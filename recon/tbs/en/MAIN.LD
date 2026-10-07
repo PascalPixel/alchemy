@@ -188,7 +188,7 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DECODE_SYMBOL.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/LOOKUP_SYMBOL.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080155d0.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080158e8.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/GRAPHICS/TILE/BUILD_METATILES.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECOMPRESS_4BPP.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECOMPRESS_4BPP_NIBBLES.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECOMPRESS_4BPP_LOOP.o"(.text .rodata .data .padding)

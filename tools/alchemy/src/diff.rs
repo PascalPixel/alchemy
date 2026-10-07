@@ -29,11 +29,11 @@ the full twelve-edition ROM comparison remains the matching authority.
 replace -mthumb with stock -marm, retaining every other game option. This
 is not an admitted build route and earns no credit, even at differ 0.
 Study output stays in obj/drafts/arm-study; no build routing is changed.
---camelot-arm is an analysis-only study of a ☀️ draft with agbcc/camelot_arm
-(pinned gcc_arm with upstream GCC's whole arm_adjust_cost) at the library
-ARM setting, assembled as ARM. CAMELOT_ARM_SOURCES is empty: this is not an
-admitted build route and earns no credit, even at differ 0. Study output
-stays in obj/drafts/camelot-arm.
+--camelot-arm compiles an ARM draft of either game as the build compiles game ARM C
+(GAME_ARM_SOURCES, AGENTS.md K1): agbcc/camelot_arm, agbcc_arm's pinned
+gcc_arm with agscc's arm_adjust_cost, at the library ARM setting, assembled
+as ARM. Credit comes only from source the build links. Output stays in
+obj/drafts/camelot-arm.
 --rtl keeps the compiler's dump after every pass (GCC's -da) in
 out/EDITION/obj/drafts/rtl/, named DRAFT.c.PASS, to find the pass where the
 draft's allocation or scheduling first leaves the listing's. The lreg and greg
@@ -47,7 +47,7 @@ scheduling cascade from early differences, so start there."#;
 
 const ARM_STUDY_NOTICE: &str = "ARM study only: pinned game compiler, -mthumb replaced by -marm; all other game options unchanged.\nNot an admitted build route; this comparison earns no credit.";
 
-pub(crate) const CAMELOT_ARM_STUDY_NOTICE: &str = "camelot_arm study only: pinned gcc_arm with upstream GCC's whole arm_adjust_cost, library ARM setting.\nNot an admitted build route; this comparison earns no credit.";
+pub(crate) const GAME_ARM_NOTICE: &str = "game ARM route (K1): agbcc/camelot_arm, pinned gcc_arm with agscc's arm_adjust_cost, library ARM setting.";
 
 struct Options {
     draft: PathBuf,
@@ -142,8 +142,8 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         "tbs"
     });
     let target = target.unwrap_or(decomp_target(Some(&format!("{game}-en")))?);
-    if camelot_arm && (arm_study || game != "tbs") {
-        return Err("--camelot-arm compiles ☀️ game ARM C only, and not with --arm".into());
+    if camelot_arm && arm_study {
+        return Err("--camelot-arm compiles game ARM C as the build does, not with --arm".into());
     }
     if heat && arm_study {
         return Err("--heat maps the game route's or camelot_arm's code; it does not combine with --arm".into());
@@ -183,15 +183,12 @@ pub(crate) fn draft_steps(target: DecompTarget, draft: &Path, object: &Path, arm
     Ok(steps)
 }
 
-/// A ☀️ draft compiled as a CAMELOT_ARM_SOURCES file is compiled by the build.
+/// A draft of either game compiled as the build compiles a GAME_ARM_SOURCES file.
 pub(crate) fn camelot_arm_steps(target: DecompTarget, draft: &Path, object: &Path) -> Result<Vec<Vec<String>>, String> {
-    if target.compiler != crate::compiler::routing::CompilerTarget::Tbs {
-        return Err("--camelot-arm compiles ☀️ game ARM C only".into());
-    }
     if family_for_source(target.compiler, &draft.to_string_lossy()) != CompilerFamily::Game {
         return Err("--camelot-arm compiles game C only; library compiler routes are unchanged".into());
     }
-    let steps = crate::build_rom::c_steps_routed(target, draft, object, Some(CompilerFamily::CamelotArm))?;
+    let steps = crate::build_rom::c_steps_routed(target, draft, object, Some(CompilerFamily::GameArm))?;
     Ok(with_draft_assembly(target, object, steps))
 }
 
@@ -227,6 +224,22 @@ fn study_assembly(step: &[String], root: &Path) -> Result<String, String> {
 }
 
 pub(crate) fn normalize(objdump: &str) -> Vec<String> {
+    normalize_with(objdump, &relocations(objdump))
+}
+
+/// Each relocation objdump -r prints, as (address, symbol).
+fn relocations(objdump: &str) -> BTreeSet<(u32, String)> {
+    objdump
+        .lines()
+        .filter_map(|line| {
+            let (address, rest) = line.trim_start().split_once(": R_")?;
+            let at = u32::from_str_radix(address, 16).ok()?;
+            Some((at, rest.split_whitespace().nth(1)?.to_string()))
+        })
+        .collect()
+}
+
+fn normalize_with(objdump: &str, relocated: &BTreeSet<(u32, String)>) -> Vec<String> {
     objdump
         .lines()
         .filter_map(|line| {
@@ -240,7 +253,13 @@ pub(crate) fn normalize(objdump: &str) -> Vec<String> {
                 return Some(mnemonic.to_string());
             }
             let mut out = if is_branch(mnemonic) && !operands.is_empty() {
+                // A Thumb branch just before a relocated literal word: objdump
+                // reads the word's relocation as the branch's own and prints
+                // the offset itself against that symbol (`3d0 <Msg+0x3d0>`).
+                let symbol = operands.get(1).map(|w| w.trim_start_matches('<').split('+').next().unwrap_or(""));
+                let misread = symbol.is_some_and(|s| relocated.contains(&(at + 2, s.to_string())));
                 match u32::from_str_radix(operands[0].trim_start_matches("0x"), 16) {
+                    Ok(target) if misread => format!("{mnemonic} {:+}", i64::from(target)),
                     Ok(target) => format!("{mnemonic} {:+}", i64::from(target) - i64::from(at)),
                     Err(_) => text.to_string(),
                 }
@@ -321,12 +340,13 @@ pub(crate) fn disassemble(object: &Path, symbol: Option<&str>) -> Result<Vec<Str
 pub(crate) fn normalize_located(objdump: &str) -> Vec<(String, Option<(String, u32)>)> {
     let mut at: Option<(String, u32)> = None;
     let mut out = Vec::new();
+    let relocated = relocations(objdump);
     for line in objdump.lines() {
         if let Some(location) = source_location(line) {
             at = Some(location);
             continue;
         }
-        out.extend(normalize(line).into_iter().map(|row| (row, at.clone())));
+        out.extend(normalize_with(line, &relocated).into_iter().map(|row| (row, at.clone())));
     }
     out
 }
@@ -586,7 +606,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         println!("{ARM_STUDY_NOTICE}");
     }
     if options.camelot_arm {
-        println!("{CAMELOT_ARM_STUDY_NOTICE}");
+        println!("{GAME_ARM_NOTICE}");
     }
     let root = root();
     let target = options.target;
@@ -719,6 +739,14 @@ mod tests {
     use super::*;
 
     #[test]
+    fn a_branch_before_a_relocated_literal_keeps_its_offset() {
+        let objdump = "    1b94:\tbl\t0 <Owner>\n    1b96:\tb.n\t3d0 <MsgDefUp+0x3d0>\n\t...\n\t\t\t1b98: R_ARM_ABS32\tMsgDefUp\n    1f66:\tb.n\t1b96 <F+0x1b96>\n";
+        assert_eq!(normalize(objdump), vec!["bl", "b.n +976", "b.n -976"]);
+        let rows: Vec<String> = normalize_located(objdump).into_iter().map(|(row, _)| row).collect();
+        assert_eq!(rows, vec!["bl", "b.n +976", "b.n -976"]);
+    }
+
+    #[test]
     fn scaffold_bounds_use_symbols_and_refuse_arm_or_unknown_modes() {
         let section = Placed {
             name: ".rom.00000100".into(), path: "out/tbs-ja/obj/recon/tbs/ja/rom.o".into(),
@@ -803,11 +831,11 @@ mod tests {
     }
 
     #[test]
-    fn camelot_arm_is_the_tbs_game_arm_route_and_assembles_as_arm() {
+    fn camelot_arm_is_the_game_arm_route_and_assembles_as_arm() {
         let args = |items: &[&str]| items.iter().map(|item| item.to_string()).collect::<Vec<_>>();
         assert!(parse(&args(&["recon/tbs/en/main/080158e8.c", "--camelot-arm"])).unwrap().camelot_arm);
         assert!(parse(&args(&["080158e8.c", "--camelot-arm", "--arm"])).is_err());
-        assert!(parse(&args(&["080158e8.c", "--camelot-arm", "--game", "tla"])).is_err());
+        assert_eq!(parse(&args(&["080388fc.c", "--camelot-arm", "--game", "tla"])).unwrap().game, "tla");
         let target = decomp_target(Some("tbs-en")).unwrap();
         let source = root().join("recon/tbs/en/main/08000000.c");
         let object = root().join(target.output_dir).join("obj/drafts/camelot-arm/test.o");
@@ -821,7 +849,10 @@ mod tests {
         let library = root().join("games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C");
         assert!(camelot_arm_steps(target, &library, &object).is_err());
         let tla = decomp_target(Some("tla-en")).unwrap();
-        assert!(camelot_arm_steps(tla, &source, &object).is_err());
+        let tla_source = root().join("recon/tla/en/main/08000000.c");
+        let tla_steps = camelot_arm_steps(tla, &tla_source, &object).unwrap();
+        assert!(tla_steps[1][0].ends_with("agbcc/camelot_arm"));
+        assert!(!tla_steps[2].iter().any(|flag| flag == "-mthumb"));
     }
 
     #[test]

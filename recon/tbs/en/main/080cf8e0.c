@@ -1,4 +1,235 @@
-/* Draft: native 670 instructions, draft 671, common 555, differ 231.
+/* Draft: native 670 instructions, draft 670, common 670, differ 0, but
+ * NOT adoptable yet: two devices change instruction selection, not only
+ * order or registers (S2): the dead repeated hit test (step) and the
+ * __asm__ __volatile__("" ::) CSE flush (burst address). The row
+ * temporary and the CopyPalette inline remain FAKEMATCH devices.
+ * Twelfth pass (2026-10-07): the step flush's mechanism is found and the
+ * asm is gone. cse_end_of_basic_block takes the AROUND path over the hit
+ * block only when no CODE_LABEL lies between the hit test's jump and the
+ * join (its no_labels_between_p scan counts any label, used or not).
+ * A label inside the hit block at CSE1 time, with code after it in the
+ * block, stops the AROUND path: CSE1's block from the k-loop top runs
+ * into the hit block and ends at the join (still one use from the hit
+ * test), so the variant test and step start a fresh table and recompute
+ * k << 3 and gShots + k * 448, which loop.c then reduces as native.
+ * The draft makes that label with a dead repeated test around the first
+ * call, if (frame == k * 8 + 17) ObjectGroup_UpdateMembers(...), which
+ * CSE1 folds (the outer test's fall-through merges frame with
+ * k * 8 + 17), so it leaves no code: 0 without the asm (451 without
+ * either). Still a device that changes selection, but it says what
+ * native's source had: a conditional inside the hit block, before
+ * BattleEventRuntime_BeginPhaseFar, that CSE1 resolves from the hit
+ * test (or the frame >= k * 8 test). thread_jumps does not touch it,
+ * because the branch after its label is no test. Natural candidates
+ * not yet tried: a condition in the hit block on frame or k that the
+ * enclosing tests decide, written as Camelot would.
+ * Twelfth-pass trials (each without the step asm): k set in the hit block
+ * by asm("" : "+r"(k)) 502 (k is no longer a biv; the step's loss is no
+ * invalidation of k); the two calls as two separate ifs with the same
+ * test 451 (thread_jumps sends the first test to the join, which then
+ * has two uses until CSE1 folds the second and rescans AROUND); the
+ * repeated test around the first call only 0; the inner test as
+ * if (frame >= k * 8), decided by the outer frame test, also 0; the
+ * redundant test in the hit condition instead,
+ * if (frame >= k * 8 && frame == k * 8 + 17), 451 (its jump goes to the
+ * join, so no label lies inside the hit block). Burst: the same kind of
+ * CSE1-decided test after group's set, if (group != k * 4) burst = 0,
+ * 171 as without the flush: a label CSE1 folds lets cse_basic_block run
+ * on past it with its table, so the burst needs a block end that keeps
+ * a use from outside (or a loop end). The 1,000-insn table flush
+ * in cse_basic_block does not reach here (CSE1's largest block in this
+ * function is under 200 insns).
+ * Eleventh pass (2026-10-07): the step flush's cause, still not found.
+ * thread_jumps runs after jump pass 1 and before CSE pass 1 (toplev.c),
+ * so a repeated test is threaded away before CSE chooses its paths; in
+ * the trials below a second jump to the join was always gone before CSE
+ * chose them. The path has to end at a block boundary that leaves
+ * no code in the final output. Of the forms tried, only a loop end does
+ * that (an empty do-while, or the asm), and neither is a natural source.
+ * Eleventh-pass trials, each without the step flush: the variant block
+ * in its own if (frame >= k * 8) after the hit stanza, with shot assigned
+ * in the first, 451 (the first test is threaded to the loop tail and CSE
+ * folds the second); if (frame - k * 8 == 17) 369 (679 instructions:
+ * frame - k * 8 becomes a giv, where native adds 17 to k * 8 and compares
+ * it with frame); the hit test repeated around
+ * BattleEventRuntime_BeginPhaseFar inside the hit block 451 (the jump dump
+ * gives the join 2 uses, but CSE1's block list shows paths from the
+ * k-loop top through the join to insns 929, 1005 and 1046, and the inner
+ * test is gone); BattleEventRuntime_BeginPhaseFar in a second
+ * if (frame == k * 8 + 17) after the hit block 451.
+ * Tenth pass (2026-10-07): the flushes' natural cause, still not found.
+ * The step flush needs CSE's AROUND path (cse_end_of_basic_block,
+ * skip_blocks) to end after the hit block's join label: a code label
+ * with uses, or a NOTE_INSN_LOOP_END, on the path between the join and
+ * the variant test. A label or loop end inside the skipped hit block
+ * does not help: the AROUND path jumps over it.
+ * Tenth-pass trials (from 0, each without the flush it replaces): an
+ * empty do { } while (0) after the hit block 0 (its LOOP_END ends the
+ * path, as the asm does; still a device that changes selection);
+ * do { BattleEventRuntime_BeginPhaseFar(133); } while (0) inside the
+ * hit block 451; do { the hit block } while (0) 451 again (jump merges
+ * the join label with the loop's exit label after the LOOP_END, so the
+ * AROUND path skips it); a static __inline__ helper forwarding
+ * BattleEventRuntime_BeginPhaseFar 451, one forwarding
+ * ObjectGroup_UpdateMembers 451 (no label left in the hit block by CSE
+ * time); the k loop as for (k = 0; k != count; k++) 456. Burst: group
+ * set in the burst for's test, for (i = 0; group = k * 4, i != count;
+ * i++), 24: CSE no longer folds group << 3 into k << 5 (group's set is
+ * in the rotated exit test, another block), but the duplicated test puts
+ * k << 2 before the count guard and PRE puts group << 3 at the loop
+ * tail; native computes k << 2 after the guard and group << 3 at the top
+ * of the body, so group's set sits at the body's top with a CSE block
+ * boundary before its use.
+ * Ninth pass (2026-10-07): the shard drawer is chosen in the call,
+ * draw[burst->velocity_x > 0 ? flip ^ 1 : flip](...), with the plain
+ * if (i & 1) picture += 9 first as native orders it (48 -> 8). fold()
+ * distributes the index's * 4 into the conditional's arms, so the scaled
+ * index t is set in both arms: a pseudo spanning blocks, which global (not
+ * local-alloc, which never takes r7) gives r7 after the position pointer
+ * takes r6; jump2's cross jump then merges the two identical
+ * "lsls r7, r2, #2" tails, leaving native's ble over eors r2, r1. With t
+ * no longer a local in r6, flip keeps r2, the constant 1 r1, the burst
+ * reload r4, and the volatile position.x re-read and the odd temporary are
+ * no longer needed (both removed; with the re-read kept also 0). The draw
+ * loop steps burst before i (burst++, i++; 8 -> 0): reload takes r0 for
+ * 28 and r1 for 1 in RTL order, then sched2 interleaves them as native.
+ * Ninth-pass trials (from 48): shard_draw = &draw[flip] right after the
+ * flip test 435; native order (i & 1 first, flip, shard_draw) 396 (the
+ * shift still lands at the call in flip's r6); if/else flip =
+ * effect->side ^ 1 / effect->side 403; if/else shard_draw = &draw[flip ^
+ * 1] / &draw[flip] 99 (675 instructions: the base add stays in each arm,
+ * but the position pointer takes r6); shard_draw = &draw[cond ? flip ^ 1 :
+ * flip] then (*shard_draw)(...) 99. At 0: without the step flush 451,
+ * without the burst flush 171, the count test through
+ * SevenMode_Records[mode * 2] (no records, no row) 135.
+ * Flush leads at 0: the burst flush replaced by do { group = k * 4; }
+ * while (0) also scores 0 (no asm: the loop's notes or labels end CSE's
+ * extended block between group's set and group * 8, so the fold into
+ * k << 5 never happens). Not taken: still a device that changes
+ * selection, but it points at a loop boundary in native's burst body
+ * as the natural cause. The step flush replaced by do { the hit block }
+ * while (0) 451 (as without the flush).
+ * Eighth pass (2026-10-07): the shard draw goes through a pointer,
+ * DrawRectangle *shard_draw = &draw[flip] and (*shard_draw)(...), with a
+ * forced temporary odd = i & 1 whose test follows flip (FAKEMATCH, a
+ * permuter hint; 64 -> 48). Everything outside the shard block now
+ * matches: reload's rotation, the mode chain and both loop tails.
+ * Cause, from the lreg/greg dumps: native's spill set includes r4 because
+ * the burst pointer reload at the velocity_x load (insn "mov r4, r8")
+ * finds r0 (picture), r1 (the constant 1), r2 (flip) and r3 (effect) busy.
+ * The pointer form keeps the drawer load at the call (combine folds
+ * &draw[flip] into the load; native ldr r4, [r7, r0]), but local-alloc
+ * gives t = flip << 2 r6 (r7 is the hard frame pointer, never used by
+ * local-alloc), global then prefers r6 for flip (set_preference through
+ * the shift), the constant 1 lands in r2 and the reload takes r1: r4
+ * never enters the spill set and the whole function shifts (396). With
+ * odd computed first the constant 1 stays in r1 and r4 returns.
+ * Remaining at 48, all in the shard block: native tests i & 1 before
+ * flip (the draft's odd test follows it), keeps flip in r2 and t in r7
+ * (so t was allocated by global, not local-alloc: some local of higher
+ * priority holds r6 during t's life, or t spans a block boundary), and
+ * the position pointer in r6 where the draft has r7.
+ * Eighth-pass trials (on the 64 draft unless marked): records[mode * 2]
+ * without row 68; pointer draw alone 396 (with the plain position.x
+ * 418, without records 391); position pointer as register asm("r6")
+ * in the burst draw block 438, with the pointer draw 262 (the burst
+ * pointer then takes r7 and t ip); i & 1 test moved after flip without
+ * a temporary 411; odd tested before flip 396; shard_draw = &draw[flip]
+ * before the odd test 435 (440 without odd); at 48: (u32)flip 48,
+ * plain position.x 257, records[mode * 2] without row 52, without
+ * records 177. Permuter (5 minutes, PERM_RANDOMIZE over the shard
+ * block, pointer form): odd first and its test after flip, 48. Second
+ * permuter run (5 minutes, seed 7, from 48): a second forced temporary
+ * tmp = burst->velocity_x before the odd test, with flip ^= 1 after it,
+ * 44; not taken: one more device for four instructions, and native's
+ * order (i & 1 tested before flip) is still not reproduced.
+ * Seventh pass (2026-10-07): the burst count indexes records with a row
+ * temporary (FAKEMATCH, 68 -> 64, a permuter hint): records[mode * 2]
+ * expands to (plus (mult mode 2) records), the multiply first as RTL
+ * canonical order puts it, so reload loads the row into r0 and the table
+ * into r1; with a plain register index the address keeps records first
+ * and native's load order (table r0, row r1). The global
+ * SevenMode_Records[mode * 2] keeps native's order too, which is why only
+ * the uses of the local pointer swap: with the count through the global and
+ * the burst velocity test through records, the swap moves to the velocity
+ * test (68). The shard draw and both loop tails remain (r4 at the call).
+ * Seventh-pass trials: (mode * 2)[records] 68; group set in the burst
+ * for's init and increment (for (i = 0, group = k * 4; ...; i++,
+ * group = k * 4)) without the burst flush 92: the address stays unreduced
+ * as native, but k << 2 lands before the count guard and group << 3 at the
+ * loop tail. Without the step flush the hit block's join label (1 use) is
+ * skipped AROUND by CSE's path following (cse_end_of_basic_block,
+ * skip_blocks), which carries k << 3 (reg 214) and shot (reg 215) past
+ * the hit block to the variant test and step: native's loss needs that
+ * label to have a second use, a code label inside the hit block, or a
+ * NOTE_INSN_LOOP_END between the join and the variant test; no natural
+ * source for any of them found yet.
+ * On the 64 draft: direct draw[flip](...) 396 and DrawRectangle *shard_draw
+ * = &draw[flip] with (*shard_draw)(...) 396, both 652 instructions. The
+ * shard draw itself then nearly matches (drawer loaded at the call into
+ * r4 from [sp+32] as native), but flip << 2 is computed at the call into
+ * flip's own register (r6) where native shifts it into r7 right after the
+ * flip test, and the mode chain loses r4 (mov r0, r8 for native's
+ * mov r4, r8): the load at the call changes reload's spill set for the
+ * whole function, which the rest of the draft has been fitted without.
+ * Permuter (6 minutes, PERM_RANDOMIZE over the burst count and the shard
+ * draw, asm lines in PERM_IGNORE): only the row temporary, 64.
+ * Sixth pass, later (2026-10-07): the burst count reads SevenMode_Records
+ * through a local s8 *records (197 -> 80): the reload rotation through the
+ * burst block and the k-loop tail now match. Whether the pointer is
+ * Camelot's source or a forced temporary (S2 tag needed) is open: without
+ * it the count stays at 199 in every form tried. The draw loop steps a user
+ * burst pointer set in the for's init beside i (80 -> 72): native sets
+ * i and the pointer before the hoisted SevenMode_Records base. The count
+ * as if/else (72 -> 68): if-conversion sets count = 4 after the load, as
+ * native. Remaining at 68: the burst count's two loads in swapped order
+ * (native loads the table address into r0 first, then the index into r1),
+ * the position pointer in r7 where native has r6 with flip << 2 in r7 and
+ * draw[flip] loaded at the call (shard_draw unallocated), the draw loop
+ * tail and frame-loop tail registers that follow from it.
+ * Trials: if/else for the burst count (no pointer) 199; records also in
+ * the burst loop's test 84; s8 *records = &SevenMode_Records[mode * 2]
+ * with *records 80; burst = gBursts before the for 80; direct
+ * draw[flip](...) 390; (*p)(...) with p = &draw[flip] 390. At 68:
+ * *(records + mode * 2) 68; records = &SevenMode_Records[mode * 2] with
+ * *records 68; shard_draw or flip declared first 68; direct draw[flip]
+ * call 396 (652 instructions: r4 re-enters reload's rotation from the
+ * first mode test on, as in the fourth pass).
+ * Next: the two CSE flushes still block adoption (one natural cause for
+ * the lost k << 3, gShots + k * 448 and group << 3 knowledge after the hit
+ * block); then the shard draw's flip << 2 in r7 with draw[flip] loaded at
+ * the call, which only the direct call gives, without losing r4.
+ * Sixth pass (2026-10-07): native's delay is loop.c's reduced giv of k * 8,
+ * not a variable. The draft writes k * 8 inline (no delay local).
+ * - Reducing it needs benefit above the add cost (2 - 2 = 0 for one k << 3,
+ *   "not worth while, 0 vs 167"); two separate k << 3 givs combine (2 + 2 - 2)
+ *   and are reduced. So native's step, (frame - k * 8) / 3, computes k << 3
+ *   afresh: CSE pass 1 did not carry the loop top's k << 3 past the hit
+ *   block (frame == k * 8 + 17). With the flush there, delay and the shot
+ *   pointer take native's slots (sp+12 below sp+16, giv pseudos made after
+ *   shot's) and native's tail order (shot += 448, delay += 8, k++).
+ * - Native's variant test and EffectPosition_ApplyBaseAndYOffset argument
+ *   use the reduced shot giv (reloaded from sp+16), not the shot pointer
+ *   in r7: gShots + k * 448 is also recomputed there; written as
+ *   gShots[k * 16] after the flush, they match (205 -> 203).
+ * - The burst address's lost group << 3 fold (below) is the same lost CSE
+ *   knowledge in the same region; one natural cause probably explains all
+ *   three. Not found: a split frame test 520, a for loop without the flush
+ *   476, shot declared inside the variant block 201.
+ * - Frame slots: camera + 12 (expression 92) and k << 2 (expression 133)
+ *   share GCSE hash bucket 50, so PRE made camera + 12's reaching reg first
+ *   (sp+20 above k << 2). Declaring camera after source (one pseudo later,
+ *   bucket 51) gives native's order, k << 2 at sp+24 and camera->pos at
+ *   sp+20 (203 -> 197).
+ * Remaining at 197, besides the two flushes: reload rotation from the
+ * burst count's SevenMode_Records load (native: address r0, index r1; the
+ * draft's address pseudo takes r3, the index r1) through the burst block
+ * and the k-loop tail; the draw loop's r8/r9 pool loads and flip << 2 in
+ * r7; one branch two bytes longer (b.n +784 vs +782).
+ * Sixth-pass trials: k * 8 inline without the step flush 467; with it 205;
+ * ApplyBase(&gShots[k * 16]) 203; flush moved before the variant test with
+ * gShots[k * 16].variant 203; camera after source 197; unused delay
+ * removed 197; without the burst flush 253.
  * Fifth pass (2026-10-06): delay += 8 before k++ (232 -> 231, and 273 ->
  * 269 without the asm; native's tail updates the shot pointer, then delay,
  * then k). The burst address
@@ -120,6 +351,28 @@
  * SevenMode_Records for the count test, a forced temporary not adopted
  * while the burst address still differs. Native's first literal pool sits
  * after the step > 4 draw; the draft's lands 152 bytes later.
+ * Fourth pass (2026-10-06), the burst address: loop.c reduces a giv only
+ * when its add value is invariant and the reg it feeds is a biv or a giv
+ * (loop.c simplify_giv_expr). Native's burst loop has no givs at all: k << 2
+ * sits in the preheader in a pseudo whose stack slot (sp+24) lies between
+ * the records index and camera + 12, i.e. a GCSE reaching register, not a
+ * user variable or loop register (slots follow regno, higher regno lower).
+ * In the loop it is shifted by 3 (CSE never folded the two shifts, so they
+ * were in different CSE blocks or the << 2 value was unknown there) and fed
+ * into an index that is set more than once per iteration, so nothing from
+ * it is a giv; the gBursts pool load stays in the loop as "not desirable".
+ * A k * 4 the k loop sees must also stay unreduced (native recomputes it
+ * from k at sp+44). Measured (from 267): a volatile group local 463 (burst
+ * loop and pool offsets then match native, frame does not); an index n set
+ * three times in the loop (n = k * 4; n *= 8; n += i) 291, no burst givs
+ * but CSE folds to k << 5 and the k loop reduces k * 32 into sp+16; the
+ * same with group = k * 4 at the k-loop top 291, in the guard or before
+ * count 311/318, group += 4 per target 283, k * 4 * 8 into n 267; an
+ * asm("" : "+r"(n)) after n = k * 4, then n = n * 8 + i, 247 (burst body
+ * as native, but GCSE's k * 4 copy then lets the k loop reduce k * 4 into
+ * sp+16): a measuring device, not adoptable (S2: it changes which loop
+ * reduces, not only order or registers). Reused height or total as the
+ * index 267/320; k * 8 inline for delay with that device 309.
  */
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
@@ -179,12 +432,11 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
     s32 frame;
     s32 k;
     s32 total;
-    struct BattleCamera *camera;
     struct MotionObject *source;
+    struct BattleCamera *camera;
     u8 *palette;
     s32 i;
     s32 height;
-    s32 delay;
 
     heap_cache = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
     cursor = heap_cache;
@@ -271,25 +523,31 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
     AudioCommand_PlayFar(103);
 
     for (frame = 0; frame != total; frame++) {
+        struct EffectStep *burst;
+
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         k = 0;
         if (work->effect->count != 0) {
-            delay = 0;
             do {
-                if (frame >= delay) {
+                if (frame >= k * 8) {
                     struct EffectStep *shot = &gShots[k * 16];
 
-                    if (frame == delay + 17) {
-                        ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
+                    if (frame == k * 8 + 17) {
+                        /* FAKEMATCH: dead repeated test, not admissible as is (it changes
+                           selection, see header): its label inside the hit block stops
+                           CSE pass 1 from skipping the block, so native's k << 3 and
+                           gShots + k * 448 are recomputed after it (451 -> 0). */
+                        if (frame == k * 8 + 17)
+                            ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
                         BattleEventRuntime_BeginPhaseFar(133);
                     }
-                    if (shot->variant >= 0) {
-                        s32 step = (frame - delay) / 3;
+                    if (gShots[k * 16].variant >= 0) {
+                        s32 step = (frame - k * 8) / 3;
 
                         if (step > 9)
                             step = 9;
-                        EffectPosition_ApplyBaseAndYOffset((s32 *)shot, &position);
+                        EffectPosition_ApplyBaseAndYOffset((s32 *)&gShots[k * 16], &position);
                         position.x >>= 1;
                         if (step > 4)
                             draw[0](canvas, work->sheet + step * 768, position.x - 16, position.y - 12, 32, 24);
@@ -299,11 +557,18 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                             EffectStep_AdvanceWithGravity3D(shot, 63, -0x8000);
                         if (shot->y < 0) {
                             s32 count;
+                            s8 *records = SevenMode_Records;
+                            s32 row;
 
                             shot->y = 0;
                             shot->variant = 1;
-                            count = 4;
-                            if (SevenMode_Records[mode * 2] != 0)
+                            /* FAKEMATCH: native loads the table address before the row
+                               (r0, r1); records[mode * 2] puts the multiply first in the
+                               address and reload loads the row first (68 -> 64). */
+                            row = mode * 2;
+                            if (records[row] == 0)
+                                count = 4;
+                            else
                                 count = 16;
                             for (i = 0; i != count; i++) {
                                 struct EffectStep *burst;
@@ -332,12 +597,10 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                         }
                     }
                 }
-                delay += 8;
                 k++;
             } while (k != work->effect->count);
         }
-        for (i = 0; i != 256; i++) {
-            struct EffectStep *burst = &gBursts[i];
+        for (i = 0, burst = gBursts; i != 256; burst++, i++) {
 
             if ((u32)burst->variant <= 44 && burst->y >= 0) {
                 EffectPosition_ApplyBaseAndYOffset((s32 *)burst, &position);
@@ -348,20 +611,13 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                 } else {
                     s32 picture = burst->variant / 5;
                     s32 flip;
-                    DrawRectangle shard_draw;
 
                     if (i & 1)
                         picture += 9;
                     flip = effect->side;
-                    if (burst->velocity_x > 0)
-                        flip ^= 1;
-                    /* FAKEMATCH: native re-reads position.x after __divsi3; kept in a
-                       register (r4, caller-saved) it keeps r4 out of reload's
-                       rotation for the whole function (412 -> 326 with the
-                       shard_draw load, 367 without the re-read). */
-                    shard_draw = draw[flip];
-                    shard_draw(canvas, work->sheet + SevenMode_ShardOffsets[picture] + 0x1e00,
-                        ((volatile struct EffectPosition *)&position)->x - SevenMode_ShardWidths[picture] / 2,
+                    draw[burst->velocity_x > 0 ? flip ^ 1 : flip](canvas,
+                        work->sheet + SevenMode_ShardOffsets[picture] + 0x1e00,
+                        position.x - SevenMode_ShardWidths[picture] / 2,
                         position.y - SevenMode_ShardHeights[picture] / 2,
                         SevenMode_ShardWidths[picture], SevenMode_ShardHeights[picture]);
                 }

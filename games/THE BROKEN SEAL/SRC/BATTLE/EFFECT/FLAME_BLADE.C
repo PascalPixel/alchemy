@@ -90,13 +90,10 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
             s32 mag;
             s32 ang;
 
-            /* FAKEMATCH: the mask is loaded into the magnitude before the random word is taken in, as the native code does; masking the call's result keeps the mask in a scratch register. */
-            mag = 0x1FF;
-            mag &= Random16();
+            mag = (Random16() & 0x1FF) + 32;
             ang = Random16() & 0xFFFF;
             spark->x = FlameBlade_StrikeColumns[n + work->effect->side * 3] << 16;
             spark->y = 176 << 15;
-            mag += 32;
             spark->velocity_x = (Trig_Sin(ang) * mag) >> 6;
             spark->velocity_y = -(Trig_Cos(ang) * mag * 2) >> 6;
             spark->variant = (Random16() & 7) + 32;

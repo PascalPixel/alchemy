@@ -341,7 +341,7 @@ void BattleEvent_Playback(void)
                 state->queue.count = 0;
                 state->event_index = 0;
                 state->timer = 0;
-                Battle_ResolveTargetAction(&work->plan, state->queue.target_index);
+                BtlTgtExec(&work->plan, state->queue.target_index);
                 state->queue.target_index++;
                 state->phase = 2;
             } else {

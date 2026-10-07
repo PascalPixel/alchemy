@@ -11911,11 +11911,11 @@ msgctxt "message"
 msgid "02975"
 msgstr "You won't change classes"
 
-msgctxt "message"
+msgctxt "MsgDjinnPsyHelp"
 msgid "02976"
 msgstr "{button_icon:4}:{argument_actor_name:1}'s Psy"
 
-msgctxt "message"
+msgctxt "MsgDjinnStatusHelp"
 msgid "02977"
 msgstr "{button_icon:4}:Status"
 

@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_BATTLE_EVENT_H
 #define ALCHEMY_BATTLE_EVENT_H
 
+#include "EDITION.H"
 #include "LAYOUT_GUARD.H"
 
 enum { BATTLE_EVENT_CAPACITY = 64 };
@@ -59,7 +60,11 @@ enum BattleEventOpcode {
 
 s32 BattleActor_DestroyTemporaryObject(s32 unit_id);
 
+#if GAME_TLA
+void BattleEv_Push(u32 opcode, u32 operand);
+#else
 u32 BattleEv_Push(u32 opcode, u32 operand);
+#endif
 u32 BattleEv_DispatchQueued(void);
 
 #endif

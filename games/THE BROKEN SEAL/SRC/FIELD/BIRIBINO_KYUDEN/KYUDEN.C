@@ -11,6 +11,7 @@
 #include "TYPES.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SERVICE.H"
 #include "text/MSG_IDS.H"
 
 #define FieldScene_PrepareActors ((void (*)(u8*))FieldScene_PrepareActors)
@@ -957,17 +958,16 @@ void ConfigureSecondarySceneChannels(void)
 
 void RunEventScript02(void)
 {
-    /* FAKEMATCH: The cleared motion byte keeps its own zero local so the following call reloads its separate zero argument. */
     struct FieldActor *buf;
     struct FieldActor *actor;
     s32 flag;
-    u8 clear = 0;
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     buf = Engine_EventGetViewCenter();
-    buf->motion_flags = clear;
+    flag = 0;
+    buf->motion_flags = flag;
     Camera_MoveTo(0x037e0000, -1, 0x02980000, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -1204,7 +1204,7 @@ void RunEventScript02(void)
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     Engine_EventWait(20);
     Actor_FaceDirection(18, 0x5000, 0);
-    Call3(Object_SetTargetAndCallback, 0, 0x10013, (s32)Kyuden_FacingActions);
+    FieldObject_SetTargetAndCallback(0, 0x10013, Kyuden_FacingActions);
     Actor_WalkToAndWait(19, 852, 646);
     Actor_WalkToAndWait(19, 852, 666);
     Actor_WalkToAndWait(19, 864, 672);

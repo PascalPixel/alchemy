@@ -1,6 +1,11 @@
-/* 080d1714: differ 888 of 1481 instructions (1471 generated, common
- * 1032). BattleEffectWork, BattleEffectArgument, MotionObject and
- * EffectStep replace local partial layouts. The control flow already
+/* 080d1714: differ 38 of 1481 instructions (1481 generated, common
+ * 1462). Battle effect mode 8 (DISPATCH.C): the targets spin and
+ * rise in a whirlwind for 160 frames, then nine comet objects sway in,
+ * 32 particles converge on their centre, sparks burst four times and
+ * four marks fly out with a screen shake; the targets are put back at
+ * frame 400. Name at adoption, e.g. BtlEfxWhirlComet.
+ * BattleEffectWork, BattleEffectArgument, MotionObject and EffectStep
+ * replace local partial layouts. The control flow already
  * follows the listing; what remains is register allocation and spill
  * slots: the native frame is 356 bytes and keeps index in r9 and frame
  * at sp+80; it strength-reduces frame - threshold into its own slot and
@@ -23,6 +28,16 @@
  *   distance loop by index: 1324; spark spawn loop by index: 1320.
  * - first-phase particle loop by index: 1581; spark update loop by
  *   index: 1370 (both kept as pointers).
+ * - (a parallel session, on its 1191 base) the inner spark loop reading
+ *   the mark position as runtime->particles[index + 60]: 1191, frame
+ *   356; the 64-step init loop by pointer with its own counter: 1249,
+ *   point = &runtime->particles[index] each iteration: 1184; register
+ *   on mark, step and alive: 1184; permuter 4 minutes with
+ *   PERM_RANDOMIZE over the frame loop's actor loop: none below 1184;
+ *   mark x and velocity_x stored before y: 1182. Its greg dump: index
+ *   (158 refs) is allocated after about 60 shorter allocnos and loop.c
+ *   hoists runtime + 0x7828 out of the actor loop (savings 3) into r9,
+ *   the register the native gives index.
  * - 64-particle setup loop through point = &particles[index] each
  *   iteration: the native's runtime + 0x7080 base, 1313 (a walking
  *   pointer hoists 120 and 63 out of the loop: 1376).
@@ -55,8 +70,175 @@
  *   first statement, which loop hoists as the native: 892, frame 356.
  * - threshold declared in the frame > 255 block, a later pseudo as
  *   the native's low slot suggests: 888; center_x there too: 888.
- * Remaining: frame - threshold is not reduced to a giv (native
- * sp+20); the sqrt sums take r4/r5 where the native uses r2/r1. */
+ * - the per-frame actor loop as for (index = 0; index != count;
+ *   index++): the native recomputes runtime + 0x7828 at the test, the
+ *   top and the latch from one constant pseudo (r2) and never hoists
+ *   the address; as a do-while loop moved it out (savings 3): 1023
+ *   alone (frame 352, index * 2 then took fp instead of its sp+56
+ *   slot).
+ * - step merged into slot, one counter for every inner loop as the
+ *   native's fp shows: 887, frame 356.
+ * - the 9-object placement loop counts with index, the native's r9:
+ *   793 (slot's priority now falls below index's, so global.c gives
+ *   index r9 and slot fp as the native).
+ * - draw sources as &runtime->sheet[frame / 4 % 3 * 3072 + ...]:
+ *   runtime + offset in the native's operand order, 791.
+ * - burst setup stores variant = 0 after z, as sched2 places it
+ *   between the umodsi3 result and the z store: 792 (1471 generated).
+ * - threshold = index * 12 + 330 (or 330 + index * 12) each
+ *   iteration again, on 792: 1004, but 1481 instructions as the native
+ *   and its loop end matches exactly: four reduced givs (0x7720 +
+ *   28i, 28i, frame - threshold, threshold) incremented in the
+ *   native's order. The frame grows to 364: wave_x >> 17 is hoisted
+ *   out of the distance loop into its own slot (the native shifts
+ *   wave_x inside each iteration; 792 hoists it too), and one more
+ *   slot sits at sp+12. Ignoring stack and literal offsets it is 410
+ *   lines against 792's 404: fix the hoist and the extra slot there.
+ *   The hoist is gcse's PRE: the unconditional center_x in the
+ *   threshold loop makes wave_x >> 17 anticipatable from the distance
+ *   loop on, so PRE computes it once before that loop (expression
+ *   reg 1148) and the distance loop, the alive draw and center_x reuse
+ *   it.
+ * - (wave_x >> 17) + 32 written inside if (frame == threshold), no
+ *   center_x, with threshold from index: 732, frame 356 (PRE no longer
+ *   hoists; the distance loop and alive draw shift wave_x as the
+ *   native). Loop.c keeps the conditional x sum in the loop ("not
+ *   desirable", life 3) where the native hoists it to sp+52; one extra
+ *   slot remains at the low end, so the givs sit 4 bytes above the
+ *   native's sp+16..28. center_x assigned before the loop again: 994.
+ * - mark stores in the order x, y, velocity_x, velocity_y: the x sum
+ *   lives long enough for loop.c to hoist it (sp+56, frame 360): 972;
+ *   y, x, velocity_y, velocity_x: 980.
+ * - the extra low slot was a caller-save: the final restore loop used
+ *   the function-wide object pseudo (r5 everywhere), so base_angle's
+ *   walking pointer lost r7 and was caller-saved in r2 (sp+12). A
+ *   block-local obj there takes r2 as the native: 872 alone (frame
+ *   352); with the y, x, vy, vx stores: 646, frame 356; with x, y,
+ *   vx, vy: 638, the threshold loop head and loop end as the native.
+ * - the frame == 160 actor loop as a for loop too: its pre-test no
+ *   longer lends its runtime + 0x7828 register to the hoisted one,
+ *   which the native recomputes: 632.
+ * - Trig_Sin(angle) * speed, the call first, in the burst setup: the
+ *   native ties speed to the mul output (mov rD, speed; mul rD, result):
+ *   628; the same in wave_y (Trig_Sin(...) * size): 624. The angle as
+ *   two statements (and, then += 0x9fff): 639.
+ * - alive = 0 before the transform calls, sharing the shake zero as the
+ *   native's mov sl, r2 shows: 624 (x, y, z store order: 633; alive
+ *   first: 631).
+ * - drift_x, drift_y, then shake_frames = 8 (all six orders tried, 598
+ *   to 622): 598.
+ * - index = 0 before mark = &runtime->particles[60]: the native shares
+ *   the zero of index and the giv at sp+24: 567.
+ * - slot = 0 before spark = &runtime->particles[32] likewise: 517
+ *   (index = 0 before point or the spark update pointer: 521, 517).
+ * - speed and angle block-local in the spark spawn and burst setup
+ *   blocks: one pseudo across both loops had swapped speed and the
+ *   walking pointer (r7/r6 where the native has r6/r7): 455 for
+ *   speed, 421 with angle. span block-local: 449 in all four blocks,
+ *   425 in one.
+ * - alive = 0 right after shake.z, a permuter hint: 394 (index = 0
+ *   before the placement setup: 429).
+ * - size block-local in the mark draw (if (frame >= threshold)): 380;
+ *   also in the first draw block or the wave block: 380; point,
+ *   object or spark block-local, or the drift adds interleaved with
+ *   the halvings: 380.
+ * - the frame == 160 background id is the resource id
+ *   ResourceId_VioletSkyBackdrop (entry 59), which the native loads
+ *   from the literal pool once for both calls: 379.
+ * - on 379: index = 0 before the wave and drift inits: 595 (drift
+ *   inits first: 595); wave_x -= then += drift_x before wave_y: 388;
+ *   alive = 0 after shake.x: 404; a block-local copy of draw_rectangle
+ *   for the two-draw block: 379 (copy propagated away);
+ *   threshold declared in the mark loop body: 379.
+ * - width = 48 set once before the frame loop, for the four draw
+ *   widths: a pseudo set once to a constant that global.c leaves
+ *   without a register, so reload rematerializes 48 at every use as
+ *   the native: 404; with (width - size) * 48 in the first draw too:
+ *   378, both single draws now exact.
+ * - on 378: drift adds or halvings in other orders, drift + wave
+ *   operand order, the sine terms through a temporary: 378 to 382; a
+ *   block-local draw_rectangle copy, src block-local or from
+ *   runtime->sheet, width set elsewhere: 378; alive = 0 after shake.y,
+ *   after shake.x or after the calls: 398 to 403.
+ * - wave and drift as two-field structs (struct ScalePair wave, drift,
+ *   in that order): 243 (drift before wave: 297). An 8-byte struct
+ *   that is never addressed is a DImode pseudo; each field store
+ *   computes into a new SImode pseudo and moves it into the subreg, so
+ *   the native's sine and drift results land in the operand's register
+ *   and wave.y is stored twice, and the spilled field reloads are not
+ *   inherited, as the native reloads drift.x and drift.y twice. The
+ *   rotation of reload registers after this block then matches too.
+ * - the two draw functions as one struct DrawPair draw (rect, then
+ *   rect_alt): 182, 1481 instructions as the native (rect_alt first:
+ *   204). A call through a field of the spilled DImode pseudo copies
+ *   the field into a new pseudo, which the two-draw block shares
+ *   across its first call: loaded once into r4 and caller-saved at
+ *   sp+8, as the native.
+ * - on 182: the frame == 160 radius and spin loop as a for or while
+ *   loop: 190. The distance sum as x * x + (y * y + z * z): 173, the
+ *   squares now in r0, r2 and r1 as the native; z * z first: 179;
+ *   y * y first: 186; the sum assigned to dist before Iwram_Sqrt: 230.
+ * - on 173: index = 0 before point = runtime->particles in the
+ *   frame <= 159 loop, as before the mark and spark pointers: 169;
+ *   point = &runtime->particles[0]: 173.
+ * - on 169: the frame == 160 radius and spin loop as a for loop: 133
+ *   (jump.c's copied exit test is the guard, so cse no longer shares
+ *   its runtime->effect load with the loop and loop.c hoists a fresh
+ *   one, as the native's guard ldr [r5, r3] then preheader reload
+ *   shows); the final restore loop as a for loop too: 127; the first
+ *   actor loop as a for loop: 127, kept for one loop shape throughout.
+ * - on 127: the distance sum in source order x * x + y * y + z * z:
+ *   180 (expand interleaves products and adds); the three squares as
+ *   statements xx, yy, zz, then Iwram_Sqrt(xx + yy + zz): 123, the
+ *   native's three products, x + y, then z through its copy in r3.
+ * - on 123: mark = &runtime->particles[60] before index = 0: 140.
+ * - on 123: the frame <= 159 particle loop as for (index = 0, point =
+ *   runtime->particles; ...): 123, the same code; permuter 5 minutes
+ *   (seed 11, --heat, shared machine): 14 candidates, none below.
+ * - on 123: the burst loop's spark as runtime->particles[slot + 32]
+ *   by index, no walking pointer: 85, 1480 instructions. The extra
+ *   instruction was never a merged PRE copy but the schedule: the
+ *   native's add r0, sp, #152 is the Thumb peephole over an adjacent
+ *   movs r0, #152 and add r0, sp, which sched2 keeps together only
+ *   when loop.c's strength-reduced spark giv is set last in the
+ *   preheader, as the native's adds r5, r4, r0 is. The giv was
+ *   runtime + 0x7418 from the pool, where the native has runtime +
+ *   0x7400 with [r5, #24]. spark = &runtime->particles[slot + 32]
+ *   each iteration: 400. spark = &runtime->particles[32] before the
+ *   loop and spark[slot].variant inside: 66, 1481 instructions as the
+ *   native, its preheader order and the [r5, #24] giv exact.
+ * - on 66: spark set before slot = 0: 66, the same code; the burst
+ *   angle as its own counter (angle = 0, angle += 2340): 543.
+ * - on 66: the frame <= 159 particle loop as point[index] from
+ *   point = runtime->particles, no point++: 52, its preheader exact
+ *   (&work, a loop.c movable, now precedes the strength-reduced point
+ *   giv as in the native).
+ * - on 52: the mark loop as mark[index] from mark =
+ *   &runtime->particles[60], no mark++: 44, and the swapped view + 12
+ *   and &base_angle spill slots (gcse PRE registers, created in hash
+ *   bucket order) now match; the burst loop's reads of
+ *   runtime->particles[index + 60] as mark[index]: 560.
+ * - on 44: the spark update loop as spark[index] from the map cell
+ *   buffer, no spark++: 38, its preheader exact.
+ * - on 38: the mark loop walking mark++ again, the others indexed: 46
+ *   (the view + 12 and &base_angle slots swap back, and the threshold
+ *   preheader still sets 330 first and mark last).
+ *   The threshold loop's givs (loop dump): 330 + 12i, frame - 330 -
+ *   12i, the mark[index] address giv, 28i and 0x7720 + 28i, the last
+ *   two moved out of the burst loop.
+ * - on 38: permuter 4 minutes (seed 7, --heat, 2 jobs): 515
+ *   candidates, none below.
+ * Remaining (38): the order in which loop.c initialises and steps
+ * the strength-reduced givs of two loops, which sets reload's register
+ * rotation there. The threshold loop preheader: the native sets mark
+ * (runtime + 0x7710) first, through r2 and r3, then 0x7720 (r5),
+ * frame - 330 (r7, r0) and 330 (r1); the draft sets them in the
+ * reverse order, 330 first and mark last. The burst preheader: slot *
+ * 2340's 0 in r3, runtime in r4 and 0x7400 in r0 in the native, so
+ * the native initialises the slot * 2340 giv before the spark giv;
+ * the draft again has the reverse (loop.c's giv list is newest
+ * first). The burst and mark latches step their givs in another
+ * order too. */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"
@@ -85,6 +267,11 @@ struct Placement {
     s32 y;
     s32 z;
     s32 unknown_0c;
+};
+
+struct DrawPair {
+    DrawRectangle rect;
+    DrawRectangle rect_alt;
 };
 
 struct ScalePair {
@@ -134,14 +321,11 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
     void *draw_destination;
     void *view;
     struct BattleEffectWork *runtime;
-    DrawRectangle draw_rectangle_alt;
-    DrawRectangle draw_rectangle;
+    struct DrawPair draw;
     s32 frame;
     u8 *graphics;
-    s32 wave_y;
-    s32 wave_x;
-    s32 drift_y;
-    s32 drift_x;
+    struct ScalePair wave;
+    struct ScalePair drift;
     struct MotionObject *object;
     struct BattleObjectSlot *context;
     struct EffectStep *point;
@@ -151,13 +335,11 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
     u8 *src;
     s32 index;
     s32 slot;
-    s32 step;
     s32 size;
     s32 span;
     s32 dist;
     s32 alive;
-    s32 speed;
-    s32 angle;
+    s32 width;
     s32 heading[8];
     s32 radius[8];
     s32 spin[8];
@@ -178,9 +360,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
 
     BattleFx_BeginCanvasLayer(0);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw_rectangle = (DrawRectangle)cells[6];
+    draw.rect = (DrawRectangle)cells[6];
     BattleEffect_LoadWork(47, 7, 7, 3, 3);
-    draw_rectangle_alt = (DrawRectangle)cells[7];
+    draw.rect_alt = (DrawRectangle)cells[7];
 
     tbl = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
     Iwram_CopyWords((void *)0x05000000, tbl, 0x80);
@@ -192,27 +374,23 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
     runtime->transfer_value = 50;
     Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-    wave_x = 0x800000;
-    wave_y = 0x280000;
-    drift_x = 0;
-    drift_y = 0;
+    wave.x = 0x800000;
+    wave.y = 0x280000;
+    drift.x = 0;
+    drift.y = 0;
 
-    index = 0;
-    if (runtime->effect->count != 0) {
-        do {
-            context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
-            object = (struct MotionObject *)context->object;
-            home[index].x = object->x;
-            home[index].y = object->z;
-            base_angle[index] = object->angle;
-            heading[index] = (u16)ArcTan2(object->x, object->z);
-            radius[index] = Iwram_Sqrt(
-                (object->x >> 8) * (object->x >> 8)
-                    + (object->z >> 8) * (object->z >> 8)) >> 7;
-            spin[index] = 0;
-            object->vertical_motion_strength = 0;
-            index++;
-        } while (index != runtime->effect->count);
+    for (index = 0; index != runtime->effect->count; index++) {
+        context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
+        object = (struct MotionObject *)context->object;
+        home[index].x = object->x;
+        home[index].y = object->z;
+        base_angle[index] = object->angle;
+        heading[index] = (u16)ArcTan2(object->x, object->z);
+        radius[index] = Iwram_Sqrt(
+            (object->x >> 8) * (object->x >> 8)
+                + (object->z >> 8) * (object->z >> 8)) >> 7;
+        spin[index] = 0;
+        object->vertical_motion_strength = 0;
     }
 
     index = 0;
@@ -227,6 +405,7 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
         index++;
     } while (index != 64);
 
+    width = 48;
     frame = 0;
     do {
         if ((gKeysRepeat & (KEY_A | KEY_B)) != 0) {
@@ -252,71 +431,67 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
         if (frame == 372)
             AudioCommand_PlayFar(212);
 
-        index = 0;
-        if (runtime->effect->count != 0) {
-            do {
-                if (frame > index * 16) {
-                    context = GetBattleObjectSlotFar(
-                        runtime->effect->actors[index]);
-                    object = (struct MotionObject *)context->object;
-                    object->x =
-                        (radius[index] * Trig_Sin(heading[index])) >> 1;
-                    object->z =
-                        (radius[index] * Trig_Cos(heading[index])) >> 1;
+        for (index = 0; index != runtime->effect->count; index++) {
+            if (frame > index * 16) {
+                context = GetBattleObjectSlotFar(
+                    runtime->effect->actors[index]);
+                object = (struct MotionObject *)context->object;
+                object->x =
+                    (radius[index] * Trig_Sin(heading[index])) >> 1;
+                object->z =
+                    (radius[index] * Trig_Cos(heading[index])) >> 1;
 
-                    if (frame <= 159) {
-                        if (frame > index * 16 + 16)
-                            spin[index] += 48;
-                        if (radius[index] <= 31)
-                            object->y += 0x60000;
-                        else
-                            object->y += 0x8000;
-                        if (object->y > 0x7c0000)
-                            object->y = 0x7c0000;
-                    }
-
-                    if (frame <= 490) {
-                        heading[index] += spin[index];
-                        if (heading[index] > 0x10000)
-                            heading[index] -= 0x10000;
-                        object->angle += spin[index] / 4;
-                    }
-
-                    if (frame == 395)
-                        object->vertical_motion_strength = 0xab85;
-
-                    slot = 0;
-                    do {
-                        if (frame == Data_080ee16c[slot]) {
-                            object->velocity_y = 0;
-                            ObjectGroup_UpdateMembers(
-                                runtime->effect->actors[index],
-                                7,
-                                5,
-                                index,
-                                8);
-                        }
-                        slot++;
-                    } while (slot != 4);
-
-                    if (radius[index] > 16)
-                        radius[index] -= 2;
+                if (frame <= 159) {
+                    if (frame > index * 16 + 16)
+                        spin[index] += 48;
+                    if (radius[index] <= 31)
+                        object->y += 0x60000;
+                    else
+                        object->y += 0x8000;
+                    if (object->y > 0x7c0000)
+                        object->y = 0x7c0000;
                 }
-                index++;
-            } while (index != runtime->effect->count);
+
+                if (frame <= 490) {
+                    heading[index] += spin[index];
+                    if (heading[index] > 0x10000)
+                        heading[index] -= 0x10000;
+                    object->angle += spin[index] / 4;
+                }
+
+                if (frame == 395)
+                    object->vertical_motion_strength = 0xab85;
+
+                slot = 0;
+                do {
+                    if (frame == Data_080ee16c[slot]) {
+                        object->velocity_y = 0;
+                        ObjectGroup_UpdateMembers(
+                            runtime->effect->actors[index],
+                            7,
+                            5,
+                            index,
+                            8);
+                    }
+                    slot++;
+                } while (slot != 4);
+
+                if (radius[index] > 16)
+                    radius[index] -= 2;
+            }
         }
 
         if ((u32)(frame - 16) <= 143) {
             size = frame * 2 - 32;
             if (size > 48)
                 size = 48;
-            draw_rectangle(
+            draw.rect(
                 draw_destination,
-                (u8 *)runtime + frame / 4 % 3 * 3072
-                    + (48 - size) * 48,
+                &runtime->sheet[frame / 4 % 3 * 3072
+                    + (width - size) * 48],
                 32,
                 112 - size,
-                48,
+                width,
                 size);
         }
 
@@ -324,34 +499,34 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
             size = frame * 2 - 96;
             if (size > 64)
                 size = 64;
-            draw_rectangle(
+            draw.rect(
                 draw_destination,
-                (u8 *)runtime + frame / 4 % 3 * 3072
-                    + (64 - size) * 48,
+                &runtime->sheet[frame / 4 % 3 * 3072
+                    + (64 - size) * 48],
                 32,
                 64 - size,
-                48,
+                width,
                 size);
         }
 
         if ((u32)(frame - 160) <= 239) {
             src = (u8 *)runtime + frame / 4 % 3 * 3072;
-            draw_rectangle(draw_destination, src, 8, 0, 48, 64);
-            draw_rectangle(draw_destination, src, 8, 64, 48, 64);
+            draw.rect(draw_destination, src, 8, 0, width, 64);
+            draw.rect(draw_destination, src, 8, 64, width, 64);
         }
 
         if (frame <= 159) {
-            point = runtime->particles;
             index = 0;
+            point = runtime->particles;
             do {
-                if (point->variant == 0) {
-                    work.x = point->z * Trig_Sin(point->velocity_y);
-                    work.y = point->y;
-                    work.z = point->z * Trig_Cos(point->velocity_y);
+                if (point[index].variant == 0) {
+                    work.x = point[index].z * Trig_Sin(point[index].velocity_y);
+                    work.y = point[index].y;
+                    work.z = point[index].z * Trig_Cos(point[index].velocity_y);
                     EffectPosition_ApplyBaseAndYOffset(&work.x, &screen);
                     screen.x >>= 1;
-                    if (point->y <= 0x3fffff) {
-                        draw_rectangle(
+                    if (point[index].y <= 0x3fffff) {
+                        draw.rect(
                             draw_destination,
                             (u8 *)runtime + 0x2400,
                             screen.x - 12,
@@ -359,33 +534,35 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                             16,
                             16);
                     }
-                    if (point->z > 24)
-                        point->z -= 4;
-                    point->velocity_y += point->velocity_x * 2;
-                    if (point->velocity_y > 0x10000)
-                        point->velocity_y -= 0x10000;
-                    point->velocity_x += 50;
-                    if (point->velocity_x > 4096)
-                        point->velocity_x = 4096;
-                    point->velocity_y += 2048;
-                    point->y += point->velocity_y * 2;
-                    if (point->y > 0x300000) {
-                        point->y = 0;
-                        point->z = 100;
-                        point->velocity_y = 0;
-                        point->velocity_x = 0;
+                    if (point[index].z > 24)
+                        point[index].z -= 4;
+                    point[index].velocity_y += point[index].velocity_x * 2;
+                    if (point[index].velocity_y > 0x10000)
+                        point[index].velocity_y -= 0x10000;
+                    point[index].velocity_x += 50;
+                    if (point[index].velocity_x > 4096)
+                        point[index].velocity_x = 4096;
+                    point[index].velocity_y += 2048;
+                    point[index].y += point[index].velocity_y * 2;
+                    if (point[index].y > 0x300000) {
+                        point[index].y = 0;
+                        point[index].z = 100;
+                        point[index].velocity_y = 0;
+                        point[index].velocity_x = 0;
                     }
                 } else {
-                    point->variant--;
+                    point[index].variant--;
                 }
                 index++;
-                point++;
             } while (index != 24);
         }
 
         if (frame == 160) {
-            BattleBackground_LoadFar(1, 0x3b, 0);
-            BattlePresentation_ConfigurePaletteFadeFar(1, 0x3b, 8);
+            s32 speed;
+            s32 angle;
+
+            BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+            BattlePresentation_ConfigurePaletteFadeFar(1, (s32)&ResourceId_VioletSkyBackdrop, 8);
             BattleFx_SelectLivingTargets(runtime->effect);
             BattleFx_SpawnObjects(9, 376, 2);
 
@@ -400,15 +577,11 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 index++;
             } while (index != 512);
 
-            index = 0;
-            if (runtime->effect->count != 0) {
-                do {
-                    context = GetBattleObjectSlotFar(
-                        runtime->effect->actors[index]);
-                    object = (struct MotionObject *)context->object;
-                    object->y = ((Random16() & 15) + 8) << 16;
-                    index++;
-                } while (index != runtime->effect->count);
+            for (index = 0; index != runtime->effect->count; index++) {
+                context = GetBattleObjectSlotFar(
+                    runtime->effect->actors[index]);
+                object = (struct MotionObject *)context->object;
+                object->y = ((Random16() & 15) + 8) << 16;
             }
 
             gProjection.center_x = 72;
@@ -417,21 +590,17 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
             do {
                 speed = Random16() & 127;
                 angle = (Random16() & 0x7fff) + 0x9fff;
-                runtime->particles[index].x = speed * Trig_Sin(angle);
-                runtime->particles[index].y = speed * Trig_Cos(angle);
-                runtime->particles[index].variant = 0;
+                runtime->particles[index].x = Trig_Sin(angle) * speed;
+                runtime->particles[index].y = Trig_Cos(angle) * speed;
                 runtime->particles[index].z =
                     ((u32)Random16() % 200 - 100) << 16;
+                runtime->particles[index].variant = 0;
                 index++;
             } while (index != 32);
 
-            index = 0;
-            if (runtime->effect->count != 0) {
-                do {
-                    radius[index] = 16;
-                    spin[index] = 6000;
-                    index++;
-                } while (index != runtime->effect->count);
+            for (index = 0; index != runtime->effect->count; index++) {
+                radius[index] = 16;
+                spin[index] = 6000;
             }
         }
 
@@ -441,60 +610,61 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
             if (frame - 160 <= 64)
                 size = 32;
 
-            wave_x -= (Trig_Sin((frame - 160) << 7) * 32) >> 6;
-            wave_y += (size * Trig_Sin((frame - 160) << 9)) >> 6;
-            wave_x += drift_x;
-            wave_y += drift_y;
-            drift_x /= 2;
-            drift_y /= 2;
+            wave.x -= (Trig_Sin((frame - 160) << 7) * 32) >> 6;
+            wave.y += (Trig_Sin((frame - 160) << 9) * size) >> 6;
+            wave.x += drift.x;
+            wave.y += drift.y;
+            drift.x /= 2;
+            drift.y /= 2;
 
             scale.x = 0x10000;
             scale.y = 0x10000;
             place.unknown_0c = 0;
-            slot = 0;
+            index = 0;
             do {
-                place.x = (Data_080ee15a[slot] << 16) + wave_x + 0x280000;
-                place.y = 0xff0000 + slot * 0x400000;
+                place.x = (Data_080ee15a[index] << 16) + wave.x + 0x280000;
+                place.y = 0xff0000 + index * 0x400000;
                 place.z =
-                    ((Data_080ee163[slot] + slot * 64) << 16) + wave_y;
-                Object_ApplyProjectedPlacementFar(runtime->objects[slot], &place, &scale, 0);
-                slot++;
-            } while (slot != 9);
+                    ((Data_080ee163[index] + index * 64) << 16) + wave.y;
+                Object_ApplyProjectedPlacementFar(runtime->objects[index], &place, &scale, 0);
+                index++;
+            } while (index != 9);
 
             if (frame > 255) {
                 s32 threshold;
-                s32 center_x;
 
                 shake.z = 0x1000000;
+                alive = 0;
                 shake.x = 0;
                 shake.y = 0;
                 Render_ResetTransformState();
                 SceneTransform_ApplyPosition(&shake);
 
-                alive = 0;
                 if (frame <= 329) {
                     index = 0;
                     do {
+                        s32 xx;
+                        s32 yy;
+                        s32 zz;
+
                         point = &runtime->particles[index];
-                        dist = Iwram_Sqrt(
-                            (point->x >> 8) * (point->x >> 8)
-                                + (point->y >> 8)
-                                    * (point->y >> 8)
-                                + (point->z >> 8)
-                                    * (point->z >> 8)) >> 9;
+                        xx = (point->x >> 8) * (point->x >> 8);
+                        yy = (point->y >> 8) * (point->y >> 8);
+                        zz = (point->z >> 8) * (point->z >> 8);
+                        dist = Iwram_Sqrt(xx + yy + zz) >> 9;
                         if (dist != 0) {
                             EffectPosition_ApplyBaseAndYOffset(&point->x, &screen);
                             screen.x =
-                                (screen.x >> 17) + (wave_x >> 17) + 32;
+                                (screen.x >> 17) + (wave.x >> 17) + 32;
                             screen.y = (screen.y >> 16)
-                                + (wave_y >> 16) - 4;
+                                + (wave.y >> 16) - 4;
                             screen.depth >>= 16;
                             if (screen.depth <= 169)
                                 screen.depth = 170;
                             if (screen.depth > 350)
                                 screen.depth = 350;
                             span = 6 - (screen.depth - 170) / 36;
-                            draw_rectangle_alt(
+                            draw.rect_alt(
                                 draw_destination,
                                 graphics + ParticleStreams_CellOffsets[span - 1],
                                 screen.x - span / 2,
@@ -515,11 +685,11 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
 
                     if (alive > 0) {
                         span = alive / 10 + 1;
-                        draw_rectangle_alt(
+                        draw.rect_alt(
                             draw_destination,
                             graphics + ParticleStreams_CellOffsets[span - 1],
-                            (wave_x >> 17) - span / 2 + 32,
-                            (wave_y >> 16) - span - 4,
+                            (wave.x >> 17) - span / 2 + 32,
+                            (wave.y >> 16) - span - 4,
                             span,
                             span * 2);
                     }
@@ -528,6 +698,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 slot = 0;
                 do {
                     if (frame == Data_080ee16c[slot]) {
+                        s32 speed;
+                        s32 angle;
+
                         index = 0;
                         do {
                             speed = (Random16() & 127) + 16;
@@ -548,8 +721,8 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                         spark = ((struct EffectStep *)Ram_MapCellBuffer);
                         index = 0;
                         do {
-                            if (spark->variant > 0) {
-                                EffectPosition_ApplyBaseAndYOffset(&spark->x, &screen);
+                            if (spark[index].variant > 0) {
+                                EffectPosition_ApplyBaseAndYOffset(&spark[index].x, &screen);
                                 screen.x = (screen.x >> 17) + 32;
                                 screen.y = (screen.y >> 16) + 56;
                                 screen.depth >>= 16;
@@ -559,74 +732,74 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                     screen.depth = 350;
                                 span =
                                     3 - (screen.depth - 170) / 90;
-                                draw_rectangle(
+                                draw.rect(
                                     draw_destination,
                                     graphics + ParticleStreams_CellOffsets[span - 1],
                                     screen.x - span / 2,
                                     screen.y - span,
                                     span,
                                     span * 2);
-                                spark->x += spark->velocity_x;
-                                spark->y += spark->velocity_y;
-                                spark->z += spark->velocity_y;
-                                spark->variant--;
+                                spark[index].x += spark[index].velocity_x;
+                                spark[index].y += spark[index].velocity_y;
+                                spark[index].z += spark[index].velocity_y;
+                                spark[index].variant--;
                             }
                             index++;
-                            spark++;
                         } while (index != 512);
                     }
                     slot++;
                 } while (slot != 4);
 
-                mark = &runtime->particles[60];
                 index = 0;
-                threshold = 330;
+                mark = &runtime->particles[60];
                 do {
-                    center_x = (wave_x >> 17) + 32;
+                    threshold = index * 12 + 330;
                     if (frame == threshold) {
-                        mark->y = (wave_y >> 16) - 4;
-                        mark->velocity_y = (wave_y >> 16) - 4;
-                        mark->x = center_x;
-                        mark->velocity_x = center_x;
+                        mark[index].x = (wave.x >> 17) + 32;
+                        mark[index].y = (wave.y >> 16) - 4;
+                        mark[index].velocity_x = (wave.x >> 17) + 32;
+                        mark[index].velocity_y = (wave.y >> 16) - 4;
 
-                        step = 0;
+                        slot = 0;
                         do {
-                            runtime->particles[step + 32].variant = 4;
-                            step++;
-                        } while (step != 28);
+                            runtime->particles[slot + 32].variant = 4;
+                            slot++;
+                        } while (slot != 28);
 
+                        drift.x = 0x80000;
+                        drift.y = -0x20000;
                         runtime->shake_frames = 8;
-                        drift_x = 0x80000;
-                        drift_y = -0x20000;
                     }
 
                     if (frame >= threshold) {
+                        s32 size;
+
                         size = (frame - threshold) / 2;
                         if (size > 2)
                             size = 2;
-                        draw_rectangle_alt(
+                        draw.rect_alt(
                             draw_destination,
                             (u8 *)runtime + Data_080ee17e[size],
-                            mark->x,
-                            mark->y - Data_080ee17a[size],
+                            mark[index].x,
+                            mark[index].y - Data_080ee17a[size],
                             Data_080ee174[size],
                             Data_080ee177[size]);
-                        mark->x -= 8;
-                        mark->y += 2;
+                        mark[index].x -= 8;
+                        mark[index].y += 2;
 
                         if (frame < threshold + 8) {
                             SceneTransform_ApplyRoll(-2048);
                             SceneTransform_ApplyYaw(-4096);
 
+                            slot = 0;
                             spark = &runtime->particles[32];
-                            step = 0;
                             do {
                                 work.x = 0;
-                                work.y = spark->variant
-                                    * Trig_Cos(step * 2340);
-                                work.z = spark->variant
-                                    * Trig_Sin(step * 2340);
-                                spark->variant += 2;
+                                work.y = spark[slot].variant
+                                    * Trig_Cos(slot * 2340);
+                                work.z = spark[slot].variant
+                                    * Trig_Sin(slot * 2340);
+                                spark[slot].variant += 2;
                                 EffectPosition_ApplyBaseAndYOffset(&work.x, &screen);
                                 screen.x =
                                     (screen.x >> 17) + runtime->particles[index + 60].velocity_x;
@@ -639,21 +812,18 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                                     screen.depth = 350;
                                 span = 3
                                     - (screen.depth - 170) / 90;
-                                draw_rectangle(
+                                draw.rect(
                                     draw_destination,
                                     graphics + ParticleStreams_CellOffsets[span - 1],
                                     screen.x - span / 2,
                                     screen.y - span,
                                     span,
                                     span * 2);
-                                step++;
-                                spark++;
-                            } while (step != 28);
+                                slot++;
+                            } while (slot != 28);
                         }
                     }
                     index++;
-                    mark++;
-                    threshold += 12;
                 } while (index != 4);
             }
         }
@@ -666,16 +836,14 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
 
     BattleEventRuntime_BeginPhaseFar(134);
 
-    index = 0;
-    if (runtime->effect->count != 0) {
-        do {
-            context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
-            object = (struct MotionObject *)context->object;
-            object->x = home[index].x;
-            object->z = home[index].y;
-            object->angle = base_angle[index];
-            index++;
-        } while (index != runtime->effect->count);
+    for (index = 0; index != runtime->effect->count; index++) {
+        struct MotionObject *obj;
+
+        context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
+        obj = (struct MotionObject *)context->object;
+        obj->x = home[index].x;
+        obj->z = home[index].y;
+        obj->angle = base_angle[index];
     }
 
     gProjection.center_x = 120;

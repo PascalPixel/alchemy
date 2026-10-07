@@ -1,9 +1,185 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1402, common 1022, differ 750.
- * Frame now 352 bytes, as native, and the setup loops match. Remaining:
- * redraw in r11 where native has r10, the search value in r7 where native
- * has r3, the djinn tile code (native: (extended == 0) by branch, then
- * + 8, inside the loop), then register choices through the loop body.
+ * Native 1392 instructions, draft 1391, common 1362, differ 59.
+ * Frame 352 bytes, as native. The setup loops, the cursor update, the
+ * face and cursor sprites (0x3FF in r8, the zero in r7, as native),
+ * the stat pushes, the djinn rows and the condition list match.
+ * Remaining: the four (s8)m < 0 modifier tests (lsr #7, beq where
+ * native has lsl #24, bge); the condition loads' sign extension
+ * (movs/ldrsb where native has ldrb, lsl, asr); the help block's
+ * saved/pointer pair (r5/r6 swapped) and code = 0 set before
+ * Runtime_BumpAllocate where native sets it after; one long branch two
+ * bytes short (the one instruction the condition loads lack).
+ *
+ * Session 5 2026-10-07: the up-key n-- after the 0x6F call 87 -> 85
+ * (sched2 moves it across the call to native's slot, after the 0x6F
+ * argument). The face pool: the face x literal 172 is a movhi pool
+ * load (pool_range 64, the pool's head); arm_reorg counts 58 bytes from
+ * it to the gFrameCount load (ldrh 4, bl 4, the rest 2), under 64 - 4,
+ * so gFrameCount joins the pool and the barrier follows it. Native puts
+ * gFrameCount in the next pool and the barrier after the cursor tile
+ * strh: it counts at least 2 bytes more there, or loads 172 through
+ * zero_extendhisi2 (pool_range 60); no source form found for either.
+ * An empty asm after the cursor's attr23 store (counted 4 bytes) 85 ->
+ * 63, FAKEMATCH-tagged; after the face push it reorders the cursor's
+ * attr23 store, 67. The condition loads with q = tbl before out = sel
+ * 63 -> 61 (native loads tbl into r7 first). Their sign extension:
+ * native's ldrb r0, [r5]; lsl; asr has base r5 and dest r0, which no
+ * extendqisi2 memory alternative prints (that form needs dest == base),
+ * so native loads the byte into a register and extends it apart:
+ * combine did not join them there. u8 *out with (s8)*out 61, and the
+ * byte shifted << 24 >> 24 by hand 61 (no change: combine joins them
+ * again). The icon loop through a block-local cache pointer, set in the
+ * for header after i, then x = 112, 61 -> 59: native's order (i = 0,
+ * the cache base into r8, then 112); vc set before the for with i = 0
+ * in its header 61. code = 0 after Runtime_BumpAllocate, retried on 61:
+ * 296 (global allocation cascades from the frame setup on); the agility
+ * delta read first 711. Modifier order diagnosed from native: ldrb r1
+ * comes before the sign-extending ldrb r3, [r3] (dest == base), so in
+ * native's RTL m's zero-extending load precedes a second, sign-extending
+ * load that CSE left alone; reg alloc cannot reverse the two (the second
+ * overwrites the address). Trial on 59: m read as *(u8 *)&field with the
+ * field itself in the > 0 test, 92 (one ldrsb serves both again).
+ *
+ * Modifier tests 2026-10-07 (session 2): native reads each modifier
+ * as u8 m (ldrb r1), tests (s8)m > 0 through a second sign-extending
+ * load (combine keeps m's load), and recomputes (s8)m < 0 as m << 24
+ * in the next block. CSE1's skip-blocks path reuses the first sign
+ * extension for the second test here (.03.cse), so the < 0 test shares
+ * one ldrsb. u8 m, (s8)m > 0 and m & 0x80: 389 -> 377 (the > 0 test is
+ * native's; the & 0x80 test is an ands with 0x80 where native has lsl
+ * #24). Rejected: the field read directly for the > 0 test 389 (CSE
+ * equates the load with m's low byte); s8 m with m & 0x80 392; u8 m
+ * with m >= 0x80 389; the condition chain with goto instead of
+ * do-while(0) 541 (still merged); the cursor tile & 0x3FF 377 (no change).
+ * Also rejected: (s32)(m << 24) < 0 for the second test 382; a block
+ * size variable for the three 332-byte calls 377 (CSE folds it back into
+ * each argument; native keeps 332 in r8 across Runtime_BumpAllocate).
+ *
+ * Session 3 2026-10-07: the second modifier test as (m >> 7) != 0
+ * 377 -> 331 (lsr #7, beq where native has lsl #24, bge, but no
+ * shared ands constant, so the list's branch offsets are native's).
+ * CSE1 deletes any second test that shares the first's ashift: in
+ * thumb the sign extension expands to ashift 24 + ashiftrt 24 and the
+ * first test's QI load becomes (subreg:QI m) by LOAD_EXTEND_OP, so
+ * (s8)m < 0 389, (s32)(m << 24) < 0 382, (s16)(m << 8) < 0 382,
+ * (s8)m >> 7 382, (s8)m <= -1 413, (s8)m & 0x80 392 all merge or
+ * worsen; the field read directly for the first test, or into a
+ * separate s8 local before or after m, changes nothing (CSE still
+ * folds the load to m's subreg). The skip-blocks path needs the label
+ * after the first then-block to have one use; native must differ
+ * there or in the path length (PATHLENGTH 10), not yet found.
+ * code = 0 before Runtime_BumpAllocate instead of after it 331 -> 120
+ * (the 332 pseudo, REG_EQUIV and local to its block, now keeps r8
+ * across the three calls, code goes to sp+4 and reloads into r4 for
+ * the modifier stores, and the freed registers fix the face/cursor
+ * zero, the stat pushes' 24 in r8 and redraw in r10, as native).
+ * redraw = 1 before idx = -1 120 -> 110 (native builds 1 in r3 and
+ * negates it for idx); the loop-end check as gLinkCountdownWork->active
+ * 110 -> 105 (native's literal; the spill slots no longer shift).
+ * Rejected: code = 0 after the first copy 331, at the top of the help
+ * block 708, after the modifier stores 785; the agility delta read
+ * first 682; n-- before keys = 0, or n -= 1, 120 (no change); the
+ * condition write pointer as sel + i or i + sel 120 (no change).
+ * redraw = 0 before base->dirty = 1 105 -> 95; the icon loop's
+ * p = objIcon before q = tbl 95 -> 93; the closing reset loop through
+ * a block-local pointer (native r5, q's r7 before) 93 -> 89.
+ * Rejected after 105: code = 0
+ * after Runtime_BumpAllocate 318 (native's order, but the 332 pseudo
+ * loses r8 again); j-- before the call in the condition loads 107;
+ * n-- then the call then keys = 0 107; the agility modifier cleared
+ * first 107; *out++ in the call 105, saved without the cast or the
+ * copies sized by the struct 105 (no change); x = 112 first 105.
+ * After 89: the write pointer as o = sel; o += i, or &i[sel], 89 (no
+ * change: the add keeps sel first where native has i first). Session 4:
+ * the pointer as (s8 *)(i + (s32)sel), FAKEMATCH-tagged, 89 -> 87 (the
+ * add takes i first, as native). Modifier trials on 87: the field read
+ * directly in both tests, no m, 212 (GCSE's PRE reloads it after the
+ * store through o in the first then-block: o may alias the field); a
+ * named label in the first then-block (diagnostic only: it ends CSE1's
+ * path) with (s8)m < 0, 120, and s8 m assigned in the first test,
+ * (m = field) > 0 then m < 0, 120, or u8 m with (s8)(m = field) > 0
+ * then (s8)m < 0, 120: each shares one ldrsb (mov #0, ldrsb r1) for
+ * both tests, cmp r1 where native has lsl #24, so GCSE also joins the
+ * two sign extensions once CSE1 does not. Native keeps them apart.
+ * Icon loop trials on 87: for (i = 0, x = 112; ...) 87 (no change);
+ * x written as 112 + i * 15 89 (112 then follows i = 0, as native, but
+ * the reduced x is incremented after p); with p = &objIcon[i] as well 89
+ * (the loop end is native's, adds r6, r4, r5, but q's reload moves
+ * before p's); tbl[i] for *q++ 344; p++ before x += 15 89; p++ in the
+ * for header with x as 112 + i * 15, 87 (no change: the loop end and the
+ * p, q reloads are native's, but the reduced x's 112 still comes before
+ * the gVramBlockCache copy into r8 where native has it after). The
+ * help block's r5/r6 swap is global allocation of saved and the
+ * &object->agility address pseudo (r9 + 64): native gives the address r5.
+ * saved declared after agiDelta, or block-local to the help block, 87
+ * (no change).
+ *
+ * Register diagnosis 2026-10-07 (session 2, lreg/greg dumps): with
+ * -fcall-used-r4 the call-saved low registers are r5, r6, r7. In the
+ * face/cursor block (bb 66) the 0xFC00, 0xFE00 and 0x3FF constants are
+ * block-local; regmove ties the 0x3FF to the cursor's and (insn 1568,
+ * operand 2), and it is already in r7 before global allocation (it is
+ * absent from greg's "regs to allocate" list) with 0xFC00 in r5 and
+ * 0xFE00 in r6. Global then gives the zero (469: 10 refs over 228
+ * insns, crosses 11 calls) r10, as r5-r7 are taken, r8 is a hard
+ * conflict and r9 is object; redraw (54: 14 refs over 982) falls to r11.
+ * Native has 0x3FF in r8 and the zero in r7, which frees r10 for redraw:
+ * one cause for both. The hard r8 conflict of the zero and of 0x3FF has
+ * no r8 insn inside bb 66 (not yet explained). Trials: the zero as a register
+ * variable in r7 scores 294 but miscompiles (r7 is the eliminated frame
+ * pointer, so global still gives it to 0x3FF and the cursor's attr23
+ * receives 0x3FF): rejected; 0x3FF as a register variable in r8 with an
+ * explicit mask at the cursor 549. A 5-minute permuter run (2 jobs, 963
+ * candidates) with PERM_RANDOMIZE over the cursor pixels, face and
+ * cursor found nothing below 377.
+ *
+ * Diagnosis 2026-10-07: most of the earlier cascade was variables shared
+ * across calls where the native's value lives only between two calls:
+ * every block-local below moved a value from a call-saved register to the
+ * call-clobbered one native uses, and freed a call-saved register for the
+ * long-lived values.
+ *
+ * Trials 2026-10-07: objName tile stored without "& 0x3FF" (the 10-bit
+ * field masks in HImode, so 0x3FF and 8 lead the first pool and the pool
+ * falls before the switch with a branch over it, as native) 750 -> 732;
+ * the cursor tile likewise, 732 (no change, kept for symmetry); the face
+ * record fetched before the attribute stores (native calls
+ * GetBattleObjectSlotFar first) through p 732; the owner search value
+ * as a block-local (native r3) 732 -> 675; the face record through a
+ * block-local pointer (native r2) 675 -> 629; n = cur.pos[cur.mode] after
+ * cur.mode = 2 (native indexes by the mode register) 629 -> 599; the stat
+ * cursor index as a block-local (native r2) 599 -> 570; the status
+ * message as a ?: argument (native loads it straight into r0) 570 -> 565;
+ * the djinn tile code as a block-local 565 -> 536, written as 1, cleared
+ * when extended, then + 8 (native's branch; 8/9 if/else becomes
+ * 9 - (extended != 0) in jump) 536 -> 524; the condition list's write
+ * pointer as a block-local (native r2) 524 -> 482; i for the condition
+ * count instead of n (native r6) 482 -> 408. Rejected: code =
+ * (extended == 0); code += 8 1055 (hoisted as neg/orr/lsr, 1 - x); j for
+ * the condition help value 528, n 500, i 655. Each modifier read into
+ * an s8 block-local m for its two sign tests 408 -> 389 (u8 m with s8
+ * casts the same); not native: native loads the field twice, ldrb into
+ * r1 for the < 0 test and ldrb, lsl, asr into the address register for
+ * the > 0 test (the dest == base form of the sign-extending load), where
+ * m is one ldrsb with a zeroed index here, 9 instructions short.
+ * The loop-end check loads gLinkCountdownWork in native (its literal),
+ * not gWindowWork + 168: written as gLinkCountdownWork->active 389 -> 444,
+ * as the array-address spill slots then shift by 8 (sp+8/12 -> 16/20);
+ * kept as gWindowWork[42] until the spill order is understood.
+ *
+ * Merged from a parallel session 2 (2026-10-06) whose body scored 769
+ * (this body 89, kept): face sprite tile read through a pointer fetched
+ * before the attribute stores 1087 -> 1085; the name sprite through a
+ * pointer declared before icons (native keeps &objName at sp+28) 873 ->
+ * 845; the cursor movement index as its own variable k, not the shared
+ * count n (native r5, &cur in r6) 845 -> 769. Rejected there: the list
+ * search reading list[n] directly 780; a separate djinn-loop index j 1148,
+ * frame 356; the pixel zero stores after the first window call or inside
+ * its arguments 769 (the store register still r3 where native reuses the
+ * argument's r1); the modifiers read as (s8)(u8) 769; pixel offsets
+ * assigned only when the entry changes (wrong semantics, diagnostic only)
+ * 1028, frame 348. Permuter, 6 minutes on 769: best 750 through
+ * temporaries only (noise, not carried).
  *
  * Diagnosis 2026-10-06: the native frame is 96 bytes of spill
  * slots under exactly 256 bytes of locals (cur 96, objName 128, objIcon 140,
@@ -29,6 +205,26 @@
  * stores and 332 in r8 across Runtime_BumpAllocate). A 5-minute permuter
  * run (--heat, 2 jobs) reached 700 by random rewrites; its minimization
  * did not finish, so none is carried over.
+ *
+ * Trials of a parallel session 2 (2026-10-06, its own line from 1087, best 769): face sprite tile read through a pointer
+ * fetched before the attribute stores (native order): 1087 -> 1085.
+ * Pixel offsets as a struct {x, y} with a separate icon-loop x: 1007 and
+ * frame 352. Native pseudo order for the declarations: 873. The name sprite
+ * through a pointer declared before icons (native keeps &objName at sp+28
+ * above icons/codes/handles): 845. The cursor movement index as its own
+ * variable k, not the shared count n (native keeps it in r5, &cur in r6):
+ * 769. The list search reading list[n] directly instead of code: 780 (native
+ * keeps the value in r3, the draft in r7). A separate djinn-loop index j
+ * (native's djinn loop index sits in r4, caller-saved at sp+4, while i is r6
+ * elsewhere): 1148, frame 356. The pixel zero stores after the first
+ * window call or inside its arguments: 769, the store register still r3
+ * where native reuses the argument's r1. Permuter, 6 minutes on the 769
+ * draft: best 750 through temporaries only (noise, not carried).
+ * Open: native loads each (s8) modifier twice with ldrb and sign-extends the
+ * first with lsl/asr; the draft uses ldrsb and reloads after the store
+ * (about 12 rows at each of the four modifier tests); reading them as
+ * (s8)(u8) leaves 769. Pixel offsets assigned only when the
+ * entry changes (wrong semantics, diagnostic only): 1028, frame still 348.
  * Rejected earlier: owner search on list[n] without
  * code 868; n as the setup loop counter 1298; pixel ints in spill order
  * without the struct 1219.
@@ -139,8 +335,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     s32 x;
 
     base = (struct UiRenderWork *)gWindowWork[0];
-    idx = -1;
     redraw = 1;
+    idx = -1;
     handleFrame = Resource_LoadIntoFreeSlot(0x200);
     cnt = 0;
     extended = Party_SumDjinnCountsFar(-1);
@@ -168,12 +364,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
     if (listCount != 0) {
         for (i = 0; i <= 5; i++) {
-            code = list[i];
-            if (code == 0xFF) {
+            s32 kind = list[i];
+
+            if (kind == 0xFF) {
                 break;
             }
-            if (code != 0xFE) {
-                if (code == owner) {
+            if (kind != 0xFE) {
+                if (kind == owner) {
                     idx = i;
                     break;
                 }
@@ -192,7 +389,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
         objName.oam.word.attr01 = 0x80000400;
         objName.oam.word.attr23 = 0;
-        objName.oam.f.tile = Ui_LoadEntryForKind(owner, handleFrame) & 0x3FF;
+        objName.oam.f.tile = Ui_LoadEntryForKind(owner, handleFrame);
         objName.oam.f.x = 8;
         objName.oam.f.y = 24;
         objName.oam.f.palette = 14;
@@ -250,18 +447,18 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         n = 0;
                         if (cur.mode == 1) {
                             cur.mode = 2;
-                            n = cur.pos[2];
+                            n = cur.pos[cur.mode];
                         }
                     }
                 } else if ((keys & 0x40) != 0) {
                     keys = 0;
-                    n--;
                     AudioCommand_PlayFar(0x6F);
+                    n--;
                     if (n < 0) {
                         n = cur.limit - 1;
                         if (cur.mode == 1) {
                             cur.mode = 2;
-                            n = cur.pos[2];
+                            n = cur.pos[cur.mode];
                         }
                     }
                 } else if ((keys & 0x31) != 0) {
@@ -278,7 +475,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 }
                 cur.pos[cur.mode] = (s8)n;
             } else if (cur.mode == 2) {
-                n = cur.pos[2];
+                n = cur.pos[cur.mode];
                 if (n >= cur.limit) {
                     n = cur.limit - 1;
                 }
@@ -312,11 +509,12 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
         }
 
         if (cur.mode == 0) {
-            i = cur.pos[cur.mode];
+            s32 k = cur.pos[cur.mode];
+
             if (extended == 0) {
-                i += 9;
+                k += 9;
             }
-            stat = &OwnerStatus_StatCursors[i];
+            stat = &OwnerStatus_StatCursors[k];
             cur.entry = stat->entry;
             cur.col = stat->column;
             cur.row = stat->row;
@@ -340,17 +538,22 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
         pix.x = cur.col * 8;
         pix.y = cur.row * 8;
 
-        objFace.oam.word.attr01 = 0xC0002400;
-        objFace.oam.word.attr23 = 0;
-        objFace.oam.f.tile = ((struct MenuSprite *)GetBattleObjectSlotFar(owner)->object->records)->oam.f.tile;
-        objFace.oam.f.x = 0xAC;
-        objFace.oam.f.y = 56;
-        Runtime_PushSlotEntry((s32 *)&objFace, 240);
+        {
+            struct MenuSprite *face = GetBattleObjectSlotFar(owner)->object->records;
+
+            objFace.oam.word.attr01 = 0xC0002400;
+            objFace.oam.word.attr23 = 0;
+            objFace.oam.f.tile = face->oam.f.tile;
+            objFace.oam.f.x = 0xAC;
+            objFace.oam.f.y = 56;
+            Runtime_PushSlotEntry((s32 *)&objFace, 240);
+        }
 
         objCursor.oam.word.attr01 = 0x40000400;
         objCursor.oam.word.attr23 = 0;
-        objCursor.oam.f.tile = Resource_GetBuffer(handleCursor, (s32)Resource_FixedBlockBTiles)
-            & 0x3FF;
+        /* FAKEMATCH: arm_reorg counts this empty asm as 4 bytes, so the gFrameCount literal falls past the face x literal's 64-byte ldrh range and opens the next pool, as native; the pool and its branch move two instructions earlier, 85 -> 63 */
+        asm("");
+        objCursor.oam.f.tile = Resource_GetBuffer(handleCursor, (s32)Resource_FixedBlockBTiles);
         objCursor.oam.f.x = (pix.x + winMain->x * 8
                           - ((gFrameCount & 4) >> 2))
             + 16;
@@ -413,13 +616,14 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 3, (struct RenderInput *)winMain, 0, 96);
 
                 for (j = 0; j <= 3; j++) {
+                    s32 pal;
+
+                    pal = 1;
                     if (extended != 0) {
-                        code = 8;
-                    } else {
-                        code = 9;
+                        pal = 0;
                     }
                     UiWindow_SetTilemapEntry(
-                        winMain, 0x5001 + j, 7 + j * 4, code, 0);
+                        winMain, 0x5001 + j, 7 + j * 4, pal + 8, 0);
                     if (extended != 0) {
                         UiText_DrawNumberInWindow(object->djinn_active_counts[j], 1,
                             (s32)winMain, 40 + j * 32, 72);
@@ -438,152 +642,163 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         40 + j * 32, 96);
                 }
 
-                n = 0;
+                i = 0;
                 if (object->hp == 0) {
                     sel[0] = 16;
-                    n = 1;
+                    i = 1;
                 }
-                out = &sel[n];
-                do {
-                    if (object->restraint != 0) {
-                        *out++ = 15;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->death_count != 0) {
-                        *out++ = 8;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->poison == 1) {
-                        *out++ = 1;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->poison == 2) {
-                        *out++ = 2;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->psy_seal != 0) {
-                        *out++ = 4;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->stun != 0) {
-                        *out++ = 3;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->sleep != 0) {
-                        *out++ = 5;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->evil_spirit != 0) {
-                        *out++ = 7;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->delusion != 0) {
-                        *out++ = 6;
-                        n++;
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->attack_modifier_turns != 0) {
-                        if ((s8)object->attack_modifier > 0) {
-                            *out++ = 9;
-                            n++;
-                        }
-                        if ((s8)object->attack_modifier < 0) {
-                            *out++ = 10;
-                            n++;
-                        }
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->defense_modifier_turns != 0) {
-                        if ((s8)object->defense_modifier > 0) {
-                            *out++ = 11;
-                            n++;
-                        }
-                        if ((s8)object->defense_modifier < 0) {
-                            *out++ = 12;
-                            n++;
-                        }
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if (object->res_modifier_turns != 0) {
-                        if ((s8)object->res_modifier > 0) {
-                            *out++ = 13;
-                            n++;
-                        }
-                        if ((s8)object->res_modifier < 0) {
-                            *out++ = 14;
-                            n++;
-                        }
-                    }
-                    if (n > 7) {
-                        break;
-                    }
-                    if ((s8)object->agility_modifier > 0) {
-                        *out++ = 17;
-                        n++;
-                    }
-                    if ((s8)object->agility_modifier < 0) {
-                        *out = 18;
-                        n++;
-                    }
-                } while (0);
+                {
+                    /* FAKEMATCH: native adds the count first (adds r2, r6, r3); &sel[i], sel + i and i + sel all add sel first, 89 -> 87 */
+                    s8 *o = (s8 *)(i + (s32)sel);
 
-                if (n > 0) {
-                    j = n;
-                    out = sel;
+                    do {
+                        if (object->restraint != 0) {
+                            *o++ = 15;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->death_count != 0) {
+                            *o++ = 8;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->poison == 1) {
+                            *o++ = 1;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->poison == 2) {
+                            *o++ = 2;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->psy_seal != 0) {
+                            *o++ = 4;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->stun != 0) {
+                            *o++ = 3;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->sleep != 0) {
+                            *o++ = 5;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->evil_spirit != 0) {
+                            *o++ = 7;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->delusion != 0) {
+                            *o++ = 6;
+                            i++;
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->attack_modifier_turns != 0) {
+                            u8 m = object->attack_modifier;
+
+                            if ((s8)m > 0) {
+                                *o++ = 9;
+                                i++;
+                            }
+                            if ((m >> 7) != 0) {
+                                *o++ = 10;
+                                i++;
+                            }
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->defense_modifier_turns != 0) {
+                            u8 m = object->defense_modifier;
+
+                            if ((s8)m > 0) {
+                                *o++ = 11;
+                                i++;
+                            }
+                            if ((m >> 7) != 0) {
+                                *o++ = 12;
+                                i++;
+                            }
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        if (object->res_modifier_turns != 0) {
+                            u8 m = object->res_modifier;
+
+                            if ((s8)m > 0) {
+                                *o++ = 13;
+                                i++;
+                            }
+                            if ((m >> 7) != 0) {
+                                *o++ = 14;
+                                i++;
+                            }
+                        }
+                        if (i > 7) {
+                            break;
+                        }
+                        {
+                            u8 m = object->agility_modifier;
+
+                            if ((s8)m > 0) {
+                                *o++ = 17;
+                                i++;
+                            }
+                            if ((m >> 7) != 0) {
+                                *o = 18;
+                                i++;
+                            }
+                        }
+                    } while (0);
+                }
+
+                if (i > 0) {
+                    j = i;
                     q = tbl;
+                    out = sel;
                     do {
                         Resource_LoadTableEntryToBuffer(*out, *q++);
                         j--;
                         out++;
                     } while (j != 0);
                 }
-                if (n == 0) {
+                if (i == 0) {
                     sel[0] = 0;
-                    n = 1;
+                    i = 1;
                 }
-                if (n <= 10) {
-                    for (j = n; j < 11; j++) {
+                if (i <= 10) {
+                    for (j = i; j < 11; j++) {
                         sel[j] = -1;
                     }
                 }
-                cnt = n;
+                cnt = i;
                 if (sel[0] == 0) {
-                    if (object->hp != 0) {
-                        code = (s32)&MsgOwnerStatusNormal;
-                    } else {
-                        code = (s32)&MsgOwnerStatusDowned;
-                    }
-                    UiText_DrawCharacterAtOffset(code, (struct RenderInput *)winMain, 112, 0);
+                    UiText_DrawCharacterAtOffset(
+                        object->hp != 0 ? (s32)&MsgOwnerStatusNormal : (s32)&MsgOwnerStatusDowned,
+                        (struct RenderInput *)winMain, 112, 0);
                 }
             }
 
@@ -594,8 +809,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     iconIdx = 16;
                 }
 
-                saved = (struct BattleUnit *)Runtime_BumpAllocate(sizeof(*object));
                 code = 0;
+                saved = (struct BattleUnit *)Runtime_BumpAllocate(sizeof(*object));
                 Iwram_CopyWords(saved, object, sizeof(*object));
 
                 atkDelta = object->attack;
@@ -654,27 +869,30 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
             UiText_RenderWideStringAtOffset(text, (struct UiWindow *)winDesc, 0, 4);
             Sys_Free(text);
-            base->dirty = 1;
             redraw = 0;
+            base->dirty = 1;
         }
 
-        q = tbl;
         p = objIcon;
-        x = 112;
-        for (i = 0; i <= 10; i++) {
-            p->oam.word.attr01 = 0x40000400;
-            p->oam.word.attr23 = 0;
-            p->oam.f.tile = gVramBlockCache[*q++].offset >> 5;
-            p->oam.f.x = x;
-            p->oam.f.y = (u8)(winMain->y * 8 + 8);
-            if (sel[i] > 0) {
-                Runtime_PushSlotEntry((s32 *)p, 240);
+        q = tbl;
+        {
+            struct VramBlockCacheEntry *vc;
+
+            for (i = 0, vc = gVramBlockCache, x = 112; i <= 10; i++) {
+                p->oam.word.attr01 = 0x40000400;
+                p->oam.word.attr23 = 0;
+                p->oam.f.tile = vc[*q++].offset >> 5;
+                p->oam.f.x = x;
+                p->oam.f.y = (u8)(winMain->y * 8 + 8);
+                if (sel[i] > 0) {
+                    Runtime_PushSlotEntry((s32 *)p, 240);
+                }
+                x += 15;
+                p++;
             }
-            x += 15;
-            p++;
         }
 
-        if (((struct MenuCell *)gWindowWork[42])->active == 0) {
+        if (gLinkCountdownWork->active == 0) {
             break;
         }
         if ((gKeyState & KEY_B) != 0) {
@@ -703,9 +921,12 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
         WaitFrames(1);
     }
 
-    q = tbl;
-    for (i = 10; i >= 0; i--) {
-        Resource_ResetEntry(*q++);
+    {
+        s32 *h = tbl;
+
+        for (i = 10; i >= 0; i--) {
+            Resource_ResetEntry(*h++);
+        }
     }
     Resource_ResetEntry(handleFrame);
     Resource_ResetEntry(handleCursor);

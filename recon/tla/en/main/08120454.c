@@ -1,33 +1,377 @@
-#include "RUNTIME_MEM.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/TYPES.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_ACTOR.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_CALC.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_EFX.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_EVENT.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_MSG.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_RUNTIME.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_SUMMON.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_TYPES.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/BATTLE_WORK.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/PARTY_STATE.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/OWNER_STATE.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/RAM_BUFFER.H"
-#include "../../../../games/THE LOST AGE/INCLUDE/RUNTIME_MEM.H"
+/* BtlTgtExec, tla-en 0x08120454.
+ * alchemy diff: listing 3450 instructions, draft 3450, common 3415,
+ * differ 70.
+ * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
+ * SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C) with this game's
+ * differences written in; they were worked out under GAME_TLA in that file
+ * and moved here, where they stay until every edition of this game matches.
+ * Then one source in games/COMMON carries only the real differences under
+ * GAME_TLA. Not real differences, to settle against ☀️'s form then: the
+ * locals block (this one orders offset, action_id, range, scale and pass
+ * differently, which steers registers, and declares apwr for the whole
+ * function), target_id u8 or s32 (no change), and MsgSplitFailed where ☀️
+ * has MsgSplitFail (each game's PO name for the same message).
+ * Scores: the old hand draft 806; ☀️'s source compiled for this game with
+ * only its names resolved 3237. One power variable (apwr) for
+ * every damage case moved it from differ 2590 to 779, the additive case's
+ * own loop counter to 657, ⚓️'s unsigned guard_level to 552, case 401 as a
+ * case of its own in the rate switch (rate 12 set before the test, as the
+ * listing does) to 510, the HP drain halving dealt in apwr (declared for
+ * the whole function, so it keeps r7 as in the listing) to
+ * 428, the PP restore reading action->effect directly (the listing loads
+ * it again) and adding max_pp / 10 before reading maxu in case 77 to 424
+ * (draft 3454, common 3240). BattleEv_Push declared void for
+ * this game (its body here sets no result, and void calls load r0 before r1,
+ * as the listing does at 61 of 68 two-argument calls) to 330 (common 3287).
+ * Then tried for the HP drain, where the listing keeps heal in r5 and the
+ * amount in r6 (ours the reverse): the amount in tmp (384), in a
+ * block-local amt (505), hp read after the halving (557); heal += apwr
+ * before dmg = apwr changes nothing. The weapon case halves defense with a
+ * signed shift sequence in the listing (lsrs #31, adds, asrs) where ours
+ * shifts logically: def / 2 and scale /= 2 give the same logical shift,
+ * defense read through the function-level value 382. With the void
+ * BattleEv_Push, plain hp reads at the top of the heal still lose: signed
+ * first 351, unsigned first 347, and plain max_hp reads in every branch too
+ * 639. The listing reads maxu before
+ * the division call and shares the add after it with 78 and 7%: reading
+ * maxu first instead merges both loads (723); direct reads with maxv as
+ * before give 435; with the void BattleEv_Push, maxu first gives 635, and
+ * with (s16)maxu / 10 as well 635. There the listing copies the target
+ * into r2 at the PP restore's head, so the effect's ldrb fits between the
+ * pp loads and case 77 keeps r2; ours copies it into r3, which the effect
+ * load takes. The summon's enemy reset as a for loop over saved[] keeps
+ * 330 only with its (u16) read (377 without). Tried and worse: a while loop
+ * for the immobilize scan (832), tmp or one shared amt for the drains (708,
+ * 716), while loops for the affinity scans, plain hp/max_hp reads in the
+ * heal (557: one ldrh shared by both; 445 with the signed read first),
+ * the heal branches reading through stat_ptr (808), the HP drain's amount in a block-local amt or with the
+ * new HP held in dmg (605 both), rate set to 0 in the switch's default
+ * instead of before it (665). No change: target_id s32 instead of u8,
+ * case 401 last, apwr's place among the declarations, BattleEv_Push
+ * without a prototype, heal += dmg instead of heal += apwr (kept: one line
+ * shared with ☀️), plain max_hp reads and value casts in place of the
+ * heal and PP restore's pointer casts (kept: the same instructions).
+ * The enemy-slot scan after a summon now matches. Still to bring over: the
+ * rate switch's 409 test (the listing derives it from
+ * 411 in r3; ours loads it fresh in r2), the summon message tail, the heal's
+ * target copy (the listing copies r8 again in each branch; ours keeps one
+ * copy in r4); then register order. The 409 test costs two bytes (a fresh
+ * constant, not subs from 411), which moves every branch offset in the
+ * rate switch; most other differences are one load swapped with a
+ * neighbouring move, the load order K2 leaves open.
+ * Tried after the split, against 330: case 409 a case of its own with rate
+ * 12, before the 399 group or after 401 (348 both), 409 last among its
+ * labels (no change), 409 sharing 401's case (336: draft 3450, but rate 12
+ * is no longer set before the 401 test), default last or with 393 last,
+ * rate as u8 or s16 (no change), rate as the function's kind (509) or tmp
+ * (660); in the heal, case 76 reading max_hp directly or maxu before maxv
+ * (337 both), maxu before maxv in case 71 (648), 2 * maxv / 5 (no change);
+ * in the PP restore, old
+ * read before heal (332), the block's declaration order and pp read
+ * through s16 and u16 pointers (no change); in
+ * the HP drain, a block-local amt (505: heal in r5 and amt in r6 as in the
+ * listing, but apwr then shares r6 and the listing's copy from r7 is
+ * lost; heal += apwr after amt = apwr keeps 505), the HP in hp0 (740) or
+ * tmp (344); for the weapon case's signed
+ * halving, (s16)def / 2 or (s16)scale / 2 (336: the sign is extended
+ * first), (s16)target->defense read into def (382), defense read into tmp
+ * (334), kind (no change) or apwr (560), value (382), power (383), guard
+ * (332), count (no change), scale /= 2 and def /= 2 in place (no change):
+ * the shift stays logical whichever variable holds the zero-extended
+ * load, even one set elsewhere from signed values (power, value).
+ * Case 77 written as 78 and the 7% are, maxv then maxu read before the
+ * division and heal += (s16)maxv / 10 (a short division, so the quotient
+ * is sign-extended as in the listing), gives 328 (draft 3452): the listing's
+ * shape, ldrh before the call and a branch to the shared add, leaving only
+ * register choices there (its target copy stays in r2 from the head; ours
+ * is copied again into r0). (s16)(maxv / 10) gives 341, maxv / 10 kept in
+ * maxv then (s16)maxv 337, and maxu read before maxv 635. With that case,
+ * old read before heal at the PP restore's head gives 320 (draft 3450):
+ * the head's copy of the target now stays in r2 and case 77 matches
+ * exactly, but the head shares one ldrh between old and heal and
+ * sign-extends it, where the listing loads ldrsh, the effect, then ldrh.
+ * heal or old read through an s16 or u16 pointer keeps 320; the block's
+ * declaration order changes nothing. A memory-clobbering asm barrier
+ * after old splits the load and keeps r2 (327: old's ldrh then comes
 
-s32 BattleUnit_KeepsOneHp(s32 unit);
-void Battle_ApplyActionExtras(s32 unit, s32 a, s32 b);
-void BattleParty_InsertUnitCentered(s16 *units, s32 unit);
-s32 BattleFormation_SelectRandomAvailableMember(s32 record_id);
-void *GetBattleObjectSlot(s32 unit);
-void BattlePresentation_SpawnActorObject(void *object, s32 unit, s32 x, s32 y);
-void BattleActor_CommitPlacement(void);
-s32 BattleParty_ListPresentEnemies(s16 *entries);
-void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-struct AffinityPair {
-    s16 low;
-    s16 high;
-};
-s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
+ * first, before the action load, where the listing has it last); after
+ * heal, with heal read first, 328; an empty asm("") changes nothing.
+ * The rate switch's 409 test: rate 9 is two case groups, 408 in one and
+ * 410 in the other (here 398 390 408 382, then 392 410), 226 (draft
+ * 3448, common 3336). The rate switch then matches: as two labels, 408
+ * and 410 keep the second test of the 409 node until after combine, so
+ * 409 stays a register and is derived from 411 (subs r3, #2); in one
+ * group the second test goes early and 409 becomes a reload in r2. Every
+ * split of the six into two groups that parts 408 from 410 gives 226;
+ * 410 and 408 together in a group of their own 290, 410 alone 322, 408
+ * alone 341 (a lone case's rate is set before its test).
+ * The weapon case's halving matches as the else of the half == 2 test
+ * (if (half == 2) scale = 0; else scale = def / 2;), 204 (draft 3450,
+ * common 3348): the else starts at a label, so combine no longer knows
+ * def is not negative and keeps the signed shift sequence, and the
+ * compiler still emits the halving before the test as the listing does.
+ * In the same order as before, def / 2, scale /= 2 with or without
+ * def, the field divided directly, def as u16, or half == 1 and
+ * half == 2 tests all stay logical (226 or worse); def as s16 276.
+ * Against 204, in the heal: case 76 (and 71) reading max_hp straight into
+ * the product, or maxu read after the add, 239 to 241 (draft 3451).
+ * The HP drain matches with the new HP in dmg and the amount in kind
+ * (dmg = actor->hp; kind = apwr; dmg += kind; ...), 178 (common 3361):
+ * dmg keeps r5 as everywhere else, and the amount, a second function-level
+ * variable, takes r6 with its copy from apwr in r7. The same with the
+ * amount in tmp 393, count 406, power 439, value 2112; the new HP and
+ * amount swapped in their old names (heal the amount) 379.
+ * In the heal, case 76 reading max_hp into a local of its own (m), 174
+ * (common 3363): the product then loads straight into r0 as in the
+ * listing; its target copy and offset still take r3 and r2 where the
+ * listing has r2 and r3, and a later tail is 2 bytes longer. The same
+ * local in case 71 as well 174, in 71 alone 178; heal held in dmg in the
+ * heal or the PP restore no change (they share r5 already); kind for
+ * old or maxv, or apwr for 76's maxv, worse (184 to 249).
+ * The 312/316 attack sum in a variable of its own (atk, local to the
+ * else), with the HP drain halving dealt in size instead of apwr, 170
+ * (common 3365): the 312/316 block matches, atk sharing r5 with dmg and
+ * 312 held in r6. As kind, the sum shares the drain's pseudo, which
+ * conflicts with dmg, so it took r6 and 312 took r5. atk alone, or dmg,
+ * def or any block-level local for the sum, 375 (draft 3449): kind then
+ * lives only in the drain, takes apwr's register and the copy goes,
+ * and apwr, allocated just ahead of 312, takes r6. In the drain with atk:
+ * the halving in tmp 174, power 200, count 262, hp0 454, n 479; with the
+ * halving in size, the amount in tmp 184, count 197, power or dealt 293,
+ * hp0 547; halving in apwr with the amount in size, tmp, count, power,
+ * dealt or hp0 389 to 691; switch (action_id) for the 312/316 test or
+ * one if after the other no better (375, 294). The drain held the
+ * halving in r0 there; halving dealt in place (if (...) dealt /= 2;
+ * kind = dealt;) 142 (common 3379), with no other variable for it;
+ * the halving in pass, bonus, half, adjust, crush, hit, modifier, skip,
+ * affinity or offset 200, guard 244, count 262, nibble 270, hp0 454,
+ * value 455, n 479. dealt stays on the stack, so ours halves it
+ * through r3 and stores it back, where the listing loads it into r7
+ * once and copies it to the amount in r6.
+ * Tried against 142: in the drain, the amount in tmp 156, size 163,
+ * count 169, power 315, n 393, hp0 569; kind = dealt halved in place
+ * 235; the halving before dmg = actor->hp 265; kind halved and apwr the
+ * amount 176; a FAKEMATCH register variable in r7 for the halving 170
+ * (kind then joins it in r7 and the copy goes), and r6 for the amount
+ * as well 168. In the heal, case 76 reading max_hp through stat_ptr
+ * (stat_ptr[-1], or stat_ptr-- first) 153; maxu read before the signed
+ * read in 76 176, in 71 too 183 (one ldrh shared again); case 70's
+ * halving through maxv = (s16)maxu 168, (s16)target->max_hp / 2 no
+ * change. Where the listing reloads target from r8 for an ldrsh at 52
+ * or 54 (cases 76, 71, 78 and the 7%), it takes the base into the
+ * first register and the offset into the second (r2/r3, r4/r0, r2/r4,
+ * r0/r1); ours takes them the other way round (r3/r2, r0/r4, r4/r2,
+ * r1/r0). Read as reload's round-robin from r0 up, skipping the
+ * ldrsh's own output, the registers are the same in both and only the
+ * order differs: the listing reloads the base before the offset
+ * scratch, ours the scratch first. Where the base is inherited from an
+ * ldrh before it (the 60/30 tails, 77) both agree. An s16 local or a
+ * byte-offset read for case 76's max_hp changes nothing.
+ * The PP restore head matches exactly when it walks a pointer as the
+ * heal does (u16 *stat_ptr; stat_ptr = (u16 *)&target->pp;
+ * old = *stat_ptr--; heal = *(s16 *)(stat_ptr + 1);, tagged FAKEMATCH
+ * as the heal's): ldrsh, the effect, then ldrh, and the later
+ * (s16)old gets its lsls/asrs pair. It scores 145 (draft 3451, common
+ * 3378) only because our 60/30 tail is still 2 bytes longer, which now
+ * moves the branch and literal offsets after it; apply it with the
+ * tail's fix. heal read first (heal = *(s16 *)stat_ptr--; old =
+ * stat_ptr[1];) 150. On top of it, for the tail: maxv *= 60 or 30 then
+ * heal += maxv / 100 191, else if (... == EFX_HEAL_30) 149. There
+ * sched2 puts our movs r1, #100 before each branch's last shift, so
+ * the two tails differ and jump2 shares only the call; the listing
+ * keeps it last in both and shares it. Alchemy permute over the heal
+ * (PERM_RANDOMIZE from stat_ptr to the clamp, 11 minutes, about 6,000
+ * candidates) found nothing below 142.
+ * The 60/30 tail matches with the product in a local p of each branch
+ * and an empty asm("") barrier between it and the division, tagged
+ * FAKEMATCH, 139 (draft 3449, common 3380): sched2 then keeps
+ * movs r1, #100 after the product's last shift and jump2 shares it with
+ * the call, as the listing does. Without the barrier, the multiplier as
+ * a ?: (fold distributes it), or a non-volatile asm "0" tie on p, it
+ * stays 142; the product divided once after the branches, in a
+ * block-local p, shares the tail but takes maxv into r2 and the shift
+ * into r3, and heal and maxu swap r5 and r6 (195); in maxv 208.
+ * With it, the PP restore head's pointer walk (above), 118 (draft 3450,
+ * common 3391): the head and the later (s16)old match.
+ * Case 70 reading max_hp into a u16 local m (maxu = m; heal += (s16)m
+ * / 2;), 114 (draft 3452, common 3394): with (s16)maxu, gcse shares
+ * maxu << 16 between case 70 and the clamp, so ours computes it before
+ * the join in r1, where the listing computes it at the join in r3; m
+ * keeps the two apart and the join matches, but its load becomes ldrsh
+ * with maxu rebuilt by lsrs (2 instructions longer). The same with m
+ * as u16 read through a u16 pointer 114; maxu read first and m = maxu
+ * 131; maxu = m after the halving 118; m as s16, read first 118 or
+ * after maxu 118; m as s32 137; (s16)target->max_hp / 2 read before
+ * maxu 125 (two ldrh, but the rest of 70 and the join match).
+ * An asm "+r" barrier on maxu after case 70's halving instead, tagged
+ * FAKEMATCH, 100 (draft 3450, common 3400): case 70 and the join match
+ * with the listing's single ldrh. A plain asm("") after the halving
+ * keeps gcse's sharing (118).
+ * Tried against 100: case 76 reading max_hp and maxu through stat_ptr
+ * (stat_ptr--; m = *(s16 *)stat_ptr; maxu = *stat_ptr;) 119; a local
+ * copy of target for case 76's reads no change (copy-propagated); in
+ * the drain, kind = dealt then kind = dealt / 2 in the if, 193.
+ * The two far branches back (-6086, -7822) were alchemy diff misreading
+ * a b.n before a relocated literal word; with diff fixed they match,
+ * 96 (common 3402), with no source change.
+ * The heal's reloads (76, 71, 78 and the 7%): the listing's RTL reads
+ * maxu (ldrh) before the signed read and sched2 then moves the ldrsh
+ * above it, so reload took the base first. maxu read first with an
+ * asm("" ::: "memory") barrier before the signed read, tagged FAKEMATCH,
+ * gives the listing's registers in all four, 72 (common 3414): 76 alone
+ * 90, with 71 82, with 78 76. The barrier also stops sched2, so each
+ * ldrh stays before its ldrsh (10 lines). Without a barrier maxu first
+ * shares one load (176); m read volatile 94 (ldrh plus shifts);
+ * asm("") 98; an asm "+r" tie on maxu after both reads 93; maxu read
+ * through stat_ptr, or m through it, 104; m through a byte offset 167;
+ * maxu = *stat_ptr-- with m through stat_ptr + 1, 86.
+ * In the drain against 96: apwr = dealt, then apwr = dealt / 2 in the
+ * if and kind = apwr, 333 (apwr and kind share r6, and cse reads apwr
+ * for dealt); apwr /= 2 in place 333; the halving in an if/else on apwr
+ * 403, or on hp0 412. apwr = dealt with an asm "+r" tie on apwr before
+ * the test 275, and another before kind = apwr 273 (draft 3449): apwr
+ * then loads before the test as in the listing, but in r6 shared with
+ * kind, and the halving reloads dealt from the stack (ldr r0) where the
+ * listing copies it from r7, since the tie ends apwr's equivalence with
+ * dealt's slot. apwr = dealt, the halving into apwr, kind = apwr and
+ * dmg += apwr (so apwr outlives the copy) 307.
+ * Against 72: in the drain, a block-local amt (amt = dealt; if (...)
+ * amt = dealt / 2, or amt = amt / 2; kind = amt;) 104: cse reads amt
+ * for dealt and amt takes r1, not r7; kind = dealt / 2 in an if with
+ * kind = dealt in its else 239. In ☀️'s heal (games/), field reads in
+ * place of its stat_ptr walk, old = (u16)target->hp or *(u16 *)&target->hp
+ * and the same for maxu, load each stat once (ldrh, then lsls/asrs for
+ * the signed copy), since old is used only as (s16)old, the value heal
+ * already holds; the walk stays. An empty asm("") after bonus = 0, tagged
+ * FAKEMATCH, keeps movs r3, #192 for Ram_HeapSlots below the stores of
+ * plan, slot and bonus, as the listing has it, 70 (common 3415). The
+ * same kind of barrier would place most of the remaining swaps, one
+ * each, but they share one pattern the compiler should explain instead:
+ * where ours issues the head of a constant or address chain (movs #192,
+ * #128, #160, #187, adds #28, lsls #2) first, the listing issues a
+ * neighbouring load, mostly a reload from the stack (ldr [sp, #64]),
+ * first and the chain just before its use. Under haifa's priorities that
+ * means the listing's loads rank higher than a load latency of 2 gives
+ * them (at the summon's 0x6b/0x64 pair, 4 or more with ties by luid),
+ * the open K2 load model.
+ * Left at 70: the drain's halving (above: the listing loads dealt into
+ * r7 before the test, copies it to r0 for the halving and copies r7 to
+ * r6 for the amount, as if the halving read a spilled dealt whose reload
+ * inherits r7); the four ldrh the barrier holds before their ldrsh; and
+ * about 20 single loads swapped with a neighbour (K2's load order).
+ * Load models tried as studies, each a cc1 rebuilt from agscc (the
+ * unchanged source rebuilds the admitted cc1 byte for byte), scored here
+ * and over the 713 C files tla-en links, compiled with ⚓️'s options and
+ * compared as assembly with the admitted cc1 (library files included, so
+ * an upper bound): a latency of 3 for halfword and byte loads only 188,
+ * 83 files change (LinkLobby_WriteSlotValue issues an lsl before its
+ * ldrb, which that latency forbids); a load preferred to any equal insn
+ * as rank_for_schedule's last tie-break after reload 76, 43 files; a load
+ * preferred only to an equal constant step (movs #n, or lsls/adds #n into
+ * the same register) 70 as the last tie-break (24 files) and 80 as the
+ * first after priority (50 files). Session 2's latency of 3 for every
+ * load gave 273. None explains these swaps without changing credited
+ * code.
+ * Why the walk and the memory barriers are needed: on Thumb, extendhisi2
+ * loads a signed read through an HImode ldrh, and cse.c's LOAD_EXTEND_OP
+ * reuse then turns it into a subreg of an earlier zero-extended
+ * read of the same field, so an unsigned read first always shares its
+ * load. Reload's round-robin registers in both games say the ROM's RTL
+ * had the unsigned read first, yet kept two loads. Studied with a cc1
+ * that has that reuse removed: plain reads (old = (u16)target->hp;
+ * heal = target->hp; maxu = (u16)target->max_hp; maxv =
+ * target->max_hp; the same for pp) and none of the two walks or four
+ * memory barriers score 60 (common 3420; the heal and PP restore match
+ * outright), against 391 with the admitted cc1. But that cc1 breaks ☀️
+ * English from System_Initialize on (2,406 linked sections differ), so
+ * the reuse itself stays; what keeps it from firing here is still open.
+ * In ☀️'s heal with the admitted cc1, plain reads with each signed read
+ * first keep both loads (heal, old, maxv, maxu: 7 instructions differ;
+ * maxv, heal, old, maxu: 5), but reload then gives old and max_hp's
+ * offset r0 and r4 where the ROM has r4 and r0, the order of an
+ * unsigned-first RTL. */
+#include "BATTLE.H"
+#include "DEBUG.H"
+#include "FIELD.H"
+#include "GAME.H"
+#include "GRAPHICS.H"
+#include "MENU.H"
+#include "MINIGAME.H"
+#include "SOUND.H"
+#include "SYSTEM.H"
+#include "TYPES.H"
+#include "BATTLE_PARTY.H"
+#include "IWRAM_CALL.H"
+#include "BATTLE_ACTOR.H"
+#include "BATTLE_CALC.H"
+#include "BATTLE_EFX.H"
+#include "BATTLE_EVENT.H"
+#include "BATTLE_MSG.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_SUMMON.H"
+#include "BATTLE_TYPES.H"
+#include "BATTLE_WORK.H"
+#include "MOTION_OBJECT.H"
+#include "RUNTIME_MEM.H"
+#include "BATTLE_PRESENTATION.H"
+#include "PARTY_STATE.H"
+#include "RAM_BUFFER.H"
+
+#define CLAMP_MOD(v)                                                           \
+    {                                                                          \
+        if ((v) < -4)                                                          \
+            (v) = -4;                                                          \
+        if ((v) > 4)                                                           \
+            (v) = 4;                                                           \
+    }
+
+#define IS_PARTY(id) ((id) >= 0 && (id) < 8)
+
+#define TAKE_BONUS()                                                           \
+    {                                                                          \
+        if (range != 4)                                                        \
+            bonus = power - target->elements[range].resist;                    \
+    }
+
+#define MES_PUSH(m) BattleEv_Push(BATTLE_EVENT_TEXT, (u32)(m))
+
+#define TEXT_SIDE(player, enemy)                                               \
+{                                                                              \
+    if (IS_PARTY(target_id))                                                   \
+        MES_PUSH(player);                                                      \
+    else                                                                       \
+        MES_PUSH(enemy);                                                       \
+}
+
+#define APPLY_GUARD()                                                         \
+    {                                                                         \
+        guard = target->guard_level;                                          \
+        if (guard != 0) {                                                     \
+            if (guard == 1)                                                   \
+                dmg /= 2;                                                     \
+            else if (guard == 2)                                              \
+                dmg = dmg * 2 / 5;                                            \
+            else                                                              \
+                dmg /= 10;                                                    \
+        }                                                                     \
+    }
+
+#define ADJUST_RES(delta, value_expr, text)                                 \
+{                                                                              \
+    target->res_modifier += (delta);                                           \
+    CLAMP_MOD(target->res_modifier);                                           \
+    BattleEv_Push(BATTLE_EVENT_VALUE, (value_expr));                           \
+    MES_PUSH(text);                                                            \
+    target->res_modifier_turns = 7;                                            \
+}
+
+#define SET_STATUS7(field, text)                                               \
+{                                                                              \
+    MES_PUSH(text);                                                            \
+    (field) = 7;                                                               \
+}
+
+s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
 {
     struct BattleAction *action;
     s32 action_id;
@@ -47,9 +391,8 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     s32 nibble;
     s32 affinity;
     struct BattleUnit *copy;
-    s32 g1;
     s32 power;
-    s16 hp0;
+    s32 hp0;
     s32 kind;
     s32 scale;
     s32 pass;
@@ -57,10 +400,10 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     u8 target_id;
     s8 *rm;
     struct BattleUnit *target;
-    s32 n;
+    u32 n;
     s32 value;
-    s32 affi;
     s32 dmg;
+    s32 apwr;
     s8 *am;
     s32 guard;
     s16 saved[8];
@@ -68,6 +411,8 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     s32 tmp;
     s32 size;
     bonus = 0;
+    /* FAKEMATCH: barrier; sched2 otherwise hoists movs r3, #192 for Ram_HeapSlots above the stores of plan, slot and bonus, 72 without, 70 with. */
+    asm("");
     work = Ram_HeapSlots->battle_work;
     half = 0;
     dealt = 0;
@@ -75,82 +420,105 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     skip = 0;
     affinity = 0;
     size = sizeof(struct BattleUnit);
-    copy = (struct BattleUnit *)Runtime_BumpAllocate(size);
-    { actor_id = (((action_id) == 0x138 || (action_id) == 0x13c) ? (plan)->actor_id2 : (plan)->actor_id); target_id = ((plan)->target_ids[(slot)]); action_id = plan->action_id; range = plan->range_index; adjust = ((plan)->target_adjustments[(slot)]); modifier = ((plan)->target_modifiers[(slot)]); };
+    copy = Runtime_BumpAllocate(size);
+
+    if (action_id == 312 || action_id == 316)
+        actor_id = plan->actor_id2;
+    else
+        actor_id = plan->actor_id;
+    target_id = plan->target_ids[slot];
+    action_id = plan->action_id;
+    range = plan->range_index;
+    adjust = plan->target_adjustments[slot];
+    modifier = plan->target_modifiers[slot];
+
     action = BattleAction_Get(action_id);
     actor = Owner_GetState(actor_id);
     target = Owner_GetState(target_id);
-    ((void (*)(void *, const void *, s32))0x03000730)( (copy), (target), (size));
-    { s32 state = *(u16 *)((u8 *)target + 0x14a); switch (state) { case 0xdd: if (((plan)->command) == 1 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, (s32)&MsgDissipated); goto done; } break; case 0x65: case 0x66: case 0x67: if (action_id != 0x23d && ((u8 *)work)[0x868] != 0 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, (s32)&MsgFieldProtects); goto done; } break; } if (target->guard_level == 4 && ((u32)(actor_id ^ target_id) >> 7) != 0) { BattleEv_Push(11, target_id); BattleEv_Push(0, target_id); BattleEv_Push(4, (s32)&MsgNoEffect); goto done; } };
+    Iwram_CopyWords(copy, target, size);
+    switch (target->enemy_id) {
+    case 221:
+        if (plan->command == 1 && (u32)(actor_id ^ target_id) >> 7 != 0) {
+            BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            MES_PUSH(MsgDissipated);
+            goto done;
+        }
+        break;
+    case 101:
+    case 102:
+    case 103:
+        if (action_id != 573 && work->unknown_868 != 0
+            && (u32)(actor_id ^ target_id) >> 7 != 0) {
+            BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            MES_PUSH(MsgFieldProtects);
+            goto done;
+        }
+        break;
+    }
+    if (target->guard_level == 4 && (u32)(actor_id ^ target_id) >> 7 != 0) {
+        BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+        BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+        MES_PUSH(MsgNoEffect);
+        goto done;
+    }
+
     if (action->range != 255) {
-        offset = ((plan)->target_offsets[(slot)]);
+        offset = plan->target_offsets[slot];
         if (offset < 0)
             offset = -offset;
     } else {
         offset = 0;
     }
+
     if (range != 4) {
-        s16 *tbl;
         s32 i;
-        value = (*(s16 *)((u8 *)(target) + 38 + (range) * 2 * 2));
-        tbl = (s16 *)((u8 *)target + 36);
-        i = 0;
-        if (value >= tbl[1]) {
-            s16 *p;
-            p = tbl;
-            do {
-                i++;
-                p += 2;
-                if (i > 3)
-                    break;
-            } while (value >= p[1]);
-        }
+
+        value = target->base_elements[range].resist;
+        for (i = 0; i < 4 && value >= target->base_elements[i].resist; i++)
+            ;
         if (i == 4)
             affinity = -1;
-        i = 0;
-        {
-            s32 off;
-            off = 2;
-            if (value <= *(s16 *)(((u8 *)(tbl)) + off)) {
-                do {
-                    i++;
-                    if (i > 3)
-                        break;
-                } while (value <= ((struct AffinityPair *)((u8 *)target + 36))[i].high);
-            }
-        }
+
+        for (i = 0; i < 4 && value <= target->base_elements[i].resist; i++)
+            ;
         if (i == 4)
             affinity = 1;
     }
-    if ((u32)plan->range_index <= 3) {
-;
-        if (((plan)->command) != 2) {
-            s32 off;
-            off = plan->range_index * 4 + 72;
-            power = *(s16 *)((u8 *)actor + off);
+
+    if (plan->range_index >= 0 && plan->range_index <= 3) {
+        cmd = &plan->command;
+        if (*cmd != 2) {
+            power = actor->elements[plan->range_index].power;
             goto after_power;
         }
     } else
-;
+        cmd = &plan->command;
     power = 100;
 after_power:
-    if (((plan)->command) == 5 && (u32)plan->range_index <= 3 && affinity > 0) {
+
+    if (plan->command == 5 && (plan->range_index >= 0 && plan->range_index <= 3) && affinity > 0) {
         s32 chance;
-        {
-            s32 off;
-            off = plan->range_index * 4 + 72;
-            chance = power - ((s16 *)((u8 *)target + off))[1];
-        }
+
+        chance = power - target->elements[plan->range_index].resist;
         chance += 30;
-        chance *= 0x28f;
+        chance *= 65536 / 100;
         if (chance > (BattleRandom16Far() & 0xffff))
             BattleEv_Push(BATTLE_EVENT_SCRIPT_UPDATE, 5);
     }
-    { if (action_id == 0x2ae || action_id == 0x165) Battle_ApplyActionExtras(target_id, 0, 0); if ((u32)(action_id - 0x2d0) <= 1) Battle_ApplyActionExtras(target_id, 1, 0); if (action_id == 0x2d8) Battle_ApplyActionExtras(target_id, 1, 1); };
+
+    if (action_id == 686 || action_id == 357)
+        Battle_ApplyActionExtras(target_id, 0, 0);
+    if (action_id == 720 || action_id == 721)
+        Battle_ApplyActionExtras(target_id, 1, 0);
+    if (action_id == 728)
+        Battle_ApplyActionExtras(target_id, 1, 1);
     nibble = action->target_flags & 15;
     {
         s32 first;
-        first = ((plan)->target_results[(slot)]);
+
+        first = plan->target_results[slot];
         if (first == -1)
             hit = Battle_HitCheck(
                 actor_id, target_id, range, action->effect,
@@ -158,43 +526,164 @@ after_power:
         else
             hit = first;
     }
-    { if ((u8)(action->effect + 206) <= 1 || action->effect == 0x56 || action->effect == 0x57) { s32 st; s32 rec; s32 state_save; s32 cursor; s32 msg; u8 efx; state_save = (s32)((u8 *)actor + 0x14a); st = *(u16 *)state_save; affi = -1; rec = Summon_FindSlot(); efx = action->effect; if (efx == EFX_STANDBY_WORK) { st = BattleFormation_SelectRandomAvailableMember(work->enemy_group); } else if (efx == 0x56) { if (*(u16 *)state_save == 0xa4) st = (BattleRandom16Far() & 3) + 0x17a; else st = 0x51; } else if (efx == 0x57) { if (((s8 *)work)[0x56b] != 0) { s32 qi; s32 state_offset; s32 charge_offset; qi = ((s8 *)work)[0x56a]; state_offset = 0x564 + qi * 2; st = *(u16 *)((u8 *)work + state_offset); charge_offset = 0x568 + qi; affi = ((u8 *)work)[charge_offset]; } else hit = 0; } if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) { if (affi == -1) { affi = Summon_TakeCharge(st, 1); if (affi & 0x8000) Summon_ResetCharge(st); } BattleUnit_AssignFar(rec, st, affi & 0x7fff); if (action->effect == 0x57) { s32 qi; ((s8 *)work)[0x56b]--; qi = ((s8 *)work)[0x56a] + 1; ((s8 *)work)[0x56a] = qi - (((s32)(qi + ((u32)qi >> 31)) >> 1) * 2); } if (*(u16 *)((u8 *)actor + 0x14a) == 0xa4) { BattleParty_InsertUnitCentered(work->enemy_units, rec); } else { s16 *slots; slots = (s16 *)((u8 *)work + 2); { s32 off; s32 i; s32 j; off = 100; i = 0; state_save = 0; if (*(s16 *)((u8 *)slots + off) == 254) { *(s16 *)((u8 *)slots + off) = rec; } else { s32 woff; s32 next; j = 0; woff = 100; for (;;) { affi = (s32)slots; cursor = j + 100; n = *(s16 *)(cursor + affi); if (n == 255) { *(s16 *)(affi + cursor) = rec; next = state_save + 102; *(s16 *)((u8 *)affi + next) = n; break; } i++; next = j + 2; j = next; if (i > 5) break; state_save = next; woff = next + 100; if (*(s16 *)(woff + affi) == 254) { *(s16 *)(woff + affi) = rec; break; } } } } } Summon_Refresh(); { s32 x; s32 y; cursor = (s32)GetBattleObjectSlot(rec); x = *(s32 *)(cursor + 12); if (x < 0) x += 0xffff; y = *(s32 *)(cursor + 16); x >>= 16; if (y < 0) y += 0xffff; y >>= 16; BattlePresentation_SpawnActorObject((void *)cursor, rec, x, y); } BattleActor_CommitPlacement(); { s32 listed; listed = BattleParty_ListPresentEnemies(saved); if (listed > 0) { u16 *q; q = (u16 *)saved; count = listed; do { Actor_ResetMotionAtAnchor(*q++); count--; } while (count != 0); } } BattleEv_Push(BATTLE_EVENT_UNIT, rec); if (action->effect == 0x57) { msg = (s32)&MsgUpToFight; goto tla_summon_msg; } else if (action_id != 0x1f7) { BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAppears); } else { BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgSplitOff); } } else if (action_id == 0x1f7) { msg = (s32)&MsgSplitFailed; tla_summon_msg: BattleEv_Push(BATTLE_EVENT_TEXT, msg); } else { BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgNoOneCame); } } };
+    if (action->effect == EFX_STANDBY || action->effect == EFX_STANDBY_WORK
+        || action->effect == 86 || action->effect == 87) {
+        s32 st;
+        s32 rec;
+        s32 ch;
+
+        st = actor->enemy_id;
+        ch = -1;
+        rec = Summon_FindSlot();
+        if (action->effect == EFX_STANDBY_WORK) {
+            st = BattleFormation_SelectRandomAvailableMember(work->enemy_group);
+        } else if (action->effect == 86) {
+            if (actor->enemy_id == 164)
+                st = (BattleRandom16Far() & 3) + 378;
+            else
+                st = 81;
+        } else if (action->effect == 87) {
+            if (work->queue_count != 0) {
+                st = work->queued_summons[work->queue_head];
+                ch = work->queued_charges[work->queue_head];
+            } else
+                hit = 0;
+        }
+        if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) {
+            if (ch == -1) {
+                ch = Summon_TakeCharge(st, 1);
+                if (ch & 0x8000)
+                    Summon_ResetCharge(st);
+            }
+            BattleUnit_AssignFar(rec, st, ch & 0x7fff);
+            if (action->effect == 87) {
+                work->queue_count--;
+                work->queue_head = (work->queue_head + 1) % 2;
+            }
+            if (actor->enemy_id == 164)
+                BattleParty_InsertUnitCentered(work->enemy_units, rec);
+            else
+            {
+                s32 i;
+
+                for (i = 0; i < 6; i++) {
+                    if (work->enemy_units[i] == 254) {
+                        work->enemy_units[i] = rec;
+                        break;
+                    }
+                    if (work->enemy_units[i] == 255) {
+                        work->enemy_units[i] = rec;
+                        work->enemy_units[i + 1] = 255;
+                        break;
+                    }
+                }
+            }
+            Summon_Refresh();
+            {
+                struct BattleObjectSlot *object;
+
+                object = GetBattleObjectSlot(rec);
+                BattlePresentation_SpawnActorObject(object, rec,
+                    object->anchor_x / 0x10000, object->anchor_z / 0x10000);
+            }
+            BattleActor_CommitPlacement();
+            {
+                s32 listed;
+
+                listed = BattleParty_ListPresentEnemies(saved);
+                for (count = 0; count < listed; count++)
+                    Actor_ResetMotionAtAnchor((u16)saved[count]);
+            }
+            BattleEv_Push(BATTLE_EVENT_UNIT, rec);
+            if (action->effect == 87)
+                MES_PUSH(MsgUpToFight);
+            else
+            if (action_id != 503)
+                MES_PUSH(MsgAppears);
+            else
+                MES_PUSH(MsgSplitOff);
+        } else if (action_id == 503) {
+            MES_PUSH(MsgSplitFailed);
+        } else {
+            MES_PUSH(MsgNoOneCame);
+        }
+    }
+
     if (hit != 0) {
         s32 efx;
-;
+
         efx = action->effect;
-        if (action->effect == EFX_IMMOBILIZE || action->effect == 0x53) { s32 hidx; hit = 0; hidx = 748; if (*(s16 *)(((u8 *)(work)) + hidx) == target_id) { hit = 1; } else { n = 0; tla_scan_next: n++; if ((u32)n <= 19) { s32 idx; idx = ((n << 1) << 3) + 748; if (*(s16 *)(((u8 *)(work)) + idx) == target_id) hit = 1; else goto tla_scan_next; } } } else if (action->effect == EFX_HALF_DEF) { half = 1; } else if (action->effect == EFX_LETHAL) { crush = 1; } else if (action->effect == EFX_INSTANT_DOWN) { skip = 1; } else if (action->effect == EFX_ACTOR_FLASH) { if (actor->hp != 0) BattleEv_Push(BATTLE_EVENT_ACTOR_EFFECT, actor_id); } else if (action->effect == EFX_DRAIN_PP) { if (target->pp != 0) nibble = 10; else hit = 0; } else if (action->effect == 0x5a) { half = 2; } else if (action->effect == 0x5b) { half = 2; };
+        if (action->effect == EFX_IMMOBILIZE || action->effect == 83) {
+            hit = 0;
+            for (n = 0; n < 20; n++) {
+                if (work->actions[n].unit_id == target_id) {
+                    hit = 1;
+                    break;
+                }
+            }
+        } else if (action->effect == EFX_HALF_DEF) {
+            half = 1;
+        } else if (action->effect == EFX_LETHAL) {
+            crush = 1;
+        } else if (action->effect == EFX_INSTANT_DOWN) {
+            skip = 1;
+        } else if (action->effect == EFX_ACTOR_FLASH) {
+            if (actor->hp != 0)
+                BattleEv_Push(BATTLE_EVENT_ACTOR_EFFECT, actor_id);
+        } else if (action->effect == EFX_DRAIN_PP) {
+            if (target->pp != 0)
+                nibble = BATTLE_DAMAGE_PP_DRAIN;
+            else
+                hit = 0;
+        } else if (action->effect == 90) {
+            half = 2;
+        } else if (action->effect == 91) {
+            half = 2;
+        }
     }
-    if ((action->effect != 0x4b || slot == 0) && skip == 0
+
+    if ((action->effect != 75 || slot == 0) && skip == 0
         && (target->hp != 0 || BattleFx_IsReviveFar(action->effect) != 0)) {
         s32 pp;
         s32 cur;
-        s32 apwr;
+
         switch (nibble) {
         case BATTLE_DAMAGE_WEAPON:
         case BATTLE_DAMAGE_WEAPON_SCALED:
         {
             s32 def;
-            if ((target->guard_level == 4))
+
+            if (target->guard_level == 4)
                 break;
-            hp0 = target->hp; def = target->defense; scale = def;
-            if (half != 0) { scale = def / 2; if (half == 2) scale = 0; };
+            hp0 = target->hp;
+            def = target->defense;
+            scale = def;
+            if (half != 0) {
+                if (half == 2)
+                    scale = 0;
+                else
+                    scale = def / 2;
+            }
             pass = 1;
             do {
-                { if (range != 4) { s32 off; off = range * 4 + 72; bonus = power - ((s16 *)((u8 *)target + off))[1]; } };
+                TAKE_BONUS();
                 if (pass == 0)
                     bonus = 0;
                 apwr = action->power;
-                if (nibble == 4)
-                    dmg = __divsi3(
-                        Battle_CalcAttack((actor->attack), scale, 0,
+                if (nibble == BATTLE_DAMAGE_WEAPON_SCALED)
+                    dmg = Battle_CalcAttack(actor->attack, scale, 0,
                                           bonus)
-                            * apwr,
-                        10);
+                            * apwr / 10;
                 else {
-                    { kind = actor->attack; if (action_id == 0x138 || action_id == 0x13c) { kind = ((struct BattleUnit *)Owner_GetState(((u8 *)plan)[0]))->attack; if (action_id == 0x138) kind += ((struct BattleUnit *)Owner_GetState(((u8 *)plan)[2]))->attack; } };
-                    dmg = Battle_CalcAttack(kind, scale, apwr,
-                                            bonus);
+                    s32 atk;
+
+                    atk = actor->attack;
+                    if (action_id == 312 || action_id == 316) {
+                        atk = ((struct BattleUnit *)Owner_GetState(plan->actor_id))->attack;
+                        if (action_id == 312)
+                            atk += ((struct BattleUnit *)Owner_GetState(plan->actor_id2))->attack / 4;
+                    }
+                    dmg = Battle_CalcAttack(atk, scale, apwr, bonus);
                 }
                 dmg *= adjust;
                 if (modifier != 0) {
@@ -202,20 +691,21 @@ after_power:
                         dmg = dmg * 5 / 4;
                     else
                         dmg = dmg * 3 / 2;
-                    dmg += (u8)__udivsi3(((u8 *)target)[15], 5) + 6;
+                    dmg += (target->level / 5) + 6;
                     if (pass == 0) {
                         BattleEv_Push(BATTLE_EVENT_MARK, 0);
                         {
                             s32 text;
-                            text = (s32)&MsgCritical;
-                            if ((u32)target_id <= 7)
+
+                            text = (s32)MsgCritical;
+                            if (IS_PARTY(target_id))
                                 text += 1;
                             BattleEv_Push(BATTLE_EVENT_TEXT_CONTINUE, text);
                         }
                     }
                 }
                 dmg += BattleRandom16Far() & 3;
-                { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = __divsi3(dmg * 2, 5); else dmg = __divsi3(dmg, 10); }; };
+                APPLY_GUARD();
                 if (dmg <= 0)
                     dmg = 1;
                 if (crush != 0) {
@@ -225,62 +715,71 @@ after_power:
                             dmg = 1;
                     }
                 }
-                if (GameFlag_Test(366) != 0 && ((plan)->command) == 5
+                if (GameFlag_Test(366) != 0 && plan->command == 5
                     && hp0 <= dmg) {
                     dmg = hp0 - 1;
                 }
                 pass++;
             } while (pass <= 1);
-            { hp0 -= dmg; BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id); BattleEv_Push(BATTLE_EVENT_UNIT, target_id); BattleEv_Push(BATTLE_EVENT_VALUE, dmg); };
+            hp0 -= dmg;
+            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
             {
                 s32 text;
-                if ((u32)target_id <= 7)
-                    text = (s32)&MsgDmgEmphP + affinity;
+
+                if (IS_PARTY(target_id))
+                    text = (s32)MsgDmgEmphP + affinity;
                 else
-                    text = (s32)&MsgDmgEmphE + affinity;
+                    text = (s32)MsgDmgEmphE + affinity;
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
             }
-            if (hp0 <= 0 && (BattleUnit_KeepsOneHp(target_id) != 0))
+
+            if (hp0 <= 0 && BattleUnit_KeepsOneHp(target_id) != 0)
                 hp0 = 1;
             if (hp0 <= 0) {
-                { u16 state; cur = 0; BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id); state = *(u16 *)((u8 *)target + 0x14a); if (state != 0x171 && state != 0x175) { BattleEv_Push(BATTLE_EVENT_UNIT, target_id); if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgGoesDown); else BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgFelled); } };
+                hp0 = 0;
+                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
+                if (target->enemy_id != 369 && target->enemy_id != 373) {
+                    BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                    TEXT_SIDE(MsgGoesDown, MsgFelled);
+                }
             } else
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             dealt = target->hp - hp0;
-            target->hp = (s16)hp0;
+            target->hp = hp0;
             Owner_RecalculateRatiosFar(target_id);
             break;
         }
+
         case BATTLE_DAMAGE_PP_DRAIN:
         {
-            if ((target->guard_level == 4))
+            if (target->guard_level == 4)
                 break;
             if (action->power == 0)
                 break;
             pp = target->pp;
-            if (range != 4) {
-                s32 off;
-                off = range * 4;
-                off = off + 72;
-                bonus = power - ((s16 *)((u8 *)target + off))[1];
-            }
+            TAKE_BONUS();
             apwr = action->power;
             dmg = Battle_CalcPower(apwr, bonus, 256);
-            dmg = __divsi3(dmg * PpLossFalloff[offset], 100);
+            dmg = dmg * PpLossFalloff[offset] / 100;
             dmg *= adjust;
-            { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = __divsi3(dmg * 2, 5); else dmg = __divsi3(dmg, 10); }; };
+            APPLY_GUARD();
             if (action->effect == EFX_DRAIN_PP && dmg > pp)
                 dmg = pp;
-            if ((dmg) > (pp)) (dmg) = (pp);
+            if (dmg > pp)
+                dmg = pp;
+
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             {
                 s32 text;
-                if ((u32)target_id <= 7)
-                    text = (s32)&MsgPpLossP;
+
+                if (IS_PARTY(target_id))
+                    text = (s32)MsgPpLossP;
                 else
-                    text = (s32)&MsgPpLossE;
+                    text = (s32)MsgPpLossE;
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 pp -= dmg;
             }
@@ -292,15 +791,18 @@ after_power:
             Owner_RecalculateRatiosFar(target_id);
             break;
         }
+
         case BATTLE_DAMAGE_HP_HEAL:
         {
             if (action->power == 0)
                 break;
             cur = target->hp;
-            if ((cur) == 0) break;
+            if (cur == 0)
+                break;
+
             apwr = action->power;
             dmg = Battle_CalcRestore(apwr, range == 4 ? 100 : power, 256);
-            dmg = __divsi3(dmg * HpHealFalloff[offset], 100);
+            dmg = dmg * HpHealFalloff[offset] / 100;
             dmg *= adjust;
             dmg += BattleRandom16Far() & 3;
             cur += dmg;
@@ -310,79 +812,140 @@ after_power:
             }
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             if (cur == target->max_hp)
-                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgHpFull);
+                MES_PUSH(MsgHpFull);
             else {
                 BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
-                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgHpRecover);
+                MES_PUSH(MsgHpRecover);
             }
             dealt = target->hp - cur;
-            target->hp = (s16)cur;
+            target->hp = cur;
             Owner_RecalculateRatiosFar(target_id);
             break;
         }
+
         case BATTLE_DAMAGE_PP_DIRECT:
         {
-            if ((target->guard_level == 4))
+            if (target->guard_level == 4)
                 break;
             if (action->power == 0)
                 break;
             pp = target->pp;
-            { if (range != 4) { s32 off; off = range * 4 + 72; bonus = power - ((s16 *)((u8 *)target + off))[1]; } };
+            TAKE_BONUS();
             apwr = action->power;
             dmg = Battle_CalcPower(apwr, bonus, 256);
-            dmg = __divsi3(dmg * PpDmgFalloff[offset], 100);
+            dmg = dmg * PpDmgFalloff[offset] / 100;
             dmg *= adjust;
-            { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = __divsi3(dmg * 2, 5); else dmg = __divsi3(dmg, 10); }; };
+            APPLY_GUARD();
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             {
                 s32 text;
-                if ((u32)target_id <= 7)
-                    text = (s32)&MsgDmgP;
+
+                if (IS_PARTY(target_id))
+                    text = (s32)MsgDmgP;
                 else
-                    text = (s32)&MsgDmgE;
+                    text = (s32)MsgDmgE;
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 pp -= dmg;
             }
             if (pp <= 0)
                 pp = 0;
             BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            goto pp_store;
+            target->pp = pp;
+            Owner_RecalculateRatiosFar(target_id);
+            break;
         }
+
         case BATTLE_DAMAGE_HP_ADDITIVE_6:
         case BATTLE_DAMAGE_HP_ADDITIVE_7:
         case BATTLE_DAMAGE_HP_ADDITIVE_9:
         {
             s32 round;
-            if ((target->guard_level == 4))
+
+            if (target->guard_level == 4)
                 break;
             if (action->power == 0)
                 break;
             cur = target->hp;
             round = 1;
             do {
-                { if (range != 4) { s32 off; off = range * 4 + 72; bonus = power - ((s16 *)((u8 *)target + off))[1]; } };
+                TAKE_BONUS();
                 if (round == 0)
                     bonus = 0;
                 apwr = action->power;
-                if (action_id == 0x2ab || action_id == 0x2a1 || action_id == 0x2d4 || ((plan)->command) == 6 || ((plan)->command) == 10) { s32 rate; rate = 0; switch (action_id) { default: case 0x189: break; case 0x196: case 0x184: case 0x18c: case 0x17c: rate = 3; break; case 0x199: case 0x191: case 0x18f: case 0x187: case 0x17f: rate = 12; break; case 0x2ab: rate = 35; break; case 0x197: case 0x190: case 0x18d: case 0x185: case 0x180: case 0x17d: rate = 6; break; case 0x18e: case 0x188: case 0x186: case 0x19a: case 0x198: case 0x17e: rate = 9; break; case 0x192: rate = 7; break; case 0x19b: case 0x193: case 0x181: rate = 15; break; case 0x18a: rate = 21; break; case 0x19c: rate = 24; break; case 0x2a1: case 0x182: rate = 30; break; case 0x2d4: case 0x194: rate = 40; break; } value = target->max_hp; if (value > 10000) value = 10000; (apwr) += __divsi3(value * rate, 100); };
+                if (action_id == 683 || action_id == 673 || action_id == 724
+                    || plan->command == 6 || plan->command == 10) {
+                    s32 rate;
+
+                    rate = 0;
+                    switch (action_id) {
+                    default:
+                    case 393:
+                        break;
+                    case 406: case 388: case 396: case 380:
+                        rate = 3;
+                        break;
+                    case 409: case 399: case 391: case 383:
+                        rate = 12;
+                        break;
+                    case 401:
+                        rate = 12;
+                        break;
+                    case 683:
+                        rate = 35;
+                        break;
+                    case 407: case 400: case 397: case 389: case 384: case 381:
+                        rate = 6;
+                        break;
+                    case 398: case 390: case 408: case 382:
+                        rate = 9;
+                        break;
+                    case 392: case 410:
+                        rate = 9;
+                        break;
+                    case 402:
+                        rate = 7;
+                        break;
+                    case 411: case 403: case 385:
+                        rate = 15;
+                        break;
+                    case 394:
+                        rate = 21;
+                        break;
+                    case 412:
+                        rate = 24;
+                        break;
+                    case 673: case 386:
+                        rate = 30;
+                        break;
+                    case 724: case 404:
+                        rate = 40;
+                        break;
+                    }
+                    value = target->max_hp;
+                    if (value > 10000)
+                        value = 10000;
+                    apwr += value * rate / 100;
+                }
                 dmg = Battle_CalcPower(apwr, bonus, 256);
                 dmg *= adjust;
                 switch (nibble & 15) {
-                case 5:
-                    dmg = __divsi3(HpDmgFalloff5[offset] * dmg, 100);
+                case BATTLE_DAMAGE_HP_ADDITIVE_6:
+                    dmg = HpDmgFalloff5[offset] * dmg / 100;
                     break;
-                case 8:
-                    dmg = __divsi3(dmg * HpDmgFalloff8[offset], 100);
+                case BATTLE_DAMAGE_HP_ADDITIVE_9:
+                    dmg = dmg * HpDmgFalloff8[offset] / 100;
                     break;
-                case 6:
-                    dmg = __divsi3(dmg * HpDmgFalloff6[offset], 100);
+                case BATTLE_DAMAGE_HP_ADDITIVE_7:
+                    dmg = dmg * HpDmgFalloff6[offset] / 100;
                     break;
                 }
                 dmg += BattleRandom16Far() & 3;
-                { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = __divsi3(dmg * 2, 5); else dmg = __divsi3(dmg, 10); }; };
-                if (((gPartyState.battle_rule_24b == 6 || (GameFlag_Test(366) != 0 && ((plan)->command) == 6)) && (cur) > (dmg))) {
+                APPLY_GUARD();
+                if ((gPartyState.battle_rule_24b == 6
+                        || (GameFlag_Test(366) != 0 && plan->command == 6))
+                    && cur > dmg) {
                     dmg = cur;
                 }
                 round++;
@@ -392,35 +955,40 @@ after_power:
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             {
                 s32 text;
-                if ((u32)target_id <= 7)
-                    text = (s32)&MsgDmgEmphP + affinity;
+
+                if (IS_PARTY(target_id))
+                    text = (s32)MsgDmgEmphP + affinity;
                 else
-                    text = (s32)&MsgDmgEmphE + affinity;
+                    text = (s32)MsgDmgEmphE + affinity;
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 cur -= dmg;
             }
-            if (cur <= 0 && (BattleUnit_KeepsOneHp(target_id) != 0))
+
+            if (cur <= 0 && BattleUnit_KeepsOneHp(target_id) != 0)
                 cur = 1;
-            if (gPartyState.battle_rule_24b == 6) (cur) = 0;
+            if (gPartyState.battle_rule_24b == 6)
+                cur = 0;
             if (cur <= 0) {
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
                 {
                     s32 text;
+
                     cur = 0;
-                    if ((u32)target_id <= 7)
-                        text = (s32)&MsgGoesDown;
+                    if (IS_PARTY(target_id))
+                        text = (s32)MsgGoesDown;
                     else
-                        text = (s32)&MsgFelled;
+                        text = (s32)MsgFelled;
                     BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 }
             } else
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             dealt = target->hp - cur;
-            target->hp = (s16)cur;
+            target->hp = cur;
             Owner_RecalculateRatiosFar(target_id);
             break;
         }
+
         case BATTLE_DAMAGE_PP_HEAL:
         {
             if (action->power == 0)
@@ -428,7 +996,7 @@ after_power:
             pp = target->pp;
             apwr = action->power;
             dmg = Battle_CalcRestore(apwr, range == 4 ? 100 : power, 256);
-            dmg = __divsi3(dmg * PpHealFalloff[offset], 100);
+            dmg = dmg * PpHealFalloff[offset] / 100;
             dmg *= adjust;
             pp += dmg;
             if (pp > target->max_pp) {
@@ -437,496 +1005,721 @@ after_power:
             }
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             if (pp == target->max_pp)
-                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPpFull);
+                MES_PUSH(MsgPpFull);
             else {
                 BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
-                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPpRecover);
+                MES_PUSH(MsgPpRecover);
             }
-pp_store:
-            target->pp = (s16)pp;
+            target->pp = pp;
             Owner_RecalculateRatiosFar(target_id);
             break;
         }
+
         case 0:
         case 7:
         case 9:
             break;
+
         case BATTLE_DAMAGE_HP_POWER:
-            if ((target->guard_level == 4))
+            if (target->guard_level == 4)
                 break;
             if (hit != 0) {
             if (action->power == 0)
                 break;
             cur = target->hp;
-            { if (range != 4) { s32 off; off = range * 4 + 72; bonus = power - ((s16 *)((u8 *)target + off))[1]; } };
+            TAKE_BONUS();
             apwr = action->power;
             dmg = Battle_CalcPower(apwr, bonus, 256);
             dmg *= adjust;
-            dmg = __divsi3(dmg * HpDmgFalloff[offset], 100);
-            { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = __divsi3(dmg * 2, 5); else dmg = __divsi3(dmg, 10); }; };
+            dmg = dmg * HpDmgFalloff[offset] / 100;
+            APPLY_GUARD();
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             {
                 s32 text;
-                if ((u32)target_id <= 7)
-                    text = (s32)&MsgDmgP;
+
+                if (IS_PARTY(target_id))
+                    text = (s32)MsgDmgP;
                 else
-                    text = (s32)&MsgDmgE;
+                    text = (s32)MsgDmgE;
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 cur -= dmg;
             }
-            if (cur <= 0 && (BattleUnit_KeepsOneHp(target_id) != 0))
+
+            if (cur <= 0 && BattleUnit_KeepsOneHp(target_id) != 0)
                 cur = 1;
             if (cur <= 0) {
-                { u16 state; cur = 0; BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id); state = *(u16 *)((u8 *)target + 0x14a); if (state != 0x171 && state != 0x175) { BattleEv_Push(BATTLE_EVENT_UNIT, target_id); if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgGoesDown); else BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgFelled); } };
+                cur = 0;
+                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
+                if (target->enemy_id != 369 && target->enemy_id != 373) {
+                    BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                    TEXT_SIDE(MsgGoesDown, MsgFelled);
+                }
             } else
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-dealt = target->hp - cur;
-            target->hp = (s16)cur;
+            dealt = target->hp - cur;
+            target->hp = cur;
             Owner_RecalculateRatiosFar(target_id);
             break;
             }
             BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgNoEffect);
+            MES_PUSH(MsgNoEffect);
             break;
+
         }
     }
-    { if (((u8 *)work)[0x868] != 0 && action_id == 0x23d) { BattleEv_Push(BATTLE_EVENT_UNIT, target_id); BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgFieldBroken); ((u8 *)work)[0x868] = 0; } };
-    BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-    if (!((action->effect != 0x4b || slot != 0) && (BattleFx_IsReviveFar(action->effect) != 0 || target->hp != 0 || BattleFx_CanAffectDefeatedUnit(action->effect) != 0) && hit != 0)) goto done;
-    if ((u32)(action->effect - 3) > 88 - 3)
-        goto done;
-    switch (action->effect) {
-    case EFX_CURE_ALL:
-        if (target->delusion != 0) {
-            target->delusion = 0;
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureDelusion);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-        }
-        if (target->stun != 0) {
-            target->stun = 0;
-            BattleEv_Push(BATTLE_EVENT_RESET, 0);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureStun);
-        }
-        { if (target->sleep != 0) { target->sleep = 0; BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgWakes); BattleEv_Push(BATTLE_EVENT_UNIT, target_id); } };
-        if (target->psy_seal != 0) {
-            target->psy_seal = 0;
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureSeal);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-        }
-        if (target->death_count != 0) {
-            target->death_count = 0;
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureCurse);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-        }
-        if (target->evil_spirit != 0) {
-            target->evil_spirit = 0;
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureSpirit);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-        }
-        if (target->poison != 0) {
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCurePoison);
-            target->poison = 0;
-        }
-        BattleEv_Push(BATTLE_EVENT_RESET, 0);
-        break;
-    case EFX_CURE_PART:
-        if (target->delusion != 0) {
-            target->delusion = 0;
-            BattleEv_Push(BATTLE_EVENT_RESET, 0);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureDelusion);
-        }
-        if (target->stun != 0) {
-            target->stun = 0;
-            BattleEv_Push(BATTLE_EVENT_RESET, 0);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureStun);
-        }
-        { if (target->sleep != 0) { target->sleep = 0; BattleEv_Push(BATTLE_EVENT_RESET, 0); BattleEv_Push(BATTLE_EVENT_UNIT, target_id); BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgWakes); } };
-        if (target->psy_seal != 0) {
-            target->psy_seal = 0;
-            BattleEv_Push(BATTLE_EVENT_RESET, 0);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureSeal);
-        }
-        if (target->death_count == 0)
-            break;
-        target->death_count = 0;
-        BattleEv_Push(BATTLE_EVENT_RESET, 0);
+
+    if (work->unknown_868 != 0 && action_id == 573) {
         BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureCurse);
-        break;
-    case EFX_HEAL_60:
-    case EFX_HEAL_30:
-    case 0x46: case 0x47: case 0x4c:
-    {
-        s32 old;
-        s32 maxu;
-        s32 maxv;
-        s32 heal;
-        u16 *stat_ptr;
-        { (stat_ptr) = (u16 *)&target->hp; (old) = *(stat_ptr)--; (heal) = *(s16 *)((stat_ptr) + 1); if (action->effect == 0x4c) { (maxv) = *(s16 *)&target->max_hp; (maxu) = *(u16 *)&target->max_hp; (heal) += __divsi3((maxv) * 2, 5); } else if (action->effect == 0x47) { (maxv) = *(s16 *)&target->max_hp; (maxu) = *(u16 *)&target->max_hp; (heal) += __divsi3((maxv) * 7, 10); } else if (action->effect == 0x46) { (maxu) = *(u16 *)&target->max_hp; (heal) += (s16)(maxu) / 2; } else { (stat_ptr)--; (maxu) = *(stat_ptr)--; (maxv) = *(s16 *)(stat_ptr + 1); if (action->effect == EFX_HEAL_60) (heal) += __divsi3((maxv) * 60, 100); else (heal) += __divsi3((maxv) * 30, 100); } };
-        if (heal > (s16)maxu)
-            heal = (s16)maxu;
-        tmp = heal - (s16)old;
-        if (tmp == 0 && nibble != 1)
-            break;
-        if (heal == (s16)maxu)
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgHpFull);
-        else {
-            BattleEv_Push(BATTLE_EVENT_VALUE, tmp);
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgHpRecover);
-        }
-        target->hp = (s16)heal;
-        Owner_RecalculateRatiosFar(target_id);
-        break;
+        MES_PUSH(MsgFieldBroken);
+        work->unknown_868 = 0;
     }
-    case EFX_PP_RESTORE_7:
-    case 0x4d: case 0x4e:
-    {
-        { s32 heal; s32 old; s32 maxu; s32 maxv; s32 effect; effect = action->effect; heal = target->pp; old = *(u16 *)&target->pp; if (effect == 0x4d) { maxv = *(s16 *)((u8 *)target + 54); maxu = *(u16 *)((u8 *)target + 54); heal += (s16)__divsi3(maxv, 10); } else if (effect == 0x4e) { maxv = target->max_pp; maxu = *(u16 *)&target->max_pp; heal += __divsi3(maxv * 3, 10); } else { maxv = target->max_pp; maxu = *(u16 *)&target->max_pp; heal += __divsi3(maxv * 7, 100); } if (heal > (s16)maxu) heal = (s16)maxu; tmp = heal - (s16)old; if (tmp == 0 && nibble != 11) break; if (heal == (s16)maxu) BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPpFull); else { BattleEv_Push(BATTLE_EVENT_VALUE, tmp); BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPpRecover); } target->pp = (s16)heal; Owner_RecalculateRatiosFar(target_id); break; };
-    }
-    case EFX_AGI_SET_UP8:
-        (*(s8 *)&(target->agility_modifier)) = 8;
-        target->agility_modifier_turns = 5;
-        BattleUnit_Recalculate(target_id);
-        BattleEv_Push(BATTLE_EVENT_VALUE, target->agility - copy->agility);
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAgiUp);
-        break;
-    case EFX_AGI_SET_DOWN4:
-        am = &(*(s8 *)&(target->agility_modifier));
-    {
-        u8 v;
-        v = -4;
-        *am = v;
-    }
-        target->agility_modifier_turns = 5;
-        BattleUnit_Recalculate(target_id);
-        BattleEv_Push(BATTLE_EVENT_VALUE, copy->agility - target->agility);
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAgiDown);
-        break;
-    case EFX_ATK_DOWN1:
-        target->attack_modifier += -1;
-        { if ((target->attack_modifier) < -4) (target->attack_modifier) = -4; if ((target->attack_modifier) > 4) (target->attack_modifier) = 4; };
-        BattleUnit_Recalculate(target_id);
-        BattleEv_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAtkDown);
-        target->attack_modifier_turns = 7;
-        break;
-    case EFX_ATK_DOWN2:
-        target->attack_modifier += -2;
-        { if ((target->attack_modifier) < -4) (target->attack_modifier) = -4; if ((target->attack_modifier) > 4) (target->attack_modifier) = 4; };
-        BattleUnit_Recalculate(target_id);
-        BattleEv_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAtkDown);
-        target->attack_modifier_turns = 7;
-        break;
-    case EFX_ATK_UP1:
-        target->attack_modifier += 1;
-        { if ((target->attack_modifier) < -4) (target->attack_modifier) = -4; if ((target->attack_modifier) > 4) (target->attack_modifier) = 4; };
-        BattleUnit_Recalculate(target_id);
-        BattleEv_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAtkUp);
-        target->attack_modifier_turns = 7;
-        break;
-    case EFX_ATK_UP2:
-        target->attack_modifier += 2;
-        { if ((target->attack_modifier) < -4) (target->attack_modifier) = -4; if ((target->attack_modifier) > 4) (target->attack_modifier) = 4; };
-        BattleUnit_Recalculate(target_id);
-        BattleEv_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAtkUp);
-        target->attack_modifier_turns = 7;
-        break;
-    case EFX_DEF_DOWN1:
-        target->defense_modifier += -1;
-        { if ((target->defense_modifier) < -4) (target->defense_modifier) = -4; if ((target->defense_modifier) > 4) (target->defense_modifier) = 4; };
-        BattleUnit_Recalculate(target_id);
-        BattleEv_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgDefDown);
-        target->defense_modifier_turns = 7;
-        break;
-    case EFX_DEF_DOWN2:
-        target->defense_modifier += -2;
-        { if ((target->defense_modifier) < -4) (target->defense_modifier) = -4; if ((target->defense_modifier) > 4) (target->defense_modifier) = 4; };
-        BattleUnit_Recalculate(target_id);
-        BattleEv_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgDefDown);
-        target->defense_modifier_turns = 7;
-        break;
-    case EFX_DEF_UP1:
-        target->defense_modifier += 1;
-        { if ((target->defense_modifier) < -4) (target->defense_modifier) = -4; if ((target->defense_modifier) > 4) (target->defense_modifier) = 4; };
-        BattleUnit_Recalculate(target_id);
-        BattleEv_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgDefUp);
-        target->defense_modifier_turns = 7;
-        break;
-    case EFX_DEF_UP2:
-        target->defense_modifier += 2;
-        { if ((target->defense_modifier) < -4) (target->defense_modifier) = -4; if ((target->defense_modifier) > 4) (target->defense_modifier) = 4; };
-        BattleUnit_Recalculate(target_id);
-        BattleEv_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgDefUp);
-        target->defense_modifier_turns = 7;
-        break;
-    case EFX_REVIVE_FULL:
-        if (target->hp != 0)
+    BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+    if ((action->effect != 75 || slot != 0)
+        && (BattleFx_IsReviveFar(action->effect) != 0 || target->hp != 0
+            || BattleFx_CanAffectDefeatedUnit(action->effect) != 0)
+        && hit != 0) {
+        switch (action->effect) {
+
+        case EFX_CURE_ALL:
+            if (target->delusion != 0) {
+                target->delusion = 0;
+                MES_PUSH(MsgCureDelusion);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            }
+            if (target->stun != 0) {
+                target->stun = 0;
+                BattleEv_Push(BATTLE_EVENT_RESET, 0);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                MES_PUSH(MsgCureStun);
+            }
+            if (target->sleep != 0) {
+                target->sleep = 0;
+                MES_PUSH(MsgWakes);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            }
+            if (target->psy_seal != 0) {
+                target->psy_seal = 0;
+                MES_PUSH(MsgCureSeal);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            }
+            if (target->death_count != 0) {
+                target->death_count = 0;
+                MES_PUSH(MsgCureCurse);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            }
+            if (target->evil_spirit != 0) {
+                target->evil_spirit = 0;
+                MES_PUSH(MsgCureSpirit);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            }
+            if (target->poison != 0) {
+                MES_PUSH(MsgCurePoison);
+                target->poison = 0;
+            }
+            BattleEv_Push(BATTLE_EVENT_RESET, 0);
             break;
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgRevived);
-        target->hp = target->max_hp;
-        Owner_RecalculateRatiosFar(target_id);
-        break;
-    case EFX_REVIVE_HALF:
-        if (target->hp != 0)
+
+        case EFX_CURE_PART:
+            if (target->delusion != 0) {
+                target->delusion = 0;
+                BattleEv_Push(BATTLE_EVENT_RESET, 0);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                MES_PUSH(MsgCureDelusion);
+            }
+            if (target->stun != 0) {
+                target->stun = 0;
+                BattleEv_Push(BATTLE_EVENT_RESET, 0);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                MES_PUSH(MsgCureStun);
+            }
+            if (target->sleep != 0) {
+                target->sleep = 0;
+                BattleEv_Push(BATTLE_EVENT_RESET, 0);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                MES_PUSH(MsgWakes);
+            }
+            if (target->psy_seal != 0) {
+                target->psy_seal = 0;
+                BattleEv_Push(BATTLE_EVENT_RESET, 0);
+                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                MES_PUSH(MsgCureSeal);
+            }
+            if (target->death_count == 0)
+                break;
+            target->death_count = 0;
+            BattleEv_Push(BATTLE_EVENT_RESET, 0);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            MES_PUSH(MsgCureCurse);
             break;
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgRevived);
-        target->hp = (s16)(target->max_hp / 2);
-        Owner_RecalculateRatiosFar(target_id);
-        break;
-    case EFX_REVIVE_80:
-        if (target->hp != 0)
-            break;
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgRevived);
-        target->hp = (s16)__divsi3(target->max_hp * 8, 10);
-        Owner_RecalculateRatiosFar(target_id);
-        break;
-    case 0x49: if (target->hp != 0) break; BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgRevived); target->hp = (s16)__divsi3(target->max_hp * 6, 10); Owner_RecalculateRatiosFar(target_id); break;
-    case EFX_CURE_POISON:
-        if (target->poison != 0)
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCurePoison);
-        target->poison = 0;
-        break;
-    case EFX_RES_DOWN1:
-        { target->res_modifier += (-1); { if ((target->res_modifier) < -4) (target->res_modifier) = -4; if ((target->res_modifier) > 4) (target->res_modifier) = 4; }; BattleEv_Push(BATTLE_EVENT_VALUE, ((copy->res_modifier - target->res_modifier) * 20)); BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgResDown)); target->res_modifier_turns = 7; };
-        break;
-    case EFX_RES_DOWN2:
-    {
-        target->res_modifier += -2;
-        if (-4 > target->res_modifier)
-            target->res_modifier = -4;
-        if (target->res_modifier > 4)
-            target->res_modifier = 4;
-        BattleEv_Push(BATTLE_EVENT_VALUE, (copy->res_modifier - target->res_modifier) * 20);
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgResDown);
-        target->res_modifier_turns = 7;
-    }
-        break;
-    case EFX_RES_UP1:
-        { target->res_modifier += (1); { if ((target->res_modifier) < -4) (target->res_modifier) = -4; if ((target->res_modifier) > 4) (target->res_modifier) = 4; }; BattleEv_Push(BATTLE_EVENT_VALUE, ((target->res_modifier - copy->res_modifier) * 20)); BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgResUp)); target->res_modifier_turns = 7; };
-        break;
-    case EFX_RES_UP2:
-    {
-        target->res_modifier += 2;
-        if (*(rm = &(*(s8 *)&(target->res_modifier))) < -4)
-            target->res_modifier = -4;
-        if (target->res_modifier > 4)
-            target->res_modifier = 4;
-        BattleEv_Push(BATTLE_EVENT_VALUE, (target->res_modifier - copy->res_modifier) * 20);
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgResUp);
-        target->res_modifier_turns = 7;
-    }
-        break;
-    case EFX_POISON:
-        if (target->poison != 0)
-            break;
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPoisoned);
-        target->poison = 1;
-        break;
-    case EFX_VENOM:
-        if (target->poison > 1)
-            break;
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgVenom);
-        target->poison = 2;
-        break;
-    case EFX_DELUSION:
-    case 0x4b:
-        { BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgDelusion)); (target->delusion) = (7); };
-        break;
-    case EFX_CONFUSE:
-        { BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgConfused)); (target->confusion) = (7); };
-        break;
-    case EFX_CHARM:
-        { BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgCharmed)); (target->charm) = (7); };
-        break;
-    case EFX_STUN:
-    case 0x55:
-        { BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgStunned)); (target->stun) = (7); };
-        break;
-    case EFX_SLEEP:
-        { BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgAsleep)); (target->sleep) = (7); };
-        break;
-    case EFX_PSY_BLOCK:
-        { if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgPsyBlock)); else BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgPsySeal)); };
-        target->psy_seal |= 7;
-        break;
-    case EFX_PSY_SEAL:
-        { if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgPsyBlock)); else BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgPsySeal)); };
-        target->psy_seal |= 16;
-        break;
-    case EFX_INSTANT_DOWN:
-        if ((BattleUnit_KeepsOneHp(target_id) != 0))
-            break;
-        BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
-        if (target->status_12a == 2)
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgKoDown);
-        else if (action_id == 219)
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgSuffocate);
-        else
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgSpiritDrain);
-        target->hp = 0;
-        Owner_RecalculateRatiosFar(target_id);
-        break;
-    case EFX_REFRAIN:
-        { BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgHpRegen)); (target->refrain) = (5); };
-        break;
-    case EFX_REFLECT:
-        { BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgReflect)); (target->reflect) = (7); };
-        break;
-    case EFX_DRAIN_HP:
-    case EFX_DRAIN_HP_HALF:
-    {
-        { s32 heal; s32 amt; heal = actor->hp; if (action->effect == EFX_DRAIN_HP_HALF) dealt /= 2; amt = dealt; dmg = amt; heal += amt; if (heal > actor->max_hp) { heal = actor->max_hp; amt = heal - actor->hp; } BattleEv_Push(BATTLE_EVENT_RESET, 0); BattleEv_Push(BATTLE_EVENT_UNIT, actor_id); if (heal == actor->max_hp) BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgHpFull); else { BattleEv_Push(BATTLE_EVENT_VALUE, amt); BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgHpRecover); } actor->hp = (s16)heal; Owner_RecalculateRatiosFar(actor_id); };
-        break;
-    }
-    case EFX_DRAIN_PP:
-    {
-        s32 heal;
-        s32 amt;
-        heal = actor->pp;
-        amt = dealt;
-        heal += amt;
-        if (heal > actor->max_pp) {
-            heal = actor->max_pp;
-            amt = heal - actor->pp;
-        }
-        BattleEv_Push(BATTLE_EVENT_RESET, 0);
-        BattleEv_Push(BATTLE_EVENT_UNIT, actor_id);
-        if (heal == actor->max_pp)
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPpFull);
-        else {
-            BattleEv_Push(BATTLE_EVENT_VALUE, amt);
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPpRecover);
-        }
-        actor->pp = (s16)heal;
-        Owner_RecalculateRatiosFar(actor_id);
-        break;
-    }
-    case EFX_PP_LEECH:
-        dmg = __divsi3(dealt, 10);
-        if (target->pp < dmg)
-            dmg = target->pp;
-        if (actor->pp + dmg > actor->max_pp)
-            dmg = actor->max_pp - actor->pp;
-        if (dmg == 0)
-            break;
-        BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
-        { if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgLeechTake)); else BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgLeechGain)); };
-        Owner_AdjustSecondValueFar(actor_id, dmg);
-        break;
-    case 0x54: dmg = (s16)__divsi3(target->max_pp, 10); if (target->pp < dmg) dmg = target->pp; if (dmg == 0) break; BattleEv_Push(BATTLE_EVENT_VALUE, dmg); if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgMorePpLossP); else BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgMorePpLossE); Owner_AdjustSecondValueFar(target_id, -dmg); break;
-    case EFX_BUFF_CLEAR:
-        if (target->attack_modifier > 0) {
-            target->attack_modifier = 0;
-            target->attack_modifier_turns = 0;
-        }
-        if (target->defense_modifier > 0) {
-            target->defense_modifier = 0;
-            target->defense_modifier_turns = 0;
-        }
-        if (target->res_modifier > 0) {
-            target->res_modifier = 0;
-            target->res_modifier_turns = 0;
-        }
-        if (target->agility_modifier > 0)
-            target->agility_modifier = 0;
-        target->element_modifier[0] = 0;
-        target->element_modifier[1] = 0;
-        target->element_modifier[2] = 0;
-        target->element_modifier[3] = 0;
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgBuffsReset);
-        break;
-    case EFX_EVIL_SPIRIT:
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgEvilSpirit);
-        target->evil_spirit = 1;
-        break;
-    case EFX_DEATH_CURSE:
-    case 0x50:
-        if (target->death_count == 0) {
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgDeathCurse);
-            target->death_count = 7;
+
+        case EFX_HEAL_60:
+        case EFX_HEAL_30:
+        case 70:
+        case 71:
+        case 76:
+        {
+            s32 old;
+            s32 maxu;
+            s32 maxv;
+            s32 heal;
+            u16 *stat_ptr;
+
+            /* FAKEMATCH: walking a pointer down from hp to max_hp reads each stat twice, unsigned and signed, as the ROM does; plain field reads share one load. */
+            stat_ptr = (u16 *)&target->hp;
+            old = *stat_ptr--;
+            heal = *(s16 *)(stat_ptr + 1);
+            if (action->effect == 76) {
+                s32 m;
+
+                maxu = (u16)target->max_hp;
+                /* FAKEMATCH: barrier; with maxu read first it keeps cse from sharing one load between the two reads, so reload takes the base before the offset as the ROM does (96 to 90); sched2 then keeps the ldrh first, where the ROM moves it after the ldrsh. */
+                asm("" ::: "memory");
+                m = target->max_hp;
+                heal += m * 2 / 5;
+            } else if (action->effect == 71) {
+                maxu = (u16)target->max_hp;
+                /* FAKEMATCH: barrier; the same for case 71 (90 to 82). */
+                asm("" ::: "memory");
+                maxv = target->max_hp;
+                heal += maxv * 7 / 10;
+            } else if (action->effect == 70) {
+                maxu = (u16)target->max_hp;
+                heal += (s16)maxu / 2;
+                /* FAKEMATCH: barrier; without it gcse shares maxu << 16 between this halving and the clamp, so ours shifts before the join in r1 where the ROM shifts at the join in r3, 118 without, 100 with. */
+                asm("" : "+r"(maxu));
+            } else
+            {
+                stat_ptr--;
+                maxu = *stat_ptr--;
+                maxv = *(s16 *)(stat_ptr + 1);
+                if (action->effect == EFX_HEAL_60) {
+                    s32 p = maxv * 60;
+                    /* FAKEMATCH: barrier; sched2 otherwise puts movs r1, #100 before the product's last shift and jump2 cannot share it with the division, 142 without, 139 with. */
+                    asm("");
+                    heal += p / 100;
+                } else {
+                    s32 p = maxv * 30;
+                    /* FAKEMATCH: barrier; the same for the 30% branch, whose tail jump2 shares with the 60% one. */
+                    asm("");
+                    heal += p / 100;
+                }
+            }
+            if (heal > (s16)maxu)
+                heal = (s16)maxu;
+            tmp = heal - (s16)old;
+            if (tmp == 0 && nibble != BATTLE_DAMAGE_HP_HEAL)
+                break;
+            if (heal == (s16)maxu)
+                MES_PUSH(MsgHpFull);
+            else {
+                BattleEv_Push(BATTLE_EVENT_VALUE, tmp);
+                MES_PUSH(MsgHpRecover);
+            }
+            target->hp = heal;
+            Owner_RecalculateRatiosFar(target_id);
             break;
         }
-        if (target->death_count <= 1)
+
+        case EFX_PP_RESTORE_7:
+        case 77:
+        case 78:
+        {
+            s32 old;
+            s32 maxv;
+            s32 heal;
+            s32 maxu;
+            u16 *stat_ptr;
+
+            /* FAKEMATCH: walking a pointer down from pp reads it twice, signed and unsigned, as the ROM does; plain field reads share one load. */
+            stat_ptr = (u16 *)&target->pp;
+            old = *stat_ptr--;
+            heal = *(s16 *)(stat_ptr + 1);
+            if (action->effect == 77) {
+                maxv = target->max_pp;
+                maxu = (u16)target->max_pp;
+                heal += (s16)maxv / 10;
+            } else if (action->effect == 78) {
+                maxu = (u16)target->max_pp;
+                /* FAKEMATCH: barrier; the same for case 78 (82 to 76). */
+                asm("" ::: "memory");
+                maxv = target->max_pp;
+                heal += maxv * 3 / 10;
+            } else {
+                maxu = (u16)target->max_pp;
+                /* FAKEMATCH: barrier; the same for the 7% (76 to 72). */
+                asm("" ::: "memory");
+                maxv = target->max_pp;
+                heal += maxv * 7 / 100;
+            }
+            if (heal > (s16)maxu)
+                heal = (s16)maxu;
+            tmp = heal - (s16)old;
+            if (tmp == 0 && nibble != BATTLE_DAMAGE_PP_HEAL)
+                break;
+            if (heal == (s16)maxu)
+                MES_PUSH(MsgPpFull);
+            else {
+                BattleEv_Push(BATTLE_EVENT_VALUE, tmp);
+                MES_PUSH(MsgPpRecover);
+            }
+            target->pp = heal;
+            Owner_RecalculateRatiosFar(target_id);
             break;
-        target->death_count -= 1;
-        BattleEv_Push(BATTLE_EVENT_VALUE, target->death_count);
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgDeathCount);
-        break;
-    case EFX_READY:
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgReadies);
-        ((u8 *)target)[0x144] = 2;
-        break;
-    case EFX_CHALLENGE:
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgChallenge);
-        target->battle_end_state = 1;
-        if ((u32)target_id <= 7)
-            ((u8 *)work)[67] |= 2;
-        break;
-    case EFX_IMMOBILIZE:
-    case 0x53:
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgImmobile);
-        target->cannot_move = 1;
-        break;
-    case EFX_GUARD1:
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAura);
-        if (((target)->guard_level) > 0)
+        }
+
+        case EFX_AGI_SET_UP8:
+            target->agility_modifier = 8;
+            target->agility_modifier_turns = 5;
+            Owner_RecalculateStatsFar(target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, target->agility - copy->agility);
+            MES_PUSH(MsgAgiUp);
             break;
-        g1 = 1;
-        (*(s8 *)&(target->guard_level)) = g1;
-        break;
-    case 0x48: BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAura); if ((u32)target->guard_level > 1) break; target->guard_level = 2; break;
-    case EFX_GUARD2:
-    case 0x58:
-        BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAura2);
-        if (((target)->guard_level) > 2)
+
+        case EFX_AGI_SET_DOWN4:
+            am = &target->agility_modifier;
+        {
+            u8 v;
+
+            v = -4;
+            *am = v;
+        }
+            target->agility_modifier_turns = 5;
+            Owner_RecalculateStatsFar(target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, copy->agility - target->agility);
+            MES_PUSH(MsgAgiDown);
             break;
-        (*(s8 *)&(target->guard_level)) = 3;
-        break;
-    case 0x4f: BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgVanished); if ((u32)target->guard_level > 3) break; target->guard_level = 4; break;
-    case EFX_TEXT_NONE:
-        BattleEv_Push(BATTLE_EVENT_TEXT, (u32)-1);
-        break;
-    case 0x51: BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAllResting); ((u8 *)work)[0x47] = 1; break; case 0x52: BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgBlownAway); BattleEv_Push(15, target_id); break; case 0x4a: BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCounterReady); ((u8 *)target)[0x143] = 1; break;
-    default:
-        break;
+
+        case EFX_ATK_DOWN1:
+            target->attack_modifier -= 1;
+            CLAMP_MOD(target->attack_modifier);
+            Owner_RecalculateStatsFar(target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
+            MES_PUSH(MsgAtkDown);
+            target->attack_modifier_turns = 7;
+            break;
+
+        case EFX_ATK_DOWN2:
+            target->attack_modifier -= 2;
+            CLAMP_MOD(target->attack_modifier);
+            Owner_RecalculateStatsFar(target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
+            MES_PUSH(MsgAtkDown);
+            target->attack_modifier_turns = 7;
+            break;
+
+        case EFX_ATK_UP1:
+            target->attack_modifier += 1;
+            CLAMP_MOD(target->attack_modifier);
+            Owner_RecalculateStatsFar(target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
+            MES_PUSH(MsgAtkUp);
+            target->attack_modifier_turns = 7;
+            break;
+
+        case EFX_ATK_UP2:
+            target->attack_modifier += 2;
+            CLAMP_MOD(target->attack_modifier);
+            Owner_RecalculateStatsFar(target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
+            MES_PUSH(MsgAtkUp);
+            target->attack_modifier_turns = 7;
+            break;
+
+        case EFX_DEF_DOWN1:
+            target->defense_modifier -= 1;
+            CLAMP_MOD(target->defense_modifier);
+            Owner_RecalculateStatsFar(target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
+            MES_PUSH(MsgDefDown);
+            target->defense_modifier_turns = 7;
+            break;
+
+        case EFX_DEF_DOWN2:
+            target->defense_modifier -= 2;
+            CLAMP_MOD(target->defense_modifier);
+            Owner_RecalculateStatsFar(target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
+            MES_PUSH(MsgDefDown);
+            target->defense_modifier_turns = 7;
+            break;
+
+        case EFX_DEF_UP1:
+            target->defense_modifier += 1;
+            CLAMP_MOD(target->defense_modifier);
+            Owner_RecalculateStatsFar(target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
+            MES_PUSH(MsgDefUp);
+            target->defense_modifier_turns = 7;
+            break;
+
+        case EFX_DEF_UP2:
+            target->defense_modifier += 2;
+            CLAMP_MOD(target->defense_modifier);
+            Owner_RecalculateStatsFar(target_id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
+            MES_PUSH(MsgDefUp);
+            target->defense_modifier_turns = 7;
+            break;
+
+        case EFX_REVIVE_FULL:
+            if (target->hp != 0)
+                break;
+            MES_PUSH(MsgRevived);
+            target->hp = target->max_hp;
+            Owner_RecalculateRatiosFar(target_id);
+            break;
+
+        case EFX_REVIVE_HALF:
+            if (target->hp != 0)
+                break;
+            MES_PUSH(MsgRevived);
+            target->hp = target->max_hp / 2;
+            Owner_RecalculateRatiosFar(target_id);
+            break;
+
+        case EFX_REVIVE_80:
+            if (target->hp != 0)
+                break;
+            MES_PUSH(MsgRevived);
+            target->hp = target->max_hp * 8 / 10;
+            Owner_RecalculateRatiosFar(target_id);
+            break;
+
+        case 73:
+            if (target->hp != 0)
+                break;
+            MES_PUSH(MsgRevived);
+            target->hp = (s16)(target->max_hp * 6 / 10);
+            Owner_RecalculateRatiosFar(target_id);
+            break;
+
+        case EFX_CURE_POISON:
+            if (target->poison != 0)
+                MES_PUSH(MsgCurePoison);
+            target->poison = 0;
+            break;
+
+        case EFX_RES_DOWN1:
+            ADJUST_RES(-1, (copy->res_modifier - target->res_modifier) * 20, MsgResDown);
+            break;
+
+        case EFX_RES_DOWN2:
+        {
+            target->res_modifier -= 2;
+            if (-4 > target->res_modifier)
+                target->res_modifier = -4;
+            if (target->res_modifier > 4)
+                target->res_modifier = 4;
+            BattleEv_Push(BATTLE_EVENT_VALUE, (copy->res_modifier - target->res_modifier) * 20);
+            MES_PUSH(MsgResDown);
+            target->res_modifier_turns = 7;
+        }
+            break;
+
+        case EFX_RES_UP1:
+            ADJUST_RES(1, (target->res_modifier - copy->res_modifier) * 20, MsgResUp);
+            break;
+
+        case EFX_RES_UP2:
+        {
+            target->res_modifier += 2;
+            if (*(rm = &target->res_modifier) < -4)
+                target->res_modifier = -4;
+            if (target->res_modifier > 4)
+                target->res_modifier = 4;
+            BattleEv_Push(BATTLE_EVENT_VALUE, (target->res_modifier - copy->res_modifier) * 20);
+            MES_PUSH(MsgResUp);
+            target->res_modifier_turns = 7;
+        }
+            break;
+
+        case EFX_POISON:
+            if (target->poison != 0)
+                break;
+            MES_PUSH(MsgPoisoned);
+            target->poison = 1;
+            break;
+
+        case EFX_VENOM:
+            if (target->poison > 1)
+                break;
+            MES_PUSH(MsgVenom);
+            target->poison = 2;
+            break;
+
+        case EFX_DELUSION:
+        case 75:
+            SET_STATUS7(target->delusion, MsgDelusion);
+            break;
+
+        case EFX_CONFUSE:
+            SET_STATUS7(target->confusion, MsgConfused);
+            break;
+
+        case EFX_CHARM:
+            SET_STATUS7(target->charm, MsgCharmed);
+            break;
+
+        case EFX_STUN:
+        case 85:
+            SET_STATUS7(target->stun, MsgStunned);
+            break;
+
+        case EFX_SLEEP:
+            SET_STATUS7(target->sleep, MsgAsleep);
+            break;
+
+        case EFX_PSY_BLOCK:
+            TEXT_SIDE(MsgPsyBlock, MsgPsySeal);
+            target->psy_seal |= 7;
+            break;
+
+        case EFX_PSY_SEAL:
+            TEXT_SIDE(MsgPsyBlock, MsgPsySeal);
+            target->psy_seal |= 16;
+            break;
+
+        case EFX_INSTANT_DOWN:
+            if (BattleUnit_KeepsOneHp(target_id) != 0)
+                break;
+            BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
+            if (target->status_12a == BATTLE_UNIT_PARTY)
+                MES_PUSH(MsgKoDown);
+            else if (action_id == 219)
+                MES_PUSH(MsgSuffocate);
+            else
+                MES_PUSH(MsgSpiritDrain);
+            target->hp = 0;
+            Owner_RecalculateRatiosFar(target_id);
+            break;
+
+        case EFX_REFRAIN:
+            MES_PUSH(MsgHpRegen);
+            target->refrain = 5;
+            break;
+
+        case EFX_REFLECT:
+            SET_STATUS7(target->reflect, MsgReflect);
+            break;
+
+        case EFX_DRAIN_HP:
+        case EFX_DRAIN_HP_HALF:
+            dmg = actor->hp;
+            if (action->effect == EFX_DRAIN_HP_HALF)
+                dealt /= 2;
+            kind = dealt;
+            dmg += kind;
+            if (dmg > actor->max_hp) {
+                dmg = actor->max_hp;
+                kind = dmg - actor->hp;
+            }
+            BattleEv_Push(BATTLE_EVENT_RESET, 0);
+            BattleEv_Push(BATTLE_EVENT_UNIT, actor_id);
+            if (dmg == actor->max_hp)
+                MES_PUSH(MsgHpFull);
+            else {
+                BattleEv_Push(BATTLE_EVENT_VALUE, kind);
+                MES_PUSH(MsgHpRecover);
+            }
+            actor->hp = dmg;
+            Owner_RecalculateRatiosFar(actor_id);
+            break;
+
+        case EFX_DRAIN_PP:
+        {
+            s32 heal;
+            s32 amt;
+
+            heal = actor->pp;
+            amt = dealt;
+            heal += amt;
+            if (heal > actor->max_pp) {
+                heal = actor->max_pp;
+                amt = heal - actor->pp;
+            }
+            BattleEv_Push(BATTLE_EVENT_RESET, 0);
+            BattleEv_Push(BATTLE_EVENT_UNIT, actor_id);
+            if (heal == actor->max_pp)
+                MES_PUSH(MsgPpFull);
+            else {
+                BattleEv_Push(BATTLE_EVENT_VALUE, amt);
+                MES_PUSH(MsgPpRecover);
+            }
+            actor->pp = heal;
+            Owner_RecalculateRatiosFar(actor_id);
+            break;
+        }
+
+        case EFX_PP_LEECH:
+            dmg = dealt / 10;
+            if (target->pp < dmg)
+                dmg = target->pp;
+            if (actor->pp + dmg > actor->max_pp)
+                dmg = actor->max_pp - actor->pp;
+            if (dmg == 0)
+                break;
+            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
+            TEXT_SIDE(MsgLeechTake, MsgLeechGain);
+            Owner_AdjustSecondValueFar(actor_id, dmg);
+            break;
+
+        case 84:
+            dmg = (s16)(target->max_pp / 10);
+            if (target->pp < dmg)
+                dmg = target->pp;
+            if (dmg == 0)
+                break;
+            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
+            TEXT_SIDE(MsgMorePpLossP, MsgMorePpLossE);
+            Owner_AdjustSecondValueFar(target_id, -dmg);
+            break;
+
+        case EFX_BUFF_CLEAR:
+            if (target->attack_modifier > 0) {
+                target->attack_modifier = 0;
+                target->attack_modifier_turns = 0;
+            }
+            if (target->defense_modifier > 0) {
+                target->defense_modifier = 0;
+                target->defense_modifier_turns = 0;
+            }
+            if (target->res_modifier > 0) {
+                target->res_modifier = 0;
+                target->res_modifier_turns = 0;
+            }
+            if (target->agility_modifier > 0)
+                target->agility_modifier = 0;
+            target->element_modifier[0] = 0;
+            target->element_modifier[1] = 0;
+            target->element_modifier[2] = 0;
+            target->element_modifier[3] = 0;
+            MES_PUSH(MsgBuffsReset);
+            break;
+
+        case EFX_EVIL_SPIRIT:
+            MES_PUSH(MsgEvilSpirit);
+            target->evil_spirit = 1;
+            break;
+
+        case EFX_DEATH_CURSE:
+        case 80:
+            if (target->death_count == 0) {
+                MES_PUSH(MsgDeathCurse);
+                target->death_count = 7;
+                break;
+            }
+            if (target->death_count <= 1)
+                break;
+            target->death_count -= 1;
+            BattleEv_Push(BATTLE_EVENT_VALUE, target->death_count);
+            MES_PUSH(MsgDeathCount);
+            break;
+
+        case EFX_READY:
+            MES_PUSH(MsgReadies);
+            target->ready_pose = 2;
+            break;
+
+        case EFX_CHALLENGE:
+            MES_PUSH(MsgChallenge);
+            target->battle_end_state = 1;
+            if (IS_PARTY(target_id))
+                work->flags_043 |= 2;
+            break;
+
+        case EFX_IMMOBILIZE:
+        case 83:
+
+            MES_PUSH(MsgImmobile);
+            target->cannot_move = 1;
+            break;
+
+        case EFX_GUARD1:
+
+            MES_PUSH(MsgAura);
+            if (target->guard_level > 0)
+                break;
+            target->guard_level = 1;
+            break;
+
+        case 72:
+            MES_PUSH(MsgAura);
+            if ((u32)target->guard_level > 1)
+                break;
+            target->guard_level = 2;
+            break;
+
+        case EFX_GUARD2:
+        case 88:
+            MES_PUSH(MsgAura2);
+            if (target->guard_level > 2)
+                break;
+            target->guard_level = 3;
+            break;
+
+        case 79:
+            MES_PUSH(MsgVanished);
+            if ((u32)target->guard_level > 3)
+                break;
+            target->guard_level = 4;
+            break;
+
+        case EFX_TEXT_NONE:
+            BattleEv_Push(BATTLE_EVENT_TEXT, -1);
+            break;
+
+        case 81:
+            MES_PUSH(MsgAllResting);
+            work->unknown_046[1] = 1;
+            break;
+
+        case 82:
+            MES_PUSH(MsgBlownAway);
+            BattleEv_Push(15, target_id);
+            break;
+
+        case 74:
+            MES_PUSH(MsgCounterReady);
+            target->unknown_142[1] = 1;
+            break;
+
+        default:
+            break;
+        }
     }
+
 done:
     BattleEv_Push(BATTLE_EVENT_RESET, 0);
-    { if (((plan)->command) != 9 && *(s8 *)((u8 *)target + 0x143) != 0 && action->target_mode == 1 && target->hp != 0) { *(s32 *)((u8 *)work + 0x858) = target_id; *(s32 *)((u8 *)work + 0x85c) = actor_id; } };
+    if (plan->command != 9 && (s8)target->unknown_142[1] != 0
+        && action->target_mode == 1 && target->hp != 0) {
+        work->unknown_858 = target_id;
+        work->unknown_85c = actor_id;
+    }
+
     if (target->hp != 0) {
         if (target->sleep != 0)
         if (target->sleep <= 6
             && dealt > 0 && (3 & BattleRandom16Far()) == 0) {
             target->sleep = 0;
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgWakes);
+            MES_PUSH(MsgWakes);
         }
     }
     Sys_Free(copy);
-    BattleUnit_Recalculate(target_id);
+    Owner_RecalculateStatsFar(target_id);
     UiWindow_DrawPartyStatusContentsFar(Ram_HeapSlots->battle_work->party_status_mode);
     if (target->hp != 0)
         BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-    if ((action_id != 0x193 && actor->evil_spirit != 0)
+    if (action_id != 403 && actor->evil_spirit != 0
         && (BattleRandom16Far() & 3) == 0 && dealt > 0) {
         s32 share;
+
         share = dealt >> 2;
         if (share == 0)
             share = 1;
-        ((plan)->pending_amount_60) += share;
+        plan->pending_amount_60 += share;
     }
 }

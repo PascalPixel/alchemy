@@ -1,8 +1,133 @@
-/* 08026080: listing 1585, draft 1585, differ 1084 (common 1043); both
- * frames are 324 bytes. The whole prologue through the first call now
+/* 08026080: listing 1585, draft 1585, differ 106 (common 1532); both
+ * frames are 324 bytes. Every remaining difference is a spill slot offset
+ * below sp+48 (see the hash analysis below); every instruction, register
+ * and order matches.
+ * Session T10-08026080/4 (from 116), kept:
+ * - the clear loop as for (i = 0; i < 6; i++) tbl[i].flags = 0: loop's
+ *   dbra reversal (one store to a giv of i) turns it into the native
+ *   count down from tbl[5], and emits the new counter start after the
+ *   hoisted 0, so movs r2, #0 now precedes movs r7, #5 as native: 106.
+ *   tbl[5 - i] counting up 110 (reversed again, stepping up from tbl[0]).
+ * - the pending loop's two branches compute block locals x and y from
+ *   every load first, then store targetPos.x, slot->x, targetPos.y,
+ *   slot->y (the else branch with slot->flags = 1 before them): the
+ *   branch stores and loads now follow the native exactly. Then branch
+ *   alone 114, both 108.
+ * Bucket hypothesis confirmed (diagnostic, not kept): GCSE sizes its
+ *   expression table from max_cuid, the real insns at GCSE entry (1412 to
+ *   1415 here: 707 buckets, set table 353). Three chains of twelve dead
+ *   zero stores at entry (flow deletes them, nothing else moves) give
+ *   1450, 725 buckets: differ 40; four more give 727 buckets: 40. So the
+ *   native source carried about 36 to 41 more real insns at GCSE (or 35
+ *   to 38 fewer for 689) that later passes (combine, flow, loop) remove.
+ *   At 725/727 only three slots still rotate: draft 32 (sp+212 tbl
+ *   address) / 36 / 40 against native 36 / 40 / 32, likely head, which
+ *   is a user variable here, not a PRE pseudo. Next: find the honest
+ *   source shape with those extra insns (casts, copies or temporaries
+ *   that combine folds), and head's slot.
+ * The whole prologue through the first call now
  * matches: sel is the parameter itself in r10, mode in r8, and
  * gLinkCountdownWork is reached as cell 48 after gBattleWork, so CSE keeps
  * the gBattleWork address in r5 and adds 192 as the native does.
+ * Session T10-08026080/3 (from 542), kept:
+ * - the cursor's else-if branch stores tbl[0].x = pos.x without nx: nx no
+ *   longer lives where the shared constant 1 does, so the 1 takes r1 with
+ *   nx as native (was r4) and the whole cursor block matches apart from
+ *   spill offsets: 477.
+ * - each info window case divides once, anchor = pos.x / 8, and tests
+ *   anchor + N: with one use the loaded pos.x dies at the division's copy,
+ *   CSE keeps the copy, and the load goes straight into it (native ldr r3;
+ *   cmp r3; adds r3, #7, no register copy): 440, draft 1587. anchor is an
+ *   ordinary local now, so its switch-block FAKEMATCH is gone.
+ * - the side block back in native order (index check, then selSlot and
+ *   cnt++): with the two changes above pos keeps fp and the 0 is
+ *   rematerialized as native: 135, draft 1586. The selSlot/cnt FAKEMATCH
+ *   is gone; the draft has no device left except infoWin in r9.
+ * - cursor = cursor + total - 1 in the step back (native adds cursor, then
+ *   total, and keeps total in r1 for the modulo), and repeat = 0 / 1 set
+ *   before pressed in the auto block (native r5 before r6): 116, draft
+ *   1585, the instruction counts equal.
+ * Trials: on 477, native order for the side block's selSlot/cnt 597
+ *   (frame 320: pos loses fp again, the 0 has 24/112 against pos 205/963);
+ *   on 440, the clear loop as for (i = 5; i >= 0; i--) no change; the side
+ *   block through n = 6 - i 1307. On 116, the pending loop's stores in
+ *   native source order (tx, sx, ty, sy; else flags first) 134 (the loads
+ *   then follow the stores); through nx/ny 857; through block locals x and
+ *   y 148; the else branch as slot->flags = 1; slot->x = targetPos.x =
+ *   entry->x; slot->y = targetPos.y = entry->y + 8: 120 (sched2 sinks the
+ *   flags store below targetPos.x and slot->x and keeps the entry->y load
+ *   after them; native hoists both entry loads above every store).
+ * Spill slots now: GCSE's expression table has 707 buckets (max_cuid
+ *   1414 or 1415), so (plus sfp C) still hashes in C order; the native
+ *   order needs a bucket multiple between 13926 - 160 and 13926 - 112:
+ *   657, 689, 725, 727, 765 or 767 buckets.
+ * Session T10-08026080/2 (from 624), kept:
+ * - the cursor sine as Trig_Sin(...) / 32768, as the pending loop and the
+ *   name drawing write it: the value stays in r0 as native, 624 (draft
+ *   1595, so equal count but closer code).
+ * - the pending loop indexes entry = &head[i]: CSE shares i * 2 between
+ *   selIds[i] and i * 12, so the i * 2 giv (no longer single use) combines
+ *   with the selIds address and is reduced to the native offset stepping
+ *   by 2 at sp+12 from 2, with selIds' base in r10 and entry = head + 12
+ *   set after the i < cnt guard: the whole pending loop matches native
+ *   apart from slot offsets. Alone 781 (frame 328).
+ * - the side marker block written as the first block: tbl[6 - i] directly
+ *   (a giv stepping by -4 from &tbl[6], native r0) and selSlot[cnt] =
+ *   6 - i; the mark/side FAKEMATCH is gone. With head[i]: 629 (frame 320);
+ *   with spill offsets ignored the diff falls from about 420 to 225.
+ *   Without head[i] 681. In native order global gives fp to the spread
+ *   loop's QImode 0 (8 refs over 112 insns, priority 2142) before pos
+ *   (41 refs over 963, 2128), so pos spills and the selIds giv takes fp;
+ *   native keeps pos in fp and rematerializes the 0 (movs r3, #0).
+ * - selSlot[cnt] and cnt++ before the side block's index check (permuter,
+ *   tagged FAKEMATCH: native stores them after it): 542, frame 324, pos
+ *   back in fp, but the 0 now sits in r8 and 254 in lr (native 254 in r8,
+ *   ids in lr, 0 rematerialized). Find a native-order way to drop the 0's
+ *   priority below pos and remove this device.
+ * Trials: head replaced by entries everywhere 871 (the -88, -84, -80
+ *   addresses become separate PRE pseudos); permuter 4 min on 629: 542
+ *   (the reorder above; its other rewrite, a u8 tmp in case 4/6, is noise).
+ * Spill slot order, measured: PRE numbers its reaching registers in hash
+ *   bucket order; (plus sfp C) hashes to 13926 + C modulo the table size
+ *   (max_cuid / 2 | 1, 717 here), so the draft orders efx (-236) < selSlot
+ *   (-160) < tbl (-112) < ids (-16) < cursor * 2. The native order tbl <
+ *   head < ids < cursor * 2 < efx < selSlot fits a table of 725 or 727
+ *   (or 689) with head as a PRE pseudo of (plus sfp -88); here head is a
+ *   user variable and takes an initial slot right after matrix.
+ * Session of 2026-10-07 (from 1084), kept:
+ * - the kind 4 and 6 searches as one || chain of byte tests each: fold's
+ *   fold_truthop merges delusion/stun into the word test & 0xFF0000FF and
+ *   sleep/psy_seal into a halfword test whose & 0xFFFF survives to loop,
+ *   which hoists the mask into r4, caller-saved as native: 1031.
+ * - the found loop's unit as its own block local st, and the side marker's
+ *   slot pointer as its own block local side, so neither shares a pseudo
+ *   with the long-lived unit and slot: 669. The found loop's registers now
+ *   match exactly (j r5, found r7, ids offset r6, st r1, mask caller-saved
+ *   at sp+8), r6 joins the reload rotation as native (spread = 1 through
+ *   r6), and the pending loop spills slot at sp+4 and caller-saves the
+ *   &targetPos copy in r4 at sp+8 as native.
+ * - the name drawing's unit as its own local who: 624 (declared after
+ *   unit or after pc, the same).
+ * Next divergence: reload-time spill slots below 48 are ordered
+ *   differently. Native (use counts): 12 selIds giv (4), 16 selSlot base
+ *   (2), 20 (3), 24 (8), 28 ids address sp+308 (21), 32 head (7), 36 tbl
+ *   address sp+212 (10), 40 and 44 (2 each); draft: 12 (7), 16 ids (22),
+ *   20 tbl (12), 24 (2), 28 (3), 32 (2), 36 (2), 40 (7), 44 (2). The draft
+ *   has no selIds giv: it shifts i each time.
+ * Trials on the way: st alone 1186 (frame 320: one caller-save slot fewer);
+ *   entry = &head[i] in the pending loop: alone 1149, with st 1046, with
+ *   st and side 826 (so entry stays a stepped pointer); targetPos through
+ *   a pointer tp (in the call argument, at the loop top, or before the
+ *   loop): 1155 alone, 1044/1046/1036 with st and head[i], no change with
+ *   side (dropped); unit without st on 669: 1041; on 624, the name
+ *   character in nx instead of n 630, the pending loop counting with j
+ *   1119, case 6's count as its own local no change, the cursor sine in
+ *   width instead of i 624 (draft 1595). Permuter 5 min over the
+ *   pending loop (st and head[i], 1046): 18 candidates, no gain.
+ * The pending loop still differs: native computes entry = head + 1 after
+ *   the i < cnt guard and steps a selIds byte offset (from 2) spilled at
+ *   sp+12, as a giv of i would; the draft sets entry before the guard and
+ *   shifts i each time.
  * Session T10-08026080/1 (from 1332), each kept:
  * - slide_offset through ((struct MenuCell **)&gBattleWork)[48]: native
  *   base reuse reproduced, 1332 (gWorkSlot[9]/[57] loads gWorkSlot+0 and
@@ -32,6 +157,20 @@
  * spread = 1 reloads through r7 against native r6 (reload rotation; r6 is
  * free there in the greg dump), then the ids address spill at 16 against
  * native 28.
+ * Parallel session of 2026-10-06 (on 8b95cd7680, merged; its body 1335
+ *   against this body's 116, so this body is kept): kind case 5 first and
+ *   the top-only gBattleWork cell base, both carried above. Its trials
+ *   (base 1335): (u16) cast of the sleep word 1335; sel r10 device 1363;
+ *   head declared after matrix or last 1335, after window 1401, first
+ *   1409; no head (entries directly) 1438; ids/tbl as pointer locals over
+ *   buffers 1432-1442; gWorkSlot[9]/[57] at the top 1341, everywhere 1352;
+ *   &gWorkSlot[9] base 1335; slots + sel parameter 1342; slots + mode r8
+ *   1335; slots + mode r8 + sel r10 1361; press search through j 1377,
+ *   block-local id 1361, nx 1377, width 1393; permuter 5 min seed 11
+ *   --heat: weighted 29540 -> 24980 but differ 1455. It noted agscc's
+ *   Thumb andsi3 turns a constant 0xFFFF mask into extzv, so the native
+ *   mask was not a CONST_INT at expand time (now reproduced by the ||
+ *   chain above).
  * Earlier history (differ 1400 -> 1332):
  * Spill slots follow declaration order: the native keeps runtime 76,
  * window 72, cursor 68, cnt 64, redraw 56, slotId 52, pending 48, matrix 44,
@@ -103,6 +242,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     s32 pending;
     s32 matrix;
     s32 found;
+    s32 anchor;
     s32 column;
     s32 rows;
     s32 count;
@@ -124,6 +264,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     u8 *pl;
     u8 *pp;
     u8 *pc;
+    struct BattleUnit *who;
 
     runtime = gBattleWork;
     cnt = 0;
@@ -136,11 +277,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         ((struct MenuCell **)&gBattleWork)[48]->slide_offset = -2;
     else
         ((struct MenuCell **)&gBattleWork)[48]->slide_offset = 16;
-    i = 5;
-    while (i >= 0) {
+    for (i = 0; i < 6; i++)
         tbl[i].flags = 0;
-        i--;
-    }
     cursor = -1;
     if (mode == 2) {
         for (i = 0; i <= 5 && runtime->party_units[i] != 0xFF; i++) {
@@ -162,38 +300,33 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         if (spread != 0xFF && kind != 0) {
             found = 0;
             for (j = 0; j < cnt; j++) {
+                struct BattleUnit *st;
+
                 if (ids[j] == 0xFE)
                     continue;
-                unit = Owner_GetStateFar(ids[j]);
+                st = Owner_GetStateFar(ids[j]);
                 switch (kind) {
                 case 5:
-                    if (unit->hp == 0) {
+                    if (st->hp == 0) {
                         sel = ids[j];
                         found = 1;
                     }
                     break;
                 case 3:
-                    if (unit->poison != 0)
+                    if (st->poison != 0)
                         found = 1;
                     break;
                 case 4:
-                    if (*(u32 *)&unit->delusion & 0xFF0000FF)
-                        found = 1;
-                    else if ((*(u32 *)&unit->sleep & 0xFFFF) != 0)
-                        found = 1;
-                    else if (unit->death_count != 0)
+                    if (st->delusion != 0 || st->stun != 0
+                        || st->sleep != 0 || st->psy_seal != 0
+                        || st->death_count != 0)
                         found = 1;
                     break;
                 case 6:
-                    if ((*(u32 *)&unit->delusion & 0xFF0000FF) != 0)
-                        found = 1;
-                    else if ((*(u32 *)&unit->sleep & 0xFFFF) != 0)
-                        found = 1;
-                    else if (unit->death_count != 0)
-                        found = 1;
-                    else if (unit->poison != 0)
-                        found = 1;
-                    else if (unit->evil_spirit != 0)
+                    if (st->delusion != 0 || st->stun != 0
+                        || st->sleep != 0 || st->psy_seal != 0
+                        || st->death_count != 0 || st->poison != 0
+                        || st->evil_spirit != 0)
                         found = 1;
                     break;
                 }
@@ -236,9 +369,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         ((s32 *)head)[1] = 0x40002000;
         ((s32 *)head)[2] = pending;
         head->tile = Resource_GetBuffer(slotId, (((gFrameCount >> 2) & 31) << 8) + (s32)Menu_AnimatedCursorTiles);
-        if ((i = Trig_Sin(gFrameCount << 12)) < 0)
-            i = i + 0x7FFF;
-        pos.y += i >> 15;
+        pos.y += Trig_Sin(gFrameCount << 12) / 32768;
         y = pos.y;
         if (tbl[0].flags & 1) {
             nx = (pos.x + tbl[0].x) / 2;
@@ -250,8 +381,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             tbl[0].y = (u8)ny;
             pos.y = ny;
         } else if ((u8)tbl[0].flags <= 3) {
-            nx = pos.x;
-            tbl[0].x = (u8)nx;
+            tbl[0].x = (u8)pos.x;
             pos.y = y;
             tbl[0].y = (u8)y;
             tbl[0].flags = 1;
@@ -294,18 +424,13 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                     cnt++;
                 }
                 if (i != 0 && (n = cursor - i) >= 0 && ids[n] != 0xFE) {
-                    /* FAKEMATCH: schedule this consumed side-marker index
-                       before the slot writes; folding it differs 1445 versus 1400 here. */
-                    u8 mark;
                     selIds[cnt] = ids[n];
-                    mark = (u8)(6 - i);
-                    slot = &tbl[6 - i];
-                    selSlot[cnt] = mark;
-                    slot->flags |= 2;
-                    if (slot->index != -i) {
-                        slot->flags &= (u8)~1;
-                        slot->index = (s8)-i;
+                    tbl[6 - i].flags |= 2;
+                    if (tbl[6 - i].index != -i) {
+                        tbl[6 - i].flags &= (u8)~1;
+                        tbl[6 - i].index = (s8)-i;
                     }
+                    selSlot[cnt] = (u8)(6 - i);
                     cnt++;
                 }
                 i++;
@@ -328,12 +453,10 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         if (infoWin != 0)
             UiWork_Finalize(infoWin, 1);
         switch (kind) {
-            /* FAKEMATCH: share the consumed coordinate temporary between
-               these cases; ordinary direct expressions differ 1410 versus 1400 here. */
-            s32 anchor;
         case 7:
-            column = pos.x / 8 - 4;
-            if (pos.x / 8 + 4 > 29)
+            anchor = pos.x / 8;
+            column = anchor - 4;
+            if (anchor + 4 > 29)
                 column = 22;
             infoWin = UiWindow_Create(column, 8, 9, 3, 6);
             UiWork_SetParamNibble(2);
@@ -341,8 +464,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             UiWork_SetParamNibble(15);
             goto frame_tail;
         case 1:
-            column = pos.x / 8 - 7;
-            if (pos.x / 8 + 6 > 29)
+            anchor = pos.x / 8;
+            column = anchor - 7;
+            if (anchor + 6 > 29)
                 column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
             UiText_DrawStringAtOffset((u8 *)OwnerStatus_HpString, (struct RenderInput *)infoWin, 0, 0);
@@ -351,9 +475,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             UiText_DrawNumberInWindow(unit->max_hp, 4, (s32)infoWin, 56, 0);
             goto frame_tail;
         case 2:
-            anchor = pos.x;
-            column = anchor / 8 - 7;
-            if (pos.x / 8 + 6 > 29)
+            anchor = pos.x / 8;
+            column = anchor - 7;
+            if (anchor + 6 > 29)
                 column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
             UiText_DrawStringAtOffset((u8 *)OwnerStatus_PpString, (struct RenderInput *)infoWin, 0, 0);
@@ -362,8 +486,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             UiText_DrawNumberInWindow(unit->max_pp, 4, (s32)infoWin, 56, 0);
             goto frame_tail;
         case 5:
-            column = pos.x / 8 - 7;
-            if (pos.x / 8 + 5 > 29)
+            anchor = pos.x / 8;
+            column = anchor - 7;
+            if (anchor + 5 > 29)
                 column = 18;
             infoWin = UiWindow_Create(column, 8, 12, 3, 6);
             if (unit->hp != 0)
@@ -371,8 +496,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             UiText_DrawCharacterAtOffset(0x8AB, (struct RenderInput *)infoWin, 0, 0);
             goto frame_tail;
         case 3:
-            column = pos.x / 8 - 7;
-            if (pos.x / 8 + 5 > 29)
+            anchor = pos.x / 8;
+            column = anchor - 7;
+            if (anchor + 5 > 29)
                 column = 18;
             infoWin = UiWindow_Create(column, 8, 12, 3, 6);
             if (unit->poison == 0)
@@ -398,7 +524,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                 rows = 4;
             anchor = pos.x / 8;
             column = anchor - 7;
-            if (pos.x / 8 + 9 > 29)
+            if (anchor + 9 > 29)
                 column = 14;
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
@@ -446,8 +572,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             rows = 9 - count;
             if (rows <= 3)
                 rows = 4;
-            column = pos.x / 8 - 7;
-            if (pos.x / 8 + 9 > 29)
+            anchor = pos.x / 8;
+            column = anchor - 7;
+            if (anchor + 9 > 29)
                 column = 14;
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
@@ -494,17 +621,17 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     draw_name:
         if (spread == 0xFF)
             goto frame_tail;
-        unit = Owner_GetStateFar(ids[cursor]);
+        who = Owner_GetStateFar(ids[cursor]);
         BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&namePos);
         namePos.y += Trig_Sin(gFrameCount << 12) / 32768;
-        if (unit->class_id == 125 || unit->class_id == 122) {
+        if (who->class_id == 125 || who->class_id == 122) {
             width = 0x80E;
-            if (unit->class_id == 125)
+            if (who->class_id == 125)
                 width++;
             UiText_CopyMessageString(width, name, 14);
         } else {
             for (i = 0; i <= 13; i++) {
-                name[i] = n = unit->name[i];
+                name[i] = n = who->name[i];
                 if (!n)
                     break;
             }
@@ -523,23 +650,29 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         redraw &= ~1;
     frame_end:
         if (pending != 0) {
-            entry = head + 1;
-            for (i = 1; i < cnt; i++, entry++) {
+            for (i = 1; i < cnt; i++) {
+                entry = &head[i];
                 slot = &tbl[selSlot[i]];
                 BattleMotion_ProjectConditionalPositionFar(selIds[i], (s32 *)&targetPos);
                 targetPos.y = targetPos.y + Trig_Sin(gFrameCount << 12) / 32768;
                 *entry = *head;
                 if (slot->flags & 1) {
-                    targetPos.x = (targetPos.x + slot->x) / 2;
-                    targetPos.y = (targetPos.y + slot->y) / 2;
-                    slot->x = targetPos.x;
-                    slot->y = targetPos.y;
+                    s32 x = (targetPos.x + slot->x) / 2;
+                    s32 y = (targetPos.y + slot->y) / 2;
+
+                    targetPos.x = x;
+                    slot->x = x;
+                    targetPos.y = y;
+                    slot->y = y;
                 } else {
-                    targetPos.x = entry->x;
-                    targetPos.y = entry->y + 8;
+                    s32 x = entry->x;
+                    s32 y = entry->y + 8;
+
                     slot->flags = 1;
-                    slot->x = targetPos.x;
-                    slot->y = targetPos.y;
+                    targetPos.x = x;
+                    slot->x = x;
+                    targetPos.y = y;
+                    slot->y = y;
                 }
                 entry->mode = 1;
                 entry->x = targetPos.x - 8;
@@ -555,12 +688,12 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         pressed = gKeyState;
         repeat = gKeysRepeat;
         if (gLinkCountdownWork->auto_enabled) {
-            pressed = 0;
             repeat = 0;
+            pressed = 0;
             if (gLinkCountdownWork->auto_delay == 0) {
                 gLinkCountdownWork->auto_delay = 60;
-                pressed = 1;
                 repeat = 1;
+                pressed = 1;
             } else {
                 gLinkCountdownWork->auto_delay--;
             }
@@ -599,7 +732,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             if (repeat & 0x60) {
                 AudioCommand_PlayFar(111);
                 do {
-                    cursor = total + cursor - 1;
+                    cursor = cursor + total - 1;
                     cursor %= total;
                 } while (ids[cursor] == 0xFE);
                 redraw |= 1;

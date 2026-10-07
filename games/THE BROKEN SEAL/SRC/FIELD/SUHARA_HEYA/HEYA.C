@@ -110,7 +110,7 @@ void Scene_RunPrimaryScript(void)
         Camera_MoveTo(24117248, -1, 6815744, 1);
         Actor_WalkToAndWait(0, 368, 160);
         Actor_FaceDirection(0, 49152, 0);
-        Motion_LaunchFromFocusedObject(19, 0, -16, 49152);
+        FieldMotion_LaunchFromFocusedObject(19, 0, -16, 49152);
         Actor_WaitForMove(19);
         Camera_WaitForMove();
         Event_SetMessage((s32)MsgSuharaIodem);

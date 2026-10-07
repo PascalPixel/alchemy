@@ -1,4 +1,4 @@
-/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 105 of 1276 (1277 draft instructions); was 289 at session 3's start, 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp (as the plain parameter), render in sl, the row computation, the swap preview, the whole help line and the gMenuWork load now match. Remaining: the prologue's zeros (native gives frame and cursor[] their own 0 where this shares anim's), native loads 0xba0 from the pool where this builds it as 186<<4, and instruction order at a few calls (see Open). No function counts yet.
+/* 080ad6d4 OwnerAction_RunCompareLoop: structural draft. differ 30 of 1276 (1276 draft instructions); 62 at session 8's start, 62 at session 7's start and end, 64 at session 6's start, 93 at session 5's start, 105 at session 4's start, 289 at session 3's start, 709, and 1136 before shared work structures and real IWRAM calls. Frame, spill slots, mode in fp (as the plain parameter), render in sl, the row computation, the swap preview, the whole help line, the gMenuWork load, the tutorial cases 10 and 11 and the post-loop phase calls now match. Remaining: the prologue's zeros (native gives frame and cursor[] their own 0 where this shares anim's), the auto-advance case's timer store, and the tile bracket calls' argument order (see Open). No function counts yet.
  * Stubborn (2026-10-06): re-scored differ 927; not first-try. Score+parked from sun100 queue-3.
  * Trial (2026-10-06): the page dispatch as a switch with the default (paired entry action) first, then case 1, then case 0, matches the native block order (default, page 1, page 0): 927 -> 892.
  * Trial (2026-10-06): dirty as u32 gives the native lsrs for dirty >> 1; differ stays 892.
@@ -20,7 +20,24 @@
  * Trial (2026-10-06, session 2): with the copy routine in r5, mode as the plain parameter wins fp by itself, so its fixed-fp FAKEMATCH is gone, and the row computation ties mode as native: 293 -> 289. On top of that, 0x8000 fixed in r8 and 0 in sl give 285 (the pools then line up) but attr still takes r1 and the copies stay wrong; not kept for 4. cursor[0] = cursor[1] = 0 leaves 289 and still reloads anim's 0 where native has its own zero in r7.
  * Trial (2026-10-06, session 3): the help line's ands copied attr where native copies the mask (mov r3, r8; movs r3, #224; movs r3, #31). In regmove the first commutative operand that stays live is copied into the result, so the copy goes to the constant only when attr is a hard register: attr fixed in r2 (FAKEMATCH) gives 289 -> 187. Constant-first source order (0xe0 & attr) folds back: 289. The tilemap entries read state->pair_entries[x] directly, where native loads it into r3 and not attr's r2: 175. row * 8 as the argument, not a y temporary: 172. 224 and the shared 0 then tie at priority 769 (7 refs over 182 insns, 4 over 104) and 224 wins by pseudo number; 0 fixed in sl (FAKEMATCH) and set inside the first tilemap call's argument as native: 127 (zero = 0 as a statement before the call: 139, before the draw: 154, at the row computation: 172). The 0x8000 test through state->pair_entries[0] directly, without attr: 259 against 289 (the no-call path then reloads).
  * Trial (2026-10-06, session 3): the prologue assignments as anim, dirty, frame, cursor[0], page, then state->cursor->active = 13 and cursor[1] (permuter hint, 5 minutes over the prologue): gMenuWork is loaded into r3 before the stack adjustment and state->cursor is reached through mov r4, r9 as native, and cursor[0] takes a fresh 0: 127 -> 105. All 24 orders of anim, dirty, page and frame alone: 127 to 135; frame = anim and state loaded last: 127; all 240 orders of the five with cursor[1] last or right after cursor[0]: 105 at best (also anim, frame, dirty, cursor[0], page); cursor[0] = cursor[1] = 0 or cursor[1] = cursor[0] = 0 in any of 120 orders each: 119 at best.
- * Open (2026-10-06, session 3): 105 instructions remain, all register choice or instruction order. Prologue: native gives anim, dirty, page and frame the registers r0, r1, r3, r2 and zeroes both cursor[] entries from its own 0 in r7; here frame's reload inherits anim's 0 in r0 and cursor[1] stores anim's 0 reloaded from its slot (CSE puts anim's register in for the constant). 0xba0: native loads it from the pool, which a K constant reaches only when the movsi split does not run on it; this splits it to 186<<4. Order only: the tutorial's work = UiText_OpenMessageWindowFar copy (native right after the call), the argument loads of both 0x060052c0 IWRAM calls (native r1, r3, r0 for the copy and r3, r0, r1, r2 for the fill), the 0x200 size of the tutorial copies (native shifts it last), the tile loop's list->width - count[page] - 3 and the two SetSlotPhase(x, 0) after the loop (native sets r1 first). */
+ * Trial (2026-10-06, session 4): expand_call loads a call argument into its pseudo before the function address when the argument is a constant costing more than 2 (0x060052c0, 0x44444444, 0x200), but loads a variable's register after it; native loads all three after the IWRAM address. A tile variable for 0x060052c0 shared by the copy and the fill: 105 -> 103; a fill variable for 0x44444444 as well: both calls match, 97. A size variable for the tutorial buffer's 0x200 in both copies of each case: 93 (the allocation through size or with 0x200, and size set before or after it: 93). Cursor[] zeroed through an empty asm output (none) after the four scalars: CSE gives the asm anim's register as input, 127.
+ * Trial (2026-10-06, session 4): the cursor[] zero through a variable fixed in r7 (as native) after frame, or after active = 13: both stores take r7 as native, but gMenuWork is no longer loaded before the stack adjustment and frame still inherits anim's r0: 109 either way. A bracket variable for 0xf128 and 0xf129 after the tile loop: 93, unchanged. Reload's find_equiv_reg (reload.c) gives frame anim's r0 because anim's own insn, rewritten in place to (set r0 0), is the nearest earlier set of 0; native's frame would need that set hidden (an intervening r0 set or a label).
+ * Trial (2026-10-06, session 4): the same cause explains the swap preview's 332: a size local (sizeof(*unit_copy)) for the allocation and the four copies, called directly, compiles identically to the copy routine fixed in r5, so that FAKEMATCH is gone (93). A 5-minute permuter run (2 jobs, 253 candidates on a shared machine) randomizing tutorial case 10 found nothing below 93; one work local shared by both tutorial cases, or size set right before each first copy: 93. A top local for the tile calls' -1 row: 119.
+ * Trial (2026-10-07, session 5): message ids are linker symbols (W8), and a symbol's value always comes from the pool where a K constant is split into a shifted byte; the R-button hints 2976 and 2977 (DE, ES, FR, IT 2899 and 2900, JA 3371 and 3372) are named MsgDjinnPsyHelp and MsgDjinnStatusHelp in all six PO files and drawn through them: the 0xba0 pool load matches and the pool and branch offsets after it line up: 93 -> 64. The other messages here (0xba4 to 0xba7, 0xbc1, 0xc42, 0xc43) are still numbers and differ by edition, so they need names before adoption in other editions.
+ * Trial (2026-10-07, session 5): the auto-advance case with input_edge set before input_held, or input_held = input_edge = 1: 66; timer and step before the inputs: 70. frame or anim as u32: 64; page as u32: 70. After the loop, a phase local (0) for both SetSlotPhase calls: 80 (it takes sl); step reused for it: 315. The bracket column as width - 3 - count[page] or width - (count[page] + 3): 64; the loop's tile variable at block scope carrying 0xf128 and 0xf129: 64 (CSE propagates the constant back). render->dirty = (2 << (list->y >> 2)) | render->dirty: 76; list->y / 4: 64. A 5-minute heat-aimed permuter run (2 jobs, 2,515 candidates) lowered the weighted score but not the count: best differ 75.
+ * Diagnosis (2026-10-07, session 5, sched2 dump): the post-loop SetSlotPhase(0, 0) sets tie in the scheduler (priority 186, three dependents each), so the earlier insn wins: native's r1 first means its r1 set came first in the RTL. In tutorial case 10 everything after UiText_OpenMessageWindowFar is ready at once; the active = 1 chain (mov r4, r9; ldr; strb) outranks the work copy, so the copy lands after the store, and movs r0 then waits for it (anti dependence), which puts movs r1 first; native copies first. In the prologue frame's set gets r0 as its output reload register and the redundant set is deleted; cursor[0]'s constant reload takes r2 (native: frame r2, cursor[] r7).
+ * Trial (2026-10-07, session 6): the bracket calls' -1 row through a block-local top: a constant costing more than 2 is precomputed into a pseudo ahead of the argument loads (so the second bracket call copied r3 before r0), while a variable loads in argument order: r0 is copied before r3 as native: 64 -> 62. row reused for it instead: 116 (it joins the help line's row and swaps r5/r7 there). A bracket variable for 0xf128 and 0xf129 on top: 62. Iwram_CopyWords typed void (an experiment only, a local redefinition): 74. A 5-minute heat-aimed permuter run (2 jobs) on 62: weighted 1570 at best (against the draft's 1860) at differ 75; the lowest differ was 71.
+ * Diagnosis (2026-10-07, session 6, sched2 dump): the tutorial copies are a scheduler tie: the IWRAM address load, the r0 copy and the r1 copy all have priority 68 (case 10's first copy) and 3, 2 and 3 dependents, so LUID decides and the address (loaded by prepare_call_address before the argument registers) goes first; case 11's second copy matches only because its r1 copy has a fourth dependent (the WaitFrames(1) that follows). The auto-advance case: r3 = 0 (priority 7, 3 dependents) beats the 0x212c load (7, 2); native schedules it after both input stores. Prologue: native's registers are reload rotation over a spill set that holds r7: anim r0, dirty r1, frame r2, page r3, state's reload r4, cursor's 0 r7 (cursor[1] inherits it); here frame inherits anim's r0 and the spill set is r0 to r4 only.
+ * Trial (2026-10-07, session 7): the bracket column through a block local set before the call (before top = -1: 660; after it: 658; the loop's allocation changes). 0xf128 through a block local set after top: 62, unchanged (CSE propagates it back into the argument load). The gMenuWork load moved after anim, after dirty or after frame: 72, 70, 70. anim = frame = 0 in place of the two statements: 85; frame = anim = 0: 62 (frame still inherits anim's r0).
+ * Diagnosis (2026-10-07, session 7, greg and sched2 dumps): bracket call: its five argument insns (0xf128 pool load, r2 -= 3, r5 = 0, r0 = list, r3 = top) all have priority 41 and two dependents, so LUID decides; expand_call precomputes the costly 0xf128 ahead of every other argument, so it goes first; native's order (r5, r0, r3, r1, r2 -= 3) means its 0xf128 load and final subtract came after the r0 and r3 loads in its RTL. Post-loop: one block runs from the loop exit to the epilogue; r0 = 0 and r1 = 0 each have three dependents (the call, the next set of the same register, the epilogue's use of sp), so LUID puts r0 first. Prologue: frame = 0 is an output reload from a simple constant move, so choose_reload_regs searches find_equiv_reg for the constant (reload1.c, search_equiv from SET_SRC) and inherits anim's r0; native's registers are plain rotation (anim r0, dirty r1, frame r2, page r3, r4 for state, r7 for cursor's 0), so its frame found no earlier set of 0 and its spill set includes r7.
+ * Trial (2026-10-07, session 8): after the loop, the phase argument held in r1 (FAKEMATCH, set to 0 before each call): both calls set r1 first as native: 62 -> 58. An empty asm (a full sched2 barrier: haifa-sched gives a traditional asm every register and memory dependence) right after each tutorial UiText_OpenMessageWindowFar (FAKEMATCH): the work copy stays right after the call and the tutorial copies and SlideCursor arguments follow in native order: 58 -> 50 (case 10) -> 40 (both cases). The same barrier between each case's tutorial_step store and active = 13 keeps the store before the mov from r9 as native, and the finalize call's r0 copy then also comes first: 40 -> 30. A barrier after input_edge = 1 in the auto-advance case: 28, but the 0x212c pool load then follows the input stores where native loads it before them (r3 = 0 now matches), so not kept. top = -1 before the tile loop instead of after it: 86. The bracket column as list->width - (count[page] + 3) or -3 - count[page] + list->width: 58, unchanged. frame = 0 moved after active = 13, after page = 2, or after cursor[1]: 80, 80, 81.
+ * Open (2026-10-07, session 8, 30 remain): the prologue zeros (16); the auto-advance case schedules r3 = 0 before the input stores (native: the 0x212c load first, r3 = 0 after both stores; 4); the bracket calls' 0xf128 load and r2 -= 3 come before the r0 and r3 copies, the second call copies r3 before r0, and the dirty offset's pool load sits after ldrh (10). All are register choice or order.
+ * Trial (2026-10-06, parallel session, merged 2026-10-07): the routine address held in r5 from the second copy on (fixed-register pointer, FAKEMATCH): the swap preview allocates as native, 332 rematerialized at each call: 408 -> 293. A plain function-pointer local set before the call (or inside the call expression) is set before the 332 and lives 92 insns against 88, so 332 still wins: 408. (Superseded by session 4's size local.)
+ * Trial (2026-10-06, parallel session): 0x8000 fixed in r8 for the help line: 293 -> 291 (not kept: 224 then takes sl and the shape is unchanged); with the shared 0 also fixed in sl, 224 is rematerialized as native but the pools move: 374. An empty volatile asm between the two help-line statements (flushing CSE): 494. frame = 0 before page = 2: 293, identical code. ((attr >> 5) & 7) for the element: 272, but only because the pools shift; native ands 224 before the shift, so not kept.
+ * Trial (2026-10-06, parallel session): the zeros. Native stores anim, dirty, page, frame from r0, r1, r3, r2 (frame does not reuse anim's 0) and the cursor pair from a fresh r7; here frame reuses r0 and the cursor pair reloads anim's slot. cursor[1] = cursor[0] = 0: 293; anim = 0 last: 297; s32 cursor[2] = { 0, 0 }: 593. A 4-minute permuter run over the order of the eight entry statements: best 286 (cursor[0] first, anim after the cursor write), whose store order is further from native's; not kept.
+ * Trial (2026-10-06, parallel session): the page label 0xba0 (message 2976) as a linker symbol (named MsgDjinnPsynergyPage there, MsgDjinnPsyHelp in session 5, which this draft keeps): native's pool load of a shiftable constant is a symbol address, not 186<<4: 293 -> 276.
+ * Trial (2026-10-06, parallel session): help line. 0x8000 fixed in r8 and the 0 in sl again: 376; 224 then goes unallocated, but regmove has already copied attr at every AND because the shared 224 never dies there, so it is still not native. Regmove's backward pass ties the operand that dies after scanning back to its set; native's tie of 224 and 31 needs both to die at their ANDs, so they were never shared when regmove ran. Passing 0 for mode in block 2: 295. (attr >> 5) & 7: 272 again, the 7 shared in r8 instead. The tile statements reading pair_entries directly, without attr: 347. Block 3 testing the attr of block 1 without its reload: 422. attr declared in each block: 293, identical code. Within block 1 both 224s sit in one basic block, so CSE always shares them unless the constant differs in mode or value; none of the source forms tried changes that. (Session 3's attr fixed in r2 solved the help line.)
+ * Open (2026-10-06, session 4; 0xba0 solved in session 5, 64 remain): 93 instructions remained at session 4's end, all register choice or instruction order. Prologue: native gives anim, dirty, page and frame the registers r0, r1, r3, r2 and zeroes both cursor[] entries from its own 0 in r7; here frame's reload inherits anim's 0 in r0 and cursor[1] stores anim's 0 reloaded from its slot (CSE puts anim's register in for the constant). 0xba0: native loads it from the pool, which a K constant reaches only when the movsi split does not run on it; this splits it to 186<<4. Order only: the tutorial's work = UiText_OpenMessageWindowFar copy (native right after the call), the tutorial copies' argument moves (native mov r1 before the address load and the size's shift last), the tile loop's list->width - count[page] - 3 and the two SetSlotPhase(x, 0) after the loop (native sets r1 first: arguments load in order, so r1 first means its argument was precomputed, a value costing more than 2 that later folds to 0, or the scheduler had a reason this source does not give it). */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
@@ -31,6 +48,8 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"
 extern struct DjinnMenuWork *gMenuWork;
+extern u8 MsgDjinnPsyHelp[];
+extern u8 MsgDjinnStatusHelp[];
 
 extern u8 Menu_BackdropFrameTile[];
 extern volatile u32 gKeyState;
@@ -135,11 +154,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         s32 second_flag;
         s32 out_a;
         s32 out_b;
-        /* FAKEMATCH: the routine's address and the size 332 tie for r5 (4 refs over 90 insns each) and the size, made first as the argument, wins by pseudo number; native keeps the address in r5 and builds 332 at each call. A plain local is propagated away by gcse. */
-        register s32 (*copy)(void *, const void *, s32) asm("r5");
+        s32 size;
 
         diff_work = Runtime_BumpAllocateAlternatePool(96);
-        unit_copy = Runtime_BumpAllocateAlternatePool(sizeof(*unit_copy));
+        size = sizeof(*unit_copy);
+        unit_copy = Runtime_BumpAllocateAlternatePool(size);
         second_element = 0;
         second_index = 0;
         id = state->shown_owner[0];
@@ -148,7 +167,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         first_flag = (u16)(state->pair_entries[0] & 0x8000);
 
         unit = Owner_GetStateFar(id);
-        Iwram_CopyWords(unit_copy, unit, sizeof(*unit_copy));
+        Iwram_CopyWords(unit_copy, unit, size);
         Djinn_DeactivateFar(id, first_element, first_index);
         if (mode == 0) {
             second_element = state->pair_element[1];
@@ -162,12 +181,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         Owner_RecalculateStatsFar(id);
         count[0] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
-        copy = Iwram_CopyWords;
-        copy(unit, unit_copy, sizeof(*unit_copy));
+        Iwram_CopyWords(unit, unit_copy, size);
 
         id = state->shown_owner[1];
         unit = Owner_GetStateFar(id);
-        copy(unit_copy, unit, sizeof(*unit_copy));
+        Iwram_CopyWords(unit_copy, unit, size);
         if (mode == 0) {
             Djinn_DeactivateFar(id, second_element, second_index);
         }
@@ -178,7 +196,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         Owner_RecalculateStatsFar(id);
         count[1] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
-        copy(unit, unit_copy, sizeof(*unit_copy));
+        Iwram_CopyWords(unit, unit_copy, size);
         Runtime_BumpFree(unit_copy);
         Runtime_BumpFree(diff_work);
     } else if (mode - 2 <= 1) {
@@ -290,8 +308,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
         if (scene->tutorial_step != 0) {
             s16 *saved;
+            s32 size;
 
-            saved = Runtime_BumpAllocateAlternatePool(0x200);
+            size = 0x200;
+            saved = Runtime_BumpAllocateAlternatePool(size);
             input_edge = 0;
             input_held = 0;
             scene->tutorial_timer += 1;
@@ -311,8 +331,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 if (scene->tutorial_timer == 60) {
                     s32 work;
 
-                    Iwram_CopyWords(saved, render, 0x200);
+                    Iwram_CopyWords(saved, render, size);
                     work = UiText_OpenMessageWindowFar(0xc43, 8, 0, 1);
+                    /* FAKEMATCH: the active = 1 chain (mov r4, r9; ldr; strb) outranks the work copy in sched2, so the copy landed after the store; an empty asm is a scheduling barrier that keeps the copy right after the call as native. */
+                    asm("");
                     state->cursor->active = 1;
                     UiMenu_SlideCursor(2, 96);
                     gGameState.message_speed = 1;
@@ -320,12 +342,14 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                         WaitFrames(1);
                     }
                     UiWork_FinalizeFar(work, 1);
-                    Iwram_CopyWords(render, saved, 0x200);
+                    Iwram_CopyWords(render, saved, size);
                     UiWindow_MarkVisibleTileAttributesFar();
                     render->dirty = 1;
                     dirty = 1;
                     scene->tutorial_timer = 0;
                     scene->tutorial_step = 11;
+                    /* FAKEMATCH: the mov from r9 for active = 13 outranks the step store in sched2; an empty asm barrier keeps the store first as native. */
+                    asm("");
                     state->cursor->active = 13;
                 }
                 break;
@@ -333,8 +357,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 if (scene->tutorial_timer == 60) {
                     s32 work;
 
-                    Iwram_CopyWords(saved, render, 0x200);
+                    Iwram_CopyWords(saved, render, size);
                     work = UiText_OpenMessageWindowFar(0xc42, 8, 0, 1);
+                    /* FAKEMATCH: the active = 1 chain (mov r4, r9; ldr; strb) outranks the work copy in sched2, so the copy landed after the store; an empty asm is a scheduling barrier that keeps the copy right after the call as native. */
+                    asm("");
                     state->cursor->active = 1;
                     UiMenu_SlideCursor(106, 56);
                     gGameState.message_speed = 1;
@@ -342,13 +368,15 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                         WaitFrames(1);
                     }
                     UiWork_FinalizeFar(work, 1);
-                    Iwram_CopyWords(render, saved, 0x200);
+                    Iwram_CopyWords(render, saved, size);
                     UiWindow_MarkVisibleTileAttributesFar();
                     render->dirty = 1;
                     WaitFrames(1);
                     dirty = 1;
                     scene->tutorial_timer = 0;
                     scene->tutorial_step = 12;
+                    /* FAKEMATCH: the mov from r9 for active = 13 outranks the step store in sched2; an empty asm barrier keeps the store first as native. */
+                    asm("");
                     state->cursor->active = 13;
                 }
                 break;
@@ -363,11 +391,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
             if (mode <= 1) {
                 UiWindow_ClearInteriorTilesFar(state->help_window, 128, 16, 224, 24);
                 if (page == 1) {
-                    UiText_DrawCharacterAtOffsetFar(0xba1, state->help_window, 128, 16);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnStatusHelp, state->help_window, 128, 16);
                 } else {
                     UiText_DrawQuantity(
                         state->shown_owner[page != 2], 1);
-                    UiText_DrawCharacterAtOffsetFar(0xba0, state->help_window, 128, 16);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnPsyHelp, state->help_window, 128, 16);
                 }
             }
             render->menu_busy = 1;
@@ -419,6 +447,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         if (page <= 1) {
             list = (struct UiWindow *)state->second_window;
             if (count[page] > 1) {
+                s32 top;
+
                 for (i = 0; i < count[page]; i++) {
                     s32 tile;
 
@@ -433,10 +463,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                         list->width - count[page] + i - 2,
                         -1, 0);
                 }
+                top = -1;
                 UiWindow_SetTilemapEntryFar((s32)list, 0xf128,
-                    list->width - count[page] - 3, -1, 0);
+                    list->width - count[page] - 3, top, 0);
                 UiWindow_SetTilemapEntryFar((s32)list, 0xf129,
-                    list->width - 2, -1, 0);
+                    list->width - 2, top, 0);
                 render->dirty |= 2 << (list->y >> 2);
             }
         }
@@ -479,10 +510,15 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         UiMenu_PositionCursor(anim * 56 + 80, 16);
 
         if ((frame & 3) == 0) {
+            void *tile;
+            u32 fill;
+
+            tile = (void *)0x060052c0;
+            fill = 0x44444444;
             if ((frame & 4) != 0) {
-                Iwram_CopyWords((void *)0x060052c0, Menu_BackdropFrameTile, 32);
+                Iwram_CopyWords(tile, Menu_BackdropFrameTile, 32);
             } else {
-                Iwram_FillWords((void *)0x060052c0, 32, 0x44444444);
+                Iwram_FillWords(tile, 32, fill);
             }
         }
 
@@ -528,8 +564,15 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         WaitFrames(1);
     }
 
-    FourObjectMotion_SetSlotPhase(0, 0);
-    FourObjectMotion_SetSlotPhase(1, 0);
+    {
+        /* FAKEMATCH: the two sets of each call tie in sched2 (priority 186, three dependents each) and expand_call emits r0 first, so LUID puts r0 first; native sets r1 first. The phase held in r1 is set before each call. */
+        register s32 phase asm("r1");
+
+        phase = 0;
+        FourObjectMotion_SetSlotPhase(0, phase);
+        phase = 0;
+        FourObjectMotion_SetSlotPhase(1, phase);
+    }
     Scheduler_AddOrUpdateCallback((s32)Menu_UpdateEntryObjectTransforms, 0xc80);
 
     ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 1;

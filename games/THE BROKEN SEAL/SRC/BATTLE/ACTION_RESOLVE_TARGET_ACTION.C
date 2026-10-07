@@ -12,7 +12,6 @@
 #include "IWRAM_CALL.H"
 #include "BATTLE_ACTOR.H"
 #include "BATTLE_CALC.H"
-#include "BATTLE_COMMAND.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EVENT.H"
 #include "BATTLE_MSG.H"
@@ -23,8 +22,6 @@
 #include "MOTION_OBJECT.H"
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
-
-#define BattlePresentation_SpawnActorObject ((void (*)(void*,s32,s32,s32))BattlePresentation_SpawnActorObject)
 
 #define CLAMP_MOD(v)                                                           \
     {                                                                          \
@@ -78,7 +75,7 @@
     (field) = 7;                                                               \
 }
 
-s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
+s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
 {
     s32 offset;
     struct BattleAction *action;
@@ -98,7 +95,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     s32 affinity;
     struct BattleUnit *copy;
     s32 power;
-    s16 hp0;
+    s32 hp0;
     s32 kind;
     s16 *cmd;
     s32 target_id;
@@ -124,7 +121,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     skip = 0;
     affinity = 0;
     size = sizeof(struct BattleUnit);
-    copy = (struct BattleUnit *)Runtime_BumpAllocate(size);
+    copy = Runtime_BumpAllocate(size);
 
     actor_id = plan->actor_id;
     target_id = plan->target_ids[slot];
@@ -237,16 +234,8 @@ after_power:
                 s32 listed;
 
                 listed = BattleParty_ListPresentEnemies(saved);
-                if (listed > 0) {
-                    u16 *q;
-
-                    q = (u16 *)saved;
-                    count = listed;
-                    do {
-                        Actor_ResetMotionAtAnchor(*q++);
-                        count--;
-                    } while (count != 0);
-                }
+                for (count = 0; count < listed; count++)
+                    Actor_ResetMotionAtAnchor((u16)saved[count]);
             }
             BattleEv_Push(BATTLE_EVENT_UNIT, rec);
             if (action_id != 503)
@@ -293,18 +282,17 @@ after_power:
         && (target->hp != 0 || BattleFx_IsReviveFar(action->effect) != 0)) {
         s32 pp;
         s32 cur;
+        s32 apwr;
 
         switch (nibble) {
         case BATTLE_DAMAGE_WEAPON:
         case BATTLE_DAMAGE_WEAPON_SCALED:
         {
             s32 def;
-            s32 apwr;
 
             hp0 = target->hp;
             def = target->defense;
             scale = def;
-            cur = hp0;
             if (half != 0)
                 scale = (u32)def >> 1;
             pass = 1;
@@ -345,21 +333,21 @@ after_power:
                 if (dmg <= 0)
                     dmg = 1;
                 if (crush != 0) {
-                    if (dmg < cur - 1) {
-                        dmg = cur - 1;
+                    if (dmg < hp0 - 1) {
+                        dmg = hp0 - 1;
                         if (dmg <= 0)
                             dmg = 1;
                     }
                 }
                 if (GameFlag_TestFar(366) != 0 && *cmd == 5
-                    && cur <= dmg) {
-                    dmg = cur - 1;
+                    && hp0 <= dmg) {
+                    dmg = hp0 - 1;
                 }
                 pass++;
             } while (pass <= 1);
+            hp0 -= dmg;
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-            cur -= dmg;
             BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
             {
                 s32 text;
@@ -371,15 +359,15 @@ after_power:
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
             }
 
-            if (cur <= 0) {
+            if (hp0 <= 0) {
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-                cur = 0;
+                hp0 = 0;
                 TEXT_SIDE(MsgGoesDown, MsgFelled);
             } else
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            dealt = target->hp - cur;
-            target->hp = cur;
+            dealt = target->hp - hp0;
+            target->hp = hp0;
             Owner_RecalculateRatiosFar(target_id);
             break;
         }
@@ -390,8 +378,8 @@ after_power:
                 break;
             pp = target->pp;
             TAKE_BONUS();
-            dmg = action->power;
-            dmg = Battle_CalcPower(dmg, bonus, 256);
+            apwr = action->power;
+            dmg = Battle_CalcPower(apwr, bonus, 256);
             dmg = dmg * PpLossFalloff[offset] / 100;
             dmg *= adjust;
             APPLY_GUARD();
@@ -426,8 +414,8 @@ after_power:
                 break;
             cur = target->hp;
 
-            dmg = action->power;
-            dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
+            apwr = action->power;
+            dmg = Battle_CalcRestore(apwr, range == 4 ? 100 : power, 256);
             dmg = dmg * HpHealFalloff[offset] / 100;
             dmg *= adjust;
             dmg += BattleRandom16Far() & 3;
@@ -455,8 +443,8 @@ after_power:
                 break;
             pp = target->pp;
             TAKE_BONUS();
-            dmg = action->power;
-            dmg = Battle_CalcPower(dmg, bonus, 256);
+            apwr = action->power;
+            dmg = Battle_CalcPower(apwr, bonus, 256);
             dmg = dmg * PpDmgFalloff[offset] / 100;
             dmg *= adjust;
             APPLY_GUARD();
@@ -485,15 +473,17 @@ after_power:
         case BATTLE_DAMAGE_HP_ADDITIVE_7:
         case BATTLE_DAMAGE_HP_ADDITIVE_9:
         {
+            s32 round;
+
             if (action->power == 0)
                 break;
             cur = target->hp;
-            pass = 1;
+            round = 1;
             do {
                 TAKE_BONUS();
-                if (pass == 0)
+                if (round == 0)
                     bonus = 0;
-                dmg = action->power;
+                apwr = action->power;
                 if (*cmd == 6) {
                     s32 item;
 
@@ -526,9 +516,9 @@ after_power:
                             break;
                         }
                     }
-                    dmg += target->max_hp * kind / 100;
+                    apwr += target->max_hp * kind / 100;
                 }
-                dmg = Battle_CalcPower(dmg, bonus, 256);
+                dmg = Battle_CalcPower(apwr, bonus, 256);
                 dmg *= adjust;
                 switch (nibble & 15) {
                 case BATTLE_DAMAGE_HP_ADDITIVE_6:
@@ -546,8 +536,8 @@ after_power:
                 if (GameFlag_TestFar(366) != 0 && *cmd == 6 && cur > dmg) {
                     dmg = cur;
                 }
-                pass++;
-            } while (pass <= 1);
+                round++;
+            } while (round <= 1);
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
@@ -588,8 +578,8 @@ after_power:
             if (action->power == 0)
                 break;
             pp = target->pp;
-            dmg = action->power;
-            dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
+            apwr = action->power;
+            dmg = Battle_CalcRestore(apwr, range == 4 ? 100 : power, 256);
             dmg = dmg * PpHealFalloff[offset] / 100;
             dmg *= adjust;
             pp += dmg;
@@ -620,8 +610,8 @@ after_power:
                 break;
             cur = target->hp;
             TAKE_BONUS();
-            dmg = action->power;
-            dmg = Battle_CalcPower(dmg, bonus, 256);
+            apwr = action->power;
+            dmg = Battle_CalcPower(apwr, bonus, 256);
             dmg *= adjust;
             dmg = dmg * HpDmgFalloff[offset] / 100;
             APPLY_GUARD();
@@ -813,7 +803,7 @@ after_power:
             break;
 
         case EFX_ATK_DOWN1:
-            target->attack_modifier += -1;
+            target->attack_modifier -= 1;
             CLAMP_MOD(target->attack_modifier);
             Owner_RecalculateStatsFar(target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
@@ -822,7 +812,7 @@ after_power:
             break;
 
         case EFX_ATK_DOWN2:
-            target->attack_modifier += -2;
+            target->attack_modifier -= 2;
             CLAMP_MOD(target->attack_modifier);
             Owner_RecalculateStatsFar(target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
@@ -849,7 +839,7 @@ after_power:
             break;
 
         case EFX_DEF_DOWN1:
-            target->defense_modifier += -1;
+            target->defense_modifier -= 1;
             CLAMP_MOD(target->defense_modifier);
             Owner_RecalculateStatsFar(target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
@@ -858,7 +848,7 @@ after_power:
             break;
 
         case EFX_DEF_DOWN2:
-            target->defense_modifier += -2;
+            target->defense_modifier -= 2;
             CLAMP_MOD(target->defense_modifier);
             Owner_RecalculateStatsFar(target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
@@ -920,7 +910,7 @@ after_power:
 
         case EFX_RES_DOWN2:
         {
-            target->res_modifier += -2;
+            target->res_modifier -= 2;
             if (-4 > target->res_modifier)
                 target->res_modifier = -4;
             if (target->res_modifier > 4)

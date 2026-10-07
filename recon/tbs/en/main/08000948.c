@@ -1,4 +1,7 @@
-/* 08000948: ARM draft (IwramSqrt); no admitted game ARM build route.
+/* 08000948: ARM draft (IwramSqrt) for the game ARM route (K1,
+   agbcc/camelot_arm). Route decision (2026-10-07), this draft under agscc
+   -marm with the game options: differ 28; with -mno-apcs-frame 28; with
+   -mno-apcs-frame -ffixed-fp 28.
    First draft, written from recon/tbs/raw/08000948.S, scored at the
    library ARM setting (analysis only, no credit):
    alchemy diff --camelot-arm (upstream's whole arm_adjust_cost):
@@ -12,6 +15,14 @@
    pattern, *movsi_compare0, prints cmp rd, #0 or subs rd, rn, #0, never
    movs r1, r0; and jump.c turns if (c) x = e; into a conditional move
    (HAVE_conditional_move) before final could make it a lone subhi.
+   The listing's test is also in the wrong mode for either compiler's
+   copy-and-test (2026-10-07, session 4): bxmi, not bxlt, so its flags
+   come from a CC_NOOV compare (get_arm_condition_code prints LT as mi
+   only in CC_NOOVmode; *movsi_compare0 sets CCmode). The one gcc_arm
+   pattern that prints movs rd, rn with CC_NOOV flags is
+   *shiftsi3_compare0 with a shift of 0 (shift_op drops a zero amount),
+   and simplify-rtx folds a shift by 0 away before it can match. Not
+   C2's handwritten list as written; a question for Pascal, not taken.
    Trials: alchemy permute --camelot-arm, 2.5 minutes, 8 jobs: best
    differ 32 (weighted 2660 -> 1300) with bit >> 1 read into a temporary
    before the first test and that temporary reused for the second

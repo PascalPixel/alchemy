@@ -110,9 +110,9 @@ Engine_EventRequestExit:
 	.thumb_func
 Engine_AudioPlayCueFromEventWork:
 	overlay_veneer Audio_PlayCueFromEventWorkFar
-	.global Engine_MotionLaunchFromFocusedObject
+	.global Motion_LaunchFromFocusedObject
 	.thumb_func
-Engine_MotionLaunchFromFocusedObject:
+Motion_LaunchFromFocusedObject:
 	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global Engine_ActorWalkByAndWait
 	.thumb_func

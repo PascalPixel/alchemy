@@ -65,9 +65,8 @@ rewrite's site is drawn in proportion to 1 plus the heat of the lines it
 changes (4 per differing instruction, 24 at the first divergence, 8 on each
 of the 3 lines before it). --prefix ranks candidates by how many
 instructions match from the start first, then by weighted score.
---camelot-arm compiles each candidate as alchemy diff --camelot-arm does: an
-analysis-only study of a ☀️ ARM draft with agbcc/camelot_arm. It is not an
-admitted build route and earns no credit, even at score 0."#;
+--camelot-arm compiles each candidate as alchemy diff --camelot-arm does:
+through the game ARM route (GAME_ARM_SOURCES, AGENTS.md K1)."#;
 
 struct Options {
     draft: PathBuf,
@@ -156,9 +155,6 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         Some(target) => target,
         None => decomp_target(Some(&format!("{game}-en")))?,
     };
-    if camelot_arm && game != "tbs" {
-        return Err(format!("--camelot-arm compiles ☀️ game ARM C only\n{USAGE}"));
-    }
     Ok(Options { draft, addresses, game, target, minutes, jobs, seed, function, iterations, camelot_arm, heat, prefix })
 }
 
@@ -347,7 +343,7 @@ fn reference(options: &Options) -> Result<(Vec<String>, Option<String>), String>
 pub fn run(arguments: &[String]) -> Result<(), String> {
     let options = parse_options(arguments)?;
     if options.camelot_arm {
-        println!("{}", crate::diff::CAMELOT_ARM_STUDY_NOTICE);
+        println!("{}", crate::diff::GAME_ARM_NOTICE);
     }
     let draft = std::fs::canonicalize(&options.draft).map_err(|e| format!("{}: {e}", options.draft.display()))?;
     let text = std::fs::read_to_string(&draft).map_err(|e| format!("{}: {e}", draft.display()))?;
@@ -1043,7 +1039,7 @@ mod tests {
         assert!(parse_options(&args(&["08000000.c", "--bogus"])).is_err());
         assert!(!parse_options(&args(&["08000000.c"])).unwrap().camelot_arm);
         assert!(parse_options(&args(&["recon/tbs/en/main/0800a0f8.c", "--camelot-arm"])).unwrap().camelot_arm);
-        assert!(parse_options(&args(&["08000000.c", "--edition", "tla-en", "--camelot-arm"])).is_err());
+        assert!(parse_options(&args(&["08000000.c", "--edition", "tla-en", "--camelot-arm"])).unwrap().camelot_arm);
     }
 
     #[test]

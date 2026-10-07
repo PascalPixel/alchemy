@@ -817,7 +817,7 @@ ObjectDispatch_Table6:
 Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x0002f258, 0x00008da8
 	.section .rom.000385e0, "ax"
-	.incbin "baserom.gba", 0x000385e0, 0x00000528
+	.incbin "baserom.gba", 0x000385e0, 0x00000310
 	.section .rom.000391b8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000391b8, 0x0000009c
@@ -4488,10 +4488,10 @@ Func_08120060:
 BattleEv_DispatchQueued:
 	.incbin "baserom.gba", 0x001201c0, 0x000001c4
 	.section .rom.00120450, "ax"
-	.global Battle_ResolveTargetAction
-	.type Battle_ResolveTargetAction, %function
+	.global BtlTgtExec
+	.type BtlTgtExec, %function
 	.thumb_func
-Battle_ResolveTargetAction:
+BtlTgtExec:
 	.incbin "baserom.gba", 0x00120450, 0x0000206c
 	.section .rom.001224d4, "ax"
 	.incbin "baserom.gba", 0x001224d4, 0x00000774

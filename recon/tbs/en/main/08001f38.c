@@ -1,5 +1,7 @@
-/* 08001f38: ARM draft (ColorBuffer_DarkenKernel); no admitted game ARM
-   build route. First draft, written from recon/tbs/raw/08001f38.S, scored
+/* 08001f38: ARM draft (ColorBuffer_DarkenKernel) for the game ARM route
+   (K1, agbcc/camelot_arm). Route decision (2026-10-07), this draft under
+   agscc -marm with the game options: differ 64; with -mno-apcs-frame 64;
+   with -mno-apcs-frame -ffixed-fp 64. First draft, written from recon/tbs/raw/08001f38.S, scored
    at the library ARM setting (analysis only, no credit):
    alchemy diff --camelot-arm (upstream's whole arm_adjust_cost):
    listing 32, draft 44, common 5, differ 66; stock agbcc_arm: 66.

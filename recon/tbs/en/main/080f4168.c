@@ -43,6 +43,48 @@
  * express an address giv as (plus offset_giv sprites) only when no constant
  * is left outside the offset. Find the source form that puts the field
  * offset inside the index; that likely also explains native's 3 extra spills.
+ * Parallel session (2026-10-06, T14), its best body differ 1945 not kept; its trials:
+ * Session 2026-10-06 (T14): opcode-level LCS (registers and offsets ignored)
+ * now matches 1774 of 2046; the rest of the differ is allocation and frame.
+ * Trial: the kind loop counts with i, as native's r11 does for every loop
+ * that holds no other i: 1966 -> 1964.
+ * Trial: locals declared frame, state, bet, timer, kind, winnings, counter,
+ * digits, count, then die/other: spill slots take native's order (each at
+ * native minus 12): 1964, unchanged.
+ * Trial: messages as numbers (MSGNO): 1964 -> 1959. Native loads one pool
+ * constant and derives the others (Coins = Winnings - 1, Throw + 1 = Quit,
+ * Coins + 10, Coins + 11): CSE's related-value reuse of one base symbol, so
+ * all four are written MsgLuckyDiceCoins + 0/1/10/11: 1959 -> 1941.
+ * Trial: the two discarded gKeysRepeat loads native makes before the KEY_UP
+ * test restored as key = gKeysRepeat twice: 1941 -> 1945; the dead loads get
+ * r0 (native r3), so sched2 cannot hoist the gKeysHeld address load above
+ * them. Kept: the loads are in the bytes. key = gKeysHeld as a third: 1945.
+ * Trial: tile loop inner counter x instead of j: 1990, worse.
+ * Trial: tile loop as *(u16 *)(0x06003000 + i) with i += 2: fp holds i as
+ * native, but j moves to sl and the store becomes reg+reg: 2056, worse.
+ * Spills (greg): both spill the 13 locals obj_palette..count first; the draft
+ * then spills stopped, a hoisted 0, &help_window, &flash, &faces, &spin,
+ * render+12 and copies; native has three more slots, render+12 between &flash
+ * and &faces, two unknown slots between &help_window and &flash.
+ * Open, likely the main cause: in every obj loop (faces, results, kind,
+ * shadows, clear, affine) native keeps offset givs (count * 8 + 200 ...) and
+ * addresses sprites (reloaded from its slot) + giv, reg+reg; the draft folds
+ * sprites into one pointer giv with immediate offsets. Native's faces loop
+ * reloads sprites inside the loop and keeps separate attr01/attr2 offset givs
+ * (240, 244), so for native's loop pass sprites was not an invariant pseudo.
+ * Trial: sprites address taken ((void)&sprites): load still hoisted, pointer
+ * giv kept: 2038, worse. Same as u32 spr cast at each use: 2061, worse.
+ * Native keeps stopped at sp+56, three slots below count (68), after
+ * &help_window (64) and one more temporary: its pseudo is made after the
+ * init code, as a block-scoped local would be. Trial: s32 stopped declared
+ * inside if (state == 1): the draft's slot moves to count - 12 as native's,
+ * differ 1947 (+2). Trial: dx, dy, dz, dist inside if (i != j): 1947, same.
+ * Trial: die/other declared after render, or j before i: 1945, unchanged.
+ * Lead to test (loop.c, simplify_giv_expr): a register made by the loop pass
+ * itself (>= max_reg_before_loop), or one not invariant in the inner loop,
+ * cannot enter a giv. The draft's loop dump processes loops last first, inner
+ * before outer, so a copy hoisted from the main loop would come too late;
+ * look for what makes sprites variant or new at the obj loops.
  */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"

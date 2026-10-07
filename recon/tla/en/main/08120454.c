@@ -1,6 +1,6 @@
 /* BtlTgtExec, tla-en 0x08120454.
- * alchemy diff: listing 3450 instructions, draft 3450, common 3414,
- * differ 72.
+ * alchemy diff: listing 3450 instructions, draft 3450, common 3415,
+ * differ 70.
  * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
  * SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
@@ -235,7 +235,26 @@
  * listing copies it from r7, since the tie ends apwr's equivalence with
  * dealt's slot. apwr = dealt, the halving into apwr, kind = apwr and
  * dmg += apwr (so apwr outlives the copy) 307.
- * Left at 72: the drain's halving (above: the listing loads dealt into
+ * Against 72: in the drain, a block-local amt (amt = dealt; if (...)
+ * amt = dealt / 2, or amt = amt / 2; kind = amt;) 104: cse reads amt
+ * for dealt and amt takes r1, not r7; kind = dealt / 2 in an if with
+ * kind = dealt in its else 239. In ☀️'s heal (games/), field reads in
+ * place of its stat_ptr walk, old = (u16)target->hp or *(u16 *)&target->hp
+ * and the same for maxu, load each stat once (ldrh, then lsls/asrs for
+ * the signed copy), since old is used only as (s16)old, the value heal
+ * already holds; the walk stays. An empty asm("") after bonus = 0, tagged
+ * FAKEMATCH, keeps movs r3, #192 for Ram_HeapSlots below the stores of
+ * plan, slot and bonus, as the listing has it, 70 (common 3415). The
+ * same kind of barrier would place most of the remaining swaps, one
+ * each, but they share one pattern the compiler should explain instead:
+ * where ours issues the head of a constant or address chain (movs #192,
+ * #128, #160, #187, adds #28, lsls #2) first, the listing issues a
+ * neighbouring load, mostly a reload from the stack (ldr [sp, #64]),
+ * first and the chain just before its use. Under haifa's priorities that
+ * means the listing's loads rank higher than a load latency of 2 gives
+ * them (at the summon's 0x6b/0x64 pair, 4 or more with ties by luid),
+ * the open K2 load model.
+ * Left at 70: the drain's halving (above: the listing loads dealt into
  * r7 before the test, copies it to r0 for the halving and copies r7 to
  * r6 for the amount, as if the halving read a spilled dealt whose reload
  * inherits r7); the four ldrh the barrier holds before their ldrsh; and
@@ -361,6 +380,8 @@ s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
     s32 tmp;
     s32 size;
     bonus = 0;
+    /* FAKEMATCH: barrier; sched2 otherwise hoists movs r3, #192 for Ram_HeapSlots above the stores of plan, slot and bonus, 72 without, 70 with. */
+    asm("");
     work = Ram_HeapSlots->battle_work;
     half = 0;
     dealt = 0;

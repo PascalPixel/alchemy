@@ -261,7 +261,11 @@ Func_020023b8:
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	.else
 	overlay_veneer Event_StartScreenTransitionFar
+	.endif
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
@@ -273,7 +277,7 @@ Event_WaitTransitionFrames:
 	overlay_veneer Event_StartScreenTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_StartScreenTransitionFar
+	overlay_veneer BattleParty_ApplyHealthDeltaFar
 	.else
 	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
@@ -293,7 +297,11 @@ Func_020023d8:
 	.global Func_020023e0
 	.thumb_func
 Func_020023e0:
+	.ifdef TLA_EDITION_JA
+	overlay_veneer Party_AddActiveOwnerFar
+	.else
 	overlay_veneer Func_080c8940
+	.endif
 	.global Func_020023e8
 	.thumb_func
 Func_020023e8:

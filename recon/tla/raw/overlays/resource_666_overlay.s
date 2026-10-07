@@ -150,7 +150,7 @@ Func_02000084:
 	pop {pc}
 	.2byte 0x0000
 .L_020081a4:
-	.4byte 0x00001b29
+	.4byte MsgScene666No31
 .L_020081a8:
 	.4byte gPartyState
 	.section .text.x020081ac,"ax",%progbits
@@ -194,7 +194,7 @@ Func_020001ac:
 .L_020081f6:
 	pop {r5, pc}
 .L_020081f8:
-	.4byte 0x00001b18
+	.4byte MsgScene666No14
 	.section .text.x020081fc,"ax",%progbits
 	.global Func_020001fc
 	.thumb_func
@@ -236,7 +236,7 @@ Func_020001fc:
 .L_02008246:
 	pop {r5, pc}
 .L_02008248:
-	.4byte 0x00001b1a
+	.4byte MsgScene666No16
 	.section .text.x0200824c,"ax",%progbits
 	.global Func_0200024c
 	.thumb_func
@@ -276,7 +276,7 @@ Func_0200024c:
 .L_02008292:
 	pop {r5, pc}
 .L_02008294:
-	.4byte 0x00001b40
+	.4byte MsgScene666No49
 	.section .text.x02008298,"ax",%progbits
 	.global Func_02000298
 	.thumb_func
@@ -295,7 +295,7 @@ Func_02000298:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020082b8:
-	.4byte 0x00001b08
+	.4byte MsgScene666No06
 	.section .text.x020082bc,"ax",%progbits
 	.global Func_020002bc
 	.thumb_func
@@ -452,7 +452,7 @@ Func_020002bc:
 .L_0200843c:
 	.4byte gPartyState
 .L_02008440:
-	.4byte 0x00001b09
+	.4byte MsgScene666No07
 	.section .text.x02008444,"ax",%progbits
 	.global Func_02000444
 	.thumb_func
@@ -480,7 +480,7 @@ Func_02000444:
 .L_02008474:
 	.4byte gPartyState
 .L_02008478:
-	.4byte 0x00001b0e
+	.4byte MsgScene666No08
 	.section .text.x0200847c,"ax",%progbits
 	.global Func_0200047c
 	.thumb_func
@@ -510,7 +510,7 @@ Func_0200047c:
 .L_020084b0:
 	.4byte gPartyState
 .L_020084b4:
-	.4byte 0x00001b3e
+	.4byte MsgScene666No48
 	.section .text.x020084b8,"ax",%progbits
 	.global Func_020004b8
 	.thumb_func
@@ -538,7 +538,7 @@ Func_020004b8:
 	bl Func_02000b3c
 	pop {r5, pc}
 .L_020084f0:
-	.4byte 0x00001c33
+	.4byte MsgScene666No55
 	.section .text.x020084f4,"ax",%progbits
 	.global Func_020004f4
 	.thumb_func
@@ -573,7 +573,7 @@ Func_020004f4:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200853c:
-	.4byte 0x00001c67
+	.4byte MsgScene666No74
 	.section .text.x02008540,"ax",%progbits
 	.global Func_02000540
 	.thumb_func
@@ -1144,7 +1144,7 @@ Func_02000738:
 .L_02008a6a:
 	pop {r5, pc}
 .L_02008a6c:
-	.4byte 0x00002f99
+	.4byte MsgScene666No120
 .L_02008a70:
 	.4byte Data_02000be4
 	.section .rodata.x02008be4,"a",%progbits
@@ -1716,34 +1716,39 @@ Data_020013dc:
 	.4byte Func_0200024c
 	.4byte 0x00000173
 	.4byte 0xffff00d6
-	.4byte 0x00403051
+	.2byte MsgScene666No121
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d7
-	.4byte 0x00403052
+	.2byte MsgScene666No122
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d8
-	.4byte 0x00403053
+	.2byte MsgScene666No123
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d9
-	.4byte 0x00403054
+	.2byte MsgScene666No124
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403055
+	.2byte MsgScene666No125
+	.2byte 0x0040
 	.4byte 0x00000002
 	.4byte 0x08b2001e
 	.4byte Func_02000084
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001b03
+	.4byte MsgScene666No01
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001b04
+	.4byte MsgScene666No02
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001b05
+	.4byte MsgScene666No03
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001b06
+	.4byte MsgScene666No04
 	.4byte 0x00000000
 	.4byte 0x08b1000e
 	.4byte Func_020002bc
@@ -1752,7 +1757,7 @@ Data_020013dc:
 	.4byte Func_020002bc
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001b07
+	.4byte MsgScene666No05
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Func_02000298
@@ -1761,127 +1766,127 @@ Data_020013dc:
 	.4byte Func_02000444
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001b0f
+	.4byte MsgScene666No09
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001b10
+	.4byte MsgScene666No10
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001b11
+	.4byte MsgScene666No11
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001b12
+	.4byte MsgScene666No12
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001b13
+	.4byte MsgScene666No13
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001b18
+	.4byte MsgScene666No14
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001b19
+	.4byte MsgScene666No15
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001b1a
+	.4byte MsgScene666No16
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001b1b
+	.4byte MsgScene666No17
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001b1c
+	.4byte MsgScene666No18
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001b1d
+	.4byte MsgScene666No19
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001b1e
+	.4byte MsgScene666No20
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00001b1f
+	.4byte MsgScene666No21
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00001b20
+	.4byte MsgScene666No22
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00001b21
+	.4byte MsgScene666No23
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00001b22
+	.4byte MsgScene666No24
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00001b23
+	.4byte MsgScene666No25
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00001b24
+	.4byte MsgScene666No26
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x00001b25
+	.4byte MsgScene666No27
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x00001b26
+	.4byte MsgScene666No28
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x00001b27
+	.4byte MsgScene666No29
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte 0x00001b28
+	.4byte MsgScene666No30
 	.4byte 0x00000000
 	.4byte 0xffff001f
-	.4byte 0x00001b2e
+	.4byte MsgScene666No32
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001b2f
+	.4byte MsgScene666No33
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001b30
+	.4byte MsgScene666No34
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001b31
+	.4byte MsgScene666No35
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001b32
+	.4byte MsgScene666No36
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001b33
+	.4byte MsgScene666No37
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001b34
+	.4byte MsgScene666No38
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001b35
+	.4byte MsgScene666No39
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001b36
+	.4byte MsgScene666No40
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001b37
+	.4byte MsgScene666No41
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x00001b38
+	.4byte MsgScene666No42
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x00001b39
+	.4byte MsgScene666No43
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x00001b3a
+	.4byte MsgScene666No44
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x00001b3b
+	.4byte MsgScene666No45
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x00001b3c
+	.4byte MsgScene666No46
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x00001b3d
+	.4byte MsgScene666No47
 	.4byte 0x00008d15
 	.4byte 0xffff041f
 	.4byte Func_0200047c
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001b40
+	.4byte MsgScene666No49
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001b41
+	.4byte MsgScene666No50
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1931,130 +1936,135 @@ Data_02001730:
 	.4byte Func_0200024c
 	.4byte 0x00000173
 	.4byte 0xffff00d6
-	.4byte 0x00403051
+	.2byte MsgScene666No121
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d7
-	.4byte 0x00403052
+	.2byte MsgScene666No122
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d8
-	.4byte 0x00403053
+	.2byte MsgScene666No123
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d9
-	.4byte 0x00403054
+	.2byte MsgScene666No124
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403055
+	.2byte MsgScene666No125
+	.2byte 0x0040
 	.4byte 0x00000000
 	.4byte 0x1971001e
-	.4byte 0x00001c73
+	.4byte MsgScene666No84
 	.4byte 0x00008d15
 	.4byte 0x1971001e
-	.4byte 0x00001c74
+	.4byte MsgScene666No85
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001c2f
+	.4byte MsgScene666No51
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001c30
+	.4byte MsgScene666No52
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001c31
+	.4byte MsgScene666No53
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001c32
+	.4byte MsgScene666No54
 	.4byte 0x00000000
 	.4byte 0x08b8000c
 	.4byte Func_020004b8
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001c34
+	.4byte MsgScene666No56
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001c35
+	.4byte MsgScene666No57
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001c36
+	.4byte MsgScene666No58
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001c37
+	.4byte MsgScene666No59
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001c38
+	.4byte MsgScene666No60
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001c39
+	.4byte MsgScene666No61
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001c3a
+	.4byte MsgScene666No62
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001c3b
+	.4byte MsgScene666No63
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001c5d
+	.4byte MsgScene666No64
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001c5e
+	.4byte MsgScene666No65
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001c5f
+	.4byte MsgScene666No66
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001c60
+	.4byte MsgScene666No67
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001c61
+	.4byte MsgScene666No68
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001c62
+	.4byte MsgScene666No69
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001c63
+	.4byte MsgScene666No70
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00001c64
+	.4byte MsgScene666No71
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x00001c65
+	.4byte MsgScene666No72
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte 0x00001c66
+	.4byte MsgScene666No73
 	.4byte 0x00000000
 	.4byte 0xffff001f
 	.4byte Func_020004f4
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001c6a
+	.4byte MsgScene666No75
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001c6b
+	.4byte MsgScene666No76
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001c6c
+	.4byte MsgScene666No77
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001c6d
+	.4byte MsgScene666No78
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001c6e
+	.4byte MsgScene666No79
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001c6f
+	.4byte MsgScene666No80
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x00001c70
+	.4byte MsgScene666No81
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x00001c71
+	.4byte MsgScene666No82
 	.4byte 0x00008d15
 	.4byte 0xffff001f
-	.4byte 0x00001c72
+	.4byte MsgScene666No83
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001c75
+	.4byte MsgScene666No86
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001c76
+	.4byte MsgScene666No87
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2104,118 +2114,123 @@ Data_020019dc:
 	.4byte Func_0200024c
 	.4byte 0x00000173
 	.4byte 0xffff00d6
-	.4byte 0x00403051
+	.2byte MsgScene666No121
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d7
-	.4byte 0x00403052
+	.2byte MsgScene666No122
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d8
-	.4byte 0x00403053
+	.2byte MsgScene666No123
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00d9
-	.4byte 0x00403054
+	.2byte MsgScene666No124
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x00403055
+	.2byte MsgScene666No125
+	.2byte 0x0040
 	.4byte 0x00000002
 	.4byte 0x1823001f
 	.4byte Func_02000738
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002588
+	.4byte MsgScene666No88
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002589
+	.4byte MsgScene666No89
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000258a
+	.4byte MsgScene666No90
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000258b
+	.4byte MsgScene666No91
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000258c
+	.4byte MsgScene666No92
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000258d
+	.4byte MsgScene666No93
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000258e
+	.4byte MsgScene666No94
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0000258f
+	.4byte MsgScene666No95
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002590
+	.4byte MsgScene666No96
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002591
+	.4byte MsgScene666No97
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002592
+	.4byte MsgScene666No98
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002593
+	.4byte MsgScene666No99
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000025a6
+	.4byte MsgScene666No100
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000025a7
+	.4byte MsgScene666No101
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000025a8
+	.4byte MsgScene666No102
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000025a9
+	.4byte MsgScene666No103
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000025aa
+	.4byte MsgScene666No104
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x000025ab
+	.4byte MsgScene666No105
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x000025ac
+	.4byte MsgScene666No106
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x000025ad
+	.4byte MsgScene666No107
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x000025ae
+	.4byte MsgScene666No108
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte 0x000025af
+	.4byte MsgScene666No109
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000025b0
+	.4byte MsgScene666No110
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000025b1
+	.4byte MsgScene666No111
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000025b2
+	.4byte MsgScene666No112
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000025b3
+	.4byte MsgScene666No113
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x000025b4
+	.4byte MsgScene666No114
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x000025b5
+	.4byte MsgScene666No115
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x000025b6
+	.4byte MsgScene666No116
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x000025b7
+	.4byte MsgScene666No117
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000025b8
+	.4byte MsgScene666No118
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000025b9
+	.4byte MsgScene666No119
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

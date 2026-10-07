@@ -257,15 +257,23 @@ Func_020013d0:
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	.else
 	overlay_veneer Event_FinishScreenTransitionFar
+	.endif
+	.endif
 	.global Event_WaitTransitionFrames
 	.thumb_func
 Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_StartScreenTransitionFar
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_StartScreenTransitionFar
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
@@ -273,19 +281,51 @@ Event_WaitTransitionFrames:
 	.global Object_SetWideSprite
 	.thumb_func
 Object_SetWideSprite:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer ObjectEvent_RemoveFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer ObjectEvent_RemoveFar
+	.else
 	overlay_veneer Object_SetWideSpriteFar
+	.endif
+	.endif
 	.global Func_020013f0
 	.thumb_func
 Func_020013f0:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8418
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8418
+	.else
 	overlay_veneer Object_ReturnHomeFar
+	.endif
+	.endif
 	.global Func_020013f8
 	.thumb_func
 Func_020013f8:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	.endif
+	.endif
 	.global Func_02001400
 	.thumb_func
 Func_02001400:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Party_PlaySavedMusicFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Party_PlaySavedMusicFar
+	.else
 	overlay_veneer Func_080c8580
+	.endif
+	.endif
 	.global ObjectMotion_OffsetPositionAndReset
 	.thumb_func
 ObjectMotion_OffsetPositionAndReset:
@@ -313,7 +353,15 @@ Func_02001420:
 	.global Func_02001428
 	.thumb_func
 Func_02001428:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8850
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8850
+	.else
 	overlay_veneer Func_080c8860
+	.endif
+	.endif
 	.global Func_02001430
 	.thumb_func
 Func_02001430:

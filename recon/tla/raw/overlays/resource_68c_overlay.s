@@ -70,11 +70,11 @@ Func_02000058:
 .L_020080f6:
 	pop {r5, pc}
 .L_020080f8:
-	.4byte 0x00002780
+	.4byte MsgScene68CNo11
 .L_020080fc:
-	.4byte 0x00002767
+	.4byte MsgScene68CNo08
 .L_02008100:
-	.4byte 0x0000274d
+	.4byte MsgScene68CNo05
 	.section .text.x02008104,"ax",%progbits
 	.global Func_02000104
 	.thumb_func
@@ -112,11 +112,11 @@ Func_02000104:
 .L_02008146:
 	pop {r5, pc}
 .L_02008148:
-	.4byte 0x00002781
+	.4byte MsgScene68CNo12
 .L_0200814c:
-	.4byte 0x00002768
+	.4byte MsgScene68CNo09
 .L_02008150:
-	.4byte 0x0000274f
+	.4byte MsgScene68CNo06
 	.section .text.x02008154,"ax",%progbits
 	.global Func_02000154
 	.thumb_func
@@ -151,7 +151,7 @@ Func_02000154:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200819c:
-	.4byte 0x00002783
+	.4byte MsgScene68CNo13
 	.section .text.x020081a0,"ax",%progbits
 	.global Func_020001a0
 	.thumb_func
@@ -186,7 +186,7 @@ Func_020001a0:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020081e8:
-	.4byte 0x0000278a
+	.4byte MsgScene68CNo18
 	.section .text.x020081ec,"ax",%progbits
 	.global Func_020001ec
 	.thumb_func
@@ -246,7 +246,7 @@ Func_020001ec:
 	bl Func_02002834
 	pop {r5, r6, r7, pc}
 .L_02008278:
-	.4byte 0x0000278d
+	.4byte MsgScene68CNo19
 	.section .text.x02008284,"ax",%progbits
 	.global Func_02000284
 	.thumb_func
@@ -732,7 +732,7 @@ Func_0200031c:
 	b .L_02008738
 	.2byte 0x0000
 .L_02008734:
-	.4byte 0x00002750
+	.4byte MsgScene68CNo07
 .L_02008738:
 	bl Func_020028bc
 	movs r1, #128
@@ -1374,7 +1374,7 @@ Func_02000a5c:
 	strh r3, [r2]
 	b .L_02008d7e
 .L_02008d54:
-	.4byte 0x00002769
+	.4byte MsgScene68CNo10
 .L_02008d58:
 	movs r0, #40
 	bl Battle_WaitMode0
@@ -2336,7 +2336,7 @@ Func_020013f0:
 	strh r3, [r2]
 	b .L_020095e2
 .L_020095bc:
-	.4byte 0x0000279b
+	.4byte MsgScene68CNo26
 .L_020095c0:
 	movs r0, #35
 	bl Battle_WaitMode0
@@ -4403,16 +4403,16 @@ gSceneEvents:
 	.4byte Func_020013f0
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002749
+	.4byte MsgScene68CNo01
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0000274a
+	.4byte MsgScene68CNo02
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000274b
+	.4byte MsgScene68CNo03
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000274c
+	.4byte MsgScene68CNo04
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte Func_02000058
@@ -4424,16 +4424,16 @@ gSceneEvents:
 	.4byte Func_02000154
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002786
+	.4byte MsgScene68CNo14
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00002787
+	.4byte MsgScene68CNo15
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002788
+	.4byte MsgScene68CNo16
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002789
+	.4byte MsgScene68CNo17
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte Func_020001a0
@@ -4457,49 +4457,58 @@ gSceneEvents:
 	.4byte Func_020001ec
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002790
+	.4byte MsgScene68CNo20
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002791
+	.4byte MsgScene68CNo21
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002792
+	.4byte MsgScene68CNo22
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002793
+	.4byte MsgScene68CNo23
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002794
+	.4byte MsgScene68CNo24
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002795
+	.4byte MsgScene68CNo25
 	.4byte 0x000000f3
 	.4byte 0xffff00c8
-	.4byte 0x00403064
+	.2byte MsgScene68CNo27
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x00403065
+	.2byte MsgScene68CNo28
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00ca
-	.4byte 0x00403066
+	.2byte MsgScene68CNo29
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cb
-	.4byte 0x00403067
+	.2byte MsgScene68CNo30
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cc
-	.4byte 0x00403068
+	.2byte MsgScene68CNo31
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cd
-	.4byte 0x00403069
+	.2byte MsgScene68CNo32
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00ce
-	.4byte 0x0040306a
+	.2byte MsgScene68CNo33
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cf
-	.4byte 0x0040306b
+	.2byte MsgScene68CNo34
+	.2byte 0x0040
 	.4byte 0x000001c3
 	.4byte 0xffff00d0
-	.4byte 0x0040306d
+	.2byte MsgScene68CNo35
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

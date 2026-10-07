@@ -15,7 +15,7 @@ msgctxt "message"
 msgid "00001"
 msgstr "(神殿からのスタートになります)"
 
-msgctxt "message"
+msgctxt "MsgIDonTKnowMy"
 msgid "00002"
 msgstr "(まだクリアしてません)"
 
@@ -59,7 +59,7 @@ msgctxt "message"
 msgid "00012"
 msgstr "{text_color:5}かきこみにしっぱいしました{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIThoughtID"
 msgid "00013"
 msgstr "{text_color:5}よみこみにしっぱいしました{end_wait}"
 
@@ -159,7 +159,7 @@ msgctxt "message"
 msgid "00037"
 msgstr "らくらくでいってみますか?{line_break}(失われし時代クリアデータの{line_break}つよさでスタート){end_now}"
 
-msgctxt "message"
+msgctxt "MsgBothKyleAnd"
 msgid "00038"
 msgstr "・・・ざんねんですが{line_break}クリアデータがありません{end_wait}"
 
@@ -24667,7 +24667,7 @@ msgctxt "message"
 msgid "06164"
 msgstr "ほう 灯台の上の戦いの時{line_break}サテュロスたちがいってたのか{line_break}ふうむ ヤツらがのう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheyDon"
 msgid "06165"
 msgstr "ほう 灯台の上の戦いの時{line_break}サテュロスたちがいってたのを{line_break}きいただけだと いうんじゃな。{end_wait}"
 
@@ -30359,7 +30359,7 @@ msgctxt "message"
 msgid "07587"
 msgstr "かいぞくパヤヤームたちを{line_break}あんたが つかまえたから{line_break}いそがしくなっちまったよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhStoppedBy"
 msgid "07588"
 msgstr "おう あんた オレたちに{line_break}めんかいに きたのかい?{end_now}"
 
@@ -47855,7 +47855,7 @@ msgctxt "message"
 msgid "11961"
 msgstr "しかくある者よ さあ ゆけ{line_break}しょうりゅうのごとく{line_break}天空へと のぼるがいい!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBetrayersYouHave"
 msgid "11962"
 msgstr "きおったな うらぎりの戦士よ。{end_wait}"
 
@@ -48179,7 +48179,7 @@ msgctxt "message"
 msgid "12042"
 msgstr "やめるんじゃ {actor_name:5}・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoAreThey"
 msgid "12043"
 msgstr "人が・・・たおれてますね・・・。{end_wait}"
 
@@ -48275,7 +48275,7 @@ msgctxt "message"
 msgid "12066"
 msgstr "ワシが もっとはやくに・・・{line_break}気が・・・ついていれば・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatSTheMatter"
 msgid "12067"
 msgstr "どうしたのよ {actor_name:8}・・・{line_break}エナジーをやめてしまったら{line_break}{actor_name:6}のパパたちの・・・。{end_wait}"
 
@@ -48455,15 +48455,15 @@ msgctxt "message"
 msgid "12111"
 msgstr "ゲホゲホ・・・{actor_name:5}・・・{line_break}よく ぶじにかえったな・・・{line_break}キミには たのみがある・・・{page_break}ゲホゲホ・・・キニーには・・・{line_break}わたしの分まで つよく生きろ{line_break}そう 伝えてほしいのだ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDoNotLet"
 msgid "12112"
 msgstr "かなしみから のがれてはならん{line_break}立ちむかうんじゃ {actor_name:5}よ{page_break}灯台に火をともしたあとなら・・・{line_break}いくら かなしみにくれようとも{line_break}ワシが 見まもってやろうぞ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWillYouCast"
 msgid "12113"
 msgstr "マーズスターをなげ入れますか?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTheBeaconIs"
 msgid "12114"
 msgstr "灯台の火が ともります・・・。{end_wait}"
 
@@ -48591,7 +48591,7 @@ msgctxt "message"
 msgid "12145"
 msgstr "それって・・・ワイズマン!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatCouldHe"
 msgid "12146"
 msgstr "ワイズマン なにしてるのかな?{end_wait}"
 

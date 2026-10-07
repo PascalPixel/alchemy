@@ -257,15 +257,23 @@ Party_SetFields1f2And1f4:
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_SetWeightedResultFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_SetWeightedResultFar
+	.else
 	overlay_veneer Event_StartScreenTransitionFar
+	.endif
+	.endif
 	.global Event_WaitTransitionFrames
 	.thumb_func
 Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_StartScreenTransitionFar
+	overlay_veneer Party_SetFields1eeAnd1f0Far
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_StartScreenTransitionFar
+	overlay_veneer Party_SetFields1eeAnd1f0Far
 	.else
 	overlay_veneer Event_WaitTransitionFramesFar
 	.endif

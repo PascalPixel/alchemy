@@ -73,15 +73,23 @@ Func_020005a4:
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	.else
 	overlay_veneer Event_FinishScreenTransitionFar
+	.endif
+	.endif
 	.global Event_WaitTransitionFrames
 	.thumb_func
 Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_StartScreenTransitionFar
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_StartScreenTransitionFar
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
@@ -89,19 +97,51 @@ Event_WaitTransitionFrames:
 	.global Func_020005bc
 	.thumb_func
 Func_020005bc:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer ObjectEvent_SetMode5WithCueFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer ObjectEvent_SetMode5WithCueFar
+	.else
 	overlay_veneer ObjectEvent_PlaceOnGroundFar
+	.endif
+	.endif
 	.global Func_020005c4
 	.thumb_func
 Func_020005c4:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	.endif
+	.endif
 	.global Func_020005cc
 	.thumb_func
 Func_020005cc:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8698
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8698
+	.else
 	overlay_veneer Func_080c86a8
+	.endif
+	.endif
 	.global Func_020005d4
 	.thumb_func
 Func_020005d4:
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c86d8
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c86d8
+	.else
 	overlay_veneer Func_080c86e8
+	.endif
+	.endif
 	.global Func_020005dc
 	.thumb_func
 Func_020005dc:

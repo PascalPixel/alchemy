@@ -4868,12 +4868,6 @@ Func_0811c074:
 	.thumb_func
 Func_0811c120:
 	.incbin "baserom.gba", 0x0011c138, 0x000000d8
-	.section .rom.0011c32c, "ax"
-	.global Func_0811c314
-	.type Func_0811c314, %function
-	.thumb_func
-Func_0811c314:
-	.incbin "baserom.gba", 0x0011c32c, 0x00000068
 	.section .rom.0011c3d4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0011c3d4, 0x00000294
@@ -5214,9 +5208,8 @@ BattleEffect_RunParticleStreams:
 	.thumb_func
 Func_0818f620:
 	.incbin "baserom.gba", 0x0018f620, 0x000024c0
-	.section .rom.00191b10, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00191b10, 0x000048dc
+	.section .rom.00191b7c, "ax"
+	.incbin "baserom.gba", 0x00191b7c, 0x00004870
 	.section .rom.00196404, "ax"
 	.global Func_08196404
 	.type Func_08196404, %function
@@ -5265,9 +5258,28 @@ Func_081a0028:
 	.type DisplayScroll_DrawMessageLine, %function
 	.thumb_func
 DisplayScroll_DrawMessageLine:
-	.incbin "baserom.gba", 0x001a0be8, 0x000006a0
+	.incbin "baserom.gba", 0x001a0be8, 0x000000c4
+	.global Func_081a0cac
+	.type Func_081a0cac, %function
+	.thumb_func
+Func_081a0cac:
+	.incbin "baserom.gba", 0x001a0cac, 0x000000cc
+	.global Func_081a0d78
+	.type Func_081a0d78, %function
+	.thumb_func
+Func_081a0d78:
+	.incbin "baserom.gba", 0x001a0d78, 0x00000240
+	.section .rom.001a101c, "ax"
+	.global DisplayScroll_DrawLine
+	.type DisplayScroll_DrawLine, %function
+	.thumb_func
+DisplayScroll_DrawLine:
+	.incbin "baserom.gba", 0x001a101c, 0x0000026c
 	.section .rom.001a1294, "ax"
-	.incbin "baserom.gba", 0x001a1294, 0x00004d6c
+	.incbin "baserom.gba", 0x001a1294, 0x00000ef0
+	.global DisplayScroll_LineTable
+DisplayScroll_LineTable:
+	.incbin "baserom.gba", 0x001a2184, 0x00003e7c
 	.global Resource_FarCall00B
 Resource_FarCall00B:
 	.incbin "baserom.gba", 0x001a6000, 0x00000018

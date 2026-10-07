@@ -136,3 +136,20 @@ s32 Func_0811c2b4(s32 slot, s32 *screen)
     screen[1] -= Iwram_MulQ16(scale, Func_0811c37c(slot) >> 16);
     return 0;
 }
+
+void *Owner_GetState(s32 owner);
+
+s32 Func_0811c314(s32 slot, s32 *screen)
+{
+    struct MotionObject *object = GetBattleObjectSlot(slot)->object;
+    struct SlotMotionRecord *record = GetMotionRecord(object, 0);
+    s32 scale;
+
+    Func_0811bd10();
+    scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
+    if (Summon_IsEntryFlagged(*(u16 *)((u8 *)Owner_GetState(slot) + 0x14a)) != 0)
+        screen[1] -= Iwram_MulQ16(scale, 24);
+    else
+        screen[1] -= Iwram_MulQ16(scale, 48);
+    return 0;
+}

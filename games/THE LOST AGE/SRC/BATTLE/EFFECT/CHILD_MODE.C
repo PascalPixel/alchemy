@@ -28,3 +28,30 @@ void Func_08191ae0(struct ChildGroup *group, s32 mode)
     }
     group->dirty = 1;
 }
+
+void Func_08191b10(u8 *table, u32 count, s32 scale)
+{
+    u32 step = count * 2;
+    s32 total = 0;
+    u32 i;
+    s32 j;
+
+    if (step > 63)
+        step = 63;
+    step = 63 / step;
+    if (step < 6)
+        step = 6;
+    for (i = 0; i != count; i++) {
+        s32 value;
+
+        total += step;
+        value = (scale * total) >> 16;
+        if (value > 63)
+            value = 63;
+        table[i] = value;
+    }
+    for (j = 1; j != 8; j++) {
+        for (i = 0; i != count; i++)
+            table[j * count + i] = table[i];
+    }
+}

@@ -1,5 +1,5 @@
 /* SaveMenu_Run (overlay resource_370 020083cc, listed as Func_020003cc): differ 45 of 920 (draft 921, common 898) with --symbol Func_020003cc.
- * Remaining: every instruction now matches; only literal pools differ. The pool after the LEFT arm's page-number subtract (b.n +90 where the native has +86) holds one word more than the native's, and the draft dumps its last pool before the epilogue with a b.n +12 around it (the 921st instruction), where the native's follows the function; so the far branches to the tail and the pool loads across them are off by those distances. Look for a constant the native shares (one entry) that the draft writes as two (a raw address beside a symbol, or 0x20096b2 beside 0x20096b4). Before adoption, row 8 of the scene table (code 0x377, area 3, map 7) needs its name in SRC/FIELD/SCENES.S: the draft calls it SceneId_Opening, which nothing defines yet.
+ * Remaining: every instruction now matches; only literal pool placement differs. The native keeps one pool after the epilogue (gKeyState, 0xf301, 0xf30b, 0xf128, 0xf129, gWindowWork, 0xea3, gEventWork, 0x3e7); the draft's arm_reorg finds the function-end barrier past the first fix's max_address, so it dumps the first seven after the far jump back to the page loop (after Func_02001fb4) and the last two before the epilogue with a b.n around them (the 921st instruction), which moves the far branches to the tail and the pool loads. The draft's address estimate up to the end must be larger than the native's: look for an RTL jump or insn whose default length differs (branches are measured before shorten_branches). Before adoption, row 8 of the scene table (code 0x377, area 3, map 7) needs its name in SRC/FIELD/SCENES.S: the draft calls it SceneId_Opening, which nothing defines yet.
  * Trials (2026-10-07, session 3):
  * - 78 -> 205: the draw call in each glyph arm: cross-jumping (after sched2) merges the tails as native, and caller-save no longer restores n at each arm's end; but CSE carries the f0c call's glyph address into both draws, loop.c hoists it (life 47) and global gives it r8, which pushes page off its register.
  * - 205 -> 141: the glyph address for f0c through a pointer behind asm volatile ("+r"): CSE no longer reuses it, but gcse cprop folds the draws' -524 and PRE hoists their sp + 24 to the loop entry (fp); the same in a goto loop (141).
@@ -7,6 +7,7 @@
  * - 69 -> 57: x passed as rec7 * 12 + 18 (or + 8) directly in the call: the product is built in r2 as native; as a separate x it goes through r3 (65-78).
  * - 57 -> 53: the row in value (a user variable that is r1 in the page dots): its copy from r0 stays, as native, but in r1 where the native has r3; record, v3, rec, rec5, x or base7_3001c94 coalesce with r0 (57), v4 (73), base3_2000240 (100), link_message (267); v3 = row; v3 <<= 4 (+= 2) (60-62); x as its own variable with the shift before or after (65-241).
  * - 53 -> 45: the row in a fixed-register variable row asm("r3") (FAKEMATCH): the copy from r0 to r3 and the shift in place, as native; the glyph loop now matches instruction for instruction.
+ * - 45 -> 45: the f0c call in do { } while (0) in place of the asm barrier (FAKEMATCH): its LOOP_END note ends the CSE path the same way and emits no insn, so the pool difference is not the asm's length estimate; kept, as it needs no inline asm. The glyph call with no barrier (183).
  * Trials (2026-10-07, session 2):
  * - 231 -> 221: the greetings stored as plain u16 through gSerialTransfer.payload and a 12-halfword peer row: the native's 0x30 is a pool load (thumb_movhi_insn takes a HImode constant through its "mn" alternative), and the struct stores expanded to an and/ior word update; the case-4/5 pool now sits after the greeting loop as native.
  * - 221 -> 221: gKeyState (volatile s32) and gLinkStatus (volatile u16) by name instead of raw addresses, as the native's relocations show; no change in code, kept.
@@ -702,9 +703,10 @@ s32 SaveMenu_Run(void)
                 /* FAKEMATCH: the row's copy from r0 goes to r1 (value) or folds into r0; the native copies it to r3 and shifts it there */
                 register s32 row asm("r3");
 
-                Func_02000f0c(password[v7] & 63, glyph);
-                /* FAKEMATCH: without the barrier CSE carries the glyph address into both draw calls and gcse hoists it out of the loop; the native rebuilds sp + 24 at each call */
-                asm volatile ("" : :);
+                /* FAKEMATCH: the loop note ends the CSE path, which otherwise carries the glyph address into both draw calls for gcse to hoist out of the loop; the native rebuilds sp + 24 at each call */
+                do {
+                    Func_02000f0c(password[v7] & 63, glyph);
+                } while (0);
                 record = Func_02001f3c(v7, 10);
                 if (record > 4) {
                     rec7 = Func_02001f4a(n, 10);

@@ -27,8 +27,6 @@
 #include "RAM_BUFFER.H"
 #endif
 
-#define BattlePresentation_SpawnActorObject ((void (*)(void*,s32,s32,s32))BattlePresentation_SpawnActorObject)
-
 #define CLAMP_MOD(v)                                                           \
     {                                                                          \
         if ((v) < -4)                                                          \
@@ -186,7 +184,7 @@ s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
     skip = 0;
     affinity = 0;
     size = sizeof(struct BattleUnit);
-    copy = (struct BattleUnit *)Runtime_BumpAllocate(size);
+    copy = Runtime_BumpAllocate(size);
 
 #if GAME_TLA
     if (action_id == 312 || action_id == 316)

@@ -151,7 +151,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/DECODE.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/DECODE_DATA.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DRAW_MAP.o"(.text .rodata .data .padding)
-    "*/recon/tbs/de/rom.o"(.rom.000098f8)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/VERTICES.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/CONVERT_MAP.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/COPY_STRIDED.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/UPDATE.o"(.text)

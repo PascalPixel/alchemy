@@ -55,12 +55,6 @@ ResourceSlot_ConversionTables:
 	.global Runtime_ByteRemapTable
 Runtime_ByteRemapTable:
 	.incbin "baserom.gba", 0x000097b8, 0x00000400
-	.section .rom.0000a0f8, "ax"
-	.global Transform_UpdateVertices
-Transform_UpdateVertices:
-	.incbin "baserom.gba", 0x0000a0f8, 0x00000284
-	.global Transform_UpdateVerticesEnd
-Transform_UpdateVerticesEnd:
 	.section .rom.0000caca, "ax"
 	.incbin "baserom.gba", 0x0000caca, 0x00000002
 	.section .rom.00012e80, "ax"

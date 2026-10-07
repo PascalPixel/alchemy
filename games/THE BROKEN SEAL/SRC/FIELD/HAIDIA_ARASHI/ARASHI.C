@@ -1502,16 +1502,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
         o = (u8 *)Object_GetById(25);
         ((struct FieldActor *)o)->steering_flags |= 1;
     }
-    {
-        u8 *o;
-        o = (u8 *)Object_GetById(26);
-        o = &((struct FieldActor *)o)->steering_flags;
-        /* FAKEMATCH: the set bit first, so the or writes into the register that holds it, as the ROM's does. */
-        {
-            u8 set = 1 | *o;
-            *o = set;
-        }
-    }
+    Object_GetById(26)->steering_flags |= 1;
     Engine_ActorFaceDirection(26, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(25, FACING_WEST, 10);
     Engine_ActorSetAnimation(24, 4);

@@ -729,7 +729,7 @@ Func_0200058c:
 	bl Func_02001fd4
 	bl .L_02009f20
 .L_02008630:
-	.4byte 0x00002804
+	.4byte MsgFieldYouAreLordCorrect
 .L_02008634:
 	.4byte 0x00013333
 .L_02008638:
@@ -3506,109 +3506,118 @@ gSceneEvents:
 	.4byte Func_0200058c
 	.4byte 0x00000000
 	.4byte 0x196a0008
-	.4byte 0x0000286e
+	.4byte MsgFieldLordConservatoSeemedVeryAngry
 	.4byte 0x00000000
 	.4byte 0x196a0009
-	.4byte 0x0000286f
+	.4byte MsgFieldBothLordConservatoAndThe
 	.4byte 0x00000000
 	.4byte 0x196a000a
-	.4byte 0x00002870
+	.4byte MsgFieldMaybeOnceYouHaveLeft
 	.4byte 0x00000000
 	.4byte 0x196a000b
-	.4byte 0x00002871
+	.4byte MsgFieldTodayHisHighnessAndLord
 	.4byte 0x00000000
 	.4byte 0x196a000c
-	.4byte 0x00002872
+	.4byte MsgFieldIfHydrosPlansToUnleash
 	.4byte 0x00008d15
 	.4byte 0x196a0008
-	.4byte 0x00002874
+	.4byte MsgFieldTheSenateSReportsUsually
 	.4byte 0x00008d15
 	.4byte 0x196a0009
-	.4byte 0x00002875
+	.4byte MsgFieldTheKingSLeadershipIs
 	.4byte 0x00008d15
 	.4byte 0x196a000a
-	.4byte 0x00002876
+	.4byte MsgFieldWheneverOutsidersArriveInLemuria
 	.4byte 0x00008d15
 	.4byte 0x196a000b
-	.4byte 0x00002877
+	.4byte MsgFieldWhatWillHappenToUs
 	.4byte 0x00008d15
 	.4byte 0x196a000c
-	.4byte 0x00002878
+	.4byte MsgFieldAsLongAsICan
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000027f6
+	.4byte MsgFieldHeIsStillInChambers
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000027f7
+	.4byte MsgFieldIfYouSeekTheCounsel
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000027f8
+	.4byte MsgFieldHisHighnessNeverLeavesA
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000027f9
+	.4byte MsgFieldConservatoAndTheKingWere
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000027fa
+	.4byte MsgFieldKingHydrosIsTheWisest
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000027fc
+	.4byte MsgFieldLordConservatoHoldsTheMost
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000027fd
+	.4byte MsgFieldOhDearUsingPsynergyIn
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000027fe
+	.4byte MsgFieldHisHighnessTheKingIs
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000027ff
+	.4byte MsgFieldLordConservatoOnlyRaisesHis
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002800
+	.4byte MsgFieldHisHighnessIsWorriedThat
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000287a
+	.4byte MsgFieldDoNotListenToConservato
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000287b
+	.4byte MsgFieldYouMustSailToThe
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0000287c
+	.4byte MsgFieldIThinkIOverheardSomething
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000287d
+	.4byte MsgFieldMyPeopleMayNotDesire
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000287e
+	.4byte MsgFieldHisMajestyHasComeTo
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x0000287f
+	.4byte MsgFieldTheActionsOfKingHydros
 	.4byte 0x000000f3
 	.4byte 0xffff00c8
-	.4byte 0x00403064
+	.2byte MsgFieldThereSABookCalled
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x00403065
+	.2byte MsgFieldIFoundALetterFrom
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00ca
-	.4byte 0x00403066
+	.2byte MsgFieldHereSABookCalled
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cb
-	.4byte 0x00403067
+	.2byte MsgFieldHereSABookCalled2
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cc
-	.4byte 0x00403068
+	.2byte MsgFieldHereSABookCalled3
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cd
-	.4byte 0x00403069
+	.2byte MsgFieldHereSABookCalled4
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00ce
-	.4byte 0x0040306a
+	.2byte MsgFieldHereSABookCalled5
+	.2byte 0x0040
 	.4byte 0x000000f3
 	.4byte 0xffff00cf
-	.4byte 0x0040306b
+	.2byte MsgFieldHereSABookCalled6
+	.2byte 0x0040
 	.4byte 0x000001c3
 	.4byte 0xffff00d0
-	.4byte 0x0040306d
+	.2byte MsgFieldWhatInWhatSWith
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

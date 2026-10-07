@@ -304,11 +304,11 @@ Func_02000210:
 .L_0200829c:
 	.4byte gPartyState
 .L_020082a0:
-	.4byte 0x000021bb
+	.4byte MsgFieldPenPenPen
 .L_020082a4:
-	.4byte 0x000021b7
+	.4byte MsgFieldPenPen
 .L_020082a8:
-	.4byte 0x000021b1
+	.4byte MsgFieldPenPen2
 	.section .text.x020082ac,"ax",%progbits
 	.global Func_020002ac
 	.thumb_func
@@ -350,11 +350,11 @@ Func_020002ac:
 	pop {pc}
 	.2byte 0x0000
 .L_02008300:
-	.4byte 0x000021bd
+	.4byte MsgFieldThereIsNothingBetterThan
 .L_02008304:
-	.4byte 0x000021b9
+	.4byte MsgFieldIMSoHappyMy
 .L_02008308:
-	.4byte 0x000021b3
+	.4byte MsgFieldMyDarlingPengulinaHurtHer
 	.section .text.x0200830c,"ax",%progbits
 	.global Func_0200030c
 	.thumb_func
@@ -405,11 +405,11 @@ Func_0200030c:
 .L_02008370:
 	.4byte gPartyState
 .L_02008374:
-	.4byte 0x000021bc
+	.4byte MsgFieldPenPenPehnnnn
 .L_02008378:
-	.4byte 0x000021b7
+	.4byte MsgFieldPenPen
 .L_0200837c:
-	.4byte 0x000021b2
+	.4byte MsgFieldPenPenPehnnn
 	.section .text.x02008380,"ax",%progbits
 	.global Func_02000380
 	.thumb_func
@@ -450,11 +450,11 @@ Func_02000380:
 	pop {pc}
 	.2byte 0x0000
 .L_020083d0:
-	.4byte 0x000021be
+	.4byte MsgFieldPengusIsPrettyPleasantAnd
 .L_020083d4:
-	.4byte 0x000021ba
+	.4byte MsgFieldIMSoGladTo
 .L_020083d8:
-	.4byte 0x000021b4
+	.4byte MsgFieldOhhMyLegICan
 	.section .text.x020083dc,"ax",%progbits
 	.global Func_020003dc
 	.thumb_func
@@ -507,7 +507,7 @@ Func_0200040c:
 .L_0200843a:
 	pop {pc}
 .L_0200843c:
-	.4byte 0x000021f7
+	.4byte MsgFieldIAmHereToTend
 	.section .text.x02008440,"ax",%progbits
 	.global Func_02000440
 	.thumb_func
@@ -579,11 +579,11 @@ Func_02000440:
 	bl Func_02003e6c
 	pop {pc}
 .L_020084e8:
-	.4byte 0x000021a4
+	.4byte MsgFieldWeLikeThisIslandA
 .L_020084ec:
 	.4byte gPartyState
 .L_020084f0:
-	.4byte 0x000021a7
+	.4byte MsgFieldLookWeReBusyWe
 	.section .text.x020084f4,"ax",%progbits
 	.global Func_020004f4
 	.thumb_func
@@ -603,7 +603,7 @@ Func_020004f4:
 	bl Func_02003e6c
 	pop {pc}
 .L_0200851c:
-	.4byte 0x000021a9
+	.4byte MsgFieldTheEasternSeaIsHuge
 	.section .text.x02008520,"ax",%progbits
 	.global Func_02000520
 	.thumb_func
@@ -637,7 +637,7 @@ Func_02000520:
 .L_02008560:
 	.4byte gPartyState
 .L_02008564:
-	.4byte 0x000021bf
+	.4byte MsgFieldChirpChirp
 	.section .text.x02008568,"ax",%progbits
 	.global Func_02000568
 	.thumb_func
@@ -805,11 +805,11 @@ Func_02000568:
 .L_020086e4:
 	.4byte gPartyState
 .L_020086e8:
-	.4byte 0x000021c4
+	.4byte MsgFieldWhatDoYouThinkDon
 .L_020086ec:
-	.4byte 0x000021c0
+	.4byte MsgFieldILoveFeelingFancyI
 .L_020086f0:
-	.4byte 0x000021c1
+	.4byte MsgFieldOhMyThatStoneYou
 	.section .text.x020086f4,"ax",%progbits
 	.global Func_020006f4
 	.thumb_func
@@ -1086,7 +1086,7 @@ Func_020006f4:
 .L_0200896c:
 	.4byte gPartyState
 .L_02008970:
-	.4byte 0x000021ca
+	.4byte MsgFieldAreYouGivingThatLovely
 .L_02008974:
 	.4byte 0x00019999
 .L_02008978:
@@ -1422,7 +1422,7 @@ Func_020006f4:
 .L_02008c8c:
 	.4byte 0x00000000
 .L_02008c90:
-	.4byte 0x000021c7
+	.4byte MsgFieldOhThatRedNeckerchiefIs
 .L_02008c94:
 	.4byte gPartyState
 .L_02008c98:
@@ -1537,9 +1537,9 @@ Func_020006f4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008d98:
-	.4byte 0x000021cd
+	.4byte MsgFieldYupANiceRedNeckerchief
 .L_02008d9c:
-	.4byte 0x000021c6
+	.4byte MsgFieldIVeBeenFeelingSo
 	.section .text.x02008da0,"ax",%progbits
 	.global Func_02000da0
 	.thumb_func
@@ -2071,7 +2071,7 @@ Func_02000e38:
 .L_02009234:
 	.4byte Func_02000df8
 .L_02009238:
-	.4byte 0x000021d2
+	.4byte MsgFieldSniffSniffISmellFresh
 .L_0200923c:
 	.4byte 0x00019999
 .L_02009240:
@@ -2079,11 +2079,11 @@ Func_02000e38:
 .L_02009244:
 	.4byte Data_02004300
 .L_02009248:
-	.4byte 0x000021d4
+	.4byte MsgFieldTradedHisMilkForThe
 .L_0200924c:
-	.4byte 0x000021d5
+	.4byte MsgFieldIDonTLikeTo
 .L_02009250:
-	.4byte 0x000021d6
+	.4byte MsgFieldIDonTWantTo3
 .L_02009254:
 	ldr r0, .L_02009274
 	bl Func_02003f24
@@ -2101,7 +2101,7 @@ Func_02000e38:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02009274:
-	.4byte 0x000021d1
+	.4byte MsgFieldTheWaterHereIsSo
 	.section .text.x02009278,"ax",%progbits
 	.global Func_02001278
 	.thumb_func
@@ -2367,7 +2367,7 @@ Func_0200129c:
 .L_020094cc:
 	.4byte Func_02000df8
 .L_020094d0:
-	.4byte 0x000021de
+	.4byte MsgFieldAtLongLastIHave
 .L_020094d4:
 	.4byte 0x00019999
 .L_020094d8:
@@ -2796,13 +2796,13 @@ Func_020014e0:
 .L_02009898:
 	.4byte Func_02000df8
 .L_0200989c:
-	.4byte 0x000021dd
+	.4byte MsgFieldOhYouReReallyGoing
 .L_020098a0:
 	.4byte 0x00019999
 .L_020098a4:
 	.4byte Data_020044f0
 .L_020098a8:
-	.4byte 0x000021d9
+	.4byte MsgFieldIMSoVerySad
 .L_020098ac:
 	movs r0, #160
 	lsls r0, r0, #4
@@ -2982,7 +2982,7 @@ Func_020014e0:
 .L_02009a50:
 	.4byte gPartyState
 .L_02009a54:
-	.4byte 0x000021eb
+	.4byte MsgFieldWantToGoToMy
 .L_02009a58:
 	.4byte 0x00019999
 .L_02009a5c:
@@ -2990,7 +2990,7 @@ Func_020014e0:
 .L_02009a60:
 	.4byte Func_02000df8
 .L_02009a64:
-	.4byte 0x000021d8
+	.4byte MsgFieldIMSoVeryVery
 	.section .text.x02009a68,"ax",%progbits
 	.global Func_02001a68
 	.thumb_func
@@ -3146,7 +3146,7 @@ Func_02001a68:
 .L_02009bd8:
 	.4byte gPartyState
 .L_02009bdc:
-	.4byte 0x000021f2
+	.4byte MsgFieldYouAllSetToGo
 .L_02009be0:
 	.4byte 0x00019999
 .L_02009be4:
@@ -3187,7 +3187,7 @@ Func_02001bf4:
 .L_02009c30:
 	.4byte gPartyState
 .L_02009c34:
-	.4byte 0x0000218e
+	.4byte MsgFieldMyPopSTheBest
 	.section .text.x02009c38,"ax",%progbits
 	.global Func_02001c38
 	.thumb_func
@@ -3573,7 +3573,7 @@ Func_02001db0:
 .L_02009f50:
 	.4byte gPartyState
 .L_02009f54:
-	.4byte 0x000021b5
+	.4byte MsgFieldThankYouSoMuchFor
 	.section .text.x02009f58,"ax",%progbits
 	.global Func_02001f58
 	.thumb_func
@@ -4854,7 +4854,7 @@ Func_02002830:
 .L_0200a9b8:
 	.4byte Func_02000df8
 .L_0200a9bc:
-	.4byte 0x000021f4
+	.4byte MsgFieldHereWeAre
 .L_0200a9c0:
 	.4byte 0x00019999
 	.section .text.x0200a9c4,"ax",%progbits
@@ -5035,7 +5035,7 @@ Func_020029c4:
 .L_0200ab58:
 	.4byte gPartyState
 .L_0200ab5c:
-	.4byte 0x000021ef
+	.4byte MsgFieldWellHereWeAre
 .L_0200ab60:
 	.4byte 0x00019999
 	.section .text.x0200ab64,"ax",%progbits
@@ -8146,25 +8146,25 @@ Data_02004b20:
 	.4byte Func_0200367c
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0000218c
+	.4byte MsgFieldEverSinceTheTidalWave
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte Func_02001bf4
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x0000218f
+	.4byte MsgFieldYouReLuckyMisterYou
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000021d0
+	.4byte MsgFieldArffArff
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002190
+	.4byte MsgFieldTheWaterwaysNorthOfTundaria
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002192
+	.4byte MsgFieldICanTWaitUntil
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002193
+	.4byte MsgFieldICanTWaitUntil2
 	.4byte 0x00008d15
 	.4byte 0xffff000b
 	.4byte Func_02000e38
@@ -8199,7 +8199,7 @@ Data_02004bb0:
 	.4byte Func_0200253c
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002196
+	.4byte MsgFieldMyMomSaysThereS
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte Func_02000210
@@ -8211,7 +8211,7 @@ Data_02004bb0:
 	.4byte Func_02003620
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002199
+	.4byte MsgFieldWhoInWeyardWouldHave
 	.4byte 0x00008d15
 	.4byte 0xffff0009
 	.4byte Func_020002ac
@@ -8223,7 +8223,7 @@ Data_02004bb0:
 	.4byte Func_0200040c
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x000021f8
+	.4byte MsgFieldMayTheseTravelersJourneyEnd
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte Func_020025a4
@@ -8249,19 +8249,19 @@ Data_02004ca0:
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0000219a
+	.4byte MsgFieldIJustWantToKnow
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0000219b
+	.4byte MsgFieldTheSeaOfTimeA
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000021c5
+	.4byte MsgFieldMooMoo
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000219f
+	.4byte MsgFieldDadAndGrandpaHavenT
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000021a0
+	.4byte MsgFieldIRememberOnceAnEntire
 	.4byte 0x00008d15
 	.4byte 0xffff000a
 	.4byte Func_020006f4
@@ -8335,10 +8335,10 @@ Data_02004d84:
 	.4byte Func_02000520
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000021ab
+	.4byte MsgFieldIfWeReSupposedTo
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000021ac
+	.4byte MsgFieldSureThereAreLegendsAbout
 	.4byte 0x00008d15
 	.4byte 0xffff000a
 	.4byte Func_02000568
@@ -8361,16 +8361,16 @@ Data_02004e5c:
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000021ad
+	.4byte MsgFieldYouUsedToBeAble
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000021af
+	.4byte MsgFieldIRememberHowWeUsed
 	.4byte 0x00000000
 	.4byte 0x0aa50009
-	.4byte 0x000021d7
+	.4byte MsgFieldText5
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000021ea
+	.4byte MsgFieldYup
 	.4byte 0x00008d15
 	.4byte 0x02170009
 	.4byte Func_020014e0

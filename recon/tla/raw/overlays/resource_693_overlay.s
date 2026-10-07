@@ -221,7 +221,7 @@ Func_02000120:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020081fc:
-	.4byte 0x0000289a
+	.4byte MsgFieldAreWeSettingOffNow
 .L_02008200:
 	.4byte gPartyState
 .L_02008204:
@@ -429,7 +429,7 @@ Func_02000208:
 	add sp, #8
 	pop {r5, r6, pc}
 .L_020083e0:
-	.4byte 0x00002bbc
+	.4byte MsgFieldWhereDoYouThinkYou
 	.section .text.x020083e4,"ax",%progbits
 	.global Func_020003e4
 	.thumb_func
@@ -675,7 +675,7 @@ Func_020003e4:
 .L_02008630:
 	.4byte 0x00026666
 .L_02008634:
-	.4byte 0x00002bd4
+	.4byte MsgFieldIVeBeenWaitingFor2
 .L_02008638:
 	.4byte 0x0004cccc
 .L_0200863c:
@@ -816,7 +816,7 @@ Func_02000640:
 .L_02008770:
 	.4byte gPartyState
 .L_02008774:
-	.4byte 0x0000289a
+	.4byte MsgFieldAreWeSettingOffNow
 .L_02008778:
 	.4byte 0x00019999
 	.section .text.x0200877c,"ax",%progbits
@@ -1331,7 +1331,7 @@ Func_0200097c:
 	mov r8, r3
 	pop {r5, r6, pc}
 .L_02008bac:
-	.4byte 0x00002c85
+	.4byte MsgFieldHeyWait
 .L_02008bb0:
 	.4byte gPartyState
 .L_02008bb4:
@@ -2267,94 +2267,94 @@ Data_02001728:
 	.4byte Func_0200077c
 	.4byte 0x00000000
 	.4byte 0x09d0000d
-	.4byte 0x000028c4
+	.4byte MsgFieldWeVeMadeTheseWings
 	.4byte 0x00000000
 	.4byte 0x09b2000d
-	.4byte 0x00002bb8
+	.4byte MsgFieldHammaReturnedToContigoAfter
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00002c51
+	.4byte MsgFieldIVeBeenWatchingThe
 	.4byte 0x00008d15
 	.4byte 0x09d0000d
-	.4byte 0x000028c8
+	.4byte MsgFieldWeFirstHeardTheProphecy
 	.4byte 0x00008d15
 	.4byte 0x09b2000d
-	.4byte 0x00002bc5
+	.4byte MsgFieldWeVeBeenWorkingForever
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002c55
+	.4byte MsgFieldWheneverILookAtThe
 	.4byte 0x00000000
 	.4byte 0x09d0000e
-	.4byte 0x000028c5
+	.4byte MsgFieldWeMustBePreparedTo
 	.4byte 0x00000000
 	.4byte 0x09b2000e
-	.4byte 0x00002bb9
+	.4byte MsgFieldWasYourBoatReallyThe
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002c52
+	.4byte MsgFieldIWonderWhatSOn
 	.4byte 0x00008d15
 	.4byte 0x09d0000e
-	.4byte 0x000028c9
+	.4byte MsgFieldTheseWingsAreSoHeavy
 	.4byte 0x00008d15
 	.4byte 0x09b2000e
-	.4byte 0x00002bc6
+	.4byte MsgFieldWhoBuiltTheBoatFrom
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002c56
+	.4byte MsgFieldIWishICouldTravel
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000028c6
+	.4byte MsgFieldWeBroughtTheseWingsFrom
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000028ca
+	.4byte MsgFieldIDoubtAnyoneCouldHurt
 	.4byte 0x00000000
 	.4byte 0x09d00010
-	.4byte 0x000028c7
+	.4byte MsgFieldIWonderIfTheseGiant
 	.4byte 0x00000000
 	.4byte 0x09b20010
-	.4byte 0x00002bbb
+	.4byte MsgFieldAMassiveRockBlockedThe
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002c54
+	.4byte MsgFieldYouReGoingNorthI
 	.4byte 0x00008d15
 	.4byte 0x09d00010
-	.4byte 0x000028cb
+	.4byte MsgFieldItSKindOfHard
 	.4byte 0x00008d15
 	.4byte 0x09b20010
-	.4byte 0x00002bc8
+	.4byte MsgFieldIfThatBoatSGonna
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002c58
+	.4byte MsgFieldIVeDecidedToBecome
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00002bcc
+	.4byte MsgFieldItSAlmostTimeTime
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002bd0
+	.4byte MsgFieldTheDayHasFinallyCome
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00002bcd
+	.4byte MsgFieldIfEveryoneWillJustObey
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00002bd1
+	.4byte MsgFieldTheAnemosWerePowerfulSure
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00002bce
+	.4byte MsgFieldWhenTheWingedShipOf
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00002bd2
+	.4byte MsgFieldTheseWarriorsWillKnowWhat
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00002bcf
+	.4byte MsgFieldOnceYouRemoveTheStone
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00002bd3
+	.4byte MsgFieldIHearThatTheWarriors
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00002be2
+	.4byte MsgFieldUseYourPsynergyToRaise
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00002be3
+	.4byte MsgFieldTravelSafelyTheWorldDepends
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2386,34 +2386,34 @@ Data_020018f0:
 	.4byte Func_02000038
 	.4byte 0x00000000
 	.4byte 0x09b20008
-	.4byte 0x00002bba
+	.4byte MsgFieldEveryoneSWaitingDownBy
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002c53
+	.4byte MsgFieldAllOfOurMythsAnd
 	.4byte 0x00008d15
 	.4byte 0x09b20008
-	.4byte 0x00002bc7
+	.4byte MsgFieldHammaIsTheNewLeader
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002c57
+	.4byte MsgFieldEveryoneInContigoUsedTo
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002bc2
+	.4byte MsgFieldTheVillagersAreAllWaiting
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002bc9
+	.4byte MsgFieldItSAmazingToThink
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002bc3
+	.4byte MsgFieldHammaWouldnTLetUs
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002bca
+	.4byte MsgFieldHammaSaysThatOurOwn
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002bc4
+	.4byte MsgFieldWhenPeopleWorkTogetherEven
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002bcb
+	.4byte MsgFieldWeCanTGetToo
 	.4byte 0x00008f15
 	.4byte 0xffff000d
 	.4byte 0x00000000

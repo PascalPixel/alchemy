@@ -81,7 +81,23 @@ Func_02000c7c:
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_08020190
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_08020190
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_08020190
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_08020190
+	.else
 	overlay_veneer Map_GetTerrainHeightFar
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02000c8c
 	.thumb_func
 Func_02000c8c:
@@ -177,31 +193,71 @@ Func_02000d0c:
 	.global Func_02000d14
 	.thumb_func
 Func_02000d14:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c82d0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c82d0
+	.else
 	overlay_veneer Func_080c82e0
+	.endif
+	.endif
 	.global Func_02000d1c
 	.thumb_func
 Func_02000d1c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8368
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8368
+	.else
 	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	.endif
+	.endif
 	.global Func_02000d24
 	.thumb_func
 Func_02000d24:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_InitializeBuffersFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_InitializeBuffersFar
+	.else
 	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	.endif
+	.endif
 	.global Func_02000d2c
 	.thumb_func
 Func_02000d2c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	.else
 	overlay_veneer BattleFx_StartBufferInterpolationFar
+	.endif
+	.endif
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	.else
 	overlay_veneer Event_StartScreenTransitionFar
+	.endif
+	.endif
 	.global Event_WaitTransitionFrames
 	.thumb_func
 Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_StartScreenTransitionFar
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_StartScreenTransitionFar
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
@@ -209,15 +265,39 @@ Event_WaitTransitionFrames:
 	.global Func_02000d44
 	.thumb_func
 Func_02000d44:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	.endif
+	.endif
 	.global Func_02000d4c
 	.thumb_func
 Func_02000d4c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8730
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8730
+	.else
 	overlay_veneer Func_080c8740
+	.endif
+	.endif
 	.global Func_02000d54
 	.thumb_func
 Func_02000d54:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8738
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8738
+	.else
 	overlay_veneer Func_080c8748
+	.endif
+	.endif
 	.global Func_02000d5c
 	.thumb_func
 Func_02000d5c:

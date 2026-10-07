@@ -385,7 +385,7 @@ Func_02000388:
 	pop {pc}
 	.2byte 0x0000
 .L_02008400:
-	.4byte 0x000030ac
+	.4byte MsgFieldIAmTheShadowThe
 .L_02008404:
 	.4byte gPartyState
 	.section .text.x02008408,"ax",%progbits

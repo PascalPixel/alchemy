@@ -1182,7 +1182,7 @@ Func_0200065c:
 .L_02008a64:
 	.4byte 0x0500021e
 .L_02008a68:
-	.4byte 0x00002d8c
+	.4byte MsgFieldBetrayersYouHaveArrived
 .L_02008a6c:
 	.4byte 0x00019999
 .L_02008a70:
@@ -3779,7 +3779,7 @@ Func_02001f10:
 .L_0200a374:
 	.4byte Func_0200008c
 .L_0200a378:
-	.4byte 0x00002ddd
+	.4byte MsgFieldWhoAreThey
 .L_0200a37c:
 	.4byte 0x00019999
 .L_0200a380:
@@ -4876,7 +4876,7 @@ Func_020029ac:
 .L_0200add4:
 	.4byte Data_02006b70
 .L_0200add8:
-	.4byte 0x00002df5
+	.4byte MsgFieldWhatSTheMatterWhy
 .L_0200addc:
 	.4byte 0x00019999
 .L_0200ade0:
@@ -6824,7 +6824,7 @@ Func_02003658:
 .L_0200bfc8:
 	.4byte Func_02003370
 .L_0200bfcc:
-	.4byte 0x00002e24
+	.4byte MsgFieldTheBeaconIsLit
 .L_0200bfd0:
 	.4byte gPartyState
 .L_0200bfd4:
@@ -7316,7 +7316,7 @@ Func_02003ff4:
 .L_0200c498:
 	.4byte 0x021a0000
 .L_0200c49c:
-	.4byte 0x00002e44
+	.4byte MsgFieldWhatCouldHeBeDoing
 .L_0200c4a0:
 	movs r1, #0
 	bl Func_020056f4
@@ -8097,7 +8097,7 @@ Func_02004bc4:
 	bl Func_02005614
 	pop {r5, pc}
 .L_0200cc24:
-	.4byte 0x00002e22
+	.4byte MsgFieldDoNotLetYourSadness
 .L_0200cc28:
 	.4byte gPartyState
 	.section .text.x0200cc2c,"ax",%progbits
@@ -8144,7 +8144,7 @@ Func_02004c2c:
 	bl Func_02005614
 	pop {r5, pc}
 .L_0200cc8c:
-	.4byte 0x00002e22
+	.4byte MsgFieldDoNotLetYourSadness
 .L_0200cc90:
 	.4byte gPartyState
 	.section .text.x0200cc94,"ax",%progbits
@@ -8199,7 +8199,7 @@ Func_02004c94:
 	pop {pc}
 	.2byte 0x0000
 .L_0200cd0c:
-	.4byte 0x00002e23
+	.4byte MsgFieldWillYouCastInThe
 .L_0200cd10:
 	.4byte gPartyState
 	.section .text.x0200cd14,"ax",%progbits
@@ -8316,7 +8316,7 @@ Func_02004da0:
 .L_0200cde8:
 	.4byte gPartyState
 .L_0200cdec:
-	.4byte 0x00002e19
+	.4byte MsgFieldIUnderstandYourLossBut
 	.section .text.x0200cdf0,"ax",%progbits
 	.global Func_02004df0
 	.thumb_func
@@ -8337,7 +8337,7 @@ Func_02004df0:
 	bl Func_02005614
 	pop {pc}
 .L_0200ce1c:
-	.4byte 0x00002e20
+	.4byte MsgFieldUhhhhnnnICanTSee
 	.section .text.x0200ce20,"ax",%progbits
 	.global Func_02004e20
 	.thumb_func
@@ -8358,7 +8358,7 @@ Func_02004e20:
 	bl Func_02005614
 	pop {pc}
 .L_0200ce4c:
-	.4byte 0x00002e21
+	.4byte MsgFieldKoffKoffYouMadeIt
 	.section .text.x0200ce50,"ax",%progbits
 	.global Func_02004e50
 	.thumb_func
@@ -8379,7 +8379,7 @@ Func_02004e50:
 	bl Func_02005614
 	pop {pc}
 .L_0200ce7c:
-	.4byte 0x00002e1f
+	.4byte MsgFieldUnnnnIAmSoHappy
 	.section .text.x0200ce80,"ax",%progbits
 	.global Func_02004e80
 	.thumb_func
@@ -10476,25 +10476,25 @@ gSceneEvents:
 	.4byte Func_0200065c
 	.4byte 0x00000000
 	.4byte 0xffff0000
-	.4byte 0x00002e17
+	.4byte MsgFieldOurQuestIsAlmostOver
 	.4byte 0x00000000
 	.4byte 0xffff0001
-	.4byte 0x00002e18
+	.4byte MsgFieldIWishICouldConsole
 	.4byte 0x00000000
 	.4byte 0xffff0003
-	.4byte 0x00002e1a
+	.4byte MsgFieldIfAlexSetThisAll
 	.4byte 0x00000000
 	.4byte 0xffff0005
-	.4byte 0x00002e1b
+	.4byte MsgFieldIThoughtIDGet
 	.4byte 0x00000000
 	.4byte 0xffff0006
-	.4byte 0x00002e1c
+	.4byte MsgFieldIDonTKnowMy
 	.4byte 0x00000000
 	.4byte 0xffff0007
-	.4byte 0x00002e1d
+	.4byte MsgFieldIMSorryThingsHad
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00002e1e
+	.4byte MsgFieldBothKyleAndYourParents
 	.4byte 0x00004400
 	.4byte 0xffff001c
 	.4byte Func_02004da0

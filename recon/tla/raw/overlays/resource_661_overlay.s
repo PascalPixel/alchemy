@@ -582,7 +582,7 @@ Func_020004bc:
 	bl Func_02004048
 	pop {pc}
 .L_020084dc:
-	.4byte 0x00001a96
+	.4byte MsgFieldWeFollowedThePiratesHere
 	.section .text.x020084e0,"ax",%progbits
 	.global Func_020004e0
 	.thumb_func
@@ -631,7 +631,7 @@ Func_020004e0:
 	pop {pc}
 	.2byte 0x0000
 .L_0200854c:
-	.4byte 0x00001a9c
+	.4byte MsgFieldCanTWeJustForget
 	.section .text.x02008550,"ax",%progbits
 	.global Func_02000550
 	.thumb_func
@@ -671,7 +671,7 @@ Func_02000550:
 .L_020085a0:
 	.4byte gPartyState
 .L_020085a4:
-	.4byte 0x00001a9f
+	.4byte MsgFieldAsYouCanSeeThe
 	.section .text.x020085a8,"ax",%progbits
 	.global Func_020005a8
 	.thumb_func
@@ -711,7 +711,7 @@ Func_020005a8:
 .L_020085f8:
 	.4byte gPartyState
 .L_020085fc:
-	.4byte 0x00001aa0
+	.4byte MsgFieldThisIsWhereMySon
 	.section .text.x02008600,"ax",%progbits
 	.global Func_02000600
 	.thumb_func
@@ -727,7 +727,7 @@ Func_02000600:
 	pop {pc}
 	.2byte 0x0000
 .L_0200861c:
-	.4byte 0x00001abe
+	.4byte MsgFieldNorthAlhafraSouthAirS
 	.section .text.x02008620,"ax",%progbits
 	.global Func_02000620
 	.thumb_func
@@ -3198,7 +3198,7 @@ Func_02001690:
 	b .L_02009abc
 	.2byte 0x0000
 .L_02009a98:
-	.4byte 0x00001aa9
+	.4byte MsgFieldHeyLookUpThere
 .L_02009a9c:
 	.4byte gPartyState
 .L_02009aa0:
@@ -8878,91 +8878,91 @@ Data_0200521c:
 	.4byte Func_020004bc
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001ab0
+	.4byte MsgFieldAtLastWeCanGet
 	.4byte 0x00008d15
 	.4byte 0x08f00008
-	.4byte 0x00001aa2
+	.4byte MsgFieldBriggsAndTheChampaAre
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001ab7
+	.4byte MsgFieldOhNotAgainDonT
 	.4byte 0x00000000
 	.4byte 0x08f00009
-	.4byte 0x00001a99
+	.4byte MsgFieldIfThatAccursedPirateBriggs
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001ab1
+	.4byte MsgFieldIWasCertainThisWas
 	.4byte 0x00008d15
 	.4byte 0x08f00009
-	.4byte 0x00001aa3
+	.4byte MsgFieldThatIsSoOneOf
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001ab8
+	.4byte MsgFieldMyJobIsToFind
 	.4byte 0x00000000
 	.4byte 0x08f0000a
-	.4byte 0x00001a9a
+	.4byte MsgFieldOooohThisDesertItS
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001ab2
+	.4byte MsgFieldIMJustGladWe
 	.4byte 0x00008d15
 	.4byte 0x08f0000a
-	.4byte 0x00001aa4
+	.4byte MsgFieldSureItSHotBut
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001ab9
+	.4byte MsgFieldMaybeWeShouldHaveThe
 	.4byte 0x00000000
 	.4byte 0x08f0000b
-	.4byte 0x00001a9b
+	.4byte MsgFieldWaterMyThroatIsSo
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001ab3
+	.4byte MsgFieldOhManThisIsThe
 	.4byte 0x00008d15
 	.4byte 0x08f0000b
-	.4byte 0x00001aa5
+	.4byte MsgFieldThereSASpringOver
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001aba
+	.4byte MsgFieldIDonTWantTo
 	.4byte 0x00000000
 	.4byte 0x08f0000c
 	.4byte Func_02000550
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001ab4
+	.4byte MsgFieldOseniaIsSoMuchLarger
 	.4byte 0x00008d15
 	.4byte 0x088f040c
 	.4byte Func_02000550
 	.4byte 0x00008d15
 	.4byte 0x08f0000c
-	.4byte 0x00001aa6
+	.4byte MsgFieldWeVeReachedADead
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001abb
+	.4byte MsgFieldHowMuchLongerWillWe
 	.4byte 0x00000000
 	.4byte 0x08f0000d
 	.4byte Func_020005a8
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001ab5
+	.4byte MsgFieldMySonHasPassedHis
 	.4byte 0x00008d15
 	.4byte 0x088f040d
 	.4byte Func_020005a8
 	.4byte 0x00008d15
 	.4byte 0x08f0000d
-	.4byte 0x00001aa7
+	.4byte MsgFieldMySonIsInQuite
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001abc
+	.4byte MsgFieldRegardlessOfWhatHappensNext
 	.4byte 0x00000000
 	.4byte 0x08f0000e
-	.4byte 0x00001aa1
+	.4byte MsgFieldFatherHowAmISupposed
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001ab6
+	.4byte MsgFieldIfWeRemainHereMuch
 	.4byte 0x00008d15
 	.4byte 0x08f0000e
-	.4byte 0x00001aa8
+	.4byte MsgFieldMyFatherSAlwaysTelling
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001abd
+	.4byte MsgFieldHoooICanTBelieve
 	.4byte 0x00000002
 	.4byte 0x08f0000f
 	.4byte Func_02001690

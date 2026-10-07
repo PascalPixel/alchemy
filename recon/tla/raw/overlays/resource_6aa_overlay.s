@@ -677,7 +677,7 @@ Func_02000564:
 	strh r3, [r2]
 	pop {r5, pc}
 .L_0200858c:
-	.4byte 0x00002e6e
+	.4byte MsgFieldCheckedTheIce
 	.section .text.x02008590,"ax",%progbits
 	.global Func_02000590
 	.thumb_func

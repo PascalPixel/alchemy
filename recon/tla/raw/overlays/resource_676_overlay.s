@@ -693,7 +693,7 @@ Func_02000544:
 	pop {pc}
 	.2byte 0x0000
 .L_02008580:
-	.4byte 0x0000223f
+	.4byte MsgFieldDoYouWantToHear
 	.section .text.x02008584,"ax",%progbits
 	.global Func_02000584
 	.thumb_func
@@ -762,9 +762,9 @@ Func_02000584:
 .L_02008608:
 	.4byte gPartyState
 .L_0200860c:
-	.4byte 0x00002241
+	.4byte MsgFieldRunningAroundInCirclesHere
 .L_02008610:
-	.4byte 0x00002245
+	.4byte MsgFieldThereSALotOf
 	.section .text.x02008614,"ax",%progbits
 	.global Func_02000614
 	.thumb_func
@@ -833,9 +833,9 @@ Func_02000614:
 .L_02008698:
 	.4byte gPartyState
 .L_0200869c:
-	.4byte 0x00002242
+	.4byte MsgFieldThereSAGameThat
 .L_020086a0:
-	.4byte 0x00002246
+	.4byte MsgFieldIOnceHeardThatChildren
 	.section .text.x020086a4,"ax",%progbits
 	.global Func_020006a4
 	.thumb_func
@@ -3251,7 +3251,7 @@ Func_02001944:
 .L_02009cd6:
 	pop {r5, r6, r7, pc}
 .L_02009cd8:
-	.4byte 0x00002254
+	.4byte MsgFieldHereLetMeShowYou
 .L_02009cdc:
 	.4byte 0x00019999
 .L_02009ce0:
@@ -3463,7 +3463,7 @@ Func_02001d14:
 .L_02009eb8:
 	.4byte gPartyState
 .L_02009ebc:
-	.4byte 0x0000225c
+	.4byte MsgFieldIfYouWantToGo2
 	.section .text.x02009ec0,"ax",%progbits
 	.global Func_02001ec0
 	.thumb_func
@@ -3841,7 +3841,7 @@ Func_02001ec0:
 .L_0200a234:
 	.4byte gPartyState
 .L_0200a238:
-	.4byte 0x00002263
+	.4byte MsgFieldIfYouWantToGo3
 .L_0200a23c:
 	.4byte 0x00026666
 .L_0200a240:
@@ -4669,52 +4669,52 @@ Data_02002d24:
 	.4byte Func_020004cc
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000021f9
+	.4byte MsgFieldYallamDoesnTGetMany
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000021fa
+	.4byte MsgFieldOurMasterBoatsmanYeppDied
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000021fb
+	.4byte MsgFieldIfYeppWereAliveToday
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000021fc
+	.4byte MsgFieldYeppFoundThisHugeBed
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000021fd
+	.4byte MsgFieldThereUsedToBeA
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000021fe
+	.4byte MsgFieldWhenWeLostYeppAll
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000021ff
+	.4byte MsgFieldYeppWasTheOneWho
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00002200
+	.4byte MsgFieldYeppToldMeTheOnly
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002201
+	.4byte MsgFieldYeppWasTheOneWho2
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002202
+	.4byte MsgFieldSingingWithYeppAndAll
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002203
+	.4byte MsgFieldThosePearlsYeppBroughtBack
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002204
+	.4byte MsgFieldYeppNeverToldAnyOf
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002205
+	.4byte MsgFieldYeppWasAmazingHeCould
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002206
+	.4byte MsgFieldSunshineIsAFamousBlacksmith
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002207
+	.4byte MsgFieldIVeSearchedTheSeas
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00002208
+	.4byte MsgFieldYeppAlwaysSangSuchWonderful
 	.4byte 0x10008e15
 	.4byte 0x03000008
 	.4byte Data_020022f4 + 0x1
@@ -4757,7 +4757,7 @@ Data_02002f10:
 	.4byte Func_02000544
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002244
+	.4byte MsgFieldYeppSSongsAreA
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte Func_02000584
@@ -4772,10 +4772,10 @@ Data_02002f10:
 	.4byte Func_02000614
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002243
+	.4byte MsgFieldYeppWroteAllOfHis
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002247
+	.4byte MsgFieldTheStoryIsThatAll
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -155,7 +155,7 @@ Func_02000048:
 	add sp, #8
 	pop {r5, r6, pc}
 .L_02008194:
-	.4byte 0x000022b0
+	.4byte MsgFieldTheMisalignedStoneItS
 	.section .text.x020081ac,"ax",%progbits
 	.global Func_020001ac
 	.thumb_func
@@ -607,9 +607,9 @@ Func_020004bc:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008530:
-	.4byte 0x000022b2
+	.4byte MsgFieldCanYouImagineWhatIt
 .L_02008534:
-	.4byte 0x000022ad
+	.4byte MsgFieldSeeThisRingOfGiant
 	.section .text.x02008538,"ax",%progbits
 	.global Func_02000538
 	.thumb_func
@@ -662,9 +662,9 @@ Func_02000538:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020085ac:
-	.4byte 0x00002328
+	.4byte MsgFieldButItSAFestival
 .L_020085b0:
-	.4byte 0x00002323
+	.4byte MsgFieldSeeThisRingOfGiant2
 	.section .text.x020085b4,"ax",%progbits
 	.global Func_020005b4
 	.thumb_func
@@ -702,7 +702,7 @@ Func_020005b4:
 	bl Func_02000d08
 	pop {r5, r6, pc}
 .L_02008608:
-	.4byte 0x00002338
+	.4byte MsgFieldLadyUzumeAndTheOthers
 	.section .text.x0200860c,"ax",%progbits
 	.global Func_0200060c
 	.thumb_func
@@ -934,7 +934,7 @@ Func_020006a4:
 	bl Func_02000d08
 	pop {r5, pc}
 .L_0200880c:
-	.4byte 0x000023b1
+	.4byte MsgFieldWait3
 .L_02008810:
 	.4byte gPartyState
 	.section .text.x02008814,"ax",%progbits
@@ -1063,7 +1063,7 @@ Func_02000814:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200894c:
-	.4byte 0x000023b8
+	.4byte MsgFieldThisTokenIsnTSomething
 .L_02008950:
 	.4byte gPartyState
 	.section .text.x02008954,"ax",%progbits
@@ -1119,11 +1119,11 @@ Func_02000954:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020089c4:
-	.4byte 0x000023b7
+	.4byte MsgFieldWouldYouBeWillingTo
 .L_020089c8:
 	.4byte gPartyState
 .L_020089cc:
-	.4byte 0x000023bf
+	.4byte MsgFieldTheLegendSaysThatThe
 	.section .text.x020089d0,"ax",%progbits
 	.global Func_020009d0
 	.thumb_func
@@ -2205,70 +2205,70 @@ Data_020018b4:
 	.4byte Func_02000c58
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000022a5
+	.4byte MsgFieldWeVeHadALot3
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000022a6
+	.4byte MsgFieldMyNameSOkuniI
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000022a7
+	.4byte MsgFieldLadyUzumeDoesnTWant
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x000022a8
+	.4byte MsgFieldSusaSGoingToTry
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x000022a9
+	.4byte MsgFieldAsAChildSusaWas
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x000022aa
+	.4byte MsgFieldChoosingTheNextSacrificeBy
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x000022ab
+	.4byte MsgFieldTheDaughtersOfTheFamily
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x000022ac
+	.4byte MsgFieldABraveWarriorWillAppear
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte Func_020004bc
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x000022ce
+	.4byte MsgFieldYeahSusaCameThroughHere
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x000022cf
+	.4byte MsgFieldEvenIfSusaTriedTo
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000022b3
+	.4byte MsgFieldTheGreatSerpentOfMikage
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000022b4
+	.4byte MsgFieldIMNotGoingTo
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000022b5
+	.4byte MsgFieldIMSureThatKindhearted
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000022b6
+	.4byte MsgFieldWhatIfLosingKushinadaMakes
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x000022b7
+	.4byte MsgFieldLadyUzumeLovesHerBrother
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x000022b8
+	.4byte MsgFieldSacrificesAsGreatAsThis
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x000022b9
+	.4byte MsgFieldKushinadaSAlwaysHadBad
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x000022ba
+	.4byte MsgFieldWhyWonTAnybodyListen
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x000022bb
+	.4byte MsgFieldWhyDoesLadyUzumeHave
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x000022d0
+	.4byte MsgFieldYouKnowICanT
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x000022d1
+	.4byte MsgFieldLadyUzumeSaysThatA
 	.4byte 0x00000008
 	.4byte 0xffff0000
 	.4byte Func_02000038
@@ -2354,55 +2354,55 @@ Data_02001b00:
 	.4byte Func_02000c58
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000231b
+	.4byte MsgFieldThoseScreamsFromMtMikage
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0000231c
+	.4byte MsgFieldWeRePlanningAFestival
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0000231d
+	.4byte MsgFieldSusaHasChangedSoMuch
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x0000231e
+	.4byte MsgFieldKushinadaHasBeenSparedI
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x0000231f
+	.4byte MsgFieldIVeHeardPeopleSaying
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00002320
+	.4byte MsgFieldSusaHasGrownSoMuch
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00002321
+	.4byte MsgFieldSusaHasPutTheSerpent
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00002322
+	.4byte MsgFieldLadyUzumePredictedThatA
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte Func_02000538
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00002342
+	.4byte MsgFieldIfYouReLookingFor
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00002343
+	.4byte MsgFieldDidYouHearHowSusa
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00002332
+	.4byte MsgFieldIWonderIfThereS2
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00002333
+	.4byte MsgFieldDancingLikeThisIsPure
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x00002334
+	.4byte MsgFieldEveryoneSaysThatSusaIs
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x00002335
+	.4byte MsgFieldWeMayNeverKnowWhat
 	.4byte 0x00000000
 	.4byte 0xffff001d
-	.4byte 0x00002336
+	.4byte MsgFieldOurIslandIsSafeAt
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte 0x00002337
+	.4byte MsgFieldTheSerpentTaughtUsOne
 	.4byte 0x00000000
 	.4byte 0xffff001f
 	.4byte Func_020005b4
@@ -2411,58 +2411,58 @@ Data_02001b00:
 	.4byte Func_02000954
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002329
+	.4byte MsgFieldIHadAlwaysThoughtSusa
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x0000232a
+	.4byte MsgFieldThisCelebrationWillRivalThe
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x0000232b
+	.4byte MsgFieldItSOddToThink
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x0000232c
+	.4byte MsgFieldKushinadaIsSuchASweet
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x0000232d
+	.4byte MsgFieldWhatWouldMakeAnyoneWant
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x0000232e
+	.4byte MsgFieldAllTheGirlsMustBe
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x0000232f
+	.4byte MsgFieldEveryoneSBeenWonderingWhy
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00002330
+	.4byte MsgFieldSoSusaReallyWasAs
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00002331
+	.4byte MsgFieldSusaDidAMomentousThing
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00002344
+	.4byte MsgFieldLadyUzumeAndKushinadaAre
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00002345
+	.4byte MsgFieldKushinadaMustBeUpsetThat
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x0000233b
+	.4byte MsgFieldAllAnyoneTalksAboutIs
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x0000233c
+	.4byte MsgFieldADragonAHeroA
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x0000233d
+	.4byte MsgFieldSusaSaidTheSerpentWasn
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x0000233e
+	.4byte MsgFieldWeNeedToFigureOut
 	.4byte 0x00008d15
 	.4byte 0xffff001d
-	.4byte 0x0000233f
+	.4byte MsgFieldDancingIsGoodForThe
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x00002340
+	.4byte MsgFieldThatSusaUsedMyDagger
 	.4byte 0x00008d15
 	.4byte 0xffff001f
-	.4byte 0x00002341
+	.4byte MsgFieldAsLongAsWeHave
 	.4byte 0x00008d15
 	.4byte 0xffff0420
 	.4byte Func_02000954

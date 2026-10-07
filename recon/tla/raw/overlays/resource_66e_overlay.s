@@ -18,7 +18,7 @@ Func_02000054:
 	pop {pc}
 	.2byte 0x0000
 .L_02008078:
-	.4byte 0x00001dfd
+	.4byte MsgFieldTheItemsThatOneCarries
 	.section .text.x0200807c,"ax",%progbits
 	.global Func_0200007c
 	.thumb_func
@@ -37,7 +37,7 @@ Func_0200007c:
 	pop {pc}
 	.2byte 0x0000
 .L_020080a0:
-	.4byte 0x00001e25
+	.4byte MsgFieldItemsPlacedBeforeMeAre
 	.section .text.x020080a4,"ax",%progbits
 	.global Func_020000a4
 	.thumb_func
@@ -105,7 +105,7 @@ Func_020000c4:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008120:
-	.4byte 0x00001e00
+	.4byte MsgFieldIfYouAreBurdenedWith
 	.section .text.x02008124,"ax",%progbits
 	.global Func_02000124
 	.thumb_func
@@ -152,7 +152,7 @@ Func_02000124:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008180:
-	.4byte 0x00001e28
+	.4byte MsgFieldWheneverIGetCustomersFrom
 	.section .text.x02008184,"ax",%progbits
 	.global Func_02000184
 	.thumb_func
@@ -199,7 +199,7 @@ Func_02000184:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020081e0:
-	.4byte 0x00001e02
+	.4byte MsgFieldYouShouldVisitTheFortune
 	.section .text.x020081e4,"ax",%progbits
 	.global Func_020001e4
 	.thumb_func
@@ -246,7 +246,7 @@ Func_020001e4:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008240:
-	.4byte 0x00001e2a
+	.4byte MsgFieldIfYouWishToKnow
 	.section .text.x02008244,"ax",%progbits
 	.global Func_02000244
 	.thumb_func
@@ -293,7 +293,7 @@ Func_02000244:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020082a0:
-	.4byte 0x00001e07
+	.4byte MsgFieldOurCookingIsFamousAll
 	.section .text.x020082a4,"ax",%progbits
 	.global Func_020002a4
 	.thumb_func
@@ -340,7 +340,7 @@ Func_020002a4:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008300:
-	.4byte 0x00001e2f
+	.4byte MsgFieldISeeSoManyTravelers
 	.section .text.x02008304,"ax",%progbits
 	.global Func_02000304
 	.thumb_func
@@ -395,11 +395,11 @@ Func_02000304:
 .L_02008382:
 	pop {r5, pc}
 .L_02008384:
-	.4byte 0x00001daa
+	.4byte MsgFieldIAmATellerOf
 .L_02008388:
 	.4byte gPartyState
 .L_0200838c:
-	.4byte 0x00001dab
+	.4byte MsgFieldThenStandBack
 	.section .text.x02008390,"ax",%progbits
 	.global Func_02000390
 	.thumb_func
@@ -781,15 +781,15 @@ Func_02000390:
 	bl Func_02000838
 	b .L_02008748
 .L_02008728:
-	.4byte 0x00001daf
+	.4byte MsgFieldVeryWellShowMeOne
 .L_0200872c:
 	.4byte gPartyState
 .L_02008730:
-	.4byte 0x00001db2
+	.4byte MsgFieldShallIGiveYouAnother
 .L_02008734:
-	.4byte 0x00001da9
+	.4byte MsgFieldPlacedOnTheTable
 .L_02008738:
-	.4byte 0x00001db0
+	.4byte MsgFieldAreYouPrepared
 .L_0200873c:
 	.4byte 0x0040250d
 .L_02008740:
@@ -852,7 +852,7 @@ Func_02000760:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020087b0:
-	.4byte 0x00001db6
+	.4byte MsgFieldBeyondTheWeaponYouSet
 	.section .text.x020087b4,"ax",%progbits
 	.global Func_020007b4
 	.thumb_func
@@ -907,19 +907,19 @@ Func_020007b4:
 .L_0200881a:
 	pop {r5, pc}
 .L_0200881c:
-	.4byte 0x00001dba
+	.4byte MsgFieldIFeelAShiningPower
 .L_02008820:
 	.4byte .L_020087d8
 .L_02008824:
-	.4byte 0x00001dbb
+	.4byte MsgFieldYouAreLostInYour
 .L_02008828:
-	.4byte 0x00001dbc
+	.4byte MsgFieldADistantIsleLiesFar
 .L_0200882c:
-	.4byte 0x00001dbd
+	.4byte MsgFieldISeeAParadiseAwaiting
 .L_02008830:
-	.4byte 0x00001dbe
+	.4byte MsgFieldATinyFigureStandsAgainst
 .L_02008834:
-	.4byte 0x00001dbf
+	.4byte MsgFieldISeeYouLostIn
 	.section .text.x02008838,"ax",%progbits
 	.global Func_02000838
 	.thumb_func
@@ -950,7 +950,7 @@ Func_02000838:
 .L_02008872:
 	pop {r5, pc}
 .L_02008874:
-	.4byte 0x00001dfa
+	.4byte MsgFieldInTheItemYouHave
 	.section .text.x02008878,"ax",%progbits
 	.global Func_02000878
 	.thumb_func
@@ -1012,21 +1012,21 @@ Func_02000878:
 .L_020088fe:
 	pop {pc}
 .L_02008900:
-	.4byte 0x00001dc1
+	.4byte MsgFieldBeyondTheItemBeforeMe
 .L_02008904:
 	.4byte .L_02008898
 .L_02008908:
-	.4byte 0x00001dc2
+	.4byte MsgFieldISeeYouInsideA
 .L_0200890c:
-	.4byte 0x00001dc3
+	.4byte MsgFieldYouMustForgeAWeapon
 .L_02008910:
-	.4byte 0x00001dc4
+	.4byte MsgFieldYouWillRaiseAMighty
 .L_02008914:
-	.4byte 0x00001dc5
+	.4byte MsgFieldYouWillGainTremendousHelp
 .L_02008918:
-	.4byte 0x00001dc6
+	.4byte MsgFieldYouHaveTheWeaponYou
 .L_0200891c:
-	.4byte 0x00001dc7
+	.4byte MsgFieldTheObjectThatYouSeek
 	.section .text.x02008920,"ax",%progbits
 	.global Func_02000920
 	.thumb_func
@@ -1076,7 +1076,7 @@ Func_02000920:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008978:
-	.4byte 0x00001dc8
+	.4byte MsgFieldTheObjectYouHavePlaced
 	.section .text.x0200897c,"ax",%progbits
 	.global Func_0200097c
 	.thumb_func
@@ -1718,91 +1718,91 @@ Func_02000c04:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_02008e7c:
-	.4byte 0x00001dfa
+	.4byte MsgFieldInTheItemYouHave
 .L_02008e80:
 	.4byte .L_02008cac
 .L_02008e84:
-	.4byte 0x00001dd1
+	.4byte MsgFieldToTheEastLiesA
 .L_02008e88:
-	.4byte 0x00001dd2
+	.4byte MsgFieldToTheNorthInsideThe
 .L_02008e8c:
-	.4byte 0x00001dd3
+	.4byte MsgFieldToTheNorthBeneathThe
 .L_02008e90:
-	.4byte 0x00001dd4
+	.4byte MsgFieldHeadEastBySoutheastIn
 .L_02008e94:
-	.4byte 0x00001dd5
+	.4byte MsgFieldHeadEastByNortheastIn
 .L_02008e98:
-	.4byte 0x00001dd6
+	.4byte MsgFieldHeadNorthByNorthwestIn
 .L_02008e9c:
-	.4byte 0x00001dd7
+	.4byte MsgFieldToTheNorthwestInThe
 .L_02008ea0:
-	.4byte 0x00001dd8
+	.4byte MsgFieldHeadWestByNorthwestIn
 .L_02008ea4:
-	.4byte 0x00001dd9
+	.4byte MsgFieldToTheNorthInThe
 .L_02008ea8:
-	.4byte 0x00001dda
+	.4byte MsgFieldHeadEastBySoutheastIn2
 .L_02008eac:
-	.4byte 0x00001ddb
+	.4byte MsgFieldHeadEastByNortheastIn2
 .L_02008eb0:
-	.4byte 0x00001ddc
+	.4byte MsgFieldToTheSoutheastInThe
 .L_02008eb4:
-	.4byte 0x00001ddd
+	.4byte MsgFieldToTheSouthInThe
 .L_02008eb8:
-	.4byte 0x00001dde
+	.4byte MsgFieldToTheEastBesideThe
 .L_02008ebc:
-	.4byte 0x00001ddf
+	.4byte MsgFieldHeadEastByNortheastIn3
 .L_02008ec0:
-	.4byte 0x00001de0
+	.4byte MsgFieldToTheNorthSomewhereOn
 .L_02008ec4:
-	.4byte 0x00001de1
+	.4byte MsgFieldHeadNorthByNorthwestIn2
 .L_02008ec8:
-	.4byte 0x00001de2
+	.4byte MsgFieldToTheNorthInRuins
 .L_02008ecc:
-	.4byte 0x00001de3
+	.4byte MsgFieldHeadEastByNortheastIn4
 .L_02008ed0:
-	.4byte 0x00001de4
+	.4byte MsgFieldToTheEastInThe
 .L_02008ed4:
-	.4byte 0x00001de5
+	.4byte MsgFieldToTheSoutheastInA
 .L_02008ed8:
-	.4byte 0x00001de6
+	.4byte MsgFieldHeadSouthBySoutheastOn
 .L_02008edc:
-	.4byte 0x00001de7
+	.4byte MsgFieldHeadEastBySoutheastIn3
 .L_02008ee0:
-	.4byte 0x00001de8
+	.4byte MsgFieldHeadEastByNortheastOn
 .L_02008ee4:
-	.4byte 0x00001de9
+	.4byte MsgFieldHeadSouthBySoutheastIn
 .L_02008ee8:
-	.4byte 0x00001dea
+	.4byte MsgFieldToTheNorthwestInThe2
 .L_02008eec:
-	.4byte 0x00001deb
+	.4byte MsgFieldToTheNorthwestAlongThe
 .L_02008ef0:
-	.4byte 0x00001dec
+	.4byte MsgFieldToTheNorthwestBesideThe
 .L_02008ef4:
-	.4byte 0x00001ded
+	.4byte MsgFieldHeadNorthByNorthwestAt
 .L_02008ef8:
-	.4byte 0x00001dee
+	.4byte MsgFieldToTheNorthInThe2
 .L_02008efc:
-	.4byte 0x00001def
+	.4byte MsgFieldHeadEastByNortheastIn5
 .L_02008f00:
-	.4byte 0x00001df0
+	.4byte MsgFieldHeadEastBySoutheastIn4
 .L_02008f04:
-	.4byte 0x00001df1
+	.4byte MsgFieldHeadEastBySoutheastIn5
 .L_02008f08:
-	.4byte 0x00001df2
+	.4byte MsgFieldToTheNorthInThe3
 .L_02008f0c:
-	.4byte 0x00001df3
+	.4byte MsgFieldToTheEastSomewhereOn
 .L_02008f10:
-	.4byte 0x00001df4
+	.4byte MsgFieldToTheEastInThe2
 .L_02008f14:
-	.4byte 0x00001df5
+	.4byte MsgFieldHeadNorthByNorthwestIn3
 .L_02008f18:
-	.4byte 0x00001df6
+	.4byte MsgFieldInTheNorthwestInThe
 .L_02008f1c:
-	.4byte 0x00001df7
+	.4byte MsgFieldHeadNorthByNorthwestNear
 .L_02008f20:
-	.4byte 0x00001df8
+	.4byte MsgFieldToTheNorthInThe4
 .L_02008f24:
-	.4byte 0x00001df9
+	.4byte MsgFieldHeadNorthByNortheastOn
 	.section .text.x02008f28,"ax",%progbits
 	.global Func_02000f28
 	.thumb_func
@@ -2084,19 +2084,19 @@ Data_02001370:
 	.4byte 0x00000007
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001da4
+	.4byte MsgFieldTheFortuneTellerLivesAt
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001da5
+	.4byte MsgFieldWeReASmallVillage
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001da8
+	.4byte MsgFieldIfYouDesireAReading
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001dfb
+	.4byte MsgFieldMyFatherIsAFortune
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001dfc
+	.4byte MsgFieldByPaintingOurBodiesWe
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Func_020000c4
@@ -2105,7 +2105,7 @@ Data_02001370:
 	.4byte Func_02000184
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001e06
+	.4byte MsgFieldIfYouLikeAdventureYou
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte Func_02000244
@@ -2114,31 +2114,31 @@ Data_02001370:
 	.4byte Func_02000304
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001da6
+	.4byte MsgFieldTheFortuneTellerInNaribwe
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001da7
+	.4byte MsgFieldAsLongAsWeListen
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001dfd
+	.4byte MsgFieldTheItemsThatOneCarries
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001dfe
+	.4byte MsgFieldMyFatherMayNotBe
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001dff
+	.4byte MsgFieldBodyPaintingAlsoProtectsUs
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001e01
+	.4byte MsgFieldICanLookAtAny
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001e03
+	.4byte MsgFieldWheneverIGetMyFortune
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001e08
+	.4byte MsgFieldTheRiverIsProbablyVery
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001e09
+	.4byte MsgFieldOurSpicesAreOurSecret
 	.4byte 0x00008d15
 	.4byte 0xffff0011
 	.4byte Func_02000054
@@ -2170,19 +2170,19 @@ Data_020014c0:
 	.4byte 0x00000007
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001e1f
+	.4byte MsgFieldIGuessThoseWarriorsLearned
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001e20
+	.4byte MsgFieldOurFortuneTellerHasBeen
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001da8
+	.4byte MsgFieldIfYouDesireAReading
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001e23
+	.4byte MsgFieldIfTroubleResidesInYour
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001e24
+	.4byte MsgFieldReadingFortunesInPeopleS
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Func_02000124
@@ -2191,7 +2191,7 @@ Data_020014c0:
 	.4byte Func_020001e4
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001e2e
+	.4byte MsgFieldIfIsTravelingInYour
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte Func_020002a4
@@ -2200,31 +2200,31 @@ Data_020014c0:
 	.4byte Func_02000304
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001e21
+	.4byte MsgFieldThePowerOfTheFortune
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001e22
+	.4byte MsgFieldTheFortuneTellerSaidThat
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001e25
+	.4byte MsgFieldItemsPlacedBeforeMeAre
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001e26
+	.4byte MsgFieldFatherShouldChargeMoreFor
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001e27
+	.4byte MsgFieldAfterFatherSBeenReading
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001e29
+	.4byte MsgFieldWhenILookAtWeapons
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001e2b
+	.4byte MsgFieldILikeOfferingArmorTo
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001e30
+	.4byte MsgFieldHePaidMeALot
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001e31
+	.4byte MsgFieldWhyWouldTravelAllThis
 	.4byte 0x00008d15
 	.4byte 0xffff0011
 	.4byte Func_0200007c

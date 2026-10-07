@@ -8732,7 +8732,7 @@ Func_02004534:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200c734:
-	.4byte 0x00001a8f
+	.4byte MsgFieldCheckedTheTabletItHas
 .L_0200c738:
 	.4byte gPartyState
 .L_0200c73c:
@@ -8785,7 +8785,7 @@ Func_02004740:
 .L_0200c7a6:
 	pop {r5, pc}
 .L_0200c7a8:
-	.4byte 0x00001a8f
+	.4byte MsgFieldCheckedTheTabletItHas
 .L_0200c7ac:
 	.4byte gPartyState
 	.section .text.x0200c7b0,"ax",%progbits
@@ -8833,7 +8833,7 @@ Func_020047b0:
 .L_0200c80e:
 	pop {r5, pc}
 .L_0200c810:
-	.4byte 0x00001a8f
+	.4byte MsgFieldCheckedTheTabletItHas
 .L_0200c814:
 	.4byte gPartyState
 	.section .text.x0200c818,"ax",%progbits
@@ -8881,7 +8881,7 @@ Func_02004818:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200c878:
-	.4byte 0x00001a8f
+	.4byte MsgFieldCheckedTheTabletItHas
 .L_0200c87c:
 	.4byte gPartyState
 	.global Data_02004880
@@ -9324,7 +9324,7 @@ Func_02004bb4:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200cbfc:
-	.4byte 0x00001a92
+	.4byte MsgFieldCheckedThePsynergyStone
 	.section .text.x0200cc00,"ax",%progbits
 	.global Func_02004c00
 	.thumb_func

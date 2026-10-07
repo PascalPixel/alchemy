@@ -412,7 +412,7 @@ Func_02000184:
 .L_020083bc:
 	.4byte gPartyState
 .L_020083c0:
-	.4byte 0x00001fb5
+	.4byte MsgFieldOhYoungWitchDoctorYou
 .L_020083c4:
 	movs r0, #14
 	lsls r1, r1, #8
@@ -1116,7 +1116,7 @@ Func_02000184:
 .L_02008a88:
 	.4byte Data_0200200c
 .L_02008a8c:
-	.4byte 0x00001fdf
+	.4byte MsgFieldCarriedTheMessageOfThe
 .L_02008a90:
 	.4byte 0x0000006e
 .L_02008a94:
@@ -1642,7 +1642,7 @@ Func_02000e60:
 	bl Func_02001da8
 	pop {pc}
 .L_02008eec:
-	.4byte 0x00001faf
+	.4byte MsgFieldIHaveFollowedOeiaS
 	.section .text.x02008ef0,"ax",%progbits
 	.global Func_02000ef0
 	.thumb_func
@@ -2345,7 +2345,7 @@ Func_020010d4:
 .L_02009518:
 	.4byte 0x01a70000
 .L_0200951c:
-	.4byte 0x00001f60
+	.4byte MsgFieldTheBlackOrbWhereIs
 .L_02009520:
 	.4byte 0x00019999
 .L_02009524:
@@ -2932,7 +2932,7 @@ Func_02001710:
 .L_02009a94:
 	.4byte gPartyState
 .L_02009a98:
-	.4byte 0x00001f7f
+	.4byte MsgFieldIMightBeAbleTo
 .L_02009a9c:
 	.4byte 0x00013333
 .L_02009aa0:
@@ -3643,10 +3643,10 @@ Data_020024dc:
 	.4byte Func_02000e60
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001fb3
+	.4byte MsgFieldYourBlackOrbRestsIn
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001fb4
+	.4byte MsgFieldOeiaWhatAmITo
 	.4byte 0x0000c403
 	.4byte 0x08ff000b
 	.4byte Func_02000184

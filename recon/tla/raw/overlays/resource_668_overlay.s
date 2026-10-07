@@ -955,7 +955,7 @@ Func_02000730:
 	bl Func_02004a9c
 	pop {r5, pc}
 .L_02008830:
-	.4byte 0x00001b58
+	.4byte MsgFieldWhatSYourProblem
 .L_02008834:
 	.4byte gPartyState
 	.section .text.x02008838,"ax",%progbits
@@ -1194,7 +1194,7 @@ Func_02000968:
 .L_02008a32:
 	pop {pc}
 .L_02008a34:
-	.4byte 0x00001cef
+	.4byte MsgFieldIDonTKnowWhat5
 .L_02008a38:
 	.4byte gPartyState
 	.section .text.x02008a44,"ax",%progbits
@@ -2384,7 +2384,7 @@ Func_0200112c:
 	bl Object_SetModeById
 	b .L_02009538
 .L_0200952c:
-	.4byte 0x00001b4c
+	.4byte MsgFieldItSItSNo
 .L_02009530:
 	.4byte gPartyState
 .L_02009534:
@@ -2678,7 +2678,7 @@ Func_02001574:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020097e0:
-	.4byte 0x00001cdc
+	.4byte MsgFieldYouDoPlanToHelp
 .L_020097e4:
 	.4byte 0x00013333
 .L_020097e8:
@@ -3072,9 +3072,9 @@ Func_020017ec:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02009b8c:
-	.4byte 0x00001ce1
+	.4byte MsgFieldAreYouFinishedHere
 .L_02009b90:
-	.4byte 0x00001cea
+	.4byte MsgFieldSoIThinkMaybeWe
 .L_02009b94:
 	.4byte 0x00013333
 .L_02009b98:
@@ -3582,7 +3582,7 @@ Func_02001cb0:
 	bl Func_02004a9c
 	pop {pc}
 .L_0200a044:
-	.4byte 0x000024c1
+	.4byte MsgFieldHeyThatBlockOnThe
 	.section .text.x0200a048,"ax",%progbits
 	.global Func_02002048
 	.thumb_func
@@ -4010,7 +4010,7 @@ Func_02002048:
 	bl Func_02004b4c
 	b .L_0200a484
 .L_0200a46c:
-	.4byte 0x000024ce
+	.4byte MsgFieldIStillJustCanT
 .L_0200a470:
 	.4byte Data_020054f4
 .L_0200a474:
@@ -5026,7 +5026,7 @@ Func_02002a08:
 	movs r1, #0
 	b .L_0200ae44
 .L_0200ae3c:
-	.4byte 0x0000253b
+	.4byte MsgFieldBriggs
 .L_0200ae40:
 	.4byte 0x00013333
 .L_0200ae44:
@@ -5897,7 +5897,7 @@ Func_02003274:
 	b .L_0200b694
 	.2byte 0x0000
 .L_0200b688:
-	.4byte 0x00002559
+	.4byte MsgFieldWhatYouLetBriggsGet
 .L_0200b68c:
 	.4byte 0x00026666
 .L_0200b690:
@@ -8585,43 +8585,43 @@ gSceneEvents:
 	.4byte Func_02000730
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00001b60
+	.4byte MsgFieldWePaidBigMoneyFor
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00001b61
+	.4byte MsgFieldWeSentMyPalInto
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00001b62
+	.4byte MsgFieldIfWeCouldJustRaise
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001b63
+	.4byte MsgFieldPeopleCallUsChampaA
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001b64
+	.4byte MsgFieldIThoughtItWouldBe
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001b65
+	.4byte MsgFieldThatLousyRatIfSomething
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x00001b66
+	.4byte MsgFieldWhenIThinkAboutHow
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte 0x00002535
+	.4byte MsgFieldOooogOw
 	.4byte 0x00000000
 	.4byte 0xffff001f
-	.4byte 0x00002536
+	.4byte MsgFieldWhyDoTheseThingsAlways
 	.4byte 0x00000000
 	.4byte 0xffff001c
-	.4byte 0x00002537
+	.4byte MsgFieldStupidBriggs
 	.4byte 0x00008d15
 	.4byte 0xffff001e
-	.4byte 0x00002538
+	.4byte MsgFieldBriggsSPiratesTheyAttacked
 	.4byte 0x00008d15
 	.4byte 0xffff001f
-	.4byte 0x00002539
+	.4byte MsgFieldIJustCameDownTo
 	.4byte 0x00008d15
 	.4byte 0xffff001c
-	.4byte 0x0000253a
+	.4byte MsgFieldBriggsSaidTheBoatWas
 	.4byte 0x50009705
 	.4byte 0x08a7000a
 	.4byte Func_0200006c

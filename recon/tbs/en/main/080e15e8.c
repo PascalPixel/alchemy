@@ -1,5 +1,5 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1640, common 1623, differ 34 (frame 336 and
+   listing 1640, draft 1640, common 1624, differ 32 (frame 336 and
    every frame-loop slot as native, sp+24 included).
    The particle draw loop walks its own pointer q: the native's draw
    loop pointer is r5 while the bursts' p is r7, so they are two
@@ -27,13 +27,14 @@
    lsls, movs 32, subs; draft movs 16, subs, lsls). Writing 32 - w * 2
    with the native's hoisting needs the frame loop's pass-2 insn count
    above 456 or the 32's life below 19.
-   Remaining (34): that preheader; the ring store's address (native:
+   Remaining (32): that preheader; the ring store's address (native:
    offset + work, then + 10000; draft: offset + 10000, then + work;
    a literal 10000 gives the native's order but loop.c hoists it out
    of the ring loop into r6); the reload registers of the 112 store
    in the burst's first blit and of the formation preheader (cam_x
-   >> 17 and i = 0 in r3 and r2 natively, swapped here); two lsls
-   placed one slot apart.
+   >> 17 and i = 0 in r3 and r2 natively, swapped here); in the smoke
+   burst's blit, lsls of i % 3 * 0x1440 scheduled before rx - 3 and
+   ry + 32 (native after them).
    n = count * 2 - i * 48 - 256 in one expression gives the native's
    sp+24: with frame * 4, GCSE's PRE gives the three-streams preheader's
    frame << 2 the same reaching register as the smoke block's second
@@ -182,7 +183,10 @@
      0x7f0000: 66; ring store as sheet[offset + j + rings],
      (sheet + offset)[rings + j], sheet[j + offset + rings] or
      (sheet + offset + rings)[j]: 66; with a literal 10000: 68; the
-     draw loop on its own pointer q: 34, adopted. */
+     draw loop on its own pointer q: 34, adopted.
+   - on 34: no fixed n (n split or one expression): 508 or 114; the
+     ring burst's s = size + 1 first in its loop body (the native
+     schedules s + 1 before the vec address): 32, adopted. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -458,13 +462,12 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 n = 128;
             }
             for (i = 0; i != n; i++) {
-                s32 s;
+                s32 s = size + 1;
                 vec[0] = Trig_Sin(i << 9) * 96;
                 vec[2] = -(Trig_Cos(i << 9) * 96);
                 EffectPosition_ApplyBaseAndYOffset(vec, (struct EffectPosition *)&pts[0]);
                 pts[0].x = (pts[0].x >> 17) + 64;
                 pts[0].y = (pts[0].y >> 16) + 60;
-                s = size + 1;
                 blit47(dst, work->sheet + (lvl * 0x302 + ParticleStreams_CellOffsets[s - 1]) + rings,
                     pts[0].x - s / 2, pts[0].y - s, s, s * 2);
             }

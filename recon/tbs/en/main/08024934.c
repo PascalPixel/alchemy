@@ -1,6 +1,14 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 944, common 819, differ 252; frame 372
- * as native's.
+ * Native 946 instructions, draft 944, common 846, differ 198; frame 372
+ * as native's, and every compiler temporary's slot now at native's offset.
+ * Session 9: the cursor is drawn through sprite = &cursor, set at the top
+ * of the main loop: 252 -> 198. PRE makes &cursor's reaching register
+ * (hash order between &sprites and count - 1) and turns sprite's set into
+ * a copy from it; GCSE's last cprop replaces the cursor uses, which sit in
+ * later blocks, with the reaching register, and the copy dies, so the
+ * cursor lives in that register's slot 24 as native's. The same set just
+ * before the push loop 210; without the six dead stores 276 (one 276, two
+ * to five 278): still 379 buckets needed.
  * Session 8: the compiler temporaries' slot order is GCSE's. PRE creates
  * its reaching registers in pre_delete, walking the expression table by
  * bucket, and hash_expr is linear: (plus (reg N) (const_int c)) hashes
@@ -500,6 +508,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     do {
     for (;;)
     {
+        sprite = &cursor;
         if (page != drawn_page || row != drawn_row) {
             render->menu_busy = 1;
             Ui_SetRectHighlight(window->x + 1, window->y + drawn_row * 2 + 1,
@@ -589,12 +598,12 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         }
         cursor_position.x = window->x * 8 - 2;
         cursor_position.y = (row * 2 + window->y) * 8 + 20;
-        cursor.oam.word.attr01 = 0x40000000;
-        cursor.oam.word.attr23 = 0;
-        cursor.oam.f.tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
-        cursor.oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
-        cursor.oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;
-        Runtime_PushSlotEntry((s32 *)&cursor, 242);
+        sprite->oam.word.attr01 = 0x40000000;
+        sprite->oam.word.attr23 = 0;
+        sprite->oam.f.tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
+        sprite->oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
+        sprite->oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;
+        Runtime_PushSlotEntry((s32 *)sprite, 242);
         affordable = gFrameCount & 8;
         {
             s32 element, tile;

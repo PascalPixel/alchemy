@@ -1,8 +1,41 @@
-/* 08026080: listing 1585, draft 1597, differ 624 (common 1279); both
+/* 08026080: listing 1585, draft 1595, differ 542 (common 1319); both
  * frames are 324 bytes. The whole prologue through the first call now
  * matches: sel is the parameter itself in r10, mode in r8, and
  * gLinkCountdownWork is reached as cell 48 after gBattleWork, so CSE keeps
  * the gBattleWork address in r5 and adds 192 as the native does.
+ * Session T10-08026080/2 (from 624), kept:
+ * - the cursor sine as Trig_Sin(...) / 32768, as the pending loop and the
+ *   name drawing write it: the value stays in r0 as native, 624 (draft
+ *   1595, so equal count but closer code).
+ * - the pending loop indexes entry = &head[i]: CSE shares i * 2 between
+ *   selIds[i] and i * 12, so the i * 2 giv (no longer single use) combines
+ *   with the selIds address and is reduced to the native offset stepping
+ *   by 2 at sp+12 from 2, with selIds' base in r10 and entry = head + 12
+ *   set after the i < cnt guard: the whole pending loop matches native
+ *   apart from slot offsets. Alone 781 (frame 328).
+ * - the side marker block written as the first block: tbl[6 - i] directly
+ *   (a giv stepping by -4 from &tbl[6], native r0) and selSlot[cnt] =
+ *   6 - i; the mark/side FAKEMATCH is gone. With head[i]: 629 (frame 320);
+ *   with spill offsets ignored the diff falls from about 420 to 225.
+ *   Without head[i] 681. In native order global gives fp to the spread
+ *   loop's QImode 0 (8 refs over 112 insns, priority 2142) before pos
+ *   (41 refs over 963, 2128), so pos spills and the selIds giv takes fp;
+ *   native keeps pos in fp and rematerializes the 0 (movs r3, #0).
+ * - selSlot[cnt] and cnt++ before the side block's index check (permuter,
+ *   tagged FAKEMATCH: native stores them after it): 542, frame 324, pos
+ *   back in fp, but the 0 now sits in r8 and 254 in lr (native 254 in r8,
+ *   ids in lr, 0 rematerialized). Find a native-order way to drop the 0's
+ *   priority below pos and remove this device.
+ * Trials: head replaced by entries everywhere 871 (the -88, -84, -80
+ *   addresses become separate PRE pseudos); permuter 4 min on 629: 542
+ *   (the reorder above; its other rewrite, a u8 tmp in case 4/6, is noise).
+ * Spill slot order, measured: PRE numbers its reaching registers in hash
+ *   bucket order; (plus sfp C) hashes to 13926 + C modulo the table size
+ *   (max_cuid / 2 | 1, 717 here), so the draft orders efx (-236) < selSlot
+ *   (-160) < tbl (-112) < ids (-16) < cursor * 2. The native order tbl <
+ *   head < ids < cursor * 2 < efx < selSlot fits a table of 725 or 727
+ *   (or 689) with head as a PRE pseudo of (plus sfp -88); here head is a
+ *   user variable and takes an initial slot right after matrix.
  * Session of 2026-10-07 (from 1084), kept:
  * - the kind 4 and 6 searches as one || chain of byte tests each: fold's
  *   fold_truthop merges delusion/stun into the word test & 0xFF0000FF and
@@ -266,9 +299,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         ((s32 *)head)[1] = 0x40002000;
         ((s32 *)head)[2] = pending;
         head->tile = Resource_GetBuffer(slotId, (((gFrameCount >> 2) & 31) << 8) + (s32)Menu_AnimatedCursorTiles);
-        if ((i = Trig_Sin(gFrameCount << 12)) < 0)
-            i = i + 0x7FFF;
-        pos.y += i >> 15;
+        pos.y += Trig_Sin(gFrameCount << 12) / 32768;
         y = pos.y;
         if (tbl[0].flags & 1) {
             nx = (pos.x + tbl[0].x) / 2;
@@ -324,21 +355,17 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                     cnt++;
                 }
                 if (i != 0 && (n = cursor - i) >= 0 && ids[n] != 0xFE) {
-                    /* FAKEMATCH: schedule this consumed side-marker index
-                       before the slot writes; folding it differs 1445 versus 1400 here. */
-                    u8 mark;
-                    struct CursorSlot *side;
-
                     selIds[cnt] = ids[n];
-                    mark = (u8)(6 - i);
-                    side = &tbl[6 - i];
-                    selSlot[cnt] = mark;
-                    side->flags |= 2;
-                    if (side->index != -i) {
-                        side->flags &= (u8)~1;
-                        side->index = (s8)-i;
-                    }
+                    tbl[6 - i].flags |= 2;
+                    /* FAKEMATCH: selSlot and cnt before the index check (the
+                       native stores them after it, as the first block does)
+                       keep pos in fp: 542 here against 629 in native order. */
+                    selSlot[cnt] = (u8)(6 - i);
                     cnt++;
+                    if (tbl[6 - i].index != -i) {
+                        tbl[6 - i].flags &= (u8)~1;
+                        tbl[6 - i].index = (s8)-i;
+                    }
                 }
                 i++;
             } while ((u32)i < spread);
@@ -555,8 +582,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         redraw &= ~1;
     frame_end:
         if (pending != 0) {
-            entry = head + 1;
-            for (i = 1; i < cnt; i++, entry++) {
+            for (i = 1; i < cnt; i++) {
+                entry = &head[i];
                 slot = &tbl[selSlot[i]];
                 BattleMotion_ProjectConditionalPositionFar(selIds[i], (s32 *)&targetPos);
                 targetPos.y = targetPos.y + Trig_Sin(gFrameCount << 12) / 32768;

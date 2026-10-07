@@ -37095,7 +37095,7 @@ msgctxt "message"
 msgid "09271"
 msgstr "Versucht, den hölzernen Stab{line_break}zu drehen, der aus dem Stein{line_break}hervorragt.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIThoughtISawSomething"
 msgid "09272"
 msgstr "Ich dachte, ich hätte etwas{line_break}Glitzerndes auf dem Boden{line_break}gesehen.{end_wait}"
 
@@ -43559,7 +43559,7 @@ msgctxt "MsgFieldWhereAreYouGoingLet"
 msgid "10887"
 msgstr "Wohin gehst du denn, {actor_name:5}?{line_break}Lass uns doch noch ein wenig{line_break}hier verweilen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAreWeSettingOffNow"
 msgid "10888"
 msgstr "{actor_name:5}, wollen wir schon{line_break}abreisen?{end_now}"
 
@@ -45191,7 +45191,7 @@ msgctxt "MsgShamanVictorsNamesOnTrialColumns"
 msgid "11295"
 msgstr "{actor_name:5}, {actor_name:6}, {actor_name:7}{line_break}und {actor_name:8}. Ich werde diese{line_break}Namen niemals vergessen.{page_break}Diese Namen sollen die Säulen{line_break}an der Straße der Prüfungen{line_break}zieren.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAhhhh"
 msgid "11296"
 msgstr "Aaaah!!!"
 
@@ -45527,7 +45527,7 @@ msgctxt "MsgFieldPartWithAgatio"
 msgid "11379"
 msgstr "Selbst jetzt möchte ich zu{line_break}{actor_name:4} eilen und ihr die{line_break}Hand zur Hilfe reichen.{page_break}Es scheint, als wäre auch ich{line_break}einfach nur schwach...{page_break}Ich nehme an, mir bleibt keine{line_break}andere Wahl, als mich von{line_break}Hagartio und Dinaria zu trennen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMSorryICan"
 msgid "11380"
 msgstr "{actor_name:1}... Es tut mir Leid...{line_break}Ich ertrage es nicht mehr...{end_wait}"
 
@@ -45543,7 +45543,7 @@ msgctxt "message"
 msgid "11383"
 msgstr "AAAAAAAAAAAAH!!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeDidItAgatio"
 msgid "11384"
 msgstr "Wir haben es geschafft, Hagartio!{end_wait}"
 
@@ -45747,23 +45747,23 @@ msgctxt "message"
 msgid "11434"
 msgstr "Hör auf die anderen!{line_break}Gemeinsam seid ihr{line_break}sicherer!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNoWhyAreYouHelping"
 msgid "11435"
 msgstr "{control_28:5}{page_break}, {actor_name:5}... Nein!{line_break}Warum hilfst du ihnen?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDonTWorryAboutUs"
 msgid "11436"
 msgstr "Macht euch keine Sorgen{line_break}wegen uns! Helft zuerst{line_break}{actor_name:2} und {actor_name:4}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeHaveToHelpHe"
 msgid "11437"
 msgstr "Wir müssen {actor_name:2}{line_break}helfen! Er hält nicht mehr viel{line_break}länger durch!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDonTKnowHow"
 msgid "11438"
 msgstr "{actor_name:1}! Ich weiß nicht,{line_break}wie du diesen Angriff überleben{line_break}konntest,{page_break}aber ich bin froh, DASS du es{line_break}geschafft hast!{page_break}Wir werden dir helfen...{line_break}Wir werden dich heilen...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouVeBeenInjuredDon"
 msgid "11439"
 msgstr "{actor_name:3}... Du bist verletzt.{line_break}Mach dir um die anderen keine{line_break}Sorgen.{page_break}Kümmern wir uns um deine{line_break}Wunden.{end_wait}"
 

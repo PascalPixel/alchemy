@@ -1153,15 +1153,15 @@ Func_02000970:
 .L_02008a60:
 	.4byte .L_0200898c
 .L_02008a64:
-	.4byte 0x00002abd
+	.4byte MsgFieldNoWhyAreYouHelping
 .L_02008a68:
-	.4byte 0x00002abe
+	.4byte MsgFieldDonTWorryAboutUs
 .L_02008a6c:
-	.4byte 0x00002abf
+	.4byte MsgFieldWeHaveToHelpHe
 .L_02008a70:
-	.4byte 0x00002ac0
+	.4byte MsgFieldIDonTKnowHow
 .L_02008a74:
-	.4byte 0x00002ac1
+	.4byte MsgFieldYouVeBeenInjuredDon
 	.section .text.x02008a78,"ax",%progbits
 	.global Func_02000a78
 	.thumb_func
@@ -1855,7 +1855,7 @@ Func_02000cac:
 	bl Func_020048f4
 	b .L_020090bc
 .L_0200906c:
-	.4byte 0x00002a32
+	.4byte MsgFieldAhhhh
 .L_02009070:
 	.4byte Data_020056ec
 .L_02009074:
@@ -3256,7 +3256,7 @@ Func_02001c7c:
 .L_02009e20:
 	.4byte 0x02e10000
 .L_02009e24:
-	.4byte 0x00002a86
+	.4byte MsgFieldIMSorryICan
 .L_02009e28:
 	.4byte 0x02c10000
 .L_02009e2c:
@@ -3754,7 +3754,7 @@ Func_02001ed0:
 .L_0200a2f4:
 	.4byte Data_02005548
 .L_0200a2f8:
-	.4byte 0x00002a8a
+	.4byte MsgFieldWeDidItAgatio
 .L_0200a2fc:
 	.4byte Data_02004a6c
 .L_0200a300:

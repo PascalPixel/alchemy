@@ -36923,7 +36923,7 @@ msgctxt "message"
 msgid "09228"
 msgstr "Essayez de faire pivoter{line_break}ce pilier en bois qui est{line_break}enfoncé dans la pierre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIThoughtISawSomething"
 msgid "09229"
 msgstr "J'ai vu quelque chose{line_break}briller par terre!{end_wait}"
 
@@ -43387,7 +43387,7 @@ msgctxt "MsgFieldWhereAreYouGoingLet"
 msgid "10844"
 msgstr "Où vas-tu, {actor_name:5}? Allons{line_break}donc voir ça de plus près!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAreWeSettingOffNow"
 msgid "10845"
 msgstr "{actor_name:5}, est-ce que{line_break}nous partons?{end_now}"
 
@@ -45019,7 +45019,7 @@ msgctxt "MsgShamanVictorsNamesOnTrialColumns"
 msgid "11252"
 msgstr "{actor_name:5}, {actor_name:6}, {actor_name:7} et{line_break}{actor_name:8}... Je me souviendrai{line_break}à jamais de ces noms...{page_break}Un jour, ils seront gravés{line_break}sur les piliers situés sur{line_break}la Route du courage.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAhhhh"
 msgid "11253"
 msgstr "Ahhhh!!!"
 
@@ -45355,7 +45355,7 @@ msgctxt "MsgFieldPartWithAgatio"
 msgid "11336"
 msgstr "Je ressens moi aussi le{line_break}besoin d'aller aider {actor_name:4}...{line_break}Ma sensibilité me surprend...{page_break}Il est grand temps que je me{line_break}sépare d'Agatio et de Karstine.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMSorryICan"
 msgid "11337"
 msgstr "{actor_name:1}... Je suis désolé...{line_break}Mais je n'en peux plus...{end_wait}"
 
@@ -45371,7 +45371,7 @@ msgctxt "message"
 msgid "11340"
 msgstr "AHHHHHHHH!!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeDidItAgatio"
 msgid "11341"
 msgstr "Nous avons réussi, Agatio!{end_wait}"
 
@@ -45575,23 +45575,23 @@ msgctxt "message"
 msgid "11391"
 msgstr "Ils ont raison... Et{line_break}comme on dit, l'union{line_break}fait la force...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNoWhyAreYouHelping"
 msgid "11392"
 msgstr "{actor_name:5}... Non!{line_break}Pourquoi les aides-tu?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDonTWorryAboutUs"
 msgid "11393"
 msgstr "Ne vous inquiétez pas pour{line_break}nous... Il est urgent d'aider{line_break}{actor_name:2} et {actor_name:4}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeHaveToHelpHe"
 msgid "11394"
 msgstr "{actor_name:2} est en danger.{line_break}Il ne tiendra pas prise{line_break}indéfiniment.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDonTKnowHow"
 msgid "11395"
 msgstr "{actor_name:1}! Je suis heureuse{line_break}que tu aies survécu à cette{line_break}puissante attaque...{page_break}Nous allons t'aider...{line_break}Nous allons te guérir...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouVeBeenInjuredDon"
 msgid "11396"
 msgstr "{actor_name:3}... Tu es blessé.{line_break}Ne t'en fais pas pour les autres.{line_break}Soignons d'abord ces blessures.{end_wait}"
 

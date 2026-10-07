@@ -23,7 +23,7 @@ SECTIONS
         "*/resource_64e_overlay.o"(.text.x02008a54)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/PREPARE.o"(.text)
         "*/resource_64e_overlay.o"(.text.x02008b2c)
-        "*/resource_64e_overlay.o"(.text.x02008d30)
+        "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/LEAVE.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/IMPORT.o"(.text)
         "*/resource_64e_overlay.o"(.rodata.x02009ce4)
     }

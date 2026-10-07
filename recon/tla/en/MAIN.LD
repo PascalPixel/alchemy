@@ -1031,7 +1031,7 @@
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SPECIAL.o"(.text)
         "*/recon/tla/raw/080ca4a8.o"(.text)
         "*/recon/tla/raw/080ca514.o"(.text)
-        "*/recon/tla/raw/080ca5a0.o"(.text)
+        "*/games/THE LOST AGE/SRC/GAME/PARTY/IS_ACTIVE_OWNER.o"(.text)
         "*/recon/tla/raw/080ca5d8.o"(.text)
         "*/recon/tla/raw/080ca6a4.o"(.text)
         "*/recon/tla/raw/080ca6e4.o"(.text)

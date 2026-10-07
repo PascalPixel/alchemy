@@ -733,6 +733,8 @@
     "*/recon/tla/de/rom.o"(.rom.000d73f4)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SPECIAL.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000d74a8)
+        "*/games/THE LOST AGE/SRC/GAME/PARTY/IS_ACTIVE_OWNER.o"(.text)
+        "*/recon/tla/de/rom.o"(.rom.000d75d8)
     "*/recon/tla/de/rom.o"(.rom.000d76a4)
     "*/recon/tla/de/rom.o"(.rom.000d76e4)
     "*/recon/tla/de/rom.o"(.rom.000d76e8)

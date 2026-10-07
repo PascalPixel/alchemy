@@ -2431,7 +2431,8 @@ Func_080ca368:
 Func_080ca3f4:
 	.incbin "baserom.gba", 0x000cf3f4, 0x000000a0
 	.section .rom.000cf4a8, "ax"
-	.incbin "baserom.gba", 0x000cf4a8, 0x00000130
+	.incbin "baserom.gba", 0x000cf4a8, 0x000000f8
+	.section .rom.000cf5d8, "ax"
 	.global BattleFx_SelectBattleCue
 	.type BattleFx_SelectBattleCue, %function
 	.thumb_func

@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 1071 of 2455 (listing 2455, draft 2426, common 1905).
+/* 080ea0d8: differ 953 of 2455 (listing 2455, draft 2438, common 1970).
  * Remaining: register allocation, scheduling, constant hoisting, repeated
  * loads and pool placement. The first particle and dust blocks now use
  * native's pointer, counter and size registers; their spill offsets and
@@ -157,7 +157,32 @@
  * x/y 1073. Removing the callback constraint then gives 1372. Moving it
  * after the initial callback use gives 1071; merging the same clobber
  * into the existing particle-height operand preserves 1071 and is kept.
- * A plain palette count and explicit red-mask update give 1083, not kept. */
+ * A plain palette count and explicit red-mask update give 1083, not kept.
+ * Further lifetimes: first-petal x/y can be block locals without changing
+ * 1071. Plain callback copies disappear; a second-petal callback operand
+ * gives 1471, a fixed sl callback 1465, both petal callbacks bound 1463;
+ * those forms make a 180-byte frame and are rejected. Persistent first-
+ * petal top/left coordinates give 1498; second-petal x/y give 1173.
+ * Sharing all second-phase counters with i4 gives 1850, not kept.
+ * Second ring: high = 10, using high / 2, CellOffsets[high - 1] and
+ * high * 2 preserves the native diameter relationship. A variable draw
+ * width gives 1172; literal width 10 gives 1069. Sharing its count with
+ * i4 gives 1030; a literal height 20 gives 1034. Kept the diameter form,
+ * literal width and shared burst counter. Grouping cell offsets in array
+ * indexes leaves 1030 unchanged for both the burst and first ring.
+ * Circle: sharing its count with i4 gives 1636, with i gives 1397.
+ * Separate half-radius locals give 1536, separate complete coordinate
+ * scopes 1627. A bound r7 count gives 1022 but is invalid: the compiler
+ * overwrites r7 with half, even with a trailing operand, so rejected.
+ * An ordinary low-register count operand gives 1050, not kept.
+ * Binding the two half-radius locals gives 1048; binding all three circle
+ * state locals too gives 953. Only the three state bindings gives 994
+ * with a shared half, 1518 with separate halves. The half bindings plus
+ * slope give 1042; adding radius gives 978. Sharing the setup count then
+ * gives 953. Removing the now-redundant slope binding preserves 953;
+ * removing radius gives 1421, first half 964, second half 1371. Kept just
+ * radius and the two half bindings, with the ordinary shared setup count.
+ * An operand after the first half assignment gives 982, not kept. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "MEM.H"
@@ -257,14 +282,10 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 i14;
     s32 i15;
     s32 i16;
-    s32 i18;
-    s32 i19;
     s32 i20;
     s32 i21;
     s32 i22;
     s32 j;
-    s32 x;
-    s32 y;
     s32 high;
     s32 speed;
     struct EffectStep *p;
@@ -745,6 +766,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             draw(canvas, work->sheet + 0x6110, 48, 40, 24, 41);
         }
         if (frame >= 68 && frame < 76) {
+            s32 x, y;
             s32 d = 76 - frame;
             x = 49 - d / 2;
             y = 38 - d;
@@ -773,23 +795,28 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
         if (frame >= 72 && frame < 76) {
             s32 r2 = (frame << 4) - 1136;
-            for (i18 = 0; i18 != 256; i18++) {
+            high = 10;
+            for (i4 = 0; i4 != 256; i4++) {
                 s32 x, y;
-                s32 angle = i18 << 8;
-                x = ((r2 * Trig_Sin(angle)) >> 16) - 5;
+                s32 angle = i4 << 8;
+                x = ((r2 * Trig_Sin(angle)) >> 16) - high / 2;
                 y = (r2 * Trig_Cos(angle)) >> 17;
-                draw(canvas, ramp + ParticleStreams_CellOffsets[9], x + 60, y + 50, 10, 20);
+                draw(canvas, ramp + ParticleStreams_CellOffsets[high - 1], x + 60, y + 50, 10, high * 2);
             }
         }
 
         if (frame > 85) {
             if (frame <= 213) {
-                for (i19 = 0; i19 != rings; i19++, ring++) {
-                    s32 radius = ring;
+                for (i = 0; i != rings; i++, ring++) {
+                    /* FAKEMATCH: native keeps the circle radius in lr across both mirrored halves; ordinary locals choose ip or r7 (1421 -> 953 with the retained half bindings). */
+                    register s32 radius asm("r14") = ring;
                     s32 slope = 0;
                     s32 err = ring;
                     while (radius >= slope) {
-                        s32 half;
+                        /* FAKEMATCH: native keeps radius/2 in r9; separate ordinary half-radius locals choose low registers (964 -> 953 with the other retained bindings). */
+                        register s32 half asm("r9");
+                        /* FAKEMATCH: native keeps slope/2 in ip while drawing the mirrored half (1371 -> 953 with the other retained bindings). */
+                        register s32 half2 asm("r12");
                         s32 left;
                         s32 right;
                         s32 top;
@@ -829,9 +856,9 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                         work->sheet[bottom * 120 + left] = 20;
                         work->sheet[top * 120 + left] = 20;
     
-                        half = slope / 2;
-                        right = cx + (half * sx) / 8;
-                        left = cx - (half * sx) / 8;
+                        half2 = slope / 2;
+                        right = cx + (half2 * sx) / 8;
+                        left = cx - (half2 * sx) / 8;
                         bottom = cy + (radius * squash) / 8;
                         top = cy - (radius * sx) / 8;
                         if (left < 0) {
@@ -850,8 +877,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                         work->sheet[top * 120 + right] = 20;
                         work->sheet[bottom * 120 + left] = 20;
                         work->sheet[top * 120 + left] = 20;
-                        right = cx + half + 1;
-                        left = cx - half + 1;
+                        right = cx + half2 + 1;
+                        left = cx - half2 + 1;
                         if (left < 0) {
                             left = 0;
                         }

@@ -207,7 +207,15 @@
  * generated) is &work in the burst spark preheader, which the native
  * builds as add r0, sp, #152 then mov r8, r0, and the draft as
  * movs r2, #152, add r2, sp, mov r8, r2 (the native's frame <= 159
- * preheader uses the two-instruction form too). */
+ * preheader uses the two-instruction form too). gcse inserts PRE
+ * registers for &screen (1169) and &work (1170) there and loop.c moves
+ * copies of them (1008, 983) out of the burst loop; 1169 has other uses
+ * and keeps its own add (sl from r7, as the native), but 1170's only use
+ * is the copy, so the two merge into one add into r8. The native's
+ * add r0 then mov r8 fits a &work PRE register with a second use.
+ * - on 123: the frame <= 159 particle loop as for (index = 0, point =
+ *   runtime->particles; ...): 123, the same code; permuter 5 minutes
+ *   (seed 11, --heat, shared machine): 14 candidates, none below. */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"

@@ -46,10 +46,10 @@ void Func_02000188(void)
     Call1(Battle_WaitMode0, 0x28);
     Call2(Func_02002b04, 0x21, 0);
     Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_02002b1c, 0x21, 0x101, 0x23);
+    Func_02002b1c(0x21, 0x101, 0x23);
     Call2(Func_02002b04, 0x21, 0x3000);
     Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_02002b1c, 0x21, 0x100, 0x1e);
+    Func_02002b1c(0x21, 0x100, 0x1e);
     Call3(Func_02002aec, 0x21, 0, 5);
     Call3(ObjectMotion_Launch, 0x20, 6, 0);
     Call3(ObjectMotion_Launch, 0x21, 6, 0);

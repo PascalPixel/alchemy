@@ -6,7 +6,7 @@ extern u8 gPartyState[];
 extern u8 MsgBlank[];
 extern u8 MsgBlank2[];
 extern u8 MsgBlank3[];
-extern u8 MsgHat[];
+extern u8 MsgHat2[];
 
 void Func_02000350(void)
 {
@@ -16,7 +16,7 @@ void Func_02000350(void)
         } else {
             if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgBlank3) {
             } else {
-                if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgHat) {
+                if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgHat2) {
                 } else {
                 }
             }

@@ -77,7 +77,7 @@ void Func_02000aa0(s32 a0)
     if (a0 == 0x14) {
         Call3(ObjectMotion_ArmCallback, 4, 0x4000, 0);
     } else {
-        ObjectMotion_ArmCallback(4, 0, 0);
+        Call3(ObjectMotion_ArmCallback, 4, 0, 0);
     }
     Call1(Battle_WaitMode0, 0x14);
     Call4(Motion_CamBounds, 0x1900000, -1, 0x3280000, 1);

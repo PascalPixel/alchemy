@@ -3,17 +3,17 @@
 
 #include "CALL.H"
 extern u8 gPartyState[];
-extern u8 MsgHat[];
 extern u8 MsgHat2[];
+extern u8 MsgHat[];
 extern u8 MsgCrownBoostsLuck[];
 extern u8 MsgHatBoostsAgility[];
 extern u8 MsgCrownBoostsCriticalsRestoresPp[];
 
 void Func_02001bec(void)
 {
-    if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgHat) {
+    if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgHat2) {
     } else {
-        if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgHat2) {
+        if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgHat) {
         } else {
             if (FIELD_AT(gPartyState, s16, 480) == (s32)MsgCrownBoostsLuck) {
             } else {

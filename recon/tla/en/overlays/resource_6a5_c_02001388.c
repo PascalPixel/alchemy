@@ -52,9 +52,9 @@ void Func_02001388(void)
 
     Func_02005814();
     Call1(Func_02005984, 0);
-    Call4(Func_0200588c, 4, 0x2000000, 0x1380000, 0xa000);
+    Func_0200588c(4, 0x2000000, 0x1380000, 0xa000);
     Call4(Func_0200588c, 7, 0x2100000, 0x1300000, 0xa000);
-    Call4(Func_0200588c, 0x1b, 0x1f80000, 0x1300000, 0x2000);
+    Func_0200588c(0x1b, 0x1f80000, 0x1300000, 0x2000);
     Call4(Func_0200588c, 0x1c, 0x2080000, 0x1200000, 0x2000);
     Call4(Func_0200588c, 5, 0x2280000, 0x1880000, 0xc000);
     Call2(Object_SetModeById, 0x1b, 9);
@@ -101,17 +101,17 @@ void Func_02001388(void)
     FIELD_AT((t36 + 0x5a), u8, 0) = (1 | FIELD_AT((t36 + 0x5a), u8, 0));
     Call2(Object_AttachWorkTargetToObject, 4, 1);
     Call3(ObjectMotion_SetPositionAndReset, 5, 0x228, 0x158);
-    Call3(Func_020058fc, 5, 0x102, 0x1e);
+    Func_020058fc(5, 0x102, 0x1e);
     Call3(Func_020058d4, 5, 0, 0);
     Call2(Func_020058ec, 7, 0x4000);
     Call1(Battle_WaitMode0, 0xa);
     Call3(Func_020058d4, 7, 0, 0);
     Call2(Func_020058ec, 0x1c, 0x6000);
-    Call3(Func_020058fc, 0x1c, 0x107, 0x1e);
+    Func_020058fc(0x1c, 0x107, 0x1e);
     Call3(Func_020058d4, 0x1c, 0, 0);
     Call3(Func_020058d4, 0x1b, 0, 0);
-    Call3(ObjectMotion_ArmCallback, 0x1c, 0x2000, 0);
-    Call2(Func_020058ec, 0x1b, 0x2000);
+    ObjectMotion_ArmCallback(0x1c, 0x2000, 0);
+    Func_020058ec(0x1b, 0x2000);
     Call2(Func_020058ec, 5, 0xa000);
     Call1(Battle_WaitMode0, 0xa);
     Call2(Func_020058dc, 5, 0);

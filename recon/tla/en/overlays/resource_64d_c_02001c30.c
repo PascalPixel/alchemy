@@ -51,7 +51,7 @@ void Func_02001c30(void)
     Event_WaitTransitionFrames();
     Call1(Battle_WaitMode0, 0x14);
     Call1(Func_0200293c, (s32)MsgAreAreYouAllRight);
-    Call3(Func_02002964, 8, 0x102, 0x28);
+    Func_02002964(8, 0x102, 0x28);
     Call3(Func_0200294c, 8, 0, 0xa);
     Call2(Motion_SetVarCbAndRefresh, 5, 2);
     Call1(Battle_WaitMode0, 0x1e);

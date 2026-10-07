@@ -1,0 +1,76 @@
+#include "TYPES.H"
+#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+
+#include "CALL.H"
+s32 Func_02004464();
+s32 Func_020045ec();
+s32 ObjectMotion_SetSpeedParameters();
+s32 Object_GetById();
+s32 ObjectMotion_SetActionVariant();
+s32 ObjectMotion_SetPositionAndReset();
+s32 Battle_WaitMode0();
+s32 ObjectMotion_ArmCallback();
+s32 Func_0200463c();
+s32 Func_02004584();
+s32 Func_020044cc();
+s32 Func_02004444();
+s32 Func_0200455c();
+s32 Func_02004404();
+s32 Func_0200442c();
+s32 GameFlag_SetBit();
+s32 Func_0200446c();
+extern u8 gPartyState[];
+
+void Func_020015d0(void)
+{
+    s32 t12;
+    s32 t4;
+    s32 t6;
+    s32 t9;
+    s32 t13;
+    s32 t16;
+    s32 t28;
+
+    Func_02004464();
+    Call1(Func_020045ec, 0);
+    Call3(ObjectMotion_SetSpeedParameters, FIELD_AT(gPartyState, s32, 532), 0x20000, 0x10000);
+    Call3(ObjectMotion_SetSpeedParameters, 0x14, 0x20000, 0x10000);
+    t4 = Value1(Object_GetById, 0x14);
+    FIELD_AT((t4 + 0x22), u8, 0) = 1;
+    Call2(ObjectMotion_SetActionVariant, 0x14, 3);
+    t6 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
+    FIELD_AT((t6 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t6 + 0x5a), u8, 0));
+    Call3(ObjectMotion_SetPositionAndReset, FIELD_AT(gPartyState, s32, 532), 0x198, 0x146);
+    Call1(Battle_WaitMode0, 1);
+    t9 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
+    FIELD_AT((t9 + 0x5a), u8, 0) = (FIELD_AT((t9 + 0x5a), u8, 0) | 1);
+    Call3(ObjectMotion_ArmCallback, FIELD_AT(gPartyState, s32, 532), 0xc000, 0);
+    Call1(Func_0200463c, 0xa1);
+    t12 = Func_02004584();
+    FIELD_AT(t12, s32, 12) = (FIELD_AT(t12, s32, 12) + 0x20000);
+    t13 = Value1(Object_GetById, 0x14);
+    FIELD_AT((t13 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t13 + 0x5a), u8, 0));
+    Call3(ObjectMotion_SetPositionAndReset, 0x14, 0x198, 0xc8);
+    Call1(Battle_WaitMode0, 1);
+    t16 = Value1(Object_GetById, 0x14);
+    FIELD_AT((t16 + 0x5a), u8, 0) = (FIELD_AT((t16 + 0x5a), u8, 0) | 1);
+    Call3(Func_020044cc, 0x14, 0, 0);
+    Call1(Func_0200463c, 0xb0);
+    Call3(Func_02004444, 0x10000, 0x20000, 0x10000);
+    Call1(Battle_WaitMode0, 0x1e);
+    Call3(Func_02004444, -1, -1, 0xe666);
+    Call1(Func_0200463c, 0x7f);
+    Call1(Battle_WaitMode0, 0x1e);
+    Call1(Func_0200463c, 0x92);
+    Call1(Battle_WaitMode0, 0x14);
+    Call3(Func_0200455c, FIELD_AT(gPartyState, s32, 532), 0x105, 0x28);
+    Call2(ObjectMotion_SetActionVariant, 0x14, 2);
+    t28 = Value1(Object_GetById, 0x14);
+    FIELD_AT((t28 + 0x23), u8, 0) = (1 | FIELD_AT((t28 + 0x23), u8, 0));
+    Call6(Func_02004404, 0x48, 3, 0x45, 3, 3, 3);
+    Call6(Func_02004404, 0x30, 0x24, 0x45, 8, 3, 2);
+    Call6(Func_0200442c, 0x48, 0xd, 1, 3, 0x46, 0x14);
+    Call1(GameFlag_SetBit, 0xa2d);
+    Func_0200446c();
+}
+

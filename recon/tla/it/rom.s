@@ -696,7 +696,7 @@ Object_SetMoveTarget:
 	.section .rom.00024d14, "ax"
 	.incbin "baserom.gba", 0x00024d14, 0x0000004c
 	.section .rom.00024ec6, "ax"
-	.incbin "baserom.gba", 0x00024ec6, 0x0000000e
+	.incbin "baserom.gba", 0x00024ec6, 0x00000002
 	.section .rom.00024efe, "ax"
 	.incbin "baserom.gba", 0x00024efe, 0x00000022
 	.section .rom.00024fde, "ax"
@@ -711,8 +711,9 @@ Object_SetMoveTarget:
 	.incbin "baserom.gba", 0x00025bb4, 0x00000030
 	.section .rom.00025c8a, "ax"
 	.incbin "baserom.gba", 0x00025c8a, 0x00000002
-	.section .rom.00026320, "ax"
-	.incbin "baserom.gba", 0x00026320, 0x00000c60
+	.section .rom.0002632c, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0002632c, 0x00000c54
 	.section .rom.00026fc8, "ax"
 	.global Func_0802de8c
 	.type Func_0802de8c, %function
@@ -1544,7 +1545,9 @@ Func_080438c8:
 	.balign 4
 	.incbin "baserom.gba", 0x00043ac8, 0x00000188
 	.section .rom.00043d3c, "ax"
-	.incbin "baserom.gba", 0x00043d3c, 0x00000700
+	.incbin "baserom.gba", 0x00043d3c, 0x0000066c
+	.section .rom.000443ac, "ax"
+	.incbin "baserom.gba", 0x000443ac, 0x00000090
 	.section .rom.000445bc, "ax"
 	.balign 4
 	.global Func_08044558
@@ -3206,7 +3209,7 @@ Func_080caa2c:
 ObjectTable_FindLastActiveId:
 	.incbin "baserom.gba", 0x000cacc0, 0x000000a4
 	.section .rom.000cae5c, "ax"
-	.incbin "baserom.gba", 0x000cae5c, 0x00000114
+	.incbin "baserom.gba", 0x000cae5c, 0x00000110
 	.section .rom.000cafc4, "ax"
 	.incbin "baserom.gba", 0x000cafc4, 0x00000704
 	.section .rom.000cb82c, "ax"
@@ -4093,7 +4096,13 @@ UpdateRisingParticleBurst:
 	.type BattleFx_RunOrbitingParticles, %function
 	.thumb_func
 BattleFx_RunOrbitingParticles:
-	.incbin "baserom.gba", 0x000de67c, 0x00000630
+	.incbin "baserom.gba", 0x000de67c, 0x00000364
+	.section .rom.000de9ec, "ax"
+	.global Func_080de9f8
+	.type Func_080de9f8, %function
+	.thumb_func
+Func_080de9f8:
+	.incbin "baserom.gba", 0x000de9ec, 0x000002c0
 	.section .rom.000decac, "ax"
 	.global Func_080cd91c
 	.type Func_080cd91c, %function
@@ -4641,7 +4650,9 @@ AudioCommand_WaitForStateByteClearFar:
 Inn_PlaySleepFar:
 	.incbin "baserom.gba", 0x00108080, 0x00000008
 	.section .rom.001080a8, "ax"
-	.incbin "baserom.gba", 0x001080a8, 0x0000021c
+	.incbin "baserom.gba", 0x001080a8, 0x00000088
+	.section .rom.00108148, "ax"
+	.incbin "baserom.gba", 0x00108148, 0x0000017c
 	.global Func_081082c4
 	.type Func_081082c4, %function
 	.thumb_func
@@ -4856,10 +4867,8 @@ Camera_InitDefaultTransform:
 	.thumb_func
 Func_0811c074:
 	.incbin "baserom.gba", 0x0011c08c, 0x00000184
-	.section .rom.0011c28c, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0011c28c, 0x00000040
 	.section .rom.0011c2cc, "ax"
+	.balign 4
 	.global Func_0811c2b4
 	.type Func_0811c2b4, %function
 	.thumb_func
@@ -5116,7 +5125,14 @@ BattleFx_RunSparkGroups:
 	.type BattleFx_RenderMode, %function
 	.thumb_func
 BattleFx_RenderMode:
-	.incbin "baserom.gba", 0x0014a814, 0x00002168
+	.incbin "baserom.gba", 0x0014a814, 0x000011b0
+	.section .rom.0014b9e8, "ax"
+	.balign 4
+	.global Func_0814b9e8
+	.type Func_0814b9e8, %function
+	.thumb_func
+Func_0814b9e8:
+	.incbin "baserom.gba", 0x0014b9e8, 0x00000f94
 	.section .rom.0014c992, "ax"
 	.incbin "baserom.gba", 0x0014c992, 0x00000002
 	.section .rom.0014c994, "ax"
@@ -5206,12 +5222,6 @@ BattleEffect_RunParticleStreams:
 	.thumb_func
 Func_0818f620:
 	.incbin "baserom.gba", 0x0018f620, 0x00006dcc
-	.section .rom.001963ec, "ax"
-	.global Func_081963ec
-	.type Func_081963ec, %function
-	.thumb_func
-Func_081963ec:
-	.incbin "baserom.gba", 0x001963ec, 0x00000018
 	.section .rom.00196404, "ax"
 	.global Func_08196404
 	.type Func_08196404, %function

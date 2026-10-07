@@ -82,3 +82,34 @@ void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id)
 
     BattleMotion_NoOp(&pos, 0x1000);
 }
+
+struct SlotEffectObject {
+    u8 unknown_00[0x50];
+    s32 resource;
+    u8 kind;
+};
+
+struct SlotEffectEntry {
+    struct SlotEffectObject *object;
+};
+
+void WaitFrames(s32 frames);
+u8 *ResourceMetadata_RegisterFar(s32 resource, s32 id);
+void Animation_SetWorkEntryFar(u8 *effect, s32 entry);
+
+void BattleMotion_SpawnSlotEffectAndWait(s32 slot)
+{
+    struct SlotEffectEntry *entry = (struct SlotEffectEntry *)GetBattleObjectSlot(slot);
+    u8 *effect;
+
+    if (entry->object != NULL) {
+        if ((entry->object->kind & 0xf) == 1) {
+            effect = ResourceMetadata_RegisterFar(entry->object->resource, 0x29f);
+            if (effect != NULL) {
+                Animation_SetWorkEntryFar(effect, 1);
+                effect[6] = 3;
+            }
+            WaitFrames(10);
+        }
+    }
+}

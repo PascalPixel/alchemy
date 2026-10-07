@@ -57,11 +57,11 @@ void Func_02000738(void)
             Call2(Motion_SetVarCbAndRefresh, 0x1f, 2);
             Call1(Battle_WaitMode0, 5);
             Call3(Func_02000b34, 0x1f, 0, 5);
-            Call3(Func_02000b5c, 0x20, 0x100, 0x1e);
+            Func_02000b5c(0x20, 0x100, 0x1e);
             Call3(Func_02000b34, 0x20, 0, 5);
             Call3(Func_02000b5c, 0x1f, 0x109, 0x1e);
             Call3(Func_02000b34, 0x1f, 0, 5);
-            Call3(Func_02000b5c, 0x20, 0x102, 0x1e);
+            Func_02000b5c(0x20, 0x102, 0x1e);
             Call3(Func_02000b34, 0x20, 0, 5);
             Call2(Motion_SetModeAndWaitAnimation, 0x1f, 3);
             Call1(Battle_WaitMode0, 0xa);
@@ -72,7 +72,7 @@ void Func_02000738(void)
             Call2(Motion_SetModeAndWaitAnimation, 0x1f, 3);
             Call1(Battle_WaitMode0, 0xa);
             Call3(Func_02000b34, 0x1f, 0, 5);
-            Call3(Func_02000b5c, 0x20, 0x109, 0x1e);
+            Func_02000b5c(0x20, 0x109, 0x1e);
             Call3(Func_02000b34, 0x20, 0, 5);
             Call2(Motion_SetVarCbAndRefresh, 0x1f, 2);
             Call1(Battle_WaitMode0, 5);

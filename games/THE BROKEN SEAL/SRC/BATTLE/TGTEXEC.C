@@ -68,6 +68,7 @@
         (f) = 7; \
     }
 
+/* わざの効果を対象ひとりにかける */
 s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 {
     s32 dist;
@@ -106,6 +107,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
     s32 cnt;
     s32 tmp;
     s32 size;
+
     bonus = 0;
     work = BtlWk;
     half = 0;
@@ -178,13 +180,11 @@ pow_end:
 
         res = plan->tgt_hit[slot];
         if (res == -1)
-            hit = BtlHitChk(
-                aid, tid, elm, action->efx,
-                HitTbl[dist]);
+            hit = BtlHitChk(aid, tid, elm, action->efx, HitTbl[dist]);
         else
             hit = res;
     }
-    if (action->efx == 50 || action->efx == 51) {
+    if (action->efx == 50 || action->efx == 51) {     /* なかまをよぶ */
         s32 cls;
         s32 ent;
 
@@ -275,7 +275,7 @@ pow_end:
         s32 ap;
 
         switch (type) {
-        case 3:
+        case 3:         /* こうげき */
         case 4:
         {
             s32 def;
@@ -292,13 +292,9 @@ pow_end:
                     bonus = 0;
                 ap = action->pow;
                 if (type == 4)
-                    dmg = BtlAtkCalc(actor->atk, scale, 0,
-                                          bonus)
-                            * ap / 10;
-                else {
-                    dmg = BtlAtkCalc(actor->atk, scale, ap,
-                                            bonus);
-                }
+                    dmg = BtlAtkCalc(actor->atk, scale, 0, bonus) * ap / 10;
+                else
+                    dmg = BtlAtkCalc(actor->atk, scale, ap, bonus);
                 dmg *= adj;
                 if (crit != 0) {
                     if (crit == 1)
@@ -459,7 +455,7 @@ pow_end:
             break;
         }
 
-        case 5:
+        case 5:         /* HPダメージ */
         case 6:
         case 8:
         {
@@ -645,7 +641,7 @@ pow_end:
         && hit != 0) {
         switch (action->efx) {
 
-        case 64:
+        case 64:        /* 状態異常をすべてなおす */
             if (target->maboroshi != 0) {
                 target->maboroshi = 0;
                 MES_PUSH(MsgCureDelusion);
@@ -680,7 +676,7 @@ pow_end:
             BtlEvPush(BEV_CLR, 0);
             break;
 
-        case 4:
+        case 4:         /* 状態異常をなおす */
             if (target->maboroshi != 0) {
                 target->maboroshi = 0;
                 BtlEvPush(BEV_CLR, 0);
@@ -992,7 +988,7 @@ pow_end:
             STAT_SET(target->reflect, MsgReflect);
             break;
 
-        case 31:
+        case 31:        /* HPをうばう */
         case 60:
         {
             s32 heal;
@@ -1019,7 +1015,7 @@ pow_end:
             break;
         }
 
-        case 32:
+        case 32:        /* EPをうばう */
         {
             s32 heal;
             s32 amt;

@@ -37007,7 +37007,7 @@ msgctxt "MsgFieldNobodyWantsToBeA"
 msgid "09249"
 msgstr "みんな イケニエがこわいのよ{line_break}だから きっとイケニエって{line_break}おそろしいことなんでしょうね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldCheckedTheAltar"
 msgid "09250"
 msgstr "{protagonist_name}は さいだんをしらべた{page_break}"
 
@@ -37131,15 +37131,15 @@ msgctxt "message"
 msgid "09280"
 msgstr "目をとじたオロチの像は{line_break}まるで生きているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMNotDyingI"
 msgid "09281"
 msgstr "オレ 死んじゃいないぜ・・・{line_break}くたびれちまったから・・・{line_break}ちょっと よこになってるんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouReGoingTo"
 msgid "09282"
 msgstr "イズモ村に行くんだったら{line_break}オレは生きてるって・・・{line_break}あねきに 伝えてくれ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouReGoingToTell"
 msgid "09283"
 msgstr "オロチをたおしたのは・・・{line_break}あんただっていうんだろ?{end_now}"
 
@@ -37151,11 +37151,11 @@ msgctxt "message"
 msgid "09285"
 msgstr "よけいなことをいっちまった{line_break}あんたが たおしたんだから{line_break}しょうじきに いってくれ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIReallyGotWorkedOver"
 msgid "09286"
 msgstr "オレは ひどくやられたけど{line_break}とにかく これで クシナダを{line_break}まもってやることができたぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldKushinadaSSafeSheS"
 msgid "09287"
 msgstr "クシナダをすくえたんだ{line_break}・・・だれがすくおうと{line_break}そんなこと どうでもいいさ。{end_wait}"
 
@@ -37983,11 +37983,11 @@ msgctxt "message"
 msgid "09493"
 msgstr "{protagonist_name}は 地のエナジー{line_break}サンド をえとくした。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMSensingSomething"
 msgid "09494"
 msgstr "なにかの けはいを{line_break}かんじる・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldICanTFeelAnything"
 msgid "09495"
 msgstr "もう けはいは{line_break}かんじられない。{end_wait}"
 

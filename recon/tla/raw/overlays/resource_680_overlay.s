@@ -119,6 +119,34 @@ Func_020000f0:
 	.global Func_02000100
 	.thumb_func
 Func_02000100:
+	.ifdef TLA_EDITION_JA
+	push {r5, r6, r7, lr}
+	bl Object_GetById
+	adds r5, r0, #0
+	adds r7, r5, #0
+	adds r7, #85
+	movs r3, #3
+	movs r6, #60
+	strb r3, [r7, #0]
+	b .L_ja_02008116
+.L_ja_02008114:
+	subs r6, #1
+.L_ja_02008116:
+	cmp r6, #0
+	beq .L_ja_02008126
+	movs r0, #1
+	bl WaitFrames
+	ldr r3, [r5, #40]
+	cmp r3, #0
+	bne .L_ja_02008114
+.L_ja_02008126:
+	movs r0, #10
+	bl WaitFrames
+	movs r3, #0
+	strb r3, [r7, #0]
+	pop {r5, r6, r7, pc}
+	movs r0, r0
+	.else
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}
@@ -154,6 +182,7 @@ Func_02000100:
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}
+	.endif
 	.section .text.x02008148,"ax",%progbits
 	.global Func_02000148
 	.thumb_func
@@ -175,6 +204,119 @@ Func_02000148:
 	.global Func_02000164
 	.thumb_func
 Func_02000164:
+	.ifdef TLA_EDITION_JA
+	push {r5, r6, lr}
+	adds r5, r1, #0
+	adds r0, r5, #0
+	sub sp, #8
+	bl Object_GetById
+	movs r3, #8
+	movs r2, #91
+	adds r6, r0, #0
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r0, #8
+	movs r1, #90
+	movs r2, #1
+	movs r3, #1
+	bl Func_02000e44
+	cmp r5, #16
+	bne .L_ja_020081ac
+	movs r0, #146
+	lsls r0, r0, #4
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_ja_020081ac
+	ldr r3, [r6, #8]
+	asrs r3, r3, #19
+	cmp r3, #11
+	bgt .L_ja_020081ac
+	movs r0, #16
+	bl Func_02000100
+	movs r0, #146
+	lsls r0, r0, #4
+	bl GameFlag_SetBit
+	movs r3, #5
+	movs r2, #27
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r0, #6
+	movs r1, #27
+	movs r2, #1
+	movs r3, #1
+	bl Func_02000e44
+.L_ja_020081ac:
+	cmp r5, #19
+	bne .L_ja_0200823c
+	movs r0, #144
+	lsls r0, r0, #4
+	adds r0, #33
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_ja_0200823c
+	ldr r3, [r6, #8]
+	asrs r3, r3, #19
+	cmp r3, #77
+	bne .L_ja_020081da
+	movs r3, #37
+	movs r2, #102
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r0, #33
+	movs r1, #102
+	movs r2, #1
+	movs r3, #2
+	bl Func_02000e44
+.L_ja_020081da:
+	ldr r3, [r6, #8]
+	asrs r3, r3, #19
+	cmp r3, #79
+	bne .L_ja_02008204
+	ldr r3, [r6, #12]
+	asrs r3, r3, #19
+	cmp r3, #12
+	bne .L_ja_02008204
+	movs r0, #19
+	bl Func_02000100
+	movs r3, #39
+	movs r2, #46
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r0, #38
+	movs r1, #46
+	movs r2, #1
+	movs r3, #1
+	bl Func_02000e44
+.L_ja_02008204:
+	ldr r3, [r6, #8]
+	asrs r3, r3, #19
+	cmp r3, #81
+	bne .L_ja_0200823c
+	movs r0, #144
+	lsls r0, r0, #4
+	adds r0, #33
+	bl GameFlag_SetBit
+	movs r3, #39
+	movs r5, #46
+	str r3, [sp, #0]
+	movs r0, #41
+	movs r1, #46
+	movs r2, #1
+	movs r3, #1
+	str r5, [sp, #4]
+	bl Func_02000e44
+	movs r3, #40
+	str r3, [sp, #0]
+	movs r0, #27
+	movs r1, #44
+	movs r2, #1
+	movs r3, #1
+	str r5, [sp, #4]
+	bl Func_02000e44
+.L_ja_0200823c:
+	add sp, #8
+	pop {r5, r6, pc}
+	.else
 	push {r5, r6, lr}
 	adds r5, r1, #0
 	adds r0, r5, #0
@@ -288,6 +430,7 @@ Func_02000164:
 .L_02008254:
 	add sp, #8
 	pop {r5, r6, pc}
+	.endif
 	.section .text.x02008258,"ax",%progbits
 	.global Func_02000258
 	.thumb_func
@@ -921,13 +1064,21 @@ Func_020006ec:
 	movs r1, #152
 	adds r3, r3, r2
 	ldr r5, .L_02008780
+	.ifdef TLA_EDITION_JA
+	adds r2, #85
+	.else
 	adds r2, #88
+	.endif
 	lsls r1, r1, #2
 	str r2, [r3]
 	adds r3, r6, r1
 	movs r1, #5
 	mov r10, r1
+	.ifdef TLA_EDITION_JA
+	adds r2, #97
+	.else
 	adds r2, #94
+	.endif
 	strh r5, [r3]
 	adds r3, r6, r2
 	mov r2, r10

@@ -1,14 +1,34 @@
 /* 0800a0f8: ARM draft (Transform_UpdateVertices) for the game ARM route
    (K1: stock agbcc_arm at the library ARM setting, alchemy diff --arm).
    Stock agbcc_arm (2026-10-07, session 4): listing 157, draft 157,
-   common 152, differ 10, from 60. Last step (36 -> 10): block 0's orr as
-   an asm, so its output reload (ox and oz are spilled) comes from reload's
-   round robin over the spill registers (r1, r2, r3) rather than from
-   combine_reloads, which hands a compiled orr its first dying input; with
-   oz's RdLo pinned to r3 every reload register after it follows as listed.
-   Left: mov r0, r8 / str r8, [r2] before Sin; the gProjection pool load
-   above strh r2, [r6, #4]; the odd-frame y's two loads above ldrsh r3.
-   The notes below record the path to 36.
+   common 156, differ 2, from 60. Steps after 36:
+   - 36 -> 10: block 0's orr as an asm, so its output reload (ox and oz
+     are spilled) comes from reload's round robin over the spill registers
+     (r1, r2, r3) rather than from combine_reloads, which hands a compiled
+     orr its first dying input; with oz's RdLo pinned to r3 every reload
+     register after it follows as listed.
+   - 10 -> 8: Vertex's u and v as s32 : 16 bitfields (int's alias set), so
+     v->v's strh no longer output-depends on out->b's (both short): out->b's
+     store drops to priority 2 and the gProjection pool load (a reload,
+     later in the stream) wins the tie, ldr r3 right above ldr r0, [r3].
+     out's a and b as bitfields instead: 12.
+   - 8 -> 4: y's v->u read by an asm (the anti dependence on str r3 costs
+     1, not 2); 4 -> 2: Sin's argument through an asm (the call then waits
+     on the asm at cost 1, so the store is not queued below the mov).
+   Left (2): the odd-frame y's ldr r2, [sp] below cmp r3, #0 where the
+   listing has it above. Measured mechanism: the listing is the schedule a
+   free anti dependence gives (2.96's arm_adjust_cost): there str r3 ->
+   ldrsh r3 costs 1 while ldrsh -> cmp keeps the load's 2, so cmp outranks
+   the oz reload. Under stock costs every source of a free link is an
+   unrecognized consumer, whose own links then cost 1: with ldrsh as an
+   asm, cmp, addlt and the asm share the str's priority with the oz reload
+   (which anti-depends on add r3, r3, r2, asr #1 at the same priority), and
+   the reload, a load, wins the tie on its function-unit hazard. Compiled,
+   ldrsh outranks the v->dz load and addlt goes above it (6). Asm and
+   compiled for each of the x store, y's v->u, v->dz and v->v (16
+   combinations): 2 at best (this one). An asm volatile or "m" read after
+   out->x: 8.
+   The notes below record the path to 36 and 10.
    - Prologue (60 -> 56): sched2 links an insn to its predecessor at cost
      1 when the consumer is unrecognized (insn_cost, LINK_COST_FREE), so
      the parameter copy written as asm("mov %0, %1") with the asm clobbering
@@ -305,8 +325,8 @@ struct Vertex {
     s32 z;
     s32 dx;
     s32 dz;
-    s16 u;
-    s16 v;
+    s32 u : 16;
+    s32 v : 16;
 };
 
 struct VertexPair {
@@ -416,8 +436,14 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to_arg, st
     /* FAKEMATCH: sched1 barrier; without it oz's orr, a birthing insn, outranks the compare and the gScanlineAngle load lands between smull and orr, taking r3 from oz's RdLo */
     asm volatile("");
     if (angle != gScanlineAngle) {
-        gScanlineAngle = angle;
-        sn = ((TrigFn)far[11].target)(angle);
+        {
+            u32 arg;
+
+            /* FAKEMATCH: Sin's argument through an asm, so its copy into r0 (an input reload) precedes the store in the insn stream and the call waits on the asm at cost 1; the store, no longer queued behind the call, then sits between them as listed (mov r0, r8; str r8, [r2]) */
+            asm("" : "=r"(arg) : "0"(angle));
+            gScanlineAngle = angle;
+            sn = ((TrigFn)far[11].target)(arg);
+        }
         cs = ((TrigFn)far[12].target)(angle);
         center = &gProjection.center_x;
         for (i = 0; i < 160; i++) {
@@ -450,7 +476,13 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to_arg, st
         for (i = 0; i < 160; i++) {
             if (gFrameCount & 1) {
                 out->x = ((ox + v->dx) >> 8) + v->v / 4 + v->u / 2;
-                out->y = ((oz + v->dz) >> 8) + v->u / 4 + v->v / 2;
+                {
+                    s32 vu;
+
+                    /* FAKEMATCH: y's v->u read by an asm, so its anti dependence on str r3, [r6, #8] costs 1, not the store's 2: ldrsh r3 then follows the store as listed (6 to 2; the ldr r2, [sp] it leaves above cmp needs the load to keep its own cost 2) */
+                    asm("ldrsh %0, [%1, #16]" : "=r"(vu) : "r"(v));
+                    out->y = ((oz + v->dz) >> 8) + vu / 4 + v->v / 2;
+                }
             } else {
                 out->x = (ox + v->dx) >> 8;
                 out->y = (oz + v->dz) >> 8;

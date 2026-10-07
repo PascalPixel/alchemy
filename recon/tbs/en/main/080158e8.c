@@ -1,7 +1,26 @@
 /* 080158e8: ARM draft (Tile_BuildMetatiles); ⚓️'s copy is 080388fc.
    Game ARM route (K1): stock agbcc_arm at the library ARM setting,
-   alchemy diff --arm: 92/92/common89/differ 6 (2026-10-07). The six are
-   instruction order; S2 allows a tagged device once reshaping fails.
+   alchemy diff --arm: 92/92/common92/differ 0 (2026-10-07, session 1 of
+   S02) with two tagged order devices, each a non-volatile empty asm that
+   rewrites a live register in place. Cause: stock agbcc_arm's old sched.c
+   costs an anti-dependence at its producer's latency (a store 2), where
+   native placement needs it at 0 or 1. An asm consumer makes the link
+   free (insn_cost sets LINK_COST_FREE when the user is unrecognized):
+   one after the last store takes the jump's anti-dependence on dst
+   (differ 6 -> 4: add sl, mov r1 and cmp rise one store); one after the
+   seventh store that rewrites dst and v takes f+d's anti-dependence on
+   the stores of v, so strh 7 sits right above f+d (4 -> 0), in sched1
+   and again in sched2. Either alone: 4 and 6. Japanese (not scored by
+   diff: an ARM scaffold) lacks the 0xf01a and 0xf01b cases.
+   ⚓️ 080388fc --game tla --arm: 93/92/common92/differ 1, the one being
+   its Thumb entry (bx pc; .2byte 0x0200), handwritten assembly (C2).
+   Adoption, not yet done: ☀️ CONSTANTS.LD sizes the code by
+   Tile_BuildMetatilesEnd; ja/de/es/fr/it rom.s hold it in one section
+   with UiText_DrawGlyphArm; GRAPHICS.H declares it const u8 [] for
+   STATUS.C's copy; ⚓️ names the Thumb entry Tile_BuildMetatiles and
+   its even address Tile_BuildMetatilesCode (08042588.s).
+   Earlier, at differ 6: instruction order; S2 allows a tagged device
+   once reshaping fails.
    History: differ 0 under agbcc_arm with 2.96's arm_adjust_cost copied
    in; adopted 2026-10-06 and again 2026-10-07 in both games under that
    copy, and returned here when it was dropped as a compiler change fitted
@@ -130,8 +149,12 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
         *dst++ = v;
         dst++;
         *dst++ = v;
+        /* FAKEMATCH: rewrites dst and v in place so f+d no longer waits two cycles on the stores of v; strh 7 then sits right above f+d (differ 4 -> 0) */
+        asm("" : "=r"(dst), "=r"(v) : "0"(dst), "1"(v));
         v = f + (d << 8);
         dst++;
         *dst++ = v;
+        /* FAKEMATCH: rewrites dst in place so the loop jump no longer waits two cycles on the last store; add sl, mov r1 and cmp rise one store (differ 6 -> 4) */
+        asm("" : "=r"(dst) : "0"(dst));
     }
 }

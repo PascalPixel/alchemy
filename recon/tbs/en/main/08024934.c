@@ -533,6 +533,12 @@
 #include "BTLSMN.H"
 #include "MENU_LIST.H"
 
+#if EDITION_INTERNATIONAL
+#define SUMMON_COST_X 13
+#else
+#define SUMMON_COST_X 10
+#endif
+
 enum {
     SUMMON_ELEMENT_TILE = 0x5001,
     SUMMON_PAGE_TILE = 0xf301,
@@ -579,12 +585,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
        registers in bucket order; 756 insns give 379 buckets, not 375, and
        &ordered and &sprites then come before count - 1 as native's spill
        slots show (369, 371, 381 and 383 order them the same). */
-    pressed = 0;
-    repeated = 0;
     result = 0;
-    tile = 0;
-    affordable = 0;
-    id = 0;
     render = (struct UiRenderWork *)gWindowWork[0];
     drawn_row = -1;
     drawn_page = -1;
@@ -597,7 +598,11 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         row = ((struct MenuCell *)gWindowWork[42])->row;
         preferred = ((struct MenuCell *)gWindowWork[42])->preferred_row;
     } while (0);
+#if EDITION_INTERNATIONAL
     window = UiWindow_Create(13, 11, 17, 9, 6);
+#else
+    window = UiWindow_Create(16, 11, 14, 9, 6);
+#endif
     for (index = 0; index < 4; index++) {
         s32 y = index * 2;
 
@@ -664,7 +669,11 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                 s32 element;
 
                 s = SummonDefinition_Get(ordered[page + row]);
+#if EDITION_INTERNATIONAL
                 UiText_CopyMessageString(s->name_message_id + (s32)&MsgAbilityDescription, text, 52);
+#else
+                UiText_DecodeMessage(s->name_message_id + (s32)&MsgAbilityDescription, text, 32);
+#endif
                 UiText_RenderWideStringAtOffset(text, (struct UiWindow *)description, 0, 4);
                 drawn_row = row;
                 mask = 0;
@@ -705,8 +714,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                             (struct RenderInput *)window, 16, index * 16);
                         for (element = 0; element <= 3; element++) {
                             if (summon->djinn_required[element] != 0) {
-                                UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE, col * 2 + 13, y, 0);
-                                UiWindow_PutGlyph(window, summon->djinn_required[element] + 48, col * 2 + 14, y, 0);
+                                UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE, col * 2 + SUMMON_COST_X, y, 0);
+                                UiWindow_PutGlyph(window, summon->djinn_required[element] + 48, col * 2 + SUMMON_COST_X + 1, y, 0);
                                 col++;
                             }
                         }

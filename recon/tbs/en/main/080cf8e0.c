@@ -1,4 +1,34 @@
-/* Draft: native 670 instructions, draft 670, common 638, differ 64.
+/* Draft: native 670 instructions, draft 670, common 646, differ 48.
+ * Eighth pass (2026-10-07): the shard draw goes through a pointer,
+ * DrawRectangle *shard_draw = &draw[flip] and (*shard_draw)(...), with a
+ * forced temporary odd = i & 1 whose test follows flip (FAKEMATCH, a
+ * permuter hint; 64 -> 48). Everything outside the shard block now
+ * matches: reload's rotation, the mode chain and both loop tails.
+ * Cause, from the lreg/greg dumps: native's spill set includes r4 because
+ * the burst pointer reload at the velocity_x load (insn "mov r4, r8")
+ * finds r0 (picture), r1 (the constant 1), r2 (flip) and r3 (effect) busy.
+ * The pointer form keeps the drawer load at the call (combine folds
+ * &draw[flip] into the load; native ldr r4, [r7, r0]), but local-alloc
+ * gives t = flip << 2 r6 (r7 is the hard frame pointer, never used by
+ * local-alloc), global then prefers r6 for flip (set_preference through
+ * the shift), the constant 1 lands in r2 and the reload takes r1: r4
+ * never enters the spill set and the whole function shifts (396). With
+ * odd computed first the constant 1 stays in r1 and r4 returns.
+ * Remaining at 48, all in the shard block: native tests i & 1 before
+ * flip (the draft's odd test follows it), keeps flip in r2 and t in r7
+ * (so t was allocated by global, not local-alloc: some local of higher
+ * priority holds r6 during t's life, or t spans a block boundary), and
+ * the position pointer in r6 where the draft has r7.
+ * Eighth-pass trials (on the 64 draft unless marked): records[mode * 2]
+ * without row 68; pointer draw alone 396 (with the plain position.x
+ * 418, without records 391); position pointer as register asm("r6")
+ * in the burst draw block 438, with the pointer draw 262 (the burst
+ * pointer then takes r7 and t ip); i & 1 test moved after flip without
+ * a temporary 411; odd tested before flip 396; shard_draw = &draw[flip]
+ * before the odd test 435 (440 without odd); at 48: (u32)flip 48,
+ * plain position.x 257, records[mode * 2] without row 52, without
+ * records 177. Permuter (5 minutes, PERM_RANDOMIZE over the shard
+ * block, pointer form): odd first and its test after flip, 48.
  * Seventh pass (2026-10-07): the burst count indexes records with a row
  * temporary (FAKEMATCH, 68 -> 64, a permuter hint): records[mode * 2]
  * expands to (plus (mult mode 2) records), the multiply first as RTL
@@ -444,19 +474,28 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                 } else {
                     s32 picture = burst->variant / 5;
                     s32 flip;
-                    DrawRectangle shard_draw;
+                    DrawRectangle *shard_draw;
+                    s32 odd;
 
-                    if (i & 1)
-                        picture += 9;
+                    /* FAKEMATCH: odd is a forced temporary and its test sits after
+                       flip (native tests i & 1 before flip): with the plain
+                       if (i & 1) first, flip takes r6 and the constant 1 r2, the
+                       burst reload at the velocity test finds r1 free, r4 never
+                       becomes a spill register and reload's rotation shifts in
+                       the whole function (396 -> 48). */
+                    odd = i & 1;
                     flip = effect->side;
                     if (burst->velocity_x > 0)
                         flip ^= 1;
+                    if (odd)
+                        picture += 9;
                     /* FAKEMATCH: native re-reads position.x after __divsi3; kept in a
                        register (r4, caller-saved) it keeps r4 out of reload's
                        rotation for the whole function (412 -> 326 with the
-                       shard_draw load, 367 without the re-read). */
-                    shard_draw = draw[flip];
-                    shard_draw(canvas, work->sheet + SevenMode_ShardOffsets[picture] + 0x1e00,
+                       shard_draw load, 367 without the re-read; 257 without
+                       it at 48). */
+                    shard_draw = &draw[flip];
+                    (*shard_draw)(canvas, work->sheet + SevenMode_ShardOffsets[picture] + 0x1e00,
                         ((volatile struct EffectPosition *)&position)->x - SevenMode_ShardWidths[picture] / 2,
                         position.y - SevenMode_ShardHeights[picture] / 2,
                         SevenMode_ShardWidths[picture], SevenMode_ShardHeights[picture]);

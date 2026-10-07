@@ -37,6 +37,7 @@
  * walking sprite (sprite = sprites; ...; sprite++) to keep it live 263.
  * The column loop's col and y take r8 and r9 swapped against native,
  * which follows from y living across the glyph call in the draft.
+ * Three more minutes of permute from 129 found nothing below it.
  * Session 9: the two page changes set page before row again (page = 0;
  * row = preferred and page -= 4; row = preferred), as session 4's base
  * had them before a merge reversed them: 172 -> 154. From 172: the

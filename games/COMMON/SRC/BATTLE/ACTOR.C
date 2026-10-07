@@ -40,7 +40,7 @@ void BattleActor_RemoveFromLists(s32 actor)
 
 #if GAME_TLA
     work = Ram_HeapSlots->battle_work;
-    Owner_GetState(actor)->status_12a = BATTLE_UNIT_ABSENT;
+    Owner_GetState(actor)->side = BATTLE_UNIT_ABSENT;
     i = (u32)&((struct BattleSession *)0)->party_units;
     slot = i;
     unit = *(s16 *)(slot + (u32)work);
@@ -57,7 +57,7 @@ void BattleActor_RemoveFromLists(s32 actor)
     }
 #else
     work = gBattleWork;
-    Owner_GetStateFar(actor)->status_12a = BATTLE_UNIT_ABSENT;
+    Owner_GetStateFar(actor)->side = BATTLE_UNIT_ABSENT;
     for (i = 0; ; i++) {
         if (work->party_units[i] == actor) {
             work->party_units[i] = BATTLE_UNIT_REMOVED;
@@ -129,7 +129,7 @@ void BattleMotion_InitializeActorRecords(s32 id)
 #endif
     index = 0;
     while ((item = GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
-        if (state->status_12a != BATTLE_UNIT_ENEMY)
+        if (state->side != BATTLE_UNIT_ENEMY)
 #if GAME_TLA
             Animation_ApplyChildArgumentFar(item, 4);
 #else
@@ -144,7 +144,7 @@ void BattleMotion_InitializeActorRecords(s32 id)
         index++;
     }
 
-    if (state->status_12a == BATTLE_UNIT_ENEMY) {
+    if (state->side == BATTLE_UNIT_ENEMY) {
         index = 0;
         while ((item = GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
             child = item->entries[0];

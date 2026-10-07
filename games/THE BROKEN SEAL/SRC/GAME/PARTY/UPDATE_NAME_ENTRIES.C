@@ -54,7 +54,7 @@ s32 UpdateNameEntries(void)
             break;
         }
         SerialRuntime_WaitForTransferB();
-        if (name_entry->status_12a != 0) {
+        if (name_entry->side != 0) {
             named_count += 1;
         }
         WaitFrames(2);
@@ -113,7 +113,7 @@ s32 LinkBattle_SendParty(void)
     count = BattleParty_PrepareActiveOwners(owners);
     for (i = 0; i < count; i++) {
         Iwram_CopyWords(buffer, Owner_GetStateFar(owners[i]), size);
-        ((struct BattleUnit *)buffer)->status_12a = 2;
+        ((struct BattleUnit *)buffer)->side = 2;
         work->owner_slots[owners[i]] = i - 128;
         if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
             break;
@@ -121,7 +121,7 @@ s32 LinkBattle_SendParty(void)
         WaitFrames(2);
     }
     for (; i <= 2; i++) {
-        ((struct BattleUnit *)buffer)->status_12a = 0;
+        ((struct BattleUnit *)buffer)->side = 0;
         if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
             break;
         SerialRuntime_WaitForTransferA();

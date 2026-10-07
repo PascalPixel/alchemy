@@ -68,7 +68,7 @@ s32 Summon_ResetCharge(s32 enemy_id)
     marker = LIST_MARKER_CHAR;
 scan_objects:
     summon = Owner_GetState(object_index + 0x80);
-    occupied = summon->status_12a;
+    occupied = summon->side;
     if (occupied != 1) goto next_object;
     if (summon->enemy_id != enemy_id) goto next_object;
     slot = 0;

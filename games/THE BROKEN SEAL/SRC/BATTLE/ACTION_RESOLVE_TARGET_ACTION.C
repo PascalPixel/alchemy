@@ -23,84 +23,86 @@
 #include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
 
-#define CLAMP_MOD(v)                                                           \
-    {                                                                          \
-        if ((v) < -4)                                                          \
-            (v) = -4;                                                          \
-        if ((v) > 4)                                                           \
-            (v) = 4;                                                           \
+#define MIKATA      2           /* 味方 */
+
+#define MIKATA_CHK(id)  ((id) >= 0 && (id) < 8)
+
+#define STEP_LIM(v) \
+    { \
+        if ((v) < -4) \
+            (v) = -4; \
+        if ((v) > 4) \
+            (v) = 4; \
     }
 
-#define IS_PARTY(id) ((id) >= 0 && (id) < 8)
-
-#define TAKE_BONUS()                                                           \
-    {                                                                          \
-        if (range != 4)                                                        \
-            bonus = power - target->elements[range].resist;                    \
+#define ELM_BONUS() \
+    { \
+        if (elm != 4) \
+            bonus = pow - target->elements[elm].resist; \
     }
 
-#define MES_PUSH(m) BattleEv_Push(BATTLE_EVENT_TEXT, (u32)(m))
+#define MES_PUSH(m)     BtlEvPush(BEV_MES, (u32)(m))
 
-#define TEXT_SIDE(player, enemy)                                               \
-{                                                                              \
-    if (IS_PARTY(target_id))                                                   \
-        MES_PUSH(player);                                                      \
-    else                                                                       \
-        MES_PUSH(enemy);                                                       \
-}
-
-#define APPLY_GUARD()                                                         \
-    {                                                                         \
-        guard = target->guard_level;                                          \
-        if (guard != 0) {                                                     \
-            if (guard == 1)                                                   \
-                dmg /= 2;                                                     \
-            else                                                              \
-                dmg /= 10;                                                    \
-        }                                                                     \
+#define MES_SIDE(m, e) \
+    { \
+        if (MIKATA_CHK(tid)) \
+            MES_PUSH(m); \
+        else \
+            MES_PUSH(e); \
     }
 
-#define ADJUST_RES(delta, value_expr, text)                                 \
-{                                                                              \
-    target->res_modifier += (delta);                                           \
-    CLAMP_MOD(target->res_modifier);                                           \
-    BattleEv_Push(BATTLE_EVENT_VALUE, (value_expr));                           \
-    MES_PUSH(text);                                                            \
-    target->res_modifier_turns = 7;                                            \
-}
+#define GUARD_CUT() \
+    { \
+        guard = target->guard_level; \
+        if (guard != 0) { \
+            if (guard == 1) \
+                dmg /= 2; \
+            else \
+                dmg /= 10; \
+        } \
+    }
 
-#define SET_STATUS7(field, text)                                               \
-{                                                                              \
-    MES_PUSH(text);                                                            \
-    (field) = 7;                                                               \
-}
+#define RES_STEP(d, v, m) \
+    { \
+        target->res_modifier += (d); \
+        STEP_LIM(target->res_modifier); \
+        BtlEvPush(BEV_NUM, (v)); \
+        MES_PUSH(m); \
+        target->res_modifier_turns = 7; \
+    }
+
+#define STAT_SET(f, m) \
+    { \
+        MES_PUSH(m); \
+        (f) = 7; \
+    }
 
 s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
 {
-    s32 offset;
+    s32 dist;
     struct BattleAction *action;
     struct BattleUnit *actor;
-    s32 actor_id;
-    s32 action_id;
+    s32 aid;
+    s32 act_no;
     s32 bonus;
     struct BattleSession *work;
     s32 half;
-    s32 adjust;
+    s32 adj;
     s32 dealt;
     s32 crush;
     s32 hit;
-    s32 modifier;
+    s32 crit;
     s32 skip;
-    s32 nibble;
-    s32 affinity;
-    struct BattleUnit *copy;
-    s32 power;
-    s32 hp0;
-    s32 kind;
+    s32 type;
+    s32 aff;
+    struct BattleUnit *bak;
+    s32 pow;
+    s32 hp;
+    s32 rate;
     s16 *cmd;
-    s32 target_id;
+    s32 tid;
     s8 *rm;
-    s32 range;
+    s32 elm;
     struct BattleUnit *target;
     u32 n;
     s32 value;
@@ -109,8 +111,8 @@ s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
     s32 pass;
     s8 *am;
     s32 guard;
-    s16 saved[8];
-    s32 count;
+    s16 list[8];
+    s32 cnt;
     s32 tmp;
     s32 size;
     bonus = 0;
@@ -119,103 +121,103 @@ s32 BtlTgtExec(struct BattlePlan *plan, s32 slot)
     dealt = 0;
     crush = 0;
     skip = 0;
-    affinity = 0;
+    aff = 0;
     size = sizeof(struct BattleUnit);
-    copy = Runtime_BumpAllocate(size);
+    bak = Runtime_BumpAllocate(size);
 
-    actor_id = plan->actor_id;
-    target_id = plan->target_ids[slot];
-    action_id = plan->action_id;
-    range = plan->range_index;
-    adjust = plan->target_adjustments[slot];
-    modifier = plan->target_modifiers[slot];
+    aid = plan->actor_id;
+    tid = plan->target_ids[slot];
+    act_no = plan->action_id;
+    elm = plan->range_index;
+    adj = plan->target_adjustments[slot];
+    crit = plan->target_modifiers[slot];
 
-    action = BattleAction_Get(action_id);
-    actor = Owner_GetStateFar(actor_id);
-    target = Owner_GetStateFar(target_id);
-    Iwram_CopyWords(copy, target, size);
+    action = BattleAction_Get(act_no);
+    actor = Owner_GetStateFar(aid);
+    target = Owner_GetStateFar(tid);
+    Iwram_CopyWords(bak, target, size);
 
     if (action->range != 255) {
-        offset = plan->target_offsets[slot];
-        if (offset < 0)
-            offset = -offset;
+        dist = plan->target_offsets[slot];
+        if (dist < 0)
+            dist = -dist;
     } else {
-        offset = 0;
+        dist = 0;
     }
 
-    if (range != 4) {
+    if (elm != 4) {
         s32 i;
 
-        value = target->base_elements[range].resist;
+        value = target->base_elements[elm].resist;
         for (i = 0; i < 4 && value >= target->base_elements[i].resist; i++)
             ;
         if (i == 4)
-            affinity = -1;
+            aff = -1;
 
         for (i = 0; i < 4 && value <= target->base_elements[i].resist; i++)
             ;
         if (i == 4)
-            affinity = 1;
+            aff = 1;
     }
 
     if (plan->range_index >= 0 && plan->range_index <= 3) {
         cmd = &plan->command;
         if (*cmd != 2) {
-            power = actor->elements[plan->range_index].power;
+            pow = actor->elements[plan->range_index].power;
             goto after_power;
         }
     } else
         cmd = &plan->command;
-    power = 100;
+    pow = 100;
 after_power:
 
-    if (plan->command == 5 && (plan->range_index >= 0 && plan->range_index <= 3) && affinity > 0) {
+    if (plan->command == 5 && (plan->range_index >= 0 && plan->range_index <= 3) && aff > 0) {
         s32 chance;
 
-        chance = power - target->elements[plan->range_index].resist;
+        chance = pow - target->elements[plan->range_index].resist;
         chance += 30;
         chance *= 65536 / 100;
         if (chance > (BattleRandom16Far() & 0xffff))
-            BattleEv_Push(BATTLE_EVENT_SCRIPT_UPDATE, 5);
+            BtlEvPush(BEV_SCR, 5);
     }
 
-    nibble = action->target_flags & 15;
+    type = action->target_flags & 15;
     {
-        s32 first;
+        s32 res;
 
-        first = plan->target_results[slot];
-        if (first == -1)
+        res = plan->target_results[slot];
+        if (res == -1)
             hit = Battle_HitCheck(
-                actor_id, target_id, range, action->effect,
-                HitFalloff[offset]);
+                aid, tid, elm, action->effect,
+                HitFalloff[dist]);
         else
-            hit = first;
+            hit = res;
     }
-    if (action->effect == EFX_STANDBY || action->effect == EFX_STANDBY_WORK) {
-        s32 st;
-        s32 rec;
+    if (action->effect == 50 || action->effect == 51) {
+        s32 cls;
+        s32 ent;
 
-        st = actor->class_id;
-        rec = Summon_FindSlot();
-        if (action->effect == EFX_STANDBY_WORK)
-            st = BattleFormation_SelectRandomAvailableMember(work->enemy_group);
-        if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) {
-            s32 ch;
+        cls = actor->class_id;
+        ent = Summon_FindSlot();
+        if (action->effect == 51)
+            cls = BattleFormation_SelectRandomAvailableMember(work->enemy_group);
+        if (hit != 0 && Summon_ClassValid(cls) != 0 && ent >= 0) {
+            s32 chg;
 
-            ch = Summon_TakeCharge(st, 1);
-            if (ch & 0x8000)
-                Summon_ResetCharge(st);
-            BattleUnit_AssignFar(rec, st, ch & 0x7fff);
+            chg = Summon_TakeCharge(cls, 1);
+            if (chg & 0x8000)
+                Summon_ResetCharge(cls);
+            BattleUnit_AssignFar(ent, cls, chg & 0x7fff);
             {
                 s32 i;
 
                 for (i = 0; i < 6; i++) {
                     if (work->enemy_units[i] == 254) {
-                        work->enemy_units[i] = rec;
+                        work->enemy_units[i] = ent;
                         break;
                     }
                     if (work->enemy_units[i] == 255) {
-                        work->enemy_units[i] = rec;
+                        work->enemy_units[i] = ent;
                         work->enemy_units[i + 1] = 255;
                         break;
                     }
@@ -223,26 +225,26 @@ after_power:
             }
             Summon_Refresh();
             {
-                struct BattleObjectSlot *object;
+                struct BattleObjectSlot *obj;
 
-                object = GetBattleObjectSlot(rec);
-                BattlePresentation_SpawnActorObject(object, rec,
-                    object->anchor_x / 0x10000, object->anchor_z / 0x10000);
+                obj = GetBattleObjectSlot(ent);
+                BattlePresentation_SpawnActorObject(obj, ent,
+                    obj->anchor_x / 0x10000, obj->anchor_z / 0x10000);
             }
             BattleActor_CommitPlacement();
             {
-                s32 listed;
+                s32 num;
 
-                listed = BattleParty_ListPresentEnemies(saved);
-                for (count = 0; count < listed; count++)
-                    Actor_ResetMotionAtAnchor((u16)saved[count]);
+                num = BattleParty_ListPresentEnemies(list);
+                for (cnt = 0; cnt < num; cnt++)
+                    Actor_ResetMotionAtAnchor((u16)list[cnt]);
             }
-            BattleEv_Push(BATTLE_EVENT_UNIT, rec);
-            if (action_id != 503)
+            BtlEvPush(BEV_UNIT, ent);
+            if (act_no != 503)
                 MES_PUSH(MsgAppears);
             else
                 MES_PUSH(MsgSplitOff);
-        } else if (action_id == 503) {
+        } else if (act_no == 503) {
             MES_PUSH(MsgSplitFail);
         } else {
             MES_PUSH(MsgNoOneCame);
@@ -253,26 +255,26 @@ after_power:
         s32 efx;
 
         efx = action->effect;
-        if (action->effect == EFX_IMMOBILIZE) {
+        if (action->effect == 53) {
             hit = 0;
             for (n = 0; n < 20; n++) {
-                if (work->actions[n].unit_id == target_id) {
+                if (work->actions[n].unit_id == tid) {
                     hit = 1;
                     break;
                 }
             }
-        } else if (action->effect == EFX_HALF_DEF) {
+        } else if (action->effect == 35) {
             half = 1;
-        } else if (action->effect == EFX_LETHAL) {
+        } else if (action->effect == 34) {
             crush = 1;
-        } else if (action->effect == EFX_INSTANT_DOWN) {
+        } else if (action->effect == 27) {
             skip = 1;
-        } else if (action->effect == EFX_ACTOR_FLASH) {
+        } else if (action->effect == 55) {
             if (actor->hp != 0)
-                BattleEv_Push(BATTLE_EVENT_ACTOR_EFFECT, actor_id);
-        } else if (action->effect == EFX_DRAIN_PP) {
+                BtlEvPush(BEV_OBJ_EFX, aid);
+        } else if (action->effect == 32) {
             if (target->pp != 0)
-                nibble = BATTLE_DAMAGE_PP_DRAIN;
+                type = 10;
             else
                 hit = 0;
         }
@@ -282,196 +284,196 @@ after_power:
         && (target->hp != 0 || BattleFx_IsReviveFar(action->effect) != 0)) {
         s32 pp;
         s32 cur;
-        s32 apwr;
+        s32 ap;
 
-        switch (nibble) {
-        case BATTLE_DAMAGE_WEAPON:
-        case BATTLE_DAMAGE_WEAPON_SCALED:
+        switch (type) {
+        case 3:
+        case 4:
         {
             s32 def;
 
-            hp0 = target->hp;
+            hp = target->hp;
             def = target->defense;
             scale = def;
             if (half != 0)
                 scale = (u32)def >> 1;
             pass = 1;
             do {
-                TAKE_BONUS();
+                ELM_BONUS();
                 if (pass == 0)
                     bonus = 0;
-                apwr = action->power;
-                if (nibble == BATTLE_DAMAGE_WEAPON_SCALED)
+                ap = action->power;
+                if (type == 4)
                     dmg = Battle_CalcAttack(actor->attack, scale, 0,
                                           bonus)
-                            * apwr / 10;
+                            * ap / 10;
                 else {
-                    dmg = Battle_CalcAttack(actor->attack, scale, apwr,
+                    dmg = Battle_CalcAttack(actor->attack, scale, ap,
                                             bonus);
                 }
-                dmg *= adjust;
-                if (modifier != 0) {
-                    if (modifier == 1)
+                dmg *= adj;
+                if (crit != 0) {
+                    if (crit == 1)
                         dmg = dmg * 5 / 4;
                     else
                         dmg = dmg * 3 / 2;
                     dmg += (target->level / 5) + 6;
                     if (pass == 0) {
-                        BattleEv_Push(BATTLE_EVENT_MARK, 0);
+                        BtlEvPush(BEV_MARK, 0);
                         {
-                            s32 text;
+                            s32 mes;
 
-                            text = (s32)MsgCritical;
-                            if (IS_PARTY(target_id))
-                                text += 1;
-                            BattleEv_Push(BATTLE_EVENT_TEXT_CONTINUE, text);
+                            mes = (s32)MsgCritical;
+                            if (MIKATA_CHK(tid))
+                                mes += 1;
+                            BtlEvPush(BEV_MES_ADD, mes);
                         }
                     }
                 }
                 dmg += BattleRandom16Far() & 3;
-                APPLY_GUARD();
+                GUARD_CUT();
                 if (dmg <= 0)
                     dmg = 1;
                 if (crush != 0) {
-                    if (dmg < hp0 - 1) {
-                        dmg = hp0 - 1;
+                    if (dmg < hp - 1) {
+                        dmg = hp - 1;
                         if (dmg <= 0)
                             dmg = 1;
                     }
                 }
                 if (GameFlag_TestFar(366) != 0 && *cmd == 5
-                    && hp0 <= dmg) {
-                    dmg = hp0 - 1;
+                    && hp <= dmg) {
+                    dmg = hp - 1;
                 }
                 pass++;
             } while (pass <= 1);
-            hp0 -= dmg;
-            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
+            hp -= dmg;
+            BtlEvPush(BEV_OBJ_BGN, tid);
+            BtlEvPush(BEV_UNIT, tid);
+            BtlEvPush(BEV_NUM, dmg);
             {
-                s32 text;
+                s32 mes;
 
-                if (IS_PARTY(target_id))
-                    text = (s32)MsgDmgEmphP + affinity;
+                if (MIKATA_CHK(tid))
+                    mes = (s32)MsgDmgEmphP + aff;
                 else
-                    text = (s32)MsgDmgEmphE + affinity;
-                BattleEv_Push(BATTLE_EVENT_TEXT, text);
+                    mes = (s32)MsgDmgEmphE + aff;
+                BtlEvPush(BEV_MES, mes);
             }
 
-            if (hp0 <= 0) {
-                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
-                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-                hp0 = 0;
-                TEXT_SIDE(MsgGoesDown, MsgFelled);
+            if (hp <= 0) {
+                BtlEvPush(BEV_OBJ_RES, tid);
+                BtlEvPush(BEV_UNIT, tid);
+                hp = 0;
+                MES_SIDE(MsgGoesDown, MsgFelled);
             } else
-                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            dealt = target->hp - hp0;
-            target->hp = hp0;
-            Owner_RecalculateRatiosFar(target_id);
+                BtlEvPush(BEV_OBJ_END, tid);
+            dealt = target->hp - hp;
+            target->hp = hp;
+            Owner_RecalculateRatiosFar(tid);
             break;
         }
 
-        case BATTLE_DAMAGE_PP_DRAIN:
+        case 10:
         {
             if (action->power == 0)
                 break;
             pp = target->pp;
-            TAKE_BONUS();
-            apwr = action->power;
-            dmg = Battle_CalcPower(apwr, bonus, 256);
-            dmg = dmg * PpLossFalloff[offset] / 100;
-            dmg *= adjust;
-            APPLY_GUARD();
-            if (action->effect == EFX_DRAIN_PP && dmg > pp)
+            ELM_BONUS();
+            ap = action->power;
+            dmg = Battle_CalcPower(ap, bonus, 256);
+            dmg = dmg * PpLossFalloff[dist] / 100;
+            dmg *= adj;
+            GUARD_CUT();
+            if (action->effect == 32 && dmg > pp)
                 dmg = pp;
 
-            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            BtlEvPush(BEV_OBJ_BGN, tid);
+            BtlEvPush(BEV_NUM, dmg);
+            BtlEvPush(BEV_UNIT, tid);
             {
-                s32 text;
+                s32 mes;
 
-                if (IS_PARTY(target_id))
-                    text = (s32)MsgPpLossP;
+                if (MIKATA_CHK(tid))
+                    mes = (s32)MsgPpLossP;
                 else
-                    text = (s32)MsgPpLossE;
-                BattleEv_Push(BATTLE_EVENT_TEXT, text);
+                    mes = (s32)MsgPpLossE;
+                BtlEvPush(BEV_MES, mes);
                 pp -= dmg;
             }
             if (pp <= 0)
                 pp = 0;
-            BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            BtlEvPush(BEV_OBJ_END, tid);
             dealt = target->pp - pp;
             target->pp = pp;
-            Owner_RecalculateRatiosFar(target_id);
+            Owner_RecalculateRatiosFar(tid);
             break;
         }
 
-        case BATTLE_DAMAGE_HP_HEAL:
+        case 1:
         {
             if (action->power == 0)
                 break;
             cur = target->hp;
 
-            apwr = action->power;
-            dmg = Battle_CalcRestore(apwr, range == 4 ? 100 : power, 256);
-            dmg = dmg * HpHealFalloff[offset] / 100;
-            dmg *= adjust;
+            ap = action->power;
+            dmg = Battle_CalcRestore(ap, elm == 4 ? 100 : pow, 256);
+            dmg = dmg * HpHealFalloff[dist] / 100;
+            dmg *= adj;
             dmg += BattleRandom16Far() & 3;
             cur += dmg;
             if (cur > target->max_hp) {
                 cur = target->max_hp;
                 dmg = cur - target->hp;
             }
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            BtlEvPush(BEV_UNIT, tid);
             if (cur == target->max_hp)
                 MES_PUSH(MsgHpFull);
             else {
-                BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
+                BtlEvPush(BEV_NUM, dmg);
                 MES_PUSH(MsgHpRecover);
             }
             dealt = target->hp - cur;
             target->hp = cur;
-            Owner_RecalculateRatiosFar(target_id);
+            Owner_RecalculateRatiosFar(tid);
             break;
         }
 
-        case BATTLE_DAMAGE_PP_DIRECT:
+        case -1:
         {
             if (action->power == 0)
                 break;
             pp = target->pp;
-            TAKE_BONUS();
-            apwr = action->power;
-            dmg = Battle_CalcPower(apwr, bonus, 256);
-            dmg = dmg * PpDmgFalloff[offset] / 100;
-            dmg *= adjust;
-            APPLY_GUARD();
-            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            ELM_BONUS();
+            ap = action->power;
+            dmg = Battle_CalcPower(ap, bonus, 256);
+            dmg = dmg * PpDmgFalloff[dist] / 100;
+            dmg *= adj;
+            GUARD_CUT();
+            BtlEvPush(BEV_OBJ_BGN, tid);
+            BtlEvPush(BEV_NUM, dmg);
+            BtlEvPush(BEV_UNIT, tid);
             {
-                s32 text;
+                s32 mes;
 
-                if (IS_PARTY(target_id))
-                    text = (s32)MsgDmgP;
+                if (MIKATA_CHK(tid))
+                    mes = (s32)MsgDmgP;
                 else
-                    text = (s32)MsgDmgE;
-                BattleEv_Push(BATTLE_EVENT_TEXT, text);
+                    mes = (s32)MsgDmgE;
+                BtlEvPush(BEV_MES, mes);
                 pp -= dmg;
             }
             if (pp <= 0)
                 pp = 0;
-            BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+            BtlEvPush(BEV_OBJ_END, tid);
             target->pp = pp;
-            Owner_RecalculateRatiosFar(target_id);
+            Owner_RecalculateRatiosFar(tid);
             break;
         }
 
-        case BATTLE_DAMAGE_HP_ADDITIVE_6:
-        case BATTLE_DAMAGE_HP_ADDITIVE_7:
-        case BATTLE_DAMAGE_HP_ADDITIVE_9:
+        case 5:
+        case 6:
+        case 8:
         {
             s32 round;
 
@@ -480,122 +482,122 @@ after_power:
             cur = target->hp;
             round = 1;
             do {
-                TAKE_BONUS();
+                ELM_BONUS();
                 if (round == 0)
                     bonus = 0;
-                apwr = action->power;
+                ap = action->power;
                 if (*cmd == 6) {
                     s32 item;
 
-                    item = action_id - 380;
+                    item = act_no - 380;
                     if (item >= 0 && item <= 21) {
                         switch (item) {
                         case 0:
                         case 6:
                         case 12:
                         case 18:
-                            kind = 3;
+                            rate = 3;
                             break;
                         case 1:
                         case 7:
                         case 13:
                         case 19:
-                            kind = 6;
+                            rate = 6;
                             break;
                         case 2:
                         case 8:
                         case 14:
                         case 20:
-                            kind = 9;
+                            rate = 9;
                             break;
                         case 3:
                         case 9:
                         case 15:
                         case 21:
-                            kind = 12;
+                            rate = 12;
                             break;
                         }
                     }
-                    apwr += target->max_hp * kind / 100;
+                    ap += target->max_hp * rate / 100;
                 }
-                dmg = Battle_CalcPower(apwr, bonus, 256);
-                dmg *= adjust;
-                switch (nibble & 15) {
-                case BATTLE_DAMAGE_HP_ADDITIVE_6:
-                    dmg = HpDmgFalloff5[offset] * dmg / 100;
+                dmg = Battle_CalcPower(ap, bonus, 256);
+                dmg *= adj;
+                switch (type & 15) {
+                case 5:
+                    dmg = HpDmgFalloff5[dist] * dmg / 100;
                     break;
-                case BATTLE_DAMAGE_HP_ADDITIVE_9:
-                    dmg = dmg * HpDmgFalloff8[offset] / 100;
+                case 8:
+                    dmg = dmg * HpDmgFalloff8[dist] / 100;
                     break;
-                case BATTLE_DAMAGE_HP_ADDITIVE_7:
-                    dmg = dmg * HpDmgFalloff6[offset] / 100;
+                case 6:
+                    dmg = dmg * HpDmgFalloff6[dist] / 100;
                     break;
                 }
                 dmg += BattleRandom16Far() & 3;
-                APPLY_GUARD();
+                GUARD_CUT();
                 if (GameFlag_TestFar(366) != 0 && *cmd == 6 && cur > dmg) {
                     dmg = cur;
                 }
                 round++;
             } while (round <= 1);
-            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            BtlEvPush(BEV_OBJ_BGN, tid);
+            BtlEvPush(BEV_NUM, dmg);
+            BtlEvPush(BEV_UNIT, tid);
             {
-                s32 text;
+                s32 mes;
 
-                if (IS_PARTY(target_id))
-                    text = (s32)MsgDmgEmphP + affinity;
+                if (MIKATA_CHK(tid))
+                    mes = (s32)MsgDmgEmphP + aff;
                 else
-                    text = (s32)MsgDmgEmphE + affinity;
-                BattleEv_Push(BATTLE_EVENT_TEXT, text);
+                    mes = (s32)MsgDmgEmphE + aff;
+                BtlEvPush(BEV_MES, mes);
                 cur -= dmg;
             }
 
             if (cur <= 0) {
-                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
-                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                BtlEvPush(BEV_OBJ_RES, tid);
+                BtlEvPush(BEV_UNIT, tid);
                 {
-                    s32 text;
+                    s32 mes;
 
                     cur = 0;
-                    if (IS_PARTY(target_id))
-                        text = (s32)MsgGoesDown;
+                    if (MIKATA_CHK(tid))
+                        mes = (s32)MsgGoesDown;
                     else
-                        text = (s32)MsgFelled;
-                    BattleEv_Push(BATTLE_EVENT_TEXT, text);
+                        mes = (s32)MsgFelled;
+                    BtlEvPush(BEV_MES, mes);
                 }
             } else
-                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+                BtlEvPush(BEV_OBJ_END, tid);
             dealt = target->hp - cur;
             target->hp = cur;
-            Owner_RecalculateRatiosFar(target_id);
+            Owner_RecalculateRatiosFar(tid);
             break;
         }
 
-        case BATTLE_DAMAGE_PP_HEAL:
+        case 11:
         {
             if (action->power == 0)
                 break;
             pp = target->pp;
-            apwr = action->power;
-            dmg = Battle_CalcRestore(apwr, range == 4 ? 100 : power, 256);
-            dmg = dmg * PpHealFalloff[offset] / 100;
-            dmg *= adjust;
+            ap = action->power;
+            dmg = Battle_CalcRestore(ap, elm == 4 ? 100 : pow, 256);
+            dmg = dmg * PpHealFalloff[dist] / 100;
+            dmg *= adj;
             pp += dmg;
             if (pp > target->max_pp) {
                 pp = target->max_pp;
                 dmg = pp - target->pp;
             }
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            BtlEvPush(BEV_UNIT, tid);
             if (pp == target->max_pp)
                 MES_PUSH(MsgPpFull);
             else {
-                BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
+                BtlEvPush(BEV_NUM, dmg);
                 MES_PUSH(MsgPpRecover);
             }
             target->pp = pp;
-            Owner_RecalculateRatiosFar(target_id);
+            Owner_RecalculateRatiosFar(tid);
             break;
         }
 
@@ -604,157 +606,157 @@ after_power:
         case 9:
             break;
 
-        case BATTLE_DAMAGE_HP_POWER:
+        case 2:
             if (hit != 0) {
             if (action->power == 0)
                 break;
             cur = target->hp;
-            TAKE_BONUS();
-            apwr = action->power;
-            dmg = Battle_CalcPower(apwr, bonus, 256);
-            dmg *= adjust;
-            dmg = dmg * HpDmgFalloff[offset] / 100;
-            APPLY_GUARD();
-            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            ELM_BONUS();
+            ap = action->power;
+            dmg = Battle_CalcPower(ap, bonus, 256);
+            dmg *= adj;
+            dmg = dmg * HpDmgFalloff[dist] / 100;
+            GUARD_CUT();
+            BtlEvPush(BEV_OBJ_BGN, tid);
+            BtlEvPush(BEV_NUM, dmg);
+            BtlEvPush(BEV_UNIT, tid);
             {
-                s32 text;
+                s32 mes;
 
-                if (IS_PARTY(target_id))
-                    text = (s32)MsgDmgP;
+                if (MIKATA_CHK(tid))
+                    mes = (s32)MsgDmgP;
                 else
-                    text = (s32)MsgDmgE;
-                BattleEv_Push(BATTLE_EVENT_TEXT, text);
+                    mes = (s32)MsgDmgE;
+                BtlEvPush(BEV_MES, mes);
                 cur -= dmg;
             }
 
             if (cur <= 0) {
-                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
-                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                BtlEvPush(BEV_OBJ_RES, tid);
+                BtlEvPush(BEV_UNIT, tid);
                 cur = 0;
-                TEXT_SIDE(MsgGoesDown, MsgFelled);
+                MES_SIDE(MsgGoesDown, MsgFelled);
             } else
-                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+                BtlEvPush(BEV_OBJ_END, tid);
             dealt = target->hp - cur;
             target->hp = cur;
-            Owner_RecalculateRatiosFar(target_id);
+            Owner_RecalculateRatiosFar(tid);
             break;
             }
-            BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            BtlEvPush(BEV_OBJ_END, tid);
+            BtlEvPush(BEV_UNIT, tid);
             MES_PUSH(MsgNoEffect);
             break;
 
         }
     }
 
-    BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+    BtlEvPush(BEV_UNIT, tid);
     if ((BattleFx_IsReviveFar(action->effect) != 0 || target->hp != 0
             || BattleFx_CanAffectDefeatedUnit(action->effect) != 0)
         && hit != 0) {
         switch (action->effect) {
 
-        case EFX_CURE_ALL:
+        case 64:
             if (target->delusion != 0) {
                 target->delusion = 0;
                 MES_PUSH(MsgCureDelusion);
-                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                BtlEvPush(BEV_UNIT, tid);
             }
             if (target->stun != 0) {
                 target->stun = 0;
-                BattleEv_Push(BATTLE_EVENT_RESET, 0);
-                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                BtlEvPush(BEV_CLR, 0);
+                BtlEvPush(BEV_UNIT, tid);
                 MES_PUSH(MsgCureStun);
             }
             target->sleep = 0;
             if (target->psy_seal != 0) {
                 target->psy_seal = 0;
                 MES_PUSH(MsgCureSeal);
-                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                BtlEvPush(BEV_UNIT, tid);
             }
             if (target->death_count != 0) {
                 target->death_count = 0;
                 MES_PUSH(MsgCureCurse);
-                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                BtlEvPush(BEV_UNIT, tid);
             }
             if (target->evil_spirit != 0) {
                 target->evil_spirit = 0;
                 MES_PUSH(MsgCureSpirit);
-                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                BtlEvPush(BEV_UNIT, tid);
             }
             if (target->poison != 0) {
                 MES_PUSH(MsgCurePoison);
                 target->poison = 0;
             }
-            BattleEv_Push(BATTLE_EVENT_RESET, 0);
+            BtlEvPush(BEV_CLR, 0);
             break;
 
-        case EFX_CURE_PART:
+        case 4:
             if (target->delusion != 0) {
                 target->delusion = 0;
-                BattleEv_Push(BATTLE_EVENT_RESET, 0);
-                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                BtlEvPush(BEV_CLR, 0);
+                BtlEvPush(BEV_UNIT, tid);
                 MES_PUSH(MsgCureDelusion);
             }
             if (target->stun != 0) {
                 target->stun = 0;
-                BattleEv_Push(BATTLE_EVENT_RESET, 0);
-                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                BtlEvPush(BEV_CLR, 0);
+                BtlEvPush(BEV_UNIT, tid);
                 MES_PUSH(MsgCureStun);
             }
             target->sleep = 0;
             if (target->psy_seal != 0) {
                 target->psy_seal = 0;
-                BattleEv_Push(BATTLE_EVENT_RESET, 0);
-                BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+                BtlEvPush(BEV_CLR, 0);
+                BtlEvPush(BEV_UNIT, tid);
                 MES_PUSH(MsgCureSeal);
             }
             if (target->death_count == 0)
                 break;
             target->death_count = 0;
-            BattleEv_Push(BATTLE_EVENT_RESET, 0);
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            BtlEvPush(BEV_CLR, 0);
+            BtlEvPush(BEV_UNIT, tid);
             MES_PUSH(MsgCureCurse);
             break;
 
-        case EFX_HEAL_60:
-        case EFX_HEAL_30:
+        case 61:
+        case 62:
         {
             s32 old;
             s32 maxu;
             s32 maxv;
             s32 heal;
-            u16 *stat_ptr;
+            u16 *pt;
 
-            /* FAKEMATCH: walking a pointer down from hp to max_hp reads each stat twice, unsigned and signed, as the ROM does; plain field reads share one load. */
-            stat_ptr = (u16 *)&target->hp;
-            old = *stat_ptr--;
-            heal = *(s16 *)(stat_ptr + 1);
-            stat_ptr--;
-            maxu = *stat_ptr--;
-            maxv = *(s16 *)(stat_ptr + 1);
-            if (action->effect == EFX_HEAL_60)
+            /* FAKEMATCH: walking a pointer down from hp to max_hp reads each stat twice, unsigned and signed, as the ROM does; plain f reads share one load. */
+            pt = (u16 *)&target->hp;
+            old = *pt--;
+            heal = *(s16 *)(pt + 1);
+            pt--;
+            maxu = *pt--;
+            maxv = *(s16 *)(pt + 1);
+            if (action->effect == 61)
                 heal += maxv * 60 / 100;
             else
                 heal += maxv * 30 / 100;
             if (heal > (s16)maxu)
                 heal = (s16)maxu;
             tmp = heal - (s16)old;
-            if (tmp == 0 && nibble != BATTLE_DAMAGE_HP_HEAL)
+            if (tmp == 0 && type != 1)
                 break;
             if (heal == (s16)maxu)
                 MES_PUSH(MsgHpFull);
             else {
-                BattleEv_Push(BATTLE_EVENT_VALUE, tmp);
+                BtlEvPush(BEV_NUM, tmp);
                 MES_PUSH(MsgHpRecover);
             }
             target->hp = heal;
-            Owner_RecalculateRatiosFar(target_id);
+            Owner_RecalculateRatiosFar(tid);
             break;
         }
 
-        case EFX_PP_RESTORE_7:
+        case 63:
         {
             s32 old;
             s32 maxv;
@@ -767,28 +769,28 @@ after_power:
             if (heal > maxv)
                 heal = maxv;
             tmp = heal - old;
-            if (tmp == 0 && nibble != BATTLE_DAMAGE_PP_HEAL)
+            if (tmp == 0 && type != 11)
                 break;
             if (heal == maxv)
                 MES_PUSH(MsgPpFull);
             else {
-                BattleEv_Push(BATTLE_EVENT_VALUE, tmp);
+                BtlEvPush(BEV_NUM, tmp);
                 MES_PUSH(MsgPpRecover);
             }
             target->pp = heal;
-            Owner_RecalculateRatiosFar(target_id);
+            Owner_RecalculateRatiosFar(tid);
             break;
         }
 
-        case EFX_AGI_SET_UP8:
+        case 59:
             target->agility_modifier = 8;
             target->agility_modifier_turns = 5;
-            Owner_RecalculateStatsFar(target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, target->agility - copy->agility);
+            Owner_RecalculateStatsFar(tid);
+            BtlEvPush(BEV_NUM, target->agility - bak->agility);
             MES_PUSH(MsgAgiUp);
             break;
 
-        case EFX_AGI_SET_DOWN4:
+        case 58:
             am = &target->agility_modifier;
         {
             u8 v;
@@ -797,239 +799,239 @@ after_power:
             *am = v;
         }
             target->agility_modifier_turns = 5;
-            Owner_RecalculateStatsFar(target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, copy->agility - target->agility);
+            Owner_RecalculateStatsFar(tid);
+            BtlEvPush(BEV_NUM, bak->agility - target->agility);
             MES_PUSH(MsgAgiDown);
             break;
 
-        case EFX_ATK_DOWN1:
+        case 9:
             target->attack_modifier -= 1;
-            CLAMP_MOD(target->attack_modifier);
-            Owner_RecalculateStatsFar(target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
+            STEP_LIM(target->attack_modifier);
+            Owner_RecalculateStatsFar(tid);
+            BtlEvPush(BEV_NUM, bak->attack - target->attack);
             MES_PUSH(MsgAtkDown);
             target->attack_modifier_turns = 7;
             break;
 
-        case EFX_ATK_DOWN2:
+        case 8:
             target->attack_modifier -= 2;
-            CLAMP_MOD(target->attack_modifier);
-            Owner_RecalculateStatsFar(target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
+            STEP_LIM(target->attack_modifier);
+            Owner_RecalculateStatsFar(tid);
+            BtlEvPush(BEV_NUM, bak->attack - target->attack);
             MES_PUSH(MsgAtkDown);
             target->attack_modifier_turns = 7;
             break;
 
-        case EFX_ATK_UP1:
+        case 7:
             target->attack_modifier += 1;
-            CLAMP_MOD(target->attack_modifier);
-            Owner_RecalculateStatsFar(target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
+            STEP_LIM(target->attack_modifier);
+            Owner_RecalculateStatsFar(tid);
+            BtlEvPush(BEV_NUM, target->attack - bak->attack);
             MES_PUSH(MsgAtkUp);
             target->attack_modifier_turns = 7;
             break;
 
-        case EFX_ATK_UP2:
+        case 6:
             target->attack_modifier += 2;
-            CLAMP_MOD(target->attack_modifier);
-            Owner_RecalculateStatsFar(target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
+            STEP_LIM(target->attack_modifier);
+            Owner_RecalculateStatsFar(tid);
+            BtlEvPush(BEV_NUM, target->attack - bak->attack);
             MES_PUSH(MsgAtkUp);
             target->attack_modifier_turns = 7;
             break;
 
-        case EFX_DEF_DOWN1:
+        case 13:
             target->defense_modifier -= 1;
-            CLAMP_MOD(target->defense_modifier);
-            Owner_RecalculateStatsFar(target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
+            STEP_LIM(target->defense_modifier);
+            Owner_RecalculateStatsFar(tid);
+            BtlEvPush(BEV_NUM, bak->defense - target->defense);
             MES_PUSH(MsgDefDown);
             target->defense_modifier_turns = 7;
             break;
 
-        case EFX_DEF_DOWN2:
+        case 12:
             target->defense_modifier -= 2;
-            CLAMP_MOD(target->defense_modifier);
-            Owner_RecalculateStatsFar(target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
+            STEP_LIM(target->defense_modifier);
+            Owner_RecalculateStatsFar(tid);
+            BtlEvPush(BEV_NUM, bak->defense - target->defense);
             MES_PUSH(MsgDefDown);
             target->defense_modifier_turns = 7;
             break;
 
-        case EFX_DEF_UP1:
+        case 11:
             target->defense_modifier += 1;
-            CLAMP_MOD(target->defense_modifier);
-            Owner_RecalculateStatsFar(target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
+            STEP_LIM(target->defense_modifier);
+            Owner_RecalculateStatsFar(tid);
+            BtlEvPush(BEV_NUM, target->defense - bak->defense);
             MES_PUSH(MsgDefUp);
             target->defense_modifier_turns = 7;
             break;
 
-        case EFX_DEF_UP2:
+        case 10:
             target->defense_modifier += 2;
-            CLAMP_MOD(target->defense_modifier);
-            Owner_RecalculateStatsFar(target_id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
+            STEP_LIM(target->defense_modifier);
+            Owner_RecalculateStatsFar(tid);
+            BtlEvPush(BEV_NUM, target->defense - bak->defense);
             MES_PUSH(MsgDefUp);
             target->defense_modifier_turns = 7;
             break;
 
-        case EFX_REVIVE_FULL:
+        case 5:
             if (target->hp != 0)
                 break;
             MES_PUSH(MsgRevived);
             target->hp = target->max_hp;
-            Owner_RecalculateRatiosFar(target_id);
+            Owner_RecalculateRatiosFar(tid);
             break;
 
-        case EFX_REVIVE_HALF:
+        case 56:
             if (target->hp != 0)
                 break;
             MES_PUSH(MsgRevived);
             target->hp = target->max_hp / 2;
-            Owner_RecalculateRatiosFar(target_id);
+            Owner_RecalculateRatiosFar(tid);
             break;
 
-        case EFX_REVIVE_80:
+        case 57:
             if (target->hp != 0)
                 break;
             MES_PUSH(MsgRevived);
             target->hp = target->max_hp * 8 / 10;
-            Owner_RecalculateRatiosFar(target_id);
+            Owner_RecalculateRatiosFar(tid);
             break;
 
-        case EFX_CURE_POISON:
+        case 3:
             if (target->poison != 0)
                 MES_PUSH(MsgCurePoison);
             target->poison = 0;
             break;
 
-        case EFX_RES_DOWN1:
-            ADJUST_RES(-1, (copy->res_modifier - target->res_modifier) * 20, MsgResDown);
+        case 17:
+            RES_STEP(-1, (bak->res_modifier - target->res_modifier) * 20, MsgResDown);
             break;
 
-        case EFX_RES_DOWN2:
+        case 16:
         {
             target->res_modifier -= 2;
             if (-4 > target->res_modifier)
                 target->res_modifier = -4;
             if (target->res_modifier > 4)
                 target->res_modifier = 4;
-            BattleEv_Push(BATTLE_EVENT_VALUE, (copy->res_modifier - target->res_modifier) * 20);
+            BtlEvPush(BEV_NUM, (bak->res_modifier - target->res_modifier) * 20);
             MES_PUSH(MsgResDown);
             target->res_modifier_turns = 7;
         }
             break;
 
-        case EFX_RES_UP1:
-            ADJUST_RES(1, (target->res_modifier - copy->res_modifier) * 20, MsgResUp);
+        case 15:
+            RES_STEP(1, (target->res_modifier - bak->res_modifier) * 20, MsgResUp);
             break;
 
-        case EFX_RES_UP2:
+        case 14:
         {
             target->res_modifier += 2;
             if (*(rm = &target->res_modifier) < -4)
                 target->res_modifier = -4;
             if (target->res_modifier > 4)
                 target->res_modifier = 4;
-            BattleEv_Push(BATTLE_EVENT_VALUE, (target->res_modifier - copy->res_modifier) * 20);
+            BtlEvPush(BEV_NUM, (target->res_modifier - bak->res_modifier) * 20);
             MES_PUSH(MsgResUp);
             target->res_modifier_turns = 7;
         }
             break;
 
-        case EFX_POISON:
+        case 18:
             if (target->poison != 0)
                 break;
             MES_PUSH(MsgPoisoned);
             target->poison = 1;
             break;
 
-        case EFX_VENOM:
+        case 19:
             if (target->poison > 1)
                 break;
             MES_PUSH(MsgVenom);
             target->poison = 2;
             break;
 
-        case EFX_DELUSION:
-            SET_STATUS7(target->delusion, MsgDelusion);
+        case 20:
+            STAT_SET(target->delusion, MsgDelusion);
             break;
 
-        case EFX_CONFUSE:
-            SET_STATUS7(target->confusion, MsgConfused);
+        case 21:
+            STAT_SET(target->confusion, MsgConfused);
             break;
 
-        case EFX_CHARM:
-            SET_STATUS7(target->charm, MsgCharmed);
+        case 22:
+            STAT_SET(target->charm, MsgCharmed);
             break;
 
-        case EFX_STUN:
-            SET_STATUS7(target->stun, MsgStunned);
+        case 23:
+            STAT_SET(target->stun, MsgStunned);
             break;
 
-        case EFX_SLEEP:
-            SET_STATUS7(target->sleep, MsgAsleep);
+        case 24:
+            STAT_SET(target->sleep, MsgAsleep);
             break;
 
-        case EFX_PSY_BLOCK:
-            TEXT_SIDE(MsgPsyBlock, MsgPsySeal);
+        case 25:
+            MES_SIDE(MsgPsyBlock, MsgPsySeal);
             target->psy_seal |= 7;
             break;
 
-        case EFX_PSY_SEAL:
-            TEXT_SIDE(MsgPsyBlock, MsgPsySeal);
+        case 67:
+            MES_SIDE(MsgPsyBlock, MsgPsySeal);
             target->psy_seal |= 16;
             break;
 
-        case EFX_INSTANT_DOWN:
-            BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
-            if (target->status_12a == BATTLE_UNIT_PARTY)
+        case 27:
+            BtlEvPush(BEV_OBJ_RES, tid);
+            if (target->side == MIKATA)
                 MES_PUSH(MsgKoDown);
-            else if (action_id == 219)
+            else if (act_no == 219)
                 MES_PUSH(MsgSuffocate);
             else
                 MES_PUSH(MsgSpiritDrain);
             target->hp = 0;
-            Owner_RecalculateRatiosFar(target_id);
+            Owner_RecalculateRatiosFar(tid);
             break;
 
-        case EFX_REFRAIN:
-            SET_STATUS7(target->refrain, MsgRefrain);
+        case 29:
+            STAT_SET(target->refrain, MsgRefrain);
             break;
 
-        case EFX_REFLECT:
-            SET_STATUS7(target->reflect, MsgReflect);
+        case 30:
+            STAT_SET(target->reflect, MsgReflect);
             break;
 
-        case EFX_DRAIN_HP:
-        case EFX_DRAIN_HP_HALF:
+        case 31:
+        case 60:
         {
             s32 heal;
 
             heal = actor->hp;
             dmg = dealt;
-            if (action->effect == EFX_DRAIN_HP_HALF)
+            if (action->effect == 60)
                 dmg /= 2;
             heal += dmg;
             if (heal > actor->max_hp) {
                 heal = actor->max_hp;
                 dmg = heal - actor->hp;
             }
-            BattleEv_Push(BATTLE_EVENT_RESET, 0);
-            BattleEv_Push(BATTLE_EVENT_UNIT, actor_id);
+            BtlEvPush(BEV_CLR, 0);
+            BtlEvPush(BEV_UNIT, aid);
             if (heal == actor->max_hp)
                 MES_PUSH(MsgHpFull);
             else {
-                BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
+                BtlEvPush(BEV_NUM, dmg);
                 MES_PUSH(MsgHpRecover);
             }
             actor->hp = heal;
-            Owner_RecalculateRatiosFar(actor_id);
+            Owner_RecalculateRatiosFar(aid);
             break;
         }
 
-        case EFX_DRAIN_PP:
+        case 32:
         {
             s32 heal;
             s32 amt;
@@ -1041,20 +1043,20 @@ after_power:
                 heal = actor->max_pp;
                 amt = heal - actor->pp;
             }
-            BattleEv_Push(BATTLE_EVENT_RESET, 0);
-            BattleEv_Push(BATTLE_EVENT_UNIT, actor_id);
+            BtlEvPush(BEV_CLR, 0);
+            BtlEvPush(BEV_UNIT, aid);
             if (heal == actor->max_pp)
                 MES_PUSH(MsgPpFull);
             else {
-                BattleEv_Push(BATTLE_EVENT_VALUE, amt);
+                BtlEvPush(BEV_NUM, amt);
                 MES_PUSH(MsgPpRecover);
             }
             actor->pp = heal;
-            Owner_RecalculateRatiosFar(actor_id);
+            Owner_RecalculateRatiosFar(aid);
             break;
         }
 
-        case EFX_PP_LEECH:
+        case 69:
             dmg = dealt / 10;
             if (target->pp < dmg)
                 dmg = target->pp;
@@ -1062,12 +1064,12 @@ after_power:
                 dmg = actor->max_pp - actor->pp;
             if (dmg == 0)
                 break;
-            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
-            TEXT_SIDE(MsgLeechTake, MsgLeechGain);
-            Owner_AdjustSecondValueFar(actor_id, dmg);
+            BtlEvPush(BEV_NUM, dmg);
+            MES_SIDE(MsgLeechTake, MsgLeechGain);
+            Owner_AdjustSecondValueFar(aid, dmg);
             break;
 
-        case EFX_BUFF_CLEAR:
+        case 33:
             if (target->attack_modifier > 0) {
                 target->attack_modifier = 0;
                 target->attack_modifier_turns = 0;
@@ -1089,12 +1091,12 @@ after_power:
             MES_PUSH(MsgBuffsReset);
             break;
 
-        case EFX_EVIL_SPIRIT:
+        case 26:
             MES_PUSH(MsgEvilSpirit);
             target->evil_spirit = 1;
             break;
 
-        case EFX_DEATH_CURSE:
+        case 28:
             if (target->death_count == 0) {
                 MES_PUSH(MsgDeathCurse);
                 target->death_count = 7;
@@ -1103,29 +1105,29 @@ after_power:
             if (target->death_count <= 1)
                 break;
             target->death_count -= 1;
-            BattleEv_Push(BATTLE_EVENT_VALUE, target->death_count);
+            BtlEvPush(BEV_NUM, target->death_count);
             MES_PUSH(MsgDeathCount);
             break;
 
-        case EFX_READY:
+        case 66:
             MES_PUSH(MsgReadies);
             target->ready_pose = 2;
             break;
 
-        case EFX_CHALLENGE:
+        case 54:
             MES_PUSH(MsgChallenge);
             target->battle_end_state = 1;
-            if (IS_PARTY(target_id))
-                work->flags_043 |= 2;
+            if (MIKATA_CHK(tid))
+                work->chal_flg |= 2;
             break;
 
-        case EFX_IMMOBILIZE:
+        case 53:
 
             MES_PUSH(MsgImmobile);
             target->cannot_move = 1;
             break;
 
-        case EFX_GUARD1:
+        case 46:
 
             MES_PUSH(MsgAura);
             if (target->guard_level > 0)
@@ -1133,7 +1135,7 @@ after_power:
             target->guard_level = 1;
             break;
 
-        case EFX_GUARD2:
+        case 47:
 
             MES_PUSH(MsgAura2);
             if (target->guard_level > 1)
@@ -1141,8 +1143,8 @@ after_power:
             target->guard_level = 2;
             break;
 
-        case EFX_TEXT_NONE:
-            BattleEv_Push(BATTLE_EVENT_TEXT, -1);
+        case 45:
+            BtlEvPush(BEV_MES, -1);
             break;
 
         default:
@@ -1150,22 +1152,22 @@ after_power:
         }
     }
 
-    BattleEv_Push(BATTLE_EVENT_RESET, 0);
+    BtlEvPush(BEV_CLR, 0);
 
     if (target->hp != 0) {
         if (target->sleep != 0)
         if (target->sleep <= 6
             && dealt > 0 && (3 & BattleRandom16Far()) == 0) {
             target->sleep = 0;
-            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            BtlEvPush(BEV_UNIT, tid);
             MES_PUSH(MsgWakes);
         }
     }
-    Sys_Free(copy);
-    Owner_RecalculateStatsFar(target_id);
+    Sys_Free(bak);
+    Owner_RecalculateStatsFar(tid);
     UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode);
     if (target->hp != 0)
-        BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
+        BtlEvPush(BEV_OBJ_END, tid);
     if (actor->evil_spirit != 0
         && (BattleRandom16Far() & 3) == 0 && dealt > 0) {
         s32 share;
@@ -1173,6 +1175,6 @@ after_power:
         share = dealt >> 2;
         if (share == 0)
             share = 1;
-        plan->pending_amount_60 += share;
+        plan->spirit_dmg += share;
     }
 }

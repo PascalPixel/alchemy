@@ -359,45 +359,45 @@ void BattleEvent_Playback(void)
                         return;
                     }
                     switch (state->queue.opcodes[i]) {
-                    case BATTLE_EVENT_SOUND:
+                    case BEV_SE:
                         AudioCommand_PlayFar(state->queue.operands[i]);
                         break;
-                    case BATTLE_EVENT_SCRIPT_UPDATE:
+                    case BEV_SCR:
                         Battle_SetRuntimeFlagBit0(state, state->queue.operands[i]);
                         break;
-                    case BATTLE_EVENT_UNIT:
+                    case BEV_UNIT:
                         UiText_DrawQuantity(state->queue.operands[i], 1);
                         break;
-                    case BATTLE_EVENT_VALUE:
+                    case BEV_NUM:
                         UiText_DrawQuantity(state->queue.operands[i], 5);
                         break;
-                    case BATTLE_EVENT_ITEM:
+                    case BEV_ITEM:
                         UiText_DrawQuantity(state->queue.operands[i] & 0x1ff, 2);
                         break;
-                    case BATTLE_EVENT_ACTION:
+                    case BEV_ACT:
                         UiText_DrawQuantity(state->queue.operands[i] & 0x3fff, 4);
                         break;
-                    case BATTLE_EVENT_MARK:
+                    case BEV_MARK:
                         gBattleDisplayWork->marked = 1;
                         break;
-                    case BATTLE_EVENT_TEXT:
+                    case BEV_MES:
                         if ((s32)state->queue.operands[i] >= 0)
                             UiText_PrepareMessageWorkFar(state->queue.operands[i]);
                         state->phase = 3;
                         gKeysPressedLatch = 0;
                         break;
-                    case BATTLE_EVENT_TEXT_CONTINUE:
+                    case BEV_MES_ADD:
                         if ((s32)state->queue.operands[i] >= 0)
                             UiText_PrepareMessageWorkFar(state->queue.operands[i]);
                         state->phase = 13;
                         break;
-                    case BATTLE_EVENT_RESET:
+                    case BEV_CLR:
                         UiWork_ClearValueNameTablesFar();
                         break;
-                    case BATTLE_EVENT_ACTOR_EFFECT:
+                    case BEV_OBJ_EFX:
                         BattleActor_DestroyTemporaryObject(state->queue.operands[i]);
                         break;
-                    case BATTLE_EVENT_ACTOR_BEGIN:
+                    case BEV_OBJ_BGN:
                         if (state->pending_cue > 0)
                             AudioCommand_PlayFar(state->pending_cue);
                         state->actor_id = state->queue.operands[i];
@@ -405,7 +405,7 @@ void BattleEvent_Playback(void)
                         state->phase = 10;
                         state->timer = 0;
                         break;
-                    case BATTLE_EVENT_ACTOR_RESOLVE:
+                    case BEV_OBJ_RES:
                         {
                             struct BattleUnit *unit;
                             struct AnimationObject *record;
@@ -416,21 +416,21 @@ void BattleEvent_Playback(void)
                             BattleActor_ResetRuntimeFields(state->actor_id);
                             unit = Owner_GetStateFar(state->actor_id);
                             for (n = 0; (record = GetMotionRecord(GetBattleObjectSlot(state->actor_id)->object, n)) != 0; n++) {
-                                if (unit->status_12a != 1)
+                                if (unit->side != 1)
                                     Object_InitializeMode(record, 4);
                                 else
                                     Object_InitializeMode(record, 5);
                             }
-                            if (unit->status_12a == 1) {
+                            if (unit->side == 1) {
                                 state->phase = 11;
                                 state->timer = 0;
                             }
                         }
                         break;
-                    case BATTLE_EVENT_REFRESH:
+                    case BEV_REDRAW:
                         UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode);
                         break;
-                    case BATTLE_EVENT_ACTOR_FINISH:
+                    case BEV_OBJ_END:
                         {
                             struct BattleObjectSlot *slot;
 

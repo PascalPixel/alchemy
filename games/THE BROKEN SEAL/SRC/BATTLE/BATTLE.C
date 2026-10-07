@@ -258,9 +258,9 @@ s32 BattlePres_SetActorModeAndAction(s32 id)
     value = 1;
     if (state->hp != 0) {
         if (state->sleep != 0 || state->stun != 0 || state->cannot_move != 0)
-            value = (state->status_12a != BATTLE_UNIT_ENEMY) * 4;
+            value = (state->side != BATTLE_UNIT_ENEMY) * 4;
     } else {
-        s32 changed = state->status_12a ^ value;
+        s32 changed = state->side ^ value;
         value = (u32)(-changed | changed) >> 31;
         value = 5 - value;
     }

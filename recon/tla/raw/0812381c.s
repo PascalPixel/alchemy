@@ -100,10 +100,10 @@ Func_0812381c:
 	bne .L_081238f2
 	movs r0, #8
 	adds r1, r5, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #9
 	adds r1, r5, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_081238f2:
 	adds r6, #2
 .L_081238f4:
@@ -1031,7 +1031,7 @@ Func_0812381c:
 	movs r0, #0
 	movs r2, #0
 	ldrsh r1, [r3, r2]
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r4, r10
 	ldr r3, [r4]
 	movs r0, #150
@@ -1048,22 +1048,22 @@ Func_0812381c:
 	adds r1, r1, r3
 	adds r1, r1, r0
 	movs r0, #3
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #14
 	movs r1, #175
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #10
 	movs r1, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08124434
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r1, r10
 	ldr r3, [r1]
 	movs r0, #11
 	movs r2, #0
 	ldrsh r1, [r3, r2]
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #212
 	bl Audio_PlayCue
 	mov r4, r10

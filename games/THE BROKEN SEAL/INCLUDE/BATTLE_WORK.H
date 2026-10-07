@@ -61,7 +61,7 @@ struct BattleSession {
     u8 summon_count;
     u8 party_status_mode;
     u8 battle_type;
-    u8 flags_043;
+    u8 chal_flg;
     u8 two_sided;
     u8 encounter_mode;
     u8 escape_failures;
@@ -99,7 +99,7 @@ LAYOUT_OFFSET_GUARD(
     struct BattleSession,
     party_status_mode,
     0x041);
-LAYOUT_OFFSET_GUARD(BattleSession_Flags043, struct BattleSession, flags_043, 0x043);
+LAYOUT_OFFSET_GUARD(BattleSession_ChalFlg, struct BattleSession, chal_flg, 0x043);
 LAYOUT_OFFSET_GUARD(
     BattleSession_PartyUnits,
     struct BattleSession,

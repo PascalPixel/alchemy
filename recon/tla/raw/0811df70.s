@@ -211,15 +211,15 @@ Func_0811df70:
 	bne .L_0811e114
 	ldrb r1, [r2]
 	movs r0, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_0811e154
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_0811e11c
 .L_0811e114:
 	ldr r1, .L_0811e158
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_0811e11c:
 	bl BattleEv_DispatchQueued
 	bl Func_0812756c

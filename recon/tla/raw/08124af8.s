@@ -41,7 +41,7 @@ sub_08124af8:
 	beq .L_08124b7a
 	mov r1, r10
 	movs r0, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r1, r8
 	movs r2, #52
 	ldrsh r3, [r1, r2]
@@ -49,15 +49,15 @@ sub_08124af8:
 	bne .L_08124b60
 	ldr r1, .L_08124ba0
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_08124b70
 .L_08124b60:
 	movs r0, #1
 	adds r1, r6, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08124ba4
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08124b70:
 	mov r2, r8
 	strh r5, [r2, #56]

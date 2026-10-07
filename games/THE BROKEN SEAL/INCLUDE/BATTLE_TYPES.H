@@ -24,7 +24,7 @@ struct BattlePlan {
     s32 outcome;
     u32 presentation_flags;
     s32 failure;
-    u32 pending_amount_60;
+    u32 spirit_dmg;
 };
 
 LAYOUT_SIZE_GUARD(BattlePlan_Size, struct BattlePlan, BATTLE_PLAN_SIZE);
@@ -44,9 +44,9 @@ LAYOUT_OFFSET_GUARD(
     action_id,
     0x4c);
 LAYOUT_OFFSET_GUARD(
-    BattlePlan_PendingAmount60,
+    BattlePlan_SpiritDmg,
     struct BattlePlan,
-    pending_amount_60,
+    spirit_dmg,
     0x60);
 
 #endif

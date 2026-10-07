@@ -22,7 +22,7 @@ s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
         id = 0x80;
         limit += 0x80;
         for (; id < limit; id++) {
-            if (((struct BattleUnit *)Owner_GetState(id))->status_12a != 0) {
+            if (((struct BattleUnit *)Owner_GetState(id))->side != 0) {
                 *output = id;
                 listed++;
                 output++;
@@ -82,7 +82,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
         if (remaining < enemy_limit) {
             do {
                 unit = Owner_GetState(remaining);
-                if (unit->status_12a != 0 && unit->hp > 0) {
+                if (unit->side != 0 && unit->hp > 0) {
                     if (output != NULL) {
                         *output = remaining;
                         output += 1;

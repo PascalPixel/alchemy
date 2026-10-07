@@ -81,7 +81,7 @@ Func_08124cc4:
 	bl Func_08122c88
 	movs r0, #0
 	adds r1, r5, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldrb r3, [r6]
 	movs r0, #3
 	lsls r1, r3, #2
@@ -92,19 +92,19 @@ Func_08124cc4:
 	movs r3, #150
 	lsls r3, r3, #1
 	adds r1, r1, r3
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #14
 	movs r1, #175
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #10
 	movs r1, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #4
 	ldr r1, .L_08124e1c
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #11
 	adds r1, r5, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	adds r0, r5, #0
 	bl BattleParty_IsUnitListed
 	cmp r0, #0

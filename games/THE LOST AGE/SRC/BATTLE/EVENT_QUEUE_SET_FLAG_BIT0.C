@@ -23,7 +23,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0)
     struct BattleObjectSlot *runtime;
 
     creature = Owner_GetState(arg0);
-    if (creature->status_12a == 1) {
+    if (creature->side == 1) {
         Owner_UpdateRatioPairFar(creature, 0);
         BattleActor_RemoveFromLists(arg0);
         ActivateBattleObjectSlot(arg0);

@@ -135,7 +135,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
 
     target = Battle_GetTaggedSlotValue(command->target);
     BattleEventRuntime_Reset();
-    plan->pending_amount_60 = 0;
+    plan->spirit_dmg = 0;
     plan->actor_id = command->unit_id;
     plan->target_count = 0;
     plan->presentation_flags = 0;
@@ -161,8 +161,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             if (unit == 254)
                 continue;
             if (Owner_AdjustFirstValueFar(unit, 0xc0000000) == 0) {
-                BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, unit);
-                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, unit);
+                BtlEvPush(BEV_OBJ_BGN, unit);
+                BtlEvPush(BEV_OBJ_RES, unit);
             }
         }
         BattleEv_DispatchQueued();
@@ -384,12 +384,12 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                 Owner_RecalculateStatsFar(command->unit_id);
                 BattleEventRuntime_Reset();
                 BattleEventRuntime_SchedulePhase(30);
-                BattleEv_Push(BATTLE_EVENT_UNIT, command->unit_id);
-                BattleEv_Push(BATTLE_EVENT_ACTION, DJINN_ELEMENT(command->parameter) * 20 + DJINN_INDEX(command->parameter) + 300);
-                BattleEv_Push(BATTLE_EVENT_SOUND, 175);
-                BattleEv_Push(BATTLE_EVENT_REFRESH, 0);
-                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgDjinnSet);
-                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, command->unit_id);
+                BtlEvPush(BEV_UNIT, command->unit_id);
+                BtlEvPush(BEV_ACT, DJINN_ELEMENT(command->parameter) * 20 + DJINN_INDEX(command->parameter) + 300);
+                BtlEvPush(BEV_SE, 175);
+                BtlEvPush(BEV_REDRAW, 0);
+                BtlEvPush(BEV_MES, (s32)MsgDjinnSet);
+                BtlEvPush(BEV_OBJ_END, command->unit_id);
                 AudioCommand_PlayFar(212);
                 Object_SetMode(GetBattleObjectSlot(command->unit_id)->object, 3);
                 ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(command->unit_id)->object, 32);

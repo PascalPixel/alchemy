@@ -112,10 +112,10 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
     }
     if (plan->failure != 0) {
         if (plan->failure == 1) {
-            BattleEv_Push(0, plan->actor_id);
-            BattleEv_Push(4, (s32)MsgPsynergyBlocked);
+            BtlEvPush(0, plan->actor_id);
+            BtlEvPush(4, (s32)MsgPsynergyBlocked);
         } else {
-            BattleEv_Push(4, (s32)MsgCastLacksPp);
+            BtlEvPush(4, (s32)MsgCastLacksPp);
         }
         BattleEv_DispatchQueued();
         BattlePres_RunWithZeroArguments();

@@ -347,7 +347,7 @@ s32 Summon_FindSlot(void)
 
     for (i = 0; i <= 5; i++) {
         id = i + 0x80;
-        if (Owner_GetStateFar(id)->status_12a == 0)
+        if (Owner_GetStateFar(id)->side == 0)
             break;
     }
     if (i == 6)

@@ -194,7 +194,7 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
         result = 0;
     }
     if (result == 0) {
-        if ((s8)battle->flags_043 != 0) {
+        if ((s8)battle->chal_flg != 0) {
             result = 1;
         }
         if (result != 0) {

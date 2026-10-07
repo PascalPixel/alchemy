@@ -114,8 +114,8 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
         WaitFrames(2);
         WaitFrames(4);
         WaitFrames(10);
-        BattleEv_Push(0, plan->target_ids[0]);
-        BattleEv_Push(4, (s32)MsgNimblyDodgesBlow);
+        BtlEvPush(0, plan->target_ids[0]);
+        BtlEvPush(4, (s32)MsgNimblyDodgesBlow);
         BattleEv_DispatchQueued();
         Actor_ResetMotionAtAnchor(work.actors[0]);
     } else {
@@ -336,8 +336,8 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
         }
     } else if (def->use_type == 2) {
         if ((BattleRandom16Far() & 7) == 0) {
-            BattleEv_Push(BATTLE_EVENT_ITEM, unit->inventory[selection->parameter]);
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgUsedItemBroke);
+            BtlEvPush(BEV_ITEM, unit->inventory[selection->parameter]);
+            BtlEvPush(BEV_MES, (s32)MsgUsedItemBroke);
             Inventory_BreakFar(selection->unit_id, selection->parameter);
             BattleEv_DispatchQueued();
         }

@@ -112,7 +112,7 @@ s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
     unit->class_id = enemy_id;
     Owner_CalculateBaseElements(unit_id, (s16 (*)[2])unit->base_elements);
     Owner_RecalculateStats(unit_id);
-    unit->status_12a = 1;
+    unit->side = 1;
     switch (unit->class_id) {
     case 158:
     case 159:
@@ -128,7 +128,7 @@ s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
     case 169:
     case 170:
     case 171:
-        unit->status_12a = 2;
+        unit->side = 2;
         break;
     }
     return 1;

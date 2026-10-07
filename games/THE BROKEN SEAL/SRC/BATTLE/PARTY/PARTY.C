@@ -369,7 +369,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
 
         if (owners != 0)
             *owners++ = owner;
-        Owner_GetStateFar(owner)->status_12a = BATTLE_UNIT_PARTY;
+        Owner_GetStateFar(owner)->side = BATTLE_UNIT_PARTY;
     }
 
     if (owners != 0)
@@ -396,7 +396,7 @@ s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
         id = 0x80;
         entry_limit += 0x80;
         for (; id < entry_limit; id += 1) {
-            if (Owner_GetStateFar(id)->status_12a != 0) {
+            if (Owner_GetStateFar(id)->side != 0) {
                 *output = id;
                 entry_count += 1;
                 output += 1;
@@ -456,7 +456,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
         if (remaining < enemy_limit) {
             do {
                 unit = Owner_GetStateFar(remaining);
-                if ((unit->status_12a != 0) && (unit->hp > 0)) {
+                if ((unit->side != 0) && (unit->hp > 0)) {
                     if (output != NULL) {
                         *output = remaining;
                         output += 1;

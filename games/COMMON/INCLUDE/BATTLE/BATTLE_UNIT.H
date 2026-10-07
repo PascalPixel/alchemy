@@ -78,7 +78,7 @@ struct BattleUnit {
     u32 experience;
     u8 class_id;
     u8 class_index;
-    u8 status_12a;
+    u8 side;
 #if GAME_TLA
     u8 guard_level;
 #else

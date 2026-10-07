@@ -29,7 +29,7 @@
 #define BattlePresentation_ConfigurePaletteFade ((void (*)(s32,s32,s32))BattlePresentation_ConfigurePaletteFade)
 #define BattleFx_PlayUnitElementEffect ((s32 (*)(s32,s32,s32,s32))BattleFx_PlayUnitElementEffect)
 
-#define MES_PUSH(m) BattleEv_Push(BATTLE_EVENT_TEXT, (u32)(m))
+#define MES_PUSH(m) BtlEvPush(BEV_MES, (u32)(m))
 
 struct BattleGroupOrder {
     s32 group[2];
@@ -83,12 +83,12 @@ s32 Battle_ProcessRoundEnd(void)
                     if (GetBattleObjectSlot(id) != 0) {
                         BattleEventRuntime_Reset();
                         BattleEventRuntime_SchedulePhase(30);
-                        BattleEv_Push(BATTLE_EVENT_UNIT, id);
-                        BattleEv_Push(BATTLE_EVENT_ACTION, expired_entry->element * 20 + expired_entry->index + 300);
-                        BattleEv_Push(BATTLE_EVENT_SOUND, 175);
-                        BattleEv_Push(BATTLE_EVENT_REFRESH, 0);
+                        BtlEvPush(BEV_UNIT, id);
+                        BtlEvPush(BEV_ACT, expired_entry->element * 20 + expired_entry->index + 300);
+                        BtlEvPush(BEV_SE, 175);
+                        BtlEvPush(BEV_REDRAW, 0);
                         MES_PUSH(MsgDjinnSet);
-                        BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
+                        BtlEvPush(BEV_OBJ_END, id);
                         Audio_PlayCue(212);
                         Object_SetMode(GetBattleObjectSlot(id)->object, 3);
                         ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(id)->object, 32);
@@ -335,11 +335,11 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             if (order > 0) {
                 BattleEventRuntime_Reset();
                 BattleEventRuntime_SchedulePhase(25);
-                BattleEv_Push(BATTLE_EVENT_UNIT, id);
-                BattleEv_Push(BATTLE_EVENT_VALUE, order);
-                BattleEv_Push(BATTLE_EVENT_SOUND, 175);
+                BtlEvPush(BEV_UNIT, id);
+                BtlEvPush(BEV_NUM, order);
+                BtlEvPush(BEV_SE, 175);
                 MES_PUSH(MsgEarthPowerUp + i);
-                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
+                BtlEvPush(BEV_OBJ_END, id);
                 Audio_PlayCue(212);
                 Object_SetMode(GetBattleObjectSlot(id)->object, 3);
                 ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(id)->object, 32);
@@ -352,15 +352,15 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
     if (both_sides != 0) {
         s8 *poison;
         BattleEventRuntime_Reset();
-        if (plan->pending_amount_60 != 0) {
-            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
-            BattleEv_Push(BATTLE_EVENT_UNIT, id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, plan->pending_amount_60);
+        if (plan->spirit_dmg != 0) {
+            BtlEvPush(BEV_OBJ_BGN, id);
+            BtlEvPush(BEV_UNIT, id);
+            BtlEvPush(BEV_NUM, plan->spirit_dmg);
             MES_PUSH(MsgCurseDamage);
-            if (Owner_AdjustFirstValueFar(id, -plan->pending_amount_60) == 0) {
+            if (Owner_AdjustFirstValueFar(id, -plan->spirit_dmg) == 0) {
                 s32 text;
-                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
-                BattleEv_Push(BATTLE_EVENT_UNIT, id);
+                BtlEvPush(BEV_OBJ_RES, id);
+                BtlEvPush(BEV_UNIT, id);
                 if (id >= 0 && id <= 7) {
                     text = (s32)MsgGoesDown;
                 } else {
@@ -368,7 +368,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 }
                 MES_PUSH(text);
             } else {
-                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
+                BtlEvPush(BEV_OBJ_END, id);
             }
         }
         BattleEv_DispatchQueued();
@@ -377,9 +377,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         if (*poison != 0) {
             s32 damage = unit->max_hp * *poison / 10;
             struct BattleSession *state = gBattleWork;
-            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
-            BattleEv_Push(BATTLE_EVENT_UNIT, id);
-            BattleEv_Push(BATTLE_EVENT_VALUE, damage);
+            BtlEvPush(BEV_OBJ_BGN, id);
+            BtlEvPush(BEV_UNIT, id);
+            BtlEvPush(BEV_NUM, damage);
             MES_PUSH(MsgPoisonDamage);
             if (*poison != 0) {
                 state->events.pending_cue = SOUND_HEAVY_IMPACT;
@@ -388,8 +388,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             }
             if (Owner_AdjustFirstValueFar(id, -damage) == 0) {
                 s32 text;
-                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
-                BattleEv_Push(BATTLE_EVENT_UNIT, id);
+                BtlEvPush(BEV_OBJ_RES, id);
+                BtlEvPush(BEV_UNIT, id);
                 if (id >= 0 && id <= 7) {
                     text = (s32)MsgGoesDown;
                 } else {
@@ -397,18 +397,18 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 }
                 MES_PUSH(text);
             } else {
-                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
+                BtlEvPush(BEV_OBJ_END, id);
             }
         }
         BattleEv_DispatchQueued();
         BattleEventRuntime_Reset();
         if (unit->death_count != 0) {
             if (--unit->death_count == 0 && Owner_AdjustFirstValueFar(id, 0xc0000000) == 0) {
-                BattleEv_Push(BATTLE_EVENT_UNIT, id);
+                BtlEvPush(BEV_UNIT, id);
                 MES_PUSH(MsgReaperCalls);
-                BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
-                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
-                BattleEv_Push(BATTLE_EVENT_UNIT, id);
+                BtlEvPush(BEV_OBJ_BGN, id);
+                BtlEvPush(BEV_OBJ_RES, id);
+                BtlEvPush(BEV_UNIT, id);
                 if (id >= 0 && id <= 7) {
                     MES_PUSH(MsgReaperCalls - 3);
                 } else {

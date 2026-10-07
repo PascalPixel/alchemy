@@ -33703,7 +33703,7 @@ msgctxt "message"
 msgid "08423"
 msgstr "OK, {actor_name:5}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaFocusEnergies"
 msgid "08424"
 msgstr "Concentre tes énergies!{end_wait}"
 
@@ -33739,7 +33739,7 @@ msgctxt "message"
 msgid "08432"
 msgstr "Nous devons persévérer!{line_break}Plus fort les tambours!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaUnderstandsChannel"
 msgid "08433"
 msgstr "Mais c'est bien sûr!{end_wait}"
 
@@ -33843,7 +33843,7 @@ msgctxt "message"
 msgid "08458"
 msgstr "Unissez votre foi et{line_break}dansez pour honorer{line_break}le Grand Gabomba!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaAcceptOffering"
 msgid "08459"
 msgstr "Oh Grand Gabomba!{line_break}Je t'en prie, accepte{line_break}notre humble présent.{end_wait}"
 
@@ -34019,7 +34019,7 @@ msgctxt "message"
 msgid "08502"
 msgstr "Qui me dit que vous n'êtes{line_break}pas des imposteurs? Je suis{line_break}Akafubu, le sorcier de Kibombo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaSawEnergyFlow"
 msgid "08503"
 msgstr "Oui, nous le savons... Nous{line_break}avons vu votre magie{line_break}circuler près de nous.{end_wait}"
 
@@ -34451,7 +34451,7 @@ msgctxt "MsgFieldCarriedTheMessageOfThe"
 msgid "08610"
 msgstr "{actor_name:5} a transmis le{line_break}message de Gabomba{line_break}à Akafubu.{page_break}Quand {actor_name:5} finit son{line_break}histoire, il faisait nuit.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaChannelTiming"
 msgid "08611"
 msgstr "La réparation du circuit{line_break}devrait faire l'affaire...{page_break}Tâchons de voir à quel moment{line_break}les deux charges magiques{line_break}atteignent la statue du milieu.{end_wait}"
 

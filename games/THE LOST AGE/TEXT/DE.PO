@@ -33875,7 +33875,7 @@ msgctxt "message"
 msgid "08466"
 msgstr "In Ordnung, {actor_name:5}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaFocusEnergies"
 msgid "08467"
 msgstr "Sammelt eure Energien!{end_wait}"
 
@@ -33911,7 +33911,7 @@ msgctxt "message"
 msgid "08475"
 msgstr "Wir müssen weitermachen!{line_break}Trommeln! Mehr Trommeln!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaUnderstandsChannel"
 msgid "08476"
 msgstr "Ah! So funktioniert das also!{end_wait}"
 
@@ -34015,7 +34015,7 @@ msgctxt "message"
 msgid "08501"
 msgstr "Vereint eure Herzen und tanzt{line_break}für den Großen Gabomba!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaAcceptOffering"
 msgid "08502"
 msgstr "Oh, Großer Gabomba! Bitte nimm{line_break}unsere bescheidene Gabe an!{end_wait}"
 
@@ -34191,7 +34191,7 @@ msgctxt "message"
 msgid "08545"
 msgstr "Warum sollte ich euch glauben?{line_break}Ich bin Akafubu, der erwählte{line_break}Medizinmann der Kibombo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaSawEnergyFlow"
 msgid "08546"
 msgstr "Ja, das wissen wir. Wir sahen, wie{line_break}deine Magie an uns vorbeizog.{end_wait}"
 
@@ -34623,7 +34623,7 @@ msgctxt "MsgFieldCarriedTheMessageOfThe"
 msgid "08653"
 msgstr "{actor_name:5} überbrachte{line_break}Gabombas Botschaft an Akafubu.{page_break}Als {actor_name:5} mit seiner Geschichte{line_break}ein Ende fand, war der Morgen{line_break}bereits angebrochen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGabombaChannelTiming"
 msgid "08654"
 msgstr "Es scheint, als würde es völlig{line_break}ausreichen, den Kreislauf{line_break}wiederherzustellen.{page_break}Wir sollten uns genau ansehen,{line_break}wann die magischen Ladungen{line_break}die Statue in der Mitte erreichen.{end_wait}"
 

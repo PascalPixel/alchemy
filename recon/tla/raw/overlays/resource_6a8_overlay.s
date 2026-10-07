@@ -765,9 +765,9 @@ Func_02000764:
 .L_020087e8:
 	.4byte gPartyState
 .L_020087ec:
-	.4byte 0x00002ec0
+	.4byte MsgWeeeeWhatFunNowThat
 .L_020087f0:
-	.4byte 0x00002ec4
+	.4byte MsgNowThatTheLighthouseIs
 	.section .text.x020087f4,"ax",%progbits
 	.global Func_020007f4
 	.thumb_func
@@ -836,9 +836,9 @@ Func_020007f4:
 .L_02008878:
 	.4byte gPartyState
 .L_0200887c:
-	.4byte 0x00002ec1
+	.4byte MsgIMissRunningAroundOutside
 .L_02008880:
-	.4byte 0x00002ec5
+	.4byte MsgThatBlizzardWasUnrealBut
 	.section .text.x02008884,"ax",%progbits
 	.global Func_02000884
 	.thumb_func
@@ -907,9 +907,9 @@ Func_02000884:
 .L_02008908:
 	.4byte gPartyState
 .L_0200890c:
-	.4byte 0x00002ec2
+	.4byte MsgIfIMGoingTo
 .L_02008910:
-	.4byte 0x00002ec6
+	.4byte MsgYouGetMoreExerciseRunning
 	.section .text.x02008914,"ax",%progbits
 	.global Func_02000914
 	.thumb_func
@@ -1099,7 +1099,7 @@ Func_02000914:
 .L_02008ad0:
 	.4byte 0x00013333
 .L_02008ad4:
-	.4byte 0x00002d0d
+	.4byte MsgTheyReNotHere
 	.section .text.x02008ad8,"ax",%progbits
 	.global Func_02000ad8
 	.thumb_func
@@ -1390,7 +1390,7 @@ Func_02000ad8:
 .L_02008da4:
 	.4byte 0x0004cccc
 .L_02008da8:
-	.4byte 0x00002d23
+	.4byte MsgWeCanTWaitFor
 	.section .text.x02008dac,"ax",%progbits
 	.global Func_02000dac
 	.thumb_func
@@ -1760,7 +1760,7 @@ Func_02000dac:
 .L_02009124:
 	.4byte gPartyState
 .L_02009128:
-	.4byte 0x00002d3f
+	.4byte MsgYouItSYou
 .L_0200912c:
 	.4byte Data_020049c4
 .L_02009130:
@@ -3178,7 +3178,7 @@ Func_02001cf0:
 .L_0200a070:
 	.4byte gPartyState
 .L_0200a074:
-	.4byte 0x00002e70
+	.4byte MsgThankYouAndYouToo
 .L_0200a078:
 	ldr r2, [r7, #108]
 	movs r3, #226
@@ -4536,7 +4536,7 @@ Func_02002a8c:
 	b .L_0200ae90
 	.2byte 0x0000
 .L_0200ae58:
-	.4byte 0x00002ee8
+	.4byte MsgWhatTookYouSoLong
 .L_0200ae5c:
 	.4byte 0x00033333
 .L_0200ae60:
@@ -8045,100 +8045,100 @@ Data_02005588:
 	.4byte 0x0000000b
 	.4byte 0x00000000
 	.4byte 0x0a3d0008
-	.4byte 0x00002cdd
+	.4byte MsgWelcomeBackToProxIt
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002ea0
+	.4byte MsgThankYouForLightingThe
 	.4byte 0x00008d15
 	.4byte 0x0a3d0008
-	.4byte 0x00002ce5
+	.4byte MsgAgatioAndKarstToldMe
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002ea8
+	.4byte MsgHasProvenHimselfAsThe
 	.4byte 0x00000000
 	.4byte 0x0a3d0009
-	.4byte 0x00002cde
+	.4byte MsgAgatioAndKarstLeftFor
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002ea1
+	.4byte MsgItSTooBadAbout
 	.4byte 0x00008d15
 	.4byte 0x0a3d0009
-	.4byte 0x00002ce6
+	.4byte MsgAgatioAndKarstAreThe
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002ea9
+	.4byte MsgIHeardTheKarstAnd
 	.4byte 0x00000000
 	.4byte 0x0a3d000a
-	.4byte 0x00002cdf
+	.4byte MsgIMGladYouMade
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002ea2
+	.4byte MsgIDonTRememberThe
 	.4byte 0x00008d15
 	.4byte 0x0a3d000a
-	.4byte 0x00002ce7
+	.4byte MsgEverSinceAgatioReturnedFrom
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002eaa
+	.4byte MsgTheBlizzardSFinallyOver
 	.4byte 0x00000000
 	.4byte 0x0a3d000b
-	.4byte 0x00002ce0
+	.4byte MsgWeReUsedToThe
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002ea3
+	.4byte MsgWinterInProxCanBe
 	.4byte 0x00008d15
 	.4byte 0x0a3d000b
-	.4byte 0x00002ce8
+	.4byte MsgItGetsColdAroundHere
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002eab
+	.4byte MsgNowThatOurWeatherIs
 	.4byte 0x00000000
 	.4byte 0x0a3d000c
-	.4byte 0x00002ce1
+	.4byte MsgIVeBeenKeepingA
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00002ea4
+	.4byte MsgIWasSoMovedWhen
 	.4byte 0x00008d15
 	.4byte 0x0a3d000c
-	.4byte 0x00002ce9
+	.4byte MsgEverythingIsSupposedToReturn
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002eac
+	.4byte MsgIWasTheFirstPerson
 	.4byte 0x00000000
 	.4byte 0x0a3d000d
-	.4byte 0x00002ce2
+	.4byte MsgHaveYouSeenSaturosOr
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00002ea5
+	.4byte MsgTheLighthousesHaveAllBeen
 	.4byte 0x00008d15
 	.4byte 0x0a3d000d
-	.4byte 0x00002cea
+	.4byte MsgICanTBelieveAnyone
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002ead
+	.4byte MsgTheyHadNoChoiceThey
 	.4byte 0x00000000
 	.4byte 0x0a3d000e
-	.4byte 0x00002ce3
+	.4byte MsgYouReBackAndYou
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002ea6
+	.4byte MsgYouDidAnAmazingJob
 	.4byte 0x00008d15
 	.4byte 0x0a3d000e
-	.4byte 0x00002ceb
+	.4byte MsgIfCouldBecomeAnAdept
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002eae
+	.4byte MsgWhenLeftTownHeOf
 	.4byte 0x00000000
 	.4byte 0x0a3d000f
-	.4byte 0x00002ce4
+	.4byte MsgOnceTheFinalLighthouseIs
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00002ea7
+	.4byte MsgWillYouBeGoingBack
 	.4byte 0x00008d15
 	.4byte 0x0a3d000f
-	.4byte 0x00002cec
+	.4byte MsgIfThisWeatherContinuesMuch
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002eaf
+	.4byte MsgIBetAndHisFriends
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte Func_02000764
@@ -8209,100 +8209,100 @@ Data_020057f8:
 	.4byte Func_02000dac
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002d15
+	.4byte MsgPuelleOrderedMeToSet
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002d17
+	.4byte MsgPuelleWantedToSetS
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002d16
+	.4byte MsgTookTheTroubleOfComing
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002d18
+	.4byte MsgICanTThinkOf
 	.4byte 0x00000000
 	.4byte 0x0a3d000c
-	.4byte 0x00002d33
+	.4byte MsgIsThatYouWhenDid
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00002edc
+	.4byte MsgSorryButThisRoadIs
 	.4byte 0x00008d15
 	.4byte 0x0a3d000c
-	.4byte 0x00002d39
+	.4byte MsgIfTheLighthouseIsnT
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002ee2
+	.4byte MsgTheRoadToTheLighthouse
 	.4byte 0x00000000
 	.4byte 0x0a3d000d
-	.4byte 0x00002d34
+	.4byte MsgIfWeWereBetterAdepts
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00002edd
+	.4byte MsgIfYouReWorriedAbout
 	.4byte 0x00008d15
 	.4byte 0x0a3d000d
-	.4byte 0x00002d3a
+	.4byte MsgNeitherOurElderNorPuelle
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002ee3
+	.4byte MsgTheEldersWereSayingThat
 	.4byte 0x00000000
 	.4byte 0x0a3d000e
-	.4byte 0x00002d35
+	.4byte MsgIFeelSoHelplessAgatio
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002ede
+	.4byte MsgIJustDonTThink
 	.4byte 0x00008d15
 	.4byte 0x0a3d000e
-	.4byte 0x00002d3b
+	.4byte MsgPuelleIsStrongerThanAny
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002ee4
+	.4byte MsgOnTheOtherHandNow
 	.4byte 0x00000000
 	.4byte 0x0a3d000f
-	.4byte 0x00002d36
+	.4byte MsgAllWeCanDoNow
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00002edf
+	.4byte MsgTaughtMeALotAbout
 	.4byte 0x00008d15
 	.4byte 0x0a3d000f
-	.4byte 0x00002d3c
+	.4byte MsgIfTheyDidnTLight
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002ee5
+	.4byte MsgMaybeIfITrainHard
 	.4byte 0x00000000
 	.4byte 0x0a3d0010
-	.4byte 0x00002d37
+	.4byte MsgOurPsynergyFeelsWeakI
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002ee0
+	.4byte MsgEvenJustStandingOutsideThe
 	.4byte 0x00008d15
 	.4byte 0x0a3d0010
-	.4byte 0x00002d3d
+	.4byte MsgIfOnlyMyFirePsynergy
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002ee6
+	.4byte MsgIfTheLightOfThe
 	.4byte 0x00000000
 	.4byte 0x0a3d0011
-	.4byte 0x00002d38
+	.4byte MsgPuellePromisedThatHeWould
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002ee1
+	.4byte MsgWellYouLookLikeYou
 	.4byte 0x00008d15
 	.4byte 0x0a3d0011
-	.4byte 0x00002d3e
+	.4byte MsgPuelleNeverIntendedToTake
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002ee7
+	.4byte MsgWhenLeftProxIDidn
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002d66
+	.4byte MsgYouMustFindKarstGet
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002d68
+	.4byte MsgIfThisDoesnTWork
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002d67
+	.4byte MsgYouAreTheOnlyHope
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002d69
+	.4byte MsgIfTheyWereStrongEnough
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -8340,196 +8340,200 @@ Data_02005a20:
 	.4byte 0x0000000a
 	.4byte 0x00000000
 	.4byte 0x0a3d0008
-	.4byte 0x00002ced
+	.4byte MsgTheRiftAtMarsLighthouse
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002eb0
+	.4byte MsgIThinkTheRiftTo
 	.4byte 0x00008d15
 	.4byte 0x0a3d0008
-	.4byte 0x00002cf0
+	.4byte MsgIThoughtProxWouldBe
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002eb3
+	.4byte MsgIWasAfraidTheFalls
 	.4byte 0x00000000
 	.4byte 0x0a3d0009
-	.4byte 0x00002cee
+	.4byte MsgOurChieftainToldMeThat
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002eb1
+	.4byte MsgIWonderIfThatHole
 	.4byte 0x00008d15
 	.4byte 0x0a3d0009
-	.4byte 0x00002cf1
+	.4byte MsgNobodyBelievedThatTheRift
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002eb4
+	.4byte MsgWhatDoWeDoIf
 	.4byte 0x00000000
 	.4byte 0x0a3d000a
-	.4byte 0x00002cef
+	.4byte MsgNotTooLongAgoI
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002eb2
+	.4byte MsgTheLighthouseWasSoBeautiful
 	.4byte 0x00008d15
 	.4byte 0x0a3d000a
-	.4byte 0x00002cf2
+	.4byte MsgTheNorthernRiftHasGotten
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002eb5
+	.4byte MsgAllTheLightsJoinedUp
 	.4byte 0x00000000
 	.4byte 0x0a3d000b
-	.4byte 0x00002cf4
+	.4byte MsgNoOneThoughtAboutOur
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002eb7
+	.4byte MsgIGuessTheFourLighthouses
 	.4byte 0x00008d15
 	.4byte 0x0a3d000b
-	.4byte 0x00002cf7
+	.4byte MsgToThinkThatWeAll
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002eba
+	.4byte MsgNowThatAlchemyIsFree
 	.4byte 0x00000000
 	.4byte 0x0a3d000c
-	.4byte 0x00002cf5
+	.4byte MsgIfMarsLighthouseSFires
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00002eb8
+	.4byte MsgThePeopleOfProxWon
 	.4byte 0x00008d15
 	.4byte 0x0a3d000c
-	.4byte 0x00002cf8
+	.4byte MsgIThinkItSToo
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002ebb
+	.4byte MsgAndHisAlliesSavedUs
 	.4byte 0x00000000
 	.4byte 0x0a3d000d
-	.4byte 0x00002cf9
+	.4byte MsgWeSentEmissariesToVale
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00002ebc
+	.4byte MsgTakeSomeAdviceFromAn
 	.4byte 0x00008d15
 	.4byte 0x0a3d000d
-	.4byte 0x00002cfb
+	.4byte MsgAtLeastTheJourneyWasn
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002ebe
+	.4byte MsgIfTheyFoundOutUsed
 	.4byte 0x00000000
 	.4byte 0x0a3d000e
-	.4byte 0x00002cfa
+	.4byte MsgValeSEldersWereStubborn
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002ebd
+	.4byte MsgAndHisFriendsLeftVale
 	.4byte 0x00008d15
 	.4byte 0x0a3d000e
-	.4byte 0x00002cfc
+	.4byte MsgThreeYearsAgoWeSent
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002ebf
+	.4byte MsgTheMayorAndTheElders
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte Func_02000620
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002d03
+	.4byte MsgIHateIgloosButAt
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002d00
+	.4byte MsgTheWindIsSoCold
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002d04
+	.4byte MsgMamaAndPapaHaveBeen
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002d01
+	.4byte MsgMyParentsToldMeThat
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002d05
+	.4byte MsgIAlwaysCatchACold
 	.4byte 0x00000000
 	.4byte 0x0a3d0012
-	.4byte 0x00002d02
+	.4byte MsgThosePoorChildrenTheyDon
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00002ec3
+	.4byte MsgICanHearTheSound
 	.4byte 0x00008d15
 	.4byte 0x0a3d0012
-	.4byte 0x00002d06
+	.4byte MsgICanTBringMyself
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00002ec7
+	.4byte MsgItSBeenSoLong
 	.4byte 0x00000000
 	.4byte 0x0a3d0013
-	.4byte 0x00002d07
+	.4byte MsgPuelleOurChieftainGrewWorried
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00002eca
+	.4byte MsgThereSNoTellingWhat
 	.4byte 0x00008d15
 	.4byte 0x0a3d0013
-	.4byte 0x00002d0a
+	.4byte MsgNowThatSaturosAndHis
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002ecf
+	.4byte MsgWeVeLostSoMany
 	.4byte 0x00000000
 	.4byte 0x0a3d0014
-	.4byte 0x00002d08
+	.4byte MsgThePeopleSaturosRescuedFrom
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00002ecb
+	.4byte MsgIAlwaysThoughtOfYou
 	.4byte 0x00008d15
 	.4byte 0x0a3d0014
-	.4byte 0x00002d0b
+	.4byte MsgMarsIsTheLastLighthouse
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00002ed0
+	.4byte MsgWhoKnewThatThePoor
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00002d09
+	.4byte MsgDonTForgetYourMother
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00002d0c
+	.4byte MsgSaturosUsedSParentsTo
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00002ec8
+	.4byte MsgIHaveMuchToDo
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x00002ecd
+	.4byte MsgWeMayHaveUnderestimatedThe
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00002ec9
+	.4byte MsgYourBodyHasAbsorbedA
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x00002ece
+	.4byte MsgThePowerToReviveThe
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte Func_02000674
 	.4byte 0x00008d15
 	.4byte 0x0a3d0016
-	.4byte 0x00002d1f
+	.4byte MsgSParentsWereWorriedAbout
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00002ed8
+	.4byte MsgWeLlNeverBeAble
 	.4byte 0x00000000
 	.4byte 0x0a3d0017
-	.4byte 0x00002d1e
+	.4byte MsgYourMotherKnowsThatYou
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00002ed7
+	.4byte MsgAfterThatEarthquakeIFeel
 	.4byte 0x00008d15
 	.4byte 0x0a3d0017
-	.4byte 0x00002d20
+	.4byte MsgSParentsWereSoWorried
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00002ed9
+	.4byte MsgWhenTheEarthquakeHitAnd
 	.4byte 0x00000000
 	.4byte 0xffff0018
 	.4byte Func_02000290
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x0040305f
+	.2byte MsgThoseBoilingVegetablesLookLike
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x00403060
+	.2byte MsgThereSCheeseInThis
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x00403061
+	.2byte MsgThereIsSomeStrangeDish
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte 0x00403062
+	.2byte MsgTheyVeGotSomeStrange
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -8549,55 +8553,59 @@ Data_02005da4:
 	.4byte 0x00000009
 	.4byte 0x00000000
 	.4byte 0x0a3d0008
-	.4byte 0x00002cf3
+	.4byte MsgProxOriginallyFlourishedBecauseConcerned
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002eb6
+	.4byte MsgIVeBeenToldThat
 	.4byte 0x00008d15
 	.4byte 0x0a3d0008
-	.4byte 0x00002cf6
+	.4byte MsgWhenTheLighthousesWereAll
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002eb9
+	.4byte MsgAlchemyHasBeenFreedWe
 	.4byte 0x00000000
 	.4byte 0x0a3d0009
-	.4byte 0x00002d19
+	.4byte MsgWhenYouLeftProxYou
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002ed2
+	.4byte MsgThankYouSoMuchIf
 	.4byte 0x00008d15
 	.4byte 0x0a3d0009
-	.4byte 0x00002d1b
+	.4byte MsgWhatHasHeGoneThrough
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002ed4
+	.4byte MsgINeverImaginedThatLittle
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte Func_020006c4
 	.4byte 0x00008d15
 	.4byte 0x0a3d000a
-	.4byte 0x00002d1c
+	.4byte MsgLooksSoConfidentSoBold
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002ed5
+	.4byte MsgItSTooBadCan
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002ecc
+	.4byte MsgThinkOfYourOldGrandma
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002ed1
+	.4byte MsgIMSoSadDoesn
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x0040305f
+	.2byte MsgThoseBoilingVegetablesLookLike
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x00403060
+	.2byte MsgThereSCheeseInThis
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x00403061
+	.2byte MsgThereIsSomeStrangeDish
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte 0x00403062
+	.2byte MsgTheyVeGotSomeStrange
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -8611,10 +8619,10 @@ Data_02005eac:
 	.4byte Func_02000714
 	.4byte 0x00008d15
 	.4byte 0x0a3d0008
-	.4byte 0x00002d22
+	.4byte MsgTheseCatastrophesAreTheResult
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002edb
+	.4byte MsgTheLighthousesAreGoingTo
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

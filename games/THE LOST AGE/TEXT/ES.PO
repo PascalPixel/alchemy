@@ -38623,23 +38623,23 @@ msgctxt "message"
 msgid "09653"
 msgstr "Estoy acabado... Ese dragón{line_break}me ha dejado rendido...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOhIMSoHungry"
 msgid "09654"
 msgstr "Oh, estoy hambriento...{line_break}Y no habrá nada para comer{line_break}hasta que vuelva Briggs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenIsBriggsGoingTo"
 msgid "09655"
 msgstr "¿Cuándo va a volver Briggs{line_break}con comida para la aldea? No{line_break}podremos esperar mucho más.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHowDidYouFindYour"
 msgid "09656"
 msgstr "¿Cómo has llegado hasta aquí,{line_break}hasta el límite de Angara? Champa{line_break}se esconde tras las montañas.{page_break}Nadie las traspasa para vernos,{line_break}excepto los monjes del Templo{line_break}Fuchin.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChampaIsImpoverishedButSoon"
 msgid "09657"
 msgstr "Champa está empobrecida, pero{line_break}pronto volverá a prosperar.{page_break}¡Todas nuestras esperanzas{line_break}están puestas en que Briggs{line_break}vuelva con muchos tesoros!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouVeTheLookOf"
 msgid "09658"
 msgstr "Tienes pinta de explorador... ¿Has{line_break}estado en las Ruinas Ankhol?{end_now}"
 
@@ -38651,27 +38651,27 @@ msgctxt "message"
 msgid "09660"
 msgstr "Culpa mía... Estos viejos ojos{line_break}no son lo que solían ser.{page_break}Aun así, las ruinas están sólo{line_break}un poco al nordeste de aquí.{line_break}Deberías inspeccionarlas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheRuinsAtAnkohlAre"
 msgid "09661"
 msgstr "Las Ruinas Ankhol son los restos{line_break}de un gran templo construido{line_break}por nuestros ancestros.{page_break}Tuvieron que ser bastante{line_break}ricos para construir un{line_break}edificio tan monumental.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEoleoBriggsSSonHas"
 msgid "09662"
 msgstr "Eoleo, el hijo de Briggs, tiene{line_break}una habilidad muy extraña...{page_break}Apuesto algo a que, si sigo{line_break}practicando, yo también{line_break}conseguiré tenerla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOnceBriggsComesBackI"
 msgid "09663"
 msgstr "Cuando vuelva Briggs, podré{line_break}jugar con Eoleo otra vez...{line_break}Espero que vuelvan pronto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheCliffCavesAreA"
 msgid "09664"
 msgstr "Las cuevas de las montañas{line_break}están más silenciosas sin Briggs...{line_break}Lo echamos de menos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurMatriarchIsTheLast"
 msgid "09665"
 msgstr "Nuestra matriarca es la última{line_break}descendiente de los ankhol.{page_break}Es una maestra en{line_break}el arte de la forja.{page_break}Fue el antiguo don{line_break}de los ankhol...{page_break}No hay nada que{line_break}no pueda reparar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheChampaSailorsArenT"
 msgid "09666"
 msgstr "¿Los marineros champa{line_break}tenemos buena reputación{line_break}ahí fuera?{end_now}"
 
@@ -38683,51 +38683,51 @@ msgctxt "message"
 msgid "09668"
 msgstr "Ey, eso molesta... Al menos{line_break}podrías mentir para ser más{line_break}amable...{page_break}Si propagas rumores como{line_break}ése, no te auguro una{line_break}buena estancia aquí.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhereCouldBriggsBeWasting"
 msgid "09669"
 msgstr "¿Dónde estará malgastando{line_break}su tiempo ahora ese Briggs?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsPromisedToBringEnough"
 msgid "09670"
 msgstr "Briggs prometió que traería{line_break}suficiente comida para toda{line_break}la aldea.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChampaIsAllAloneOn"
 msgid "09671"
 msgstr "Champa está sola en la costa{line_break}este de Angara. Por eso fue{line_break}que nos echamos a la mar.{page_break}Aprendimos a valernos por{line_break}nosotros mismos... Con ello{line_break}nos convertimos en marineros.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIBetBriggsHasAlready"
 msgid "09672"
 msgstr "Apuesto a que Briggs ya{line_break}está trayendo los tesoros{line_break}de vuelta a casa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWantSomeoneToSolve"
 msgid "09673"
 msgstr "Quiero que alguien resuelva el{line_break}acertijo de las Ruinas Ankhol{line_break}antes de que muera...{page_break}¡Sólo pido eso!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheySayTheChamberAt"
 msgid "09674"
 msgstr "Dicen que la cámara en lo alto{line_break}de las ruinas está decorada{line_break}con oro puro.{page_break}Nuestros ancestros han debido{line_break}de ser muy ricos para permitirse{line_break}una decoración tan extravagante.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfICouldPickUp"
 msgid "09675"
 msgstr "Si pudiera coger las cosas{line_break}sin usar las manos, la vida{line_break}sería mucho más sencilla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEoleoSSoMuchYounger"
 msgid "09676"
 msgstr "Eoleo es mucho más pequeño{line_break}que yo, pero no puedo dejar de{line_break}pensar en él... ¿Será... amor?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyHavenTBriggsAnd"
 msgid "09677"
 msgstr "¿Por qué no han vuelto{line_break}Briggs y sus hombres?{page_break}Obaba dijo que no fuéramos{line_break}en su busca, pero ¿y si están{line_break}en apuros?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgObabaSLockedHerselfIn"
 msgid "09678"
 msgstr "Obaba se ha encerrado en su{line_break}habitación hasta que su nieto,{line_break}Briggs, regrese a casa.{page_break}Está muy preocupada...{line_break}Ni siquiera ha comido.{line_break}Espero que esté bien.{end_wait}"
 
-msgctxt "MsgObabaIsTheLastPossessor"
+msgctxt "MsgIfBriggsWouldJustBring"
 msgid "09679"
 msgstr "Si Briggs trajera el tesoro{line_break}que ha encontrado, Champa{line_break}prosperaría al fin.{page_break}Entonces podríamos{line_break}olvidarnos de ser piratas{line_break}y todas esas historias.{end_wait}"
 
-msgctxt "MsgYouDThinkObabaWould"
+msgctxt "message"
 msgid "09680"
 msgstr "No hay mucho espacio en las{line_break}cuevas de las montañas. Por{line_break}eso tenemos que vivir aquí.{end_wait}"
 
@@ -38843,7 +38843,7 @@ msgctxt "message"
 msgid "09708"
 msgstr "Todos los hombres se echaron{line_break}a la mar con Briggs... ¡Mi amorcito{line_break}también! Ojalá vuelva pronto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIBetYouReWondering"
 msgid "09709"
 msgstr "Apuesto a que te preguntas por{line_break}qué sólo los marineros y sus{line_break}familias viven en las montañas.{page_break}Bueno, desde aquí arriba, las{line_break}familias pueden mirar al mar{line_break}esperando su regreso.{end_wait}"
 
@@ -38879,7 +38879,7 @@ msgctxt "message"
 msgid "09717"
 msgstr "Briggs es el mejor de{line_break}nuestros marineros.{page_break}Mientras lidere a nuestros{line_break}hombres, todos volverán{line_break}a Champa a salvo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStandingHereStaringAcrossThe"
 msgid "09718"
 msgstr "Estando aquí, frente al mar en{line_break}este acantilado, siento que{line_break}ayudo a nuestros marineros.{end_wait}"
 
@@ -38939,7 +38939,7 @@ msgctxt "MsgChanpaNeedsCaptainTreasure"
 msgid "09732"
 msgstr "Espero que Briggs traiga algo...{line_break}Si no, será el fin de los champas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgISeeYouVeCaught"
 msgid "09733"
 msgstr "Veo que te vuelves a{line_break}topar conmigo, {actor_name:5}.{end_wait}"
 
@@ -39471,7 +39471,7 @@ msgctxt "message"
 msgid "09865"
 msgstr "Dice: \"Dos pasos hacia el{line_break}norte en la tumba central{line_break}donde la carta ha caído\".{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChampaAhead"
 msgid "09866"
 msgstr "¡Ahí está Champa!{end_wait}"
 
@@ -40503,19 +40503,19 @@ msgctxt "MsgThePoorGuardWasBlindfolded"
 msgid "10123"
 msgstr "El pobre guardia tenía los ojos{line_break}vendados cuando Briggs escapó,{line_break}así que no pudo ver nada.{page_break}Ese Briggs es inteligente,{line_break}cubriendo su ruta de{line_break}escape de esa forma.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsCameBackWithA"
 msgid "10124"
 msgstr "¡Briggs volvió con gran cantidad{line_break}de comida! ¡Estoy llenísimo! ¡Ya{line_break}no me acordaba de esta sensación!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDonTTalkToMe"
 msgid "10125"
 msgstr "No me hables de comida...{line_break}Creo que voy a estallar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLetSSeeThemCall"
 msgid "10126"
 msgstr "¡A ver si nos vuelven a{line_break}llamar pobres a los champas!{page_break}¡Desde que Briggs volvió con{line_break}una carga de gemas, somos{line_break}asquerosamente ricos!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeyYouJustCameTo"
 msgid "10127"
 msgstr "Ey, tú viniste a Champa{line_break}no hace mucho, ¿verdad?{end_now}"
 
@@ -40527,7 +40527,7 @@ msgctxt "message"
 msgid "10129"
 msgstr "Bueno, quizás no lo creas al vernos{line_break}ahora, pero los champas hemos{line_break}sido pobres hasta hace poco.{page_break}¡Ahora, gracias a Briggs, somos{line_break}tan ricos que damos asco!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsTookALongTime"
 msgid "10130"
 msgstr "Briggs tardó mucho en volver.{line_break}¿Quieres saber por qué?{end_now}"
 
@@ -40539,75 +40539,75 @@ msgctxt "message"
 msgid "10132"
 msgstr "Briggs superó un grave{line_break}peligro antes de volver.{line_break}Realmente lo admiro.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsLooksSoReliableSo"
 msgid "10133"
 msgstr "Briggs me da tanta confianza,{line_break}parece tan seguro de sí mismo.{line_break}Nunca lo había visto así.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThoseBagsAreFullOf"
 msgid "10134"
 msgstr "Esas bolsas están llenas de{line_break}comida para los champas.{line_break}Nos las dio Briggs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWantToPlayWith"
 msgid "10135"
 msgstr "Quiero jugar con Eoleo,{line_break}pero ya no baja al puerto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsFoughtTheOddsTo"
 msgid "10136"
 msgstr "¡Briggs luchó contra la adversidad{line_break}para traernos comida y joyas!{line_break}¡Es un líder ejemplar!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgObabaIsTheLastPossessor"
 msgid "10137"
 msgstr "Obaba es la última poseedora{line_break}de los antiguos secretos de los{line_break}ankhol, una civilización perdida.{page_break}No hay nada que no pueda{line_break}arreglar, no importa el qué...{line_break}¡Ella es como un herrero!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouDThinkObabaWould"
 msgid "10138"
 msgstr "Creí que Obaba se alegraría de{line_break}volver a ver a Briggs, pero actúa{line_break}como si nada hubiera cambiado.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowNobodyHasToDo"
 msgid "10139"
 msgstr "Ahora, nadie tiene porqué hacer{line_break}nada que no quiera. ¡Y todo se{line_break}lo debemos a Briggs!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsIsSoGenerousHe"
 msgid "10140"
 msgstr "¡Briggs es muy generoso!{line_break}¡Me dijo que no parara de{line_break}comer y así lo hice!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgErrrrgIWasSoFull"
 msgid "10141"
 msgstr "Aaarg... Estoy tan llena que{line_break}creo que no tendré que comer{line_break}en las próximas semanas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoshHowMuchAreAll"
 msgid "10142"
 msgstr "Cielos... ¿Cuánto valdrán{line_break}esas joyas? Más de lo que{line_break}me imagino, seguro.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThingsAreGoingToBe"
 msgid "10143"
 msgstr "Las cosas van a cambiar por{line_break}aquí. Todo irá a mejor. Estoy{line_break}deseando que así sea.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeReLuckyBriggsHadn"
 msgid "10144"
 msgstr "Tenemos suerte de que{line_break}no encontraran las joyas{line_break}cuando capturaron a Briggs.{page_break}Habría significado el{line_break}fin de los champas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBriggsWasAlwaysSuchA"
 msgid "10145"
 msgstr "Briggs siempre fue un mocoso,{line_break}¡pero ahora ha salvado a la{line_break}aldea! ¡Menudo cambio!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllOfOurStockhousesAre"
 msgid "10146"
 msgstr "Todas las despensas están{line_break}tan llenas que han tenido que{line_break}dejar el sobrante aquí fuera...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEoleoSaidHeCouldnT"
 msgid "10147"
 msgstr "Eoleo dijo que no podía jugar{line_break}con nosotros, y eso que él{line_break}es el más pequeño...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfChampaGetsEnoughMoney"
 msgid "10148"
 msgstr "Si Champa consigue el dinero{line_break}suficiente, quizás podamos dejar{line_break}los pillajes y saqueos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIsObabaInAGood"
 msgid "10149"
 msgstr "¿Está contenta Obaba ahora{line_break}o qué? Noté el cambio en{line_break}cuanto regresó Briggs.{page_break}Si tienes algo que pedirle,{line_break}ahora es el momento.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNobodyReallyLikesToPlay"
 msgid "10150"
 msgstr "A nadie le gusta{line_break}ser pirata.{page_break}Estoy seguro de que todos{line_break}se alegran de no tener que{line_break}serlo más.{end_wait}"
 
@@ -40699,7 +40699,7 @@ msgctxt "message"
 msgid "10172"
 msgstr "Sustentar toda una aldea sólo de{line_break}la pesca es imposible. Necesitamos{line_break}nuevas fuentes de ingresos.{page_break}Briggs nos ha puesto en el{line_break}buen camino con todas esas{line_break}joyas.{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgWhoaYouYouRe"
 msgid "10173"
 msgstr "¡Vaya! Tú eres... ¡Eres {actor_name:5}!{end_wait}"
 
@@ -41311,7 +41311,7 @@ msgctxt "message"
 msgid "10325"
 msgstr "Vosotros capturasteis a Briggs{line_break}en Alhafra, ¿no? Sois muy fuertes,{line_break}pero no lo aparentáis.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenBriggsSetSailWe"
 msgid "10326"
 msgstr "Cuando Briggs partió, creímos{line_break}que no lo volveríamos a ver.{page_break}¡Y ahora, de repente, aparece{line_break}con un montón de comida{line_break}para salvar la aldea!{end_wait}"
 
@@ -41375,7 +41375,7 @@ msgctxt "message"
 msgid "10341"
 msgstr "Ese {actor_name:5} llega con sus aires{line_break}de prepotencia. Odio a ese{line_break}tipo de gente.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWasJustGazingOut"
 msgid "10342"
 msgstr "Estaba mirando al horizonte{line_break}cuando vi el barco de Briggs...{line_break}No podía respirar de la emoción.{end_wait}"
 
@@ -46075,7 +46075,7 @@ msgctxt "message"
 msgid "11516"
 msgstr "Tu poder de predicción debe{line_break}de haber crecido más de lo{line_break}que imaginas, {actor_name:3}...{end_wait}"
 
-msgctxt "MsgYouLikeIgloosRight"
+msgctxt "message"
 msgid "11517"
 msgstr "¡Maldición! ¡Han debido de{line_break}coger el ascensor para escapar!{end_wait}"
 
@@ -46191,7 +46191,7 @@ msgctxt "message"
 msgid "11545"
 msgstr "Pero no sabía que fuera{line_break}tan espectacular.{end_wait}"
 
-msgctxt "MsgYouGoAwayForA"
+msgctxt "message"
 msgid "11546"
 msgstr "No estarás planeando escapar{line_break}de {actor_name:1} otra vez, ¿verdad?{end_wait}"
 
@@ -46203,7 +46203,7 @@ msgctxt "message"
 msgid "11548"
 msgstr "Además, quieren dialogar,{line_break}no luchar...{end_wait}"
 
-msgctxt "MsgYourParentsHaveGoneAway"
+msgctxt "message"
 msgid "11549"
 msgstr "Nos esperan. Volvamos{line_break}a Mitdir.{end_wait}"
 
@@ -46219,7 +46219,7 @@ msgctxt "message"
 msgid "11552"
 msgstr "Ya se han ido todos de la{line_break}ciudad. Están transportando{line_break}las alas...{page_break}A decir verdad, ya las habrán{line_break}colocado en el barco.{end_wait}"
 
-msgctxt "MsgIHearAgatioAndKarst"
+msgctxt "message"
 msgid "11553"
 msgstr "¿Es ése tu barco? Parece{line_break}exactamente el mismo que{line_break}el de los geoglifos.{end_wait}"
 
@@ -47779,135 +47779,135 @@ msgctxt "message"
 msgid "11942"
 msgstr "{protagonist_name} examinó la señal.{page_break}Dice: \"Los clientes que deseen{line_break}hospedarse, deben registrarse{line_break}en el mostrador\".{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWelcomeBackToProxIt"
 msgid "11943"
 msgstr "¡{actor_name:5}! ¡Bienvenido de nuevo{line_break}a Prox! Parece que sólo queda{line_break}el Faro de Marte por encender...{page_break}Agatio creía que no llegarías,{line_break}por eso me he sorprendido{line_break}al verte.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAgatioAndKarstLeftFor"
 msgid "11944"
 msgstr "Agatio y Karst salieron hacia{line_break}el Faro de Marte hace poco...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMGladYouMade"
 msgid "11945"
 msgstr "Me alegro de que hayas regresado{line_break}sano y salvo... El hielo está{line_break}dificultando la navegación.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeReUsedToThe"
 msgid "11946"
 msgstr "Estamos acostumbrados al frío{line_break}aquí en Prox, pero últimamente{line_break}el tiempo está empeorando.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeBeenKeepingA"
 msgid "11947"
 msgstr "He estado pendiente de{line_break}los cielos del norte...{page_break}Cuando vea un brillo en la{line_break}lontananza, sabré que el{line_break}faro ha sido encendido.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaveYouSeenSaturosOr"
 msgid "11948"
 msgstr "¿Habéis visto a Saturos y{line_break}a Menardi? Se dice que han{line_break}sido asesinados...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouReBackAndYou"
 msgid "11949"
 msgstr "¿{actor_name:5}, has vuelto? ¿Y has{line_break}aprendido a usar la Psinergía?{page_break}Ya siento el poder en ti...{line_break}¡Es muy fuerte!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOnceTheFinalLighthouseIs"
 msgid "11950"
 msgstr "Cuando el faro final haya sido{line_break}encendido, los vientos cesarán.{page_break}¡Pero no parece{line_break}que eso vaya a{line_break}ocurrir ahora!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAgatioAndKarstToldMe"
 msgid "11951"
 msgstr "Agatio y Karst me dijeron que{line_break}{actor_name:5} había desertado porque{line_break}la misión era muy peligrosa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAgatioAndKarstAreThe"
 msgid "11952"
 msgstr "Agatio y Karst son los guerreros{line_break}más fuertes de Prox... Por eso los{line_break}enviamos.{page_break}Pero estoy preocupada... Ya{line_break}llevan un buen rato fuera y{line_break}el faro sigue apagado.{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgEverSinceAgatioReturnedFrom"
 msgid "11953"
 msgstr "Desde que Agatio volviera del{line_break}Faro de Júpiter, los vientos han{line_break}sido más fuertes que nunca...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItGetsColdAroundHere"
 msgid "11954"
 msgstr "Aquí siempre hace frío, pero es{line_break}la primera vez que he visto el{line_break}río cubierto de nieve.{page_break}¿Qué ocurrirá si Agatio no{line_break}enciende el Faro de Marte{line_break}a tiempo?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEverythingIsSupposedToReturn"
 msgid "11955"
 msgstr "Se supone que todo volverá{line_break}a la normalidad cuando el{line_break}Faro de Marte sea encendido.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTBelieveAnyone"
 msgid "11956"
 msgstr "No puedo creer que alguien{line_break}haya derrotado a Saturos y{line_break}a Menardi...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfCouldBecomeAnAdept"
 msgid "11957"
 msgstr "¡Si {actor_name:5} llegó a ser un Adepto{line_break}en tan poco tiempo, yo también!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfThisWeatherContinuesMuch"
 msgid "11958"
 msgstr "Si las temperaturas continúan así{line_break}por mucho tiempo, terminaremos{line_break}muy pronto bajo la nieve.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheRiftAtMarsLighthouse"
 msgid "11959"
 msgstr "La falla del Faro de Marte{line_break}se abre cada día más.{page_break}¡Si no encontramos la manera{line_break}de detenerla, va a tragarse{line_break}Prox por completo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurChieftainToldMeThat"
 msgid "11960"
 msgstr "Nuestro jefe me dijo que esa{line_break}falla crece día a día como las{line_break}Cataratas de la Madre Tierra.{page_break}Será mejor que encendamos{line_break}el Faro de Marte pronto; si no,{line_break}esto es el fin...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotTooLongAgoI"
 msgid "11961"
 msgstr "No hace mucho, escalé la montaña{line_break}al norte de la falla. ¡Era tremenda!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIThoughtProxWouldBe"
 msgid "11962"
 msgstr "¡Creí que Prox existiría para{line_break}siempre, pero ahora parece{line_break}que va a ser destruida!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNobodyBelievedThatTheRift"
 msgid "11963"
 msgstr "Nadie creyó que la falla{line_break}llegara tan al sur que{line_break}colindara con Prox...{page_break}Todos creyeron que Puel{line_break}estaba exagerando...{line_break}Ya no piensan así...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheNorthernRiftHasGotten"
 msgid "11964"
 msgstr "La falla del norte ha crecido{line_break}tanto que ya no puedo ver{line_break}lo que hay al otro lado...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgProxOriginallyFlourishedBecauseConcerned"
 msgid "11965"
 msgstr "Prox floreció en sus orígenes{line_break}porque los Adeptos encendían{line_break}fuegos en el Faro de Marte.{page_break}Ahora, la gente de la llama del{line_break}norte nos hemos olvidado del{line_break}mundo exterior.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoOneThoughtAboutOur"
 msgid "11966"
 msgstr "Nadie pensó en nuestras{line_break}necesidades cuando extinguieron{line_break}los grandes faros...{page_break}Ahora, por su culpa, nuestra{line_break}gran tierra está muriendo,{line_break}deshaciéndose por los límites...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfMarsLighthouseSFires"
 msgid "11967"
 msgstr "Si los fuegos del Faro de Marte{line_break}no son reavivados, Prox será{line_break}destruida, pero eso no es todo...{page_break}Las Cataratas de la Madre{line_break}Tierra lo erosionarán todo,{line_break}devorando Weyard por completo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenTheLighthousesWereAll"
 msgid "11968"
 msgstr "Cuando los faros fueron{line_break}apagados, las civilizaciones{line_break}se desvanecieron...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToThinkThatWeAll"
 msgid "11969"
 msgstr "Y pensar que llegamos a{line_break}controlar el poder de la{line_break}naturaleza... Qué necios fuimos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIThinkItSToo"
 msgid "11970"
 msgstr "Creo que ya es demasiado tarde...{line_break}Pero si encienden los fuegos,{line_break}los estaremos esperando.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeSentEmissariesToVale"
 msgid "11971"
 msgstr "Enviamos emisarios a Tale{line_break}para advertirles de que{line_break}Weyard estaba desapareciendo.{page_break}Pero no nos escucharon...{line_break}Ojalá lo hubieran hecho...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgValeSEldersWereStubborn"
 msgid "11972"
 msgstr "Los ancianos de Tale estaban{line_break}ofuscados... No nos escucharon{line_break}y nos echaron por la fuerza.{page_break}Habríamos ido en paz a{line_break}convencerlos de lo que{line_break}el mundo afrontaba...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAtLeastTheJourneyWasn"
 msgid "11973"
 msgstr "Por lo menos, el viaje no fue{line_break}en vano. Supimos que el Templo{line_break}Sonne escondía un secreto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThreeYearsAgoWeSent"
 msgid "11974"
 msgstr "Hace tres años, enviamos a los{line_break}mejores al Templo Sonne. Sólo{line_break}dos sobrevivieron a una trampa.{page_break}Los habitantes de Tale no{line_break}comprendían lo desesperada{line_break}que era nuestra necesidad...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouLikeIgloosRight"
 msgid "11975"
 msgstr "{actor_name:5}, ¿te gustan{line_break}los iglús, verdad?{end_wait}"
 
@@ -47919,59 +47919,59 @@ msgctxt "message"
 msgid "11977"
 msgstr "¡Bueno, si no te gustan las{line_break}cosas frías, estás en el{line_break}lugar equivocado!{page_break}Construimos esto para{line_break}tener algo con lo que{line_break}protegernos del frío...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheWindIsSoCold"
 msgid "11978"
 msgstr "El viento es tan helado{line_break}que hemos decidido{line_break}meternos en el iglú...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyParentsToldMeThat"
 msgid "11979"
 msgstr "¡Mis padres me dijeron que{line_break}el aire fresco me sentaría{line_break}bien, pero me estoy congelando!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThosePoorChildrenTheyDon"
 msgid "11980"
 msgstr "Esos pobres chicos... No{line_break}saben lo que se avecina...{page_break}Sólo quiero que estén felices{line_break}durante el poco tiempo que{line_break}nos queda.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHateIgloosButAt"
 msgid "11981"
 msgstr "Odio los iglús, pero al menos{line_break}nos protegen del viento...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMamaAndPapaHaveBeen"
 msgid "11982"
 msgstr "Mamá y papá han estado{line_break}actuando de manera extraña...{line_break}Parecen muy tristes.{page_break}Cada vez que pregunto,{line_break}me dicen que salga a{line_break}jugar un rato más.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAlwaysCatchACold"
 msgid "11983"
 msgstr "Siempre me resfrío cuando{line_break}el tiempo está así... ¿Acaso{line_break}mi madre quiere que enferme?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTBringMyself"
 msgid "11984"
 msgstr "No puedo explicarles lo que{line_break}nos va a pasar... {pause_20_skippable}Oh, por{line_break}favor, haced algo...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPuelleOurChieftainGrewWorried"
 msgid "11985"
 msgstr "Puel, nuestro jefe, se{line_break}preocupó por Agatio{line_break}y por Karst.{page_break}Se ha ido a la parte norte{line_break}del pueblo para esperarlos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThePeopleSaturosRescuedFrom"
 msgid "11986"
 msgstr "La gente que Saturos rescató{line_break}en la tormenta de Vale tiene{line_break}que estar en su habitación.{page_break}¡Una vez que el Faro de Marte{line_break}haya sido encendido, los{line_break}liberaremos!{end_wait}"
 
-msgctxt "MsgYourFosterGrandmotherKnewThat"
+msgctxt "MsgDonTForgetYourMother"
 msgid "11987"
 msgstr "No lo olvides, {actor_name:5}. Tu madre{line_break}y tu padre están en la parte{line_break}norte de Prox.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatSaturosAndHis"
 msgid "11988"
 msgstr "Ahora que Saturos y su equipo{line_break}han desaparecido, Agatio es{line_break}el último de nuestros guerreros.{page_break}Si algo le ocurriera, nuestras{line_break}esperanzas se desvanecerían.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMarsIsTheLastLighthouse"
 msgid "11989"
 msgstr "Marte es el último faro que{line_break}queda por encender.{page_break}Cuando nos encarguemos de{line_break}él, liberaremos a la gente de{line_break}Tale.{end_wait}"
 
-msgctxt "MsgWeHadNoIdeaThere"
+msgctxt "MsgSaturosUsedSParentsTo"
 msgid "11990"
 msgstr "Saturos usó a los padres de{line_break}{actor_name:5} para forzarlo a que se{line_break}uniera a su misión.{page_break}Corren tiempos difíciles; nos{line_break}vemos obligados a coaccionar para{line_break}que se unan a nuestra causa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheyReNotHere"
 msgid "11991"
 msgstr "Aquí no hay nadie...{end_wait}"
 
@@ -47983,7 +47983,7 @@ msgctxt "message"
 msgid "11993"
 msgstr "Todos dicen que han{line_break}desaparecido sin dejar{line_break}rastro... Qué extraño.{end_wait}"
 
-msgctxt "MsgNowThatTheLighthouseHas"
+msgctxt "message"
 msgid "11994"
 msgstr "No pensarás que ellos...{end_wait}"
 
@@ -48003,63 +48003,63 @@ msgctxt "message"
 msgid "11998"
 msgstr "Lo dejó bien claro...{line_break}\"Cuando {actor_name:5} vuelva a Prox,{line_break}liberad a sus padres\".{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPuelleOrderedMeToSet"
 msgid "11999"
 msgstr "Puel me ordenó que{line_break}liberara a tus padres.{line_break}Por eso estoy aquí...{page_break}Lo que pasa es que no hay{line_break}nadie... ¡No sé dónde están{line_break}tus padres!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTookTheTroubleOfComing"
 msgid "12000"
 msgstr "Te preocupaste por volver{line_break}a por tus padres y ahora{line_break}ya no están...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPuelleWantedToSetS"
 msgid "12001"
 msgstr "Puel quería liberar a los padres{line_break}de {actor_name:5} antes de que Prox{line_break}fuera destruida...{page_break}Pero si no podemos encontrarlos,{line_break}¿cómo vamos a liberarlos?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTThinkOf"
 msgid "12002"
 msgstr "¡No sé a qué otro sitio han{line_break}podido ir los padres de {actor_name:5}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenYouLeftProxYou"
 msgid "12003"
 msgstr "¡Cuando dejaste Prox, eras tan{line_break}joven que ni siquiera podías{line_break}blandir una espada!{page_break}¡Y ahora, mírate! ¡Eres un{line_break}maestro de las armas!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouGoAwayForA"
 msgid "12004"
 msgstr "¡Te vas por una temporada{line_break}y vuelves convertido en un{line_break}poderoso guerrero!{page_break}¡Me alegro por ti!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatHasHeGoneThrough"
 msgid "12005"
 msgstr "¿Qué habrá tenido que vivir{line_break}para hacerse tan fuerte en{line_break}tan poco tiempo?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLooksSoConfidentSoBold"
 msgid "12006"
 msgstr "{actor_name:5} parece muy seguro de{line_break}sí mismo, tan audaz... Sólo{line_break}tienes que mirar sus ojos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourParentsHaveGoneAway"
 msgid "12007"
 msgstr "{actor_name:5}, tus padres ya no{line_break}están aquí... Estaban muy{line_break}preocupados por ti.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourMotherKnowsThatYou"
 msgid "12008"
 msgstr "Tu madre sabe que eres fuerte{line_break}como un roble, así que no está{line_break}preocupada...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSParentsWereWorriedAbout"
 msgid "12009"
 msgstr "Los padres de {actor_name:5} se{line_break}preocuparon cuando supieron{line_break}que Saturos había muerto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSParentsWereSoWorried"
 msgid "12010"
 msgstr "Los padres de {actor_name:5} estaban{line_break}tan preocupados por él que{line_break}quedaron demacrados...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHearAgatioAndKarst"
 msgid "12011"
 msgstr "Escuché que Agatio y Karst{line_break}fueron al Faro de Marte...{page_break}¿Y si sus acciones sólo causan{line_break}más confusión? ¿Cómo podemos{line_break}asegurarnos de que harán el bien?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheseCatastrophesAreTheResult"
 msgid "12012"
 msgstr "Estas catástrofes son el resultado{line_break}de que los faros hayan sido{line_break}encendidos.{page_break}Esta nieve, este viento...{line_break}Todo comenzó cuando se{line_break}encendió el Faro de Júpiter.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeCanTWaitFor"
 msgid "12013"
 msgstr "No podemos seguir esperando{line_break}a Agatio y a sus hombres...{end_wait}"
 
@@ -48123,55 +48123,55 @@ msgctxt "message"
 msgid "12028"
 msgstr "Entonces tenemos que esperar{line_break}aquí sentados a que caiga un{line_break}milagro del cielo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIsThatYouWhenDid"
 msgid "12029"
 msgstr "¿Eres tú, {actor_name:5}? ¿Cuándo{line_break}has regresado a Prox?{page_break}Deberías llevarte a tus padres{line_break}de vuelta a Tale, para que al{line_break}menos puedan morir en su tierra.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfWeWereBetterAdepts"
 msgid "12030"
 msgstr "Si fuéramos mejores Adeptos,{line_break}intentaríamos encender el faro{line_break}nosotros mismos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIFeelSoHelplessAgatio"
 msgid "12031"
 msgstr "Me siento tan impotente... Agatio{line_break}no ha regresado y el faro sigue{line_break}apagado.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllWeCanDoNow"
 msgid "12032"
 msgstr "Lo único que podemos hacer{line_break}es esperar a que Agatio y sus{line_break}hombres regresen...{page_break}Pero ningún soldado puede{line_break}quedarse de brazos cruzados{line_break}mientras otros hacen el trabajo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurPsynergyFeelsWeakI"
 msgid "12033"
 msgstr "Nuestra Psinergía se debilita...{line_break}Puedo sentirlo en mi interior.{page_break}Los faros del agua, la tierra y{line_break}el viento están encendidos,{line_break}sólo queda el del fuego.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPuellePromisedThatHeWould"
 msgid "12034"
 msgstr "Puel prometió que devolvería{line_break}a los secuestrados a Tale.{page_break}Si no me crees,{line_break}pregúntale.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheLighthouseIsnT"
 msgid "12035"
 msgstr "Si no encienden el faro pronto,{line_break}Prox está sentenciada... ¡Tengo{line_break}que salir de aquí como sea!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNeitherOurElderNorPuelle"
 msgid "12036"
 msgstr "Ni nuestro anciano ni Puel{line_break}nos dirán lo que está pasando{line_break}en el faro...{page_break}¿Por qué estamos entrenando{line_break}tanto? Encender un faro no{line_break}tiene que ser tan difícil...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPuelleIsStrongerThanAny"
 msgid "12037"
 msgstr "Puel es más fuerte que cualquiera{line_break}de nosotros y no hay nada que{line_break}pueda hacer para salvarnos...{page_break}Pero si no tomamos alguna{line_break}decisión, Prox será destruida...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheyDidnTLight"
 msgid "12038"
 msgstr "Si no han encendido el faro{line_break}ni han regresado, el equipo{line_break}de Agatio ha debido de fallar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfOnlyMyFirePsynergy"
 msgid "12039"
 msgstr "Ojalá mi Psinergía de fuego{line_break}no estuviera tan débil ahora,{line_break}al menos podría ayudar...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPuelleNeverIntendedToTake"
 msgid "12040"
 msgstr "Puel nunca quiso tomar rehenes.{line_break}Él sólo quería que la gente{line_break}volviera a Tale sana y salva.{page_break}Saturos insistió en que debíamos{line_break}retenerlos por seguridad, pero{line_break}Puel no estuvo de acuerdo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouItSYou"
 msgid "12041"
 msgstr "Tú... {actor_name:5}, eres tú...{end_wait}"
 
@@ -48327,19 +48327,19 @@ msgctxt "message"
 msgid "12079"
 msgstr "Gracias por vuestra ayuda.{line_break}El futuro de Weyard está{line_break}ahora en vuestras manos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouMustFindKarstGet"
 msgid "12080"
 msgstr "Encontrad a Karst,{line_break}pedidle la Estrella Marte{line_break}y encended el faro.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouAreTheOnlyHope"
 msgid "12081"
 msgstr "{actor_name:5}, eres la única{line_break}esperanza que nos queda.{line_break}Buena suerte.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfThisDoesnTWork"
 msgid "12082"
 msgstr "Si no lo conseguís, estamos{line_break}condenados... Prox, Weyard,{line_break}incluso Tale... Será el fin...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheyWereStrongEnough"
 msgid "12083"
 msgstr "Si fueron tan fuertes como para{line_break}derrotar a Saturos y a Menardi,{line_break}quizás puedan conseguirlo...{end_wait}"
 
@@ -49391,7 +49391,7 @@ msgctxt "message"
 msgid "12345"
 msgstr "Un trozo de hielo{line_break}sobresale del suelo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThankYouAndYouToo"
 msgid "12346"
 msgstr "Gracias, {actor_name:5}.{line_break}Y a vosotros también,{line_break}{actor_name:1} y Kraden.{end_wait}"
 
@@ -49583,295 +49583,295 @@ msgctxt "message"
 msgid "12393"
 msgstr "Nunca olvidaremos lo que{line_break}habéis hecho por Prox.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThankYouForLightingThe"
 msgid "12394"
 msgstr "Gracias por encender el{line_break}fuego del faro, {actor_name:5}.{line_break}Nos has salvado a todos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSTooBadAbout"
 msgid "12395"
 msgstr "Es una verdadera pena{line_break}lo de Agatio y Karst...{page_break}No eran malas personas...{page_break}Sólo estaban un poco{line_break}obsesionados, pero no{line_break}merecían tal destino.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTRememberThe"
 msgid "12396"
 msgstr "No recuerdo la última vez que{line_break}vi el cielo tan brillante y{line_break}despejado. ¡Me siento genial!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWinterInProxCanBe"
 msgid "12397"
 msgstr "El invierno en Prox es frío,{line_break}pero creo que el tiempo se{line_break}suavizará después de esto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWasSoMovedWhen"
 msgid "12398"
 msgstr "Me conmoví tanto cuando vi que{line_break}la luz brillaba al norte. Todos os{line_break}debemos la vida.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheLighthousesHaveAllBeen"
 msgid "12399"
 msgstr "Todos los faros están encendidos...{line_break}¿Significa eso que vamos a volver{line_break}al caos y la guerra?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouDidAnAmazingJob"
 msgid "12400"
 msgstr "Hiciste un trabajo extraordinario...{line_break}Has conseguido lo que Agatio y{line_break}Karst no pudieron...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWillYouBeGoingBack"
 msgid "12401"
 msgstr "¿Volverás a Tale ahora que{line_break}has terminado tu misión,{line_break}{actor_name:5}? ¡No nos olvides!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHasProvenHimselfAsThe"
 msgid "12402"
 msgstr "¡{actor_name:5} ha demostrado ser{line_break}el guerrero más fuerte que{line_break}jamás haya conocido Prox!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHeardTheKarstAnd"
 msgid "12403"
 msgstr "Escuché que Karst y Agatio fueron{line_break}derrotados por un monstruoso{line_break}dragón...{page_break}Aunque {actor_name:5} venció al dragón...{line_break}No sé si impresionarme o{line_break}asustarme de él.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheBlizzardSFinallyOver"
 msgid "12404"
 msgstr "Ya cesó la ventisca...{line_break}¡Es el peor temporal{line_break}que hayamos tenido!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatOurWeatherIs"
 msgid "12405"
 msgstr "Ahora que el clima está{line_break}volviendo a la normalidad,{line_break}todos regresarán aquí.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWasTheFirstPerson"
 msgid "12406"
 msgstr "¡Fui la primera persona del pueblo{line_break}en ver la luz del faro!{page_break}¡Me alegré tanto que tuve{line_break}que decírselo a todos!{page_break}¡Me sentía como un chiquillo,{line_break}correteando por la aldea,{line_break}gritando y levantando los brazos!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheyHadNoChoiceThey"
 msgid "12407"
 msgstr "No tuvieron elección... Tenían{line_break}que encender los cuatro{line_break}faros elementales...{page_break}Aunque ello provocase el{line_break}estallido de la guerra y{line_break}la violencia, era un deber.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenLeftTownHeOf"
 msgid "12408"
 msgstr "Cuando {actor_name:5} dejó el poblado,{line_break}no tenía mucho de guerrero... ni{line_break}tampoco de otra cosa...{page_break}¿Cuándo se hizo el guerrero{line_break}más fuerte de Prox?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIBetAndHisFriends"
 msgid "12409"
 msgstr "Seguro que {actor_name:5} y sus amigos{line_break}viven en un lugar cálido...{line_break}Ojalá pudiera ir con ellos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIThinkTheRiftTo"
 msgid "12410"
 msgstr "Creo que la falla del norte{line_break}comenzó a cerrarse cuando{line_break}el faro fue encendido...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderIfThatHole"
 msgid "12411"
 msgstr "Me pregunto si esa falla al norte{line_break}ha dejado de crecer... ¿Y si{line_break}vuelve a hacerlo de nuevo?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheLighthouseWasSoBeautiful"
 msgid "12412"
 msgstr "El faro era tan bonito con la luz{line_break}encendida... ¡Fue como ver la{line_break}aurora boreal!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWasAfraidTheFalls"
 msgid "12413"
 msgstr "¡Tenía miedo de que las cataratas{line_break}me arrastraran hacia el vacío! Me{line_break}alegro de que todo haya pasado...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoWeDoIf"
 msgid "12414"
 msgstr "¿Qué hacemos si la falla sigue{line_break}acercándose y {actor_name:5} no{line_break}está aquí para ayudarnos?{page_break}Oh, fantástico... Me voy a pasar{line_break}toda la noche pensando en lo{line_break}mismo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllTheLightsJoinedUp"
 msgid "12415"
 msgstr "Todas las luces se unieron{line_break}y se centraron al sudeste{line_break}de aquí.{page_break}Parecía como si formaran{line_break}una gran bola dorada o{line_break}algo así.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeBeenToldThat"
 msgid "12416"
 msgstr "Me dijeron que encender los{line_break}cuatro faros había liberado la{line_break}Alquimia sobre el mundo.{page_break}¡Ahora que todos podemos usar{line_break}la Alquimia, las civilizaciones{line_break}van a comenzar a avanzar!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIGuessTheFourLighthouses"
 msgid "12417"
 msgstr "Supongo que los cuatro faros{line_break}fueron sellados para bloquear{line_break}el poder de la Alquimia.{page_break}¡Así que {actor_name:5} no sólo{line_break}salvó Prox, sino que también{line_break}nos trajo la edad dorada!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThePeopleOfProxWon"
 msgid "12418"
 msgstr "Los habitantes de Prox no{line_break}olvidarán lo que has hecho{line_break}por ellos...{page_break}Puedes volver a Tale con gran{line_break}orgullo, pero siempre serás{line_break}bienvenido aquí.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAlchemyHasBeenFreedWe"
 msgid "12419"
 msgstr "La Alquimia ha sido liberada.{line_break}Debemos comenzar a estudiarla{line_break}en serio aquí en Prox.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatAlchemyIsFree"
 msgid "12420"
 msgstr "¡Ahora que la Alquimia ha sido{line_break}liberada, es como si Weyard{line_break}despertara!{page_break}¿Cómo cambiará el mundo?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAndHisAlliesSavedUs"
 msgid "12421"
 msgstr "{actor_name:5} y sus aliados nos{line_break}salvaron de una destrucción{line_break}segura.{page_break}Es una pena que el resto del{line_break}mundo no conozca todo lo que{line_break}ellos han hecho por nosotros.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTakeSomeAdviceFromAn"
 msgid "12422"
 msgstr "{actor_name:5}, deja que un anciano{line_break}como yo te dé un consejo...{page_break}Sería mejor que no fuerais{line_break}contando que vosotros{line_break}encendisteis los faros...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAndHisFriendsLeftVale"
 msgid "12423"
 msgstr "{actor_name:1} y sus amigos dejaron{line_break}Tale, jurando que volverían{line_break}con las Estrellas Elementales.{page_break}Cuando regresen, tendrán que{line_break}explicar lo sucedido. Espero{line_break}que no sean castigados...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheyFoundOutUsed"
 msgid "12424"
 msgstr "Si averiguan que {actor_name:5} usó los{line_break}tesoros del Templo Sonne para{line_break}encender los faros...{page_break}Ese estúpido alcalde no dudaría{line_break}en castigarlo por lo que hizo{line_break}para salvarnos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheMayorAndTheElders"
 msgid "12425"
 msgstr "El alcalde y los ancianos de{line_break}Tale son tan intransigentes.{page_break}Cuando sepan que {actor_name:5} y{line_break}sus amigos vuelven sin las{line_break}piedras, los castigarán.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeeeeWhatFunNowThat"
 msgid "12426"
 msgstr "¡Yupiiiii! ¡Qué divertido! Ahora{line_break}que ha dejado de nevar podemos{line_break}salir a jugar de nuevo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMissRunningAroundOutside"
 msgid "12427"
 msgstr "Echaba de menos corretear por{line_break}ahí. Hacía tanto frío que ni{line_break}siquiera me ponía a sudar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfIMGoingTo"
 msgid "12428"
 msgstr "Si quiero convertirme en un{line_break}gran guerrero como {actor_name:5},{line_break}tendré que entrenarme mucho.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanHearTheSound"
 msgid "12429"
 msgstr "Puedo oír el sonido de{line_break}los niños jugando a{line_break}lo lejos...{page_break}Eso me dice que todo ha vuelto{line_break}a la normalidad y que nuestras{line_break}preocupaciones se acabaron.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatTheLighthouseIs"
 msgid "12430"
 msgstr "Ahora que el faro está encendido,{line_break}no tenemos por qué seguir{line_break}jugando en ese feo iglú.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThatBlizzardWasUnrealBut"
 msgid "12431"
 msgstr "Esa ventisca fue como ninguna{line_break}otra, pero ya cesó y hace un{line_break}tiempo espléndido.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouGetMoreExerciseRunning"
 msgid "12432"
 msgstr "Haces mucho más ejercicio{line_break}corriendo por la nieve porque{line_break}hacerlo cuesta bastante.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSBeenSoLong"
 msgid "12433"
 msgstr "Hacía mucho que no{line_break}oía los gritos de los{line_break}niños por los caminos.{page_break}Espero que estos niños sigan{line_break}ignorantes del peligro que{line_break}corrimos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHaveMuchToDo"
 msgid "12434"
 msgstr "Tengo mucho que hacer, así{line_break}que no podré veros partir.{line_break}Os deseo un viaje sin percances.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourBodyHasAbsorbedA"
 msgid "12435"
 msgstr "Tu cuerpo ha absorbido gran{line_break}cantidad de energía elemental en{line_break}estado puro. Por favor, cuídate.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSNoTellingWhat"
 msgid "12436"
 msgstr "No se sabe lo que puede suceder{line_break}ahora... Si has absorbido energía,{line_break}quizás {actor_name:6} también...{page_break}¡Lo que significa que mejor{line_break}no la cabreéis porque, si no,{line_break}os la buscáis...!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAlwaysThoughtOfYou"
 msgid "12437"
 msgstr "{actor_name:5}, te cogí cariño{line_break}como si fueras mi propio{line_break}nieto cuando estabas aquí...{page_break}Ahora que te vas, no puedo{line_break}explicarte el dolor que invade{line_break}este viejo corazón.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThinkOfYourOldGrandma"
 msgid "12438"
 msgstr "Piensa en los platos que te{line_break}cocinaba tu vieja abuela cuando{line_break}regreses a tu casa en Tale.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeMayHaveUnderestimatedThe"
 msgid "12439"
 msgstr "Puede que hayamos infravalorado{line_break}el poder de la Psinergía que ha{line_break}liberado...{page_break}Tendremos que estudiarla más{line_break}de cerca cuando hayamos{line_break}despedido a {actor_name:5}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThePowerToReviveThe"
 msgid "12440"
 msgstr "El poder de revivir a los muertos{line_break}es asombroso y aterrador...{page_break}El secreto de la vida eterna{line_break}pronto estará en manos de{line_break}los alquimistas... ¡Increíble!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeVeLostSoMany"
 msgid "12441"
 msgstr "Hemos perdido muchos soldados{line_break}y ahora {actor_name:5} se marcha...{line_break}Prox va a estar muy tranquila.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoKnewThatThePoor"
 msgid "12442"
 msgstr "¿Quién iba a decir que el niño{line_break}herido que trajeron de Tale{line_break}sería el salvador de Prox?{page_break}Estoy contento de que por{line_break}fin pueda regresar a su casa,{line_break}pero lo echaré de menos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSoSadDoesn"
 msgid "12443"
 msgstr "Qué tristeza... {actor_name:5} no tiene{line_break}tiempo para disfrutar de la{line_break}merienda que le he preparado...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThankYouSoMuchIf"
 msgid "12444"
 msgstr "¡Muchísimas gracias, {actor_name:5}!{line_break}¡Si no hubieras vuelto aquí,{line_break}ya habríamos desaparecido!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourFosterGrandmotherKnewThat"
 msgid "12445"
 msgstr "Tu abuela de acogida sabía que{line_break}volverías. Siempre decía que{line_break}eras de confianza.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgINeverImaginedThatLittle"
 msgid "12446"
 msgstr "Nunca creí que el pequeño{line_break}{actor_name:5} se haría más fuerte{line_break}que Agatio y Karst.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSTooBadCan"
 msgid "12447"
 msgstr "Qué pena que {actor_name:5} no{line_break}se quede por aquí... Sería el{line_break}hijo adoptivo perfecto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeHadNoIdeaThere"
 msgid "12448"
 msgstr "No teníamos ni idea de que{line_break}semejante temblor se{line_break}produciría al encender el faro.{page_break}Mi mujer cayó directamente en{line_break}mis brazos... ¡Fue como volver{line_break}a los tiempos de juventud!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAfterThatEarthquakeIFeel"
 msgid "12449"
 msgstr "¡Después del terremoto, me sentí{line_break}como si hubieran pasado varios{line_break}años de mi vida en un instante!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeLlNeverBeAble"
 msgid "12450"
 msgstr "Nunca llegaremos a agradecer a{line_break}{actor_name:5} y a los guerreros{line_break}de Tale lo suficiente.{page_break}Espero que todos estén{line_break}felices por volver a Tale{line_break}con sus familias.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenTheEarthquakeHitAnd"
 msgid "12451"
 msgstr "El terremoto sucedió cuando{line_break}{actor_name:5} y sus amigos se{line_break}encontraban en lo alto del faro.{page_break}¡Si hubiera estado allí,{line_break}creo que me habría dado{line_break}un ataque al corazón!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatTheLighthouseHas"
 msgid "12452"
 msgstr "Ahora que el faro está{line_break}encendido, tengo miedo por{line_break}lo que ocurra en Weyard.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheLighthousesAreGoingTo"
 msgid "12453"
 msgstr "Los faros van a restablecer{line_break}el poder de la Alquimia...{page_break}Pero la Alquimia es un{line_break}poder peligroso...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSorryButThisRoadIs"
 msgid "12454"
 msgstr "Lo siento, {actor_name:5}, pero este{line_break}camino está bloqueado ahora.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouReWorriedAbout"
 msgid "12455"
 msgstr "Si te preocupa el fuego{line_break}del faro, no lo hagas...{line_break}Sigue encendido.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIJustDonTThink"
 msgid "12456"
 msgstr "No dejo de pensar que no valgo{line_break}para ser soldado. Siempre dije{line_break}que lo mío era tricotar...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTaughtMeALotAbout"
 msgid "12457"
 msgstr "{actor_name:5} me enseñó mucho{line_break}para convertirme en un{line_break}soldado de pro...{page_break}¡He progresado lentamente, pero{line_break}eso se acabó! ¡Comenzaré un{line_break}entrenamiento intensivo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEvenJustStandingOutsideThe"
 msgid "12458"
 msgstr "Incluso aquí, fuera del faro,{line_break}siento la energía que libera...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWellYouLookLikeYou"
 msgid "12459"
 msgstr "Bueno, parece que estáis todos{line_break}listos para partir hacia Tale.{line_break}Buen viaje, {actor_name:5}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheRoadToTheLighthouse"
 msgid "12460"
 msgstr "El camino al faro está muy{line_break}deteriorado después del{line_break}temblor que sacudió la zona...{page_break}No sé cómo {actor_name:5}{line_break}y los otros pudieron llegar{line_break}al poblado por ese camino.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheEldersWereSayingThat"
 msgid "12461"
 msgstr "Los ancianos decían que apagar{line_break}el faro era complicado una vez{line_break}que estaba encendido.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOnTheOtherHandNow"
 msgid "12462"
 msgstr "Como decía aquél, ahora que la{line_break}Alquimia ha sido liberada, quizás{line_break}me meta a alquimista...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMaybeIfITrainHard"
 msgid "12463"
 msgstr "Puede que, si me entreno lo{line_break}suficiente, llegue a ser tan{line_break}fuerte como Menardi y Karst...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheLightOfThe"
 msgid "12464"
 msgstr "Si la luz del faro sigue brillando,{line_break}el poder de la Alquimia nunca{line_break}cesará...{page_break}Aunque Prox sea atacada,{line_break}nuestra ardiente llama seguirá{line_break}ardiendo para siempre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenLeftProxIDidn"
 msgid "12465"
 msgstr "Cuando {actor_name:5} se fue de Prox,{line_break}no me paré mucho a pensar en{line_break}él, ¡pero ahora es inevitable!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatTookYouSoLong"
 msgid "12466"
 msgstr "¿Qué te entretuvo tanto?{line_break}Mamá y papá están{line_break}cansados de esperarte...{end_wait}"
 
@@ -50487,7 +50487,7 @@ msgctxt "message"
 msgid "12619"
 msgstr "Puede que te veamos allí.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlank2"
 msgid "12620"
 msgstr "¡{actor_name:1}!{end_wait}"
 
@@ -51371,19 +51371,19 @@ msgctxt "message"
 msgid "12840"
 msgstr "Es un estofado celta hecho con{line_break}carne de cordero y patatas.{page_break}Tiene una pinta tremenda,{line_break}sobre todo si te gusta la{line_break}carne guisada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThoseBoilingVegetablesLookLike"
 msgid "12841"
 msgstr "Los vegetales que cuecen{line_break}aquí parecen hierbajos.{page_break}Estoy muy seguro de que{line_break}no probaré un bocado de{line_break}eso en toda mi vida.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSCheeseInThis"
 msgid "12842"
 msgstr "Hay queso en este estofado.{page_break}¡Eh! ¡Hay moho en él!{line_break}¿Acaso tiene que ser{line_break}así?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereIsSomeStrangeDish"
 msgid "12843"
 msgstr "Hay un tipo extraño de plato{line_break}a base de huevas de pescado.{page_break}Les salen hilillos. Me pregunto{line_break}si eso será normal...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheyVeGotSomeStrange"
 msgid "12844"
 msgstr "Es un tipo de carne que{line_break}no había visto en mi vida.{page_break}En lugar de usar una{line_break}fogata, están usando{line_break}una cornamenta quemada.{page_break}Me pregunto si la carne{line_break}y la cornamenta proceden{line_break}del mismo animal.{end_wait}"
 

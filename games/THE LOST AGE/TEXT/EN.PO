@@ -45947,131 +45947,131 @@ msgctxt "message"
 msgid "11484"
 msgstr "{protagonist_name} checked the sign{page_break}It reads \"People staying at{line_break}the inn can check in at the{line_break}counter.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWelcomeBackToProxIt"
 msgid "11485"
 msgstr "{actor_name:5}! Welcome back to{line_break}Prox! It looks like only Mars{line_break}Lighthouse still needs lighting...{page_break}Agatio didn't think you'd be{line_break}coming back here, so I'm a{line_break}little surprised to see you...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAgatioAndKarstLeftFor"
 msgid "11486"
 msgstr "Agatio and Karst left for{line_break}Mars Lighthouse a little{line_break}while ago...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMGladYouMade"
 msgid "11487"
 msgstr "I'm glad you made it back{line_break}safely... The ice is making it very{line_break}difficult for anyone to sail here.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeReUsedToThe"
 msgid "11488"
 msgstr "We're used to the cold up{line_break}here in Prox, but lately, it{line_break}seems to be getting worse.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeBeenKeepingA"
 msgid "11489"
 msgstr "I've been keeping a close{line_break}eye on the northern skies...{page_break}Once I see a bright flash in{line_break}the distance, I'll know the{line_break}last beacon has been lit.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaveYouSeenSaturosOr"
 msgid "11490"
 msgstr "Have you seen Saturos or{line_break}Menardi? People have been{line_break}saying that they were killed...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouReBackAndYou"
 msgid "11491"
 msgstr "{actor_name:5}, you're back? And you{line_break}learned how to use Psynergy?{page_break}I can sense the power{line_break}inside of you... It's strong!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOnceTheFinalLighthouseIs"
 msgid "11492"
 msgstr "Once the final lighthouse is lit,{line_break}the winds should weaken. They{line_break}keep getting stronger, though!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAgatioAndKarstToldMe"
 msgid "11493"
 msgstr "Agatio and Karst told me that{line_break}{actor_name:5} ran away because{line_break}their quest was too dangerous.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAgatioAndKarstAreThe"
 msgid "11494"
 msgstr "Agatio and Karst are the{line_break}strongest fighters in Prox...{line_break}That's why we sent them.{page_break}But I'm worried... They've been{line_break}gone for a while now, and the{line_break}lighthouse still remains dark.{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgEverSinceAgatioReturnedFrom"
 msgid "11495"
 msgstr "Ever since Agatio returned from{line_break}Jupiter Lighthouse, the winds{line_break}have been stronger than ever...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItGetsColdAroundHere"
 msgid "11496"
 msgstr "It gets cold around here, but{line_break}this is the first time I've ever{line_break}seen snow pile up on the river.{page_break}What if Agatio doesn't reach{line_break}Mars Lighthouse in time?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEverythingIsSupposedToReturn"
 msgid "11497"
 msgstr "Everything is supposed to{line_break}return to normal once Mars{line_break}Lighthouse is lit again.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTBelieveAnyone"
 msgid "11498"
 msgstr "I can't believe anyone could{line_break}have beaten Saturos and{line_break}Menardi...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfCouldBecomeAnAdept"
 msgid "11499"
 msgstr "If {actor_name:5} could become an{line_break}Adept so quickly, so can I!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfThisWeatherContinuesMuch"
 msgid "11500"
 msgstr "If this weather continues much{line_break}longer, we'll all be buried under{line_break}snow in no time.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheRiftAtMarsLighthouse"
 msgid "11501"
 msgstr "The rift at Mars Lighthouse{line_break}gets wider every day.{page_break}If we don't find a way to{line_break}stop it, I think it's going to{line_break}devour Prox entirely!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurChieftainToldMeThat"
 msgid "11502"
 msgstr "Our chieftain told me that the{line_break}rift is growing larger by the day,{line_break}just like Gaia Falls is.{page_break}We'd better light the Mars{line_break}beacon soon, or Prox is{line_break}finished...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotTooLongAgoI"
 msgid "11503"
 msgstr "Not too long ago, I climbed{line_break}the mountains to the north to{line_break}look at the rift. It was huge!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIThoughtProxWouldBe"
 msgid "11504"
 msgstr "I thought Prox would be here{line_break}forever, but now, it looks like{line_break}it might be destroyed!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNobodyBelievedThatTheRift"
 msgid "11505"
 msgstr "Nobody believed that the rift{line_break}would go as far south as{line_break}Prox...{page_break}They all thought Puelle was{line_break}being melodramatic... But no{line_break}one thinks that anymore...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheNorthernRiftHasGotten"
 msgid "11506"
 msgstr "The northern rift has gotten{line_break}so big that I couldn't see the{line_break}other side...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgProxOriginallyFlourishedBecauseConcerned"
 msgid "11507"
 msgstr "Prox originally flourished{line_break}because concerned Adepts lit{line_break}the fires of the Mars Lighthouse.{page_break}Now, we, the people of the{line_break}northern flame, have been{line_break}forgotten by the outside world.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoOneThoughtAboutOur"
 msgid "11508"
 msgstr "No one thought about our{line_break}needs when they extinguished{line_break}the great lighthouses...{page_break}Now, because of them, our{line_break}great land is dying, crumbling{line_break}away at the edges...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfMarsLighthouseSFires"
 msgid "11509"
 msgstr "If Mars Lighthouse's fires are{line_break}not rekindled, Prox will be{line_break}destroyed, but that's not all...{page_break}Eventually, Gaia Falls will{line_break}continue to erode, finally{line_break}devouring all of Weyard.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenTheLighthousesWereAll"
 msgid "11510"
 msgstr "When the lighthouses were{line_break}all extinguished, every great{line_break}civilization faded away...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToThinkThatWeAll"
 msgid "11511"
 msgstr "To think that we all once{line_break}had the power to control{line_break}nature... What fools we were.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIThinkItSToo"
 msgid "11512"
 msgstr "I think it's too late for us{line_break}already... But if they light the{line_break}fires, we'll be ready for them.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeSentEmissariesToVale"
 msgid "11513"
 msgstr "We sent emissaries to Vale{line_break}to tell them that Weyard{line_break}was dying.{page_break}But they wouldn't listen to us...{line_break}If only they had listened to us...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgValeSEldersWereStubborn"
 msgid "11514"
 msgstr "Vale's elders were stubborn...{line_break}They refused to listen to us,{line_break}and they drove us out by force.{page_break}We had gone in peace, hoping{line_break}to convince them of the plight{line_break}our world faces...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAtLeastTheJourneyWasn"
 msgid "11515"
 msgstr "At least the journey wasn't{line_break}for nothing. We learned that Sol{line_break}Sanctum held a hidden secret.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThreeYearsAgoWeSent"
 msgid "11516"
 msgstr "Three years ago, we sent our{line_break}finest to Sol Sanctum. All but{line_break}two were killed in a trap.{page_break}The people of Vale couldn't{line_break}possibly understand how dire{line_break}our need was...{end_wait}"
 
@@ -46087,59 +46087,59 @@ msgctxt "message"
 msgid "11519"
 msgstr "Well, if you don't like cold{line_break}things, you're in the wrong{line_break}place!{page_break}We just built this so that{line_break}we'd have something to{line_break}do to keep us warm...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheWindIsSoCold"
 msgid "11520"
 msgstr "The wind is so cold and{line_break}bitter that we decided to{line_break}hide out inside our igloo...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMyParentsToldMeThat"
 msgid "11521"
 msgstr "My parents told me that it{line_break}would do me good to get some{line_break}fresh air, but I'm freezing!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThosePoorChildrenTheyDon"
 msgid "11522"
 msgstr "Those poor children. They{line_break}don't understand what's about{line_break}to happen to us...{page_break}I just want them to be happy{line_break}in the short time left to us.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHateIgloosButAt"
 msgid "11523"
 msgstr "I hate igloos, but at least{line_break}it's protecting us from the{line_break}wind...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMamaAndPapaHaveBeen"
 msgid "11524"
 msgstr "Mama and Papa have been{line_break}acting really strange lately...{line_break}They seem so sad.{page_break}Whenever I ask them what's{line_break}wrong, they tell me to go{line_break}outside and play some more.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAlwaysCatchACold"
 msgid "11525"
 msgstr "I always catch a cold when I'm{line_break}outside in weather like this...{line_break}Does Mom want me to get sick?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTBringMyself"
 msgid "11526"
 msgstr "I can't bring myself to tell{line_break}them what's going to happen{line_break}to us...{pause_20_skippable} Oh, please, save us...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPuelleOurChieftainGrewWorried"
 msgid "11527"
 msgstr "Puelle, our chieftain, grew{line_break}worried about Agatio and{line_break}Karst.{page_break}He's gone to the northern{line_break}edge of town to wait for them.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThePeopleSaturosRescuedFrom"
 msgid "11528"
 msgstr "The people Saturos rescued{line_break}from the storm in Vale should{line_break}be waiting in their room.{page_break}Once Mars Lighthouse has{line_break}been lit, they'll be free to{line_break}return home.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDonTForgetYourMother"
 msgid "11529"
 msgstr "Don't forget, {actor_name:5}, your{line_break}mother and father are staying{line_break}in the north end of Prox.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatSaturosAndHis"
 msgid "11530"
 msgstr "Now that Saturos and his{line_break}team are gone, Agatio is the{line_break}last of our warriors.{page_break}If something happens to{line_break}them, our final hope is lost.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMarsIsTheLastLighthouse"
 msgid "11531"
 msgstr "Mars is the last lighthouse{line_break}that needs to be rekindled.{page_break}Once that's been taken care{line_break}of, the people of Vale will be{line_break}set free.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaturosUsedSParentsTo"
 msgid "11532"
 msgstr "Saturos used {actor_name:5}'s parents{line_break}to force {actor_name:5} to follow him{line_break}on his mission.{page_break}We've fallen on hard times{line_break}when we need to coerce{line_break}people to join our cause.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheyReNotHere"
 msgid "11533"
 msgstr "They're not here...{end_wait}"
 
@@ -46171,23 +46171,23 @@ msgctxt "message"
 msgid "11540"
 msgstr "He was clear about it, too...{line_break}\"When {actor_name:5} returns to Prox,{line_break}set his parents free.\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPuelleOrderedMeToSet"
 msgid "11541"
 msgstr "Puelle ordered me to set{line_break}your parents free. That's{line_break}why I'm here now...{page_break}The only thing is, no one{line_break}else is here... I don't know{line_break}where your parents went!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTookTheTroubleOfComing"
 msgid "11542"
 msgstr "{actor_name:5} took the trouble of{line_break}coming back for his parents,{line_break}and now they're just gone?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPuelleWantedToSetS"
 msgid "11543"
 msgstr "Puelle wanted to set {actor_name:5}'s{line_break}parents free before Prox{line_break}was destroyed...{page_break}But if we can't find them,{line_break}how can we set them free?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTThinkOf"
 msgid "11544"
 msgstr "I can't think of anywhere{line_break}else {actor_name:5}'s parents{line_break}might have gone!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenYouLeftProxYou"
 msgid "11545"
 msgstr "When you left Prox, you were{line_break}so young that you could barely{line_break}lift a sword!{page_break}Now, look at you! You could{line_break}handle any weapon with ease!{end_wait}"
 
@@ -46195,11 +46195,11 @@ msgctxt "MsgYouGoAwayForA"
 msgid "11546"
 msgstr "You go away for a little{line_break}while, and you come back{line_break}a strong and mighty warrior!{page_break}I'm so proud of you!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatHasHeGoneThrough"
 msgid "11547"
 msgstr "What has he gone through{line_break}that he's become so strong{line_break}in such a short time?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLooksSoConfidentSoBold"
 msgid "11548"
 msgstr "{actor_name:5} looks so confident,{line_break}so bold... You can see it in{line_break}his eyes...{end_wait}"
 
@@ -46207,15 +46207,15 @@ msgctxt "MsgYourParentsHaveGoneAway"
 msgid "11549"
 msgstr "{actor_name:5}, your parents have{line_break}gone away... They were very{line_break}worried about you.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourMotherKnowsThatYou"
 msgid "11550"
 msgstr "Your mother knows that you're{line_break}strong and healthy, so I'm sure{line_break}she's very relieved...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSParentsWereWorriedAbout"
 msgid "11551"
 msgstr "{actor_name:5}'s parents{line_break}were worried about him when{line_break}they heard Saturos was dead.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSParentsWereSoWorried"
 msgid "11552"
 msgstr "{actor_name:5}'s parents were{line_break}so worried about him that{line_break}they were wasting away...{end_wait}"
 
@@ -46223,11 +46223,11 @@ msgctxt "MsgIHearAgatioAndKarst"
 msgid "11553"
 msgstr "I hear Agatio and Karst have{line_break}gone to Mars Lighthouse...{page_break}What if their actions only{line_break}cause more turmoil? How can{line_break}we be sure they're right?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheseCatastrophesAreTheResult"
 msgid "11554"
 msgstr "These catastrophes are{line_break}the result of the lighthouse{line_break}beacons being rekindled.{page_break}This snow, this wind, it all{line_break}started after Jupiter{line_break}Lighthouse was lit.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeCanTWaitFor"
 msgid "11555"
 msgstr "We can't wait for Agatio{line_break}and his men any longer...{end_wait}"
 
@@ -46291,55 +46291,55 @@ msgctxt "message"
 msgid "11570"
 msgstr "So, we must sit here and{line_break}wait for a miracle to come.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIsThatYouWhenDid"
 msgid "11571"
 msgstr "Is that you, {actor_name:5}? When{line_break}did you return to Prox?{page_break}You should take your parents{line_break}back to Vale, so they can at{line_break}least die in their hometown.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfWeWereBetterAdepts"
 msgid "11572"
 msgstr "If we were better Adepts,{line_break}we could try to enter the{line_break}lighthouse ourselves...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIFeelSoHelplessAgatio"
 msgid "11573"
 msgstr "I feel so helpless... Agatio has{line_break}not returned, and the lighthouse{line_break}beacon remains unlit.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllWeCanDoNow"
 msgid "11574"
 msgstr "All we can do now is wait{line_break}for Agatio and his men to{line_break}return...{page_break}But no honest soldier can{line_break}sit idly by while others do{line_break}all of the work.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurPsynergyFeelsWeakI"
 msgid "11575"
 msgstr "Our Psynergy feels weak...{line_break}I can sense it inside me.{page_break}The water, earth, and wind{line_break}lighthouses have been lit,{line_break}and fire alone remains dark.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPuellePromisedThatHeWould"
 msgid "11576"
 msgstr "Puelle promised that he{line_break}would return our hostages{line_break}to Vale.{page_break}If you don't believe me,{line_break}ask him yourself.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheLighthouseIsnT"
 msgid "11577"
 msgstr "If the lighthouse isn't lit{line_break}soon, Prox is doomed...{line_break}I need to get out of here!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNeitherOurElderNorPuelle"
 msgid "11578"
 msgstr "Neither our elder nor Puelle{line_break}will tell us what's going on{line_break}at the lighthouse...{page_break}Why are we training so{line_break}much? A lighthouse shouldn't{line_break}pose that much danger...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPuelleIsStrongerThanAny"
 msgid "11579"
 msgstr "Puelle is stronger than any{line_break}of us, and there is nothing{line_break}he can do to save us...{page_break}But if we don't take some{line_break}kind of action, Prox will be{line_break}destroyed for sure...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheyDidnTLight"
 msgid "11580"
 msgstr "If they didn't light the beacon{line_break}and they didn't return home,{line_break}Agatio's team must have failed.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfOnlyMyFirePsynergy"
 msgid "11581"
 msgstr "If only my fire Psynergy{line_break}weren't so weak now, I{line_break}might be able to help...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPuelleNeverIntendedToTake"
 msgid "11582"
 msgstr "Puelle never intended to take{line_break}hostages. He wanted the people{line_break}of Vale to be returned safely.{page_break}Saturos insisted that we{line_break}hold on to them for our{line_break}safety, but Puelle disagreed.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouItSYou"
 msgid "11583"
 msgstr "You... {actor_name:5}, it's you...{end_wait}"
 
@@ -46495,19 +46495,19 @@ msgctxt "message"
 msgid "11621"
 msgstr "Thanks for your help.{line_break}The future of Weyard{line_break}rests in your hands.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouMustFindKarstGet"
 msgid "11622"
 msgstr "You must find Karst,{line_break}get the Mars Star, and{line_break}light the lighthouse.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouAreTheOnlyHope"
 msgid "11623"
 msgstr "{actor_name:5}, you are the only{line_break}hope left to us now.{line_break}Good luck.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfThisDoesnTWork"
 msgid "11624"
 msgstr "If this doesn't work, we're all{line_break}finished... Prox, Weyard, even{line_break}Vale... All will be lost...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheyWereStrongEnough"
 msgid "11625"
 msgstr "If they were strong enough to{line_break}defeat Saturos and Menardi,{line_break}perhaps they can do the job...{end_wait}"
 
@@ -47559,7 +47559,7 @@ msgctxt "message"
 msgid "11887"
 msgstr "A shaft of ice is poking{line_break}up through the floor.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThankYouAndYouToo"
 msgid "11888"
 msgstr "Thank you, {actor_name:5}.{line_break}And you, too, {actor_name:1}{line_break}and Kraden.{end_wait}"
 
@@ -47751,207 +47751,207 @@ msgctxt "message"
 msgid "11935"
 msgstr "We shall never forget what{line_break}you have done for Prox.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThankYouForLightingThe"
 msgid "11936"
 msgstr "Thank you for lighting the{line_break}fires of the lighthouse beacon,{line_break}{actor_name:5}. You saved us all.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSTooBadAbout"
 msgid "11937"
 msgstr "It's too bad about Agatio{line_break}and Karst...{page_break}They weren't bad people... A{line_break}little obsessed, yeah, but it's{line_break}still sad that they're gone.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTRememberThe"
 msgid "11938"
 msgstr "I don't remember the last{line_break}time I saw the sky this bright{line_break}and clear. It feels wonderful!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWinterInProxCanBe"
 msgid "11939"
 msgstr "Winter in Prox can be bitter{line_break}cold, but I think things will{line_break}feel more mild after this.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWasSoMovedWhen"
 msgid "11940"
 msgstr "I was so moved when I saw{line_break}that light shining from the{line_break}north. We all owe you our lives.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheLighthousesHaveAllBeen"
 msgid "11941"
 msgstr "The lighthouses have all been{line_break}lit... Does that mean we're going{line_break}to fall back into war and chaos?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouDidAnAmazingJob"
 msgid "11942"
 msgstr "You did an amazing job... You{line_break}accomplished what Agatio and{line_break}Karst could not...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWillYouBeGoingBack"
 msgid "11943"
 msgstr "Will you be going back to Vale{line_break}now that your quest is over,{line_break}{actor_name:5}? Don't forget us!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHasProvenHimselfAsThe"
 msgid "11944"
 msgstr "{actor_name:5} has proven{line_break}himself as the strongest{line_break}warrior Prox has ever known!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHeardTheKarstAnd"
 msgid "11945"
 msgstr "I heard the Karst and Agatio{line_break}were defeated by a monstrous{line_break}dragon...{page_break}{actor_name:5} beat the dragon,{line_break}though... I don't know whether{line_break}I'm impressed or scared of him.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheBlizzardSFinallyOver"
 msgid "11946"
 msgstr "The blizzard's finally over...{line_break}That was the worst patch of{line_break}weather we've ever had!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatOurWeatherIs"
 msgid "11947"
 msgstr "Now that our weather is{line_break}returning to normal, maybe{line_break}everyone will move back here.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWasTheFirstPerson"
 msgid "11948"
 msgstr "I was the first person in town{line_break}to see the lighthouse! I was{line_break}so happy, I had to tell everyone!{page_break}I felt like a little boy again,{line_break}running giddily through{line_break}town, shouting and waving!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheyHadNoChoiceThey"
 msgid "11949"
 msgstr "They had no choice... They{line_break}had to light the four{line_break}elemental lighthouses...{page_break}Even though it might mean{line_break}a rise in war and violence,{line_break}it had to be done.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenLeftTownHeOf"
 msgid "11950"
 msgstr "When {actor_name:5} left town, he{line_break}of a fighter... He wasn't much{line_break}of anything, really...{page_break}When did he become{line_break}mightier than the mightiest{line_break}of Prox's warriors?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIBetAndHisFriends"
 msgid "11951"
 msgstr "I bet {actor_name:5} and his friends{line_break}live in a nice, warm place... I{line_break}wish I could go with them.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIThinkTheRiftTo"
 msgid "11952"
 msgstr "I think the rift to the north{line_break}started receding when the{line_break}lighthouse was lit...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWonderIfThatHole"
 msgid "11953"
 msgstr "I wonder if that hole up{line_break}north has stopped growing...{line_break}What if it starts again?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheLighthouseWasSoBeautiful"
 msgid "11954"
 msgstr "The lighthouse was so beautiful{line_break}when the beacon was lit... It{line_break}made a beautiful band of light!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWasAfraidTheFalls"
 msgid "11955"
 msgstr "I was afraid the falls were{line_break}going to gobble me up!{line_break}I'm glad that's over now...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatDoWeDoIf"
 msgid "11956"
 msgstr "What do we do if the falls{line_break}start expanding again and{line_break}{actor_name:5} isn't here?{page_break}Oh, great... That's going to{line_break}keep me up all night worrying.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAllTheLightsJoinedUp"
 msgid "11957"
 msgstr "All the lights joined up{line_break}together and shot off to{line_break}the southeast.{page_break}It looked like they all{line_break}formed into a big, golden{line_break}ball or something.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIVeBeenToldThat"
 msgid "11958"
 msgstr "I've been told that lighting{line_break}the four beacons has set{line_break}Alchemy free on the world.{page_break}Now that we all can use{line_break}Alchemy again, civilization is{line_break}going to make great strides!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIGuessTheFourLighthouses"
 msgid "11959"
 msgstr "I guess the four lighthouses{line_break}were the seal that blocked{line_break}the power of Alchemy.{page_break}So not only did {actor_name:5} save{line_break}Prox, he's also brought{line_break}about a new golden age!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThePeopleOfProxWon"
 msgid "11960"
 msgstr "The people of Prox won't{line_break}forget what you've done{line_break}for them...{page_break}You can return home to{line_break}Vale with great pride, but you'll{line_break}always be welcome here.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAlchemyHasBeenFreedWe"
 msgid "11961"
 msgstr "Alchemy has been freed. We{line_break}must begin researching it{line_break}in earnest here in Prox.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatAlchemyIsFree"
 msgid "11962"
 msgstr "Now that Alchemy is free,{line_break}it's like Weyard is waking up!{line_break}How will the world change?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAndHisAlliesSavedUs"
 msgid "11963"
 msgstr "{actor_name:5} and his allies{line_break}saved us from certain{line_break}destruction.{page_break}It's a shame the rest of the{line_break}world doesn't know how much{line_break}they've done for us all.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTakeSomeAdviceFromAn"
 msgid "11964"
 msgstr "{actor_name:5}, take some advice{line_break}from an old man...{page_break}You would do well not to tell{line_break}anyone that you were the ones{line_break}to light the beacons...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAndHisFriendsLeftVale"
 msgid "11965"
 msgstr "{actor_name:1} and his friends left{line_break}Vale having sworn to return{line_break}with the Elemental Stars.{page_break}When they return, they'll have{line_break}to tell everyone what happened.{line_break}I hope they won't be punished...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheyFoundOutUsed"
 msgid "11966"
 msgstr "If they found out {actor_name:5} used{line_break}the treasures of Sol Sanctum{line_break}to light the beacons...{page_break}That fool of a mayor would{line_break}no doubt punish them for{line_break}what they did to save us.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheMayorAndTheElders"
 msgid "11967"
 msgstr "The mayor and the elders in{line_break}Vale are so out of touch.{page_break}When they see {actor_name:5} and{line_break}his friends return without the{line_break}stones, they'll punish them.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeeeeWhatFunNowThat"
 msgid "11968"
 msgstr "Weeee! What fun! Now that{line_break}it's stopped snowing, we{line_break}can go outside and play.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMissRunningAroundOutside"
 msgid "11969"
 msgstr "I miss running around outside.{line_break}It's been so cold, I can't even{line_break}work up a good sweat.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfIMGoingTo"
 msgid "11970"
 msgstr "If I'm going to be a great{line_break}warrior, like {actor_name:5}, I'm gonna{line_break}have to train hard.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanHearTheSound"
 msgid "11971"
 msgstr "I can hear the sound of{line_break}children playing far off{line_break}in the distance...{page_break}That sound means that{line_break}everything's back to normal{line_break}and our worries are past.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNowThatTheLighthouseIs"
 msgid "11972"
 msgstr "Now that the lighthouse is lit,{line_break}we don't have to play in{line_break}that stupid igloo anymore.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThatBlizzardWasUnrealBut"
 msgid "11973"
 msgstr "That blizzard was unreal,{line_break}but it's gone now, and the{line_break}weather's beautiful.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouGetMoreExerciseRunning"
 msgid "11974"
 msgstr "You get more exercise running{line_break}in the snow, because it's a lot{line_break}harder to do.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSBeenSoLong"
 msgid "11975"
 msgstr "It's been so long since{line_break}children's voices rang{line_break}through our streets.{page_break}I hope these children{line_break}remain ignorant of how much{line_break}danger we were all in...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIHaveMuchToDo"
 msgid "11976"
 msgstr "I have much to do, so I{line_break}won't be able to see you{line_break}off, but I wish you safe journey.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourBodyHasAbsorbedA"
 msgid "11977"
 msgstr "Your body has absorbed a{line_break}great deal of raw elemental{line_break}energy. Please be careful.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSNoTellingWhat"
 msgid "11978"
 msgstr "There's no telling what could{line_break}happen now... If you absorbed{line_break}energy, maybe {actor_name:6} did, too...{page_break}Which means you'd better{line_break}not make her angry, or you'll{line_break}really get it!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAlwaysThoughtOfYou"
 msgid "11979"
 msgstr "{actor_name:5}, I always thought{line_break}of you as my very own grandson{line_break}when you were here...{page_break}Now that you're leaving, I can't{line_break}describe the sorrow that fills{line_break}this old man's heart.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThinkOfYourOldGrandma"
 msgid "11980"
 msgstr "Think of your old grandma's{line_break}cooking every now and then{line_break}when you're back home in Vale.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeMayHaveUnderestimatedThe"
 msgid "11981"
 msgstr "We may have underestimated{line_break}the power of the Psynergy he{line_break}unleashed...{page_break}We'll have to study it more{line_break}closely once we've seen{line_break}{actor_name:5} on his way.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThePowerToReviveThe"
 msgid "11982"
 msgstr "The power to revive the dead...{line_break}It's an awesome and terrifying{line_break}power indeed...{page_break}Eternal life could soon be in{line_break}the hands of Alchemists{line_break}everywhere... What a thought!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeVeLostSoMany"
 msgid "11983"
 msgstr "We've lost so many soldiers,{line_break}and now {actor_name:5} is leaving...{line_break}It's going to be quiet in Prox.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoKnewThatThePoor"
 msgid "11984"
 msgstr "Who knew that the poor, injured{line_break}boy they brought back from Vale{line_break}would be the one to save Prox?{page_break}I'm happy that he'll finally{line_break}be able to return home, but{line_break}I'll miss him so...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSoSadDoesn"
 msgid "11985"
 msgstr "I'm so sad... {actor_name:5} doesn't{line_break}even have time to enjoy{line_break}this last meal I made him...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThankYouSoMuchIf"
 msgid "11986"
 msgstr "Thank you so much, {actor_name:5}!{line_break}If you hadn't returned to us,{line_break}we wouldn't be here now!{end_wait}"
 
@@ -47959,11 +47959,11 @@ msgctxt "MsgYourFosterGrandmotherKnewThat"
 msgid "11987"
 msgstr "Your foster grandmother knew{line_break}that you would return. She{line_break}always said you were reliable.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgINeverImaginedThatLittle"
 msgid "11988"
 msgstr "I never imagined that little{line_break}{actor_name:5} would become stronger{line_break}even than Agatio and Karst.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItSTooBadCan"
 msgid "11989"
 msgstr "It's too bad {actor_name:5} can't{line_break}stick around... He'd make the{line_break}perfect son-in-law.{end_wait}"
 
@@ -47971,15 +47971,15 @@ msgctxt "MsgWeHadNoIdeaThere"
 msgid "11990"
 msgstr "We had no idea there would{line_break}be such a terrible earthquake{line_break}when the beacon was lit.{page_break}My wife tumbled right into my{line_break}arms... It was like we were{line_break}teenagers all over again!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAfterThatEarthquakeIFeel"
 msgid "11991"
 msgstr "After that earthquake, I feel{line_break}like I aged a couple of years{line_break}in just a few minutes!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWeLlNeverBeAble"
 msgid "11992"
 msgstr "We'll never be able to thank{line_break}{actor_name:5} and the warriors{line_break}of Vale enough.{page_break}I hope they're all happy to{line_break}be home with their families{line_break}in Vale again.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenTheEarthquakeHitAnd"
 msgid "11993"
 msgstr "When the earthquake hit,{line_break}{actor_name:5} and his friends{line_break}were high up on the lighthouse.{page_break}If that had been me up there,{line_break}I think my heart would have{line_break}stopped from fear!{end_wait}"
 
@@ -47987,59 +47987,59 @@ msgctxt "MsgNowThatTheLighthouseHas"
 msgid "11994"
 msgstr "Now that the lighthouse has{line_break}been lit, I fear for what will{line_break}happen to Weyard.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheLighthousesAreGoingTo"
 msgid "11995"
 msgstr "The lighthouses are going{line_break}to restore the power of{line_break}Alchemy to the land...{page_break}But Alchemy is too terrible{line_break}a power to set free...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSorryButThisRoadIs"
 msgid "11996"
 msgstr "Sorry, {actor_name:5}, but this road{line_break}is blocked off right now.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouReWorriedAbout"
 msgid "11997"
 msgstr "If you're worried about the{line_break}lighthouse beacon, don't...{line_break}It's still lit.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIJustDonTThink"
 msgid "11998"
 msgstr "I just don't think I'm cut out{line_break}to be a soldier. I should have{line_break}taken up knitting instead.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTaughtMeALotAbout"
 msgid "11999"
 msgstr "{actor_name:5} taught me a lot{line_break}about how to be a serious{line_break}soldier...{page_break}I've been going easy on myself,{line_break}but no more! I'm going to train{line_break}harder every day!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEvenJustStandingOutsideThe"
 msgid "12000"
 msgstr "Even just standing outside the{line_break}lighthouse, I can feel the energy{line_break}coming from within...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWellYouLookLikeYou"
 msgid "12001"
 msgstr "Well, you look like you're all{line_break}set for the return trip to Vale.{line_break}Travel well, {actor_name:5}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheRoadToTheLighthouse"
 msgid "12002"
 msgstr "The road to the lighthouse{line_break}is in terrible shape after{line_break}the earthquake...{page_break}I've got no clue how {actor_name:5}{line_break}and the others made it back{line_break}to town on that road.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheEldersWereSayingThat"
 msgid "12003"
 msgstr "The elders were saying that{line_break}the lighthouse beacon is tough{line_break}to put out once it's lit.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOnTheOtherHandNow"
 msgid "12004"
 msgstr "On the other hand, now that{line_break}Alchemy is free, maybe I{line_break}should study Alchemy...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMaybeIfITrainHard"
 msgid "12005"
 msgstr "Maybe if I train hard enough,{line_break}I'll be as strong as Menardi{line_break}and Karst were...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfTheLightOfThe"
 msgid "12006"
 msgstr "If the light of the beacon{line_break}keeps shining, the power{line_break}of Alchemy will never end...{page_break}Even if Prox is attacked,{line_break}the bright flames of our{line_break}strength will burn on.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhenLeftProxIDidn"
 msgid "12007"
 msgstr "When {actor_name:5} left Prox, I didn't{line_break}think much of him, but now,{line_break}he's totally hot!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatTookYouSoLong"
 msgid "12008"
 msgstr "What took you so long?{line_break}Mom and Dad are tired{line_break}of waiting for you...{end_wait}"
 
@@ -49539,19 +49539,19 @@ msgctxt "message"
 msgid "12382"
 msgstr "There's Kaltic stew made with{line_break}lamb meat and potatoes.{page_break}Looks pretty tasty, if you{line_break}like boiled meat.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThoseBoilingVegetablesLookLike"
 msgid "12383"
 msgstr "Those boiling vegetables{line_break}look like weeds.{page_break}I'm pretty sure I won't{line_break}be eating any of those{line_break}anytime soon.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSCheeseInThis"
 msgid "12384"
 msgstr "There's cheese in this stew.{page_break}Hey! There's mold growing on it!{line_break}Is it supposed to be like that?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereIsSomeStrangeDish"
 msgid "12385"
 msgstr "There is some strange{line_break}dish made using fish eggs.{page_break}There are strings coming from{line_break}them. I wonder if that's normal.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheyVeGotSomeStrange"
 msgid "12386"
 msgstr "They've got some strange{line_break}meat I've never seen before.{page_break}Instead of using firewood,{line_break}they're cooking it with burning{line_break}antlers.{page_break}I wonder if the meat{line_break}and the antlers came{line_break}from the same animal.{end_wait}"
 

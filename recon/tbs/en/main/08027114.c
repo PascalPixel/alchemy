@@ -1,5 +1,5 @@
-/* 08027114: differ 424 against the 1727-line parent listing (draft 1771,
- * common 1537), 46 of them the two nested helpers' lines (see below).
+/* 08027114: differ 264 against the 1727-line parent listing (draft 1771,
+ * common 1617), 46 of them the two nested helpers' lines (see below).
  * Frame 100 as native.
  * The draft emits its two nested helpers first, 080270ac/080270d8, adopted on
  * their own as Battle_DrawPartyPanelsWithEmptyList and
@@ -25,6 +25,14 @@
  * - The djinn icons sit at n*2+13 with their own counter n, which only
  *   advances for a required element.
  * - Classify results go straight into BattleTarget_RunSelection.
+ * - Message bases are their linker symbols ((s32)MsgCommandName,
+ *   MsgAbilityName, MsgDjinnName, MsgItemName), loaded from the pool as
+ *   native (31 included).
+ * - The closing handshake counts misses in mode (native r6); with miss there,
+ *   CSE made param, which then outlived mode, the djinn case's first
+ *   SummonDefinition_Get argument.
+ * - Sprite positions are win->x * 8 + 8 and win->y * 8 + 4: the shifted
+ *   (u8) form narrows the y load to ldrb, native ldrh.
  * - The two init loops are plain for loops (loop.c reverses them as native);
  *   state->timer = -1 among the zero stores (sched2 puts the store last).
  * Remaining: register choices in the opening frame-slot order (&hdr below
@@ -436,7 +444,7 @@ mark_visible:
             switch (mode) {
             case 0:
                 win = UiWindow_Create(11, 17, 11, 3, 6);
-                UiText_DrawCharacterAtOffset(31, (struct RenderInput *)win, 16, 0);
+                UiText_DrawCharacterAtOffset((s32)MsgCommandName, (struct RenderInput *)win, 16, 0);
                 state->entries[0].oam.f.x = 64;
                 Audio_PlayCue(112);
                 mode = BattleTarget_RunSelection(actorId, 1, 1, 0);
@@ -503,8 +511,8 @@ psynergy_menu:
                 state->entries[0].oam.f.x = 40;
                 slot->oam.word.attr01 = 0x40000400;
                 slot->oam.word.attr23 = 0;
-                slot->oam.f.x = (win->x << 3) + 8;
-                slot->oam.f.y = (u8)((win->y << 3) + 4);
+                slot->oam.f.x = win->x * 8 + 8;
+                slot->oam.f.y = win->y * 8 + 4;
                 slot->oam.f.tile = Resource_LoadIndexedEntryToBuffer(param, handle);
                 state->entryActive[1] = 1;
                 ui->level = 5;
@@ -513,7 +521,7 @@ psynergy_menu:
                 } else if (actor->fuuji != 0) {
                     UiWork_SetParamNibble(9);
                 }
-                UiText_DrawCharacterAtOffset(param + 819, (struct RenderInput *)win, 16, 0);
+                UiText_DrawCharacterAtOffset(param + (s32)MsgAbilityName, (struct RenderInput *)win, 16, 0);
                 UiText_DrawNumberAtOffset(ability->pp_cost, 2, (struct RenderInput *)win, 104, 0);
                 ui->level = 15;
                 UiWork_SetParamNibble(15);
@@ -575,14 +583,14 @@ djinn_menu:
                 state->entries[0].oam.f.x = 56;
                 slot->oam.word.attr01 = 0x40000400;
                 slot->oam.word.attr23 = 0;
-                slot->oam.f.x = (win->x << 3) + 8;
-                slot->oam.f.y = (u8)((win->y << 3) + 4);
+                slot->oam.f.x = win->x * 8 + 8;
+                slot->oam.f.y = win->y * 8 + 4;
                 slot->oam.f.tile = Resource_LoadIndexedEntryToBuffer(djinn->name_message_id & 0x3fff, handle);
                 state->entryActive[1] = 1;
                 if (ok == 0) {
                     UiWork_SetParamNibble(2);
                 }
-                UiText_DrawCharacterAtOffset(SummonDefinition_Get(mode)->name_message_id + 819,
+                UiText_DrawCharacterAtOffset(SummonDefinition_Get(mode)->name_message_id + (s32)MsgAbilityName,
                                              win, 16, 0);
                 n = 0;
                 for (j = 0; j <= 3; j++) {
@@ -647,7 +655,7 @@ summon_menu:
                     win = UiWindow_Create(11, 17, 10, 3, 6);
                     state->entries[0].oam.f.x = 64;
                     UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
-                    UiText_DrawCharacterAtOffset(element * 20 + index + 1119, win, 16, 0);
+                    UiText_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName, win, 16, 0);
                     ent->rng = cost;
                     WaitFrames(1);
                     Audio_PlayCue(112);
@@ -671,7 +679,7 @@ summon_menu:
                     state->entries[0].oam.f.x = 64;
                     UiWork_SetParamNibble(2);
                     UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
-                    UiText_DrawCharacterAtOffset(element * 20 + index + 1119, win, 16, 0);
+                    UiText_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName, win, 16, 0);
                     UiWork_SetParamNibble(15);
                     ent->rng = 1;
                     WaitFrames(1);
@@ -757,11 +765,11 @@ item_menu:
                 state->entries[0].oam.f.x = 48;
                 slot->oam.word.attr01 = 0x40000400;
                 slot->oam.word.attr23 = 0;
-                slot->oam.f.x = (win->x << 3) + 8;
-                slot->oam.f.y = (u8)((win->y << 3) + 4);
+                slot->oam.f.x = win->x * 8 + 8;
+                slot->oam.f.y = win->y * 8 + 4;
                 slot->oam.f.tile = Resource_LoadKind26EntryToBuffer(actor->inventory[sel], handle);
                 state->entryActive[1] = 1;
-                UiText_DrawCharacterAtOffset((actor->inventory[sel] & 0x1ff) + 386,
+                UiText_DrawCharacterAtOffset((actor->inventory[sel] & 0x1ff) + (s32)MsgItemName,
                                              (struct RenderInput *)win, 24, 0);
                 ent->rng = cost;
                 Audio_PlayCue(112);
@@ -836,7 +844,7 @@ finish:
         }
 
         session = BtlWk;
-        miss = 0;
+        mode = 0;
         if (state->displayHandle == 0 && session->link_paused == 0) {
             state->displayHandle = (s32)UiWindow_Create(0, 16, 30, 4, 42);
             Ui_FillVramBlockPattern();
@@ -851,18 +859,18 @@ finish:
                 break;
             }
             if ((gLinkStatus & 3) != 3) {
-                miss++;
-                if (miss > 24) {
+                mode++;
+                if (mode > 24) {
                     count = -1;
                     break;
                 }
             } else {
-                miss = 0;
+                mode = 0;
                 if (peer[4] == 'E' && peer[5] == 'D' && peer[6] == 'V' && peer[7] == 'S') {
                     break;
                 }
                 if (!(peer[4] == 'V' && peer[5] == 'S' && peer[6] == 'S' && peer[7] == 'T')) {
-                    miss = 1;
+                    mode = 1;
                 }
             }
             WaitFrames(1);

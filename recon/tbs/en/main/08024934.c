@@ -1,22 +1,39 @@
 /* 08024934: SummonMenu_SelectSummon draft.
  * Native 946 instructions, draft 919, common 649, differ 567; frame 372
  * as native's.
- * Session 4: each tile loop (both page-tile loops and the highlight loop)
- * declares its own tile: 575 -> 567. Diagnosed with flow.c's weights
- * (refs count loop_depth + 1 from the CFG's natural loops, goto loops
- * included) and global.c's find_reg: index (126 refs, 510 insns, 14 calls,
- * 1.482) is allocated before the column element (1.407), takes r7 and
- * leaves element the caller-saved r4. Native's scan counter and column
- * element share r7, which one element for both gives (element 37 refs,
- * 88 insns, 2.10, takes r7), but then index goes to r8, 835: the
- * first page-tile loop's tile (9 refs, 16 insns, 1.69) takes r4 first
- * and blocks caller-saves. With that tile's test removed (diagnostic
- * only) index takes r4 as native's, 697. Native's tile is r1 and the
- * loop quotient (count + 3) / 4 r0; in the draft the quotient (9 refs,
- * 11 insns, 2.45) is allocated before tile and takes r1, so tile falls
- * to r4. Shared element with the two page loops sharing one tile 835;
- * page tile as if/else or a conditional argument 821 (with shared
- * element).
+ * Session 4: the highlight loop has its own tile, the two page-tile loops
+ * share the function's tile as ItemList_SelectEntry (BATTLE_LIST.C, the
+ * matched twin) does: 575 -> 567 (a tile per loop also 567).
+ * Diagnosed with flow.c's weights (refs count loop_depth + 1 over the
+ * CFG's natural loops, goto loops included) and global.c's find_reg:
+ * index (126 refs, 510 insns, 14 calls, 6 * 126 / 510 = 1.482) is
+ * allocated before the column element (1.407), takes r7 and leaves
+ * element the caller-saved r4. Native's scan counter and column element
+ * share r7, which one element for both gives (37 refs, 88 insns, 2.10,
+ * takes r7), but then index falls to r8 (835): the first page-tile
+ * loop's tile (9 refs, 16 insns, 1.69) already holds r4, and index's
+ * caller-save attempt needs r4 free. With that loop's page test removed
+ * (diagnostic only) index takes r4 with saves at sp+4 as native's, 697.
+ * Native's tile is r1 and its quotient (count + 3) / 4 r0; the draft's
+ * tile conflicts with r1 because local-alloc gives the stack argument's
+ * 0 (a REG_EQUIV pseudo) r1 while tile is live, so the quotient takes r1
+ * and tile r4. Native's stack zeros carry no register: in its second
+ * page loop "movs r3, #0; str r3, [sp]; ... subs r3, #1" is reload's
+ * constant 0 and move2add turning the -1 reload into a subtract, and in
+ * the first loop its 0 is reloaded into r0 after the quotient dies. Both
+ * page loops are phony to loop.c (entry jump target outside the loop),
+ * so nothing there is hoisted. Item (e) below is the same move2add:
+ * native reaches menu_busy's offset with adds r1, #3 from dirty's reload
+ * in r1. In the draft expand writes dirty = 1 as a read-modify-write
+ * (load, and 0, ior 1: insns 1244-1258 of the rtl dump, although the
+ * fields are plain u8), CSE reuses that and-mask 0 as menu_busy's value,
+ * local-alloc gives it r1 from before the first store, and the second
+ * offset's reload must take r2. Native's 0 is fresh after the first
+ * store. With shared element: tiles
+ * shared by the page loops 835, page tile if/else or a conditional
+ * argument 821, tile = index + (test ? selected : page) 821. From 567:
+ * an edge = -1 variable for the arrows (as the twin has) 567, unchanged;
+ * a function-wide zero for the first page loop's argument 864.
  * Session 3, third step: the highlight loop's test written
  * (1 << element & mask) == 0 keeps native's movs 1; lsls; ands; cmp, where
  * (mask & (1 << element)) == 0 is folded to (mask >> element) & 1 (asrs):
@@ -217,7 +234,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     struct MenuSprite *sprite;
     const u8 *required, *supply;
     s32 used, element;
-    s32 id, affordable;
+    s32 id, tile, affordable;
     s32 pressed, repeated, result;
     s32 index;
 
@@ -354,8 +371,6 @@ loop:
                 drawn_page = page;
             }
             if (count > 4) {
-                s32 tile;
-
                 for (index = 0; index < (count + 3) / 4; index++) {
                     tile = index + SUMMON_PAGE_TILE;
                     if (index == page / 4)
@@ -392,8 +407,6 @@ loop:
             }
         }
         if (count > 4) {
-            s32 tile;
-
             for (index = 0; index < (count + 3) / 4; index++) {
                 tile = index + SUMMON_PAGE_TILE;
                 if ((gFrameCount & 15) <= 11 && index == page / 4)

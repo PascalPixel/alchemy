@@ -1,3 +1,5 @@
+/* 2026-10-07 queue3: differ 172 (listing 1037, draft 1035, common 950), not matched. A tagged dead CSE boundary in the mode-0 panel loop removes its separate limit reload and restores the panel*2 spill (237 -> 204). Naming the per-column pattern before the address expression then gives native's row induction registers r5/r6 (204 -> 196), although their per-row copies remain exchanged between ip and sp+4. Moving message into its tutorial conditional restores the native spill-slot order (196 -> 172). The row pattern can share tmp3 at the same score; kept. Left: count and count*3 exchanged between sl/fp, the per-row copies, the main-loop zero shared with rebuild, and literal-pool placement. */
+/* Trial (queue3, from 204): fixed count r11 806; count shared with both blank-loop tests 538; unsigned count 204; pattern computed as the whole value before the store 260; just the row pattern named before the store 196, kept; explicit pattern and index 577; memory asm on pattern 737; shared pattern across both modes 509; a dead branch between scroll and rebuild stores 196, no effect. alchemy permute 10 minutes, 2 jobs, seed 53 from 237: 20,095 candidates, no improvement. */
 /* Trial (2026-10-07 queue3, baseline 237, none kept): an unconditional goto after the mode-0 content loop disappears before CSE (237); a redundant mode test there 420, the loop exit test repeated there 429; both content loops assigning count in their condition 427; mode-0 for (;;) with an explicit break 497; a redundant count != work->count break after the count load 372; an empty volatile asm before the outer increment 237; fixed count in r11 810; count loaded before and used as the limit of both content loops 370, mode 0 alone 345; count loaded before the mode branch 586. */
 /* Stubborn (2026-10-07, S10-08021e6c session 4): differ 357 -> 237 (listing 1037, draft 1038, common 919). Not matched. count is one variable for both content loops, declared at the rebuild block (s32 count; then count = work->count inside each panel loop): its pseudo now outranks work in global.c's priority (floor_log2(n) * n / live: count 15 refs over 43 insns, 1.05; work 88 over 698, 0.756; count * 3 9 over 38, 0.71), so work takes r9 as native everywhere. Left: count in sl and count * 3 in fp (native fp and sl: native ranks count * 3 above work and count below it), the mode-0 content loop's exit test still reloads work->count through 432 to a spill at sp+24 (native cmp lr, fp), the index and pattern row bivs swapped (native index r6, pattern r5), the 0 stored to gBgScroll[1].x shared with rebuild = 0 (native a pool 0), the stack slots below scale 4 or 8 lower than native, the literal pool after the mode-1 blank loop. */
 /* Trial (S10 session 4, from 357): mode-0 count at block scope (s32 count; count = work->count in the panel loop): 357; mode-0 as count = work->count; for (panel = 0; panel < count; ...): 339 (draft 1030); the same in mode 1 too: 370; count shared by both modes at the rebuild block: 237 (kept); count shared and panel shared too: 237; count shared but either mode's own s32 count = work->count: 357 each; i or num (function scope) as count: 237 and 332; work->selection + work->count - 1 in the up-repeat modulus on 237: 258 (native's operand order, but one instruction fewer elsewhere); (panel - count) * 3 in both stores: 659; a separate ofs = count * 3: 916. */
@@ -114,7 +116,6 @@ s32 Ui_RunSelectionScreen(s32 mode)
     struct SelectionWork *work;
     struct MenuCell *runtime;
     s32 rebuild, trade_count, scale, result;
-    struct UiWindow *message;
     s32 cnt;
     s32 keys, repeat;
     s32 slot;
@@ -206,8 +207,8 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
                         for (col = 0; col <= 2; col++) {
-                            s32 tmp3;
-                            ((u16 *)0x0600fd6c)[panel * 3 + cnt * 32 + (col & 3) - count * 3] = tmp3 = panel * 16 + cnt * 4 + col + 0x100;
+                            s32 tmp3 = panel * 16 + cnt * 4;
+                            ((u16 *)0x0600fd6c)[panel * 3 + cnt * 32 + (col & 3) - count * 3] = tmp3 = tmp3 + col + 0x100;
                             tmp3 = col & 3;
                             *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - count * 3 + 22) = 0;
                         }
@@ -223,12 +224,21 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     }
                 }
                 for (panel = 0; panel < work->count; panel++) {
+                    /* FAKEMATCH: The native mode-0 loop's CSE block ends before
+                     * its count load. This dead branch leaves that boundary
+                     * through jump.c and disappears in cse.c: differ 237 ->
+                     * 204, removing the separately hoisted limit reload and
+                     * restoring the native panel*2 spill. Ordinary for,
+                     * do-while, early-break and goto shapes kept the reload. */
+                    s32 dead = panel;
+                    if (dead == 0 && panel != 0)
+                        continue;
                     count = work->count;
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
                         for (col = 0; col <= 2; col++) {
-                            s32 tmp3;
-                            ((u16 *)0x0600fd68)[panel * 3 + cnt * 32 + (col & 3) - count * 3] = tmp3 = panel * 16 + cnt * 4 + col + 0x100;
+                            s32 tmp3 = panel * 16 + cnt * 4;
+                            ((u16 *)0x0600fd68)[panel * 3 + cnt * 32 + (col & 3) - count * 3] = tmp3 = tmp3 + col + 0x100;
                             tmp3 = col & 3;
                             *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - count * 3 + 20) = 0;
                         }
@@ -279,6 +289,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     s32 kind = work->kinds[work->selection];
                     if (kind == 16 || (trade_count == 0 && kind == 15)) {
                         if (runtime->auto_enabled == 1) {
+                            struct UiWindow *message;
                             if (kind == 15)
                                 message = UiText_ShowMessageAndWaitComplete((s32)&MsgDjinnTutorialUnleashCommand, 15, 8);
                             else if (kind == 16)

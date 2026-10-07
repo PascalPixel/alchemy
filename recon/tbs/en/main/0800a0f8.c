@@ -1,7 +1,14 @@
 /* 0800a0f8: ARM draft (Transform_UpdateVertices) for the game ARM route
    (K1: stock agbcc_arm at the library ARM setting, alchemy diff --arm).
    Stock agbcc_arm (2026-10-07, session 4): listing 157, draft 157,
-   common 139, differ 36, from 60.
+   common 152, differ 10, from 60. Last step (36 -> 10): block 0's orr as
+   an asm, so its output reload (ox and oz are spilled) comes from reload's
+   round robin over the spill registers (r1, r2, r3) rather than from
+   combine_reloads, which hands a compiled orr its first dying input; with
+   oz's RdLo pinned to r3 every reload register after it follows as listed.
+   Left: mov r0, r8 / str r8, [r2] before Sin; the gProjection pool load
+   above strh r2, [r6, #4]; the odd-frame y's two loads above ldrsh r3.
+   The notes below record the path to 36.
    - Prologue (60 -> 56): sched2 links an insn to its predecessor at cost
      1 when the consumer is unrecognized (insn_cost, LINK_COST_FREE), so
      the parameter copy written as asm("mov %0, %1") with the asm clobbering
@@ -338,13 +345,33 @@ static __inline__ s32 FixedMulPre(s32 a, s32 b)
 {
     s32 lo;
     s32 hi;
+    s32 res;
 
     /* FAKEMATCH: register choice; the same smull with RdLo as operand 0, so
        local-alloc ties nothing: with FixedMul's order RdHi of oz's smull
        takes the dying 0x8000 (Rm) and reload copies it out (differ 49). */
     CAMELOT_ASM("FixedMul: the ROM's smull puts RdHi in an input register, which GCC's early-clobber mulsidi3 never allocates")
     asm volatile("smull %0, %1, %2, %3" : "=&r,&r"(lo), "=r,&r"(hi) : "r,r"(a), "1,r"(b));
-    return (u32)lo >> 16 | hi << 16;
+    hi <<= 16;
+    /* FAKEMATCH: register choice; as an asm the orr's output reload (ox and oz are spilled) takes reload's next spill register, r2, not the dying RdLo combine_reloads hands a compiled orr (r0); that round robin then lands every later reload register as listed (36 to 10 with FixedMulPreR3) */
+    asm("orr %0, %1, %2, lsr #16" : "=r"(res) : "r"(hi), "r"(lo));
+    return res;
+}
+
+static __inline__ s32 FixedMulPreR3(s32 a, s32 b)
+{
+    /* FAKEMATCH: register choice; oz's RdLo in r3 (local-alloc's widened lifetimes give it ip), so its output reload goes on to r1 */
+    register s32 lo asm("r3");
+    s32 hi;
+    s32 res;
+
+    /* FAKEMATCH: register choice, as in FixedMulPre */
+    CAMELOT_ASM("FixedMul: the ROM's smull puts RdHi in an input register, which GCC's early-clobber mulsidi3 never allocates")
+    asm volatile("smull %0, %1, %2, %3" : "=&r,&r"(lo), "=r,&r"(hi) : "r,r"(a), "1,r"(b));
+    hi <<= 16;
+    /* FAKEMATCH: register choice, as in FixedMulPre */
+    asm("orr %0, %1, %2, lsr #16" : "=r"(res) : "r"(hi), "r"(lo));
+    return res;
 }
 
 union Word {
@@ -384,7 +411,7 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to_arg, st
     {
         s32 half = 0x8000;
         ox = FixedMulPre(half, to->x);
-        oz = FixedMulPre(half, to->z);
+        oz = FixedMulPreR3(half, to->z);
     }
     /* FAKEMATCH: sched1 barrier; without it oz's orr, a birthing insn, outranks the compare and the gScanlineAngle load lands between smull and orr, taking r3 from oz's RdLo */
     asm volatile("");

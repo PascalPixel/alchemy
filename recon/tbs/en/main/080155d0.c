@@ -1,5 +1,14 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+ * Source-order trials after the six-edition checkpoint (2026-10-07):
+ *   EN shared src/colour union14 or20; scoped font byte14 (retained),
+ *   separate row locals46; signed colour14; early row reset14; dropping
+ *   the font input16. Mutable y parameter42; short y/r7 alias14, readonly
+ *   alias70; font-subrow/r6 boundary38. Native first-colour instruction
+ *   pair26, second-colour/r2 boundary48, width-base/r3 boundary26.
+ *   Tail shift with pointer output51; shift plus pointer memory store62.
+ *   JA volatile font source54; narrow-row store memory boundary51.
+ *   Rejected devices removed. No real asm instructions retained.
  * Continental branch (2026-10-07): German listing187, draft187, common175,
  *   differ24. Native y/r8 gives127 to107. Native narrow rows/r2, head/r1,
  *   pass/r2 and tail pointer/r2 give77; character/ip handoff60. A short
@@ -393,7 +402,6 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
     u16 *rows;
     s32 ret;
     u32 width;
-    u32 b;
     u32 gw;
     s32 bits;
     u32 idx;
@@ -454,6 +462,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 xpos, u32 ypos, u8
     if (ch < 256 || (font != 0 && ch - 222 < 2)) {
 #endif
         if (font != 0) {
+            u32 b;
             u8 *src = font + ch * 32;
             u32 c1 = 0x1111;
             u32 c3 = 0x3333;

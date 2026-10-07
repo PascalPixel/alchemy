@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
 	.section .text.x02008038,"ax",%progbits
+	.balign 4
 	.global Func_02000038
 	.thumb_func
 Func_02000038:
@@ -251,6 +252,7 @@ Func_0200014c:
 .L_02008200:
 	.4byte gPartyState
 	.section .text.x02008218,"ax",%progbits
+	.balign 4
 	.global Func_02000218
 	.thumb_func
 Func_02000218:
@@ -387,61 +389,8 @@ Func_02000270:
 	.4byte Data_02002ce4
 .L_02008324:
 	.4byte gPartyState
-	.section .text.x02008328,"ax",%progbits
-	.global Func_02000328
-	.thumb_func
-Func_02000328:
-	push {r5, r6, lr}
-	sub sp, #12
-	movs r3, #67
-	str r3, [sp, #0]
-	movs r5, #1
-	movs r6, #5
-	movs r0, #67
-	movs r1, #25
-	movs r2, #5
-	movs r3, #5
-	str r6, [sp, #4]
-	str r5, [sp, #8]
-	bl Func_02002598
-	movs r0, #23
-	movs r1, #29
-	movs r2, #5
-	movs r3, #6
-	str r5, [sp, #0]
-	str r5, [sp, #4]
-	bl Func_02002468
-	movs r3, #8
-	str r3, [sp, #4]
-	movs r0, #23
-	movs r1, #29
-	movs r2, #1
-	movs r3, #1
-	str r6, [sp, #0]
-	bl Func_02002470
-	add sp, #12
-	pop {r5, r6, pc}
-	.2byte 0x0000
-	.section .text.x0200836c,"ax",%progbits
-	.global Func_0200036c
-	.thumb_func
-Func_0200036c:
-	push {lr}
-	sub sp, #12
-	movs r3, #79
-	movs r2, #22
-	movs r1, #1
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	str r1, [sp, #8]
-	movs r0, #67
-	movs r1, #25
-	movs r2, #2
-	movs r3, #1
-	bl Func_02002598
-	add sp, #12
-	pop {pc}
 	.section .text.x0200838c,"ax",%progbits
+	.balign 4
 	.global Func_0200038c
 	.thumb_func
 Func_0200038c:
@@ -508,26 +457,8 @@ Func_0200038c:
 	.2byte 0x0000
 .L_02008418:
 	.4byte gPartyState
-	.section .text.x0200841c,"ax",%progbits
-	.global Func_0200041c
-	.thumb_func
-Func_0200041c:
-	push {lr}
-	sub sp, #12
-	movs r3, #106
-	movs r2, #20
-	movs r1, #1
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	str r1, [sp, #8]
-	movs r0, #67
-	movs r1, #25
-	movs r2, #3
-	movs r3, #3
-	bl Func_02002598
-	add sp, #12
-	pop {pc}
 	.section .text.x0200843c,"ax",%progbits
+	.balign 4
 	.global Func_0200043c
 	.thumb_func
 Func_0200043c:
@@ -594,26 +525,8 @@ Func_0200043c:
 	.2byte 0x0000
 .L_020084c8:
 	.4byte gPartyState
-	.section .text.x020084cc,"ax",%progbits
-	.global Func_020004cc
-	.thumb_func
-Func_020004cc:
-	push {lr}
-	sub sp, #12
-	movs r3, #87
-	movs r2, #8
-	movs r1, #1
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	str r1, [sp, #8]
-	movs r0, #67
-	movs r1, #25
-	movs r2, #2
-	movs r3, #2
-	bl Func_02002598
-	add sp, #12
-	pop {pc}
 	.section .text.x020084ec,"ax",%progbits
+	.balign 4
 	.global Func_020004ec
 	.thumb_func
 Func_020004ec:

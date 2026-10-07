@@ -45,6 +45,8 @@ struct Ov687MapWork {
 struct Ov687EventWork {
     u8 unknown_000[0x16a];
     s16 alarm;
+    u8 unknown_16c[0x40];
+    s32 screen_effect;
 };
 
 struct Ov687Spark {

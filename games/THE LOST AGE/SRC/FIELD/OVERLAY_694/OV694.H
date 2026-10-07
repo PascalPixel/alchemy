@@ -53,6 +53,15 @@ void Func_02004164(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g, s32 h, s32 i
 s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
 s32 GameFlag_Test(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+void Func_02001938(s32 mode);
+void Func_02001c5c(s32 a, s32 b, s32 c, s32 d);
+void Func_02004004(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_0200400c(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_020041a4(s32 a, s32 x, s32 y, s32 z);
+void Func_020041b4(s32 countdown);
+void Func_02004214(s32 a, s32 b, s32 c);
+void Func_0200423c(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y, s32 mode);
 
 static inline void Ov694_ObjFollow(s32 actor, s32 target)
 {
@@ -220,6 +229,30 @@ static inline void Ov694_ObjVar(s32 actor, s32 value)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Motion_SetVarCbAndRefresh(actor, value);
+}
+
+static inline void Ov694_CopyCells(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02004004(src_x, src_y, dest_x, dest_y, width, height);
+}
+
+static inline void Ov694_CopyAttrs(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_0200400c(src_x, src_y, width, height, dest_x, dest_y);
+}
+
+static inline void Ov694_CamSet(s32 a, s32 x, s32 y, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_020041a4(a, x, y, z);
+}
+
+static inline void Ov694_Tiles(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y, s32 mode)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_0200423c(src_x, src_y, width, height, dest_x, dest_y, mode);
 }
 
 #endif

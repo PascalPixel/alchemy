@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
 	.section .text.x02008054,"ax",%progbits
+	.balign 4
 	.global Func_02000054
 	.thumb_func
 Func_02000054:
@@ -167,163 +168,8 @@ Func_02000054:
 	.2byte 0x0000
 .L_020081b0:
 	.4byte 0xfffff5c3
-	.section .text.x020081b4,"ax",%progbits
-	.global Func_020001b4
-	.thumb_func
-Func_020001b4:
-	push {r5, lr}
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #10
-	bl GameFlag_SetBit
-	bl Func_02002a88
-	movs r0, #0
-	bl Func_02002b18
-	ldr r5, .L_02008260
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r5, r5, r2
-	ldr r0, [r5]
-	movs r1, #1
-	bl Object_SetModeById
-	ldr r0, [r5]
-	movs r1, #0
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r0, #11
-	movs r1, #9
-	movs r2, #0
-	bl Func_020017a8
-	movs r0, #40
-	bl Battle_WaitMode0
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #11
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_02008210
-	movs r0, #0
-	bl Func_02000054
-	movs r0, #40
-	bl Battle_WaitMode0
-	b .L_02008216
-.L_02008210:
-	movs r0, #2
-	bl Func_02000054
-.L_02008216:
-	ldr r3, .L_02008260
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r0, [r3]
-	movs r1, #1
-	bl Object_AttachWorkTargetToObject
-	movs r0, #40
-	bl Battle_WaitMode0
-	movs r0, #9
-	bl Object_GetById
-	bl Func_02001070
-	movs r0, #10
-	bl Object_GetById
-	bl Func_02001070
-	movs r0, #11
-	bl Object_GetById
-	bl Func_02001070
-	movs r0, #12
-	bl Object_GetById
-	bl Func_02001070
-	bl Func_02002af0
-	bl Func_02002a90
-	pop {r5, pc}
-	.2byte 0x0000
-.L_02008260:
-	.4byte gPartyState
-	.section .text.x02008264,"ax",%progbits
-	.global Func_02000264
-	.thumb_func
-Func_02000264:
-	push {r5, lr}
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #11
-	bl GameFlag_SetBit
-	bl Func_02002a88
-	movs r0, #0
-	bl Func_02002b18
-	ldr r5, .L_02008310
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r5, r5, r2
-	ldr r0, [r5]
-	movs r1, #1
-	bl Object_SetModeById
-	movs r1, #128
-	ldr r0, [r5]
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r0, #12
-	movs r1, #10
-	movs r2, #1
-	bl Func_020017a8
-	movs r0, #40
-	bl Battle_WaitMode0
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #10
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_020082c2
-	movs r0, #1
-	bl Func_02000054
-	movs r0, #40
-	bl Battle_WaitMode0
-	b .L_020082c8
-.L_020082c2:
-	movs r0, #3
-	bl Func_02000054
-.L_020082c8:
-	ldr r3, .L_02008310
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r0, [r3]
-	movs r1, #1
-	bl Object_AttachWorkTargetToObject
-	movs r0, #40
-	bl Battle_WaitMode0
-	movs r0, #9
-	bl Object_GetById
-	bl Func_02001070
-	movs r0, #10
-	bl Object_GetById
-	bl Func_02001070
-	movs r0, #11
-	bl Object_GetById
-	bl Func_02001070
-	movs r0, #12
-	bl Object_GetById
-	bl Func_02001070
-	bl Func_02002af0
-	bl Func_02002a90
-	pop {r5, pc}
-.L_02008310:
-	.4byte gPartyState
-	.section .text.x02008314,"ax",%progbits
-	.global Func_02000314
-	.thumb_func
-Func_02000314:
-	push {lr}
-	adds r0, r1, #0
-	bl Object_GetById
-	ldr r3, [r0, #8]
-	ldr r1, [r0, #16]
-	movs r2, #0
-	adds r0, r3, #0
-	movs r3, #4
-	bl Func_02002a78
-	pop {pc}
 	.section .text.x0200832c,"ax",%progbits
+	.balign 4
 	.global Func_0200032c
 	.thumb_func
 Func_0200032c:
@@ -563,6 +409,7 @@ Func_0200032c:
 .L_0200852c:
 	.4byte gPartyState
 	.section .text.x02008538,"ax",%progbits
+	.balign 4
 	.global Func_02000538
 	.thumb_func
 Func_02000538:

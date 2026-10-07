@@ -29,7 +29,8 @@ struct BattleSession {
     u8 unknown_042[2];
     u8 two_sided;
     u8 encounter_mode;
-    u8 unknown_046[0x0a];
+    u8 unknown_046[2];
+    u8 owner_slots[8];
     u8 link_side;
     u8 unknown_051;
     u8 link_paused;

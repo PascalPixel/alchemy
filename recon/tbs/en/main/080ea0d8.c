@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 1553 of 2455 (listing 2455, draft 2438, common 1670).
+/* 080ea0d8: differ 1426 of 2455 (listing 2455, draft 2441, common 1735).
  * Frame: 184 as native. The spill slots from sp+104 (canvas) down to sp+32
  * (shift) now sit where the native's do; the native also spills the second
  * petal block's cell (sp+28), which ours keeps in a register.
@@ -162,7 +162,6 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 ring;
     s32 rings;
     s32 shift;
-    s32 i;
     s32 i1;
     s32 i2;
     s32 i3;
@@ -189,13 +188,9 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 i24;
     s32 i25;
     s32 j;
-    s32 size;
     s32 high;
-    s32 speed;
     struct EffectStep *p;
     DrawRectangle blit;
-    s32 z;
-    s32 amp;
     volatile u16 *ime;
 
     cache = &gBattleFxWork[1];
@@ -260,10 +255,10 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         DUST[i2].velocity_y = Random16() & 0xffff;
     }
 
-    amp = 255;
-    speed = 0;
     for (i3 = 0; i3 != 128; i3++) {
         s32 angle = Random16() & 0xffff;
+        s32 amp = 255;
+        s32 speed = 0;
         SPARKS[i3].x = (Trig_Sin(angle) * amp) >> 2;
         SPARKS[i3].z = (Trig_Cos(angle) * amp) >> 2;
         SPARKS[i3].y = ((Random16() & 63) + 32) << 16;
@@ -290,6 +285,9 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
             for (i4 = 0; i4 != 128; i4++) {
+                s32 z;
+                s32 size;
+
                 EffectStep_AdvanceWithGravity3D(&SPARKS[i4], 60, -0x400);
                 EffectPosition_ApplyBaseAndYOffset(&SPARKS[i4], (struct EffectPosition *)scene);
                 scene[0] >>= 1;
@@ -327,6 +325,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         anchor[1] = 0;
         for (i5 = 0; i5 != 64; i5++) {
             if (frame > i5 / 4 + 80 && DUST[i5].x > 0) {
+                s32 size;
+
                 Render_ResetTransformState();
                 SceneTransform_ApplyRoll(DUST[i5].velocity_y);
                 SceneTransform_ApplyPitch(DUST[i5].velocity_x);
@@ -685,11 +685,12 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
         if (frame >= 72 && frame < 76) {
             s32 r2 = (frame << 4) - 1136;
+            s32 size = 10;
             for (i18 = 0; i18 != 256; i18++) {
                 s32 angle = i18 << 8;
-                s32 x = ((r2 * Trig_Sin(angle)) >> 16) - 5;
-                s32 y = (r2 * Trig_Cos(angle)) >> 17;
-                draw[0](canvas, ramp + ParticleStreams_CellOffsets[9], x + 60, y + 50, 10, 20);
+                s32 x = ((Trig_Sin(angle) * r2) >> 16) - size / 2;
+                s32 y = (Trig_Cos(angle) * r2) >> 17;
+                draw[0](canvas, ramp + ParticleStreams_CellOffsets[size - 1], x + 60, y + 50, size, size * 2);
             }
         }
 

@@ -1,14 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	push {lr}
-	movs r0, #21
-	movs r1, #74
-	bl Func_02002be4
-	pop {pc}
 	.section .text.x02008060,"ax",%progbits
 	.global Func_02000060
 	.thumb_func
@@ -158,17 +149,8 @@ Func_02000160:
 .L_0200817e:
 	bl Func_02000100
 	pop {pc}
-	.section .text.x02008184,"ax",%progbits
-	.global Func_02000184
-	.thumb_func
-Func_02000184:
-	push {lr}
-	movs r0, #10
-	bl WaitFrames
-	bl Func_02000100
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x02008194,"ax",%progbits
+	.balign 4
 	.global Func_02000194
 	.thumb_func
 Func_02000194:
@@ -903,31 +885,8 @@ Func_020005e8:
 	.4byte 0xfffe0000
 .L_02008774:
 	.4byte gPartyState
-	.section .text.x02008778,"ax",%progbits
-	.global Func_02000778
-	.thumb_func
-Func_02000778:
-	push {r5, r6, lr}
-	adds r5, r1, #0
-	adds r0, r5, #0
-	bl Object_GetById
-	adds r6, r0, #0
-	cmp r5, #20
-	bne .L_020087a0
-	ldr r0, [r6, #8]
-	ldr r1, [r6, #16]
-	movs r2, #0
-	movs r3, #6
-	bl Func_02002b54
-	ldr r0, [r6, #8]
-	ldr r1, [r6, #16]
-	movs r2, #0
-	movs r3, #128
-	bl Func_02002c54
-.L_020087a0:
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x020087a4,"ax",%progbits
+	.balign 4
 	.global Func_020007a4
 	.thumb_func
 Func_020007a4:
@@ -1178,28 +1137,6 @@ Func_020007a4:
 	pop {r5, r6, r7, pc}
 .L_020089d4:
 	.4byte gPartyState
-	.section .text.x020089d8,"ax",%progbits
-	.global Func_020009d8
-	.thumb_func
-Func_020009d8:
-	push {lr}
-	movs r0, #0
-	bl Func_02002c0c
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x020089e4,"ax",%progbits
-	.global Func_020009e4
-	.thumb_func
-Func_020009e4:
-	push {lr}
-	adds r3, r0, #0
-	adds r2, r1, #0
-	ldr r0, .L_020089f4
-	adds r1, r3, #0
-	bl Func_02001a48
-	pop {pc}
-.L_020089f4:
-	.4byte Data_020031c4
 	.section .text.x020089f8,"ax",%progbits
 	.global Func_020009f8
 	.thumb_func
@@ -1716,13 +1653,6 @@ Func_02000cec:
 	.2byte 0x0000
 .L_02008e1c:
 	.4byte gPartyState
-	.section .text.x02008e20,"ax",%progbits
-	.global Func_02000e20
-	.thumb_func
-Func_02000e20:
-	push {lr}
-	bl Func_02002bec
-	pop {pc}
 	.section .text.x02008e30,"ax",%progbits
 	.global Func_02000e30
 	.thumb_func
@@ -2070,16 +2000,6 @@ Func_02000fc0:
 	.4byte gPartyState
 	.section .text.x0200915a,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x0200915c,"ax",%progbits
-	.global Func_0200115c
-	.thumb_func
-Func_0200115c:
-	ldr r3, .L_02009164
-	str r0, [r3]
-	bx lr
-	.2byte 0x0000
-.L_02009164:
-	.4byte Data_02003594
 	.section .text.x02009168,"ax",%progbits
 	.global Func_02001168
 	.thumb_func
@@ -2536,32 +2456,6 @@ Func_020012fc:
 	pop {r5, r6, r7, pc}
 .L_020094e4:
 	.4byte gPartyState
-	.section .text.x020094e8,"ax",%progbits
-	.global Func_020014e8
-	.thumb_func
-Func_020014e8:
-	push {lr}
-	ldr r3, [r1]
-	ldr r4, [r0]
-	ldr r2, [r1, #8]
-	subs r4, r4, r3
-	ldr r3, [r0, #8]
-	asrs r4, r4, #16
-	subs r3, r3, r2
-	asrs r3, r3, #16
-	adds r2, r3, #0
-	muls r2, r3
-	adds r0, r4, #0
-	muls r0, r4
-	adds r3, r2, #0
-	adds r0, r0, r3
-	ldr r3, .L_02009510
-	mov lr, r3
-	.2byte 0xf800
-	pop {pc}
-	.2byte 0x0000
-.L_02009510:
-	.4byte IwramFillWords + 0x74
 	.section .text.x02009514,"ax",%progbits
 	.global Func_02001514
 	.thumb_func
@@ -3800,44 +3694,6 @@ Func_02001e30:
 .L_02009eb4:
 	pop {r5, r6, pc}
 	.2byte 0x0000
-	.section .text.x02009eb8,"ax",%progbits
-	.global Func_02001eb8
-	.thumb_func
-Func_02001eb8:
-	push {r5, lr}
-	adds r5, r1, #0
-	bl Object_GetById
-	adds r4, r0, #0
-	cmp r4, #0
-	beq .L_02009ede
-	adds r3, r4, #0
-	adds r3, #100
-	strh r5, [r3]
-	ldr r1, .L_02009ee0
-	ldr r0, .L_02009ee4
-	ldrh r2, [r1]
-	movs r5, #0
-	ldrsh r3, [r1, r5]
-	adds r2, #1
-	lsls r3, r3, #2
-	str r4, [r0, r3]
-	strh r2, [r1]
-.L_02009ede:
-	pop {r5, pc}
-.L_02009ee0:
-	.4byte Data_020035fe
-.L_02009ee4:
-	.4byte Data_02003600
-	.section .text.x02009ee8,"ax",%progbits
-	.global Func_02001ee8
-	.thumb_func
-Func_02001ee8:
-	ldr r3, .L_02009ef0
-	strh r0, [r3]
-	bx lr
-	.2byte 0x0000
-.L_02009ef0:
-	.4byte Data_02003702
 	.section .text.x02009f3a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02009f72,"ax",%progbits

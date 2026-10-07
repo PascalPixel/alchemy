@@ -1,3 +1,16 @@
+/* 2026-10-08 queue3 release entry: all six differ54, not matched; localizations
+ * listing/draft1037, common1010; JA listing/draft1036, common1009.
+ * Loading count before the zero and the original zero-before-load
+ * form both give56; a readonly input of the count address beside zero restores
+ * the native address; zero; load schedule. Release body and closing allocation
+ * remain as at56. Rejected trials from56: short closing tile/r6 initializer
+ * gives93 at u16,66 at s32,58 with readonly input,56 copying after the window
+ * call; it moves tile from fp to native lr but is not an improvement. Paired
+ * saved mask/tile initializers give108; fixed ip/lr copies give198. Scoped
+ * release counter/r8 with known-zero handoff gives68; explicit entry-pointer
+ * traversal64, resource-field pointer62, readonly step/r1 gives60. Ordinary
+ * while cleanup is unchanged56. All those trial devices are removed.
+ */
 /* 2026-10-07 queue3 cleanup copies: all six differ56, not matched. JA
  * listing/draft1036, common1008; localizations listing/draft1037, common1009.
  * Short mode/r7 binding restores the cleanup mode copy/compare (70 -> 66).
@@ -409,14 +422,19 @@ s32 Ui_RunSelectionScreen(s32 mode)
             gLinkCountdownWork->command_selection[0] = work->selection;
     }
     {
-        /* FAKEMATCH: Native initializes the shared release counter through r0. An ordinary separate counter gives98, fixed r8 gives82; this short readonly zero restores r0 (72 -> 70), although it is still scheduled early. */
+        s32 *count = &work->count;
+        /* FAKEMATCH: Native initializes the shared release counter through r0. An ordinary separate counter gives98, fixed r8 gives82; this short readonly zero restores r0 (72 -> 70). */
         register s32 n __asm__("r0") = 0;
-        /* FAKEMATCH: Retain the native zero register; read/write loses the known-zero loop start and gives74. */
-        __asm__("" : : "r"(n));
+        /* FAKEMATCH: Retain the native zero register; read/write loses the known-zero loop start and gives74. Plain zero-first and count-load-first both give56; the readonly count address restores address; zero; load order, differ54. */
+        __asm__("" : : "r"(n), "r"(count));
         cnt = n;
+        if (cnt < *count) {
+            do {
+                Resource_ResetEntry(work->entries[cnt].resource);
+                cnt++;
+            } while (cnt < work->count);
+        }
     }
-    for (; cnt < work->count; cnt++)
-        Resource_ResetEntry(work->entries[cnt].resource);
     render->menu_busy = 1;
     UiWork_Finalize(work->window, 1);
     {

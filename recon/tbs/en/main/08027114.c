@@ -1,9 +1,12 @@
-/* 08027114: differ 102 against the 1727-line parent listing (draft 1773,
- * common 1699), 46 of them the two nested helpers' lines (see below):
- * 56 real, all instruction order, register choice or pool placement;
- * by symbol ja 62, de/es/it 58, fr 60. Frame 100 as native.
- * 2026-10-08: the GCSE bucket-order device (twenty dead hdr stores, see
- * its tag) gives the native spill slots: 150 -> 102.
+/* 08027114: differ 66 against the 1727-line parent listing (draft 1773,
+ * common 1717), 46 of them the two nested helpers' lines (see below):
+ * 20 real, all instruction order or register choice; by symbol ja 20,
+ * de/es/it 22, fr 24. Frame 100 as native.
+ * 2026-10-08: the GCSE bucket-order device (dead hdr stores, see its tag)
+ * gives the native spill slots: 150 -> 102. An empty asm in each of the
+ * psynergy, djinn and item cases counts four bytes in arm_reorg and puts
+ * the literal pool where native has it (and the djinn ok computation
+ * among the slot stores): 102 -> 66.
  * The draft emits its two nested helpers first, 080270ac/080270d8, adopted on
  * their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent with FAKEMATCH static-chain devices; compiled
@@ -456,7 +459,7 @@ mark_visible:
             UiWindow_MarkVisibleTileAttributes();
             COUNTDOWN->entryActive[0] = 0;
             COUNTDOWN->result[i] = 0x80000000;
-            /* FAKEMATCH: register choice (spill slots) only: twenty dead
+            /* FAKEMATCH: register choice (spill slots) only: seventeen dead
                stores, one insn each until flow deletes them. GCSE sizes its
                expression table from the insn count (n / 2 | 1 buckets) and
                PRE numbers its reaching registers in bucket order, which is
@@ -465,12 +468,11 @@ mark_visible:
                13969: with these stores the table has 775 buckets (747
                against 16, 17, 19), so the givs take sp+32, 28 and 24
                before &hdr (sp+20) as in the native frame; without them 765
-               (152 against 196, 197, 199) puts &hdr above the givs (differ
-               en 150, ja 110, de/es/it 106, fr 108; with them 102, 62, 58,
-               60; every row they remove is a spill slot's offset). */
-            hdr[0] = 0;
-            hdr[0] = 0;
-            hdr[0] = 0;
+               (152 against 196, 197, 199) puts &hdr above the givs. 775
+               needs 16 or 17 stores in every edition (Japanese is two
+               insns longer). Without them differ en 114, ja 68, de/es/it
+               70, fr 72 (with them 66, 20, 22, 24); every row they remove is
+               a spill slot's offset. */
             hdr[0] = 0;
             hdr[0] = 0;
             hdr[0] = 0;
@@ -603,6 +605,8 @@ psynergy_menu:
                 slot->oam.word.attr23 = 0;
                 slot->oam.f.x = win->x * 8 + 8;
                 slot->oam.f.y = win->y * 8 + 4;
+                /* FAKEMATCH: instruction order only (pool placement): arm_reorg counts this empty asm as a 4-byte insn, so the pool goes in after mov r1, r10 as native, whose constant 40 acts as a range-60 (zero_extendhisi2) pool load (differ 14). */
+                __asm__ volatile ("");
                 slot->oam.f.tile = Resource_LoadIndexedEntryToBuffer(param, handle);
                 state->entryActive[1] = 1;
                 ui->level = 5;
@@ -678,6 +682,8 @@ djinn_menu:
                 state->entries[0].oam.f.x = 56;
                 slot->oam.word.attr01 = 0x40000400;
                 slot->oam.word.attr23 = 0;
+                /* FAKEMATCH: instruction order only (pool placement, schedule): counted as 4 bytes, the empty asm puts the pool after mov r2, r9 as native (constant 56) and keeps ok = 1 - (j != 4) among the slot stores (differ 12). */
+                __asm__ volatile ("");
                 slot->oam.f.x = win->x * 8 + 8;
                 slot->oam.f.y = win->y * 8 + 4;
                 slot->oam.f.tile = Resource_LoadIndexedEntryToBuffer(djinn->name_message_id & 0x3fff, handle);
@@ -863,6 +869,8 @@ item_menu:
                 state->entries[0].oam.f.x = 48;
                 slot->oam.word.attr01 = 0x40000400;
                 slot->oam.word.attr23 = 0;
+                /* FAKEMATCH: instruction order only (pool placement): counted as 4 bytes, the empty asm puts the pool after ldr r1, [sp, #72] as native (constant 48) (differ 10). */
+                __asm__ volatile ("");
                 slot->oam.f.x = win->x * 8 + 8;
                 slot->oam.f.y = win->y * 8 + 4;
                 slot->oam.f.tile = Resource_LoadKind26EntryToBuffer(actor->inventory[sel], handle);

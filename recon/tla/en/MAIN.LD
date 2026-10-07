@@ -105,8 +105,6 @@
         "*/games/COMMON/SRC/SYSTEM/MEMORY/DEBUG_NUMBER.o"(.text)
         "*/recon/tla/raw/08014b70.o"(.text)
         "*/games/THE LOST AGE/SRC/SYSTEM/MEMORY/MEMORY.o"(.text)
-        "*/recon/tla/raw/08014de0.o"(.text)
-        "*/recon/tla/raw/08014de4.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/RENDER/RENDER.o"(.text)
         "*/recon/tla/raw/08014ee0.o"(.text)
         "*/recon/tla/raw/08014efc.o"(.text)

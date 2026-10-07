@@ -193,14 +193,6 @@ Scheduler_SetCallbackMask:
 	.thumb_func
 Func_08014b70:
 	.incbin "baserom.gba", 0x00014b9c, 0x0000003c
-	.section .rom.00014e0c, "ax"
-	.incbin "baserom.gba", 0x00014e0c, 0x00000004
-	.section .rom.00014e10, "ax"
-	.global Render_ResetTransformState
-	.type Render_ResetTransformState, %function
-	.thumb_func
-Render_ResetTransformState:
-	.incbin "baserom.gba", 0x00014e10, 0x00000038
 	.section .rom.00014f0c, "ax"
 	.global Func_08014ee0
 	.type Func_08014ee0, %function

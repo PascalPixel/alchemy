@@ -21,6 +21,29 @@
     defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
 #include "RAM_BUFFER.H"
 
+void Render_EmptyHook(void)
+{
+}
+
+void Render_ResetTransformState(void)
+{
+    gTransformStackTop = Runtime_AllocateBlock(8, sizeof(gTransform));
+    gTransformStackDepth = 0;
+    {
+        /* FAKEMATCH: the identity row's four fixed registers. */
+        register s32 zero2 __asm__("r3"), one __asm__("r1"), zero1 __asm__("r2"), zero3 __asm__("r4");
+
+        /* FAKEMATCH: ⚓️ builds the one before the zeros; three stmia no C store compiles to. */
+        __asm__ volatile("mov r0, %4\n\tmov %1, #128\n\tlsl %1, %1, #9\n\tmov %2, #0\n\t"
+                         "mov %0, #0\n\tmov %3, #0\n\t"
+                         "stmia r0!, {%1, %2, %0, %3}\n\t"
+                         "stmia r0!, {%1, %2, %0, %3}\n\t"
+                         "stmia r0!, {%1, %2, %0, %3}"
+                         : "=r"(zero2), "=r"(one), "=r"(zero1), "=r"(zero3)
+                         : "r"(gTransform) : "r0", "memory");
+    }
+}
+
 void SceneTransform_RewindStack(void)
 {
     gTransformStackTop = Ram_HeapSlots->transform_stack;

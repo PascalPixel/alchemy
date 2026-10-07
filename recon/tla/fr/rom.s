@@ -186,12 +186,6 @@ Resource_FindFreeEntry:
 	.incbin "baserom.gba", 0x00014422, 0x00000002
 	.section .rom.00014438, "ax"
 	.incbin "baserom.gba", 0x00014438, 0x000000b4
-	.section .rom.00014748, "ax"
-	.global Scheduler_SetCallbackMask
-	.type Scheduler_SetCallbackMask, %function
-	.thumb_func
-Scheduler_SetCallbackMask:
-	.incbin "baserom.gba", 0x00014748, 0x00000040
 	.section .rom.00014a24, "ax"
 	.global Text_FormatHexToWork
 	.type Text_FormatHexToWork, %function
@@ -4100,7 +4094,12 @@ Func_08108020:
 Func_08108028:
 	.incbin "baserom.gba", 0x00108028, 0x00000008
 	.section .rom.001080a8, "ax"
-	.incbin "baserom.gba", 0x001080a8, 0x00000438
+	.incbin "baserom.gba", 0x001080a8, 0x0000021c
+	.global Func_081082c4
+	.type Func_081082c4, %function
+	.thumb_func
+Func_081082c4:
+	.incbin "baserom.gba", 0x001082c4, 0x000001a0
 	.section .rom.001084f4, "ax"
 	.incbin "baserom.gba", 0x001084f4, 0x00000268
 	.section .rom.00108948, "ax"
@@ -4322,8 +4321,9 @@ Camera_InitDefaultTransform:
 	.thumb_func
 Func_0811c074:
 	.incbin "baserom.gba", 0x0011c08c, 0x00000184
-	.section .rom.0011c228, "ax"
-	.incbin "baserom.gba", 0x0011c228, 0x000000a4
+	.section .rom.0011c28c, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0011c28c, 0x00000040
 	.section .rom.0011c2cc, "ax"
 	.global Func_0811c2b4
 	.type Func_0811c2b4, %function

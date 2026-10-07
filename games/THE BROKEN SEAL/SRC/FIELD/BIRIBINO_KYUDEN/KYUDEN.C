@@ -957,17 +957,16 @@ void ConfigureSecondarySceneChannels(void)
 
 void RunEventScript02(void)
 {
-    /* FAKEMATCH: The cleared motion byte keeps its own zero local so the following call reloads its separate zero argument. */
     struct FieldActor *buf;
     struct FieldActor *actor;
     s32 flag;
-    u8 clear = 0;
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     buf = Engine_EventGetViewCenter();
-    buf->motion_flags = clear;
+    flag = 0;
+    buf->motion_flags = flag;
     Camera_MoveTo(0x037e0000, -1, 0x02980000, 0);
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);

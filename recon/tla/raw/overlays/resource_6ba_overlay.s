@@ -170,58 +170,6 @@ Func_02000178:
 	.4byte 0x000012d2
 .L_0200818c:
 	.4byte 0x000012fd
-	.section .text.x02008190,"ax",%progbits
-	.global Func_02000190
-	.thumb_func
-Func_02000190:
-	push {lr}
-	adds r1, r0, #0
-	movs r0, #1
-	bl Func_02000e40
-	pop {pc}
-	.section .text.x0200819c,"ax",%progbits
-	.global Func_0200019c
-	.thumb_func
-Func_0200019c:
-	push {lr}
-	adds r1, r0, #0
-	movs r0, #2
-	bl Func_02000e40
-	pop {pc}
-	.section .text.x020081a8,"ax",%progbits
-	.global Func_020001a8
-	.thumb_func
-Func_020001a8:
-	push {lr}
-	adds r1, r0, #0
-	movs r0, #3
-	bl Func_02000e40
-	pop {pc}
-	.section .text.x020081b4,"ax",%progbits
-	.global Func_020001b4
-	.thumb_func
-Func_020001b4:
-	push {lr}
-	adds r1, r0, #0
-	movs r0, #24
-	bl Func_02000e40
-	pop {pc}
-	.section .text.x020081c0,"ax",%progbits
-	.global Func_020001c0
-	.thumb_func
-Func_020001c0:
-	push {lr}
-	adds r1, r0, #0
-	movs r0, #0
-	bl Func_02000e50
-	pop {pc}
-	.section .text.x020081cc,"ax",%progbits
-	.global Func_020001cc
-	.thumb_func
-Func_020001cc:
-	push {lr}
-	bl Func_02000e48
-	pop {pc}
 	.section .text.x020081d4,"ax",%progbits
 	.global Func_020001d4
 	.thumb_func
@@ -436,21 +384,8 @@ Func_02000394:
 	bl Func_02000e60
 	add sp, #8
 	pop {pc}
-	.section .text.x020083a4,"ax",%progbits
-	.global Func_020003a4
-	.thumb_func
-Func_020003a4:
-	push {r5, lr}
-	movs r5, #0
-.L_020083a8:
-	adds r0, r5, #0
-	adds r5, #1
-	bl Func_02000d20
-	cmp r5, #7
-	ble .L_020083a8
-	pop {r5, pc}
-	.2byte 0x0000
 	.section .text.x020083b8,"ax",%progbits
+	.balign 4
 	.global Func_020003b8
 	.thumb_func
 Func_020003b8:
@@ -760,19 +695,6 @@ Func_02000638:
 	.global Data_02000664
 Data_02000664:
 	.4byte 0x00004770
-	.section .text.x02008668,"ax",%progbits
-	.global Func_02000668
-	.thumb_func
-Func_02000668:
-	push {lr}
-	movs r1, #0
-	movs r0, #11
-	bl PartyInventory_GiveItem
-	movs r0, #22
-	bl Func_02000d38
-	movs r0, #22
-	bl Func_02000dd0
-	pop {pc}
 	.section .text.x02008688,"ax",%progbits
 	.global Func_02000688
 	.thumb_func
@@ -1285,43 +1207,8 @@ Func_02000848:
 	.4byte Data_02000ea8
 .L_02008aa8:
 	.4byte gInput
-	.section .text.x02008aac,"ax",%progbits
-	.global Func_02000aac
-	.thumb_func
-Func_02000aac:
-	push {lr}
-	bl Func_02000d28
-	pop {pc}
-	.section .text.x02008ab4,"ax",%progbits
-	.global Func_02000ab4
-	.thumb_func
-Func_02000ab4:
-	push {lr}
-	bl Func_02000d30
-	pop {pc}
-	.section .text.x02008abc,"ax",%progbits
-	.global Func_02000abc
-	.thumb_func
-Func_02000abc:
-	push {lr}
-	sub sp, #8
-	adds r4, r3, #0
-	cmp r0, #1
-	bne .L_02008ada
-	ldr r3, [sp, #16]
-	adds r0, r1, #0
-	str r3, [sp, #0]
-	ldr r3, [sp, #20]
-	adds r1, r2, #0
-	str r3, [sp, #4]
-	adds r2, r4, #0
-	ldr r3, [sp, #12]
-	bl Func_02000c90
-.L_02008ada:
-	add sp, #8
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x02008ae0,"ax",%progbits
+	.balign 4
 	.global Func_02000ae0
 	.thumb_func
 Func_02000ae0:

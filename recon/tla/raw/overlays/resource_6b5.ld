@@ -4,7 +4,7 @@ SECTIONS
     {
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/ENTRY.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/SCENE_TABLES.o"(.text)
-        "*/resource_6b5_overlay.o"(.text.x02008044)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/IME_CALL.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/LAYOUT.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x0200806c)
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/LOBBY.o"(.text)
@@ -19,7 +19,7 @@ SECTIONS
         "*/resource_6b5_overlay.o"(.text.x02008bb0)
         "*/resource_6b5_overlay.o"(.text.x02008da0)
         "*/resource_6b5_overlay.o"(.text.x02008e4c)
-        "*/resource_6b5_overlay.o"(.text.x02008f50)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/SOUND_CALL.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x02008f6c)
         "*/resource_6b5_overlay.o"(.text.x02008fbc)
         "*/resource_6b5_overlay.o"(.text.x02009130)

@@ -60,7 +60,7 @@ s32 BattleActor_ResetRuntimeFields(s32 actor)
     state->miugoki = 0;
     state->agi_cnt = 0;
     state->agi_lv = 0;
-    state->battle_end_state = 0;
+    state->chouhatsu = 0;
 
     UnitCalcFar(actor);
     return BattleUnit_BuildStatusFlags(actor, BtlObjGet(actor));

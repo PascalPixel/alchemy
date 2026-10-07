@@ -110,7 +110,7 @@ s32 BtlUnitSet(s32 unit_id, s32 enemy_id, s32 suffix)
     unit->rewards = enemy->rewards;
     unit->class_index = 0;
     unit->class_id = enemy_id;
-    Owner_CalculateBaseElements(unit_id, (s16 (*)[2])unit->base_elements);
+    Owner_CalculateBaseElements(unit_id, (s16 (*)[2])unit->base_elm);
     UnitCalc(unit_id);
     unit->side = 1;
     switch (unit->class_id) {
@@ -463,7 +463,7 @@ void Owner_RefreshDerivedData(s32 owner_no)
 
     owner->class_index = Owner_DetermineClass(owner->class_id, (u8 *)owner->djinn_available);
     Owner_RefreshClassActions(owner_no);
-    Owner_CalculateBaseElements(owner_no, (s16 (*)[2])owner->base_elements);
+    Owner_CalculateBaseElements(owner_no, (s16 (*)[2])owner->base_elm);
 }
 
 s32 Curve_LookupScaledValue(s32 input, s32 halve)

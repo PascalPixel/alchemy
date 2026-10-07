@@ -411,7 +411,7 @@ s32 BattlePres_RunUnitAction(s16 *action)
         work.count = BattleParty_ListLivingUnits(2, work.actors);
     else
         work.count = BattleParty_ListLivingUnits(1, work.actors);
-    PtyStDrawFar(BtlWk->party_status_mode & ~1);
+    PtyStDrawFar(BtlWk->pty_st & ~1);
     object = BtlObjGet(work.actor)->object;
     Object_SetMode(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);

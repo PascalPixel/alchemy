@@ -121,7 +121,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
         Runtime_SetIrqHandler(2, 32, Graphics_ClearBg0Vofs);
         gBgScroll[0].y = 32;
         WaitFrames(1);
-        UiWindow_CreateWithLayoutBoundsFar(BtlWk->party_status_mode);
+        UiWindow_CreateWithLayoutBoundsFar(BtlWk->pty_st);
         WaitFrames(20);
         QueueIoWriteDelay10(0x04000008, 2);
         QueueIoWriteDelay6(0x04000008, 0);
@@ -160,7 +160,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
         Runtime_SetIrqHandler(2, 32, Graphics_ClearBg0Vofs);
         WaitFrames(1);
         WaitFrames(20);
-        UiWindow_CreateWithLayoutBoundsFar(BtlWk->party_status_mode);
+        UiWindow_CreateWithLayoutBoundsFar(BtlWk->pty_st);
         QueueIoWriteDelay10(0x04000008, 2);
         QueueIoWriteDelay6(0x04000008, 0);
         REG_BLDCNT = 0x3f40;

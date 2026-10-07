@@ -77,7 +77,7 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
     BattlePres_SetActorModes(0, 0);
     BattlePres_BuildTargetList(plan, &work);
     if (work.kind == 0x87)
-        PtyStDrawFar(BtlWk->party_status_mode & ~1);
+        PtyStDrawFar(BtlWk->pty_st & ~1);
 
     unit = UnitGetFar(work.actor);
     UnitGetFar(work.actors[0]);

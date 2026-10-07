@@ -62,8 +62,8 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
         }
     } else {
         index = 0;
-        slot = (u32)&((struct BtlWork *)0)->enemy_units / sizeof(s16) - 1;
-        tail = (u32)&((struct BtlWork *)0)->enemy_units / sizeof(s16) - 1;
+        slot = (u32)&((struct BtlWork *)0)->enm_no / sizeof(s16) - 1;
+        tail = (u32)&((struct BtlWork *)0)->enm_no / sizeof(s16) - 1;
         offset = tail * 2;
         entry = (s16 *)(order->items + 1);
         if (*(s16 *)((char *)entry + offset) != 255) {
@@ -237,7 +237,7 @@ pick:
             && BtlEfxRevChkFar((action)->effect) == 0)                  \
             (applies) = 0;                                                    \
         if ((applies) == 0) {                                                 \
-            (damage_class) = ((action)->target_flags & 0x0f) - 1;             \
+            (damage_class) = ((action)->tgt_flg & 0x0f) - 1;             \
             switch (damage_class) {                                           \
             case 2:                                                           \
             case 3:                                                           \
@@ -327,8 +327,8 @@ s32 BattleTarget_SelectForAction(
 
 scan_mirrored_order:
         target_index = 0;
-        while (turn_order->enemy_units[target_index] != 255) {
-            unit_id = turn_order->enemy_units[target_index];
+        while (turn_order->enm_no[target_index] != 255) {
+            unit_id = turn_order->enm_no[target_index];
             if (unit_id != 254) {
                 if (action->target_mode != 4 || unit_id == actor_id) {
                     unit_ids[candidate_count] = unit_id;
@@ -365,7 +365,7 @@ scan_complete:
         && action->range == 1
         && Owner_GetRecordFar(UnitGetFar(actor_id)->class_id)
                 ->target_strategy != 2
-        && (u32)((action->target_flags & 0x0f) - 3) <= 2) {
+        && (u32)((action->tgt_flg & 0x0f) - 3) <= 2) {
         selected = -1;
         for (target_index = 0;
              target_index < target_count;

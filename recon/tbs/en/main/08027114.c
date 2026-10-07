@@ -456,7 +456,7 @@ psynergy_menu:
                     scan = &actor->action_slots[0].encoded_action;
                     do {
                         ability = Ability_GetData(cur);
-                        if ((ability->target_flags & 0x80) != 0) {
+                        if ((ability->tgt_flg & 0x80) != 0) {
                             state->pick[cnt] = (u8)k;
                             state->list[cnt] = (u16)cur;
                             cnt++;

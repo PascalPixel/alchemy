@@ -41,13 +41,13 @@ s32 PsynergyMenu_CollectActions(struct BtlUnit *owner, u16 *actions, s32 mode)
                 if (owner->action_slots[i].encoded_action != 0) {
                     struct BtlAct *ability = BtlActGet(owner->action_slots[i].encoded_action & ACTION_ID_MASK);
 
-                    if (j == 0 && (ability->type_0c != 0 || (ability->target_flags & 0x40) != 0)) {
+                    if (j == 0 && (ability->type_0c != 0 || (ability->tgt_flg & 0x40) != 0)) {
                         *out = owner->action_slots[i].encoded_action;
                         out++;
                         count++;
                     } else if (j == 1) {
                     } else if (j == 2) {
-                    } else if (j == 3 && ability->type_0c == 0 && (ability->target_flags & 0x40) == 0) {
+                    } else if (j == 3 && ability->type_0c == 0 && (ability->tgt_flg & 0x40) == 0) {
                         *out = owner->action_slots[i].encoded_action;
                         out++;
                         count++;

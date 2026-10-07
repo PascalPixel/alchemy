@@ -331,7 +331,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
         }
         BattleUnit_Recalculate(id);
         for (i = 0; i <= 3; i++) {
-            order = unit->elements[i].power - before->elements[i].power;
+            order = unit->elm[i].power - before->elm[i].power;
             if (order > 0) {
                 BattleEventRuntime_Reset();
                 BattleEventRuntime_SchedulePhase(25);

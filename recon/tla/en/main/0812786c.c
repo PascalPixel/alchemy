@@ -17,7 +17,7 @@ struct OwnerStats {
     u16 agility;
     u8 luck;
     u8 unknown_0f[5];
-    struct OwnerElementStats elements[4];
+    struct OwnerElementStats elm[4];
 };
 
 struct OwnerState {
@@ -93,13 +93,13 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     state->stats.agility = value;
 
     for (i = 0; i < 4; i++) {
-        value = state->stats.elements[i].power + levels * 15;
-        floor = __divsi3(base->elements[i].power * 7, 10);
+        value = state->stats.elm[i].power + levels * 15;
+        floor = __divsi3(base->elm[i].power * 7, 10);
         if (value < floor)
             value = floor;
         if (value > 200)
             value = 200;
-        state->stats.elements[i].power = value;
+        state->stats.elm[i].power = value;
     }
 
     state->level += levels;

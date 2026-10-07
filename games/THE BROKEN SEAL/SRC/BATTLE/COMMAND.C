@@ -83,7 +83,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
             for (index = 0; battle->party_units[index] != 255; index++)
                 ;
             allies = index;
-            for (index = 0; battle->enemy_units[index] != 255; index++)
+            for (index = 0; battle->enm_no[index] != 255; index++)
                 ;
             enemies = index;
             center = command->target & 15;
@@ -98,7 +98,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
                     if (command->target & 128) {
                         if (index >= enemies)
                             continue;
-                        unit = battle->enemy_units[index];
+                        unit = battle->enm_no[index];
                         if (unit == 254)
                             continue;
                         if (!allow_defeated && UnitGetFar(unit)->hp == 0)
@@ -153,7 +153,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
             enemy_side = 0;
         for (i = 0; ; i++) {
             if (enemy_side)
-                unit = battle->enemy_units[i];
+                unit = battle->enm_no[i];
             else
                 unit = battle->party_units[i];
             if (unit == 255)
@@ -312,7 +312,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *
                 return -1;
             UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
-            if ((Ability_GetData(action)->target_flags & 15) == 6)
+            if ((Ability_GetData(action)->tgt_flg & 15) == 6)
                 message = (s32)MsgActorUnleashesAbility;
             else
                 message = (s32)MsgActorUsesAbility;

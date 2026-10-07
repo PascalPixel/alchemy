@@ -143,7 +143,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                         entry & ACTION_ID_MASK, 0, &handles[i], &glyph, 1);
                     sprites[i].oam.f.tile = glyph;
 
-                    if ((action->target_flags & ACTION_USABLE_IN_BATTLE) == 0) {
+                    if ((action->tgt_flg & ACTION_USABLE_IN_BATTLE) == 0) {
                         UiWork_SetParamNibble(4);
                     } else if (action->pp_cost > unit->ep) {
                         UiWork_SetParamNibble(2);
@@ -253,7 +253,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
         if ((gKeyState & KEY_A) != 0) {
             if (count != 0) {
                 result = page + row;
-                if ((Ability_GetData(actions[result])->target_flags & ACTION_USABLE_IN_BATTLE) != 0) {
+                if ((Ability_GetData(actions[result])->tgt_flg & ACTION_USABLE_IN_BATTLE) != 0) {
                     break;
                 }
                 /* FAKEMATCH: a dead store here keeps the test above from being threaded past the break. */

@@ -635,10 +635,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     UiText_DrawNumberInWindow(Owner_GetResistanceValueFar(owner, j), 2,
                         (s32)winMain, 48 + j * 32, 80);
                     UiText_DrawNumberInWindow(
-                        object->elements[j].power, 3, (s32)winMain,
+                        object->elm[j].power, 3, (s32)winMain,
                         40 + j * 32, 88);
                     UiText_DrawNumberInWindow(
-                        object->elements[j].resist, 3, (s32)winMain,
+                        object->elm[j].resist, 3, (s32)winMain,
                         40 + j * 32, 96);
                 }
 
@@ -934,7 +934,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     UiWindow_MarkVisibleTileAttributes();
     UiWork_Finalize(winMain, 1);
     UiWork_Finalize(winDesc, 1);
-    PtyStDraw(BtlWk->party_status_mode);
+    PtyStDraw(BtlWk->pty_st);
     ((struct MenuCell **)&BtlWk)[HEAP_SLOT_WINDOW + 42 - HEAP_SLOT_BATTLE]->busy = 0;
     WaitFrames(1);
     return 0;

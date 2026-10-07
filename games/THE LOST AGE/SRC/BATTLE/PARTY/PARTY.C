@@ -19,10 +19,10 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
         }
     }
     if (groups & 2) {
-        for (i = 0; order->enemy_units[i] != 255; i++) {
-            if (order->enemy_units[i] != 254) {
+        for (i = 0; order->enm_no[i] != 255; i++) {
+            if (order->enm_no[i] != 254) {
                 if (dst != NULL)
-                    *dst++ = order->enemy_units[i];
+                    *dst++ = order->enm_no[i];
                 count++;
             }
         }

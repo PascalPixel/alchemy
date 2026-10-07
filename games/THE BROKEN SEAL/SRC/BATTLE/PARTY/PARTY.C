@@ -117,7 +117,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
     Dma3Fill(fill, camera, sizeof(struct BattleCamera));
     Dma3Fill(fill, battle, sizeof(struct BtlWork));
     battle->prompt_slot = -1;
-    battle->enemy_group = enemy_group;
+    battle->enm_grp = enemy_group;
     display = Runtime_AllocateBlock(37, sizeof(struct BattleDisplayWork));
     Dma3Fill(fill, display, sizeof(struct BattleDisplayWork));
     battle->background = Event_GetSpecialValueFar();
@@ -138,7 +138,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
     camera->yaw = 0x2800;
     camera->pitch = 0x5000;
     camera->distance = 0x1000000;
-    object = BattleFormation_BuildEnemyList(battle->enemy_group);
+    object = BattleFormation_BuildEnemyList(battle->enm_grp);
 
     if (GameFlag_IsSet(FLAG_LINK_BATTLE) != 0) {
         battle->two_sided = 1;
@@ -183,9 +183,9 @@ s32 Battle_RunEncounter(s32 enemy_group)
     BattleParty_ReconcileDjinnRecovery();
     BattleSummon_UpdateAvailability();
     if (*Trade_GetOfferStateFar(0) != 0)
-        battle->party_status_mode = 3;
+        battle->pty_st = 3;
     else
-        battle->party_status_mode = 1;
+        battle->pty_st = 1;
     UiWindow_CreateWithLayoutBoundsFar(9);
     Camera_InitDefaultTransform();
     BtlObjPut();
@@ -215,12 +215,12 @@ s32 Battle_RunEncounter(s32 enemy_group)
         Battle_ReservedNoOp9B2C();
         BattleSummon_UpdateAvailability();
         if (*Trade_GetOfferStateFar(0) != 0)
-            battle->party_status_mode = 3;
+            battle->pty_st = 3;
         else
-            battle->party_status_mode = 1;
+            battle->pty_st = 1;
         transition->target_yaw = 0x2800;
         transition->frames = 60;
-        PtyStDrawFar(battle->party_status_mode);
+        PtyStDrawFar(battle->pty_st);
         Iwram_ClearWords(battle->actions, 0x140);
         Resource_ResetEntry(battle->prompt_slot);
         if (GameFlag_IsSet(FLAG_AUTO_BATTLE) == 0) {
@@ -233,7 +233,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
             count = BattlePresentation_BuildSortedUnitEntries(battle->actions);
         }
         battle->prompt_slot = Resource_LoadIntoFreeSlot(128);
-        PtyStDrawFar(battle->party_status_mode);
+        PtyStDrawFar(battle->pty_st);
         if (count < 0)
             goto aborted;
 
@@ -491,10 +491,10 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
         }
     }
     if (groups & BATTLE_SIDE_ENEMIES) {
-        for (i = 0; order->enemy_units[i] != BATTLE_UNIT_LIST_END; i++) {
-            if (order->enemy_units[i] != BATTLE_UNIT_REMOVED) {
+        for (i = 0; order->enm_no[i] != BATTLE_UNIT_LIST_END; i++) {
+            if (order->enm_no[i] != BATTLE_UNIT_REMOVED) {
                 if (dst != NULL)
-                    *dst++ = order->enemy_units[i];
+                    *dst++ = order->enm_no[i];
                 count++;
             }
         }

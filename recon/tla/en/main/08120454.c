@@ -333,7 +333,7 @@
 #define ELM_BONUS()                                                           \
     {                                                                          \
         if (elm != 4)                                                        \
-            bonus = pow - target->elements[elm].resist;                    \
+            bonus = pow - target->elm[elm].resist;                    \
     }
 
 #define MES_PUSH(m) BtlEvPush(BEV_MES, (u32)(m))
@@ -478,13 +478,13 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
     if (elm != 4) {
         s32 i;
 
-        value = target->base_elements[elm].resist;
-        for (i = 0; i < 4 && value >= target->base_elements[i].resist; i++)
+        value = target->base_elm[elm].resist;
+        for (i = 0; i < 4 && value >= target->base_elm[i].resist; i++)
             ;
         if (i == 4)
             aff = -1;
 
-        for (i = 0; i < 4 && value <= target->base_elements[i].resist; i++)
+        for (i = 0; i < 4 && value <= target->base_elm[i].resist; i++)
             ;
         if (i == 4)
             aff = 1;
@@ -493,7 +493,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
     if (plan->elm >= 0 && plan->elm <= 3) {
         cmd = &plan->command;
         if (*cmd != 2) {
-            pow = actor->elements[plan->elm].power;
+            pow = actor->elm[plan->elm].power;
             goto pow_end;
         }
     } else
@@ -504,7 +504,7 @@ pow_end:
     if (plan->command == 5 && (plan->elm >= 0 && plan->elm <= 3) && aff > 0) {
         s32 chance;
 
-        chance = pow - target->elements[plan->elm].resist;
+        chance = pow - target->elm[plan->elm].resist;
         chance += 30;
         chance *= 65536 / 100;
         if (chance > (BtlRndFar() & 0xffff))
@@ -517,7 +517,7 @@ pow_end:
         Battle_ApplyActionExtras(tid, 1, 0);
     if (act_no == 728)
         Battle_ApplyActionExtras(tid, 1, 1);
-    type = action->target_flags & 15;
+    type = action->tgt_flg & 15;
     {
         s32 res;
 
@@ -539,7 +539,7 @@ pow_end:
         chg = -1;
         ent = EnmSlotGet();
         if (action->effect == 51) {
-            cls = BtlGrpRnd(work->enemy_group);
+            cls = BtlGrpRnd(work->enm_grp);
         } else if (action->effect == 86) {
             if (actor->enemy_id == 164)
                 cls = (BtlRndFar() & 3) + 378;
@@ -564,19 +564,19 @@ pow_end:
                 work->queue_head = (work->queue_head + 1) % 2;
             }
             if (actor->enemy_id == 164)
-                BattleParty_InsertUnitCentered(work->enemy_units, ent);
+                BattleParty_InsertUnitCentered(work->enm_no, ent);
             else
             {
                 s32 i;
 
                 for (i = 0; i < 6; i++) {
-                    if (work->enemy_units[i] == 254) {
-                        work->enemy_units[i] = ent;
+                    if (work->enm_no[i] == 254) {
+                        work->enm_no[i] = ent;
                         break;
                     }
-                    if (work->enemy_units[i] == 255) {
-                        work->enemy_units[i] = ent;
-                        work->enemy_units[i + 1] = 255;
+                    if (work->enm_no[i] == 255) {
+                        work->enm_no[i] = ent;
+                        work->enm_no[i + 1] = 255;
                         break;
                     }
                 }
@@ -1625,7 +1625,7 @@ pow_end:
 
         case 54:
             MES_PUSH(MsgChallenge);
-            target->battle_end_state = 1;
+            target->chouhatsu = 1;
             if (MIKATA_CHK(tid))
                 work->chal_flg |= 2;
             break;
@@ -1710,7 +1710,7 @@ done:
     }
     MemFree(bak);
     UnitCalcFar(tid);
-    PtyStDrawFar(Ram_HeapSlots->battle_work->party_status_mode);
+    PtyStDrawFar(Ram_HeapSlots->battle_work->pty_st);
     if (target->hp != 0)
         BtlEvPush(BEV_OBJ_END, tid);
     if (act_no != 403 && actor->akuryo != 0

@@ -259,7 +259,7 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
             transition->target_yaw = yaw;
     }
     BattlePres_SetActorModes(0, 0);
-    PtyStDrawFar(BtlWk->party_status_mode & ~1);
+    PtyStDrawFar(BtlWk->pty_st & ~1);
     object = BtlObjGet(actor)->object;
     REG_BLDCNT = 0x3f40;
     count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, units);

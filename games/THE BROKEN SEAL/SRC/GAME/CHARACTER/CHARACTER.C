@@ -178,7 +178,7 @@ void UnitCalc(s32 owner)
     work->hp_regen = st->base_hp_regen;
     work->ep_regen = st->base_ep_regen;
     {
-        s16 *src = &st->base_elements[0].power;
+        s16 *src = &st->base_elm[0].power;
         s32 *dst = work->element[0];
         for (i = 0; i < 4; i++) {
             dst[0] = src[0];
@@ -431,8 +431,8 @@ void UnitCalc(s32 owner)
     st->hp_regen = work->hp_regen;
     st->ep_regen = work->ep_regen;
     for (i = 0; i < 4; i++) {
-        st->elements[i].power = work->element[i][0];
-        st->elements[i].resist = work->element[i][1];
+        st->elm[i].power = work->element[i][0];
+        st->elm[i].resist = work->element[i][1];
     }
 
     cap = 9999;

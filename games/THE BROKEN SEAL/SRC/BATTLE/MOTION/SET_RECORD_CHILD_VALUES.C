@@ -88,7 +88,7 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
     if (scripted)
         work.flags = 1;
     BattlePres_SetActorModes(0, 0);
-    PtyStDrawFar(BtlWk->party_status_mode & ~1);
+    PtyStDrawFar(BtlWk->pty_st & ~1);
     object = BtlObjGet(work.actor)->object;
     Object_SetMode(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);

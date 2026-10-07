@@ -71,13 +71,13 @@ void BattleActor_RemoveFromLists(s32 actor)
     do {
         j = 0;
 again:
-        unit = work->enemy_units[j];
+        unit = work->enm_no[j];
 #if GAME_TLA
         if (unit == actor)
             goto enemy_removed;
 #else
         if (unit == actor) {
-            work->enemy_units[j] = BATTLE_UNIT_REMOVED;
+            work->enm_no[j] = BATTLE_UNIT_REMOVED;
             goto removed;
         }
 #endif
@@ -93,7 +93,7 @@ again:
 #if GAME_TLA
     return -1;
 enemy_removed:
-    work->enemy_units[j] = BATTLE_UNIT_REMOVED;
+    work->enm_no[j] = BATTLE_UNIT_REMOVED;
     goto removed;
 party_removed:
     *(s16 *)((u8 *)work + slot) = BATTLE_UNIT_REMOVED;

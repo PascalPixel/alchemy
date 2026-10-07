@@ -22,7 +22,7 @@ s32 Item_ClassifyUseAbility(s32 owner, s32 item)
     if ((definition->type != 0) && (Item_CanOwnerEquip(owner, item) == 0)) {
         return ret;
     }
-    if ((0x80 & BtlActGet(definition->action_id)->target_flags) == 0) {
+    if ((0x80 & BtlActGet(definition->action_id)->tgt_flg) == 0) {
         return 2;
     }
     return 0;

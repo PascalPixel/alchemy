@@ -154,7 +154,7 @@ s32 BattleEffect_ApplyToTargets(
         }
 
         amount = effect->power;
-        switch (effect->target_flags & 0xf) {
+        switch (effect->tgt_flg & 0xf) {
         case BATTLE_DAMAGE_HP_HEAL:
             if (fixed_scale == 0) {
                 if (effect->damage_class != 4) {
@@ -162,7 +162,7 @@ s32 BattleEffect_ApplyToTargets(
 
                     source = UnitGetFar(source_id);
                     stat_offset = effect->damage_class;
-                    scale = source->elements[stat_offset].power;
+                    scale = source->elm[stat_offset].power;
                 } else
                     scale = 100;
                 amount = BtlRcvCalc(amount, scale, 0x100);
@@ -386,7 +386,7 @@ void Ability_PlayUseAnimation(s32 action)
     struct BtlAct *ability;
 
     ability = BtlActGet(action);
-    animation_type = 0xf & ability->target_flags;
+    animation_type = 0xf & ability->tgt_flg;
     switch (animation_type) {
     case 1:
         Audio_PlayCueReturnOne(0x7e);

@@ -11,7 +11,7 @@ s32 Battle_ClassifyEntryKind(const struct BtlAct *entry)
     u8 k;
 
     ret = 0;
-    low = entry->target_flags & 0xF;
+    low = entry->tgt_flg & 0xF;
     if (low == 1) {
         ret = 1;
     }

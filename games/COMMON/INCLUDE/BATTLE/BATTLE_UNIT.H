@@ -22,7 +22,7 @@ struct BattleElementStats {
 
 struct BtlAct {
     u8 target_mode;
-    u8 target_flags;
+    u8 tgt_flg;
     u8 damage_class;
     u8 effect;
     u8 unknown_04[4];
@@ -53,7 +53,7 @@ struct BtlUnit {
     u8 base_hp_regen;
     u8 base_ep_regen;
     u8 unknown_022[2];
-    struct BattleElementStats base_elements[4];
+    struct BattleElementStats base_elm[4];
     s16 max_hp;
     s16 max_ep;
     s16 hp;
@@ -66,7 +66,7 @@ struct BtlUnit {
     u8 hp_regen;
     u8 ep_regen;
     u8 unknown_046[2];
-    struct BattleElementStats elements[4];
+    struct BattleElementStats elm[4];
     struct OwnerActionSlot action_slots[32];
     u16 inventory[15];
     u8 unknown_0f6[2];
@@ -108,7 +108,7 @@ struct BtlUnit {
     u8 miugoki;
     u8 agi_cnt;
     s8 agi_lv;
-    s8 battle_end_state;
+    s8 chouhatsu;
     u8 unknown_149;
     u16 enemy_id;
 };
@@ -146,10 +146,10 @@ LAYOUT_OFFSET_GUARD(BattleUnit_Hp, struct BtlUnit, hp, 0x038);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_BaseElements,
     struct BtlUnit,
-    base_elements,
+    base_elm,
     0x024);
 LAYOUT_OFFSET_GUARD(BattleUnit_Level, struct BtlUnit, level, 0x00f);
-LAYOUT_OFFSET_GUARD(BattleUnit_Elements, struct BtlUnit, elements, 0x048);
+LAYOUT_OFFSET_GUARD(BattleUnit_Elements, struct BtlUnit, elm, 0x048);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_ReadyPose,
     struct BtlUnit,

@@ -23,9 +23,9 @@ LAYOUT_SIZE_GUARD(BattleEventState_Size, struct BattleEventState, 0x170);
 LAYOUT_OFFSET_GUARD(BattleEventState_PendingCue, struct BattleEventState, pending_cue, 0x168);
 
 struct BtlWork {
-    s32 enemy_group;
+    s32 enm_grp;
     u8 unknown_004[0x3d];
-    u8 party_status_mode;
+    u8 pty_st;
     u8 unknown_042;
     u8 chal_flg;
     u8 two_sided;
@@ -37,7 +37,7 @@ struct BtlWork {
     u8 link_paused;
     u8 unknown_053[5];
     s16 party_units[7];
-    s16 enemy_units[7];
+    s16 enm_no[7];
     u8 placement[16];
     struct BtlObj slots[14];
     struct BattleActionRecord actions[20];
@@ -58,13 +58,13 @@ struct BtlWork {
 LAYOUT_OFFSET_GUARD(
     BattleSession_PartyStatusMode,
     struct BtlWork,
-    party_status_mode,
+    pty_st,
     0x041);
 LAYOUT_OFFSET_GUARD(BattleSession_ChalFlg, struct BtlWork, chal_flg, 0x043);
 LAYOUT_OFFSET_GUARD(BattleSession_TwoSided, struct BtlWork, two_sided, 0x044);
 LAYOUT_OFFSET_GUARD(BattleSession_EncounterMode, struct BtlWork, encounter_mode, 0x045);
 LAYOUT_OFFSET_GUARD(BattleSession_PartyUnits, struct BtlWork, party_units, 0x058);
-LAYOUT_OFFSET_GUARD(BattleSession_EnemyUnits, struct BtlWork, enemy_units, 0x066);
+LAYOUT_OFFSET_GUARD(BattleSession_EnemyUnits, struct BtlWork, enm_no, 0x066);
 LAYOUT_OFFSET_GUARD(BattleSession_Placement, struct BtlWork, placement, 0x074);
 LAYOUT_OFFSET_GUARD(BattleSession_Slots, struct BtlWork, slots, 0x084);
 LAYOUT_OFFSET_GUARD(BattleSession_Actions, struct BtlWork, actions, 0x2ec);

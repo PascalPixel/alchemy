@@ -50,7 +50,7 @@ struct BattleEventState {
 };
 
 struct BtlWork {
-    s32 enemy_group;
+    s32 enm_grp;
     s16 sprite_slots[6];
     u16 enemy_classes[6];
     u32 summon_masks[6];
@@ -59,7 +59,7 @@ struct BtlWork {
     u16 first_defeated;
     u16 defeat_state;
     u8 summon_count;
-    u8 party_status_mode;
+    u8 pty_st;
     u8 battle_type;
     u8 chal_flg;
     u8 two_sided;
@@ -73,7 +73,7 @@ struct BtlWork {
     u8 unknown_053;
     s32 prompt_slot;
     s16 party_units[7];
-    s16 enemy_units[7];
+    s16 enm_no[7];
     struct BtlObj slots[14];
     u8 placement[14];
     u8 unknown_2ea[2];
@@ -97,7 +97,7 @@ LAYOUT_SIZE_GUARD(BattleSession_Size, struct BtlWork, 0x82c);
 LAYOUT_OFFSET_GUARD(
     BattleSession_PartyStatusMode,
     struct BtlWork,
-    party_status_mode,
+    pty_st,
     0x041);
 LAYOUT_OFFSET_GUARD(BattleSession_ChalFlg, struct BtlWork, chal_flg, 0x043);
 LAYOUT_OFFSET_GUARD(
@@ -108,7 +108,7 @@ LAYOUT_OFFSET_GUARD(
 LAYOUT_OFFSET_GUARD(
     BattleSession_EnemyUnits,
     struct BtlWork,
-    enemy_units,
+    enm_no,
     0x066);
 LAYOUT_OFFSET_GUARD(BattleSession_Slots, struct BtlWork, slots, 0x074);
 LAYOUT_OFFSET_GUARD(BattleSession_Placement, struct BtlWork, placement, 0x2dc);

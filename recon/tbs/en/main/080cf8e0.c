@@ -1,8 +1,35 @@
-/* Draft: native 670 instructions, draft 670, common 670, differ 0, but
- * NOT adoptable yet: two devices change instruction selection, not only
- * order or registers (S2): the dead repeated hit test (step) and the
+/* Draft: native 670 instructions, draft 670, common 670, differ 0 in all
+ * six editions (en, it at 080cf8e0; ja 080c68e0; de 080d16e0; es, fr
+ * 080d30e0), but NOT adoptable yet: one device still changes instruction
+ * selection, not only order or registers (S2): the
  * __asm__ __volatile__("" ::) CSE flush (burst address). The row
  * temporary and the CopyPalette inline remain FAKEMATCH devices.
+ * Thirteenth pass (2026-10-07): the step's dead repeated test is replaced
+ * by Camelot's own hit-sound habit. After the hit's
+ * ObjectGroup_UpdateMembers, the sibling effects choose the sound by a
+ * frame threshold: TWELVE_MODE.C, UpdateMembers(actors[0], 7, 5, 0, 8)
+ * then if (frame > ...) BattleEventRuntime_BeginPhaseFar(133) else
+ * AudioCommand_PlayFar(133); also TWELVE_MODE.C's mode == 8 choice,
+ * APPROACH.C and MEMBERFX.C. Here the threshold is the hit frame itself,
+ * if (frame >= k * 8 + 17) ... else AudioCommand_PlayFar(133), which the
+ * hit test decides (frame and k * 8 + 17 share a CSE class, so GE folds
+ * true): the else arm leaves no code, and its label inside the hit block
+ * stops CSE1's AROUND path exactly as the twelfth pass's dead test did.
+ * The template reading is reconstruction, not recovered; whether a
+ * template threshold the enclosing test decides counts as source (no
+ * FAKEMATCH tag) is Pascal's call before adoption.
+ * Thirteenth-pass trials (step, each with the burst flush kept): the same
+ * if/else on frame >= k * 8 (the outer test) 0, frame <= k * 8 + 17 0,
+ * frame == k * 8 + 17 0; frame > k * 8 109, frame != k * 8 109,
+ * frame > 16 114 (CSE1 decides only a comparison it recorded or one whose
+ * operands share a class; the undecided else arm leaves a PlayFar call).
+ * Burst, without the flush: the whole burst body as a static __inline__
+ * BurstSet(shot, k * 4, i, mode) 171 (integration adds no block boundary
+ * between the group argument and group * 8). Observation: native reloads
+ * k << 2 from sp+24 in the loop, which a spilled PRE register explains;
+ * the boundary CSE1 needs between group = k * 4 and group * 8 is still
+ * only a loop end (the do { group = k * 4; } while (0) of the ninth pass)
+ * or a label with a use from outside the path.
  * Twelfth pass (2026-10-07): the step flush's mechanism is found and the
  * asm is gone. cse_end_of_basic_block takes the AROUND path over the hit
  * block only when no CODE_LABEL lies between the hit test's jump and the
@@ -534,13 +561,11 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                     struct EffectStep *shot = &gShots[k * 16];
 
                     if (frame == k * 8 + 17) {
-                        /* FAKEMATCH: dead repeated test, not admissible as is (it changes
-                           selection, see header): its label inside the hit block stops
-                           CSE pass 1 from skipping the block, so native's k << 3 and
-                           gShots + k * 448 are recomputed after it (451 -> 0). */
-                        if (frame == k * 8 + 17)
-                            ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
-                        BattleEventRuntime_BeginPhaseFar(133);
+                        ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
+                        if (frame >= k * 8 + 17)
+                            BattleEventRuntime_BeginPhaseFar(133);
+                        else
+                            AudioCommand_PlayFar(133);
                     }
                     if (gShots[k * 16].variant >= 0) {
                         s32 step = (frame - k * 8) / 3;

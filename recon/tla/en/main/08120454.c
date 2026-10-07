@@ -12,7 +12,9 @@
  * the whole function under GAME_TLA, so it keeps r7 as in the listing) to
  * 428, the PP restore reading action->effect directly (the listing loads
  * it again) and adding max_pp / 10 before reading maxu in case 77 to 424
- * (draft 3454, common 3240); ☀️ stays exact. The listing reads maxu before
+ * (draft 3454, common 3240); ☀️ stays exact. BattleEv_Push declared void for
+ * this game (its body here sets no result, and void calls load r0 before r1,
+ * as the listing does at 61 of 68 two-argument calls) to 330 (common 3287). The listing reads maxu before
  * the division call and shares the add after it with 78 and 7%: reading
  * maxu first instead merges both loads (723); direct reads with maxv as
  * before give 435. Tried and worse: a while loop
@@ -30,8 +32,7 @@
  * rate switch's 409 test (the listing derives it from
  * 411 in r3; ours loads it fresh in r2), the summon message tail, the heal's
  * target copy (the listing copies r8 again in each branch; ours keeps one
- * copy in r4), argument order at BattleEv_Push calls (the listing sets r0
- * before r1); then register order. */
+ * copy in r4); then register order. */
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "BATTLE_ACTOR.H"

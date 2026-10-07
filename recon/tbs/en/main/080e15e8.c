@@ -1,6 +1,14 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1640, common 1572, differ 136 (frame 336 and
+   listing 1640, draft 1640, common 1607, differ 66 (frame 336 and
    every frame-loop slot as native, sp+24 included).
+   j and n: the native keeps j in r8 and n in sl in every loop, and
+   counts the smoke burst's four particles with j (r8 there), as the
+   draft now does. Global allocation still takes n first (n: 60 refs
+   over 195 insns, priority 5 * 60 / 195; j: 95 over 534, 6 * 95 /
+   534) and gives it r8, so n is fixed in sl (FAKEMATCH). As a hard
+   register n is no giv of the three-streams loop, so the -256 is
+   applied as its own statement (n -= 256), which keeps it inside the
+   loop as native.
    0x1fe0000 for the camera goes through an inline DivQ16 (FAKEMATCH,
    as RESOLVE.C's matched call): a direct RatioMulQ14 call lets CSE
    share one 0x1fe0000 pseudo across the call, which local-alloc puts
@@ -16,11 +24,11 @@
    lsls, movs 32, subs; draft movs 16, subs, lsls). Writing 32 - w * 2
    with the native's hoisting needs the frame loop's pass-2 insn count
    above 456 or the 32's life below 19.
-   Remaining (136): that preheader; r8 and sl swapped in the ring,
-   three-streams, ring-burst and particle loops (global's choice among
-   call-saved high registers); the reload order of one 112 store; r5
-   and r7 swapped in the particle draw loop; two swapped registers in
-   the formation preheader.
+   Remaining (66): that preheader; the ring store's address (native:
+   offset + work, then + 10000; draft: offset + 10000, then + work);
+   the reload order of one 112 store; r5 and r7 swapped in the
+   particle draw loop; two swapped registers in the formation
+   preheader; two lsls placed one slot apart.
    n = count * 2 - i * 48 - 256 in one expression gives the native's
    sp+24: with frame * 4, GCSE's PRE gives the three-streams preheader's
    frame << 2 the same reaching register as the smoke block's second
@@ -157,7 +165,13 @@
      (FAKEMATCH, as RESOLVE.C): 258, adopted.
    - on 258: second ramp loop width as (16 - w) * 2: 136, adopted;
      first ramp loop width as 32 - (w + i) * 2: 274; &ramp[w] in the
-     second: 258, no change. */
+     second: 258, no change.
+   - on 136: n fixed in sl: 90 (the three-streams -256 then folds
+     into the preheader); j fixed in r8: 1259 (j is no biv as a hard
+     register); j counting the smoke burst, no fixed register: 146;
+     both: 80; with n = count * 2 - i * 48; n -= 256: 66, adopted
+     (n = count * 2 - 256 - i * 48 or -256 + (count * 2 - i * 48):
+     80). */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -247,7 +261,8 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     s32 count;
     s32 i;
     s32 j;
-    s32 n;
+    /* FAKEMATCH: global allocation ranks n (60 refs over 195 insns) above j (95 over 534) and gives n r8; the native has j in r8 and n in sl. */
+    register s32 n asm("sl");
     struct EffectStep *p;
     DrawRectangle *cache;
     s32 rings = 0x2710;
@@ -395,7 +410,8 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 pts[i].y = (pts[i].y >> 16) + 60;
             }
             for (i = 0; i != 3; i++) {
-                n = count * 2 - i * 48 - 256;
+                n = count * 2 - i * 48;
+                n -= 256;
                 if (n > 48) {
                     n = 48;
                 }
@@ -626,7 +642,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             BattleEffect_LoadWork(47, 7, 7, 15, 2);
             SLOT(47)(dst, work->sheet + 0x6000, sx, oy, 12, 24);
             Runtime_ReleaseHeapBlock(47);
-            n = 0;
+            j = 0;
             for (i = 0, p = PARTICLES; i != 910; i++, p++) {
                 if (p->variant == 0) {
                     s32 speed = 63;
@@ -639,7 +655,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                     p->velocity_x = (Trig_Sin(angle) * speed) >> 7;
                     p->velocity_y = -((Trig_Cos(angle) * speed) << 1) >> 7;
                     p->variant = (Random16() & 7) + 16;
-                    if (++n == 4) {
+                    if (++j == 4) {
                         break;
                     }
                 }

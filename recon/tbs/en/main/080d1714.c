@@ -28,6 +28,16 @@
  *   distance loop by index: 1324; spark spawn loop by index: 1320.
  * - first-phase particle loop by index: 1581; spark update loop by
  *   index: 1370 (both kept as pointers).
+ * - (a parallel session, on its 1191 base) the inner spark loop reading
+ *   the mark position as runtime->particles[index + 60]: 1191, frame
+ *   356; the 64-step init loop by pointer with its own counter: 1249,
+ *   point = &runtime->particles[index] each iteration: 1184; register
+ *   on mark, step and alive: 1184; permuter 4 minutes with
+ *   PERM_RANDOMIZE over the frame loop's actor loop: none below 1184;
+ *   mark x and velocity_x stored before y: 1182. Its greg dump: index
+ *   (158 refs) is allocated after about 60 shorter allocnos and loop.c
+ *   hoists runtime + 0x7828 out of the actor loop (savings 3) into r9,
+ *   the register the native gives index.
  * - 64-particle setup loop through point = &particles[index] each
  *   iteration: the native's runtime + 0x7080 base, 1313 (a walking
  *   pointer hoists 120 and 63 out of the loop: 1376).

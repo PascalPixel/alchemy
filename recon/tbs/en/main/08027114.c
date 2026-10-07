@@ -1,5 +1,6 @@
 /* 08027114: differ 150 against the 1727-line parent listing (draft 1773,
- * common 1675), 46 of them the two nested helpers' lines (see below).
+ * common 1675), 46 of them the two nested helpers' lines (see below):
+ * 104 real, all instruction order, register choice or pool placement.
  * Frame 100 as native.
  * The draft emits its two nested helpers first, 080270ac/080270d8, adopted on
  * their own as Battle_DrawPartyPanelsWithEmptyList and
@@ -46,11 +47,50 @@
  *   and r2 for out, and ent stays inherited in r2 (one load fewer).
  * - The two init loops are plain for loops (loop.c reverses them as native);
  *   state->timer = -1 among the zero stores (sched2 puts the store last).
- * Remaining: register choices in the opening frame-slot order (&hdr below
- * the i givs), the djinn and summon cases, and the cost loop entry.
+ * - Japanese branches (EDITION_INTERNATIONAL): the first actor sprite starts
+ *   at x 4 (else 0), the djinn window is 14 wide (else 17) and its icons
+ *   start at column 10 (else 13). Scaffold differ per edition: ja 110,
+ *   en 104 (150 with the helpers), de 106, es 106, fr 108, it 106.
+ * Remaining (2026-10-07, all instruction order, register or pool placement;
+ * the instruction stream is otherwise the native's):
+ * - Frame-slot order: native &hdr 20 below the i*16/i*4/i*2 givs 24/28/32,
+ *   draft &hdr 32 above them. GCSE's PRE makes its reaching registers in
+ *   hash-bucket order; buckets are (rtx hash mod table size), table size =
+ *   (real insns at GCSE)/2 | 1. Here 765: &state (sfp-8) 148, &hdr (sfp-4)
+ *   152, i<<1/i<<2/i<<4 196/197/199 (i is pseudo 52), so &hdr comes first.
+ *   Measured: twenty dead stores at the top (table 775) give the native
+ *   frame exactly and differ 102. So the native function had about 20 more
+ *   (or about 60 fewer) real insns at GCSE than this draft, removed before
+ *   allocation. Not found: Audio_PlayCue as an inline wrapper, declaration
+ *   initializers and moving DrawLocalizedResource (top, loop bodies, case
+ *   blocks) all leave the table at 765.
+ * - Literal-pool barriers in the psynergy, djinn and item cases sit one or
+ *   two insns earlier in native. arm_reorg's arithmetic fits all three
+ *   exactly if the cursor x constant stored after UiWindow_Create (40, 56,
+ *   48) is a zero_extendhisi2 pool load (pool_range 60) in native, a movhi
+ *   one (pool_range 64) here; the other cursor constants match as movhi.
+ *   No source form tried (casts, u16/s32/u8 temporaries, inline setters)
+ *   makes that zero_extend.
+ * - sched2 order: the opening handshake's miss = 0 (native before the 'T'
+ *   store), psynergy/item mode = 0 (native before the countdown load), the
+ *   djinn case's ok = 1 - (j != 4) (native before the slot attr23 store),
+ *   the mode-7 block's arguments (native loads *block before the r0 copy),
+ *   in[i]'s two loads.
+ * - Reload: the opening handshake's third count = -1 takes r3 (native r1).
+ * Worse or neutral this session: while (cur) scan loops (actor+88 hoisted);
+ * actor->inventory[0] (actor+216 hoisted; [k]: 1124 -> 809); the do-while
+ * countdown init loops; timer = -1 last; slot or win function-wide in
+ * psynergy/item (slot block-local: 766 -> 424); pick before list in
+ * psynergy; item pick store first; mode as the classify result; param for
+ * the summon element; y as
+ * (u8)((win->y << 3) + 4) or (win->y << 3) + 4 (ldrb); x as
+ * (win->x * 8 + 8) & 0x1ff (extra and); n = 0 after ok or at the menu label;
+ * DrawLocalizedResource at the function top (442), in a loop body (316) or
+ * the summon/item case (162); permute cannot parse nested functions (with
+ * PERM_IGNORE around them it found no rewrite in 9 minutes).
  *
- * Earlier sessions (figures against the pre-restructure draft): differ 1366 against the 1727-line parent listing (draft 1823,
- * common 1092; was 2131).
+ * Earlier sessions (figures against the pre-restructure draft): differ 1366
+ * against the 1727-line parent listing (draft 1823, common 1092; was 2131).
  * The draft also emits the two preceding nested helpers, 080270ac/080270d8,
  * now adopted on their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent; the score counts them as extra lines.
@@ -139,6 +179,7 @@
 #include "RESOURCE.H"
 #include "MEM.H"
 #include "TYPES.H"
+#include "EDITION.H"
 #include "IO_REG.H"
 #include "BTLWORK.H"
 #include "BATTLE_UNIT.H"
@@ -400,7 +441,11 @@ handshake_done:
             slot->oam.word.attr01 = 0x80000400;
             slot->oam.word.attr23 = 0;
             slot->oam.f.tile = Ui_LoadEntryForKind(actor->class_id, res512);
+#if EDITION_INTERNATIONAL
             slot->oam.f.x = 0;
+#else
+            slot->oam.f.x = 4;
+#endif
             slot->oam.f.y = 0x80;
             slot->oam.f.palette = 14;
             state->entryActive[2] = 1;
@@ -584,7 +629,11 @@ djinn_menu:
                 djinn = SummonDefinition_Get(mode);
                 ability = Ability_GetData(djinn->name_message_id);
                 handle = Resource_LoadIntoFreeSlot(128);
+#if EDITION_INTERNATIONAL
                 win = UiWindow_Create(10, 17, 17, 3, 6);
+#else
+                win = UiWindow_Create(10, 17, 14, 3, 6);
+#endif
                 n = 0;
                 for (j = 0; j <= 3; j++) {
                     if (djinn->djinn_required[j] > state->cost[i][j]) {
@@ -606,8 +655,13 @@ djinn_menu:
                                              win, 16, 0);
                 for (j = 0; j <= 3; j++) {
                     if (djinn->djinn_required[j] != 0) {
+#if EDITION_INTERNATIONAL
                         UiWindow_SetTilemapEntry(win, j + 20481, n * 2 + 13, 0, 0);
                         UiWindow_PutGlyph(win, djinn->djinn_required[j] + 48, n * 2 + 14, 0, 0);
+#else
+                        UiWindow_SetTilemapEntry(win, j + 20481, n * 2 + 10, 0, 0);
+                        UiWindow_PutGlyph(win, djinn->djinn_required[j] + 48, n * 2 + 11, 0, 0);
+#endif
                         n++;
                     }
                 }

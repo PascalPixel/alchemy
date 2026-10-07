@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 953 of 2455 (listing 2455, draft 2438, common 1970).
+/* 080ea0d8: differ 870 of 2455 (listing 2455, draft 2437, common 2011).
  * Remaining: register allocation, scheduling, constant hoisting, repeated
  * loads and pool placement. The first particle and dust blocks now use
  * native's pointer, counter and size registers; their spill offsets and
@@ -182,7 +182,31 @@
  * gives 953. Removing the now-redundant slope binding preserves 953;
  * removing radius gives 1421, first half 964, second half 1371. Kept just
  * radius and the two half bindings, with the ordinary shared setup count.
- * An operand after the first half assignment gives 982, not kept. */
+ * An operand after the first half assignment gives 982, not kept.
+ * Callback/cell continuation: the shared Ram_WorkSlot declaration for the
+ * eight temporary callbacks gives 945. A burst offset operand after
+ * LoadWork gives 966, binding it to r6 gives 927; removing the operand,
+ * the binding and then the standard register hint each preserves 927.
+ * Kept the plain offset and pointer addition after LoadWork. Applying
+ * that source form to the first ring gives 907; reading its callback
+ * before forming the pointer gives 901. Drawing with high/high*2 gives
+ * 890, literal width/high*2 gives 897, high/literal height gives 929.
+ * Separate x/y coordinate updates preserve 897. Kept high/high*2.
+ * Sharing the arc count with setup gives 874. Removing the redundant
+ * member-count guard gives 870. A local immediate-use draw2 copy is
+ * unchanged; binding it to r4 removes its reload but gives 887, rejected.
+ * A loop-local flag mask gives 1008. The signed-byte priority update
+ * matches its native subloop but gives 917 overall; a named priority
+ * bitfield gives the same result. Reading draw through slots with it
+ * gives 894; with the unsigned byte update, 879. Neither supersedes the
+ * semantically correct 870 form, which keeps the unsigned byte update
+ * and direct callback load. The native subloop alternatives remain leads.
+ * Queue macro trials, from 917, kept only as this record: a literal IME
+ * disable value gives 937 (pool load), a widened pointer temporary 921
+ * (two shifts), a widened numeric 0x208 gives 913 (native 130 << 2).
+ * Independent address expressions give 931 and an empty-asm CSE boundary
+ * does not change it. These keep address/value copies across successive
+ * pushes unlike native; the shared macro is unchanged. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "MEM.H"
@@ -223,7 +247,6 @@ void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 
 extern void *gBattleFxWork[];
-extern void *gTransitionWork[];
 extern volatile u32 gKeysRepeat;
 
 typedef struct Scale {
@@ -282,7 +305,6 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 i14;
     s32 i15;
     s32 i16;
-    s32 i20;
     s32 i21;
     s32 i22;
     s32 j;
@@ -484,24 +506,26 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
         if (frame >= 116 && frame < 144) {
             u8 *cell;
+            s32 offset;
             s32 n = (frame - 116) / 4;
             if (n > 6) {
                 n = 6;
             }
             high = BattleFx9_BurstHeights[n];
-            cell = work->sheet + BattleFx9_BurstCells[n] + 0x600;
+            offset = BattleFx9_BurstCells[n] + 0x600;
 
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, cell, 60 - high, 80 - high * 2, high, high * 2);
+            cell = work->sheet + offset;
+            (((DrawRectangle *)Ram_WorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, cell, 60 - high, 80 - high * 2, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, cell, 60, 80 - high * 2, high, high * 2);
+            (((DrawRectangle *)Ram_WorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, cell, 60, 80 - high * 2, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 11, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, cell, 60 - high, 80, high, high * 2);
+            (((DrawRectangle *)Ram_WorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, cell, 60 - high, 80, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 15, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, cell, 60, 80, high, high * 2);
+            (((DrawRectangle *)Ram_WorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, cell, 60, 80, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
 
             for (i4 = 0; i4 != 6; i4++) {
@@ -530,16 +554,18 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             r = frame * 10 - 1424;
             work->transfer_value = 75;
             if (n <= 6) {
-                u8 *cell = &((struct BattleFx9Work *)work)->ramp[n][ParticleStreams_CellOffsets[7]];
+                u8 *cell;
+                s32 offset = n * 770 + ParticleStreams_CellOffsets[7] + 0x2710;
                 high = 8;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
+                cell = work->sheet + offset;
                 for (i4 = 0; i4 != 128; i4++) {
                     s32 x, y;
                     s32 angle = i4 << 9;
                     x = ((r * Trig_Sin(angle)) >> 16) - high / 2;
                     y = (r * Trig_Cos(angle)) >> 17;
-                    blit(canvas, cell, x + 60, y + 72, 8, 16);
+                    blit(canvas, cell, x + 60, y + 72, high, high * 2);
                 }
                 Runtime_ReleaseHeapBlock(47);
             }
@@ -746,16 +772,16 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 sheet = work->sheet + 0x4240;
             }
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, sheet, 36, top - 24 + 24, 24, 24);
+            (((DrawRectangle *)Ram_WorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 36, top - 24 + 24, 24, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, sheet, 59, top, 24, 24);
+            (((DrawRectangle *)Ram_WorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 59, top, 24, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 11, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, sheet, 36, top + 23, 24, 24);
+            (((DrawRectangle *)Ram_WorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 36, top + 23, 24, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 15, 2);
-            ((DrawRectangle)gTransitionWork[3])(canvas, sheet, 59, top + 23, 24, 24);
+            (((DrawRectangle *)Ram_WorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, sheet, 59, top + 23, 24, 24);
             Runtime_ReleaseHeapBlock(47);
         }
 
@@ -903,11 +929,11 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
 
         if (frame >= 86 && frame < 150) {
             s32 angle = -0x4000;
-            for (i20 = 0; i20 != 9; i20++, angle += 0x1000) {
+            for (i = 0; i != 9; i++, angle += 0x1000) {
                 s32 x, y;
                 x = ((frame - 86) * Trig_Sin(angle)) >> 16;
                 y = ((frame - 70) * Trig_Cos(angle)) >> 16;
-                draw(canvas, work->sheet + ((frame / 2 + i20) % 4) * 1728 + 0x4000, x + 44, y + 17, 32, 54);
+                draw(canvas, work->sheet + ((frame / 2 + i) % 4) * 1728 + 0x4000, x + 44, y + 17, 32, 54);
             }
         }
 
@@ -922,10 +948,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame > 319) {
-            if (work->effect->count != 0) {
-                for (i21 = 0; i21 != work->effect->count; i21++) {
-                    ObjectGroup_UpdateMembers(work->effect->actors[i21], 14, 5, -1, 0);
-                }
+            for (i21 = 0; i21 != work->effect->count; i21++) {
+                ObjectGroup_UpdateMembers(work->effect->actors[i21], 14, 5, -1, 0);
             }
         }
 

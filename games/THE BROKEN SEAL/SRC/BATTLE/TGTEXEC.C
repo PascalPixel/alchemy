@@ -605,40 +605,40 @@ pow_end:
 
         case 2:
             if (hit != 0) {
-            if (action->power == 0)
-                break;
-            cur = target->hp;
-            ELM_BONUS();
-            ap = action->power;
-            dmg = BtlPowCalc(ap, bonus, 256);
-            dmg *= adj;
-            dmg = dmg * HpDmgFalloff[dist] / 100;
-            GUARD_CUT();
-            BtlEvPush(BEV_OBJ_BGN, tid);
-            BtlEvPush(BEV_NUM, dmg);
-            BtlEvPush(BEV_UNIT, tid);
-            {
-                s32 mes;
-
-                if (MIKATA_CHK(tid))
-                    mes = (s32)MsgDmgP;
-                else
-                    mes = (s32)MsgDmgE;
-                BtlEvPush(BEV_MES, mes);
-                cur -= dmg;
-            }
-
-            if (cur <= 0) {
-                BtlEvPush(BEV_OBJ_RES, tid);
+                if (action->power == 0)
+                    break;
+                cur = target->hp;
+                ELM_BONUS();
+                ap = action->power;
+                dmg = BtlPowCalc(ap, bonus, 256);
+                dmg *= adj;
+                dmg = dmg * HpDmgFalloff[dist] / 100;
+                GUARD_CUT();
+                BtlEvPush(BEV_OBJ_BGN, tid);
+                BtlEvPush(BEV_NUM, dmg);
                 BtlEvPush(BEV_UNIT, tid);
-                cur = 0;
-                MES_SIDE(MsgGoesDown, MsgFelled);
-            } else
-                BtlEvPush(BEV_OBJ_END, tid);
-            dealt = target->hp - cur;
-            target->hp = cur;
-            Owner_RecalculateRatiosFar(tid);
-            break;
+                {
+                    s32 mes;
+
+                    if (MIKATA_CHK(tid))
+                        mes = (s32)MsgDmgP;
+                    else
+                        mes = (s32)MsgDmgE;
+                    BtlEvPush(BEV_MES, mes);
+                    cur -= dmg;
+                }
+
+                if (cur <= 0) {
+                    BtlEvPush(BEV_OBJ_RES, tid);
+                    BtlEvPush(BEV_UNIT, tid);
+                    cur = 0;
+                    MES_SIDE(MsgGoesDown, MsgFelled);
+                } else
+                    BtlEvPush(BEV_OBJ_END, tid);
+                dealt = target->hp - cur;
+                target->hp = cur;
+                Owner_RecalculateRatiosFar(tid);
+                break;
             }
             BtlEvPush(BEV_OBJ_END, tid);
             BtlEvPush(BEV_UNIT, tid);
@@ -1119,13 +1119,11 @@ pow_end:
             break;
 
         case 53:        /* みうごき */
-
             MES_PUSH(MsgImmobile);
             target->cannot_move = 1;
             break;
 
         case 46:        /* まもりのオーラ */
-
             MES_PUSH(MsgAura);
             if (target->guard_level > 0)
                 break;
@@ -1133,7 +1131,6 @@ pow_end:
             break;
 
         case 47:        /* まもりのオーラ */
-
             MES_PUSH(MsgAura2);
             if (target->guard_level > 1)
                 break;

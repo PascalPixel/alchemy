@@ -1,8 +1,8 @@
-/* 080ea0d8: differ 870 of 2455 (listing 2455, draft 2437, common 2011).
+/* 080ea0d8: differ 659 of 2455 (listing 2455, draft 2432, common 2114).
  * Remaining: register allocation, scheduling, constant hoisting, repeated
  * loads and pool placement. The first particle and dust blocks now use
- * native's pointer, counter and size registers; their spill offsets and
- * several scheduling decisions still differ.
+ * native's pointer, counter, size registers and spill offsets; several
+ * scheduling decisions still differ.
  * Ramp: the eight clamped copies are a two-dimensional u8 [8][770] array at
  * work + 0x2710, indexed [i][j]: the constant then folds into the address
  * after the variable part, loop.c creates it in the inner loop's preheader
@@ -18,8 +18,9 @@
  * sp+116 after pair). The frame is now the native's 184 bytes, and draw2
  * occupies the native's sp+92 slot and reloads before each call. The local
  * arrays consequently sit at their native offsets. In
- * the petal blocks the native keeps draw in sl and spills the petal cell
- * (sp+28), and builds d as frame * 2 then subtracts 164.
+ * the second petal block draw now stays in sl and the cell spills at
+ * sp+28 as native; separating the lower coordinate from the earlier
+ * frame multiple restores that spill and the first phase's native slots.
  * Register allocation and remaining stack slots
  * still differ widely; the BattleFx9 data names remain draft
  * declarations pending labels at their native bytes. BattleEffectWork, camera,
@@ -206,7 +207,29 @@
  * (two shifts), a widened numeric 0x208 gives 913 (native 130 << 2).
  * Independent address expressions give 931 and an empty-asm CSE boundary
  * does not change it. These keep address/value copies across successive
- * pushes unlike native; the shared macro is unchanged. */
+ * pushes unlike native; the shared macro is unchanged.
+ * Petal continuation: a first height local gives 868, including width
+ * expressed as height/2. A plain one-pass callback copy is unchanged;
+ * a nonvolatile callback operand gives 1414 and hoists to the frame
+ * preheader, a volatile operand 882, adding r9 gives 1404. Persistent
+ * cell, half and top locals with the r9 callback give 828; cell fixed to
+ * fp gives 846, also top to r8 gives 841. An r7 clobber gives 845 and
+ * does not prevent width reuse, so none of those additions is kept.
+ * All ordinary first-petal locals give 1296; just the volatile callback
+ * operand 886; only the r9 binding 828. Moving cell initialization before
+ * the coordinate locals gives 817. Four width operands give 830; also
+ * binding top gives 846. Kept the plain coordinates and r9 callback.
+ * Second petal: persistent coordinates, cell and ordinary callback give
+ * 1224 with a 180-byte frame; binding the callback to sl gives 1226,
+ * also quarter to r9 gives 1164. A plain height local is unchanged;
+ * binding height to r8 gives 1154. Binding the frame multiple and lower
+ * coordinate together to fp gives 1211. Splitting their lifetimes gives
+ * 659, with the native 184-byte frame and cell spill. Removing the now
+ * redundant lower-coordinate binding preserves 659, so it is removed.
+ * Independently removing height gives 1151, quarter 1205, second callback
+ * 1191, first callback 1214. Separate left/top updates preserve 659.
+ * Kept only the four measured callback, quarter and height bindings;
+ * all coordinates and pointers otherwise remain ordinary locals. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "MEM.H"
@@ -792,18 +815,20 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             draw(canvas, work->sheet + 0x6110, 48, 40, 24, 41);
         }
         if (frame >= 68 && frame < 76) {
-            s32 x, y;
+            /* FAKEMATCH: native keeps the four-call callback in r9; an ordinary copy coalesces into the root spill (1214 -> 659 after the second petal lifetime correction). */
+            register DrawRectangle put asm("r9");
             s32 d = 76 - frame;
-            x = 49 - d / 2;
-            y = 38 - d;
-            draw(canvas, work->sheet + 0x64e8, x, y, 22, 44);
-            y = d + 38;
-            draw(canvas, work->sheet + 0x64e8, x, y, 22, 44);
-            x = d / 2 + 49;
-            y = 38 - d;
-            draw(canvas, work->sheet + 0x64e8, x, y, 22, 44);
-            y = d + 38;
-            draw(canvas, work->sheet + 0x64e8, x, y, 22, 44);
+            u8 *cell = work->sheet + 0x64e8;
+            s32 half = d / 2;
+            s32 x = 49 - half;
+            s32 top = 38 - d;
+            put = draw;
+            put(canvas, cell, x, top, 22, 44);
+            d += 38;
+            put(canvas, cell, x, d, 22, 44);
+            half += 49;
+            put(canvas, cell, half, top, 22, 44);
+            put(canvas, cell, half, d, 22, 44);
         }
         if (frame >= 78 && frame < 80) {
             draw(canvas, work->sheet + 0x6000, 52, 51, 16, 17);
@@ -812,11 +837,25 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             draw(canvas, work->sheet + 0x6110, 48, 40, 24, 41);
         }
         if (frame >= 82 && frame < 86) {
-            s32 d = frame * 2 - 164;
-            draw(canvas, work->sheet + 0x64e8, 49 - d / 4, 38 - d, 22, 44);
-            draw(canvas, work->sheet + 0x64e8, 49 - d / 4, frame * 2 - 126, 22, 44);
-            draw(canvas, work->sheet + 0x64e8, d / 4 + 49, 38 - d, 22, 44);
-            draw(canvas, work->sheet + 0x64e8, d / 4 + 49, frame * 2 - 126, 22, 44);
+            /* FAKEMATCH: native keeps this four-call callback in r10; an ordinary copy reloads it and changes the cell spill (1191 -> 659). */
+            register DrawRectangle put asm("r10");
+            s32 lower = frame * 2;
+            s32 d = lower - 164;
+            u8 *cell = work->sheet + 0x64e8;
+            /* FAKEMATCH: native retains the quarter separation in r9 across these calls; an ordinary local changes the coordinate allocation and cell spill (1205 -> 659). */
+            register s32 quarter asm("r9") = d / 4;
+            s32 left = 49 - quarter;
+            s32 top = 38 - d;
+            s32 bottom;
+            /* FAKEMATCH: native keeps the four-call height in r8; an ordinary local rematerializes it and removes the cell spill (1151 -> 659). */
+            register s32 height asm("r8") = 44;
+            put = draw;
+            put(canvas, cell, left, top, 22, height);
+            bottom = lower - 126;
+            put(canvas, cell, left, bottom, 22, height);
+            quarter += 49;
+            put(canvas, cell, quarter, top, 22, height);
+            put(canvas, cell, quarter, bottom, 22, height);
         }
 
         if (frame >= 72 && frame < 76) {

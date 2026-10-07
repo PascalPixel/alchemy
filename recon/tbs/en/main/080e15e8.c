@@ -186,7 +186,9 @@
      draw loop on its own pointer q: 34, adopted.
    - on 34: no fixed n (n split or one expression): 508 or 114; the
      ring burst's s = size + 1 first in its loop body (the native
-     schedules s + 1 before the vec address): 32, adopted. */
+     schedules s + 1 before the vec address): 32, adopted.
+   - on 32: the smoke burst's sheet as &work->sheet[i % 3 * 0x1440]:
+     32, no change. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"

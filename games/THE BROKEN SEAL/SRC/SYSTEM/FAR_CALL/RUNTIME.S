@@ -1,6 +1,8 @@
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
+	.global FarCall_RuntimeTable
+FarCall_RuntimeTable:
 	.global WaitFramesFar
 	.thumb_func
 WaitFramesFar:

@@ -299,7 +299,7 @@ msgctxt "message"
 msgid "00072"
 msgstr "Lotta"
 
-msgctxt "message"
+msgctxt "MsgFieldRepelEvil"
 msgid "00073"
 msgstr "Djinn"
 
@@ -15727,7 +15727,7 @@ msgctxt "message"
 msgid "03929"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgFieldSpace"
 msgid "03930"
 msgstr "Spazio"
 
@@ -15739,11 +15739,11 @@ msgctxt "message"
 msgid "03932"
 msgstr "Fine"
 
-msgctxt "message"
+msgctxt "MsgFieldInvalidPassword"
 msgid "03933"
 msgstr "Password non valida."
 
-msgctxt "message"
+msgctxt "MsgFieldPasswordAccepted"
 msgid "03934"
 msgstr "Password accettata."
 
@@ -19783,7 +19783,7 @@ msgctxt "message"
 msgid "04943"
 msgstr "Password"
 
-msgctxt "message"
+msgctxt "MsgFieldPreparingToReceive"
 msgid "04944"
 msgstr "Ricezione del"
 
@@ -19791,7 +19791,7 @@ msgctxt "message"
 msgid "04945"
 msgstr "Gioco completo"
 
-msgctxt "message"
+msgctxt "MsgFieldTransferringData"
 msgid "04946"
 msgstr "Ricezione dati"
 
@@ -19799,7 +19799,7 @@ msgctxt "message"
 msgid "04947"
 msgstr "{button_icon:2}: Esci"
 
-msgctxt "message"
+msgctxt "MsgFieldDataTransferWasInterrupted"
 msgid "04948"
 msgstr "Errore comunicazione"
 

@@ -1695,7 +1695,7 @@ Menu_DrawFlagBitTable:
 	.type Func_0804e0d0, %function
 	.thumb_func
 Func_0804e0d0:
-	.incbin "baserom.gba", 0x0004e2d0, 0x00000108
+	.incbin "baserom.gba", 0x0004e2d0, 0x0000007c
 	.section .rom.0004e3d8, "ax"
 	.global Func_0804e1d8
 	.type Func_0804e1d8, %function

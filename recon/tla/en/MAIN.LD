@@ -860,7 +860,7 @@
         "*/games/THE LOST AGE/SRC/GAME/DJINN/SET_FOUND_FLAG_AND_ADD.o"(.text)
         "*/recon/tla/raw/0804e0ce.o"(.text)
         "*/recon/tla/raw/0804e0d0.o"(.text)
-        "*/recon/tla/raw/0804e14c.o"(.text)
+        "*/games/THE LOST AGE/SRC/MENU/FLAG_BIT_RECT.o"(.text)
         "*/recon/tla/raw/0804e1d8.o"(.text)
         "*/recon/tla/raw/0804e3f4.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.0804e584)

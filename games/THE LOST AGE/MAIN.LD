@@ -630,6 +630,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/GAME/DJINN/SET_FOUND_FLAG_AND_ADD.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0004e2ce)
     "*/recon/tla/ja/rom.o"(.rom.0004e2d0)
+        "*/games/THE LOST AGE/SRC/MENU/FLAG_BIT_RECT.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0004e3d8)
     "*/recon/tla/ja/rom.o"(.rom.0004e5f4)
     "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)

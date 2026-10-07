@@ -1,3 +1,22 @@
+/* 2026-10-07 queue3: differ 1309 (listing 1727, draft 1824, common 1121).
+ * Corrected three source behaviors against the current listing: the command
+ * selected in mode survives Resource_LoadIndexedIntoBuffer (only its r0 result
+ * is the sprite tile; the subsequent compare and switch use r6); the summon
+ * cost display advances its column only for nonzero requirements (the native
+ * add #2 is inside the conditional); every menu retry skips the three initial
+ * COUNTDOWN resets, so the labels follow those stores. A separate tile local
+ * holds resource results. Scoping djinn and ok to case 16 restores the native
+ * 100-byte frame. Remaining: allocation throughout, including &state in fp
+ * where native spills it at sp+36, loop entry tests, scheduling and pools.
+ * No compiler devices retained. The nested helpers are still emitted by the
+ * draft and count as extra rows against the parent-only listing.
+ * Trials: corrected direct command-tile assignment 1398; all resource results
+ * direct 1429; mode fixed r6 1441 (direct results 1401), ok fixed r4 1450;
+ * neither kept. Glyph column correction 1400, retry labels 1386; command tile
+ * through cur 1412; separate tile local for all four results 1415; case-local
+ * djinn and ok 1309, kept. Original command overwrite is semantically wrong
+ * even though its normalized score was lower.
+ */
 /* 08027114: differ 1366 against the 1727-line parent listing (draft 1823,
  * common 1092; was 2131).
  * The draft also emits the two preceding nested helpers, 080270ac/080270d8,
@@ -177,7 +196,6 @@ void BattlePlacement_CountValidEntriesFar(s32 mode, u8 *cost);
 
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 count)
 {
-    const struct SummonDefinition *djinn;
     struct LinkRoundState *state;
     struct BtlWork *link;
     struct BtlWork *session;
@@ -194,6 +212,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     s32 aux;
     s32 actorId;
     s32 mode;
+    s32 tile;
     s32 kind;
     s32 param;
     s32 res1024;
@@ -202,7 +221,6 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     s32 cnt;
     s32 sel;
     s32 cost;
-    s32 ok;
     s32 i;
     s32 k;
     s32 cur;
@@ -367,8 +385,8 @@ handshake_done:
             slot = &COUNTDOWN->entries[2];
             slot->oam.word.attr01 = 0x80000400;
             slot->oam.word.attr23 = 0;
-            mode = Ui_LoadEntryForKind(actor->class_id, res512);
-            slot->oam.f.tile = mode;
+            tile = Ui_LoadEntryForKind(actor->class_id, res512);
+            slot->oam.f.tile = tile;
             slot->oam.f.x = 0;
             slot->oam.f.y = 0x80;
             slot->oam.f.palette = 14;
@@ -413,8 +431,8 @@ mark_visible:
             slot = &COUNTDOWN->entries[0];
             slot->oam.word.attr23 = 0;
             slot->oam.word.attr01 = 0x80002400;
-            mode = Resource_LoadIndexedIntoBuffer(res1024, mode);
-            slot->oam.f.tile = mode;
+            tile = Resource_LoadIndexedIntoBuffer(res1024, mode);
+            slot->oam.f.tile = tile;
             if (mode == 15) {
                 slot->oam.f.x = 128;
             } else {
@@ -444,10 +462,10 @@ mark_visible:
                 s32 handle;
 
                 Audio_PlayCue(112);
-psynergy_menu:
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
+psynergy_menu:
                 state->entries[0].oam.f.x = 48;
                 cnt = 0;
                 k = 0;
@@ -488,8 +506,8 @@ psynergy_menu:
                 slot->oam.word.attr23 = 0;
                 slot->oam.f.x = (win->x << 3) + 8;
                 slot->oam.f.y = (u8)((win->y << 3) + 4);
-                mode = Resource_LoadIndexedEntryToBuffer(param, handle);
-                slot->oam.f.tile = mode;
+                tile = Resource_LoadIndexedEntryToBuffer(param, handle);
+                slot->oam.f.tile = tile;
                 state->entryActive[1] = 1;
                 ui->level = 5;
                 if ((s32)ability->pp_cost > (s32)actor->ep) {
@@ -522,16 +540,19 @@ psynergy_menu:
             }
 
             case 16: {
+                const struct SummonDefinition *djinn;
                 struct UiWindow *win;
                 struct MenuSprite *slot;
                 s32 handle;
                 s32 j;
+                s32 n;
+                s32 ok;
 
                 Audio_PlayCue(112);
-djinn_menu:
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
+djinn_menu:
                 state->entries[0].oam.f.x = 80;
                 BattleLayout_HighlightPartyPanels(hdr);
                 mode = SummonMenu_SelectSummon(0, 0, state->cost[i]);
@@ -565,10 +586,12 @@ djinn_menu:
                 }
                 UiText_DrawCharacterAtOffset(SummonDefinition_Get(mode)->name_message_id + 819,
                                              win, 16, 0);
+                n = 0;
                 for (j = 0; j <= 3; j++) {
                     if (djinn->djinn_required[j] != 0) {
-                        UiWindow_SetTilemapEntry(win, j + 20481, j * 2 + 13, 0, 0);
-                        UiWindow_PutGlyph(win, djinn->djinn_required[j] + 48, j * 2 + 14, 0, 0);
+                        UiWindow_SetTilemapEntry(win, j + 20481, n * 2 + 13, 0, 0);
+                        UiWindow_PutGlyph(win, djinn->djinn_required[j] + 48, n * 2 + 14, 0, 0);
+                        n++;
                     }
                 }
                 if (ok != 0) {
@@ -604,10 +627,10 @@ djinn_menu:
                 s32 index;
 
                 Audio_PlayCue(112);
-summon_menu:
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
+summon_menu:
                 state->entries[0].oam.f.x = 144;
                 COUNTDOWN->result[i] = 0x80000000;
                 mode = Battle_SelectAbility(actorId, 1);
@@ -671,10 +694,10 @@ summon_menu:
                 s32 handle;
 
                 Audio_PlayCue(112);
-item_menu:
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
+item_menu:
                 state->entries[0].oam.f.x = 96;
                 cnt = 0;
                 cur = actor->inventory[0];
@@ -728,8 +751,8 @@ item_menu:
                 slot->oam.word.attr23 = 0;
                 slot->oam.f.x = (win->x << 3) + 8;
                 slot->oam.f.y = (u8)((win->y << 3) + 4);
-                mode = Resource_LoadKind26EntryToBuffer(actor->inventory[sel], handle);
-                slot->oam.f.tile = mode;
+                tile = Resource_LoadKind26EntryToBuffer(actor->inventory[sel], handle);
+                slot->oam.f.tile = tile;
                 state->entryActive[1] = 1;
                 UiText_DrawCharacterAtOffset((actor->inventory[sel] & 0x1ff) + 386,
                                              win, 24, 0);

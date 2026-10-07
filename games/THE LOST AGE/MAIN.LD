@@ -516,7 +516,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0003f748)
     "*/recon/tla/ja/rom.o"(.rom.0003f754)
     "*/recon/tla/ja/rom.o"(.rom.0003f758)
-    "*/recon/tla/ja/rom.o"(.rom.0003f7cc)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/RESOURCE.o"(.text)
     "*/games/THE LOST AGE/SRC/MENU/TOPSEL.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0003f8ac)

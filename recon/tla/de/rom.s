@@ -141,7 +141,10 @@ AffineMatrix_BuildForEffect:
 	.type Func_080140d8, %function
 	.thumb_func
 Func_080140d8:
-	.incbin "baserom.gba", 0x00014104, 0x0000009c
+	.incbin "baserom.gba", 0x00014104, 0x00000050
+	.global Runtime_PushSlotEntry
+Runtime_PushSlotEntry:
+	.incbin "baserom.gba", 0x00014154, 0x0000004c
 	.global ResourceTable_AllocateBlocks
 	.type ResourceTable_AllocateBlocks, %function
 	.thumb_func
@@ -1311,12 +1314,6 @@ Func_0803f620:
 	.thumb_func
 UiTextResource_Initialize:
 	.incbin "baserom.gba", 0x0003f678, 0x00000074
-	.section .rom.0003f6ec, "ax"
-	.global UiTextResource_SetPosition
-	.type UiTextResource_SetPosition, %function
-	.thumb_func
-UiTextResource_SetPosition:
-	.incbin "baserom.gba", 0x0003f6ec, 0x00000028
 	.section .rom.0003f7cc, "ax"
 	.global Menu_RunTopSelection
 	.type Menu_RunTopSelection, %function

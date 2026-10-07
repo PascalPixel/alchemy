@@ -480,7 +480,6 @@
     "*/recon/tla/fr/rom.o"(.rom.0003f658)
     "*/recon/tla/fr/rom.o"(.rom.0003f664)
     "*/recon/tla/fr/rom.o"(.rom.0003f668)
-    "*/recon/tla/fr/rom.o"(.rom.0003f6dc)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TEXT/RESOURCE.o"(.text)
     "*/games/THE LOST AGE/SRC/MENU/TOPSEL.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0003f7bc)

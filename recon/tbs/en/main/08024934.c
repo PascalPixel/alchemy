@@ -1,6 +1,122 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 944, common 868, differ 154; frame 372
+ * Native 946 instructions, draft 946, common 926, differ 40; frame 372
  * as native's, and every compiler temporary's slot now at native's offset.
+ * Session 11: the description reads its summon into a block-local s,
+ * the draw loop's columns are indexed (summon->djinn_required[element])
+ * and y = index * 2 follows the glyph call: 129 -> 88. Native's
+ * description summon is r6 (tied to the mask loop's required) while the
+ * draw loop's summon is spilled at 36, so they are two variables; with
+ * the columns indexed loop.c makes their pointer after GCSE, which no
+ * longer shares summon + 4 with the scan's first test, and the scan's
+ * pointer starts before that test as native's. Each step alone: indexed
+ * columns 661 (summon then takes r8 everywhere, frame 368); block-local
+ * description summon 615 (frame 376); both 191 (row r8 against native's
+ * r10); y after the call as well 88, y then in r8 as native's. Bucket
+ * count 379 throughout. From 88: the tile store indexed
+ * (sprites[index].oam.f.tile = glyph) 121, the setup loop hoists its
+ * constants again (sprite's last use gone). Native's tile store is that
+ * indexed form: with it the draw loop matches native to the instruction
+ * (base reloaded from 28, offset (index * 2 + index) * 4 + 8, index * 2
+ * in r8 shared with y), as one function-wide y for the setup and draw
+ * loops shows (87, but the setup loop's y then takes r8 where native's
+ * is r0, and 0x1ff is hoisted; not kept). Why the setup loop needs
+ * sprite: loop.c's record_giv makes a DEST_REG giv replaceable when the
+ * register's first reference is its set and its last reference
+ * (REGNO_LAST_UID) lies inside the loop; sprite referenced after the
+ * setup loop keeps loop pass 1's copy sprite = giv, and that copy is
+ * the 25th insn of pass 2, unless delete_trivially_dead_insns between
+ * the passes finds sprite with no use left anywhere. So native's sprite
+ * keeps one use that survives GCSE's cprop and loop pass 1, outside
+ * the tile store. Not found yet, from 88 with the tile store indexed:
+ * the cursor drawn through sprite = &cursor at the top of the main loop
+ * 121 (cprop replaces every use); sprite = &cursor just before the cursor
+ * code 119 (setup and draw loops then native, but sprite is a pseudo in
+ * r5 there and the &cursor and row * 2 slots swap, 16 and 24); the setup
+ * loop all indexed without sprite 649 (25 insns in pass 2, but its giv is
+ * &sprites[index].oam from sp, not &sprites[index] from slot 28); the
+ * push loop through sprite = &sprites[index] 121 (replaceable, deleted),
+ * the same set only when visible 121; the push loop walking sprite
+ * (sprite = sprites; ...; sprite++) 114 (setup loop and tile store
+ * native, but loop.c then reverses the push loop's index to 3..0).
+ * Five minutes of permute from 88 found nothing below it. The counts
+ * window's glyph column written element * 2 + 1 (no col counter): 88 ->
+ * 86, 379 buckets (loop.c's giv from 1 by 2 is native's r6); col = 1 in
+ * the for header instead 88. From 86: the mask loop's required set in
+ * its for header 86 (same code). Remaining at 86, in order: mask stored
+ * before counts and the window call's stack argument late; the setup
+ * loop's index * 2 late (native first); count - 1 built before count is
+ * stored (native after); the mask loop's adds r6, #4 before movs r2, #0;
+ * the tile store (indexed in native, see above); cursor_position.y
+ * stored late; the arrows' -1 and width order; nav->row stored before
+ * nav->page; then literal pools and branch distances.
+ * alchemy similar --editions: de, es, fr and it hold this function
+ * relocated (identical code), ja differs by 4 instructions (at 08024990);
+ * alchemy diff --edition still refuses the scaffold for every edition.
+ * Session 12, why: --edition needs that edition built first (its
+ * out/tbs-xx/tbs-xx.map), and then the function is still unlabelled in
+ * each edition's rom.s incbin, so 08024934 resolves to another symbol in
+ * de (BattleMenu_RunActionSelection) and ja's 08024990 to no bounded
+ * Thumb function; alchemy label copies only exact English bytes, which
+ * the relocated copies do not have. 86 -> 40, 379 buckets (259
+ * entries): the tile store indexed (sprites[index].oam.f.tile = glyph)
+ * and the cursor pushed through sprite (sprite = &cursor;
+ * Runtime_PushSlotEntry(sprite, 242)), as the twin pushes its rows
+ * through spr. That push is the surviving use of sprite the setup loop
+ * needed: it keeps loop pass 1's copy alive into pass 2 (25 insns), and
+ * combine folds the single-use copy afterwards, so the push reloads the
+ * reaching register from slot 24 as native's. Draft 946 instructions as
+ * native's; the setup loop, the draw loop and the cursor block match to
+ * the instruction. sprite = cur for the push instead also 40. Other
+ * trials from 86: the whole cursor block through sprite = cur 105 (cse1
+ * makes sprite the first register of the copy's class, its life being
+ * the longer, so the cursor reads through sprite in r5 where native
+ * reloads slot 24 at every access); that with the push through cur 119
+ * (cse1 folds sprite into cur, sprite dies before loop.c and the setup
+ * loop hoists both constants); sprite = &cursor once before the main
+ * loop with only the push through it 118. Remaining at 40, all sched2
+ * order: mask stored before counts, the window call's stack argument
+ * late; the setup loop's index * 2 late; count - 1 built before count is
+ * stored; the mask loop's adds r6, #4 before movs r2, #0;
+ * cursor_position.y stored after the cursor pointer's reload; the
+ * arrows' -1 copy and width order and their pool loads; nav->row stored
+ * before nav->page; the cleanup's add r5, sp, #96.
+ * Session 10: the handle loop is indexed (sprites[index].oam.f.tile, as
+ * native's base r7, offset from 8 and mask r8 show), the cursor is drawn
+ * through its own pointer cur (cur = &cursor at the top of the main
+ * loop, GCSE's reaching register in slot 24 as before) and sprite is set
+ * in the setup loop and again in the draw loop's tile store (sprite =
+ * &sprites[index]; sprite->oam.f.tile = glyph): 154 -> 130; count - 1 is
+ * now built in r3 as native's. Diagnosed in the loop dump: loop.c runs
+ * twice and its second pass moves a constant when 2 * (1 + 11) * savings
+ * * life >= the loop's real insns, so the setup loop must keep 25 insns
+ * (24 hoists 0x1ff into r6 and every register there changes). The setup
+ * loop's sprite = &sprites[index] (insn 162) and its index * 12 giv stay
+ * only while sprite has a use left after GCSE; with the handle loop
+ * indexed and the cursor's uses replaced by GCSE's cprop, cse2 deletes
+ * them as trivially dead (indexed handle loop alone 193; through sprite
+ * = &sprites[index] there as well 199). The cursor through sprite set
+ * once before the main loop keeps them (156) but makes the cursor a
+ * user variable, spilled by pseudo number at 36 above the GCSE
+ * temporaries; native's cursor is the reaching register at 24. Also from
+ * 154 or 130: sprite = &cursor just before the cursor code 189; the setup
+ * loop as a sprite walk 271 (377 buckets); its attribute words through
+ * sprite 207; the push loop as a sprite walk (and the draw loop indexed)
+ * 184. Remaining at 130: scheduling at the start as before; the setup
+ * loop's index * 2 computed late (native first); item (a) below in the
+ * draw loop; the draw loop's tile store, where native has the indexed
+ * form (base reloaded from slot 28 twice, offset (index * 2 + index) * 4
+ * + 8 with index * 2 in r8 after the glyph call) and the draft sprite +
+ * 8 from y's index * 2 in r9 before the call. Native's indexed tile
+ * store needs another live use of sprite to keep the setup loop at 25.
+ * Five minutes of permute from 130: the draw loop's summon fetched
+ * before col = 0, 129 (kept; id then r6 as native's, summon still
+ * in r8 with summon + 4 in slot 36). From 129: y = index * 2 after the
+ * glyph call (native computes it there, in r8, and shares it with the
+ * tile offset) 215; that with the tile store indexed and the push loop
+ * walking sprite (sprite = sprites; ...; sprite++) to keep it live 263.
+ * The column loop's col and y take r8 and r9 swapped against native,
+ * which follows from y living across the glyph call in the draft.
+ * Three more minutes of permute from 129 found nothing below it.
  * Session 9: the two page changes set page before row again (page = 0;
  * row = preferred and page -= 4; row = preferred), as session 4's base
  * had them before a merge reversed them: 172 -> 154. From 172: the
@@ -452,7 +568,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     struct MenuPoint cursor_position;
     const struct SummonDefinition *summon;
     struct MenuCell *nav;
-    struct MenuSprite *sprite;
+    struct MenuSprite *sprite, *cur;
     const u8 *required, *supply;
     s32 used, element;
     s32 id, tile, affordable;
@@ -490,12 +606,10 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         sprite->oam.f.x = window->x * 8 + 8;
         sprite->oam.f.y = (y + window->y) * 8 + 4;
     }
-    sprite = sprites;
     for (index = 0; index < 4; index++) {
         s32 slot = Resource_LoadIntoFreeSlot(128);
         handles[index] = slot;
-        sprite->oam.f.tile = Resource_GetBuffer(slot, -1);
-        sprite++;
+        sprites[index].oam.f.tile = Resource_GetBuffer(slot, -1);
     }
     count = Trade_ListFlaggedEntriesFar(available);
     used = 0;
@@ -535,21 +649,22 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     do {
     for (;;)
     {
-        sprite = &cursor;
+        cur = &cursor;
         if (page != drawn_page || row != drawn_row) {
             render->menu_busy = 1;
             Ui_SetRectHighlight(window->x + 1, window->y + drawn_row * 2 + 1,
                 window->width - 2, 1, 15);
             Ui_FillVramBlockPattern();
-            summon = SummonDefinition_Get(ordered[page + row]);
-            UiText_CopyMessageString(summon->name_message_id + (s32)&MsgAbilityDescription, text, 52);
-            UiText_RenderWideStringAtOffset(text, (struct UiWindow *)description, 0, 4);
-            drawn_row = row;
-            mask = 0;
             {
+                const struct SummonDefinition *s;
                 s32 element;
 
-                required = summon->djinn_required;
+                s = SummonDefinition_Get(ordered[page + row]);
+                UiText_CopyMessageString(s->name_message_id + (s32)&MsgAbilityDescription, text, 52);
+                UiText_RenderWideStringAtOffset(text, (struct UiWindow *)description, 0, 4);
+                drawn_row = row;
+                mask = 0;
+                required = s->djinn_required;
                 for (element = 0; element <= 3; element++) {
                     if (*required++ != 0)
                         mask |= 1 << element;
@@ -558,13 +673,11 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             if (page != drawn_page) {
                 RenderOutput_RedrawSavedRect(window);
                 {
-                    s32 element, col;
+                    s32 element;
 
-                    col = 1;
                     for (element = 0; element <= 3; element++) {
                         UiWindow_SetTilemapEntry(counts, element + SUMMON_ELEMENT_TILE, element * 2, 0, 0);
-                        UiWindow_PutGlyph(counts, standby[element] + 48, col, 0, 0);
-                        col += 2;
+                        UiWindow_PutGlyph(counts, standby[element] + 48, element * 2 + 1, 0, 0);
                     }
                 }
                 {
@@ -573,28 +686,26 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                     index = 0;
                     if ((id = ordered[page + index]) != 32) {
                     next:
-                        col = 0;
                         summon = SummonDefinition_Get(id);
+                        col = 0;
                         for (element = 0; element <= 3; element++) {
                             if (summon->djinn_required[element] > standby[element])
                                 break;
                         }
                         affordable = element == 4;
-                        y = index * 2;
                         Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);
+                        y = index * 2;
                         sprites[index].oam.f.tile = glyph;
                         if (!affordable)
                             UiWork_SetParamNibble(2);
                         UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->name_message_id + (s32)&MsgAbilityName,
                             (struct RenderInput *)window, 16, index * 16);
-                        required = summon->djinn_required;
                         for (element = 0; element <= 3; element++) {
-                            if (*required != 0) {
+                            if (summon->djinn_required[element] != 0) {
                                 UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE, col * 2 + 13, y, 0);
-                                UiWindow_PutGlyph(window, *required + 48, col * 2 + 14, y, 0);
+                                UiWindow_PutGlyph(window, summon->djinn_required[element] + 48, col * 2 + 14, y, 0);
                                 col++;
                             }
-                            required++;
                         }
                         UiWork_SetParamNibble(15);
                         visible[index++] = 1;
@@ -625,11 +736,12 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
         }
         cursor_position.x = window->x * 8 - 2;
         cursor_position.y = (row * 2 + window->y) * 8 + 20;
-        sprite->oam.word.attr01 = 0x40000000;
-        sprite->oam.word.attr23 = 0;
-        sprite->oam.f.tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
-        sprite->oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
-        sprite->oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;
+        cur->oam.word.attr01 = 0x40000000;
+        cur->oam.word.attr23 = 0;
+        cur->oam.f.tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
+        cur->oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
+        cur->oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;
+        sprite = &cursor;
         Runtime_PushSlotEntry((s32 *)sprite, 242);
         {
             s32 element, tile, blink;

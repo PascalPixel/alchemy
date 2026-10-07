@@ -1,5 +1,5 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1640, common 1629, differ 22 (frame 336 and
+   listing 1640, draft 1640, common 1633, differ 14 (frame 336 and
    every frame-loop slot as native, sp+24 included).
    The particle draw loop walks its own pointer q: the native's draw
    loop pointer is r5 while the bursts' p is r7, so they are two
@@ -27,13 +27,20 @@
    lsls, movs 32, subs; draft movs 16, subs, lsls). Writing 32 - w * 2
    with the native's hoisting needs the frame loop's pass-2 insn count
    above 456 or the 32's life below 19.
-   Remaining (22): that preheader; the ring store's address (native:
+   Remaining (14): that preheader; the ring store's address (native:
    offset + work, then + 10000; draft: offset + 10000, then + work;
    a literal 10000 gives the native's order but loop.c hoists it out
-   of the ring loop into r6); the reload registers of the 112 store
-   in the burst's first blit; in the smoke
-   burst's blit, lsls of i % 3 * 0x1440 scheduled before rx - 3 and
-   ry + 32 (native after them).
+   of the ring loop into r6).
+   The burst's first pillar blit is cy high: the native's 112 there is
+   a reload (r0) of cy's pseudo, which has no register and a REG_EQUIV
+   of 112, as at p->y = cy << 16; a literal 112 is a pseudo of its own
+   that local-alloc puts in r3. The pillar's foot is the burst's
+   centre (36 + 48 / 2 = cx, height cy). The second blit keeps 112.
+   The smoke blit's rx and ry carry their offsets from the start:
+   with rx - 3 and ry + 32 in the call, both insns follow the 0x1440
+   product in insn order and sched2 takes the product's last lsls
+   first on the LUID tie; set before the LoadWork call, they move down
+   past it (r5 and r6 are call-saved) and are scheduled first.
    n = count * 2 - i * 48 - 256 in one expression gives the native's
    sp+24: with frame * 4, GCSE's PRE gives the three-streams preheader's
    frame << 2 the same reaching register as the smoke block's second
@@ -189,7 +196,10 @@
    - on 32: the smoke burst's sheet as &work->sheet[i % 3 * 0x1440]:
      32, no change; the formation's base set in the loop's
      initializer after i = 0 (for (i = 0, base = cam_x >> 17; ...)):
-     22, adopted. */
+     22, adopted.
+   - on 22: the burst's first blit as 48 wide and cy high: 16, adopted
+     (both blits cy: 180); the smoke blit's rx = (Random16() & 3) - 3
+     and ry = (Random16() & 3) + 32: 14, adopted. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -558,7 +568,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             s32 start = j * 128 + 8;
             if (frame >= start && frame < j * 128 + 17) {
                 if (frame >= j * 128 + 9 && frame < j * 128 + 12) {
-                    blit[0](dst, work->sheet, 36, 0, 48, 112);
+                    blit[0](dst, work->sheet, 36, 0, 48, cy);
                 }
                 if (frame >= j * 128 + 12 && frame < start + 8) {
                     blit[0](dst, work->sheet + 0x1500, 36, 0, 48, 112);
@@ -604,10 +614,10 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             for (i = 0; i != 30; i++) {
                 if (frame >= i * 2 + 80) {
                     if (frame < i * 2 + 82) {
-                        s32 rx = Random16() & 3;
-                        s32 ry = Random16() & 3;
+                        s32 rx = (Random16() & 3) - 3;
+                        s32 ry = (Random16() & 3) + 32;
                         BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                        SLOT(47)(dst, work->sheet + i % 3 * 0x1440, rx - 3, ry + 32, 72, 72);
+                        SLOT(47)(dst, work->sheet + i % 3 * 0x1440, rx, ry, 72, 72);
                         Runtime_ReleaseHeapBlock(47);
                     }
                     if (frame == i * 2 + 80) {

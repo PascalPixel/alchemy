@@ -1,5 +1,5 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1391, common 1347, differ 89.
+ * Native 1392 instructions, draft 1391, common 1348, differ 87.
  * Frame 352 bytes, as native. The setup loops, the cursor update, the
  * face and cursor sprites (0x3FF in r8, the zero in r7, as native),
  * the stat pushes, the djinn rows and the condition list match.
@@ -8,10 +8,9 @@
  * (movs/ldrsb where native has ldrb, lsl, asr); the help block's
  * saved/pointer pair (r5/r6 swapped) and code = 0 set before
  * Runtime_BumpAllocate where native sets it after; the up-key n--
- * scheduled before the 0x6F argument; the condition write pointer's
- * add operands swapped; one literal pool placed two instructions
- * later (and the branch offsets it moves); 112 scheduled later in the
- * icon loop setup.
+ * scheduled before the 0x6F argument; one literal pool placed two
+ * instructions later (and the branch offsets it moves); 112 scheduled
+ * later in the icon loop setup.
  *
  * Modifier tests 2026-10-07 (session 2): native reads each modifier
  * as u8 m (ldrb r1), tests (s8)m > 0 through a second sign-extending
@@ -63,7 +62,13 @@
  * first 107; *out++ in the call 105, saved without the cast or the
  * copies sized by the struct 105 (no change); x = 112 first 105.
  * After 89: the write pointer as o = sel; o += i, or &i[sel], 89 (no
- * change: the add keeps sel first where native has i first).
+ * change: the add keeps sel first where native has i first). Session 4:
+ * the pointer as (s8 *)(i + (s32)sel), FAKEMATCH-tagged, 89 -> 87 (the
+ * add takes i first, as native). The modifier tests: native looks like
+ * the field read in both tests, CSE1 kept apart (its skip-blocks
+ * invalidate_skipped_set drops all memory at the store through o) and
+ * GCSE joining the loads by alias analysis (o is frame-based), then
+ * combine duplicating the load for the first test; untried in this form.
  *
  * Register diagnosis 2026-10-07 (session 2, lreg/greg dumps): with
  * -fcall-used-r4 the call-saved low registers are r5, r6, r7. In the
@@ -577,7 +582,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     i = 1;
                 }
                 {
-                    s8 *o = &sel[i];
+                    /* FAKEMATCH: native adds the count first (adds r2, r6, r3); &sel[i], sel + i and i + sel all add sel first, 89 -> 87 */
+                    s8 *o = (s8 *)(i + (s32)sel);
 
                     do {
                         if (object->restraint != 0) {

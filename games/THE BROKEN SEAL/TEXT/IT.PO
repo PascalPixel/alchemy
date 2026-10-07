@@ -31,7 +31,7 @@ msgctxt "message"
 msgid "00005"
 msgstr "Riprendere il gioco da{line_break}un Tempio?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSaveRecoveryFailed"
 msgid "00006"
 msgstr "{text_color:5}Non è possibile{line_break}recuperare i dati.{end_wait}"
 

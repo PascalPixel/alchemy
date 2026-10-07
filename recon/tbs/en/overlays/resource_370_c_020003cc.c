@@ -1,9 +1,11 @@
-/* SaveMenu_Run (overlay resource_370 020083cc, listed as Func_020003cc): differ 0 of 920 (English) with --symbol Func_020003cc; all 2,352 bytes, all four literal pools, every call and data relocation agree with the listing's (messages and scene ids resolve to the listing's numbers: 7, 0xa, 4, 6, 2, 8, 0xbe; gGameState is gCell's address).
- * Remaining before adoption into SRC/MENU/CLEAR/CLEAR.C (its linker neighbour; ENTRY.S's veneer and the linker line name Func_020003cc):
- * - Headers: the draft declares its callees unprototyped; CLEAR.C's headers declare them with real prototypes and types (UiWindow_Create returns struct UiWindow *, UiWork_Finalize and UiWindow_SetTilemapEntry take one, Scheduler_AddOrUpdateCallback a SchedulerCallback, SerialRuntime_BeginTransferA a void *, Battle_WaitMode0 returns void); give the windows their type, drop the draft's declarations and rescore. Measured: the body under CLEAR.C's include block, with the draft's UiWork_Finalize, UiWindow_Create and UiWindow_SetTilemapEntry declarations dropped (the only conflicts), still scores differ 0; with all its callee declarations dropped, the callees passed to the Value and Call wrappers that CLEAR.C's headers lack (SaveState_ScanRecordFlags, Menu_SelectSaveSlotAction, UiText_DrawResource, Menu_SelectResourceLayout, Clear_PackPasswordData, Clear_EncodePassword, Graphics_ExpandVramTilesByColorTable ...) are undeclared.
- * - Editions: the listing differs per edition. Japanese (not EDITION_INTERNATIONAL) has a 488-byte frame (sub sp) and other pools; the link greeting compares the edition's letter (EN 85, DE 69, FR 70, ES 83, IT 73, JA 67); German and French move pools. Spanish and Italian end the link section with UiWork_Finalize(v6, 2) and WaitFrames(1) and no RenderOutput_PrepareForRedraw(v6), which cross-jumps into the case-0 tail (b Clear_FinalizeAndWait), and their case-4 test branches the other way (beq Clear_LoadFourthSlot); Japanese ends it as English does. Each needs its #if branch or stays on its scaffold (S4).
- * - Ids: the build's id gate refuses the pool word MsgSaveDataCorrupted + 2 ("use the id whole"): message 6 (the could-not-restore notice after the corrupted-data prompt) needs its own msgctxt name in the six TEXT/*.PO files, then the draft uses that name.
- * - Tried (2026-10-07, not committed): CLEAR.C plus #include "SERIAL_RUNTIME.H", then this draft from its first declaration inside #if defined(TBS_EDITION_EN) without its gKeysHeld, UiWork_Finalize, UiWindow_Create and UiWindow_SetTilemapEntry declarations: SaveMenu_Run compiles there byte for byte (pool words aside, which are the ids). With the listing's function wrapped in .ifndef TBS_EDITION_EN and its label and ENTRY.S's veneer renamed SaveMenu_Run, make compare-tbs-en stopped only at the id gate above.
+/* SaveMenu_Run (overlay resource_370 020083cc): English is adopted, SRC/MENU/CLEAR/CLEAR.C under #if defined(TBS_EDITION_EN) (2026-10-07); the listing's function stays for the other five editions under .ifndef TBS_EDITION_EN. This draft is the English body, kept as the start for their branches; it scored differ 0 of 920 against the English listing before adoption, and English is now judged by make compare-tbs-en (OK). With the listing's function under .ifndef TBS_EDITION_EN, alchemy diff --symbol SaveMenu_Run finds no listing instructions (listing 0), with --edition tbs-de or tbs-es too, so scoring another edition's branch needs that edition's listing assembled.
+ * Remaining:
+ * - Editions: the listing differs per edition. Japanese (not EDITION_INTERNATIONAL) has a 488-byte frame (sub sp) and other pools; the link greeting compares the edition's letter (EN 85, DE 69, FR 70, ES 83, IT 73, JA 67); German and French move pools. Spanish and Italian end the link section with UiWork_Finalize(v6, 2) and WaitFrames(1) and no RenderOutput_PrepareForRedraw(v6), which cross-jumps into the case-0 tail (b Clear_FinalizeAndWait), and their case-4 test branches the other way (beq Clear_LoadFourthSlot); Japanese ends it as English does. Each needs its #if branch in CLEAR.C or stays on its scaffold (S4).
+ * - Headers: in CLEAR.C the body still declares its callees unprototyped where CLEAR.C's headers lack them; the windows are s32 where the headers' type is struct UiWindow * (UiWindow_Create returns one, UiWork_Finalize and UiWindow_SetTilemapEntry take one). Give the windows their type and drop the declarations the headers already make, rescoring each.
+ * - Ids: message 6 (the could-not-restore notice) is MsgSaveRecoveryFailed in the six TEXT/*.PO files. Its first use is that name; at its second the native adds 2 to the register holding MsgSaveDataCorrupted, so that use stays MsgSaveDataCorrupted + 2 under a FAKEMATCH tag (186 by name: both uses then cross-jump into one pool load and r5 and r6 trade places).
+ * Trials (2026-10-07, session 5):
+ * - 0 -> 186: MsgSaveRecoveryFailed at both uses of message 6: the two pool loads cross-jump into one, the second no longer derives from MsgSaveDataCorrupted's register, and r5 and r6 trade the state pointer and the message base.
+ * - 186 -> 0: the first use by name, the second as MsgSaveDataCorrupted + 2 (FAKEMATCH); adopted into CLEAR.C for English, twelve editions OK.
  * Trials (2026-10-07, session 4):
  * - 26 -> 0: the A-key wait after a link error tests gKeyState & v5 (KEY_A held in v5 = 1): the native's ldr r7 loads gKeyState from the shared pool entry; the raw 0x3001c94 address added a pool word, which moved every later branch and pool load by 4.
  * - 0 -> 0: every Func_ placeholder callee named as the listing's relocations pair them (137 calls, one name each), raw addresses as their symbols (Clear_CheckButtonCodes, Clear_UpdateBlend, Clear_CodeUnlocked, Clear_ExtraCodeUnlocked, gSleepDisabled, gDebugMode, gOptionMirror, gWindowWork, gEventWork), the save record union as struct GameState fields (build_stamp, play_time, palette_glow, unknown_20f, saved_options), scene row 8 named SceneId_HaidiaBabi in SCENES.S after its overlay folder, and the dead 0x2000240 stores and unused locals dropped.
@@ -77,6 +79,7 @@ s32 Menu_RunConfirmSelection(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern u8 MsgNoBackupMemory[];
 extern u8 MsgSaveAdventureQuestion[];
 extern u8 MsgSaveDataCorrupted[];
+extern u8 MsgSaveRecoveryFailed[];
 extern u8 MsgClearCommunicationError[];
 extern u8 MsgClearSendingData[];
 extern u8 MsgClearPasswordLabel[];
@@ -150,11 +153,13 @@ s32 __modsi3();
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
+    /* FAKEMATCH: a forwarding call keeps 0x109 out of a register for SaveMenu_Run's later flag clears (differ 85 called directly). */
     f(a0);
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
+    /* FAKEMATCH: a forwarding call for SaveMenu_Run's 0x952 flag test (differ 10 called directly). */
     return f(a0);
 }
 
@@ -287,7 +292,7 @@ s32 SaveMenu_Run(void)
             GameFlag_ClearBit(0x109);
         } else if ((gKeysHeld & 0x208) == 0x208) {
             if (Scene_GetModeMask() != 0) {
-                UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted + 2, 9);
+                UiText_ShowPositionedMessageAndWait((s32)MsgSaveRecoveryFailed, 9);
                 goto L_020004a8;
             }
             state->scene = state->saved_scene;
@@ -303,6 +308,7 @@ s32 SaveMenu_Run(void)
             }
             UiWork_FinalizePendingCore();
             if (Scene_GetModeMask() != 0) {
+                /* FAKEMATCH: MsgSaveRecoveryFailed as MsgSaveDataCorrupted + 2, the native adds 2 to the register holding message 4 (186 by name). */
                 UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted + 2, 9);
                 goto L_020004a8;
             }

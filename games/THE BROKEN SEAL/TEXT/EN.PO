@@ -31,7 +31,7 @@ msgctxt "message"
 msgid "00005"
 msgstr "Do you wish to try to{line_break}recover from a Sanctum?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSaveRecoveryFailed"
 msgid "00006"
 msgstr "{text_color:5}Unfortunately, your data{line_break}could not be recovered.{end_wait}"
 

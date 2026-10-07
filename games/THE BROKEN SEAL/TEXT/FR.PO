@@ -31,7 +31,7 @@ msgctxt "message"
 msgid "00005"
 msgstr "Récupérer votre sauvegarde à{line_break}partir d'un temple?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSaveRecoveryFailed"
 msgid "00006"
 msgstr "{text_color:5}Malheureusement, vos données{line_break}n'ont pu être récupérées.{end_wait}"
 

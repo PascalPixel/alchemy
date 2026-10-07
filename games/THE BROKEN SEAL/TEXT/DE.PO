@@ -31,7 +31,7 @@ msgctxt "message"
 msgid "00005"
 msgstr "Möchtest du versuchen, von einem{line_break}Heiligtum aus fortzufahren?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSaveRecoveryFailed"
 msgid "00006"
 msgstr "{text_color:5}Leider konnten deine Daten{line_break}nicht wiederhergestellt werden.{end_wait}"
 

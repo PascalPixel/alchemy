@@ -1,6 +1,19 @@
 /* 08024934: SummonMenu_SelectSummon draft.
- * Native 946 instructions, draft 918, common 587, differ 690; frame 372
+ * Native 946 instructions, draft 919, common 601, differ 663; frame 372
  * as native's.
+ * Session 3: the draw loop's columns counted (col = 0 at the top of each
+ * pass, col * 2 + 13 and col * 2 + 14, col++) give native's giv start
+ * (lsls r3, rX, #1; adds r5, r3, #0; adds r5, #13) and its hoisted 0 for
+ * the stack argument: 690 -> 663. col = 0 anywhere after the scan (before
+ * the glyph, the tile store, the name or the columns) 687. Remaining
+ * cascade there: element takes r4 with caller-saves and index r7, where
+ * native has the reverse; their priorities (lreg) are close, element
+ * 4 * 19 / 54 against index 6 * 126 / 510, so index is allocated first.
+ * From 663: the draw loop on its own counter i 907; element shared by
+ * the scan and the columns 870; the page-tile loops on element 909; the
+ * display loop on element 663 unchanged; the init and reset loops on
+ * element 669; indexed summon->djinn_required[element] columns 984;
+ * indexed handle and tile loop 819.
  * Remaining, in order: (a) the draw loop's affordability scan has its
  * first test duplicated by jump.c before loop.c runs, so CSE folds element
  * 0 into summon + 4 (insn 2490), GCSE shares it with the column loop's
@@ -267,6 +280,7 @@ loop:
                     index = 0;
                     if ((id = ordered[page + index]) != 32) {
                     next:
+                        col = 0;
                         summon = SummonDefinition_Get(id);
                         for (n = 0; n <= 3; n++) {
                             if (summon->djinn_required[n] > standby[n])
@@ -280,13 +294,12 @@ loop:
                         UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->name_message_id + (s32)&MsgAbilityName,
                             (struct RenderInput *)window, 16, index * 16);
                         required = summon->djinn_required;
-                        col = 13;
                         y = index * 2;
                         for (element = 0; element <= 3; element++) {
                             if (*required != 0) {
-                                UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE, col, y, 0);
-                                UiWindow_PutGlyph(window, *required + 48, col + 1, y, 0);
-                                col += 2;
+                                UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE, col * 2 + 13, y, 0);
+                                UiWindow_PutGlyph(window, *required + 48, col * 2 + 14, y, 0);
+                                col++;
                             }
                             required++;
                         }

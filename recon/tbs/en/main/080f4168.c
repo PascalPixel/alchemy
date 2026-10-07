@@ -1,4 +1,14 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2033, differ 1675.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2033, differ 1665.
+ * Shadow depth keeps native's two stores: projected depth first, then depth
+ * plus the die's height. Plain consecutive assignments delete the first
+ * store. A memory-input boundary preserves it (2034/1670), but reloading
+ * depth adds a load native lacks. Keep the intermediate in a local dep:
+ * 2033/1665, frame768, both stores and the intervening add remain. The plain
+ * dep form without the memory input is2033/1675, identical to no local.
+ * A volatile first store instead is2039/1703. Hoisting the shadow matrix
+ * index into a loop local restores its advancing value, but spills it and
+ * enlarges the frame to772 (2038/1792); not kept. Native keeps that matrix
+ * value in r9 and temporarily saves its point pointer across projection.
  * Keep squared distance in a separate local d2: native builds it directly
  * in the square-root argument r0, then keeps the resulting distance in r5.
  * Reusing dist kept both values in r5 and added an argument copy. Splitting
@@ -727,6 +737,8 @@ void LuckyDice_Run(void)
         }
 
         for (i = 0; i != 2; i++) {
+            s32 dep;
+
             point[1] = 0;
             point[0] = work->particles[i].x;
             point[2] = work->particles[i].z;
@@ -737,8 +749,12 @@ void LuckyDice_Run(void)
             if (proj[2] > 0x28a) {
                 proj[2] = 0x28a;
             }
-            depth[2 + i] = proj[2] - 0x15e;
-            depth[2 + i] += *((s16 *)&work->particles[i].y + 1);
+            dep = proj[2] - 0x15e;
+            depth[2 + i] = dep;
+            /* FAKEMATCH: native stores projected depth before adding height; plain consecutive assignments lose that first store (1675 vs 1665). */
+            __asm__ volatile("" : : "m"(depth[2 + i]));
+            dep += *((s16 *)&work->particles[i].y + 1);
+            depth[2 + i] = dep;
             if (proj[1] + 88 > -16) {
                 u32 off0 = OBJ_OFF(count, attr01);
                 u32 off1 = OBJ_OFF(count, attr2);

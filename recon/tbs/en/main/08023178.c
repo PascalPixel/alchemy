@@ -1,16 +1,92 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1391, common 1362, differ 59.
+ * Native 1392 instructions, draft 1392, common 1372, differ 40.
  * Frame 352 bytes, as native. The setup loops, the cursor update, the
  * face and cursor sprites (0x3FF in r8, the zero in r7, as native),
- * the stat pushes, the djinn rows and the condition list match.
+ * the stat pushes, the djinn rows, the condition list and the condition
+ * loads match.
  * Remaining: the four (s8)m < 0 modifier tests (lsr #7, beq where
- * native has lsl #24, bge); the condition loads' sign extension
- * (movs/ldrsb where native has ldrb, lsl, asr); the help block's
- * saved/pointer pair (r5/r6 swapped) and code = 0 set before
- * Runtime_BumpAllocate where native sets it after; one long branch two
- * bytes short (the one instruction the condition loads lack).
+ * native has lsl #24, bge); the help block's saved/pointer pair (r5/r6
+ * swapped) and code = 0 set before Runtime_BumpAllocate where native
+ * sets it after.
  *
- * Session 5 2026-10-07: the up-key n-- after the 0x6F call 87 -> 85
+ * Session 8 2026-10-07: (s8)m < 0 for the second tests on 40: 182 (one
+ * ldrsb for both tests). The CSE1 dump's block list shows every path
+ * from the list's labels (the do-while(0) start and each skipped
+ * then-block) reaching each second test with the first then-block
+ * AROUND (the 8th entry from the list's start), so PATHLENGTH does not
+ * end it. Even without CSE1 the merge would follow: gcse.c's
+ * want_to_gcse_p takes any expression but a register or constant, and
+ * the first test's (ashift m 24) dominates the second's with m unchanged,
+ * so PRE deletes the second. Native's first test therefore shifted no
+ * m at GCSE time: its sign extension came from a second QI read of the
+ * field that CSE's LOAD_EXTEND_OP lookup did not fold into m's subreg,
+ * and combine then put that read (sign_extend mem, at the ashiftrt)
+ * after m's ldrb. Diagnostics: each first test in do { } while (0) 182
+ * (jump1 drops the empty loop's notes, so no NOTE_INSN_LOOP_END ends
+ * the path); attack only as s32 t = turns, if (t != 0 && (s8)(m = field)
+ * > 0) then if (t != 0 && (s8)m < 0), 91 (jump1 threads the t == 0 jump
+ * past the second then-block and deletes the second t test, so the
+ * label is used once again before CSE1); s32 t = field, u8 m = field,
+ * t > 0 then (s8)m < 0 on 40, 643. Not found: a source whose second read
+ * of the field follows m's read without the fold.
+ *
+ * Session 7 2026-10-07: the condition loads as a plain
+ * for (j = 0; j < i; j++) f(sel[j], tbl[j]) 59 -> 40: loop.c reduces
+ * both addresses and reverses j itself (native's i > 0 guard, count-down
+ * r4 and ldmia), and the byte load, lsl and asr stay three insns into r0
+ * as native, with the long branch now native's. Modifier diagnosis: an
+ * s8 local is promoted to SImode zero-extended (ARM PROMOTE_MODE), so
+ * m's ldrb r1 is native's; native's first test (ldrb r1, then the
+ * sign-extending ldrb/lsl/asr with dest == base) is combine's split of
+ * the three-insn PARALLEL (m kept, sign_extend (mem) for the test),
+ * which the draft already reproduces. Native's second test recomputes
+ * (ashift m 24), so CSE did not carry the first test's ashift across the
+ * then-block: here cse_end_of_basic_block skips the then-block (AROUND,
+ * label with one use, no label inside), marks the next block QImode and
+ * so processes the second test only on the path that knows the ashift.
+ * s8 m with m > 0, m < 0 182 (one ldrsb for both). The condition list
+ * as sel[i++] = code, without the write pointer and its FAKEMATCH, 40
+ * (no change: loop.c reduces sel + i itself, i first as native); s8 m
+ * on that form 182; s32 t and u8 m read in that order with t > 0 and
+ * (s8)m < 0 643. Not found yet: why native's first test is not skipped
+ * AROUND (it would need a second use of the label after the then-block,
+ * a label inside it, or nine branches already on the path). Code = 0
+ * after Runtime_BumpAllocate on 40: 285. Editions (similar --editions,
+ * native against English): de identical (08021e3c), fr 1 (0802211c), ja
+ * 12 (080231dc), es and it 189 (080221b4, 08023120); diff --edition
+ * cannot bound these scaffold copies yet ("bounded Thumb function only").
+ *
+ * Session 6 2026-10-07: the second modifier test is native's (lsls r3,
+ * r1, #24; cmp; bge) once the first test's sign-extended read of the
+ * field comes before m's read: s32 t = field; u8 m = field; t > 0, then
+ * (s8)m < 0, attack only, 59 -> 126. Cause: CSE's LOAD_EXTEND_OP lookup
+ * (cse.c, "See if a MEM has already been loaded with a widening
+ * operation") turns any QI read of the field after m's zero-extending
+ * read into (subreg:QI m), fold_rtx's paradoxical SUBREG case then makes
+ * the first test's shift (ashift m 24), the second test's, and CSE or
+ * GCSE joins them. Read first, the field keeps its own QI register and
+ * the two shifts differ. The cost: the shared address (object + 309)
+ * then lives 5 luids (read, two shifts, m's read) and loop.c hoists it
+ * out of the do-while(0) (loop.08: 191 real insns; life 5 x savings 2
+ * moved, life 2 x 2 not desirable), so the address sits in r0 before the
+ * loop and the read is mov/ldrsb with dest != base. Native reads m
+ * (ldrb r1) and then the field with dest == base, so its address dies
+ * at the second read: native read the field for the first test after m
+ * without that fold; no source form found yet. Rejected: m read first,
+ * then t, 92 (folded); s8 *mp with t = *mp, m = *mp 126 (as t, m); no m,
+ * the field read in both tests 73 (the second test's lsl #24 is native's,
+ * but gcse.c counts any store a kill of every load, so PRE reloads the
+ * field after the then-block's store: native's second test reads no
+ * memory), the same with o = sel + i 75; s32 m = field & 0xFF with the
+ * field read in the first test and (s8)m < 0, 184 (both reads stay in
+ * place and the second test is native's, but combine puts the
+ * sign-extending read, m's intermediate, before m's ldrb: mov/ldrsb with
+ * dest != base, and o moves from r2 to r1). Condition loads: the byte read
+ * into s32 c first 59, *q++ read into h first 59, *out++ in the call 59
+ * (no change: combine still joins the QI read and both shifts into one
+ * sign_extend; native's three instructions into r0 were never joined).
+ *
+ * Session 5 2026-10-07:the up-key n-- after the 0x6F call 87 -> 85
  * (sched2 moves it across the call to native's slot, after the 0x6F
  * argument). The face pool: the face x literal 172 is a movhi pool
  * load (pool_range 64, the pool's head); arm_reorg counts 58 bytes from
@@ -321,7 +397,6 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     s32 defDelta;
     s32 i;
     s32 j;
-    s8 *out;
     s32 code;
     s32 atkDelta;
     s32 redraw;
@@ -647,143 +722,114 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     sel[0] = 16;
                     i = 1;
                 }
-                {
-                    /* FAKEMATCH: native adds the count first (adds r2, r6, r3); &sel[i], sel + i and i + sel all add sel first, 89 -> 87 */
-                    s8 *o = (s8 *)(i + (s32)sel);
+                do {
+                    if (object->restraint != 0) {
+                        sel[i++] = 15;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->death_count != 0) {
+                        sel[i++] = 8;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->poison == 1) {
+                        sel[i++] = 1;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->poison == 2) {
+                        sel[i++] = 2;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->psy_seal != 0) {
+                        sel[i++] = 4;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->stun != 0) {
+                        sel[i++] = 3;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->sleep != 0) {
+                        sel[i++] = 5;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->evil_spirit != 0) {
+                        sel[i++] = 7;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->delusion != 0) {
+                        sel[i++] = 6;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->attack_modifier_turns != 0) {
+                        u8 m = object->attack_modifier;
 
-                    do {
-                        if (object->restraint != 0) {
-                            *o++ = 15;
-                            i++;
+                        if ((s8)m > 0) {
+                            sel[i++] = 9;
                         }
-                        if (i > 7) {
-                            break;
+                        if ((m >> 7) != 0) {
+                            sel[i++] = 10;
                         }
-                        if (object->death_count != 0) {
-                            *o++ = 8;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->poison == 1) {
-                            *o++ = 1;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->poison == 2) {
-                            *o++ = 2;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->psy_seal != 0) {
-                            *o++ = 4;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->stun != 0) {
-                            *o++ = 3;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->sleep != 0) {
-                            *o++ = 5;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->evil_spirit != 0) {
-                            *o++ = 7;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->delusion != 0) {
-                            *o++ = 6;
-                            i++;
-                        }
-                        if (i > 7) {
-                            break;
-                        }
-                        if (object->attack_modifier_turns != 0) {
-                            u8 m = object->attack_modifier;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->defense_modifier_turns != 0) {
+                        u8 m = object->defense_modifier;
 
-                            if ((s8)m > 0) {
-                                *o++ = 9;
-                                i++;
-                            }
-                            if ((m >> 7) != 0) {
-                                *o++ = 10;
-                                i++;
-                            }
+                        if ((s8)m > 0) {
+                            sel[i++] = 11;
                         }
-                        if (i > 7) {
-                            break;
+                        if ((m >> 7) != 0) {
+                            sel[i++] = 12;
                         }
-                        if (object->defense_modifier_turns != 0) {
-                            u8 m = object->defense_modifier;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    if (object->res_modifier_turns != 0) {
+                        u8 m = object->res_modifier;
 
-                            if ((s8)m > 0) {
-                                *o++ = 11;
-                                i++;
-                            }
-                            if ((m >> 7) != 0) {
-                                *o++ = 12;
-                                i++;
-                            }
+                        if ((s8)m > 0) {
+                            sel[i++] = 13;
                         }
-                        if (i > 7) {
-                            break;
+                        if ((m >> 7) != 0) {
+                            sel[i++] = 14;
                         }
-                        if (object->res_modifier_turns != 0) {
-                            u8 m = object->res_modifier;
+                    }
+                    if (i > 7) {
+                        break;
+                    }
+                    {
+                        u8 m = object->agility_modifier;
 
-                            if ((s8)m > 0) {
-                                *o++ = 13;
-                                i++;
-                            }
-                            if ((m >> 7) != 0) {
-                                *o++ = 14;
-                                i++;
-                            }
+                        if ((s8)m > 0) {
+                            sel[i++] = 17;
                         }
-                        if (i > 7) {
-                            break;
+                        if ((m >> 7) != 0) {
+                            sel[i++] = 18;
                         }
-                        {
-                            u8 m = object->agility_modifier;
+                    }
+                } while (0);
 
-                            if ((s8)m > 0) {
-                                *o++ = 17;
-                                i++;
-                            }
-                            if ((m >> 7) != 0) {
-                                *o = 18;
-                                i++;
-                            }
-                        }
-                    } while (0);
-                }
-
-                if (i > 0) {
-                    j = i;
-                    q = tbl;
-                    out = sel;
-                    do {
-                        Resource_LoadTableEntryToBuffer(*out, *q++);
-                        j--;
-                        out++;
-                    } while (j != 0);
+                for (j = 0; j < i; j++) {
+                    Resource_LoadTableEntryToBuffer(sel[j], tbl[j]);
                 }
                 if (i == 0) {
                     sel[0] = 0;

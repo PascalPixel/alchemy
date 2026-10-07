@@ -1,16 +1,15 @@
 /* 08023178: Ui_RunOwnerStatusScreen draft.
- * Native 1392 instructions, draft 1401, common 1208, differ 377.
- * Frame now 352 bytes, as native, and the setup loops, the cursor
- * update, the face and cursor sprites, the djinn rows and the condition
- * list match up to register choice. Remaining: redraw in r11 where native
- * has r10; the face/cursor zero in r10 where native has r7 (native: 0x3FF
- * in r8 copied to a low register at its use, the zero in r7; here the
- * 0x3FF is rematerialized at the cursor); the stat value pushes after the
- * condition list (native keeps 24 in r8); and the condition help block:
- * native keeps 332 in r8 across Runtime_BumpAllocate, code in r4 saved
- * at sp+4 around calls (caller-save, lowest priority), the deltas atk sl,
- * def fp, agi r7; here code takes r7 and the deltas r8, sl, fp, and 332
- * gets no register.
+ * Native 1392 instructions, draft 1391, common 1339, differ 105.
+ * Frame 352 bytes, as native. The setup loops, the cursor update, the
+ * face and cursor sprites (0x3FF in r8, the zero in r7, as native),
+ * the stat pushes, the djinn rows and the condition list match.
+ * Remaining: the four (s8)m < 0 modifier tests (lsr #7, beq where
+ * native has lsl #24, bge); the condition loads' sign extension
+ * (movs/ldrsb where native has ldrb, lsl, asr); the help block's
+ * saved/pointer pair (r5/r6 swapped) and code = 0 set before
+ * Runtime_BumpAllocate where native sets it after; the up-key n--
+ * scheduled before the 0x6F argument; one literal pool placed two
+ * instructions later; and register choice in the icon loop setup.
  *
  * Modifier tests 2026-10-07 (session 2): native reads each modifier
  * as u8 m (ldrb r1), tests (s8)m > 0 through a second sign-extending
@@ -26,6 +25,32 @@
  * Also rejected: (s32)(m << 24) < 0 for the second test 382; a block
  * size variable for the three 332-byte calls 377 (CSE folds it back into
  * each argument; native keeps 332 in r8 across Runtime_BumpAllocate).
+ *
+ * Session 3 2026-10-07: the second modifier test as (m >> 7) != 0
+ * 377 -> 331 (lsr #7, beq where native has lsl #24, bge, but no
+ * shared ands constant, so the list's branch offsets are native's).
+ * CSE1 deletes any second test that shares the first's ashift: in
+ * thumb the sign extension expands to ashift 24 + ashiftrt 24 and the
+ * first test's QI load becomes (subreg:QI m) by LOAD_EXTEND_OP, so
+ * (s8)m < 0 389, (s32)(m << 24) < 0 382, (s16)(m << 8) < 0 382,
+ * (s8)m >> 7 382, (s8)m <= -1 413, (s8)m & 0x80 392 all merge or
+ * worsen; the field read directly for the first test, or into a
+ * separate s8 local before or after m, changes nothing (CSE still
+ * folds the load to m's subreg). The skip-blocks path needs the label
+ * after the first then-block to have one use; native must differ
+ * there or in the path length (PATHLENGTH 10), not yet found.
+ * code = 0 before Runtime_BumpAllocate instead of after it 331 -> 120
+ * (the 332 pseudo, REG_EQUIV and local to its block, now keeps r8
+ * across the three calls, code goes to sp+4 and reloads into r4 for
+ * the modifier stores, and the freed registers fix the face/cursor
+ * zero, the stat pushes' 24 in r8 and redraw in r10, as native).
+ * redraw = 1 before idx = -1 120 -> 110 (native builds 1 in r3 and
+ * negates it for idx); the loop-end check as gLinkCountdownWork->active
+ * 110 -> 105 (native's literal; the spill slots no longer shift).
+ * Rejected: code = 0 after the first copy 331, at the top of the help
+ * block 708, after the modifier stores 785; the agility delta read
+ * first 682; n-- before keys = 0, or n -= 1, 120 (no change); the
+ * condition write pointer as sel + i or i + sel 120 (no change).
  *
  * Register diagnosis 2026-10-07 (session 2, lreg/greg dumps): with
  * -fcall-used-r4 the call-saved low registers are r5, r6, r7. In the
@@ -214,8 +239,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     s32 x;
 
     base = (struct UiRenderWork *)gWindowWork[0];
-    idx = -1;
     redraw = 1;
+    idx = -1;
     handleFrame = Resource_LoadIntoFreeSlot(0x200);
     cnt = 0;
     extended = Party_SumDjinnCountsFar(-1);
@@ -598,7 +623,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                                 *o++ = 9;
                                 i++;
                             }
-                            if (m & 0x80) {
+                            if ((m >> 7) != 0) {
                                 *o++ = 10;
                                 i++;
                             }
@@ -613,7 +638,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                                 *o++ = 11;
                                 i++;
                             }
-                            if (m & 0x80) {
+                            if ((m >> 7) != 0) {
                                 *o++ = 12;
                                 i++;
                             }
@@ -628,7 +653,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                                 *o++ = 13;
                                 i++;
                             }
-                            if (m & 0x80) {
+                            if ((m >> 7) != 0) {
                                 *o++ = 14;
                                 i++;
                             }
@@ -643,7 +668,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                                 *o++ = 17;
                                 i++;
                             }
-                            if (m & 0x80) {
+                            if ((m >> 7) != 0) {
                                 *o = 18;
                                 i++;
                             }
@@ -685,8 +710,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     iconIdx = 16;
                 }
 
-                saved = (struct BattleUnit *)Runtime_BumpAllocate(sizeof(*object));
                 code = 0;
+                saved = (struct BattleUnit *)Runtime_BumpAllocate(sizeof(*object));
                 Iwram_CopyWords(saved, object, sizeof(*object));
 
                 atkDelta = object->attack;
@@ -765,7 +790,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
             p++;
         }
 
-        if (((struct MenuCell *)gWindowWork[42])->active == 0) {
+        if (gLinkCountdownWork->active == 0) {
             break;
         }
         if ((gKeyState & KEY_B) != 0) {

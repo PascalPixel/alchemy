@@ -366,10 +366,9 @@ fn in_units(name: &str) -> bool {
         .any(|word| lower.contains(word))
 }
 
-/// A name for a character or text, by its words (split at underscores and
-/// case steps): its operands are character codes (`c - 0xde` dakuten,
-/// `ch == 0x20`), written in hex.
-fn says_character(name: &str) -> bool {
+/// The words of a name, lowercase, split at underscores and case steps
+/// (`object_id`, `objId` and `OBJ_ID` are each `obj(ect)` and `id`).
+fn words(name: &str) -> Vec<String> {
     let mut words: Vec<String> = Vec::new();
     let mut word = String::new();
     let mut lower_before = false;
@@ -383,12 +382,52 @@ fn says_character(name: &str) -> bool {
         }
     }
     words.push(word);
-    words.iter().any(|w| {
+    words
+}
+
+/// A name for a character or text, by its words: its operands are
+/// character codes (`c - 0xde` dakuten, `ch == 0x20`), written in hex.
+fn says_character(name: &str) -> bool {
+    words(name).iter().any(|w| {
         matches!(
             w.as_str(),
             "c" | "ch" | "chr" | "char" | "chars" | "character" | "characters" | "glyph" | "glyphs" | "kana" | "letter" | "font" | "ascii" | "digit" | "digits" | "text" | "str" | "string" | "msg" | "code" | "codes"
         )
     })
+}
+
+/// A name for a byte offset or an id, by its words: its operands are
+/// offsets into a layout (`off = (n * 4) + 0x14` before `work + off`) or
+/// the bases of id ranges (`id += 0x78` maps 8 onto the enemies' 0x80),
+/// written in hex.
+fn says_offset_or_id(name: &str) -> bool {
+    words(name).iter().any(|w| matches!(w.as_str(), "off" | "offs" | "offset" | "offsets" | "ofs" | "ofst" | "adr" | "addr" | "address" | "id" | "ids"))
+}
+
+/// Whether token `i` is in the arguments of a call that plays a sound
+/// (`Engine_AudioPlayCue(mode + 0x5a)`): a cue id, not a quantity.
+fn sound_argument(tokens: &[Token], groups: &[Option<usize>], i: usize) -> bool {
+    let mut group = groups[i];
+    while let Some(open) = group {
+        let callee = open.checked_sub(1).and_then(|k| ident(&tokens[k]));
+        if punct(&tokens[open]) == Some("(")
+            && callee.is_some_and(|n| words(n).iter().any(|w| matches!(w.as_str(), "audio" | "sound" | "snd" | "song" | "bgm" | "se" | "sfx" | "cue" | "music" | "voice")))
+        {
+            return true;
+        }
+        group = groups[open];
+    }
+    false
+}
+
+/// The names a statement assigns to before token `i` (`step` in
+/// `step = object->action * 0x50`): the literal is part of their value.
+fn targets(tokens: &[Token], i: usize) -> Vec<&str> {
+    let span = statement(tokens, i);
+    let Some(assign) = (span.start..i).find(|&k| matches!(punct(&tokens[k]), Some("=" | "+=" | "-=" | "*=" | "/="))) else {
+        return Vec::new();
+    };
+    heads(tokens, span.start..assign)
 }
 
 /// The names that hold character codes: those named for characters, and
@@ -536,7 +575,7 @@ fn arithmetic(tokens: &[Token], i: usize, tainted: &HashSet<String>, characters:
         return false;
     }
     !names(tokens, span).any(|n| {
-        tainted.contains(n) || flag_name(n) || in_units(n) || characters.contains(n) || n.starts_with("unknown") || n.starts_with("pad")
+        tainted.contains(n) || flag_name(n) || in_units(n) || says_offset_or_id(n) || characters.contains(n) || n.starts_with("unknown") || n.starts_with("pad")
     })
 }
 
@@ -569,14 +608,14 @@ fn quantity(c: &Context, i: usize, h: &Hex) -> bool {
     if h.value >= QUANTITY_LIMIT || fixed_point(h.value) || LIMITS.contains(&h.value) || packed(h.digits, h.value) {
         return false;
     }
-    if flag_argument(tokens, groups, i) || beside_fixed_point(tokens, groups, i) {
+    if flag_argument(tokens, groups, i) || sound_argument(tokens, groups, i) || beside_fixed_point(tokens, groups, i) {
         return false;
     }
     if in_declarator(tokens, groups, i) || in_brackets(tokens, groups, i) {
         return false;
     }
     // A loop over character codes or units keeps its base.
-    let plain = |span: Range<usize>| !names(tokens, span).any(|n| c.characters.contains(n) || in_units(n) || n.starts_with("unknown"));
+    let plain = |span: Range<usize>| !names(tokens, span).any(|n| c.characters.contains(n) || in_units(n) || says_offset_or_id(n) || n.starts_with("unknown"));
     // Arithmetic only below 0x400 and off whole multiples of 0x100, which
     // are fixed-point steps.
     let small = h.value < 0x400 && h.value % 0x100 != 0;
@@ -655,7 +694,10 @@ pub(crate) fn found(text: &str, commands: &[String]) -> Vec<Found> {
         }
         let mut changed = false;
         for (i, h) in hexes.iter_mut() {
-            if h.is_some() && related(*i).into_iter().any(|n| kept.contains(&(functions[*i], n))) {
+            // A candidate also meets the names its statement assigns: in
+            // `step = object->action * 0x50; object->angle += step + 0x1000;`
+            // the step is an angle, kept hex.
+            if h.is_some() && related(*i).into_iter().chain(targets(&tokens, *i)).any(|n| kept.contains(&(functions[*i], n))) {
                 *h = None;
                 changed = true;
             }
@@ -790,7 +832,7 @@ mod tests {
         same("struct S {\n    u8 pad24[0x50 - 0x24];\n    u16 pages[2][0x3c0];\n};\nu8 *unknown_534[0x10];\n");
         same("slot = (u16 *)(state + 0x534);\n*(s32 *)(base[19] + 0x1c0) = 0x209;\n");
         same("o->scale_y -= 0x80;\nrecord->angle -= 0x80;\nsize += 0xc00;\ntransfer += 0x100;\n");
-        assert_eq!(convert("work[0x294] = 8;\nid += 0x78;\n").0, "work[0x294] = 8;\nid += 120;\n");
+        assert_eq!(convert("work[0x294] = 8;\nn += 0x78;\n").0, "work[0x294] = 8;\nn += 120;\n");
     }
 
     #[test]
@@ -866,6 +908,26 @@ mod tests {
     #[test]
     fn angles_stay_hex() {
         same("angle = angle + 0x10;\nobj->facing = obj->facing - 0x40;\nyaw += 0x20;\n");
+        // ⚓️ BATTLE/EFFECT/ADVANCE_ANGLE_WITH_RAMP.C:8-13, RADPART.C:25-30:
+        // the step a literal assigns meets the angle's hex.
+        same("void BattleFx_AdvanceAngleWithRamp(struct ObjectRuntime *object)\n{\n    u32 step;\n\n    step = object->action * 0x50;\n    object->angle += step + 0x1000;\n    if (step < 0x1000)\n        object->action++;\n}\n");
+        same("void BattleFx_SpinUpAngle(void *obj)\n{\n    u32 step;\n\n    step = FIELD_AT_OFFSET(obj, s16 *, 0x64) * 0x50;\n    FIELD_AT_OFFSET(obj, u16 *, 6) = (u16)(FIELD_AT_OFFSET(obj, u16 *, 6) + step + 0x1000);\n    if (step < 0x1000U) {\n        FIELD_AT_OFFSET(obj, s16 *, 0x64) = (s16)((u16)FIELD_AT_OFFSET(obj, s16 *, 0x64) + 1);\n    }\n}\n");
+    }
+
+    /// Lines the session-2 dry run decimalized, verbatim.
+    #[test]
+    fn offsets_ids_and_sound_cues_stay_hex() {
+        // ☀️ BATTLE/EFFECT/EMITTER.C:256; FIELD/COMMON/OBJECT/SNAPSHOT.C:42
+        same("    s32 work = (s32)gEventWork;\n    u32 off = (obj_id * 4) + 0x14;\n\n    s32 src_z = (s32)*(struct EfxSrc **)(work + off);\n");
+        same("    if (index > 0xbf)\n        return 0;\n    offset = (index * 4) + 0x14;\n    return *(void **)(base + offset);\n");
+        // COMMON BATTLE/PARTY/CONTAINS_ID.C:8; ☀️ BATTLE/MOTION/SLOTS.C; ⚓️ BATTLE/SUMMON/FIND_SLOT.C
+        same("    if (id > 7)\n        id += 0x78;\n");
+        same("        object_id -= 0x78;\n");
+        same("        id = i + 0x80;\n");
+        // ☀️ FIELD/KOROSSEO_KABE/TRANSITION.C
+        same("    Engine_AudioPlayCue(mode + 0x5a);\n");
+        // Quantities beside them still change.
+        assert_eq!(convert("    object->y = (index / columns) * 0x10 + origin_y;\n").0, "    object->y = (index / columns) * 16 + origin_y;\n");
     }
 
     #[test]

@@ -228,7 +228,13 @@
  * In the drain against 96: apwr = dealt, then apwr = dealt / 2 in the
  * if and kind = apwr, 333 (apwr and kind share r6, and cse reads apwr
  * for dealt); apwr /= 2 in place 333; the halving in an if/else on apwr
- * 403, or on hp0 412.
+ * 403, or on hp0 412. apwr = dealt with an asm "+r" tie on apwr before
+ * the test 275, and another before kind = apwr 273 (draft 3449): apwr
+ * then loads before the test as in the listing, but in r6 shared with
+ * kind, and the halving reloads dealt from the stack (ldr r0) where the
+ * listing copies it from r7, since the tie ends apwr's equivalence with
+ * dealt's slot. apwr = dealt, the halving into apwr, kind = apwr and
+ * dmg += apwr (so apwr outlives the copy) 307.
  * Left at 72: the drain's halving (above: the listing loads dealt into
  * r7 before the test, copies it to r0 for the halving and copies r7 to
  * r6 for the amount, as if the halving read a spilled dealt whose reload

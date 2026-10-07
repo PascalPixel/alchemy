@@ -35,18 +35,18 @@ struct ClassRecord {
     u8 unknown_00[8];
     u8 hp;
     u8 ep;
-    u8 attack;
-    u8 defense;
-    u8 agility;
+    u8 atk;
+    u8 def;
+    u8 agi;
     u8 luck;
 };
 
 struct StatWork {
     s32 hp;
     s32 ep;
-    s32 attack;
-    s32 defense;
-    s32 agility;
+    s32 atk;
+    s32 def;
+    s32 agi;
     s32 unknown_14;
     s32 luck;
     s32 turns;
@@ -170,9 +170,9 @@ void UnitCalc(s32 owner)
     st = UnitGet(owner);
     work->hp = st->base_hp;
     work->ep = st->base_ep;
-    work->attack = st->base_attack;
-    work->defense = st->base_defense;
-    work->agility = st->base_agility;
+    work->atk = st->base_attack;
+    work->def = st->base_defense;
+    work->agi = st->base_agility;
     work->luck = st->base_luck;
     work->turns = st->base_action_count & 15;
     work->hp_regen = st->base_hp_regen;
@@ -213,9 +213,9 @@ void UnitCalc(s32 owner)
                 st->restraint |= 3;
             /* FAKEMATCH: a do-while barrier keeps the defense load after the item bonus load, as the ROM schedules it */
             do {
-                work->attack += work->item->primary_bonus;
+                work->atk += work->item->primary_bonus;
             } while (0);
-            work->defense += work->item->secondary_bonus;
+            work->def += work->item->secondary_bonus;
             for (j = 0; j < 4; j++) {
                 kind = work->item->effects[j].kind;
                 amount = work->item->effects[j].amount;
@@ -237,7 +237,7 @@ void UnitCalc(s32 owner)
                     work->ep_regen += work->amount;
                     break;
                 case ITEM_EFFECT_ADD_AGILITY:
-                    work->agility += work->amount;
+                    work->agi += work->amount;
                     break;
                 case ITEM_EFFECT_ADD_LUCK:
                     work->luck += work->amount;
@@ -293,9 +293,9 @@ void UnitCalc(s32 owner)
 
                     work->hp += djinn->hp;
                     work->ep += djinn->ep;
-                    work->attack += djinn->attack;
-                    work->defense += djinn->defense;
-                    work->agility += djinn->agility;
+                    work->atk += djinn->atk;
+                    work->def += djinn->def;
+                    work->agi += djinn->agi;
                     work->luck += djinn->luck;
                 }
             }
@@ -307,9 +307,9 @@ void UnitCalc(s32 owner)
 
             work->hp = work->hp * class->hp / 10;
             work->ep = work->ep * class->ep / 10;
-            work->attack = work->attack * class->attack / 10;
-            work->defense = work->defense * class->defense / 10;
-            work->agility = work->agility * class->agility / 10;
+            work->atk = work->atk * class->atk / 10;
+            work->def = work->def * class->def / 10;
+            work->agi = work->agi * class->agi / 10;
             work->luck = work->luck * class->luck / 10;
         }
 
@@ -337,13 +337,13 @@ void UnitCalc(s32 owner)
                     work->ep_regen = work->ep_regen * work->amount / 10;
                     break;
                 case 4:
-                    work->attack = work->attack * work->amount / 10;
+                    work->atk = work->atk * work->amount / 10;
                     break;
                 case 5:
-                    work->defense = work->defense * work->amount / 10;
+                    work->def = work->def * work->amount / 10;
                     break;
                 case 6:
-                    work->agility = work->agility * work->amount / 10;
+                    work->agi = work->agi * work->amount / 10;
                     break;
                 case 7:
                     work->luck = work->luck * work->amount / 10;
@@ -353,9 +353,9 @@ void UnitCalc(s32 owner)
         }
     }
 
-    work->attack = work->attack * (st->atk_lv + 8) / 8;
-    work->defense = work->defense * (st->def_lv + 8) / 8;
-    work->agility = work->agility * (st->agi_lv + 8) / 8;
+    work->atk = work->atk * (st->atk_lv + 8) / 8;
+    work->def = work->def * (st->def_lv + 8) / 8;
+    work->agi = work->agi * (st->agi_lv + 8) / 8;
     for (i = 0; i < 4; i++)
         work->element[i][0] += (st->elm_lv[i] * st->elm_lv[i] + st->elm_lv[i]) * 5;
     for (i = 0; i < 4; i++)
@@ -384,18 +384,18 @@ void UnitCalc(s32 owner)
             work->ep_regen += 4;
     }
 
-    if (work->attack < 0)
-        work->attack = 0;
-    if (work->attack > 999)
-        work->attack = 999;
-    if (work->defense < 0)
-        work->defense = 0;
-    if (work->defense > 999)
-        work->defense = 999;
-    if (work->agility < 0)
-        work->agility = 0;
-    if (work->agility > 999)
-        work->agility = 999;
+    if (work->atk < 0)
+        work->atk = 0;
+    if (work->atk > 999)
+        work->atk = 999;
+    if (work->def < 0)
+        work->def = 0;
+    if (work->def > 999)
+        work->def = 999;
+    if (work->agi < 0)
+        work->agi = 0;
+    if (work->agi > 999)
+        work->agi = 999;
     if (work->luck < 0)
         work->luck = 0;
     if (work->luck > 99)
@@ -423,9 +423,9 @@ void UnitCalc(s32 owner)
             work->element[i][1] = 200;
     }
 
-    st->attack = work->attack;
-    st->defense = work->defense;
-    st->agility = work->agility;
+    st->atk = work->atk;
+    st->def = work->def;
+    st->agi = work->agi;
     st->luck = work->luck;
     st->action_entry_count = work->turns;
     st->hp_regen = work->hp_regen;

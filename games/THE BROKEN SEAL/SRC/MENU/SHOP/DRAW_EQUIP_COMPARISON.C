@@ -57,15 +57,15 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
     saved = unit->inventory[slot];
     unit->inventory[slot] = item_id | 0x200;
     UnitCalcFar(unit_id);
-    with[0] = unit->attack;
-    with[1] = unit->defense;
-    with[2] = unit->agility;
+    with[0] = unit->atk;
+    with[1] = unit->def;
+    with[2] = unit->agi;
     with[3] = unit->luck;
     unit->inventory[slot] = saved;
     UnitCalcFar(unit_id);
-    without[0] = unit->attack;
-    without[1] = unit->defense;
-    without[2] = unit->agility;
+    without[0] = unit->atk;
+    without[1] = unit->def;
+    without[2] = unit->agi;
     without[3] = unit->luck;
     for (i = 0; i <= 2; i++) {
         if (without[i] > with[i])

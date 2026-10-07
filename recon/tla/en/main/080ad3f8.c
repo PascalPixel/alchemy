@@ -23,9 +23,9 @@ struct OwnerStats {
     s16 max_ep;
     s16 hp;
     s16 ep;
-    s16 attack;
-    s16 defense;
-    s16 agility;
+    s16 atk;
+    s16 def;
+    s16 agi;
     u8 luck;
     u8 turns;
     u8 stat_44;
@@ -61,9 +61,9 @@ struct DjinnDefinition {
     u8 unknown_00[4];
     s8 hp;
     s8 ep;
-    s8 attack;
-    s8 defense;
-    s8 agility;
+    s8 atk;
+    s8 def;
+    s8 agi;
     s8 luck;
 };
 
@@ -71,18 +71,18 @@ struct ClassRecord {
     u8 unknown_00[8];
     u8 hp;
     u8 ep;
-    u8 attack;
-    u8 defense;
-    u8 agility;
+    u8 atk;
+    u8 def;
+    u8 agi;
     u8 luck;
 };
 
 struct StatWork {
     s32 hp;
     s32 ep;
-    s32 attack;
-    s32 defense;
-    s32 agility;
+    s32 atk;
+    s32 def;
+    s32 agi;
     s32 unused_14;
     s32 luck;
     s32 turns;
@@ -117,9 +117,9 @@ void UnitCalc(s32 owner)
     st = UnitGet(owner);
     work->hp = st->base_hp;
     work->ep = st->base_ep;
-    work->attack = st->base_attack;
-    work->defense = st->base_defense;
-    work->agility = st->base_agility;
+    work->atk = st->base_attack;
+    work->def = st->base_defense;
+    work->agi = st->base_agility;
     work->luck = st->base_luck;
     work->turns = st->base_turns & 15;
     work->stat_20 = st->base_20;
@@ -161,9 +161,9 @@ void UnitCalc(s32 owner)
             /* FAKEMATCH: a do-while barrier keeps the defense load after the
                item bonus load, as the ROM schedules it */
             do {
-                work->attack += work->item->primary_bonus;
+                work->atk += work->item->primary_bonus;
             } while (0);
-            work->defense += work->item->secondary_bonus;
+            work->def += work->item->secondary_bonus;
             for (j = 0; j < 4; j++) {
                 kind = work->item->effects[j].kind;
                 amount = work->item->effects[j].amount;
@@ -185,7 +185,7 @@ void UnitCalc(s32 owner)
                     work->stat_24 += work->amount;
                     break;
                 case 5:
-                    work->agility += work->amount;
+                    work->agi += work->amount;
                     break;
                 case 6:
                     work->luck += work->amount;
@@ -242,9 +242,9 @@ void UnitCalc(s32 owner)
 
                     work->hp += djinn->hp;
                     work->ep += djinn->ep;
-                    work->attack += djinn->attack;
-                    work->defense += djinn->defense;
-                    work->agility += djinn->agility;
+                    work->atk += djinn->atk;
+                    work->def += djinn->def;
+                    work->agi += djinn->agi;
                     work->luck += djinn->luck;
                 }
             }
@@ -255,9 +255,9 @@ void UnitCalc(s32 owner)
 
             work->hp = __divsi3(work->hp * class->hp, 10);
             work->ep = __divsi3(work->ep * class->ep, 10);
-            work->attack = __divsi3(work->attack * class->attack, 10);
-            work->defense = __divsi3(work->defense * class->defense, 10);
-            work->agility = __divsi3(work->agility * class->agility, 10);
+            work->atk = __divsi3(work->atk * class->atk, 10);
+            work->def = __divsi3(work->def * class->def, 10);
+            work->agi = __divsi3(work->agi * class->agi, 10);
             work->luck = __divsi3(work->luck * class->luck, 10);
         }
 
@@ -285,13 +285,13 @@ void UnitCalc(s32 owner)
                     work->stat_24 = __divsi3(work->stat_24 * work->amount, 10);
                     break;
                 case 4:
-                    work->attack = __divsi3(work->attack * work->amount, 10);
+                    work->atk = __divsi3(work->atk * work->amount, 10);
                     break;
                 case 5:
-                    work->defense = __divsi3(work->defense * work->amount, 10);
+                    work->def = __divsi3(work->def * work->amount, 10);
                     break;
                 case 6:
-                    work->agility = __divsi3(work->agility * work->amount, 10);
+                    work->agi = __divsi3(work->agi * work->amount, 10);
                     break;
                 case 7:
                     work->luck = __divsi3(work->luck * work->amount, 10);
@@ -301,9 +301,9 @@ void UnitCalc(s32 owner)
         }
     }
 
-    work->attack = work->attack * (st->attack_level + 8) / 8;
-    work->defense = work->defense * (st->defense_level + 8) / 8;
-    work->agility = work->agility * (st->agility_level + 8) / 8;
+    work->atk = work->atk * (st->attack_level + 8) / 8;
+    work->def = work->def * (st->defense_level + 8) / 8;
+    work->agi = work->agi * (st->agility_level + 8) / 8;
     for (i = 0; i < 4; i++)
         work->element[i][0] += (st->element_level[i] * st->element_level[i] + st->element_level[i]) * 5;
     for (i = 0; i < 4; i++)
@@ -332,18 +332,18 @@ void UnitCalc(s32 owner)
             work->stat_24 += 4;
     }
 
-    if (work->attack < 0)
-        work->attack = 0;
-    if (work->attack > 999)
-        work->attack = 999;
-    if (work->defense < 0)
-        work->defense = 0;
-    if (work->defense > 999)
-        work->defense = 999;
-    if (work->agility < 0)
-        work->agility = 0;
-    if (work->agility > 999)
-        work->agility = 999;
+    if (work->atk < 0)
+        work->atk = 0;
+    if (work->atk > 999)
+        work->atk = 999;
+    if (work->def < 0)
+        work->def = 0;
+    if (work->def > 999)
+        work->def = 999;
+    if (work->agi < 0)
+        work->agi = 0;
+    if (work->agi > 999)
+        work->agi = 999;
     if (work->luck < 0)
         work->luck = 0;
     if (work->luck > 99)
@@ -371,9 +371,9 @@ void UnitCalc(s32 owner)
             work->element[i][1] = 200;
     }
 
-    st->attack = work->attack;
-    st->defense = work->defense;
-    st->agility = work->agility;
+    st->atk = work->atk;
+    st->def = work->def;
+    st->agi = work->agi;
     st->luck = work->luck;
     st->turns = work->turns;
     st->stat_44 = work->stat_20;

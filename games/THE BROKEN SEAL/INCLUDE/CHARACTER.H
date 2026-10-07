@@ -11,9 +11,9 @@ struct CharacterDefinition {
     u8 unknown_00[0x50];
     s16 hp[6];
     s16 ep[6];
-    u16 attack[6];
-    u16 defense[6];
-    u16 agility[6];
+    u16 atk[6];
+    u16 def[6];
+    u16 agi[6];
     u8 luck[6];
     u8 element_bonus[4];
     u8 starting_level;
@@ -33,9 +33,9 @@ struct ClassDefinition {
     u8 required[4];
     u8 hp;
     u8 ep;
-    u8 attack;
-    u8 defense;
-    u8 agility;
+    u8 atk;
+    u8 def;
+    u8 agi;
     u8 luck;
     u8 unknown_0e[2];
     struct ClassAbility abilities[16];
@@ -46,9 +46,9 @@ struct DjinnDefinition {
     u8 unknown_00[4];
     s8 hp;
     s8 ep;
-    s8 attack;
-    s8 defense;
-    s8 agility;
+    s8 atk;
+    s8 def;
+    s8 agi;
     s8 luck;
     u8 unknown_0a[2];
 };
@@ -58,9 +58,9 @@ struct EnemyDefinition {
     u8 level;
     u16 hp;
     u16 ep;
-    u16 attack;
-    u16 defense;
-    u16 agility;
+    u16 atk;
+    u16 def;
+    u16 agi;
     u8 luck;
     u8 turns;
     u8 hp_regen;
@@ -87,9 +87,9 @@ struct LevelUpResult {
     u16 ability;
     u16 hp;
     u16 ep;
-    u16 attack;
-    u16 defense;
-    u16 agility;
+    u16 atk;
+    u16 def;
+    u16 agi;
     u16 luck;
 };
 

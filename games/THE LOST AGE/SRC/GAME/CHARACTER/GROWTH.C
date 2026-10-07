@@ -4,9 +4,9 @@ struct OwnerGrowthRecord {
     u8 unknown_00[0x50];
     s16 hp[6];
     s16 ep[6];
-    u16 attack[6];
-    u16 defense[6];
-    u16 agility[6];
+    u16 atk[6];
+    u16 def[6];
+    u16 agi[6];
     u8 luck[6];
     u8 unknown_92[0x22];
 };

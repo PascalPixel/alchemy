@@ -281,7 +281,7 @@ pow_end:
             s32 def;
 
             hp = target->hp;
-            def = target->defense;
+            def = target->def;
             scale = def;
             if (half != 0)
                 scale = (u32)def >> 1;
@@ -292,11 +292,11 @@ pow_end:
                     bonus = 0;
                 ap = action->pow;
                 if (type == 4)
-                    dmg = BtlAtkCalc(actor->attack, scale, 0,
+                    dmg = BtlAtkCalc(actor->atk, scale, 0,
                                           bonus)
                             * ap / 10;
                 else {
-                    dmg = BtlAtkCalc(actor->attack, scale, ap,
+                    dmg = BtlAtkCalc(actor->atk, scale, ap,
                                             bonus);
                 }
                 dmg *= adj;
@@ -774,7 +774,7 @@ pow_end:
             target->agi_lv = 8;
             target->agi_cnt = 5;
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, target->agility - bak->agility);
+            BtlEvPush(BEV_NUM, target->agi - bak->agi);
             MES_PUSH(MsgAgiUp);
             break;
 
@@ -788,7 +788,7 @@ pow_end:
         }
             target->agi_cnt = 5;
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, bak->agility - target->agility);
+            BtlEvPush(BEV_NUM, bak->agi - target->agi);
             MES_PUSH(MsgAgiDown);
             break;
 
@@ -796,7 +796,7 @@ pow_end:
             target->atk_lv -= 1;
             STEP_LIM(target->atk_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, bak->attack - target->attack);
+            BtlEvPush(BEV_NUM, bak->atk - target->atk);
             MES_PUSH(MsgAtkDown);
             target->atk_cnt = 7;
             break;
@@ -805,7 +805,7 @@ pow_end:
             target->atk_lv -= 2;
             STEP_LIM(target->atk_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, bak->attack - target->attack);
+            BtlEvPush(BEV_NUM, bak->atk - target->atk);
             MES_PUSH(MsgAtkDown);
             target->atk_cnt = 7;
             break;
@@ -814,7 +814,7 @@ pow_end:
             target->atk_lv += 1;
             STEP_LIM(target->atk_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, target->attack - bak->attack);
+            BtlEvPush(BEV_NUM, target->atk - bak->atk);
             MES_PUSH(MsgAtkUp);
             target->atk_cnt = 7;
             break;
@@ -823,7 +823,7 @@ pow_end:
             target->atk_lv += 2;
             STEP_LIM(target->atk_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, target->attack - bak->attack);
+            BtlEvPush(BEV_NUM, target->atk - bak->atk);
             MES_PUSH(MsgAtkUp);
             target->atk_cnt = 7;
             break;
@@ -832,7 +832,7 @@ pow_end:
             target->def_lv -= 1;
             STEP_LIM(target->def_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, bak->defense - target->defense);
+            BtlEvPush(BEV_NUM, bak->def - target->def);
             MES_PUSH(MsgDefDown);
             target->def_cnt = 7;
             break;
@@ -841,7 +841,7 @@ pow_end:
             target->def_lv -= 2;
             STEP_LIM(target->def_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, bak->defense - target->defense);
+            BtlEvPush(BEV_NUM, bak->def - target->def);
             MES_PUSH(MsgDefDown);
             target->def_cnt = 7;
             break;
@@ -850,7 +850,7 @@ pow_end:
             target->def_lv += 1;
             STEP_LIM(target->def_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, target->defense - bak->defense);
+            BtlEvPush(BEV_NUM, target->def - bak->def);
             MES_PUSH(MsgDefUp);
             target->def_cnt = 7;
             break;
@@ -859,7 +859,7 @@ pow_end:
             target->def_lv += 2;
             STEP_LIM(target->def_lv);
             UnitCalcFar(tid);
-            BtlEvPush(BEV_NUM, target->defense - bak->defense);
+            BtlEvPush(BEV_NUM, target->def - bak->def);
             MES_PUSH(MsgDefUp);
             target->def_cnt = 7;
             break;

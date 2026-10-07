@@ -59,7 +59,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
         unit = UnitGetFar(unit_id);
         entry = &entries[index];
         entry->unit_id = unit_id;
-        entry->priority = unit->agility;
+        entry->priority = unit->agi;
         entry->command = 0;
         entry->parameter = 0;
         entry->target = 0x80;
@@ -73,9 +73,9 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 
         unit = UnitGetFar(unit_id);
         entry->unit_id = unit_id;
-        entry->priority = unit->agility >> 1;
+        entry->priority = unit->agi >> 1;
         if (entry->priority != 0)
-            entry->priority += (Random16() * unit->agility) >> 16;
+            entry->priority += (Random16() * unit->agi) >> 16;
         entry->command = 0;
         entry->parameter = 0;
         entry->target = (Random16() * priority_range) >> 16;

@@ -762,10 +762,10 @@ store_target:
 commit:
             Audio_PlayCue(110);
             ent->unit_id = (u16)actorId;
-            order = actor->agility;
+            order = actor->agi;
             if (order != 0) {
                 mode = Random16();
-                order += (s32)((u32)(actor->agility * mode) >> 20);
+                order += (s32)((u32)(actor->agi * mode) >> 20);
             }
             ent->priority = (u16)order;
             if (i != 0) {

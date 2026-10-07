@@ -175,13 +175,13 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         u8 *base = MsgPanelStatLabel;
 
         UiText_DrawCharacterAtOffsetFar((s32)base, window, 0, 40);
-        value = unit->attack;
+        value = unit->atk;
         UiText_DrawNumberInWindowFar(value, 3, window, 64, 40);
         UiText_DrawCharacterAtOffsetFar((s32)base + 1, window, 0, 48);
-        value = unit->defense;
+        value = unit->def;
         UiText_DrawNumberInWindowFar(value, 3, window, 64, 48);
         UiText_DrawCharacterAtOffsetFar((s32)base + 4, window, 0, 56);
-        value = unit->agility;
+        value = unit->agi;
         UiText_DrawNumberInWindowFar(value, 3, window, 64, 56);
         UiText_DrawCharacterAtOffsetFar((s32)base + 3, window, 0, 64);
         value = unit->luck;

@@ -82,9 +82,9 @@ s32 BtlUnitSet(s32 unit_id, s32 enemy_id, s32 suffix)
     unit->max_ep = enemy->ep;
     unit->hp_gauge = 0x4000;
     unit->ep_gauge = 0x4000;
-    unit->base_attack = enemy->attack;
-    unit->base_defense = enemy->defense;
-    unit->base_agility = enemy->agility;
+    unit->base_attack = enemy->atk;
+    unit->base_defense = enemy->def;
+    unit->base_agility = enemy->agi;
     unit->base_luck = enemy->luck;
     unit->base_action_count = enemy->turns;
     unit->base_hp_regen = enemy->hp_regen;

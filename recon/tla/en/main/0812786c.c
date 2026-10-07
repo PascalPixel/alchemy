@@ -12,9 +12,9 @@ struct OwnerStats {
     s16 max_ep;
     s16 hp;
     s16 ep;
-    u16 attack;
-    u16 defense;
-    u16 agility;
+    u16 atk;
+    u16 def;
+    u16 agi;
     u8 luck;
     u8 unknown_0f[5];
     struct OwnerElementStats elm[4];
@@ -63,34 +63,34 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     state->stats.max_ep = value;
 
     floor = __divsi3(levels * 123, 10);
-    value = state->stats.attack;
+    value = state->stats.atk;
     value += floor;
-    floor = __divsi3(base->attack * 7, 10);
+    floor = __divsi3(base->atk * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
-    state->stats.attack = value;
+    state->stats.atk = value;
 
     floor = __divsi3(levels * 33, 10);
-    value = state->stats.defense;
+    value = state->stats.def;
     value += floor;
-    floor = __divsi3(base->defense * 7, 10);
+    floor = __divsi3(base->def * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
-    state->stats.defense = value;
+    state->stats.def = value;
 
     floor = __divsi3(levels * 51, 10);
-    value = state->stats.agility;
+    value = state->stats.agi;
     value += floor;
-    floor = __divsi3(base->agility * 7, 10);
+    floor = __divsi3(base->agi * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
-    state->stats.agility = value;
+    state->stats.agi = value;
 
     for (i = 0; i < 4; i++) {
         value = state->stats.elm[i].pow + levels * 15;

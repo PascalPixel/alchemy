@@ -58,9 +58,9 @@ struct BtlUnit {
     s16 max_ep;
     s16 hp;
     s16 ep;
-    u16 attack;
-    u16 defense;
-    u16 agility;
+    u16 atk;
+    u16 def;
+    u16 agi;
     u8 luck;
     u8 action_entry_count;
     u8 hp_regen;

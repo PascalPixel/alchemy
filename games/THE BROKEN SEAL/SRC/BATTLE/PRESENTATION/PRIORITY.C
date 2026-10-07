@@ -72,7 +72,7 @@ s32 BattlePres_BuildOpponentEntries(
             s32 value;
 
             entry->unit_id = unit_id;
-            value = unit->agility;
+            value = unit->agi;
             entry->priority = value;
             if (copy_index != 0) {
                 entry->priority = (s16)value / 2;

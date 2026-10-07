@@ -274,9 +274,9 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
     res->ability = 0xffff;
     res->hp = 0;
     res->ep = 0;
-    res->attack = 0;
-    res->defense = 0;
-    res->agility = 0;
+    res->atk = 0;
+    res->def = 0;
+    res->agi = 0;
     res->luck = 0;
     if (level < 99) {
         st->level++;
@@ -288,9 +288,9 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         if (res->level == 1) {
             res->hp += work->growth->hp[0];
             res->ep += work->growth->ep[0];
-            res->attack += work->growth->attack[0];
-            res->defense += work->growth->defense[0];
-            res->agility += work->growth->agility[0];
+            res->atk += work->growth->atk[0];
+            res->def += work->growth->def[0];
+            res->agi += work->growth->agi[0];
             res->luck += work->growth->luck[0];
         }
         band = res->level / 20;
@@ -302,19 +302,19 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         res->hp += ((Random16() * 20 >> 16) + diff) / 20;
         diff = work->growth->ep[band + 1] - work->growth->ep[band];
         res->ep += ((Random16() * 20 >> 16) + diff) / 20;
-        diff = work->growth->attack[band + 1] - work->growth->attack[band];
-        res->attack += ((Random16() * 20 >> 16) + diff) / 20;
-        diff = work->growth->defense[band + 1] - work->growth->defense[band];
-        res->defense += ((Random16() * 20 >> 16) + diff) / 20;
-        diff = work->growth->agility[band + 1] - work->growth->agility[band];
-        res->agility += ((Random16() * 20 >> 16) + diff) / 20;
+        diff = work->growth->atk[band + 1] - work->growth->atk[band];
+        res->atk += ((Random16() * 20 >> 16) + diff) / 20;
+        diff = work->growth->def[band + 1] - work->growth->def[band];
+        res->def += ((Random16() * 20 >> 16) + diff) / 20;
+        diff = work->growth->agi[band + 1] - work->growth->agi[band];
+        res->agi += ((Random16() * 20 >> 16) + diff) / 20;
         diff = work->growth->luck[band + 1] - work->growth->luck[band];
         res->luck += ((Random16() * 20 >> 16) + diff) / 20;
         st->base_hp += res->hp;
         st->base_ep += res->ep;
-        st->base_attack += res->attack;
-        st->base_defense += res->defense;
-        st->base_agility += res->agility;
+        st->base_attack += res->atk;
+        st->base_defense += res->def;
+        st->base_agility += res->agi;
         st->base_luck += res->luck;
         st->base_action_count = 1;
         st->base_hp_regen = 0;

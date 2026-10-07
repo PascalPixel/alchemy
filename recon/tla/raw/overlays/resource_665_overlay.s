@@ -3705,7 +3705,8 @@ Data_020027f4:
 	.4byte 0x0000000b
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte MsgScene665No180 + 0x00400000
+	.2byte MsgScene665No180
+	.2byte 0x0040
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte Func_02000760
@@ -3890,7 +3891,8 @@ Data_02002ad0:
 	.4byte 0x0000000b
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte MsgScene665No180 + 0x00400000
+	.2byte MsgScene665No180
+	.2byte 0x0040
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte Func_02000760
@@ -4114,7 +4116,8 @@ Data_02002e48:
 	.4byte 0x0000000b
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte MsgScene665No180 + 0x00400000
+	.2byte MsgScene665No180
+	.2byte 0x0040
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte Func_02000760
@@ -4311,7 +4314,8 @@ Data_02003154:
 	.4byte 0x0000000b
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte MsgScene665No180 + 0x00400000
+	.2byte MsgScene665No180
+	.2byte 0x0040
 	.4byte 0x50009085
 	.4byte 0xffff0000
 	.4byte Func_02000760

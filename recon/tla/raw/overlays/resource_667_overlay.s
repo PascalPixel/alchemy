@@ -2519,7 +2519,8 @@ gSceneEvents:
 	.4byte MsgScene667No28
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte MsgScene666No125 + 0x00400000
+	.2byte MsgScene666No125
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

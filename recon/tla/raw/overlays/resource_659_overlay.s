@@ -3961,19 +3961,24 @@ Data_020028a0:
 	.4byte MsgScene659No168
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte MsgScene659No169 + 0x00400000
+	.2byte MsgScene659No169
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte MsgScene659No170 + 0x00400000
+	.2byte MsgScene659No170
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte MsgScene659No171 + 0x00400000
+	.2byte MsgScene659No171
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte MsgScene659No172 + 0x00400000
+	.2byte MsgScene659No172
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cc
-	.4byte MsgScene659No173 + 0x00400000
+	.2byte MsgScene659No173
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -4100,7 +4105,8 @@ Data_02002c9c:
 	.4byte MsgScene659No148
 	.4byte 0x00000173
 	.4byte 0xffff00cd
-	.4byte MsgScene659No174 + 0x00400000
+	.2byte MsgScene659No174
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -4276,19 +4282,24 @@ Data_02002da4:
 	.4byte MsgScene659No96
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte MsgScene659No169 + 0x00400000
+	.2byte MsgScene659No169
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte MsgScene659No170 + 0x00400000
+	.2byte MsgScene659No170
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte MsgScene659No171 + 0x00400000
+	.2byte MsgScene659No171
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte MsgScene659No172 + 0x00400000
+	.2byte MsgScene659No172
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cc
-	.4byte MsgScene659No173 + 0x00400000
+	.2byte MsgScene659No173
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -4485,19 +4496,24 @@ Data_0200308c:
 	.4byte Func_02001310
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte MsgScene659No169 + 0x00400000
+	.2byte MsgScene659No169
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte MsgScene659No170 + 0x00400000
+	.2byte MsgScene659No170
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte MsgScene659No171 + 0x00400000
+	.2byte MsgScene659No171
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cb
-	.4byte MsgScene659No172 + 0x00400000
+	.2byte MsgScene659No172
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00cc
-	.4byte MsgScene659No173 + 0x00400000
+	.2byte MsgScene659No173
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

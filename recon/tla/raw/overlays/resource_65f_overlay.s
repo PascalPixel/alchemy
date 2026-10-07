@@ -9560,7 +9560,8 @@ Data_02005e34:
 	.4byte Func_0200105c
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte MsgScene65FNo31 + 0x00400000
+	.2byte MsgScene65FNo31
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -9649,7 +9650,8 @@ Data_02005f78:
 	.4byte Func_0200105c
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte MsgScene65FNo31 + 0x00400000
+	.2byte MsgScene65FNo31
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

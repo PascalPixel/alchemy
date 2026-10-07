@@ -10307,7 +10307,8 @@ Data_02005fc4:
 	.4byte Func_02002014
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte MsgScene653No13 + 0x00400000
+	.2byte MsgScene653No13
+	.2byte 0x0040
 	.4byte 0x00000002
 	.4byte 0x02300014
 	.4byte Func_020004a8

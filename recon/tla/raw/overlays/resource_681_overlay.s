@@ -10491,7 +10491,8 @@ Data_02005f30:
 	.4byte Func_020019cc
 	.4byte 0x00000053
 	.4byte 0xffff0032
-	.4byte MsgScene681No11 + 0x00400000
+	.2byte MsgScene681No11
+	.2byte 0x0040
 	.4byte 0x00000003
 	.4byte 0xffff0037
 	.4byte Func_02001ebc
@@ -10523,10 +10524,12 @@ Data_02005fcc:
 	.4byte Func_020019cc
 	.4byte 0x00000053
 	.4byte 0xffff0032
-	.4byte MsgScene681No11 + 0x00400000
+	.2byte MsgScene681No11
+	.2byte 0x0040
 	.4byte 0x00000003
 	.4byte 0xffff0037
-	.4byte MsgScene681No08 + 0x00400000
+	.2byte MsgScene681No08
+	.2byte 0x0040
 	.4byte 0x00000053
 	.4byte 0x0e41004d
 	.4byte Func_02001fa0

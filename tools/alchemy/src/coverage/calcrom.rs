@@ -891,6 +891,19 @@ pub(crate) fn measure(
                 })
                 .collect())
         };
+        // A section's modes are what its own object marks; an archive
+        // member falls back to the image's mapping symbols.
+        let own = |placed: &Placed<'_>| -> Result<Option<Vec<(u32, super::arm::Mode)>>, String> {
+            if placed.object.ends_with(')') {
+                return Ok(None);
+            }
+            let Ok(bytes) = std::fs::read(root.join(placed.object)) else {
+                return Ok(None);
+            };
+            super::arm::object_mappings(&bytes, placed.name, placed.address as u32)
+                .map(Some)
+                .map_err(|error| format!("{}: {error}", placed.object))
+        };
         let (arm, likely) = super::arm::inventory(
             &image,
             &map.image,
@@ -898,6 +911,7 @@ pub(crate) fn measure(
             &spans,
             &describe,
             &defined,
+            &own,
         )?;
         measurement.arm.extend(arm);
         measurement.arm_likely.extend(likely);

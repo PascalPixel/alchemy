@@ -471,6 +471,51 @@ pub(crate) fn object_labels(bytes: &[u8], section: &str, start: u32) -> Result<V
     Ok(labels)
 }
 
+/// The mapping runs an object file marks in its input section `section`,
+/// placed at `start`: its own mapping symbols, or, in a section that has
+/// none (code from the compilers' own assembler), its function symbols,
+/// Thumb at an odd address and ARM at an even one. A mapping symbol's
+/// address in the linked image never tells which object marked it: one
+/// another object leaves at its own end sits where the next section starts.
+pub(crate) fn object_mappings(bytes: &[u8], section: &str, start: u32) -> Result<Vec<(u32, Mode)>, String> {
+    let file = object::File::parse(bytes).map_err(|e| e.to_string())?;
+    let Some(index) = file.sections().find(|s| s.name() == Ok(section)).map(|s| s.index()) else {
+        return Ok(Vec::new());
+    };
+    let symbols = file
+        .symbols()
+        .filter(|symbol| symbol.section_index() == Some(index))
+        .map(|symbol| {
+            let kind = match symbol.flags() {
+                object::SymbolFlags::Elf { st_info, .. } => st_info & 0xf,
+                _ => object::elf::STT_NOTYPE,
+            };
+            (symbol.address() as u32, symbol.name().unwrap_or(""), kind)
+        })
+        .collect::<Vec<_>>();
+    Ok(section_mappings(start, &symbols))
+}
+
+/// `object_mappings` over one section's symbols in symbol-table order, as
+/// (offset, name, ELF symbol type): the old assemblers mark a Thumb
+/// function `STT_ARM_TFUNC`, the current one with an odd `STT_FUNC`.
+pub(crate) fn section_mappings(start: u32, symbols: &[(u32, &str, u8)]) -> Vec<(u32, Mode)> {
+    let mut marked = Vec::new();
+    let mut functions = Vec::new();
+    for (index, &(offset, name, kind)) in symbols.iter().enumerate() {
+        if let Some(mode) = mapping_mode(name) {
+            marked.push((start + offset, index, mode));
+        } else if kind == object::elf::STT_ARM_TFUNC || (kind == object::elf::STT_FUNC && offset & 1 == 1) {
+            functions.push((start + (offset & !1), index, Mode::Thumb));
+        } else if kind == object::elf::STT_FUNC {
+            functions.push((start + offset, index, Mode::Arm));
+        }
+    }
+    let mut found = if marked.is_empty() { functions } else { marked };
+    found.sort_by_key(|(address, index, _)| (*address, *index));
+    found.into_iter().map(|(address, _, mode)| (address, mode)).collect()
+}
+
 /// The global symbols a linker map lists under each input section, keyed
 /// by section name, address and object as `sections` reads them: the
 /// fallback for an object that cannot be read on its own (an archive
@@ -585,7 +630,10 @@ fn overlap(from: u32, to: u32, spans: &[(i64, i64)]) -> i64 {
 /// and origin (C, assembly, library, disassembly, listing, other, or
 /// outside when the count does not read the section); `defined` gives the
 /// labels that section's own object defines in it, so a label another
-/// object ends at the same address never names its code.
+/// object ends at the same address never names its code; `own` gives the
+/// mapping runs that section's own object marks (`object_mappings`), or
+/// None when the object cannot be read and the image's mapping symbols
+/// stand in.
 pub(crate) fn inventory(
     image: &Image<'_>,
     name: &str,
@@ -593,15 +641,17 @@ pub(crate) fn inventory(
     uncredited: &[(i64, i64)],
     describe: &dyn Fn(&Placed<'_>) -> Result<(String, &'static str), String>,
     defined: &dyn Fn(&Placed<'_>) -> Result<Vec<Label>, String>,
+    own: &dyn Fn(&Placed<'_>) -> Result<Option<Vec<(u32, Mode)>>, String>,
 ) -> Result<(Vec<ArmRow>, Vec<ArmRow>), String> {
-    let pieces = placed
-        .iter()
-        .filter(|p| p.size > 0 && p.address >= 0 && image.executable(p.address as u32))
-        .map(|p| {
-            let (start, end) = (p.address as u32, (p.address + p.size) as u32);
-            (p, runs(start, end, &image.mappings))
-        })
-        .collect::<Vec<_>>();
+    let mut pieces = Vec::new();
+    for p in placed.iter().filter(|p| p.size > 0 && p.address >= 0 && image.executable(p.address as u32)) {
+        let (start, end) = (p.address as u32, (p.address + p.size) as u32);
+        let found = match own(p)? {
+            Some(mappings) => runs(start, end, &mappings),
+            None => runs(start, end, &image.mappings),
+        };
+        pieces.push((p, found));
+    }
     let mut modes: BTreeMap<&str, (i64, i64)> = BTreeMap::new();
     for (piece, found) in &pieces {
         let entry = modes.entry(piece.object).or_default();
@@ -910,7 +960,7 @@ mod tests {
                 _ => vec![label(0x0300_0010, "entry", false, false), label(0x0300_0014, "Second", true, true)],
             })
         };
-        let (rows, likely) = inventory(&image, "main", &placed, &[(0x0300_0014, 4)], &describe, &defined).unwrap();
+        let (rows, likely) = inventory(&image, "main", &placed, &[(0x0300_0014, 4)], &describe, &defined, &from_image).unwrap();
         assert!(likely.is_empty());
         let shown = rows.iter().map(|r| (r.function.as_str(), r.run, r.load, r.bytes, r.padding, r.origin, r.shape)).collect::<Vec<_>>();
         // Code before B.o's first global takes the local label before it.
@@ -931,6 +981,67 @@ mod tests {
 
     fn label(address: u32, name: &str, global: bool, function: bool) -> Label {
         Label { address, name: name.into(), global, function }
+    }
+
+    fn from_image(_: &Placed<'_>) -> Result<Option<Vec<(u32, Mode)>>, String> {
+        Ok(None)
+    }
+
+    #[test]
+    fn a_section_without_mapping_symbols_takes_its_modes_from_its_functions() {
+        use object::elf::{STT_ARM_TFUNC, STT_FUNC, STT_NOTYPE};
+        // agscc's and gcc_arm's own assemblers write no mapping symbols.
+        let arm = [(0, ".gcc2_compiled.", STT_NOTYPE), (0, "Tile_BuildMetatiles", STT_FUNC)];
+        assert_eq!(section_mappings(0x0801_58e8, &arm), [(0x0801_58e8, Mode::Arm)]);
+        let thumb = [(0, "A", STT_ARM_TFUNC), (0x40, "B", STT_ARM_TFUNC), (0x81, "C", STT_FUNC)];
+        assert_eq!(
+            section_mappings(0x0800_0000, &thumb),
+            [(0x0800_0000, Mode::Thumb), (0x0800_0040, Mode::Thumb), (0x0800_0080, Mode::Thumb)]
+        );
+        // A section's own mapping symbols win over its function symbols.
+        let marked = [(0, "Main", STT_FUNC), (0, "$a", STT_NOTYPE), (0x10, "$d", STT_NOTYPE)];
+        assert_eq!(section_mappings(0x100, &marked), [(0x100, Mode::Arm), (0x110, Mode::Data)]);
+        assert!(section_mappings(0x100, &[(0, "table", STT_NOTYPE)]).is_empty());
+    }
+
+    #[test]
+    fn a_mapping_symbol_another_object_leaves_at_its_end_never_sets_the_next_section() {
+        // 080155d0.o ends with `$d` where BUILD_METATILES.o, compiled by
+        // gcc_arm's own assembler, starts: the image reads all of
+        // Tile_BuildMetatiles as data, its own object as ARM.
+        let bytes = le(&[MOV_R0_R1, PUSH_R4_LR, MOV_R0_R1, POP_R4_PC, 0x0300_0000]);
+        let image = Image {
+            code: vec![(0x0801_58e4, &bytes)],
+            segments: vec![],
+            mappings: vec![(0x0801_58e4, Mode::Arm), (0x0801_58e8, Mode::Data)],
+            labels: vec![(0x0801_58e4, "Func_080155d0".into(), true), (0x0801_58e8, "Tile_BuildMetatiles".into(), true)],
+        };
+        let listing = "obj/recon/tbs/raw/080155d0.o";
+        let placed = [
+            Placed { name: ".text", address: 0x0801_58e4, size: 4, object: listing },
+            Placed { name: ".text", address: 0x0801_58e8, size: 16, object: "obj/games/X/BUILD_METATILES.o" },
+        ];
+        let describe = |p: &Placed<'_>| {
+            Ok::<_, String>((p.object.to_owned(), if p.object == listing { "disassembly" } else { "C" }))
+        };
+        let defined = |p: &Placed<'_>| {
+            Ok::<_, String>(if p.object == listing {
+                vec![label(0x0801_58e4, "Func_080155d0", true, true)]
+            } else {
+                vec![label(0x0801_58e8, "Tile_BuildMetatiles", true, true)]
+            })
+        };
+        let own = |p: &Placed<'_>| {
+            Ok::<_, String>((p.object != listing).then(|| {
+                section_mappings(p.address as u32, &[(0, "Tile_BuildMetatiles", object::elf::STT_FUNC)])
+            }))
+        };
+        let (rows, _) = inventory(&image, "main", &placed, &[], &describe, &defined, &from_image).unwrap();
+        assert_eq!(ArmTally::of(&rows).c, 0);
+        let (rows, _) = inventory(&image, "main", &placed, &[], &describe, &defined, &own).unwrap();
+        let shown = rows.iter().map(|r| (r.function.as_str(), r.bytes, r.origin)).collect::<Vec<_>>();
+        assert_eq!(shown, [("Func_080155d0", 4, "disassembly"), ("Tile_BuildMetatiles", 16, "C")]);
+        assert_eq!(ArmTally::of(&rows).c, 16);
     }
 
     fn le(list: &[u32]) -> Vec<u8> {
@@ -968,7 +1079,7 @@ mod tests {
                 vec![label(0x0800_2cf4, "Resource_ExecuteTransfer", true, true)]
             })
         };
-        let (rows, _) = inventory(&image, "main", &placed, &[], &describe, &defined).unwrap();
+        let (rows, _) = inventory(&image, "main", &placed, &[], &describe, &defined, &from_image).unwrap();
         let named = rows.iter().map(|r| (r.function.as_str(), r.bytes)).collect::<Vec<_>>();
         assert_eq!(named, [("Resource_DecodeType2Loop", 4), ("Resource_ExecuteTransfer", 12)]);
     }
@@ -1068,14 +1179,14 @@ mod tests {
         let as_origin = |origin: &'static str| {
             move |p: &Placed<'_>| Ok::<_, String>((p.object.to_owned(), origin))
         };
-        let (rows, likely) = inventory(&image, "main", &[raw], &[], &as_origin("disassembly"), &defined).unwrap();
+        let (rows, likely) = inventory(&image, "main", &[raw], &[], &as_origin("disassembly"), &defined, &from_image).unwrap();
         assert!(rows.is_empty());
         let shown = likely.iter().map(|r| (r.function.as_str(), r.run, r.bytes, r.origin, r.shape)).collect::<Vec<_>>();
         assert_eq!(shown, [("Func_080212d8", 0x0802_12dc, 12, "disassembly", "mixed")]);
         assert_eq!(register_list(likely[0].evidence.save.unwrap()), "{r4,lr}");
         assert_eq!(ArmTally::of(&rows), ArmTally::default());
         // Data in maintained assembly or C is data, whatever it holds.
-        let (rows, likely) = inventory(&image, "main", &[raw], &[], &as_origin("assembly"), &defined).unwrap();
+        let (rows, likely) = inventory(&image, "main", &[raw], &[], &as_origin("assembly"), &defined, &from_image).unwrap();
         assert!(rows.is_empty() && likely.is_empty());
     }
 }

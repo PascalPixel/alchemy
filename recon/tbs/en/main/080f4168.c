@@ -1,4 +1,22 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2036, differ 1754.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2035, differ 1731.
+ * Split affine pointer constraints: 1754 -> 1746, all four halfword
+ * pointers and four object offsets now use native's registers. An input
+ * instead of an output for pa alone was unchanged at 1754. Initialize
+ * order[] with a two-iteration != loop: 2035/1731. GCC unrolls it and
+ * puts the order base at native sp+44, restoring render+12 at48, flash52,
+ * stopped56, projection base60. The affine depth cursor still spills at32
+ * (native4), physics spin cursor at28 (native32), and its byte offset at24
+ * (native28). Native's initial order[0] store retains i/r11; draft uses 0.
+ * Order init with <2: 2038/1746, stores reverse and key reload returns;
+ * sorting from i=0 instead of1: 2036/1738; retain init i with an asm input:
+ * 2041/1771. Native's physics spin variant load uses base plus byte offset,
+ * other accesses use a cursor. Local opaque base at that one access:
+ * 2035/1741, but subsequent decrement becomes indexed too. Explicit step
+ * pointer: 2033/1757; opaque step: 2031/1761; independent step cursor:
+ * 2032/1756; step lifetime input: 2036/1892. None kept. Index inputs on the
+ * two y paths: 2035/1757. Unused-output asm blocks: 2035/1731, identical
+ * assembled diff to no device; native's unused index loads already survive
+ * naturally. No extra CSE-block device is needed there.
  * Affine obj now has block scope: 1776 -> 1754; b/c/d halfword pointers
  * take native's r5/r4/r0. The first pointer and offset remain swapped,
  * r6/r7 instead of native's r7/r6. Sharing obj across the earlier object
@@ -611,8 +629,9 @@ void LuckyDice_Run(void)
             } while (faces[0] == faces[1]);
         }
 
-        order[0] = 0;
-        order[1] = 1;
+        for (i = 0; i != 2; i++) {
+            order[i] = i;
+        }
         for (i = 1; i < 2; i++) {
             key = order[i];
             for (j = i - 1; j >= 0 && work->particles[order[j]].z > work->particles[key].z; j--) {
@@ -866,8 +885,10 @@ void LuckyDice_Run(void)
                 u32 offc = OBJ_OFF(i * 4 + 2, attr2);
                 u32 offd = OBJ_OFF(i * 4 + 3, attr2);
 
-                /* FAKEMATCH: native keeps four halfword pointers and the first object offset in low registers; restores the depth-pointer spill and 768-byte frame (764 without). */
-                __asm__ volatile("" : "+l"(pa), "+l"(pb), "+l"(pc), "+l"(pd) : "l"(offa));
+                /* FAKEMATCH: native's first halfword pointer is r7; a separate boundary swaps it with the first offset as native does (1754 to 1746). */
+                __asm__ volatile("" : "+l"(pa));
+                /* FAKEMATCH: native keeps the other three pointers and first offset low; restores the depth-pointer spill and 768-byte frame (764 without). */
+                __asm__ volatile("" : "+l"(pb), "+l"(pc), "+l"(pd) : "l"(offa));
                 value = depth[i] / 2 + 128;
                 *pa = value;
                 *pb = 0;

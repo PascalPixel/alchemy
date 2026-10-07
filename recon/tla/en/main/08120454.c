@@ -31,7 +31,8 @@
  * with (s16)maxu / 10 as well 635. There the listing copies the target
  * into r2 at the PP restore's head, so the effect's ldrb fits between the
  * pp loads and case 77 keeps r2; ours copies it into r3, which the effect
- * load takes. Tried and worse: a while loop
+ * load takes. The summon's enemy reset as a for loop over saved[] keeps
+ * 330 only with its (u16) read (377 without). Tried and worse: a while loop
  * for the immobilize scan (832), tmp or one shared amt for the drains (708,
  * 716), while loops for the affinity scans, plain hp/max_hp reads in the
  * heal (557: one ldrh shared by both; 445 with the signed read first),

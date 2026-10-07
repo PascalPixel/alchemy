@@ -1,3 +1,5 @@
+/* 2026-10-07 queue3 lifetime correction: differ 155 (listing 1037, draft 1036, common 959), not matched. Separate per-mode count locals and shared gap = count * 3 inside the column loops restore native count/fp, gap/sl and work/r9 together (169 -> 155), without another device. Gap computed at panel scope gives 651; before the pattern or in the indexed-store expression stays 155. Left: row copies exchanged between ip/sp+4, the mode-1 gap*2 spill's order, the main-loop zero, closing address operands and literal-pool placement. */
+/* Trial (queue3 from 155, none kept): chained pattern computation restores index/ip and pattern/sp+4 but exchanges the row induction registers r5/r6 (163). A mode-1 row-local pattern with a memory input 319, with a read/write register constraint 344; a pattern shared by both modes 510. The chained form's index biv has 15 refs/26 insns, pattern 15/27, so index wins r5; precomputing pattern reverses that order but also reverses which row copy survives reload. */
 /* 2026-10-07 queue3 continuation: differ 169 (listing 1037, draft 1036, common 952), not matched. A readonly address constraint retains the closing tile loop's native separate add before strh (172 -> 169); naming the pointer alone gives 174. The preceding add still reverses its commutative operands. Count/sl versus count*3/fp, row copies, the main-loop zero and literal-pool placement remain. */
 /* Trial (queue3 continuation, none kept): mode-1 row index constrained to ip at row scope 469 (read-only also 469), normal index with a fixed copy 390, read/write handoff back to index 475; extra row-index input inside the column loop 356; fixed ip inside the column loop 570 (read-only 917); a high-register constraint fails reload with an internal compiler error. Plain index before pattern inside the column loop 380. The baseline's index copy already outranks its pattern copy (9 refs/17 insns versus 9/18); reload still spills the index. Scroll zero through a cast pointer 174, identity asm 180, volatile field 175, all rejected. Closing address readonly versus read/write both 169; post-store constraint 171, repeated pre-store expression 365, indexed address 182. A narrow fp handoff for the mode-1 count load on 169 gives 290 and prevents its native hoist. */
 /* Trial (queue3 after 172, none kept): separate per-mode counts 278 (count gets native fp, but count*3 now outranks work and takes r9); fixed work r9 951; a narrow work-to-r9 asm input in both column loops 868. Shared count has 18 refs over 80 insns, work 84/696, count*3 9/38; separate counts shorten count*3's lifetime to 17. Named count*3, const pattern, row-scope tmp3 and panel-scope tmp3 all 172; tmp3 shared by both modes 793. Moving rebuild = 0 after menu_busy 169 changes native store order and removes another instruction, rejected. Explicit else-if (mode == 0) and a default/case-0 switch without the dead CSE branch both 227. alchemy permute 10 minutes, 2 jobs, seed 73 from 196: 25,822 candidates, no improvement. */
@@ -193,11 +195,12 @@ s32 Ui_RunSelectionScreen(s32 mode)
         gBgScroll[1].x = 0;
         gBgScroll[1].y = 32;
         if (rebuild != 0) {
-            s32 count;
+            s32 gap;
             rebuild = 0;
             render->menu_busy = 1;
             if (mode) {
                 s32 panel;
+                s32 count;
                 for (panel = 0; panel < 6 - work->count; panel++) {
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
@@ -211,14 +214,16 @@ s32 Ui_RunSelectionScreen(s32 mode)
                         s32 col;
                         for (col = 0; col <= 2; col++) {
                             s32 tmp3 = panel * 16 + cnt * 4;
-                            ((u16 *)0x0600fd6c)[panel * 3 + cnt * 32 + (col & 3) - count * 3] = tmp3 = tmp3 + col + 0x100;
+                            gap = count * 3;
+                            ((u16 *)0x0600fd6c)[panel * 3 + cnt * 32 + (col & 3) - gap] = tmp3 = tmp3 + col + 0x100;
                             tmp3 = col & 3;
-                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - count * 3 + 22) = 0;
+                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - gap + 22) = 0;
                         }
                     }
                 }
             } else {
                 s32 panel;
+                s32 count;
                 for (panel = 0; panel < 6 - work->count; panel++) {
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
@@ -241,9 +246,10 @@ s32 Ui_RunSelectionScreen(s32 mode)
                         s32 col;
                         for (col = 0; col <= 2; col++) {
                             s32 tmp3 = panel * 16 + cnt * 4;
-                            ((u16 *)0x0600fd68)[panel * 3 + cnt * 32 + (col & 3) - count * 3] = tmp3 = tmp3 + col + 0x100;
+                            gap = count * 3;
+                            ((u16 *)0x0600fd68)[panel * 3 + cnt * 32 + (col & 3) - gap] = tmp3 = tmp3 + col + 0x100;
                             tmp3 = col & 3;
-                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - count * 3 + 20) = 0;
+                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - gap + 20) = 0;
                         }
                     }
                 }

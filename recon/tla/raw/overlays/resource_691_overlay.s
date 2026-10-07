@@ -1881,30 +1881,6 @@ Func_02000ee4:
 	pop {r5, r6, r7, pc}
 .L_02008fc8:
 	.4byte Func_02000dc0
-	.section .text.x02008fcc,"ax",%progbits
-	.global Func_02000fcc
-	.thumb_func
-Func_02000fcc:
-	push {lr}
-	ldr r3, .L_02008ff0
-	adds r2, r0, #0
-	adds r2, #99
-	ldrb r2, [r2]
-	ldr r3, [r3]
-	ands r3, r2
-	cmp r3, #0
-	beq .L_02008fe6
-	movs r1, #10
-	bl Object_SetPartAttribute
-	b .L_02008fec
-.L_02008fe6:
-	movs r1, #0
-	bl Object_SetPartAttribute
-.L_02008fec:
-	pop {pc}
-	.2byte 0x0000
-.L_02008ff0:
-	.4byte gFrameCount
 	.section .text.x02008ff4,"ax",%progbits
 	.global Func_02000ff4
 	.thumb_func

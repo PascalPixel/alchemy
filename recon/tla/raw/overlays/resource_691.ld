@@ -33,7 +33,7 @@ SECTIONS
         "*/resource_691_overlay.o"(.text.x02008d40)
         "*/resource_691_overlay.o"(.text.x02008dc0)
         "*/resource_691_overlay.o"(.text.x02008ee4)
-        "*/resource_691_overlay.o"(.text.x02008fcc)
+        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_691/BLINK.o"(.text)
         "*/resource_691_overlay.o"(.text.x02008ff4)
         "*/resource_691_overlay.o"(.text.x02009084)
         "*/resource_691_overlay.o"(.text.x020090cc)

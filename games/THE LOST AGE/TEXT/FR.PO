@@ -43587,7 +43587,7 @@ msgctxt "message"
 msgid "10894"
 msgstr "C'est difficile d'imaginer{line_break}ce vaisseau quand il{line_break}battra des ailes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlazeStoneEmber"
 msgid "10895"
 msgstr "Un objet ardent se trouve{line_break}à l'intérieur du rocher.{end_wait}"
 
@@ -43599,7 +43599,7 @@ msgctxt "message"
 msgid "10897"
 msgstr "{actor_name:5} trouve une{line_break}boule de magma.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlazeTabletInscription"
 msgid "10898"
 msgstr "{actor_name:5} examine la{line_break}stèle. Des symboles étranges{line_break}ornent sa surface.{page_break}O, détenteur de la force{line_break}du feu... Posez vos mains{line_break}sur cette pierre.{page_break}Nous vous conférerons{line_break}la magie \"Embraser\"...{end_wait}"
 

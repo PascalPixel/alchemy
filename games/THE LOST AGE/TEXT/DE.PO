@@ -43759,7 +43759,7 @@ msgctxt "message"
 msgid "10937"
 msgstr "Man kann sich nur schwer{line_break}vorstellen, wie diese Flügel{line_break}aussehen,{page_break}wenn sie sich flatternd auf{line_break}und ab bewegen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlazeStoneEmber"
 msgid "10938"
 msgstr "Im Inneren des Steines scheint{line_break}etwas zu sein, das ein tiefes{line_break}Glühen von sich gibt.{end_wait}"
 
@@ -43771,7 +43771,7 @@ msgctxt "message"
 msgid "10940"
 msgstr "{actor_name:5} erhält eine{line_break}Magma-Kugel.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBlazeTabletInscription"
 msgid "10941"
 msgstr "{actor_name:5} untersucht die{line_break}Tafel. Verwitterte Schriftzeichen{line_break}sind darauf zu erkennen.{page_break}Führer der Macht des Feuers...{line_break}Lege deine Hände auf den Stein.{page_break}Erweist du dich als würdig,{line_break}gewähren wir dir die Kraft, einen{line_break}Sturm aus Feuer zu entfesseln.{end_wait}"
 

@@ -51083,7 +51083,7 @@ msgctxt "MsgSummonInheritedEarthDarkness"
 msgid "12768"
 msgstr "われ 地の力をうけつぎ{line_break}やみをつくりだす者なり{pause_60}{page_break}大いなる力を ほっするならば{line_break}このせきばんに ふれてみよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIAmTheShadowThe"
 msgid "12769"
 msgstr "われ 光をふうじる者なり{line_break}太陽の力を ほっするならば{line_break}お前の力を 見せてみよ。{end_wait}"
 

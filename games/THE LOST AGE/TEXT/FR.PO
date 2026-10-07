@@ -26667,7 +26667,7 @@ msgctxt "MsgDeriHeyaBoringVillage"
 msgid "06664"
 msgstr "Les voyageurs finissent très{line_break}vite par s'ennuyer à Daïla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene657No01"
 msgid "06665"
 msgstr "Regardez... C'est le{line_break}bateau de Ph¾nixia!{end_wait}"
 
@@ -26759,11 +26759,11 @@ msgctxt "MsgKibonboWarriorsWonderAboutPrisoners"
 msgid "06687"
 msgstr "Le raid fut une réussite,{line_break}mais, malgré nos efforts,{line_break}nous n'avons rien trouvé...{page_break}Je me demande où sont{line_break}les prisonniers qui se sont{line_break}évadés grâce à nous.{end_wait}."
 
-msgctxt "message"
+msgctxt "MsgScene657No02"
 msgid "06688"
 msgstr "Cette porte est bloquée{line_break}par quelque chose de{line_break}très puissant.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene657No03"
 msgid "06689"
 msgstr "Eh bien, ne perdons pas{line_break}notre temps ici...{page_break}Nous ferions mieux d'aller{line_break}chercher un bateau que{line_break}nous pourrons utiliser.{end_wait}"
 
@@ -29723,11 +29723,11 @@ msgctxt "message"
 msgid "07428"
 msgstr "Ce peuple est maudit car{line_break}il a choisi de se vouer corps{line_break}et âme à un dieu méprisable...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo01"
 msgid "07429"
 msgstr "Comme on s'ennuie ici...{line_break}Pourquoi personne n'ose{line_break}commettre un... crime?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo02"
 msgid "07430"
 msgstr "Je me demande pourquoi{line_break}il y a autant d'étrangers{line_break}à Alhafra. C'est louche...{end_wait}"
 
@@ -30959,7 +30959,7 @@ msgctxt "message"
 msgid "07737"
 msgstr "Je crois que cet homme{line_break}ne ferait qu'une bouchée{line_break}des terribles loups-garous...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo03"
 msgid "07738"
 msgstr "Vous désirez voir Briggs?{end_wait}"
 
@@ -31063,11 +31063,11 @@ msgctxt "message"
 msgid "07763"
 msgstr "HIN!"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo04"
 msgid "07764"
 msgstr "Depuis que vous avez{line_break}attrapé Briggs et sa bande,{line_break}je suis TRES occupé.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo05"
 msgid "07765"
 msgstr "Oh, vous êtes venus{line_break}nous rendre visite?{end_now}"
 
@@ -31079,43 +31079,43 @@ msgctxt "message"
 msgid "07767"
 msgstr "Ah, vous êtes donc venus{line_break}nous espionner, pas vrai?{page_break}Comme vous pouvez le voir,{line_break}nous sommes très sages!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo06"
 msgid "07768"
 msgstr "Je déteste les prisons.{line_break}On y mange si mal...{page_break}Tout cela est pire{line_break}qu'une vie de pirate.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo07"
 msgid "07769"
 msgstr "La réparation du bateau{line_break}n'a plus l'air d'intéresser{line_break}le maire d'Alhafra.{page_break}Cela signifie que le mât{line_break}n'est pas prêt d'être{line_break}redressé.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo08"
 msgid "07770"
 msgstr "Si vous ne fourriez pas{line_break}votre nez partout, tout{line_break}se serait bien passé!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo09"
 msgid "07771"
 msgstr "Je vous ai vus observer{line_break}Eoléo... Mais vous n'avez{line_break}rien remarqué...{page_break}N-Non! Bien sûr que non!{line_break}Personne ne peut le voir.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo10"
 msgid "07772"
 msgstr "Quand toutes les cellules{line_break}sont vides, je m'ennuie. A{line_break}présent, je me sens moins seul!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo11"
 msgid "07773"
 msgstr "{actor_name:5} a lui aussi{line_break}d'étranges pouvoirs. Il ne doit{line_break}pas voir ce qu'Eoléo peut faire.{page_break}Sinon, je pourrai dire adieu à ma{line_break}dernière chance de m'évader.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo12"
 msgid "07774"
 msgstr "Je ne veux pas moisir dans{line_break}cette maudite cellule. Je{line_break}m'évaderai tôt ou tard!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo13"
 msgid "07775"
 msgstr "S'ils ne réparent pas{line_break}le bateau, ce dernier{line_break}moisira au port.{page_break}Je parie que le maire{line_break}d'Alhafra souffre que Madra{line_break}s'enrichisse à sa place.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo14"
 msgid "07776"
 msgstr "Oh, qu'est-ce que ce maudit{line_break}{actor_name:5} vient faire ici?{page_break}Je voudrais que cet{line_break}importun disparaisse!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo15"
 msgid "07777"
 msgstr "Les pouvoirs d'Eoléo{line_break}seraient parfois visibles...{line_break}Je vais voir ça de plus près.{end_wait}"
 
@@ -32015,35 +32015,35 @@ msgctxt "message"
 msgid "08001"
 msgstr "Ce rocher me gêne. Je{line_break}veux aller de l'autre côté.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66BNo01"
 msgid "08002"
 msgstr "Whouaf! Whouaf!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66BNo02"
 msgid "08003"
 msgstr "Creuser ici? Whouaf!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66BNo03"
 msgid "08004"
 msgstr "J'en étais sûr. Je savais{line_break}qu'il y avait là quelque{line_break}chose et il l'a déterré!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66BNo04"
 msgid "08005"
 msgstr "Je voulais retrouver les{line_break}miens à Gondowan, mais{line_break}les cordes sont déliées.{page_break}Je suis coincé ici jusqu'à ce{line_break}qu'un Kibombo remarque mon{line_break}absence et vienne me chercher.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66BNo05"
 msgid "08006"
 msgstr "Je me demande qui a pu{line_break}défaire cette corde...{page_break}"
 
-msgctxt "message"
+msgctxt "MsgScene66BNo06"
 msgid "08007"
 msgstr "Si les autres soldats savaient{line_break}que nous ne pouvons pas rentrer{line_break}à Kibombo, ils s'affoleraient.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66BNo07"
 msgid "08008"
 msgstr "J'ai hâte de rentrer chez moi.{line_break}Indra n'a pas le charme{line_break}naturel de Gondowan.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66BNo08"
 msgid "08009"
 msgstr "{actor_name:5}! Où veux-tu{line_break}aller?{page_break}Je propose d'aider {actor_name:8}{line_break}à récupérer son orbe noir.{end_wait}"
 
@@ -35803,7 +35803,7 @@ msgctxt "message"
 msgid "08948"
 msgstr "Hum... Je me demande si le{line_break}raz de marée a été causé{line_break}par une éruption volcanique.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene657No04"
 msgid "08949"
 msgstr "Mon bateau! Enfin...{line_break}Je retrouve mon{line_break}bateau.{end_wait}"
 
@@ -35995,11 +35995,11 @@ msgctxt "message"
 msgid "08996"
 msgstr "Oh, merci!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene657No05"
 msgid "08997"
 msgstr "Alors, ne perdons pas de{line_break}temps! Allons à Madra{line_break}sur-le-champ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene657No06"
 msgid "08998"
 msgstr "Que c'est bon de retrouver{line_break}mon bon vieux bateau.{end_wait}"
 
@@ -36031,7 +36031,7 @@ msgctxt "message"
 msgid "09005"
 msgstr "Je dois placer l'orbe{line_break}noir sur ce piédestal.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene657No07"
 msgid "09006"
 msgstr "Tiens le gouvernail, {actor_name:5}!{end_wait}"
 
@@ -40443,11 +40443,11 @@ msgctxt "message"
 msgid "10108"
 msgstr "Ils ont baissé la garde après{line_break}l'arrestation de Briggs. Il a pu{line_break}filer à cause de leur négligence.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo16"
 msgid "10109"
 msgstr "Chaucha a volé la clé de{line_break}la prison puis l'a remise{line_break}à Briggs et ses hommes.{page_break}Ils m'ont eu! Pourtant, je{line_break}ne les ai pas lâchés des{line_break}yeux! Comment ont-ils fait?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene66ANo17"
 msgid "10110"
 msgstr "Plus je revois la scène et{line_break}moins je comprends. Il y a{line_break}quelque chose qui cloche.{page_break}Un instant... Eoléo est resté{line_break}derrière moi tout le temps...{end_wait}"
 
@@ -41435,7 +41435,7 @@ msgctxt "MsgChanpaVillagersStoppedWorking"
 msgid "10356"
 msgstr "Tous les villageois{line_break}aspirent à une vie{line_break}sans travail.{page_break}Ils ont quitté leurs{line_break}emplois et vivent au{line_break}crochet de Briggs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene657No08"
 msgid "10357"
 msgstr "Ne lâche pas le gouvernail!{line_break}Tu ne voudrais pas que{line_break}les vagues nous dévorent!?{end_wait}"
 
@@ -43387,7 +43387,7 @@ msgctxt "message"
 msgid "10844"
 msgstr "Où vas-tu, {actor_name:5}? Allons{line_break}donc voir ça de plus près!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No01"
 msgid "10845"
 msgstr "{actor_name:5}, est-ce que{line_break}nous partons?{end_now}"
 
@@ -43555,35 +43555,35 @@ msgctxt "message"
 msgid "10886"
 msgstr "Mon copain dit que je{line_break}suis fou de risquer ma{line_break}vie pour ces chutes d'eau.{page_break}En fait, je veux juste{line_break}m'emparer de quelque{line_break}trésor vu en chemin.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No02"
 msgid "10887"
 msgstr "Nous avons construit et{line_break}transporté ces ailes ici pour{line_break}que la prophétie se réalise.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No03"
 msgid "10888"
 msgstr "Ces ailes seront posées{line_break}sur le vaisseau sacré.{page_break}Le moment fatidique{line_break}arrivera lorsque le Mont{line_break}Jupiter sera en flammes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No04"
 msgid "10889"
 msgstr "Nous avons ramené ces{line_break}ailes de Contigo et nous{line_break}assurons leur surveillance.{page_break}Il faut qu'elles restent{line_break}intactes pour que la{line_break}prophétie se réalise.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No05"
 msgid "10890"
 msgstr "Je me demande si ces{line_break}ailes géantes le feront...{line_break}vraiment voler.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No06"
 msgid "10891"
 msgstr "La prophétie a été révélée{line_break}il y a trois ans... Ces ailes{line_break}ont fait longue route depuis.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No07"
 msgid "10892"
 msgstr "Ces ailes sont si lourdes{line_break}qu'elles feraient couler{line_break}un bateau ordinaire.{page_break}Je me demande quel{line_break}genre de bateau est{line_break}le vaisseau sacré.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No08"
 msgid "10893"
 msgstr "Bien que je doute que quelqu'un{line_break}soit capable de détruire ces{line_break}ailes, il nous faut les garder.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No09"
 msgid "10894"
 msgstr "C'est difficile d'imaginer{line_break}ce vaisseau quand il{line_break}battra des ailes.{end_wait}"
 
@@ -46579,23 +46579,23 @@ msgctxt "message"
 msgid "11642"
 msgstr "Si j'assiste à un miracle,{line_break}je retrouverai peut-être{line_break}la foi...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No10"
 msgid "11643"
 msgstr "Après une longue absence,{line_break}Hamo est revenue à Contigo,{line_break}quand les ailes étaient prêtes!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No11"
 msgid "11644"
 msgstr "Votre bateau est-il vraiment{line_break}identique à celui des hiéroglyphes?{line_break}Qu'est-ce que tout cela veut dire?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No12"
 msgid "11645"
 msgstr "Tout le monde patiente{line_break}sur la plage.{page_break}On veut voir de ses propres{line_break}yeux le bateau voler.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No13"
 msgid "11646"
 msgstr "Depuis que le phare a été{line_break}allumé, un gros rocher bloque{line_break}l'accès au port...{page_break}Si ce bateau veut quitter{line_break}le village, il devra voler{line_break}pour y arriver.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No14"
 msgid "11647"
 msgstr "Où croyez-vous aller?{end_wait}"
 
@@ -46619,79 +46619,79 @@ msgctxt "message"
 msgid "11652"
 msgstr "Merci, mon vieux!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No15"
 msgid "11653"
 msgstr "Les villageois prennent leur{line_break}mal en patience. Faites-nous{line_break}donc une petite démonstration!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No16"
 msgid "11654"
 msgstr "Hamo ne veut pas que{line_break}nous nous approchions.{line_break}Nous regarderons d'ici.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No17"
 msgid "11655"
 msgstr "Quand on se serre les coudes,{line_break}un rien de force spirituelle{line_break}peut faire des miracles.{page_break}Nous avons renvoyé les gens{line_break}au village afin que leurs espoirs{line_break}n'incommodent pas votre vol.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No18"
 msgid "11656"
 msgstr "Nous avons travaillé si{line_break}dur pour attacher ces{line_break}ailes au bateau!{page_break}Le travail n'a jamais été{line_break}notre passion... J'ai la{line_break}tête qui tourne!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No19"
 msgid "11657"
 msgstr "Qui a bien pu construire{line_break}le bateau des hiéroglyphes?{page_break}Existerait-il une autre tribu{line_break}qui, comme la tribu de Contigo,{line_break}descendrait des Anémos?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No20"
 msgid "11658"
 msgstr "Hamo a été nommée chef{line_break}de Contigo car elle porte{line_break}les pouvoirs d'Anémos.{page_break}Mais je désapprouve qu'elle{line_break}nous ait forcés à rénover{line_break}le bateau.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No21"
 msgid "11659"
 msgstr "Le bateau ne peut quitter{line_break}le port que par les airs.{line_break}Je veux le voir voler.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No22"
 msgid "11660"
 msgstr "Quand je pense que mon{line_break}travail va permettre à ce{line_break}bateau de voler.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No23"
 msgid "11661"
 msgstr "Hamo prétend que nos{line_break}rêves et espérances peuvent{line_break}nuire à l'envol du bateau.{page_break}En le voulant trop fort,{line_break}nous risquons d'obtenir{line_break}l'effet inverse.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No24"
 msgid "11662"
 msgstr "Si nous nous trouvons trop{line_break}près du bateau, il ne volera pas.{page_break}Nous devons donc renoncer{line_break}aux premières loges et nous{line_break}éloigner un peu.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No25"
 msgid "11663"
 msgstr "C'est bientôt l'heure... L'heure{line_break}de voir une légende devenir{line_break}réalité!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No26"
 msgid "11664"
 msgstr "Si tout le monde suivait{line_break}les conseils d'Hamo, le{line_break}bateau finirait par voler.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No27"
 msgid "11665"
 msgstr "Quand le bateau ailé d'Anémos{line_break}prendra son envol, tout le pays{line_break}sera enfin libre...{page_break}C'est ce que dit la légende...{line_break}Mais quel est ce pays qui{line_break}est enchaîné? Ici, on est libre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No28"
 msgid "11666"
 msgstr "Quand vous lèverez les{line_break}ancres qui retiennent le{line_break}bateau, il s'envolera...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No29"
 msgid "11667"
 msgstr "Aujourd'hui, le bateau{line_break}s'envolera en battant{line_break}les ailes d'Anémos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No30"
 msgid "11668"
 msgstr "Les Anémos étaient puissants,{line_break}mais sont-ils capables de faire{line_break}voler un si grand bateau?{page_break}Je ne dois pas douter... Je{line_break}dois garder la foi et prier{line_break}pour que le navire s'envole.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No31"
 msgid "11669"
 msgstr "Ces guerriers sauront quoi{line_break}faire... Ils sauront comment{line_break}sauver le pays...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No32"
 msgid "11670"
 msgstr "On dit que ces guerriers{line_break}ont rapporté le Jade flottant.{page_break}C'est quelque chose que{line_break}j'aimerais bien voir.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No33"
 msgid "11671"
 msgstr "Je t'attendais, {actor_name:5}.{end_wait}"
 
@@ -46747,11 +46747,11 @@ msgctxt "message"
 msgid "11684"
 msgstr "Contigo te regarde...{line_break}Fais montre de tes pouvoirs{line_break}et puisse ton vaisseau voler!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No34"
 msgid "11685"
 msgstr "Utilise ta Psynergie pour{line_break}survoler les falaises.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No35"
 msgid "11686"
 msgstr "Prends soin de toi, {actor_name:3}...{line_break}Le monde dépend de toi.{end_wait}"
 
@@ -47191,35 +47191,35 @@ msgctxt "message"
 msgid "11795"
 msgstr "{actor_name:3} est censé être{line_break}un grand héros... Apparemment,{line_break}certaines légendes sont fictives...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No36"
 msgid "11796"
 msgstr "J'observe sans cesse les{line_break}cieux dans l'espoir de{line_break}revoir le bateau volant.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No37"
 msgid "11797"
 msgstr "Je suis heureux ici, mais{line_break}je voudrais savoir ce que{line_break}cache l'autre côté de l'océan.{page_break}Quand je pense à ce navire{line_break}volant, j'ai envie de partir{line_break}et d'explorer le monde!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No38"
 msgid "11798"
 msgstr "Nos mythes et légendes{line_break}nous enseignent les terribles{line_break}pouvoirs de l'océan.{page_break}Mais le jour de l'envol du{line_break}bateau, la mer était si{line_break}calme et si belle...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No39"
 msgid "11799"
 msgstr "Vous allez vers le nord?{line_break}Il paraît qu'il y fait très{line_break}froid, alors couvrez-vous!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No40"
 msgid "11800"
 msgstr "Quand je regarde le ciel, je{line_break}repense au navire volant, et{line_break}l'envie de voyager me prend.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No41"
 msgid "11801"
 msgstr "Ah, si je pouvais voyager{line_break}au bout du monde avec{line_break}ce beau bateau volant.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No42"
 msgid "11802"
 msgstr "Tous à Contigo ont une{line_break}peur bleue de l'océan.{page_break}Mais depuis l'envol du bateau,{line_break}ils associent l'océan à toutes{line_break}sortes de rêves et de miracles.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No43"
 msgid "11803"
 msgstr "Je veux devenir{line_break}un aventurier!{page_break}Quand {actor_name:3} et ses amis{line_break}reviendront, je me joindrai{line_break}à eux sur leur beau navire!{end_wait}"
 
@@ -47399,7 +47399,7 @@ msgctxt "message"
 msgid "11847"
 msgstr "Eh bien, partons...{line_break}Dépêchons, {actor_name:5}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene693No44"
 msgid "11848"
 msgstr "Hé, attendez!{end_wait}"
 
@@ -48451,7 +48451,7 @@ msgctxt "message"
 msgid "12110"
 msgstr "Vous avez fait vos preuves!{line_break}Les cieux vous attendent!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo01"
 msgid "12111"
 msgstr "Traîtres, vous voilà!{end_wait}"
 
@@ -48775,7 +48775,7 @@ msgctxt "message"
 msgid "12191"
 msgstr "{actor_name:5}, non! Arrête!!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo02"
 msgid "12192"
 msgstr "Qui sont ces gens?{end_wait}"
 
@@ -48871,7 +48871,7 @@ msgctxt "message"
 msgid "12215"
 msgstr "Si seulement j'avais{line_break}compris plus tôt...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo03"
 msgid "12216"
 msgstr "Pourquoi t'arrêtes-tu,{line_break}{actor_name:8}? Les parents de{line_break}{actor_name:6} ont besoin de toi...{end_wait}"
 
@@ -49007,59 +49007,59 @@ msgctxt "message"
 msgid "12249"
 msgstr "Le temps presse, {actor_name:5}...{line_break}Utilise l'Etoile de Mars{line_break}pour allumer le phare.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo04"
 msgid "12250"
 msgstr "Notre quête touche à sa fin.{line_break}J'ignore ce que je vais{line_break}raconter à ma mère...{page_break}Mais la douleur peut{line_break}attendre. Allons-y.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo05"
 msgid "12251"
 msgstr "J'aimerais savoir comment{line_break}te consoler toi et les autres...{line_break}Ce doit être très difficile...{page_break}Ah, les bons gâteaux de{line_break}ta maman vont beaucoup{line_break}me manquer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo06"
 msgid "12252"
 msgstr "{actor_name:5}, je comprends{line_break}ton désarroi...{page_break}Mais il te reste {actor_name:6}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo07"
 msgid "12253"
 msgstr "Si Alex est derrière tout{line_break}cela, il le regrettera{line_break}toute sa vie.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo08"
 msgid "12254"
 msgstr "J'ai cru que je reverrais mes{line_break}parents... J'espérais les{line_break}prendre dans mes bras.{page_break}Mais on nous a obligés{line_break}à les détruire...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo09"
 msgid "12255"
 msgstr "Je ne connais pas mes{line_break}parents... Ils sont peut-être{line_break}en vie... Mais je compatis.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo10"
 msgid "12256"
 msgstr "Je suis attristé par la{line_break}tournure qu'ont pris les{line_break}événements.{page_break}C'est terrible pour {actor_name:6}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo11"
 msgid "12257"
 msgstr "Kyle et tes parents m'ont{line_break}ouvert leur c¾ur. Je{line_break}partage ton chagrin.{page_break}Tu dois allumer le{line_break}phare pour qu'ils{line_break}reposent en paix.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo12"
 msgid "12258"
 msgstr "Aaaahhh... {actor_name:5}?{line_break}{actor_name:6}?{page_break}Quel bonheur de vous{line_break}revoir enfin...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo13"
 msgid "12259"
 msgstr "Aaaahhh... {actor_name:5}...{line_break}Je... ne peux pas te voir,{line_break}mais je sens ta présence...{page_break}Je t'en prie... Veille sur{line_break}{actor_name:6} pour nous...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo14"
 msgid "12260"
 msgstr "{actor_name:5}...{line_break}Tu es vivant... J'ai une{line_break}dernière volonté...{page_break}Dis à Dora... de profiter{line_break}de la vie... pour moi...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo15"
 msgid "12261"
 msgstr "Ne sombre pas dans{line_break}la douleur, {actor_name:5}!{page_break}Quand le phare sera allumé,{line_break}tu pourras pleurer tant que{line_break}tu voudras. Je te protégerai.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo16"
 msgid "12262"
 msgstr "Voulez-vous jeter{line_break}l'Etoile de Mars?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo17"
 msgid "12263"
 msgstr "Le phare est allumé!{end_wait}"
 
@@ -49187,7 +49187,7 @@ msgctxt "message"
 msgid "12294"
 msgstr "L'Inexorable!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene6AENo18"
 msgid "12295"
 msgstr "Qu'est-ce qu'il manigance?{end_wait}"
 

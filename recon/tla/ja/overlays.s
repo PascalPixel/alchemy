@@ -49,7 +49,8 @@ Resource_Overlay656:
 	.incbin "baserom.gba", 0x00eda96c, 0x00001cf0
 	.global Resource_Overlay657
 Resource_Overlay657:
-	.incbin "baserom.gba", 0x00edc65c, 0x00001144
+	.incbin "overlays/resource_657.lz"
+	.incbin "baserom.gba", 0x00edd79e, 0x00000002
 	.global Resource_Overlay658
 Resource_Overlay658:
 	.incbin "baserom.gba", 0x00edd7a0, 0x00001608
@@ -111,7 +112,8 @@ Resource_Overlay66A:
 	.incbin "baserom.gba", 0x00ef6820, 0x00000d94
 	.global Resource_Overlay66B
 Resource_Overlay66B:
-	.incbin "baserom.gba", 0x00ef75b4, 0x00001274
+	.incbin "overlays/resource_66b.lz"
+	.incbin "baserom.gba", 0x00ef8827, 0x00000001
 	.global Resource_Overlay66C
 Resource_Overlay66C:
 	.incbin "overlays/resource_66c.lz"
@@ -242,7 +244,8 @@ Resource_Overlay692:
 	.incbin "baserom.gba", 0x00f3044f, 0x00000001
 	.global Resource_Overlay693
 Resource_Overlay693:
-	.incbin "baserom.gba", 0x00f30450, 0x00000be8
+	.incbin "overlays/resource_693.lz"
+	.incbin "baserom.gba", 0x00f31035, 0x00000003
 	.global Resource_Overlay694
 Resource_Overlay694:
 	.incbin "baserom.gba", 0x00f31038, 0x00002e04

@@ -221,7 +221,7 @@ Func_02000120:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020081fc:
-	.4byte 0x0000289a
+	.4byte MsgScene693No01
 .L_02008200:
 	.4byte gPartyState
 .L_02008204:
@@ -429,7 +429,7 @@ Func_02000208:
 	add sp, #8
 	pop {r5, r6, pc}
 .L_020083e0:
-	.4byte 0x00002bbc
+	.4byte MsgScene693No14
 	.section .text.x020083e4,"ax",%progbits
 	.global Func_020003e4
 	.thumb_func
@@ -675,7 +675,7 @@ Func_020003e4:
 .L_02008630:
 	.4byte 0x00026666
 .L_02008634:
-	.4byte 0x00002bd4
+	.4byte MsgScene693No33
 .L_02008638:
 	.4byte 0x0004cccc
 .L_0200863c:
@@ -816,7 +816,7 @@ Func_02000640:
 .L_02008770:
 	.4byte gPartyState
 .L_02008774:
-	.4byte 0x0000289a
+	.4byte MsgScene693No01
 .L_02008778:
 	.4byte 0x00019999
 	.section .text.x0200877c,"ax",%progbits
@@ -1331,7 +1331,7 @@ Func_0200097c:
 	mov r8, r3
 	pop {r5, r6, pc}
 .L_02008bac:
-	.4byte 0x00002c85
+	.4byte MsgScene693No44
 .L_02008bb0:
 	.4byte gPartyState
 .L_02008bb4:
@@ -2267,94 +2267,94 @@ Data_02001728:
 	.4byte Func_0200077c
 	.4byte 0x00000000
 	.4byte 0x09d0000d
-	.4byte 0x000028c4
+	.4byte MsgScene693No02
 	.4byte 0x00000000
 	.4byte 0x09b2000d
-	.4byte 0x00002bb8
+	.4byte MsgScene693No10
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00002c51
+	.4byte MsgScene693No36
 	.4byte 0x00008d15
 	.4byte 0x09d0000d
-	.4byte 0x000028c8
+	.4byte MsgScene693No06
 	.4byte 0x00008d15
 	.4byte 0x09b2000d
-	.4byte 0x00002bc5
+	.4byte MsgScene693No18
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002c55
+	.4byte MsgScene693No40
 	.4byte 0x00000000
 	.4byte 0x09d0000e
-	.4byte 0x000028c5
+	.4byte MsgScene693No03
 	.4byte 0x00000000
 	.4byte 0x09b2000e
-	.4byte 0x00002bb9
+	.4byte MsgScene693No11
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002c52
+	.4byte MsgScene693No37
 	.4byte 0x00008d15
 	.4byte 0x09d0000e
-	.4byte 0x000028c9
+	.4byte MsgScene693No07
 	.4byte 0x00008d15
 	.4byte 0x09b2000e
-	.4byte 0x00002bc6
+	.4byte MsgScene693No19
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002c56
+	.4byte MsgScene693No41
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000028c6
+	.4byte MsgScene693No04
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000028ca
+	.4byte MsgScene693No08
 	.4byte 0x00000000
 	.4byte 0x09d00010
-	.4byte 0x000028c7
+	.4byte MsgScene693No05
 	.4byte 0x00000000
 	.4byte 0x09b20010
-	.4byte 0x00002bbb
+	.4byte MsgScene693No13
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002c54
+	.4byte MsgScene693No39
 	.4byte 0x00008d15
 	.4byte 0x09d00010
-	.4byte 0x000028cb
+	.4byte MsgScene693No09
 	.4byte 0x00008d15
 	.4byte 0x09b20010
-	.4byte 0x00002bc8
+	.4byte MsgScene693No21
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002c58
+	.4byte MsgScene693No43
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00002bcc
+	.4byte MsgScene693No25
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002bd0
+	.4byte MsgScene693No29
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00002bcd
+	.4byte MsgScene693No26
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00002bd1
+	.4byte MsgScene693No30
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00002bce
+	.4byte MsgScene693No27
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00002bd2
+	.4byte MsgScene693No31
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00002bcf
+	.4byte MsgScene693No28
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00002bd3
+	.4byte MsgScene693No32
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00002be2
+	.4byte MsgScene693No34
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00002be3
+	.4byte MsgScene693No35
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2386,34 +2386,34 @@ Data_020018f0:
 	.4byte Func_02000038
 	.4byte 0x00000000
 	.4byte 0x09b20008
-	.4byte 0x00002bba
+	.4byte MsgScene693No12
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002c53
+	.4byte MsgScene693No38
 	.4byte 0x00008d15
 	.4byte 0x09b20008
-	.4byte 0x00002bc7
+	.4byte MsgScene693No20
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002c57
+	.4byte MsgScene693No42
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002bc2
+	.4byte MsgScene693No15
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002bc9
+	.4byte MsgScene693No22
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002bc3
+	.4byte MsgScene693No16
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002bca
+	.4byte MsgScene693No23
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002bc4
+	.4byte MsgScene693No17
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002bcb
+	.4byte MsgScene693No24
 	.4byte 0x00008f15
 	.4byte 0xffff000d
 	.4byte 0x00000000

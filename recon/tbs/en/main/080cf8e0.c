@@ -1,9 +1,61 @@
 /* Draft: native 670 instructions, draft 670, common 670, differ 0 in all
  * six editions (en, it at 080cf8e0; ja 080c68e0; de 080d16e0; es, fr
- * 080d30e0), but NOT adoptable yet: one device still changes instruction
- * selection, not only order or registers (S2): the
- * __asm__ __volatile__("" ::) CSE flush (burst address). The row
- * temporary and the CopyPalette inline remain FAKEMATCH devices.
+ * 080d30e0), but NOT adoptable without Pascal's ruling: two tagged empty
+ * one-pass blocks, do { } while (0);, each give CSE pass 1 the block
+ * boundary native's bytes prove, and both change instruction selection,
+ * which S2 does not admit for a device (step: after the hit block; burst:
+ * between group = k * 4 and group * 8). The row temporary and the
+ * CopyPalette inline remain FAKEMATCH devices as before.
+ * Seventeenth pass (2026-10-07): no source form exists for either
+ * boundary; the drafts' devices are now the same kind at both places.
+ * - Why a boundary and nothing else. Native's k << 2 sits in a GCSE
+ *   reaching register (slot sp+24, between row's and camera + 12's), so it
+ *   was computed in the burst loop; set before the loop, PRE hoists
+ *   group << 3 itself (267), set at the tail, PRE moves group << 3 there
+ *   (92, 24). So group's set is at the top of the body, in the block CSE1
+ *   starts empty at the loop's top label (insn 1757 in the cse dump), and
+ *   fold_rtx associates group << 3 with group's (ashift k 2) (and a MULT
+ *   use with the REG_EQUAL (mult k 4)). Between them CSE1 must lose that
+ *   equivalence while no instruction remains: cse_end_of_basic_block ends
+ *   a path only at a CODE_LABEL, NOTE_INSN_LOOP_END or NOTE_INSN_SETJMP;
+ *   the table is otherwise flushed only by a volatile asm or after 1,000
+ *   insns; group's entry dies only if k or group is set again; a label
+ *   CSE1 runs on past keeps the table. At that point CSE1 knows only
+ *   group and k, so the source held a one-pass loop (its LOOP_END) or an
+ *   if/else CSE1 decides from group alone, i.e. a tautology on group and k.
+ * - Statement macro: a do { } while (0) macro ends CSE1's block only at
+ *   its end, so it would have to end with group's set, with nothing else
+ *   in it: an empty wrapper for group = k * 4. A macro (or inline helper,
+ *   fourteenth pass) holding the address or the whole burst keeps group's
+ *   set and use in one block, 171. Camelot's own one-pass loops,
+ *   for (j = 0; j != 1; j++) (TWELVE_MODE.C, TRIANGLE.C, SHATTER_ROCKS.C),
+ *   wrap whole target blocks and keep their counter (SHATTER_ROCKS.o
+ *   cmp r1, #1): only a loop under 50 insns loses it (loop.c's
+ *   n_iterations == 1 path), so one here would wrap the one assignment.
+ * - Step: the thirteenth pass's if (frame >= k * 8 + 17) ... else
+ *   AudioCommand_PlayFar(133) is the same kind: inside
+ *   frame == k * 8 + 17 its else arm can never run (dead code, S2). The
+ *   sibling it follows, TWELVE_MODE.C, chooses BeginPhase for the final
+ *   hit of a run (frame past the last strike's, from TwelveMode_Records);
+ *   here every target's hit takes it, so no threshold varies. Replaced
+ *   by the empty block after the hit block (the tenth pass's 0), which
+ *   invents no call.
+ *   With either step boundary the variant test and the step's position
+ *   use shot itself (the gShots[k * 16] re-spellings were for the old
+ *   flush), 0.
+ * - Ruling needed: may an empty one-pass block that restores a CSE block
+ *   boundary the bytes prove stand as a FAKEMATCH device though it
+ *   changes selection, or does the function stay disassembly?
+ * Seventeenth-pass trials (without any burst device unless named): do {
+ *   group = k * 4; } while (0) 0; group = k * 4; do { } while (0); 0 (the
+ *   draft); for (n = 0; n != 1; n++) group = k * 4; 0; group = k * 4 then
+ *   do { the burst body } while (0) 171; a one-pass for around the burst
+ *   body 329, with (group + n) * 8 + i 459; for (j = 0; j != 1; j++)
+ *   around the target block 321 (679 instructions, the counter stays);
+ *   group = k + k; group += group; 171, (k + k) * 2 171, k * 2 then
+ *   group += group 171 (fold and expand make them shifts), k + k + k + k
+ *   448, k * 5 - k 224; the k loop as for (k = 0; k != count; k++) with
+ *   both blocks 95.
  * Sixteenth pass (2026-10-07): the burst loop in the k loop's own form,
  * i = 0; if (count != 0) do { ... i++; } while (i != count);, without the
  * flush 171 (the body's CSE1 block still starts at the loop's top label,
@@ -615,17 +667,18 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 
                     if (frame == k * 8 + 17) {
                         ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
-                        if (frame >= k * 8 + 17)
-                            BattleEventRuntime_BeginPhaseFar(133);
-                        else
-                            AudioCommand_PlayFar(133);
+                        BattleEventRuntime_BeginPhaseFar(133);
                     }
-                    if (gShots[k * 16].variant >= 0) {
+                    /* FAKEMATCH: CSE pass 1 must start a new block here (native
+                       recomputes k * 8 and gShots + k * 448 for the step); the
+                       one-pass block's loop end does it and leaves no code. */
+                    do { } while (0);
+                    if (shot->variant >= 0) {
                         s32 step = (frame - k * 8) / 3;
 
                         if (step > 9)
                             step = 9;
-                        EffectPosition_ApplyBaseAndYOffset((s32 *)&gShots[k * 16], &position);
+                        EffectPosition_ApplyBaseAndYOffset((s32 *)shot, &position);
                         position.x >>= 1;
                         if (step > 4)
                             draw[0](canvas, work->sheet + step * 768, position.x - 16, position.y - 12, 32, 24);
@@ -652,10 +705,12 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                                 struct EffectStep *burst;
                                 s32 group = k * 4;
 
-                                /* Diagnostic, not admissible as is (see header): native keeps
-                                   group = k << 2 and group << 3 apart and leaves the address
-                                   unreduced (287 -> 232 with delay = 0 in the count test). */
-                                __asm__ __volatile__("" ::); /* FAKEMATCH: flushes CSE so group << 3 is not folded into k << 5 */
+                                /* FAKEMATCH: CSE pass 1 must start a new block between
+                                   group's set and group * 8 (native shifts k << 2 by 3 in
+                                   the loop and leaves the address unreduced; in one block
+                                   CSE folds them into k << 5); the one-pass block's loop
+                                   end does it and leaves no code. */
+                                do { } while (0);
                                 burst = &gBursts[group * 8 + i];
 
                                 burst->x = shot->x;

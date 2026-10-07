@@ -8807,11 +8807,11 @@ msgctxt "MsgDjinnSet"
 msgid "02199"
 msgstr "{argument_ability_name} is set to {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnRecovering"
 msgid "02200"
 msgstr "Your Djinni is still recovering."
 
-msgctxt "message"
+msgctxt "MsgBattleSummonStandby"
 msgid "02201"
 msgstr "Ready to summon."
 
@@ -9147,7 +9147,7 @@ msgctxt "MsgBattleItemBroken"
 msgid "02284"
 msgstr "It's broken."
 
-msgctxt "message"
+msgctxt "MsgBattleNoDjinn"
 msgid "02285"
 msgstr "You have no Djinn."
 
@@ -9155,7 +9155,7 @@ msgctxt "MsgBattleItemUnavailable"
 msgid "02286"
 msgstr "Cannot be used during battle."
 
-msgctxt "message"
+msgctxt "MsgBattleDjinnTwice"
 msgid "02287"
 msgstr "Cannot use the same Djinni twice."
 

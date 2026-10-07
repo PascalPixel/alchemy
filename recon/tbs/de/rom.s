@@ -177,8 +177,6 @@ UiText_DrawGlyphArm:
 	.thumb_func
 Ui_RunSelectionScreen:
 	.incbin "baserom.gba", 0x00020b30, 0x000008fc
-	.section .rom.00022b34, "ax"
-	.incbin "baserom.gba", 0x00022b34, 0x00000ac4
 	.section .rom.00025dd8, "ax"
 	.global Battle_CollectPartyCommands
 	.type Battle_CollectPartyCommands, %function
@@ -347,7 +345,10 @@ Graphics_ExpandNibbleTable:
 	.incbin "baserom.gba", 0x000360f4, 0x00000040
 	.global Link_TimeLabelString
 Link_TimeLabelString:
-	.incbin "baserom.gba", 0x00036134, 0x00000028
+	.incbin "baserom.gba", 0x00036134, 0x00000008
+	.global DjinnMenu_BlinkTile
+DjinnMenu_BlinkTile:
+	.incbin "baserom.gba", 0x0003613c, 0x00000020
 	.global OwnerStatus_StatCursors
 OwnerStatus_StatCursors:
 	.incbin "baserom.gba", 0x0003615c, 0x00000080
@@ -368,7 +369,13 @@ OwnerStatus_SlashString:
 	.incbin "baserom.gba", 0x00036214, 0x00000004
 	.global OwnerStatus_PpString
 OwnerStatus_PpString:
-	.incbin "baserom.gba", 0x00036218, 0x0000000b
+	.incbin "baserom.gba", 0x00036218, 0x00000003
+	.global DjinnMenu_ElementXOffsets
+DjinnMenu_ElementXOffsets:
+	.incbin "baserom.gba", 0x0003621b, 0x00000004
+	.global DjinnMenu_ElementYOffsets
+DjinnMenu_ElementYOffsets:
+	.incbin "baserom.gba", 0x0003621f, 0x00000004
 	.global Menu_SelectionStepDelays
 Menu_SelectionStepDelays:
 	.incbin "baserom.gba", 0x00036223, 0x00000008

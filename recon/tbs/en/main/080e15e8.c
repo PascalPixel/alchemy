@@ -1,5 +1,5 @@
 /* 080e15e8 BattleFx_InitializeMode12: draft, not matching.
-   listing 1640, draft 1640, common 1633, differ 14 (frame 336 and
+   listing 1640, draft 1640, common 1637, differ 6 (frame 336 and
    every frame-loop slot as native, sp+24 included).
    The particle draw loop walks its own pointer q: the native's draw
    loop pointer is r5 while the bursts' p is r7, so they are two
@@ -27,17 +27,18 @@
    lsls, movs 32, subs; draft movs 16, subs, lsls). Writing 32 - w * 2
    with the native's hoisting needs the frame loop's pass-2 insn count
    above 456 or the 32's life below 19.
-   Remaining (14): that preheader; the ring store's address (native:
-   offset + work, then + 10000; draft: offset + 10000, then + work;
-   a literal 10000 gives the native's order but loop.c hoists it out
-   of the ring loop into r6).
+   Remaining (6): that preheader only.
    Ring store: GCSE propagates rings' 10000 into offset + rings and
-   PRE hoists that sum, so the giv adds work last. With a literal,
-   the reduced giv's 10000 is a new pseudo in the inner preheader; the
-   second loop pass hoists it from the outer ring loop as its first
-   movable (threshold 30 * savings 1 * life 1 >= 30 insns). The
-   native keeps it inside (ldr r2 after offset + work), which needs
-   that loop at 31 insns or more, or a movable moved before it.
+   PRE hoists that sum, so the giv adds work last; written
+   (sheet + 10000)[offset + j], the giv adds work first as native,
+   and combine folds its 10000 into the add, so reload loads it. The
+   reload register rotates (reload1.c allocate_reload_reg): after
+   work's reload in r2 it takes the next free one, r1, unless r1 is
+   live there. The native reads aux through its own pointer src, set
+   in the inner loop's header: as a user biv its r1 is live before
+   the giv inits, so the rotation wraps to r2, as native (with
+   aux[j], the aux giv's init follows the store giv's: loop.c lists
+   givs newest first and the store is found last).
    The burst's first pillar blit is cy high: the native's 112 there is
    a reload (r0) of cy's pseudo, which has no register and a REG_EQUIV
    of 112, as at p->y = cy << 16; a literal 112 is a pseudo of its own
@@ -214,7 +215,12 @@
      j]: 14 (order as native, 10000 a reload into r1, native r2); with
      the literal, offset += j in the for header: 18; a lim = 64 - i * 7
      local: 31; permuter, 4 minutes over the ring loops on the literal
-     form: no gain. */
+     form: no gain.
+   - on 14: the store address as a d pointer set before the aux load:
+     14 (the store is still the last giv found, through d); aux read
+     through src set in the inner for header (j = 0, src = aux), with
+     the rings store: 10 (r2 for the 10000, but offset + 10000 first);
+     with (sheet + 10000)[offset + j]: 6, adopted. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
@@ -326,8 +332,9 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     {
     s32 offset;
     for (i = 0, offset = 0; i != 8; i++) {
-        for (j = 0; j != 0x302; j++) {
-            s32 v = aux[j];
+        u8 *src;
+        for (j = 0, src = aux; j != 0x302; j++) {
+            s32 v = *src++;
 
             if (v > 64 - i * 7) {
                 v = 64 - i * 7;
@@ -335,7 +342,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             if (v < 0) {
                 v = 0;
             }
-            work->sheet[offset + rings + j] = v;
+            (work->sheet + 10000)[offset + j] = v;
         }
         offset += j;
     }

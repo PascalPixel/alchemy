@@ -1,5 +1,13 @@
 #include "TYPES.H"
-extern u8 Data_03001e8c[];
+#include "RAM_BUFFER.H"
+#include "DMA.H"
+#include "IO_REG.H"
+#include "IWRAM_CALL.H"
+
+#define PANEL_TILE_ROWS ((u32 *)0x06002500)
+#define PANEL_ROW_COUNT 30
+#define PANEL_ROW_WORDS 32
+#define PANEL_ROW_LEAD 8
 
 struct Work;
 
@@ -9,7 +17,7 @@ void UiWork_AdvanceChannelTransition(void *);
 
 void UiWork_ProcessRenderChannels(void)
 {
-    u8 *channel = *(u8 **)((u32)&Data_03001e8c) + RENDER_CHANNEL_OFS;
+    u8 *channel = (u8 *)Ram_HeapSlots->window_tiles + 0x6b8;
     s32 channel_no = 0;
     s32 one = 1;
 

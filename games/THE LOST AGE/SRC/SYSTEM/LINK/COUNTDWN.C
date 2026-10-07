@@ -1,5 +1,6 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "TYPES.H"
+#include "RAM_BUFFER.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
 void Camera_ConfigureSceneFar(s32 offset);
@@ -52,7 +53,7 @@ void Audio_PlayCue(s32 soundId);
 
 void UpdateLinkSessionCountdown(void)
 {
-    struct LinkCountdownState *state = gLinkCountdownWork;
+    struct LinkCountdownState *state = ((struct LinkCountdownState **)Ram_HeapSlots)[57];
     struct LinkRuntimeState *runtime;
     struct CountdownDisplayEntry *entry;
     u8 *active;
@@ -97,7 +98,7 @@ void UpdateLinkSessionCountdown(void)
         if (state->enabled == 0)
             goto done;
 
-        runtime = gBattleWork;
+        runtime = (struct LinkRuntimeState *)Ram_HeapSlots->battle_work;
         if (runtime->paused == 0)
             goto load_timer;
         state->timer = 0;
@@ -142,7 +143,7 @@ timer_ready:
 
         seconds = __divsi3(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
         if (seconds != 0 && seconds *FRAMES_PER_SECOND == timer)
-            Audio_PlayCue(SOUND_TRIPLE_TONE_LOW);
+            Audio_PlayCue(108);
 
         if (state->displayHandle != 0)
             UiText_DrawNumberInWindow(seconds, 2, state->displayHandle, 16, 8);

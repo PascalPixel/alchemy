@@ -141,7 +141,12 @@ AffineMatrix_BuildForEffect:
 	.type Func_080140d8, %function
 	.thumb_func
 Func_080140d8:
-	.incbin "baserom.gba", 0x00014104, 0x0000009c
+	.incbin "baserom.gba", 0x00014104, 0x00000050
+	.global Runtime_PushSlotEntry
+	.type Runtime_PushSlotEntry, %function
+	.thumb_func
+Runtime_PushSlotEntry:
+	.incbin "baserom.gba", 0x00014154, 0x0000004c
 	.global ResourceTable_AllocateBlocks
 	.type ResourceTable_AllocateBlocks, %function
 	.thumb_func
@@ -980,12 +985,17 @@ RenderOutput_Release:
 Ui_ClearVramBlock:
 	.incbin "baserom.gba", 0x000396a0, 0x0000003c
 	.section .rom.0003972a, "ax"
-	.incbin "baserom.gba", 0x0003972a, 0x000000b6
+	.incbin "baserom.gba", 0x0003972a, 0x0000002a
+	.section .rom.0003975c, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0003975c, 0x00000084
+	.section .rom.000397e0, "ax"
 	.global UiWork_ProcessRenderChannels
 	.type UiWork_ProcessRenderChannels, %function
 	.thumb_func
 UiWork_ProcessRenderChannels:
 	.incbin "baserom.gba", 0x000397e0, 0x000006b0
+	.section .rom.00039e90, "ax"
 	.global UiWork_ProcessDirectWork
 	.type UiWork_ProcessDirectWork, %function
 	.thumb_func
@@ -1609,7 +1619,10 @@ Graphics_MergeShiftedTileRows:
 	.incbin "baserom.gba", 0x00049b2a, 0x00000002
 	.section .rom.00049b58, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x00049b58, 0x00001f30
+	.incbin "baserom.gba", 0x00049b58, 0x00001d54
+	.section .rom.0004b9cc, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0004b9cc, 0x000000bc
 	.section .rom.0004bac2, "ax"
 	.incbin "baserom.gba", 0x0004bac2, 0x000002f2
 	.section .rom.0004bddc, "ax"

@@ -44,7 +44,9 @@
    - Odd-frame y as v->u / 4 + ((oz + v->dz) >> 8) + v->v / 2: 68; an
      asm on v between out->x and out->y: 60, unchanged.
    - On 60, a = (s16)t before out->a = v->u = t, then a <<= 8; a *= k
-     (the camelot_arm 52 form's loop alone): 97, draft 158.
+     (the camelot_arm 52 form's loop alone): 97, draft 158; z = to->z
+     - from->z in one expression: 66 (to->z then loads into r1 and to->x
+     into ip, swapped as under camelot_arm).
    Stock agbcc_arm (2026-10-07, session 1): listing 157, draft 157,
    common 119, differ 76 (14 register, 20 reordered, 4 inserted, 4
    deleted). Not reachable from source under this route: the prologue.

@@ -1,3 +1,21 @@
+/* 2026-10-07 queue3 window/cost-loop correction: differ 1255 (listing 1727,
+ * draft 1814, common 1143), not matched; frame 100. A tagged case-16 window
+ * in fp restores its native register (1287 -> 1274); writing the final cost
+ * loop as subtraction in the <= arm and zero/break in its else improves to
+ * 1255. The captured-state address now occupies sl, still not native's sp+36.
+ * Commands survive resource loads, summon columns advance only for nonzero
+ * requirements, and menu retries still skip the three COUNTDOWN resets.
+ * Menu_BuildLocalizedPatternTiles, BattleLayout_HighlightPartyPanels and
+ * CountValidEntriesFar now use their existing s32 result types, score-neutral.
+ * Remaining: captured-state spill, row/loop boundaries, scheduling and pools;
+ * the nested helpers still add rows to this parent diff.
+ * Trials, rejected: case-local ability unchanged1274; also fixing it in sl
+ * spills the state address but reduces the frame to92 and gives1392. Plain
+ * mode with those two pointer bindings1341, then djinn/r9 gives1296, then
+ * sprite/r8 gives1450. Final cost zero followed by goto instead of break
+ * gives1337 before reversing the branch; goto in the reversed else is1255.
+ * Removing the window constraint from1255 gives1290; ordinary mode1299.
+ */
 /* 2026-10-07 queue3 command-register correction: differ 1287 (listing 1727,
  * draft 1814, common 1127), not matched. With the corrected case scopes,
  * direct resource-result assignments preserve 1309 and remove the redundant
@@ -169,7 +187,7 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 id, s32 handle);
 s32 Resource_LoadKind26EntryToBuffer(s32 id, s32 handle);
 void Graphics_ExpandVramTilesByColorTable(s32 destination);
 void Link_DrawShiftedTilePair(s32 destination);
-void Menu_BuildLocalizedPatternTiles(void);
+s32 Menu_BuildLocalizedPatternTiles(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 period);
 void UpdateLinkSessionCountdown(void);
 void Battle_DrawPartyPanelsWithEmptyList(void);
@@ -193,7 +211,7 @@ s32 Item_ClassifyUseAbility(s32 actor, s32 item);
 s32 BattleTarget_RunSelection(s32 actor, s32 a, s32 b, s32 kind);
 void UiWindow_PutGlyph(struct UiWindow *win, s32 id, s32 pos, s32 arg3, u32 arg4);
 s32 Ui_RunSelectionScreen(s32 mode);
-void BattleLayout_HighlightPartyPanels(u16 *header);
+s32 BattleLayout_HighlightPartyPanels(u16 *header);
 void Ui_RunOwnerStatusScreen(void *block, s32 handle, s32 actor);
 s32 Battle_SelectAbility(s32 actor, s32 mode);
 s32 SummonMenu_SelectSummon(s32 a, s32 b, const u8 *standby);
@@ -206,7 +224,7 @@ s32 Djinn_IsActiveFar(s32 actor, s32 element, s32 index);
 s32 BattleParty_ListActorIdsFar(s32 mode, void *block);
 void Camera_ConfigureSceneFar(s32 offset);
 void BattlePres_SetActorModesFar(u16 *header, s32 mode);
-void BattlePlacement_CountValidEntriesFar(s32 mode, u8 *cost);
+s32 BattlePlacement_CountValidEntriesFar(s32 mode, u8 *cost);
 
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 count)
 {
@@ -225,7 +243,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     u16 hdr[2];
     s32 aux;
     s32 actorId;
-    /* FAKEMATCH: Native retains commands and menu selections in r6. Ordinary allocation puts mode in caller-saved r4; sharing the competing handles/buffers gives 1467/1357. Binding mode removes ten instructions of save traffic, 1309 -> 1287, with the native 100-byte frame. */
+    /* FAKEMATCH: Native retains commands and menu selections in r6. Ordinary allocation puts mode in caller-saved r4; sharing competing handles/buffers gives 1467/1357. Binding mode reduces save traffic and removes ten instructions overall, 1309 -> 1287, with frame100; removing it after the window/cost-loop change gives1299 instead of1255. */
     register s32 mode __asm__("r6");
     s32 kind;
     s32 param;
@@ -552,7 +570,8 @@ psynergy_menu:
 
             case 16: {
                 const struct SummonDefinition *djinn;
-                struct UiWindow *win;
+                /* FAKEMATCH: Native retains the summon window in fp. Its own ordinary local gives 1290 with the reshaped final-cost branch; this binding restores the window register (1255). */
+                register struct UiWindow *win __asm__("r11");
                 struct MenuSprite *slot;
                 s32 handle;
                 s32 j;
@@ -620,11 +639,12 @@ djinn_menu:
                     goto djinn_menu;
                 }
                 for (j = 0; j <= 3; j++) {
-                    if (djinn->djinn_required[j] > state->cost[i][j]) {
+                    if (djinn->djinn_required[j] <= state->cost[i][j]) {
+                        state->cost[i][j] = (u8)(state->cost[i][j] - djinn->djinn_required[j]);
+                    } else {
                         state->cost[i][j] = 0;
                         break;
                     }
-                    state->cost[i][j] = (u8)(state->cost[i][j] - djinn->djinn_required[j]);
                 }
                 goto store_target;
 

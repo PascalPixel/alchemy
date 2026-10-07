@@ -1,5 +1,26 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+ * Stock agbcc_arm (2026-10-07, S13 session 3): listing 196, draft 196, common 160, differ 72.
+ *   117 to 114: the glyph index and the row bit pattern are one variable (bits). Set more than
+ *   once, its ch - 32 is no longer a birthing insn, so sched1 puts it before win's parameter
+ *   copy; it is born while r0 is live and global gives it ip (native), not r0. The width load
+ *   is then the function's first reload and takes the first spill register, r0, which still
+ *   holds win (reload_cse drops the ldr): native's ldrh r0, [r0, #10].
+ *   114 to 100: rows set in two steps, rows = (u16 *)(UiText_Glyphs + ofs) then rows++ or
+ *   rows += 4 (rows itself is the spilled temporary: no local 48/49), and the code test
+ *   written ch - 222 < 2 at the join (one PRE reaching register for block 3 and the narrow
+ *   arm, lr in both; no copy in the wide arm).
+ *   100 to 72: the plot macro takes the pixel's y and computes ty and sub itself; loop.c
+ *   hoists both out of the column loop behind col = 0 and row + 1 (native's order), which
+ *   shortens their live ranges: ty and sub now outrank x (priority 2*7/27 against 4*22/172),
+ *   take sl and r8 first, and x gets r9 as native.
+ *   Still to do: (1) native puts mov r7, r3 above sub sp: stock arm_adjust_cost charges its
+ *   anti dependence on the push the push's cost (5), as sub sp's, and the higher LUID wins
+ *   the tie (see 0800a0f8); an unrecognized insn's link costs 1, so y's copy as an opaque
+ *   asm move would be a device. (2) ofs takes r0 (native r3): r0 reaches it by
+ *   expand_preferences, w (returned in r0) -> bits (dies at wp[bits]) -> 26 * bits -> ofs.
+ *   (3) the narrow arm's PRE copy of ch - 222 sits at the block's end (native first).
+ *   (4) round-robin reload registers in the font path, the arms and the row loop tail.
  * Stock agbcc_arm (2026-10-07, S13 session 2): listing 196, draft 197, common 138, differ 117.
  *   127 to 117: row = 0 first in the pass setup, before next and bits (permute's reorder);
  *   bits = rows[0] before next = rows + 1: no change (117).
@@ -99,8 +120,10 @@ struct UiTextWideGlyph {
 extern u8 UiSprite_CursorFrameTiles[];
 extern struct UiTextGlyph UiText_Glyphs[];
 
-#define UiText_PlotPixel(width, px, ty, sub, color) \
+#define UiText_PlotPixel(width, px, py, color) \
 { \
+    u32 ty = (py) >> 3; \
+    u32 sub = ((py) & 7) * 2; \
     u8 *vram = (u8 *)0x06002500; \
     u16 *dst = (u16 *)((u32)(vram + ((px >> 3) * (width - 2) + ty) * 32) | ((sub | ((px & 7) >> 2)) << 1)); \
     u32 mask = 15 << ((px & 3) * 4); \
@@ -116,18 +139,14 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
     u32 b;
     u32 gw;
     s32 bits;
-    u32 idx;
     u32 row;
-    u32 code;
     u32 pass;
     u32 col;
-    struct UiTextGlyph *glyph;
-    struct UiTextWideGlyph *wide;
     u32 ofs;
 
-    idx = ch - 32;
+    bits = ch - 32;
     width = win->width;
-    if (idx > 111)
+    if ((u32)bits > 111)
         return 1;
     if (ch < 256 || (font != 0 && ch - 222 < 2)) {
         if (font != 0) {
@@ -135,15 +154,11 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
             u32 c1 = 0x1111;
             u32 c3 = 0x3333;
             u8 *wp = UiSprite_CursorFrameTiles + 0x800;
-            s32 w = wp[idx];
+            s32 w = wp[bits];
             u32 px;
-            u32 sub;
             u32 color;
-            u32 ty;
 
             for (row = 0; row < 8 && y + row < 32; row++) {
-                ty = (y + row) >> 3;
-                sub = ((y + row) & 7) * 2;
                 for (col = 0; col < 8; col++) {
                     if (col & 1)
                         b >>= 4;
@@ -153,24 +168,22 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
                         color = (b & 15) == 1 ? c1 : c3;
                         px = x + col;
                         if (px >> 3 < 30)
-                            UiText_PlotPixel(width, px, ty, sub, color);
+                            UiText_PlotPixel(width, px, y + row, color);
                     }
                 }
             }
             return w;
         }
-        code = ch - 222;
-        ofs = idx * 26;
-        glyph = (struct UiTextGlyph *)((u8 *)UiText_Glyphs + ofs);
-        rows = glyph->rows;
+        ofs = bits * 26;
+        rows = (u16 *)((u8 *)UiText_Glyphs + ofs);
+        rows++;
     } else {
-        code = ch - 222;
         ofs = (ch - 32) * 32;
-        wide = (struct UiTextWideGlyph *)((u8 *)UiText_Glyphs + ofs);
-        rows = wide->rows;
+        rows = (u16 *)((u8 *)UiText_Glyphs + ofs);
+        rows += 4;
     }
     gw = *(u16 *)((u8 *)UiText_Glyphs + ofs);
-    if (code < 2) {
+    if (ch - 222 < 2) {
         x -= 3;
         y -= 2;
         ret = 0;
@@ -179,10 +192,8 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
     }
     for (pass = 0; pass < 4; pass++) {
         u16 *next;
-        u32 ty;
         u32 color;
         u32 px;
-        u32 sub;
 
         color = pass == 3 ? 0x1111 : 0x5555;
         if (win->flags & 64) {
@@ -203,12 +214,10 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
         bits = rows[0];
         bits <<= 16;
         while (y + row < 32) {
-            ty = (y + row) >> 3;
-            sub = ((y + row) & 7) * 2;
             for (col = 0; col < 14; col++) {
                 if (bits < 0) {
                     px = x + col;
-                    UiText_PlotPixel(width, px, ty, sub, color);
+                    UiText_PlotPixel(width, px, y + row, color);
                 }
                 if ((bits <<= 1) == 0)
                     break;

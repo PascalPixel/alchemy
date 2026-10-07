@@ -9891,7 +9891,7 @@ msgctxt "message"
 msgid "02470"
 msgstr "PP"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusAttack"
 msgid "02471"
 msgstr "Attacke"
 
@@ -11619,19 +11619,19 @@ msgctxt "MsgPsynergyLost"
 msgid "02902"
 msgstr "* geht verloren"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareSet"
 msgid "02903"
 msgstr "Verbünd."
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareStandby"
 msgid "02904"
 msgstr "Standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareGive"
 msgid "02905"
 msgstr "Geben"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareTrade"
 msgid "02906"
 msgstr "Tauschen"
 
@@ -11735,7 +11735,7 @@ msgctxt "message"
 msgid "02931"
 msgstr "Weggeben"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareConfirm"
 msgid "02932"
 msgstr "Ist das O.K.?"
 
@@ -12667,11 +12667,11 @@ msgctxt "MsgDjinnTutorialSetAfterGive"
 msgid "03164"
 msgstr "Nachdem du ent-schieden hast,{line_break}wer den Dschinn erhalten soll,{line_break}kannst du ihn verbunden.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialClassPsynergy"
 msgid "03165"
 msgstr "Ändert sich deine{line_break}Klasse, können sich{page_break}auch deine verfügbaren{line_break}Psynergien ändern.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialSetChanges"
 msgid "03166"
 msgstr "Das Bündnis mit einem{page_break}Dschinn verändert deine{line_break}Attribute und mitunter{line_break}sogar deine Klasse.{end_wait}"
 

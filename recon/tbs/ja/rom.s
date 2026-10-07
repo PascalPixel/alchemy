@@ -175,8 +175,8 @@ UiText_DrawGlyphArm:
 	.incbin "baserom.gba", 0x000155d0, 0x0000030c
 	.section .rom.00021ece, "ax"
 	.incbin "baserom.gba", 0x00021ece, 0x00000902
-	.section .rom.000231dc, "ax"
-	.incbin "baserom.gba", 0x000231dc, 0x00002000
+	.section .rom.00023ecc, "ax"
+	.incbin "baserom.gba", 0x00023ecc, 0x00000ac4
 	.section .rom.000260dc, "ax"
 	.incbin "baserom.gba", 0x000260dc, 0x00000e00
 	.section .rom.00027170, "ax"
@@ -664,12 +664,6 @@ gEffectScripts:
 	.global WorldMap_PlaceMarkers
 WorldMap_PlaceMarkers:
 	.incbin "baserom.gba", 0x0009711c, 0x00000ee4
-	.section .rom.000a45f4, "ax"
-	.global OwnerAction_RunCompareLoop
-	.type OwnerAction_RunCompareLoop, %function
-	.thumb_func
-OwnerAction_RunCompareLoop:
-	.incbin "baserom.gba", 0x000a45f4, 0x00000c20
 	.section .rom.000a596c, "ax"
 	.global UiIcon_ResourceTiles
 UiIcon_ResourceTiles:
@@ -941,12 +935,6 @@ RomBytes_080c73f8:
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x000be420, 0x00001be0
-	.section .rom.000c68e0, "ax"
-	.global BattleFx_RunSevenMode
-	.type BattleFx_RunSevenMode, %function
-	.thumb_func
-BattleFx_RunSevenMode:
-	.incbin "baserom.gba", 0x000c68e0, 0x00000614
 	.section .rom.000d9972, "ax"
 	.incbin "baserom.gba", 0x000d9972, 0x00000002
 	.section .rom.000e10d8, "ax"
@@ -1127,7 +1115,19 @@ MemberBeam_HeadWidths:
 	.incbin "baserom.gba", 0x000e50b0, 0x00000003
 	.global MemberBeam_HeadHeights
 MemberBeam_HeadHeights:
-	.incbin "baserom.gba", 0x000e50b3, 0x00000059
+	.incbin "baserom.gba", 0x000e50b3, 0x00000003
+	.global SevenMode_Records
+SevenMode_Records:
+	.incbin "baserom.gba", 0x000e50b6, 0x0000000e
+	.global SevenMode_ShardWidths
+SevenMode_ShardWidths:
+	.incbin "baserom.gba", 0x000e50c4, 0x00000012
+	.global SevenMode_ShardHeights
+SevenMode_ShardHeights:
+	.incbin "baserom.gba", 0x000e50d6, 0x00000012
+	.global SevenMode_ShardOffsets
+SevenMode_ShardOffsets:
+	.incbin "baserom.gba", 0x000e50e8, 0x00000024
 	.global CounterReveal_PanelX
 CounterReveal_PanelX:
 	.incbin "baserom.gba", 0x000e510c, 0x0000000e

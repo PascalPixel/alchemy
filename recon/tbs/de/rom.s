@@ -679,12 +679,6 @@ gEffectScripts:
 	.global WorldMap_PlaceMarkers
 WorldMap_PlaceMarkers:
 	.incbin "baserom.gba", 0x000a38a0, 0x00000560
-	.section .rom.000b0550, "ax"
-	.global OwnerAction_RunCompareLoop
-	.type OwnerAction_RunCompareLoop, %function
-	.thumb_func
-OwnerAction_RunCompareLoop:
-	.incbin "baserom.gba", 0x000b0550, 0x00000c20
 	.section .rom.000b18c8, "ax"
 	.global UiIcon_ResourceTiles
 UiIcon_ResourceTiles:

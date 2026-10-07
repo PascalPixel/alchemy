@@ -5,7 +5,7 @@
 #include "EVENTWRK.H"
 #include "MAP.H"
 #include "OBJECT_RUNTIME.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "IWRAM_CALL.H"
 #include "CALLBACK_SCHEDULER.H"
 

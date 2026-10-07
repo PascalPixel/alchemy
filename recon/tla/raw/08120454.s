@@ -26,7 +26,7 @@ BtlTgtExec:
 	movs r0, #166
 	lsls r0, r0, #1
 	str r3, [sp, #64]
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r1, #156
 	lsls r1, r1, #1
 	str r0, [sp, #20]
@@ -67,13 +67,13 @@ BtlTgtExec:
 	ldrsb r3, [r5, r3]
 	mov r11, r0
 	str r3, [sp, #36]
-	bl BattleAction_Get
+	bl BtlActGet
 	str r0, [sp, #84]
 	ldr r0, [sp, #76]
-	bl Owner_GetState
+	bl UnitGet
 	str r0, [sp, #80]
 	mov r0, r10
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #166
 	mov r8, r0
 	ldr r3, .L_081207bc
@@ -108,10 +108,10 @@ BtlTgtExec:
 	beq .L_081205a0
 	movs r0, #11
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_081207c0
 	bl .L_08122326
 .L_0812053a:
@@ -136,13 +136,13 @@ BtlTgtExec:
 	beq .L_0812059a
 	movs r0, #11
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_081207c4
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, [sp, #92]
 	adds r1, #74
 	str r1, [sp, #4]
@@ -180,10 +180,10 @@ BtlTgtExec:
 	cmp r3, #0
 	beq .L_081205cc
 	movs r0, #11
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_081207c8
 	bl .L_08122326
 .L_081205cc:
@@ -298,7 +298,7 @@ BtlTgtExec:
 	adds r3, #255
 	adds r5, #30
 	muls r5, r3
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #255
 	lsls r3, r3, #8
 	adds r3, #255
@@ -307,7 +307,7 @@ BtlTgtExec:
 	ble .L_081206ac
 	movs r0, #13
 	movs r1, #5
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_081206ac:
 	movs r3, #128
 	lsls r3, r3, #2
@@ -363,7 +363,7 @@ BtlTgtExec:
 	str r2, [sp, #0]
 	mov r1, r10
 	ldr r2, [sp, #72]
-	bl Battle_HitCheck
+	bl BtlHitChk
 .L_0812071a:
 	str r0, [sp, #40]
 	ldr r0, [sp, #84]
@@ -387,7 +387,7 @@ BtlTgtExec:
 	lsls r4, r4, #1
 	adds r6, r3, r4
 	ldrh r5, [r6]
-	bl Summon_FindSlot
+	bl EnmSlotGet
 	mov r9, r0
 	ldr r0, [sp, #84]
 	movs r7, #1
@@ -397,7 +397,7 @@ BtlTgtExec:
 	bne .L_08120762
 	ldr r1, [sp, #64]
 	ldr r0, [r1]
-	bl BattleFormation_SelectRandomAvailableMember
+	bl BtlGrpRnd
 	adds r5, r0, #0
 	b .L_081207d8
 .L_08120762:
@@ -406,7 +406,7 @@ BtlTgtExec:
 	ldrh r3, [r6]
 	cmp r3, #164
 	bne .L_0812077c
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #3
 	movs r2, #189
 	ands r3, r0
@@ -458,7 +458,7 @@ BtlTgtExec:
 .L_081207cc:
 	.4byte 0xfffffd30
 .L_081207d0:
-	.4byte HitFalloff
+	.4byte HitTbl
 .L_081207d4:
 	movs r2, #0
 	str r2, [sp, #40]
@@ -469,7 +469,7 @@ BtlTgtExec:
 	b .L_08120942
 .L_081207e0:
 	adds r0, r5, #0
-	bl Summon_ClassValid
+	bl EnmChk
 	cmp r0, #0
 	bne .L_081207ec
 	b .L_08120942
@@ -485,7 +485,7 @@ BtlTgtExec:
 	bne .L_08120816
 	adds r0, r5, #0
 	movs r1, #1
-	bl Summon_TakeCharge
+	bl EnmCntDec
 	movs r3, #128
 	adds r7, r0, #0
 	lsls r3, r3, #8
@@ -493,7 +493,7 @@ BtlTgtExec:
 	cmp r3, #0
 	beq .L_08120816
 	adds r0, r5, #0
-	bl Summon_ResetCharge
+	bl EnmCntClr
 .L_08120816:
 	movs r2, #254
 	lsls r2, r2, #7
@@ -501,7 +501,7 @@ BtlTgtExec:
 	adds r1, r5, #0
 	ands r2, r7
 	mov r0, r9
-	bl BattleUnit_AssignFar
+	bl BtlUnitSetFar
 	ldr r1, [sp, #84]
 	ldrb r3, [r1, #3]
 	cmp r3, #87
@@ -579,9 +579,9 @@ BtlTgtExec:
 	mov r3, r9
 	strh r3, [r0, r1]
 .L_081208b8:
-	bl Summon_Refresh
+	bl EnmUpd
 	mov r0, r9
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r2, [r0, #12]
 	cmp r2, #0
 	bge .L_081208d0
@@ -601,11 +601,11 @@ BtlTgtExec:
 .L_081208e0:
 	asrs r3, r3, #16
 	mov r1, r9
-	bl BattlePresentation_SpawnActorObject
-	bl BattleActor_CommitPlacement
+	bl BtlObjMake
+	bl BtlObjPut
 	add r5, sp, #96
 	adds r0, r5, #0
-	bl BattleParty_ListPresentEnemies
+	bl BtlEnmList
 	cmp r0, #0
 	ble .L_0812090a
 	adds r6, r5, #0
@@ -614,13 +614,13 @@ BtlTgtExec:
 	ldrh r0, [r6]
 	subs r5, #1
 	adds r6, #2
-	bl Actor_ResetMotionAtAnchor
+	bl ObjMotRst
 	cmp r5, #0
 	bne .L_081208fc
 .L_0812090a:
 	movs r0, #0
 	mov r1, r9
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r0, [sp, #84]
 	ldrb r3, [r0, #3]
 	cmp r3, #87
@@ -634,14 +634,14 @@ BtlTgtExec:
 	beq .L_08120934
 	ldr r1, .L_08120bcc
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r4, [sp, #84]
 	ldrb r1, [r4, #3]
 	b .L_08120964
 .L_08120934:
 	ldr r1, .L_08120bd0
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r5, [sp, #84]
 	ldrb r1, [r5, #3]
 	b .L_08120964
@@ -653,14 +653,14 @@ BtlTgtExec:
 	ldr r1, .L_08120bd4
 .L_0812094c:
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r2, [sp, #84]
 	ldrb r1, [r2, #3]
 	b .L_08120964
 .L_08120958:
 	ldr r1, .L_08120bd8
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r3, [sp, #84]
 	ldrb r1, [r3, #3]
 .L_08120964:
@@ -729,7 +729,7 @@ BtlTgtExec:
 	beq .L_08120a10
 	ldr r1, [sp, #76]
 	movs r0, #12
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r2, [sp, #84]
 	ldrb r1, [r2, #3]
 	b .L_08120a10
@@ -780,7 +780,7 @@ BtlTgtExec:
 	bne .L_08120a44
 	ldr r3, [sp, #84]
 	ldrb r0, [r3, #3]
-	bl BattleFx_IsReviveFar
+	bl BtlEfxRevChkFar
 	cmp r0, #0
 	bne .L_08120a44
 	bl .L_08121480
@@ -868,7 +868,7 @@ BtlTgtExec:
 	ldrh r0, [r4, #60]
 	movs r2, #0
 	ldr r3, [sp, #68]
-	bl Battle_CalcAttack
+	bl BtlAtkCalc
 	movs r1, #10
 	muls r0, r7
 	bl __divsi3
@@ -887,13 +887,13 @@ BtlTgtExec:
 .L_08120b1a:
 	ldr r2, [sp, #92]
 	ldrb r0, [r2]
-	bl Owner_GetState
+	bl UnitGet
 	ldrh r5, [r0, #60]
 	cmp r11, r6
 	bne .L_08120b36
 	ldr r3, [sp, #92]
 	ldrb r0, [r3, #2]
-	bl Owner_GetState
+	bl UnitGet
 	ldrh r3, [r0, #60]
 	lsrs r3, r3, #2
 	adds r5, r5, r3
@@ -902,7 +902,7 @@ BtlTgtExec:
 	ldr r1, [sp, #12]
 	adds r2, r7, #0
 	ldr r3, [sp, #68]
-	bl Battle_CalcAttack
+	bl BtlAtkCalc
 .L_08120b42:
 	adds r5, r0, #0
 	ldr r4, [sp, #52]
@@ -940,7 +940,7 @@ BtlTgtExec:
 	bne .L_08120b9a
 	movs r1, #0
 	movs r0, #6
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r3, r10
 	ldr r1, .L_08120be0
 	cmp r3, #7
@@ -948,9 +948,9 @@ BtlTgtExec:
 	adds r1, #1
 .L_08120b94:
 	movs r0, #5
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08120b9a:
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #3
 	ands r3, r0
 	adds r5, r5, r3
@@ -1037,13 +1037,13 @@ BtlTgtExec:
 	movs r0, #8
 	mov r1, r10
 	mov r9, r3
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #1
 	adds r1, r5, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r4, r10
 	cmp r4, #7
 	bhi .L_08120c60
@@ -1057,7 +1057,7 @@ BtlTgtExec:
 	adds r1, r0, r3
 .L_08120c66:
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r1, r9
 	cmp r1, #0
 	bgt .L_08120cc6
@@ -1075,7 +1075,7 @@ BtlTgtExec:
 	movs r0, #9
 	mov r1, r10
 	mov r9, r4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r3, #165
 	lsls r3, r3, #1
 	add r3, r8
@@ -1090,7 +1090,7 @@ BtlTgtExec:
 	beq .L_08120cce
 	mov r1, r10
 	movs r0, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r1, r10
 	cmp r1, #7
 	bhi .L_08120cbc
@@ -1100,12 +1100,12 @@ BtlTgtExec:
 	ldr r1, .L_08120f48
 .L_08120cbe:
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_08120cce
 .L_08120cc6:
 	movs r0, #11
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08120cce:
 	mov r4, r8
 	movs r2, #56
@@ -1154,7 +1154,7 @@ BtlTgtExec:
 	ldr r1, [sp, #68]
 	lsls r2, r2, #1
 	adds r0, r7, #0
-	bl Battle_CalcPower
+	bl BtlPowCalc
 	adds r5, r0, #0
 	ldr r0, [sp, #60]
 	ldr r2, .L_08120f4c
@@ -1204,13 +1204,13 @@ BtlTgtExec:
 .L_08120d7e:
 	movs r0, #8
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #1
 	adds r1, r5, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r0, r10
 	cmp r0, #7
 	bhi .L_08120da0
@@ -1221,14 +1221,14 @@ BtlTgtExec:
 .L_08120da2:
 	movs r0, #4
 	subs r6, r6, r5
-	bl BattleEv_Push
+	bl BtlEvPush
 	cmp r6, #0
 	bgt .L_08120db0
 	movs r6, #0
 .L_08120db0:
 	movs r0, #11
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r2, r8
 	movs r1, #58
 	ldrsh r3, [r2, r1]
@@ -1237,7 +1237,7 @@ BtlTgtExec:
 	str r3, [sp, #48]
 	mov r3, r8
 	strh r6, [r3, #58]
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 	b .L_08121480
 .L_08120dce:
 	ldr r4, [sp, #84]
@@ -1263,7 +1263,7 @@ BtlTgtExec:
 	movs r2, #128
 	lsls r2, r2, #1
 	adds r0, r7, #0
-	bl Battle_CalcRestore
+	bl BtlRcvCalc
 	ldr r4, [sp, #60]
 	ldr r2, .L_08120f58
 	lsls r3, r4, #2
@@ -1276,7 +1276,7 @@ BtlTgtExec:
 	adds r5, r0, #0
 	ldr r0, [sp, #52]
 	muls r5, r0
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #3
 	ands r3, r0
 	mov r2, r8
@@ -1293,7 +1293,7 @@ BtlTgtExec:
 .L_08120e32:
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r1, r8
 	movs r0, #52
 	ldrsh r3, [r1, r0]
@@ -1301,15 +1301,15 @@ BtlTgtExec:
 	bne .L_08120e4e
 	ldr r1, .L_08120f5c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_08120e5e
 .L_08120e4e:
 	movs r0, #1
 	adds r1, r5, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08120f60
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08120e5e:
 	mov r4, r8
 	movs r2, #56
@@ -1319,7 +1319,7 @@ BtlTgtExec:
 	str r3, [sp, #48]
 	mov r0, r10
 	strh r6, [r5, #56]
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 	b .L_08121480
 .L_08120e74:
 	movs r0, #44
@@ -1358,7 +1358,7 @@ BtlTgtExec:
 	lsls r2, r2, #1
 	ldr r1, [sp, #68]
 	adds r0, r7, #0
-	bl Battle_CalcPower
+	bl BtlPowCalc
 	ldr r4, [sp, #60]
 	ldr r2, .L_08120f64
 	lsls r3, r4, #2
@@ -1396,13 +1396,13 @@ BtlTgtExec:
 .L_08120efc:
 	movs r0, #8
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #1
 	adds r1, r5, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r2, r10
 	cmp r2, #7
 	bhi .L_08120f1e
@@ -1413,14 +1413,14 @@ BtlTgtExec:
 .L_08120f20:
 	movs r0, #4
 	subs r6, r6, r5
-	bl BattleEv_Push
+	bl BtlEvPush
 	cmp r6, #0
 	bgt .L_08120f2e
 	movs r6, #0
 .L_08120f2e:
 	movs r0, #11
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r3, r8
 	strh r6, [r3, #58]
 	b .L_081212fc
@@ -1433,19 +1433,19 @@ BtlTgtExec:
 .L_08120f48:
 	.4byte 0x00000c70
 .L_08120f4c:
-	.4byte PpLossFalloff
+	.4byte EpLossTbl
 .L_08120f50:
 	.4byte 0x00000c76
 .L_08120f54:
 	.4byte 0x00000c75
 .L_08120f58:
-	.4byte HpHealFalloff
+	.4byte HpRcvTbl
 .L_08120f5c:
 	.4byte 0x00000c6c
 .L_08120f60:
 	.4byte 0x00000c69
 .L_08120f64:
-	.4byte PpDmgFalloff
+	.4byte EpDmgTbl
 .L_08120f68:
 	.4byte 0x00000c73
 .L_08120f6c:
@@ -1701,7 +1701,7 @@ BtlTgtExec:
 	adds r0, r7, #0
 	ldr r1, [sp, #68]
 	lsls r2, r2, #1
-	bl Battle_CalcPower
+	bl BtlPowCalc
 	adds r5, r0, #0
 	ldr r3, [sp, #28]
 	ldr r0, [sp, #52]
@@ -1739,7 +1739,7 @@ BtlTgtExec:
 	bl __divsi3
 	adds r5, r0, #0
 .L_08121172:
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #3
 	ands r3, r0
 	adds r5, r5, r3
@@ -1800,13 +1800,13 @@ BtlTgtExec:
 .L_081211e0:
 	movs r0, #8
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #1
 	adds r1, r5, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r2, r10
 	cmp r2, #7
 	bhi .L_08121206
@@ -1821,7 +1821,7 @@ BtlTgtExec:
 .L_0812120c:
 	movs r0, #4
 	subs r6, r6, r5
-	bl BattleEv_Push
+	bl BtlEvPush
 	cmp r6, #0
 	bgt .L_08121224
 	mov r0, r10
@@ -1844,10 +1844,10 @@ BtlTgtExec:
 	bgt .L_08121260
 	movs r0, #9
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r2, r10
 	movs r6, #0
 	cmp r2, #7
@@ -1858,12 +1858,12 @@ BtlTgtExec:
 	ldr r1, .L_0812144c
 .L_08121258:
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_08121268
 .L_08121260:
 	movs r0, #11
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08121268:
 	mov r5, r8
 	movs r4, #56
@@ -1893,7 +1893,7 @@ BtlTgtExec:
 	movs r2, #128
 	lsls r2, r2, #1
 	adds r0, r7, #0
-	bl Battle_CalcRestore
+	bl BtlRcvCalc
 	adds r5, r0, #0
 	ldr r0, [sp, #60]
 	ldr r2, .L_08121450
@@ -1919,7 +1919,7 @@ BtlTgtExec:
 .L_081212cc:
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r1, r8
 	movs r0, #54
 	ldrsh r3, [r1, r0]
@@ -1927,21 +1927,21 @@ BtlTgtExec:
 	bne .L_081212e8
 	ldr r1, .L_08121454
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_081212f8
 .L_081212e8:
 	movs r0, #1
 	adds r1, r5, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121458
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_081212f8:
 	mov r2, r8
 	strh r6, [r2, #58]
 .L_081212fc:
 	mov r0, r10
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 	b .L_08121480
 .L_08121304:
 	movs r3, #44
@@ -1985,7 +1985,7 @@ BtlTgtExec:
 	ldr r1, [sp, #68]
 	lsls r2, r2, #1
 	adds r0, r7, #0
-	bl Battle_CalcPower
+	bl BtlPowCalc
 	ldr r4, [sp, #60]
 	ldr r1, [sp, #52]
 	ldr r2, .L_0812145c
@@ -2023,13 +2023,13 @@ BtlTgtExec:
 .L_08121394:
 	movs r0, #8
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #1
 	adds r1, r5, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r1, r10
 	movs r0, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r1, r10
 	cmp r1, #7
 	bhi .L_081213b6
@@ -2040,7 +2040,7 @@ BtlTgtExec:
 .L_081213b8:
 	movs r0, #4
 	subs r6, r6, r5
-	bl BattleEv_Push
+	bl BtlEvPush
 	cmp r6, #0
 	bgt .L_08121412
 	mov r0, r10
@@ -2053,7 +2053,7 @@ BtlTgtExec:
 	bgt .L_08121412
 	movs r0, #9
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r3, #165
 	lsls r3, r3, #1
 	add r3, r8
@@ -2070,7 +2070,7 @@ BtlTgtExec:
 	movs r0, #0
 	mov r1, r10
 	mov r5, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	cmp r5, #7
 	bhi .L_08121408
 	ldr r1, .L_08121448
@@ -2079,12 +2079,12 @@ BtlTgtExec:
 	ldr r1, .L_0812144c
 .L_0812140a:
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_0812141a
 .L_08121412:
 	movs r0, #11
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_0812141a:
 	mov r1, r8
 	movs r0, #56
@@ -2094,14 +2094,14 @@ BtlTgtExec:
 	str r3, [sp, #48]
 	mov r0, r10
 	strh r6, [r2, #56]
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 	b .L_08121480
 .L_08121430:
-	.4byte HpDmgFalloff5
+	.4byte HpDmgTbl5
 .L_08121434:
-	.4byte HpDmgFalloff8
+	.4byte HpDmgTbl8
 .L_08121438:
-	.4byte HpDmgFalloff6
+	.4byte HpDmgTbl6
 .L_0812143c:
 	.4byte gPartyState
 .L_08121440:
@@ -2113,13 +2113,13 @@ BtlTgtExec:
 .L_0812144c:
 	.4byte 0x00000c70
 .L_08121450:
-	.4byte PpHealFalloff
+	.4byte EpRcvTbl
 .L_08121454:
 	.4byte 0x00000c6d
 .L_08121458:
 	.4byte 0x00000c6a
 .L_0812145c:
-	.4byte HpDmgFalloff
+	.4byte HpDmgTbl
 .L_08121460:
 	.4byte 0x00000c73
 .L_08121464:
@@ -2127,13 +2127,13 @@ BtlTgtExec:
 .L_08121468:
 	movs r0, #11
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121820
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08121480:
 	ldr r3, [sp, #64]
 	movs r4, #128
@@ -2150,16 +2150,16 @@ BtlTgtExec:
 	bne .L_081214ae
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121824
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r3, #0
 	strb r3, [r5]
 .L_081214ae:
 	mov r1, r10
 	movs r0, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, [sp, #84]
 	ldrb r3, [r1, #3]
 	cmp r3, #75
@@ -2171,7 +2171,7 @@ BtlTgtExec:
 .L_081214c8:
 	ldr r3, [sp, #84]
 	ldrb r0, [r3, #3]
-	bl BattleFx_IsReviveFar
+	bl BtlEfxRevChkFar
 	cmp r0, #0
 	bne .L_081214ee
 	mov r5, r8
@@ -2181,7 +2181,7 @@ BtlTgtExec:
 	bne .L_081214ee
 	ldr r1, [sp, #84]
 	ldrb r0, [r1, #3]
-	bl BattleFx_CanAffectDefeatedUnit
+	bl BtlEfxDeadChk
 	cmp r0, #0
 	bne .L_081214ee
 	bl .L_081223ba
@@ -2301,10 +2301,10 @@ BtlTgtExec:
 	ldr r1, .L_0812182c
 	movs r0, #4
 	strb r3, [r2]
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08121688:
 	movs r2, #60
 	adds r2, #255
@@ -2316,13 +2316,13 @@ BtlTgtExec:
 	strb r3, [r2]
 	movs r0, #7
 	movs r1, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121830
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_081216b0:
 	movs r2, #158
 	lsls r2, r2, #1
@@ -2334,10 +2334,10 @@ BtlTgtExec:
 	ldr r1, .L_08121834
 	movs r0, #4
 	strb r3, [r2]
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_081216d0:
 	movs r2, #62
 	adds r2, #255
@@ -2349,10 +2349,10 @@ BtlTgtExec:
 	ldr r1, .L_08121838
 	movs r0, #4
 	strb r3, [r2]
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_081216f0:
 	movs r2, #66
 	adds r2, #255
@@ -2364,10 +2364,10 @@ BtlTgtExec:
 	ldr r1, .L_0812183c
 	movs r0, #4
 	strb r3, [r2]
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08121710:
 	movs r2, #160
 	lsls r2, r2, #1
@@ -2379,10 +2379,10 @@ BtlTgtExec:
 	ldr r1, .L_08121840
 	movs r0, #4
 	strb r3, [r2]
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08121730:
 	movs r5, #50
 	adds r5, #255
@@ -2393,13 +2393,13 @@ BtlTgtExec:
 	beq .L_0812174a
 	ldr r1, .L_08121844
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r3, #0
 	strb r3, [r5]
 .L_0812174a:
 	movs r0, #7
 	movs r1, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	bl .L_081223ba
 .L_08121756:
 	movs r2, #156
@@ -2412,13 +2412,13 @@ BtlTgtExec:
 	strb r3, [r2]
 	movs r0, #7
 	movs r1, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_0812182c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_0812177e:
 	movs r2, #60
 	adds r2, #255
@@ -2430,13 +2430,13 @@ BtlTgtExec:
 	strb r3, [r2]
 	movs r0, #7
 	movs r1, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121830
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_081217a6:
 	movs r2, #158
 	lsls r2, r2, #1
@@ -2448,13 +2448,13 @@ BtlTgtExec:
 	strb r3, [r2]
 	movs r0, #7
 	movs r1, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121834
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_081217ce:
 	movs r2, #62
 	adds r2, #255
@@ -2466,13 +2466,13 @@ BtlTgtExec:
 	strb r3, [r2]
 	movs r0, #7
 	movs r1, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121838
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_081217f6:
 	movs r2, #66
 	adds r2, #255
@@ -2486,10 +2486,10 @@ BtlTgtExec:
 	strb r3, [r2]
 	movs r0, #7
 	movs r1, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_0812183c
 	bl .L_08122326
 .L_08121820:
@@ -2592,14 +2592,14 @@ BtlTgtExec:
 	bne .L_081218de
 	ldr r1, .L_08121c20
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_081218ec
 .L_081218de:
 	movs r0, #1
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121c24
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_081218ec:
 	mov r1, r8
 	strh r5, [r1, #56]
@@ -2664,14 +2664,14 @@ BtlTgtExec:
 	bne .L_08121968
 	ldr r1, .L_08121c28
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_08121976
 .L_08121968:
 	movs r0, #1
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121c2c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08121976:
 	mov r4, r8
 	strh r5, [r4, #58]
@@ -2688,7 +2688,7 @@ BtlTgtExec:
 	movs r3, #5
 	strb r3, [r2]
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	mov r3, r8
 	adds r3, #64
 	ldrh r1, [r3]
@@ -2697,7 +2697,7 @@ BtlTgtExec:
 	adds r3, #64
 	ldrh r3, [r3]
 	subs r1, r1, r3
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121c30
 	bl .L_08122326
 .L_081219b0:
@@ -2712,7 +2712,7 @@ BtlTgtExec:
 	movs r3, #5
 	strb r3, [r2]
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r3, [sp, #20]
 	movs r0, #1
 	adds r3, #64
@@ -2721,7 +2721,7 @@ BtlTgtExec:
 	adds r3, #64
 	ldrh r3, [r3]
 	subs r1, r1, r3
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121c34
 	bl .L_08122326
 .L_081219e4:
@@ -2748,17 +2748,17 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121a0c:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r0, [sp, #20]
 	mov r2, r8
 	ldrh r3, [r2, #60]
 	ldrh r1, [r0, #60]
 	movs r0, #1
 	subs r1, r1, r3
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121c38
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #153
 	lsls r2, r2, #1
 	add r2, r8
@@ -2788,17 +2788,17 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121a5e:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r5, [sp, #20]
 	mov r0, r8
 	ldrh r3, [r0, #60]
 	ldrh r1, [r5, #60]
 	movs r0, #1
 	subs r1, r1, r3
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121c38
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #153
 	lsls r2, r2, #1
 	add r2, r8
@@ -2828,17 +2828,17 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121ab0:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r4, [sp, #20]
 	mov r2, r8
 	ldrh r1, [r2, #60]
 	ldrh r3, [r4, #60]
 	movs r0, #1
 	subs r1, r1, r3
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121c3c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #153
 	lsls r2, r2, #1
 	add r2, r8
@@ -2868,17 +2868,17 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121b02:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r2, [sp, #20]
 	mov r0, r8
 	ldrh r3, [r2, #60]
 	ldrh r1, [r0, #60]
 	movs r0, #1
 	subs r1, r1, r3
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121c3c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #153
 	lsls r2, r2, #1
 	add r2, r8
@@ -2908,17 +2908,17 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121b54:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r5, [sp, #20]
 	mov r0, r8
 	ldrh r3, [r0, #62]
 	ldrh r1, [r5, #62]
 	movs r0, #1
 	subs r1, r1, r3
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121c40
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #154
 	lsls r2, r2, #1
 	add r2, r8
@@ -2948,17 +2948,17 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121ba6:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r2, [sp, #20]
 	mov r4, r8
 	ldrh r1, [r2, #62]
 	ldrh r3, [r4, #62]
 	movs r0, #1
 	subs r1, r1, r3
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121c40
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #154
 	lsls r2, r2, #1
 	add r2, r8
@@ -2988,17 +2988,17 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121bf8:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r2, [sp, #20]
 	mov r0, r8
 	ldrh r3, [r2, #62]
 	ldrh r1, [r0, #62]
 	movs r0, #1
 	subs r1, r1, r3
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121c44
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #154
 	lsls r2, r2, #1
 	add r2, r8
@@ -3048,17 +3048,17 @@ BtlTgtExec:
 	strb r3, [r2]
 .L_08121c70:
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r0, [sp, #20]
 	mov r5, r8
 	ldrh r3, [r0, #62]
 	ldrh r1, [r5, #62]
 	movs r0, #1
 	subs r1, r1, r3
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121fec
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #154
 	lsls r2, r2, #1
 	add r2, r8
@@ -3074,7 +3074,7 @@ BtlTgtExec:
 .L_08121ca4:
 	movs r0, #4
 	ldr r1, .L_08121ff0
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r4, r8
 	ldrh r3, [r4, #52]
 	mov r5, r8
@@ -3090,7 +3090,7 @@ BtlTgtExec:
 .L_08121cc2:
 	movs r0, #4
 	ldr r1, .L_08121ff0
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r2, r8
 	ldrh r3, [r2, #52]
 	mov r0, r10
@@ -3101,7 +3101,7 @@ BtlTgtExec:
 	asrs r2, r2, #1
 	mov r3, r8
 	strh r2, [r3, #56]
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 	b .L_081223ba
 .L_08121ce4:
 	mov r5, r8
@@ -3113,7 +3113,7 @@ BtlTgtExec:
 .L_08121cf0:
 	ldr r1, .L_08121ff0
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r1, #52
 	ldrsh r0, [r5, r1]
 	movs r1, #10
@@ -3132,7 +3132,7 @@ BtlTgtExec:
 .L_08121d16:
 	movs r0, #4
 	ldr r1, .L_08121ff0
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #52
 	ldrsh r3, [r5, r0]
 	movs r1, #10
@@ -3153,7 +3153,7 @@ BtlTgtExec:
 	beq .L_08121d4a
 	ldr r1, .L_08121ff4
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08121d4a:
 	movs r3, #0
 	strb r3, [r5]
@@ -3196,10 +3196,10 @@ BtlTgtExec:
 	adds r1, r1, r2
 	lsls r1, r1, #2
 	movs r0, #1
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121ff8
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #155
 	lsls r2, r2, #1
 	add r2, r8
@@ -3243,10 +3243,10 @@ BtlTgtExec:
 	adds r1, r1, r2
 	lsls r1, r1, #2
 	movs r0, #1
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121ff8
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #155
 	lsls r2, r2, #1
 	add r2, r8
@@ -3291,10 +3291,10 @@ BtlTgtExec:
 	adds r1, r1, r3
 	lsls r1, r1, #2
 	movs r0, #1
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121ffc
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #155
 	lsls r2, r2, #1
 	add r2, r8
@@ -3339,10 +3339,10 @@ BtlTgtExec:
 	adds r1, r1, r3
 	lsls r1, r1, #2
 	movs r0, #1
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08121ffc
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #155
 	lsls r2, r2, #1
 	add r2, r8
@@ -3360,7 +3360,7 @@ BtlTgtExec:
 .L_08121ed4:
 	ldr r1, .L_08122000
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r3, #1
 	strb r3, [r5]
 	b .L_081223ba
@@ -3376,14 +3376,14 @@ BtlTgtExec:
 .L_08121ef2:
 	ldr r1, .L_08122004
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r3, #2
 	strb r3, [r5]
 	b .L_081223ba
 .L_08121f00:
 	ldr r1, .L_08122008
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #156
 	lsls r2, r2, #1
 	add r2, r8
@@ -3392,7 +3392,7 @@ BtlTgtExec:
 .L_08121f12:
 	ldr r1, .L_0812200c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #58
 	adds r2, #255
 	add r2, r8
@@ -3401,7 +3401,7 @@ BtlTgtExec:
 .L_08121f24:
 	ldr r1, .L_08122010
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #157
 	lsls r2, r2, #1
 	add r2, r8
@@ -3410,7 +3410,7 @@ BtlTgtExec:
 .L_08121f36:
 	ldr r1, .L_08122014
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #60
 	adds r2, #255
 	add r2, r8
@@ -3419,7 +3419,7 @@ BtlTgtExec:
 .L_08121f48:
 	ldr r1, .L_08122018
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #158
 	lsls r2, r2, #1
 	add r2, r8
@@ -3431,12 +3431,12 @@ BtlTgtExec:
 	bhi .L_08121f6a
 	ldr r1, .L_0812201c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_08121f72
 .L_08121f6a:
 	ldr r1, .L_08122020
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08121f72:
 	movs r1, #62
 	adds r1, #255
@@ -3450,12 +3450,12 @@ BtlTgtExec:
 	bhi .L_08121f8e
 	ldr r1, .L_0812201c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_08121f96
 .L_08121f8e:
 	ldr r1, .L_08122020
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08121f96:
 	movs r1, #62
 	adds r1, #255
@@ -3472,7 +3472,7 @@ BtlTgtExec:
 .L_08121fae:
 	movs r0, #9
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r3, #149
 	lsls r3, r3, #1
 	add r3, r8
@@ -3488,19 +3488,19 @@ BtlTgtExec:
 	ldr r1, .L_08122028
 .L_08121fce:
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_08121fde
 .L_08121fd6:
 	ldr r1, .L_0812202c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08121fde:
 	movs r3, #0
 	mov r4, r8
 	strh r3, [r4, #56]
 .L_08121fe4:
 	mov r0, r10
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 	b .L_081223ba
 .L_08121fec:
 	.4byte 0x00000cbf
@@ -3539,7 +3539,7 @@ BtlTgtExec:
 .L_08122030:
 	ldr r1, .L_08122350
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #159
 	lsls r2, r2, #1
 	add r2, r8
@@ -3548,7 +3548,7 @@ BtlTgtExec:
 .L_08122042:
 	ldr r1, .L_08122354
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #64
 	adds r2, #255
 	add r2, r8
@@ -3581,10 +3581,10 @@ BtlTgtExec:
 .L_08122080:
 	movs r0, #7
 	movs r1, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	ldr r1, [sp, #76]
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, [sp, #80]
 	movs r0, #52
 	ldrsh r3, [r1, r0]
@@ -3592,15 +3592,15 @@ BtlTgtExec:
 	bne .L_081220a4
 	ldr r1, .L_08122358
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_081220b4
 .L_081220a4:
 	movs r0, #1
 	adds r1, r6, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_0812235c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_081220b4:
 	ldr r2, [sp, #80]
 	strh r5, [r2, #56]
@@ -3621,10 +3621,10 @@ BtlTgtExec:
 .L_081220d2:
 	movs r0, #7
 	movs r1, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #0
 	ldr r1, [sp, #76]
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r2, [sp, #80]
 	movs r1, #54
 	ldrsh r3, [r2, r1]
@@ -3632,21 +3632,21 @@ BtlTgtExec:
 	bne .L_081220f6
 	ldr r1, .L_08122360
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_08122106
 .L_081220f6:
 	movs r0, #1
 	adds r1, r6, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08122364
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08122106:
 	ldr r3, [sp, #80]
 	strh r5, [r3, #58]
 .L_0812210a:
 	ldr r0, [sp, #76]
-	bl Owner_RecalculateRatiosFar
+	bl UnitRatioFar
 	b .L_081223ba
 .L_08122112:
 	ldr r0, [sp, #48]
@@ -3677,22 +3677,22 @@ BtlTgtExec:
 .L_08122142:
 	adds r1, r5, #0
 	movs r0, #1
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r1, r10
 	cmp r1, #7
 	bhi .L_0812215a
 	ldr r1, .L_08122368
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_08122162
 .L_0812215a:
 	ldr r1, .L_0812236c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08122162:
 	ldr r0, [sp, #76]
 	adds r1, r5, #0
-	bl Owner_AdjustSecondValueFar
+	bl UnitEpAddFar
 	b .L_081223ba
 .L_0812216c:
 	mov r3, r8
@@ -3715,22 +3715,22 @@ BtlTgtExec:
 .L_0812218e:
 	adds r1, r5, #0
 	movs r0, #1
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r1, r10
 	cmp r1, #7
 	bhi .L_081221a6
 	ldr r1, .L_08122370
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_081221ae
 .L_081221a6:
 	ldr r1, .L_08122374
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_081221ae:
 	negs r1, r5
 	mov r0, r10
-	bl Owner_AdjustSecondValueFar
+	bl UnitEpAddFar
 	b .L_081223ba
 .L_081221b8:
 	movs r2, #52
@@ -3807,7 +3807,7 @@ BtlTgtExec:
 .L_0812223e:
 	ldr r1, .L_0812237c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #160
 	lsls r2, r2, #1
 	b .L_081223b4
@@ -3821,7 +3821,7 @@ BtlTgtExec:
 	bne .L_08122268
 	ldr r1, .L_08122380
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r3, #7
 	strb r3, [r5]
 	b .L_081223ba
@@ -3834,13 +3834,13 @@ BtlTgtExec:
 	strb r3, [r5]
 	movs r0, #1
 	ldrb r1, [r5]
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_08122384
 	b .L_08122326
 .L_0812227e:
 	ldr r1, .L_08122388
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #162
 	lsls r2, r2, #1
 	add r2, r8
@@ -3849,7 +3849,7 @@ BtlTgtExec:
 .L_08122290:
 	ldr r1, .L_0812238c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #164
 	lsls r2, r2, #1
 	add r2, r8
@@ -3871,13 +3871,13 @@ BtlTgtExec:
 .L_081222b8:
 	ldr r1, .L_08122390
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #70
 	b .L_081223b2
 .L_081222c4:
 	ldr r1, .L_08122394
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #44
 	adds r2, #255
 	add r2, r8
@@ -3888,7 +3888,7 @@ BtlTgtExec:
 .L_081222da:
 	ldr r1, .L_08122394
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #44
 	adds r2, #255
 	add r2, r8
@@ -3900,7 +3900,7 @@ BtlTgtExec:
 .L_081222f2:
 	ldr r1, .L_08122398
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #44
 	adds r2, #255
 	add r2, r8
@@ -3912,7 +3912,7 @@ BtlTgtExec:
 .L_0812230a:
 	ldr r1, .L_0812239c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #44
 	adds r2, #255
 	add r2, r8
@@ -3926,12 +3926,12 @@ BtlTgtExec:
 	negs r1, r1
 .L_08122326:
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_081223ba
 .L_0812232e:
 	ldr r1, .L_081223a0
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r2, [sp, #64]
 	movs r3, #1
 	adds r2, #71
@@ -3939,10 +3939,10 @@ BtlTgtExec:
 .L_0812233e:
 	ldr r1, .L_081223a4
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r0, #15
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 	b .L_081223ba
 .L_08122350:
 	.4byte 0x00000ccb
@@ -3991,7 +3991,7 @@ BtlTgtExec:
 .L_081223a8:
 	ldr r1, .L_081224b8
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	movs r2, #68
 .L_081223b2:
 	adds r2, #255
@@ -4004,7 +4004,7 @@ BtlTgtExec:
 .L_081223ba:
 	movs r0, #7
 	movs r1, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r5, [sp, #4]
 	movs r4, #0
 	ldrsh r3, [r5, r4]
@@ -4057,7 +4057,7 @@ BtlTgtExec:
 	ldr r0, [sp, #48]
 	cmp r0, #0
 	ble .L_08122446
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #3
 	ands r0, r3
 	cmp r0, #0
@@ -4065,21 +4065,21 @@ BtlTgtExec:
 	strb r0, [r5]
 	mov r1, r10
 	movs r0, #0
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_081224bc
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08122446:
 	ldr r0, [sp, #20]
-	bl Sys_Free
+	bl MemFree
 	mov r0, r10
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #36]
 	adds r3, #65
 	ldrb r0, [r3]
-	bl UiWindow_DrawPartyStatusContentsFar
+	bl PtyStDrawFar
 	mov r2, r8
 	movs r1, #56
 	ldrsh r3, [r2, r1]
@@ -4087,7 +4087,7 @@ BtlTgtExec:
 	beq .L_08122472
 	movs r0, #11
 	mov r1, r10
-	bl BattleEv_Push
+	bl BtlEvPush
 .L_08122472:
 	movs r3, #148
 	adds r3, #255
@@ -4100,7 +4100,7 @@ BtlTgtExec:
 	ldrb r3, [r3]
 	cmp r3, #0
 	beq .L_081224aa
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #3
 	ands r0, r3
 	cmp r0, #0

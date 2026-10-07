@@ -130,10 +130,10 @@ SaveState_ProcessSelectedSlot:
 	.thumb_func
 Trade_GetOfferState:
 	overlay_veneer Trade_GetOfferStateFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
 Engine_GameFlagIsSet:

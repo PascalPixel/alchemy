@@ -13,25 +13,25 @@
 
 #define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(s32,s32))ObjectDispatch_ApplyValueToChildrenFar)
 
-s32 *GetBattleObjectSlot(s32);
+s32 *BtlObjGet(s32);
 
 s32 BattlePres_SetActorModeAndAction(s32 id)
 {
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     s32 value;
 
-    state = Owner_GetState(id);
+    state = UnitGet(id);
     value = 1;
     if (state->hp != 0) {
-        if (state->sleep != 0 || state->stun != 0 || state->cannot_move != 0)
-            value = (state->status_12a != 1) * 4;
+        if (state->nemuri != 0 || state->shibire != 0 || state->miugoki != 0)
+            value = (state->side != 1) * 4;
     } else {
-        s32 changed = state->status_12a ^ value;
+        s32 changed = state->side ^ value;
         value = (u32)(-changed | changed) >> 31;
         value = 5 - value;
     }
 
-    Object_SetMode(*GetBattleObjectSlot(id), value);
-    ObjectDispatch_ApplyValueToChildrenFar(*GetBattleObjectSlot(id), (id & 3) + 14);
+    Object_SetMode(*BtlObjGet(id), value);
+    ObjectDispatch_ApplyValueToChildrenFar(*BtlObjGet(id), (id & 3) + 14);
 }
 

@@ -9,7 +9,7 @@ Func_08045564:
 	mov r8, r0
 	ldr r5, .L_080455a8
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #132
 	movs r3, #128
 	adds r6, r0, #0
@@ -31,7 +31,7 @@ Func_08045564:
 	mov lr, r6
 	.2byte 0xf800
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, pc}

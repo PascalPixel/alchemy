@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "ITEM_IDS.H"
@@ -16,7 +16,7 @@
 #include "CALL.H"
 #include "EVENT_RUNTIME.H"
 #include "EDITION.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "text/MSG_IDS.H"
 
 #define Object_SetMoveTarget ((void (*)(s32, s32, s32, s32))Object_SetMoveTarget)
@@ -25,7 +25,7 @@
 #define KuupuappuHeya_PairScriptP ((u8 (*))&KuupuappuHeya_PairScriptP)
 #define KuupuappuHeya_PairScriptR ((u8 (*))&KuupuappuHeya_PairScriptR)
 
-void Owner_RecalculateStats();
+void UnitCalc();
 s32 PartyInventory_HasSpace(void);
 void BattleEffect_CleanupSceneObjects(void);
 s32 PartyInventory_HasSpace();
@@ -43,7 +43,7 @@ void SceneEffect_ApplyPairWithValue141();
 void SceneState_SetValue2ThenFinish();
 void Ui_SetBank15PaletteAndClearRenderMode();
 void Map_SetViewBounds();
-u8 *Owner_GetState(s32);
+u8 *UnitGet(s32);
 void Djinn_Transfer(s32, s32, s32, s32);
 
 void Object_SetModeById(s32, s32, s32);
@@ -177,9 +177,9 @@ void SceneEffect_ApplyThreeValuesAndFinish(s32 actor, s32 animation, s32 frames)
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 first, s32 second);
-u8 *Owner_GetState(s32 owner);
+u8 *UnitGet(s32 owner);
 void Djinn_Transfer(s32 owner, s32 djinn, s32 element, s32 flags);
-void Owner_RecalculateStats(s32 owner);
+void UnitCalc(s32 owner);
 
 s32 BattleFx_PlayCueAndStartEmitterOnTarget();
 void Party_RemoveOwnerRestored();
@@ -1561,7 +1561,7 @@ void KuupuappuHeya_RunVaultEvent(void)
 
 s32 KuupuappuHeya_GetIwanVenusDjinnCount(void)
 {
-    return ((struct BattleUnit *)Owner_GetState(2))->djinn_owned_counts[0];
+    return ((struct BtlUnit *)UnitGet(2))->djinn_owned_counts[0];
 }
 
 s32 OverlayObject_RunObjectTwoWhenFlagged(void)
@@ -1569,12 +1569,12 @@ s32 OverlayObject_RunObjectTwoWhenFlagged(void)
     u8 *state;
 
     BattlePlacement_UpdateTimedEntriesTwentyTimes();
-    state = Owner_GetState(2);
+    state = UnitGet(2);
     if (*(s32 *)(state + 0xf8) & 1) {
         Djinn_Transfer(2, 0, 0, 0);
         Engine_AudioPlayCue(126);
-        Owner_RecalculateStats(0);
-        Owner_RecalculateStats(2);
+        UnitCalc(0);
+        UnitCalc(2);
     }
 }
 

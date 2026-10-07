@@ -12,7 +12,7 @@
 #include "GAME_FLAGS.H"
 #include "PARTY_STATE.H"
 #include "TYPES.H"
-#include "BATTLE_SUMMON.H"
+#include "BTLSMN.H"
 #include "RUNTIME_INTERFACES.H"
 #include "FIXED_MATH.H"
 #include "OWNER_STATE.H"
@@ -47,7 +47,7 @@ typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 
 u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
 {
-    struct BattleUnit *state = (struct BattleUnit *)Owner_GetState(owner);
+    struct BtlUnit *state = (struct BtlUnit *)UnitGet(owner);
     u32 index;
     u32 result;
     s32 values[4];

@@ -13,7 +13,7 @@
 #include "WINDOW.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 
 
 s32 UiWork_IsIdle(struct UiWindow *window)

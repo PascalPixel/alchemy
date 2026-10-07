@@ -17,53 +17,53 @@
 #include "RESOURCE.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_WORK.H"
+#include "BTLSYS.H"
+#include "BTLWORK.H"
 #include "MENU_LIST.H"
 
 s32 BattleActor_ResetRuntimeFields(s32 actor)
 {
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     s8 *cursor;
     s32 count;
     u8 zero;
 
-    state = Owner_GetStateFar(actor);
+    state = UnitGetFar(actor);
     count = 3;
     zero = 0;
-    cursor = &state->element_modifier[3];
+    cursor = &state->elm_lv[3];
     do {
         count--;
         *cursor-- = zero;
     } while (count >= 0);
 
-    state->poison = 0;
-    state->attack_modifier_turns = 0;
-    state->attack_modifier = 0;
-    state->defense_modifier_turns = 0;
-    state->defense_modifier = 0;
-    state->res_modifier_turns = 0;
-    state->res_modifier = 0;
-    state->delusion = 0;
-    state->confusion = 0;
+    state->doku = 0;
+    state->atk_cnt = 0;
+    state->atk_lv = 0;
+    state->def_cnt = 0;
+    state->def_lv = 0;
+    state->res_cnt = 0;
+    state->res_lv = 0;
+    state->maboroshi = 0;
+    state->konran = 0;
     state->charm = 0;
-    state->stun = 0;
-    state->sleep = 0;
-    state->psy_seal = 0;
+    state->shibire = 0;
+    state->nemuri = 0;
+    state->fuuji = 0;
     state->refrain = 0;
     state->reflect = 0;
-    state->evil_spirit = 0;
-    state->death_count = 0;
+    state->akuryo = 0;
+    state->shiryo = 0;
     state->unknown_142[0] = 0;
     state->unknown_142[1] = 0;
-    state->ready_pose = 0;
-    state->cannot_move = 0;
-    state->agility_modifier_turns = 0;
-    state->agility_modifier = 0;
+    state->sonae = 0;
+    state->miugoki = 0;
+    state->agi_cnt = 0;
+    state->agi_lv = 0;
     state->battle_end_state = 0;
 
-    Owner_RecalculateStatsFar(actor);
-    return BattleUnit_BuildStatusFlags(actor, GetBattleObjectSlot(actor));
+    UnitCalcFar(actor);
+    return BattleUnit_BuildStatusFlags(actor, BtlObjGet(actor));
 }
 
 struct AdvanceSprite {

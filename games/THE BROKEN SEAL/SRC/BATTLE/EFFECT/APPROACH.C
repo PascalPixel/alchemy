@@ -1,15 +1,15 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "FIXED_MATH.H"
 #include "FIELD_EVENT.H"
 #include "CANVAS.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "EFFECT_STEP.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
@@ -466,7 +466,7 @@ draw_shot:
 
 void BattleFx_InitializeRisingObject(s32 arg0)
 {
-    struct BattleObjectSlot *context = GetBattleObjectSlotFar(arg0);
+    struct BtlObj *context = GetBattleObjectSlotFar(arg0);
     struct MotionObject *object = context->object;
 
     object->acceleration = 0x20000;
@@ -483,8 +483,8 @@ void BattleFx_InitializeRisingObject(s32 arg0)
 
 void BattleFx_SetApproachMotion(s32 first, s32 second, s32 divisor)
 {
-    struct BattleObjectSlot *first_context = GetBattleObjectSlotFar(first);
-    struct BattleObjectSlot *second_context = GetBattleObjectSlotFar(second);
+    struct BtlObj *first_context = GetBattleObjectSlotFar(first);
+    struct BtlObj *second_context = GetBattleObjectSlotFar(second);
     struct MotionObject *object = first_context->object;
     struct MotionObject *target = second_context->object;
     s32 scale = 80;

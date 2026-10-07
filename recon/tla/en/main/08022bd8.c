@@ -1,5 +1,5 @@
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 extern u8 Func_0800a418[];
 
 extern u8 Tile_CopyStridedCodeSize[];

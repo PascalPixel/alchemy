@@ -8,16 +8,16 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "SYSTEM.H"
 #include "BATTLE_COMMAND.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "FIXED_MATH.H"
 #include "BATTLE_EFX.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_SUMMON.H"
-#include "BATTLE_WORK.H"
-#include "MOTION_OBJECT.H"
+#include "BTLTYPE.H"
+#include "BTLSMN.H"
+#include "BTLWORK.H"
+#include "MOTOBJ.H"
 #include "CHARACTER.H"
 #include "ANIMSPR.H"
 
@@ -38,18 +38,18 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
     s32 offset;
 
     count = 0;
-    order = (struct SlotArray *)gBattleWork;
+    order = (struct SlotArray *)BtlWk;
 
     if (require_living_unit != 0) {
         for (;;) {
             index = 0;
-            slot = (u32)&((struct BattleSession *)0)->party_units / sizeof(s16);
+            slot = (u32)&((struct BtlWork *)0)->party_units / sizeof(s16);
             if (order->items[slot] != 255) {
                 entry = order->items;
                 do {
                     value = entry[slot];
                     if (value != 254) {
-                        if (Owner_GetStateFar(value)->hp != 0) {
+                        if (UnitGetFar(value)->hp != 0) {
                             positions[count] = index | 0x100;
                             count++;
                         }
@@ -62,8 +62,8 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
         }
     } else {
         index = 0;
-        slot = (u32)&((struct BattleSession *)0)->enemy_units / sizeof(s16) - 1;
-        tail = (u32)&((struct BattleSession *)0)->enemy_units / sizeof(s16) - 1;
+        slot = (u32)&((struct BtlWork *)0)->enemy_units / sizeof(s16) - 1;
+        tail = (u32)&((struct BtlWork *)0)->enemy_units / sizeof(s16) - 1;
         offset = tail * 2;
         entry = (s16 *)(order->items + 1);
         if (*(s16 *)((char *)entry + offset) != 255) {
@@ -90,44 +90,44 @@ pick:
 
 #define COUNT_PARTIAL_CURES(unit, count)                                      \
     {                                                                         \
-        if ((unit)->delusion != 0)                                            \
+        if ((unit)->maboroshi != 0)                                            \
             (count)++;                                                        \
-        if ((u8)(unit)->confusion != 0)                                       \
+        if ((u8)(unit)->konran != 0)                                       \
             (count)++;                                                        \
         if ((unit)->charm != 0)                                               \
             (count)++;                                                        \
-        if ((unit)->sleep != 0)                                               \
+        if ((unit)->nemuri != 0)                                               \
             (count)++;                                                        \
-        if ((unit)->psy_seal != 0)                                            \
+        if ((unit)->fuuji != 0)                                            \
             (count)++;                                                        \
-        if ((unit)->death_count != 0)                                         \
+        if ((unit)->shiryo != 0)                                         \
             (count)++;                                                        \
     }
 
 #define COUNT_ALL_CURES(unit, count)                                          \
     {                                                                         \
         COUNT_PARTIAL_CURES((unit), (count));                                 \
-        if ((unit)->evil_spirit != 0)                                         \
+        if ((unit)->akuryo != 0)                                         \
             (count)++;                                                        \
-        if ((unit)->poison != 0)                                              \
+        if ((unit)->doku != 0)                                              \
             (count)++;                                                        \
     }
 
 #define COUNT_POSITIVE_MODIFIERS(unit, count)                                 \
     {                                                                         \
-        if ((unit)->attack_modifier > 0)                                      \
+        if ((unit)->atk_lv > 0)                                      \
             (count)++;                                                        \
-        if ((unit)->defense_modifier > 0)                                     \
+        if ((unit)->def_lv > 0)                                     \
             (count)++;                                                        \
-        if ((unit)->res_modifier > 0)                                         \
+        if ((unit)->res_lv > 0)                                         \
             (count)++;                                                        \
-        if ((unit)->element_modifier[0] > 0)                                   \
+        if ((unit)->elm_lv[0] > 0)                                   \
             (count)++;                                                        \
-        if ((unit)->element_modifier[1] > 0)                                   \
+        if ((unit)->elm_lv[1] > 0)                                   \
             (count)++;                                                        \
-        if ((unit)->element_modifier[2] > 0)                                   \
+        if ((unit)->elm_lv[2] > 0)                                   \
             (count)++;                                                        \
-        if ((unit)->element_modifier[3] > 0)                                   \
+        if ((unit)->elm_lv[3] > 0)                                   \
             (count)++;                                                        \
     }
 
@@ -137,48 +137,48 @@ pick:
         switch ((action)->effect) {                                           \
         case EFX_ATK_UP2:                                                     \
         case EFX_ATK_UP1:                                                     \
-            if ((unit)->attack_modifier + 1 <= 4)                             \
+            if ((unit)->atk_lv + 1 <= 4)                             \
                 (applies) = 1;                                                \
-            if ((unit)->attack_modifier_turns == 1)                           \
+            if ((unit)->atk_cnt == 1)                           \
                 (applies)++;                                                  \
             break;                                                            \
         case EFX_ATK_DOWN2:                                                   \
         case EFX_ATK_DOWN1:                                                   \
-            if ((unit)->attack_modifier - 1 >= -4)                            \
+            if ((unit)->atk_lv - 1 >= -4)                            \
                 (applies) = 1;                                                \
-            if ((unit)->attack_modifier_turns == 1)                           \
+            if ((unit)->atk_cnt == 1)                           \
                 (applies)++;                                                  \
             break;                                                            \
         case EFX_DEF_UP2:                                                     \
         case EFX_DEF_UP1:                                                     \
-            if ((unit)->defense_modifier + 1 <= 4)                            \
+            if ((unit)->def_lv + 1 <= 4)                            \
                 (applies) = 1;                                                \
-            if ((unit)->defense_modifier_turns == 1)                          \
+            if ((unit)->def_cnt == 1)                          \
                 (applies)++;                                                  \
             break;                                                            \
         case EFX_DEF_DOWN2:                                                   \
         case EFX_DEF_DOWN1:                                                   \
-            if ((unit)->defense_modifier - 1 >= -4)                           \
+            if ((unit)->def_lv - 1 >= -4)                           \
                 (applies) = 1;                                                \
-            if ((unit)->defense_modifier_turns == 1)                          \
+            if ((unit)->def_cnt == 1)                          \
                 (applies)++;                                                  \
             break;                                                            \
         case EFX_RES_UP2:                                                     \
         case EFX_RES_UP1:                                                     \
-            if ((unit)->res_modifier + 1 <= 4)                                \
+            if ((unit)->res_lv + 1 <= 4)                                \
                 (applies) = 1;                                                \
-            if ((unit)->res_modifier_turns == 1)                              \
+            if ((unit)->res_cnt == 1)                              \
                 (applies)++;                                                  \
             break;                                                            \
         case EFX_RES_DOWN2:                                                   \
         case EFX_RES_DOWN1:                                                   \
-            if ((unit)->res_modifier - 1 >= -4)                               \
+            if ((unit)->res_lv - 1 >= -4)                               \
                 (applies) = 1;                                                \
-            if ((unit)->res_modifier_turns == 1)                              \
+            if ((unit)->res_cnt == 1)                              \
                 (applies)++;                                                  \
             break;                                                            \
         case EFX_CURE_POISON:                                                 \
-            if ((unit)->poison != 0)                                          \
+            if ((unit)->doku != 0)                                          \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_CURE_PART:                                                   \
@@ -196,27 +196,27 @@ pick:
             COUNT_ALL_CURES((unit), (applies));                               \
             break;                                                            \
         case EFX_DEATH_CURSE:                                                 \
-            if ((unit)->death_count == 0)                                     \
+            if ((unit)->shiryo == 0)                                     \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_POISON:                                                      \
-            if ((unit)->poison == 0)                                          \
+            if ((unit)->doku == 0)                                          \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_VENOM:                                                       \
-            if ((unit)->poison <= 1)                                          \
+            if ((unit)->doku <= 1)                                          \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_STUN:                                                        \
-            if ((unit)->stun == 0)                                            \
+            if ((unit)->shibire == 0)                                            \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_SLEEP:                                                       \
-            if ((unit)->sleep == 0)                                           \
+            if ((unit)->nemuri == 0)                                           \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_EVIL_SPIRIT:                                                 \
-            if ((unit)->evil_spirit == 0)                                     \
+            if ((unit)->akuryo == 0)                                     \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_REVIVE_FULL:                                                 \
@@ -234,7 +234,7 @@ pick:
             break;                                                            \
         }                                                                     \
         if ((unit)->hp == 0                                                   \
-            && BattleFx_IsReviveFar((action)->effect) == 0)                  \
+            && BtlEfxRevChkFar((action)->effect) == 0)                  \
             (applies) = 0;                                                    \
         if ((applies) == 0) {                                                 \
             (damage_class) = ((action)->target_flags & 0x0f) - 1;             \
@@ -250,7 +250,7 @@ pick:
                     (applies)++;                                              \
                 break;                                                        \
             case 9:                                                           \
-                if ((unit)->pp != 0)                                          \
+                if ((unit)->ep != 0)                                          \
                     (applies)++;                                              \
                 break;                                                        \
             case 0:                                                           \
@@ -269,15 +269,15 @@ pick:
 
 s32 BattleTarget_SelectForAction(
     s32 actor_id,
-    struct BattleAction *action)
+    struct BtlAct *action)
 {
     u16 order_positions[6];
     s32 unit_ids[6];
     s32 target_positions[6];
-    struct BattleSession *turn_order;
-    struct BattleUnit *unit;
-    struct BattleUnit *next_unit;
-    struct BattleUnit *this_unit;
+    struct BtlWork *turn_order;
+    struct BtlUnit *unit;
+    struct BtlUnit *next_unit;
+    struct BtlUnit *this_unit;
     s32 candidate_count;
     s32 target_index;
     s32 target_count;
@@ -293,7 +293,7 @@ s32 BattleTarget_SelectForAction(
     u32 roll;
     s16 *slot;
 
-    turn_order = gBattleWork;
+    turn_order = BtlWk;
     target_count = 0;
     candidate_count = 0;
 
@@ -349,7 +349,7 @@ scan_complete:
     for (target_index = 0;
          target_index < candidate_count;
          target_index++) {
-        unit = Owner_GetStateFar(unit_ids[target_index]);
+        unit = UnitGetFar(unit_ids[target_index]);
         CHECK_EFFECT_TARGET(unit, action, applies, damage_class);
         if (applies != 0) {
             unit_ids[target_count] = unit_ids[target_index];
@@ -363,7 +363,7 @@ scan_complete:
 
     if (action->target_mode == 1
         && action->range == 1
-        && Owner_GetRecordFar(Owner_GetStateFar(actor_id)->class_id)
+        && Owner_GetRecordFar(UnitGetFar(actor_id)->class_id)
                 ->target_strategy != 2
         && (u32)((action->target_flags & 0x0f) - 3) <= 2) {
         selected = -1;
@@ -373,9 +373,9 @@ scan_complete:
             for (inner_index = target_index;
                  inner_index < target_count - 1;
                  inner_index++) {
-                this_unit = Owner_GetStateFar(unit_ids[inner_index]);
-                next_unit = Owner_GetStateFar(unit_ids[inner_index + 1]);
-                if (Owner_GetRecordFar(Owner_GetStateFar(actor_id)->class_id)
+                this_unit = UnitGetFar(unit_ids[inner_index]);
+                next_unit = UnitGetFar(unit_ids[inner_index + 1]);
+                if (Owner_GetRecordFar(UnitGetFar(actor_id)->class_id)
                         ->target_strategy == 0) {
                     value = this_unit->hp;
                     next_value = next_unit->hp;

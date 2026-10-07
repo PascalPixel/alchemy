@@ -1036,7 +1036,7 @@ Func_0816c6f8:
 	adds r0, r5, #0
 	bl Func_08196a7c
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 .L_0816cefa:
 	mov r1, r11
 	cmp r1, #48
@@ -1176,9 +1176,9 @@ Func_0816c6f8:
 	cmp r7, #4
 	bne .L_0816cf72
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 .L_0816d022:
 	mov r1, r11
 	cmp r1, #61

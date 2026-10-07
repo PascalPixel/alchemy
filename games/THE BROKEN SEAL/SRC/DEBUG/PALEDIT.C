@@ -12,7 +12,7 @@
 #include "IO_REG.H"
 #include "GAME_STATE.H"
 #include "RAM_BUFFER.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #include "OBJECT_LOOKUP.H"
 #define ObjectTable_Get ((struct Object * (*)(s32))ObjectTable_Get)

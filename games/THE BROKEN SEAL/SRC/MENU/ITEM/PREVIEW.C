@@ -1,6 +1,6 @@
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "INVENTORY_MENU.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "TYPES.H"
 #include "ITEM.H"
 #include "IWRAM_CALL.H"
@@ -12,7 +12,7 @@
 
 s32 Inventory_RemoveFirstUnflagged(s32 owner);
 
-s32 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode)
+s32 ItemMenu_Collect(struct BtlUnit *owner, u16 *items, s32 mode)
 {
     s32 count;
     s32 i;
@@ -61,11 +61,11 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
 void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
 {
     struct InventoryMenuState *menu;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
     u16 *items;
 
     menu = gMenuWork;
-    owner = Owner_GetStateFar(owner_id);
+    owner = UnitGetFar(owner_id);
     items = menu->items;
     menu->item_count = ItemMenu_Collect(owner, items, 0);
     RenderOutput_RedrawSavedRectFar(menu->item_window);
@@ -84,9 +84,9 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
 {
     struct InventoryMenuState *menu = gMenuWork;
     register s32 style asm("sl") = 0; /* FAKEMATCH: the ROM allocates owner (r8) before style (sl); style's 19 references over 246 insns outrank owner's 4 over 28 */
-    struct BattleUnit *state = Owner_GetStateFar(owner);
+    struct BtlUnit *state = UnitGetFar(owner);
     s32 item = state->inventory[slot];
-    struct BattleUnit *saved;
+    struct BtlUnit *saved;
     s32 equipped;
 
     if (mode == 1)
@@ -109,9 +109,9 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
         } else {
             s32 size;
 
-            state = Owner_GetStateFar(target);
+            state = UnitGetFar(target);
             size = BATTLE_UNIT_SIZE;
-            saved = Runtime_BumpAllocate(size);
+            saved = MemAlloc(size);
             Iwram_CopyWords(saved, state, size);
             equipped = Inventory_RemoveFirstUnflagged(target);
             if (equipped != 0) {
@@ -137,9 +137,9 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
         } else {
             s32 size;
 
-            state = Owner_GetStateFar(target);
+            state = UnitGetFar(target);
             size = BATTLE_UNIT_SIZE;
-            saved = Runtime_BumpAllocate(size);
+            saved = MemAlloc(size);
             Iwram_CopyWords(saved, state, size);
             equipped = Inventory_RemoveFirstUnflagged(target);
             if (equipped != 0) {
@@ -162,7 +162,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
 
 s32 Inventory_RemoveFirstUnflagged(s32 owner)
 {
-    struct BattleUnit *state = Owner_GetStateFar(owner);
+    struct BtlUnit *state = UnitGetFar(owner);
     s32 result = 0;
     s32 i;
 

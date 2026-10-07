@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "RESMENU.H"
 #include "TYPES.H"
 #include "SOUND_IDS.H"
@@ -85,7 +85,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
 void Menu_LoadResourceSlot(s32 slot, s32 index)
 {
     s32 size = 1024;
-    void *buffer = (void *)Runtime_BumpAllocate(size);
+    void *buffer = (void *)MemAlloc(size);
     u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
     Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);

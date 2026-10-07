@@ -8,11 +8,11 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "RENDER_INPUT.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "GAME_STATE.H"
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
@@ -58,7 +58,7 @@ void Debug_SelectAbilityPair(void)
 
     cursor = NULL;
     redraw = 1;
-    list = Runtime_BumpAllocate(0x700);
+    list = MemAlloc(0x700);
     OwnerAction_AddFar(0, 140);
     OwnerAction_AddFar(1, 140);
     OwnerAction_AddFar(2, 140);

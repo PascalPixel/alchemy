@@ -12,7 +12,7 @@
 #include "SAVE_STATE.H"
 #include "GAME_STATE.H"
 #include "RUNTIME_INTERFACES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TBS_EDITION.H"
 #include "RENDER_INPUT.H"
 #include "WINDOW.H"

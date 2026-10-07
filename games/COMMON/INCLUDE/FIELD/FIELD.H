@@ -43,7 +43,7 @@ s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 #if !GAME_TLA
 struct AbilityListEntry;
 struct BattleEffectArgument;
-struct BattleUnit;
+struct BtlUnit;
 struct BurstParticle;
 struct DispatchObject;
 struct EffectObject_02000c5c;
@@ -1682,7 +1682,7 @@ void RunScene59Sequence(void);
 void RunSceneSelectionChain(void);
 void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 s32 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position);
-struct BattleUnit *Runtime_GetObject(s32 object_id);
+struct BtlUnit *Runtime_GetObject(s32 object_id);
 #ifndef OWN_Scene_FadeColorFromWhite
 s32 Scene_FadeColorFromWhite(void);
 #endif

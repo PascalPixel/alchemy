@@ -1,5 +1,5 @@
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 extern u8 Data_03001f38[];

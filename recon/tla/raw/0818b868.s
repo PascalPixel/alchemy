@@ -423,9 +423,9 @@ Func_0818b868:
 	cmp r9, r2
 	bne .L_0818bb46
 	ldr r0, [sp, #28]
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #32]
-	bl Sys_Free
+	bl MemFree
 	movs r1, #8
 	movs r0, #8
 	bl Func_08158ce0

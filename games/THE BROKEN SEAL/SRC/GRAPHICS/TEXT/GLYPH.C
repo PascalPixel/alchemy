@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "GLYPH.H"
@@ -56,7 +56,7 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
     font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
     decoded->encoded = font + ((u16 *)font)[glyph];
     Resource_DecodeByteLz(decoded->encoded, decoded);
-    remapped = Runtime_BumpAllocate(0x400);
+    remapped = MemAlloc(0x400);
     src = decoded->input;
     dst = remapped;
     for (i = 0; i < 0x400; i++) {

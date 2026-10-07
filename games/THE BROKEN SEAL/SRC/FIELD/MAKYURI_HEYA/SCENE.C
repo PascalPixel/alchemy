@@ -52,7 +52,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 mode);
 void Event_PrepareObjectAndApplyValue();
 s32 Djinn_AddToOwner();
 void Djinn_Activate();
-void Owner_RecalculateStats();
+void UnitCalc();
 
 struct LiftLayer {
     u8 unknown_00[12];
@@ -1583,7 +1583,7 @@ void MakyuriHeya_RunPartyScene(void)
     Engine_GameFlagSet(68);
     Djinn_AddToOwner(3, 1, 0);
     Djinn_Activate(3, 1, 0);
-    Owner_RecalculateStats(3);
+    UnitCalc(3);
     Object_SetModeById(3, 2);
     actor = Object_GetById(0);
     if (actor != 0) {
@@ -1704,7 +1704,7 @@ void SceneState_SetRecordTableValue(s32 key, s32 value)
         s32 index = Inventory_Find(slot, key);
 
         if (index != -1) {
-            Owner_GetState(slot)->tbl[index] = value;
+            UnitGet(slot)->tbl[index] = value;
         }
     }
 }

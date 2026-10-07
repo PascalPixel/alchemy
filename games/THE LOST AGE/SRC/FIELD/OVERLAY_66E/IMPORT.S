@@ -18,10 +18,10 @@ Runtime_AllocateBlock:
 	.thumb_func
 Runtime_ReleaseHeapBlock:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

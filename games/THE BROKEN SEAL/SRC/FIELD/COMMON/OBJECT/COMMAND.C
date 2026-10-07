@@ -10,7 +10,7 @@
 #include "OBJECT_RUNTIME.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "SCRIPT.H"
 #include "SCRIPT_OBJECT_ENTRY.H"
@@ -20,7 +20,7 @@
 #include "SCRIPT_MOTION.H"
 #include "FIELDOBJ.H"
 #include "IO_REG.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define gObjectSlots (*(struct ScriptMotionObject * *)&gObjectSlots)
 
@@ -98,10 +98,10 @@ void Object_RunUpdateAllFromHeap(void)
 {
     void (*routine)(void);
 
-    routine = (void (*)(void))Runtime_BumpAllocate((s32)Object_UpdateAllCodeSize);
+    routine = (void (*)(void))MemAlloc((s32)Object_UpdateAllCodeSize);
     Dma_Set(Object_UpdateAll, routine, 0x84000000 | ((u32)Object_UpdateAllCodeSize >> 2), REG_DMA3);
     routine();
-    Sys_Free(routine);
+    MemFree(routine);
 }
 
 void Object_UpdateAllMotion(void)

@@ -5,7 +5,7 @@
 
 s32 Owner_AdjustFirstValue(s32 owner, s32 delta)
 {
-    struct BattleUnit *state = Owner_GetState(owner);
+    struct BtlUnit *state = UnitGet(owner);
     s32 cur = state->hp;
     s32 max = state->max_hp;
     s32 value = cur + delta;
@@ -19,15 +19,15 @@ s32 Owner_AdjustFirstValue(s32 owner, s32 delta)
             result = value;
     }
     state->hp = result;
-    Owner_RecalculateRatios(owner);
+    UnitRatio(owner);
     return state->hp;
 }
 
-s16 Owner_AdjustSecondValue(s32 owner, s32 delta)
+s16 UnitEpAdd(s32 owner, s32 delta)
 {
-    struct BattleUnit *state = Owner_GetState(owner);
-    s32 cur = state->pp;
-    s32 max = state->max_pp;
+    struct BtlUnit *state = UnitGet(owner);
+    s32 cur = state->ep;
+    s32 max = state->max_ep;
     s32 value = cur + delta;
     s32 result;
 
@@ -38,7 +38,7 @@ s16 Owner_AdjustSecondValue(s32 owner, s32 delta)
         if (value >= 0)
             result = value;
     }
-    state->pp = result;
-    Owner_RecalculateRatios(owner);
-    return state->pp;
+    state->ep = result;
+    UnitRatio(owner);
+    return state->ep;
 }

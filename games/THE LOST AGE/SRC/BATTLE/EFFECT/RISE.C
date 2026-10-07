@@ -1,11 +1,11 @@
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "B5_CONTEXT.H"
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 
 void BattleFx_InitializeRisingObject(s32 slot)
 {
-    struct BattleObjectSlot *context = GetBattleObjectSlotFar(slot);
+    struct BtlObj *context = GetBattleObjectSlotFar(slot);
     struct ObjectRuntime *object = context->object;
 
     object->acceleration = 0x20000;

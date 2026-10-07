@@ -2,14 +2,14 @@
 #include "IWRAM_CALL.H"
 #include "SYSTEM.H"
 
-extern u8 gBattleWork[];
+extern u8 BtlWk[];
 
 typedef s32 (*ClearFn)(void *dst, s32 size);
 typedef s32 (*FillFn)(void *dst, s32 size, u32 value);
 
 void BattleFx_SetupCanvasTileMap(void)
 {
-    u8 **cells = (u8 **)gBattleWork;
+    u8 **cells = (u8 **)BtlWk;
     void *canvas = cells[31];
     struct BattleScreen *screen = (struct BattleScreen *)cells[0];
     struct BattleLayer *layer = (struct BattleLayer *)cells[35];

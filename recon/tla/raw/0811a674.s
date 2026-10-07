@@ -5,7 +5,7 @@
 Func_0811a674:
 	push {r5, r6, lr}
 	adds r5, r0, #0
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #1
 	adds r6, r0, #0
 	adds r0, r5, #0

@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "GAME_STATE.H"
 #include "EVENTWRK.H"
 

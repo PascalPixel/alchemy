@@ -160,7 +160,7 @@ OwnerAction_RunCompareLoop:
 	mov r8, r0
 	adds r0, r6, #0
 	str r3, [sp, #68]
-	bl Owner_GetStateFar
+	bl UnitGetFar
 	adds r7, r0, #0
 	ldr r3, .L_080adb88
 	adds r1, r7, #0
@@ -204,7 +204,7 @@ OwnerAction_RunCompareLoop:
 	bl Djinn_ActivateFar
 .L_080ad870:
 	adds r0, r6, #0
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	mov r3, r10
 	mov r4, sp
 	mov r0, sp
@@ -232,7 +232,7 @@ OwnerAction_RunCompareLoop:
 	add r3, r9
 	ldrb r6, [r3]
 	adds r0, r6, #0
-	bl Owner_GetStateFar
+	bl UnitGetFar
 	movs r2, #166
 	adds r7, r0, #0
 	adds r1, r7, #0
@@ -260,7 +260,7 @@ OwnerAction_RunCompareLoop:
 	bl Djinn_ActivateFar
 .L_080ad8ec:
 	adds r0, r6, #0
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r3, [sp, #56]
 	adds r1, r7, #0
 	str r3, [sp, #0]
@@ -315,7 +315,7 @@ OwnerAction_RunCompareLoop:
 	adds r0, r6, #0
 	mov r8, r1
 	orrs r5, r3
-	bl Owner_GetStateFar
+	bl UnitGetFar
 	lsrs r5, r5, #31
 	subs r5, r7, r5
 	movs r2, #166
@@ -337,7 +337,7 @@ OwnerAction_RunCompareLoop:
 	bl Djinn_ActivateFar
 .L_080ad998:
 	adds r0, r6, #0
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	mov r0, r10
 	add r2, sp, #104
 	adds r1, r7, #0

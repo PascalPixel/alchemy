@@ -24,7 +24,7 @@ BattleQueue_SortByPriority:
 	bne .L_0811d1d8
 	movs r2, #0
 	ldrsh r0, [r5, r2]
-	bl Owner_GetState
+	bl UnitGet
 	ldrh r2, [r5, #8]
 	ldr r3, .L_0811d1b8
 	lsls r0, r2, #16
@@ -33,7 +33,7 @@ BattleQueue_SortByPriority:
 	ands r0, r3
 	ands r1, r2
 	bl Djinn_GetDefinitionHeaderFar
-	bl BattleAction_Get
+	bl BtlActGet
 	ldrb r3, [r0, #3]
 	cmp r3, #72
 	beq .L_0811d1cc

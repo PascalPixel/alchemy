@@ -46,7 +46,7 @@ Func_080fa50c:
 	lsls r5, r5, #2
 	adds r3, r6, r5
 	ldrh r0, [r7, r3]
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #226
 	lsls r1, r1, #1
 	adds r6, r7, r1

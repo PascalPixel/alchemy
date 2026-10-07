@@ -12,7 +12,7 @@
 #include "INVENTORY_MENU.H"
 #include "ITEM.H"
 #include "TBS_EDITION.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
 
@@ -140,7 +140,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
     }
 
     {
-        struct BattleAction *action = BattleAction_Get(def->action_id & 0x3fff);
+        struct BtlAct *action = BtlActGet(def->action_id & 0x3fff);
 
         if (def->action_id != 0) {
             if (def->type != 0) {

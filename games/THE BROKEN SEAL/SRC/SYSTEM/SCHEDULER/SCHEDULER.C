@@ -14,7 +14,7 @@
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
 #include "DMA.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "VRAM_BLOCK.H"
 #include "SCENE.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -102,9 +102,9 @@ void Render_BuildOamList(void *work)
     do {
         size = (u32)LoadedRuntime_Size;
     } while (0);
-    routine = (OamBuildRoutine)Runtime_BumpAllocate(size);
+    routine = (OamBuildRoutine)MemAlloc(size);
     Dma_Set((const void *)Render_BuildOamListKernel, (void *)routine,
             (size >> 2) | 0x84000000, REG_DMA3);
     routine(work);
-    Sys_Free((void *)routine);
+    MemFree((void *)routine);
 }

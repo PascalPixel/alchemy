@@ -2,7 +2,7 @@
 #include "FIELD_SCENE.H"
 #include "RESOURCE.H"
 #include "DMA.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "IO_REG.H"
 
 extern char ResourceId_IntroTilesB;
@@ -27,5 +27,5 @@ void Title_LoadSprites(void)
     dma = (volatile s32 *)REG_DMA3;
     while (dma[2] < 0)
         ;
-    Sys_Free(buffer);
+    MemFree(buffer);
 }

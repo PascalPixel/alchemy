@@ -161,7 +161,7 @@ Func_080f94a4:
 .L_080f9604:
 	strb r2, [r3, #6]
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #1
 	bl WaitFrames
 	bl Scheduler_DisableOverlayCallbacksWithFlags

@@ -2,7 +2,7 @@
 #include "FIXED_MATH.H"
 extern u8 Data_03001f2c[];
 
-s32 Owner_GetStateFar(s32);
+s32 UnitGetFar(s32);
 s32 ItemMenu_Count(s32 owner);
 
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
@@ -18,7 +18,7 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
     s32 value;
 
     limit = ItemMenu_Count(LoadByte(entries, offset));
-    encoded = Owner_GetStateFar(LoadByte(entries, offset));
+    encoded = UnitGetFar(LoadByte(entries, offset));
     value = LoadSignedByte(base, LoadByte(entries, offset) + 0x260);
     if ((s32)(value + 1) > limit) {
         value = limit - 1;

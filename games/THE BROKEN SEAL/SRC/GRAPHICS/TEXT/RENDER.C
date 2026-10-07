@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "TEXT_RENDER_RUNTIME.H"
 #include "WINDOW.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 

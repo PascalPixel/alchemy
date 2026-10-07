@@ -232,7 +232,7 @@ Func_080f9644:
 	strb r3, [r2, #5]
 	ldrb r0, [r1]
 	add r5, r9
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #0
 	adds r1, r5, #0
 	bl ItemMenu_Collect
@@ -378,7 +378,7 @@ Func_080f9644:
 	lsls r5, r5, #1
 	ldrb r0, [r3]
 	add r5, r9
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #0
 	adds r1, r5, #0
 	bl ItemMenu_Collect
@@ -544,7 +544,7 @@ Func_080f9644:
 	add r3, r9
 	ldrb r7, [r3]
 	adds r0, r7, #0
-	bl Owner_GetState
+	bl UnitGet
 	adds r0, r6, #1
 	cmp r0, #0
 	ble .L_080f9b1a
@@ -572,7 +572,7 @@ Func_080f9644:
 	adds r0, r7, #0
 	bl Owner_RefreshClassActionsFar
 	adds r0, r7, #0
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	bl ItemMenu_SetItemWin3
 	movs r3, #128
 	lsls r3, r3, #2
@@ -615,7 +615,7 @@ Func_080f9644:
 	adds r3, #22
 	add r3, r9
 	ldrb r0, [r3]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	movs r3, #134
 	lsls r3, r3, #2
 	add r3, r9
@@ -806,9 +806,9 @@ Func_080f9644:
 	ldrb r0, [r7]
 	bl Owner_RefreshClassActionsFar
 	ldrb r0, [r5]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldrb r0, [r7]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	mov r2, r10
 	movs r6, #1
 	cmp r2, #0
@@ -933,22 +933,22 @@ Func_080f9644:
 	adds r3, #22
 	add r3, r9
 	ldrb r0, [r3]
-	bl Owner_GetState
+	bl UnitGet
 	movs r3, #140
 	str r0, [sp, #12]
 	lsls r3, r3, #1
 	adds r3, #255
 	add r3, r9
 	ldrb r0, [r3]
-	bl Owner_GetState
+	bl UnitGet
 	movs r5, #166
 	lsls r5, r5, #1
 	str r0, [sp, #8]
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	mov r11, r0
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r2, r5, #0
 	ldr r1, [sp, #12]
 	mov r8, r0
@@ -1172,9 +1172,9 @@ Func_080f9644:
 	ldrb r0, [r7]
 	bl Owner_RefreshClassActionsFar
 	ldrb r0, [r5]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldrb r0, [r7]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	bl ItemMenu_SetMsgWin5
 	mov r3, r9
 	adds r3, #240
@@ -1247,9 +1247,9 @@ Func_080f9644:
 	bl Func_080f8ce8
 .L_080fa09a:
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	mov r0, r11
-	bl Sys_Free
+	bl MemFree
 .L_080fa0a6:
 	bl Event_ClearInvalidPackedValuesFar
 	movs r2, #0
@@ -1294,7 +1294,7 @@ Func_080f9644:
 	ldrb r0, [r7]
 	bl Owner_RefreshClassActionsFar
 	ldrb r0, [r7]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	mov r3, r9
 	ldr r2, [r3, #20]
 	movs r5, #226
@@ -1303,7 +1303,7 @@ Func_080f9644:
 	strb r3, [r2, #5]
 	add r5, r9
 	ldrb r0, [r7]
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #0
 	adds r1, r5, #0
 	bl ItemMenu_Collect
@@ -1358,7 +1358,7 @@ Func_080f9644:
 	adds r6, #22
 	add r6, r9
 	ldrb r0, [r6]
-	bl Owner_GetState
+	bl UnitGet
 	movs r3, #180
 	lsls r3, r3, #1
 	add r3, r9
@@ -1375,7 +1375,7 @@ Func_080f9644:
 	ldrb r0, [r6]
 	bl Owner_RefreshClassActionsFar
 	ldrb r0, [r6]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	mov r1, r9
 	ldr r2, [r1, #20]
 	movs r3, #0
@@ -1386,7 +1386,7 @@ Func_080f9644:
 	strb r3, [r2, #5]
 	add r5, r9
 	ldrb r0, [r6]
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #0
 	adds r1, r5, #0
 	bl ItemMenu_Collect

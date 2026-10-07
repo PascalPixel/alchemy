@@ -11,11 +11,11 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "SYSTEM.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "BATTLE_RANDOM.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "IO_REG.H"
 #include "RAM_BUFFER.H"
 #include "SERIAL_RUNTIME.H"
@@ -23,7 +23,7 @@
 
 s32 Func_0801680c(void *source, s32 size);
 s32 Func_0801692c(void);
-void Sys_Free(void *block);
+void MemFree(void *block);
 
 extern volatile u16 gLinkStatus;
 
@@ -36,7 +36,7 @@ struct BattleLinkedActionState {
 
 s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s32 count)
 {
-    struct BattleSession *battle = Ram_HeapSlots->battle_work;
+    struct BtlWork *battle = Ram_HeapSlots->battle_work;
     s32 result = 0;
     s32 allocation_size = (u32)(count * 16 + 19) / 20 * 20;
     struct BattleLinkedActionState *state = (struct BattleLinkedActionState *)Runtime_BumpAllocateAlternatePool(40);
@@ -150,7 +150,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
             u32 saved;
 
             state->count = count;
-            state->check = BattleRandom16Far();
+            state->check = BtlRndFar();
             /* FAKEMATCH: the one-pass IME scope keeps the seed copy between writes and reloads state after the first write. */
             do {
                 ime = &REG_IME;
@@ -171,7 +171,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
             state->count = count;
             if (BattleLink_SendActions() < 0)
                 goto fail;
-            if (BattleRandom16Far() != state->check)
+            if (BtlRndFar() != state->check)
                 goto fail;
             gBattleRandomSeed = state->seed;
         }
@@ -183,13 +183,13 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
             action->target = action->target ^ 0x80;
         }
 
-        Sys_Free(state);
+        MemFree(state);
         return result;
     }
 
 fail:
     BattleLink_ResetTransferState();
     SerialRuntime_RemoveIrqHandlers();
-    Sys_Free(state);
+    MemFree(state);
     return -1;
 }

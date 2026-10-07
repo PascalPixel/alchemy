@@ -8,20 +8,20 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "EDITION.H"
-#include "BATTLE_PARTY.H"
-#include "RUNTIME_MEM.H"
+#include "BTLPTY.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_FORMATION.H"
 #include "FIXED_MATH.H"
 #include "TBS_EDITION.H"
-#include "BATTLE_SUMMON.H"
+#include "BTLSMN.H"
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_UNIT.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "CHARACTER.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "B5_CONTEXT.H"
 
 struct FormationCandidate {
@@ -31,16 +31,16 @@ struct FormationCandidate {
 
 struct BattleBaseStats {
     s16 base_hp;
-    s16 base_pp;
+    s16 base_ep;
     s16 hp_gauge;
-    s16 pp_gauge;
+    s16 ep_gauge;
     u16 base_attack;
     u16 base_defense;
     u16 base_agility;
     u8 base_luck;
     u8 action_count;
     u8 hp_regen;
-    u8 pp_regen;
+    u8 ep_regen;
     u8 unknown_12[2];
     struct BattleElementStats elements[4];
 };
@@ -63,7 +63,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 
         i = unit_count;
         do {
-            u8 level = Owner_GetStateFar(*p)->level;
+            u8 level = UnitGetFar(*p)->level;
 
             i--;
             p++;
@@ -129,13 +129,13 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 {
     struct BattleBaseStats *base;
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     s32 value;
     s32 floor;
     s32 i;
 
     base = (struct BattleBaseStats *)Runtime_BumpAllocateAlternatePool(sizeof(struct BattleBaseStats));
-    state = Owner_GetStateFar(owner);
+    state = UnitGetFar(owner);
     Iwram_CopyWords(base, &state->base_hp, sizeof(struct BattleBaseStats));
 
     value = state->base_hp;
@@ -147,14 +147,14 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
         value = 9999;
     state->base_hp = value;
 
-    value = state->base_pp;
+    value = state->base_ep;
     value += levels * 15 / 10;
-    floor = base->base_pp * 7 / 10;
+    floor = base->base_ep * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 9999)
         value = 9999;
-    state->base_pp = value;
+    state->base_ep = value;
 
     floor = levels * 123 / 10;
     value = state->base_attack;
@@ -197,7 +197,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     }
 
     state->level += levels;
-    Owner_RecalculateStatsFar(owner);
+    UnitCalcFar(owner);
     Runtime_BumpFree(base);
 }
 
@@ -207,15 +207,15 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 #define CH_CNT 26
 #endif
 
-s32 Summon_TakeCharge(s32 no, s32 n)
+s32 EnmCntDec(s32 no, s32 n)
 {
-    struct BattleSession *w;
+    struct BtlWork *w;
     s32 num;
     s32 i;
     s32 retry;
     s32 ch;
 
-    w = gBattleWork;
+    w = BtlWk;
     num = w->summon_count;
     for (i = 0; i < num; i++) {
         if (w->enemy_classes[i] == no)
@@ -247,17 +247,17 @@ s32 Summon_TakeCharge(s32 no, s32 n)
     return -1;
 }
 
-s32 Summon_ReleaseCharge(s32 actor_id)
+s32 EnmCntRel(s32 actor_id)
 {
-    struct BattleSession *state = gBattleWork;
-    struct BattleUnit *actor;
+    struct BtlWork *state = BtlWk;
+    struct BtlUnit *actor;
     s32 count = state->summon_count;
     s32 index;
     s32 name_length;
     s32 bit;
     s32 class_id;
 
-    actor = Owner_GetStateFar(actor_id);
+    actor = UnitGetFar(actor_id);
     if (actor->class_index != 0)
         return;
 
@@ -280,9 +280,9 @@ s32 Summon_ReleaseCharge(s32 actor_id)
     state->summon_masks[index] &= ~(1 << bit);
 }
 
-s32 Summon_ResetCharge(s32 class_id)
+s32 EnmCntClr(s32 class_id)
 {
-    struct BattleUnit *summon;
+    struct BtlUnit *summon;
     s32 object_index;
     s32 slot;
     s32 next_slot;
@@ -292,8 +292,8 @@ s32 Summon_ResetCharge(s32 class_id)
     object_index = 0;
     marker = LIST_MARKER_CHAR;
 scan_objects:
-    summon = Owner_GetStateFar(object_index + 0x80);
-    occupied = summon->status_12a;
+    summon = UnitGetFar(object_index + 0x80);
+    occupied = summon->side;
     if (occupied != 1) goto next_object;
     if (summon->class_id != class_id) goto next_object;
     slot = 0;

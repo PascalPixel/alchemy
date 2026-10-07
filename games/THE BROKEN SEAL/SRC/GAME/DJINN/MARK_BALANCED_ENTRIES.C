@@ -12,8 +12,8 @@
 #include "GLOBAL_CELLS.H"
 #include "DJINN_MENU.H"
 #include "BATTLE_UNIT.H"
-#include "BATTLE_RUNTIME.H"
-#include "RUNTIME_MEM.H"
+#include "BTLSYS.H"
+#include "MEM.H"
 #include "IWRAM_CALL.H"
 #include "RENDER_INPUT.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -44,7 +44,7 @@ s32 DjinnMenu_ShowOwnerStatus(void)
     u32 keys;
     u32 repeat;
     struct DjinnMenuWork *menu;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
     struct UiWindow *window;
     u16 *actions;
     void *saved;
@@ -74,7 +74,7 @@ s32 DjinnMenu_ShowOwnerStatus(void)
     page[1] = page[0] = 1;
     actions = Runtime_BumpAllocateAlternatePool(96);
     saved = Runtime_BumpAllocateAlternatePool(332);
-    owner = Owner_GetStateFar(menu->shown_owner[0]);
+    owner = UnitGetFar(menu->shown_owner[0]);
     page[1] = page[0] = OwnerAction_DiffSlots(owner->action_slots, owner->action_slots,
         actions, &gained, &lost);
     Runtime_BumpFree(saved);
@@ -243,7 +243,7 @@ s32 Djinn_CheckTurnBalance(s32 from, s32 to)
 void Djinn_CountTurns(u8 *counts)
 {
     struct DjinnMenuWork *work;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     s32 owner_index;
     s32 element;
     s32 bit;
@@ -251,7 +251,7 @@ void Djinn_CountTurns(u8 *counts)
 
     work = gMenuWork;
     for (owner_index = 0; owner_index < work->owner_count; owner_index++) {
-        unit = Owner_GetStateFar(work->owners[owner_index]);
+        unit = UnitGetFar(work->owners[owner_index]);
         count = 0;
         for (element = 0; element <= 3; element++) {
             for (bit = 0; bit <= 19; bit++) {

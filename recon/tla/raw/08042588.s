@@ -33,7 +33,7 @@ UiWindow_FillFromScene:
 .L_080425bc:
 	ldr r5, .L_080425f4
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #132
 	movs r3, #128
 	adds r6, r0, #0
@@ -52,7 +52,7 @@ UiWindow_FillFromScene:
 	mov lr, r6
 	.2byte 0xf800
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 .L_080425ec:
 	add sp, #4
 	pop {r3}

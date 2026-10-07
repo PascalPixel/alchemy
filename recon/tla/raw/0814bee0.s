@@ -1219,9 +1219,9 @@ Func_0814bee0:
 	cmp r7, #4
 	bne .L_0814c78c
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r11
-	bl Sys_Free
+	bl MemFree
 .L_0814c828:
 	mov r3, r9
 	cmp r3, #156

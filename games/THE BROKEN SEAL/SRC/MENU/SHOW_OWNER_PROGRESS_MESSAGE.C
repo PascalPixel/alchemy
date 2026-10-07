@@ -7,11 +7,11 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "CHARACTER_MENU.H"
 #include "BATTLE_UNIT.H"
 #include "EDITION.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #include "TYPES.H"
 #include "text/MSG_IDS.H"
@@ -38,7 +38,7 @@ void StatusMenu_ShowOwnerProgressMessage(
         message_variant++;
     }
     if (message_variant == 1) {
-        struct BattleUnit *owner = Owner_GetStateFar(menu->selected_ids[0]);
+        struct BtlUnit *owner = UnitGetFar(menu->selected_ids[0]);
 
         if (owner->level == 99) {
             message_variant = 8;
@@ -54,7 +54,7 @@ void StatusMenu_ShowOwnerProgressMessage(
         }
     }
 
-    buffer = Runtime_BumpAllocate(PROGRESS_TEXT_MAX * 2);
+    buffer = MemAlloc(PROGRESS_TEXT_MAX * 2);
     UiText_CopyMessageStringFar(message_variant + (s32)MsgProgressHelp, buffer, PROGRESS_TEXT_MAX);
     UiText_RenderWideStringAtOffsetFar(buffer, destination, 0, -1);
     Runtime_BumpFree(buffer);

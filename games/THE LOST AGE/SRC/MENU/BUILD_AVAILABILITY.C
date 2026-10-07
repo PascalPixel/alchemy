@@ -3,13 +3,13 @@
 
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     s32 i;
     s32 zero;
     s32 count;
     s32 mode;
 
-    state = Owner_GetState(id);
+    state = UnitGet(id);
     zero = 0;
     for (i = 4; i >= 0; i--)
         output[i] = zero;
@@ -20,7 +20,7 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
         count = 1;
     }
 
-    mode = state->poison;
+    mode = state->doku;
     if (mode != 0) {
         if (mode == 1)
             output[1] = mode;
@@ -32,7 +32,7 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
         output[3] = 1;
         count++;
     }
-    if (state->evil_spirit != 0) {
+    if (state->akuryo != 0) {
         output[4] = 1;
         count++;
     }

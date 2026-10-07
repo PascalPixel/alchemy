@@ -89,7 +89,7 @@ DisplayScroll_DrawMessageLine:
 	cmp r6, #23
 	ble .L_081a0c6e
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r10
 	add sp, #32
 	pop {r3, r5}

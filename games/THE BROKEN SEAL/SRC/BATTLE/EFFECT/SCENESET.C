@@ -12,7 +12,7 @@
 #include "GAME_STATE.H"
 #include "RESOURCE_IDS.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 
 

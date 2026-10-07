@@ -1,4 +1,4 @@
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 
 u32 BattleEventRuntime_Reset(void)
 {

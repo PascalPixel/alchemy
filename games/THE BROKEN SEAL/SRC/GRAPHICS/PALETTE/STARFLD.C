@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
@@ -21,7 +21,7 @@
 #include "FIXED_MATH.H"
 #include "IO_WRITE_QUEUE.H"
 #include "EFFECT_STEP.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "IO_REG.H"
 
 #define FarCall_EffectTable ((s32 (*)(s32,s32,s32,s32,s32))FarCall_EffectTable)
@@ -254,7 +254,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
     struct EffectLaunch launch2;
     /* FAKEMATCH: the reference holds the address of slot 12 in the register that later holds the IME address; only a variable assigned twice does that. The session is slot 9, read three words below it. */
     volatile u16 *ime = (volatile u16 *)&gWorkSlot[12];
-    struct BattleSession *session = *(struct BattleSession **)((u8 *)ime - 12);
+    struct BtlWork *session = *(struct BtlWork **)((u8 *)ime - 12);
     struct Bg2OriginWork *work;
     s32 frame;
     s32 *brightness;

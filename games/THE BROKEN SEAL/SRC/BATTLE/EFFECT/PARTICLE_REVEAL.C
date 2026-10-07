@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
 #include "RESOURCE.H"
@@ -22,9 +22,9 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "B5_CONTEXT.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "TRANSFORM.H"
 
 #define EffectPosition_ApplyAlternateStepAndYOffset ((void (*)(s16,s32*))EffectPosition_ApplyAlternateStepAndYOffset)

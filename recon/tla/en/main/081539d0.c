@@ -1,4 +1,4 @@
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"

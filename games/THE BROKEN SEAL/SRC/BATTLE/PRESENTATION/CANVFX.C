@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
 #include "TYPES.H"
@@ -18,7 +18,7 @@
 #include "RESOURCE_IDS.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "MENU_LIST.H"
@@ -42,7 +42,7 @@ struct StreakPoint {
 
 #include "FIXED_MATH.H"
 #include "RESOURCE.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "B5_CONTEXT.H"
 #include "IO_REG.H"
 

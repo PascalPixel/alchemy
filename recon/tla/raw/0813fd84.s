@@ -1249,13 +1249,13 @@ Func_0813fd84:
 	bl Func_08196a7c
 .L_08140760:
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	movs r5, #238
 	lsls r5, r5, #7
 	adds r5, #168
 	ldr r0, [sp, #64]
 	add r5, r11
-	bl Sys_Free
+	bl MemFree
 	ldr r3, [r5]
 	cmp r3, #0
 	ble .L_081407a0
@@ -2245,9 +2245,9 @@ Func_0813fd84:
 	b .L_08140de8
 .L_08140f24:
 	mov r0, r9
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #56]
-	bl Sys_Free
+	bl MemFree
 	ldr r3, .L_0814109c
 	ldr r2, [sp, #40]
 	ldr r4, [r3, #4]
@@ -2935,9 +2935,9 @@ Func_0813fd84:
 	bl Func_08196a7c
 .L_08141478:
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 .L_08141484:
 	ldr r0, [sp, #116]
 	movs r1, #8

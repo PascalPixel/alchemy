@@ -2,11 +2,11 @@
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
 #include "CALL.H"
-s32 Runtime_BumpAllocate();
+s32 MemAlloc();
 s32 Func_020019bc();
 s32 Resource_FindFreeEntry();
 s32 VramBlock_LoadCached();
-s32 Sys_Free();
+s32 MemFree();
 s32 Scheduler_AddOrUpdateCallback();
 extern u8 IwramClearWords[];
 extern u8 Data_02002204[];
@@ -22,13 +22,13 @@ void Func_02000c68(void)
     s32 t0;
     s32 t3;
 
-    t0 = Value1(Runtime_BumpAllocate, 0xc00);
+    t0 = Value1(MemAlloc, 0xc00);
     ((s32 (*)())(s32)IwramClearWords)((s32)Data_02002204, 0x40);
     Call2(Func_020019bc, (s32)Data_02001b4c, t0);
     t3 = Resource_FindFreeEntry();
     FIELD_AT(Data_02002200, u16, 0) = t3;
     Call3(VramBlock_LoadCached, ((t3 << 16) >> 16), 0xc00, t0);
-    Call1(Sys_Free, t0);
+    Call1(MemFree, t0);
     Call2(Scheduler_AddOrUpdateCallback, (s32)Func_02000aac, 0x480);
     FIELD_AT(Data_02002202, u16, 0) = 0;
     FIELD_AT(Data_02002304, u16, 0) = 0;

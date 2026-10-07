@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "OBJDISP.H"
 #include "OBJECT_EFX.H"
 

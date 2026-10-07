@@ -13,7 +13,7 @@ Func_080d9b08:
 	adds r5, r0, #0
 	movs r0, #144
 	lsls r0, r0, #4
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r3, #0
 	adds r6, r0, #0
 	mov r0, sp
@@ -44,7 +44,7 @@ Func_080d9b08:
 	ldr r0, .L_080d9b7c
 	bl Scheduler_AddOrUpdateCallback
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	add sp, #4
 	pop {r5, r6, pc}
 .L_080d9b70:

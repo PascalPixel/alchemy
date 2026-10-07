@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "PARTY_STATE.H"
 
 static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
@@ -25,41 +25,41 @@ static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
 
 void Party_RemoveOwnerRestored(s32 owner)
 {
-    struct BattleUnit *vitals;
+    struct BtlUnit *vitals;
     s32 i;
     s32 count;
     s32 standing;
 
     Party_RemoveActiveOwnerFar(owner);
     Event_ClearInvalidPackedValues();
-    vitals = Owner_GetStateFar(owner);
+    vitals = UnitGetFar(owner);
     /* FAKEMATCH: the do-while keeps both vital copies ahead of the ratio */
     do {
         vitals->hp = vitals->max_hp;
-        vitals->pp = vitals->max_pp;
+        vitals->ep = vitals->max_ep;
     } while (0);
     vitals->hp_gauge = Vitals_Ratio(vitals->hp, vitals->max_hp);
     if (vitals->hp_gauge == 0 && vitals->hp != 0)
         vitals->hp_gauge = 1;
-    vitals->pp_gauge = Vitals_Ratio(vitals->pp, vitals->max_pp);
-    if (vitals->pp_gauge == 0 && vitals->pp != 0)
-        vitals->pp_gauge = 1;
-    vitals->poison = 0;
+    vitals->ep_gauge = Vitals_Ratio(vitals->ep, vitals->max_ep);
+    if (vitals->ep_gauge == 0 && vitals->ep != 0)
+        vitals->ep_gauge = 1;
+    vitals->doku = 0;
     standing = 0;
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++) {
-        vitals = Owner_GetStateFar(gGameState.active_owners[i]);
+        vitals = UnitGetFar(gGameState.active_owners[i]);
         if (vitals->hp != 0)
             standing++;
     }
     if (standing == 0) {
-        vitals = Owner_GetStateFar(gGameState.selected_actor);
+        vitals = UnitGetFar(gGameState.selected_actor);
         vitals->hp = 1;
         vitals->hp_gauge = Vitals_Ratio(vitals->hp, vitals->max_hp);
         if (vitals->hp_gauge == 0 && vitals->hp != 0)
             vitals->hp_gauge = 1;
-        vitals->pp_gauge = Vitals_Ratio(vitals->pp, vitals->max_pp);
-        if (vitals->pp_gauge == 0 && vitals->pp != 0)
-            vitals->pp_gauge = 1;
+        vitals->ep_gauge = Vitals_Ratio(vitals->ep, vitals->max_ep);
+        if (vitals->ep_gauge == 0 && vitals->ep != 0)
+            vitals->ep_gauge = 1;
     }
 }

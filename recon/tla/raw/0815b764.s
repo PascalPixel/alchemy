@@ -1517,9 +1517,9 @@ Func_0815b764:
 	cmp r2, #96
 	bne .L_0815c2cc
 	ldr r0, [sp, #44]
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #48]
-	bl Sys_Free
+	bl MemFree
 .L_0815c32a:
 	ldr r3, [sp, #56]
 	cmp r3, #0
@@ -1702,9 +1702,9 @@ Func_0815b764:
 	cmp r2, #2
 	bne .L_0815c3c0
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #28]
-	bl Sys_Free
+	bl MemFree
 .L_0815c4a6:
 	ldr r3, [sp, #52]
 	cmp r3, #179

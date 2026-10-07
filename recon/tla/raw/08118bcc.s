@@ -16,7 +16,7 @@ Func_08118bcc:
 	bl UiWork_ClearValueNameTablesFar
 	mov r6, sp
 	adds r0, r6, #0
-	bl BattleParty_ListPresentEnemies
+	bl BtlEnmList
 	movs r5, #0
 	cmp r7, #0
 	beq .L_08118c1c

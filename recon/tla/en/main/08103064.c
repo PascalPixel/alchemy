@@ -5,7 +5,7 @@
 
 s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element)
 {
-    struct OwnerDjinnState *state = Owner_GetState(owner);
+    struct OwnerDjinnState *state = UnitGet(owner);
     s32 count = 0;
     s32 row;
     s32 bit;

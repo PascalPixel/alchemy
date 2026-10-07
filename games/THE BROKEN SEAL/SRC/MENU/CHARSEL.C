@@ -17,7 +17,7 @@
 #include "SYSTEM.H"
 #include "GLOBAL_CELLS.H"
 #include "UI.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #define gKeyState (*(volatile u32 *)&gKeyState)
@@ -50,7 +50,7 @@ s32 CharacterSelector_RunRearrange(void)
     redraw = 1;
     result = 0;
     page = work->page;
-    Owner_GetStateFar(work->owner_ids[cursor]);
+    UnitGetFar(work->owner_ids[cursor]);
     for (i = 0; i < 4; i++) {
         work->row_x[i] = 130 + i * 32;
         work->row_y[i] = 0x80;
@@ -69,7 +69,7 @@ s32 CharacterSelector_RunRearrange(void)
                 UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnListHelp, (s32)work->selector_window, 0, 16);
             UiText_DrawCharacterAtOffsetFar((s32)MsgRearrangeHelp - 3, (s32)work->selector_window, 0, 8);
             cursor = (cursor + count) % count;
-            Owner_GetStateFar(work->owner_ids[cursor]);
+            UnitGetFar(work->owner_ids[cursor]);
             page = (page + 3) % 3;
             Menu_CreateWindowAndEntryObjects(work->owner_ids[cursor], page);
             PsynergyMenu_CallIconRoutineWithValue(work, work->owner_ids[cursor]);
@@ -151,7 +151,7 @@ s32 PsynergyMenu_SelectOwner(void)
     s32 result;
     s32 i;
 
-    Owner_GetStateFar(menu->owner_table[selection]);
+    UnitGetFar(menu->owner_table[selection]);
     RenderOutput_RedrawSavedRectFar(menu->message_window);
     UiText_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter, menu->message_window, 0, 0);
     UiText_DrawCharacterAtOffsetFar((s32)MsgChooseCharacter + 1, menu->message_window, 0, 16);
@@ -159,14 +159,14 @@ s32 PsynergyMenu_SelectOwner(void)
         if (pending) {
             pending = 0;
             selection = (selection + count) % count;
-            Owner_GetStateFar(menu->owner_table[selection]);
+            UnitGetFar(menu->owner_table[selection]);
             frame = (frame + 3) % 3;
             Menu_CreateWindowAndEntryObjects(menu->owner_table[selection], frame);
             PsynergyMenu_CallIconRoutineWithValue(menu, menu->owner_table[selection]);
             for (i = 0; i < MENU_ROW_COUNT; i++)
                 menu->row_positions[i] = 30;
             menu->row_positions[selection] = 26;
-            menu->psynergy_count = PsynergyMenu_CollectActions(Owner_GetStateFar(menu->owner_table[selection]), (u16 *)menu->psynergies, 0);
+            menu->psynergy_count = PsynergyMenu_CollectActions(UnitGetFar(menu->owner_table[selection]), (u16 *)menu->psynergies, 0);
             PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
             Menu_PlaceEntryObjectsInGrid(96, 96, 8);
             Menu_HideEmptyEntryIcons(menu->psynergies);
@@ -334,7 +334,7 @@ s32 CharacterMenu_SelectCommand(void)
     UiMenu_SlideCursor(-10, 88);
 
     while (done == 0 && GameFlag_TestFar(0x150) == 0) {
-        Owner_GetStateFar(menu->selected_ids[0]);
+        UnitGetFar(menu->selected_ids[0]);
         CharacterMenu_DrawStatusAilments(menu->status_window, menu->selected_ids[0], 1);
         count = CharacterMenu_BuildAvailability(entries, 1, menu->selected_ids[0]);
         has_ailments = 0;

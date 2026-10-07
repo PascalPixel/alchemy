@@ -41,7 +41,7 @@ Func_080d1f20:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	movs r1, #128
 	lsls r1, r1, #19
 	ldrh r2, [r1]

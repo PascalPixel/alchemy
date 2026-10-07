@@ -41,29 +41,29 @@ LAYOUT_OFFSET_GUARD(
     0x144);
 
 enum BattleEventOpcode {
-    BATTLE_EVENT_UNIT = 0,
-    BATTLE_EVENT_VALUE = 1,
-    BATTLE_EVENT_ITEM = 2,
-    BATTLE_EVENT_ACTION = 3,
-    BATTLE_EVENT_TEXT = 4,
-    BATTLE_EVENT_TEXT_CONTINUE = 5,
-    BATTLE_EVENT_MARK = 6,
-    BATTLE_EVENT_RESET = 7,
-    BATTLE_EVENT_ACTOR_BEGIN = 8,
-    BATTLE_EVENT_ACTOR_RESOLVE = 9,
-    BATTLE_EVENT_REFRESH = 10,
-    BATTLE_EVENT_ACTOR_FINISH = 11,
-    BATTLE_EVENT_ACTOR_EFFECT = 12,
-    BATTLE_EVENT_SCRIPT_UPDATE = 13,
-    BATTLE_EVENT_SOUND = 14
+    BEV_UNIT = 0,
+    BEV_NUM = 1,
+    BEV_ITEM = 2,
+    BEV_ACT = 3,
+    BEV_MES = 4,
+    BEV_MES_ADD = 5,
+    BEV_MARK = 6,
+    BEV_CLR = 7,
+    BEV_OBJ_BGN = 8,
+    BEV_OBJ_RES = 9,
+    BEV_REDRAW = 10,
+    BEV_OBJ_END = 11,
+    BEV_OBJ_EFX = 12,
+    BEV_SCR = 13,
+    BEV_SE = 14
 };
 
 s32 BattleActor_DestroyTemporaryObject(s32 unit_id);
 
 #if GAME_TLA
-void BattleEv_Push(u32 opcode, u32 operand);
+void BtlEvPush(u32 opcode, u32 operand);
 #else
-u32 BattleEv_Push(u32 opcode, u32 operand);
+u32 BtlEvPush(u32 opcode, u32 operand);
 #endif
 u32 BattleEv_DispatchQueued(void);
 

@@ -118,10 +118,10 @@ UiText_ShowCenteredMessage:
 	.thumb_func
 Engine_ItemLoadIcon:
 	overlay_veneer ItemIcon_LoadTilesFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global Inventory_AddItem
 	.thumb_func
 Inventory_AddItem:

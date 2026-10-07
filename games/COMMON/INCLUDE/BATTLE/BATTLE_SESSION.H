@@ -7,7 +7,7 @@
 struct MotionObject;
 struct SpriteEntry;
 
-struct BattleObjectSlot {
+struct BtlObj {
     struct MotionObject *object;
     u16 resource;
     u16 overlay;
@@ -44,11 +44,11 @@ struct BattleSpoils {
     u16 items[4];
 };
 
-LAYOUT_SIZE_GUARD(BattleObjectSlot_Size, struct BattleObjectSlot, 0x2c);
-LAYOUT_OFFSET_GUARD(BattleObjectSlot_AnchorX, struct BattleObjectSlot, anchor_x, 0x0c);
-LAYOUT_OFFSET_GUARD(BattleObjectSlot_Conditions, struct BattleObjectSlot, active_conditions, 0x1c);
-LAYOUT_OFFSET_GUARD(BattleObjectSlot_CycleTimer, struct BattleObjectSlot, cycle_timer, 0x1f);
-LAYOUT_OFFSET_GUARD(BattleObjectSlot_Active, struct BattleObjectSlot, active, 0x28);
+LAYOUT_SIZE_GUARD(BattleObjectSlot_Size, struct BtlObj, 0x2c);
+LAYOUT_OFFSET_GUARD(BattleObjectSlot_AnchorX, struct BtlObj, anchor_x, 0x0c);
+LAYOUT_OFFSET_GUARD(BattleObjectSlot_Conditions, struct BtlObj, active_conditions, 0x1c);
+LAYOUT_OFFSET_GUARD(BattleObjectSlot_CycleTimer, struct BtlObj, cycle_timer, 0x1f);
+LAYOUT_OFFSET_GUARD(BattleObjectSlot_Active, struct BtlObj, active, 0x28);
 
 LAYOUT_SIZE_GUARD(BattleActionRecord_Size, struct BattleActionRecord, 0x10);
 LAYOUT_OFFSET_GUARD(BattleActionRecord_Priority, struct BattleActionRecord, priority, 0x04);

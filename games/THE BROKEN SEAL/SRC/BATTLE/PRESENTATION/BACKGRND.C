@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
@@ -16,8 +16,8 @@
 #include "RAM_BUFFER.H"
 #include "IWRAM_CALL.H"
 #include "CALLBACK_SCHEDULER.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLWORK.H"
+#include "BTLDISP.H"
 #include "HEAP_STATE.H"
 #include "IO_REG.H"
 
@@ -52,7 +52,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 {
     struct BattleBackgroundView *view = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
     u8 *data = Resource_GetTableEntry(resource);
-    struct BattleSession *session = *(gWorkSlot + HEAP_SLOT_BATTLE);
+    struct BtlWork *session = *(gWorkSlot + HEAP_SLOT_BATTLE);
     u16 *palette;
 
     /* FAKEMATCH: the one-pass block keeps the size load after the session load and the decoder call after the copy. */

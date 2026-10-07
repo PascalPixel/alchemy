@@ -1,11 +1,11 @@
 #include "TYPES.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 
 void BattleMotion_ReservedNoOp83B0(void *, s32);
 
 void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id)
 {
-    struct BattleObjectSlot *second_slot;
+    struct BtlObj *second_slot;
     struct MotionObject *first;
     struct MotionObject *second;
     s32 x1;
@@ -18,8 +18,8 @@ void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id)
         s32 z;
     } pos;
 
-    first = GetBattleObjectSlot(first_id)->object;
-    second_slot = GetBattleObjectSlot(second_id);
+    first = BtlObjGet(first_id)->object;
+    second_slot = BtlObjGet(second_id);
     second = second_slot->object;
 
     x1 = first->target_x;

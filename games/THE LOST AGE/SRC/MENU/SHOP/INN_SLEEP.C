@@ -11,7 +11,7 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "FIELD_EVENT.H"
 
 struct FieldEffectState {
@@ -46,11 +46,11 @@ void Inn_PlaySleep(s32 room_price)
     Party_AdjustCoinsFar(-room_price);
 
     for (index = 0; index < count; index++) {
-        object = Owner_GetState(objects[index]);
+        object = UnitGet(objects[index]);
         if (object->x != 0) {
             object->x = object->saved_x;
             object->y = object->saved_y;
-            Owner_RecalculateRatiosFar(objects[index]);
+            UnitRatioFar(objects[index]);
         }
     }
 

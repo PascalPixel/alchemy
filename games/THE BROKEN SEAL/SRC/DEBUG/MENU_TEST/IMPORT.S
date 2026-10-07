@@ -81,14 +81,14 @@ NameEntry_EditOwnerName:
 	.thumb_func
 DebugMenu_BrowseIcons:
 	overlay_veneer DebugMenu_BrowseIconsFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
-	.global Owner_RecalculateStats
+UnitGet:
+	overlay_veneer UnitGetFar
+	.global UnitCalc
 	.thumb_func
-Owner_RecalculateStats:
-	overlay_veneer Owner_RecalculateStatsFar
+UnitCalc:
+	overlay_veneer UnitCalcFar
 	.global Engine_DebugGetItem
 	.thumb_func
 Engine_DebugGetItem:
@@ -105,10 +105,10 @@ PartyInventory_Add:
 	.thumb_func
 Owner_AdjustFirstValue:
 	overlay_veneer Owner_AdjustFirstValueFar
-	.global Owner_AdjustSecondValue
+	.global UnitEpAdd
 	.thumb_func
-Owner_AdjustSecondValue:
-	overlay_veneer Owner_AdjustSecondValueFar
+UnitEpAdd:
+	overlay_veneer UnitEpAddFar
 	.global Party_AddActiveOwner
 	.thumb_func
 Party_AddActiveOwner:

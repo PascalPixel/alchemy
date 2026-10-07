@@ -11,7 +11,7 @@
 #include "GLOBAL_CELLS.H"
 #include "WINDOW.H"
 #include "AFFINE.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "RESOURCE.H"
 #include "FIXED_MATH.H"
 #include "CALLBACK_SCHEDULER.H"

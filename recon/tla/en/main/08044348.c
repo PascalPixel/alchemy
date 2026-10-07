@@ -3,7 +3,7 @@
 #include "WINDOW.H"
 #include "UIWINDOW.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 
 void UiWindow_DrawTilemapResource(struct UiWindow *window, const void *resource)
 {
@@ -31,5 +31,5 @@ void UiWindow_DrawTilemapResource(struct UiWindow *window, const void *resource)
         vram += 32 - window->width;
         map += 32 - window->width;
     }
-    Sys_Free(buffer);
+    MemFree(buffer);
 }

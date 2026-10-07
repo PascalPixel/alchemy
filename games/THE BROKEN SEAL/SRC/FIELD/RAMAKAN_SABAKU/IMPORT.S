@@ -22,13 +22,13 @@ Engine_RandomNext:
 	.thumb_func
 Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
-	.global Runtime_BumpAllocate
+	.global MemAlloc
 	.thumb_func
-Runtime_BumpAllocate:
+MemAlloc:
 	overlay_veneer Runtime_BumpAllocateFar
-	.global Sys_Free
+	.global MemFree
 	.thumb_func
-Sys_Free:
+MemFree:
 	overlay_veneer Sys_FreeFar
 	.global Resource_DecodeType01
 	.thumb_func

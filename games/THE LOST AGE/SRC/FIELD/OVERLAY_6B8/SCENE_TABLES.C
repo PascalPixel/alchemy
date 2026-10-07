@@ -29,8 +29,8 @@ void UiWork_FinalizePendingCore(void);
 void UiText_OpenMessageWindow(s32, s32, s32, s32);
 s32 UiWork_IsComplete(void);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
-void Owner_RecalculateStats(s32);
-s32 Owner_AdjustSecondValue(s32, s32);
+void UnitCalc(s32);
+s32 UnitEpAdd(s32, s32);
 void GameFlag_SetBit(s32);
 struct ObjectRuntime *Object_GetById(s32);
 void ObjectMotion_Launch(s32, s32, s32);
@@ -175,9 +175,9 @@ void Func_020001e0(void)
 void Func_020001e4(void)
 {
     UiText_ShowPositionedMessageAndWait((s32)MsgYouWentUp, 1);
-    Party_AdvanceOwnerCountToTarget(4, ((u8 *)Owner_GetState(4))[15] + 10);
-    Party_AdvanceOwnerCountToTarget(5, ((u8 *)Owner_GetState(5))[15] + 10);
-    Party_AdvanceOwnerCountToTarget(6, ((u8 *)Owner_GetState(6))[15] + 10);
+    Party_AdvanceOwnerCountToTarget(4, ((u8 *)UnitGet(4))[15] + 10);
+    Party_AdvanceOwnerCountToTarget(5, ((u8 *)UnitGet(5))[15] + 10);
+    Party_AdvanceOwnerCountToTarget(6, ((u8 *)UnitGet(6))[15] + 10);
 }
 
 void Func_02000224(void)
@@ -190,9 +190,9 @@ void Func_02000224(void)
         Inventory_AddItem(4, 228);
         Inventory_AddItem(4, 229);
     }
-    Owner_RecalculateStats(4);
-    Owner_RecalculateStats(5);
-    Owner_RecalculateStats(6);
+    UnitCalc(4);
+    UnitCalc(5);
+    UnitCalc(6);
 }
 
 static __inline__ void Owner_AdjustFirstValueBy(s32 owner, s32 delta)
@@ -209,19 +209,19 @@ void Func_0200026c(void)
     Owner_AdjustFirstValueBy(4, -100);
     Owner_AdjustFirstValueBy(5, -100);
     Owner_AdjustFirstValue(6, -33);
-    Owner_AdjustSecondValue(4, -50);
-    Owner_AdjustSecondValue(5, -40);
-    Owner_AdjustSecondValue(6, -35);
-    state = Owner_GetState(4);
+    UnitEpAdd(4, -50);
+    UnitEpAdd(5, -40);
+    UnitEpAdd(6, -35);
+    state = UnitGet(4);
     state[0x131] = 1;
     state += 0x140;
     *state = 1;
-    state = Owner_GetState(5);
+    state = UnitGet(5);
     state[0x130] = 1;
     state[0x131] = 2;
-    Owner_RecalculateStats(4);
-    Owner_RecalculateStats(5);
-    Owner_RecalculateStats(6);
+    UnitCalc(4);
+    UnitCalc(5);
+    UnitCalc(6);
 }
 
 void Func_020002f4(s32 owner, s32 element, s32 djinn, s32 activate)
@@ -255,9 +255,9 @@ void Func_02000330(void)
     Func_020002f4(6, 1, 3, 1);
     Func_020002f4(6, 1, 4, 1);
     Func_020002f4(6, 1, 5, 1);
-    Owner_RecalculateStats(4);
-    Owner_RecalculateStats(5);
-    Owner_RecalculateStats(6);
+    UnitCalc(4);
+    UnitCalc(5);
+    UnitCalc(6);
 }
 
 void Func_02000444(void)

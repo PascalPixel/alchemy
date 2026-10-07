@@ -13,7 +13,7 @@
 
 s32 Owner_GetResistanceValue(s32 owner, s32 index)
 {
-    struct OwnerInventoryState *state = Owner_GetState(owner);
+    struct OwnerInventoryState *state = UnitGet(owner);
     s32 values[4];
     s32 result = 0;
 

@@ -2,7 +2,7 @@
 
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit)
 {
-    struct OwnerDjinnState *state = Owner_GetState(owner);
+    struct OwnerDjinnState *state = UnitGet(owner);
     u32 present = Djinn_IsActive(owner, index, bit);
 
     if (present != 0) {

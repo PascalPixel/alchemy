@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "RESMENU.H"
 #include "DMA.H"
 #include "SYSTEM.H"

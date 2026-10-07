@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "RAM_BUFFER.H"
 
 void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,
@@ -93,6 +93,6 @@ void UiWindow_CreateWithLayoutBounds(s32 flags)
     UiWindow_BuildLayoutBounds(flags);
     window->handle = UiWindow_Create(
         window->left, window->top, window->right, window->height, 6);
-    UiWindow_DrawPartyStatusContents(flags);
+    PtyStDraw(flags);
     tiles[6] = zero;
 }

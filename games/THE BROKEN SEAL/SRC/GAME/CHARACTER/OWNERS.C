@@ -12,7 +12,7 @@
 #include "PARTY_STATE.H"
 #include "TYPES.H"
 #include "CHARACTER.H"
-#include "BATTLE_SUMMON.H"
+#include "BTLSMN.H"
 #include "RUNTIME_INTERFACES.H"
 #include "PRESET_TABLE.H"
 #include "FIXED_MATH.H"
@@ -51,9 +51,9 @@ static __inline__ void ClearWords(ClearWordsFn clear, void *destination, s32 siz
     clear(destination, size);
 }
 
-s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
+s32 BtlUnitSet(s32 unit_id, s32 enemy_id, s32 suffix)
 {
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     const struct EnemyDefinition *enemy;
     u16 name[15];
     s32 i;
@@ -68,7 +68,7 @@ s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
         return 0;
     if (index > 242)
         return 0;
-    unit = Owner_GetState(unit_id);
+    unit = UnitGet(unit_id);
     ClearWords(Iwram_ClearWords, unit, BATTLE_UNIT_SIZE);
     if (index > 164)
         index = 0;
@@ -77,18 +77,18 @@ s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
     unit->base_hp = enemy->hp;
     unit->hp = enemy->hp;
     unit->max_hp = enemy->hp;
-    unit->base_pp = enemy->pp;
-    unit->pp = enemy->pp;
-    unit->max_pp = enemy->pp;
+    unit->base_ep = enemy->ep;
+    unit->ep = enemy->ep;
+    unit->max_ep = enemy->ep;
     unit->hp_gauge = 0x4000;
-    unit->pp_gauge = 0x4000;
+    unit->ep_gauge = 0x4000;
     unit->base_attack = enemy->attack;
     unit->base_defense = enemy->defense;
     unit->base_agility = enemy->agility;
     unit->base_luck = enemy->luck;
     unit->base_action_count = enemy->turns;
     unit->base_hp_regen = enemy->hp_regen;
-    unit->base_pp_regen = enemy->pp_regen;
+    unit->base_ep_regen = enemy->ep_regen;
     UiText_DecodeMessageFar(index + (s32)MsgEnemyName, name, 15);
     for (i = 0; i < 14 && name[i] != 0; i++)
         unit->name[i] = name[i];
@@ -111,8 +111,8 @@ s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
     unit->class_index = 0;
     unit->class_id = enemy_id;
     Owner_CalculateBaseElements(unit_id, (s16 (*)[2])unit->base_elements);
-    Owner_RecalculateStats(unit_id);
-    unit->status_12a = 1;
+    UnitCalc(unit_id);
+    unit->side = 1;
     switch (unit->class_id) {
     case 158:
     case 159:
@@ -128,7 +128,7 @@ s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
     case 169:
     case 170:
     case 171:
-        unit->status_12a = 2;
+        unit->side = 2;
         break;
     }
     return 1;
@@ -301,8 +301,8 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
             *cursor++ = Enemy_ElementPresetTable[index].digits[i] * 10;
     } else {
         cursor = output;
-        source += (u8 *)&((struct BattleUnit *)0)->djinn_active_counts -
-                  (u8 *)&((struct BattleUnit *)0)->djinn_available;
+        source += (u8 *)&((struct BtlUnit *)0)->djinn_active_counts -
+                  (u8 *)&((struct BtlUnit *)0)->djinn_available;
         for (i = 3; i >= 0; i--) {
             u32 value = *source;
             source++;
@@ -322,7 +322,7 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 
 s32 Owner_GetResistanceValue(s32 owner, s32 index)
 {
-    struct BattleUnit *state = (struct BattleUnit *)Owner_GetState(owner);
+    struct BtlUnit *state = (struct BtlUnit *)UnitGet(owner);
     s32 values[4];
     s32 result = 0;
 
@@ -333,7 +333,7 @@ s32 Owner_GetResistanceValue(s32 owner, s32 index)
     return result;
 }
 
-s32 Owner_GetDefaultElement(struct BattleUnit *state)
+s32 Owner_GetDefaultElement(struct BtlUnit *state)
 {
     const struct EnemyDefinition *record =
         (const struct EnemyDefinition *)Owner_GetRecord(state->class_id);
@@ -346,7 +346,7 @@ s32 Owner_GetDefaultElement(struct BattleUnit *state)
 
 u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
 {
-    struct BattleUnit *state = (struct BattleUnit *)Owner_GetState(owner);
+    struct BtlUnit *state = (struct BtlUnit *)UnitGet(owner);
     u32 index;
     u32 result;
     s32 values[4];
@@ -459,7 +459,7 @@ struct ClassDefinition *Owner_GetRecordStride84(s32 arg0)
 
 void Owner_RefreshDerivedData(s32 owner_no)
 {
-    struct BattleUnit *owner = Owner_GetState(owner_no);
+    struct BtlUnit *owner = UnitGet(owner_no);
 
     owner->class_index = Owner_DetermineClass(owner->class_id, (u8 *)owner->djinn_available);
     Owner_RefreshClassActions(owner_no);

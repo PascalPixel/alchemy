@@ -1,7 +1,7 @@
 #include "FIXED_MATH.H"
 extern u8 Data_03001f2c[];
 
-s32 Owner_GetStateFar(s32);
+s32 UnitGetFar(s32);
 
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
 {
@@ -16,7 +16,7 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
     s32 selected_index;
     s32 owner_slot;
 
-    owner_state = Owner_GetStateFar(owners[offset]);
+    owner_state = UnitGetFar(owners[offset]);
     entry_count = base[0x218];
     owner_slot = owners[offset] + 0x260;
     selected_index = ((s8 *)base)[owner_slot];

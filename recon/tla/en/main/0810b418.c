@@ -20,8 +20,8 @@ extern struct FieldEffectState *gEventWork;
 
 s32 Party_ListActiveOwnersFar(s16 *);
 void Party_AdjustCoinsFar(s32);
-struct FieldObject *Owner_GetStateFar(s32);
-void Owner_RecalculateRatiosFar(s32);
+struct FieldObject *UnitGetFar(s32);
+void UnitRatioFar(s32);
 void Event_FinishScreenTransitionFar(void);
 void Event_WaitTransitionFramesFar(void);
 void Audio_PlayCue(s32);

@@ -41,7 +41,7 @@ s32 ItemMenu_Use(void)
     }
 
     Item_PlayUseAnimation(menu->selected_items[0] & 0x1ff);
-    Owner_RecalculateStatsFar(menu->pane_owner[0]);
-    Owner_RecalculateStatsFar(menu->pane_owner[1]);
+    UnitCalcFar(menu->pane_owner[0]);
+    UnitCalcFar(menu->pane_owner[1]);
     return 1;
 }

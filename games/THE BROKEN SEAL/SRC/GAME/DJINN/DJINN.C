@@ -17,7 +17,7 @@
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 #include "CHARACTER.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 
 #define BattleRandomPercent ((s32 (*)(void))BattleRandomPercent)
 
@@ -32,7 +32,7 @@ u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit);
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit);
 const u16 *Djinn_GetDefinition(u32 group, u32 index);
 
-s32 RollWeaponUnleash(struct BattleUnit *owner)
+s32 RollWeaponUnleash(struct BtlUnit *owner)
 {
     struct ItemDefinition *item;
     s32 rate;
@@ -49,7 +49,7 @@ s32 RollWeaponUnleash(struct BattleUnit *owner)
     }
     rate = ((Equipment_GetUnleashRateBonus(owner) +
          (item->secondary_flags * 5)) << 0x10) / 100;
-    if (rate > (s32)(BattleRandom16() & 0xFFFF)) {
+    if (rate > (s32)(BtlRnd() & 0xFFFF)) {
         return item->description_message;
     }
     return 1;
@@ -109,7 +109,7 @@ block_18:
     return 0 - battle_result;
 }
 
-s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effect_id)
+s32 BattleTarget_IsWeakToEffect(const struct BtlUnit *target, s32 effect_id)
 {
     const u8 *entries;
     s32 i;
@@ -131,7 +131,7 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effect_id)
     return 0;
 }
 
-s32 BattleFx_IsRevive(s32 effect_id)
+s32 BtlEfxRevChk(s32 effect_id)
 {
     if ((effect_id == 5) || (effect_id == 0x38) || (effect_id == 0x39)) {
         return 1;
@@ -146,8 +146,8 @@ s32 BattleFx_RollSuccess(
     s32 effect_id,
     s32 success_scale) {
     /* FAKEMATCH: the byte-status view and pointer setup prevent adjacent reads from merging into wider loads. */
-    u8 *state = (u8 *)Owner_GetState(target);
-    struct BattleUnit *unit = (struct BattleUnit *)state;
+    u8 *state = (u8 *)UnitGet(target);
+    struct BtlUnit *unit = (struct BtlUnit *)state;
     s32 attempts = 1;
     s32 score;
     s32 attempt;
@@ -158,36 +158,36 @@ s32 BattleFx_RollSuccess(
     u8 *stun;
     u8 *sleep;
 
-    if (BattleFx_IsRevive(effect_id)!= 0 &&
+    if (BtlEfxRevChk(effect_id)!= 0 &&
         unit->hp != 0) {
         return 0;
     }
 
-    if (effect_id == 3 && *(s8 *)(state + (u32)&((struct BattleUnit *)0)->poison) == 0) {
+    if (effect_id == 3 && *(s8 *)(state + (u32)&((struct BtlUnit *)0)->doku) == 0) {
         goto fail;
     }
 
     goto action4_check;
 action4_tail:
-    if (state[(u32)&((struct BattleUnit *)0)->stun] == 0 && state[(u32)&((struct BattleUnit *)0)->sleep] == 0 &&
-        state[(u32)&((struct BattleUnit *)0)->psy_seal] == 0 && state[(u32)&((struct BattleUnit *)0)->death_count] == 0) {
+    if (state[(u32)&((struct BtlUnit *)0)->shibire] == 0 && state[(u32)&((struct BtlUnit *)0)->nemuri] == 0 &&
+        state[(u32)&((struct BtlUnit *)0)->fuuji] == 0 && state[(u32)&((struct BtlUnit *)0)->shiryo] == 0) {
         goto fail;
     }
     goto action4_done;
 action4_check:
     if (effect_id == 4) {
-        if (state[(u32)&((struct BattleUnit *)0)->delusion] == 0 && state[(u32)&((struct BattleUnit *)0)->confusion] == 0 && state[(u32)&((struct BattleUnit *)0)->charm] == 0) {
+        if (state[(u32)&((struct BtlUnit *)0)->maboroshi] == 0 && state[(u32)&((struct BtlUnit *)0)->konran] == 0 && state[(u32)&((struct BtlUnit *)0)->charm] == 0) {
             goto action4_tail;
         }
     }
 
 action4_done:
-    poison = (s8 *)(state + (u32)&((struct BattleUnit *)0)->poison);
-    delusion = state + (u32)&((struct BattleUnit *)0)->delusion;
-    confusion = state + (u32)&((struct BattleUnit *)0)->confusion;
-    charm = state + (u32)&((struct BattleUnit *)0)->charm;
-    stun = state + (u32)&((struct BattleUnit *)0)->stun;
-    sleep = state + (u32)&((struct BattleUnit *)0)->sleep;
+    poison = (s8 *)(state + (u32)&((struct BtlUnit *)0)->doku);
+    delusion = state + (u32)&((struct BtlUnit *)0)->maboroshi;
+    confusion = state + (u32)&((struct BtlUnit *)0)->konran;
+    charm = state + (u32)&((struct BtlUnit *)0)->charm;
+    stun = state + (u32)&((struct BtlUnit *)0)->shibire;
+    sleep = state + (u32)&((struct BtlUnit *)0)->nemuri;
     if (effect_id == 0x40 &&
         *poison == 0 &&
         *delusion == 0 &&
@@ -195,13 +195,13 @@ action4_done:
         *charm == 0 &&
         *stun == 0 &&
         *sleep == 0 &&
-        state[(u32)&((struct BattleUnit *)0)->psy_seal] == 0 &&
-        state[(u32)&((struct BattleUnit *)0)->death_count] == 0 &&
-        state[(u32)&((struct BattleUnit *)0)->evil_spirit] == 0) {
+        state[(u32)&((struct BtlUnit *)0)->fuuji] == 0 &&
+        state[(u32)&((struct BtlUnit *)0)->shiryo] == 0 &&
+        state[(u32)&((struct BtlUnit *)0)->akuryo] == 0) {
         return 0;
     }
 
-    if (effect_id == 0x1C && state[(u32)&((struct BattleUnit *)0)->death_count] == 1) {
+    if (effect_id == 0x1C && state[(u32)&((struct BtlUnit *)0)->shiryo] == 1) {
         return 0;
     }
 
@@ -256,7 +256,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
 
     count = Party_CountActiveOwners();
     for (i = 0; i < count; i++) {
-        struct BattleUnit *unit = Owner_GetState(gGameState.active_owners[i]);
+        struct BtlUnit *unit = UnitGet(gGameState.active_owners[i]);
 
         if (unit->djinn_owned_counts[index] <= 9) {
             s32 value = 0;
@@ -281,7 +281,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
 
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)
 {
-    struct BattleUnit *state = Owner_GetState(owner);
+    struct BtlUnit *state = UnitGet(owner);
 
     if (state->djinn_owned_counts[index] > 9)
         return -1;
@@ -294,8 +294,8 @@ s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)
 
 s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
 {
-    struct BattleUnit *state =
-        (struct BattleUnit *)Owner_GetState(owner);
+    struct BtlUnit *state =
+        (struct BtlUnit *)UnitGet(owner);
     struct DjinnRecoveryList *table;
     s32 i;
     s32 status;
@@ -325,7 +325,7 @@ s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
 {
     s32 value =
-        ((struct BattleUnit *)Owner_GetState(owner))->djinn_active[index] &
+        ((struct BtlUnit *)UnitGet(owner))->djinn_active[index] &
         (1 << bit);
 
     return (u32)(-value | value) >> 31;
@@ -333,8 +333,8 @@ u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
 
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 {
-    struct BattleUnit *state =
-        (struct BattleUnit *)Owner_GetState(owner);
+    struct BtlUnit *state =
+        (struct BtlUnit *)UnitGet(owner);
     s32 result = Trade_CanOfferDjinn(owner, index, bit);
 
     if (result != 0) {
@@ -351,8 +351,8 @@ s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit)
 {
-    struct BattleUnit *state =
-        (struct BattleUnit *)Owner_GetState(owner);
+    struct BtlUnit *state =
+        (struct BtlUnit *)UnitGet(owner);
     u32 present = Djinn_IsActive(owner, index, bit);
 
     if (present != 0) {
@@ -402,7 +402,7 @@ u32 *Trade_AddOffer(u32 kind, u32 first, u32 second)
 s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target)
 {
     /* FAKEMATCH: the scalar available-Djinn cursor preserves operand order changed by direct array access. */
-    struct BattleUnit *state = Owner_GetState(source);
+    struct BtlUnit *state = UnitGet(source);
     s32 avail_off = index * sizeof(state->djinn_available[0])
         + ((u8 *)state->djinn_available - (u8 *)state);
     u32 mask = 1U << bit;
@@ -476,7 +476,7 @@ s32 Party_SumDjinnCounts(s32 index)
         s32 remaining = count;
 
         do {
-            struct BattleUnit *state = Owner_GetState(*owner++);
+            struct BtlUnit *state = UnitGet(*owner++);
 
             if (index == -1) {
                 result += state->djinn_owned_counts[0];

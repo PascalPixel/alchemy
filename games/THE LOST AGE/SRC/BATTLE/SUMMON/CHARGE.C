@@ -22,7 +22,7 @@ struct BattleActorDefinition {
     u16 class_id;
 };
 
-s32 Summon_ReleaseCharge(s32 actor_id)
+s32 EnmCntRel(s32 actor_id)
 {
     struct SummonChargeState *state = (struct SummonChargeState *)Ram_HeapSlots->battle_work;
     struct BattleActorDefinition *actor;
@@ -32,7 +32,7 @@ s32 Summon_ReleaseCharge(s32 actor_id)
     s32 bit;
     s32 class_id;
 
-    actor = Owner_GetState(actor_id);
+    actor = UnitGet(actor_id);
     if (actor->unavailable != 0)
         return;
 
@@ -55,9 +55,9 @@ s32 Summon_ReleaseCharge(s32 actor_id)
     state->used_masks[index] &= ~(1 << bit);
 }
 
-s32 Summon_ResetCharge(s32 enemy_id)
+s32 EnmCntClr(s32 enemy_id)
 {
-    struct BattleUnit *summon;
+    struct BtlUnit *summon;
     s32 object_index;
     s32 slot;
     s32 next_slot;
@@ -67,8 +67,8 @@ s32 Summon_ResetCharge(s32 enemy_id)
     object_index = 0;
     marker = LIST_MARKER_CHAR;
 scan_objects:
-    summon = Owner_GetState(object_index + 0x80);
-    occupied = summon->status_12a;
+    summon = UnitGet(object_index + 0x80);
+    occupied = summon->side;
     if (occupied != 1) goto next_object;
     if (summon->enemy_id != enemy_id) goto next_object;
     slot = 0;

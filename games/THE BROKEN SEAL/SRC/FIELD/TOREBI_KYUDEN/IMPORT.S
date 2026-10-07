@@ -49,7 +49,7 @@ Engine_ItemLoadIcon:
 	.global Engine_OwnerGetState
 	.thumb_func
 Engine_OwnerGetState:
-	overlay_veneer Owner_GetStateFar
+	overlay_veneer UnitGetFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
 Engine_GameFlagIsSet:
@@ -65,7 +65,7 @@ Engine_GameFlagClear:
 	.global Engine_OwnerRecalculateRatios
 	.thumb_func
 Engine_OwnerRecalculateRatios:
-	overlay_veneer Owner_RecalculateRatiosFar
+	overlay_veneer UnitRatioFar
 	.global Engine_PartyAddActiveOwner
 	.thumb_func
 Engine_PartyAddActiveOwner:

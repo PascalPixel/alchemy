@@ -8,9 +8,9 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "ANIMSPR.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "OBJECT_RUNTIME.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
@@ -25,7 +25,7 @@
 #include "DMA.H"
 #include "IO_REG.H"
 #include "DISPTRAN.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define gOverlayArea (*(struct FieldMapState *)&gOverlayArea)
 

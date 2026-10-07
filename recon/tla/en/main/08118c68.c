@@ -1,10 +1,10 @@
 #include "INVENTORY.H"
 
-extern u8 *gBattleWork;
+extern u8 *BtlWk;
 extern s8 BattleParty_CenterOrderOffsets[];
 
 s32 BattleParty_PrepareActiveOwners(u16 *out);
-s32 BattleParty_ListPresentEnemies(u16 *out);
+s32 BtlEnmList(u16 *out);
 
 void BattleParty_CollectUnitList(void)
 {
@@ -18,7 +18,7 @@ void BattleParty_CollectUnitList(void)
     s32 kind;
     u16 *out;
 
-    state = gBattleWork;
+    state = BtlWk;
     count = BattleParty_PrepareActiveOwners(buf);
     for (i = 0; i < count; i++) {
         *(u16 *)(state + 88 + i * 2) = buf[i];
@@ -26,7 +26,7 @@ void BattleParty_CollectUnitList(void)
     offset = count * 2 + 88;
     *(u16 *)(state + offset) = 0xFF;
 
-    count = BattleParty_ListPresentEnemies(buf);
+    count = BtlEnmList(buf);
     kind = state[66];
     if (kind >= 0) {
         if (kind <= 1) {

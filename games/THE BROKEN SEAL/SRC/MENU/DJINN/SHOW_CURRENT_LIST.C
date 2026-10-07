@@ -12,7 +12,7 @@
 #include "SYSTEM.H"
 #include "UI.H"
 #include "DJINN_MENU.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 extern struct DjinnMenuWork *gMenuWork;
 #include "TBS_EDITION.H"

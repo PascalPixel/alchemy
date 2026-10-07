@@ -8,8 +8,8 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "CANVAS.H"
-#include "MOTION_OBJECT.H"
-#include "RUNTIME_MEM.H"
+#include "MOTOBJ.H"
+#include "MEM.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -19,10 +19,10 @@
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
 #include "RAM_BUFFER.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "IO_REG.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 
 extern u8 gMapCellBuffer[];
 
@@ -245,7 +245,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
     }
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
-    BattleBackground_LoadFar(1, gBattleWork->background, 24);
+    BattleBackground_LoadFar(1, BtlWk->background, 24);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

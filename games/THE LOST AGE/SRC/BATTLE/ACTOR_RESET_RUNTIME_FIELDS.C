@@ -12,7 +12,7 @@
 #include "OWNER_STATE.H"
 #include "BATTLE_STATUS_ICON.H"
 
-s32 GetBattleObjectSlot(s32);
+s32 BtlObjGet(s32);
 
 s32 BattleActor_ResetRuntimeFields(s32 actor)
 {
@@ -21,7 +21,7 @@ s32 BattleActor_ResetRuntimeFields(s32 actor)
     s32 count;
     u8 zero;
 
-    state = Owner_GetState(actor);
+    state = UnitGet(actor);
     zero = 0;
     count = 3;
     cursor = state + 0x12f;
@@ -55,6 +55,6 @@ s32 BattleActor_ResetRuntimeFields(s32 actor)
     state[0x147] = 0;
     state[0x148] = 0;
 
-    Owner_RecalculateStatsFar(actor);
-    return BattleUnit_BuildStatusFlags(actor, GetBattleObjectSlot(actor));
+    UnitCalcFar(actor);
+    return BattleUnit_BuildStatusFlags(actor, BtlObjGet(actor));
 }

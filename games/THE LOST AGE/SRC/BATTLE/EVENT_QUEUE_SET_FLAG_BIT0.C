@@ -9,25 +9,25 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "BATTLE_SESSION.H"
 #include "OWNER_STATE.H"
 
-struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
+struct BtlObj *BtlObjGet(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
     /* FAKEMATCH: the shared discard-only result type preserves the epilogue register choice. */
-    struct BattleUnit *creature;
-    struct BattleObjectSlot *runtime;
+    struct BtlUnit *creature;
+    struct BtlObj *runtime;
 
-    creature = Owner_GetState(arg0);
-    if (creature->status_12a == 1) {
+    creature = UnitGet(arg0);
+    if (creature->side == 1) {
         Owner_UpdateRatioPairFar(creature, 0);
         BattleActor_RemoveFromLists(arg0);
         ActivateBattleObjectSlot(arg0);
-        runtime = GetBattleObjectSlot(arg0);
+        runtime = BtlObjGet(arg0);
         Object_Destroy((struct DispatchObject *)runtime->object);
         runtime->object = 0;
         runtime->active = 0;

@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-s32 BattleFx_CanAffectDefeatedUnit(s32 effect)
+s32 BtlEfxDeadChk(s32 effect)
 {
     switch (effect) {
     case 31:

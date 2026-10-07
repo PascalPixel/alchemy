@@ -64,7 +64,7 @@ Runtime_ReleaseHeapBlockFar:
 	.global Runtime_BumpAllocateFar
 	.thumb_func
 Runtime_BumpAllocateFar:
-	overlay_veneer Runtime_BumpAllocate
+	overlay_veneer MemAlloc
 	.global Runtime_BumpAllocateAlternatePoolFar
 	.thumb_func
 Runtime_BumpAllocateAlternatePoolFar:
@@ -72,7 +72,7 @@ Runtime_BumpAllocateAlternatePoolFar:
 	.global Sys_FreeFar
 	.thumb_func
 Sys_FreeFar:
-	overlay_veneer Sys_Free
+	overlay_veneer MemFree
 	overlay_veneer Runtime_WriteDebugTextTiles
 	overlay_veneer Text_DrawHexRightAligned
 	overlay_veneer Text_DrawSignedDecimalRightAligned

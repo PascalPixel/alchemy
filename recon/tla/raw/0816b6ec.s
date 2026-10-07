@@ -651,7 +651,7 @@ Func_0816b6ec:
 	str r3, [r2, #12]
 	str r3, [r2, #16]
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0

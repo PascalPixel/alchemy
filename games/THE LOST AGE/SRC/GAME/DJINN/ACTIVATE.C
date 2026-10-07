@@ -12,7 +12,7 @@
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
 {
     s32 value =
-        ((struct OwnerDjinnState *)Owner_GetState(owner))->flags.banks.active[index] &
+        ((struct OwnerDjinnState *)UnitGet(owner))->flags.banks.active[index] &
         (1 << bit);
 
     return (u32)(-value | value) >> 31;
@@ -21,7 +21,7 @@ u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
 
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 {
-    struct OwnerDjinnState *state = Owner_GetState(owner);
+    struct OwnerDjinnState *state = UnitGet(owner);
     s32 result = Trade_CanOfferDjinn(owner, index, bit);
 
     if (result != 0) {
@@ -39,7 +39,7 @@ s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit)
 {
-    struct OwnerDjinnState *state = Owner_GetState(owner);
+    struct OwnerDjinnState *state = UnitGet(owner);
     u32 present = Djinn_IsActive(owner, index, bit);
 
     if (present != 0) {

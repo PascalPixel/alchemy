@@ -9,8 +9,8 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "FIXED_MATH.H"
-#include "MOTION_OBJECT.H"
-#include "BATTLE_WORK.H"
+#include "MOTOBJ.H"
+#include "BTLWORK.H"
 
 #define Object_ResetMotion ((void (*)(struct MotionObject *))Object_ResetMotion)
 #define Object_SetPosition ((void (*)(struct MotionObject *, s32, s32, s32))Object_SetPosition)
@@ -19,10 +19,10 @@
 s32 ArcTan2(s32, s32);
 
 
-struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id)
+struct BtlObj *BtlObjGet(s32 object_id)
 {
-    struct BattleSession *work = Ram_HeapSlots->battle_work;
-    struct BattleObjectSlot *slots = work->slots;
+    struct BtlWork *work = Ram_HeapSlots->battle_work;
+    struct BtlObj *slots = work->slots;
     s32 index;
 
     if (object_id > 7) {
@@ -35,14 +35,14 @@ struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id)
     return &slots[work->placement[index]];
 }
 
-void Actor_ResetMotionAtAnchor(s32 slot_id)
+void ObjMotRst(s32 slot_id)
 {
     s32 z;
     s32 zero;
-    struct BattleObjectSlot *slot;
+    struct BtlObj *slot;
     struct MotionObject *object;
 
-    slot = GetBattleObjectSlot(slot_id);
+    slot = BtlObjGet(slot_id);
     object = slot->object;
     zero = 0;
     object->acceleration = 0x20000;
@@ -63,10 +63,10 @@ void Actor_ResetMotionAtAnchor(s32 slot_id)
 
 void BattleMotion_SetupEscapeObject(s32 object_id)
 {
-    struct BattleObjectSlot *slot;
+    struct BtlObj *slot;
     struct MotionObject *object;
 
-    slot = GetBattleObjectSlot(object_id);
+    slot = BtlObjGet(object_id);
     object = slot->object;
     object->acceleration = 0x20000;
     object->speed_limit = 0x80000;

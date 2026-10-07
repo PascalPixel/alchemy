@@ -1,6 +1,6 @@
 #include "RESOURCE.H"
 #include "LOG_ROLLING.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 
 void Korosseo_UpdatePathRival(void);
 

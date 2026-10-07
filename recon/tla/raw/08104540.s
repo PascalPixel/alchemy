@@ -66,7 +66,7 @@ Func_08104540:
 	add r3, r10
 	adds r6, r0, #0
 	ldrb r0, [r3]
-	bl Owner_GetState
+	bl UnitGet
 	adds r1, r0, #0
 	add r2, sp, #64
 	adds r1, #88
@@ -79,9 +79,9 @@ Func_08104540:
 	str r0, [sp, #72]
 	str r0, [r1, #4]
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #72]
 	movs r1, #6
 	subs r0, #1

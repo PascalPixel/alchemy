@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "LOG_ROLLING.H"
 #include "CALL.H"
 #include "FIELD_SERVICE.H"

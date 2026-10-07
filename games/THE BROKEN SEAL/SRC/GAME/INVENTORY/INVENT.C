@@ -17,7 +17,7 @@
 #include "WINDOW.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EVENT.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "B5_CONTEXT.H"
 
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);

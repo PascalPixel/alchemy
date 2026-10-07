@@ -8,9 +8,9 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "EDITION.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "DMA.H"
@@ -85,9 +85,9 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
                     UiText_DrawCharacterAtOffsetFar((s32)MsgItemCounter, window, 96, 24);
                 }
 #endif
-                UiText_DrawStringAtOffsetFar(Owner_GetStateFar(menu->pane_owner[0])->name, window, 16, 16);
+                UiText_DrawStringAtOffsetFar(UnitGetFar(menu->pane_owner[0])->name, window, 16, 16);
                 if (single == 0)
-                    UiText_DrawStringAtOffsetFar(Owner_GetStateFar(menu->pane_owner[1])->name, window, 80, 16);
+                    UiText_DrawStringAtOffsetFar(UnitGetFar(menu->pane_owner[1])->name, window, 80, 16);
             }
             if (gKeyState & KEY_A) {
                 AudioCommand_PlayFar(112);

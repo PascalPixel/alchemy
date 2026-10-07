@@ -92,9 +92,9 @@ Func_0819273c:
 	mov r0, r9
 	bl Func_08196a7c
 	mov r0, r9
-	bl Sys_Free
+	bl MemFree
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	add sp, #52
 	pop {r3, r5, r6, r7}
 	mov r8, r3

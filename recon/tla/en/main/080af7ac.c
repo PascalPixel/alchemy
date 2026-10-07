@@ -16,7 +16,7 @@ void Owner_InitRecords(void)
     u8 *name;
 
     for (owner = 0; owner <= 7; owner++) {
-        state = (struct OwnerRecordState *)Owner_GetState(owner);
+        state = (struct OwnerRecordState *)UnitGet(owner);
         Ui_AdjustValueWithoutLimitFar(owner + (s32)&MsgCharacterName, name_buf);
         name = state->name;
         name[0] = name_buf[0];
@@ -34,7 +34,7 @@ void Owner_InitRecords(void)
 
     if (*remote != -1) {
         do {
-            state = (struct OwnerRecordState *)Owner_GetState(*remote);
+            state = (struct OwnerRecordState *)UnitGet(*remote);
             if (state != 0) {
                 state->class_id = (u8)*remote;
                 tmpl = (struct OwnerEquipTemplate *)Character_GetDefinition(state->class_id);
@@ -51,7 +51,7 @@ void Owner_InitRecords(void)
                 state->pp_ratio = 0x4000;
                 state->hp_ratio = 0x4000;
                 Party_AdvanceOwnerCountToTarget(*remote, tmpl->unknown_096);
-                Owner_RecalculateStats(*remote);
+                UnitCalc(*remote);
             }
             remote++;
         } while (*remote != -1);

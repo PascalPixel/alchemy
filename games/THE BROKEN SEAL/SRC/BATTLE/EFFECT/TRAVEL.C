@@ -7,10 +7,10 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "TRANSFORM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -21,7 +21,7 @@
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
 #include "EFFECT_STEP.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "RAM_BUFFER.H"
 
 #define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)

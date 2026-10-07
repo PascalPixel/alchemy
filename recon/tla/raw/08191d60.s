@@ -769,9 +769,9 @@ Func_08191d60:
 	cmp r3, #4
 	bne .L_081922be
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 .L_0819235c:
 	mov r4, r9
 	cmp r4, #139

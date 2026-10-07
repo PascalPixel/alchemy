@@ -14,7 +14,7 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "ITEM.H"
 #include "text/MSG_IDS.H"
 

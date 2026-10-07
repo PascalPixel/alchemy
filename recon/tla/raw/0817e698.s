@@ -390,9 +390,9 @@ Func_0817e698:
 	adds r0, r5, #0
 	bl Func_08196a7c
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 .L_0817e99e:
 	mov r3, r9
 	cmp r3, #0

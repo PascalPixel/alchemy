@@ -1,10 +1,10 @@
 #include "TYPES.H"
 #include "SCENE.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_POINT_POSITION.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLWORK.H"
+#include "BTLDISP.H"
 
 void *GetMotionRecord(struct MotionObject *object, s32 record_index)
 {

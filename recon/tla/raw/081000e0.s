@@ -23,7 +23,7 @@ Func_081000e0:
 	ldrb r0, [r3]
 	adds r5, r2, #0
 	sub sp, #4
-	bl Owner_GetState
+	bl UnitGet
 	movs r3, #96
 	str r3, [sp, #0]
 	movs r2, #8

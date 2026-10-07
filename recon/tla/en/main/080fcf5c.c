@@ -2,7 +2,7 @@
 #include "SYSTEM.H"
 extern u8 Data_03001f2c[];
 
-u8 *BattleAction_Get(s32 action);
+u8 *BtlActGet(s32 action);
 s32 BattleFx_HasMatchingEvent5Far(u8 effect);
 
 s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
@@ -43,7 +43,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
 
     obj_off = combined_offset + 520;
     obj_id = *(u16 *)(menu + obj_off);
-    obj_ptr = Owner_GetStateFar(obj_id);
+    obj_ptr = UnitGetFar(obj_id);
     p456 = menu + 456;
     badge = PsynergyMenu_CollectActions(obj_ptr, p456, 2);
     *(u8 *)(menu + 536) = (u8)badge;

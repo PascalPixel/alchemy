@@ -260,7 +260,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
 
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || \
     defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TEXT_READER.H"
 #include "TYPES.H"
 #include "DMA.H"
@@ -268,7 +268,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
 #include "WINDOW.H"
 #include "HEAP_STATE.H"
 #include "GAME_STATE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "SCENE.H"
 
 #define ENTRY_NARROW_GAP 5
@@ -584,7 +584,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         pos = next;
                         break;
                     case 16:
-                        src = Owner_GetStateFar(gGameState.selected_actor)->name;
+                        src = UnitGetFar(gGameState.selected_actor)->name;
                         dst = name;
                         i = 0;
                         do {
@@ -598,7 +598,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         break;
                     case 18:
                         no = decode(&st) - 1;
-                        src = Owner_GetStateFar(
+                        src = UnitGetFar(
                             UiRender_LookupNamedValue(1, clear))->name;
                         dst = name;
                         j = 0;
@@ -613,7 +613,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         break;
                     case 17:
                         tmp = decode(&st) - 1;
-                        src = Owner_GetStateFar(tmp)->name;
+                        src = UnitGetFar(tmp)->name;
                         dst = name;
                         j = 0;
                         do {
@@ -799,14 +799,14 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 #endif
 
 #if defined(TBS_EDITION_JA)
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TEXT_READER.H"
 #include "DMA.H"
 #include "IO_REG.H"
 #include "WINDOW.H"
 #include "HEAP_STATE.H"
 #include "GAME_STATE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "SCENE.H"
 
 extern const u8 Text_DecodeSymbol[];
@@ -869,7 +869,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
     u8 *num;
     u8 *src;
     u16 *dst;
-    struct BattleUnit *actor;
+    struct BtlUnit *actor;
     u16 name[24];
     u8 numbuf[16];
     struct TextReader st;
@@ -1020,7 +1020,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
                         break;
                     case 16:
-                        src = Owner_GetStateFar(gGameState.selected_actor)->name;
+                        src = UnitGetFar(gGameState.selected_actor)->name;
                         dst = name;
                         i = 0;
                         do {
@@ -1032,7 +1032,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
                         break;
                     case 18:
-                        actor = Owner_GetStateFar(UiRender_LookupNamedValue(1, clear));
+                        actor = UnitGetFar(UiRender_LookupNamedValue(1, clear));
                         if (work->menu_state != 0 &&
                             (actor->class_id == 122 || actor->class_id == 125)) {
                             message = (s32)&MsgMysteryPersonName;
@@ -1055,7 +1055,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         break;
                     case 17:
                         tmp = decode(&st) - 1;
-                        src = Owner_GetStateFar(tmp)->name;
+                        src = UnitGetFar(tmp)->name;
                         dst = name;
                         j = 0;
                         do {

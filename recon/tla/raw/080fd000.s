@@ -35,7 +35,7 @@ Func_080fd000:
 	adds r5, r7, #0
 	lsls r3, r3, #1
 	ldrh r0, [r3, r0]
-	bl Owner_GetState
+	bl UnitGet
 	adds r5, #36
 	movs r3, #10
 	movs r6, #2
@@ -94,7 +94,7 @@ Func_080fd000:
 	lsls r3, r3, #1
 	ldrh r0, [r3, r1]
 	ldr r5, [r7, #40]
-	bl Owner_GetState
+	bl UnitGet
 	ldr r3, [sp, #20]
 	mov r2, r8
 	lsls r3, r3, #1
@@ -235,7 +235,7 @@ Func_080fd000:
 	strb r3, [r2]
 .L_080fd1e0:
 	movs r0, #64
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r6, r0, #0
 	adds r1, r6, #0
 	movs r2, #1
@@ -247,7 +247,7 @@ Func_080fd000:
 	lsls r5, r5, #24
 	adds r0, r6, #0
 	asrs r5, r5, #24
-	bl Sys_Free
+	bl MemFree
 	cmp r5, #0
 	bne .L_080fd212
 	mov r3, r10

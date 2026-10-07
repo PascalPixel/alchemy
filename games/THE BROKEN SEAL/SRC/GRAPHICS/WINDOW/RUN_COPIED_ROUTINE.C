@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "DMA.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "GLYPH.H"
 #include "HEAP_STATE.H"
 #include "IO_REG.H"

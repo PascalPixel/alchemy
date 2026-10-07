@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
@@ -24,16 +24,16 @@ void Vector_AddPolarOffset(s32, s32, s32 *);
 
 void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 {
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
 
-    unit = Owner_GetStateFar(id);
+    unit = UnitGetFar(id);
     if (mode == 0) {
         unit->hp = unit->max_hp;
-        Owner_RecalculateRatiosFar(id);
+        UnitRatioFar(id);
     } else if (mode == 1) {
-        unit->poison = 0;
+        unit->doku = 0;
     } else if (mode == 2) {
-        unit->evil_spirit = 0;
+        unit->akuryo = 0;
     } else if (mode == 3) {
         s32 i;
 
@@ -41,7 +41,7 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode)
             if (unit->inventory[i] & 0x200) {
                 if (Item_Get(unit->inventory[i])->flags & 1) {
                     unit->inventory[i] ^= 0x200;
-                    Owner_RecalculateStatsFar(id);
+                    UnitCalcFar(id);
                 }
             }
         }

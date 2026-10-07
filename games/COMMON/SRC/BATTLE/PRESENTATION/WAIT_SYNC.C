@@ -2,7 +2,7 @@
 #include "EDITION.H"
 #include "RAM_BUFFER.H"
 #include "SERIAL_RUNTIME.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 
 extern volatile u16 gLinkStatus;
 extern u16 gLinkPeerSignatures[][12];
@@ -10,9 +10,9 @@ extern u16 gLinkPeerSignatures[][12];
 s32 BattlePres_WaitSync(void)
 {
 #if GAME_TLA
-    struct BattleSession *work = Ram_HeapSlots->battle_work;
+    struct BtlWork *work = Ram_HeapSlots->battle_work;
 #else
-    struct BattleSession *work = gBattleWork;
+    struct BtlWork *work = BtlWk;
 #endif
     u16 *peer;
     u16 *sync;
@@ -53,9 +53,9 @@ s32 BattlePres_WaitSync(void)
 s32 BattlePres_SyncTurn(void)
 {
 #if GAME_TLA
-    struct BattleSession *work = Ram_HeapSlots->battle_work;
+    struct BtlWork *work = Ram_HeapSlots->battle_work;
 #else
-    struct BattleSession *work = gBattleWork;
+    struct BtlWork *work = BtlWk;
 #endif
     u16 *peer;
     u16 *sync;

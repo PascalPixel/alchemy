@@ -19,7 +19,7 @@
 #include "FIELDRUN.H"
 #include "EVENT_RUNTIME.H"
 #include "GAME_STATE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define gKeyState (*(volatile u32 *)&gKeyState)
 

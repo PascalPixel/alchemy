@@ -10,11 +10,11 @@
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "RAM_BUFFER.H"
-#include "MOTION_OBJECT.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_RUNTIME.H"
+#include "MOTOBJ.H"
+#include "BTLWORK.H"
+#include "BTLSYS.H"
 #include "INVENTORY.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 
 
 struct MotionObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
@@ -24,17 +24,17 @@ s32 ArcTan2(s32, s32);
 
 s32 BattleMotion_GetSlotPalette(s32 id)
 {
-    return GetBattleObjectSlot(id)->palette;
+    return BtlObjGet(id)->palette;
 }
 
-s32 Summon_ClassValid(s32 summon)
+s32 EnmChk(s32 summon)
 {
-    struct BattleSession *ptr;
+    struct BtlWork *ptr;
     s32 retval;
     s32 i;
 
     retval = Summon_IsEntryFlagged(summon);
-    ptr = gBattleWork;
+    ptr = BtlWk;
     for (i = 0; i <= 5; i++) {
         if (ptr->sprite_slots[i] != 0)
             continue;
@@ -49,8 +49,8 @@ s32 Summon_ClassValid(s32 summon)
 s32 SummonSlot_RegisterActorSprites(s32 unit)
 {
     s32 pass;
-    struct BattleSession *table = gBattleWork;
-    struct BattleUnit *actor = Owner_GetStateFar(unit);
+    struct BtlWork *table = BtlWk;
+    struct BtlUnit *actor = UnitGetFar(unit);
     s32 single_slot = Summon_IsEntryFlagged(actor->class_id);
     s32 result = 0;
     s32 sprite_value = Summon_GetEntryValue(actor->class_id);
@@ -101,7 +101,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 
 s32 BattleMotion_ReleaseObjectSlotByValue(s32 value)
 {
-    struct BattleSession *work = gBattleWork;
+    struct BtlWork *work = BtlWk;
     s32 index;
 
     for (index = 0; index <= 5; index++) {
@@ -137,11 +137,11 @@ done:
 
 s32 BattleUnit_LookupWeaponValueByClass(s32 id)
 {
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     s32 entry;
     s32 result;
 
-    state = Owner_GetStateFar(id);
+    state = UnitGetFar(id);
     entry = Inventory_FindEquippedFar(id, 1);
     result = 0;
     if (entry >= 0) {
@@ -171,14 +171,14 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 id)
     return result;
 }
 
-void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 unit, s32 x, s32 y)
+void BtlObjMake(struct BtlObj *actor, s32 unit, s32 x, s32 y)
 {
     s32 fixed_x;
     s32 fixed_y;
     s32 actor_flag;
     s32 sprite;
     s32 existing_sprite;
-    struct BattleUnit *unit_record;
+    struct BtlUnit *unit_record;
     struct MotionObject *object;
     s32 position;
     s32 anim;
@@ -187,7 +187,7 @@ void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 uni
     fixed_x = x << 16;
     fixed_y = y << 16;
     object = Object_CreateFar(0xf000, fixed_x, 0, fixed_y);
-    unit_record = Owner_GetStateFar(unit);
+    unit_record = UnitGetFar(unit);
     actor_flag = 0;
     existing_sprite = SummonSlot_RegisterActorSprites(unit);
 
@@ -274,7 +274,7 @@ void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 uni
     class_id = unit_record->class_id;
     actor->overlay = anim;
 
-    if (class_id <= 1 && Inventory_GetEquippedItemFar((struct BattleUnit *)unit_record, 1) == 15) {
+    if (class_id <= 1 && Inventory_GetEquippedItemFar((struct BtlUnit *)unit_record, 1) == 15) {
         if (unit_record->class_id == 0) {
             sprite = 480;
             actor->resource = sprite;
@@ -317,11 +317,11 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
 
         x_positions[index] = -80;
         if (index != 0) {
-            struct BattleUnit *actor;
+            struct BtlUnit *actor;
 
             spacing = 25;
             if ((u16)(actor_ids[index] - 254) > 1) {
-                actor = Owner_GetStateFar(actor_ids[index]);
+                actor = UnitGetFar(actor_ids[index]);
                 spacing = Summon_IsEntryFlagged(actor->class_id) ? 27 : 38;
                 if (actor->class_id == 148 || actor->class_id == 121) {
                     x_positions[index] = -50;
@@ -332,7 +332,7 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
         z_positions[index] = z;
         spacing = 25;
         if ((u16)(actor_ids[index] - 254) > 1) {
-            struct BattleUnit *actor = Owner_GetStateFar(actor_ids[index]);
+            struct BtlUnit *actor = UnitGetFar(actor_ids[index]);
 
             spacing = Summon_IsEntryFlagged(actor->class_id) ? 27 : 38;
         }
@@ -340,14 +340,14 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
     }
 }
 
-s32 Summon_FindSlot(void)
+s32 EnmSlotGet(void)
 {
     s32 i;
     s32 id;
 
     for (i = 0; i <= 5; i++) {
         id = i + 0x80;
-        if (Owner_GetStateFar(id)->status_12a == 0)
+        if (UnitGetFar(id)->side == 0)
             break;
     }
     if (i == 6)
@@ -355,9 +355,9 @@ s32 Summon_FindSlot(void)
     return id;
 }
 
-s32 Summon_Refresh(void)
+s32 EnmUpd(void)
 {
-    struct BattleSession *work = gBattleWork;
+    struct BtlWork *work = BtlWk;
     u16 unit_ids[14];
     s32 x[6];
     s32 z[6];
@@ -372,7 +372,7 @@ s32 Summon_Refresh(void)
         s32 id = work->enemy_units[i];
 
         if (id != 0xfe) {
-            struct BattleObjectSlot *object = GetBattleObjectSlot(id);
+            struct BtlObj *object = BtlObjGet(id);
 
             object->anchor_x = x[i] << 16;
             object->anchor_z = z[i] << 16;
@@ -382,7 +382,7 @@ s32 Summon_Refresh(void)
 
 void BattleUnit_RefreshPlacement(void)
 {
-    struct BattleSession *work;
+    struct BtlWork *work;
     u16 ids[14];
     s32 x[6];
     s32 z[6];
@@ -396,7 +396,7 @@ void BattleUnit_RefreshPlacement(void)
 
     place = 0;
     stand = 0;
-    work = gBattleWork;
+    work = BtlWk;
     count = BattleParty_PrepareActiveOwners(ids);
     value = 0xff;
     for (i = 13; i >= 0; i--)
@@ -408,7 +408,7 @@ void BattleUnit_RefreshPlacement(void)
         s32 id = ids[i];
 
         work->placement[id] = place;
-        BattlePresentation_SpawnActorObject(GetBattleObjectSlot(id), id,
+        BtlObjMake(BtlObjGet(id), id,
             BattlePlacement_StepPairs[place * 2], BattlePlacement_StepPairs[place * 2 + 1]);
     }
     for (i = 0; i < 6 && work->enemy_units[i] != 0xff; i++)
@@ -419,6 +419,6 @@ void BattleUnit_RefreshPlacement(void)
         s32 id = work->enemy_units[i];
 
         if (id != 0xfe)
-            BattlePresentation_SpawnActorObject(GetBattleObjectSlot(id), id, x[stand], z[stand]);
+            BtlObjMake(BtlObjGet(id), id, x[stand], z[stand]);
     }
 }

@@ -7575,7 +7575,7 @@ Func_02004280:
 	adds r2, #50
 	adds r3, r1, r2
 	ldr r0, [r3]
-	bl Owner_GetState
+	bl UnitGet
 	adds r2, r0, #0
 	movs r5, #0
 	adds r2, #13
@@ -8297,7 +8297,7 @@ Func_020044f8:
 	movs r3, #1
 	str r3, [r1]
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #252
 	lsls r0, r0, #2
 	bl GameFlag_SetBit

@@ -5636,7 +5636,7 @@ Func_02002cf0:
 	movs r0, #128
 	lsls r0, r0, #4
 	sub sp, #12
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	bl Func_02005e14
 	movs r0, #0
@@ -5669,7 +5669,7 @@ Func_02002cf0:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r3, .L_0200ad80
 	mov r0, sp
 	adds r0, #10
@@ -5682,7 +5682,7 @@ Func_02002cf0:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #128
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	ldr r0, .L_0200ad94
 	bl Resource_GetTableEntry
@@ -5735,7 +5735,7 @@ Func_02002cf0:
 	cmp r7, #16
 	bne .L_0200adb0
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #246
 	bl Func_02005f94
 	movs r0, #11
@@ -6750,7 +6750,7 @@ Func_02003654:
 	movs r0, #128
 	lsls r0, r0, #4
 	sub sp, #12
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	bl Func_02005e14
 	movs r0, #0
@@ -6783,7 +6783,7 @@ Func_02003654:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r3, .L_0200b6e4
 	mov r0, sp
 	adds r0, #10
@@ -6796,7 +6796,7 @@ Func_02003654:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #128
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	ldr r0, .L_0200b6f8
 	bl Resource_GetTableEntry
@@ -6849,7 +6849,7 @@ Func_02003654:
 	cmp r7, #16
 	bne .L_0200b714
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #246
 	bl Func_02005f94
 	movs r0, #10

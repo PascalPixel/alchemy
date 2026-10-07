@@ -15,7 +15,7 @@ Func_08100738:
 	adds r0, r7, #0
 	sub sp, #4
 	mov r9, r2
-	bl Owner_GetState
+	bl UnitGet
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #220

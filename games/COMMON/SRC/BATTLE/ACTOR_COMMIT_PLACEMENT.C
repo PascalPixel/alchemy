@@ -9,12 +9,12 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 
 #define BattleActor_SpawnObjectsForList ((s32 (*)(void*,s32))BattleActor_SpawnObjectsForList)
 
 
-void BattleActor_CommitPlacement(void)
+void BtlObjPut(void)
 {
     u8 actor_slots[28];
 

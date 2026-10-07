@@ -10,13 +10,13 @@
 #include "GAME_STATE.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "DMA.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "VRAM_BLOCK.H"
 #include "IO_REG.H"
 #include "FIELD_EVENT.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "UI.H"
 
 struct FxWindowEntry {

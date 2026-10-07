@@ -8,13 +8,13 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "BATTLE_UNIT.H"
 #include "RENDER_INPUT.H"
 #include "IWRAM_CALL.H"
 #include "EDITION.H"
 #include "DJINN_PREVIEW.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
 
@@ -38,7 +38,7 @@ struct AbilityData {
 struct BattleUnitRecord {
     u8 field_00[0x38];
     s16 hp;
-    s16 pp;
+    s16 ep;
     u16 atk;
     u16 def;
     u16 agi;
@@ -110,7 +110,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         }
     }
 
-    unit = Owner_GetStateFar(owner);
+    unit = UnitGetFar(owner);
     if (win != 0)
         UiWork_Finalize(win, 1);
 
@@ -121,8 +121,8 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     if (win == 0)
         return 0;
 
-    buf = (s16 *)Runtime_BumpAllocate(128);
-    snap = (struct BattleUnitRecord *)Runtime_BumpAllocate(332);
+    buf = (s16 *)MemAlloc(128);
+    snap = (struct BattleUnitRecord *)MemAlloc(332);
     list = (u16 *)Runtime_BumpAllocateAlternatePool(96);
     Iwram_CopyWords(snap, unit, 332);
 
@@ -132,7 +132,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         Djinn_DeactivateFar(owner, col, row);
     else
         Djinn_ActivateFar(owner, col, row);
-    Owner_RecalculateStatsFar(owner);
+    UnitCalcFar(owner);
 
     total = DjinnMenu_ListChangedDjinn((const struct OwnerActionSlot *)snap->grid, (const struct OwnerActionSlot *)unit->grid, list, &gained, &lost);
     pages = __divsi3(total - 1, 5) + 1;
@@ -157,7 +157,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 #else
         UiText_RenderWideStringInWindow(buf + 7, win, 5, 1);
 #endif
-        oldPp = snap->pp;
+        oldPp = snap->ep;
         UiText_FormatNumberToHalfwords(buf, oldPp);
 #if !EDITION_INTERNATIONAL
         UiText_RenderWideStringInWindow(buf + 7, win, 4, 2);
@@ -270,11 +270,11 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             DjinnMenu_DrawStatArrow(80, 14, val);
         }
 
-        UiText_FormatNumberToHalfwords(buf, unit->pp);
+        UiText_FormatNumberToHalfwords(buf, unit->ep);
         UiText_RenderWideStringInWindow(buf + 7, win, 11, 2);
-        if (unit->pp != oldPp) {
+        if (unit->ep != oldPp) {
             val = 0;
-            if (unit->pp > oldPp)
+            if (unit->ep > oldPp)
                 val = 1;
             DjinnMenu_DrawStatArrow(80, 22, val);
         }

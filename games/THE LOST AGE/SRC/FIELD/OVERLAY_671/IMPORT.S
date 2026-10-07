@@ -50,17 +50,17 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Runtime_BumpAllocate
+	.global MemAlloc
 	.thumb_func
-Runtime_BumpAllocate:
+MemAlloc:
 	overlay_veneer Runtime_BumpAllocateFar
 	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func
 Runtime_BumpAllocateAlternatePool:
 	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global Sys_Free
+	.global MemFree
 	.thumb_func
-Sys_Free:
+MemFree:
 	overlay_veneer Sys_FreeFar
 	.global Func_020055cc
 	.thumb_func
@@ -86,10 +86,10 @@ Func_020055ec:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

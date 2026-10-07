@@ -10,7 +10,7 @@ Func_081095b0:
 	adds r5, r0, #0
 	adds r0, r7, #0
 	adds r6, r2, #0
-	bl Owner_GetState
+	bl UnitGet
 	mov r8, r0
 	cmp r5, #0
 	beq .L_08109616

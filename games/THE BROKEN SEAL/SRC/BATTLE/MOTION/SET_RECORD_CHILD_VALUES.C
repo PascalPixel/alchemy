@@ -8,17 +8,17 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "ANIMSPR.H"
-#include "BATTLE_EVENT.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLEV.H"
+#include "BTLWORK.H"
+#include "BTLDISP.H"
 #include "OBJDISP.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIXED_MATH.H"
-#include "BATTLE_MSG.H"
+#include "BTLMES.H"
 #include "FIELD_EVENT.H"
-#include "BATTLE_ACTOR.H"
+#include "BTLOBJ.H"
 #include "MENU_LIST.H"
 
 s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
@@ -51,7 +51,7 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
 
 u16 ArcTan2(s32 x, s32 y);
 
-s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
+s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
 {
     struct BattlePresentationWork work;
     struct BattlePresentationTransition *transition = gTransitionWork;
@@ -63,7 +63,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
         transition->target_yaw = plan->actor_id <= 7 ? -0x2000 : 0x5000;
         transition->frames = 60;
     } else {
-        struct MotionObject *actor = GetBattleObjectSlot(plan->actor_id)->object;
+        struct MotionObject *actor = BtlObjGet(plan->actor_id)->object;
         s32 angle = ArcTan2(actor->x, actor->z);
         s32 current;
 
@@ -73,7 +73,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
             current = angle + 0x1800;
         current = (s16)current;
         current += ((plan->actor_id <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
-        if (!((plan->actor_id <= 7) ^ (plan->target_ids[0] <= 7)))
+        if (!((plan->actor_id <= 7) ^ (plan->tgt_no[0] <= 7)))
             current = plan->actor_id <= 7 ? 0x2400 : -0x2400;
         if (transition->target_yaw != current)
             transition->target_yaw = current;
@@ -88,23 +88,23 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
     if (scripted)
         work.flags = 1;
     BattlePres_SetActorModes(0, 0);
-    UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode & ~1);
-    object = GetBattleObjectSlot(work.actor)->object;
+    PtyStDrawFar(BtlWk->party_status_mode & ~1);
+    object = BtlObjGet(work.actor)->object;
     Object_SetMode(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
     AudioCommand_PlayFar(0x9a);
     if (mode & 2)
-        BattleFx_PlayUnitElementEffect(work.actor, plan->range_index, 1, 0);
+        BattleFx_PlayUnitElementEffect(work.actor, plan->elm, 1, 0);
     else if (!scripted)
-        BattleFx_PlayUnitElementEffect(work.actor, plan->range_index, 0, 0);
-    if (plan->target_ids[0] <= 7)
+        BattleFx_PlayUnitElementEffect(work.actor, plan->elm, 0, 0);
+    if (plan->tgt_no[0] <= 7)
         work.side = 1;
     else
         work.side = 0;
 
     for (i = 0; i != work.count; i++) {
         struct AnimationObject *animation = GetMotionRecord(
-            GetBattleObjectSlot(work.actors[i])->object, 0);
+            BtlObjGet(work.actors[i])->object, 0);
         s32 j;
 
         for (j = 0; j != animation->count - 1; j++)
@@ -112,10 +112,10 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
     }
     if (plan->failure != 0) {
         if (plan->failure == 1) {
-            BattleEv_Push(0, plan->actor_id);
-            BattleEv_Push(4, (s32)MsgPsynergyBlocked);
+            BtlEvPush(0, plan->actor_id);
+            BtlEvPush(4, (s32)MsgPsynergyBlocked);
         } else {
-            BattleEv_Push(4, (s32)MsgCastLacksPp);
+            BtlEvPush(4, (s32)MsgCastLacksPp);
         }
         BattleEv_DispatchQueued();
         BattlePres_RunWithZeroArguments();
@@ -132,7 +132,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
         BattleEventRuntime_WaitForReady();
         Object_SetMode(object, 1);
         for (i = 0; i != work.count; i++)
-            Actor_ResetMotionAtAnchor(work.actors[i]);
+            ObjMotRst(work.actors[i]);
     }
     return 0;
 }

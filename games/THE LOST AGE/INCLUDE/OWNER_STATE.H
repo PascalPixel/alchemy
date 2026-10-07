@@ -72,7 +72,7 @@ LAYOUT_SIZE_GUARD(TradeOffer_Size, struct TradeOffer, 4);
 LAYOUT_OFFSET_GUARD(TradeOfferState_Offers, struct TradeOfferState, offers, 8);
 LAYOUT_OFFSET_GUARD(TradeOfferState_Count, struct TradeOfferState, count, 0x128);
 
-void *Owner_GetState(s32 owner);
+void *UnitGet(s32 owner);
 void Owner_RefreshDerivedData(s32 owner);
 struct ClassDefinition *Owner_GetRecordStride84(s32 class_id);
 s32 Owner_SumDjinnCounts(s32 owner, s32 element);

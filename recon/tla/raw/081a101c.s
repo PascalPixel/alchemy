@@ -293,7 +293,7 @@ DisplayScroll_DrawLine:
 	bne .L_081a11c2
 .L_081a123c:
 	ldr r0, [sp, #4]
-	bl Sys_Free
+	bl MemFree
 	movs r0, #0
 .L_081a1244:
 	add sp, #44

@@ -10,7 +10,7 @@ void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
     u16 *items;
 
     menu = gMenuWork;
-    owner = Owner_GetStateFar(owner_id);
+    owner = UnitGetFar(owner_id);
     items = menu->items;
     menu->item_count = ItemMenu_Collect(owner, items, 0);
     RenderOutput_RedrawSavedRectFar(menu->item_window);

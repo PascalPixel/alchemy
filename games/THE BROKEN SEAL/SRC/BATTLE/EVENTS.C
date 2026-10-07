@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "SYSTEM.H"
 
 
@@ -15,7 +15,7 @@ u32 BattleEventRuntime_Reset(void)
 {
     struct BattleEventState *events;
 
-    events = &gBattleWork->events;
+    events = &BtlWk->events;
     events->phase = BATTLE_PLAYBACK_IDLE;
     events->queue.count = 0;
     events->event_index = 0;
@@ -30,7 +30,7 @@ s32 BattleEventRuntime_WaitForReady(void)
     s32 state;
     struct BattleEventState *events;
 
-    events = &gBattleWork->events;
+    events = &BtlWk->events;
     state = events->phase;
     if (state == BATTLE_PLAYBACK_IDLE) {
         events->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;

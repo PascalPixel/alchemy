@@ -10,13 +10,13 @@ WaitFrames:
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Runtime_BumpAllocate
+	.global MemAlloc
 	.thumb_func
-Runtime_BumpAllocate:
+MemAlloc:
 	overlay_veneer Runtime_BumpAllocateFar
-	.global Sys_Free
+	.global MemFree
 	.thumb_func
-Sys_Free:
+MemFree:
 	overlay_veneer Sys_FreeFar
 	.global Func_020007ac
 	.thumb_func

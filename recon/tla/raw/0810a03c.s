@@ -17,7 +17,7 @@ Func_0810a03c:
 	ldr r7, [r3]
 	mov r10, r0
 	mov r9, r1
-	bl Owner_GetState
+	bl UnitGet
 	mov r1, r9
 	lsls r5, r1, #1
 	adds r6, r0, #0

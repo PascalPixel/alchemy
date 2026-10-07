@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "IWRAM_CALL.H"
 
 s32 GameFlag_Test(s32 flag);
@@ -107,6 +107,6 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
         *(u32 *)(0x06010018 + tile * 32) = words[0x180];
         *(u32 *)(0x0601001c + tile * 32) = words[0x1c0];
     }
-    Sys_Free(buf);
+    MemFree(buf);
     return 0;
 }

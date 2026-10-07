@@ -11,10 +11,10 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "TBS_EDITION.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "text/MSG_IDS.H"
 
-#define Owner_RecalculateStats ((s32 (*)(int))Owner_RecalculateStats)
+#define UnitCalc ((s32 (*)(int))UnitCalc)
 
 struct EffectRecord {
     u8 pad[9];
@@ -53,7 +53,7 @@ struct SceneActor_02001010 {
 
 extern u8 *gWork;
 
-u8 *Owner_GetState();
+u8 *UnitGet();
 void Djinn_Transfer(int, int, int, int);
 void Party_RemoveOwnerRestored();
 s32 PartyInventory_FindOwner(s32);
@@ -136,17 +136,17 @@ void *SceneData_SelectActorTableByFlag855(void)
 
 int KuupuappuMura_GetIwanVenusDjinnCount(void)
 {
-    return ((struct BattleUnit *)Owner_GetState(2))->djinn_owned_counts[0];
+    return ((struct BtlUnit *)UnitGet(2))->djinn_owned_counts[0];
 }
 
 s32 OverlayObject_RunObject2WhenFlagged(void)
 {
     BattlePlacement_UpdateTimedEntriesTwentyTimes();
-    if ((*(u32 *)(Owner_GetState(2) + 248) & 1) != 0) {
+    if ((*(u32 *)(UnitGet(2) + 248) & 1) != 0) {
         Djinn_Transfer(2, 0, 0, 0);
         Engine_AudioPlayCue(126);
-        Owner_RecalculateStats(0);
-        return Owner_RecalculateStats(2);
+        UnitCalc(0);
+        return UnitCalc(2);
     }
 }
 

@@ -7,13 +7,13 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "FIELDOBJ.H"
 #include "TYPES.H"
 #include "OWNERVAL.H"
 #include "SCENE.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLTYPE.H"
+#include "BTLSYS.H"
 #include "PARTY_STATE.H"
 #include "SOUND_IDS.H"
 #include "FIXED_MATH.H"
@@ -26,7 +26,7 @@
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
 #include "SCENE_IDS.H"
-#include "BATTLE_CALC.H"
+#include "BTLCALC.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "DISPTRAN.H"
 #include "text/MSG_IDS.H"
@@ -59,7 +59,7 @@ void BattleParty_ApplyDrain(s32 amount)
     s32 i;
 
     for (i = 0; i < target_count; i++)
-        Owner_AdjustSecondValueFar(gGameState.active_owners[i], amount);
+        UnitEpAddFar(gGameState.active_owners[i], amount);
 }
 
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
@@ -67,7 +67,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
     s32 count;
     s32 i;
     s32 value;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
 
     if (amount < 0) {
         BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
@@ -82,7 +82,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
 
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++) {
-        unit = Owner_GetStateFar(gGameState.active_owners[i]);
+        unit = UnitGetFar(gGameState.active_owners[i]);
         if (!scaled) {
             value = amount;
         } else {
@@ -104,10 +104,10 @@ s32 BattleParty_ApplyStatusDamage(void)
     s32 i;
 
     for (i = 0; i < count; i++) {
-        struct BattleUnit *unit = Owner_GetStateFar(gGameState.active_owners[i]);
+        struct BtlUnit *unit = UnitGetFar(gGameState.active_owners[i]);
         s32 amount;
 
-        switch (unit->poison) {
+        switch (unit->doku) {
         case 1:
             amount = -((unit->max_hp + 10) / 20);
             if (amount == 0)
@@ -388,7 +388,7 @@ s32 Field_RunScene(s32 entrance)
                         UiText_ShowPositionedMessageAndWaitFar((s32)MsgFieldStrengthExhausted, 1);
                     }
                     if (work->survived == 0) {
-                        struct BattleUnit *vitals;
+                        struct BtlUnit *vitals;
 
                         if (gGameState.selected_actor == 0) {
                             if (GameFlag_IsSet(32) != 0)
@@ -400,7 +400,7 @@ s32 Field_RunScene(s32 entrance)
                         }
                         AudioCommand_PlayFar(59);
                         UiText_ShowPositionedMessageAndWaitFar((s32)MsgFieldPartyAnnihilated, 1);
-                        vitals = Owner_GetStateFar(gGameState.selected_actor);
+                        vitals = UnitGetFar(gGameState.selected_actor);
                         vitals->hp = 1;
                         /* FAKEMATCH: the one-pass block around the hp gauge keeps sched2 from lifting the shift's reloaded 1 above the hp store, as the ROM orders them. */
                         do {
@@ -408,9 +408,9 @@ s32 Field_RunScene(s32 entrance)
                             if (vitals->hp_gauge == 0 && vitals->hp != 0)
                                 vitals->hp_gauge = 1;
                         } while (0);
-                        vitals->pp_gauge = Vitals_Clamp((vitals->pp << 14) / vitals->max_pp);
-                        if (vitals->pp_gauge == 0 && vitals->pp != 0)
-                            vitals->pp_gauge = 1;
+                        vitals->ep_gauge = Vitals_Clamp((vitals->ep << 14) / vitals->max_ep);
+                        if (vitals->ep_gauge == 0 && vitals->ep != 0)
+                            vitals->ep_gauge = 1;
                         gGameState.scene = gGameState.saved_scene;
                         gGameState.entrance = gGameState.saved_entrance;
                         Battle_ClearObjectFlag5bWhenMode3();

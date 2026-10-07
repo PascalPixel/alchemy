@@ -27,7 +27,7 @@ void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 
 #if !GAME_TLA
 struct AnimationObject;
-struct BattleAction;
+struct BtlAct;
 struct DjinnListTable;
 struct EffectSlot;
 struct MenuResult;
@@ -136,7 +136,7 @@ extern const u16 WorkspaceOptions_SliderPalette[];
 extern const u8 WorkspaceOptions_SliderTiles[];
 s32 Ability_GetAvailability(s32);
 #ifndef OWN_Ability_GetData
-struct BattleAction * Ability_GetData(s32 action_id);
+struct BtlAct * Ability_GetData(s32 action_id);
 #endif
 s32 Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
 s32 AbilityMenu_BuildAvailableList(void);
@@ -302,7 +302,7 @@ void OptionMenu_InitializeWork(void);
 u32 Owner_GetLevelThresholdFar(s32 owner_id, s32 level);
 s32 Owner_GetResistanceValueFar(s32 unit, s32 element);
 #ifndef OWN_Owner_RecalculateStatsFar
-void Owner_RecalculateStatsFar(s32 owner);
+void UnitCalcFar(s32 owner);
 #endif
 void Owner_RefreshClassActionsFar(s32 owner);
 #ifndef OWN_OwnerAction_DiffSlots

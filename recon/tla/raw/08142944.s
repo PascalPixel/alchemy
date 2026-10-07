@@ -762,9 +762,9 @@ Func_08142944:
 	b .L_08142e36
 .L_08142f48:
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #12]
-	bl Sys_Free
+	bl MemFree
 .L_08142f54:
 	movs r0, #8
 	movs r1, #8

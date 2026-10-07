@@ -1,4 +1,4 @@
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TEXT_READER.H"
 
 extern const u8 Func_08015430[];

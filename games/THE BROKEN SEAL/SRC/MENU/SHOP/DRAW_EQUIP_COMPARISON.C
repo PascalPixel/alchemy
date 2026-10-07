@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "SHOP.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "ITEM.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
@@ -20,7 +20,7 @@ void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 style)
 void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 {
     struct ShopRuntime *shop = gMenuWork;
-    struct BattleUnit *unit = Owner_GetStateFar(unit_id);
+    struct BtlUnit *unit = UnitGetFar(unit_id);
     struct ItemDefinition *item = Item_Get(item_id);
     s32 replaced = -1;
     s32 slot;
@@ -56,13 +56,13 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
     }
     saved = unit->inventory[slot];
     unit->inventory[slot] = item_id | 0x200;
-    Owner_RecalculateStatsFar(unit_id);
+    UnitCalcFar(unit_id);
     with[0] = unit->attack;
     with[1] = unit->defense;
     with[2] = unit->agility;
     with[3] = unit->luck;
     unit->inventory[slot] = saved;
-    Owner_RecalculateStatsFar(unit_id);
+    UnitCalcFar(unit_id);
     without[0] = unit->attack;
     without[1] = unit->defense;
     without[2] = unit->agility;

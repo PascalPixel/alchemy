@@ -11,9 +11,9 @@
 #include "TYPES.H"
 #include "HEAP_STATE.H"
 #include "IWRAM_CALL.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "SCENE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #include "MAP_SCROLL.H"
 #include "TRANSFORM.H"

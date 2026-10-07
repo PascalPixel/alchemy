@@ -5,12 +5,12 @@ struct OwnerItems {
     s16 items[15];
 };
 
-struct OwnerItems *Owner_GetState(s32 owner);
-void Owner_RecalculateStats(s32 owner);
+struct OwnerItems *UnitGet(s32 owner);
+void UnitCalc(s32 owner);
 
 s32 Func_080af0e4(s32 owner, s32 index)
 {
-    struct OwnerItems *state = Owner_GetState(owner);
+    struct OwnerItems *state = UnitGet(owner);
     s16 *items = state->items;
     s16 *src;
     s16 *dst;
@@ -31,6 +31,6 @@ s32 Func_080af0e4(s32 owner, s32 index)
     }
     for (i = count; i < 15; i++)
         items[i] = 0;
-    Owner_RecalculateStats(owner);
+    UnitCalc(owner);
     return 2;
 }

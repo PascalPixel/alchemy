@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "EFFECT_STEP.H"
 #include "IWRAM_CALL.H"
 #include "TYPES.H"
@@ -16,13 +16,13 @@
 #include "RESOURCE.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "BATTLE_UNIT.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_WORK.H"
+#include "BTLSYS.H"
+#include "BTLWORK.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "ANIMSPR.H"
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
@@ -150,7 +150,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
     u8 *sheet;
     struct BattleCamera *camera;
     s32 kind;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     DrawRectangle draw[2];
     struct MotionObject *target;
     void *colors = (void *)0x05000000;
@@ -166,7 +166,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
     camera = *(struct BattleCamera **)((u8 *)heap_cache - 108);
     kind = effect->kind;
     work->effect = effect;
-    unit = Owner_GetStateFar(effect->actor);
+    unit = UnitGetFar(effect->actor);
     WaitFrames(1);
     BattlePres_ConfigureEffectDisplay();
     BattleFx_SetupCanvasTileMap();
@@ -544,7 +544,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     gBgScroll[1].y = 32;
-    for (frame = 0, background = &gBattleWork->background; frame != 7; frame++) {
+    for (frame = 0, background = &BtlWk->background; frame != 7; frame++) {
         BattlePresentation_SetPaletteLevelFar(*background, 6 - frame);
         WaitFrames(1);
     }

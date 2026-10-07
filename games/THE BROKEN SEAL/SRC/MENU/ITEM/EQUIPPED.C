@@ -31,7 +31,7 @@ void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
     struct InventoryMenuState *menu = gMenuWork;
     u16 *items;
 
-    Owner_GetStateFar(owner_id);
+    UnitGetFar(owner_id);
     ItemMenu_PosCategory();
     ItemMenu_HideAllIcons();
     UiText_DrawCharacterAtOffsetFar((s32)MsgEquipSlotLabels, window, 0, 0);

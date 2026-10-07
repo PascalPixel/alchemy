@@ -1974,9 +1974,9 @@ Func_08179f18:
 	cmp r1, #4
 	bne .L_0817ad9c
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	bl Render_ResetTransformState
 	movs r0, #148
 	lsls r0, r0, #8

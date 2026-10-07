@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "PARTY_STATE.H"
 #include "RAM_BUFFER.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 
 struct SaveSlotRecord {
     u8 unknown_00[0x1c];

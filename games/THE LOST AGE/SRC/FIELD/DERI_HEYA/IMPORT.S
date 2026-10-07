@@ -2,10 +2,10 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -82,10 +82,10 @@ Func_02000ccc:
 	.thumb_func
 UiWork_FinalizePendingCore:
 	overlay_veneer UiWork_FinalizePendingCoreFar
-	.global Owner_RecalculateStats
+	.global UnitCalc
 	.thumb_func
-Owner_RecalculateStats:
-	overlay_veneer Owner_RecalculateStatsFar
+UnitCalc:
+	overlay_veneer UnitCalcFar
 	.global Func_02000ce4
 	.thumb_func
 Func_02000ce4:

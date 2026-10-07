@@ -17,9 +17,9 @@ struct OwnerVitals {
     s16 pp_ratio;
     u8 unknown_018[28];
     s16 max_hp;
-    s16 max_pp;
+    s16 max_ep;
     s16 hp;
-    s16 pp;
+    s16 ep;
     u8 unknown_03c[0x131 - 60];
     u8 status;
 };
@@ -55,34 +55,34 @@ void Party_RemoveOwnerRestored(s32 owner)
 
     Party_RemoveActiveOwnerFar(owner);
     Event_ClearValidPackedIds();
-    vitals = Owner_GetState(owner);
+    vitals = UnitGet(owner);
     /* FAKEMATCH: the do-while keeps both vital copies ahead of the ratio */
     do {
         vitals->hp = vitals->max_hp;
-        vitals->pp = vitals->max_pp;
+        vitals->ep = vitals->max_ep;
     } while (0);
     vitals->hp_ratio = Vitals_Ratio(vitals->hp, vitals->max_hp);
     if (vitals->hp_ratio == 0 && vitals->hp != 0)
         vitals->hp_ratio = 1;
-    vitals->pp_ratio = Vitals_Ratio(vitals->pp, vitals->max_pp);
-    if (vitals->pp_ratio == 0 && vitals->pp != 0)
+    vitals->pp_ratio = Vitals_Ratio(vitals->ep, vitals->max_ep);
+    if (vitals->pp_ratio == 0 && vitals->ep != 0)
         vitals->pp_ratio = 1;
     vitals->status = 0;
     standing = 0;
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++) {
-        vitals = Owner_GetState(gPartyState.active_owners[i]);
+        vitals = UnitGet(gPartyState.active_owners[i]);
         if (vitals->hp != 0)
             standing++;
     }
     if (standing == 0) {
-        vitals = Owner_GetState(gPartyState.current_owner);
+        vitals = UnitGet(gPartyState.current_owner);
         vitals->hp = 1;
         vitals->hp_ratio = Vitals_Ratio(vitals->hp, vitals->max_hp);
         if (vitals->hp_ratio == 0 && vitals->hp != 0)
             vitals->hp_ratio = 1;
-        vitals->pp_ratio = Vitals_Ratio(vitals->pp, vitals->max_pp);
-        if (vitals->pp_ratio == 0 && vitals->pp != 0)
+        vitals->pp_ratio = Vitals_Ratio(vitals->ep, vitals->max_ep);
+        if (vitals->pp_ratio == 0 && vitals->ep != 0)
             vitals->pp_ratio = 1;
     }
 }

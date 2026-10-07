@@ -11,7 +11,7 @@
 #include "BATTLE_UNIT.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -46,7 +46,7 @@ s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid, const stru
     removed = 0;
     count = 0;
     for (i = 0; i < 32 && newGrid[i].encoded_action != 0; i++) {
-        if (BattleAction_Get(newGrid[i].encoded_action)->target_flags & 0x80) {
+        if (BtlActGet(newGrid[i].encoded_action)->target_flags & 0x80) {
             out[count] = newGrid[i].encoded_action & 0x3fff;
             count++;
             for (j = 0; j < 32; j++) {
@@ -60,7 +60,7 @@ s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid, const stru
         }
     }
     for (i = 0; i < 32 && oldGrid[i].encoded_action != 0; i++) {
-        if (BattleAction_Get(oldGrid[i].encoded_action)->target_flags & 0x80) {
+        if (BtlActGet(oldGrid[i].encoded_action)->target_flags & 0x80) {
             for (j = 0; j < 32; j++) {
                 if (((oldGrid[i].encoded_action ^ newGrid[j].encoded_action) & 0x3fff) == 0)
                     break;

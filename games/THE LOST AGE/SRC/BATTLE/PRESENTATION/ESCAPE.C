@@ -10,8 +10,8 @@
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "SYSTEM.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLPTY.H"
+#include "BTLDISP.H"
 #include "text/MSG_IDS.H"
 
 
@@ -46,10 +46,10 @@ s32 BattlePres_ShowDefendMessage(s16 *script)
 {
     s32 object_id;
     s32 result;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
 
     object_id = *script;
-    unit = Owner_GetState(object_id);
+    unit = UnitGet(object_id);
     if (BattleObject_IsValidId(object_id) < 0) {
         return -1;
     }

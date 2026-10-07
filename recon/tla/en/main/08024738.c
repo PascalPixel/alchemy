@@ -11,13 +11,13 @@
 #include "OBJECT_RUNTIME.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "SCRIPT.H"
 #include "OBJDISP.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
 #include "IO_REG.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define gObjectSlots (*(struct ScriptMotionObject * *)&gObjectSlots)
 

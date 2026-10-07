@@ -15,7 +15,7 @@
 #include "MAP_SCROLL.H"
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "IO_REG.H"
 #include "FLAG_IDS.H"
 
@@ -213,7 +213,7 @@ s32 Map_LoadLayeredScene(s32 index)
     if (GameFlag_IsSet(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
         GameFlag_ClearBitFar(FLAG_KEEP_LAYER_GRAPHICS);
     } else {
-        buf = Runtime_BumpAllocate(0x4000);
+        buf = MemAlloc(0x4000);
         if (buf != NULL) {
             backdrop = *(s16 *)BG_PLTT;
             Resource_DecodeType01(Resource_GetTableEntry(entry->resources[1] + (u32)&ResourceId_Map001), buf);

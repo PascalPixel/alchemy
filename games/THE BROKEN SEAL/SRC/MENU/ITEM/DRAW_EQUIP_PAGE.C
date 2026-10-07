@@ -10,7 +10,7 @@
 #include "EDITION.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "ITEM.H"
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"

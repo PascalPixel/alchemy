@@ -35,7 +35,7 @@ Func_080ae118:
 	ldrb r0, [r5]
 	subs r6, #1
 	adds r5, #1
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	cmp r6, #0
 	bne .L_080ae158
 .L_080ae166:

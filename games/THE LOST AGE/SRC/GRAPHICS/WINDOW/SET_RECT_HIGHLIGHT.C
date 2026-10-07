@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 
 struct WindowTiles {
     u8 unknown_00[3];
@@ -66,7 +66,7 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
 
 s32 BattleLayout_HighlightPartyPanels(u16 *ids)
 {
-    struct BattleSession *battle = Ram_HeapSlots->battle_work;
+    struct BtlWork *battle = Ram_HeapSlots->battle_work;
     s32 count;
     s32 i;
     s32 j;

@@ -9,9 +9,9 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "OWNER_STATE.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "FIELD_EVENT.H"
 
 
@@ -22,8 +22,8 @@ void BattleMotion_RunValueSequence(s32 id)
     s32 target;
     s32 remaining;
 
-    Owner_GetState(id);
-    Object_SetMode(GetBattleObjectSlot(id)->object, 5);
+    UnitGet(id);
+    Object_SetMode(BtlObjGet(id)->object, 5);
 
     sel = selection;
     remaining = 1;
@@ -32,15 +32,15 @@ void BattleMotion_RunValueSequence(s32 id)
         sel[1] = target;
         sel[0] = id;
         BattleLayout_HighlightPartyPanelsFar(sel);
-        BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, 7);
+        BattleMotion_SetRecordChildValues(BtlObjGet(id)->object, 7);
         WaitFrames(2);
 
         sel[0] = id;
         BattleLayout_HighlightPartyPanelsFar(sel);
-        BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, BattleMotion_GetSlotPalette(id));
+        BattleMotion_SetRecordChildValues(BtlObjGet(id)->object, BattleMotion_GetSlotPalette(id));
         WaitFrames(2);
         remaining--;
     } while (remaining >= 0);
 
-    UiWindow_DrawPartyStatusContentsFar(Ram_HeapSlots->battle_work->party_status_mode);
+    PtyStDrawFar(Ram_HeapSlots->battle_work->party_status_mode);
 }

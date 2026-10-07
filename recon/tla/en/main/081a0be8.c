@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "IWRAM_CALL.H"
 
 s32 Func_08038418(s32 message, u8 *canvas, s32 align);
@@ -52,6 +52,6 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align)
         offset += 32;
         top++;
     }
-    Sys_Free(canvas);
+    MemFree(canvas);
     return busy;
 }

@@ -12,7 +12,7 @@
 #include "DMA.H"
 #include "SCENE.H"
 #include "RAM_BUFFER.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "MAP_SCROLL.H"
 #include "IO_REG.H"
 #include "HEAP_STATE.H"

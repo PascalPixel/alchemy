@@ -476,9 +476,9 @@ Func_0817e0c0:
 	bl Func_08196a7c
 .L_0817e48a:
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	ldr r5, [sp, #32]
 	cmp r5, #8
 	bne .L_0817e522

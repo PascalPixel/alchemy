@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -16,7 +16,7 @@
 #include "FIELD_SCENE.H"
 #include "FIXED_POINT_POSITION.H"
 #include "TBS_EDITION.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "text/MSG_IDS.H"
 
 #define Object_SetMoveTarget ((void (*)(s32, s32, s32, s32))Object_SetMoveTarget)
@@ -26,7 +26,7 @@
 s32 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPosition *position);
 void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *object, s32 mode);
 
-void Owner_RecalculateStats();
+void UnitCalc();
 
 s32 PartyInventory_HasSpace(void);
 void BattleEffect_CleanupSceneObjects(void);
@@ -45,7 +45,7 @@ void SceneEffect_ApplyPairWithValue141();
 void SceneState_SetValue2ThenFinish();
 void Ui_SetBank15PaletteAndClearRenderMode();
 void Map_SetViewBounds();
-u8 *Owner_GetState(s32);
+u8 *UnitGet(s32);
 void Djinn_Transfer(s32, s32, s32, s32);
 
 void Object_SetModeById(s32, s32, s32);

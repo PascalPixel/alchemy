@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "SCRIPT_MOTION.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "FIELD_EFFECT.H"

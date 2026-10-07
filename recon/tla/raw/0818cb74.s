@@ -884,9 +884,9 @@ Func_0818cb74:
 	bne .L_0818d1cc
 .L_0818d270:
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #24]
-	bl Sys_Free
+	bl MemFree
 .L_0818d27c:
 	mov r1, r11
 	cmp r1, #63

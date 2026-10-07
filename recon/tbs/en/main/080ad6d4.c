@@ -50,7 +50,7 @@
  * Trial (2026-10-06, parallel session): the page label 0xba0 (message 2976) as a linker symbol (named MsgDjinnPsynergyPage there, MsgDjinnPsyHelp in session 5, which this draft keeps): native's pool load of a shiftable constant is a symbol address, not 186<<4: 293 -> 276.
  * Trial (2026-10-06, parallel session): help line. 0x8000 fixed in r8 and the 0 in sl again: 376; 224 then goes unallocated, but regmove has already copied attr at every AND because the shared 224 never dies there, so it is still not native. Regmove's backward pass ties the operand that dies after scanning back to its set; native's tie of 224 and 31 needs both to die at their ANDs, so they were never shared when regmove ran. Passing 0 for mode in block 2: 295. (attr >> 5) & 7: 272 again, the 7 shared in r8 instead. The tile statements reading pair_entries directly, without attr: 347. Block 3 testing the attr of block 1 without its reload: 422. attr declared in each block: 293, identical code. Within block 1 both 224s sit in one basic block, so CSE always shares them unless the constant differs in mode or value; none of the source forms tried changes that. (Session 3's attr fixed in r2 solved the help line.)
  * Open (2026-10-06, session 4; 0xba0 solved in session 5, 64 remain): 93 instructions remained at session 4's end, all register choice or instruction order. Prologue: native gives anim, dirty, page and frame the registers r0, r1, r3, r2 and zeroes both cursor[] entries from its own 0 in r7; here frame's reload inherits anim's 0 in r0 and cursor[1] stores anim's 0 reloaded from its slot (CSE puts anim's register in for the constant). 0xba0: native loads it from the pool, which a K constant reaches only when the movsi split does not run on it; this splits it to 186<<4. Order only: the tutorial's work = UiText_OpenMessageWindowFar copy (native right after the call), the tutorial copies' argument moves (native mov r1 before the address load and the size's shift last), the tile loop's list->width - count[page] - 3 and the two SetSlotPhase(x, 0) after the loop (native sets r1 first: arguments load in order, so r1 first means its argument was precomputed, a value costing more than 2 that later folds to 0, or the scheduler had a reason this source does not give it). */
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "DJINN_MENU.H"
@@ -67,11 +67,11 @@ extern u8 Menu_BackdropFrameTile[];
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
-struct BattleUnit *Owner_GetStateFar(s32);
+struct BtlUnit *UnitGetFar(s32);
 void WaitFrames(s32);
 void AudioCommand_PlayFar(s32);
 s32 Menu_GetModuloOfSum(s32, s32);
-void Owner_RecalculateStatsFar(s32);
+void UnitCalcFar(s32);
 
 void RenderOutput_RedrawSavedRectFar(s32);
 void RenderOutput_PrepareForRedrawFar(s32);
@@ -155,8 +155,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
     if (mode <= 1) {
         u16 *diff_work;
-        struct BattleUnit *unit_copy;
-        struct BattleUnit *unit;
+        struct BtlUnit *unit_copy;
+        struct BtlUnit *unit;
         s32 id;
         s32 first_element;
         s32 first_index;
@@ -178,7 +178,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         first_index = state->pair_index[0] & 31;
         first_flag = (u16)(state->pair_entries[0] & 0x8000);
 
-        unit = Owner_GetStateFar(id);
+        unit = UnitGetFar(id);
         Iwram_CopyWords(unit_copy, unit, size);
         Djinn_DeactivateFar(id, first_element, first_index);
         if (mode == 0) {
@@ -190,13 +190,13 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 Djinn_ActivateFar(id, second_element, second_index);
             }
         }
-        Owner_RecalculateStatsFar(id);
+        UnitCalcFar(id);
         count[0] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
         Iwram_CopyWords(unit, unit_copy, size);
 
         id = state->shown_owner[1];
-        unit = Owner_GetStateFar(id);
+        unit = UnitGetFar(id);
         Iwram_CopyWords(unit_copy, unit, size);
         if (mode == 0) {
             Djinn_DeactivateFar(id, second_element, second_index);
@@ -205,7 +205,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         if (first_flag != 0) {
             Djinn_ActivateFar(id, first_element, first_index);
         }
-        Owner_RecalculateStatsFar(id);
+        UnitCalcFar(id);
         count[1] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
         Iwram_CopyWords(unit, unit_copy, size);
@@ -213,8 +213,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         Runtime_BumpFree(diff_work);
     } else if (mode - 2 <= 1) {
         u16 *diff_work;
-        struct BattleUnit *unit_copy;
-        struct BattleUnit *unit;
+        struct BtlUnit *unit_copy;
+        struct BtlUnit *unit;
         s32 first_id;
         s32 first_element;
         s32 first_index;
@@ -229,13 +229,13 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         first_index = state->pair_index[0] & 31;
         apply_second = (mode == 3);
 
-        unit = Owner_GetStateFar(first_id);
+        unit = UnitGetFar(first_id);
         Iwram_CopyWords(unit_copy, unit, sizeof(*unit_copy));
         Djinn_DeactivateFar(first_id, first_element, first_index);
         if (apply_second != 0) {
             Djinn_ActivateFar(first_id, first_element, first_index);
         }
-        Owner_RecalculateStatsFar(first_id);
+        UnitCalcFar(first_id);
         count[0] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
         Iwram_CopyWords(unit, unit_copy, sizeof(*unit_copy));

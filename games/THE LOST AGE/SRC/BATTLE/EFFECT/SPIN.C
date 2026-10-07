@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 
 
 void BattleFx_SpinObject(struct MotionObject *object)

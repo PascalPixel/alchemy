@@ -11,7 +11,7 @@
 #include "BATTLE_UNIT.H"
 #include "EDITION.H"
 #include "TYPES.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #define UiWindow_ClearInteriorTilesFar ((void (*)(void*,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
@@ -31,7 +31,7 @@ void WaitFrames(s32 frames);
 void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mode)
 {
     struct CharacterMenuState *state = gMenuWork;
-    struct BattleUnit *status;
+    struct BtlUnit *status;
     s32 row;
     s32 has_djinn;
     s32 keep;
@@ -42,7 +42,7 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mod
         has_djinn = 1;
     else
         has_djinn = 0;
-    status = Owner_GetStateFar(unit);
+    status = UnitGetFar(unit);
     if ((mode & 0xff) == 1)
         row = 7;
     else

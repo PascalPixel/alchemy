@@ -804,9 +804,9 @@ Func_08189b14:
 	bne .L_0818a0d8
 .L_0818a172:
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #20]
-	bl Sys_Free
+	bl MemFree
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0

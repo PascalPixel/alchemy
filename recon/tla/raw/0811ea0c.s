@@ -20,7 +20,7 @@ Func_0811ea0c:
 	str r3, [sp, #8]
 	ldrb r5, [r0]
 	adds r0, r5, #0
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r2, [r0, #12]
 	ldr r3, [r0]
 	str r2, [r3, #8]
@@ -84,7 +84,7 @@ Func_0811ea0c:
 	movs r3, #2
 	negs r3, r3
 	ands r0, r3
-	bl UiWindow_DrawPartyStatusContentsFar
+	bl PtyStDrawFar
 .L_0811eab8:
 	ldr r0, [sp, #16]
 	mov r1, r8
@@ -92,12 +92,12 @@ Func_0811ea0c:
 	str r0, [sp, #4]
 	mov r1, r8
 	ldr r0, [r1, #8]
-	bl Owner_GetState
+	bl UnitGet
 	mov r3, r8
 	adds r6, r0, #0
 	movs r2, #36
 	ldrsh r0, [r3, r2]
-	bl Owner_GetState
+	bl UnitGet
 	ldr r3, [sp, #16]
 	ldr r1, [sp, #16]
 	adds r3, #45
@@ -116,7 +116,7 @@ Func_0811ea0c:
 .L_0811eaf4:
 	ldr r3, [sp, #16]
 	ldrb r0, [r3]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r5, [r0]
 	movs r1, #0
 	adds r0, r5, #0
@@ -169,7 +169,7 @@ Func_0811ea0c:
 	asrs r3, r3, #16
 	cmp r0, r3
 	beq .L_0811ebb8
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	adds r5, r0, #0
 	movs r1, #0
 	ldr r0, [r5]
@@ -183,7 +183,7 @@ Func_0811ea0c:
 	ldr r3, [sp, #16]
 	mov r11, r0
 	ldrb r0, [r3, #2]
-	bl Owner_GetState
+	bl UnitGet
 	movs r4, #165
 	lsls r4, r4, #1
 	adds r3, r0, r4
@@ -204,7 +204,7 @@ Func_0811ea0c:
 .L_0811ebb8:
 	mov r1, r8
 	ldr r0, [r1, #8]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	movs r1, #16
 	ldr r0, [r0]
 	bl ObjectDispatch_ApplyValueToChildrenFar
@@ -280,15 +280,15 @@ Func_0811ea0c:
 	ldr r4, [sp, #16]
 	movs r0, #0
 	ldrb r1, [r4, #3]
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_0811eda8
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	bl BattleEv_DispatchQueued
 	mov r2, r8
 	movs r1, #36
 	ldrsh r0, [r2, r1]
-	bl Actor_ResetMotionAtAnchor
+	bl ObjMotRst
 	b .L_0811ed88
 .L_0811ec78:
 	movs r3, #0
@@ -405,7 +405,7 @@ Func_0811ea0c:
 	adds r0, r1, #0
 	bl Func_0811e830
 	ldr r0, [sp, #4]
-	bl Sys_Free
+	bl MemFree
 .L_0811ed5e:
 	bl BattleEventRuntime_WaitForReady
 	ldr r2, [sp, #12]
@@ -424,14 +424,14 @@ Func_0811ea0c:
 	mov r2, r8
 	movs r1, #36
 	ldrsh r0, [r2, r1]
-	bl Actor_ResetMotionAtAnchor
+	bl ObjMotRst
 .L_0811ed88:
 	ldr r3, [sp, #4]
 	cmp r3, #0
 	bne .L_0811ed96
 	mov r4, r8
 	ldr r0, [r4, #8]
-	bl Actor_ResetMotionAtAnchor
+	bl ObjMotRst
 .L_0811ed96:
 	movs r0, #0
 	add sp, #116

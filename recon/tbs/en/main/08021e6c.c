@@ -56,7 +56,7 @@
 #include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"

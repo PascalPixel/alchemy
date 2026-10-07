@@ -83,7 +83,7 @@ void Object_SetActionCallbackAndRefreshById();
 void Vector_AddPolarOffset();
 s32 PartyInventory_FindOwner();
 s32 Inventory_Find();
-struct PaletteSceneRecord *Owner_GetState();
+struct PaletteSceneRecord *UnitGet();
 void Audio_PlayCueFromEventWork();
 
 void KorimaKi_PlayGesture(s32 actor, s32 gesture);

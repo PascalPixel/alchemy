@@ -1,7 +1,7 @@
 #include "FIXED_MATH.H"
 #include "TYPES.H"
 #include "SCENE.H"
-#include "BATTLE_MSG.H"
+#include "BTLMES.H"
 #include "BATTLE_MOTION.H"
 #include "SYSTEM.H"
 s32 BattleObject_IsValidId(u32);
@@ -31,13 +31,13 @@ struct ObjectSlot_080b8b48 {
 
 extern s32 *gTransitionWork;
 
-void Owner_GetStateFar(s32);
+void UnitGetFar(s32);
 void UiWork_PushValueSlotFar(s32, s32);
 void UiText_ShowMessageAndWaitCoreFar(s32);
-struct ObjectSlot_080b8b48 *GetBattleObjectSlot(s32);
+struct ObjectSlot_080b8b48 *BtlObjGet(s32);
 void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
 
-void Actor_ResetMotionAtAnchor(s32);
+void ObjMotRst(s32);
 void BattleFx_DispatchByIdRangeFar(struct Work_080b8b48 *);
 
 s32 BattlePres_RunApproachAction(struct Input_080b8b48 *input)
@@ -60,14 +60,14 @@ s32 BattlePres_RunApproachAction(struct Input_080b8b48 *input)
     if (BattleObject_IsValidId(work.secondary_id) < 0)
         return -1;
 
-    Owner_GetStateFar(work.primary_id);
-    Owner_GetStateFar(work.secondary_id);
+    UnitGetFar(work.primary_id);
+    UnitGetFar(work.secondary_id);
     Random16();
     UiWork_PushValueSlotFar(work.primary_id, 1);
     UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorAttacks);
     BattleMotion_ApproachTarget(work.primary_id, work.secondary_id, 13, 0);
-    ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(work.primary_id)->object, 16);
-    GetBattleObjectSlot(work.secondary_id);
+    ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(work.primary_id)->object, 16);
+    BtlObjGet(work.secondary_id);
 
     work.count = 1;
     if ((u16)work.secondary_id <= 7)
@@ -78,7 +78,7 @@ s32 BattlePres_RunApproachAction(struct Input_080b8b48 *input)
 
     WaitFrames(4);
     BattleFx_DispatchByIdRangeFar(&work);
-    Actor_ResetMotionAtAnchor(work.secondary_id);
-    Actor_ResetMotionAtAnchor(work.primary_id);
+    ObjMotRst(work.secondary_id);
+    ObjMotRst(work.primary_id);
     return 0;
 }

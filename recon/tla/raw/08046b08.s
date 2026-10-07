@@ -1223,7 +1223,7 @@ Func_08046b08:
 	bl .L_0804846e
 .L_0804746c:
 	ldr r0, [sp, #144]
-	bl Owner_GetState
+	bl UnitGet
 	str r0, [sp, #64]
 	ldr r0, [sp, #92]
 	cmp r0, #0
@@ -1654,7 +1654,7 @@ Func_08046b08:
 	adds r0, r5, #0
 	str r1, [sp, #12]
 	str r4, [sp, #4]
-	bl BattleAction_Get
+	bl BtlActGet
 	ldrb r2, [r0, #1]
 	movs r3, #128
 	ands r3, r2
@@ -1793,7 +1793,7 @@ Func_08046b08:
 	mov r9, r4
 .L_080478d6:
 	adds r0, r5, #0
-	bl BattleAction_Get
+	bl BtlActGet
 	movs r1, #240
 	adds r6, r0, #0
 	lsls r1, r1, #8
@@ -3070,7 +3070,7 @@ Func_08046b08:
 .L_080482ba:
 	movs r0, #128
 	lsls r0, r0, #1
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	ldr r3, [sp, #444]
 	str r0, [sp, #52]
 	cmp r3, #13
@@ -3095,7 +3095,7 @@ Func_08046b08:
 	lsls r1, r1, #1
 	mov r8, r1
 	mov r0, r8
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	mov r2, r8
 	ldr r1, [sp, #64]
 	ldr r3, .L_08048434
@@ -3127,7 +3127,7 @@ Func_08046b08:
 	adds r3, r2, r1
 	strb r7, [r3]
 	ldr r0, [sp, #144]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	ldr r2, [sp, #64]
 	mov r4, r10
 	ldrh r3, [r2, #60]
@@ -3148,7 +3148,7 @@ Func_08046b08:
 	mov lr, r3
 	.2byte 0xf800
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r3, [sp, #48]
 	subs r3, #8
 	cmp r3, #10
@@ -3272,7 +3272,7 @@ Func_08046b08:
 	movs r3, #4
 	bl UiText_RenderWideStringAtOffset
 	ldr r0, [sp, #52]
-	bl Sys_Free
+	bl MemFree
 .L_08048464:
 	ldr r4, [sp, #140]
 	movs r2, #0
@@ -3524,7 +3524,7 @@ Func_08046b08:
 	adds r5, #228
 	adds r3, #65
 	ldrb r0, [r3]
-	bl UiWindow_DrawPartyStatusContents
+	bl PtyStDraw
 	ldr r2, [r5]
 	movs r3, #0
 	str r3, [r2, #72]
@@ -3534,7 +3534,7 @@ Func_08046b08:
 	movs r0, #1
 	bl WaitFrames
 	ldr r0, [sp, #84]
-	bl Sys_Free
+	bl MemFree
 	movs r3, #185
 	lsls r3, r3, #2
 	movs r0, #0

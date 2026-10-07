@@ -15,7 +15,7 @@
 #include "GLOBAL_CELLS.H"
 #include "TRANSFORM.H"
 #include "DMA.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "IO_REG.H"
 #include "FIXED_MATH.H"
 
@@ -108,13 +108,13 @@ s32 Resource_DecodeType01(const void *source, void *destination)
     do {
         size = (u32)Resource_DecodeType01CodeSize;
     } while (0);
-    routine = (s32 (*)(const void *, void *))Runtime_BumpAllocate(size);
+    routine = (s32 (*)(const void *, void *))MemAlloc(size);
     Dma_Set((const void *)Resource_DecodeType01Arm, routine, 0x84000000 | (size >> 2), REG_DMA3);
     /* FAKEMATCH: so is the call, which keeps the argument loads in order. */
     do {
         result = routine(source, destination);
     } while (0);
-    Sys_Free(routine);
+    MemFree(routine);
     return result;
 }
 
@@ -128,13 +128,13 @@ s32 Resource_DecodeType2(const void *source, void *destination)
     do {
         size = (u32)Resource_Decode2CodeSize;
     } while (0);
-    routine = (s32 (*)(const void *, void *))Runtime_BumpAllocate(size);
+    routine = (s32 (*)(const void *, void *))MemAlloc(size);
     Dma_Set((const void *)Resource_Decode2, routine, 0x84000000 | (size >> 2), REG_DMA3);
     /* FAKEMATCH: so is the call, which keeps the argument loads in order. */
     do {
         result = routine(source, destination);
     } while (0);
-    Sys_Free(routine);
+    MemFree(routine);
     return result;
 }
 
@@ -148,13 +148,13 @@ s32 Resource_DecodeByteLz(const void *source, void *destination)
     do {
         size = (u32)Resource_DecodeByteLzCodeSize;
     } while (0);
-    routine = (s32 (*)(const void *, void *))Runtime_BumpAllocate(size);
+    routine = (s32 (*)(const void *, void *))MemAlloc(size);
     Dma_Set((const void *)Resource_DecodeByteLzArm, routine, 0x84000000 | (size >> 2), REG_DMA3);
     /* FAKEMATCH: so is the call, which keeps the argument loads in order. */
     do {
         result = routine(source, destination);
     } while (0);
-    Sys_Free(routine);
+    MemFree(routine);
     return result;
 }
 

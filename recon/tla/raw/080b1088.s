@@ -43,7 +43,7 @@ Func_080b1088:
 	mov r10, r1
 .L_080b10d2:
 	mov r0, r10
-	bl Owner_GetState
+	bl UnitGet
 	adds r7, r0, #0
 	adds r2, r7, #0
 	adds r2, #216
@@ -141,7 +141,7 @@ Func_080b1088:
 	mov r0, r10
 	bl Owner_RefreshDerivedData
 	mov r0, r10
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	movs r2, #1
 	add r10, r2
 	mov r3, r10

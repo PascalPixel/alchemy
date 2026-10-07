@@ -25,7 +25,7 @@ Func_080fc2e0:
 	adds r6, #255
 	add r6, r9
 	ldrb r0, [r6]
-	bl Owner_GetState
+	bl UnitGet
 	movs r3, #181
 	str r0, [sp, #4]
 	lsls r3, r3, #1
@@ -39,7 +39,7 @@ Func_080fc2e0:
 	lsls r5, r5, #1
 	bl Func_080fae8c
 	adds r0, r5, #0
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	ldr r3, .L_080fc470
 	ldr r1, [sp, #4]
 	adds r2, r5, #0
@@ -180,11 +180,11 @@ Func_080fc2e0:
 	adds r5, #255
 	mov r0, r11
 	add r5, r9
-	bl Sys_Free
+	bl MemFree
 	ldrb r0, [r5]
 	bl Owner_RefreshClassActionsFar
 	ldrb r0, [r5]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	mov r0, r8
 	add sp, #12
 	pop {r3, r5, r6, r7}

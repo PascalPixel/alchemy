@@ -2,7 +2,7 @@
 
 void Inventory_AddAndEquip(s32 owner, s32 target)
 {
-    struct BattleUnit *state = Owner_GetState(owner);
+    struct BtlUnit *state = UnitGet(owner);
     u16 *entry;
     s32 index;
 

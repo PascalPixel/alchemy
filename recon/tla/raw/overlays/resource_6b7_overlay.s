@@ -167,7 +167,7 @@ Func_020001a8:
 	adds r3, r3, r2
 	ldr r0, [r3]
 	sub sp, #4
-	bl Owner_GetState
+	bl UnitGet
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #0
@@ -265,13 +265,13 @@ Func_020001a8:
 	adds r0, r6, #0
 	bl UiWork_Finalize
 	movs r0, #0
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	movs r0, #1
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	movs r0, #3
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	movs r0, #2
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	add sp, #4
 	pop {r3}
 	mov r8, r3

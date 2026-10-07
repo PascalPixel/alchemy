@@ -530,7 +530,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
-#include "BATTLE_SUMMON.H"
+#include "BTLSMN.H"
 #include "MENU_LIST.H"
 
 enum {

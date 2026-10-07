@@ -15,7 +15,7 @@ Func_0811a4e0:
 	sub sp, #4
 	ldr r7, [r3, #36]
 	mov r11, r0
-	bl Owner_GetState
+	bl UnitGet
 	movs r5, #165
 	mov r9, r0
 	lsls r5, r5, #1

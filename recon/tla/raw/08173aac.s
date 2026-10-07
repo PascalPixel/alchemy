@@ -4560,9 +4560,9 @@ Func_08173aac:
 	bl Func_08196a7c
 .L_08175edc:
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #20]
-	bl Sys_Free
+	bl MemFree
 	ldr r2, .L_08175f68
 	movs r3, #120
 	str r3, [r2, #12]

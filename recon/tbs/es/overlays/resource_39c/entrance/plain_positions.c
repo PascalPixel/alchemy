@@ -70,7 +70,7 @@ extern u8 MsgMakyuriThoughtSo[];
 void Event_PrepareObjectAndApplyValue();
 s32 Djinn_AddToOwner();
 void Djinn_Activate();
-void Owner_RecalculateStats();
+void UnitCalc();
 
 struct LiftLayer {
     u8 unknown_00[12];

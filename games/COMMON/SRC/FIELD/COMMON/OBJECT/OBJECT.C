@@ -8,7 +8,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "EDITION.H"
 #include "OBJDISP.H"
 #include "RESOURCE.H"
@@ -17,7 +17,7 @@
 #include "OBJECT_DISPATCH.H"
 #include "IO_REG.H"
 #include "DMA.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "TRANSFORM.H"
 
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)

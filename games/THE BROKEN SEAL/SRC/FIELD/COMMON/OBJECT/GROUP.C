@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "CANVAS.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "BATTLE_SESSION.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "TYPES.H"
@@ -21,7 +21,7 @@
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
                                s32 state_slot, s32 state_value)
 {
-    struct BattleObjectSlot *set;
+    struct BtlObj *set;
     struct AnimationObject *group;
     struct BattleEffectWork *state;
     s32 group_index;

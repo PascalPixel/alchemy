@@ -2319,9 +2319,9 @@ Func_081848ec:
 	bl Func_08196a7c
 .L_08185ab8:
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #112]
-	bl Sys_Free
+	bl MemFree
 	ldr r2, .L_08185b4c
 	add r2, r11
 	cmp r2, #51
@@ -3462,9 +3462,9 @@ Func_08185b9c:
 	cmp r0, #16
 	bne .L_08186352
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #76]
-	bl Sys_Free
+	bl MemFree
 	mov r1, r11
 	cmp r1, #133
 	ble .L_08186494
@@ -4420,7 +4420,7 @@ Func_08185b9c:
 	bl Func_08196a7c
 	mov r5, r11
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	cmp r5, #87
 	ble .L_08186b88
 	b .L_08186d30

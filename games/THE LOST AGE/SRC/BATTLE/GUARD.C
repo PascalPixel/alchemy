@@ -8,11 +8,11 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "BATTLE_UNIT.H"
 #include "OWNER_STATE.H"
 
-#define Owner_RecalculateStatsFar ((void (*)(u16))Owner_RecalculateStatsFar)
+#define UnitCalcFar ((void (*)(u16))UnitCalcFar)
 
 
 void BattleUnit_ResetGuardLevels(void)
@@ -23,10 +23,10 @@ void BattleUnit_ResetGuardLevels(void)
 
     count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)ids);
     for (index = 0; index < count; index++) {
-        struct BattleUnit *actor;
+        struct BtlUnit *actor;
 
-        actor = Owner_GetState(ids[index]);
-        actor->guard_level = 0;
-        Owner_RecalculateStatsFar(ids[index]);
+        actor = UnitGet(ids[index]);
+        actor->guard_lv = 0;
+        UnitCalcFar(ids[index]);
     }
 }

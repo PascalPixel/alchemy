@@ -59,7 +59,7 @@ Func_081284c0:
 	ldrh r3, [r3, r0]
 	adds r0, r3, #0
 	str r3, [sp, #4]
-	bl Owner_GetState
+	bl UnitGet
 	ldr r2, [sp, #8]
 	ldr r3, [sp, #20]
 	mov r10, r0
@@ -259,7 +259,7 @@ Func_081284c0:
 	b .L_0812852c
 .L_081286ec:
 	mov r0, r11
-	bl Sys_Free
+	bl MemFree
 	ldr r2, [sp, #24]
 	ldr r0, [r2]
 	cmp r0, #0

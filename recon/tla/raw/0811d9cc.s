@@ -26,7 +26,7 @@ Func_0811d9cc:
 	movs r0, #0
 	b .L_0811ddb2
 .L_0811d9f8:
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	cmp r3, #0
@@ -280,7 +280,7 @@ Func_0811d9cc:
 	strb r3, [r7]
 	strb r4, [r5]
 	ldrb r0, [r7]
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #165
 	lsls r1, r1, #1
 	adds r3, r0, r1
@@ -451,8 +451,8 @@ Func_0811d9cc:
 	adds r0, #124
 	add r0, r10
 	bl Func_0812561c
-	bl BattleActor_CommitPlacement
-	bl Summon_Refresh
+	bl BtlObjPut
+	bl EnmUpd
 	bl Func_0811d9a4
 	movs r3, #255
 	mov r1, r11

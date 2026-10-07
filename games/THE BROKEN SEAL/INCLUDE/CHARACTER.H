@@ -5,12 +5,12 @@
 #include "OWNERVAL.H"
 #include "LAYOUT_GUARD.H"
 
-struct BattleUnit;
+struct BtlUnit;
 
 struct CharacterDefinition {
     u8 unknown_00[0x50];
     s16 hp[6];
-    s16 pp[6];
+    s16 ep[6];
     u16 attack[6];
     u16 defense[6];
     u16 agility[6];
@@ -32,7 +32,7 @@ struct ClassDefinition {
     s32 series;
     u8 required[4];
     u8 hp;
-    u8 pp;
+    u8 ep;
     u8 attack;
     u8 defense;
     u8 agility;
@@ -45,7 +45,7 @@ struct ClassDefinition {
 struct DjinnDefinition {
     u8 unknown_00[4];
     s8 hp;
-    s8 pp;
+    s8 ep;
     s8 attack;
     s8 defense;
     s8 agility;
@@ -57,14 +57,14 @@ struct EnemyDefinition {
     u8 unknown_00[15];
     u8 level;
     u16 hp;
-    u16 pp;
+    u16 ep;
     u16 attack;
     u16 defense;
     u16 agility;
     u8 luck;
     u8 turns;
     u8 hp_regen;
-    u8 pp_regen;
+    u8 ep_regen;
     u8 unknown_1e[2];
     u32 rewards;
     u8 unknown_24[4];
@@ -86,7 +86,7 @@ struct LevelUpResult {
     s16 level;
     u16 ability;
     u16 hp;
-    u16 pp;
+    u16 ep;
     u16 attack;
     u16 defense;
     u16 agility;
@@ -119,12 +119,12 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *result);
 struct LevelUpResult *Owner_GetValueIfLevelThresholdReached(s32 owner, struct LevelUpResult *result);
 struct LevelUpResult *OwnerAction_CheckLevelThreshold(s32 owner, struct LevelUpResult *result);
 void *Trade_GetOfferState(s32 which);
-void Owner_RecalculateStats(s32 owner);
+void UnitCalc(s32 owner);
 void Owner_RefreshDerivedData(s32 owner);
 s32 OwnerAction_Add(s32 owner, s32 action);
-void Owner_RecalculateRatios(s32 owner);
-void Owner_UpdateRatioPair(struct BattleUnit *owner, s32 hp);
-void Owner_UpdateSecondInputAndRatios(struct BattleUnit *owner, s32 pp);
-s16 Owner_AdjustSecondValue(s32 owner, s32 pp);
+void UnitRatio(s32 owner);
+void Owner_UpdateRatioPair(struct BtlUnit *owner, s32 hp);
+void Owner_UpdateSecondInputAndRatios(struct BtlUnit *owner, s32 ep);
+s16 UnitEpAdd(s32 owner, s32 ep);
 
 #endif

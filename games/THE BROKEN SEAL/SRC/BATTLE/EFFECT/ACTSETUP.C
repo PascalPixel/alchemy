@@ -9,13 +9,13 @@
 #include "SYSTEM.H"
 #include "RESOURCE.H"
 #include "VRAM_BLOCK.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "ANIMSPR.H"
 #include "OBJECT_RUNTIME.H"
 #include "SCRIPT_MOTION.H"
 #include "OBJDISP.H"
 #include "FIELDOBJ.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "TYPES.H"
 #include "GAME_STATE.H"
 #include "FX_SCENE.H"
@@ -206,7 +206,7 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
         work = *(gWorkSlot + 56);
     }
     work->action = action;
-    work->animation = BattleAction_Get(action)->type_0c;
+    work->animation = BtlActGet(action)->type_0c;
     running = scene->running;
     if (running != 0)
         return;

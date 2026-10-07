@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleEv_Push
+	.global BtlEvPush
 	.thumb_func
-BattleEv_Push:
+BtlEvPush:
 	push {r5, lr}
 	movs r3, #192
 	lsls r3, r3, #18

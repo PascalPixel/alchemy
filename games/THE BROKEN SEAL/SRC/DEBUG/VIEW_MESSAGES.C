@@ -12,7 +12,7 @@
 #include "IO_REG.H"
 #include "BATTLE_UNIT.H"
 #include "GAME_STATE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #define gWindowWork (*(u8 * *)&gWindowWork)
@@ -47,7 +47,7 @@ void DebugBattle_ViewMessages(void)
 {
     u16 text[64];
     s32 second = 0;
-    struct BattleUnit *unit = Owner_GetStateFar(0);
+    struct BtlUnit *unit = UnitGetFar(0);
     s32 i;
     s32 index;
     s32 window;

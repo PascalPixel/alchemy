@@ -25,7 +25,7 @@ Func_080adcec:
 	adds r5, r0, #0
 .L_080add14:
 	ldrb r0, [r6]
-	bl Owner_GetState
+	bl UnitGet
 	adds r3, r0, #0
 	movs r2, #54
 	ldrsh r1, [r3, r2]
@@ -54,7 +54,7 @@ Func_080adcec:
 	cmp r8, r1
 	beq .L_080add52
 	mov r0, r8
-	bl Owner_AdjustSecondValue
+	bl UnitEpAdd
 .L_080add52:
 	pop {r3}
 	mov r8, r3

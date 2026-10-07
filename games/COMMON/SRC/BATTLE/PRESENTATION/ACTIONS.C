@@ -12,11 +12,11 @@
 #include "EDITION.H"
 #include "BATTLE_ESCAPE.H"
 
-#include "BATTLE_WORK.H"
-#include "BATTLE_PARTY.H"
+#include "BTLWORK.H"
+#include "BTLPTY.H"
 #include "BATTLE_UNIT.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLSYS.H"
+#include "BTLDISP.H"
 #include "OWNER_STATE.H"
 
 extern struct BattlePresentationTransition *gTransitionWork;
@@ -91,8 +91,8 @@ void Palette_CopyBanksWithBrightnessOffset(s32 offset)
 
 s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
 {
-    struct BattleUnit *character;
-    struct BattleSession *battle;
+    struct BtlUnit *character;
+    struct BtlWork *battle;
     u8 *mode;
     s32 count;
     s32 added;
@@ -101,7 +101,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
     battle = Ram_HeapSlots->battle_work;
 #else
-    battle = gBattleWork;
+    battle = BtlWk;
 #endif
     {
         struct BattleActionRecord *queued = battle->actions;
@@ -137,7 +137,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
     if (Ram_HeapSlots->battle_work->two_sided != 0) {
 #else
-    if (gBattleWork->two_sided != 0) {
+    if (BtlWk->two_sided != 0) {
 #endif
         added = BattlePresentation_AppendLinkedActions(actions, count);
         if (BattlePres_WaitSync() < 0) {
@@ -161,11 +161,11 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
         do {
             if (action->command == 3 || action->command == 7) {
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-                character = Owner_GetState(action->unit_id);
-                character->guard_level = action->command == 3 ? 1 : 3;
+                character = UnitGet(action->unit_id);
+                character->guard_lv = action->command == 3 ? 1 : 3;
 #else
-                character = Owner_GetStateFar(action->unit_id);
-                character->guard_level = action->command == 3 ? 1 : 2;
+                character = UnitGetFar(action->unit_id);
+                character->guard_lv = action->command == 3 ? 1 : 2;
 #endif
             }
             action++;
@@ -191,9 +191,9 @@ finish:
 s16 Battle_GetTaggedSlotValue(s32 slot)
 {
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    struct BattleSession *battle = Ram_HeapSlots->battle_work;
+    struct BtlWork *battle = Ram_HeapSlots->battle_work;
 #else
-    struct BattleSession *battle = gBattleWork;
+    struct BtlWork *battle = BtlWk;
 #endif
 
     if ((slot & 0x80) != 0)
@@ -204,9 +204,9 @@ s16 Battle_GetTaggedSlotValue(s32 slot)
 s32 Battle_FindTaggedSlotByValue(u32 value)
 {
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    struct BattleSession *battle = Ram_HeapSlots->battle_work;
+    struct BtlWork *battle = Ram_HeapSlots->battle_work;
 #else
-    struct BattleSession *battle = gBattleWork;
+    struct BtlWork *battle = BtlWk;
 #endif
     s32 i;
     s16 item;

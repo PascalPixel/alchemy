@@ -425,7 +425,7 @@ Func_020003a0:
 	movs r0, #128
 	lsls r0, r0, #5
 	sub sp, #4
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	mov r9, r0
 	movs r2, #253
 	movs r3, #128
@@ -533,7 +533,7 @@ Func_020003a0:
 	lsls r1, r1, #3
 	bl Scheduler_AddOrUpdateCallback
 	mov r0, r9
-	bl Sys_Free
+	bl MemFree
 	add sp, #4
 	pop {r3, r5, r6, r7}
 	mov r8, r3

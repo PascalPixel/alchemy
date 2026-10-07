@@ -26,7 +26,7 @@ extern struct DebugPartyEntry Debug_PartyPresets[];
 s32 DebugParty_LoadPreset(s32 preset)
 {
     s32 next_djinn[4];
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     s32 owner;
     s32 done;
     s32 row;
@@ -62,7 +62,7 @@ s32 DebugParty_LoadPreset(s32 preset)
 
         Party_AddActiveOwnerFar(owner);
         Party_AdvanceOwnerCountToTargetFar(owner, Debug_PartyPresets[row].level);
-        state = (struct BattleUnit *)Owner_GetStateFar(owner);
+        state = (struct BtlUnit *)UnitGetFar(owner);
         for (i = 0; i < 4; i++) {
             state->djinn_owned_counts[i] = 0;
             state->djinn_active_counts[i] = 0;
@@ -71,7 +71,7 @@ s32 DebugParty_LoadPreset(s32 preset)
         }
         for (i = 0; i < 32; i++)
             /* FAKEMATCH: the halfword store through a u16 cast loads its zero from the literal pool, as the reference does. */
-            *(u16 *)&((struct BattleUnit *)state)->action_slots[i] = 0;
+            *(u16 *)&((struct BtlUnit *)state)->action_slots[i] = 0;
         for (i = 0; i < 2; i++) {
             if (Debug_PartyPresets[row].actions[i] != 0)
                 OwnerAction_AddFar(owner, Debug_PartyPresets[row].actions[i]);

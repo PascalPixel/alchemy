@@ -9,7 +9,7 @@
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "IWRAM_CALL.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "DMA.H"
 #include "IO_REG.H"
 #include "RESOURCE.H"
@@ -169,7 +169,7 @@ void Runtime_FillFreeHeapWords(u32 value)
     Iwram_FillWords((void *)address, 0x02040000U - address, value);
 }
 
-void *Runtime_BumpAllocate(s32 size)
+void *MemAlloc(s32 size)
 {
     u32 *state = (u32 *)Ram_HeapSlots;
     u32 other;

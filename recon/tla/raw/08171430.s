@@ -869,9 +869,9 @@ Func_08171430:
 	b .L_081719fc
 .L_08171b16:
 	mov r0, r11
-	bl Sys_Free
+	bl MemFree
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0

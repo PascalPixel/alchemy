@@ -22,7 +22,7 @@ Func_08196a28:
 	ldrh r3, [r5]
 	adds r0, r2, #0
 	strh r3, [r7]
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	str r0, [r7, #4]
 	movs r3, #4
 	ldr r1, [r5, #4]

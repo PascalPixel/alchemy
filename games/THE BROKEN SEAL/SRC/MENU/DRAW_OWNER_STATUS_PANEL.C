@@ -7,14 +7,14 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "CHARACTER_MENU.H"
 #include "INVENTORY_MENU.H"
 #include "BATTLE_UNIT.H"
 #include "ITEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
 
@@ -48,7 +48,7 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
     struct ItemDefinition *def;
     u32 item;
     struct InventoryMenuState *state;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     s32 window;
     s32 cnt;
     s32 value;
@@ -56,7 +56,7 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
 
     created = 0;
     state = gMenuWork;
-    unit = Owner_GetStateFar(owner);
+    unit = UnitGetFar(owner);
     item = unit->inventory[slot];
     def = Item_Get(item & 0x1ff);
     if (!(mode & 0x100))
@@ -129,13 +129,13 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
 #endif
             break;
         }
-        backup = Runtime_BumpAllocate(0x14c);
+        backup = MemAlloc(0x14c);
         Owner_Copy(backup, unit);
         if (state->equip_preview)
             unit->inventory[slot] &= 0xfdff;
         else
             Inventory_EquipFar(owner, slot);
-        Owner_RecalculateStatsFar(owner);
+        UnitCalcFar(owner);
         UiText_DrawStatComparison(unit, backup, window);
         Owner_Copy(unit, backup);
         Runtime_BumpFree(backup);

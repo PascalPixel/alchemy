@@ -1,13 +1,13 @@
 #include "BATTLE_UNIT.H"
 
 void Owner_UpdateSecondInputAndRatios(
-    struct BattleUnit *state, s32 input)
+    struct BtlUnit *state, s32 input)
 {
     s32 clamped;
     s32 value;
 
-    if (input > state->max_pp) {
-        clamped = state->max_pp;
+    if (input > state->max_ep) {
+        clamped = state->max_ep;
     } else {
         clamped = 0;
         if (input >= 0) {
@@ -16,7 +16,7 @@ void Owner_UpdateSecondInputAndRatios(
     }
     /* FAKEMATCH: the one-pass loop keeps the store before the ratio-input reads. */
     do {
-        state->pp = clamped;
+        state->ep = clamped;
     } while (0);
     value = state->hp;
     value <<= 14;
@@ -41,8 +41,8 @@ void Owner_UpdateSecondInputAndRatios(
         s32 numerator;
         s32 divisor;
 
-        numerator = state->pp;
-        divisor = state->max_pp;
+        numerator = state->ep;
+        divisor = state->max_ep;
         value = (numerator << 14) / divisor;
     }
     {
@@ -54,9 +54,9 @@ void Owner_UpdateSecondInputAndRatios(
                 output = value;
             }
         }
-        state->pp_gauge = output;
-        if ((output << 16) == 0 && state->pp != 0) {
-            state->pp_gauge = 1;
+        state->ep_gauge = output;
+        if ((output << 16) == 0 && state->ep != 0) {
+            state->ep_gauge = 1;
         }
     }
 }

@@ -11,7 +11,7 @@
 #include "OBJECT_RUNTIME.H"
 #include "GAME_STATE.H"
 #include "GLOBAL_CELLS.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(struct HopActor*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
 

@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "CANVAS.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -20,7 +20,7 @@
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "IO_REG.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "MENU_LIST.H"
 
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)

@@ -7,7 +7,7 @@ Trade_CanOfferDjinn:
 	adds r5, r1, #0
 	adds r6, r2, #0
 	adds r7, r0, #0
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #140
 	lsls r2, r2, #1
 	adds r3, r5, r2

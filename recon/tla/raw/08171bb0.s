@@ -27,7 +27,7 @@ Func_08171bb0:
 	str r3, [sp, #60]
 	movs r3, #36
 	ldrsh r0, [r4, r3]
-	bl Owner_GetState
+	bl UnitGet
 	str r0, [sp, #52]
 	movs r0, #0
 	bl BattleFx_BeginCanvasLayer
@@ -1867,7 +1867,7 @@ Func_08171bb0:
 	str r3, [r2, #12]
 .L_08172a08:
 	mov r0, r11
-	bl Sys_Free
+	bl MemFree
 	ldr r5, [sp, #88]
 	cmp r5, #2
 	beq .L_08172a18

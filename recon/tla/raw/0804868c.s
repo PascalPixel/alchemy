@@ -66,7 +66,7 @@ Func_0804868c:
 	mov r10, r2
 	str r3, [sp, #36]
 	ldr r0, [sp, #76]
-	bl Owner_GetState
+	bl UnitGet
 	adds r0, #248
 	movs r7, #0
 	mov r8, r0
@@ -1361,7 +1361,7 @@ Func_0804868c:
 	movs r0, #0
 	bl UiWork_SetAltFlagAndClearTable
 	ldr r0, [sp, #56]
-	bl Sys_Free
+	bl MemFree
 	movs r0, #1
 	bl WaitFrames
 	adds r0, r6, #0

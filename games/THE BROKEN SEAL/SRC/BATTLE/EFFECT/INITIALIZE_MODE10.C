@@ -8,10 +8,10 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "HEAP_STATE.H"
 #include "CANVAS.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "PROJECT.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
@@ -23,7 +23,7 @@
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
 #include "EFFECT_STEP.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "TRANSFORM.H"
@@ -347,7 +347,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
         if (frame >= 161 && frame <= 223) {
             for (i = 0; i != work->effect->count; i++) {
                 if (frame > i * 8 + 160) {
-                    struct BattleObjectSlot *slot =
+                    struct BtlObj *slot =
                         GetBattleObjectSlotFar(work->effect->actors[i]);
                     struct MotionObject *object = slot->object;
                     void *record;

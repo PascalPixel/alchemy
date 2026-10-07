@@ -8,15 +8,15 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
 #include "IWRAM_CALL.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_PARTY.H"
+#include "BTLTYPE.H"
+#include "BTLWORK.H"
+#include "BTLPTY.H"
 #include "SERIAL_RUNTIME.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
@@ -39,7 +39,7 @@ s32 UpdateNameEntries(void)
 {
     u16 name_text[24];
     void *buffer;
-    struct BattleUnit *name_entry;
+    struct BtlUnit *name_entry;
     s32 named_count;
     s32 index;
     s32 len;
@@ -54,7 +54,7 @@ s32 UpdateNameEntries(void)
             break;
         }
         SerialRuntime_WaitForTransferB();
-        if (name_entry->status_12a != 0) {
+        if (name_entry->side != 0) {
             named_count += 1;
         }
         WaitFrames(2);
@@ -95,7 +95,7 @@ s32 UpdateNameEntries(void)
 s32 LinkBattle_SendParty(void)
 {
     u8 *buffer;
-    struct BattleSession *work;
+    struct BtlWork *work;
     s32 j;
     struct DjinnRecoveryList *list;
     s32 size;
@@ -107,13 +107,13 @@ s32 LinkBattle_SendParty(void)
     size = LINK_PARTY_UNIT_BYTES;
     buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
     mark = 0xff;
-    work = gBattleWork;
+    work = BtlWk;
     for (i = 7; i >= 0; i--)
         work->owner_slots[i] = mark;
     count = BattleParty_PrepareActiveOwners(owners);
     for (i = 0; i < count; i++) {
-        Iwram_CopyWords(buffer, Owner_GetStateFar(owners[i]), size);
-        ((struct BattleUnit *)buffer)->status_12a = 2;
+        Iwram_CopyWords(buffer, UnitGetFar(owners[i]), size);
+        ((struct BtlUnit *)buffer)->side = 2;
         work->owner_slots[owners[i]] = i - 128;
         if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
             break;
@@ -121,7 +121,7 @@ s32 LinkBattle_SendParty(void)
         WaitFrames(2);
     }
     for (; i <= 2; i++) {
-        ((struct BattleUnit *)buffer)->status_12a = 0;
+        ((struct BtlUnit *)buffer)->side = 0;
         if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
             break;
         SerialRuntime_WaitForTransferA();

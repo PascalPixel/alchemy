@@ -13,7 +13,7 @@
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 #include "FIXED_MATH.H"
-#include "BATTLE_CALC.H"
+#include "BTLCALC.H"
 #include "FIELD_EVENT.H"
 
 
@@ -23,7 +23,7 @@ void BattleParty_ApplyDrain(s32 amount)
     s32 i;
 
     for (i = 0; i < target_count; i++)
-        Owner_AdjustSecondValueFar(gPartyState.active_owners[i], amount);
+        UnitEpAddFar(gPartyState.active_owners[i], amount);
 }
 
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
@@ -31,7 +31,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
     s32 count;
     s32 i;
     s32 value;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     if (amount < 0) {
         BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
         BattleFx_StartBufferInterpolation(4);
@@ -44,7 +44,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
     }
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++) {
-        unit = Owner_GetState(gPartyState.active_owners[i]);
+        unit = UnitGet(gPartyState.active_owners[i]);
         if (!scaled) {
             value = amount;
         } else {
@@ -74,10 +74,10 @@ s32 BattleParty_ApplyStatusDamage(void)
         remaining = count;
 
         do {
-            struct BattleUnit *object = Owner_GetState(*entry);
+            struct BtlUnit *object = UnitGet(*entry);
             s32 amount;
 
-            switch (object->poison) {
+            switch (object->doku) {
             case 1:
                 amount = -((object->max_hp + 10) / 20);
                 if (amount == 0)

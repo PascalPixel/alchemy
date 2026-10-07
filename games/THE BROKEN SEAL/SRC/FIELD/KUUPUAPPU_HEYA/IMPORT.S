@@ -91,14 +91,14 @@ Engine_MessageShowCentered:
 	.thumb_func
 Engine_ItemLoadIcon:
 	overlay_veneer ItemIcon_LoadTilesFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
-	.global Owner_RecalculateStats
+UnitGet:
+	overlay_veneer UnitGetFar
+	.global UnitCalc
 	.thumb_func
-Owner_RecalculateStats:
-	overlay_veneer Owner_RecalculateStatsFar
+UnitCalc:
+	overlay_veneer UnitCalcFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
 Engine_GameFlagIsSet:

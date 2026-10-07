@@ -407,7 +407,7 @@ Func_02000390:
 	b .L_ja_02008496
 .L_ja_020083ea:
 	ldr r0, [sp, #4]
-	bl Owner_GetState
+	bl UnitGet
 	ldr r3, [sp, #0]
 	adds r5, r0, #0
 	lsls r3, r3, #1
@@ -670,7 +670,7 @@ Func_02000390:
 	movs r0, #10
 	bl Func_02001148
 	ldr r0, [sp, #4]
-	bl Owner_GetState
+	bl UnitGet
 	ldr r3, [sp, #0]
 	adds r5, r0, #0
 	lsls r3, r3, #1
@@ -810,7 +810,7 @@ Func_02000390:
 	b .L_02008496
 .L_020083ea:
 	ldr r0, [sp, #4]
-	bl Owner_GetState
+	bl UnitGet
 	ldr r3, [sp, #0]
 	adds r5, r0, #0
 	lsls r3, r3, #1
@@ -1073,7 +1073,7 @@ Func_02000390:
 	movs r0, #10
 	bl Func_02001148
 	ldr r0, [sp, #4]
-	bl Owner_GetState
+	bl UnitGet
 	ldr r3, [sp, #0]
 	adds r5, r0, #0
 	lsls r3, r3, #1

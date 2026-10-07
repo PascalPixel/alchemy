@@ -11,7 +11,7 @@
 #include "HEAP_STATE.H"
 #include "WINDOW.H"
 #include "EDITION.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"

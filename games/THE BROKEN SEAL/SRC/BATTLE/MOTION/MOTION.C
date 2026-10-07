@@ -13,10 +13,10 @@
 #include "IO_REG.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "BATTLE_MOTION.H"
-#include "BATTLE_PRESENTATION.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLDISP.H"
+#include "BTLSYS.H"
 #include "FIELD_EVENT.H"
 
 #define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)
@@ -52,14 +52,14 @@ void Camera_InitDefaultTransform(void)
     Iwram_TransformVector((s32 *)&transfer, (s32 *)state);
 }
 
-void Actor_ResetMotionAtAnchor(s32 slot_id)
+void ObjMotRst(s32 slot_id)
 {
     s32 z;
     s32 zero;
-    struct BattleObjectSlot *slot;
+    struct BtlObj *slot;
     struct MotionObject *object;
 
-    slot = GetBattleObjectSlot(slot_id);
+    slot = BtlObjGet(slot_id);
     object = slot->object;
     zero = 0;
     object->acceleration = 0x20000;
@@ -80,10 +80,10 @@ void Actor_ResetMotionAtAnchor(s32 slot_id)
 
 void BattleMotion_SetupEscapeObject(s32 object_id)
 {
-    struct BattleObjectSlot *slot;
+    struct BtlObj *slot;
     struct MotionObject *object;
 
-    slot = GetBattleObjectSlot(object_id);
+    slot = BtlObjGet(object_id);
     object = slot->object;
     object->acceleration = 0x20000;
     object->speed_limit = 0x80000;
@@ -96,8 +96,8 @@ void BattleMotion_SetupEscapeObject(s32 object_id)
     Object_SetMode(object, 1);
 }
 
-void BattleMotion_InterpolatePosition(struct BattleObjectSlot *start_slot,
-    struct BattleObjectSlot *end_slot, s32 progress)
+void BattleMotion_InterpolatePosition(struct BtlObj *start_slot,
+    struct BtlObj *end_slot, s32 progress)
 {
     s32 z_step;
     s32 start_x;
@@ -125,7 +125,7 @@ void BattleMotion_InterpolatePosition(struct BattleObjectSlot *start_slot,
     Object_SetMode(start, 2);
 }
 
-void BattleMotion_SetObjectPosition(struct BattleObjectSlot *slot)
+void BattleMotion_SetObjectPosition(struct BtlObj *slot)
 {
     struct MotionObject *object = slot->object;
 
@@ -140,10 +140,10 @@ void BattleMotion_SetObjectPosition(struct BattleObjectSlot *slot)
 void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id)
 {
     u32 scaled_x;
-    struct BattleObjectSlot *slot;
+    struct BtlObj *slot;
     struct MotionObject *object;
 
-    slot = GetBattleObjectSlot(object_id);
+    slot = BtlObjGet(object_id);
     object = slot->object;
     object->acceleration = 0x10000;
     object->speed_limit = 0x40000;
@@ -158,7 +158,7 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id)
 
 void BattleMotion_InitializeObject(s32 id)
 {
-    struct BattleObjectSlot *slot = GetBattleObjectSlot(id);
+    struct BtlObj *slot = BtlObjGet(id);
     struct MotionObject *object = slot->object;
 
     object->acceleration = 128 << 9;
@@ -176,14 +176,14 @@ void BattleMotion_InitializeObject(s32 id)
 
 void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
 {
-    struct BattleObjectSlot *slot;
+    struct BtlObj *slot;
     struct MotionObject *object;
     s32 x;
     s32 scale;
 
-    slot = GetBattleObjectSlot(id);
+    slot = BtlObjGet(id);
     object = slot->object;
-    if (Owner_GetStateFar(id)->class_id != 0x94) {
+    if (UnitGetFar(id)->class_id != 0x94) {
         object->acceleration = BattleMotion_VariantAcceleration[variant];
         object->speed_limit = BattleMotion_VariantSpeedLimit[variant];
         if (object->y == 0 || variant > 4)
@@ -206,8 +206,8 @@ void BattleMotion_ApproachTarget(
     s32 initial_velocity_y
 )
 {
-    struct BattleObjectSlot *actor_slot = GetBattleObjectSlot(actor_id);
-    struct BattleObjectSlot *target_slot = GetBattleObjectSlot(target_id);
+    struct BtlObj *actor_slot = BtlObjGet(actor_id);
+    struct BtlObj *target_slot = BtlObjGet(target_id);
     struct MotionObject *object = actor_slot->object;
     struct MotionObject *target = target_slot->object;
     s32 scale = 75;
@@ -244,7 +244,7 @@ void BattleMotion_ResetSlotObjectMode2(s32 id)
 {
     struct MotionObject *object;
 
-    object = GetBattleObjectSlot(id)->object;
+    object = BtlObjGet(id)->object;
     Object_ResetMotion(object);
     Object_SetMode(object, 2);
 }

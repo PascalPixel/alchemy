@@ -6,7 +6,7 @@
 #include "MENU.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "GLYPH.H"
 #include "RESOURCE.H"
 #include "DMA.H"
@@ -75,27 +75,27 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
         do {
             size = (u32)Tile_Decompress4bppCodeSize;
         } while (0);
-        code = Runtime_BumpAllocate(size);
+        code = MemAlloc(size);
         size >>= 2;
         Dma_Set((const void *)Tile_Decompress4bppCode, code, 0x84000000 | size, REG_DMA3);
     }
     ((void (*)(const void *, u8 *))code)(glyph->encoded, glyph->input);
-    Sys_Free(code);
+    MemFree(code);
     if (outlined) {
         u32 size;
 
         size = (u32)Tile_ExpandMaskedCodeSize;
-        code = Runtime_BumpAllocate(size);
+        code = MemAlloc(size);
         size >>= 2;
         Dma_Set((const void *)Tile_ExpandMaskedCode, code, 0x84000000 | size, REG_DMA3);
     } else {
         u32 size;
 
         size = (u32)Tile_ExpandOpaqueCodeSize;
-        code = Runtime_BumpAllocate(size);
+        code = MemAlloc(size);
         size >>= 2;
         Dma_Set((const void *)Tile_ExpandOpaqueCode, code, 0x84000000 | size, REG_DMA3);
     }
     ((void (*)(u8 *, u8 *, u32, u32))code)(glyph->input, glyph->tiles, (u16)glyph->width, (u16)glyph->height);
-    Sys_Free(code);
+    MemFree(code);
 }

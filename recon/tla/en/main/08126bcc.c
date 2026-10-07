@@ -1,5 +1,5 @@
-#include "RUNTIME_MEM.H"
-#include "BATTLE_PARTY.H"
+#include "MEM.H"
+#include "BTLPTY.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"

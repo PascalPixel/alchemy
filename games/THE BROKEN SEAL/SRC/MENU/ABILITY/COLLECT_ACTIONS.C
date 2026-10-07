@@ -4,7 +4,7 @@
 
 #define ACTION_ID_MASK 0x3FFF
 
-s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode)
+s32 PsynergyMenu_CollectActions(struct BtlUnit *owner, u16 *actions, s32 mode)
 {
     /* FAKEMATCH: the scalar cursor, offset clears and empty branches preserve operand order and 274 bytes; indexed clearing yields 266. */
     s32 n;
@@ -26,7 +26,7 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode
     if (mode == 1) {
         for (i = 0, off = (u8 *)owner->action_slots - (u8 *)owner, out = actions; i <= 31; i++, off += 4) {
             if (*(u16 *)(off + (s32)owner) != 0) {
-                if (BattleAction_Get(*(u16 *)(off + (s32)owner) & ACTION_ID_MASK)->type_0c != 0) {
+                if (BtlActGet(*(u16 *)(off + (s32)owner) & ACTION_ID_MASK)->type_0c != 0) {
                     *out = *(u16 *)((s32)owner + off);
                     out++;
                     count++;
@@ -39,7 +39,7 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode
 
             for (i = 0; i < 32; i++) {
                 if (owner->action_slots[i].encoded_action != 0) {
-                    struct BattleAction *ability = BattleAction_Get(owner->action_slots[i].encoded_action & ACTION_ID_MASK);
+                    struct BtlAct *ability = BtlActGet(owner->action_slots[i].encoded_action & ACTION_ID_MASK);
 
                     if (j == 0 && (ability->type_0c != 0 || (ability->target_flags & 0x40) != 0)) {
                         *out = owner->action_slots[i].encoded_action;

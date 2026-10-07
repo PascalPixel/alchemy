@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 
 extern u8 gProjection[];
 void Graphics_PrepareTransferInIwramWork();

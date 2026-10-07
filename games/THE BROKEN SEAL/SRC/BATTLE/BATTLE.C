@@ -8,12 +8,12 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "BATTLE_STATUS_ICON.H"
-#include "BATTLE_RUNTIME.H"
-#include "MOTION_OBJECT.H"
+#include "BTLSYS.H"
+#include "MOTOBJ.H"
 #include "ANIMSPR.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "FIELD_EVENT.H"
 
 #define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct MotionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
@@ -35,7 +35,7 @@ void BattleActor_UpdateSpritePriorities(void)
     if (ids[i] != BATTLE_UNIT_LIST_END) {
 again:
         {
-            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+            struct BtlObj *slot = BtlObjGet(ids[i]);
 
             if (slot != 0) {
                 object = slot->object;
@@ -73,7 +73,7 @@ again:
     {
         count = BattleParty_ListActorIds(BATTLE_SIDE_PARTY, ids);
         for (i = 0; i < count; i++) {
-            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+            struct BtlObj *slot = BtlObjGet(ids[i]);
 
             if (slot != 0) {
                 object = slot->object;
@@ -102,7 +102,7 @@ again:
     {
         count = BattleParty_ListActorIds(BATTLE_SIDE_ENEMIES, ids);
         for (i = 0; i < count; i++) {
-            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+            struct BtlObj *slot = BtlObjGet(ids[i]);
 
             if (slot != 0) {
                 object = slot->object;
@@ -132,37 +132,37 @@ again:
 
 
 
-s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObjectSlot *output)
+s32 BattleUnit_BuildStatusFlags(s32 id, struct BtlObj *output)
 {
-    struct BattleUnit *state = Owner_GetStateFar(id);
-    s8 mode = state->poison;
+    struct BtlUnit *state = UnitGetFar(id);
+    s8 mode = state->doku;
     u32 flags = 0;
 
     if (mode == 1)
         flags = 1;
     if (mode == 2)
         flags |= mode;
-    if (state->delusion != 0)
+    if (state->maboroshi != 0)
         flags |= 0x20;
-    if (state->stun != 0) {
+    if (state->shibire != 0) {
         s32 kind;
         flags |= 4;
         kind = state->class_id;
         if (kind == 0x79 || kind == 0x94)
             flags &= ~4;
     }
-    if (state->psy_seal != 0)
+    if (state->fuuji != 0)
         flags |= 8;
-    if (state->evil_spirit != 0)
+    if (state->akuryo != 0)
         flags |= 0x40;
-    if (state->sleep != 0)
+    if (state->nemuri != 0)
         flags |= 0x10;
-    if (state->death_count != 0)
-        flags |= 1 << (state->death_count + 6);
+    if (state->shiryo != 0)
+        flags |= 1 << (state->shiryo + 6);
     output->active_conditions = flags;
 }
 
-s32 BattleStatusIcon_Cycle(struct BattleObjectSlot *record)
+s32 BattleStatusIcon_Cycle(struct BtlObj *record)
 {
     struct AnimationEntry *old_effect;
     struct AnimationEntry *effect;
@@ -251,20 +251,20 @@ done:
 
 s32 BattlePres_SetActorModeAndAction(s32 id)
 {
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     s32 value;
 
-    state = Owner_GetStateFar(id);
+    state = UnitGetFar(id);
     value = 1;
     if (state->hp != 0) {
-        if (state->sleep != 0 || state->stun != 0 || state->cannot_move != 0)
-            value = (state->status_12a != BATTLE_UNIT_ENEMY) * 4;
+        if (state->nemuri != 0 || state->shibire != 0 || state->miugoki != 0)
+            value = (state->side != BATTLE_UNIT_ENEMY) * 4;
     } else {
-        s32 changed = state->status_12a ^ value;
+        s32 changed = state->side ^ value;
         value = (u32)(-changed | changed) >> 31;
         value = 5 - value;
     }
 
-    Object_SetMode(GetBattleObjectSlot(id)->object, value);
-    ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(id)->object, (id & 3) + 14);
+    Object_SetMode(BtlObjGet(id)->object, value);
+    ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(id)->object, (id & 3) + 14);
 }

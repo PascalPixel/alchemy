@@ -14,7 +14,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "FIELD_EFFECT.H"
 #include "SCENE.H"
 #include "FIELDRUN.H"

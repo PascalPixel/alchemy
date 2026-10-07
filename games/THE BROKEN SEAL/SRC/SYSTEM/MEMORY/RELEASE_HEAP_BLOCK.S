@@ -18,9 +18,9 @@ Runtime_ReleaseHeapBlock:
 AlchemyUncredited_08002dee:
 	.2byte	0x0000
 AlchemyUncreditedEnd_08002dee:
-	.global Sys_Free
+	.global MemFree
 	.thumb_func
-Sys_Free:
+MemFree:
 	.global Party_Do
 	.thumb_func
 Party_Do:

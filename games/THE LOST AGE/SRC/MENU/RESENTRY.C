@@ -7,7 +7,7 @@
 #include "MENU.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "RESMENU.H"
@@ -21,12 +21,12 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style)
 void Menu_LoadResourceSlot(s32 slot, s32 index)
 {
     s32 size = 1024;
-    void *buffer = (void *)Runtime_BumpAllocate(size);
+    void *buffer = (void *)MemAlloc(size);
     u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
     Resource_DecodeByteLzInRam((void *)((u32)base + base[index]), buffer);
     VramBlock_LoadCached(slot, size, buffer);
-    Sys_Free(buffer);
+    MemFree(buffer);
 }
 
 void Menu_AppendResourceEntry(s32 no)

@@ -5,7 +5,7 @@
 #include "TYPES.H"
 
 void Owner_RefreshDerivedData(s32 arg0);
-s32 Owner_RecalculateStats(s32);
+s32 UnitCalc(s32);
 s32 GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 
@@ -22,7 +22,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
 
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
-        obj = Owner_GetState(gPartyState.active_owners[n]);
+        obj = UnitGet(gPartyState.active_owners[n]);
 
         do {
             *(u16 *)(obj + 0x38) = *(u16 *)(obj + 0x34);

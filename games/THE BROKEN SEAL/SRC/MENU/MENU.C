@@ -10,7 +10,7 @@
 #include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "SELECT.H"
 #include "TYPES.H"
 #include "SCENE.H"

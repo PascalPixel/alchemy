@@ -9,23 +9,23 @@
 #include "SYSTEM.H"
 #include "FIXED_POINT_POSITION.H"
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "SCENE.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "BATTLE_ESCAPE.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLSYS.H"
+#include "BTLWORK.H"
+#include "BTLDISP.H"
 #include "GAME_STATE.H"
 #include "PROJECT.H"
 
 #define gFrameCount (*(s32 *)&gFrameCount)
 
 #define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)
-#define Owner_RecalculateStatsFar ((void (*)(u16))Owner_RecalculateStatsFar)
+#define UnitCalcFar ((void (*)(u16))UnitCalcFar)
 
 
 
@@ -121,11 +121,11 @@ void BattleUnit_ResetGuardLevels(void)
 
     count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)ids);
     for (index = 0; index < count; index++) {
-        struct BattleUnit *actor;
+        struct BtlUnit *actor;
 
-        actor = Owner_GetStateFar(ids[index]);
-        actor->guard_level = 0;
-        Owner_RecalculateStatsFar(ids[index]);
+        actor = UnitGetFar(ids[index]);
+        actor->guard_lv = 0;
+        UnitCalcFar(ids[index]);
     }
 }
 
@@ -138,10 +138,10 @@ s32 BattleEscape_CheckSuccess(void)
     s32 level_total;
     s32 unit_index;
     s32 chance;
-    struct BattleSession *escape_state;
+    struct BtlWork *escape_state;
 
     escaped = 0;
-    escape_state = gBattleWork;
+    escape_state = BtlWk;
     if (escape_state->encounter_mode == 1) {
         escaped = 1;
     } else {
@@ -152,7 +152,7 @@ s32 BattleEscape_CheckSuccess(void)
             living_units);
         level_total = 0;
         for (unit_index = escaped; unit_index < living_count; unit_index++) {
-            level_total += Owner_GetStateFar(
+            level_total += UnitGetFar(
                 living_units[unit_index])->level;
         }
         chance += level_total * 0x1F4 / living_count;
@@ -161,7 +161,7 @@ s32 BattleEscape_CheckSuccess(void)
             living_units);
         level_total = 0;
         for (unit_index = 0; unit_index < living_count; unit_index++) {
-            level_total += Owner_GetStateFar(
+            level_total += UnitGetFar(
                 living_units[unit_index])->level;
         }
         chance -= level_total * 0x1F4 / living_count;
@@ -188,11 +188,11 @@ s32 BattlePres_BuildUnitEntries(
     s32 unit_index;
 
     for (unit_index = 0; unit_index < unit_count; unit_index++) {
-        struct BattleUnit *unit = Owner_GetStateFar(unit_ids[unit_index]);
+        struct BtlUnit *unit = UnitGetFar(unit_ids[unit_index]);
         s32 copy_index;
 
         for (copy_index = 0; copy_index < unit->action_entry_count; copy_index++) {
-            if (unit->sleep != 0 || (*(u32 *)&unit->delusion & 0xffffff00)) {
+            if (unit->nemuri != 0 || (*(u32 *)&unit->maboroshi & 0xffffff00)) {
                 struct BattleActionRecord *entry =
                     &entries[entry_count];
                 entry->unit_id = unit_ids[unit_index];

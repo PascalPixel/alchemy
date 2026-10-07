@@ -8,23 +8,23 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_EVENT.H"
+#include "BTLEV.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
 #include "BATTLE_MOTION.H"
 #include "BATTLE_COMMAND.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "SYSTEM.H"
-#include "BATTLE_MSG.H"
-#include "BATTLE_PRESENTATION.H"
-#include "MOTION_OBJECT.H"
+#include "BTLMES.H"
+#include "BTLDISP.H"
+#include "MOTOBJ.H"
 #include "ANIMSPR.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "OBJDISP.H"
 #include "INVENTORY.H"
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
-#include "BATTLE_ACTOR.H"
+#include "BTLOBJ.H"
 #include "FIELD_EVENT.H"
 
 #define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct MotionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
@@ -34,12 +34,12 @@
 
 s32 ArcTan2(s32 first, s32 second);
 
-s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
+s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
 {
     struct BattlePresentationWork work;
     struct MotionObject *object;
     struct AnimationObject *animation;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     s16 position[3];
     s32 scripted;
     struct BattlePresentationTransition *transition;
@@ -56,7 +56,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
     /* FAKEMATCH: r0 forgets the plan, so the first read reloads it */
     asm volatile("" : : : "r0");
     transition = gTransitionWork;
-    object = GetBattleObjectSlot(plan->actor_id)->object;
+    object = BtlObjGet(plan->actor_id)->object;
     z = object->z;
     x = object->x;
     angle = (u16)ArcTan2(x, z);
@@ -77,23 +77,23 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
     BattlePres_SetActorModes(0, 0);
     BattlePres_BuildTargetList(plan, &work);
     if (work.kind == 0x87)
-        UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode & ~1);
+        PtyStDrawFar(BtlWk->party_status_mode & ~1);
 
-    unit = Owner_GetStateFar(work.actor);
-    Owner_GetStateFar(work.actors[0]);
-    scripted = plan->target_modifiers[0];
-    direct = plan->target_adjustments[0] == 0;
+    unit = UnitGetFar(work.actor);
+    UnitGetFar(work.actors[0]);
+    scripted = plan->tgt_crit[0];
+    direct = plan->tgt_adj[0] == 0;
 
     animation = GetMotionRecord(
-        GetBattleObjectSlot(plan->actor_id)->object, 0);
+        BtlObjGet(plan->actor_id)->object, 0);
     divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->anim_id, 2, 1);
     BattleMotion_ApproachTarget(
         work.actor,
         work.actors[0],
         divisor,
         Battle_GetSpriteFlagHighBits(unit->class_id) << 16);
-    ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(work.actor)->object, 16);
-    GetBattleObjectSlot(work.actors[0]);
+    ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(work.actor)->object, 16);
+    BtlObjGet(work.actors[0]);
 
     if ((u16)work.actors[0] <= 7)
         work.side = 1;
@@ -114,10 +114,10 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
         WaitFrames(2);
         WaitFrames(4);
         WaitFrames(10);
-        BattleEv_Push(0, plan->target_ids[0]);
-        BattleEv_Push(4, (s32)MsgNimblyDodgesBlow);
+        BtlEvPush(0, plan->tgt_no[0]);
+        BtlEvPush(4, (s32)MsgNimblyDodgesBlow);
         BattleEv_DispatchQueued();
-        Actor_ResetMotionAtAnchor(work.actors[0]);
+        ObjMotRst(work.actors[0]);
     } else {
         phase = 0;
         work.flags = 0;
@@ -167,16 +167,16 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
             BattleParty_ListAllUnitsAndSubmit();
             BattlePres_SetupTransitionScene(0, 0, 0, 100);
         }
-        Actor_ResetMotionAtAnchor(work.actors[0]);
+        ObjMotRst(work.actors[0]);
     }
-    Actor_ResetMotionAtAnchor(work.actor);
+    ObjMotRst(work.actor);
     return 0;
 }
 
-s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
+s32 BattlePres_RunSimple(struct BtlPlan *input, s32 flags)
 {
     struct BattlePresentationWork work;
-    struct BattlePlan *saved_input;
+    struct BtlPlan *saved_input;
     struct MotionObject *object;
     struct AnimationObject *animation;
     struct BattlePresentationTransition *transition;
@@ -190,7 +190,7 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
 
     transition = gTransitionWork;
     saved_input = input;
-    object = GetBattleObjectSlot(saved_input->actor_id)->object;
+    object = BtlObjGet(saved_input->actor_id)->object;
     z = object->z;
     x = object->x;
     angle = (u16)ArcTan2(x, z);
@@ -210,49 +210,49 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
 
     BattlePres_SetActorModes(0, 0);
     BattlePres_BuildTargetList(saved_input, &work);
-    Owner_GetStateFar(work.actor);
-    Owner_GetStateFar(saved_input->target_ids[0]);
+    UnitGetFar(work.actor);
+    UnitGetFar(saved_input->tgt_no[0]);
 
     scripted = flags & 2;
     animation = GetMotionRecord(
-        GetBattleObjectSlot(saved_input->actor_id)->object, 0);
+        BtlObjGet(saved_input->actor_id)->object, 0);
     divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->anim_id, 2, 1);
     BattleMotion_ApproachTarget(
         work.actor,
-        saved_input->target_ids[0],
+        saved_input->tgt_no[0],
         divisor,
         0);
-    ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(work.actor)->object, 16);
-    GetBattleObjectSlot(saved_input->target_ids[0]);
+    ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(work.actor)->object, 16);
+    BtlObjGet(saved_input->tgt_no[0]);
 
-    if (saved_input->target_ids[0] <= 7)
+    if (saved_input->tgt_no[0] <= 7)
         work.side = 1;
     else
         work.side = 0;
     if (scripted != 0) {
         WaitFrames(10);
-        BattleMotion_ResetObjectAtScaledAnchor(saved_input->target_ids[0]);
+        BattleMotion_ResetObjectAtScaledAnchor(saved_input->tgt_no[0]);
         WaitFrames(2);
         WaitFrames(4);
         WaitFrames(10);
-        Actor_ResetMotionAtAnchor(saved_input->target_ids[0]);
+        ObjMotRst(saved_input->tgt_no[0]);
     } else {
         BattleFx_DispatchByIdRangeFar(&work);
         BattleEv_DispatchQueued();
-        Actor_ResetMotionAtAnchor(saved_input->target_ids[0]);
+        ObjMotRst(saved_input->tgt_no[0]);
     }
-    Actor_ResetMotionAtAnchor(work.actor);
+    ObjMotRst(work.actor);
     return 0;
 }
 
-s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
+s32 BattlePres_RunItem(struct BtlPlan *plan, s32 unused,
                         struct BattleActionRecord *selection)
 {
     struct BattlePresentationWork work;
     struct MotionObject *object;
     s32 i;
     s32 item;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     struct ItemDefinition *def;
     struct BattlePresentationTransition *transition = gTransitionWork;
     s32 facing;
@@ -265,17 +265,17 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
         transition->target_yaw = facing;
     BattlePres_BuildTargetList(plan, &work);
     BattlePres_SetActorModes(0, 0);
-    object = GetBattleObjectSlot(work.actor)->object;
+    object = BtlObjGet(work.actor)->object;
     Object_SetMode(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);
-    if (plan->target_ids[0] <= 7)
+    if (plan->tgt_no[0] <= 7)
         work.side = 1;
     else
         work.side = 0;
 
     for (i = 0; i != work.count; i++) {
         struct AnimationObject *animation = GetMotionRecord(
-            GetBattleObjectSlot(work.actors[i])->object, 0);
+            BtlObjGet(work.actors[i])->object, 0);
         s32 j;
 
         for (j = 0; j != animation->count - 1; j++)
@@ -289,7 +289,7 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
         i = 0;
         fade = 0;
         do {
-            struct BattleSession *battle = gBattleWork;
+            struct BtlWork *battle = BtlWk;
 
             if (i < 20) {
                 u16 *palette = battle->palette;
@@ -312,16 +312,16 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
     BattleEventRuntime_WaitForReady();
     Object_SetMode(object, 1);
     for (i = 0; i != work.count; i++)
-        Actor_ResetMotionAtAnchor(work.actors[i]);
+        ObjMotRst(work.actors[i]);
 
-    unit = Owner_GetStateFar(selection->unit_id);
+    unit = UnitGetFar(selection->unit_id);
     item = unit->inventory[selection->parameter];
     def = Item_Get(item);
     if (def->use_type == 1) {
         s32 result = Inventory_RemoveFar(selection->unit_id, selection->parameter);
         s32 index = selection->parameter;
         if (result == 2) {
-            struct BattleSession *battle = gBattleWork;
+            struct BtlWork *battle = BtlWk;
             u32 row;
 
             for (row = 0; row < 20; row++) {
@@ -335,9 +335,9 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
             }
         }
     } else if (def->use_type == 2) {
-        if ((BattleRandom16Far() & 7) == 0) {
-            BattleEv_Push(BATTLE_EVENT_ITEM, unit->inventory[selection->parameter]);
-            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgUsedItemBroke);
+        if ((BtlRndFar() & 7) == 0) {
+            BtlEvPush(BEV_ITEM, unit->inventory[selection->parameter]);
+            BtlEvPush(BEV_MES, (s32)MsgUsedItemBroke);
             Inventory_BreakFar(selection->unit_id, selection->parameter);
             BattleEv_DispatchQueued();
         }

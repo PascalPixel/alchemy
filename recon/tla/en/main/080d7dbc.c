@@ -2,7 +2,7 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "ANIMSPR.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "OBJECT_RUNTIME.H"
 #include "OBJDISP.H"
 #include "PARTY_STATE.H"

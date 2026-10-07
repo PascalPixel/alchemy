@@ -20,7 +20,7 @@ Func_0811e830:
 	lsls r7, r7, #19
 	adds r0, r3, #0
 	str r3, [sp, #8]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r0, [r0]
 	movs r1, #253
 	mov r10, r0
@@ -68,7 +68,7 @@ Func_0811e830:
 	bl ReleaseBattleObjectRecords
 	ldr r3, [sp, #4]
 	ldrb r0, [r3]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r3, .L_0811e8d0
 	adds r1, r5, #0
 	movs r2, #44
@@ -140,7 +140,7 @@ Func_0811e830:
 	beq .L_0811e954
 	mov r3, r11
 	ldrh r0, [r7, r3]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	strh r5, [r0, #4]
 .L_0811e954:
 	subs r6, #1
@@ -167,7 +167,7 @@ Func_0811e830:
 	bne .L_0811e970
 .L_0811e980:
 	ldr r0, [sp, #8]
-	bl Actor_ResetMotionAtAnchor
+	bl ObjMotRst
 	mov r2, r10
 	ldr r3, [r2, #56]
 	movs r7, #128

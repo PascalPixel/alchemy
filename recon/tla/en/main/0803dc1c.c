@@ -1,5 +1,5 @@
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 
 struct GlyphCursor { u16 unused; u16 cursor; };

@@ -854,32 +854,32 @@ BattlePlacement_StepPairs:
 	.global Camera_FlagTransformWork
 Camera_FlagTransformWork:
 	.incbin "baserom.gba", 0x000c2a94, 0x0000003c
-	.global HitFalloff
-HitFalloff:
+	.global HitTbl
+HitTbl:
 	.incbin "baserom.gba", 0x000c2ad0, 0x00000008
-	.global PpLossFalloff
-PpLossFalloff:
+	.global EpLossTbl
+EpLossTbl:
 	.incbin "baserom.gba", 0x000c2ad8, 0x00000018
-	.global HpHealFalloff
-HpHealFalloff:
+	.global HpRcvTbl
+HpRcvTbl:
 	.incbin "baserom.gba", 0x000c2af0, 0x00000018
-	.global PpDmgFalloff
-PpDmgFalloff:
+	.global EpDmgTbl
+EpDmgTbl:
 	.incbin "baserom.gba", 0x000c2b08, 0x00000018
-	.global HpDmgFalloff5
-HpDmgFalloff5:
+	.global HpDmgTbl5
+HpDmgTbl5:
 	.incbin "baserom.gba", 0x000c2b20, 0x00000018
-	.global HpDmgFalloff8
-HpDmgFalloff8:
+	.global HpDmgTbl8
+HpDmgTbl8:
 	.incbin "baserom.gba", 0x000c2b38, 0x00000018
-	.global HpDmgFalloff6
-HpDmgFalloff6:
+	.global HpDmgTbl6
+HpDmgTbl6:
 	.incbin "baserom.gba", 0x000c2b50, 0x00000018
-	.global PpHealFalloff
-PpHealFalloff:
+	.global EpRcvTbl
+EpRcvTbl:
 	.incbin "baserom.gba", 0x000c2b68, 0x00000018
-	.global HpDmgFalloff
-HpDmgFalloff:
+	.global HpDmgTbl
+HpDmgTbl:
 	.incbin "baserom.gba", 0x000c2b80, 0x00000018
 	.global BattleCommand_SelectionWeights
 BattleCommand_SelectionWeights:

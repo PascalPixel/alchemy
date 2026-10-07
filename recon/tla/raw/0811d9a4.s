@@ -17,7 +17,7 @@ Func_0811d9a4:
 	ldrh r0, [r6]
 	subs r5, #1
 	adds r6, #2
-	bl Actor_ResetMotionAtAnchor
+	bl ObjMotRst
 	cmp r5, #0
 	bne .L_0811d9ba
 .L_0811d9c8:

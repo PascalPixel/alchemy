@@ -1,4 +1,4 @@
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "ITEM.H"
 #include "GAME_FLAGS.H"
@@ -7,7 +7,7 @@
 struct OwnerStats {
     u8 unknown_000[0x10];
     s16 base_hp;
-    s16 base_pp;
+    s16 base_ep;
     s16 hp_ratio;
     s16 pp_ratio;
     u16 base_attack;
@@ -20,9 +20,9 @@ struct OwnerStats {
     u8 unknown_022[2];
     s16 base_element[4][2];
     s16 max_hp;
-    s16 max_pp;
+    s16 max_ep;
     s16 hp;
-    s16 pp;
+    s16 ep;
     s16 attack;
     s16 defense;
     s16 agility;
@@ -60,7 +60,7 @@ struct OwnerStats {
 struct DjinnDefinition {
     u8 unknown_00[4];
     s8 hp;
-    s8 pp;
+    s8 ep;
     s8 attack;
     s8 defense;
     s8 agility;
@@ -70,7 +70,7 @@ struct DjinnDefinition {
 struct ClassRecord {
     u8 unknown_00[8];
     u8 hp;
-    u8 pp;
+    u8 ep;
     u8 attack;
     u8 defense;
     u8 agility;
@@ -79,7 +79,7 @@ struct ClassRecord {
 
 struct StatWork {
     s32 hp;
-    s32 pp;
+    s32 ep;
     s32 attack;
     s32 defense;
     s32 agility;
@@ -101,7 +101,7 @@ s32 __divsi3(s32 numerator, s32 denominator);
 
 #define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-void Owner_RecalculateStats(s32 owner)
+void UnitCalc(s32 owner)
 {
     struct StatWork *work;
     struct OwnerStats *st;
@@ -114,9 +114,9 @@ void Owner_RecalculateStats(s32 owner)
     s16 old;
 
     work = Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
-    st = Owner_GetState(owner);
+    st = UnitGet(owner);
     work->hp = st->base_hp;
-    work->pp = st->base_pp;
+    work->ep = st->base_ep;
     work->attack = st->base_attack;
     work->defense = st->base_defense;
     work->agility = st->base_agility;
@@ -136,11 +136,11 @@ void Owner_RecalculateStats(s32 owner)
     }
 
     if (STAT_DIFF(st->max_hp * st->hp_ratio / 0x4000, st->hp) > 1
-        || STAT_DIFF(st->max_pp * st->pp_ratio / 0x4000, st->pp) > 1) {
+        || STAT_DIFF(st->max_ep * st->pp_ratio / 0x4000, st->ep) > 1) {
         st->hp_ratio = 0x4000;
         st->pp_ratio = 0x4000;
         st->hp = st->max_hp;
-        st->pp = st->max_pp;
+        st->ep = st->max_ep;
     }
 
     st->curse &= ~3;
@@ -179,7 +179,7 @@ void Owner_RecalculateStats(s32 owner)
                     work->stat_20 += work->amount;
                     break;
                 case 3:
-                    work->pp += work->amount;
+                    work->ep += work->amount;
                     break;
                 case 4:
                     work->stat_24 += work->amount;
@@ -241,7 +241,7 @@ void Owner_RecalculateStats(s32 owner)
                         (const struct DjinnDefinition *)Djinn_GetDefinition(el, i);
 
                     work->hp += djinn->hp;
-                    work->pp += djinn->pp;
+                    work->ep += djinn->ep;
                     work->attack += djinn->attack;
                     work->defense += djinn->defense;
                     work->agility += djinn->agility;
@@ -254,7 +254,7 @@ void Owner_RecalculateStats(s32 owner)
             struct ClassRecord *class = Owner_GetRecordStride84(st->class_id);
 
             work->hp = __divsi3(work->hp * class->hp, 10);
-            work->pp = __divsi3(work->pp * class->pp, 10);
+            work->ep = __divsi3(work->ep * class->ep, 10);
             work->attack = __divsi3(work->attack * class->attack, 10);
             work->defense = __divsi3(work->defense * class->defense, 10);
             work->agility = __divsi3(work->agility * class->agility, 10);
@@ -279,7 +279,7 @@ void Owner_RecalculateStats(s32 owner)
                     work->stat_20 = __divsi3(work->stat_20 * work->amount, 10);
                     break;
                 case 2:
-                    work->pp = __divsi3(work->pp * work->amount, 10);
+                    work->ep = __divsi3(work->ep * work->amount, 10);
                     break;
                 case 3:
                     work->stat_24 = __divsi3(work->stat_24 * work->amount, 10);
@@ -404,21 +404,21 @@ void Owner_RecalculateStats(s32 owner)
         st->hp = value;
     }
 
-    old = st->max_pp;
-    if (work->pp < 0)
-        work->pp = 0;
-    if (work->pp > cap)
-        work->pp = cap;
-    st->max_pp = work->pp;
-    if (old != st->max_pp) {
-        value = work->pp * st->pp_ratio / 0x4000;
+    old = st->max_ep;
+    if (work->ep < 0)
+        work->ep = 0;
+    if (work->ep > cap)
+        work->ep = cap;
+    st->max_ep = work->ep;
+    if (old != st->max_ep) {
+        value = work->ep * st->pp_ratio / 0x4000;
         if (value < 0)
             value = 0;
         if (value > cap)
             value = cap;
-        if (st->pp != 0 && value == 0)
+        if (st->ep != 0 && value == 0)
             value = 1;
-        st->pp = value;
+        st->ep = value;
     }
 
     Runtime_BumpFree(work);

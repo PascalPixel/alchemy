@@ -1,12 +1,12 @@
 #include "OWNER_STATE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 
 struct OwnerLevelState {
     u8 unknown_000[0x0f];
     u8 level;
     u16 base_hp;
-    u16 base_pp;
+    u16 base_ep;
     u8 unknown_014[4];
     u16 base_attack;
     u16 base_defense;
@@ -24,7 +24,7 @@ struct OwnerLevelState {
 struct OwnerGrowth {
     u8 unknown_00[0x50];
     s16 hp[6];
-    s16 pp[6];
+    s16 ep[6];
     u16 attack[6];
     u16 defense[6];
     u16 agility[6];
@@ -35,7 +35,7 @@ struct LevelUpResult {
     s16 level;
     u16 ability;
     u16 hp;
-    u16 pp;
+    u16 ep;
     u16 attack;
     u16 defense;
     u16 agility;
@@ -49,11 +49,11 @@ struct LevelUpWork {
     u8 unused_0c[0x20];
 };
 
-void Sys_Free(void *buffer);
+void MemFree(void *buffer);
 u32 Owner_GetLevelThreshold(s32 owner, s32 level);
 struct OwnerGrowth *Character_GetDefinition(s32 owner);
 s32 Owner_RefreshClassActions(s32 owner);
-void Owner_RecalculateStats(s32 owner);
+void UnitCalc(s32 owner);
 u32 Random16(void);
 s32 __divsi3(s32 numerator, s32 denominator);
 u32 __udivsi3(u32 numerator, u32 denominator);
@@ -67,7 +67,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
     s32 diff;
     s32 level;
 
-    st = Owner_GetState(owner);
+    st = UnitGet(owner);
     work = Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
     work->class_id = st->class_id;
     level = st->level;
@@ -75,7 +75,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
     res->level = level;
     res->ability = 0xffff;
     res->hp = 0;
-    res->pp = 0;
+    res->ep = 0;
     res->attack = 0;
     res->defense = 0;
     res->agility = 0;
@@ -89,7 +89,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         work->growth = Character_GetDefinition(owner);
         if (res->level == 1) {
             res->hp += work->growth->hp[0];
-            res->pp += work->growth->pp[0];
+            res->ep += work->growth->ep[0];
             res->attack += work->growth->attack[0];
             res->defense += work->growth->defense[0];
             res->agility += work->growth->agility[0];
@@ -102,8 +102,8 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
             band = 4;
         diff = work->growth->hp[band + 1] - work->growth->hp[band];
         res->hp += __udivsi3((Random16() * 20 >> 16) + diff, 20);
-        diff = work->growth->pp[band + 1] - work->growth->pp[band];
-        res->pp += __udivsi3((Random16() * 20 >> 16) + diff, 20);
+        diff = work->growth->ep[band + 1] - work->growth->ep[band];
+        res->ep += __udivsi3((Random16() * 20 >> 16) + diff, 20);
         diff = work->growth->attack[band + 1] - work->growth->attack[band];
         res->attack += __udivsi3((Random16() * 20 >> 16) + diff, 20);
         diff = work->growth->defense[band + 1] - work->growth->defense[band];
@@ -113,7 +113,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         diff = work->growth->luck[band + 1] - work->growth->luck[band];
         res->luck += __udivsi3((Random16() * 20 >> 16) + diff, 20);
         st->base_hp += res->hp;
-        st->base_pp += res->pp;
+        st->base_ep += res->ep;
         st->base_attack += res->attack;
         st->base_defense += res->defense;
         st->base_agility += res->agility;
@@ -122,8 +122,8 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         st->base_20 = 0;
         st->base_21 = 0;
         Owner_RefreshClassActions(owner);
-        Owner_RecalculateStats(owner);
+        UnitCalc(owner);
     }
-    Sys_Free(work);
+    MemFree(work);
     return res;
 }

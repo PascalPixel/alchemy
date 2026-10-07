@@ -16,11 +16,11 @@ void Shop_SellItem(s32, s32, s32);
 
 s32 Shop_SellOld(s32 unit_id, s32 slot)
 {
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     s32 item_offset;
     s32 item_id;
 
-    unit = Owner_GetStateFar(unit_id);
+    unit = UnitGetFar(unit_id);
     if (slot == -1)
     {
         return 0;

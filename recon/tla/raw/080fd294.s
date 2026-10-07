@@ -8,7 +8,7 @@ Func_080fd294:
 	lsls r3, r3, #18
 	adds r3, #220
 	ldr r7, [r3]
-	bl Owner_GetState
+	bl UnitGet
 	movs r3, #226
 	lsls r3, r3, #1
 	adds r6, r7, r3

@@ -40,7 +40,7 @@ void Ui_PrepareTransferFromTableEntry(u32 index);
 s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y);
 void UiTextResource_Release(s32 value);
-void UiWindow_DrawPartyStatusContents(s32 flags);
+void PtyStDraw(s32 flags);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 #ifndef OWN_UiWindow_SetTilemapEntry
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y, u32 mode);
@@ -54,7 +54,7 @@ void UiWork_UploadDirtyBlocks(void);
 #if !GAME_TLA
 struct AnimationObject;
 struct ArticleTable;
-struct BattleUnit;
+struct BtlUnit;
 struct EffectLaunch;
 struct GlyphPalette;
 struct NumberRow;
@@ -323,7 +323,7 @@ void Ui_ApplyTableScaleToObject(struct UiScaleSprite *obj);
 #endif
 void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 flag);
 s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 slot);
-void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 layer);
+void Ui_DrawValuePairRows(struct BtlUnit *unit, s32 layer);
 void Ui_FillGridColumnFromMetadata(s32 slot, s32 value);
 s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step);
 void Ui_SetGridColumnNumber(s32 slot, s32 no);
@@ -350,7 +350,7 @@ s32 UiText_BuildRenderEntriesMode1(s32 arg0);
 #ifndef OWN_UiText_DrawFourNumbersInRow
 void UiText_DrawFourNumbersInRow(struct RenderInput *work, struct NumberRow *row);
 #endif
-void UiText_DrawStatComparison(const struct BattleUnit *alt, const struct BattleUnit *base, s32 work);
+void UiText_DrawStatComparison(const struct BtlUnit *alt, const struct BtlUnit *base, s32 work);
 void UiText_DrawWorkValueWithLabel(s32 work);
 #ifndef OWN_UiText_GetResourceDimensions
 s32 UiText_GetResourceDimensions(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);

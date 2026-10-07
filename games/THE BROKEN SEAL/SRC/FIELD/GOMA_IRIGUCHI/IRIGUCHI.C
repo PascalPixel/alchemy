@@ -13,7 +13,7 @@
 #include "FIELD_SCENE.H"
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "CALL.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "ITEM.H"
 #include "INVENTORY.H"
 #include "text/MSG_IDS.H"
@@ -592,7 +592,7 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
 
 void SceneActor_ApplyValueAndMatchingSlots(s32 group, s32 value)
 {
-    u8 *work = Owner_GetState(group);
+    u8 *work = UnitGet(group);
     s32 i;
     Inventory_AddItem(group, value);
     for (i = 0; i < 15; i++) {
@@ -610,7 +610,7 @@ void GomaIriguchi_GiveShamansRod(void)
     s32 id;
 
     id = 65;
-    member = (struct Member_387 *)Owner_GetState(2);
+    member = (struct Member_387 *)UnitGet(2);
     tries = 0;
 retry:
     if (++tries > 1000) {

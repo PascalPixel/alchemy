@@ -30,7 +30,7 @@ Func_080fa5a4:
 	str r1, [sp, #12]
 	mov r9, r1
 	str r1, [sp, #8]
-	bl Owner_GetState
+	bl UnitGet
 	adds r5, r7, #0
 	movs r3, #10
 	mov r2, r10
@@ -106,7 +106,7 @@ Func_080fa5a4:
 	ldrh r0, [r3, r6]
 	mov r9, r1
 	ldr r5, [r7, #40]
-	bl Owner_GetState
+	bl UnitGet
 	ldr r2, [sp, #8]
 	mov r11, r0
 	cmp r2, #0
@@ -114,7 +114,7 @@ Func_080fa5a4:
 	ldr r3, [sp, #20]
 	lsls r3, r3, #1
 	ldrh r0, [r3, r6]
-	bl Owner_GetState
+	bl UnitGet
 	movs r3, #226
 	lsls r3, r3, #1
 	adds r1, r7, r3

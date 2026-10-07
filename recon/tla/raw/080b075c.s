@@ -17,7 +17,7 @@ Func_080b075c:
 	mov r0, r11
 	mov r8, r3
 	str r2, [sp, #0]
-	bl Owner_GetState
+	bl UnitGet
 	mov r1, r8
 	adds r6, r0, #0
 	movs r0, #1
@@ -42,7 +42,7 @@ Func_080b075c:
 	b .L_080b0a82
 .L_080b07a8:
 	mov r0, r8
-	bl BattleFx_IsRevive
+	bl BtlEfxRevChk
 	cmp r0, #0
 	beq .L_080b07be
 	movs r7, #56

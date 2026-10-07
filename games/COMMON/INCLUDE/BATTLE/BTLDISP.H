@@ -80,11 +80,11 @@ LAYOUT_SIZE_GUARD(BattleAffineHdma_Size, struct BattleAffineHdma, 0x2a0);
 LAYOUT_OFFSET_GUARD(BattleAffineHdma_Affine, struct BattleAffineHdma, affine, 0x10);
 LAYOUT_OFFSET_GUARD(BattleAffineHdma_Lines, struct BattleAffineHdma, lines, 0x20);
 
-struct BattlePlan;
-s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused);
+struct BtlPlan;
+s32 BattlePres_RunActorEntries(struct BtlPlan *plan, s32 unused);
 
 s32 BattlePres_BuildTargetList(
-    struct BattlePlan *plan, struct BattlePresentationWork *work);
+    struct BtlPlan *plan, struct BattlePresentationWork *work);
 
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
 
@@ -93,7 +93,7 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
 s32 BattleObject_IsValidId(u32 object_id);
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode);
 void BattlePres_SetActorRecordMode(s32 actor, s32 mode);
-void BattleActor_CommitPlacement(void);
+void BtlObjPut(void);
 void BattleFx_InitializeModeFar(s32 *context);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_ArmBg2AffineHBlankDma(void);

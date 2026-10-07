@@ -28,7 +28,7 @@ Func_0811f4d4:
 	ldrsh r0, [r5, r2]
 	cmp r0, #254
 	beq .L_0811f51e
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	cmp r3, #0
@@ -69,7 +69,7 @@ Func_0811f4d4:
 	ldrsh r0, [r2, r6]
 	cmp r0, #254
 	beq .L_0811f56c
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #56
 	ldrsh r3, [r0, r1]
 	cmp r3, #0
@@ -98,7 +98,7 @@ Func_0811f4d4:
 	cmp r2, #0
 	beq .L_0811f598
 	mov r5, sp
-	bl BattleRandom16Far
+	bl BtlRndFar
 	mov r3, r8
 	muls r3, r0
 	lsrs r3, r3, #16

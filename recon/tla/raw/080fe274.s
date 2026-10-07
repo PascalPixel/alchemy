@@ -198,9 +198,9 @@ Func_080fe274:
 	mov lr, r10
 	.2byte 0xf800
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	mov r3, r11
 	ldr r2, [r3, #60]
 	ldr r3, .L_080fe470

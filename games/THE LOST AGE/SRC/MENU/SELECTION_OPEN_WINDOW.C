@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "RESOURCE.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "SCENE.H"

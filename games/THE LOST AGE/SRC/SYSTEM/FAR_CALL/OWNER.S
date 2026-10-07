@@ -5,14 +5,14 @@
 	.thumb_func
 Owner_AdjustFirstValueFar:
 	overlay_veneer Owner_AdjustFirstValue
-	.global Owner_AdjustSecondValueFar
+	.global UnitEpAddFar
 	.thumb_func
-Owner_AdjustSecondValueFar:
-	overlay_veneer Owner_AdjustSecondValue
-	.global Owner_RecalculateRatiosFar
+UnitEpAddFar:
+	overlay_veneer UnitEpAdd
+	.global UnitRatioFar
 	.thumb_func
-Owner_RecalculateRatiosFar:
-	overlay_veneer Owner_RecalculateRatios
+UnitRatioFar:
+	overlay_veneer UnitRatio
 	.global Owner_UpdateRatioPairFar
 	.thumb_func
 Owner_UpdateRatioPairFar:
@@ -21,9 +21,9 @@ Owner_UpdateRatioPairFar:
 	.thumb_func
 Owner_UpdateSecondInputAndRatiosFar:
 	overlay_veneer Owner_UpdateSecondInputAndRatios
-	.global BattleUnit_AssignFar
+	.global BtlUnitSetFar
 	.thumb_func
-BattleUnit_AssignFar:
+BtlUnitSetFar:
 	overlay_veneer Func_080afbec
 	.global Party_CountActiveOwnersFar
 	.thumb_func
@@ -49,30 +49,30 @@ Party_RemoveActiveOwnerFar:
 	.thumb_func
 Item_GetEquippedElementFar:
 	overlay_veneer Item_GetEquippedElement
-	.global Battle_HitCheck
+	.global BtlHitChk
 	.thumb_func
-Battle_HitCheck:
+BtlHitChk:
 	overlay_veneer Func_080b075c
-	.global Battle_CalcAttack
+	.global BtlAtkCalc
 	.thumb_func
-Battle_CalcAttack:
+BtlAtkCalc:
 	overlay_veneer Owner_ScaleAdjustedAmount
-	.global Battle_CalcPower
+	.global BtlPowCalc
 	.thumb_func
-Battle_CalcPower:
+BtlPowCalc:
 	overlay_veneer Owner_ScaleValueByCurve
-	.global Battle_CalcRestore
+	.global BtlRcvCalc
 	.thumb_func
-Battle_CalcRestore:
+BtlRcvCalc:
 	overlay_veneer Owner_ScaleValueByOffsetCurve
 	.global Owner_GetRecordFar
 	.thumb_func
 Owner_GetRecordFar:
 	overlay_veneer Owner_GetRecord
-	.global BattleRandom16Far
+	.global BtlRndFar
 	.thumb_func
-BattleRandom16Far:
-	overlay_veneer BattleRandom16
+BtlRndFar:
+	overlay_veneer BtlRnd
 	.global Djinn_AddToOwnerFar
 	.thumb_func
 Djinn_AddToOwnerFar:

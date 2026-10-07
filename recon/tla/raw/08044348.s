@@ -68,7 +68,7 @@ Func_08044348:
 	blt .L_08044394
 .L_080443c4:
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 	pop {r3, r5}
 	mov r8, r3
 	mov r10, r5

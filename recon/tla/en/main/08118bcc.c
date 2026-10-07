@@ -1,8 +1,8 @@
 #include "TYPES.H"
-#include "BATTLE_MSG.H"
-#include "BATTLE_PARTY.H"
+#include "BTLMES.H"
+#include "BTLPTY.H"
 
-extern u8 *gBattleWork;
+extern u8 *BtlWk;
 
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(s32, s32);
@@ -17,9 +17,9 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
     s16 *enemy;
     s32 announced;
 
-    battle_state = gBattleWork;
+    battle_state = BtlWk;
     UiWork_ClearValueNameTablesFar();
-    BattleParty_ListPresentEnemies(enemies);
+    BtlEnmList(enemies);
 
     announced = 0;
     if (enemy_count != 0) {

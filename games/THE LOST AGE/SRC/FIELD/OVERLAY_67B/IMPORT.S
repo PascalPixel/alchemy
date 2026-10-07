@@ -34,13 +34,13 @@ Runtime_AllocateBlock:
 	.thumb_func
 Runtime_ReleaseHeapBlock:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
-	.global Runtime_BumpAllocate
+	.global MemAlloc
 	.thumb_func
-Runtime_BumpAllocate:
+MemAlloc:
 	overlay_veneer Runtime_BumpAllocateFar
-	.global Sys_Free
+	.global MemFree
 	.thumb_func
-Sys_Free:
+MemFree:
 	overlay_veneer Sys_FreeFar
 	.global Func_020028b0
 	.thumb_func

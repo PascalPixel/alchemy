@@ -1,11 +1,11 @@
 #include "TYPES.H"
 #include "SCENE.H"
-#include "BATTLE_MSG.H"
+#include "BTLMES.H"
 #include "BATTLE_ESCAPE.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "BATTLE_TARGET.H"
 #include "FIXED_MATH.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "SYSTEM.H"
 
 s32 BattleObject_IsValidId(u32 object_id)

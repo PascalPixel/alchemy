@@ -311,9 +311,9 @@ Func_0817b66c:
 	cmp r7, #8
 	bne .L_0817b862
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	ldr r2, .L_0817b948
 	movs r3, #120
 	str r3, [r2, #12]

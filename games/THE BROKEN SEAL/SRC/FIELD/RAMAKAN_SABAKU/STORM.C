@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "GAME_STATE.H"
@@ -80,7 +80,7 @@ void RamakanSabaku_RunSandstorm(void)
         }
     }
 
-    buffer = Runtime_BumpAllocate(0x900);
+    buffer = MemAlloc(0x900);
     Dma_Set(RamakanSabaku_SandPalette, buffer, 0x80000010, REG_DMA3);
     colors = (s16 *)(buffer + 12);
     color = colors;
@@ -168,5 +168,5 @@ void RamakanSabaku_RunSandstorm(void)
         offset += 12;
         x += 32;
     }
-    Sys_Free(buffer);
+    MemFree(buffer);
 }

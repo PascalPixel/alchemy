@@ -550,9 +550,9 @@ Func_0816f080:
 	cmp r6, #6
 	bne .L_0816f42a
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r11
-	bl Sys_Free
+	bl MemFree
 	ldr r6, [sp, #28]
 	cmp r6, #64
 	bne .L_0816f4f0

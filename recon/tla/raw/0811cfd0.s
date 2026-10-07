@@ -89,7 +89,7 @@ BattlePres_BuildOpponentEntries:
 	movs r6, #0
 	mov r9, r3
 	mov r0, r9
-	bl Owner_GetState
+	bl UnitGet
 	adds r7, r0, #0
 	adds r2, r7, #0
 	adds r2, #67

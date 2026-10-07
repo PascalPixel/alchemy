@@ -13,10 +13,10 @@ Func_0811c120:
 	adds r6, r1, #0
 	mov r11, r2
 	mov r9, r3
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	adds r5, r0, #0
 	adds r0, r6, #0
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r7, [r5]
 	ldr r6, [r0]
 	movs r2, #75

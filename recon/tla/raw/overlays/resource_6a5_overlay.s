@@ -1863,7 +1863,7 @@ Func_02000cd0:
 	cmp r5, #14
 	bgt .L_020090f8
 	movs r0, #4
-	bl Owner_GetState
+	bl UnitGet
 	ldr r3, .L_020090f4
 	ldrh r2, [r0, r6]
 	ands r3, r2
@@ -2941,7 +2941,7 @@ Func_02001b04:
 	lsls r1, r1, #2
 	adds r3, r5, r1
 	ldrb r0, [r2, r3]
-	bl Owner_GetState
+	bl UnitGet
 	ldrh r1, [r0, #52]
 	mov r9, r0
 	mov r2, r9
@@ -8107,7 +8107,7 @@ Func_02004990:
 	push {r5, r6, lr}
 	movs r0, #192
 	lsls r0, r0, #4
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	ldr r3, .L_0200c9f0
 	adds r6, r0, #0
 	movs r1, #64
@@ -8127,7 +8127,7 @@ Func_02004990:
 	asrs r0, r0, #16
 	bl VramBlock_LoadCached
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200ca00
@@ -8169,7 +8169,7 @@ Func_02004a10:
 	push {r5, r6, lr}
 	movs r0, #192
 	lsls r0, r0, #4
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	ldr r3, .L_0200ca70
 	adds r6, r0, #0
 	movs r1, #64
@@ -8189,7 +8189,7 @@ Func_02004a10:
 	asrs r0, r0, #16
 	bl VramBlock_LoadCached
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200ca80
@@ -8231,7 +8231,7 @@ Func_02004a90:
 	push {r5, r6, lr}
 	movs r0, #128
 	lsls r0, r0, #4
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	ldr r3, .L_0200caf4
 	adds r6, r0, #0
 	movs r1, #64
@@ -8251,7 +8251,7 @@ Func_02004a90:
 	asrs r0, r0, #16
 	bl VramBlock_LoadCached
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200cb04
@@ -8957,7 +8957,7 @@ Func_02004ec8:
 .L_0200d0a4:
 	movs r0, #128
 	lsls r0, r0, #1
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	adds r1, r5, #0
 	movs r2, #63
@@ -8977,7 +8977,7 @@ Func_02004ec8:
 	asrs r0, r0, #16
 	bl VramBlock_LoadCached
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0200d108

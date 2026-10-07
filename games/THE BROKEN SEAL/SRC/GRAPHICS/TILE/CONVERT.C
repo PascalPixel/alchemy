@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
 #include "RAM_BUFFER.H"
@@ -62,7 +62,7 @@ void Tilemap_ConvertBuffer(void)
         u32 code_size = (u32)Tile_ConvertMapCodeSize;
 
         do {
-            routine = (ConvertFn)Runtime_BumpAllocate(code_size);
+            routine = (ConvertFn)MemAlloc(code_size);
             Dma_Set((void *)Tile_ConvertMap, routine, 0x84000000 | (code_size >> 2),
                     REG_DMA3);
         } while (0);

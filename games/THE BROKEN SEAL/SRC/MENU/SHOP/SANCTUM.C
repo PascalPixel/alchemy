@@ -16,7 +16,7 @@
 #include "PARTY_STATE.H"
 #include "GLOBAL_CELLS.H"
 #include "SOUND_IDS.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "OBJECT_RUNTIME.H"
 #include "text/MSG_IDS.H"
 
@@ -35,7 +35,7 @@ void PsynergyMenu_InitializeEntryObjectsFar();
 
 s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 {
-    u8 value = Owner_GetStateFar(entry_no)->level;
+    u8 value = UnitGetFar(entry_no)->level;
     s32 result = 0;
 
     if (kind == 0) {
@@ -52,12 +52,12 @@ s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 
 s32 Shop_CanServe(s32 entry_no, s32 kind)
 {
-    struct BattleUnit *entry = Owner_GetStateFar(entry_no);
+    struct BtlUnit *entry = UnitGetFar(entry_no);
     s32 result = 0;
 
     if ((kind == 0 && entry->hp <= 0)
-        || (kind == 1 && entry->poison != 0)
-        || (kind == 2 && entry->evil_spirit != 0)
+        || (kind == 1 && entry->doku != 0)
+        || (kind == 2 && entry->akuryo != 0)
         || (kind == 3 && entry->restraint != 0)) {
         result = 1;
     }

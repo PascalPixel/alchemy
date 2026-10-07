@@ -10,9 +10,9 @@
 #include "EDITION.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "UI.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
@@ -36,10 +36,10 @@ void WaitFrames(s32 frames);
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 {
     struct InventoryMenuState *menu;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
 
     menu = gMenuWork;
-    unit = Owner_GetStateFar(owner);
+    unit = UnitGetFar(owner);
     menu->cursor->active = 1;
     flags &= 0x100;
     if (flags == 0) {
@@ -67,8 +67,8 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 #else
     UiText_DrawStringInWindowFar(Menu_PpString, window, 40, 24);
 #endif
-    UiText_DrawNumberInWindowFar(unit->pp, 4, window, 72, 24);
-    UiText_DrawNumberInWindowFar(unit->max_pp, 4, window, 112, 24);
+    UiText_DrawNumberInWindowFar(unit->ep, 4, window, 72, 24);
+    UiText_DrawNumberInWindowFar(unit->max_ep, 4, window, 112, 24);
     UiText_DrawStringInWindowFar(Menu_SlashString, window, 104, 24);
     UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel, window, 40, 8);
     UiText_DrawNumberInWindowFar(unit->experience, 7, window, 88, 8);

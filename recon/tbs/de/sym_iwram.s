@@ -194,8 +194,8 @@ gMapWork:
 Data_03001e74_a:
 	.global Data_03001e74
 Data_03001e74:
-	.global gBattleWork
-gBattleWork:
+	.global BtlWk
+BtlWk:
 	.space 0x0000000c
 	.global gCameraWork
 gCameraWork:

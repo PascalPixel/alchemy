@@ -1,4 +1,4 @@
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
@@ -7,8 +7,8 @@ void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y)
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
 s32 UiWork_SetParamNibbleFar(s32 color);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
-struct BattleUnit *Owner_GetStateFar(s32 owner);
-struct BattleAction *BattleAction_Get(s32 action);
+struct BtlUnit *UnitGetFar(s32 owner);
+struct BtlAct *BtlActGet(s32 action);
 extern u8 MsgAbilityName;
 extern u8 MsgShortcutHelp[];
 extern u8 MsgChangeCharacterHelp[];
@@ -20,8 +20,8 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     u32 visible_count;
     u8 row;
     s32 cursor;
-    struct BattleUnit *owner;
-    struct BattleAction *ability;
+    struct BtlUnit *owner;
+    struct BtlAct *ability;
     struct PsynergyMenuState *menu = gMenuWork;
 
     (void)unused;
@@ -49,10 +49,10 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     if (visible_count > row) {
         cursor = first_entry * 2 + 0x1c8;
         do {
-            owner = Owner_GetStateFar(menu->owner_ids[0]);
-            ability = BattleAction_Get(0x3fff & *(const u16 *)(cursor + (s32)menu));
+            owner = UnitGetFar(menu->owner_ids[0]);
+            ability = BtlActGet(0x3fff & *(const u16 *)(cursor + (s32)menu));
 
-            if (ability->pp_cost > owner->pp) {
+            if (ability->pp_cost > owner->ep) {
                 UiWork_SetParamNibbleFar(2);
             } else if (PsynergyMenu_IsActionRestricted(0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
                 UiWork_SetParamNibbleFar(4);

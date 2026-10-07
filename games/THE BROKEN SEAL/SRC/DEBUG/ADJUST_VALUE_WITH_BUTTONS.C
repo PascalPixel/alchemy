@@ -2,7 +2,7 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SCENE.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
@@ -18,13 +18,13 @@ void WaitFrames(s32);
 
 s32 Runtime_AdjustDebugValueWithButtons(s32 ret)
 {
-    struct BattleSession *battle;
+    struct BtlWork *battle;
     volatile u32 *keys;
 
     if (gKeysHeld & KEY_START) {
         keys = &gKeysRepeat;
 loop:
-        battle = gBattleWork;
+        battle = BtlWk;
         if (*keys & 0x20)
             battle->debug_value -= 1;
         if (*keys & 0x10)

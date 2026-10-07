@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "STAGED_MOTION.H"

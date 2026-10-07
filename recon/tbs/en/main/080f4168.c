@@ -106,7 +106,7 @@
  * (&sprites->help_window at sp+64), formed once and reused.
  */
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "DMA.H"
@@ -116,7 +116,7 @@
 #include "GAME_STATE.H"
 #include "MAP_SCROLL.H"
 #include "BATTLE_EFFECT_WORK.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "IWRAM_CALL.H"
 #include "TRANSFORM.H"
 #include "RESOURCE_IDS.H"

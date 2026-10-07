@@ -231,18 +231,18 @@ L_main:
 
 void ColossoLogRollingStage_ApplyItemToMatchingSlots(s32 handle, s32 item)
 {
-    extern u8 *Owner_GetState();
+    extern u8 *UnitGet();
     extern s32 Inventory_AddItem();
     extern void Inventory_Equip();
 
     u8 *record;
     s32 slot;
 
-    record = Owner_GetState(handle);
+    record = UnitGet(handle);
     Inventory_AddItem(handle, item);
 
     for (slot = 0; slot <= 14; slot++) {
-        if (((struct BattleUnit *)record)->inventory[slot] == item) {
+        if (((struct BtlUnit *)record)->inventory[slot] == item) {
             Inventory_Equip(handle, slot);
         }
     }

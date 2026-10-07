@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 
 s32 Func_080cc67c(s32);
 s32 Func_080cc7c4(void);

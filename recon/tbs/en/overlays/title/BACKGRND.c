@@ -1,6 +1,6 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
@@ -31,7 +31,7 @@ void ScrollFar_Entry00(s32 mode);
 s32 PaletteFar_Entry00(s32 mode);
 void PaletteFar_Entry20(s32 mode);
 
-void Sys_Free(void *buffer);
+void MemFree(void *buffer);
 #define DMA3 ((volatile u32 *)0x040000d4)
 
 static __inline__ void RestoreInterrupts(u32 saved)
@@ -219,7 +219,7 @@ void Title_LoadSprites(s32 unused)
     dma = DMA3;
     while (dma[2] & 0x80000000)
         ;
-    Sys_Free(buffer);
+    MemFree(buffer);
 }
 
 void Title_RevealSpriteRow(void)

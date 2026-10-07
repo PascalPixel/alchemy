@@ -9,19 +9,19 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "WINDOW.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "DMA.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 #include "RENDER_INPUT.H"
 #include "IO_REG.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "PARTY_STATE.H"
-#include "RUNTIME_MEM.H"
-#include "BATTLE_PARTY.H"
+#include "MEM.H"
+#include "BTLPTY.H"
 #include "B5_CONTEXT.H"
 #include "MENU_LIST.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define TILE_ROW_FROM_BOTTOM(tile, up) ((u32 *)((tile) * 32 - (up) * 4 + 0x0600001c))
 
@@ -37,7 +37,7 @@ void UiWindow_FillFromScene(void *dst)
         Dma_Set((void *)&fill, dst, 0x810000a0, REG_DMA3);
     } else {
         u32 size = (u32)Tile_BuildMetatilesCodeSize;
-        RamRoutine code = (RamRoutine)Runtime_BumpAllocate(size);
+        RamRoutine code = (RamRoutine)MemAlloc(size);
 
         Dma_Set((void *)Tile_BuildMetatiles, code, 0x84000000 | (size >> 2), REG_DMA3);
         code(dst, scene);
@@ -115,7 +115,7 @@ void UiWindow_CreateWithLayoutBounds(s32 flags)
     UiWindow_BuildLayoutBounds(flags);
     window->window = UiWindow_Create(
         window->x, window->y, window->width, window->height, 6);
-    UiWindow_DrawPartyStatusContents(flags);
+    PtyStDraw(flags);
     *busy = zero;
 }
 
@@ -227,11 +227,11 @@ s32 __divsi3(s32, s32);
 s32 UiText_DrawPrefixedNumberAtOffset();
 s32 UiWindow_PutGlyph();
 
-void UiWindow_DrawPartyStatusContents(s32 flags)
+void PtyStDraw(s32 flags)
 {
     void **slot = (void **)Data_03001e90;
     struct PartyStatusWindow *layout = slot[0];
-    struct BattleSession *party = slot[-7];
+    struct BtlWork *party = slot[-7];
     struct RenderInput *window = (struct RenderInput *)layout->window;
     struct UiRenderWork *work = slot[-1];
     s32 x = 0;
@@ -282,7 +282,7 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
     if (flags & 2)
         x = 5;
     for (i = 0; i != count; i++) {
-        struct BattleUnit *unit = Owner_GetStateFar(owners[i]);
+        struct BtlUnit *unit = UnitGetFar(owners[i]);
         s32 hp = unit->hp;
         s32 maximum = unit->max_hp;
         s32 value;
@@ -312,10 +312,10 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
             work->level = 14;
             if (work->menu_state != 0)
                 work->level = 5;
-            UiText_DrawPrefixedNumberAtOffset(unit->pp, window, (x + i * 6) * 8, y * 8 + 16, 1);
-            if (unit->max_pp != 0) {
-                current = unit->pp;
-                value = __divsi3(current * 40, unit->max_pp);
+            UiText_DrawPrefixedNumberAtOffset(unit->ep, window, (x + i * 6) * 8, y * 8 + 16, 1);
+            if (unit->max_ep != 0) {
+                current = unit->ep;
+                value = __divsi3(current * 40, unit->max_ep);
                 if (value == 0 && current != 0)
                     value = 1;
                 UiWindow_DrawStatusBarTiles(window, x + i * 6 + 1, y + 3, value);

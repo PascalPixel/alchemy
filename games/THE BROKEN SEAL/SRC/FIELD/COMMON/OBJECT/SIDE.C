@@ -15,7 +15,7 @@
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
 #include "RUNTIME_INTERFACES.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define UiGlyph_LoadEntryWithPalette ((void (*)(s32,s32,s32*,s32*,s32,s32))UiGlyph_LoadEntryWithPalette)
 

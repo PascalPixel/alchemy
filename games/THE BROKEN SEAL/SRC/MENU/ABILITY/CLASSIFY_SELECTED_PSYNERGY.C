@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "TYPES.H"
 #include "PSYNERGY_MENU.H"
 #include "SYSTEM.H"
@@ -16,11 +16,11 @@
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void)
 {
-    struct BattleAction *psynergy;
+    struct BtlAct *psynergy;
     s32 diff;
     s32 ret;
 
-    psynergy = BattleAction_Get(
+    psynergy = BtlActGet(
         0x3fff &
               gMenuWork
                   ->pane_action[0]);
@@ -52,7 +52,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
     s32 owner_offset;
     s32 table_offset;
     s32 owner_id;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
     u16 *actions;
     u8 *counts;
     s32 badge;
@@ -79,7 +79,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
 
     table_offset = owner_offset + ((u8 *)menu->owner_table - (u8 *)menu);
     owner_id = *(u16 *)((u8 *)menu + table_offset);
-    owner = Owner_GetStateFar(owner_id);
+    owner = UnitGetFar(owner_id);
     actions = menu->psynergies;
     badge = PsynergyMenu_CollectActions(owner, actions, 2);
     menu->psynergy_count = badge;

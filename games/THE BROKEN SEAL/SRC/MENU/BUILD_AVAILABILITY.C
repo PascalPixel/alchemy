@@ -13,17 +13,17 @@
 #include "TBS_EDITION.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {
-    struct BattleUnit *state;
+    struct BtlUnit *state;
     s32 i;
     s32 zero;
     s32 count;
     s32 mode;
 
-    state = Owner_GetStateFar(id);
+    state = UnitGetFar(id);
     zero = 0;
     for (i = 4; i >= 0; i--)
         output[i] = zero;
@@ -34,7 +34,7 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
         count = 1;
     }
 
-    mode = state->poison;
+    mode = state->doku;
     if (mode != 0) {
         if (mode == 1)
             output[CHARACTER_POISON] = mode;
@@ -46,7 +46,7 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
         output[CHARACTER_CURSE] = 1;
         count++;
     }
-    if (state->evil_spirit != 0) {
+    if (state->akuryo != 0) {
         output[CHARACTER_HAUNT] = 1;
         count++;
     }
@@ -69,7 +69,7 @@ s32 Menu_BuildPageResult(struct MenuResult *result, s32 index)
     s32 groups;
     s32 value;
 
-    encoded = (s32)Owner_GetStateFar(menu->pane_owner[index]);
+    encoded = (s32)UnitGetFar(menu->pane_owner[index]);
     limit = menu->item_count;
     value = menu->selected_index_by_owner[menu->pane_owner[index]];
     if ((value + 1) > limit) {

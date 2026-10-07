@@ -11,7 +11,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_EFFECT_WORK.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "B5_CONTEXT.H"
 #include "IWRAM_CALL.H"
 #include "HEAP_STATE.H"
@@ -50,7 +50,7 @@ void Palette_StepFadeTransfer(void)
     /* FAKEMATCH: relative heap cells 9 and 39 avoid address instructions added by named globals or full heap indexing. */
     void **slots = (void **)((u8 *)gWorkSlot + 9 * sizeof(void *));
     struct BattleEffectWork *work = slots[39 - 9];
-    struct BattleSession *battle = slots[0];
+    struct BtlWork *battle = slots[0];
 
     if (work->fade_frames > 0) {
         s32 step = ++work->fade_step;

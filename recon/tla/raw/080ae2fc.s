@@ -9,7 +9,7 @@ Func_080ae2fc:
 	push {r6, r7}
 	mov r8, r1
 	mov r10, r2
-	bl Owner_GetState
+	bl UnitGet
 	movs r6, #1
 	adds r7, r0, #0
 	negs r6, r6

@@ -1,6 +1,6 @@
-#include "BATTLE_PRESENTATION.H"
-#include "BATTLE_PARTY.H"
-#include "MOTION_OBJECT.H"
+#include "BTLDISP.H"
+#include "BTLPTY.H"
+#include "MOTOBJ.H"
 #include "ANIMSPR.H"
 #include "TYPES.H"
 #include "BATTLE_STATUS_ICON.H"
@@ -20,7 +20,7 @@ void Func_080b7738(void)
     if (ids[i] != BATTLE_UNIT_LIST_END) {
 again:
         {
-            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+            struct BtlObj *slot = BtlObjGet(ids[i]);
 
             if (slot != 0) {
                 struct MotionObject *object = slot->object;
@@ -61,7 +61,7 @@ again:
         count = BattleParty_ListActorIds(BATTLE_SIDE_PARTY, ids);
         value = priority[0];
         for (i = 0; i < count; i++) {
-            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+            struct BtlObj *slot = BtlObjGet(ids[i]);
 
             if (slot != 0) {
                 struct MotionObject *object = slot->object;
@@ -92,7 +92,7 @@ again:
         count = BattleParty_ListActorIds(BATTLE_SIDE_ENEMIES, ids);
         value = priority[1];
         for (i = 0; i < count; i++) {
-            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+            struct BtlObj *slot = BtlObjGet(ids[i]);
 
             if (slot != 0) {
                 struct MotionObject *object = slot->object;

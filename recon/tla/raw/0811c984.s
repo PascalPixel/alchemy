@@ -44,10 +44,10 @@ Func_0811c984:
 	b .L_0811ca4a
 .L_0811c9d4:
 	ldr r0, [r5, #8]
-	bl Owner_GetState
+	bl UnitGet
 	movs r3, #36
 	ldrsh r0, [r5, r3]
-	bl Owner_GetState
+	bl UnitGet
 	bl Random16
 	movs r1, #1
 	ldr r0, [r5, #8]
@@ -61,13 +61,13 @@ Func_0811c984:
 	movs r3, #0
 	bl Func_0811c120
 	ldr r0, [r5, #8]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	movs r1, #16
 	ldr r0, [r0]
 	bl ObjectDispatch_ApplyValueToChildrenFar
 	movs r3, #36
 	ldrsh r0, [r5, r3]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldrh r3, [r5, #36]
 	movs r2, #1
 	str r2, [r5, #20]
@@ -87,9 +87,9 @@ Func_0811c984:
 	bl Func_08138008
 	movs r3, #36
 	ldrsh r0, [r5, r3]
-	bl Actor_ResetMotionAtAnchor
+	bl ObjMotRst
 	ldr r0, [r5, #8]
-	bl Actor_ResetMotionAtAnchor
+	bl ObjMotRst
 	movs r0, #0
 .L_0811ca4a:
 	add sp, #88

@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 #include "EFFECT_STEP.H"

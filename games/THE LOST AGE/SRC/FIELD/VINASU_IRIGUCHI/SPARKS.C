@@ -10,7 +10,7 @@
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 
 struct SparkWork {
     u8 unknown_0000[0x2102];

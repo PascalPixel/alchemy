@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "FIELDRUN.H"
 #include "SCENE.H"
 #include "EFFECT_RUNTIME.H"
@@ -18,7 +18,7 @@
 #include "ITEM.H"
 #include "GAME_STATE.H"
 #include "BATTLE_UNIT.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "ANIMSPR.H"
 #include "text/MSG_IDS.H"
 
@@ -154,7 +154,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     s32 result;
     s32 item_id;
     s32 actor;
-    struct BattleUnit *obj;
+    struct BtlUnit *obj;
     const struct SceneEvent *event;
     u16 *p;
     s32 j;
@@ -177,7 +177,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             if (actor < count) {
                 struct GameState *party = &gGameState;
                 do {
-                    obj = (struct BattleUnit *)Owner_GetStateFar(party->active_owners[i]);
+                    obj = (struct BtlUnit *)UnitGetFar(party->active_owners[i]);
                     matches = 0;
                     p = obj->inventory;
                     j = 14;
@@ -195,7 +195,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
                 } while (i < count);
             }
         } else {
-            obj = (struct BattleUnit *)Owner_GetStateFar(actor);
+            obj = (struct BtlUnit *)UnitGetFar(actor);
             p = obj->inventory;
             j = 14;
             do {
@@ -310,7 +310,7 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
             GameFlag_IsConditionActive(event->condition) != 0 &&
             (has_reference == 0 ||
              (u16)(high_value - reference + 0x17ff) <= 0x2ffe) &&
-            BattleAction_Get(((const u8 *)&event->control)[1])->type_0c == group &&
+            BtlActGet(((const u8 *)&event->control)[1])->type_0c == group &&
             (ignore_flags ||
              (event->control & 0x7000000f) == requested_flags)) {
             if ((event->control & 0x80) != 0)

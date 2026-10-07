@@ -3,7 +3,7 @@
 
 #include "TYPES.H"
 
-u32 BattleRandom16(void);
+u32 BtlRnd(void);
 
 extern s32 gBattleRandomSeed;
 

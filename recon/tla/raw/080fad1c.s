@@ -4,7 +4,7 @@
 	.thumb_func
 Func_080fad1c:
 	push {r5, lr}
-	bl Owner_GetState
+	bl UnitGet
 	movs r4, #128
 	lsls r4, r4, #1
 	movs r5, #0

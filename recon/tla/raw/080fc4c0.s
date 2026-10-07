@@ -26,7 +26,7 @@ Func_080fc4c0:
 	bl Func_080fad1c
 	adds r7, r0, #0
 	ldrb r0, [r6, r5]
-	bl Owner_GetState
+	bl UnitGet
 	ldrb r3, [r6, r5]
 	movs r2, #153
 	lsls r2, r2, #2

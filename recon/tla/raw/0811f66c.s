@@ -165,7 +165,7 @@ Func_0811f66c:
 	lsls r3, r3, #2
 	ldr r0, [r4, r3]
 	mov r9, r3
-	bl Owner_GetState
+	bl UnitGet
 	adds r5, r0, #0
 	ldrb r0, [r7, #3]
 	movs r6, #0
@@ -653,7 +653,7 @@ Func_0811f66c:
 	lsls r3, r1, #16
 	cmp r3, #0
 	bne .L_0811fbb0
-	bl BattleFx_IsReviveFar
+	bl BtlEfxRevChkFar
 	cmp r0, #0
 	bne .L_0811fbb0
 	movs r6, #0
@@ -775,7 +775,7 @@ Func_0811f66c:
 	b .L_0811fe00
 .L_0811fc8e:
 	ldr r0, [sp, #28]
-	bl Owner_GetState
+	bl UnitGet
 	movs r4, #165
 	lsls r4, r4, #1
 	adds r3, r0, r4
@@ -833,13 +833,13 @@ Func_0811f66c:
 	ldr r2, [sp, #16]
 	str r1, [sp, #0]
 	ldr r0, [r5, r2]
-	bl Owner_GetState
+	bl UnitGet
 	mov r8, r0
 	ldr r0, [r7]
-	bl Owner_GetState
+	bl UnitGet
 	adds r6, r0, #0
 	ldr r0, [sp, #28]
-	bl Owner_GetState
+	bl UnitGet
 	movs r4, #165
 	lsls r4, r4, #1
 	adds r3, r0, r4

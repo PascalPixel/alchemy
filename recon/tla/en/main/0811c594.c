@@ -1,11 +1,11 @@
 #include "TYPES.H"
 #include "SCENE.H"
-#include "BATTLE_MSG.H"
+#include "BTLMES.H"
 #include "BATTLE_ESCAPE.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "BATTLE_TARGET.H"
 #include "FIXED_MATH.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "SYSTEM.H"
 void UiWork_ClearValueNameTablesFar(void);
 extern u8 Data_03001ae8[];
@@ -22,7 +22,7 @@ s32 BattlePres_RunAction(s16 *action)
     u8 *actor;
 
     actor_id = action[0];
-    actor = Owner_GetStateFar(actor_id);
+    actor = UnitGetFar(actor_id);
     if (*(s16 *)(actor + 0x38) == 0)
         return -1;
 

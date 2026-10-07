@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "B5_CONTEXT.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "FIELD_EVENT.H"
 
 #define ObjectDispatch_ApplyValueToChildrenFar ((s32 (*)(s32,s32))ObjectDispatch_ApplyValueToChildrenFar)

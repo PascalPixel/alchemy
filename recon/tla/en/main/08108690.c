@@ -12,7 +12,7 @@
 #include "DMA.H"
 #include "RESOURCE.H"
 #include "RENDER_INPUT.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 

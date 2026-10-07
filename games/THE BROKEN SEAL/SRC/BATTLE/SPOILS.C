@@ -8,15 +8,15 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_PARTY.H"
-#include "RUNTIME_MEM.H"
+#include "BTLPTY.H"
+#include "MEM.H"
 #include "IWRAM_CALL.H"
 #include "INVENTORY.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_MSG.H"
+#include "BTLWORK.H"
+#include "BTLTYPE.H"
+#include "BTLMES.H"
 #include "CHARACTER.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define Item_EncodeBankedId ((s32 (*)(s32))Item_EncodeBankedId)
 #define Item_EncodeBankedId ((s32 (*)(s32))Item_EncodeBankedId)
@@ -24,7 +24,7 @@
 u32 Random16(void);
 
 static __inline__ s32 BattleEnemy_CalculateCoinReward(
-    struct BattleUnit *unit, u16 *reward)
+    struct BtlUnit *unit, u16 *reward)
 {
     s32 i;
     s32 bonus = 0;
@@ -41,7 +41,7 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(
 }
 
 static __inline__ s32 BattleEnemy_CalculateExperienceReward(
-    struct BattleUnit *unit, u16 *reward)
+    struct BtlUnit *unit, u16 *reward)
 {
     s32 i;
     s32 bonus = 0;
@@ -62,9 +62,9 @@ void Audio_PlayCue(s32 cue);
 
 s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
 {
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     struct EnemyDefinition *rec;
-    struct BattleSession *formation;
+    struct BtlWork *formation;
     struct BattleSpoils *spoils;
     s32 i;
     s32 chance;
@@ -73,8 +73,8 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
     s32 lowest_slot;
     s32 value;
 
-    unit = Owner_GetStateFar(unit_id);
-    formation = gBattleWork;
+    unit = UnitGetFar(unit_id);
+    formation = BtlWk;
     spoils = &formation->spoils;
     if (unit_id >= 0 && unit_id < 8)
         return -1;
@@ -126,7 +126,7 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
         chance -= 2;
     if (chance < 0)
         chance = 0;
-    if ((0x20000 >> chance) > (BattleRandom16Far() & 0xffff)) {
+    if ((0x20000 >> chance) > (BtlRndFar() & 0xffff)) {
         lowest_slot = -1;
         lowest = 0x40000000;
         for (i = 0; i <= 3; i++) {
@@ -149,8 +149,8 @@ void Battle_AwardSpoils(void)
     u16 *list;
     s32 i;
     s32 unit_id;
-    struct BattleUnit *unit;
-    struct BattleUnit *backup;
+    struct BtlUnit *unit;
+    struct BtlUnit *backup;
     s32 cnt;
     u32 learned;
     s32 j;
@@ -162,7 +162,7 @@ void Battle_AwardSpoils(void)
     s16 gains[8];
     u16 units[8];
 
-    spoils = &gBattleWork->spoils;
+    spoils = &BtlWk->spoils;
     if (spoils->experience != 0) {
         UiWork_PushValueSlotFar(spoils->experience, 5);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgExpGained);
@@ -170,12 +170,12 @@ void Battle_AwardSpoils(void)
     }
     list = units;
     count = BattleParty_ListLivingUnits(1, list);
-    backup = (struct BattleUnit *)Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
+    backup = (struct BtlUnit *)Runtime_BumpAllocateAlternatePool(sizeof(struct BtlUnit));
     for (i = 0; i < count; i++) {
         unit_id = list[i];
-        unit = (struct BattleUnit *)Owner_GetStateFar(unit_id);
+        unit = (struct BtlUnit *)UnitGetFar(unit_id);
         unit->experience += spoils->experience;
-        while (Iwram_CopyWords(backup, unit, sizeof(struct BattleUnit)),
+        while (Iwram_CopyWords(backup, unit, sizeof(struct BtlUnit)),
             Owner_GetValueIfLevelThresholdReachedFar(unit_id, gains) != 0) {
             Audio_PlayCue(0x59);
             UiWork_ClearValueNameTablesFar();

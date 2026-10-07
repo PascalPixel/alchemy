@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "IWRAM_CALL.H"
 #include "ANIMSPR.H"
 
@@ -9,7 +9,7 @@ u32 Battle_GetObjectTableValue(s32);
 
 s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected)
 {
-    struct MotionObject *object = GetBattleObjectSlot(id)->object;
+    struct MotionObject *object = BtlObjGet(id)->object;
     struct AnimationObject *record = GetMotionRecord(object, 0);
     s32 scaled;
     s32 factor;

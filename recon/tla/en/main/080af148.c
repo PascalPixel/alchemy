@@ -2,7 +2,7 @@
 
 s32 Inventory_Remove(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *inv = Owner_GetState(owner);
+    struct OwnerInventoryState *inv = UnitGet(owner);
     u16 item = inv->inventory[slot];
     s32 result = -1;
 
@@ -27,6 +27,6 @@ s32 Inventory_Remove(s32 owner, s32 slot)
             result = 2;
         }
     }
-    Owner_RecalculateStats(owner);
+    UnitCalc(owner);
     return result;
 }

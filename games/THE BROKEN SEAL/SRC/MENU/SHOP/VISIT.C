@@ -7,13 +7,13 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "PARTY_STATE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "OBJECT_RUNTIME.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -194,9 +194,9 @@ s32 Battle_ApplyPresetItemsAndFlags(void)
     Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
     Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
     Inventory_AddItemFar(2, 0xe7);
-    Owner_GetStateFar(3)->poison = 1;
-    Owner_GetStateFar(5)->poison = 1;
-    Owner_GetStateFar(2)->evil_spirit = 1;
+    UnitGetFar(3)->doku = 1;
+    UnitGetFar(5)->doku = 1;
+    UnitGetFar(2)->akuryo = 1;
     Shop_Run(FINAL_ARG, 0x1e);
     return 0;
 }

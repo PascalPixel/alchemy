@@ -1,1 +1,1 @@
-#include "../../../../games/THE BROKEN SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C"
+#include "../../../../games/THE BROKEN SEAL/SRC/BATTLE/TGTEXEC.C"

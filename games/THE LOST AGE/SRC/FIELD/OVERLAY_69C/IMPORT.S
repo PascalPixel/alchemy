@@ -34,13 +34,13 @@ Math_Cosine:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global Runtime_BumpAllocate
+	.global MemAlloc
 	.thumb_func
-Runtime_BumpAllocate:
+MemAlloc:
 	overlay_veneer Runtime_BumpAllocateFar
-	.global Sys_Free
+	.global MemFree
 	.thumb_func
-Sys_Free:
+MemFree:
 	overlay_veneer Sys_FreeFar
 	.global Func_020022a0
 	.thumb_func

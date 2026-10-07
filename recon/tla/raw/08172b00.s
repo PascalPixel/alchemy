@@ -1289,7 +1289,7 @@ Func_08172b00:
 	movs r3, #120
 	str r3, [r2, #12]
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 .L_081734fe:
 	movs r1, #8
 	movs r0, #8

@@ -1796,9 +1796,9 @@ Func_0815cde8:
 	cmp r4, #31
 	bne .L_0815dab4
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 .L_0815db98:
 	ldr r6, [sp, #64]
 	cmp r6, #78
@@ -2217,7 +2217,7 @@ Func_0815cde8:
 	bl Func_08196a7c
 .L_0815defc:
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 .L_0815df02:
 	ldr r2, [sp, #64]
 	cmp r2, #185

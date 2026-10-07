@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "IO_REG.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 #define gKeyState (*(volatile u32 *)&gKeyState)

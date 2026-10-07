@@ -915,7 +915,7 @@ void PaletteScene_SetRecordValue(s32 key, s32 value)
         s32 index = Inventory_Find(slot, key);
 
         if (index != -1) {
-            Owner_GetState(slot)->values[index] = value;
+            UnitGet(slot)->values[index] = value;
         }
     }
 }

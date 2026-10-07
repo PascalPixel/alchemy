@@ -12,22 +12,22 @@
 #include "SCENE.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_COMMAND.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_MSG.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLSYS.H"
+#include "BTLPTY.H"
+#include "BTLTYPE.H"
+#include "BTLMES.H"
+#include "BTLDISP.H"
 #include "SYSTEM.H"
-#include "BATTLE_ACTOR.H"
+#include "BTLOBJ.H"
 #include "IO_REG.H"
-#include "BATTLE_WORK.H"
-#include "MOTION_OBJECT.H"
+#include "BTLWORK.H"
+#include "MOTOBJ.H"
 #include "ANIMSPR.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TRANSFORM.H"
 
 #define Camera_StoreSceneParameters ((void (*)(s32,u32,s32))Camera_StoreSceneParameters)
-#define BattleUnit_ProcessTurnEnd ((void (*)(struct BattlePlan*))BattleUnit_ProcessTurnEnd)
+#define BattleUnit_ProcessTurnEnd ((void (*)(struct BtlPlan*))BattleUnit_ProcessTurnEnd)
 #define BattleFx_PlayUnitElementEffect ((s32 (*)(s32,s32,s32,s32))BattleFx_PlayUnitElementEffect)
 
 static __inline__ s32 DivQ16(s32 divisor, s32 value)
@@ -39,9 +39,9 @@ static __inline__ s32 DivQ16(s32 divisor, s32 value)
 s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 delay)
 {
     struct BattlePresentationTransition *view;
-    struct BattleSession *battle;
+    struct BtlWork *battle;
     struct BattleCamera *camera;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     u16 actor[2];
     u16 ids[14];
     s32 kept;
@@ -52,7 +52,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
     kept = 0;
     if (request->unit_id == 0xff)
         return 0;
-    unit = Owner_GetStateFar(request->unit_id);
+    unit = UnitGetFar(request->unit_id);
     if (unit->hp == 0)
         return -1;
     if (unit->class_index == 0)
@@ -116,18 +116,18 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
     }
     BattleMotion_DestroyAllSlotObjects();
     BattleUnit_ProcessTurnEnd(&battle->plan);
-    BattleActor_CommitPlacement();
+    BtlObjPut();
     count = BattleParty_ListActorIds(3, (u16 *)ids);
     for (i = 0; i < count; i++)
-        Actor_ResetMotionAtAnchor(ids[i]);
+        ObjMotRst(ids[i]);
     request->unit_id = 0xff;
 finish:
-    BattlePresentation_ConfigurePaletteFade(2, gBattleWork->background, 0);
+    BattlePresentation_ConfigurePaletteFade(2, BtlWk->background, 0);
     return kept;
 }
 
 s32 BattlePres_BuildTargetList(
-    struct BattlePlan *plan, struct BattlePresentationWork *work)
+    struct BtlPlan *plan, struct BattlePresentationWork *work)
 {
     s16 *dst;
     u32 flags;
@@ -143,10 +143,10 @@ s32 BattlePres_BuildTargetList(
     work->actor = plan->actor_id;
     i = 0;
     if (i < plan->target_count) {
-        target = plan->target_ids;
+        target = plan->tgt_no;
         dst = work->actors;
         do {
-            if (Owner_GetStateFar(*target)->hp != 0 ||
+            if (UnitGetFar(*target)->hp != 0 ||
                 (plan->presentation_flags & 0x10000)) {
                 count++;
                 *dst++ = *target;
@@ -156,18 +156,18 @@ s32 BattlePres_BuildTargetList(
         } while (i < plan->target_count);
     }
     if (count == 0) {
-        work->actors[0] = plan->target_ids[0];
+        work->actors[0] = plan->tgt_no[0];
         count = 1;
     }
-    work->first_target = plan->target_ids[0];
+    work->first_target = plan->tgt_no[0];
     work->count = count;
     work->initial_value = 1;
 }
 
-s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
+s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
 {
     struct BattlePresentationTransition *presentation = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
-    struct BattleSession *scene = *(gWorkSlot + HEAP_SLOT_BATTLE);
+    struct BtlWork *scene = *(gWorkSlot + HEAP_SLOT_BATTLE);
     s32 completed = 0;
     s32 party_mode;
 
@@ -191,9 +191,9 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
             s32 index = BattleParty_ListLivingUnits(1, (u16 *)unit_ids) - 1;
 
             while (index != -1) {
-                struct BattleUnit *unit = Owner_GetStateFar(unit_ids[index]);
+                struct BtlUnit *unit = UnitGetFar(unit_ids[index]);
 
-                if (unit->stun == 0 && unit->sleep == 0) {
+                if (unit->shibire == 0 && unit->nemuri == 0) {
                     BattleMotion_SetupEscapeObject(unit_ids[index]);
                     WaitFrames(8);
                 }
@@ -223,7 +223,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
 void Object_SetMode(void *object, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
 
-s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
+s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 {
     u16 units[14];
     struct BattlePresentationWork work;
@@ -234,11 +234,11 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
     s32 n;
     u32 kept;
     struct MotionObject *object;
-    void **slots = (void **)&gBattleWork;
+    void **slots = (void **)&BtlWk;
 
     BattlePres_BuildTargetList(plan, &work);
     actor = plan->actor_id;
-    target = plan->target_ids[0];
+    target = plan->tgt_no[0];
     if (plan->presentation_flags & 0x8000) {
         struct BattlePresentationTransition *transition;
         s32 yaw;
@@ -259,8 +259,8 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
             transition->target_yaw = yaw;
     }
     BattlePres_SetActorModes(0, 0);
-    UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode & ~1);
-    object = GetBattleObjectSlot(actor)->object;
+    PtyStDrawFar(BtlWk->party_status_mode & ~1);
+    object = BtlObjGet(actor)->object;
     REG_BLDCNT = 0x3f40;
     count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, units);
     for (i = 0; i != count; i++) {
@@ -274,7 +274,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
         }
     }
     AudioCommand_PlayFar(0x9a);
-    BattleFx_PlayUnitElementEffect(work.actor, plan->range_index, 0, 0);
+    BattleFx_PlayUnitElementEffect(work.actor, plan->elm, 0, 0);
     if (mode & 1)
         BattlePres_SetActorRecordMode(actor, 1);
     for (i = 0; i != 16; i++) {
@@ -283,10 +283,10 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
     }
     if (plan->failure != 0) {
         if (plan->failure == 1) {
-            BattleEv_Push(0, plan->actor_id);
-            BattleEv_Push(4, (s32)MsgPsynergyBlocked);
+            BtlEvPush(0, plan->actor_id);
+            BtlEvPush(4, (s32)MsgPsynergyBlocked);
         } else {
-            BattleEv_Push(4, (s32)MsgCastLacksPp);
+            BtlEvPush(4, (s32)MsgCastLacksPp);
         }
         BattleEv_DispatchQueued();
         BattlePres_RunWithZeroArguments();
@@ -304,13 +304,13 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
         units[kept] = BATTLE_UNIT_LIST_END;
         BattleActor_SpawnObjectsForList((s16 *)units, 0);
         for (n = 0; n < plan->target_count; n++)
-            units[n] = plan->target_ids[n];
+            units[n] = plan->tgt_no[n];
         units[n] = BATTLE_UNIT_LIST_END;
         for (i = 0; i != work.count; i++) {
             struct AnimationObject *animation;
             u32 child;
 
-            animation = GetMotionRecord(GetBattleObjectSlot(work.actors[i])->object, 0);
+            animation = GetMotionRecord(BtlObjGet(work.actors[i])->object, 0);
             for (child = 0; child != animation->count - 1; child++)
                 work.params[i][child] = animation->entries[child]->param;
         }
@@ -320,7 +320,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
             else
                 work.side = 1;
         } else {
-            if (plan->target_ids[0] <= 7)
+            if (plan->tgt_no[0] <= 7)
                 work.side = 1;
             else
                 work.side = 0;
@@ -336,7 +336,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
             BattleFx_DispatchModeFar((s32 *)&work);
         BattleEventRuntime_WaitForReady();
     }
-    BattleActor_CommitPlacement();
+    BtlObjPut();
     count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, units);
     REG_BLDCNT = 0x3f40;
     for (i = 0; i != count; i++) {

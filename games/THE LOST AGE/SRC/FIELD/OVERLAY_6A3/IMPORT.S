@@ -30,13 +30,13 @@ Math_Sine:
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
-	.global Runtime_BumpAllocate
+	.global MemAlloc
 	.thumb_func
-Runtime_BumpAllocate:
+MemAlloc:
 	overlay_veneer Runtime_BumpAllocateFar
-	.global Sys_Free
+	.global MemFree
 	.thumb_func
-Sys_Free:
+MemFree:
 	overlay_veneer Sys_FreeFar
 	.global Func_0200468c
 	.thumb_func
@@ -66,10 +66,10 @@ Func_020046b4:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -246,10 +246,10 @@ UiText_ShowPositionedMessageAndWait:
 	.thumb_func
 Func_02004784:
 	overlay_veneer Func_08038348
-	.global Owner_RecalculateStats
+	.global UnitCalc
 	.thumb_func
-Owner_RecalculateStats:
-	overlay_veneer Owner_RecalculateStatsFar
+UnitCalc:
+	overlay_veneer UnitCalcFar
 	.global PartyInventory_Add
 	.thumb_func
 PartyInventory_Add:
@@ -266,10 +266,10 @@ Func_020047a4:
 	.thumb_func
 Owner_AdjustFirstValue:
 	overlay_veneer Owner_AdjustFirstValueFar
-	.global Owner_AdjustSecondValue
+	.global UnitEpAdd
 	.thumb_func
-Owner_AdjustSecondValue:
-	overlay_veneer Owner_AdjustSecondValueFar
+UnitEpAdd:
+	overlay_veneer UnitEpAddFar
 	.global Party_AddActiveOwner
 	.thumb_func
 Party_AddActiveOwner:

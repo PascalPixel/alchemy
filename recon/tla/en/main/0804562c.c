@@ -1,5 +1,5 @@
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 
 struct GlyphPalette {
     u8 slot[256];
@@ -22,7 +22,7 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
     font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
     *(u8 **)(decoded + 0x604) = font + ((u16 *)font)[glyph];
     Resource_DecodeByteLz(*(u8 **)(decoded + 0x604), decoded);
-    remapped = Runtime_BumpAllocate(0x400);
+    remapped = MemAlloc(0x400);
     src = decoded;
     dst = remapped;
     for (i = 0; i < 0x400; i++) {

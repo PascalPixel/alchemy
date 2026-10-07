@@ -10,7 +10,7 @@
 #include "EDITION.H"
 #include "IO_REG.H"
 #include "SHOP.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "SYSTEM.H"
 extern struct ShopRuntime *gMenuWork;
 
@@ -109,7 +109,7 @@ done:
 
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
-#include "BATTLE_CALC.H"
+#include "BTLCALC.H"
 #include "SYSTEM.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
@@ -126,7 +126,7 @@ s32 Shop_SelUse(s32 actor)
 
     s32 win2;
     s32 win1;
-    struct BattleUnit *object;
+    struct BtlUnit *object;
     s32 selection;
     s32 redraw;
     s32 count;
@@ -235,7 +235,7 @@ exit_loop:
 
 void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 {
-    struct BattleUnit *unit = Owner_GetStateFar(unit_id);
+    struct BtlUnit *unit = UnitGetFar(unit_id);
     s32 masked = unit->inventory[item_id] & 0x1ff;
     u32 entry = unit->inventory[item_id];
     s32 mult = (entry >> 11) + 1;

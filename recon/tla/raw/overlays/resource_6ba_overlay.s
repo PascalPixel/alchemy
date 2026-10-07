@@ -554,17 +554,17 @@ Func_02000520:
 	movs r1, #50
 	negs r1, r1
 	movs r0, #4
-	bl Owner_AdjustSecondValue
+	bl UnitEpAdd
 	movs r1, #40
 	negs r1, r1
 	movs r0, #5
-	bl Owner_AdjustSecondValue
+	bl UnitEpAdd
 	movs r1, #35
 	negs r1, r1
 	movs r0, #6
-	bl Owner_AdjustSecondValue
+	bl UnitEpAdd
 	movs r0, #4
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #160
 	adds r7, r0, #0
 	lsls r2, r2, #1
@@ -575,7 +575,7 @@ Func_02000520:
 	strb r5, [r7, r6]
 	movs r0, #5
 	strb r5, [r3]
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #152
 	adds r7, r0, #0
 	lsls r2, r2, #1
@@ -584,7 +584,7 @@ Func_02000520:
 	movs r3, #2
 	strb r3, [r7, r6]
 	movs r0, #4
-	bl Owner_GetState
+	bl UnitGet
 	movs r5, #0
 	adds r7, r0, #0
 	movs r6, #216
@@ -608,7 +608,7 @@ Func_02000520:
 	bl Inventory_Break
 .L_020085c2:
 	movs r0, #5
-	bl Owner_GetState
+	bl UnitGet
 	movs r5, #0
 	adds r7, r0, #0
 	movs r6, #216
@@ -772,13 +772,13 @@ Func_02000704:
 	ldrh r5, [r2, r3]
 	adds r6, #1
 	adds r0, r5, #0
-	bl Owner_GetState
+	bl UnitGet
 	ldrb r1, [r0, #15]
 	adds r0, r5, #0
 	add r1, r8
 	bl Party_AdvanceOwnerCountToTarget
 	adds r0, r5, #0
-	bl Owner_RecalculateStats
+	bl UnitCalc
 	cmp r6, r7
 	blt .L_0200871c
 .L_0200873e:
@@ -800,7 +800,7 @@ Func_02000748:
 	adds r3, r3, r2
 	ldr r0, [r3]
 	sub sp, #4
-	bl Owner_GetState
+	bl UnitGet
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #0

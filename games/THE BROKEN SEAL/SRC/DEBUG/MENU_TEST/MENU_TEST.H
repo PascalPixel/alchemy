@@ -10,7 +10,7 @@
 #include "text/MSG_IDS.H"
 
 #include "CHARACTER.H"
-#define Owner_AdjustSecondValue ((s32 (*)())Owner_AdjustSecondValue)
+#define UnitEpAdd ((s32 (*)())UnitEpAdd)
 
 extern volatile s32 gKeysHeld;
 extern struct BattleFxScene *gEffectWork;
@@ -34,7 +34,7 @@ s32 Battle_ApplyPresetItemsAndFlags();
 s32 Shop_PickUnitItem();
 s32 NameEntry_EditOwnerName();
 void UiText_ShowPositionedMessageAndWait();
-void Owner_RecalculateStats();
+void UnitCalc();
 void Party_AdvanceOwnerCountToTarget();
 s32 Inventory_AddItem();
 s32 Djinn_AddToOwner();

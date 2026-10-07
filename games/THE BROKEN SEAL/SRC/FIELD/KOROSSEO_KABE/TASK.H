@@ -3,7 +3,7 @@
 #define KOROSSEO_KABE_TASK_H
 
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
@@ -139,7 +139,7 @@ s32 Object_CheckMovementCollision();
 void Object_CommitPosition();
 void UiWork_PushValueSlot();
 s32 Resource_LoadFixedBlockBIntoFreeSlot();
-u16 *Owner_GetState();
+u16 *UnitGet();
 void Inventory_AddItem();
 void Inventory_Equip();
 s32 Party_CountActiveOwners();

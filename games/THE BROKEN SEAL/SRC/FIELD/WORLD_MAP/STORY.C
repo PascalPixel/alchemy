@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "RESOURCE.H"
 #include "STORY.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "CALL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -622,7 +622,7 @@ void Scene_RunScene371SequenceA(s32 palette)
     Engine_EventWait(45);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
-    Sys_Free(buffer);
+    MemFree(buffer);
     Engine_GameFlagSet(0x101);
 }
 

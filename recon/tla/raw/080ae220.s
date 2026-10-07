@@ -48,7 +48,7 @@ Func_080ae220:
 	cmp r5, #0
 	beq .L_080ae2e6
 	adds r0, r6, #0
-	bl Owner_GetState
+	bl UnitGet
 	adds r5, r0, #0
 	ldrh r3, [r5, #54]
 	strh r3, [r5, #58]

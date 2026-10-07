@@ -10,13 +10,13 @@
 #include "FIXED_POINT_POSITION.H"
 #include "ANIMSPR.H"
 #include "TYPES.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_PRESENTATION.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLWORK.H"
+#include "BTLDISP.H"
+#include "BTLSYS.H"
 
 s32 ObjectDispatch_ReleaseFar(s32);
 
@@ -26,9 +26,9 @@ s32 Graphics_PrepareTransferInIwramWork(void *, void *);
 s32 Render_ProjectPoint(const s32 *, s32 *);
 
 
-struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id) {
-    struct BattleSession *work = gBattleWork;
-    struct BattleObjectSlot *slots = work->slots;
+struct BtlObj *BtlObjGet(s32 object_id) {
+    struct BtlWork *work = BtlWk;
+    struct BtlObj *slots = work->slots;
     s32 index;
     if (object_id > 7) {
         object_id -= 0x78;
@@ -83,9 +83,9 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object)
 
 s32 ActivateBattleObjectSlot(s32 object_id)
 {
-  struct BattleObjectSlot *slot;
+  struct BtlObj *slot;
   BattleMotion_ReleaseObjectSlotByValue(object_id);
-  slot = GetBattleObjectSlot(object_id);
+  slot = BtlObjGet(object_id);
   slot->active = 1;
   return 0;
 }
@@ -95,7 +95,7 @@ void *BattleMotion_DestroyAllSlotObjects(void)
     /* FAKEMATCH: the ignored-result signature keeps the return-address pop in r1; void selects r0. */
     s32 no;
     s32 i;
-    struct BattleObjectSlot *slot;
+    struct BtlObj *slot;
 
     i = 0;
     do {
@@ -103,7 +103,7 @@ void *BattleMotion_DestroyAllSlotObjects(void)
         if (i <= 7) {
             no = i;
         }
-        slot = GetBattleObjectSlot(no);
+        slot = BtlObjGet(no);
         if ((slot != NULL) && (slot->active != 0)) {
             ObjectDispatch_ReleaseFar((s32)slot->object);
             slot->object = NULL;
@@ -115,7 +115,7 @@ void *BattleMotion_DestroyAllSlotObjects(void)
 
 s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out)
 {
-    struct BattleSession *state = gBattleWork;
+    struct BtlWork *state = BtlWk;
 
     out->x = state->slots[no].anchor_x;
     out->y = 0;
@@ -137,7 +137,7 @@ s32 Camera_ApplyTransformByFlag(void)
 
 s32 BattleMotion_ProjectPosition(s32 id, s32 *projected)
 {
-    struct MotionObject *object = GetBattleObjectSlot(id)->object;
+    struct MotionObject *object = BtlObjGet(id)->object;
     struct AnimationObject *record = GetMotionRecord(object, 0);
     s32 position[3];
     s32 scaled;

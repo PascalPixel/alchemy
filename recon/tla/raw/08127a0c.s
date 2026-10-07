@@ -12,7 +12,7 @@ Func_08127a0c:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r8, r0
 	mov r0, r10
-	bl Owner_GetState
+	bl UnitGet
 	adds r7, r0, #0
 	adds r6, r7, #0
 	adds r6, #16
@@ -98,9 +98,9 @@ Func_08127a0c:
 .L_08127ac0:
 	mov r0, r10
 	strh r5, [r7, #26]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	mov r0, r8
-	bl Sys_Free
+	bl MemFree
 	pop {r3, r5}
 	mov r8, r3
 	mov r10, r5

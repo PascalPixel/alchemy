@@ -2373,7 +2373,7 @@ Func_02001420:
 	movs r0, #128
 	sub sp, #4
 	ldr r7, .L_020094d4
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r6, r0, #0
 	str r6, [sp, #0]
 	movs r3, #192
@@ -2414,7 +2414,7 @@ Func_02001420:
 	asrs r0, r0, #16
 	bl VramBlock_LoadCached
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 	mov r1, r8
 	ldr r3, [r1, #8]
 	str r3, [r7, #8]

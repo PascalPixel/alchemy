@@ -33,7 +33,7 @@ struct PasswordOwner {
     u32 values[4];
 };
 
-struct PasswordOwner *Owner_GetState(s32 owner);
+struct PasswordOwner *UnitGet(s32 owner);
 
 
 s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
@@ -82,7 +82,7 @@ s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
     }
 
     for (i = 0; i != 4; i++) {
-        struct PasswordOwner *owner = Owner_GetState(Clear_PasswordMembers[i]);
+        struct PasswordOwner *owner = UnitGet(Clear_PasswordMembers[i]);
         struct PasswordStats *stats = &owner->stats;
 
         if (stats->value_10 > 1999) {
@@ -136,7 +136,7 @@ s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
         p = 39;
         bit = 0;
         for (i = 0; i != 4; i++) {
-            struct PasswordOwner *owner = Owner_GetState(Clear_PasswordMembers[i]);
+            struct PasswordOwner *owner = UnitGet(Clear_PasswordMembers[i]);
 
             for (n = 0; n != 15; n++) {
                 u16 item;
@@ -157,7 +157,7 @@ s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
         p = 107;
         bit = -1;
         for (i = 0; i != 4; i++) {
-            struct PasswordOwner *owner = Owner_GetState(Clear_PasswordMembers[i]);
+            struct PasswordOwner *owner = UnitGet(Clear_PasswordMembers[i]);
             s32 m;
 
             for (m = 0; m != 23; m++) {

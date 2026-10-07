@@ -50,7 +50,7 @@
  *   Permuter 5 min, PERM_RANDOMIZE over head/pending/the call/the two
  *   word stores/tile on the bed: 2,389 candidates, no gain.
  * Session S07-08026080/2 (102), kept:
- * - case 4 tests unit->delusion ... unit->death_count directly, as case 6
+ * - case 4 tests unit->maboroshi ... unit->shiryo directly, as case 6
  *   does; the five pointer locals pd..pc are gone. Code identical (102,
  *   1411 insns after addressof): CSE keeps the field addresses in
  *   registers by itself.
@@ -139,8 +139,8 @@
  *   that combine folds), and head's slot.
  * The whole prologue through the first call now
  * matches: sel is the parameter itself in r10, mode in r8, and
- * gLinkCountdownWork is reached as cell 48 after gBattleWork, so CSE keeps
- * the gBattleWork address in r5 and adds 192 as the native does.
+ * gLinkCountdownWork is reached as cell 48 after BtlWk, so CSE keeps
+ * the BtlWk address in r5 and adds 192 as the native does.
  * Session T10-08026080/3 (from 542), kept:
  * - the cursor's else-if branch stores tbl[0].x = pos.x without nx: nx no
  *   longer lives where the shared constant 1 does, so the 1 takes r1 with
@@ -241,7 +241,7 @@
  *   sp+12, as a giv of i would; the draft sets entry before the guard and
  *   shifts i each time.
  * Session T10-08026080/1 (from 1332), each kept:
- * - slide_offset through ((struct MenuCell **)&gBattleWork)[48]: native
+ * - slide_offset through ((struct MenuCell **)&BtlWk)[48]: native
  *   base reuse reproduced, 1332 (gWorkSlot[9]/[57] loads gWorkSlot+0 and
  *   offsets 36/228 instead, 1338).
  * - party and enemy lists as for (i = 0; i <= 5 && units[i] != 0xFF; i++),
@@ -271,7 +271,7 @@
  * native 28.
  * Parallel session of 2026-10-06 (on 8b95cd7680, merged; its body 1335
  *   against this body's 116, so this body is kept): kind case 5 first and
- *   the top-only gBattleWork cell base, both carried above. Its trials
+ *   the top-only BtlWk cell base, both carried above. Its trials
  *   (base 1335): (u16) cast of the sleep word 1335; sel r10 device 1363;
  *   head declared after matrix or last 1335, after window 1401, first
  *   1409; no head (entries directly) 1438; ids/tbl as pointer locals over
@@ -300,7 +300,7 @@
  * current draft and its measured devices; no new device or credit.
  * The exact RESOLVE.C relative heap-cell pattern differs 1417/1600; moving
  * sel initialization before the first call with it differs 1475/1596.
- * Neither reproduces the native reuse of the gBattleWork cell base.
+ * Neither reproduces the native reuse of the BtlWk cell base.
  */
 #include "AFFINE.H"
 #include "SELECT.H"
@@ -308,8 +308,8 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
-#include "BATTLE_WORK.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLWORK.H"
+#include "BTLSYS.H"
 #include "MENU_LIST.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
@@ -342,8 +342,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     struct EffectPosition namePos;
     struct EffectPosition targetPos;
     struct AffineTransform efx;
-    struct BattleUnit *unit;
-    struct BattleSession *runtime;
+    struct BtlUnit *unit;
+    struct BtlWork *runtime;
     struct UiWindow *window;
     register struct UiWindow *infoWin asm("r9"); /* FAKEMATCH: the ordinary window lifetime differs 1464; native r9 reduces it to 1400 without changing instruction count. */
     s32 cursor;
@@ -371,9 +371,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     struct CursorSlot *slot;
     struct SelectionSprite *entry;
     struct SelectionSprite *head;
-    struct BattleUnit *who;
+    struct BtlUnit *who;
 
-    runtime = gBattleWork;
+    runtime = BtlWk;
     cnt = 0;
     redraw = 0xFFFF;
     slotId = Resource_LoadIntoFreeSlot(256);
@@ -381,9 +381,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     if (spread == 0)
         spread = 1;
     if (mode == 2 || mode == 4)
-        ((struct MenuCell **)&gBattleWork)[48]->slide_offset = -2;
+        ((struct MenuCell **)&BtlWk)[48]->slide_offset = -2;
     else
-        ((struct MenuCell **)&gBattleWork)[48]->slide_offset = 16;
+        ((struct MenuCell **)&BtlWk)[48]->slide_offset = 16;
     for (i = 0; i < 6; i++)
         tbl[i].flags = 0;
     cursor = -1;
@@ -407,11 +407,11 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         if (spread != 0xFF && kind != 0) {
             found = 0;
             for (j = 0; j < cnt; j++) {
-                struct BattleUnit *st;
+                struct BtlUnit *st;
 
                 if (ids[j] == 0xFE)
                     continue;
-                st = Owner_GetStateFar(ids[j]);
+                st = UnitGetFar(ids[j]);
                 switch (kind) {
                 case 5:
                     if (st->hp == 0) {
@@ -420,20 +420,20 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                     }
                     break;
                 case 3:
-                    if (st->poison != 0)
+                    if (st->doku != 0)
                         found = 1;
                     break;
                 case 4:
-                    if (st->delusion != 0 || st->stun != 0
-                        || st->sleep != 0 || st->psy_seal != 0
-                        || st->death_count != 0)
+                    if (st->maboroshi != 0 || st->shibire != 0
+                        || st->nemuri != 0 || st->fuuji != 0
+                        || st->shiryo != 0)
                         found = 1;
                     break;
                 case 6:
-                    if (st->delusion != 0 || st->stun != 0
-                        || st->sleep != 0 || st->psy_seal != 0
-                        || st->death_count != 0 || st->poison != 0
-                        || st->evil_spirit != 0)
+                    if (st->maboroshi != 0 || st->shibire != 0
+                        || st->nemuri != 0 || st->fuuji != 0
+                        || st->shiryo != 0 || st->doku != 0
+                        || st->akuryo != 0)
                         found = 1;
                     break;
                 }
@@ -455,7 +455,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     while (1) {
         if (ids[cursor] == 0xFE)
             goto step_back;
-        if (GameFlag_TestFar(0x16C) && mode == 1 && Owner_GetStateFar(ids[cursor])->hp == 0)
+        if (GameFlag_TestFar(0x16C) && mode == 1 && UnitGetFar(ids[cursor])->hp == 0)
             goto step_back;
         break;
     step_back:
@@ -553,7 +553,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             goto frame_tail;
         if (kind == 0)
             goto frame_tail;
-        unit = Owner_GetStateFar(ids[cursor]);
+        unit = UnitGetFar(ids[cursor]);
         BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&pos);
         if (infoWin != 0)
             UiWork_Finalize(infoWin, 1);
@@ -586,9 +586,9 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                 column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
             UiText_DrawStringAtOffset((u8 *)OwnerStatus_PpString, (struct RenderInput *)infoWin, 0, 0);
-            UiText_DrawNumberInWindow(unit->pp, 4, (s32)infoWin, 16, 0);
+            UiText_DrawNumberInWindow(unit->ep, 4, (s32)infoWin, 16, 0);
             UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct RenderInput *)infoWin, 48, 0);
-            UiText_DrawNumberInWindow(unit->max_pp, 4, (s32)infoWin, 56, 0);
+            UiText_DrawNumberInWindow(unit->max_ep, 4, (s32)infoWin, 56, 0);
             goto frame_tail;
         case 5:
             anchor = pos.x / 8;
@@ -606,21 +606,21 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             if (anchor + 5 > 29)
                 column = 18;
             infoWin = UiWindow_Create(column, 8, 12, 3, 6);
-            if (unit->poison == 0)
+            if (unit->doku == 0)
                 goto no_condition;
             UiText_DrawCharacterAtOffset(0x8A4, (struct RenderInput *)infoWin, 0, 0);
             goto frame_tail;
         case 4:
             count = 0;
-            if (unit->delusion != 0)
+            if (unit->maboroshi != 0)
                 count = 1;
-            if (unit->stun != 0)
+            if (unit->shibire != 0)
                 count++;
-            if (unit->sleep != 0)
+            if (unit->nemuri != 0)
                 count++;
-            if (unit->psy_seal != 0)
+            if (unit->fuuji != 0)
                 count++;
-            if (unit->death_count != 0)
+            if (unit->shiryo != 0)
                 count++;
             if (count == 0)
                 count = 1;
@@ -633,23 +633,23 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                 column = 14;
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
-            if (unit->delusion != 0) {
+            if (unit->maboroshi != 0) {
                 UiText_DrawCharacterAtOffset(0x8A5, (struct RenderInput *)infoWin, 0, 0);
                 count = 1;
             }
-            if (unit->stun != 0) {
+            if (unit->shibire != 0) {
                 UiText_DrawCharacterAtOffset(0x8A6, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->sleep != 0) {
+            if (unit->nemuri != 0) {
                 UiText_DrawCharacterAtOffset(0x8A7, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->psy_seal != 0) {
+            if (unit->fuuji != 0) {
                 UiText_DrawCharacterAtOffset(0x8A8, (struct RenderInput *)infoWin, 0, count * 8);
                 ++count;
             }
-            if (unit->death_count != 0) {
+            if (unit->shiryo != 0) {
                 UiText_DrawCharacterAtOffset(0x8A9, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
@@ -658,19 +658,19 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
             goto frame_tail;
         case 6:
             count = 0;
-            if (unit->poison != 0)
+            if (unit->doku != 0)
                 count = 1;
-            if (unit->delusion != 0)
+            if (unit->maboroshi != 0)
                 count++;
-            if (unit->stun != 0)
+            if (unit->shibire != 0)
                 count++;
-            if (unit->sleep != 0)
+            if (unit->nemuri != 0)
                 count++;
-            if (unit->psy_seal != 0)
+            if (unit->fuuji != 0)
                 count++;
-            if (unit->death_count != 0)
+            if (unit->shiryo != 0)
                 count++;
-            if (unit->evil_spirit != 0)
+            if (unit->akuryo != 0)
                 count++;
             if (count == 0)
                 count = 1;
@@ -683,31 +683,31 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                 column = 14;
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
-            if (unit->poison != 0) {
+            if (unit->doku != 0) {
                 UiText_DrawCharacterAtOffset(0x8A4, (struct RenderInput *)infoWin, 0, 0);
                 count = 1;
             }
-            if (unit->delusion != 0) {
+            if (unit->maboroshi != 0) {
                 UiText_DrawCharacterAtOffset(0x8A5, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->stun != 0) {
+            if (unit->shibire != 0) {
                 UiText_DrawCharacterAtOffset(0x8A6, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->sleep != 0) {
+            if (unit->nemuri != 0) {
                 UiText_DrawCharacterAtOffset(0x8A7, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->psy_seal != 0) {
+            if (unit->fuuji != 0) {
                 UiText_DrawCharacterAtOffset(0x8A8, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->death_count != 0) {
+            if (unit->shiryo != 0) {
                 UiText_DrawCharacterAtOffset(0x8A9, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->evil_spirit != 0) {
+            if (unit->akuryo != 0) {
                 UiText_DrawCharacterAtOffset(0x8AA, (struct RenderInput *)infoWin, 0, 8 * count);
                 count++;
             }
@@ -726,7 +726,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     draw_name:
         if (spread == 0xFF)
             goto frame_tail;
-        who = Owner_GetStateFar(ids[cursor]);
+        who = UnitGetFar(ids[cursor]);
         BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&namePos);
         namePos.y += Trig_Sin(gFrameCount << 12) / 32768;
         if (who->class_id == 125 || who->class_id == 122) {

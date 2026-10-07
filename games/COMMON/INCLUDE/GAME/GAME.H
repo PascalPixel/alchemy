@@ -5,7 +5,7 @@
 
 #include "TYPES.H"
 #include "EDITION.H"
-#include "BATTLE_SUMMON.H"
+#include "BTLSMN.H"
 #include "BATTLE_UNIT.H"
 #include "ITEM.H"
 #if !GAME_TLA
@@ -13,7 +13,7 @@
 #include "PRESET_TABLE.H"
 #endif
 #if GAME_TLA
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #endif
 
 struct ItemDefinition;
@@ -24,11 +24,11 @@ extern const struct SummonDefinition Summon_DefinitionTable[];
 s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit);
 
 #if !GAME_TLA
-struct BattleAction;
+struct BtlAct;
 struct EnemyDefinition;
 struct PresetValues;
 
-extern struct BattleAction BattleAction_DefinitionTable[];
+extern struct BtlAct BattleAction_DefinitionTable[];
 extern const u8 Character_ElementGroupTable[];
 extern u32 Character_LevelExpTable[];
 extern s32 Character_StartingEquipOwnerIds[];

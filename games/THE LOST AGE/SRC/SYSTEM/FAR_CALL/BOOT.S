@@ -88,7 +88,7 @@ Runtime_GetRemainingEwramFar:
 	.global Runtime_BumpAllocateFar
 	.thumb_func
 Runtime_BumpAllocateFar:
-	overlay_veneer Runtime_BumpAllocate
+	overlay_veneer MemAlloc
 	.global Runtime_BumpAllocateAlternatePoolFar
 	.thumb_func
 Runtime_BumpAllocateAlternatePoolFar:
@@ -96,7 +96,7 @@ Runtime_BumpAllocateAlternatePoolFar:
 	.global Sys_FreeFar
 	.thumb_func
 Sys_FreeFar:
-	overlay_veneer Sys_Free
+	overlay_veneer MemFree
 	.global Runtime_WriteDebugTextTilesFar
 	.thumb_func
 Runtime_WriteDebugTextTilesFar:
@@ -385,10 +385,10 @@ SerialRuntime_StepBlockTransferFar:
 	.thumb_func
 Scheduler_SetCallbackMaskFar:
 	overlay_veneer Scheduler_SetCallbackMask
-	.global Owner_GetStateFar
+	.global UnitGetFar
 	.thumb_func
-Owner_GetStateFar:
-	overlay_veneer Owner_GetState
+UnitGetFar:
+	overlay_veneer UnitGet
 	.global GameFlag_TestFar
 	.thumb_func
 GameFlag_TestFar:

@@ -8,8 +8,8 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "CANVAS.H"
-#include "RUNTIME_MEM.H"
-#include "BATTLE_PRESENTATION.H"
+#include "MEM.H"
+#include "BTLDISP.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -17,7 +17,7 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "B5_CONTEXT.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "RESOURCE_IDS.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
@@ -26,7 +26,7 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "TRANSFORM.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "IO_WRITE_QUEUE.H"
 #include "MAP_SCROLL.H"
 #include "HEAP_STATE.H"
@@ -48,8 +48,8 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
     void *canvas;
     /* FAKEMATCH: an unused second blitter word; the native frame keeps an 8-byte draw slot (sp+48..55, the upper word never accessed), 84 bytes against 80 without it. */
     DrawRectangleFn draw[2];
-    struct BattleObjectSlot *first;
-    struct BattleObjectSlot *second;
+    struct BtlObj *first;
+    struct BtlObj *second;
     struct MotionObject *object;
     struct MotionObject *target;
     s32 x;
@@ -453,7 +453,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
     s32 frame;
     DrawRectangle draw1;
     DrawRectangle draw0;
-    struct BattleSession *battle;
+    struct BtlWork *battle;
     struct BattleBackgroundView *view;
     void **slots;
     void **cache;

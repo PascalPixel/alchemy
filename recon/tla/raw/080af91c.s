@@ -12,7 +12,7 @@ Owner_LevelUp:
 	push {r7}
 	adds r6, r1, #0
 	mov r11, r0
-	bl Owner_GetState
+	bl UnitGet
 	mov r10, r0
 	movs r0, #44
 	bl Runtime_BumpAllocateAlternatePool
@@ -283,10 +283,10 @@ Owner_LevelUp:
 	mov r0, r11
 	bl Owner_RefreshClassActions
 	mov r0, r11
-	bl Owner_RecalculateStats
+	bl UnitCalc
 .L_080afb6a:
 	mov r0, r9
-	bl Sys_Free
+	bl MemFree
 	adds r0, r6, #0
 	pop {r3, r5, r6, r7}
 	mov r8, r3

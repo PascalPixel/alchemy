@@ -67,7 +67,7 @@ UiText_DrawStringAtOffset:
 .L_08042174:
 	bl UiText_RenderStringTiles
 	adds r0, r6, #0
-	bl Sys_Free
+	bl MemFree
 .L_0804217e:
 	pop {r3, r5}
 	mov r8, r3

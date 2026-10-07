@@ -95,7 +95,7 @@ PartyInventory_GiveItem:
 	b .L_080d2772
 .L_080d26d8:
 	ldr r0, [sp, #8]
-	bl Owner_GetState
+	bl UnitGet
 	ldr r1, [sp, #4]
 	ldr r0, [sp, #8]
 	bl Inventory_GetQuantityFar
@@ -130,7 +130,7 @@ PartyInventory_GiveItem:
 	ldr r0, [sp, #8]
 	bl Owner_RefreshClassActionsFar
 	ldr r0, [sp, #8]
-	bl Owner_RecalculateStatsFar
+	bl UnitCalcFar
 	adds r0, r6, #0
 	bl PartyInventory_AddFar
 	mov r8, r0

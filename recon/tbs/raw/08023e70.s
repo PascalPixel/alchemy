@@ -64,7 +64,7 @@ Battle_SelectAbility:
 	mov r10, r2
 	str r3, [sp, #36]
 	ldr r0, [sp, #76]
-	bl Owner_GetStateFar
+	bl UnitGetFar
 	adds r0, #248
 	movs r7, #0
 	mov r8, r0

@@ -3,7 +3,7 @@
 struct OwnerGrowthRecord {
     u8 unknown_00[0x50];
     s16 hp[6];
-    s16 pp[6];
+    s16 ep[6];
     u16 attack[6];
     u16 defense[6];
     u16 agility[6];

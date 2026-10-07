@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 void UiWindow_Commit(s32 window);
 
 void UiWindow_SetTilemapEntryFar(s32, s32, s32, s32, s32);
@@ -16,7 +16,7 @@ s32 PsynergyMenu_DrawListPage(
 
     (void)unused;
 
-    owner = Owner_GetStateFar(menu->owner_ids[0]);
+    owner = UnitGetFar(menu->owner_ids[0]);
 
     UiWindow_Commit(window);
 
@@ -35,7 +35,7 @@ s32 PsynergyMenu_DrawListPage(
     if (rows > row) {
         ofs = (s32)(first * 2) + PSY_LIST_OFS;
         do {
-            struct BattleAction *act;
+            struct BtlAct *act;
             s32 msg;
             s32 y;
             s32 range;

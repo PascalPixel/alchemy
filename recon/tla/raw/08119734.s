@@ -19,11 +19,11 @@ Func_08119734:
 	bl BattleMotion_DestroyAllSlotObjects
 	movs r1, #1
 	adds r0, r5, #0
-	bl Summon_TakeCharge
+	bl EnmCntDec
 	adds r1, r5, #0
 	movs r2, #255
 	movs r0, #128
-	bl BattleUnit_AssignFar
+	bl BtlUnitSetFar
 	adds r2, r6, #0
 	adds r2, #102
 	movs r3, #128
@@ -31,9 +31,9 @@ Func_08119734:
 	adds r2, #2
 	movs r3, #255
 	strh r3, [r2]
-	bl Summon_Refresh
+	bl EnmUpd
 	movs r0, #128
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r2, [r0, #12]
 	cmp r2, #0
 	bge .L_0811978a
@@ -53,6 +53,6 @@ Func_08119734:
 .L_0811979a:
 	asrs r3, r3, #16
 	movs r1, #128
-	bl BattlePresentation_SpawnActorObject
-	bl BattleActor_CommitPlacement
+	bl BtlObjMake
+	bl BtlObjPut
 	pop {r5, r6, pc}

@@ -81,9 +81,9 @@ s32 CommandTable_ConfigureCommandList(void)
     Party_AdvanceOwnerCountToTarget(MEARI, 30);
 #endif
     Party_AdvanceOwnerCountToTarget(IWAN, 30);
-    Owner_RecalculateStats(ROBIN);
-    Owner_RecalculateStats(JERARD);
-    Owner_RecalculateStats(MEARI);
-    Owner_RecalculateStats(IWAN);
+    UnitCalc(ROBIN);
+    UnitCalc(JERARD);
+    UnitCalc(MEARI);
+    UnitCalc(IWAN);
     return 0;
 }

@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 
 struct ItemOwner {
     u8 padding_000[0x10];
@@ -13,13 +13,13 @@ struct ItemOwner {
     u8 stat_1e;
     u8 padding_01f[0x15];
     s16 max_hp;
-    s16 max_pp;
+    s16 max_ep;
     s16 hp;
-    s16 pp;
+    s16 ep;
     u8 padding_03c[0x9c];
     u16 items[15];
     u8 padding_0f6[0x3b];
-    s8 poison;
+    s8 doku;
 };
 
 struct ItemData {
@@ -41,7 +41,7 @@ struct ItemUseWork {
 
 extern struct ItemUseWork *gMenuWork;
 
-struct ItemOwner *Owner_GetStateFar(s32);
+struct ItemOwner *UnitGetFar(s32);
 struct ItemData *Item_Get(s32);
 u8 Inventory_RemoveFar(s32, s32);
 u32 ItemMenu_Collect(struct ItemOwner *, u16 *, s32);
@@ -55,7 +55,7 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     struct ItemOwner *owner;
     struct ItemData *item;
 
-    owner = Owner_GetStateFar(owner_id);
+    owner = UnitGetFar(owner_id);
     work = gMenuWork;
     item_id = 0x1ff & owner->items[slot];
     item = Item_Get(item_id);

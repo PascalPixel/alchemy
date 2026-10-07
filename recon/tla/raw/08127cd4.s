@@ -403,7 +403,7 @@ Func_08127cd4:
 	.4byte IwramClearWords
 .L_08127fc8:
 	adds r0, r7, #0
-	bl Owner_GetState
+	bl UnitGet
 	movs r1, #166
 	lsls r1, r1, #1
 	adds r7, #1
@@ -422,7 +422,7 @@ Func_08127cd4:
 	movs r1, #1
 	adds r5, r2, r6
 	ldrh r0, [r5]
-	bl Summon_TakeCharge
+	bl EnmCntDec
 	movs r3, #128
 	adds r4, r0, #0
 	lsls r3, r3, #8
@@ -431,7 +431,7 @@ Func_08127cd4:
 	beq .L_0812800a
 	ldrh r0, [r5]
 	str r4, [sp, #0]
-	bl Summon_ResetCharge
+	bl EnmCntClr
 	ldr r4, [sp, #0]
 .L_0812800a:
 	movs r2, #254
@@ -442,9 +442,9 @@ Func_08127cd4:
 	ldrh r1, [r5]
 	ands r2, r4
 	adds r0, r6, #0
-	bl BattleUnit_AssignFar
+	bl BtlUnitSetFar
 	adds r0, r6, #0
-	bl Owner_GetState
+	bl UnitGet
 	ldr r1, [sp, #32]
 	mov r8, r0
 	cmp r1, #0

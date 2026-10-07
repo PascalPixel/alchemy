@@ -46,13 +46,13 @@ Runtime_AllocateHeapBlockFar:
 	.thumb_func
 Runtime_ReleaseHeapBlock:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
-	.global Runtime_BumpAllocate
+	.global MemAlloc
 	.thumb_func
-Runtime_BumpAllocate:
+MemAlloc:
 	overlay_veneer Runtime_BumpAllocateFar
-	.global Sys_Free
+	.global MemFree
 	.thumb_func
-Sys_Free:
+MemFree:
 	overlay_veneer Sys_FreeFar
 	.global Func_02005704
 	.thumb_func
@@ -70,10 +70,10 @@ Resource_FindFreeEntry:
 	.thumb_func
 Func_0200571c:
 	overlay_veneer Runtime_PushSlotEntryFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:

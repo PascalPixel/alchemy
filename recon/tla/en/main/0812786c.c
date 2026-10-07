@@ -1,4 +1,4 @@
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -9,9 +9,9 @@ struct OwnerElementStats {
 
 struct OwnerStats {
     s16 max_hp;
-    s16 max_pp;
+    s16 max_ep;
     s16 hp;
-    s16 pp;
+    s16 ep;
     u16 attack;
     u16 defense;
     u16 agility;
@@ -26,9 +26,9 @@ struct OwnerState {
     struct OwnerStats stats;
 };
 
-struct OwnerState *Owner_GetStateFar(s32 owner);
+struct OwnerState *UnitGetFar(s32 owner);
 s32 __divsi3(s32 numerator, s32 denominator);
-void Owner_RecalculateStatsFar(s32 owner);
+void UnitCalcFar(s32 owner);
 
 s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 {
@@ -40,7 +40,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     s32 i;
 
     base = Runtime_BumpAllocateAlternatePool(sizeof(struct OwnerStats));
-    state = Owner_GetStateFar(owner);
+    state = UnitGetFar(owner);
     stats = &state->stats;
     Iwram_CopyWords(base, stats, sizeof(struct OwnerStats));
 
@@ -53,14 +53,14 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
         value = 9999;
     stats->max_hp = value;
 
-    value = state->stats.max_pp;
+    value = state->stats.max_ep;
     value += __divsi3(levels * 15, 10);
-    floor = __divsi3(base->max_pp * 7, 10);
+    floor = __divsi3(base->max_ep * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 9999)
         value = 9999;
-    state->stats.max_pp = value;
+    state->stats.max_ep = value;
 
     floor = __divsi3(levels * 123, 10);
     value = state->stats.attack;
@@ -103,6 +103,6 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     }
 
     state->level += levels;
-    Owner_RecalculateStatsFar(owner);
+    UnitCalcFar(owner);
     Runtime_BumpFree(base);
 }

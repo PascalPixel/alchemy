@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "RESOURCE.H"
 
 extern u8 gSceneState[];

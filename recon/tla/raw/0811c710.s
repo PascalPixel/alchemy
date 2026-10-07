@@ -56,7 +56,7 @@ Func_0811c710:
 	bl WaitFrames
 	bl Random16
 	ldr r0, [sp, #8]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	ldr r2, [sp, #4]
 	ldr r6, [r0]
 	cmp r2, #7
@@ -142,7 +142,7 @@ Func_0811c710:
 	cmp r5, #16
 	bne .L_0811c810
 	movs r0, #9
-	bl UiWindow_DrawPartyStatusContentsFar
+	bl PtyStDrawFar
 	ldr r2, [sp, #4]
 	cmp r2, #127
 	ble .L_0811c86a
@@ -161,7 +161,7 @@ Func_0811c710:
 	adds r6, r5, #0
 	adds r6, #128
 	adds r0, r6, #0
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #56
 	ldrsh r3, [r0, r2]
 	cmp r3, #0
@@ -189,7 +189,7 @@ Func_0811c710:
 	adds r6, r3, r1
 .L_0811c882:
 	adds r0, r5, #0
-	bl Owner_GetState
+	bl UnitGet
 	movs r2, #56
 	ldrsh r3, [r0, r2]
 	cmp r3, #0
@@ -252,7 +252,7 @@ Func_0811c710:
 	bl BattleFx_InitializeModeFar
 	movs r0, #10
 	bl WaitFrames
-	bl BattleActor_CommitPlacement
+	bl BtlObjPut
 	ldr r3, .L_0811c930
 	movs r2, #128
 	lsls r2, r2, #19

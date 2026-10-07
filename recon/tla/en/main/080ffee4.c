@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "ITEM.H"
 #include "SYSTEM.H"
 

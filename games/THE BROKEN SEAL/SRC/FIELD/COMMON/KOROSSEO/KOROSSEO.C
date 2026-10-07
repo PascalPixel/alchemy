@@ -12,7 +12,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "TBS_EDITION.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "FIELD_EVENT.H"
 #include "DMA.H"
 #include "RESOURCE_IDS.H"

@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "IO_REG.H"
 #include "FIXED_POINT_POSITION.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "PROJECT.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"

@@ -1,9 +1,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "GAME_STATE.H"
 #include "FIELDRUN.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "BATTLE.H"
 
 void MapGroupTable_SelectEntry(s32 kind)
@@ -78,37 +78,37 @@ static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
     return clamped;
 }
 
-static __inline__ void Unit_UpdateGauges(struct BattleUnit *unit)
+static __inline__ void Unit_UpdateGauges(struct BtlUnit *unit)
 {
     unit->hp_gauge = Vitals_Ratio(unit->hp, unit->max_hp);
     if (unit->hp_gauge == 0 && unit->hp != 0)
         unit->hp_gauge = 1;
-    unit->pp_gauge = Vitals_Ratio(unit->pp, unit->max_pp);
-    if (unit->pp_gauge == 0 && unit->pp != 0)
-        unit->pp_gauge = 1;
+    unit->ep_gauge = Vitals_Ratio(unit->ep, unit->max_ep);
+    if (unit->ep_gauge == 0 && unit->ep != 0)
+        unit->ep_gauge = 1;
 }
 
 void Party_SetReturnPoint(s32 reason)
 {
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     s32 i;
     s32 scene;
     s32 entrance;
 
     gGameState.scene_change_reason = reason;
     if (reason == -1) {
-        unit = Owner_GetStateFar(gGameState.selected_actor);
+        unit = UnitGetFar(gGameState.selected_actor);
         if (unit->hp == 0) {
             unit->hp = 1;
             Unit_UpdateGauges(unit);
         }
         if (GameFlag_TestFar(32)) {
             for (i = 0; i < 2; i++) {
-                unit = Owner_GetStateFar(i);
+                unit = UnitGetFar(i);
                 /* FAKEMATCH: the one-pass block keeps both copies ahead of the ratio */
                 do {
                     unit->hp = unit->max_hp;
-                    unit->pp = unit->max_pp;
+                    unit->ep = unit->max_ep;
                 } while (0);
                 Unit_UpdateGauges(unit);
             }

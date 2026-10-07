@@ -15,7 +15,7 @@
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_UNIT.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "UI.H"
 #include "DJINN_MENU.H"
 #include "text/MSG_IDS.H"
@@ -23,7 +23,7 @@
 #include "KEYSTATE.H"
 #include "WINDOW.H"
 #include "GAME_STATE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define gWindowWork (*(struct UiWork * *)&gWindowWork)
 
@@ -73,7 +73,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     u8 balanced[16];
     struct DjinnMenuWork *state = gMenuWork;
     struct DjinnMenuBackdrop *lists = state->backdrop;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
     s32 window;
     s32 redraw = 1;
     u32 refresh;
@@ -160,7 +160,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             if (!(buf[x] & 1))
                 sel = y;
             window = state->status_window;
-            owner = Owner_GetStateFar(state->owners[x]);
+            owner = UnitGetFar(state->owners[x]);
             RenderOutput_RedrawSavedRectFar(window);
             UiText_DrawStringAtOffsetFar(owner->name, window, 0, 0);
             UiText_DrawCharacterAtOffsetFar(owner->class_index + (s32)MsgClassName, window, 0, 8);
@@ -303,7 +303,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     BattlePlacement_UpdateTimedEntriesFar();
                     Djinn_DeactivateFar(0, 0, 0);
                     Trade_AddOfferFar(0, 0, 0);
-                    Owner_RecalculateStatsFar(0);
+                    UnitCalcFar(0);
                     repeat = 2;
                     pressed = 2;
                 }
@@ -461,7 +461,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 Djinn_ActivateFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn));
                 Trade_RemoveOfferFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn));
             }
-            Owner_RecalculateStatsFar(DJINN_OWNER(djinn));
+            UnitCalcFar(DJINN_OWNER(djinn));
             DjinnMenu_DrawElementList(&lists->list);
             redraw = 1;
         }
@@ -536,12 +536,12 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                                 if (!(entry & 0x8000)) {
                                     Djinn_ActivateFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
                                     Trade_RemoveOfferFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
-                                    Owner_RecalculateStatsFar(DJINN_OWNER(entry));
+                                    UnitCalcFar(DJINN_OWNER(entry));
                                 }
                             } else if (entry & 0x8000) {
                                 Djinn_DeactivateFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
                                 Trade_AddOfferFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
-                                Owner_RecalculateStatsFar(DJINN_OWNER(entry));
+                                UnitCalcFar(DJINN_OWNER(entry));
                             }
                         }
                     }
@@ -660,7 +660,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
 
 s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element)
 {
-    struct BattleUnit *state = Owner_GetStateFar(owner);
+    struct BtlUnit *state = UnitGetFar(owner);
     s32 count = 0;
     s32 row;
     s32 bit;
@@ -729,16 +729,16 @@ s32 Menu_RunPairedEntryAction(s32 mode, s32 param)
 #define PREVIEW_ARROW_X (x * 8 + 64)
 #define PREVIEW_PP_X 56
 #endif
-static __inline__ void Unit_Copy(struct BattleUnit *dst, struct BattleUnit *src)
+static __inline__ void Unit_Copy(struct BtlUnit *dst, struct BtlUnit *src)
 {
-    Iwram_CopyWords(dst, src, sizeof(struct BattleUnit));
+    Iwram_CopyWords(dst, src, sizeof(struct BtlUnit));
 }
 
 s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
     s32 give, s32 take, s32 mode, s32 page, s32 side)
 {
-    struct BattleUnit *state;
-    struct BattleUnit *saved;
+    struct BtlUnit *state;
+    struct BtlUnit *saved;
     s32 give_element;
     s32 give_index;
     s32 give_set;
@@ -750,7 +750,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
     u16 actions[48];
     struct DjinnMenuWork *menu;
 
-    state = Owner_GetStateFar(owner);
+    state = UnitGetFar(owner);
     menu = gMenuWork;
     give_element = menu->pair_element[give];
     give_index = menu->pair_index[give];
@@ -758,20 +758,20 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
     take_element = menu->pair_element[take];
     take_index = menu->pair_index[take];
     take_set = menu->pair_entries[take] & 0x8000;
-    saved = (struct BattleUnit *)Runtime_BumpAllocate(sizeof(struct BattleUnit));
+    saved = (struct BtlUnit *)MemAlloc(sizeof(struct BtlUnit));
     Unit_Copy(saved, state);
 
     if (page == 0) {
         if (mode == 3) {
             UiNumber_DrawAt(state->max_hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_MAX_X, y * 8 + 56);
-            UiNumber_DrawAt(state->max_pp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_MAX_X, y * 8 + 64);
+            UiNumber_DrawAt(state->max_ep, PREVIEW_DIGITS, window, x * 8 + PREVIEW_MAX_X, y * 8 + 64);
             UiNumber_DrawAt(state->hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 56);
-            UiNumber_DrawAt(state->pp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
+            UiNumber_DrawAt(state->ep, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
             UiText_DrawStringAtOffsetFar(DjinnMenu_TextSlash, window, x * 8 + PREVIEW_SLASH_X, y * 8 + 56);
             UiText_DrawStringAtOffsetFar(DjinnMenu_TextSlash, window, x * 8 + PREVIEW_SLASH_X, y * 8 + 64);
         } else {
             UiNumber_DrawAt(state->hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 56);
-            UiNumber_DrawAt(state->pp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
+            UiNumber_DrawAt(state->ep, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
         }
         UiNumber_DrawAt(state->attack, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 72);
         UiNumber_DrawAt(state->defense, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 80);
@@ -804,8 +804,8 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
         break;
     }
 
-    Owner_RecalculateStatsFar(owner);
-    state = Owner_GetStateFar(owner);
+    UnitCalcFar(owner);
+    state = UnitGetFar(owner);
 
     if (page == 0) {
         s32 label;
@@ -857,9 +857,9 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
             else
                 UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 56, 1);
         }
-        if (state->pp != saved->pp) {
-            UiNumber_DrawAt(state->pp, 4, window, x * 8 + 72, y * 8 + 64);
-            if (state->pp > saved->pp)
+        if (state->ep != saved->ep) {
+            UiNumber_DrawAt(state->ep, 4, window, x * 8 + 72, y * 8 + 64);
+            if (state->ep > saved->ep)
                 UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 64, 0);
             else
                 UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 64, 1);

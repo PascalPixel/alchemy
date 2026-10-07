@@ -1,13 +1,13 @@
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_WORK.H"
+#include "BTLPTY.H"
+#include "BTLWORK.H"
 #include "IWRAM_CALL.H"
 
 s32 BattleParty_AssignMemberSlots(void)
 {
     u16 active_members[8];
-    struct BattleSession *battle_state = gBattleWork;
+    struct BtlWork *battle_state = BtlWk;
     s32 party_size = BattleParty_PrepareActiveOwners(active_members);
     s32 member_slot;
     s32 unit_id;

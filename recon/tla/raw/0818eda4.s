@@ -967,9 +967,9 @@ Func_0818eda4:
 	cmp r3, #8
 	bne .L_0818f4fc
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	ldr r0, [sp, #12]
-	bl Sys_Free
+	bl MemFree
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0

@@ -2,7 +2,7 @@
 
 s32 Inventory_CountItem(s32 owner, s32 item_id)
 {
-    struct OwnerInventoryState *base = Owner_GetState(owner);
+    struct OwnerInventoryState *base = UnitGet(owner);
     s32 count = 0;
     s32 target = item_id & ITEM_ID_MASK;
     s32 index = 0;

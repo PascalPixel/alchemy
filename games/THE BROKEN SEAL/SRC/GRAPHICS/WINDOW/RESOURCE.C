@@ -10,7 +10,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "VRAM_BLOCK.H"
 #include "GLYPH.H"
 #include "AFFINE.H"
@@ -20,7 +20,7 @@
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
 #include "B5_CONTEXT.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define UiGlyph_LoadEntryWithPalette ((s32 (*)(u32,s32,s32*,s32*,s32,s32))UiGlyph_LoadEntryWithPalette)
 

@@ -164,10 +164,10 @@ Resource_LoadFixedBlockBIntoFreeSlot:
 	.global Engine_OwnerGetState
 	.thumb_func
 Engine_OwnerGetState:
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global Inventory_AddItem
 	.thumb_func
 Inventory_AddItem:

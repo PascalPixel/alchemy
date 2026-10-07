@@ -8,18 +8,18 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_EFX.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
 #include "INVENTORY_MENU.H"
 #include "ITEM.H"
 #include "DJINN_MENU.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_CALC.H"
+#include "BTLSYS.H"
+#include "BTLCALC.H"
 #include "UI.H"
 
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
@@ -79,10 +79,10 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     struct InventoryMenuState *work;
     s32 result;
     s32 item_id;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
     struct ItemDefinition *item;
 
-    owner = Owner_GetStateFar(owner_id);
+    owner = UnitGetFar(owner_id);
     work = gMenuWork;
     item_id = 0x1ff & owner->inventory[slot];
     item = Item_Get(item_id);
@@ -119,10 +119,10 @@ s32 BattleEffect_ApplyToTargets(
     s32 target_id,
     s32 fixed_scale)
 {
-    struct BattleAction *effect;
+    struct BtlAct *effect;
     struct InventoryMenuState *runtime;
-    struct BattleUnit *target;
-    struct BattleUnit *source;
+    struct BtlUnit *target;
+    struct BtlUnit *source;
     s32 later_target;
     s32 changed;
     u8 index;
@@ -132,16 +132,16 @@ s32 BattleEffect_ApplyToTargets(
     s32 amount;
     s32 result_code;
 
-    effect = BattleAction_Get(effect_id);
+    effect = BtlActGet(effect_id);
     runtime = gMenuWork;
     changed = 0;
     result_code = 0;
     later_target = 0;
 
     if (target_id != 9)
-        target = Owner_GetStateFar(target_id);
+        target = UnitGetFar(target_id);
     else
-        target = Owner_GetStateFar(0);
+        target = UnitGetFar(0);
 
     /* FAKEMATCH: the dead test keeps the range load before the count guard and preserves target-index and power-load registers. */
     if (effect->range == 0xff && later_target != 0)
@@ -150,7 +150,7 @@ s32 BattleEffect_ApplyToTargets(
     for (index = 0; index < runtime->party_count; index++) {
         if (effect->range == 0xff) {
             target_id = runtime->owner_ids[index];
-            target = Owner_GetStateFar(target_id);
+            target = UnitGetFar(target_id);
         }
 
         amount = effect->power;
@@ -160,12 +160,12 @@ s32 BattleEffect_ApplyToTargets(
                 if (effect->damage_class != 4) {
                     s32 stat_offset;
 
-                    source = Owner_GetStateFar(source_id);
+                    source = UnitGetFar(source_id);
                     stat_offset = effect->damage_class;
                     scale = source->elements[stat_offset].power;
                 } else
                     scale = 100;
-                amount = Battle_CalcRestore(amount, scale, 0x100);
+                amount = BtlRcvCalc(amount, scale, 0x100);
             }
 
             if (target->hp <= 0) {
@@ -185,7 +185,7 @@ s32 BattleEffect_ApplyToTargets(
                     } else if (later_target == 0) {
                         result_code = 1;
                     }
-                    Owner_RecalculateRatiosFar(target_id);
+                    UnitRatioFar(target_id);
                     changed = 1;
                     if (effect->range == 0xff) {
                         later_target = 1;
@@ -213,7 +213,7 @@ s32 BattleEffect_ApplyToTargets(
                 changed = 1;
                 break;
             case 0x105:
-                target->base_pp += amount + random_adjust;
+                target->base_ep += amount + random_adjust;
                 result_code = 0x11;
                 changed = 1;
                 break;
@@ -243,20 +243,20 @@ s32 BattleEffect_ApplyToTargets(
             break;
 
         case BATTLE_DAMAGE_PP_HEAL:
-            if (target->pp == target->max_pp) {
+            if (target->ep == target->max_ep) {
                 if (later_target == 0)
                     result_code = 7;
             } else {
-                target->pp += amount;
-                if (target->pp > target->max_pp) {
-                    amount -= target->pp - target->max_pp;
-                    target->pp = target->max_pp;
+                target->ep += amount;
+                if (target->ep > target->max_ep) {
+                    amount -= target->ep - target->max_ep;
+                    target->ep = target->max_ep;
                     if (later_target == 0)
                         result_code = 5;
                 } else if (later_target == 0) {
                     result_code = 6;
                 }
-                Owner_RecalculateRatiosFar(target_id);
+                UnitRatioFar(target_id);
                 changed = 1;
                 if (effect->range == 0xff) {
                     later_target = 1;
@@ -290,25 +290,25 @@ s32 BattleEffect_ApplyToTargets(
                 } else if (later_target == 0) {
                     result_code = 1;
                 }
-                Owner_RecalculateRatiosFar(target_id);
+                UnitRatioFar(target_id);
                 changed = 1;
             }
             break;
 
         case 2:
-            if (target->pp == target->max_pp) {
+            if (target->ep == target->max_ep) {
                 if (later_target == 0)
                     result_code = 7;
             } else {
-                target->pp += amount;
-                if (target->pp > target->max_pp) {
-                    target->pp = target->max_pp;
+                target->ep += amount;
+                if (target->ep > target->max_ep) {
+                    target->ep = target->max_ep;
                     if (later_target == 0)
                         result_code = 5;
                 } else if (later_target == 0) {
                     result_code = 6;
                 }
-                Owner_RecalculateRatiosFar(target_id);
+                UnitRatioFar(target_id);
                 changed = 1;
             }
             break;
@@ -316,7 +316,7 @@ s32 BattleEffect_ApplyToTargets(
         case EFX_REVIVE_FULL:
             if (target->hp == 0) {
                 target->hp = target->max_hp;
-                Owner_RecalculateRatiosFar(target_id);
+                UnitRatioFar(target_id);
                 changed = 1;
                 if (later_target == 0)
                     result_code = 0xc;
@@ -328,7 +328,7 @@ s32 BattleEffect_ApplyToTargets(
         case EFX_REVIVE_HALF:
             if (target->hp == 0) {
                 target->hp = target->max_hp / 2;
-                Owner_RecalculateRatiosFar(target_id);
+                UnitRatioFar(target_id);
                 if (later_target == 0)
                     result_code = 0xc;
             } else if (later_target == 0) {
@@ -339,7 +339,7 @@ s32 BattleEffect_ApplyToTargets(
         case EFX_REVIVE_80:
             if (target->hp == 0) {
                 target->hp = target->max_hp * 7 / 10;
-                Owner_RecalculateRatiosFar(target_id);
+                UnitRatioFar(target_id);
                 if (later_target == 0)
                     result_code = 0xc;
             } else if (later_target == 0) {
@@ -348,8 +348,8 @@ s32 BattleEffect_ApplyToTargets(
             break;
 
         case EFX_CURE_POISON:
-            if (target->poison != 0) {
-                target->poison = 0;
+            if (target->doku != 0) {
+                target->doku = 0;
                 changed = 1;
                 if (later_target == 0)
                     result_code = 0xa;
@@ -383,9 +383,9 @@ void Ability_PlayUseAnimation(s32 action)
 {
     s32 animation_type;
     u32 target_type;
-    struct BattleAction *ability;
+    struct BtlAct *ability;
 
-    ability = BattleAction_Get(action);
+    ability = BtlActGet(action);
     animation_type = 0xf & ability->target_flags;
     switch (animation_type) {
     case 1:
@@ -666,8 +666,8 @@ s32 DjinnMenu_RunScreen(void)
         case 13:
             AudioCommand_PlayFar(126);
             result = Djinn_TransferFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0], menu->shown_owner[1]);
-            Owner_RecalculateStatsFar(menu->shown_owner[0]);
-            Owner_RecalculateStatsFar(menu->shown_owner[1]);
+            UnitCalcFar(menu->shown_owner[0]);
+            UnitCalcFar(menu->shown_owner[1]);
             menu->cursor->active = 13;
             RenderOutput_ClearListFar(menu->list_window);
             Menu_ComputeEntryValues(menu->backdrop);
@@ -703,7 +703,7 @@ s32 DjinnMenu_RunScreen(void)
             AudioCommand_PlayFar(175);
             Djinn_DeactivateFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0]);
             result = Trade_AddOfferFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0]);
-            Owner_RecalculateStatsFar(menu->shown_owner[0]);
+            UnitCalcFar(menu->shown_owner[0]);
             menu->cursor->active = 13;
             RenderOutput_ClearListFar(menu->list_window);
             menu->cursor->active = 1;
@@ -720,8 +720,8 @@ s32 DjinnMenu_RunScreen(void)
             AudioCommand_PlayFar(126);
             Djinn_TransferFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0], menu->shown_owner[1]);
             result = Djinn_TransferFar(menu->shown_owner[1], menu->pair_element[1], menu->pair_index[1], menu->shown_owner[0]);
-            Owner_RecalculateStatsFar(menu->shown_owner[0]);
-            Owner_RecalculateStatsFar(menu->shown_owner[1]);
+            UnitCalcFar(menu->shown_owner[0]);
+            UnitCalcFar(menu->shown_owner[1]);
             Menu_ComputeEntryValues(menu->backdrop);
             {
                 s32 column;
@@ -764,7 +764,7 @@ s32 DjinnMenu_RunScreen(void)
             AudioCommand_PlayFar(139);
             Djinn_ActivateFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0]);
             result = Trade_RemoveOfferFar(menu->shown_owner[0], menu->pair_element[0], menu->pair_index[0]);
-            Owner_RecalculateStatsFar(menu->shown_owner[0]);
+            UnitCalcFar(menu->shown_owner[0]);
             menu->cursor->active = 13;
             RenderOutput_ClearListFar(menu->list_window);
             menu->cursor->active = 1;

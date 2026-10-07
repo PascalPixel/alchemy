@@ -28,9 +28,9 @@
 struct OwnerState {
     u8 unknown_00[0x34];
     u16 max_hp;
-    u16 max_pp;
+    u16 max_ep;
     u16 hp;
-    u16 pp;
+    u16 ep;
 };
 
 static __inline__ void Party_RestoreAll(void)
@@ -44,7 +44,7 @@ static __inline__ void Party_RestoreAll(void)
     for (i = 0; i < cnt; i++) {
         state = Engine_OwnerGetState(owners[i]);
         state->hp = state->max_hp;
-        state->pp = state->max_pp;
+        state->ep = state->max_ep;
         Engine_OwnerRecalculateRatios(owners[i]);
     }
     Engine_PartyAddActiveOwner(1);

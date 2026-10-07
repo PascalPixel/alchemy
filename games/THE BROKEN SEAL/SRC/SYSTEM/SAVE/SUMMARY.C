@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "IO_REG.H"
@@ -18,7 +18,7 @@
 #include "BATTLE_UNIT.H"
 #include "RUNTIME_INTERFACES.H"
 #include "WINDOW.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #define Runtime_GetBuildStampTimeFar ((u32 (*)(s32))Runtime_GetBuildStampTimeFar)
@@ -199,7 +199,7 @@ u32 SaveState_BuildSummaryHeader(void)
 {
     u16 owners[14];
     struct SaveSummary *summary;
-    struct BattleUnit *owner;
+    struct BtlUnit *owner;
     u8 *source;
     u8 *destination;
     u32 *word;
@@ -214,7 +214,7 @@ u32 SaveState_BuildSummaryHeader(void)
         copy[64] = gLoadedStateWord;
     }
     gGameState.saved_options = gOptionMirror;
-    owner = Owner_GetStateFar(gGameState.selected_actor);
+    owner = UnitGetFar(gGameState.selected_actor);
     destination = summary->name;
     source = owner->name;
     for (i = 11; i >= 0; i--)

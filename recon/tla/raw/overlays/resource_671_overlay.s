@@ -5319,7 +5319,7 @@ Func_020038ac:
 	movs r0, #192
 	lsls r0, r0, #4
 	ldr r6, .L_0200b8ec
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	adds r5, r0, #0
 	adds r1, r5, #0
 	ldr r0, .L_0200b8f0
@@ -5336,7 +5336,7 @@ Func_020038ac:
 	mov r3, r8
 	strh r3, [r6]
 	adds r0, r5, #0
-	bl Sys_Free
+	bl MemFree
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, pc}

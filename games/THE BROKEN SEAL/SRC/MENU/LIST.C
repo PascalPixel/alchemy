@@ -11,10 +11,10 @@
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "MENU_LIST.H"
 #include "text/MSG_IDS.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define UiWindow_DrawThreeTileColumn ((void (*)(struct UiWindow*,s32,s32,s32,s32))UiWindow_DrawThreeTileColumn)
 
@@ -30,7 +30,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
     s32 page;
     s32 drawn_row;
     s32 cursor_handle;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     struct UiWindow *message_window;
     s32 icon_count;
     s32 preferred_row;
@@ -55,7 +55,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
     drawn_row = -1;
     drawn_page = -1;
     cursor_handle = Resource_LoadIntoFreeSlot(128);
-    unit = Owner_GetStateFar(unit_id);
+    unit = UnitGetFar(unit_id);
     message_window = UiWindow_Create(0, 5, 30, 4, 42);
     icon_count = BATTLE_LIST_ROWS;
     page = ((struct MenuCell *)gWindowWork[42])->page;
@@ -126,7 +126,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
             if (page != drawn_page) {
                 RenderOutput_RedrawSavedRect(window);
                 for (i = 0; i < BATTLE_LIST_ROWS; i++) {
-                    struct BattleAction *action;
+                    struct BtlAct *action;
 
                     entry = actions[page + i];
                     if (entry == 0) {
@@ -145,9 +145,9 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 
                     if ((action->target_flags & ACTION_USABLE_IN_BATTLE) == 0) {
                         UiWork_SetParamNibble(4);
-                    } else if (action->pp_cost > unit->pp) {
+                    } else if (action->pp_cost > unit->ep) {
                         UiWork_SetParamNibble(2);
-                    } else if (unit->psy_seal != 0) {
+                    } else if (unit->fuuji != 0) {
                         UiWork_SetParamNibble(9);
                     }
 

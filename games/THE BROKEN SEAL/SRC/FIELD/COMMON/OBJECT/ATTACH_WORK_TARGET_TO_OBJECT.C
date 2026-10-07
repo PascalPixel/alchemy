@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"

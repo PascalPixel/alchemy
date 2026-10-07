@@ -16,7 +16,7 @@
 #include "FIXED_MATH.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "EQUIPMENT_MENU.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
 #define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)

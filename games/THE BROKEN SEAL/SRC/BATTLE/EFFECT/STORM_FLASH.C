@@ -9,7 +9,7 @@
 #include "SYSTEM.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "DMA.H"
@@ -18,8 +18,8 @@
 #include "MAP_SCROLL.H"
 #include "FXBLEND.H"
 #include "IO_REG.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_PARTY.H"
+#include "BTLSYS.H"
+#include "BTLPTY.H"
 
 #define BattleFx_ApplyColorToTargetBuffer ((void (*)(void*,s32))BattleFx_ApplyColorToTargetBuffer)
 

@@ -12,7 +12,7 @@
 #include "GAME_FLAGS.H"
 #include "PARTY_STATE.H"
 #include "TYPES.H"
-#include "BATTLE_SUMMON.H"
+#include "BTLSMN.H"
 #include "RUNTIME_INTERFACES.H"
 #include "FIXED_MATH.H"
 #include "OWNER_STATE.H"
@@ -45,7 +45,7 @@ typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 
 
 
-s32 Owner_GetDefaultElement(struct BattleUnit *state)
+s32 Owner_GetDefaultElement(struct BtlUnit *state)
 {
     const struct EnemyDefinition *record =
         (const struct EnemyDefinition *)Owner_GetRecord(state->class_id);

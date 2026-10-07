@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 
 u32 BattleParty_IsUnitListed(u32 arg0)
 {

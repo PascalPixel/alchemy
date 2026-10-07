@@ -788,7 +788,7 @@ void Scene_UnmaskGarcia(void)
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4);
     Engine_EventWait(20);
     cnt = 0;
-    tbl = ((struct BattleUnit *)Owner_GetState(1))->inventory;
+    tbl = ((struct BtlUnit *)UnitGet(1))->inventory;
     left = 14;
     do {
         u32 id = *tbl & 0x1ff;

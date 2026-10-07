@@ -10,10 +10,10 @@ __modsi3:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -130,10 +130,10 @@ Func_02000d30:
 	.thumb_func
 Func_02000d38:
 	overlay_veneer Func_08038340
-	.global Owner_RecalculateStats
+	.global UnitCalc
 	.thumb_func
-Owner_RecalculateStats:
-	overlay_veneer Owner_RecalculateStatsFar
+UnitCalc:
+	overlay_veneer UnitCalcFar
 	.global Func_02000d48
 	.thumb_func
 Func_02000d48:
@@ -154,10 +154,10 @@ Inventory_Break:
 	.thumb_func
 Owner_AdjustFirstValue:
 	overlay_veneer Owner_AdjustFirstValueFar
-	.global Owner_AdjustSecondValue
+	.global UnitEpAdd
 	.thumb_func
-Owner_AdjustSecondValue:
-	overlay_veneer Owner_AdjustSecondValueFar
+UnitEpAdd:
+	overlay_veneer UnitEpAddFar
 	.global Party_ListActiveOwners
 	.thumb_func
 Party_ListActiveOwners:

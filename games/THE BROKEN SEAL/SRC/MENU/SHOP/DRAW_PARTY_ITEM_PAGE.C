@@ -11,7 +11,7 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "INVENTORY_MENU.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
 
@@ -34,14 +34,14 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 
 s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state)
 {
     struct InventoryMenuState *menu = gMenuWork;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
     u16 *item;
     s32 first;
     u32 count;
     u32 row;
     s32 message;
 
-    unit = Owner_GetStateFar(menu->pane_owner[0]);
+    unit = UnitGetFar(menu->pane_owner[0]);
     UiWindow_ClearInteriorTilesFar(window, 128, 8, 224, 96);
     first = state->page * PAGE_ROWS;
     count = (u8)(state->entry_count - first);

@@ -29,7 +29,7 @@ UiText_LoadRemappedGlyph:
 	bl Resource_DecodeByteLzInRam
 	movs r0, #128
 	lsls r0, r0, #3
-	bl Runtime_BumpAllocate
+	bl MemAlloc
 	movs r2, #0
 	mov lr, r0
 	mov r5, lr
@@ -87,7 +87,7 @@ UiText_LoadRemappedGlyph:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	mov r0, lr
-	bl Sys_Free
+	bl MemFree
 	movs r0, #68
 	bl Runtime_ReleaseHeapBlock
 	pop {r3, r5}

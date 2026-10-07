@@ -7,16 +7,16 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_WORK.H"
+#include "BTLSYS.H"
+#include "BTLTYPE.H"
+#include "BTLWORK.H"
 #include "PARTY_STATE.H"
-#include "BATTLE_PARTY.H"
+#include "BTLPTY.H"
 #include "TYPES.H"
 #include "BATTLE_COMMAND.H"
 #include "RESOURCE.H"
-#include "RUNTIME_MEM.H"
-#include "BATTLE_PRESENTATION.H"
+#include "MEM.H"
+#include "BTLDISP.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
@@ -27,7 +27,7 @@
 #include "MENU_LIST.H"
 #include "AUDIO_ENGINE_SYMBOLS.H"
 #include "UI.H"
-#include "BATTLE_CALC.H"
+#include "BTLCALC.H"
 #include "text/MSG_IDS.H"
 
 #define BattleParty_ReconcileDjinnRecovery ((void (*)(void))BattleParty_ReconcileDjinnRecovery)
@@ -65,7 +65,7 @@ extern u8 gCpuLoadDisplayEnabled;
 
 void GameFlag_SetBitFar(s32 id);
 s32 *Trade_GetOfferStateFar(s32 index);
-void UiWindow_DrawPartyStatusContentsFar(s32 mode);
+void PtyStDrawFar(s32 mode);
 void BattleMotion_DestroyAllSlotObjects(void);
 s32 UiText_OpenMessageWindowFar(s32 id, s32 a, s32 b, s32 c);
 void UiWork_FinalizeFar(s32 handle, s32 mode);
@@ -77,7 +77,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 {
     struct BattleCamera *camera;
     s32 *target;
-    struct BattleSession *battle;
+    struct BtlWork *battle;
     u8 *owner_states;
     struct BattlePresentationTransition *transition;
     struct BattleDisplayWork *display;
@@ -95,7 +95,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
     volatile u32 fill;
 
     camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
-    battle = Runtime_AllocateBlock(HEAP_SLOT_BATTLE, sizeof(struct BattleSession));
+    battle = Runtime_AllocateBlock(HEAP_SLOT_BATTLE, sizeof(struct BtlWork));
     owner_states = Runtime_AllocateBlock(54, 0x7c8);
     transition = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_BACKGROUND, 32);
     Runtime_AllocateBlock(11, 0x280);
@@ -115,7 +115,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
     Render_ResetTransformState();
 
     Dma3Fill(fill, camera, sizeof(struct BattleCamera));
-    Dma3Fill(fill, battle, sizeof(struct BattleSession));
+    Dma3Fill(fill, battle, sizeof(struct BtlWork));
     battle->prompt_slot = -1;
     battle->enemy_group = enemy_group;
     display = Runtime_AllocateBlock(37, sizeof(struct BattleDisplayWork));
@@ -188,7 +188,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
         battle->party_status_mode = 1;
     UiWindow_CreateWithLayoutBoundsFar(9);
     Camera_InitDefaultTransform();
-    BattleActor_CommitPlacement();
+    BtlObjPut();
     BattlePresentation_InitializeWorkAndResetState();
     BattleBackground_Load(1, battle->background, 0);
     BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
@@ -201,9 +201,9 @@ s32 Battle_RunEncounter(s32 enemy_group)
     if (GameFlag_IsSet(FLAG_DJINN_TUTORIAL) != 0) {
         battle->encounter_mode = 1;
     } else if (gGameState.battle_start == 0) {
-        if ((BattleRandom16Far() & 15) == 0)
+        if ((BtlRndFar() & 15) == 0)
             battle->encounter_mode = 1;
-        else if ((BattleRandom16Far() & 31) == 0)
+        else if ((BtlRndFar() & 31) == 0)
             battle->encounter_mode = 2;
     }
     BattlePres_RunEntryTransition(object, enemy_group);
@@ -220,7 +220,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
             battle->party_status_mode = 1;
         transition->target_yaw = 0x2800;
         transition->frames = 60;
-        UiWindow_DrawPartyStatusContentsFar(battle->party_status_mode);
+        PtyStDrawFar(battle->party_status_mode);
         Iwram_ClearWords(battle->actions, 0x140);
         Resource_ResetEntry(battle->prompt_slot);
         if (GameFlag_IsSet(FLAG_AUTO_BATTLE) == 0) {
@@ -233,7 +233,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
             count = BattlePresentation_BuildSortedUnitEntries(battle->actions);
         }
         battle->prompt_slot = Resource_LoadIntoFreeSlot(128);
-        UiWindow_DrawPartyStatusContentsFar(battle->party_status_mode);
+        PtyStDrawFar(battle->party_status_mode);
         if (count < 0)
             goto aborted;
 
@@ -293,7 +293,7 @@ resolved:
         if (battle->spoils.defeated != 0) {
             AudioCommand_PlayFar(58);
             if (battle->defeat_state <= 1) {
-                BattleUnit_AssignFar(128, battle->enemy_classes[battle->first_defeated], 26);
+                BtlUnitSetFar(128, battle->enemy_classes[battle->first_defeated], 26);
                 UiWork_ClearValueNameTablesFar();
                 UiWork_PushValueSlotFar(128, 1);
                 UiText_ShowMessageAndWaitCoreFar(battle->defeat_state + (s32)MsgDowned);
@@ -357,7 +357,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
     s32 index;
 
     limit = 4;
-    if (gBattleWork->two_sided != 0)
+    if (BtlWk->two_sided != 0)
         limit = 3;
 
     count = Party_CountActiveOwnersFar();
@@ -369,7 +369,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
 
         if (owners != 0)
             *owners++ = owner;
-        Owner_GetStateFar(owner)->status_12a = BATTLE_UNIT_PARTY;
+        UnitGetFar(owner)->side = BATTLE_UNIT_PARTY;
     }
 
     if (owners != 0)
@@ -377,7 +377,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
     return count;
 }
 
-s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
+s32 BtlEnmList(s16 *unit_ids)
 {
     s16 *output;
     s32 battle_result;
@@ -396,7 +396,7 @@ s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
         id = 0x80;
         entry_limit += 0x80;
         for (; id < entry_limit; id += 1) {
-            if (Owner_GetStateFar(id)->status_12a != 0) {
+            if (UnitGetFar(id)->side != 0) {
                 *output = id;
                 entry_count += 1;
                 output += 1;
@@ -421,7 +421,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
     s32 unit_id;
     s16 hp;
     s32 active_count;
-    struct BattleUnit *unit;
+    struct BtlUnit *unit;
 
     output = unit_ids;
     living_count = 0;
@@ -438,7 +438,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
             do {
                 unit_id = *member;
                 member += 1;
-                hp = Owner_GetStateFar(unit_id)->hp;
+                hp = UnitGetFar(unit_id)->hp;
                 if (hp > 0) {
                     if (output != NULL) {
                         *output = unit_id;
@@ -455,8 +455,8 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
         enemy_limit = enemy_capacity + 0x80;
         if (remaining < enemy_limit) {
             do {
-                unit = Owner_GetStateFar(remaining);
-                if ((unit->status_12a != 0) && (unit->hp > 0)) {
+                unit = UnitGetFar(remaining);
+                if ((unit->side != 0) && (unit->hp > 0)) {
                     if (output != NULL) {
                         *output = remaining;
                         output += 1;
@@ -475,11 +475,11 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
 
 s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
 {
-    struct BattleSession *order;
+    struct BtlWork *order;
     s32 count;
     s32 i;
 
-    order = gBattleWork;
+    order = BtlWk;
     count = 0;
     if (groups & BATTLE_SIDE_PARTY) {
         for (i = 0; order->party_units[i] != BATTLE_UNIT_LIST_END; i++) {

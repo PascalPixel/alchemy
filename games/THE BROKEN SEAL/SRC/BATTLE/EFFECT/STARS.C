@@ -7,12 +7,12 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "HEAP_STATE.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "CANVAS.H"
 #include "RESOURCE.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 #include "TRANSFORM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -27,7 +27,7 @@
 #include "FIELD_EVENT.H"
 #include "PROJECT.H"
 #include "B5_CONTEXT.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "IO_REG.H"
 #include "RAM_BUFFER.H"
 
@@ -353,7 +353,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
     struct ScalePair wave;
     struct ScalePair drift;
     struct MotionObject *object;
-    struct BattleObjectSlot *context;
+    struct BtlObj *context;
     struct EffectStep *point;
     struct EffectStep *spark;
     struct EffectStep *mark;

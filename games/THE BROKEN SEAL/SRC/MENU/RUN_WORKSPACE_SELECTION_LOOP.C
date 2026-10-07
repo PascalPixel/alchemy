@@ -20,7 +20,7 @@
 #include "DMA.H"
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "UIFLOW.H"
 
 #define gKeyState ((u8 *)&gKeyState)

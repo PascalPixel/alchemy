@@ -8,12 +8,12 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
-#include "BATTLE_TYPES.H"
+#include "BTLTYPE.H"
 #include "SCENE.H"
-#include "BATTLE_SUMMON.H"
-#include "BATTLE_PARTY.H"
+#include "BTLSMN.H"
+#include "BTLPTY.H"
 #include "OWNER_STATE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 #define Trade_AddOfferFar ((void (*)(s32,s32,s32))Trade_AddOfferFar)
 
@@ -21,7 +21,7 @@ s32 Djinn_ActivateFar(s32 id, s32 element, s32 index);
 s32 Trade_RemoveOfferFar(s32 id, s32 element, s32 index);
 
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
-struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
+struct BtlObj *BtlObjGet(s32 object_id);
 
 s32 BattleParty_ResetActiveRuntimeFields(void)
 {
@@ -33,13 +33,13 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
 
     i = 0;
     if (i < count) {
-        struct BattleUnit *unit;
+        struct BtlUnit *unit;
         u8 *cursor;
         s32 remaining;
 
         do {
-            unit = Owner_GetStateFar(owners[i]);
-            cursor = (u8 *)&unit->element_modifier[3];
+            unit = UnitGetFar(owners[i]);
+            cursor = (u8 *)&unit->elm_lv[3];
             remaining = 3;
 
             do {
@@ -47,27 +47,27 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
                 *cursor-- = 0;
             } while (remaining >= 0);
 
-            unit->attack_modifier_turns = 0;
-            unit->attack_modifier = 0;
-            unit->defense_modifier_turns = 0;
-            unit->defense_modifier = 0;
-            unit->res_modifier_turns = 0;
-            unit->res_modifier = 0;
-            unit->delusion = 0;
-            unit->confusion = 0;
+            unit->atk_cnt = 0;
+            unit->atk_lv = 0;
+            unit->def_cnt = 0;
+            unit->def_lv = 0;
+            unit->res_cnt = 0;
+            unit->res_lv = 0;
+            unit->maboroshi = 0;
+            unit->konran = 0;
             unit->charm = 0;
-            unit->stun = 0;
-            unit->sleep = 0;
-            unit->psy_seal = 0;
+            unit->shibire = 0;
+            unit->nemuri = 0;
+            unit->fuuji = 0;
             unit->refrain = 0;
             unit->reflect = 0;
-            unit->death_count = 0;
+            unit->shiryo = 0;
             unit->unknown_142[0] = 0;
             unit->unknown_142[1] = 0;
-            unit->ready_pose = 0;
-            unit->cannot_move = 0;
-            unit->agility_modifier_turns = 0;
-            unit->agility_modifier = 0;
+            unit->sonae = 0;
+            unit->miugoki = 0;
+            unit->agi_cnt = 0;
+            unit->agi_lv = 0;
             unit->battle_end_state = 0;
 
             BattleUnit_Recalculate(owners[i]);
@@ -119,7 +119,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void)
 
             entry = list->entries;
             do {
-                if (entry->turns == permanent_timer && GetBattleObjectSlot(entry->unit_id) == 0) {
+                if (entry->turns == permanent_timer && BtlObjGet(entry->unit_id) == 0) {
                     u8 id = entry->unit_id;
                     u8 element = entry->element;
                     u8 index = entry->index;

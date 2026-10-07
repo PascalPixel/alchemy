@@ -1,8 +1,8 @@
-#include "BATTLE_SUMMON.H"
+#include "BTLSMN.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 #include "GAME_STATE.H"
 #include "ITEM.H"
 
@@ -109,7 +109,7 @@ u32 Item_EncodeBankedId(u32 value)
 
 void Summon_ClearWorkFields(void)
 {
-    struct BattleSession *work = gBattleWork;
+    struct BtlWork *work = BtlWk;
     struct BattleSpoils *spoils = &work->spoils;
     u16 *items;
     s32 index;

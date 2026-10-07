@@ -7,13 +7,13 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "GLYPH.H"
 #include "BATTLE_UNIT.H"
 #include "RESOURCE.H"
 #include "SCENE.H"
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 
 extern u8 UiIcon_ItemIconPointers[];
 
@@ -54,6 +54,6 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 fla
 
 void Ability_RequestGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse)
 {
-    UiIcon_BuildItemIconTiles(BattleAction_Get(action)->unknown_04[0],
+    UiIcon_BuildItemIconTiles(BtlActGet(action)->unknown_04[0],
         with_base, slot, tile, reuse);
 }

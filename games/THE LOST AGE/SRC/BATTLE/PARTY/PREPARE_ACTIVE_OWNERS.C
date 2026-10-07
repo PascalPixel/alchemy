@@ -8,9 +8,9 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "OWNER_STATE.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_TYPES.H"
-#include "BATTLE_WORK.H"
+#include "BTLSYS.H"
+#include "BTLTYPE.H"
+#include "BTLWORK.H"
 #include "PARTY_STATE.H"
 #include "RAM_BUFFER.H"
 
@@ -34,7 +34,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
 
         if (owners != 0)
             *owners++ = owner;
-        ((struct BattleUnit *)Owner_GetState(owner))->status_12a = 2;
+        ((struct BtlUnit *)UnitGet(owner))->side = 2;
     }
 
     if (owners != 0)

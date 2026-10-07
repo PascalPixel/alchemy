@@ -1,8 +1,8 @@
-#include "BATTLE_RUNTIME.H"
+#include "BTLSYS.H"
 #include "TYPES.H"
 #include "SCENE.H"
 
-s32 Battle_ClassifyEntryKind(const struct BattleAction *entry)
+s32 Battle_ClassifyEntryKind(const struct BtlAct *entry)
 {
     s32 b3;
     s32 kind;
@@ -30,7 +30,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAction *entry)
     if (k == 0x40) {
         ret = 6;
     }
-    if (BattleFx_IsReviveFar(entry->effect) != 0) {
+    if (BtlEfxRevChkFar(entry->effect) != 0) {
         ret = 5;
     }
     return ret;

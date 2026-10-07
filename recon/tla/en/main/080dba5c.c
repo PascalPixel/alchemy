@@ -2,7 +2,7 @@
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "OBJECT_RUNTIME.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "IWRAM_CALL.H"
 #include "RESOURCE.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -56,14 +56,14 @@ void Func_080dba5c(void)
     main_object = scene->main_object;
     if (scene->mode == 0xc000) {
         scene->active = 1;
-        buffer = Runtime_BumpAllocate(0x200);
+        buffer = MemAlloc(0x200);
         Iwram_FillWords(buffer, 0x200, 0);
         slot = Resource_FindFreeEntry();
         tiles = VramBlock_LoadCached(slot, 0x200, buffer);
         /* FAKEMATCH: ⚓️ forms the frame zero here, apart from the fill value */
         asm("" : "=l"(zero) : "0"(0));
         scene->vram_slot = slot;
-        Sys_Free(buffer);
+        MemFree(buffer);
         sprite = &scene->sprite;
         Func_080eaf98(sprite, 16, 31, 0x80000000, tiles);
         sprite->frame = zero;

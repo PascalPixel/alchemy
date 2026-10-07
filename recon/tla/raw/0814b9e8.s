@@ -561,9 +561,9 @@ Func_0814b9e8:
 	cmp r2, #16
 	bne .L_0814bd9e
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 	mov r0, r11
-	bl Sys_Free
+	bl MemFree
 .L_0814be68:
 	ldr r2, .L_0814bec4
 	movs r3, #120

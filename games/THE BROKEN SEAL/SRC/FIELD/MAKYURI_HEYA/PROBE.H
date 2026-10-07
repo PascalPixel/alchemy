@@ -1,4 +1,4 @@
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #ifndef ALCHEMY_PROBE_H
 #define ALCHEMY_PROBE_H
 
@@ -76,7 +76,7 @@ void UiWork_PushValueSlot(s32, s32);
 void BattleFx_PlayQueuedSound();
 s32 PartyInventory_FindOwner();
 s32 Inventory_Find();
-struct SceneLookupRecord *Owner_GetState();
+struct SceneLookupRecord *UnitGet();
 
 s32 StagedActor_FindClearPosition();
 void SceneActor_MoveAndRedraw();

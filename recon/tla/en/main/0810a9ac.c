@@ -10,7 +10,7 @@ struct ShopServiceWork {
     s8 mode;
 };
 
-u8 *Owner_GetStateFar(s32);
+u8 *UnitGetFar(s32);
 extern struct ShopServiceWork *gMenuWork;
 s32 Shop_CanServe(s32 selection, s32 variant);
 extern u8 MsgReviveService;

@@ -11,7 +11,7 @@
 #include "DMA.H"
 #include "IO_REG.H"
 #include "HEAP_STATE.H"
-#include "BATTLE_WORK.H"
+#include "BTLWORK.H"
 
 extern u16 gBgScroll[];
 
@@ -21,7 +21,7 @@ void BattleEffect_SetupBlendedDisplay(void)
 {
     void **slots = &gWorkSlot[HEAP_SLOT_BATTLE];
     u8 *buffer = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
-    struct BattleSession *battle = slots[0];
+    struct BtlWork *battle = slots[0];
     volatile u32 zero;
 
     REG_DISPCNT = 1;

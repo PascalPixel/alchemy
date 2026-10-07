@@ -150,10 +150,10 @@ Graphics_ExpandVramTilesByColorTable:
 	.thumb_func
 Link_DrawShiftedTilePair:
 	overlay_veneer Link_DrawShiftedTilePairFar
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global Item_Get
 	.thumb_func
 Item_Get:

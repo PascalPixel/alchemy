@@ -38,9 +38,9 @@ Vector_AddPolarOffsetFar:
 	.thumb_func
 Runtime_BumpAllocateAlternatePool:
 	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global Sys_Free
+	.global MemFree
 	.thumb_func
-Sys_Free:
+MemFree:
 	overlay_veneer Sys_FreeFar
 	.global Func_02004aa8
 	.thumb_func
@@ -78,10 +78,10 @@ Render_ProjectPoint:
 	.thumb_func
 QueueIoWriteDelay2:
 	overlay_veneer QueueIoWriteDelay2Far
-	.global Owner_GetState
+	.global UnitGet
 	.thumb_func
-Owner_GetState:
-	overlay_veneer Owner_GetStateFar
+UnitGet:
+	overlay_veneer UnitGetFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -266,10 +266,10 @@ Func_02004bb8:
 	.thumb_func
 Menu_AnimateSelectionToEntry:
 	overlay_veneer Menu_AnimateSelectionToEntryFar
-	.global Owner_AdjustSecondValue
+	.global UnitEpAdd
 	.thumb_func
-Owner_AdjustSecondValue:
-	overlay_veneer Owner_AdjustSecondValueFar
+UnitEpAdd:
+	overlay_veneer UnitEpAddFar
 	.global Party_CountActiveOwners
 	.thumb_func
 Party_CountActiveOwners:

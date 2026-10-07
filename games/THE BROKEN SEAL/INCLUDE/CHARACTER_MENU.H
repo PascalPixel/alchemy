@@ -6,7 +6,7 @@
 #include "ANIMSPR.H"
 #include "WINDOW.H"
 
-struct BattleUnit;
+struct BtlUnit;
 struct OwnerActionSlot;
 
 struct CharacterMenuState {

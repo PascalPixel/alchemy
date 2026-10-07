@@ -37,7 +37,7 @@ Func_0811edb0:
 	movs r0, #0
 	bl BattlePres_SetActorModes
 	ldr r0, [r5, #8]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #36]
@@ -72,7 +72,7 @@ Func_0811edb0:
 	lsls r3, r7, #1
 	adds r3, #36
 	ldrsh r0, [r2, r3]
-	bl GetBattleObjectSlot
+	bl BtlObjGet
 	movs r1, #0
 	ldr r0, [r0]
 	bl GetMotionRecord
@@ -178,7 +178,7 @@ Func_0811edb0:
 .L_0811ef0c:
 	ldrsh r0, [r6, r2]
 	str r2, [sp, #0]
-	bl Actor_ResetMotionAtAnchor
+	bl ObjMotRst
 	adds r5, r6, #0
 	ldr r2, [sp, #0]
 	ldr r3, [r5, #20]
@@ -190,7 +190,7 @@ Func_0811edb0:
 	mov r3, r8
 	movs r2, #0
 	ldrsh r0, [r3, r2]
-	bl Owner_GetState
+	bl UnitGet
 	mov r1, r8
 	movs r7, #8
 	ldrsh r3, [r1, r7]
@@ -265,7 +265,7 @@ Func_0811edb0:
 	lsrs r3, r3, #24
 	cmp r3, #2
 	bne .L_0811eff4
-	bl BattleRandom16Far
+	bl BtlRndFar
 	movs r3, #7
 	ands r0, r3
 	cmp r0, #0
@@ -277,10 +277,10 @@ Func_0811edb0:
 	lsls r3, r3, #1
 	adds r3, #216
 	ldrh r1, [r6, r3]
-	bl BattleEv_Push
+	bl BtlEvPush
 	ldr r1, .L_0811f02c
 	movs r0, #4
-	bl BattleEv_Push
+	bl BtlEvPush
 	mov r3, r8
 	movs r2, #0
 	ldrsh r0, [r3, r2]

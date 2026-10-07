@@ -9,16 +9,16 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "OWNERVAL.H"
-#include "BATTLE_EVENT.H"
+#include "BTLEV.H"
 #include "SYSTEM.H"
 #include "BATTLE_UNIT.H"
 #include "BATTLE_COMMAND.H"
-#include "BATTLE_RUNTIME.H"
-#include "BATTLE_SUMMON.H"
-#include "BATTLE_PARTY.H"
-#include "BATTLE_CALC.H"
-#include "BATTLE_MSG.H"
-#include "MOTION_OBJECT.H"
+#include "BTLSYS.H"
+#include "BTLSMN.H"
+#include "BTLPTY.H"
+#include "BTLCALC.H"
+#include "BTLMES.H"
+#include "MOTOBJ.H"
 #include "ITEM.H"
 
 #define Battle_GetTaggedSlotValue ((s32 (*)(s32))Battle_GetTaggedSlotValue)
@@ -38,16 +38,16 @@ void Object_SetMode(struct MotionObject *object, s32 mode);
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 void BattlePresentation_WaitForAdvance(void);
 
-s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePlan *plan)
+s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BtlPlan *plan)
 {
-    struct BattleUnit *actor = Owner_GetStateFar(command->unit_id);
-    struct BattleSession *battle = gBattleWork;
+    struct BtlUnit *actor = UnitGetFar(command->unit_id);
+    struct BtlWork *battle = BtlWk;
     s32 target;
     s32 action;
 
     s32 BattleCommand_SelectTargets(s32 action_id)
     {
-        struct BattleAction *action = Ability_GetData(action_id);
+        struct BtlAct *action = Ability_GetData(action_id);
         s32 mode = action->target_mode;
         s32 allow_defeated = 0;
         s32 count;
@@ -67,16 +67,16 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
         }
         switch (mode) {
         case 0:
-            plan->target_offsets[0] = mode;
+            plan->tgt_dist[0] = mode;
             plan->target_count = 1;
-            plan->target_ids[0] = target;
-            plan->target_adjustments[0] = 1;
+            plan->tgt_no[0] = target;
+            plan->tgt_adj[0] = 1;
             break;
         case 4:
-            plan->target_offsets[0] = 0;
+            plan->tgt_dist[0] = 0;
             plan->target_count = 1;
-            plan->target_ids[0] = target;
-            plan->target_adjustments[0] = 1;
+            plan->tgt_no[0] = target;
+            plan->tgt_adj[0] = 1;
             break;
         default:
             count = 0;
@@ -101,11 +101,11 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                         unit = battle->enemy_units[index];
                         if (unit == 254)
                             continue;
-                        if (!allow_defeated && Owner_GetStateFar(unit)->hp == 0)
+                        if (!allow_defeated && UnitGetFar(unit)->hp == 0)
                             continue;
-                        plan->target_adjustments[count] = 1;
-                        plan->target_offsets[count] = index - center;
-                        plan->target_ids[count] = unit;
+                        plan->tgt_adj[count] = 1;
+                        plan->tgt_dist[count] = index - center;
+                        plan->tgt_no[count] = unit;
                         count++;
                     } else {
                         if (index >= allies)
@@ -113,11 +113,11 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                         unit = battle->party_units[index];
                         if (unit == 254)
                             continue;
-                        if (!allow_defeated && Owner_GetStateFar(unit)->hp == 0)
+                        if (!allow_defeated && UnitGetFar(unit)->hp == 0)
                             continue;
-                        plan->target_adjustments[count] = 1;
-                        plan->target_offsets[count] = index - center;
-                        plan->target_ids[count] = unit;
+                        plan->tgt_adj[count] = 1;
+                        plan->tgt_dist[count] = index - center;
+                        plan->tgt_no[count] = unit;
                         count++;
                     }
                 }
@@ -126,8 +126,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             if (count <= 0) {
                 UiText_DrawQuantity(command->unit_id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
-                if (actor->guard_level == 0)
-                    actor->guard_level = 1;
+                if (actor->guard_lv == 0)
+                    actor->guard_lv = 1;
                 return -1;
             }
         }
@@ -135,12 +135,12 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
 
     target = Battle_GetTaggedSlotValue(command->target);
     BattleEventRuntime_Reset();
-    plan->pending_amount_60 = 0;
+    plan->spirit_dmg = 0;
     plan->actor_id = command->unit_id;
     plan->target_count = 0;
     plan->presentation_flags = 0;
     plan->failure = 0;
-    plan->range_index = 4;
+    plan->elm = 4;
     UiWork_ClearValueNameTablesFar();
     if (actor->hp == 0)
         return -2;
@@ -161,31 +161,31 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             if (unit == 254)
                 continue;
             if (Owner_AdjustFirstValueFar(unit, 0xc0000000) == 0) {
-                BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, unit);
-                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, unit);
+                BtlEvPush(BEV_OBJ_BGN, unit);
+                BtlEvPush(BEV_OBJ_RES, unit);
             }
         }
         BattleEv_DispatchQueued();
         return -2;
     }
     UiWork_ClearValueNameTablesFar();
-    if (actor->cannot_move) {
-        actor->cannot_move = 0;
+    if (actor->miugoki) {
+        actor->miugoki = 0;
         UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgUnableToMove);
         return -1;
     }
-    if (actor->sleep) {
+    if (actor->nemuri) {
         UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgIsAsleep);
         return -1;
     }
-    if (actor->stun) {
+    if (actor->shibire) {
         UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgIsParalyzed);
         return -1;
     }
-    if ((actor->restraint & 1) && command->command != 3 && (BattleRandom16Far() & 3) == 0) {
+    if ((actor->restraint & 1) && command->command != 3 && (BtlRndFar() & 3) == 0) {
         UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgIsBound);
         return -1;
@@ -197,9 +197,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
         s32 i;
 
         for (i = 0; i < 14; i++)
-            plan->target_modifiers[i] = 0;
+            plan->tgt_crit[i] = 0;
         for (i = 0; i < 14; i++)
-            plan->target_results[i] = -1;
+            plan->tgt_hit[i] = -1;
     }
     switch (command->command) {
     case 99:
@@ -227,7 +227,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
         break;
     case 1:
         {
-            struct BattleAction *ability;
+            struct BtlAct *ability;
             s32 ok = 1;
 
             action = command->parameter;
@@ -237,22 +237,22 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
             UiText_ShowMessageAndWaitCoreFar((s32)MsgActorCasts);
-            if (actor->pp < ability->pp_cost) {
+            if (actor->ep < ability->pp_cost) {
                 plan->failure = 2;
                 ok = 0;
             }
-            if (actor->psy_seal) {
+            if (actor->fuuji) {
                 plan->failure = 1;
                 ok = 0;
             }
             if (ok) {
                 plan->failure = 0;
-                actor->pp -= ability->pp_cost;
-                Owner_RecalculateRatiosFar(command->unit_id);
-                if (actor->pp < 0)
-                    actor->pp = 0;
-                if (actor->pp > actor->max_pp)
-                    actor->pp = actor->max_pp;
+                actor->ep -= ability->pp_cost;
+                UnitRatioFar(command->unit_id);
+                if (actor->ep < 0)
+                    actor->ep = 0;
+                if (actor->ep > actor->max_ep)
+                    actor->ep = actor->max_ep;
             }
         }
         break;
@@ -270,8 +270,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             if (action == 0 || (actor->inventory[command->parameter] & 0x400)) {
                 UiText_DrawQuantity(command->unit_id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
-                if (actor->guard_level == 0)
-                    actor->guard_level = 1;
+                if (actor->guard_lv == 0)
+                    actor->guard_lv = 1;
                 return -1;
             }
             if (BattleCommand_SelectTargets(action) == -1)
@@ -381,18 +381,18 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                 BattlePres_SetActorModes(0, 0);
                 Djinn_ActivateFar(command->unit_id, DJINN_ELEMENT(command->parameter), DJINN_INDEX(command->parameter));
                 Trade_RemoveOfferFar(command->unit_id, DJINN_ELEMENT(command->parameter), DJINN_INDEX(command->parameter));
-                Owner_RecalculateStatsFar(command->unit_id);
+                UnitCalcFar(command->unit_id);
                 BattleEventRuntime_Reset();
                 BattleEventRuntime_SchedulePhase(30);
-                BattleEv_Push(BATTLE_EVENT_UNIT, command->unit_id);
-                BattleEv_Push(BATTLE_EVENT_ACTION, DJINN_ELEMENT(command->parameter) * 20 + DJINN_INDEX(command->parameter) + 300);
-                BattleEv_Push(BATTLE_EVENT_SOUND, 175);
-                BattleEv_Push(BATTLE_EVENT_REFRESH, 0);
-                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)MsgDjinnSet);
-                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, command->unit_id);
+                BtlEvPush(BEV_UNIT, command->unit_id);
+                BtlEvPush(BEV_ACT, DJINN_ELEMENT(command->parameter) * 20 + DJINN_INDEX(command->parameter) + 300);
+                BtlEvPush(BEV_SE, 175);
+                BtlEvPush(BEV_REDRAW, 0);
+                BtlEvPush(BEV_MES, (s32)MsgDjinnSet);
+                BtlEvPush(BEV_OBJ_END, command->unit_id);
                 AudioCommand_PlayFar(212);
-                Object_SetMode(GetBattleObjectSlot(command->unit_id)->object, 3);
-                ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(command->unit_id)->object, 32);
+                Object_SetMode(BtlObjGet(command->unit_id)->object, 3);
+                ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(command->unit_id)->object, 32);
                 BattleFx_PlayUnitElementEffect(command->unit_id, DJINN_ELEMENT(command->parameter), 3, 0);
                 BattleEventRuntime_WaitForReady();
                 return -2;
@@ -405,7 +405,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             return -1;
         }
         {
-            struct BattleAction *ability;
+            struct BtlAct *ability;
 
             if (BattleCommand_SelectTargets(action) == -1)
                 return -1;
@@ -414,7 +414,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
             UiText_ShowMessageAndWaitCoreFar((s32)MsgActorUnleashesDjinn);
-            plan->range_index = ability->damage_class;
+            plan->elm = ability->damage_class;
         }
         break;
     case 6:
@@ -459,10 +459,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
         break;
     }
     if (action == 1) {
-        struct BattleUnit *defender = Owner_GetStateFar(plan->target_ids[0]);
+        struct BtlUnit *defender = UnitGetFar(plan->tgt_no[0]);
 
         plan->action_id = 1;
-        plan->range_index = Item_GetEquippedElementFar(command->unit_id);
+        plan->elm = Item_GetEquippedElementFar(command->unit_id);
         plan->outcome = 2;
         if (actor->class_index == 0) {
             plan->presentation_flags = Battle_GetSpriteFlagNibble(actor->class_id) | 0x4000;
@@ -490,26 +490,26 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
         UiText_ShowMessageAndWaitCoreFar((s32)MsgActorAttacks);
         /* FAKEMATCH: the one-pass block keeps the native test order; the same tests as one if condition change 44 instructions. */
         do {
-            if (defender->hp == 0 || defender->sleep != 0 || defender->stun != 0
-                || defender->cannot_move != 0 || defender->charm != 0)
+            if (defender->hp == 0 || defender->nemuri != 0 || defender->shibire != 0
+                || defender->miugoki != 0 || defender->charm != 0)
                 break;
-            if (actor->delusion != 0 && (BattleRandom16Far() & 255) <= 152)
-                plan->target_adjustments[0] = 0;
-            if ((BattleRandom16Far() & 31) == 0)
-                plan->target_adjustments[0] = 0;
+            if (actor->maboroshi != 0 && (BtlRndFar() & 255) <= 152)
+                plan->tgt_adj[0] = 0;
+            if ((BtlRndFar() & 31) == 0)
+                plan->tgt_adj[0] = 0;
         } while (0);
         if (GameFlag_IsSet(366))
-            plan->target_adjustments[0] = 0;
+            plan->tgt_adj[0] = 0;
         if (defender->hp != 0) {
-            if ((BattleRandom16Far() & 31) == 0)
-                plan->target_modifiers[0] = 1;
-            else if ((Equipment_GetUnleashRateBonusFar(actor) << 16) / 200 > (BattleRandom16Far() & 0xffff))
-                plan->target_modifiers[0] = 1;
+            if ((BtlRndFar() & 31) == 0)
+                plan->tgt_crit[0] = 1;
+            else if ((Equipment_GetUnleashRateBonusFar(actor) << 16) / 200 > (BtlRndFar() & 0xffff))
+                plan->tgt_crit[0] = 1;
         }
     } else {
-        struct BattleAction *ability = Ability_GetData(action);
+        struct BtlAct *ability = Ability_GetData(action);
 
-        plan->range_index = ability->damage_class;
+        plan->elm = ability->damage_class;
         plan->presentation_flags = 0;
         plan->action_id = action;
         if (ability->effect == 65 || ability->effect == 41 || ability->effect == 42
@@ -527,11 +527,11 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                 amount = 1;
             else
                 amount = 2;
-            if ((BattleRandom16Far() & 255) < chance) {
+            if ((BtlRndFar() & 255) < chance) {
                 s32 i;
 
                 for (i = 0; i < plan->target_count; i++)
-                    plan->target_adjustments[i] += amount;
+                    plan->tgt_adj[i] += amount;
             }
         } else if (ability->effect >= 36 && ability->effect <= 40) {
             s32 mask;
@@ -554,23 +554,23 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                 mask = 3;
                 break;
             }
-            if ((BattleRandom16Far() & mask) == 0) {
+            if ((BtlRndFar() & mask) == 0) {
                 s32 i;
 
                 for (i = 0; i < plan->target_count; i++)
-                    plan->target_modifiers[i] = 2;
+                    plan->tgt_crit[i] = 2;
             }
         } else if (action == 178) {
             s32 i;
 
             for (i = 0; i < plan->target_count; i++)
-                plan->target_results[i] = Battle_HitCheck(command->unit_id, plan->target_ids[i],
+                plan->tgt_hit[i] = BtlHitChk(command->unit_id, plan->tgt_no[i],
                     ability->damage_class, ability->effect, 100);
         }
         if (action >= 0 && action <= 0x206) {
             plan->presentation_flags = Battle_ActionFlags[action];
-            if (plan->target_adjustments[0] > 1)
-                plan->presentation_flags = Battle_ActionFlags[action] + (plan->target_adjustments[0] << 12) - 0x1000;
+            if (plan->tgt_adj[0] > 1)
+                plan->presentation_flags = Battle_ActionFlags[action] + (plan->tgt_adj[0] << 12) - 0x1000;
         }
         if ((action >= 0 && action <= 0x205) && Battle_ActionStatus[action] != 0)
             plan->outcome = Battle_ActionStatus[action];
@@ -583,9 +583,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
                 plan->outcome = 3;
         } else
             plan->outcome = 1;
-        if (BattleFx_IsReviveFar(ability->effect))
+        if (BtlEfxRevChkFar(ability->effect))
             plan->presentation_flags |= 0x10000;
-        if (action == 178 && plan->target_results[0] != 0)
+        if (action == 178 && plan->tgt_hit[0] != 0)
             plan->presentation_flags |= 0x1000;
     }
     if (command->command == 2 && plan->outcome != 5 && plan->outcome != 9)

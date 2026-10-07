@@ -8,7 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "CANVAS.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -17,7 +17,7 @@
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
 #include "IO_REG.H"
-#include "BATTLE_PRESENTATION.H"
+#include "BTLDISP.H"
 
 extern u8 gWorkSlot[];
 void Audio_PlayCue(s32);

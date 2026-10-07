@@ -1424,7 +1424,7 @@ Func_0200020c:
 	strh r3, [r2, #2]
 .L_02008b16:
 	mov r0, r10
-	bl Sys_Free
+	bl MemFree
 	bl Func_02001f74
 	ldr r3, .L_02008b60
 	movs r0, #128
@@ -3286,7 +3286,7 @@ Func_02001400:
 	bl QueueIoWriteDelay2
 .L_02009982:
 	adds r0, r7, #0
-	bl Sys_Free
+	bl MemFree
 	movs r0, #2
 	adds r0, #255
 	bl GameFlag_SetBit

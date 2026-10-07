@@ -7,7 +7,7 @@ s32 Inventory_CountStackedItem(s32 owner, s32 item_id)
     s32 count;
     s32 i;
 
-    slot = (u16 *)((u8 *)Owner_GetState(owner) + 0xd8);
+    slot = (u16 *)((u8 *)UnitGet(owner) + 0xd8);
     count = 0;
     for (i = 14; i >= 0; i--) {
         u32 value = *slot++;

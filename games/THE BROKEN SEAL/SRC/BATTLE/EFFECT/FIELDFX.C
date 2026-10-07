@@ -7,7 +7,7 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "MOTION_OBJECT.H"
+#include "MOTOBJ.H"
 #include "FX_SCENE.H"
 #include "FIXED_MATH.H"
 #include "OBJDISP.H"

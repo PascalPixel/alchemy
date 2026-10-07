@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 #include "PARTY_STATE.H"
-#include "RUNTIME_MEM.H"
+#include "MEM.H"
 #include "RESOURCE.H"
 
 extern u8 gSceneState[];

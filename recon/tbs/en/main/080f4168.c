@@ -1,7 +1,6 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2046, differ 18.
- * Frame 768 with every array and spill slot at its native offset; the
- * remaining difference is mostly register choice (reload's round-robin
- * spill registers follow from everything before) and a few open shapes.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2046, differ 0
+ * in English. Frame 768 with every array and spill slot at its native offset.
+ * Other editions: not yet scored (Japanese may need its own branch).
  *
  * Source shapes the bytes prove (session 2026-10-07, sun-080f4168):
  * - The OAM shadow entries are volatile u32. loop.c then forms no DEST_ADDR
@@ -22,10 +21,12 @@
  *   each compare as in native.
  * - Two discarded gKeysRepeat reads before the KEY_UP test.
  * - The kind tiles loop counts with i to Data_080f53fc[kind] itself (the
- *   loop bound is hoisted and copied as native's r5); x = 0x278 - n * 16 and
- *   y = 96 are set inside the loop, so loop.c hoists them after the entry
- *   test, keeps the MINUS as the giv's base (subs) and ORs 96 and
- *   0x80002000 separately.
+ *   loop bound is hoisted and copied as native's r5); kx = 0x278 - n * 16
+ *   + i * 32 and ky = 96 are set inside the loop, so loop.c hoists them
+ *   after the entry test, keeps the MINUS as the giv's base (subs) and ORs
+ *   96 and 0x80002000 separately. With i * 32 in kx's own expression (not
+ *   added at the use) the giv's 632 - n * 16 is built late in the
+ *   preheader as native's: 632 in r3, n * 16 in r2 (18 -> 0).
  * - order[] is filled by a two-pass loop (completely unrolled) and sorted by
  *   a one-pass i loop (removed in loop pass 2), so key is 1 and the j loop
  *   starts at 0 as in native.
@@ -56,10 +57,6 @@
  *   fills point[0] before point[1] (sched2 then loads x first).
  * - In the state 2 else arm reset = 1 comes first: its reload takes r7, so
  *   state = 0 gets r0 as in native, and sched2 sinks the r7 copy.
- *
- * Open:
- * - Kind loop preheader: native computes 632 - n * 16 after the table loads
- *   (632 in r3, n * 16 in r2); the draft hoists it first (r2, r1).
  *
  * Earlier trials (kept where still informative):
  * - Native locals, top down: palette 256, depth 240, results 224, point 212,
@@ -326,9 +323,9 @@ void LuckyDice_Run(void)
                     s32 kx;
                     s32 ky;
 
-                    kx = 0x278 - Data_080f53fc[kind] * 16;
+                    kx = 0x278 - Data_080f53fc[kind] * 16 + i * 32;
                     ky = 96;
-                    sprites->obj[count].attr01 = ((((kx + i * 32) & 0x1ff) << 16) | ky) | 0x80002000;
+                    sprites->obj[count].attr01 = (((kx & 0x1ff) << 16) | ky) | 0x80002000;
                     sprites->obj[count].attr2 = Data_080f5400[kind] * 8 + 152 + i * 32;
                     count++;
                 }

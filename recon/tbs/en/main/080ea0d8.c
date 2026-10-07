@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 131 of 2455 (listing 2455, draft 2454, common 2389).
+/* 080ea0d8: differ 66 of 2455 (listing 2455, draft 2457, common 2423).
  * Frame: 184 as native, and every spill slot (sp+104 canvas down to sp+12,
  * the frame giv) holds what the native's holds, with r4's caller-save word
  * at sp+8.
@@ -62,6 +62,14 @@
  * - The shake y goes through an s32 local (no HImode narrowing of the & 3,
  *   whose constant would come from the pool) (137); the actor loop is a
  *   plain for, its zero start before the copied exit test (131).
+ * - Palette fade: pal is a volatile u16 pointer (the native does not hoist
+ *   red's SImode 31 out of the loop), blue and green shift (u16)c with a
+ *   pool-loaded HImode 31 and red masks c directly; computing blue, red,
+ * - The frame 280 block clears ctrl->initial_value before writing
+ *   BLDALPHA, so the ctrl load schedules first (125).
+ *   green in that order is the nearest so far (66). Left: the native ties
+ *   red's AND to the constant's register (movs r4, #31; ands r4, r2), as
+ *   if c were still live after it; ours overwrites c (regmove).
  * - The reload registers of the prologue's constants (r1/r2/r4) match only
  *   when the function's set of spill registers matches: a quick global
  *   check after any change.
@@ -70,12 +78,9 @@
  * work + 0x2710, indexed [i][j]: the constant then folds into the address
  * after the variable part, loop.c creates it in the inner loop's preheader
  * and cannot hoist it, and the whole ramp loop matches the native's.
- * The palette fade masks with a pool-loaded 0x1f and widens each colour as
- * a halfword (lsls 16 / lsrs 26), ours with asrs.
  * The native fill word sits at sp+140, between place and place2, so it is a
  * declared volatile word.
  * Trial: petal cell written in each call, not a block local (kept).
- * Trial: palette colour as s32, not u16 (u16 loads with ldrsh), kept.
  * Trial: spark velocities from their own zero variable, not the ramp
  * limit: the counter takes r7 and the zero r8 as native's (kept).
  * Trial: ramp limit as 64 - i * 7 in the inner loop (kept).
@@ -612,8 +617,8 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             Dma_Set(&fill, work, 0x85000e10, (volatile u32 *)0x040000d4);
             fill = 0x01010101;
             Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
-            *(u16 *)0x04000052 = 0x1010;
             ctrl->initial_value = 0;
+            *(u16 *)0x04000052 = 0x1010;
             for (i = 0; i != 16; i++) {
                 p = &work->particles[i];
                 p->x = ((Random16() & 63) + 256) << 16;
@@ -627,12 +632,12 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
 
         if (frame > 279) {
-            u16 *pal = (u16 *)0x05000002;
+            volatile u16 *pal = (volatile u16 *)0x05000002;
             for (i = 0; i != 63; i++, pal++) {
                 s32 c = *pal;
-                s32 b = ((c >> 10) & 31) + 1;
-                s32 g = ((c >> 5) & 31) + 1;
+                s32 b = (((u16)c >> 10) & 31) + 1;
                 s32 r = (c & 31) + 1;
+                s32 g = (((u16)c >> 5) & 31) + 1;
                 if (b > 31) {
                     b = 31;
                 }

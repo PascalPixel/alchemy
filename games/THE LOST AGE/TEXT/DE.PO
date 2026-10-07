@@ -283,7 +283,7 @@ msgctxt "message"
 msgid "00068"
 msgstr "Geben"
 
-msgctxt "message"
+msgctxt "MsgFieldRepelEvil"
 msgid "00069"
 msgstr "Wegwerfen"
 
@@ -15727,7 +15727,7 @@ msgctxt "message"
 msgid "03929"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgFieldSpace"
 msgid "03930"
 msgstr "Leer"
 
@@ -15739,11 +15739,11 @@ msgctxt "message"
 msgid "03932"
 msgstr "Fertig"
 
-msgctxt "message"
+msgctxt "MsgFieldInvalidPassword"
 msgid "03933"
 msgstr "Ungültiges Passwort."
 
-msgctxt "message"
+msgctxt "MsgFieldPasswordAccepted"
 msgid "03934"
 msgstr "Passwort akzeptiert."
 
@@ -19799,7 +19799,7 @@ msgctxt "message"
 msgid "04947"
 msgstr "Passwort"
 
-msgctxt "message"
+msgctxt "MsgFieldPreparingToReceive"
 msgid "04948"
 msgstr "Speichern"
 
@@ -19807,7 +19807,7 @@ msgctxt "message"
 msgid "04949"
 msgstr "Empfang wird vorbereitet"
 
-msgctxt "message"
+msgctxt "MsgFieldTransferringData"
 msgid "04950"
 msgstr "Datenübertragung..."
 
@@ -19815,7 +19815,7 @@ msgctxt "message"
 msgid "04951"
 msgstr "{button_icon:2}: Ende"
 
-msgctxt "message"
+msgctxt "MsgFieldDataTransferWasInterrupted"
 msgid "04952"
 msgstr "Übertragungsfehler"
 

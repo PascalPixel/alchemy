@@ -385,6 +385,887 @@ Func_020002e0:
 	.global Func_02000328
 	.thumb_func
 Func_02000328:
+	.ifdef TLA_EDITION_DE
+	push {r5, r6, r7, lr}
+	mov r7, sl
+	mov r6, r8
+	push {r6, r7}
+	movs r1, #0
+	mov sl, r1
+	bl Func_0200005c
+	movs r1, #144
+	lsls r1, r1, #3
+	ldr r0, .L_de_020086a0
+	bl Scheduler_AddOrUpdateCallback
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r3, [r3, #108]
+	movs r2, #214
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	mov r1, sl
+	str r1, [r3, #0]
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
+	ldr r3, .L_de_020086a4
+	movs r2, #241
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #2
+	bne .L_de_020083ee
+.L_de_0200836a:
+	ldr r5, .L_de_020086a8
+	movs r1, #5
+	adds r0, r5, #0
+	bl UiText_ShowPositionedMessageAndWait
+	movs r0, #1
+	bl Func_020023d8
+	adds r6, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r6, #0
+	bne .L_de_020083cc
+	movs r1, #1
+	adds r0, r5, #1
+	bl UiText_ShowPositionedMessageAndWait
+	ldr r3, .L_de_020086a4
+	movs r2, #152
+	lsls r2, r2, #1
+	adds r2, #255
+	adds r3, r3, r2
+	movs r2, #1
+	strb r2, [r3, #0]
+	movs r0, #5
+	bl Party_AddActiveOwner
+	movs r0, #6
+	bl Party_AddActiveOwner
+	movs r0, #7
+	bl Party_AddActiveOwner
+	movs r0, #1
+	bl Party_AddActiveOwner
+	movs r0, #2
+	bl Party_AddActiveOwner
+	movs r0, #3
+	bl Party_AddActiveOwner
+	bl Func_020022d0
+	movs r3, #1
+	adds r6, r0, #0
+	negs r3, r3
+	cmp r6, r3
+	beq .L_de_0200836a
+.L_de_020083cc:
+	movs r0, #60
+	bl Battle_WaitMode0
+	bl Event_FinishScreenTransition
+	movs r0, #78
+	bl Func_02002408
+	movs r0, #150
+	lsls r0, r0, #1
+	bl Battle_WaitMode0
+	ldr r0, .L_de_020086ac
+	movs r1, #1
+	bl Func_020023b8
+	b .L_de_02008a24
+.L_de_020083ee:
+	ldr r3, .L_de_020086b0
+	mov r1, sl
+	strb r1, [r3, #0]
+.L_de_020083f4:
+	bl Func_020022f0
+	adds r5, r0, #0
+	cmp r5, #0
+	bge .L_de_02008422
+	ldr r3, .L_de_020086b4
+	ldrb r3, [r3, #0]
+	cmp r3, #0
+	beq .L_de_02008422
+	ldr r3, .L_de_020086a4
+	movs r2, #128
+	lsls r2, r2, #2
+	adds r2, #74
+	adds r3, r3, r2
+	movs r2, #1
+	strb r2, [r3, #0]
+	ldr r3, .L_de_020086b8
+	ldr r0, .L_de_020086bc
+	strb r2, [r3, #0]
+	movs r1, #1
+	movs r2, #8
+	bl Func_020022b8
+.L_de_02008422:
+	cmp r5, #0
+	bne .L_de_02008446
+	mov r3, sl
+	cmp r3, #0
+	bne .L_de_02008446
+	movs r0, #30
+	bl WaitFrames
+	movs r1, #144
+	lsls r1, r1, #3
+	ldr r0, .L_de_020086c0
+	bl Scheduler_AddOrUpdateCallback
+	movs r0, #1
+	bl WaitFrames
+	movs r1, #1
+	mov sl, r1
+.L_de_02008446:
+	cmp r5, #0
+	ble .L_de_02008452
+	bl Menu_SelectSaveSlotAction
+	adds r5, r0, #0
+	b .L_de_02008454
+.L_de_02008452:
+	movs r5, #0
+.L_de_02008454:
+	cmp r5, #0
+	beq .L_de_0200845a
+	b .L_de_020086f4
+.L_de_0200845a:
+	bl Func_02002350
+	ldr r3, .L_de_020086a4
+	movs r1, #147
+	lsls r1, r1, #1
+	adds r1, #255
+	adds r2, r3, r1
+	ldrb r0, [r2, #0]
+	movs r2, #128
+	lsls r2, r2, #2
+	adds r2, #38
+	adds r3, r3, r2
+	ldrb r1, [r3, #0]
+	bl Func_02002310
+	movs r6, #4
+	movs r7, #5
+.L_de_0200847c:
+	movs r0, #6
+	bl WaitFrames
+	adds r0, r6, #0
+	bl Func_020022f8
+	movs r3, #1
+	adds r5, r0, #0
+	negs r3, r3
+	cmp r5, r3
+	bne .L_de_0200849a
+	cmp r6, #4
+	beq .L_de_020083f4
+	subs r6, #1
+	b .L_de_0200847c
+.L_de_0200849a:
+	ldr r3, .L_de_020086c4
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #0
+	bne .L_de_020084ae
+	ldr r3, .L_de_020086c8
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #0
+	beq .L_de_020084b0
+.L_de_020084ae:
+	movs r7, #8
+.L_de_020084b0:
+	adds r6, #1
+	cmp r6, r7
+	blt .L_de_0200847c
+.L_de_020084b6:
+	ldr r0, .L_de_020086cc
+	movs r1, #13
+	bl UiText_ShowPositionedMessageAndWait
+	movs r0, #1
+	movs r1, #0
+	movs r2, #0
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	adds r5, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r5, #0
+	bne .L_de_0200856a
+.L_de_020084d4:
+	movs r0, #0
+	bl Func_020022b0
+	movs r3, #1
+	negs r3, r3
+	adds r5, r0, #0
+	mov r8, r3
+	cmp r5, r8
+	beq .L_de_020083f4
+	cmp r5, #1
+	bne .L_de_0200852a
+	ldr r5, .L_de_020086d0
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r6, .L_de_020086d4
+	ldr r0, .L_de_020086d8
+	mov lr, r6
+	.2byte 0xf800
+	bl Func_02000b24
+	adds r7, r0, #0
+	cmp r7, r8
+	beq .L_de_02008508
+	bl Func_020023e8
+.L_de_02008508:
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r0, .L_de_020086dc
+	mov lr, r6
+	.2byte 0xf800
+	movs r2, #192
+	adds r0, r5, #0
+	ldr r1, .L_de_020086d8
+	lsls r2, r2, #6
+	mov lr, r6
+	.2byte 0xf800
+	cmp r7, r8
+	beq .L_de_020084d4
+	ldr r0, .L_de_020086dc
+	movs r1, #0
+	b .L_de_02008562
+.L_de_0200852a:
+	cmp r5, #0
+	bne .L_de_0200856e
+	ldr r5, .L_de_020086d0
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r6, .L_de_020086d4
+	ldr r0, .L_de_020086d8
+	mov lr, r6
+	.2byte 0xf800
+	bl Func_02002350
+	bl Func_02000e44
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r0, .L_de_020086dc
+	mov lr, r6
+	.2byte 0xf800
+	movs r2, #192
+	ldr r1, .L_de_020086d8
+	lsls r2, r2, #6
+	adds r0, r5, #0
+	mov lr, r6
+	.2byte 0xf800
+	ldr r0, .L_de_020086dc
+	movs r1, #1
+.L_de_02008562:
+	movs r2, #0
+	bl Func_02002370
+	b .L_de_0200856e
+.L_de_0200856a:
+	bl Func_02002398
+.L_de_0200856e:
+	movs r6, #0
+	movs r7, #1
+.L_de_02008572:
+	movs r0, #6
+	bl WaitFrames
+	adds r0, r6, #0
+	bl Func_020022f8
+	movs r1, #1
+	adds r5, r0, #0
+	negs r1, r1
+	cmp r5, r1
+	bne .L_de_02008590
+	cmp r6, #0
+	beq .L_de_020084b6
+	subs r6, #1
+	b .L_de_02008572
+.L_de_02008590:
+	ldr r3, .L_de_020086c8
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #0
+	beq .L_de_0200859c
+	movs r7, #4
+.L_de_0200859c:
+	adds r6, #1
+	cmp r6, r7
+	blt .L_de_02008572
+	ldr r3, .L_de_020086e0
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #0
+	beq .L_de_02008696
+.L_de_020085ac:
+	ldr r5, .L_de_020086e4
+	movs r1, #13
+	adds r0, r5, #0
+	bl UiText_ShowPositionedMessageAndWait
+	ldr r1, .L_de_020086e8
+	movs r0, #1
+	movs r2, #8
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	adds r6, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r6, #0
+	bne .L_de_02008642
+	ldr r3, .L_de_020086e0
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #0
+	bne .L_de_020085e0
+	adds r0, r5, #1
+	movs r1, #1
+	bl UiText_ShowPositionedMessageAndWait
+	b .L_de_02008642
+.L_de_020085e0:
+	ldr r6, .L_de_020086d0
+	movs r2, #192
+	adds r1, r6, #0
+	lsls r2, r2, #6
+	ldr r7, .L_de_020086d4
+	ldr r0, .L_de_020086d8
+	mov lr, r7
+	.2byte 0xf800
+	movs r0, #5
+	bl Func_020022d8
+	adds r5, r0, #0
+	cmp r5, #0
+	bne .L_de_020085ac
+	ldr r5, .L_de_020086a4
+	movs r1, #147
+	lsls r1, r1, #1
+	movs r2, #128
+	adds r1, #255
+	lsls r2, r2, #2
+	adds r3, r5, r1
+	adds r2, #38
+	ldrb r0, [r3, #0]
+	adds r3, r5, r2
+	ldrb r1, [r3, #0]
+	bl Func_02002310
+	movs r2, #192
+	adds r1, r6, #0
+	lsls r2, r2, #6
+	ldr r0, .L_de_020086dc
+	mov lr, r7
+	.2byte 0xf800
+	movs r2, #192
+	ldr r1, .L_de_020086d8
+	lsls r2, r2, #6
+	adds r0, r6, #0
+	mov lr, r7
+	.2byte 0xf800
+	ldr r0, .L_de_020086dc
+	bl Func_020023a0
+	movs r3, #196
+	lsls r3, r3, #1
+	adds r3, #255
+	adds r5, r5, r3
+	movs r3, #1
+	strb r3, [r5, #0]
+	b .L_de_02008696
+.L_de_02008642:
+	ldr r0, .L_de_020086ec
+	movs r1, #13
+	bl UiText_ShowPositionedMessageAndWait
+	ldr r5, .L_de_020086e8
+	movs r0, #1
+	adds r1, r5, #0
+	movs r2, #8
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	adds r6, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r6, #0
+	bne .L_de_02008678
+	movs r0, #46
+	bl GameFlag_SetBit
+	ldr r3, .L_de_020086a4
+	movs r1, #196
+	lsls r1, r1, #1
+	adds r1, #255
+	adds r3, r3, r1
+	movs r2, #2
+	strb r2, [r3, #0]
+	b .L_de_02008696
+.L_de_02008678:
+	ldr r0, .L_de_020086f0
+	movs r1, #13
+	bl UiText_ShowPositionedMessageAndWait
+	movs r0, #1
+	adds r1, r5, #0
+	movs r2, #8
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	adds r6, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r6, #0
+	bne .L_de_020085ac
+.L_de_02008696:
+	ldr r0, .L_de_020086ac
+	movs r1, #8
+	bl Func_020023b8
+	b .L_de_020089f6
+.L_de_020086a0:
+	.4byte Func_020001f4
+.L_de_020086a4:
+	.4byte gPartyState
+.L_de_020086a8:
+	.4byte 0x00000008
+.L_de_020086ac:
+	.4byte 0x00000000
+.L_de_020086b0:
+	.4byte gSleepDisabled
+.L_de_020086b4:
+	.4byte gDebugMode
+.L_de_020086b8:
+	.4byte gAutoSleepEnabled
+.L_de_020086bc:
+	.4byte 0x0000000b
+.L_de_020086c0:
+	.4byte Func_0200015c
+.L_de_020086c4:
+	.4byte Data_020024f6
+.L_de_020086c8:
+	.4byte Data_020024f8
+.L_de_020086cc:
+	.4byte 0x00000024
+.L_de_020086d0:
+	.4byte Data_02000000
+.L_de_020086d4:
+	.4byte IwramCopyWords
+.L_de_020086d8:
+	.4byte gMapCellBuffer
+.L_de_020086dc:
+	.4byte 0x02013000
+.L_de_020086e0:
+	.4byte Data_02003860
+.L_de_020086e4:
+	.4byte 0x00000025
+.L_de_020086e8:
+	.4byte 0x00000029
+.L_de_020086ec:
+	.4byte 0x00000027
+.L_de_020086f0:
+	.4byte 0x00000028
+.L_de_020086f4:
+	cmp r5, #1
+	beq .L_de_020086fa
+	b .L_de_02008848
+.L_de_020086fa:
+	movs r0, #1
+	bl Func_020022d8
+	movs r2, #1
+	adds r5, r0, #0
+	negs r2, r2
+	cmp r5, r2
+	bne .L_de_0200870c
+	b .L_de_020083f4
+.L_de_0200870c:
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_SetBit
+	ldr r5, .L_de_02008a30
+	movs r1, #147
+	lsls r1, r1, #1
+	movs r2, #128
+	adds r1, #255
+	lsls r2, r2, #2
+	adds r3, r5, r1
+	adds r2, #38
+	ldrb r0, [r3, #0]
+	adds r3, r5, r2
+	ldrb r1, [r3, #0]
+	bl Func_02002310
+	bl Func_02002388
+	ldr r3, [r5, #0]
+	cmp r3, r0
+	beq .L_de_0200876a
+	movs r1, #242
+	lsls r1, r1, #1
+	adds r3, r5, r1
+	ldrh r0, [r3, #0]
+	movs r2, #240
+	lsls r2, r2, #1
+	adds r3, r5, r2
+	strh r0, [r3, #0]
+	adds r1, #2
+	adds r3, r5, r1
+	ldrh r1, [r3, #0]
+	adds r2, #2
+	adds r3, r5, r2
+	strh r1, [r3, #0]
+	lsls r0, r0, #16
+	lsls r1, r1, #16
+	asrs r0, r0, #16
+	asrs r1, r1, #16
+	bl Func_020023e0
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_ClearBit
+	b .L_de_0200883e
+.L_de_0200876a:
+	ldr r3, .L_de_02008a34
+	movs r2, #130
+	ldr r3, [r3, #0]
+	lsls r2, r2, #2
+	ands r3, r2
+	cmp r3, r2
+	bne .L_de_020087be
+	bl Func_020002e0
+	cmp r0, #0
+	beq .L_de_02008784
+	ldr r0, .L_de_02008a38
+	b .L_de_020087fe
+.L_de_02008784:
+	movs r1, #242
+	lsls r1, r1, #1
+	adds r3, r5, r1
+	ldrh r0, [r3, #0]
+	movs r2, #240
+	lsls r2, r2, #1
+	adds r3, r5, r2
+	strh r0, [r3, #0]
+	adds r1, #2
+	adds r3, r5, r1
+	ldrh r1, [r3, #0]
+	adds r2, #2
+	adds r3, r5, r2
+	strh r1, [r3, #0]
+	lsls r0, r0, #16
+	lsls r1, r1, #16
+	asrs r0, r0, #16
+	asrs r1, r1, #16
+	bl Func_020023e0
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_ClearBit
+	movs r0, #159
+	lsls r0, r0, #1
+	bl GameFlag_SetBit
+	b .L_de_0200883e
+.L_de_020087be:
+	ldr r3, .L_de_02008a3c
+	ldr r2, [r5, #4]
+	ldr r3, [r3, #0]
+	cmp r2, r3
+	beq .L_de_0200883e
+	ldr r6, .L_de_02008a40
+	movs r1, #9
+	adds r0, r6, #0
+	bl UiText_ShowPositionedMessageAndWait
+	adds r0, r6, #1
+	movs r1, #13
+	bl UiText_ShowPositionedMessageAndWait
+	movs r0, #1
+	movs r1, #0
+	movs r2, #0
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	cmp r0, #0
+	beq .L_de_020087f0
+	bl UiWork_FinalizePendingCore
+	b .L_de_020083f4
+.L_de_020087f0:
+	bl UiWork_FinalizePendingCore
+	bl Func_020002e0
+	cmp r0, #0
+	beq .L_de_02008806
+	adds r0, r6, #2
+.L_de_020087fe:
+	movs r1, #9
+	bl UiText_ShowPositionedMessageAndWait
+	b .L_de_020083f4
+.L_de_02008806:
+	movs r1, #242
+	lsls r1, r1, #1
+	adds r3, r5, r1
+	ldrh r0, [r3, #0]
+	movs r2, #240
+	lsls r2, r2, #1
+	adds r3, r5, r2
+	strh r0, [r3, #0]
+	adds r1, #2
+	adds r3, r5, r1
+	ldrh r1, [r3, #0]
+	adds r2, #2
+	adds r3, r5, r2
+	strh r1, [r3, #0]
+	lsls r0, r0, #16
+	lsls r1, r1, #16
+	asrs r0, r0, #16
+	asrs r1, r1, #16
+	bl Func_020023e0
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_ClearBit
+	movs r0, #64
+	adds r0, #255
+	bl GameFlag_SetBit
+.L_de_0200883e:
+	movs r0, #131
+	lsls r0, r0, #1
+	bl GameFlag_ClearBit
+	b .L_de_020089f6
+.L_de_02008848:
+	cmp r5, #2
+	bne .L_de_02008852
+	bl Func_020022e0
+	b .L_de_020083f4
+.L_de_02008852:
+	cmp r5, #3
+	bne .L_de_0200885c
+	bl Func_020022e8
+	b .L_de_020083f4
+.L_de_0200885c:
+	cmp r5, #4
+	bne .L_de_020088d4
+	movs r0, #4
+	bl Func_020022d8
+	movs r3, #1
+	adds r5, r0, #0
+	negs r3, r3
+	cmp r5, r3
+	bne .L_de_02008872
+	b .L_de_020083f4
+.L_de_02008872:
+	ldr r5, .L_de_02008a30
+	movs r1, #133
+	lsls r1, r1, #2
+	movs r0, #144
+	adds r3, r5, r1
+	movs r2, #4
+	lsls r0, r0, #4
+	str r2, [r3, #0]
+	adds r0, #255
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_de_02008890
+	bl Func_02002390
+.L_de_02008890:
+	movs r2, #147
+	lsls r2, r2, #1
+	movs r1, #128
+	adds r2, #255
+	lsls r1, r1, #2
+	adds r3, r5, r2
+	adds r1, #38
+	ldrb r0, [r3, #0]
+	adds r3, r5, r1
+	ldrb r1, [r3, #0]
+	bl Func_02002310
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_ClearBit
+	movs r0, #131
+	lsls r0, r0, #1
+	bl GameFlag_ClearBit
+	movs r3, #128
+	lsls r3, r3, #2
+	adds r3, #118
+	adds r2, r5, r3
+	movs r3, #0
+	strh r3, [r2, #0]
+	ldr r2, .L_de_02008a44
+	movs r3, #1
+	strb r3, [r2, #0]
+	ldr r0, .L_de_02008a48
+	movs r1, #1
+	bl Func_020023b8
+	b .L_de_020089f6
+.L_de_020088d4:
+	cmp r5, #5
+	beq .L_de_020088da
+	b .L_de_020083f4
+.L_de_020088da:
+	movs r0, #6
+	bl Func_020022d8
+	movs r1, #1
+	adds r5, r0, #0
+	negs r1, r1
+	cmp r5, r1
+	bne .L_de_020088ec
+	b .L_de_020083f4
+.L_de_020088ec:
+	ldr r3, .L_de_02008a30
+	movs r1, #147
+	lsls r1, r1, #1
+	adds r1, #255
+	adds r2, r3, r1
+	ldrb r0, [r2, #0]
+	movs r2, #128
+	lsls r2, r2, #2
+	adds r2, #38
+	adds r3, r3, r2
+	ldrb r1, [r3, #0]
+	bl Func_02002310
+.L_de_02008906:
+	movs r0, #2
+	bl Func_020022b0
+	movs r3, #1
+	negs r3, r3
+	adds r5, r0, #0
+	mov r8, r3
+	cmp r5, r8
+	beq .L_de_020088da
+	cmp r5, #1
+	bne .L_de_02008962
+	ldr r5, .L_de_02008a4c
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r6, .L_de_02008a50
+	ldr r0, .L_de_02008a54
+	mov lr, r6
+	.2byte 0xf800
+	bl Func_02000b24
+	adds r7, r0, #0
+	cmp r7, r8
+	beq .L_de_0200893a
+	bl Func_020023e8
+.L_de_0200893a:
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r0, .L_de_02008a58
+	mov lr, r6
+	.2byte 0xf800
+	movs r2, #192
+	adds r0, r5, #0
+	ldr r1, .L_de_02008a54
+	lsls r2, r2, #6
+	mov lr, r6
+	.2byte 0xf800
+	cmp r7, r8
+	beq .L_de_02008906
+	ldr r0, .L_de_02008a58
+	movs r1, #0
+	movs r2, #1
+	bl Func_02002370
+	b .L_de_020089a6
+.L_de_02008962:
+	cmp r5, #0
+	bne .L_de_020089a6
+	ldr r5, .L_de_02008a4c
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r6, .L_de_02008a50
+	ldr r0, .L_de_02008a54
+	mov lr, r6
+	.2byte 0xf800
+	bl Func_02002350
+	bl Func_02000e44
+	movs r2, #192
+	adds r7, r0, #0
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r0, .L_de_02008a58
+	mov lr, r6
+	.2byte 0xf800
+	movs r2, #192
+	adds r0, r5, #0
+	ldr r1, .L_de_02008a54
+	lsls r2, r2, #6
+	mov lr, r6
+	.2byte 0xf800
+	cmp r7, r8
+	beq .L_de_02008906
+	ldr r0, .L_de_02008a58
+	movs r1, #1
+	movs r2, #1
+	bl Func_02002370
+.L_de_020089a6:
+	ldr r3, .L_de_02008a5c
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #0
+	bne .L_de_020089ba
+	ldr r3, .L_de_02008a60
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #0
+	beq .L_de_020089ee
+.L_de_020089ba:
+	movs r6, #0
+	movs r7, #1
+.L_de_020089be:
+	movs r0, #6
+	bl WaitFrames
+	adds r0, r6, #0
+	bl Func_020022f8
+	movs r3, #1
+	adds r5, r0, #0
+	negs r3, r3
+	cmp r5, r3
+	bne .L_de_020089dc
+	cmp r6, #0
+	beq .L_de_020088da
+	subs r6, #1
+	b .L_de_020089be
+.L_de_020089dc:
+	ldr r3, .L_de_02008a60
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #0
+	beq .L_de_020089e8
+	movs r7, #4
+.L_de_020089e8:
+	adds r6, #1
+	cmp r6, r7
+	blt .L_de_020089be
+.L_de_020089ee:
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_SetBit
+.L_de_020089f6:
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r3, [r3, #108]
+	movs r2, #172
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	movs r2, #186
+	lsls r2, r2, #2
+	adds r2, #255
+	strh r2, [r3, #0]
+	movs r0, #30
+	bl Battle_WaitMode0
+	movs r0, #78
+	bl Func_02002408
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
+	movs r0, #60
+	bl Battle_WaitMode0
+.L_de_02008a24:
+	movs r0, #0
+	pop {r3, r5}
+	mov r8, r3
+	mov sl, r5
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_de_02008a30:
+	.4byte gPartyState
+.L_de_02008a34:
+	.4byte gInput
+.L_de_02008a38:
+	.4byte 0x00000007
+.L_de_02008a3c:
+	.4byte Data_02001000
+.L_de_02008a40:
+	.4byte 0x00000005
+.L_de_02008a44:
+	.4byte gSleepDisabled
+.L_de_02008a48:
+	.4byte 0x00000138
+.L_de_02008a4c:
+	.4byte Data_02000000
+.L_de_02008a50:
+	.4byte IwramCopyWords
+.L_de_02008a54:
+	.4byte gMapCellBuffer
+.L_de_02008a58:
+	.4byte 0x02013000
+.L_de_02008a5c:
+	.4byte Data_020024f6
+.L_de_02008a60:
+	.4byte Data_020024f8
+	.else
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8
@@ -1268,6 +2149,7 @@ Func_02000328:
 	.4byte Data_020024f6
 .L_02008a68:
 	.4byte Data_020024f8
+	.endif
 	.section .text.x02008a70,"ax",%progbits
 	.global Func_02000a70
 	.thumb_func
@@ -1390,9 +2272,17 @@ Func_02000b24:
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #5
+	.ifdef TLA_EDITION_DE
+	movs r2, #20
+	.else
 	movs r2, #18
+	.endif
 	movs r3, #8
+	.ifdef TLA_EDITION_DE
+	movs r0, #5
+	.else
 	movs r0, #6
+	.endif
 	bl UiWindow_Create
 	ldr r5, .L_02008bf0
 	adds r6, r0, #0
@@ -1472,7 +2362,7 @@ Func_02000b24:
 	bl Func_02002408
 	b .L_02008ce8
 .L_02008be0:
-	.4byte 0x00000055
+	.4byte MsgFieldRepelEvil
 .L_02008be4:
 	.4byte 0x00000056
 .L_02008be8:
@@ -1480,7 +2370,7 @@ Func_02000b24:
 .L_02008bec:
 	.4byte 0x00000053
 .L_02008bf0:
-	.4byte 0x00001184
+	.4byte MsgFieldPreparingToReceive
 .L_02008bf4:
 	.4byte gLinkStatus
 .L_02008bf8:
@@ -1669,7 +2559,7 @@ Func_02000b24:
 .L_02008d80:
 	.4byte gSerialReceivedSize
 .L_02008d84:
-	.4byte 0x00001186
+	.4byte MsgFieldTransferringData
 .L_02008d88:
 	.4byte Data_02003a74
 .L_02008d8c:
@@ -1679,7 +2569,7 @@ Func_02000b24:
 .L_02008d94:
 	.4byte 0x000927bf
 .L_02008d98:
-	.4byte 0x00001188
+	.4byte MsgFieldDataTransferWasInterrupted
 .L_02008d9c:
 	.4byte gInput
 .L_02008da0:
@@ -2171,7 +3061,7 @@ Func_02000e44:
 .L_0200916c:
 	.4byte Data_0200247c
 .L_02009170:
-	.4byte 0x00000d8d
+	.4byte MsgFieldSpace
 .L_02009174:
 	.4byte Data_0200274a
 .L_02009178:
@@ -2917,7 +3807,7 @@ Func_02000e44:
 .L_02009760:
 	.4byte Data_0200274a
 .L_02009764:
-	.4byte 0x00000d91
+	.4byte MsgFieldPasswordAccepted
 .L_02009768:
 	.4byte gPartyState
 .L_0200976c:
@@ -2927,7 +3817,7 @@ Func_02000e44:
 .L_02009774:
 	.4byte GameFlagBytes
 .L_02009778:
-	.4byte 0x00000d90
+	.4byte MsgFieldInvalidPassword
 .L_0200977c:
 	.4byte Data_02002440
 .L_02009780:
@@ -2937,7 +3827,7 @@ Func_02000e44:
 .L_02009788:
 	.4byte Data_0200247c
 .L_0200978c:
-	.4byte 0x00000d8d
+	.4byte MsgFieldSpace
 .L_02009790:
 	.4byte IwramClearWords
 .L_02009794:

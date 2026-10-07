@@ -660,21 +660,29 @@ pub(crate) struct Found {
     end: usize,
     decimal: String,
     operands: Vec<Range<usize>>,
+    /// The function it sits in and its value: the same value kept hex in
+    /// that function keeps it hex.
+    value: (Option<usize>, u64),
 }
 
-/// The quantities of `text`, before typing. One quantity keeps one base
-/// within a function: a literal stays hex when a name it meets also meets a
-/// literal that stays hex there (`len > 0x10` keeps `len - 0x10`).
-pub(crate) fn found(text: &str, commands: &[String]) -> Vec<Found> {
+/// The quantities of `text`, before typing, and the values that stay hex in
+/// each function, tagged code aside. One quantity keeps one base within a
+/// function: a literal stays hex when a name it meets also meets a literal
+/// that stays hex there (`len > 0x10` keeps `len - 0x10`), or when its value
+/// stays hex there (`id = 0x80;` keeps `limit += 0x80;`, `BumpAllocate(0x400)`
+/// keeps `i < 0x400`).
+pub(crate) fn found(text: &str, commands: &[String]) -> (Vec<Found>, HashSet<(Option<usize>, u64)>) {
     let Ok(tokens) = lex(text) else {
-        return Vec::new();
+        return (Vec::new(), HashSet::new());
     };
     let tokens = code(tokens);
     let context = Context { groups: groups(&tokens), commands, tainted: tainted(&tokens), characters: characters(&tokens), tokens: &tokens };
     let tagged = tagged::ranges(text);
     let functions = functions(&tokens);
     let related = |i: usize| -> HashSet<&str> { partners(&tokens, i).into_iter().flat_map(|r| heads(&tokens, r)).collect() };
-    let mut hexes: Vec<(usize, Option<Hex>)> = Vec::new();
+    // Each hex literal: its token, value, whether a tag covers it, and the
+    // literal while it is still a candidate.
+    let mut hexes: Vec<(usize, u64, bool, Option<Hex>)> = Vec::new();
     for (i, token) in tokens.iter().enumerate() {
         let Tok::Number(number) = &token.tok else {
             continue;
@@ -682,22 +690,32 @@ pub(crate) fn found(text: &str, commands: &[String]) -> Vec<Found> {
         let Some(h) = hex(number) else {
             continue;
         };
-        let keep = !quantity(&context, i, &h) || tagged::covered(&tagged, token.start, token.end);
-        hexes.push((i, (!keep).then_some(h)));
+        let tag = tagged::covered(&tagged, token.start, token.end);
+        let keep = tag || !quantity(&context, i, &h);
+        hexes.push((i, h.value, tag, (!keep).then_some(h)));
     }
+    // The values kept hex in each function; a tag keeps its own literals
+    // only.
+    let kept_values = |hexes: &[(usize, u64, bool, Option<Hex>)]| -> HashSet<(Option<usize>, u64)> {
+        hexes.iter().filter(|(_, _, tag, h)| h.is_none() && !tag).map(|(i, value, _, _)| (functions[*i], *value)).collect()
+    };
     loop {
         let mut kept: HashSet<(Option<usize>, &str)> = HashSet::new();
-        for (i, h) in &hexes {
+        for (i, _, _, h) in &hexes {
             if h.is_none() {
                 kept.extend(related(*i).into_iter().map(|n| (functions[*i], n)));
             }
         }
+        let values = kept_values(&hexes);
         let mut changed = false;
-        for (i, h) in hexes.iter_mut() {
+        for (i, value, _, h) in hexes.iter_mut() {
             // A candidate also meets the names its statement assigns: in
             // `step = object->action * 0x50; object->angle += step + 0x1000;`
             // the step is an angle, kept hex.
-            if h.is_some() && related(*i).into_iter().chain(targets(&tokens, *i)).any(|n| kept.contains(&(functions[*i], n))) {
+            if h.is_some()
+                && (values.contains(&(functions[*i], *value))
+                    || related(*i).into_iter().chain(targets(&tokens, *i)).any(|n| kept.contains(&(functions[*i], n))))
+            {
                 *h = None;
                 changed = true;
             }
@@ -706,23 +724,30 @@ pub(crate) fn found(text: &str, commands: &[String]) -> Vec<Found> {
             break;
         }
     }
-    hexes
+    let values = kept_values(&hexes);
+    let found = hexes
         .into_iter()
-        .filter_map(|(i, h)| {
+        .filter_map(|(i, value, _, h)| {
             let h = h?;
             let added = matches!(i.checked_sub(1).and_then(|k| punct(&tokens[k])), Some("+" | "-" | "+=" | "-="))
                 || matches!(tokens.get(i + 1).and_then(punct), Some("+" | "-"));
             let operands = if added { partners(&tokens, i).into_iter().map(|r| tokens[r.start].start..tokens[r.end - 1].end).collect() } else { Vec::new() };
-            Some(Found { start: tokens[i].start, end: tokens[i].end, decimal: format!("{}{}", h.value, h.suffix), operands })
+            Some(Found { start: tokens[i].start, end: tokens[i].end, decimal: format!("{}{}", h.value, h.suffix), operands, value: (functions[i], value) })
         })
-        .collect()
+        .collect();
+    (found, values)
 }
 
 /// The text with its quantities in decimal, and how many changed. `address`
 /// says whether the operand at a byte range (its start, its text) is an
-/// address or cannot be typed: a literal beside one stays hex.
+/// address or cannot be typed: a literal beside one stays hex, and so does
+/// its value everywhere in that function (`buffer + 0x480` keeps
+/// `i < 0x480`).
 pub(crate) fn rewrite_with(text: &str, commands: &[String], address: &mut dyn FnMut(usize, &str) -> bool) -> (String, usize) {
-    let edits: Vec<Found> = found(text, commands).into_iter().filter(|f| !f.operands.iter().any(|r| address(r.start, &text[r.clone()]))).collect();
+    let (found, mut values) = found(text, commands);
+    let (mut edits, beside): (Vec<Found>, Vec<Found>) = found.into_iter().partition(|f| !f.operands.iter().any(|r| address(r.start, &text[r.clone()])));
+    values.extend(beside.iter().map(|f| f.value));
+    edits.retain(|f| !values.contains(&f.value));
     let count = edits.len();
     let mut out = text.to_string();
     for f in edits.into_iter().rev() {
@@ -735,7 +760,7 @@ pub(crate) fn rewrite_with(text: &str, commands: &[String], address: &mut dyn Fn
 /// file builds in: a literal stays hex beside an operand any edition types
 /// as an address, or none can type.
 pub(crate) fn rewrite(root: &Path, file: &Path, text: &str, games: &[DecompTarget], commands: &[String]) -> Result<(String, usize), String> {
-    let candidates = found(text, commands);
+    let (candidates, _) = found(text, commands);
     if candidates.is_empty() {
         return Ok((text.to_string(), 0));
     }
@@ -903,6 +928,28 @@ mod tests {
         same("s32 F(void)\n{\n  if (len > 0x10)\n  {\n    dx2 = dx;\n    n = len - 0x10;\n  }\n}\n");
         let other = "s32 F(void)\n{\n  if (len > 0x10)\n  {\n  }\n}\ns32 G(void)\n{\n    n = len - 0x10;\n}\n";
         assert_eq!(convert(other).0, other.replace("len - 0x10", "len - 16"));
+    }
+
+    /// The four lines the session-2 dry run left for a reviewer, verbatim:
+    /// the enemy-id base and two buffer sizes, each also written hex
+    /// elsewhere in its function.
+    #[test]
+    fn one_value_keeps_one_base_in_a_function() {
+        // ☀️ BATTLE/PARTY/PARTY.C:396-397
+        same("void F(void)\n{\n        id = 0x80;\n        entry_limit += 0x80;\n        for (; id < entry_limit; id += 1) {\n        }\n}\n");
+        // ☀️ BATTLE/PARTY/PARTY.C:454-455; ⚓️ BATTLE/PARTY/LIST_LIVING_UNITS.C:81
+        same("void F(void)\n{\n        remaining = 0x80;\n        enemy_limit = enemy_capacity + 0x80;\n        if (remaining < enemy_limit) {\n        }\n}\n");
+        // ☀️ GRAPHICS/TEXT/GLYPH.C:59-62
+        same("void F(void)\n{\n    remapped = Runtime_BumpAllocate(0x400);\n    src = decoded->input;\n    dst = remapped;\n    for (i = 0; i < 0x400; i++) {\n        index = *src++;\n    }\n}\n");
+        // ☀️ FIELD/RAMAKAN_SABAKU/STORM.C:143-144
+        same("void F(void)\n{\n    destination = buffer;\n    source = buffer + 0x480;\n    for (i = 0; i < 0x480; i++) {\n        u8 value = *source++;\n    }\n}\n");
+        // A literal kept hex beside an address keeps its value hex too.
+        same("void F(void)\n{\n    cursor = p + 0x80;\n    for (i = 0; i < 0x80; i++) {}\n}\n");
+        // Another function's hex, or a tagged literal, keeps nothing.
+        let other = "void F(void)\n{\n    id = 0x80;\n}\nvoid G(void)\n{\n    for (i = 0; i < 0x80; i++) {}\n}\n";
+        assert_eq!(convert(other).0, other.replace("i < 0x80", "i < 128"));
+        let tagged = "void F(void)\n{\n    if (x) {\n        /* FAKEMATCH: order */\n        id = 0x80;\n    }\n    for (i = 0; i < 0x80; i++) {}\n}\n";
+        assert_eq!(convert(tagged).0, tagged.replace("i < 0x80", "i < 128"));
     }
 
     #[test]

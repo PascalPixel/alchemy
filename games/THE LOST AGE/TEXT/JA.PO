@@ -35567,7 +35567,7 @@ msgctxt "message"
 msgid "08889"
 msgstr "インドラ大陸にふさがれて{line_break}ゴンドワナ大陸の西がわへ{line_break}出られなくなっちまったよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDidYouKnowIndraMoved"
 msgid "08890"
 msgstr "インドラ大陸が動いたでしょ{line_break}あれにはビックリしたわよ{page_break}そのおかげで 南をとおる水ろへ{line_break}行けなくなっちゃのよ・・・。{end_wait}"
 
@@ -35583,7 +35583,7 @@ msgctxt "message"
 msgid "08893"
 msgstr "むすこに 船をおしえるのに{line_break}サウスアイランド北のすいろは{line_break}ピッタリだったのになあ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMSoGratefulOur"
 msgid "08894"
 msgstr "あんな 大つなみがおきたのに{line_break}よく この島はぶじだったわね{line_break}これを きせきっていうんだわ。{end_wait}"
 
@@ -38099,99 +38099,99 @@ msgctxt "message"
 msgid "09522"
 msgstr "パヤヤームが見つけた宝さえ{line_break}村にもちかえってくれれば{line_break}チャンパは ゆたかになるんだ{page_break}そうなったら オレも{line_break}かいぞくって商売から{line_break}あしをあらうつもりだぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereSNotMuchSpace"
 msgid "09523"
 msgstr "チャンパは いえをたてる土地が{line_break}あんまり ないもんだから・・・{line_break}こうやって船でくらしてるのさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEveryoneInChampaIsPoor"
 msgid "09524"
 msgstr "チャンパ村は みんなまずしいけど{line_break}船でくらす者は とくにまずしいの{line_break}ああ 陸でくらせるといいわよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhenMyFatherHeadsOut"
 msgid "09525"
 msgstr "父ちゃんが 海へ出かけると{line_break}いえが なくなっちゃうんだ{page_break}でもサカナをとってこないと{line_break}ハラペコのままだしなあ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMyDadWentOutTo"
 msgid "09526"
 msgstr "父ちゃん りょうに出たけど{line_break}おサカナがいなかったから{line_break}もどってきちゃったんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheseRaftsAreAllWe"
 msgid "09527"
 msgstr "こんな土地のすくない村だから{line_break}われわれが船にすんでいるのも{line_break}しかたないことなんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfDadHadnTBeen"
 msgid "09528"
 msgstr "お父さんが パヤヤームに{line_break}はんこうさえしなかったら{line_break}ガケには すめるのにねぇ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHopeDadMakesIt"
 msgid "09529"
 msgstr "りょうへ出かけた父ちゃんが{line_break}夜 もどってこない時には{line_break}土の上でねむることになるんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldFatherWorriesSoMuchAbout"
 msgid "09530"
 msgstr "海で おサカナがとれないから{line_break}父ちゃんは こまってるの{page_break}むかしは あんなにとれたのに{line_break}どうして とれないのかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheTidalWaveWasTerrible"
 msgid "09531"
 msgstr "すごい大つなみがあったんだ{line_break}オレたち もうすこしで・・・{line_break}大つなみにのまれそうだったよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItLookedToMeLike"
 msgid "09532"
 msgstr "大つなみは まの海の中から{line_break}発生したように見えたが{line_break}あの中に なにがあるのかな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMostOfTheSailorsHere"
 msgid "09533"
 msgstr "ここのほとんどの船のりたちは{line_break}ガケに すむことになってるが{line_break}オレたちは それがイヤなのさ{page_break}まあ 船の上でせいかつする者は{line_break}村の船のりの きらわれ者なんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheFishAreVanishingI"
 msgid "09534"
 msgstr "このへんでサカナがとれないから{line_break}とおくまで 船を出したんだけど{line_break}そんなこと するもんじゃないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldSomethingMustHaveBlownUp"
 msgid "09535"
 msgstr "まの海が 大つなみのげんいんなら{line_break}あの中に 火山か なにかがあって{line_break}それが ばくはつしたのかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouHaveToBeOne"
 msgid "09536"
 msgstr "チャンパのガケに すむってことは{line_break}パヤヤームの手下になるってことだ{line_break}オレたち それだけはゴメンさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeVeSeenALot"
 msgid "09537"
 msgstr "このチャンパ村へおとずれる{line_break}戦士のかずが ふえたのう{page_break}すこし前まで たび人なんか{line_break}やってこなかったというのに{line_break}どうした風のふきまわしじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAGroupOfTravelersCame"
 msgid "09538"
 msgstr "{actor_name:5}という戦士をさがし{line_break}なんにんかの戦士がきたわい{page_break}きっと その戦士はよっぽど{line_break}人気があるんじゃろうのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMoreVisitorsMeansMoreMoney"
 msgid "09539"
 msgstr "たくさんのたび人がくれば{line_break}チャンパがうるおうんじゃ{line_break}たび人よ もっとくるのじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNowThatIThinkAbout"
 msgid "09540"
 msgstr "そういえば つい さっき・・・{line_break}{actor_name:5}という戦士をさがして{line_break}男がやってきたんじゃったのう{page_break}あの男なら きっとまだ{line_break}村にいるんじゃないかのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheOceanHasBeenA"
 msgid "09541"
 msgstr "さいきん なんだか海の水が{line_break}なまあたたかくなったんだよ{line_break}そしたらサカナがとれなくてさ{page_break}海の水があたたかくなるってのも{line_break}おかしなはなしだと おもうしな{line_break}海はどうなっちまったんだ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIVeHeardRumorsOf"
 msgid "09542"
 msgstr "おどろくほどの 大つなみが{line_break}イースト海の南でおきたそうよ{page_break}まさか パヤヤームたちは{line_break}その大つなみにのまれて・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeChampaRelyEntirelyOn"
 msgid "09543"
 msgstr "海の民のチャンパにとって{line_break}海がおかしくなってしまうことは{line_break}生きていくのに こまることだ{page_break}はやく むかしのような海に{line_break}もどってくれないものかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAllTheSailorsAreSaying"
 msgid "09544"
 msgstr "南の海でおこった大つなみは{line_break}たいへんな 大きさだったと{line_break}船のりのひとりが いってたわ{page_break}あの大つなみにのみこまれたら{line_break}あの パヤヤームたちでさえも{line_break}たすからないと・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldObabaSNotSeeingAnyone"
 msgid "09545"
 msgstr "オババ様に なにかようじかい{line_break}あいにくだけど いまはムリだね{page_break}パヤヤームがここにもどるまで{line_break}だれにも あわないってさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHasMyGrandsonReturnedHas"
 msgid "09546"
 msgstr "あたしの パヤヤームが{line_break}かえってきたってのかい?{end_now}"
 
@@ -38203,15 +38203,15 @@ msgctxt "message"
 msgid "09548"
 msgstr "あの子が かえってくるまでは{line_break}だれとも あいたくないんだよ{line_break}とっとと かえっておくれ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThatPitIsObabaS"
 msgid "09549"
 msgstr "そのアナは オババ様が{line_break}かじのしごとをする時に{line_break}りようするアナなんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBeforeHeLeftBriggsOrdered"
 msgid "09550"
 msgstr "こんかい パヤヤームは{line_break}るすばんするようにって{line_break}オレに めいれいしたんだ{page_break}パヤヤームの船のかえりを{line_break}しんぱいするぐらいだったら{line_break}やっぱり 船にのるんだった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAllOfOurMenWent"
 msgid "09551"
 msgstr "うちの人はパヤヤームとともに{line_break}こう海に出て かえらないのさ{line_break}はああ あの人がこいしいねぇ。{end_wait}"
 
@@ -38219,35 +38219,35 @@ msgctxt "message"
 msgid "09552"
 msgstr "どうして 船のりのかんけい者が{line_break}ガケに すむようになったか・・・{line_break}あんたには わかんないだろうね{page_break}ここから海をながめていれば{line_break}船のかえりが すぐにわかり{line_break}とっても べんりだからなのさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheChampaSailorsWhoDon"
 msgid "09553"
 msgstr "チャンパの船のりのクセして{line_break}ガケにすまない船のりたちは{line_break}しょせん おくびょう者さ{page_break}ガケにすむ者は いつだって{line_break}オババ様やパヤヤームのため{line_break}いのちを すてられるんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMyHusbandWantsOurChildren"
 msgid "09554"
 msgstr "父ちゃんたら じぶんの子どもを{line_break}船のりに させたいみたいだけど{line_break}とんでもない はなしだわよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldSomedayIWantToBe"
 msgid "09555"
 msgstr "ボク 父ちゃんと同じように{line_break}船のりになりたいんだけど{line_break}母ちゃん イヤみたいなんだ{page_break}たくさん べんきょうして{line_break}がくしゃになれなんて・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMomSHadItPretty"
 msgid "09556"
 msgstr "しょうらい 出世する男の子と{line_break}いまのうちに つきあっておけば{line_break}ママみたいに くろうしないわね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIVeNeverSeenObaba"
 msgid "09557"
 msgstr "オババ様 へやにこもったまま{line_break}出てこないなんて はじめてだ{page_break}ホントにパヤヤームのことが{line_break}しんぱいなんだろうなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWonderHowDeepThis"
 msgid "09558"
 msgstr "そのアナは 地下のそこに{line_break}つながってる ふかいアナだ{page_break}オババ様だけ あのアナから{line_break}おそろしいほのおをよびよせて{line_break}どんな金ぞくも きたえちまう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBriggsMayBeOurCaptain"
 msgid "09559"
 msgstr "パヤヤームはオレたちのボスだが{line_break}けっして いばったりしないヤツだ{line_break}オレは そんなあいつが大スキさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBriggsIsTheGreatestAmong"
 msgid "09560"
 msgstr "船のりの中の 船のりなのが{line_break}パヤヤームという男なのさ{page_break}あの人と いっしょなら{line_break}かならず うちの人は・・・{line_break}チャンパに かえってくるわ。{end_wait}"
 
@@ -38255,51 +38255,51 @@ msgctxt "message"
 msgid "09561"
 msgstr "船で出ていった かぞくをおもい{line_break}はるかに 海をみまもるのには{line_break}このガケは べんりなばしょだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouLiveUpIn"
 msgid "09562"
 msgstr "船のりにとって ガケにすむのは{line_break}イースト海すべてをまたにかける{line_break}ひょうめいみたいなものなのさ{page_break}せっかく 船にのっているのに{line_break}陸をはなれようとしないなんて{line_break}船のりとは いえないね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhenIMarriedASailor"
 msgid "09563"
 msgstr "船のりの 主人をもってみて{line_break}ホントの海のこわさを知ったわ{page_break}ていしゅは しかたないけど{line_break}子どもには そんなしごとは{line_break}できたら させたくないわよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHasMomForgottenThatI"
 msgid "09564"
 msgstr "母ちゃんは ボクのこと・・・{line_break}父ちゃんと母ちゃんの子だって{line_break}きっと わすれちゃってるんだ{page_break}もしそれが わかっていたら{line_break}がくしゃになれなんていわないよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEoleoIsTheOnlyBoy"
 msgid "09565"
 msgstr "チャンパ村で 出世する男って{line_break}レオレオしかいないわよ{line_break}よし あの子とつきあおうっと。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHaveSomeLovelyArtifacts"
 msgid "09566"
 msgstr "めずらしい商品があるって{line_break}お客さんに いわれるのは{line_break}アンコール遺跡のおかげね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouGoToThe"
 msgid "09567"
 msgstr "アンコール遺跡へ行ってみれば{line_break}あんたも めずらしい道具を{line_break}見つけられるかもしれないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOurProductsCostWhatThey"
 msgid "09568"
 msgstr "あたしたちが売っている商品で{line_break}ねだんのたかい商品があったら{line_break}それは遺跡で見つけた商品よ{page_break}キケンをおかして見つけた商品は{line_break}ねだんが高くて とうぜんだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheStuffInTheRuins"
 msgid "09569"
 msgstr "遺跡におちてる 道具だから{line_break}だれが ひろってもいいんだ{page_break}だけど それが こわれてたら{line_break}なおせるのは オレたちだけさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldListenIfYouCameTo"
 msgid "09570"
 msgstr "先に ことわっておくけどさ{line_break}うまいサカナが くえるとは{line_break}きたいしないでくれよな{page_break}いま チャンパのまわりの海は{line_break}サカナが あんまりとれないで{line_break}こまってるぐらいなんだからさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeUsedToDoGood"
 msgid "09571"
 msgstr "サカナが大スキな人たちの島が{line_break}この ずっと東の方にあって{line_break}さいそくされてるらしいけどさ{page_break}チャンパ村がこまってるんだから{line_break}サカナをよその島になんかには{line_break}まわせやしないわよね・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSAShameThat"
 msgid "09572"
 msgstr "お客に うまいサカナが出せず{line_break}まったく なさけなくなっちまう{page_break}かつては 船でとったサカナは{line_break}とおくの島まで売りに行ってた{line_break}チャンパだっていうのになあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWatchingOurCatchesDwindleWith"
 msgid "09573"
 msgstr "ああ サカナがとれないなんて{line_break}まるで あくむを見てるみたい{line_break}サカナはどこへ行ったのかしら。{end_wait}"
 
@@ -39983,91 +39983,91 @@ msgctxt "message"
 msgid "09993"
 msgstr "ホントは かいぞくのようなマネは{line_break}だれだって やりたくないんだ{page_break}それをしなくて よくなったって{line_break}みんな よろこんでいるだろうよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeDonTNeedTo"
 msgid "09994"
 msgstr "海で サカナをとらなくたって{line_break}じゅうぶん くらしていけるんだ{page_break}そうなってくると しごとなんか{line_break}バカバカしくて やってられんな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSTrueItS"
 msgid "09995"
 msgstr "パヤヤーム ホントに宝をもって{line_break}村へかえってきちゃったのよ{page_break}こんなことならかれらのなかまに{line_break}前から 入っとくんだったわ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldFatherSActingLikeA"
 msgid "09996"
 msgstr "父ちゃん もうバカバカしいから{line_break}サカナをとるしごとはヤメて・・・{line_break}ずっと いえにいるつもりらしい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhenBriggsReturnedWithThe"
 msgid "09997"
 msgstr "パヤヤームが 宝をもってきたら{line_break}大人たち しごとをしないのよ{line_break}あんな大人にはなりたくないわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDRatherSpendMy"
 msgid "09998"
 msgstr "海で とれないサカナをもとめ{line_break}ムダに 時をすごすぐらいなら{line_break}ねていた方が かしこいぜ・・・{page_break}どうせ しょくりょうだったら{line_break}パヤヤームがくれるんだもん。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBriggsIsAHeroFor"
 msgid "09999"
 msgstr "パヤヤームは 村をすくって{line_break}えいゆうあつかいだもの・・・{line_break}父ちゃん やる気なくすわよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfFatherSitsAroundThe"
 msgid "10000"
 msgstr "たとえ サカナがとれなくても{line_break}りょうに出てた父ちゃんの方が{line_break}いまより ずっとカッコいい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldQuittingTheirJobsMakesThe"
 msgid "10001"
 msgstr "大人が しごとをヤメちゃったら{line_break}あたしたち子どもと同じじゃない{line_break}そんなの ぜったいにおかしいわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHearThatBriggsSold"
 msgid "10002"
 msgstr "どうやらパヤヤームたちは{line_break}見つけた宝を 金にかえて{line_break}船を手に入れてきたらしい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhileIMGratefulFor"
 msgid "10003"
 msgstr "くやしいけど パヤヤームが{line_break}たべものをもってきてくれて{line_break}いきのびることができたぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBriggsReallySavedOurHides"
 msgid "10004"
 msgstr "たしかに パヤヤームたちに{line_break}こんかいは すくわれたけど{line_break}ヤツの手下には ならねえよ{page_break}ヤツにかりた このかりは{line_break}いつか かならず かえすぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheNerveOfThatBriggs"
 msgid "10005"
 msgstr "ちぇ パヤヤームのヤツめ{line_break}また やけにデカイ船で{line_break}かえってきやがったもんだ{page_break}ヤツにしたがわないオレたちに{line_break}見せつけるためじゃないのかな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIShouldJustSignUp"
 msgid "10006"
 msgstr "パヤヤームと はりあうのをやめて{line_break}ガケの船のりになろうかな・・・{page_break}あいぼうたちは オレのかんがえに{line_break}やっぱり はんたいするのかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIRefuseToLiveIn"
 msgid "10007"
 msgstr "ガケの船のりにならないことは{line_break}パヤヤームにしたがわないことだ{page_break}しょくりょうは もらったけど{line_break}このいじだけは つらぬくぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIVeBeenWonderingAbout"
 msgid "10008"
 msgstr "長のいなかったチャンパじゃが{line_break}せいしきに 村をおさめる者を{line_break}・・・かんがえてもいいかのう{page_break}だとすれば はじめての長は{line_break}村にこうけんしたパヤヤームを{line_break}すいせんせねば ならんかのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeVillageEldersHaveGuided"
 msgid "10009"
 msgstr "これまで 村をおさめたのは{line_break}この村の 長ろうとよばれる{line_break}われわれじゃったんじゃ・・・{page_break}しかし 時代はかわった・・・{line_break}チャンパは ガケの船のりに{line_break}まかせても いいかもしれん。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldANewImageForChampa"
 msgid "10010"
 msgstr "たび人のかずが ふえてきた時{line_break}それをむかえるチャンパのかおが{line_break}村にひつようになってきたんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldObservingBriggsRecentlyTheLimits"
 msgid "10011"
 msgstr "こんかいのパヤヤームを見て{line_break}村だけで やっていくことの{line_break}げんかいをかんじたんじゃ{page_break}これからは ぼうえきをしながら{line_break}村をはってんさせていく・・・{line_break}そんな時代になっていくじゃろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSeemsTheEldersAre"
 msgid "10012"
 msgstr "長ろうたちは パヤヤームを{line_break}この村で はじめての長にと{line_break}かんがえているらしいんだ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIForOneThinkA"
 msgid "10013"
 msgstr "やっぱり チャンパの村には{line_break}村のみんなをまとめる人が{line_break}ひつようだと おもうのよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldSureBriggsSavedTheVillage"
 msgid "10014"
 msgstr "たしかにパヤヤームのおかげで{line_break}チャンパ村は すくわれたけど{line_break}ヤツが長になるのは どうかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldSupportingAnEntireVillageThrough"
 msgid "10015"
 msgstr "海で サカナをとりながら{line_break}村をささえていくのなんて{line_break}しょせん ムリなんだし・・・{page_break}だったら 宝をもってきた{line_break}パヤヤームが長になれば{line_break}村も よくなるとおもうな。{end_wait}"
 
@@ -40095,35 +40095,35 @@ msgctxt "message"
 msgid "10021"
 msgstr "ホントに{actor_name:5}だ・・・{line_break}すぐに にげなくちゃ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyDoYouHaveTo"
 msgid "10022"
 msgstr "く くそう チャンパまで{line_break}オレたちをおってくるとは{line_break}お前 しつこすぎるぞ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAllRightISurrenderI"
 msgid "10023"
 msgstr "ひえーっ こうさんだよ{line_break}パヤヤームといっしょなら{line_break}アラフラにもどるから・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIDRatherFightThan"
 msgid "10024"
 msgstr "ろうやに もどるぐらいなら{line_break}ここでお前たちと戦ってやる{line_break}さあ かかってこいよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLeaveTheWomenAndChildren"
 msgid "10025"
 msgstr "ここの女や子どもたちには{line_break}なんの つみもないんだから{line_break}それだけは見のがしてくれ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouReArenTYou"
 msgid "10026"
 msgstr "お お前が{actor_name:5}か・・・{line_break}パヤヤームに こてんぱんに{line_break}のされたって はなしだろ?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDidYouReallyThinkYou"
 msgid "10027"
 msgstr "りっぱな船で村にやってきて{line_break}このパヤヤームのアジトで{line_break}あばれようってのか お前!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAwComeOnIM"
 msgid "10028"
 msgstr "うわあ ボクはなにもしてない{line_break}どうか おたすけを・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhatYouWantToCome"
 msgid "10029"
 msgstr "あなた ここから先に{line_break}行こうっての・・・?{end_now}"
 
@@ -40135,55 +40135,55 @@ msgctxt "message"
 msgid "10031"
 msgstr "なあんだ だったら{line_break}あっちへ行ってよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhySEveryoneSoScared"
 msgid "10032"
 msgstr "みんな お兄ちゃんのことを{line_break}こわがっているみたいだけど{line_break}お兄ちゃん なに者・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfYouSoMuchAs"
 msgid "10033"
 msgstr "あたしに なにかしたら{line_break}かみついてやるんだから!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMaybeIfIPretendHe"
 msgid "10034"
 msgstr "もし こいつと戦っても{line_break}かち目なんかないし・・・{line_break}どうすりゃいいんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeSAfterOurShip"
 msgid "10035"
 msgstr "きっと オレたちの船は{line_break}もって行かれるんだよな{line_break}・・・もってけドロボウ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItWouldBeSoMuch"
 msgid "10036"
 msgstr "こいつと 戦うぐらいなら{line_break}ろうやに もどった方が{line_break}ずっと らくなんだよな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhatAreTheyDoingHere"
 msgid "10037"
 msgstr "こいつの もくてきって{line_break}オレたちをつかまえて{line_break}つれもどすことなのか?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBriggsSaidTheGuyWho"
 msgid "10038"
 msgstr "パヤヤームをつかまえてたという{line_break}わるいヤツが {actor_name:5}だよな{page_break}だけど こいつはどう見ても{line_break}パヤヤームがいう わる者には{line_break}見えないけどなあ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyWouldBriggsRunAway"
 msgid "10039"
 msgstr "パヤヤームは いったいどうして{line_break}こいつのすがたを見ただけで・・・{line_break}にげだしたりしたんだろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBriggsIsPrettyToughThis"
 msgid "10040"
 msgstr "パヤヤームが おそれる男じゃ{line_break}きょうあくなヤツにちがいない{line_break}オレって ついてないの・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldToughOrNotHeS"
 msgid "10041"
 msgstr "いくら わるいヤツだって{line_break}わたしをたおしてまで・・・{line_break}先に行こうとしないわよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHeSNotSoTough"
 msgid "10042"
 msgstr "こいつが わるいヤツだったら{line_break}やっつけちゃえばいいのにな{line_break}みんな なにやってんだろ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhatSHeStaringAt"
 msgid "10043"
 msgstr "なにをジロジロ見てるのかしら{line_break}その目が いやらしいのよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHoldItRightThere"
 msgid "10044"
 msgstr "とまるんだ!{end_wait}"
 
@@ -40243,7 +40243,7 @@ msgctxt "message"
 msgid "10058"
 msgstr "たのんだぜ バアちゃん!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOhAllRightListenYou"
 msgid "10059"
 msgstr "いたい目を見たくないなら{line_break}ここから もどることだよ{line_break}どうだい もどるかい?{end_now}"
 
@@ -40259,7 +40259,7 @@ msgctxt "message"
 msgid "10062"
 msgstr "地のそこの 炎の神よ{line_break}あたしに力をかしておくれ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHaveYouLearnedYourLesson"
 msgid "10063"
 msgstr "おもい知ったか {actor_name:5}!{end_wait}"
 
@@ -40267,7 +40267,7 @@ msgctxt "message"
 msgid "10064"
 msgstr "あんた これでこりただろ{line_break}もう2どと パヤヤームを{line_break}つかまえにこないでおくれ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBackForMore"
 msgid "10065"
 msgstr "また きやがったな!{end_wait}"
 
@@ -40279,7 +40279,7 @@ msgctxt "message"
 msgid "10067"
 msgstr "パヤヤームをつれてくんなら{line_break}あたしが ゆるさないよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMySalamanderYouBeatMy"
 msgid "10068"
 msgstr "たおしちまったんかい・・・。{end_wait}"
 
@@ -40555,15 +40555,15 @@ msgctxt "message"
 msgid "10136"
 msgstr "まあいいさ もし このオババに{line_break}そうだんしたいことができたら{line_break}いつでも こえをかけるがいい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMeanItIfThere"
 msgid "10137"
 msgstr "そうだんしたいことができたら{line_break}いつでも こえをかけとくれ{line_break}あたしゃいつでもここにいるよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNowIVeDoneIt"
 msgid "10138"
 msgstr "そうだんに のるったって{line_break}ものを なおすぐらいしか{line_break}あたしにはできないけどね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThisLooksLikeAWeapon"
 msgid "10139"
 msgstr "これは武器のようだね・・・。{end_wait}"
 
@@ -40595,15 +40595,15 @@ msgctxt "message"
 msgid "10146"
 msgstr "のこりのふたつをもっておいで{line_break}そしたら このオババが・・・{line_break}ヤリをなおしてあげるよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheLegendSaysThatAnyone"
 msgid "10147"
 msgstr "もしも あれが3つまたのヤリなら{line_break}あんたは 海の中の戦いだったら{line_break}こわいものなしになるだろうよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAllOfMySmithingKnowledge"
 msgid "10148"
 msgstr "あたしの かじのぎじゅつは{line_break}3つまたのヤリをなおすため{line_break}うけつがれてきたようなもんさ{page_break}はやく ヤリの3つのぶひんを{line_break}つなげてみたいもんだね・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAhHaveYouFoundThe"
 msgid "10149"
 msgstr "ふたつ目をもってきたんだね。{end_wait}"
 
@@ -40615,15 +40615,15 @@ msgctxt "message"
 msgid "10151"
 msgstr "これも あたしがあずかっとくよ{line_break}さあ のこりのヤリのぶひんを{line_break}見つけてくるんだよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYesThereSNoDoubt"
 msgid "10152"
 msgstr "どうやら 見つけてきたものは{line_break}ホントの3つまたのヤリ・・・{line_break}そのぶひんに まちがいないよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldSoonILlHaveThe"
 msgid "10153"
 msgstr "あたしの かじのぎじゅつが{line_break}もうすぐ ためせるなんて・・・{line_break}まちどおしくて たまんないよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWellDoneYouFoundAll"
 msgid "10154"
 msgstr "よく 3つのぶひんを{line_break}あつめてきたもんだね!{end_wait}"
 
@@ -40667,19 +40667,19 @@ msgctxt "message"
 msgid "10164"
 msgstr "とにかく 3つまたのヤリは{line_break}これで なおったはずなんだ{line_break}もってくがいいよ {actor_name:5}。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheTridentSeemsToHave"
 msgid "10165"
 msgstr "そのヤリは なんだか知らないけど{line_break}ふしぎなパワーがあるみたいだよ{line_break}・・・伝説はやっぱりホントだね{page_break}どんな おそろしいモンスターでも{line_break}海のまものだったら そのヤリで{line_break}たおせないものなんかいないはずさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouGuysDonTLook"
 msgid "10166"
 msgstr "あんたたち いくら戦士だって{line_break}ここに なぐりこんでくるとは{line_break}ずいぶん ゆう気があるなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhyDidYouHaveTo"
 msgid "10167"
 msgstr "オレたちが かいぞくだってことを{line_break}オババ様に チクッたそうだな{line_break}いらんことをしてくれるぜ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldArenTYouTheOnes"
 msgid "10168"
 msgstr "うちの人をアラフラのろうやへ{line_break}あんたが おくりこんだんだね{line_break}見かけによらず つよいんだ。{end_wait}"
 
@@ -40687,63 +40687,63 @@ msgctxt "message"
 msgid "10169"
 msgstr "パヤヤームの船が出て行ってから{line_break}ずっと かえってこないから・・・{line_break}みんな あきらめかけてたのさ{page_break}いまさら かえってくるなんて{line_break}まったく あくうんがつよいわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIThinkThoseGuysDown"
 msgid "10170"
 msgstr "みなとの船にすんでるヤツらは{line_break}いまになって あたしたちの{line_break}なかまになりたいそうよ・・・{page_break}いまごろ いってきたって{line_break}なかまに してあげないわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeHaveSoMuchFood"
 msgid "10171"
 msgstr "こんかい とってきた宝は・・・{line_break}みんな しょくりょうになって{line_break}きえちゃったって はなしなの{page_break}はやく 宝の島へ船を出して{line_break}つぎの宝をとってきてほしいわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBriggsCameDownWithA"
 msgid "10172"
 msgstr "パヤヤームが びょうきみたいで{line_break}すぐには船が出せないんだってさ{line_break}あの人でも びょうきするんだね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEoleoStillWonTCome"
 msgid "10173"
 msgstr "レオレオ あそびにいったのに{line_break}ぜんぜん のってこないんだから{line_break}もう あたまにきちゃうわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOnceIMOverMy"
 msgid "10174"
 msgstr "オレの からだがなおったら・・・{line_break}ちゃんと 船で宝をとりに行って{line_break}マドラやデリィに つぐなうぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWonderWhatSWrong"
 msgid "10175"
 msgstr "あんなにげんきだったパヤヤームが{line_break}どうしちまったんだろうね・・・{page_break}ネツもなければ セキも出ないのに{line_break}からだが だるいっていうんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBabuBaBubabu"
 msgid "10176"
 msgstr "バウバウ バブー。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeReGoingToWait"
 msgid "10177"
 msgstr "パヤヤームのかいふくをまって{line_break}宝は とってくるからさ・・・{line_break}しばらく まっててくれよな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereWerePlentyOfTreasures"
 msgid "10178"
 msgstr "まの海の北で見つけた島に{line_break}宝は ちゃんとねむってるよ{page_break}パヤヤームを まてなければ{line_break}あんたがオレたちといっしょに{line_break}行ってくれても いいんだぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeReallyWantToMake"
 msgid "10179"
 msgstr "オレたちは つぐないをする気は{line_break}じゅうぶん あるんだからさ・・・{line_break}それだけは わかってくれよな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSAllMyFault"
 msgid "10180"
 msgstr "オレが みんな わるいんだよ{line_break}あんなスイッチを いじらなきゃ{line_break}こんなことに なんなかったんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAllOfMyTrainingWas"
 msgid "10181"
 msgstr "きっと あたしのかじの力は{line_break}3つまたのヤリをなおすため{line_break}あたえられたもんだったんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMustBeIncrediblyStrongTo"
 msgid "10182"
 msgstr "パヤヤームが タジタジになるとは{line_break}{actor_name:5}って戦士はたいしたもんだ{line_break}きっと おっかないんだろうな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIJustKnowSheS"
 msgid "10183"
 msgstr "オレたち いずれはオババ様に{line_break}おこられるに きまってるぜ{line_break}ああ その時がおそろしいよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThatSureComesOffKind"
 msgid "10184"
 msgstr "パヤヤームをたおした{actor_name:5}は{line_break}せいぎのみかたをきどっちゃって{line_break}あたしは むしがすかないわね。{end_wait}"
 
@@ -40751,79 +40751,79 @@ msgctxt "message"
 msgid "10185"
 msgstr "ここから とおくを見ていて・・・{line_break}むこうにパヤヤームの船が見えた時{line_break}おもわず ムネがあつくなったわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAllThoseSailorsWhoDidn"
 msgid "10186"
 msgstr "なかまにならないっていってた{line_break}船のりたちはパヤヤームたちが{line_break}かいぞくだって知ってたのよ{page_break}いまは かいぞくをしなくていいから{line_break}なかまに なりたいっていうんだわ{line_break}ふん なんて コシぬけなのかしら。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBriggsSaysHeSSick"
 msgid "10187"
 msgstr "パヤヤームは びょうきだといって{line_break}宝をとりに むかわないけれど・・・{page_break}村のみんなの しょくりょうを{line_break}ぜんぶ せわしていくのならば{line_break}行かないわけにはいかないわね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBriggsSNeverBeenSick"
 msgid "10188"
 msgstr "パヤヤームは 子ども時代から{line_break}びょうきなんかしたことないと{line_break}ゆうめいだったんだけどなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEoleoIsYoungerThanI"
 msgid "10189"
 msgstr "レオレオったら つめたいの{line_break}あたしより 子どものクセして{line_break}やけに大人っぽくなっちゃったわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIMCertainThatThere"
 msgid "10190"
 msgstr "いま 宝をとりに行ったって{line_break}せり出した岩が じゃまして{line_break}宝なんて とれやしないんだ{page_break}さいしょ すこしだけでも{line_break}宝をはこび出していたから{line_break}よかったようなもんさ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThereIsAbsolutelyNothingWrong"
 msgid "10191"
 msgstr "パヤヤームは ぜったいに{line_break}からだは おかしくないんだわ{page_break}この人 まちがいなく わたしに{line_break}なにかを かくしてるわよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldOneOfPapaSMen"
 msgid "10192"
 msgstr "どうやら 宝のへやのトラップを{line_break}手下が さわってしまったために{line_break}宝がとれなくなったらしいでちゅ{page_break}パパ はやく そのことを・・・{line_break}{actor_name:5}さんにはなした方がいい{line_break}ボクは そうおもいまちゅね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldSupposeWeWentToGet"
 msgid "10193"
 msgstr "宝をとってこいっていわれても{line_break}あんなことになっちゃったら{line_break}どうやって とるのかな・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBriggsIsJustPretendingTo"
 msgid "10194"
 msgstr "パヤヤーム くるしまぎれに{line_break}やくそくなんかするから・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWasAsShockedAs"
 msgid "10195"
 msgstr "宝のへやに 岩がせり出してきて{line_break}宝が とれなくなっちまうなんて{line_break}・・・ショックだったよなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAtLeastWeGotSome"
 msgid "10196"
 msgstr "オレがスイッチをおす前に・・・{line_break}すこしでも宝をはこんでたのが{line_break}せめてもの すくいってもんさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheJewelsBriggsFoundAre"
 msgid "10197"
 msgstr "パヤヤームが 見つけた宝って{line_break}ホントに すごいものらしいの{page_break}わたしも その宝のどうくつへ{line_break}行ってみたいもんだわ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldThanksToBriggsTheChampa"
 msgid "10198"
 msgstr "パヤヤームの お宝のおかげで{line_break}村の者は とりあえずたすかった{page_break}しかし それにたよってたんじゃ{line_break}チャンパに みらいはないんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldBriggsSMenSaidThey"
 msgid "10199"
 msgstr "パヤヤームの宝のどうくつには{line_break}見たこともない武器や道具も{line_break}いっぱい あったらしい・・・{page_break}わたしは その武器や道具に{line_break}とても きょうみがあるわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNowSTheTimeWe"
 msgid "10200"
 msgstr "いま 村がゆたかなうちに{line_break}チャンパがさかえるために{line_break}みんな がんばるべきだぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWeStillHavenTBeen"
 msgid "10201"
 msgstr "ゆうしょくの おかずだけどさ{line_break}うまいサカナは あいかわらず{line_break}出すことができないんだ・・・{page_break}だけどパヤヤームの買ってきた{line_break}にくりょうりが 出せるから{line_break}あんしんして とまってくれよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItSNiceNotHaving"
 msgid "10202"
 msgstr "はたらかなくて よくなったけど{line_break}やっぱり はたらかないなんて{line_break}あたしには たえられないわよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldMostPeopleHereWouldLove"
 msgid "10203"
 msgstr "サカナがスキなヤツもいるだろう{line_break}だけどやっぱり にくりょうりは{line_break}いちばん うまくて ぜいたくだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheOnlyWayToFind"
 msgid "10204"
 msgstr "人は あせ水をたらしてはたらき{line_break}せいかつすることによって・・・{line_break}生きることの いみを知るのよ。{end_wait}"
 
@@ -41439,23 +41439,23 @@ msgctxt "MsgFieldMotherWhyHaveYouLeft"
 msgid "10357"
 msgstr "お母さん どうして{line_break}ぼくを のこして・・・{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIHaveNeverBeenOutside"
 msgid "10358"
 msgstr "オレは この島のそとになんか{line_break}出たことないから わからんが{line_break}そとには いろいろあるんだろ{page_break}島から出ては いけないという{line_break}きまりさえ なかったら・・・{line_break}オレも 行ってみたいもんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldNowThatHasReturnedMaybe"
 msgid "10359"
 msgstr "島にもどってきた{actor_name:8}から{line_break}島のそとの 世界のはなしを{line_break}きかせてもらいたいわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhoKnowsWhatWondersLie"
 msgid "10360"
 msgstr "島のそとの 大きな世界には{line_break}とっても きょうみがあるけど{line_break}きっと 長くはいられないな{page_break}文明のレベルが ひくいんじゃ{line_break}オレには がまんできないさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldTheSenatePassedTheLaw"
 msgid "10361"
 msgstr "島から出ては いけないという{line_break}コングレスの方がたがつくった{line_break}レムリアのおきてだけど・・・{page_break}{actor_name:8}が 出てしまったのは{line_break}つなみによる じこだったから{line_break}きっと ゆるされるんでしょうね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAreYouTheTravelersThat"
 msgid "10362"
 msgstr "{actor_name:8}とやってきた戦士とは{line_break}どうやら あんたたちだね?{end_now}"
 
@@ -41463,11 +41463,11 @@ msgctxt "message"
 msgid "10363"
 msgstr "そうか ちがったのか・・・{line_break}{actor_name:8}は いつになったら{line_break}わたしに あいにくるのかな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIWasWhatIsThe"
 msgid "10364"
 msgstr "{actor_name:8}が 生きていたなんて{line_break}さいしょ しんじられなかった{page_break}はやく げんきでいるすがたを{line_break}見せてもらいたいもんだぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIAmSorryItHas"
 msgid "10365"
 msgstr "おじさん しばらくです。{end_wait}"
 
@@ -41559,15 +41559,15 @@ msgctxt "message"
 msgid "10387"
 msgstr "それがいい {actor_name:8}のことは{line_break}そっと しておいてやろうぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIAmSoRelievedThat"
 msgid "10388"
 msgstr "{actor_name:8}が 生きていてくれて{line_break}わたしは とてもうれしいよ{page_break}かれが 行方知れずのままだったら{line_break}わたしは みうちのひとりもいない{line_break}ひとりぼっちに なってたところさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPoorBeingBornInLemuria"
 msgid "10389"
 msgstr "{actor_name:8}も かわいそうなヤツだ{line_break}長生きが あたりまえの・・・{line_break}レムリアにうまれながら・・・{page_break}おさないころに 父をうしない{line_break}いままた 母までうしなって{line_break}ひとりぼっちになってしまった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWait4"
 msgid "10390"
 msgstr "まってくれ・・・。{end_wait}"
 
@@ -41659,11 +41659,11 @@ msgctxt "message"
 msgid "10412"
 msgstr "これでいい これでルンパと{line_break}あうことが できるだろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldGoToLunpaSTower"
 msgid "10413"
 msgstr "ルンパのとうへ行ってみれば{line_break}ヤツが 出むかえてくれるよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLunpaHasGivenTheKing"
 msgid "10414"
 msgstr "ルンパは こんかいのことでは{line_break}王の そうだんやくだったから{line_break}なんでも知ってるはずなんだ。{end_wait}"
 
@@ -41671,7 +41671,7 @@ msgctxt "MsgFieldHouseOfTheSenate"
 msgid "10415"
 msgstr "コングレスのやかた{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAreYouTheWarriorsFrom"
 msgid "10416"
 msgstr "お主が {actor_name:8}とやってきた{line_break}そとの世界の戦士らしいな?{end_now}"
 
@@ -41683,23 +41683,23 @@ msgctxt "message"
 msgid "10418"
 msgstr "文明レベルのひくい者たちは{line_break}すぐ そうやってウソをつく{line_break}ワシは みんな お見とおしじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLongAgoThePowerOf"
 msgid "10419"
 msgstr "そのむかし 錬金じゅつの力が{line_break}世界をほろぼしかけたから{line_break}その力が ふうじられたんじゃ{page_break}王は その力がうしなわれたから{line_break}世界が ほろびようとしてると{line_break}いっているようじゃがのう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAndNowRumorsAboundOf"
 msgid "10420"
 msgstr "どうやら どこかのバカ者が・・・{line_break}錬金じゅつをよみがえらせようと{line_break}いらぬことをやっているらしい{page_break}錬金じゃつが なくなったから{line_break}こうやって 世界のへいわが{line_break}たもたれてるというのにのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldComeWhatMayICannot"
 msgid "10421"
 msgstr "ワシは どんなことがあっても{line_break}錬金じゅつをよみがえらせるのに{line_break}さんせいしたりは しないのじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHasLemuriaFallenIntoDecay"
 msgid "10422"
 msgstr "このレムリアの どこがいったい{line_break}あれはてたと いうんじゃ・・・{page_break}錬金じゅつなど 使えなくたって{line_break}世界は だいじょうぶじゃよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDoYouSeekToKnow"
 msgid "10423"
 msgstr "ちょうじゅのくすり・・・{line_break}そのことが知りたいんか?{end_now}"
 
@@ -41711,7 +41711,7 @@ msgctxt "message"
 msgid "10425"
 msgstr "レムリアで くらす者にとっては{line_break}いずみの水さえのんでいれば・・・{line_break}いくらでも長生きできるんじゃ{page_break}島から出なくなったレムリアには{line_break}クスリは ひつようないから・・・{line_break}つくる者もいなくなったんじゃよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWasThatSomeFormOf"
 msgid "10426"
 msgstr "お主 なんか いま・・・{line_break}エナジーを使わなかったかな?{end_now}"
 
@@ -41723,27 +41723,27 @@ msgctxt "message"
 msgid "10428"
 msgstr "そうか まあ どちらでもよい{line_break}レムリアの者は エナジーに{line_break}いちいち おどろいたりせぬよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhatDoesHydrosThinkWill"
 msgid "10429"
 msgstr "フン いったいハイドロ王は{line_break}錬金じゅつをふっかつさせて{line_break}どうなると おもっとるんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEverSinceAlchemyWasSealed"
 msgid "10430"
 msgstr "錬金じゅつの力がうしなわれて{line_break}それから 世界のじかんは{line_break}とまってるそうじゃが・・・{page_break}ワシらの目の くろいうちは{line_break}そんなハイドロのかんがえに{line_break}だれが さんせいするものか。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldIfAlchemyWereLoosedUpon"
 msgid "10431"
 msgstr "錬金じゅつをよみがえらせれば{line_break}けんじゃの石を手に入れようと{line_break}あらそいが おこるんじゃ{page_break}そんなことに なるぐらいなら{line_break}錬金じゅつは このまま・・・{line_break}ふういんしておくべきなんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAllOfTheMembersOf"
 msgid "10432"
 msgstr "ワシら コングレスのメンバーが{line_break}錬金じゅつをふっかつさせないと{line_break}いっていればいいのじゃ{page_break}そうすればハイドロ王だって{line_break}下手なことは できまいよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldCertainlyLemuriaHasLostSome"
 msgid "10433"
 msgstr "たしかに すこし前とくらべて{line_break}どこか レムリアの城や町は{line_break}かっきが なくなっているわい{page_break}じゃが それと錬金じゅつとは{line_break}なんのかんけいも ないんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEvenThoughWeNoLonger"
 msgid "10434"
 msgstr "クスリが なくなっても{line_break}いずみの水を のめば{line_break}げんきなんじゃ・・・。{end_wait}"
 
@@ -41767,7 +41767,7 @@ msgctxt "message"
 msgid "10439"
 msgstr "わるいが そこから{line_break}入ってきてくれないか。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldHonestlyIMAmazedThat"
 msgid "10440"
 msgstr "はるか そとの世界から{line_break}よく きてくれたもんだね。{end_wait}"
 
@@ -50835,7 +50835,7 @@ msgctxt "MsgFieldWhatInWhatSWith"
 msgid "12706"
 msgstr "・・・な なんと!{control_15:4}{control_15:4}{page_break}{control_12:11}かぞえきれないほどの{line_break}バスローブがある{line_break}・・・オフロはどこに?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldFinallyWeVeReachedVale"
 msgid "12707"
 msgstr "ついに ハイディアよ・・・。{end_wait}"
 

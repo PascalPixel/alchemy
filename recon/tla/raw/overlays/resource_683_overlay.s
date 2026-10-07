@@ -115,14 +115,22 @@ Func_020000fc:
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
 	movs r0, #214
+	.ifdef TLA_EDITION_JA
+	movs r2, #129
+	.else
 	movs r2, #133
+	.endif
 	lsls r0, r0, #1
 	lsls r2, r2, #1
 	adds r3, r3, r0
 	adds r2, #255
 	ldr r1, .L_02008140
 	str r2, [r3]
+	.ifdef TLA_EDITION_JA
+	subs r2, #33
+	.else
 	subs r2, #41
+	.endif
 	adds r3, r1, r2
 	movs r0, #0
 	ldrsh r2, [r3, r0]

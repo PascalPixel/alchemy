@@ -41,12 +41,5 @@ extern u8 gSuharaHeyaEvents96f[];
 
 void Engine_AudioPlayCueFromEventWork(void);
 void Engine_InnCheckIn(s32 first, s32 second);
-void Engine_MotionLaunchFromFocusedObject(s32 first, s32 second, s32 third, s32 fourth);
-static inline void Motion_LaunchFromFocusedObject(s32 first, s32 second, s32 third, s32 fourth)
-{
-    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
-    Engine_MotionLaunchFromFocusedObject(first, second, third, fourth);
-}
-
 void Engine_ShopConfirmAct(s32 first);
 #endif

@@ -1,5 +1,15 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+ * Further trials (2026-10-07): no improvement among all 5040 orders of
+ *   seven English locals, or all six independent JA font-setup orders.
+ *   JA const font colour69. EN long-lived colour/r1 gives76; direct mutable
+ *   y with readonly input boundaries67, without inputs193, adding ty/r8
+ *   gives61, then short font/r3 gives60. Table/r3 and row-zero/r2 boundaries
+ *   give14 but exchange a row-reset mismatch for a width-spill mismatch;
+ *   adding colour/r1 gives26, separated colour/r1/r2 boundaries30.
+ *   Two-stage ordinary font pointer18. Register y parameter42, adding
+ *   font subrow/r6 gives62, then font byte/r5 gives24: y returns to r7 but
+ *   its copy again follows the frame allocation. Rejected devices removed.
  * Source-order trials after the six-edition checkpoint (2026-10-07):
  *   EN shared src/colour union14 or20; scoped font byte14 (retained),
  *   separate row locals46; signed colour14; early row reset14; dropping

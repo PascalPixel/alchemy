@@ -182,7 +182,13 @@ UiText_DrawGlyphArm:
 	.section .rom.00020e0e, "ax"
 	.incbin "baserom.gba", 0x00020e0e, 0x000008fe
 	.section .rom.0002211c, "ax"
-	.incbin "baserom.gba", 0x0002211c, 0x00002008
+	.incbin "baserom.gba", 0x0002211c, 0x000017bc
+	.section .rom.000238d8, "ax"
+	.global SummonMenu_SelectSummon
+	.type SummonMenu_SelectSummon, %function
+	.thumb_func
+SummonMenu_SelectSummon:
+	.incbin "baserom.gba", 0x000238d8, 0x0000084c
 	.section .rom.00025024, "ax"
 	.incbin "baserom.gba", 0x00025024, 0x00000e00
 	.section .rom.000260b8, "ax"

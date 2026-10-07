@@ -569,8 +569,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
     const struct SummonDefinition *summon;
     struct MenuCell *nav;
     struct MenuSprite *sprite, *cur;
-    const u8 *required, *supply;
-    s32 used, element;
+    s32 used;
     s32 id, tile, affordable;
     s32 pressed, repeated, result;
     s32 index;

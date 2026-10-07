@@ -86,7 +86,7 @@ mod tests {
         let target = target_for(DecompTargetId::TbsJa);
         let flags = flags(
             target,
-            "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BUILD_METATILES.C",
+            "games/COMMON/SRC/GRAPHICS/TILE/BUILD_METATILES.C",
             false,
         );
         assert!(flags

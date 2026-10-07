@@ -51,7 +51,7 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
                     break;
                 case 0xf007:
                 case 0xf016:
-#if EDITION_INTERNATIONAL
+#if EDITION_INTERNATIONAL || GAME_TLA
                 case 0xf01a:
 #endif
                     a = col * 8;
@@ -76,7 +76,7 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
                     break;
                 case 0xf007:
                 case 0xf017:
-#if EDITION_INTERNATIONAL
+#if EDITION_INTERNATIONAL || GAME_TLA
                 case 0xf01b:
 #endif
                     f = col * 8 + 8;

@@ -51,4 +51,4 @@ pub static AGBCC_ARM_SOURCES: &[&str] = &[];
 /// through agbcc/camelot_arm (agbcc_arm's pinned gcc_arm with agscc's
 /// arm_adjust_cost) at the library ARM setting, one option set for the
 /// whole class (AGENTS.md K1; the lead's decision, 2026-10-07).
-pub static GAME_ARM_SOURCES: &[&str] = &["games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BUILD_METATILES.C"];
+pub static GAME_ARM_SOURCES: &[&str] = &["games/COMMON/SRC/GRAPHICS/TILE/BUILD_METATILES.C"];

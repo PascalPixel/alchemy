@@ -22619,7 +22619,7 @@ msgctxt "message"
 msgid "05652"
 msgstr "そうとう つかれてたんですね。{end_wait}"
 
-msgctxt "MsgNotThatWayTheMeeting"
+msgctxt "message"
 msgid "05653"
 msgstr "このまま ねかせてあげましょう。{end_wait}"
 
@@ -23335,7 +23335,7 @@ msgctxt "message"
 msgid "05831"
 msgstr "{argument_item_name:134}見つけた{page_break}さらに そこの方に{line_break}{argument_item_name:134}見つけた。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereTheyAreGetEm"
 msgid "05832"
 msgstr "あっ ヤツらが{line_break}あらわれたぞ!{end_wait}"
 
@@ -23599,7 +23599,7 @@ msgctxt "message"
 msgid "05897"
 msgstr "さあ 行くんじゃ・・・{line_break}まちあわせの 出島へ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreAreYouAllRight"
 msgid "05898"
 msgstr "だ だいじょうぶか{line_break}{actor_name:6}や・・・。{end_wait}"
 
@@ -23643,7 +23643,7 @@ msgctxt "message"
 msgid "05908"
 msgstr "{actor_name:6}たちは船の方ににげなさい!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyDoIGottaBe"
 msgid "05909"
 msgstr "おうえんが くるまで{line_break}ここで ふせいでろと{line_break}いわれたけど・・・{end_wait}"
 
@@ -23659,7 +23659,7 @@ msgctxt "message"
 msgid "05912"
 msgstr "それじゃ・・・ おまえらに{line_break}おれの ほんとうの力を{line_break}見せてやるとするか。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUggghICanTBelieve"
 msgid "05913"
 msgstr "ウググ こんな女の子に{line_break}やられちまうなんて{line_break}オレっていったい・・・。{end_wait}"
 
@@ -23711,7 +23711,7 @@ msgctxt "message"
 msgid "05925"
 msgstr "まあ よわいヤツで{line_break}さいわいじゃったわい{line_break}さあ 出島へいそごうぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotThatWayTheMeeting"
 msgid "05926"
 msgstr "どこへ行く気じゃ {actor_name:6}{line_break}まちあわせの 出島へは{line_break}ここから西へ むかうんじゃ{page_break}そして ガケを下って{line_break}どうくつの入り口をはいり{line_break}そこをぬければ すぐじゃ。{end_wait}"
 

@@ -673,7 +673,7 @@ Func_02000510:
 	movs r2, #60
 	b .L_02008930
 .L_0200892c:
-	.4byte 0x000015b7
+	.4byte MsgThereTheyAreGetEm
 .L_02008930:
 	movs r0, #5
 	bl Func_02002964
@@ -1300,15 +1300,7 @@ Func_02000510:
 	bl Func_02002a54
 	bl Func_02002a4c
 	movs r0, #16
-	.ifdef TLA_EDITION_ES
-	bl Field_EndActorSpriteEffect
-	.else
-	.ifdef TLA_EDITION_IT
-	bl Field_EndActorSpriteEffect
-	.else
 	bl Field_BeginPaletteTransition
-	.endif
-	.endif
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r1, #9
@@ -2581,7 +2573,7 @@ Func_02001a2c:
 	bl Func_020028bc
 	pop {r5, pc}
 .L_02009ba4:
-	.4byte 0x00001604
+	.4byte MsgWhyDoIGottaBe
 .L_02009ba8:
 	.4byte 0x00000004
 .L_02009bac:
@@ -2951,7 +2943,7 @@ Func_02001c30:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02009fc8:
-	.4byte 0x000015f9
+	.4byte MsgAreAreYouAllRight
 .L_02009fcc:
 	.4byte 0x00013333
 	.section .text.x02009fd0,"ax",%progbits
@@ -4324,7 +4316,7 @@ gSceneEvents:
 	.4byte Func_02001bb0
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00001608
+	.4byte MsgUggghICanTBelieve
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte VinasuIriguchi_RunActorSparkBurst

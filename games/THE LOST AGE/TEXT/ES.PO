@@ -22619,7 +22619,7 @@ msgctxt "message"
 msgid "05652"
 msgstr "Qué combate tan impresionante.{line_break}Estuve todo el rato saltando.{end_wait}"
 
-msgctxt "MsgNotThatWayTheMeeting"
+msgctxt "message"
 msgid "05653"
 msgstr "No te culpes. Sólo fue{line_break}una mala estrategia.{end_wait}"
 
@@ -24075,7 +24075,7 @@ msgctxt "message"
 msgid "06016"
 msgstr "Encontraste {argument_item_name:10}.{page_break}Parece ser que hay algo{line_break}más, {argument_item_name:10}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereTheyAreGetEm"
 msgid "06017"
 msgstr "¡Ahí están!{line_break}¡Prendedlos!{end_wait}"
 
@@ -24339,7 +24339,7 @@ msgctxt "message"
 msgid "06082"
 msgstr "¡Pongámonos en marcha!{line_break}¡Hacia la península!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreAreYouAllRight"
 msgid "06083"
 msgstr "{actor_name:6}... ¿Estás...?{line_break}¿Estás bien?{end_wait}"
 
@@ -24383,7 +24383,7 @@ msgctxt "message"
 msgid "06093"
 msgstr "¡{actor_name:6}, escapa{line_break}hacia el barco!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyDoIGottaBe"
 msgid "06094"
 msgstr "¿Por qué tengo que ser yo{line_break}el que espere a los refuerzos?{end_wait}"
 
@@ -24399,7 +24399,7 @@ msgctxt "message"
 msgid "06097"
 msgstr "¡Qué bien! ¡Entonces podré{line_break}mostraros de lo que soy capaz!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUggghICanTBelieve"
 msgid "06098"
 msgstr "Aaarg. No puedo creer que me{line_break}haya vencido una chica...{end_wait}"
 
@@ -24451,7 +24451,7 @@ msgctxt "message"
 msgid "06110"
 msgstr "¡Nunca pensé que luchar fuera tan{line_break}divertido!{pause_20_skippable} Bueno, será mejor que{line_break}reanudemos la marcha...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotThatWayTheMeeting"
 msgid "06111"
 msgstr "¡Por ahí no, {actor_name:6}!{line_break}El punto de encuentro{line_break}está al oeste.{page_break}Debemos coger ese camino{line_break}y atravesar las colinas.{end_wait}"
 

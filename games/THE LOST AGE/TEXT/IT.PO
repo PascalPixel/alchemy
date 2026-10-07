@@ -22619,7 +22619,7 @@ msgctxt "message"
 msgid "05652"
 msgstr "Io ho fatto ciò che potevo.{line_break}Spero anche tu.{end_wait}"
 
-msgctxt "MsgNotThatWayTheMeeting"
+msgctxt "message"
 msgid "05653"
 msgstr "Forse era meglio{line_break}che non partecipassi...{end_wait}"
 
@@ -24047,7 +24047,7 @@ msgctxt "message"
 msgid "06009"
 msgstr "Hai trovato {argument_item_name:2}.{page_break}Sembra che ci sia anche{line_break}{argument_item_name:2} all'interno.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereTheyAreGetEm"
 msgid "06010"
 msgstr "Eccoli!{line_break}Prendeteli!{end_wait}"
 
@@ -24311,7 +24311,7 @@ msgctxt "message"
 msgid "06075"
 msgstr "Andiamo!{line_break}Alla penisola!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreAreYouAllRight"
 msgid "06076"
 msgstr "{actor_name:6}... Stai...{line_break}Stai bene?{end_wait}"
 
@@ -24355,7 +24355,7 @@ msgctxt "message"
 msgid "06086"
 msgstr "{actor_name:6}, raggiungete{line_break}la nave!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyDoIGottaBe"
 msgid "06087"
 msgstr "Perché devo essere io{line_break}ad attendere i rinforzi!?{end_wait}"
 
@@ -24371,7 +24371,7 @@ msgctxt "message"
 msgid "06090"
 msgstr "Perfetto! Ora vedrete di che{line_break}pasta sono fatto!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUggghICanTBelieve"
 msgid "06091"
 msgstr "Non riesco a credere di essere{line_break}stato battuto da una ragazza...{end_wait}"
 
@@ -24423,7 +24423,7 @@ msgctxt "message"
 msgid "06103"
 msgstr "Non avrei mai detto che lottare{line_break}fosse{pause_20_skippable} così divertente!{line_break}Ma è meglio andare ora...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotThatWayTheMeeting"
 msgid "06104"
 msgstr "Non da questa parte, {actor_name:6}!{line_break}Il luogo dell'appuntamento è{line_break}verso ovest.{page_break}Dobbiamo prendere la strada{line_break}che va fra le colline.{end_wait}"
 

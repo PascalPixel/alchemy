@@ -22243,7 +22243,7 @@ msgctxt "message"
 msgid "05558"
 msgstr "You found {argument_item_name:2}.{page_break}It looks like there's also{line_break}{argument_item_name:2} inside.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereTheyAreGetEm"
 msgid "05559"
 msgstr "There they are!{line_break}Get 'em!{end_wait}"
 
@@ -22507,7 +22507,7 @@ msgctxt "message"
 msgid "05624"
 msgstr "Let's get going!{line_break}To the peninsula!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreAreYouAllRight"
 msgid "05625"
 msgstr "{actor_name:6}... Are...{line_break}Are you all right?{end_wait}"
 
@@ -22551,7 +22551,7 @@ msgctxt "message"
 msgid "05635"
 msgstr "{actor_name:6}, escape{line_break}to the boat!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyDoIGottaBe"
 msgid "05636"
 msgstr "Why do I gotta be the{line_break}one to wait for backup!?{end_wait}"
 
@@ -22567,7 +22567,7 @@ msgctxt "message"
 msgid "05639"
 msgstr "Great! Now, you'll see{line_break}what I'm really made of!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUggghICanTBelieve"
 msgid "05640"
 msgstr "Ugggh. I can't believe I{line_break}got beaten by a girl...{end_wait}"
 

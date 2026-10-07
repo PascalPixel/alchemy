@@ -46,11 +46,7 @@ void VinasuIriguchi_RunActorSparkBurst(void *object)
     Func_02002a5c(Object_GetById(5), 0);
     Func_02002a54();
     Func_02002a4c();
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-    Field_EndActorSpriteEffect(8);
-#else
     Field_BeginPaletteTransition(8);
-#endif
 }
 
 void VinasuIriguchi_UpdateSparkTrail(struct ObjectRuntime *object)

@@ -22619,7 +22619,7 @@ msgctxt "message"
 msgid "05652"
 msgstr "Ich werde mein Bestes geben!{end_wait}"
 
-msgctxt "MsgNotThatWayTheMeeting"
+msgctxt "message"
 msgid "05653"
 msgstr "?"
 
@@ -24219,7 +24219,7 @@ msgctxt "message"
 msgid "06052"
 msgstr "Du fandest {argument_item_name:1}.{page_break}Es scheint als wäre noch{line_break}folgender Gegenstand in{line_break}der Truhe: {argument_item_name:1}{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereTheyAreGetEm"
 msgid "06053"
 msgstr "Da sind sie!{line_break}Schnappt sie euch!{end_wait}"
 
@@ -24483,7 +24483,7 @@ msgctxt "message"
 msgid "06118"
 msgstr "Lass uns gehen!{line_break}Auf zur Halbinsel!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAreAreYouAllRight"
 msgid "06119"
 msgstr "{actor_name:6}... Ist...{line_break}Ist etwas nicht in Ordnung?{end_wait}"
 
@@ -24527,7 +24527,7 @@ msgctxt "message"
 msgid "06129"
 msgstr "{actor_name:6}, schnell! Lauf{line_break}zum Boot!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhyDoIGottaBe"
 msgid "06130"
 msgstr "Warum muss ich derjenige sein,{line_break}der auf die Verstärkung warten{line_break}soll?!?{end_wait}"
 
@@ -24543,7 +24543,7 @@ msgctxt "message"
 msgid "06133"
 msgstr "Sehr schön! Jetzt werde ich euch{line_break}zeigen, aus welchem Holz ich{line_break}wirklich geschnitzt bin!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUggghICanTBelieve"
 msgid "06134"
 msgstr "Urgh! Ich kann nicht glauben, dass{line_break}ich von einem Mädchen besiegt{line_break}worden bin...{end_wait}"
 
@@ -24595,7 +24595,7 @@ msgctxt "message"
 msgid "06146"
 msgstr "Ich hätte mir niemals gedacht,{line_break}dass mir die Kämpferei solchen{line_break}Spaß bereiten würde!{page_break}Aber wir sollten jetzt besser{line_break}in Richtung der Halbinsel{line_break}ziehen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotThatWayTheMeeting"
 msgid "06147"
 msgstr "Nicht hier entlang, {actor_name:6}!{line_break}Der Treffpunkt liegt westlich von{line_break}hier.{page_break}Wir müssen dieser Straße folgen{line_break}und uns dann durch die Hügel{line_break}schlagen.{end_wait}"
 

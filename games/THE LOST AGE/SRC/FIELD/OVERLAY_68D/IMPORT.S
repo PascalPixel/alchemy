@@ -301,18 +301,26 @@ Func_0200210c:
 	.global Func_02002114
 	.thumb_func
 Func_02002114:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87e8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87e8
+	.else
 	overlay_veneer Func_080c87f8
+	.endif
+	.endif
 	.ifdef TLA_EDITION_ES
 	.global Field_EndActorSpriteEffect
 	.thumb_func
 Field_EndActorSpriteEffect:
-	overlay_veneer Field_EndActorSpriteEffectFar
+	overlay_veneer Field_BeginPaletteTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
 	.global Field_EndActorSpriteEffect
 	.thumb_func
 Field_EndActorSpriteEffect:
-	overlay_veneer Field_EndActorSpriteEffectFar
+	overlay_veneer Field_BeginPaletteTransitionFar
 	.else
 	.global Field_BeginPaletteTransition
 	.thumb_func

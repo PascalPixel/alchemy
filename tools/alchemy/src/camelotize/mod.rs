@@ -33,10 +33,9 @@ nothing. REWRITE is one of:
                 labels, stores, register words, flags, masks, packed pairs
                 and everything from 0x1000 up stay hex
   casts         value casts and pointer casts the compiler does not need:
-                each removal is compiled and assembled for English (for
-                every edition inside an #if block), and kept only when the
-                object's bytes, relocations and symbols are identical and
-                no warning is new
+                each removal is compiled and assembled in every edition of
+                the game, and kept only when the object's bytes,
+                relocations and symbols are identical and no warning is new
   idioms        x = x + 1 as x++, x = x | n as x |= n, !(a == b) as
                 a != b, parentheses around one name or number, an else
                 after a block that returns, flattened, and empty

@@ -1,13 +1,13 @@
 //! Source edits proved one file at a time: each set of edits is compiled and
-//! assembled with the English build's compiler, flags and assembler, and kept
-//! only when the object (every section's bytes, every relocation and symbol)
-//! is identical and the compiler says nothing new. An edit inside an `#if` block is compiled for
-//! every edition of the game instead. Sets are tried together and bisected
+//! assembled with each edition's compiler, flags and assembler, and kept only
+//! when the object (every section's bytes, every relocation and symbol) is
+//! identical and the compiler says nothing new in every edition of the game
+//! that builds the file. Sets are tried together and bisected
 //! when one fails, so a file costs a handful of compiles, not one per edit.
 
 use crate::compiler::bundle::compiler_command_for_target;
 use crate::compiler::routing::{cflags_for_target_source, compiler_assembly_command, is_arm};
-use crate::targets::{target_for, DecompTarget, DecompTargetId, TARGET_IDS};
+use crate::targets::{target_for, DecompTarget, TARGET_IDS};
 use std::path::Path;
 use std::process::Command;
 
@@ -61,39 +61,6 @@ pub(crate) fn apply(text: &str, edits: &[Edit]) -> String {
     }
     out.push_str(&text[at..]);
     out
-}
-
-/// The byte ranges inside `#if` ... `#endif` blocks, where one build
-/// compiles only one branch.
-pub(crate) fn conditional(text: &str) -> Vec<std::ops::Range<usize>> {
-    let mut ranges = Vec::new();
-    let mut depth = 0usize;
-    let mut start = 0;
-    let mut at = 0;
-    for line in text.split_inclusive('\n') {
-        let directive = line.trim_start().strip_prefix('#').map(str::trim_start).unwrap_or("");
-        let word: String = directive.chars().take_while(char::is_ascii_alphabetic).collect();
-        match word.as_str() {
-            "if" | "ifdef" | "ifndef" => {
-                if depth == 0 {
-                    start = at;
-                }
-                depth += 1;
-            }
-            "endif" if depth > 0 => {
-                depth -= 1;
-                if depth == 0 {
-                    ranges.push(start..at + line.len());
-                }
-            }
-            _ => {}
-        }
-        at += line.len();
-    }
-    if depth > 0 {
-        ranges.push(start..text.len());
-    }
-    ranges
 }
 
 /// The candidates outside FAKEMATCH-tagged statements and asm.
@@ -169,14 +136,6 @@ pub(crate) fn disjoint(mut edits: Vec<Edit>) -> Vec<Edit> {
     out
 }
 
-fn english(target: DecompTarget) -> DecompTarget {
-    match target.id {
-        DecompTargetId::TbsJa => target_for(DecompTargetId::TbsEn),
-        DecompTargetId::TlaJa => target_for(DecompTargetId::TlaEn),
-        _ => target,
-    }
-}
-
 struct Build {
     target: DecompTarget,
     imports: Option<tempfile::TempDir>,
@@ -226,19 +185,13 @@ pub(crate) fn proved(root: &Path, file: &Path, text: &str, games: &[DecompTarget
     if found.is_empty() {
         return Ok((text.to_string(), 0));
     }
-    // An edit inside an #if block is proved by every edition of the game,
-    // since one build compiles only one branch; otherwise English suffices.
-    let blocks = conditional(text);
-    let branched = found.iter().any(|e| blocks.iter().any(|b| b.start < e.end && e.start < b.end));
+    // Every edition of the game proves every edit: an edition's headers and
+    // defines can change what an edit outside any #if means (SCRIPT.C's
+    // casts kept English and broke tbs-ja). A file one edition cannot
+    // compile is skipped whole.
     let targets: Vec<DecompTarget> = games
         .iter()
-        .flat_map(|&game| {
-            if branched {
-                TARGET_IDS.iter().map(|&id| target_for(id)).filter(|t| t.compiler == game.compiler).collect()
-            } else {
-                vec![english(game)]
-            }
-        })
+        .flat_map(|&game| TARGET_IDS.iter().map(|&id| target_for(id)).filter(move |t| t.compiler == game.compiler))
         .collect();
     let mut builds = Vec::new();
     for target in targets {
@@ -275,14 +228,6 @@ mod tests {
         assert_eq!(apply(text, &[cut(7, 12), cut(22, 26)]), "a = b - -c;\nreturn x;\n");
         let edits = disjoint(vec![cut(0, 4), cut(2, 6), cut(6, 8)]);
         assert_eq!(edits, vec![cut(0, 4), cut(6, 8)]);
-    }
-
-    #[test]
-    fn conditional_blocks_are_found_whole() {
-        let text = "a;\n#if X\nb;\n#  ifdef Y\nc;\n#endif\n#else\nd;\n#endif\ne;\n";
-        let ranges = conditional(text);
-        assert_eq!(ranges.len(), 1);
-        assert_eq!(&text[ranges[0].clone()], "#if X\nb;\n#  ifdef Y\nc;\n#endif\n#else\nd;\n#endif\n");
     }
 
     #[test]

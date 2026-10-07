@@ -1,26 +1,30 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
- * Stock agbcc_arm (2026-10-07, S13 session 3): listing 196, draft 196, common 160, differ 72.
- *   117 to 114: the glyph index and the row bit pattern are one variable (bits). Set more than
- *   once, its ch - 32 is no longer a birthing insn, so sched1 puts it before win's parameter
- *   copy; it is born while r0 is live and global gives it ip (native), not r0. The width load
- *   is then the function's first reload and takes the first spill register, r0, which still
- *   holds win (reload_cse drops the ldr): native's ldrh r0, [r0, #10].
- *   114 to 100: rows set in two steps, rows = (u16 *)(UiText_Glyphs + ofs) then rows++ or
- *   rows += 4 (rows itself is the spilled temporary: no local 48/49), and the code test
- *   written ch - 222 < 2 at the join (one PRE reaching register for block 3 and the narrow
- *   arm, lr in both; no copy in the wide arm).
- *   100 to 72: the plot macro takes the pixel's y and computes ty and sub itself; loop.c
- *   hoists both out of the column loop behind col = 0 and row + 1 (native's order), which
- *   shortens their live ranges: ty and sub now outrank x (priority 2*7/27 against 4*22/172),
- *   take sl and r8 first, and x gets r9 as native.
- *   Still to do: (1) native puts mov r7, r3 above sub sp: stock arm_adjust_cost charges its
- *   anti dependence on the push the push's cost (5), as sub sp's, and the higher LUID wins
- *   the tie (see 0800a0f8); an unrecognized insn's link costs 1, so y's copy as an opaque
- *   asm move would be a device. (2) ofs takes r0 (native r3): r0 reaches it by
- *   expand_preferences, w (returned in r0) -> bits (dies at wp[bits]) -> 26 * bits -> ofs.
- *   (3) the narrow arm's PRE copy of ch - 222 sits at the block's end (native first).
- *   (4) round-robin reload registers in the font path, the arms and the row loop tail.
+ * Stock agbcc_arm (2026-10-07, S13 session 3): listing 196, draft 196, common 189, differ 14.
+ *   Reshaping, 117 to 72: the glyph index and the row bit pattern are one variable (bits): set
+ *   more than once, its ch - 32 is no longer a birthing insn, so sched1 puts it before win's
+ *   parameter copy, it is born while r0 is live and global gives it ip; the width load is the
+ *   function's first reload and takes the first spill register, r0, which still holds win
+ *   (reload_cse drops the ldr). rows set in two steps (rows itself is the spilled temporary).
+ *   The plot macro takes the pixel's y and computes ty and sub itself; loop.c hoists both out of
+ *   the column loop behind col = 0 and row + 1 (native's order), which shortens their live
+ *   ranges so ty and sub outrank x and take sl and r8, and x gets r9.
+ *   Devices, 72 to 14 (each tagged FAKEMATCH where it stands): ofs in r3, col in lr (also
+ *   carrying the code test value), the empty asms at the end of the ret = 0 block and of the
+ *   row reload, px & 7 through an asm. Most of what remains is one habit: stock arm_adjust_cost
+ *   charges an anti dependence its producer's full cost, where the native was scheduled as if
+ *   anti and output dependences cost one cycle (the same habit as 0800a0f8 and 0800a494).
+ *   Still to do: (1) block 0, native push; mov r7, r3; sub sp (y's copy anti-depends on the push
+ *   at 5 like sub sp, and the higher LUID wins the tie) and mov r9, r2 after ldr r3 (it is ready
+ *   from T-2 at priority 5, ahead of the cmp); (2) the font path's head: the c1 and c3 constants
+ *   interleave and the row = 0 move and w's store sit as native (stock gives c1's chain
+ *   priority 2 through its anti dependence on the src store, and row = 0 priority 2 through c3's).
+ *   Trials: plot macro with cell, half and shift as statements in native order: the stream
+ *   matches but local-alloc then needs ip in the plot (x spilled, 246 to 271); px & 7 through an
+ *   asm as a statement before dst: sched1 moves it past the mla and the same ip appears (244);
+ *   x and y pinned to r9 and r7 through register locals: 245 (frame 40); code pinned to lr as a
+ *   variable of its own: 48 (src inherits the lr preference and pushes col to r4); gw read in
+ *   each arm (the native cross-jumps one ldrh into the join): 85-109 on the stock-tuned draft.
  * Stock agbcc_arm (2026-10-07, S13 session 2): listing 196, draft 197, common 138, differ 117.
  *   127 to 117: row = 0 first in the pass setup, before next and bits (permute's reorder);
  *   bits = rows[0] before next = rows + 1: no change (117).
@@ -120,12 +124,15 @@ struct UiTextWideGlyph {
 extern u8 UiSprite_CursorFrameTiles[];
 extern struct UiTextGlyph UiText_Glyphs[];
 
+/* FAKEMATCH: px & 7 through an asm: stock charges its anti dependence on the mla (which reads r3) the multiply's 16 cycles, tying it with the VRAM add; an asm's links cost 1, so the add and its orr follow the mask shift as native (26 to 18) */
+#define UiText_Dot(px) ({ u32 dot_; asm("and %0, %1, #7" : "=r"(dot_) : "r"(px)); dot_; })
+
 #define UiText_PlotPixel(width, px, py, color) \
 { \
     u32 ty = (py) >> 3; \
     u32 sub = ((py) & 7) * 2; \
     u8 *vram = (u8 *)0x06002500; \
-    u16 *dst = (u16 *)((u32)(vram + ((px >> 3) * (width - 2) + ty) * 32) | ((sub | ((px & 7) >> 2)) << 1)); \
+    u16 *dst = (u16 *)((u32)(vram + ((px >> 3) * (width - 2) + ty) * 32) | ((sub | (UiText_Dot(px) >> 2)) << 1)); \
     u32 mask = 15 << ((px & 3) * 4); \
  \
     *dst = (*dst & ~mask) | (mask & color); \
@@ -141,8 +148,10 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
     s32 bits;
     u32 row;
     u32 pass;
-    u32 col;
-    u32 ofs;
+    /* FAKEMATCH: col in lr, where it also carries the glyph code from each arm to the join: GCSE's copy of ch - 222 in block 3 then prefers lr and its copy in the wide arm vanishes, and the narrow arm computes it first (18 to 14) */
+    register u32 col asm("lr");
+    /* FAKEMATCH: ofs in r3: expand_preferences hands it r0 (w is returned in r0 and bits dies in wp[bits] and in bits * 26), and with ofs in r0 the arms take r3 for their reloads and every round-robin reload register after them shifts (72 to 30) */
+    register u32 ofs asm("r3");
 
     bits = ch - 32;
     width = win->width;
@@ -174,19 +183,23 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
             }
             return w;
         }
+        col = ch - 222;
         ofs = bits * 26;
         rows = (u16 *)((u8 *)UiText_Glyphs + ofs);
         rows++;
     } else {
+        col = ch - 222;
         ofs = (ch - 32) * 32;
         rows = (u16 *)((u8 *)UiText_Glyphs + ofs);
         rows += 4;
     }
     gw = *(u16 *)((u8 *)UiText_Glyphs + ofs);
-    if (ch - 222 < 2) {
+    if (col < 2) {
         x -= 3;
         y -= 2;
         ret = 0;
+        /* FAKEMATCH: a barrier at the end of the block lets the ret store sit next to the branch (stock charges its anti dependence on the jump 2 cycles, so sub r7 took that slot); reading y adds the reference that keeps y ranked above the row's sub, in r7 (30 to 28) */
+        asm volatile("" : : "r"(y));
     } else {
         ret = gw;
     }
@@ -226,6 +239,8 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
                 break;
             bits = *next++;
             bits <<= 16;
+            /* FAKEMATCH: the next pointer's reload store sits next to the loop branch: this asm's memory clobber takes the store's dependence at cost 1, where stock charges the branch 2 (28 to 26) */
+            asm("" : "=r"(bits) : "0"(bits) : "memory");
         }
     }
     return ret;

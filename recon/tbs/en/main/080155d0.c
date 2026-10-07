@@ -1,4 +1,36 @@
-/* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1, agbcc/camelot_arm).
+/* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
+ * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+ * Stock agbcc_arm (2026-10-07, S13 session 2): listing 196, draft 197, common 138, differ 117.
+ *   127 to 117: row = 0 first in the pass setup, before next and bits (permute's reorder);
+ *   bits = rows[0] before next = rows + 1: no change (117).
+ *   Still to do: idx takes r0 (native ip), code r2 then ip (native lr in both), x and the
+ *   VRAM base swap r9 and sl. Diagnosis (greg): 43 (idx) inherits preference r0 through
+ *   expand_preferences, 43 -> 111 -> 50 (ofs) -> gw; win (32) gets no register in global, so
+ *   its reload for the width cannot inherit r0 while idx holds it.
+ *   161 to 127: each glyph row loaded into bits and shifted in place, bits = *next++;
+ *   bits <<= 16, so the halfword load and the shift share bits' pseudo, as native's
+ *   ldrh ip, [r1], #2 ... lsl ip, ip, #16 (a separate load temporary was local-allocated r2
+ *   or r3); pass and row now take native's r1 and r2. Trial: code = ch - 222 assigned in the
+ *   font test, (code = ch - 222) < 2, and not recomputed in the wide arm: 132 (GCSE no longer
+ *   hoists the sub above the beq; native's single lr is GCSE's copy, 175 = code).
+ * Stock agbcc_arm (2026-10-07, S13 session 1): listing 196, draft 197, common 116, differ 161
+ *   (from 177). 163 to 161: the width table through a local pointer, wp[idx], so the address
+ *   is (plus base idx) as native's ldrb r3, [r3, ip] (the symbol form expands to (plus idx base)
+ *   and ties idx to w's register). idx still takes r0 (native ip): global's preference chain
+ *   idx -> idx * 13 -> ofs -> gw -> the return register; native's ofs is r3; ofs declared
+ *   before idx: no change (161); wp declared before src: no change (161); w read before the
+ *   colour constants: 169. The other five editions keep their scaffold, which diff --arm
+ *   cannot compare (no separate listing object); score them once English matches. 177 to 169: the wide glyph as a byte offset, (u8 *)UiText_Glyphs + (ch - 32) * 32,
+ *   so the - 32 stays out of the symbol (native sub r3, r1, #32; lsl r3, r3, #5; one pool word).
+ *   169 to 163: ofs set in each arm and the glyph width read once after the join through it,
+ *   gw = *(u16 *)((u8 *)UiText_Glyphs + ofs). Read in each arm, the load is anti-dependent on
+ *   the narrow arm's jump at its full latency, so sched1 hoisted it above the rows adds; at the
+ *   join it is native's shared ldrh r0, [r3, r2], and ch, font and y now take native's r1, r3, r7.
+ *   Trials (stock): rows through a cast to the glyph struct, (struct UiTextGlyph *)(... + ofs)->rows,
+ *   folds the + 2 into the pool symbol: 179. gw read before rows in each arm: no change (169).
+ *   code = ch - 222 once after the join: 170; the test as ch - 222 < 2 after the join: 170;
+ *   code assigned inside the font test, (code = ch - 222) < 2: 168 (and code is unset on the
+ *   font == 0 path). Native's code is GCSE's: computed before the font test's beq, lr in both.
  * Route decision (2026-10-07), this draft under agscc -marm with the game options:
  *   differ 377; with -mno-apcs-frame 381; with -mno-apcs-frame -ffixed-fp 377.
  * alchemy diff --camelot-arm, upstream's whole arm_adjust_cost (2026-10-06, session 6):
@@ -91,6 +123,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
     u32 col;
     struct UiTextGlyph *glyph;
     struct UiTextWideGlyph *wide;
+    u32 ofs;
 
     idx = ch - 32;
     width = win->width;
@@ -101,7 +134,8 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
             u8 *src = font + ch * 32;
             u32 c1 = 0x1111;
             u32 c3 = 0x3333;
-            s32 w = (UiSprite_CursorFrameTiles + 0x800)[idx];
+            u8 *wp = UiSprite_CursorFrameTiles + 0x800;
+            s32 w = wp[idx];
             u32 px;
             u32 sub;
             u32 color;
@@ -126,15 +160,16 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
             return w;
         }
         code = ch - 222;
-        glyph = &UiText_Glyphs[idx];
+        ofs = idx * 26;
+        glyph = (struct UiTextGlyph *)((u8 *)UiText_Glyphs + ofs);
         rows = glyph->rows;
-        gw = glyph->width;
     } else {
         code = ch - 222;
-        wide = &((struct UiTextWideGlyph *)UiText_Glyphs)[ch - 32];
+        ofs = (ch - 32) * 32;
+        wide = (struct UiTextWideGlyph *)((u8 *)UiText_Glyphs + ofs);
         rows = wide->rows;
-        gw = wide->width;
     }
+    gw = *(u16 *)((u8 *)UiText_Glyphs + ofs);
     if (code < 2) {
         x -= 3;
         y -= 2;
@@ -163,9 +198,10 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
                 y--;
             }
         }
-        next = rows + 1;
-        bits = rows[0] << 16;
         row = 0;
+        next = rows + 1;
+        bits = rows[0];
+        bits <<= 16;
         while (y + row < 32) {
             ty = (y + row) >> 3;
             sub = ((y + row) & 7) * 2;
@@ -179,7 +215,8 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x, u32 y, u8 *font
             }
             if (++row >= 12)
                 break;
-            bits = *next++ << 16;
+            bits = *next++;
+            bits <<= 16;
         }
     }
     return ret;

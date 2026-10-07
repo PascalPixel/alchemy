@@ -148,6 +148,40 @@
  * value 455, n 479. dealt stays on the stack, so ours halves it
  * through r3 and stores it back, where the listing loads it into r7
  * once and copies it to the amount in r6.
+ * Tried against 142: in the drain, the amount in tmp 156, size 163,
+ * count 169, power 315, n 393, hp0 569; kind = dealt halved in place
+ * 235; the halving before dmg = actor->hp 265; kind halved and apwr the
+ * amount 176; a FAKEMATCH register variable in r7 for the halving 170
+ * (kind then joins it in r7 and the copy goes), and r6 for the amount
+ * as well 168. In the heal, case 76 reading max_hp through stat_ptr
+ * (stat_ptr[-1], or stat_ptr-- first) 153; maxu read before the signed
+ * read in 76 176, in 71 too 183 (one ldrh shared again); case 70's
+ * halving through maxv = (s16)maxu 168, (s16)target->max_hp / 2 no
+ * change. Where the listing reloads target from r8 for an ldrsh at 52
+ * or 54 (cases 76, 71, 78 and the 7%), it takes the base into the
+ * first register and the offset into the second (r2/r3, r4/r0, r2/r4,
+ * r0/r1); ours takes them the other way round (r3/r2, r0/r4, r4/r2,
+ * r1/r0). Read as reload's round-robin from r0 up, skipping the
+ * ldrsh's own output, the registers are the same in both and only the
+ * order differs: the listing reloads the base before the offset
+ * scratch, ours the scratch first. Where the base is inherited from an
+ * ldrh before it (the 60/30 tails, 77) both agree. An s16 local or a
+ * byte-offset read for case 76's max_hp changes nothing.
+ * The PP restore head matches exactly when it walks a pointer as the
+ * heal does (u16 *stat_ptr; stat_ptr = (u16 *)&target->pp;
+ * old = *stat_ptr--; heal = *(s16 *)(stat_ptr + 1);, tagged FAKEMATCH
+ * as the heal's): ldrsh, the effect, then ldrh, and the later
+ * (s16)old gets its lsls/asrs pair. It scores 145 (draft 3451, common
+ * 3378) only because our 60/30 tail is still 2 bytes longer, which now
+ * moves the branch and literal offsets after it; apply it with the
+ * tail's fix. heal read first (heal = *(s16 *)stat_ptr--; old =
+ * stat_ptr[1];) 150. On top of it, for the tail: maxv *= 60 or 30 then
+ * heal += maxv / 100 191, else if (... == EFX_HEAL_30) 149. There
+ * sched2 puts our movs r1, #100 before each branch's last shift, so
+ * the two tails differ and jump2 shares only the call; the listing
+ * keeps it last in both and shares it. Alchemy permute over the heal
+ * (PERM_RANDOMIZE from stat_ptr to the clamp, 11 minutes, about 6,000
+ * candidates) found nothing below 142.
  * Left at 142: the drain's halving (above); the heal's target copies
  * and offsets in 76, 71 and 70
  * (reload registers in another rotation) and the 60/30 tails' shared

@@ -13,6 +13,18 @@
  *   slot->y (the else branch with slot->flags = 1 before them): the
  *   branch stores and loads now follow the native exactly. Then branch
  *   alone 114, both 108.
+ * Bucket hypothesis confirmed (diagnostic, not kept): GCSE sizes its
+ *   expression table from max_cuid, the real insns at GCSE entry (1412 to
+ *   1415 here: 707 buckets, set table 353). Three chains of twelve dead
+ *   zero stores at entry (flow deletes them, nothing else moves) give
+ *   1450, 725 buckets: differ 40; four more give 727 buckets: 40. So the
+ *   native source carried about 36 to 41 more real insns at GCSE (or 35
+ *   to 38 fewer for 689) that later passes (combine, flow, loop) remove.
+ *   At 725/727 only three slots still rotate: draft 32 (sp+212 tbl
+ *   address) / 36 / 40 against native 36 / 40 / 32, likely head, which
+ *   is a user variable here, not a PRE pseudo. Next: find the honest
+ *   source shape with those extra insns (casts, copies or temporaries
+ *   that combine folds), and head's slot.
  * The whole prologue through the first call now
  * matches: sel is the parameter itself in r10, mode in r8, and
  * gLinkCountdownWork is reached as cell 48 after gBattleWork, so CSE keeps

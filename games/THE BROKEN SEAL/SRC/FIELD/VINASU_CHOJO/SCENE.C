@@ -8,6 +8,7 @@
 #include "SOUND.H"
 #include "SYSTEM.H"
 #include "GLOBAL_CELLS.H"
+#include "HEAP_STATE.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
@@ -740,7 +741,6 @@ void Scene_RunExtendedActorTransition(void)
 {
     struct FieldActor *actor;
     s32 step_pending;
-    void **cell;
 
     step_pending = 0;
     Engine_EventSetMessage((s32)MsgVinasuWhyHappeningProtectVenusLighthouse);
@@ -1027,17 +1027,14 @@ void Scene_RunExtendedActorTransition(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 272, 216);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 272, 254);
     Engine_EventWait(80);
-    cell = (void **)&gEventWork;
-    ((struct EventWork *)*cell)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-    ((struct EventWork *)*cell)->transition_frames = 16;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+    gEventWork->transition_frames = 16;
     Engine_EventCloseScreen();
-    /* FAKEMATCH: the window work is reached 12 cells below the event work's cell, as the scene's single pool word shows; naming gWindowWork adds a word. */
-    cell -= 12;
     Engine_EventWaitForScreen();
     Engine_EventWait(80);
     Graphics_EnableObjLayerAndCallbacks();
-    ((struct UiRenderWork *)*cell)->result[0] = 0;
-    ((struct UiRenderWork *)*cell)->result[1] = 0;
+    ((struct UiRenderWork *)((void **)&gEventWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_EVENT])->result[0] = 0;
+    ((struct UiRenderWork *)((void **)&gEventWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_EVENT])->result[1] = 0;
     UiText_ShowCenteredMessage((s32)MsgVinasuDespiteLongTiring, 0, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Engine_EventWait(80);

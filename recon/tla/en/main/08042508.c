@@ -1,0 +1,32 @@
+#include "TYPES.H"
+#include "RAM_BUFFER.H"
+
+struct CharacterGlyphWork {
+    u8 unknown_0000[0x137c];
+    u16 loaded[2];
+    u16 glyph_slot[2];
+};
+
+s32 Localization_LookupEntryId(s32 key);
+void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s32 palette, s32 reuse);
+
+void Ui_LoadCharacterEntryForSlot(u32 slot, s32 key, s32 unused)
+{
+    struct CharacterGlyphWork *work = (struct CharacterGlyphWork *)Ram_HeapSlots->window_tiles;
+    s32 id = Localization_LookupEntryId(key);
+    s32 tile;
+    s32 glyph;
+
+    if (id == -1)
+        return;
+    if (slot > 1) {
+        if (work->loaded[1] == id)
+            slot = 1;
+        else if (work->loaded[0] == id)
+            slot = 0;
+        else
+            return;
+    }
+    glyph = work->glyph_slot[slot];
+    UiGlyph_LoadEntryWithPalette(id, unused, &glyph, &tile, slot + 14, 1);
+}

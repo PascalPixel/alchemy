@@ -4854,7 +4854,12 @@ Func_0811b75c:
 	.incbin "baserom.gba", 0x0011ba14, 0x00000230
 	.section .rom.0011bd04, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x0011bd04, 0x00000064
+	.incbin "baserom.gba", 0x0011bd04, 0x00000024
+	.global Func_0811bd10
+	.type Func_0811bd10, %function
+	.thumb_func
+Func_0811bd10:
+	.incbin "baserom.gba", 0x0011bd28, 0x00000040
 	.section .rom.0011bd68, "ax"
 	.global Func_0811bd50
 	.type Func_0811bd50, %function
@@ -4878,13 +4883,6 @@ Camera_InitDefaultTransform:
 	.thumb_func
 Func_0811c074:
 	.incbin "baserom.gba", 0x0011c08c, 0x00000184
-	.section .rom.0011c2cc, "ax"
-	.balign 4
-	.global Func_0811c2b4
-	.type Func_0811c2b4, %function
-	.thumb_func
-Func_0811c2b4:
-	.incbin "baserom.gba", 0x0011c2cc, 0x00000060
 	.section .rom.0011c32c, "ax"
 	.global Func_0811c314
 	.type Func_0811c314, %function
@@ -5146,7 +5144,7 @@ BattleFx_RenderMode:
 	.type Func_0814b9e8, %function
 	.thumb_func
 Func_0814b9e8:
-	.incbin "baserom.gba", 0x0014b9e8, 0x00000f94
+	.incbin "baserom.gba", 0x0014b9e8, 0x00000f40
 	.section .rom.0014c992, "ax"
 	.incbin "baserom.gba", 0x0014c992, 0x00000002
 	.section .rom.0014c994, "ax"

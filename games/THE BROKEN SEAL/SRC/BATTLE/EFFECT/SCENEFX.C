@@ -250,9 +250,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         work->frame = 0;
         for (frame = 0; frame != 192; frame++, work->frame++) {
             s32 angle = frame << 8;
-            /* As a hard register count leaves the division temp canonical in
-               cse, so the compare and +3 use the temp as in the reference. */
-            /* FAKEMATCH: count fixed in r2, as in the reference. */
+            /* FAKEMATCH: count fixed in r2, as in the reference; as a hard register it leaves the division temp canonical in cse, so the compare and +3 use the temp as in the reference. */
             register s32 count asm("r2") = work->frame;
             /* FAKEMATCH: work's copy in r0; else it and the 0x778c reload swap r0/r1. */
             register u8 *base asm("r0") = (u8 *)work;
@@ -262,11 +260,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
             s32 x;
             s32 y;
 
-            /* Reading count after the division keeps its load apart from the
-               division temp (no combine); through base the asm is not
-               volatile, so no sched2 barrier, and the mode reload lands after
-               movs r2, #252 as in the reference (38 -> 2). */
-            /* FAKEMATCH: count read and base passed through, see above. */
+            /* FAKEMATCH: count read and base passed through; reading count after the division keeps its load apart from the division temp (no combine); through base the asm is not volatile, so no sched2 barrier, and the mode reload lands after movs r2, #252 as in the reference (38 -> 2). */
             asm("" : "=r"(base) : "0"(base), "r"(count));
             line = (u16 *)(base + 0x1f80);
             if (mode == 1) {
@@ -279,11 +273,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
             {
                 s32 hold;
 
-                /* FAKEMATCH: with line in r5, hold in r7 and r6 clobbered,
-                   heat takes r4 and its sp+8 caller-save as in the
-                   reference (222 -> 89); global.c ignores hard conflicts
-                   with r7, the frame pointer, so r7 needs a pseudo. */
-                /* FAKEMATCH: hold takes r7 across the call. */
+                /* FAKEMATCH: hold takes r7 across the call; with line in r5, hold in r7 and r6 clobbered, heat takes r4 and its sp+8 caller-save as in the reference (222 -> 89); global.c ignores hard conflicts with r7, the frame pointer, so r7 needs a pseudo. */
                 asm("" : "=r"(hold));
                 /* FAKEMATCH: r6 is clobbered across the call. */
                 asm("" : : : "r6");
@@ -296,9 +286,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
                 *line++ = 0;
             for (; i != 135; i++) {
                 s32 green = i - 16;
-                /* Local-alloc otherwise ties level to the quotient and swaps
-                   level and red (16 lines). */
-                /* FAKEMATCH: the quotient in r3, as in the reference. */
+                /* FAKEMATCH: the quotient in r3, as in the reference; local-alloc otherwise ties level to the quotient and swaps level and red (16 lines). */
                 register s32 quarter asm("r3") = green / 4;
                 /* FAKEMATCH: level in r2, see quarter. */
                 register s32 level asm("r2") = quarter + heat;

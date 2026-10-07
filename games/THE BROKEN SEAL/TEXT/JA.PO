@@ -31,7 +31,7 @@ msgctxt "message"
 msgid "00005"
 msgstr "神殿からの ふっきを{line_break}ためしてみますか?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSaveRecoveryFailed"
 msgid "00006"
 msgstr "{text_color:5}・・・おきのどくですが {line_break}ふっきできませんでした{end_wait}"
 

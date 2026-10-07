@@ -15,7 +15,6 @@
 #include "HEYA.H"
 #include "STAGED_ACTOR.H"
 #include "SCENE_IDS.H"
-#include "CALL.H"
 #include "INVENTORY.H"
 #include "text/MSG_IDS.H"
 
@@ -2137,7 +2136,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         if (arg != 0) {
             Actor_FaceDirection(13, 0xb000, 0);
         }
-        Call3(ObjectMotion_ArmCallback, 14, 0xd000, 0);
+        Actor_FaceDirection(14, 0xd000, 0);
         Actor_FaceDirection(15, 0xb000, 0);
         Actor_FaceDirection(16, 0xd000, 0);
         FieldScene_CallPairWith10(17, 0xb000);

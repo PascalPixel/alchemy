@@ -14,7 +14,6 @@
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
-#include "CALL.H"
 #include "IO_REG.H"
 
 enum {
@@ -548,10 +547,10 @@ void SceneState_TriggerColumnTen(void)
     s32 z = leader->z.fixed / 0x100000;
     struct EventWork *work = gEventWork;
 
-    if (Value1(Engine_TestTriggerFlag, 0x220) == 0 &&
+    if (GameFlag_IsSet(0x220) == 0 &&
         gGameState.cloaked == 0 && gGameState.paused_object != 9 &&
         x == 10 && (u32)(z - 16) <= 2) {
-        Call1(Engine_SetTriggerFlag, 0x220);
+        GameFlag_Set(0x220);
         SceneState_StoreStep(&work->raised_trigger, 92);
     }
 }
@@ -701,9 +700,9 @@ void SceneState_TriggerColumnNineteen(void)
     struct EventWork *work = gEventWork;
     struct GameState *state = &gGameState;
 
-    if (state->paused_object != 12 && Value1(Engine_TestTriggerFlag, 0x220) == 0 &&
+    if (state->paused_object != 12 && GameFlag_IsSet(0x220) == 0 &&
         state->cloaked == 0 && x == 19 && (u32)(z - 15) <= 1) {
-        Call1(Engine_SetTriggerFlag, 0x220);
+        GameFlag_Set(0x220);
         SceneState_StoreStep(&work->raised_trigger, 96);
     }
 }

@@ -11,6 +11,7 @@
 #include "CALL.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "FIELD_SERVICE.H"
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
@@ -850,9 +851,9 @@ void FieldScene_RunClosingSequence(void)
     SoruNichigetsu_Light3Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
     SoruNichigetsu_Light4Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
     SoruNichigetsu_FlashState = 0;
-    Value2(Engine_TaskAddCallback, (s32)UpdateStatueLight1, 3200);
-    Value2(Engine_TaskAddCallback, (s32)UpdateStatueLight2, 3200);
-    Value2(Engine_TaskAddCallback, (s32)UpdateStatueLight3, 3200);
+    Task_AddCallback(UpdateStatueLight1, 3200);
+    Task_AddCallback(UpdateStatueLight2, 3200);
+    Task_AddCallback(UpdateStatueLight3, 3200);
     Engine_TaskAddCallback((s32)UpdateStatueLight4, 3200);
     for (i = 0; i != 6; i++) {
         Audio_PlayCue(246);

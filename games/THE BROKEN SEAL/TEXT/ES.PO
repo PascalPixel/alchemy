@@ -31,7 +31,7 @@ msgctxt "message"
 msgid "00005"
 msgstr "¿Quieres intentar empezar{line_break}desde un Templo?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSaveRecoveryFailed"
 msgid "00006"
 msgstr "{text_color:5}Desafortunadamente, no se{line_break}han recuperado los datos.{end_wait}"
 

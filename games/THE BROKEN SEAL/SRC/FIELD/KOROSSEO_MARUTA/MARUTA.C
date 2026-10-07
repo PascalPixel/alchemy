@@ -10,6 +10,7 @@
 #include "RUNTIME_MEM.H"
 #include "LOG_ROLLING.H"
 #include "CALL.H"
+#include "FIELD_SERVICE.H"
 
 
 void ColossoLogRollingStage_SceneTask(void)
@@ -1155,24 +1156,24 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Engine_EventWait(60);
     callback_target = (s32)ColossoLogRollingStage_SpawnPeriodicParticle;
     gColossoParticleCount = 9;
-    Call2(Engine_TaskAddCallback, callback_target, 0xc80);
+    Task_AddCallback((void (*)(void))callback_target, 0xc80);
     Engine_EventWait(5);
     Engine_TaskRemoveCallback(callback_target);
     Engine_EventWait(55);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
-    Call2(Engine_TaskAddCallback, callback_target, 0xc80);
+    Task_AddCallback((void (*)(void))callback_target, 0xc80);
     Engine_EventWait(20);
     Engine_TaskRemoveCallback(callback_target);
     Engine_EventWait(40);
     Actor_ShowEmote(ACTOR_IVAN, 0x101, 60);
     gColossoParticleCount = 9;
-    Call2(Engine_TaskAddCallback, callback_target, 0xc80);
+    Task_AddCallback((void (*)(void))callback_target, 0xc80);
     Engine_EventWait(35);
     Engine_TaskRemoveCallback(callback_target);
     Engine_EventWait(25);
     Actor_ShowEmote(ACTOR_MIA, 0x102, 60);
     gColossoParticleCount = 9;
-    Call2(Engine_TaskAddCallback, callback_target, 0xc80);
+    Task_AddCallback((void (*)(void))callback_target, 0xc80);
     Engine_EventWait(35);
     Engine_TaskRemoveCallback(callback_target);
     Engine_EventWait(25);
@@ -1183,7 +1184,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Object_LinkObjectAndSetCallback(3, 0);
     Object_LinkObjectAndSetCallback(2, 0);
     gColossoParticleCount = 9;
-    Call2(Engine_TaskAddCallback, callback_target, 0xc80);
+    Task_AddCallback((void (*)(void))callback_target, 0xc80);
     Engine_EventWait(35);
     Engine_TaskRemoveCallback(callback_target);
     Engine_EventWait(25);
@@ -1194,7 +1195,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Object_LinkObjectAndSetCallback(3, 2);
     Object_LinkObjectAndSetCallback(1, 2);
     gColossoParticleCount = 9;
-    Call2(Engine_TaskAddCallback, callback_target, 0xc80);
+    Task_AddCallback((void (*)(void))callback_target, 0xc80);
     Engine_ActorSetAnimation(ACTOR_GERALD, 3);
     Engine_ActorSetAnimation(ACTOR_IVAN, 3);
     Engine_ActorSetAnimation(ACTOR_MIA, 3);

@@ -11,7 +11,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
-#include "CALL.H"
+#include "FIELD_SERVICE.H"
 #include "text/MSG_IDS.H"
 
 #define Shop_Run ((void (*)(s32,s32))Shop_Run)
@@ -267,9 +267,9 @@ void FieldScene_RunPrimaryScript(void)
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
     Engine_ActorWalkToAndWait(0, 104, 136);
     Engine_EventWait(10);
-    Call4(Motion_LaunchFromFocusedObject, 1, -16, 16, 49152);
-    Call4(Motion_LaunchFromFocusedObject, 3, 0, 24, 49152);
-    Value4(Motion_LaunchFromFocusedObject, 2, 16, 16, 49152);
+    FieldMotion_LaunchFromFocusedObject(1, -16, 16, 49152);
+    FieldMotion_LaunchFromFocusedObject(3, 0, 24, 49152);
+    FieldMotion_LaunchFromFocusedObject(2, 16, 16, 49152);
     Engine_ActorWaitForMove(1);
     Engine_EventWait(20);
     Engine_EventWait(10);

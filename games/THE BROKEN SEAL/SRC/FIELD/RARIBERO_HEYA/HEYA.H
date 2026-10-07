@@ -19,7 +19,6 @@ extern u8 gRariberoHeyaEvents9a7[];
 
 void Engine_ResetSceneEffectCounter(void);
 void Owner_RefreshActiveRatios();
-s32 Motion_LaunchFromFocusedObject();
 void FieldScene_RunSecondaryScript();
 
 void FieldScene_RunPrimaryScript(void);

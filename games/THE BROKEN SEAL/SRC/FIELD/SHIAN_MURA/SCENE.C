@@ -11,6 +11,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "CALL.H"
+#include "FIELD_SERVICE.H"
 #include "text/MSG_IDS.H"
 
 #define FLAG_SHIAN_WATER_SPILLED 0x200
@@ -409,7 +410,7 @@ void ShianMura_RunNpcMeetScene(void)
         pos[1] = flag;
         pos[2] = flag;
         leader = Object_GetById(0);
-        Call3(Vector_AddPolarOffset, -0x80000, leader->facing, (s32)pos);
+        FieldVector_AddPolarOffset(-0x80000, leader->facing, (struct FieldPosition *)pos);
         Engine_ActorSetAnimation(0, 2);
         Engine_ActorSetDestinationOffset(0, pos[0] / 0x10000, pos[2] / 0x10000);
         Engine_ActorWaitForMove(0);
@@ -421,7 +422,7 @@ void ShianMura_RunNpcMeetScene(void)
         Effect_Spawn(0xc00000, 0, 0x1380000, 0x3333, 0x1999, 0, 0x20001, 0);
         Engine_AudioPlayCue(132);
         cb = (s32)SceneEffect_SpawnPeriodicEffect;
-        Value2(Engine_TaskAddCallback, cb, 0xc80);
+        Task_AddCallback((void (*)(void))cb, 0xc80);
         Object_GetById(14)->velocity_y = 0x60000;
         Object_GetById(14)->gravity = 0x10000;
         Object_GetById(14)->bounce = 0;
@@ -484,7 +485,7 @@ void ShianMura_HopLeaderAhead(void)
         p[0].fixed = (leader->x.fixed & -0x100000) + 0x80000;
         p[1].fixed = leader->y.fixed;
         p[2].fixed = (leader->z.fixed & -0x100000) + 0x80000;
-        Call3((void (*)())Vector_AddPolarOffset, 0x200000, (leader->facing + 0x2000) & 0xc000, (s32)p);
+        FieldVector_AddPolarOffset(0x200000, (leader->facing + 0x2000) & 0xc000, (struct FieldPosition *)p);
         if (((s32 (*)())Object_CheckMovementCollision)((s32)leader, (s32)p) == 0) {
             Engine_EventBegin();
             Object_SetMode(leader, 6);

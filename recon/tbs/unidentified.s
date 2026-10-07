@@ -915,7 +915,10 @@ BattleFx10_UnitScale:
 RockWall_Heights:
 	.global Data_080eda88
 Data_080eda88:
-	.incbin "baserom.gba", 0x000eda88, 0x00000028
+	.incbin "baserom.gba", 0x000eda88, 0x00000010
+	.global Mode12_Points
+Mode12_Points:
+	.incbin "baserom.gba", 0x000eda98, 0x00000018
 	.global RisingWall_UnitScale
 RisingWall_UnitScale:
 	.incbin "baserom.gba", 0x000edab0, 0x00000008
@@ -1513,7 +1516,12 @@ RockToss_ChipX:
 	.global RockToss_ChipY
 RockToss_ChipY:
 	.incbin "baserom.gba", 0x000eeca1, 0x00000009
-	.incbin "baserom.gba", 0x000eecaa, 0x00000008
+	.global Mode12_Animations
+Mode12_Animations:
+	.incbin "baserom.gba", 0x000eecaa, 0x00000004
+	.global Mode12_SmokeFlips
+Mode12_SmokeFlips:
+	.incbin "baserom.gba", 0x000eecae, 0x00000004
 	.global ShatterRocks_ShardOffsets
 ShatterRocks_ShardOffsets:
 	.incbin "baserom.gba", 0x000eecb2, 0x0000002a

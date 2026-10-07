@@ -976,12 +976,6 @@ BattleFx_RunSevenMode:
 	.thumb_func
 Unnamed_080d1714:
 	.incbin "baserom.gba", 0x000d3514, 0x00000d38
-	.section .rom.000e33e8, "ax"
-	.global BattleFx_InitializeMode12
-	.type BattleFx_InitializeMode12, %function
-	.thumb_func
-BattleFx_InitializeMode12:
-	.incbin "baserom.gba", 0x000e33e8, 0x00000f50
 	.section .rom.000e4772, "ax"
 	.incbin "baserom.gba", 0x000e4772, 0x00000002
 	.section .rom.000e9138, "ax"
@@ -1005,7 +999,10 @@ BattleFx10_UnitScale:
 	.incbin "baserom.gba", 0x000ef880, 0x00000008
 	.global RockWall_Heights
 RockWall_Heights:
-	.incbin "baserom.gba", 0x000ef888, 0x00000028
+	.incbin "baserom.gba", 0x000ef888, 0x00000010
+	.global Mode12_Points
+Mode12_Points:
+	.incbin "baserom.gba", 0x000ef898, 0x00000018
 	.global RisingWall_UnitScale
 RisingWall_UnitScale:
 	.incbin "baserom.gba", 0x000ef8b0, 0x00000008
@@ -1546,7 +1543,13 @@ RockToss_ChipX:
 	.incbin "baserom.gba", 0x000f0a98, 0x00000009
 	.global RockToss_ChipY
 RockToss_ChipY:
-	.incbin "baserom.gba", 0x000f0aa1, 0x00000011
+	.incbin "baserom.gba", 0x000f0aa1, 0x00000009
+	.global Mode12_Animations
+Mode12_Animations:
+	.incbin "baserom.gba", 0x000f0aaa, 0x00000004
+	.global Mode12_SmokeFlips
+Mode12_SmokeFlips:
+	.incbin "baserom.gba", 0x000f0aae, 0x00000004
 	.global ShatterRocks_ShardOffsets
 ShatterRocks_ShardOffsets:
 	.incbin "baserom.gba", 0x000f0ab2, 0x00000040

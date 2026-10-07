@@ -1,4 +1,5 @@
 #include "BATTLE.H"
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "FIELD_EVENT.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -14,7 +15,6 @@
 #include "TYPES.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
-#include "CALL.H"
 
 
 
@@ -132,7 +132,7 @@ void HaidiaDou_SinkPillarColumn23(void)
             Object_GetById(9)->y.fixed -= 0x8000;
             Battle_WaitMode0(1);
         }
-        Call6((void (*)())Map_CopyCellAttributeRect, 23, 41, 1, 1, 23, 39);
+        Map_CopyCellAttributes(23, 41, 1, 1, 23, 39);
         Object_GetById(9)->priority_flags |= 2;
         Engine_GameFlagSet(0x200);
         Object_GetById(9)->y.fixed = -0x80000;
@@ -172,7 +172,7 @@ void HaidiaDou_SinkPillarColumn27(void)
             Object_GetById(10)->y.fixed -= 0x8000;
             Battle_WaitMode0(1);
         }
-        Call6((void (*)())Map_CopyCellAttributeRect, 31, 39, 2, 1, 27, 41);
+        Map_CopyCellAttributes(31, 39, 2, 1, 27, 41);
         Object_GetById(10)->priority_flags |= 2;
         Engine_GameFlagSet(0x201);
         Object_GetById(10)->y.fixed = -0x80000;
@@ -252,7 +252,7 @@ void FieldScene_RunScene3a6SequenceA(void)
         Battle_WaitMode0(20);
         Actor_SetMotionSpeed(8, 0x10000, 0x8000);
         Actor_WalkToAndWait(8, 0x318, 248);
-        Audio_PlayCue(152);
+        Engine_AudioPlayCue(152);
         record = Actor_Get(8);
         record->velocity_y = 0x80000;
         Actor_WalkToAndWait(8, 0x318, 0x118);

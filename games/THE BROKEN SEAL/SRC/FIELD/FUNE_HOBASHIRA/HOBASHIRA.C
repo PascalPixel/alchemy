@@ -11,7 +11,7 @@
 #include "FUNE.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
-#include "CALL.H"
+#include "FIELD_SERVICE.H"
 #include "text/MSG_IDS.H"
 
 struct Other {
@@ -445,13 +445,13 @@ void FieldScene_RunActorNinePresentationCycles(void)
     rec9->rise_base_y = 0;
     Engine_EventWait(20);
     Actor_SetSpeed(9, 0x80000, 0x40000);
-    Call4(Object_SetPosition, rec9, 0xa40000, 0x900000, 0x1410000);
+    FieldObject_SetPosition(rec9, 0xa40000, 0x900000, 0x1410000);
     Object_CommitPosition(rec9);
-    Call4(Object_SetPosition, rec9, 0xa40000, 0x680000, 0x1410000);
+    FieldObject_SetPosition(rec9, 0xa40000, 0x680000, 0x1410000);
     Object_CommitPosition(rec9);
-    Call4(Object_SetPosition, rec9, 0xcc0000, 0x7c0000, 0x1410000);
+    FieldObject_SetPosition(rec9, 0xcc0000, 0x7c0000, 0x1410000);
     Object_CommitPosition(rec9);
-    Call4(Object_SetPosition, rec9, 0x900000, 0, 0xa90000);
+    FieldObject_SetPosition(rec9, 0x900000, 0, 0xa90000);
     Engine_ActorStop(8);
     Engine_TaskWait(1);
     Actor_FaceDirection(8, 0x8000, 0);
@@ -471,18 +471,18 @@ void FieldScene_RunActorNinePresentationCycles(void)
     rec9->rise_base_y = 0;
     Engine_EventWait(20);
     Actor_SetSpeed(9, 0x80000, 0x40000);
-    Call4(Object_SetPosition, rec9, 0xa40000, 0x900000, 0x1410000);
+    FieldObject_SetPosition(rec9, 0xa40000, 0x900000, 0x1410000);
     Object_CommitPosition(rec9);
     Actor_SetSpeed(9, 0x50000, 0x28000);
-    Call4(Object_SetPosition, rec9, 0xa40000, 0x680000, 0x1410000);
+    FieldObject_SetPosition(rec9, 0xa40000, 0x680000, 0x1410000);
     Object_CommitPosition(rec9);
-    Call4(Object_SetPosition, rec9, 0xa40000, 0x720000, 0x1410000);
+    FieldObject_SetPosition(rec9, 0xa40000, 0x720000, 0x1410000);
     Object_CommitPosition(rec9);
-    Call4(Object_SetPosition, rec9, 0xa40000, 0x680000, 0x1410000);
+    FieldObject_SetPosition(rec9, 0xa40000, 0x680000, 0x1410000);
     Object_CommitPosition(rec9);
-    Call4(Object_SetPosition, rec9, 0xcc0000, 0x7c0000, 0x1410000);
+    FieldObject_SetPosition(rec9, 0xcc0000, 0x7c0000, 0x1410000);
     Object_CommitPosition(rec9);
-    Object_SetPosition(rec9, 0x900000, 0, 0xa90000);
+    Engine_ObjectSetPosition(rec9, 0x900000, 0, 0xa90000);
     Engine_ActorStop(8);
     Engine_TaskWait(1);
     Actor_FaceDirection(8, 0x8000, 0);

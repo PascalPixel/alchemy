@@ -2,9 +2,10 @@
 .syntax unified
 	.thumb
 	.section .text.x020083cc,"ax",%progbits
-	.global Func_020003cc
+	.ifndef TBS_EDITION_EN
+	.global SaveMenu_Run
 	.thumb_func
-Func_020003cc:
+SaveMenu_Run:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -1633,6 +1634,7 @@ Clear_FinalizeAndWait:
 	.4byte gEventWork
 .L_02008cf8:
 	.4byte 0x000003e7
+	.endif
 	.section .rodata.x020094d4,"a",%progbits
 	.global Clear_CodeSequence
 Clear_CodeSequence:

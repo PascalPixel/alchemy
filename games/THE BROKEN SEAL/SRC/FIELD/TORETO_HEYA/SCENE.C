@@ -10,11 +10,11 @@
 #include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
 #include "HEYA.H"
-#include "CALL.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SERVICE.H"
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
@@ -438,7 +438,7 @@ void FieldScene_RunFourActorEncounter(void)
         base5_200962d = (s32)ToretoHeya_SpawnSwirlSparks;
         bank[2] = 0x340000;
     }
-    Call2(Engine_TaskAddCallback, base5_200962d, 0xc80);
+    Task_AddCallback((void (*)(void))base5_200962d, 0xc80);
     Engine_EventWait(220);
     Engine_TaskRemoveCallback(base5_200962d);
     ColorBuffer_ApplyTarget(0x10000, 1);

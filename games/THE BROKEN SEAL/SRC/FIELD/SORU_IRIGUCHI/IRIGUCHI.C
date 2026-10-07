@@ -10,8 +10,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "FIELD_SERVICE.H"
 #include "SORU.H"
-#include "CALL.H"
 #include "SCENE_IDS.H"
 #include "text/MSG_IDS.H"
 
@@ -508,10 +508,8 @@ void SoruIriguchi_ApplyEntryState(void)
     GameFlag_Set(0x144);
     *(s32 *)((*(u8 *volatile *)&gWork + 0x1c0)) = 0x100;
     if (GameFlag_IsSet(0x814) != 0) {
-        s32 *timer = &SoruIriguchi_CueTimer;
-        s32 zero = 0;
-        *timer = zero;
-        Call2(Engine_TaskAddCallback, (s32)Scene_UpdateCueTimer, 0xc80);
+        SoruIriguchi_CueTimer = 0;
+        Task_AddCallback((void (*)(void))Scene_UpdateCueTimer, 0xc80);
     }
     if (GameFlag_IsSet(0x879) != 0) {
         Map_CopyCellAttributes(5, 6, 1, 1, 6, 6);

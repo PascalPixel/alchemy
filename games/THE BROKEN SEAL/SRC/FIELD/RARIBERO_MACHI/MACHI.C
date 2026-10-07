@@ -10,9 +10,9 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "FIELD_SERVICE.H"
 #include "FIELD_EFFECT.H"
 #include "ITEM_IDS.H"
-#include "CALL.H"
 #include "text/MSG_IDS.H"
 
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
@@ -186,7 +186,7 @@ void Scene_RunPrimarySequence(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
-    Call4(Motion_LaunchFromFocusedObject, 22, 8, -16, 0xc000);
+    FieldMotion_LaunchFromFocusedObject(22, 8, -16, 0xc000);
     Engine_ActorWaitForMove(22);
     Engine_EventWait(20);
     Actor_ShowEmote(22, 0x102, 60);
@@ -368,8 +368,8 @@ void FieldScene_RunSecondarySequence(void)
     Engine_EventSetMessage((s32)MsgRariberoWhereGoingRobinIodemAsked);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 0x178);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-    Call4(Motion_LaunchFromFocusedObject, 1, -32, 0, 0);
-    Call4(Motion_LaunchFromFocusedObject, 3, -16, 16, 0xe000);
+    FieldMotion_LaunchFromFocusedObject(1, -32, 0, 0);
+    FieldMotion_LaunchFromFocusedObject(3, -16, 16, 0xe000);
     Motion_LaunchFromFocusedObject(2, 0, 16, 0xc000);
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Engine_EventWait(30);

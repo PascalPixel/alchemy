@@ -1,17 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x0200804c,"ax",%progbits
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	ldr r0, .L_02008050
-	bx lr
-.L_02008050:
-	.4byte Data_0200345c
-	.global Data_02000054
-Data_02000054:
-	.4byte 0x00004770
 	.section .text.x02008058,"ax",%progbits
+	.balign 4
 	.global Func_02000058
 	.thumb_func
 Func_02000058:
@@ -1521,13 +1511,13 @@ gSceneEvents:
 	.4byte Func_02000128
 	.4byte 0x10008c15
 	.4byte 0xffff000d
-	.4byte Data_02000054 + 0x1
+	.4byte Func_02000054
 	.4byte 0x00008c15
 	.4byte 0xffff000d
 	.4byte Func_02000058
 	.4byte 0x00000008
 	.4byte 0xffff001e
-	.4byte Data_02000054 + 0x1
+	.4byte Func_02000054
 	.4byte 0x00000009
 	.4byte 0xffff001e
 	.4byte Func_02000058

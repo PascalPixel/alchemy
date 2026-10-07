@@ -1,5 +1,5 @@
-/* 08027114: differ 1403 against the 1727-line parent listing (draft 1822,
- * common 1073; was 2131).
+/* 08027114: differ 1366 against the 1727-line parent listing (draft 1823,
+ * common 1092; was 2131).
  * The draft also emits the two preceding nested helpers, 080270ac/080270d8,
  * now adopted on their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent; the score counts them as extra lines.
@@ -63,18 +63,28 @@
  * the djinn case (native fp): 1477; in the psynergy case too: 1476. The
  * djinn case's own sprite slot (native r8, its counter then r7 as native):
  * 1417. Block-local handle and block in the mode-7 branch: 1405; in the
- * mode -2 branch: 1403; the djinn case's handle block-local: 1403.
+ * mode -2 branch: 1403; the djinn case's handle block-local: 1403. sel
+ * block-local in the mode-7 branch: 1401; the summon case as a block with
+ * its own element, index and hint: 1401; its own cost: 1393; the psynergy
+ * case's own scan: 1373; the summon case's own ability: 1366.
  * Worse, reverted: block-local djinn 1666; djinn as a fixed r9 (frame then
  * 100 as native, but registers reshuffle) 1579 on 1504; uncast allocator
  * result 1504 (unchanged); own window in the item case 1514 and in the
- * summon case 1425; own ability in the djinn case 1638; own slot in the
- * psynergy case 1517, in the item case 1445; permuting the declaration
- * order (500 candidates) found nothing below 1504.
+ * summon case 1425; own ability in the djinn case 1638, in the item case
+ * 1413, in the psynergy case 1471 (on 1366); own slot in the psynergy case
+ * 1517, in the item case 1445; own cost in the item case 1409 (on 1393);
+ * the last cost loop as while (required <= cost) with the counter test
+ * inside 1687; permuting the declaration order (500 candidates) found
+ * nothing below 1504. Neutral: own sel in the item case, own cost in the
+ * psynergy case, own ok in the djinn case, a block-local scan at commit.
  * Remaining causes: djinn still spills (frame 104 against 100: out, in and
  * count 4 bytes high): ok (prio 5*35/89) outranks djinn (5*38/158), so ok
  * takes r9 where native has djinn in r9 and ok caller-saved in r4. mode
  * (pseudo 52, 437 refs) is native r6 throughout but conflicts here with
- * local-alloc hard regs r5, r6 and r8 and lands in caller-saved r4. */
+ * local-alloc hard regs r5, r6 and r8 (the mode -2 branch's block and
+ * handle, the item case's handle, a 0x1ff mask kept across a call) and
+ * lands in caller-saved r4. The last djinn cost loop enters at its bottom
+ * test; native copies the required > cost test to the entry. */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -176,7 +186,6 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     struct BattleActionRecord *ent;
     struct BattleUnit *actor;
     struct UiWindow *win;
-    struct UiWindow *hint;
     struct MenuSprite *slot;
     struct BattleAction *ability;
     struct UiRenderWork *ui;
@@ -193,8 +202,6 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     s32 cnt;
     s32 sel;
     s32 cost;
-    s32 element;
-    s32 index;
     s32 ok;
     s32 i;
     s32 k;
@@ -306,6 +313,7 @@ handshake_done:
         }
         if (mode == 7) {
             void *block;
+            s32 sel;
             s32 handle;
 
             block = Runtime_BumpAllocate(12);
@@ -432,6 +440,7 @@ mark_visible:
 
             case 1: {
                 struct UiWindow *win;
+                u16 *scan;
                 s32 handle;
 
                 Audio_PlayCue(112);
@@ -587,7 +596,13 @@ djinn_menu:
 
             }
 
-            case 15:
+            case 15: {
+                struct BattleAction *ability;
+                struct UiWindow *hint;
+                s32 cost;
+                s32 element;
+                s32 index;
+
                 Audio_PlayCue(112);
 summon_menu:
                 COUNTDOWN->unk_34 = 0;
@@ -650,6 +665,7 @@ summon_menu:
                     }
                     goto store_target;
                 }
+            }
 
             case 2: {
                 s32 handle;

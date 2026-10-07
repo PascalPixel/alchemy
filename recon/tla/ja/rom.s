@@ -2924,7 +2924,10 @@ Func_080c8948:
 	.section .rom.000c9c38, "ax"
 	.incbin "baserom.gba", 0x000c9c38, 0x00000190
 	.section .rom.000c9de0, "ax"
-	.incbin "baserom.gba", 0x000c9de0, 0x0000014c
+	.incbin "baserom.gba", 0x000c9de0, 0x0000003c
+	.section .rom.000c9e48, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000c9e48, 0x000000e4
 	.section .rom.000c9f2c, "ax"
 	.global BattleFx_LookupResult
 	.type BattleFx_LookupResult, %function
@@ -4051,7 +4054,12 @@ EffectSlot_Initialize:
 	.section .rom.000ebed8, "ax"
 	.incbin "baserom.gba", 0x000ebed8, 0x000001b8
 	.section .rom.000ec0b0, "ax"
-	.incbin "baserom.gba", 0x000ec0b0, 0x00001668
+	.incbin "baserom.gba", 0x000ec0b0, 0x00001660
+	.global Func_080ed804
+	.type Func_080ed804, %function
+	.thumb_func
+Func_080ed804:
+	.incbin "baserom.gba", 0x000ed710, 0x00000008
 	.global BattleFx_ArcTiles
 BattleFx_ArcTiles:
 	.incbin "baserom.gba", 0x000ed718, 0x000002c0

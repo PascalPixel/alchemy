@@ -2091,7 +2091,10 @@ Game_ResetForNewGame:
 	.section .rom.000d6c38, "ax"
 	.incbin "baserom.gba", 0x000d6c38, 0x00000190
 	.section .rom.000d6de0, "ax"
-	.incbin "baserom.gba", 0x000d6de0, 0x0000014c
+	.incbin "baserom.gba", 0x000d6de0, 0x0000003c
+	.section .rom.000d6e48, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000d6e48, 0x000000e4
 	.section .rom.000d6f2c, "ax"
 	.global BattleFx_LookupResult
 	.type BattleFx_LookupResult, %function
@@ -4329,7 +4332,9 @@ BattlePres_SetActorModes:
 Summon_GetEntryByte4:
 	.incbin "baserom.gba", 0x001281ac, 0x0000001c
 	.section .rom.00128202, "ax"
-	.incbin "baserom.gba", 0x00128202, 0x0000065a
+	.incbin "baserom.gba", 0x00128202, 0x0000003e
+	.section .rom.00128264, "ax"
+	.incbin "baserom.gba", 0x00128264, 0x000005f8
 	.global BattlePlacement_StepPairs
 BattlePlacement_StepPairs:
 	.incbin "baserom.gba", 0x0012885c, 0x0000428c

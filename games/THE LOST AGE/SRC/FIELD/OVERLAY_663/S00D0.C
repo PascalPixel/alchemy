@@ -19,7 +19,7 @@ s32 Func_020000d0(s32 a0, s32 a1, s32 a2, s32 a3)
         Call2(ObjectDispatch_SetSingleChildFlags, t0, 0);
         Call2(Object_SetPartAttribute, t0, 0xf);
         FIELD_AT((t0 + 0x23), u8, 0) = (0x22 | FIELD_AT((t0 + 0x23), u8, 0));
-    } else {
+        return t0;
     }
     return 0;
 }

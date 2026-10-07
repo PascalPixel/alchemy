@@ -3164,7 +3164,10 @@ Game_ResetForNewGame:
 	.section .rom.000c9c38, "ax"
 	.incbin "baserom.gba", 0x000c9c38, 0x00000190
 	.section .rom.000c9de0, "ax"
-	.incbin "baserom.gba", 0x000c9de0, 0x0000014c
+	.incbin "baserom.gba", 0x000c9de0, 0x0000003c
+	.section .rom.000c9e48, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000c9e48, 0x000000e4
 	.global BattleFx_LookupResult
 	.type BattleFx_LookupResult, %function
 	.thumb_func
@@ -4196,10 +4199,10 @@ Func_080e3698:
 Func_080d9ad0:
 	.incbin "baserom.gba", 0x000ea7b4, 0x00000114
 	.section .rom.000ea8c8, "ax"
-	.global Func_080ed804
-	.type Func_080ed804, %function
+	.global Func_080d9ab0
+	.type Func_080d9ab0, %function
 	.thumb_func
-Func_080ed804:
+Func_080d9ab0:
 	.incbin "baserom.gba", 0x000ea8c8, 0x00000140
 	.section .rom.000eaa08, "ax"
 	.global Func_080ea7c0
@@ -4293,10 +4296,10 @@ EffectSlot_UpdateMotion:
 	.section .rom.000ec160, "ax"
 	.incbin "baserom.gba", 0x000ec160, 0x00001698
 	.section .rom.000ed7f8, "ax"
-	.global Func_080d9ab0
-	.type Func_080d9ab0, %function
+	.global Func_080ed804
+	.type Func_080ed804, %function
 	.thumb_func
-Func_080d9ab0:
+Func_080ed804:
 	.incbin "baserom.gba", 0x000ed7f8, 0x00000008
 	.global BattleFx_ArcTiles
 BattleFx_ArcTiles:
@@ -5052,7 +5055,9 @@ BattlePres_SetActorModes:
 Summon_GetEntryByte4:
 	.incbin "baserom.gba", 0x001281ac, 0x0000001c
 	.section .rom.00128202, "ax"
-	.incbin "baserom.gba", 0x00128202, 0x0000065a
+	.incbin "baserom.gba", 0x00128202, 0x0000003e
+	.section .rom.00128264, "ax"
+	.incbin "baserom.gba", 0x00128264, 0x000005f8
 	.global BattlePlacement_StepPairs
 BattlePlacement_StepPairs:
 	.incbin "baserom.gba", 0x0012885c, 0x0000428c

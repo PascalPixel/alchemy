@@ -753,6 +753,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000c9c38)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/PLAY_SAVED_MUSIC.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000c9de0)
+    "*/games/THE LOST AGE/SRC/FIELD/COMMON/FIND_ENTRY_VALUE.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000c9e48)
     "*/recon/tla/ja/rom.o"(.rom.000c9f2c)
     "*/recon/tla/ja/rom.o"(.rom.000c9fd8)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/DATA_LOOKUP_ROUTINES.o"(.text)

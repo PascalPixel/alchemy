@@ -18,7 +18,7 @@
  * - 108 -> 92: the LEFT and RIGHT arms compute the new page number and one Func_02001e6e call follows them, where the native has its one shared mov r1, r8 / bl (195 when the score was 181: the earlier pool and help placement hid it).
  * - 92 -> 80: the page number as rec5 = page + page_count, then rec5-- or rec5++ in place: r0 throughout, as native.
  * - 80 -> 78: the redraw prepare before v7 = 0 and v5 = 2 for the dividers, as the native calls it first.
- * - no gain: the row call into rec (108) or into v3 shifted after the arms (243); the column test on the call directly (108).
+ * - no gain: the row call into rec (108) or into v3 shifted after the arms (243); the column test on the call directly (108); at 78, v3 = record << 4 before x in each arm (234) and the column in rec apart from the row's record (78).
  * - no gain: v5 as the greeting-loop mask while count shared the transfer loop (399; with v7 as the transfer counter 395); v7 as the transfer counter alone (495); the row call into v3 shifted in place, in each arm or after (356); one Func_02001e6e call after the LEFT and RIGHT arms, v7 = 1 before or after it (195).
  * Trials (2026-10-07):
  * - 463 -> 350: the glyph counter n apart from the link result v4, and password[v7] & 63 passed directly: v3 no longer conflicts with r3, the link result takes a caller-saved register, and page gets r11 with the encoded size in r9 and the page window in r10, as native.

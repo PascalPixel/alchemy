@@ -1,5 +1,13 @@
-/* SaveMenu_Run (overlay resource_370 020083cc, listed as Func_020003cc): differ 463 of 920 (draft 919, common 688) with --symbol Func_020003cc.
- * Remaining: the frame keeps one spill slot too many (started at [sp, #24], native [sp, #20]; heading window at [sp, #20], native [sp, #12]); the encoded size sits in r11 and the page window in r9, native r9 and r10; the then-arm of the one-page help test jumps back 1556 bytes where the native jumps forward over the else; the link wait loop allocates its mask, miss count and result to r5, r2 and r10 where the native uses r1, r5 and r4; the new-game scene (row 8 of the scene table, unnamed) is stored as an immediate where the native loads its id from the pool.
+/* SaveMenu_Run (overlay resource_370 020083cc, listed as Func_020003cc): differ 231 of 920 (draft 919, common 804) with --symbol Func_020003cc.
+ * Remaining: the help exit (WaitFrames(300), far jump to the menu head) sits right after the v6 != 0 test where the native keeps it after the page loop, so the password page's B exit lands after it and the native's branch over the test is missing; the native dumps a literal pool after case 4's two link exit blocks, the draft only later; the link wait loop loads 3 into r3 each pass where the native keeps the mask in r1 (caller-saved at [sp, #8]) and the result in r4 ([sp, #4]); the glyph loop builds rec7 * 12 in r3 and copies it to x in r2, where the native builds it in r2; the record-select and case-1 stores put their 0x1c0/0x1c4 constants in other registers. Before adoption, row 8 of the scene table (code 0x377, area 3, map 7) needs its name in SRC/FIELD/SCENES.S: the draft calls it SceneId_Opening, which nothing defines yet.
+ * Trials (2026-10-07):
+ * - 463 -> 350: the glyph counter n apart from the link result v4, and password[v7] & 63 passed directly: v3 no longer conflicts with r3, the link result takes a caller-saved register, and page gets r11 with the encoded size in r9 and the page window in r10, as native.
+ * - 350 -> 332: the missed-frame count kept in v5 (r5, as native).
+ * - 332 -> 315: the link wait loop as a real for loop testing the constant 3: loop.c moves its ten-missed-frames exit to the barrier after case 4, where the native has it, and leaves the status and source addresses in the loop.
+ * - 315 -> 304: the new-game scene loaded as a scene table id (row 8) instead of an immediate.
+ * - 304 -> 251: the new-game entrance stored as a plain 20.
+ * - 251 -> 231: help_window declared before heading_window: spill slots [sp, #16] and [sp, #12] as native; the dead v3 = 50 and the two-step row shift dropped (231).
+ * - no gain: x after v3 in the glyph arms (460); the draw call in each glyph arm (628, no cross-jump); v3 & 63 (463); the status read before the mask (no change); the status through v3 (no change); the first wait loop testing v5 (447); the for loop testing the mask variable (409: loop.c hoists the status address at 15 real insns, threshold 15), plus an empty asm in it (329: the rerun still hoists it at 15); an explicit goto to the help exit (231, unchanged).
  * Trials (2026-10-06):
  * - 873 -> 757: the record prompt as a goto loop; the native reloads every invariant in it, as goto loops do.
  * - 757 -> 711: SceneId_WorldMap from the scene table; one callee name per function, so the case-1 tails cross-jump through one message call; a state pointer kept in r5.
@@ -19,6 +27,7 @@
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
 extern u32 gKeysHeld;
+extern char SceneId_Opening;
 struct SaveMenuSceneState {
     u8 unknown_000[0x100];
     s32 word_100;
@@ -254,14 +263,14 @@ s32 SaveMenu_Run(void)
     s32 v1;
     s32 v3;
     s32 v4;
-    s32 missing_link_frames;
+    s32 n;
     s32 base7_3001c94;
     s32 page_message;
     s32 page;
     s32 x;
     s32 started;
-    s32 heading_window;
     s32 help_window;
+    s32 heading_window;
     u8 save_data[200];
     u8 password[320];
     u8 glyph[4];
@@ -344,12 +353,8 @@ s32 SaveMenu_Run(void)
         goto L_02000522;
     }
     Func_020019dc();
-    Data_02000240.location.scene = 0x8;
-    {
-        s32 shown = 20;
-
-        Data_02000240.location.entrance = shown;
-    }
+    Data_02000240.location.scene = (s32)&SceneId_Opening;
+    Data_02000240.location.entrance = 20;
     goto L_02000c96;
     L_0200057a:;
     if (v6 != 1) {
@@ -510,27 +515,22 @@ s32 SaveMenu_Run(void)
         Func_02001c34(10);
         Value2(Func_02001c94, (s32)gSaveBuffer, 0x1004);
         Func_02001c42(10);
-        missing_link_frames = 0;
+        v5 = 0;
         v1 = 3;
         v4 = 1;
-        count = 0;
-        goto L_wait_test;
-    L_wait:
-        Func_02001c56(1);
-        count = (count + 1);
-    L_wait_test:
-        if (count <= 0x927bf) {
-            missing_link_frames = (missing_link_frames + 1);
-            if ((v1 & *(u16 *)0x03001f64) == v1) {
-                missing_link_frames = 0;
+        for (count = 0; count <= 0x927bf; count++) {
+            v5 = (v5 + 1);
+            if ((3 & *(u16 *)0x03001f64) == 3) {
+                v5 = 0;
             }
-            if (missing_link_frames == 10) {
+            if (v5 == 10) {
                 v4 = 0;
-                goto L_0200095e;
+                break;
             }
-            if (gSerialSendSource != 0) {
-                goto L_wait;
+            if (gSerialSendSource == 0) {
+                break;
             }
+            Func_02001c56(1);
         }
     }
     L_0200095e:;
@@ -671,31 +671,26 @@ s32 SaveMenu_Run(void)
                 v6 = encoded_size;
             }
             if ((page * 50) != v6) {
-                v3 = 50;
-                v4 = 0;
+                n = 0;
                 v7 = (page * 50);
                 do {
-                    v3 = password;
-                    v3 = *(u8 *)(v3 + v7);
-                    Func_02000f0c((63 & v3), glyph);
+                    Func_02000f0c(password[v7] & 63, glyph);
                     record = Func_02001f3c(v7, 10);
                     if (record > 4) {
-                        rec7 = Func_02001f4a(v4, 10);
-                        record = Func_02001f4e(v4, 10);
+                        rec7 = Func_02001f4a(n, 10);
+                        record = Func_02001f4e(n, 10);
                         x = rec7 * 12 + 18;
-                        v3 = record;
-                        v3 = (v3 << 4);
+                        v3 = record << 4;
                     } else {
-                        rec7 = Func_02001f6e(v4, 10);
-                        record = Func_02001f72(v4, 10);
+                        rec7 = Func_02001f6e(n, 10);
+                        record = Func_02001f72(n, 10);
                         x = rec7 * 12 + 8;
-                        v3 = record;
-                        v3 = (v3 << 4);
+                        v3 = record << 4;
                     }
                     v3 = (v3 + 2);
                     Func_02002030(glyph, page_window, x, v3);
                     v7 = (v7 + 1);
-                    v4 = (v4 + 1);
+                    n = (n + 1);
                 } while (v7 != v6);
             }
             v7 = 0;

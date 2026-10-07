@@ -1,5 +1,5 @@
-/* 080d1714: differ 567 of 1481 instructions (1474 generated, common
- * 1194). Battle effect mode 8 (DISPATCH.C): the targets spin and
+/* 080d1714: differ 394 of 1481 instructions (1475 generated, common
+ * 1281). Battle effect mode 8 (DISPATCH.C): the targets spin and
  * rise in a whirlwind for 160 frames, then nine comet objects sway in,
  * 32 particles converge on their centre, sparks burst four times and
  * four marks fly out with a screen shake; the targets are put back at
@@ -119,6 +119,15 @@
  *   to 622): 598.
  * - index = 0 before mark = &runtime->particles[60]: the native shares
  *   the zero of index and the giv at sp+24: 567.
+ * - slot = 0 before spark = &runtime->particles[32] likewise: 517
+ *   (index = 0 before point or the spark update pointer: 521, 517).
+ * - speed and angle block-local in the spark spawn and burst setup
+ *   blocks: one pseudo across both loops had swapped speed and the
+ *   walking pointer (r7/r6 where the native has r6/r7): 455 for
+ *   speed, 421 with angle. span block-local: 449 in all four blocks,
+ *   425 in one.
+ * - alive = 0 right after shake.z, a permuter hint: 394 (index = 0
+ *   before the placement setup: 429).
  * Remaining: the first draw shares one 48 for 48 - size and the
  * width argument, and the second keeps 48 in r4 across the first call
  * where the native rematerializes it and caller-saves the function
@@ -222,8 +231,6 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
     s32 span;
     s32 dist;
     s32 alive;
-    s32 speed;
-    s32 angle;
     s32 heading[8];
     s32 radius[8];
     s32 spin[8];
@@ -446,6 +453,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
         }
 
         if (frame == 160) {
+            s32 speed;
+            s32 angle;
+
             BattleBackground_LoadFar(1, 0x3b, 0);
             BattlePresentation_ConfigurePaletteFadeFar(1, 0x3b, 8);
             BattleFx_SelectLivingTargets(runtime->effect);
@@ -523,9 +533,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 s32 threshold;
 
                 shake.z = 0x1000000;
+                alive = 0;
                 shake.x = 0;
                 shake.y = 0;
-                alive = 0;
                 Render_ResetTransformState();
                 SceneTransform_ApplyPosition(&shake);
 
@@ -585,6 +595,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 slot = 0;
                 do {
                     if (frame == Data_080ee16c[slot]) {
+                        s32 speed;
+                        s32 angle;
+
                         index = 0;
                         do {
                             speed = (Random16() & 127) + 16;
@@ -674,8 +687,8 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                             SceneTransform_ApplyRoll(-2048);
                             SceneTransform_ApplyYaw(-4096);
 
-                            spark = &runtime->particles[32];
                             slot = 0;
+                            spark = &runtime->particles[32];
                             do {
                                 work.x = 0;
                                 work.y = spark->variant

@@ -1293,7 +1293,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/CANVAS_MODES.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0018f624)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/CHILD_MODE.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.00191b80)
+    "*/recon/tla/ja/rom.o"(.rom.00191cc8)
     "*/recon/tla/ja/rom.o"(.rom.0018f624)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/NIBBLE_PAIR.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00196408)

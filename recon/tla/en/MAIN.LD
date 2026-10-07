@@ -2516,8 +2516,6 @@
         "*/recon/tla/raw/08191530.o"(.text)
         "*/recon/tla/raw/08191958.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/CHILD_MODE.o"(.text)
-        "*/recon/tla/raw/08191b7c.o"(.text)
-        "*/recon/tla/raw/08191c20.o"(.text)
         "*/recon/tla/raw/08191cc4.o"(.text)
         "*/recon/tla/raw/08191d60.o"(.text)
         "*/recon/tla/raw/0819253c.o"(.text)

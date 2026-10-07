@@ -55,3 +55,62 @@ void Func_08191b10(u8 *table, u32 count, s32 scale)
             table[j * count + i] = table[i];
     }
 }
+
+void Func_08191b7c(u8 *table, u32 count, u32 repeats, s32 scale)
+{
+    s32 total = 0;
+    u32 step = count * 2;
+    u32 i;
+    u32 j;
+
+    if (step > 63)
+        step = 63;
+    step = 63 / step;
+    if (step < 6)
+        step = 6;
+    for (i = 0; i != count; i++) {
+        s32 value;
+
+        total += step;
+        value = (scale * total) >> 16;
+        if (value > 63)
+            value = 63;
+        table[i] = value;
+    }
+    for (i = 0; i != count; i++)
+        table[count + i] = table[count - 1 - i];
+    for (j = 1; j != repeats; j++) {
+        for (i = 0; i != count * 2; i++)
+            table[j * count * 2 + i] = table[i];
+    }
+}
+
+void Func_08191c20(u8 *table, u32 count, u32 repeats, s32 scale)
+{
+    s32 total = 0;
+    u32 step = count * 2;
+    u32 i;
+    u32 j;
+
+    if (step > 63)
+        step = 63;
+    step = 63 / step;
+    if (step < 6)
+        step = 6;
+    step *= 2;
+    for (i = 0; i != count; i++) {
+        s32 value;
+
+        total += step;
+        value = (scale * total) >> 16;
+        if (value > 63)
+            value = 63;
+        table[i] = value;
+    }
+    for (i = 0; i != count; i++)
+        table[count + i] = table[count - 1 - i];
+    for (j = 1; j != repeats; j++) {
+        for (i = 0; i != count * 2; i++)
+            table[j * count * 2 + i] = table[i];
+    }
+}

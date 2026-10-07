@@ -23,6 +23,28 @@
  * equates the load with m's low byte); s8 m with m & 0x80 392; u8 m
  * with m >= 0x80 389; the condition chain with goto instead of
  * do-while(0) 541 (still merged); the cursor tile & 0x3FF 377 (no change).
+ * Also rejected: (s32)(m << 24) < 0 for the second test 382; a block
+ * size variable for the three 332-byte calls 377 (CSE folds it back into
+ * each argument; native keeps 332 in r8 across Runtime_BumpAllocate).
+ *
+ * Register diagnosis 2026-10-07 (session 2, lreg/greg dumps): with
+ * -fcall-used-r4 the call-saved low registers are r5, r6, r7. In the
+ * face/cursor block (bb 66) the 0xFC00, 0xFE00 and 0x3FF constants are
+ * block-local; regmove ties the 0x3FF to the cursor's and (insn 1568,
+ * operand 2), and it is already in r7 before global allocation (it is
+ * absent from greg's "regs to allocate" list) with 0xFC00 in r5 and
+ * 0xFE00 in r6. Global then gives the zero (469: 10 refs over 228
+ * insns, crosses 11 calls) r10, as r5-r7 are taken, r8 is a hard
+ * conflict and r9 is object; redraw (54: 14 refs over 982) falls to r11.
+ * Native has 0x3FF in r8 and the zero in r7, which frees r10 for redraw:
+ * one cause for both. The hard r8 conflict of the zero and of 0x3FF has
+ * no r8 insn inside bb 66 (not yet explained). Trials: the zero as a register
+ * variable in r7 scores 294 but miscompiles (r7 is the eliminated frame
+ * pointer, so global still gives it to 0x3FF and the cursor's attr23
+ * receives 0x3FF): rejected; 0x3FF as a register variable in r8 with an
+ * explicit mask at the cursor 549. A 5-minute permuter run (2 jobs, 963
+ * candidates) with PERM_RANDOMIZE over the cursor pixels, face and
+ * cursor found nothing below 377.
  *
  * Diagnosis 2026-10-07: most of the earlier cascade was variables shared
  * across calls where the native's value lives only between two calls:

@@ -12,8 +12,8 @@
 struct Work;
 
 void UiWork_Finalize(struct Work *, s32);
-s32 UiWork_StepChannelScript(void *);
-void UiWork_AdvanceChannelTransition(void *);
+s32 Func_08039864(void *);
+void Func_0803cbf8(void *);
 
 void UiWork_ProcessRenderChannels(void)
 {
@@ -34,9 +34,9 @@ void UiWork_ProcessRenderChannels(void)
                 s32 kind;
 
                 if (pending != 0) {
-                    UiWork_AdvanceChannelTransition(channel);
+                    Func_0803cbf8(channel);
                 } else {
-                    kind = UiWork_StepChannelScript(channel);
+                    kind = Func_08039864(channel);
                     switch (kind) {
                     case 8:
                         *(u16 *)(*(u8 **)channel + 0x14) = one;

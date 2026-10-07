@@ -1,4 +1,5 @@
-/* Stubborn (2026-10-07, T08-08021e6c session 2): differ 484 (listing 1037, draft 1025, common 789). Not matched. Still permuter scaffolding, to be replaced by real source shapes: tmp7 = mode != 0 kept from before the position loop to the command_selection test (worth 50: 534 without), tmp2/tmp3/tmp4 temporaries shared inside the content col loops, the u16 * temporary for 0x0600fd68 (worth 232: 716 without), and the mode-1 blank and content col loops as while. */
+/* Stubborn (2026-10-07, T08-08021e6c session 2): differ 467 (listing 1037, draft 1032, common 801). Not matched. Still permuter scaffolding, to be replaced by real source shapes: tmp7 = mode != 0 kept from before the position loop to the command_selection test (worth 50: 534 without), tmp2/tmp3/tmp4 temporaries shared inside the content col loops, the u16 * temporary for 0x0600fd68 (worth 232: 716 without), and the mode-1 blank and content col loops as while. Native copies every tile loop's row pointer or row index once per row (adds r1, r0, #0; mov r12, r6; str r5, [sp, #4]): loop.c keeps such a copy when a giv is not replaceable (loop.c 5520-5565: a biv update inside the giv's lifetime, or the giv's register first set elsewhere); its large constant offsets (0x448, 0x46c) are rematerialized inside the column loops, so they are pseudos left without hard registers, which the draft still allocates. */
+/* Trial (session 2): mode-0 blank and closing loops as for (cnt = 0; cnt <= 2; ) { tile_row = &render->tilemap[panel * 3 + cnt * 32]; cnt++; columns } (cnt++ before the columns makes tile_row non-replaceable, native's per-row copy, though native increments cnt after the columns): 484 -> 473 (closing) -> 467 (both). The same in the mode-1 blank loop: 485; in the mode-1 content loop: 483. Declaration order elsewhere: no effect (every adjacent pair swapped, 484). Function-scope tile_row shared by every loop: 495. Content loops with index and pattern computed per row from cnt: 886-926. */
 /* Trial (session 2): mode-1 content loop declares tile_row before pattern (alchemy permute 5 min, seed 11, --heat: one rewrite): 636 -> 484. The same order in the mode-0 content loop: 546. tmp7 removed: 534; the u16 * temporary removed: 716. */
 /* Trial (2026-10-07): bisecting the 658 candidate below: removing the scale - 256 chain 657, the gBgScroll pointer 657, rebuild != 0 temporary 659, the four temporaries of the redraw test 643, keys & 1 643, the mode != 0 and repeat & 0x90 temporaries 619, the work->count chain 619; the AffineMatrix_BuildForEffect result shared with runtime->auto_enabled is worth 17 (619 with it, 636 without), dropped as noise. */
 /* Trial (2026-10-07): the mode-1 blank and closing loops index each row as tile_row = &render->tilemap[panel * 3 + cnt * 32] (native's panel*2 giv plus panel): 787 -> 785 -> 776. The same in the mode-0 blank loop: 868, reverted. The mode-1 content loop in the permuter's mode-0 form: 899, reverted. */
@@ -202,15 +203,12 @@ s32 Ui_RunSelectionScreen(s32 mode)
             } else {
                 s32 panel;
                 for (panel = 0; panel < 6 - work->count; panel++) {
-                    u16 *tile_row = &render->tilemap[panel * 3];
-                    cnt = 0;
-                    if (cnt <= 2) {
-                        do {
-                            s32 col;
-                            for (col = 0; col <= 2; col++)
-                                tile_row[0x222 + (col & 3)] = 0xf07f;
-                            cnt++, tile_row += 32;
-                        } while (cnt <= 2);
+                    for (cnt = 0; cnt <= 2; ) {
+                        u16 *tile_row = &render->tilemap[panel * 3 + cnt * 32];
+                        s32 col;
+                        cnt++;
+                        for (col = 0; col <= 2; col++)
+                            tile_row[0x222 + (col & 3)] = 0xf07f;
                     }
                 }
                 panel = 0;
@@ -350,9 +348,10 @@ s32 Ui_RunSelectionScreen(s32 mode)
     {
         s32 panel;
         for (panel = 0; panel <= 6; panel++) {
-            for (cnt = 0; cnt <= 2; cnt++) {
+            for (cnt = 0; cnt <= 2; ) {
                 u16 *tile_row = &render->tilemap[panel * 3 + cnt * 32];
                 s32 col;
+                cnt++;
                 for (col = 0; col <= 2; col++)
                     tile_row[0x225 + (col & 3)] = 0xf07f;
             }

@@ -1,8 +1,13 @@
-/* 08026080: listing 1585, draft 1585, differ 108 (common 1531); both
- * frames are 324 bytes. All that remains is the order of the spill
- * slots below sp+48 (see the hash analysis below) and movs r2, #0
- * scheduled after movs r7, #5 in the clear loop (native before).
+/* 08026080: listing 1585, draft 1585, differ 106 (common 1532); both
+ * frames are 324 bytes. Every remaining difference is a spill slot offset
+ * below sp+48 (see the hash analysis below); every instruction, register
+ * and order matches.
  * Session T10-08026080/4 (from 116), kept:
+ * - the clear loop as for (i = 0; i < 6; i++) tbl[i].flags = 0: loop's
+ *   dbra reversal (one store to a giv of i) turns it into the native
+ *   count down from tbl[5], and emits the new counter start after the
+ *   hoisted 0, so movs r2, #0 now precedes movs r7, #5 as native: 106.
+ *   tbl[5 - i] counting up 110 (reversed again, stepping up from tbl[0]).
  * - the pending loop's two branches compute block locals x and y from
  *   every load first, then store targetPos.x, slot->x, targetPos.y,
  *   slot->y (the else branch with slot->flags = 1 before them): the
@@ -260,11 +265,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         ((struct MenuCell **)&gBattleWork)[48]->slide_offset = -2;
     else
         ((struct MenuCell **)&gBattleWork)[48]->slide_offset = 16;
-    i = 5;
-    while (i >= 0) {
+    for (i = 0; i < 6; i++)
         tbl[i].flags = 0;
-        i--;
-    }
     cursor = -1;
     if (mode == 2) {
         for (i = 0; i <= 5 && runtime->party_units[i] != 0xFF; i++) {

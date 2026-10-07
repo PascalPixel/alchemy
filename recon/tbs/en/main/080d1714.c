@@ -1,4 +1,4 @@
-/* 080d1714: differ 793 of 1481 instructions (1472 generated, common
+/* 080d1714: differ 792 of 1481 instructions (1471 generated, common
  * 1080). BattleEffectWork, BattleEffectArgument, MotionObject and
  * EffectStep replace local partial layouts. The control flow already
  * follows the listing; what remains is register allocation and spill
@@ -66,8 +66,26 @@
  * - the 9-object placement loop counts with index, the native's r9:
  *   793 (slot's priority now falls below index's, so global.c gives
  *   index r9 and slot fp as the native).
+ * - draw sources as &runtime->sheet[frame / 4 % 3 * 3072 + ...]:
+ *   runtime + offset in the native's operand order, 791.
+ * - burst setup stores variant = 0 after z, as sched2 places it
+ *   between the umodsi3 result and the z store: 792 (1471 generated).
+ * - threshold = index * 12 + 330 (or 330 + index * 12) each
+ *   iteration again, on 792: 1004, but 1481 instructions as the native
+ *   and its loop end matches exactly: four reduced givs (0x7720 +
+ *   28i, 28i, frame - threshold, threshold) incremented in the
+ *   native's order. The frame grows to 364: wave_x >> 17 is hoisted
+ *   out of the distance loop into its own slot (the native shifts
+ *   wave_x inside each iteration; 792 hoists it too), and one more
+ *   slot sits at sp+12. Ignoring stack and literal offsets it is 410
+ *   lines against 792's 404: fix the hoist and the extra slot there.
  * Remaining: frame - threshold is not reduced to a giv (native
- * sp+20); the sqrt sums take r4/r5 where the native uses r2/r1. */
+ * sp+20) unless threshold comes from index; the distance loop hoists
+ * wave_x >> 17; the first draw shares one 48 for 48 - size and the
+ * width argument, and the second keeps 48 in r4 across the first call
+ * where the native rematerializes it and caller-saves the function
+ * pointer in r4; the sqrt sums take r4/r5 where the native uses
+ * r2/r1. */
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RESOURCE.H"
@@ -318,8 +336,8 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 size = 48;
             draw_rectangle(
                 draw_destination,
-                (u8 *)runtime + frame / 4 % 3 * 3072
-                    + (48 - size) * 48,
+                &runtime->sheet[frame / 4 % 3 * 3072
+                    + (48 - size) * 48],
                 32,
                 112 - size,
                 48,
@@ -332,8 +350,8 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 size = 64;
             draw_rectangle(
                 draw_destination,
-                (u8 *)runtime + frame / 4 % 3 * 3072
-                    + (64 - size) * 48,
+                &runtime->sheet[frame / 4 % 3 * 3072
+                    + (64 - size) * 48],
                 32,
                 64 - size,
                 48,
@@ -425,9 +443,9 @@ void Unnamed_080d1714(struct BattleEffectArgument *argument)
                 angle = (Random16() & 0x7fff) + 0x9fff;
                 runtime->particles[index].x = speed * Trig_Sin(angle);
                 runtime->particles[index].y = speed * Trig_Cos(angle);
-                runtime->particles[index].variant = 0;
                 runtime->particles[index].z =
                     ((u32)Random16() % 200 - 100) << 16;
+                runtime->particles[index].variant = 0;
                 index++;
             } while (index != 32);
 

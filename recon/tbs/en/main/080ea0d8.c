@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 659 of 2455 (listing 2455, draft 2432, common 2114).
+/* 080ea0d8: differ 631 of 2455 (listing 2455, draft 2432, common 2128).
  * Remaining: register allocation, scheduling, constant hoisting, repeated
  * loads and pool placement. The first particle and dust blocks now use
  * native's pointer, counter, size registers and spill offsets; several
@@ -229,7 +229,20 @@
  * Independently removing height gives 1151, quarter 1205, second callback
  * 1191, first callback 1214. Separate left/top updates preserve 659.
  * Kept only the four measured callback, quarter and height bindings;
- * all coordinates and pointers otherwise remain ordinary locals. */
+ * all coordinates and pointers otherwise remain ordinary locals.
+ * Continuation (2026-10-08): named priority gives 722 from 659, plus
+ * callback through slots gives 699; neither retained. An ordinary first
+ * height local gives 641. Initializing it after the callback gives 639,
+ * a width local is unchanged; initializing the second height after its
+ * callback gives 631. Moving top after the callback is unchanged.
+ * Circle horizontal extent locals, shared or split, give 732; operands
+ * on both saved halves give 723. A second-ring callback copy or r5 binding
+ * alone is unchanged; adding an operand gives 653. A ring-local dimension
+ * is unchanged. First-ring literal width gives 642; moving its height
+ * after LoadWork, narrowing it, adding a loop-local height and expressing
+ * the same dimensions from height rather than width each preserve 642.
+ * None of these trials is retained. At the 631 form, removing the first
+ * callback binding gives 1203 and removing the second height gives 1157. */
 #include "CANVAS.H"
 #include "RESOURCE.H"
 #include "MEM.H"
@@ -815,20 +828,22 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             draw(canvas, work->sheet + 0x6110, 48, 40, 24, 41);
         }
         if (frame >= 68 && frame < 76) {
-            /* FAKEMATCH: native keeps the four-call callback in r9; an ordinary copy coalesces into the root spill (1214 -> 659 after the second petal lifetime correction). */
+            /* FAKEMATCH: native keeps the four-call callback in r9; an ordinary copy coalesces into the root spill (1203 -> 631 after the height lifetime correction). */
             register DrawRectangle put asm("r9");
             s32 d = 76 - frame;
             u8 *cell = work->sheet + 0x64e8;
             s32 half = d / 2;
             s32 x = 49 - half;
             s32 top = 38 - d;
+            s32 height;
             put = draw;
-            put(canvas, cell, x, top, 22, 44);
+            height = 44;
+            put(canvas, cell, x, top, 22, height);
             d += 38;
-            put(canvas, cell, x, d, 22, 44);
+            put(canvas, cell, x, d, 22, height);
             half += 49;
-            put(canvas, cell, half, top, 22, 44);
-            put(canvas, cell, half, d, 22, 44);
+            put(canvas, cell, half, top, 22, height);
+            put(canvas, cell, half, d, 22, height);
         }
         if (frame >= 78 && frame < 80) {
             draw(canvas, work->sheet + 0x6000, 52, 51, 16, 17);
@@ -847,9 +862,10 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             s32 left = 49 - quarter;
             s32 top = 38 - d;
             s32 bottom;
-            /* FAKEMATCH: native keeps the four-call height in r8; an ordinary local rematerializes it and removes the cell spill (1151 -> 659). */
-            register s32 height asm("r8") = 44;
+            /* FAKEMATCH: native keeps the four-call height in r8; an ordinary local rematerializes it and removes the cell spill (1157 -> 631). */
+            register s32 height asm("r8");
             put = draw;
+            height = 44;
             put(canvas, cell, left, top, 22, height);
             bottom = lower - 126;
             put(canvas, cell, left, bottom, 22, height);

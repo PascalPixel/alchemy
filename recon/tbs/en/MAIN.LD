@@ -286,7 +286,6 @@
         "*/games/THE BROKEN SEAL/SRC/MENU/DJINNDIF.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/RENDER/CREATE_OUTPUT_FROM_RESOURCE_SLOT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/PREVIEW.o"(.text)
-        "*/recon/tbs/raw/08023178.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/08023e70.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/08024934.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/GAME/ITEM/CLASSIFY_USE_ABILITY.o"(.text)

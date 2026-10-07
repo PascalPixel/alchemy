@@ -1,3 +1,8 @@
+//--------------------------------------------------------------------------
+// IMPACT.C
+// 散って集まる粒の動きと、重い衝撃の破片
+//--------------------------------------------------------------------------
+
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -15,14 +20,14 @@
 #include "FX_SCENE.H"
 #include "OBJECT_EFX.H"
 #include "SOUND_IDS.H"
-#include "SYSTEM.H"
 
-#define Camera_WorldToScreen ((void (*)(struct EffectPosition*))Camera_WorldToScreen)
+#define Camera_WorldToScreen ((void (*)(struct EffectPosition *))Camera_WorldToScreen)
 
-struct EffectPosition {
-    s32 x;
-    s32 y;
-    s32 z;
+struct EffectPosition
+{
+	s32 x; // 16.16 固定小数
+	s32 y;
+	s32 z;
 };
 
 extern struct BattleFxScene *gEffectWork;
@@ -31,101 +36,116 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectPosition *outp
 
 void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
 
-struct ImpactPosition {
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-void Audio_PlayCue(s32 cue);
+void				  Audio_PlayCue(s32 cue);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 s32 RunBattleEffect04();
 
-void BattleFx_UpdateRadialBurst(struct EffectSlot *effect)
+//--------------------------------------------------------------------------
+// 粒の動き : 原点のまわりへ散ってから、主オブジェクトのそばへ集まって消える
+//--------------------------------------------------------------------------
+void BattleFx_UpdateRadialBurst(struct EffectSlot *slot)
 {
-    struct BattleFxScene *runtime = gEffectWork;
-    struct EffectPosition value;
-    s32 state;
+	struct BattleFxScene *scene = gEffectWork;
+	struct EffectPosition pos;
+	s32					  state;
 
 again:
-    state = effect->state;
-    if (state == 0) {
-        value.x = effect->origin_x;
-        value.z = effect->origin_z;
-        Vector_AddPolarOffset(0x190000, (u16)Random16(), &value);
-        effect->target_x = value.x;
-        effect->target_z = value.z;
-        effect->acceleration = 0x30000;
-        effect->max_speed = 0x30000;
-        effect->flag42 = 0;
-        effect->state++;
-        return;
-    }
+	state = slot->state;
+	if (state == 0)
+	{
+		// 原点から 25 ドット、でたらめな方向へ
+		pos.x = slot->origin_x;
+		pos.z = slot->origin_z;
+		Vector_AddPolarOffset(25 << 16, (u16)Random16(), &pos);
+		slot->target_x = pos.x;
+		slot->target_z = pos.z;
+		slot->acceleration = 3 << 16;
+		slot->max_speed = 3 << 16;
+		slot->flag42 = 0;
+		slot->state++;
+		return;
+	}
 
-    if (state == 1) {
-        if (BattleFx_HasReachedTarget(effect) == 0) {
-            effect->state++;
-            goto again;
-        }
-        return;
-    }
+	if (state == 1)
+	{
+		// 着いたらすぐ次へ
+		if (BattleFx_HasReachedTarget(slot) == 0)
+		{
+			slot->state++;
+			goto again;
+		}
+		return;
+	}
 
-    if (state == 2) {
-        struct MotionObject *target = runtime->main_object;
+	if (state == 2)
+	{
+		// 主オブジェクトの 16 ドット上から scene->angle へ 8 ドット、
+		// 画面座標にして 4 ドットの揺らぎを足す
+		struct MotionObject *obj = scene->main_object;
 
-        value.x = target->x;
-        value.y = target->y + 0x100000;
-        value.z = target->z;
-        Vector_AddPolarOffset(0x80000, runtime->angle, &value);
-        Camera_WorldToScreen(&value);
-        Vector_AddPolarOffset(0x40000, Random16(), &value);
-        effect->target_x = value.x;
-        effect->target_z = value.z;
-        effect->max_turn_step = 0x800;
-        effect->flag42 = 1;
-        effect->state++;
-        return;
-    }
+		pos.x = obj->x;
+		pos.y = obj->y + (16 << 16);
+		pos.z = obj->z;
+		Vector_AddPolarOffset(8 << 16, scene->angle, &pos);
+		Camera_WorldToScreen(&pos);
+		Vector_AddPolarOffset(4 << 16, Random16(), &pos);
+		slot->target_x = pos.x;
+		slot->target_z = pos.z;
+		slot->max_turn_step = 0x800;
+		slot->flag42 = 1;
+		slot->state++;
+		return;
+	}
 
-    if (state == 3 && BattleFx_HasReachedTarget(effect) == 0)
-        BattleFx_ClearOwnedSlot(effect);
+	if (state == 3 && BattleFx_HasReachedTarget(slot) == 0)
+		BattleFx_ClearOwnedSlot(slot);
 }
 
-s32 SpawnHeavyImpactEffect(struct MotionObject *source)
+//--------------------------------------------------------------------------
+// 重い衝撃 : y を 32 ドット下げた位置に 0x11b を置き、破片を 12 個まき散らす
+// src : 衝撃の位置になるオブジェクト
+//--------------------------------------------------------------------------
+s32 SpawnHeavyImpactEffect(struct MotionObject *src)
 {
-    struct ImpactPosition position;
-    struct ObjectRuntime *object;
-    struct ObjectRuntime *fragment;
-    s32 i;
+	struct EffectPosition pos;
+	struct ObjectRuntime *obj;
+	struct ObjectRuntime *frag;
+	s32					  i;
 
-    Audio_PlayCue(SOUND_HEAVY_IMPACT);
-    position.x = source->x;
-    position.y = source->y;
-    position.z = source->z;
-    object = Object_Spawn(0x11b, position.x, position.y - 0x200000, position.z);
-    if (object != NULL) {
-        object->flags = 0;
-        object->unknown_5e = 20;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_CommonParticleScript);
-    }
+	Audio_PlayCue(SOUND_HEAVY_IMPACT);
+	pos.x = src->x;
+	pos.y = src->y;
+	pos.z = src->z;
+	obj = Object_Spawn(0x11b, pos.x, pos.y - (32 << 16), pos.z);
+	if (obj != NULL)
+	{
+		obj->flags = 0;
+		obj->unknown_5e = 20;
+		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+	}
 
-    for (i = 0; i < 12; i++) {
-        fragment = Object_Spawn(0x11d, position.x, position.y, position.z);
-        if (fragment != NULL) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)fragment, BattleFx_FragmentScript);
-            fragment->speed_limit = Random16() + 0x10000;
-            fragment->acceleration = 0x10000;
-            fragment->flags = 0;
-            Motion_SetTargetPositionFromMagnitudeAngle(
-                fragment, Random16() * 24 + 0x80000, Random16());
-        }
-    }
-    return 0;
+	// 破片 : 速さ 1〜2 ドット、8〜32 ドット先のでたらめな方向へ
+	for (i = 0; i < 12; i++)
+	{
+		frag = Object_Spawn(0x11d, pos.x, pos.y, pos.z);
+		if (frag != NULL)
+		{
+			ObjectDispatch_InitializeFar((struct DispatchObject *)frag, BattleFx_FragmentScript);
+			frag->speed_limit = Random16() + (1 << 16);
+			frag->acceleration = 1 << 16;
+			frag->flags = 0;
+			Motion_SetTargetPositionFromMagnitudeAngle(
+				frag, Random16() * 24 + (8 << 16), Random16());
+		}
+	}
+	return 0;
 }
 
+//--------------------------------------------------------------------------
+// 戦闘エフェクト 4 番を呼ぶ
+//--------------------------------------------------------------------------
 void BattleFx_CallEffect04(void)
 {
-    RunBattleEffect04();
+	RunBattleEffect04();
 }

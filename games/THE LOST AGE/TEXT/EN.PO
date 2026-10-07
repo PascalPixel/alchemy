@@ -17507,7 +17507,7 @@ msgctxt "message"
 msgid "04374"
 msgstr "Exorcise the spirits at a Sanctum."
 
-msgctxt "message"
+msgctxt "MsgYourNameAndLevelExperience"
 msgid "04375"
 msgstr "Your name and level. Experience{line_break}points increase your level."
 

@@ -713,7 +713,9 @@ Object_SetMoveTarget:
 	.incbin "baserom.gba", 0x00025c8a, 0x00000002
 	.section .rom.0002632c, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x0002632c, 0x00000c54
+	.incbin "baserom.gba", 0x0002632c, 0x00000aa4
+	.section .rom.00026e60, "ax"
+	.incbin "baserom.gba", 0x00026e60, 0x00000120
 	.section .rom.00026fc8, "ax"
 	.global Func_0802de8c
 	.type Func_0802de8c, %function
@@ -4453,8 +4455,8 @@ Func_080fe184:
 	.thumb_func
 Func_080fe274:
 	.incbin "baserom.gba", 0x000fe370, 0x00000f80
-	.section .rom.000ff3e4, "ax"
-	.incbin "baserom.gba", 0x000ff3e4, 0x000005f8
+	.section .rom.000ff46c, "ax"
+	.incbin "baserom.gba", 0x000ff46c, 0x00000570
 	.section .rom.000ffa48, "ax"
 	.incbin "baserom.gba", 0x000ffa48, 0x00000b8c
 	.section .rom.0010065c, "ax"
@@ -4660,8 +4662,6 @@ AudioCommand_WaitForStateByteClearFar:
 	.thumb_func
 Inn_PlaySleepFar:
 	.incbin "baserom.gba", 0x00108080, 0x00000008
-	.section .rom.001080a8, "ax"
-	.incbin "baserom.gba", 0x001080a8, 0x00000088
 	.section .rom.00108148, "ax"
 	.incbin "baserom.gba", 0x00108148, 0x0000017c
 	.global Func_081082c4

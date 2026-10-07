@@ -19347,7 +19347,7 @@ msgctxt "message"
 msgid "04834"
 msgstr "Exorcízalo en un Templo."
 
-msgctxt "message"
+msgctxt "MsgYourNameAndLevelExperience"
 msgid "04835"
 msgstr "El nombre y el nivel. Los puntos{line_break}de experiencia suben el nivel."
 

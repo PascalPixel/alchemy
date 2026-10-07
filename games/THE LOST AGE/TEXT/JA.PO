@@ -17495,7 +17495,7 @@ msgctxt "message"
 msgid "04371"
 msgstr "神殿で おはらいをしてもらえます"
 
-msgctxt "message"
+msgctxt "MsgYourNameAndLevelExperience"
 msgid "04372"
 msgstr "名前とレベルです{line_break}けいけんちがたまるとレベルアップします"
 

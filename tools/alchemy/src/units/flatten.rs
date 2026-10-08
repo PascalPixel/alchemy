@@ -441,10 +441,6 @@ fn expand_local(root: &Path, source: &str, text: &str, group: &BTreeSet<String>,
         let local = trimmed.strip_prefix("#include").map(str::trim).and_then(|r| r.strip_prefix('"')).and_then(|r| r.split('"').next());
         if let Some(name) = local {
             let header = directory.join(name).to_string_lossy().into_owned();
-            if expanded.contains(&header) {
-                // Already expanded where an earlier file included it.
-                continue;
-            }
             if root.join(&header).is_file() && depth < 8 {
                 let includers = includers_of(root, &header)?;
                 if includers.iter().all(|i| group.contains(i) || expanded.contains(i)) {
@@ -825,14 +821,6 @@ mod tests {
         assert_eq!(strip_guard("#ifndef A_H\n#define A_H\n\nvoid f(void);\n\n#endif\n"), "void f(void);\n");
         assert_eq!(strip_guard("void f(void);\n"), "void f(void);\n");
         assert_eq!(strip_guard("#include \"a.h\"\n#ifndef B_H\n#define B_H\nvoid f(void);\n#endif\n"), "#include \"a.h\"\nvoid f(void);\n");
-    }
-
-    #[test]
-    fn a_header_is_expanded_once() {
-        let root = tempfile::tempdir().unwrap();
-        let mut expanded: BTreeSet<String> = ["d/h.h".to_string()].into_iter().collect();
-        let text = expand_local(root.path(), "d/b.c", "#include \"h.h\"\nint x;\n", &BTreeSet::new(), &mut expanded, 0).unwrap();
-        assert_eq!(text, "int x;\n");
     }
 
     #[test]

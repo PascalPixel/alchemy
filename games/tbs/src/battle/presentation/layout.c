@@ -1,0 +1,426 @@
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "menu.h"
+#include "minigame.h"
+#include "sound.h"
+#include "system.h"
+#include "types.h"
+#include "objdisp.h"
+#include "ram_buffer.h"
+#include "motobj.h"
+#include "btlwork.h"
+#include "btlsys.h"
+#include "inventory.h"
+#include "btlpty.h"
+
+
+struct MotionObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
+s32 ArcTan2(s32, s32);
+
+
+
+s32 BattleMotion_GetSlotPalette(s32 id)
+{
+    return BtlObjGet(id)->palette;
+}
+
+s32 EnmChk(s32 summon)
+{
+    struct BtlWork *ptr;
+    s32 retval;
+    s32 i;
+
+    retval = Summon_IsEntryFlagged(summon);
+    ptr = BtlWk;
+    for (i = 0; i <= 5; i++) {
+        if (ptr->sprite_slots[i] != 0)
+            continue;
+        if (retval != 0)
+            break;
+        if (i <= 4 && ptr->sprite_slots[i + 1] == 0)
+            break;
+    }
+    return i != 6;
+}
+
+s32 SummonSlot_RegisterActorSprites(s32 unit)
+{
+    s32 pass;
+    struct BtlWork *table = BtlWk;
+    struct BtlUnit *actor = UnitGetFar(unit);
+    s32 single_slot = Summon_IsEntryFlagged(actor->class_id);
+    s32 result = 0;
+    s32 sprite_value = Summon_GetEntryValue(actor->class_id);
+
+    pass = result;
+    /* FAKEMATCH: empty asm barrier on pass: cse no longer knows the copy of result is zero, so pass starts as mov r4, r10 as native, not movs r4, #0 (1 of 119 rows differ without) */
+    asm("" : "+r"(pass));
+    do {
+        s32 slot;
+
+        if (actor->class_index != 0)
+            continue;
+
+        for (slot = 0; slot <= 5; slot++) {
+            if (table->sprite_slots[slot] != 0)
+                continue;
+            if (single_slot)
+                break;
+            if (slot <= 4 && table->sprite_slots[slot + 1] == 0)
+                break;
+        }
+
+        if (slot == 6)
+            break;
+
+        {
+            s32 flag = Summon_GetEntryFlag1Field(actor->class_id);
+            s32 buffer_addr = (slot << 14) + (s32)Ram_ActorSpriteSlots;
+
+            /* FAKEMATCH: an empty use of sprite_value steers it into r7 as the ROM allocates it */
+            asm("" : "+r"(sprite_value));
+            if (ResourceSlot_LoadFar(slot, (u32 *)buffer_addr, sprite_value + pass, flag) == 0)
+                return 0;
+        }
+
+        if (pass == 0)
+            result = (slot << 12) | sprite_value;
+
+        table->sprite_slots[slot] = unit;
+        if (!single_slot)
+            table->sprite_slots[slot + 1] = unit;
+
+        if (sprite_value != 476 && sprite_value != 483)
+            break;
+    } while (++pass <= 1);
+
+    return result;
+}
+
+s32 BattleMotion_ReleaseObjectSlotByValue(s32 value)
+{
+    struct BtlWork *work = BtlWk;
+    s32 index;
+
+    for (index = 0; index <= 5; index++) {
+        if (work->sprite_slots[index] == value) {
+            ResourceSlot_LoadFar(index, 0, 0, 0);
+            work->sprite_slots[index] = 0;
+        }
+    }
+}
+
+s32 Resource_FindFreeSlot(s32 key)
+{
+    s32 index;
+    s32 entry;
+    u32 value;
+    s32 result;
+
+    for (index = 0;; index++) {
+        entry = Resource_SlotAssignments[index];
+        if (key == (entry & 0x1ff)) {
+            /* FAKEMATCH: empty asm barrier with a memory clobber: it ends cse's memory equivalence, so the entry is reread, ldrh [table, index], as native; without it cse reuses the first load (23 of 25 rows differ) */
+            asm("" ::: "memory");
+            value = Resource_SlotAssignments[index];
+            result = value >> 9;
+            goto done;
+        }
+        if ((s16)entry == -1)
+            break;
+    }
+    result = 6;
+done:
+    return result;
+}
+
+s32 BattleUnit_LookupWeaponValueByClass(s32 id)
+{
+    struct BtlUnit *state;
+    s32 entry;
+    s32 result;
+
+    state = UnitGetFar(id);
+    entry = Inventory_FindEquippedFar(id, 1);
+    result = 0;
+    if (entry >= 0) {
+        s32 sel;
+
+        sel = Resource_FindFreeSlot(state->inventory[entry] & 0x1FF);
+        switch (state->class_id) {
+        case ROBIN:
+            result = BattleUnit_WeaponAnimsClass0[sel];
+            break;
+        case GERALD:
+            result = BattleUnit_WeaponAnimsClass1[sel];
+            break;
+        case IWAN:
+            result = BattleUnit_WeaponAnimsClass2[sel];
+            break;
+        case MEARI:
+            result = BattleUnit_WeaponAnimsClass3[sel];
+            break;
+        case GARUSHIA:
+            break;
+        case JASMINE:
+            result = BattleUnit_WeaponAnimsClass5[sel];
+            break;
+        }
+    }
+    return result;
+}
+
+void BtlObjMake(struct BtlObj *actor, s32 unit, s32 x, s32 y)
+{
+    s32 fixed_x;
+    s32 fixed_y;
+    s32 actor_flag;
+    s32 sprite;
+    s32 existing_sprite;
+    struct BtlUnit *unit_record;
+    struct MotionObject *object;
+    s32 position;
+    s32 anim;
+    u8 class_id;
+
+    fixed_x = x << 16;
+    fixed_y = y << 16;
+    object = Object_CreateFar(0xf000, fixed_x, 0, fixed_y);
+    unit_record = UnitGetFar(unit);
+    actor_flag = 0;
+    existing_sprite = SummonSlot_RegisterActorSprites(unit);
+
+    if (unit_record->class_index == 0) {
+        sprite = Summon_GetEntryValue(unit_record->class_id);
+        if (existing_sprite == 0)
+            actor_flag = Summon_GetEntryFlag1Field(unit_record->class_id);
+        else
+            sprite = existing_sprite;
+    } else {
+        switch (unit_record->class_id) {
+        case GERALD: sprite = BTL_CHARA(GERALD); break;
+        case MEARI: sprite = BTL_CHARA(MEARI); break;
+        case IWAN: sprite = BTL_CHARA(IWAN); break;
+        case JASMINE: sprite = BTL_CHARA(JASMINE); break;
+        case ROBIN:
+        default: sprite = BTL_CHARA(ROBIN); break;
+        }
+        if (unit < 0 || unit > 7)
+            actor_flag = 1;
+    }
+
+    actor->scale = 0x10000;
+    switch (unit_record->class_id) {
+    case 78: actor->scale = 0x19999; break;
+    case 89: actor->scale = 0x18ccc; break;
+    case 130: actor->scale = 0x13333; break;
+    case 131: actor->scale = 0x19999; break;
+    case 138: actor->scale = 0x18000; break;
+    case 147: actor->scale = 0x1cccc; break;
+    case 149: actor->scale = 0x1cccc; break;
+    case 29: actor->scale = 0x10000; break;
+    case 121: actor->scale = 0x1b333; break;
+    case 148: actor->scale = 0x18000; break;
+    case 150: actor->scale = 0x18000; break;
+    case 151: actor->scale = 0x18000; break;
+    case 152: actor->scale = 0x18000; break;
+    case 153: actor->scale = 0x18000; break;
+    case 154: actor->scale = 0x18000; break;
+    case 155: actor->scale = 0x18000; break;
+    case 156: actor->scale = 0x18000; break;
+    case 157: actor->scale = 0x18000; break;
+    case 47: actor->scale = 0x13333; break;
+    case 48: actor->scale = 0x13333; break;
+    case 49: actor->scale = 0x16666; break;
+    case 84: actor->scale = 0x10000; break;
+    case 85: actor->scale = 0x14000; break;
+    case 128: actor->scale = 0x16666; break;
+    case 129: actor->scale = 0x16666; break;
+    case 94: actor->scale = 0x18000; break;
+    case 98: actor->scale = 0x14ccc; break;
+    case 110: actor->scale = 0x13333; break;
+    case 132: actor->scale = 0x10ccc; break;
+    case 133: actor->scale = 0x10ccc; break;
+    case 134: actor->scale = 0x11999; break;
+    case 135: actor->scale = 0x11999; break;
+    case 136: actor->scale = 0x13333; break;
+    case 137: actor->scale = 0x13333; break;
+    case 141: actor->scale = 0x18000; break;
+    case 144: actor->scale = 0x13333; break;
+    case 145: actor->scale = 0x18000; break;
+    case 146: actor->scale = 0x18ccc; break;
+    case 52: actor->scale = 0x14000; break;
+    case 105: actor->scale = 0x14000; break;
+    case 18: case 19: case 20: case 21: case 30:
+    case 68: case 69: case 70: case 92:
+    case 122: case 123: case 124: case 125: case 126:
+        actor->scale = 0xe666;
+        break;
+    }
+
+    actor->object = object;
+    actor->anchor_x = fixed_x;
+    actor->anchor_z = fixed_y;
+    actor->palette = actor_flag;
+    actor->resource = sprite;
+    anim = BattleUnit_LookupWeaponValueByClass(unit);
+    actor->animation = 0;
+    actor->animation_entry = 0;
+    actor->effect_entry = 0;
+    actor->active = 0;
+    actor->fading = 0;
+    actor->effect = 0x1fe;
+    class_id = unit_record->class_id;
+    actor->overlay = anim;
+
+    if (class_id <= GERALD && Inventory_GetEquippedItemFar((struct BtlUnit *)unit_record, 1) == 15) {
+        if (unit_record->class_id == ROBIN) {
+            sprite = 480;
+            actor->resource = sprite;
+        } else {
+            sprite = 482;
+            actor->resource = sprite;
+        }
+        actor->overlay = 0;
+    }
+
+    position = ArcTan2(y / 8, x) + 0x8000;
+    object->angle = position;
+    object->unknown_59 = 3;
+    object->motion_flags = 2;
+    if (unit_record->class_index == 0) {
+        object->scale_x = 0x14ccc;
+        object->scale_y = 0x14ccc;
+    } else {
+        object->scale_x = 0x10000;
+        object->scale_y = 0x10000;
+    }
+    ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattlePres_ActorObjectScript);
+}
+
+void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y)
+{
+    index *= 2;
+    *x = BattlePlacement_StepPairs[index];
+    *y = BattlePlacement_StepPairs[index + 1];
+}
+
+void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_positions)
+{
+    s32 total_spacing = count <= 4 ? 30 : 27;
+    s32 z = ((count - 1) * total_spacing) / 2;
+    s32 index;
+
+    for (index = 0; index != count; index++) {
+        s32 spacing = 0;
+
+        x_positions[index] = -80;
+        if (index != 0) {
+            struct BtlUnit *actor;
+
+            spacing = 25;
+            if ((u16)(actor_ids[index] - 254) > 1) {
+                actor = UnitGetFar(actor_ids[index]);
+                spacing = Summon_IsEntryFlagged(actor->class_id) ? 27 : 38;
+                if (actor->class_id == 148 || actor->class_id == 121) {
+                    x_positions[index] = -50;
+                }
+            }
+        }
+        z -= spacing / 2;
+        z_positions[index] = z;
+        spacing = 25;
+        if ((u16)(actor_ids[index] - 254) > 1) {
+            struct BtlUnit *actor = UnitGetFar(actor_ids[index]);
+
+            spacing = Summon_IsEntryFlagged(actor->class_id) ? 27 : 38;
+        }
+        z -= spacing / 2;
+    }
+}
+
+s32 EnmSlotGet(void)
+{
+    s32 i;
+    s32 id;
+
+    for (i = 0; i <= 5; i++) {
+        id = i + 0x80;
+        if (UnitGetFar(id)->side == 0)
+            break;
+    }
+    if (i == 6)
+        return -1;
+    return id;
+}
+
+s32 EnmUpd(void)
+{
+    struct BtlWork *work = BtlWk;
+    u16 unit_ids[14];
+    s32 x[6];
+    s32 z[6];
+    s32 count;
+    s32 i;
+
+    for (i = 0; i < 6 && work->enm_no[i] != 0xff; i++)
+        unit_ids[i] = work->enm_no[i];
+    count = i;
+    Summon_LayoutPositions(unit_ids, count, x, z);
+    for (i = 0; i < count; i++) {
+        s32 id = work->enm_no[i];
+
+        if (id != 0xfe) {
+            struct BtlObj *object = BtlObjGet(id);
+
+            object->anchor_x = x[i] << 16;
+            object->anchor_z = z[i] << 16;
+        }
+    }
+}
+
+void BattleUnit_RefreshPlacement(void)
+{
+    struct BtlWork *work;
+    u16 ids[14];
+    s32 x[6];
+    s32 z[6];
+    s32 count;
+    s32 i;
+    s32 place;
+    s32 stand;
+    s32 n;
+    s32 value;
+    u8 *p;
+
+    place = 0;
+    stand = 0;
+    work = BtlWk;
+    count = BattleParty_PrepareActiveOwners(ids);
+    value = 0xff;
+    for (i = 13; i >= 0; i--)
+        work->placement[i] = value;
+    p = &work->placement[13];
+    for (n = 5, value = 13; n >= 0; n--, value--)
+        *p-- = value;
+    for (i = 0; i < count; place++, i++) {
+        s32 id = ids[i];
+
+        work->placement[id] = place;
+        BtlObjMake(BtlObjGet(id), id,
+            BattlePlacement_StepPairs[place * 2], BattlePlacement_StepPairs[place * 2 + 1]);
+    }
+    for (i = 0; i < 6 && work->enm_no[i] != 0xff; i++)
+        ids[i] = work->enm_no[i];
+    count = i;
+    Summon_LayoutPositions(ids, count, x, z);
+    for (i = 0; i < count; i++, stand++) {
+        s32 id = work->enm_no[i];
+
+        if (id != 0xfe)
+            BtlObjMake(BtlObjGet(id), id, x[stand], z[stand]);
+    }
+}

@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "OBJDISP.H"
-#include "RAM_BUFFER.H"
-#include "OBJECT_EFX.H"
+#include "types.h"
+#include "objdisp.h"
+#include "ram_buffer.h"
+#include "object_efx.h"
 
 struct Triple08099340 {
     s32 x;

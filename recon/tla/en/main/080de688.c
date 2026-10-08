@@ -1,9 +1,9 @@
-#include "TYPES.H"
-#include "OBJECT_DISPATCH.H"
-#include "SCENE.H"
-#include "OBJECT_EFX.H"
-#include "FIXED_MATH.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "object_dispatch.h"
+#include "scene.h"
+#include "object_efx.h"
+#include "fixed_math.h"
+#include "system.h"
 extern u8 Data_03001e40[];
 void BattleEffect_InitializeSharedScene(void);
 s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);

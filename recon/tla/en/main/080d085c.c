@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "iwram_call.h"
+#include "ram_buffer.h"
 
 struct DisplayTransitionState {
     u8 reserved_000[0x52a];

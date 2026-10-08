@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "OBJECT_RUNTIME.H"
-#include "PARTY_STATE.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "object_runtime.h"
+#include "party_state.h"
+#include "system.h"
 
 struct ContextSprite {
     u8 unknown_00[0x1a];

@@ -1,0 +1,10 @@
+.syntax unified
+	.thumb
+	.include "games/tbs/src/system/overlay.inc"
+	.balign 4
+	overlay_veneer Scene_Initialize
+	overlay_veneer RariberoHeya_GetEntrances
+	overlay_veneer RariberoHeya_GetExits
+	overlay_veneer RariberoHeya_GetPlacements
+	overlay_veneer RariberoHeya_GetEvents
+	overlay_veneer RariberoHeya_GetRegions

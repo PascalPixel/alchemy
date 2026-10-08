@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "RENDER_INPUT.H"
+#include "types.h"
+#include "render_input.h"
 
 extern u8 *gMenuWork;
 

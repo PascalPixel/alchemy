@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "SCENE.H"
+#include "types.h"
+#include "scene.h"
 extern struct InnState *Data_03001f2c;
 
 void Scheduler_RemoveCallback(s32);

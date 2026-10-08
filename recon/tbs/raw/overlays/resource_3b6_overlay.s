@@ -1,5 +1,5 @@
 .syntax unified
-	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
+	.include "games/common/include/game/ed_asm.h"
 	.thumb
 	.section .rodata.x02008a90,"a",%progbits
 .L_02008a90:

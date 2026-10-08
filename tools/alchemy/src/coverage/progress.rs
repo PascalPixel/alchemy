@@ -175,16 +175,13 @@ fn run(argv: &[String]) -> Result<String, String> {
     }
     let devices = crate::devices::count(root)?;
     let mut lines = Vec::new();
-    for ((mark, game), state) in [("☀️", "The Broken Seal"), ("⚓️", "The Lost Age")]
+    for ((mark, game, id), state) in [("☀️", "The Broken Seal", "tbs"), ("⚓️", "The Lost Age", "tla")]
         .iter()
         .zip(&games)
     {
         let mut line = done_line(mark, game, state);
-        line.push_str(&patch_part(&root.join("games").join(game.to_uppercase()))?);
-        line.push_str(&crate::devices::summary(
-            &devices,
-            if game.starts_with("The Broken") { "tbs" } else { "tla" },
-        ));
+        line.push_str(&patch_part(&root.join("games").join(id))?);
+        line.push_str(&crate::devices::summary(&devices, id));
         lines.push(line);
         lines.extend(edition_lines(mark, state));
     }
@@ -271,7 +268,7 @@ fn patch_part(game: &std::path::Path) -> Result<String, String> {
             let path = entry.map_err(|error| error.to_string())?.path();
             if path.is_dir() {
                 walk(&path, found)?;
-            } else if path.to_string_lossy().ends_with("_PATCH.TSV") {
+            } else if path.to_string_lossy().ends_with("_patch.tsv") {
                 found.push(path);
             }
         }

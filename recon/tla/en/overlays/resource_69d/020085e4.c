@@ -1,10 +1,10 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "PARTY_STATE.H"
-#include "FIELD_EVENT.H"
-#include "IWRAM_CALL.H"
-#include "DMA.H"
-#include "IO_REG.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "party_state.h"
+#include "field_event.h"
+#include "iwram_call.h"
+#include "dma.h"
+#include "io_reg.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))

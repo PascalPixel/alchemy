@@ -1,8 +1,8 @@
-#include "MEM.H"
-#include "TYPES.H"
-#include "RESOURCE.H"
-#include "RESMENU.H"
-#include "RAM_BUFFER.H"
+#include "mem.h"
+#include "types.h"
+#include "resource.h"
+#include "resmenu.h"
+#include "ram_buffer.h"
 
 void Menu_CenterResourceEntries(s32 row, s32 width, s32 resource_base)
 {

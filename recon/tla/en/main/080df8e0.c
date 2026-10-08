@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "FIELD_EFFECT.H"
-#include "FIELD_SCENE.H"
+#include "types.h"
+#include "field_effect.h"
+#include "field_scene.h"
 
 extern const s32 *const gEffectScripts[];
 

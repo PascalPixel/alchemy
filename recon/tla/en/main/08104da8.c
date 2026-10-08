@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "ram_buffer.h"
 
 struct MenuEntryWork {
     u8 unknown_000[0xf8];

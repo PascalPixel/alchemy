@@ -1,5 +1,5 @@
-#include "SERIAL_RUNTIME.H"
-#include "AUDIO_ENGINE_SYMBOLS.H"
+#include "serial_runtime.h"
+#include "audio_engine_symbols.h"
 extern u8 gMapCellBuffer[];
 
 extern u8 gKeysHeld[];

@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "IO_REG.H"
-#include "IRQ.H"
+#include "types.h"
+#include "io_reg.h"
+#include "irq.h"
 
 void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
 {

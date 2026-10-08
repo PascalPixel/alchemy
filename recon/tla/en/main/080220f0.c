@@ -1,9 +1,9 @@
-#include "AFFINE.H"
-#include "CALLBACK_SCHEDULER.H"
-#include "RESOURCE.H"
-#include "TYPES.H"
-#include "ANIMSPR.H"
-#include "IWRAM_CALL.H"
+#include "affine.h"
+#include "callback_scheduler.h"
+#include "resource.h"
+#include "types.h"
+#include "animspr.h"
+#include "iwram_call.h"
 
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
 {

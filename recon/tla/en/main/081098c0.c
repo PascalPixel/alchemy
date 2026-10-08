@@ -1,6 +1,6 @@
-#include "BTLSYS.H"
-#include "SYSTEM.H"
-#include "FIXED_MATH.H"
+#include "btlsys.h"
+#include "system.h"
+#include "fixed_math.h"
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 extern u8 Data_03001c94[];

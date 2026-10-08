@@ -1,8 +1,8 @@
 /* Near miss: listing 58 instructions, draft 58, common 55, differ 6; the rest differs in instruction order. */
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "OBJECT_RUNTIME.H"
-#include "IWRAM_CALL.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "object_runtime.h"
+#include "iwram_call.h"
 
 struct EffectSprite {
     u8 unknown_00[4];

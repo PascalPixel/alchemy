@@ -1,5 +1,5 @@
-#include "MEM.H"
-#include "TEXT_RENDER_RUNTIME.H"
+#include "mem.h"
+#include "text_render_runtime.h"
 
 void UiText_RenderWideStringAtOffset(void *text, s32 work, s32 x, s32 y);
 

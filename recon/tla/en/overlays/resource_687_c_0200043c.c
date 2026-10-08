@@ -1,7 +1,7 @@
 /* Near miss (16 of 120 instructions differ): three loads of the object's
  * position sit one slot earlier or later than the native's, and the native
  * stores the turned x after it sums z. */
-#include "../../../../games/THE LOST AGE/SRC/FIELD/OVERLAY_687/OV687.H"
+#include "../../../../games/tla/src/field/overlay_687/ov687.h"
 
 void Func_0200043c(void)
 {

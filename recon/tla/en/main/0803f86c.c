@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "FIELD_EVENT.H"
+#include "types.h"
+#include "field_event.h"
 
 s32 BattleFx_FindConditionResourceFar(s16 scene, s16 entrance);
 s32 UiText_GetResourceDimensions(s32 resource, s32 *x, s32 *y, s32 *width, s32 *height);

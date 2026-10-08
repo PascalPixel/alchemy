@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 struct OwnerItems {
     u8 unknown_00[216];

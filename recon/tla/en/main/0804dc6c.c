@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "IO_REG.H"
+#include "types.h"
+#include "io_reg.h"
 
 extern volatile u32 gKeysRepeat;
 void Menu_DrawSelectionRow(s32 arg, s32 value, s16 *sub);

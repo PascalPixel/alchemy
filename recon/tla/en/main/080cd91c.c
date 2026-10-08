@@ -1,6 +1,6 @@
-#include "OBJECT_RUNTIME.H"
-#include "FIXED_MATH.H"
-#include "IWRAM_CALL.H"
+#include "object_runtime.h"
+#include "fixed_math.h"
+#include "iwram_call.h"
 
 u16 ArcTan2(s32 deltaZ, s32 deltaX);
 

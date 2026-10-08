@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 void *ObjectTable_Get(u32 object);
 

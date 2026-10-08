@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "system.h"
 extern u8 gOverlayArea[];
 extern char MsgPonderEllipsis;
 

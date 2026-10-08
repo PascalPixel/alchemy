@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "SCENE.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "scene.h"
+#include "system.h"
 s32 BattleFx_FindConditionResourceFar(s16, s16);
 void Event_SetDestinationFar(s16 primary, s16 secondary);
 void UiTextResource_Release(s32 resource);

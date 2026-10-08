@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "IO_REG.H"
+#include "types.h"
+#include "io_reg.h"
 
 extern volatile s32 gKeysRepeat;
 extern volatile s32 gKeyState;

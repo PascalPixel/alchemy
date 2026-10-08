@@ -1,5 +1,5 @@
-#include "RESOURCE.H"
-#include "MEM.H"
+#include "resource.h"
+#include "mem.h"
 
 struct GlyphPalette {
     u8 slot[256];

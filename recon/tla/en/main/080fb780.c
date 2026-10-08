@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "SYSTEM.H"
-#include "FIXED_MATH.H"
+#include "types.h"
+#include "system.h"
+#include "fixed_math.h"
 
 #define MENU_SUBOBJECT(menu, offset) (*(u8 **)((u8 *)(menu) + (offset)))
 

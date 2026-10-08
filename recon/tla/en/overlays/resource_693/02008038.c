@@ -1,9 +1,9 @@
-/* Func_02000064, Func_020000e0, Func_02000d08 and Func_02000d3c load scene ids 0xea and 0xeb from the literal pool: they wait for SceneId_ names in a ⚓️ SCENES.S table (O3).
+/* Func_02000064, Func_020000e0, Func_02000d08 and Func_02000d3c load scene ids 0xea and 0xeb from the literal pool: they wait for SceneId_ names in a ⚓️ scenes.s table (O3).
    Func_02000c14 differ 10: the native reloads gFrameCount's address for the second test instead of keeping it in r1. */
-#include "TYPES.H"
-#include "PARTY_STATE.H"
-#include "FIELD_EVENT.H"
-#include "FIELD_SPRITE.H"
+#include "types.h"
+#include "party_state.h"
+#include "field_event.h"
+#include "field_sprite.h"
 
 extern u8 Data_02001194[];
 extern u8 Data_020011ac[];

@@ -1,5 +1,5 @@
 
-	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
+	.include "games/common/include/game/ed_asm.h"
 	.set SHAMAN_GRAPHIC1_SCALE, 256
 	.set SHAMAN_GRAPHIC4_START_SCALE, 512
 	.set SHAMAN_GRAPHIC4_SMALL_SCALE, 256

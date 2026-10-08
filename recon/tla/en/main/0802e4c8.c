@@ -1,10 +1,10 @@
 /* ☀️ Map_BuildProbeRing; differ 10: after each Vector_AddPolarOffset call the
    native reloads the spilled loop counter one instruction earlier, inside the
    split angle step constant (arm9tdmi load scheduling). */
-#include "TYPES.H"
-#include "INPUT.H"
-#include "ANIMSPR.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "input.h"
+#include "animspr.h"
+#include "ram_buffer.h"
 
 extern s32 gFrameTick;
 

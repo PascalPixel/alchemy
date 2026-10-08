@@ -60,8 +60,8 @@ pub fn input_name(built: &str) -> Result<String, String> {
         .ok_or_else(|| format!("{built} names no form"))?;
     let form = rest.split('.').next().unwrap_or_default();
     let extension = match form {
-        form if data_form(form) => "TSV",
-        _ => "PNG",
+        form if data_form(form) => "tsv",
+        _ => "png",
     };
     Ok(if directory.is_empty() {
         format!("{stem}.{extension}")
@@ -70,8 +70,12 @@ pub fn input_name(built: &str) -> Result<String, String> {
     })
 }
 
+/// The file a recipe's table names beside its `input`, or under common/.
+/// Tables name files by their stems, which double as symbol names in upper
+/// case; the files themselves are lower case.
 pub fn sibling_path(input: &std::path::Path, name: &str) -> Result<std::path::PathBuf, String> {
-    let Some(shared) = name.strip_prefix("COMMON/") else {
+    let name = &name.to_ascii_lowercase();
+    let Some(shared) = name.strip_prefix("common/") else {
         return Ok(input.with_file_name(name));
     };
     if shared
@@ -85,16 +89,16 @@ pub fn sibling_path(input: &std::path::Path, name: &str) -> Result<std::path::Pa
         .and_then(|folder| {
             let text = folder.to_str()?;
             let at = text
-                .find("/SRC/")
-                .or_else(|| text.ends_with("/SRC").then(|| text.len() - 4))?;
+                .find("/src/")
+                .or_else(|| text.ends_with("/src").then(|| text.len() - 4))?;
             let games = std::path::Path::new(&text[..at]).parent()?;
             Some((games.to_path_buf(), text[at + 1..].to_owned()))
         })
         .ok_or_else(|| format!("{} lies under no game's SRC", input.display()))?;
     Ok(if shared.contains('/') {
-        games.join("COMMON/SRC").join(shared)
+        games.join("common/src").join(shared)
     } else {
-        games.join("COMMON").join(folder).join(shared)
+        games.join("common").join(folder).join(shared)
     })
 }
 
@@ -132,7 +136,7 @@ pub fn build_file_with(
     } else if form == "font" {
         let stem = input_name(built)?;
         let stem = stem.rsplit('/').next().unwrap_or(&stem);
-        let table = sibling(&stem.replace(".PNG", ".TSV"))?;
+        let table = sibling(&stem.replace(".png", ".tsv"))?;
         font(built, input, &table)?
     } else {
         image_form(built, form, input)?
@@ -238,7 +242,7 @@ impl MapPart {
         built: &str,
         sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
     ) -> Result<MapDrawing, String> {
-        let text = sibling(&format!("{}.TSV", self.map))?;
+        let text = sibling(&format!("{}.tsv", self.map))?;
         let (entries, wide) = tilemap(&format!("{}.table", self.map), &text)?;
         MapDrawing::new(&entries, wide, self.first, self.count)
             .map_err(|error| format!("{built}: {error}"))
@@ -473,7 +477,7 @@ fn icon4_bank(
         }
         let at = u16::try_from(output.len()).map_err(|_| format!("{built}: bank too large"))?;
         output[2 * index..2 * index + 2].copy_from_slice(&at.to_le_bytes());
-        let image = indexed_bitmap_png(&sibling(&format!("{slot}.PNG"))?)
+        let image = indexed_bitmap_png(&sibling(&format!("{slot}.png"))?)
             .map_err(|error| format!("{built}: {slot}: {}", error.0))?;
         let palette =
             bgr555_palette_of(&image).map_err(|error| format!("{built}: {slot}: {}", error.0))?;
@@ -686,7 +690,7 @@ mod tests {
         assert_eq!(bytes[15], 0x80);
         assert!(bytes[2..15].iter().all(|&byte| byte == 0));
         assert!(one_bpp("T.1bpp", &pixels[..120], 15, 8).is_err());
-        assert!(is_recipe("GRAPHICS/DISPLAY/STAFF.1bpp"));
-        assert!(!is_recipe("GRAPHICS/DISPLAY/STAFF.2bpp"));
+        assert!(is_recipe("graphics/display/staff.1bpp"));
+        assert!(!is_recipe("graphics/display/staff.2bpp"));
     }
 }

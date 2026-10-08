@@ -1,7 +1,7 @@
-#include "IO_REG.H"
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "IWRAM_CALL.H"
+#include "io_reg.h"
+#include "types.h"
+#include "ram_buffer.h"
+#include "iwram_call.h"
 
 void Func_081b83c4(void);
 void Render_ResetTransformState(void);

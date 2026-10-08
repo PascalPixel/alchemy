@@ -1,11 +1,11 @@
 
 
-#include "OBJECT_RUNTIME.H"
-#include "METADATA_LOOKUP.H"
-#include "OBJECT_DISPATCH.H"
-#include "RAM_BUFFER.H"
-#include "IO_REG.H"
-#include "DMA.H"
+#include "object_runtime.h"
+#include "metadata_lookup.h"
+#include "object_dispatch.h"
+#include "ram_buffer.h"
+#include "io_reg.h"
+#include "dma.h"
 
 struct ObjectRuntimeDraft {
     s32 *script;

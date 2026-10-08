@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "OBJECT_RUNTIME.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "object_runtime.h"
 
 struct EventWorkCbc {
     u8 unknown_000[0xcbc];

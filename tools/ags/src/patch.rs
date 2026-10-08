@@ -1,7 +1,7 @@
 #![allow(clippy::tabs_in_doc_comments)] // the example is a TSV file, tabs and all
 //! Edits Camelot made to a stream after packing it (W3).
 //!
-//! A patch file sits beside its asset as `<STEM>_PATCH.TSV`:
+//! A patch file sits beside its asset as `<STEM>_patch.tsv`:
 //!
 //! ```text
 //! position	pack	ship	proof
@@ -32,7 +32,7 @@ pub struct Patch {
 pub fn patch_name(input: &str) -> String {
     let file = input.rsplit('/').next().unwrap_or(input);
     let stem = file.split('.').next().unwrap_or(file);
-    format!("{stem}_PATCH.TSV")
+    format!("{stem}_patch.tsv")
 }
 
 fn byte(field: &str) -> Option<u8> {
@@ -124,7 +124,7 @@ mod tests {
 
     #[test]
     fn a_patch_restores_the_bytes_the_packer_saw() {
-        let patch = Patch::parse("GRID_PATCH.TSV", TEXT.as_bytes()).unwrap();
+        let patch = Patch::parse("grid_patch.tsv", TEXT.as_bytes()).unwrap();
         assert_eq!(patch.literals(), 1);
         let shipped = [0, 0, 0, 0, 1, 0, 1, 0];
         assert_eq!(
@@ -140,6 +140,6 @@ mod tests {
         assert!(Patch::parse("X", unproven.as_bytes()).is_err());
         let falling = "position\tpack\tship\tproof\n6\t0x02\t0x01\ta\n4\t0x02\t0x01\tb\n";
         assert!(Patch::parse("X", falling.as_bytes()).is_err());
-        assert_eq!(patch_name("MAP/MAP_181/GRID.TSV"), "GRID_PATCH.TSV");
+        assert_eq!(patch_name("map/map_181/grid.tsv"), "grid_patch.tsv");
     }
 }

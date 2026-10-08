@@ -9,7 +9,7 @@ use crate::targets::{target_for, DecompTarget, TARGET_IDS};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-const USAGE: &str = "usage: alchemy sweep FILE.C...\n\
+const USAGE: &str = "usage: alchemy sweep FILE.c...\n\
 For each FAKEMATCH-tagged device in each file (a register pin, an empty asm\n\
 barrier or a volatile qualifier), remove the device and its tag, compile the\n\
 file for every edition whose last build compiled it, and keep the removal\n\

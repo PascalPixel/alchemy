@@ -1,4 +1,4 @@
-#include "INVENTORY.H"
+#include "inventory.h"
 
 extern u8 *BtlWk;
 extern s8 BattleParty_CenterOrderOffsets[];

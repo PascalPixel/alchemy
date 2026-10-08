@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "BTLSMN.H"
-#include "OWNER_STATE.H"
+#include "types.h"
+#include "btlsmn.h"
+#include "owner_state.h"
 
 extern u8 Summon_OrderList[29];
 

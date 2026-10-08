@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "BTLTYPE.H"
-#include "ITEM.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "btltype.h"
+#include "item.h"
+#include "system.h"
 
 struct MenuEntryIcon {
     u8 unknown_00[5];

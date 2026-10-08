@@ -91,7 +91,7 @@ pub(crate) fn script_objects(script: &str) -> Vec<String> {
 }
 
 pub(crate) fn source_for(root: &Path, object: &str) -> Result<PathBuf, String> {
-    ["C", "c", "S", "s", "MID"]
+    ["c", "s", "S", "mid"]
         .iter()
         .map(|extension| PathBuf::from(format!("{object}.{extension}")))
         .find(|path| root.join(path).is_file())
@@ -469,7 +469,7 @@ fn links_game_code(sources: &[PathBuf], objects: &[PathBuf]) -> Result<bool, Str
 
 fn carries_code(source: &Path, object: &[u8]) -> Result<bool, String> {
     use object::{Object, ObjectSection};
-    if matches!(source.extension().and_then(|e| e.to_str()), Some("C" | "c")) {
+    if matches!(source.extension().and_then(|e| e.to_str()), Some("c")) {
         return Ok(true);
     }
     let file =
@@ -613,7 +613,7 @@ struct EntryHeader {
 }
 
 const IWRAM_CALLS: EntryHeader = EntryHeader {
-    path: "INCLUDE/IWRAM_CALL.H",
+    path: "include/iwram_call.h",
     prefix: "Iwram_",
     region: "0?3[0-9a-fA-F]{6}",
     refused: "0?3[0-9a-fA-F]{6}",
@@ -621,7 +621,7 @@ const IWRAM_CALLS: EntryHeader = EntryHeader {
 };
 
 const RAM_BUFFERS: EntryHeader = EntryHeader {
-    path: "INCLUDE/RAM_BUFFER.H",
+    path: "include/ram_buffer.h",
     prefix: "Ram_",
     region: "0?[23][0-9a-fA-F]{6}",
     refused: "0?[0-9a-fA-F]{7}",
@@ -629,7 +629,7 @@ const RAM_BUFFERS: EntryHeader = EntryHeader {
 };
 
 const CARTRIDGE_BOOT: EntryHeader = EntryHeader {
-    path: "INCLUDE/CARTBOOT.H",
+    path: "include/cartboot.h",
     prefix: "Cart_",
     region: "0?8000000",
     refused: "0?[0-9a-fA-F]{7}",
@@ -894,7 +894,7 @@ fn plan(
     let mut assembly = None;
     let mut scratch = Vec::new();
     let mut warnings = None;
-    let steps = if extension == Some("MID") {
+    let steps = if extension == Some("mid") {
         let midi = fs::read(root.join(source)).map_err(|error| error.to_string())?;
         let text = ags::sound::sequence_assembly(&midi)?;
         let path = object.with_extension("s");
@@ -903,7 +903,7 @@ fn plan(
         scratch.push(path.clone());
         assembly = Some((path, text));
         vec![step]
-    } else if matches!(extension, Some("C" | "c")) {
+    } else if matches!(extension, Some("c")) {
         let preprocessed = object.with_extension("i");
         // Nintendo's library C keeps its own compiler in the modern build too.
         let modern = build.modern.filter(|_| crate::modern::compiles(target, source));
@@ -1056,9 +1056,9 @@ fn asset_files(root: &Path, source: &Path) -> Vec<String> {
     asset_names(&text)
 }
 
-/// The directories of built assets in an edition's output: one per SRC
-/// module (GRAPHICS, MAP, BATTLE ...), SOUND and COMMON, named in upper case
-/// as the modules are, beside the build's own lower-case folders.
+/// The directories of built assets in an edition's output: one per src
+/// module (graphics, map, battle ...), sound and common, named as the
+/// modules are, beside the build's own folders (BUILD_FOLDERS).
 fn asset_directories(output: &Path) -> Vec<PathBuf> {
     let Ok(entries) = fs::read_dir(output) else {
         return Vec::new();
@@ -1071,23 +1071,29 @@ fn asset_directories(output: &Path) -> Vec<PathBuf> {
         .collect()
 }
 
+/// The folders an edition's build makes for itself; every other plain
+/// folder in its output holds built assets.
+const BUILD_FOLDERS: [&str; 4] = ["obj", "overlays", "symbols", "text"];
+
 fn asset_root(name: &str) -> bool {
-    name.bytes().next().is_some_and(|byte| byte.is_ascii_uppercase())
+    name.bytes().next().is_some_and(|byte| byte.is_ascii_lowercase())
         && name
             .bytes()
-            .all(|byte| byte.is_ascii_uppercase() || byte.is_ascii_digit() || byte == b'_')
+            .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'_')
+        && !BUILD_FOLDERS.contains(&name)
 }
 
 /// The build products a source names: sound samples first, then every
-/// `.incbin` or `.include` under GRAPHICS/ or MAP/ and every recipe in any
-/// other module of SRC (BATTLE, GAME, MENU ...), optionally under COMMON/.
-/// Paths that start in lower case (games/..., text/..., baserom.gba) and
-/// other modules' names that are not a recipe (BATTLE/X.INC) are not assets.
+/// `.incbin` or `.include` under graphics/ or map/ and every recipe in any
+/// other module of src (battle, game, menu ...), optionally under common/.
+/// Paths under games/ or the build's own folders (text/..., overlays/...),
+/// baserom.gba and other modules' names that are not a recipe
+/// (battle/x.inc) are not assets.
 fn asset_names(text: &str) -> Vec<String> {
     static PATTERN: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
     let pattern = PATTERN.get_or_init(|| {
         regex::Regex::new(
-            r#"(?m)^\s*\.(?:incbin\s+"((?:COMMON/)?SOUND/[A-Za-z0-9_./]+\.bin)"|(?:incbin|include)\s+"((?:COMMON/)?[A-Z][A-Z0-9_]*/[A-Za-z0-9_./]+)")"#,
+            r#"(?m)^\s*\.(?:incbin\s+"((?:common/)?sound/[a-z0-9_./]+\.bin)"|(?:incbin|include)\s+"((?:common/)?([a-z][a-z0-9_]*)/[a-z0-9_./]+)")"#,
         )
         .expect("static pattern")
     });
@@ -1097,10 +1103,13 @@ fn asset_names(text: &str) -> Vec<String> {
             sound.push(path.as_str().to_owned());
             continue;
         }
+        if &capture[3] == "games" || BUILD_FOLDERS.contains(&&capture[3]) {
+            continue;
+        }
         let path = &capture[2];
-        let module = path.strip_prefix("COMMON/").unwrap_or(path);
-        let graphics = module.starts_with("GRAPHICS/") || module.starts_with("MAP/");
-        if graphics || (!module.starts_with("SOUND/") && ags::resource::is_recipe(path)) {
+        let module = path.strip_prefix("common/").unwrap_or(path);
+        let graphics = module.starts_with("graphics/") || module.starts_with("map/");
+        if graphics || (!module.starts_with("sound/") && ags::resource::is_recipe(path)) {
             built.push(path.to_owned());
         }
     }
@@ -1119,9 +1128,9 @@ fn source_assets(root: &Path, target: DecompTarget, source: &Path) -> Result<Vec
     let mut assets = Vec::new();
     for built in asset_files(root, source) {
         let sound = built
-            .strip_prefix("COMMON/")
+            .strip_prefix("common/")
             .unwrap_or(&built)
-            .starts_with("SOUND/");
+            .starts_with("sound/");
         let recipe = if sound {
             built
                 .strip_suffix(".bin")
@@ -1139,10 +1148,10 @@ fn source_assets(root: &Path, target: DecompTarget, source: &Path) -> Result<Vec
                 source.display()
             ));
         }
-        let (game, recipe) = match recipe.strip_prefix("COMMON/") {
-            Some(shared) => (Path::new("games/COMMON"), shared),
-            None if !sound && source.starts_with("games/COMMON") => {
-                (Path::new("games/COMMON"), recipe)
+        let (game, recipe) = match recipe.strip_prefix("common/") {
+            Some(shared) => (Path::new("games/common"), shared),
+            None if !sound && source.starts_with("games/common") => {
+                (Path::new("games/common"), recipe)
             }
             None => (Path::new(target.game_dir()), recipe),
         };
@@ -1160,10 +1169,10 @@ fn asset_input(root: &Path, asset: &Asset) -> Result<PathBuf, String> {
     if !asset.sound {
         return Ok(asset
             .game
-            .join("SRC")
+            .join("src")
             .join(ags::resource::input_name(&asset.recipe)?));
     }
-    let inputs: Vec<PathBuf> = ["WAV", "PCM4"]
+    let inputs: Vec<PathBuf> = ["wav", "pcm4"]
         .iter()
         .map(|extension| asset.game.join(format!("{}.{extension}", asset.recipe)))
         .filter(|path| root.join(path).is_file())
@@ -1171,7 +1180,7 @@ fn asset_input(root: &Path, asset: &Asset) -> Result<PathBuf, String> {
     match inputs.as_slice() {
         [input] => Ok(input.clone()),
         _ => Err(format!(
-            "{} needs exactly one WAV or PCM4 input",
+            "{} needs exactly one wav or pcm4 input",
             asset.built
         )),
     }
@@ -1804,7 +1813,7 @@ fn with_includes(directories: &[&Path], source: &Path) -> Result<Vec<u8>, String
             continue;
         };
         let include = rest.trim().trim_matches('"');
-        if ["GRAPHICS/", "MAP/", "SOUND/", "COMMON/"]
+        if ["graphics/", "map/", "sound/", "common/"]
             .iter()
             .any(|prefix| include.starts_with(prefix))
         {
@@ -1825,35 +1834,35 @@ mod tests {
     use super::*;
 
     #[test]
-    fn built_asset_directories_are_the_upper_case_ones() {
-        for name in ["GRAPHICS", "MAP", "SOUND", "COMMON", "BATTLE", "MENU_2"] {
+    fn built_asset_directories_are_the_module_ones() {
+        for name in ["graphics", "map", "sound", "common", "battle", "menu_2"] {
             assert!(asset_root(name), "{name}");
         }
-        for name in ["obj", "overlays", "text", "symbols", "tbs-en.gba", "Map", "_X", ""] {
+        for name in ["obj", "overlays", "text", "symbols", "tbs-en.gba", "Map", "_x", ""] {
             assert!(!asset_root(name), "{name}");
         }
     }
 
     #[test]
     fn assets_live_in_any_module() {
-        let source = "\t.include \"games/COMMON/INCLUDE/GAME/ED_ASM.H\"\n\
-            \t.incbin \"BATTLE/ITEM/ITEMS.table\"\n\
-            \t.incbin \"GAME/CLASS/CLASSES.table.lz\"\n\
+        let source = "\t.include \"games/common/include/game/ed_asm.h\"\n\
+            \t.incbin \"battle/item/items.table\"\n\
+            \t.incbin \"game/class/classes.table.lz\"\n\
             \t.include \"text/messages.inc\"\n\
-            \t.include \"BATTLE/ITEM/ITEM.INC\"\n\
+            \t.include \"battle/item/item.inc\"\n\
             \t.incbin \"baserom.gba\", 0x100, 0x10\n\
-            \t.incbin \"COMMON/MENU/ICONS/ARROW.4bpp\"\n\
-            \t.incbin \"MAP/MAP_095/SHAPES.table.lz\"\n\
-            \t.incbin \"SOUND/SAMPLE/DRUM.PCM8.bin\"\n\
-            \t.incbin \"SOUND/X.table\"\n";
+            \t.incbin \"common/menu/icons/arrow.4bpp\"\n\
+            \t.incbin \"map/map_095/shapes.table.lz\"\n\
+            \t.incbin \"sound/sample/drum.pcm8.bin\"\n\
+            \t.incbin \"sound/x.table\"\n";
         assert_eq!(
             asset_names(source),
             [
-                "SOUND/SAMPLE/DRUM.PCM8.bin",
-                "BATTLE/ITEM/ITEMS.table",
-                "GAME/CLASS/CLASSES.table.lz",
-                "COMMON/MENU/ICONS/ARROW.4bpp",
-                "MAP/MAP_095/SHAPES.table.lz",
+                "sound/sample/drum.pcm8.bin",
+                "battle/item/items.table",
+                "game/class/classes.table.lz",
+                "common/menu/icons/arrow.4bpp",
+                "map/map_095/shapes.table.lz",
             ]
         );
     }

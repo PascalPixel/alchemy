@@ -204,7 +204,7 @@ pub(crate) fn analyze(text: &str, source: &str) -> Result<Analysis, String> {
     }
     for def in &defs {
         if result.whole_owners.contains(&def.owner)
-            || std::path::Path::new(&def.owner).ends_with("games/COMMON/INCLUDE/LIB/CALL.H")
+            || std::path::Path::new(&def.owner).ends_with("games/common/include/lib/call.h")
         {
             result.steered.insert(def.name.clone());
             result.reasons.entry(def.name.clone()).or_default().insert(def.owner.clone());
@@ -377,9 +377,9 @@ fn parameter_names(tokens: &[&Tok]) -> Option<Vec<String>> {
 }
 
 pub(crate) const SCRIPT_LAYER: &[&str] = &[
-    "games/THE BROKEN SEAL/INCLUDE/FIELD_EVENT.H",
-    "games/THE BROKEN SEAL/INCLUDE/FIELD_SERVICE.H",
-    "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/JO.H",
+    "games/tbs/include/field_event.h",
+    "games/tbs/include/field_service.h",
+    "games/tbs/src/field/runpa_jo/jo.h",
 ];
 
 pub(crate) fn forwarding_findings(text: &str, source: &str) -> Result<Vec<Forwarder>, String> {
@@ -426,8 +426,8 @@ mod tests {
     use super::*;
     #[test]
     fn helper_graph_is_transitive_and_inclusion_alone_does_not_steer() {
-        let text = "# 1 \"games/COMMON/INCLUDE/LIB/CALL.H\"\nstatic inline void Call1(void (*f)(), int x) { f(x); }\n# 1 \"games/THE BROKEN SEAL/SRC/A.C\"\nstatic inline void Adapter(int x) { Call1(Target, x); }\nvoid Caller(void) { Adapter(1); }\nvoid Plain(void) { Target(2); }\n";
-        let analysis = analyze(text, "games/THE BROKEN SEAL/SRC/A.C").unwrap();
+        let text = "# 1 \"games/common/include/lib/call.h\"\nstatic inline void Call1(void (*f)(), int x) { f(x); }\n# 1 \"games/tbs/src/a.c\"\nstatic inline void Adapter(int x) { Call1(Target, x); }\nvoid Caller(void) { Adapter(1); }\nvoid Plain(void) { Target(2); }\n";
+        let analysis = analyze(text, "games/tbs/src/a.c").unwrap();
         assert_eq!(
             analysis.steered,
             ["Adapter", "Call1", "Caller"].map(String::from).into()
@@ -436,7 +436,7 @@ mod tests {
     #[test]
     fn named_helpers_steer_and_noninline_calls_and_members_do_not() {
         let text = "static inline int Help(int x) { /* FAKEMATCH: measured. */ return x; }\nint Tagged(int x) { /* FAKEMATCH: measured. */ return x; }\nint Alias(void) { int (*f)(int) = Help; return f(1); }\nint Ordinary(void) { return Tagged(1); }\nint Member(struct S *s) { return s->Help; }\n";
-        let analysis = analyze(text, "A.C").unwrap();
+        let analysis = analyze(text, "a.c").unwrap();
         assert_eq!(
             analysis.steered,
             ["Alias", "Help", "Tagged"].map(String::from).into()
@@ -455,7 +455,7 @@ mod tests {
     fn cycles_and_macro_bodies_remain_function_specific() {
         let text = "static inline void A(void) { /* FAKEMATCH: measured. */ B(); }\nstatic inline void B(void) { A(); }\nvoid Expanded(void) { /* FAKEMATCH: preserved macro. */ A(); }\nvoid Plain(void) {}";
         assert_eq!(
-            analyze(text, "A.C").unwrap().steered,
+            analyze(text, "a.c").unwrap().steered,
             ["A", "B", "Expanded"].map(String::from).into()
         );
     }
@@ -470,12 +470,12 @@ mod tests {
     #[test]
     fn asm_does_not_hide_inline_dependencies() {
         let text = "static inline int Help(int x) { /* FAKEMATCH: measured. */ return x; }\nint Caller(void) { register int r __asm__(\"r0\"); __asm__ volatile(\"\"); return Help(1); }";
-        assert!(analyze(text, "A.C").unwrap().steered.contains("Caller"));
+        assert!(analyze(text, "a.c").unwrap().steered.contains("Caller"));
     }
     #[test]
     fn forwarders_need_reason_inside_their_own_body() {
         let text = "/* FAKEMATCH: preceding tag does not admit helper. */\nstatic inline int Forward(int x) { return (int)Target((int)x); }\nstatic inline void Pointer(void (*f)(int), int x) { f(x); }\nstatic inline int Tagged(int x) { /* FAKEMATCH: measured. */ return Target(x); }\nstatic inline int Compute(int x) { return Target(x + 1); }\nstatic inline int Fake(int x) { const char *s = \"FAKEMATCH: fake\"; return Target(x); }";
-        let found = forwarding_findings(text, "A.C").unwrap();
+        let found = forwarding_findings(text, "a.c").unwrap();
         assert_eq!(
             found
                 .iter()
@@ -486,16 +486,16 @@ mod tests {
     }
     #[test]
     fn raw_production_header_adapters_keep_zero_one_and_two_typed_arguments() {
-        let source = "#include \"TYPES.H\"\nstatic inline void Event_Begin(void) { Engine_EventBegin(); }\nstatic inline void Event_Wait(s32 frames) { Engine_EventWait(frames); }\nstatic inline void Actor_SetSpeed(s32 channel, s32 speed) { Engine_ActorSetSpeed(channel, speed); }";
+        let source = "#include \"types.h\"\nstatic inline void Event_Begin(void) { Engine_EventBegin(); }\nstatic inline void Event_Wait(s32 frames) { Engine_EventWait(frames); }\nstatic inline void Actor_SetSpeed(s32 channel, s32 speed) { Engine_ActorSetSpeed(channel, speed); }";
         assert_eq!(
-            forwarding_findings(source, "FIELD_EVENT.H").unwrap().len(),
+            forwarding_findings(source, "field_event.h").unwrap().len(),
             3
         );
     }
     #[test]
     fn production_copy_adapter_parameter_permutations_are_forwarders() {
         let source = "static inline s32 CopyWords(const void *src, CopyFn copy, void *dst, s32 size) { return copy(dst, (const void *)src, size); }\nstatic inline s32 Duplicate(s32 a, s32 b) { return Target(a, a); }";
-        let found = forwarding_findings(source, "CANCEL.C").unwrap();
+        let found = forwarding_findings(source, "cancel.c").unwrap();
         assert_eq!(
             found
                 .iter()
@@ -507,7 +507,7 @@ mod tests {
     #[test]
     fn file_scope_literal_pool_tag_marks_only_its_sized_function() {
         let text = "void Steered(void) { /* FAKEMATCH: literal load. */ asm(\"ldr r0, .LPool\"); }\n/* FAKEMATCH: complete source-owned pool. */\nasm(\".align 2\\n.LPool:\\n.word Table\\n.size Steered,.-Steered\");\nvoid Plain(void) {}";
-        let result = analyze(text, "A.C").unwrap();
+        let result = analyze(text, "a.c").unwrap();
         assert_eq!(result.steered, ["Steered".to_string()].into());
         assert!(result.whole_owners.is_empty());
     }

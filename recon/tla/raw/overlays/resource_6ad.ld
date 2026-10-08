@@ -2,8 +2,8 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6AD/ENTRY.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6AD/SCENE_TABLES.o"(.text)
+        "*/games/tla/src/field/overlay_6ad/entry.o"(.text)
+        "*/games/tla/src/field/overlay_6ad/scene_tables.o"(.text)
         "*/resource_6ad_overlay.o"(.text.x0200804c)
         "*/resource_6ad_overlay.o"(.text.x02008058)
         "*/resource_6ad_overlay.o"(.text.x020080bc)
@@ -63,7 +63,7 @@ SECTIONS
         "*/resource_6ad_overlay.o"(.text.x02009448)
         "*/resource_6ad_overlay.o"(.text.x02009468)
         "*/resource_6ad_overlay.o"(.text.x02009490)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCENE_SET_ARRIVAL_FLAGS.o"(.text)
+        "*/games/tla/src/field/common/scene_set_arrival_flags.o"(.text)
         "*/resource_6ad_overlay.o"(.text.x020094da)
         "*/resource_6ad_overlay.o"(.text.x020094dc)
         "*/resource_6ad_overlay.o"(.text.x020094e8)
@@ -119,9 +119,9 @@ SECTIONS
         "*/resource_6ad_overlay.o"(.text.x0200b3cc)
         "*/resource_6ad_overlay.o"(.text.x0200b478)
         "*/resource_6ad_overlay.o"(.text.x0200b51c)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_SPRITE_PRIORITY.o"(.text)
+        "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/resource_6ad_overlay.o"(.text.x0200b57e)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
+        "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_6ad_overlay.o"(.text.x0200b5b6)
         "*/resource_6ad_overlay.o"(.text.x0200b5b8)
         "*/resource_6ad_overlay.o"(.text.x0200b780)
@@ -129,7 +129,7 @@ SECTIONS
         "*/resource_6ad_overlay.o"(.text.x0200baf0)
         "*/resource_6ad_overlay.o"(.text.x0200bb78)
         "*/resource_6ad_overlay.o"(.text.x0200bbe8)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/ADVANCE_MOTION.o"(.text)
+        "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_6ad_overlay.o"(.text.x0200bd7e)
         "*/resource_6ad_overlay.o"(.text.x0200bd80)
         "*/resource_6ad_overlay.o"(.text.x0200bf18)
@@ -152,7 +152,7 @@ SECTIONS
         "*/resource_6ad_overlay.o"(.text.x0200d304)
         "*/resource_6ad_overlay.o"(.text.x0200d38c)
         "*/resource_6ad_overlay.o"(.text.x0200d3bc)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6AD/IMPORT.o"(.text)
+        "*/games/tla/src/field/overlay_6ad/import.o"(.text)
         "*/resource_6ad_overlay.o"(.rodata.x0200d6c8)
     }
     .bss : { "*/resource_6ad_overlay.o"(.bss) }

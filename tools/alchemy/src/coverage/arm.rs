@@ -1133,7 +1133,7 @@ mod tests {
 
     #[test]
     fn a_mapping_symbol_another_object_leaves_at_its_end_never_sets_the_next_section() {
-        // 080155d0.o ends with `$d` where BUILD_METATILES.o, compiled by
+        // 080155d0.o ends with `$d` where build_metatiles.o, compiled by
         // gcc_arm's own assembler, starts: the image reads all of
         // Tile_BuildMetatiles as data, its own object as ARM.
         let bytes = le(&[MOV_R0_R1, PUSH_R4_LR, MOV_R0_R1, POP_R4_PC, 0x0300_0000]);
@@ -1146,7 +1146,7 @@ mod tests {
         let listing = "obj/recon/tbs/raw/080155d0.o";
         let placed = [
             Placed { name: ".text", address: 0x0801_58e4, size: 4, object: listing },
-            Placed { name: ".text", address: 0x0801_58e8, size: 16, object: "obj/games/X/BUILD_METATILES.o" },
+            Placed { name: ".text", address: 0x0801_58e8, size: 16, object: "obj/games/x/build_metatiles.o" },
         ];
         let describe = |p: &Placed<'_>| {
             Ok::<_, String>((p.object.to_owned(), if p.object == listing { "disassembly" } else { "C" }))
@@ -1177,8 +1177,8 @@ mod tests {
 
     #[test]
     fn a_label_another_object_ends_at_never_names_the_next_function() {
-        // DECODE_2_LOOP.o ends with the global Resource_Decode2End at the
-        // address where EXECUTE_TRANSFER.o's Resource_ExecuteTransfer
+        // decode_2_loop.o ends with the global Resource_Decode2End at the
+        // address where execute_transfer.o's Resource_ExecuteTransfer
         // starts; the image holds both labels there, and the End label
         // sorts first.
         let bytes = le(&[BX_LR, PUSH_R4_LR, MOV_R0_R1, POP_R4_PC]);
@@ -1192,8 +1192,8 @@ mod tests {
                 (0x0800_2cf4, "Resource_ExecuteTransfer".into(), true),
             ],
         };
-        let loop_o = "obj/games/X/SRC/SYSTEM/RESOURCE/DECODE_2_LOOP.o";
-        let transfer_o = "obj/games/X/SRC/SYSTEM/RESOURCE/EXECUTE_TRANSFER.o";
+        let loop_o = "obj/games/x/src/system/resource/decode_2_loop.o";
+        let transfer_o = "obj/games/x/src/system/resource/execute_transfer.o";
         let placed = [
             Placed { name: ".text", address: 0x0800_2cf0, size: 4, object: loop_o },
             Placed { name: ".text", address: 0x0800_2cf4, size: 12, object: transfer_o },
@@ -1225,25 +1225,25 @@ mod tests {
 
     #[test]
     fn map_globals_are_kept_under_their_own_input_section() {
-        let map = " .text          0x0000000008002850      0x4a4 /o/DECODE_2_LOOP.o
+        let map = " .text          0x0000000008002850      0x4a4 /o/decode_2_loop.o
                 0x0000000008002910                Resource_DecodeType2Loop
                 0x0000000008002cf4                Resource_Decode2End
- .data          0x0000000008002cf4        0x0 /o/DECODE_2_LOOP.o
- .text          0x0000000008002cf4       0x68 /o/EXECUTE_TRANSFER.o
+ .data          0x0000000008002cf4        0x0 /o/decode_2_loop.o
+ .text          0x0000000008002cf4       0x68 /o/execute_transfer.o
                 0x0000000008002cf4                Resource_ExecuteTransfer
  .text.long_section_name
-                0x0000000008002d5c       0x10 /o/LONG.o
+                0x0000000008002d5c       0x10 /o/long.o
                 0x0000000008002d5c                Long_Entry
                 0x0000000008002d6c                __end = .
 ";
         let found = map_globals(map);
         let key = |name: &str, address: i64, object: &str| (name.to_owned(), address, object.to_owned());
         assert_eq!(
-            found[&key(".text", 0x0800_2850, "/o/DECODE_2_LOOP.o")],
+            found[&key(".text", 0x0800_2850, "/o/decode_2_loop.o")],
             [(0x0800_2910, "Resource_DecodeType2Loop".to_owned()), (0x0800_2cf4, "Resource_Decode2End".to_owned())]
         );
-        assert_eq!(found[&key(".text", 0x0800_2cf4, "/o/EXECUTE_TRANSFER.o")], [(0x0800_2cf4, "Resource_ExecuteTransfer".to_owned())]);
-        assert_eq!(found[&key(".text.long_section_name", 0x0800_2d5c, "/o/LONG.o")], [(0x0800_2d5c, "Long_Entry".to_owned())]);
+        assert_eq!(found[&key(".text", 0x0800_2cf4, "/o/execute_transfer.o")], [(0x0800_2cf4, "Resource_ExecuteTransfer".to_owned())]);
+        assert_eq!(found[&key(".text.long_section_name", 0x0800_2d5c, "/o/long.o")], [(0x0800_2d5c, "Long_Entry".to_owned())]);
         assert_eq!(found.len(), 3);
     }
 

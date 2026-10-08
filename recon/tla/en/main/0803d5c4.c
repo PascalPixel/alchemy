@@ -1,7 +1,7 @@
-#include "MEM.H"
-#include "TYPES.H"
-#include "SCENE.H"
-#include "RESOURCE.H"
+#include "mem.h"
+#include "types.h"
+#include "scene.h"
+#include "resource.h"
 
 typedef struct {
     u8 pad0[0x400];

@@ -1,4 +1,4 @@
-#include "OBJECT_RUNTIME.H"
+#include "object_runtime.h"
 
 s32 Object_IsTargetUnset(struct ObjectRuntime *object)
 {

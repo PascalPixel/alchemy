@@ -1,6 +1,6 @@
 /* Near miss: listing 21 instructions, draft 21, common 20, differ 2; the rest differs in instruction order. */
-#include "TYPES.H"
-#include "PARTY_STATE.H"
+#include "types.h"
+#include "party_state.h"
 
 void *Func_080ccd78(s32 group, s32 id);
 

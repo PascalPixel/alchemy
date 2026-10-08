@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 extern const u8 Menu_HexDigitsString[];
 
 extern const u8 Menu_ColonString[];

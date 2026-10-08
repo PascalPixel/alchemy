@@ -1,4 +1,4 @@
-#include "OWNER_STATE.H"
+#include "owner_state.h"
 
 s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
 {

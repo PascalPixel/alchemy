@@ -1,6 +1,6 @@
 /* Near miss: listing 25 instructions, draft 23, common 19, differ 10; the rest differs in instruction order. */
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "ram_buffer.h"
 
 struct CellTag {
     u8 key;

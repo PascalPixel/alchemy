@@ -1,7 +1,7 @@
-#include "MEM.H"
-#include "TYPES.H"
-#include "SYSTEM.H"
-#include "IWRAM_CALL.H"
+#include "mem.h"
+#include "types.h"
+#include "system.h"
+#include "iwram_call.h"
 
 struct ItemMenuModeState {
     u8 reserved_000[0x20c];

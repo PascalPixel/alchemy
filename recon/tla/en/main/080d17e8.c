@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "PALBUF.H"
-#include "RAM_BUFFER.H"
-#include "IWRAM_CALL.H"
+#include "types.h"
+#include "palbuf.h"
+#include "ram_buffer.h"
+#include "iwram_call.h"
 
 void BattleFx_BuildBuffer(s32 mode, struct BattleEffectBuffers *source, u16 *destination, s32 half);
 

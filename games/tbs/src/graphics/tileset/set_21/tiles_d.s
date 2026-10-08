@@ -1,0 +1,5 @@
+	.section .rodata
+	.global Tileset_Set21TilesD
+Tileset_Set21TilesD:
+	.incbin "graphics/tileset/set_21/tiles_d.4bpp.mtf"
+	.byte 0x7c, 0x2f	@ PACKER: left in the buffer by Tileset_Set21TilesC+0x1cea

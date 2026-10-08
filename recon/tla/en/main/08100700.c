@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "LAYOUT_GUARD.H"
+#include "types.h"
+#include "layout_guard.h"
 
 struct Object_080a9cbc {
     u8 padding[6];

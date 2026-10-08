@@ -1,5 +1,5 @@
-#include "TEXT_RENDER_RUNTIME.H"
-#include "MEM.H"
+#include "text_render_runtime.h"
+#include "mem.h"
 extern u8 Data_03001e8c[];
 
 extern u8 *gWindowWork;

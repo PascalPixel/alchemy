@@ -1,5 +1,5 @@
-#include "OBJECT_RUNTIME.H"
-#include "OBJDISP.H"
+#include "object_runtime.h"
+#include "objdisp.h"
 
 void Object_SetTargetAndCallback(u32 object_id, s32 target_id, const void *callback)
 {

@@ -1,0 +1,41 @@
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+#include "owner_state.h"
+#include "btlsys.h"
+#include "btltype.h"
+#include "btlwork.h"
+#include "party_state.h"
+#include "ram_buffer.h"
+
+s32 BattleParty_PrepareReserveOwners(u16 *owners)
+{
+    s32 count;
+    s32 index;
+
+    count = Party_CountActiveOwnersFar();
+    if (count > 4)
+        count -= 4;
+    else
+        count = 0;
+    if (Ram_HeapSlots->battle_work->two_sided != 0)
+        count = 0;
+
+    for (index = 0; index < count; index++) {
+        s32 owner = gPartyState.active_owners[index + 4];
+
+        if (owners != 0)
+            *owners++ = owner;
+        ((struct BtlUnit *)UnitGet(owner))->side = 2;
+    }
+
+    if (owners != 0)
+        *owners = 0xff;
+    return count;
+}

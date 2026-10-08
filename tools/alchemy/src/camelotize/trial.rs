@@ -147,9 +147,9 @@ impl Build {
     /// place of the file. Assembly text is not compared: an edit that only
     /// renumbers GCC's `.L` labels leaves the object identical.
     fn compile(&self, root: &Path, file: &Path, text: &str) -> Result<(String, String), String> {
-        let name = file.file_name().and_then(|n| n.to_str()).unwrap_or("SOURCE.C");
+        let name = file.file_name().and_then(|n| n.to_str()).unwrap_or("source.c");
         let source = self.directory.path().join(name);
-        let assembly = self.directory.path().join("OUT.S");
+        let assembly = self.directory.path().join("out.s");
         let object = self.directory.path().join("OUT.O");
         std::fs::write(&source, text).map_err(|e| e.to_string())?;
         let mut arguments = vec![format!("-I{}", file.parent().unwrap_or(root).display())];
@@ -194,7 +194,7 @@ pub(crate) fn proved(root: &Path, file: &Path, text: &str, games: &[DecompTarget
         return Ok((text.to_string(), 0));
     }
     // Every edition of the game proves every edit: an edition's headers and
-    // defines can change what an edit outside any #if means (SCRIPT.C's
+    // defines can change what an edit outside any #if means (script.c's
     // casts kept English and broke tbs-ja). A file one edition cannot
     // compile is skipped whole.
     let mut builds = Vec::new();
@@ -236,10 +236,10 @@ mod tests {
 
     #[test]
     fn messages_compare_without_line_numbers() {
-        let before = "A.C: In function `F':\nA.C:12: warning: unused variable `x'\n";
-        let after = "A.C: In function `F':\nA.C:11: warning: unused variable `x'\n";
+        let before = "a.c: In function `F':\nA.C:12: warning: unused variable `x'\n";
+        let after = "a.c: In function `F':\nA.C:11: warning: unused variable `x'\n";
         assert_eq!(unnumbered(before), unnumbered(after));
-        assert_ne!(unnumbered(before), unnumbered("A.C: In function `F':\nA.C:11: warning: unused variable `y'\n"));
+        assert_ne!(unnumbered(before), unnumbered("a.c: In function `F':\nA.C:11: warning: unused variable `y'\n"));
     }
 
     #[test]

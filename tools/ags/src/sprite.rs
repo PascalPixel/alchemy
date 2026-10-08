@@ -248,7 +248,7 @@ fn shared_pictures(
     Ok(pictures)
 }
 
-pub(crate) const PICTURES: &str = "PICTURES.TSV";
+pub(crate) const PICTURES: &str = "pictures.tsv";
 
 impl Bank {
     fn read(
@@ -261,7 +261,7 @@ impl Bank {
         let mut sprites = HashMap::new();
         for record in &records {
             let owns = |list: &Option<String>| list.as_deref() == Some(record.name.as_str());
-            let name = format!("{}.TSV", record.files);
+            let name = format!("{}.tsv", record.files);
             if owns(&record.animations) || (owns(&record.frames) && sibling(&name).is_ok()) {
                 let text = String::from_utf8(sibling(&name)?)
                     .map_err(|_| format!("{built}: {name} is not text"))?;
@@ -351,8 +351,8 @@ impl Bank {
     ) -> Result<(Data, Data), String> {
         let name = &record.name;
         let png = match self.pictures.get(&record.files) {
-            Some(picture) => sibling(&format!("COMMON/{picture}.PNG"))?,
-            None => sibling(&format!("{}.PNG", record.files))?,
+            Some(picture) => sibling(&format!("common/{picture}.png"))?,
+            None => sibling(&format!("{}.png", record.files))?,
         };
         let image =
             indexed_bitmap_png(&png).map_err(|error| format!("{built}: {name}: {}", error.0))?;
@@ -428,8 +428,8 @@ pub(crate) fn blocks(
     sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
 ) -> Result<Vec<(Option<String>, Data)>, String> {
     let bank = Bank::read(built, table, sibling)?;
-    let layout = String::from_utf8(sibling("LAYOUT.TSV")?)
-        .map_err(|_| format!("{built}: LAYOUT.TSV is not text"))?;
+    let layout = String::from_utf8(sibling("layout.tsv")?)
+        .map_err(|_| format!("{built}: layout.tsv is not text"))?;
     let mut parts = vec![(None, Data::default())];
     bank.records(built, &mut parts[0].1)?;
     let mut order = Vec::new();

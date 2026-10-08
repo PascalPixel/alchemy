@@ -1,4 +1,4 @@
-#include "INVENTORY.H"
+#include "inventory.h"
 
 s32 Inventory_CheckDiscard(s32 owner, s32 slot)
 {

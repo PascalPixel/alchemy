@@ -17,11 +17,11 @@ fn declaration() -> &'static Regex {
 
 pub(crate) fn index(root: &Path, target: DecompTarget) -> Result<BTreeMap<String, String>, String> {
     let mut headers = Vec::new();
-    let mut directories = vec![root.join("games").join(target.game_dir()).join("INCLUDE")];
-    directories.extend(COMMON_INCLUDE_MODULES.iter().map(|m| root.join("games/COMMON/INCLUDE").join(m)));
+    let mut directories = vec![root.join("games").join(target.game_dir()).join("include")];
+    directories.extend(COMMON_INCLUDE_MODULES.iter().map(|m| root.join("games/common/include").join(m)));
     for directory in directories {
         for entry in walkdir::WalkDir::new(&directory).into_iter().filter_map(Result::ok) {
-            if entry.path().extension().is_some_and(|e| e == "H") {
+            if entry.path().extension().is_some_and(|e| e == "h") {
                 headers.push(entry.path().to_path_buf());
             }
         }
@@ -87,30 +87,30 @@ mod tests {
 
     fn indexed() -> BTreeMap<String, String> {
         let mut found = BTreeMap::new();
-        add(&mut found, "void Object_SetMode(void *object, s32 mode);\ns32 Engine_Wait();\n", "FIELD_EVENT.H");
+        add(&mut found, "void Object_SetMode(void *object, s32 mode);\ns32 Engine_Wait();\n", "field_event.h");
         found
     }
 
     #[test]
     fn a_declaration_a_header_makes_gives_way_to_the_header() {
-        let text = "#include \"TYPES.H\"\n\nvoid Object_SetMode(void *, s32);\n\nvoid F(void)\n{\n    Object_SetMode(0, 1);\n}\n";
+        let text = "#include \"types.h\"\n\nvoid Object_SetMode(void *, s32);\n\nvoid F(void)\n{\n    Object_SetMode(0, 1);\n}\n";
         let (out, removed) = rewrite(text, &indexed());
         assert_eq!(removed, 1);
-        assert!(out.starts_with("#include \"TYPES.H\"\n#include \"FIELD_EVENT.H\"\n"));
+        assert!(out.starts_with("#include \"types.h\"\n#include \"field_event.h\"\n"));
         assert!(!out.contains("void Object_SetMode(void *, s32);"));
     }
 
     #[test]
     fn unprototyped_header_declarations_and_unknown_functions_stay() {
-        let text = "#include \"FIELD_EVENT.H\"\ns32 Engine_Wait();\nvoid Local_Thing(s32 x);\n";
+        let text = "#include \"field_event.h\"\ns32 Engine_Wait();\nvoid Local_Thing(s32 x);\n";
         assert_eq!(rewrite(text, &indexed()), (text.to_string(), 0));
     }
 
     #[test]
     fn an_included_header_is_not_added_twice() {
-        let text = "#include \"FIELD_EVENT.H\"\nvoid Object_SetMode(void *, s32);\n";
+        let text = "#include \"field_event.h\"\nvoid Object_SetMode(void *, s32);\n";
         let (out, removed) = rewrite(text, &indexed());
         assert_eq!(removed, 1);
-        assert_eq!(out.matches("FIELD_EVENT.H").count(), 1);
+        assert_eq!(out.matches("field_event.h").count(), 1);
     }
 }

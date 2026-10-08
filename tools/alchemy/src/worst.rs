@@ -329,7 +329,7 @@ void Func_08012345(void)
     } while (0);
 }
 ";
-        let ranked = rank_source("TEST.C", text);
+        let ranked = rank_source("test.c", text);
         assert_eq!(ranked.len(), 2);
         let plain = ranked.iter().find(|r| r.name == "Plain_Run").unwrap();
         let worst = ranked.iter().find(|r| r.name == "Func_08012345").unwrap();

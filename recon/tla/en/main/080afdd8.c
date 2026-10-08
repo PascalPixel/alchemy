@@ -1,5 +1,5 @@
-#include "GAME_FLAGS.H"
-#include "PARTY_STATE.H"
+#include "game_flags.h"
+#include "party_state.h"
 
 s32 GameFlag_SetBit(s32);
 void GameFlag_ClearBit(s32);

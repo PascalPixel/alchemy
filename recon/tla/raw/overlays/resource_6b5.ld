@@ -2,12 +2,12 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/ENTRY.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/SCENE_TABLES.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/IME_CALL.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/LAYOUT.o"(.text)
+        "*/games/tla/src/field/overlay_6b5/entry.o"(.text)
+        "*/games/tla/src/field/overlay_6b5/scene_tables.o"(.text)
+        "*/games/tla/src/field/overlay_6b5/ime_call.o"(.text)
+        "*/games/tla/src/field/overlay_6b5/layout.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x0200806c)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/LOBBY.o"(.text)
+        "*/games/tla/src/field/overlay_6b5/lobby.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x02008134)
         "*/resource_6b5_overlay.o"(.text.x020082d8)
         "*/resource_6b5_overlay.o"(.text.x02008344)
@@ -19,7 +19,7 @@ SECTIONS
         "*/resource_6b5_overlay.o"(.text.x02008bb0)
         "*/resource_6b5_overlay.o"(.text.x02008da0)
         "*/resource_6b5_overlay.o"(.text.x02008e4c)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/SOUND_CALL.o"(.text)
+        "*/games/tla/src/field/overlay_6b5/sound_call.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x02008f6c)
         "*/resource_6b5_overlay.o"(.text.x02008fbc)
         "*/resource_6b5_overlay.o"(.text.x02009130)
@@ -27,13 +27,13 @@ SECTIONS
         "*/resource_6b5_overlay.o"(.text.x0200922c)
         "*/resource_6b5_overlay.o"(.text.x02009304)
         "*/resource_6b5_overlay.o"(.text.x02009388)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/SCENE_EVENTS.o"(.text)
+        "*/games/tla/src/field/overlay_6b5/scene_events.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x020093ec)
         "*/resource_6b5_overlay.o"(.text.x02009400)
         "*/resource_6b5_overlay.o"(.text.x02009414)
         "*/resource_6b5_overlay.o"(.text.x0200945c)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/PREPARE.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B5/IMPORT.o"(.text)
+        "*/games/tla/src/field/overlay_6b5/prepare.o"(.text)
+        "*/games/tla/src/field/overlay_6b5/import.o"(.text)
         "*/resource_6b5_overlay.o"(.rodata.x02009ae4)
     }
     .bss : { "*/resource_6b5_overlay.o"(.bss) }

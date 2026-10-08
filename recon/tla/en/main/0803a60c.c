@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 extern u8 Data_03001e8c[];
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))

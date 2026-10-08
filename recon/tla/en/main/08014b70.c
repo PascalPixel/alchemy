@@ -1,8 +1,8 @@
-#include "TYPES.H"
-#include "DMA.H"
-#include "RAM_BUFFER.H"
-#include "IWRAM_CALL.H"
-#include "MEM.H"
+#include "types.h"
+#include "dma.h"
+#include "ram_buffer.h"
+#include "iwram_call.h"
+#include "mem.h"
 
 extern u16 *Data_030011c4;
 extern const u8 Data_08017b10[];

@@ -1,0 +1,10 @@
+.syntax unified
+	.thumb
+	.include "games/tbs/src/system/overlay.inc"
+	.balign 4
+	overlay_veneer StageSetup_BuildAndDispatch
+	overlay_veneer ColossoLogRollingStage_GetScriptData
+	overlay_veneer ColossoLogRollingStage_GetActorData
+	overlay_veneer ColossoLogRollingStage_GetEffectData
+	overlay_veneer ColossoLogRollingStage_GetSceneEventState
+	overlay_veneer ColossoLogRollingStage_GetMessageData

@@ -515,7 +515,7 @@ fn classify(root: &Path, object: &str) -> (Origin, String) {
             .find(|p| root.join(p).is_file())
     };
     if relative.starts_with("games/") {
-        if let Some(path) = existing(&[".C", ".c"]) {
+        if let Some(path) = existing(&[".c"]) {
             return (Origin::C, path);
         }
         if let Some(path) = existing(&[".S", ".s"]) {
@@ -606,7 +606,7 @@ mod tests {
             .text 0x08000100 0x30\n\
             \x20.text 0x08000100 0x8 /out/obj/recon/tbs/raw/08000100.o\n\
             \x20                0x08000100 ThumbCaller\n\
-            \x20.text 0x08000110 0x4 /out/obj/games/X/THUMB.o\n\
+            \x20.text 0x08000110 0x4 /out/obj/games/x/thumb.o\n\
             \x20                0x08000110 ThumbCallee\n\
             \x20.text 0x08000120 0xc /out/obj/recon/tbs/raw/08000120.o\n\
             \x20                0x08000120 Func_08000120\n\

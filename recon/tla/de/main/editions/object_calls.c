@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 void ObjectMotion_SnapToTerrain(void *object)
 {

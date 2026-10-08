@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "ANIMSPR.H"
-#include "OBJECT_RUNTIME.H"
-#include "FRAME.H"
+#include "types.h"
+#include "animspr.h"
+#include "object_runtime.h"
+#include "frame.h"
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 

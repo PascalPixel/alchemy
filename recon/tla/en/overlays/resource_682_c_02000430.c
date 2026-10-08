@@ -1,7 +1,7 @@
-#include "TYPES.H"
+#include "types.h"
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
-#include "CALL.H"
+#include "call.h"
 s32 Object_GetById();
 s32 Func_02002adc();
 s32 Func_02002af4();

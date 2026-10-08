@@ -1,4 +1,4 @@
-#include "TEXT_RENDER_RUNTIME.H"
+#include "text_render_runtime.h"
 
 u8 *UiText_FormatNumber(u8 *output, s32 value, s32 width);
 

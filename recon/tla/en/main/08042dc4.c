@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "MEM.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "mem.h"
 
 s32 Func_080cc67c(s32);
 s32 Func_080cc7c4(void);

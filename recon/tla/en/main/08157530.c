@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "MOTOBJ.H"
-#include "FIXED_MATH.H"
+#include "types.h"
+#include "iwram_call.h"
+#include "motobj.h"
+#include "fixed_math.h"
 
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);

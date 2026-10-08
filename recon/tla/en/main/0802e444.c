@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 extern const u16 Data_0802f064[];
 

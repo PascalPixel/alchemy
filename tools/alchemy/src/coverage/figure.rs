@@ -631,7 +631,7 @@ mod tests {
         };
         let canvas = map_of(
             &letters,
-            vec![tile("games/X/SRC/A.C", 600), tile("games/X/SRC/B.S", 400)],
+            vec![tile("games/x/src/a.c", 600), tile("games/x/src/b.s", 400)],
         );
         assert_eq!((canvas.width, canvas.height), (838, 1490));
         use super::super::raster::{blend, rgb};
@@ -651,7 +651,7 @@ mod tests {
         assert_eq!(canvas.get(4 + step, 32), Some(light));
         let again = map_of(
             &letters,
-            vec![tile("games/X/SRC/A.C", 600), tile("games/X/SRC/B.S", 400)],
+            vec![tile("games/x/src/a.c", 600), tile("games/x/src/b.s", 400)],
         );
         assert_eq!(canvas.rgba(2), again.rgba(2));
     }

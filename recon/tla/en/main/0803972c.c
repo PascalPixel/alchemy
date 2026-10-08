@@ -1,5 +1,5 @@
-#include "WINDOW.H"
-#include "RAM_BUFFER.H"
+#include "window.h"
+#include "ram_buffer.h"
 
 void UiWork_CopyParamsToRenderWork(struct UiChannelSlot *channel)
 {

@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "SERIAL_RUNTIME.H"
+#include "types.h"
+#include "serial_runtime.h"
 
 s32 SerialRuntime_BeginTransferA(void *source, s32 transfer_value)
 {

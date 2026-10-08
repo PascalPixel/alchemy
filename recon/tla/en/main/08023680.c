@@ -1,4 +1,4 @@
-#include "OBJECT_DISPATCH.H"
+#include "object_dispatch.h"
 
 void Animation_SetStateFlags(struct DispatchObject *object, u32 value)
 {

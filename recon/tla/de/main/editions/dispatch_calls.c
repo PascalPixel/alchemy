@@ -1,7 +1,7 @@
 #ifndef TLA_OBJECT_DISPATCH_H
 #define TLA_OBJECT_DISPATCH_H
 
-#include "TYPES.H"
+#include "types.h"
 
 struct DispatchChild {
     u8 unknown_00[5];

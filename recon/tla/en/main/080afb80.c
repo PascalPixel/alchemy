@@ -1,5 +1,5 @@
-#include "OWNER_STATE.H"
-#include "TYPES.H"
+#include "owner_state.h"
+#include "types.h"
 
 struct Owner_080792c4 {
     u8 unknown_000[0x0f];

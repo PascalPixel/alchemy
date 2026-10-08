@@ -147,7 +147,7 @@ fn trench(file: &str) -> String {
     let game = parts.get(1).copied().unwrap_or("");
     let at = parts
         .iter()
-        .position(|p| *p == "SRC" || *p == "INCLUDE")
+        .position(|p| *p == "src" || *p == "include")
         .unwrap_or(parts.len());
     let folders = parts[(at + 1).min(parts.len())..parts.len().saturating_sub(1)]
         .iter()
@@ -344,9 +344,9 @@ fn sizes(root: &Path, game: &str) -> BTreeMap<String, u64> {
 }
 
 fn games(file: &str) -> &'static [&'static str] {
-    if file.contains("THE BROKEN SEAL") {
+    if file.contains("games/tbs/") {
         &["tbs"]
-    } else if file.contains("THE LOST AGE") {
+    } else if file.contains("games/tla/") {
         &["tla"]
     } else {
         &["tbs", "tla"]
@@ -381,7 +381,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             .to_string_lossy()
             .into_owned();
         tags.extend(scan_source(&name, &text));
-        if name.ends_with(".C") || name.ends_with(".c") {
+        if name.ends_with(".c") {
             for (function, calls) in function_calls(&text) {
                 callers.push((name.clone(), function, calls));
             }
@@ -456,7 +456,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     }
     let helpers = tags
         .iter()
-        .filter(|t| t.file.ends_with(".H") && t.function != "(file scope)")
+        .filter(|t| t.file.ends_with(".h") && t.function != "(file scope)")
         .map(|t| (t.function.clone(), t.file.clone()))
         .collect::<BTreeMap<_, _>>();
     let mut spread = BTreeMap::<&str, (usize, [u64; 2])>::new();
@@ -558,7 +558,7 @@ void Table_Clear(void)
     gTable.count = gTable.count;
 }
 ";
-        let tags = scan_source("games/COMMON/SRC/TEST.C", text);
+        let tags = scan_source("games/common/src/test.c", text);
         assert_eq!(tags.len(), 5);
         assert_eq!(
             tags.iter()
@@ -573,7 +573,7 @@ void Table_Clear(void)
             ]
         );
         assert_eq!(tags[0].family, "call wrapper: Call3");
-        assert_eq!(tags[2].family, "one-pass block in COMMON/SRC");
+        assert_eq!(tags[2].family, "one-pass block in common/src");
         assert_eq!(tags[0].family, tags[1].family);
         assert!(tags[4].count_suspect && !tags[0].count_suspect);
     }

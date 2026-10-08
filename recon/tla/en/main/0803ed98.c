@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 struct StepNode {
     u8 unk_00[4];

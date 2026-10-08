@@ -2,17 +2,17 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_67C/ENTRY.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_SPRITE_PRIORITY.o"(.text)
+        "*/games/tla/src/field/overlay_67c/entry.o"(.text)
+        "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/resource_67c_overlay.o"(.text.x0200807e)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/PREPARE_OBJECT.o"(.text)
+        "*/games/tla/src/field/common/object/prepare_object.o"(.text)
         "*/resource_67c_overlay.o"(.text.x020080ce)
         "*/resource_67c_overlay.o"(.text.x020080d0)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
+        "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_67c_overlay.o"(.text.x0200815a)
         "*/resource_67c_overlay.o"(.text.x0200815c)
         "*/resource_67c_overlay.o"(.text.x0200833c)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_67C/SCENE_TABLES.o"(.text)
+        "*/games/tla/src/field/overlay_67c/scene_tables.o"(.text)
         "*/resource_67c_overlay.o"(.text.x0200835c)
         "*/resource_67c_overlay.o"(.text.x0200842c)
         "*/resource_67c_overlay.o"(.text.x020084b4)
@@ -99,7 +99,7 @@ SECTIONS
         "*/resource_67c_overlay.o"(.text.x0200bbd8)
         "*/resource_67c_overlay.o"(.text.x0200bc00)
         "*/resource_67c_overlay.o"(.text.x0200bc14)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_67C/IMPORT.o"(.text)
+        "*/games/tla/src/field/overlay_67c/import.o"(.text)
         "*/resource_67c_overlay.o"(.rodata.x0200bf04)
     }
     .bss : { "*/resource_67c_overlay.o"(.bss) }

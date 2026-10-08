@@ -39,77 +39,77 @@ pub static ARCHIVES: [ArchiveSpec; 12] = [
     ArchiveSpec {
         target: "tbs-ja",
         language: "ja",
-        output: "games/THE BROKEN SEAL/TEXT/JA.PO",
+        output: "games/tbs/text/ja.po",
         charmap: Some(include_str!(
-            "../../../games/COMMON/SRC/GRAPHICS/FONT/CHARMAP_JA.TSV"
+            "../../../games/common/src/graphics/font/charmap_ja.tsv"
         )),
     },
     ArchiveSpec {
         target: "tbs-en",
         language: "en",
-        output: "games/THE BROKEN SEAL/TEXT/EN.PO",
+        output: "games/tbs/text/en.po",
         charmap: None,
     },
     ArchiveSpec {
         target: "tbs-de",
         language: "de",
-        output: "games/THE BROKEN SEAL/TEXT/DE.PO",
+        output: "games/tbs/text/de.po",
         charmap: None,
     },
     ArchiveSpec {
         target: "tbs-es",
         language: "es",
-        output: "games/THE BROKEN SEAL/TEXT/ES.PO",
+        output: "games/tbs/text/es.po",
         charmap: None,
     },
     ArchiveSpec {
         target: "tbs-fr",
         language: "fr",
-        output: "games/THE BROKEN SEAL/TEXT/FR.PO",
+        output: "games/tbs/text/fr.po",
         charmap: None,
     },
     ArchiveSpec {
         target: "tbs-it",
         language: "it",
-        output: "games/THE BROKEN SEAL/TEXT/IT.PO",
+        output: "games/tbs/text/it.po",
         charmap: None,
     },
     ArchiveSpec {
         target: "tla-ja",
         language: "ja",
-        output: "games/THE LOST AGE/TEXT/JA.PO",
+        output: "games/tla/text/ja.po",
         charmap: Some(include_str!(
-            "../../../games/COMMON/SRC/GRAPHICS/FONT/CHARMAP_TLA_JA.TSV"
+            "../../../games/common/src/graphics/font/charmap_tla_ja.tsv"
         )),
     },
     ArchiveSpec {
         target: "tla-en",
         language: "en",
-        output: "games/THE LOST AGE/TEXT/EN.PO",
+        output: "games/tla/text/en.po",
         charmap: None,
     },
     ArchiveSpec {
         target: "tla-de",
         language: "de",
-        output: "games/THE LOST AGE/TEXT/DE.PO",
+        output: "games/tla/text/de.po",
         charmap: None,
     },
     ArchiveSpec {
         target: "tla-es",
         language: "es",
-        output: "games/THE LOST AGE/TEXT/ES.PO",
+        output: "games/tla/text/es.po",
         charmap: None,
     },
     ArchiveSpec {
         target: "tla-fr",
         language: "fr",
-        output: "games/THE LOST AGE/TEXT/FR.PO",
+        output: "games/tla/text/fr.po",
         charmap: None,
     },
     ArchiveSpec {
         target: "tla-it",
         language: "it",
-        output: "games/THE LOST AGE/TEXT/IT.PO",
+        output: "games/tla/text/it.po",
         charmap: None,
     },
 ];

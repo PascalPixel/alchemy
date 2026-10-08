@@ -1,10 +1,10 @@
-#include "MEM.H"
-#include "TYPES.H"
-#include "BATTLE_EFX.H"
-#include "BATTLE_EFFECT_WORK.H"
-#include "CALLBACK_SCHEDULER.H"
-#include "SYSTEM.H"
-#include "RAM_BUFFER.H"
+#include "mem.h"
+#include "types.h"
+#include "battle_efx.h"
+#include "battle_effect_work.h"
+#include "callback_scheduler.h"
+#include "system.h"
+#include "ram_buffer.h"
 extern u8 gBattleFxWork[];
 extern u8 gCameraWork[];
 

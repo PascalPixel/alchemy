@@ -1,6 +1,6 @@
 /* Remaining difference: the native loads the table between the shift and the add of row * 33. */
-#include "TYPES.H"
-#include "GAME_FLAGS.H"
+#include "types.h"
+#include "game_flags.h"
 
 extern u16 Data_0810c3f4[][33];
 void Item_AdjustCounterFar(s32 item, s32 amount);

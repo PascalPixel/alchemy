@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "BTLWORK.H"
-#include "FIXED_POINT_POSITION.H"
+#include "types.h"
+#include "btlwork.h"
+#include "fixed_point_position.h"
 
 s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out)
 {

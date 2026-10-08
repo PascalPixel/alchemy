@@ -15,18 +15,18 @@ use crate::targets::{target_for, DecompTarget, DecompTargetId};
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
-const USAGE: &str = r#"usage: alchemy camelotize [--dry-run] REWRITE FILE.C...
+const USAGE: &str = r#"usage: alchemy camelotize [--dry-run] REWRITE FILE.c...
 Applies Alchemy's mechanical source cleanup in place and prints how
 many places changed in each file; --dry-run counts them and writes
 nothing. REWRITE is one of:
   actors        byte offsets on field actors as struct FieldActor members
   events        byte offsets on the event work as struct EventWork members
-  registers     hardware register addresses by their IO_REG.H names
+  registers     hardware register addresses by their io_reg.h names
   declarations  a file's own declarations of functions a header declares,
                 replaced by an include of that header
   barriers      FAKEMATCH-tagged empty asm barriers, with their tag
   numbers       hex literals below 0x1000 in decimal, only where the code
-                shows a quantity: an argument of an EVENT.H scene command, a
+                shows a quantity: an argument of an event.h scene command, a
                 loop bound compared with its counter, or plain arithmetic
                 with no bit operation, register, fixed address or subscript
                 in the statement or on its variables, beside operands every
@@ -58,10 +58,10 @@ twelve editions byte-identical (a path given to keep is held, not checked)."#;
 fn games(file: &Path) -> Vec<DecompTarget> {
     let text = file.to_string_lossy();
     let mut found = Vec::new();
-    if !text.contains("THE LOST AGE") {
+    if !text.contains("games/tla/") {
         found.push(target_for(DecompTargetId::TbsJa));
     }
-    if !text.contains("THE BROKEN SEAL") {
+    if !text.contains("games/tbs/") {
         found.push(target_for(DecompTargetId::TlaJa));
     }
     found
@@ -78,11 +78,11 @@ fn library(root: &Path, file: &Path) -> bool {
 }
 
 fn search(root: &Path, target: DecompTarget) -> Vec<PathBuf> {
-    let mut paths = vec![root.join("games").join(target.game_dir()).join("INCLUDE")];
+    let mut paths = vec![root.join("games").join(target.game_dir()).join("include")];
     paths.extend(
         COMMON_INCLUDE_MODULES
             .iter()
-            .map(|module| root.join("games/COMMON/INCLUDE").join(module)),
+            .map(|module| root.join("games/common/include").join(module)),
     );
     paths
 }

@@ -1,0 +1,611 @@
+#include "types.h"
+#include "ability_ids.h"
+#include "field_scene.h"
+#include "item_ids.h"
+#include "objcmd.h"
+
+void ActorPresentation_SetCellAndLowerActorEight(void);
+void ArutinYama_BeginRollingRide(void);
+void ArutinYama_PushMovableObject(void);
+void ArutinYama_RestoreFallingActorNine(void);
+void ArutinYama_RunLeapSequence(void);
+void ArutinYama_SetActorTenAutomaticPriority(void);
+void ArutinYama_SetActorTenUnderfootPriority(void);
+void ArutinYama_StartAreaFiveEncounter(void);
+void ArutinYama_StartAreaOneEncounter(void);
+void ArutinYama_StartAreaThreeEncounter(void);
+void ArutinYama_SwingActorIntoSetPiece(void);
+void FieldScene_BuildMultiPhasePresentation(void);
+void FieldScene_RunFallingRocksWarning(void);
+void FieldScene_RunLateAuxiliarySequence(void);
+void FieldScene_RunLine1528Sequence(void);
+void FieldScene_RunScene3a4SequenceC(void);
+void FieldScene_RunScene3a4SequenceD(void);
+void FieldScene_RunValue1528Scene(void);
+void OverlayObject_IntegrateAndDamp(void);
+void OverlayObject_UpdateFacingTowardTarget(void);
+void SceneActor_AdjustSlot12AndSetFlag204(void);
+void SceneActor_RaiseSlot11AndSetFlag201(void);
+void SceneActor_RaiseSlot9StepA(void);
+void SceneActor_RaiseSlot9StepB(void);
+void SceneActor_UpdateSlot10ByTileX(void);
+void SceneState_ApplyRectAndLowerActor9(void);
+void SceneState_SetValue14Mode23(void);
+
+u32 ArutinYama_PaletteScript[] = {
+	0x20021003, 0x20024001, 255,
+};
+
+s32 ArutinYama_ActorScript[] = {
+	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+s32 ArutinYama_EarlyActorScript[] = {
+	SC_ADD(SW_SCALE_X, 546),
+	SC_ADD(SW_SCALE_Y, 546),
+	SC_WAIT(1),
+	SC_LOOP(108, SC_TOP),
+	SC_END,
+};
+
+s32 ArutinYama_LogRideScript[] = {
+	SC_MOVE(PIXELS(786), 0, PIXELS(220)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(786), 0, PIXELS(326)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(786), 0, PIXELS(326)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(786), 0, PIXELS(480)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(786), 0, PIXELS(520)),
+	SC_SYNC,
+	SC_SET(0x23, 1),
+	SC_END,
+};
+
+s32 ArutinYama_LeaderRideScript[] = {
+	SC_ARG(5),
+	SC_MOVE(PIXELS(804), 0, PIXELS(140)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(804), 0, PIXELS(166)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(764), 0, PIXELS(166)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(764), 0, PIXELS(198)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(786), 0, PIXELS(198)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(786), 0, PIXELS(246)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(764), 0, PIXELS(246)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(764), 0, PIXELS(282)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(780), 0, PIXELS(298)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(804), 0, PIXELS(298)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(804), 0, PIXELS(326)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(776), 0, PIXELS(326)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(776), 0, PIXELS(358)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(804), 0, PIXELS(358)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(804), 0, PIXELS(392)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(786), 0, PIXELS(392)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(762), 0, PIXELS(416)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(762), 0, PIXELS(438)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(804), 0, PIXELS(438)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(804), 0, PIXELS(472)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(794), 0, PIXELS(472)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(792), 0, PIXELS(504)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(808), 0, PIXELS(504)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(808), 0, PIXELS(552)),
+	SC_SYNC,
+	SC_SET(0x23, 1),
+	SC_MOVE(PIXELS(854), 0, PIXELS(552)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_LABEL(1),
+	SC_ADD(SW_FACING, 1024),
+	SC_LOOP(24, SC_TO(1)),
+	SC_END,
+};
+
+s32 ArutinYama_SparkScript[] = {
+	SC_CALL(OverlayObject_IntegrateAndDamp),
+	SC_WAIT(1),
+	SC_LOOP(60, SC_TOP),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 ArutinYama_GeraldScript[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(314), 0, PIXELS(126)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_WAIT(10),
+	SC_END,
+};
+
+s32 ArutinYama_IvanScript[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(346), 0, PIXELS(126)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_WAIT(10),
+	SC_END,
+};
+
+s32 ArutinYama_MiaScript[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(328), 0, PIXELS(138)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_WAIT(10),
+	SC_END,
+};
+
+s32 ArutinYama_CelebrateScript[] = {
+	SC_ADD(SW_SCALE_X, 128),
+	SC_ADD(SW_SCALE_Y, -1024),
+	SC_WAIT(1),
+	SC_LOOP(60, SC_TOP),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 ArutinYama_PartyScript[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(328), 0, PIXELS(118)),
+	SC_SYNC,
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+struct SceneEntrance gArutinYamaEntrancesOther[] = {
+	{ 0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gArutinYamaEntrances1[] = {
+	{ 0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 456, 0, 520, FACING_NORTH, 0, 0, 56, 506, 530, 0 },
+	{ 98, CONDITION_ALWAYS, 456, 0, 488, FACING_NORTH, 0, 0, 56, 506, 530, 0 },
+	{ 99, CONDITION_ALWAYS, 104, 0, 232, FACING_SOUTH, 0, 0, 56, 506, 530, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gArutinYamaEntrances2[] = {
+	{ 0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 248, 0, 464, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 2, CONDITION_ALWAYS, 56, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gArutinYamaEntrances3[] = {
+	{ 0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 2, CONDITION_ALWAYS, 664, 0, 380, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 3, CONDITION_ALWAYS, 904, 0, 214, FACING_NORTH, 0, 842, 40, 1016, 248, 0 },
+	{ 98, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 99, CONDITION_ALWAYS, 320, 0, 472, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gArutinYamaEntrances4[] = {
+	{ 0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 248, 0, 498, FACING_NORTH, 0, 24, 0, 648, 560, 0 },
+	{ 2, CONDITION_ALWAYS, 119, 0, 108, FACING_SOUTH, 0, 24, 0, 648, 560, 0 },
+	{ 3, CONDITION_ALWAYS, 567, 0, 105, FACING_SOUTH, 0, 24, 0, 648, 560, 0 },
+	{ 4, CONDITION_ALWAYS, 887, 0, 798, FACING_NORTH, 0, 712, 568, 960, 860, 0 },
+	{ 5, CONDITION_ALWAYS, 791, 0, 679, FACING_SOUTH, 0, 712, 560, 960, 860, 0 },
+	{ 6, CONDITION_ALWAYS, 88, 0, 840, FACING_NORTH, 0, 32, 704, 272, 864, 0 },
+	{ 7, CONDITION_ALWAYS, 216, 0, 840, FACING_NORTH, 0, 32, 704, 272, 864, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gArutinYamaEntrances5[] = {
+	{ 0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0 },
+	{ 98, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0 },
+	{ 99, CONDITION_ALWAYS, 747, 0, 258, FACING_SOUTH, 0, 0, 0, 798, 530, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gArutinYamaEntrances6[] = {
+	{ 0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 568, 0, 348, FACING_NORTH, 0, 0, 0, 798, 530, 0 },
+	{ 2, CONDITION_ALWAYS, 295, 0, 95, FACING_SOUTH, 0, 0, 0, 798, 530, 0 },
+	{ 3, CONDITION_ALWAYS, 442, 0, 774, FACING_NORTH, 0, 0, 530, 512, 948, 0 },
+	{ 4, CONDITION_ALWAYS, 72, 0, 870, FACING_NORTH, 0, 0, 530, 512, 948, 0 },
+	{ 5, CONDITION_ALWAYS, 918, 0, 712, FACING_SOUTH, 0, 520, 570, 992, 786, 0 },
+	{ 6, CONDITION_ALWAYS, 615, 0, 684, FACING_SOUTH, 0, 520, 570, 992, 786, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gArutinYamaEntrances7[] = {
+	{ 0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 72, 0, 502, FACING_NORTH, 0, 0, 0, 820, 568, 0 },
+	{ 2, CONDITION_ALWAYS, 152, 0, 174, FACING_SOUTH, 0, 0, 0, 820, 568, 0 },
+	{ 3, CONDITION_ALWAYS, 264, 0, 890, FACING_NORTH, 0, 144, 720, 384, 908, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gArutinYamaEntrances8[] = {
+	{ 0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 392, 0, 116, FACING_SOUTH, 0, 0, 0, 830, 564, 0 },
+	{ 2, CONDITION_ALWAYS, 40, 0, 116, FACING_NORTH, 0, 0, 0, 830, 564, 0 },
+	{ 3, CONDITION_ALWAYS, 520, 0, 616, FACING_SOUTH, 0, 244, 564, 1024, 1024, 0 },
+	{ 4, CONDITION_ALWAYS, 408, 0, 970, FACING_NORTH, 0, 244, 564, 1024, 1024, 0 },
+	{ 5, CONDITION_ALWAYS, 951, 0, 791, FACING_SOUTH, 0, 244, 564, 1024, 1024, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gArutinYamaEntrances9[] = {
+	{ 0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 361, 0, 309, FACING_NORTH, 0, 0, 0, 524, 816, 0 },
+	{ 2, CONDITION_ALWAYS, 89, 0, 749, FACING_NORTH, 0, 0, 0, 524, 816, 0 },
+	{ 3, CONDITION_ALWAYS, 728, 0, 717, FACING_NORTH, 0, 618, 0, 990, 854, 0 },
+	{ 4, CONDITION_ALWAYS, 935, 0, 493, FACING_SOUTH, 0, 618, 0, 990, 854, 0 },
+	{ 5, CONDITION_ALWAYS, 791, 0, 566, FACING_SOUTH, 0, 618, 0, 990, 854, 0 },
+	{ 6, CONDITION_ALWAYS, 792, 16, 577, FACING_SOUTH, 0, 618, 0, 998, 854, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gArutinYamaEntrances10[] = {
+	{ 0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0 },
+	{ 98, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0 },
+	{ 99, CONDITION_ALWAYS, 328, 0, 118, FACING_NORTH, 0, 0, 0, 448, 524, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gArutinYamaEntrances11[] = {
+	{ 0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 408, 0, 517, FACING_NORTH, 0, 0, 0, 540, 590, 0 },
+	{ 2, CONDITION_ALWAYS, 198, 0, 336, FACING_SOUTH, 0, 0, 0, 540, 590, 0 },
+	{ 3, CONDITION_ALWAYS, 568, 0, 136, FACING_NORTH, 0, 480, 15, 684, 180, 0 },
+	{ 4, CONDITION_ALWAYS, 73, 0, 190, FACING_NORTH, 0, 0, 0, 540, 590, 0 },
+	{ SCENE_TABLE_END },
+};
+
+s16 gArutinYamaRegions9[] = {
+#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+	790, -106, 575, 794, -102, 579, -1, 6,
+	788, -108, 579, 796, -100, 587, -1, 6,
+#else
+	784, -116, 572, 800, -100, 588, -1, 6,
+#endif
+	-1, 0, 0, 0, 0, 0, 0, 0,
+};
+
+s16 gArutinYamaRegions10[] = {
+#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+	84, 38, 420, 92, 46, 428, -1, 1,
+#else
+	80, 34, 416, 96, 50, 432, -1, 1,
+#endif
+	-1, 0, 0, 0, 0, 0, 0, 0,
+};
+
+u32 ArutinYama_StatueTable[] = {
+	SCENE_EXITS(77),
+	SCENE_EXIT(1, 75, 10),
+	SCENE_EXIT(0, 78, 0),
+	SCENE_EXIT(1, 80, 3),
+	SCENE_EXIT(2, 79, 1),
+	SCENE_EXIT(0, 79, 0),
+	SCENE_EXIT(1, 78, 2),
+	SCENE_EXIT(2, 79, 3),
+	SCENE_EXIT(3, 79, 2),
+	SCENE_EXIT(0, 80, 0),
+	SCENE_EXIT(1, 75, 11),
+	SCENE_EXIT(2, 80, 4),
+	SCENE_EXIT(3, 78, 1),
+	SCENE_EXIT(4, 80, 2),
+	SCENE_EXIT(5, 82, 1),
+	SCENE_EXIT(6, 74, 4),
+	SCENE_EXIT(7, 74, 5),
+	SCENE_EXIT(0, 81, 0),
+	SCENE_EXIT(1, 82, 6),
+	SCENE_EXIT(0, 82, 0),
+	SCENE_EXIT(1, 80, 5),
+	SCENE_EXIT(2, 82, 3),
+	SCENE_EXIT(3, 82, 2),
+	SCENE_EXIT(4, 82, 5),
+	SCENE_EXIT(5, 82, 4),
+	SCENE_EXIT(6, 81, 1),
+	SCENE_EXIT(0, 83, 0),
+	SCENE_EXIT(1, 84, 1),
+	SCENE_EXIT(2, 85, 1),
+	SCENE_EXIT(3, 75, 13),
+	SCENE_EXIT(0, 84, 0),
+	SCENE_EXIT(1, 83, 1),
+	SCENE_EXIT(2, 85, 5),
+	SCENE_EXIT(3, 87, 1),
+	SCENE_EXIT(4, 75, 12),
+	SCENE_EXIT(5, 85, 3),
+	SCENE_EXIT(0, 85, 0),
+	SCENE_EXIT(1, 83, 2),
+	SCENE_EXIT(2, 85, 4),
+	SCENE_EXIT(3, 84, 5),
+	SCENE_EXIT(4, 85, 2),
+	SCENE_EXIT(5, 84, 2),
+	SCENE_EXIT(6, 86, 1),
+	SCENE_EXIT(0, 86, 0),
+	SCENE_EXIT(1, 85, 6),
+	SCENE_EXIT(0, 87, 0),
+	SCENE_EXIT(1, 84, 3),
+	SCENE_EXIT(2, 87, 3),
+	SCENE_EXIT(3, 87, 2),
+	SCENE_EXIT(4, 2, 52),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement gArutinYamaPlacementsOther[] = {
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gArutinYamaPlacements1[] = {
+	{ 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(152), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(296), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xbe, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(296), 0, PIXELS(336), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gArutinYamaPlacements3[] = {
+	{ 0xe7, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(216), 0, PIXELS(312), FACING_EAST, TALK_KEEP_FACING, 0 },
+	{ 0xbe, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(248), 0, PIXELS(464), FACING_WEST, TALK_KEEP_FACING, 0 },
+	{ 0x127, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(888), 0, PIXELS(172), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gArutinYamaPlacements5[] = {
+	{ 0xe7, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(536), 0, PIXELS(296), FACING_EAST, TALK_KEEP_FACING, 0 },
+	{ 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(408), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xbe, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(759), 0, PIXELS(285), FACING_WEST, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gArutinYamaPlacements6[] = {
+	{ 0xe7, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(712), 0, PIXELS(184), FACING_EAST, TALK_KEEP_FACING, 0 },
+	{ 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(696), 0, PIXELS(664), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gArutinYamaPlacements7[] = {
+	{ 0xe7, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(264), 0, PIXELS(408), FACING_EAST, TALK_KEEP_FACING, 0 },
+	{ 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(424), 0, PIXELS(424), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(408), 0, PIXELS(424), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(280), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(424), 0, PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x127, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(520), 0, PIXELS(632), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x5b, 0x47, ACTOR_STAND,
+		PIXELS(56), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gArutinYamaPlacements8[] = {
+	{ 0x127, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(536), 0, PIXELS(636), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gArutinYamaPlacements9[] = {
+	{ 0xc8, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(784), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x120, CONDITION_ALWAYS, 7,
+		PIXELS(784), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xcd, CONDITION_ALWAYS, 7,
+		PIXELS(774), 0, PIXELS(76), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x16, CONDITION_ALWAYS, 7,
+		PIXELS(774), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x112, CONDITION_ALWAYS, 7,
+		PIXELS(792), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gArutinYamaPlacements10[] = {
+	{ 0xc7, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(328), 0, PIXELS(84), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x120, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(328), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gArutinYamaPlacements11[] = {
+	{ 0x127, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(312), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(200), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent gArutinYamaEventsOther[] = {
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutinYamaEvents1[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_TOUCH, 10, 0x904, EVENT_SCRIPT(FieldScene_BuildMultiPhasePresentation) },
+	{ EVENT_TOUCH, 11, 0x905, EVENT_SCRIPT(ArutinYama_RunLeapSequence) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_StartAreaOneEncounter) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_StartAreaOneEncounter) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent ArutinYama_OpenedAreaScript[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x200, EVENT_SCRIPT(ActorPresentation_SetCellAndLowerActorEight) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x201, EVENT_SCRIPT(ArutinYama_RestoreFallingActorNine) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutinYamaEvents2[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutinYamaEvents3[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_BeginRollingRide) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_StartAreaThreeEncounter) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_StartAreaThreeEncounter) },
+	{ PSYNERGY_ON_ACTOR(0x8f), 10, CONDITION_ALWAYS, 0 },
+	{ SEARCH(SEARCH_UNNAMED), 83, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunValue1528Scene) },
+	{ SEARCH(SEARCH_CHEST), 100, 0xf76, FIND_ITEM(0xc0) },
+	{ SCENE_EVENTS_END },
+	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
+	{ SEARCH(SEARCH_CHEST), 100, 0xf05, FIND_ITEM(0xb4) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutinYamaEvents4[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
+	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
+	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
+	{ EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
+	{ EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutinYamaEvents5[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x200, EVENT_SCRIPT(SceneActor_RaiseSlot9StepB) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_StartAreaFiveEncounter) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_StartAreaFiveEncounter) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_BeginRollingRide) },
+	{ SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLine1528Sequence) },
+	{ 0x2413, 100, 0xf77, FIND_ITEM(0x7b) },
+	{ 0x413, 100, 0xf77, FIND_ITEM(0x7b) },
+	{ 0xe413, 100, 0xf77, FIND_ITEM(0x7b) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutinYamaEvents6[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
+	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
+	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
+	{ EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x200, EVENT_SCRIPT(SceneState_ApplyRectAndLowerActor9) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_BeginRollingRide) },
+	{ SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3a4SequenceC) },
+	{ SEARCH(SEARCH_CHEST), 100, 0xef2, 0x500002 },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutinYamaEvents7[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
+	{ SEARCH(SEARCH_CHEST), 101, 0xf07, FIND_ITEM(0xba) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue14Mode23) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_BeginRollingRide) },
+	{ SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3a4SequenceD) },
+	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_SetActorTenUnderfootPriority) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_SetActorTenAutomaticPriority) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_UpdateSlot10ByTileX) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_PushMovableObject) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x200, EVENT_SCRIPT(SceneActor_RaiseSlot9StepA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x201, EVENT_SCRIPT(SceneActor_RaiseSlot11AndSetFlag201) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x204, EVENT_SCRIPT(SceneActor_AdjustSlot12AndSetFlag204) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutinYamaEvents8[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
+	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
+	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
+	{ SEARCH(SEARCH_CHEST), 100, 0xf78, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+	{ PSYNERGY_ON_ACTOR(0x8f), 8, CONDITION_ALWAYS, 0 },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutinYamaEvents9[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
+	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
+	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
+	{ SEARCH(SEARCH_UNNAMED), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFallingRocksWarning) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 11, 0x908, EVENT_SCRIPT(ArutinYama_SwingActorIntoSetPiece) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutinYamaEvents10[] = {
+	{ EVENT_TOUCH, 10, 0x909, EVENT_SCRIPT(FieldScene_RunLateAuxiliarySequence) },
+	{ SEARCH(SEARCH_CHEST), 100, 0xf08, FIND_ITEM(0xcb) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutinYamaEvents11[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
+	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
+	{ PSYNERGY_ON_ACTOR(0x8f), 8, CONDITION_ALWAYS, 0 },
+	{ PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, 0 },
+	{ SEARCH(SEARCH_CHEST), 100, 0xf79, FIND_ITEM(ITEM_VIAL) },
+	{ SCENE_EVENTS_END },
+};
+
+s32 ArutinYama_CueTicks = 0;
+
+u32 ArutinYama_RollRadii[] = {
+	0x10000, 0x10b55, 0x1172b, 0x12387, 0x1306f, 0x13dea, 0x14bfd, 0x15ab0,
+	0x16a09, 0x17a11, 0x18ace, 0x19c49, 0x1ae89, 0x1c199, 0x1d581, 0x1ea4b,
+	0x20000, 0x216ab, 0x22e56, 0x2470f, 0x260df, 0x27bd4, 0x297fb, 0x2b560,
+	0x2d413, 0x2f422, 0x3159c, 0x33892, 0x35d13, 0x38333, 0x3ab03, 0x3d495,
+	0x40000,
+};

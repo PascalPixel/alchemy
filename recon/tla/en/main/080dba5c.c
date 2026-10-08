@@ -1,11 +1,11 @@
 /* Near miss: listing 102 instructions, draft 128, common 92, differ 46; the rest differs in instruction order. */
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "OBJECT_RUNTIME.H"
-#include "MEM.H"
-#include "IWRAM_CALL.H"
-#include "RESOURCE.H"
-#include "CALLBACK_SCHEDULER.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "object_runtime.h"
+#include "mem.h"
+#include "iwram_call.h"
+#include "resource.h"
+#include "callback_scheduler.h"
 
 struct DepthSprite {
     u8 unknown_00[5];

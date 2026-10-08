@@ -1,5 +1,5 @@
-#include "FAR_RUNTIME.H"
-#include "OWNER_STATE.H"
+#include "far_runtime.h"
+#include "owner_state.h"
 
 void Menu_HideEmptyEntryIcons(const u16 *items)
 {

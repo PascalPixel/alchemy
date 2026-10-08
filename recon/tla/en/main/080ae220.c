@@ -1,8 +1,8 @@
-#include "OWNER_STATE.H"
-#include "PARTY_STATE.H"
-#include "GAME_FLAGS.H"
-#include "FIXED_MATH.H"
-#include "TYPES.H"
+#include "owner_state.h"
+#include "party_state.h"
+#include "game_flags.h"
+#include "fixed_math.h"
+#include "types.h"
 
 extern const u8 Character_ElementGroupTable[];
 

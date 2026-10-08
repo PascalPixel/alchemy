@@ -1,8 +1,8 @@
-#include "TYPES.H"
-#include "IO_REG.H"
-#include "SCENE.H"
-#include "SYSTEM.H"
-#include "LAYOUT_GUARD.H"
+#include "types.h"
+#include "io_reg.h"
+#include "scene.h"
+#include "system.h"
+#include "layout_guard.h"
 
 #define SELECTION_FIXED 999
 

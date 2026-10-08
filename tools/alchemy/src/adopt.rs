@@ -2,16 +2,16 @@ use crate::compiler::routing::root;
 use std::path::{Path, PathBuf};
 
 const USAGE: &str = r#"usage: alchemy adopt ADDRESS LABEL [NEW_NAME] [--game tbs|tla] [--padding]
-                    [--into MODULE.C [--head]]
+                    [--into MODULE.c [--head]]
 After the function's C is in its module: removes recon/<game>/raw/ADDRESS.s,
 its line in the English linker script and the draft recon/<game>/en/main/
 ADDRESS.c; in each other edition removes the rom.s section that holds
 exactly LABEL and its line in that edition's linker script
-(games/<GAME>/MAIN.LD for Japanese; ☀️'s MAIN_<LANG>.LD beside it, ⚓️'s
-recon/tla/<lang>/MAIN.LD). --padding also removes a two-byte section
+(games/<game>/main.ld for Japanese; ☀️'s main_<lang>.ld beside it, ⚓️'s
+recon/tla/<lang>/main.ld). --padding also removes a two-byte section
 directly before or after it. NEW_NAME renames LABEL across games/ and recon/. The
 game defaults to tbs. Then build all twelve editions.
---into first merges the draft into MODULE.C, its linker neighbour: the
+--into first merges the draft into MODULE.c, its linker neighbour: the
 draft's missing includes after the module's top include block, then the
 declarations and functions the module lacks at its end, or with --head
 before its first function; the draft's audit header stays behind. A name

@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "OWNER_STATE.H"
+#include "types.h"
+#include "owner_state.h"
 
 #define ACTION_MASK 0x3fff
 #define FLAG_FIRST 0x8000

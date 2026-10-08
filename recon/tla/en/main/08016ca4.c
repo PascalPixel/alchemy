@@ -1,5 +1,5 @@
-#include "OWNER_STATE.H"
-#include "TYPES.H"
+#include "owner_state.h"
+#include "types.h"
 
 struct OwnerState {
     u8 bytes[0x14c];

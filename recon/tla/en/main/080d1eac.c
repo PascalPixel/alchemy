@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "PARTY_STATE.H"
+#include "types.h"
+#include "party_state.h"
 
 struct BattleFxDefinition {
     u16 id;

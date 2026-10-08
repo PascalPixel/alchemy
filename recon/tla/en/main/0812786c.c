@@ -1,6 +1,6 @@
-#include "MEM.H"
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
+#include "mem.h"
+#include "types.h"
+#include "iwram_call.h"
 
 struct OwnerElementStats {
     s16 pow;

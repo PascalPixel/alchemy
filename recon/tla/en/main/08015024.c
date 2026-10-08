@@ -1,12 +1,12 @@
-#include "MEM.H"
-#include "EDITION.H"
-#include "TYPES.H"
-#include "TRANSFORM.H"
-#include "DMA.H"
-#include "IO_REG.H"
-#include "RAM_BUFFER.H"
-#include "SYSTEM.H"
-#include "IWRAM_CALL.H"
+#include "mem.h"
+#include "edition.h"
+#include "types.h"
+#include "transform.h"
+#include "dma.h"
+#include "io_reg.h"
+#include "ram_buffer.h"
+#include "system.h"
+#include "iwram_call.h"
 
 void SceneTransform_ApplyPitch(s32 angle)
 {
@@ -14,7 +14,7 @@ void SceneTransform_ApplyPitch(s32 angle)
     s32 sin = Trig_Sin(angle);
     s32 cos = Trig_Cos(angle);
 
-    CAMELOT_ASM("the fixed-register identity store of TRANSFORM.H")
+    CAMELOT_ASM("the fixed-register identity store of transform.h")
     Transform_SetIdentity(matrix);
     matrix[4] = cos;
     matrix[5] = sin;

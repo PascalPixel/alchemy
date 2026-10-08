@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "BTLSYS.H"
+#include "types.h"
+#include "btlsys.h"
 extern u8 Data_03001e74[];
 
 s32 Battle_SelectWeightedIndex(u8 *weights)

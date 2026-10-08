@@ -876,7 +876,7 @@ mod tests {
                    */recon/tbs/raw/08000000.o(.text)\n \
                    .text          0x0000000008000000       0x20 /x/out/tbs-en/obj/recon/tbs/raw/08000000.o\n                \
                    0x0000000008000000                Foo_Run\n \
-                   .text          0x0000000008000020        0x8 /x/out/tbs-en/obj/games/X/SRC/BAR.o\n                \
+                   .text          0x0000000008000020        0x8 /x/out/tbs-en/obj/games/x/src/bar.o\n                \
                    0x0000000008000020                Bar_Run\n";
         edition("tbs-en", map, 0x0800_0000, &code, &[("Foo_Run", 0x0800_0001, 2), ("Bar_Run", 0x0800_0021, 2)])
     }

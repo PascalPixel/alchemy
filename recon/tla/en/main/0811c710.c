@@ -1,9 +1,9 @@
-#include "TYPES.H"
-#include "SYSTEM.H"
-#include "BTLPTY.H"
-#include "BTLSYS.H"
-#include "BTLDISP.H"
-#include "MOTOBJ.H"
+#include "types.h"
+#include "system.h"
+#include "btlpty.h"
+#include "btlsys.h"
+#include "btldisp.h"
+#include "motobj.h"
 
 extern u8 gTransitionWork[];
 

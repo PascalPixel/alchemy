@@ -2,16 +2,16 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/THE LOST AGE/SRC/FIELD/DERI_MURA/ENTRY.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/DERI_MURA/SCENE_TABLES.o"(.text)
+        "*/games/tla/src/field/deri_mura/entry.o"(.text)
+        "*/games/tla/src/field/deri_mura/scene_tables.o"(.text)
         "*/resource_651_overlay.o"(.text.x02008044)
         "*/resource_651_overlay.o"(.text.x02008070)
         "*/resource_651_overlay.o"(.text.x0200809c)
         "*/resource_651_overlay.o"(.text.x02008118)
         "*/resource_651_overlay.o"(.text.x02008128)
-        "*/games/THE LOST AGE/SRC/FIELD/DERI_MURA/TALK.o"(.text)
+        "*/games/tla/src/field/deri_mura/talk.o"(.text)
         "*/resource_651_overlay.o"(.text.x02008288)
-        "*/games/THE LOST AGE/SRC/FIELD/DERI_MURA/HIP.o"(.text)
+        "*/games/tla/src/field/deri_mura/hip.o"(.text)
         "*/resource_651_overlay.o"(.text.x02008340)
         "*/resource_651_overlay.o"(.text.x020083a0)
         "*/resource_651_overlay.o"(.text.x02008924)
@@ -24,7 +24,7 @@ SECTIONS
         "*/resource_651_overlay.o"(.text.x02008ac8)
         "*/resource_651_overlay.o"(.text.x02008b44)
         "*/resource_651_overlay.o"(.text.x02008c30)
-        "*/games/THE LOST AGE/SRC/FIELD/DERI_MURA/IMPORT.o"(.text)
+        "*/games/tla/src/field/deri_mura/import.o"(.text)
         "*/resource_651_overlay.o"(.rodata.x02008d80)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

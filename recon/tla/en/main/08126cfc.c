@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "BTLPTY.H"
-#include "SCENE.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "btlpty.h"
+#include "scene.h"
+#include "system.h"
 
 void Graphics_AdvancePaletteCycle(void);
 void Scheduler_RemoveCallback(u32);

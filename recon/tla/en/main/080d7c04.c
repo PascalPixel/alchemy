@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "FIXED_MATH.H"
-#include "OBJECT_DISPATCH.H"
+#include "types.h"
+#include "fixed_math.h"
+#include "object_dispatch.h"
 
 extern u8 gEffectWork[];
 

@@ -1,6 +1,6 @@
-#include "RESOURCE.H"
-#include "MEM.H"
-#include "TYPES.H"
+#include "resource.h"
+#include "mem.h"
+#include "types.h"
 
 struct GlyphCursor { u16 unused; u16 cursor; };
 

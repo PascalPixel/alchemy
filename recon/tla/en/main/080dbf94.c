@@ -1,7 +1,7 @@
 /* Near miss: listing 81 instructions, draft 81, common 62, differ 38; the rest differs in instruction order. */
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "OBJECT_RUNTIME.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "object_runtime.h"
 
 struct MoveScene {
     u16 mode;

@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "DMA.H"
-#include "RAM_BUFFER.H"
-#include "MAP.H"
+#include "types.h"
+#include "dma.h"
+#include "ram_buffer.h"
+#include "map.h"
 
 extern u8 Data_0201c000[];
 extern u8 gMapBlocks[];

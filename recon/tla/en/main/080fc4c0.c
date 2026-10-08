@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "FIXED_MATH.H"
+#include "types.h"
+#include "fixed_math.h"
 extern u8 Data_03001f2c[];
 
 s32 UnitGetFar(s32);

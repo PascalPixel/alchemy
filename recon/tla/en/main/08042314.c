@@ -1,7 +1,7 @@
-#include "RENDER_INPUT.H"
-#include "OUTPUT.H"
-#include "VRAM_TAB.H"
-#include "RESOURCE.H"
+#include "render_input.h"
+#include "output.h"
+#include "vram_tab.h"
+#include "resource.h"
 
 struct RenderOutput *RenderOutput_Create(
     s32 slot,

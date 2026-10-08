@@ -1,0 +1,262 @@
+#include "types.h"
+#include "ability_ids.h"
+#include "field_event.h"
+#include "field_scene.h"
+#include "item_ids.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
+
+void FieldScene_RunPrimarySequence(void);
+void SceneEffect_ActivateNearbyActor(void);
+void SceneEffect_DispatchStep(void);
+void SceneEffect_RequestFixedEffect(void);
+void SceneEffect_RunActorSceneMessage(void);
+void SceneEffect_ShowActorSetupMessage(void);
+void Scene_RunActorNineteenScript(void);
+void ShianMura_ActivateActorTwentyPlatform(void);
+void ShianMura_EscortActorEighteen(void);
+void ShianMura_HopLeaderAhead(void);
+void ShianMura_RunNpcMeetScene(void);
+
+s32 gEffectScript0[] = {
+	SC_WAIT(1),
+	SC_LOOP(22, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 gEffectScript1[] = {
+	SC_WAIT(1),
+	SC_LOOP(44, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 gEffectScript2[] = {
+	SC_WAIT(1),
+	SC_LOOP(126, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 *gEffectScripts[] = {
+	gEffectScript0,
+	gEffectScript1,
+	gEffectScript2,
+};
+
+s32 ShianMura_ActionTable[] = {
+	SC_SET(SW_SPEED, 0x6666),
+	SC_SET(SW_ACCEL, 0x1999),
+	SC_WAIT(60),
+	SC_LABEL(1),
+	SC_ARG(3),
+	SC_WAIT(60),
+	SC_ARG(3),
+	SC_WAIT(180),
+	SC_ARG(2),
+	SC_MOVE(PIXELS(424), 0, PIXELS(232)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(424), 0, PIXELS(216)),
+	SC_SYNC,
+	SC_WAIT(10),
+	SC_SET(SW_FACING, 0x1000),
+	SC_WAIT(10),
+	SC_ARG(3),
+	SC_WAIT(60),
+	SC_ARG(3),
+	SC_WAIT(120),
+	SC_ARG(2),
+	SC_MOVE(PIXELS(424), 0, PIXELS(232)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(280), 0, PIXELS(232)),
+	SC_SYNC,
+	SC_LOOP(SC_FOREVER, SC_TO(1)),
+	SC_END,
+};
+
+s32 ShianMura_Actor19Motion[] = {
+	SC_SET(SW_SNAP, 0),
+	SC_SET(SW_SPEED, 0x30000),
+	SC_SET(SW_ACCEL, 0x18000),
+	SC_MOVE(PIXELS(168), PIXELS(48), PIXELS(312)),
+	SC_SYNC,
+	SC_SET(SW_SPEED, 0x30000),
+	SC_SET(SW_ACCEL, 0x1999),
+	SC_SET(SW_SNAP, 1),
+	SC_MOVE(PIXELS(168), PIXELS(16), PIXELS(312)),
+	SC_SYNC,
+	SC_END,
+};
+
+s32 ShianMura_EffectScript[] = {
+	SC_WAIT(18),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 ShianMura_EffectConfig[] = {
+	SC_SET(SW_FACING, FACING_WEST),
+	SC_WAIT(16),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+u16 ShianMura_GateSteps1[] = {
+	MAP_CELL_STEP(64, 48, 1, 2, 4), MAP_CELL_STEP(63, 48, 1, 2, 4), MAP_CELL_STEPS_END,
+};
+
+u16 ShianMura_GateSteps2[] = {
+	MAP_CELL_STEP(69, 50, 2, 2, 4), MAP_CELL_STEP(65, 50, 2, 2, 4), MAP_CELL_STEPS_END,
+};
+
+u16 ShianMura_GateSteps3[] = {
+	MAP_CELL_STEP(66, 46, 3, 2, 4), MAP_CELL_STEP(63, 46, 3, 2, 4), MAP_CELL_STEPS_END,
+};
+
+u16 ShianMura_GateSteps4[] = {
+	MAP_CELL_STEP(67, 50, 4, 2, 4), MAP_CELL_STEP(63, 50, 4, 2, 4), MAP_CELL_STEPS_END,
+};
+
+u16 ShianMura_GateSteps5[] = {
+	MAP_CELL_STEP(66, 44, 3, 2, 4), MAP_CELL_STEP(63, 44, 3, 2, 4), MAP_CELL_STEPS_END,
+};
+
+struct SceneEntrance gShianMuraEntrances[] = {
+	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 376, 0, 504, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 5, CONDITION_ALWAYS, 344, 0, 328, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 6, CONDITION_ALWAYS, 376, 0, 216, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 7, CONDITION_ALWAYS, 424, 0, 216, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 8, CONDITION_ALWAYS, 408, 0, 424, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 9, CONDITION_ALWAYS, 216, 0, 184, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 10, CONDITION_ALWAYS, 392, 0, 184, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 11, CONDITION_ALWAYS, 176, 0, 216, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 gShianMuraExits[] = {
+	SCENE_EXITS(72),
+	SCENE_EXIT(1, 73, 1),
+	SCENE_EXIT(2, 73, 2),
+	SCENE_EXIT(3, 73, 3),
+	SCENE_EXIT(4, 73, 4),
+	SCENE_EXIT(5, 73, 6),
+	SCENE_EXIT(6, 9, 32),
+	SCENE_EXIT(7, 61, 2),
+	SCENE_EXIT(8, 2, 14),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement gShianMuraPlacements[] = {
+	{ 0x9c, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(328), 0, PIXELS(448), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x9f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(152), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
+	{ 0xa0, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(420), 0, PIXELS(304), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0xa4, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(144), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0xa6, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(312), 0, PIXELS(200), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xa8, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(264), 0, PIXELS(184), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0xa9, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(192), 0, PIXELS(312), FACING_WEST, TALK_KEEP_FACING, 0 },
+	{ 0xaa, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(428), 0, PIXELS(432), FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x9f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(200), 0, PIXELS(440), FACING_NORTH, TALK_FACE_PARTY, 0 },
+	{ 0x27, IF_FLAG_SET(0x89a), ACTOR_STAND,
+		PIXELS(368), 0, PIXELS(496), FACING_SOUTHEAST + FACING_STEP, 3, 0 },
+	{ 0x9f, CONDITION_ALWAYS, (s32)ShianMura_ActionTable,
+		PIXELS(280), 0, PIXELS(232), FACING_WEST, TALK_KEEP_FACING, 0 },
+	{ 0xcd, CONDITION_ALWAYS, 7,
+		PIXELS(168), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0xe3, CONDITION_ALWAYS, 7,
+		0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(168), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x5b, 0x46, ACTOR_STAND,
+		PIXELS(448), 0, PIXELS(328), FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0xdf, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(426), 0, PIXELS(428), FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0xdf, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(299), 0, PIXELS(222), FACING_WEST, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0xdf, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(168), 0, PIXELS(280), FACING_WEST, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent gShianMuraEvents[] = {
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(SceneEffect_DispatchStep) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(SceneEffect_DispatchStep) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(SceneEffect_DispatchStep) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(SceneEffect_DispatchStep) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(SceneEffect_DispatchStep) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(SceneEffect_DispatchStep) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(SceneEffect_DispatchStep) },
+	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
+	{ 0x202, 20, 0x201, EVENT_SCRIPT(ShianMura_HopLeaderAhead) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 21, 0x201, EVENT_SCRIPT(ShianMura_HopLeaderAhead) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 2, 0x201, EVENT_SCRIPT(ShianMura_HopLeaderAhead) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 3, 0x201, EVENT_SCRIPT(ShianMura_HopLeaderAhead) },
+	{ EVENT_TALK, 8, 0x895, MSGNO(MsgShianMuraThisIsXianTravelersAreWelcome) },
+	{ EVENT_TALK, 9, 0x895, EVENT_SCRIPT(SceneEffect_ShowActorSetupMessage) },
+	{ EVENT_TALK, 10, 0x895, MSGNO(MsgShianMuraXianIsTheVillageOfKinu) },
+	{ EVENT_TALK, 11, 0x895, MSGNO(MsgShianMuraMartialArtsAreVeryPopularIn) },
+	{ EVENT_TALK, 12, 0x895, MSGNO(MsgShianMuraYouWarriorsShouldVisitMasterFehs) },
+	{ EVENT_TALK, 13, 0x895, MSGNO(MsgShianMuraMyClothesAreNotSilkSilk) },
+	{ EVENT_TALK, 14, 0x895, EVENT_SCRIPT(ShianMura_RunNpcMeetScene) },
+	{ EVENT_TALK, 15, 0x895, MSGNO(MsgShianMuraDisastersFromTheSkyManyMany) },
+	{ EVENT_TALK, 16, 0x895, MSGNO(MsgShianMuraThisIsTheMulberryOrchardWhen) },
+	{ EVENT_TALK, 17, 0x895, EVENT_SCRIPT(SceneEffect_RunActorSceneMessage) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPrimarySequence) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgShianMuraXianIsAPeacefulVillageBut) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShianMuraThereWasARockslideOnSilk) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShianMuraIWentToHelpMoveBoulders) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgShianMuraThePeopleWhoClearedTheRockslide) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgShianMuraHsuIsVeryGoodAtKung) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgShianMuraThePeopleOfXianLoveTheir) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgShianMuraAltinWasFloodedWithWaterBut) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgShianMuraWeClearedTheRocksFromSilk) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgShianMuraManyStrangeThingsHappenedAllAt) },
+	{ 0x10001815, 20, 0x201, EVENT_SCRIPT(SceneEffect_ActivateNearbyActor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, 0x201, EVENT_SCRIPT(ShianMura_ActivateActorTwentyPlatform) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunActorNineteenScript) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x895, MSGNO(MsgShianMuraTheseChildrenMustHaveComeTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x895, MSGNO(MsgShianMuraYouYoungWarriorsLookStrongBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x895, MSGNO(MsgShianMuraIHopeManyPeopleComeTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x895, MSGNO(MsgShianMuraFightingWithKicksAndPunchesIs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x895, MSGNO(MsgShianMuraMasterFehsSchoolIsTrainingIt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x895, MSGNO(MsgShianMuraSilkIsShinyAndSmoothIt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x895, MSGNO(MsgShianMuraBreakingTreesWithMyHandHurts) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x895, MSGNO(MsgShianMuraMasterFehSaidYahAndThen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x895, MSGNO(MsgShianMuraTheOrchardGivesTheVillageLife) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x895, MSGNO(MsgShianMuraGoingWestAloneIsVeryDangerous) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgShianMuraIMustCarryWaterEveryDay) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShianMuraHsuWasCaughtUnderABoulder) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShianMuraTheRocksThereWereVeryHard) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgShianMuraSomePeopleDidNotCarryRocks) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgShianMuraSandIsTheColorOfThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgShianMuraHsuIsStrongHeadedHeWould) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgShianMuraEveryoneStaysInXianTheyDo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgShianMuraThisWarriorSavedAltinVillageNo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgShianMuraItIsBadForXianIf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgShianMuraIWasHappyToSeeGems) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgShianMuraWhereAreTheMerchantsNoOne) },
+	{ SEARCH(SEARCH_JAR), 101, 0xf6e, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(SceneEffect_RequestFixedEffect) },
+	{ EVENT_RAISED, 200, CONDITION_ALWAYS, EVENT_SCRIPT(ShianMura_EscortActorEighteen) },
+	{ SCENE_EVENTS_END },
+};

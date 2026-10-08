@@ -1,6 +1,6 @@
-#include "OBJECT_DISPATCH.H"
-#include "TYPES.H"
-#include "SCENE.H"
+#include "object_dispatch.h"
+#include "types.h"
+#include "scene.h"
 
 s32 AnimationObjects_SelectAnimation(void *, s32);
 void AnimationObjects_SetActiveTimerSteps(void *, s32);

@@ -1,0 +1,112 @@
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "menu.h"
+#include "minigame.h"
+#include "sound.h"
+#include "system.h"
+#include "edition.h"
+#include "types.h"
+#include "inventory_menu.h"
+#include "btltype.h"
+#include "item.h"
+#include "menu_result.h"
+#include "system.h"
+#include "ui.h"
+#include "tbs_edition.h"
+#include "menu_list.h"
+#include "text/msg_ids.h"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
+
+#define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
+
+#if EDITION_INTERNATIONAL
+#define EQUIP_SLOT_X     1
+#define EQUIP_SLOT_WIDTH 12
+#else
+#define EQUIP_SLOT_X     2
+#define EQUIP_SLOT_WIDTH 9
+#endif
+
+
+void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
+void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
+
+#define ITEM_ID_MASK 0x1ff
+
+s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
+{
+    struct InventoryMenuState *menu;
+    struct ItemDefinition *item;
+    s32 base;
+    s32 row;
+
+    menu = gMenuWork;
+    base = state->page * PAGE_ROWS;
+    state->selected_index = base + state->row;
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+    RenderOutput_RedrawSavedRectFar(menu->info_window);
+#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+    UiWindow_ClearInteriorTilesFar((s32)menu->info_window, 0, 0, 224, 8);
+#else
+    RenderOutput_ClearListFar(menu->info_window);
+#endif
+    WaitFrames(1);
+    if (menu->items[state->selected_index] != 0) {
+#if EDITION_INTERNATIONAL
+        UiText_DrawCharacterAtOffsetFar((menu->items[state->selected_index] & ITEM_ID_MASK)
+                + (s32)MsgItemPlainName,
+            (s32)menu->info_window, 0, 0);
+#else
+        UiText_DrawResourceFar((menu->items[state->selected_index] & ITEM_ID_MASK)
+                + (s32)MsgItemPlainName,
+            (s32)menu->info_window, 0, 0);
+#endif
+    }
+
+    for (row = 0; row < PAGE_ROWS; row++) {
+        if (row == state->row) {
+            item = Item_GetDirectFar(menu->items[state->selected_index] & ITEM_ID_MASK);
+            if (item->element != 4) {
+                UiWindow_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1, 0);
+                Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1, 14);
+            } else {
+                Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 14, 1, 14);
+            }
+        } else {
+            item = Item_GetDirectFar(menu->items[base + row] & ITEM_ID_MASK);
+            if (item->element != 4) {
+                UiWindow_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1, 4);
+                Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1, 15);
+            } else {
+                Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 14, 1, 15);
+            }
+        }
+    }
+
+    for (row = 0; row <= 3; row++) {
+        Render_SetTilemapFlagRect((s32)menu->equip_window, EQUIP_SLOT_X, row * 2 + 1, EQUIP_SLOT_WIDTH, 1, 15);
+    }
+
+    if (menu->items[state->selected_index] & 0x200) {
+        item = Item_GetDirectFar(menu->items[state->selected_index] & ITEM_ID_MASK);
+        switch (item->type) {
+        case 1:
+            Render_SetTilemapFlagRect((s32)menu->equip_window, EQUIP_SLOT_X, 1, EQUIP_SLOT_WIDTH, 1, 14);
+            break;
+        case 4:
+            Render_SetTilemapFlagRect((s32)menu->equip_window, EQUIP_SLOT_X, 3, EQUIP_SLOT_WIDTH, 1, 14);
+            break;
+        case 3:
+            Render_SetTilemapFlagRect((s32)menu->equip_window, EQUIP_SLOT_X, 5, EQUIP_SLOT_WIDTH, 1, 14);
+            break;
+        case 2:
+            Render_SetTilemapFlagRect((s32)menu->equip_window, EQUIP_SLOT_X, 7, EQUIP_SLOT_WIDTH, 1, 14);
+            break;
+        }
+    }
+    WaitFrames(1);
+    return 1;
+}

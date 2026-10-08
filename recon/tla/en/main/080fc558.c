@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "ram_buffer.h"
 
 extern u8 MsgItemPlainName;
 void RenderOutput_RedrawSavedRectFar(s32 window);

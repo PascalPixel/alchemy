@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "SCENE.H"
-#include "RUNTIME_INTERFACES.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "scene.h"
+#include "runtime_interfaces.h"
+#include "system.h"
 s32 UiText_OpenMessageWindow(s32, s32, s32, s32);
 s32 SaveMenu_SelectSlot(s16, s32);
 s32 Menu_RunConfirmSelection(s32, s32, s32, s32);

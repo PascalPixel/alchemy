@@ -1,7 +1,7 @@
-#include "MEM.H"
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "RAM_BUFFER.H"
+#include "mem.h"
+#include "types.h"
+#include "iwram_call.h"
+#include "ram_buffer.h"
 extern u8 gMapCellBuffer[];
 
 extern const u8 Func_0800a37c[];

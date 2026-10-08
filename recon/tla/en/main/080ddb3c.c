@@ -1,8 +1,8 @@
-#include "TYPES.H"
-#include "OBJDISP.H"
-#include "SCENE.H"
-#include "FIXED_MATH.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "objdisp.h"
+#include "scene.h"
+#include "fixed_math.h"
+#include "system.h"
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 extern u8 Data_03001f30[];
 void ObjectDispatch_ApplyValueToKind200Children(s32 battle_value);

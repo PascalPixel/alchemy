@@ -2,7 +2,7 @@ use object::{Object, ObjectSection, ObjectSymbol, SectionFlags};
 use crate::decode::{decode_one, Kind};
 use std::collections::{BTreeMap, BTreeSet};
 
-const REMEDY: &str = "call main-image code through the overlay's own IMPORT.S veneers";
+const REMEDY: &str = "call main-image code through the overlay's own import.s veneers";
 
 pub(crate) fn check(elf: &[u8], map: &str) -> Result<(), String> {
     let image = read(elf)?;
@@ -303,7 +303,7 @@ mod tests {
                 "  Scene_Run+0x8 (0x02008008): b 0x02007ff0",
                 "  Scene_Run+0xa (0x0200800a): bne 0x02008044",
                 "  Scene_Arm+0x4 (0x02008034): bl 0x03000000",
-                "call main-image code through the overlay's own IMPORT.S veneers",
+                "call main-image code through the overlay's own import.s veneers",
             ]
         );
     }

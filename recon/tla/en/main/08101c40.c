@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 struct UiPanel {
     u8 unknown_00[0xc];

@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 void Func_080afb80();
 

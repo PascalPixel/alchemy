@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "SERIAL_RUNTIME.H"
+#include "types.h"
+#include "serial_runtime.h"
 
 void SerialRuntime_HandleTransferInterrupt(void)
 {

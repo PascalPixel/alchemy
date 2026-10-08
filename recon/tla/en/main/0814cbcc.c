@@ -1,5 +1,5 @@
-#include "RAM_BUFFER.H"
-#include "DMA.H"
+#include "ram_buffer.h"
+#include "dma.h"
 extern u8 gMapCellBuffer[];
 
 void BattleFx_BuildWindowEdgeTable(void)

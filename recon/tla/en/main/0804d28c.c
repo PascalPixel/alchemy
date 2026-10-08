@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "RESOURCE.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "resource.h"
+#include "system.h"
 extern u8 Data_03001f38[];
 
 struct MenuSelectionState {

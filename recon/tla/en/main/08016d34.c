@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 extern u8 GameFlagBytes[];
 
 u32 GameFlag_Toggle(s32 flag)

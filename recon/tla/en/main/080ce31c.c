@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "ram_buffer.h"
 struct PendingAction { u8 unknown_00[6]; u8 event_kind; u8 unknown_07[9]; };
 struct PendingEventRecord { u32 key; u16 metadata; s16 condition; s32 action; };
 struct PendingEventList { u8 unknown_00[16]; struct PendingEventRecord *events; };

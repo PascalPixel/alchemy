@@ -1,9 +1,9 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "WINDOW.H"
-#include "UIWINDOW.H"
-#include "RESOURCE.H"
-#include "MEM.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "window.h"
+#include "uiwindow.h"
+#include "resource.h"
+#include "mem.h"
 
 void UiWindow_DrawTilemapResource(struct UiWindow *window, const void *resource)
 {

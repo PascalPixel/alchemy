@@ -2,11 +2,10 @@
  * alchemy diff: listing 3450 instructions, draft 3450, common 3426,
  * differ 48 (2026-10-08; 56 before the HP drain below, 70 before the
  * order devices).
- * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
- * SEAL/SRC/BATTLE/TGTEXEC.C) with this game's
+ * This draft is The Broken Seal's source (0x080bbb0c, games/tbs/src/battle/tgtexec.c) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
  * and moved here, where they stay until every edition of this game matches.
- * Then one source in games/COMMON carries only the real differences under
+ * Then one source in games/common carries only the real differences under
  * GAME_TLA. Not real differences, to settle against ☀️'s form then: the
  * locals block (this one orders offset, action_id, range, scale and pass
  * differently, which steers registers, and declares apwr for the whole
@@ -341,32 +340,32 @@
  * movs after it as one strb.w, not a difference; so all six editions
  * share this source as it stands. With the drain: no single asm("")
  * after any statement improves on 48. */
-#include "BATTLE.H"
-#include "DEBUG.H"
-#include "FIELD.H"
-#include "GAME.H"
-#include "GRAPHICS.H"
-#include "MENU.H"
-#include "MINIGAME.H"
-#include "SOUND.H"
-#include "SYSTEM.H"
-#include "TYPES.H"
-#include "BTLPTY.H"
-#include "IWRAM_CALL.H"
-#include "BTLOBJ.H"
-#include "BTLCALC.H"
-#include "BATTLE_EFX.H"
-#include "BTLEV.H"
-#include "BTLMES.H"
-#include "BTLSYS.H"
-#include "BTLSMN.H"
-#include "BTLTYPE.H"
-#include "BTLWORK.H"
-#include "MOTOBJ.H"
-#include "MEM.H"
-#include "BTLDISP.H"
-#include "PARTY_STATE.H"
-#include "RAM_BUFFER.H"
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "menu.h"
+#include "minigame.h"
+#include "sound.h"
+#include "system.h"
+#include "types.h"
+#include "btlpty.h"
+#include "iwram_call.h"
+#include "btlobj.h"
+#include "btlcalc.h"
+#include "battle_efx.h"
+#include "btlev.h"
+#include "btlmes.h"
+#include "btlsys.h"
+#include "btlsmn.h"
+#include "btltype.h"
+#include "btlwork.h"
+#include "motobj.h"
+#include "mem.h"
+#include "btldisp.h"
+#include "party_state.h"
+#include "ram_buffer.h"
 
 #define MIKATA      2           /* 味方 */
 

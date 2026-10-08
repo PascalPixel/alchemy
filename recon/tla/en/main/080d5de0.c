@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "OBJECT_LOOKUP.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "object_lookup.h"
+#include "system.h"
 
 union EffectMotionSlot {
     u32 word;

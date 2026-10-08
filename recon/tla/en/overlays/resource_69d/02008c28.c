@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "FIELD_EVENT.H"
-#include "FIELD_EFFECT.H"
+#include "types.h"
+#include "field_event.h"
+#include "field_effect.h"
 
 extern u32 gFrameCount;
 

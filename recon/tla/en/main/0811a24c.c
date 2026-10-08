@@ -1,6 +1,6 @@
-#include "BTLPTY.H"
-#include "BTLSYS.H"
-#include "TYPES.H"
+#include "btlpty.h"
+#include "btlsys.h"
+#include "types.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 

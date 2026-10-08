@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "MEM.H"
-#include "IWRAM_CALL.H"
+#include "types.h"
+#include "mem.h"
+#include "iwram_call.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);

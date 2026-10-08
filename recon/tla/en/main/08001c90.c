@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "IO_REG.H"
+#include "types.h"
+#include "io_reg.h"
 
 extern const u32 ColorBuffer_ScaleThreeQuartersKernelCode[48];
 extern const u32 ColorBuffer_HalveKernelCode[32];

@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 #if defined(TBS_EDITION_EN)
 

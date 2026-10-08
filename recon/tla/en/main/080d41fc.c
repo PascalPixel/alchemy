@@ -1,9 +1,9 @@
 /* Near miss: 080d41fc differs by the second message increment's
  * scheduling around the stacked window position, 080d4330 by the
  * interleaving of the portrait load with the window offset. */
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "PARTY_STATE.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "party_state.h"
 
 struct InputState {
     u32 held;

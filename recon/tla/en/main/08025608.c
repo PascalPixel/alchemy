@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "SCENE.H"
-#include "FIXED_MATH.H"
+#include "types.h"
+#include "scene.h"
+#include "fixed_math.h"
 extern u8 IwramSqrt[];
 s32 _call_via_r3(s32, s32, s32, s32);
 s32 Object_SetMoveTarget(void *, s32, s32, s32);

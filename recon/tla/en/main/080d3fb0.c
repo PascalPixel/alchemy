@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "IO_REG.H"
+#include "types.h"
+#include "io_reg.h"
 
 extern u8 gEventWork[];
 

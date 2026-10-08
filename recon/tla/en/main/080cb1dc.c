@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 struct MapFocusObject {
     u8 padding00[6];

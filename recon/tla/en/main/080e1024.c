@@ -1,5 +1,5 @@
-#include "RESOURCE.H"
-#include "TYPES.H"
+#include "resource.h"
+#include "types.h"
 
 void BattleFx_UpdateDescendingParticleNegativeArc(void);
 void BattleFx_UpdateDescendingParticlePositiveArc(void);
@@ -58,7 +58,7 @@ struct ArcObject {
     void *callback;
 };
 
-#include "VRAM_TAB.H"
+#include "vram_tab.h"
 extern u8 *gEffectWork;
 
 struct ArcObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);

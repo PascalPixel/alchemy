@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "SYSTEM.H"
-#include "FIXED_MATH.H"
+#include "types.h"
+#include "system.h"
+#include "fixed_math.h"
 extern u8 Data_03001f2c[];
 
 s32 UiMenu_CreateCursor(void *menu);

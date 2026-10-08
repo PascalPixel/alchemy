@@ -1,8 +1,8 @@
 /* differ 4: the native loads the window work before building the resource-id offset; only ARM9TDMI load scheduling differs */
-#include "TYPES.H"
-#include "GRAPHICS.H"
-#include "WINDOW.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "graphics.h"
+#include "window.h"
+#include "ram_buffer.h"
 
 extern const s16 Data_0805eb58[];
 extern const s16 Data_0805eb7c[];

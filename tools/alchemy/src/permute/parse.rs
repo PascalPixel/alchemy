@@ -1069,7 +1069,7 @@ pub fn parse_body(source: &str, typedefs: &[&str]) -> Result<Vec<Stmt>> {
 mod tests {
     use super::*;
 
-    const DRAFT: &str = "#include \"TYPES.H\"\n/* header */\nextern u16 gTable[];\n\ns32 Find_Slot(s32 key)\n{\n    s32 index;\n    int entry;\n    for (index = 0; ; index += 1) {\n        entry = gTable[index];\n        /* note */\n        if (key == (entry & 0x1FF))\n            return *(u16 *)((u8 *)gTable + index * 2) >> 9;\n        if (((s16)entry) == -1)\n            break;\n    }\n    return 6;\n}\n";
+    const DRAFT: &str = "#include \"types.h\"\n/* header */\nextern u16 gTable[];\n\ns32 Find_Slot(s32 key)\n{\n    s32 index;\n    int entry;\n    for (index = 0; ; index += 1) {\n        entry = gTable[index];\n        /* note */\n        if (key == (entry & 0x1FF))\n            return *(u16 *)((u8 *)gTable + index * 2) >> 9;\n        if (((s16)entry) == -1)\n            break;\n    }\n    return 6;\n}\n";
 
     #[test]
     fn locates_parses_and_reprints_a_function() {

@@ -1,6 +1,6 @@
 //! Hex literals that are quantities, written in decimal. A literal is
 //! converted only where the code shows it is a quantity: an argument of a
-//! scene command from EVENT.H (whose coordinates are pixels, S3), a loop
+//! scene command from event.h (whose coordinates are pixels, S3), a loop
 //! bound compared with the loop counter, or an operand of plain arithmetic
 //! (+ - * /) in a statement with no bit operation, shift, register, fixed
 //! address or subscript, among names that never meet one, beside operands
@@ -160,7 +160,7 @@ fn says_flag(name: &str) -> bool {
 const QUANTITY_PARAMETERS: &[&str] = &["no", "to", "x", "z", "t"];
 
 /// The quantity arguments of the scene commands, as `NAME/index`: the
-/// parameters of the all-caps function-like macros an EVENT.H defines that
+/// parameters of the all-caps function-like macros an event.h defines that
 /// hold actor numbers, coordinates and frames (every argument of `WAIT`).
 /// The flag commands, whose arguments are flag ids, have none.
 pub(crate) fn commands(event_h: &str) -> Vec<String> {
@@ -185,9 +185,9 @@ pub(crate) fn commands(event_h: &str) -> Vec<String> {
     out
 }
 
-/// The scene commands of ☀️'s EVENT.H.
+/// The scene commands of ☀️'s event.h.
 pub(crate) fn scene_commands(root: &Path) -> Vec<String> {
-    std::fs::read_to_string(root.join("games/THE BROKEN SEAL/INCLUDE/EVENT.H")).map(|text| commands(&text)).unwrap_or_default()
+    std::fs::read_to_string(root.join("games/tbs/include/event.h")).map(|text| commands(&text)).unwrap_or_default()
 }
 
 /// Whether a bracket group around token `i` belongs to a flag: the
@@ -796,7 +796,7 @@ mod tests {
     use super::*;
 
     fn scene() -> Vec<String> {
-        commands(include_str!("../../../../games/THE BROKEN SEAL/INCLUDE/EVENT.H"))
+        commands(include_str!("../../../../games/tbs/include/event.h"))
     }
 
     /// The names these tests declare addresses: pointers into state and
@@ -870,25 +870,25 @@ mod tests {
     /// stand in the tree.
     #[test]
     fn reviewed_words_stay_hex() {
-        // BATTLE/EFFECT/DESCRIPT.C:179-194
+        // battle/effect/descript.c:179-194
         same("range = flags & 0x600;\nswitch (range) {\ncase 0:\n    accepted = 1;\n    break;\ncase 0x200:\n    break;\ncase 0x400:\n    flags &= 0xf000;\n    accepted = (u16)((flags - reference) + 0x1fff) <= 0x3ffe;\n    break;\ncase 0x600:\n    break;\n}\n");
-        // BATTLE/EFFECT/DESCRIPT.C:380-384
+        // battle/effect/descript.c:380-384
         same("kind = desc2->flags & 0x30;\nswitch (kind) {\ncase 0: Audio_PlayCue(0x7B); break;\ncase 32: Audio_PlayCue(0x80); break;\n}\n");
-        // MENU/ITEM/STATUS.C:182,203,215,227
+        // menu/item/status.c:182,203,215,227
         same("switch (key) {\ncase 0x40:\n    break;\ncase 0x80:\n    break;\ncase 0x20:\n    break;\ncase 0x10:\n    break;\n}\n");
-        // MAP/LOADGFX.C:32,61; MAP/PERSPECT.C:152; SYSTEM/IO.C:82
+        // map/loadgfx.c:32,61; map/perspect.c:152; system/io.c:82
         same("control = 0x682;\nmode = 0x501;\nIo_Set16(0x501, &REG_BG1CNT);\nu32 control = 0x84;\n");
-        // SYSTEM/MEMORY/MEMORY.C:37
+        // system/memory/memory.c:37
         same("{\n    s32 control = 0x400;\n\n    REG_BG0CNT = control;\n}\n");
-        // BATTLE/EFFECT/OBJECT_ROW.C:90
+        // battle/effect/object_row.c:90
         same("REG16(0x0400000c) = 0x784;\nREG16(0x0400000c) = 0x84 + n;\n");
-        // TOREBI_IZUMI/IZUMI.C:144; WORLD_MAP/STORY.C:573-619
+        // torebi_izumi/izumi.c:144; world_map/story.c:573-619
         same("do { Io_SetBlendAlpha(0x80c); } while (0);\ngWorldMapBlend = 0xe00;\nQueueFrame(buffer, 0x3480)\ngWorldMapBlend = 0xd00;\n");
-        // GRAPHICS/DISPLAY/BLEND.C:18-48; MINIGAME/REEL_INIT_TITLE.C:108
+        // graphics/display/blend.c:18-48; minigame/reel_init_title.c:108
         same("gBlendLayers = 0x3e;\ngBlendTargetLevel = 0x10;\nblend = 0x400;\nblend = blend + 0x10;\n");
-        // SYSTEM/LINK/SIO_INTR.C:179; SOUND/ENGINE.C:522
+        // system/link/sio_intr.c:179; sound/engine.c:522
         same("state->status = 0x80;\n*reg0 = 0x40;\nREG_WAVE_RAM[0] = note->wave[0];\n");
-        // SYSTEM/RESOURCE/RESOBJ.C:71-72
+        // system/resource/resobj.c:71-72
         same("switch (size) {\ncase 0x0808: shape = 0; break;\ncase 0x0810: shape = 0x8000; break;\n}\n");
     }
 
@@ -924,7 +924,7 @@ mod tests {
 
     #[test]
     fn one_quantity_keeps_one_base_in_a_function() {
-        // MOTION_AIM_APPROACH_LINKED_OBJECT.C:29-32
+        // motion_aim_approach_linked_object.c:29-32
         same("s32 F(void)\n{\n  if (len > 0x10)\n  {\n    dx2 = dx;\n    n = len - 0x10;\n  }\n}\n");
         let other = "s32 F(void)\n{\n  if (len > 0x10)\n  {\n  }\n}\ns32 G(void)\n{\n    n = len - 0x10;\n}\n";
         assert_eq!(convert(other).0, other.replace("len - 0x10", "len - 16"));
@@ -935,13 +935,13 @@ mod tests {
     /// elsewhere in its function.
     #[test]
     fn one_value_keeps_one_base_in_a_function() {
-        // ☀️ BATTLE/PARTY/PARTY.C:396-397
+        // ☀️ battle/party/party.c:396-397
         same("void F(void)\n{\n        id = 0x80;\n        entry_limit += 0x80;\n        for (; id < entry_limit; id += 1) {\n        }\n}\n");
-        // ☀️ BATTLE/PARTY/PARTY.C:454-455; ⚓️ BATTLE/PARTY/LIST_LIVING_UNITS.C:81
+        // ☀️ battle/party/party.c:454-455; ⚓️ battle/party/list_living_units.c:81
         same("void F(void)\n{\n        remaining = 0x80;\n        enemy_limit = enemy_capacity + 0x80;\n        if (remaining < enemy_limit) {\n        }\n}\n");
-        // ☀️ GRAPHICS/TEXT/GLYPH.C:59-62
+        // ☀️ graphics/text/glyph.c:59-62
         same("void F(void)\n{\n    remapped = Runtime_BumpAllocate(0x400);\n    src = decoded->input;\n    dst = remapped;\n    for (i = 0; i < 0x400; i++) {\n        index = *src++;\n    }\n}\n");
-        // ☀️ FIELD/RAMAKAN_SABAKU/STORM.C:143-144
+        // ☀️ field/ramakan_sabaku/storm.c:143-144
         same("void F(void)\n{\n    destination = buffer;\n    source = buffer + 0x480;\n    for (i = 0; i < 0x480; i++) {\n        u8 value = *source++;\n    }\n}\n");
         // A literal kept hex beside an address keeps its value hex too.
         same("void F(void)\n{\n    cursor = p + 0x80;\n    for (i = 0; i < 0x80; i++) {}\n}\n");
@@ -955,7 +955,7 @@ mod tests {
     #[test]
     fn angles_stay_hex() {
         same("angle = angle + 0x10;\nobj->facing = obj->facing - 0x40;\nyaw += 0x20;\n");
-        // ⚓️ BATTLE/EFFECT/ADVANCE_ANGLE_WITH_RAMP.C:8-13, RADPART.C:25-30:
+        // ⚓️ battle/effect/advance_angle_with_ramp.c:8-13, radpart.c:25-30:
         // the step a literal assigns meets the angle's hex.
         same("void BattleFx_AdvanceAngleWithRamp(struct ObjectRuntime *object)\n{\n    u32 step;\n\n    step = object->action * 0x50;\n    object->angle += step + 0x1000;\n    if (step < 0x1000)\n        object->action++;\n}\n");
         same("void BattleFx_SpinUpAngle(void *obj)\n{\n    u32 step;\n\n    step = FIELD_AT_OFFSET(obj, s16 *, 0x64) * 0x50;\n    FIELD_AT_OFFSET(obj, u16 *, 6) = (u16)(FIELD_AT_OFFSET(obj, u16 *, 6) + step + 0x1000);\n    if (step < 0x1000U) {\n        FIELD_AT_OFFSET(obj, s16 *, 0x64) = (s16)((u16)FIELD_AT_OFFSET(obj, s16 *, 0x64) + 1);\n    }\n}\n");
@@ -964,14 +964,14 @@ mod tests {
     /// Lines the session-2 dry run decimalized, verbatim.
     #[test]
     fn offsets_ids_and_sound_cues_stay_hex() {
-        // ☀️ BATTLE/EFFECT/EMITTER.C:256; FIELD/COMMON/OBJECT/SNAPSHOT.C:42
+        // ☀️ battle/effect/emitter.c:256; field/common/object/snapshot.c:42
         same("    s32 work = (s32)gEventWork;\n    u32 off = (obj_id * 4) + 0x14;\n\n    s32 src_z = (s32)*(struct EfxSrc **)(work + off);\n");
         same("    if (index > 0xbf)\n        return 0;\n    offset = (index * 4) + 0x14;\n    return *(void **)(base + offset);\n");
-        // COMMON BATTLE/PARTY/CONTAINS_ID.C:8; ☀️ BATTLE/MOTION/SLOTS.C; ⚓️ BATTLE/SUMMON/FIND_SLOT.C
+        // COMMON battle/party/contains_id.c:8; ☀️ battle/motion/slots.c; ⚓️ battle/summon/find_slot.c
         same("    if (id > 7)\n        id += 0x78;\n");
         same("        object_id -= 0x78;\n");
         same("        id = i + 0x80;\n");
-        // ☀️ FIELD/KOROSSEO_KABE/TRANSITION.C
+        // ☀️ field/korosseo_kabe/transition.c
         same("    Engine_AudioPlayCue(mode + 0x5a);\n");
         // Quantities beside them still change.
         assert_eq!(convert("    object->y = (index / columns) * 0x10 + origin_y;\n").0, "    object->y = (index / columns) * 16 + origin_y;\n");

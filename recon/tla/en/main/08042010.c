@@ -1,6 +1,6 @@
-#include "TEXT_RENDER_RUNTIME.H"
-#include "WINDOW.H"
-#include "RAM_BUFFER.H"
+#include "text_render_runtime.h"
+#include "window.h"
+#include "ram_buffer.h"
 
 s32 UiText_BuildRenderEntries(s32 message, s32 mode);
 

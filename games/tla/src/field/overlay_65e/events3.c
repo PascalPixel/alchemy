@@ -1,0 +1,148 @@
+#include "types.h"
+#include "object_runtime.h"
+#include "party_state.h"
+#include "call.h"
+#include "text/msg_ids.h"
+
+void Battle_WaitMode0();
+void Func_020005c4();
+void Func_020005cc();
+void Func_02000604();
+void Func_02000614();
+void Func_0200062c();
+void Func_02000634();
+void Func_0200063c();
+void Func_02000644();
+void Func_0200064c();
+void Inventory_PromptAndSetObjectMode();
+struct ObjectRuntime *Object_GetById();
+void UiText_OpenMessageAtObject();
+
+void Func_020000f4(void)
+{
+    s32 result0;
+    s32 result1;
+
+    ((void (*)())Func_020005c4)();
+    Call1((void (*)())Func_0200062c, 0);
+    Call1((void (*)())Func_02000604, (s32)MsgScene65ENo03);
+    Value2((s32 (*)())UiText_OpenMessageAtObject, 10, 0);
+    result0 = Value0((s32 (*)())Func_02000634);
+    result1 = Value2((s32 (*)())Inventory_PromptAndSetObjectMode, result0, 0);
+    if (result1 != 0) goto L_0200812c;
+    Call1((void (*)())Battle_WaitMode0, 10);
+    Call1((void (*)())Func_02000604, ((s32)MsgScene65ENo03 + 1));
+    goto L_02008138;
+L_0200812c:
+    Call1((void (*)())Battle_WaitMode0, 20);
+    Call1((void (*)())Func_02000604, ((s32)MsgScene65ENo03 + 2));
+L_02008138:
+    Call2((void (*)())Func_02000614, 10, 0);
+    ((void (*)())Func_020005cc)();
+    return;
+}
+
+void Func_0200014c(s32 actor)
+{
+    struct ObjectRuntime *leader;
+    u16 facing;
+
+    leader = Object_GetById(gPartyState.current_owner);
+    /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
+    __asm__ volatile("" : "+l"(leader));
+    facing = (leader->angle + 0x2000) & 0xc000;
+    if (facing == 0xc000) {
+        Call2((void (*)())Func_0200063c, 13, actor);
+    } else {
+        Call1((void (*)())Func_02000604, (s32)MsgScene65ENo11);
+        Call2((void (*)())Func_02000614, actor, 0);
+    }
+}
+
+void Func_0200019c(s32 actor)
+{
+    struct ObjectRuntime *leader;
+    u16 facing;
+
+    leader = Object_GetById(gPartyState.current_owner);
+    /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
+    __asm__ volatile("" : "+l"(leader));
+    facing = (leader->angle + 0x2000) & 0xc000;
+    if (facing == 0xc000) {
+        Call2((void (*)())Func_0200064c, 4, actor);
+    } else {
+        ((void (*)())Func_020005c4)();
+        Call1((void (*)())Func_0200062c, 0);
+        Call1((void (*)())Func_02000604, (s32)MsgScene65ENo14);
+        Call2((void (*)())Func_02000614, actor, 0);
+        ((void (*)())Func_020005cc)();
+    }
+}
+
+void Func_020001fc(s32 actor)
+{
+    struct ObjectRuntime *leader;
+    u16 facing;
+
+    leader = Object_GetById(gPartyState.current_owner);
+    /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
+    __asm__ volatile("" : "+l"(leader));
+    facing = (leader->angle + 0x2000) & 0xc000;
+    if (facing == 0xc000) {
+        Call1((void (*)())Func_02000644, actor);
+    } else {
+        ((void (*)())Func_020005c4)();
+        Call1((void (*)())Func_0200062c, 0);
+        Call1((void (*)())Func_02000604, (s32)MsgScene65ENo17);
+        Value2((s32 (*)())UiText_OpenMessageAtObject, actor, 0);
+        if (Value2((s32 (*)())Inventory_PromptAndSetObjectMode, Value0((s32 (*)())Func_02000634), 0) == 0) {
+            Call1((void (*)())Battle_WaitMode0, 10);
+            Call1((void (*)())Func_02000604, (s32)MsgScene65ENo17 + 1);
+        } else {
+            Call1((void (*)())Battle_WaitMode0, 20);
+            Call1((void (*)())Func_02000604, (s32)MsgScene65ENo17 + 2);
+        }
+        Call2((void (*)())Func_02000614, actor, 0);
+        ((void (*)())Func_020005cc)();
+    }
+}
+
+void Func_02000288(s32 actor)
+{
+    struct ObjectRuntime *leader;
+    u16 facing;
+
+    leader = Object_GetById(gPartyState.current_owner);
+    /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
+    __asm__ volatile("" : "+l"(leader));
+    facing = (leader->angle + 0x2000) & 0xc000;
+    if (facing == 0xc000) {
+        Call1((void (*)())Func_02000644, actor);
+    } else {
+        ((void (*)())Func_020005c4)();
+        Call1((void (*)())Func_0200062c, 0);
+        Call1((void (*)())Func_02000604, (s32)MsgScene65ENo29);
+        Call2((void (*)())Func_02000614, actor, 0);
+        ((void (*)())Func_020005cc)();
+    }
+}
+
+void Func_020002e4(s32 actor)
+{
+    struct ObjectRuntime *leader;
+    u16 facing;
+
+    leader = Object_GetById(gPartyState.current_owner);
+    /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
+    __asm__ volatile("" : "+l"(leader));
+    facing = (leader->angle + 0x2000) & 0xc000;
+    if (facing == 0xc000) {
+        Call1((void (*)())Func_02000644, actor);
+    } else {
+        ((void (*)())Func_020005c4)();
+        Call1((void (*)())Func_0200062c, 0);
+        Call1((void (*)())Func_02000604, (s32)MsgScene65ENo27);
+        Call2((void (*)())Func_02000614, actor, 0);
+        ((void (*)())Func_020005cc)();
+    }
+}

@@ -17,7 +17,7 @@ pub(crate) fn script(root: &Path, target: DecompTarget, output: &Path) -> Result
 }
 
 /// The edition's derived linker script, or None for the Japanese base
-/// edition, which links the game's MAIN.LD as it stands.
+/// edition, which links the game's main.ld as it stands.
 pub(crate) fn script_text(root: &Path, target: DecompTarget) -> Result<Option<String>, String> {
     let game = target.script();
     let Some(edition) = target.edition_script() else {
@@ -247,15 +247,15 @@ pub(crate) fn derive(game: &str, edition: &str, own: &str) -> Result<String, Str
 mod tests {
     use super::*;
 
-    const GAME: &str = "SECTIONS\n{\n    .rom_main :\n    {\n    \"*/games/G/A.o\"(.text)\n    . = ABSOLUTE(0x08009000);\n    \"*/games/G/FIELD.o\"(.text)\n    \"*/games/G/B.o\"(.text)\n} > ROM\n}\n";
+    const GAME: &str = "SECTIONS\n{\n    .rom_main :\n    {\n    \"*/games/g/a.o\"(.text)\n    . = ABSOLUTE(0x08009000);\n    \"*/games/g/field.o\"(.text)\n    \"*/games/g/b.o\"(.text)\n} > ROM\n}\n";
 
     #[test]
     fn editions_place_their_banks_at_their_own_addresses() {
-        let edition = ".rom_main :\n{\n    \"*/games/G/A.o\"(.text)\n    \"*/recon/g/de/rom.o\"(.rom.00000100)\n    . = ABSOLUTE(0x08008800);\n    \"*/games/G/FIELD.o\"(.text)\n    \"*/games/G/B.o\"(.text)\n}\n";
+        let edition = ".rom_main :\n{\n    \"*/games/g/a.o\"(.text)\n    \"*/recon/g/de/rom.o\"(.rom.00000100)\n    . = ABSOLUTE(0x08008800);\n    \"*/games/g/field.o\"(.text)\n    \"*/games/g/b.o\"(.text)\n}\n";
         let text = derive(GAME, edition, "\"*/recon/g/de/").unwrap();
         assert!(text.contains(". = ABSOLUTE(0x08008800);"), "{text}");
         assert!(!text.contains("0x08009000"), "{text}");
-        let reordered = ".rom_main :\n{\n    \"*/games/G/B.o\"(.text)\n    \"*/games/G/A.o\"(.text)\n}\n";
+        let reordered = ".rom_main :\n{\n    \"*/games/g/b.o\"(.text)\n    \"*/games/g/a.o\"(.text)\n}\n";
         assert!(derive(GAME, reordered, "\"*/recon/g/de/").is_err());
     }
 
@@ -264,7 +264,7 @@ mod tests {
         assert!(placement(". = ABSOLUTE(0x08009000);"));
         assert!(placement(".=0x08009000;"));
         assert!(!placement(".rom_main :"));
-        assert!(!placement("\"*/games/G/A.o\"(.text)"));
+        assert!(!placement("\"*/games/g/a.o\"(.text)"));
         assert!(!placement("Symbol = 0x08009000;"));
     }
 }

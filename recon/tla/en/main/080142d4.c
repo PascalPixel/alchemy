@@ -1,7 +1,7 @@
-#include "RESOURCE.H"
-#include "VRAM_TAB.H"
-#include "IWRAM_CALL.H"
-#include "DMA.H"
+#include "resource.h"
+#include "vram_tab.h"
+#include "iwram_call.h"
+#include "dma.h"
 
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
 {

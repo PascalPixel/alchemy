@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "DMA.H"
+#include "types.h"
+#include "dma.h"
 
 struct DisplayScrollObject {
     u32 attr01;

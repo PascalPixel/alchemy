@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 struct MapBlock {
     u8 unknown_0[2];

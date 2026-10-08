@@ -1,10 +1,10 @@
 /* differ 22: argument and constant scheduling around the turn service calls and the event delay store */
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "PARTY_STATE.H"
-#include "FIELD_EVENT.H"
-#include "CALLBACK_SCHEDULER.H"
-#include "text/MSG_IDS.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "party_state.h"
+#include "field_event.h"
+#include "callback_scheduler.h"
+#include "text/msg_ids.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))

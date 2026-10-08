@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "SCENE.H"
-#include "BATTLE_EFFECT_WORK.H"
+#include "types.h"
+#include "scene.h"
+#include "battle_effect_work.h"
 
 struct DisplayWork {
     u8 unknown_0000[0x77bc];

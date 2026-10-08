@@ -1,12 +1,12 @@
-#include "RESOURCE.H"
-#include "TYPES.H"
-#include "IO_REG.H"
-#include "CALLBACK_SCHEDULER.H"
-#include "SYSTEM.H"
-#include "DMA.H"
-#include "RAM_BUFFER.H"
-#include "INPUT.H"
-#include "FRAME.H"
+#include "resource.h"
+#include "types.h"
+#include "io_reg.h"
+#include "callback_scheduler.h"
+#include "system.h"
+#include "dma.h"
+#include "ram_buffer.h"
+#include "input.h"
+#include "frame.h"
 
 struct BgScroll { u16 x, y; };
 

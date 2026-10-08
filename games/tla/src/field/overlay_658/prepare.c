@@ -1,0 +1,299 @@
+#include "types.h"
+#include "ram_buffer.h"
+#include "object_runtime.h"
+#include "party_state.h"
+#include "field_scene.h"
+
+s32 GameFlag_Test(s32 flag);
+void GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+void WaitFrames(s32 frames);
+void Battle_WaitMode0(s32 frames);
+struct ObjectRuntime *Object_GetById(s32 id);
+void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
+void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
+void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
+void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
+void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
+void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
+void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
+void UiText_OpenMessageAtObject(s32 id, s32 flags);
+s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
+void Func_02002ae8(const void *data, s32 a, s32 b);
+void Func_02002af0(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_02002af8(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Func_02002b28(void);
+void Func_02002b30(void);
+void Func_02002b88(s32 id, s32 a, s32 b);
+void Func_02002b90(s32 id, s32 x, s32 y, s32 z);
+void Func_02002bd0(s32 message);
+void Func_02002be0(s32 id, s32 a, s32 b);
+void Func_02002be8(s32 a, s32 b);
+void Func_02002bf8(s32 id, s32 a);
+void Func_02002c08(s32 id, s32 a, s32 b);
+void Func_02002c30(s32 a);
+void Func_02002c58(s32 a);
+s32 Func_02002c80(void);
+void Func_02002c88(s32 a, s32 b);
+void Func_02002c90(s32 a);
+void Func_02000f80(void);
+void Func_020019d8(void);
+
+extern const u8 Data_02002d38[];
+extern const u8 Data_02002ff0[];
+extern const u8 Data_02003358[];
+extern const u8 Data_0200367c[];
+extern const u8 Data_0200394c[];
+
+extern u8 MsgItLooksLikeThe;
+extern u8 MsgTheArmorerAnd;
+extern u8 MsgAfterTheChampa;
+extern u8 MsgPeopleAreSaying;
+extern u8 MsgIKnewThere;
+extern u8 MsgOwOwOw;
+extern u8 MsgMyBoyfriendShin;
+extern u8 MsgAllMyInjuries;
+extern u8 MsgMySisterWas;
+extern u8 MsgIfYouDon;
+extern u8 MsgHaveYouBy;
+extern u8 MsgUsingPsynergyOn;
+extern u8 MsgWhereCouldMenardi;
+extern u8 MsgEveryoneHereIn;
+extern u8 MsgYeahWellWe;
+extern u8 MsgYouCominThrough;
+extern u8 MsgYeahUhWe;
+extern u8 MsgOhUhYou;
+extern u8 MsgWasIJust;
+extern u8 MsgHeyMisterAre;
+extern u8 MsgDidYouCome;
+extern u8 MsgIsThereBy;
+
+static __inline__ s32 Flag_Test(s32 flag)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    return GameFlag_Test(flag);
+}
+
+static __inline__ void Flag_Set(s32 flag)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    GameFlag_SetBit(flag);
+}
+
+static __inline__ void CommitPos(s32 id, s32 x, s32 z)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    ObjectMotion_CommitPositionAndActivate(id, x, z);
+}
+
+static __inline__ void ArmCallback(s32 id, s32 angle, s32 flags)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    ObjectMotion_ArmCallback(id, angle, flags);
+}
+
+static __inline__ void Walk(s32 id, s32 a, s32 b)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02002c08(id, a, b);
+}
+
+static __inline__ void OpenAt(s32 id, s32 flags)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    UiText_OpenMessageAtObject(id, flags);
+}
+
+static __inline__ void CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02002af0(a, b, c, d, e, f);
+}
+
+static __inline__ void CopyCells2(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02002af8(a, b, c, d, e, f);
+}
+
+static __inline__ void Emote(s32 id, s32 a, s32 b)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02002be0(id, a, b);
+}
+
+static __inline__ void Face(s32 id, s32 target, s32 flags)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    ObjectMotion_SetAngleToward(id, target, flags);
+}
+
+static __inline__ void Anim(s32 id, s32 mode)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Motion_SetModeAndWaitAnimation(id, mode);
+}
+
+static __inline__ void Show(s32 id, s32 a, s32 b)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02002b88(id, a, b);
+}
+
+static __inline__ void Place(s32 id, s32 x, s32 y, s32 z)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02002b90(id, x, y, z);
+}
+
+static __inline__ void Speed(s32 id, s32 s, s32 a)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    ObjectMotion_SetSpeedParameters(id, s, a);
+}
+
+static __inline__ void SetPos(s32 id, s32 x, s32 z)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    ObjectMotion_SetPositionAndReset(id, x, z);
+}
+
+static __inline__ void Turn(s32 id, s32 a)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02002bf8(id, a);
+}
+
+s32 Scene_PrepareMap(void)
+{
+    return 0;
+}
+
+void Func_0200083c(s32 actor)
+{
+    s32 msg;
+
+    Func_02002b28();
+    Func_02002c58(0);
+    msg = (s32)&MsgWasIJust;
+    Func_02002bd0(msg);
+    UiText_OpenMessageAtObject(actor, 0);
+    if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0) {
+        Battle_WaitMode0(10);
+        Func_02002bd0(msg + 1);
+    } else {
+        Battle_WaitMode0(20);
+        Func_02002bd0(msg + 2);
+    }
+    Func_02002be8(actor, 0);
+    Func_02002b30();
+}
+
+void Func_02000894(void)
+{
+    s32 msg;
+
+    Func_02002b28();
+    Func_02002c58(0);
+    if (GameFlag_Test(0x8ab)) {
+        msg = (s32)&MsgHeyMisterAre;
+        Func_02002bd0(msg);
+        UiText_OpenMessageAtObject(8, 0);
+        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0) {
+            Battle_WaitMode0(10);
+            Func_02002bd0(msg + 1);
+        } else {
+            Battle_WaitMode0(20);
+            Func_02002bd0(msg + 2);
+        }
+        Func_02002be8(8, 0);
+    } else {
+        if (GameFlag_Test(0x300) == 0)
+            ObjectMotion_SetAngleToward(14, 4, 0);
+        msg = (s32)&MsgDidYouCome;
+        Func_02002bd0(msg);
+        UiText_OpenMessageAtObject(8, 0);
+        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0) {
+            Battle_WaitMode0(10);
+            Func_02002bd0(msg + 1);
+        } else {
+            Battle_WaitMode0(20);
+            Func_02002bd0(msg + 2);
+        }
+        Func_02002be8(8, 0);
+    }
+    ObjectMotion_ArmCallback(14, 0x4000, 0);
+    GameFlag_SetBit(0x300);
+    Func_02002b30();
+}
+
+void Func_02000968(void)
+{
+    s32 msg, x, z;
+
+    Func_02002b28();
+    Func_02002c58(0);
+    if (GameFlag_Test(0x8ab)) {
+        msg = (s32)&MsgHeyMisterAre;
+        Func_02002bd0(msg);
+        UiText_OpenMessageAtObject(8, 0);
+        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0) {
+            Battle_WaitMode0(10);
+            Func_02002bd0(msg + 1);
+        } else {
+            Battle_WaitMode0(20);
+            Func_02002bd0(msg + 2);
+        }
+        Func_02002be8(8, 0);
+    } else {
+        if (GameFlag_Test(0x300) == 0) {
+            x = 0x100;
+            z = 30;
+            /* FAKEMATCH: the native loads both distances before the actor id. */
+            __asm__ volatile("" : "+r"(x), "+r"(z));
+            Func_02002c08(14, x, z);
+            ObjectMotion_SetAngleToward(14, 4, 0);
+        }
+        msg = (s32)&MsgDidYouCome;
+        Func_02002bd0(msg);
+        UiText_OpenMessageAtObject(8, 0);
+        if (Inventory_PromptAndSetObjectMode(Func_02002c80(), 0) == 0) {
+            Battle_WaitMode0(10);
+            Func_02002bd0(msg + 1);
+        } else {
+            Battle_WaitMode0(20);
+            Func_02002bd0(msg + 2);
+        }
+        Func_02002be8(8, 0);
+    }
+    ObjectMotion_ArmCallback(14, 0x4000, 0);
+    GameFlag_SetBit(0x300);
+    Func_02002b30();
+}
+
+void Func_02000a48(void)
+{
+    s32 flags;
+
+    Func_02002b28();
+    Func_02002c58(0);
+    ObjectMotion_SetAngleToward(11, 4, 0);
+    Func_02002bd0((s32)&MsgIsThereBy);
+    flags = 0;
+    /* FAKEMATCH: the native loads the flags before the actor id. */
+    __asm__ volatile("" : "+r"(flags));
+    UiText_OpenMessageAtObject(11, flags);
+    if (Inventory_PromptAndSetObjectMode(4, 0) == 0) {
+        GameFlag_SetBit(0x301);
+        Func_02002be8(11, 0);
+        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+    } else {
+        (*(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4))++;
+        Func_02002be8(11, 0);
+    }
+    Func_02002b30();
+}

@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "PARTY_STATE.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "party_state.h"
 
 void Func_081281ec(void)
 {

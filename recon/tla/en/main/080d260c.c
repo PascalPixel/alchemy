@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "SCENE.H"
+#include "types.h"
+#include "scene.h"
 
 extern s32 gGameState[];
 extern u8 MsgCannotCarryMore;

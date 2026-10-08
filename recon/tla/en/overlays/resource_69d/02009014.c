@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "FIELD_EVENT.H"
-#include "CALLBACK_SCHEDULER.H"
+#include "types.h"
+#include "iwram_call.h"
+#include "field_event.h"
+#include "callback_scheduler.h"
 
 extern u8 Data_02001f10[];
 extern u8 Data_02002072[];

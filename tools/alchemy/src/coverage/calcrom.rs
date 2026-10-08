@@ -150,7 +150,7 @@ fn source_mark(
     expansion: &crate::compiler::preprocess::Expansion<'_>,
     stem: &str,
 ) -> Result<Mark, String> {
-    let Some((path, text)) = ["C", "c", "S", "s"].iter().find_map(|extension| {
+    let Some((path, text)) = ["c", "s", "S"].iter().find_map(|extension| {
         let path = format!("{stem}.{extension}");
         std::fs::read_to_string(root.join(&path))
             .ok()
@@ -159,7 +159,7 @@ fn source_mark(
         return Ok(Mark::default());
     };
     let mut reasons = BTreeMap::new();
-    let steered = if path.ends_with(".C") || path.ends_with(".c") {
+    let steered = if path.ends_with(".c") {
         let expanded = expansion.fresh(&path)?;
         let analysis = crate::compiler::steering::analyze(&expanded, &path)?;
         reasons = analysis.reasons.clone();
@@ -540,7 +540,7 @@ fn origin(
             .ok_or_else(|| format!("{relative}: not an object"))?;
         let language =
             source(stem).ok_or_else(|| format!("{relative}: no maintained source; rebuild"))?;
-        let common = relative.starts_with("games/COMMON/");
+        let common = relative.starts_with("games/common/");
         return Ok(match (common, language) {
             (true, Language::C) => Origin::CommonC,
             (true, Language::Assembly) => Origin::CommonAsm,
@@ -743,7 +743,7 @@ fn streamed(root: &Path, target: DecompTarget, map: &str) -> Result<Vec<String>,
         else {
             continue;
         };
-        let source = ["S", "s"]
+        let source = ["s", "S"]
             .iter()
             .map(|extension| PathBuf::from(format!("{stem}.{extension}")))
             .find(|path| root.join(path).is_file())

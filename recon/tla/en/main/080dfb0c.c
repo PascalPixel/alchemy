@@ -1,9 +1,9 @@
-#include "TYPES.H"
-#include "MOTOBJ.H"
-#include "FIELD_SCENE.H"
-#include "FIELD_EFFECT.H"
-#include "FIXED_MATH.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "motobj.h"
+#include "field_scene.h"
+#include "field_effect.h"
+#include "fixed_math.h"
+#include "system.h"
 
 void Effect_AdvanceMotion(struct FieldEffect *effect);
 

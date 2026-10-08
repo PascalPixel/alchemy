@@ -1,6 +1,6 @@
-#include "TYPES.H"
+#include "types.h"
 
-#include "ITEM.H"
+#include "item.h"
 
 extern u8 MsgEquipEffectHeading[], MsgStatLabel[], MsgDefenseLabel[], MsgEquipEffectName[];
 extern u8 MsgItemCursed[], MsgBestowsPsynergy[], MsgUsesHeading[], MsgSingleUse[];

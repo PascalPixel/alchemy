@@ -1,5 +1,5 @@
-#include "AUDIO_ENGINE.H"
-#include "RAM_BUFFER.H"
+#include "audio_engine.h"
+#include "ram_buffer.h"
 
 void Sound_Mixer(void);
 void AudioEngine_Initialize(struct SoundWork *work);

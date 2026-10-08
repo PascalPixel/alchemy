@@ -2,9 +2,9 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_697/ENTRY.o"(.text)
+        "*/games/tla/src/field/overlay_697/entry.o"(.text)
         "*/resource_697_overlay.o"(.text.x02008038)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_697/SCENE_TABLES.o"(.text)
+        "*/games/tla/src/field/overlay_697/scene_tables.o"(.text)
         "*/resource_697_overlay.o"(.text.x02008058)
         "*/resource_697_overlay.o"(.text.x02008088)
         "*/resource_697_overlay.o"(.text.x020080fc)
@@ -70,9 +70,9 @@ SECTIONS
         "*/resource_697_overlay.o"(.text.x020091c0)
         "*/resource_697_overlay.o"(.text.x020091dc)
         "*/resource_697_overlay.o"(.text.x020091f8)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_SPRITE_PRIORITY.o"(.text)
+        "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/resource_697_overlay.o"(.text.x02009262)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
+        "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_697_overlay.o"(.text.x0200929a)
         "*/resource_697_overlay.o"(.text.x0200929c)
         "*/resource_697_overlay.o"(.text.x02009464)
@@ -138,14 +138,14 @@ SECTIONS
         "*/resource_697_overlay.o"(.text.x0200cce0)
         "*/resource_697_overlay.o"(.text.x0200cd6c)
         "*/resource_697_overlay.o"(.text.x0200cd84)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_697/BALANCE.o"(.text)
+        "*/games/tla/src/field/overlay_697/balance.o"(.text)
         "*/resource_697_overlay.o"(.text.x0200cddc)
         "*/resource_697_overlay.o"(.text.x0200d1a0)
         "*/resource_697_overlay.o"(.text.x0200d5c4)
         "*/resource_697_overlay.o"(.text.x0200d688)
         "*/resource_697_overlay.o"(.text.x0200d6c4)
         "*/resource_697_overlay.o"(.text.x0200d6e8)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_697/IMPORT.o"(.text)
+        "*/games/tla/src/field/overlay_697/import.o"(.text)
         "*/resource_697_overlay.o"(.rodata.x0200da70)
     }
     .bss : { "*/resource_697_overlay.o"(.bss) }

@@ -1,7 +1,7 @@
 /* Near miss (6 of 41 instructions differ): the native loads the
  * 0xfff20000 offset from the pool before it masks the random value, and
  * stores the spark's address to the stack before the position loads. */
-#include "../../../../games/THE LOST AGE/SRC/FIELD/OVERLAY_687/OV687.H"
+#include "../../../../games/tla/src/field/overlay_687/ov687.h"
 
 void Func_020010a8(struct Ov687Object *object)
 {

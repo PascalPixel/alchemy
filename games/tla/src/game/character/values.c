@@ -1,0 +1,24 @@
+#include "owner_state.h"
+#include "ownerval.h"
+
+void UnitRatio(s32);
+
+s32 Owner_AdjustFirstValue(s32 owner, s32 delta)
+{
+    struct BtlUnit *state = UnitGet(owner);
+    s32 cur = state->hp;
+    s32 max = state->max_hp;
+    s32 value = cur + delta;
+    s32 result;
+
+    if (value > max)
+        result = max;
+    else {
+        result = 0;
+        if (value >= 0)
+            result = value;
+    }
+    state->hp = result;
+    UnitRatio(owner);
+    return state->hp;
+}

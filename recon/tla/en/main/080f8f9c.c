@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "IO_REG.H"
-#include "FIXED_MATH.H"
+#include "types.h"
+#include "io_reg.h"
+#include "fixed_math.h"
 
 extern volatile u32 gKeysRepeat;
 

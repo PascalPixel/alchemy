@@ -1,8 +1,8 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "PARTY_STATE.H"
-#include "FIELD_EVENT.H"
-#include "FIELD_SPRITE.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "party_state.h"
+#include "field_event.h"
+#include "field_sprite.h"
 
 extern u8 Data_02002fb8[];
 extern u8 Data_02003214[];

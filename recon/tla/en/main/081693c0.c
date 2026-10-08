@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "DMA.H"
-#include "IO_REG.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "dma.h"
+#include "io_reg.h"
 
 void Func_081963ec(s32 slot, s32 size);
 

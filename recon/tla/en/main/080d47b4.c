@@ -1,4 +1,4 @@
-#include "OBJDISP.H"
+#include "objdisp.h"
 
 struct BattleEffectVisual {
     u8 unknown_00[9];

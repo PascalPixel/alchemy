@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "MAP.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "map.h"
 
 extern struct MapCell gMapBlocks[];
 extern struct MapCell gMapCellBuffer[];

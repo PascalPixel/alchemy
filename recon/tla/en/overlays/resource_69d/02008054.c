@@ -1,7 +1,7 @@
 /* differ 2: the first Func_02001ef0 call builds 0x1300000 with its shift
    last in native (after r1-r3); here the shift follows the movs. Pixel
    units, swapped helper parameters and a prototype did not move it. */
-#include "TYPES.H"
+#include "types.h"
 
 void Func_02001e00();
 void Func_02001df8();

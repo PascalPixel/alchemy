@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "OBJECT_RUNTIME.H"
-#include "PARTY_STATE.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "object_runtime.h"
+#include "party_state.h"
 
 extern const u8 Data_02003f44[];
 extern const u8 Data_02003f52[];

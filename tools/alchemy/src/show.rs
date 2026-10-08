@@ -421,7 +421,7 @@ mod tests {
         let map = Map::parse(crate::ld_map::tests::MAP);
         let functions = vec![(0x0800_0014, "Input_Static".to_string())];
         let found = |wanted: &str| resolve(&map, None, &functions, wanted).map(|(p, a, n)| (p.label(), a, n));
-        let io = "games/THE BROKEN SEAL/SRC/SYSTEM/IO.o".to_string();
+        let io = "games/tbs/src/system/io.o".to_string();
         assert_eq!(found("Input_Poll"), Ok((io.clone(), 0x0800_0018, "Input_Poll".to_string())));
         assert_eq!(found("08000012"), Ok((io.clone(), 0x0800_0010, "Input_Handle".to_string())));
         assert_eq!(found("0x08000016"), Ok((io.clone(), 0x0800_0014, "Input_Static".to_string())));

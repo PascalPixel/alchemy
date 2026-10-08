@@ -2,20 +2,20 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_686/ENTRY.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_SPRITE_PRIORITY.o"(.text)
+        "*/games/tla/src/field/overlay_686/entry.o"(.text)
+        "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/resource_686_overlay.o"(.text.x0200807e)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/PREPARE_OBJECT.o"(.text)
+        "*/games/tla/src/field/common/object/prepare_object.o"(.text)
         "*/resource_686_overlay.o"(.text.x020080ce)
         "*/resource_686_overlay.o"(.text.x020080d0)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
+        "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_686_overlay.o"(.text.x0200815a)
         "*/resource_686_overlay.o"(.text.x0200815c)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_686/SCENE_TABLES.o"(.text)
+        "*/games/tla/src/field/overlay_686/scene_tables.o"(.text)
         "*/resource_686_overlay.o"(.text.x02008344)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_686/EXITS.o"(.text)
+        "*/games/tla/src/field/overlay_686/exits.o"(.text)
         "*/resource_686_overlay.o"(.text.x02008384)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/ADVANCE_MOTION.o"(.text)
+        "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_686_overlay.o"(.text.x02008416)
         "*/resource_686_overlay.o"(.text.x02008418)
         "*/resource_686_overlay.o"(.text.x020085c0)
@@ -54,8 +54,8 @@ SECTIONS
         "*/resource_686_overlay.o"(.text.x0200a338)
         "*/resource_686_overlay.o"(.text.x0200a3d0)
         "*/resource_686_overlay.o"(.text.x0200a438)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_686/PREPARE.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_686/IMPORT.o"(.text)
+        "*/games/tla/src/field/overlay_686/prepare.o"(.text)
+        "*/games/tla/src/field/overlay_686/import.o"(.text)
         "*/resource_686_overlay.o"(.rodata.x0200aef4)
     }
     .bss : { "*/resource_686_overlay.o"(.bss) }

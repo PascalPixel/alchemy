@@ -1,6 +1,6 @@
-#include "RESOURCE.H"
-#include "TYPES.H"
-#include "OBJECT_DISPATCH.H"
+#include "resource.h"
+#include "types.h"
+#include "object_dispatch.h"
 
 extern u8 gEffectWork[];
 

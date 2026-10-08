@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "METADATA_LOOKUP.H"
-#include "SCENE.H"
-#include "OBJECT_LOOKUP.H"
+#include "types.h"
+#include "metadata_lookup.h"
+#include "scene.h"
+#include "object_lookup.h"
 
 extern u8 *gCam;
 

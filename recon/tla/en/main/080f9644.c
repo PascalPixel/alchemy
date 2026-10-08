@@ -1,8 +1,8 @@
-#include "MEM.H"
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "ITEM.H"
-#include "OWNER_STATE.H"
+#include "mem.h"
+#include "types.h"
+#include "iwram_call.h"
+#include "item.h"
+#include "owner_state.h"
 extern u8 Data_03001f2c[];
 
 struct ItemMenuIcon {

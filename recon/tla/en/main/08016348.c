@@ -1,4 +1,4 @@
-#include "SERIAL_RUNTIME.H"
+#include "serial_runtime.h"
 
 s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
 {

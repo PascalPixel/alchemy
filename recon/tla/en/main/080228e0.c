@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "ANIMSPR.H"
-#include "METADATA_LOOKUP.H"
+#include "types.h"
+#include "animspr.h"
+#include "metadata_lookup.h"
 
 struct MetadataSlotState {
     u8 unknown_00[0x0c];

@@ -1,8 +1,8 @@
-#include "FIXED_MATH.H"
-#include "OBJECT_LOOKUP.H"
-#include "TYPES.H"
-#include "OBJECT_DISPATCH.H"
-#include "SYSTEM.H"
+#include "fixed_math.h"
+#include "object_lookup.h"
+#include "types.h"
+#include "object_dispatch.h"
+#include "system.h"
 
 extern s8 BattleFx_RandomChildValues[];
 

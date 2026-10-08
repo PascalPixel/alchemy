@@ -4,7 +4,7 @@ use std::process::ExitCode;
 fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.len() != 2 || args[0] == "-h" || args[0] == "--help" {
-        eprintln!("usage: mid2ags INPUT.MID OUTPUT.s");
+        eprintln!("usage: mid2ags INPUT.mid OUTPUT.s");
         return ExitCode::FAILURE;
     }
     let result = fs::read(&args[0])

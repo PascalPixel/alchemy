@@ -3,9 +3,9 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 const TABLES: [(&str, &str); 3] = [
-    ("SceneId_", "SRC/FIELD/SCENES.S"),
-    ("ResourceId_", "SRC/SYSTEM/RESOURCE/DIRECTORY.S"),
-    ("Msg", "TEXT/MESSAGES.S"),
+    ("SceneId_", "src/field/scenes.s"),
+    ("ResourceId_", "src/system/resource/directory.s"),
+    ("Msg", "text/messages.s"),
 ];
 
 fn table(name: &str) -> Option<&'static str> {
@@ -147,7 +147,7 @@ mod tests {
     use super::*;
     use crate::gate::elf::{build, Symbol, ABSOLUTE, SECTION, UNDEFINED};
 
-    const GAME: &str = "games/THE BROKEN SEAL";
+    const GAME: &str = "games/tbs";
 
     fn problems(source: &str, object: &[u8]) -> Vec<String> {
         violations(
@@ -173,9 +173,9 @@ mod tests {
             &[],
         );
         for (table, name) in [
-            ("SRC/FIELD/SCENES.S", "SceneId_WorldMap"),
-            ("SRC/SYSTEM/RESOURCE/DIRECTORY.S", "ResourceId_WindowTiles"),
-            ("TEXT/MESSAGES.S", "MsgSaving"),
+            ("src/field/scenes.s", "SceneId_WorldMap"),
+            ("src/system/resource/directory.s", "ResourceId_WindowTiles"),
+            ("text/messages.s", "MsgSaving"),
         ] {
             let found = problems(table, &object);
             assert_eq!(found.len(), 2, "{found:?}");
@@ -185,11 +185,11 @@ mod tests {
             );
         }
         assert_eq!(
-            problems("SRC/FIELD/ROWS.S", &object),
+            problems("src/field/rows.s", &object),
             [
-                "games/THE BROKEN SEAL/SRC/FIELD/ROWS.S defines SceneId_WorldMap, which only games/THE BROKEN SEAL/SRC/FIELD/SCENES.S may define",
-                "games/THE BROKEN SEAL/SRC/FIELD/ROWS.S defines ResourceId_WindowTiles, which only games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/DIRECTORY.S may define",
-                "games/THE BROKEN SEAL/SRC/FIELD/ROWS.S defines MsgSaving, which only games/THE BROKEN SEAL/TEXT/MESSAGES.S may define",
+                "games/tbs/src/field/rows.s defines SceneId_WorldMap, which only games/tbs/src/field/scenes.s may define",
+                "games/tbs/src/field/rows.s defines ResourceId_WindowTiles, which only games/tbs/src/system/resource/directory.s may define",
+                "games/tbs/src/field/rows.s defines MsgSaving, which only games/tbs/text/messages.s may define",
             ]
         );
     }
@@ -225,13 +225,13 @@ mod tests {
             ],
         );
         assert_eq!(
-            problems("SRC/SCENE.S", &object),
+            problems("src/scene.s", &object),
             [
-                "games/THE BROKEN SEAL/SRC/SCENE.S .text+0x4: ResourceId_WindowTiles + 0x4; use the id whole",
-                "games/THE BROKEN SEAL/SRC/SCENE.S .text+0x8: MsgSaving - 0x2; use the id whole",
-                "games/THE BROKEN SEAL/SRC/SCENE.S .text+0x12: ResourceId_WindowTiles + 0x1; use the id whole",
-                "games/THE BROKEN SEAL/SRC/SCENE.S .text+0x15: MsgSaving - 0x1; use the id whole",
-                "games/THE BROKEN SEAL/SRC/SCENE.S .text+0xc: MsgSaving fills a place of relocation type 10, not a data word",
+                "games/tbs/src/scene.s .text+0x4: ResourceId_WindowTiles + 0x4; use the id whole",
+                "games/tbs/src/scene.s .text+0x8: MsgSaving - 0x2; use the id whole",
+                "games/tbs/src/scene.s .text+0x12: ResourceId_WindowTiles + 0x1; use the id whole",
+                "games/tbs/src/scene.s .text+0x15: MsgSaving - 0x1; use the id whole",
+                "games/tbs/src/scene.s .text+0xc: MsgSaving fills a place of relocation type 10, not a data word",
             ]
         );
     }
@@ -252,13 +252,13 @@ mod tests {
             ),
         )
         .unwrap();
-        let source = Path::new(GAME).join("SRC/FIELD/ROWS.S");
+        let source = Path::new(GAME).join("src/field/rows.s");
         let error = check(Path::new(GAME), &[(source.clone(), object.clone())]).unwrap_err();
-        let table = Path::new(GAME).join("SRC/FIELD/SCENES.S");
+        let table = Path::new(GAME).join("src/field/scenes.s");
         let passes = check(Path::new(GAME), &[(table, object)]);
         fs::remove_dir_all(&directory).unwrap();
         assert!(error.starts_with("ids come only from their tables and are used whole:\n  "));
-        assert!(error.contains("ROWS.S defines SceneId_WorldMap"), "{error}");
+        assert!(error.contains("rows.s defines SceneId_WorldMap"), "{error}");
         assert!(error.ends_with("load the id itself"), "{error}");
         passes.unwrap();
     }

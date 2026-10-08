@@ -1,10 +1,10 @@
 /* Near miss (87 of 197 instructions differ): the native keeps the
  * palette fill's colour and base inside its loop, reloading both each pass,
  * and builds the entrance offset in r0; the draft hoists them. Destined
- * for the head of OVERLAY_687/FADE.C as the overlay's start. */
-#include "../../../../games/THE LOST AGE/SRC/FIELD/OVERLAY_687/OV687.H"
-#include "PARTY_STATE.H"
-#include "SCENE_IDS.H"
+ * for the head of overlay_687/fade.c as the overlay's start. */
+#include "../../../../games/tla/src/field/overlay_687/ov687.h"
+#include "party_state.h"
+#include "scene_ids.h"
 
 extern u16 Data_020026c0[];
 

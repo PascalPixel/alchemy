@@ -1,7 +1,7 @@
-#include "FIXED_MATH.H"
-#include "TYPES.H"
-#include "SCENE.H"
-#include "SYSTEM.H"
+#include "fixed_math.h"
+#include "types.h"
+#include "scene.h"
+#include "system.h"
 extern u8 Data_03001f30[];
 s32 BattleEffect_RunFallbackObjectTransition();
 

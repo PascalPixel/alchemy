@@ -663,7 +663,7 @@ pub fn placeholder(image: &Image, first: usize, last: usize) -> String {
     }
     let main = order.iter().max_by_key(|o| (bytes[*o], std::cmp::Reverse(order.iter().position(|x| x == *o)))).copied().unwrap_or("");
     let stem = main.trim_end_matches(".o");
-    let stem = stem.split_once("/SRC/").map_or(stem, |(_, tail)| tail);
+    let stem = stem.split_once("/src/").map_or(stem, |(_, tail)| tail);
     if order.len() > 1 {
         format!("{stem}+{}", order.len() - 1)
     } else {
@@ -765,17 +765,17 @@ mod tests {
     fn image() -> Image {
         let mut image = Image { name: "test".into(), ..Image::default() };
         image.functions = vec![
-            function("Menu_Open", 0x100, 0x20, "games/G/SRC/MENU/OPEN.o", &["ram:gMenu", "rom:MenuTable"]),
-            function("Menu_Close", 0x120, 0x20, "games/G/SRC/MENU/CLOSE.o", &["ram:gMenu", "rom:MenuTable"]),
-            function("Menu_Draw", 0x140, 0x1e, "games/G/SRC/MENU/DRAW.o", &["ram:gMenu"]),
-            function("Battle_Run", 0x170, 0x20, "games/G/SRC/BATTLE/RUN.o", &["ram:gBattle", "io:04000000"]),
-            function("Battle_End", 0x190, 0x20, "games/G/SRC/BATTLE/RUN.o", &["ram:gBattle", "io:04000000"]),
-            function("Sound_Play", 0x1b0, 0x20, "games/G/SRC/SOUND/PLAY.o", &["ram:gSound"]),
+            function("Menu_Open", 0x100, 0x20, "games/g/src/menu/open.o", &["ram:gMenu", "rom:MenuTable"]),
+            function("Menu_Close", 0x120, 0x20, "games/g/src/menu/close.o", &["ram:gMenu", "rom:MenuTable"]),
+            function("Menu_Draw", 0x140, 0x1e, "games/g/src/menu/draw.o", &["ram:gMenu"]),
+            function("Battle_Run", 0x170, 0x20, "games/g/src/battle/run.o", &["ram:gBattle", "io:04000000"]),
+            function("Battle_End", 0x190, 0x20, "games/g/src/battle/run.o", &["ram:gBattle", "io:04000000"]),
+            function("Sound_Play", 0x1b0, 0x20, "games/g/src/sound/play.o", &["ram:gSound"]),
         ];
         image.data = vec![Data {
             start: 0x160,
             end: 0x170,
-            object: "games/G/SRC/MENU/DRAW.o".into(),
+            object: "games/g/src/menu/draw.o".into(),
             region: 0,
             names: vec!["MenuStrings".into()],
             targets: BTreeSet::new(),
@@ -787,7 +787,7 @@ mod tests {
     fn data_between_functions_is_a_forced_boundary() {
         let gaps = judge(&image());
         assert_eq!(gaps[2].verdict, Verdict::ForcedBoundary);
-        assert!(gaps[2].forced_boundary[0].starts_with("data:16B:games/G/SRC/MENU/DRAW.o"));
+        assert!(gaps[2].forced_boundary[0].starts_with("data:16B:games/g/src/menu/draw.o"));
     }
 
     #[test]
@@ -800,8 +800,8 @@ mod tests {
         let spans: Vec<(usize, usize)> = units.iter().map(|u| (u.first, u.last)).collect();
         assert_eq!(spans, [(0, 2), (3, 4), (5, 5)]);
         assert_eq!(units[0].data, [0]);
-        assert_eq!(units[0].name, "MENU/OPEN+2");
-        assert_eq!(units[1].name, "BATTLE/RUN");
+        assert_eq!(units[0].name, "menu/open+2");
+        assert_eq!(units[1].name, "battle/run");
     }
 
     #[test]

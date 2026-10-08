@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "OBJDISP.H"
-#include "SYSTEM.H"
-#include "OBJECT_EFX.H"
+#include "types.h"
+#include "objdisp.h"
+#include "system.h"
+#include "object_efx.h"
 
 struct BattleEffectScene {
     u8 reserved_00[4];

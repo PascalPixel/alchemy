@@ -1,5 +1,5 @@
-#include "SERIAL_RUNTIME.H"
-#include "DMA.H"
+#include "serial_runtime.h"
+#include "dma.h"
 
 void SerialRuntime_Initialize(void)
 {

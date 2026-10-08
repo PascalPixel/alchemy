@@ -1,4 +1,4 @@
-#include "CURVE.H"
+#include "curve.h"
 
 s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 position, u32 row)
 {

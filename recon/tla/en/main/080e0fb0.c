@@ -1,7 +1,7 @@
-#include "RESOURCE.H"
-#include "VRAM_BLOCK.H"
-#include "TYPES.H"
-#include "SCENE_IDS.H"
+#include "resource.h"
+#include "vram_block.h"
+#include "types.h"
+#include "scene_ids.h"
 
 void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle)
 {

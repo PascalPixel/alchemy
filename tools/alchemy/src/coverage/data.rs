@@ -205,8 +205,8 @@ mod tests {
             "Linker script and memory map",
             "",
             ".rom_start      0x0000000008000000      0x40",
-            " .rodata        0x0000000008000000       0x10 /b/out/tbs-en/obj/games/X/HEAD.o",
-            " .text          0x0000000008000010       0x20 /b/out/tbs-en/obj/games/X/CODE.o",
+            " .rodata        0x0000000008000000       0x10 /b/out/tbs-en/obj/games/x/head.o",
+            " .text          0x0000000008000010       0x20 /b/out/tbs-en/obj/games/x/code.o",
             " *fill*         0x0000000008000030        0x4 ",
             " .unidentified  0x0000000008000034        0xc /b/out/tbs-en/obj/recon/tbs/unidentified.o",
             "",
@@ -254,7 +254,7 @@ mod tests {
         let map = [
             "Linker script and memory map",
             ".text           0x0000000002008000      0x20",
-            " .text          0x0000000002008000       0x8 /b/out/tbs-en/obj/games/X/ENTRY.o",
+            " .text          0x0000000002008000       0x8 /b/out/tbs-en/obj/games/x/entry.o",
             " .rodata.x02008008",
             "                0x0000000002008008      0x18 /b/out/tbs-en/overlays/resource_649_overlay.o",
         ]
@@ -280,9 +280,9 @@ mod tests {
         let map = [
             "Linker script and memory map",
             ".rom_tail       0x0000000008000000      0x60",
-            " .rodata        0x0000000008000000       0x10 /b/out/tbs-en/obj/games/X/HEAD.o",
-            " */games/X/OVERLAYS.o(.overlays)",
-            " .overlays      0x0000000008000010       0x28 /b/out/tbs-en/obj/games/X/OVERLAYS.o",
+            " .rodata        0x0000000008000000       0x10 /b/out/tbs-en/obj/games/x/head.o",
+            " */games/x/overlays.o(.overlays)",
+            " .overlays      0x0000000008000010       0x28 /b/out/tbs-en/obj/games/x/overlays.o",
             "                0x0000000008000010                Resource_Overlay36F",
             "                0x0000000008000020                Resource_Overlay370",
             " .overlays      0x0000000008000038       0x28 /b/out/tbs-en/obj/recon/tla/overlays.o",
@@ -292,8 +292,8 @@ mod tests {
         assert_eq!(
             stream_owners(&map).into_iter().collect::<Vec<_>>(),
             [
-                ("36f".to_string(), "/b/out/tbs-en/obj/games/X/OVERLAYS.o".to_string()),
-                ("370".to_string(), "/b/out/tbs-en/obj/games/X/OVERLAYS.o".to_string()),
+                ("36f".to_string(), "/b/out/tbs-en/obj/games/x/overlays.o".to_string()),
+                ("370".to_string(), "/b/out/tbs-en/obj/games/x/overlays.o".to_string()),
                 ("649".to_string(), "/b/out/tbs-en/obj/recon/tla/overlays.o".to_string()),
             ]
         );

@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "ITEM.H"
+#include "types.h"
+#include "item.h"
 
 void Menu_CopyListOrder(s32 mode, u8 *order);
 

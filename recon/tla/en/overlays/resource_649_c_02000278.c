@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "VRAM_TAB.H"
+#include "types.h"
+#include "vram_tab.h"
 
 struct TitleSprite {
     u32 attr[3];

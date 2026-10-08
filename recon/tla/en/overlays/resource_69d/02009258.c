@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "PARTY_STATE.H"
-#include "FIELD_EFFECT.H"
+#include "types.h"
+#include "party_state.h"
+#include "field_effect.h"
 
 extern const s32 *const Data_0200270c[];
 

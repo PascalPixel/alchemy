@@ -1,5 +1,5 @@
-#include "RESOURCE.H"
-#include "TYPES.H"
+#include "resource.h"
+#include "types.h"
 
 extern u8 *gWindowWork;
 

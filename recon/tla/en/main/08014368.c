@@ -1,4 +1,4 @@
-#include "VRAM_TAB.H"
+#include "vram_tab.h"
 
 void Resource_InitializeTable(void)
 {

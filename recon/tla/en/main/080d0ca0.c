@@ -1,14 +1,14 @@
-#include "TYPES.H"
-#include "PALBUF.H"
-#include "RAM_BUFFER.H"
-#include "IWRAM_CALL.H"
-#include "IO_WRITE_QUEUE.H"
-#include "IO_REG.H"
+#include "types.h"
+#include "palbuf.h"
+#include "ram_buffer.h"
+#include "iwram_call.h"
+#include "io_write_queue.h"
+#include "io_reg.h"
 
 s32 GameFlag_Test(s32 flag);
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 
-/* FAKEMATCH: SYSTEM/IO_WRITE_QUEUE.C's queue idiom, for that file's reasons:
+/* FAKEMATCH: system/io_write_queue.c's queue idiom, for that file's reasons:
    the loop that runs once around the IME read, and the count stored through
    a u16 pointer before the entry is written. */
 #define QUEUE_WRITE(value, address, control) {                             \

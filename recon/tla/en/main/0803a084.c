@@ -1,15 +1,15 @@
-/* ported from games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/DRAW_FRAME.C */
-#include "BATTLE.H"
-#include "DEBUG.H"
-#include "FIELD.H"
-#include "GAME.H"
-#include "GRAPHICS.H"
-#include "MENU.H"
-#include "MINIGAME.H"
-#include "SOUND.H"
-#include "SYSTEM.H"
-#include "TYPES.H"
-#include "WINDOW.H"
+/* ported from games/tbs/src/graphics/window/draw_frame.c */
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "menu.h"
+#include "minigame.h"
+#include "sound.h"
+#include "system.h"
+#include "types.h"
+#include "window.h"
 
 
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)

@@ -1,9 +1,9 @@
 /* ☀️ SpawnHeavyImpactEffect; differ 18: arm9tdmi scheduling of the z copy
    and the fragment speed stores. */
-#include "TYPES.H"
-#include "OBJDISP.H"
-#include "OBJECT_EFX.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "objdisp.h"
+#include "object_efx.h"
+#include "system.h"
 
 struct ImpactPosition {
     s32 x;

@@ -1,8 +1,8 @@
-#include "OBJECT_LOOKUP.H"
-#include "TYPES.H"
-#include "FIXED_MATH.H"
-#include "SCENE_IDS.H"
-#include "SCENE.H"
+#include "object_lookup.h"
+#include "types.h"
+#include "fixed_math.h"
+#include "scene_ids.h"
+#include "scene.h"
 
 void BattleFx_UpdatePairedArcSpawner(void *object)
 {

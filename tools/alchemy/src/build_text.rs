@@ -5,7 +5,7 @@ use std::path::Path;
 
 pub(crate) const INCLUDE: &str = "text/messages.inc";
 
-pub(crate) const C_INCLUDE: &str = "text/MSG_IDS.H";
+pub(crate) const C_INCLUDE: &str = "text/msg_ids.h";
 
 const LABEL: &str = "Text_Message";
 
@@ -37,7 +37,7 @@ fn c_imports(names: &[(String, usize)]) -> String {
         "/* Message numbers from the edition's editable PO catalog. */\n\
          #ifndef ALCHEMY_MESSAGE_IDS_H\n\
          #define ALCHEMY_MESSAGE_IDS_H\n\
-         #include \"TYPES.H\"\n\
+         #include \"types.h\"\n\
          #define TEXT_MESSAGE_ENUM(name) enum { name = TEXT_MESSAGE_NUMBER_ ## name }\n\
          #define MSGNO(name) TEXT_MESSAGE_NUMBER_ ## name\n",
     );

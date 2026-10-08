@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "PARTY_STATE.H"
-#include "FIELD_EVENT.H"
+#include "types.h"
+#include "party_state.h"
+#include "field_event.h"
 
 struct LightSpot {
     u8 unknown_00[6];

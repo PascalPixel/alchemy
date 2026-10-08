@@ -1,9 +1,9 @@
-#include "TYPES.H"
-#include "EFFECT_SLOT.H"
-#include "FIELD_SPRITE.H"
-#include "RESOURCE.H"
-#include "DMA.H"
-#include "FIXED_MATH.H"
+#include "types.h"
+#include "effect_slot.h"
+#include "field_sprite.h"
+#include "resource.h"
+#include "dma.h"
+#include "fixed_math.h"
 
 void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode);
 

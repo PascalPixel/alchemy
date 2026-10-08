@@ -119,7 +119,7 @@ pub fn classify(root: &Path, object: &str) -> (Origin, String) {
             .find(|p| root.join(p).is_file())
     };
     if relative.starts_with("games/") {
-        if let Some(path) = existing(&[".C", ".c"]) {
+        if let Some(path) = existing(&[".c"]) {
             return (Origin::C, path);
         }
         if let Some(path) = existing(&[".S", ".s"]) {

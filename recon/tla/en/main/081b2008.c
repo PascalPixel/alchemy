@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 extern struct GameState gGameState;
 extern u8 Data_03001cb4[];
 

@@ -1,0 +1,35 @@
+	.include "games/tla/src/map/map.inc"
+	.section .rodata
+	.global Field_Map194
+Field_Map194:
+	map_header 0, 0, 128, 128, 3, 2, 2, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map194, .LField_Map194_METATILES
+	map_block Field_Map194, .LField_Map194_SHAPES
+	map_block Field_Map194, .LField_Map194_GRID
+	map_block Field_Map194, .LField_Map194_SHAPE_GRID
+	map_block Field_Map194, .LField_Map194_ANIMATION
+	map_block Field_Map194, .LField_Map194_BLEND
+	map_block Field_Map194, .LField_Map194_SCENE
+.LField_Map194_METATILES:
+	.incbin "map/map_194/metatiles.delta1.lz"
+	.balign 4, 0
+.LField_Map194_SHAPES:
+	.incbin "map/map_194/shapes.table.lz"
+	.balign 4, 0
+.LField_Map194_GRID:
+	.incbin "map/map_194/grid.parts.lz"
+	.balign 4, 0
+.LField_Map194_SHAPE_GRID:
+	.incbin "map/map_194/shape_grid.plane.lz"
+	.balign 4, 0
+.LField_Map194_ANIMATION:
+	.incbin "map/map_194/animation.script.lz"
+	.balign 4, 0
+.LField_Map194_BLEND:
+	.incbin "map/map_194/blend.script.lz"
+	.balign 4, 0
+.LField_Map194_SCENE:
+	.incbin "map/map_194/scene.parts.lz"

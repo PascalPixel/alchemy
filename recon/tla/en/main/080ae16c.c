@@ -1,8 +1,8 @@
-#include "SCENE.H"
-#include "GAME_FLAGS.H"
-#include "INVENTORY.H"
-#include "PARTY_STATE.H"
-#include "TYPES.H"
+#include "scene.h"
+#include "game_flags.h"
+#include "inventory.h"
+#include "party_state.h"
+#include "types.h"
 
 void Owner_RefreshDerivedData(s32 arg0);
 s32 UnitCalc(s32);

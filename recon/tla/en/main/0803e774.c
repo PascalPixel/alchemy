@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "SCENE.H"
+#include "types.h"
+#include "scene.h"
 s32 Menu_SetupSelectionSide(s32, s32);
 extern u8 Data_03001e98[];
 

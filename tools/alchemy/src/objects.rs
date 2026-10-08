@@ -406,13 +406,13 @@ mod tests {
         assert_eq!(
             summary,
             [
-                ("games/THE BROKEN SEAL/SRC/SYSTEM/IO.o", 0x0800_001a, &["Input_Poll".to_string()][..]),
-                ("games/THE BROKEN SEAL/SRC/SYSTEM/RUNTIME.o", 0x0800_0034, &["IwramIrqMain".to_string()][..]),
+                ("games/tbs/src/system/io.o", 0x0800_001a, &["Input_Poll".to_string()][..]),
+                ("games/tbs/src/system/runtime.o", 0x0800_0034, &["IwramIrqMain".to_string()][..]),
                 ("recon/tbs/raw/08000048.o", 0x0800_004a, &["Func_08000048".to_string()][..]),
             ]
         );
         let text = describe_first(&map, &anchors(false), &reference, &built).unwrap();
-        assert_eq!(text, "first difference at 0x0800001a (ROM offset 0x1a), in games/THE BROKEN SEAL/SRC/SYSTEM/IO.o at Input_Poll+0x2");
+        assert_eq!(text, "first difference at 0x0800001a (ROM offset 0x1a), in games/tbs/src/system/io.o at Input_Poll+0x2");
         built.truncate(0x40);
         assert_eq!(first_offset(&reference[..0x40], &built), Some(0x1a));
         assert_eq!(first_offset(&reference, &reference[..0x40]), Some(0x40));
@@ -436,7 +436,7 @@ mod tests {
         built.copy_within(0x20..0x30, 0x1e);
         let text = report(&map, &anchors, &reference, &built, false);
         assert!(text.starts_with("first difference at 0x0800001e (ROM offset 0x1e), in recon/tbs/de/rom.o(.rom.00000020) at Func_08000020+0x0\n  placed at 0x0800001e, its bytes belong at 0x08000020: 2 bytes early\n"), "{text}");
-        assert!(text.contains("2 scaffold sections sit 2 bytes early: from recon/tbs/de/rom.o(.rom.00000020) at 0x0800001e (its bytes belong at 0x08000020) to recon/tbs/unidentified.o(.unidentified.08000030) at 0x08000036\n  after recon/tbs/de/rom.o(.rom.00000000), which sits right; just before the run: games/THE BROKEN SEAL/SRC/SYSTEM/IO.o\n"), "{text}");
+        assert!(text.contains("2 scaffold sections sit 2 bytes early: from recon/tbs/de/rom.o(.rom.00000020) at 0x0800001e (its bytes belong at 0x08000020) to recon/tbs/unidentified.o(.unidentified.08000030) at 0x08000036\n  after recon/tbs/de/rom.o(.rom.00000000), which sits right; just before the run: games/tbs/src/system/io.o\n"), "{text}");
     }
 
     #[test]

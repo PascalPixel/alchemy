@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "WINDOW.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "window.h"
 
 u32 UiRender_LookupNamedValue(u32 name, u32 clear)
 {

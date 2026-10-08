@@ -4,7 +4,7 @@ use std::process::ExitCode;
 fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.len() != 2 || args[0] == "-h" || args[0] == "--help" {
-        eprintln!("usage: wav2ags INPUT.PCM8.WAV|INPUT.PCM4 OUTPUT.bin");
+        eprintln!("usage: wav2ags INPUT.pcm8.wav|INPUT.pcm4 OUTPUT.bin");
         return ExitCode::FAILURE;
     }
     let result = fs::read(&args[0])

@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "M7_INTERFACES.H"
+#include "types.h"
+#include "m7_interfaces.h"
 extern u8 Data_03001f2c[];
 
 void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns);

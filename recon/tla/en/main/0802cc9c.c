@@ -1,10 +1,10 @@
 /* alchemy permute 0802cc9c: weighted 120, differ 4 (2 reordered); draft weighted 170, differ 14 (5 register, 2 reordered).
    Job 0, iteration 839; rewrites: 1x reorder independent statements (minimized from 1: 1x reorder independent statements). */
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "MAP.H"
-#include "IWRAM_CALL.H"
-#include "CALLBACK_SCHEDULER.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "map.h"
+#include "iwram_call.h"
+#include "callback_scheduler.h"
 
 void MapAnimation_Update(void);
 

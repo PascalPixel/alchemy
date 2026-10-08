@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "SCENE.H"
+#include "types.h"
+#include "iwram_call.h"
+#include "scene.h"
 s32 Trig_Sin(s32);
 s32 Trig_Cos(s32);
 extern u8 gProjection[];

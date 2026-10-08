@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "RAM_BUFFER.H"
-#include "WINDOW.H"
+#include "types.h"
+#include "iwram_call.h"
+#include "ram_buffer.h"
+#include "window.h"
 
 void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_width);
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height);

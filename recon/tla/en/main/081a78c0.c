@@ -1,9 +1,9 @@
 /* FAKEMATCH: each queued write is QueueIoWriteDelay-style inline code with
    function-level queue and IME pointers and the one-pass loop around the
-   IME read (as in SYSTEM/IO_WRITE_QUEUE.C); the front bank address passes
+   IME read (as in system/io_write_queue.c); the front bank address passes
    through a block local, and the packing loop counts down from an explicit
    512 set before the source pointer. */
-#include "TYPES.H"
+#include "types.h"
 
 extern u8 gWorkSlot[];
 

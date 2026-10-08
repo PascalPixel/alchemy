@@ -1,0 +1,10 @@
+.syntax unified
+	.thumb
+	.include "games/tbs/src/system/overlay.inc"
+	.balign 4
+	overlay_veneer SuharaGate_EnterScene
+	overlay_veneer Scene_GetEntrances
+	overlay_veneer SceneData_GetSceneTable
+	overlay_veneer Scene_GetPlacements
+	overlay_veneer Scene_GetEvents
+	overlay_veneer SceneData_ReturnZero

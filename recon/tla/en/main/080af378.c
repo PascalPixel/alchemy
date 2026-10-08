@@ -1,4 +1,4 @@
-#include "INVENTORY.H"
+#include "inventory.h"
 
 extern u16 Data_080b1f40[];
 

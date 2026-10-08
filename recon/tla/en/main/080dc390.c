@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 struct EffectVector {
     s32 x;

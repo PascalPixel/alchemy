@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 struct CenteredTextWork {
     u8 unknown_000[0xf40];
@@ -11,7 +11,7 @@ struct CenteredTextWindow {
     u16 width;
     u16 height;
 };
-#include "RAM_BUFFER.H"
+#include "ram_buffer.h"
 s32 UiText_BuildRenderEntries(s32 message, s32 mode);
 void UiText_GetResourceDimensions(s32, s32 *, s32 *, s32 *, s32 *);
 struct CenteredTextWindow *UiWindow_Create(s32, s32, s32, s32, s32);

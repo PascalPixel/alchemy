@@ -1,12 +1,12 @@
 /* FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
-   (SYSTEM/IO_WRITE_QUEUE.C) written out inline with that function's odd
+   (system/io_write_queue.c) written out inline with that function's odd
    constructs, the one-pass loop around the IME read and the count stored
    through an explicit u16 pointer, plus a one-pass loop around everything
    after the queue pointer so the queue literal loads ahead of the store
    before it. */
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "CALLBACK_SCHEDULER.H"
+#include "types.h"
+#include "iwram_call.h"
+#include "callback_scheduler.h"
 
 void Palette_StepFadeTransfer(void);
 

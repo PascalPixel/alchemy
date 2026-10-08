@@ -2,9 +2,9 @@
  * reloads gPartyState.current_owner's address from r9 (native r1/r3/r2,
  * draft r2/r3), the fall speed's register stored as the motion flags byte
  * (native strb of 0xffff0000, draft the known zero in r6), and the order of
- * one ldr against a speed constant. Destined for the end of EVENT6.C. */
-#include "../../../../games/THE LOST AGE/SRC/FIELD/OVERLAY_654/KABE.H"
-#include "text/MSG_IDS.H"
+ * one ldr against a speed constant. Destined for the end of event6.c. */
+#include "../../../../games/tla/src/field/overlay_654/kabe.h"
+#include "text/msg_ids.h"
 
 extern const u8 Data_02003c58[];
 

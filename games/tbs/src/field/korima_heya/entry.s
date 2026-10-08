@@ -1,0 +1,10 @@
+.syntax unified
+	.thumb
+	.include "games/tbs/src/system/overlay.inc"
+	.balign 4
+	overlay_veneer FieldScene_SetupEntryLayoutsBySelector
+	overlay_veneer SceneData_GetPrimaryTable
+	overlay_veneer SceneData_GetSecondaryTable
+	overlay_veneer SceneData_GetPreparedRecords
+	overlay_veneer SceneData_GetFourthTable
+	overlay_veneer SceneData_ReturnZero

@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 struct Object_0801c0dc {
     u8 filler0[5];

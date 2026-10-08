@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "SCENE.H"
+#include "types.h"
+#include "iwram_call.h"
+#include "scene.h"
 void UiWindow_SetTilemapEntry(s32, s32, s32, s32, s32);
 
 struct Effect {

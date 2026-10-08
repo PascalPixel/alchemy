@@ -1,4 +1,4 @@
-#include "SCRIPT_OBJECT_RUNTIME.H"
+#include "script_object_runtime.h"
 
 u16 ArcTan2(s32, s32);
 

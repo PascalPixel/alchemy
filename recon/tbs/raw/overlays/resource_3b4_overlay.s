@@ -1,4 +1,4 @@
-	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
+	.include "games/common/include/game/ed_asm.h"
 .syntax unified
 	.thumb
 	.section .rodata.x0200a644,"a",%progbits

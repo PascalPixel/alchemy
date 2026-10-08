@@ -1,9 +1,9 @@
-/* ported from games/COMMON/SRC/SYSTEM/RESOURCE/RESOBJ.C */
-#include "EDITION.H"
-#include "RESOURCE.H"
-#include "DMA.H"
-#include "IO_REG.H"
-#include "ANIMSPR.H"
+/* ported from games/common/src/system/resource/resobj.c */
+#include "edition.h"
+#include "resource.h"
+#include "dma.h"
+#include "io_reg.h"
+#include "animspr.h"
 
 struct ResourceObjectWork {
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
@@ -28,8 +28,8 @@ void ResourceMetadata_ClearRecord(void *destination);
 
 #if !GAME_TLA
 /* The Lost Age keeps its own version, 0x08022d40, as a listing for now. */
-#include "METADATA_LOOKUP.H"
-#include "VRAM_TAB.H"
+#include "metadata_lookup.h"
+#include "vram_tab.h"
 
 extern struct AnimationObject *gSpriteObjects;
 

@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 u32 __udivsi3(s32, s32);
 s32 __umodsi3(s32, s32);

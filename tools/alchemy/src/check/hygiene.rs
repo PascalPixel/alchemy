@@ -13,7 +13,7 @@ assets, empty files and text that is not UTF-8; and, in games/ and tools/,\n\
 on CRLF line endings, trailing whitespace (TSV fields excepted) and a\n\
 missing final newline.";
 
-const BINARY: [&str; 4] = ["PNG", "WAV", "MID", "PCM4"];
+const BINARY: [&str; 4] = ["png", "wav", "mid", "pcm4"];
 const SCRATCH: [&str; 14] = [
     ".o", ".elf", ".map", ".log", ".i", ".gba", ".bin", ".lz", ".orig", ".rej", ".swp", ".tmp",
     ".bak", "~",
@@ -151,16 +151,16 @@ mod tests {
     #[test]
     fn each_kind_of_problem_is_named() {
         assert_eq!(reasons("a/.DS_Store", b"x"), ["Finder metadata"]);
-        assert_eq!(reasons("games/X.o", b"x"), ["scratch or build output"]);
-        assert_eq!(reasons("games/X.C", b""), ["empty file"]);
-        assert!(reasons("games/X.PNG", b"\0\x89").is_empty());
-        assert_eq!(reasons("games/X.DAT", b"a\0b"), ["stray binary"]);
-        assert_eq!(reasons("games/X.C", b"\xff\xfe"), ["not UTF-8"]);
+        assert_eq!(reasons("games/x.o", b"x"), ["scratch or build output"]);
+        assert_eq!(reasons("games/x.c", b""), ["empty file"]);
+        assert!(reasons("games/x.png", b"\0\x89").is_empty());
+        assert_eq!(reasons("games/x.dat", b"a\0b"), ["stray binary"]);
+        assert_eq!(reasons("games/x.c", b"\xff\xfe"), ["not UTF-8"]);
         assert_eq!(
-            reasons("games/X.C", b"int a; \r\nint b;"),
+            reasons("games/x.c", b"int a; \r\nint b;"),
             ["CRLF line endings", "trailing whitespace", "no final newline"]
         );
-        assert!(reasons("games/X.TSV", b"a\t\n").is_empty());
+        assert!(reasons("games/x.tsv", b"a\t\n").is_empty());
         assert!(reasons("recon/x.s", b"a \n").is_empty());
     }
 
@@ -168,6 +168,6 @@ mod tests {
     fn fixing_leaves_clean_text() {
         let text = fixed("int a; \r\nint b;\t");
         assert_eq!(text, "int a;\nint b;\n");
-        assert!(reasons("games/X.C", text.as_bytes()).is_empty());
+        assert!(reasons("games/x.c", text.as_bytes()).is_empty());
     }
 }

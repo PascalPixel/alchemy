@@ -6,16 +6,16 @@ use std::io;
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 
-const DMA_HEADER: &str = "games/COMMON/INCLUDE/SYSTEM/DMA.H";
+const DMA_HEADER: &str = "games/common/include/system/dma.h";
 const DMA_SOURCE: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
-    "/../../games/COMMON/INCLUDE/SYSTEM/DMA.H"
+    "/../../games/common/include/system/dma.h"
 ));
 const DMA_BODY_SHA256: &str = "85462569a1fe487dd3033778e787524ca91ddc9bff061d3a85cb78fdbaca736e";
-const IWRAM_CALL_HEADER: &str = "games/THE BROKEN SEAL/INCLUDE/IWRAM_CALL.H";
+const IWRAM_CALL_HEADER: &str = "games/tbs/include/iwram_call.h";
 const IWRAM_CALL_SOURCE: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
-    "/../../games/THE BROKEN SEAL/INCLUDE/IWRAM_CALL.H"
+    "/../../games/tbs/include/iwram_call.h"
 ));
 const IWRAM_CALL_BODY_SHA256: &str =
     "110abd5ad8313dcfe0dce7ed49bb246d04883fe6b9ad61f29bd290c7abc80882";
@@ -300,7 +300,7 @@ pub fn source_files(directory: &Path) -> io::Result<Vec<PathBuf>> {
             files.extend(source_files(&path)?);
         } else if matches!(
             path.extension().and_then(|v| v.to_str()),
-            Some("c" | "h" | "C" | "H")
+            Some("c" | "h")
         ) {
             files.push(path);
         }
@@ -334,13 +334,13 @@ pub fn self_test() -> Result<(), String> {
     }
     let source = "/* M2C_FIELD */\n#define M2C_FIELD(x) (x)\n";
     let found = find_named_source_tool_leaks(
-        "games/THE BROKEN SEAL/SRC/graphics/window/example.c",
+        "games/tbs/src/graphics/window/example.c",
         source,
     );
     if found.len() != 1 || found[0].line != 2 || !found[0].token.contains("M2C_FIELD") {
         return Err("named-source gate missed a tool-branded identifier".into());
     }
-    if !find_named_source_tool_leaks("games/THE BROKEN SEAL/SRC/unidentified/example.c", source)
+    if !find_named_source_tool_leaks("games/tbs/src/unidentified/example.c", source)
         .is_empty()
     {
         return Err("named-source gate crossed its owned boundary".into());
@@ -348,7 +348,7 @@ pub fn self_test() -> Result<(), String> {
     if !find_named_source_tool_leaks("recon/tbs/example.c", source).is_empty() {
         return Err("named-source gate treated a reconstruction draft as production source".into());
     }
-    if find_named_source_tool_leaks("games/THE LOST AGE/SRC/example.c", source).is_empty() {
+    if find_named_source_tool_leaks("games/tla/src/example.c", source).is_empty() {
         return Err("named-source gate did not apply outside tbs".into());
     }
     Ok(())
@@ -448,9 +448,9 @@ mod tests {
     fn atlas_source_names_keep_tool_leak_checks() {
         let source = "void f(void) { M2C_ERROR(); }";
         let lower =
-            find_named_source_tool_leaks("games/THE BROKEN SEAL/SRC/field/example.c", source);
+            find_named_source_tool_leaks("games/tbs/src/field/example.c", source);
         let upper =
-            find_named_source_tool_leaks("games/THE BROKEN SEAL/SRC/FIELD/EXAMPLE.C", source);
+            find_named_source_tool_leaks("games/tbs/src/field/example.c", source);
         assert!(!lower.is_empty());
         assert_eq!(lower.len(), upper.len());
     }

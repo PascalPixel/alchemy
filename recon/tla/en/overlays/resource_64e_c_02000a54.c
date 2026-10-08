@@ -1,22 +1,22 @@
 /* Near miss (2 of 76 instructions differ): the international
  * editions' saved destination; the native loads the scene id from the pool
  * one slot before the saved-scene offset, the draft one slot after. */
-#include "BATTLE.H"
-#include "DEBUG.H"
-#include "FIELD.H"
-#include "GAME.H"
-#include "GRAPHICS.H"
-#include "LIB.H"
-#include "MENU.H"
-#include "SOUND.H"
-#include "SYSTEM.H"
-#include "TYPES.H"
-#include "FIELD_SCENE.H"
-#include "FIELD_EVENT.H"
-#include "RAM_BUFFER.H"
-#include "PARTY_STATE.H"
-#include "TLA_EDITION.H"
-#include "SCENE_IDS.H"
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+#include "types.h"
+#include "field_scene.h"
+#include "field_event.h"
+#include "ram_buffer.h"
+#include "party_state.h"
+#include "tla_edition.h"
+#include "scene_ids.h"
 
 #define Object_SetPartAttribute ((void (*)(struct FieldActor*,s32))Object_SetPartAttribute)
 

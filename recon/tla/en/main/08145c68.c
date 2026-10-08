@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "SYSTEM.H"
-#include "RAM_BUFFER.H"
-#include "IWRAM_CALL.H"
+#include "types.h"
+#include "system.h"
+#include "ram_buffer.h"
+#include "iwram_call.h"
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 

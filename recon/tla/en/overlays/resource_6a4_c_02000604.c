@@ -1,7 +1,7 @@
 /* Near miss (4 of 151 instructions differ): in each terrain call the
  * native builds the last argument (6) before it loads the object's x and z,
  * the draft between the two loads; one load swapped against a constant. */
-#include "TYPES.H"
+#include "types.h"
 
 struct Ov6a4Object {
     u8 unknown_00[8];

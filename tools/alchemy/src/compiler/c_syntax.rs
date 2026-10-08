@@ -199,7 +199,7 @@ mod tests {
     #[test]
     fn tokens_skip_directives_and_keep_comments() {
         let tokens =
-            lex("#include \"A.H\"\n#define X \\\n  1\nint a = 0x1FFu; /* c */ a <<= 2;\n").unwrap();
+            lex("#include \"a.h\"\n#define X \\\n  1\nint a = 0x1FFu; /* c */ a <<= 2;\n").unwrap();
         let kinds: Vec<Tok> = tokens.into_iter().map(|token| token.tok).collect();
         assert_eq!(
             kinds,

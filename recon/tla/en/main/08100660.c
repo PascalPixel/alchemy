@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "ITEM.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "item.h"
 
 void ItemMenu_PosCategory(void);
 void UiIcon_PrepareObject(void *arg0);

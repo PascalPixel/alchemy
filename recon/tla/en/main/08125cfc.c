@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "SCENE.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "scene.h"
+#include "ram_buffer.h"
 s32 BattlePres_SetupTransitionScene(s32, s32, s32, s32);
 
 struct Display080c01bc {

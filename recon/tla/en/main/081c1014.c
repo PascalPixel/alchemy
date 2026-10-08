@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "IO_REG.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "io_reg.h"
+#include "system.h"
 
 extern volatile u32 gKeysRepeat;
 extern s32 gSoundClipFlag;

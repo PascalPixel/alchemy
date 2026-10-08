@@ -1,8 +1,8 @@
-#include "RESOURCE.H"
-#include "TYPES.H"
-#include "IO_REG.H"
-#include "SYSTEM.H"
-#include "RAM_BUFFER.H"
+#include "resource.h"
+#include "types.h"
+#include "io_reg.h"
+#include "system.h"
+#include "ram_buffer.h"
 
 struct BgScroll {
     s16 x;

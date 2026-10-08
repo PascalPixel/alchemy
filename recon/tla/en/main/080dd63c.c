@@ -1,9 +1,9 @@
-#include "TYPES.H"
-#include "SYSTEM.H"
-#include "RAM_BUFFER.H"
-#include "MOTOBJ.H"
-#include "OBJDISP.H"
-#include "OBJECT_EFX.H"
+#include "types.h"
+#include "system.h"
+#include "ram_buffer.h"
+#include "motobj.h"
+#include "objdisp.h"
+#include "object_efx.h"
 
 struct BattleFxScene { u8 pad00[16]; void *volatile main_object; };
 

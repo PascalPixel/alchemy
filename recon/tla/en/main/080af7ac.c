@@ -1,4 +1,4 @@
-#include "OWNER_STATE.H"
+#include "owner_state.h"
 s32 Inventory_AddItem(s32 owner, s32 item);
 
 void Owner_RefreshClassActions(s32);

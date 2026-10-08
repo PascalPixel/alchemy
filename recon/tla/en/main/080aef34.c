@@ -1,7 +1,7 @@
 /* Near miss (differ 2): the native loads the slot before it builds the
  * 0xfdff unequip mask; a barrier does not hold because the load moves to
  * its single use. */
-#include "INVENTORY.H"
+#include "inventory.h"
 
 s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);
 void Owner_RefreshClassActions(s32 owner);

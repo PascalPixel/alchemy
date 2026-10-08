@@ -1,10 +1,10 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "EVENTWRK.H"
-#include "OBJECT_RUNTIME.H"
-#include "FIELD_SPRITE.H"
-#include "MAP.H"
-#include "DMA.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "eventwrk.h"
+#include "object_runtime.h"
+#include "field_sprite.h"
+#include "map.h"
+#include "dma.h"
 
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object, s32 value);
 

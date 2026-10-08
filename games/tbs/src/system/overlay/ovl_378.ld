@@ -1,0 +1,11 @@
+SECTIONS
+{
+    .text 0x2008000 :
+    {
+        "*/games/tbs/src/field/common/shinden_heya/entry.o"(.text)
+        "*/games/tbs/src/field/common/shinden_heya/heya.o"(.text)
+        "*/games/tbs/src/field/common/shinden_heya/import.o"(.text)
+        "*/games/tbs/src/field/common/shinden_heya/data.o"(.data)
+    }
+    /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+}

@@ -1,4 +1,4 @@
-#include "SCRIPT_OBJECT_RUNTIME.H"
+#include "script_object_runtime.h"
 
 void Object_SetMoveTarget(void *, s32, s32, s32);
 

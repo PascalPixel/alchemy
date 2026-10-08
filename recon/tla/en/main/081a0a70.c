@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "MEM.H"
-#include "DMA.H"
-#include "CALLBACK_SCHEDULER.H"
+#include "types.h"
+#include "mem.h"
+#include "dma.h"
+#include "callback_scheduler.h"
 
 struct DisplayScrollObject {
     u32 attr01;

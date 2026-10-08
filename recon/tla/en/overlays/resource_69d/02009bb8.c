@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "PARTY_STATE.H"
-#include "OBJECT_RUNTIME.H"
+#include "types.h"
+#include "party_state.h"
+#include "object_runtime.h"
 
 struct LightTile {
     s16 x;

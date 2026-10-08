@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "RENDER_INPUT.H"
+#include "types.h"
+#include "render_input.h"
 
 struct ArrowResources {
     u8 unknown_000[0x392];

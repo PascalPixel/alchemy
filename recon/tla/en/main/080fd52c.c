@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "PARTY_STATE.H"
-#include "RAM_BUFFER.H"
-#include "MEM.H"
+#include "types.h"
+#include "party_state.h"
+#include "ram_buffer.h"
+#include "mem.h"
 
 struct SaveSlotRecord {
     u8 unknown_00[0x1c];

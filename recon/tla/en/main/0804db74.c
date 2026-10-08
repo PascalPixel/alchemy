@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "SYSTEM.H"
-#include "TLA_EDITION.H"
-#include "PARTY_STATE.H"
+#include "types.h"
+#include "system.h"
+#include "tla_edition.h"
+#include "party_state.h"
 
 struct InputState {
     u32 held;

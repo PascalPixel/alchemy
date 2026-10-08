@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta)
 {

@@ -612,15 +612,15 @@ mod tests {
         }
         assert_eq!(family_flags(CompilerFamily::GameArm)[0], "-marm");
         let target = decomp_target(Some("tbs-en")).unwrap();
-        assert!(compiles(target, Path::new("games/THE BROKEN SEAL/SRC/BATTLE/TGTEXEC.C")));
-        assert!(compiles(target, Path::new("games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/MOJI.C")));
-        assert!(!compiles(target, Path::new("games/COMMON/SRC/SOUND/ENGINE.C")));
-        assert!(!compiles(target, Path::new("games/COMMON/SRC/SYSTEM/SAVE/READ_FLASH.C")));
+        assert!(compiles(target, Path::new("games/tbs/src/battle/tgtexec.c")));
+        assert!(compiles(target, Path::new("games/tbs/src/graphics/text/moji.c")));
+        assert!(!compiles(target, Path::new("games/common/src/sound/engine.c")));
+        assert!(!compiles(target, Path::new("games/common/src/system/save/read_flash.c")));
     }
 
     #[test]
     fn the_main_script_widens_sections_and_ends_rom_with_a_catch_all() {
-        let text = "SECTIONS\n{\n    .rom_main :\n    {\n    \"*/A.o\"(.text .rodata .data .padding)\n    \"*/B.o\"(.text)\n        . = ABSOLUTE(0x080f0000);\n} > ROM\n    .iwram_mixer 0x3007000 :\n    {\n    } > IWRAM AT>ROM\n    .rom_tail :\n    {\n    \"*/C.o\"(.rodata)\n    } > ROM\n    X = LOADADDR(.iwram_mixer);\n    /DISCARD/ : { \"*/D.o\"(.text.spawn) }\n}\n";
+        let text = "SECTIONS\n{\n    .rom_main :\n    {\n    \"*/A.o\"(.text .rodata .data .padding)\n    \"*/B.o\"(.text)\n        . = ABSOLUTE(0x080f0000);\n} > ROM\n    .iwram_mixer 0x3007000 :\n    {\n    } > IWRAM AT>ROM\n    .rom_tail :\n    {\n    \"*/C.o\"(.rodata)\n    } > ROM\n    X = LOADADDR(.iwram_mixer);\n    /discard/ : { \"*/D.o\"(.text.spawn) }\n}\n";
         let out = main_script(text);
         assert!(out.contains("\"*/A.o\"(.text .text.unlikely .text.hot .text.startup .rodata .rodata.str* .rodata.cst* .data .padding)"));
         assert!(out.contains("\"*/B.o\"(.text .text.unlikely .text.hot .text.startup)"));
@@ -642,21 +642,21 @@ mod tests {
 
     #[test]
     fn warnings_parse_by_option_and_group_by_kind() {
-        let text = "games/A.C: In function 'f':\n\
-games/A.C:3:5: warning: implicit declaration of function 'g' [-Wimplicit-function-declaration]\n\
-games/A.C:4:9: warning: 'x' may be used uninitialized [-Wmaybe-uninitialized]\n\
-games/A.C:2:6: note: 'x' was declared here\n\
-games/B.C:7:1: warning: array subscript 4 is above array bounds [-Warray-bounds=]\n";
+        let text = "games/a.c: In function 'f':\n\
+games/a.c:3:5: warning: implicit declaration of function 'g' [-Wimplicit-function-declaration]\n\
+games/a.c:4:9: warning: 'x' may be used uninitialized [-Wmaybe-uninitialized]\n\
+games/a.c:2:6: note: 'x' was declared here\n\
+games/b.c:7:1: warning: array subscript 4 is above array bounds [-Warray-bounds=]\n";
         let found = parse(text);
         assert_eq!(found.len(), 3);
-        assert_eq!(found[0].file, "games/A.C");
+        assert_eq!(found[0].file, "games/a.c");
         assert_eq!(found[0].line, 3);
         assert_eq!(found[2].option, "-Warray-bounds");
         assert_eq!(kind(&found[0].option), "implicit declarations");
         assert_eq!(kind(&found[1].option), "uninitialised variables");
         let summary = summarise(&found);
         assert!(summary.starts_with("3 distinct warnings"));
-        assert!(summary.contains("      2  games/A.C"));
+        assert!(summary.contains("      2  games/a.c"));
     }
 
     #[test]

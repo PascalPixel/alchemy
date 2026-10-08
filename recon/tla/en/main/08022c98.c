@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "METADATA_LOOKUP.H"
+#include "types.h"
+#include "metadata_lookup.h"
 
 struct AnimationObject {
     s16 id;

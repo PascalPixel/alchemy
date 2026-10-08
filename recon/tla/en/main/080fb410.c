@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "ITEM.H"
+#include "types.h"
+#include "item.h"
 
 #define COMMAND_DISABLED (-1)
 #define COMMAND_AVAILABLE 1

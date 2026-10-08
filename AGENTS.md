@@ -74,7 +74,7 @@ A game is finished when all six hold (Pascal, 2026-10-08):
       FAKEMATCH devices (`alchemy sweep`) and undefined behaviour behind a
       `BUGFIX` switch for the modern build.
    2. Structure: Camelot's translation units, repeated code folded into
-      `games/COMMON` helpers, macros and inline layers, and the global
+      `games/common` helpers, macros and inline layers, and the global
       layers above.
    3. Meaning: names and comments from evidence, assets named through
       their modules; linters flag what remains, and an unknown keeps its
@@ -82,24 +82,25 @@ A game is finished when all six hold (Pascal, 2026-10-08):
 
 ## Where things are
 
-- `games/<GAME>/SRC`, `INCLUDE`, `SOUND`, `TEXT` and `games/COMMON` hold the
-  source. `games/<GAME>/MAIN.LD` is the Japanese object order.
+- `games/<game>/src`, `include`, `sound`, `text` and `games/common` hold the
+  source; `<game>` is `tbs` or `tla`. `games/<game>/main.ld` is the Japanese
+  object order.
 - `recon/<game>/raw` holds the English disassembly of code that is not C yet,
-  one listing per function or run. ☀️'s `games/THE BROKEN SEAL/MAIN_EN.LD`
+  one listing per function or run. ☀️'s `games/tbs/main_en.ld`
   is the English object order; German, Spanish, French and Italian follow it
-  through their own `MAIN_DE.LD` ... beside it. ⚓️'s edition scripts are
-  still `recon/tla/<lang>/MAIN.LD`.
-- ☀️'s overlays link by `games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY/OVL_<ID>.LD`,
+  through their own `main_de.ld` ... beside it. ⚓️'s edition scripts are
+  still `recon/tla/<lang>/main.ld`.
+- ☀️'s overlays link by `games/tbs/src/system/overlay/ovl_<id>.ld`,
   with the overlay's own data and bss not yet in its modules in
-  `OVL_<ID>.S` beside it; `recon/tbs/raw/overlays` keeps the original
+  `ovl_<id>.s` beside it; `recon/tbs/raw/overlays` keeps the original
   listings as reference only. ⚓️'s are `recon/tla/raw/overlays`.
-- `games/<GAME>/SRC/SYSTEM/ROM_HEAD.S` is the cartridge header, linked
+- `games/<game>/src/system/rom_head.s` is the cartridge header, linked
   first in every edition, as pret's `rom_header.s`: the logo is
   `.space 156` and the complement 0. Right after objcopy the build runs
   the header fix-up (`alchemy gbafix`, pret's gbafix) on every ROM it
   links, which writes the logo and the complement (L1).
-- `games/THE BROKEN SEAL/INCLUDE/EVENT.H` is the scene command vocabulary
-  (S3); `FIELD_EVENT.H` and `FIELD_SERVICE.H` hold the script layer the
+- `games/tbs/include/event.h` is the scene command vocabulary
+  (S3); `field_event.h` and `field_service.h` hold the script layer the
   commands expand to.
 - `recon/<game>/<lang>` holds that edition's ROM scaffold (`rom.s`,
   `overlays.s`) and its drafts (`main/`, `overlays/`).
@@ -234,7 +235,7 @@ or functions is exactly this cheating.
   `WaitFrames`' stack switch (a write to sp). A layer that
   explains a habit of the whole game is source, not a device: the ☀️ scene
   script layer (inline helpers forwarding to the engine services in
-  `FIELD_EVENT.H`, `FIELD_SERVICE.H` and `RUNPA_JO/JO.H`) matches every scene
+  `field_event.h`, `field_service.h` and `runpa_jo/jo.h`) matches every scene
   where direct calls break 642 functions (Pascal, 2026-10-05). Never patch
   compiler output. _Check: no-asm (in lint-staged)._
 - **S3** Camelotize: reconstruct readable source consistent with the games'
@@ -244,7 +245,7 @@ or functions is exactly this cheating.
   (Pascal, 2026-10-07):
 
   ```c
-  #include "EVENT.H"
+  #include "event.h"
 
   #define BOUZU       8           // 坊主
 
@@ -257,12 +258,18 @@ or functions is exactly this cheating.
   }
   ```
 
-  - Layout: `games/<GAME>/SRC`, `INCLUDE`, `SOUND`, `TEXT`, the same folders
-    in both games and `games/COMMON`; uppercase 8.3 file names, `.C` and
-    `.H` (Pascal, 2026-10-08). Directives stay lowercase (`#include`): the
-    preprocessor reads no other. Rename a file and its include and linker
-    references together.
-    Shared code and declarations live once in `games/COMMON`; a function is
+  - Layout: `games/<game>/src`, `include`, `sound`, `text`, the same folders
+    in both games (`games/tbs`, `games/tla`) and `games/common`; lowercase
+    8.3 file and folder names, `.c` and `.h` (Pascal, 2026-10-08: no evidence
+    for the uppercase style). The one exception follows the GNU convention:
+    an assembly file the C preprocessor reads (`#include`, `#define`, `#if`)
+    is all capitals, name and extension (`NAME.S`); plain assembly such as
+    `rom_head.s` is lowercase. The build chooses preprocessing by the
+    extension, as GCC's driver does (Pascal, 2026-10-08). Directives stay
+    lowercase (`#include`): the preprocessor reads no other. Rename a file
+    and its include and linker references together. _Check: hygiene,
+    publication._
+    Shared code and declarations live once in `games/common`; a function is
     adopted into the module that holds its linker neighbours, not into a new
     file of its own.
   - Language: C89 with only extensions supported by the approved compiler;
@@ -297,7 +304,7 @@ or functions is exactly this cheating.
   - Values are written in the author's units, whatever the bytes store:
     scene coordinates are pixels, and the command shifts them into fixed
     point.
-  - Scenes are written in `EVENT.H` commands (`OBJ_POS_SET`, `MES_PUT`,
+  - Scenes are written in `event.h` commands (`OBJ_POS_SET`, `MES_PUT`,
     `WAIT`, `FLAG_CHK` ...), all-caps macros that expand to exactly the call
     the bytes need: the scene script layer's inline helper (S2), or the
     engine service itself where the native calls it directly.
@@ -318,7 +325,7 @@ or functions is exactly this cheating.
     comments, organization and byte identity, preserving necessary casts,
     hardware `volatile`, `goto`, work arrays and S2 devices with their reasons.
   - The showcase is `BtlTgtExec` in
-    `games/THE BROKEN SEAL/SRC/BATTLE/TGTEXEC.C`.
+    `games/tbs/src/battle/tgtexec.c`.
 - **S4** Never throw work away: commit each adoption and attempt, and keep a
   near miss as a draft with the remaining difference in its header. One draft
   per listing, overwritten as it improves: a trial is a commit or a line in
@@ -569,7 +576,7 @@ alchemy diff DRAFT.c --heat            # differing instructions per line, first 
 alchemy permute DRAFT.c [ADDR] [--minutes N]   # rewrites and PERM_* choices toward differ 0, in out/permute
 alchemy sizes DRAFT.c [SIZE]           # struct sizes; the locals that fill a frame gap
 alchemy show EDITION FUNCTION          # a built function beside the ROM
-alchemy adopt ADDR LABEL NAME [--into MODULE.C]   # into its module, out of all scaffolding
+alchemy adopt ADDR LABEL NAME [--into MODULE.c]   # into its module, out of all scaffolding
 alchemy label NAME ENGLISH_ADDR LEN    # name English-only scaffold data in other editions
 alchemy adopt-data OBJECT PIECE...     # a data block's object into all six scripts, out of all scaffolds
 # Check the whole build
@@ -582,7 +589,7 @@ make worst                             # maintained C ranked by how mechanical i
 alchemy camelotize REWRITE FILE...     # actors, events, registers, declarations, barriers
 alchemy camelotize numbers|casts|idioms FILE...  # decimal quantities, needless casts, C idioms
 alchemy keep [PATH...]                 # keep only edits that leave all twelve identical
-alchemy sweep FILE.C...                # drop FAKEMATCH pins, barriers and volatiles the bytes no longer need
+alchemy sweep FILE.c...                # drop FAKEMATCH pins, barriers and volatiles the bytes no longer need
 # Work in parallel
 alchemy queues --workers N --out-dir DIR   # work that cannot collide (W7)
 alchemy integrate BRANCH...            # merge, reconcile linker scripts, build all twelve

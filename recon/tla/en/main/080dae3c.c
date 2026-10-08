@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "ram_buffer.h"
 
 struct ScriptSlot {
     s16 id;

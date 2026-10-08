@@ -1,4 +1,4 @@
-#include "SHOP.H"
+#include "shop.h"
 
 void Shop_SellItem(s32, s32, s32);
 

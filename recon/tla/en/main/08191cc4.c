@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "MOTOBJ.H"
-#include "BATTLE_SESSION.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "motobj.h"
+#include "battle_session.h"
 
 struct SummonCast {
     u8 unknown_00[20];

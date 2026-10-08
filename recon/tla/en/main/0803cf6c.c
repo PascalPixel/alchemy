@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "WINDOW.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "window.h"
+#include "ram_buffer.h"
 
 s32 UiText_BuildRenderEntries(s32 message, s32 mode);
 

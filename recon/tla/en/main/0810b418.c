@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "system.h"
 
 struct FieldEffectState {
     u8 padding0[0x1C0];

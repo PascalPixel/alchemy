@@ -1,9 +1,9 @@
-#include "SCENE.H"
-#include "INVENTORY.H"
-#include "GAME_FLAGS.H"
-#include "TYPES.H"
-#include "RESOURCE.H"
-#include "PARTY_STATE.H"
+#include "scene.h"
+#include "inventory.h"
+#include "game_flags.h"
+#include "types.h"
+#include "resource.h"
+#include "party_state.h"
 
 struct ItemUses {
     u8 unknown_00[24];

@@ -476,7 +476,7 @@ mod tests {
 
     #[test]
     fn map_sections_read_both_line_layouts() {
-        let map = " .text          0x08000100       0x20 /a/obj/games/X/SRC/A.o\n\
+        let map = " .text          0x08000100       0x20 /a/obj/games/x/src/a.o\n\
                    \x20                0x08000100                A\n\
                    \x20.text.x02009ca4\n\
                    \x20               0x02009ca4      0x5d0 /a/overlays/resource_371_overlay.o\n\
@@ -485,7 +485,7 @@ mod tests {
         assert_eq!(
             placed,
             vec![
-                (0x0800_0100, 0x20, "/a/obj/games/X/SRC/A.o".to_string()),
+                (0x0800_0100, 0x20, "/a/obj/games/x/src/a.o".to_string()),
                 (
                     0x0200_9ca4,
                     0x5d0,

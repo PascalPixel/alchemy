@@ -1,0 +1,48 @@
+#include "types.h"
+#include "resource.h"
+#include "frame.h"
+
+extern char ResourceId_BuildStamp;
+
+u16 Runtime_GetBuildStampTime(void)
+{
+    u8 *digits;
+    s32 hourTens;
+    s32 hourUnits;
+    s32 minuteTens;
+    s32 minuteUnits;
+    s32 secondTens;
+    s32 secondUnits;
+    s32 hours;
+    s32 minutes;
+    s32 seconds;
+    s32 packed;
+    s32 shifted;
+    s32 result;
+
+    digits = Resource_GetTableEntry((s32)&ResourceId_BuildStamp);
+    hourTens = *digits;
+    hours = (hourTens - '0') * 10;
+    digits++;
+    hourUnits = *digits;
+    digits++;
+    hours += hourUnits - '0';
+    minuteTens = *digits;
+    minutes = (minuteTens - '0') * 10;
+    digits++;
+    minuteUnits = *digits;
+    digits++;
+    minutes += minuteUnits - '0';
+    secondTens = digits[0];
+    seconds = (secondTens - '0') * 10;
+    secondUnits = digits[1];
+    seconds += secondUnits - '0';
+    packed = (((hours << 4) + minutes) << 6) + seconds;
+    shifted = 0x80 << 21;
+    shifted |= packed << 16;
+    result = shifted >> 16;
+    if (gDebugMode != 0) {
+        result |= ~0x7fff;
+    }
+    return result;
+}

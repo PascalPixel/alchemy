@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "EFFECT_SLOT.H"
-#include "IWRAM_CALL.H"
-#include "FIXED_MATH.H"
+#include "types.h"
+#include "effect_slot.h"
+#include "iwram_call.h"
+#include "fixed_math.h"
 
 void EffectSlot_UpdateMotion(struct EffectSlot *effect)
 {

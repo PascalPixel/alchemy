@@ -1,7 +1,7 @@
-#include "OWNER_STATE.H"
-#include "TYPES.H"
-#include "ITEM.H"
-#include "IWRAM_CALL.H"
+#include "owner_state.h"
+#include "types.h"
+#include "item.h"
+#include "iwram_call.h"
 
 void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
 {

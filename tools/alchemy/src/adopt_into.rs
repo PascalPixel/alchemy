@@ -265,24 +265,24 @@ pub(crate) fn run(root: &Path, game: &str, address: &str, module: &Path, head: b
 mod tests {
     use super::*;
 
-    const MODULE: &str = "/* Shop module. */\n#include \"TYPES.H\"\n#include \"SHOP.H\"\n\nstruct Slot {\n    u8 id;\n};\n\nvoid Shop_Close(void);\n\nvoid Shop_Open(void)\n{\n    Shop_Close();\n}\n";
+    const MODULE: &str = "/* Shop module. */\n#include \"types.h\"\n#include \"shop.h\"\n\nstruct Slot {\n    u8 id;\n};\n\nvoid Shop_Close(void);\n\nvoid Shop_Open(void)\n{\n    Shop_Close();\n}\n";
 
-    const DRAFT: &str = "/* Draft: Shop_Count, 2026-10-05.\n * Score 0: exact. */\n#include \"TYPES.H\"\n#include \"ITEM.H\"\n\nstruct Slot {\n    u8 id;\n};\nvoid Shop_Close(void);\ns32 Item_Count(u32 id);\n\n/* Counts the slot's items. */\ns32 Shop_Count(struct Slot *slot)\n{\n    return Item_Count(slot->id);\n}\n";
+    const DRAFT: &str = "/* Draft: Shop_Count, 2026-10-05.\n * Score 0: exact. */\n#include \"types.h\"\n#include \"item.h\"\n\nstruct Slot {\n    u8 id;\n};\nvoid Shop_Close(void);\ns32 Item_Count(u32 id);\n\n/* Counts the slot's items. */\ns32 Shop_Count(struct Slot *slot)\n{\n    return Item_Count(slot->id);\n}\n";
 
     #[test]
     fn adds_missing_includes_after_the_top_include_block() {
         let (text, added) = with_includes(MODULE, DRAFT);
-        assert_eq!(added, ["#include \"ITEM.H\""]);
-        assert!(text.starts_with("/* Shop module. */\n#include \"TYPES.H\"\n#include \"SHOP.H\"\n#include \"ITEM.H\"\n\nstruct Slot"));
+        assert_eq!(added, ["#include \"item.h\""]);
+        assert!(text.starts_with("/* Shop module. */\n#include \"types.h\"\n#include \"shop.h\"\n#include \"item.h\"\n\nstruct Slot"));
         let (bare, _) = with_includes("void f(void) {}\n", DRAFT);
-        assert!(bare.starts_with("#include \"TYPES.H\"\n#include \"ITEM.H\"\n\nvoid f"));
-        assert_eq!(with_includes(MODULE, "#include \"SHOP.H\"\n").1.len(), 0);
+        assert!(bare.starts_with("#include \"types.h\"\n#include \"item.h\"\n\nvoid f"));
+        assert_eq!(with_includes(MODULE, "#include \"shop.h\"\n").1.len(), 0);
     }
 
     #[test]
     fn appends_what_the_module_lacks_and_drops_the_audit_header() {
         let (with, _) = with_includes(MODULE, DRAFT);
-        let merged = merge(&with, DRAFT, &Known::default(), false, "SHOP.C").unwrap();
+        let merged = merge(&with, DRAFT, &Known::default(), false, "shop.c").unwrap();
         assert_eq!(merged.present, 2);
         assert_eq!(merged.defined, ["Shop_Count"]);
         assert!(merged.text.ends_with("    Shop_Close();\n}\n\ns32 Item_Count(u32 id);\n\n/* Counts the slot's items. */\ns32 Shop_Count(struct Slot *slot)\n{\n    return Item_Count(slot->id);\n}\n"));
@@ -291,41 +291,41 @@ mod tests {
 
     #[test]
     fn head_puts_the_draft_before_the_first_function() {
-        let module = "#include \"TYPES.H\"\n\nvoid Shop_Close(void);\n\n/* Opens. */\nvoid Shop_Open(void)\n{\n}\n";
-        let merged = merge(module, DRAFT, &Known::default(), true, "SHOP.C").unwrap();
+        let module = "#include \"types.h\"\n\nvoid Shop_Close(void);\n\n/* Opens. */\nvoid Shop_Open(void)\n{\n}\n";
+        let merged = merge(module, DRAFT, &Known::default(), true, "shop.c").unwrap();
         assert_eq!(
             merged.text,
-            "#include \"TYPES.H\"\n\nvoid Shop_Close(void);\n\nstruct Slot {\n    u8 id;\n};\ns32 Item_Count(u32 id);\n\n/* Counts the slot's items. */\ns32 Shop_Count(struct Slot *slot)\n{\n    return Item_Count(slot->id);\n}\n\n/* Opens. */\nvoid Shop_Open(void)\n{\n}\n"
+            "#include \"types.h\"\n\nvoid Shop_Close(void);\n\nstruct Slot {\n    u8 id;\n};\ns32 Item_Count(u32 id);\n\n/* Counts the slot's items. */\ns32 Shop_Count(struct Slot *slot)\n{\n    return Item_Count(slot->id);\n}\n\n/* Opens. */\nvoid Shop_Open(void)\n{\n}\n"
         );
-        let later = "#include \"TYPES.H\"\nvoid Shop_Open(void)\n{\n}\nstruct Slot {\n    u8 id;\n};\n";
-        let error = merge(later, DRAFT, &Known::default(), true, "SHOP.C").err().unwrap();
+        let later = "#include \"types.h\"\nvoid Shop_Open(void)\n{\n}\nstruct Slot {\n    u8 id;\n};\n";
+        let error = merge(later, DRAFT, &Known::default(), true, "shop.c").err().unwrap();
         assert!(error.contains("struct Slot is defined below the module's first function"), "{error}");
     }
 
     #[test]
     fn refuses_a_name_defined_twice() {
-        let module = "#include \"TYPES.H\"\nstruct Slot { u16 id; };\ns32 Shop_Count(struct Slot *slot)\n{\n    return 0;\n}\n";
-        let error = merge(module, DRAFT, &Known::default(), false, "SHOP.C").err().unwrap();
-        assert!(error.contains("struct Slot is already defined in SHOP.C"), "{error}");
-        assert!(error.contains("Shop_Count is already defined in SHOP.C"), "{error}");
+        let module = "#include \"types.h\"\nstruct Slot { u16 id; };\ns32 Shop_Count(struct Slot *slot)\n{\n    return 0;\n}\n";
+        let error = merge(module, DRAFT, &Known::default(), false, "shop.c").err().unwrap();
+        assert!(error.contains("struct Slot is already defined in shop.c"), "{error}");
+        assert!(error.contains("Shop_Count is already defined in shop.c"), "{error}");
         let headers = Known::of_headers(
-            "# 1 \"/tmp/module.c\"\n# 1 \"games/COMMON/INCLUDE/GAME/ITEM.H\" 1\ntypedef unsigned short u16;\ns32 Item_Count(u32 count);\nstruct Slot { u32 id; };\n# 2 \"/tmp/module.c\" 2\n",
+            "# 1 \"/tmp/module.c\"\n# 1 \"games/common/include/game/item.h\" 1\ntypedef unsigned short u16;\ns32 Item_Count(u32 count);\nstruct Slot { u32 id; };\n# 2 \"/tmp/module.c\" 2\n",
             "/tmp/module.c",
         );
-        let error = merge(MODULE.replace("struct Slot {\n    u8 id;\n};\n", "").as_str(), DRAFT, &headers, false, "SHOP.C").err().unwrap();
-        assert_eq!(error, "the draft cannot merge into SHOP.C:\n  struct Slot is already defined in games/COMMON/INCLUDE/GAME/ITEM.H");
+        let error = merge(MODULE.replace("struct Slot {\n    u8 id;\n};\n", "").as_str(), DRAFT, &headers, false, "shop.c").err().unwrap();
+        assert_eq!(error, "the draft cannot merge into shop.c:\n  struct Slot is already defined in games/common/include/game/item.h");
     }
 
     #[test]
     fn leaves_identical_header_definitions_and_notes_differing_declarations() {
         let headers = Known::of_headers(
-            "# 1 \"games/X/TYPES.H\" 1\ntypedef unsigned short u16;\nvoid Item_Count(void);\n# 3 \"/tmp/module.c\" 2\nvoid Local(void);\n",
+            "# 1 \"games/x/types.h\" 1\ntypedef unsigned short u16;\nvoid Item_Count(void);\n# 3 \"/tmp/module.c\" 2\nvoid Local(void);\n",
             "/tmp/module.c",
         );
-        let draft = "#include \"TYPES.H\"\ntypedef unsigned short u16;\ns32 Item_Count(u32 id);\nvoid Local(u32);\nstruct Rec *Find(u32 key)\n{\n    return 0;\n}\n";
-        let module = "#include \"TYPES.H\"\nstruct Event *Find(u32);\n";
-        let merged = merge(module, draft, &headers, false, "M.C").unwrap();
-        assert_eq!(merged.text, "#include \"TYPES.H\"\nstruct Event *Find(u32);\n\nvoid Local(u32);\nstruct Rec *Find(u32 key)\n{\n    return 0;\n}\n");
+        let draft = "#include \"types.h\"\ntypedef unsigned short u16;\ns32 Item_Count(u32 id);\nvoid Local(u32);\nstruct Rec *Find(u32 key)\n{\n    return 0;\n}\n";
+        let module = "#include \"types.h\"\nstruct Event *Find(u32);\n";
+        let merged = merge(module, draft, &headers, false, "m.c").unwrap();
+        assert_eq!(merged.text, "#include \"types.h\"\nstruct Event *Find(u32);\n\nvoid Local(u32);\nstruct Rec *Find(u32 key)\n{\n    return 0;\n}\n");
         assert_eq!(merged.differing, ["Find", "Item_Count"]);
         assert_eq!(merged.present, 2);
     }

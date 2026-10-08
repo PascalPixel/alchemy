@@ -4,7 +4,7 @@ use std::process::ExitCode;
 fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.len() < 2 || args[0] == "-h" || args[0] == "--help" {
-        eprintln!("usage: po2ags CATALOG.PO OUTPUT.inc [--label NAME]");
+        eprintln!("usage: po2ags CATALOG.po OUTPUT.inc [--label NAME]");
         return ExitCode::FAILURE;
     }
     let label = args

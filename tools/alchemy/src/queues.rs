@@ -152,7 +152,7 @@ mod tests {
 
     #[test]
     fn runs_break_at_c_objects() {
-        let script = "\"*/recon/tbs/raw/08000100.o\"(.text)\n\"*/recon/tbs/raw/08000200.o\"(.text)\n\"*/games/X/A.o\"(.text)\n\"*/recon/tbs/raw/08000300.o\"(.text)\n";
+        let script = "\"*/recon/tbs/raw/08000100.o\"(.text)\n\"*/recon/tbs/raw/08000200.o\"(.text)\n\"*/games/x/a.o\"(.text)\n\"*/recon/tbs/raw/08000300.o\"(.text)\n";
         let r = runs(script, "tbs");
         assert_eq!(r["08000100"], r["08000200"]);
         assert_ne!(r["08000200"], r["08000300"]);
@@ -162,8 +162,8 @@ mod tests {
     fn arm_listings_use_the_same_module_run_and_adoption_key() {
         let script = "\"*/recon/tbs/raw/080155d0.o\"(.text)\n\"*/recon/tbs/raw/080158e8.o\"(.text)\n";
         let run_of = runs(script, "tbs");
-        let arm = listing_stem("recon/tbs/raw/080155d0.S");
-        let next = listing_stem("recon/tbs/raw/080158e8.S");
+        let arm = listing_stem("recon/tbs/raw/080155d0.s");
+        let next = listing_stem("recon/tbs/raw/080158e8.s");
         assert_eq!(arm, "080155d0");
         assert_eq!(run_of[arm], run_of[next]);
         let adopted = BTreeSet::from(["080155d0".to_string()]);

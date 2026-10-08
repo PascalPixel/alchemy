@@ -1,10 +1,10 @@
 /* Near miss: listing 82 instructions, draft 82, common 77, differ 10; the rest differs in instruction order. */
-#include "TYPES.H"
-#include "INPUT.H"
-#include "RAM_BUFFER.H"
-#include "IO_REG.H"
-#include "SCENE.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "input.h"
+#include "ram_buffer.h"
+#include "io_reg.h"
+#include "scene.h"
+#include "system.h"
 unsigned char Ui_FillVramBlockPattern(void);
 void UiText_RenderWideStringAtOffset(s16 *, s32, s32, s32);
 

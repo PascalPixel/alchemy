@@ -80,7 +80,7 @@ mod tests {
 
     #[test]
     fn game_arm_c_preprocesses_with_the_shared_modules_it_builds_with() {
-        let shared = format!("-I{}", root().join("games/COMMON/INCLUDE/GAME").display());
+        let shared = format!("-I{}", root().join("games/common/include/game").display());
         for id in ["tbs-ja", "tla-en"] {
             let target = target_for(parse_decomp_target(id).unwrap());
             for source in GAME_ARM_SOURCES {

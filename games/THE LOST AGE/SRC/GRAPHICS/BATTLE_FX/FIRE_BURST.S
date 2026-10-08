@@ -1,5 +1,0 @@
-	.section .rodata
-	.global BattleFx_FireBurstSheet
-BattleFx_FireBurstSheet:
-	.incbin "GRAPHICS/BATTLE_FX/FIRE_BURST.gbapal"
-	.incbin "GRAPHICS/BATTLE_FX/FIRE_BURST.bitmap.lz"

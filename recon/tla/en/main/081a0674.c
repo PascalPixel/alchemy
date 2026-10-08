@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 void DisplayScroll_BuildHblankWordTable(u32 *arg0)
 {

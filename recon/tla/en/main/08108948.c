@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "RENDER_INPUT.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "render_input.h"
+#include "ram_buffer.h"
 
 struct ShopCursor {
     struct RenderOutput *anchor;

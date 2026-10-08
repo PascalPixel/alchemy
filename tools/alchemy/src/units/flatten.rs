@@ -22,8 +22,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 const USAGE: &str = "usage: alchemy unit candidates [--build EDITION] [--out-dir DIR]
-       alchemy unit flatten (IMAGE:UNIT | --objects PATH.C,PATH.C...) [--build EDITION]
-                            [--name NAME.C] [--static] [--dry-run]
+       alchemy unit flatten (IMAGE:UNIT | --objects PATH.c,PATH.c...) [--build EDITION]
+                            [--name NAME.c] [--static] [--dry-run]
 candidates writes DIR/units-EDITION-merges.tsv (default out/reports): each run
 of today's C files the analysis joins, with the units it covers, the
 evidence at its two edges and its weakest join. An edge is forced (another
@@ -99,7 +99,7 @@ fn stem(object: &str) -> &str {
 }
 
 fn source_path(root: &Path, object: &str) -> Option<String> {
-    let path = format!("{}.C", stem(object));
+    let path = format!("{}.c", stem(object));
     root.join(&path).is_file().then_some(path)
 }
 
@@ -192,7 +192,7 @@ fn chains(root: &Path, target: DecompTarget, image: &Image, gaps: &[Gap], units:
             return None;
         }
         let source = source_path(root, &f.object)?;
-        Some((family(root, target, &source), f.object.starts_with("games/COMMON/"), linked.get(&f.object).cloned().unwrap_or_default()))
+        Some((family(root, target, &source), f.object.starts_with("games/common/"), linked.get(&f.object).cloned().unwrap_or_default()))
     };
     let unit_of = |i: usize| units.iter().position(|u| u.first <= i && i <= u.last).unwrap_or(0);
     let mut out = Vec::new();
@@ -258,7 +258,7 @@ fn candidates(options: &Options) -> Result<(), String> {
                 c.right.label(),
                 c.weakest,
                 if apply { "yes" } else { "no" },
-                c.objects.iter().map(|o| format!("{}.C", stem(o))).collect::<Vec<_>>().join(",")
+                c.objects.iter().map(|o| format!("{}.c", stem(o))).collect::<Vec<_>>().join(",")
             );
         }
     }
@@ -273,9 +273,9 @@ fn candidates(options: &Options) -> Result<(), String> {
 /// The editions that build a source: all six of its game, and both games'
 /// for COMMON.
 fn editions(source: &str) -> Vec<String> {
-    let games: &[&str] = if source.starts_with("games/COMMON/") {
+    let games: &[&str] = if source.starts_with("games/common/") {
         &["tbs", "tla"]
-    } else if source.starts_with("games/THE LOST AGE/") {
+    } else if source.starts_with("games/tla/") {
         &["tla"]
     } else {
         &["tbs"]
@@ -284,7 +284,7 @@ fn editions(source: &str) -> Vec<String> {
 }
 
 fn linker_scripts(root: &Path) -> Result<Vec<PathBuf>, String> {
-    let listed = crate::process::run(&["git", "ls-files", "--", "*.LD"], root)?;
+    let listed = crate::process::run(&["git", "ls-files", "--", "*.ld"], root)?;
     Ok(listed.lines().filter(|l| l.starts_with("games/") || l.starts_with("recon/")).map(|l| root.join(l)).collect())
 }
 
@@ -298,10 +298,10 @@ fn group(root: &Path, options: &Options, judged: &[super::Judged], target: Decom
         let mut out = Vec::new();
         for path in list {
             let path = path.trim_start_matches("./");
-            if !root.join(path).is_file() || !path.ends_with(".C") {
+            if !root.join(path).is_file() || !path.ends_with(".c") {
                 return Err(format!("{path}: not a C source of this tree"));
             }
-            out.push(format!("{}.o", path.trim_end_matches(".C")));
+            out.push(format!("{}.o", path.trim_end_matches(".c")));
         }
         // Given in ROM order, as the candidates list them; today's build must link each.
         for o in &out {
@@ -331,7 +331,7 @@ fn group(root: &Path, options: &Options, judged: &[super::Judged], target: Decom
 }
 
 fn is_eight_three(stem: &str) -> bool {
-    !stem.is_empty() && stem.len() <= 8 && stem.chars().all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
+    !stem.is_empty() && stem.len() <= 8 && stem.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_')
 }
 
 /// Where the merged file goes and what it is called.
@@ -351,7 +351,7 @@ fn destination(root: &Path, objects: &[String], judged: &[super::Judged], name: 
     let order: Vec<String> = objects.iter().map(|o| Path::new(stem(o)).parent().unwrap_or(Path::new("")).to_string_lossy().into_owned()).collect();
     let folder = order.iter().max_by_key(|f| (count.get(*f).copied().unwrap_or(0), std::cmp::Reverse(order.iter().position(|x| x == *f)))).cloned().unwrap_or_default();
     let file = match name {
-        Some(n) => n.trim_end_matches(".C").to_string(),
+        Some(n) => n.trim_end_matches(".c").to_string(),
         None => match area_word(root, &folder, objects) {
             Some(word) => word,
             None => {
@@ -371,12 +371,12 @@ fn destination(root: &Path, objects: &[String], judged: &[super::Judged], name: 
         },
     };
     if !is_eight_three(&file) {
-        return Err(format!("{file}: not an uppercase 8.3 name; pass --name"));
+        return Err(format!("{file}: not a lower-case 8.3 name; pass --name"));
     }
-    let path = format!("{folder}/{file}.C");
-    let theirs = objects.iter().any(|o| format!("{}.C", stem(o)) == path);
+    let path = format!("{folder}/{file}.c");
+    let theirs = objects.iter().any(|o| format!("{}.c", stem(o)) == path);
     if !theirs {
-        for extension in ["C", "S", "s", "c", "MID", "H"] {
+        for extension in ["c", "s", "S", "mid", "h"] {
             let other = format!("{folder}/{file}.{extension}");
             if root.join(&other).exists() {
                 return Err(format!("{other} already exists; pass --name"));
@@ -386,15 +386,15 @@ fn destination(root: &Path, objects: &[String], judged: &[super::Judged], name: 
     Ok(path)
 }
 
-/// An area's main unit, the one defining what its ENTRY.S veneers name,
-/// takes the last word of its folder (HAIDIA_MURA/MURA.C), or the 8.3
+/// An area's main unit, the one defining what its entry.s veneers name,
+/// takes the last word of its folder (haidia_mura/mura.c), or the 8.3
 /// abbreviation of it the folder's files already use. None when the run is
 /// not the main unit or another file already has that name.
 fn area_word(root: &Path, folder: &str, objects: &[String]) -> Option<String> {
-    let entry = read(&root.join(folder).join("ENTRY.S")).ok()?;
+    let entry = read(&root.join(folder).join("entry.s")).ok()?;
     let entries: Vec<&str> = entry.lines().filter_map(|l| l.trim().strip_prefix("overlay_veneer")).map(str::trim).filter(|n| !n.is_empty()).collect();
     let main = objects.iter().any(|o| {
-        let text = read(&root.join(format!("{}.C", stem(o)))).unwrap_or_default();
+        let text = read(&root.join(format!("{}.c", stem(o)))).unwrap_or_default();
         text.lines().any(|line| {
             !line.starts_with([' ', '\t', '#', '/', '*']) && !line.trim_end().ends_with(';') && entries.iter().any(|e| line.split(|c: char| !c.is_ascii_alphanumeric() && c != '_').any(|w| w == *e) && line.contains(&format!("{e}(")))
         })
@@ -416,8 +416,8 @@ fn area_word(root: &Path, folder: &str, objects: &[String]) -> Option<String> {
         known.sort_by_key(|s| std::cmp::Reverse(s.len()));
         known.into_iter().next().unwrap_or_else(|| word.chars().take(8).collect())
     };
-    let path = format!("{folder}/{word}.C");
-    let ours = objects.iter().any(|o| format!("{}.C", stem(o)) == path);
+    let path = format!("{folder}/{word}.c");
+    let ours = objects.iter().any(|o| format!("{}.c", stem(o)) == path);
     (ours || !root.join(&path).exists()).then_some(word)
 }
 
@@ -493,7 +493,7 @@ fn plan(root: &Path, objects: &[String], judged: &[super::Judged], target: Decom
     if families.len() > 1 {
         return Err(format!("the sources compile with different compilers ({})", families.into_iter().collect::<Vec<_>>().join(", ")));
     }
-    let common: BTreeSet<bool> = sources.iter().map(|s| s.starts_with("games/COMMON/")).collect();
+    let common: BTreeSet<bool> = sources.iter().map(|s| s.starts_with("games/common/")).collect();
     if common.len() > 1 {
         return Err("COMMON and game-only sources never share a file".into());
     }
@@ -656,7 +656,7 @@ fn flatten(options: &Options) -> Result<(), String> {
         }
         // The scripts first: a merge the link cannot express stops here.
         let scripts = linker_scripts(&root)?;
-        let merged_object = plan.destination.trim_end_matches(".C").to_string();
+        let merged_object = plan.destination.trim_end_matches(".c").to_string();
         let stems: Vec<String> = plan.objects.iter().map(|o| stem(o).to_string()).collect();
         let mut rewritten = Vec::new();
         for script in &scripts {
@@ -774,10 +774,11 @@ mod tests {
 
     #[test]
     fn names_are_eight_three() {
-        assert!(is_eight_three("CLEAR"));
-        assert!(is_eight_three("ROM_HEAD"));
-        assert!(!is_eight_three("TILEGRIDS"));
+        assert!(is_eight_three("clear"));
+        assert!(is_eight_three("rom_head"));
+        assert!(!is_eight_three("tilegrids"));
         assert!(!is_eight_three("Clear"));
+        assert!(!is_eight_three("CLEAR"));
     }
 
     #[test]
@@ -795,21 +796,21 @@ mod tests {
     #[test]
     fn an_areas_main_unit_takes_its_folder_word() {
         let root = tempfile::tempdir().unwrap();
-        let folder = "games/G/SRC/FIELD/HAIDIA_MURA";
+        let folder = "games/g/src/field/haidia_mura";
         fs::create_dir_all(root.path().join(folder)).unwrap();
-        fs::write(root.path().join(folder).join("ENTRY.S"), "\toverlay_veneer HaidiaMura_Setup\n").unwrap();
-        fs::write(root.path().join(folder).join("SETUP.C"), "s32 HaidiaMura_Setup(void)\n{\n}\n").unwrap();
-        fs::write(root.path().join(folder).join("OTHER.C"), "void Other(void)\n{\n}\n").unwrap();
+        fs::write(root.path().join(folder).join("entry.s"), "\toverlay_veneer HaidiaMura_Setup\n").unwrap();
+        fs::write(root.path().join(folder).join("setup.c"), "s32 HaidiaMura_Setup(void)\n{\n}\n").unwrap();
+        fs::write(root.path().join(folder).join("other.c"), "void Other(void)\n{\n}\n").unwrap();
         let o = |n: &str| format!("{folder}/{n}.o");
-        assert_eq!(area_word(root.path(), folder, &[o("SETUP"), o("OTHER")]).as_deref(), Some("MURA"));
-        assert_eq!(area_word(root.path(), folder, &[o("OTHER")]), None);
-        fs::write(root.path().join(folder).join("MURA.C"), "").unwrap();
-        assert_eq!(area_word(root.path(), folder, &[o("SETUP")]), None);
+        assert_eq!(area_word(root.path(), folder, &[o("setup"), o("other")]).as_deref(), Some("mura"));
+        assert_eq!(area_word(root.path(), folder, &[o("other")]), None);
+        fs::write(root.path().join(folder).join("mura.c"), "").unwrap();
+        assert_eq!(area_word(root.path(), folder, &[o("setup")]), None);
     }
 
     #[test]
     fn editions_follow_the_game() {
-        assert_eq!(editions("games/COMMON/SRC/A.C").len(), 12);
-        assert_eq!(editions("games/THE BROKEN SEAL/SRC/A.C")[0], "tbs-ja");
+        assert_eq!(editions("games/common/src/a.c").len(), 12);
+        assert_eq!(editions("games/tbs/src/a.c")[0], "tbs-ja");
     }
 }

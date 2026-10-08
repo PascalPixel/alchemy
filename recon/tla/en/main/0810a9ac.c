@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "system.h"
 
 struct ShopServiceWork {
     u8 unk_000[0x380];

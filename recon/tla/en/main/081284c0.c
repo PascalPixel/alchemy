@@ -1,9 +1,9 @@
-#include "MEM.H"
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "INVENTORY.H"
-#include "BTLWORK.H"
-#include "BTLTYPE.H"
+#include "mem.h"
+#include "types.h"
+#include "iwram_call.h"
+#include "inventory.h"
+#include "btlwork.h"
+#include "btltype.h"
 
 #if defined(TBS_EDITION_EN)
 

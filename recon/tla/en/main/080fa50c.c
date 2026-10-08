@@ -1,4 +1,4 @@
-#include "SYSTEM.H"
+#include "system.h"
 
 void RenderOutput_ClearListFar(s32);
 void UiMenu_SlideCursor(s32, s32);

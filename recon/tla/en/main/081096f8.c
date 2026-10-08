@@ -1,8 +1,8 @@
-#include "IO_REG.H"
-#include "MEM.H"
-#include "RENDER_INPUT.H"
-#include "FIXED_MATH.H"
-#include "RESOURCE.H"
+#include "io_reg.h"
+#include "mem.h"
+#include "render_input.h"
+#include "fixed_math.h"
+#include "resource.h"
 
 extern u8 gKeyState[];
 extern u8 gKeysRepeat[];

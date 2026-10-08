@@ -1,6 +1,6 @@
 
 
-#include "OBJECT_DISPATCH.H"
+#include "object_dispatch.h"
 
 void ObjectDispatch_Initialize(struct DispatchObject *object, u32 value)
 {

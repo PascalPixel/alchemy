@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "OBJECT_RUNTIME.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "object_runtime.h"
+#include "system.h"
 
 void Object_ShakeAngle(u32 object_id)
 {

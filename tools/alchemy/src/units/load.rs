@@ -192,7 +192,7 @@ fn origin(root: &Path, compiler: CompilerTarget, path: &str) -> Origin {
         return Origin { lang: Lang::Listing, source: None };
     }
     let stem = rel.trim_end_matches(".o");
-    for ext in ["C", "S", "c", "s"] {
+    for ext in ["c", "s", "S"] {
         let source = root.join(format!("{stem}.{ext}"));
         if source.exists() {
             let relative_source = format!("{stem}.{ext}");
@@ -683,7 +683,7 @@ mod tests {
 
     #[test]
     fn objects_are_named_from_the_build_s_obj_directory() {
-        assert_eq!(relative("/x/out/tbs-en/obj/games/A/SRC/B.o"), "games/A/SRC/B.o");
+        assert_eq!(relative("/x/out/tbs-en/obj/games/a/src/b.o"), "games/a/src/b.o");
         assert_eq!(relative("/x/out/tbs-en/overlays/resource_36f_overlay.o"), "resource_36f_overlay.o");
     }
 }

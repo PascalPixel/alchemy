@@ -1,10 +1,10 @@
 /* Near miss: alchemy diff 080d3940,080d3a10,080d3b28 differs by store and
  * constant scheduling around the position copy and the zero/0x400 register
  * choice in Func_080d3b28. */
-#include "TYPES.H"
-#include "OBJECT_RUNTIME.H"
-#include "FIELD_SPRITE.H"
-#include "DMA.H"
+#include "types.h"
+#include "object_runtime.h"
+#include "field_sprite.h"
+#include "dma.h"
 
 struct ObjectRuntime *Object_GetById(u32);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object, u32 value);

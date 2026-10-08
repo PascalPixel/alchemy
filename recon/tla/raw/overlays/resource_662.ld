@@ -2,7 +2,7 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_662/ENTRY.o"(.text)
+        "*/games/tla/src/field/overlay_662/entry.o"(.text)
         "*/resource_662_overlay.o"(.text.x02008038)
         "*/resource_662_overlay.o"(.text.x0200818c)
         "*/resource_662_overlay.o"(.text.x020081d4)
@@ -19,12 +19,12 @@ SECTIONS
         "*/resource_662_overlay.o"(.text.x02008b54)
         "*/resource_662_overlay.o"(.text.x02008bc0)
         "*/resource_662_overlay.o"(.text.x02008c44)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_662/SCENE_TABLES.o"(.text)
+        "*/games/tla/src/field/overlay_662/scene_tables.o"(.text)
         "*/resource_662_overlay.o"(.text.x02008d44)
         "*/resource_662_overlay.o"(.text.x02008d84)
         "*/resource_662_overlay.o"(.text.x02008dac)
         "*/resource_662_overlay.o"(.text.x02008de0)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_662/EVENTS.o"(.text)
+        "*/games/tla/src/field/overlay_662/events.o"(.text)
         "*/resource_662_overlay.o"(.text.x02008e68)
         "*/resource_662_overlay.o"(.text.x02008f10)
         "*/resource_662_overlay.o"(.text.x02009040)
@@ -36,8 +36,8 @@ SECTIONS
         "*/resource_662_overlay.o"(.text.x020093c8)
         "*/resource_662_overlay.o"(.text.x020093d8)
         "*/resource_662_overlay.o"(.text.x02009418)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_662/PREPARE.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_662/IMPORT.o"(.text)
+        "*/games/tla/src/field/overlay_662/prepare.o"(.text)
+        "*/games/tla/src/field/overlay_662/import.o"(.text)
         "*/resource_662_overlay.o"(.rodata.x02009968)
     }
     .bss : { "*/resource_662_overlay.o"(.bss) }

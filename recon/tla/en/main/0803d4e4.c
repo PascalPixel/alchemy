@@ -1,6 +1,6 @@
-#include "MEM.H"
-#include "TYPES.H"
-#include "RESOURCE.H"
+#include "mem.h"
+#include "types.h"
+#include "resource.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 

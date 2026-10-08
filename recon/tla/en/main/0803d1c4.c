@@ -1,7 +1,7 @@
 /* differ 6: ☀️ UiText_DecodeSymbol; the native loads the bit count before addressing the leaves, and the second leaf byte before masking the first; only ARM9TDMI load scheduling differs */
-#include "GRAPHICS.H"
-#include "TEXT_READER.H"
-#include "TYPES.H"
+#include "graphics.h"
+#include "text_reader.h"
+#include "types.h"
 extern const void *const Text_MessageContexts[][2];
 
 s32 Func_0803d1c4(struct TextReader *reader)

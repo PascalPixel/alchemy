@@ -1,6 +1,6 @@
-#include "WINDOW.H"
-#include "SYSTEM.H"
-#include "RAM_BUFFER.H"
+#include "window.h"
+#include "system.h"
+#include "ram_buffer.h"
 
 void UiWork_ResetCounters(void);
 void UiWork_DrawByAttributes(struct UiWindow *window);

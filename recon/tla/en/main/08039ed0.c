@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 struct Work {
     s32 unknown00;

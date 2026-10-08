@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "IO_REG.H"
-#include "CALLBACK_SCHEDULER.H"
-#include "AUDIO_ENGINE.H"
+#include "types.h"
+#include "io_reg.h"
+#include "callback_scheduler.h"
+#include "audio_engine.h"
 
 struct FrameSoundState {
     u8 tick;

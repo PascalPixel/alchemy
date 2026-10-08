@@ -1,4 +1,4 @@
-#include "TRACKBUF.H"
+#include "trackbuf.h"
 
 void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 {

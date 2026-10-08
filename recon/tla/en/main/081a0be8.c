@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "MEM.H"
-#include "IWRAM_CALL.H"
+#include "types.h"
+#include "mem.h"
+#include "iwram_call.h"
 
 s32 Func_08038418(s32 message, u8 *canvas, s32 align);
 

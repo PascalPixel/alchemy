@@ -1,6 +1,6 @@
 /*
  * Draft of resource_668 Func_02000200 and Func_02000514 (English 0x02008200 and
- * 0x02008514), listings between SCENE_TABLES.C, EVENTS2.C and EVENTS.C.
+ * 0x02008514), listings between scene_tables.c, events2.c and events.c.
  *
  * Func_02000200 differs by 4 instructions: native sets r8 = sp (the address of
  * sparks) inside the creation loop, after the create call; GCSE's PRE hoists it
@@ -10,21 +10,21 @@
  * sp + 24 and only r8 is saved. Its wait loop needs the while form below.
  */
 #define OWN_ObjectDispatch_SetSingleChildFlags
-#include "BATTLE.H"
-#include "FIELD.H"
-#include "GAME.H"
-#include "GRAPHICS.H"
-#include "LIB.H"
-#include "MENU.H"
-#include "SOUND.H"
-#include "SYSTEM.H"
-#include "TYPES.H"
-#include "FIELD_SCENE.H"
-#include "PARTY_STATE.H"
-#include "RAM_BUFFER.H"
-#include "EVENTWRK.H"
-#include "CALL.H"
-#include "text/MSG_IDS.H"
+#include "battle.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+#include "types.h"
+#include "field_scene.h"
+#include "party_state.h"
+#include "ram_buffer.h"
+#include "eventwrk.h"
+#include "call.h"
+#include "text/msg_ids.h"
 
 struct DoorPlan {
     s32 value[6];

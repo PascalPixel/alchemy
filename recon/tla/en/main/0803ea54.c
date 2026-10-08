@@ -1,4 +1,4 @@
-#include "LAYOUT_GUARD.H"
+#include "layout_guard.h"
 
 #define NODE_STATUS_SCROLLING 33
 #define NODE_STATUS_SHOWN 1

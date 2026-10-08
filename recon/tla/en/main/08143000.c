@@ -1,9 +1,9 @@
 
-#include "TYPES.H"
-#include "IO_REG.H"
-#include "RAM_BUFFER.H"
-#include "IWRAM_CALL.H"
-#include "LAYOUT_GUARD.H"
+#include "types.h"
+#include "io_reg.h"
+#include "ram_buffer.h"
+#include "iwram_call.h"
+#include "layout_guard.h"
 
 struct CanvasTransferDraftWork {
     u8 unknown_0000[0x7780];

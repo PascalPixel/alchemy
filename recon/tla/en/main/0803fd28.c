@@ -1,6 +1,6 @@
-#include "RESOURCE.H"
-#include "TYPES.H"
-#include "RENDER_INPUT.H"
+#include "resource.h"
+#include "types.h"
+#include "render_input.h"
 
 #define SLIDER_PALETTE 14
 #define RESOURCE_SLOTS 96

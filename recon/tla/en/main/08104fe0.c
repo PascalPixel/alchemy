@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "CALLBACK_SCHEDULER.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "callback_scheduler.h"
 
 struct MenuEntryWindow {
     u8 unknown_00[12];

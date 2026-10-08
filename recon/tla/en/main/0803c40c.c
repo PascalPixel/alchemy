@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "WINDOW.H"
-#include "AFFINE.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "window.h"
+#include "affine.h"
 
 struct OutputSprite {
     u32 link;

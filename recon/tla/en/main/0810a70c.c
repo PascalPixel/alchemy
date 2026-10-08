@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 struct ForgeRecipe {
     s16 item;

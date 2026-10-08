@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "system.h"
 
 struct EventWork {
     u8 unknown_000[0x1cc];

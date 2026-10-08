@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "SERIAL_RUNTIME.H"
-#include "PARTY_STATE.H"
+#include "types.h"
+#include "iwram_call.h"
+#include "serial_runtime.h"
+#include "party_state.h"
 
 s32 GameFlag_Test(s32);
 s32 Resource_ResetEntry(u32);

@@ -1,6 +1,6 @@
-#include "CALLBACK_SCHEDULER.H"
-#include "RESOURCE.H"
-#include "TYPES.H"
+#include "callback_scheduler.h"
+#include "resource.h"
+#include "types.h"
 
 struct SlotEntry {
     struct SlotEntry *next;

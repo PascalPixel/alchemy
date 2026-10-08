@@ -1,7 +1,7 @@
-#include "TYPES.H"
+#include "types.h"
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
-#include "CALL.H"
+#include "call.h"
 extern u8 gPartyState[];
 extern u8 MsgShieldResistsFire[];
 extern u8 MsgShieldUseToRestoreHp[];

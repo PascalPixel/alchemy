@@ -1,6 +1,6 @@
 /* Near miss: listing 45 instructions, draft 45, common 39, differ 12; the rest differs in instruction order. */
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "ram_buffer.h"
 
 void Runtime_SetWorkTripleIfNonNegativeFar(s32 a, s32 b, s32 c);
 void Object_AttachWorkTargetToObject(s32 id, s32 mode);

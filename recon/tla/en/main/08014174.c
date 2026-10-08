@@ -1,5 +1,5 @@
-#include "RESOURCE.H"
-#include "VRAM_TAB.H"
+#include "resource.h"
+#include "vram_tab.h"
 
 s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
 {

@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 union StagedActorCoordinate {
     s32 value;

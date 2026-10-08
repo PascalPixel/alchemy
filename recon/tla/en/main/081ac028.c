@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "SCENE.H"
+#include "types.h"
+#include "iwram_call.h"
+#include "scene.h"
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
 void SceneTransform_ApplyYaw(s32);

@@ -148,7 +148,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let game = match target {
         Some(target) if target.id.as_str().starts_with("tla-") => "tla",
         Some(_) => "tbs",
-        None if text.contains("/tla/") || text.contains("THE LOST AGE") => "tla",
+        None if text.contains("/tla/") => "tla",
         None => "tbs",
     };
     let target = match target {

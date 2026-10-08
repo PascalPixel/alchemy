@@ -1,8 +1,8 @@
 /* differ 12: five loads, the spilled done flag, the table base, the owner byte
    and the set counter, issue one slot earlier in the native (arm9tdmi load
    latency). */
-#include "TYPES.H"
-#include "OWNER_STATE.H"
+#include "types.h"
+#include "owner_state.h"
 
 struct DebugPartyEntry {
     s8 owner;

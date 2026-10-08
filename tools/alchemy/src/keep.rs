@@ -373,7 +373,7 @@ fn is_kept(path: &str, kept: &[String]) -> bool {
 fn is_header(path: &str) -> bool {
     matches!(
         Path::new(path).extension().and_then(|e| e.to_str()),
-        Some("H" | "h" | "INC" | "inc")
+        Some("h" | "inc")
     )
 }
 
@@ -714,13 +714,13 @@ mod tests {
     use super::*;
 
     fn names(range: std::ops::Range<usize>) -> Vec<String> {
-        range.map(|n| format!("games/F{n:02}.C")).collect()
+        range.map(|n| format!("games/f{n:02}.c")).collect()
     }
 
     #[test]
     fn bisect_finds_two_bad_files_among_many() {
         let files = names(0..20);
-        let bad = ["games/F04.C", "games/F13.C"];
+        let bad = ["games/f04.c", "games/f13.c"];
         let mut asked = 0;
         let (good, rejected) = bisect(&files, |set: &[String]| {
             asked += 1;
@@ -945,8 +945,8 @@ mod tests {
 
     #[test]
     fn blames_the_changed_header_or_the_changed_source() {
-        let header = "games/X/INCLUDE/A.H".to_string();
-        let source = "games/X/SRC/B.C".to_string();
+        let header = "games/x/include/a.h".to_string();
+        let source = "games/x/src/b.c".to_string();
         let failure = |source: &str, locations: &[&str]| Outcome {
             failures: vec![Failure {
                 source: source.into(),
@@ -954,7 +954,7 @@ mod tests {
             }],
             ..Outcome::default()
         };
-        let other = "games/X/SRC/C.C";
+        let other = "games/x/src/c.c";
         assert_eq!(
             blame(&[failure(other, &[&header])], std::slice::from_ref(&header)),
             std::slice::from_ref(&header)
@@ -965,7 +965,7 @@ mod tests {
             std::slice::from_ref(&source)
         );
         assert_eq!(
-            blame(&[failure(&source, &["games/X/INCLUDE/Z.H"])], &both),
+            blame(&[failure(&source, &["games/x/include/z.h"])], &both),
             std::slice::from_ref(&source)
         );
         assert!(blame(&[failure(other, &[other])], &both).is_empty());
@@ -975,13 +975,13 @@ mod tests {
     fn reads_failures_and_verdicts_from_a_compare_log() {
         let log = "\
 cargo run -- build rom --target tbs-en
-error: games/THE BROKEN SEAL/SRC/A.C: xgcc failed: games/THE BROKEN SEAL/SRC/A.C: In function `f':
-games/THE BROKEN SEAL/SRC/A.C:58: warning: passing arg 2 of `g' makes pointer from integer
-games/THE BROKEN SEAL/SRC/A.C:174: `nope' undeclared (first use in this function)
-games/THE BROKEN SEAL/SRC/B.C: xgcc failed: In file included from games/THE BROKEN SEAL/SRC/B.C:2:
-games/THE BROKEN SEAL/INCLUDE/AFFINE.H:32: parse error before `}'
-games/THE BROKEN SEAL/INCLUDE/AFFINE.H:33: warning: This file contains more `}'s than `{'s.
-games/COMMON/SRC/C.C: xgcc failed: games/COMMON/SRC/C.C:3: parse error before `int'
+error: games/tbs/src/a.c: xgcc failed: games/tbs/src/a.c: In function `f':
+games/tbs/src/a.c:58: warning: passing arg 2 of `g' makes pointer from integer
+games/tbs/src/a.c:174: `nope' undeclared (first use in this function)
+games/tbs/src/b.c: xgcc failed: In file included from games/tbs/src/b.c:2:
+games/tbs/include/affine.h:32: parse error before `}'
+games/tbs/include/affine.h:33: warning: This file contains more `}'s than `{'s.
+games/common/src/c.c: xgcc failed: games/common/src/c.c:3: parse error before `int'
 make: *** [compare-tbs-en] Error 1
 ";
         let outcome = read_log("tbs-en", log);
@@ -1001,19 +1001,19 @@ make: *** [compare-tbs-en] Error 1
             read,
             [
                 (
-                    "games/THE BROKEN SEAL/SRC/A.C",
-                    vec!["games/THE BROKEN SEAL/SRC/A.C"]
+                    "games/tbs/src/a.c",
+                    vec!["games/tbs/src/a.c"]
                 ),
                 (
-                    "games/THE BROKEN SEAL/SRC/B.C",
-                    vec!["games/THE BROKEN SEAL/INCLUDE/AFFINE.H"]
+                    "games/tbs/src/b.c",
+                    vec!["games/tbs/include/affine.h"]
                 ),
-                ("games/COMMON/SRC/C.C", vec!["games/COMMON/SRC/C.C"]),
+                ("games/common/src/c.c", vec!["games/common/src/c.c"]),
             ]
         );
         assert_eq!(
             status(&outcome),
-            "cannot compile games/COMMON/SRC/C.C, games/THE BROKEN SEAL/SRC/A.C, games/THE BROKEN SEAL/SRC/B.C (errors in games/THE BROKEN SEAL/INCLUDE/AFFINE.H)"
+            "cannot compile games/common/src/c.c, games/tbs/src/a.c, games/tbs/src/b.c (errors in games/tbs/include/affine.h)"
         );
         let ok = read_log("tla-ja", "objects=1\nout/tla-ja/tla-ja.gba: OK\n");
         assert!(ok.compared && ok.identical && ok.failures.is_empty());
@@ -1028,32 +1028,32 @@ make: *** [compare-tbs-en] Error 1
     fn paths_to_keep_are_from_the_root_and_cover_directories() {
         let (root, cwd) = (Path::new("/r"), Path::new("/r/games"));
         assert_eq!(
-            kept_path(Path::new("/r"), root, "./games/A/INCLUDE/").unwrap(),
-            "games/A/INCLUDE"
+            kept_path(Path::new("/r"), root, "./games/a/include/").unwrap(),
+            "games/a/include"
         );
         assert_eq!(
-            kept_path(cwd, root, "COMMON/X.H").unwrap(),
-            "games/COMMON/X.H"
+            kept_path(cwd, root, "common/x.h").unwrap(),
+            "games/common/x.h"
         );
-        assert_eq!(kept_path(cwd, root, "/r/games/B.C").unwrap(), "games/B.C");
-        assert!(kept_path(cwd, root, "/elsewhere/B.C").is_err());
+        assert_eq!(kept_path(cwd, root, "/r/games/b.c").unwrap(), "games/b.c");
+        assert!(kept_path(cwd, root, "/elsewhere/b.c").is_err());
         assert!(kept_path(Path::new("/r"), root, ".").is_err());
-        let kept = ["games/A/INCLUDE".to_string()];
-        assert!(is_kept("games/A/INCLUDE/X.H", &kept));
-        assert!(!is_kept("games/A/INCLUDED.H", &kept));
-        assert!(is_header("games/A/INCLUDE/X.H") && !is_header("games/A/SRC/X.C"));
+        let kept = ["games/a/include".to_string()];
+        assert!(is_kept("games/a/include/x.h", &kept));
+        assert!(!is_kept("games/a/included.h", &kept));
+        assert!(is_header("games/a/include/x.h") && !is_header("games/a/src/x.c"));
     }
 
     #[test]
     fn names_the_whole_object_path_at_an_address() {
-        let map = " .text          0x0000000008000000        0x4 /r/out/tbs-en/obj/games/THE BROKEN SEAL/SRC/A.o\n .data          0x0000000008000004        0x0 /r/out/tbs-en/obj/games/B.o\n .text          0x0000000008000004        0x8 /r/out/tbs-en/obj/games/THE BROKEN SEAL/SRC/C D.o\n";
+        let map = " .text          0x0000000008000000        0x4 /r/out/tbs-en/obj/games/tbs/src/a.o\n .data          0x0000000008000004        0x0 /r/out/tbs-en/obj/games/B.o\n .text          0x0000000008000004        0x8 /r/out/tbs-en/obj/games/tbs/src/c D.o\n";
         assert_eq!(
             object_at(map, 0x0800_0000).as_deref(),
-            Some("games/THE BROKEN SEAL/SRC/A.o")
+            Some("games/tbs/src/a.o")
         );
         assert_eq!(
             object_at(map, 0x0800_0004).as_deref(),
-            Some("games/THE BROKEN SEAL/SRC/C D.o")
+            Some("games/tbs/src/c D.o")
         );
         assert_eq!(object_at(map, 0x0800_0010), None);
     }

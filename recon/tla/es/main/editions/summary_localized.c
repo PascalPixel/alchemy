@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 void RenderOutput_PrepareForRedraw(void);
 void UiWindow_DrawDividerLine(s32, s32, s32, s32, s32);

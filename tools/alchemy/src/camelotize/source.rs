@@ -420,28 +420,28 @@ mod tests {
 
     #[test]
     fn includes_go_after_the_top_block_not_after_one_further_down() {
-        let text = "/* head */\n#include \"A.H\"\n#if X\n#include \"B.H\"\n#endif\n#define Y 1\n\nvoid F(void);\n#include \"LATE.INC\"\n";
-        let out = insert_include(text, "IO_REG.H");
-        assert!(out.contains("#include \"A.H\"\n#include \"IO_REG.H\"\n#if X"));
-        assert!(out.ends_with("#include \"LATE.INC\"\n"));
-        let bare = insert_include("/* head */\nvoid F(void);\n", "IO_REG.H");
-        assert_eq!(bare, "/* head */\n#include \"IO_REG.H\"\n\nvoid F(void);\n");
+        let text = "/* head */\n#include \"a.h\"\n#if X\n#include \"b.h\"\n#endif\n#define Y 1\n\nvoid F(void);\n#include \"late.inc\"\n";
+        let out = insert_include(text, "io_reg.h");
+        assert!(out.contains("#include \"a.h\"\n#include \"io_reg.h\"\n#if X"));
+        assert!(out.ends_with("#include \"late.inc\"\n"));
+        let bare = insert_include("/* head */\nvoid F(void);\n", "io_reg.h");
+        assert_eq!(bare, "/* head */\n#include \"io_reg.h\"\n\nvoid F(void);\n");
     }
 
     #[test]
     fn library_files_name_headers_by_their_relative_path() {
         let root = tempfile::tempdir().unwrap();
         let base = root.path().canonicalize().unwrap();
-        let include = base.join("games/COMMON/INCLUDE/SYSTEM");
-        let source = base.join("games/COMMON/SRC/SOUND");
+        let include = base.join("games/common/include/system");
+        let source = base.join("games/common/src/sound");
         std::fs::create_dir_all(&include).unwrap();
         std::fs::create_dir_all(&source).unwrap();
-        std::fs::write(include.join("IO_REG.H"), "").unwrap();
-        let file = source.join("ENGINE.C");
-        std::fs::write(&file, "#include \"../../INCLUDE/SYSTEM/IO_REG.H\"\n").unwrap();
-        let header = include.join("IO_REG.H");
-        assert_eq!(spelling(&file, &header, &[]).as_deref(), Some("../../INCLUDE/SYSTEM/IO_REG.H"));
-        assert_eq!(spelling(&file, &header, std::slice::from_ref(&include)).as_deref(), Some("IO_REG.H"));
+        std::fs::write(include.join("io_reg.h"), "").unwrap();
+        let file = source.join("engine.c");
+        std::fs::write(&file, "#include \"../../include/system/io_reg.h\"\n").unwrap();
+        let header = include.join("io_reg.h");
+        assert_eq!(spelling(&file, &header, &[]).as_deref(), Some("../../include/system/io_reg.h"));
+        assert_eq!(spelling(&file, &header, std::slice::from_ref(&include)).as_deref(), Some("io_reg.h"));
         assert!(reachable(&file, &[]).contains(&header));
     }
 }

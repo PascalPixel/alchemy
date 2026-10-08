@@ -1,0 +1,9 @@
+	.include "games/common/include/game/ed_asm.h"
+	.section .rodata
+	.global BattleFx_BlueArcSheetB
+BattleFx_BlueArcSheetB:
+	.incbin "graphics/battle_fx/blue_arc_b.gbapal"
+	.incbin "graphics/battle_fx/blue_arc_b.bitmap.lz"
+	.ifeq GAME_TLA
+	.byte 0xaa, 0x30	@ PACKER: left in the buffer by BattleFx_EmberStreakSheet+0xace
+	.endif

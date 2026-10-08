@@ -319,20 +319,20 @@ fn incbin(path: &str, data: &[u8]) -> bool {
     let overlay = regex::Regex::new(r#"^\s*\.incbin\s+"overlays/resource_[0-9a-f]+\.lz"\s*$"#)
         .expect("built overlay pattern");
     let built_sound = regex::Regex::new(
-        r#"^\s*\.incbin\s+"(?:COMMON/)?SOUND(?:/[A-Z0-9_]+)+(?:\.[A-Z0-9]+)?\.bin"\s*$"#,
+        r#"^\s*\.incbin\s+"(?:common/)?sound(?:/[a-z0-9_]+)+(?:\.[a-z0-9]+)?\.bin"\s*$"#,
     )
     .expect("built sound pattern");
     let built_graphics = regex::Regex::new(
-        r#"^\s*\.incbin\s+"((?:COMMON/)?([A-Z][A-Z0-9_]*)(?:/[A-Z0-9_]+)+\.[a-z0-9.]+)"\s*$"#,
+        r#"^\s*\.incbin\s+"((?:common/)?([a-z][a-z0-9_]*)(?:/[a-z0-9_]+)+\.[a-z0-9.]+)"\s*$"#,
     )
     .expect("built graphics pattern");
     let built_font = regex::Regex::new(
-        r#"^\s*\.incbin\s+"((?:COMMON/)?GRAPHICS(?:/[A-Z0-9_]+)+\.font)"\s*,\s*([^,]+?)(?:\s*,\s*([^,]+?))?\s*$"#,
+        r#"^\s*\.incbin\s+"((?:common/)?graphics(?:/[a-z0-9_]+)+\.font)"\s*,\s*([^,]+?)(?:\s*,\s*([^,]+?))?\s*$"#,
     ).expect("built font range pattern");
     let is_built_graphics = |line: &str| {
         built_graphics
             .captures(line)
-            .is_some_and(|capture| &capture[2] != "SOUND" && ags::resource::is_recipe(&capture[1]))
+            .is_some_and(|capture| !matches!(&capture[2], "sound" | "games" | "text" | "overlays" | "obj" | "symbols") && ags::resource::is_recipe(&capture[1]))
             || built_font.captures(line).is_some_and(|capture| {
                 ags::resource::is_recipe(&capture[1])
                     && font_range(&capture[2])
@@ -343,14 +343,14 @@ fn incbin(path: &str, data: &[u8]) -> bool {
     let parts = path.split('/').collect::<Vec<_>>();
     let sound_source = matches!(
         parts.as_slice(),
-        ["games", game, "SOUND", .., _] if *game != "COMMON"
+        ["games", game, "sound", .., _] if *game != "common"
     );
-    let asset_source = matches!(parts.as_slice(), ["games", _, "SRC", .., _]);
+    let asset_source = matches!(parts.as_slice(), ["games", _, "src", .., _]);
     // A game's overlay streams, which the build links from the overlays it
     // builds, live in one source beside the overlays' link scripts.
     let overlay_source = matches!(
         parts.as_slice(),
-        ["games", game, "SRC", "SYSTEM", "OVERLAY", "OVERLAYS.S"] if *game != "COMMON"
+        ["games", game, "src", "system", "overlay", "overlays.s"] if *game != "common"
     );
     let text = String::from_utf8_lossy(data);
     text.split(['\n', '\r'])
@@ -641,14 +641,15 @@ fn part_palette_built(path: &str) -> bool {
         match parts.split_first() {
             // The list's first part is the palette itself: the list writes it.
             Some((first, rest)) if lines[0].get(1) == Some(&"gbapal") => {
-                (*first == stem || rest.contains(&stem))
+                (first.eq_ignore_ascii_case(stem) || rest.iter().any(|part| part.eq_ignore_ascii_case(stem)))
                     && list
                         .file_stem()
                         .and_then(|list| list.to_str())
                         .is_some_and(|list| incbinned(path, &format!("{list}.parts")))
             }
-            Some((first, rest)) if rest.contains(&stem) => {
-                own_palette_built(&directory.join(format!("{first}.PNG")).to_string_lossy())
+            Some((first, rest)) if rest.iter().any(|part| part.eq_ignore_ascii_case(stem)) => {
+                let first = first.to_ascii_lowercase();
+                own_palette_built(&directory.join(format!("{first}.png")).to_string_lossy())
             }
             _ => false,
         }
@@ -662,12 +663,12 @@ fn own_palette_built(path: &str) -> bool {
         .is_some_and(|stem| incbinned(path, &format!("{stem}.gbapal")))
 }
 
-/// Whether an .S beside `path` incbins the build product `name` from that folder.
+/// Whether an assembly source beside `path` incbins the build product `name` from that folder.
 fn incbinned(path: &str, name: &str) -> bool {
     let Some(directory) = Path::new(path).parent() else {
         return false;
     };
-    let Some(source_root) = path.find("/SRC/").map(|at| &path[..at + 5]) else {
+    let Some(source_root) = path.find("/src/").map(|at| &path[..at + 5]) else {
         return false;
     };
     let relative = directory
@@ -679,7 +680,7 @@ fn incbinned(path: &str, name: &str) -> bool {
         return false;
     };
     entries.flatten().any(|entry| {
-        entry.path().extension().is_some_and(|ext| ext == "S")
+        entry.path().extension().is_some_and(|ext| ext == "s" || ext == "S")
             && std::fs::read_to_string(entry.path())
                 .is_ok_and(|text| text.contains(&format!("\"{relative}")))
     })
@@ -705,10 +706,10 @@ fn binary_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'stati
         _ => return Some(UNREGISTERED),
     };
     match (area, extension(path).to_ascii_lowercase().as_str()) {
-        ("SOUND", "pcm4") => {
-            (!rest.starts_with("SAMPLE/") || data.len() > 64).then_some(UNREGISTERED)
+        ("sound", "pcm4") => {
+            (!rest.starts_with("sample/") || data.len() > 64).then_some(UNREGISTERED)
         }
-        ("SRC" | "TEXT", "png") => match indexed_png_bytes(data) {
+        ("src" | "text", "png") => match indexed_png_bytes(data) {
             None => {
                 Some("PNG is not an exact indexed build input: standard chunks, one exact stream")
             }
@@ -717,10 +718,10 @@ fn binary_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'stati
                 .is_some_and(|logo| contains(&pixels, logo))
                 .then_some(LOGO_REASON),
         },
-        ("SOUND", "wav") => wav_pcm8(data)
+        ("sound", "wav") => wav_pcm8(data)
             .is_err()
             .then_some("WAV is not a canonical mono 8-bit PCM build input"),
-        ("SOUND", "mid") => midi_reason(data),
+        ("sound", "mid") => midi_reason(data),
         _ => Some(UNREGISTERED),
     }
 }
@@ -1443,7 +1444,7 @@ fn loaded_pointer_words(words: &[Option<u32>], start: usize, register: u32) -> b
 fn raw_address_reason(path: &str, text: &str) -> Option<&'static str> {
     let parts = path.split('/').collect::<Vec<_>>();
     let listing = matches!(parts.as_slice(), ["recon", _, "raw", .., leaf] if extension(leaf).eq_ignore_ascii_case("s"));
-    let overlay_data = matches!(parts.as_slice(), ["games", _, "SRC", "SYSTEM", "OVERLAY", leaf] if extension(leaf) == "S");
+    let overlay_data = matches!(parts.as_slice(), ["games", _, "src", "system", "overlay", leaf] if extension(leaf).eq_ignore_ascii_case("s"));
     if !listing && !overlay_data {
         return None;
     }
@@ -1804,22 +1805,22 @@ fn shared_root_reason(path: &str) -> Option<&'static str> {
     let [top, root, rest @ ..] = components.as_slice() else {
         return None;
     };
-    if !top.eq_ignore_ascii_case("games") || !root.eq_ignore_ascii_case("COMMON") {
+    if !top.eq_ignore_ascii_case("games") || !root.eq_ignore_ascii_case("common") {
         return None;
     }
-    let source = matches!(rest, ["SRC", _, .., leaf]
-        if listed(extension(leaf), &["C", "S", "PNG", "TSV"]));
-    let interface = matches!(rest, ["INCLUDE", _, .., leaf] if extension(leaf) == "H");
-    let sequence = matches!(rest, ["SOUND", "SEQUENCE", leaf]
-        if listed(extension(leaf), &["MID", "S"]));
-    let sample = matches!(rest, ["SOUND", "SAMPLE", leaf]
-        if listed(extension(leaf), &["WAV", "PCM4"]));
+    let source = matches!(rest, ["src", _, .., leaf]
+        if listed(extension(leaf), &["c", "s", "png", "tsv"]));
+    let interface = matches!(rest, ["include", _, .., leaf] if extension(leaf) == "h");
+    let sequence = matches!(rest, ["sound", "sequence", leaf]
+        if listed(extension(leaf), &["mid", "s"]));
+    let sample = matches!(rest, ["sound", "sample", leaf]
+        if listed(extension(leaf), &["wav", "pcm4"]));
     (!(source || interface || sequence || sample)).then_some(
-        "games/COMMON holds only shared SRC/<module>/ sources and inputs, INCLUDE/<module>/*.H \
-         and SOUND/ sequences and samples",
+        "games/common holds only shared src/<module>/ sources and inputs, include/<module>/*.h \
+         and sound/ sequences and samples",
     )
 }
-const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, an edition's assembly scaffold and MAIN.LD and C drafts under an edition";
+const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, an edition's assembly scaffold and main.ld and C drafts under an edition";
 fn recon_path_reason(path: &str) -> Option<&'static str> {
     let components: Vec<_> = path.split('/').collect();
     let [top, rest @ ..] = components.as_slice() else {
@@ -1840,7 +1841,7 @@ fn recon_path_reason(path: &str) -> Option<&'static str> {
             [g, leaf] => game(g) && named(leaf, &["s"]),
             [g, "raw", leaf] => game(g) && named(leaf, &["s", "S"]),
             [g, "raw", "overlays", leaf] => game(g) && named(leaf, &["s", "ld"]),
-            [g, e, "MAIN.LD"] => game(g) && edition(e),
+            [g, e, "main.ld"] => game(g) && edition(e),
             [g, e, leaf] if named(leaf, &["s"]) => game(g) && edition(e),
             [g, e, .., leaf] => game(g) && edition(e) && named(leaf, &["c", "h"]),
             _ => false,
@@ -1859,7 +1860,7 @@ fn native_path_reason(path: &str) -> Option<&'static str> {
         return None;
     }
     let native = *top == "games"
-        && ((matches!(*area, "SRC" | "INCLUDE" | "SOUND" | "TEXT")
+        && ((matches!(*area, "src" | "include" | "sound" | "text")
             && !rest.is_empty()
             && listed(extension(path), NATIVE_INPUT_EXTENSIONS))
             || (rest.is_empty() && listed(extension(path), &["ld", "mk"])));
@@ -2425,38 +2426,38 @@ mod tests {
                 Some("GIF image"),
             ),
             (
-                "games/THE BROKEN SEAL/PREVIEW/DJINN_101_IDLE.GIF",
+                "games/tbs/preview/djinn_101_idle.gif",
                 b"GIF89a".to_vec(),
                 Some("presentation material"),
             ),
             (
-                "games/THE BROKEN SEAL/PREVIEW/title.png",
+                "games/tbs/preview/title.png",
                 indexed_fixture(4),
                 Some("PREVIEW"),
             ),
             (
-                "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SHOT.PNG",
+                "games/tbs/src/graphics/tile/shot.png",
                 png_fixture(16, 8, 6, &stream, &[]),
                 Some("truecolour"),
             ),
             (
-                "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/IDLE.INDEXED.PNG",
+                "games/tbs/src/graphics/tile/idle.indexed.png",
                 png_fixture(16, 4, 3, &stream, &[(b"acTL", &[0, 0, 0, 2, 0, 0, 0, 0])]),
                 Some("animated PNG"),
             ),
             (
-                "games/THE BROKEN SEAL/SRC/TABLE.DAT",
+                "games/tbs/src/table.dat",
                 b"\x01\x02\0\x03".to_vec(),
                 Some("editable native game input"),
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE_00.PCM4",
+                "games/tbs/sound/sample/wave_00.pcm4",
                 vec![0x5a; 65],
                 unregistered,
             ),
             ("tools/alchemy/tests/tone.wav", wave.clone(), unregistered),
             (
-                "games/THE BROKEN SEAL/SOUND/X.PNG",
+                "games/tbs/sound/x.png",
                 indexed_fixture(4),
                 unregistered,
             ),
@@ -2466,107 +2467,107 @@ mod tests {
                 Some("ROM header fragment"),
             ),
             (
-                "games/THE LOST AGE/SOUND/SEQUENCE/X.MID",
+                "games/tla/sound/sequence/x.mid",
                 midi.clone(),
                 None,
             ),
             (
-                "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TRAILING.INDEXED.PNG",
+                "games/tbs/src/graphics/tile/trailing.indexed.png",
                 trailing,
                 malformed_png,
             ),
             (
-                "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TEXT.INDEXED.PNG",
+                "games/tbs/src/graphics/tile/text.indexed.png",
                 png_fixture(16, 4, 3, &stream, &[(b"tEXt", b"Comment\0payload")]),
                 malformed_png,
             ),
             (
-                "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SURPLUS.INDEXED.PNG",
+                "games/tbs/src/graphics/tile/surplus.indexed.png",
                 png_fixture(16, 4, 3, &surplus, &[]),
                 malformed_png,
             ),
             (
-                "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SECOND.INDEXED.PNG",
+                "games/tbs/src/graphics/tile/second.indexed.png",
                 png_fixture(16, 4, 3, &second, &[]),
                 malformed_png,
             ),
             (
-                "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/LOGO.INDEXED.PNG",
+                "games/tbs/src/graphics/tile/logo.indexed.png",
                 png_fixture(160, 8, 3, &hidden, &[]),
                 nintendo,
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SAMPLE/LONG.PCM8.WAV",
+                "games/tbs/sound/sample/long.pcm8.wav",
                 [wave.as_slice(), &[0]].concat(),
                 wav,
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SAMPLE/LIST.PCM8.WAV",
+                "games/tbs/sound/sample/list.pcm8.wav",
                 listed_wave,
                 wav,
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SAMPLE/LOGO.PCM8.WAV",
+                "games/tbs/sound/sample/logo.pcm8.wav",
                 ags::assets::wav::pcm8_wav(&samples, 8000).unwrap(),
                 nintendo,
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SEQUENCE/CHUNK.MID",
+                "games/tbs/sound/sequence/chunk.mid",
                 [midi.as_slice(), b"XXXX\0\0\0\x01\0"].concat(),
                 sequence,
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SEQUENCE/SYSEX.MID",
+                "games/tbs/sound/sequence/sysex.mid",
                 midi_fixture(&[0, 0xf0, 3, 1, 2, 0xf7], true),
                 sequence,
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SEQUENCE/BINARY.MID",
+                "games/tbs/sound/sequence/binary.mid",
                 meta(0x7f, &[0xff, 0xfe, 0x80]),
                 sequence,
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SEQUENCE/OPEN.MID",
+                "games/tbs/sound/sequence/open.mid",
                 midi_fixture(&[], false),
                 sequence,
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SEQUENCE/TEMPO.MID",
+                "games/tbs/sound/sequence/tempo.mid",
                 meta(0x51, &fixture_bytes(64, 3)),
                 sequence,
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SEQUENCE/TIMED.MID",
+                "games/tbs/sound/sequence/timed.mid",
                 meta(0x51, &[7, 0xa1, 0x20]),
                 None,
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SEQUENCE/PAYLOAD.MID",
+                "games/tbs/sound/sequence/payload.mid",
                 meta(0x01, encoded_fixture(&base64, 600, 2).as_bytes()),
                 Some("encoded payload"),
             ),
             (
-                "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/SPARE.TOKENS",
+                "games/tbs/src/graphics/common/spare.tokens",
                 table.clone(),
                 Some("stored compression token table"),
             ),
             (
-                "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.TOKENS",
+                "games/tbs/src/graphics/common/compression.tokens",
                 garbled,
                 Some("stored compression token table"),
             ),
             (
-                "games/THE BROKEN SEAL/SRC/GRAPHICS/FONT/LOCALIZATION_GLYPHS_0020_00FF.1BPP.PNG",
+                "games/tbs/src/graphics/font/localization_glyphs_0020_00ff.1bpp.png",
                 indexed_fixture(1),
                 None,
             ),
             (
-                "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/UI_MTF_00.INDEXED.PNG",
+                "games/tbs/src/graphics/tile/ui_mtf_00.indexed.png",
                 indexed_fixture(4),
                 None,
             ),
             (
-                "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/UI_TILE.8BPP.PNG",
+                "games/tbs/src/graphics/tile/ui_tile.8bpp.png",
                 png_fixture(
                     16,
                     8,
@@ -2577,74 +2578,74 @@ mod tests {
                 None,
             ),
             (
-                "games/THE BROKEN SEAL/TEXT/STAFF_ROLL_MOJI.1BPP.PNG",
+                "games/tbs/text/staff_roll_moji.1bpp.png",
                 indexed_fixture(1),
                 None,
             ),
             (
-                "games/THE BROKEN SEAL/TEXT/INK_AND_PAPER.1BPP.PNG",
+                "games/tbs/text/ink_and_paper.1bpp.png",
                 grey_fixture(1),
                 None,
             ),
             (
-                "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/UI_TILE.4BPP.PNG",
+                "games/tbs/src/graphics/tile/ui_tile.4bpp.png",
                 grey_fixture(4),
                 Some("grey sheet"),
             ),
             (
-                "games/THE LOST AGE/SOUND/SAMPLE/WAVE_00.PCM8.WAV",
+                "games/tla/sound/sample/wave_00.pcm8.wav",
                 wave,
                 None,
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.MID",
+                "games/tbs/sound/sequence/theme.mid",
                 meta(0x7f, &directive),
                 None,
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SEQUENCE/SKELETON.MID",
+                "games/tbs/sound/sequence/skeleton.mid",
                 meta(0x01, b"smsh-sequence 1\nstream track_1\n"),
                 None,
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SEQUENCE/JSON.MID",
+                "games/tbs/sound/sequence/json.mid",
                 meta(0x01, br#"{"format":1,"layout":[]}"#),
                 Some("JSON"),
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SEQUENCE/MARKER.MID",
+                "games/tbs/sound/sequence/marker.mid",
                 meta(0x06, br#"["fine"]"#),
                 Some("JSON"),
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SEQUENCE/PLACED.MID",
+                "games/tbs/sound/sequence/placed.mid",
                 meta(0x01, b"smsh-sequence 1\nheader s base=0x08000000\n"),
                 Some("ROM address or placement"),
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SEQUENCE/TONE_BANK.MID",
+                "games/tbs/sound/sequence/tone_bank.mid",
                 meta(0x01, b"smsh-sequence 1\nheader s externals=tone_bank\n"),
                 Some("ROM address or placement"),
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SEQUENCE/LITERAL.MID",
+                "games/tbs/sound/sequence/literal.mid",
                 meta(0x06, b"goto 0x0815fb78"),
                 Some("ROM address or placement"),
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE_00.PCM4",
+                "games/tbs/sound/sample/wave_00.pcm4",
                 vec![0x5a; 16],
                 None,
             ),
             (
-                "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.TOKENS",
+                "games/tbs/src/graphics/common/compression.tokens",
                 table,
                 Some("stored compression token table"),
             ),
         ]
     }
     fn text_fixtures() -> Vec<Fixture> {
-        let tbs = "games/THE BROKEN SEAL";
+        let tbs = "games/tbs";
         let letters = || (b'A'..=b'Z').chain(b'a'..=b'z').chain(b'0'..=b'9');
         let base64: Vec<u8> = letters().chain(*b"+/").collect();
         let base64url: Vec<u8> = letters().chain(*b"-_").collect();
@@ -2705,7 +2706,7 @@ mod tests {
         );
         let bang = "!";
         let logo_include = format!(
-            "include_bytes{bang} (\"../../../GAMES/{}/LOGO.DAT\")",
+            "include_bytes{bang} (\"../../../games/{}/LOGO.DAT\")",
             &tbs[6..]
         );
         let header_include =
@@ -2754,7 +2755,7 @@ mod tests {
             ("tools/alchemy/src/dashboard/index.html", css_uri, uri),
             ("tools/alchemy/src/coverage/figure.rs", rust_uri, uri),
             (
-                "games/THE BROKEN SEAL/SRC/SYSTEM/BLOB.JSON",
+                "games/tbs/src/system/blob.json",
                 json_base64,
                 Some(JSON_REASON),
             ),
@@ -2779,15 +2780,15 @@ mod tests {
             ("tools/alchemy/src/rom_table.rs", array, arrays),
             ("tools/alchemy/src/rom_bytes.rs", escapes, arrays),
             ("tools/alchemy/src/rom_dump.rs", dump, arrays),
-            ("games/THE BROKEN SEAL/SRC/BATTLE/TABLE.C", c_table, arrays),
+            ("games/tbs/src/battle/table.c", c_table, arrays),
             (
-                "games/THE BROKEN SEAL/SRC/BATTLE/DATA/TABLE.JSON",
+                "games/tbs/src/battle/data/table.json",
                 json_table,
                 Some(JSON_REASON),
             ),
-            ("games/THE LOST AGE/DATA/TABLE.TSV", empty(), native),
-            ("games/THE LOST AGE/src/battle/table.tsv", empty(), native),
-            ("Games/THE BROKEN SEAL/SRC/TABLE.TSV", empty(), native),
+            ("games/tla/data/table.tsv", empty(), native),
+            ("games/tla/SRC/battle/table.tsv", empty(), native),
+            ("Games/tbs/src/table.tsv", empty(), native),
             ("tools/alchemy/src/logo.rs", logo_include, include),
             ("tools/alchemy/src/header.rs", header_include, include),
             (
@@ -2804,69 +2805,69 @@ mod tests {
             (".gitattributes", b"*.TOKENS binary\n".to_vec(), None),
             ("recon/tla/raw/overlays/.gitkeep", Vec::new(), None),
             (
-                "games/THE LOST AGE/SRC/MAIN/X.C",
+                "games/tla/src/main/x.c",
                 b"void f(void) {}\n".to_vec(),
                 None,
             ),
             (
-                "games/COMMON/SRC/SOUND/X.C",
+                "games/common/src/sound/x.c",
                 b"void f(void) {}\n".to_vec(),
                 None,
             ),
             (
-                "games/COMMON/SRC/X.C",
+                "games/common/src/x.c",
                 b"void f(void) {}\n".to_vec(),
-                Some("games/COMMON holds only"),
+                Some("games/common holds only"),
             ),
             (
-                "games/COMMON/SRC/GRAPHICS/FONT/TEXT.TSV",
+                "games/common/src/graphics/font/text.tsv",
                 b"first\t20\n".to_vec(),
                 None,
             ),
             (
-                "games/COMMON/SRC/SOUND/X.H",
+                "games/common/src/sound/x.h",
                 b"void f(void);\n".to_vec(),
-                Some("games/COMMON holds only"),
+                Some("games/common holds only"),
             ),
             (
-                "games/COMMON/INCLUDE/SOUND/X.H",
+                "games/common/include/sound/x.h",
                 b"void f(void);\n".to_vec(),
                 None,
             ),
             (
-                "games/COMMON/SOUND/SEQUENCE/X.S",
+                "games/common/sound/sequence/x.s",
                 b"\t.section .rodata\n".to_vec(),
                 None,
             ),
             (
-                "games/COMMON/SOUND/SAMPLE/X.S",
+                "games/common/sound/sample/x.s",
                 b"\t.section .rodata\n".to_vec(),
-                Some("games/COMMON holds only"),
+                Some("games/common holds only"),
             ),
             (
-                "games/COMMON/SOUND/SEQUENCE/DEEP/X.S",
+                "games/common/sound/sequence/deep/x.s",
                 b"\t.section .rodata\n".to_vec(),
-                Some("games/COMMON holds only"),
+                Some("games/common holds only"),
             ),
             (
-                "games/COMMON/SRC/SOUND/TABLE.dat",
+                "games/common/src/sound/table.dat",
                 empty(),
-                Some("games/COMMON holds only"),
+                Some("games/common holds only"),
             ),
             (
-                "games/COMMON/recon/translation-units.tsv",
+                "games/common/recon/translation-units.tsv",
                 empty(),
-                Some("games/COMMON holds only"),
+                Some("games/common holds only"),
             ),
             (
-                "games/THE BROKEN SEAL/SRC/FIELD/SCENE/SCENE.C",
+                "games/tbs/src/field/scene/scene.c",
                 text(identifiers),
                 None,
             ),
             ("tools/Cargo.lock", text(checksums), None),
             ("tools/alchemy/src/hashes.rs", text(digests(2_048)), None),
             (
-                "games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEADER.JSON",
+                "games/tbs/src/system/rom_header.json",
                 text(rows),
                 Some(JSON_REASON),
             ),
@@ -2880,7 +2881,7 @@ mod tests {
     }
     fn json_ban_fixtures() -> Vec<Fixture> {
         [
-            "games/THE BROKEN SEAL/SRC/GAME/TABLE.JSON",
+            "games/tbs/src/game/table.json",
             "tools/alchemy/data/settings.json",
             "out/report.jsonl",
             "README.JSON5",
@@ -2948,10 +2949,10 @@ mod tests {
                 "tools/alchemy/src/dump.rs",
                 format!("// {}\n", joined(&logo, &|byte| format!("{byte:02x}"), " ")),
             ),
-            ("games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEAD.S", rows),
-            ("games/THE LOST AGE/SRC/SYSTEM/ROM_HEAD.S", words),
+            ("games/tbs/src/system/rom_head.s", rows),
+            ("games/tla/src/system/rom_head.s", words),
             (
-                "games/THE BROKEN SEAL/SRC/SYSTEM/LOGO.C",
+                "games/tbs/src/system/logo.c",
                 format!(
                     "const s8 logo[] = {{{}}};\n",
                     joined(&logo, &|byte| (*byte as i8).to_string(), ", ")
@@ -2987,12 +2988,12 @@ mod tests {
     #[test]
     fn maintained_c_names_are_real_definitions_not_gcc_alias_attributes() {
         for path in [
-            "games/THE BROKEN SEAL/SRC/BATTLE/DRAW_PARTY_PANELS_WITH_EMPTY_LIST.C",
-            "games/THE BROKEN SEAL/SRC/BATTLE/SELECT_WEIGHTED_INDEX.C",
-            "games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DRAW_DRAW_LOCALIZED_RESOURCE.C",
-            "games/THE LOST AGE/SRC/SYSTEM/A.C",
-            "games/COMMON/INCLUDE/SYSTEM/A.H",
-            "games/COMMON/SRC/SYSTEM/A.c",
+            "games/tbs/src/battle/draw_party_panels_with_empty_list.c",
+            "games/tbs/src/battle/select_weighted_index.c",
+            "games/tbs/src/graphics/text/draw_draw_localized_resource.c",
+            "games/tla/src/system/a.c",
+            "games/common/include/system/a.h",
+            "games/common/src/system/a.c",
         ] {
             for source in [
                 "extern void Public(void) __attribute__((alias(\"Target\")));",
@@ -3029,7 +3030,7 @@ mod tests {
             "#define NOTE /* __attribute__((alias(\"Target\"))) */ 1\nint Ordinary;",
         ] {
             assert_eq!(
-                publication_reason("games/COMMON/INCLUDE/SYSTEM/A.H", source.as_bytes(), None),
+                publication_reason("games/common/include/system/a.h", source.as_bytes(), None),
                 None,
                 "{source}"
             );
@@ -3037,8 +3038,8 @@ mod tests {
         let source = b"extern void Public(void) __attribute__((alias(\"Target\")));";
         for path in [
             "tools/tests/A.c",
-            "recon/tbs/en/main/A.c",
-            "games/THE LOST AGE/SRC/SYSTEM/A.S",
+            "recon/tbs/en/main/a.c",
+            "games/tla/src/system/a.s",
         ] {
             assert_eq!(publication_reason(path, source, None), None, "{path}");
         }
@@ -3048,7 +3049,7 @@ mod tests {
     fn only_base_rom_ranges_and_built_overlays_may_incbin_and_only_in_scaffolding() {
         let range = b".incbin \"baserom.gba\", 0x00037464, 0x0003c3a4\n";
         assert!(!super::incbin("recon/tbs/unidentified.s", range));
-        assert!(super::incbin("games/THE BROKEN SEAL/SRC/DATA.S", range));
+        assert!(super::incbin("games/tbs/src/data.s", range));
         assert!(super::incbin(
             "recon/tbs/unidentified.s",
             b".incbin \"TEXT.BIN\"\n"
@@ -3059,7 +3060,7 @@ mod tests {
         ));
         let overlay = b".incbin \"overlays/resource_36f.lz\"\n";
         assert!(!super::incbin("recon/tbs/overlays.s", overlay));
-        assert!(super::incbin("games/THE BROKEN SEAL/SRC/DATA.S", overlay));
+        assert!(super::incbin("games/tbs/src/data.s", overlay));
         assert!(super::incbin(
             "recon/tbs/overlays.s",
             b".incbin \"overlays/resource_36f.bin\"\n"
@@ -3068,16 +3069,16 @@ mod tests {
 
     #[test]
     fn a_games_overlay_source_may_incbin_only_its_built_overlay_streams() {
-        let source = "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY/OVERLAYS.S";
+        let source = "games/tbs/src/system/overlay/overlays.s";
         let overlay = b"Resource_Overlay36F:\n\t.incbin \"overlays/resource_36f.lz\"\n";
         assert!(!super::incbin(source, overlay));
-        assert!(!super::incbin("games/THE LOST AGE/SRC/SYSTEM/OVERLAY/OVERLAYS.S", overlay));
+        assert!(!super::incbin("games/tla/src/system/overlay/overlays.s", overlay));
         for path in [
-            "games/COMMON/SRC/SYSTEM/OVERLAY/OVERLAYS.S",
-            "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY/OVL_36F.S",
-            "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAYS.S",
-            "games/THE BROKEN SEAL/SRC/OVERLAY/OVERLAYS.S",
-            "games/THE BROKEN SEAL/SOUND/OVERLAYS.S",
+            "games/common/src/system/overlay/overlays.s",
+            "games/tbs/src/system/overlay/ovl_36f.s",
+            "games/tbs/src/system/overlays.s",
+            "games/tbs/src/overlay/overlays.s",
+            "games/tbs/sound/overlays.s",
         ] {
             assert!(super::incbin(path, overlay), "{path}");
         }
@@ -3094,81 +3095,81 @@ mod tests {
 
     #[test]
     fn sound_data_sources_may_incbin_only_the_sound_files_the_build_makes() {
-        let sample = b"Sound_Wave00:\n\t.incbin \"SOUND/SAMPLE/WAVE_00.PCM8.bin\"\n";
-        let wave = b"\t.incbin \"SOUND/SAMPLE/CGB_WAVE_0.bin\"\n";
-        let shared = b"\t.incbin \"COMMON/SOUND/SAMPLE/WAVE_20.PCM8.bin\"\n";
+        let sample = b"Sound_Wave00:\n\t.incbin \"sound/sample/wave_00.pcm8.bin\"\n";
+        let wave = b"\t.incbin \"sound/sample/cgb_wave_0.bin\"\n";
+        let shared = b"\t.incbin \"common/sound/sample/wave_20.pcm8.bin\"\n";
         for path in [
-            "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
-            "games/THE LOST AGE/SOUND/CGB_WAVES.S",
+            "games/tbs/sound/samples.s",
+            "games/tla/sound/cgb_waves.s",
         ] {
             assert!(!super::incbin(path, sample), "{path}");
             assert!(!super::incbin(path, wave), "{path}");
             assert!(!super::incbin(path, shared), "{path}");
         }
         assert!(super::incbin(
-            "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
-            b"\t.incbin \"COMMON/SAMPLE/WAVE_20.PCM8.bin\"\n"
+            "games/tbs/sound/samples.s",
+            b"\t.incbin \"common/sample/wave_20.pcm8.bin\"\n"
         ));
         for (path, line) in [
-            ("games/THE BROKEN SEAL/SRC/SOUND/DATA.S", sample.as_slice()),
+            ("games/tbs/src/sound/data.s", sample.as_slice()),
             ("recon/tbs/unidentified.s", sample),
-            ("games/COMMON/SOUND/SAMPLES.S", sample),
+            ("games/common/sound/samples.s", sample),
             (
-                "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
+                "games/tbs/sound/samples.s",
                 b".incbin \"baserom.gba\", 0x000fd048, 0x000002ac\n",
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
-                b".incbin \"SOUND/SAMPLE/WAVE_00.PCM8.WAV\"\n",
+                "games/tbs/sound/samples.s",
+                b".incbin \"sound/sample/wave_00.pcm8.wav\"\n",
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
-                b".incbin \"SOUND/../../../roms/tbs-en.bin\"\n",
+                "games/tbs/sound/samples.s",
+                b".incbin \"sound/../../../roms/tbs-en.bin\"\n",
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
-                b".incbin \"SOUND/SAMPLE/WAVE_00.PCM8.bin\", 0, 16\n",
+                "games/tbs/sound/samples.s",
+                b".incbin \"sound/sample/wave_00.pcm8.bin\", 0, 16\n",
             ),
             (
-                "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
+                "games/tbs/sound/samples.s",
                 b".incbin \"overlays/resource_36f.lz\"\n",
             ),
         ] {
             assert!(super::incbin(path, line), "{path}");
         }
         assert_eq!(
-            super::publication_data_reason("games/THE BROKEN SEAL/SOUND/SAMPLES.S", sample, None),
+            super::publication_data_reason("games/tbs/sound/samples.s", sample, None),
             None
         );
     }
 
     #[test]
     fn asset_sources_may_incbin_only_the_graphics_files_the_build_makes() {
-        let sheet = b"BattleFx_Star:\n\t.incbin \"GRAPHICS/FX/STAR.gbapal\"\n\t.incbin \"GRAPHICS/FX/STAR.bitmap.lz\"\n";
+        let sheet = b"BattleFx_Star:\n\t.incbin \"graphics/fx/star.gbapal\"\n\t.incbin \"graphics/fx/star.bitmap.lz\"\n";
         let tiles =
-            b"\t.incbin \"GRAPHICS/FX/STAR.4bpp.mtf\"\n\t.incbin \"GRAPHICS/FX/STAR.8bpp\"\n\t.incbin \"GRAPHICS/FX/STAR.4bpp32x16.lz\"\n\t.incbin \"MAP/M/METATILES.delta1.lz\"\n\t.incbin \"MAP/M/ANIMATION.script.lz\"\n\t.incbin \"MAP/M/PATH.table.lz\"\n\t.incbin \"GRAPHICS/FX/FONT.glyphs\"\n\t.incbin \"GRAPHICS/UI/ICONS/ICONS.icons4\"\n\t.incbin \"MAP/WORLD/BLOCKS.blocks\"\n";
+            b"\t.incbin \"graphics/fx/star.4bpp.mtf\"\n\t.incbin \"graphics/fx/star.8bpp\"\n\t.incbin \"graphics/fx/star.4bpp32x16.lz\"\n\t.incbin \"map/m/metatiles.delta1.lz\"\n\t.incbin \"map/m/animation.script.lz\"\n\t.incbin \"map/m/path.table.lz\"\n\t.incbin \"graphics/fx/font.glyphs\"\n\t.incbin \"graphics/ui/icons/icons.icons4\"\n\t.incbin \"map/world/blocks.blocks\"\n";
         for path in [
-            "games/THE BROKEN SEAL/SRC/GRAPHICS/FX/STAR.S",
-            "games/THE LOST AGE/SRC/BATTLE/EFFECT/STAR.S",
+            "games/tbs/src/graphics/fx/star.s",
+            "games/tla/src/battle/effect/star.s",
         ] {
             assert!(!super::incbin(path, sheet), "{path}");
             assert!(!super::incbin(path, tiles), "{path}");
         }
-        let star = "games/THE BROKEN SEAL/SRC/GRAPHICS/FX/STAR.S";
+        let star = "games/tbs/src/graphics/fx/star.s";
         for (path, line) in [
             ("recon/tbs/unidentified.s", sheet.as_slice()),
-            ("games/THE BROKEN SEAL/SOUND/STAR.S", sheet),
-            (star, b".incbin \"GRAPHICS/FX/STAR.PNG\"\n"),
-            (star, b".incbin \"GRAPHICS/FX/STAR.raw\"\n"),
-            (star, b".incbin \"GRAPHICS/FX/STAR.4bpp.zip\"\n"),
-            (star, b".incbin \"MAP/M/CELLS.delta3.lz\"\n"),
-            (star, b".incbin \"GRAPHICS/UI/ICONS.icons5\"\n"),
-            (star, b".incbin \"MAP/WORLD/BLOCKS.block\"\n"),
-            (star, b".incbin \"TEXT/M/CELLS.bin\"\n"),
-            (star, b".incbin \"MAP/M/END.bin\"\n"),
-            (star, b".incbin \"GRAPHICS/FX/star.4bpp\"\n"),
-            (star, b".incbin \"GRAPHICS/../../roms/tbs-en.4bpp\"\n"),
-            (star, b".incbin \"GRAPHICS/FX/STAR.4bpp\", 0, 16\n"),
+            ("games/tbs/sound/star.s", sheet),
+            (star, b".incbin \"graphics/fx/star.png\"\n"),
+            (star, b".incbin \"graphics/fx/star.raw\"\n"),
+            (star, b".incbin \"graphics/fx/star.4bpp.zip\"\n"),
+            (star, b".incbin \"map/m/cells.delta3.lz\"\n"),
+            (star, b".incbin \"graphics/ui/icons.icons5\"\n"),
+            (star, b".incbin \"map/world/blocks.block\"\n"),
+            (star, b".incbin \"text/m/cells.bin\"\n"),
+            (star, b".incbin \"map/m/end.bin\"\n"),
+            (star, b".incbin \"graphics/fx/STAR.4bpp\"\n"),
+            (star, b".incbin \"graphics/../../roms/tbs-en.4bpp\"\n"),
+            (star, b".incbin \"graphics/fx/star.4bpp\", 0, 16\n"),
             (star, b".incbin \"baserom.gba\", 0x003cd090, 0x00000488\n"),
         ] {
             assert!(super::incbin(path, line), "{path}");
@@ -3178,21 +3179,21 @@ mod tests {
 
     #[test]
     fn any_module_may_incbin_the_tables_the_build_makes() {
-        let items = "games/THE BROKEN SEAL/SRC/BATTLE/ITEM/ITEMS.S";
+        let items = "games/tbs/src/battle/item/items.s";
         for line in [
-            ".incbin \"BATTLE/ITEM/ITEMS.table\"\n",
-            ".incbin \"GAME/CLASS/CLASSES.table.lz\"\n",
-            ".incbin \"COMMON/MENU/ICONS/ARROW.4bpp\"\n",
+            ".incbin \"battle/item/items.table\"\n",
+            ".incbin \"game/class/classes.table.lz\"\n",
+            ".incbin \"common/menu/icons/arrow.4bpp\"\n",
         ] {
             assert!(!super::incbin(items, line.as_bytes()), "{line}");
-            assert!(super::incbin("games/THE BROKEN SEAL/SOUND/ITEMS.S", line.as_bytes()), "{line}");
+            assert!(super::incbin("games/tbs/sound/items.s", line.as_bytes()), "{line}");
         }
         for line in [
-            ".incbin \"BATTLE/X.bin\"\n",
-            ".incbin \"BATTLE/ITEM/ITEMS.TSV\"\n",
-            ".incbin \"battle/ITEM/ITEMS.table\"\n",
-            ".incbin \"SOUND/SAMPLE/X.table\"\n",
-            ".incbin \"BATTLE/../../roms/tbs-en.table\"\n",
+            ".incbin \"battle/x.bin\"\n",
+            ".incbin \"battle/item/items.tsv\"\n",
+            ".incbin \"BATTLE/item/items.table\"\n",
+            ".incbin \"sound/sample/x.table\"\n",
+            ".incbin \"battle/../../roms/tbs-en.table\"\n",
         ] {
             assert!(super::incbin(items, line.as_bytes()), "{line}");
         }
@@ -3200,10 +3201,10 @@ mod tests {
 
     #[test]
     fn generated_fonts_allow_only_constant_character_layout_ranges() {
-        let path = "games/COMMON/SRC/GRAPHICS/FONT/TEXT.S";
+        let path = "games/common/src/graphics/font/text.s";
         for line in [
-            ".incbin \"GRAPHICS/FONT/TEXT_JA.font\", 0, (0x100 - 0x20) * (2 + 12 * 2)\n",
-            ".incbin \"GRAPHICS/FONT/TEXT_JA.font\", (0x100 - 0x20) * (2 + 12 * 2)\n",
+            ".incbin \"graphics/font/text_ja.font\", 0, (0x100 - 0x20) * (2 + 12 * 2)\n",
+            ".incbin \"graphics/font/text_ja.font\", (0x100 - 0x20) * (2 + 12 * 2)\n",
         ] {
             assert!(!super::incbin(path, line.as_bytes()), "{line}");
             assert!(
@@ -3213,13 +3214,13 @@ mod tests {
         }
         for line in [
             ".incbin \"baserom.gba\", 0, (0x100 - 0x20) * 26\n",
-            ".incbin \"GRAPHICS/FONT/TEXT_JA.raw\", 0, 26\n",
-            ".incbin \"GRAPHICS/FONT/TEXT_JA.font.lz\", 0, 26\n",
-            ".incbin \"GRAPHICS/FONT/TEXT_JA.font\", ExpectedOffset, 26\n",
-            ".incbin \"GRAPHICS/FONT/TEXT_JA.font\", 0, LOADADDR(.font)\n",
-            ".incbin \"GRAPHICS/FONT/TEXT_JA.font\", 0, 2 +\n",
-            ".incbin \"GRAPHICS/FONT/TEXT_JA.font\", 0, (2 * 26\n",
-            ".incbin \"GRAPHICS/FONT/TEXT_JA.font\", -1, 26\n",
+            ".incbin \"graphics/font/text_ja.raw\", 0, 26\n",
+            ".incbin \"graphics/font/text_ja.font.lz\", 0, 26\n",
+            ".incbin \"graphics/font/text_ja.font\", ExpectedOffset, 26\n",
+            ".incbin \"graphics/font/text_ja.font\", 0, LOADADDR(.font)\n",
+            ".incbin \"graphics/font/text_ja.font\", 0, 2 +\n",
+            ".incbin \"graphics/font/text_ja.font\", 0, (2 * 26\n",
+            ".incbin \"graphics/font/text_ja.font\", -1, 26\n",
         ] {
             assert!(super::incbin(path, line.as_bytes()), "{line}");
         }
@@ -3228,10 +3229,10 @@ mod tests {
     #[test]
     fn raw_bin_inputs_are_refused_by_path_in_game_and_shared_sources() {
         for path in [
-            "games/THE BROKEN SEAL/SRC/X.BIN",
-            "games/THE LOST AGE/SRC/X.BIN",
-            "games/COMMON/SRC/M/X.BIN",
-            "games/THE BROKEN SEAL/SRC/X.bin",
+            "games/tbs/src/x.bin",
+            "games/tla/src/x.bin",
+            "games/common/src/m/x.bin",
+            "games/tbs/src/x.bin",
         ] {
             assert_eq!(
                 publication_path_reason(path),
@@ -3245,8 +3246,8 @@ mod tests {
     #[test]
     fn linker_names_come_from_bytes_sections_or_symbol_differences() {
         for path in [
-            "games/THE BROKEN SEAL/MAIN.LD",
-            "games/THE LOST AGE/CONSTANTS.LD",
+            "games/tbs/main.ld",
+            "games/tla/constants.ld",
         ] {
             for source in [
                 "Alias = Defined;\n",
@@ -3291,7 +3292,7 @@ mod tests {
 
     #[test]
     fn raw_calls_and_literal_pools_use_labels_without_rejecting_instruction_encodings() {
-        let path = "recon/tla/raw/ROUTINE.s";
+        let path = "recon/tla/raw/routine.s";
         for source in [
             "bl 0x08000101\n",
             "blx 50331648\n",
@@ -3342,11 +3343,11 @@ mod tests {
             assert!(raw_address_reason(path, source).is_none(), "{source}");
         }
         assert!(
-            raw_address_reason("games/THE LOST AGE/SRC/ROUTINE.S", "bl 0x08000100\n").is_none()
+            raw_address_reason("games/tla/src/routine.s", "bl 0x08000100\n").is_none()
         );
         assert_eq!(
             raw_address_reason(
-                "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY/OVL_3A7.S",
+                "games/tbs/src/system/overlay/ovl_3a7.s",
                 "ldr r0, =0x02000000\nldr r1, [r0]\n"
             ),
             Some(RAW_ADDRESS_REASON)
@@ -3356,19 +3357,19 @@ mod tests {
     #[test]
     fn message_archives_are_built_assembly_included_by_a_tracked_source() {
         let root = crate::compiler::routing::root();
-        for game in ["THE BROKEN SEAL", "THE LOST AGE"] {
-            let path = format!("games/{game}/TEXT/MESSAGES.S");
+        for game in ["tbs", "tla"] {
+            let path = format!("games/{game}/text/messages.s");
             let data = std::fs::read(root.join(&path)).unwrap();
             assert_eq!(publication_reason(&path, &data, None), None, "{path}");
             assert!(String::from_utf8_lossy(&data).contains("\t.include \"text/messages.inc\"\n"));
         }
         assert!(super::incbin(
-            "games/THE BROKEN SEAL/TEXT/MESSAGES.S",
+            "games/tbs/text/messages.s",
             b".incbin \"text/messages.bin\"\n"
         ));
         let named = b"msgctxt \"MsgHpRecover\"\nmsgid \"02077\"\nmsgstr \"HP!\"\n";
         assert_eq!(
-            publication_reason("games/THE BROKEN SEAL/TEXT/EN.PO", named, None),
+            publication_reason("games/tbs/text/en.po", named, None),
             None
         );
     }
@@ -3377,29 +3378,29 @@ mod tests {
     fn editable_sources_need_no_calculated_asset_catalog() {
         for (path, data) in [
             (
-                "games/THE BROKEN SEAL/SRC/FIELD/RUNPA/EVENTS.TSV",
+                "games/tbs/src/field/runpa/events.tsv",
                 b"actor\tx\ty\tscript\nGuard\t4\t8\tOpenGate\n".to_vec(),
             ),
             (
-                "games/THE LOST AGE/MAIN.LD",
+                "games/tla/main.ld",
                 b"MEMORY { ROM (rx) : ORIGIN = 0x08000000, LENGTH = 32M }\nSoundMixer = LOADADDR(.iwram_mixer) + 1;\n"
                     .to_vec(),
             ),
             (
-                "games/THE LOST AGE/BUILD.MK",
-                b"GAME_OBJECTS := BATTLE/START.o FIELD/EVENT.o\n".to_vec(),
+                "games/tla/build.mk",
+                b"GAME_OBJECTS := battle/start.o field/event.o\n".to_vec(),
             ),
             (
-                "games/THE LOST AGE/INCLUDE/LINK.H",
+                "games/tla/include/link.h",
                 b"extern int Data_081c0000;\n#define BufferAddress 0x02000000\n".to_vec(),
             ),
             (
-                "games/THE LOST AGE/SRC/SYSTEM/MACHINE.S",
+                "games/tla/src/system/machine.s",
                 b".syntax unified\n.thumb\n.global CallRoutine\nCallRoutine:\n bx r0\n"
                     .to_vec(),
             ),
             (
-                "games/THE BROKEN SEAL/TEXT/EN.PO",
+                "games/tbs/text/en.po",
                 b"msgid \"000001\"\nmsgstr \"Open the gate.\"\n".to_vec(),
             ),
         ] {
@@ -3411,7 +3412,7 @@ mod tests {
     fn calculated_ledgers_and_saved_answers_fail_after_renaming_or_splitting() {
         for data in [
             r#"{"decoded_sha256":"00"}"#,
-            r#"[{"source":"FIELD/EVENT.C","address":"0x08000100","size":32}]"#,
+            r#"[{"source":"field/event.c","address":"0x08000100","size":32}]"#,
             r#"{"codec":"golden-sun-kind2-lz","frames":[{"tokens":[2],"lookahead":"00"}]}"#,
         ] {
             for path in [
@@ -3432,9 +3433,9 @@ mod tests {
         );
         for path in [
             "recon/tbs/private-inputs.json",
-            "games/THE BROKEN SEAL/SRC/GRAPHICS/TOKEN.TOKENS",
-            "games/THE BROKEN SEAL/SRC/GRAPHICS/CHAR_COMMON.PNG",
-            "games/THE LOST AGE/SRC/DATA.BIN",
+            "games/tbs/src/graphics/token.tokens",
+            "games/tbs/src/graphics/char_common.png",
+            "games/tla/src/data.bin",
         ] {
             assert!(publication_path_reason(path).is_some(), "{path}");
         }
@@ -3450,7 +3451,7 @@ mod tests {
             ".thumb\n",
             &format!(".thumb\n.set sub_{address:08x}, 0x{address:08x}\n"),
         );
-        for path in ["recon/tbs/raw/routine.s", "games/X/SRC/ROUTINE.S"] {
+        for path in ["recon/tbs/raw/routine.s", "games/x/src/routine.s"] {
             assert_eq!(publication_reason(path, listing.as_bytes(), None), None);
             assert_eq!(
                 publication_reason(path, equated.as_bytes(), None),
@@ -3480,21 +3481,21 @@ mod tests {
         assert_eq!(publication_data_reason("game.c", c.as_bytes(), None), None);
         let linker = format!("Data_{address:08x} = 0x{address:08x};\n");
         assert_eq!(
-            publication_data_reason("LINK.LD", linker.as_bytes(), None),
+            publication_data_reason("link.ld", linker.as_bytes(), None),
             None
         );
         let library = format!(
             ".syntax unified\n.thumb\n.global MultiplyWords\nMultiplyWords:\n cmp r0, #0\n beq .L_{address:08x}\n bx lr\n.L_{address:08x}:\n bx lr\n"
         );
         assert_eq!(
-            publication_data_reason("LIBRARY.S", library.as_bytes(), None),
+            publication_data_reason("library.s", library.as_bytes(), None),
             None
         );
         let global_alias = format!(
             ".syntax unified\n.thumb\n.global Func_{address:08x}\nFunc_{address:08x}:\n bx lr\n"
         );
         assert_eq!(
-            publication_data_reason("LIBRARY.S", global_alias.as_bytes(), None),
+            publication_data_reason("library.s", global_alias.as_bytes(), None),
             None
         );
     }
@@ -3506,7 +3507,7 @@ mod tests {
         git(root, &["init", "--quiet"], "publication fixture").unwrap();
         let base = commit(
             root,
-            &[("games/X/SRC/START.C", b"void Start(void) {}\n".to_vec())],
+            &[("games/x/src/start.c", b"void Start(void) {}\n".to_vec())],
         );
         let path = root.join("recon/tbs/raw/renamed.s");
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
@@ -3583,7 +3584,7 @@ mod tests {
     }
     #[test]
     fn credited_assembly_is_written_as_instructions() {
-        let tbs = "games/THE BROKEN SEAL/SRC/SOUND/HOOK.S";
+        let tbs = "games/tbs/src/sound/hook.s";
         let refused = [
             ".syntax unified\n\t.thumb\nHook:\n\t.inst.n 0x4718\n",
             "\t.arm\n\tmov r0, r0\n\t.inst 0xe1a0a00a\n\tbx lr\n",
@@ -3602,7 +3603,7 @@ mod tests {
                 Some(RAW_ENCODING_REASON),
                 "{text:?}"
             );
-            assert!(raw_encoding_reason("games/THE LOST AGE/SRC/X.INC", text).is_some());
+            assert!(raw_encoding_reason("games/tla/src/x.inc", text).is_some());
         }
         let accepted = [
             "\t.thumb\n\tpop {r4, pc}\n\t.align 2, 0\n.L_pool:\n\t.4byte Table\n\t.4byte 0x04000200\n",
@@ -3635,8 +3636,8 @@ mod tests {
         let hidden = "\tbx lr\nAlchemyUncredited_08001000:\n\tmovs r0, #1\n\tbx lr\nAlchemyUncreditedEnd_08001000:\n";
         assert_eq!(uncredited_code_reason(tbs, hidden), Some(UNCREDITED_CODE_REASON));
         let spelled = "\t.thumb\n\tmovs r0, #1\n\t.inst.n 0x4770\n";
-        assert!(raw_encoding_reason("recon/tbs/raw/080006fc.S", spelled).is_none());
-        assert!(raw_encoding_reason("games/THE BROKEN SEAL/SRC/X.C", spelled).is_none());
+        assert!(raw_encoding_reason("recon/tbs/raw/080006fc.s", spelled).is_none());
+        assert!(raw_encoding_reason("games/tbs/src/x.c", spelled).is_none());
         assert_eq!(
             publication_data_reason(tbs, spelled.as_bytes(), None),
             Some(RAW_ENCODING_REASON)
@@ -3675,17 +3676,17 @@ mod tests {
         assert!(edition_equate_reason("recon/tbs/ja/rom.s", accepted).is_none());
         let measured = "\t.set Tile_BuildMetatilesCodeSize, . - Tile_BuildMetatiles\n";
         for path in [
-            "recon/tbs/raw/080158e8.S",
+            "recon/tbs/raw/080158e8.s",
             "recon/tbs/unidentified.s",
-            "games/THE BROKEN SEAL/SRC/X.S",
-            "recon/tbs/ja/MAIN.LD",
+            "games/tbs/src/x.s",
+            "recon/tbs/ja/main.ld",
         ] {
             assert!(edition_equate_reason(path, measured).is_none(), "{path}");
         }
     }
     #[test]
     fn full_address_equates_are_refused_in_game_and_reconstruction_assembly() {
-        let tbs = "games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TABLES.S";
+        let tbs = "games/tbs/src/battle/effect/tables.s";
         let listing = "recon/tbs/raw/overlays/resource_3a7_overlay.s";
         let refused = [
             "\t.set\t.L_case_2, 0x080f0144\n",
@@ -3701,7 +3702,7 @@ mod tests {
                 "{line:?}"
             );
             assert!(address_equate_reason(listing, line).is_some(), "{line:?}");
-            assert!(address_equate_reason("games/THE LOST AGE/SRC/X.INC", line).is_some());
+            assert!(address_equate_reason("games/tla/src/x.inc", line).is_some());
         }
         let accepted = [
             "\t.set FIELD_OVERLAY_LOAD_BIAS, 0x8000\n",
@@ -3718,7 +3719,7 @@ mod tests {
         let restated = "\t.set .L_case_2, 0x080f0144\n";
         assert!(address_equate_reason("tools/alchemy/src/x.rs", restated).is_none());
         assert!(address_equate_reason("docs/notes.s", restated).is_none());
-        assert!(address_equate_reason("games/THE BROKEN SEAL/SRC/X.C", restated).is_none());
+        assert!(address_equate_reason("games/tbs/src/x.c", restated).is_none());
         assert_eq!(
             publication_data_reason(tbs, restated.as_bytes(), None),
             Some(ADDRESS_EQUATE_REASON)
@@ -3727,51 +3728,51 @@ mod tests {
     #[test]
     fn later_parts_share_the_first_parts_built_palette() {
         let temp = tempfile::tempdir().unwrap();
-        let directory = temp.path().join("games/X/SRC/GRAPHICS");
+        let directory = temp.path().join("games/x/src/graphics");
         std::fs::create_dir_all(&directory).unwrap();
-        let second = directory.join("W_2.PNG").to_string_lossy().into_owned();
-        std::fs::write(directory.join("W.TSV"), "W_1\t4bpp\nW_2\t4bpp16x32\n").unwrap();
+        let second = directory.join("w_2.png").to_string_lossy().into_owned();
+        std::fs::write(directory.join("w.tsv"), "W_1\t4bpp\nW_2\t4bpp16x32\n").unwrap();
         assert!(!palette_built(&second));
-        std::fs::write(directory.join("W.S"), "\t.incbin \"GRAPHICS/W_1.gbapal\"\n").unwrap();
+        std::fs::write(directory.join("w.s"), "\t.incbin \"graphics/w_1.gbapal\"\n").unwrap();
         assert!(palette_built(&second));
-        assert!(palette_built(&directory.join("W_1.PNG").to_string_lossy()));
+        assert!(palette_built(&directory.join("w_1.png").to_string_lossy()));
     }
 
     #[test]
     fn a_part_list_that_starts_with_the_palette_writes_it() {
         let temp = tempfile::tempdir().unwrap();
-        let directory = temp.path().join("games/X/SRC/GRAPHICS");
+        let directory = temp.path().join("games/x/src/graphics");
         std::fs::create_dir_all(&directory).unwrap();
-        let sheet = directory.join("T.PNG").to_string_lossy().into_owned();
-        let other = directory.join("U.PNG").to_string_lossy().into_owned();
-        std::fs::write(directory.join("T.TSV"), "T\tgbapal\nT\t4bpp8x16\n").unwrap();
+        let sheet = directory.join("t.png").to_string_lossy().into_owned();
+        let other = directory.join("u.png").to_string_lossy().into_owned();
+        std::fs::write(directory.join("t.tsv"), "T\tgbapal\nT\t4bpp8x16\n").unwrap();
         assert!(!palette_built(&sheet));
-        std::fs::write(directory.join("T.S"), "\t.incbin \"GRAPHICS/T.4bpp.lz\"\n").unwrap();
+        std::fs::write(directory.join("t.s"), "\t.incbin \"graphics/t.4bpp.lz\"\n").unwrap();
         assert!(!palette_built(&sheet));
-        std::fs::write(directory.join("T.S"), "\t.incbin \"GRAPHICS/T.parts.lz\"\n").unwrap();
+        std::fs::write(directory.join("t.s"), "\t.incbin \"graphics/t.parts.lz\"\n").unwrap();
         assert!(palette_built(&sheet));
         assert!(!palette_built(&other));
-        std::fs::write(directory.join("T.TSV"), "T\t4bpp\nT\tgbapal\n").unwrap();
+        std::fs::write(directory.join("t.tsv"), "T\t4bpp\nT\tgbapal\n").unwrap();
         assert!(!palette_built(&sheet));
     }
 
     #[test]
     fn a_grey_palette_passes_only_when_the_build_writes_it() {
         let temp = tempfile::tempdir().unwrap();
-        let directory = temp.path().join("games/X/SRC/GRAPHICS");
+        let directory = temp.path().join("games/x/src/graphics");
         std::fs::create_dir_all(&directory).unwrap();
-        let png = directory.join("LOGO.PNG");
+        let png = directory.join("logo.png");
         let path = png.to_string_lossy().into_owned();
         assert!(!palette_built(&path));
         std::fs::write(
-            directory.join("OTHER.S"),
-            "\t.incbin \"GRAPHICS/OTHER.gbapal\"\n",
+            directory.join("other.s"),
+            "\t.incbin \"graphics/other.gbapal\"\n",
         )
         .unwrap();
         assert!(!palette_built(&path));
         std::fs::write(
-            directory.join("LOGO.S"),
-            "\t.incbin \"GRAPHICS/LOGO.gbapal\"\n",
+            directory.join("logo.s"),
+            "\t.incbin \"graphics/logo.gbapal\"\n",
         )
         .unwrap();
         assert!(palette_built(&path));
@@ -3827,11 +3828,11 @@ mod tests {
         let logo = logo_fixture();
         let (_, png, _) = binary_fixtures()
             .into_iter()
-            .find(|(path, ..)| path.ends_with("/LOGO.INDEXED.PNG"))
+            .find(|(path, ..)| path.ends_with("/logo.indexed.png"))
             .unwrap();
         assert!(!contains(&png, &logo));
         assert!(contains(&indexed_png_bytes(&png).unwrap(), &logo));
-        let path = "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/LOGO.INDEXED.PNG";
+        let path = "games/tbs/src/graphics/tile/logo.indexed.png";
         assert_eq!(publication_data_reason(path, &png, None), None);
         assert_eq!(
             publication_data_reason(path, &png, Some(&logo)),
@@ -3884,7 +3885,7 @@ mod tests {
         let published = commit(root, &[("README.md", b"Project\n".to_vec())]);
         let tip = commit(
             root,
-            &[("games/X/SRC/START.C", b"void Start(void) {}\n".to_vec())],
+            &[("games/x/src/start.c", b"void Start(void) {}\n".to_vec())],
         );
         assert_eq!(revisions(root, &tip, &published).unwrap(), [tip]);
     }
@@ -3985,10 +3986,10 @@ mod tests {
         let inputs = commit(
             root,
             &[
-                ("games/X/SRC/GRAPHICS/TILE/A.4BPP.PNG", indexed_fixture(4)),
-                ("games/X/SOUND/SEQUENCE/A.MID", midi.clone()),
-                ("games/X/SRC/MAIN.C", b"void main(void) {}\n".to_vec()),
-                ("games/Y/SRC/MAIN.C", b"void main(void) {}\n".to_vec()),
+                ("games/x/src/graphics/tile/a.4bpp.png", indexed_fixture(4)),
+                ("games/x/sound/sequence/a.mid", midi.clone()),
+                ("games/x/src/main.c", b"void main(void) {}\n".to_vec()),
+                ("games/y/src/main.c", b"void main(void) {}\n".to_vec()),
                 ("tools/Cargo.lock", b"checksum = \"00ff\"\n".to_vec()),
             ],
         );
@@ -3997,19 +3998,19 @@ mod tests {
         let gif = commit(
             root,
             &[(
-                "games/X/PREVIEW/IDLE.gif",
+                "games/x/preview/idle.gif",
                 b"GIF89a\x01\0\x01\0\0\0\0".to_vec(),
             )],
         );
         let error = check_tree(root, Some(&gif)).unwrap_err();
         assert_eq!(error.lines().count(), 2, "{error}");
-        assert!(error.contains("games/X/PREVIEW/IDLE.gif: presentation material"));
-        assert!(check_tree(root, None).unwrap_err().contains("IDLE.gif"));
+        assert!(error.contains("games/x/preview/idle.gif: presentation material"));
+        assert!(check_tree(root, None).unwrap_err().contains("idle.gif"));
         let zero = "0".repeat(40);
         let update = format!("refs/heads/main {gif} refs/heads/main {inputs}\n");
         let error = check_push(root, &update).unwrap_err();
         assert!(
-            error.contains("IDLE.gif") && !error.contains("A.4BPP.PNG"),
+            error.contains("idle.gif") && !error.contains("a.4bpp.png"),
             "{error}"
         );
         let update = format!("refs/heads/main {inputs} refs/heads/main {zero}\n");
@@ -4017,14 +4018,14 @@ mod tests {
         let native_and_misplaced = commit(
             root,
             &[
-                ("games/Y/SOUND/SEQUENCE/A.MID", midi),
-                ("games/Y/Data/TABLE.JSON", b"{}\n".to_vec()),
+                ("games/y/sound/sequence/a.mid", midi),
+                ("games/y/data/table.json", b"{}\n".to_vec()),
             ],
         );
         let error = check_tree(root, Some(&native_and_misplaced)).unwrap_err();
-        assert!(!error.contains("games/Y/SOUND/SEQUENCE/A.MID:"));
-        assert!(error.contains("games/Y/Data/TABLE.JSON: JSON is banned"));
-        assert!(!error.contains("games/X/SOUND"), "{error}");
+        assert!(!error.contains("games/y/sound/sequence/a.mid:"));
+        assert!(error.contains("games/y/data/table.json: JSON is banned"));
+        assert!(!error.contains("games/x/sound"), "{error}");
     }
 }
 
@@ -4036,7 +4037,7 @@ const PATCH_LITERALS: usize = 8;
 /// a broad set of stand-ins, and mark every other row as a copy of a listed
 /// literal.
 fn patch_reason(path: &str, data: &[u8]) -> Option<&'static str> {
-    if !path.ends_with("_PATCH.TSV") {
+    if !path.ends_with("_patch.tsv") {
         return None;
     }
     let Ok(patch) = ags::patch::Patch::parse(path, data) else {
@@ -4084,20 +4085,20 @@ mod patch_tests {
         let good = "position\tpack\tship\tproof\n\
             10\t0x02\t0x01\tliteral: 254 of 255 stand-ins reproduce the stream; this is the lowest\n\
             12\t0x02\t0x01\tcopy of 10\n";
-        assert_eq!(patch_reason("MAP/X/GRID_PATCH.TSV", good.as_bytes()), None);
+        assert_eq!(patch_reason("map/x/grid_patch.tsv", good.as_bytes()), None);
         let narrow = "position\tpack\tship\tproof\n\
             10\t0x02\t0x01\tliteral: 3 of 255 stand-ins reproduce the stream\n";
-        assert!(patch_reason("MAP/X/GRID_PATCH.TSV", narrow.as_bytes()).is_some());
+        assert!(patch_reason("map/x/grid_patch.tsv", narrow.as_bytes()).is_some());
         let orphan = "position\tpack\tship\tproof\n\
             10\t0x02\t0x01\tliteral: 254 of 255 stand-ins reproduce the stream\n\
             12\t0x02\t0x01\tcopy of 11\n";
-        assert!(patch_reason("MAP/X/GRID_PATCH.TSV", orphan.as_bytes()).is_some());
+        assert!(patch_reason("map/x/grid_patch.tsv", orphan.as_bytes()).is_some());
         let mut many = String::from("position\tpack\tship\tproof\n");
         for position in 0..9 {
             many.push_str(&format!(
                 "{position}\t0x02\t0x01\tliteral: 254 of 255 stand-ins reproduce the stream\n"
             ));
         }
-        assert!(patch_reason("MAP/X/GRID_PATCH.TSV", many.as_bytes()).is_some());
+        assert!(patch_reason("map/x/grid_patch.tsv", many.as_bytes()).is_some());
     }
 }

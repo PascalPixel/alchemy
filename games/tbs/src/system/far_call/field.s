@@ -1,0 +1,312 @@
+.syntax unified
+	.thumb
+	.include "games/tbs/src/system/overlay.inc"
+	.global FarCall_FieldTable
+FarCall_FieldTable:
+	.global ObjectSystem_ConfigureFar
+	.thumb_func
+ObjectSystem_ConfigureFar:
+	overlay_veneer ObjectSystem_Configure
+	.global Object_ApplyProjectedPlacementFar
+	.thumb_func
+Object_ApplyProjectedPlacementFar:
+	overlay_veneer Render_ApplyProjectedPlacement
+	overlay_veneer Render_PlaceProjectedSprite
+	overlay_veneer Animation_InitializeObjects
+	.global AnimationObjects_SelectAnimationFar
+	.thumb_func
+AnimationObjects_SelectAnimationFar:
+	overlay_veneer AnimationObjects_SelectAnimation
+	overlay_veneer AnimationObjects_SetActiveFrameTimers
+	.global ResourceObject_CreateFar
+	.thumb_func
+ResourceObject_CreateFar:
+	overlay_veneer ResourceObject_Create
+	.global ResourceObject_ReleaseFar
+	.thumb_func
+ResourceObject_ReleaseFar:
+	overlay_veneer ResourceObject_Release
+	overlay_veneer Render_PlaceSpritePartPair
+	.global ResourceMetadata_RegisterFar
+	.thumb_func
+ResourceMetadata_RegisterFar:
+	overlay_veneer ResourceMetadata_Register
+	.global ResourceMetadata_UnregisterFar
+	.thumb_func
+ResourceMetadata_UnregisterFar:
+	overlay_veneer ResourceMetadata_Unregister
+	overlay_veneer ResourceMetadata_ReleaseSlot
+	.global ResourceMetadata_ClearRecordFar
+	.thumb_func
+ResourceMetadata_ClearRecordFar:
+	overlay_veneer ResourceMetadata_ClearRecord
+	overlay_veneer Animation_InitWorkFromMetadata
+	.global Animation_SetWorkEntryFar
+	.thumb_func
+Animation_SetWorkEntryFar:
+	overlay_veneer Animation_SetWorkEntry
+	.global ObjectSystem_InitializeFar
+	.thumb_func
+ObjectSystem_InitializeFar:
+	overlay_veneer ObjectSystem_Initialize
+	@ O2 pending: shared code calls this stub Object_SetMode while overlay veneers of that name target the other label
+	.global Object_SetMode
+	.thumb_func
+Object_SetMode:
+	.global ObjectDispatch_ApplyArgumentToChildrenFar
+	.thumb_func
+ObjectDispatch_ApplyArgumentToChildrenFar:
+	overlay_veneer ObjectDispatch_ApplyArgumentToChildren
+	.global ObjectDispatch_ApplyValueToChildrenFar
+	.thumb_func
+ObjectDispatch_ApplyValueToChildrenFar:
+	overlay_veneer ObjectDispatch_ApplyValueToChildren
+	overlay_veneer ObjectDispatch_ApplyPairToChildren
+	.global ObjectDispatch_InitializeFar
+	.thumb_func
+ObjectDispatch_InitializeFar:
+	overlay_veneer ObjectDispatch_Initialize
+	.global ObjectDispatch_InitFromTable2Far
+	.thumb_func
+ObjectDispatch_InitFromTable2Far:
+	overlay_veneer ObjectDispatch_InitFromTable2
+	.global ObjectDispatch_InitFromTable3Far
+	.thumb_func
+ObjectDispatch_InitFromTable3Far:
+	overlay_veneer ObjectDispatch_InitFromTable3
+	.global ObjectDispatch_InitFromTable1Far
+	.thumb_func
+ObjectDispatch_InitFromTable1Far:
+	overlay_veneer ObjectDispatch_InitFromTable1
+	.global ObjectDispatch_InitFromTable0Far
+	.thumb_func
+ObjectDispatch_InitFromTable0Far:
+	overlay_veneer ObjectDispatch_InitFromTable0
+	overlay_veneer ObjectDispatch_FindFreeObject
+	.global Object_CreateFar
+	.thumb_func
+Object_CreateFar:
+	overlay_veneer FieldObject_Create
+	.global ObjectDispatch_ReleaseFar
+	.thumb_func
+ObjectDispatch_ReleaseFar:
+	overlay_veneer ObjectDispatch_Release
+	overlay_veneer ObjectDispatch_SetChildRotation
+	.global ObjectDispatch_InitFromTable4WithArgumentFar
+	.thumb_func
+ObjectDispatch_InitFromTable4WithArgumentFar:
+	overlay_veneer ObjectDispatch_InitFromTable4WithArgument
+	overlay_veneer ObjectDispatch_InitFromTable5WithArgument
+	.global Object_SetPositionAndResetMotionFar
+	.thumb_func
+Object_SetPositionAndResetMotionFar:
+	overlay_veneer Object_SetPositionAndResetMotion
+	.global render_animated_tile_frameFar
+	.thumb_func
+render_animated_tile_frameFar:
+	overlay_veneer Map_RenderAnimatedTileFrame
+	.global Map_RenderAnimatedTileFramesForObjectFar
+	.thumb_func
+Map_RenderAnimatedTileFramesForObjectFar:
+	overlay_veneer Map_RenderAnimatedTileFramesForObject
+	.global Map_RenderAllAnimatedTileFramesFar
+	.thumb_func
+Map_RenderAllAnimatedTileFramesFar:
+	overlay_veneer Map_RenderAllAnimatedTileFrames
+	.global Map_LoadLayeredSceneFar
+	.thumb_func
+Map_LoadLayeredSceneFar:
+	overlay_veneer Map_LoadLayeredScene
+	.global Map_InitializePerspectiveSceneFar
+	.thumb_func
+Map_InitializePerspectiveSceneFar:
+	overlay_veneer Map_InitializePerspectiveScene
+	overlay_veneer Map_SetCameraCenter
+	.global Map_ApplyWorkOriginAndSpanFar
+	.thumb_func
+Map_ApplyWorkOriginAndSpanFar:
+	overlay_veneer Map_ApplyWorkOriginAndSpan
+	.global Map_UpdateCurrentTileBlockFar
+	.thumb_func
+Map_UpdateCurrentTileBlockFar:
+	overlay_veneer Map_UpdateCurrentTileBlock
+	.global WorldMap_LoadGraphicsFar
+	.thumb_func
+WorldMap_LoadGraphicsFar:
+	overlay_veneer WorldMap_LoadGraphics
+	.global ObjectDispatch_InitFromTable6Far
+	.thumb_func
+ObjectDispatch_InitFromTable6Far:
+	overlay_veneer ObjectDispatch_InitFromTable6
+	.global ObjectDispatch_WaitForValue16Far
+	.thumb_func
+ObjectDispatch_WaitForValue16Far:
+	overlay_veneer ObjectDispatch_WaitForValue16
+	.global Object_SetMoveTargetFar
+	.thumb_func
+Object_SetMoveTargetFar:
+	overlay_veneer Object_SetMoveTarget
+	.global Script_WaitForEventTimeoutFar
+	.thumb_func
+Script_WaitForEventTimeoutFar:
+	overlay_veneer Script_WaitForEventTimeout
+	overlay_veneer Map_GetScreenRelativePosition
+	overlay_veneer WorldMap_UpdateView
+	.global Map_LoadDefaultCellsAndUpdateBlockFar
+	.thumb_func
+Map_LoadDefaultCellsAndUpdateBlockFar:
+	overlay_veneer Map_LoadDefaultCellsAndUpdateBlock
+	.global Map_PlayMetatileCopySequenceFar
+	.thumb_func
+Map_PlayMetatileCopySequenceFar:
+	overlay_veneer Map_PlayMetatileCopySequence
+	.global Map_CopyMetatileIndicesRectFar
+	.thumb_func
+Map_CopyMetatileIndicesRectFar:
+	overlay_veneer Map_CopyMetatileIndicesRect
+	.global Map_ClearLayerEntryFlagFar
+	.thumb_func
+Map_ClearLayerEntryFlagFar:
+	overlay_veneer Map_ClearLayerEntryFlag
+	.global Map_SetLayerEntryFlagFar
+	.thumb_func
+Map_SetLayerEntryFlagFar:
+	overlay_veneer Map_SetLayerEntryFlag
+	.global DisplayBlend_DisableRunScriptFar
+	.thumb_func
+DisplayBlend_DisableRunScriptFar:
+	overlay_veneer DisplayBlend_DisableRunScript
+	.global DisplayBlend_EnableRunScriptFar
+	.thumb_func
+DisplayBlend_EnableRunScriptFar:
+	overlay_veneer DisplayBlend_EnableRunScript
+	.global Map_GetTerrainHeightFar
+	.thumb_func
+Map_GetTerrainHeightFar:
+	overlay_veneer Map_GetTerrainHeight
+	.global GetMapCellCollisionFar
+	.thumb_func
+GetMapCellCollisionFar:
+	overlay_veneer GetMapCellCollision
+	.global Map_CopyMetatileCellsRectFar
+	.thumb_func
+Map_CopyMetatileCellsRectFar:
+	overlay_veneer Map_CopyMetatileCellsRect
+	.global Map_CopyCellAttributeRectFar
+	.thumb_func
+Map_CopyCellAttributeRectFar:
+	overlay_veneer Map_CopyCellAttributeRect
+	.global Map_CopyCellIndexRectFar
+	.thumb_func
+Map_CopyCellIndexRectFar:
+	overlay_veneer Map_CopyCellIndexRect
+	.global Map_SetWindowCellTileFar
+	.thumb_func
+Map_SetWindowCellTileFar:
+	overlay_veneer Map_SetWindowCellTile
+	.global Object_CheckMovementCollision
+	.global Map_CheckObjectStepFar
+	.thumb_func
+Object_CheckMovementCollision:
+	.thumb_func
+Map_CheckObjectStepFar:
+	overlay_veneer Map_CheckObjectStep
+	.global ObjectDispatch_SetSingleChildFlagsFar
+	.thumb_func
+ObjectDispatch_SetSingleChildFlagsFar:
+	overlay_veneer ObjectDispatch_SetSingleChildFlags
+	.global ObjectDispatch_SetChildBlendModeFar
+	.thumb_func
+ObjectDispatch_SetChildBlendModeFar:
+	overlay_veneer ObjectDispatch_SetChildBlendMode
+	.global Runtime_SetWorkTripleIfNonNegativeFar
+	.thumb_func
+Runtime_SetWorkTripleIfNonNegativeFar:
+	overlay_veneer Runtime_SetWorkTripleIfNonNegative
+	.global Map_WaitWorkValuesBelow256Far
+	.thumb_func
+Map_WaitWorkValuesBelow256Far:
+	overlay_veneer Map_WaitWorkValuesBelow256
+	overlay_veneer Animation_SetIndexAndInitObjects
+	.global Graphics_EnableObjLayerAndCallbacksFar
+	.thumb_func
+Graphics_EnableObjLayerAndCallbacksFar:
+	overlay_veneer Graphics_EnableObjLayerAndCallbacks
+	.global ObjectDispatch_StopCallbacksAndHideLayersFar
+	.thumb_func
+ObjectDispatch_StopCallbacksAndHideLayersFar:
+	overlay_veneer ObjectDispatch_StopCallbacksAndHideLayers
+	overlay_veneer ObjectDispatch_SetChildDisplayFlag1
+	.global CheckMapPositionCellOccupiedFar
+	.thumb_func
+CheckMapPositionCellOccupiedFar:
+	overlay_veneer CheckMapPositionCellOccupied
+	.global ObjectDispatch_RegisterChildMetadataFar
+	.thumb_func
+ObjectDispatch_RegisterChildMetadataFar:
+	overlay_veneer ObjectDispatch_RegisterChildMetadata
+	.global Map_ResumeAnimationFar
+	.thumb_func
+Map_ResumeAnimationFar:
+	overlay_veneer MapAnimation_Start
+	.global Map_LoadAreaGraphicsFar
+	.thumb_func
+Map_LoadAreaGraphicsFar:
+	overlay_veneer Map_LoadAreaGraphics
+	.global Animation_ApplyChildValuesFar
+	.thumb_func
+Animation_ApplyChildValuesFar:
+	overlay_veneer Animation_ApplyChildValues
+	.global ObjectGroup_SetChildValueUnlessFifteenFar
+	.thumb_func
+ObjectGroup_SetChildValueUnlessFifteenFar:
+	overlay_veneer ObjectGroup_SetChildValueUnlessFifteen
+	.global ScriptObject_CheckOverlapFar
+	.thumb_func
+ScriptObject_CheckOverlapFar:
+	overlay_veneer ScriptObject_CheckOverlap
+	.global Map_SetWorkFlagBits9To11Far
+	.thumb_func
+Map_SetWorkFlagBits9To11Far:
+	overlay_veneer Map_SetWorkFlagBits9To11
+	.global ResourceMetadata_SumCommandLengthsFar
+	.thumb_func
+ResourceMetadata_SumCommandLengthsFar:
+	overlay_veneer ResourceMetadata_SumCommandLengths
+	.global GetWorldMapTerrainBehaviorFar
+	.thumb_func
+GetWorldMapTerrainBehaviorFar:
+	overlay_veneer GetWorldMapTerrainBehavior
+	.global ResourceSlot_LoadFar
+	.thumb_func
+ResourceSlot_LoadFar:
+	overlay_veneer ResourceSlot_Load
+	.global SetMapCellCollisionFar
+	.thumb_func
+SetMapCellCollisionFar:
+	overlay_veneer SetMapCellCollision
+	.global AnimationObjects_SetActiveTimerStepsFar
+	.thumb_func
+AnimationObjects_SetActiveTimerStepsFar:
+	overlay_veneer AnimationObjects_SetActiveTimerSteps
+	.global Runtime_RemapBytesByTableFar
+	.thumb_func
+Runtime_RemapBytesByTableFar:
+	overlay_veneer Runtime_RemapBytesByTable
+	.global Map_EnableUpdateCallbackFar
+	.thumb_func
+Map_EnableUpdateCallbackFar:
+	overlay_veneer Map_EnableUpdateCallback
+	.global Map_DisableUpdateCallbackFar
+	.thumb_func
+Map_DisableUpdateCallbackFar:
+	overlay_veneer Map_DisableUpdateCallback
+	.global ScriptObject_FindOverlappingEntryFar
+	.thumb_func
+ScriptObject_FindOverlappingEntryFar:
+	overlay_veneer ScriptObject_FindOverlappingEntry
+	.global Map_GetCellAttributeLowNibbleFar
+	.thumb_func
+Map_GetCellAttributeLowNibbleFar:
+	overlay_veneer Map_GetCellAttributeLowNibble
+	overlay_veneer Ui_RunIconMonitor

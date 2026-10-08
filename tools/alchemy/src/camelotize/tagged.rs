@@ -133,7 +133,7 @@ fn inside(tokens: &[Token]) -> Vec<Option<usize>> {
 }
 
 /// The byte ranges no rewrite may change. A tag's reason may name several
-/// statements (PRIORITY.C's "these flag updates"), so a tag covers the whole
+/// statements (priority.c's "these flag updates"), so a tag covers the whole
 /// innermost block holding it, with the statement that owns that block (its
 /// `if`, `else` branches and loop head); a tag in a function's top-level
 /// block covers the whole function. A tag outside every block covers the
@@ -228,7 +228,7 @@ mod tests {
     /// The reviewer's cases: each tag's reason names several statements.
     #[test]
     fn a_tag_protects_every_statement_its_reason_names() {
-        // FIELD/TAKARA_HASHIRA/PRIORITY.C:334-355 (tags at 337 and 345)
+        // field/takara_hashira/priority.c:334-355 (tags at 337 and 345)
         let priority = "void F(void)\n{\n        if (*flags & 1) {
             if (GetMapCellCollision(2, actor->x, actor->z) == 50) {
                 Engine_AudioPlayCue(189);
@@ -257,7 +257,7 @@ mod tests {
         }
         assert!(covers(priority, "(struct FieldActor *)actor, 0", 0));
         assert!(!covers(priority, "*flags = 0", 0));
-        // FIELD/HAIDIA_MURA/MURA.C:2569-2584 (tag at 2570)
+        // field/haidia_mura/mura.c:2569-2584 (tag at 2570)
         let mura = "s32 F(void)\n{\n    if (Runtime_ComputeFixedPointDistance(&target->x.fixed, &obj->x.fixed) < range || force != 0) {
         if (angle == dir || right == dir || left == dir || force != 0) {
             /* FAKEMATCH: plain-byte publication avoids synthetic QI masks. */

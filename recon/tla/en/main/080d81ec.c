@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "EFFECT_SLOT.H"
-#include "FIXED_MATH.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "effect_slot.h"
+#include "fixed_math.h"
+#include "system.h"
 u32 BattleFx_HasReachedTarget(struct EffectSlot *);
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
@@ -33,7 +33,7 @@ struct PositionSource_08096048 {
     struct Output_08096048 position;
 };
 
-#include "PARTY_STATE.H"
+#include "party_state.h"
 extern u32 gFrameTick;
 
 s32 Object_GetById(u32);

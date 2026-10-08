@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "RESOURCE.H"
-#include "CALLBACK_SCHEDULER.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "resource.h"
+#include "callback_scheduler.h"
 
 void Func_080e2c38(void);
 

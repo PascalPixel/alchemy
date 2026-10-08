@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "INPUT.H"
+#include "types.h"
+#include "input.h"
 
 void Audio_PlayCue(s32 cue);
 

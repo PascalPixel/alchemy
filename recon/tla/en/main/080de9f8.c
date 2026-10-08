@@ -1,6 +1,6 @@
-#include "RESOURCE.H"
-#include "TYPES.H"
-#include "FX_SCENE.H"
+#include "resource.h"
+#include "types.h"
+#include "fx_scene.h"
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void RunBattleEffect03(void)

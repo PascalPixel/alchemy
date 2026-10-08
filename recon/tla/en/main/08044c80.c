@@ -1,9 +1,9 @@
-#include "CALLBACK_SCHEDULER.H"
-#include "TYPES.H"
-#include "IO_REG.H"
-#include "SCENE.H"
-#include "RENDER_INPUT.H"
-#include "RESOURCE.H"
+#include "callback_scheduler.h"
+#include "types.h"
+#include "io_reg.h"
+#include "scene.h"
+#include "render_input.h"
+#include "resource.h"
 
 #if defined(TBS_EDITION_EN)
 

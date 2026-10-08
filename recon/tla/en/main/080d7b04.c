@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 struct Vec {
     s32 x;

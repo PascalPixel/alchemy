@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "ITEM.H"
+#include "types.h"
+#include "item.h"
 
 struct ItemDefinition *Item_GetDirect(s32 item_id);
 

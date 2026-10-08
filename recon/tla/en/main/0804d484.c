@@ -1,6 +1,6 @@
-#include "TLA_EDITION.H"
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
+#include "tla_edition.h"
+#include "types.h"
+#include "ram_buffer.h"
 
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
 {

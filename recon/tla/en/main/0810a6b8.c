@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 extern s16 EventTable_AbilityLoadouts[][33];
 s32 GameFlag_TestFar(s32);

@@ -1,0 +1,505 @@
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "menu.h"
+#include "minigame.h"
+#include "sound.h"
+#include "system.h"
+#include "mem.h"
+#include "heap_state.h"
+#include "canvas.h"
+#include "project.h"
+#include "types.h"
+#include "io_reg.h"
+#include "battle_effect_work.h"
+#include "battle_efx.h"
+#include "callback_scheduler.h"
+#include "effect_step.h"
+#include "fixed_math.h"
+#include "resource_ids.h"
+#include "ram_buffer.h"
+#include "irq.h"
+#include "resource.h"
+
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
+#define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
+
+extern u8 gMapCellBuffer[];
+void WaitFrames(s32);
+u32 Random16(void);
+void AudioCommand_PlayFar(s32);
+void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
+
+extern struct Cells03001ad0 gBgScroll;
+
+typedef struct Scale {
+    s32 x;
+    s32 y;
+} Scale;
+
+extern const Scale BattleFx6_UnitScale;
+
+#define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
+#define HI(v) (((s16 *)&(v))[1])
+
+void Graphics_ResetBg2Pa(void)
+{
+    REG_BG2PA = 0x100;
+}
+
+void Graphics_SetBg2AffineScaleHalf(void)
+{
+    REG_BG2PA = 0x80;
+}
+
+void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
+{
+    s32 pos[4];
+    s32 seat[3];
+    void *dst;
+    u8 *aux;
+    s32 step;
+    s32 px;
+    s32 py;
+    s32 vx;
+    s32 vy;
+    s32 scroll;
+    s32 *spot;
+    s32 j;
+    s32 burst;
+    s32 bx;
+    u32 *cache;
+    struct BattleEffectWork *work;
+    s32 frame;
+    s32 t;
+    s32 i;
+    s32 n;
+    s32 s;
+    struct EffectStep *q1;
+    struct EffectStep *q2;
+    struct EffectStep *q3;
+    struct EffectStep *q4;
+    DrawRectangle blit[2];
+    Scale scale;
+    s32 ground = 112;
+
+    cache = (u32 *)&((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];
+    dst = (void *)cache[40 - 40];
+    work = (struct BattleEffectWork *)cache[39 - 40];
+    aux = (u8 *)cache[41 - 40];
+    work->effect = efx;
+    BattleFx_BeginCanvasLayer(0);
+    BattlePres_ConfigureEffectDisplay();
+    PLTT_BACKDROP = 0;
+    *(u16 *)0x05000002 = 0;
+    Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, 0x480);
+    Runtime_SetIrqHandler(2, 0, (s32)Graphics_SetBg2AffineScaleHalf);
+    work->transfer_mode = 0;
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    REG_WININ = 0x2137;
+    BattleEffect_WipeCanvas(1, 0);
+    REG_WIN0H = 0xf0f0;
+    BattleFx_SelectLivingTargets(work->effect);
+    BattleFx_SpawnObjects(8, 0x17a, 1);
+    gProjection.center_y = 240;
+    WaitFrames(1);
+    BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, aux, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet + 0x4e20, 0, 0);
+    REG_DISPCNT = 0x7741;
+    REG_BG2PA = 0x80;
+    REG_BLDALPHA = 0x1010;
+    REG_BLDCNT = 0x3f44;
+    step = 1;
+    px = 140 << 17;
+    py = 200 << 16;
+    vx = -0x40000;
+    vy = -0x80000;
+    scroll = gBgScroll.unk04;
+    spot = (s32 *)cache[44 - 40];
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    spot[4] = 1;
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+    blit[0] = (DrawRectangle)cache[46 - 40];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+    blit[1] = (DrawRectangle)cache[47 - 40];
+    REG_BG2CNT = 0x784;
+
+    for (i = 0; i != 1024; i++) {
+        PARTICLES[i].variant = -1;
+    }
+    for (i = 0, q1 = work->particles; i != 32; i++, q1++) {
+        s32 a = (Random16() & 0x3fff) + 0x8000;
+        s32 r = (Random16() & 127) + 255;
+        q1->x = (Trig_Sin(a) * r) >> 2;
+        q1->y = (Trig_Cos(a) * r) >> 2;
+        q1->velocity_x = -q1->x / 32;
+        q1->velocity_y = -q1->y / 32;
+        q1->variant = 0;
+    }
+    for (i = 0; i != 712; i++) {
+        s32 r = Random16() & 255;
+        s32 a = Random16() & 0xffff;
+        PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + 0x800000;
+        PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
+        PARTICLES[i].velocity_x = (-(Random16() & 0x1fff) - 0x800) << 5;
+        PARTICLES[i].velocity_y = (-(Random16() & 0xfff) - 0x1800) << 5;
+        PARTICLES[i].variant = 0;
+    }
+
+    frame = 0;
+    do {
+        if (frame == 24) {
+            AudioCommand_PlayFar(162);
+        }
+        if (frame == 76) {
+            AudioCommand_PlayFar(164);
+        }
+        if (frame == 154) {
+            AudioCommand_PlayFar(142);
+        }
+        if (frame == 222) {
+            AudioCommand_PlayFar(145);
+        }
+        if (frame >= 0 && frame < 16) {
+            u16 *phase = (u16 *)Ram_MapCellBuffer;
+            if (frame == 1) {
+                u8 *noise = gMapCellBuffer + 2;
+                s32 k;
+                for (k = 0; k != 128; k++) {
+                    noise[k] = Random16() & 63;
+                }
+                *phase = 0;
+                Scheduler_AddOrUpdateCallback(BattleFx_BuildWindowEdgeTable, 0x480);
+            }
+            *phase += step;
+            step += 3;
+            if (frame == 15) {
+                Scheduler_RemoveCallback(BattleFx_BuildWindowEdgeTable);
+            }
+        }
+
+        if (frame > 21) {
+            scale = BattleFx6_UnitScale;
+            if (frame <= 83) {
+                if (frame > 48) {
+                    vx = vx * 60 / 64;
+                }
+                vy = vy * 60 / 64;
+                if (py > 0x840000) {
+                    vy -= 0x2000;
+                } else {
+                    vy += 0x2000;
+                }
+                px += vx;
+                py += vy;
+            } else if (frame <= 170) {
+                if (frame <= 107) {
+                    vx += 0x2000;
+                }
+                vx = vx * 60 / 64;
+                px += vx;
+                if (frame <= 117) {
+                    if (py > 0x8a0000) {
+                        vy -= 0x2000;
+                    } else {
+                        vy += 0x2000;
+                    }
+                    vy = vy * 56 / 64;
+                    py += vy;
+                }
+            }
+            pos[3] = 0;
+            pos[1] = 0;
+            for (i = 0; i != 8; i++) {
+                pos[0] = (((BattleFx6_ObjectX[i] * 3) >> 1) << 16) + px - 0x200000;
+                pos[2] = (((BattleFx6_ObjectY[i] * 3) >> 1) << 16) + py - 0x180000;
+                Object_ApplyProjectedPlacementFar(work->objects[i], pos, &scale, 0);
+            }
+        }
+
+        if (frame == 76) {
+            for (i = 0; i != 1024; i++) {
+                if (PARTICLES[i].variant == -1) {
+                    s32 r = Random16() & 255;
+                    s32 a = Random16() & 0xffff;
+                    PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + 0x400000;
+                    PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
+                    PARTICLES[i].velocity_x = (32 - (Random16() & 63)) << 12;
+                    PARTICLES[i].velocity_y = (-(Random16() & 31) - 16) << 13;
+                    PARTICLES[i].variant = 0;
+                }
+            }
+        }
+        if (frame == 152) {
+            Runtime_SetIrqHandler(2, 96, (s32)Graphics_SetBg2AffineScaleHalf);
+            work->fade_frames = 24;
+            work->fade_step = 0;
+        }
+
+        t = frame - 152;
+        if (t >= 0 && t < 88) {
+            for (i = 0, q2 = work->particles; i != 32; i++, q2++) {
+                if (frame >= i / 4 + 152 && frame < i / 4 + 152 + 32) {
+                    s32 fx = HI(q2->x) + 112;
+                    s32 fy = HI(q2->y) + 62;
+                    s32 r = (i & 3) + 5;
+                    s = r * 2;
+                    blit[0](dst, work->sheet + BattleFx6_FlareCells[r - 1] + 0x4e20, fx - r, fy - r, s, s);
+                    q2->x += q2->velocity_x;
+                    q2->y += q2->velocity_y;
+                }
+            }
+        }
+
+        if (frame == 222) {
+            for (i = 0; i != 64; i++) {
+                q3 = &work->particles[i];
+                q3->x = (Random16() & 15) - 8;
+                q3->y = (Random16() & 15) - 8;
+                if (q3->x < 0) {
+                    q3->x -= 4;
+                } else {
+                    q3->x += 4;
+                }
+                if (q3->y < 0) {
+                    q3->y -= 4;
+                } else {
+                    q3->y += 4;
+                }
+                q3->x += 100;
+                q3->y += 52;
+                q3->velocity_x = -6;
+                q3->z = q3->x;
+                q3->velocity_y = q3->y;
+                q3->variant = 0;
+            }
+        }
+        if (frame > 221) {
+            for (i = 0; i != 64; i++) {
+                u16 *cells = BattleFx6_FlareCells;
+                s32 r = 1;
+                if (frame >= i / 2 + 222) {
+                    blit[0](dst, work->sheet + cells[r - 1] + 0x4e20,
+                        work->particles[i].x - r, work->particles[i].y - r, r * 2, r * 2);
+                    work->particles[i].x += work->particles[i].velocity_x;
+                    work->particles[i].y += work->particles[i].velocity_y;
+                    if (work->particles[i].y < 0) {
+                        work->particles[i].y = work->particles[i].velocity_y;
+                        work->particles[i].x = work->particles[i].z;
+                    }
+                }
+            }
+        }
+
+        if (frame > 175) {
+            n = 5;
+            if (frame > 221) {
+                n = 60;
+                if (frame != 223 && frame != 224) {
+                    n = 40;
+                }
+            }
+            if (n > 60) {
+                n = 60;
+            }
+            for (i = 0; i != n; i++) {
+                s32 w;
+                s32 d = (i + 1) / 2;
+                w = n * 2 - d * 4;
+                if (w < 12) {
+                    w = 12;
+                }
+                if (w > 63) {
+                    w = 63;
+                }
+                if (i & 1) {
+                    d = -d;
+                }
+                BattleFx_DrawClippedCanvasLine(d + 48, 0, d / 2 + 111, 63 - (d + 1) / 2, w);
+            }
+        }
+
+        if (t >= 0 && t < 40) {
+            s32 z;
+            z = t / 2 + 1;
+            if (z > 4) {
+                z = 4;
+            }
+            blit[1](dst, work->sheet + BattleFx6_FlareCells[z - 1] + 0x4e20, 108 - z, 60 - z, z * 2, z * 2);
+        }
+        if (frame >= 192 && frame < 200) {
+            s32 z;
+            z = (frame - 192) / 2 + 3;
+            if (z > 6) {
+                z = 6;
+            }
+            blit[1](dst, work->sheet + BattleFx6_FlareCells[z - 1] + 0x4e20, 108 - z, 60 - z, z * 2, z * 2);
+        }
+        if (frame > 199) {
+            s32 z;
+            s32 u = frame - 200;
+            z = u / 4 + 5;
+            if (z > 8) {
+                z = 8;
+            }
+            blit[1](dst, work->sheet + BattleFx6_FlareCells[z - 1] + 0x4e20, 108 - z, 60 - z, z * 2, z * 2);
+            if (frame <= 213) {
+                z = u / 4 + 1;
+                if (z > 4) {
+                    z = 4;
+                }
+                blit[1](dst, work->sheet + BattleFx6_FlareCells[z - 1] + 0x4e20, 100 - z, 52 - z, z * 2, z * 2);
+            }
+        }
+        if (frame >= 214 && frame < 222) {
+            s32 z;
+            z = (frame - 214) / 4;
+            if (z > 2) {
+                z = 2;
+            }
+            blit[1](dst, work->sheet + z * 9 * 256 + 0x400, 63, 18, 48, 48);
+        }
+        if (frame > 221) {
+            s32 z;
+            z = (frame - 222) / 2 % 4 + 3;
+            blit[0](dst, work->sheet + z * 9 * 256 + 0x400, 72, 30, 48, 48);
+            if (z == 5) {
+                blit[0](dst, work->sheet + 0x1600, 66, 22, 48, 48);
+            }
+        }
+
+        if (frame > 27) {
+            DrawRectangle draw = blit[1];
+            for (i = 0; i != 1024; i++) {
+                s32 m = 3;
+                if (PARTICLES[i].variant >= 0) {
+                    s32 k = i % 3 + 2;
+                    draw(dst, aux + ParticleStreams_CellOffsets[k - 1],
+                        HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k, k * 2);
+                    EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62, BattleFx6_Gravity[i & m]);
+                    PARTICLES[i].variant++;
+                    if (PARTICLES[i].velocity_y > 0 && HI(PARTICLES[i].y) > 104) {
+                        PARTICLES[i].variant = -1;
+                    }
+                }
+            }
+        }
+        for (i = 0; i != 5; i++) {
+            blit[1](dst, work->sheet, i * 32 + ((frame / 4) & 31) - 32, 88, 32, 32);
+        }
+        work->transfer_pending = 1;
+        WaitFrames(1);
+    } while (++frame != 244 && (frame <= 16 || !(gKeysRepeat & (KEY_A | KEY_B))));
+
+    gBgScroll.unk04 = scroll;
+    spot[4] = 0;
+    Runtime_SetIrqHandler(2, 0, 0);
+    BattleEffect_SetupBlendedDisplay();
+    Scheduler_RemoveCallback(Graphics_ResetBg2Pa);
+    REG_WIN0H = 0xf0;
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    for (i = 0; i != 1024; i++) {
+        PARTICLES[i].variant = 0;
+    }
+    for (i = 0; i != 16; i++) {
+        work->particles[i].x = (Random16() & 31) + 32;
+        work->particles[i].y = 0;
+        work->particles[i].variant = 0;
+    }
+    for (i = 0; i != work->effect->count; i++) {
+        EffectPosition_ApplyStepAndYOffset(work->effect->actors[i], (struct EffectPosition *)seat);
+        work->particles[i].x = seat[0] / 2;
+    }
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1, 1);
+    AudioCommand_PlayFar(0x121);
+    REG_BG2PA = 0x80;
+    REG_BLDALPHA = 0x1010;
+
+    frame = 0;
+    do {
+        if (frame == 96) {
+            BattleEventRuntime_BeginPhaseFar(134);
+        }
+        for (i = 0; i != 5; i++) {
+            q4 = &work->particles[i];
+            if (frame == i * 16 + 7) {
+                AudioCommand_PlayFar(154);
+            }
+            if (frame >= i * 16 && q4->variant <= 31) {
+                s32 wobble = frame * 16 % 104;
+                blit[1](dst, work->sheet, q4->x - 8, q4->y + wobble - 216, 17, 104);
+                blit[1](dst, work->sheet, q4->x - 8, q4->y + wobble - 112, 17, 104 - wobble);
+                blit[1](dst, work->sheet + 0x6e8, q4->x - 17, q4->y - 65, 34, 65);
+                if (q4->y <= 111) {
+                    q4->y += 16;
+                } else {
+                    q4->variant++;
+                }
+                if (q4->y > 111) {
+                    burst = 0;
+                    bx = q4->x;
+                    if (q4->variant <= 7) {
+                        work->shake_frames = 4;
+                    }
+                    for (j = 0; j != 1024; j++) {
+                        if (PARTICLES[j].variant == 0) {
+                            s32 r = 0x3ff;
+                            s32 a;
+                            r &= Random16();
+                            a = (Random16() & 0x7fff) - 0x4000;
+                            PARTICLES[j].x = bx << 16;
+                            PARTICLES[j].y = ground << 16;
+                            r += 32;
+                            PARTICLES[j].velocity_x = (Trig_Sin(a) * r) >> 7;
+                            PARTICLES[j].velocity_y = -(Trig_Cos(a) * r * 2) >> 7;
+                            PARTICLES[j].variant = (Random16() & 7) + 32;
+                            if (++burst == 4) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (i = 0; i != work->effect->count; i++) {
+            if (frame == i * 16 + 8) {
+                ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 8);
+                BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 2);
+            }
+        }
+        for (i = 0; i != 1024; i++) {
+            if (PARTICLES[i].variant > 0) {
+                s32 x;
+                s32 y;
+                PARTICLES[i].variant--;
+                EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 60, 0x4000);
+                y = PARTICLES[i].y >> 16;
+                if (y > 120) {
+                    PARTICLES[i].velocity_y = -PARTICLES[i].velocity_y / 2;
+                } else if (PARTICLES[i].x >= 0 && (x = PARTICLES[i].x >> 16) <= 126 && PARTICLES[i].y >= 0) {
+                    s32 k = PARTICLES[i].variant / 8 + 3;
+                    blit[i & 1](dst, aux + ParticleStreams_CellOffsets[k - 1], x - k / 2, y - k, k, k * 2);
+                }
+            }
+        }
+        Camera_ApplyShake(4, 8);
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+    } while (++frame != 144);
+
+    for (i = 0; i != 8; i++) {
+        ResourceObject_ReleaseFar(work->objects[i]);
+    }
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+    BattleFx_EndCanvasLayer();
+}

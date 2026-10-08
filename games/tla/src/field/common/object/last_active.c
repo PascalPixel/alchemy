@@ -1,0 +1,19 @@
+#include "types.h"
+#include "ram_buffer.h"
+#include "eventwrk.h"
+
+s32 ObjectTable_FindLastActiveId(void)
+{
+    struct EventWork *work = Ram_HeapSlots->event_work;
+    s32 last = 7;
+    s32 i;
+
+    for (i = 8; i <= 63; i++) {
+        if (work->objects[i] != NULL)
+            last = i;
+    }
+    last++;
+    if (last == 64)
+        last = -1;
+    return last;
+}

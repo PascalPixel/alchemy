@@ -1,8 +1,8 @@
-#include "MEM.H"
-#include "TYPES.H"
+#include "mem.h"
+#include "types.h"
 
 #define ALCHEMY_TYPES_H
-#include "../../../../games/THE BROKEN SEAL/INCLUDE/DMA.H"
+#include "../../../../games/tbs/include/dma.h"
 
 struct Particle {
     s32 x;

@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 void UiText_LoadRemappedGlyph(u8 *base, u32 value, s32 slot_a, s32 slot_b);
 s32 Resource_LoadIndexedIntoBuffer(u16 packed, u32 value);

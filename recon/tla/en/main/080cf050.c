@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "OBJECT_RUNTIME.H"
+#include "types.h"
+#include "object_runtime.h"
 
 s32 EventRuntime_GetControlledOwner(void);
 s32 ArcTan2(s32 y, s32 x);

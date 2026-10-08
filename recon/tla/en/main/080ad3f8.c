@@ -1,8 +1,8 @@
-#include "MEM.H"
-#include "TYPES.H"
-#include "ITEM.H"
-#include "GAME_FLAGS.H"
-#include "OWNER_STATE.H"
+#include "mem.h"
+#include "types.h"
+#include "item.h"
+#include "game_flags.h"
+#include "owner_state.h"
 
 struct OwnerStats {
     u8 unknown_000[0x10];

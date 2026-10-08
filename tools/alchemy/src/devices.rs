@@ -109,12 +109,12 @@ pub(crate) fn summary(counts: &Counts, game: &str) -> String {
 }
 
 pub(crate) fn count(root: &Path) -> Result<Counts, String> {
-    let games = [("tbs", "games/THE BROKEN SEAL", CompilerTarget::Tbs), ("tla", "games/THE LOST AGE", CompilerTarget::Tla)];
+    let games = [("tbs", "games/tbs", CompilerTarget::Tbs), ("tla", "games/tla", CompilerTarget::Tla)];
     let mut sources: Vec<(String, String)> = Vec::new();
     for entry in walkdir::WalkDir::new(root.join("games")).sort_by_file_name() {
         let entry = entry.map_err(|e| e.to_string())?;
         let path = entry.path().strip_prefix(root).unwrap_or(entry.path()).to_string_lossy().into_owned();
-        if !(path.ends_with(".C") || path.ends_with(".H")) {
+        if !(path.ends_with(".c") || path.ends_with(".h")) {
             continue;
         }
         let text = fs::read(entry.path()).map_err(|e| format!("{path}: {e}"))?;
@@ -139,10 +139,10 @@ pub(crate) fn count(root: &Path) -> Result<Counts, String> {
     }
     for (path, text) in &sources {
         for (game, folder, target) in &games {
-            if !(path.starts_with(folder) || path.starts_with("games/COMMON")) {
+            if !(path.starts_with(folder) || path.starts_with("games/common")) {
                 continue;
             }
-            if path.ends_with(".C")
+            if path.ends_with(".c")
                 && matches!(
                     family_for_source(*target, path),
                     CompilerFamily::Agbcc | CompilerFamily::AgbccFlash | CompilerFamily::AgbccArm

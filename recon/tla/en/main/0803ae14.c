@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "FIXED_MATH.H"
+#include "types.h"
+#include "fixed_math.h"
 
 u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width)
 {

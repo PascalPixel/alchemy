@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "PALBUF.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "palbuf.h"
+#include "ram_buffer.h"
 
 void BattleFx_PackTargetBuffer(void)
 {

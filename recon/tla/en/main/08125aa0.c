@@ -1,6 +1,6 @@
-#include "FIXED_MATH.H"
-#include "TYPES.H"
-#include "SYSTEM.H"
+#include "fixed_math.h"
+#include "types.h"
+#include "system.h"
 
 void Blend_SetDarkenTarget16(s32 arg0);
 

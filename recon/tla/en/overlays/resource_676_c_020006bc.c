@@ -4,7 +4,7 @@
  * by its first argument's register. The case structure (each step moves
  * the actor and ends with its own increment and return, odd steps wait for
  * arrival) and the state switch match. */
-#include "TYPES.H"
+#include "types.h"
 
 struct Ov676Object {
     u8 unknown_00[8];

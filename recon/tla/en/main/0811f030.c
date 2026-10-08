@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "MOTOBJ.H"
+#include "types.h"
+#include "motobj.h"
 
 struct MotionRecordChild {
     u8 unknown_00[5];

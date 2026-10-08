@@ -1,7 +1,7 @@
-#include "IWRAM_CALL.H"
-#include "OBJDISP.H"
-#include "SYSTEM.H"
-#include "FIXED_MATH.H"
+#include "iwram_call.h"
+#include "objdisp.h"
+#include "system.h"
+#include "fixed_math.h"
 
 extern const u8 BattleFx_CommonParticleScript[];
 

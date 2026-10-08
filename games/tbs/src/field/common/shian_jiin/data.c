@@ -1,0 +1,357 @@
+#include "types.h"
+#include "ability_ids.h"
+#include "field_event.h"
+#include "field_scene.h"
+#include "item_ids.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
+
+void FieldScene_DispatchApproachByFacing(void);
+void FieldScene_DispatchByFacing(void);
+void FieldScene_DispatchByFacingAndFlags(void);
+void FieldScene_DispatchByRange(void);
+void FieldScene_PlaySound123AndEnable(void);
+void FieldScene_RunFlag88FBranch(void);
+void FieldScene_RunRoofSceneExit(void);
+void FieldScene_RunScene39eSequenceA(void);
+void FieldScene_RunSkippableStoryBeat(void);
+void FieldScene_ShowDialogue17B1(void);
+void FieldScene_ShowDialogue17DF(void);
+void FieldScene_ShowDialogue1825(void);
+void FieldScene_ShowDialogue182D(void);
+void FieldScene_ShowDialogue1A58(void);
+void Scene_RunActorNineTransition(void);
+void Scene_RunScene39eSequenceB(void);
+void ShianJiin_AskBridgeCrossing(void);
+void ShianJiin_RunExitTransition(void);
+void ShianJiin_RunTempleWalkScene(void);
+void StartSchoolDoorEvent(void);
+void StopXianActor(void);
+
+s32 gEffectScript0[] = {
+	SC_WAIT(1),
+	SC_LOOP(22, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 gEffectScript1[] = {
+	SC_WAIT(1),
+	SC_LOOP(44, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 gEffectScript2[] = {
+	SC_WAIT(1),
+	SC_LOOP(126, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 *gEffectScripts[] = {
+	gEffectScript0,
+	gEffectScript1,
+	gEffectScript2,
+};
+
+s32 ShianJiin_ActorTwelveScript[] = {
+	SC_ARG(0),
+	SC_SET(SW_GRAVITY, 0x9999),
+	SC_LABEL(1),
+	SC_SET(SW_VELOCITY_Y, 0x30000),
+	SC_WAIT(30),
+	SC_SET(SW_VELOCITY_Y, 0x40000),
+	SC_WAIT(30),
+	SC_SET(SW_VELOCITY_Y, 0x50000),
+	SC_SET(SW_FACING, FACING_SOUTH),
+	SC_WAIT(2),
+	SC_SET(SW_FACING, 0x5000),
+	SC_WAIT(2),
+	SC_SET(SW_FACING, FACING_WEST),
+	SC_WAIT(2),
+	SC_SET(SW_FACING, 0xb000),
+	SC_WAIT(2),
+	SC_SET(SW_FACING, FACING_NORTH),
+	SC_WAIT(2),
+	SC_SET(SW_FACING, 0xd000),
+	SC_WAIT(2),
+	SC_SET(SW_FACING, FACING_EAST),
+	SC_WAIT(2),
+	SC_SET(SW_FACING, 0x3000),
+	SC_WAIT(2),
+	SC_SET(SW_FACING, FACING_SOUTH),
+	SC_WAIT(2),
+	SC_WAIT(60),
+	SC_LOOP(SC_FOREVER, SC_TO(1)),
+	SC_END,
+};
+
+s32 gShianJiinPlacement1[] = {
+	SC_CALL(StopXianActor),
+	SC_WAIT(1),
+	SC_END,
+};
+
+u16 ShianJiin_CellStepsA[] = {
+	MAP_CELL_STEP(66, 46, 3, 2, 5), MAP_CELL_STEP(63, 46, 3, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 ShianJiin_CellStepsB[] = {
+	MAP_CELL_STEP(62, 19, 2, 2, 5), MAP_CELL_STEP(64, 19, 2, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 ShianJiin_CellStepsC[] = {
+	MAP_CELL_STEP(62, 19, 2, 2, 5), MAP_CELL_STEP(60, 19, 2, 2, 5), MAP_CELL_STEPS_END,
+};
+
+struct SceneEntrance gShianJiinEntrances1[] = {
+	{ 0, CONDITION_ALWAYS, 296, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 296, 0, 504, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 2, CONDITION_ALWAYS, 296, 0, 304, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 3, CONDITION_ALWAYS, 168, 0, 360, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 5, CONDITION_ALWAYS, 232, 0, 328, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gShianJiinEntrancesOther[] = {
+	{ 0, CONDITION_ALWAYS, 168, 0, 552, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 168, 0, 552, FACING_NORTH, 0, 48, 384, 288, 576, 0 },
+	{ 2, CONDITION_ALWAYS, 256, 0, 264, FACING_NORTH, 0, 48, 80, 368, 288, 0 },
+	{ 3, CONDITION_ALWAYS, 472, 0, 552, FACING_NORTH, 0, 352, 384, 592, 576, 0 },
+	{ 4, CONDITION_ALWAYS, 304, 0, 248, FACING_SOUTH, 0, 48, 80, 368, 288, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 ShianJiin_XianMessages[] = {
+	SCENE_EXITS(60),
+	SCENE_EXIT(1, 2, 12),
+	SCENE_EXIT(2, 61, 1),
+	SCENE_EXIT(3, 62, 1),
+	SCENE_EXIT(0, 61, 0),
+	SCENE_EXIT(1, 60, 2),
+	SCENE_EXIT(2, 72, 10),
+	SCENE_EXIT(3, 88, 2),
+	SCENE_EXIT(4, 73, 8),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement gShianJiinPlacements1[] = {
+	{ 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
+		PIXELS(296), 0, PIXELS(440), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x95, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(168), 0, PIXELS(360), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x97, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(272), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x97, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(392), 0, PIXELS(392), FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x97, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(312), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(232), 0, PIXELS(312), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gShianJiinPlacements[] = {
+	{ 0x33, 0x0, ACTOR_STAND,
+		PIXELS(168), 0, PIXELS(472), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x6c, 0x0, ACTOR_STAND,
+		PIXELS(216), 0, PIXELS(264), FACING_NORTH, TALK_FACE_PARTY, 0 },
+	{ 0x82, 0x0, ACTOR_STAND,
+		PIXELS(120), 0, PIXELS(200), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x83, 0x0, ACTOR_STAND,
+		PIXELS(152), 0, PIXELS(152), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x83, 0x0, (s32)ShianJiin_ActorTwelveScript,
+		PIXELS(120), 0, PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x83, 0x0, ACTOR_STAND,
+		PIXELS(176), 0, PIXELS(168), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x66, 0x0, ACTOR_STAND,
+		PIXELS(168), 0, PIXELS(264), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x82, 0x0, ACTOR_STAND,
+		PIXELS(216), 0, PIXELS(152), FACING_SOUTHEAST, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x82, 0x0, ACTOR_STAND,
+		PIXELS(176), 0, PIXELS(216), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x27, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x28, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0xcd, CONDITION_ALWAYS, 7,
+		PIXELS(232), 0, PIXELS(168), FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x16, CONDITION_ALWAYS, (s32)gShianJiinPlacement1,
+		PIXELS(232), 0, PIXELS(168), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gShianJiinPlacementsEntrance3[] = {
+	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+	{ 0x3d, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(472), 0, PIXELS(472), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x97, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(440), 0, PIXELS(536), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x27, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent gShianJiinEvents1[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(ShianJiin_RunExitTransition) },
+	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene39eSequenceA) },
+	{ EVENT_TOUCH, 5, 0x894, EVENT_SCRIPT(Scene_RunActorNineTransition) },
+	{ EVENT_TALK, 8, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinTheFuchinTempleIsAPleasant) },
+	{ EVENT_TALK, 9, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinOhRobinWhatTookYouSo) },
+	{ EVENT_TALK, 10, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinAhhhMasterNyunpaHeHasPassed) },
+	{ EVENT_TALK, 11, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinMasterNyunpaHasWastedAwayAt) },
+	{ EVENT_TALK, 12, IF_FLAG_SET(0x88f), EVENT_SCRIPT(FieldScene_RunFlag88FBranch) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ShianJiin_AskBridgeCrossing) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ShianJiin_AskBridgeCrossing) },
+	{ EVENT_TALK, 9, 0x891, MSGNO(MsgShianJiinOmOmBlueLightsInThe) },
+	{ EVENT_TALK, 9, 0x892, EVENT_SCRIPT(ShianJiin_RunTempleWalkScene) },
+	{ EVENT_TALK, 9, 0xf14, MSGNO(MsgShianJiinTheTestOfFuchinFallsIs) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShianJiinMasterNyunpaIsWaitingForYou) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShianJiinGemsFromTheSkyBlueLights) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgShianJiinNyunpaHasNotEatenInDays) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFlag88FBranch) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByRange) },
+	{ SEARCH(SEARCH_UNNAMED), 110, 0x350, FIND_PSYNERGY_STONE },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinGemsFallingFromTheSkyMountains) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinIKnewMasterNyunpaWasFasting) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinMasterNyunpaReachedEnlightenmentDuringHis) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinMasterNyunpaIsNothingButSkin) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinHeCantLeaveUsYetHe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x890, MSGNO(MsgShianJiinIBeginningToThinkIllBe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShianJiinIDontFeelSafeGoingHome) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x891, MSGNO(MsgShianJiinManyStarsFellFromTheSky) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x892, MSGNO(MsgShianJiinCanSuchYoungWarriorsEndureThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0xf14, MSGNO(MsgShianJiinCanSuchYoungWarriorsEndureThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShianJiinTheWarriorsHaveMasteredTheSecrets) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgShianJiinThereIsNoPointInTraining) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgShianJiinICantImagineFastingItGets) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgShianJiinIWillTrainToBecomeA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgShianJiinSinceImHereIdLikeTo) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gShianJiinEvents[] = {
+	{ 0x4402, 1, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaySound123AndEnable) },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(StartSchoolDoorEvent) },
+	{ EVENT_TALK, 8, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiin) },
+	{ EVENT_TALK, 8, IF_FLAG_SET(0x893), MSGNO(MsgShianJiinUseThisEnergyToFindThe) },
+	{ EVENT_TALK, 8, IF_FLAG_SET(0x891), MSGNO(MsgShianJiinSpeakToTheMonkStandingBeneath) },
+	{ EVENT_TALK, 8, IF_FLAG_SET(0x300), EVENT_SCRIPT(Scene_RunScene39eSequenceB) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgShianNyunpaMeditates) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x88f), EVENT_SCRIPT(FieldScene_ShowDialogue17DF) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x893), MSGNO(MsgShianJiinNowThatIHavePassedMy) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, IF_FLAG_SET(0x891), EVENT_SCRIPT(FieldScene_ShowDialogue17B1) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunScene39eSequenceB) },
+	{ EVENT_TALK, 9, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinThisIsMasterFehsKungFu) },
+	{ EVENT_TALK, 10, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinBouldersOvercameHsuKungFuShould) },
+	{ EVENT_TALK, 11, IF_FLAG_SET(0x895), EVENT_SCRIPT(FieldScene_ShowDialogue1A58) },
+	{ EVENT_TALK, 12, IF_FLAG_SET(0x895), EVENT_SCRIPT(FieldScene_RunRoofSceneExit) },
+	{ EVENT_TALK, 14, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinFeizhiPredictedHsusDangerHerProphecy) },
+	{ EVENT_TALK, 16, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinHsuIsRestingFeizhiIsWatching) },
+	{ EVENT_TALK, 18, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinPracticeEveryoneChiHasItsLimits) },
+	{ EVENT_TALK, 9, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinWarriorYouAreGreatYouHave) },
+	{ EVENT_TALK, 10, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinEveryoneWantsToLearnTheChi) },
+	{ EVENT_TALK, 11, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinConcentrateEnergyIntoTheHandsAnd) },
+	{ EVENT_TALK, 12, IF_FLAG_SET(0x89b), EVENT_SCRIPT(FieldScene_RunRoofSceneExit) },
+	{ EVENT_TALK, 13, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinIDidNotThinkMuchOf) },
+	{ EVENT_TALK, 14, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinWhereDidFeizhiGoIAm) },
+	{ EVENT_TALK, 15, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinMasterHsuIsLateICan) },
+	{ EVENT_TALK, 16, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinIWillLearnChiIWill) },
+	{ EVENT_TALK, 18, IF_FLAG_SET(0x301), MSGNO(MsgShianJiinWarriorUseYourChiFromThe) },
+	{ EVENT_TALK, 16, IF_FLAG_SET(0x301), MSGNO(MsgShianJiinWarriorPleaseUseYourChiFrom) },
+	{ EVENT_TALK, 18, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinWarriorLetMeSeeYourChi) },
+	{ EVENT_TALK, 13, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinFeizhiIsGoneItIsDangerous) },
+	{ EVENT_TALK, 14, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinFeizhiIsStrongerThanSheLooks) },
+	{ EVENT_TALK, 15, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinWarriorShowUsYourChiLike) },
+	{ EVENT_TALK, 16, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinWarriorThatWasGreatButMaster) },
+	{ EVENT_TALK, 18, IF_FLAG_SET(0x899), EVENT_SCRIPT(FieldScene_RunSkippableStoryBeat) },
+	{ EVENT_TALK, 13, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinFeizhiIsGoneItIsDangerousOutside) },
+	{ EVENT_TALK, 14, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinFeizhiIsStrongerThanSheLooksShe) },
+	{ EVENT_TALK, 15, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinIKnowWhyYouCanUse) },
+	{ EVENT_TALK, 16, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinWarriorChiIsAGreatPower) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_ShowDialogue1825) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShianJiinStrongKicksAreVeryImportantKick) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgShianJiinIWantToLearnSoI) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunRoofSceneExit) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgShianJiinEveryoneInXianCanDoMartial) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgShianJiinJustListeningDoesNotMakeOne) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_ShowDialogue182D) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgShianJiinMasterFehIsVeryBusyHe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinPeaceHasReturnedToXianBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinNoMatterHowMuchYouPractice) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinTheMonstersAreVeryLargeStriking) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinWhenABoulderFallsJumpRepeat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinWhereDidFeizhiGainThePower) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinMasterFehIsVeryWorriedAbout) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinCanSuchAYoungWarriorReally) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinYourChiIsFuchinTemplesHow) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinIDontCareWhichChiIt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinMasterHamasChiCanShatterBoulders) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinFollowSilkRoadStraightPassThrough) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinWarriorYouUseWeaponsAndChi) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinFeizhiIsNotInTheFeh) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinFeizhiWorriesOnlyAboutMasterHsu) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinLearningChiIsVeryHardMaster) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x301), MSGNO(MsgShianJiinWarriorTheRulesRequireYouTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x301), MSGNO(MsgShianJiinSoCloseWarriorUseChiFrom) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinWarriorShowMeYourChiI) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinFeizhiIKnowIKnowHow) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinMyKickAndPunchAreVery) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinShowUsYourChiNowDo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinIAmShockedThatThisWarrior) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinIWantToSeeTheChi) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinFeizhiIKnowHowYouFeel) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinMyKickAndPunchAreVeryLoud) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinWarriorShowMeYourChiNow) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinWarriorDoNotHideYourChi) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShianJiinWarriorsFightWithWeaponsKungFu) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgShianJiinPracticingKicksHurtsMyFeetVery) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgShianJiinThatPunchWasGoodYouSurprise) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgShianJiinIMoveTooQuicklyYouCant) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgShianJiinWarriorsCameToLearnTheFeh) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgShianJiinGreatKickKickFromTheHip) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgShianJiinYouAreTheWarriorsWhoCame) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgShianJiinMasterFehIsTalkingWithFeizhi) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByFacing) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByFacing) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByFacing) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByFacing) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 19, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchApproachByFacing) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByFacingAndFlags) },
+	{ SEARCH(SEARCH_BARREL), 100, 0xf69, FIND_ITEM(ITEM_ANTIDOTE) },
+	{ SEARCH(SEARCH_JAR), 101, 0xf68, FIND_ITEM(0x10a) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gShianJiinEventsEntrance3[] = {
+	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 3 },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShianJiinMasterHamaIsMeditatingAskingFor) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgShianJiinTheFutureHoldsManyHardshipsBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShianJiinIDoNotThinkMasterHama) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShianJiinICannotSeeYourFutureClearly) },
+	{ SEARCH(SEARCH_JAR), 102, 0xf6a, FIND_COINS(6) },
+	{ SCENE_EVENTS_END },
+};
+
+s32 ShianJiin_ShotScript[] = {
+	SC_SET(SW_FACING, FACING_NORTH),
+	SC_WAIT(44),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};

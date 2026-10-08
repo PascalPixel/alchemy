@@ -1,4 +1,4 @@
-#include "SERIAL_RUNTIME.H"
+#include "serial_runtime.h"
 
 void SerialRuntime_WaitForTransferB(void)
 {

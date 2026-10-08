@@ -1,11 +1,11 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "MAP.H"
-#include "RESOURCE.H"
-#include "SYSTEM.H"
-#include "DMA.H"
-#include "IO_REG.H"
-#include "CALLBACK_SCHEDULER.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "map.h"
+#include "resource.h"
+#include "system.h"
+#include "dma.h"
+#include "io_reg.h"
+#include "callback_scheduler.h"
 
 extern void (*Data_030011f8)(void);
 extern char ResourceId_DefaultMapCells;

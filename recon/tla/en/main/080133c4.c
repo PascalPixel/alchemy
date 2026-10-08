@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "DMA.H"
-#include "IO_REG.H"
-#include "IRQ.H"
+#include "types.h"
+#include "dma.h"
+#include "io_reg.h"
+#include "irq.h"
 
 void Runtime_InstallIwramAndIrqs(void)
 {

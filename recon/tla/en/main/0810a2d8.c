@@ -1,5 +1,5 @@
-#include "PARTY_STATE.H"
-#include "BTLSYS.H"
+#include "party_state.h"
+#include "btlsys.h"
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 

@@ -1,0 +1,1037 @@
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "menu.h"
+#include "minigame.h"
+#include "sound.h"
+#include "system.h"
+#include "types.h"
+#include "io_reg.h"
+#include "callback_scheduler.h"
+#include "resource.h"
+#include "btltype.h"
+#include "menu_list.h"
+#include "text/msg_ids.h"
+#include "btlsys.h"
+#include "affine.h"
+#include "select.h"
+#include "effect_step.h"
+#include "btlwork.h"
+#include "fixed_math.h"
+#include "ui.h"
+#include "heap_state.h"
+struct BtlAct * BtlActGet(s32 action_id);
+
+#define UiWindow_DrawThreeTileColumn ((void (*)(struct UiWindow*,s32,s32,s32,s32))UiWindow_DrawThreeTileColumn)
+
+
+#define ACTION_ID_MASK 0x3fff
+
+
+
+s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
+{
+    struct UiRenderWork *render;
+    s32 drawn_page;
+    s32 page;
+    s32 drawn_row;
+    s32 cursor_handle;
+    struct BtlUnit *unit;
+    struct UiWindow *message_window;
+    s32 icon_count;
+    s32 preferred_row;
+    struct MenuPoint pos;
+    struct MenuCell *nav;
+    struct UiWindow *window;
+    s32 row;
+    s32 entry;
+    s32 tile;
+    s32 edge;
+    s32 range;
+    s32 result;
+    s32 i;
+    struct MenuSprite cursor;
+    struct MenuSprite *spr;
+    u16 buffer[64];
+    s32 handles[BATTLE_LIST_ROWS];
+    struct MenuSprite sprites[BATTLE_LIST_ROWS];
+    s32 glyph;
+
+    render = (struct UiRenderWork *)gWindowWork[0];
+    drawn_row = -1;
+    drawn_page = -1;
+    cursor_handle = Resource_LoadIntoFreeSlot(128);
+    unit = UnitGetFar(unit_id);
+    message_window = UiWindow_Create(0, 5, 30, 4, 42);
+    icon_count = BATTLE_LIST_ROWS;
+    /* FAKEMATCH: needed to match: a one-pass block restores the saved row before the list window */
+    do {
+        page = ((struct MenuCell *)gWindowWork[42])->page;
+        row = ((struct MenuCell *)gWindowWork[42])->row;
+        preferred_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
+    } while (0);
+    window = UiWindow_Create(9, 9, 21, BATTLE_LIST_ROWS * 2 + 1, 6);
+
+    for (i = 0; i < BATTLE_LIST_ROWS; i++) {
+        s32 y = i * 2;
+
+        spr = &sprites[i];
+        /* FAKEMATCH: the block that runs once keeps y = i * 2 first. */
+        do {
+            sprites[i].oam.word.attr01 = MENU_SPRITE_SIZE_16;
+            sprites[i].oam.word.attr23 = 0;
+        } while (0);
+        spr->oam.f.x = window->x * 8 + 8;
+        spr->oam.f.y = (y + window->y) * 8 + 4;
+    }
+
+    for (i = 0; i < BATTLE_LIST_ROWS; i++) {
+        handles[i] = Resource_LoadIntoFreeSlot(128);
+        sprites[i].oam.f.tile = Resource_GetBuffer(handles[i], -1);
+    }
+
+    Vram_CopyTile(0xf018, 0x200);
+    Vram_CopyTile(0xf018, 0x201);
+    Vram_CopyTile(0xf019, 0x210);
+    Vram_CopyTile(0xf019, 0x211);
+
+    spr = &cursor;
+    for (;;) {
+        if (page != drawn_page || row != drawn_row) {
+            render->menu_busy = 1;
+            Ui_SetRectHighlight(
+                window->x + 1,
+                window->y + drawn_row * 2 + 1,
+                window->width - 2,
+                1,
+                15);
+            Ui_FillVramBlockPattern();
+            if (count != 0) {
+#if EDITION_INTERNATIONAL
+                UiText_CopyMessageString(
+                    (actions[page + row] & ACTION_ID_MASK) +
+                        (s32)MsgAbilityDescription,
+                    buffer,
+                    52);
+#else
+                UiText_DecodeMessage(
+                    (actions[page + row] & ACTION_ID_MASK) +
+                        (s32)MsgAbilityDescription,
+                    buffer,
+                    32);
+#endif
+            } else {
+#if EDITION_INTERNATIONAL
+                UiText_CopyMessageString(MSGNO(MsgBattleNoPsynergy), buffer, 52);
+#else
+                UiText_DecodeMessage(MSGNO(MsgBattleNoPsynergy), buffer, 32);
+#endif
+            }
+            UiText_RenderWideStringAtOffset(buffer, message_window, 0, 4);
+            drawn_row = row;
+
+            if (page != drawn_page) {
+                RenderOutput_RedrawSavedRect(window);
+                for (i = 0; i < BATTLE_LIST_ROWS; i++) {
+                    struct BtlAct *action;
+
+                    entry = actions[page + i];
+                    if (entry == 0) {
+                        break;
+                    }
+                    action = BtlActGet(entry);
+                    UiWindow_SetTilemapEntry(window, 0xf01f, 11, i * 2, 0);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+                    UiWindow_SetTilemapEntry(window, 0xf005, 12, i * 2, 0);
+#else
+                    UiWindow_SetTilemapEntry(window, 0xf01e, 12, i * 2, 0);
+#endif
+                    Ability_LoadGlyph(
+                        entry & ACTION_ID_MASK, 0, &handles[i], &glyph, 1);
+                    sprites[i].oam.f.tile = glyph;
+
+                    if ((action->tgt_flg & ACTION_USABLE_IN_BATTLE) == 0) {
+                        UiWork_SetParamNibble(4);
+                    } else if (action->pp_cost > unit->ep) {
+                        UiWork_SetParamNibble(2);
+                    } else if (unit->fuuji != 0) {
+                        UiWork_SetParamNibble(9);
+                    }
+
+                    render->level = 5;
+                    UiText_DrawCharacterAtOffset(
+                        entry + (s32)MsgAbilityName,
+                        (struct RenderInput *)window, 16, i * 16);
+                    UiText_DrawNumberAtOffset(
+                        action->pp_cost, 2, (struct RenderInput *)window,
+                        104, i * 16);
+                    UiWork_SetParamNibble(15);
+                    render->level = 15;
+
+                    if (action->damage_class != 4) {
+                        UiWindow_SetTilemapEntry(
+                            window, action->damage_class + 0x5001, 15, i * 2, 0);
+                    }
+
+                    range = action->rng;
+                    if (range == 255) {
+                        range = 11;
+                    } else {
+                        range--;
+                    }
+                    UiWindow_DrawThreeTileColumn(window, 16, i * 2, range, 0);
+                }
+                icon_count = i;
+                drawn_page = page;
+            }
+
+            if (count > BATTLE_LIST_ROWS) {
+                for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
+                    tile = i + 0xf301;
+                    if (i == page / BATTLE_LIST_ROWS) {
+                        tile = i + 0xf30b;
+                    }
+                    UiWindow_SetTilemapEntry(
+                        window,
+                        tile,
+                        window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2,
+                        -1,
+                        0);
+                }
+            }
+
+            Ui_SetRectHighlight(
+                window->x + 1,
+                window->y + row * 2 + 1,
+                window->width - 2,
+                1,
+                14);
+            render->dirty = 1;
+            render->menu_busy = 0;
+        }
+
+        if (count > BATTLE_LIST_ROWS) {
+            for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
+                tile = i + 0xf301;
+                if ((gFrameCount & 15) <= 11) {
+                    if (i == page / BATTLE_LIST_ROWS) {
+                        tile = i + 0xf30b;
+                    }
+                }
+                UiWindow_SetTilemapEntry(
+                    window,
+                    tile,
+                    window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2,
+                    -1,
+                    0);
+            }
+            edge = -1;
+            UiWindow_SetTilemapEntry(
+                window, 0xf334, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
+            UiWindow_SetTilemapEntry(
+                window, 0xf335, window->width - 2, edge, 0);
+
+            /* FAKEMATCH: reload render work before its dirty-field offset. */
+            __asm__ volatile ("" : : "r" (render));
+            render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+        }
+
+        for (i = 0; i < icon_count; i++) {
+            Runtime_PushSlotEntry(&sprites[i], 240);
+        }
+
+        pos.x = window->x * 8 - 4;
+        pos.y = (row * 2 + window->y) * 8 + 20;
+        ((u32 *)spr)[1] = 0x40000000;
+        ((u32 *)spr)[2] = 0;
+        spr->oam.f.tile =
+            Resource_GetBuffer(cursor_handle, (s32)Resource_FixedBlockBTiles);
+        spr->oam.f.x = pos.x + ((gFrameCount & 4) >> 1) - 4;
+        spr->oam.f.y = pos.y - ((gFrameCount & 4) >> 2) - 8;
+        if (count != 0) {
+            Runtime_PushSlotEntry(spr, 242);
+        }
+
+        nav = gLinkCountdownWork;
+        nav->page = page;
+        nav->row = row;
+        nav->preferred_row = preferred_row;
+
+        if ((gKeyState & KEY_A) != 0) {
+            if (count != 0) {
+                result = page + row;
+                if ((BtlActGet(actions[result])->tgt_flg & ACTION_USABLE_IN_BATTLE) != 0) {
+                    break;
+                }
+                /* FAKEMATCH: a dead store here keeps the test above from being threaded past the break. */
+                result = -1;
+            } else {
+                result = -1;
+                break;
+            }
+        } else if (nav->active == 0 || (gKeyState & KEY_B) != 0) {
+            AudioCommand_PlayFar(113);
+            result = -1;
+            break;
+        }
+
+        if (count != 0) {
+            if ((gKeysRepeat & KEY_DOWN) != 0) {
+                AudioCommand_PlayFar(111);
+                row++;
+                if (row == BATTLE_LIST_ROWS || page + row == count) {
+                    row = 0;
+                }
+                preferred_row = row;
+            } else if ((gKeysRepeat & KEY_UP) != 0) {
+                AudioCommand_PlayFar(111);
+                row--;
+                if (row < 0) {
+                    if (page == (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS) {
+                        row = count - page - 1;
+                    } else {
+                        row = BATTLE_LIST_ROWS - 1;
+                    }
+                }
+                preferred_row = row;
+            } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
+                AudioCommand_PlayFar(111);
+                Runtime_SetMainState19();
+                if (page + BATTLE_LIST_ROWS >= count) {
+                    if (page != 0) {
+                        page = 0;
+                        row = preferred_row;
+                    }
+                } else {
+                    page += BATTLE_LIST_ROWS;
+                    row = preferred_row;
+                    if (page ==
+                        (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS) {
+                        row = count - page - 1;
+                        if (row > preferred_row) {
+                            row = preferred_row;
+                        }
+                    }
+                }
+            } else if ((gKeysRepeat & KEY_LEFT) != 0) {
+                AudioCommand_PlayFar(111);
+                Runtime_SetMainState19();
+                if (page != 0) {
+                    row = preferred_row;
+                    page -= BATTLE_LIST_ROWS;
+                } else {
+                    page = (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS;
+                    row = preferred_row;
+                    if (page != 0) {
+                        row = count - page - 1;
+                        if (row > preferred_row) {
+                            row = preferred_row;
+                        }
+                    }
+                }
+            }
+        }
+        WaitFrames(1);
+    }
+
+    UiWork_Finalize(message_window, 1);
+    UiWork_Finalize(window, 1);
+    WaitFrames(1);
+    for (i = 0; i < BATTLE_LIST_ROWS; i++) {
+        Resource_ResetEntry(handles[i]);
+    }
+    Resource_ResetEntry(cursor_handle);
+    WaitFrames(1);
+    return result;
+}
+
+struct CursorSlot {
+    u8 x;
+    u8 y;
+    u8 flags;
+    s8 index;
+};
+
+s32 BattleMotion_ProjectConditionalPositionFar(s32 id, s32 *out);
+s32 UiText_GetWideStringWidth(u16 *text);
+void UiText_DrawNumberInWindow(
+    s32 value, s32 digits, s32 work, s32 x, s32 y);
+
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+s32 System_GetLanguage(void);
+#endif
+
+s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
+{
+    u16 ids[8];
+    struct SelectionSprite entries[6];
+    struct CursorSlot tbl[6];
+    struct EffectPosition markPos;
+    u16 selIds[14];
+    u8 selSlot[8];
+    struct EffectPosition pos;
+    u16 name[15];
+    struct EffectPosition namePos;
+    struct EffectPosition targetPos;
+    struct AffineTransform efx;
+    struct BtlUnit *unit;
+    struct BtlWork *runtime;
+    struct UiWindow *window;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+    /* FAKEMATCH: register choice only: as an ordinary local the info window takes r9 and sel r10 (differ 98); the native has the window in r10 and sel in r9. */
+    register struct UiWindow *infoWin asm("r10");
+#else
+    /* FAKEMATCH: register choice only: as an ordinary local the info window is spilled and the frame shrinks to 320 bytes (differ 492); the native keeps it in r9. */
+    register struct UiWindow *infoWin asm("r9");
+#endif
+    s32 cursor;
+    s32 cnt;
+    s32 total;
+    s32 redraw;
+    s32 slotId;
+    s32 pending;
+    s32 matrix;
+    s32 found;
+    s32 column;
+    s32 rows;
+    s32 count;
+    s32 i;
+    s32 j;
+    s32 n;
+    s32 nx;
+    s32 ny;
+    s32 pressed;
+    s32 y;
+    s32 width;
+    s32 repeat;
+    s32 result;
+    struct CursorSlot *slot;
+    struct SelectionSprite *entry;
+    struct SelectionSprite *head;
+    struct BtlUnit *who;
+
+    runtime = BtlWk;
+    cnt = 0;
+    redraw = 0xFFFF;
+    slotId = Resource_LoadIntoFreeSlot(256);
+    infoWin = 0;
+    if (spread == 0)
+        spread = 1;
+    if (mode == 2 || mode == 4)
+        ((struct MenuCell **)&BtlWk)[48]->slide_offset = -2;
+    else
+        ((struct MenuCell **)&BtlWk)[48]->slide_offset = 16;
+    for (i = 0; i < 6; i++)
+        tbl[i].flags = 0;
+    cursor = -1;
+    if (mode == 2) {
+        for (i = 0; i <= 5 && runtime->party_units[i] != 0xFF; i++) {
+            ids[cnt] = runtime->party_units[i];
+            cnt++;
+        }
+    } else if (mode == 4) {
+        ids[0] = (u16)sel;
+        cnt = 1;
+    } else {
+        for (i = 0; i <= 5 && runtime->enm_no[i] != 0xFF; i++) {
+            ids[cnt] = runtime->enm_no[i];
+            cnt++;
+        }
+    }
+    ids[cnt] = 0xFF;
+    total = cnt;
+    if (mode == 2) {
+        if (spread != 0xFF && kind != 0) {
+            found = 0;
+            for (j = 0; j < cnt; j++) {
+                struct BtlUnit *st;
+
+                if (ids[j] == 0xFE)
+                    continue;
+                st = UnitGetFar(ids[j]);
+                switch (kind) {
+                case 5:
+                    if (st->hp == 0) {
+                        sel = ids[j];
+                        found = 1;
+                    }
+                    break;
+                case 3:
+                    if (st->doku != 0)
+                        found = 1;
+                    break;
+                case 4:
+                    if (st->maboroshi != 0 || st->shibire != 0
+                        || st->nemuri != 0 || st->fuuji != 0
+                        || st->shiryo != 0)
+                        found = 1;
+                    break;
+                case 6:
+                    if (st->maboroshi != 0 || st->shibire != 0
+                        || st->nemuri != 0 || st->fuuji != 0
+                        || st->shiryo != 0 || st->doku != 0
+                        || st->akuryo != 0)
+                        found = 1;
+                    break;
+                }
+                if (found != 0) {
+                    sel = ids[j];
+                    break;
+                }
+            }
+        }
+        for (j = 0; j < cnt; j++) {
+            if (ids[j] == sel)
+                break;
+        }
+        if (j != cnt)
+            cursor = j;
+    }
+    if (cursor < 0)
+        cursor = (cnt - 1) / 2;
+    while (ids[cursor] == 0xFE
+           || (GameFlag_TestFar(0x16C) && mode == 1 && UnitGetFar(ids[cursor])->hp == 0)) {
+        cursor = cursor + cnt - 1;
+        cursor %= cnt;
+    }
+    if (mode != 2) {
+        BattleMotion_ProjectConditionalPositionFar(sel, (s32 *)&markPos);
+        tbl[0].flags = 8;
+        tbl[0].x = (u8)markPos.x;
+        tbl[0].y = 0x80;
+    }
+    window = UiWindow_Create(0, 12, 30, 4, 74);
+    while (1) {
+        head = entries;
+        pending = 0;
+        {
+            s32 t = cursor * 2;
+
+            /* FAKEMATCH: instruction order only: the empty asm takes cursor * 2 from its spill slot into r3 before the ids address is loaded, as the native does; through ids[cursor] both are reloads of the one load, base first (differ 2). */
+            __asm__ volatile ("" : "+r" (t));
+            BattleMotion_ProjectConditionalPositionFar(*(u16 *)((u8 *)ids + t), (s32 *)&pos);
+        }
+        ((s32 *)head)[1] = 0x40002000;
+        ((s32 *)head)[2] = 0;
+        head->tile = Resource_GetBuffer(slotId, (((gFrameCount >> 2) & 31) << 8) + (s32)Menu_AnimatedCursorTiles);
+        pos.y += Trig_Sin(gFrameCount << 12) / 32768;
+        y = pos.y;
+        if (tbl[0].flags & 1) {
+            nx = (pos.x + tbl[0].x) / 2;
+            ny = (y + tbl[0].y) / 2;
+            if ((pos.x - nx < 0 ? -(pos.x - nx) : pos.x - nx) <= 7)
+                pending = 1;
+            pos.x = nx;
+            tbl[0].x = (u8)nx;
+            tbl[0].y = (u8)ny;
+            pos.y = ny;
+        } else if ((u8)tbl[0].flags <= 3) {
+            tbl[0].x = (u8)pos.x;
+            pos.y = y;
+            tbl[0].y = (u8)y;
+            tbl[0].flags = 1;
+        } else {
+            pos.x = tbl[0].x;
+            pos.y = tbl[0].y;
+            tbl[0].flags = (u8)(tbl[0].flags - 4);
+            if (tbl[0].flags <= 3)
+                tbl[0].flags = 1;
+        }
+        head->x = pos.x - 8;
+        head->y = (u8)(pos.y - 16);
+        Runtime_PushSlotEntry((s32 *)head, 240);
+        if (spread == 0xFF) {
+            efx.scale_x = 256;
+            efx.scale_y = 256;
+        } else {
+            efx.scale_x = 176;
+            efx.scale_y = 176;
+        }
+        efx.angle = 0;
+        /* FAKEMATCH: register choice (spill slots) only: seventeen dead
+           stores, two insns each until flow deletes them. GCSE sizes its
+           expression table from the insn count (n / 2 | 1 buckets) and
+           PRE numbers its reaching registers in bucket order, which is the
+           order their spill slots are assigned; with these the count is
+           1451 and the table 725 buckets, so tbl, entries, ids and
+           cursor * 2 take sp+36, 32, 28 and 24 before &efx (20) and
+           selSlot (16) as in the native frame (1417 and 709 buckets
+           without them: every remaining row is a spill slot's offset;
+           ES and IT, 107 insns longer, reach 779). */
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        efx.angle = 0;
+        matrix = AffineMatrix_BuildForEffect(&efx);
+        if ((redraw & 1) == 0)
+            goto frame_end;
+        cnt = 0;
+        for (i = 0; i < 6; i++)
+            tbl[i].flags &= (u8)~2;
+        for (i = 0; (u32)i < spread; i++) {
+            {
+                n = cursor + i;
+                if (n < total && ids[n] != 0xFE) {
+                    selIds[cnt] = ids[n];
+                    tbl[i].flags |= 2;
+                    if (tbl[i].index != i) {
+                        tbl[i].flags &= (u8)~1;
+                        tbl[i].index = (s8)i;
+                    }
+                    selSlot[cnt] = (u8)i;
+                    cnt++;
+                }
+                if (i != 0 && (n = cursor - i) >= 0 && ids[n] != 0xFE) {
+                    selIds[cnt] = ids[n];
+                    tbl[6 - i].flags |= 2;
+                    if (tbl[6 - i].index != -i) {
+                        tbl[6 - i].flags &= (u8)~1;
+                        tbl[6 - i].index = (s8)-i;
+                    }
+                    selSlot[cnt] = (u8)(6 - i);
+                    cnt++;
+                }
+            }
+        }
+        for (i = 0; i < 6; i++) {
+            if ((tbl[i].flags & 2) == 0)
+                tbl[i].index = 6;
+        }
+        selIds[cnt] = 0xFF;
+        BattlePres_SetActorModesFar(selIds, 1);
+        if (ids[cursor] > 7)
+            goto draw_name;
+        if (spread == 0xFF)
+            goto frame_tail;
+        if (kind == 0)
+            goto frame_tail;
+        unit = UnitGetFar(ids[cursor]);
+        BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&pos);
+        if (infoWin != 0)
+            UiWork_Finalize(infoWin, 1);
+        switch (kind) {
+        case 7:
+            {
+                s32 anchor;
+
+                anchor = pos.x / 8;
+                column = anchor - 4;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+                if (System_GetLanguage() == 4) {
+                    if (anchor + 6 > 29)
+                        column = 20;
+                    infoWin = UiWindow_Create(column, 8, 10, 3, 6);
+                } else if (System_GetLanguage() == 3) {
+                    if (anchor + 7 > 29)
+                        column = 19;
+                    infoWin = UiWindow_Create(column, 8, 11, 3, 6);
+                } else {
+                    if (anchor + 5 > 29)
+                        column = 21;
+                    infoWin = UiWindow_Create(column, 8, 9, 3, 6);
+                }
+#elif defined(TBS_EDITION_FR)
+                if (anchor + 5 > 29)
+                    column = 21;
+                infoWin = UiWindow_Create(column, 8, 9, 3, 6);
+#elif defined(TBS_EDITION_JA)
+                if (anchor + 4 > 29)
+                    column = 22;
+                infoWin = UiWindow_Create(column, 8, 8, 3, 6);
+#else
+                if (anchor + 4 > 29)
+                    column = 22;
+                infoWin = UiWindow_Create(column, 8, 9, 3, 6);
+#endif
+            }
+            UiWork_SetParamNibble(2);
+            UiText_DrawCharacterAtOffset((s32)MsgTargetSetDjinni, (struct RenderInput *)infoWin, 0, 0);
+            UiWork_SetParamNibble(15);
+            goto frame_tail;
+        case 1:
+            {
+                s32 anchor;
+
+                anchor = pos.x / 8;
+                column = anchor - 7;
+                if (anchor + 6 > 29)
+                    column = 17;
+                infoWin = UiWindow_Create(column, 8, 13, 3, 6);
+            }
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+            switch (System_GetLanguage()) {
+            case 1:
+                UiText_DrawStringAtOffset((u8 *)OwnerStatus_KpString, (struct RenderInput *)infoWin, 0, 0);
+                break;
+            case 2:
+                UiText_DrawStringAtOffset((u8 *)OwnerStatus_PvString, (struct RenderInput *)infoWin, 0, 0);
+                break;
+            case 3:
+                UiText_DrawStringAtOffset((u8 *)OwnerStatus_PvString, (struct RenderInput *)infoWin, 0, 0);
+                break;
+            case 4:
+                UiText_DrawStringAtOffset((u8 *)OwnerStatus_HpString, (struct RenderInput *)infoWin, 0, 0);
+                break;
+            }
+#else
+            UiText_DrawStringAtOffset((u8 *)OwnerStatus_HpString, (struct RenderInput *)infoWin, 0, 0);
+#endif
+            UiText_DrawNumberInWindow(unit->hp, 4, (s32)infoWin, 16, 0);
+            UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct RenderInput *)infoWin, 48, 0);
+            UiText_DrawNumberInWindow(unit->max_hp, 4, (s32)infoWin, 56, 0);
+            goto frame_tail;
+        case 2:
+            {
+                s32 anchor;
+
+                anchor = pos.x / 8;
+                column = anchor - 7;
+                if (anchor + 6 > 29)
+                    column = 17;
+                infoWin = UiWindow_Create(column, 8, 13, 3, 6);
+            }
+            UiText_DrawStringAtOffset((u8 *)OwnerStatus_PpString, (struct RenderInput *)infoWin, 0, 0);
+            UiText_DrawNumberInWindow(unit->ep, 4, (s32)infoWin, 16, 0);
+            UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct RenderInput *)infoWin, 48, 0);
+            UiText_DrawNumberInWindow(unit->max_ep, 4, (s32)infoWin, 56, 0);
+            goto frame_tail;
+        case 5:
+            {
+                s32 anchor;
+
+                anchor = pos.x / 8;
+                column = anchor - 7;
+                if (anchor + 5 > 29)
+                    column = 18;
+                infoWin = UiWindow_Create(column, 8, 12, 3, 6);
+            }
+            if (unit->hp != 0)
+                goto no_condition;
+            UiText_DrawCharacterAtOffset((s32)MsgTargetDowned, (struct RenderInput *)infoWin, 0, 0);
+            goto frame_tail;
+        case 3:
+            {
+                s32 anchor;
+
+                anchor = pos.x / 8;
+                column = anchor - 7;
+                if (anchor + 5 > 29)
+                    column = 18;
+                infoWin = UiWindow_Create(column, 8, 12, 3, 6);
+            }
+            if (unit->doku == 0)
+                goto no_condition;
+            UiText_DrawCharacterAtOffset((s32)MsgTargetCurePoison, (struct RenderInput *)infoWin, 0, 0);
+            goto frame_tail;
+        case 4:
+            count = 0;
+            if (unit->maboroshi != 0)
+                count = 1;
+            if (unit->shibire != 0)
+                count++;
+            if (unit->nemuri != 0)
+                count++;
+            if (unit->fuuji != 0)
+                count++;
+            if (unit->shiryo != 0)
+                count++;
+            if (count == 0)
+                count = 1;
+            rows = 9 - count;
+            if (rows <= 3)
+                rows = 4;
+            {
+                s32 anchor;
+
+                anchor = pos.x / 8;
+                column = anchor - 7;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+                if (System_GetLanguage() == 3) {
+                    if (anchor + 10 > 29)
+                        column = 13;
+                    infoWin = UiWindow_Create(column, rows, 17, count + 2, 6);
+                } else {
+                    if (anchor + 9 > 29)
+                        column = 14;
+                    infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+                }
+#elif defined(TBS_EDITION_JA)
+                if (anchor + 7 > 29)
+                    column = 16;
+                infoWin = UiWindow_Create(column, rows, 14, count + 2, 6);
+#else
+                if (anchor + 9 > 29)
+                    column = 14;
+                infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+#endif
+            }
+            count = 0;
+            if (unit->maboroshi != 0) {
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureDelusion, (struct RenderInput *)infoWin, 0, 0);
+                count = 1;
+            }
+            if (unit->shibire != 0) {
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureStun, (struct RenderInput *)infoWin, 0, count * 8);
+                count++;
+            }
+            if (unit->nemuri != 0) {
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureSleep, (struct RenderInput *)infoWin, 0, count * 8);
+                count++;
+            }
+            if (unit->fuuji != 0) {
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureSeal, (struct RenderInput *)infoWin, 0, count * 8);
+                ++count;
+            }
+            if (unit->shiryo != 0) {
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureCurse, (struct RenderInput *)infoWin, 0, count * 8);
+                count++;
+            }
+            if (count == 0)
+                goto no_condition;
+            goto frame_tail;
+        case 6:
+            count = 0;
+            if (unit->doku != 0)
+                count = 1;
+            if (unit->maboroshi != 0)
+                count++;
+            if (unit->shibire != 0)
+                count++;
+            if (unit->nemuri != 0)
+                count++;
+            if (unit->fuuji != 0)
+                count++;
+            if (unit->shiryo != 0)
+                count++;
+            if (unit->akuryo != 0)
+                count++;
+            if (count == 0)
+                count = 1;
+            rows = 9 - count;
+            if (rows <= 3)
+                rows = 4;
+            {
+                s32 anchor;
+
+                anchor = pos.x / 8;
+                column = anchor - 7;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+                if (System_GetLanguage() == 3) {
+                    if (anchor + 10 > 29)
+                        column = 13;
+                    infoWin = UiWindow_Create(column, rows, 17, count + 2, 6);
+                } else {
+                    if (anchor + 9 > 29)
+                        column = 14;
+                    infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+                }
+#elif defined(TBS_EDITION_JA)
+                if (anchor + 7 > 29)
+                    column = 16;
+                infoWin = UiWindow_Create(column, rows, 14, count + 2, 6);
+#else
+                if (anchor + 9 > 29)
+                    column = 14;
+                infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+#endif
+            }
+            count = 0;
+            if (unit->doku != 0) {
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCurePoison, (struct RenderInput *)infoWin, 0, 0);
+                count = 1;
+            }
+            if (unit->maboroshi != 0) {
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureDelusion, (struct RenderInput *)infoWin, 0, count * 8);
+                count++;
+            }
+            if (unit->shibire != 0) {
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureStun, (struct RenderInput *)infoWin, 0, count * 8);
+                count++;
+            }
+            if (unit->nemuri != 0) {
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureSleep, (struct RenderInput *)infoWin, 0, count * 8);
+                count++;
+            }
+            if (unit->fuuji != 0) {
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureSeal, (struct RenderInput *)infoWin, 0, count * 8);
+                count++;
+            }
+            if (unit->shiryo != 0) {
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureCurse, (struct RenderInput *)infoWin, 0, count * 8);
+                count++;
+            }
+            if (unit->akuryo != 0) {
+                UiText_DrawCharacterAtOffset((s32)MsgTargetCureHaunt, (struct RenderInput *)infoWin, 0, 8 * count);
+                count++;
+            }
+            if (count == 0)
+                goto no_condition;
+            goto frame_tail;
+        default:
+            break;
+        }
+        goto frame_tail;
+    no_condition:
+        UiWork_SetParamNibble(2);
+        UiText_DrawCharacterAtOffset((s32)MsgTargetNoEffect, (struct RenderInput *)infoWin, 0, 0);
+        UiWork_SetParamNibble(15);
+        goto frame_tail;
+    draw_name:
+        if (spread == 0xFF)
+            goto frame_tail;
+        who = UnitGetFar(ids[cursor]);
+        BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&namePos);
+        namePos.y += Trig_Sin(gFrameCount << 12) / 32768;
+        if (who->class_id == 125 || who->class_id == 122) {
+            width = (s32)MsgMysteryPersonName;
+            if (who->class_id == 125)
+                width++;
+#if defined(TBS_EDITION_JA)
+            UiText_DecodeMessage(width, name, 10);
+#else
+            UiText_CopyMessageString(width, name, 14);
+#endif
+
+        } else {
+            for (i = 0; i <= 13; i++) {
+                name[i] = n = who->name[i];
+                if (!n)
+                    break;
+            }
+            name[i] = 0;
+        }
+        width = UiText_GetWideStringWidth(name);
+        namePos.x -= width / 2;
+        namePos.x -= 8;
+        if (namePos.x + width > 224)
+            namePos.x = 224 - width;
+        if (namePos.x < 0)
+            namePos.x = 0;
+        Ui_ClearVramBlock();
+        UiText_RenderWideStringAtOffset(name, window, namePos.x, 4);
+    frame_tail:
+        redraw &= ~1;
+    frame_end:
+        if (pending != 0) {
+            for (i = 1; i < cnt; i++) {
+                entry = &head[i];
+                slot = &tbl[selSlot[i]];
+                BattleMotion_ProjectConditionalPositionFar(selIds[i], (s32 *)&targetPos);
+                targetPos.y = targetPos.y + Trig_Sin(gFrameCount << 12) / 32768;
+                *entry = *head;
+                if (slot->flags & 1) {
+                    s32 x = (targetPos.x + slot->x) / 2;
+                    s32 y = (targetPos.y + slot->y) / 2;
+
+                    targetPos.x = x;
+                    slot->x = x;
+                    targetPos.y = y;
+                    slot->y = y;
+                } else {
+                    s32 x = entry->x;
+                    s32 y = entry->y + 8;
+
+                    slot->flags = 1;
+                    targetPos.x = x;
+                    slot->x = x;
+                    targetPos.y = y;
+                    slot->y = y;
+                }
+                entry->mode = 1;
+                entry->x = targetPos.x - 8;
+                entry->y = targetPos.y - 12;
+                if (spread == 0xFF)
+                    entry->affine = 0;
+                else
+                    entry->affine = 1;
+                entry->param = matrix;
+                Runtime_PushSlotEntry((s32 *)entry, 240);
+            }
+        }
+        pressed = gKeyState;
+        repeat = gKeysRepeat;
+        if (gLinkCountdownWork->auto_enabled) {
+            repeat = 0;
+            pressed = 0;
+            if (gLinkCountdownWork->auto_delay == 0) {
+                gLinkCountdownWork->auto_delay = 60;
+                repeat = 1;
+                pressed = 1;
+            } else {
+                gLinkCountdownWork->auto_delay--;
+            }
+        }
+        if (pressed & 1) {
+            s32 id;
+            s32 k;
+
+            id = ids[cursor];
+            redraw = 0;
+            result = -1;
+            for (k = 0; k <= 5 && runtime->party_units[k] != 0xFF; k++) {
+                if (runtime->party_units[k] == id) {
+                    result = 0x100 | k;
+                    break;
+                }
+            }
+            if (result < 0) {
+                for (k = 0; k <= 5 && runtime->enm_no[k] != 0xFF; k++) {
+                    if (runtime->enm_no[k] == id) {
+                        result = 0x180 | k;
+                        break;
+                    }
+                }
+            }
+            cursor = result;
+        } else if (spread != 0xFF) {
+            if (repeat & 0x90) {
+                AudioCommand_PlayFar(111);
+                do {
+                    cursor++;
+                    cursor %= total;
+                } while (ids[cursor] == 0xFE);
+                redraw |= 1;
+            }
+            if (repeat & 0x60) {
+                AudioCommand_PlayFar(111);
+                do {
+                    cursor = cursor + total - 1;
+                    cursor %= total;
+                } while (ids[cursor] == 0xFE);
+                redraw |= 1;
+            }
+        }
+        if (gLinkCountdownWork->active == 0 || (pressed & 2)) {
+            AudioCommand_PlayFar(113);
+            cursor = -1;
+            break;
+        }
+        WaitFrames(1);
+        if (redraw == 0)
+            break;
+    }
+    WaitFrames(1);
+    Resource_ResetEntry(slotId);
+    if (infoWin != 0)
+        UiWork_Finalize(infoWin, 1);
+    UiWork_Finalize(window, 1);
+    BattlePres_SetActorModesFar(ids, 0);
+    gLinkCountdownWork->slide_offset = 0;
+    WaitFrames(1);
+    return cursor;
+}

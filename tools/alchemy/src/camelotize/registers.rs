@@ -5,8 +5,8 @@ use std::ops::Range;
 use std::path::{Path, PathBuf};
 
 pub(crate) const HEADERS: [&str; 2] = [
-    "games/COMMON/INCLUDE/SYSTEM/IO_REG.H",
-    "games/COMMON/INCLUDE/SOUND/AUDIO_ENGINE_TYPES.H",
+    "games/common/include/system/io_reg.h",
+    "games/common/include/sound/audio_engine_types.h",
 ];
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -158,7 +158,7 @@ mod tests {
 
     fn table() -> Table {
         let header = "#define REG_DISPCNT (*(volatile u16 *)0x04000000)\n#define REG_BG2X (*(volatile s32 *)0x04000028)\n#define REG_DMA0 ((volatile u16 *)0x040000b0)\n#define REG_DMA3SAD (*(volatile u32 *)0x040000d4)\n#define REG_DMA3 ((volatile u32 *)0x040000d4)\n#define REG_IME (*(volatile u16 *)0x04000208)\n#define REG_BLDCNT (*(volatile u16 *)0x04000050)\n";
-        Table::new(defines(header, Path::new("IO_REG.H")))
+        Table::new(defines(header, Path::new("io_reg.h")))
     }
 
     #[test]
@@ -171,7 +171,7 @@ mod tests {
         assert!(out.contains("    REG_DISPCNT = 0;\n    REG_DISPCNT = 1;\n    G(REG_DISPCNT);\n    REG_BG2X = 2;\n    REG_BLDCNT = 3;\n"));
         assert!(out.contains("    G(*(s16 *)0x4000050);\n"));
         assert!(out.contains("Dma(REG_DMA3, &REG_IME, REG_DMA0);"));
-        assert_eq!(headers.into_iter().collect::<Vec<_>>(), [PathBuf::from("IO_REG.H")]);
+        assert_eq!(headers.into_iter().collect::<Vec<_>>(), [PathBuf::from("io_reg.h")]);
     }
 
     #[test]

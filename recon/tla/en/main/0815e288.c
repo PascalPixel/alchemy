@@ -1,5 +1,5 @@
-#include "MOTOBJ.H"
-#include "IWRAM_CALL.H"
+#include "motobj.h"
+#include "iwram_call.h"
 
 extern u8 *gCameraWork;
 

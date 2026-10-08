@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "SCENE.H"
-#include "RESOURCE.H"
+#include "types.h"
+#include "scene.h"
+#include "resource.h"
 extern u8 Data_03001e40[];
 
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output, s32 shift)

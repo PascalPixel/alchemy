@@ -1,4 +1,4 @@
-@ Unlinked overlay field data from the removed games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/FIELD_DATA.INC, kept as a GNU as draft (S4); nothing includes it.
+@ Unlinked overlay field data from the removed games/tla/src/field/vinasu_chojo/field_data.inc, kept as a GNU as draft (S4); nothing includes it.
 
 FieldActorScript_02001ce4:
 	actor_wait 1

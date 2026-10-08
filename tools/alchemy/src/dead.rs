@@ -128,11 +128,11 @@ fn resolve(root: &Path, target: DecompTarget, from: &str, name: &str) -> Option<
     let mut candidates = vec![
         Path::new(from).parent().unwrap_or(Path::new("")).join(name),
         PathBuf::from(name),
-        Path::new(target.game_dir()).join("INCLUDE").join(name),
-        Path::new("games/COMMON/INCLUDE").join(name),
+        Path::new(target.game_dir()).join("include").join(name),
+        Path::new("games/common/include").join(name),
     ];
     for module in crate::compiler::routing::COMMON_INCLUDE_MODULES {
-        candidates.push(Path::new("games/COMMON/INCLUDE").join(module).join(name));
+        candidates.push(Path::new("games/common/include").join(module).join(name));
     }
     candidates
         .into_iter()
@@ -156,9 +156,9 @@ fn normalize(path: &str) -> String {
 
 /// Headers a tool reads directly: the fixed-address lists (O2).
 fn tool_headers(target: DecompTarget) -> Vec<String> {
-    ["IWRAM_CALL.H", "RAM_BUFFER.H", "CARTBOOT.H"]
+    ["iwram_call.h", "ram_buffer.h", "cartboot.h"]
         .iter()
-        .map(|name| format!("{}/INCLUDE/{name}", target.game_dir()))
+        .map(|name| format!("{}/include/{name}", target.game_dir()))
         .collect()
 }
 
@@ -209,25 +209,23 @@ impl Linked {
                     continue;
                 };
                 let text = String::from_utf8_lossy(&bytes);
-                if (file.ends_with(".C") || file.ends_with(".c"))
+                if file.ends_with(".c")
                     && direct.contains(&file) {
                         compiled.push(file.clone());
                     }
-                if !(file.ends_with(".C")
-                    || file.ends_with(".c")
-                    || file.ends_with(".H")
+                if !(file.ends_with(".c")
+                    || file.ends_with(".h")
                     || file.ends_with(".S")
                     || file.ends_with(".s")
-                    || file.ends_with(".INC")
                     || file.ends_with(".inc")
-                    || file.ends_with(".LD"))
+                    || file.ends_with(".ld"))
                 {
                     continue;
                 }
                 for capture in includes.captures_iter(&text) {
                     let name = (1..=3).find_map(|group| capture.get(group)).unwrap().as_str();
                     if let Some(path) = resolve(root, target, &file, name) {
-                        if !(file.ends_with(".C") || file.ends_with(".c") || file.ends_with(".H")) {
+                        if !(file.ends_with(".c") || file.ends_with(".h")) {
                             assembled.insert(path.clone());
                         }
                         queue.push(path);
@@ -286,9 +284,9 @@ impl Linked {
                 continue;
             }
             match path.rsplit('.').next().unwrap_or("") {
-                "C" | "S" => sources.push(path),
-                "H" | "INC" => headers.push(path),
-                "LD" => scripts.push(path),
+                "c" | "s" | "S" => sources.push(path),
+                "h" | "inc" => headers.push(path),
+                "ld" => scripts.push(path),
                 _ => {}
             }
         }
@@ -385,7 +383,7 @@ impl Marked {
                 continue;
             }
             let extension = path.rsplit('.').next().unwrap_or("");
-            if !matches!(extension, "C" | "H" | "INC") {
+            if !matches!(extension, "c" | "h" | "inc") {
                 std::os::unix::fs::symlink(entry.path(), &target).map_err(|error| error.to_string())?;
                 continue;
             }
@@ -725,7 +723,7 @@ impl Report {
             .collect();
         let headers: Vec<String> = reached
             .iter()
-            .filter(|file| file.starts_with("games/") && file.ends_with(".H"))
+            .filter(|file| file.starts_with("games/") && file.ends_with(".h"))
             .filter(|file| !live.files.contains(**file) && !tool.contains(**file) && !linked.assembled.contains(**file))
             .map(|file| file.to_string())
             .collect();
@@ -914,7 +912,7 @@ fn declarations(
     let tool: HashSet<String> =
         linked.units.iter().flat_map(|(target, _)| tool_headers(*target)).collect();
     for (file, text) in texts {
-        if !file.ends_with(".H") || tool.contains(file) {
+        if !file.ends_with(".h") || tool.contains(file) {
             continue;
         }
         let blanked = blank_conditionals(text);
@@ -977,8 +975,8 @@ fn declarations(
     }
     let reached = linked.reached();
     for file in &reached {
-        let assembly = file.ends_with(".S") || file.ends_with(".s") || file.ends_with(".LD")
-            || file.ends_with(".ld") || file.ends_with(".INC") || file.ends_with(".inc");
+        let assembly = file.ends_with(".S") || file.ends_with(".s") || file.ends_with(".ld")
+            || file.ends_with(".inc");
         if !assembly {
             continue;
         }
@@ -995,7 +993,7 @@ fn declarations(
     for entry in walkdir::WalkDir::new(root.join("recon")) {
         let Ok(entry) = entry else { continue };
         let path = entry.path();
-        if path.extension().is_some_and(|ext| ext == "c" || ext == "C" || ext == "h" || ext == "H") {
+        if path.extension().is_some_and(|ext| ext == "c" || ext == "h") {
             if let Ok(bytes) = fs::read(path) {
                 let text = String::from_utf8_lossy(&bytes);
                 for word in identifiers(&text) {
@@ -1264,10 +1262,10 @@ mod tests {
 
     #[test]
     fn the_output_names_the_arms_and_headers_it_reached() {
-        let output = "# 1 \"games/A.C\"\nALCHEMY_DEAD_ARM_3\nint a;\n# 1 \"/c/games/B.H\" 1\nx ALCHEMY_DEAD_ARM_12 y\n";
+        let output = "# 1 \"games/a.c\"\nALCHEMY_DEAD_ARM_3\nint a;\n# 1 \"/c/games/b.h\" 1\nx ALCHEMY_DEAD_ARM_12 y\n";
         let live = scan(output, "/c");
         assert_eq!(live.arms, HashSet::from([3, 12]));
-        assert_eq!(live.files, HashSet::from(["games/A.C".to_string(), "games/B.H".to_string()]));
+        assert_eq!(live.files, HashSet::from(["games/a.c".to_string(), "games/b.h".to_string()]));
     }
 
     #[test]
@@ -1321,7 +1319,7 @@ mod tests {
 
     #[test]
     fn includes_resolve_beside_the_file_first() {
-        assert_eq!(normalize("games/A/../B/./C.H"), "games/B/C.H");
+        assert_eq!(normalize("games/a/../b/./c.h"), "games/b/c.h");
     }
 
     #[test]

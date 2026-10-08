@@ -1,0 +1,408 @@
+.syntax unified
+	.thumb
+	.include "games/tla/src/system/overlay.inc"
+	.balign 4
+	.global __divsi3
+	.thumb_func
+__divsi3:
+	overlay_veneer IwramSignedDivide
+	.global WaitFrames
+	.thumb_func
+WaitFrames:
+	overlay_veneer WaitFramesFar
+	.global Scheduler_AddOrUpdateCallback
+	.thumb_func
+Scheduler_AddOrUpdateCallback:
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global Scheduler_RemoveCallbackFar
+	.thumb_func
+Scheduler_RemoveCallbackFar:
+	overlay_veneer Func_080000d8
+	.global Random16Far
+	.thumb_func
+Random16Far:
+	overlay_veneer Func_080000f8
+	.global Math_Sine
+	.thumb_func
+Math_Sine:
+	overlay_veneer Math_SineFar
+	.global Math_Cosine
+	.thumb_func
+Math_Cosine:
+	overlay_veneer Math_CosineFar
+	.global GameFlag_Test
+	.thumb_func
+GameFlag_Test:
+	overlay_veneer GameFlag_TestFar
+	.global GameFlag_SetBit
+	.thumb_func
+GameFlag_SetBit:
+	overlay_veneer GameFlag_SetBitFar
+	.global GameFlag_ClearBit
+	.thumb_func
+GameFlag_ClearBit:
+	overlay_veneer GameFlag_ClearBitFar
+	.global Func_02003968
+	.thumb_func
+Func_02003968:
+	overlay_veneer Object_SetMode
+	.global Func_02003970
+	.thumb_func
+Func_02003970:
+	overlay_veneer ObjectDispatch_InitializeFar
+	.global Func_02003978
+	.thumb_func
+Func_02003978:
+	overlay_veneer Func_080200c0
+	.global Object_SetPositionAndResetMotion
+	.thumb_func
+Object_SetPositionAndResetMotion:
+	overlay_veneer Object_SetPositionAndResetMotionFar
+	.global Func_02003988
+	.thumb_func
+Func_02003988:
+	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	.global Func_02003990
+	.thumb_func
+Func_02003990:
+	overlay_veneer Object_SetPosition
+	.global Func_02003998
+	.thumb_func
+Func_02003998:
+	overlay_veneer Map_CopyMetatileIndicesRectFar
+	.global Func_020039a0
+	.thumb_func
+Func_020039a0:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_08020180
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_08020180
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_08020180
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_08020180
+	.else
+	overlay_veneer DisplayBlend_EnableRunScriptFar
+	.endif
+	.endif
+	.endif
+	.endif
+	.global Func_020039a8
+	.thumb_func
+Func_020039a8:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer DisplayBlend_StartScriptFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer DisplayBlend_StartScriptFar
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer DisplayBlend_StartScriptFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer DisplayBlend_StartScriptFar
+	.else
+	overlay_veneer Map_CopyCellAttributeRectFar
+	.endif
+	.endif
+	.endif
+	.endif
+	.global ObjectDispatch_SetSingleChildFlags
+	.thumb_func
+ObjectDispatch_SetSingleChildFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
+	.global Func_020039b8
+	.thumb_func
+Func_020039b8:
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	.global Func_020039c0
+	.thumb_func
+Func_020039c0:
+	overlay_veneer Func_08020230
+	.global UiText_ShowPositionedMessageAndWait
+	.thumb_func
+UiText_ShowPositionedMessageAndWait:
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	.global Battle_WaitMode0
+	.thumb_func
+Battle_WaitMode0:
+	overlay_veneer Battle_WaitMode0Far
+	.global Func_020039d8
+	.thumb_func
+Func_020039d8:
+	overlay_veneer EventRuntime_BeginFar
+	.global Func_020039e0
+	.thumb_func
+Func_020039e0:
+	overlay_veneer EventRuntime_EndFar
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
+	overlay_veneer Object_GetByIdFar
+	.global ObjectMotion_SetSpeedParameters
+	.thumb_func
+ObjectMotion_SetSpeedParameters:
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	.global ObjectMotion_EnableActionAndSetCallback
+	.thumb_func
+ObjectMotion_EnableActionAndSetCallback:
+	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	.global ObjectMotion_EnableActionAndResetMotion
+	.thumb_func
+ObjectMotion_EnableActionAndResetMotion:
+	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar
+	.global Object_SetActionCallbackAndRefreshById
+	.thumb_func
+Object_SetActionCallbackAndRefreshById:
+	overlay_veneer Object_SetActionCallbackAndRefreshByIdFar
+	.global ObjectMotion_ResetAndSetPosition
+	.thumb_func
+ObjectMotion_ResetAndSetPosition:
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	.global ObjectMotion_SetPositionAndCommit
+	.thumb_func
+ObjectMotion_SetPositionAndCommit:
+	overlay_veneer ObjectMotion_SetPositionAndCommitFar
+	.global ObjectMotion_SetPositionAndReset
+	.thumb_func
+ObjectMotion_SetPositionAndReset:
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	.global ObjectMotion_CommitCurrentPositionAndActivate
+	.thumb_func
+ObjectMotion_CommitCurrentPositionAndActivate:
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	.global Func_02003a30
+	.thumb_func
+Func_02003a30:
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	.global Func_02003a38
+	.thumb_func
+Func_02003a38:
+	overlay_veneer ObjectMotion_SetHorizontalPositionAndAngleWithTerrainFar
+	.global Object_SetModeById
+	.thumb_func
+Object_SetModeById:
+	overlay_veneer Object_SetModeByIdFar
+	.global Motion_SetModeAndWaitAnimation
+	.thumb_func
+Motion_SetModeAndWaitAnimation:
+	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	.global ObjectMotion_Launch
+	.thumb_func
+ObjectMotion_Launch:
+	overlay_veneer ObjectMotion_LaunchFar
+	.global Motion_SetVarCbAndRefresh
+	.thumb_func
+Motion_SetVarCbAndRefresh:
+	overlay_veneer Motion_SetVarCbAndRefreshFar
+	.global ObjectMotion_SetAngleToward
+	.thumb_func
+ObjectMotion_SetAngleToward:
+	overlay_veneer ObjectMotion_SetAngleTowardFar
+	.global Object_SetPartAttribute
+	.thumb_func
+Object_SetPartAttribute:
+	overlay_veneer Object_SetPartAttributeFar
+	.global Func_02003a70
+	.thumb_func
+Func_02003a70:
+	overlay_veneer EventRuntime_SetMessageFar
+	.global Func_02003a78
+	.thumb_func
+Func_02003a78:
+	overlay_veneer Func_080c8198
+	.global Func_02003a80
+	.thumb_func
+Func_02003a80:
+	overlay_veneer EventRuntime_ShowMessageAndWaitFar
+	.global ObjectMotion_ArmCallback
+	.thumb_func
+ObjectMotion_ArmCallback:
+	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global Func_02003a90
+	.thumb_func
+Func_02003a90:
+	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
+	.global ObjectMotion_SetActionVariant
+	.thumb_func
+ObjectMotion_SetActionVariant:
+	overlay_veneer ObjectMotion_SetActionVariantFar
+	.global Func_02003aa0
+	.thumb_func
+Func_02003aa0:
+	overlay_veneer Func_080c8208
+	.global Func_02003aa8
+	.thumb_func
+Func_02003aa8:
+	overlay_veneer Func_080c8210
+	.global Func_02003ab0
+	.thumb_func
+Func_02003ab0:
+	overlay_veneer Func_080c8218
+	.global Func_02003ab8
+	.thumb_func
+Func_02003ab8:
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
+	.global Motion_CamBounds
+	.thumb_func
+Motion_CamBounds:
+	overlay_veneer Motion_CamBoundsFar
+	.global Func_02003ac8
+	.thumb_func
+Func_02003ac8:
+	overlay_veneer Func_080c8240
+	.global Func_02003ad0
+	.thumb_func
+Func_02003ad0:
+	overlay_veneer Func_080c8258
+	.global Func_02003ad8
+	.thumb_func
+Func_02003ad8:
+	overlay_veneer EventRuntime_SetCountdownFar
+	.global Func_02003ae0
+	.thumb_func
+Func_02003ae0:
+	overlay_veneer Func_080c8288
+	.global Event_StartScreenTransition
+	.thumb_func
+Event_StartScreenTransition:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	.else
+	overlay_veneer Event_StartScreenTransitionFar
+	.endif
+	.endif
+	.global Event_FinishScreenTransition
+	.thumb_func
+Event_FinishScreenTransition:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_SetPrimaryBufferValueFar
+	.else
+	overlay_veneer Event_FinishScreenTransitionFar
+	.endif
+	.endif
+	.global Event_WaitTransitionFrames
+	.thumb_func
+Event_WaitTransitionFrames:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Event_DelayEffectFramesFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Event_DelayEffectFramesFar
+	.else
+	overlay_veneer Event_WaitTransitionFramesFar
+	.endif
+	.endif
+	.global Func_02003b00
+	.thumb_func
+Func_02003b00:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8470
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8470
+	.else
+	overlay_veneer Func_080c8480
+	.endif
+	.endif
+	.global Func_02003b08
+	.thumb_func
+Func_02003b08:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	.endif
+	.endif
+	.global Object_LinkObjectAndSetCallback
+	.thumb_func
+Object_LinkObjectAndSetCallback:
+	overlay_veneer Object_LinkObjectAndSetCallbackFar
+	.global Func_02003b18
+	.thumb_func
+Func_02003b18:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8698
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8698
+	.else
+	overlay_veneer Func_080c86a8
+	.endif
+	.endif
+	.global Func_02003b20
+	.thumb_func
+Func_02003b20:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c86d8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c86d8
+	.else
+	overlay_veneer Func_080c86e8
+	.endif
+	.endif
+	.global Func_02003b28
+	.thumb_func
+Func_02003b28:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8700
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8700
+	.else
+	overlay_veneer Func_080c8710
+	.endif
+	.endif
+	.global Func_02003b30
+	.thumb_func
+Func_02003b30:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8708
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8708
+	.else
+	overlay_veneer Func_080c8718
+	.endif
+	.endif
+	.global Func_02003b38
+	.thumb_func
+Func_02003b38:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8710
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8710
+	.else
+	overlay_veneer Func_080c8720
+	.endif
+	.endif
+	.global Func_02003b40
+	.thumb_func
+Func_02003b40:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8718
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8718
+	.else
+	overlay_veneer Func_080c8728
+	.endif
+	.endif
+	.global Func_02003b48
+	.thumb_func
+Func_02003b48:
+	overlay_veneer Audio_PlayCue

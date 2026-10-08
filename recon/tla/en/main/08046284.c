@@ -1,4 +1,4 @@
-#include "BTLSYS.H"
+#include "btlsys.h"
 
 struct DjinnSlot {
     u16 id;

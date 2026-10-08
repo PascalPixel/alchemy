@@ -1,5 +1,5 @@
 /* Near miss: listing 31 instructions, draft 31, common 30, differ 2; the rest differs in instruction order. */
-#include "TRACKBUF.H"
+#include "trackbuf.h"
 
 void Func_081b3fb0(u8 *destination)
 {

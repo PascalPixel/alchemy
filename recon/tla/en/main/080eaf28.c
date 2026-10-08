@@ -1,7 +1,7 @@
 /* Near miss: listing 56 instructions, draft 56, common 53, differ 6; the rest differs in instruction order. */
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "OBJECT_RUNTIME.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "object_runtime.h"
 
 struct EventWork {
     u8 unknown_00[20];

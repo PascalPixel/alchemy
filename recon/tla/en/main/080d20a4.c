@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 void Func_080d20a4(s32 x, s32 y, u32 corner)
 {

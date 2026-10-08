@@ -1,8 +1,8 @@
-#include "TYPES.H"
-#include "MOTOBJ.H"
-#include "BATTLE_SESSION.H"
-#include "RAM_BUFFER.H"
-#include "IWRAM_CALL.H"
+#include "types.h"
+#include "motobj.h"
+#include "battle_session.h"
+#include "ram_buffer.h"
+#include "iwram_call.h"
 
 s32 Camera_ApplyTransformByFlag(void);
 s32 Render_ProjectPoint(const s32 *, s32 *);

@@ -38,7 +38,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     }
     let total: u32 = ranked.iter().map(|r| r.score).sum();
     println!("{} functions, total score {total}; {}", ranked.len(), out.display());
-    for (label, needle) in [("☀️", "games/THE BROKEN SEAL/"), ("⚓️", "games/THE LOST AGE/"), ("COMMON", "games/COMMON/")] {
+    for (label, needle) in [("☀️", "games/tbs/"), ("⚓️", "games/tla/"), ("COMMON", "games/common/")] {
         let part: Vec<_> = ranked.iter().filter(|r| r.file.starts_with(needle)).collect();
         let lines: usize = part.iter().map(|r| r.lines).sum();
         let clean: Vec<_> = part.iter().filter(|r| r.score == 0).collect();

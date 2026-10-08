@@ -91,20 +91,13 @@ pub enum CompilerTarget {
 }
 impl CompilerTarget {
     pub fn directory(self) -> &'static str {
-        game_directory(self.as_str())
+        self.as_str()
     }
     pub fn as_str(self) -> &'static str {
         match self {
             CompilerTarget::Tbs => "tbs",
             CompilerTarget::Tla => "tla",
         }
-    }
-}
-pub fn game_directory(game: &str) -> &str {
-    match game {
-        "tbs" => "THE BROKEN SEAL",
-        "tla" => "THE LOST AGE",
-        _ => game,
     }
 }
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -131,18 +124,18 @@ pub(crate) fn include_flag(target: CompilerTarget) -> String {
         root()
             .join("games")
             .join(target.directory())
-            .join("INCLUDE")
+            .join("include")
             .display()
     )
 }
 pub(crate) const COMMON_INCLUDE_MODULES: &[&str] = &[
-    "BATTLE", "FIELD", "GAME", "GRAPHICS", "LIB", "MENU", "SOUND", "SYSTEM",
+    "battle", "field", "game", "graphics", "lib", "menu", "sound", "system",
 ];
 fn common_include_flags() -> impl Iterator<Item = String> {
     COMMON_INCLUDE_MODULES.iter().map(|module| {
         format!(
             "-I{}",
-            root().join("games/COMMON/INCLUDE").join(module).display()
+            root().join("games/common/include").join(module).display()
         )
     })
 }
@@ -234,11 +227,11 @@ fn natural_source(target: CompilerTarget, source: &str) -> Option<PathBuf> {
         .components()
         .filter(|part| !matches!(part, Component::CurDir))
         .collect::<PathBuf>();
-    let game = Path::new("games").join(target.directory()).join("SRC");
+    let game = Path::new("games").join(target.directory()).join("src");
     if path.starts_with("games") {
-        (path.starts_with(&game) || path.starts_with("games/COMMON/SRC")).then_some(path)
+        (path.starts_with(&game) || path.starts_with("games/common/src")).then_some(path)
     } else {
-        Some(game.join(path.strip_prefix("SRC").unwrap_or(&path)))
+        Some(game.join(path.strip_prefix("src").unwrap_or(&path)))
     }
 }
 fn has(table: &[&str], source: &Path) -> bool {
@@ -310,13 +303,13 @@ mod target_tests {
         let tla = cflags_for_target(CompilerTarget::Tla);
         assert!(tbs
             .iter()
-            .any(|flag| flag.ends_with("/games/THE BROKEN SEAL/INCLUDE")));
+            .any(|flag| flag.ends_with("/games/tbs/include")));
         assert!(tla
             .iter()
-            .any(|flag| flag.ends_with("/games/THE LOST AGE/INCLUDE")));
+            .any(|flag| flag.ends_with("/games/tla/include")));
         assert!(!tla
             .iter()
-            .any(|flag| flag.ends_with("/games/THE BROKEN SEAL/INCLUDE")));
+            .any(|flag| flag.ends_with("/games/tbs/include")));
         let shared: Vec<&String> = tbs
             .iter()
             .filter(|flag| *flag != "-mthumb-interwork" && !flag.starts_with("-I"))
@@ -339,7 +332,7 @@ mod target_tests {
     }
     #[test]
     fn game_code_searches_every_shared_module_after_its_own_tree() {
-        let mut modules: Vec<String> = std::fs::read_dir(root().join("games/COMMON/INCLUDE"))
+        let mut modules: Vec<String> = std::fs::read_dir(root().join("games/common/include"))
             .unwrap()
             .map(|entry| entry.unwrap())
             .filter(|entry| entry.file_type().unwrap().is_dir())
@@ -351,19 +344,19 @@ mod target_tests {
             let flags = cflags_for_target(target);
             let includes: Vec<&String> = flags.iter().filter(|f| f.starts_with("-I")).collect();
             assert_eq!(includes.len(), 1 + modules.len());
-            assert!(includes[0].ends_with(&format!("/games/{}/INCLUDE", target.directory())));
+            assert!(includes[0].ends_with(&format!("/games/{}/include", target.directory())));
             for (flag, module) in includes[1..].iter().zip(&modules) {
-                assert!(flag.ends_with(&format!("/games/COMMON/INCLUDE/{module}")));
+                assert!(flag.ends_with(&format!("/games/common/include/{module}")));
             }
         }
-        for game in ["THE BROKEN SEAL", "THE LOST AGE"] {
-            for entry in std::fs::read_dir(root().join("games").join(game).join("INCLUDE")).unwrap()
+        for game in ["tbs", "tla"] {
+            for entry in std::fs::read_dir(root().join("games").join(game).join("include")).unwrap()
             {
                 let path = entry.unwrap().path();
                 let text = std::fs::read_to_string(&path).unwrap_or_default();
                 let lines: Vec<&str> = text.lines().filter(|l| !l.trim().is_empty()).collect();
                 assert!(
-                    !(lines.len() == 1 && lines[0].contains("COMMON/INCLUDE")),
+                    !(lines.len() == 1 && lines[0].contains("common/include")),
                     "{} only forwards to a shared header",
                     path.display()
                 );
@@ -372,8 +365,8 @@ mod target_tests {
     }
     #[test]
     fn only_tbs_game_code_interworks() {
-        let tbs = cflags_for_target_source(CompilerTarget::Tbs, "MENU/INPUT_CANCEL_SOUND_TICK.C");
-        let tla = cflags_for_target_source(CompilerTarget::Tla, "GAME/FLAGS/GET_BYTE.C");
+        let tbs = cflags_for_target_source(CompilerTarget::Tbs, "menu/input_cancel_sound_tick.c");
+        let tla = cflags_for_target_source(CompilerTarget::Tla, "game/flags/get_byte.c");
         assert!(tbs.iter().any(|flag| flag == "-mthumb-interwork"));
         assert!(!tla.iter().any(|flag| flag == "-mthumb-interwork"));
         assert_eq!(
@@ -394,14 +387,14 @@ mod target_tests {
             .chain(AGBCC_ARM_SOURCES)
         {
             assert!(
-                source.contains("/SRC/SOUND/") || source.contains("/SRC/SYSTEM/SAVE/"),
+                source.contains("/src/sound/") || source.contains("/src/system/save/"),
                 "{source} is not a library file"
             );
         }
         for target in [CompilerTarget::Tbs, CompilerTarget::Tla] {
             assert_eq!(
-                cflags_for_target_source(target, "GAME/FLAGS/GET_BYTE.C"),
-                cflags_for_target_source(target, "BATTLE/EFFECT/ANY_FILE.C")
+                cflags_for_target_source(target, "game/flags/get_byte.c"),
+                cflags_for_target_source(target, "battle/effect/any_file.c")
             );
         }
     }
@@ -410,16 +403,16 @@ mod target_tests {
         let split = |flags: Vec<String>| flags.iter().any(|flag| flag == "-mthumb-split-constants");
         assert!(split(cflags_for_target_source(
             CompilerTarget::Tla,
-            "GAME/FLAGS/GET_BYTE.C"
+            "game/flags/get_byte.c"
         )));
         assert!(!split(cflags_for_target_source(
             CompilerTarget::Tbs,
-            "MENU/INPUT_CANCEL_SOUND_TICK.C"
+            "menu/input_cancel_sound_tick.c"
         )));
         assert!(!split(cflags()));
         assert!(!split(cflags_for_target_source(
             CompilerTarget::Tla,
-            "SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C"
+            "sound/music_track_operate_work_byte.c"
         )));
     }
     #[test]
@@ -455,10 +448,10 @@ mod target_tests {
         assert!(compile(false).contains("_call_via_r0"));
         let flags = |t, s| cflags_for_target_source(t, s);
         let has = |f: Vec<String>| f.iter().any(|x| x == "-mthumb-call-via-lr");
-        assert!(has(flags(CompilerTarget::Tla, "GAME/FLAGS/GET_BYTE.C")));
+        assert!(has(flags(CompilerTarget::Tla, "game/flags/get_byte.c")));
         assert!(!has(flags(
             CompilerTarget::Tbs,
-            "MENU/INPUT_CANCEL_SOUND_TICK.C"
+            "menu/input_cancel_sound_tick.c"
         )));
     }
     #[test]
@@ -498,13 +491,13 @@ mod target_tests {
     #[test]
     fn game_code_always_compiles_with_the_canonical_flags() {
         for source in [
-            "SOUND/COMMAND.C",
-            "SOUND/PLAY_PLAY_CUE_RETURN_ONE.C",
-            "SYSTEM/SAVE/STATE.C",
-            "SYSTEM/SAVE/WRITE_PAIR.C",
-            "SYSTEM/SAVE/SUMMARY.C",
-            "MENU/INPUT_CANCEL_SOUND_TICK.C",
-            "FIELD/ARUTAMIRA_DOU/ROOM_VIS.C",
+            "sound/command.c",
+            "sound/play_play_cue_return_one.c",
+            "system/save/state.c",
+            "system/save/write_pair.c",
+            "system/save/summary.c",
+            "menu/input_cancel_sound_tick.c",
+            "field/arutamira_dou/room_vis.c",
         ] {
             assert_eq!(
                 cflags_for_target_source(CompilerTarget::Tbs, source),
@@ -529,7 +522,7 @@ mod target_tests {
         for table in [AGBCC_SOURCES, AGBCC_FLASH_SOURCES] {
             for entry in table {
                 assert!(
-                    entry.starts_with("games/") && entry.contains("/SRC/") && entry.ends_with(".C")
+                    entry.starts_with("games/") && entry.contains("/src/") && entry.ends_with(".c")
                 );
                 assert!(
                     root().join(entry).is_file(),
@@ -538,11 +531,11 @@ mod target_tests {
                 assert!(files.insert(*entry), "duplicate family for {entry}");
             }
         }
-        let library = root().join("games/COMMON/SRC/SOUND");
+        let library = root().join("games/common/src/sound");
         for entry in std::fs::read_dir(&library).unwrap() {
             let name = entry.unwrap().file_name().to_string_lossy().into_owned();
-            if name.ends_with(".C") {
-                let source = format!("games/COMMON/SRC/SOUND/{name}");
+            if name.ends_with(".c") {
+                let source = format!("games/common/src/sound/{name}");
                 assert!(
                     AGBCC_SOURCES.contains(&source.as_str()),
                     "unrouted library module {source}"
@@ -552,7 +545,7 @@ mod target_tests {
     }
     #[test]
     fn natural_paths_route_the_same_whole_file_and_respect_game_boundaries() {
-        let source = "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C";
+        let source = "games/common/src/system/save/identify_flash.c";
         for target in [CompilerTarget::Tbs, CompilerTarget::Tla] {
             for path in [
                 source.to_string(),
@@ -566,24 +559,24 @@ mod target_tests {
             assert_eq!(
                 family_for_source(
                     target,
-                    "games/COMMON/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.C"
+                    "games/common/src/system/save/flash_verify_callback.c"
                 ),
                 CompilerFamily::AgbccFlash
             );
             for source in [
-                "games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.C",
-                "games/THE LOST AGE/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.C",
+                "games/tbs/src/system/save/flash_verify_callback.c",
+                "games/tla/src/system/save/flash_verify_callback.c",
             ] {
                 assert_eq!(family_for_source(target, source), CompilerFamily::Game);
             }
             assert_eq!(
-                family_for_source(target, "games/COMMON/SRC/SOUND/ENGINE.C"),
+                family_for_source(target, "games/common/src/sound/engine.c"),
                 CompilerFamily::Agbcc
             );
             for source in [
-                "games/COMMON/SRC/SOUND_EFFECT/SCHEDULE.C",
-                "games/COMMON/SRC/SOUND/../GAME/FLAGS.C",
-                "games/COMMON/SRC/SOUND/DRIVER/UPDATE.S",
+                "games/common/src/sound_effect/schedule.c",
+                "games/common/src/sound/../game/flags.c",
+                "games/common/src/sound/driver/update.s",
                 "08006878.c",
                 "resource_3a8_c_0200142c.c",
             ] {
@@ -631,17 +624,17 @@ mod target_tests {
         assert!(CompilerFamily::GameArm.is_arm());
         let mut files = std::collections::BTreeSet::new();
         for entry in GAME_ARM_SOURCES {
-            let owners: &[CompilerTarget] = if entry.starts_with("games/COMMON/SRC/") {
+            let owners: &[CompilerTarget] = if entry.starts_with("games/common/src/") {
                 &games
-            } else if entry.starts_with("games/THE BROKEN SEAL/SRC/") {
+            } else if entry.starts_with("games/tbs/src/") {
                 &[CompilerTarget::Tbs]
-            } else if entry.starts_with("games/THE LOST AGE/SRC/") {
+            } else if entry.starts_with("games/tla/src/") {
                 &[CompilerTarget::Tla]
             } else {
                 panic!("{entry} is not game C")
             };
-            assert!(entry.ends_with(".C"), "{entry} is not game C");
-            assert!(!entry.contains("/SRC/SOUND/") && !entry.contains("/SRC/SYSTEM/SAVE/"));
+            assert!(entry.ends_with(".c"), "{entry} is not game C");
+            assert!(!entry.contains("/src/sound/") && !entry.contains("/src/system/save/"));
             assert!(root().join(entry).is_file(), "missing routed source {entry}");
             assert!(files.insert(*entry), "duplicate route for {entry}");
             for table in [AGBCC_SOURCES, AGBCC_FLASH_SOURCES, AGBCC_ARM_SOURCES] {
@@ -658,15 +651,15 @@ mod target_tests {
             }
         }
         for target in games {
-            assert_eq!(family_for_source(target, "GRAPHICS/ANY_FILE.C"), CompilerFamily::Game);
+            assert_eq!(family_for_source(target, "graphics/any_file.c"), CompilerFamily::Game);
         }
     }
     #[test]
     fn agbcc_families_keep_their_flag_sets() {
         for source in [
-            "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C",
-            "games/COMMON/SRC/SYSTEM/SAVE/FLASH_ERASE_VERIFY.C",
-            "games/COMMON/SRC/SYSTEM/SAVE/FLASH_READ_ROUTINES.C",
+            "games/common/src/system/save/identify_flash.c",
+            "games/common/src/system/save/flash_erase_verify.c",
+            "games/common/src/system/save/flash_read_routines.c",
         ] {
             assert_eq!(
                 cflags_for_target_source(CompilerTarget::Tbs, source),
@@ -674,11 +667,11 @@ mod target_tests {
             );
         }
         assert_eq!(
-            cflags_for_target_source(CompilerTarget::Tbs, "games/COMMON/SRC/SOUND/ENGINE.C"),
+            cflags_for_target_source(CompilerTarget::Tbs, "games/common/src/sound/engine.c"),
             agbcc_cflags()
         );
         assert_eq!(
-            cflags_for_target_source(CompilerTarget::Tla, "SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C"),
+            cflags_for_target_source(CompilerTarget::Tla, "sound/music_track_operate_work_byte.c"),
             agbcc_cflags()
         );
     }

@@ -1,8 +1,8 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "MAP.H"
-#include "FIELD_EVENT.H"
-#include "VRAM_TAB.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "map.h"
+#include "field_event.h"
+#include "vram_tab.h"
 
 struct LightOam {
     u32 link;

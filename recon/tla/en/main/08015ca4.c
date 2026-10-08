@@ -1,8 +1,8 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "SAVE_STATE.H"
-#include "DMA.H"
-#include "FLASH.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "save_state.h"
+#include "dma.h"
+#include "flash.h"
 
 struct DmaRegisters {
     u32 source;

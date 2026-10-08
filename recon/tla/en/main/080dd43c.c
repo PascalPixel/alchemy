@@ -1,5 +1,5 @@
-#include "FIXED_MATH.H"
-#include "SYSTEM.H"
+#include "fixed_math.h"
+#include "system.h"
 u32 BattleFx_HasReachedTarget(struct EffectSlot *);
 
 struct Output_08097f80 {

@@ -50,7 +50,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     }
     let draft = draft.ok_or_else(|| USAGE.to_string())?;
     let text = draft.to_string_lossy();
-    let game = game.unwrap_or(if text.contains("/tla/") || text.contains("THE LOST AGE") { "tla" } else { "tbs" });
+    let game = game.unwrap_or(if text.contains("/tla/") { "tla" } else { "tbs" });
     Ok(Options { draft, size, game })
 }
 
@@ -289,12 +289,12 @@ mod tests {
 
     #[test]
     fn visible_types_come_from_the_expansion_with_their_files() {
-        let expanded = "# 1 \"/r/draft.c\"\n# 1 \"/r/games/COMMON/INCLUDE/GAME/A.H\" 1\nstruct A { u8 a; };\ntypedef struct { u8 b; } B;\n# 3 \"/r/draft.c\" 2\nstruct A *Get(void);\nunion C { u8 c; u16 d; };\nvoid Use(void) { struct L { u8 l; } l; }\n";
+        let expanded = "# 1 \"/r/draft.c\"\n# 1 \"/r/games/common/include/game/a.h\" 1\nstruct A { u8 a; };\ntypedef struct { u8 b; } B;\n# 3 \"/r/draft.c\" 2\nstruct A *Get(void);\nunion C { u8 c; u16 d; };\nvoid Use(void) { struct L { u8 l; } l; }\n";
         assert_eq!(
             visible_types(expanded),
             [
-                ("struct A".to_string(), "/r/games/COMMON/INCLUDE/GAME/A.H".to_string()),
-                ("B".to_string(), "/r/games/COMMON/INCLUDE/GAME/A.H".to_string()),
+                ("struct A".to_string(), "/r/games/common/include/game/a.h".to_string()),
+                ("B".to_string(), "/r/games/common/include/game/a.h".to_string()),
                 ("union C".to_string(), "/r/draft.c".to_string()),
             ]
         );
@@ -303,8 +303,8 @@ mod tests {
     #[test]
     fn probes_keep_declarations_and_replace_bodies() {
         assert_eq!(
-            declarations_only("#include \"TYPES.H\"\nstruct A { u8 a; };\ns32 Run(struct A *a)\n{\n    return a->a;\n}\nu8 gB;"),
-            "#include \"TYPES.H\"\nstruct A { u8 a; };\ns32 Run(struct A *a);\n\n\n\nu8 gB;\n"
+            declarations_only("#include \"types.h\"\nstruct A { u8 a; };\ns32 Run(struct A *a)\n{\n    return a->a;\n}\nu8 gB;"),
+            "#include \"types.h\"\nstruct A { u8 a; };\ns32 Run(struct A *a);\n\n\n\nu8 gB;\n"
         );
         assert_eq!(
             layout_probe(&["struct A", "B"]),

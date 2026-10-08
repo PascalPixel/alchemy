@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "ram_buffer.h"
 
 struct CharacterGlyphWork {
     u8 unknown_0000[0x137c];

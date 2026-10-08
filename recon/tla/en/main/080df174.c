@@ -1,10 +1,10 @@
-#include "FIXED_MATH.H"
-#include "OBJDISP.H"
-#include "TYPES.H"
-#include "SCENE.H"
-#include "OBJECT_EFFECT.H"
-#include "OBJECT_EFX.H"
-#include "SYSTEM.H"
+#include "fixed_math.h"
+#include "objdisp.h"
+#include "types.h"
+#include "scene.h"
+#include "object_effect.h"
+#include "object_efx.h"
+#include "system.h"
 u8 *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 struct Vector_08099d18 {

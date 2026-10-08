@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 extern u8 GameFlagBytes[];
 

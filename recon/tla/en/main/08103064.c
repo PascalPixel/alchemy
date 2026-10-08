@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "OWNER_STATE.H"
+#include "types.h"
+#include "owner_state.h"
 
 #define DJINN_ENTRY_SET (-0x8000)
 

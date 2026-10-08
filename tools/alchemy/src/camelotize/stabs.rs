@@ -349,7 +349,7 @@ pub(crate) struct Probe {
     pub expression: String,
 }
 
-const PROBE: &str = "ALCHEMY_PROBE.C";
+const PROBE: &str = "alchemy_probe.c";
 
 pub(crate) fn compile(target: DecompTarget, imports: Option<&Path>, file: &Path, probes: &[Probe]) -> Result<Stabs, String> {
     let directory = tempfile::Builder::new()
@@ -359,7 +359,7 @@ pub(crate) fn compile(target: DecompTarget, imports: Option<&Path>, file: &Path,
     let mut kept: Vec<&Probe> = probes.iter().collect();
     loop {
         let source = directory.path().join(PROBE);
-        let assembly = directory.path().join("ALCHEMY_PROBE.S");
+        let assembly = directory.path().join("alchemy_probe.s");
         let mut text = format!("#include \"{}\"\nvoid alchemy_probe(void)\n{{\n", file.display());
         for probe in &kept {
             text.push_str(&format!("typedef __typeof__({}) {};\n", probe.expression, probe.name));
@@ -447,6 +447,6 @@ mod tests {
         let stabs = Stabs::parse(ASSEMBLY);
         assert_eq!(stabs.typedef("alchemy_probe_Actor_Get"), Some(Kind::Pointer(Pointee::Record("FieldActor".into()))));
         assert_eq!(stabs.typedef("alchemy_probe_gWork"), Some(Kind::Pointer(Pointee::Int(1))));
-        assert_eq!(failed_lines("x/ALCHEMY_PROBE.C:5: `gWork' undeclared"), [5]);
+        assert_eq!(failed_lines("x/alchemy_probe.c:5: `gWork' undeclared"), [5]);
     }
 }

@@ -1,5 +1,5 @@
-#include "MEM.H"
-#include "TEXT_RENDER_RUNTIME.H"
+#include "mem.h"
+#include "text_render_runtime.h"
 
 s32 UiText_BuildRenderEntries(s32 character, s32 count);
 u8 *Text_FormatNumber(u8 *output, s32 value, s32 width);

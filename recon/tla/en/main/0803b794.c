@@ -1,7 +1,7 @@
-/* ported from games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/MEASURE.C */
-#include "TYPES.H"
-#include "RUNTIME_INTERFACES.H"
-#include "WINDOW.H"
+/* ported from games/tbs/src/graphics/window/measure.c */
+#include "types.h"
+#include "runtime_interfaces.h"
+#include "window.h"
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)

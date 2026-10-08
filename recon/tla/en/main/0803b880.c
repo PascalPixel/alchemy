@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "RUNTIME_INTERFACES.H"
+#include "types.h"
+#include "runtime_interfaces.h"
 extern u8 Data_03001e8c[];
 
 s32 UiText_BuildRenderEntries(s32, s32);

@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "BTLTYPE.H"
+#include "types.h"
+#include "btltype.h"
 void UiWindow_Commit(s32 window);
 
 void UiWindow_SetTilemapEntryFar(s32, s32, s32, s32, s32);

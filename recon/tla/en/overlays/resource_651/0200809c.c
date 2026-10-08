@@ -1,8 +1,8 @@
 
-#include "TYPES.H"
-#include "FIELD_EVENT.H"
-#include "PARTY_STATE.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "field_event.h"
+#include "party_state.h"
+#include "ram_buffer.h"
 
 void DeriMura_RunExitWalk(void)
 {

@@ -1,4 +1,4 @@
-#include "BTLSYS.H"
+#include "btlsys.h"
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 

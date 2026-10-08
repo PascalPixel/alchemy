@@ -1,9 +1,9 @@
-#include "RESOURCE.H"
-#include "MEM.H"
-#include "OBJECT_LOOKUP.H"
-#include "TYPES.H"
-#include "SCENE.H"
-#include "FIXED_MATH.H"
+#include "resource.h"
+#include "mem.h"
+#include "object_lookup.h"
+#include "types.h"
+#include "scene.h"
+#include "fixed_math.h"
 
 void WaitFrames(s32);
 

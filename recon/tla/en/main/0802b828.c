@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "RESOURCE.H"
-#include "RAM_BUFFER.H"
-#include "PARTY_STATE.H"
+#include "types.h"
+#include "resource.h"
+#include "ram_buffer.h"
+#include "party_state.h"
 
 struct MapTableEntry {
     u16 resource;

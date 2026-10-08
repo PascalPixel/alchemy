@@ -2,14 +2,14 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_64A/ENTRY.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_64A/SCENE_TABLES.o"(.text)
+        "*/games/tla/src/field/overlay_64a/entry.o"(.text)
+        "*/games/tla/src/field/overlay_64a/scene_tables.o"(.text)
         "*/resource_64a_overlay.o"(.text.x0200805c)
         "*/resource_64a_overlay.o"(.text.x0200815c)
         "*/resource_64a_overlay.o"(.text.x020081f4)
         "*/resource_64a_overlay.o"(.text.x020082e0)
         "*/resource_64a_overlay.o"(.text.x02008328)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_64A/PREPARE.o"(.text)
+        "*/games/tla/src/field/overlay_64a/prepare.o"(.text)
         "*/resource_64a_overlay.o"(.text.x02008a70)
         "*/resource_64a_overlay.o"(.text.x02008b24)
         "*/resource_64a_overlay.o"(.text.x02008db4)
@@ -20,7 +20,7 @@ SECTIONS
         "*/resource_64a_overlay.o"(.text.x02009c7c)
         "*/resource_64a_overlay.o"(.text.x0200a068)
         "*/resource_64a_overlay.o"(.text.x0200a17c)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_64A/IMPORT.o"(.text)
+        "*/games/tla/src/field/overlay_64a/import.o"(.text)
         "*/resource_64a_overlay.o"(.rodata.x0200a410)
     }
     .bss : { "*/resource_64a_overlay.o"(.bss) }

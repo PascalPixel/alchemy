@@ -1,0 +1,32 @@
+	.include "games/tla/src/map/map.inc"
+	.section .rodata
+	.global Field_Map074
+Field_Map074:
+	map_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map074, .LField_Map074_METATILES
+	map_block Field_Map074, .LField_Map074_SHAPES
+	map_block Field_Map074, .LField_Map074_GRID
+	map_block Field_Map074, .LField_Map074_SHAPE_GRID
+	map_block Field_Map074, .LField_Map074_ANIMATION
+	map_block Field_Map074
+	map_block Field_Map074, .LField_Map074_SCENE
+.LField_Map074_METATILES:
+	.incbin "map/map_074/metatiles.delta2.lz"
+	.balign 4, 0
+.LField_Map074_SHAPES:
+	.incbin "map/map_074/shapes.table.lz"
+	.balign 4, 0
+.LField_Map074_GRID:
+	.incbin "map/map_074/grid.parts.lz"
+	.balign 4, 0
+.LField_Map074_SHAPE_GRID:
+	.incbin "map/map_074/shape_grid.plane.lz"
+	.balign 4, 0
+.LField_Map074_ANIMATION:
+	.incbin "map/map_012/animation.script.lz"
+	.balign 4, 0
+.LField_Map074_SCENE:
+	.incbin "map/map_074/scene.parts.lz"

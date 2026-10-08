@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "OBJECT_RUNTIME.H"
+#include "types.h"
+#include "object_runtime.h"
 
 struct AnimationFrameSet {
     u8 unknown_00[16];

@@ -1,4 +1,4 @@
-#include "OWNER_STATE.H"
+#include "owner_state.h"
 
 s32 ItemMenu_Collect(struct OwnerInventoryState *owner, u16 *items, s32 mode)
 {

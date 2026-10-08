@@ -398,7 +398,7 @@ mod tests {
 
     #[test]
     fn integer_casts_of_addresses_stay_by_declared_type() {
-        // ROWING.C and PLAY.C: messages and tables are arrays, and their
+        // rowing.c and play.c: messages and tables are arrays, and their
         // callees are declared with empty parentheses, so GCC says nothing.
         let text = "typedef int s32;\ntypedef unsigned char u8;\ntypedef unsigned short u16;\ntypedef unsigned int u32;\n\
             extern const u8 MsgFuneWhereGoingSlay[];\nextern const u8 MsgTorebiGetRidItems[];\nextern u8 FuneHeya_ProgressTableA[];\n\
@@ -454,7 +454,7 @@ mod tests {
         assert_eq!(numeric_spans(text, &[text]), vec!["(void *)gWords, dst, 0x84000003, 3);"]);
     }
 
-    /// The session-3 dry run: ☀️ FIELD/KUUPUAPPU_HEYA/HEYA.C:501 stored
+    /// The session-3 dry run: ☀️ field/kuupuappu_heya/heya.c:501 stored
     /// through `*q` for `*(u16 *)q` with `s16 *q`.
     #[test]
     fn a_dereferenced_pointer_cast_goes_only_when_it_names_the_declared_type() {

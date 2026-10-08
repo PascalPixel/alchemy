@@ -7,11 +7,11 @@ const USAGE: &str = r#"usage: alchemy adopt-data OBJECT PIECE... [--sections ".r
 After a data block's source is in its module: takes the block out of every
 edition's scaffold (recon/<game>/unidentified.s for English,
 recon/<game>/<lang>/rom.s for the others) and links OBJECT in its place in
-that edition's linker script (games/<GAME>/MAIN.LD for Japanese,
-MAIN_<LANG>.LD beside it for ☀️, recon/tla/<lang>/MAIN.LD for ⚓️).
+that edition's linker script (games/<game>/main.ld for Japanese,
+main_<lang>.ld beside it for ☀️, recon/tla/<lang>/main.ld for ⚓️).
 
-OBJECT is the module's object or source, games/<GAME>/SRC/.../X.o (or .S
-or .C); --sections lists its input sections, .rodata by default. It may
+OBJECT is the module's object or source, games/<game>/src/.../x.o (or .s
+or .c); --sections lists its input sections, .rodata by default. It may
 already be linked for other sections (its .text): the block becomes its
 .rodata. A PIECE names scaffold bytes by their labels:
   LABEL         from LABEL to the next label or the end of its section
@@ -616,11 +616,11 @@ fn object_line(root: &Path, object: &str, sections: &str) -> Result<String, Stri
     if !object.starts_with("games/") || object.contains("..") || object.contains('"') {
         return Err(format!("{object} is not a games/ object"));
     }
-    if !["S", "s", "C", "c"]
+    if !["s", "S", "c"]
         .iter()
         .any(|extension| root.join(stem.with_extension(extension)).is_file())
     {
-        return Err(format!("{object} has no source (.S or .C) to build it from"));
+        return Err(format!("{object} has no source (.s, .S or .c) to build it from"));
     }
     let sections = sections.split_whitespace().collect::<Vec<_>>().join(" ");
     if sections.is_empty() || !sections.split(' ').all(|section| section.starts_with('.')) {
@@ -759,8 +759,8 @@ mod tests {
     use super::*;
 
     const ENGLISH: &str = "\t.section .unidentified.08000100,\"a\"\n\t.global A\nA:\n\t.incbin \"baserom.gba\", 0x00000100, 0x00000010\n\t.global B\n\t.type B, %object\nB:\n\t.incbin \"baserom.gba\", 0x00000110, 0x00000008\n\t.incbin \"baserom.gba\", 0x00000118, 0x00000008\n\t.global C\nC:\n\t.incbin \"baserom.gba\", 0x00000120, 0x00000020\n\t.section .unidentified.08000200,\"a\"\n\t.global D\nD:\n\t.incbin \"baserom.gba\", 0x00000200, 0x00000004\n";
-    const SCRIPT: &str = ".rom_main :\n{\n        \"*/games/G/X.o\"(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000100)\n        \"*/games/G/Y.o\"(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000200)\n}\n";
-    const OBJECT: &str = "\"*/games/G/SRC/BATTLE/B.o\"(.rodata)";
+    const SCRIPT: &str = ".rom_main :\n{\n        \"*/games/g/x.o\"(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000100)\n        \"*/games/g/y.o\"(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000200)\n}\n";
+    const OBJECT: &str = "\"*/games/g/src/battle/b.o\"(.rodata)";
 
     fn piece(text: &str) -> Piece {
         Piece::parse(text).unwrap()
@@ -780,7 +780,7 @@ mod tests {
         let script = relink(SCRIPT, "recon/tbs/unidentified.o", ".unidentified.", &cut, OBJECT).unwrap();
         assert_eq!(
             script,
-            ".rom_main :\n{\n        \"*/games/G/X.o\"(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000100)\n        \"*/games/G/SRC/BATTLE/B.o\"(.rodata)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000120)\n        \"*/games/G/Y.o\"(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000200)\n}\n"
+            ".rom_main :\n{\n        \"*/games/g/x.o\"(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000100)\n        \"*/games/g/src/battle/b.o\"(.rodata)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000120)\n        \"*/games/g/y.o\"(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000200)\n}\n"
         );
         assert!(relink(&script, "recon/tbs/unidentified.o", ".unidentified.", &cut, OBJECT).is_err());
     }
@@ -788,10 +788,10 @@ mod tests {
     #[test]
     fn an_object_linked_for_its_text_takes_the_block_as_its_rodata() {
         let cut = cut(ENGLISH, &[piece("B")]).unwrap();
-        let text = "\"*/games/G/X.o\"(.rodata)";
+        let text = "\"*/games/g/x.o\"(.rodata)";
         let script = relink(SCRIPT, "recon/tbs/unidentified.o", ".unidentified.", &cut, text).unwrap();
-        assert!(script.contains("        \"*/games/G/X.o\"(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000100)\n        \"*/games/G/X.o\"(.rodata)\n"), "{script}");
-        let error = relink(SCRIPT, "recon/tbs/unidentified.o", ".unidentified.", &cut, "\"*/games/G/X.o\"(.rodata .text)").unwrap_err();
+        assert!(script.contains("        \"*/games/g/x.o\"(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000100)\n        \"*/games/g/x.o\"(.rodata)\n"), "{script}");
+        let error = relink(SCRIPT, "recon/tbs/unidentified.o", ".unidentified.", &cut, "\"*/games/g/x.o\"(.rodata .text)").unwrap_err();
         assert!(error.contains("already links .text"), "{error}");
         assert!(relink(&script, "recon/tbs/unidentified.o", ".unidentified.", &cut, text).is_err());
     }
@@ -804,7 +804,7 @@ mod tests {
         assert_eq!(cut.after.as_deref(), Some("0800010c"));
         assert!(cut.text.starts_with("\t.section .unidentified.0800010c,\"a\"\n\t.incbin \"baserom.gba\", 0x0000010c, 0x00000004\n\t.global B\n\t.type B, %object\nB:\n\t.incbin \"baserom.gba\", 0x00000110, 0x00000008\n"), "{}", cut.text);
         let script = relink(SCRIPT, "recon/tbs/unidentified.o", ".unidentified.", &cut, OBJECT).unwrap();
-        assert!(script.contains("        \"*/games/G/SRC/BATTLE/B.o\"(.rodata)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.0800010c)\n        \"*/games/G/Y.o\""), "{script}");
+        assert!(script.contains("        \"*/games/g/src/battle/b.o\"(.rodata)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.0800010c)\n        \"*/games/g/y.o\""), "{script}");
         assert!(!script.contains("(.unidentified.08000100)"));
         let across = super::cut(ENGLISH, &[piece("A+0x14")]).unwrap();
         assert_eq!(across.labels, ["A", "B"]);
@@ -830,7 +830,7 @@ mod tests {
 
     #[test]
     fn an_object_takes_the_tail_that_follows_it() {
-        let object = "\"*/games/G/X.o\"(.text)";
+        let object = "\"*/games/g/x.o\"(.text)";
         let pad = "\t.section .unidentified.08000100,\"a\"\n\t.incbin \"baserom.gba\", 0x00000100, 0x00000002\n\t.section .unidentified.08000200,\"a\"\n\t.global D\nD:\n\t.incbin \"baserom.gba\", 0x00000200, 0x00000004\n";
         let scaffold = "recon/tbs/unidentified.o";
         let name = following_section(SCRIPT, scaffold, ".unidentified.", object).unwrap();
@@ -845,19 +845,19 @@ mod tests {
         assert_eq!(head.after.as_deref(), Some("08000104"));
         assert_eq!(head.text, "\t.section .unidentified.08000104,\"a\"\n\t.incbin \"baserom.gba\", 0x00000104, 0x0000000c\n\t.global B\nB:\n\t.incbin \"baserom.gba\", 0x00000110, 0x00000008\n");
         let relinked = relink_tail(SCRIPT, scaffold, ".unidentified.", &head).unwrap();
-        assert!(relinked.contains("(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000104)\n        \"*/games/G/Y.o\""), "{relinked}");
+        assert!(relinked.contains("(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000104)\n        \"*/games/g/y.o\""), "{relinked}");
         assert!(cut_head(german, "08000100", 0x19).is_err());
         assert!(cut_head(ENGLISH, "08000100", 2).unwrap_err().contains("A lies"));
         let editions = [
             ("en", scaffold, ".unidentified.", pad, SCRIPT),
-            ("ja", scaffold, ".unidentified.", pad, ".rom_main :\n{\n        \"*/games/G/X.o\"(.text)\n        \"*/games/G/Y.o\"(.text)\n}\n"),
+            ("ja", scaffold, ".unidentified.", pad, ".rom_main :\n{\n        \"*/games/g/x.o\"(.text)\n        \"*/games/g/y.o\"(.text)\n}\n"),
         ];
         let outcomes = plan_tail(&editions, object, 2, &[]).unwrap();
         assert_eq!(outcomes[0].0, "ja");
         assert!(matches!(&outcomes[0].1, Outcome::Kept(reason) if reason.contains("no scaffold section")));
         assert!(matches!(outcomes[1].1, Outcome::Adopted(..)));
         assert!(plan_tail(&editions, object, 2, &["ja"]).is_err());
-        assert!(plan_tail(&editions, "\"*/games/G/Z.o\"(.text)", 2, &[]).is_err());
+        assert!(plan_tail(&editions, "\"*/games/g/z.o\"(.text)", 2, &[]).is_err());
     }
 
     #[test]
@@ -888,7 +888,7 @@ mod tests {
         assert!(matches!(&outcomes[1].1, Outcome::Kept(reason) if reason.contains("0x14")));
         let Outcome::Adopted(cut, text) = &outcomes[2].1 else { panic!("{:?}", outcomes[2]) };
         assert_eq!(cut.after.as_deref(), Some("00000120"));
-        assert!(text.contains("(.rom.00000100)\n        \"*/games/G/SRC/BATTLE/B.o\"(.rodata)\n        \"*/recon/tbs/fr/rom.o\"(.rom.00000120)"), "{text}");
+        assert!(text.contains("(.rom.00000100)\n        \"*/games/g/src/battle/b.o\"(.rodata)\n        \"*/recon/tbs/fr/rom.o\"(.rom.00000120)"), "{text}");
         assert!(plan(&editions, &[piece("B")], OBJECT, &["de"], false).is_err());
         let without_english = [editions[0], editions[2]];
         let missing = [("en", "recon/tbs/unidentified.o", ".unidentified.", "\t.section .unidentified.08000100,\"a\"\n", SCRIPT), editions[2]];

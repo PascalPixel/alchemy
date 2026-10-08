@@ -1,8 +1,8 @@
-#include "TYPES.H"
-#include "FIXED_MATH.H"
-#include "EFFECT_STEP.H"
-#include "BATTLE_EFFECT_WORK.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "fixed_math.h"
+#include "effect_step.h"
+#include "battle_effect_work.h"
+#include "ram_buffer.h"
 
 struct ReelWork {
     u8 unknown_000[0x8c];

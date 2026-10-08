@@ -1,5 +1,5 @@
-#include "FIXED_MATH.H"
-#include "TYPES.H"
+#include "fixed_math.h"
+#include "types.h"
 
 struct EffectPosition {
     s32 x;

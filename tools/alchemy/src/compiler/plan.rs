@@ -125,9 +125,6 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
         arguments.push("-S".to_string());
         arguments.push("-o".to_string());
         arguments.push(options.output.clone());
-        if extname(&options.input) == ".C" {
-            arguments.extend(["-x".to_string(), "c".to_string()]);
-        }
         arguments.push(options.input.clone());
         steps.push(compiler_command_for_target(options.target, &arguments)?);
     }

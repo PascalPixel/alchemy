@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 void UiIcon_BuildItemIconTiles(s32, s32, s32, s32, s32);
 

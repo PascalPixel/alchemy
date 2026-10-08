@@ -1,12 +1,12 @@
-#include "TYPES.H"
-#include "CALLBACK_SCHEDULER.H"
-#include "IO_REG.H"
-#include "IO_WRITE_QUEUE.H"
-#include "IWRAM_CALL.H"
-#include "SCENE.H"
-#include "GLOBAL_CELLS.H"
-#include "RAM_BUFFER.H"
-#include "DISPTRAN.H"
+#include "types.h"
+#include "callback_scheduler.h"
+#include "io_reg.h"
+#include "io_write_queue.h"
+#include "iwram_call.h"
+#include "scene.h"
+#include "global_cells.h"
+#include "ram_buffer.h"
+#include "disptran.h"
 #define QUEUE_DISPLAY_CONTROL(value)                                        \
 
 void DisplayTransition_Finish(s32 mode, s32 frames)

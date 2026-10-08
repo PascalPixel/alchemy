@@ -1,0 +1,70 @@
+#ifndef GUARD_TIMED_EVENTS_H
+#define GUARD_TIMED_EVENTS_H
+
+#include "types.h"
+
+#define NULL ((void *)0)
+
+#include "facing_object.h"
+#include "field_event.h"
+#include "field_scene.h"
+
+enum ValeHouseFlag {
+    FLAG_GOT_FAREWELL_HERB = 0x81b
+};
+
+enum {
+    ITEM_HERB = 180
+};
+
+typedef struct {
+    u8 pad_to_position[8];
+    s32 x;
+    s32 y;
+    u8 pad_to_scale[8];
+    s32 scale_x;
+    s32 scale_y;
+    u8 pad_to_velocity[0x44];
+    s16 velocity_x;
+    s16 velocity_y;
+} ScaledMotion;
+
+union SceneActor {
+    s32 words[26];
+    u16 halfwords[52];
+};
+
+union SceneField {
+    u16 value;
+    u8 bytes[2];
+} __attribute__((packed, aligned(2)));
+
+extern u8 gValeFaceTargetScript[];
+extern u8 gValeActor10Script[];
+extern u8 gValePartyScript[];
+extern u8 gValeTimedActorScript[];
+extern u8 gValeHouseEntrances[];
+extern u8 gValeHouseExits[];
+extern u8 gValeHouseLateExits[];
+extern u8 gValeHousePlacements[];
+extern u8 gValeHousePlacementsAfterLeaving[];
+extern u8 gValeHouseReturnPlacements[];
+extern u8 gValeHouseLateEvents[];
+extern u8 gValeHouseEvents[];
+extern u8 gValeHouseEventsAfterLeaving[];
+extern u8 gValeHouseReturnEvents[];
+
+s32 ArcTan2(s32, s32);
+void SceneEvents_UpdateInView(void *);
+void Object_SetTargetAndCallback();
+void BattleFx_SetBlock30ValuesMaxZero(void);
+void Map_ClearLayerEntryFlag();
+void BattleFx_StartTwelveFrameBlend();
+void BattleFx_SetBlock30Values12Zero();
+void BattleFx_SetBlock30Values128One();
+s32 Battle_GetWorkObject1e0();
+s32 Object_SetActionCallbackAndRefreshById();
+void Scene_UpdateTimedActor(void);
+void Scene_GiveFarewellHerb(void);
+
+#endif

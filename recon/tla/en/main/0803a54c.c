@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "WINDOW.H"
-#include "UIFLOW.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "window.h"
+#include "uiflow.h"
 
 struct UiMessageSlot {
     struct UiWindow *window;

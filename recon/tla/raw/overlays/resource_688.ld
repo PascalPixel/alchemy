@@ -2,19 +2,19 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_688/ENTRY.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_688/EVENTS_A.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_688/SCENE_TABLES.o"(.text)
+        "*/games/tla/src/field/overlay_688/entry.o"(.text)
+        "*/games/tla/src/field/overlay_688/events_a.o"(.text)
+        "*/games/tla/src/field/overlay_688/scene_tables.o"(.text)
         "*/resource_688_overlay.o"(.text.x02008060)
         "*/resource_688_overlay.o"(.text.x020080b0)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_688/EVENTS_B.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_688/SCENE_EVENTS.o"(.text)
+        "*/games/tla/src/field/overlay_688/events_b.o"(.text)
+        "*/games/tla/src/field/overlay_688/scene_events.o"(.text)
         "*/resource_688_overlay.o"(.text.x02008120)
         "*/resource_688_overlay.o"(.text.x02008190)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_688/PREPARE.o"(.text)
+        "*/games/tla/src/field/overlay_688/prepare.o"(.text)
         "*/resource_688_overlay.o"(.text.x02008310)
         "*/resource_688_overlay.o"(.text.x020083cc)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_688/IMPORT.o"(.text)
+        "*/games/tla/src/field/overlay_688/import.o"(.text)
         "*/resource_688_overlay.o"(.rodata.x020085e4)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

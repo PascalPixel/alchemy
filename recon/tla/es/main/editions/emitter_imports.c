@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "OBJDISP.H"
+#include "types.h"
+#include "objdisp.h"
 
 struct ParticlePosition {
     s32 x;

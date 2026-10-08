@@ -1,7 +1,7 @@
-#include "OWNER_STATE.H"
-#include "TYPES.H"
-#include "SYSTEM.H"
-#include "RAM_BUFFER.H"
+#include "owner_state.h"
+#include "types.h"
+#include "system.h"
+#include "ram_buffer.h"
 
 struct FieldEffectState {
     u8 padding0[0x1AC];

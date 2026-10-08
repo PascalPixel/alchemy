@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "RESOURCE.H"
+#include "types.h"
+#include "resource.h"
 
 struct MenuSprite {
     struct MenuSprite *next;

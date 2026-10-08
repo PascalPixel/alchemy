@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 struct MessageWork {
     u8 unknown_000[0xeb0];

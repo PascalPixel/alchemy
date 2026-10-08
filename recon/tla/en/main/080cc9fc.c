@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "IO_REG.H"
+#include "types.h"
+#include "io_reg.h"
 
 extern volatile u32 gKeysRepeat;
 extern volatile u32 Data_03001ae8;

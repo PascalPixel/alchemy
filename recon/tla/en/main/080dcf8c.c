@@ -1,8 +1,8 @@
-#include "FIXED_MATH.H"
-#include "OBJDISP.H"
-#include "TYPES.H"
-#include "OBJECT_EFX.H"
-#include "SYSTEM.H"
+#include "fixed_math.h"
+#include "objdisp.h"
+#include "types.h"
+#include "object_efx.h"
+#include "system.h"
 
 struct ItemBreakFragmentPosition {
     s32 x;

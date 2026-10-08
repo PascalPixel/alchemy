@@ -1,0 +1,77 @@
+.syntax unified
+	.thumb
+	.include "games/tla/src/system/overlay.inc"
+	.global Resource_FarCall004
+Resource_FarCall004:
+	.global UiWork_InitializeWithResourceCountersFar
+	.thumb_func
+UiWork_InitializeWithResourceCountersFar:
+	overlay_veneer UiWork_InitializeWithResourceCounters
+	.global UiWork_InitializeFar
+	.thumb_func
+UiWork_InitializeFar:
+	overlay_veneer UiWork_Initialize
+	.global UiWindow_CreateFar
+	.thumb_func
+UiWindow_CreateFar:
+	overlay_veneer UiWindow_Create
+	.global UiWork_FinalizeFar
+	.thumb_func
+UiWork_FinalizeFar:
+	overlay_veneer UiWork_Finalize
+	.global Ui_AdjustValueWithoutLimitFar
+	.thumb_func
+Ui_AdjustValueWithoutLimitFar:
+	overlay_veneer Ui_AdjustValueWithoutLimit
+	.global UiText_DecodeMessageFar
+	.thumb_func
+UiText_DecodeMessageFar:
+	overlay_veneer UiText_DecodeMessage
+	.global UiText_CopyMessageStringFar
+	.thumb_func
+UiText_CopyMessageStringFar:
+	overlay_veneer UiText_CopyMessageString
+	.global UiText_OpenMessageWindowFar
+	.thumb_func
+UiText_OpenMessageWindowFar:
+	overlay_veneer UiText_OpenMessageWindow
+	.global UiText_ShowPositionedMessageAndWaitFar
+	.thumb_func
+UiText_ShowPositionedMessageAndWaitFar:
+	overlay_veneer UiText_ShowPositionedMessageAndWait
+	.global UiWork_IsCompleteFar
+	.thumb_func
+UiWork_IsCompleteFar:
+	overlay_veneer UiWork_IsComplete
+	.global UiWork_IsIdleFar
+	.thumb_func
+UiWork_IsIdleFar:
+	overlay_veneer UiWork_IsIdle
+	.global UiWork_SetBusyFlagsFar
+	.thumb_func
+UiWork_SetBusyFlagsFar:
+	overlay_veneer UiWork_SetBusyFlags
+	.global RenderOutput_PrepareForRedrawFar
+	.thumb_func
+RenderOutput_PrepareForRedrawFar:
+	overlay_veneer RenderOutput_PrepareForRedraw
+	.global UiWindow_ClearInteriorTilesFar
+	.thumb_func
+UiWindow_ClearInteriorTilesFar:
+	overlay_veneer UiWindow_ClearInteriorTiles
+	.global UiWindow_DrawDividerLineFar
+	.thumb_func
+UiWindow_DrawDividerLineFar:
+	overlay_veneer UiWindow_DrawDividerLine
+	.global UiText_DrawResourceFar
+	.thumb_func
+UiText_DrawResourceFar:
+	overlay_veneer UiText_DrawResource
+	.global UiText_DrawCharacterAtOffsetFar
+	.thumb_func
+UiText_DrawCharacterAtOffsetFar:
+	overlay_veneer UiText_DrawCharacterAtOffset
+	.global UiText_DrawStringFar
+	.thumb_func
+UiText_DrawStringFar:
+	overlay_veneer UiText_DrawString

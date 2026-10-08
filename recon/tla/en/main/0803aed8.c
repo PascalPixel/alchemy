@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "FIXED_MATH.H"
+#include "types.h"
+#include "fixed_math.h"
 
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
                              s32 no, s32 plural, s32 *suffix)

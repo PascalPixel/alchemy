@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "SCENE.H"
-#include "BTLDISP.H"
+#include "types.h"
+#include "iwram_call.h"
+#include "scene.h"
+#include "btldisp.h"
 
 extern u8 gProjection[];
 

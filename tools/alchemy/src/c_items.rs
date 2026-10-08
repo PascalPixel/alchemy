@@ -601,10 +601,10 @@ mod tests {
 
     #[test]
     fn splits_top_level_items_with_their_exact_text() {
-        let source = "/* head */\n#include \"TYPES.H\"\n#define MASK(x) \\\n  ((x) & 1)\nstruct A { u8 a; }; /* note */\ns32 f(void);\n#if defined(X)\nu8 gX;\n#endif\nvoid g(void)\n{\n#if Y\n    f();\n#endif\n}\n";
+        let source = "/* head */\n#include \"types.h\"\n#define MASK(x) \\\n  ((x) & 1)\nstruct A { u8 a; }; /* note */\ns32 f(void);\n#if defined(X)\nu8 gX;\n#endif\nvoid g(void)\n{\n#if Y\n    f();\n#endif\n}\n";
         let found = kinds(source);
         assert_eq!(found[0], (Kind::Comment, "/* head */"));
-        assert_eq!(found[1], (Kind::Include("TYPES.H".into()), "#include \"TYPES.H\""));
+        assert_eq!(found[1], (Kind::Include("types.h".into()), "#include \"types.h\""));
         assert_eq!(found[2], (Kind::Directive, "#define MASK(x) \\\n  ((x) & 1)"));
         assert_eq!(found[3], (Kind::Declaration, "struct A { u8 a; }; /* note */"));
         assert_eq!(found[4], (Kind::Declaration, "s32 f(void);"));
@@ -659,8 +659,8 @@ mod tests {
         assert_eq!(normalized(&a[0]), normalized(&b[0]));
         let m = items("#define  X  1 /* c */");
         assert_eq!(normalized(&m[0]), "#define X 1");
-        let marker = items("# 12 \"games/COMMON/INCLUDE/GAME/A.H\" 2\n");
-        assert_eq!(line_marker(&marker[0]).as_deref(), Some("games/COMMON/INCLUDE/GAME/A.H"));
+        let marker = items("# 12 \"games/common/include/game/a.h\" 2\n");
+        assert_eq!(line_marker(&marker[0]).as_deref(), Some("games/common/include/game/a.h"));
         assert!(blank_line_before("a;\n\n  b;", 6));
         assert!(!blank_line_before("a;\n  b;", 5));
     }

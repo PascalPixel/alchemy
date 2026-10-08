@@ -1,5 +1,5 @@
-#include "CURVE.H"
-#include "FIXED_MATH.H"
+#include "curve.h"
+#include "fixed_math.h"
 
 s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 position, s32 row)
 {

@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "SCENE.H"
+#include "types.h"
+#include "scene.h"
 
 typedef struct {
     u8 reserved_00[9];

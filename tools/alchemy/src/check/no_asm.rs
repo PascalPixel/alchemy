@@ -46,7 +46,7 @@ fn message_imports(
 }
 
 fn sibling(root: &Path, source: &str) -> Option<std::path::PathBuf> {
-    (source.ends_with(".c") || source.ends_with(".C"))
+    source.ends_with(".c")
         .then(|| root.join(source).with_extension("s"))
 }
 
@@ -65,7 +65,7 @@ fn groups(
         let mut sources =
             source_files(&root.join(target.source_dir)).map_err(|error| error.to_string())?;
         sources.extend(
-            source_files(&root.join("games/COMMON/SRC")).map_err(|error| error.to_string())?,
+            source_files(&root.join("games/common/src")).map_err(|error| error.to_string())?,
         );
         for path in sources {
             if !path
@@ -305,7 +305,7 @@ fn macro_self_test() -> Result<(), String> {
         return Err("macro fixture did not evade the raw scan".into());
     }
     let target = target_for(DecompTargetId::TbsEn);
-    let human = Path::new("games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/CLEAR_WORD_IF_SET.C");
+    let human = Path::new("games/tbs/src/system/memory/clear_word_if_set.c");
     if sibling(root, &human.to_string_lossy()) != Some(root.join(human).with_extension("s")) {
         return Err("relative sibling path did not resolve under repository root".into());
     }
@@ -465,7 +465,7 @@ fn batched_audit_uses_current_catalog_and_invalidates_clean_keys() {
     let root = directory.path();
     let id = DecompTargetId::TbsEn;
     let target = target_for(id);
-    let catalog = root.join(format!("{}/TEXT/EN.PO", target.game_dir()));
+    let catalog = root.join(format!("{}/text/en.po", target.game_dir()));
     fs::create_dir_all(catalog.parent().unwrap()).unwrap();
     let write_catalog = |number| {
         fs::write(
@@ -483,16 +483,16 @@ fn batched_audit_uses_current_catalog_and_invalidates_clean_keys() {
         "#error stale generated header\n",
     )
     .unwrap();
-    let source = root.join("IMPORT.C");
+    let source = root.join("import.c");
     fs::write(
         &source,
-        "#include \"text/MSG_IDS.H\"\nTEXT_MESSAGE_ENUM(MsgImported);\n\
+        "#include \"text/msg_ids.h\"\nTEXT_MESSAGE_ENUM(MsgImported);\n\
          #if TEXT_MESSAGE_NUMBER_MsgImported == 8\n#define KIND naked\n\
          #else\n#define KIND packed\n#endif\n\
          void Imported(void) __attribute__((KIND));\n",
     )
     .unwrap();
-    let plain = root.join("PLAIN.C");
+    let plain = root.join("plain.c");
     fs::write(&plain, "void Plain(void) {}\n").unwrap();
     let first = message_imports(root, &[id]).unwrap();
     let command = |imports: &BTreeMap<String, MessageImports>| {

@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "OWNER_STATE.H"
-#include "PARTY_STATE.H"
+#include "types.h"
+#include "owner_state.h"
+#include "party_state.h"
 
 extern u16 Data_020023c4[];
 

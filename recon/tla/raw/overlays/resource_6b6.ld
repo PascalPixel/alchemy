@@ -2,13 +2,13 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B6/ENTRY.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B6/SCENE_TABLES.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B6/EVENTS_A.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B6/SCENE_EVENTS.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B6/EVENTS_B.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B6/PREPARE.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6B6/IMPORT.o"(.text)
+        "*/games/tla/src/field/overlay_6b6/entry.o"(.text)
+        "*/games/tla/src/field/overlay_6b6/scene_tables.o"(.text)
+        "*/games/tla/src/field/overlay_6b6/events_a.o"(.text)
+        "*/games/tla/src/field/overlay_6b6/scene_events.o"(.text)
+        "*/games/tla/src/field/overlay_6b6/events_b.o"(.text)
+        "*/games/tla/src/field/overlay_6b6/prepare.o"(.text)
+        "*/games/tla/src/field/overlay_6b6/import.o"(.text)
         "*/resource_6b6_overlay.o"(.rodata.x020080c4)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

@@ -127,7 +127,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     if matches!((game, edition_game), (Some(game), Some(edition_game)) if game != edition_game) {
         return Err("--game and --edition name different games".into());
     }
-    let game = game.or(edition_game).unwrap_or(if text.contains("/tla/") || text.contains("THE LOST AGE") {
+    let game = game.or(edition_game).unwrap_or(if text.contains("/tla/") {
         "tla"
     } else {
         "tbs"
@@ -784,7 +784,7 @@ mod tests {
         elf.symbols[0].size = 0x0e;
         assert!(scaffold_extent_mode(&map, &elf, "First", true).is_err());
         let mut ordinary = section;
-        ordinary.path = "games/THE BROKEN SEAL/SRC/TEST.o".into();
+        ordinary.path = "games/tbs/src/test.o".into();
         assert!(scaffold_extent(&Map { placed: vec![ordinary] }, &elf, "First").unwrap_err().contains("no main-image scaffold"));
     }
 
@@ -886,7 +886,7 @@ mod tests {
             assert!(steps[1].contains(&flag), "{flag}");
         }
         assert!(!steps[2].iter().any(|flag| flag == "-mthumb"));
-        let library = root().join("games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C");
+        let library = root().join("games/tbs/src/sound/music_track_operate_work_byte.c");
         assert!(arm_steps(target, &library, &object).is_err());
         let tla = decomp_target(Some("tla-en")).unwrap();
         let tla_source = root().join("recon/tla/en/main/08000000.c");
@@ -985,12 +985,12 @@ mod tests {
 
     #[test]
     fn located_rows_follow_objdump_line_markers() {
-        let objdump = "00000000 <f>:\nf():\n/work/probe.c:3\n   0:\tpush\t{lr}\n/work/probe.c:4 (discriminator 1)\n   2:\tmovs\tr0, #1\n/work/EVENT.H:12\n   4:\tbl\t0 <Use>\n";
+        let objdump = "00000000 <f>:\nf():\n/work/probe.c:3\n   0:\tpush\t{lr}\n/work/probe.c:4 (discriminator 1)\n   2:\tmovs\tr0, #1\n/work/event.h:12\n   4:\tbl\t0 <Use>\n";
         let rows = normalize_located(objdump);
         assert_eq!(rows, [
             ("push {lr}".to_string(), Some(("/work/probe.c".to_string(), 3))),
             ("movs r0, #1".to_string(), Some(("/work/probe.c".to_string(), 4))),
-            ("bl".to_string(), Some(("/work/EVENT.H".to_string(), 12))),
+            ("bl".to_string(), Some(("/work/event.h".to_string(), 12))),
         ]);
         // A row from a header goes to the next row in the draft.
         let found = heat(&["push {lr}".to_string()], &[("push {lr}".into(), Some(3)), ("bl".into(), None), ("movs r0, #1".into(), Some(9))]);
@@ -999,12 +999,12 @@ mod tests {
 
     #[test]
     fn located_rows_follow_the_decoded_table_when_objdump_l_cannot() {
-        let dump = "CU: /w/0800a494.c:\nFile name    Line number    Starting address    View    Stmt\n/w/0800a494.c    84    0    x\n/w/0800a494.c    105    0x4    x\n/w/THE BROKEN SEAL/X.H    12    0x8    1    x\n/w/0800a494.c    104    0xc    x\n";
+        let dump = "CU: /w/0800a494.c:\nFile name    Line number    Starting address    View    Stmt\n/w/0800a494.c    84    0    x\n/w/0800a494.c    105    0x4    x\n/w/games/tbs/x.h    12    0x8    1    x\n/w/0800a494.c    104    0xc    x\n";
         let table = decoded_lines(dump);
         assert_eq!(table, [
             (0, "/w/0800a494.c".to_string(), 84),
             (4, "/w/0800a494.c".to_string(), 105),
-            (8, "/w/THE BROKEN SEAL/X.H".to_string(), 12),
+            (8, "/w/games/tbs/x.h".to_string(), 12),
             (12, "/w/0800a494.c".to_string(), 104),
         ]);
         let objdump = "00000000 <f>:\n   0:\tpush\t{r4, lr}\n   4:\tmov\tr4, r0\n   8:\tldr\tr0, [r4]\n   c:\tadd\tr0, r0, #1\n  10:\tpop\t{r4, pc}\n";

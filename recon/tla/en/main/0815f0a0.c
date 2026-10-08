@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "RESOURCE.H"
+#include "types.h"
+#include "iwram_call.h"
+#include "resource.h"
 
 void BattleFx_StepPaletteToResource(s32 resource_id)
 {

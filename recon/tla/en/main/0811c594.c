@@ -1,12 +1,12 @@
-#include "TYPES.H"
-#include "SCENE.H"
-#include "BTLMES.H"
-#include "BATTLE_ESCAPE.H"
-#include "BTLDISP.H"
-#include "BATTLE_TARGET.H"
-#include "FIXED_MATH.H"
-#include "BTLPTY.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "scene.h"
+#include "btlmes.h"
+#include "battle_escape.h"
+#include "btldisp.h"
+#include "battle_target.h"
+#include "fixed_math.h"
+#include "btlpty.h"
+#include "system.h"
 void UiWork_ClearValueNameTablesFar(void);
 extern u8 Data_03001ae8[];
 s32 BattlePres_ShowDefendMessage(s16 *);

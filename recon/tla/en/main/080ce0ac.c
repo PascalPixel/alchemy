@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "OBJECT_LOOKUP.H"
-#include "ITEM.H"
+#include "types.h"
+#include "object_lookup.h"
+#include "item.h"
 
 s32 BattleFx_ExecutePackedAbilityEffect(s32);
 

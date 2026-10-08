@@ -125,7 +125,7 @@ fn clean(text: &str) -> String {
 
 fn short(object: &str) -> &str {
     let object = object.trim_end_matches(".o");
-    object.split_once("/SRC/").map_or(object, |(_, tail)| tail)
+    object.split_once("/src/").map_or(object, |(_, tail)| tail)
 }
 
 fn gaps_report(judged: &[Judged]) -> String {
@@ -297,10 +297,10 @@ fn validation_report(judged: &[Judged]) -> String {
         let _ = writeln!(out, "overlays-one-code-unit\t{mode}\t{one}\t{total}\toverlays whose code (veneers aside) is one unit");
         let _ = writeln!(out, "overlays-at-most-three\t{mode}\t{few}\t{total}\toverlays whose code is three units or fewer");
     }
-    // TITLE.C, merged earlier from five files.
+    // title.c, merged earlier from five files.
     for j in judged {
         let image = &j.loaded.image;
-        let members: Vec<usize> = image.functions.iter().enumerate().filter(|(_, f)| f.object.ends_with("SRC/MENU/TITLE/TITLE.o")).map(|(i, _)| i).collect();
+        let members: Vec<usize> = image.functions.iter().enumerate().filter(|(_, f)| f.object.ends_with("src/menu/title/title.o")).map(|(i, _)| i).collect();
         if members.is_empty() {
             continue;
         }
@@ -309,13 +309,13 @@ fn validation_report(judged: &[Judged]) -> String {
             let holding: BTreeSet<usize> = members.iter().filter_map(|&m| units.iter().position(|u| u.first <= m && m <= u.last)).collect();
             let foreign: usize = holding
                 .iter()
-                .map(|&u| image.functions[units[u].first..=units[u].last].iter().filter(|f| f.lang == Lang::C && !f.object.ends_with("TITLE.o")).count())
+                .map(|&u| image.functions[units[u].first..=units[u].last].iter().filter(|f| f.lang == Lang::C && !f.object.ends_with("title.o")).count())
                 .sum();
             let internal = members.len() - 1;
             let joined = members.windows(2).filter(|w| holding.len() == 1 || units.iter().any(|u| u.first <= w[0] && w[1] <= u.last)).count();
             let _ = writeln!(
                 out,
-                "title\t{}\t{joined}\t{internal}\t{} functions of TITLE.C in {} unit(s); {foreign} other C functions share them",
+                "title\t{}\t{joined}\t{internal}\t{} functions of title.c in {} unit(s); {foreign} other C functions share them",
                 if binary { "binary" } else { "all" },
                 members.len(),
                 holding.len()

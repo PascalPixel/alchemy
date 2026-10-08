@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 extern u16 UiText_Glyphs[];
 

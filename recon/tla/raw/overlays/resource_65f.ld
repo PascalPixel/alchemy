@@ -2,10 +2,10 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_65F/ENTRY.o"(.text)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_SPRITE_PRIORITY.o"(.text)
+        "*/games/tla/src/field/overlay_65f/entry.o"(.text)
+        "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/resource_65f_overlay.o"(.text.x0200807e)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
+        "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_65f_overlay.o"(.text.x020080b6)
         "*/resource_65f_overlay.o"(.text.x020080b8)
         "*/resource_65f_overlay.o"(.text.x02008280)
@@ -13,7 +13,7 @@ SECTIONS
         "*/resource_65f_overlay.o"(.text.x02008390)
         "*/resource_65f_overlay.o"(.text.x020083d8)
         "*/resource_65f_overlay.o"(.text.x02008420)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_65F/SCENE_TABLES.o"(.text)
+        "*/games/tla/src/field/overlay_65f/scene_tables.o"(.text)
         "*/resource_65f_overlay.o"(.text.x02008440)
         "*/resource_65f_overlay.o"(.text.x020084cc)
         "*/resource_65f_overlay.o"(.text.x02008580)
@@ -30,7 +30,7 @@ SECTIONS
         "*/resource_65f_overlay.o"(.text.x020089dc)
         "*/resource_65f_overlay.o"(.text.x02008a68)
         "*/resource_65f_overlay.o"(.text.x02008aa8)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_65F/PREPARE.o"(.text)
+        "*/games/tla/src/field/overlay_65f/prepare.o"(.text)
         "*/resource_65f_overlay.o"(.text.x02008be4)
         "*/resource_65f_overlay.o"(.text.x02008d30)
         "*/resource_65f_overlay.o"(.text.x02008e00)
@@ -56,7 +56,7 @@ SECTIONS
         "*/resource_65f_overlay.o"(.text.x02009104)
         "*/resource_65f_overlay.o"(.text.x02009144)
         "*/resource_65f_overlay.o"(.text.x020091c8)
-        "*/games/THE LOST AGE/SRC/FIELD/COMMON/EFFECT/ADVANCE_MOTION.o"(.text)
+        "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_65f_overlay.o"(.text.x020092a6)
         "*/resource_65f_overlay.o"(.text.x020092a8)
         "*/resource_65f_overlay.o"(.text.x0200932c)
@@ -69,7 +69,7 @@ SECTIONS
         "*/resource_65f_overlay.o"(.text.x0200a2f4)
         "*/resource_65f_overlay.o"(.text.x0200a694)
         "*/resource_65f_overlay.o"(.text.x0200b878)
-        "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_65F/IMPORT.o"(.text)
+        "*/games/tla/src/field/overlay_65f/import.o"(.text)
         "*/resource_65f_overlay.o"(.rodata.x0200d39c)
     }
     .bss : { "*/resource_65f_overlay.o"(.bss) }

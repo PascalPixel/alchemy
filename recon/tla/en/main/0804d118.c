@@ -1,7 +1,7 @@
-#include "RESOURCE.H"
-#include "MEM.H"
-#include "TYPES.H"
-#include "SYSTEM.H"
+#include "resource.h"
+#include "mem.h"
+#include "types.h"
+#include "system.h"
 extern u8 Data_03001f38[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))

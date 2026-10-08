@@ -1,5 +1,5 @@
-#include "OWNER_STATE.H"
-#include "TYPES.H"
+#include "owner_state.h"
+#include "types.h"
 
 s32 Inventory_CountStackedItem(s32 owner, s32 item_id)
 {

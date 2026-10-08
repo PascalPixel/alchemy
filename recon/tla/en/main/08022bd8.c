@@ -1,5 +1,5 @@
-#include "RESOURCE.H"
-#include "MEM.H"
+#include "resource.h"
+#include "mem.h"
 extern u8 Func_0800a418[];
 
 extern u8 Tile_CopyStridedCodeSize[];

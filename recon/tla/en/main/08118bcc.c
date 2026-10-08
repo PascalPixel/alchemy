@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "BTLMES.H"
-#include "BTLPTY.H"
+#include "types.h"
+#include "btlmes.h"
+#include "btlpty.h"
 
 extern u8 *BtlWk;
 

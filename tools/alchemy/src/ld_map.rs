@@ -221,8 +221,8 @@ Linker script and memory map
  */recon/tbs/de/rom.o(.rom.00000000)
  .rom.00000000  0x0000000008000000       0x10 /x/out/tbs-de/obj/recon/tbs/de/rom.o
                 0x0000000008000000                Rom_Start
- */games/THE BROKEN SEAL/SRC/SYSTEM/IO.o(.text .rodata .data .padding)
- .text          0x0000000008000010        0xe /x/out/tbs-de/obj/games/THE BROKEN SEAL/SRC/SYSTEM/IO.o
+ */games/tbs/src/system/io.o(.text .rodata .data .padding)
+ .text          0x0000000008000010        0xe /x/out/tbs-de/obj/games/tbs/src/system/io.o
                 0x0000000008000010                Func_08000010
                 0x0000000008000010                Input_Handle
                 0x0000000008000018                Input_Poll
@@ -233,10 +233,10 @@ Linker script and memory map
                 0x0000000008000030                IwramCodeEnd = .
 
 .iwram_runtime  0x0000000003000000        0x8 load address 0x0000000008000030
- */games/THE BROKEN SEAL/SRC/SYSTEM/RUNTIME.o(.text)
- .text          0x0000000003000000        0x8 /x/out/tbs-de/obj/games/THE BROKEN SEAL/SRC/SYSTEM/RUNTIME.o
+ */games/tbs/src/system/runtime.o(.text)
+ .text          0x0000000003000000        0x8 /x/out/tbs-de/obj/games/tbs/src/system/runtime.o
                 0x0000000003000000                IwramIrqMain
- .bss           0x0000000003000008        0x4 /x/out/tbs-de/obj/games/THE BROKEN SEAL/SRC/SYSTEM/RUNTIME.o
+ .bss           0x0000000003000008        0x4 /x/out/tbs-de/obj/games/tbs/src/system/runtime.o
 
 iwram           0x0000000003000100       0x40 load address 0x0000000008000038
  */recon/tbs/sym_iwram.o(.sym_iwram)
@@ -260,7 +260,7 @@ LOAD /x/out/tbs-de/obj/recon/tbs/de/rom.o
         let names: Vec<&str> = map.placed.iter().map(|p| p.name.as_str()).collect();
         assert_eq!(names, [".rom.00000000", ".text", "*fill*", ".rom.00000020", ".text", ".bss", ".sym_iwram", ".unidentified.08000030", ".text"]);
         let io = &map.placed[1];
-        assert_eq!(io.object(), "games/THE BROKEN SEAL/SRC/SYSTEM/IO.o");
+        assert_eq!(io.object(), "games/tbs/src/system/io.o");
         assert_eq!((io.address, io.size, io.load), (0x0800_0010, 0xe, 0x0800_0010));
         assert_eq!(io.symbol_at(0x0800_0012), Some(("Input_Handle", 2)));
         assert_eq!(io.symbol_at(0x0800_001a), Some(("Input_Poll", 2)));
@@ -274,7 +274,7 @@ LOAD /x/out/tbs-de/obj/recon/tbs/de/rom.o
         let held: Vec<&str> = map.in_image(0x58).map(|p| p.name.as_str()).collect();
         assert_eq!(held, [".rom.00000000", ".text", "*fill*", ".rom.00000020", ".text", ".unidentified.08000030", ".text"]);
         assert_eq!(map.symbol("gFrameTick").map(|(_, a)| a), Some(0x0300_0100));
-        assert_eq!(map.at_load(0x0800_0034, 0x58).map(Placed::label), Some("games/THE BROKEN SEAL/SRC/SYSTEM/RUNTIME.o".to_string()));
+        assert_eq!(map.at_load(0x0800_0034, 0x58).map(Placed::label), Some("games/tbs/src/system/runtime.o".to_string()));
         assert_eq!(map.at_load(0x0800_0038, 0x58).map(Placed::label), Some("recon/tbs/unidentified.o(.unidentified.08000030)".to_string()));
         assert!(is_placeholder("Func_08000010") && !is_placeholder("Input_Handle"));
     }

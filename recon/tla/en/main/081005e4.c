@@ -1,5 +1,5 @@
-#include "A9_MOTION.H"
-#include "TYPES.H"
+#include "a9_motion.h"
+#include "types.h"
 extern u8 Data_03001f2c[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))

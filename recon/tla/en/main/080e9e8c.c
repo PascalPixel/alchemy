@@ -1,6 +1,6 @@
 /* Near miss: listing 43 instructions, draft 43, common 34, differ 18; the rest differs in instruction order. */
-#include "TYPES.H"
-#include "OBJECT_RUNTIME.H"
+#include "types.h"
+#include "object_runtime.h"
 
 void Func_080e9e8c(struct ObjectRuntime *object)
 {

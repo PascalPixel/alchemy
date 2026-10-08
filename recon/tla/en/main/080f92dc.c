@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 struct MenuPageIcon {
     u8 reserved_00[5];
@@ -14,7 +14,7 @@ struct MenuPageWork {
     u8 entry_count;
 };
 
-#include "RAM_BUFFER.H"
+#include "ram_buffer.h"
 
 void UiIcon_PrepareObject(struct MenuPageIcon *icon);
 

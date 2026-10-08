@@ -1,11 +1,11 @@
-#include "TYPES.H"
-#include "MEM.H"
-#include "DISPTRAN.H"
-#include "DMA.H"
-#include "SYSTEM.H"
-#include "CALLBACK_SCHEDULER.H"
-#include "IWRAM_CALL.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "mem.h"
+#include "disptran.h"
+#include "dma.h"
+#include "system.h"
+#include "callback_scheduler.h"
+#include "iwram_call.h"
+#include "ram_buffer.h"
 void DisplayTransition_FillTilemapAndSolidTile(s32 color)
 {
     struct DisplayTransitionState *work = Ram_HeapSlots->display_transition;

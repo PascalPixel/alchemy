@@ -1,10 +1,10 @@
-#include "TYPES.H"
-#include "OBJDISP.H"
-#include "RAM_BUFFER.H"
-#include "MOTOBJ.H"
-#include "BTLWORK.H"
-#include "BTLSYS.H"
-#include "INVENTORY.H"
+#include "types.h"
+#include "objdisp.h"
+#include "ram_buffer.h"
+#include "motobj.h"
+#include "btlwork.h"
+#include "btlsys.h"
+#include "inventory.h"
 
 s32 EnmUpd(void)
 {

@@ -1,0 +1,70 @@
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+#include "mem.h"
+#include "glyph.h"
+#include "select.h"
+#include "types.h"
+#include "resource.h"
+#include "system.h"
+#include "ram_buffer.h"
+#include "node_chain.h"
+
+#define Resource_DecodeByteLzInRam ((void (*)(void*,void*))Resource_DecodeByteLzInRam)
+
+extern char ResourceId_CommandIcons;
+
+
+void Menu_LoadSelectedResource(void)
+{
+    struct SelectionScreen *state = Ram_HeapSlots->menu_work;
+    struct SelectionNode *selection = NodeChain_GetNodeAtCount(state);
+    struct SelectionNode *transfer;
+    GlyphTransfer *buffer;
+    u8 *tbl;
+    void *resource;
+    s32 no;
+
+    if (selection->kind != 1 && selection->kind != 6)
+        return;
+
+    buffer = (GlyphTransfer *)Runtime_AllocateHeapBlock(68, sizeof(GlyphTransfer));
+    transfer = &state->records[15];
+    no = selection->base;
+    tbl = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+    {
+        u8 **destination = &buffer->encoded;
+        resource = tbl
+            + *(u16 *)(tbl + selection->base * 2);
+        *destination = resource;
+    }
+    Resource_DecodeByteLzInRam(resource, buffer);
+
+    if (transfer->kind == 0)
+        transfer->slot = Resource_FindFreeEntry();
+    transfer->tile =
+        VramBlock_LoadCached(transfer->slot, 0x400, buffer);
+    transfer->kind = 1;
+    transfer->base = no;
+    transfer->scale = 40;
+    transfer->scale_step = 40;
+    transfer->scale_end = 240;
+    Runtime_ReleaseHeapBlock(68);
+}
+
+void Resource_ResetPendingTransfer(void)
+{
+    struct SelectionNode *transfer =
+        &((struct SelectionScreen *)Ram_HeapSlots->menu_work)->records[15];
+
+    if (transfer->kind != 0) {
+        Resource_ResetEntry(transfer->slot);
+        transfer->kind = 0;
+    }
+}

@@ -1,9 +1,9 @@
-#include "TYPES.H"
-#include "OWNERVAL.H"
-#include "BATTLE_UNIT.H"
-#include "OWNER_STATE.H"
-#include "PARTY_STATE.H"
-#include "FIXED_MATH.H"
+#include "types.h"
+#include "ownerval.h"
+#include "battle_unit.h"
+#include "owner_state.h"
+#include "party_state.h"
+#include "fixed_math.h"
 
 s32 Party_CountActiveOwnersFar(void);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);

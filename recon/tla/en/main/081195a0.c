@@ -1,4 +1,4 @@
-#include "BTLPTY.H"
+#include "btlpty.h"
 
 extern u8 *BtlWk;
 

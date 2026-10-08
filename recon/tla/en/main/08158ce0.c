@@ -1,7 +1,7 @@
-#include "TYPES.H"
-#include "SCENE.H"
-#include "FIXED_MATH.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "scene.h"
+#include "fixed_math.h"
+#include "system.h"
 extern u8 gBattleFxWork[];
 extern u8 gBgScroll[];
 extern u8 gProjection[];

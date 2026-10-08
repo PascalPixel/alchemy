@@ -1,0 +1,78 @@
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+#include "eventwrk.h"
+#include "types.h"
+#include "facing_object.h"
+#include "ram_buffer.h"
+
+s32 ArcTan2(s32 y, s32 x);
+
+void Object_LinkPair(s32 first_id, s32 second_id, s32 wait)
+{
+    void *first = ObjectTable_Get(first_id);
+    void *second = ObjectTable_Get(second_id);
+
+    if (first != NULL && second != NULL) {
+        FacingObject_TurnPairToFaceEachOther(first, second);
+        EventRuntime_Wait(wait);
+    }
+}
+
+void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first, struct FacingObject *second)
+{
+    s32 toward;
+    s32 away;
+    s32 frame;
+    s32 turning;
+    s32 delta;
+
+    if (first == NULL || second == NULL)
+        return;
+    toward = (u16)ArcTan2(second->position_z - first->position_z,
+        second->position_x - first->position_x);
+    away = toward + 0x8000;
+    for (frame = 0; frame < 60; frame++) {
+        delta = (s16)(toward - first->facing);
+        turning = 2;
+        if (delta != 0) {
+            if (delta > 0x1000)
+                delta = 0x1000;
+            if (delta < -0x1000)
+                delta = -0x1000;
+            first->facing += delta;
+        } else {
+            turning = 1;
+        }
+        delta = (s16)(away - second->facing);
+        if (delta != 0) {
+            if (delta > 0x1000)
+                delta = 0x1000;
+            if (delta < -0x1000)
+                delta = -0x1000;
+            second->facing += delta;
+        } else {
+            turning--;
+        }
+        if (turning == 0)
+            break;
+        WaitFrames(1);
+    }
+}
+
+void ObjectTable_DestroyById(s32 id)
+{
+    void *object = ObjectTable_Get(id);
+    struct EventWork *work = Ram_HeapSlots->event_work;
+
+    if (object != NULL) {
+        Object_Destroy(object);
+        work->objects[id] = NULL;
+    }
+}

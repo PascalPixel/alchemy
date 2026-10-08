@@ -26,9 +26,9 @@ pub(crate) fn content_style(tile: &Tile) -> (&'static str, &'static str) {
         "wav" => ("WAV audio", PCM_ORANGE),
         "mid" => ("MIDI music", MIDI_GREEN),
         "po" => ("Translations", TRANSLATION_TEAL),
-        "png" if source.contains("/GRAPHICS/CHARACTER/") => ("Sprite sheets", SPRITE_PURPLE),
-        "png" if source.contains("/GRAPHICS/") => ("Images", IMAGE_BLUE),
-        "png" if source.contains("/FIELD/") => ("Maps", MAP_GREEN),
+        "png" if source.contains("/graphics/character/") => ("Sprite sheets", SPRITE_PURPLE),
+        "png" if source.contains("/graphics/") => ("Images", IMAGE_BLUE),
+        "png" if source.contains("/field/") => ("Maps", MAP_GREEN),
         "png" => ("Images", IMAGE_BLUE),
         "tsv" => ("Tables", TABLE_LAVENDER),
         _ => ("Other files", OTHER_TAN),
@@ -174,7 +174,7 @@ fn published_view_leaves_out_untracked_private_inputs() {
     let dir = temp.path().join("games/test");
     std::fs::create_dir_all(&dir).unwrap();
     std::fs::write(dir.join("MAP.BIN"), [0u8; 123]).unwrap();
-    std::fs::write(dir.join("MAP.S"), [0u8; 45]).unwrap();
+    std::fs::write(dir.join("map.s"), [0u8; 45]).unwrap();
     let git = |args: &[&str]| {
         assert!(std::process::Command::new("git")
             .args(args)
@@ -184,10 +184,10 @@ fn published_view_leaves_out_untracked_private_inputs() {
             .success());
     };
     git(&["init", "--quiet"]);
-    git(&["add", "games/test/MAP.S"]);
+    git(&["add", "games/test/map.s"]);
     let tiles = tracked_only(temp.path(), disk_tiles(temp.path()));
     assert_eq!(tiles.len(), 1);
-    assert_eq!(tiles[0].source.as_deref(), Some("games/test/MAP.S"));
+    assert_eq!(tiles[0].source.as_deref(), Some("games/test/map.s"));
 }
 
 /// Assembly under games/ is proven source (S1); under recon/ it is a listing.
@@ -239,7 +239,7 @@ mod tests {
     #[test]
     fn all_directories_wrap_files_without_duplicating_bytes() {
         let tile = Tile {
-            source: Some("games/THE BROKEN SEAL/SRC/battle/effects/fire.c".into()),
+            source: Some("games/tbs/src/battle/effects/fire.c".into()),
             bytes: 100,
             extension: "c".into(),
             ..Tile::default()
@@ -249,10 +249,10 @@ mod tests {
         let mut node = &grouped[0];
         for path in [
             "games/",
-            "games/THE BROKEN SEAL/",
-            "games/THE BROKEN SEAL/SRC/",
-            "games/THE BROKEN SEAL/SRC/battle/",
-            "games/THE BROKEN SEAL/SRC/battle/effects/",
+            "games/tbs/",
+            "games/tbs/src/",
+            "games/tbs/src/battle/",
+            "games/tbs/src/battle/effects/",
         ] {
             assert_eq!(node.source.as_deref(), Some(path));
             assert_eq!(node.children.len(), 1);
@@ -299,16 +299,16 @@ mod tests {
         };
         for (source, extension, kind) in [
             (
-                "games/X/SRC/GRAPHICS/CHARACTER/HERO.PNG",
+                "games/x/src/graphics/character/hero.png",
                 "png",
                 "Sprite sheets",
             ),
-            ("games/X/SRC/GRAPHICS/FONT/GLYPHS.PNG", "png", "Images"),
-            ("games/X/SRC/FIELD/AREA/AREA.PNG", "png", "Maps"),
-            ("games/X/TEXT/STAFF_ROLL.PNG", "png", "Images"),
+            ("games/x/src/graphics/font/glyphs.png", "png", "Images"),
+            ("games/x/src/field/area/area.png", "png", "Maps"),
+            ("games/x/text/staff_roll.png", "png", "Images"),
             ("history.tsv", "tsv", "Tables"),
-            ("games/X/SRC/FIELD/AREA/FIELD_DATA.INC", "inc", "Headers"),
-            ("games/X/SRC/FIELD/AREA/OVERLAY.LD", "ld", "Other files"),
+            ("games/x/src/field/area/field_data.inc", "inc", "Headers"),
+            ("games/x/src/field/area/overlay.ld", "ld", "Other files"),
         ] {
             assert_eq!(
                 content_style(&placed(source, extension)).0,
@@ -316,8 +316,8 @@ mod tests {
                 "{source}"
             );
         }
-        assert!(super::quiet(&placed("games/X/TEXT/DE.PO", "po")));
-        assert!(!super::quiet(&placed("games/X/SRC/FIELD/A/A.S", "s")));
+        assert!(super::quiet(&placed("games/x/text/de.po", "po")));
+        assert!(!super::quiet(&placed("games/x/src/field/a/a.s", "s")));
         assert_eq!(
             content_style(&tile("mid")),
             ("MIDI music", super::MIDI_GREEN)
@@ -334,16 +334,16 @@ mod tests {
             label: name.into(),
             bytes,
             extension: extension.into(),
-            source: Some(format!("games/X/SRC/FIELD/AREA/{name}")),
+            source: Some(format!("games/x/src/field/area/{name}")),
             children: Vec::new(),
         };
         let folder = Tile {
             bytes: 120,
             children: vec![
-                file("ENTRY.S", "s-credited", 5),
-                file("IMPORT.S", "s-credited", 5),
-                file("AREA.PNG", "png", 40),
-                file("SCENE.C", "c", 70),
+                file("entry.s", "s-credited", 5),
+                file("import.s", "s-credited", 5),
+                file("area.png", "png", 40),
+                file("scene.c", "c", 70),
             ],
             ..Tile::default()
         };

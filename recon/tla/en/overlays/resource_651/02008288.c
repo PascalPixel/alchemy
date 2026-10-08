@@ -1,7 +1,7 @@
 
-#include "TYPES.H"
-#include "FIELD_EVENT.H"
-#include "PARTY_STATE.H"
+#include "types.h"
+#include "field_event.h"
+#include "party_state.h"
 
 extern u8 MsgDeriTaviRikiWorry[];
 extern u8 MsgDeriTaviRikiHome[];

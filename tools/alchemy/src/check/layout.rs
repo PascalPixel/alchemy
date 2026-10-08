@@ -70,9 +70,9 @@ fn recipes_in(
         let Some(form) = form_of(built) else {
             continue;
         };
-        let (root, built) = match built.strip_prefix("COMMON/") {
+        let (root, built) = match built.strip_prefix("common/") {
             Some(shared) => match source_root.parent().and_then(Path::parent) {
-                Some(games) => (games.join("COMMON/SRC"), shared),
+                Some(games) => (games.join("common/src"), shared),
                 None => continue,
             },
             None => (source_root.to_path_buf(), built),
@@ -102,7 +102,7 @@ fn recipes_in(
             for line in list.lines() {
                 let fields: Vec<&str> = line.split('\t').map(str::trim).collect();
                 if let [part, form] = fields.as_slice() {
-                    let png = ags::resource::sibling_path(&input, &format!("{part}.PNG"));
+                    let png = ags::resource::sibling_path(&input, &format!("{part}.png"));
                     if let (true, Ok(png)) = (judged_form(form), png) {
                         found.insert(Recipe {
                             png,
@@ -125,7 +125,7 @@ fn tilemap_problems(list: &str, sibling: &dyn Fn(&str) -> Result<Vec<u8>, String
         .iter()
         .filter(|fields| fields.get(1) == Some(&"table"))
         .filter(|fields| {
-            sibling(&format!("{}.TSV", fields[0]))
+            sibling(&format!("{}.tsv", fields[0]))
                 .is_ok_and(|text| ags::resource::tilemap(fields[0], &text).is_ok())
         })
         .map(|fields| fields[0])
@@ -143,8 +143,9 @@ fn tilemap_problems(list: &str, sibling: &dyn Fn(&str) -> Result<Vec<u8>, String
         }
         if drawing.is_empty() {
             problems.push(format!(
-                "{part}.PNG is cut plainly beside the tilemap {}; draw it as the picture the map shows \
+                "{}.png is cut plainly beside the tilemap {}; draw it as the picture the map shows \
                  and the tiles the map never shows as frames (PART FORM MAP FIRST COUNT [frames])",
+                part.to_ascii_lowercase(),
                 maps.join(", ")
             ));
             continue;
@@ -173,11 +174,11 @@ fn recipes(root: &Path) -> Result<(BTreeSet<Recipe>, Vec<String>), String> {
     for entry in walkdir::WalkDir::new(root.join("games")).sort_by_file_name() {
         let entry = entry.map_err(|error| format!("games: {error}"))?;
         let path = entry.path();
-        if path.extension().is_none_or(|ext| ext != "S") {
+        if path.extension().is_none_or(|ext| ext != "s" && ext != "S") {
             continue;
         }
         let text = path.to_string_lossy();
-        let Some(at) = text.find("/SRC/") else {
+        let Some(at) = text.find("/src/") else {
             continue;
         };
         let source_root = PathBuf::from(&text[..at + 4]);
@@ -589,9 +590,9 @@ mod tests {
     }
 
     fn map_sibling(name: &str) -> Result<Vec<u8>, String> {
-        match name {
-            "M.TSV" => Ok(b"a:u16\tb:u16\tc:u16\td:u16\n0\t0\t0\t0\n0\t1\t2\t0\n".to_vec()),
-            "T.TSV" => Ok(b"a:u8\n1\n".to_vec()),
+        match name.to_ascii_lowercase().as_str() {
+            "m.tsv" => Ok(b"a:u16\tb:u16\tc:u16\td:u16\n0\t0\t0\t0\n0\t1\t2\t0\n".to_vec()),
+            "t.tsv" => Ok(b"a:u8\n1\n".to_vec()),
             other => Err(format!("{other} is missing")),
         }
     }
@@ -600,7 +601,7 @@ mod tests {
     fn a_tile_part_cut_plainly_beside_its_tilemap_is_refused() {
         let problems = tilemap_problems("P\tgbapal\nM\ttable\nP\t8bpp\n", &map_sibling);
         assert_eq!(problems.len(), 1, "{problems:?}");
-        assert!(problems[0].contains("P.PNG is cut plainly"), "{problems:?}");
+        assert!(problems[0].contains("p.png is cut plainly"), "{problems:?}");
     }
 
     #[test]
@@ -634,12 +635,12 @@ mod tests {
     #[test]
     fn a_common_recipe_reads_its_input_from_common() {
         let directory = tempfile::tempdir().unwrap();
-        let source_root = directory.path().join("games/GAME/SRC");
+        let source_root = directory.path().join("games/game/src");
         let mut found = BTreeSet::new();
         let mut problems = Vec::new();
         recipes_in(
             &source_root,
-            "\t.incbin \"COMMON/GRAPHICS/SET/TILES.4bpp.mtf\"\n",
+            "\t.incbin \"common/graphics/set/tiles.4bpp.mtf\"\n",
             &mut found,
             &mut problems,
         );
@@ -648,7 +649,7 @@ mod tests {
             found,
             [directory
                 .path()
-                .join("games/COMMON/SRC/GRAPHICS/SET/TILES.PNG")]
+                .join("games/common/src/graphics/set/tiles.png")]
         );
     }
 
@@ -658,7 +659,7 @@ mod tests {
         let root = directory.path();
         std::fs::create_dir_all(root.join("A")).unwrap();
         std::fs::write(
-            root.join("A/LOGO.TSV"),
+            root.join("a/logo.tsv"),
             "LOGO_TILES\tgbapal\nLOGO_TILES\t8bpp\n",
         )
         .unwrap();
@@ -666,7 +667,7 @@ mod tests {
         let mut problems = Vec::new();
         recipes_in(
             root,
-            "\t.incbin \"A/LOGO.parts.lz\"\n\t.incbin \"A/WORD.4bpp32x16.lz\"\n\t.incbin \"A/HERO.frames\"\n\t.incbin \"A/SPARK.bitmap.lz\"\n",
+            "\t.incbin \"a/logo.parts.lz\"\n\t.incbin \"a/word.4bpp32x16.lz\"\n\t.incbin \"a/hero.frames\"\n\t.incbin \"a/spark.bitmap.lz\"\n",
             &mut found,
             &mut problems,
         );
@@ -683,9 +684,9 @@ mod tests {
         assert_eq!(
             found,
             [
-                ("A/LOGO_TILES.PNG".to_owned(), "8bpp".to_owned()),
-                ("A/SPARK.PNG".to_owned(), "bitmap".to_owned()),
-                ("A/WORD.PNG".to_owned(), "4bpp32x16".to_owned()),
+                ("a/logo_tiles.png".to_owned(), "8bpp".to_owned()),
+                ("a/spark.png".to_owned(), "bitmap".to_owned()),
+                ("a/word.png".to_owned(), "4bpp32x16".to_owned()),
             ]
         );
     }

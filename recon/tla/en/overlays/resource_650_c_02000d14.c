@@ -1,6 +1,6 @@
-#include "TYPES.H"
+#include "types.h"
 
-#include "PARTY_STATE.H"
+#include "party_state.h"
 
 struct SceneEventWork {
     u8 unknown_000[0x1c4];

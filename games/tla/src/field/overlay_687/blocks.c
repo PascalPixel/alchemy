@@ -1,0 +1,121 @@
+#include "ov687.h"
+#include "party_state.h"
+#include "field_scene.h"
+#include "scene_ids.h"
+
+extern const u8 Data_020022d0[];
+extern const u8 Data_0200242c[];
+extern const u8 Data_0200251c[];
+
+void Func_0200141c(s32 x, s32 z, s32 actor)
+{
+    s32 cx = x >> 20;
+    s32 cz = z >> 20;
+
+    Func_02000388(1, cx - 1, cz - 1, 0);
+    Func_02000388(1, cx, cz - 1, 0);
+    Func_02000388(1, cx - 1, cz, 0);
+    Func_02000388(1, cx, cz, 0);
+    Func_02001fdc(actor, 0, 0);
+}
+
+void Func_02001480(void)
+{
+    struct Ov687Object *object;
+
+    Func_02001fac();
+    Func_02002044(0);
+    object = Object_GetById(9);
+    Func_0200141c(object->x, Object_GetById(9)->z, 9);
+    GameFlag_SetBit(0xa90);
+    Func_02001fb4();
+}
+
+void Func_020014b4(void)
+{
+    struct Ov687Object *object;
+
+    Func_02001fac();
+    Func_02002044(0);
+    object = Object_GetById(10);
+    Func_0200141c(object->x, Object_GetById(10)->z, 10);
+    GameFlag_SetBit(0xa91);
+    Func_02001fb4();
+}
+
+void Func_020014ec(void)
+{
+    struct Ov687Object *object;
+
+    Func_02001fac();
+    Func_02002044(0);
+    object = Object_GetById(11);
+    Func_0200141c(object->x, Object_GetById(11)->z, 11);
+    GameFlag_SetBit(0xa92);
+    Func_02001fb4();
+}
+
+void Func_02001524(void)
+{
+    struct Ov687Object *object;
+
+    Func_02001fac();
+    Func_02002044(0);
+    object = Object_GetById(12);
+    Func_0200141c(object->x, Object_GetById(12)->z, 12);
+    GameFlag_SetBit(0xa93);
+    Func_02001fb4();
+}
+
+void Func_0200155c(void)
+{
+    struct Ov687Object *object;
+
+    Func_02001fac();
+    Func_02002044(0);
+    object = Object_GetById(13);
+    Func_0200141c(object->x, Object_GetById(13)->z, 13);
+    GameFlag_SetBit(0xa94);
+    Func_02001fb4();
+}
+
+void Func_02001594(void)
+{
+    struct Ov687Object *object;
+
+    Func_02001fac();
+    Func_02002044(0);
+    object = Object_GetById(9);
+    Func_0200141c(object->x, Object_GetById(9)->z, 9);
+    GameFlag_SetBit(0xa95);
+    Func_02001fb4();
+}
+
+void Func_020015cc(void)
+{
+    Func_02001fac();
+    Func_02002044(0);
+    Func_02002004(4);
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    Func_02001fb4();
+}
+
+void Func_020015ec(void)
+{
+    Func_02001fac();
+    Func_02002044(0);
+    Func_02002004(5);
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    Func_02001fb4();
+}
+
+const struct SceneEvent *Scene_GetEvents(void)
+{
+    if (gPartyState.scene == (s32)&SceneId_Ov687Room1)
+        return (const struct SceneEvent *)Data_020022d0;
+    if (gPartyState.entrance <= 4)
+        return (const struct SceneEvent *)Data_0200242c;
+    return (const struct SceneEvent *)Data_0200251c;
+}

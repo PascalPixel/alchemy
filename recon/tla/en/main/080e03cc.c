@@ -1,8 +1,8 @@
-#include "TYPES.H"
-#include "FX_SCENE.H"
-#include "MOTOBJ.H"
-#include "FIXED_POINT_POSITION.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "fx_scene.h"
+#include "motobj.h"
+#include "fixed_point_position.h"
+#include "system.h"
 
 void RunBattleEffect13(void)
 {

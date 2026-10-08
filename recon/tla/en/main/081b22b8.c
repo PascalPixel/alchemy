@@ -1,6 +1,6 @@
-#include "TYPES.H"
+#include "types.h"
 
-#include "RAM_BUFFER.H"
+#include "ram_buffer.h"
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 

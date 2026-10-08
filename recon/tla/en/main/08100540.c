@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "ITEM.H"
+#include "types.h"
+#include "item.h"
 
 extern u8 MsgItemName;
 

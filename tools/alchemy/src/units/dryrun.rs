@@ -19,7 +19,7 @@ use std::path::{Path, PathBuf};
 
 /// The C source of one of today's objects.
 fn source_of(root: &Path, object: &str) -> Option<PathBuf> {
-    let path = root.join(format!("{}.C", object.trim_end_matches(".o")));
+    let path = root.join(format!("{}.c", object.trim_end_matches(".o")));
     path.exists().then_some(path)
 }
 
@@ -226,7 +226,7 @@ pub fn compare_source(root: &Path, target: DecompTarget, loaded: &Loaded, main: 
     if let Err(e) = fs::create_dir_all(&directory) {
         return fail("error", e.to_string());
     }
-    let source = directory.join(format!("{id}.C"));
+    let source = directory.join(format!("{id}.c"));
     let object = directory.join(format!("{id}.o"));
     if let Err(e) = fs::write(&source, text) {
         return fail("error", e.to_string());
@@ -482,10 +482,10 @@ mod tests {
 
     #[test]
     fn items_split_at_top_level_and_keep_bodies_whole() {
-        let text = "#include \"A.H\"\n#define X(a) \\\n  (a)\nextern int g; /* ; */\nstruct S { int a; };\nvoid f(void)\n{\n    if (g) { g = 1; }\n}\nstatic const char *s = \"};\";\n";
+        let text = "#include \"a.h\"\n#define X(a) \\\n  (a)\nextern int g; /* ; */\nstruct S { int a; };\nvoid f(void)\n{\n    if (g) { g = 1; }\n}\nstatic const char *s = \"};\";\n";
         let items: Vec<String> = items(text).into_iter().map(|i| normalised(&i)).collect();
         assert_eq!(items, [
-            "#include \"A.H\"",
+            "#include \"a.h\"",
             "#define X(a) \\ (a)",
             "extern int g;",
             "/* ; */ struct S { int a; };",
@@ -496,10 +496,10 @@ mod tests {
 
     #[test]
     fn merging_keeps_one_of_each_declaration_and_every_definition() {
-        let a = (PathBuf::from("/nowhere/A.C"), "#include \"TYPES.H\"\nextern int g;\nvoid f(void);\nvoid f(void)\n{\n}\n".to_string());
-        let b = (PathBuf::from("/nowhere/B.C"), "#include \"TYPES.H\"\nextern  int g;\nvoid f(void);\nvoid h(void)\n{\n    f();\n}\n".to_string());
+        let a = (PathBuf::from("/nowhere/a.c"), "#include \"types.h\"\nextern int g;\nvoid f(void);\nvoid f(void)\n{\n}\n".to_string());
+        let b = (PathBuf::from("/nowhere/b.c"), "#include \"types.h\"\nextern  int g;\nvoid f(void);\nvoid h(void)\n{\n    f();\n}\n".to_string());
         let merged = merge(&[a, b]);
-        assert_eq!(merged.matches("#include \"TYPES.H\"").count(), 1);
+        assert_eq!(merged.matches("#include \"types.h\"").count(), 1);
         assert_eq!(merged.matches("extern").count(), 1);
         assert_eq!(merged.matches("void f(void);").count(), 1);
         assert!(merged.contains("void h(void)"));

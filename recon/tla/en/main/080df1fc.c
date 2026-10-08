@@ -1,11 +1,11 @@
-#include "TYPES.H"
-#include "OBJECT_DISPATCH.H"
-#include "INPUT.H"
-#include "OBJDISP.H"
-#include "RAM_BUFFER.H"
-#include "BATTLE_EFX.H"
-#include "CALLBACK_SCHEDULER.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "object_dispatch.h"
+#include "input.h"
+#include "objdisp.h"
+#include "ram_buffer.h"
+#include "battle_efx.h"
+#include "callback_scheduler.h"
+#include "system.h"
 
 struct FxPosition {
     s32 x;

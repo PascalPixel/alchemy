@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "SCENE.H"
+#include "types.h"
+#include "scene.h"
 
 s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 extern u8 Data_03001e74[];

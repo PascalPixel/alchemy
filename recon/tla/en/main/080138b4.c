@@ -1,4 +1,4 @@
-#include "INPUT.H"
+#include "input.h"
 
 void Input_UpdateKeyRepeatAndDirection(void)
 {

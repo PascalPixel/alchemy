@@ -1,6 +1,6 @@
-#include "OWNER_STATE.H"
-#include "MEM.H"
-#include "TYPES.H"
+#include "owner_state.h"
+#include "mem.h"
+#include "types.h"
 
 struct OwnerLevelState {
     u8 unknown_000[0x0f];

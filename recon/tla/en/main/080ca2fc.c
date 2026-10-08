@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "SCENE.H"
+#include "types.h"
+#include "scene.h"
 
 extern s16 gGameState[];
 extern const s16 Party_PairResolveRules[];

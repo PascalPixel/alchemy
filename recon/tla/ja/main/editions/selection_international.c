@@ -1,9 +1,9 @@
-#include "TLA_EDITION.H"
+#include "tla_edition.h"
 #undef SELECT_MENU_WIDTH
 #define SELECT_MENU_WIDTH 7
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "TLA_EDITION.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "tla_edition.h"
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 

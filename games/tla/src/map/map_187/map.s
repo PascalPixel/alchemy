@@ -1,0 +1,32 @@
+	.include "games/tla/src/map/map.inc"
+	.section .rodata
+	.global Field_Map187
+Field_Map187:
+	map_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map187, .LField_Map187_METATILES
+	map_block Field_Map187, .LField_Map187_SHAPES
+	map_block Field_Map187, .LField_Map187_GRID
+	map_block Field_Map187, .LField_Map187_SHAPE_GRID
+	map_block Field_Map187, .LField_Map187_ANIMATION
+	map_block Field_Map187
+	map_block Field_Map187, .LField_Map187_SCENE
+.LField_Map187_METATILES:
+	.incbin "map/map_187/metatiles.delta1.lz"
+	.balign 4, 0
+.LField_Map187_SHAPES:
+	.incbin "map/map_187/shapes.table.lz"
+	.balign 4, 0
+.LField_Map187_GRID:
+	.incbin "map/map_187/grid.parts.lz"
+	.balign 4, 0
+.LField_Map187_SHAPE_GRID:
+	.incbin "map/map_187/shape_grid.plane.lz"
+	.balign 4, 0
+.LField_Map187_ANIMATION:
+	.incbin "map/map_012/animation.script.lz"
+	.balign 4, 0
+.LField_Map187_SCENE:
+	.incbin "map/map_187/scene.parts.lz"

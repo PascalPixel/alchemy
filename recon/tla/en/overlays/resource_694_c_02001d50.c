@@ -3,11 +3,11 @@
  * copies it to r0 in each branch, keeping the answer in r0; the draft moves
  * the answer to r3 and loads the leader straight into r0. The rest are
  * literal pool offsets that follow from it. */
-#include "TYPES.H"
-#include "PARTY_STATE.H"
-#include "RAM_BUFFER.H"
-#include "EVENTWRK.H"
-#include "text/MSG_IDS.H"
+#include "types.h"
+#include "party_state.h"
+#include "ram_buffer.h"
+#include "eventwrk.h"
+#include "text/msg_ids.h"
 
 struct Ov694Object;
 

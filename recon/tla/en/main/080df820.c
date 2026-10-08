@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "SCENE.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "scene.h"
+#include "system.h"
 
 void Audio_PlayCue(s32);
 void *Object_Spawn(s32, s32, s32, s32);

@@ -1,4 +1,4 @@
-#include "INVENTORY.H"
+#include "inventory.h"
 
 s32 Inventory_GetEquippedItem(struct OwnerInventoryState *inv, s32 type)
 {

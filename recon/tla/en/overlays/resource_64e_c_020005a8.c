@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 void Object_SetPartAttribute(void *object, s32 value);
 void Engine_AudioPlayCue(s32 cue);

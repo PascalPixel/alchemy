@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "FIELD_EVENT.H"
-#include "FIELD_SPRITE.H"
+#include "types.h"
+#include "field_event.h"
+#include "field_sprite.h"
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 

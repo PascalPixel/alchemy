@@ -1,7 +1,7 @@
-#include "FIXED_POINT_POSITION.H"
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "BTLDISP.H"
+#include "fixed_point_position.h"
+#include "types.h"
+#include "iwram_call.h"
+#include "btldisp.h"
 
 extern u8 gLinkStatus[];
 

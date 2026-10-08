@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 extern const s32 Data_080f3228[];
 

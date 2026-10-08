@@ -1,9 +1,9 @@
-#include "TYPES.H"
-#include "BTLPTY.H"
-#include "BATTLE_ESCAPE.H"
-#include "OWNER_STATE.H"
-#include "PARTY_STATE.H"
-#include "RAM_BUFFER.H"
+#include "types.h"
+#include "btlpty.h"
+#include "battle_escape.h"
+#include "owner_state.h"
+#include "party_state.h"
+#include "ram_buffer.h"
 
 s32 __divsi3(s32, s32);
 u32 Random16(void);

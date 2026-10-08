@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "SCENE.H"
+#include "types.h"
+#include "scene.h"
 extern u8 Data_03001f2c[];
 s32 Djinn_CheckTurnBalance(s32, s32);
 void Djinn_CountTurns(u8 *);

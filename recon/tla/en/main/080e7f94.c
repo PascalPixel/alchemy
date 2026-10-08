@@ -1,6 +1,6 @@
 /* Near miss: listing 37 instructions, draft 33, common 13, differ 44; the rest differs in instruction order. */
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
+#include "types.h"
+#include "iwram_call.h"
 
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);

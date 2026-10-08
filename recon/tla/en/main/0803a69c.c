@@ -1,4 +1,4 @@
-#include "RENDER_INPUT.H"
+#include "render_input.h"
 
 struct MessageWindowWork {
     s32 records[0xf40 / 4];
@@ -10,7 +10,7 @@ struct MessageWindowWork {
     u8 pending;
 };
 
-#include "RAM_BUFFER.H"
+#include "ram_buffer.h"
 
 s32 UiText_BuildRenderEntries(s32 message, s32 mode);
 void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags);

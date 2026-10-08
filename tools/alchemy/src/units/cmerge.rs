@@ -891,11 +891,11 @@ mod tests {
 
     #[test]
     fn identical_items_once_and_regions_in_order() {
-        let a = source("A.C", "/* A. */\n#include \"TYPES.H\"\n\nstruct S { u8 a; };\nvoid g(void);\n\n// 最初\nvoid f(void)\n{\n\tg();\n}\n");
-        let b = source("B.C", "#include \"TYPES.H\"\n#include \"B.H\"\n\nstruct S { u8 a; };\nvoid g(void);\n\nvoid g(void)\n{\n}\n");
+        let a = source("a.c", "/* A. */\n#include \"types.h\"\n\nstruct S { u8 a; };\nvoid g(void);\n\n// 最初\nvoid f(void)\n{\n\tg();\n}\n");
+        let b = source("b.c", "#include \"types.h\"\n#include \"b.h\"\n\nstruct S { u8 a; };\nvoid g(void);\n\nvoid g(void)\n{\n}\n");
         let merged = merge(&[a, b], &Known::default(), &Options::default()).unwrap();
-        assert_eq!(merged.text.matches("#include \"TYPES.H\"").count(), 1);
-        assert!(merged.text.starts_with("/* A. */\n\n#include \"TYPES.H\"\n#include \"B.H\"\n"));
+        assert_eq!(merged.text.matches("#include \"types.h\"").count(), 1);
+        assert!(merged.text.starts_with("/* A. */\n\n#include \"types.h\"\n#include \"b.h\"\n"));
         assert_eq!(merged.text.matches("struct S").count(), 1);
         assert_eq!(merged.text.matches("void g(void);").count(), 1);
         assert!(merged.text.contains("// 最初\nvoid f(void)"));
@@ -904,16 +904,16 @@ mod tests {
 
     #[test]
     fn conflicting_declarations_stay_in_their_own_functions() {
-        let a = source("A.C", "#include \"TYPES.H\"\nextern u8 gX[];\nvoid h(u32 a);\nvoid f(void)\n{\n\th(gX[0]);\n}\n");
-        let b = source("B.C", "#include \"TYPES.H\"\nextern u16 gX[];\nvoid h(u32 a);\nvoid k(void)\n{\n\th(gX[1]);\n}\n");
+        let a = source("a.c", "#include \"types.h\"\nextern u8 gX[];\nvoid h(u32 a);\nvoid f(void)\n{\n\th(gX[0]);\n}\n");
+        let b = source("b.c", "#include \"types.h\"\nextern u16 gX[];\nvoid h(u32 a);\nvoid k(void)\n{\n\th(gX[1]);\n}\n");
         let merged = merge(&[a, b], &Known::default(), &Options::default()).unwrap();
         // No header or definition: each file's shape goes inside its own functions.
         assert!(merged.text.contains("void f(void)\n{\n\textern u8 gX[];\n\th(gX[0]);"), "{}", merged.text);
         assert!(merged.text.contains("void k(void)\n{\n\textern u16 gX[];\n\th(gX[1]);"));
         // A definition governs: its prototype comes first, and a differing
         // shape gives way to it, or stays as a cast with views.
-        let e = || source("E.C", "void p(u8 a);\nvoid q(void)\n{\n\tp(1);\n}\n");
-        let d = || source("D.C", "void p(s32 a)\n{\n}\n");
+        let e = || source("e.c", "void p(u8 a);\nvoid q(void)\n{\n\tp(1);\n}\n");
+        let d = || source("d.c", "void p(s32 a)\n{\n}\n");
         let plain = merge(&[e(), d()], &Known::default(), &Options::default()).unwrap();
         assert!(plain.text.contains("void p(s32 a);\n") && !plain.text.contains("u8 a"), "{}", plain.text);
         let cast = merge(&[e(), d()], &Known::default(), &Options { views: true, unprototyped: false }).unwrap();
@@ -926,8 +926,8 @@ mod tests {
     fn a_header_shape_wins_and_private_ones_go_inside() {
         let mut headers = Known::default();
         headers.declared.insert((Space::Ordinary, "h".into()), "void h ( u32 )".into());
-        let a = source("A.C", "#include \"H.H\"\nvoid f(void)\n{\n\th(1);\n}\n");
-        let b = source("B.C", "s32 h(void);\nvoid k(void)\n{\n\th();\n}\n");
+        let a = source("a.c", "#include \"h.h\"\nvoid f(void)\n{\n\th(1);\n}\n");
+        let b = source("b.c", "s32 h(void);\nvoid k(void)\n{\n\th();\n}\n");
         let merged = merge(&[a, b], &headers, &Options::default()).unwrap();
         assert!(!merged.text.contains("s32 h(void);"), "{}", merged.text);
         assert!(merged.notes.iter().any(|n| n.contains("takes the header's shape")));
@@ -935,31 +935,31 @@ mod tests {
 
     #[test]
     fn private_macros_end_where_a_later_file_needs_the_name() {
-        let a = source("A.C", "#define Go ((void (*)(int))Go)\nvoid Go(void);\nvoid f(void)\n{\n\tGo(1);\n}\n");
-        let b = source("B.C", "void Go(void);\nvoid k(void)\n{\n\tGo();\n}\n");
-        let c = source("C.C", "#define N 4\nvoid m(void)\n{\n}\n");
-        let d = source("D.C", "#define N 4\n#define M 5\nvoid n(void)\n{\n}\n");
+        let a = source("a.c", "#define Go ((void (*)(int))Go)\nvoid Go(void);\nvoid f(void)\n{\n\tGo(1);\n}\n");
+        let b = source("b.c", "void Go(void);\nvoid k(void)\n{\n\tGo();\n}\n");
+        let c = source("c.c", "#define N 4\nvoid m(void)\n{\n}\n");
+        let d = source("d.c", "#define N 4\n#define M 5\nvoid n(void)\n{\n}\n");
         let merged = merge(&[a, b, c, d], &Known::default(), &Options::default()).unwrap();
         assert!(merged.text.contains("#undef Go\n\nvoid k(void)"), "{}", merged.text);
         assert_eq!(merged.text.matches("#define N 4").count(), 1);
-        let redefined = merge(&[source("A.C", "#define N 4\nint a = N;\n"), source("B.C", "#define N 5\nint b = N;\n")], &Known::default(), &Options::default()).unwrap();
+        let redefined = merge(&[source("a.c", "#define N 4\nint a = N;\n"), source("b.c", "#define N 5\nint b = N;\n")], &Known::default(), &Options::default()).unwrap();
         assert!(redefined.text.contains("#undef N\n\n#define N 5"), "{}", redefined.text);
     }
 
     #[test]
     fn clashing_statics_and_tags_take_numbered_names() {
-        let a = source("A.C", "struct T { u8 a; };\nstatic u8 sCount;\nvoid f(struct T *t)\n{\n\tsCount = t->a;\n}\n");
-        let b = source("B.C", "struct T { u16 b; };\nstatic u16 sCount;\nvoid k(struct T *t)\n{\n\tsCount = t->b;\n}\n");
+        let a = source("a.c", "struct T { u8 a; };\nstatic u8 sCount;\nvoid f(struct T *t)\n{\n\tsCount = t->a;\n}\n");
+        let b = source("b.c", "struct T { u16 b; };\nstatic u16 sCount;\nvoid k(struct T *t)\n{\n\tsCount = t->b;\n}\n");
         let merged = merge(&[a, b], &Known::default(), &Options::default()).unwrap();
         assert!(merged.text.contains("struct T_2 { u16 b; };\nstatic u16 sCount_2;\nvoid k(struct T_2 *t)\n{\n\tsCount_2 = t->b;"), "{}", merged.text);
-        let error = merge(&[source("A.C", "u8 gA = 1;\n"), source("B.C", "u8 gA = 2;\n")], &Known::default(), &Options::default()).unwrap_err();
+        let error = merge(&[source("a.c", "u8 gA = 1;\n"), source("b.c", "u8 gA = 2;\n")], &Known::default(), &Options::default()).unwrap_err();
         assert!(error[0].contains("gA is defined differently"), "{error:?}");
     }
 
     #[test]
     fn own_defines_drop_unless_every_file_has_them() {
-        let a = source("A.C", "#define OWN_gState\n#include \"STATE.H\"\nextern u8 gState[];\nvoid f(void)\n{\n\tgState[0] = 1;\n}\n");
-        let b = source("B.C", "#include \"STATE.H\"\nvoid k(void)\n{\n\tgState.a = 1;\n}\n");
+        let a = source("a.c", "#define OWN_gState\n#include \"state.h\"\nextern u8 gState[];\nvoid f(void)\n{\n\tgState[0] = 1;\n}\n");
+        let b = source("b.c", "#include \"state.h\"\nvoid k(void)\n{\n\tgState.a = 1;\n}\n");
         let mut headers = Known::default();
         headers.declared.insert((Space::Ordinary, "gState".into()), "struct State gState".into());
         let merged = merge(&[a, b], &headers, &Options::default()).unwrap();
@@ -970,14 +970,14 @@ mod tests {
 
     #[test]
     fn enumerators_defined_identically_appear_once() {
-        let a = source("A.C", "enum A {\n    MSG_X = 0x10,\n    MSG_Y = 0x11\n};\n");
-        let b = source("B.C", "enum {\n    MSG_Y = 0x11,\n    MSG_Z = 0x12\n};\n");
-        let c = source("C.C", "enum {\n    MSG_X = 0x10\n};\n");
+        let a = source("a.c", "enum A {\n    MSG_X = 0x10,\n    MSG_Y = 0x11\n};\n");
+        let b = source("b.c", "enum {\n    MSG_Y = 0x11,\n    MSG_Z = 0x12\n};\n");
+        let c = source("c.c", "enum {\n    MSG_X = 0x10\n};\n");
         let merged = merge(&[a, b, c], &Known::default(), &Options::default()).unwrap();
         assert_eq!(merged.text.matches("MSG_Y").count(), 1, "{}", merged.text);
         assert!(merged.text.contains("enum {\n    MSG_Z = 0x12\n};"), "{}", merged.text);
         assert_eq!(merged.text.matches("MSG_X").count(), 1);
-        let clash = merge(&[source("A.C", "enum { M = 1 };\n"), source("B.C", "enum { M = 2 };\n")], &Known::default(), &Options::default());
+        let clash = merge(&[source("a.c", "enum { M = 1 };\n"), source("b.c", "enum { M = 2 };\n")], &Known::default(), &Options::default());
         assert!(clash.is_err());
     }
 
@@ -994,17 +994,17 @@ mod tests {
     fn implicit_calls_keep_their_unprototyped_shape_under_views() {
         let mut headers = Known::default();
         headers.declared.insert((Space::Ordinary, "Run".into()), "void Run ( s32 )".into());
-        let a = Source { path: "A.C".into(), text: "void f(void)\n{\n\tRun(1);\n}\n".into(), own: Some(Known::default()) };
+        let a = Source { path: "a.c".into(), text: "void f(void)\n{\n\tRun(1);\n}\n".into(), own: Some(Known::default()) };
         let views = merge(&[a], &headers, &Options { views: true, unprototyped: false }).unwrap();
         assert!(views.text.contains("#define Run ((int (*)())Run)\n"), "{}", views.text);
-        let a = Source { path: "A.C".into(), text: "void f(void)\n{\n\tRun(1);\n}\n".into(), own: Some(Known::default()) };
+        let a = Source { path: "a.c".into(), text: "void f(void)\n{\n\tRun(1);\n}\n".into(), own: Some(Known::default()) };
         assert!(!merge(&[a], &headers, &Options::default()).unwrap().text.contains("#define"));
     }
 
     #[test]
     fn block_scope_only_where_it_adds_no_copies() {
-        let a = source("A.C", "extern u16 gS;\nvoid f(void)\n{\n\tgS = 1;\n}\nvoid g(void)\n{\n\tgS = 2;\n}\n");
-        let b = source("B.C", "extern volatile u16 gS;\nvoid k(void)\n{\n\tgS = 3;\n}\n");
+        let a = source("a.c", "extern u16 gS;\nvoid f(void)\n{\n\tgS = 1;\n}\nvoid g(void)\n{\n\tgS = 2;\n}\n");
+        let b = source("b.c", "extern volatile u16 gS;\nvoid k(void)\n{\n\tgS = 3;\n}\n");
         let plain = merge(&[a, b], &Known::default(), &Options::default()).unwrap();
         assert_eq!(plain.text.matches("u16 gS;").count(), 1, "{}", plain.text);
         assert!(plain.notes.iter().any(|n| n.contains("first file's shape")));

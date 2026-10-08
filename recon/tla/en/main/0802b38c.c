@@ -1,5 +1,5 @@
-#include "EDITION.H"
-#include "TYPES.H"
+#include "edition.h"
+#include "types.h"
 
 extern u8 gMapCellBuffer[];
 extern u8 gMapShapeGrid[];

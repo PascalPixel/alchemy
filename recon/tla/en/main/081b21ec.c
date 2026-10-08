@@ -1,5 +1,5 @@
-#include "RESOURCE.H"
-#include "DMA.H"
+#include "resource.h"
+#include "dma.h"
 
 void Palette_StepTowardResource(s32 resource_id)
 {

@@ -1,9 +1,9 @@
-#include "FIXED_MATH.H"
-#include "TYPES.H"
-#include "SCENE.H"
-#include "BTLMES.H"
-#include "BATTLE_MOTION.H"
-#include "SYSTEM.H"
+#include "fixed_math.h"
+#include "types.h"
+#include "scene.h"
+#include "btlmes.h"
+#include "battle_motion.h"
+#include "system.h"
 s32 BattleObject_IsValidId(u32);
 
 struct Input_080b8b48 {

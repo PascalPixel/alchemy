@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 struct SceneRegionEntry {
     s16 id;

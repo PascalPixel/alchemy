@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "SCENE.H"
+#include "types.h"
+#include "scene.h"
 
 struct Object_080216b4 {
     struct Object_080216b4 *next;

@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "types.h"
 
 s32 Scheduler_EnableCallbacks(u32 callback);
 void Object_EffectSpawnCallback(void);

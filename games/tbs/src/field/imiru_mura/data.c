@@ -1,0 +1,421 @@
+#include "types.h"
+#include "ability_ids.h"
+#include "field_event.h"
+#include "field_scene.h"
+#include "item_ids.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
+
+void FieldScene_RunSingleStep(void);
+void FieldScene_RunSupplementalSequenceOne(void);
+void ImiruMura_OpenInn(void);
+void ImiruMura_OpenSanctum(void);
+void ImiruMura_RunArmorShop(void);
+void ImiruMura_RunExitDoor(void);
+void ImiruMura_RunHeadingProbe(void);
+void ImiruMura_RunItemShop(void);
+void ImiruMura_RunWeaponShop(void);
+void ImiruMura_TalkAboutLighthouse(void);
+void OverlayObject_UpdateFacingTowardTarget(void);
+void OverlayObject_UpdateWobbleByCounter(void);
+void SceneActor_SetActorZeroFacingC000AndRun(void);
+void SceneDialogue_RunActor12Line(void);
+void SceneDialogue_RunActor18Line(void);
+void SceneDialogue_RunActor20BranchScene(void);
+void SceneDialogue_RunActor20FlaggedLine(void);
+void SceneDialogue_RunActor9Line(void);
+void SceneDialogue_RunActorEightBranchedDialogue(void);
+void SceneDialogue_RunActorEightFlagGatedDialogue(void);
+void SceneDialogue_RunActorTenFlag881Dialogue(void);
+void SceneDialogue_ShowLine156E(void);
+void SceneDialogue_ShowLine1571Or152F(void);
+void SceneDialogue_ShowLine1573Or155A(void);
+void SceneState_UpdateActor11WithFlag203(void);
+
+u16 ImiruMura_KeyHeadings[] = {
+	0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
+	FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
+	0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, 0xffff, 0xffff, FACING_NORTH,
+	FACING_SOUTH, 0xffff, 0xffff, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
+};
+
+u16 ImiruMura_SwayHeadings[] = {
+	0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
+	FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
+};
+
+s32 gImiruMuraPlacementData[] = {
+	SC_SET(SW_SCALE_X, 0x10000),
+	SC_SET(SW_SCALE_Y, 0x10000),
+	SC_ADD(SW_SCALE_X, -0x5000),
+	SC_ADD(SW_SCALE_Y, 0x1000),
+	SC_WAIT(1),
+	SC_ADD(SW_SCALE_X, 0x2800),
+	SC_ADD(SW_SCALE_Y, -2048),
+	SC_WAIT(1),
+	SC_ADD(SW_SCALE_X, 0x1400),
+	SC_ADD(SW_SCALE_Y, -1024),
+	SC_WAIT(1),
+	SC_ADD(SW_SCALE_X, 0x1400),
+	SC_ADD(SW_SCALE_Y, -1024),
+	SC_WAIT(1),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+s32 ImiruMura_ActorScriptA[] = {
+	SC_CALL(OverlayObject_UpdateWobbleByCounter),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+s32 ImiruMura_ActorScriptB[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(136), 0, PIXELS(192)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(136), 0, PIXELS(136)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(149), 0, PIXELS(116)),
+	SC_SYNC,
+	SC_SET(SW_FACING, FACING_EAST),
+	SC_ARG(1),
+	SC_END,
+};
+
+s32 ImiruMura_ActorScriptC[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(155), 0, PIXELS(135)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, 0xd000),
+	SC_END,
+	SC_ADD(SW_SCALE_Y, 0x6000),
+	SC_WAIT(2),
+	SC_ADD(SW_SCALE_Y, -0x3000),
+	SC_WAIT(2),
+	SC_ADD(SW_SCALE_Y, -0x1800),
+	SC_WAIT(2),
+	SC_ADD(SW_SCALE_Y, -0x1800),
+	SC_WAIT(4),
+	SC_END,
+};
+
+s32 ImiruMura_TurnScript[] = {
+	SC_ADD(SW_SCALE_Y, 0x6000),
+	SC_WAIT(2),
+	SC_ADD(SW_SCALE_Y, -0x3000),
+	SC_WAIT(2),
+	SC_ADD(SW_SCALE_Y, -0x1800),
+	SC_WAIT(2),
+	SC_ADD(SW_SCALE_Y, -0x1800),
+	SC_WAIT(4),
+	SC_LOOP(2, SC_TOP),
+	SC_END,
+};
+
+s32 ImiruMura_SparkScript[] = {
+	SC_ADD(SW_Y, -0x6666),
+	SC_WAIT(1),
+	SC_LOOP(72, SC_TOP),
+	SC_FREE,
+};
+
+s32 ImiruMura_MiaScriptA[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(177), 0, PIXELS(136)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(161), 0, PIXELS(124)),
+	SC_SYNC,
+	SC_SET(0x23, 1),
+	SC_MOVE(PIXELS(134), 0, PIXELS(139)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(135), 0, PIXELS(189)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_END,
+};
+
+s32 ImiruMura_MiaScriptB[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(165), 0, PIXELS(207)),
+	SC_SYNC,
+	SC_SET(0x23, 1),
+	SC_MOVE(PIXELS(147), 0, PIXELS(252)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(150), 0, PIXELS(268)),
+	SC_SYNC,
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 ImiruMura_PrimaryScript[] = {
+	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+s32 ImiruMura_PrimaryScript2[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(132), 0, PIXELS(206)),
+	SC_SYNC,
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+struct SceneEntrance gImiruMuraEntrancesOther[] = {
+	{ 0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 288, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 2, CONDITION_ALWAYS, 480, 0, 280, FACING_WEST, 0, -1, -1, -1, -1, 0 },
+	{ 3, CONDITION_ALWAYS, 312, 0, 424, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 4, CONDITION_ALWAYS, 424, 0, 392, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 5, CONDITION_ALWAYS, 456, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 6, CONDITION_ALWAYS, 376, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 7, CONDITION_ALWAYS, 120, 0, 208, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 8, CONDITION_ALWAYS, 64, 0, 360, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 9, CONDITION_ALWAYS, 229, 0, 88, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gImiruMuraEntrances2[] = {
+	{ 0, CONDITION_ALWAYS, 136, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 144, 0, 242, FACING_NORTH, 0, 32, 52, 256, 280, 0 },
+	{ 2, CONDITION_ALWAYS, 143, 0, 596, FACING_NORTH, 0, 42, 424, 256, 631, 0 },
+	{ 3, CONDITION_ALWAYS, 399, 0, 322, FACING_NORTH, 0, 320, 58, 536, 360, 0 },
+	{ 4, CONDITION_ALWAYS, 400, 0, 659, FACING_NORTH, 0, 307, 382, 545, 697, 0 },
+	{ 5, CONDITION_ALWAYS, 129, 0, 915, FACING_NORTH, 0, 50, 706, 350, 949, 0 },
+	{ 6, CONDITION_ALWAYS, 446, 0, 825, FACING_SOUTH, 0, 402, 740, 670, 921, 0 },
+	{ 7, CONDITION_ALWAYS, 687, 0, 264, FACING_NORTH, 0, 594, 49, 806, 295, 0 },
+	{ 8, CONDITION_ALWAYS, 182, 0, 772, FACING_SOUTH, 0, 50, 706, 350, 949, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 ImiruMura_SceneTable[] = {
+	SCENE_EXITS(50),
+	SCENE_EXIT(1, 51, 1),
+	SCENE_EXIT(2, 51, 5),
+	SCENE_EXIT(3, 51, 3),
+	SCENE_EXIT(4, 51, 4),
+	SCENE_EXIT(5, 51, 2),
+	SCENE_EXIT(6, 51, 7),
+	SCENE_EXIT(8, 52, 1),
+	SCENE_EXIT(11, 2, 9),
+	SCENE_EXIT(12, 2, 39),
+	SCENE_EXIT(0, 51, 0),
+	SCENE_EXIT(1, 50, 3),
+	SCENE_EXIT(2, 50, 7),
+	SCENE_EXIT(3, 50, 5),
+	SCENE_EXIT(4, 50, 6),
+	SCENE_EXIT(5, 50, 4),
+	SCENE_EXIT(6, 51, 8),
+	SCENE_EXIT(7, 50, 8),
+	SCENE_EXIT(8, 51, 6),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement gImiruMuraPlacements[] = {
+	{ 0x6c, CONDITION_ALWAYS, (s32)gImiruMuraPlacementData,
+		PIXELS(99), 0, PIXELS(234), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x6b, CONDITION_ALWAYS, ACTOR_WANDER,
+		PIXELS(376), 0, PIXELS(408), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(408), 0, PIXELS(248), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ 0xea, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(262), 0, PIXELS(124), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gImiruMuraPlacementsFlag881[] = {
+	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(99), 0, PIXELS(234), FACING_NORTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x6b, CONDITION_ALWAYS, ACTOR_WANDER,
+		PIXELS(376), 0, PIXELS(408), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(408), 0, PIXELS(248), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ 0xea, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(262), 0, PIXELS(124), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gImiruMuraPlacements2[] = {
+	{ 0x6f, 0x0, ACTOR_STAND,
+		PIXELS(111), 0, PIXELS(215), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x67, 0x0, ACTOR_STAND,
+		PIXELS(166), 0, PIXELS(116), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x16, 0x0, 7,
+		PIXELS(174), 0, PIXELS(173), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x67, 0x0, ACTOR_STAND,
+		PIXELS(118), 0, PIXELS(488), FACING_NORTH, TALK_FACE_PARTY, 0 },
+	{ 0x67, 0x0, ACTOR_STAND,
+		PIXELS(370), 0, PIXELS(468), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x67, 0x0, ACTOR_STAND,
+		PIXELS(478), 0, PIXELS(468), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x66, 0x0, ACTOR_STAND,
+		PIXELS(460), 0, PIXELS(266), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x73, 0x0, ACTOR_STAND,
+		PIXELS(436), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x77, 0x0, ACTOR_STAND,
+		PIXELS(100), 0, PIXELS(830), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x80, 0x0, ACTOR_WANDER,
+		PIXELS(160), 0, PIXELS(880), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x6c, 0x0, ACTOR_STAND,
+		PIXELS(249), 0, PIXELS(832), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x6b, 0x0, ACTOR_STAND,
+		PIXELS(686), 0, PIXELS(148), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x66, 0x0, ACTOR_STAND,
+		PIXELS(717), 0, PIXELS(229), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0xdf, 0x0, 7,
+		PIXELS(192), 0, PIXELS(124), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent gImiruMuraEventsOther[] = {
+	{ EVENT_EXIT, 60, CONDITION_ALWAYS, 11 },
+	{ EVENT_EXIT, 61, CONDITION_ALWAYS, 12 },
+	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x200, EVENT_SCRIPT(SceneState_UpdateActor11WithFlag203) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 56, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
+	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_SetActorZeroFacingC000AndRun) },
+	{ EVENT_TOUCH, 90, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunHeadingProbe) },
+	{ EVENT_TALK, 8, 0x881, EVENT_SCRIPT(SceneDialogue_RunActorEightFlagGatedDialogue) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgImiruMuraTheMercuryLighthouseIsShiningMary) },
+	{ EVENT_TALK, 9, 0x881, EVENT_SCRIPT(SceneDialogue_RunActor9Line) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgImiruMuraImilWillBeFineDiseaseIs) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorTenFlag881Dialogue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x881, EVENT_SCRIPT(SceneDialogue_ShowLine1571Or152F) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgImiruMuraMaryWasOnlyInImilTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x881, MSGNO(MsgImiruMuraWeveHadALotOfStrangers) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgImiruMuraDontWorryAboutUsMaryWell) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x881, MSGNO(MsgImiruMuraPeopleGetSickBecauseTheyStay) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgImiruMuraNowThatIveLetMyGuard) },
+	{ SEARCH(SEARCH_JAR), 100, 0xf5f, FIND_COINS(9) },
+	{ SEARCH(SEARCH_CHEST), 101, 0xf60, FIND_ITEM(ITEM_VIAL) },
+	{ SEARCH(SEARCH_GRAVE), 102, 0xf61, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gImiruMuraEvents2[] = {
+	{ EVENT_TALK, 8, 0x82c, MSGNO(MsgImiruMuraTheresBeenAnEpidemicGoingAround) },
+	{ EVENT_TALK, 8, 0x82b, MSGNO(MsgImiruMuraGetMaryHurry) },
+	{ EVENT_TALK, 8, 0x881, EVENT_SCRIPT(ImiruMura_TalkAboutLighthouse) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgImiruMuraThatFountainWaterReallyMadeGrandpa) },
+	{ EVENT_TALK, 9, 0x82c, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne) },
+	{ EVENT_TALK, 9, 0x82b, MSGNO(MsgImiruMuraItHurts) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne) },
+	{ EVENT_TALK, 10, IF_FLAG_SET(0x82b), EVENT_SCRIPT(FieldScene_RunSingleStep) },
+	{ EVENT_TALK, 11, 0x881, MSGNO(MsgImiruMuraCoughTheEpidemicHasHitAlmost) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgImiruMuraItsNiceThatTheFountainCan) },
+	{ EVENT_TALK, 12, 0x881, EVENT_SCRIPT(SceneDialogue_RunActor12Line) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunWeaponShop) },
+	{ EVENT_TALK, 13, 0x881, MSGNO(MsgImiruMuraWereClosedSorryIGetA) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunArmorShop) },
+	{ EVENT_TALK, 15, 0x881, MSGNO(MsgImiruMuraIfYouWantToBuyAnything) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunItemShop) },
+	{ EVENT_TALK, 14, 0x881, EVENT_SCRIPT(ImiruMura_RunItemShop) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgImiruMuraImSoHappyThatMommyIs) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_OpenInn) },
+	{ EVENT_TALK, 17, 0x881, MSGNO(MsgImiruMuraWereTheOnlyInnThatStays) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgImiruMuraThankGoodnessTheTownIsBack) },
+	{ EVENT_TALK, 18, 0x881, EVENT_SCRIPT(SceneDialogue_RunActor18Line) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgImiruMuraImGladTheBeaconHasBeen) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_OpenSanctum) },
+	{ EVENT_TALK, 20, 0x881, EVENT_SCRIPT(SceneDialogue_RunActor20BranchScene) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgImiruMuraIWillBeAKindGirl) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x881, EVENT_SCRIPT(SceneDialogue_RunActorEightBranchedDialogue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgImiruMuraGrandpasAllBetterNowThanksTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, 0x82c, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x82b, MSGNO(MsgImiruMuraOoohIDontFeelSoGood) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x881, MSGNO(MsgImiruMuraMaryIsAGoodGirlI) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgImiruMuraNowMaryCanLeaveTheVillage) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x82b), EVENT_SCRIPT(SceneDialogue_ShowLine156E) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x881, MSGNO(MsgImiruMuraHerPalmsShineWithABlue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgImiruMuraThatBlueLightFromHerHands) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x881, MSGNO(MsgImiruMuraWhoAreThesePeopleTheyMust) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgImiruMuraCustomersAreHardToComeBy) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x881, MSGNO(MsgImiruMuraWhyDoTheyAlwaysComeWhen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgImiruMuraTheCustomersAreBackIThought) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x881, MSGNO(MsgImiruMuraIfOnlyWeHadSomeOf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgImiruMuraMarySaidItWouldntBeGood) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x881, MSGNO(MsgImiruMuraIWonderIfTheyAreHeaded) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgImiruMuraMyDaddysStillInKolimaIll) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x881, MSGNO(MsgImiruMuraSoManyCustomersItJustGoes) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgImiruMuraMaryWillBeLeavingWithYou) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x881, MSGNO(MsgImiruMuraWintersAreToughHereSoIm) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgImiruMuraTheyCameToOurVillageAnd) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x881, MSGNO(MsgImiruMuraWeDontGetToEatMany) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgImiruMuraINeverToldMaryThatI) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x881, EVENT_SCRIPT(SceneDialogue_ShowLine1573Or155A) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgImiruMuraMarysGoingToDefendTheHonor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x881, EVENT_SCRIPT(SceneDialogue_RunActor20FlaggedLine) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgImiruMuraImSorryMaryButICant) },
+	{ 0xc403, 10, 0x881, EVENT_SCRIPT(ImiruMura_RunWeaponShop) },
+	{ 0xc403, 11, 0x881, EVENT_SCRIPT(ImiruMura_RunArmorShop) },
+	{ SEARCH(SEARCH_CHEST), 100, 0xf26, FIND_ITEM(0xb9) },
+	{ SEARCH(SEARCH_BARREL), 101, 0xf62, FIND_ITEM(ITEM_SLEEP_BOMB) },
+	{ SEARCH(SEARCH_OVEN), 102, 0xf63, FIND_ITEM(0xc4) },
+	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgImiruMuraItLooksLikePorridgeItIs)) },
+	{ SEARCH(SEARCH_OVEN), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgImiruMuraItsSomeHotStewItWarms)) },
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
+	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
+	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
+	{ EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
+	{ EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
+	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
+	{ SCENE_EVENTS_END },
+};
+
+u16 ImiruMura_ExitCellStep5[] = {
+	MAP_CELL_STEP(40, 37, 4, 2, 5), MAP_CELL_STEP(40, 39, 4, 2, 5), MAP_CELL_STEPS_END,
+	MAP_CELL_STEP(35, 35, 2, 2, 5), MAP_CELL_STEP(33, 35, 2, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 ImiruMura_ExitCellStep4[] = {
+	MAP_CELL_STEP(35, 37, 2, 2, 5), MAP_CELL_STEP(33, 37, 2, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 ImiruMura_ExitCellStep1[] = {
+	MAP_CELL_STEP(35, 43, 2, 2, 5), MAP_CELL_STEP(33, 43, 2, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 ImiruMura_ExitCellStep0[] = {
+	MAP_CELL_STEP(35, 39, 2, 2, 5), MAP_CELL_STEP(33, 39, 2, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 ImiruMura_ExitCellStep2[] = {
+	MAP_CELL_STEP(42, 48, 2, 2, 5), MAP_CELL_STEP(40, 48, 2, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 ImiruMura_ExitCellStep3[] = {
+	MAP_CELL_STEP(42, 46, 2, 2, 5), MAP_CELL_STEP(40, 46, 2, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 *ImiruMura_ExitCellSteps[] = {
+	ImiruMura_ExitCellStep0,
+	ImiruMura_ExitCellStep1,
+	ImiruMura_ExitCellStep2,
+	ImiruMura_ExitCellStep3,
+	ImiruMura_ExitCellStep4,
+	ImiruMura_ExitCellStep5,
+};
+
+u32 ImiruMura_ExitCellPoints[] = {
+	0x180032, 0x160039, 0xd003b, 0xa0036, 0x80026, 0x130022,
+};
+
+u16 ImiruMura_CellStepsA[] = {
+	MAP_CELL_STEP(1, 125, 1, 2, 10), MAP_CELL_STEP(0, 125, 1, 2, 10), MAP_CELL_STEPS_END,
+};
+
+u16 ImiruMura_CellStepsB[] = {
+	MAP_CELL_STEP(1, 125, 1, 2, 10), MAP_CELL_STEP(2, 125, 1, 2, 10), MAP_CELL_STEPS_END,
+};

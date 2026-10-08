@@ -1,13 +1,13 @@
-/* differ 28: ported from ☀️ RADPART.C; load order only */
-#include "TYPES.H"
-#include "SYSTEM.H"
-#include "ANIMSPR.H"
-#include "MOTOBJ.H"
-#include "OBJECT_RUNTIME.H"
-#include "OBJDISP.H"
-#include "PARTY_STATE.H"
-#include "EFFECT_SLOT.H"
-#include "RAM_BUFFER.H"
+/* differ 28: ported from ☀️ radpart.c; load order only */
+#include "types.h"
+#include "system.h"
+#include "animspr.h"
+#include "motobj.h"
+#include "object_runtime.h"
+#include "objdisp.h"
+#include "party_state.h"
+#include "effect_slot.h"
+#include "ram_buffer.h"
 
 struct EffectVector {
     s32 x;

@@ -1,6 +1,6 @@
-#include "RESOURCE.H"
-#include "MEM.H"
-#include "TYPES.H"
+#include "resource.h"
+#include "mem.h"
+#include "types.h"
 typedef volatile u16 vu16;
 typedef volatile u32 vu32;
 
@@ -178,7 +178,7 @@ void Func_08143000(void);
 void Func_0813baec(void);
 
 #define ALCHEMY_TYPES_H
-#include "../../../../games/THE BROKEN SEAL/INCLUDE/DMA.H"
+#include "../../../../games/tbs/include/dma.h"
 
 void BattleSummon_RunUlysses(struct SummonArgument *arg)
 {

@@ -1,6 +1,6 @@
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#include "SYSTEM.H"
+#include "types.h"
+#include "iwram_call.h"
+#include "system.h"
 
 extern u8 BtlWk[];
 

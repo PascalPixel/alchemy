@@ -1,9 +1,9 @@
 /* Near miss: listing 57 instructions, draft 57, common 48, differ 18; the rest differs in instruction order. */
-#include "TYPES.H"
-#include "RAM_BUFFER.H"
-#include "OBJECT_RUNTIME.H"
-#include "IO_REG.H"
-#include "IWRAM_CALL.H"
+#include "types.h"
+#include "ram_buffer.h"
+#include "object_runtime.h"
+#include "io_reg.h"
+#include "iwram_call.h"
 
 struct FxRunWork {
     u8 unknown_0000[0x78e4];

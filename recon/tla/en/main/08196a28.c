@@ -1,5 +1,5 @@
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
+#include "types.h"
+#include "iwram_call.h"
 
 struct Texture {
     u8 log_width;

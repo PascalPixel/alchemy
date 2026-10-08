@@ -1,5 +1,5 @@
-#include "TEXT_READER.H"
-#include "MEM.H"
+#include "text_reader.h"
+#include "mem.h"
 
 extern const u8 Func_08015570[];
 

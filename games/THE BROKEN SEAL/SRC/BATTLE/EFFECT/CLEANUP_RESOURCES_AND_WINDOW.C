@@ -33,7 +33,8 @@ extern void UiWork_FinalizeFar(u32 arg0, u32 arg1);
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
-#define WORLD_MAP_CURSOR_SNAPS 1 // キーを離すとカーソルが近くの地名へ寄る
+// キーを離すとカーソルが近くの地名へ寄る
+#define WORLD_MAP_CURSOR_SNAPS 1
 #define WORLD_MAP_NAME_RANGE 64	 // 地名を出す距離の 2 乗
 #define WORLD_MAP_NAME_LEFT 3	 // 地名ウインドウを印から左へずらす量
 #else

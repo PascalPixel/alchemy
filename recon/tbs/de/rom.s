@@ -1,7 +1,3 @@
-	.section .rom.00000000, "ax"
-	.global Rom_Start
-Rom_Start:
-	.incbin "baserom.gba", 0x00000000, 0x000000c0
 	.section .rom.00002e00, "ax"
 	.incbin "baserom.gba", 0x00002e00, 0x00000020
 	.section .rom.00007350, "ax"

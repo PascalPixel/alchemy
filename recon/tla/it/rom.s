@@ -1,7 +1,3 @@
-	.section .rom.00000000, "ax"
-	.global Cartridge_Restart
-Cartridge_Restart:
-	.incbin "baserom.gba", 0x00000000, 0x000000c0
 	.section .rom.00000630, "ax"
 	.global SoundDriver_EnterFrameUpdate
 	.type SoundDriver_EnterFrameUpdate, %function

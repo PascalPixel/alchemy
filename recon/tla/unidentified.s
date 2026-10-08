@@ -1,7 +1,3 @@
-	.section .unidentified.08000000,"a"
-	.global Cartridge_Restart
-Cartridge_Restart:
-	.incbin "baserom.gba", 0x00000000, 0x000000c0
 	.section .unidentified.080178b4,"a"
 	.global Runtime_IrqHandlers
 Runtime_IrqHandlers:

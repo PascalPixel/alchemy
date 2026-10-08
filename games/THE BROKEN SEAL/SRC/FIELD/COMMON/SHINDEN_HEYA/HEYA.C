@@ -16,15 +16,25 @@
 #include "FACING_OBJECT.H"
 #include "CALL.H"
 #include "text/MSG_IDS.H"
+#include "IO_REG.H"
+#include "SAVE_STATE.H"
+#include "FIELD_SERVICE.H"
+#include "WINDOW.H"
+#include "UIFLOW.H"
+#include "RESOURCE.H"
+#include "MEM.H"
+#include "OBJECT_DISPATCH.H"
 
-void ShindenHeya_SpawnOwnerEffect();
-
+void FieldScene_RunPairedActorChoreography(void);
+void SceneEffect_StepEllipseOrbit(u8 *obj);
+void ShindenHeya_CopyActorPose(void);
+void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor);
+s32 ShindenHeya_MatchLeaderPriority(struct FieldActor *actor);
+void ShindenHeya_SpawnActorSpark(s32 id);
+void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1);
 
 void Event_CallWithLastActiveObjectId();
 void AudioCommand_WaitForCompletion();
-
-
-
 
 extern struct BattleEffectBuffers *Data_03001ed0;
 
@@ -36,14 +46,7 @@ struct ShrineWork {
 };
 
 void UiText_ShowCenteredMessage(s32 message, s32 a1, s32 a2);
-
-s32 ShindenHeya_MatchLeaderPriority();
-void ShindenHeya_CopyActorPose();
-void FieldScene_RunPairedActorChoreography();
 void ObjectMotion_WaitForAnimationChange();
-void ShindenHeya_SpawnActorSpark();
-
-void ShindenHeya_FollowLeaderOffset();
 
 extern
 
@@ -75,11 +78,7 @@ enum FacingGatedMessage {
 };
 
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
-extern u32 gFrameCount;
 #endif
-
-void SceneEffect_StepEllipseOrbit();
-
 
 s32 UpdateFacingFromResolvedObject(struct FacingObject *object)
 {
@@ -1483,4 +1482,533 @@ void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
             }
         }
     }
+}
+
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
+
+struct TextCursor {
+    u8 storage[12];
+};
+
+extern volatile u32 gFrameTick;
+
+void UiText_DrawResource(s32 message, s32 window, s32 x, s32 y);
+void UiTextResource_Initialize(struct TextCursor *cursor, s32 *slot);
+void UiTextResource_SetPosition(struct TextCursor *cursor, s32 x, s32 y);
+
+static inline void TextCursor_Initialize(struct TextCursor *cursor, s32 *slot)
+{
+    /* FAKEMATCH: needed to match: a direct call lets GCC 2.96 keep the cursor's address in a register across the calls. */
+    UiTextResource_Initialize(cursor, slot);
+}
+
+static inline void TextCursor_SetPosition(struct TextCursor *cursor, s32 x, s32 y)
+{
+    /* FAKEMATCH: needed to match: a direct call lets GCC 2.96 keep the cursor's address in a register across the calls. */
+    UiTextResource_SetPosition(cursor, x, y);
+}
+
+#if EDITION_INTERNATIONAL
+#define QUESTION_X 2
+#define QUESTION_WIDTH 25
+#define CURSOR_X 24
+#else
+#define QUESTION_X 7
+#define QUESTION_WIDTH 17
+#define CURSOR_X 64
+#endif
+
+s32 ShindenHeya_ChooseRestartOption(void)
+{
+    s32 slot;
+    struct TextCursor cursor;
+    s32 window;
+    s32 text;
+    s32 choice;
+
+    Engine_ActorSetPosition(8, 0, 0);
+    Engine_ActorSetPosition(9, 0, 0);
+    Engine_ActorSetPosition(10, 0, 0);
+    Engine_ActorSetPosition(1, 0, 0);
+    Engine_ActorSetPosition(11, 0, 0);
+    Engine_ActorSetPosition(12, 0, 0);
+    Engine_ActorSetPosition(0, 0, 0);
+    Engine_ColorBufferApplyTarget(0x10000, 2);
+    Engine_ColorBufferInterpolate(1);
+    Engine_EventWait(1);
+    window = UiWindow_Create(QUESTION_X, 7, QUESTION_WIDTH, 5, 1);
+    text = (s32)MsgShindenGreatHealer;
+    UiText_DrawResource(text, window, 16, 0);
+    if (SaveState_CountRecordsExcludingFlagged(1) == 0) {
+        UiText_DrawResource(text + 2, window, 16, 16);
+    } else {
+        UiText_DrawResource(text + 1, window, 16, 16);
+    }
+    TextCursor_Initialize(&cursor, &slot);
+    TextCursor_SetPosition(&cursor, 72, 60);
+    choice = 0;
+    while ((gKeyState & KEY_A) == 0) {
+        s32 x;
+
+        if (gKeysRepeat & KEYS_VERTICAL) {
+            choice ^= 1;
+        }
+        x = ShindenHeya_CursorBob[(gFrameTick >> 1) & 15] + CURSOR_X;
+        TextCursor_SetPosition(&cursor, x, (choice << 4) + 60);
+        Engine_EventWait(1);
+    }
+    UiTextResource_Release(slot);
+    UiWork_Finalize(window, 1);
+    return choice;
+}
+
+void Object_RefreshSelectorById();
+void Ui_PrepareTransferForItem();
+
+s32 Math_RemainderUnsigned();
+
+void FieldScene_RunSupplementalSequenceOne(void);
+
+void FieldScene_RunPairedActorChoreography(void)
+{
+
+    Actor_SetSpeed(0, 0x18000, 0xc000);
+    Actor_SetSpeed(1, 0x18000, 0xc000);
+    Engine_ActorRunRepeatedMotion(12, 2);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(12, 3);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Engine_EventWait(15);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, GERALD, 0);
+    Engine_ActorStartRepeatedMotion(0, 1);
+    ((struct FacingObject *)Object_GetById(0))->facing_flags &= ~1;
+    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 184, 168);
+    ((struct FacingObject *)Object_GetById(1))->facing_flags &= ~1;
+    Engine_ActorWalkToAndWait(1, 200, 168);
+    Engine_EventWait(1);
+    ((struct FacingObject *)Object_GetById(1))->facing_flags |= 1;
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+    ((struct FacingObject *)Object_GetById(0))->facing_flags |= 1;
+    ((struct FacingObject *)Object_GetById(1))->facing_flags |= 1;
+    Engine_ActorJump(GERALD, 2, 0);
+    Engine_EventWait(15);
+    Engine_ActorFaceActor(GERALD, 8, 0);
+    Engine_EventWait(5);
+    Engine_ActorJump(GERALD, 2, 0);
+    Engine_EventWait(25);
+    Engine_ActorRunRepeatedMotion(GERALD, 2);
+    Engine_ActorFaceActor(GERALD, 12, 0);
+    Engine_EventWait(5);
+    Engine_ActorSetAnimationAndWait(GERALD, 3);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Engine_EventWait(5);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Engine_EventWait(10);
+    Engine_ActorFaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(GERALD, 3);
+    Engine_EventWait(15);
+    Engine_ActorSetAnimation(11, 3);
+    Engine_ActorSetAnimation(12, 3);
+    Engine_ActorSetAnimation(8, 3);
+    Engine_ActorSetAnimation(9, 3);
+    Engine_ActorSetAnimationAndWait(10, 3);
+    Engine_EventWait(20);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
+    Engine_ActorFaceActor(GERALD, 12, 0);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimationAndWait(GERALD, 3);
+    Engine_EventWait(20);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 11, 0);
+    Engine_ActorFaceActor(GERALD, 11, 0);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimationAndWait(GERALD, 3);
+    Engine_EventWait(20);
+    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 0);
+    Engine_EventWait(15);
+    Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Engine_EventWait(10);
+    ((void (*)())ShindenHeya_RaiseItemIcon)(222, 0xb80000, 0x1b0000, 0xa80000);
+    Engine_ActorFaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
+    Engine_EventWait(10);
+    Engine_ActorRunRepeatedMotion(GERALD, 1);
+    Engine_EventWait(10);
+    Engine_ActorJump(GERALD, 4, 0);
+    Actor_FaceDirection(1, 0xd000, 0);
+    Engine_EventWait(15);
+    Actor_FaceDirection(1, 0xb000, 0);
+    Engine_EventWait(10);
+    Actor_FaceDirection(1, 0xd000, 0);
+    Engine_EventWait(10);
+    Actor_FaceDirection(1, 0xb000, 0);
+    Engine_EventWait(10);
+    Actor_FaceDirection(1, 0xd000, 0);
+    Engine_EventWait(30);
+    Engine_ActorJump(GERALD, 4, 0);
+    Actor_FaceDirection(1, 0x3000, 0);
+    Engine_EventWait(15);
+    Actor_FaceDirection(1, 0x5000, 0);
+    Engine_EventWait(10);
+    Actor_FaceDirection(1, 0x3000, 0);
+    Engine_EventWait(10);
+    Actor_FaceDirection(1, 0x5000, 0);
+    Engine_EventWait(10);
+    Actor_FaceDirection(1, 0x3000, 0);
+    Engine_EventWait(30);
+    Actor_FaceDirection(0, 0xc000, 0);
+    Actor_FaceDirection(1, 0xc000, 0);
+    Engine_EventWait(10);
+    Actor_ShowEmote(0, 0x102, 0);
+    Actor_ShowEmote(1, 0x102, 0);
+    Engine_EventWait(60);
+    Engine_ActorFaceActor(GERALD, 12, 0);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(GERALD, 3);
+    Engine_EventWait(10);
+    Object_GetById(8)->timer = 1;
+    Object_GetById(8)->update =
+        (void (*)(union FieldObject *))UpdateFacingFromResolvedObject;
+    Object_GetById(12)->timer = 1;
+    Object_GetById(12)->update =
+        (void (*)(union FieldObject *))UpdateFacingFromResolvedObject;
+    Engine_ActorWalkToAndWait(1, 196, 180);
+    Engine_ActorWalkToAndWait(GERALD, 184, 184);
+    Engine_ActorWalkToAndWait(GERALD, 180, 180);
+    Engine_ActorWalkToAndWait(GERALD, 168, 168);
+    Engine_ActorWalkToAndWait(GERALD, 180, 156);
+    Engine_ActorWalkTo(GERALD, 200, 104);
+    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 192, 168);
+    Actor_FaceDirection(0, 0xc000, 0);
+    Engine_ActorWaitForMove(GERALD);
+    Engine_EventWait(30);
+    Engine_ActorRunRepeatedMotion(GERALD, 1);
+    Engine_EventWait(10);
+    Actor_FaceDirection(1, 0x5000, 0);
+    Engine_EventWait(15);
+    Object_GetById(12)->update = NULL;
+    Object_GetById(8)->update = NULL;
+    Engine_ActorStartRepeatedMotion(8, 2);
+    Engine_ActorShowEmote(8, 0x100, 0);
+    Engine_EventWait(60);
+    Engine_ActorSetAnimation(8, 0);
+    Engine_ActorShowEmote(0, 0x102, 0);
+    Engine_EventWait(60);
+    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 11, 0);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(11, 3);
+    Engine_EventWait(10);
+    Actor_FaceDirection(0, 0xc000, 0);
+    Engine_EventWait(10);
+    Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Engine_EventWait(10);
+    Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
+    Engine_EventWait(20);
+    Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
+    Engine_EventWait(20);
+    Engine_EventWait(15);
+    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(12, 3);
+    Engine_EventWait(60);
+    Engine_ActorWalkToAndWait(GERALD, 208, 168);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 11, 0);
+    Engine_ActorFaceActor(GERALD, 12, 0);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
+    Engine_ActorSetAnimationAndWait(GERALD, 4);
+    Engine_EventWait(10);
+    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+    Engine_ActorRunRepeatedMotion(GERALD, 1);
+    Engine_EventWait(10);
+    Engine_ActorFaceDirection(GERALD, 0, 0);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(GERALD, 3);
+    Engine_EventWait(10);
+    Engine_ActorFaceActor(GERALD, 12, 0);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimationAndWait(12, 3);
+    Engine_EventWait(10);
+    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 0);
+    Engine_ActorFaceDirection(GERALD, 0, 0);
+    Engine_EventWait(10);
+    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorRunRepeatedMotion(GERALD, 2);
+    Engine_EventWait(10);
+    Engine_ActorEnableActionCallback(0, ShindenHeya_LeaderCircleScript);
+    Engine_ActorEnableActionCallback(1, ShindenHeya_GeraldCircleScript);
+    Object_RefreshSelectorById(0);
+    Object_RefreshSelectorById(1);
+    Actor_SetSpeed(0, 0x18000, 0xc000);
+    Actor_SetSpeed(1, 0x18000, 0xc000);
+    Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
+    Engine_ActorJump(GERALD, 6, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 9, 0);
+    Engine_ActorFaceActor(GERALD, 8, 0);
+    Engine_EventWait(1);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
+    Engine_ActorFaceActor(GERALD, 11, 0);
+    Engine_EventWait(1);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 8, 0);
+    Engine_ActorFaceActor(GERALD, 9, 0);
+    Engine_EventWait(1);
+    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 192, 168);
+    Engine_ActorWalkToAndWait(GERALD, 208, 168);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+    Engine_EventWait(10);
+    Actor_FaceDirection(0, 0x3000, 0);
+    Actor_FaceDirection(1, 0xd000, 0);
+    Engine_EventWait(10);
+    Actor_FaceDirection(0, 0x5000, 0);
+    Actor_FaceDirection(1, 0xb000, 0);
+    Engine_EventWait(10);
+    Actor_FaceDirection(0, 0x3000, 0);
+    Engine_ActorFaceDirection(1, 0xd000, 0);
+    Engine_EventWait(10);
+    Actor_FaceDirection(0, 0x5000, 0);
+    Engine_ActorFaceDirection(1, 0xb000, 0);
+    Engine_EventWait(20);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 11, 0);
+    Engine_ActorFaceActor(GERALD, 12, 0);
+    Engine_EventWait(20);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimationAndWait(GERALD, 3);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimation(11, 3);
+    Engine_ActorSetAnimationAndWait(12, 3);
+    Engine_EventWait(30);
+    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
+    Engine_EventWait(20);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimationAndWait(GERALD, 3);
+    Engine_EventWait(10);
+    Engine_ActorFaceDirection(GERALD, 0, 0);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorSetAnimation(GERALD, 2);
+    Engine_EventWait(60);
+}
+
+void ShindenHeya_RaiseItemIcon(s32 item)
+{
+    struct FieldActor *obj;
+    struct FieldSprite *spr;
+    u8 *buf;
+    u32 i;
+    u8 zero;
+    s32 z;
+    u8 *flag;
+
+    obj = ((struct FieldActor *(*)())Engine_ObjectCreate)(22);
+    zero = 0;
+    if (obj != 0) {
+        Engine_ObjectSetScript((s32)obj, (s32)ShindenHeya_ItemIconGrowScript);
+        spr = obj->sprite;
+        spr->flags = zero;
+        spr->part_count = zero;
+        spr->full_color = 0;
+        spr->palette = 0;
+        obj->velocity_y = 0x20000;
+        ((struct FieldEffect *)obj)->velocity_y = 0x4000;
+        buf = Runtime_AllocateHeapBlock(17, 0x608);
+        Ui_PrepareTransferForItem(item);
+        Engine_VramLoad(spr->vram_block, 128, buf + 0x400);
+        Runtime_ReleaseHeapBlock(17);
+        /* FAKEMATCH: needed to match: this initializer order keeps the sprite zero in r5 instead of r3. */
+        for (i = 0, flag = &obj->motion_flags, z = 0; i < 60; i++) {
+            if ((u32)(obj->velocity_y + 255) <= 0x1fe)
+                *flag = z;
+            Engine_TaskWait(1);
+        }
+        Engine_ObjectSetScript((s32)obj, (s32)ShindenHeya_ItemIconEndScript);
+    }
+}
+
+void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
+{
+    struct FieldActor *spark = &object->actor;
+    s32 scale;
+    s32 timer;
+
+    spark->y.fixed += (s16)spark->timer << 12;
+    spark->target_y = spark->y.fixed;
+    scale = 0;
+    switch ((u16)((s16)spark->work >> 2) & 3) {
+    case 0:
+        scale = 0x10000;
+        break;
+    case 1:
+    case 3:
+        scale = 0xcccc;
+        break;
+    case 2:
+        scale = 0x9999;
+        break;
+    }
+    spark->scale_x = scale;
+    spark->scale_y = scale;
+    timer = spark->work - 1;
+    spark->work = timer;
+    if ((s16)timer <= 0)
+        Engine_ObjectSetScript(spark, ShindenHeya_SparkEndScript);
+}
+
+void ShindenHeya_SpawnActorSpark(s32 id)
+{
+    struct FieldActor *actor;
+    struct FieldActor *obj;
+    struct FieldSprite *spr;
+    s32 x;
+    s32 r;
+
+    actor = Object_GetById(id);
+    if (actor == 0)
+        return;
+    r = Math_RemainderUnsigned(Engine_RandomNext(), 20);
+    x = actor->x.fixed;
+    x += r << 16;
+    x += -0xa0000;
+    obj = Engine_ObjectCreate(0x11e, x, actor->y.fixed + ((Engine_RandomNext() & 15) << 16) + -0x80000, actor->z.fixed);
+    if (obj == 0)
+        return;
+    spr = obj->sprite;
+    obj->motion_flags = 0;
+    obj->timer = Math_RemainderUnsigned(Engine_RandomNext(), 10) + 5;
+    obj->work = Math_RemainderUnsigned(Engine_RandomNext(), 60) + 30;
+    obj->update = ShindenHeya_UpdateRisingSpark;
+    spr->flags = 0;
+    spr->priority = actor->sprite->priority;
+}
+
+void SceneState_ApplyTwoRects(void)
+{
+    {
+        s32 width = 3, height = 2;
+        Map_CopyCellsTo(0, 64, 11, 68, width, height);
+    }
+    {
+        s32 x = 11, y = 8;
+        Engine_MapCopyCellAttributes(11, 10, 3, 2, x, y);
+    }
+    Engine_TaskWait(1);
+}
+
+s32 IsActorFacingInward(void)
+{
+    struct FieldActor *actor = Object_GetById(0);
+
+    if ((u32)((actor->facing + 0x5fff) << 16) <= 0x3ffe0000) {
+        return 1;
+    }
+    return 0;
+}
+
+void FieldScene_RunActorEightFacingDialogue(void)
+{
+    if (IsActorFacingInward() != 0) {
+        Engine_SanctumOpen(8);
+        return;
+    }
+
+    Engine_EventBegin();
+    if (Engine_GameFlagIsSet(0x87a) != 0)
+        Engine_EventSetMessage((s32)MsgShindenPathSolSanctumStillClosed);
+    else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
+        Engine_EventSetMessage((s32)MsgShindenMyControlOverPsynergyHas);
+    else
+        Engine_EventSetMessage((s32)MsgShindenWieldersPsynergyCalledAdeptsAdepts);
+    Engine_EventShowMessage(8, 0);
+    Engine_EventEnd();
+}
+
+void FieldScene_DispatchBySceneId(void)
+{
+    s32 no;
+
+    if (IsActorFacingInward() != 0) {
+        Engine_SanctumOpen(8);
+        return;
+    }
+
+    Engine_EventBegin();
+
+    no = gGameState.entrance;
+
+    switch (no) {
+    case 10:
+    case 12:
+        if (Engine_GameFlagIsSet(0x855) != 0) {
+            Engine_EventSetMessage((s32)MsgShindenWasHandFateReturnedGold);
+        } else {
+            Engine_EventSetMessage((s32)MsgShindenWeWillHelpAnytimeAs);
+        }
+        break;
+    case 11:
+        Engine_EventSetMessage((s32)MsgShindenMayWrongButLatelyThere);
+        break;
+    case 20:
+    case 21:
+    case 50:
+        Engine_EventEnd();
+        FieldScene_RunSupplementalSequenceOne();
+        return;
+    default:
+        break;
+    }
+
+    Engine_EventShowMessage(8, 0);
+    Engine_EventEnd();
+}
+
+void SceneDialogue_RunActorEightFlaggedDialogue(void)
+{
+    if (IsActorFacingInward() != 0) {
+        Engine_SanctumOpen(8);
+        return;
+    }
+
+    Engine_EventBegin();
+    if (Engine_GameFlagIsSet(0x845) != 0)
+        Engine_EventSetMessage((s32)MsgShindenCurseMayOverButWe);
+    else
+        Engine_EventSetMessage((s32)MsgShindenAmStartingFeelOnlyBeginning);
+    Engine_EventShowMessage(8, 0);
+    Engine_EventEnd();
+}
+
+void SceneDialogue_RunActorEightFollowupDialogue(void)
+{
+    if (IsActorFacingInward() != 0) {
+        Engine_SanctumOpen(8);
+        return;
+    }
+
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgShindenWasAfterEerieNightWhen);
+    if (Engine_GameFlagIsSet(0x909) != 0)
+        Engine_EventSetMessage((s32)MsgShindenSavedAltinFromMonstersClearly);
+    Engine_EventShowMessage(8, 0);
+    Engine_EventEnd();
+}
+
+void SceneDialogue_RunActorEightDialogue(void)
+{
+    if (IsActorFacingInward() != 0) {
+        Engine_SanctumOpen(8);
+        return;
+    }
+
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgShindenCameXianFromVeryDistant);
+    Engine_EventShowMessage(8, 0);
+    Engine_EventEnd();
 }

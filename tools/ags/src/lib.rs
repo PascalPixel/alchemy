@@ -2,6 +2,7 @@ pub mod asm;
 pub mod assets;
 pub mod graphics;
 pub mod lz;
+pub mod patch;
 pub mod resource;
 pub mod sound;
 pub mod sprite;

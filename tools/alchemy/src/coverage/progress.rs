@@ -158,7 +158,9 @@ fn run(argv: &[String]) -> Result<String, String> {
         .iter()
         .zip(&games)
     {
-        lines.push(done_line(mark, game, state));
+        let mut line = done_line(mark, game, state);
+        line.push_str(&patch_part(&root.join("games").join(game.to_uppercase()))?);
+        lines.push(line);
         lines.extend(edition_lines(mark, state));
     }
     Ok(lines.join("\n"))
@@ -214,4 +216,33 @@ pub fn entry(arguments: &[String]) {
             std::process::exit(1);
         }
     }
+}
+
+/// Post-pack patches (W3) under one game's sources: the shipped literal bytes
+/// Camelot wrote into streams after packing, reported apart from every total.
+fn patch_part(game: &std::path::Path) -> Result<String, String> {
+    fn walk(dir: &std::path::Path, found: &mut Vec<std::path::PathBuf>) -> Result<(), String> {
+        let entries =
+            std::fs::read_dir(dir).map_err(|error| format!("{}: {error}", dir.display()))?;
+        for entry in entries {
+            let path = entry.map_err(|error| error.to_string())?.path();
+            if path.is_dir() {
+                walk(&path, found)?;
+            } else if path.to_string_lossy().ends_with("_PATCH.TSV") {
+                found.push(path);
+            }
+        }
+        Ok(())
+    }
+    let mut files = Vec::new();
+    walk(game, &mut files)?;
+    let mut literals = 0;
+    for file in &files {
+        let text = std::fs::read(file).map_err(|error| format!("{}: {error}", file.display()))?;
+        literals += ags::patch::Patch::parse(&file.to_string_lossy(), &text)?.literals();
+    }
+    Ok(format!(
+        "; post-pack patch literals {literals} in {} assets (data, not counted)",
+        files.len()
+    ))
 }

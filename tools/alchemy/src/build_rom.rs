@@ -1196,13 +1196,19 @@ fn asset_key(root: &Path, asset: &Asset, inputs: &[String]) -> Option<String> {
     hasher.update(env!("ALCHEMY_ENCODER").as_bytes());
     hasher.update(asset.built.as_bytes());
     let input = asset_input(root, asset).ok()?;
-    for path in std::iter::once(input.to_string_lossy().into_owned()).chain(inputs.iter().cloned())
-    {
-        let bytes = fs::read(root.join(&path)).ok()?;
+    hasher.update(fs::read(root.join(&input)).ok()?);
+    for path in inputs {
         hasher.update((path.len() as u64).to_le_bytes());
         hasher.update(path.as_bytes());
-        hasher.update((bytes.len() as u64).to_le_bytes());
-        hasher.update(bytes);
+        // A sibling the recipe looked for and did not find, such as an
+        // optional patch file, keys the asset by its absence.
+        match fs::read(root.join(path)) {
+            Ok(bytes) => {
+                hasher.update((bytes.len() as u64).to_le_bytes());
+                hasher.update(bytes);
+            }
+            Err(_) => hasher.update(u64::MAX.to_le_bytes()),
+        }
     }
     Some(format!("{:x}", hasher.finalize()))
 }

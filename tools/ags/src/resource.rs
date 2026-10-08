@@ -1,5 +1,9 @@
 use crate::graphics::{indices, metatiles, MapDrawing};
-use crate::lz::{compress_mtf4, compress_palette, compress_tagged, LzMachine};
+use crate::lz::{
+    compress_mtf4_packed, compress_palette, compress_palette_packed, compress_tagged_packed,
+    LzMachine,
+};
+use crate::patch::{patch_name, Patch};
 use crate::assets::compression::{
     encode_delta7, encode_halfword_lz, encode_icon4, encode_tilemap_delta, encode_zero_skip,
 };
@@ -133,11 +137,16 @@ pub fn build_file_with(
     } else {
         image_form(built, form, input)?
     };
+    let packed = match codec {
+        Some("lz" | "plz" | "mtf") => packed_bytes(built, &pixels, sibling)?,
+        _ => None,
+    };
+    let packed = packed.as_deref().unwrap_or(&pixels);
     match codec {
         None => Ok(pixels),
-        Some("lz") => compress_tagged(&pixels, &PACKER),
-        Some("plz") => compress_palette(&pixels, &PACKER),
-        Some("mtf") => compress_mtf4(&pixels),
+        Some("lz") => compress_tagged_packed(&pixels, packed, &PACKER),
+        Some("plz") => compress_palette_packed(&pixels, packed, &PACKER),
+        Some("mtf") => compress_mtf4_packed(&pixels, packed),
         Some("d7") => encode_delta7(&pixels).map_err(|error| format!("{built}: {}", error.0)),
         Some("hlz") => encode_halfword_lz(&pixels).map_err(|error| format!("{built}: {}", error.0)),
         Some(other) => Err(format!("{built}: unknown codec .{other}")),
@@ -665,5 +674,19 @@ mod tests {
         assert!(one_bpp("T.1bpp", &pixels[..120], 15, 8).is_err());
         assert!(is_recipe("GRAPHICS/DISPLAY/STAFF.1bpp"));
         assert!(!is_recipe("GRAPHICS/DISPLAY/STAFF.2bpp"));
+    }
+}
+
+/// The bytes Camelot's packer saw, when a patch file beside the asset lists
+/// edits made after packing (W3); `None` when the asset has no patch.
+fn packed_bytes(
+    built: &str,
+    pixels: &[u8],
+    sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+) -> Result<Option<Vec<u8>>, String> {
+    let name = patch_name(&input_name(built)?);
+    match sibling(&name) {
+        Ok(text) => Ok(Some(Patch::parse(&name, &text)?.packed(built, pixels)?)),
+        Err(_) => Ok(None),
     }
 }

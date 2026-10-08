@@ -154,12 +154,12 @@ void UiWindow_SetTileAttributeRect(const struct RenderInput *window,
 
 void Resource_CopyFixedBlockB(s32 arg0)
 {
-    VramBlock_LoadCached(arg0, 0x80, RomBytes_080310a4);
+    VramBlock_LoadCached(arg0, 0x80, Resource_FixedBlockBTiles);
 }
 
 void Resource_CopyFixedBlockA(s32 arg0)
 {
-    VramBlock_LoadCached(arg0, 0x80, RomBytes_080317e4);
+    VramBlock_LoadCached(arg0, 0x80, Resource_FixedBlockATiles);
 }
 
 #if EDITION_INTERNATIONAL
@@ -300,7 +300,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
     }
     slot = Resource_FindFreeEntry();
     if (slot <= 95) {
-        VramBlock_LoadCached(slot, 128, RomBytes_080317e4);
+        VramBlock_LoadCached(slot, 128, Resource_FixedBlockATiles);
         slot = (s32)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
         caret.output = (struct RenderOutput *)slot;
         ((struct RenderOutput *)slot)->sentinel = 255;
@@ -526,7 +526,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
     }
     slot = Resource_FindFreeEntry();
     if (slot <= 95) {
-        VramBlock_LoadCached(slot, 128, RomBytes_080317e4);
+        VramBlock_LoadCached(slot, 128, Resource_FixedBlockATiles);
         slot = (s32)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
         caret.output = (struct RenderOutput *)slot;
         ((struct RenderOutput *)slot)->sentinel = 255;

@@ -1,7 +1,6 @@
 #include "TYPES.H"
-/* FAKEMATCH: this file reads RomBytes_08029a10 through its own declaration; the shop's changes its code. */
-#define OWN_RomBytes_08029a10
-extern u8 *RomBytes_08029a10[];
+/* FAKEMATCH: this file reads UiIcon_FramePointerTable through its own declaration; the shop's changes its code. */
+extern u8 *UiIcon_FramePointerTable[];
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -60,7 +59,7 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
         glyph = 0;
 
     if (with_base != 0) {
-        work->encoded = RomBytes_08029a10[2];
+        work->encoded = UiIcon_FramePointerTable[2];
         work->width = 2;
         work->height = 2;
         UiGlyph_DecodeWithHeapRoutines(work, 0);

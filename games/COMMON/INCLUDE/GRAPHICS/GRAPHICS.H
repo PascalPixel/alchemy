@@ -141,11 +141,8 @@ extern const u8 Resource_DecodeHalfwordLz[];
 extern const u8 Resource_DecodeType01Arm[];
 extern u8 Resource_DecodeType01CodeSize[];
 extern u8 Resource_DecompressHalfwordsCodeSize[];
-#ifndef OWN_RomBytes_08029a10
-extern u8 RomBytes_08029a10[];
-#endif
-extern u8 RomBytes_080310a4[];
-extern const u8 RomBytes_080317e4[];
+extern u8 Resource_FixedBlockBTiles[];
+extern const u8 Resource_FixedBlockATiles[];
 extern const u8 SentouKouka_Tenkai[];
 extern u8 SentouKouka_TenkaiCodeSize[];
 extern const u8 Text_DecodeSymbol[];

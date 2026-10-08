@@ -4,24 +4,7 @@
 	.incbin "baserom.gba", 0x00007b38, 0x00000004
 	.section .rom.0000caca, "ax"
 	.incbin "baserom.gba", 0x0000caca, 0x00000002
-	.section .rom.00029968, "ax"
-	.global WorkspaceOptions_SliderTiles
-WorkspaceOptions_SliderTiles:
-	.incbin "baserom.gba", 0x00029968, 0x00000100
-	.global RomBytes_08029a10
-	.global UiIcon_FramePointerTable
-RomBytes_08029a10:
-UiIcon_FramePointerTable:
-	.incbin "baserom.gba", 0x00029a68, 0x000000bc
-	.global UiIcon_MarkPointers
-UiIcon_MarkPointers:
-	.incbin "baserom.gba", 0x00029b24, 0x0000009c
-	.global UiIcon_DigitPointers
-UiIcon_DigitPointers:
-	.incbin "baserom.gba", 0x00029bc0, 0x00000298
-	.global UiIcon_OverlayPointerTable
-UiIcon_OverlayPointerTable:
-	.incbin "baserom.gba", 0x00029e58, 0x000000e4
+	.section .rom.00029f3c, "ax"
 	.global UiIcon_ItemIconPointers
 UiIcon_ItemIconPointers:
 	.incbin "baserom.gba", 0x00029f3c, 0x000003fc
@@ -36,21 +19,8 @@ UiIcon_PsynergyIconPointersEnd:
 	.incbin "baserom.gba", 0x0002e154, 0x00002798
 	.global UiIcon_MiscIconPointers
 UiIcon_MiscIconPointers:
-	.incbin "baserom.gba", 0x000308ec, 0x00000804
-	.global Resource_FixedBlockBTiles
-	.global RomBytes_080310a4
-Resource_FixedBlockBTiles:
-RomBytes_080310a4:
-	.incbin "baserom.gba", 0x000310f0, 0x00000300
-	.global DjinnMenu_ArrowUpTiles
-DjinnMenu_ArrowUpTiles:
-	.incbin "baserom.gba", 0x000313f0, 0x00000080
-	.global DjinnMenu_ArrowDownTiles
-DjinnMenu_ArrowDownTiles:
-	.incbin "baserom.gba", 0x00031470, 0x000003c0
-	.global RomBytes_080317e4
-RomBytes_080317e4:
-	.incbin "baserom.gba", 0x00031830, 0x00000080
+	.incbin "baserom.gba", 0x000308ec, 0x00000800
+	.section .rom.000318b0, "ax"
 	.global RenderResource_PairSourceTable
 RenderResource_PairSourceTable:
 	.incbin "baserom.gba", 0x000318b0, 0x00000bc0

@@ -51,10 +51,18 @@ pub fn rewrite(script: &str, objects: &[String], merged: &str) -> Result<Option<
         }
     }
     let mut placed: Vec<&str> = Vec::new();
+    let mut redundant: Vec<bool> = Vec::new();
     for run in &runs {
         // Uninitialized data has no bytes in the image and its order is the
         // compiler's; the full build judges where it lands.
         let uninitialized = sections(run[0].2).iter().all(|s| matches!(*s, ".bss" | "COMMON" | ".sbss"));
+        // A later line of uninitialized sections the merged object already
+        // places is already said.
+        let said = uninitialized && sections(run[0].2).iter().all(|s| placed.contains(s));
+        redundant.push(said);
+        if said {
+            continue;
+        }
         if !uninitialized && run.windows(2).any(|w| w[0].1 >= w[1].1) {
             return Err(format!("names {} out of the merged order", run.iter().map(|h| objects[h.1].as_str()).collect::<Vec<_>>().join(", ")));
         }
@@ -68,7 +76,11 @@ pub fn rewrite(script: &str, objects: &[String], merged: &str) -> Result<Option<
     let mut out = String::with_capacity(script.len());
     let mut skip: std::collections::BTreeSet<usize> = std::collections::BTreeSet::new();
     let mut replace: std::collections::BTreeMap<usize, String> = std::collections::BTreeMap::new();
-    for run in &runs {
+    for (run, said) in runs.iter().zip(&redundant) {
+        if *said {
+            skip.extend(run.iter().map(|h| h.0));
+            continue;
+        }
         let first = run[0].0;
         let line = lines[first];
         let (object, _) = named(line).expect("a hit names an object");
@@ -118,6 +130,8 @@ mod tests {
         assert!(rewrite(reordered, &objects(&["g/A", "g/B"]), "g/M").unwrap_err().contains("order"));
         let bss = "\"*/g/A.o\"(.text)\n\"*/g/B.o\"(.text)\n\"*/g/B.o\"(.bss COMMON)\n\"*/g/A.o\"(.bss COMMON)\n";
         assert_eq!(rewrite(bss, &objects(&["g/A", "g/B"]), "g/M").unwrap().unwrap(), "\"*/g/M.o\"(.text)\n\"*/g/M.o\"(.bss COMMON)\n");
+        let commons = "\"*/g/A.o\"(.data .bss COMMON)\n\"*/g/C.o\"(COMMON)\n\"*/g/B.o\"(COMMON)\n";
+        assert_eq!(rewrite(commons, &objects(&["g/A", "g/B", "g/C"]), "g/M").unwrap().unwrap(), "\"*/g/M.o\"(.data .bss COMMON)\n");
         // A data object between two code objects of the unit is another section list.
         let data = "\"*/g/A.o\"(.text)\n\"*/g/D.o\"(.data)\n\"*/g/B.o\"(.text)\n";
         assert!(rewrite(data, &objects(&["g/A", "g/B"]), "g/M").is_err());

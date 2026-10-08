@@ -346,8 +346,8 @@ pub fn view(declaration: &str, name: &str) -> Option<String> {
     let rest = text[at + name.len()..].trim_start();
     let head = &text[..at];
     let (cast, function) = if rest.starts_with('[') {
-        let close = rest.find(']')?;
-        (format!("{head}(*){}", &rest[close + 1..]), false)
+        // The whole array type, so indexing stays indexing of an array.
+        (format!("{head}(*){rest}"), false)
     } else if rest.starts_with('(') {
         (format!("{head}(*){rest}"), true)
     } else if rest.is_empty() {
@@ -360,7 +360,7 @@ pub fn view(declaration: &str, name: &str) -> Option<String> {
     Some(if function {
         format!("#define {name} (({cast}){name})")
     } else if array {
-        format!("#define {name} (({cast})&{name})")
+        format!("#define {name} (*({cast})&{name})")
     } else {
         format!("#define {name} (*({cast})&{name})")
     })
@@ -976,8 +976,8 @@ mod tests {
 
     #[test]
     fn views_cast_the_name_to_the_files_own_shape() {
-        assert_eq!(view("extern u8 gX[4];", "gX").unwrap(), "#define gX ((u8 (*))&gX)");
-        assert_eq!(view("extern u8 gY[4][8];", "gY").unwrap(), "#define gY ((u8 (*)[8])&gY)");
+        assert_eq!(view("extern u8 gX[4];", "gX").unwrap(), "#define gX (*(u8 (*)[4])&gX)");
+        assert_eq!(view("extern u8 gY[][8];", "gY").unwrap(), "#define gY (*(u8 (*)[][8])&gY)");
         assert_eq!(view("struct A *Get(s32 id);", "Get").unwrap(), "#define Get ((struct A *(*)(s32 id))Get)");
         assert_eq!(view("extern struct W gW;", "gW").unwrap(), "#define gW (*(struct W (*))&gW)");
         assert_eq!(view("void Run();", "Run").unwrap(), "#define Run ((void (*)())Run)");

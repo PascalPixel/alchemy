@@ -143,3 +143,104 @@ pub fn encode_icon4(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
     bits.align(8, 1);
     Ok(bits.bytes)
 }
+
+/// Halfword LZ, as Resource_DecompressHalfwords reads it: a little-endian
+/// flag word ahead of every 16 tokens, its bits taken from the top; a clear
+/// bit is a literal halfword, a set bit a copy word `distance << 5 |
+/// (length - 2)` (length 2-33, distance 1-2047 halfwords back), and a
+/// zero copy word ends the stream. One rule: the longest match, the
+/// nearest on a tie, a literal when no match reaches two halfwords.
+pub fn encode_halfword_lz(data: &[u8]) -> Result<Vec<u8>, AssetError> {
+    if !data.len().is_multiple_of(2) {
+        return Err(AssetError("halfword LZ input is not whole halfwords".into()));
+    }
+    let words: Vec<u16> = data
+        .chunks_exact(2)
+        .map(|pair| u16::from_le_bytes([pair[0], pair[1]]))
+        .collect();
+    let mut tokens: Vec<(bool, u16)> = Vec::new();
+    let mut at = 0;
+    while at < words.len() {
+        let (mut length, mut distance) = (0, 0);
+        for back in 1..=at.min(2047) {
+            let mut run = 0;
+            while run < 33 && at + run < words.len() && words[at + run] == words[at + run - back] {
+                run += 1;
+            }
+            if run > length {
+                (length, distance) = (run, back);
+            }
+        }
+        if length >= 2 {
+            tokens.push((true, (distance << 5 | (length - 2)) as u16));
+            at += length;
+        } else {
+            tokens.push((false, words[at]));
+            at += 1;
+        }
+    }
+    tokens.push((true, 0));
+    let mut output = Vec::new();
+    for group in tokens.chunks(16) {
+        let flags = group
+            .iter()
+            .enumerate()
+            .fold(0u16, |flags, (index, &(copy, _))| flags | (u16::from(copy) << (15 - index)));
+        output.extend(flags.to_le_bytes());
+        for &(_, word) in group {
+            output.extend(word.to_le_bytes());
+        }
+    }
+    Ok(output)
+}
+
+#[cfg(test)]
+mod halfword_lz_tests {
+    use super::encode_halfword_lz;
+
+    fn decode(stream: &[u8]) -> Vec<u8> {
+        let word = |at: usize| u16::from_le_bytes([stream[at], stream[at + 1]]);
+        let (mut at, mut out): (usize, Vec<u16>) = (0, Vec::new());
+        loop {
+            let flags = word(at);
+            at += 2;
+            for index in 0..16 {
+                let token = word(at);
+                at += 2;
+                if flags & (0x8000 >> index) == 0 {
+                    out.push(token);
+                    continue;
+                }
+                if token == 0 {
+                    return out.iter().flat_map(|w| w.to_le_bytes()).collect();
+                }
+                let (distance, length) = (usize::from(token >> 5), usize::from(token & 31) + 2);
+                for _ in 0..length {
+                    out.push(out[out.len() - distance]);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn literals_copies_and_the_end_word() {
+        let data: Vec<u8> = [1u16, 2, 1, 2, 1, 2, 7]
+            .iter()
+            .flat_map(|w| w.to_le_bytes())
+            .collect();
+        let stream = encode_halfword_lz(&data).unwrap();
+        // two literals, a copy of four from two back, a literal, the end
+        assert_eq!(stream, [0x00, 0x28, 1, 0, 2, 0, 0x42, 0, 7, 0, 0, 0]);
+        assert_eq!(decode(&stream), data);
+    }
+
+    #[test]
+    fn long_runs_round_trip_across_flag_groups() {
+        let data: Vec<u8> = (0..400u16)
+            .map(|i| (i % 7) * 3 + (i / 50))
+            .flat_map(|w| w.to_le_bytes())
+            .collect();
+        assert_eq!(decode(&encode_halfword_lz(&data).unwrap()), data);
+        assert!(encode_halfword_lz(&[1, 2, 3]).is_err());
+    }
+}

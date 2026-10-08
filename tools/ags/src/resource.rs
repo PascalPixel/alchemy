@@ -1,13 +1,13 @@
 use crate::graphics::{indices, metatiles, MapDrawing};
 use crate::lz::{compress_mtf4, compress_palette, compress_tagged, LzMachine};
 use crate::assets::compression::{
-    encode_delta7, encode_icon4, encode_tilemap_delta, encode_zero_skip,
+    encode_delta7, encode_halfword_lz, encode_icon4, encode_tilemap_delta, encode_zero_skip,
 };
 use crate::assets::image::{bgr555_palette_of, indexed_bitmap_png, GbaBpp};
 
 pub const PACKER: LzMachine = LzMachine::new(4123, 485, 4126, 272);
 
-pub(crate) const CODECS: &[&str] = &["lz", "plz", "mtf", "d7"];
+pub(crate) const CODECS: &[&str] = &["lz", "plz", "mtf", "d7", "hlz"];
 
 pub fn is_recipe(built: &str) -> bool {
     let file = built.rsplit('/').next().unwrap_or(built);
@@ -139,6 +139,7 @@ pub fn build_file_with(
         Some("plz") => compress_palette(&pixels, &PACKER),
         Some("mtf") => compress_mtf4(&pixels),
         Some("d7") => encode_delta7(&pixels).map_err(|error| format!("{built}: {}", error.0)),
+        Some("hlz") => encode_halfword_lz(&pixels).map_err(|error| format!("{built}: {}", error.0)),
         Some(other) => Err(format!("{built}: unknown codec .{other}")),
     }
 }

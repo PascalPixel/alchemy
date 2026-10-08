@@ -16,7 +16,6 @@
 #include "fixed_math.h"
 #include "tbs_edition.h"
 #include "system.h"
-#include "keystate.h"
 #include "game_state.h"
 #include "btlwork.h"
 #include "uiflow.h"

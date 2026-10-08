@@ -658,7 +658,7 @@ fn apply(root: &Path, plan: &Plan, text: &str, scripts: &[(PathBuf, String)]) ->
     let mut gone: Vec<String> = plan.sources.iter().filter(|s| **s != plan.destination).cloned().collect();
     gone.extend(plan.headers.iter().cloned());
     for g in &gone {
-        crate::process::run(&["git", "rm", "-q", "-f", "--", g], root)?;
+        fs::remove_file(root.join(g)).map_err(|e| format!("{g}: {e}"))?;
     }
     let destination = root.join(&plan.destination);
     fs::write(&destination, text).map_err(|e| format!("{}: {e}", destination.display()))?;

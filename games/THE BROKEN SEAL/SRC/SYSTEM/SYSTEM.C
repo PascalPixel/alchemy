@@ -81,7 +81,7 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
 
 void WaitFrames(s32 frames)
 {
-    /* FAKEMATCH: the stack pointer as a register variable; reading and assigning it emits each mov to or from sp. */
+    CAMELOT_ASM("the stack switch, a write to sp no C can express")
     register u8 *sp __asm__("sp");
     u32 i;
     /* FAKEMATCH: base stays in sl, where the native keeps it across the frame loop. */

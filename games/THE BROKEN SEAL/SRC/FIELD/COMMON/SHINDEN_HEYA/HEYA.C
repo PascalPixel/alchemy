@@ -75,7 +75,9 @@ enum FacingGatedMessage {
     MSG_DIRTY_GOLDEN_STATUE_CLEANED_UP = 0x1ceb
 };
 
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
+#endif
 
 void SceneEffect_StepEllipseOrbit();
 

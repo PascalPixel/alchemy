@@ -30,6 +30,8 @@ struct BattleLocationRule
 	s16 result;	   // 最初の出現テーブル番号
 };
 
+extern const struct BattleLocationRule Battle_LocationRules[];
+
 s32 GameFlag_TestFar(s32 flag);
 
 // ワールドマップの地形ごとの出現テーブル (BattleFx_ResultRules、-1 で終わり)

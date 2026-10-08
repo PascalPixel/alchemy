@@ -116,7 +116,6 @@ extern const u32 DisplayScroll_SlideResources[];
 extern const u8 DisplayTransition_DitherTable[];
 extern s8 DisplayTransition_EdgeOffsets[];
 extern u8 DisplayTransition_NoiseWidths[];
-extern struct TransitionShape DisplayTransition_Shapes[];
 extern const u8 FarCall_ResourceTable[];
 extern s16 Flash_Layout;
 extern u8 gDecodeFillByte;

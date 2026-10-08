@@ -124,7 +124,9 @@ row:
     return result;
 }
 
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
+#endif
 
 s32 Title_ShowAnimatedSplash(void)
 {

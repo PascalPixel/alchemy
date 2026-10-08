@@ -78,6 +78,8 @@ struct SparkleFrame {
     u16 tile;
 };
 
+extern const struct SparkleFrame Data_0809f024[];
+
 extern struct SparkleWork *gParticleWork;
 #define SparkleMap (*(struct MapScrollWork **)((u8 *)&gParticleWork - 84))
 

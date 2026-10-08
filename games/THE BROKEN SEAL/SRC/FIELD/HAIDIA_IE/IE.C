@@ -953,7 +953,13 @@ void HaidiaIe_RunActorPairEffectScene(void)
 
 void Scene_RunExtendedActorSequence(void)
 {
+#ifdef MODERN
+    // modern GCC holds one type for a name in a file
+    extern const u8 HaidiaIe_FaceTargetActions_modern[] __asm__("HaidiaIe_FaceTargetActions");
+#define HaidiaIe_FaceTargetActions HaidiaIe_FaceTargetActions_modern
+#else
     extern const u8 HaidiaIe_FaceTargetActions[];
+#endif
 
     struct FieldActor *record;
     struct EventWork *work;
@@ -1276,6 +1282,9 @@ void Scene_RunExtendedActorSequence(void)
     Engine_EventRequestExit(10);
     Engine_EventEnd();
 }
+#ifdef MODERN
+#undef HaidiaIe_FaceTargetActions
+#endif
 
 void Event_SayThenWait(s32 speaker, s32 frames)
 {

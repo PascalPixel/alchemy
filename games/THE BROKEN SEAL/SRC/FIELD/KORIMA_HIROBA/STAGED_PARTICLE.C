@@ -12,6 +12,11 @@
 
 #include "STAGED_ACTOR.H"
 #include "IO_REG.H"
+#ifdef MODERN
+// called before its definition below, which modern GCC refuses for an
+// implicit int declaration of a u16 function
+u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj);
+#endif
 
 enum {
     ITEM_NUT = 181

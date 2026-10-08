@@ -24,7 +24,9 @@
 
 #define BattleEffect_SelectNearbyObject ((s32 (*)(u32))BattleEffect_SelectNearbyObject)
 
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
+#endif
 
 void *ObjectTable_Get(u32);
 s32 GetFocusedObjectCollision(void);

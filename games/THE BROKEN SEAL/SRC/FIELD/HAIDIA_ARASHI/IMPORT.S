@@ -10,9 +10,9 @@ Math_RemainderUnsigned:
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
-	.global Scheduler_AddOrUpdateCallback
+	.global Engine_TaskAddCallback
 	.thumb_func
-Scheduler_AddOrUpdateCallback:
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallback
 	.thumb_func
@@ -234,9 +234,9 @@ Engine_EventAskYesNo:
 	.thumb_func
 Engine_ActorFaceDirection:
 	overlay_veneer ObjectMotion_ArmCallbackFar
-	.global ObjectMotion_SetActionVariant
+	.global Engine_ActorSetSpritePriority
 	.thumb_func
-ObjectMotion_SetActionVariant:
+Engine_ActorSetSpritePriority:
 	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Engine_ActorShowEmote
 	.thumb_func

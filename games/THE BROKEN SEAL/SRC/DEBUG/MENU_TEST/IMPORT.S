@@ -149,9 +149,9 @@ PartyInventory_GiveItem:
 	.endif
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
-	.global Event_SetMessageId
+	.global Engine_EventSetMessage
 	.thumb_func
-Event_SetMessageId:
+Engine_EventSetMessage:
 	overlay_veneer Event_SetMessageIdFar
 	.global BattleEv_RunWait
 	.thumb_func

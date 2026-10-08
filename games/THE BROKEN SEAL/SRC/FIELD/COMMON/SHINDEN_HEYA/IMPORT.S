@@ -7,9 +7,6 @@
 	.thumb_func
 Math_RemainderUnsigned:
 	overlay_veneer IwramUnsignedRemainder
-	.global WaitFrames
-	.thumb_func
-WaitFrames:
 	.global Engine_TaskWait
 	.thumb_func
 Engine_TaskWait:
@@ -38,13 +35,10 @@ Runtime_AllocateHeapBlock:
 	.thumb_func
 Runtime_ReleaseHeapBlock:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
-	.global VramBlock_LoadCached
+	.global Engine_VramLoad
 	.thumb_func
-VramBlock_LoadCached:
+Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
-	.global ObjectDispatch_Initialize
-	.thumb_func
-ObjectDispatch_Initialize:
 	.global Engine_ObjectSetScript
 	.thumb_func
 Engine_ObjectSetScript:
@@ -134,15 +128,6 @@ Engine_EventChooseYesNo:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
-	.global ResolveFacingObject
-	.thumb_func
-ResolveFacingObject:
-	.global Object_GetById
-	.thumb_func
-Object_GetById:
-	.global GetActorState
-	.thumb_func
-GetActorState:
 	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func

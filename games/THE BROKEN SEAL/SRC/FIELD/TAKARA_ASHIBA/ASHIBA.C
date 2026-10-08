@@ -46,20 +46,20 @@ static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
     *field = step;
 }
 
-void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Engine_MapCopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 
 s32 PartyInventory_FindOwner();
 void PartyInventory_Remove();
 s32 PartyInventory_FindOwner(s32);
 void TakaraAshiba_OpenPassage(s32);
 
-void Battle_Reset();
-void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_OffsetPositionAndResetMotion();
-void Battle_WaitMode0();
-void ObjectMotion_CommitCurrentPositionAndActivate();
-void BattleFx_FinishAction();
-void AudioCommand_Play();
+void Engine_EventBegin();
+void Engine_ActorSetSpeed();
+void Engine_ActorSetDestinationOffset();
+void Engine_EventWait();
+void Engine_ActorWaitForMove();
+void Engine_EventEnd();
+void Engine_AudioPlayCue();
 
 void battle_owner_69();
 void FieldEffect_UpdateGridPlacement();
@@ -322,10 +322,10 @@ void TakaraAshiba_OpenPassage(s32 arg)
         Engine_AudioPlayCue(157);
         Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-        Map_CopyMetatileCellsRect(79, 29, 1, 3, dest, 40);
+        Engine_MapCopyCells(79, 29, 1, 3, dest, 40);
         Engine_TaskWait(40);
     }
-    Map_CopyMetatileCellsRect(80, 29, 1, 3, dest, 40);
+    Engine_MapCopyCells(80, 29, 1, 3, dest, 40);
     Engine_MapCopyCellAttributes(column, 40, 1, 1, column, 41);
     Engine_MapCopyCellAttributes(column, 40, 1, 1, column, 42);
 }
@@ -658,37 +658,37 @@ void TakaraAshiba_RunActorElevenFollowScene(void)
     s32 v3;
 
     if (gGameState.paused_object != 11) {
-        Battle_Reset();
+        Engine_EventBegin();
         Actor_SetSpeed(0, 0x1b333, 0xd999);
-        ObjectMotion_SetSpeedParameters(11, 0x1b333, 0xd999);
-        AudioCommand_Play(188);
+        Engine_ActorSetSpeed(11, 0x1b333, 0xd999);
+        Engine_AudioPlayCue(188);
         v3 = Object_GetById(0)->x.fixed / 0x100000;
         if (v3 > Object_GetById(11)->x.fixed / 0x100000) {
-            ObjectMotion_OffsetPositionAndResetMotion(11, 8, 0);
+            Engine_ActorSetDestinationOffset(11, 8, 0);
         }
         v3 = Object_GetById(0)->x.fixed / 0x100000;
         if (v3 < Object_GetById(11)->x.fixed / 0x100000) {
             FieldObjectMotion_OffsetPositionAndResetMotion(11, -8, 0);
         }
-        ObjectMotion_CommitCurrentPositionAndActivate(11);
+        Engine_ActorWaitForMove(11);
         record = Object_GetById(0);
         if (record != 0) {
-            ObjectMotion_ResetAndSetPosition(11, record->x.part.pixel, record->z.part.pixel);
+            Engine_ActorSetDestination(11, record->x.part.pixel, record->z.part.pixel);
         }
-        ObjectMotion_CommitCurrentPositionAndActivate(11);
+        Engine_ActorWaitForMove(11);
 #if EDITION_INTERNATIONAL
-        ObjectMotion_OffsetPositionAndResetMotion(0, 0, 24);
+        Engine_ActorSetDestinationOffset(0, 0, 24);
 #else
-        ObjectMotion_OffsetPositionAndResetMotion(0, 0, 16);
+        Engine_ActorSetDestinationOffset(0, 0, 16);
 #endif
-        Battle_WaitMode0(4);
-        AudioCommand_Play(188);
-        ObjectMotion_OffsetPositionAndResetMotion(11, 0, 16);
-        ObjectMotion_CommitCurrentPositionAndActivate(0);
-        ObjectMotion_ResetAndSetPosition(11, 0x158, 0x168);
-        ObjectMotion_CommitCurrentPositionAndActivate(11);
-        Battle_WaitMode0(10);
-        BattleFx_FinishAction();
+        Engine_EventWait(4);
+        Engine_AudioPlayCue(188);
+        Engine_ActorSetDestinationOffset(11, 0, 16);
+        Engine_ActorWaitForMove(0);
+        Engine_ActorSetDestination(11, 0x158, 0x168);
+        Engine_ActorWaitForMove(11);
+        Engine_EventWait(10);
+        Engine_EventEnd();
     }
 }
 

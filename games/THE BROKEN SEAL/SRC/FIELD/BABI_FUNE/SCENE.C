@@ -22,7 +22,7 @@
 void Engine_MapCopyCellAttributes();
 void Motion_LaunchFromFocusedObject();
 s32 UiText_OpenMessageAtObject();
-s32 Inventory_PromptAndSetObjectMode();
+s32 Engine_EventChooseYesNo();
 void Object_RefreshSelectorById();
 void MusicCommand_SetPitchAndUpdateFrequency();
 void BabiFune_ScheduleFade();
@@ -113,7 +113,7 @@ void Scene_RunExtendedPresentationSequence(void)
     Engine_ActorFaceDirection(1, 57344, 0);
     Engine_EventWait(20);
     UiText_OpenMessageAtObject(1, 0);
-    if (Inventory_PromptAndSetObjectMode(0, 0) == 0) {
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(30);
         Actor_ShowEmote(1, 258, 50);
         Engine_EventShowMessage(1, 0);
@@ -151,7 +151,7 @@ void Scene_RunExtendedPresentationSequence(void)
     Engine_ActorSetAnimationAndWait(3, 4);
     Engine_EventWait(20);
     UiText_OpenMessageAtObject(3, 0);
-    if (Inventory_PromptAndSetObjectMode(0, 0) == 0) {
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
         Engine_ActorRunRepeatedMotion(1, 2);
         Engine_EventWait(20);
@@ -189,7 +189,7 @@ void Scene_RunExtendedPresentationSequence(void)
     Actor_FaceDirection(3, 49152, 0);
     Engine_ActorFaceDirection(2, 40960, 0);
     Engine_EventWait(20);
-    if (Inventory_PromptAndSetObjectMode(0, 0) == 0) {
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(30);
         Engine_ActorSetAnimationAndWait(3, 3);
         Engine_EventWait(20);

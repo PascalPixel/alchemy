@@ -19,8 +19,8 @@ enum StatueHallActor {
 };
 
 void Event_SayThenWait();
-void ObjectMotion_ResetAndSetPositionInMode2();
-s32 Inventory_PromptAndSetObjectMode();
+void Engine_ActorWalkTo();
+s32 Engine_EventChooseYesNo();
 s32 UiText_OpenMessageAtObject();
 
 struct FocusPoint {
@@ -317,7 +317,7 @@ void FieldScene_RunStagedActorScene(void)
     Actor_FaceDirection(8, 0x8000, 0);
     Engine_EventWait(10);
     Actor_SetSpeed(8, 0x13333, 0x9999);
-    ObjectMotion_ResetAndSetPositionInMode2(8, 0x1b0, 200);
+    Engine_ActorWalkTo(8, 0x1b0, 200);
     Engine_EventWait(20);
     Camera_SetSpeed(0x26666, 0x4ccc);
     Camera_MoveTo(0x1200000, -1, 0xab0000, 1);
@@ -367,7 +367,7 @@ void FieldScene_RunStagedActorScene(void)
     Actor_FaceDirection(0, 0x4000, 0);
     Actor_FaceDirection(5, 0x4000, 0);
     Actor_FaceDirection(1, 0x4000, 0);
-    if (Inventory_PromptAndSetObjectMode(0, 0) == 0) {
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventSetMessage((s32)MsgSoruHonestlyDoubtUnderstand);
     } else {
         Engine_EventSetMessage((s32)MsgSoruHmphWellTold);

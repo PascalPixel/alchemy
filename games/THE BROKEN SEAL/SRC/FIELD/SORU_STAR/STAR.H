@@ -66,7 +66,7 @@ s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z);
 void SoruStar_LineUpFollowers(void);
 void Party_RemoveOwnerRestored();
 void PartyInventory_Discard();
-void Object_SetMoveTarget();
+void Engine_ObjectSetPosition();
 void SoruStar_RiseActorFourteenSparks();
 void UiText_ShowCenteredMessage();
 void *UnitGet(u32 owner);

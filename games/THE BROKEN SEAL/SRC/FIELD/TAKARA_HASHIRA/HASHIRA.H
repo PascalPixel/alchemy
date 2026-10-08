@@ -31,7 +31,7 @@ void TakaraHashira_JitterBackgroundScroll(void);
 s32 SceneActor_UpdateBit1ByPositionToSlotZero();
 s32 TakaraHashira_UpdateActorPriority();
 
-void WaitFrames(s32 frames);
+void Engine_TaskWait(s32 frames);
 void Object_SetMode(struct FieldActor *object, s32 mode);
 
 extern u8 TakaraHashira_ShakenScroll[];

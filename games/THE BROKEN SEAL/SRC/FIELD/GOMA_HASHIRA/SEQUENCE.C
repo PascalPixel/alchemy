@@ -16,8 +16,8 @@
 
 
 
-void Battle_WaitMode0(s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Engine_EventWait(s32 frames);
+void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
 
 void BattleFx_SetPhaseRequest(s32, s32);
 void GomaHashira_SpawnPillarEffect();
@@ -25,14 +25,14 @@ void GomaHashira_SpawnPillarEffect();
 static __inline__ void Goma_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 {
     /* FAKEMATCH: a direct call changes FieldScene_RunActor13Departure from mov r0, #13 to lsl r2, r2, #9 (82/82 assembly lines). */
-    ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+    Engine_ActorSetSpeed(actor, speed, acceleration);
 }
 
 static __inline__ void Goma_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
                                                s32 dest_x, s32 dest_y)
 {
     /* FAKEMATCH: a direct call changes FieldScene_SetupPillarsOnEntry from mov r2, #6 to str r3, [sp] (183/185 assembly lines). */
-    Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
+    Engine_MapCopyCellAttributes(src_x, src_y, width, height, dest_x, dest_y);
 }
 
 #include "TYPES.H"
@@ -49,7 +49,7 @@ void FieldScene_RunActor13Departure(void)
     Engine_EventSetMessage((s32)MsgGomaGotWowThatsPrettyImpressive);
     Event_ShowMessage(13, 0);
     Engine_ActorSetAnimationAndWait(13, 3);
-    Battle_WaitMode0(30);
+    Engine_EventWait(30);
     Object_GetById(10)->priority_flags &= ~ACTOR_PRIORITY_UNDERFOOT;
     Goma_SetSpeed(13, 0x20000, 0x10000);
     Actor_WalkToAndWait(13, 0x258, 216);
@@ -94,10 +94,10 @@ s32 FieldScene_SetupPillarsOnEntry(void)
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Actor_SetPosition(9, 0x1800000, 0xc00000);
-        Battle_WaitMode0(60);
+        Engine_EventWait(60);
         Object_GetById(9)->terrain_id = 2;
         Actor_MoveToAndWait(9, 0x198, 192);
-        Battle_WaitMode0(60);
+        Engine_EventWait(60);
         FieldScene_RunPillarSequence();
     }
     if (gGameState.pending_djinn_event != 0) {

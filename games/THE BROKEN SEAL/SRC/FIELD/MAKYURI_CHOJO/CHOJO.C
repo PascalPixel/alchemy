@@ -108,11 +108,11 @@ s32 Scene_Initialize(void)
     if (Engine_GameFlagIsSet(0x109) && (actor = FindNearestF2Actor()) != 0 && (obj = Object_GetById(actor)) != NULL) {
         obj->motion_flags = 0;
     }
-    SetOverlayObjectMode(Object_GetById(9), 0);
-    SetOverlayObjectMode(Object_GetById(10), 0);
-    SetOverlayObjectMode(Object_GetById(11), 0);
-    SetOverlayObjectMode(Object_GetById(12), 0);
-    SetOverlayObjectMode(Object_GetById(13), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
     Object_GetById(12)->scale_x = -0x10000;
     Object_GetById(13)->scale_x = -0x10000;
     if (gGameState.entrance == 1) {
@@ -147,10 +147,10 @@ void FieldScene_RunFourActorPresentation(void)
 
     Engine_EventBegin();
     Owner_RefreshRatiosOnFlag();
-    SetOverlayObjectMode(Object_GetById(0), 0);
-    SetOverlayObjectMode(Object_GetById(1), 0);
-    SetOverlayObjectMode(Object_GetById(2), 0);
-    SetOverlayObjectMode(Object_GetById(3), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(1), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(2), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(3), 0);
     Camera_MoveTo(0x1300000, -1, 0x780000, 0);
     Engine_TaskWait(1);
     Engine_MapRedraw();
@@ -188,14 +188,14 @@ void FieldScene_RunFourActorPresentation(void)
     Engine_ColorBufferInterpolate(30);
     Engine_EventWait(30);
     Engine_EventWait(80);
-    SetOverlayObjectMode(Object_GetById(0), 1);
+    Engine_ActorSetSpriteFlags(Object_GetById(0), 1);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_EventWait(30);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 4);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_EventWait(60);
-    SetOverlayObjectMode(Object_GetById(1), 1);
+    Engine_ActorSetSpriteFlags(Object_GetById(1), 1);
     Engine_ActorSetAnimation(GERALD, 1);
     Engine_EventWait(20);
     Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
@@ -203,11 +203,11 @@ void FieldScene_RunFourActorPresentation(void)
     Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 0);
     Engine_EventWait(20);
     Actor_FaceDirection(GERALD, FACING_EAST, 0);
-    SetOverlayObjectMode(Object_GetById(2), 1);
+    Engine_ActorSetSpriteFlags(Object_GetById(2), 1);
     Engine_ActorSetAnimation(IWAN, 1);
     Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 0);
     Engine_EventWait(40);
-    SetOverlayObjectMode(Object_GetById(3), 1);
+    Engine_ActorSetSpriteFlags(Object_GetById(3), 1);
     Engine_ActorSetAnimation(MEARI, 1);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(MEARI, 3);
@@ -307,10 +307,10 @@ void SceneActor_InitializeMotion(void)
         actor->acceleration = 0x20000;
         actor->velocity_y = 0x40000;
         actor->motion_flags &= 0x7e;
-        SetOverlayObjectMode(actor, 0);
+        Engine_ActorSetSpriteFlags(actor, 0);
         Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, position[0] >> 16, position[2] >> 16);
         Object_SetMode(actor, 6);
-        SetOverlayObjectMode(actor, 1);
+        Engine_ActorSetSpriteFlags(actor, 1);
         actor->motion_flags = flags;
     }
 }
@@ -687,10 +687,10 @@ void RunScene58Sequence(void)
     Actor_Get(0x17)->velocity_y = 0x40000;
     Audio_PlayCue(0x98);
     Actor_Get(0x17)->motion_flags &= 0x7e;
-    SetOverlayObjectMode(Object_GetById(0x17), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(0x17), 0);
     Object_GetById(0x11)->motion_flags = 4;
     Engine_ActorMoveToAndWait(0x17, 0x68, 0xA8);
-    SetOverlayObjectMode(Object_GetById(0x17), 1);
+    Engine_ActorSetSpriteFlags(Object_GetById(0x17), 1);
     Actor_Get(0x17)->motion_flags = 3;
     Actor_FaceDirection(0x17, FACING_EAST, 30);
     Actor_FaceDirection(0x15, FACING_EAST, 10);
@@ -810,7 +810,7 @@ void RunScene59Sequence(void)
     Actor_FaceDirection(MEARI, FACING_NORTH, 0);
     Actor_SetPosition(0x16, PIXELS(0x150), PIXELS(0xB0));
     Engine_ActorSetAnimation(0x16, 9);
-    SetOverlayObjectMode(Object_GetById(0x16), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(0x16), 0);
     Camera_MoveTo(PIXELS(0x150), -1, PIXELS(0xD0), 0);
     Engine_TaskWait(1);
     Engine_MapRedraw();
@@ -973,7 +973,7 @@ void RunScene59Sequence(void)
     Engine_ActorSetAnimation(0x16, 8);
     Engine_EventWait(45);
     Engine_ActorSetAnimation(0x16, 1);
-    SetOverlayObjectMode(Object_GetById(0x16), 1);
+    Engine_ActorSetSpriteFlags(Object_GetById(0x16), 1);
     Engine_EventWait(40);
     Actor_ShowEmote(IWAN, 0x102, 60);
     Event_ShowMessage(2, 0);
@@ -1396,8 +1396,8 @@ void MakyuriChojo_SinkActorPair(void)
     Engine_AudioPlayCue(190);
     Actor_SetChildValue(22, 0x100);
     Engine_ActorSetChildValue(24, 0x100);
-    SetOverlayObjectMode(Object_GetById(22), 0);
-    SetOverlayObjectMode(Object_GetById(24), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(22), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(24), 0);
     p = &params;
     p->count = 1;
     p->kind = 5;
@@ -1438,8 +1438,8 @@ void MakyuriChojo_RiseActorPair(void)
     left = Object_GetById(22);
     right = Object_GetById(24);
     Engine_AudioPlayCue(190);
-    SetOverlayObjectMode(Object_GetById(22), 0);
-    SetOverlayObjectMode(Object_GetById(24), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(22), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(24), 0);
     p = &params;
     p->count = 1;
     p->kind = 5;
@@ -1468,8 +1468,8 @@ void MakyuriChojo_RiseActorPair(void)
     }
     Engine_ActorSetChildValue(22, 0);
     Engine_ActorSetChildValue(24, 0);
-    SetOverlayObjectMode(Object_GetById(22), 1);
-    SetOverlayObjectMode(Object_GetById(24), 1);
+    Engine_ActorSetSpriteFlags(Object_GetById(22), 1);
+    Engine_ActorSetSpriteFlags(Object_GetById(24), 1);
 }
 
 void MakyuriChojo_CollectBandSlots(s32 *out, s32 y)

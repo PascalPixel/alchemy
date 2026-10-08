@@ -212,7 +212,7 @@ static __inline__ void ClearStep(u8 *a)
 
 void FieldScene_RunScene3a8SequenceB();
 s32 Object_CheckMovementCollision();
-void Object_SetPosition();
+void Engine_ObjectSetPosition();
 void Object_CommitPosition();
 void BattleFx_PlayQueuedSound();
 void FieldScene_RunScene3a8SequenceA();
@@ -1207,7 +1207,7 @@ void FieldScene_RunMiddleSequence(void)
     Engine_ActorSetSpriteFlags((s32)record, 0);
     record = Actor_Get(9);
     Engine_ActorSetSpriteFlags((s32)record, 0);
-    Scheduler_AddOrUpdateCallback((s32)FieldScene_RunSupplementalSequenceOne, 0xc80);
+    Engine_TaskAddCallback((s32)FieldScene_RunSupplementalSequenceOne, 0xc80);
     if (GameFlag_IsSet(0x915) != 0) {
         Actor_SetPosition(10, 0x1aa0000, 0x2da0000);
         record = Actor_Get(10);
@@ -1887,10 +1887,10 @@ void FieldScene_RunLateSequence(void)
             Engine_AudioPlayCue(185);
             block->speed = k;
             block->acceleration = k;
-            Object_SetPosition(block, dst[0], dst[1], dst[2]);
+            Engine_ObjectSetPosition(block, dst[0], dst[1], dst[2]);
             leader->speed = k;
             leader->acceleration = k;
-            Object_SetPosition(leader, dst[0], dst[1], dst[2]);
+            Engine_ObjectSetPosition(leader, dst[0], dst[1], dst[2]);
             Object_CommitPosition(block);
             BattleFx_PlayQueuedSound();
             block->x.fixed = dst[0];

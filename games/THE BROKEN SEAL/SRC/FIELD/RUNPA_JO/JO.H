@@ -100,20 +100,24 @@ enum ActorPriorityFlag {
     ACTOR_PRIORITY_UNDERFOOT = 0x02
 };
 
-void Battle_WaitMode0(s32 frames);
+void Engine_EventWait(s32 frames);
 void *Object_GetById(s32 actor);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
-void Object_SetModeById(s32 actor, s32 animation);
-void Audio_PlayCue(s32 cue);
+void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
+void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
+void Engine_ActorWaitForMove(s32 actor);
+void Engine_MapCopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Engine_ActorSetAnimation(s32 actor, s32 animation);
+static inline void Audio_PlayCue(s32 cue)
+{
+    Engine_AudioPlayCue(cue);
+}
 
 s32 Engine_PartyInventoryFindOwner(s32 item_id);
 s32 Engine_BattleFxPlayCueAndStartEmitterOnTarget(s32 value, s32 actor, s32 item);
 void Engine_BattleFxSetWeightedResult(s32 slot, s32 value);
 void Engine_BattleFxRunPageEffectForSlot(s32 slot, s32 first, s32 second);
 void Engine_PartySetFields1ceAnd1d0(s32 first, s32 second);
-void Engine_ObjectRefreshSelectorById(s32 actor);
+void Object_RefreshSelectorById(s32 actor);
 void Engine_MapSetWorkFlagBits9To11();
 void Engine_ActorFaceActor(s32 actor, s32 target, s32 frames);
 void Engine_ActorFaceDirection(s32 actor, s32 facing, s32 frames);
@@ -181,7 +185,7 @@ static inline void Actor_SetDestination(s32 actor, s32 x, s32 z)
 
 static inline void Actor_SetDestinationOffset(s32 actor, s32 dx, s32 dz)
 {
-    ObjectMotion_OffsetPositionAndResetMotion(actor, dx, dz);
+    Engine_ActorSetDestinationOffset(actor, dx, dz);
 }
 
 static inline void Actor_SetPosition(s32 actor, s32 fixed_x, s32 fixed_z)
@@ -191,7 +195,7 @@ static inline void Actor_SetPosition(s32 actor, s32 fixed_x, s32 fixed_z)
 
 static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 {
-    ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+    Engine_ActorSetSpeed(actor, speed, acceleration);
 }
 
 static inline void Actor_ShowEmote(s32 actor, s32 emote, s32 frames)
@@ -253,7 +257,7 @@ static inline void *Actor_Get(s32 actor)
 
 static inline void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y)
 {
-    Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
+    Engine_MapCopyCellAttributes(src_x, src_y, width, height, dest_x, dest_y);
 }
 
 void Engine_MapSetWorkFlagBits9To11(s32 first);

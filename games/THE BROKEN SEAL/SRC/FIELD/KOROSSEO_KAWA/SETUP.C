@@ -94,7 +94,7 @@ void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
     Korosseo_MarkerBlink = 0;
     Korosseo_MarkerSteps = 0;
 
-    Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateMarker), 0xc80);
+    Engine_TaskAddCallback((s32)(Korosseo_UpdateMarker), 0xc80);
 }
 
 void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
@@ -106,7 +106,7 @@ void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
     Korosseo_MarkerSteps = (u16)duration;
     Korosseo_MarkerStep = 0;
 
-    Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateMarker), 0xc80);
+    Engine_TaskAddCallback((s32)(Korosseo_UpdateMarker), 0xc80);
 }
 
 void KorosseoKawa_ReleaseMarker(void)
@@ -130,7 +130,7 @@ void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
         o->paused = z;
         ObjectDispatch_InitFromTable6(o);
         Object_SetMode(o, 5);
-        Object_SetMoveTarget(o, b << 16, o->y.fixed, c << 16);
+        Engine_ObjectSetPosition(o, b << 16, o->y.fixed, c << 16);
     }
 }
 
@@ -147,7 +147,7 @@ void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c)
         o->paused = z;
         ObjectDispatch_InitFromTable6(o);
         Object_SetMode(o, 5);
-        Object_SetMoveTarget(o, b << 16, o->y.fixed, c << 16);
+        Engine_ObjectSetPosition(o, b << 16, o->y.fixed, c << 16);
         Script_WaitForEventTimeout(o);
         Object_SetMode(o, 1);
     }

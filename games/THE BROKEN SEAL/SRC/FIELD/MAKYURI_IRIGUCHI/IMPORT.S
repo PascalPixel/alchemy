@@ -10,9 +10,9 @@ __divsi3:
 	.thumb_func
 __umodsi3:
 	overlay_veneer IwramUnsignedRemainder
-	.global WaitFrames
+	.global Engine_TaskWait
 	.thumb_func
-WaitFrames:
+Engine_TaskWait:
 	overlay_veneer WaitFramesFar
 	.global Engine_TaskAddCallback
 	.thumb_func
@@ -70,9 +70,9 @@ Engine_ObjectDispatchRelease:
 	.thumb_func
 Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
-	.global Object_SetPosition
+	.global Engine_ObjectSetPosition
 	.thumb_func
-Object_SetPosition:
+Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
 	.global Object_CommitPosition
 	.thumb_func
@@ -82,9 +82,9 @@ Object_CommitPosition:
 	.thumb_func
 Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
-	.global Map_CopyCellAttributeRect
+	.global Engine_MapCopyCellAttributes
 	.thumb_func
-Map_CopyCellAttributeRect:
+Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Object_CheckMovementCollision
 	.thumb_func
@@ -126,9 +126,9 @@ Engine_GameFlagSet:
 	.thumb_func
 Engine_GameFlagClear:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Battle_WaitMode0
+	.global Engine_EventWait
 	.thumb_func
-Battle_WaitMode0:
+Engine_EventWait:
 	overlay_veneer Battle_WaitMode0Far
 	.global Engine_EventBegin
 	.thumb_func
@@ -142,9 +142,9 @@ Engine_EventEnd:
 	.thumb_func
 Object_GetById:
 	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_SetSpeedParameters
+	.global Engine_ActorSetSpeed
 	.thumb_func
-ObjectMotion_SetSpeedParameters:
+Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
 	.global Engine_ActorEnableActionCallback
 	.thumb_func
@@ -162,21 +162,21 @@ Engine_ActorWalkTo:
 	.thumb_func
 Engine_ActorWalkToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
-	.global ObjectMotion_OffsetPositionAndResetMotion
+	.global Engine_ActorSetDestinationOffset
 	.thumb_func
-ObjectMotion_OffsetPositionAndResetMotion:
+Engine_ActorSetDestinationOffset:
 	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
-	.global ObjectMotion_CommitCurrentPositionAndActivate
+	.global Engine_ActorWaitForMove
 	.thumb_func
-ObjectMotion_CommitCurrentPositionAndActivate:
+Engine_ActorWaitForMove:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	.global Engine_ActorSetPosition
 	.thumb_func
 Engine_ActorSetPosition:
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Object_SetModeById
+	.global Engine_ActorSetAnimation
 	.thumb_func
-Object_SetModeById:
+Engine_ActorSetAnimation:
 	overlay_veneer Object_SetModeByIdFar
 	.global Engine_ActorSetAnimationAndWait
 	.thumb_func
@@ -266,9 +266,9 @@ Engine_EventCloseScreen:
 	.thumb_func
 Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global ObjectTable_Get
+	.global Engine_ActorLookup
 	.thumb_func
-ObjectTable_Get:
+Engine_ActorLookup:
 	overlay_veneer ObjectTable_GetFar
 	.global BattleFx_StartFadeOverlay
 	.thumb_func
@@ -286,7 +286,7 @@ BattleFx_SetQueuedSoundAndPlay:
 	.thumb_func
 BattleFx_PlayQueuedSound:
 	overlay_veneer BattleFx_PlayQueuedSoundFar
-	.global Audio_PlayCue
+	.global Engine_AudioPlayCue
 	.thumb_func
-Audio_PlayCue:
+Engine_AudioPlayCue:
 	overlay_veneer AudioCommand_PlayFar

@@ -19,7 +19,6 @@
 #include "RESOURCE_IDS.H"
 #include "text/MSG_IDS.H"
 
-#define Object_SetMoveTarget ((void (*)(struct FieldActor *, s32, s32, s32))Object_SetMoveTarget)
 
 #define ObjectDispatch_InitFromTable4WithArgument ((void (*)(s32,struct FieldActor*))ObjectDispatch_InitFromTable4WithArgument)
 #define FieldScene_BuildSceneDescriptorAndInstallTask ((s32 (*)(s32,s32,s32,s32,s32,s32,s32))FieldScene_BuildSceneDescriptorAndInstallTask)
@@ -205,7 +204,7 @@ void SceneState_SetMode66AndPassOpeningSequence(void)
     s32 *mode = (s32 *)&KorosseoKawa_Countdown;
 
     *mode = value;
-    Scheduler_AddOrUpdateCallback((s32)FieldScene_RunOpeningAuxiliarySequence, 0xC80);
+    Engine_TaskAddCallback((s32)FieldScene_RunOpeningAuxiliarySequence, 0xC80);
 }
 
 void KorosseoKawa_WaitForCountdown(void)
@@ -325,7 +324,7 @@ void KorosseoKawa_RaisePlatformPair(void)
     ((struct FieldActor *)rec7)->motion_flags = none;
     ((struct FieldActor *)rec7)->acceleration = 0x6666;
     ((struct FieldActor *)rec7)->speed = 0xcccc;
-    Object_SetMoveTarget((s32)rec7, ((struct FieldActor *)rec7)->x.fixed, 0x200000, ((struct FieldActor *)rec7)->z.fixed);
+    ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)((s32)rec7, ((struct FieldActor *)rec7)->x.fixed, 0x200000, ((struct FieldActor *)rec7)->z.fixed);
     Script_WaitForEventTimeout((s32)rec7);
     Engine_EventWait(45);
     Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
@@ -351,7 +350,7 @@ void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz)
 
         leader->speed = 0x10000;
         leader->acceleration = 0x8000;
-        Object_SetMoveTarget(leader, x, leader->y.fixed, z);
+        ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)(leader, x, leader->y.fixed, z);
     }
     Object_SetMode(leader, 27);
     {
@@ -360,7 +359,7 @@ void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz)
 
         actor->speed = 0x10000;
         actor->acceleration = 0x8000;
-        Object_SetMoveTarget(actor, x, actor->y.fixed, z);
+        ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)(actor, x, actor->y.fixed, z);
     }
     if (dx < 0 || dz < 0) {
         Object_SetMode(actor, 4);
@@ -453,12 +452,12 @@ void KorosseoKawa_RaisePipes(void)
     actor->acceleration = 0x3333;
     Audio_PlayCue(239);
     Object_SetMode(actor, 2);
-    Object_SetMoveTarget(actor, actor->x.fixed - 0x300000, 0, actor->z.fixed);
+    ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)(actor, actor->x.fixed - 0x300000, 0, actor->z.fixed);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(leader_id, 2);
     ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 480), actor);
     Actor_SetSpeed(leader_id, 0x4ccc, 0x3333);
-    Object_SetMoveTarget(leader, leader->x.fixed - 0x180000, 0, leader->z.fixed);
+    ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)(leader, leader->x.fixed - 0x180000, 0, leader->z.fixed);
     Engine_ActorWaitForMove(leader_id);
     Engine_ActorSetAnimation(leader_id, 1);
     Script_WaitForEventTimeout(actor);
@@ -497,7 +496,7 @@ void KorosseoKawa_RaisePipes(void)
     actor->motion_flags = none;
     actor->acceleration = 0x6666;
     actor->speed = 0xcccc;
-    Object_SetMoveTarget(actor, actor->x.fixed, 0x80000, actor->z.fixed);
+    ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)(actor, actor->x.fixed, 0x80000, actor->z.fixed);
     Object_SetMode(actor, 3);
     Map_CopyCells(96, 29, 1, 3, 34, 38);
     Engine_EventWait(3);
@@ -512,7 +511,7 @@ void KorosseoKawa_RaisePipes(void)
     actor->motion_flags = none;
     actor->acceleration = 0x6666;
     actor->speed = 0xcccc;
-    Object_SetMoveTarget(actor, actor->x.fixed, 0x200000, actor->z.fixed);
+    ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)(actor, actor->x.fixed, 0x200000, actor->z.fixed);
     Script_WaitForEventTimeout(actor);
     Engine_EventWait(15);
     Engine_EventEnd();
@@ -662,7 +661,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
     actor->motion_flags = 0;
     actor->priority_flags = 2;
     Map_CopyCellAttributes(14, 13, 1, 1, x, 12);
-    ((s32 (*)(void ( *)(void), s32))Scheduler_AddOrUpdateCallback)(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
+    ((s32 (*)(void ( *)(void), s32))Engine_TaskAddCallback)(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
     actor = Object_GetById(15);
     actor->terrain_id = 1;
     zero = 0;
@@ -726,7 +725,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
         SceneState_InitControlWhenFlag109Clear((s32)&ResourceId_RivalPathA);
         break;
     case 2:
-        ((s32 (*)(void ( *)(void), s32))Scheduler_AddOrUpdateCallback)(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
+        ((s32 (*)(void ( *)(void), s32))Engine_TaskAddCallback)(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
         Engine_ActorDestroy(24);
         Engine_ActorDestroy(25);
         if (!Engine_GameFlagIsSet(0x109)) {

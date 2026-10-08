@@ -135,7 +135,6 @@ void Engine_MapRedraw();
 void Engine_TaskWait();
 void BattleFx_StartTwelveFrameBlend();
 void FieldFx_StartGroundParticles();
-s32 Scene_CopyCellAttributes();
 void Object_SetTargetAndCallback();
 void Engine_ActorSetSpriteFlags();
 void Engine_ActorSetAnimation();

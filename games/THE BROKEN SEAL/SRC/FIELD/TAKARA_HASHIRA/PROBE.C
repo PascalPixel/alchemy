@@ -34,7 +34,7 @@ void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
         if (cnt == 0) {
             break;
         }
-        WaitFrames(1);
+        Engine_TaskWait(1);
         if (*(u32 *)(obj + 12) == *(u32 *)(obj + 20)) {
             break;
         }
@@ -54,7 +54,7 @@ void SceneActor_WaitHeightBelowLimit(struct FieldActor *obj, s32 limit)
         if (cnt == 0) {
             break;
         }
-        WaitFrames(1);
+        Engine_TaskWait(1);
         if (obj->y.fixed <= obj->terrain_height) {
             break;
         }

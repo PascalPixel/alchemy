@@ -177,7 +177,7 @@ void Villager_ShowOffPsynergy(void)
             OverlayObject_UpdateOnFrameBit1((s32)Object_GetById(17));
             Engine_TaskWait(1);
         }
-        Scheduler_AddOrUpdateCallback((s32)FieldScene_RunStep17, 0xc80);
+        Engine_TaskAddCallback((s32)FieldScene_RunStep17, 0xc80);
         Engine_AudioPlayCue(107);
         for (i = 0; i != 180; i++) {
             if (Math_RemainderUnsigned(i, 10) == 0) {
@@ -267,7 +267,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
         Engine_TaskWait(1);
     }
     FieldScheduler_AddOrUpdateCallback((s32)FieldScene_RunStep15, 0xc80);
-    Scheduler_AddOrUpdateCallback((s32)FieldScene_RunStep20, 0xc80);
+    Engine_TaskAddCallback((s32)FieldScene_RunStep20, 0xc80);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
     rec8 = Object_GetById(20);
     v2 = rec8->motion_flags;
@@ -496,7 +496,7 @@ s32 HaidiaIe_RestoreEntryState(void)
         if (Engine_GameFlagIsSet(0x834) != 0) {
             FieldFx_StartGroundParticles();
             BattleFx_StartTwelveFrameBlend();
-            Call6(Scene_CopyCellAttributes, 21, 38, 1, 1, 18, 41);
+            Call6(Engine_MapCopyCellAttributes, 21, 38, 1, 1, 18, 41);
             record = Engine_GameFlagIsSet(0x840);
             if (record == 0) {
                 goto L_02000aaa;

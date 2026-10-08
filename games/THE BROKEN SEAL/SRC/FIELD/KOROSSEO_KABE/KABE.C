@@ -1051,7 +1051,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 speaker)
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 10);
         actor = Object_GetById(ACTOR_PARTY_LEADER);
         Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x400000, actor->z.fixed);
-        ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+        Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
         battle_owner_69();
         Camera_MoveTo(-1, -1, -1, 0);
         Event_ShowMessage(speaker, 0);

@@ -58,9 +58,9 @@ Engine_ObjectCreate:
 	.thumb_func
 Engine_ObjectDispatchRelease:
 	overlay_veneer ObjectDispatch_ReleaseFar
-	.global Object_SetPosition
+	.global Engine_ObjectSetPosition
 	.thumb_func
-Object_SetPosition:
+Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
 	.global Object_CommitPosition
 	.thumb_func
@@ -202,9 +202,9 @@ Engine_EventWaitForScreen:
 	.thumb_func
 Engine_RunRisingObjectSequence:
 	overlay_veneer EffectRuntime_RunRisingObjectSequenceFar
-	.global ObjectTable_Get
+	.global Engine_ActorLookup
 	.thumb_func
-ObjectTable_Get:
+Engine_ActorLookup:
 	overlay_veneer ObjectTable_GetFar
 	.global BattleFx_StartFadeOverlay
 	.thumb_func

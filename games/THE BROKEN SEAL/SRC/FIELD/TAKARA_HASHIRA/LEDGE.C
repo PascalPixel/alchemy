@@ -134,7 +134,7 @@ void StagedActor_StepDownUntilClamp(s32 index)
     cnt = 0;
     for (;;) {
         if (cnt > 31) return;
-        WaitFrames(1);
+        Engine_TaskWait(1);
         obj->scale_y += -0x1999;
         obj->y.fixed += -0xcccc;
         cnt++;
@@ -238,7 +238,7 @@ s32 FieldScene_RunScene3b3SequenceD(void)
     }
     Engine_EventBegin();
     Object_SetMode(leader, 6);
-    WaitFrames(6);
+    Engine_TaskWait(6);
     Engine_AudioPlayCue(152);
     Object_SetMode(leader, 7);
     leader->speed = 0x30000;

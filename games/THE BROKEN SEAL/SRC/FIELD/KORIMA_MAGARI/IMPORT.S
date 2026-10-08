@@ -18,9 +18,9 @@ Engine_TaskAddCallback:
 	.thumb_func
 Engine_TaskRemoveCallback:
 	overlay_veneer Scheduler_RemoveCallbackFar
-	.global Random16
+	.global Engine_RandomNext
 	.thumb_func
-Random16:
+Engine_RandomNext:
 	overlay_veneer Random16Far
 	.global Vector_AddPolarOffset
 	.thumb_func
@@ -50,9 +50,9 @@ ObjectDispatch_InitFromTable4WithArgument:
 	.thumb_func
 Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
-	.global Object_SetPosition
+	.global Engine_ObjectSetPosition
 	.thumb_func
-Object_SetPosition:
+Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
 	.global Object_CommitPosition
 	.thumb_func
@@ -66,9 +66,9 @@ Map_GetTerrainHeight:
 	.thumb_func
 Engine_MapCopyCells:
 	overlay_veneer Map_CopyMetatileCellsRectFar
-	.global Map_CopyCellAttributeRect
+	.global Engine_MapCopyCellAttributes
 	.thumb_func
-Map_CopyCellAttributeRect:
+Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func

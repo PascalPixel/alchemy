@@ -53,7 +53,7 @@ enum FacingGatedMessage {
 };
 
 
-void WaitFrames();
+void Engine_TaskWait();
 void Ui_PrepareTransferForItem();
 
 
@@ -303,7 +303,7 @@ void ShindenHeya_RaiseItemIcon(s32 item)
     obj = ((struct FieldActor *(*)())Engine_ObjectCreate)(22);
     zero = 0;
     if (obj != 0) {
-        ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconGrowScript);
+        Engine_ObjectSetScript((s32)obj, (s32)ShindenHeya_ItemIconGrowScript);
         spr = obj->sprite;
         spr->flags = zero;
         spr->part_count = zero;
@@ -313,15 +313,15 @@ void ShindenHeya_RaiseItemIcon(s32 item)
         ((struct FieldEffect *)obj)->velocity_y = 0x4000;
         buf = Runtime_AllocateHeapBlock(17, 0x608);
         Ui_PrepareTransferForItem(item);
-        VramBlock_LoadCached(spr->vram_block, 128, buf + 0x400);
+        Engine_VramLoad(spr->vram_block, 128, buf + 0x400);
         Runtime_ReleaseHeapBlock(17);
         /* FAKEMATCH: needed to match: this initializer order keeps the sprite zero in r5 instead of r3. */
         for (i = 0, flag = &obj->motion_flags, z = 0; i < 60; i++) {
             if ((u32)(obj->velocity_y + 255) <= 0x1fe)
                 *flag = z;
-            WaitFrames(1);
+            Engine_TaskWait(1);
         }
-        ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconEndScript);
+        Engine_ObjectSetScript((s32)obj, (s32)ShindenHeya_ItemIconEndScript);
     }
 }
 
@@ -396,7 +396,7 @@ void SceneState_ApplyTwoRects(void)
 
 s32 IsActorFacingInward(void)
 {
-    struct FieldActor *actor = GetActorState(0);
+    struct FieldActor *actor = Object_GetById(0);
 
     if ((u32)((actor->facing + 0x5fff) << 16) <= 0x3ffe0000) {
         return 1;

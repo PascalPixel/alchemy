@@ -137,7 +137,6 @@ void Engine_ActorEnableActionCallback(s32 actor, const u8 *table);
 void Engine_ActorSetActionCallback(struct FieldActor *actor, s32 value);
 void Engine_ActorsRefresh(void);
 void Engine_MapCopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
-void Engine_MapRenderSetValues(s32 value0, s32 value1, s32 value2);
 void Engine_ColorBufferApplySource(s32 value, s32 mode);
 void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
 void Engine_ColorBufferInterpolate(s32 frames);
@@ -209,7 +208,7 @@ static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 #else
 static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 {
-    ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+    Engine_ActorSetSpeed(actor, speed, acceleration);
 }
 #endif
 
@@ -281,7 +280,7 @@ static inline void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 h
 static inline void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
                                           s32 dest_x, s32 dest_y)
 {
-    Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
+    Engine_MapCopyCellAttributes(src_x, src_y, width, height, dest_x, dest_y);
 }
 #endif
 
@@ -389,7 +388,7 @@ static inline void Map_CopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y,
 
 static inline void MapRender_SetValues(s32 value0, s32 value1, s32 value2)
 {
-    Engine_MapRenderSetValues(value0, value1, value2);
+    Engine_WorkSetValuesIfNonNegative(value0, value1, value2);
 }
 
 static inline void ColorBuffer_ApplySource(s32 value, s32 mode)

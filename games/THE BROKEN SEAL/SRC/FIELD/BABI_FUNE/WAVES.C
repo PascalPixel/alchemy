@@ -69,7 +69,7 @@ static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
 
 
 void Battle_ResetEffectCounter(void);
-void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Engine_ActorWalkToAndWait(s32 actor, s32 x, s32 z);
 
 static inline void BabiFune_AddTask(void (*task)(void), s32 order)
 {
@@ -98,7 +98,7 @@ void BabiFune_RunDeparture(void)
 
     Event_Begin();
     Battle_ResetEffectCounter();
-    BabiFune_Call3(ObjectMotion_SetPositionAndReset, 0, 312, 232);
+    BabiFune_Call3(Engine_ActorWalkToAndWait, 0, 312, 232);
     BabiFune_Call3((void (*)(s32, s32, s32))Engine_ActorFaceDirection, 0, 0xc000, 0);
     Event_Wait(40);
     Audio_PlayCue(140);

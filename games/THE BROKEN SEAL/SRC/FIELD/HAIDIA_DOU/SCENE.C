@@ -16,7 +16,7 @@
 #include "STAGED_ACTOR.H"
 
 
-void WaitFrames();
+void Engine_TaskWait();
 void HaidiaDou_ApplyEntryState();
 
 
@@ -43,7 +43,7 @@ s32 HaidiaDou_RunSceneScript(void)
     *request = 0x204;
     if (gGameState.scene == (s32)&SceneId_HaidiaDou1) {
         *request = 0x100;
-        WaitFrames(1);
+        Engine_TaskWait(1);
         Engine_ActorSetSpritePriority(11, 3);
         Engine_ActorSetSpritePriority(12, 3);
         Engine_GameFlagClear(0x12f);
@@ -62,14 +62,14 @@ void HaidiaDou_PlayCueAndRequestTouchedExit(void)
 
 void DialogueLayout_ConfigureRowsByFlag301(void)
 {
-    Map_CopyCellAttributeRect(0, 34, 13, 3, 23, 34);
+    Engine_MapCopyCellAttributes(0, 34, 13, 3, 23, 34);
 
     if (Engine_GameFlagIsSet(0x301) != 0) {
         SceneActor_PlaceAtTile(11, 35, 35);
-        Map_CopyCellAttributeRect(24, 34, 1, 3, 23, 34);
+        Engine_MapCopyCellAttributes(24, 34, 1, 3, 23, 34);
     } else {
         SceneActor_PlaceAtTile(11, 23, 35);
-        Map_CopyCellAttributeRect(24, 34, 1, 3, 35, 34);
+        Engine_MapCopyCellAttributes(24, 34, 1, 3, 35, 34);
     }
 }
 
@@ -90,7 +90,7 @@ void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
 
         p->f30 = 0x10000;
         p->f34 = 0x8000;
-        Object_SetPosition(p, x, p->f0c, y);
+        ((void (*)(Obj *, s32, s32, s32))Engine_ObjectSetPosition)(p, x, p->f0c, y);
     }
     Object_SetMode(p, 27);
     {
@@ -99,7 +99,7 @@ void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
 
         q->f30 = 0x10000;
         q->f34 = 0x8000;
-        Object_SetPosition(q, x, q->f0c, y);
+        ((void (*)(Obj *, s32, s32, s32))Engine_ObjectSetPosition)(q, x, q->f0c, y);
     }
     if (a1 < 0 || a2 < 0) {
         Object_SetMode(q, 4);
@@ -117,7 +117,7 @@ void FieldScene_RunShiftAndSetFlag301(void)
     SceneActor_PositionPair(11, 112, 0);
     SceneActor_PositionPair(11, 80, 0);
     Engine_GameFlagSet(0x301);
-    WaitFrames(2);
+    Engine_TaskWait(2);
     DialogueLayout_ConfigureRowsByFlag301();
     Engine_AudioPlayCue(0x121);
 }
@@ -129,7 +129,7 @@ void FieldScene_RunActor11Transition301(void)
     SceneActor_PositionPair(11, -112, 0);
     SceneActor_PositionPair(11, -80, 0);
     Engine_GameFlagClear(0x301);
-    WaitFrames(2);
+    Engine_TaskWait(2);
     DialogueLayout_ConfigureRowsByFlag301();
     Engine_AudioPlayCue(0x121);
 }
@@ -174,7 +174,7 @@ void HaidiaDou_ApplyEntryState(void)
             if (gGameState.entrance == 5) {
                 Engine_GameFlagSet(0x201);
             }
-            WaitFrames(1);
+            Engine_TaskWait(1);
             if (Engine_GameFlagIsSet(0x109) != 0) {
                 break;
             }
@@ -217,8 +217,8 @@ void HaidiaDou_ApplyEntryState(void)
                 StagedActor_FillGridAttributeRectangle(0, 13, 19, 4, 2, 0);
             } else if (Engine_GameFlagIsSet(0x204) != 0) {
                 StagedActor_FillGridAttributeRectangle(0, 13, 15, 4, 2, flag);
-                Map_CopyCellAttributeRect(14, 17, 2, 1, 14, 16);
-                Map_CopyCellAttributeRect(14, 13, 1, 1, 14, 15);
+                Engine_MapCopyCellAttributes(14, 17, 2, 1, 14, 16);
+                Engine_MapCopyCellAttributes(14, 13, 1, 1, 14, 15);
             } else {
                 FieldScene_RedrawActorFootprint(11);
                 Engine_ActorSetSpritePriority(11, 3);
@@ -230,6 +230,6 @@ void HaidiaDou_ApplyEntryState(void)
 
 void ActorPresentation_AdvanceActorElevenStates(void)
 {
-    Object_SetModeById(11, 1);
-    Object_SetModeById(11, 2);
+    Engine_ActorSetAnimation(11, 1);
+    Engine_ActorSetAnimation(11, 2);
 }

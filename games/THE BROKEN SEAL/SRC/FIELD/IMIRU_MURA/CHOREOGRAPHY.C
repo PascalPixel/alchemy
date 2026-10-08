@@ -397,7 +397,7 @@ void StagedActor_RunHeadingProbeStep(void)
     s32 x;
     u8 *p;
 
-    subject = ObjectTable_Get(((struct SharedData_02000240 *)&gGameState)->selected_subject);
+    subject = Engine_ActorLookup(((struct SharedData_02000240 *)&gGameState)->selected_subject);
 
     for (;;) {
         heading = ImiruMura_SwayHeadings[(*(u32 *)gKeysHeld >> 4) & 15];

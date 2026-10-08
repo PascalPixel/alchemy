@@ -150,7 +150,7 @@ s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a)
 {
     struct FieldActor *o = Object_GetById((s16)a->timer);
 
-    Object_SetMoveTarget(o, a->x.fixed, a->y.fixed + 0x240000, a->z.fixed);
+    Engine_ObjectSetPosition(o, a->x.fixed, a->y.fixed + 0x240000, a->z.fixed);
     o->motion_flags = 0;
     Engine_ObjectSetScript(o, (s32)KorosseoKawa_ScriptB);
     Engine_AudioPlayCue(83);
@@ -194,7 +194,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
     rec->acceleration = 0x4000;
     rec->speed = 0x10000;
 
-    Object_SetMoveTarget(rec, x, 0, z);
+    Engine_ObjectSetPosition(rec, x, 0, z);
     Engine_GameFlagSet(0x211);
     Engine_ObjectSetScript(rec, (s32)KorosseoKawa_ApproachScript);
 

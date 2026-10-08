@@ -11,8 +11,12 @@
 #include "GAME_STATE.H"
 #include "BATTLE_UNIT.H"
 
-void Engine_PartyAddActiveOwner(s32 id);
-struct BtlUnit *Engine_OwnerGetState(s32 id);
+void Party_RemoveActiveOwner(s32 id);
+
+void Engine_CameraFollowActor(s32 id, s32 target);
+
+void Party_AddActiveOwner(s32 id);
+struct BtlUnit *UnitGet(s32 id);
 
 void Korosseo_SelectSoloCompetitor(s32 id)
 {
@@ -20,15 +24,15 @@ void Korosseo_SelectSoloCompetitor(s32 id)
     s32 v;
     s32 t;
 
-    Engine_PartyRemoveActiveOwner(0);
-    Engine_PartyRemoveActiveOwner(1);
-    Engine_PartyRemoveActiveOwner(2);
-    Engine_PartyRemoveActiveOwner(3);
-    Engine_PartyRemoveActiveOwner(5);
-    Engine_PartyAddActiveOwner(id);
+    Party_RemoveActiveOwner(0);
+    Party_RemoveActiveOwner(1);
+    Party_RemoveActiveOwner(2);
+    Party_RemoveActiveOwner(3);
+    Party_RemoveActiveOwner(5);
+    Party_AddActiveOwner(id);
     gGameState.selected_actor = id;
-    Engine_ObjectAttachWorkTarget(id, 0);
-    unit = Engine_OwnerGetState(id);
+    Engine_CameraFollowActor(id, 0);
+    unit = UnitGet(id);
     unit->hp = unit->max_hp;
     unit->ep = unit->max_ep;
     unit->doku = 0;

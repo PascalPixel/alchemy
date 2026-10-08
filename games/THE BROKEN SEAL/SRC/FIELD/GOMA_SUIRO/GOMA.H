@@ -18,7 +18,7 @@ typedef struct {
     EffectRecord_020004c4 *record;
 } EffectWork_020004c4;
 
-void WaitFrames(s32 frames);
+void Engine_TaskWait(s32 frames);
 
 void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *object);
 

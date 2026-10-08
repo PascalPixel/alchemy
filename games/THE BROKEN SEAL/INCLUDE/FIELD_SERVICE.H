@@ -200,7 +200,7 @@ void ObjectMotion_OffsetPositionAndResetMotion();
 
 static inline void FieldObjectMotion_OffsetPositionAndResetMotion(s32 a0, s32 a1, s32 a2)
 {
-    ObjectMotion_OffsetPositionAndResetMotion(a0, a1, a2);
+    Engine_ActorSetDestinationOffset(a0, a1, a2);
 }
 
 void ObjectMotion_CenterOnColumn();
@@ -214,7 +214,7 @@ void ObjectMotion_ResetAndSetPosition();
 
 static inline void FieldObjectMotion_ResetAndSetPosition(s32 a0, s32 a1, s32 a2)
 {
-    ObjectMotion_ResetAndSetPosition(a0, a1, a2);
+    Engine_ActorSetDestination(a0, a1, a2);
 }
 
 static inline void FieldObject_MotionSetPositionAndCommit(s32 actor, s32 x, s32 z)
@@ -226,14 +226,14 @@ s32 Scheduler_AddOrUpdateCallback();
 
 static inline s32 FieldScheduler_AddOrUpdateCallback(s32 a0, s32 a1)
 {
-    return Scheduler_AddOrUpdateCallback(a0, a1);
+    return Engine_TaskAddCallback(a0, a1);
 }
 
 void Object_SetMoveTarget();
 
 static inline void FieldObject_SetMoveTarget(s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    Object_SetMoveTarget(a0, a1, a2, a3);
+    Engine_ObjectSetPosition(a0, a1, a2, a3);
 }
 
 void SetMapCellCollision();

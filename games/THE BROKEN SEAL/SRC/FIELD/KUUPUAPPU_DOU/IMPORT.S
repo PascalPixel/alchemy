@@ -14,9 +14,9 @@ Math_RemainderUnsigned:
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
-	.global Scheduler_AddOrUpdateCallback
+	.global Engine_TaskAddCallback
 	.thumb_func
-Scheduler_AddOrUpdateCallback:
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Engine_RandomNext
 	.thumb_func
@@ -49,9 +49,6 @@ Engine_MapRedraw:
 	.global Engine_ObjectSetPosition
 	.thumb_func
 Engine_ObjectSetPosition:
-	.global Object_SetMoveTarget
-	.thumb_func
-Object_SetMoveTarget:
 	overlay_veneer Object_SetMoveTargetFar
 	.global Engine_ObjectCommitPosition
 	.thumb_func

@@ -262,7 +262,7 @@ void ArutamiraDou_RespawnActorObject(void)
     old = *(struct FieldActor **)(work + 16);
     Engine_ActorFaceDirection(*(s16 *)(work + 24), 0x4000, 0);
     Animation_ApplyChildValues((struct DispatchObject *)old, 0);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     copy = Engine_ObjectCreate(0, old->x.fixed, old->y.fixed, old->z.fixed);
     if (copy != 0) {
         Dma_Set(old, copy, DMA_ENABLE32 | DMA_32BIT | sizeof(struct FieldActor) / 4, REG_DMA3);

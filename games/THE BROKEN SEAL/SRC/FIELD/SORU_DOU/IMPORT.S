@@ -2,17 +2,17 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Resource37c_SetViewScale
+	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
-Resource37c_SetViewScale:
+Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
-	.global Resource37c_TestSetupGate
+	.global Engine_GameFlagIsSet
 	.thumb_func
-Resource37c_TestSetupGate:
+Engine_GameFlagIsSet:
 	overlay_veneer GameFlag_TestFar
-	.global Resource37c_SetSetupFlag
+	.global Engine_GameFlagSet
 	.thumb_func
-Resource37c_SetSetupFlag:
+Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
 	.global Resource37c_FinalizeSetup
 	.thumb_func

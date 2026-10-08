@@ -23,7 +23,7 @@ void SceneActor_WaitObjectBelowHeight(u8 *object, s32 height)
     s32 frames = 60;
 
     while (frames != 0) {
-        WaitFrames(1);
+        Engine_TaskWait(1);
         frames--;
         if (*(s32 *)(object + 12) <= height)
             break;
@@ -55,13 +55,13 @@ union SceneActor {
 struct Vector { s32 x, y, z; };
 
 union SceneActor *Object_GetById(s32);
-void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_ResetAndSetPosition();
-void ObjectMotion_CommitCurrentPositionAndActivate(s32);
-void Audio_PlayCue(s32);
-void Runtime_SetWorkTripleIfNonNegative();
+void Engine_ActorSetSpeed();
+void Engine_ActorSetDestination();
+void Engine_ActorWaitForMove(s32);
+void Engine_AudioPlayCue(s32);
+void Engine_WorkSetValuesIfNonNegative();
 void Effect_Spawn();
-void Object_SetModeById(s32, s32);
+void Engine_ActorSetAnimation(s32, s32);
 
 void SceneEffect_RunActorBurst(s32 no)
 {
@@ -76,23 +76,23 @@ void SceneEffect_RunActorBurst(s32 no)
     work = Object_GetById(no);
     work->fields.mode = 0;
     for (cnt = 0; cnt < 18; cnt++) {
-        WaitFrames(1);
+        Engine_TaskWait(1);
         work->fields.sprite->angle -= 256;
         work->fields.x -= Trig_Cos(work->fields.sprite->angle) / 2;
         work->fields.field_38 = 0x80000000;
     }
     work->fields.callback = (u32)SceneEffect_RotateRecord;
-    Call3(ObjectMotion_SetSpeedParameters, no, 0x30000, 0x18000);
-    Call3(ObjectMotion_ResetAndSetPosition, no, 376, 288);
+    Call3(Engine_ActorSetSpeed, no, 0x30000, 0x18000);
+    Call3(Engine_ActorSetDestination, no, 376, 288);
     work->fields.velocity_y = 0xcccc;
     work->fields.mode = 3;
     work->fields.field_22 = 0;
-    ObjectMotion_CommitCurrentPositionAndActivate(no);
+    Engine_ActorWaitForMove(no);
     SceneActor_WaitObjectBelowHeight(work, 0);
-    Audio_PlayCue(188);
-    Call3(Runtime_SetWorkTripleIfNonNegative, 0x50000, 0x50000, 0x10000);
-    Audio_PlayCue(141);
-    Call3(Runtime_SetWorkTripleIfNonNegative, -1, -1, 0xe666);
+    Engine_AudioPlayCue(188);
+    Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
+    Engine_AudioPlayCue(141);
+    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     for (cnt = 0; cnt < 17; cnt++) {
         vec.x = Trig_Cos(cnt << 12);
         vec.y = 0;
@@ -103,8 +103,8 @@ void SceneEffect_RunActorBurst(s32 no)
                      vec.x, vec.y, vec.z, 0, NULL);
     }
     work->fields.field_28 = 0x50000;
-    Call3(ObjectMotion_ResetAndSetPosition, no, 346, 292);
-    ObjectMotion_CommitCurrentPositionAndActivate(no);
+    Call3(Engine_ActorSetDestination, no, 346, 292);
+    Engine_ActorWaitForMove(no);
     SceneActor_WaitObjectBelowHeight(work, 0);
     work->fields.callback = 0;
     work->fields.sprite->angle = 0x1000;
@@ -114,7 +114,7 @@ void SceneEffect_RunActorBurst(s32 no)
     opt.fields.target30 = 0x18000;
     opt.fields.target34 = 0x13333;
     Effect_Spawn(work->fields.x, work->fields.y, work->fields.z, 0, 0, 0, 0x1c0000, &opt.fields);
-    Audio_PlayCue(154);
-    Object_SetModeById(no, 3);
+    Engine_AudioPlayCue(154);
+    Engine_ActorSetAnimation(no, 3);
     Map_WaitWorkValuesBelow256();
 }

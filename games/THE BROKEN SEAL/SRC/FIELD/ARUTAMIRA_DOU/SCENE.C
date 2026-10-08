@@ -28,7 +28,7 @@
 extern u8 gDisplayTransition[];
 void Battle_ResetEffectCounter(void);
 void Motion_LaunchFromFocusedObject(s32 actor, s32 dx, s32 dz, s32 facing);
-void Engine_ActorStartAction(s32 actor);
+void Object_RefreshSelectorById(s32 actor);
 void Audio_PlayCueFromEventWork(void);
 
 
@@ -410,9 +410,9 @@ void FieldScene_RunExtendedActorPresentation(void)
     Engine_EventWait(3);
     Actor_WalkByAndWait(11, -16, 0);
     Engine_ActorEnableActionCallback(11, gAltmillerActionA);
-    Engine_ActorStartAction(10);
+    Object_RefreshSelectorById(10);
     Actor_WalkByAndWait(10, 0, -16);
-    Engine_ActorStartAction(11);
+    Object_RefreshSelectorById(11);
     Actor_FaceDirection(10, FACING_EAST, 0);
     Actor_FaceDirection(11, FACING_EAST, 0);
     Engine_ActorStop(ACTOR_PARTY_LEADER);
@@ -608,7 +608,7 @@ void FieldScene_RunExtendedActorPresentation(void)
     Engine_EventWait(10);
     Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 0);
     Engine_ActorFaceEachOther(MEARI, IWAN, 0);
-    Engine_ActorStartAction(9);
+    Object_RefreshSelectorById(9);
     Event_ShowMessage(9, 0);
     Engine_EventWait(10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);

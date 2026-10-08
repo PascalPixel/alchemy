@@ -46,7 +46,6 @@ void ColossoLogRollingStage_StopPaletteTask(void)
 void ColossoLogRollingStage_PositionScaledObject(s32 id, s32 x, s32 z)
 {
     extern void ObjectDispatch_InitFromTable6();
-    extern void Object_SetPosition();
 
     ScaledStageObject *object = (ScaledStageObject *)Engine_ActorLookup(id);
     s32 scale;
@@ -58,14 +57,13 @@ void ColossoLogRollingStage_PositionScaledObject(s32 id, s32 x, s32 z)
         object->state = 0;
         ObjectDispatch_InitFromTable6(object);
         Object_SetMode(object, 5);
-        Object_SetPosition(object, x << 16, object->y, z << 16);
+        ((void (*)(u8 *object, s32 x, s32 y, s32 z))Engine_ObjectSetPosition)(object, x << 16, object->y, z << 16);
     }
 }
 
 void ColossoLogRollingStage_SpawnPositionedObject(s32 object_id, s32 x, s32 z)
 {
     extern void ObjectDispatch_InitFromTable6(void);
-    extern void Object_SetPosition(u8 *object, s32 x, s32 y, s32 z);
     extern void Object_CommitPosition(u8 *object);
 
     u8 *object = (u8 *)Engine_ActorLookup(object_id);
@@ -86,7 +84,7 @@ void ColossoLogRollingStage_SpawnPositionedObject(s32 object_id, s32 x, s32 z)
 
     ObjectDispatch_InitFromTable6();
     Object_SetMode(object, 5);
-    Object_SetPosition(object, x << 16, ((struct FieldActor *)object)->y.fixed, z << 16);
+    ((void (*)(u8 *object, s32 x, s32 y, s32 z))Engine_ObjectSetPosition)(object, x << 16, ((struct FieldActor *)object)->y.fixed, z << 16);
     Object_CommitPosition(object);
     Object_SetMode(object, 1);
 }

@@ -14,9 +14,6 @@ __modsi3:
 	.thumb_func
 Math_DivideUnsigned:
 	overlay_veneer IwramUnsignedDivide
-	.global WaitFrames
-	.thumb_func
-WaitFrames:
 	.global Engine_TaskWait
 	.thumb_func
 Engine_TaskWait:
@@ -45,17 +42,14 @@ Object_SetMode:
 	.thumb_func
 Engine_ObjectCreate:
 	overlay_veneer Object_CreateFar
-	.global Object_SetPosition
+	.global Engine_ObjectSetPosition
 	.thumb_func
-Object_SetPosition:
+Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
 	.global Object_CommitPosition
 	.thumb_func
 Object_CommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
-	.global Map_CopyCellAttributeRect
-	.thumb_func
-Map_CopyCellAttributeRect:
 	.global Engine_MapCopyCellAttributes
 	.thumb_func
 Engine_MapCopyCellAttributes:
@@ -104,9 +98,6 @@ Engine_GameFlagClear:
 	.thumb_func
 Engine_PartyRemoveItem:
 	overlay_veneer PartyInventory_DiscardFar
-	.global Battle_WaitMode0
-	.thumb_func
-Battle_WaitMode0:
 	.global Engine_EventWait
 	.thumb_func
 Engine_EventWait:
@@ -127,9 +118,6 @@ Engine_EventChooseYesNo:
 	.thumb_func
 Object_GetById:
 	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_SetSpeedParameters
-	.thumb_func
-ObjectMotion_SetSpeedParameters:
 	.global Engine_ActorSetSpeed
 	.thumb_func
 Engine_ActorSetSpeed:
@@ -138,9 +126,9 @@ Engine_ActorSetSpeed:
 	.thumb_func
 Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
-	.global Engine_ActorStartAction
+	.global Object_RefreshSelectorById
 	.thumb_func
-Engine_ActorStartAction:
+Object_RefreshSelectorById:
 	overlay_veneer Object_RefreshSelectorByIdFar
 	.global Engine_ActorStop
 	.thumb_func
@@ -158,13 +146,10 @@ Engine_ObjectMotionSetPositionAndCommit:
 	.thumb_func
 Engine_ActorWalkToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
-	.global ObjectMotion_OffsetPositionAndResetMotion
+	.global Engine_ActorSetDestinationOffset
 	.thumb_func
-ObjectMotion_OffsetPositionAndResetMotion:
+Engine_ActorSetDestinationOffset:
 	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
-	.global ObjectMotion_CommitCurrentPositionAndActivate
-	.thumb_func
-ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Engine_ActorWaitForMove
 	.thumb_func
 Engine_ActorWaitForMove:
@@ -173,9 +158,6 @@ Engine_ActorWaitForMove:
 	.thumb_func
 Engine_ActorSetPosition:
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Object_SetModeById
-	.thumb_func
-Object_SetModeById:
 	.global Engine_ActorSetAnimation
 	.thumb_func
 Engine_ActorSetAnimation:
@@ -344,9 +326,6 @@ Shop_RestoreSceneTiles:
 	.thumb_func
 Shop_InitEffect:
 	overlay_veneer Shop_InitEffectFar
-	.global Audio_PlayCue
-	.thumb_func
-Audio_PlayCue:
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:

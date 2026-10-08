@@ -85,7 +85,7 @@ s32 UpdateFacingFromResolvedObject(struct FacingObject *object)
 {
     struct FacingObject *target;
 
-    target = ResolveFacingObject(object->unknown_64);
+    target = Object_GetById(object->unknown_64);
     object->facing = CalculateFacingAngle(
         target->position_z - object->position_z,
         target->position_x - object->position_x

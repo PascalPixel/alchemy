@@ -44,6 +44,5 @@ void FuneHobashira_GrowActorScale(struct FieldActor *o);
 s32 Battle_GetWorkObject1e0();
 void Event_CallWithLastActiveObjectId(s32 value);
 void Object_CommitPosition();
-u32 Random16(void);
 
 #endif

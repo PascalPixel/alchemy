@@ -19,8 +19,8 @@
 #include "BTLPTY.H"
 #include "text/MSG_IDS.H"
 
-#define Object_SetMoveTarget ((void (*)(s32, s32, s32, s32))Object_SetMoveTarget)
-#define ObjectTable_Get ((struct Rec_383b * (*)())ObjectTable_Get)
+#define Engine_ObjectSetPosition ((void (*)(s32, s32, s32, s32))Engine_ObjectSetPosition)
+#define Engine_ActorLookup ((struct Rec_383b * (*)())Engine_ActorLookup)
 
 #define KuupuappuHeya_PairScriptP ((u8 (*))&KuupuappuHeya_PairScriptP)
 #define KuupuappuHeya_PairScriptR ((u8 (*))&KuupuappuHeya_PairScriptR)
@@ -46,7 +46,6 @@ void Map_SetViewBounds();
 u8 *UnitGet(s32);
 void Djinn_Transfer(s32, s32, s32, s32);
 
-void Object_SetModeById(s32, s32, s32);
 void ObjectMotion_WaitForAnimationChange(s32);
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
@@ -131,7 +130,7 @@ enum PromptMessage {
 void KuupuappuHeya_RunBranchingDialogueScene();
 
 extern struct EventWork *gEventWork;
-void Engine_AudioPlaySceneCue();
+void Audio_PlayCueFromEventWork();
 void Engine_ActorSetSpritePriority();
 void Engine_ActorSetSpeed();
 void Engine_ActorSetPosition();
@@ -139,7 +138,7 @@ void Engine_CameraFollowActor();
 void Engine_MapRedraw();
 void Engine_EventOpenScreen();
 void Engine_EventWaitForScreen();
-s32 Engine_UiWorkWaitThenFinalizeCapacity();
+s32 Engine_EventChooseYesNo();
 void Engine_ActorStartRepeatedMotion();
 
 s32 Engine_GameFlagIsSet();
@@ -153,7 +152,7 @@ void Engine_EventBegin();
 void KuupuappuHeya_RunVaultEvent();
 void Engine_EventEnd();
 void Engine_AudioPlayCue();
-void Map_CopyMetatileCellsRect();
+void Engine_MapCopyCells();
 void FieldScene_RunLateSequence();
 void Engine_EventRequestExit();
 void RunEventScript01();
@@ -772,7 +771,7 @@ void FieldScene_RunVaultClosingSequence(void)
     Engine_EventWait(50);
     Engine_ActorFaceActor(2, 0, 0);
     FieldScene_RunSplitTripleSteps(1, 0, 30);
-    if (Engine_UiWorkWaitThenFinalizeCapacity(0, 0) == 0) {
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(40);
         Engine_ActorFaceActor(1, 10, 0);
         Actor_FaceActor(IWAN, 10, 0);
@@ -888,7 +887,7 @@ void FieldScene_RunOpeningSequenceThird(void)
     Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
     GameFlag_Set(2130);
     GameFlag_Set(768);
-    Scheduler_AddOrUpdateCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 3200);
+    Engine_TaskAddCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 3200);
     ((struct FieldActor *)actor24)->timer = 1;
     ((struct FieldActor *)actor25)->timer = 3;
     Engine_EventEnd();
@@ -1110,7 +1109,7 @@ void FieldScene_SelectActorPair(void)
 
         ((struct FieldActor *)record)->timer = shown;
     }
-    Scheduler_AddOrUpdateCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
+    Engine_TaskAddCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Engine_EventEnd();
 }
@@ -1121,7 +1120,7 @@ void KuupuappuHeya_RunBranchingDialogueScene(void)
     u8 *record;
     s32 v5;
 
-    Engine_AudioPlaySceneCue();
+    Audio_PlayCueFromEventWork();
     Engine_ActorSetSpritePriority(0, 1);
     {
         struct FieldActor *record = Object_GetById(0);
@@ -1180,13 +1179,13 @@ void KuupuappuHeya_RunBranchingDialogueScene(void)
     SceneActor_SetPairZeroAndValue(0, 1, 20);
     Engine_EventOpenMessage(1, 0);
     v5 = 0;
-    if (Engine_UiWorkWaitThenFinalizeCapacity(0, 0) != 0) {
+    if (Engine_EventChooseYesNo(0, 0) != 0) {
         Engine_EventWait(20);
         Engine_ActorStartRepeatedMotion(2, 2);
         SceneEffect_ApplyThreeValuesAndFinish(1, 4, 30);
         Engine_EventOpenMessage(1, 0);
         v5 = 0;
-        if (Engine_UiWorkWaitThenFinalizeCapacity(0, 0) != 0) {
+        if (Engine_EventChooseYesNo(0, 0) != 0) {
             Engine_EventWait(20);
             Engine_ActorShowEmote(2, 0x102, 0);
             Engine_EventWait(60);
@@ -1194,7 +1193,7 @@ void KuupuappuHeya_RunBranchingDialogueScene(void)
             SceneActor_SetPairZeroAndValue(0, 2, 20);
             Engine_EventOpenMessage(2, 0);
             v5 = 0;
-            if (Engine_UiWorkWaitThenFinalizeCapacity(2, 0) != 0) {
+            if (Engine_EventChooseYesNo(2, 0) != 0) {
                 Engine_EventWait(20);
                 Engine_ActorShowEmote(2, 0x105, 0);
                 Engine_EventWait(60);
@@ -1414,15 +1413,15 @@ s32 KuupuappuHeya_ApplyEntryState(void)
         Engine_EventEnd();
         break;
     case 16:
-        Map_CopyMetatileCellsRect(54, 2, 2, 8, 44, 21);
-        Map_CopyMetatileCellsRect(54, 2, 2, 8, 44, 81);
+        Engine_MapCopyCells(54, 2, 2, 8, 44, 21);
+        Engine_MapCopyCells(54, 2, 2, 8, 44, 81);
         Engine_ActorSetPosition(8, 0x3380000, 0x1c80000);
         FieldScene_RunLateSequence();
         Engine_EventRequestExit(16);
         break;
     case 17:
-        Map_CopyMetatileCellsRect(54, 2, 2, 8, 44, 21);
-        Map_CopyMetatileCellsRect(54, 2, 2, 8, 44, 81);
+        Engine_MapCopyCells(54, 2, 2, 8, 44, 21);
+        Engine_MapCopyCells(54, 2, 2, 8, 44, 81);
         if (Engine_GameFlagIsSet(0x109) == 0) {
             Actor_SetPosition(8, 0x3380000, 0x1c80000);
             RunEventScript01();
@@ -2265,7 +2264,7 @@ void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 
 void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c)
 {
-    Object_SetModeById(a, b, c);
+    ((void (*)(s32, s32, s32))Engine_ActorSetAnimation)(a, b, c);
     ObjectMotion_WaitForAnimationChange(a);
     Engine_EventWait(c);
 }
@@ -2374,7 +2373,7 @@ struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s16 *pos
 
 s32 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id)
 {
-    struct Rec_383b *rec = ObjectTable_Get(id);
+    struct Rec_383b *rec = Engine_ActorLookup(id);
     s32 target_x = rec->f56;
     s32 target_y;
     s32 dx;
@@ -2433,11 +2432,10 @@ s32 SceneActor_CheckTileFreeOfKinds(u8 *p)
 
 void SceneActor_ApplyScaledBytePairPosition(s32 a, u8 *p)
 {
-    Object_SetMoveTarget(a, (p[0] << 19) + 0x480000, 0, (p[1] << 19) + 0x2780000);
+    Engine_ObjectSetPosition(a, (p[0] << 19) + 0x480000, 0, (p[1] << 19) + 0x2780000);
 }
 
-u32 Random16(void);
-void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *actor, s32 argument);
+void Object_SetMode(struct FieldActor *actor, s32 argument);
 
 void KuupuappuHeya_UpdateActorStops(void)
 {
@@ -2479,16 +2477,16 @@ void KuupuappuHeya_UpdateActorStops(void)
         dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
         if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
             SceneActor_ApplyScaledBytePairPosition((s32)actor, dest);
-            ObjectDispatch_ApplyArgumentToChildren(actor, 2);
+            Object_SetMode(actor, 2);
         } else {
-            ObjectDispatch_ApplyArgumentToChildren(actor, 1);
+            Object_SetMode(actor, 1);
         }
     }
 
     actor = Engine_ActorLookup(24);
     entry = SceneData_FindEntryAtPosition(&actor->x.fixed);
     if (entry != NULL && actor->target_x == ACTOR_NO_TARGET) {
-        u32 turn = Random16() * 2 >> 16;
+        u32 turn = ((u32 (*)(void))Engine_RandomNext)() * 2 >> 16;
         s32 f;
 
         turn *= 0x60000000;
@@ -2502,19 +2500,19 @@ void KuupuappuHeya_UpdateActorStops(void)
                 Engine_ActorSetAttachedEffect(24, 2);
                 goto move_first;
             }
-            ObjectDispatch_ApplyArgumentToChildren(actor, 4);
+            Object_SetMode(actor, 4);
             blocked = 1;
         } else {
 move_first:
             SceneActor_ApplyScaledBytePairPosition((s32)actor, dest);
-            ObjectDispatch_ApplyArgumentToChildren(actor, 2);
+            Object_SetMode(actor, 2);
         }
     }
 
     actor = Engine_ActorLookup(25);
     entry = SceneData_FindEntryAtPosition(&actor->x.fixed);
     if (entry != NULL && actor->target_x == ACTOR_NO_TARGET) {
-        u32 turn = Random16() * 3 >> 16;
+        u32 turn = ((u32 (*)(void))Engine_RandomNext)() * 3 >> 16;
         s32 f;
 
         turn *= 0x30000000;
@@ -2528,12 +2526,12 @@ move_first:
                 Engine_ActorSetAttachedEffect(25, 2);
                 goto move_second;
             }
-            ObjectDispatch_ApplyArgumentToChildren(actor, 4);
+            Object_SetMode(actor, 4);
             blocked += 2;
         } else {
 move_second:
             SceneActor_ApplyScaledBytePairPosition((s32)actor, dest);
-            ObjectDispatch_ApplyArgumentToChildren(actor, 2);
+            Object_SetMode(actor, 2);
         }
     }
     if (blocked != 0) {

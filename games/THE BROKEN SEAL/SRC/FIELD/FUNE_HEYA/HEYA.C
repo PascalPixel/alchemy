@@ -90,7 +90,7 @@ s32 SceneActor_CheckBucketOffsetPoint();
 #ifndef MODERN // the prototype above holds; modern GCC refuses this one
 void FieldScene_CallPairWith10();
 #endif
-void ObjectMotion_SetActionVariant();
+void Engine_ActorSetSpritePriority();
 
 struct Walker {
     u8 unknown_00[0x4c];
@@ -834,7 +834,7 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
 
     rec4 = Object_GetById(0);
     v8 = 1;
-    ObjectMotion_SetActionVariant(a0, 2);
+    Engine_ActorSetSpritePriority(a0, 2);
     {
         struct FieldActor *record = Object_GetById(a0);
 

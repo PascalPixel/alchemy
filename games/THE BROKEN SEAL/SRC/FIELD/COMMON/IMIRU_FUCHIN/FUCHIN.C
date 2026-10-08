@@ -147,7 +147,7 @@ void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz)
 
         actor->speed = 0x10000;
         actor->acceleration = 0x8000;
-        Object_SetPosition(actor, x, actor->y.fixed, z);
+        ((void (*)())Engine_ObjectSetPosition)(actor, x, actor->y.fixed, z);
     }
     Object_SetMode(actor, 27);
     {
@@ -156,7 +156,7 @@ void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz)
 
         other->speed = 0x10000;
         other->acceleration = 0x8000;
-        Object_SetPosition(other, x, other->y.fixed, z);
+        ((void (*)())Engine_ObjectSetPosition)(other, x, other->y.fixed, z);
     }
     if (dx < 0 || dz < 0) {
         Object_SetMode(other, 4);
@@ -1465,7 +1465,7 @@ void SceneActor_StepSubjectAlongHeading(void)
     s32 z;
     s32 x;
 
-    subject = ObjectTable_Get(gGameState.selected_actor);
+    subject = ((void * (*)())Engine_ActorLookup)(gGameState.selected_actor);
 
     for (;;) {
         heading = gImiruFuchinHeadings[(gKeysHeld >> 4) & 15];
@@ -1496,7 +1496,7 @@ void SceneActor_StepSubjectAlongHeading(void)
         subject->speed = 0x20000;
         subject->acceleration = 0x1999;
         subject->timer = 0;
-        Object_SetPosition(subject, x, subject->y.fixed, z);
+        ((void (*)())Engine_ObjectSetPosition)(subject, x, subject->y.fixed, z);
 
         Object_SetMode(subject, 2);
         ObjectDispatch_ApplyValueToChildren(subject, 48);
@@ -1513,7 +1513,7 @@ continue_probe:
         z = probe.z;
         subject->speed = 0x20000;
         subject->acceleration = 0x1999;
-        Object_SetPosition(subject, probe.x, probe.y, probe.z);
+        ((void (*)())Engine_ObjectSetPosition)(subject, probe.x, probe.y, probe.z);
         Object_CommitPosition(subject);
         if (marker != goal) {
             goto blocked;
@@ -1530,7 +1530,7 @@ advance_probe:
 finish_probe:
         subject->speed = 0x20000;
         subject->acceleration = 0x10000;
-        Object_SetPosition(subject, x, subject->y.fixed, z);
+        ((void (*)())Engine_ObjectSetPosition)(subject, x, subject->y.fixed, z);
         Object_CommitPosition(subject);
         Engine_TaskWait(2);
     }

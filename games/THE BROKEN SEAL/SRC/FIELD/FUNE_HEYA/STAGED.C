@@ -62,7 +62,6 @@ struct EffectRecord {
     u8 active;
 };
 
-s32 Random16(u8 *o);
 
 s32 ResetStagedActorState(struct StagedActor *actor)
 {
@@ -107,7 +106,7 @@ block_5:
 
 s32 StagedActor_SetAngleByKind(struct FieldActor *o)
 {
-    u32 v = (u32)(Random16(o) << 6) >> 16;
+    u32 v = (u32)(((s32 (*)(u8 *o))Engine_RandomNext)(o) << 6) >> 16;
 
     if (v == 6) {
         s32 k = 0x3000;

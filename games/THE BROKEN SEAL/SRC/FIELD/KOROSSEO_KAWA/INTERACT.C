@@ -48,7 +48,6 @@ typedef struct ActiveSubjectSlot {
 
 extern u8 HexDigits[];
 typedef void(*SceneTask)(void);
-PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 void GameFlag_SetByte(s32, s32);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
@@ -87,7 +86,7 @@ void RunPartyCountInteraction(s32 actorId)
     s32 x;
     s32 y;
 
-    record = GetPartyInteractionRecord();
+    record = ((PartyInteractionRecord * (*)(void))Object_GetById)();
     x = record->x;
     y = record->y;
     Engine_EventBegin();

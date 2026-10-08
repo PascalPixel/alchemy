@@ -142,9 +142,9 @@ void ToretoEda_PlayCueAndSelectTouchedExit(void)
     u8 *state = (u8 *)gEventWork;
     s16 *cnt;
 
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     cnt = (s16 *)(state + 0x16C);
-    Event_SetExitRequest(*cnt);
+    Engine_EventRequestExit(*cnt);
 }
 
 void Effect_SetAlphaBlendForScene9(void)
@@ -181,8 +181,8 @@ u8 *ToretoEda_GetEvents(void)
 
 void Scene_RunTwoCallSequence(void)
 {
-    Battle_Reset();
-    BattleFx_FinishAction();
+    Engine_EventBegin();
+    Engine_EventEnd();
 }
 
 void State_RunEmptyHookFirst(void)
@@ -269,5 +269,5 @@ void Effect_SetBg3HofsSplit(void)
 void ToretoEda_StartBg3Split(void)
 {
     Runtime_SetIrqHandler(1, 0, Effect_UpdateBg3HofsByVcount);
-    Scheduler_AddOrUpdateCallback((s32)(Effect_SetBg3HofsSplit), 0xc80);
+    Engine_TaskAddCallback((s32)(Effect_SetBg3HofsSplit), 0xc80);
 }

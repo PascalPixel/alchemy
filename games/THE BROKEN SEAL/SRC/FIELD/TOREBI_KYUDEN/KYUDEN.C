@@ -42,14 +42,14 @@ static __inline__ void Party_RestoreAll(void)
 
     cnt = Engine_PartyListActiveOwners(owners);
     for (i = 0; i < cnt; i++) {
-        state = Engine_OwnerGetState(owners[i]);
+        state = UnitGet(owners[i]);
         state->hp = state->max_hp;
         state->ep = state->max_ep;
         Engine_OwnerRecalculateRatios(owners[i]);
     }
-    Engine_PartyAddActiveOwner(1);
-    Engine_PartyAddActiveOwner(2);
-    Engine_PartyAddActiveOwner(3);
+    Party_AddActiveOwner(1);
+    Party_AddActiveOwner(2);
+    Party_AddActiveOwner(3);
     Engine_InventorySnapshotRestore();
 }
 
@@ -354,8 +354,8 @@ void FieldScene_RunScene3b8SequenceB(void)
     Actor_FaceDirection(3, FACING_EAST, 0);
     Actor_FaceDirection(2, FACING_NORTHEAST, 0);
     gEventWork->transition_frames = 60;
-    Event_StartScreenTransition();
-    Event_WaitTransitionFrames();
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
     Event_Wait(20);
     gEventWork->transition_frames = 24;
     Actor_SetSpeed(3, 0x10000, 0x8000);
@@ -453,21 +453,21 @@ void FieldScene_RunScene3b8SequenceB(void)
     Actor_SetAnimation(1, 2);
     record = Actor_Get(0);
     if (record != 0) {
-        ObjectMotion_ResetAndSetPosition(1, record->x.part.pixel, record->z.part.pixel);
+        Engine_ActorSetDestination(1, record->x.part.pixel, record->z.part.pixel);
     }
     Actor_WaitForMove(1);
     Actor_SetPosition(1, 0, 0);
     Actor_SetAnimation(3, 2);
     record = Actor_Get(0);
     if (record != 0) {
-        ObjectMotion_ResetAndSetPosition(3, record->x.part.pixel, record->z.part.pixel);
+        Engine_ActorSetDestination(3, record->x.part.pixel, record->z.part.pixel);
     }
     Actor_WaitForMove(3);
     Actor_SetPosition(3, 0, 0);
     Actor_SetAnimation(2, 2);
     record = Actor_Get(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        ObjectMotion_ResetAndSetPosition(2, record->x.part.pixel, record->z.part.pixel);
+        Engine_ActorSetDestination(2, record->x.part.pixel, record->z.part.pixel);
     }
     Actor_WaitForMove(2);
     Actor_SetPosition(2, 0, 0);
@@ -617,21 +617,21 @@ void FieldScene_RunScene3b8SequenceA(void)
         Actor_SetAnimation(1, 2);
         record = Actor_Get(0);
         if (record != 0) {
-            ObjectMotion_ResetAndSetPosition(1, record->x.part.pixel, record->z.part.pixel);
+            Engine_ActorSetDestination(1, record->x.part.pixel, record->z.part.pixel);
         }
         Actor_WaitForMove(GERALD);
         Actor_SetPosition(1, 0, 0);
         Actor_SetAnimation(3, 2);
         record = Actor_Get(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            ObjectMotion_ResetAndSetPosition(3, record->x.part.pixel, record->z.part.pixel);
+            Engine_ActorSetDestination(3, record->x.part.pixel, record->z.part.pixel);
         }
         Actor_WaitForMove(MEARI);
         Actor_SetPosition(3, 0, 0);
         Actor_SetAnimation(2, 2);
         record = Actor_Get(0);
         if (record != 0) {
-            ObjectMotion_ResetAndSetPosition(2, record->x.part.pixel, record->z.part.pixel);
+            Engine_ActorSetDestination(2, record->x.part.pixel, record->z.part.pixel);
         }
         Actor_WaitForMove(2);
         Actor_SetPosition(2, 0, 0);
@@ -923,8 +923,8 @@ void FieldScene_RunBranchingActorSequence(void)
     SetHalf((u16 *)(work + 0x52a), 0);
     SetHalf((u16 *)(work + 0x534), 0x1f1f);
     SetHalf((u16 *)(work + 0x536), 1);
-    Event_StartScreenTransition();
-    Event_WaitTransitionFrames();
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
     for (step = 1; step <= 5; step++) {
         Task_Wait(3);
         *(u16 *)(work + 0x52a) = step;
@@ -1140,21 +1140,21 @@ void FieldScene_RunBranchingActorSequence(void)
     Actor_SetAnimation(GERALD, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-        ObjectMotion_ResetAndSetPosition(GERALD, actor->x.part.pixel, actor->z.part.pixel);
+        Engine_ActorSetDestination(GERALD, actor->x.part.pixel, actor->z.part.pixel);
     }
     Actor_WaitForMove(1);
     Actor_SetPosition(GERALD, 0, 0);
     Actor_SetAnimation(MEARI, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-        ObjectMotion_ResetAndSetPosition(MEARI, actor->x.part.pixel, actor->z.part.pixel);
+        Engine_ActorSetDestination(MEARI, actor->x.part.pixel, actor->z.part.pixel);
     }
     Actor_WaitForMove(3);
     Actor_SetPosition(MEARI, 0, 0);
     Actor_SetAnimation(IWAN, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-        ObjectMotion_ResetAndSetPosition(IWAN, actor->x.part.pixel, actor->z.part.pixel);
+        Engine_ActorSetDestination(IWAN, actor->x.part.pixel, actor->z.part.pixel);
     }
     Actor_WaitForMove(2);
     Actor_SetPosition(IWAN, 0, 0);
@@ -1169,8 +1169,8 @@ void FieldScene_RunMainCutsceneSequence(void)
     Audio_PlayCue(30);
     Event_Begin();
     Event_SetMessage((s32)MsgTorebiWaitingCompanions);
-    Event_StartScreenTransition();
-    Event_WaitTransitionFrames();
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
     Camera_MoveTo(0xd80000, -1, 0x2e00000, 1);
     Camera_WaitForMove();
     Event_Wait(20);
@@ -1185,7 +1185,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Event_ShowMessage(14, 0);
     Event_Wait(20);
     Event_ShowMessage(20, 0);
-    Object_AttachWorkTargetToObject(0, 1);
+    Engine_CameraFollowActor(0, 1);
     Camera_WaitForMove();
     Event_Wait(40);
     Actor_SetSpeed(0, 0x10000, 0x8000);
@@ -2060,19 +2060,19 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_SetAnimation(1, 2);
     position = Actor_Get(0);
     if (position != 0)
-        ObjectMotion_ResetAndSetPosition(1, position[5], position[9]);
+        Engine_ActorSetDestination(1, position[5], position[9]);
     Actor_WaitForMove(1);
     Actor_SetPosition(1, 0, 0);
     Actor_SetAnimation(IWAN, 2);
     position = Actor_Get(ACTOR_PARTY_LEADER);
     if (position != 0)
-        ObjectMotion_ResetAndSetPosition(2, position[5], position[9]);
+        Engine_ActorSetDestination(2, position[5], position[9]);
     Actor_WaitForMove(2);
     Actor_SetPosition(2, 0, 0);
     Actor_SetAnimation(3, 2);
     position = Actor_Get(0);
     if (position != 0)
-        ObjectMotion_ResetAndSetPosition(3, position[5], position[9]);
+        Engine_ActorSetDestination(3, position[5], position[9]);
     Actor_WaitForMove(3);
     Actor_SetPosition(3, 0, 0);
     Event_Wait(10);

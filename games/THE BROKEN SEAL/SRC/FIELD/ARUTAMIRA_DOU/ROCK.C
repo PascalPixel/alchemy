@@ -130,7 +130,7 @@ void ArutamiraDou_TurnRock(s32 action)
             ArutamiraDou_Wheel->phase = 2;
             ArutamiraDou_Wheel->ticks = 0;
             Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-            Battle_WaitMode0(20);
+            Engine_EventWait(20);
             Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
             ArutamiraDou_Wheel->phase = 99;
             Audio_PlayCue(190);

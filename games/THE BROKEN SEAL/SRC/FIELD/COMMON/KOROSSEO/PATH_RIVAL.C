@@ -140,7 +140,7 @@ void Korosseo_DrawGauge(void)
             Dma_Set(Korosseo_GaugePalette, (void *)&OBJ_PLTT_COLOR(14, 0), DMA_ENABLE32 | 0x10, REG_DMA3);
             buf = (u8 *)Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 512);
             Resource_DecodeType01(Korosseo_GaugeGraphics, buf);
-            VramBlock_LoadCached(gauge->vram_block, 512, buf);
+            Engine_VramLoad(gauge->vram_block, 512, buf);
             Runtime_BumpFree(buf);
         }
     }

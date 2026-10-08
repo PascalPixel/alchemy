@@ -16,7 +16,7 @@
 #include "STAGED_ACTOR.H"
 #include "KAWA.H"
 
-#define Object_SetMoveTarget ((void (*)(struct FieldActor *, s32, s32, s32))Object_SetMoveTarget)
+#define Engine_ObjectSetPosition ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -170,11 +170,11 @@ void StagedActor_PushActorAhead(void)
 
     target->speed = 0x3333;
     target->acceleration = 0x3333;
-    Object_SetMoveTarget(target, pos.x, pos.y, pos.z);
+    Engine_ObjectSetPosition(target, pos.x, pos.y, pos.z);
 
     subject->speed = 0x3333;
     subject->acceleration = 0x3333;
-    Object_SetMoveTarget(subject, pos.x, pos.y, pos.z);
+    Engine_ObjectSetPosition(subject, pos.x, pos.y, pos.z);
 
     Engine_AudioPlayCue(0xee);
     Script_WaitForEventTimeout(target);

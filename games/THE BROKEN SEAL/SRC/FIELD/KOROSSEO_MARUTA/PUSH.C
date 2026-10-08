@@ -20,7 +20,6 @@ s32 *FindActorAtWholeTilePosition(s32 *position, void *mover)
 void ColossoLogRollingStage_PushStagedActor(void)
 {
     extern s32 Object_CheckMovementCollision(MarutaSceneRecord *, Position3 *);
-    extern void Object_SetPosition(MarutaSceneRecord *, s32, s32, s32);
     extern void Object_CommitPosition(MarutaSceneRecord *);
 
     MarutaSceneRecord *subject;
@@ -87,11 +86,11 @@ void ColossoLogRollingStage_PushStagedActor(void)
 
     target->rate_x = 0x3333;
     target->rate_z = 0x3333;
-    Object_SetPosition(target, position.x, position.y, position.z);
+    ((void (*)(MarutaSceneRecord *, s32, s32, s32))Engine_ObjectSetPosition)(target, position.x, position.y, position.z);
 
     subject->rate_x = 0x3333;
     subject->rate_z = 0x3333;
-    Object_SetPosition(subject, position.x, position.y, position.z);
+    ((void (*)(MarutaSceneRecord *, s32, s32, s32))Engine_ObjectSetPosition)(subject, position.x, position.y, position.z);
 
     Engine_AudioPlayCue(0xee);
     Object_CommitPosition(target);

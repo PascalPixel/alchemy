@@ -35,8 +35,8 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 
     Engine_EventBegin();
     Object_SetMode(actor, 6);
-    WaitFrames(6);
-    Audio_PlayCue(152);
+    Engine_TaskWait(6);
+    Engine_AudioPlayCue(152);
     Object_SetMode(actor, 7);
 
     actor->speedX = 0x00030000;
@@ -52,7 +52,7 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 #endif
     Object_SetMode(actor, 6);
     Engine_ActorSetSpriteFlags(actor, 1);
-    WaitFrames(6);
+    Engine_TaskWait(6);
 
     actor->flags = saved;
     Engine_EventEnd();
@@ -152,7 +152,7 @@ void SceneState_SwapSlotPairByRank(s32 first, s32 second)
         t = a->x;    a->x    = b->x;    b->x    = t;
         t = a->y;    a->y    = b->y;    b->y    = t;
         t = a->rank; a->rank = b->rank; b->rank = t;
-        WaitFrames(1);
+        Engine_TaskWait(1);
     }
 }
 
@@ -203,7 +203,7 @@ void SceneActor_WaitValueBelowLimit(struct Track02001038 *track)
         if (cnt != 0) {
             s32 value;
 
-            WaitFrames(1);
+            Engine_TaskWait(1);
             value = track->value;
             limit = track->limit;
             cnt--;
@@ -257,17 +257,17 @@ void BabiChika_RunLeaderSpray(void)
     Object_SetMode(leader, 1);
     Engine_ActorSetSpriteFlags(leader, 0);
     leader->motion_flags |= 2;
-    Audio_PlayCue(152);
+    Engine_AudioPlayCue(152);
     leader->velocity_y = 0x40000;
-    Object_SetPosition(leader, leader->x.fixed, leader->y.fixed, leader->z.fixed + 0xc0000);
-    WaitFrames(6);
+    Engine_ObjectSetPosition(leader, leader->x.fixed, leader->y.fixed, leader->z.fixed + 0xc0000);
+    Engine_TaskWait(6);
     leader->motion_flags = 0;
     options.update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
-    Audio_PlayCue(127);
+    Engine_AudioPlayCue(127);
     for (i = 0; i < 8; i++) {
         leader->y.fixed -= 0x20000;
         leader->target_y = leader->y.fixed;
-        WaitFrames(1);
+        Engine_TaskWait(1);
         if (i & 1) {
             s32 m = (u32)Engine_RandomNext() % 10 - 5;
             s32 vx = m * 0x3332;

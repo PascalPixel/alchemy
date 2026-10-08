@@ -19,7 +19,7 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
-#define ObjectTable_Get ((struct FieldActor * (*)(s32))ObjectTable_Get)
+#define Engine_ActorLookup ((struct FieldActor * (*)(s32))Engine_ActorLookup)
 #define Data_03001ed0 (*(u16 * *)&Data_03001ed0)
 
 void FieldScene_RunOpeningAuxiliarySequence();
@@ -850,7 +850,7 @@ void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
     ResourceMetadata_ClearRecord(*(s32 *)((u8 *)sprite + 44));
     *(s32 *)((u8 *)sprite + 44) = 0;
     ((u8 *)sprite)[37] = 1;
-    leader = ObjectTable_Get(gGameState.selected_actor);
+    leader = Engine_ActorLookup(gGameState.selected_actor);
     Engine_AudioPlayCue(152);
     leader->x.fixed = x;
     leader->velocity_y = 0x60000;
@@ -996,7 +996,7 @@ void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
 void ArutinYama_RunRollingObject(s32 id, s32 heading)
 {
     struct FieldActor *object = Object_GetById(id);
-    struct FieldActor *leader = ObjectTable_Get(gGameState.selected_actor);
+    struct FieldActor *leader = Engine_ActorLookup(gGameState.selected_actor);
     union FieldCoordinate pos[3];
     union FieldCoordinate *p;
     struct Byte zero;

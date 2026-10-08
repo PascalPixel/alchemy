@@ -287,7 +287,6 @@ struct SaveMenuSceneState {
     s32 word_100;
 };
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
-void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void UiWork_FinalizePendingCore(void);
 s32 Scene_GetModeMask(void);
@@ -320,17 +319,16 @@ struct SaveLinkGreeting {
 };
 
 extern struct SaveLinkGreeting gLinkPeerSignatures[4];
-s32 Battle_WaitMode0(s32);
 s32 Clear_EncodePassword();
 void Clear_LoadBackground();
 void Clear_NameEntryCharacter();
 s32 Clear_PackPasswordData();
 void Engine_AudioPlayCue(s32);
 s32 Engine_GameFlagIsSet();
-void Event_FinishScreenTransition();
+void Engine_EventCloseScreen();
 void Event_SetDestination();
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames();
+void Engine_EventOpenScreen(void);
+void Engine_EventWaitForScreen();
 void GameState_InitDefaults();
 void Graphics_ExpandVramTilesByColorTable();
 void InventorySnapshot_Restore(void);
@@ -350,7 +348,7 @@ s32 SaveState_LoadRecordIntoWork();
 s32 SaveState_ScanRecordFlags();
 s32 Save_WriteSelectedSlot();
 s32 SceneData_GetBufferCrc16();
-s32 Scheduler_AddOrUpdateCallback();
+s32 Engine_TaskAddCallback();
 s32 SerialRuntime_BeginTransferA();
 void SerialRuntime_Initialize();
 void SerialRuntime_RemoveIrqHandlers();
@@ -360,7 +358,7 @@ void UiText_DrawString();
 void UiText_ShowCenteredMessage();
 void UiWindow_DrawDividerLine();
 void Ui_LoadWindowGraphics();
-void WaitFrames();
+void Engine_TaskWait();
 s32 __divsi3(s32, s32);
 s32 __modsi3();
 
@@ -411,10 +409,10 @@ s32 SaveMenu_Run(void)
 
     started = 0;
     Clear_LoadBackground();
-    Scheduler_AddOrUpdateCallback((s32)Clear_CheckButtonCodes, 0xc80);
+    Engine_TaskAddCallback((s32)Clear_CheckButtonCodes, 0xc80);
     *(s32 *)((*(u8 **)&gEventWork + 0x1c0)) = started;
-    Event_StartScreenTransition();
-    Event_WaitTransitionFrames();
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
     if (gGameState.entrance == 2) {
     L_ask:
         UiText_ShowPositionedMessageAndWait((s32)MsgSaveAdventureQuestion, 5);
@@ -428,10 +426,10 @@ s32 SaveMenu_Run(void)
                 goto L_ask;
             }
         }
-        Battle_WaitMode0(60);
-        Event_FinishScreenTransition();
+        ((s32 (*)(s32))Engine_EventWait)(60);
+        Engine_EventCloseScreen();
         Engine_AudioPlayCue(17);
-        Battle_WaitMode0(0x12c);
+        ((s32 (*)(s32))Engine_EventWait)(0x12c);
         Event_SetDestination((s32)&SceneId_WorldMap, 72);
         return 0;
     } else {
@@ -448,9 +446,9 @@ s32 SaveMenu_Run(void)
     }
     if (v6 == 0) {
         if (started == 0) {
-            WaitFrames(30);
-            Scheduler_AddOrUpdateCallback((s32)Clear_UpdateBlend, 0xc80);
-            WaitFrames(1);
+            Engine_TaskWait(30);
+            Engine_TaskAddCallback((s32)Clear_UpdateBlend, 0xc80);
+            Engine_TaskWait(1);
             started = 1;
         }
     }
@@ -467,7 +465,7 @@ s32 SaveMenu_Run(void)
     v5 = 1;
     v7 = 0;
     L_02000522:;
-    WaitFrames(6);
+    Engine_TaskWait(6);
     v6 = NameEntry_EditOwnerName(v7);
     if (v6 == -1) {
         if (v7 == 0) {
@@ -500,7 +498,7 @@ s32 SaveMenu_Run(void)
             goto L_020004a8;
         }
         /* FAKEMATCH: called directly, CSE keeps 0x109 in r7 for the later clears; the native derives them from 0x1c2 (522 vs 573). */
-        Call1((void (*)())GameFlag_SetBit, 0x109);
+        Call1((void (*)())Engine_GameFlagSet, 0x109);
         state = &gGameState;
         PaletteGlow_Update(state->palette_glow[0], state->palette_glow[1]);
         if (state->build_stamp != Runtime_GetBuildStampTime()) {
@@ -515,7 +513,7 @@ s32 SaveMenu_Run(void)
             state->scene = state->saved_scene;
             state->entrance = state->saved_entrance;
             GameFlag_ClearBit(0x109);
-            GameFlag_SetBit(0x13e);
+            ((void (*)(s32 flag))Engine_GameFlagSet)(0x13e);
         } else if (state->play_time != ((struct SaveMenuSceneState *)gSceneState)->word_100) {
             UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted, 9);
             UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted + 1, 13);
@@ -532,7 +530,7 @@ s32 SaveMenu_Run(void)
             state->scene = state->saved_scene;
             state->entrance = state->saved_entrance;
             GameFlag_ClearBit(0x109);
-            GameFlag_SetBit(0x13f);
+            ((void (*)(s32 flag))Engine_GameFlagSet)(0x13f);
         }
         GameFlag_ClearBit(0x106);
         goto L_02000c96;
@@ -566,7 +564,7 @@ s32 SaveMenu_Run(void)
         PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
         GameFlag_ClearBit(0x109);
         GameFlag_ClearBit(0x106);
-        GameFlag_SetBit(0x17e);
+        ((void (*)(s32 flag))Engine_GameFlagSet)(0x17e);
         gSleepDisabled = 1;
         Event_SetDestination((s32)&SceneId_LinkLobby, 1);
         goto L_02000c96;
@@ -599,7 +597,7 @@ s32 SaveMenu_Run(void)
         UiText_DrawResource((link_message + 1), v6, 0, 16);
         UiText_DrawResource((link_message + 3), v6, 0, 36);
         SerialRuntime_Initialize();
-        WaitFrames(10);
+        Engine_TaskWait(10);
         {
             u16 *sync = (u16 *)gSerialTransfer.payload;
 
@@ -647,7 +645,7 @@ s32 SaveMenu_Run(void)
                     }
                 }
             }
-            WaitFrames(1);
+            Engine_TaskWait(1);
         }
         Engine_AudioPlayCue(113);
         L_020008e0:;
@@ -662,9 +660,9 @@ s32 SaveMenu_Run(void)
 #endif
 
         UiText_DrawResource((s32)MsgClearSendingData, v6, 0, 4);
-        WaitFrames(10);
+        Engine_TaskWait(10);
         SerialRuntime_BeginTransferA((s32)gSaveBuffer, 0x1004);
-        WaitFrames(10);
+        Engine_TaskWait(10);
         v5 = 0;
         v1 = 3;
         v4 = 1;
@@ -680,7 +678,7 @@ s32 SaveMenu_Run(void)
             if (gSerialSendSource == 0) {
                 break;
             }
-            WaitFrames(1);
+            Engine_TaskWait(1);
         }
     }
     L_0200095e:;
@@ -689,15 +687,15 @@ s32 SaveMenu_Run(void)
         UiText_DrawResource((s32)MsgClearCommunicationError, v6, 0, 4);
         v5 = 1;
         do {
-            WaitFrames(1);
+            Engine_TaskWait(1);
         } while ((gKeyState & v5) == 0);
     }
-    WaitFrames(10);
+    Engine_TaskWait(10);
         SerialRuntime_RemoveIrqHandlers();
-    WaitFrames(10);
+    Engine_TaskWait(10);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
     UiWork_Finalize(v6, 2);
-    WaitFrames(1);
+    Engine_TaskWait(1);
 #else
     RenderOutput_PrepareForRedraw(v6);
     UiWork_Finalize(v6, 2);
@@ -776,7 +774,7 @@ s32 SaveMenu_Run(void)
                 UiWork_Finalize(page_window, 2);
                 UiWork_Finalize(help_window, 2);
                 UiWork_Finalize(heading_window, 2);
-                WaitFrames(1);
+                Engine_TaskWait(1);
                 goto L_020004a8;
             }
             Engine_AudioPlayCue(111);
@@ -859,20 +857,20 @@ s32 SaveMenu_Run(void)
             }
             v7 = 0;
         }
-        WaitFrames(1);
+        Engine_TaskWait(1);
         }
     }
-    WaitFrames(0x12c);
+    Engine_TaskWait(0x12c);
     goto L_020004a8;
     L_02000c96:;
     /* FAKEMATCH: stored as a plain constant, 0x3e7 is a halfword pool load that forces a pool before the epilogue (differ 25); through an s32 local it joins the one pool after the function. */
     v3 = 0x3e7;
     *(u16 *)((*(u8 **)&gEventWork + 0x170)) = v3;
-    Battle_WaitMode0(30);
+    ((s32 (*)(s32))Engine_EventWait)(30);
     Engine_AudioPlayCue(17);
-    Event_FinishScreenTransition();
-    Event_WaitTransitionFrames();
-    Battle_WaitMode0(60);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    ((s32 (*)(s32))Engine_EventWait)(60);
     L_Return:;
     return 0;
 }

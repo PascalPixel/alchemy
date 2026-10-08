@@ -19,7 +19,6 @@
 #include "FIELD_SERVICE.H"
 #include "text/MSG_IDS.H"
 
-#define ObjectDispatch_SetSingleChildFlags ((void (*)(void*,s32))ObjectDispatch_SetSingleChildFlags)
 
 union KanpanSlot {
     s32 w;
@@ -42,12 +41,12 @@ s32 Engine_RandomNext();
 extern struct EventWork *gEventWork;
 void FuneKanpan_OpenFirstDoor();
 void FuneKanpan_OpenSecondDoor();
-void Battle_Reset();
-void Battle_WaitMode0();
+void Engine_EventBegin();
+void Engine_EventWait();
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_CenterOnColumn();
-void Event_SetExitRequest();
-void AudioCommand_Play();
+void Engine_EventRequestExit();
+void Engine_AudioPlayCue();
 
 void Battle_ResetEffectCounter();
 void FuneKanpan_OpenSecondDoor(void);
@@ -77,23 +76,21 @@ void FieldScene_CallPairWith10();
 void FuneKanpan_OpenFirstDoor(void);
 
 void FieldScene_RunStepThen10();
-void WaitFrames();
-void ObjectMotion_SetHorizontalPositionWithTerrain();
-void ObjectGroup_ConfigureChildValue();
-void *ObjectMotion_SetPositionAndReset();
-void ObjectMotion_ResetAndSetPosition();
-void Motion_SetVarCbAndRefresh();
-void Event_SetMessageId();
+void Engine_TaskWait();
+void Engine_ActorSetPosition();
+void Engine_ActorSetChildValue();
+void Engine_ActorSetDestination();
+void Engine_ActorRunRepeatedMotion();
+void Engine_EventSetMessage();
 void Graphics_EnableObjLayerAndCallbacks();
-void ObjectMotion_EnableActionAndSetCallback();
+void Engine_ActorEnableActionCallback();
 void ObjectDispatch_StopCallbacksAndHideLayers();
 void UiText_ShowCenteredMessage();
-void *Event_StartScreenTransition();
 void Object_RefreshSelectorById();
-void ObjectMotion_ResetAndSetPositionInMode2();
+void Engine_ActorWalkTo();
 void Ui_SetRenderResultFromObject();
-void Event_FinishScreenTransition();
-void Event_WaitTransitionFrames();
+void Engine_EventCloseScreen();
+void Engine_EventWaitForScreen();
 
 void Engine_ActorSetChildValue();
 void Engine_ActorSetSpriteFlags();
@@ -124,7 +121,7 @@ void Engine_ActorWalkTo();
 void Engine_ActorSetAttachedEffect();
 
 void FieldScene_RunStepThen10(s32 actor);
-void Engine_ActorStartAction(s32 actor);
+void Object_RefreshSelectorById(s32 actor);
 
 struct MapLayer {
     u8 unknown_00[8];
@@ -522,7 +519,7 @@ void FuneKanpan_RunDeckStateEvent(void)
     struct EventWork *p6;
 
     p6 = gEventWork;
-    Battle_Reset();
+    Engine_EventBegin();
     v5 = 0;
     switch (p6->touched_trigger) {
     case 1:
@@ -537,11 +534,11 @@ void FuneKanpan_RunDeckStateEvent(void)
     if (v5 != 0) {
         Actor_SetSpeed(0, 0x9999, 0x4ccc);
         FieldObjectMotion_CenterOnColumn(0, 1, -10);
-        Battle_WaitMode0(10);
+        Engine_EventWait(10);
     } else {
-        AudioCommand_Play(123);
+        Engine_AudioPlayCue(123);
     }
-    Event_SetExitRequest(p6->touched_trigger);
+    Engine_EventRequestExit(p6->touched_trigger);
 }
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -551,7 +548,7 @@ void FuneKanpan_RunDeckStateEventFromEntry(void)
     if ((u16)(Object_GetById(ACTOR_PARTY_LEADER)->facing - 0x6001) <= 0x3ffe) {
         Engine_EventBegin();
         Actor_WalkTo(ACTOR_PARTY_LEADER, 214, 664);
-        ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+        Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
         FuneKanpan_RunDeckStateEvent();
     }
 }
@@ -1225,61 +1222,61 @@ void FieldScene_RunShipDeckEventScript(void)
 {
     s32 v;
 
-    Battle_Reset();
+    Engine_EventBegin();
     Event_CallWithLastActiveObjectId((s32)FuneKanpan_CrewScript);
-    WaitFrames(1);
+    Engine_TaskWait(1);
     Event_CallWithLastActiveObjectId((s32)FuneKanpan_CrewScriptB);
-    WaitFrames(1);
-    Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 21, 16252928, 47710208);
-    ObjectGroup_ConfigureChildValue(0, 15);
-    ObjectDispatch_SetSingleChildFlags(Object_GetById(0), 0);
+    Engine_TaskWait(1);
+    Call3(Engine_ActorSetPosition, 21, 16252928, 47710208);
+    Engine_ActorSetChildValue(0, 15);
+    ((void (*)(void*,s32))Engine_ActorSetSpriteFlags)(Object_GetById(0), 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
-    Event_StartScreenTransition();
+    ((void * (*)())Engine_EventOpenScreen)();
     Actor_SetSpeed(21, 104857, 52428);
-    Call3(ObjectMotion_SetPositionAndReset, 21, 242, 692);
-    Call3(ObjectMotion_SetPositionAndReset, 21, 196, 678);
-    Call3(ObjectMotion_SetPositionAndReset, 21, 182, 654);
-    Motion_SetVarCbAndRefresh(21, 2);
-    Event_SetMessageId((s32)MsgFuneNoUseLate);
+    Call3(Engine_ActorWalkToAndWait, 21, 242, 692);
+    Call3(Engine_ActorWalkToAndWait, 21, 196, 678);
+    Call3(Engine_ActorWalkToAndWait, 21, 182, 654);
+    Engine_ActorRunRepeatedMotion(21, 2);
+    Engine_EventSetMessage((s32)MsgFuneNoUseLate);
     FieldScene_RunStepThen10(40981);
     Actor_SetSpeed(0, 157286, 78643);
     FieldObjectMotion_ResetAndSetPosition(0, 154, 609);
-    AudioCommand_Play(146);
+    Engine_AudioPlayCue(146);
     v = 0;
     Object_GetById(24)->timer = v;
     Object_GetById(25)->timer = v;
     Object_GetById(26)->timer = v;
-    Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 24, 2097152, 31719424);
-    Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 25, 5505024, 32505856);
-    Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 26, 1048576, 39059456);
+    Call3(Engine_ActorSetPosition, 24, 2097152, 31719424);
+    Call3(Engine_ActorSetPosition, 25, 5505024, 32505856);
+    Call3(Engine_ActorSetPosition, 26, 1048576, 39059456);
     Actor_SetSpeed(24, 157286, 78643);
     Actor_SetSpeed(25, 157286, 78643);
     Actor_SetSpeed(26, 157286, 78643);
     v = (s32)FuneKanpan_DeckEventActions;
-    ObjectMotion_EnableActionAndSetCallback(24, v);
-    ObjectMotion_EnableActionAndSetCallback(25, v);
-    ObjectMotion_EnableActionAndSetCallback(26, v);
-    ObjectGroup_ConfigureChildValue(24, 3);
-    ObjectGroup_ConfigureChildValue(25, 3);
-    ObjectGroup_ConfigureChildValue(26, 3);
+    Engine_ActorEnableActionCallback(24, v);
+    Engine_ActorEnableActionCallback(25, v);
+    Engine_ActorEnableActionCallback(26, v);
+    Engine_ActorSetChildValue(24, 3);
+    Engine_ActorSetChildValue(25, 3);
+    Engine_ActorSetChildValue(26, 3);
     do {
-        WaitFrames(1);
+        Engine_TaskWait(1);
     } while (*(s16 *)&Object_GetById(24)->timer == 0);
     FuneKanpan_OpenFirstDoor();
     /* FAKEMATCH: the do/while sets r0 = 21 first, straight after the call. */
     do {
-        Call3(ObjectMotion_ResetAndSetPositionInMode2, 21, 196, 612);
+        Call3(Engine_ActorWalkTo, 21, 196, 612);
     } while (0);
     Object_RefreshSelectorById(24);
-    Battle_WaitMode0(10);
-    Event_FinishScreenTransition();
-    Event_WaitTransitionFrames();
-    Battle_WaitMode0(10);
+    Engine_EventWait(10);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventWait(10);
     Graphics_EnableObjLayerAndCallbacks();
     Ui_SetRenderResultFromObject(21);
     UiText_ShowCenteredMessage((s32)MsgFuneArrgh, 1, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
-    Event_SetExitRequest(12);
+    Engine_EventRequestExit(12);
 }
 
 void FuneKanpan_RunDeckCrewScene(void)
@@ -1490,8 +1487,8 @@ void FieldScene_RunActorSequence(void)
     Actor_SetSpeed(29, 0x19999, 0xcccc);
     Object_SetActionCallbackAndRefreshById(29, base5_200c888);
     Engine_EventWait(20);
-    Event_FinishScreenTransition();
-    Event_WaitTransitionFrames();
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
     Engine_ActorStop(24);
     Engine_ActorStop(25);
     Engine_ActorStop(26);
@@ -1887,7 +1884,7 @@ scene:
         Engine_ActorEnableActionCallback(actor, FuneKanpan_RosterActions);
     }
 
-    Engine_ActorStartAction(actor);
+    Object_RefreshSelectorById(actor);
     Engine_EventWait(40);
     Engine_ActorSetPosition(0, 216 << 16, 146 << 18);
     Engine_TaskWait(1);

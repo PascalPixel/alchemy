@@ -2,13 +2,13 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global SetCameraZoom
+	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
-SetCameraZoom:
+Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
-	.global TestSceneFlag
+	.global Engine_GameFlagIsSet
 	.thumb_func
-TestSceneFlag:
+Engine_GameFlagIsSet:
 	overlay_veneer GameFlag_TestFar
 	.global InitializeSceneRecordBuffer
 	.thumb_func

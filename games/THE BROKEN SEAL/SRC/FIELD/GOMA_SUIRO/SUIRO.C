@@ -18,7 +18,6 @@
 
 
 
-void GameFlag_SetBit();
 
 
 const struct SceneEntrance *Scene_GetEntrances(void)
@@ -61,7 +60,7 @@ void FieldScene_RunActor8AtCell24Sequence(void)
         Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
         target = Object_GetById(8);
         Engine_ActorSetSpriteFlags((s32)target, 0);
-        GameFlag_SetBit(0x864);
+        ((void (*)())Engine_GameFlagSet)(0x864);
     }
 }
 
@@ -88,7 +87,7 @@ s32 FieldScene_PlaceActor8OnEntry(void)
                 record = Object_GetById(8);
                 Engine_ActorSetSpriteFlags(record, 0);
                 *((u8 *)Object_GetById(8) + 35) |= 2;
-                Object_SetModeById(8, 2);
+                Engine_ActorSetAnimation(8, 2);
                 Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
             }
         }

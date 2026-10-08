@@ -41,9 +41,6 @@ Engine_ObjectSetScript:
 	.global Engine_ObjectCreate
 	.thumb_func
 Engine_ObjectCreate:
-	.global CreateOverlayObject
-	.thumb_func
-CreateOverlayObject:
 	overlay_veneer Object_CreateFar
 	.global Engine_MapRedraw
 	.thumb_func
@@ -57,9 +54,9 @@ Engine_MapCopyCellsTo:
 	.thumb_func
 Object_CheckMovementCollision:
 	overlay_veneer Map_CheckObjectStepFar
-	.global SetOverlayObjectMode
+	.global Engine_ActorSetSpriteFlags
 	.thumb_func
-SetOverlayObjectMode:
+Engine_ActorSetSpriteFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global RunOverlayObjectCommand1
 	.thumb_func
@@ -164,9 +161,6 @@ Engine_ActorSetChildValue:
 	.global ObjectGroup_SetChildValue
 	.thumb_func
 ObjectGroup_SetChildValue:
-	.global SetOverlayObjectSlot
-	.thumb_func
-SetOverlayObjectSlot:
 	overlay_veneer ObjectGroup_SetChildValueFar
 	.global Engine_EventSetMessage
 	.thumb_func

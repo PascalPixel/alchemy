@@ -161,7 +161,7 @@ void MakyuriHeya_SpawnSparkPair(void)
             sprite->flags = 0;
         }
     }
-    Audio_PlayCue(130);
+    Engine_AudioPlayCue(130);
 }
 
 void MakyuriIriguchi_RaisePillar(void)
@@ -206,7 +206,7 @@ void MakyuriIriguchi_RaisePillar(void)
     }
     for (step = state->step; step <= 2; step++) {
         MakyuriHeya_SpawnSparkPair();
-        WaitFrames(30);
+        Engine_TaskWait(30);
         pillar[84] = 1;
         Object_SetMode(pillar, 5 - step);
     }

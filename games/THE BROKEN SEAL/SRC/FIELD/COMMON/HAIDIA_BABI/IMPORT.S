@@ -82,9 +82,9 @@ Engine_MapCopyCellAttributes:
 	.thumb_func
 Engine_ActorSetSpriteFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global Engine_MapRenderSetValues
+	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
-Engine_MapRenderSetValues:
+Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Graphics_EnableObjLayerAndCallbacks
 	.thumb_func

@@ -22,7 +22,7 @@ void HaidiaArashi_SetStormCellAttributes();
 void SceneActor_RunActor22PlacementSequence();
 
 void ActorPresentation_SetEightSceneCells();
-void ObjectMotion_SetActionVariant();
+void Engine_ActorSetSpritePriority();
 void FieldScene_DrawFiveTileBlocks();
 void Event_PrepareObjectAndApplyValue();
 
@@ -402,7 +402,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         Engine_ActorSetAnimation(8, 6);
         Object_GetById(22)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
         Object_GetById(8)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
-        Scheduler_AddOrUpdateCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xC80);
+        Engine_TaskAddCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xC80);
         Engine_ActorSetPosition(24, 0, 0);
         Engine_ActorSetPosition(25, 0, 0);
         Engine_ActorSetPosition(23, 0, 0);
@@ -691,9 +691,9 @@ void HaidiaArashi_RunEventSequence(void)
             rec7->target_y = v3;
             rec7->bounce = 0x8000;
             Actor_WalkToAndWait(12, 0x122, 0x341);
-            ObjectMotion_SetActionVariant(12, 1);
+            Engine_ActorSetSpritePriority(12, 1);
             Actor_WalkToAndWait(12, 0x102, 0x354);
-            ObjectMotion_SetActionVariant(12, 2);
+            Engine_ActorSetSpritePriority(12, 2);
             Actor_WalkToAndWait(12, 224, 0x368);
             Engine_EventWait(40);
             Engine_AudioPlayCue(0x121);
@@ -760,7 +760,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Audio_PlayCue(141);
             Engine_TaskWait(40);
             Audio_PlayCue(145);
-            ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 3);
+            Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
             Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
             Actor_SetPosition(13, 0, 0x2bf0000);
             actor->speed = 0x18000;
@@ -775,7 +775,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Engine_MapWaitWorkValuesBelow256();
             BattleFx_PlayQueuedSound();
             GameFlag_Set(0x832);
-            ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, priority);
+            Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, priority);
             Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
             leader->priority_flags = flags;
         }
@@ -1164,10 +1164,10 @@ void Scene_BoulderFalls(void)
         Engine_ActorSetAnimation(30, 8);
         Engine_ActorSetAnimation(29, 8);
         Actor_Get(30)->scale_x = -0x10000;
-        ObjectMotion_SetActionVariant(32, 2);
-        ObjectMotion_SetActionVariant(33, 2);
-        ObjectMotion_SetActionVariant(30, 3);
-        ObjectMotion_SetActionVariant(29, 3);
+        Engine_ActorSetSpritePriority(32, 2);
+        Engine_ActorSetSpritePriority(33, 2);
+        Engine_ActorSetSpritePriority(30, 3);
+        Engine_ActorSetSpritePriority(29, 3);
         Engine_EventSetMessage((s32)MsgHaidiaTheBoulderIsFalling);
         Event_ShowMessageAndWait(28, 0, 20);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1188,7 +1188,7 @@ void Scene_BoulderFalls(void)
         *phase = 0;
         FieldScheduler_AddOrUpdateCallback(steps, 0xc80);
         callback = (s32)SceneState_SetValue19ThenCall;
-        Scheduler_AddOrUpdateCallback(callback, 0xc80);
+        Engine_TaskAddCallback(callback, 0xc80);
         Engine_EventWait(40);
         *phase = 1;
         Engine_EventWait(30);
@@ -2019,7 +2019,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     ColorBuffer_ApplyTarget(0x10000, 2);
     Engine_ColorBufferInterpolate(30);
     Task_Wait(30);
-    Scheduler_AddOrUpdateCallback(HaidiaArashi_UpdatePulsingGlow, 0xc80);
+    Engine_TaskAddCallback(HaidiaArashi_UpdatePulsingGlow, 0xc80);
     Actor_EnableActionCallback(19, HaidiaArashi_ActorNineteenRiseScript);
     Camera_SetSpeed(0x20000, 0x7ae);
     Camera_MoveTo(0xaf0000, 0x600000, 0x43e0000, 1);
@@ -2086,7 +2086,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     Engine_MapRedraw();
     groupActor->scale_x = 0x20000;
     groupActor->scale_y = 0x20000;
-    Scheduler_AddOrUpdateCallback(ActorPresentation_SelectActorTwentySevenState, 0xc80);
+    Engine_TaskAddCallback(ActorPresentation_SelectActorTwentySevenState, 0xc80);
     Actor_Stop(10);
     Actor_Stop(24);
     Actor_Stop(25);
@@ -2189,7 +2189,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     Actor_SetAnimation(8, 6);
     Object_GetById(22)->priority_flags &= 254;
     Object_GetById(8)->priority_flags &= 254;
-    Scheduler_AddOrUpdateCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xc80);
+    Engine_TaskAddCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xc80);
     Actor_SetPosition(0, 0xb50000, 0x4f90000);
     work = Actor_Get(0);
     work->facing = 0xe000;

@@ -53,12 +53,12 @@ void BabiIriguchi_CloseTruthDoor(void);
 
 struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor);
 
-void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
-void Object_SetModeById(s32 actor, s32 mode);
+void Engine_TaskWait(s32 frames);
+void Engine_EventWait(s32 frames);
+void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
+void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
+void Engine_ActorWaitForMove(s32 actor);
+void Engine_ActorSetAnimation(s32 actor, s32 mode);
 void Engine_MapCopyCellsLayered(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width,
                                 s32 height);
 void BattleFx_SetPhaseRequest();
@@ -72,14 +72,14 @@ void BabiIriguchi_JumpFromLedge();
 static __inline__ void Iriguchi_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 {
     /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
-    ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+    Engine_ActorSetSpeed(actor, speed, acceleration);
 }
 
 static __inline__ void Iriguchi_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
                                                    s32 dest_x, s32 dest_y)
 {
     /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
-    Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
+    Engine_MapCopyCellAttributes(src_x, src_y, width, height, dest_x, dest_y);
 }
 
 static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)

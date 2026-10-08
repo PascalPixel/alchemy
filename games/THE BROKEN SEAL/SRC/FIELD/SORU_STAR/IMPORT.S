@@ -70,9 +70,9 @@ Engine_ObjectDispatchRelease:
 	.thumb_func
 Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
-	.global Object_SetMoveTarget
+	.global Engine_ObjectSetPosition
 	.thumb_func
-Object_SetMoveTarget:
+Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
 	.global Engine_MapAnimateCells
 	.thumb_func

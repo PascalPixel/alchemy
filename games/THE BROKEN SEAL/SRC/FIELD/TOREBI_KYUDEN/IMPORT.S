@@ -46,9 +46,9 @@ Engine_UiTextDrawQuantity:
 	.thumb_func
 Engine_ItemLoadIcon:
 	overlay_veneer Ui_PrepareTransferForItemFar
-	.global Engine_OwnerGetState
+	.global UnitGet
 	.thumb_func
-Engine_OwnerGetState:
+UnitGet:
 	overlay_veneer UnitGetFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
@@ -66,9 +66,9 @@ Engine_GameFlagClear:
 	.thumb_func
 Engine_OwnerRecalculateRatios:
 	overlay_veneer UnitRatioFar
-	.global Engine_PartyAddActiveOwner
+	.global Party_AddActiveOwner
 	.thumb_func
-Engine_PartyAddActiveOwner:
+Party_AddActiveOwner:
 	overlay_veneer Party_AddActiveOwnerFar
 	.global Engine_PartyListActiveOwners
 	.thumb_func
@@ -118,9 +118,9 @@ Object_RefreshSelectorById:
 	.thumb_func
 Engine_ActorStop:
 	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar
-	.global ObjectMotion_ResetAndSetPosition
+	.global Engine_ActorSetDestination
 	.thumb_func
-ObjectMotion_ResetAndSetPosition:
+Engine_ActorSetDestination:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
 	.global Engine_ActorWalkTo
 	.thumb_func
@@ -198,9 +198,9 @@ Engine_ActorShowEmote:
 	.thumb_func
 Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
-	.global Object_AttachWorkTargetToObject
+	.global Engine_CameraFollowActor
 	.thumb_func
-Object_AttachWorkTargetToObject:
+Engine_CameraFollowActor:
 	overlay_veneer Object_AttachWorkTargetToObjectFar
 	.global Engine_CameraMoveTo
 	.thumb_func
@@ -218,13 +218,13 @@ Engine_EventRequestExit:
 	.thumb_func
 DisplayTransition_InitializeBattleEffectState:
 	overlay_veneer DisplayTransition_InitializeBattleEffectStateFar
-	.global Event_StartScreenTransition
+	.global Engine_EventOpenScreen
 	.thumb_func
-Event_StartScreenTransition:
+Engine_EventOpenScreen:
 	overlay_veneer Event_StartScreenTransitionFar
-	.global Event_WaitTransitionFrames
+	.global Engine_EventWaitForScreen
 	.thumb_func
-Event_WaitTransitionFrames:
+Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitTransitionFramesFar
 	.global Engine_ItemShowFound
 	.thumb_func

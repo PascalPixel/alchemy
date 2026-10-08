@@ -22,7 +22,7 @@ s32 MakyuriIriguchi_TrailSparks(struct FieldActor *a0)
 
 s32 SceneAudio_PlayCue118AndReturnZero(void)
 {
-    Audio_PlayCue(118);
+    Engine_AudioPlayCue(118);
     return 0;
 }
 

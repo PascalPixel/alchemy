@@ -302,9 +302,9 @@ Engine_EventWaitForScreen:
 	.thumb_func
 Engine_ItemShowFound:
 	overlay_veneer BattleFx_StartEffectObject22Far
-	.global ObjectTable_Get
+	.global Engine_ActorLookup
 	.thumb_func
-ObjectTable_Get:
+Engine_ActorLookup:
 	overlay_veneer ObjectTable_GetFar
 	.global Engine_PsynergyPlayEffect
 	.thumb_func

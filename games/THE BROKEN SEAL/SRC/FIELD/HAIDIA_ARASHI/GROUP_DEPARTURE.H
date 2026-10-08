@@ -95,7 +95,7 @@ extern u8 HaidiaArashi_ActorNineteenScript[];
 
 extern u8 HaidiaArashi_ActorEightScript[];
 
-void ObjectMotion_SetActionVariant(s32 actor, s32 priority);
+void Engine_ActorSetSpritePriority(s32 actor, s32 priority);
 
 extern s32 HaidiaArashi_ShakeDone;
 extern s32 HaidiaArashi_ShakeShift;

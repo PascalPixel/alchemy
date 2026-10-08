@@ -2,9 +2,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global WaitFrames
+	.global Engine_TaskWait
 	.thumb_func
-WaitFrames:
+Engine_TaskWait:
 	overlay_veneer WaitFramesFar
 	.global Engine_TaskAddCallback
 	.thumb_func
@@ -18,9 +18,6 @@ Engine_TaskRemoveCallback:
 	.thumb_func
 Engine_RandomNext:
 	overlay_veneer Random16Far
-	.global Object_SetMode
-	.thumb_func
-Object_SetMode:
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
@@ -41,17 +38,17 @@ Engine_ObjectDispatchRelease:
 	.thumb_func
 Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
-	.global Object_SetPosition
+	.global Engine_ObjectSetPosition
 	.thumb_func
-Object_SetPosition:
+Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
 	.global Object_CommitPosition
 	.thumb_func
 Object_CommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
-	.global Map_CopyCellAttributeRect
+	.global Engine_MapCopyCellAttributes
 	.thumb_func
-Map_CopyCellAttributeRect:
+Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Object_CheckMovementCollision
 	.thumb_func
@@ -69,9 +66,9 @@ Engine_GameFlagIsSet:
 	.thumb_func
 Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
-	.global Battle_WaitMode0
+	.global Engine_EventWait
 	.thumb_func
-Battle_WaitMode0:
+Engine_EventWait:
 	overlay_veneer Battle_WaitMode0Far
 	.global Engine_EventBegin
 	.thumb_func
@@ -89,9 +86,9 @@ Engine_EventChooseYesNo:
 	.thumb_func
 Object_GetById:
 	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_SetSpeedParameters
+	.global Engine_ActorSetSpeed
 	.thumb_func
-ObjectMotion_SetSpeedParameters:
+Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
 	.global Engine_ActorEnableActionCallback
 	.thumb_func
@@ -121,21 +118,21 @@ Engine_ActorMoveToAndWait:
 	.thumb_func
 Engine_ActorWalkToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
-	.global ObjectMotion_OffsetPositionAndResetMotion
+	.global Engine_ActorSetDestinationOffset
 	.thumb_func
-ObjectMotion_OffsetPositionAndResetMotion:
+Engine_ActorSetDestinationOffset:
 	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
-	.global ObjectMotion_CommitCurrentPositionAndActivate
+	.global Engine_ActorWaitForMove
 	.thumb_func
-ObjectMotion_CommitCurrentPositionAndActivate:
+Engine_ActorWaitForMove:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	.global Engine_ActorSetPosition
 	.thumb_func
 Engine_ActorSetPosition:
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Object_SetModeById
+	.global Engine_ActorSetAnimation
 	.thumb_func
-Object_SetModeById:
+Engine_ActorSetAnimation:
 	overlay_veneer Object_SetModeByIdFar
 	.global Engine_ActorSetAnimationAndWait
 	.thumb_func
@@ -213,9 +210,6 @@ Audio_PlayCueFromEventWork:
 	.thumb_func
 BattleFx_PlayQueuedSound:
 	overlay_veneer BattleFx_PlayQueuedSoundFar
-	.global Audio_PlayCue
-	.thumb_func
-Audio_PlayCue:
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:

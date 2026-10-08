@@ -18,7 +18,7 @@
 
 
 s32 Object_CheckMovementCollision();
-void Object_SetPosition();
+void Engine_ObjectSetPosition();
 void Object_CommitPosition();
 
 s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
@@ -458,11 +458,11 @@ void StagedActor_PushActorAhead(void)
 
     target->speed = 0x3333;
     target->acceleration = 0x3333;
-    Object_SetPosition(target, pos[0], pos[1], pos[2]);
+    Engine_ObjectSetPosition(target, pos[0], pos[1], pos[2]);
 
     player->speed = 0x3333;
     player->acceleration = 0x3333;
-    Object_SetPosition(player, pos[0], pos[1], pos[2]);
+    Engine_ObjectSetPosition(player, pos[0], pos[1], pos[2]);
 
     Object_CommitPosition(target);
 

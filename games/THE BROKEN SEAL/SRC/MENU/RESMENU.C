@@ -73,7 +73,7 @@ struct LinkRoundState {
 };
 
 extern volatile u16 gLinkStatus;
-extern volatile u8 gDebugMode;
+extern u8 gDebugMode;
 extern volatile u32 gKeysHeld;
 void Audio_PlayCue(s32 cue);
 void Graphics_ExpandVramTilesByColorTable(s32 destination);

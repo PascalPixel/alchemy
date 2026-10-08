@@ -141,7 +141,7 @@ loop:
 	x = (u16)((window->x * 8 + (offset->x >> 8) + 4) & 0x1ff);
 	attr1 = spr->attr1;
 	spr->attr1 = (attr1 & ~0x1ff) | x;
-	// 上下に 1 ドットゆれる
+	// 上下に 2 ドットまでゆれる
 	*(u8 *)&spr->attr0 = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 + (offset->y >> 8) + 6;
 	Runtime_PushSlotEntry(spr, 240);
 	if (!(gKeysHeld & KEY_B) && !(gKeyState & KEY_OKURI)

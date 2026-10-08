@@ -89,13 +89,14 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character,
         return result;
     }
 
+    if (character == ' ') {
 #if !EDITION_INTERNATIONAL
-    width = 7;
+        width = 7;
 #else
-    width = 5;
+        width = 5;
 #endif
-    if (character == ' ')
         goto done;
+    }
     {
         u32 tiles[32];
         struct RenderOutput *output;
@@ -107,8 +108,6 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character,
             return 0;
         index = (output - work->outputs) * 4;
         output->active = 1;
-        /* FAKEMATCH: keeps the space width out of CSE, which would store its register for outline 3's 5. */
-        __asm__("" : "+r"(width));
         output->kind = 0;
         if (mode == 1) {
             width = 1;

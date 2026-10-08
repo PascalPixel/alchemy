@@ -1,3 +1,8 @@
+//--------------------------------------------------------------------------
+// DATA_LOOKUP_ROUTINES.C
+// フィールド：エンカウント・曲・地名の表引き
+//--------------------------------------------------------------------------
+
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -19,122 +24,141 @@ extern struct EventWork *gEventWork;
 
 extern s32 Encounter_SelectEnemyGroup();
 
-s32 EffectRuntime_LookupByTableEntry(u32 index)
+//--------------------------------------------------------------------------
+// 地形ごとのエンカウント
+// terrain : 地形番号（0 は通常の地面）
+// 呼び出し側が r1 に置いた歩数はそのまま Encounter_SelectEnemyGroup へ渡る
+//--------------------------------------------------------------------------
+s32 EffectRuntime_LookupByTableEntry(u32 terrain)
 {
-    u8 *table = gEventWork->encounter_groups;
+	u8 *zone;
 
-    return Encounter_SelectEnemyGroup(table[index]);
+	zone = gEventWork->encounter_groups;
+	return Encounter_SelectEnemyGroup(zone[terrain]);
 }
 
-s32 Encounter_SelectEnemyGroup(s32, s32);
+s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps);
 
-s32 BattleFx_ApplyLookupResult(s32 arg0, s32 arg1)
+//--------------------------------------------------------------------------
+// ワールドマップのエンカウント（足元の地形からゾーンを引く）
+//--------------------------------------------------------------------------
+s32 BattleFx_ApplyLookupResult(s32 pos, s32 steps)
 {
-    return Encounter_SelectEnemyGroup(BattleFx_LookupResult((void *)arg0), arg1);
+	return Encounter_SelectEnemyGroup(BattleFx_LookupResult((void *)pos), steps);
 }
 
 extern u16 Encounter_EnemyGroupTable[];
 
-u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1)
+//--------------------------------------------------------------------------
+// ゾーンの敵グループをひとつ返す
+// zone : ゾーン番号（1 件 14 ハーフワード）
+// slot : 敵グループの枠
+//--------------------------------------------------------------------------
+u16 BattleFx_GetWeightedResult(s32 zone, s32 slot)
 {
-    return Encounter_EnemyGroupTable[(arg0 * 14) + arg1 + 2];
+	return Encounter_EnemyGroupTable[zone * 14 + slot + 2];
 }
 
-unsigned char BattleFx_GetPhaseResult(s32 phase_index)
+//--------------------------------------------------------------------------
+// 番号から（ゾーン, 枠）を引き、その敵グループを返す
+// return 文はなく、BattleFx_GetWeightedResult の戻り値が r0 に残る
+//--------------------------------------------------------------------------
+u8 BattleFx_GetPhaseResult(s32 no)
 {
-  s32 entry_offset;
-  int entry_address;
-  int weighted_index_address;
-  u16 weighted_row;
-  u8 *entry;
-  u8 *weighted_row_address;
-  entry_offset = phase_index * 4;
-  entry = ((u8 *)entry_offset) + (s32)Encounter_AreaEntryTable;
-  weighted_index_address = entry_offset + (s32)Encounter_AreaEntryTable;
-  weighted_row_address = entry;
-  weighted_row = *((u16 *)weighted_row_address);
-  entry_address = weighted_index_address;
-  BattleFx_GetWeightedResult(
-      weighted_row, *((u16 *)(((u8 *)entry_address) + 2)));
+	u16 *ent;
+
+	ent = (u16 *)(Encounter_AreaEntryTable + no * 4);
+	BattleFx_GetWeightedResult(ent[0], ent[1]);
 }
 
-struct SceneInteractionEntry {
-    s16 id;
-    s16 value : 15;
-    u16 alt_source : 1;
-    s16 condition;
-    s16 result;
+struct SceneInteractionEntry
+{
+	s16 id;
+	s16 value : 15;		// 入口（-1 はどの入口でも）
+	u16 alt_source : 1; // 1: id はシーン番号、0: グループ番号
+	s16 condition;		// 立っていれば有効になるフラグ（-1 は常に）
+	s16 result;			// 曲
 };
 
+//--------------------------------------------------------------------------
+// シーンと入口から、そのシーンの曲を決める
+//--------------------------------------------------------------------------
 void Scene_ResolveInteractionResult(void)
 {
-    s16 result = 18;
-    s16 progress = gGameState.scene;
-    s16 sub = gGameState.entrance;
-    s16 alt = gGameState.scene_group;
-    const struct SceneInteractionEntry *entry = Scene_InteractionRuleTable;
+	s16									cue = 18;
+	s16									scene = gGameState.scene;
+	s16									ent = gGameState.entrance;
+	s16									grp = gGameState.scene_group;
+	const struct SceneInteractionEntry *p = Scene_InteractionRuleTable;
 
-    for (; entry->id != -1; entry++) {
-        if (entry->alt_source) {
-            if (entry->id != progress) {
-                continue;
-            }
-            if (entry->value != -1 && entry->value != sub) {
-                continue;
-            }
-            if (entry->condition != -1 && GameFlag_TestFar(entry->condition) == 0) {
-                continue;
-            }
-            result = entry->result;
-            break;
-        } else {
-            if (entry->id != alt) {
-                continue;
-            }
-            if (entry->value != -1 && entry->value != sub) {
-                continue;
-            }
-            if (entry->condition != -1 && GameFlag_TestFar(entry->condition) == 0) {
-                continue;
-            }
-            result = entry->result;
-            break;
-        }
-    }
+	for (; p->id != -1; p++)
+	{
+		if (p->alt_source)
+		{
+			if (p->id != scene)
+				continue;
+			if (p->value != -1 && p->value != ent)
+				continue;
+			if (p->condition != -1 && GameFlag_TestFar(p->condition) == 0)
+				continue;
+			cue = p->result;
+			break;
+		}
+		if (p->id != grp)
+			continue;
+		if (p->value != -1 && p->value != ent)
+			continue;
+		if (p->condition != -1 && GameFlag_TestFar(p->condition) == 0)
+			continue;
+		cue = p->result;
+		break;
+	}
 
-    gGameState.cue = result;
+	gGameState.cue = cue;
 }
 
-struct SceneAreaNameRule {
-    s16 id;
-    s16 entrance : 15;
-    u16 use_scene_id : 1;
-    s32 area_name_index;
+struct SceneAreaNameRule
+{
+	s16 id;
+	s16 entrance : 15;	  // -1 はどの入口でも
+	u16 use_scene_id : 1; // 1: id はシーン番号、0: グループ番号
+	s32 area_name_index;  // 地名番号
 };
 
+//--------------------------------------------------------------------------
+// シーンと入口から地名の番号を返す（見つからなければ 0）
+//--------------------------------------------------------------------------
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {
-    const struct SceneAreaNameRule *entry = Scene_AreaNameRules;
-    s32 area_name_index = 0;
-    s32 group = BattleFx_GetResourceGroup(scene);
+	const struct SceneAreaNameRule *p = Scene_AreaNameRules;
+	s32								name = 0;
+	s32								grp = BattleFx_GetResourceGroup(scene);
 
-    while (entry->id != -1) {
-        if (entry->use_scene_id) {
-            if (entry->id == scene) {
-                if (entry->entrance == -1 || entry->entrance == entrance) {
-                    area_name_index = entry->area_name_index;
-                    break;
-                }
-            }
-        } else {
-            if (entry->id == group) {
-                if (entry->entrance == -1 || entry->entrance == entrance) {
-                    area_name_index = entry->area_name_index;
-                    break;
-                }
-            }
-        }
-        entry++;
-    }
-    return area_name_index;
+	while (p->id != -1)
+	{
+		if (p->use_scene_id)
+		{
+			if (p->id == scene)
+			{
+				if (p->entrance == -1 || p->entrance == entrance)
+				{
+					name = p->area_name_index;
+					break;
+				}
+			}
+		}
+		else
+		{
+			if (p->id == grp)
+			{
+				if (p->entrance == -1 || p->entrance == entrance)
+				{
+					name = p->area_name_index;
+					break;
+				}
+			}
+		}
+		p++;
+	}
+	return name;
 }

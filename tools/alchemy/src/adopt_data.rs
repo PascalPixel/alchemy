@@ -616,7 +616,7 @@ fn object_line(root: &Path, object: &str, sections: &str) -> Result<String, Stri
     if !object.starts_with("games/") || object.contains("..") || object.contains('"') {
         return Err(format!("{object} is not a games/ object"));
     }
-    if !["s", "S", "c"]
+    if !crate::build_rom::source_extensions(&stem.to_string_lossy())
         .iter()
         .any(|extension| root.join(stem.with_extension(extension)).is_file())
     {

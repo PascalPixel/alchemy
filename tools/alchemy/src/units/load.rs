@@ -192,7 +192,7 @@ fn origin(root: &Path, compiler: CompilerTarget, path: &str) -> Origin {
         return Origin { lang: Lang::Listing, source: None };
     }
     let stem = rel.trim_end_matches(".o");
-    for ext in ["c", "s", "S"] {
+    for ext in crate::build_rom::source_extensions(stem) {
         let source = root.join(format!("{stem}.{ext}"));
         if source.exists() {
             let relative_source = format!("{stem}.{ext}");

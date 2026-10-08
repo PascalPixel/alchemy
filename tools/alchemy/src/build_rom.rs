@@ -90,8 +90,21 @@ pub(crate) fn script_objects(script: &str) -> Vec<String> {
         .collect()
 }
 
+/// The extensions an object's source may take, by the case rule (S3): an
+/// object named in capitals comes from a preprocessed assembly file (NAME.S),
+/// any other from C, plain assembly or MIDI. The name decides, not the file
+/// system, which on macOS finds x.s for X.S.
+pub(crate) fn source_extensions(object: &str) -> &'static [&'static str] {
+    let leaf = object.rsplit('/').next().unwrap_or(object);
+    if leaf.bytes().any(|byte| byte.is_ascii_uppercase()) {
+        &["S"]
+    } else {
+        &["c", "s", "mid"]
+    }
+}
+
 pub(crate) fn source_for(root: &Path, object: &str) -> Result<PathBuf, String> {
-    ["c", "s", "S", "mid"]
+    source_extensions(object)
         .iter()
         .map(|extension| PathBuf::from(format!("{object}.{extension}")))
         .find(|path| root.join(path).is_file())
@@ -930,12 +943,11 @@ fn plan(
             .and_then(Path::parent)
             .ok_or("an object lies outside its build's obj directory")?;
         assembly_inputs(&mut hasher, root, target, source, base, index)?;
-        vec![target_assembly_command(
-            target,
-            &source_text,
-            &object_text,
-            base,
-        )]
+        let steps = target_assembly_steps(target, &source_text, &object_text, base);
+        if steps.len() > 1 {
+            scratch.push(object.with_extension("i"));
+        }
+        steps
     };
     for step in &steps {
         hasher.update(portable(root, step.join("\0").as_bytes()));
@@ -1397,13 +1409,36 @@ fn overlay_data(root: &Path, target: DecompTarget, id: &str) -> Option<PathBuf> 
     root.join(&path).is_file().then_some(path)
 }
 
-fn target_assembly_command(
+/// The steps that assemble one source, chosen by its extension as GCC's
+/// driver chooses them: a `.S` file runs through the C preprocessor first,
+/// with the edition defined as a macro, and the assembler reads its output;
+/// any other assembly goes straight to the assembler.
+fn target_assembly_steps(
     target: DecompTarget,
     source: &str,
     object: &str,
     include: &Path,
-) -> Vec<String> {
-    let mut step = assembly_command(source, object);
+) -> Vec<Vec<String>> {
+    let mut steps = Vec::new();
+    let mut input = source.to_owned();
+    if Path::new(source).extension().is_some_and(|extension| extension == "S") {
+        let preprocessed = Path::new(object).with_extension("i");
+        let preprocessed = preprocessed.to_string_lossy().into_owned();
+        steps.push(vec![
+            crate::compiler::routing::bundle()
+                .join("cpp0")
+                .to_string_lossy()
+                .into_owned(),
+            "-lang-asm".into(),
+            "-nostdinc".into(),
+            format!("-D{}=1", target.edition_define),
+            format!("-I{}", include.display()),
+            source.to_owned(),
+            preprocessed.clone(),
+        ]);
+        input = preprocessed;
+    }
+    let mut step = assembly_command(&input, object);
     step.splice(
         1..1,
         [
@@ -1412,7 +1447,8 @@ fn target_assembly_command(
             format!("-I{}", include.display()),
         ],
     );
-    step
+    steps.push(step);
+    steps
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -1550,7 +1586,7 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
     );
     link.extend(libraries.iter().map(|path| path.to_string_lossy().into_owned()));
     let empty = Path::new("/dev/null");
-    let assemble = target_assembly_command(
+    let assemble = target_assembly_steps(
         target,
         &listing.as_deref().unwrap_or(empty).to_string_lossy(),
         &object,
@@ -1558,7 +1594,7 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
     );
     let mut hasher = Sha256::new();
     overlay_inputs(&mut hasher, root, output, listing.as_deref(), script, objects, index)?;
-    for step in [&assemble, &link] {
+    for step in assemble.iter().chain([&link]) {
         hasher.update(portable(root, step.join("\0").as_bytes()));
     }
     for library in &libraries {
@@ -1586,7 +1622,9 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
             materialize(root, output, index, &asset)?;
         }
     }
-    command(&assemble, root)?;
+    for step in &assemble {
+        command(step, root)?;
+    }
     let mut own = BTreeSet::new();
     for path in std::iter::once(PathBuf::from(&object))
         .chain(objects.iter().cloned())
@@ -1806,10 +1844,21 @@ pub(crate) fn preprocessor_only(
 }
 
 fn with_includes(directories: &[&Path], source: &Path) -> Result<Vec<u8>, String> {
+    let preprocessed = source.extension().is_some_and(|extension| extension == "S");
+    included(directories, source, preprocessed)
+}
+
+/// A source and everything it includes; a preprocessed (.S) source and its
+/// headers also name headers with #include.
+fn included(directories: &[&Path], source: &Path, preprocessed: bool) -> Result<Vec<u8>, String> {
     let text = fs::read(source).map_err(|error| format!("{}: {error}", source.display()))?;
     let mut key = text.clone();
     for line in String::from_utf8_lossy(&text).lines() {
-        let Some(rest) = line.trim().strip_prefix(".include") else {
+        let line = line.trim();
+        let directive = line
+            .strip_prefix(".include")
+            .or_else(|| line.strip_prefix("#include").filter(|_| preprocessed));
+        let Some(rest) = directive else {
             continue;
         };
         let include = rest.trim().trim_matches('"');
@@ -1819,12 +1868,14 @@ fn with_includes(directories: &[&Path], source: &Path) -> Result<Vec<u8>, String
         {
             continue;
         }
-        let path = directories
-            .iter()
-            .map(|directory| directory.join(include))
+        // cpp looks beside the including file first.
+        let beside = source.parent().filter(|_| preprocessed).map(|folder| folder.join(include));
+        let path = beside
+            .into_iter()
+            .chain(directories.iter().map(|directory| directory.join(include)))
             .find(|path| path.is_file())
             .unwrap_or_else(|| directories[0].join(include));
-        key.extend_from_slice(&with_includes(directories, &path)?);
+        key.extend_from_slice(&included(directories, &path, preprocessed)?);
     }
     Ok(key)
 }
@@ -1841,6 +1892,22 @@ mod tests {
         for name in ["obj", "overlays", "text", "symbols", "tbs-en.gba", "Map", "_x", ""] {
             assert!(!asset_root(name), "{name}");
         }
+    }
+
+    #[test]
+    fn only_a_capital_s_file_is_preprocessed() {
+        let target = decomp_target(Some("tbs-en")).unwrap();
+        let include = Path::new("out/tbs-en");
+        let plain = target_assembly_steps(target, "games/tbs/src/a.s", "out/a.o", include);
+        assert_eq!(plain.len(), 1);
+        assert_eq!(plain[0].last().map(String::as_str), Some("games/tbs/src/a.s"));
+        let steps = target_assembly_steps(target, "games/tbs/src/A.S", "out/A.o", include);
+        assert_eq!(steps.len(), 2);
+        assert!(steps[0][0].ends_with("cpp0"));
+        assert!(steps[0].contains(&"-lang-asm".to_string()));
+        assert!(steps[0].contains(&format!("-D{}=1", target.edition_define)));
+        assert_eq!(steps[0][steps[0].len() - 2..], ["games/tbs/src/A.S", "out/A.i"]);
+        assert_eq!(steps[1].last().map(String::as_str), Some("out/A.i"));
     }
 
     #[test]

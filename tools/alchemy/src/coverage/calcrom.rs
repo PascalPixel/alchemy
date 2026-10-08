@@ -150,7 +150,7 @@ fn source_mark(
     expansion: &crate::compiler::preprocess::Expansion<'_>,
     stem: &str,
 ) -> Result<Mark, String> {
-    let Some((path, text)) = ["c", "s", "S"].iter().find_map(|extension| {
+    let Some((path, text)) = crate::build_rom::source_extensions(stem).iter().find_map(|extension| {
         let path = format!("{stem}.{extension}");
         std::fs::read_to_string(root.join(&path))
             .ok()
@@ -743,7 +743,7 @@ fn streamed(root: &Path, target: DecompTarget, map: &str) -> Result<Vec<String>,
         else {
             continue;
         };
-        let source = ["s", "S"]
+        let source = crate::build_rom::source_extensions(stem)
             .iter()
             .map(|extension| PathBuf::from(format!("{stem}.{extension}")))
             .find(|path| root.join(path).is_file())

@@ -326,6 +326,27 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
     ))
 }
 
+pub fn entry(rest: &[String]) -> std::process::ExitCode {
+    if rest.first().is_some_and(|a| a == "--editions") && rest.iter().any(|a| a == "--help" || a == "-h") {
+        println!("{}", crate::editions::USAGE);
+        return std::process::ExitCode::SUCCESS;
+    }
+    if rest == ["--help"] || rest == ["-h"] {
+        println!("{USAGE}");
+        return std::process::ExitCode::SUCCESS;
+    }
+    match run(rest) {
+        Ok(text) => {
+            print!("{text}");
+            std::process::ExitCode::SUCCESS
+        }
+        Err(error) => {
+            eprintln!("{error}");
+            std::process::ExitCode::from(2)
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -363,26 +384,5 @@ mod tests {
                 ("tla-en".into(), 0x0800_1000),
             ]
         );
-    }
-}
-
-pub fn entry(rest: &[String]) -> std::process::ExitCode {
-    if rest.first().is_some_and(|a| a == "--editions") && rest.iter().any(|a| a == "--help" || a == "-h") {
-        println!("{}", crate::editions::USAGE);
-        return std::process::ExitCode::SUCCESS;
-    }
-    if rest == ["--help"] || rest == ["-h"] {
-        println!("{USAGE}");
-        return std::process::ExitCode::SUCCESS;
-    }
-    match run(rest) {
-        Ok(text) => {
-            print!("{text}");
-            std::process::ExitCode::SUCCESS
-        }
-        Err(error) => {
-            eprintln!("{error}");
-            std::process::ExitCode::from(2)
-        }
     }
 }

@@ -162,7 +162,7 @@ mod tests {
         assert_eq!((extra.weighted, extra.inserted, extra.differ), (INSERT, 1, 1));
         let missing = score(&listing, &rows(&["movs r0, #1", "str r0, [r2]", "bx lr"]));
         assert_eq!((missing.weighted, missing.deleted), (DELETE, 1));
-        assert!(REGALLOC < REORDER && REORDER < INSERT);
+        const { assert!(REGALLOC < REORDER && REORDER < INSERT) };
     }
 
     #[test]

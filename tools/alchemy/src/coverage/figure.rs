@@ -169,7 +169,7 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
     models_strip(
         &mut canvas,
         letters,
-        &days,
+        days,
         &models,
         (left, right, bottom + 24),
         &x_of,

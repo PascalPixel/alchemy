@@ -5,7 +5,6 @@
 
 void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind);
 void *StagedActorPairScene_SpawnSecondaryEffect(s32 x, s32 y, s32 z, s32 kind);
-void StagedActorPairScene_SpawnConfiguredEffect();
 void StagedActorPairScene_RunStep(void);
 void StagedActorPairScene_RunUpdate(void);
 void StagedActorPairScene_NoopActorCallback(void);

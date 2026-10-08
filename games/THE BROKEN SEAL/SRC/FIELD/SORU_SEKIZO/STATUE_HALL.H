@@ -62,18 +62,6 @@ void SoruSekizo_OpenSeal(void);
 
 s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z);
 
-static __inline__ void ConfigureScene(s32 actor, s32 x, s32 y, s32 mode)
-{
-    /* FAKEMATCH: a direct call changes ConfigureSceneAndCheckActors from mov r0, #2 to lsl r1, r1, #16 (22/22 assembly lines). */
-    SetMapCellCollision(actor, x, y, mode);
-}
-
-static __inline__ void SoruSekizo_ConfigureAlternateCell(s32 actor, s32 x, s32 y, s32 mode)
-{
-    /* FAKEMATCH: a direct call changes ConfigureAlternateSceneAndCheckActors from mov r0, #2 to lsl r1, r1, #17 (22/22 assembly lines). */
-    SetMapCellCollision(actor, x, y, mode);
-}
-
 u8 *SceneEventRuntime_GetScriptData(void);
 s32 SceneEventRuntime_ReturnZero(void);
 u8 *SceneEventRuntime_GetMessageData(void);

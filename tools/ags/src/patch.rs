@@ -1,3 +1,4 @@
+#![allow(clippy::tabs_in_doc_comments)] // the example is a TSV file, tabs and all
 //! Edits Camelot made to a stream after packing it (W3).
 //!
 //! A patch file sits beside its asset as `<STEM>_PATCH.TSV`:

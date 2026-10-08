@@ -69,19 +69,6 @@ s32 FieldEffect_UpdateGridPlacement();
 s32 battle_owner_69();
 void BabiIriguchi_JumpFromLedge();
 
-static __inline__ void Iriguchi_SetSpeed(s32 actor, s32 speed, s32 acceleration)
-{
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
-    ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static __inline__ void Iriguchi_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
-                                                   s32 dest_x, s32 dest_y)
-{
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
-    Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
-}
-
 static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 {
     return dividend / divisor;

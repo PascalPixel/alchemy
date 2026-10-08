@@ -164,15 +164,16 @@ fn run(argv: &[String]) -> Result<String, String> {
         };
     }
     let root = crate::compiler::routing::root();
-    let games = measure_both(&root)?;
+    let games = measure_both(root)?;
     for (id, game) in ["tbs", "tla"].iter().zip(&games) {
         if let Ok(game) = game {
-            write_steered(&root, id, &game.english)?;
-            write_missing(&root, id, game)?;
-            write_arm(&root, id, &game.english)?;
-            write_data(&root, id, &game.english)?;
+            write_steered(root, id, &game.english)?;
+            write_missing(root, id, game)?;
+            write_arm(root, id, &game.english)?;
+            write_data(root, id, &game.english)?;
         }
     }
+    let devices = crate::devices::count(root)?;
     let mut lines = Vec::new();
     for ((mark, game), state) in [("☀️", "The Broken Seal"), ("⚓️", "The Lost Age")]
         .iter()
@@ -180,6 +181,10 @@ fn run(argv: &[String]) -> Result<String, String> {
     {
         let mut line = done_line(mark, game, state);
         line.push_str(&patch_part(&root.join("games").join(game.to_uppercase()))?);
+        line.push_str(&crate::devices::summary(
+            &devices,
+            if game.starts_with("The Broken") { "tbs" } else { "tla" },
+        ));
         lines.push(line);
         lines.extend(edition_lines(mark, state));
     }

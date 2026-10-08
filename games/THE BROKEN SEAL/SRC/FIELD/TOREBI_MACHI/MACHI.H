@@ -66,12 +66,6 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
     Engine_MapObjectSetPosition(actor, x, y);
 }
 
-static __inline__ void TorebiMachi_PlaceHiddenMapActor(s32 actor, s32 x, s32 y)
-{
-    /* FAKEMATCH: a direct call changes HideActorOneHundredTwo from mov r1, #1 to mov r2, #1 (24/23 assembly lines). */
-    Engine_MapObjectSetPosition(actor, x, y);
-}
-
 void SceneState_SetValues31_2_4(void);
 
 s32 SceneActor_GetPositionDistance(s32 *a, s32 *b);

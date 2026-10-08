@@ -174,7 +174,7 @@ pub(crate) fn pair<'a>(built: &'a [Line], reference: &'a [Line]) -> Vec<(Option<
                 i += 1;
                 j += 1;
             }
-            (Some(b), r) if r.map_or(true, |r| b.address < r.address) => {
+            (Some(b), r) if r.is_none_or(|r| b.address < r.address) => {
                 rows.push((Some(b), None));
                 i += 1;
             }

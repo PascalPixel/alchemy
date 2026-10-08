@@ -41,15 +41,6 @@ struct StagedActor {
     u32 movement_callback;
 };
 
-struct StagedActorMoveArgs {
-    s32 displacement_row;
-    s32 actor_slot;
-    s32 target_x;
-    s32 elevation;
-    s32 target_z;
-    void (*callback)(void);
-};
-
 #define STAGED_ACTOR_OFFSET(field) ((u32)&(((struct StagedActor *)0)->field))
 typedef char StagedActor_size[sizeof(struct StagedActor) == 0x70 ? 1 : -1];
 typedef char StagedActor_x_offset[

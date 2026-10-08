@@ -36,9 +36,6 @@ typedef char Resource388SlotView_unknown_59_offset[
 s32 Resource388_TestSetupGate(s32);
 u8 Resource388_SetSlotOption(s32, s32);
 void Resource388_SetSlotPosition(s32, s32, s32);
-s32 Resource388_LookupSlotHandle(s32);
-struct Resource388SlotView *Resource388_GetSlotRecord(s32);
-struct Resource388SlotView *Resource388_GetSlotState(s32);
 u8 Resource388_SetSlotMode(s32, s32);
 u8 Resource388_QueueSlotCommand(s32, s32, s32, s32, s32, s32);
 

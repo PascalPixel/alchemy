@@ -24,7 +24,7 @@ impl Atlas {
             || self.frame_height == 0
             || self.columns == 0
             || self.columns.checked_mul(self.frame_width) != Some(width)
-            || height % self.frame_height != 0
+            || !height.is_multiple_of(self.frame_height)
         {
             return Err("atlas dimensions differ".into());
         }
@@ -39,7 +39,7 @@ pub(crate) fn tiles(
     bpp: GbaBpp,
     atlas: Option<(Atlas, usize)>,
 ) -> Result<Vec<u8>, String> {
-    if width % 8 != 0 || height % 8 != 0 || pixels.len() != width * height {
+    if !width.is_multiple_of(8) || !height.is_multiple_of(8) || pixels.len() != width * height {
         return Err("tiles need whole 8x8 cells".into());
     }
     let mut corners = Vec::new();
@@ -78,7 +78,7 @@ pub(crate) fn tiles(
             match bpp {
                 GbaBpp::Bpp4 => data.extend(
                     values
-                        .chunks_exact(2)
+                        .as_chunks::<2>().0.iter()
                         .map(|pair| (pair[0] & 0xf) | (pair[1] & 0xf) << 4),
                 ),
                 GbaBpp::Bpp8 => data.extend_from_slice(values),
@@ -100,7 +100,7 @@ pub fn metatiles(
         return Err("metatile dimensions must be positive".into());
     }
     let (cell_width, cell_height) = (meta_width * 8, meta_height * 8);
-    if width % cell_width != 0 || height % cell_height != 0 || pixels.len() != width * height {
+    if !width.is_multiple_of(cell_width) || !height.is_multiple_of(cell_height) || pixels.len() != width * height {
         return Err("the image is not whole metatiles".into());
     }
     let mut data = Vec::with_capacity(pixels.len());
@@ -146,7 +146,7 @@ impl MapDrawing {
         first: usize,
         count: usize,
     ) -> Result<Self, String> {
-        if map_wide == 0 || count == 0 || entries.len() % map_wide != 0 {
+        if map_wide == 0 || count == 0 || !entries.len().is_multiple_of(map_wide) {
             return Err("a tilemap drawing needs whole map rows and tiles".into());
         }
         let shows = |entry: u16| {
@@ -214,7 +214,7 @@ impl MapDrawing {
         if width != self.wide * 8
             || pixels.len() != width * height
             || height == 0
-            || height % (rows * 8) != 0
+            || !height.is_multiple_of(rows * 8)
             || (!frames && height != rows * 8)
         {
             return Err(format!(
@@ -289,7 +289,7 @@ impl MapDrawing {
         let size = tile_bytes(bpp);
         let count = self.count;
         if packed.is_empty()
-            || packed.len() % (size * count) != 0
+            || !packed.len().is_multiple_of(size * count)
             || (!frames && packed.len() != size * count)
         {
             return Err(format!(

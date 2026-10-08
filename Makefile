@@ -32,7 +32,7 @@ $(LIBGCC):
 .PHONY: help bootstrap merge-drivers fetch-dependencies compilers compiler-sources compiler-source-check toolchain-check build-tools
 .PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
-.PHONY: publication-check publication-staged-check coverage-report
+.PHONY: publication-check publication-staged-check hygiene-check coverage-report
 .PHONY: progress figure deps similar worst clean modern
 
 help:
@@ -148,6 +148,11 @@ land:
 publication-check:
 	$(CHECK) publication --tree
 	$(CHECK) layout
+	$(CHECK) dead
+	$(CHECK) devices
+
+hygiene-check:
+	$(CHECK) hygiene
 
 publication-staged-check:
 	$(CHECK) publication --staged
@@ -162,6 +167,7 @@ language-check:
 
 test:
 	$(CARGO) test --offline --quiet --release --workspace --manifest-path $(TOOLS)/Cargo.toml
+	$(CARGO) clippy --offline --quiet --release --workspace --all-targets --manifest-path $(TOOLS)/Cargo.toml -- -D warnings
 
 test-integration: toolchain-check
 	$(CARGO) test --offline --quiet --release --workspace --manifest-path $(TOOLS)/Cargo.toml -- --ignored

@@ -3,12 +3,4 @@
 
 #include "TYPES.H"
 
-extern u8 PrimaryRuntimeSelector;
-extern u8 SecondaryRuntimeSelector;
-extern u8 TertiaryRuntimeSelector;
-extern u8 PrimaryOverlayData[];
-extern u8 SecondaryOverlayData[];
-extern u8 TertiaryOverlayData[];
-extern u8 DefaultOverlayData[];
-
 #endif

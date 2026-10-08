@@ -27,7 +27,7 @@ pub(crate) fn first_difference(map: &str, reference: &[u8], built: &[u8]) -> Opt
             continue;
         }
         if let Some(k) = (start..end).find(|&k| reference[k] != built[k]) {
-            if best.as_ref().map_or(true, |(a, _, _)| address < *a) {
+            if best.as_ref().is_none_or(|(a, _, _)| address < *a) {
                 best = Some((address, (k - start) as u32, path.to_string()));
             }
         }

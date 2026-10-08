@@ -8,7 +8,7 @@ struct Bits {
 impl Bits {
     fn put(&mut self, value: u32, count: usize) {
         for bit in 0..count {
-            if self.len % 8 == 0 {
+            if self.len.is_multiple_of(8) {
                 self.bytes.push(0);
             }
             self.bytes[self.len / 8] |= (((value >> bit) & 1) as u8) << (self.len % 8);
@@ -16,7 +16,7 @@ impl Bits {
         }
     }
     fn align(&mut self, bits: usize, fill: u32) {
-        while self.len % bits != 0 {
+        while !self.len.is_multiple_of(bits) {
             self.put(fill, 1);
         }
     }
@@ -78,14 +78,14 @@ pub fn encode_delta7(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
 }
 
 pub fn encode_tilemap_delta(entries: &[u8], mode: u8) -> Result<Vec<u8>, AssetError> {
-    if mode > 2 || entries.is_empty() || entries.len() % 2 != 0 {
+    if mode > 2 || entries.is_empty() || !entries.len().is_multiple_of(2) {
         return Err(AssetError(
             "tilemap delta requires mode 0, 1 or 2 and whole 16-bit entries".into(),
         ));
     }
     let mut previous = 0u16;
     let transformed: Vec<u16> = entries
-        .chunks_exact(2)
+        .as_chunks::<2>().0.iter()
         .map(|entry| {
             let value = u16::from_le_bytes([entry[0], entry[1]]);
             let coded = if mode == 0 { value } else { value ^ previous };
@@ -155,7 +155,7 @@ pub fn encode_halfword_lz(data: &[u8]) -> Result<Vec<u8>, AssetError> {
         return Err(AssetError("halfword LZ input is not whole halfwords".into()));
     }
     let words: Vec<u16> = data
-        .chunks_exact(2)
+        .as_chunks::<2>().0.iter()
         .map(|pair| u16::from_le_bytes([pair[0], pair[1]]))
         .collect();
     let mut tokens: Vec<(bool, u16)> = Vec::new();

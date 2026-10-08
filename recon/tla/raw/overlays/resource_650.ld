@@ -12,7 +12,6 @@ SECTIONS
         "*/resource_650_overlay.o"(.text.x02008664)
         "*/resource_650_overlay.o"(.text.x020086a8)
         "*/games/THE LOST AGE/SRC/FIELD/IDEJIMA/DEPART.o"(.text)
-        "*/resource_650_overlay.o"(.text.x0200953c)
         "*/resource_650_overlay.o"(.text.x02009558)
         "*/resource_650_overlay.o"(.text.x020095a0)
         "*/resource_650_overlay.o"(.text.x0200961c)

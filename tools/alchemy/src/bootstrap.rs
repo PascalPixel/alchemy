@@ -76,7 +76,7 @@ fn with_install_lock(action: impl FnOnce() -> Result<(), String>) -> Result<(), 
     let parent = installation
         .parent()
         .ok_or("compiler installation has no parent")?;
-    fs::create_dir_all(&parent).map_err(|e| e.to_string())?;
+    fs::create_dir_all(parent).map_err(|e| e.to_string())?;
     let lock = fs::OpenOptions::new()
         .create(true)
         .truncate(false)

@@ -377,8 +377,8 @@ mod packed_tests {
                 (seed >> 16) as u8
             })
             .collect();
-        for index in 0x3000 - 64..0x3000 {
-            data[index] = if index % 2 == 0 { 1 } else { 0 };
+        for (index, byte) in data.iter_mut().enumerate().skip(0x3000 - 64).take(64) {
+            *byte = if index % 2 == 0 { 1 } else { 0 };
         }
         data
     }

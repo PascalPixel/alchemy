@@ -16,6 +16,8 @@ mod camelotize;
 mod check;
 mod compiler;
 mod coverage;
+mod dead;
+mod devices;
 mod decode;
 mod deps;
 mod deps_command;
@@ -37,6 +39,7 @@ mod permute;
 mod process;
 mod queues;
 mod show;
+mod sweep;
 mod similar;
 mod similar_command;
 mod sizes;
@@ -78,6 +81,8 @@ Adopt data
 
 Check the whole build
   objects       what differs from the reference ROM, object or placement
+  dead          what no edition links, includes or selects: unlinked files,
+                never-selected #if arms, unused header declarations
   progress      DONE in every edition from the verified linker maps
 
 Camelotize
@@ -86,6 +91,7 @@ Camelotize
   camelotize    mechanical rewrites: actors, events, registers,
                 declarations, barriers
   keep          keep only the edits that leave all twelve editions identical
+  sweep         drop FAKEMATCH pins, barriers and volatiles the bytes no longer need
 
 Work in parallel
   queues        split not-yet-C work into queues that cannot collide
@@ -131,7 +137,9 @@ fn main() -> ExitCode {
         "figure" => result(coverage::figures::run(rest)),
         "camelotize" => result(camelotize::run(rest)),
         "objects" => result(objects::run(rest)),
+        "dead" => result(dead::run(rest)),
         "show" => result(show::run(rest)),
+        "sweep" => result(sweep::run(rest)),
         "worktree" => result(worktree::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");

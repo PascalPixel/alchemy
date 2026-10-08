@@ -906,7 +906,7 @@ mod tests {
             }
         };
         let report = decide(&files, builds(judge, &log)).unwrap();
-        assert_eq!(report.needed, [renamed.clone()]);
+        assert_eq!(report.needed, std::slice::from_ref(&renamed));
         assert_eq!(report.reverted, [(Reason::Bytes, wrong)]);
         assert_eq!(report.kept, [files[0].clone(), renamed, files[2].clone()]);
     }
@@ -956,17 +956,17 @@ mod tests {
         };
         let other = "games/X/SRC/C.C";
         assert_eq!(
-            blame(&[failure(other, &[&header])], &[header.clone()]),
-            [header.clone()]
+            blame(&[failure(other, &[&header])], std::slice::from_ref(&header)),
+            std::slice::from_ref(&header)
         );
         let both = [header.clone(), source.clone()];
         assert_eq!(
             blame(&[failure(&source, &[&source, &header])], &both),
-            [source.clone()]
+            std::slice::from_ref(&source)
         );
         assert_eq!(
             blame(&[failure(&source, &["games/X/INCLUDE/Z.H"])], &both),
-            [source.clone()]
+            std::slice::from_ref(&source)
         );
         assert!(blame(&[failure(other, &[other])], &both).is_empty());
     }

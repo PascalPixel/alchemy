@@ -138,6 +138,7 @@ fn inside(tokens: &[Token]) -> Vec<Option<usize>> {
 /// `if`, `else` branches and loop head); a tag in a function's top-level
 /// block covers the whole function. A tag outside every block covers the
 /// statement it trails, or else the one after it.
+#[allow(clippy::single_range_in_vec_init)] // one range: the whole text
 pub(crate) fn ranges(text: &str) -> Vec<Range<usize>> {
     let Ok(all) = lex(text) else {
         return vec![0..text.len()];

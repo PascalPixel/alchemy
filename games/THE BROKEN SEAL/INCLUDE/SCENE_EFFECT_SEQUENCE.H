@@ -5,7 +5,6 @@
 
 void *SceneEffect_SpawnPrimary(s32 x, s32 y, s32 z, s32 kind);
 void *SceneEffect_SpawnSecondary(s32 x, s32 y, s32 z, s32 kind);
-void SceneEffect_SpawnConfigured();
 void SceneEffect_RequestFixedEffect(void);
 void SceneEffect_AdvanceRotatingSprite(void);
 void SceneEffect_SpawnPeriodicEffect(void);

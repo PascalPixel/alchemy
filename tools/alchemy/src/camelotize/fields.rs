@@ -325,7 +325,7 @@ fn bare(mask: &[u8], at: usize) -> Option<Access> {
     }
     let number = word_at(mask, next(mask, plus + 1)?);
     let offset = literal(mask, number.clone())?;
-    (mask[next(mask, number.end)?] == b';').then(|| Access {
+    (mask[next(mask, number.end)?] == b';').then_some(Access {
         span: word.start..number.end,
         core: word,
         cast: false,

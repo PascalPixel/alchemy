@@ -53,8 +53,8 @@ fn line_start(bytes: &[u8], at: usize) -> bool {
 
 fn comment_end(source: &str, at: usize) -> Option<usize> {
     let rest = &source[at..];
-    if rest.starts_with("/*") {
-        Some(rest[2..].find("*/").map_or(source.len(), |e| at + 2 + e + 2))
+    if let Some(after) = rest.strip_prefix("/*") {
+        Some(after.find("*/").map_or(source.len(), |e| at + 2 + e + 2))
     } else if rest.starts_with("//") {
         Some(rest.find('\n').map_or(source.len(), |e| at + e))
     } else {

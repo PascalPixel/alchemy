@@ -256,10 +256,10 @@ pub fn tilemap(built: &str, text: &[u8]) -> Result<(Vec<u16>, usize), String> {
     }
     let bytes = table(built, text)?;
     let entries: Vec<u16> = bytes
-        .chunks_exact(2)
+        .as_chunks::<2>().0.iter()
         .map(|pair| u16::from_le_bytes([pair[0], pair[1]]))
         .collect();
-    if entries.len() % wide != 0 {
+    if !entries.len().is_multiple_of(wide) {
         return Err(format!("{built}: a tilemap has whole rows"));
     }
     Ok((entries, wide))
@@ -640,7 +640,7 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
 /// 8x8 tiles in sheet order, one byte per tile row with the leftmost pixel
 /// in bit 7, as pret's gbagfx writes `.1bpp`; any non-zero index is set.
 fn one_bpp(built: &str, pixels: &[u8], width: usize, height: usize) -> Result<Vec<u8>, String> {
-    if width % 8 != 0 || height % 8 != 0 || pixels.len() != width * height {
+    if !width.is_multiple_of(8) || !height.is_multiple_of(8) || pixels.len() != width * height {
         return Err(format!("{built}: 1bpp sheets are whole 8x8 tiles"));
     }
     let mut out = Vec::with_capacity(pixels.len() / 8);
@@ -653,6 +653,20 @@ fn one_bpp(built: &str, pixels: &[u8], width: usize, height: usize) -> Result<Ve
         }
     }
     Ok(out)
+}
+
+/// The bytes Camelot's packer saw, when a patch file beside the asset lists
+/// edits made after packing (W3); `None` when the asset has no patch.
+fn packed_bytes(
+    built: &str,
+    pixels: &[u8],
+    sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+) -> Result<Option<Vec<u8>>, String> {
+    let name = patch_name(&input_name(built)?);
+    match sibling(&name) {
+        Ok(text) => Ok(Some(Patch::parse(&name, &text)?.packed(built, pixels)?)),
+        Err(_) => Ok(None),
+    }
 }
 
 #[cfg(test)]
@@ -674,19 +688,5 @@ mod tests {
         assert!(one_bpp("T.1bpp", &pixels[..120], 15, 8).is_err());
         assert!(is_recipe("GRAPHICS/DISPLAY/STAFF.1bpp"));
         assert!(!is_recipe("GRAPHICS/DISPLAY/STAFF.2bpp"));
-    }
-}
-
-/// The bytes Camelot's packer saw, when a patch file beside the asset lists
-/// edits made after packing (W3); `None` when the asset has no patch.
-fn packed_bytes(
-    built: &str,
-    pixels: &[u8],
-    sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
-) -> Result<Option<Vec<u8>>, String> {
-    let name = patch_name(&input_name(built)?);
-    match sibling(&name) {
-        Ok(text) => Ok(Some(Patch::parse(&name, &text)?.packed(built, pixels)?)),
-        Err(_) => Ok(None),
     }
 }

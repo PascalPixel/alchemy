@@ -13,29 +13,6 @@
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 
 typedef struct {
-    u8 filler0[0x18];
-    s32 unk18;
-    s32 unk1c;
-    u8 filler20[0x44];
-    u16 unk64;
-} Spr;
-
-typedef struct {
-    u8 filler0[0x1e];
-    u16 unk1e;
-} Obj_02000400;
-
-typedef struct {
-    u8 filler0[0x50];
-    Obj_02000400 *obj;
-} Spr_02000400;
-
-typedef struct {
-    u8 filler0[6];
-    u16 unk06;
-} Spr_02000424;
-
-typedef struct {
     u8 filler0[0x28];
     s16 *unk28;
 } Obj_020004bc;
@@ -59,15 +36,6 @@ struct SceneActor {
     u8 pad38[29];
     u8 flags55;
 };
-
-typedef struct {
-    u8 filler0[0xc];
-    s32 unk0c;
-    u8 filler10[4];
-    s32 unk14;
-    u8 filler18[0x3d];
-    u8 unk55;
-} Spr_020005ec;
 
 typedef struct {
     u8 filler0[0xc];

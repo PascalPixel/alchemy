@@ -17,7 +17,7 @@ pub(crate) mod elf {
     }
 
     fn align(file: &mut Vec<u8>) -> u32 {
-        while file.len() % 4 != 0 {
+        while !file.len().is_multiple_of(4) {
             file.push(0);
         }
         file.len() as u32

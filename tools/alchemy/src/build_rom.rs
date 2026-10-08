@@ -90,7 +90,7 @@ pub(crate) fn script_objects(script: &str) -> Vec<String> {
         .collect()
 }
 
-fn source_for(root: &Path, object: &str) -> Result<PathBuf, String> {
+pub(crate) fn source_for(root: &Path, object: &str) -> Result<PathBuf, String> {
     ["C", "c", "S", "s", "MID"]
         .iter()
         .map(|extension| PathBuf::from(format!("{object}.{extension}")))
@@ -546,7 +546,7 @@ fn symbols_pass(
     let mut arguments = link_command(root, build, script, text, &objects, &elf);
     arguments.insert(1, "--unresolved-symbols=ignore-all".to_owned());
     let key = link_key(root, build, index, &arguments, text, &objects)?;
-    if index.fresh(&[elf.clone()], &key) {
+    if index.fresh(std::slice::from_ref(&elf), &key) {
         return Ok(elf);
     }
     command(&arguments, root)?;
@@ -560,7 +560,7 @@ fn symbols_pass(
         ],
         root,
     )?;
-    index.record(&[elf.clone()], &key, Vec::new())?;
+    index.record(std::slice::from_ref(&elf), &key, Vec::new())?;
     Ok(elf)
 }
 
@@ -1308,7 +1308,7 @@ fn stream_ids_in(
     let mut seen = BTreeSet::new();
     let mut macro_depth = 0usize;
     for row in selected.lines() {
-        let operation = row.trim().split_whitespace().next().unwrap_or("");
+        let operation = row.split_whitespace().next().unwrap_or("");
         if operation == ".macro" {
             macro_depth += 1;
         }

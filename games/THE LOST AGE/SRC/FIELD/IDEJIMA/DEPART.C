@@ -242,3 +242,12 @@ void Idejima_RunAlexDeparture(void)
     Call1(GameFlag_SetBit, 0x867);
     Engine_EventEnd();
 }
+
+extern s16 Data_02003c14;
+extern s32 Data_02003c10;
+
+void Func_0200153c(void)
+{
+    Data_02003c14 = 0;
+    Data_02003c10 = 0;
+}

@@ -3,12 +3,7 @@
 
 #include "TYPES.H"
 
-u8 *PaletteScene_GetScriptData(void);
-u8 *PaletteScene_GetMessageData(void);
-u8 *PaletteScene_GetActorData(void);
-u8 *PaletteScene_GetEffectData(void);
 void PaletteScene_Initialize(void);
-u8 *PaletteScene_GetState(void);
 void PaletteScene_RunActorNineBranch(void);
 void PaletteScene_RunActorEightBranch(void);
 void PaletteScene_RunFlaggedBranch(void);

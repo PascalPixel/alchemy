@@ -86,8 +86,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
     s32 column;
     s32 none;
 #if !EDITION_INTERNATIONAL
-    /* FAKEMATCH: the Japanese clamp keeps top in r1; split subtraction shares r2. */
-    register s32 base asm("r1");
+    s32 base;
 #endif
 
     win = (struct UiRenderWork *)gWindowWork[0];

@@ -1,3 +1,4 @@
+@ Unlinked overlay field data from the removed games/THE LOST AGE/SRC/FIELD/IDEJIMA/FIELD_DATA.INC, kept as a GNU as draft (S4); nothing includes it.
 
 FieldActorScript_02003330:
 	actor_op 0x27, 0x00000002

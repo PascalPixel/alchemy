@@ -109,8 +109,8 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
     if overlay.is_none() && path_text.contains("/overlays/") {
         overlay = resource_name(&path_text);
     }
-    if addresses.is_empty() && overlay.is_none() && symbol.is_some() {
-        addresses.push(symbol.as_ref().unwrap().clone());
+    if let Some(symbol) = symbol.as_ref().filter(|_| addresses.is_empty() && overlay.is_none()) {
+        addresses.push(symbol.clone());
     }
     if addresses.is_empty() && overlay.is_none() {
         let stem = draft

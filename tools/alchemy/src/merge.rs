@@ -42,7 +42,7 @@ fn parse(text: &str) -> Scaffold {
         if let Some(name) = section(line) {
             started = true;
             next = Some(name.to_string());
-            for l in tag(pending.drain(..).collect()) {
+            for l in tag(std::mem::take(&mut pending)) {
                 s.post.insert((last_end, l));
             }
             continue;
@@ -59,7 +59,7 @@ fn parse(text: &str) -> Scaffold {
             }
             s.ranges.push((offset, offset + size));
             last_end = offset + size;
-            for l in tag(pending.drain(..).collect()) {
+            for l in tag(std::mem::take(&mut pending)) {
                 s.pre.insert((offset, l));
             }
         } else if line.starts_with("\t.size ") {
@@ -251,7 +251,7 @@ pub fn reconcile_links(scaffold: &str, script: &str) -> (String, usize, Vec<Stri
     };
     let mut lines: Vec<String> = script.lines().map(str::to_string).collect();
     let before = lines.len();
-    lines.retain(|l| reference(l).map_or(true, |r| present.contains(r.as_str())));
+    lines.retain(|l| reference(l).is_none_or(|r| present.contains(r.as_str())));
     let dropped = before - lines.len();
     let mut unplaced = Vec::new();
     for (k, name) in names.iter().enumerate() {

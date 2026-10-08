@@ -567,12 +567,15 @@ alchemy label NAME ENGLISH_ADDR LEN    # name English-only scaffold data in othe
 alchemy adopt-data OBJECT PIECE...     # a data block's object into all six scripts, out of all scaffolds
 # Check the whole build
 alchemy objects EDITION...             # what differs from the ROM, object or placement
+alchemy dead [--apply PATH]            # what no edition links, includes or selects
 make progress                          # DONE code and data, one line per edition (alchemy progress)
+alchemy check devices [--update]       # register pins, asm barriers, inline asm, volatile: may only fall
 # Camelotize
 make worst                             # maintained C ranked by how mechanical it reads
 alchemy camelotize REWRITE FILE...     # actors, events, registers, declarations, barriers
 alchemy camelotize numbers|casts|idioms FILE...  # decimal quantities, needless casts, C idioms
 alchemy keep [PATH...]                 # keep only edits that leave all twelve identical
+alchemy sweep FILE.C...                # drop FAKEMATCH pins, barriers and volatiles the bytes no longer need
 # Work in parallel
 alchemy queues --workers N --out-dir DIR   # work that cannot collide (W7)
 alchemy integrate BRANCH...            # merge, reconcile linker scripts, build all twelve

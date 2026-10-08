@@ -208,7 +208,7 @@ impl Judgement {
         self.drawn.meta == (1, 1)
             && self.drawn.tiles_wide <= ANIMATION_TILES
             && self.best.meta == (1, 1)
-            && self.best.tiles_wide % self.drawn.tiles_wide == 0
+            && self.best.tiles_wide.is_multiple_of(self.drawn.tiles_wide)
             && self.tiles / self.best.tiles_wide <= self.drawn.tiles_wide
     }
 
@@ -266,7 +266,7 @@ pub fn judge(png: &[u8], form: &str) -> Result<Option<Judgement>, String> {
         tiles_wide: image.width as usize / 8,
     };
     if drawn.tiles_wide == 0
-        || drawn.tiles_wide % meta.0 != 0
+        || !drawn.tiles_wide.is_multiple_of(meta.0)
         || count % (drawn.tiles_wide * meta.1) != 0
     {
         return Err(format!(

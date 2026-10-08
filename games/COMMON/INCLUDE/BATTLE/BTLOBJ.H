@@ -3,10 +3,7 @@
 
 #include "TYPES.H"
 
-void *Actor_GetObject(s32 unit);
 void Actor_Place(void *object, s32 unit, s32 x, s32 y);
-void Actor_Commit(void);
-s32 Actor_ListSlots(s16 *entries);
 void ObjMotRst(s32 slot);
 
 #endif

@@ -443,7 +443,7 @@ impl Env {
                 self.member(&record, member)?
             }
             Expr::Cast(name, _) => self.type_name(name),
-            Expr::SizeofExpr(_) | Expr::SizeofType(_) => CType::Int {
+            Expr::SizeofValue(_) | Expr::SizeofType(_) => CType::Int {
                 bits: 32,
                 signed: false,
             },

@@ -134,12 +134,12 @@ pub(crate) fn encode_huffman_archive(
         bytes.extend(leaves);
         bytes.extend(pack_bits(&context.tree));
     }
-    if (base as usize + bytes.len()) % 2 != 0 {
+    if !(base as usize + bytes.len()).is_multiple_of(2) {
         bytes.push(0);
     }
     let offset_table = base + bytes.len() as u32;
     bytes.extend(offsets);
-    while (base as usize + bytes.len()) % 4 != 0 {
+    while !(base as usize + bytes.len()).is_multiple_of(4) {
         bytes.push(0);
     }
     let context_directory = base + bytes.len() as u32;
@@ -187,7 +187,7 @@ pub(crate) fn encode_huffman_archive(
         bytes.extend(payload);
         bytes.extend(lengths);
     }
-    while (base as usize + bytes.len()) % 4 != 0 {
+    while !(base as usize + bytes.len()).is_multiple_of(4) {
         bytes.push(0);
     }
     let directory_address = base + bytes.len() as u32;

@@ -61,7 +61,7 @@ pub fn indexed_bitmap_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
         return err("invalid PLTE");
     }
     let palette: Vec<Rgb> = raw_palette
-        .chunks_exact(3)
+        .as_chunks::<3>().0.iter()
         .map(|rgb| [rgb[0], rgb[1], rgb[2]])
         .collect();
     if palette.len() as u32 > 1 << depth {
@@ -190,7 +190,7 @@ fn palette_rgb(palette: &[u8], bpp: GbaBpp) -> Result<Vec<u8>, AssetError> {
         return err(format!("palette exceeds {} entry limit", bpp.name()));
     }
     let mut rgb = Vec::with_capacity(palette.len() / 2 * 3);
-    for word in palette.chunks_exact(2) {
+    for word in palette.as_chunks::<2>().0 {
         let value = u16::from_le_bytes([word[0], word[1]]);
         if value & 0x8000 != 0 {
             return err("BGR555 palette uses unsupported transparent bit 15");
@@ -353,11 +353,11 @@ fn tile_sheet_layout_of(tiles: &[u8], bpp: GbaBpp, shapes: &[(usize, usize)]) ->
     };
     let mut best = (plain, -1.0, -1.0);
     for &(mw, mh) in shapes {
-        if count % (mw * mh) != 0 {
+        if !count.is_multiple_of(mw * mh) {
             continue;
         }
         let metas = count / (mw * mh);
-        for metas_wide in (1..=metas).filter(|wide| metas % wide == 0 && wide * mw <= 64) {
+        for metas_wide in (1..=metas).filter(|wide| metas.is_multiple_of(*wide) && wide * mw <= 64) {
             if metas_wide == 1 && (mw, mh) != (1, 1) && shapes.len() > 1
                 || metas_wide * mw < 2 && count > 1
             {
@@ -392,6 +392,11 @@ pub struct SpriteRun {
     pub layout: TileLayout,
 }
 
+/// The best split ending here: (score, sprite shape, picture count).
+type Step = (i64, (usize, usize), usize);
+/// A run of pictures: (first, count, sprite shape, sprites).
+type Group = (usize, usize, (usize, usize), Vec<usize>);
+
 pub fn sprite_runs(tiles: &[u8], bpp: GbaBpp) -> Vec<SpriteRun> {
     let count = tiles.len() / bpp.tile_bytes();
     let pixel = |tile: usize, x: usize, y: usize| match bpp {
@@ -421,7 +426,7 @@ pub fn sprite_runs(tiles: &[u8], bpp: GbaBpp) -> Vec<SpriteRun> {
         }
         value
     };
-    let mut best: Vec<Option<(i64, (usize, usize), usize)>> = vec![None; count + 1];
+    let mut best: Vec<Option<Step>> = vec![None; count + 1];
     best[0] = Some((0, (1, 1), 0));
     for end in 1..=count {
         for &(mw, mh) in &OBJ_SHAPES {
@@ -448,7 +453,7 @@ pub fn sprite_runs(tiles: &[u8], bpp: GbaBpp) -> Vec<SpriteRun> {
         pictures.push((end, meta, sprites));
     }
     pictures.reverse();
-    let mut groups: Vec<(usize, usize, (usize, usize), Vec<usize>)> = Vec::new();
+    let mut groups: Vec<Group> = Vec::new();
     for (first, meta, sprites) in pictures {
         let tiles_in = meta.0 * meta.1 * sprites;
         match groups.last_mut() {
@@ -535,7 +540,7 @@ fn png_from_tiles(
     }
     let encoded = if output_bpp == GbaBpp::Bpp4 {
         let mut packed = Vec::with_capacity(pixels.len() / 2);
-        for pair in pixels.chunks_exact(2) {
+        for pair in pixels.as_chunks::<2>().0 {
             packed.push(pair[0] << 4 | pair[1]);
         }
         packed

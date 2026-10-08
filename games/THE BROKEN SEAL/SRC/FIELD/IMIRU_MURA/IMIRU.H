@@ -119,13 +119,6 @@ struct Subject_02001fa4 {
 };
 
 extern s16 ImiruMura_KeyHeadings[];
-extern u8 Data_0200a8a0[];
-extern u8 Data_0200a798[];
-extern u8 Data_0200a9e0[];
-extern u8 Data_0200aa58[];
-extern u8 Data_0200aad0[];
-extern u8 Data_0200adb8[];
-extern u8 Data_0200ac80[];
 extern u8 ImiruMura_CellStepsB[];
 extern u8 ImiruMura_PrimaryScript[];
 extern u8 ImiruMura_PrimaryScript2[];

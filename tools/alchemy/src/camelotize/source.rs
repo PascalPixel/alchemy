@@ -441,7 +441,7 @@ mod tests {
         std::fs::write(&file, "#include \"../../INCLUDE/SYSTEM/IO_REG.H\"\n").unwrap();
         let header = include.join("IO_REG.H");
         assert_eq!(spelling(&file, &header, &[]).as_deref(), Some("../../INCLUDE/SYSTEM/IO_REG.H"));
-        assert_eq!(spelling(&file, &header, &[include.clone()]).as_deref(), Some("IO_REG.H"));
+        assert_eq!(spelling(&file, &header, std::slice::from_ref(&include)).as_deref(), Some("IO_REG.H"));
         assert!(reachable(&file, &[]).contains(&header));
     }
 }

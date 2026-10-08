@@ -13,8 +13,6 @@
 #define SHIBA       6           /* シバ */
 #define PIKAADO     7           /* ピカード */
 
-#define CHARA_MAX   8           /* 仲間 8 人 */
-
 #define BTL_CHARA(no)   (300 + (no))    /* 戦闘キャラ */
 
 /* 子供のころの絵 (フラグ 32 のあいだ); 仲間 8 人の絵の番号はキャラ番号と同じ */

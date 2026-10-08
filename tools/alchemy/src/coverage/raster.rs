@@ -211,7 +211,7 @@ impl Canvas {
                     Some([r, g, b]) => [*r, *g, *b, 255],
                     None => [0; 4],
                 })
-                .flat_map(|pixel| std::iter::repeat(pixel).take(scale).flatten())
+                .flat_map(|pixel| std::iter::repeat_n(pixel, scale).flatten())
                 .collect::<Vec<_>>();
             for _ in 0..scale {
                 out.extend_from_slice(&wide);
@@ -252,7 +252,7 @@ impl Canvas {
             let mut packed = vec![0u8; stride];
             let wide = line
                 .iter()
-                .flat_map(|index| std::iter::repeat(*index).take(scale as usize));
+                .flat_map(|index| std::iter::repeat_n(*index, scale as usize));
             for (x, index) in wide.enumerate() {
                 let bit = x * depth;
                 packed[bit / 8] |= index << (8 - depth - bit % 8);

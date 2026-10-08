@@ -86,7 +86,7 @@ impl Elf {
                     Some(s) => bytes_of(s)?,
                     None => &[],
                 };
-                for entry in table.chunks_exact(16) {
+                for entry in table.as_chunks::<16>().0 {
                     let info = entry[12];
                     symbols.push(Symbol {
                         name: string(strings, word(entry, 0)? as usize),

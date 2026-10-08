@@ -363,7 +363,7 @@ mod tests {
             extension: extension.into(),
             ..Tile::default()
         };
-        let tiles = vec![tile(10, "s"), tile(20, "s"), tile(70, "tsv")];
+        let tiles = [tile(10, "s"), tile(20, "s"), tile(70, "tsv")];
         assert_eq!(
             super::legend_items(&tiles.iter().collect::<Vec<_>>()),
             vec![

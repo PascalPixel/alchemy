@@ -67,7 +67,7 @@ impl Data {
     }
     pub(crate) fn append(&mut self, other: Data) -> Result<(), String> {
         let offset = self.bytes.len();
-        if offset % other.align != 0 {
+        if !offset.is_multiple_of(other.align) {
             return Err(format!(
                 "appended data needs {}-byte alignment at offset {offset}",
                 other.align

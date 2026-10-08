@@ -55,9 +55,6 @@ extern u8 Link_TimeLabelString[];
 extern void *Resource_DirectoryTable[];
 extern u8 Resource_PatchThumbBranchCodeSize[];
 extern u8 ResourceSlot_ConversionTables[][256];
-extern u8 RomBytes_08029e00[];
-extern u8 RomBytes_0802de88[];
-extern u8 RomBytes_0802e108[];
 extern const u16 Ui_WindowPalette[];
 s32 Animation_LookupValueByKey(s32 key);
 #ifndef OWN_CountRemainingErasedFlashBytes
@@ -78,16 +75,6 @@ struct AnimationObject;
 struct SelectionNode;
 struct T;
 
-struct Cell {
-    u8 unk0;
-    u8 unk1;
-    u8 kind;
-    u8 type;
-};
-struct Flags85 {
-    u8 pad[85];
-    u8 flags;
-};
 struct S {
     s32 f00;
     s32 f04;
@@ -101,104 +88,6 @@ struct S {
     u8 pad40[16];
     struct T *f50;
 };
-struct S_02001bbc {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-struct S_02001c84 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-struct S_02001d2c {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-struct S_02001de0 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-struct S_02001e5c {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-struct S_02001ef4 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-struct S_02001f78 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-struct S_02002004 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-struct S_02002080 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-struct S_0200216c {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-struct S_02002200 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-struct S_020022c8 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-struct S_020023c4 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-struct S_02002450 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
 extern u8 Data_03000bd8[];
 #ifndef OWN_Flash_Handler0
 extern u32 Flash_Handler0;
@@ -209,22 +98,9 @@ extern u8 gDebugTextEnabled;
 #ifndef OWN_gFlashNumRemainingBytes
 extern u16 gFlashNumRemainingBytes;
 #endif
-extern s16 *gOv;
-extern s16 *gOv2;
-extern u16 *gOv3;
 extern u8 gSaveBuffer[];
 extern s16 gSaveSlot;
-extern u8 gUnk[];
 extern u8 IwramCodeRecords[];
-extern u8 LinkedMessage_DoYouWishCrossInto[];
-extern u8 LinkedMessage_IvanGotShamansRod[];
-extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
-extern u8 LinkedMessage_TheresNothingWeCanDo[];
-extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
-extern u8 LinkedMessage_TheyreBack[];
-extern u8 LinkedMessage_WouldYouLikeHearDescription;
-extern u8 LinkedMessage_YouRobinRightWontForget[];
-extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern u8 LoadedRuntime_Size[];
 extern const u16 Math_ArcTanTable[];
 extern const u16 Math_TanTable[];
@@ -235,7 +111,6 @@ extern const u8 Resource_PatchThumbBranch[];
 extern const u8 Rom_LanguageCode;
 extern const u8 Text_HexDigits[];
 extern u8 RomBytes_080308a0[];
-extern u8 RomBytes_080ad40d[];
 extern const u16 SentouKouka_BitOperands[];
 extern const u32 SentouKouka_Hikaku4Gyaku[];
 extern const u32 SentouKouka_Hikaku4Jun[];
@@ -316,10 +191,6 @@ struct ObjectRuntime;
 struct ParticleChild {
     u8 padding[9];
     u8 flags;
-};
-struct TableEntry {
-    u16 unused;
-    u16 value;
 };
 extern s32 BattleMotion_VariantAcceleration[];
 extern s32 BattleMotion_VariantDistancePercent[];

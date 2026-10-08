@@ -1,3 +1,4 @@
+@ Unlinked overlay field data from the removed games/THE LOST AGE/SRC/FIELD/DERI_HEYA/FIELD_DATA.INC, kept as a GNU as draft (S4); nothing includes it.
 
 FieldFlaggedIds_02000e04:
 	field_flagged_id 0x000a, 0x220

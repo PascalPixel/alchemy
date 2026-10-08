@@ -701,21 +701,17 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         kind = UiText_ItemGenders[tmp];
                         word = possessives.text[kind & 3];
 #endif
-                        {
-                            /* FAKEMATCH: as a plain local the counter loses r1: Spanish puts the counter in r4, the text in r0 and the character in r1 (16 lines); Italian shifts allocation through the whole function (differ 458). Native holds the counter in r1, the character in r0 and the text in r4. */
-                            register u32 n asm("r1");
-
-                            n = 0;
-                            for (;;) {
-                                if ((c8 = *word++) == 0)
-                                    break;
-                                if (n == 0 && suffix == 2)
-                                    c8 -= 0x20;
-                                entry[pos] = c8;
-                                pos = (pos + 1) & RENDER_ENTRY_MASK;
-                                if (++n >= 16)
-                                    break;
-                            }
+                        /* FAKEMATCH: needed to match: value counts the letters, compared unsigned; a counter of its own loses r1 (Italian differs throughout). */
+                        value = 0;
+                        for (;;) {
+                            if ((c8 = *word++) == 0)
+                                break;
+                            if (value == 0 && suffix == 2)
+                                c8 -= 0x20;
+                            entry[pos] = c8;
+                            pos = (pos + 1) & RENDER_ENTRY_MASK;
+                            if ((u32)++value >= 16)
+                                break;
                         }
                         break;
 #endif

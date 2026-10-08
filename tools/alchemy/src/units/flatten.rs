@@ -29,7 +29,8 @@ of today's C files the analysis joins, with the units it covers, the
 evidence at its two edges and its weakest join. An edge is forced (another
 language or compiler, data, a region, the image's end), strong (code shared
 with other images ends there) or weak (only the scored valley, names or
-folders say so); apply is yes when neither edge is weak.
+folders say so); apply is yes when neither edge is weak and the weakest
+join is at least 0.7 (runs joined below that were rejected on review).
 flatten merges the runs of one proposed unit (IMAGE:UNIT as in the units
 TSV; main is the main image), or the named sources, into one C file in ROM
 order, in the folder holding most of their functions and named after its
@@ -148,6 +149,10 @@ fn edge(gap: Option<&Gap>) -> Edge {
     }
 }
 
+/// The weakest internal join a run may have and still be applied: runs
+/// offered at 0.696, 0.670 and 0.516 were applied and rejected on review.
+const MIN_JOIN: f64 = 0.7;
+
 /// A run of joined C objects in one image.
 struct Chain {
     image: String,
@@ -158,6 +163,11 @@ struct Chain {
     left: Edge,
     right: Edge,
     weakest: f64,
+}
+
+/// Whether a run is offered to apply: neither edge weak, no join below MIN_JOIN.
+fn applies(chain: &Chain) -> bool {
+    !matches!(chain.left, Edge::Weak(_)) && !matches!(chain.right, Edge::Weak(_)) && chain.weakest >= MIN_JOIN
 }
 
 fn family(root: &Path, target: DecompTarget, source: &str) -> CompilerFamily {
@@ -240,7 +250,7 @@ fn candidates(options: &Options) -> Result<(), String> {
             if !seen.insert(c.objects.clone()) {
                 continue;
             }
-            let apply = !matches!(c.left, Edge::Weak(_)) && !matches!(c.right, Edge::Weak(_));
+            let apply = applies(&c);
             if apply {
                 yes += 1;
             } else {
@@ -266,7 +276,7 @@ fn candidates(options: &Options) -> Result<(), String> {
     fs::create_dir_all(&out_dir).map_err(|e| format!("{}: {e}", out_dir.display()))?;
     let path = out_dir.join(format!("units-{}-merges.tsv", options.build));
     fs::write(&path, out).map_err(|e| format!("{}: {e}", path.display()))?;
-    println!("{yes} runs to apply, {no} with a weak edge: {}", path.strip_prefix(&root).unwrap_or(&path).display());
+    println!("{yes} runs to apply, {no} with a weak edge or a join below {MIN_JOIN}: {}", path.strip_prefix(&root).unwrap_or(&path).display());
     Ok(())
 }
 
@@ -771,6 +781,28 @@ fn routing(root: &Path, sources: &[String], destination: &str) -> Result<(), Str
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn runs_apply_only_with_strong_edges_and_joins() {
+        let chain = |left: Edge, right: Edge, weakest: f64| Chain {
+            image: "main".into(),
+            objects: vec!["a".into(), "b".into()],
+            first: 0,
+            last: 1,
+            units: vec![0],
+            left,
+            right,
+            weakest,
+        };
+        let forced = || Edge::Forced("data".into());
+        assert!(applies(&chain(Edge::End, forced(), 0.7)));
+        assert!(applies(&chain(Edge::Strong("p=0.90 shared-edge".into()), Edge::End, 0.95)));
+        // U0054 and U0067: no weak edge, but a weak join inside.
+        assert!(!applies(&chain(forced(), forced(), 0.696)));
+        assert!(!applies(&chain(forced(), Edge::End, 0.670)));
+        assert!(!applies(&chain(forced(), forced(), 0.516)));
+        assert!(!applies(&chain(Edge::Weak("p=0.40".into()), forced(), 0.99)));
+    }
 
     #[test]
     fn names_are_eight_three() {

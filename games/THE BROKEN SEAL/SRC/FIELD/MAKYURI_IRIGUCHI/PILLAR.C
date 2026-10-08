@@ -14,7 +14,6 @@
 
 #define Makyuri_PillarScript ((u8 (*))&Makyuri_PillarScript)
 
-#define FrameCounter gFrameCount
 
 struct FollowDetail {
     u8 unknown_00[5];
@@ -122,7 +121,7 @@ s32 Makyuri_FollowLeader(struct FieldActor *actor)
         actor->z.fixed += dz;
     }
     sprite = (struct FollowSprite *)actor->sprite;
-    sprite->detail->shade = ((FrameCounter >> 1) & 1) * 7;
+    sprite->detail->shade = ((gFrameCount >> 1) & 1) * 7;
     sprite->visible = 1;
     return 1;
 }

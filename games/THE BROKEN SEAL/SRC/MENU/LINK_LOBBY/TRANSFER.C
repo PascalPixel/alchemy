@@ -94,7 +94,7 @@ s32 LinkLobby_ReceivePartyRecords(void)
     slot = 0;
     goto next;
 wait1:
-    if (SERIAL_VALUE_B > size) {
+    if (gSerialReceivedSize > size) {
         result = -1;
         goto done;
     }
@@ -109,7 +109,7 @@ test1:
     if (SerialRuntime_GetActiveTransfers() != 0) {
         goto wait1;
     }
-    if (SERIAL_VALUE_B != size) {
+    if (gSerialReceivedSize != size) {
         result = -1;
         goto done;
     }
@@ -153,7 +153,7 @@ next:
     }
     goto test1;
 wait2:
-    ret = SERIAL_VALUE_B;
+    ret = gSerialReceivedSize;
     if (ret > 0x140) {
         result = -1;
         goto done;
@@ -169,7 +169,7 @@ test2:
     if (SerialRuntime_GetActiveTransfers() != 0) {
         goto wait2;
     }
-    if (SERIAL_VALUE_B != 0x140) {
+    if (gSerialReceivedSize != 0x140) {
         result = -1;
     } else {
         Engine_TaskWait(2);

@@ -59,7 +59,7 @@ restart:
                 RuntimeWait_BusyLoopTick();
             } while (tick >= 0);
         }
-        if (SERIAL_ACTIVE_B == 0) {
+        if (gSerialReceiveDest == 0) {
             Dma_Set((const void *)gMapCellBuffer, (void *)0x06001000, 0x840000a0, REG_DMA3);
             goto restart;
         }

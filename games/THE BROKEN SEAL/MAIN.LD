@@ -718,7 +718,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_GOUSEI.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/KOUKATBL.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_GOUSEI_IRO.o"(.text .rodata .data .padding)
-    "*/recon/tbs/ja/rom.o"(.rom.000e6014)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/KOUKABIT.o"(.rodata)
     . = ABSOLUTE(0x080e7000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/SCROLL.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_SEKIWA.o"(.text .rodata .data .padding)

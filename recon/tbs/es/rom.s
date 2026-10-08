@@ -970,11 +970,6 @@ ObjectRow_RisePair:
 	.global BattleFx6_UnitScale
 BattleFx6_UnitScale:
 	.incbin "baserom.gba", 0x000f12e8, 0x00000008
-	.section .rom.000f2814, "ax"
-	.incbin "baserom.gba", 0x000f2814, 0x00000020
-	.global SentouKouka_BitOperands
-SentouKouka_BitOperands:
-	.incbin "baserom.gba", 0x000f2834, 0x00000020
 	.section .rom.000f3a5c, "ax"
 	.global DisplayScroll_SlideResources
 DisplayScroll_SlideResources:

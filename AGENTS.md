@@ -47,9 +47,10 @@ A game is finished when all six hold (Pascal, 2026-10-08):
 - `games/<GAME>/SRC`, `INCLUDE`, `SOUND`, `TEXT` and `games/COMMON` hold the
   source. `games/<GAME>/MAIN.LD` is the Japanese object order.
 - `recon/<game>/raw` holds the English disassembly of code that is not C yet,
-  one listing per function or run. `recon/<game>/en/MAIN.LD` is the English
-  object order; German, Spanish, French and Italian follow it through their
-  own `recon/<game>/<lang>/MAIN.LD`.
+  one listing per function or run. ☀️'s `games/THE BROKEN SEAL/MAIN_EN.LD`
+  is the English object order; German, Spanish, French and Italian follow it
+  through their own `MAIN_DE.LD` ... beside it. ⚓️'s edition scripts are
+  still `recon/tla/<lang>/MAIN.LD`.
 - `games/<GAME>/SRC/SYSTEM/ROM_HEAD.S` is the cartridge header, linked
   first in every edition, as pret's `rom_header.s`: the logo is
   `.space 156` and the complement 0. Right after objcopy the build runs

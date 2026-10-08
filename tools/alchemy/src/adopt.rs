@@ -4,11 +4,12 @@ use std::path::{Path, PathBuf};
 const USAGE: &str = r#"usage: alchemy adopt ADDRESS LABEL [NEW_NAME] [--game tbs|tla] [--padding]
                     [--into MODULE.C [--head]]
 After the function's C is in its module: removes recon/<game>/raw/ADDRESS.s,
-its line in recon/<game>/en/MAIN.LD and the draft recon/<game>/en/main/
+its line in the English linker script and the draft recon/<game>/en/main/
 ADDRESS.c; in each other edition removes the rom.s section that holds
-exactly LABEL and its line in that edition's linker script (Japanese:
-games/<GAME>/MAIN.LD). --padding also removes a two-byte section directly
-before or after it. NEW_NAME renames LABEL across games/ and recon/. The
+exactly LABEL and its line in that edition's linker script
+(games/<GAME>/MAIN.LD for Japanese; ☀️'s MAIN_<LANG>.LD beside it, ⚓️'s
+recon/tla/<lang>/MAIN.LD). --padding also removes a two-byte section
+directly before or after it. NEW_NAME renames LABEL across games/ and recon/. The
 game defaults to tbs. Then build all twelve editions.
 --into first merges the draft into MODULE.C, its linker neighbour: the
 draft's missing includes after the module's top include block, then the
@@ -117,10 +118,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         return Err(USAGE.into());
     }
     let root = root();
-    let game_dir = if game == "tla" { "THE LOST AGE" } else { "THE BROKEN SEAL" };
     let mut edits: Vec<(PathBuf, String)> = Vec::new();
 
-    let english = root.join(format!("recon/{game}/en/MAIN.LD"));
+    let english = root.join(crate::targets::edition_script_path(game, "en"));
     let object = format!("\"*/recon/{game}/raw/{address}.o\"");
     let (text, removed) = drop_lines(&read(&english)?, |l| !l.contains(&object));
     if removed != 1 {
@@ -130,11 +130,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
 
     for lang in ["ja", "de", "es", "fr", "it"] {
         let scaffold = root.join(format!("recon/{game}/{lang}/rom.s"));
-        let script: PathBuf = if lang == "ja" {
-            root.join(format!("games/{game_dir}/MAIN.LD"))
-        } else {
-            root.join(format!("recon/{game}/{lang}/MAIN.LD"))
-        };
+        let script = root.join(crate::targets::edition_script_path(game, lang));
         let (text, sections) = remove_section(&read(&scaffold)?, &label, padding).map_err(|e| format!("{game}-{lang}: {e}"))?;
         edits.push((scaffold, text));
         let (text, removed) = drop_lines(&read(&script)?, |l| !sections.iter().any(|s| l.contains(&format!("(.rom.{s})"))));

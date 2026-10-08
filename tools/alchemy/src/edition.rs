@@ -12,13 +12,9 @@ pub(crate) fn script(root: &Path, target: DecompTarget, output: &Path) -> Result
     let read = |path: &Path| {
         fs::read_to_string(root.join(path)).map_err(|error| format!("{}: {error}", path.display()))
     };
-    let own = edition
-        .parent()
-        .expect("an edition script has a directory")
-        .to_string_lossy()
-        .into_owned();
+    let own = target.scaffold_dir().to_string_lossy().into_owned();
     let product = target.id.as_str().split_once('-').unwrap().0;
-    let international_path = Path::new("recon").join(product).join("en/MAIN.LD");
+    let international_path = crate::targets::edition_script_path(product, "en");
     let international = native(&read(&game)?, &read(&international_path)?)
         .map_err(|error| format!("{}: {error}", international_path.display()))?;
     let text = if edition == international_path {

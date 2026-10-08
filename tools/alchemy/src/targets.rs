@@ -79,11 +79,18 @@ impl DecompTarget {
     pub fn script(&self) -> std::path::PathBuf {
         std::path::Path::new(self.game_dir()).join("MAIN.LD")
     }
+    /// The edition's own linker script, which replaces or derives the
+    /// game's output sections; the Japanese base edition has none.
     pub fn edition_script(&self) -> Option<std::path::PathBuf> {
         match self.id.as_str().split_once('-') {
             Some((_, "ja")) | None => None,
-            Some((game, lang)) => Some(["recon", game, lang, "MAIN.LD"].iter().collect()),
+            Some((game, lang)) => Some(edition_script_path(game, lang)),
         }
+    }
+    /// The directory of the edition's assembly scaffold, recon/<game>/<lang>.
+    pub fn scaffold_dir(&self) -> std::path::PathBuf {
+        let (game, lang) = self.id.as_str().split_once('-').expect("an edition id names its game");
+        ["recon", game, lang].iter().collect()
     }
     pub fn editions(&self) -> [DecompTarget; 6] {
         let first = self.id as usize / 6 * 6;
@@ -120,6 +127,26 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, usize); 2] = [
 ];
 pub const DEFAULT_TARGET: DecompTargetId = DecompTargetId::TbsJa;
 
+/// Games whose edition linker scripts live beside MAIN.LD as MAIN_<LANG>.LD;
+/// the others keep theirs in recon/<game>/<lang>/MAIN.LD.
+const SCRIPTS_IN_GAME: [&str; 1] = ["tbs"];
+
+/// The linker script of one edition of a game ("tbs" or "tla"), relative to
+/// the checkout: the game's MAIN.LD for Japanese, else the edition's own.
+pub fn edition_script_path(game: &str, lang: &str) -> std::path::PathBuf {
+    let dir = match game {
+        "tla" => "games/THE LOST AGE",
+        _ => "games/THE BROKEN SEAL",
+    };
+    if lang == "ja" {
+        [dir, "MAIN.LD"].iter().collect()
+    } else if SCRIPTS_IN_GAME.contains(&game) {
+        [dir, &format!("MAIN_{}.LD", lang.to_ascii_uppercase())].iter().collect()
+    } else {
+        ["recon", game, lang, "MAIN.LD"].iter().collect()
+    }
+}
+
 pub fn parse_decomp_target(value: &str) -> Result<DecompTargetId, String> {
     TARGET_IDS
         .into_iter()
@@ -154,5 +181,24 @@ pub fn target_for(id: DecompTargetId) -> DecompTarget {
         asm_dir,
         output_dir,
         overlay_entry_veneers,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn edition_scripts_live_with_their_game() {
+        let path = |game, lang| edition_script_path(game, lang).to_string_lossy().into_owned();
+        assert_eq!(path("tbs", "ja"), "games/THE BROKEN SEAL/MAIN.LD");
+        assert_eq!(path("tbs", "en"), "games/THE BROKEN SEAL/MAIN_EN.LD");
+        assert_eq!(path("tbs", "it"), "games/THE BROKEN SEAL/MAIN_IT.LD");
+        assert_eq!(path("tla", "ja"), "games/THE LOST AGE/MAIN.LD");
+        assert_eq!(path("tla", "de"), "recon/tla/de/MAIN.LD");
+        let de = target_for(DecompTargetId::TbsDe);
+        assert_eq!(de.edition_script().unwrap(), edition_script_path("tbs", "de"));
+        assert_eq!(de.scaffold_dir().to_string_lossy(), "recon/tbs/de");
+        assert_eq!(target_for(DecompTargetId::TbsJa).edition_script(), None);
     }
 }

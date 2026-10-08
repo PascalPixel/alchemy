@@ -283,10 +283,10 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         }
         [kind] if kind == "links" => {
             let root = crate::compiler::routing::root();
-            for (game, dir) in [("tbs", "THE BROKEN SEAL"), ("tla", "THE LOST AGE")] {
+            for game in ["tbs", "tla"] {
                 for lang in ["ja", "de", "es", "fr", "it"] {
                     let rom = root.join(format!("recon/{game}/{lang}/rom.s"));
-                    let script = if lang == "ja" { root.join(format!("games/{dir}/MAIN.LD")) } else { root.join(format!("recon/{game}/{lang}/MAIN.LD")) };
+                    let script = root.join(crate::targets::edition_script_path(game, lang));
                     if !Path::new(&rom).exists() {
                         continue;
                     }

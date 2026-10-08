@@ -776,7 +776,8 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SLIDES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/CREDITS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SLIDES.o"(.rodata)
-    "*/recon/tbs/ja/rom.o"(.rom.000e7ae0)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/CREDITS.o"(.rodata)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/CREDITS.o"(.data)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/STAFFROL.o"(.rodata)
     . = ABSOLUTE(0x080e9000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/PALETTE.o"(.text .rodata .data .padding)
@@ -787,7 +788,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/TINT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/TITLE.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/PALETTE.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000ea8bc)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/PROMPT.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/INTRO.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/CURVE.o"(.rodata)
     . = ABSOLUTE(0x080eb000);
@@ -1139,7 +1140,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/CAMELOT_LOGO.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/GOLDEN_SUN.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WORLD_MAP/PICTURE.o"(.rodata)
-    "*/recon/tbs/ja/rom.o"(.rom.00332338)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/TSUZUKU.o"(.rodata)
     "*/games/COMMON/SRC/GRAPHICS/BACKDROP/SUHARA_GATE.o"(.rodata)
     "*/games/COMMON/SRC/GRAPHICS/BACKDROP/TAKARA_SHIMA.o"(.rodata)
     "*/games/COMMON/SRC/GRAPHICS/BACKDROP/TAKARA_SHIMA_CAVE.o"(.rodata)

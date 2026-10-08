@@ -717,6 +717,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/CREDITS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SLIDES.o"(.rodata)
     "*/recon/tbs/es/rom.o"(.rom.000f3ae0)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/STAFFROL.o"(.rodata)
     . = ABSOLUTE(0x080f5000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/PALETTE.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/INTRO.o"(.text)

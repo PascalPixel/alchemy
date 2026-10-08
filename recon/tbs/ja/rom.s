@@ -963,9 +963,6 @@ DisplayScroll_GlyphWidths:
 	.global DisplayScroll_LineTable
 DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x000e83c8, 0x00000540
-	.global DisplayScroll_Font
-DisplayScroll_Font:
-	.incbin "baserom.gba", 0x000e8908, 0x000002f3
 	.section .rom.000ea8bc, "ax"
 	.global Title_PromptTiles
 Title_PromptTiles:

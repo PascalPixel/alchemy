@@ -591,8 +591,7 @@ SECTIONS
     . = ABSOLUTE(0x080c0000);
     "*/games/tbs/src/system/far_call/effect.o"(.text .rodata .data .padding)
     "*/games/tbs/src/battle/presentation/falling.o"(.text)
-    "*/games/tbs/src/battle/effect/run_five_mode_mode0.o"(.text)
-    "*/games/tbs/src/battle/effect/particle_pool.o"(.text)
+    "*/games/tbs/src/battle/effect/fivemode.o"(.text)
     "*/games/tbs/src/battle/effect/twelve_mode.o"(.text)
     "*/games/tbs/src/battle/effect/flipping_burst.o"(.text)
     "*/games/tbs/src/battle/presentation/canvfx.o"(.text)

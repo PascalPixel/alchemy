@@ -728,7 +728,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/BLANK_RUN.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CAMERA/CAMERA.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/SCALE_RGB555_BUFFER.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000f5768)
+    "*/recon/tbs/de/rom.o"(.rom.000f69dc)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/BLANK_LOAD.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/COLORFX.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MINIGAME/REEL_INIT_TITLE.o"(.text)

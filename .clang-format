@@ -1,1 +1,24 @@
-DisableFormat: true
+# Alchemy's source layout (S3).
+BasedOnStyle: LLVM
+DisableFormat: false
+UseTab: Always
+IndentWidth: 4
+TabWidth: 4
+ContinuationIndentWidth: 4
+ColumnLimit: 100
+BreakBeforeBraces: Allman
+SpaceBeforeParens: ControlStatements
+IndentCaseLabels: false
+IndentPPDirectives: None
+SortIncludes: Never
+IncludeBlocks: Preserve
+ReflowComments: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortBlocksOnASingleLine: Never
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AlignAfterOpenBracket: DontAlign
+AlignConsecutiveDeclarations: Consecutive
+AlignEscapedNewlines: Left
+PointerAlignment: Right
+BreakBeforeBinaryOperators: NonAssignment

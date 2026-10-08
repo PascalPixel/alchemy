@@ -330,7 +330,7 @@ fn reference(options: &Options) -> Result<(Vec<String>, Option<String>), String>
         if object.exists() {
             listing.extend(crate::diff::disassemble(&object, None)?);
         } else {
-            let (tokens, name) = crate::diff::scaffold_reference(options.target, address)?;
+            let (tokens, name) = crate::diff::scaffold_reference(options.target, address, options.arm)?;
             listing.extend(tokens);
             if options.addresses.len() == 1 {
                 scaffold = Some(name);

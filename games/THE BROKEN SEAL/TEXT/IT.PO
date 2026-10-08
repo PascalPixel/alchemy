@@ -10231,11 +10231,11 @@ msgctxt "MsgSlotsBet"
 msgid "02555"
 msgstr "Scommetti"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceCoins"
 msgid "02556"
 msgstr "Mon."
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceWinnings"
 msgid "02557"
 msgstr "Vincite"
 
@@ -10271,11 +10271,11 @@ msgctxt "MsgSlotsStart"
 msgid "02565"
 msgstr "{button_icon:1}:Aziona"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceThrow"
 msgid "02566"
 msgstr "{button_icon:1}:Tira"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceQuit"
 msgid "02567"
 msgstr "{button_icon:2}:Esci"
 

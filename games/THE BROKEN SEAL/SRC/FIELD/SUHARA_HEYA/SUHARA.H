@@ -6,8 +6,6 @@
 #include "FIELD_SCENE.H"
 #include "SCENE.H"
 
-#define STEP_COUNTER (*(u16 *)(*(u8 **)&gEventWork + 0x1d8))
-
 struct SceneRecord {
     u8 unk_00[9];
     u8 flags;

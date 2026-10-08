@@ -94,7 +94,6 @@ extern char SceneId_KorosseoKabe;
 extern char SceneId_TakaraAshiba1;
 extern char SceneId_TakaraAshiba2;
 extern char SceneId_TakaraAshiba3;
-extern char SceneId_TorebiKyuden1;
 extern char SceneId_TorebiKyuden2;
 extern char SceneId_KorosseoMaruta;
 

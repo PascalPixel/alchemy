@@ -266,11 +266,6 @@ static inline void FieldObject_SetTargetAndCallback(s32 object, s32 target, cons
 
 struct FieldActor * Object_CreateFar();
 
-static inline struct FieldActor * FieldObject_CreateFar(s32 type, s32 x, s32 y, s32 z)
-{
-    return Object_CreateFar(type, x, y, z);
-}
-
 void Vector_AddPolarOffset();
 
 static inline void FieldVector_AddPolarOffset(s32 radius, s32 heading, struct FieldPosition *probe)

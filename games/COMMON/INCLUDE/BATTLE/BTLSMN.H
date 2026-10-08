@@ -26,7 +26,6 @@ struct BattleSummonState {
     u32 available_mask;
 };
 
-const struct SummonDefinition *Summon_GetRecord(s32 summon_id);
 const struct SummonDefinition *SummonDefinition_Get(s32 summon_id);
 s32 EnmSlotGet(void);
 s32 EnmChk(s32 class_id);

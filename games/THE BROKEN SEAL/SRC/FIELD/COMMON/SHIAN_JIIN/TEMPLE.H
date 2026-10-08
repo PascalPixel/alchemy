@@ -7,16 +7,6 @@ extern struct EventWork *gEventWork;
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define ObjectMotion_CallThenWaitForAnimationChange_9(args...) ((void (*)())Engine_ActorSetAnimationAndWait)(args)
 
-struct SceneRecordHeading {
-    u8 pad[6];
-    u16 heading;
-};
-
-struct SceneActor_02001334 {
-    u8 unknown_00[6];
-    u16 facing;
-};
-
 struct Params {
     s32 unused0;
     s32 field1;

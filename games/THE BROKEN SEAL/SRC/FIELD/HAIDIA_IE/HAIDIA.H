@@ -46,11 +46,6 @@ struct SceneVerticalEffect {
     struct VerticalEffectAnchor *anchor;
 };
 
-struct SceneWork {
-    u8 pad000[0x22b];
-    u8 area_state;
-};
-
 struct PairDetail {
     u8 unknown_00[22];
     u8 field_16;

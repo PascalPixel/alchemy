@@ -46,11 +46,6 @@ s32 DebugMenu_BrowseIcons(void);
 s32 Shop_ConfirmAct(void);
 s32 Menu_OpenCharacterSelector(void);
 
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
 u8 *MenuTest_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 u8 *MenuTest_GetExits(void);

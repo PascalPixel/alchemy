@@ -3,28 +3,6 @@
 
 #include "TYPES.H"
 
-struct EventValueWork {
-    u8 unknown_000[0x1f4];
-    s32 value;
-};
-
-struct EventValidationWork {
-    u8 unknown_000[0x220];
-    u16 values[2];
-};
-
-struct EventPairWork1c0 {
-    u8 unknown_000[0x1c0];
-    u16 first;
-    u16 second;
-};
-
-struct EventPairWork1c4 {
-    u8 unknown_000[0x1c4];
-    u16 first;
-    u16 second;
-};
-
 struct EventPairWork1d6 {
     u8 unknown_000[0x1d6];
     u16 special;

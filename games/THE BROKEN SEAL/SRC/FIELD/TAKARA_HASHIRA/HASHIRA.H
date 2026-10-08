@@ -37,10 +37,6 @@ void Object_SetMode(struct FieldActor *object, s32 mode);
 extern u8 TakaraHashira_ShakenScroll[];
 extern u8 *gEffectWork;
 
-typedef struct {
-    s32 v[6];
-} PlacementResult;
-
 extern u8 gCell[][2];
 extern s32 TakaraHashira_ShakeChance;
 

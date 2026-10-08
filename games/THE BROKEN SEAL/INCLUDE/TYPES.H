@@ -12,8 +12,6 @@ typedef unsigned int u32;
 typedef signed long long s64;
 typedef unsigned long long u64;
 
-typedef int bool;
-
 #define NULL ((void *)0)
 #define FALSE 0
 #define TRUE 1

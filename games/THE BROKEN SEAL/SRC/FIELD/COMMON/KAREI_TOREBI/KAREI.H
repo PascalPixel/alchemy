@@ -66,7 +66,6 @@ void FieldScene_RunOpeningAuxiliarySequence(void);
 void KareiTorebi_TalkScaryTrip(void);
 void KareiTorebi_TalkSeasickTourists(void);
 void KareiTorebi_DeliverParentsMessage(void);
-s32 FieldScene_RunScene3ae_0200086c(void);
 void KareiTorebi_PreparePort(void);
 void KareiTorebi_PrepareWindowTransition(void);
 void FieldScene_PlaceSlots14And15(void);

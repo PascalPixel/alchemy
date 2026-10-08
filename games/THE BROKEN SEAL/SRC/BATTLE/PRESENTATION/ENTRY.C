@@ -201,22 +201,20 @@ struct Half {
 
 void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 {
-    /* FAKEMATCH: needed to match: the one-pass IME save orders its stack address first */
-
     struct BtlWork *screen = BtlWk;
     u16 *palette = screen->palette;
-    volatile u32 ime;
+    u32 ime;
+    u32 *slot = &ime;
 
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+    /* FAKEMATCH: needed to match: the one-pass block and the loop on a zero local keep the IME save through slot's register */
     do {
-        volatile u32 *slot = &ime;
         u16 *ime_reg = (u16 *)0x04000208;
+        s32 once = 0;
 
-        /* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
         do {
             *slot = *ime_reg;
             *ime_reg = (u32)ime_reg;
-        } while (0);
+        } while (once);
     } while (0);
 
     if (level == 0) {
@@ -225,7 +223,7 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
         Graphics_ScaleRgb555Clamped(palette, (u16 *)0x050000c0, screen->brightness = 0x10000 - level * 1092, 128);
     }
     {
-        u32 saved = ime;
+        u32 saved = *slot;
 
         REG_IME = saved;
     }

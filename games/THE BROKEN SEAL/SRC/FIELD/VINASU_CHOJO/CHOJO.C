@@ -91,7 +91,7 @@ struct PairWork {
     u16 vram_block;
 };
 
-extern struct PairWork *Data_03001f30;
+extern struct PairWork *gEffectWork;
 
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
@@ -1198,7 +1198,7 @@ void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
     union PairObject *child;
     struct PairSprite *part;
     struct FieldSprite *sprite;
-    struct PairWork *work = Data_03001f30;
+    struct PairWork *work = gEffectWork;
     s32 i;
 
     Engine_AudioPlayCue(131);

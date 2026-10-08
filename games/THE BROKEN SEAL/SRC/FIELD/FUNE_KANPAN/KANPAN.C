@@ -1694,7 +1694,7 @@ void FieldScene_ConfigureThreeActors(void)
     record = Object_GetById(21);
     record->facing = 0xb000;
     /* FAKEMATCH: needed to match: the work pointer is read as a word, which may alias the facing stores, so they stay ahead of its load. */
-    *(s32 *)(*(s32 *)&Data_03001ebc + 0x1c0) = 0x202;
+    *(s32 *)(*(s32 *)&gEventWork + 0x1c0) = 0x202;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);

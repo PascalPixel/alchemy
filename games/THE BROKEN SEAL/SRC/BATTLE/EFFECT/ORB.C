@@ -54,8 +54,8 @@ void CheckObjectMapTile(void)
 	s32					  x;
 	s32					  y;
 
-	slot = (u32)&gWork;
-	ev = gWork;
+	slot = (u32)&gEventWork;
+	ev = gEventWork;
 	obj = ObjectTable_Get(gGameState.selected_actor);
 	tile = (u8 *)*(struct MapState **)(slot - 76); // gMapWork[0]
 

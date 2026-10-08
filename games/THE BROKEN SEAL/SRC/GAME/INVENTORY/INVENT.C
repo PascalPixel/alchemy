@@ -57,7 +57,7 @@ void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value)
 
 s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 force_bottom)
 {
-    struct EventPromptWork *work = (struct EventPromptWork *)gWork;
+    struct EventPromptWork *work = (struct EventPromptWork *)gEventWork;
     s32 sprite = ((struct ScenePlacement *)BattleAction_FindDescriptor(work->event.speaker))->sprite;
     struct UiWindow *window = (struct UiWindow *)work->event.message_window;
     struct UiWindow *side = (struct UiWindow *)work->event.side_window;

@@ -32,7 +32,6 @@ void BattleFx_SetWeightedResult(s32 value, s32 mode);
 
 extern struct BattleEffectBuffers *Data_03001ed0;
 
-extern u8 *gWork[];
 
 
 void Vector_AddPolarOffset();
@@ -603,8 +602,8 @@ void ToretoPalette_ApplyTint(void)
     u32 color;
     u8 *event;
 
-    event = gWork[0];
-    src = (u16 *)gWork[5];
+    event = ((u8 **)&gEventWork)[0];
+    src = (u16 *)((u8 **)&gEventWork)[5];
     if (*(s16 *)(event + 0x17e) != 0)
         return;
     if ((gFrameCount & 31) != 0)

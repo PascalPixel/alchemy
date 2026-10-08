@@ -145,18 +145,10 @@ void Scene_RunScene3c3SequenceC(void)
 #else
     extern u8 gCell[];
 #endif
-#ifdef MODERN
-    // modern GCC holds one type for a name in a file
-    extern u8 gWork_modern[] __asm__("gWork");
-#define gWork gWork_modern
-#else
-    extern u8 gWork[];
-#endif
-
     s32 arg;
     s32 v5;
 
-    arg = *(s16 *)(*(u8 **)gWork + 0x16c);
+    arg = *(s16 *)(*(u8 **)&gEventWork + 0x16c);
     Actor_Get(0)->motion_flags = 0;
     v5 = 2;
     Audio_PlayCue(158);
@@ -170,15 +162,10 @@ void Scene_RunScene3c3SequenceC(void)
 #ifdef MODERN
 #undef gCell
 #endif
-#ifdef MODERN
-#undef gWork
-#endif
 
 void Dialogue_ShowMessages8fbAnd8fc(void)
 {
-    extern u8 *gWork;
-
-    s16 token = *(s16 *)(gWork + 364);
+    s16 token = *(s16 *)((u8 *)gEventWork + 364);
 
     Engine_AudioPlayCue(123);
     Engine_GameFlagClear(0x8FB);
@@ -208,14 +195,6 @@ void Scene_RunPrimarySequence(void)
 
 void Scene_RunScene3c3SequenceA(void)
 {
-#ifdef MODERN
-    // modern GCC holds one type for a name in a file
-    extern u8 gWork_modern[] __asm__("gWork");
-#define gWork gWork_modern
-#else
-    extern u8 gWork[];
-#endif
-
     u32 i;
     struct FieldActor *record;
     s32 v5;
@@ -318,14 +297,9 @@ void Scene_RunScene3c3SequenceA(void)
     GameFlag_Set(0x89f);
     Engine_EventEnd();
 }
-#ifdef MODERN
-#undef gWork
-#endif
 
 void Scene_RunActorNinePromptDialogue(void)
 {
-    extern u8 *gWork;
-
     u8 *work;
 
     Engine_EventBegin();
@@ -355,7 +329,7 @@ close:
     goto done;
 
 skip:
-    work = gWork;
+    work = (u8 *)gEventWork;
     *(u16 *)(work + 472) += 2;
     Engine_EventShowMessage(9, 0);
 
@@ -365,8 +339,6 @@ done:
 
 void Scene_RunActorTenRepeatedMotion(void)
 {
-    extern u8 *gWork;
-
     unsigned int beat;
 
     Engine_EventBegin();

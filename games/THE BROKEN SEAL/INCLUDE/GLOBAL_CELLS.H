@@ -5,6 +5,4 @@
 
 extern void *gMapWork[];
 
-extern u8 Data_03001e74_a[];
-
 #endif

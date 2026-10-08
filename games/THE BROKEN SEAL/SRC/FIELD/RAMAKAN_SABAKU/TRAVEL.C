@@ -227,7 +227,7 @@ void RamakanSabaku_PlayStartledRetreat(void)
     u16 *shown_addr;
     u8 *p5;
 
-    p5 = gWork;
+    p5 = (u8 *)gEventWork;
     RamakanSabaku_UpdateTravelDust();
     if (GameFlag_IsSet(0x90a) == 0) {
         rec8 = GameFlag_IsSet(0x200);

@@ -27,6 +27,8 @@
 #include "BTLSYS.H"
 #include "text/MSG_IDS.H"
 
+extern struct BattleRuntime *gEventWork;
+
 #define BattleFx_UpdateScaledArcObjectB ((void (*)(void))BattleFx_UpdateScaledArcObjectB)
 #define BattleFx_UpdateScaledArcObjectA ((void (*)(void))BattleFx_UpdateScaledArcObjectA)
 #define ObjectGroup_SetActionForOthers ((void (*)(void*,s32,s32))ObjectGroup_SetActionForOthers)
@@ -202,7 +204,7 @@ void BattleFx_PrepareBufferInterpolation(void)
     s32 value;
     u8 *state;
 
-    state = (u8 *)Data_03001ebc;
+    state = (u8 *)gEventWork;
     value = (s32)(state + 0x236);
     BattleFx_ApplyColorToTargetBuffer(value, 2);
     if (FIELD_AT_OFFSET(state, s16 *, 0xCB8) != 0) {
@@ -215,7 +217,7 @@ void BattleFx_PrepareBufferInterpolation(void)
 
 void Camera_WorldToScreen(struct EffectVector *position)
 {
-    struct EventRuntime **data = (struct EventRuntime **)&Data_03001ebc;
+    struct EventRuntime **data = (struct EventRuntime **)&gEventWork;
 
     if ((*data)->mode_19e == 3) {
         struct EffectVector result;

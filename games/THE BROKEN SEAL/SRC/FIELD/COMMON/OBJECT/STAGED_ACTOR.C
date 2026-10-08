@@ -18,7 +18,7 @@
 #include "MAP_SCROLL.H"
 extern u8 gMapCellBuffer[];
 
-extern u8 *gWork;
+extern u8 *gEventWork;
 extern s32 StagedActor_DirectionSteps[];
 extern s32 StagedActor_FootprintBounds[];
 
@@ -57,7 +57,7 @@ s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 
 struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *origin)
 {
-    struct FieldStepWork *work = (struct FieldStepWork *)gWork;
+    struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
     struct ObjectRuntime **slots = work->actors;
     u32 i;
 
@@ -214,7 +214,7 @@ done:
 
 u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint)
 {
-    struct FieldStepWork *work = (struct FieldStepWork *)gWork;
+    struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
     struct StagedActor *player = Object_GetById(0);
     struct ObjectRuntime **list;
     u32 i, j;

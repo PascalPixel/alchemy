@@ -20,6 +20,8 @@
 #include "FIXED_MATH.H"
 #include "TRANSFORM.H"
 
+extern void *gWorkSlot[];
+
 #define Camera_StoreSceneParameters ((void (*)(s32,s32,s32))Camera_StoreSceneParameters)
 #define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
 
@@ -161,7 +163,7 @@ void WorldMap_UpdateView(void)
         gScanlineAngle = 0;
         gScanlinePitch = view->pitch;
     }
-    ((s32 (*)(void *, s32 *, void *, void *))Data_03001e50[46])(cam, pos, map->scanlines, buffer[gFrameCount & 1]);
+    ((s32 (*)(void *, s32 *, void *, void *))gWorkSlot[46])(cam, pos, map->scanlines, buffer[gFrameCount & 1]);
 }
 
 

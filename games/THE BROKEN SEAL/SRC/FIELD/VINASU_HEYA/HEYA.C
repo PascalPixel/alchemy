@@ -819,10 +819,9 @@ void FieldScene_RunLeaderSurpriseApproach(void)
 
 void FieldScene_RunStatueDialogueSequence(void)
 {
-    extern struct EventWorkState *gWork;
     struct EventWorkState *work;
 
-    work = gWork;
+    work = (struct EventWorkState *)gEventWork;
     work->field_cba = 0;
     work->field_cb6 = 1;
     Engine_EventBegin();

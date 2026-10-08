@@ -914,12 +914,12 @@ void FieldScene_RunBranchingActorSequence(void)
     Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
     Actor_FaceDirection(MEARI, FACING_EAST, 0);
     Actor_FaceDirection(IWAN, FACING_WEST, 0);
-    event = (struct EventWork *)gWork[0];
+    event = (struct EventWork *)((u8 **)&gEventWork)[0];
     event->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     event->transition_frames = 12;
     Task_Wait(1);
     DisplayTransition_InitializeBattleEffectState(9);
-    work = gWork[4];
+    work = ((u8 **)&gEventWork)[4];
     SetHalf((u16 *)(work + 0x52a), 0);
     SetHalf((u16 *)(work + 0x534), 0x1f1f);
     SetHalf((u16 *)(work + 0x536), 1);
@@ -937,7 +937,7 @@ void FieldScene_RunBranchingActorSequence(void)
         *(u16 *)(work + 0x52a) = step;
     }
     SetHalf((u16 *)(work + 0x536), 31);
-    event = (struct EventWork *)gWork[0];
+    event = (struct EventWork *)((u8 **)&gEventWork)[0];
     event->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     event->transition_frames = 24;
     Event_Wait(20);
@@ -987,7 +987,7 @@ void FieldScene_RunBranchingActorSequence(void)
         Actor_Jump(GERALD, 4, 13);
         Actor_Jump(GERALD, 4, 30);
         Event_ShowMessage(GERALD, 0);
-        ((struct EventWork *)gWork[0])->message++;
+        ((struct EventWork *)((u8 **)&gEventWork)[0])->message++;
     } else {
         Event_Wait(10);
         Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
@@ -995,7 +995,7 @@ void FieldScene_RunBranchingActorSequence(void)
         Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 3, 40);
         Actor_Jump(GERALD, 4, 13);
         Actor_Jump(GERALD, 4, 30);
-        ((struct EventWork *)gWork[0])->message++;
+        ((struct EventWork *)((u8 **)&gEventWork)[0])->message++;
         Event_ShowMessage(GERALD, 0);
     }
     Event_Wait(10);
@@ -1034,13 +1034,13 @@ void FieldScene_RunBranchingActorSequence(void)
         Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 7, 40);
         Event_ShowMessage(GERALD, 0);
         pick = 0;
-        ((struct EventWork *)gWork[0])->message++;
+        ((struct EventWork *)((u8 **)&gEventWork)[0])->message++;
     } else {
         Event_Wait(10);
         Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
         Event_Wait(20);
         Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 7, 40);
-        ((struct EventWork *)gWork[0])->message++;
+        ((struct EventWork *)((u8 **)&gEventWork)[0])->message++;
         pick = 1;
         Event_ShowMessage(GERALD, 0);
     }
@@ -1078,9 +1078,9 @@ void FieldScene_RunBranchingActorSequence(void)
         Actor_RunRepeatedMotion(GERALD, 2);
         Event_Wait(30);
         Event_ShowMessage(GERALD, 0);
-        ((struct EventWork *)gWork[0])->message += 2;
+        ((struct EventWork *)((u8 **)&gEventWork)[0])->message += 2;
     } else {
-        ((struct EventWork *)gWork[0])->message += 2;
+        ((struct EventWork *)((u8 **)&gEventWork)[0])->message += 2;
         Event_Wait(10);
         Actor_SetAnimationAndWait(IWAN, ANIM_SHAKE_HEAD);
         Event_Wait(20);
@@ -2084,7 +2084,7 @@ void TorebiKyuden_LeaveThroughDoor(void)
 {
     struct EventWork *work;
 
-    work = (struct EventWork *)gWork[0];
+    work = (struct EventWork *)((u8 **)&gEventWork)[0];
     Event_Begin();
     Audio_PlayCue(158);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);

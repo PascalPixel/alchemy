@@ -36,7 +36,6 @@ struct ObjectRuntime *Object_CreateFar(s32 character, s32 x, s32 y, s32 z);
 u32 Random16(void);
 u32 __umodsi3(u32 numerator, u32 denominator);
 
-extern struct FieldStepWork *gWork;
 
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 {
@@ -194,7 +193,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
 
 s32 ObjectTable_FindLastActiveId(void)
 {
-    struct FieldStepWork *state = gWork;
+    struct FieldStepWork *state = (struct FieldStepWork *)gEventWork;
     s32 result = 7;
     s32 index = 8;
     struct ObjectRuntime **value = &state->actors[ACTOR_FIRST_PLACED];

@@ -74,7 +74,6 @@ void FieldScene_RunPairedStepB();
 void Object_SetActionCallbackAndRefreshById();
 void Audio_PlayCueFromEventWork();
 
-extern u8 *gWork;
 
 void FieldScene_ConfigureActor0ThenRun();
 
@@ -263,7 +262,7 @@ void FieldScene_ConfigureActor0ThenRun(s32 a0)
 
 void KorimaMura_AnimateSwitchOrExit(void)
 {
-    u8 *work = gWork;
+    u8 *work = (u8 *)gEventWork;
     s32 x = 0;
     s32 y = 0;
 
@@ -290,7 +289,7 @@ void KorimaMura_AnimateSwitchOrExit(void)
         Object_GetById(0)->motion_flags = 0;
         Actor_SetSpeed(0, 0x8000, 0x4000);
         Engine_ActorSetDestinationOffset(0, 0, 8);
-        *(s32 *)(gWork + 0x1c8) = 16;
+        *(s32 *)((u8 *)gEventWork + 0x1c8) = 16;
         Engine_EventRequestExit(9);
         Engine_EventEnd();
         return;
@@ -400,7 +399,7 @@ s32 Scene_Initialize(void)
     }
 
     if (scene == (s32)&SceneId_KorimaMura2) {
-        *(s32 *)(gWork + 0x1c0) = 0x204;
+        *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x204;
         return 0;
     }
 

@@ -58,7 +58,6 @@ struct SceneActor_02000350 {
     u8 active;
 };
 
-extern u8 *gWork;
 
 s32 SceneActor_GetPositionDistance(s32 *, s32 *);
 s32 ArcTan2(s32, s32);
@@ -166,7 +165,7 @@ void FieldScene_RunActorEighteenDialogue(void)
     Engine_ActorSetAnimation(18, 1);
 
     if (PartyInventory_FindOwner(231) != -1 && Engine_GameFlagIsSet(0x858) == 0) {
-        ((struct SceneWork_02000e90 *)gWork)->actor18_marker = 1;
+        ((struct SceneWork_02000e90 *)gEventWork)->actor18_marker = 1;
     }
 
     Engine_EventEnd();

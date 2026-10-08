@@ -4,7 +4,7 @@ extern const s32 Makyuri_ScaleCounterScript[];
 
 void SceneState_ClearCurrentRecordAndReleaseTarget(void)
 {
-    s32 *rec = **(s32 ***)&gWork.scene;
+    s32 *rec = **(s32 ***)&((struct WorkPointers *)&gEventWork)->scene;
     s32 *target;
 
     if (rec[0] == 0) {

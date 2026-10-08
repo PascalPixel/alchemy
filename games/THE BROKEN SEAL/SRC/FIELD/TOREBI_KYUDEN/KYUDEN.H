@@ -33,7 +33,6 @@ static __inline__ void SetHalf(u16 *at, s32 value)
     ((union WorkCell *)at)->h = value;
 }
 
-extern u8 *gWork[];
 extern s32 gKeysHeld;
 
 extern u8 TorebiKyuden_EmptyTable[];

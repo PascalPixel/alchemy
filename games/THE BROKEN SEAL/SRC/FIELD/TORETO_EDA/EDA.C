@@ -34,7 +34,6 @@ union SceneCell {
 };
 
 extern s32 gCell[];
-extern u8 *gWork;
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
 #endif
@@ -140,7 +139,7 @@ void Scene_ApplyOffset0Neg6(void)
 
 void ToretoEda_PlayCueAndSelectTouchedExit(void)
 {
-    u8 *state = gWork;
+    u8 *state = (u8 *)gEventWork;
     s16 *cnt;
 
     Audio_PlayCue(0x7B);

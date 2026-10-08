@@ -74,7 +74,7 @@ extern volatile s32 gKeyState;
 
 void Battle_UpdateModeFromShoulderButtons(void)
 {
-    struct BattleRuntime *runtime = Data_03001ebc;
+    struct BattleRuntime *runtime = (struct BattleRuntime *)gEventWork;
 
     if (gDebugMode != 0) {
         if (gKeyState & KEY_L) {
@@ -88,7 +88,7 @@ void Battle_UpdateModeFromShoulderButtons(void)
 
 void Battle_WaitMode0(s32 frames)
 {
-    if (Data_03001ebc->mode_1cc == 0 && frames != 0) {
+    if (((struct BattleRuntime *)gEventWork)->mode_1cc == 0 && frames != 0) {
         WaitFrames(frames);
     }
 }
@@ -115,7 +115,7 @@ void Battle_ResetEffectCounter(void);
 
 void Battle_Reset(void)
 {
-    struct BattleRuntime *runtime = Data_03001ebc;
+    struct BattleRuntime *runtime = (struct BattleRuntime *)gEventWork;
 
     UiTimedNotice_CloseIfActiveFar();
     Battle_InitializeRenderObject();

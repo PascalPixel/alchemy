@@ -51,7 +51,6 @@ struct SceneActor_02001010 {
     struct Presentation *presentation;
 };
 
-extern u8 *gWork;
 
 u8 *UnitGet();
 void Djinn_Transfer(int, int, int, int);
@@ -61,7 +60,7 @@ s32 SceneActor_CheckFacingAndRange();
 
 s32 SceneActor_UpdateProximityToLeader(u8 *self)
 {
-    u8 **globals = Data_03001e8c;
+    u8 **globals = gWindowWork;
     u8 *scene = globals[0];
     u8 *workspace = globals[12];
     u16 *flags = (u16 *)(self + 100);
@@ -94,8 +93,8 @@ s32 SceneActor_UpdateProximityToLeader(u8 *self)
 
 s32 ActorPresentation_UpdateEntityFromLeader(u8 *entity)
 {
-    u8 *base = Data_03001e8c[0];
-    u8 *workspace = Data_03001e8c[12];
+    u8 *base = gWindowWork[0];
+    u8 *workspace = gWindowWork[12];
     s32 flag = 0;
     s32 selector = 18;
     struct FieldActor *leader;
@@ -234,7 +233,7 @@ void ActorPresentation_RunActorThirteenSceneSetup(void)
     SceneActor_ApplyActorCueThenWait(13, 0, 2);
     Engine_EventOpenMessage(13, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        workspace = gWork;
+        workspace = (u8 *)gEventWork;
         ++*(u16 *)(workspace + 472);
     }
     Engine_EventShowMessage(13, 0);
@@ -252,7 +251,7 @@ void ActorPresentation_RunActorSeventeenSceneSetup(void)
     SceneActor_ApplyActorCueThenWait(17, 0, 2);
     Engine_EventOpenMessage(17, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        workspace = gWork;
+        workspace = (u8 *)gEventWork;
         ++*(u16 *)(workspace + 472);
     }
     Engine_EventShowMessage(17, 0);
@@ -268,7 +267,7 @@ void ActorPresentation_RunActorEighteenSceneSetup(void)
     SceneActor_ApplyActorCueThenWait(18, 0, 2);
     Engine_EventOpenMessage(18, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        workspace = gWork;
+        workspace = (u8 *)gEventWork;
         ++*(u16 *)(workspace + 472);
     }
     Engine_EventShowMessage(18, 0);
@@ -362,7 +361,7 @@ void ActorPresentation_RunActorEightSceneSetup(void)
 {
     u8 *workspace;
     Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuYoureHittingRoadAgain); SceneActor_ApplyActorCueThenWait(8, 0, 2); Engine_EventOpenMessage(8, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0) { workspace = gWork; ++*(u16 *)(workspace + 472); }
+    if (Engine_EventChooseYesNo(0, 0) != 0) { workspace = (u8 *)gEventWork; ++*(u16 *)(workspace + 472); }
     Engine_EventShowMessage(8, 0); Engine_EventEnd();
 }
 
@@ -372,7 +371,7 @@ void SceneDialogue_RunActor12LineAndAdvance(void)
 {
     u8 *workspace;
     Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuTalkingAboutHammetsServantIvan);
-    if (Engine_GameFlagIsSet(2) != 0) { workspace = gWork; ++*(u16 *)(workspace + 472); }
+    if (Engine_GameFlagIsSet(2) != 0) { workspace = (u8 *)gEventWork; ++*(u16 *)(workspace + 472); }
     SceneActor_RunActorStep(12); Engine_EventEnd();
 }
 
@@ -423,7 +422,7 @@ void ActorPresentation_RunActorSixteenSceneSetup(void)
 {
     u8 *workspace;
     Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuThoseMenCapturedTheyreIn); Engine_ActorSetAnimation(16, 1); SceneActor_ApplyActorCueThenWait(16, 0, 2); Engine_EventOpenMessage(16, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0) { workspace = gWork; ++*(u16 *)(workspace + 472); }
+    if (Engine_EventChooseYesNo(0, 0) != 0) { workspace = (u8 *)gEventWork; ++*(u16 *)(workspace + 472); }
     Engine_EventShowMessage(16, 0); Engine_EventEnd();
 }
 
@@ -433,7 +432,7 @@ void ActorPresentation_RunActorEighteenFollowupSceneSetup(void)
 
     u8 *workspace;
     Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuOnesWhoCapturedThieves); SceneActor_ApplyActorCueThenWait(18, 0, 2); Engine_EventOpenMessage(18, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0) { workspace = gWork; ++*(u16 *)(workspace + 472); }
+    if (Engine_EventChooseYesNo(0, 0) != 0) { workspace = (u8 *)gEventWork; ++*(u16 *)(workspace + 472); }
     Engine_EventShowMessage(18, 0); Engine_EventEnd();
 }
 
@@ -449,7 +448,7 @@ void ActorPresentation_RunActorNineteenDialogueAndSetSceneState(void)
     Engine_EventShowMessage(19, 0);
     Engine_ActorSetAnimation(19, 1);
     if (PartyInventory_FindOwner(231) != -1 && Engine_GameFlagIsSet(0x858) == 0) {
-        u16 *p = (u16 *)(gWork + 370);
+        u16 *p = (u16 *)((u8 *)gEventWork + 370);
         u16 value = 1;
 
         *p = value;

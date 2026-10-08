@@ -59,8 +59,6 @@ gVramBlockCache:
 	.global gDecodeFillByte
 gDecodeFillByte:
 	.space 0x00000004
-	.global Data_03001c94
-Data_03001c94:
 	.global gKeyState
 gKeyState:
 	.space 0x00000004
@@ -165,16 +163,16 @@ gSchedulerTaskCount:
 	.global gObjAffineMatrices
 gObjAffineMatrices:
 	.space 0x00000100
-	.global Data_03001e40
-Data_03001e40:
+	.global gFrameCount
+gFrameCount:
 	.global gFrameCount
 gFrameCount:
 	.space 0x00000004
 	.global gFrameRenderPending
 gFrameRenderPending:
 	.space 0x0000000c
-	.global Data_03001e50
-Data_03001e50:
+	.global gWorkSlot
+gWorkSlot:
 	.global gWorkSlot
 	.type gWorkSlot, %object
 	.size gWorkSlot, 0x100
@@ -183,8 +181,6 @@ gWorkSlot:
 	.global gAnimationObjects
 gAnimationObjects:
 	.space 0x00000004
-	.global Data_03001e60
-Data_03001e60:
 	.global gSpriteObjects
 gSpriteObjects:
 	.space 0x00000004
@@ -200,18 +196,14 @@ gMapAnimationPages:
 	.global gMapWork
 gMapWork:
 	.space 0x00000004
-	.global Data_03001e74
-Data_03001e74:
-	.global Data_03001e74_a
-Data_03001e74_a:
 	.global BtlWk
 BtlWk:
 	.space 0x0000000c
 	.global gCameraWork
 gCameraWork:
 	.space 0x0000000c
-	.global Data_03001e8c
-Data_03001e8c:
+	.global gWindowWork
+gWindowWork:
 	.global gWindowWork
 gWindowWork:
 	.space 0x00000004
@@ -221,8 +213,6 @@ Data_03001e90:
 	.global gGlyphWork
 gGlyphWork:
 	.space 0x00000004
-	.global Data_03001e98
-Data_03001e98:
 	.global gResQueueWork
 gResQueueWork:
 	.space 0x00000004
@@ -235,12 +225,8 @@ gSelectionWork:
 	.global gBattleBgFxWork
 gBattleBgFxWork:
 	.space 0x00000014
-	.global Data_03001ebc
-Data_03001ebc:
 	.global gEventWork
 gEventWork:
-	.global gWork
-gWork:
 	.space 0x00000004
 	.global gPaletteWork
 gPaletteWork:
@@ -263,8 +249,6 @@ gHBlankScrollWork:
 	.global gActorEffectWork
 gActorEffectWork:
 	.space 0x00000004
-	.global Data_03001ee4
-Data_03001ee4:
 	.global gBattleDisplayWork
 gBattleDisplayWork:
 	.space 0x00000008
@@ -277,29 +261,23 @@ gDisp:
 	.global gTransitionWork
 gTransitionWork:
 	.space 0x0000001c
-	.global Data_03001f1c
-Data_03001f1c:
 	.global gSaveWorkspace
 gSaveWorkspace:
 	.space 0x0000000c
 	.global gBattleOwnerStates
 gBattleOwnerStates:
 	.space 0x00000004
-	.global Data_03001f2c
-Data_03001f2c:
 	.global gMenuWork
 gMenuWork:
 	.space 0x00000004
-	.global Data_03001f30
-Data_03001f30:
+	.global gEffectWork
+gEffectWork:
 	.global gEffectWork
 gEffectWork:
 	.space 0x00000004
 	.global gLinkCountdownWork
 gLinkCountdownWork:
 	.space 0x00000004
-	.global Data_03001f38
-Data_03001f38:
 	.global gMenuSelectWork
 gMenuSelectWork:
 	.space 0x00000004

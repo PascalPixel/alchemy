@@ -40,7 +40,6 @@ struct WorkPointers {
     u8 *scene;
 };
 
-extern struct WorkPointers gWork;
 
 extern const u8 MakyuriIriguchi_Actor8Path1[];
 extern const u8 MakyuriIriguchi_Actor8Path2[];

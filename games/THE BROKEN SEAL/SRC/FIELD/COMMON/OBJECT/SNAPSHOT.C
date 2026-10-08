@@ -25,7 +25,7 @@ void ObjectTable_ClearBattleSlots(void)
     s32 count;
     zero = 0;
     count = 0x41;
-    current = (s32 *)&((struct FieldStepWork *)gWork)->actors[65];
+    current = (s32 *)&((struct FieldStepWork *)gEventWork)->actors[65];
     do {
         count--;
         *current = zero;
@@ -35,7 +35,7 @@ void ObjectTable_ClearBattleSlots(void)
 
 void *ObjectTable_Get(u32 index)
 {
-    u8 *base = (u8 *)gWork;
+    u8 *base = (u8 *)gEventWork;
     u32 offset;
     if (index > 0xbf)
         return 0;

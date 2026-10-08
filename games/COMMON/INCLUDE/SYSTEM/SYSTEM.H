@@ -325,7 +325,6 @@ extern s32 BattleMotion_VariantAcceleration[];
 extern s32 BattleMotion_VariantDistancePercent[];
 extern s32 BattleMotion_VariantSpeedLimit[];
 extern s32 BattleMotion_VariantVelocityY[];
-extern u8 Data_03001e8c[];
 extern u8 Data_03001e90[];
 extern u16 Graphics_ExpandNibbleTable[];
 extern const u8 Resource_PatchThumbBranchCode[];

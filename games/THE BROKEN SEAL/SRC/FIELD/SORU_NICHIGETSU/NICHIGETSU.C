@@ -16,7 +16,6 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
-#define Data_03001ebc (*(struct EventGlobals *)&Data_03001ebc)
 
 
 
@@ -1415,7 +1414,7 @@ void SoruNichigetsu_RunLightScene(void)
     Engine_TaskWait(1);
     Actor_SetPosition(1, 0x1180000, 0x860000);
     Actor_FaceDirection(1, 0xa000, 0);
-    Data_03001ebc.event->transition_frames = 1;
+    ((struct EventGlobals *)&gEventWork)->event->transition_frames = 1;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_ColorBufferApplyTarget(0x2051cc, 1);
@@ -1476,7 +1475,7 @@ void SoruNichigetsu_RunLightScene(void)
     }
     Engine_ActorWaitForMove(1);
     Engine_ActorSetPosition(1, 0, 0);
-    field = Data_03001ebc.field;
+    field = ((struct EventGlobals *)&gEventWork)->field;
     *(u16 *)(field + 0xe00) = 0;
     *(u16 *)(field + 0xe02) = 0;
     *(u16 *)(field + 0xe04) = 0;
@@ -1486,8 +1485,8 @@ void SoruNichigetsu_RunLightScene(void)
     field[0x2a03] = 1;
     /* FAKEMATCH: the do/while keeps the backdrop-colour clear ahead of the event-work load. */
     do { PLTT_BACKDROP = 0; } while (0);
-    Data_03001ebc.event->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-    Data_03001ebc.event->transition_frames = 16;
+    ((struct EventGlobals *)&gEventWork)->event->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+    ((struct EventGlobals *)&gEventWork)->event->transition_frames = 16;
     Engine_EventEnd();
 }
 

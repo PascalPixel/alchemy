@@ -66,9 +66,7 @@ u8 *TorebiHeya_SelectEvents(void)
 
 void TorebiHeya_StartWindowTransition(void)
 {
-    extern u8 *Data_03001ebc;
-
-    u8 *state = Data_03001ebc;
+    u8 *state = (u8 *)gEventWork;
 
     *(s32 *)(state + 0x1C0) = 0x201;
     *(s32 *)(state + 0x1C8) = 24;
@@ -77,20 +75,12 @@ void TorebiHeya_StartWindowTransition(void)
 
 void FieldScene_RunPrimarySequence(void)
 {
-#ifdef MODERN
-    // modern GCC holds one type for a name in a file
-    extern u8 Data_03001ebc_modern[] __asm__("Data_03001ebc");
-#define Data_03001ebc Data_03001ebc_modern
-#else
-    extern u8 Data_03001ebc[];
-#endif
-
     u32 i;
     struct FieldActor *record;
     u8 *p6;
     s32 n;
 
-    p6 = *(u8 **)Data_03001ebc;
+    p6 = *(u8 **)&gEventWork;
     for (i = 8; i < 66; i++) {
         record = Object_GetById(i);
         if (record != 0) {
@@ -106,9 +96,6 @@ void FieldScene_RunPrimarySequence(void)
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     Engine_EventRequestExit(*(s16 *)p6);
 }
-#ifdef MODERN
-#undef Data_03001ebc
-#endif
 
 void FieldScene_RunScene3b6SequenceA(void)
 {

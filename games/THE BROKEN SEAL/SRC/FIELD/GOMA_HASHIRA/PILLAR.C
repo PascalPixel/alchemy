@@ -73,7 +73,6 @@ void Engine_ActorShowEmote();
 void Engine_ActorStartRepeatedMotion();
 void Engine_ActorJump();
 void Object_SetModeById();
-extern u8 *gWork;
 extern s16 Data_02000240[];
 
 s32 GomaHashira_Actor13Frames;
@@ -246,7 +245,7 @@ void GomaHashira_DriveActor13Idle(void)
     u8 *work;
     s32 t;
 
-    work = gWork;
+    work = (u8 *)gEventWork;
     t = ++GomaHashira_Actor13Frames;
     switch (t) {
     case 60:

@@ -47,7 +47,6 @@ void Engine_EventBegin(void);
 #include "TYPES.H"
 
 #include "BATTLE_EFFECT_RUNTIME.H"
-#define Data_03001ebc (*(u8 * *)&Data_03001ebc)
 #include "WINDOW.H"
 #define UiWindow_Create ((s32 (*)())UiWindow_Create)
 

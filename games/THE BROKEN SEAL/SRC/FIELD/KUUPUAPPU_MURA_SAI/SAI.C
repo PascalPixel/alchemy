@@ -57,7 +57,6 @@ struct SceneActor_02000350 {
     u8 active;
 };
 
-extern u8 *gWork;
 
 s32 SceneActor_GetPositionDistance(s32 *, s32 *);
 s32 ArcTan2(s32, s32);
@@ -105,7 +104,7 @@ s32 SceneActor_UpdateProximity(struct SceneActor_02000350 *actor, struct SceneAc
 
 s32 UpdateActorProximity(u8 *actor)
 {
-    u8 **globals = Data_03001e8c;
+    u8 **globals = gWindowWork;
     u8 *scene = globals[0];
     u8 *work = globals[12];
     u16 *flags = (u16 *)(actor + 100);
@@ -255,7 +254,7 @@ void SceneDialogue_RunActor16CountedDialogue(void)
     Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
     Engine_EventOpenMessage(16, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        ((struct SceneWork_020006b4 *)gWork)->branch_counter += 1;
+        ((struct SceneWork_020006b4 *)gEventWork)->branch_counter += 1;
     }
     Engine_EventShowMessage(16, 0);
     Engine_GameFlagSet(0x308);

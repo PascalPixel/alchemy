@@ -5,7 +5,6 @@
 #include "TYPES.H"
 
 #include "BATTLE_EFFECT_RUNTIME.H"
-#define Data_03001ebc (*(struct BattleEffectCounterState * *)&Data_03001ebc)
 
 struct BattleEffectCounterState {
     u8 padding_000[0x16c];

@@ -15,7 +15,6 @@
 #include "CALL.H"
 #include "B5_CONTEXT.H"
 
-extern u8 *gWork;
 
 extern s16 Data_02000240[];
 

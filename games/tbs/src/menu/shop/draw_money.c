@@ -4,7 +4,6 @@
 #include "ui.h"
 #include "text/msg_ids.h"
 #include "graphics.h"
-extern struct ShopRuntime *gMenuWork;
 
 void Shop_DrawMoney(void)
 {

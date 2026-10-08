@@ -260,7 +260,7 @@ void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns)
     s32 index;
 
     index = 0;
-    slot = gMenuWork->entry_icons;
+    slot = ((struct PsynergyMenuState *)gMenuWork)->entry_icons;
     scan = slot;
     do {
         if (*scan++ != NULL) {

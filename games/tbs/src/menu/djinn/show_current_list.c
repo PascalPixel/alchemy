@@ -14,7 +14,6 @@
 #include "djinn_menu.h"
 #include "btlsys.h"
 
-extern struct DjinnMenuWork *gMenuWork;
 #include "tbs_edition.h"
 #include "text/msg_ids.h"
 

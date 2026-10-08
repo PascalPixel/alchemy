@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_PSYNERGY_MENU_H
 #define ALCHEMY_PSYNERGY_MENU_H
 
+#include "global_cells.h"
 #include "layout_guard.h"
 #include "menu_result.h"
 #include "render_input.h"
@@ -131,8 +132,6 @@ LAYOUT_OFFSET_GUARD(
 LAYOUT_OFFSET_GUARD(PsynergyMenuState_SkipSlide, struct PsynergyMenuState, skip_slide, 0x222);
 LAYOUT_OFFSET_GUARD(PsynergyMenuState_TabObjects, struct PsynergyMenuState, tab_objects, 0x114);
 LAYOUT_OFFSET_GUARD(PsynergyMenuState_OwnerScale, struct PsynergyMenuState, owner_scale, 0x154);
-
-extern struct PsynergyMenuState *gMenuWork;
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 s32 PsynergyMenu_SelectPartySlot(s32 party_slot);

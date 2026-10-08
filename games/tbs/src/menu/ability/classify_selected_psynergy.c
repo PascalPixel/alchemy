@@ -21,9 +21,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
     s32 ret;
 
     psynergy = BtlActGet(
-        0x3fff &
-              gMenuWork
-                  ->pane_action[0]);
+        0x3fff & ((struct PsynergyMenuState *)gMenuWork)->pane_action[0]);
     if (BattleFx_HasMatchingEvent5Far(psynergy->type_0c) != 0) {
         return 0;
     }

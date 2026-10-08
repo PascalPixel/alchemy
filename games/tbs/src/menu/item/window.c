@@ -46,41 +46,41 @@ void ItemMenu_DrawStat(
 void ItemMenu_SetItemWin5(void)
 {
     UiWindow_SetBounds(
-        (struct RenderInput *)gMenuWork->item_window,
+        (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)->item_window,
         13, 5, 17, 10);
 }
 
 void ItemMenu_SetItemWin3(void)
 {
     UiWindow_SetBounds(
-        (struct RenderInput *)gMenuWork->item_window,
+        (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)->item_window,
         13, 3, 17, 10);
 }
 
 void ItemMenu_SetMsgWin5(void)
 {
     UiWindow_SetBounds(
-        (struct RenderInput *)gMenuWork->message_window,
+        (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)->message_window,
         13, 0, 17, 5);
 }
 
 void ItemMenu_SetMsgWin6(void)
 {
     UiWindow_SetBounds(
-        (struct RenderInput *)gMenuWork->message_window,
+        (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)->message_window,
         13, 0, 17, 6);
 }
 
 void ItemMenu_SetMsgWin7(void)
 {
     UiWindow_SetBounds(
-        (struct RenderInput *)gMenuWork->message_window,
+        (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)->message_window,
         13, 0, 17, 7);
 }
 
 void ItemMenu_SetMsgWin3(void)
 {
     UiWindow_SetBounds(
-        (struct RenderInput *)gMenuWork->message_window,
+        (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)->message_window,
         13, 0, 17, 3);
 }

@@ -14,7 +14,6 @@ struct ItemDefinition *Item_GetDirectFar(s32 item);
 struct RenderOutput *RenderOutput_CreateLoadedFar(s32 code, s32 layers, struct RenderInput *input, s32 x, s32 y);
 
 #define RenderOutput_CreateLoadedFar ((struct RenderOutput * (*)(s32,s32,s32,s32,s32))RenderOutput_CreateLoadedFar)
-extern struct ShopRuntime *gMenuWork;
 
 
 void Shop_DrawStock(s32 window, s32 selected)

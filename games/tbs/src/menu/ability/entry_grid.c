@@ -86,7 +86,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies)
     s32 psynergy_id;
 
     icons =
-        gMenuWork->entry_icons;
+        ((struct PsynergyMenuState *)gMenuWork)->entry_icons;
     p = psynergies;
     remaining = 31;
     do {

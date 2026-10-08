@@ -25,7 +25,6 @@ void RenderOutput_PrepareForRedrawFar(s32 window);
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 
 
-extern struct DjinnMenuWork *gMenuWork;
 void AudioCommand_PlayFar(s32 cue);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 

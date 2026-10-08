@@ -16,7 +16,6 @@
 #include "types.h"
 #include "text/msg_ids.h"
 
-extern struct CharacterMenuState *gMenuWork;
 void UiWork_PushValueSlotFar(u32 quantity, s32 style);
 
 

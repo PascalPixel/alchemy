@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_INVENTORY_MENU_H
 #define ALCHEMY_INVENTORY_MENU_H
 
+#include "global_cells.h"
 #include "layout_guard.h"
 #include "menu_result.h"
 #include "render_input.h"
@@ -94,8 +95,6 @@ LAYOUT_OFFSET_GUARD(InventoryMenuState_SelectedIndex, struct InventoryMenuState,
 LAYOUT_OFFSET_GUARD(InventoryMenuState_Mode, struct InventoryMenuState, mode, 0x268);
 LAYOUT_OFFSET_GUARD(InventoryMenuState_ResourceSlots, struct InventoryMenuState, resource_slots, 0x392);
 LAYOUT_SIZE_GUARD(InventoryMenuState_Size, struct InventoryMenuState, 0x398);
-
-extern struct InventoryMenuState *gMenuWork;
 
 enum ItemMenuCommand {
     ITEM_COMMAND_USE,

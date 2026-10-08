@@ -34,7 +34,6 @@ void UnitCalcFar(s32 unit_id);
 
 #define gMenuCtrlWork (*(struct ItemMenuDisplayState * *)&gMenuCtrlWork)
 
-extern struct InventoryMenuState *gMenuWork;
 void UiWork_PushValueSlotFar(s32, s32);
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))

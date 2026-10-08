@@ -13,7 +13,6 @@
 #include "btlsys.h"
 s32 GameFlag_TestFar(s32 flag);
 
-extern struct CharacterMenuState *gMenuWork;
 
 s32 ItemMenu_SelectItem(void);
 

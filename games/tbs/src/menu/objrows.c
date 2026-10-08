@@ -104,7 +104,6 @@ struct PlacementState {
 
 s32 Object_ApplyProjectedPlacementFar(s32, void *, void *, s32);
 
-extern struct FourObjectMotionState *gMenuWork;
 
 void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
                                  struct PlacementDescriptor *descriptor)

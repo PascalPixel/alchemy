@@ -20,11 +20,10 @@ void Audio_PlayCue(s32 cue);
 #include "KEYSTATE.H"
 #include "IO_REG.H"
 
-#define gWindowWork (*(u8 *volatile *)&gWindowWork)
 
 void UiWork_SetMenuBusy(void)
 {
-    u8 *base = gWindowWork;
+    u8 *base = gWindowWork[0];
     u8 *p = base + RENDER_MENU_BUSY_OFS;
     u8 flag = 1;
     *p = flag;
@@ -32,7 +31,7 @@ void UiWork_SetMenuBusy(void)
 
 void UiWork_ClearMenuBusy(void)
 {
-    u8 *base = gWindowWork;
+    u8 *base = gWindowWork[0];
     u8 *p = base + RENDER_MENU_BUSY_OFS;
     u8 flag = 0;
     *p = flag;

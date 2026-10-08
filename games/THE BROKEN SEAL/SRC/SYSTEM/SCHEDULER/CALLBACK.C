@@ -416,7 +416,7 @@ s32 ArcTan2(s32 x, s32 y)
         ratio = (value << 8) / ratio;
         result = 0x4000;
         if (ratio <= 0xFB6A) {
-            table = Math_ArcTanTable;
+            table = &Math_TanTable[127];
             result = 0;
 
             value = *table;
@@ -511,7 +511,7 @@ s32 Runtime_GetLowTableAddress(void)
 void Text_FormatHexToWork(u32 value)
 {
     u8 *buffer = gNumberTextBuffer;
-    const u8 *digits = RomBytes_0800795c;
+    const u8 *digits = Text_HexDigits;
     s32 index = 7;
 
     do {

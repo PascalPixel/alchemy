@@ -1,20 +1,3 @@
-	.section .rom.00007330, "ax"
-	.incbin "baserom.gba", 0x00007368, 0x0000031e
-	.global Math_ArcTanTable
-Math_ArcTanTable:
-	.incbin "baserom.gba", 0x00007686, 0x00000106
-	.global Ui_WindowPalette
-Ui_WindowPalette:
-	.incbin "baserom.gba", 0x0000778c, 0x00000020
-	.global System_BasicColorPalette
-System_BasicColorPalette:
-	.incbin "baserom.gba", 0x000077ac, 0x000001c0
-	.global RomBytes_0800795c
-RomBytes_0800795c:
-	.incbin "baserom.gba", 0x0000796c, 0x00000014
-	.global Text_PowersOfTen
-Text_PowersOfTen:
-	.incbin "baserom.gba", 0x00007980, 0x00000024
 	.section .rom.000079c0, "ax"
 	.global Save_Signature
 Save_Signature:

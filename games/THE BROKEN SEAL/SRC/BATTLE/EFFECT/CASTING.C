@@ -1161,7 +1161,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 		}
 		else if (kind == 16)
 		{
-			// 64 個のかけらが対象のまわりを回りながら縮まり、
+			// 64 個のかけらが対象のまわりからまっすぐ集まり、
 			// 8 個おきに着くたびに対象が反応する
 			if (frame == 0)
 			{

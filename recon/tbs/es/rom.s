@@ -946,12 +946,6 @@ Summon_EntryTable:
 	.incbin "baserom.gba", 0x000cb438, 0x000013c8
 	.section .rom.000e6172, "ax"
 	.incbin "baserom.gba", 0x000e6172, 0x00000002
-	.section .rom.000ed8d8, "ax"
-	.global Unnamed_080ea0d8
-	.type Unnamed_080ea0d8, %function
-	.thumb_func
-Unnamed_080ea0d8:
-	.incbin "baserom.gba", 0x000ed8d8, 0x0000167c
 	.section .rom.000f1278, "ax"
 	.global Data_080eda78
 Data_080eda78:
@@ -976,7 +970,10 @@ Formation_SmallScale:
 	.incbin "baserom.gba", 0x000f12c0, 0x00000008
 	.global CirclingScene_UnitScale
 CirclingScene_UnitScale:
-	.incbin "baserom.gba", 0x000f12c8, 0x00000010
+	.incbin "baserom.gba", 0x000f12c8, 0x00000008
+	.global ShockwaveScene_UnitScale
+ShockwaveScene_UnitScale:
+	.incbin "baserom.gba", 0x000f12d0, 0x00000008
 	.global ObjectRow_SweepPair
 ObjectRow_SweepPair:
 	.incbin "baserom.gba", 0x000f12d8, 0x00000008
@@ -1691,7 +1688,22 @@ FallingSword_FlashCells:
 	.incbin "baserom.gba", 0x000f2712, 0x00000006
 	.global FallingSword_DustGravity
 FallingSword_DustGravity:
-	.incbin "baserom.gba", 0x000f2718, 0x0000003e
+	.incbin "baserom.gba", 0x000f2718, 0x00000010
+	.global ShockwaveScene_BurstHeights
+ShockwaveScene_BurstHeights:
+	.incbin "baserom.gba", 0x000f2728, 0x00000008
+	.global ShockwaveScene_BurstCells
+ShockwaveScene_BurstCells:
+	.incbin "baserom.gba", 0x000f2730, 0x0000000e
+	.global ShockwaveScene_ShardCells
+ShockwaveScene_ShardCells:
+	.incbin "baserom.gba", 0x000f273e, 0x0000000c
+	.global ShockwaveScene_ShardWidths
+ShockwaveScene_ShardWidths:
+	.incbin "baserom.gba", 0x000f274a, 0x00000006
+	.global ShockwaveScene_ShardHeights
+ShockwaveScene_ShardHeights:
+	.incbin "baserom.gba", 0x000f2750, 0x00000006
 	.global ObjectRow_Columns
 ObjectRow_Columns:
 	.incbin "baserom.gba", 0x000f2756, 0x00000009

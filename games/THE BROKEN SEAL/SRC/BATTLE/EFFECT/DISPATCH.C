@@ -82,7 +82,7 @@ void BattleFx_InitializeMode(s32 *arg)
 			BattleFx_RunWhirlwindComets((struct BattleEffectArgument *)arg);
 			break;
 		case 9:
-			Unnamed_080ea0d8(arg);
+			BattleEffect_RunShockwaveScene((struct BattleEffectArgument *)arg);
 			break;
 		case 10:
 			BattleFx_InitializeMode10(arg);

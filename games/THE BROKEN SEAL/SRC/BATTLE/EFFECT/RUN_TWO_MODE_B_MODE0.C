@@ -1,13 +1,24 @@
+//--------------------------------------------------------------------------
+// RUN_TWO_MODE_B_MODE0.C
+// バトル演出：火花の群れ (SPARKS.C) の二つの入口
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE.H"
 
-void BattleFx_RunTwoModeBMode0(s32 arg0)
+//--------------------------------------------------------------------------
+// kind 0 : キャンバスを優先度 1 で開き、(60, 48) から出す
+//--------------------------------------------------------------------------
+void BattleFx_RunTwoModeBMode0(s32 effect)
 {
-    BattleFx_RunSparkGroups(arg0, 0);
+	BattleFx_RunSparkGroups(effect, 0);
 }
 
-void BattleFx_RunTwoModeBMode1(s32 arg0)
+//--------------------------------------------------------------------------
+// kind 1 : キャンバスを優先度 0 で開き、(60, 64) から OrangePaletteB で出す
+//--------------------------------------------------------------------------
+void BattleFx_RunTwoModeBMode1(s32 effect)
 {
-    BattleFx_RunSparkGroups(arg0, 1);
+	BattleFx_RunSparkGroups(effect, 1);
 }

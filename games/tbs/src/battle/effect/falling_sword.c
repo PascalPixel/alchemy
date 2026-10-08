@@ -378,17 +378,17 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 
 #define BattlePresentation_ConfigurePaletteFadeFar ((void (*)(s32, s32, s32))BattlePresentation_ConfigurePaletteFadeFar)
 
-typedef struct Scale {
+struct Scale {
     s32 x;
     s32 y;
-} Scale;
+};
 
 struct ShockwaveWork {
     u8 sheet[0x2710];
     u8 ramp[8][770];
 };
 
-extern const Scale ShockwaveScene_UnitScale;
+extern const struct Scale ShockwaveScene_UnitScale;
 extern const u8 ShockwaveScene_BurstHeights[];
 extern const u16 ShockwaveScene_BurstCells[];
 extern u16 ShockwaveScene_ShardCells[];
@@ -440,8 +440,8 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
     s32 place[4];
     volatile u32 fill;
     s32 place2[4];
-    Scale pair;
-    Scale scale;
+    struct Scale pair;
+    struct Scale scale;
     void *canvas;
     struct BattleEffectWork *work;
     struct BattlePresentationWork *ctrl;

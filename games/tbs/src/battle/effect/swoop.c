@@ -35,12 +35,12 @@ void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
 
 extern struct Cells03001ad0 gBgScroll;
 
-typedef struct Scale {
+struct Scale {
     s32 x;
     s32 y;
-} Scale;
+};
 
-extern const Scale BattleFx6_UnitScale;
+extern const struct Scale BattleFx6_UnitScale;
 
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 #define HI(v) (((s16 *)&(v))[1])
@@ -83,7 +83,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     struct EffectStep *q3;
     struct EffectStep *q4;
     DrawRectangle blit[2];
-    Scale scale;
+    struct Scale scale;
     s32 ground = 112;
 
     cache = (u32 *)&((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];

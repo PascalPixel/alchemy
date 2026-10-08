@@ -11,5 +11,5 @@
 
 s32 Ui_CountIconTableEntries(void)
 {
-    return (UiIcon_ItemIconPointersEnd - UiIcon_ItemIconPointers) >> 2;
+    return UiIcon_ItemIconPointersEnd - UiIcon_ItemIconPointers;
 }

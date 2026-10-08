@@ -14,11 +14,12 @@
 #include "mem.h"
 #include "window.h"
 #include "io_reg.h"
+#include "edition.h"
+#include "global_cells.h"
+#include "render_input.h"
 
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *colours, s32 flags);
 s32 UiWork_IsComplete(void);
-
-
 
 void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset)
 {
@@ -163,4 +164,112 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
     reader->previous_code = code;
     reader->words = (const u32 *)text;
     return code;
+}
+
+extern s32 CreateSideObject();
+
+void UiWork_SetTwoEntriesTo999(void)
+{
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+    s32 index = 0;
+
+    do {
+        work->resource_ids[index] = 999;
+        index++;
+    } while (index != 2);
+}
+
+s32 Localization_LookupEntryId(u32 value)
+{
+    s32 result = -1;
+    s32 i = 0;
+
+    if (value < 20) {
+        for (;;) {
+            s32 key = Portrait_CharacterMap[i];
+
+            if (key == -1)
+                break;
+            if (key == value) {
+                i++;
+                result = Portrait_CharacterMap[i];
+                break;
+            }
+            i += 2;
+        }
+    } else {
+        for (;;) {
+            s32 key = Portrait_SpriteMap[i];
+
+            if (key == -1)
+                break;
+            if (key == value) {
+                i++;
+                result = Portrait_SpriteMap[i];
+                result += 128;
+                break;
+            }
+            i += 2;
+        }
+    }
+    return result;
+}
+
+s32 UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x, s32 y)
+{
+    s32 win;
+    s32 minus_four;
+    s32 ofs;
+    void *work;
+
+    work = gWindowWork[0];
+    if (Localization_LookupEntryId(arg0) == -1) {
+        return 0;
+    }
+    minus_four = -4;
+    ofs = minus_four;
+    if (((struct UiRenderWork *)work)->mode != 0) {
+        win = (s32)UiWindow_Create(x, y, 6, 5, 2);
+        ofs = 0;
+    } else {
+        win = (s32)UiWindow_Create(x, y, 5, 5, 2);
+    }
+    if (win != 0) {
+        CreateSideObject(arg0, arg1, -1, win, ofs, minus_four);
+    }
+    return win;
+}
+
+void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry)
+{
+    struct UiRenderWork *state;
+    struct UiWindow *work;
+    s32 id;
+    s32 index;
+    s32 i;
+    struct RenderOutput *entity;
+
+    state = (struct UiRenderWork *)gWindowWork[0];
+    work = state->windows;
+    id = Localization_LookupEntryId(entry);
+    if (id == -1)
+        return;
+
+    if (state->resource_ids[1] == id) {
+        index = 1;
+    } else if (state->resource_ids[0] == id) {
+        index = 0;
+    } else {
+        return;
+    }
+
+    id = state->output_ids[index];
+
+    for (i = 0; i != WINDOW_COUNT; i++, work++) {
+        entity = work->output.head;
+        if ((u8)entity->kind == 2 && (u8)entity->index == id) {
+            UiWork_Finalize(work, 2);
+            return;
+        }
+    }
 }

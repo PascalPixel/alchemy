@@ -440,8 +440,10 @@ fn expand_local(root: &Path, source: &str, text: &str, group: &BTreeSet<String>,
         let trimmed = line.trim();
         let local = trimmed.strip_prefix("#include").map(str::trim).and_then(|r| r.strip_prefix('"')).and_then(|r| r.split('"').next());
         if let Some(name) = local {
+            // Only a header beside the source is local; a path reaching into
+            // include/ names a shared header.
             let header = directory.join(name).to_string_lossy().into_owned();
-            if root.join(&header).is_file() && depth < 8 {
+            if !name.contains('/') && root.join(&header).is_file() && depth < 8 {
                 let includers = includers_of(root, &header)?;
                 if includers.iter().all(|i| group.contains(i) || expanded.contains(i)) {
                     let mut body = read(&root.join(&header))?;
@@ -583,7 +585,7 @@ fn verify(root: &Path, plan: &Plan, text: &str, cache: &mut BTreeMap<String, (De
             }
             checked += 1;
             let id = format!("flatten-{}", Path::new(&plan.destination).file_stem().unwrap_or_default().to_string_lossy());
-            let outcome = dryrun::compare_source(root, *target, loaded, &images[0], &objects, &absolute, &id);
+            let outcome = dryrun::compare_source(root, *target, loaded, &images[0], &objects, &absolute, &id, family(root, *target, &plan.sources[0]));
             let line = format!("{edition}\t{}\t{}\t{}", loaded.image.name, outcome.verdict, outcome.detail);
             if outcome.verdict != "pass" {
                 failures.push(line.clone());
@@ -838,6 +840,29 @@ mod tests {
         assert_eq!(area_word(root.path(), folder, &[o("other")]), None);
         fs::write(root.path().join(folder).join("mura.c"), "").unwrap();
         assert_eq!(area_word(root.path(), folder, &[o("setup")]), None);
+    }
+
+    #[test]
+    fn shared_headers_reached_by_path_stay_includes() {
+        let root = tempfile::tempdir().unwrap();
+        fs::create_dir_all(root.path().join("games/common/src/sound")).unwrap();
+        fs::create_dir_all(root.path().join("games/common/include/system")).unwrap();
+        fs::write(root.path().join("games/common/include/system/io_reg.h"), "#define REG 1\n").unwrap();
+        let source = "games/common/src/sound/engine.c";
+        let text = "#include \"../../include/system/io_reg.h\"\nvoid f(void)\n{\n}\n";
+        let group: BTreeSet<String> = [source.to_string()].into();
+        let mut expanded = BTreeSet::new();
+        assert_eq!(expand_local(root.path(), source, text, &group, &mut expanded, 0).unwrap(), text);
+        assert!(expanded.is_empty());
+    }
+
+    #[test]
+    fn merged_copies_compile_with_their_sources_compiler() {
+        // The copy verify compiles lives under out/ and routes as game code;
+        // library sources must still reach their own compiler.
+        let target = decomp_target(Some("tbs-en")).unwrap();
+        assert_eq!(family(Path::new("."), target, "games/common/src/sound/engine.c"), CompilerFamily::Agbcc);
+        assert_eq!(family_for_source(target.compiler, "out/tbs-en/obj/units/flatten-engine.c"), CompilerFamily::Game);
     }
 
     #[test]

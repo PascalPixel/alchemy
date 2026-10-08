@@ -24,9 +24,11 @@ extern const u8 Ui_HpRowString[];
 extern const u8 Ui_HpString[];
 extern const u8 Ui_PpString[];
 extern const u8 Ui_SlashString[];
-extern u8 UiIcon_ItemIconPointersEnd[];
+extern u8 *UiIcon_ItemIconPointers[];
+extern u8 *UiIcon_ItemIconPointersEnd[];
 extern u8 *UiIcon_MiscIconPointers[];
-extern u8 UiIcon_PsynergyIconPointersEnd[];
+extern u8 *UiIcon_PsynergyIconPointers[];
+extern u8 *UiIcon_PsynergyIconPointersEnd[];
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse);
 #ifndef OWN_BattleLayout_HighlightPartyPanels
 s32 BattleLayout_HighlightPartyPanels(u16 *ids);
@@ -384,9 +386,8 @@ void UiWork_CloseAndRelease(void);
 #endif
 void UiWork_CopyParamsToRenderWork(struct UiChannelSlot *channel);
 void UiWork_DrawByAttributes(struct UiWindow *window);
-#ifndef OWN_UiWork_FinalizeEntityMatchingLocalizedId
-void UiWork_FinalizeEntityMatchingLocalizedId(void);
-#endif
+void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry);
+s32 Localization_LookupEntryId(u32 entry);
 void UiWork_InitCountersAndScheduleRefresh(s32 initialize);
 s32 UiWork_IsIdle(struct UiWindow *window);
 void UiWork_ProcessAll(void);
@@ -412,8 +413,6 @@ extern char ResourceId_UiFixedBlockATiles;
 extern char ResourceId_UiIconTiles;
 extern const u8 Text_LookupSymbolCode[];
 extern u8 Text_LookupSymbolCodeSize[];
-extern u8 UiIcon_ItemIconPointers[];
-extern u8 UiIcon_PsynergyIconPointers[];
 void Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
 s32 BattleParty_PrepareActiveOwnersFar(u16 *owners);
 s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align);

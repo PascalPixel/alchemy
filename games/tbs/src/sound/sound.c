@@ -7,16 +7,111 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
+#include "audio_engine.h"
+#include "audio_engine_types.h"
+#include "audio_engine_symbols.h"
 #include "types.h"
 #include "io_reg.h"
-#include "system.h"
-#include "audio_engine_symbols.h"
-#include "audio_engine.h"
+
+void AudioCommand_Play(s32 id)
+{
+    s32 flags;
+    s32 player;
+
+    flags = id & AUDIO_CUE_FLAGS_MASK;
+    id &= AUDIO_CUE_ID_MASK;
+
+    if (id == AUDIO_CUE_FADE_BGM) {
+        if (gMusicFadeRequested != 0)
+            return;
+        MusicPlayer_FadeOut(&gMusicPlayerBgm, 7);
+        gMusicFadeRequested++;
+        gAudioSecondaryState = 19;
+    } else if (id == AUDIO_CUE_FADE_SLOT3) {
+        gMusicPlayerVolumes[3] = 0;
+        MusicPlayer_FadeOut(&Sound_Player3, 3);
+    } else if (id >= AUDIO_SONG_FIRST) {
+        player = Sound_SongTable[id].slot;
+        if (player == 7) {
+        next:
+            if (((u8 *)&Sound_PlayerSlots[player].player->status)[0] != 0) {
+                player--;
+                if (player > 3)
+                    goto next;
+                player = 7;
+            }
+        }
+        MusicPlayer_StartSong(Sound_PlayerSlots[player].player, Sound_SongTable[id].header);
+        gMusicPlayerVolumes[player] = id;
+    } else if (id >= AUDIO_JINGLE_FIRST) {
+        MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, 0);
+        gMusicVolumeTarget = 0;
+        gMusicVolume = 0;
+        Audio_PlaySound(id);
+        gMusicRestoreDelay = 10;
+    } else {
+        if (id == AUDIO_CUE_KEEP_BGM)
+            return;
+        if (id == gAudioSecondaryState)
+            return;
+        gAudioSecondaryState = id;
+        Sound_LoadPresetParameters((id == 70 || id == 75 || id == 67) ? 3 : 2);
+        Audio_PlaySound(id);
+        if (flags & AUDIO_CUE_START_SILENT)
+            gMusicVolume = 0;
+        else
+            gMusicVolume = 0x100;
+        gMusicVolumeTarget = 0x100;
+        gMusicVolumeStep = 4;
+        gMusicFadeRequested = 0;
+    }
+}
+
+void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
+{
+    s32 delta;
+
+    if (gMusicRestoreDelay != 0) {
+        if (gMusicRestoreDelay == 1) {
+            if ((u8)gMusicPlayerFanfare.status == 0) {
+                gMusicRestoreDelay = 0;
+                gMusicVolumeTarget = 0x100;
+            }
+        } else {
+            gMusicRestoreDelay -= 1;
+        }
+    }
+    if ((s16)gMusicVolumeTarget != (s16)gMusicVolume) {
+        delta = (s16)gMusicVolumeTarget - (s16)gMusicVolume;
+        if (delta > 0) {
+            gMusicVolume = gMusicVolume + gMusicVolumeStep;
+        } else {
+            gMusicVolume = gMusicVolume - gMusicVolumeStep;
+        }
+        if ((((s16)gMusicVolumeTarget - (s16)gMusicVolume) ^ delta) < 0) {
+            gMusicVolume = gMusicVolumeTarget;
+        }
+        MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, gMusicVolume);
+    }
+    if ((s16)gMusicPitchTarget != (s16)gMusicPitch) {
+        delta = (s16)gMusicPitchTarget - (s16)gMusicPitch;
+        if (delta > 0) {
+            gMusicPitch = gMusicPitch + gMusicPitchStep;
+        } else {
+            gMusicPitch = gMusicPitch - gMusicPitchStep;
+        }
+        if ((((s16)gMusicPitchTarget - (s16)gMusicPitch) ^ delta) < 0) {
+            gMusicPitch = gMusicPitchTarget;
+        }
+        MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, gMusicPitch);
+        MusicPlayer_SetPitch(&gMusicPlayerBgm, 255, (s16)gMusicPitch * 12 - 3072);
+    }
+    Sound_TickDmaRestartTimer();
+}
 
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 void AudioCommand_Play(s32 id);
-
 
 void AudioTest_RunParameterController(void)
 {

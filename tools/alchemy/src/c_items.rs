@@ -509,12 +509,20 @@ pub(crate) fn names(item: &Item) -> Vec<Name> {
             }
         }
         Kind::Conditional => {
+            // The branch directives go, with any lines they continue onto.
+            let mut continued = false;
             let inner: String = item
                 .text
                 .lines()
-                .map(|line| match directive_name(line) {
-                    "if" | "ifdef" | "ifndef" | "elif" | "else" | "endif" if line.trim_start().starts_with('#') => "",
-                    _ => line,
+                .map(|line| {
+                    let directive = continued
+                        || matches!(directive_name(line), "if" | "ifdef" | "ifndef" | "elif" | "else" | "endif") && line.trim_start().starts_with('#');
+                    continued = directive && line.trim_end().ends_with('\\');
+                    if directive {
+                        ""
+                    } else {
+                        line
+                    }
                 })
                 .collect::<Vec<_>>()
                 .join("\n");
@@ -650,6 +658,12 @@ mod tests {
         assert_eq!(signature("void f(u32 value, void (*cb)(void))\n{\n}"), declared);
         assert_ne!(signature("void f(s32, void (*)(void));"), declared);
         assert_eq!(signature("struct Q;"), "struct Q");
+    }
+
+    #[test]
+    fn continued_conditions_name_nothing() {
+        use Space::*;
+        assert_eq!(named("#if defined(A) || \\\n    defined(B)\n#define M 1\n#endif\n"), vec![(Macro, "M".into(), true)]);
     }
 
     #[test]

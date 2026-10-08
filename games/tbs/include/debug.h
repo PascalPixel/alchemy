@@ -18,12 +18,8 @@ extern u8 gItemLevelItemHelp[];
 extern u8 gItemLevelItemPrompt[];
 extern u8 gItemLevelPsyHelp[];
 extern u8 gItemLevelPsyPrompt[];
-#ifndef OWN_SideObject_ActorKindIdMap
-extern s16 Portrait_SpriteMap[][2];
-#endif
-#ifndef OWN_SideObject_CharacterIdMap
-extern s16 Portrait_CharacterMap[][2];
-#endif
+extern const s16 Portrait_SpriteMap[];      // 2 entries a row: key, id
+extern const s16 Portrait_CharacterMap[];   // 2 entries a row: key, id
 extern u8 TestRooms_Entrances[];
 extern u8 TestRooms_Events[];
 extern u8 TestRooms_Exits[];

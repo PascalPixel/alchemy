@@ -98,7 +98,7 @@ static __inline__ u32 XorWord(u32 word, u32 mask)
     return word ^ mask;
 }
 
-extern const struct TileMask Data_080af23c[];
+extern const struct TileMask Menu_PatternRowMasks[];
 
 void Menu_BuildPatternTiles(void)
 {
@@ -128,8 +128,8 @@ void Menu_BuildPatternTiles(void)
                         mi = 0;
                     }
                 }
-                tile[x] = XorWord(tile[x], Data_080af23c[mi].word0);
-                tile[x + 8] = XorWord(tile[x + 8], Data_080af23c[mi].word1);
+                tile[x] = XorWord(tile[x], Menu_PatternRowMasks[mi].word0);
+                tile[x + 8] = XorWord(tile[x + 8], Menu_PatternRowMasks[mi].word1);
             }
         }
     }

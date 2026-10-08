@@ -1202,7 +1202,6 @@ extern const u8 RariberoMachi_LamentActions[];
 #ifndef OWN_Render_DecodeFrame
 extern u8 Render_DecodeFrame[];
 #endif
-extern s32 RomBytes_080af304[];
 extern const s32 SceneAction_EntryGroup[];
 extern const s32 SceneAction_EntryPair[];
 extern const u32 SceneAction_GroupMotion[];

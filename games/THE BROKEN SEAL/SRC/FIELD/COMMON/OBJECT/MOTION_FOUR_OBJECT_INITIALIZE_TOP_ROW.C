@@ -34,7 +34,7 @@ void FourObjectMotion_InitializeTopRow(void)
     }
 
     for (index = 0; index < 4; index++) {
-        struct AnimationObject *object = ResourceObject_CreateFar(RomBytes_080af304[index]);
+        struct AnimationObject *object = ResourceObject_CreateFar(FourObjectMotion_ResourceIds[index]);
 
         if (object != NULL) {
             AnimationObjects_SelectAnimationFar(object, 2);

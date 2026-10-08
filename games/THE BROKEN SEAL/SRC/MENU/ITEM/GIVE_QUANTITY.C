@@ -65,7 +65,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
                 quantity = (range + quantity) % range;
                 RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
                 UiText_DrawCharacterAtOffsetFar((s32)MsgGiveHowMany, window, GIVE_ASK_X, GIVE_ASK_Y);
-                Dma_Set(Data_080af08c, tiles, 0x84000040, REG_DMA3);
+                Dma_Set(Menu_QuantityTiles, tiles, 0x84000040, REG_DMA3);
                 Shop_FillSelectorFar(30, 14, tiles);
                 Shop_FillSelectorFar(range + base, 0, tiles);
                 Shop_FillSelectorFar(base + quantity + 1, 10, tiles);

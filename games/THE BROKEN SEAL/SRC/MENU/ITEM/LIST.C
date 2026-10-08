@@ -48,10 +48,10 @@ void Resource_LoadPairedBlocks(void)
     s32 value = Resource_FindFreeEntry();
 
     state->resource_slots[0] = value;
-    VramBlock_LoadCached(value, 128, Data_080aebcc);
+    VramBlock_LoadCached(value, 128, Menu_ArrowTiles);
     value = Resource_FindFreeEntry();
     state->resource_slots[1] = value;
-    VramBlock_LoadCached(value, 128, Data_080aeb4c);
+    VramBlock_LoadCached(value, 128, Menu_SmallDownArrowTiles);
 }
 
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)

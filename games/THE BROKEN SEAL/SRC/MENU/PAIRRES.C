@@ -26,12 +26,12 @@ void Resource_LoadPairedBlocksIfAvailable(void)
     first_slot = Resource_FindFreeEntry();
     active_state->resource_slots[0] = first_slot;
     if (first_slot != -1) {
-        VramBlock_LoadCached(first_slot, 0x80, Data_080aed4c);
+        VramBlock_LoadCached(first_slot, 0x80, Menu_PairSpriteATiles);
     }
     second_slot = Resource_FindFreeEntry();
     active_state->resource_slots[1] = second_slot;
     if (second_slot != -1) {
-        VramBlock_LoadCached(second_slot, 0x80, Data_080aedcc);
+        VramBlock_LoadCached(second_slot, 0x80, Menu_PairSpriteBTiles);
     }
 }
 

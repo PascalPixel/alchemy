@@ -557,7 +557,9 @@
         "*/games/THE BROKEN SEAL/SRC/MENU/PAIRRES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/CREATE_WITH_LOADED_RESOURCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/ARROWS.o"(.text)
-        "*/recon/tbs/unidentified.o"(.unidentified.080aea4c)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/UI/MENUSPR.o"(.rodata)
+        "*/games/THE BROKEN SEAL/SRC/MENU/MENUSTR.o"(.rodata)
+        "*/games/THE BROKEN SEAL/SRC/MENU/MENUDATA.o"(.rodata)
         . = ABSOLUTE(0x080b0000);
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/SHOP.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/VISIT.o"(.text)
@@ -576,7 +578,8 @@
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/PARTY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/INN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/ITEM_SELECTION.o"(.text)
-        "*/recon/tbs/unidentified.o"(.unidentified.080b3940)
+        "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/SHOPSPR.o"(.rodata)
+        "*/recon/tbs/unidentified.o"(.unidentified.080b4100)
         . = ABSOLUTE(0x080b5000);
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/BATTLE.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECODE.o"(.text .rodata .data .padding)

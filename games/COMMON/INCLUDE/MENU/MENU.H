@@ -72,7 +72,6 @@ extern const char DjinnMenu_TextLevel[];
 extern const char DjinnMenu_TextSlash[];
 extern s16 Shop_StockTable[][33];
 extern u32 gLinkLobbyCallFrames;
-extern s32 gLinkLobbyWaitFrames;
 #ifndef OWN_gMenuCtrlWork
 extern struct ObjectSystemWork *gMenuCtrlWork;
 #endif

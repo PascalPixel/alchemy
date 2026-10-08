@@ -35,8 +35,6 @@ DisplayScroll_GlyphWidths:
 	.global DisplayScroll_LineTable
 DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x000f12a8, 0x00000544
-	.section .rom.000fc504, "ax"
-	.incbin "baserom.gba", 0x000fc504, 0x00000090
 	.section .rom.0032b09b, "ax"
 	.incbin "baserom.gba", 0x0032b09b, 0x00000001
 	.global Title_IntroGraphicsC

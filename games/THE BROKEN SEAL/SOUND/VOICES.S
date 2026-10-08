@@ -237,3 +237,12 @@ Sound_SeVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x09, 60, 0, 0, 0, 0, 6, 0, 3
+
+@ キースプリット表らしきもの (未使用): 鍵 0-35 は 0、36-71 は 1 の 72 鍵を二つ。
+@ どの音色も参照せず、この版に keysplit (0x40) の音色はない。⚓️ にも同じ位置に同じ表がある。
+	.global Sound_UnusedKeySplitTables
+Sound_UnusedKeySplitTables:
+	.fill 36, 1, 0
+	.fill 36, 1, 1
+	.fill 36, 1, 0
+	.fill 36, 1, 1

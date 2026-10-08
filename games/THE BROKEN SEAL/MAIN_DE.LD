@@ -1,7 +1,3 @@
-iwram :
-{
-    "*/recon/tbs/de/sym_iwram.o"(.sym_iwram)
-}
 .rom_start :
 {
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEAD.o"(.text .rodata .data .padding)

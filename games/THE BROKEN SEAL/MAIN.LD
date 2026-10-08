@@ -11,7 +11,7 @@ MEMORY
 
 SECTIONS
 {
-    ewram (NOLOAD) : { "*/recon/tbs/sym_ewram.o"(.sym_ewram) } > EWRAM
+    ewram (NOLOAD) : { "*/games/THE BROKEN SEAL/SRC/SYSTEM/RAM/EWRAM.o"(.sym_ewram) } > EWRAM
     .rom_start :
     {
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEAD.o"(.text .rodata .data .padding)
@@ -49,7 +49,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RUNTIME_MIX_WORKSPACE.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RUNTIME_COPY_WORDS.o"(.text .rodata .data .padding)
 } > IWRAM AT>ROM
-    iwram (NOLOAD) : { "*/recon/tbs/sym_iwram.o"(.sym_iwram) } > IWRAM
+    iwram (NOLOAD) : { "*/games/THE BROKEN SEAL/SRC/SYSTEM/RAM/IWRAM.o"(.sym_iwram) } > IWRAM
     .rom_main :
     {
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/DECODE_BYTE_LZ.o"(.text .rodata .data .padding)
@@ -752,7 +752,7 @@ SECTIONS
     {
     "*/games/THE BROKEN SEAL/SRC/SOUND/DRIVER/MIXER.o"(.text .rodata .data .padding)
 } > IWRAM AT>ROM
-    iwram_high (NOLOAD) : { "*/recon/tbs/sym_iwram_high.o"(.sym_iwram_high) } > IWRAM
+    iwram_high (NOLOAD) : { "*/games/THE BROKEN SEAL/SRC/SYSTEM/RAM/IWRAM_HI.o"(.sym_iwram_high) } > IWRAM
     .rom_tail :
     {
     "*/games/THE BROKEN SEAL/SRC/SOUND/DRIVER/CLEAR_BUFFER.o"(.text .rodata .data .padding)

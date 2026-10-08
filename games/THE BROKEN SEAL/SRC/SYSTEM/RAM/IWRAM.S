@@ -1,4 +1,7 @@
 	.section .sym_iwram,"aw",%nobits
+	.ifdef TBS_EDITION_DE
+	.space 0x00000010
+	.endif
 	.global Data_03001400
 Data_03001400:
 	.space 0x00000400
@@ -125,7 +128,11 @@ gObjAffineCount:
 	.space 0x00000004
 	.global gKeysDirection
 gKeysDirection:
+	.ifdef TBS_EDITION_DE
+	.space 0x0000000c
+	.else
 	.space 0x00000004
+	.endif
 	.global gOptionMirror
 gOptionMirror:
 	.space 0x00000004
@@ -152,7 +159,11 @@ gTransformStackTop:
 	.space 0x00000008
 	.global gSchedulerTaskCount
 gSchedulerTaskCount:
+	.ifdef TBS_EDITION_DE
+	.space 0x00000004
+	.else
 	.space 0x0000000c
+	.endif
 	.global gObjAffineMatrices
 gObjAffineMatrices:
 	.space 0x00000100
@@ -320,6 +331,10 @@ gNumberTextHexEnd:
 	.space 0x00000002
 	.global gNumberTextDecimalEnd
 gNumberTextDecimalEnd:
+	.ifdef TBS_EDITION_DE
+	.space 0x00000076
+	.else
 	.space 0x00000086
+	.endif
 	.global gIwramHeap
 gIwramHeap:

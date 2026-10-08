@@ -196,7 +196,7 @@ or functions is exactly this cheating.
   buffers its code addressed as constants, and the hardware cartridge restart
   entry, each listed once in a game header and checked against where the
   linker placed it. One name per place; never a
-  name that spells its own value. _Check: publication, fixed-address check._
+  name that spells its own value. _Check: publication, fixed-address check, aliases._
 - **O3** Scene and resource ids come only from their tables and are used whole.
   Overlay code never branches straight into the main image.
   _Check: the build's id gate._

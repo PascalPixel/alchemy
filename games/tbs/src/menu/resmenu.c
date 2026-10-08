@@ -11,7 +11,6 @@
 #include "mem.h"
 #include "resmenu.h"
 #include "dma.h"
-#include "system.h"
 #include "types.h"
 #include "io_reg.h"
 #include "callback_scheduler.h"
@@ -26,6 +25,11 @@
 #include "btlsmn.h"
 #include "menu_list.h"
 #include "serial_runtime.h"
+#include "sound_ids.h"
+#include "resource_ids.h"
+#include "save_state.h"
+#include "tbs_edition.h"
+
 s32 GameFlag_TestFar(s32 flag);
 struct BtlAct * BtlActGet(s32 action_id);
 struct ItemDefinition *Item_GetDirectFar(s32 item);
@@ -985,7 +989,6 @@ void AffineEffect_UpdateFrame(void)
     }
 }
 
-
 void *AffineEffect_InitializeWork(void)
 {
     void *work;
@@ -1018,15 +1021,11 @@ void Menu_EndResourceSelection(void)
     WaitFrames(1U);
 }
 
-
-
-void RenderOutput_PrepareForRedraw(void *);
-
-
 void AudioCommand_PlayFar(s32);
 
 s32 Menu_RunResourceSelectionLoop(s32 initial)
 {
+	void RenderOutput_PrepareForRedraw(void *);
     struct ResourceMenuWork *work = gMenuSelectWork;
     s32 resource;
 
@@ -1067,4 +1066,496 @@ redraw:
             goto redraw;
         }
     }
+}
+
+void AudioCommand_PlayFar(s32 sound_id);
+
+static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs)
+{
+    if (diff >= 0)
+        return diff;
+    return rhs - lhs;
+}
+
+u32 Resource_DecodeByteLz(const void *, void *);
+
+s32 Menu_SelectResource(s32 start, s32 goal)
+{
+	void RenderOutput_PrepareForRedraw(void *work);
+    s16 resource_base;
+    s16 cur;
+    s32 diff;
+    s32 resource_id;
+    s32 dist;
+    s32 pos;
+    s32 step;
+    s32 delay;
+    const u8 *tbl;
+    struct ResourceMenuWork *state;
+
+    state = gMenuSelectWork;
+    step = 1;
+    delay = 12;
+    state->selection = start;
+    if (goal < start)
+        step = -1;
+    pos = start;
+
+    for (;;) {
+        RenderOutput_PrepareForRedraw(state->window);
+        resource_base = state->resource_base;
+        if (resource_base != 0) {
+            resource_id = resource_base + state->selection;
+        } else {
+            resource_id = state->resource_ids[state->selection] + (s32)MsgCommandName;
+        }
+        UiText_DrawCharacterAtOffset(resource_id, state->window, 0, 0);
+
+        cur = state->selection;
+        tbl = Menu_SelectionStepDelays;
+        diff = cur - goal;
+        dist = AbsoluteDifference(diff, cur, goal);
+        WaitFrames(tbl[dist] + delay);
+
+        if (pos == goal)
+            break;
+
+        state->selection = state->selection + step;
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        delay = 0;
+        pos += step;
+    }
+
+    WaitFrames(48);
+    AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+    return goal;
+}
+
+void Menu_LoadResourceSlot(s32 slot, s32 index)
+{
+    s32 size = 1024;
+    void *buffer = (void *)MemAlloc(size);
+    u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+
+    Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
+    VramBlock_LoadCached(slot, size, buffer);
+    MemFree(buffer);
+}
+
+void Menu_AppendResourceEntry(s32 no)
+{
+    struct ResourceMenuWork *work;
+    struct ResourceMenuEntry *entry;
+    s16 index;
+    s32 slot;
+    s32 flags;
+
+    work = gMenuSelectWork;
+    index = work->count;
+    if (index <= 5) {
+        work->count = work->count + 1;
+        entry = &work->entries[index];
+        slot = Resource_FindFreeEntry();
+        Menu_LoadResourceSlot(slot, no);
+        entry->x = index * 24 + 32;
+        flags = 136;
+        entry->y = flags;
+        entry->slot = slot;
+        work->resource_ids[index] = no;
+    }
+}
+
+void Menu_CenterResourceEntries(s32 row, s32 width, s32 resource_base)
+{
+    struct ResourceMenuWork *menu = ((struct ResourceMenuWork *)gMenuSelectWork);
+    s32 x;
+    s32 i;
+    s32 count;
+
+    menu->width = width + 2;
+    menu->resource_base = resource_base;
+    menu->row = row;
+    count = menu->count;
+    x = 15 - (count * 3 + menu->width * 2 / 3) / 2;
+    for (i = 0; i < menu->count; i++) {
+        struct ResourceMenuEntry *entry = &menu->entries[i];
+
+        entry->x = x * 8;
+        entry->y = row * 8;
+        x += 3;
+    }
+    menu->window = UiWindow_Create(x, row, menu->width, 3, 2);
+}
+
+void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
+{
+    struct ResourceMenuWork *work;
+    s32 i;
+    u8 *entries;
+
+    work = gMenuSelectWork;
+    work->width = width + 2;
+    work->resource_base = resource_base;
+    work->row = y;
+    /* FAKEMATCH: the byte span keeps the sprite base at +0; struct coordinates hoist +12 into the loop and add four bytes. */
+    entries = (u8 *)work;
+    for (i = 0; i < work->count; i++) {
+        *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 14) = y << 3;
+        *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 12) = x << 3;
+        x = x + 3;
+    }
+    work->window = UiWindow_Create(x, y, work->width, 3, 2);
+}
+
+#define UiWindow_ClearInteriorTiles ((void (*)(void*,s32,s32,s32,s32))UiWindow_ClearInteriorTiles)
+
+void Menu_CenterResourceEntries(s32, s32, s32);
+
+static __inline__ s32 TblGet(s8 *tbl, s32 index)
+{
+    return tbl[index];
+}
+
+s32 Menu_SelectTopEntry(s32 sel)
+{
+    s32 group = 0;
+    s32 ofs;
+    s32 triple;
+    s32 ret;
+    s8 *tbl;
+
+    if (Party_SumDjinnCountsFar(-1) == 0) {
+        group = 1;
+    }
+
+    triple = group * 3;
+    tbl = Menu_TopEntryPositionByCommand;
+    ofs = triple << 1;
+    sel = TblGet(tbl, sel + ofs) - 1;
+    if (sel < 0) {
+        sel = 0;
+    }
+
+    AffineEffect_InitializeWork();
+    Menu_AppendResourceEntry(1);
+    if (group == 0) {
+        Menu_AppendResourceEntry(15);
+    }
+    Menu_AppendResourceEntry(2);
+    Menu_AppendResourceEntry(7);
+    Menu_CenterResourceEntries(17, SELECT_MENU_WIDTH, 0);
+    ret = Menu_RunResourceSelectionLoop(sel);
+    Menu_EndResourceSelection();
+
+    if (ret >= 0) {
+        ret = Menu_TopEntryCommandByPosition[ret + ofs + 1];
+    }
+
+    return ret;
+}
+
+#if EDITION_INTERNATIONAL
+#define ANIMATE_ENTRIES_ROW 7
+#else
+#define ANIMATE_ENTRIES_ROW 5
+#endif
+
+s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
+{
+    UiWindow_OpenMode1AndWaitFrame();
+    AffineEffect_InitializeWork();
+    Menu_AppendResourceEntry(1);
+    Menu_AppendResourceEntry(0xF);
+    Menu_AppendResourceEntry(2);
+    Menu_AppendResourceEntry(7);
+    Menu_CenterResourceEntries(0x11, ANIMATE_ENTRIES_ROW, 0);
+    arg1 = Menu_SelectResource(arg0, arg1 - 1);
+    Menu_EndResourceSelection();
+    UiWork_CloseAndRelease();
+    return arg1;
+}
+
+s32 Menu_SelectSaveSlotAction(void)
+{
+    s32 type;
+    s32 ret;
+    s32 initial;
+    u32 group;
+
+    group = 0;
+    initial = 0;
+    type = SaveState_ScanRecordFlags();
+    if (type < 0) {
+        return -1;
+    }
+    if (type == 0) {
+        return 0;
+    }
+    if (type == 3) {
+        group = 1;
+    } else if (type == 0x67) {
+        group = 2;
+    } else if (type > 0x64) {
+        group = 3;
+    } else {
+        initial = 1;
+    }
+    AffineEffect_InitializeWork();
+    if ((group == 0) || (group == 3)) {
+        Menu_AppendResourceEntry(0x15);
+    }
+    if (group <= 1U) {
+        Menu_AppendResourceEntry(0x16);
+    }
+    if ((group == 0) || (group == 3)) {
+        Menu_AppendResourceEntry(0x17);
+    }
+    Menu_AppendResourceEntry(0x18);
+    if ((*(s16 *)gTitleExtraOptionEnabled) != 0) {
+        Menu_AppendResourceEntry(0x1D);
+    }
+    if (gTitleSendOptionEnabled != 0) {
+        Menu_AppendResourceEntry(0x1E);
+    }
+    Menu_CenterResourceEntries(0x11, TYPE_MENU_WIDTH, 0);
+    ret = Menu_RunResourceSelectionLoop(initial);
+    Menu_EndResourceSelection();
+    if (ret >= 0) {
+        ret = Menu_SaveSlotActionByPosition[ret + (group * 6)];
+    }
+    return ret;
+}
+
+#if EDITION_INTERNATIONAL
+#define MODE_LABEL_X     18
+#define MODE_LABEL_RIGHT 144
+#else
+#define MODE_LABEL_X     8
+#define MODE_LABEL_RIGHT 80
+#endif
+
+void Menu_DrawModeLabel(void)
+{
+    struct ResourceMenuWork *state = gMenuSelectWork;
+
+    if (state->previous_mode != state->selection) {
+        state->previous_mode = state->selection;
+        UiWindow_ClearInteriorTiles(state->lower_window, 8, 40, MODE_LABEL_RIGHT, 80);
+
+        if (state->selection != 1) {
+            if (state->selection > 1)
+                goto mode_other;
+            if (state->selection != 0)
+                goto mode_other;
+
+            {
+                s32 text = (s32)MsgPasswordLevel;
+
+                UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 40);
+                UiText_DrawCharacterAtOffset(text + 1, state->lower_window, MODE_LABEL_X, 48);
+                UiText_DrawCharacterAtOffset(text + 2, state->lower_window, MODE_LABEL_X, 56);
+                UiText_DrawCharacterAtOffset(text + 3, state->lower_window, MODE_LABEL_X, 64);
+                text += 4;
+                UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 72);
+                goto done;
+            }
+        }
+
+        {
+            s32 text = (s32)MsgPasswordLevel;
+
+            UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 40);
+            UiText_DrawCharacterAtOffset(text + 1, state->lower_window, MODE_LABEL_X, 48);
+            text += 2;
+            UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 56);
+            goto done;
+        }
+
+mode_other:
+        {
+            s32 text = (s32)MsgPasswordLevel;
+
+            UiText_DrawCharacterAtOffset(text++, state->lower_window, MODE_LABEL_X, 40);
+            UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 48);
+        }
+done:
+;
+    }
+}
+
+#if EDITION_INTERNATIONAL
+#define PASSWORD_HELP_X 16
+#else
+#define PASSWORD_HELP_X 0
+#endif
+
+#if defined(TBS_EDITION_FR)
+
+void Menu_DrawModeIndicator(void)
+{
+    struct ResourceMenuWork *state = gMenuSelectWork;
+
+    if (state->previous_mode != state->selection) {
+        if (state->selection == 0) {
+            RenderOutput_ClearList(state->lower_window);
+            UiText_DrawResource((s32)MsgPasswordTransferHelp, (s32)state->lower_window, 16, 4);
+            UiText_DrawResource((s32)MsgPasswordTransferHelp + 1, (s32)state->lower_window, 16, 16);
+        } else if (state->previous_mode == 0) {
+            RenderOutput_ClearList(state->lower_window);
+            UiText_DrawResource((s32)MsgCableTransferHelp, (s32)state->lower_window, 0, 4);
+            UiText_DrawResource((s32)MsgCableTransferHelp + 1, (s32)state->lower_window, 0, 16);
+            UiText_DrawResource((s32)MsgCableTransferHelp + 2, (s32)state->lower_window, 0, 28);
+        }
+        state->previous_mode = state->selection;
+    }
+}
+#else
+void Menu_DrawModeIndicator(void)
+{
+    struct ResourceMenuWork *state = gMenuSelectWork;
+    s16 *shown = &state->previous_mode;
+    s16 *current = &state->selection;
+
+    if (*shown != *current) {
+        *shown = *current;
+        RenderOutput_PrepareForRedraw(state->lower_window);
+        if (*current == 0) {
+#if defined(TBS_EDITION_DE)
+            UiText_DrawCharacterAtOffset((s32)MsgPasswordTransferHelp,
+                state->lower_window, 32, 8);
+            UiText_DrawCharacterAtOffset((s32)MsgPasswordTransferHelp + 1,
+                state->lower_window, 32, 24);
+#else
+            UiText_DrawResource((s32)MsgPasswordTransferHelp,
+                state->lower_window, PASSWORD_HELP_X, 4);
+            UiText_DrawResource((s32)MsgPasswordTransferHelp + 1,
+                state->lower_window, PASSWORD_HELP_X, 16);
+#endif
+        } else {
+#if defined(TBS_EDITION_DE)
+            UiText_DrawCharacterAtOffset((s32)MsgCableTransferHelp,
+                state->lower_window, 0, 0);
+            UiText_DrawCharacterAtOffset((s32)MsgCableTransferHelp + 1,
+                state->lower_window, 0, 16);
+            UiText_DrawCharacterAtOffset((s32)MsgCableTransferHelp + 2,
+                state->lower_window, 0, 32);
+#else
+            UiText_DrawResource((s32)MsgCableTransferHelp,
+                state->lower_window, 0, 4);
+            UiText_DrawResource((s32)MsgCableTransferHelp + 1,
+                state->lower_window, 0, 16);
+            UiText_DrawResource((s32)MsgCableTransferHelp + 2,
+                state->lower_window, 0, 28);
+#endif
+        }
+    }
+}
+#endif
+
+void WaitFrames(s32);
+
+s32 Menu_SelectResourceLayout(s32 mode)
+{
+	void RenderOutput_PrepareForRedraw(struct UiWindow *);
+	void UiText_DrawResource(s32, struct UiWindow *, s32, s32);
+    struct ResourceMenuWork *work;
+    struct UiWindow *window;
+    s32 msg;
+    struct UiWindow **upper;
+    s32 result;
+
+    AffineEffect_InitializeWork();
+    work = gMenuSelectWork;
+    if (mode == 0) {
+        Menu_AppendResourceEntry(44);
+        Menu_AppendResourceEntry(45);
+    } else {
+        Menu_AppendResourceEntry(46);
+        Menu_AppendResourceEntry(47);
+        Menu_AppendResourceEntry(48);
+#if defined(TBS_EDITION_ES)
+        Menu_CenterResourceEntries(17, 5, 0);
+#endif
+    }
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_IT)
+    Menu_CenterResourceEntries(17, 7, 0);
+#elif defined(TBS_EDITION_ES)
+#elif defined(TBS_EDITION_FR)
+    Menu_CenterResourceEntries(17, 9, 0);
+#else
+    Menu_CenterResourceEntries(17, 5, 0);
+#endif
+    if (mode != 0) {
+        Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, 0xc76);
+        work->previous_mode = 0xffff;
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_IT)
+        window = UiWindow_Create(7, 0, 17, 4, 2);
+#elif defined(TBS_EDITION_ES)
+        window = UiWindow_Create(5, 0, 21, 4, 2);
+#elif defined(TBS_EDITION_FR)
+        window = UiWindow_Create(5, 0, 22, 4, 2);
+#else
+        window = UiWindow_Create(9, 0, 13, 4, 2);
+#endif
+        msg = (s32)MsgPasswordSelection;
+        upper = &work->upper_window;
+        *upper = window;
+        UiText_DrawResource(msg, window, 0, 4);
+#if EDITION_INTERNATIONAL
+#if defined(TBS_EDITION_DE)
+        window = UiWindow_Create(1, 4, 28, 12, 2);
+#else
+        window = UiWindow_Create(3, 4, 25, 12, 2);
+#endif
+        work->lower_window = window;
+        UiText_DrawResource(msg + 1, window, 8, 0);
+        UiText_DrawResource(msg + 2, work->lower_window, 8, 11);
+        msg += 3;
+        UiText_DrawResource(msg, work->lower_window, 8, 22);
+#else
+        window = UiWindow_Create(5, 4, 21, 12, 2);
+        work->lower_window = window;
+        UiText_DrawResource(msg + 1, window, 0, 4);
+        msg += 2;
+        UiText_DrawResource(msg, work->lower_window, 0, 16);
+#endif
+    } else {
+        Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 0xc76);
+        work->previous_mode = 0xffff;
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+        window = UiWindow_Create(6, 0, 18, 4, 2);
+#elif defined(TBS_EDITION_ES)
+        window = UiWindow_Create(4, 0, 21, 4, 2);
+#elif defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        window = UiWindow_Create(5, 0, 20, 4, 2);
+#else
+        window = UiWindow_Create(9, 0, 13, 4, 2);
+#endif
+        upper = &work->upper_window;
+        *upper = window;
+#if EDITION_INTERNATIONAL
+        UiText_DrawResource((s32)MsgTransferMethod, window, 2, 4);
+#else
+        UiText_DrawResource((s32)MsgTransferMethod, window, 0, 4);
+#endif
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        work->lower_window = UiWindow_Create(1, 5, 28, 7, 2);
+#elif defined(TBS_EDITION_DE)
+        work->lower_window = UiWindow_Create(0, 5, 30, 7, 2);
+#else
+        work->lower_window = UiWindow_Create(5, 5, 21, 7, 2);
+#endif
+    }
+    result = Menu_RunResourceSelectionLoop(0);
+    if (mode != 0)
+        Scheduler_RemoveCallback(Menu_DrawModeLabel);
+    else
+        Scheduler_RemoveCallback(Menu_DrawModeIndicator);
+    RenderOutput_PrepareForRedraw(*upper);
+    RenderOutput_PrepareForRedraw(work->lower_window);
+    UiWork_Finalize(*upper, 2);
+    UiWork_Finalize(work->lower_window, 2);
+    WaitFrames(1);
+    Menu_EndResourceSelection();
+    return result;
 }

@@ -714,7 +714,8 @@
     "*/games/COMMON/SRC/GRAPHICS/TILE/CLEAR_CHARACTER_BLOCK.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SLIDES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/CREDITS.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000f3a5c)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SLIDES.o"(.rodata)
+    "*/recon/tbs/fr/rom.o"(.rom.000f3ae0)
     . = ABSOLUTE(0x080f5000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/PALETTE.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/INTRO.o"(.text)

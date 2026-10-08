@@ -949,10 +949,8 @@ ObjectRow_RisePair:
 	.global BattleFx6_UnitScale
 BattleFx6_UnitScale:
 	.incbin "baserom.gba", 0x000edae8, 0x00000008
-	.section .rom.000f0a5c, "ax"
-	.global DisplayScroll_SlideResources
-DisplayScroll_SlideResources:
-	.incbin "baserom.gba", 0x000f0a5c, 0x000007e9
+	.section .rom.000f0ae0, "ax"
+	.incbin "baserom.gba", 0x000f0ae0, 0x00000765
 	.global DisplayScroll_GlyphWidths
 DisplayScroll_GlyphWidths:
 	.incbin "baserom.gba", 0x000f1245, 0x00000063

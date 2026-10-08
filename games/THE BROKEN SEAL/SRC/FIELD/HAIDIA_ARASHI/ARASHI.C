@@ -7,15 +7,213 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "GROUP_DEPARTURE.H"
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 #include "CALL.H"
 #include "FIELD_SERVICE.H"
 #include "FIELDOBJ.H"
 #include "ANIMSPR.H"
-#include "FIELD_EVENT.H"
-#include "FIELD_SCENE.H"
 #include "text/MSG_IDS.H"
+#include "RESOURCE.H"
+#include "FIELD_EFFECT.H"
+#include "TBS_EDITION.H"
+#include "B5_CONTEXT.H"
+
+enum {
+    FLAG_BOULDER_FELL = 0x838
+};
+
+enum StormNightActor {
+    ACTOR_DORA = ACTOR_FIRST_PLACED + 1,
+    ACTOR_KYLE
+};
+
+#define ACTOR_ID 22
+
+struct Object {
+    u8 filler00[6];
+    u16 x;
+    u8 filler08[92];
+    s16 counter;
+};
+
+typedef struct Obj {
+    u8 pad00[8];
+    s32 f08;
+    s32 f0c;
+    s32 f10;
+    u8 pad14[4];
+    s32 f18;
+    s32 f1c;
+    u8 pad20[0x44];
+    u16 f64;
+    u8 pad66[2];
+    struct Obj *f68;
+} Obj;
+
+typedef struct Ent {
+    u8 pad00[9];
+    u8 b01:2;
+    u8 f:2;
+    u8 b45:4;
+} Ent;
+
+typedef struct Rec {
+    u8 pad00[0x50];
+    Ent *f50;
+} Rec;
+
+struct FixedPointCountdown {
+    u8 pad_00[0x18];
+    s32 fixed_point_18;
+    s32 fixed_point_1c;
+    u8 pad_20[0x44];
+    s16 countdown;
+};
+
+typedef struct {
+    u8 filler0[8];
+    s32 unk8;
+    u8 fillerC[4];
+    s32 unk10;
+} Thing1;
+
+typedef struct {
+    u8 filler0[10];
+    s16 unkA;
+    u8 fillerC[6];
+    s16 unk12;
+} Thing2;
+
+struct Actor {
+    u8 reserved_00[80];
+    u8 *presentation;
+};
+
+extern u8 HaidiaArashi_FrameModes[];
+
+extern u8 HaidiaArashi_SceneTable0[];
+
+extern u8 HaidiaArashi_SceneTable1[];
+
+extern u8 HaidiaArashi_SceneTable2[];
+
+extern u8 HaidiaArashi_SceneTable3[];
+
+extern u8 HaidiaArashi_CellSteps0[];
+
+extern u8 HaidiaArashi_CellSteps1[];
+
+extern u8 HaidiaArashi_ActorNineteenScript[];
+
+extern u8 HaidiaArashi_ActorEightScript[];
+
+void Engine_ActorSetSpritePriority(s32 actor, s32 priority);
+
+extern s32 HaidiaArashi_ShakeDone;
+extern s32 HaidiaArashi_ShakeShift;
+extern u8 HaidiaArashi_CellSteps2[];
+extern u8 HaidiaArashi_CellSteps3[];
+extern u8 HaidiaArashi_LastObjectCall[];
+extern u8 HaidiaArashi_LeaderScript[];
+extern u8 HaidiaArashi_ActorTwentyScript[];
+extern u8 HaidiaArashi_ActorTwentyTwoScript[];
+
+s32 Math_RemainderUnsigned(s32, s32);
+
+union PairObject;
+void HaidiaArashi_SpawnEffectPair(union PairObject *parent);
+
+void BattleFx_SetQueuedSoundAndPlay(s32);
+
+void Effect_SoundAndFlash(void);
+
+void BattleFx_StartTwelveFrameBlend(void);
+
+void BattleFx_SetBlock30Values128One(void);
+
+void HaidiaArashi_RunCallOutSequence(void);
+
+void BattleFx_SetBlock30ValuesMaxZero(void);
+
+s32 BattleFx_SetWeightedResult(s32, s32);
+
+void HaidiaArashi_CycleObjectPalettes(s32 o);
+
+void BattleFx_PlayQueuedSound();
+
+void Event_CallWithLastActiveObjectId();
+
+void Object_RefreshSelectorById();
+
+void Object_SetActionCallbackAndRefreshById();
+
+void Map_SetLayerEntryFlag();
+
+void Map_ClearLayerEntryFlag();
+
+void OverlayObject_UpdateRandomSlotByFrame(s32 obj);
+
+void BattleEffect_CleanupSceneObjects(void);
+
+void SceneActor_RunActor22PlacementSequence(s32 x, s32 y);
+
+s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object);
+s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state);
+u8 *HaidiaArashi_GetEntrances(void);
+s32 SceneData_ReturnZero(void);
+u8 *HaidiaArashi_GetExits(void);
+u8 *HaidiaArashi_GetPlacements(void);
+u8 *HaidiaArashi_GetEvents(void);
+void SceneState_SetFlag210AndConfigureRegion40_84(void);
+void SceneState_SetFlag210AndConfigureRegion40_89(void);
+void HaidiaArashi_RequestBackdropExit(u8 *o);
+void HaidiaArashi_OpenBackdropExit11(void);
+void SceneState_SetValue123Mode1(void);
+void SceneState_ApplyValues123And3(void);
+void SceneState_SetValue123Mode4(void);
+void FieldScene_RunStep7BAndCheckFlags841And842(void);
+void HaidiaArashi_OpenBackdropExit5(void);
+void HaidiaArashi_OpenGateRoute(void);
+void HaidiaArashi_OpenBackdropExit7(void);
+void HaidiaArashi_OpenBackdropExit8(void);
+void HaidiaArashi_OpenBackdropExit9(void);
+void HaidiaArashi_OpenRouteTen(void);
+void HaidiaArashi_OpenRouteTwelve(void);
+void HaidiaArashi_OpenRouteThirteen(void);
+s32 FieldScene_RunFlagGatedActorSetup(void);
+void Scene_DoraSendsRobinToThePlaza(void);
+void HaidiaArashi_SetStormCellAttributes(void);
+void ActorPresentation_SetEightSceneCells(void);
+void FieldScene_RunOpeningAuxiliarySequence(void);
+void SceneState_ApplyFourRects(void);
+void FieldScene_DrawFiveTileBlocks(void);
+void FieldScene_RunScene372SequenceA(void);
+void FieldScene_RunScene372SequenceB(void);
+void FieldScene_RunActor22SceneWhenFlag836Only(void);
+void FieldScene_RunScene372SequenceD(void);
+void Scene_BoulderFalls(void);
+void Arashi_SetActorFrameMode(struct FieldActor *actor, s32 mode);
+void ActorPresentation_SetFourActorsModeByBit(void);
+void SceneDialogue_RunActorTenFlag30dDialogue(void);
+void HaidiaArashi_FlashLightning(void);
+void ActorPresentation_SelectActorTwentySevenState(void);
+void HaidiaArashi_TryToFreeActorEight(void);
+void FieldScene_ConfigureActorTwentyTwoScene(void);
+void FieldScene_BuildPlacementGrid(void);
+void SceneState_SetWords1c0And1c8AndRun(void);
+void SceneState_SetWorkWordsAndFlag87f(void);
+void SceneActor_SetModeByFrameBit1(s32 o);
+void SceneEffect_UpdateArcOverAnchor(union FieldObject *object);
+void OverlayObject_UpdateArcFromParent(union FieldObject *object);
+void SceneState_SetValue140Mode0(void);
+void FieldScene_RunSingleStep(void);
+void FieldScene_RunFourPairedSteps(void);
+void SceneState_SetValue19ThenCall(void);
+void HaidiaArashi_CopyLeaderSpritePriority(void);
+void SceneState_SetValueEe4(void);
 
 void BattleFx_SetBlock30Values12Zero(void);
 void HaidiaArashi_SetStormCellAttributes();
@@ -28,8 +226,6 @@ void Event_PrepareObjectAndApplyValue();
 
 s32 HaidiaArashi_ShakeDone;
 s32 HaidiaArashi_ShakeShift;
-
-void Scene_RunActorGroupDepartureSequence();
 
 s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object)
 {
@@ -2213,4 +2409,511 @@ void Scene_RunActorGroupDepartureSequence(void)
     Event_Wait(60);
     Party_RemoveOwnerRestored(1);
     BattleFx_SetBlock30Values128One();
+}
+
+#define Object_InitializeMode ((s32 (*)(struct FieldSprite*,s32))Object_InitializeMode)
+
+struct Pulse {
+    u8 unknown_00[0x64];
+    s16 timer;
+    s16 beat;
+};
+
+struct PairDetail {
+    u8 unknown_00[22];
+    u8 field_16;
+};
+
+struct PairSprite {
+    struct FieldSprite sprite;
+    struct PairDetail *detail;
+};
+
+union PairObject {
+    union FieldObject object;
+    s32 words[28];
+    struct {
+        u8 unknown_00[0x68];
+        union PairObject *parent;
+    } link;
+};
+
+struct PairWork {
+    u8 unknown_00[70];
+    u16 vram_block;
+};
+
+extern struct PairWork *gEffectWork;
+
+extern struct WorldMapVramBlock gVramBlockCache[];
+
+struct WorldMapOam {
+    u8 unknown_00[4];
+    u16 attr0;
+    u16 x : 9;
+    u16 affine_index : 5;
+    u16 size : 2;
+};
+
+void HaidiaArashi_FlashLightning(void)
+{
+    u32 i;
+    s32 record;
+
+    Engine_TaskWait(20);
+    GameFlag_Set(0x166);
+    Map_SetLayerEntryFlag(0);
+    Map_SetLayerEntryFlag(1);
+    Map_SetLayerEntryFlag(2);
+    Map_SetLayerEntryFlag(3);
+    Map_SetLayerEntryFlag(4);
+    Map_SetLayerEntryFlag(5);
+    ColorBuffer_ApplyTarget(0x10003, 1);
+    ColorBuffer_ApplyTarget(0x10000, 2);
+    Engine_ColorBufferInterpolate(1);
+    Engine_TaskWait(120);
+    ColorBuffer_ApplyTarget(0, 0);
+    Engine_ColorBufferInterpolate(60);
+    Engine_TaskWait(60);
+    GameFlag_Clear(0x166);
+    Map_ClearLayerEntryFlag(0);
+    Map_ClearLayerEntryFlag(1);
+    Map_ClearLayerEntryFlag(2);
+    Map_ClearLayerEntryFlag(3);
+    Map_ClearLayerEntryFlag(4);
+    Map_ClearLayerEntryFlag(5);
+}
+
+void HaidiaArashi_UpdatePulsingGlow(void)
+{
+    struct FieldActor *source;
+    struct FieldActor *glow;
+    struct FieldSprite *sprite;
+    s16 *timer;
+
+    source = Object_GetById(19);
+    glow = Object_GetById(27);
+    sprite = glow->sprite;
+    timer = &((struct Pulse *)source)->timer;
+    if (*timer != 0) {
+        if (*timer == 60) {
+            Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+        }
+        if (*timer == 40) {
+            Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+        }
+        if (*timer == 30) {
+            Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+        }
+        if (*timer == 20) {
+            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+        }
+        (*timer)--;
+    }
+    glow->x.fixed = source->x.fixed;
+    glow->z.fixed = source->z.fixed;
+    glow->target_x = glow->x.fixed;
+    ((u8 *)sprite)[35] = 10;
+    if (gFrameCount & 1) {
+        switch (((struct Pulse *)source)->beat) {
+        case 1:
+        case 5:
+            glow->scale_x += 0xa3d;
+            glow->scale_y += 0xa3d;
+            break;
+        case 4:
+            glow->scale_x += 0x51e;
+            glow->scale_y += 0x51e;
+            break;
+        case 2:
+        case 3:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+            glow->scale_x += -0x7ae;
+            glow->scale_y += -0x7ae;
+            break;
+        }
+        sprite->scale = glow->scale_x;
+    } else {
+        sprite->scale = 0;
+    }
+}
+
+void ActorPresentation_SelectActorTwentySevenState(void)
+{
+    struct Actor *actor = Object_GetById(27);
+    u32 flags = gFrameCount;
+    u8 *presentation = actor->presentation;
+
+    if (flags & 1) {
+        u8 *state = presentation + 35;
+        *state = 2;
+    } else {
+        u8 *state = presentation + 35;
+        *state = 64;
+    }
+}
+
+void HaidiaArashi_TryToFreeActorEight(void)
+{
+    u32 i;
+    struct FieldActor *rec7;
+    struct FieldActor *rec8;
+    s32 record;
+
+    rec8 = Object_GetById(ACTOR_PARTY_LEADER);
+    rec7 = Object_GetById(8);
+    Engine_EventBegin();
+    if (GameFlag_IsSet(0x305) != 0) {
+        Engine_ActorStop(8);
+        Engine_EventWait(10);
+        Engine_ActorRunRepeatedMotion(8, 2);
+        Engine_EventWait(40);
+        if ((s16)rec8->facing >= 0) {
+            Engine_ActorSetAnimation(8, 7);
+        } else {
+            Engine_ActorSetAnimation(8, 8);
+        }
+        Engine_ActorRunRepeatedMotion(8, 2);
+        Engine_EventWait(20);
+        Engine_EventSetMessage((s32)MsgHaidiaICantMoveGetHelp);
+        Event_ShowMessage(8, 0);
+        Engine_ActorEnableActionCallback(8, HaidiaArashi_ActorEightScript);
+        Engine_ActorSetAnimation(8, 6);
+    } else {
+        Engine_ActorStop(8);
+        rec7->scale_x = 0x10000;
+        rec7->scale_y = 0x10000;
+        Actor_FaceDirection(8, 0x1000, 0);
+        if ((s16)rec8->facing >= 0) {
+            Engine_ActorSetAnimation(8, 7);
+        } else {
+            Engine_ActorSetAnimation(8, 8);
+        }
+        Engine_EventWait(20);
+        Engine_EventSetMessage((s32)MsgHaidiaIllGo);
+        Event_ShowMessageAndWait(8, 0, 20);
+        Engine_ActorSetAnimation(8, 1);
+        Engine_ActorJump(8, 4, 0);
+        Engine_EventWait(80);
+        Engine_ActorRunRepeatedMotion(8, 2);
+        Engine_EventWait(40);
+        if ((s16)rec8->facing >= 0) {
+            Engine_ActorSetAnimation(8, 7);
+        } else {
+            Engine_ActorSetAnimation(8, 8);
+        }
+        Engine_EventWait(2);
+        Engine_ActorJump(8, 2, 0);
+        Engine_EventWait(60);
+        Engine_ActorRunRepeatedMotion(8, 2);
+        Engine_EventWait(20);
+        Event_ShowMessage(8, 0);
+        Engine_ActorEnableActionCallback(8, HaidiaArashi_ActorEightScript);
+        Engine_ActorSetAnimation(8, 6);
+        GameFlag_Set(0x305);
+    }
+    Engine_EventEnd();
+}
+
+void FieldScene_ConfigureActorTwentyTwoScene(void)
+{
+    u32 i;
+    u8 *record;
+
+    Engine_EventBegin();
+    Camera_MoveTo(-1, -1, -1, 0);
+    Engine_ActorStop(ACTOR_ID);
+    Scheduler_RemoveCallback((s32)HaidiaArashi_CopyLeaderSpritePriority);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e0, 0x570);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
+    Actor_FaceDirection(ACTOR_ID, 0x3000, 20);
+    Actor_Get(ACTOR_ID)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+    Actor_SetPosition(ACTOR_ID, 0xf90000, 0x4d80000);
+    Engine_TaskWait(1);
+    Engine_EventSetMessage((s32)MsgHaidiaRobin);
+    Event_ShowMessage(0x1016, 0);
+    Actor_SetPosition(ACTOR_ID, 0xac0000, 0x4fe0000);
+    Engine_TaskWait(1);
+    Camera_SetSpeed(0x40000, 0x8000);
+    Camera_MoveTo(0xa20000, 0, 0x5050000, 1);
+    Engine_CameraWaitForMove();
+    Engine_EventWait(40);
+    Engine_ActorSetAnimationAndWait(ACTOR_ID, 4);
+    Event_ShowMessageAndWait(0x1016, 0, 10);
+    Actor_FaceDirection(ACTOR_ID, FACING_NORTH, 20);
+    Engine_ActorRunRepeatedMotion(ACTOR_ID, 2);
+    Event_ShowMessageAndWait(0x1016, 0, 10);
+    Actor_FaceDirection(ACTOR_ID, 0x1000, 20);
+    Engine_ActorSetAnimationAndWait(ACTOR_ID, 3);
+    Actor_SetSpeed(ACTOR_ID, 0x20000, 0x10000);
+    Actor_WalkToAndWait(ACTOR_ID, 165, 0x514);
+    Actor_WalkToAndWait(ACTOR_ID, 195, 0x598);
+    GameFlag_Set(0x842);
+}
+
+void FieldScene_BuildPlacementGrid(void)
+{
+    u32 i;
+    u8 *record;
+
+    Map_CopyCellsTo(16, 96, 11, 73, 6, 3);
+    Map_CopyCellsTo(16, 96, 34, 68, 14, 10);
+    Map_CopyCellsTo(16, 96, 64, 68, 7, 7);
+    Map_CopyCellsTo(9, 95, 11, 73, 6, 3);
+    Map_CopyCellsTo(40, 94, 34, 68, 14, 10);
+    Map_CopyCellsTo(54, 94, 64, 68, 8, 7);
+    Map_CopyCellsTo(72, 75, 72, 76, 1, 1);
+    Map_CopyCellsTo(72, 75, 74, 76, 1, 1);
+    Map_CopyCellAttributes(7, 75, 1, 1, 6, 75);
+    Map_CopyCellAttributes(8, 70, 3, 1, 8, 71);
+    Map_CopyCellAttributes(8, 70, 2, 1, 9, 72);
+    Map_CopyCellAttributes(8, 70, 2, 1, 9, 73);
+    Map_CopyCellAttributes(11, 66, 1, 1, 8, 73);
+    Map_CopyCellAttributes(12, 66, 1, 4, 11, 73);
+    Map_CopyCellAttributes(25, 0, 1, 1, 6, 74);
+    Engine_MapRedraw();
+}
+
+void SceneState_SetWords1c0And1c8AndRun(void)
+{
+
+    struct EventWork *state;
+
+    Engine_EventBegin();
+    state = gEventWork;
+    state->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+    state->transition_frames = 64;
+    Engine_GameFlagSet(0x87c);
+    BattleFx_SetWeightedResult(12, 2);
+    Engine_GameFlagSet(0x900);
+    Engine_EventEnd();
+}
+
+void SceneState_SetWorkWordsAndFlag87f(void)
+{
+
+    struct EventWork *state;
+
+    Engine_EventBegin();
+    state = gEventWork;
+    state->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+    state->transition_frames = 64;
+    Engine_GameFlagSet(0x87f);
+    BattleFx_SetWeightedResult(12, 3);
+    Engine_GameFlagSet(0x900);
+    Engine_EventEnd();
+}
+
+void SceneActor_SetModeByFrameBit1(s32 o)
+{
+    s32 v;
+
+    if ((gFrameCount & 2) != 0) {
+        Engine_ObjectSetPartPalettes(o, 7);
+    } else {
+        Engine_ObjectSetPartPalettes(o, 0);
+    }
+    {
+        /* FAKEMATCH: needed to match: the frame counter's address is taken before the shake period, as the % operator would order it. */
+        volatile u32 *frame = &gFrameCount;
+
+        v = (HaidiaArashi_ShakeShift << 3) + 16;
+        if (Math_RemainderUnsigned(*frame, v) == 0) {
+            HaidiaArashi_SpawnEffectPair((union PairObject *)o);
+        }
+    }
+}
+
+void OverlayObject_UpdateRandomSlotByFrame(s32 obj)
+{
+    s32 t;
+    s32 n;
+
+    if ((gFrameCount & 1) != 0) {
+        t = (s32)(gFrameCount >> 1);
+        Engine_ObjectSetPartPalettes(obj, Math_RemainderUnsigned(t, 6));
+    }
+    n = (HaidiaArashi_ShakeShift << 3) + 16;
+    if (Math_RemainderUnsigned(gFrameCount, n) == 0) {
+        HaidiaArashi_SpawnEffectPair((union PairObject *)obj);
+    }
+}
+
+void HaidiaArashi_CycleObjectPalettes(s32 o)
+{
+    s32 t;
+
+    if ((gFrameCount & 1) != 0) {
+        t = (s32)(gFrameCount >> 1);
+        Engine_ObjectSetPartPalettes(o, Math_RemainderUnsigned(t, 6));
+    }
+}
+
+void SceneEffect_UpdateArcOverAnchor(union FieldObject *object)
+{
+    Obj *o = (Obj *)object;
+    Obj *b;
+    s32 t;
+    s32 d;
+    s32 k;
+
+    b = o->f68;
+    o->f64++;
+    t = (s16)o->f64;
+    t = (s16)o->f64;
+    if (t > 31) {
+        Engine_ObjectDispatchRelease(o);
+    } else {
+        d = Engine_MathSin(t << 10);
+        o->f18 = d;
+        o->f1c = d;
+        o->f08 = b->f08;
+        k = 0x10000;
+        o->f0c += k;
+        k -= d;
+        o->f10 = b->f10 + ((k << 2) + k) + 0x80000;
+    }
+}
+
+void OverlayObject_UpdateArcFromParent(union FieldObject *object)
+{
+    Obj *o = (Obj *)object;
+    Obj *b;
+    s32 t;
+    s32 d;
+    s32 k;
+
+    b = o->f68;
+    o->f64++;
+    t = (s16)o->f64;
+    t = (s16)o->f64;
+    if (t > 31) {
+        Engine_ObjectDispatchRelease(o);
+    } else {
+        d = Engine_MathSin(t << 10);
+        o->f18 = d;
+        o->f1c = -d;
+        o->f08 = b->f08;
+        k = 0x10000;
+        o->f0c += k;
+        k -= d;
+        o->f10 = b->f10 - ((k << 2) + k) + 0x100000;
+    }
+}
+
+void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
+{
+    union PairObject *pair[2];
+    union PairObject *child;
+    struct PairSprite *part;
+    struct FieldSprite *sprite;
+    struct PairWork *work = gEffectWork;
+    s32 i;
+
+    Engine_AudioPlayCue(152);
+    for (i = 0; i < 2; ++i) {
+        child = (union PairObject *)Engine_ObjectCreate(26,
+            parent->object.actor.x.fixed, parent->object.actor.y.fixed,
+            parent->object.actor.z.fixed);
+        pair[i] = child;
+        if (child != NULL) {
+            child->words[5] = parent->words[5];
+            part = (struct PairSprite *)child->object.actor.sprite;
+            child->object.actor.motion_flags = 0;
+            child->object.effect.spin = 0;
+            child->link.parent = parent;
+            if (part != NULL) {
+                sprite = &part->sprite;
+                Object_InitializeMode(sprite, 0);
+                sprite->flags = 0;
+                Resource_ResetEntry(sprite->vram_block);
+                sprite->vram_block = work->vram_block;
+                /* FAKEMATCH: a plain byte access; the struct field store leaves a dead QImode zero that takes r3 from the +85 address. */
+                *(u8 *)&sprite->unknown_1d |= 1;
+                sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
+                sprite->full_color = 0;
+                sprite->shape = 1;
+                ((struct WorldMapOam *)sprite)->size = 2;
+                part->detail->field_16 = 0;
+            }
+        }
+    }
+    {
+        union PairObject *p = pair[0];
+        struct FieldSprite *sp = p->object.actor.sprite;
+
+        p->object.actor.update = OverlayObject_UpdateArcFromParent;
+        sp->priority = parent->object.actor.sprite->priority;
+    }
+    {
+        struct FieldActor *p = &pair[1]->object.actor;
+        struct FieldSprite *sp = p->sprite;
+
+        sp->priority = parent->object.actor.sprite->priority;
+        p->update = SceneEffect_UpdateArcOverAnchor;
+        p->priority_flags = 2;
+    }
+}
+
+void SceneState_SetValue140Mode0(void)
+{
+
+    Engine_PsynergyBegin(140, 0);
+}
+
+void FieldScene_RunSingleStep(void)
+{
+    BattleEffect_CleanupSceneObjects();
+}
+
+void FieldScene_RunFourPairedSteps(void)
+{
+    OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(32));
+    OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(33));
+    OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(30));
+    if (HaidiaArashi_ShakeDone == 0) {
+        OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(29));
+    }
+}
+
+void SceneState_SetValue19ThenCall(void)
+{
+
+    HaidiaArashi_CycleObjectPalettes((s32)Object_GetById(19));
+}
+
+void HaidiaArashi_CopyLeaderSpritePriority(void)
+{
+    Ent *src;
+    Ent *dst;
+    Ent *dst2;
+
+    src = (Ent *)Object_GetById(0)->sprite;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    Engine_ActorSetSpritePriority(22, ((struct FieldSpritePriority *)src)->priority);
+    Engine_ActorSetSpritePriority(8, ((struct FieldSpritePriority *)src)->priority);
+#else
+    dst = (Ent *)Object_GetById(22)->sprite;
+    ((struct FieldSpritePriority *)dst)->priority = ((struct FieldSpritePriority *)src)->priority;
+    dst2 = (Ent *)Object_GetById(8)->sprite;
+    ((struct FieldSpritePriority *)dst2)->priority = ((struct FieldSpritePriority *)src)->priority;
+#endif
+}
+
+void SceneState_SetValueEe4(void)
+{
+
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgHaidiaDoorWontOpen, 1);
+    Engine_EventEnd();
+}
+
+void FieldScene_ShowChestValuables(void)
+{
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgHaidiaSChestValuables, 1);
+    Engine_EventEnd();
 }

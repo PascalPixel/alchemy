@@ -1,3 +1,8 @@
+//--------------------------------------------------------------------------
+// DRAW_CHARACTER_SUMMARY.C
+// セーブ：記録の名前・レベル・クラス・コイン・プレイ時間を書く
+//--------------------------------------------------------------------------
+
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -22,6 +27,7 @@ void UiWindow_DrawDividerLine(s32, s32, s32, s32, s32);
 void UiText_DrawStringInWindow(s32, s32, s32, s32);
 void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
 
+// 版ごとの「Lv」と「コイン」の x（ドット）
 #if defined(TBS_EDITION_ES) || defined(TLA_EDITION_ES)
 #define SUMMARY_LEVEL_X 64
 #define SUMMARY_COINS_X 56
@@ -34,42 +40,52 @@ void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
 #define SUMMARY_COINS_X 48
 #endif
 
-void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
+//--------------------------------------------------------------------------
+// win : 書き込み先（0 なら何もしない）
+// rec : セーブの記録（SaveSummary）
+//       +16 名前、+28 レベル、+29 クラス、+32 プレイ時間、+36 コイン
+//--------------------------------------------------------------------------
+void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec)
 {
-    u32 buf[4];
-    s32 extra;
+	u32 buf[4]; // プレイ時間の文字列
+	s32 y;
 
-    if (surface != 0) {
-        RenderOutput_PrepareForRedraw();
-        UiWindow_DrawDividerLine(surface, 0, 4, 13, 4);
-        UiText_DrawStringAtOffset(st + 16, surface, 0, 0);
-        extra = 0;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR)
-        UiText_DrawStringAtOffset(StatusMenu_LevelLetterString, surface, SUMMARY_LEVEL_X, 0);
+	if (win != 0)
+	{
+		RenderOutput_PrepareForRedraw();
+		UiWindow_DrawDividerLine(win, 0, 4, 13, 4);
+		UiText_DrawStringAtOffset(rec + 16, win, 0, 0);
+		y = 0;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TLA_EDITION_ES) \
+	|| defined(TLA_EDITION_FR)
+		UiText_DrawStringAtOffset(StatusMenu_LevelLetterString, win, SUMMARY_LEVEL_X, 0);
 #else
-        UiText_DrawStringInWindow((s32)StatusMenu_LevelLetterString, surface, 72, 0);
+		UiText_DrawStringInWindow((s32)StatusMenu_LevelLetterString, win, 72, 0);
 #endif
-        UiText_DrawNumberAtOffset(st[28], 2, surface, 80, extra);
-        UiText_DrawCharacterAtOffset(st[29] + (s32)MsgClassName, surface, 0, 16);
+		UiText_DrawNumberAtOffset(rec[28], 2, win, 80, y);
+		UiText_DrawCharacterAtOffset(rec[29] + (s32)MsgClassName, win, 0, 16);
 #if !EDITION_INTERNATIONAL
-        extra = 32;
-        UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 24, extra);
-        UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, 72, 32);
-        UiText_DrawCharacterAtOffset((s32)MsgStatusLabel, surface, 0, 48);
-        UiText_DrawStringInWindow((s32)Text_FormatPlayTime(*(s32 *)(st + 32), (u8 *)buf), surface, 48, 48);
+		y = 32;
+		UiText_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 24, y);
+		UiText_DrawCharacterAtOffset((s32)MsgCoins, win, 72, 32);
+		UiText_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 48);
+		UiText_DrawStringInWindow(
+			(s32)Text_FormatPlayTime(*(s32 *)(rec + 32), (u8 *)buf), win, 48, 48);
 #else
-        UiText_DrawCharacterAtOffset((s32)MsgStatusLabel, surface, 0, 32);
-        UiText_DrawStringInWindow((s32)Text_FormatPlayTime(*(s32 *)(st + 32), (u8 *)buf), surface, 48, 40);
-        extra = 48;
-        UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 0, extra);
+		UiText_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 32);
+		UiText_DrawStringInWindow(
+			(s32)Text_FormatPlayTime(*(s32 *)(rec + 32), (u8 *)buf), win, 48, 40);
+		y = 48;
+		UiText_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 0, y);
 #if defined(TBS_EDITION_FR) || defined(TLA_EDITION_FR)
-        if (*(u32 *)(st + 36) > 1)
-            UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, SUMMARY_COINS_X, 48);
-        else
-            UiText_DrawCharacterAtOffset((s32)MsgPiece, surface, SUMMARY_COINS_X, 48);
+		// フランス語版は 1 枚以下なら単数形
+		if (*(u32 *)(rec + 36) > 1)
+			UiText_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
+		else
+			UiText_DrawCharacterAtOffset((s32)MsgPiece, win, SUMMARY_COINS_X, 48);
 #else
-        UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, SUMMARY_COINS_X, 48);
+		UiText_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
 #endif
 #endif
-    }
+	}
 }

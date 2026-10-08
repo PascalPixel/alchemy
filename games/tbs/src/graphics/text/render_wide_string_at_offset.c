@@ -24,14 +24,17 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
         work->count = (work->count + 1) & RENDER_ENTRY_MASK;
     }
 #if EDITION_INTERNATIONAL
-    for (;;) {
+    for (;;)
+#else
+    while ((c = *text++) != 0)
+#endif
+    {
+#if EDITION_INTERNATIONAL
         c = *text++;
         if (c > 0xff)
             c = 0x40;
         if (c == 0)
             break;
-#else
-    while ((c = *text++) != 0) {
 #endif
         if (c <= 30) {
             switch (c) {

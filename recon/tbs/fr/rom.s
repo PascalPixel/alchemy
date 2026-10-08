@@ -47,10 +47,6 @@ DisplayScroll_GlyphWidths:
 	.global DisplayScroll_LineTable
 DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x000f42a4, 0x00000544
-	.section .rom.000f68bc, "ax"
-	.global Title_PromptTiles
-Title_PromptTiles:
-	.incbin "baserom.gba", 0x000f68bc, 0x000000e6
 	.section .rom.000fed04, "ax"
 	.incbin "baserom.gba", 0x000fed04, 0x00000090
 	.section .rom.0032c89b, "ax"
@@ -58,10 +54,6 @@ Title_PromptTiles:
 	.global Title_IntroGraphicsC
 Title_IntroGraphicsC:
 	.incbin "baserom.gba", 0x0032c89c, 0x000086f8
-	.section .rom.0033c410, "ax"
-	.global Title_IntroTilesB
-Title_IntroTilesB:
-	.incbin "baserom.gba", 0x0033c410, 0x000006a8
 	.section .rom.005d8e3a, "ax"
 	.incbin "baserom.gba", 0x005d8e3a, 0x00000002
 	.section .rom.005ef252, "ax"

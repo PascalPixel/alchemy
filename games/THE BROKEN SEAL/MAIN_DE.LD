@@ -1132,7 +1132,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/CAMELOT_LOGO.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/GOLDEN_SUN.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WORLD_MAP/PICTURE.o"(.rodata)
-    "*/recon/tbs/de/rom.o"(.rom.0033a9fc)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/TSUZUKU.o"(.rodata)
     "*/games/COMMON/SRC/GRAPHICS/BACKDROP/SUHARA_GATE.o"(.rodata)
     "*/games/COMMON/SRC/GRAPHICS/BACKDROP/TAKARA_SHIMA.o"(.rodata)
     "*/games/COMMON/SRC/GRAPHICS/BACKDROP/TAKARA_SHIMA_CAVE.o"(.rodata)

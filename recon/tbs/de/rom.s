@@ -66,10 +66,6 @@ Title_PromptTiles:
 	.global Title_IntroGraphicsC
 Title_IntroGraphicsC:
 	.incbin "baserom.gba", 0x0032ae9c, 0x000086f8
-	.section .rom.0033a9fc, "ax"
-	.global Title_IntroTilesB
-Title_IntroTilesB:
-	.incbin "baserom.gba", 0x0033a9fc, 0x00000878
 	.section .rom.005d783e, "ax"
 	.incbin "baserom.gba", 0x005d783e, 0x00000002
 	.section .rom.005edc56, "ax"

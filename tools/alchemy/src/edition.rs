@@ -113,6 +113,15 @@ fn statement(line: &str) -> String {
     text.trim().to_owned()
 }
 
+/// A fixed placement, `. = ABSOLUTE(ADDRESS);`: Camelot's far-call
+/// banks start at addresses each edition chose, written in its own script
+/// as pokeemerald pins its graphics (W3), with the gap as linker fill.
+fn placement(line: &str) -> bool {
+    line.strip_prefix('.')
+        .map(str::trim_start)
+        .is_some_and(|rest| rest.starts_with('=') && !rest.starts_with("=="))
+}
+
 fn object(line: &str) -> Option<&str> {
     let start = line.find("\"*/")? + 3;
     let end = start + line[start..].find(".o\"")?;
@@ -192,7 +201,7 @@ pub(crate) fn derive(game: &str, edition: &str, own: &str) -> Result<String, Str
             .collect();
         let mut next = 0;
         for line in body.lines().map(statement).filter(|line| !line.is_empty()) {
-            if line.contains(own) {
+            if line.contains(own) || placement(&line) {
                 continue;
             }
             match theirs[next..].iter().position(|their| *their == line) {
@@ -223,4 +232,30 @@ pub(crate) fn derive(game: &str, edition: &str, own: &str) -> Result<String, Str
         }
     }
     Ok(text)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const GAME: &str = "SECTIONS\n{\n    .rom_main :\n    {\n    \"*/games/G/A.o\"(.text)\n    . = ABSOLUTE(0x08009000);\n    \"*/games/G/FIELD.o\"(.text)\n    \"*/games/G/B.o\"(.text)\n} > ROM\n}\n";
+
+    #[test]
+    fn editions_place_their_banks_at_their_own_addresses() {
+        let edition = ".rom_main :\n{\n    \"*/games/G/A.o\"(.text)\n    \"*/recon/g/de/rom.o\"(.rom.00000100)\n    . = ABSOLUTE(0x08008800);\n    \"*/games/G/FIELD.o\"(.text)\n    \"*/games/G/B.o\"(.text)\n}\n";
+        let text = derive(GAME, edition, "\"*/recon/g/de/").unwrap();
+        assert!(text.contains(". = ABSOLUTE(0x08008800);"), "{text}");
+        assert!(!text.contains("0x08009000"), "{text}");
+        let reordered = ".rom_main :\n{\n    \"*/games/G/B.o\"(.text)\n    \"*/games/G/A.o\"(.text)\n}\n";
+        assert!(derive(GAME, reordered, "\"*/recon/g/de/").is_err());
+    }
+
+    #[test]
+    fn placements_are_assignments_to_dot_only() {
+        assert!(placement(". = ABSOLUTE(0x08009000);"));
+        assert!(placement(".=0x08009000;"));
+        assert!(!placement(".rom_main :"));
+        assert!(!placement("\"*/games/G/A.o\"(.text)"));
+        assert!(!placement("Symbol = 0x08009000;"));
+    }
 }

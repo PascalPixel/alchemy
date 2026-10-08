@@ -399,6 +399,18 @@ never a file or a function.
   encoding and decoding (agsgfx, mid2ags, wav2ags, po2ags). Look at how pret
   does something before inventing. Alchemy is never stricter than pret: where
   pret's practice settles a question, follow it (Pascal, 2026-10-08).
+  Settled this way (2026-10-08): Camelot's far-call banks start at fixed
+  addresses per edition, written in the linker scripts as pokeemerald pins
+  its graphics blobs (`__gfx_load_address`), with the gap as linker fill;
+  leftovers of Camelot's packer buffer after compressed streams are kept as
+  tagged literal bytes beside their asset, as pret keeps garbage data (an
+  S1 exception for proven packer garbage only); and each encoder takes one
+  rule for all its streams, verified on every stream of its kind in both
+  games, never per-file options, as pret's one generic LZ rule.
+  "100%" is announced only as a pret reviewer would accept it: no game
+  function matching through instruction-emitting inline asm, nothing in the
+  build read from the ROM, and `recon/<game>` gone except its raw listings
+  kept for reference.
 - **W4** Choose what to match from `make deps`: first the functions other
   unfinished functions call, with the structures they share, then the ones
   with nothing left to name, largest first.

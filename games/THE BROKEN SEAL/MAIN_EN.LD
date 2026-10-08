@@ -1122,7 +1122,7 @@
         "*/games/COMMON/SRC/GRAPHICS/UI/SMALL_FONT.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/INTRO_SUN.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/SCREEN.o"(.rodata)
-        "*/recon/tbs/unidentified.o"(.unidentified.0832b0a6)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/INTRO_PEAK.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/NINTENDO_SPLASH.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/CAMELOT_LOGO.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/GOLDEN_SUN.o"(.rodata)

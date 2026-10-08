@@ -760,7 +760,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Palette32
 	resource , Field_Map134
 	resource , Field_Map135
-	resource , Resource_Data2EE
+	resource , Field_KaragoruDou
 	resource , Tileset_Palette33
 	resource , Field_Map136
 	resource , Tileset_Palette34

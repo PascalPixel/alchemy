@@ -1842,7 +1842,7 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/PALETTES/PAL_32.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/MAP/MAP_134/MAP.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/MAP/MAP_135/MAP.o"(.rodata)
-        "*/recon/tbs/unidentified.o"(.unidentified.08717b8c)
+        "*/games/THE BROKEN SEAL/SRC/MAP/KARAGORU_DOU/MAP.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/PALETTES/PAL_33.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/MAP/MAP_136/MAP.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/PALETTES/PAL_34.o"(.rodata)

@@ -56,12 +56,12 @@ void ItemMenu_DrawItemHead(void)
 
 s32 ItemMenu_ConfirmDrop(s32 a0)
 {
-    volatile s32 *pad;
     s32 win;
     s32 slot;
     s32 text;
     s32 label;
-    register s32 sel asm("r6"); /* FAKEMATCH: keeps the row in r6 */
+    s32 rows = 2;
+    s32 sel;
     register s32 changed asm("r8"); /* FAKEMATCH: pins the flag to r8, where the native keeps it; with the r2 copy below unpinned it moves to r7 (86 of 141 rows differ) */
 
     win = UiWindow_CreateFar(13, 3, 17, 10, 2);
@@ -97,7 +97,7 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
         asm("" : "+l"(c));
         if (c) {
             changed = 0;
-            sel = __modsi3(sel + 2, 2);
+            sel = (sel + rows) % rows;
         }}
         if (gKeyState & KEY_A) {
             AudioCommand_PlayFar(112);
@@ -109,18 +109,17 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
             break;
         }
         UiMenu_PositionCursor(104, (sel << 4) + 70);
-        pad = &gKeysRepeat;
-        if (*pad & 64) {
-            {
+        /* FAKEMATCH: needed to match: the key-repeat pointer shares text's variable; as a pointer of its own it ranks below sel and the two swap r5 and r6 (13 of 134 rows differ) */
+        text = (s32)&gKeysRepeat;
+        if (*(volatile s32 *)text & 64) {
             register s32 one asm("r2") = 1; /* FAKEMATCH: sets the flag through r2 */
             /* FAKEMATCH: empty asm barrier on the r2 one, so cse does not set r8 from the constant, whose reload takes r3 (2 of 134 rows differ) */
             asm("" : "+l"(one));
             sel -= 1;
             changed = one;
             AudioCommand_PlayFar(111);
-            }
         }
-        if (*pad & 128) {
+        if (*(volatile s32 *)text & 128) {
             sel += 1;
             changed = 1;
             AudioCommand_PlayFar(111);

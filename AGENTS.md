@@ -436,7 +436,13 @@ never a file or a function.
   games. A standard compressor may take its standard flags per file, as
   pokecrystal's `gfx/lz.mk` does; a reconstructed packer takes no invented
   per-file flag without clear evidence Camelot ran its tool that way
-  (Pascal, 2026-10-08).
+  (Pascal, 2026-10-08). A stream Camelot edited after packing keeps its
+  encoder's one rule and takes a patch file beside its asset instead: the
+  build packs the asset with a neutral stand-in at each listed position,
+  then writes the shipped byte back into that literal. Each entry is
+  tagged with its measured proof: the stream matches only with that one
+  literal changed, and nearly any stand-in value works. Patch bytes count
+  as data and are reported apart, like FAKEMATCH (Pascal, 2026-10-08).
   "100%" is announced only as a pret reviewer would accept it: no game
   function matching through instruction-emitting inline asm, nothing in the
   build read from the ROM, and `recon/<game>` gone except its raw listings

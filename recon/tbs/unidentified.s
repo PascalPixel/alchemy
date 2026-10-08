@@ -19,15 +19,6 @@ Party_PairResolveRules:
 	.global RomWords_0809e270
 RomWords_0809e270:
 	.incbin "baserom.gba", 0x0009e270, 0x00000218
-	.section .unidentified.080f0ae0,"a"
-	.incbin "baserom.gba", 0x000f0ae0, 0x000006dc
-	.incbin "baserom.gba", 0x000f11bc, 0x00000001
-	.global DisplayScroll_GlyphWidths
-DisplayScroll_GlyphWidths:
-	.incbin "baserom.gba", 0x000f11bd, 0x00000063
-	.global DisplayScroll_LineTable
-DisplayScroll_LineTable:
-	.incbin "baserom.gba", 0x000f1220, 0x00000550
 	.section .unidentified.0832b0a6,"a"
 	.incbin "baserom.gba", 0x0032b0a6, 0x00000002
 	.global Title_IntroGraphicsC

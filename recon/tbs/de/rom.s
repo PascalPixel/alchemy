@@ -47,14 +47,6 @@ RomWords_0809e270:
 	.incbin "baserom.gba", 0x000a19d8, 0x00000218
 	.section .rom.000e4772, "ax"
 	.incbin "baserom.gba", 0x000e4772, 0x00000002
-	.section .rom.000f20e0, "ax"
-	.incbin "baserom.gba", 0x000f20e0, 0x00000759
-	.global DisplayScroll_GlyphWidths
-DisplayScroll_GlyphWidths:
-	.incbin "baserom.gba", 0x000f2839, 0x00000063
-	.global DisplayScroll_LineTable
-DisplayScroll_LineTable:
-	.incbin "baserom.gba", 0x000f289c, 0x00000544
 	.section .rom.000f4ed0, "ax"
 	.global Title_PromptTiles
 Title_PromptTiles:

@@ -283,13 +283,8 @@ void *ObjectDispatch_FindFreeObject(void)
 //--------------------------------------------------------------------------
 void ObjectDispatch_Release(struct DispatchObject *obj)
 {
-#if GAME_TLA
-	u32	 zero;
-	u32 *src;
-#else
 	volatile u32  zero;
 	volatile u32 *src;
-#endif
 	s32							n;
 	struct ResourceObjectWork **child;
 
@@ -312,10 +307,6 @@ void ObjectDispatch_Release(struct DispatchObject *obj)
 			break;
 		}
 		src = &zero;
-#if GAME_TLA
-		/* FAKEMATCH: the pointer handoff captures the DMA source before its zero store without reading the uninitialized word. */
-		asm("" : "+r"(src));
-#endif
 		*src = 0;
 		Dma_Set(src, obj, 0x85000000 | (sizeof(struct ObjectRuntime) / 4), REG_DMA3);
 	}

@@ -39,7 +39,7 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
     struct RenderOutput **icons;
     s32 item_id;
 
-    icons = gMenuWork->entry_icons;
+    icons = ((struct InventoryMenuState *)gMenuWork)->entry_icons;
     entries = items;
     remaining = 14;
     do {

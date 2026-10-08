@@ -1,3 +1,4 @@
+@ C2: stmia r0!, {r4-r7} writes arithmetic-modified words, not a block copy.
 .syntax unified
 	.arm
 	.global ColorBuffer_DarkenKernel

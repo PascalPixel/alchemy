@@ -27,7 +27,6 @@
 #define Djinn_ListOwnerEntries ((s16 (*)(void*,s32,s32))Djinn_ListOwnerEntries)
 
 #define FRAME_TILE 150
-extern u8 gMenuWork[];
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
@@ -52,7 +51,7 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 
 s32 Menu_OpenBackdropScreen(void)
 {
-    struct DjinnMenuWork *work = *(struct DjinnMenuWork **)gMenuWork;
+    struct DjinnMenuWork *work = gMenuWork;
     struct DjinnMenuBackdrop *backdrop = work->backdrop;
 
     UiWindow_UpdateOrCreate(&work->list_window, 0, 5, 30, 15, 2);
@@ -124,7 +123,7 @@ s32 Menu_ComputeEntryValues(void *tbl)
     s16 v;
     s32 cnt;
 
-    state = *(struct DjinnMenuWork **)gMenuWork;
+    state = gMenuWork;
     i = 0;
     if (i < FIELD_AT_OFFSET(state, u8, 0x219)) {
         dst = (s8 *)tbl + 0xA0;
@@ -156,8 +155,8 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
     s32 usable;
     u16 *list;
 
-    menu = *(struct DjinnMenuWork **)gMenuWork;
-    ui = *(struct UiWork **)(gMenuWork + (HEAP_SLOT_WINDOW - HEAP_SLOT_MENU) * sizeof(void *));
+    menu = gMenuWork;
+    ui = *(struct UiWork **)((u8 *)&gMenuWork + (HEAP_SLOT_WINDOW - HEAP_SLOT_MENU) * sizeof(void *));
     ui->menu_busy = 1;
     i = 0;
     if (menu->owner_count != 0) {
@@ -198,6 +197,6 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
         }
     }
     UiWindow_DrawDividerLineFar(menu->list_window, 0, 10, 28, 10);
-    (*(struct UiWork **)(gMenuWork + (HEAP_SLOT_WINDOW - HEAP_SLOT_MENU) * sizeof(void *)))->dirty = 1;
+    (*(struct UiWork **)((u8 *)&gMenuWork + (HEAP_SLOT_WINDOW - HEAP_SLOT_MENU) * sizeof(void *)))->dirty = 1;
     ui->menu_busy = 0;
 }

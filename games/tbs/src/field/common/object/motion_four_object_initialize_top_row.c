@@ -17,7 +17,6 @@
 
 #define Link_DrawShiftedTilePairFar ((void (*)(void*))Link_DrawShiftedTilePairFar)
 s32 Object_ApplyProjectedPlacementFar(u32 object, u32 *request, u32 *motion, u32 limit);
-extern struct FourObjectMotionState *gMenuWork;
 
 void FourObjectMotion_InitializeTopRow(void)
 {
@@ -95,7 +94,6 @@ void FourObjectMotion_UpdateAllPositions(void)
     }
 }
 
-extern struct FourObjectMotionState *gMenuWork;
 
 s32 Object_ApplyProjectedPlacementFar(u32, u32 *, u32 *, u32);
 

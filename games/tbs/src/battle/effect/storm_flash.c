@@ -25,7 +25,7 @@
 
 void AudioCommand_PlayFar(s32);
 
-extern void *Data_03001ec8[];
+extern void *gFieldBlendWork[];
 
 struct GroundParticle {
     u8 unknown_00[4];
@@ -107,8 +107,8 @@ void FieldFx_UpdateGroundParticles(void)
 
 void BattleFx_UpdateStormFlash(void)
 {
-    struct FieldBlendWork *work = Data_03001ec8[0];
-    struct BattleEffectBuffers *target = Data_03001ec8[2];
+    struct FieldBlendWork *work = gFieldBlendWork[0];
+    struct BattleEffectBuffers *target = gFieldBlendWork[2];
     s16 *timer = &work->timer;
 
     if (*timer < 0)

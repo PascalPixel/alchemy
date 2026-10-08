@@ -127,6 +127,7 @@ fn statement_end(source: &str, at: usize) -> (usize, Option<usize>) {
     let bytes = source.as_bytes();
     let (mut depth, mut i) = (0usize, at);
     let (mut last, mut assigned, mut body) = (0u8, false, None);
+    let mut branches = Vec::new();
     while i < bytes.len() {
         let byte = bytes[i];
         if let Some(end) = comment_end(source, i) {
@@ -134,7 +135,24 @@ fn statement_end(source: &str, at: usize) -> (usize, Option<usize>) {
             continue;
         }
         if byte == b'#' && line_start(bytes, i) {
-            i = directive_end(source, i);
+            let end = directive_end(source, i);
+            // Alternative branches start at the same delimiter state. A
+            // call name followed by `(` in both branches has only one
+            // closing `)` after #endif; counting both swallows the rest
+            // of the file into this item.
+            match directive_name(&source[i..end]) {
+                "if" | "ifdef" | "ifndef" => branches.push((depth, last, assigned, body)),
+                "elif" | "else" => {
+                    if let Some(state) = branches.last() {
+                        (depth, last, assigned, body) = *state;
+                    }
+                }
+                "endif" => {
+                    branches.pop();
+                }
+                _ => {}
+            }
+            i = end;
             continue;
         }
         if byte == b'"' || byte == b'\'' {
@@ -658,6 +676,18 @@ mod tests {
         assert_eq!(signature("void f(u32 value, void (*cb)(void))\n{\n}"), declared);
         assert_ne!(signature("void f(s32, void (*)(void));"), declared);
         assert_eq!(signature("struct Q;"), "struct Q");
+    }
+
+    #[test]
+    fn nested_call_name_branches_end_at_the_function_boundary() {
+        let function = "void Draw(void)\n{\n#if OUTER\n#if INNER\n    First(\n#elif OTHER\n    Second(\n#else\n    Third(\n#endif\n#else\n    Last(\n#endif\n        1, 2);\n}\n";
+        let source = format!("{function}void Next(void) {{}}\n");
+        let found = items(&source);
+        assert_eq!(found.len(), 2);
+        assert_eq!(found[0].text, function.trim_end());
+        assert!(matches!(found[0].kind, Kind::Function { .. }));
+        assert_eq!(names(&found[0])[0].name, "Draw");
+        assert_eq!(names(&found[1])[0].name, "Next");
     }
 
     #[test]

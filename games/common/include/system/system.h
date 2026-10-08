@@ -88,7 +88,7 @@ struct S {
     u8 pad40[16];
     struct T *f50;
 };
-extern u8 Data_03000bd8[];
+extern u8 IwramSoundPresetCode[];
 #ifndef OWN_Flash_Handler0
 extern u32 Flash_Handler0;
 #endif
@@ -196,7 +196,7 @@ extern s32 BattleMotion_VariantAcceleration[];
 extern s32 BattleMotion_VariantDistancePercent[];
 extern s32 BattleMotion_VariantSpeedLimit[];
 extern s32 BattleMotion_VariantVelocityY[];
-extern u8 Data_03001e90[];
+extern u8 gPartyStatusWork[];
 extern u16 Graphics_ExpandNibbleTable[];
 extern const u8 Resource_PatchThumbBranchCode[];
 s32 _call_via_r3(s32, u8 *, u8, s32);

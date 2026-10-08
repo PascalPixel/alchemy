@@ -23,7 +23,7 @@
 #include "iwram_call.h"
 #include "palbuf.h"
 
-#define HEAP_SLOT_PALBUF 32 // 色のバッファ (Data_03001ed0)
+#define HEAP_SLOT_PALBUF 32 // 色のバッファ (gPaletteBufferWork)
 
 #define COLOR_MAX 448 // BG 224 色 + OBJ 224 色
 #define COLOR_HALF 224
@@ -351,7 +351,7 @@ void Runtime_ScheduleCallbackAndReleaseBlock32B(void)
 //--------------------------------------------------------------------------
 void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half)
 {
-	struct BattleEffectBuffers *buf = Data_03001ed0;
+	struct BattleEffectBuffers *buf = gPaletteBufferWork;
 
 	if (buf != NULL)
 	{
@@ -364,7 +364,7 @@ void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half)
 //--------------------------------------------------------------------------
 void BattleFx_ApplyColorToSourceBuffer(s32 mode, s32 half)
 {
-	struct BattleEffectBuffers *buf = Data_03001ed0;
+	struct BattleEffectBuffers *buf = gPaletteBufferWork;
 
 	if (buf != NULL)
 	{
@@ -377,7 +377,7 @@ void BattleFx_ApplyColorToSourceBuffer(s32 mode, s32 half)
 //--------------------------------------------------------------------------
 void BattleFx_SetPrimaryBufferValue(u32 col)
 {
-	struct BattleEffectBuffers *buf = Data_03001ed0;
+	struct BattleEffectBuffers *buf = gPaletteBufferWork;
 
 	if (buf != NULL)
 	{
@@ -390,7 +390,7 @@ void BattleFx_SetPrimaryBufferValue(u32 col)
 //--------------------------------------------------------------------------
 void BattleFx_StartBufferInterpolation(s32 frames)
 {
-	struct BattleEffectBuffers *buf = Data_03001ed0;
+	struct BattleEffectBuffers *buf = gPaletteBufferWork;
 
 	if (buf != NULL)
 	{

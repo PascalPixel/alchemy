@@ -6,6 +6,7 @@
 //! to the one the last build linked: same object, same ROM.
 
 use crate::targets::{target_for, DecompTarget, TARGET_IDS};
+use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -23,10 +24,11 @@ pub fn run(args: &[String]) -> Result<(), String> {
         return if args.is_empty() { Err("no file given".into()) } else { Ok(()) };
     }
     let root = crate::compiler::routing::root();
+    let linked = linked(root)?;
     let (mut kept, mut tried, mut skipped) = (0, 0, 0);
     for file in args {
         let source = relative(root, file)?;
-        let report = sweep(root, &source)?;
+        let report = sweep(root, &source, &linked)?;
         kept += report.kept;
         tried += report.tried;
         skipped += report.other;
@@ -50,14 +52,42 @@ struct Report {
     other: usize,
 }
 
-/// The editions whose last build compiled this source, with its object.
-fn built(root: &Path, source: &str) -> Vec<(DecompTarget, PathBuf)> {
+/// Only current linker inputs may supply a baseline. Merging translation
+/// units leaves old objects in out/, even when that edition no longer builds
+/// their source.
+fn linked(root: &Path) -> Result<Vec<(DecompTarget, BTreeSet<String>)>, String> {
     TARGET_IDS
         .iter()
         .map(|id| target_for(*id))
-        .filter_map(|target| {
+        .map(|target| {
+            let main = match crate::edition::script_text(root, target)? {
+                Some(text) => text,
+                None => fs::read_to_string(root.join(target.script())).map_err(|error| error.to_string())?,
+            };
+            let mut objects: BTreeSet<String> = crate::build_rom::script_objects(&main).into_iter().collect();
+            for entry in walkdir::WalkDir::new(root.join(target.overlay_dir)) {
+                let entry = entry.map_err(|error| error.to_string())?;
+                if entry.path().extension().is_some_and(|ext| ext == "ld") {
+                    let text = fs::read_to_string(entry.path()).map_err(|error| error.to_string())?;
+                    objects.extend(crate::build_rom::script_objects(&text));
+                }
+            }
+            Ok((target, objects))
+        })
+        .collect()
+}
+
+fn built(root: &Path, source: &str, linked: &[(DecompTarget, BTreeSet<String>)]) -> Result<Vec<(DecompTarget, PathBuf)>, String> {
+    let stem = Path::new(source).with_extension("").to_string_lossy().into_owned();
+    linked
+        .iter()
+        .filter(|(_, objects)| objects.contains(&stem))
+        .map(|(target, _)| {
             let object = root.join(target.output_dir).join("obj").join(source).with_extension("o");
-            object.is_file().then_some((target, object))
+            if !object.is_file() {
+                return Err(format!("{}: linked object missing; run make compare-editions", object.display()));
+            }
+            Ok((*target, object))
         })
         .collect()
 }
@@ -90,10 +120,10 @@ fn identical(root: &Path, source: &str, editions: &[(DecompTarget, PathBuf)]) ->
     Ok(all)
 }
 
-fn sweep(root: &Path, source: &str) -> Result<Report, String> {
+fn sweep(root: &Path, source: &str, linked: &[(DecompTarget, BTreeSet<String>)]) -> Result<Report, String> {
     let path = root.join(source);
     let original = fs::read_to_string(&path).map_err(|error| format!("{source}: {error}"))?;
-    let editions = built(root, source);
+    let editions = built(root, source, linked)?;
     if editions.is_empty() {
         return Err(format!("{source}: no edition's build compiled it; run make compare-editions"));
     }
@@ -197,6 +227,25 @@ fn remove(text: &str, tag: &Tag) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn stale_objects_do_not_supply_an_editions_baseline() {
+        let root = tempfile::tempdir().unwrap();
+        let source = "games/common/src/work.c";
+        let tbs = target_for(crate::targets::DecompTargetId::TbsEn);
+        let tla = target_for(crate::targets::DecompTargetId::TlaEn);
+        for target in [tbs, tla] {
+            let object = root.path().join(target.output_dir).join("obj").join(source).with_extension("o");
+            fs::create_dir_all(object.parent().unwrap()).unwrap();
+            fs::write(object, b"object").unwrap();
+        }
+        let linked = [(tbs, BTreeSet::new()), (tla, BTreeSet::from(["games/common/src/work".into()]))];
+        let editions = built(root.path(), source, &linked).unwrap();
+        assert_eq!(editions.len(), 1);
+        assert_eq!(editions[0].0, tla);
+        fs::remove_file(&editions[0].1).unwrap();
+        assert!(built(root.path(), source, &linked).unwrap_err().contains("linked object missing"));
+    }
 
     fn removed(text: &str) -> Option<String> {
         remove(text, &tags(text)[0])

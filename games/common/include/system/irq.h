@@ -10,6 +10,7 @@ extern InterruptHandler gIrqHandlers[14];
 extern const u32 Runtime_IrqHandlers[14];
 
 extern u8 IwramIrqMain[];
+extern const u32 IwramIrqModeWord;
 extern const u8 IwramRuntime_Rom[];
 extern void *gIrqVector;
 

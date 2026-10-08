@@ -23,6 +23,7 @@
 #include "callback_scheduler.h"
 #include "battle_status_icon.h"
 #include "iwram_call.h"
+#include "irq.h"
 #include "vram_block.h"
 #include "btlev.h"
 #include "animspr.h"
@@ -339,14 +340,14 @@ done:
 }
 
 //--------------------------------------------------------------------------
-// DMA3 を三回設定してから、IWRAM のフックを呼ぶ
+// DMA3 を三回設定し、IRQ 復帰命令のワードを呼び出し先として読む
 //--------------------------------------------------------------------------
 void Dma_StopAllThenRunHook(void)
 {
 	Dma_Set(0, 0, DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
 	Dma_Set(0, 0, DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
 	Dma_Set(0, 0, DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
-	_call_via_r0(*(u32 *)0x030000c4);
+	_call_via_r0(IwramIrqModeWord);
 }
 
 //--------------------------------------------------------------------------

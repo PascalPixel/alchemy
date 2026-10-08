@@ -54,6 +54,8 @@ IwramIrqMain:
 	mov	lr, r5
 	mrs	r3, CPSR
 	bic	r3, r3, #0xdf
+	.global IwramIrqModeWord
+IwramIrqModeWord:
 	orr	r3, r3, #0x92
 	msr	CPSR_fc, r3
 	pop	{r0, r1, r2, r3, r4, r5, lr}

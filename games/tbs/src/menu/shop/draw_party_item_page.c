@@ -27,7 +27,6 @@
 #define SHOP_STAT_X       72
 #endif
 
-extern struct InventoryMenuState *gMenuWork;
 void UiText_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 

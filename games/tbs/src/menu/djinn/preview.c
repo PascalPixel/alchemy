@@ -1052,7 +1052,7 @@ LAYOUT_SIZE_GUARD(BattleMenuSelection_Size, struct BattleMenuSelection, 0x104);
 LAYOUT_OFFSET_GUARD(BattleMenuSelection_Selected, struct BattleMenuSelection, selected, 0xe4);
 
 #define MENU_STATE ((struct BattleMenuSelection *)gLinkCountdownWork)
-#define CURSOR_OWNER (*(struct PartyStatusWindow **)Data_03001e90)
+#define CURSOR_OWNER (*(struct PartyStatusWindow **)gPartyStatusWork)
 
 extern volatile u32 gKeysHeld;
 extern const u8 DjinnMenu_BlinkTile[32];

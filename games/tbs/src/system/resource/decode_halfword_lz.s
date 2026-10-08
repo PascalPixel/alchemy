@@ -1,3 +1,4 @@
+@ C2: bcc and adc consume lsls r3's carry; the intervening ldrh keeps flags.
 .syntax unified
 	.arm
 	.global Resource_DecodeHalfwordLz

@@ -3,7 +3,7 @@
 	.arm
 	.global Rom_Start
 Rom_Start:
-	b	Entry_080003c0			@ 起動
+	b	System_Entry			@ 起動
 	.space	156				@ 任天堂ロゴ (gbafix が書き込む)
 	.ifdef TBS_EDITION_JA
 	.ascii	"OugonTaiyo_A"			@ ゲームタイトル

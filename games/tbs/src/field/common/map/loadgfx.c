@@ -53,7 +53,7 @@ void MapAnimation_Start(void)
     Resource_RunCopiedDecoder((s32)pages->pages[gFrameCount & one], (s32)gMapCellBuffer);
     work->window_top = 200;
     work->window_bottom = 255;
-    Data_03001cfc = MapAnimation_PresentFrame;
+    gVBlankHook = MapAnimation_PresentFrame;
 }
 
 void Map_ShowBg1FromBuffer(void)
@@ -84,7 +84,7 @@ void Map_LoadAreaGraphics(void)
     Resource_DecodeType01(Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
     Resource_DecodeType01(Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
     Resource_DecodeType01(Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
-    Data_03001cfc = Map_ShowBg1FromBuffer;
+    gVBlankHook = Map_ShowBg1FromBuffer;
     state->window_top = 0;
     state->window_bottom = 159;
     WaitFrames(1);
@@ -100,7 +100,7 @@ void Map_LoadAreaGraphics(void)
 void Map_LoadDefaultCellsAndUpdateBlock(void)
 {
     struct PerspectiveWork *work = gMapWork[0];
-    Data_03001cfc = Map_ShowBg1FromBuffer;
+    gVBlankHook = Map_ShowBg1FromBuffer;
     work->window_top = 0;
     work->window_bottom = 0x9f;
     WaitFrames(1);

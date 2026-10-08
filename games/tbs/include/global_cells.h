@@ -4,5 +4,6 @@
 #include "types.h"
 
 extern void *gMapWork[];
+extern void *gMenuWork;
 
 #endif

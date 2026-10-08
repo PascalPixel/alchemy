@@ -1,3 +1,5 @@
+@ C2: r11/fp is the mask 7 passed through the command linkage; the opening
+@ str loop rewrites the command table used by ldr pc in its dispatcher.
 .syntax unified
 .text
 	.arm

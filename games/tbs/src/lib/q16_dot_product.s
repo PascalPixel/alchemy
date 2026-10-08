@@ -1,3 +1,4 @@
+@ C2: smull and both smlal keep the multiply halves in unpaired r12/r0.
 .syntax unified
 	.arm
 	.global RelocatedQ16DotProduct

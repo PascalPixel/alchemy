@@ -84,7 +84,7 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state, s32 arg1)
 void ItemMenu_HideAllIcons(void)
 {
     s32 hidden_state = 13;
-    struct RenderOutput **icons = gMenuWork->entry_icons;
+    struct RenderOutput **icons = ((struct InventoryMenuState *)gMenuWork)->entry_icons;
     s32 slot;
 
     for (slot = 31; slot >= 0; slot--) {

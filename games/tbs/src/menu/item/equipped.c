@@ -88,7 +88,7 @@ void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase)
 
     i = 0;
     tbl =
-        gMenuWork->entry_icons;
+        ((struct InventoryMenuState *)gMenuWork)->entry_icons;
     do {
         obj = *tbl++;
         if (obj != NULL) {

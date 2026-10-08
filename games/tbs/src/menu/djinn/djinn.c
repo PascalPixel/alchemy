@@ -35,7 +35,6 @@ struct BtlAct * BtlActGet(s32 action_id);
 #define Djinn_DeactivateFar ((void (*)(s32,s32,s32))Djinn_DeactivateFar)
 #define OwnerAction_DiffSlots ((s8 (*)(void*,void*,u16*,s32*,s32*))OwnerAction_DiffSlots)
 
-extern struct DjinnMenuWork *gMenuWork;
 
 #define DJINN_ENTRY_SET (-0x8000)
 

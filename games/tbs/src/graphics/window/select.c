@@ -45,7 +45,7 @@ void Ui_FinalizeWorkAndReleaseHeap13(void)
     struct SelectionWorkspace *state;
     u16 *p;
 
-    state = *(struct SelectionWorkspace **)Data_03001e9c;
+    state = *(struct SelectionWorkspace **)gSelectionWorkspace;
     UiWork_Finalize(state->window, 0);
     while (UiWork_IsIdle(state->window) == 0) {
         WaitFrames(1);

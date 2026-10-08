@@ -1,3 +1,5 @@
+@ C2: add ip, pc, #36 followed by ldm ip, {sl, fp} loads a data block
+@ relative to pc, including r11/fp as ordinary decoder state.
 .syntax unified
 	.arm
 	.global Resource_Decode2

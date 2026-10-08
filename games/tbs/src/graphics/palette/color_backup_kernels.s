@@ -1,3 +1,5 @@
+@ C2: both kernels save callee-saved r5/r6 without lr, and write modified
+@ words back with stmia r0!, {r3-r6}, beyond their initial block copy.
 .syntax unified
 	.arm
 	.global ColorBuffer_ScaleThreeQuartersKernel

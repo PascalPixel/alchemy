@@ -1,3 +1,5 @@
+@ C2: unshifted movs r6, r6/r5/r4/r3 copy and test; ldmdb r2! also loads
+@ a four-register list outside the block-copy patterns.
 .syntax unified
 	.arm
 	.global Render_BuildOamListKernel

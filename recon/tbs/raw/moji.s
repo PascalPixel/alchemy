@@ -1,4 +1,7 @@
-@ C2: a load or store between a compare and its branch. Every edition
+@ Not yet C: scheduling differences are not a handwritten-assembly proof
+@ under C2. This compiler-shaped function stays uncredited until ARM C
+@ matches. The matching notes below describe the remaining differences.
+@ A load or store between a compare and its branch. Every edition
 @ puts an unconditional ldr, ldrb or str between a compare and the
 @ conditional branch that reads it, while the compare's operands are
 @ written by nothing after it: in all six, str rN, [sp, #8] after

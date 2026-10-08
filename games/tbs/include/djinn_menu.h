@@ -2,6 +2,7 @@
 #define ALCHEMY_DJINN_MENU_H
 
 #include "types.h"
+#include "global_cells.h"
 #include "render_input.h"
 
 #define DJINN_ENTRY_INDEX   31

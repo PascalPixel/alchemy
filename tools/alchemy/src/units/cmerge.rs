@@ -20,7 +20,7 @@
 
 use crate::adopt_into::Known;
 use crate::c_items::{blank_line_before, items, names, normalized, Item, Kind, Space};
-use crate::compiler::c_syntax::{lex, Tok};
+use crate::compiler::c_syntax::{lex, scan_definitions, Tok};
 use std::collections::{BTreeMap, BTreeSet};
 
 pub struct Source {
@@ -332,6 +332,10 @@ fn conditional_declarations(item: &Item) -> Vec<(String, Vec<crate::c_items::Nam
 /// shape governs. `extern u8 gX[4];` -> `((u8 (*))&gX)`, `s32 f(u8);` ->
 /// `((s32 (*)(u8))f)`, `extern struct W gW;` -> `(*(struct W (*))&gW)`.
 pub fn view(declaration: &str, name: &str) -> Option<String> {
+    let list = items(declaration);
+    if list.len() != 1 || list[0].kind != Kind::Declaration || !scan_definitions(&lex(declaration).ok()?).is_empty() {
+        return None;
+    }
     let mut text = declaration.trim().trim_end_matches(';').trim().to_string();
     for word in ["extern ", "static "] {
         if let Some(rest) = text.strip_prefix(word) {
@@ -370,6 +374,16 @@ pub fn merge(sources: &[Source], headers: &Known, options: &Options) -> Result<M
     let lists: Vec<Vec<Item>> = sources.iter().map(|s| items(&s.text)).collect();
     let mut files: Vec<Parsed> = sources.iter().zip(&lists).map(|(s, l)| parse(s, l)).collect();
     let mut errors = Vec::new();
+    for (source, list) in sources.iter().zip(&lists) {
+        for item in list.iter().filter(|i| i.kind == Kind::Declaration) {
+            if lex(item.text).is_ok_and(|tokens| !scan_definitions(&tokens).is_empty()) {
+                errors.push(format!("{}: a function definition was parsed as a declaration", source.path));
+            }
+        }
+    }
+    if !errors.is_empty() {
+        return Err(errors);
+    }
 
     // Defines written before the includes.
     let mut pre: Vec<String> = Vec::new();
@@ -931,6 +945,43 @@ mod tests {
         let merged = merge(&[a, b], &headers, &Options::default()).unwrap();
         assert!(!merged.text.contains("s32 h(void);"), "{}", merged.text);
         assert!(merged.notes.iter().any(|n| n.contains("takes the header's shape")));
+    }
+
+    #[test]
+    fn conditional_call_names_keep_complete_page_definitions() {
+        // range_page.c selects a call name before the common arguments;
+        // the following function also contains ordinary edition branches.
+        let range = "s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)\n{\n    if (state->selected_index != 0) {\n#if EDITION_INTERNATIONAL\n        UiText_DrawCharacterAtOffsetFar(\n#else\n        UiText_DrawResourceFar(\n#endif\n            state->selected_index, window, 0, 0);\n    }\n    return 1;\n}";
+        let list = "s32 PsynergyMenu_DrawListPage(s32 window, s32 unused, const struct MenuResult *res)\n{\n#if EDITION_INTERNATIONAL\n    UiText_DrawStringAtOffsetFar(res->text, window, 0, 0);\n#else\n    UiText_DrawStringInWindowFar(res->text, window, 0, 0);\n#endif\n    return 1;\n}";
+        let text = format!("{range}\n\n{list}\n");
+        let mut headers = Known::default();
+        headers.declared.insert((Space::Ordinary, "PsynergyMenu_DrawRangePage".into()), "s32 PsynergyMenu_DrawRangePage ( s32 , s32 , struct MenuResult * )".into());
+        headers.declared.insert((Space::Ordinary, "PsynergyMenu_DrawListPage".into()), "s32 PsynergyMenu_DrawListPage ( s32 , s32 , const struct MenuResult * )".into());
+
+        for options in [Options::default(), Options { views: true, unprototyped: false }, Options { views: true, unprototyped: true }] {
+            let merged = merge(&[source("range_page.c", &text)], &headers, &options).unwrap();
+            assert!(merged.text.contains(range), "{}", merged.text);
+            assert!(merged.text.contains(list), "{}", merged.text);
+            let definitions: Vec<_> = items(&merged.text).iter().filter(|i| matches!(i.kind, Kind::Function { .. })).flat_map(names).map(|n| n.name).collect();
+            assert_eq!(definitions, ["PsynergyMenu_DrawRangePage", "PsynergyMenu_DrawListPage"]);
+            assert!(!merged.text.contains("#define PsynergyMenu_Draw"), "{}", merged.text);
+            assert!(!merged.notes.iter().any(|n| n.contains("dropped")), "{:?}", merged.notes);
+        }
+    }
+
+    #[test]
+    fn a_function_definition_is_never_a_declaration_view() {
+        assert!(view("s32 Run(void) { return 1; }", "Run").is_none());
+        assert!(view("s32 Run(void) { return 1; }\ns32 Next(void) { return 2; }", "Run").is_none());
+    }
+
+    #[test]
+    fn an_unparsed_function_body_stops_the_merge() {
+        let mut headers = Known::default();
+        headers.declared.insert((Space::Ordinary, "Run".into()), "s32 Run ( void )".into());
+        let broken = source("broken.c", "s32 Run(void) { Draw(; }\ns32 Next(void) { return 2; }");
+        let errors = merge(&[broken], &headers, &Options::default()).unwrap_err();
+        assert_eq!(errors, ["broken.c: a function definition was parsed as a declaration"]);
     }
 
     #[test]

@@ -28,7 +28,6 @@ s32 AudioCommand_GetStateByteFar(void);
 
 #define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
 
-extern struct ShopRuntime *gMenuWork;
 
 void Battle_ResetEffectCounterFar(void);
 s32 UiWork_FinalizePendingCoreFar();
@@ -65,7 +64,7 @@ s32 AbilityMenu_BuildAvailableList(void)
 
 void Shop_StepCursor(void)
 {
-    ShopCursor_Advance(&gMenuWork->cursor);
+    ShopCursor_Advance(&((struct ShopRuntime *)gMenuWork)->cursor);
 }
 
 void Shop_InitializeCursorWork(void)

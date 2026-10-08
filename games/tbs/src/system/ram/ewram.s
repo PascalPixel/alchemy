@@ -26,8 +26,8 @@ gSceneState:
 	.global gInventorySnapshot
 gInventorySnapshot:
 	.space 0x000000ac
-	.global Data_02001124
-Data_02001124:
+	.global gObjectSnapshots
+gObjectSnapshots:
 	.space 0x00000edc
 	.global gSleepActive
 gSleepActive:
@@ -125,11 +125,11 @@ Sound_CommandTable:
 	.global Sound_JumpCommand
 Sound_JumpCommand:
 	.space 0x00000084
-	.global Data_02004088
-Data_02004088:
+	.global Sound_Command34
+Sound_Command34:
 	.space 0x00000004
-	.global Data_0200408c
-Data_0200408c:
+	.global Sound_Command35
+Sound_Command35:
 	.space 0x00000004
 	.global Sound_CgbNotes
 Sound_CgbNotes:

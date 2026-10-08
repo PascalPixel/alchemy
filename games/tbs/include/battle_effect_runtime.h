@@ -50,7 +50,7 @@ struct BattleEffectEntry {
     u8 flags;
 };
 
-extern struct BattleEffectBuffers *Data_03001ed0;
+extern struct BattleEffectBuffers *gPaletteBufferWork;
 
 void BattleFx_SpawnLinked(s32 resource_id, s32 flags, s32 state);
 

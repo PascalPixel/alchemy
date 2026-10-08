@@ -102,7 +102,7 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames
 void BattlePalette_UpdateBlend(void)
 {
     /* FAKEMATCH: needed to match: IME scopes and halfword count stores preserve queue order; direct packed-bank selection swaps queue/IME registers. */
-    struct BattleEffectBuffers *work = Data_03001ed0;
+    struct BattleEffectBuffers *work = gPaletteBufferWork;
     u16 *add = work->delta;
     volatile u16 *ime;
     struct IoWriteQueue *q;

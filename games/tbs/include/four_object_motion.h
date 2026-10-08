@@ -2,6 +2,7 @@
 #define ALCHEMY_FOUR_OBJECT_MOTION_H
 
 #include "types.h"
+#include "global_cells.h"
 
 struct FourObjectMotionState {
     u8 unknown_000[0x144];

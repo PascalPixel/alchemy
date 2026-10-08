@@ -2,8 +2,8 @@
 	.ifdef TBS_EDITION_DE
 	.space 0x00000010
 	.endif
-	.global Data_03001400
-Data_03001400:
+	.global gRenderSlotHeads
+gRenderSlotHeads:
 	.space 0x00000400
 	.global gFrameTick
 gFrameTick:
@@ -116,8 +116,8 @@ gKeysHeldLast:
 	.global gBlendLayers
 gBlendLayers:
 	.space 0x00000004
-	.global Data_03001cfc
-Data_03001cfc:
+	.global gVBlankHook
+gVBlankHook:
 	.space 0x00000004
 	.global gObjAffineCount
 gObjAffineCount:
@@ -207,8 +207,8 @@ gWindowWork:
 	.global gWindowWork
 gWindowWork:
 	.space 0x00000004
-	.global Data_03001e90
-Data_03001e90:
+	.global gPartyStatusWork
+gPartyStatusWork:
 	.space 0x00000004
 	.global gGlyphWork
 gGlyphWork:
@@ -216,8 +216,8 @@ gGlyphWork:
 	.global gResQueueWork
 gResQueueWork:
 	.space 0x00000004
-	.global Data_03001e9c
-Data_03001e9c:
+	.global gSelectionWorkspace
+gSelectionWorkspace:
 	.space 0x00000004
 	.global gSelectionWork
 gSelectionWork:
@@ -234,14 +234,14 @@ gPaletteWork:
 	.global gParticleWork
 gParticleWork:
 	.space 0x00000004
-	.global Data_03001ec8
-Data_03001ec8:
+	.global gFieldBlendWork
+gFieldBlendWork:
 	.space 0x00000004
 	.global gDisplayTransition
 gDisplayTransition:
 	.space 0x00000004
-	.global Data_03001ed0
-Data_03001ed0:
+	.global gPaletteBufferWork
+gPaletteBufferWork:
 	.space 0x00000008
 	.global gHBlankScrollWork
 gHBlankScrollWork:

@@ -1617,7 +1617,7 @@ void ArutinYama_SetRollingStateAndPlayCue(u16 *record);
 #endif
 
 #define Engine_ActorLookup ((struct FieldActor * (*)(s32))Engine_ActorLookup)
-#define Data_03001ed0 (*(u16 * *)&Data_03001ed0)
+#define gPaletteBufferWork (*(u16 * *)&gPaletteBufferWork)
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
@@ -2647,7 +2647,7 @@ arrived:
 
 void ArutinYama_StepPaletteAnim(void)
 {
-    u16 *palette = Data_03001ed0;
+    u16 *palette = gPaletteBufferWork;
 
     if (ArutinYama_PaletteHold <= 0) {
         s32 frame;

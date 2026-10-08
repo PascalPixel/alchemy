@@ -1,3 +1,5 @@
+@ C2: r11/fp holds a row counter (rsb fp, ip, #16; mov lr, fp), not a frame.
+@ The preceding entries also share unsaved r5/r9 state with the main body.
 .syntax unified
 .text
 	.arm

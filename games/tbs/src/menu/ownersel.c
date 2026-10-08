@@ -17,7 +17,6 @@
 #include "ui.h"
 #include "menu_list.h"
 
-extern struct CharacterMenuState *gMenuWork;
 void ItemMenu_Close(void);
 
 #if EDITION_INTERNATIONAL

@@ -1,4 +1,9 @@
+@ Not yet C: the two ordinary Thumb entries have no C2 handwritten marker.
+@ Their shared literal pool remains here; the linker aligns MemFree and
+@ places the two-byte gap as fill, so uncredited code does not hide padding.
 .syntax unified
+	.section .text.release, "ax", %progbits
+	.balign 2
 	.thumb
 	.global Runtime_ReleaseHeapBlock
 	.thumb_func
@@ -15,15 +20,8 @@ Runtime_ReleaseHeapBlock:
 	str	r1, [r3, r4]
 .L_08002dec:
 	bx	lr
-AlchemyUncredited_08002dee:
-	.2byte	0x0000
-AlchemyUncreditedEnd_08002dee:
-	.global MemFree
-	.thumb_func
-MemFree:
-	.global MemFree
-	.thumb_func
-MemFree:
+	.section .text.free, "ax", %progbits
+	.balign 4
 	.global MemFree
 	.thumb_func
 MemFree:
@@ -42,6 +40,8 @@ MemFree:
 	.endif
 	.ifdef GAMEPAK_STOP
 @ カートリッジ割り込みなら音を止めて止まる
+	.section .text.gamepak, "ax", %progbits
+	.balign 4
 	.arm
 	.global Runtime_StopOnGamePakIrq
 Runtime_StopOnGamePakIrq:

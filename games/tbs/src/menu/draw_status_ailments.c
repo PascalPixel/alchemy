@@ -20,7 +20,6 @@ void UiText_DrawNumberInWindowFar(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 ar
 #define UiText_DrawNumberInWindowFar ((void (*)(s32,s32,void*,s32,s32))UiText_DrawNumberInWindowFar)
 
 
-extern struct CharacterMenuState *gMenuWork;
 
 s32 Party_SumDjinnCountsFar(s32 side);
 void UiText_DrawCharacterAtOffsetFar(s32 text, void *window, s32 x, s32 y);

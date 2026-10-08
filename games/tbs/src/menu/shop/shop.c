@@ -76,7 +76,6 @@ struct ShopCursorSprite3 {
     struct SpriteAttr2 oam;
 };
 
-extern struct ShopRuntime *gMenuWork;
 
 void UiMessage_ShowAndWait(s32 arg0)
 {
@@ -137,7 +136,7 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
 
 s32 UiMessage_ShowChoice(s32 arg0)
 {
-    struct RenderOutput **slot = &gMenuWork->cursor.anchor;
+    struct RenderOutput **slot = &((struct ShopRuntime *)gMenuWork)->cursor.anchor;
     u8 saved = (*slot)->active;
     UiIcon_PrepareObjectFar(*slot);
 #if defined(TBS_EDITION_DE)
@@ -151,7 +150,7 @@ s32 UiMessage_ShowChoice(s32 arg0)
 
 s32 UiMessage_ShowChoiceVariant(s32 arg0)
 {
-    struct RenderOutput **slot = &gMenuWork->cursor.anchor;
+    struct RenderOutput **slot = &((struct ShopRuntime *)gMenuWork)->cursor.anchor;
     u8 saved = (*slot)->active;
     UiIcon_PrepareObjectFar(*slot);
     arg0 = Menu_RunConfirmSelectionAtFar(7, 7, arg0);

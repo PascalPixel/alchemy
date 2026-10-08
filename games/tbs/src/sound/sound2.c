@@ -1,17 +1,17 @@
 #include "audio_engine.h"
 
-extern void (*Data_02004088)(struct SoundNote *);
+extern void (*Sound_Command34)(struct SoundNote *);
 
 void AudioCommand_InvokeSlot34(struct SoundNote *note)
 {
     /* FAKEMATCH: the entry-cell load and one-word call avoid an extra instruction from table indexing. */
-    Data_02004088(note);
+    Sound_Command34(note);
 }
 
-extern void (*Data_0200408c)(void *);
+extern void (*Sound_Command35)(void *);
 
 void AudioCommand_InvokeSlot35(void *block)
 {
     /* FAKEMATCH: the entry-cell load and one-word call avoid an extra instruction from table indexing. */
-    Data_0200408c(block);
+    Sound_Command35(block);
 }

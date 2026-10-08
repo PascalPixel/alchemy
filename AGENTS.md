@@ -272,6 +272,9 @@ or functions is exactly this cheating.
     Shared code and declarations live once in `games/common`; a function is
     adopted into the module that holds its linker neighbours, not into a new
     file of its own.
+    For shared files blocked by ⚓️'s layout: "give ⚓️ its own copy, merge
+    ☀️'s, and use pret's library file names" (Pascal's handoff,
+    2026-10-09).
   - Language: C89 with only extensions supported by the approved compiler;
     GNU C `//` comments are allowed. Identifiers are ASCII. Use prototypes,
     `typedef`, `enum` and ordinary C idioms where appropriate. Choose types,

@@ -99,11 +99,11 @@ extern const u8 ColorBuffer_HalveKernel[];
 extern const u8 ColorBuffer_HalveNonzeroKernel[];
 extern const u8 ColorBuffer_ScaleNonzeroThreeQuartersKernel[];
 extern const u8 ColorBuffer_ScaleThreeQuartersKernel[];
-#ifndef OWN_Data_03001400
-extern u8 Data_03001400[];
+#ifndef OWN_gRenderSlotHeads
+extern u8 gRenderSlotHeads[];
 #endif
-extern u8 Data_03001e90[];
-extern u8 Data_03001e9c[];
+extern u8 gPartyStatusWork[];
+extern u8 gSelectionWorkspace[];
 extern const struct ArticleTable UiText_ArticleTable;
 struct TileMask {
     u32 word0;

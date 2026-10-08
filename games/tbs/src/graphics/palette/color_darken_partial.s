@@ -1,3 +1,4 @@
+@ C2: the saved lr is restored into ip, and bx ip returns through ip.
 .syntax unified
 	.arm
 	.global ColorBuffer_DarkenPartialKernel

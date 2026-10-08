@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_INN_RUNTIME_H
 #define ALCHEMY_INN_RUNTIME_H
 
+#include "global_cells.h"
 #include "layout_guard.h"
 #include "types.h"
 
@@ -36,7 +37,5 @@ LAYOUT_OFFSET_GUARD(
     struct InnRuntimeState,
     special_active,
     0x3ac);
-
-extern struct InnRuntimeState *gMenuWork;
 
 #endif

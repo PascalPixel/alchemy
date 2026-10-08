@@ -32,7 +32,7 @@ $(LIBGCC):
 .PHONY: help bootstrap merge-drivers fetch-dependencies compilers compiler-sources compiler-source-check toolchain-check build-tools
 .PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
-.PHONY: publication-check publication-staged-check coverage-report
+.PHONY: publication-check publication-staged-check hygiene-check coverage-report
 .PHONY: progress figure deps similar worst clean modern
 
 help:
@@ -150,6 +150,9 @@ publication-check:
 	$(CHECK) layout
 	$(CHECK) dead
 	$(CHECK) devices
+
+hygiene-check:
+	$(CHECK) hygiene
 
 publication-staged-check:
 	$(CHECK) publication --staged

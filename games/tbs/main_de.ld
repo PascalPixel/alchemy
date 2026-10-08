@@ -215,8 +215,6 @@
     "*/games/common/src/system/memory/clear_word_if_set.o"(.text)
     "*/games/common/src/graphics/window/uiwork.o"(.text)
     "*/games/tbs/src/graphics/text/symbol.o"(.text)
-    "*/games/tbs/src/graphics/window/sideobj.o"(.text)
-    "*/games/tbs/src/graphics/window/runtime_finalize_entity_matching_localized_id.o"(.text)
     "*/games/tbs/src/graphics/render/icons.o"(.text)
     "*/games/tbs/src/graphics/tile/build_item_icon_tiles.o"(.text)
     "*/games/tbs/src/graphics/tile/copy_resource_to_slot.o"(.text)

@@ -16,12 +16,15 @@ as long as it still refuses everything it refused before.
 
 ## Goal
 
-**DONE = matching C + proven library, handwritten or veneer assembly**, over
-each game's executable bytes in all six of its editions together. 100% means
-every language of a game builds all of its code from source. `make progress`
-prints the exact counts with one line per edition, shows ⚓️ in its parts (C,
-assembly and 8-byte stubs) and shows the bytes of FAKEMATCH-steered code as
-their own number. ☀️ has the priority; the target is ☀️ 100% and ⚓️ 100%,
+**DONE is a pair, code and data** (Pascal, 2026-10-08). **DONE code =
+matching C + proven library, handwritten or veneer assembly**, over each
+game's executable bytes; **DONE data = the non-code bytes each image places
+from source**, over all its other placed bytes (C2); each is counted in all
+six of a game's editions together. 100% means both: every language of a game
+builds all of its code and all of its data from source. `make progress`
+prints both figures on every line, one line per edition, shows code in its
+parts (C, assembly and 8-byte stubs) and shows the bytes of FAKEMATCH-steered
+code as their own number. ☀️ has the priority; the target is ☀️ 100% and ⚓️ 100%,
 sharing as much code between the games as possible.
 
 Matching is not the finish. The project is finished when the source also
@@ -34,7 +37,7 @@ FAKEMATCH (S2), camelotizes what remains.
 
 A game is finished when all six hold (Pascal, 2026-10-08):
 
-1. 100% DONE in all six editions.
+1. 100% DONE code and 100% DONE data in all six editions.
 2. Every asset ported: nothing reaches the ROM as copied bytes; all data is
    editable source our tools build (A1).
 3. `recon/<game>` removed: no scaffold, draft or edition scaffolding left.
@@ -116,7 +119,7 @@ A game is finished when all six hold (Pascal, 2026-10-08):
   included, compiles exactly and every edition stays byte-identical. A
   function counts in an edition only when that edition's build links its C.
   _Check: compare, compare-tla, compare-other-editions._
-- **C2** DONE is pret's calcrom over the linker maps of byte-identical builds:
+- **C2** DONE code is pret's calcrom over the linker maps of byte-identical builds:
   the code the linker places from `games/`, counted once for each of the
   game's six editions whose build links it, out of six; sizes are the English
   build's, so code that exists only in another edition is outside the total,
@@ -133,9 +136,22 @@ A game is finished when all six hold (Pascal, 2026-10-08):
   off sp, other than a block copy's list from r0 or a doubleword pair) or a
   linkage no procedure-call standard produces; anything else is not-yet-C
   until it matches as C. Whole aligned 8-byte far-call stubs count as veneers.
-  Padding a source marks as carrying no credit does not count. It is
-  outside the total, as the linker's fill is; a span may hold only padding,
-  data and nop.
+  Padding a source marks as carrying no credit does not count as code. It
+  is outside the code total, as the linker's fill is, and is data; a span
+  may hold only padding, data and nop.
+  DONE data (Pascal, 2026-10-08) is every other byte each image places, the
+  ROM and each overlay, from its first placed byte to its last: data, assets,
+  headers and fill. Each overlay counts once, in its unpacked image as
+  linked; its compressed stream in the ROM is outside the total. A byte is
+  done when an object built from `games/` places it (data, assets, tagged
+  packer bytes) or the build writes it as fill or alignment; a byte placed
+  from `recon/` (incbin scaffolds, not-yet-C listings and their overlay
+  counterparts, drafts) is not. Uncredited padding counts as data, compiler
+  library and linker bytes count as done, and each edition's data total is
+  its own images', not the English build's; a game's figure sums its six.
+  Cartridge padding after the last placed byte is outside the total. A game is
+  100% only when DONE code and DONE data are both 100% in all six editions
+  (Pascal, 2026-10-08).
   _Check: coverage-report, publication._
 - **C3** Every push to main carries its measurement: `make land` compares all
   twelve editions and measures both games, and the pre-push hook uploads that
@@ -538,7 +554,7 @@ alchemy label NAME ENGLISH_ADDR LEN    # name English-only scaffold data in othe
 alchemy adopt-data OBJECT PIECE...     # a data block's object into all six scripts, out of all scaffolds
 # Check the whole build
 alchemy objects EDITION...             # what differs from the ROM, object or placement
-make progress                          # DONE, one line per edition (alchemy progress)
+make progress                          # DONE code and data, one line per edition (alchemy progress)
 # Camelotize
 make worst                             # maintained C ranked by how mechanical it reads
 alchemy camelotize REWRITE FILE...     # actors, events, registers, declarations, barriers

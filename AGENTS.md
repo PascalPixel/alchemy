@@ -54,6 +54,12 @@ A game is finished when all six hold (Pascal, 2026-10-08):
      sprite, name and dialogue through its id; likewise scenes, areas and
      other units the code treats as one, with reusable modules, inline
      helpers and macros where the code repeats.
+   - Assets are named the same way, never with invented names: each
+     character's field sprite, battle sprite and portrait files and their
+     resource directory rows take the character's name through that
+     module (for example ROBIN, ROBIN_KO), other sprites and pictures take
+     names from in-game text or the code that loads them, and anything
+     unproven keeps its number.
 
    Order (Pascal, 2026-10-08): first 100% by pret's standard (W3), then this
    structure as the first order of camelotizing.

@@ -268,7 +268,7 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 						u32	 tmp14;
 						u32	 tmp18;
 						u32	 tmp21;
-						/* FAKEMATCH: the scaled cell stays in r3 for both view words; registers and order only. */
+						/* FAKEMATCH: the scaled cell stays in r3 for both tile words; registers and order only. */
 						register u32 bytes __asm__("r3") = cell * 8;
 						u32			 tmp16;
 

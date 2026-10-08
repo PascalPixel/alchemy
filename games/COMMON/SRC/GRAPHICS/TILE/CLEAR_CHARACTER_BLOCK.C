@@ -1,25 +1,40 @@
+//--------------------------------------------------------------------------
+// CLEAR_CHARACTER_BLOCK.C
+// タイル：BG のキャラクターとパレットの半分を消す
+//--------------------------------------------------------------------------
+
 #include "DMA.H"
 #include "IO_REG.H"
 #include "TYPES.H"
 
-void Graphics_ClearCharacterBlockAndPalette(s32 alternate)
+//--------------------------------------------------------------------------
+// 256 色のキャラクター 30K バイトを色 1 で埋め、パレット 128 色を 0 にする
+// alt : 0 なら前半（VRAM 0x06000000・パレット 0〜127）
+//       1 なら後半（VRAM 0x06008000・パレット 128〜255、色 129 で埋める）
+//--------------------------------------------------------------------------
+void Graphics_ClearCharacterBlockAndPalette(s32 alt)
 {
-    u32 value;
-    u32 vram;
-    u32 palette;
-    volatile u32 fill;
+	u32			 v;
+	u32			 vram;
+	u32			 pal;
+	volatile u32 fill;
 
-    if (alternate == 0) {
-        value = 0x01010101;
-        vram = 0x06000000;
-        palette = 0x05000000;
-    } else {
-        value = 0x81818181;
-        vram = 0x06008000;
-        palette = 0x05000100;
-    }
-    fill = value;
-    Dma_Set((const void *)&fill, (void *)vram, 0x85001e00, REG_DMA3);
-    fill = 0;
-    Dma_Set((const void *)&fill, (void *)palette, 0x85000040, REG_DMA3);
+	if (alt == 0)
+	{
+		v = 0x01010101;
+		vram = 0x06000000;
+		pal = 0x05000000;
+	}
+	else
+	{
+		v = 0x81818181;
+		vram = 0x06008000;
+		pal = 0x05000100;
+	}
+	fill = v;
+	Dma_Set((const void *)&fill, (void *)vram, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 7680,
+		REG_DMA3);
+	fill = 0;
+	Dma_Set((const void *)&fill, (void *)pal, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 64,
+		REG_DMA3);
 }

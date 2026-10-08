@@ -1,29 +1,35 @@
+//--------------------------------------------------------------------------
+// IS_COMPLETE.C
+// 表示：メッセージのチャンネルがすべて書き終えたか
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 #include "EDITION.H"
 #include "WINDOW.H"
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
 #include "RAM_BUFFER.H"
 #else
 #include "GLOBAL_CELLS.H"
 #endif
 
+//--------------------------------------------------------------------------
+// 3 つのチャンネルのうち、ウィンドウがあって書き終えていない（state が 0）
+// ものがあれば 0、なければ 1 を返す
+//--------------------------------------------------------------------------
 s32 UiWork_IsComplete(void)
 {
-    struct UiChannelSlot *channel;
-    s32 i;
+	struct UiChannelSlot *ch;
+	s32					  i;
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    channel = ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)->channels;
+#if GAME_TLA
+	ch = ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)->channels;
 #else
-    channel = ((struct UiRenderWork *)gWindowWork[0])->channels;
+	ch = ((struct UiRenderWork *)gWindowWork[0])->channels;
 #endif
-    for (i = 0; i != 3; i++, channel++) {
-        if (channel->work != NULL && channel->work->state == 0)
-            return 0;
-    }
-    return 1;
+	for (i = 0; i != 3; i++, ch++)
+	{
+		if (ch->work != NULL && ch->work->state == 0)
+			return 0;
+	}
+	return 1;
 }

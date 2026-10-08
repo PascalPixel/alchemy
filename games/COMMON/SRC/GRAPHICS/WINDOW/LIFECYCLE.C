@@ -1,31 +1,49 @@
+//--------------------------------------------------------------------------
+// LIFECYCLE.C
+// ウィンドウ：ハンドルで持つウィンドウを開く・閉じる
+//--------------------------------------------------------------------------
+
 #include "UIWINDOW.H"
 
-void UiWork_FinalizeFar();
+void			 UiWork_FinalizeFar();
 struct UiWindow *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
-void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
+void			 RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 
-s32 UiWindow_UpdateOrCreate(s32 *handle, s32 first, s32 second, s32 third, s32 fourth, s32 flags)
+//--------------------------------------------------------------------------
+// *handle のウィンドウがなければ作って 1 を返す
+// すでにあれば 0 を返し、flags に 0x100 がなければ保存した矩形で描きなおす
+// flags : 下位 8 ビットがウィンドウの種類
+//--------------------------------------------------------------------------
+s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h, s32 flags)
 {
-    s32 current;
-    s32 masked;
+	s32 cur;
+	s32 style;
 
-    current = *handle;
-    if (current != 0) {
-        if (0x100 & flags) {
-            return 0;
-        }
-        RenderOutput_RedrawSavedRectFar((struct UiWindow *)current);
-        return 0;
-    }
-    masked = flags & 0xff;
-    *handle = (s32)UiWindow_CreateFar(first, second, third, fourth, masked);
-    return 1;
+	cur = *handle;
+	if (cur != 0)
+	{
+		if (0x100 & flags)
+		{
+			return 0;
+		}
+		RenderOutput_RedrawSavedRectFar((struct UiWindow *)cur);
+		return 0;
+	}
+	style = flags & 0xff;
+	*handle = (s32)UiWindow_CreateFar(x, y, w, h, style);
+	return 1;
 }
 
+//--------------------------------------------------------------------------
+// *handle のウィンドウがあれば閉じて、ハンドルを NULL にする
+// 引数 1 つの宣言だが、呼び出し元の 2 つめの引数が r1 のまま
+// UiWork_FinalizeFar に渡る
+//--------------------------------------------------------------------------
 void UiWindow_CloseIfOpen(void **handle)
 {
-    if (*handle != NULL) {
-        UiWork_FinalizeFar(*handle);
-        *handle = NULL;
-    }
+	if (*handle != NULL)
+	{
+		UiWork_FinalizeFar(*handle);
+		*handle = NULL;
+	}
 }

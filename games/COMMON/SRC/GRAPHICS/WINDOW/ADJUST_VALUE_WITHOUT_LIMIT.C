@@ -1,8 +1,16 @@
+//--------------------------------------------------------------------------
+// ADJUST_VALUE_WITHOUT_LIMIT.C
+// ウィンドウ：メッセージを長さの制限なしに文字列にする
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 #include "SCENE.H"
 #include "WINDOW.H"
 
-void Ui_AdjustValueWithoutLimit(s32 no, s32 value)
+//--------------------------------------------------------------------------
+// メッセージ mes を buf に展開する（長さの上限なし）
+//--------------------------------------------------------------------------
+void Ui_AdjustValueWithoutLimit(s32 mes, s32 buf)
 {
-    UiText_DecodeMessage(no, value, 0x7fffffff);
+	UiText_DecodeMessage(mes, buf, 0x7fffffff);
 }

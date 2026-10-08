@@ -178,7 +178,6 @@ extern const u8 UiText_GlyphWidths[];
 extern const struct ArticleTable UiText_IndefiniteArticles;
 extern const u8 UiText_LookupMessageArm[];
 extern u8 UiText_LookupMessageCodeSize[];
-extern u8 UiText_SecondGlyphs[];
 extern const u8 UiText_SpeedCueGaps[3];
 extern const u8 UiText_SpeedDelays[3];
 extern const u8 UiText_SpeedSteps[3];

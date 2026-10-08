@@ -2,13 +2,6 @@
 	.incbin "baserom.gba", 0x00007a68, 0x00000024
 	.section .unidentified.08007b38,"a"
 	.incbin "baserom.gba", 0x00007b38, 0x00000004
-	.section .unidentified.08031864,"a"
-	.global RenderResource_PairSourceTable
-RenderResource_PairSourceTable:
-	.incbin "baserom.gba", 0x00031864, 0x000005c0
-	.global UiText_SecondGlyphs
-UiText_SecondGlyphs:
-	.incbin "baserom.gba", 0x00031e24, 0x00000400
 	.section .unidentified.08033e24,"a"
 	.incbin "baserom.gba", 0x00033e24, 0x0000001c
 	.global Data_08033e40

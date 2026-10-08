@@ -61,7 +61,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
         Iwram_ExpandBitRuns(input, buf + 32, colour);
     }
     if ((u16)second_index != 0) {
-        input = UiText_SecondGlyphs + ((u16)second_index << 5);
+        input = (const u8 *)&UiText_Glyphs[-32] + ((u16)second_index << 5);
         second_width = *(const s16 *)input;
         input += 2;
         if (work->outline == 1) {

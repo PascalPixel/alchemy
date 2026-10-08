@@ -22,13 +22,6 @@ UiIcon_PsynergyIconPointersEnd:
 	.global UiIcon_MiscIconPointers
 UiIcon_MiscIconPointers:
 	.incbin "baserom.gba", 0x0002f568, 0x00000800
-	.section .rom.0003052c, "ax"
-	.global RenderResource_PairSourceTable
-RenderResource_PairSourceTable:
-	.incbin "baserom.gba", 0x0003052c, 0x000006a8
-	.global UiText_SecondGlyphs
-UiText_SecondGlyphs:
-	.incbin "baserom.gba", 0x00030bd4, 0x00000400
 	.section .rom.00032bd4, "ax"
 	.incbin "baserom.gba", 0x00032bd4, 0x00000024
 	.global Data_08033e40

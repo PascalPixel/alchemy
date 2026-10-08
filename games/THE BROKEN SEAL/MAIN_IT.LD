@@ -325,7 +325,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/UI/MARKS.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/UI/MENU_ICONS.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/FIXBLK.o"(.rodata)
-    "*/recon/tbs/it/rom.o"(.rom.00031990)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/LABELS.o"(.rodata)
     "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
     "*/recon/tbs/it/rom.o"(.rom.00033f6c)
     "*/games/THE BROKEN SEAL/TEXT/MESSAGES.o"(.rodata)

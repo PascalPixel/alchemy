@@ -20,10 +20,6 @@ UiIcon_PsynergyIconPointersEnd:
 	.global UiIcon_MiscIconPointers
 UiIcon_MiscIconPointers:
 	.incbin "baserom.gba", 0x000308ec, 0x00000800
-	.section .rom.000318b0, "ax"
-	.global RenderResource_PairSourceTable
-RenderResource_PairSourceTable:
-	.incbin "baserom.gba", 0x000318b0, 0x00000bc0
 	.section .rom.000345e0, "ax"
 	.global UiSprite_CursorBobOffsets
 UiSprite_CursorBobOffsets:

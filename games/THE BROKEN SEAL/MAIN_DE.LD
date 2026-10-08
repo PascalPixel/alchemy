@@ -582,13 +582,13 @@
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/INN.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/ITEM_SELECTION.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/SHOPSPR.o"(.rodata)
-    "*/recon/tbs/de/rom.o"(.rom.000b6700)
+    "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/SHOPDATA.o"(.rodata)
     . = ABSOLUTE(0x080b7600);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/BATTLE.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECODE.o"(.text .rodata .data .padding)
-    "*/recon/tbs/de/rom.o"(.rom.000b7804)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECPOOL.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_DISPATCH.o"(.text .rodata .data .padding)
-    "*/recon/tbs/de/rom.o"(.rom.000b7818)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BITTABLE.o"(.data)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_COMMANDS.o"(.text .rodata .data .padding)
     BitDecoder_Size = ABSOLUTE(BitDecoder_End - BitDecoder_DecodeImage);
     "*/games/THE BROKEN SEAL/SRC/DEBUG/LOAD_PARTY_PRESET.o"(.text)

@@ -82,7 +82,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     saved_kind = shop->cursor.anchor->active;
     shop->burst_member = 0xff;
     shop->cursor.anchor->active = 13;
-    Audio_PlayCue(Data_080b4ab2[shop->party_action]);
+    Audio_PlayCue(Shop_PartyActionCues[shop->party_action]);
     Shop_RestoreSceneTiles(0x00202108);
     AnimationObjects_SetActiveTimerStepsFar(shop->party_member_icons[member], 0);
     WaitFrames(20);

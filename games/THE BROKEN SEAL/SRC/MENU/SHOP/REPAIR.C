@@ -304,9 +304,9 @@ void EventTable_ApplyRowAbilities(s32 row_no)
     if (GameFlag_TestFar(flag) == 0) {
         GameFlag_SetBitFar(flag);
         count = 0;
-        value = EventTable_AbilityLoadouts[row_no][24];
+        value = Shop_StockTable[row_no][24];
         if (value != 0) {
-            row = EventTable_AbilityLoadouts[row_no];
+            row = Shop_StockTable[row_no];
             entry = row + 24;
             do {
                 Item_AdjustCounterFar(value, 1);
@@ -327,9 +327,9 @@ s32 EventTable_CopyRowHeader(s32 row_no, s16 *output)
     s32 count;
 
     count = 0;
-    if (EventTable_AbilityLoadouts[row_no][0] != 0) {
+    if (Shop_StockTable[row_no][0] != 0) {
         dst = output;
-        src = EventTable_AbilityLoadouts[row_no];
+        src = Shop_StockTable[row_no];
         do {
             /* FAKEMATCH: only the copy read is volatile, so its lifetime stays separate from the signed sentinel read. */
             *dst = *(volatile s16 *)src;
@@ -346,5 +346,5 @@ s32 EventTable_CopyRowHeader(s32 row_no, s16 *output)
 
 s32 EventTable_GetRowType(s32 index)
 {
-    return EventTable_AbilityLoadouts[index][32];
+    return Shop_StockTable[index][32];
 }

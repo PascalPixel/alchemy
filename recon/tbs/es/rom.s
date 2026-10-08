@@ -54,29 +54,6 @@ RomWords_0809e270:
 	.global Debug_PaletteSwatchTiles
 Debug_PaletteSwatchTiles:
 	.incbin "baserom.gba", 0x000a3626, 0x000001b2
-	.section .rom.000b8100, "ax"
-	.global RomBytes_080b4100
-RomBytes_080b4100:
-	.incbin "baserom.gba", 0x000b8100, 0x0000003c
-	.global RomBytes_080b413c
-RomBytes_080b413c:
-	.incbin "baserom.gba", 0x000b813c, 0x0000000a
-	.global Shop_SpecialItemPrices
-Shop_SpecialItemPrices:
-	.incbin "baserom.gba", 0x000b8146, 0x00000066
-	.global EventTable_AbilityLoadouts
-EventTable_AbilityLoadouts:
-	.incbin "baserom.gba", 0x000b81ac, 0x00000906
-	.global Data_080b4ab2
-Data_080b4ab2:
-	.incbin "baserom.gba", 0x000b8ab2, 0x00000004
-	.global Inn_PriceMultipliers
-Inn_PriceMultipliers:
-	.incbin "baserom.gba", 0x000b8ab6, 0x0000000c
-	.section .rom.000b9204, "ax"
-	.incbin "baserom.gba", 0x000b9204, 0x00000008
-	.section .rom.000b9218, "ax"
-	.incbin "baserom.gba", 0x000b9218, 0x00000040
 	.section .rom.000c6a22, "ax"
 	.incbin "baserom.gba", 0x000c6a22, 0x00000006
 	.global BattleParty_CenterOrderOffsets

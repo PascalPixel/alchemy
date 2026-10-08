@@ -177,7 +177,7 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
     selector = shifted + 1;
 
     if (count > 0) {
-        offset = RomBytes_080b4100;
+        offset = Shop_SelectorTileOffsets;
         do {
             struct Record_080b06c0 *record = (struct Record_080b06c0 *)(base + *offset++);
             record->values[0] = selector;
@@ -195,7 +195,7 @@ void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2)
 {
     u8 *src = Shop_GlyphBytes + (arg0 << 5);
     u8 *dst =
-        arg1 + RomBytes_080b413c[arg2] + 2;
+        arg1 + Shop_GlyphOffsets[arg2] + 2;
     s32 count = 3;
 
     do {

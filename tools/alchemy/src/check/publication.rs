@@ -1417,8 +1417,9 @@ fn loaded_pointer_words(words: &[Option<u32>], start: usize, register: u32) -> b
 }
 fn raw_address_reason(path: &str, text: &str) -> Option<&'static str> {
     let parts = path.split('/').collect::<Vec<_>>();
-    if !matches!(parts.as_slice(), ["recon", _, "raw", .., leaf] if extension(leaf).eq_ignore_ascii_case("s"))
-    {
+    let listing = matches!(parts.as_slice(), ["recon", _, "raw", .., leaf] if extension(leaf).eq_ignore_ascii_case("s"));
+    let overlay_data = matches!(parts.as_slice(), ["games", _, "SRC", "SYSTEM", "OVERLAY", leaf] if extension(leaf) == "S");
+    if !listing && !overlay_data {
         return None;
     }
     static CALL: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
@@ -3270,6 +3271,13 @@ mod tests {
         }
         assert!(
             raw_address_reason("games/THE LOST AGE/SRC/ROUTINE.S", "bl 0x08000100\n").is_none()
+        );
+        assert_eq!(
+            raw_address_reason(
+                "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY/OVL_3A7.S",
+                "ldr r0, =0x02000000\nldr r1, [r0]\n"
+            ),
+            Some(RAW_ADDRESS_REASON)
         );
     }
 

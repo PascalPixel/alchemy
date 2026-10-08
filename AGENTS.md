@@ -51,6 +51,10 @@ A game is finished when all six hold (Pascal, 2026-10-08):
   is the English object order; German, Spanish, French and Italian follow it
   through their own `MAIN_DE.LD` ... beside it. ⚓️'s edition scripts are
   still `recon/tla/<lang>/MAIN.LD`.
+- ☀️'s overlays link by `games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY/OVL_<ID>.LD`,
+  with the overlay's own data and bss not yet in its modules in
+  `OVL_<ID>.S` beside it; `recon/tbs/raw/overlays` keeps the original
+  listings as reference only. ⚓️'s are `recon/tla/raw/overlays`.
 - `games/<GAME>/SRC/SYSTEM/ROM_HEAD.S` is the cartridge header, linked
   first in every edition, as pret's `rom_header.s`: the logo is
   `.space 156` and the complement 0. Right after objcopy the build runs

@@ -61,7 +61,7 @@ pub struct DecompTarget {
     pub compiler: CompilerTarget,
     pub edition_define: &'static str,
     pub source_dir: &'static str,
-    pub asm_dir: &'static str,
+    pub overlay_dir: &'static str,
     pub output_dir: &'static str,
     pub overlay_entry_veneers: usize,
 }
@@ -92,6 +92,27 @@ impl DecompTarget {
         let (game, lang) = self.id.as_str().split_once('-').expect("an edition id names its game");
         ["recon", game, lang].iter().collect()
     }
+    /// An overlay's link script: games/<GAME>/SRC/SYSTEM/OVERLAY/OVL_<ID>.LD,
+    /// or recon/<game>/raw/overlays/resource_<id>.ld for a game whose
+    /// overlays are still listings.
+    pub fn overlay_script(&self, id: &str) -> std::path::PathBuf {
+        let name = if self.overlay_dir.starts_with("games/") {
+            format!("OVL_{}.LD", id.to_ascii_uppercase())
+        } else {
+            format!("resource_{id}.ld")
+        };
+        std::path::Path::new(self.overlay_dir).join(name)
+    }
+    /// The overlay's own data and bss, assembled as resource_<id>_overlay.o:
+    /// OVL_<ID>.S beside its script, or the recon listing resource_<id>_overlay.s.
+    pub fn overlay_data(&self, id: &str) -> std::path::PathBuf {
+        let name = if self.overlay_dir.starts_with("games/") {
+            format!("OVL_{}.S", id.to_ascii_uppercase())
+        } else {
+            format!("resource_{id}_overlay.s")
+        };
+        std::path::Path::new(self.overlay_dir).join(name)
+    }
     pub fn editions(&self) -> [DecompTarget; 6] {
         let first = self.id as usize / 6 * 6;
         std::array::from_fn(|index| target_for(TARGET_IDS[first + index]))
@@ -114,14 +135,14 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, usize); 2] = [
         CompilerTarget::Tbs,
         0x0080_0000,
         "games/THE BROKEN SEAL/SRC",
-        "recon/tbs/raw",
+        "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY",
         6,
     ),
     (
         CompilerTarget::Tla,
         0x0100_0000,
         "games/THE LOST AGE/SRC",
-        "recon/tla/raw",
+        "recon/tla/raw/overlays",
         7,
     ),
 ];
@@ -168,7 +189,7 @@ pub fn decomp_target(id: Option<&str>) -> Result<DecompTarget, String> {
 pub fn target_for(id: DecompTargetId) -> DecompTarget {
     let index = id as usize;
     let (name, rom, edition_define, output_dir, rom_sha256) = TARGETS[index];
-    let (compiler, rom_size, source_dir, asm_dir, overlay_entry_veneers) = PRODUCTS[index / 6];
+    let (compiler, rom_size, source_dir, overlay_dir, overlay_entry_veneers) = PRODUCTS[index / 6];
     debug_assert_eq!(name, id.as_str());
     DecompTarget {
         id,
@@ -178,7 +199,7 @@ pub fn target_for(id: DecompTargetId) -> DecompTarget {
         compiler,
         edition_define,
         source_dir,
-        asm_dir,
+        overlay_dir,
         output_dir,
         overlay_entry_veneers,
     }
@@ -200,5 +221,16 @@ mod tests {
         assert_eq!(de.edition_script().unwrap(), edition_script_path("tbs", "de"));
         assert_eq!(de.scaffold_dir().to_string_lossy(), "recon/tbs/de");
         assert_eq!(target_for(DecompTargetId::TbsJa).edition_script(), None);
+        assert_eq!(
+            de.overlay_script("3ad").to_string_lossy(),
+            "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY/OVL_3AD.LD"
+        );
+        assert_eq!(
+            de.overlay_data("3ad").to_string_lossy(),
+            "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY/OVL_3AD.S"
+        );
+        let tla = target_for(DecompTargetId::TlaEn);
+        assert_eq!(tla.overlay_script("4a0").to_string_lossy(), "recon/tla/raw/overlays/resource_4a0.ld");
+        assert_eq!(tla.overlay_data("4a0").to_string_lossy(), "recon/tla/raw/overlays/resource_4a0_overlay.s");
     }
 }

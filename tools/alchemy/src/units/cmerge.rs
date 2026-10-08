@@ -245,7 +245,7 @@ fn shared_enumerators(sources: &[Source], notes: &mut Vec<String>) -> Vec<Source
             if gone.is_empty() {
                 continue;
             }
-            let tagged = !item.text[..open].trim().trim_start_matches("enum").trim().is_empty();
+            let tagged = !item.text[..open].trim().trim_start_matches("extern").trim().trim_start_matches("enum").trim().is_empty();
             let left = kept.iter().any(|m| !strip_line_comments(m).trim().is_empty());
             let replacement = if left {
                 let mut body = kept.join(",");
@@ -253,7 +253,7 @@ fn shared_enumerators(sources: &[Source], notes: &mut Vec<String>) -> Vec<Source
                     body.push('\n');
                 }
                 format!("{}{{{}}}{}", &item.text[..open], body, &item.text[close + 1..])
-            } else if tagged && identifiers(&source.text.replacen(item.text, "", 1)).contains(item.text[..open].trim().trim_start_matches("enum").trim()) {
+            } else if tagged && identifiers(&source.text.replacen(item.text, "", 1)).contains(item.text[..open].trim().trim_start_matches("extern").trim().trim_start_matches("enum").trim()) {
                 continue;
             } else {
                 String::new()
@@ -287,6 +287,7 @@ fn strip_line_comments(text: &str) -> String {
 /// The braces of `enum [Tag] { ... };` with no declarator.
 fn enum_body(text: &str) -> Option<(usize, usize)> {
     let code = text.trim_start();
+    let code = code.strip_prefix("extern").map_or(code, str::trim_start);
     if !code.starts_with("enum") {
         return None;
     }

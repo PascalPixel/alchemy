@@ -351,27 +351,27 @@ void FieldScene_RunThreeActorEncounter(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-        Actor_SetPosition(ACTOR_GERALD, leader->x.fixed, leader->z.fixed);
+        Actor_SetPosition(GERALD, leader->x.fixed, leader->z.fixed);
     }
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-        Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
+        Actor_SetPosition(IWAN, leader->x.fixed, leader->z.fixed);
     }
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-        Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
+        Actor_SetPosition(MEARI, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
-    Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
-    Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
-    Actor_WalkTo(ACTOR_GERALD, 194, 0x280);
-    Actor_WalkTo(ACTOR_IVAN, 198, 0x28e);
-    Actor_WalkToAndWait(ACTOR_MIA, 194, 0x2a0);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 1);
-    Engine_ActorSetAnimation(ACTOR_IVAN, 1);
+    Actor_SetSpeed(GERALD, 0x13333, 0x9999);
+    Actor_SetSpeed(IWAN, 0x10000, 0x8000);
+    Actor_SetSpeed(MEARI, 0x13333, 0x9999);
+    Actor_WalkTo(GERALD, 194, 0x280);
+    Actor_WalkTo(IWAN, 198, 0x28e);
+    Actor_WalkToAndWait(MEARI, 194, 0x2a0);
+    Engine_ActorSetAnimation(GERALD, 1);
+    Engine_ActorSetAnimation(IWAN, 1);
     Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x8000, 0);
+    Actor_FaceDirection(GERALD, 0x8000, 0);
+    Actor_FaceDirection(IWAN, 0x8000, 0);
     FieldScene_CallPairWith10(3, 0x8000);
     FieldScene_CallPairWith10(22, 0);
     Engine_EventSetMessage((s32)MsgFuneRobinTalkedPassengersDidntTour);
@@ -382,19 +382,19 @@ void FieldScene_RunThreeActorEncounter(void)
     Engine_ActorRunRepeatedMotion(22, 1);
     Event_OpenMessage(22, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
+        Engine_ActorSetAnimationAndWait(IWAN, 4);
         FieldScene_RunStepThen10(2);
         FieldScene_CallPairWith10(3, 0xa000);
-        Engine_ActorSetAnimation(ACTOR_MIA, 3);
+        Engine_ActorSetAnimation(MEARI, 3);
         FieldScene_RunStepThen10(3);
         FieldScene_CallPairWith10(1, 0x6000);
-        Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
-        Event_OpenMessage(ACTOR_GERALD, 0);
+        Engine_ActorRunRepeatedMotion(GERALD, 1);
+        Event_OpenMessage(GERALD, 0);
     ask_again:
         if (Engine_EventChooseYesNo(0, 0) == 1) {
-            Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
+            Engine_ActorRunRepeatedMotion(IWAN, 1);
             Engine_EventSetMessage((s32)MsgFuneRobinDontTalkLikeShouldnt);
-            Event_OpenMessage(ACTOR_IVAN, 0);
+            Event_OpenMessage(IWAN, 0);
             goto ask_again;
         }
     }
@@ -426,12 +426,12 @@ void FieldScene_RunThreeActorEncounter(void)
     Actor_FaceDirection(22, 0x3000, 0);
     FieldScene_CallPairWith10(21, 0xd000);
     FieldScene_RunStepThen10(22);
-    Actor_WalkTo(ACTOR_GERALD, 180, 0x28e);
-    Actor_WalkTo(ACTOR_IVAN, 180, 0x28e);
-    Actor_WalkToAndWait(ACTOR_MIA, 180, 0x28e);
-    Engine_ActorDestroy(ACTOR_GERALD);
-    Engine_ActorDestroy(ACTOR_IVAN);
-    Engine_ActorDestroy(ACTOR_MIA);
+    Actor_WalkTo(GERALD, 180, 0x28e);
+    Actor_WalkTo(IWAN, 180, 0x28e);
+    Actor_WalkToAndWait(MEARI, 180, 0x28e);
+    Engine_ActorDestroy(GERALD);
+    Engine_ActorDestroy(IWAN);
+    Engine_ActorDestroy(MEARI);
     GameFlag_Set(0x903);
     Engine_EventEnd();
 }

@@ -605,13 +605,13 @@ struct ScenePlacement gWorldMapPlacements[] = {
 	{ 0x39, CONDITION_ALWAYS, (s32)gWorldMapPlacement4,
 		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ SCENE_TABLE_END },
-	{ ACTOR_GERALD, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+	{ GERALD, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
 struct ScenePlacement gWorldMapPlacements64[] = {
-	{ ACTOR_GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x31, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -677,7 +677,7 @@ struct ScenePlacement gWorldMapPlacements71[] = {
 };
 
 struct ScenePlacement gWorldMapPlacements80[] = {
-	{ ACTOR_JASMINE, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+	{ JASMINE, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
 		PIXELS(7560), 0, PIXELS(3512), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x6, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
 		PIXELS(7816), 0, PIXELS(3528), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },

@@ -46,7 +46,7 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 
     window = NULL;
     zero = 0;
-    name = Djinn_ElementActorKinds[element & 3];
+    name = Djinn_ElementSprites[element & 3];
     entry = sprite;
     /* FAKEMATCH: the null window is also the style argument (ROM passes its register). */
     window = UiWindow_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, (s32)window);
@@ -94,9 +94,9 @@ s32 Party_LookupCharacterValueByFlag32(u32 index)
         return 0;
     }
     if (GameFlag_TestFar(32) == 0) {
-        return Party_CharacterValues[index];
+        return Character_SpriteTable[index];
     }
-    return Party_CharacterValuesFlag32[index];
+    return Character_ChildSpriteTable[index];
 }
 
 void AudioCommand_PlayFar(s32);

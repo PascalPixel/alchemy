@@ -119,14 +119,16 @@ NameEntry_EndKeyLabel:
 	.endif
 	.endif
 @ 属性ごとのジンの種類
-	.global Djinn_ElementActorKinds
-Djinn_ElementActorKinds:
+	.global Djinn_ElementSprites
+Djinn_ElementSprites:
 	.2byte 90, 91, 92, 93
-	.global Party_CharacterValues
-Party_CharacterValues:
+@ 仲間ごとのキャラ
+	.global Character_SpriteTable
+Character_SpriteTable:
 	.2byte 0, 1, 2, 3, 35, 5, 6, 7
-	.global Party_CharacterValuesFlag32
-Party_CharacterValuesFlag32:
+@ 子供のころ (フラグ 32)
+	.global Character_ChildSpriteTable
+Character_ChildSpriteTable:
 	.2byte 18, 19, 2, 3, 36, 48, 6, 7
 	.global Ui_PairBobOffsets
 Ui_PairBobOffsets:

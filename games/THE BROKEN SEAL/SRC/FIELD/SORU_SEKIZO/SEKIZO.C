@@ -121,9 +121,9 @@ void FieldScene_SetupStagedActors(void)
     Actor_SetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 216);
     Engine_EventWait(20);
-    Engine_ActorJump(ACTOR_JASMINE, 2, 0);
+    Engine_ActorJump(JASMINE, 2, 0);
     Engine_EventWait(30);
-    Event_SayThenWait(ACTOR_JASMINE, 6);
+    Event_SayThenWait(JASMINE, 6);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
     Engine_EventWait(6);
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_WEST + FACING_STEP, 0);
@@ -172,10 +172,10 @@ void FieldScene_SetupStagedActors(void)
     Camera_MoveTo(0x23e0000, -1, 0x9d0000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
-    Event_SayThenWait(ACTOR_GERALD, 20);
-    Engine_ActorSetAnimationAndWait(ACTOR_JASMINE, ANIM_NOD);
-    Event_SayThenWait(ACTOR_JASMINE, 6);
+    Engine_ActorRunRepeatedMotion(GERALD, 2);
+    Event_SayThenWait(GERALD, 20);
+    Engine_ActorSetAnimationAndWait(JASMINE, ANIM_NOD);
+    Event_SayThenWait(JASMINE, 6);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
     Engine_EventWait(40);
     Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, ANIM_SHAKE_HEAD);
@@ -186,25 +186,25 @@ void FieldScene_SetupStagedActors(void)
     Engine_EventWait(30);
     Event_SayThenWait(ACTOR_SUKURETA, 20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 1, 0);
-    Actor_ShowEmote(ACTOR_JASMINE, EMOTE_IN_FRONT | 1, 0);
+    Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 1, 0);
+    Actor_ShowEmote(JASMINE, EMOTE_IN_FRONT | 1, 0);
     Engine_EventWait(60);
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 0);
     Engine_EventWait(30);
     Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, ANIM_SHAKE_HEAD);
     Event_SayThenWait(ACTOR_SUKURETA, 6);
-    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
+    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
     Engine_EventWait(40);
-    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 0);
+    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JASMINE, 0);
     Engine_EventWait(40);
     Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, ANIM_NOD);
     Event_SayThenWait(ACTOR_SUKURETA, 6);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-    Actor_FaceDirection(ACTOR_JASMINE, FACING_SOUTH, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
+    Actor_FaceDirection(JASMINE, FACING_SOUTH, 0);
+    Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
     Engine_EventWait(40);
-    Engine_ActorSetAnimation(ACTOR_GERALD, ANIM_NOD);
-    Engine_ActorSetAnimation(ACTOR_JASMINE, ANIM_NOD);
+    Engine_ActorSetAnimation(GERALD, ANIM_NOD);
+    Engine_ActorSetAnimation(JASMINE, ANIM_NOD);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, ANIM_NOD);
@@ -222,22 +222,22 @@ void FieldScene_SetupStagedActors(void)
     Camera_MoveTo(0x2400000, -1, 0x880000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
-    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
-    Actor_SetSpeed(ACTOR_JASMINE, 0x10000, 0x8000);
-    Engine_ActorSetAnimation(ACTOR_GERALD, ANIM_WALK);
+    Actor_SetSpeed(GERALD, 0x10000, 0x8000);
+    Actor_SetSpeed(JASMINE, 0x10000, 0x8000);
+    Engine_ActorSetAnimation(GERALD, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-        Actor_SetDestination(ACTOR_GERALD, leader->x.part.pixel, leader->z.part.pixel);
+        Actor_SetDestination(GERALD, leader->x.part.pixel, leader->z.part.pixel);
     }
-    Engine_ActorWaitForMove(ACTOR_GERALD);
-    Actor_SetPosition(ACTOR_GERALD, 0, 0);
-    Engine_ActorSetAnimation(ACTOR_JASMINE, ANIM_WALK);
+    Engine_ActorWaitForMove(GERALD);
+    Actor_SetPosition(GERALD, 0, 0);
+    Engine_ActorSetAnimation(JASMINE, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-        Actor_SetDestination(ACTOR_JASMINE, leader->x.part.pixel, leader->z.part.pixel);
+        Actor_SetDestination(JASMINE, leader->x.part.pixel, leader->z.part.pixel);
     }
-    Engine_ActorWaitForMove(ACTOR_JASMINE);
-    Actor_SetPosition(ACTOR_JASMINE, 0, 0);
+    Engine_ActorWaitForMove(JASMINE);
+    Actor_SetPosition(JASMINE, 0, 0);
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     gEventWork->transition_frames = 16;
@@ -289,7 +289,7 @@ void FieldScene_RunStagedActorScene(void)
     Engine_EventWait(40);
     Engine_ActorSetAnimationAndWait(8, 3);
     Event_SayThenWait(8, 6);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
     Engine_ActorSetAnimation(5, 3);
     Engine_ActorSetAnimationAndWait(0, 3);
     Engine_EventWait(40);
@@ -304,10 +304,10 @@ void FieldScene_RunStagedActorScene(void)
     Engine_ActorRunRepeatedMotion(8, 1);
     Engine_ActorSetAnimationAndWait(8, 4);
     Event_SayThenWait(8, 6);
-    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 0);
+    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JASMINE, 0);
     Engine_EventWait(40);
     Engine_ActorFaceActor(8, 0, 0);
-    Actor_FaceActor(8, ACTOR_JASMINE, 0);
+    Actor_FaceActor(8, JASMINE, 0);
     Engine_EventWait(40);
     Engine_ActorJump(8, 6, 0);
     Actor_WalkToAndWait(8, 0x240, 216);
@@ -330,7 +330,7 @@ void FieldScene_RunStagedActorScene(void)
     Engine_EventWait(10);
     Actor_FaceDirection(0, 0x4000, 0);
     Actor_FaceDirection(5, 0x4000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
+    Actor_FaceDirection(GERALD, 0x4000, 0);
     Engine_CameraSetSpeed(0xcccc, 0x1999);
     Engine_CameraMoveTo(0x23e0000, -1, 0xab0000, 1);
     Engine_ActorJump(8, 6, 0);
@@ -342,7 +342,7 @@ void FieldScene_RunStagedActorScene(void)
     Event_SayThenWait(8, 20);
     Engine_ActorShowEmote(5, 0x102, 0);
     Engine_EventWait(40);
-    Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
+    Engine_ActorRunRepeatedMotion(JASMINE, 2);
     Event_SayThenWait(5, 6);
     Engine_ActorSetAnimationAndWait(8, 3);
     Engine_ActorFaceDirection(8, 0x8000, 0);
@@ -352,13 +352,13 @@ void FieldScene_RunStagedActorScene(void)
     Event_SayThenWait(8, 6);
     Actor_ShowEmote(0, 0x101, 0);
     Actor_ShowEmote(1, 0x101, 0);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x101, 0);
+    Actor_ShowEmote(JASMINE, 0x101, 0);
     Engine_EventWait(60);
     Engine_ActorSetAnimationAndWait(8, 4);
     Event_SayThenWait(8, 6);
     Engine_ActorFaceEachOther(1, 0, 0);
     Engine_EventWait(40);
-    Engine_ActorFaceEachOther(ACTOR_JASMINE, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceEachOther(JASMINE, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(40);
     UiText_OpenMessageAtObject(8, 0);
     Actor_FaceDirection(0, 0x4000, 0);
@@ -409,7 +409,7 @@ void FieldScene_RunStagedActorScene(void)
     Engine_ActorSetAnimationAndWait(5, 3);
     Actor_SetSpeed(1, 0x10000, 0x8000);
     Actor_SetSpeed(5, 0x10000, 0x8000);
-    Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
+    Engine_ActorSetAnimation(JASMINE, 2);
     record = Object_GetById(0);
     if (record != 0) {
         Engine_ActorSetDestination(5, record->x.part.pixel, record->z.part.pixel);
@@ -603,8 +603,8 @@ s32 Scene_RunGuardSequenceB(void)
     Object_GetById(18)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(18, 1);
     if ((u32)((gCell[225][0] - 3) << 16) > 0x10000) {
-        Actor_SetPosition(ACTOR_JASMINE, 0, 0);
-        Actor_SetPosition(ACTOR_GERALD, 0, 0);
+        Actor_SetPosition(JASMINE, 0, 0);
+        Actor_SetPosition(GERALD, 0, 0);
     }
     if (GameFlag_IsSet(0x818) != 0) {
         Actor_SetPosition(18, 0x1200000, 0xb20000);
@@ -667,8 +667,8 @@ s32 Scene_RunGuardSequenceB(void)
 
     if (state[225] == 3) {
         if (GameFlag_IsSet(0x30a) != 0) {
-            Actor_SetPosition(ACTOR_GERALD, 0, 0);
-            Actor_SetPosition(ACTOR_JASMINE, 0, 0);
+            Actor_SetPosition(GERALD, 0, 0);
+            Actor_SetPosition(JASMINE, 0, 0);
         } else if (GameFlag_IsSet(0x109) == 0) {
             FieldScene_SetupStagedActors();
             GameFlag_Set(0x30a);
@@ -676,8 +676,8 @@ s32 Scene_RunGuardSequenceB(void)
     }
     if (state[225] == 4) {
         if (GameFlag_IsSet(0x30b) != 0) {
-            Actor_SetPosition(ACTOR_GERALD, 0, 0);
-            Actor_SetPosition(ACTOR_JASMINE, 0, 0);
+            Actor_SetPosition(GERALD, 0, 0);
+            Actor_SetPosition(JASMINE, 0, 0);
         } else if (GameFlag_IsSet(0x109) == 0) {
             FieldScene_RunStagedActorScene();
             GameFlag_Set(0x30b);

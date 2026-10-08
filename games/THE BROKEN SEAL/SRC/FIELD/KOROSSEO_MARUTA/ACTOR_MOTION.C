@@ -226,7 +226,7 @@ void ColossoLogRollingStage_RestoreActorPositions(void)
         x += center;
         z <<= 20;
         z += center;
-        Engine_ActorSetPosition(ACTOR_GERALD, x, z);
+        Engine_ActorSetPosition(GERALD, x, z);
     }
     {
         s32 x = GameFlag_GetByte(912);
@@ -235,7 +235,7 @@ void ColossoLogRollingStage_RestoreActorPositions(void)
         x += center;
         z <<= 20;
         z += center;
-        Engine_ActorSetPosition(ACTOR_IVAN, x, z);
+        Engine_ActorSetPosition(IWAN, x, z);
     }
     {
         s32 x = GameFlag_GetByte(928);
@@ -244,6 +244,6 @@ void ColossoLogRollingStage_RestoreActorPositions(void)
         x += center;
         z <<= 20;
         z += center;
-        Engine_ActorSetPosition(ACTOR_MIA, x, z);
+        Engine_ActorSetPosition(MEARI, x, z);
     }
 }

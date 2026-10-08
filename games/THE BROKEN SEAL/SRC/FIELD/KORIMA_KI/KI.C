@@ -261,25 +261,25 @@ void PaletteScene_RunActorTransitionSequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Audio_PlayCue(17);
     Engine_MessageShowCentered((s32)MsgKorimaWaterHermesSeepedIntoTret, 1);
-    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
-    Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
+    Actor_SetSpeed(GERALD, 0x10000, 0x8000);
+    Actor_SetSpeed(IWAN, 0x10000, 0x8000);
     object = Actor_Get(ACTOR_PARTY_LEADER);
     if (object != 0) {
-        Actor_SetPosition(ACTOR_GERALD, object->x.fixed, object->z.fixed);
+        Actor_SetPosition(GERALD, object->x.fixed, object->z.fixed);
     }
     object = Actor_Get(ACTOR_PARTY_LEADER);
     if (object != 0) {
-        Actor_SetPosition(ACTOR_IVAN, object->x.fixed, object->z.fixed);
+        Actor_SetPosition(IWAN, object->x.fixed, object->z.fixed);
     }
-    Engine_ActorEnableActionCallback(ACTOR_GERALD, SceneAction_ActorOneEntry);
-    Engine_ActorEnableActionCallback(ACTOR_IVAN, SceneAction_ActorTwoEntry);
+    Engine_ActorEnableActionCallback(GERALD, SceneAction_ActorOneEntry);
+    Engine_ActorEnableActionCallback(IWAN, SceneAction_ActorTwoEntry);
     if (actorThreeEnabled != 0) {
-        Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
+        Actor_SetSpeed(MEARI, 0x10000, 0x8000);
         object = Actor_Get(ACTOR_PARTY_LEADER);
         if (object != 0) {
-            Actor_SetPosition(ACTOR_MIA, object->x.fixed, object->z.fixed);
+            Actor_SetPosition(MEARI, object->x.fixed, object->z.fixed);
         }
-        Engine_ActorEnableActionCallback(ACTOR_MIA, SceneAction_ActorThreeEntry);
+        Engine_ActorEnableActionCallback(MEARI, SceneAction_ActorThreeEntry);
     }
     Object_RefreshSelectorById(2);
     Engine_EventWait(40);
@@ -290,19 +290,19 @@ void PaletteScene_RunActorTransitionSequence(void)
     *transitionState = 0;
     Engine_TaskAddCallback(PaletteScene_AdvanceTransition, 0xc80);
     Engine_EventWait(40);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 20);
+    Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 20);
     Camera_SetSpeed(0x33333, 0x6666);
     Camera_MoveTo(0x1000000, -1, 0xfe0000, 1);
     Engine_CameraWaitForMove();
     Audio_PlayCue(246);
     Engine_EventWait(40);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 20);
+    Actor_FaceDirection(IWAN, FACING_SOUTHEAST, 20);
     Camera_MoveTo(0x19d0000, -1, 0x1050000, 1);
     Engine_CameraWaitForMove();
     Audio_PlayCue(246);
     Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 20);
+    Actor_FaceDirection(MEARI, FACING_SOUTH, 20);
     Camera_MoveTo(0x1460000, -1, 0x1800000, 1);
     Engine_CameraWaitForMove();
     Audio_PlayCue(246);
@@ -335,13 +335,13 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_EventSetMessage((s32)MsgKorimaFeelGreatPowerSpreadingThrough);
     Event_ShowMessage(8, 0);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
-    Engine_ActorStartRepeatedMotion(ACTOR_MIA, 2);
-    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorStartRepeatedMotion(GERALD, 2);
+    Engine_ActorStartRepeatedMotion(MEARI, 2);
+    Engine_ActorRunRepeatedMotion(IWAN, 2);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
+    Actor_FaceDirection(GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(MEARI, FACING_NORTH, 0);
+    Actor_FaceDirection(IWAN, FACING_NORTH, 20);
     KorimaKi_PlayGesture(10, 2);
     Engine_EventWait(20);
     KorimaKi_PlayGesture(10, 3);
@@ -350,9 +350,9 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_EventWait(20);
     Event_ShowMessage(8, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x105, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x105, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x105, 40);
+    Actor_ShowEmote(GERALD, 0x105, 0);
+    Actor_ShowEmote(MEARI, 0x105, 0);
+    Actor_ShowEmote(IWAN, 0x105, 40);
     Camera_MoveTo(0xea0000, 0, 0xe80000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(40);
@@ -364,9 +364,9 @@ void PaletteScene_RunActorTransitionSequence(void)
     KorimaKi_PlayGesture(11, 2);
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 20);
+    Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(MEARI, FACING_SOUTHWEST, 20);
     KorimaKi_PlayGesture(11, 3);
     Engine_EventWait(20);
     KorimaKi_PlayGesture(11, 2);
@@ -380,34 +380,34 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_EventWait(20);
     Event_OpenMessage(0x8008, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+    Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(MEARI, FACING_NORTH, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Event_ShowMessage(0x4009, 0);
         Event_ShowMessage(0x8008, 0);
     } else {
         gEventWork->message += 2;
-        Actor_ShowEmote(ACTOR_MIA, 0x103, 0);
-        Actor_ShowEmote(ACTOR_GERALD, 0x103, 0);
-        Actor_ShowEmote(ACTOR_IVAN, 0x103, 40);
-        Engine_ActorSetAnimation(ACTOR_GERALD, 4);
-        Event_ShowMessage(ACTOR_GERALD, 0);
+        Actor_ShowEmote(MEARI, 0x103, 0);
+        Actor_ShowEmote(GERALD, 0x103, 0);
+        Actor_ShowEmote(IWAN, 0x103, 40);
+        Engine_ActorSetAnimation(GERALD, 4);
+        Event_ShowMessage(GERALD, 0);
         if (actorThreeEnabled != 0) {
-            Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
-            Event_ShowMessage(ACTOR_MIA, 0);
+            Engine_ActorRunRepeatedMotion(MEARI, 2);
+            Event_ShowMessage(MEARI, 0);
         } else {
             gEventWork->message += 1;
         }
-        Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
-        Event_ShowMessage(ACTOR_IVAN, 0);
+        Engine_ActorSetAnimationAndWait(IWAN, 3);
+        Event_ShowMessage(IWAN, 0);
         Event_ShowMessage(0x4009, 0);
         Event_ShowMessage(0x8008, 0);
     }
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
-    Engine_ActorSetAnimation(ACTOR_MIA, 3);
-    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimation(MEARI, 3);
+    Engine_ActorSetAnimationAndWait(IWAN, 3);
     Camera_MoveTo(0x1480000, 0x80000, 0xd40000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
@@ -438,36 +438,36 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_EventSetMessage((s32)MsgKorimaShouldDoPeopleKolimaCursed);
     Event_ShowMessage(0x8008, 0);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
-    Engine_ActorSetAnimation(ACTOR_MIA, 3);
-    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimation(MEARI, 3);
+    Engine_ActorSetAnimationAndWait(IWAN, 3);
     Camera_MoveTo(0xea0000, 0, 0xe80000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
     Event_ShowMessage(0x4009, 0);
     Event_ShowMessageAndWait(0x8008, 0, 10);
-    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorRunRepeatedMotion(GERALD, 2);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 10);
-    Event_OpenMessage(ACTOR_GERALD, 0);
+    Actor_FaceDirection(GERALD, FACING_NORTHEAST, 10);
+    Event_OpenMessage(GERALD, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Actor_ShowEmote(ACTOR_GERALD, 0x102, 40);
+        Actor_ShowEmote(GERALD, 0x102, 40);
     } else {
-        Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4);
+        Engine_ActorSetAnimationAndWait(GERALD, 4);
         gEventWork->message += 1;
     }
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Event_ShowMessage(GERALD, 0);
     KorimaKi_PlayGesture(10, 4);
     Engine_EventWait(20);
     Engine_EventSetMessage((s32)MsgKorimaWasIndeedAngryPeopleHad);
     Event_ShowMessage(0x8008, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(GERALD, FACING_NORTH, 0);
     Event_ShowMessage(0x8008, 0);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
-    Engine_ActorSetAnimation(ACTOR_MIA, 3);
-    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimation(MEARI, 3);
+    Engine_ActorSetAnimationAndWait(IWAN, 3);
     KorimaKi_PlayGesture(10, 4);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x8008, 0, 20);
@@ -482,9 +482,9 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_EventWait(20);
     Event_ShowMessage(0x8008, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x102, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x102, 80);
+    Actor_ShowEmote(GERALD, 0x102, 0);
+    Actor_ShowEmote(MEARI, 0x102, 0);
+    Actor_ShowEmote(IWAN, 0x102, 80);
     KorimaKi_PlayGesture(11, 5);
     Engine_EventWait(60);
     KorimaKi_PlayGesture(11, 3);
@@ -495,17 +495,17 @@ void PaletteScene_RunActorTransitionSequence(void)
     KorimaKi_PlayGesture(10, 2);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x4008, 0, 20);
-    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 10);
-    Event_ShowMessage(ACTOR_GERALD, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
+    Engine_ActorRunRepeatedMotion(GERALD, 2);
+    Actor_FaceDirection(GERALD, FACING_WEST, 10);
+    Event_ShowMessage(GERALD, 0);
+    Actor_FaceDirection(IWAN, FACING_WEST, 20);
     Event_ShowMessage(0x8002, 0);
     KorimaKi_PlayGesture(11, 4);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x4009, 0, 20);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
-    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
+    Event_ShowMessageAndWait(GERALD, 0, 20);
     KorimaKi_PlayGesture(10, 1);
     Event_ShowMessageAndWait(0x8008, 0, 10);
     KorimaKi_PlayGesture(10, 2);
@@ -528,11 +528,11 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_TaskAddCallback(effectCallback, 0xc80);
     Engine_EventWait(100);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 40);
-    Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 1);
-    Actor_ShowEmote(ACTOR_IVAN, 0x100, 20);
+    Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(MEARI, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 40);
+    Engine_ActorStartRepeatedMotion(IWAN, 1);
+    Actor_ShowEmote(IWAN, 0x100, 20);
     Event_ShowMessageAndWait(0x8002, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 10);
@@ -540,22 +540,22 @@ void PaletteScene_RunActorTransitionSequence(void)
     KorimaKi_PlayGesture(10, 4);
     Engine_EventWait(20);
     Event_ShowMessage(0x8008, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x101, 60);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
+    Actor_ShowEmote(IWAN, 0x101, 60);
+    Actor_FaceDirection(IWAN, FACING_NORTH, 10);
     Event_ShowMessageAndWait(0x8002, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 20);
+    Actor_FaceDirection(MEARI, FACING_NORTH, 0);
+    Actor_FaceDirection(GERALD, FACING_NORTH, 20);
     Event_ShowMessageAndWait(0x8008, 0, 10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
-    Engine_ActorSetAnimation(ACTOR_MIA, 3);
-    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimation(MEARI, 3);
+    Engine_ActorSetAnimationAndWait(IWAN, 3);
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 120);
+    Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(MEARI, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 120);
     Engine_TaskRemoveCallback(effectCallback);
     Engine_EventWait(60);
     KorimaPalette_Restore(0);
@@ -570,15 +570,15 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x4009, 0, 10);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
-    Engine_ActorStartRepeatedMotion(ACTOR_MIA, 2);
-    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorStartRepeatedMotion(GERALD, 2);
+    Engine_ActorStartRepeatedMotion(MEARI, 2);
+    Engine_ActorRunRepeatedMotion(IWAN, 2);
     KorimaKi_PlayGesture(10, 1);
     Event_OpenMessage(0x8008, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(MEARI, FACING_NORTH, 0);
+    Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         gEventWork->message += 1;
     }
@@ -591,18 +591,18 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x8008, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_EAST, 0);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
+    Actor_FaceDirection(GERALD, FACING_EAST, 0);
+    Actor_FaceDirection(MEARI, FACING_NORTH, 0);
+    Actor_FaceDirection(IWAN, FACING_WEST, 10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
-    Engine_ActorSetAnimation(ACTOR_MIA, 3);
-    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimation(MEARI, 3);
+    Engine_ActorSetAnimationAndWait(IWAN, 3);
     Audio_PlayCue(17);
     finalActions = SceneAction_GroupFinish;
-    Engine_ActorEnableActionCallback(ACTOR_GERALD, finalActions);
+    Engine_ActorEnableActionCallback(GERALD, finalActions);
     if (actorThreeEnabled != 0) {
-        Engine_ActorEnableActionCallback(ACTOR_MIA, finalActions);
+        Engine_ActorEnableActionCallback(MEARI, finalActions);
     }
     Object_SetActionCallbackAndRefreshById(2, (s32)finalActions);
     KorimaKi_PlayGesture(10, 4);

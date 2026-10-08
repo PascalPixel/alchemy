@@ -19,10 +19,10 @@ extern u8 gItemLevelItemPrompt[];
 extern u8 gItemLevelPsyHelp[];
 extern u8 gItemLevelPsyPrompt[];
 #ifndef OWN_SideObject_ActorKindIdMap
-extern s16 SideObject_ActorKindIdMap[][2];
+extern s16 Portrait_SpriteMap[][2];
 #endif
 #ifndef OWN_SideObject_CharacterIdMap
-extern s16 SideObject_CharacterIdMap[][2];
+extern s16 Portrait_CharacterMap[][2];
 #endif
 extern u8 TestRooms_Entrances[];
 extern u8 TestRooms_Events[];

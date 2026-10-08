@@ -151,21 +151,21 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 id)
 
         sel = Resource_FindFreeSlot(state->inventory[entry] & 0x1FF);
         switch (state->class_id) {
-        case 0:
+        case ROBIN:
             result = BattleUnit_WeaponAnimsClass0[sel];
             break;
-        case 1:
+        case GERALD:
             result = BattleUnit_WeaponAnimsClass1[sel];
             break;
-        case 2:
+        case IWAN:
             result = BattleUnit_WeaponAnimsClass2[sel];
             break;
-        case 3:
+        case MEARI:
             result = BattleUnit_WeaponAnimsClass3[sel];
             break;
-        case 4:
+        case GARUSHIA:
             break;
-        case 5:
+        case JASMINE:
             result = BattleUnit_WeaponAnimsClass5[sel];
             break;
         }
@@ -201,12 +201,12 @@ void BtlObjMake(struct BtlObj *actor, s32 unit, s32 x, s32 y)
             sprite = existing_sprite;
     } else {
         switch (unit_record->class_id) {
-        case 1: sprite = 301; break;
-        case 3: sprite = 303; break;
-        case 2: sprite = 302; break;
-        case 5: sprite = 305; break;
-        case 0:
-        default: sprite = 300; break;
+        case GERALD: sprite = BTL_CHARA(GERALD); break;
+        case MEARI: sprite = BTL_CHARA(MEARI); break;
+        case IWAN: sprite = BTL_CHARA(IWAN); break;
+        case JASMINE: sprite = BTL_CHARA(JASMINE); break;
+        case ROBIN:
+        default: sprite = BTL_CHARA(ROBIN); break;
         }
         if (unit < 0 || unit > 7)
             actor_flag = 1;
@@ -276,8 +276,8 @@ void BtlObjMake(struct BtlObj *actor, s32 unit, s32 x, s32 y)
     class_id = unit_record->class_id;
     actor->overlay = anim;
 
-    if (class_id <= 1 && Inventory_GetEquippedItemFar((struct BtlUnit *)unit_record, 1) == 15) {
-        if (unit_record->class_id == 0) {
+    if (class_id <= GERALD && Inventory_GetEquippedItemFar((struct BtlUnit *)unit_record, 1) == 15) {
+        if (unit_record->class_id == ROBIN) {
             sprite = 480;
             actor->resource = sprite;
         } else {

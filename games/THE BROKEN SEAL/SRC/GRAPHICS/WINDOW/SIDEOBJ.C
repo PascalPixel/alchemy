@@ -1,10 +1,10 @@
 #include "TYPES.H"
-/* FAKEMATCH: this file reads SideObject_CharacterIdMap through its own declaration; the shop's changes its code. */
+/* FAKEMATCH: this file reads Portrait_CharacterMap through its own declaration; the shop's changes its code. */
 #define OWN_SideObject_CharacterIdMap
-extern const s16 SideObject_CharacterIdMap[];
-/* FAKEMATCH: this file reads SideObject_ActorKindIdMap through its own declaration; the shop's changes its code. */
+extern const s16 Portrait_CharacterMap[];
+/* FAKEMATCH: this file reads Portrait_SpriteMap through its own declaration; the shop's changes its code. */
 #define OWN_SideObject_ActorKindIdMap
-extern const s16 SideObject_ActorKindIdMap[];
+extern const s16 Portrait_SpriteMap[];
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -43,26 +43,26 @@ s32 Localization_LookupEntryId(u32 value)
 
     if (value < 20) {
         for (;;) {
-            s32 key = SideObject_CharacterIdMap[i];
+            s32 key = Portrait_CharacterMap[i];
 
             if (key == -1)
                 break;
             if (key == value) {
                 i++;
-                result = SideObject_CharacterIdMap[i];
+                result = Portrait_CharacterMap[i];
                 break;
             }
             i += 2;
         }
     } else {
         for (;;) {
-            s32 key = SideObject_ActorKindIdMap[i];
+            s32 key = Portrait_SpriteMap[i];
 
             if (key == -1)
                 break;
             if (key == value) {
                 i++;
-                result = SideObject_ActorKindIdMap[i];
+                result = Portrait_SpriteMap[i];
                 result += 128;
                 break;
             }

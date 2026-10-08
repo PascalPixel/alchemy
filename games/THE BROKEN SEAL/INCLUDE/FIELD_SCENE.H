@@ -3,6 +3,7 @@
 
 #include "LAYOUT_GUARD.H"
 #include "SCENE_IDS.H"
+#include "CHARA.H"
 
 enum SceneId {
     SCENE_WORLD_MAP = 2,
@@ -102,10 +103,6 @@ enum ActorTalkFacing {
 
 enum {
     ACTOR_PARTY_LEADER = 0,
-    ACTOR_GERALD = 1,
-    ACTOR_IVAN = 2,
-    ACTOR_MIA = 3,
-    ACTOR_JASMINE = 5,
     ACTOR_FIRST_PLACED = 8
 };
 

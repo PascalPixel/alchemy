@@ -163,25 +163,25 @@ void KuupuappuMura_SayFarewellToIvan(void)
     Engine_EventBegin();
     record = Actor_Get(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_IVAN, record->x.fixed, record->z.fixed);
+        Actor_SetPosition(IWAN, record->x.fixed, record->z.fixed);
     }
-    Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
+    Actor_SetSpeed(IWAN, 0xcccc, 0x6666);
     if (p5->touched_trigger == 20) {
-        Actor_WalkToAndWait(ACTOR_IVAN, 0x190, 0x1c0);
+        Actor_WalkToAndWait(IWAN, 0x190, 0x1c0);
     } else {
         Camera_SetSpeed(0xcccc, 0x1999);
         Camera_MoveTo(PIXELS(0xE0), -1, PIXELS(0xA2), 1);
-        Actor_WalkToAndWait(ACTOR_IVAN, 224, 162);
+        Actor_WalkToAndWait(IWAN, 224, 162);
         Engine_CameraWaitForMove();
     }
-    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
+    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IWAN, 0);
     Engine_EventWait(20);
     Engine_EventSetMessage((s32)MsgKuupuappuLeavingImStillWorriedAbout);
     Event_ShowMessageAndWait(0x9002, 0, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     if (KuupuappuMura_GetIwanVenusDjinnCount()!= 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuWaitDontWantTakeYour);
-        Event_ShowMessage(ACTOR_IVAN, 0);
+        Event_ShowMessage(IWAN, 0);
         OverlayObject_RunObject2WhenFlagged();
         Engine_TaskWait(20);
     }

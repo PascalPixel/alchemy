@@ -321,7 +321,7 @@ void FieldScene_RunBranchingActorSequence(void)
     FieldMotion_LaunchFromFocusedObject(1, -8, 16, 0xc000);
     FieldMotion_LaunchFromFocusedObject(2, 8, 16, 0xc000);
     FieldMotion_LaunchFromFocusedObject(3, 24, 16, 0xc000);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
+    ObjectMotion_CommitCurrentPositionAndActivate(MEARI);
     Battle_WaitMode0(20);
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(10);
@@ -398,17 +398,17 @@ void FieldScene_RunBranchingActorSequence(void)
     Actor_ShowEmote(14, 0x105, 60);
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(10);
-    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 4);
+    Engine_ActorSetAnimationAndWait(MEARI, 4);
     Battle_WaitMode0(20);
-    Event_ShowMessage(ACTOR_MIA, 0);
+    Event_ShowMessage(MEARI, 0);
     Battle_WaitMode0(10);
-    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorRunRepeatedMotion(IWAN, 2);
     Battle_WaitMode0(20);
-    Event_ShowMessage(ACTOR_IVAN, 0);
+    Event_ShowMessage(IWAN, 0);
     Battle_WaitMode0(10);
-    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorRunRepeatedMotion(GERALD, 2);
     Battle_WaitMode0(20);
-    Event_OpenMessage(ACTOR_GERALD, 0);
+    Event_OpenMessage(GERALD, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Battle_WaitMode0(30);
         Actor_FaceDirection(10, FACING_WEST, 0);
@@ -441,16 +441,16 @@ void FieldScene_RunBranchingActorSequence(void)
     Battle_WaitMode0(20);
     Event_ShowMessage(14, 0);
     Battle_WaitMode0(20);
-    Actor_ShowEmote(ACTOR_MIA, 0x102, 40);
-    Event_ShowMessage(ACTOR_MIA, 0);
+    Actor_ShowEmote(MEARI, 0x102, 40);
+    Event_ShowMessage(MEARI, 0);
     Battle_WaitMode0(10);
-    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorRunRepeatedMotion(IWAN, 2);
     Battle_WaitMode0(20);
-    Event_ShowMessage(ACTOR_IVAN, 0);
+    Event_ShowMessage(IWAN, 0);
     Battle_WaitMode0(10);
-    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimationAndWait(GERALD, 3);
     Battle_WaitMode0(30);
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Event_ShowMessage(GERALD, 0);
     Battle_WaitMode0(20);
     Actor_ShowEmote(14, 0x100, 40);
     Event_OpenMessage(14, 0);
@@ -551,30 +551,30 @@ void FieldScene_RunBranchingActorSequence(void)
     Actor_WalkToAndWait(11, 0x148, 0x148);
     Actor_FaceDirection(11, FACING_WEST, 0);
     Battle_WaitMode0(20);
-    Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
-    Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
-    Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
-    Object_SetModeById(ACTOR_GERALD, 2);
+    Actor_SetSpeed(GERALD, 0x13333, 0x9999);
+    Actor_SetSpeed(IWAN, 0x13333, 0x9999);
+    Actor_SetSpeed(MEARI, 0x13333, 0x9999);
+    Object_SetModeById(GERALD, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
+        Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
-    Actor_SetPosition(ACTOR_GERALD, 0, 0);
-    Object_SetModeById(ACTOR_IVAN, 2);
+    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+    Actor_SetPosition(GERALD, 0, 0);
+    Object_SetModeById(IWAN, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_IVAN, record->x.part.pixel, record->z.part.pixel);
+        Actor_SetDestination(IWAN, record->x.part.pixel, record->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
-    Actor_SetPosition(ACTOR_IVAN, 0, 0);
-    Object_SetModeById(ACTOR_MIA, 2);
+    ObjectMotion_CommitCurrentPositionAndActivate(IWAN);
+    Actor_SetPosition(IWAN, 0, 0);
+    Object_SetModeById(MEARI, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_MIA, record->x.part.pixel, record->z.part.pixel);
+        Actor_SetDestination(MEARI, record->x.part.pixel, record->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
-    Actor_SetPosition(ACTOR_MIA, 0, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(MEARI);
+    Actor_SetPosition(MEARI, 0, 0);
     Battle_WaitMode0(10);
     Engine_EventEnd();
 }
@@ -594,7 +594,7 @@ void FieldScene_RunActorEventSequence(void)
     Motion_LaunchFromFocusedObject(1, 0, 16, 0);
     FieldMotion_LaunchFromFocusedObject(2, -16, -8, 0);
     Motion_LaunchFromFocusedObject(3, -16, 24, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
+    ObjectMotion_CommitCurrentPositionAndActivate(MEARI);
     Battle_WaitMode0(20);
     Camera_SetSpeed(0x30000, 0x6000);
     Camera_MoveTo(0x1180000, -1, 0x1480000, 1);
@@ -635,16 +635,16 @@ void FieldScene_RunActorEventSequence(void)
     Actor_FaceDirection(13, FACING_WEST, 0);
     Battle_WaitMode0(30);
     Battle_WaitMode0(10);
-    Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
+    Engine_ActorRunRepeatedMotion(MEARI, 2);
     Battle_WaitMode0(20);
-    Event_ShowMessage(ACTOR_MIA, 0);
+    Event_ShowMessage(MEARI, 0);
     Battle_WaitMode0(10);
-    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorRunRepeatedMotion(IWAN, 2);
     Battle_WaitMode0(20);
-    Event_ShowMessage(ACTOR_IVAN, 0);
+    Event_ShowMessage(IWAN, 0);
     Battle_WaitMode0(10);
-    Actor_ShowEmote(ACTOR_GERALD, 0x102, 40);
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Actor_ShowEmote(GERALD, 0x102, 40);
+    Event_ShowMessage(GERALD, 0);
     Battle_WaitMode0(20);
     Engine_ActorSetAnimationAndWait(10, 4);
     Battle_WaitMode0(20);
@@ -690,9 +690,9 @@ void FieldScene_RunActorEventSequence(void)
     Actor_FaceDirection(12, 0xb000, 0);
     Actor_FaceDirection(13, 0xb000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+    Actor_FaceDirection(GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+    Actor_FaceDirection(MEARI, FACING_NORTH, 0);
     Battle_WaitMode0(30);
     Actor_ShowEmote(11, 0x100, 0);
     Actor_ShowEmote(12, 0x100, 0);
@@ -708,24 +708,24 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(20);
     Event_ShowMessage(13, 0);
     Battle_WaitMode0(10);
-    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorRunRepeatedMotion(IWAN, 2);
     Battle_WaitMode0(30);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(IWAN, FACING_SOUTHEAST, 0);
     Battle_WaitMode0(20);
-    Event_ShowMessage(ACTOR_IVAN, 0);
+    Event_ShowMessage(IWAN, 0);
     Battle_WaitMode0(10);
     Actor_FaceDirection(10, FACING_SOUTH, 0);
     Battle_WaitMode0(30);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(MEARI, FACING_NORTHEAST, 0);
     Battle_WaitMode0(30);
-    Actor_ShowEmote(ACTOR_MIA, 0x102, 40);
+    Actor_ShowEmote(MEARI, 0x102, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x3000, 0);
     Battle_WaitMode0(20);
-    Event_ShowMessage(ACTOR_MIA, 0);
+    Event_ShowMessage(MEARI, 0);
     Battle_WaitMode0(10);
-    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4);
+    Engine_ActorSetAnimationAndWait(GERALD, 4);
     Battle_WaitMode0(20);
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Event_ShowMessage(GERALD, 0);
     Battle_WaitMode0(20);
     Actor_ShowEmote(14, 0x103, 50);
     Actor_FaceDirection(14, FACING_WEST, 0);
@@ -735,8 +735,8 @@ void FieldScene_RunActorEventSequence(void)
     Actor_FaceDirection(11, FACING_WEST, 0);
     Actor_FaceDirection(12, FACING_WEST, 0);
     Actor_FaceDirection(13, FACING_WEST, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x1000, 0);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(IWAN, 0x1000, 0);
+    Actor_FaceDirection(MEARI, FACING_NORTHEAST, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Battle_WaitMode0(30);
         Engine_ActorRunRepeatedMotion(14, 2);
@@ -819,38 +819,38 @@ void FieldScene_RunActorEventSequence(void)
     Battle_WaitMode0(25);
     Event_ShowMessage(10, 0);
     Battle_WaitMode0(10);
-    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
-    Engine_ActorFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
+    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
+    Engine_ActorFaceEachOther(MEARI, IWAN, 0);
     Battle_WaitMode0(30);
     Object_SetModeById(ACTOR_PARTY_LEADER, 3);
-    Object_SetModeById(ACTOR_GERALD, 3);
-    Object_SetModeById(ACTOR_MIA, 3);
-    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Object_SetModeById(GERALD, 3);
+    Object_SetModeById(MEARI, 3);
+    Engine_ActorSetAnimationAndWait(IWAN, 3);
     Battle_WaitMode0(30);
-    Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
-    Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
-    Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
-    Object_SetModeById(ACTOR_GERALD, 2);
+    Actor_SetSpeed(GERALD, 0x13333, 0x9999);
+    Actor_SetSpeed(IWAN, 0x13333, 0x9999);
+    Actor_SetSpeed(MEARI, 0x13333, 0x9999);
+    Object_SetModeById(GERALD, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
+        Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
-    Actor_SetPosition(ACTOR_GERALD, 0, 0);
-    Object_SetModeById(ACTOR_IVAN, 2);
+    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+    Actor_SetPosition(GERALD, 0, 0);
+    Object_SetModeById(IWAN, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_IVAN, record->x.part.pixel, record->z.part.pixel);
+        Actor_SetDestination(IWAN, record->x.part.pixel, record->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
-    Actor_SetPosition(ACTOR_IVAN, 0, 0);
-    Object_SetModeById(ACTOR_MIA, 2);
+    ObjectMotion_CommitCurrentPositionAndActivate(IWAN);
+    Actor_SetPosition(IWAN, 0, 0);
+    Object_SetModeById(MEARI, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_MIA, record->x.part.pixel, record->z.part.pixel);
+        Actor_SetDestination(MEARI, record->x.part.pixel, record->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
-    Actor_SetPosition(ACTOR_MIA, 0, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(MEARI);
+    Actor_SetPosition(MEARI, 0, 0);
     Battle_WaitMode0(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(10, 0xb000, 0);

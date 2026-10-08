@@ -1,0 +1,20 @@
+/*----------------------------------------------------------
+    キャラクター番号
+----------------------------------------------------------*/
+#ifndef CHARA_H
+#define CHARA_H
+
+#define ROBIN       0           /* ロビン */
+#define GERALD      1           /* ジェラルド */
+#define IWAN        2           /* イワン */
+#define MEARI       3           /* メアリィ */
+#define GARUSHIA    4           /* ガルシア */
+#define JASMINE     5           /* ジャスミン */
+#define SHIBA       6           /* シバ */
+#define PIKAADO     7           /* ピカード */
+
+#define CHARA_MAX   8           /* 仲間 8 人 */
+
+#define BTL_CHARA(no)   (300 + (no))    /* 戦闘キャラ */
+
+#endif

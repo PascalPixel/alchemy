@@ -1170,7 +1170,7 @@ void SceneActor_PlacePartyAtSavedTiles(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Engine_ActorSetPosition(ACTOR_GERALD, x, y);
+        Engine_ActorSetPosition(GERALD, x, y);
     }
     {
         s32 x = GameFlag_GetByte(912);
@@ -1180,7 +1180,7 @@ void SceneActor_PlacePartyAtSavedTiles(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Engine_ActorSetPosition(ACTOR_IVAN, x, y);
+        Engine_ActorSetPosition(IWAN, x, y);
     }
     {
         s32 x = GameFlag_GetByte(928);
@@ -1190,6 +1190,6 @@ void SceneActor_PlacePartyAtSavedTiles(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Engine_ActorSetPosition(ACTOR_MIA, x, y);
+        Engine_ActorSetPosition(MEARI, x, y);
     }
 }

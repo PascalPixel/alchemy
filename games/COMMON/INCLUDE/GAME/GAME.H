@@ -8,6 +8,7 @@
 #include "BTLSMN.H"
 #include "BATTLE_UNIT.H"
 #include "ITEM.H"
+#include "CHARA.H"
 #if !GAME_TLA
 #include "CHARACTER.H"
 #include "PRESET_TABLE.H"
@@ -32,7 +33,7 @@ extern struct BtlAct BattleAction_DefinitionTable[];
 extern const u8 Character_ElementGroupTable[];
 extern u32 Character_LevelExpTable[];
 extern s32 Character_StartingEquipOwnerIds[];
-extern s16 Djinn_ElementActorKinds[];
+extern s16 Djinn_ElementSprites[];
 extern s32 Owner_FourColumnValues[];
 extern const u16 Djinn_DefinitionTable[];
 extern const s16 Element_PowerResistCurve[5][2];
@@ -42,8 +43,8 @@ extern u16 gInventorySnapshot[];
 extern u8 gItemCounters[128];
 extern u8 gSaveStamp[];
 extern u8 Item_ArtifactSlotTable[];
-extern s16 Party_CharacterValues[];
-extern s16 Party_CharacterValuesFlag32[];
+extern s16 Character_SpriteTable[];
+extern s16 Character_ChildSpriteTable[];
 extern u8 Summon_OrderList[16];
 void Ability_PlayUseAnimation(s32 action);
 s32 Audio_Check(void);

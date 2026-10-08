@@ -1,21 +1,22 @@
 #include "TYPES.H"
+#include "CHARA.H"
 
-// {番号, 項目} の組, -1 で終わり
-const s16 SideObject_CharacterIdMap[20] =
+// {キャラ番号, 顔番号} の組, -1 で終わり
+const s16 Portrait_CharacterMap[20] =
 {
-	0, 0,
-	18, 56,
-	1, 1,
-	19, 57,
-	2, 2,
-	3, 3,
-	4, 4,
-	5, 5,
-	6, 6,
+	ROBIN, ROBIN,			/* ロビン */
+	18, 56,					/* ロビン(こ) */
+	GERALD, GERALD,			/* ジェラルド */
+	19, 57,					/* ジェラルド(こ) */
+	IWAN, IWAN,				/* イワン */
+	MEARI, MEARI,			/* メアリー */
+	GARUSHIA, GARUSHIA,		/* ガルシア */
+	JASMINE, JASMINE,		/* ジャスミン */
+	SHIBA, SHIBA,			/* シバ */
 	-1, -1,
 };
 
-const s16 SideObject_ActorKindIdMap[100] =
+const s16 Portrait_SpriteMap[100] =
 {
 	93, 0,
 	90, 1,

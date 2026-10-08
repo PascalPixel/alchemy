@@ -34,8 +34,6 @@ void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window
 void UiText_DrawResource(s32 text, struct RenderInput *window, s32 x, s32 y);
 
 
-enum { ROBIN, JERARD, IWAN, MEARI };
-
 u8 *MenuTest_GetEntrances(void)
 {
     return MenuTest_Entrances;
@@ -679,31 +677,31 @@ void FieldScene_AssignCodeSetBToSlots(void)
     Inventory_AddItem(ROBIN, 0xde);
     Inventory_AddItem(ROBIN, 0xdf);
     Inventory_AddItem(ROBIN, 0xe0);
-    Inventory_AddItem(JERARD, 0xe2);
-    Inventory_AddItem(JERARD, 0xe3);
-    Inventory_AddItem(JERARD, 0xe6);
-    Inventory_AddItem(JERARD, 0xe4);
-    Inventory_AddItem(JERARD, 0xe4);
-    Inventory_AddItem(JERARD, 0xe4);
-    Inventory_AddItem(JERARD, 0xe4);
-    Inventory_AddItem(JERARD, 0xe4);
-    Inventory_AddItem(JERARD, 0xe4);
-    Inventory_AddItem(JERARD, 0xe4);
-    Inventory_AddItem(JERARD, 0xe4);
-    Inventory_AddItem(JERARD, 0xe4);
-    Inventory_AddItem(JERARD, 0xe4);
-    Inventory_AddItem(JERARD, 0xe4);
-    Inventory_AddItem(JERARD, 0xe5);
-    Inventory_AddItem(JERARD, 0xe5);
-    Inventory_AddItem(JERARD, 0xe5);
-    Inventory_AddItem(JERARD, 0xe5);
-    Inventory_AddItem(JERARD, 0xe5);
-    Inventory_AddItem(JERARD, 0xe5);
-    Inventory_AddItem(JERARD, 0xe5);
-    Inventory_AddItem(JERARD, 0xe5);
-    Inventory_AddItem(JERARD, 0xe8);
-    Inventory_AddItem(JERARD, 0xe7);
-    Inventory_AddItem(JERARD, 0xed);
+    Inventory_AddItem(GERALD, 0xe2);
+    Inventory_AddItem(GERALD, 0xe3);
+    Inventory_AddItem(GERALD, 0xe6);
+    Inventory_AddItem(GERALD, 0xe4);
+    Inventory_AddItem(GERALD, 0xe4);
+    Inventory_AddItem(GERALD, 0xe4);
+    Inventory_AddItem(GERALD, 0xe4);
+    Inventory_AddItem(GERALD, 0xe4);
+    Inventory_AddItem(GERALD, 0xe4);
+    Inventory_AddItem(GERALD, 0xe4);
+    Inventory_AddItem(GERALD, 0xe4);
+    Inventory_AddItem(GERALD, 0xe4);
+    Inventory_AddItem(GERALD, 0xe4);
+    Inventory_AddItem(GERALD, 0xe4);
+    Inventory_AddItem(GERALD, 0xe5);
+    Inventory_AddItem(GERALD, 0xe5);
+    Inventory_AddItem(GERALD, 0xe5);
+    Inventory_AddItem(GERALD, 0xe5);
+    Inventory_AddItem(GERALD, 0xe5);
+    Inventory_AddItem(GERALD, 0xe5);
+    Inventory_AddItem(GERALD, 0xe5);
+    Inventory_AddItem(GERALD, 0xe5);
+    Inventory_AddItem(GERALD, 0xe8);
+    Inventory_AddItem(GERALD, 0xe7);
+    Inventory_AddItem(GERALD, 0xed);
     Inventory_AddItem(IWAN, 0xf2);
     Inventory_AddItem(IWAN, 0x102);
     Inventory_AddItem(IWAN, 0x10b);
@@ -717,7 +715,7 @@ void FieldScene_AssignCodeSetBToSlots(void)
     Inventory_AddItem(MEARI, 0xcc);
     Inventory_AddItem(MEARI, 0xcf);
     UnitCalc(ROBIN);
-    UnitCalc(JERARD);
+    UnitCalc(GERALD);
     UnitCalc(MEARI);
     UnitCalc(IWAN);
 }
@@ -725,7 +723,7 @@ void FieldScene_AssignCodeSetBToSlots(void)
 s32 CommandTable_ConfigureCommandList(void)
 {
     Party_RemoveActiveOwner(5);
-    Party_AddActiveOwner(JERARD);
+    Party_AddActiveOwner(GERALD);
     Party_AddActiveOwner(MEARI);
     Party_AddActiveOwner(IWAN);
     Item_AdjustCounter(5, 1);
@@ -745,17 +743,17 @@ s32 CommandTable_ConfigureCommandList(void)
     /* FAKEMATCH: the typed void calls put the first three owner arguments before the target count; ordinary calls reverse their order. */
 #if EDITION_INTERNATIONAL
     ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(ROBIN, 50);
-    ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(JERARD, 30);
+    ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(GERALD, 30);
     ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(MEARI, 30);
 #else
     gGameState.coins = 777777;
     ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(ROBIN, 30);
-    ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(JERARD, 30);
+    ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(GERALD, 30);
     ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(MEARI, 30);
 #endif
     Party_AdvanceOwnerCountToTarget(IWAN, 30);
     UnitCalc(ROBIN);
-    UnitCalc(JERARD);
+    UnitCalc(GERALD);
     UnitCalc(MEARI);
     UnitCalc(IWAN);
     return 0;

@@ -308,7 +308,7 @@ void SceneDialogue_ShowLine12BB(void)
     Battle_InitializeRenderObject();
 #endif
     Engine_EventSetMessage((s32)MsgKuupuappuWeDontHaveTimeFor);
-    Engine_EventShowMessage(ACTOR_GERALD, 0);
+    Engine_EventShowMessage(GERALD, 0);
 }
 
 void SceneDialogue_ShowEmptyBarrel(void)

@@ -88,8 +88,8 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     actor0->timer = 0;
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ArutinYama_LeaderRideScript);
     if (GameFlag_IsSet(0x205) != 0) {
-        Actor_SetPosition(ACTOR_GERALD, 0x36e0000, 0x2100000);
-        actor = Actor_Get(ACTOR_GERALD);
+        Actor_SetPosition(GERALD, 0x36e0000, 0x2100000);
+        actor = Actor_Get(GERALD);
         actor->facing = FACING_SOUTH + FACING_STEP;
     }
     Camera_SetSpeed(0x14000, 0x2800);
@@ -135,17 +135,17 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_EventWait(120);
     if (GameFlag_IsSet(0x205) != 0) {
-        Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
-        Actor_WalkTo(ACTOR_GERALD, 0x338, 0x22e);
+        Actor_SetSpeed(GERALD, 0x10000, 0x8000);
+        Actor_WalkTo(GERALD, 0x338, 0x22e);
     }
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x356, 0x248);
     if (GameFlag_IsSet(0x205) != 0) {
-        Engine_ActorSetAnimation(ACTOR_GERALD, 1);
-        Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
+        Engine_ActorSetAnimation(GERALD, 1);
+        Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
     }
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 40);
-    Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
+    Actor_ShowEmote(GERALD, 0x102, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
     Camera_MoveTo(0x3140000, -0x400000, 0x2620000, 1);
     Engine_CameraWaitForMove();
@@ -155,15 +155,15 @@ void FieldScene_RunSharedSetPiece(s32 a0)
         Camera_SetSpeed(0x40000, 0x8000);
         Camera_MoveTo(0x3560000, 0, 0x2480000, 1);
         Engine_CameraWaitForMove();
-        Actor_WalkToAndWait(ACTOR_GERALD, 0x348, 0x228);
-        Actor_WalkToAndWait(ACTOR_GERALD, 0x356, 0x232);
-        Engine_ActorSetAnimation(ACTOR_GERALD, 2);
+        Actor_WalkToAndWait(GERALD, 0x348, 0x228);
+        Actor_WalkToAndWait(GERALD, 0x356, 0x232);
+        Engine_ActorSetAnimation(GERALD, 2);
         actor = Actor_Get(ACTOR_PARTY_LEADER);
         if (actor != NULL) {
-            Actor_SetDestination(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
+            Actor_SetDestination(GERALD, actor->x.part.pixel, actor->z.part.pixel);
         }
-        Engine_ActorWaitForMove(ACTOR_GERALD);
-        Actor_SetPosition(ACTOR_GERALD, 0, 0);
+        Engine_ActorWaitForMove(GERALD);
+        Actor_SetPosition(GERALD, 0, 0);
     }
     Audio_PlayCueFromEventWork();
     GameFlag_Set(0x908);
@@ -185,28 +185,28 @@ void FieldScene_RunFallingRocksWarning(void)
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
         record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
+            Actor_SetPosition(GERALD, record->x.fixed, record->z.fixed);
         }
-        Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
-        Actor_WalkToAndWait(ACTOR_GERALD, 0x320, 140);
-        Actor_FaceDirection(ACTOR_GERALD, 0xc000, 20);
+        Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
+        Actor_WalkToAndWait(GERALD, 0x320, 140);
+        Actor_FaceDirection(GERALD, 0xc000, 20);
         Engine_EventSetMessage(msg + 1);
-        Engine_ActorSetAnimation(ACTOR_GERALD, 4);
+        Engine_ActorSetAnimation(GERALD, 4);
         Engine_EventWait(20);
-        Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
-        Engine_ActorJump(ACTOR_GERALD, 6, 0);
-        Actor_SetSpeed(ACTOR_GERALD, 0x19999, 0xcccc);
-        Object_GetById(ACTOR_GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
-        Actor_WalkToAndWait(ACTOR_GERALD, 0x318, 110);
+        Event_ShowMessageAndWait(GERALD, 0, 10);
+        Engine_ActorJump(GERALD, 6, 0);
+        Actor_SetSpeed(GERALD, 0x19999, 0xcccc);
+        Object_GetById(GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
+        Actor_WalkToAndWait(GERALD, 0x318, 110);
         Engine_EventWait(1);
-        Object_GetById(ACTOR_GERALD)->steering_flags |= ACTOR_FACES_MOTION;
+        Object_GetById(GERALD)->steering_flags |= ACTOR_FACES_MOTION;
         Audio_PlayCue(161);
         Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
-        Object_GetById(ACTOR_GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
-        Actor_WalkToAndWait(ACTOR_GERALD, 0x318, 120);
+        Object_GetById(GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
+        Actor_WalkToAndWait(GERALD, 0x318, 120);
         Engine_EventWait(1);
         {
-            struct FieldActor *record = Actor_Get(ACTOR_GERALD);
+            struct FieldActor *record = Actor_Get(GERALD);
 
             record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
         }
@@ -216,33 +216,33 @@ void FieldScene_RunFallingRocksWarning(void)
         Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
         Engine_EventWait(40);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-        Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
+        Actor_ShowEmote(GERALD, 0x101, 60);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
-        Actor_FaceDirection(ACTOR_GERALD, 0, 20);
+        Actor_FaceDirection(GERALD, 0, 20);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-        Actor_FaceDirection(ACTOR_GERALD, 0x8000, 40);
+        Actor_FaceDirection(GERALD, 0x8000, 40);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
-        Actor_FaceDirection(ACTOR_GERALD, 0, 40);
+        Actor_FaceDirection(GERALD, 0, 40);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-        Actor_FaceDirection(ACTOR_GERALD, 0xc000, 40);
-        Actor_ShowEmote(ACTOR_GERALD, 0x102, 60);
-        Actor_FaceDirection(ACTOR_GERALD, 0x4000, 20);
-        Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
-        Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
-        Actor_SetSpeed(ACTOR_GERALD, 0x28000, 0x14000);
-        Engine_ActorSetAnimation(ACTOR_GERALD, 5);
-        Actor_MoveToAndWait(ACTOR_GERALD, 0x31c, 138);
+        Actor_FaceDirection(GERALD, 0xc000, 40);
+        Actor_ShowEmote(GERALD, 0x102, 60);
+        Actor_FaceDirection(GERALD, 0x4000, 20);
+        Engine_ActorStartRepeatedMotion(GERALD, 2);
+        Event_ShowMessageAndWait(GERALD, 0, 10);
+        Actor_SetSpeed(GERALD, 0x28000, 0x14000);
+        Engine_ActorSetAnimation(GERALD, 5);
+        Actor_MoveToAndWait(GERALD, 0x31c, 138);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-        Actor_MoveToAndWait(ACTOR_GERALD, 0x324, 140);
+        Actor_MoveToAndWait(GERALD, 0x324, 140);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-        Actor_MoveToAndWait(ACTOR_GERALD, 0x324, 166);
-        Actor_MoveToAndWait(ACTOR_GERALD, 0x2fc, 166);
-        Actor_MoveToAndWait(ACTOR_GERALD, 0x2fc, 198);
-        Actor_MoveToAndWait(ACTOR_GERALD, 0x312, 198);
+        Actor_MoveToAndWait(GERALD, 0x324, 166);
+        Actor_MoveToAndWait(GERALD, 0x2fc, 166);
+        Actor_MoveToAndWait(GERALD, 0x2fc, 198);
+        Actor_MoveToAndWait(GERALD, 0x312, 198);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-        Actor_MoveToAndWait(ACTOR_GERALD, 0x312, 246);
-        Engine_ActorSetAnimation(ACTOR_GERALD, 1);
-        Actor_SetPosition(ACTOR_GERALD, 0, 0);
+        Actor_MoveToAndWait(GERALD, 0x312, 246);
+        Engine_ActorSetAnimation(GERALD, 1);
+        Actor_SetPosition(GERALD, 0, 0);
         Engine_EventWait(40);
         FieldScene_RunSharedSetPiece(10);
     }

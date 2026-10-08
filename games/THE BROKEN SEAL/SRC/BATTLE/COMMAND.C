@@ -52,13 +52,6 @@
 #define MIKATA_MAX 7   // 仲間の番号の上限
 #define TGT_MAX 14
 
-// キャラクター
-#define ROBIN 0	  // ロビン
-#define GERALD 1  // ジェラルド
-#define IWAN 2	  // イワン
-#define MEARI 3	  // メアリィ
-#define JASMINE 5 // ジャスミン
-
 void					   UiText_DrawQuantity(s32 value, s32 slot);
 void					   UiText_ShowMessageAndWaitCoreFar(s32 message);
 void					   Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);

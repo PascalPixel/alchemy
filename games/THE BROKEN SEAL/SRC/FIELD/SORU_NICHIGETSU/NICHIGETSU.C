@@ -425,14 +425,14 @@ void FieldScene_RunScene37aSequenceF(void)
         Engine_ActorSetAnimation(1, 2);
         rec = Object_GetById(0);
         if (rec != 0) {
-            Engine_ActorSetDestination(ACTOR_GERALD, rec->x.part.pixel, rec->z.part.pixel);
+            Engine_ActorSetDestination(GERALD, rec->x.part.pixel, rec->z.part.pixel);
         }
         Engine_ActorWaitForMove(1);
         Engine_ActorSetPosition(1, 0, 0);
         Engine_ActorSetAnimation(5, 2);
         rec = Object_GetById(0);
         if (rec != 0) {
-            Engine_ActorSetDestination(ACTOR_JASMINE, rec->x.part.pixel, rec->z.part.pixel);
+            Engine_ActorSetDestination(JASMINE, rec->x.part.pixel, rec->z.part.pixel);
         }
         Engine_ActorWaitForMove(5);
         Engine_ActorSetPosition(5, 0, 0);

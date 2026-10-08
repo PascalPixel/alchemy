@@ -532,37 +532,37 @@ void Kyuden_RunKolimaRequest(void)
         Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
         record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            Engine_ActorSetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
+            Engine_ActorSetPosition(GERALD, record->x.fixed, record->z.fixed);
         }
         record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            Engine_ActorSetPosition(ACTOR_IVAN, record->x.fixed, record->z.fixed);
+            Engine_ActorSetPosition(IWAN, record->x.fixed, record->z.fixed);
         }
         if (Engine_GameFlagIsSet(3) != 0) {
             record = Object_GetById(ACTOR_PARTY_LEADER);
             if (record != 0) {
-                Engine_ActorSetPosition(ACTOR_MIA, record->x.fixed, record->z.fixed);
+                Engine_ActorSetPosition(MEARI, record->x.fixed, record->z.fixed);
             }
         }
-        Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
-        Actor_SetSpeed(ACTOR_IVAN, 0x9999, 0x4ccc);
-        Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
-        Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-        Engine_ActorSetAnimation(ACTOR_IVAN, 2);
-        Engine_ActorSetAnimation(ACTOR_MIA, 2);
-        Actor_SetDestinationOffset(ACTOR_GERALD, -16, 16);
-        Engine_ActorSetDestinationOffset(ACTOR_IVAN, 16, 16);
+        Actor_SetSpeed(GERALD, 0x9999, 0x4ccc);
+        Actor_SetSpeed(IWAN, 0x9999, 0x4ccc);
+        Actor_SetSpeed(MEARI, 0x10000, 0x8000);
+        Engine_ActorSetAnimation(GERALD, 2);
+        Engine_ActorSetAnimation(IWAN, 2);
+        Engine_ActorSetAnimation(MEARI, 2);
+        Actor_SetDestinationOffset(GERALD, -16, 16);
+        Engine_ActorSetDestinationOffset(IWAN, 16, 16);
         if (Engine_GameFlagIsSet(3) != 0) {
-            Engine_ActorSetDestinationOffset(ACTOR_MIA, 32, 16);
+            Engine_ActorSetDestinationOffset(MEARI, 32, 16);
         }
-        Engine_ActorWaitForMove(ACTOR_IVAN);
-        Engine_ActorSetAnimation(ACTOR_GERALD, 1);
-        Engine_ActorSetAnimation(ACTOR_IVAN, 1);
-        Engine_ActorSetAnimation(ACTOR_MIA, 1);
+        Engine_ActorWaitForMove(IWAN);
+        Engine_ActorSetAnimation(GERALD, 1);
+        Engine_ActorSetAnimation(IWAN, 1);
+        Engine_ActorSetAnimation(MEARI, 1);
         Engine_EventWait(10);
-        Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-        Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
-        Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
+        Actor_FaceDirection(MEARI, FACING_NORTH, 0);
+        Actor_FaceDirection(GERALD, FACING_NORTH, 0);
+        Actor_FaceDirection(IWAN, FACING_NORTH, 20);
         Engine_ActorJump(18, 2, 20);
         Actor_FaceDirection(18, FACING_SOUTHWEST + FACING_STEP, 10);
         Event_ShowMessageAndWait(0x2012, 0, 10);
@@ -577,8 +577,8 @@ void Kyuden_RunKolimaRequest(void)
         Actor_FaceDirection(18, FACING_SOUTH + FACING_STEP, 20);
         Actor_ShowEmote(18, 0x105, 40);
         Engine_EventOpenMessage(0x2012, 0);
-        Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
-        Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
+        Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
+        Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
             /* FAKEMATCH: the first offer and the change of heart share one refusal and one acceptance by jumping into each other's blocks, which keeps the reference's single copy of each in this order. */
             goto accepted;
@@ -589,30 +589,30 @@ void Kyuden_RunKolimaRequest(void)
         Actor_FaceDirection(19, FACING_SOUTHEAST + FACING_STEP, 0);
         Engine_ActorSetAnimationAndWait(18, 4);
         Engine_EventShowMessageAndWait(0x2012, 0, 10);
-        Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
-        Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
+        Actor_FaceDirection(GERALD, FACING_NORTH, 0);
+        Actor_FaceDirection(IWAN, FACING_NORTH, 0);
         Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-        Engine_ActorSetAnimation(ACTOR_GERALD, 2);
+        Engine_ActorSetAnimation(GERALD, 2);
         record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            Engine_ActorSetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
+            Engine_ActorSetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
         }
-        Engine_ActorSetAnimation(ACTOR_IVAN, 2);
+        Engine_ActorSetAnimation(IWAN, 2);
         record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            Engine_ActorSetDestination(ACTOR_IVAN, record->x.part.pixel, record->z.part.pixel);
+            Engine_ActorSetDestination(IWAN, record->x.part.pixel, record->z.part.pixel);
         }
         if (Engine_GameFlagIsSet(3) != 0) {
-            Engine_ActorSetAnimation(ACTOR_MIA, 2);
+            Engine_ActorSetAnimation(MEARI, 2);
             record = Object_GetById(ACTOR_PARTY_LEADER);
             if (record != 0) {
-                Engine_ActorSetDestination(ACTOR_MIA, record->x.part.pixel, record->z.part.pixel);
+                Engine_ActorSetDestination(MEARI, record->x.part.pixel, record->z.part.pixel);
             }
         }
-        Engine_ActorWaitForMove(ACTOR_IVAN);
-        Engine_ActorSetPosition(ACTOR_GERALD, 0, 0);
-        Engine_ActorSetPosition(ACTOR_IVAN, 0, 0);
-        Actor_SetPosition(ACTOR_MIA, 0, 0);
+        Engine_ActorWaitForMove(IWAN);
+        Engine_ActorSetPosition(GERALD, 0, 0);
+        Engine_ActorSetPosition(IWAN, 0, 0);
+        Actor_SetPosition(MEARI, 0, 0);
         Engine_GameFlagSet(0x85f);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 752);
@@ -630,37 +630,37 @@ void Kyuden_RunKolimaRequest(void)
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Engine_ActorSetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
+        Engine_ActorSetPosition(GERALD, record->x.fixed, record->z.fixed);
     }
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Engine_ActorSetPosition(ACTOR_IVAN, record->x.fixed, record->z.fixed);
+        Engine_ActorSetPosition(IWAN, record->x.fixed, record->z.fixed);
     }
     if (Engine_GameFlagIsSet(3) != 0) {
         record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            Engine_ActorSetPosition(ACTOR_MIA, record->x.fixed, record->z.fixed);
+            Engine_ActorSetPosition(MEARI, record->x.fixed, record->z.fixed);
         }
     }
-    Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
-    Actor_SetSpeed(ACTOR_IVAN, 0x9999, 0x4ccc);
-    Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    Engine_ActorSetAnimation(ACTOR_IVAN, 2);
-    Engine_ActorSetAnimation(ACTOR_MIA, 2);
-    Actor_SetDestinationOffset(ACTOR_GERALD, -16, 16);
-    Engine_ActorSetDestinationOffset(ACTOR_IVAN, 16, 16);
+    Actor_SetSpeed(GERALD, 0x9999, 0x4ccc);
+    Actor_SetSpeed(IWAN, 0x9999, 0x4ccc);
+    Actor_SetSpeed(MEARI, 0x10000, 0x8000);
+    Engine_ActorSetAnimation(GERALD, 2);
+    Engine_ActorSetAnimation(IWAN, 2);
+    Engine_ActorSetAnimation(MEARI, 2);
+    Actor_SetDestinationOffset(GERALD, -16, 16);
+    Engine_ActorSetDestinationOffset(IWAN, 16, 16);
     if (Engine_GameFlagIsSet(3) != 0) {
-        Engine_ActorSetDestinationOffset(ACTOR_MIA, 32, 16);
+        Engine_ActorSetDestinationOffset(MEARI, 32, 16);
     }
-    Engine_ActorWaitForMove(ACTOR_IVAN);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 1);
-    Engine_ActorSetAnimation(ACTOR_IVAN, 1);
-    Engine_ActorSetAnimation(ACTOR_MIA, 1);
+    Engine_ActorWaitForMove(IWAN);
+    Engine_ActorSetAnimation(GERALD, 1);
+    Engine_ActorSetAnimation(IWAN, 1);
+    Engine_ActorSetAnimation(MEARI, 1);
     Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
+    Actor_FaceDirection(MEARI, FACING_NORTH, 0);
+    Actor_FaceDirection(GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(IWAN, FACING_NORTH, 20);
     Engine_ActorShowEmote(18, 0x101, 60);
     Engine_EventSetMessage((s32)MsgBiribinoYehveChangeHeart);
     Engine_EventOpenMessage(0x2012, 0);
@@ -669,14 +669,14 @@ void Kyuden_RunKolimaRequest(void)
         goto declined;
     }
 accepted:
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+    Actor_FaceDirection(MEARI, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
-    Engine_ActorSetAnimation(ACTOR_MIA, 3);
+    Actor_FaceDirection(GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(IWAN, FACING_NORTH, 20);
+    Engine_ActorSetAnimation(MEARI, 3);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
-    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimationAndWait(IWAN, 3);
     Engine_ActorShowEmote(18, 0x105, 60);
     Engine_EventSetMessage((s32)MsgBiribinoHmmmWellGrant);
     Event_ShowMessage(0x2012, 0);
@@ -695,86 +695,86 @@ accepted:
     Actor_MoveToAndWait(20, 894, 668);
     Engine_EventWait(40);
     Event_ShowMessageAndWait(0x2012, 0, 10);
-    Actor_ShowEmote(ACTOR_MIA, 0x101, 0);
+    Actor_ShowEmote(MEARI, 0x101, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x101, 60);
+    Actor_ShowEmote(GERALD, 0x101, 0);
+    Actor_ShowEmote(IWAN, 0x101, 60);
     Engine_ActorSetAnimationAndWait(18, 4);
     Event_ShowMessageAndWait(0x2012, 0, 10);
-    Actor_ShowEmote(ACTOR_GERALD, 0x103, 60);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 10);
+    Actor_ShowEmote(GERALD, 0x103, 60);
+    Actor_FaceDirection(GERALD, FACING_NORTHEAST, 10);
     Engine_EventOpenMessage(0x4001, 0);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(MEARI, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         do {
-            Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
-            Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
+            Engine_ActorStartRepeatedMotion(GERALD, 2);
+            Engine_ActorRunRepeatedMotion(IWAN, 2);
             Engine_EventSetMessage((s32)MsgBiribinoSeriousDoesntBother);
             Engine_EventOpenMessage(0x4001, 0);
         } while (Engine_EventChooseYesNo(0, 0) != 1);
     }
-    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimationAndWait(GERALD, 3);
     Engine_EventSetMessage((s32)MsgBiribinoWellDontLet);
     Event_ShowMessageAndWait(0x4001, 0, 10);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+    Actor_FaceDirection(MEARI, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
+    Actor_FaceDirection(GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(IWAN, FACING_NORTH, 10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_EventWait(20);
     Actor_ShowEmote(18, 0x105, 60);
     Engine_EventShowMessageAndWait(0x2012, 0, 20);
-    Actor_ShowEmote(ACTOR_IVAN, 0x102, 60);
+    Actor_ShowEmote(IWAN, 0x102, 60);
     Actor_FaceDirection(18, FACING_SOUTHEAST + FACING_STEP, 10);
     Actor_ShowEmote(18, 0x101, 60);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 40);
-    Engine_ActorFaceDirection(ACTOR_GERALD, FACING_EAST, 20);
-    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
+    Actor_ShowEmote(GERALD, 0x101, 40);
+    Engine_ActorFaceDirection(GERALD, FACING_EAST, 20);
+    Engine_ActorRunRepeatedMotion(GERALD, 1);
     Event_ShowMessageAndWait(0x4001, 0, 10);
-    Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
+    Actor_FaceDirection(MEARI, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 20);
-    Actor_ShowEmote(ACTOR_IVAN, 0x102, 60);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
+    Actor_ShowEmote(IWAN, 0x102, 60);
+    Actor_FaceDirection(IWAN, FACING_WEST, 10);
     Engine_EventShowMessageAndWait(0x4002, 0, 10);
-    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
+    Engine_ActorRunRepeatedMotion(GERALD, 1);
     Engine_EventWait(40);
-    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimationAndWait(GERALD, 3);
     Event_ShowMessageAndWait(0x4001, 0, 10);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 10);
-    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 1);
+    Actor_FaceDirection(GERALD, FACING_NORTHEAST, 10);
+    Engine_ActorStartRepeatedMotion(GERALD, 1);
     Engine_EventOpenMessage(0x4001, 0);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(MEARI, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
     while (Engine_EventChooseYesNo(0, 0) != 0) {
         Engine_EventSetMessage((s32)MsgBiribinoComeSaidYoud);
         Engine_EventOpenMessage(0x4001, 0);
     }
     Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
-    Engine_ActorFaceDirection(ACTOR_GERALD, FACING_EAST, 10);
+    Actor_FaceDirection(MEARI, FACING_WEST, 0);
+    Engine_ActorFaceDirection(GERALD, FACING_EAST, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
-    Actor_ShowEmote(ACTOR_IVAN, 0x105, 60);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
+    Engine_ActorSetAnimationAndWait(GERALD, 3);
+    Actor_ShowEmote(IWAN, 0x105, 60);
+    Actor_FaceDirection(IWAN, FACING_WEST, 10);
+    Engine_ActorSetAnimationAndWait(IWAN, 4);
     Engine_EventSetMessage((s32)MsgBiribinoWellSGoing);
     Event_ShowMessageAndWait(0x4002, 0, 20);
     Engine_ActorRunRepeatedMotion(18, 1);
     Actor_FaceDirection(18, FACING_SOUTH + FACING_STEP, 10);
     Engine_ActorSetAnimationAndWait(18, 4);
     Event_ShowMessageAndWait(0x2012, 0, 10);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+    Actor_FaceDirection(MEARI, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
-    Engine_ActorSetAnimation(ACTOR_MIA, 3);
+    Actor_FaceDirection(GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(IWAN, FACING_NORTH, 20);
+    Engine_ActorSetAnimation(MEARI, 3);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
-    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimationAndWait(IWAN, 3);
     Engine_EventWait(40);
     Actor_ShowEmote(18, 0x105, 80);
     Actor_FaceDirection(19, FACING_EAST + FACING_STEP, 10);
@@ -798,37 +798,37 @@ accepted:
     Engine_ActorWaitForMove(20);
     Engine_ActorSetPosition(20, 0, 0);
     Engine_EventWait(20);
-    Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
+    Actor_SetAttachedEffect(MEARI, 0x102);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
-    Engine_ActorSetAttachedEffect(ACTOR_IVAN, 0x102);
+    Actor_SetAttachedEffect(GERALD, 0x102);
+    Engine_ActorSetAttachedEffect(IWAN, 0x102);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(19, 2);
     Engine_EventShowMessageAndWait(19, 0, 10);
     Engine_ActorSetAnimationAndWait(18, 3);
     Event_ShowMessageAndWait(0x2012, 0, 20);
     Engine_ActorSetAnimationAndWait(19, 3);
-    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorRunRepeatedMotion(IWAN, 2);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x4002, 0, 10);
     Actor_FaceDirection(19, FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_FaceDirection(18, FACING_SOUTHEAST + FACING_STEP, 10);
     Engine_ActorSetAnimationAndWait(18, 4);
     Event_ShowMessageAndWait(0x2012, 0, 10);
-    Actor_ShowEmote(ACTOR_GERALD, 0x103, 60);
+    Actor_ShowEmote(GERALD, 0x103, 60);
     Engine_EventShowMessageAndWait(0x4001, 0, 10);
     Actor_FaceDirection(18, FACING_SOUTH + FACING_STEP, 10);
     Engine_ActorSetAnimation(18, 4);
     Event_ShowMessageAndWait(0x2012, 0, 10);
-    Engine_ActorSetAnimation(ACTOR_IVAN, 4);
+    Engine_ActorSetAnimation(IWAN, 4);
     Engine_EventShowMessageAndWait(0x4002, 0, 10);
     Actor_FaceDirection(18, FACING_SOUTHEAST + FACING_STEP, 10);
     Engine_ActorSetAnimationAndWait(18, 3);
     Event_ShowMessageAndWait(0x2012, 0, 10);
-    Actor_ShowEmote(ACTOR_MIA, 0x107, 0);
+    Actor_ShowEmote(MEARI, 0x107, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x107, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x107, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x107, 60);
+    Actor_ShowEmote(GERALD, 0x107, 0);
+    Actor_ShowEmote(IWAN, 0x107, 60);
     Actor_FaceDirection(18, FACING_SOUTHWEST + FACING_STEP, 10);
     Engine_ActorSetAnimationAndWait(18, 3);
     Engine_EventWait(10);
@@ -848,36 +848,36 @@ accepted:
     Actor_FaceDirection(19, FACING_EAST + FACING_STEP, 10);
     Event_ShowMessageAndWait(0x4013, 0, 20);
     Engine_ActorStop(ACTOR_PARTY_LEADER);
-    Engine_ActorStop(ACTOR_GERALD);
-    Engine_ActorStop(ACTOR_IVAN);
+    Engine_ActorStop(GERALD);
+    Engine_ActorStop(IWAN);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x105, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x105, 60);
+    Actor_ShowEmote(GERALD, 0x105, 0);
+    Actor_ShowEmote(IWAN, 0x105, 60);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
-    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimationAndWait(IWAN, 3);
     Call3(Object_SetTargetAndCallback, 19, 0x10000, (s32)Kyuden_FacingActions);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 2);
+    Engine_ActorSetAnimation(GERALD, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Engine_ActorSetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
+        Engine_ActorSetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
     }
-    Engine_ActorSetAnimation(ACTOR_IVAN, 2);
+    Engine_ActorSetAnimation(IWAN, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Engine_ActorSetDestination(ACTOR_IVAN, record->x.part.pixel, record->z.part.pixel);
+        Engine_ActorSetDestination(IWAN, record->x.part.pixel, record->z.part.pixel);
     }
     if (Engine_GameFlagIsSet(3) != 0) {
-        Engine_ActorSetAnimation(ACTOR_MIA, 2);
+        Engine_ActorSetAnimation(MEARI, 2);
         record = Object_GetById(ACTOR_PARTY_LEADER);
         if (record != 0) {
-            Engine_ActorSetDestination(ACTOR_MIA, record->x.part.pixel, record->z.part.pixel);
+            Engine_ActorSetDestination(MEARI, record->x.part.pixel, record->z.part.pixel);
         }
     }
-    Engine_ActorWaitForMove(ACTOR_IVAN);
-    Engine_ActorSetPosition(ACTOR_GERALD, 0, 0);
-    Engine_ActorSetPosition(ACTOR_IVAN, 0, 0);
-    Engine_ActorSetPosition(ACTOR_MIA, 0, 0);
+    Engine_ActorWaitForMove(IWAN);
+    Engine_ActorSetPosition(GERALD, 0, 0);
+    Engine_ActorSetPosition(IWAN, 0, 0);
+    Engine_ActorSetPosition(MEARI, 0, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 894, 752);
     gEventWork->transition_frames = 16;
@@ -1013,35 +1013,35 @@ void RunEventScript02(void)
 
     actor = Object_GetById(0);
     if (actor != 0) {
-        Actor_SetPosition(ACTOR_GERALD, actor->x.fixed, actor->z.fixed);
+        Actor_SetPosition(GERALD, actor->x.fixed, actor->z.fixed);
     }
     actor = Object_GetById(0);
     if (actor != 0) {
-        Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+        Actor_SetPosition(IWAN, actor->x.fixed, actor->z.fixed);
     }
     actor = Object_GetById(0);
     if (actor != 0) {
-        Actor_SetPosition(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+        Actor_SetPosition(MEARI, actor->x.fixed, actor->z.fixed);
     }
 
-    Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
-    Actor_SetSpeed(ACTOR_IVAN, 0x9999, 0x4ccc);
-    Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    Engine_ActorSetAnimation(ACTOR_IVAN, 2);
-    Engine_ActorSetAnimation(ACTOR_MIA, 2);
-    Actor_SetDestinationOffset(ACTOR_GERALD, -16, 16);
-    Actor_SetDestinationOffset(ACTOR_IVAN, 16, 16);
-    Actor_SetDestinationOffset(ACTOR_MIA, 32, 16);
-    Engine_ActorWaitForMove(ACTOR_IVAN);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 1);
-    Engine_ActorSetAnimation(ACTOR_IVAN, 1);
-    Engine_ActorSetAnimation(ACTOR_MIA, 1);
+    Actor_SetSpeed(GERALD, 0x9999, 0x4ccc);
+    Actor_SetSpeed(IWAN, 0x9999, 0x4ccc);
+    Actor_SetSpeed(MEARI, 0x10000, 0x8000);
+    Engine_ActorSetAnimation(GERALD, 2);
+    Engine_ActorSetAnimation(IWAN, 2);
+    Engine_ActorSetAnimation(MEARI, 2);
+    Actor_SetDestinationOffset(GERALD, -16, 16);
+    Actor_SetDestinationOffset(IWAN, 16, 16);
+    Actor_SetDestinationOffset(MEARI, 32, 16);
+    Engine_ActorWaitForMove(IWAN);
+    Engine_ActorSetAnimation(GERALD, 1);
+    Engine_ActorSetAnimation(IWAN, 1);
+    Engine_ActorSetAnimation(MEARI, 1);
     Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
-    Engine_ActorWaitForMove(ACTOR_MIA);
-    Actor_FaceDirection(ACTOR_MIA, 0xa000, 0);
+    Actor_FaceDirection(GERALD, 0xc000, 0);
+    Actor_FaceDirection(IWAN, 0xc000, 0);
+    Engine_ActorWaitForMove(MEARI);
+    Actor_FaceDirection(MEARI, 0xa000, 0);
     Object_RefreshSelectorById(19);
     Engine_EventWait(20);
 
@@ -1071,23 +1071,23 @@ void RunEventScript02(void)
     Engine_EventWait(20);
     if (GameFlag_IsSet(0x84f) != 0) {
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
-        Actor_ShowEmote(ACTOR_GERALD, 261, 40);
+        Actor_ShowEmote(GERALD, 261, 40);
     } else {
         Engine_EventWait(40);
     }
 
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 10);
+    Actor_FaceDirection(GERALD, 0xc000, 10);
     Event_ShowMessageAndWait(0x4001, 0, 10);
-    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Actor_FaceDirection(IWAN, 0xc000, 10);
+    Engine_ActorSetAnimationAndWait(IWAN, 3);
     Event_ShowMessage(0x4002, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0xa000, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
+    Actor_FaceDirection(MEARI, 0xa000, 10);
+    Engine_ActorSetAnimationAndWait(MEARI, 3);
     Event_ShowMessageAndWait(0x4003, 0, 20);
     Engine_ActorSetAnimationAndWait(18, 3);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x2012, 0, 20);
-    Actor_ShowEmote(ACTOR_GERALD, 259, 0);
+    Actor_ShowEmote(GERALD, 259, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
 
     if (GameFlag_IsSet(0x84f) != 0) {
@@ -1126,9 +1126,9 @@ void RunEventScript02(void)
     Engine_EventSetMessage((s32)MsgBiribinoWasButWorriedYehMight);
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0, 0);
-    Actor_FaceDirection(ACTOR_MIA, 0x8000, 40);
+    Actor_FaceDirection(GERALD, 0xe000, 0);
+    Actor_FaceDirection(IWAN, 0, 0);
+    Actor_FaceDirection(MEARI, 0x8000, 40);
     Engine_ActorRunRepeatedMotion(18, 2);
     Event_ShowMessageAndWait(0x2012, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
@@ -1137,9 +1137,9 @@ void RunEventScript02(void)
     Actor_ShowEmote(18, 261, 60);
     Event_ShowMessageAndWait(0x2012, 0, 10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
-    Engine_ActorSetAnimation(ACTOR_IVAN, 3);
-    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimation(IWAN, 3);
+    Engine_ActorSetAnimationAndWait(MEARI, 3);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(18, 3);
     Event_ShowMessageAndWait(0x2012, 0, 10);
@@ -1176,32 +1176,32 @@ void RunEventScript02(void)
     Engine_ActorSetAnimationAndWait(18, 3);
     Event_ShowMessageAndWait(0x2012, 0, 10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
-    Engine_ActorSetAnimation(ACTOR_IVAN, 3);
-    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimation(IWAN, 3);
+    Engine_ActorSetAnimationAndWait(MEARI, 3);
     Engine_EventWait(20);
 
-    Engine_ActorSetAnimation(ACTOR_GERALD, 2);
+    Engine_ActorSetAnimation(GERALD, 2);
     actor = Object_GetById(0);
     if (actor != 0) {
-        Actor_SetDestination(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
+        Actor_SetDestination(GERALD, actor->x.part.pixel, actor->z.part.pixel);
     }
-    Engine_ActorSetAnimation(ACTOR_IVAN, 2);
+    Engine_ActorSetAnimation(IWAN, 2);
     actor = Object_GetById(0);
     if (actor != 0) {
-        Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
+        Actor_SetDestination(IWAN, actor->x.part.pixel, actor->z.part.pixel);
     }
-    Engine_ActorSetAnimation(ACTOR_MIA, 2);
+    Engine_ActorSetAnimation(MEARI, 2);
     actor = Object_GetById(0);
     if (actor != 0) {
-        Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
+        Actor_SetDestination(MEARI, actor->x.part.pixel, actor->z.part.pixel);
     }
 
-    Engine_ActorWaitForMove(ACTOR_GERALD);
-    Actor_SetPosition(ACTOR_GERALD, 0, 0);
-    Actor_SetPosition(ACTOR_IVAN, 0, 0);
-    Engine_ActorWaitForMove(ACTOR_MIA);
-    Actor_SetPosition(ACTOR_MIA, 0, 0);
+    Engine_ActorWaitForMove(GERALD);
+    Actor_SetPosition(GERALD, 0, 0);
+    Actor_SetPosition(IWAN, 0, 0);
+    Engine_ActorWaitForMove(MEARI);
+    Actor_SetPosition(MEARI, 0, 0);
     Engine_EventWait(20);
     Actor_FaceDirection(18, 0x5000, 0);
     FieldObject_SetTargetAndCallback(0, 0x10013, Kyuden_FacingActions);

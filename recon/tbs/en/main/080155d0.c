@@ -1,5 +1,27 @@
 /* 080155d0: ARM, compiled C (push starts at r5: -fcall-used-r4), for the game ARM route (K1:
  * stock agbcc_arm at the library ARM setting, alchemy diff --arm).
+ * Stock agbcc_arm (2026-10-08, S13 session 4): differ 0 in English (alchemy diff --arm) and in
+ *   German, Spanish, French and Italian (diff cannot score their ARM scaffolds: each build of
+ *   this draft compared instruction by instruction with the ROM extent, 0x2f4 bytes at
+ *   080142d0 de, 080145d0 es and fr, 080155d0 it; pool words differ only by relocation).
+ *   The European branch: bits holds ch itself (one variable for the code and the row bits, so
+ *   ch takes ip as native), the font test is ch < 256 || font != 0 (stock gives native's
+ *   subs/movne/movls flag), the width table is indexed through idx = bits - 32 (written
+ *   wp[bits - 32] the - 32 folds into the address), each arm subtracts 32 itself and reads the
+ *   glyph width (cross jumping then shares the ret store), no bits > 111 return, no code test.
+ *   Its devices, measured as differ against the German extent when removed: x's and y's
+ *   copies through asms (2, 4), the width store's memory asm (4), c3's mov through an asm (4),
+ *   a volatile barrier after the colour constants (38), w's store memory asm (6), a memory
+ *   barrier after the narrow arm's rows (39), the pass loop's next store asm (2), px & 7
+ *   through UiText_Dot (8), ofs in r3 (28); col in lr changes nothing there (0).
+ *   The plot macro now sets the VRAM base before sub (Japanese needs it; no change in the
+ *   other five). An analysis-only agbcc_arm whose arm_adjust_cost charges anti and output
+ *   dependences 1 (built in scratch, never used for credit) compiles the European branch
+ *   without any device but ofs in r3 to differ 0, and the Japanese draft (recon/tbs/ja/main/
+ *   080155d0.c) without scheduling devices to differ 0: the devices here stand in for that one
+ *   habit.
+ *   Japanese: its own body of 0x30c bytes (1bpp 10-byte font rows, a kanji table, frame 100);
+ *   see its draft for why stock cannot place its last loads and stores.
  * Stock agbcc_arm (2026-10-07, S13 session 3): listing 196, draft 196, common 196, differ 0
  *   in English. Reshaping (117 to 72): bits is also the glyph index; rows set in two steps;
  *   the plot macro takes the pixel's y. Devices (72 to 0), each tagged with the differ its
@@ -100,14 +122,14 @@ struct UiTextWindow {
 extern u8 UiSprite_CursorFrameTiles[];
 extern u8 UiText_Glyphs[];
 
-/* FAKEMATCH: px & 7 through an asm: stock charges its anti dependence on the mla, which reads r3, the multiply's 16 cycles, tying it with the VRAM add; an asm's links cost 1, so the add and its orr follow the mask shift as native (8 to 0) */
+/* FAKEMATCH: px & 7 through an asm: stock charges its anti dependence on the mla, which reads r3, the multiply's 16 cycles, tying it with the VRAM add; an asm's links cost 1, so the add and its orr follow the mask shift as native (8 to 0; European 8 to 0) */
 #define UiText_Dot(px) ({ u32 dot_; asm("and %0, %1, #7" : "=r"(dot_) : "r"(px)); dot_; })
 
 #define UiText_PlotPixel(width, px, py, color) \
 { \
     u32 ty = (py) >> 3; \
-    u32 sub = ((py) & 7) * 2; \
     u8 *vram = (u8 *)0x06002500; \
+    u32 sub = ((py) & 7) * 2; \
     u16 *dst = (u16 *)((u32)(vram + ((px >> 3) * (width - 2) + ty) * 32) | ((sub | (UiText_Dot(px) >> 2)) << 1)); \
     u32 mask = 15 << ((px & 3) * 4); \
  \
@@ -126,31 +148,51 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x0, u32 y0, u8 *fo
     s32 bits;
     u32 row;
     u32 pass;
-    /* FAKEMATCH: col in lr, also carrying ch - 222 from each arm to the join: GCSE's copy of ch - 222 in block 3 then prefers lr, the wide arm's copy vanishes and the narrow arm computes it first (15 to 0; as a variable of its own, 15) */
+    /* FAKEMATCH: col in lr, also carrying ch - 222 from each arm to the join: GCSE's copy of ch - 222 in block 3 then prefers lr, the wide arm's copy vanishes and the narrow arm computes it first (15 to 0; as a variable of its own, 15; the European branch has no code and does not change) */
     register u32 col asm("lr");
-    /* FAKEMATCH: ofs in r3: expand_preferences hands it r0 (w is returned in r0, and bits dies in wp[bits] and in bits * 26); in r0 the arms take r3 for their reloads and every round-robin reload register after them shifts (58 to 0) */
+    /* FAKEMATCH: ofs in r3: expand_preferences hands it r0 (w is returned in r0, and bits dies in wp[bits] and in bits * 26); in r0 the arms take r3 for their reloads and every round-robin reload register after them shifts (58 to 0; European 28 to 0) */
     register u32 ofs asm("r3");
 
+#if defined(TBS_EDITION_EN)
     /* FAKEMATCH: y's copy through an asm: stock charges its anti dependence on the push the push's 5 cycles, as sub sp's true one, and the higher LUID then puts it below sub sp; an asm's link costs 1 (2 to 0) */
     asm("mov %0, %1" : "=r"(y) : "r"(y0));
     /* FAKEMATCH: x's copy through an asm: compiled, it is ready at T-2 with priority 5 from the push and takes the branch's slot (6 to 0) */
     asm("mov %0, %1" : "=r"(x) : "r"(x0));
     bits = ch - 32;
+#else
+    /* FAKEMATCH: x's copy through an asm, as English's (2 to 0) */
+    asm("mov %0, %1" : "=r"(x) : "r"(x0));
+    /* FAKEMATCH: y's copy through an asm, as English's (4 to 0) */
+    asm("mov %0, %1" : "=r"(y) : "r"(y0));
+    bits = ch;
+#endif
     width = win->width;
-    /* FAKEMATCH: the width store sits between the cmp and the branch: this asm's memory clobber takes the store's dependence at cost 1, where stock charges the branch 2 (6 to 0) */
+    /* FAKEMATCH: the width store sits between the cmp and the branch: this asm's memory clobber takes the store's dependence at cost 1, where stock charges the branch 2 (6 to 0; European 4 to 0) */
     asm("" : "=r"(b) : "0"(b) : "memory");
+#if defined(TBS_EDITION_EN)
     if ((u32)bits > 111)
         return 1;
     if (ch < 256 || (font != 0 && ch - 222 < 2)) {
+#else
+    if ((u32)bits < 256 || font != 0) {
+#endif
         if (font != 0) {
+#if defined(TBS_EDITION_EN)
             u8 *src = font + ch * 32;
+#else
+            u8 *src = font + bits * 32;
+#endif
             u32 c1;
             u32 c3;
             u8 *wp;
+#if !defined(TBS_EDITION_EN)
+            u32 idx;
+#endif
             s32 w;
             u32 px;
             u32 color;
 
+#if defined(TBS_EDITION_EN)
             /* FAKEMATCH: c1's mov through an asm: stock gives c1's chain priority 2 through its anti dependence on the src store, which puts the c3 constant and the table load before it (8 to 0) */
             asm("mov %0, #4352" : "=r"(c1));
             c1 += 17;
@@ -162,6 +204,20 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x0, u32 y0, u8 *fo
             row = 0;
             /* FAKEMATCH: reads row and, through memory, w's store, so the store sits between the cmp and the branch and row = 0 waits for the w load (4 to 0) */
             asm("" : "=r"(b) : "0"(b), "r"(row) : "memory");
+#else
+            c1 = 0x1111;
+            /* FAKEMATCH: c3's mov through an asm: stock charges its anti dependence on the src store (r2) 2, which puts c1's add below the src store and c3's mov below c1's store; an asm's links cost 1 (4 to 0) */
+            asm("mov %0, #13056" : "=r"(c3));
+            c3 += 51;
+            /* FAKEMATCH: a barrier after the colour constants: native's row = 0, table load and index follow every colour store; without it stock moves the y compare up among them and sched1 swaps b and row + 1 between r5 and r4 (38 to 0) */
+            asm volatile("");
+            row = 0;
+            wp = UiSprite_CursorFrameTiles + 0x800;
+            idx = bits - 32;
+            w = wp[idx];
+            /* FAKEMATCH: w's store sits between the cmp and the branch: this asm's memory clobber takes the store's dependence at cost 1, where stock charges the branch 2 (6 to 0) */
+            asm("" : "=r"(b) : "0"(b) : "memory");
+#endif
             for (; row < 8 && y + row < 32; row++) {
                 for (col = 0; col < 8; col++) {
                     if (col & 1)
@@ -172,12 +228,14 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x0, u32 y0, u8 *fo
                         color = (b & 15) == 1 ? c1 : c3;
                         px = x + col;
                         if (px >> 3 < 30)
+                            /* FAKEMATCH: px & 7 through UiText_Dot's asm, measured there */
                             UiText_PlotPixel(width, px, y + row, color);
                     }
                 }
             }
             return w;
         }
+#if defined(TBS_EDITION_EN)
         col = ch - 222;
         ofs = bits * 26;
         rows = (u16 *)(UiText_Glyphs + ofs);
@@ -198,6 +256,20 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x0, u32 y0, u8 *fo
     } else {
         ret = gw;
     }
+#else
+        ofs = (bits - 32) * 26;
+        rows = (u16 *)(UiText_Glyphs + ofs);
+        rows++;
+        /* FAKEMATCH: the rows store comes before the glyph width load: without this barrier stock hoists the load over the rows add and store, and the arms no longer share their ret store (39 to 0) */
+        asm volatile("" : : : "memory");
+        ret = *(u16 *)(UiText_Glyphs + ofs);
+    } else {
+        ofs = (bits - 32) * 32;
+        rows = (u16 *)(UiText_Glyphs + ofs);
+        rows += 4;
+        ret = *(u16 *)(UiText_Glyphs + ofs);
+    }
+#endif
     for (pass = 0; pass < 4; pass++) {
         u16 *next;
         u32 color;
@@ -225,6 +297,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x0, u32 y0, u8 *fo
             for (col = 0; col < 14; col++) {
                 if (bits < 0) {
                     px = x + col;
+                    /* FAKEMATCH: px & 7 through UiText_Dot's asm, measured there */
                     UiText_PlotPixel(width, px, y + row, color);
                 }
                 if ((bits <<= 1) == 0)
@@ -234,7 +307,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x0, u32 y0, u8 *fo
                 break;
             bits = *next++;
             bits <<= 16;
-            /* FAKEMATCH: the next pointer's reload store sits next to the loop branch: this asm's memory clobber takes the store's dependence at cost 1, where stock charges the branch 2 (2 to 0) */
+            /* FAKEMATCH: the next pointer's reload store sits next to the loop branch: this asm's memory clobber takes the store's dependence at cost 1, where stock charges the branch 2 (2 to 0; European 2 to 0) */
             asm("" : "=r"(bits) : "0"(bits) : "memory");
         }
     }

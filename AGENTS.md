@@ -433,7 +433,10 @@ never a file or a function.
   tagged literal bytes beside their asset, as pret keeps garbage data (an
   S1 exception for proven packer garbage only); and each encoder takes one
   rule for all its streams, verified on every stream of its kind in both
-  games, never per-file options, as pret's one generic LZ rule.
+  games. A standard compressor may take its standard flags per file, as
+  pokecrystal's `gfx/lz.mk` does; a reconstructed packer takes no invented
+  per-file flag without clear evidence Camelot ran its tool that way
+  (Pascal, 2026-10-08).
   "100%" is announced only as a pret reviewer would accept it: no game
   function matching through instruction-emitting inline asm, nothing in the
   build read from the ROM, and `recon/<game>` gone except its raw listings

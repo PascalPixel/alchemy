@@ -25,7 +25,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/PUSH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3bc_overlay.o"(.rodata.x0200cbec)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/DATA.o"(.data)
     }
     .bss (NOLOAD) : { "*/resource_3bc_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

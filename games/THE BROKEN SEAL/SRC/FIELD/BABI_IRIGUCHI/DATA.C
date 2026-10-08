@@ -1,0 +1,373 @@
+#include "TYPES.H"
+#include "ABILITY_IDS.H"
+#include "FIELD_SCENE.H"
+#include "OBJCMD.H"
+#include "text/MSG_IDS.H"
+
+void ActorPresentation_PlaceActorTwelveAtTile20And12(void);
+void ActorPresentation_SetSceneCellByFlag985(void);
+void BabiIriguchi_CloseTruthDoor(void);
+void BabiIriguchi_EnableEffectChildOption(void);
+void BabiIriguchi_FlipTruthDoorSwitch(void);
+void BabiIriguchi_JumpFromLedge(void);
+void BabiIriguchi_OpenTruthDoor(void);
+void FieldScene_RunBranchingActorSequence(void);
+void FieldScene_RunFourCallSequence(void);
+void FieldScene_RunStep11(void);
+void FieldScene_RunStep12WithPosition(void);
+void FieldScene_RunStep13WithTwoPositions(void);
+void FieldScene_RunStep15(void);
+void FieldScene_RunStepWithValue2693(void);
+void SceneActor_PushObjectAheadIfLevel(void);
+void SceneActor_RunSlotZeroFacingCheck(void);
+void SceneState_ApplyRectAt32x78(void);
+void SceneState_BranchOnActorEightOrNineTile(void);
+void SceneState_ConfigureRegion82_7AndApply768(void);
+void SceneState_SetValue8Mode66(void);
+
+s16 StagedActor_DirectionSteps[] = {
+	0, 16,
+	0, 16,
+	0, 16,
+	16, 0,
+	16, 0,
+	16, 0,
+	16, 0,
+	0, -16,
+	0, -16,
+	0, -16,
+	0, -16,
+	-16, 0,
+	-16, 0,
+	-16, 0,
+	-16, 0,
+	0, 16,
+};
+
+u32 StagedActor_FootprintKinds[] = {
+	207, 205, 228, 229, 298, 297,
+};
+
+s32 StagedActor_FootprintBounds[] = {
+	-32, -8, 32, 8,
+	-8, -32, 8, 32,
+	-32, -16, 32, 0,
+	-8, -32, 8, 32,
+	-32, -8, 32, 8,
+	-8, -32, 8, 32,
+};
+
+s32 gEffectScript0[] = {
+	SC_WAIT(1),
+	SC_LOOP(22, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 gEffectScript1[] = {
+	SC_WAIT(1),
+	SC_LOOP(44, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 gEffectScript2[] = {
+	SC_WAIT(1),
+	SC_LOOP(126, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 *gEffectScripts[] = {
+	gEffectScript0,
+	gEffectScript1,
+	gEffectScript2,
+};
+
+s32 gBabiIriguchiPlacements30[] = {
+	SC_SET(SW_SCALE_X, 0x10000),
+	SC_SET(SW_SCALE_Y, 0x10000),
+	SC_LABEL(1),
+	SC_ADD(SW_SCALE_X, -0x4000),
+	SC_ADD(SW_SCALE_Y, 0x2000),
+	SC_WAIT(2),
+	SC_ADD(SW_SCALE_X, 0x2000),
+	SC_ADD(SW_SCALE_Y, -0x1000),
+	SC_WAIT(2),
+	SC_ADD(SW_SCALE_X, 0x1000),
+	SC_ADD(SW_SCALE_Y, -2048),
+	SC_WAIT(2),
+	SC_ADD(SW_SCALE_X, 0x1000),
+	SC_ADD(SW_SCALE_Y, -2048),
+	SC_WAIT(4),
+	SC_ADD(SW_SCALE_X, -0x4000),
+	SC_ADD(SW_SCALE_Y, 0x2000),
+	SC_WAIT(2),
+	SC_ADD(SW_SCALE_X, 0x2000),
+	SC_ADD(SW_SCALE_Y, -0x1000),
+	SC_WAIT(2),
+	SC_ADD(SW_SCALE_X, 0x1000),
+	SC_ADD(SW_SCALE_Y, -2048),
+	SC_WAIT(2),
+	SC_ADD(SW_SCALE_X, 0x1000),
+	SC_ADD(SW_SCALE_Y, -2048),
+	SC_WAIT(120),
+	SC_WAIT(1),
+	SC_LOOP(SC_FOREVER, SC_TO(1)),
+};
+
+struct SceneEntrance gBabiIriguchiEntrances3[] = {
+	{ 0, CONDITION_ALWAYS, 136, 0, 376, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 200, 0, 424, FACING_NORTH, 0, 0, 0, 384, 448, 0 },
+	{ 2, CONDITION_ALWAYS, 200, 0, 200, FACING_SOUTH, 0, 0, 0, 384, 448, 0 },
+	{ 3, CONDITION_ALWAYS, 216, 0, 184, FACING_SOUTH, 0, 0, 0, 384, 448, 0 },
+	{ 4, CONDITION_ALWAYS, 104, 0, 312, FACING_SOUTH, 0, 0, 0, 384, 448, 0 },
+	{ 5, CONDITION_ALWAYS, 296, 0, 312, FACING_SOUTH, 0, 0, 0, 384, 448, 0 },
+	{ 6, CONDITION_ALWAYS, 312, 0, 88, FACING_SOUTH, 0, 0, 0, 384, 448, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gBabiIriguchiEntrances2[] = {
+	{ 0, CONDITION_ALWAYS, 136, 0, 376, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 232, 0, 488, FACING_SOUTH, 0, 128, 432, 368, 672, 0 },
+	{ 2, CONDITION_ALWAYS, 280, 0, 488, FACING_SOUTH, 0, 128, 432, 368, 672, 0 },
+	{ 3, CONDITION_ALWAYS, 248, 0, 648, FACING_SOUTH, 0, 128, 432, 368, 672, 0 },
+	{ 4, CONDITION_ALWAYS, 424, 0, 120, FACING_SOUTH, 0, 352, 64, 592, 320, 0 },
+	{ 5, CONDITION_ALWAYS, 456, 0, 120, FACING_SOUTH, 0, 352, 64, 592, 320, 0 },
+	{ 6, CONDITION_ALWAYS, 504, 0, 120, FACING_SOUTH, 0, 352, 64, 592, 320, 0 },
+	{ 7, CONDITION_ALWAYS, 472, 0, 288, FACING_NORTH, 0, 352, 64, 592, 320, 0 },
+	{ 8, CONDITION_ALWAYS, 120, 0, 120, FACING_SOUTH, 0, 48, 64, 288, 320, 0 },
+	{ 9, CONDITION_ALWAYS, 184, 0, 288, FACING_NORTH, 0, 48, 64, 288, 320, 0 },
+	{ 10, CONDITION_ALWAYS, 728, 0, 168, FACING_SOUTH, 0, 624, 96, 864, 256, 0 },
+	{ 11, CONDITION_ALWAYS, 776, 0, 184, FACING_SOUTH, 0, 624, 96, 864, 256, 0 },
+	{ 12, CONDITION_ALWAYS, 488, 0, 184, FACING_SOUTH, 0, 352, 64, 592, 320, 0 },
+	{ 13, CONDITION_ALWAYS, 248, 0, 584, FACING_SOUTH, 0, 128, 432, 368, 672, 0 },
+	{ 14, CONDITION_ALWAYS, 440, 0, 216, FACING_SOUTH, 0, 352, 64, 592, 320, 0 },
+	{ 15, CONDITION_ALWAYS, 216, 0, 584, FACING_SOUTH, 0, 128, 432, 368, 672, 0 },
+	{ 16, CONDITION_ALWAYS, 456, 0, 168, FACING_SOUTH, 0, 352, 64, 592, 320, 0 },
+	{ 17, CONDITION_ALWAYS, 232, 0, 536, FACING_SOUTH, 0, 128, 432, 368, 672, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gBabiIriguchiEntrances1[] = {
+	{ 1, CONDITION_ALWAYS, 248, 0, 120, FACING_SOUTH, 0, 96, 48, 384, 432, 0 },
+	{ 2, CONDITION_ALWAYS, 136, 0, 368, FACING_NORTH, 0, 96, 48, 384, 432, 0 },
+	{ 3, CONDITION_ALWAYS, 168, 0, 344, FACING_SOUTH, 0, 96, 48, 384, 432, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gBabiIriguchiEntrancesOther[] = {
+	{ 0, CONDITION_ALWAYS, 328, 0, 240, FACING_NORTH, 0, 0, 0, 464, 400, 0 },
+	{ 1, CONDITION_ALWAYS, 112, 0, 360, FACING_NORTH, 0, 0, 0, 464, 400, 0 },
+	{ 2, CONDITION_ALWAYS, 136, 0, 32, FACING_SOUTH, 0, 0, 0, 464, 400, 0 },
+	{ SCENE_TABLE_END },
+};
+
+s16 gBabiIriguchiRegions3[] = {
+	96, -20, 320, 112, -4, 336, -1, 4,
+	288, -20, 320, 304, -4, 336, -1, 5,
+	304, -20, 96, 320, -4, 112, -1, 6,
+	-1, 0, 0, 0, 0, 0, 0, 0,
+};
+
+u32 gBabiIriguchiExits[] = {
+	SCENE_EXITS(176),
+	SCENE_EXIT(1, 177, 2),
+	SCENE_EXIT(2, 175, 7),
+	SCENE_EXIT(3, 175, 9),
+	SCENE_EXIT(4, 173, 1),
+	SCENE_EXIT(5, 173, 3),
+	SCENE_EXIT(6, 173, 2),
+	SCENE_EXIT(0, 175, 0),
+	SCENE_EXIT(1, 175, 4),
+	SCENE_EXIT(2, 176, 3),
+	SCENE_EXIT(3, 175, 8),
+	SCENE_EXIT(4, 175, 1),
+	SCENE_EXIT(5, 175, 2),
+	SCENE_EXIT(6, 176, 2),
+	SCENE_EXIT(7, 175, 5),
+	SCENE_EXIT(8, 175, 6),
+	SCENE_EXIT(9, 175, 11),
+	SCENE_EXIT(10, 175, 3),
+	SCENE_EXIT(11, 175, 12),
+	SCENE_EXIT(12, 175, 13),
+	SCENE_EXIT(13, 175, 14),
+	SCENE_EXIT(14, 175, 15),
+	SCENE_EXIT(15, 175, 16),
+	SCENE_EXIT(16, 175, 17),
+	SCENE_EXIT(17, 174, 3),
+	SCENE_EXIT(18, 174, 2),
+	SCENE_EXIT(0, 174, 0),
+	SCENE_EXIT(1, 172, 1),
+	SCENE_EXIT(2, 175, 10),
+	SCENE_EXIT(0, 177, 0),
+	SCENE_EXIT(1, 2, 31),
+	SCENE_EXIT(2, 176, 1),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement gBabiIriguchiNoPlacements[] = {
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gBabiIriguchiPlacements3[] = {
+	{ 0xfd, CONDITION_ALWAYS, 7,
+		PIXELS(88), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xfd, CONDITION_ALWAYS, 7,
+		PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0xee, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(296), 0, PIXELS(130), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x98, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements30,
+		PIXELS(176), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x74, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements30,
+		PIXELS(240), 0, PIXELS(240), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x98, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements30,
+		PIXELS(216), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x72, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements30,
+		PIXELS(184), 0, PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gBabiIriguchiPlacements2[] = {
+	{ 0x5d, 0x72, ACTOR_STAND,
+		PIXELS(472), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gBabiIriguchiPlacements1[] = {
+	{ ACTOR_GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ ACTOR_IVAN, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ ACTOR_MIA, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x128, CONDITION_ALWAYS, 7,
+		PIXELS(296), 0, PIXELS(240), FACING_WEST, TALK_KEEP_FACING, 0 },
+	{ 0x128, CONDITION_ALWAYS, 7,
+		PIXELS(312), 0, PIXELS(240), FACING_EAST, TALK_KEEP_FACING, 0 },
+	{ 0x39, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(312), 0, PIXELS(352), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(328), 0, PIXELS(328), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x65, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(344), 0, PIXELS(336), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(344), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x46, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(328), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gBabiIriguchiPlacementsOther[] = {
+	{ 0x72, CONDITION_ALWAYS, ACTOR_WANDER,
+		PIXELS(128), 0, PIXELS(264), FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x74, CONDITION_ALWAYS, ACTOR_WANDER,
+		PIXELS(96), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x87, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(184), 0, PIXELS(200), FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x87, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(232), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x100, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(376), 0, PIXELS(216), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent gBabiIriguchiEvents3[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
+	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFourCallSequence) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_BranchOnActorEightOrNineTile) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiOnlyTwoOfThoseSixEver) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiTheyJustKickedUsOutOf) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiTheySetFireToEverythingThats) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiWereTheOnesWhoAttackedBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiTheOtherFourDidntSeemTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiWhatCouldTheyBePlanningFor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiNoneOfThemHadAnyTorches) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(BabiIriguchi_JumpFromLedge) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(BabiIriguchi_JumpFromLedge) },
+	{ PSYNERGY_ON_ACTOR(0xc), 10, 0x300, EVENT_SCRIPT(SceneState_ConfigureRegion82_7AndApply768) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gBabiIriguchiEvents2[] = {
+	{ 0x31, 5, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 6, CONDITION_ALWAYS, 2 },
+	{ 0x21, 1, CONDITION_ALWAYS, 3 },
+	{ 0x31, 2, CONDITION_ALWAYS, 4 },
+	{ 0x31, 3, CONDITION_ALWAYS, 5 },
+	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 6 },
+	{ 0x21, 7, CONDITION_ALWAYS, 7 },
+	{ 0x21, 8, CONDITION_ALWAYS, 8 },
+	{ 0x31, 9, CONDITION_ALWAYS, 9 },
+	{ 0x21, 10, CONDITION_ALWAYS, 10 },
+	{ EVENT_EXIT, 11, CONDITION_ALWAYS, 18 },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep11) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep12WithPosition) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep13WithTwoPositions) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep15) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue8Mode66) },
+	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWithValue2693) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gBabiIriguchiEvents1[] = {
+	{ 0x31, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_TOUCH, 10, 0x988, EVENT_SCRIPT(FieldScene_RunBranchingActorSequence) },
+	{ EVENT_TOUCH, 20, IF_FLAG_SET(0x301), EVENT_SCRIPT(BabiIriguchi_CloseTruthDoor) },
+	{ EVENT_TOUCH, 21, 0x301, EVENT_SCRIPT(BabiIriguchi_CloseTruthDoor) },
+	{ EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(BabiIriguchi_OpenTruthDoor) },
+	{ EVENT_TALK, 10, 0x989, MSGNO(MsgBabiIriguchiIAmCountingOnYouRobin) },
+	{ EVENT_TALK, 11, 0x989, MSGNO(MsgBabiIriguchiWhenISawThemTheyHad) },
+	{ EVENT_TALK, 12, 0x989, MSGNO(MsgBabiIriguchiIAmSorryButNotEven) },
+	{ EVENT_TALK, 13, 0x989, MSGNO(MsgBabiIriguchiThisAllStartedWhenActorWas) },
+	{ EVENT_TALK, 14, 0x989, MSGNO(MsgBabiIriguchiIfYouCanOpenThisDoor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x989, MSGNO(MsgBabiIriguchiIDoNotMeanToDoubt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x989, MSGNO(MsgBabiIriguchiNobodyThinksTheDoorCanBe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x989, MSGNO(MsgBabiIriguchiIDontKnowWhatTheyreWaiting) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x989, MSGNO(MsgBabiIriguchiThisIsAllAHugeWaste) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x989, MSGNO(MsgBabiIriguchiIHopeTheyCanOpenThe) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiIBegOfYouRobinPlease) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiICantBelieveThisDoorActually) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiItTakesGreatCourageToContinue) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiImVeryInterestedInWhatLies) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiIAmNotAfraidOfDanger) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiIfAnythingHappensToActorTolbi) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiIfThisDoorOpensMaybeWe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiIBetTheMonstersAroundHere) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiThisIsABigWasteOf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiIDontWantToHinderActors) },
+	{ SEARCH(SEARCH_UNNAMED), 60, CONDITION_ALWAYS, EVENT_SCRIPT(BabiIriguchi_FlipTruthDoorSwitch) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetSceneCellByFlag985) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAt32x78) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gBabiIriguchiEventsOther[] = {
+	{ 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_PushObjectAheadIfLevel) },
+	{ 0x202, 51, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_RunSlotZeroFacingCheck) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_PlaceActorTwelveAtTile20And12) },
+	{ 0x10009315, 12, CONDITION_ALWAYS, EVENT_SCRIPT(BabiIriguchi_EnableEffectChildOption) },
+	{ PSYNERGY_ON_ACTOR(0x93), 12, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_PlaceActorTwelveAtTile20And12) },
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiWeHaventBeenOrderedToStart) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiThereWereStrangeFolkGoingTo) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiItsOddThatBabiWouldBuild) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiCuttingTheseStonesAndStackingThem) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiThereWasABigFightThat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiIfFaranWentAfterThemThen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiWhyWouldTheyWantToRush) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiNowThatIThinkOfIt) },
+	{ 0x413, 100, 0xfbc, FIND_ITEM(0xc4) },
+	{ SCENE_EVENTS_END },
+};

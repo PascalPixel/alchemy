@@ -23,7 +23,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/FIND_SLOT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3ba_overlay.o"(.rodata.x0200be44)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/DATA.o"(.data)
     }
     .bss : { "*/resource_3ba_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

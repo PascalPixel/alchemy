@@ -11,7 +11,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/IRIGUCHI.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3c5_overlay.o"(.rodata.x0200afd4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/DATA.o"(.data)
     }
     /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }
 }

@@ -6,7 +6,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/SEKIZO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/BEAMS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/IMPORT.o"(.text)
-        "*/resource_37b_overlay.o"(.rodata.x0200a56c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/DATA.o"(.data)
     }
     .bss ALIGN(16) (NOLOAD) :
     {

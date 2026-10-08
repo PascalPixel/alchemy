@@ -10,7 +10,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/STOP_DMA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/SCHEDULE_FADE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/IMPORT.o"(.text)
-        "*/resource_3ca_overlay.o"(.rodata.x020094ac)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/DATA.o"(.data)
     }
     .bss : { "*/resource_3ca_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

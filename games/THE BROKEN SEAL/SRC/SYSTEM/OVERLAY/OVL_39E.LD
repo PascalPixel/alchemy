@@ -8,7 +8,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/JIIN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/IMPORT.o"(.text)
-        "*/resource_39e_overlay.o"(.rodata.x0200c584)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/DATA.o"(.data)
     }
     /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }
 }

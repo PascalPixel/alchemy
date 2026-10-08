@@ -1,0 +1,290 @@
+#include "TYPES.H"
+#include "ABILITY_IDS.H"
+#include "EDITION.H"
+#include "FIELD_SCENE.H"
+#include "OBJCMD.H"
+#include "text/MSG_IDS.H"
+
+void FieldScene_DispatchBySceneId(void);
+void FieldScene_RunActorEightFacingDialogue(void);
+void FieldScene_RunActorEightResetSequence(void);
+void FieldScene_RunActorNineFlagDialogueA(void);
+void FieldScene_RunActorNineFlagDialogueB(void);
+void FieldScene_RunActorTenCountStep(void);
+void FieldScene_RunScene378SequenceB(void);
+void FieldScene_RunSupplementalSequenceOne(void);
+void SceneDialogue_RunActorEightDialogue(void);
+void SceneDialogue_RunActorEightFlaggedDialogue(void);
+void SceneDialogue_RunActorEightFollowupDialogue(void);
+void ShindenHeya_RunAltarScene(void);
+
+u32 ShindenHeya_LeaderCircleScript[] = {
+	28, 2, 21, 15, 0x28000, 21, 16, 0x8000,
+	0x80010000, 3, 0xcc0000, 0, 0xbc0000, 1, 3, 0xd80000,
+	0, 0xc00000, 1, 3, 0xec0000, 0, 0xbc0000, 1,
+	3, 0xf00000, 0, 0xa80000, 1, 3, 0xec0000, 0,
+	0x9c0000, 1, 3, 0xd80000, 0, 0x900000, 1, 3,
+	0xcc0000, 0, 0x9c0000, 1, 3, 0xc00000, 0, 0xa80000,
+	1, 12, 4, 0x80010000, 28, 1, 16,
+};
+
+u32 ShindenHeya_GeraldCircleScript[] = {
+	28, 2, 21, 15, 0x28000, 21, 16, 0x8000,
+	0x80010000, 3, 0xcc0000, 0, 0x9c0000, 1, 3, 0xb80000,
+	0, 0x900000, 1, 3, 0xac0000, 0, 0x9c0000, 1,
+	3, 0xa00000, 0, 0xa80000, 1, 3, 0xac0000, 0,
+	0xbc0000, 1, 3, 0xb80000, 0, 0xc00000, 1, 3,
+	0xcc0000, 0, 0xbc0000, 1, 3, 0xd00000, 0, 0xa80000,
+	1, 12, 4, 0x80010000, 28, 1, 16,
+};
+
+s32 ShindenHeya_ItemIconGrowScript[] = {
+	SC_SET(SW_SCALE_X, 0x8000),
+	SC_SET(SW_SCALE_Y, 0x8000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0xc000),
+	SC_SET(SW_SCALE_Y, 0xc000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0xe000),
+	SC_SET(SW_SCALE_Y, 0xe000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0xf000),
+	SC_SET(SW_SCALE_Y, 0xf000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x10000),
+	SC_SET(SW_SCALE_Y, 0x10000),
+	SC_WAIT(16),
+	SC_SET(SW_SCALE_X, 0x16000),
+	SC_SET(SW_SCALE_Y, 0x16000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x18000),
+	SC_SET(SW_SCALE_Y, 0x18000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x12000),
+	SC_SET(SW_SCALE_Y, 0x12000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x10000),
+	SC_SET(SW_SCALE_Y, 0x10000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x16000),
+	SC_SET(SW_SCALE_Y, 0x16000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x18000),
+	SC_SET(SW_SCALE_Y, 0x18000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x12000),
+	SC_SET(SW_SCALE_Y, 0x12000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x10000),
+	SC_SET(SW_SCALE_Y, 0x10000),
+	SC_WAIT(2),
+	SC_END,
+};
+
+s32 ShindenHeya_ItemIconEndScript[] = {
+	SC_WAIT(60),
+	SC_FREE,
+};
+
+struct SceneEntrance ShindenHeya_TableA[] = {
+	{ 0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
+	{ 2, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
+	{ 10, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
+	{ 11, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
+	{ 12, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
+	{ 20, CONDITION_ALWAYS, 192, 0, 168, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
+	{ 21, CONDITION_ALWAYS, 192, 0, 168, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
+	{ 29, CONDITION_ALWAYS, 200, 0, 240, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
+	{ 32, CONDITION_ALWAYS, 200, 0, 240, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
+	{ 35, CONDITION_ALWAYS, 200, 0, 240, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 ShindenHeya_TableB[] = {
+	SCENE_EXITS(9),
+	SCENE_EXIT(1, 4, 1),
+	SCENE_EXIT(10, 20, 11),
+	SCENE_EXIT(11, 23, 11),
+	SCENE_EXIT(20, 9, 21),
+	SCENE_EXIT(30, 5, 12),
+	SCENE_EXIT(40, 75, 3),
+	SCENE_EXIT(41, 30, 9),
+	SCENE_EXIT(42, 72, 11),
+	SCENE_EXIT(50, 1, 1),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement ShindenHeya_PlacementA[] = {
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement ShindenHeya_PlacementB[] = {
+	{ ACTOR_GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ ACTOR_MIA, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(200), 0, PIXELS(130), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(152), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(248), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+#if EDITION_INTERNATIONAL
+struct ScenePlacement ShindenHeya_PlacementSequenceB[] = {
+	{ ACTOR_IVAN, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+#endif
+
+struct ScenePlacement ShindenHeya_PlacementC[] = {
+	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(200), 0, PIXELS(130), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x7a, CONDITION_ALWAYS, ACTOR_WANDER,
+		PIXELS(200), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0xdd, CONDITION_ALWAYS, 7,
+		PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement ShindenHeya_PlacementD[] = {
+	{ ACTOR_GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(208), 0, PIXELS(168), FACING_NORTH + FACING_STEP, 3, 0 },
+	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(168), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(224), 0, PIXELS(216), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(246), 0, PIXELS(198), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(168), 0, PIXELS(208), FACING_NORTH + FACING_STEP, 3, 0 },
+	{ 0x75, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(232), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, 3, 0 },
+	{ 0xfc, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(8), 0, PIXELS(8), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement ShindenHeya_PlacementE[] = {
+	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(200), 0, PIXELS(132), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent ShindenHeya_SceneTableA[] = {
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorEightFacingDialogue) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShindenOurPsynergyWasGivenToUs) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShindenPsynergyIsAPowerThatShould) },
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent ShindenHeya_SceneTableB[] = {
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchBySceneId) },
+	{ EVENT_TALK, 9, 0x855, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueA) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenGoOnIfThatEasesThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueB) },
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 10 },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent ShindenHeya_SceneTableC[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 11 },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchBySceneId) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenIHopeTheEarthquakesArentA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueB) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent ShindenHeya_SceneTableD[] = {
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne) },
+	{ EVENT_TALK, 1, CONDITION_ALWAYS, MSGNO(MsgShindenItIsATerribleBurdenTo) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgShindenMotherWouldNeverDoubtYourCourage) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgShindenIDontBlameYouICouldnt) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShindenWasItRightToRefuseWhen) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShindenItsClearThatTheGreatHealer) },
+	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(ShindenHeya_RunAltarScene) },
+	{ EVENT_TOUCH, 2, 0x200, EVENT_SCRIPT(FieldScene_RunActorEightResetSequence) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent ShindenHeya_SceneTableE[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorEightFacingDialogue) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShindenThePowerOfMtAlephStems) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorTenCountStep) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenThePowerOfMyPsynergyHas) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShindenTheAngaranContinentWillCertainlySee) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgShindenMyPsynergyHasntChangedAtAll) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent ShindenHeya_SceneTableF[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorEightFacingDialogue) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene378SequenceB) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShindenWhyIsItThatDifferentAdepts) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenItllBeDifficultToReachSol) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShindenISeeABeautifulGirlHas) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgShindenItsNotFairIWantTo) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent ShindenHeya_SceneTableG[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 40 },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorEightFollowupDialogue) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorEightFollowupDialogue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x909, MSGNO(MsgShindenPleaseSaveTheHelplessInAltin) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenAlmightyFateMustHaveHeardMe) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent ShindenHeya_SceneTableH[] = {
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorEightFlaggedDialogue) },
+	{ EVENT_TALK, 9, 0x845, MSGNO(MsgShindenPleaseGiveMeStrengthAtTimes) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x845, MSGNO(MsgShindenWillITurnIntoATree) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x845, MSGNO(MsgShindenSomeoneWillSaveUsJustKeep) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShindenHowAboutThatOurWishesHave) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenTheSignsOfDangerAreActually) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShindenPeaceWillBeKeptAsLong) },
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 41 },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent ShindenHeya_SceneTableI[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 42 },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorEightDialogue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenWhenYouStayInXianFor) },
+	{ SCENE_EVENTS_END },
+};
+
+s32 ShindenHeya_CursorBob[] = {
+	SC_WAIT(0),
+	SC_WAIT(1),
+	SC_SYNC,
+	SC_SYNC,
+	SC_POS(0x2, 0x3, 0x4),
+	SC_MOVE(0x2, 0x2, 0x1),
+	SC_SYNC,
+	SC_SYNC,
+};
+
+s32 ShindenHeya_OwnerEffectScript[] = {
+	SC_ADD(SW_Y, -0x8000),
+	SC_ADD(SW_TARGET_Y, -0x8000),
+	SC_WAIT(1),
+	SC_LOOP(96, SC_TOP),
+	SC_FREE,
+};
+
+s32 ShindenHeya_SparkEndScript[] = {
+	SC_FREE,
+};

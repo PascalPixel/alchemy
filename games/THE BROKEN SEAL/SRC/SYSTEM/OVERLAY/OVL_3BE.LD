@@ -11,7 +11,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/DOU.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3be_overlay.o"(.rodata.x02009618)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/DATA.o"(.data)
     }
     /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }
 }

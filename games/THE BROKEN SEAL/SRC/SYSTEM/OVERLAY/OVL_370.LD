@@ -7,7 +7,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/TILEGRID.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/PASSWORD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/IMPORT.o"(.text)
-        "*/resource_370_overlay.o"(.rodata.x020094d4)
+        "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/DATA.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

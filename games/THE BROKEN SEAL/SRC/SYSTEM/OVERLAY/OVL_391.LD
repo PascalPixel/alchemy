@@ -10,7 +10,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HASHI/ALTERNATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HASHI/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_391_overlay.o"(.rodata.x0200ad68)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HASHI/DATA.o"(.data)
     }
     .bss (NOLOAD) :
     {

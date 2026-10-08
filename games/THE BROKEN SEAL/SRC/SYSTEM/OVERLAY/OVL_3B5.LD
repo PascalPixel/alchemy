@@ -7,7 +7,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/MACHI.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3b5_overlay.o"(.rodata.x02008ea8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/DATA.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

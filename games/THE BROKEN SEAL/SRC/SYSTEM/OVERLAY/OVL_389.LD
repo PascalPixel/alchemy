@@ -10,7 +10,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/SEQUENCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_389_overlay.o"(.rodata.x02009554)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/DATA.o"(.data)
     }
     .bss (NOLOAD) : { *(.bss COMMON) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

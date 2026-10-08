@@ -15,7 +15,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3a6_overlay.o"(.rodata.x02009da0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/DATA.o"(.data)
     }
     /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }
 }

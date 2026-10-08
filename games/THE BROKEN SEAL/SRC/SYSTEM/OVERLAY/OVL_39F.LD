@@ -11,7 +11,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MORI.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_39f_overlay.o"(.rodata.x0200aef8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/DATA.o"(.data)
     }
     /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }
 }

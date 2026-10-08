@@ -8,7 +8,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ROCKS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/RESTORE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/IMPORT.o"(.text)
-        "*/resource_3a4_overlay.o"(.rodata.x0200bd28)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/DATA.o"(.data)
     }
     .bss : { "*/resource_3a4_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

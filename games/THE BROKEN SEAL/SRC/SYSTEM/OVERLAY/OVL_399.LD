@@ -6,7 +6,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/MURA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/CHOREOGRAPHY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/IMPORT.o"(.text)
-        "*/resource_399_overlay.o"(.rodata.x0200a3f0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/DATA.o"(.data)
     }
     .bss : { "*/resource_399_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

@@ -34,6 +34,14 @@ enum ActorAnimation {
     (src_x), (src_y), (width), (height), (frames)
 #define MAP_CELL_STEPS_END 0xffff
 
+// セル書き換え: 手順と書き込み先のセル
+struct MapCellAnim
+{
+	const u16 *steps;
+	u16 x;
+	u16 y;
+};
+
 void Engine_EventBegin(void);
 void Engine_EventEnd(void);
 void Engine_EventWait(s32 frames);

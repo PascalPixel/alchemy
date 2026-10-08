@@ -10,7 +10,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/CHOJO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_39d_overlay.o"(.rodata.x0200b884)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/DATA.o"(.data)
     }
     /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }
 }

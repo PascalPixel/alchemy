@@ -8,7 +8,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/IRIGUCHI.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/IMPORT.o"(.text)
-        "*/resource_387_overlay.o"(.rodata.x02009234)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/DATA.o"(.data)
     }
     /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }
 }

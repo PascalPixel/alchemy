@@ -1,0 +1,110 @@
+#include "TYPES.H"
+#include "ABILITY_IDS.H"
+#include "FIELD_SCENE.H"
+#include "OBJCMD.H"
+
+void KorimaKi_RunMessageScene(void);
+void KorimaKi_TalkToToreto(void);
+void PaletteScene_AdvanceEffectFrame(void);
+void PaletteScene_RunActorEightBranch(void);
+void PaletteScene_RunActorNineBranch(void);
+void PaletteScene_RunFlaggedBranch(void);
+
+s32 SceneAction_ActorOneEntry[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(312), 0, PIXELS(230)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, FACING_NORTH),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 SceneAction_ActorTwoEntry[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(346), 0, PIXELS(224)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, FACING_NORTH),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 SceneAction_ActorThreeEntry[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(333), 0, PIXELS(240)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, FACING_NORTH),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 SceneAction_GroupFinish[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(328), 0, PIXELS(212)),
+	SC_SYNC,
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+struct SceneEntrance gKorimaKiEntrances[] = {
+	{ 0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, 0, 0, 512, 448, 0 },
+	{ 1, CONDITION_ALWAYS, 136, 0, 424, FACING_NORTH, 0, 0, 0, 512, 448, 0 },
+	{ 2, CONDITION_ALWAYS, 328, 16, 200, FACING_SOUTH, 0, 0, 0, 512, 448, 0 },
+	{ SCENE_TABLE_END },
+};
+
+s16 gKorimaKiRegions[] = {
+	320, 88, 176, 336, 104, 192, -1, 2,
+	-1, 0, 0, 0, 0, 0, 0, 0,
+};
+
+u32 gKorimaKiExits[] = {
+	SCENE_EXITS(44),
+	SCENE_EXIT(1, 43, 2),
+	SCENE_EXIT(2, 45, 1),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement gKorimaKiPlacements[] = {
+	{ 0x47, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x38, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(136), 0, PIXELS(270), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x16, CONDITION_ALWAYS, 7,
+		PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x16, CONDITION_ALWAYS, 7,
+		PIXELS(136), 0, PIXELS(270), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x16, CONDITION_ALWAYS, 7,
+		PIXELS(327), 0, PIXELS(194), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x16, CONDITION_ALWAYS, 7,
+		PIXELS(136), 0, PIXELS(272), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x37, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ ACTOR_GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+	{ ACTOR_IVAN, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+	{ ACTOR_MIA, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent gKorimaKiEvents[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ 0xb814, 12, 0x845, EVENT_SCRIPT(PaletteScene_RunFlaggedBranch) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(KorimaKi_RunMessageScene) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(KorimaKi_TalkToToreto) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(PaletteScene_RunActorNineBranch) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40c, 0x844, EVENT_SCRIPT(KorimaKi_TalkToToreto) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, EVENT_SCRIPT(PaletteScene_RunActorEightBranch) },
+	{ SCENE_EVENTS_END },
+};
+
+s32 gKorimaKiEffectScript[] = {
+	SC_ADD(SW_SCALE_X, 0x1999),
+	SC_CALL(PaletteScene_AdvanceEffectFrame),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};

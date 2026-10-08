@@ -9,7 +9,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KORIMA/PALETTE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_393_overlay.o"(.rodata.x02008f10)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/DATA.o"(.data)
     }
     .bss : { "*/resource_393_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

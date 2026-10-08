@@ -14,9 +14,9 @@ SECTIONS
         *libgcc.a:_lshrdi3.o(.text)
         *libgcc.a:_pack_df.o(.text)
         *libgcc.a:_unpack_df.o(.text)
-        "*/resource_3bf_overlay.o"(.rodata.x0200ded8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/DATA.o"(.data)
         *libgcc.a:_thenan_df.o(.rodata)
-        "*/resource_3bf_overlay.o"(.rodata.x0200dfa4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/DATA2.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

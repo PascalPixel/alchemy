@@ -206,9 +206,10 @@ pub(crate) fn analyze(
                 12 if index > 0 && words[index - 1].1 & 0x0FFF_1000 == 0x08BD_1000 => {
                     bump(&mut e.exits, "bx-ip")
                 }
+                // mov lr, pc; bx ip: a compiled call through ip.
+                _ if after_link => {}
                 12 => bump(&mut e.markers, "ip-return"),
                 rm if holds(adr, rm) => bump(&mut e.markers, "pc-interwork"),
-                _ if after_link => {}
                 _ => bump(&mut e.exits, "bx-reg"),
             }
         } else if w & 0x0FBF_0FFF == 0x010F_0000 {
@@ -287,6 +288,9 @@ pub(crate) fn analyze(
         } else if w & 0x0C00_0000 == 0 {
             if w & 0x0F00_00F0 == 0x0000_0090 {
                 written = 1 << rn | if bit(23) { 1 << rd } else { 0 };
+                if bit(23) && unpaired_halves(w, &words[index + 1..]) {
+                    bump(&mut e.markers, "multiply-unpaired");
+                }
             } else if w & 0x0FB0_0FF0 == 0x0100_0090 {
                 written = 1 << rd;
             } else if w & 0x0E00_0090 == 0x0000_0090 && w & 0x60 != 0 {
@@ -352,6 +356,87 @@ pub(crate) fn analyze(
         bump(&mut e.markers, "unsaved-reg");
     }
     e
+}
+
+/// A long multiply that keeps both halves outside a register pair. Both
+/// compilers keep both halves only through mulsidi3 or its accumulating
+/// forms, which print a DImode register as RdLo, RdLo + 1, early-clobbered
+/// apart from smull's inputs; smulsi3_highpart frees RdLo but discards it,
+/// so an smull or umull counts only when a later instruction reads RdLo.
+fn unpaired_halves(w: u32, after: &[(u32, u32)]) -> bool {
+    let (hi, lo, rs, rm) = ((w >> 16) & 15, (w >> 12) & 15, (w >> 8) & 15, w & 15);
+    if w & (1 << 21) != 0 {
+        return hi != lo + 1;
+    }
+    let outside = hi != lo + 1 || [rm, rs].contains(&hi) || [rm, rs].contains(&lo);
+    outside && reads_before_writing(lo, after)
+}
+
+/// Whether straight-line code reads register `r` before an unconditional
+/// write replaces it. A conditional write hides `r` from reads on the same
+/// condition until the flags change. Anything it cannot follow (a branch,
+/// an exchange, a coprocessor or status instruction) answers no.
+fn reads_before_writing(r: u32, after: &[(u32, u32)]) -> bool {
+    let mut hidden: Option<u32> = None;
+    for &(_, w) in after {
+        let field = |shift: u32| (w >> shift) & 15;
+        let condition = w >> 28;
+        let sets_flags = w & 0x0C00_0000 == 0 && w & (1 << 20) != 0;
+        let (reads, writes): (u16, u16) = if w & 0x0FFF_FFF0 == 0x012F_FF10 || w & 0x0E00_0000 == 0x0A00_0000 {
+            return false;
+        } else if w & 0x0F00_00F0 == 0x0000_0090 {
+            let long = w & (1 << 23) != 0;
+            let accumulate = w & (1 << 21) != 0;
+            let mut reads = 1 << field(0) | 1 << field(8);
+            if accumulate {
+                reads |= 1 << field(12) | if long { 1 << field(16) } else { 0 };
+            }
+            (reads, 1 << field(16) | if long { 1 << field(12) } else { 0 })
+        } else if w & 0x0E00_0090 == 0x0000_0090 && w & 0x60 != 0 {
+            let load = w & (1 << 20) != 0;
+            let mut reads = 1 << field(16) | if w & (1 << 22) == 0 { 1 << field(0) } else { 0 };
+            if !load {
+                reads |= 1 << field(12);
+            }
+            (reads, if load { 1 << field(12) } else { 0 })
+        } else if w & 0x0C00_0000 == 0 {
+            if w & 0x0D90_0000 == 0x0100_0000 {
+                return false;
+            }
+            let opcode = (w >> 21) & 15;
+            let mut reads = if opcode == 13 || opcode == 15 { 0 } else { 1 << field(16) };
+            if w & (1 << 25) == 0 {
+                reads |= 1 << field(0) | if w & 0x10 != 0 { 1 << field(8) } else { 0 };
+            }
+            (reads, if (8..=11).contains(&opcode) { 0 } else { 1 << field(12) })
+        } else if w & 0x0C00_0000 == 0x0400_0000 {
+            let load = w & (1 << 20) != 0;
+            let mut reads = 1 << field(16) | if w & (1 << 25) != 0 { 1 << field(0) } else { 0 };
+            if !load {
+                reads |= 1 << field(12);
+            }
+            (reads, if load { 1 << field(12) } else { 0 })
+        } else if w & 0x0E00_0000 == 0x0800_0000 {
+            let load = w & (1 << 20) != 0;
+            let list = w as u16;
+            (1 << field(16) | if load { 0 } else { list }, if load { list } else { 0 })
+        } else {
+            return false;
+        };
+        if reads & (1 << r) != 0 && hidden != Some(condition) {
+            return true;
+        }
+        if writes & (1 << r) != 0 {
+            if condition == 0xE {
+                return false;
+            }
+            hidden = Some(condition);
+        }
+        if sets_flags {
+            hidden = None;
+        }
+    }
+    false
 }
 
 pub(crate) fn shape(evidence: &Evidence, mixed: bool) -> &'static str {
@@ -917,6 +1002,22 @@ mod tests {
         assert!(markers(&[0xE8B1_000F, 0xE8AC_000F, 0xE8B1_000C, 0xE89C_000F, BX_LR]).is_empty());
         // A compiled call through a register and a switch table are not marks.
         assert!(markers(&[0xE1A0_E00F, 0xE12F_FF13, 0x979F_F100, BX_LR]).is_empty());
+        assert!(markers(&[0xE1A0_E00F, 0xE12F_FF1C, BX_LR]).is_empty()); // mov lr, pc; bx ip
+        // Both halves kept outside mulsidi3's pair (RdLo, RdLo + 1, apart
+        // from the inputs); lsl r3, r3, #16 then orr reads the low half.
+        let unpaired = |smull: u32, orr: u32| markers(&[smull, 0xE1A0_3803, orr, BX_LR]);
+        assert_eq!(unpaired(0xE0C3_1696, 0xE183_3821), ["multiply-unpaired"]); // smull r1, r3, r6, r6
+        assert_eq!(unpaired(0xE0C3_2293, 0xE183_3822), ["multiply-unpaired"]); // smull r2, r3, r3, r2
+        assert!(unpaired(0xE0C3_2696, 0xE183_3822).is_empty()); // smull r2, r3, r6, r6
+        // smulsi3_highpart: any RdLo, but nothing reads it.
+        assert!(markers(&[0xE0C3_1696, 0xE1A0_0003, BX_LR]).is_empty()); // smull r1, r3, r6, r6; mov r0, r3
+        assert!(markers(&[0xE0C3_1696, 0xE3A0_1000, 0xE1A0_0001, BX_LR]).is_empty()); // ...; mov r1, #0; mov r0, r1
+        // umulls r3, r0, r1, r3; mulne r3, r0, r2; subne r1, r1, r3: the
+        // only read of RdLo follows a write on the same condition.
+        assert!(markers(&[0xE090_3391, 0x1003_0290, 0x1041_1003, 0x112F_FF1E, BX_LR]).is_empty());
+        // smlal reads and writes both halves.
+        assert_eq!(markers(&[0xE0E3_1696, BX_LR]), ["multiply-unpaired"]); // smlal r1, r3, r6, r6
+        assert!(markers(&[0xE0E3_2696, BX_LR]).is_empty()); // smlal r2, r3, r6, r6
         let e = plain(&[PUSH_R4_LR, 0xE08F_F100, POP_R4_PC]);
         assert_eq!(shape(&e, false), "hand");
         // Writing r5-r11 without saving them breaks the calling convention;

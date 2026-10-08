@@ -4,8 +4,6 @@
 	.incbin "baserom.gba", 0x00007ac8, 0x00000024
 	.section .rom.00007b98, "ax"
 	.incbin "baserom.gba", 0x00007b98, 0x00000004
-	.section .rom.0000c2ca, "ax"
-	.incbin "baserom.gba", 0x0000c2ca, 0x00000002
 	.section .rom.000290a4, "ax"
 	.global UiIcon_ItemIconPointers
 UiIcon_ItemIconPointers:
@@ -39,8 +37,6 @@ Party_PairResolveRules:
 	.global RomWords_0809e270
 RomWords_0809e270:
 	.incbin "baserom.gba", 0x000a33c8, 0x00000218
-	.section .rom.000e6172, "ax"
-	.incbin "baserom.gba", 0x000e6172, 0x00000002
 	.section .rom.000f3ae0, "ax"
 	.incbin "baserom.gba", 0x000f3ae0, 0x00000755
 	.global DisplayScroll_GlyphWidths

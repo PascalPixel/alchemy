@@ -2,12 +2,6 @@
 	.incbin "baserom.gba", 0x00007aa8, 0x00000024
 	.section .rom.00007b78, "ax"
 	.incbin "baserom.gba", 0x00007b78, 0x00000004
-	.section .rom.0000caca, "ax"
-	.incbin "baserom.gba", 0x0000caca, 0x00000002
-	.section .rom.00072c78, "ax"
-	.global UiText_ItemGenders
-UiText_ItemGenders:
-	.incbin "baserom.gba", 0x00072c78, 0x0000010d
 	.section .rom.0009d2c8, "ax"
 	.global Battle_LocationRules
 Battle_LocationRules:
@@ -25,8 +19,6 @@ Party_PairResolveRules:
 	.global RomWords_0809e270
 RomWords_0809e270:
 	.incbin "baserom.gba", 0x0009e3c8, 0x00000218
-	.section .rom.000e2972, "ax"
-	.incbin "baserom.gba", 0x000e2972, 0x00000002
 	.section .rom.000f0ae0, "ax"
 	.incbin "baserom.gba", 0x000f0ae0, 0x00000765
 	.global DisplayScroll_GlyphWidths

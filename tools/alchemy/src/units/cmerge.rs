@@ -574,7 +574,10 @@ pub fn merge(sources: &[Source], headers: &Known, options: &Options) -> Result<M
             }
             let text = declaration_text.get(&(k, name.clone())).map(|(t, _)| t.clone()).unwrap_or_default();
             let defining_here = usage.defined.as_ref().is_some_and(|(d, _, _)| *d == k);
-            let as_view = options.views && !defining_here && (options.unprototyped || !signature.ends_with("( )"));
+            // A header's static inline wrapper is called, never cast: a cast call
+            // would not inline.
+            let header_static = header.as_ref().is_some_and(|h| h.split_whitespace().any(|w| w == "static"));
+            let as_view = options.views && !defining_here && !header_static && (options.unprototyped || !signature.ends_with("( )"));
             if as_view {
                 notes.push(format!("{}: {name} keeps its own shape as a cast ({signature})", files[k].path));
             } else if !signature.ends_with("( )") {

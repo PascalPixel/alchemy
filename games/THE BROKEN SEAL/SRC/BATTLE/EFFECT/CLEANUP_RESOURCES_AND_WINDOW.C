@@ -111,7 +111,9 @@ void BattleFx_CleanupResourcesAndWindow(void)
 }
 
 extern struct WorldMapVramBlock gVramBlockCache[];
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32						gFrameCount;
+#endif
 extern u32						gKeysHeld;
 
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);

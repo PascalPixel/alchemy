@@ -81,6 +81,48 @@ fn mask_iwram_call_body(text: &str) -> String {
     mask_body(text, iwram_call_body())
 }
 
+/// Blanks the branches only the modern build compiles (`#ifdef MODERN`, `#if
+/// MODERN`, `#if defined(MODERN)` and the `#else` of `#ifndef MODERN`): no
+/// matching build sees them, and pret's MODERN guards are not devices.
+fn mask_modern(text: &str) -> String {
+    let mut kept = String::with_capacity(text.len());
+    // Per open conditional: whether it is a MODERN test, whether its current
+    // branch is modern-only, and whether this level masks.
+    let mut open: Vec<(bool, bool)> = Vec::new();
+    for line in text.split_inclusive('\n') {
+        let directive = line.trim_start().strip_prefix('#').map(str::trim_start);
+        let word = directive.map(|rest| rest.split(|c: char| !c.is_ascii_alphanumeric() && c != '_').next().unwrap_or(""));
+        let rest = directive.map(|rest| rest[word.unwrap_or("").len()..].trim());
+        let masked_before = open.iter().any(|(_, masks)| *masks);
+        match word {
+            Some("if" | "ifdef" | "ifndef") => {
+                let test = rest.unwrap_or("");
+                let modern = matches!(test, "MODERN" | "defined(MODERN)" | "defined MODERN");
+                let masks = modern && word != Some("ifndef");
+                open.push((modern, masks));
+            }
+            Some("else" | "elif") => {
+                if let Some((modern, masks)) = open.last_mut() {
+                    if *modern {
+                        *masks = !*masks;
+                    }
+                }
+            }
+            Some("endif") => {
+                open.pop();
+            }
+            _ => {}
+        }
+        let masked = masked_before || open.iter().any(|(_, masks)| *masks);
+        if masked {
+            kept.extend(line.chars().map(|c| if c == '\n' { c } else { ' ' }));
+        } else {
+            kept.push_str(line);
+        }
+    }
+    kept
+}
+
 const ABI: &str = "naked interrupt interrupt_handler isr long_call short_call pcs target target_clones regparm stdcall fastcall";
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -147,6 +189,7 @@ fn admit_camelot(findings: Vec<Finding>, text: impl Fn(&str) -> Option<String>) 
 }
 
 pub fn find_forbidden(file: &str, text: &str) -> Vec<Finding> {
+    let text = &mask_modern(text);
     let text = if Path::new(file).ends_with(DMA_HEADER) {
         mask_dma_body(text)
     } else if Path::new(file).ends_with(IWRAM_CALL_HEADER) {
@@ -222,7 +265,7 @@ pub fn find_named_source_tool_leaks(file: &str, text: &str) -> Vec<Finding> {
 }
 
 pub fn find_preprocessed(label: &str, text: &str) -> Vec<Finding> {
-    let text = mask_iwram_call_body(&mask_dma_body(text));
+    let text = mask_iwram_call_body(&mask_dma_body(&mask_modern(text)));
     let mut findings = scan_forbidden(label, &text, false);
     for item in &mut findings {
         let marker = text
@@ -359,6 +402,25 @@ mod tests {
             assert!(!find_forbidden(IWRAM_CALL_HEADER, &changed).is_empty());
             assert!(!find_preprocessed("expanded", &changed).is_empty());
         }
+    }
+
+    #[test]
+    fn only_the_modern_branches_go_unscanned() {
+        let modern = "#ifdef MODERN\nextern char a[] __asm__(\"a\");\n#else\nasm(\"\");\n#endif\n";
+        let found = find_forbidden("fixture.c", modern);
+        assert_eq!(found.len(), 1, "the matching branch is still scanned");
+        assert_eq!(found[0].line, 4);
+        let negated = "#ifndef MODERN\nasm(\"\");\n#else\nasm(\"\");\n#endif\nasm(\"\");\n";
+        let lines: Vec<usize> = find_forbidden("fixture.c", negated)
+            .iter()
+            .map(|item| item.line)
+            .collect();
+        assert_eq!(lines, [2, 6]);
+        let nested = "#if MODERN\n#if X\nasm(\"\");\n#endif\nasm(\"\");\n#endif\n";
+        assert!(find_forbidden("fixture.c", nested).is_empty());
+        assert!(find_preprocessed("expanded", nested).is_empty());
+        let other = "#ifdef MODERNISH\nasm(\"\");\n#endif\n";
+        assert_eq!(find_forbidden("fixture.c", other).len(), 1);
     }
 
     #[test]

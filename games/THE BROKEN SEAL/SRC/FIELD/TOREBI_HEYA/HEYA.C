@@ -77,7 +77,13 @@ void TorebiHeya_StartWindowTransition(void)
 
 void FieldScene_RunPrimarySequence(void)
 {
+#ifdef MODERN
+    // modern GCC holds one type for a name in a file
+    extern u8 Data_03001ebc_modern[] __asm__("Data_03001ebc");
+#define Data_03001ebc Data_03001ebc_modern
+#else
     extern u8 Data_03001ebc[];
+#endif
 
     u32 i;
     struct FieldActor *record;
@@ -100,6 +106,9 @@ void FieldScene_RunPrimarySequence(void)
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     Engine_EventRequestExit(*(s16 *)p6);
 }
+#ifdef MODERN
+#undef Data_03001ebc
+#endif
 
 void FieldScene_RunScene3b6SequenceA(void)
 {

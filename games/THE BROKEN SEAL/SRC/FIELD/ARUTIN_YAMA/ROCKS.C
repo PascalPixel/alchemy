@@ -463,7 +463,9 @@ union TimedActor {
     struct SceneMotion motion;
 };
 
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern s32 gKeyState;
+#endif
 
 void ArutinYama_RunLeapSequence(void)
 {

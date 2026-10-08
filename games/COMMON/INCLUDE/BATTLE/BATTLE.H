@@ -24,7 +24,6 @@ extern const s8 BattlePlacement_StepPairs[];
 extern u8 Encounter_AreaEntryTable[];
 extern u8 gPlayerObjectId[];
 extern u16 Resource_SlotAssignments[];
-extern const struct SceneAreaNameRule Scene_AreaNameRules[];
 s32 BtlTgtExec(struct BtlPlan *plan, s32 slot);
 struct BtlObj;
 #ifndef OWN_BattlePresentation_SpawnActorObject
@@ -148,7 +147,6 @@ struct Vector3 {
     s32 z;
 };
 extern u8 Animation_ChildPaletteCycle[];
-extern const struct BattleLocationRule Battle_LocationRules[];
 extern u8 BattleCommand_SelectionWeights[3][8];
 extern const u8 BattleFx_ArcSparkTiles[];
 extern const s32 BattleFx_BurstParticleObjectScript[];
@@ -384,7 +382,6 @@ extern const s32 RomBytes_0809e75c[];
 extern u16 RomBytes_080c2a1c[];
 extern u16 RomBytes_080c73f8[];
 extern s32 RomWords_0809e270[];
-extern const struct SceneInteractionEntry Scene_InteractionRuleTable[];
 extern const u32 SentouKouka_Gousei[];
 extern u8 ShatterRocks_DropFrames[];
 extern u8 ShatterRocks_RockCounts[];

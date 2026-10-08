@@ -58,8 +58,10 @@ FAKEMATCH (S2), camelotizes what remains.
 
 ### Legal
 
-- **L1** Never commit, upload or publish a ROM, the cartridge logo, private
-  inputs or any other copy of the original game files. _Check: publication._
+- **L1** Never commit, upload or publish a ROM, private inputs or any other
+  copy of the original game files. The cartridge header's Nintendo logo lives
+  only in the build's header fix-up tool, which writes it into each built ROM
+  as pret's gbafix does (Pascal, 2026-10-08). _Check: publication._
 - **L2** Evidence comes only from our own ROMs, this repository and public
   documentation. Never use another project's Golden Sun work, and never open
   one to compare.
@@ -373,7 +375,8 @@ never a file or a function.
 - **W3** Alchemy owns compilation, linking, verification, reading and analysis,
   behind one `alchemy` command for both games; the ags crate owns asset
   encoding and decoding (agsgfx, mid2ags, wav2ags, po2ags). Look at how pret
-  does something before inventing.
+  does something before inventing. Alchemy is never stricter than pret: where
+  pret's practice settles a question, follow it (Pascal, 2026-10-08).
 - **W4** Choose what to match from `make deps`: first the functions other
   unfinished functions call, with the structures they share, then the ones
   with nothing left to name, largest first.

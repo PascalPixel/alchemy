@@ -267,20 +267,12 @@ void FuneHobashira_SetupHiddenLeaderLookout(void)
 {
     u32 i;
     s32 record;
-    s32 x;
-    s32 y;
-    s32 pan;
-
-    /* FAKEMATCH: r3 carries the preceding zero byte store into the camera's fourth argument. Capturing it reorders the x/y setup; these two moves preserve that setup with all four arguments present. */
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
-    /* FAKEMATCH: keep y before x while capturing the store's zero in pan. */
-    asm ("mov %0, #128\n\tmov %1, #164"
-         : "=r" (y), "=r" (x), "=r" (pan));
-    Camera_MoveTo(x << 16, y << 15, 0x1410000, pan);
+    Camera_MoveTo(0xa40000, 0x400000, 0x1410000, 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);

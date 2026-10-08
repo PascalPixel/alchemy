@@ -60,7 +60,7 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
     s32 text;
     s32 label;
     register s32 sel asm("r6"); /* FAKEMATCH: keeps the row in r6 */
-    s32 changed;
+    register s32 changed asm("r8"); /* FAKEMATCH: pins the flag to r8, where the native keeps it; with the r2 copy below unpinned it moves to r7 (86 of 141 rows differ) */
 
     win = UiWindow_CreateFar(13, 3, 17, 10, 2);
     slot = a0 & ITEM_ID_MASK;
@@ -90,8 +90,9 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
             break;
         }
         {
-        register s32 c asm("r2"); /* FAKEMATCH: tests the flag through r2 */
-        asm("mov %0, %1" : "=l"(c) : "h"(changed)); /* FAKEMATCH: tests the flag through r2 */
+        register s32 c asm("r2") = changed; /* FAKEMATCH: tests the flag through r2 */
+        /* FAKEMATCH: empty asm barrier on the r2 copy, so cse does not test r8 directly, whose reload takes r3 (2 of 134 rows differ) */
+        asm("" : "+l"(c));
         if (c) {
             changed = 0;
             sel = __modsi3(sel + 2, 2);
@@ -110,10 +111,11 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
         if (*pad & 64) {
             {
             register s32 one asm("r2") = 1; /* FAKEMATCH: sets the flag through r2 */
-            register s32 cue asm("r0") = 111; /* FAKEMATCH: loads the cue before the step */
+            /* FAKEMATCH: empty asm barrier on the r2 one, so cse does not set r8 from the constant, whose reload takes r3 (2 of 134 rows differ) */
+            asm("" : "+l"(one));
             sel -= 1;
-            asm volatile("mov %0, %1" : "=h"(changed) : "l"(one)); /* FAKEMATCH: sets the flag through r2 */
-            Audio_PlayCue(cue);
+            changed = one;
+            Audio_PlayCue(111);
             }
         }
         if (*pad & 128) {

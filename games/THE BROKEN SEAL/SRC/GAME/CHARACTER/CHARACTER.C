@@ -108,8 +108,13 @@ void *UnitGet(u32 owner)
     struct BtlUnit *states;
     struct BtlUnit *unit;
 
-    /* FAKEMATCH: the dead entry copy of lr no ordinary C emits */
-    asm volatile("mov r3, lr" ::: "r3");
+    {
+        /* FAKEMATCH: register pin and empty asm use: the caller's return address, read in C, is copied to r3 at entry and never used, as native (mov r3, lr); unused, the copy is deleted (27 of 31 rows differ); used unpinned, the asm reads lr itself */
+        register void *caller asm("r3") = __builtin_return_address(0);
+
+        /* FAKEMATCH: empty asm use of the pinned copy, measured above */
+        asm("" : : "r"(caller));
+    }
     states = gGameState.owners;
     if (owner < 8) {
         unit = &states[owner];

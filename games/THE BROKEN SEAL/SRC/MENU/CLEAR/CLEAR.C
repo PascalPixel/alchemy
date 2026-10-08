@@ -306,9 +306,9 @@ extern volatile u16 gLinkStatus;
 void RenderOutput_PrepareForRedraw(s32 window);
 
 extern u8 gSaveBuffer[];
-extern volatile u8 gSleepDisabled;
+extern u8 gSleepDisabled;
 extern u8 gDebugMode;
-extern volatile u8 gOptionMirror;
+extern u8 gOptionMirror;
 extern s16 Clear_CodeUnlocked;
 extern s16 Clear_ExtraCodeUnlocked;
 extern u8 *gWindowWork[];

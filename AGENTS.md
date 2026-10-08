@@ -225,8 +225,13 @@ or functions is exactly this cheating.
   only after reshaping the source has failed, and a function is never
   written as inline assembly. A fake match stays in the source, tagged; it is never
   replaced by a compiler option or routing that fits only those functions
-  (K1, K3). `CAMELOT_ASM("proof")` marks assembly Camelot very likely
-  wrote in C; the reviewed `Dma_Set` and `Iwram_*` macros stay. A layer that
+  (K1, K3). `CAMELOT_ASM("proof")` marks a small handwritten asm helper inside C,
+  proven handwritten assembly under C2; its few instructions stay inside
+  the C functions that use it, which stay C. Four are proven (Pascal, 2026-10-08): `Dma_Set` and
+  `Transform_SetIdentity` (multi-register `stmia` with no paired `ldmia`,
+  which no pattern in agscc's machine description emits), `Iwram_Call2` (a
+  return through ip, which no procedure-call standard produces) and
+  `WaitFrames`' stack switch (a write to sp). A layer that
   explains a habit of the whole game is source, not a device: the ☀️ scene
   script layer (inline helpers forwarding to the engine services in
   `FIELD_EVENT.H`, `FIELD_SERVICE.H` and `RUNPA_JO/JO.H`) matches every scene
@@ -473,7 +478,9 @@ never a file or a function.
   literal changed, and nearly any stand-in value works. Patch bytes count
   as data and are reported apart, like FAKEMATCH (Pascal, 2026-10-08).
   "100%" is announced only as a pret reviewer would accept it: no game
-  function matching through instruction-emitting inline asm, nothing in the
+  function matching through instruction-emitting inline asm other than
+  the proven `CAMELOT_ASM` helpers (S2), no register pin or empty asm
+  barrier left, nothing in the
   build read from the ROM, and `recon/<game>` gone except its raw listings
   kept for reference.
 - **W4** Choose what to match from `make deps`: first the functions other

@@ -45,10 +45,10 @@ void Render_ResetTransformState(void)
 	gTransformStackTop = Runtime_AllocateBlock(8, sizeof(gTransform));
 	gTransformStackDepth = 0;
 	{
-		/* FAKEMATCH: the identity row's four fixed registers. */
+		CAMELOT_ASM("the identity row's four fixed registers")
 		register s32 z2 __asm__("r3"), one __asm__("r1"), z1 __asm__("r2"), z3 __asm__("r4");
 
-		/* FAKEMATCH: ⚓️ builds the one before the zeros; three stmia no C store compiles to. */
+		CAMELOT_ASM("TRANSFORM.H's identity store, ⚓️ building the one before the zeros")
 		__asm__ volatile("mov r0, %4\n\tmov %1, #128\n\tlsl %1, %1, #9\n\tmov %2, #0\n\t"
 						 "mov %0, #0\n\tmov %3, #0\n\t"
 						 "stmia r0!, {%1, %2, %0, %3}\n\t"

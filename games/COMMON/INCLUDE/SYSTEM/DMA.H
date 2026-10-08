@@ -10,6 +10,7 @@
                 0x85000000 | ((size) / 4), (volatile u32 *)0x040000d4);      \
     }
 
+CAMELOT_ASM("stmia of three registers with no paired ldmia, which no agscc pattern emits")
 static __inline__ void Dma_Set(const void *source, void *destination, u32 control, volatile u32 *channel)
 {
     register volatile u32 *dma __asm__("r3") = channel;

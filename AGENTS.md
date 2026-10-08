@@ -331,8 +331,8 @@ never a file or a function.
   start saving at r5. Nintendo's library code is not Camelot's and keeps
   the compiler and flags its own bytes show, one setting per whole library
   file, as pret names its library files: pret's agbcc for MusicPlayer2000
-  (`-O2`) and the flash library (`-O`, except two helper files whose bytes
-  show `-O2`), and agbcc_arm for RAM-executed ARM code
+  (`-O2`) and the flash library (`-O`; its last two files moved from `-O2`
+  once the address words their `-O` output emits were found, 2026-10-08), and agbcc_arm for RAM-executed ARM code
   (`-fomit-frame-pointer`). Game ARM C of either game, the files listed
   in `GAME_ARM_SOURCES`, compiles with that same stock agbcc_arm at that
   same library ARM setting (`alchemy diff --arm`): Camelot's few IWRAM ARM

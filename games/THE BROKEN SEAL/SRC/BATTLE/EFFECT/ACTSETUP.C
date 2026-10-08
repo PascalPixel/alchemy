@@ -33,6 +33,7 @@
 #include "SYSTEM.H"
 #include "IO_REG.H"
 #include "HEAP_STATE.H"
+#include "MAP_SCROLL.H"
 
 #define HEAP_SLOT_FX 56 // エナジー演出のワーク
 
@@ -100,15 +101,6 @@ struct FieldActor			*Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 
 extern volatile u32 gFrameCount;
 void				Animation_ApplyChildValuesFar(struct DispatchObject *object, u32 value);
-
-// マップのワークのうち、位置
-struct EffectOrigin
-{
-	u8	padding00[4];
-	s32 x;
-	s32 y;
-	s32 z;
-};
 
 // イベントワークのうち、ここで使う部分
 struct BattleSceneState
@@ -233,7 +225,7 @@ void BattleFx_UpdateAllEffectSlots(void)
 void BattleFx_LoadActionEffectResources(s32 act_no, s32 mode)
 {
 	struct BattleSceneState *ev = *(gWorkSlot + HEAP_SLOT_EVENT);
-	struct EffectOrigin		*origin = *(gWorkSlot + 8);
+	struct MapScrollWork	*map = *(gWorkSlot + 8);
 	struct BattleFxScene	*work;
 	s32						 running;
 
@@ -262,9 +254,10 @@ void BattleFx_LoadActionEffectResources(s32 act_no, s32 mode)
 	work->enabled = 1;
 	work->active = 1;
 	work->message_mode = 1;
-	work->saved_x = origin->x;
-	work->saved_y = origin->y;
-	work->saved_z = origin->z;
+	// マップのゆれの大きさと減り方を取っておき、演出の後で戻す
+	work->saved_x = map->shake_x;
+	work->saved_y = map->shake_y;
+	work->saved_z = map->shake_decay;
 	if (gGameState.map == (s32)&SceneId_MakyuriIriguchi)
 		work->lit = 1;
 	if (gGameState.map == (s32)&SceneId_MakyuriHeya2)

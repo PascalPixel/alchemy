@@ -321,7 +321,7 @@ finish_target:
 	if (retry == 0)
 		keep_going = 0;
 next_candidate:
-	// 17 回選べなければ、ぼうぎょ
+	// 18 回選べなければ、ぼうぎょ
 	if (keep_going != 0 && tries > 16)
 	{
 		req->command = CMD_BOUGYO;

@@ -1839,14 +1839,6 @@ Title_IntroTilesB:
 	.incbin "baserom.gba", 0x0033f2fe, 0x00000002
 	.section .unidentified.0834fa6e,"a"
 	.incbin "baserom.gba", 0x0034fa6e, 0x00000002
-	.section .unidentified.083c5677,"a"
-	.incbin "baserom.gba", 0x003c5677, 0x00000001
-	.section .unidentified.083cb4b9,"a"
-	.incbin "baserom.gba", 0x003cb4b9, 0x00000003
-	.section .unidentified.083cbd01,"a"
-	.incbin "baserom.gba", 0x003cbd01, 0x00000003
-	.section .unidentified.083d82e2,"a"
-	.incbin "baserom.gba", 0x003d82e2, 0x00000002
 	.section .unidentified.083f1e50,"a"
 	.global BattleFx_LavaOrbSheet
 BattleFx_LavaOrbSheet:
@@ -1859,12 +1851,6 @@ BattleFx_IceShardSheet:
 	.global BattleFx_IceBlockSheet
 BattleFx_IceBlockSheet:
 	.incbin "baserom.gba", 0x00401d9c, 0x00001588
-	.section .unidentified.08435ef7,"a"
-	.incbin "baserom.gba", 0x00435ef7, 0x00000001
-	.section .unidentified.0843f866,"a"
-	.incbin "baserom.gba", 0x0043f866, 0x00000002
-	.section .unidentified.08488667,"a"
-	.incbin "baserom.gba", 0x00488667, 0x00000001
 	.section .unidentified.084baaa4,"a"
 	.global Resource_Data129
 Resource_Data129:
@@ -1881,14 +1867,6 @@ Resource_Data12C:
 	.global Resource_Data12D
 Resource_Data12D:
 	.incbin "baserom.gba", 0x004bae80, 0x00000140
-	.section .unidentified.08516607,"a"
-	.incbin "baserom.gba", 0x00516607, 0x00000001
-	.section .unidentified.08517383,"a"
-	.incbin "baserom.gba", 0x00517383, 0x00000001
-	.section .unidentified.0851adae,"a"
-	.incbin "baserom.gba", 0x0051adae, 0x00000002
-	.section .unidentified.08556b4a,"a"
-	.incbin "baserom.gba", 0x00556b4a, 0x00000002
 	.section .unidentified.0857a09c,"a"
 	.global Resource_Data1B7
 Resource_Data1B7:
@@ -2342,18 +2320,6 @@ Resource_Data36E:
 	.incbin "baserom.gba", 0x00779048, 0x00000140
 	.section .unidentified.087fd4b9,"a"
 	.incbin "baserom.gba", 0x007fd4b9, 0x00000003
-	.section .unidentified.0851d292,"a"
-	.incbin "baserom.gba", 0x0051d292, 0x00000002
-	.section .unidentified.08560fce,"a"
-	.incbin "baserom.gba", 0x00560fce, 0x00000002
-	.section .unidentified.08561f13,"a"
-	.incbin "baserom.gba", 0x00561f13, 0x00000001
-	.section .unidentified.0856e772,"a"
-	.incbin "baserom.gba", 0x0056e772, 0x00000002
-	.section .unidentified.0857153f,"a"
-	.incbin "baserom.gba", 0x0057153f, 0x00000001
-	.section .unidentified.08583423,"a"
-	.incbin "baserom.gba", 0x00583423, 0x00000001
 	.section .unidentified.085c4cab,"a"
 	.incbin "baserom.gba", 0x005c4cab, 0x00000001
 	.section .unidentified.085c73c3,"a"

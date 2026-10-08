@@ -1826,14 +1826,6 @@ Title_IntroTilesB:
 	.incbin "baserom.gba", 0x00340efa, 0x00000002
 	.section .rom.0035166a, "ax"
 	.incbin "baserom.gba", 0x0035166a, 0x00000002
-	.section .rom.003c7273, "ax"
-	.incbin "baserom.gba", 0x003c7273, 0x00000001
-	.section .rom.003cd23b, "ax"
-	.incbin "baserom.gba", 0x003cd23b, 0x00000001
-	.section .rom.003cda81, "ax"
-	.incbin "baserom.gba", 0x003cda81, 0x00000003
-	.section .rom.003da062, "ax"
-	.incbin "baserom.gba", 0x003da062, 0x00000002
 	.section .rom.003f3bd0, "ax"
 	.global BattleFx_LavaOrbSheet
 BattleFx_LavaOrbSheet:
@@ -1846,12 +1838,6 @@ BattleFx_IceShardSheet:
 	.global BattleFx_IceBlockSheet
 BattleFx_IceBlockSheet:
 	.incbin "baserom.gba", 0x00403b1c, 0x00001588
-	.section .rom.004377db, "ax"
-	.incbin "baserom.gba", 0x004377db, 0x00000001
-	.section .rom.0044114a, "ax"
-	.incbin "baserom.gba", 0x0044114a, 0x00000002
-	.section .rom.00489f4b, "ax"
-	.incbin "baserom.gba", 0x00489f4b, 0x00000001
 	.section .rom.004bc388, "ax"
 	.global Resource_Data129
 Resource_Data129:
@@ -1868,14 +1854,6 @@ Resource_Data12C:
 	.global Resource_Data12D
 Resource_Data12D:
 	.incbin "baserom.gba", 0x004bc764, 0x00000140
-	.section .rom.00517eea, "ax"
-	.incbin "baserom.gba", 0x00517eea, 0x00000002
-	.section .rom.00518c67, "ax"
-	.incbin "baserom.gba", 0x00518c67, 0x00000001
-	.section .rom.0051c692, "ax"
-	.incbin "baserom.gba", 0x0051c692, 0x00000002
-	.section .rom.00558345, "ax"
-	.incbin "baserom.gba", 0x00558345, 0x00000003
 	.section .rom.0057b89c, "ax"
 	.global Resource_Data1B7
 Resource_Data1B7:

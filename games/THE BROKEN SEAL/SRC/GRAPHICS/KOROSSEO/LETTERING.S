@@ -23,3 +23,19 @@ Korosseo_Lettering:
 	.endif
 	.endif
 	.endif
+	/* PACKER: left in the packer's buffer by earlier streams, which differ by edition */
+	.ifdef TBS_EDITION_DE
+	.byte 0x30, 0x58
+	.else
+	.ifdef TBS_EDITION_FR
+	.byte 0x73
+	.else
+	.ifdef TBS_EDITION_JA
+	.byte 0xbd, 0x8e
+	.else
+	.ifdef TBS_EDITION_EN
+	.byte 0xc5
+	.endif
+	.endif
+	.endif
+	.endif

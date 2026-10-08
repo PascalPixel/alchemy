@@ -538,17 +538,23 @@ pub fn merge(sources: &[Source], headers: &Known, options: &Options) -> Result<M
         // header's shape, or the definition's declared once after the
         // includes, governs, and a differing private shape gives way to it
         // (with `views`, it stays as a cast of the name over its own region).
-        let governing = header.clone().or(definition.clone());
+        let mut governing = header.clone().or(definition.clone());
         if governing.is_none() {
-            for &k in usage.declared.keys() {
-                if declaration_text.get(&(k, name.clone())).is_some_and(|(_, conditional)| *conditional) {
-                    errors.push(format!("{}: {name} is declared differently by several files, inside an #if", files[k].path));
-                    continue;
+            // Block scope only where it adds no copies: one function per file.
+            let block_ok = usage.declared.keys().all(|&k| {
+                let conditional = declaration_text.get(&(k, name.clone())).is_some_and(|(_, c)| *c);
+                let users = files[k].body.iter().filter(|(_, item)| matches!(item.kind, Kind::Function { .. }) && uses(item, name)).count();
+                !conditional && users <= 1
+            });
+            if block_ok {
+                for &k in usage.declared.keys() {
+                    lifted.insert((k, name.clone()));
+                    notes.push(format!("{}: {name} stays at block scope ({})", files[k].path, usage.declared[&k]));
                 }
-                lifted.insert((k, name.clone()));
-                notes.push(format!("{}: {name} stays at block scope ({})", files[k].path, usage.declared[&k]));
+                continue;
             }
-            continue;
+            // Otherwise the first file's shape governs where it stands.
+            governing = usage.declared.values().next().cloned();
         }
         if header.is_none() {
             if let Some((k, _, true)) = &usage.defined {
@@ -571,7 +577,7 @@ pub fn merge(sources: &[Source], headers: &Known, options: &Options) -> Result<M
             if as_view {
                 notes.push(format!("{}: {name} keeps its own shape as a cast ({signature})", files[k].path));
             } else if !signature.ends_with("( )") {
-                notes.push(format!("{}: {name} takes the {} shape ({signature} dropped)", files[k].path, if header.is_some() { "header's" } else { "definition's" }));
+                notes.push(format!("{}: {name} takes the {} shape ({signature} dropped)", files[k].path, if header.is_some() { "header's" } else if definition.is_some() { "definition's" } else { "first file's" }));
             }
             dropped.insert((k, name.clone()), (text, as_view));
         }
@@ -985,6 +991,15 @@ mod tests {
         assert!(views.text.contains("#define Run ((int (*)())Run)\n"), "{}", views.text);
         let a = Source { path: "A.C".into(), text: "void f(void)\n{\n\tRun(1);\n}\n".into(), own: Some(Known::default()) };
         assert!(!merge(&[a], &headers, &Options::default()).unwrap().text.contains("#define"));
+    }
+
+    #[test]
+    fn block_scope_only_where_it_adds_no_copies() {
+        let a = source("A.C", "extern u16 gS;\nvoid f(void)\n{\n\tgS = 1;\n}\nvoid g(void)\n{\n\tgS = 2;\n}\n");
+        let b = source("B.C", "extern volatile u16 gS;\nvoid k(void)\n{\n\tgS = 3;\n}\n");
+        let plain = merge(&[a, b], &Known::default(), &Options::default()).unwrap();
+        assert_eq!(plain.text.matches("u16 gS;").count(), 1, "{}", plain.text);
+        assert!(plain.notes.iter().any(|n| n.contains("first file's shape")));
     }
 
     #[test]

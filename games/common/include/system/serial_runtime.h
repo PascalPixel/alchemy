@@ -6,12 +6,7 @@
 #include "system.h"
 #include "io_reg.h"
 #include "irq.h"
-
-struct DmaRegisters {
-    u32 source;
-    u32 destination;
-    u32 control;
-};
+#include "dma.h"
 
 struct SerialPacket {
     u8 sequence;

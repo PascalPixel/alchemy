@@ -4,12 +4,6 @@
 #include "dma.h"
 #include "flash.h"
 
-struct DmaRegisters {
-    u32 source;
-    u32 destination;
-    u32 control;
-};
-
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 #define DMA3_BUSY 0x80000000
 

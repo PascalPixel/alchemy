@@ -8,12 +8,6 @@
 #include "fixed_math.h"
 #include "flash.h"
 
-struct DmaRegisters {
-    u32 source;
-    u32 destination;
-    u32 control;
-};
-
 struct SaveSlotHeader {
     u8 signature[7];
     u8 record_id;

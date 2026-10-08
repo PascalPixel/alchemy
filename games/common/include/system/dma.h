@@ -3,6 +3,13 @@
 
 #include "types.h"
 
+// DMA チャンネルのレジスタ (DMAxSAD, DMAxDAD, DMAxCNT)
+struct DmaRegisters {
+    u32 source;
+    u32 destination;
+    u32 control;
+};
+
 #define Dma_Fill32(value, destination, size)                                 \
     {                                                                        \
         volatile u32 fill_ = (value);                                        \

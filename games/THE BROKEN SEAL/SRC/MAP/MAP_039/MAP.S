@@ -119,3 +119,4 @@ Field_Map039:
 	.endif
 	.endif
 	.endif
+	.balign 4, 0

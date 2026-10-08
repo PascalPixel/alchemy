@@ -14,3 +14,5 @@ Tileset_Set09Palette:
 	.endif
 	.endif
 	.endif
+	/* PACKER: left in the packer's buffer by MAP_010/MAP.o at +0x133 */
+	.byte 0xd4

@@ -23,8 +23,9 @@
 #include "EFFECT_STEP.H"
 #include "BTLWORK.H"
 #include "IO_REG.H"
+s32 BattleEffect_LoadWorkFar(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
 
-#define FarCall_EffectTable ((s32 (*)(s32,s32,s32,s32,s32))FarCall_EffectTable)
+#define BattleEffect_LoadWorkFar ((s32 (*)(s32,s32,s32,s32,s32))BattleEffect_LoadWorkFar)
 #define BattleFx_RunIceFleckBurstFar ((void (*)(struct EffectLaunch*))BattleFx_RunIceFleckBurstFar)
 
 #define gTransitionWork (*(s32 * *)&gTransitionWork)
@@ -129,8 +130,8 @@ s32 BattleFx_InitializeStarField(s32 mode)
         REG_BG2PC = zero;
         REG_BG2PD = scale;
     } while (0);
-    FarCall_EffectTable(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
-    FarCall_EffectTable(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+    BattleEffect_LoadWorkFar(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+    BattleEffect_LoadWorkFar(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
     Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_UpdateStarField, 0xc80);
     return Scheduler_AddOrUpdateCallback((SchedulerCallback)Graphics_UploadVramBlock, 0xc80);
 }

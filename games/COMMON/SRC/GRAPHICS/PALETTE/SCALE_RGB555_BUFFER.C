@@ -109,7 +109,7 @@ void Camera_ResetSceneDefaults(void);
 void Scheduler_ResetTaskTable(void);
 void Render_ResetTransformState(void);
 s32 Render_ProjectPoint(void *point, s32 *out);
-void FarCall_WindowTable(void);
+void UiWork_InitializeWithResourceCountersFar(void);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 void Party_AdjustCoinsFar(s32 amount);
@@ -298,7 +298,7 @@ void LuckyDice_Run(void)
     work->particles[1].y = 0x600000;
     work->particles[1].z = -0xa00000;
 
-    FarCall_WindowTable();
+    UiWork_InitializeWithResourceCountersFar();
     window = UiWindow_CreateFar(DICE_COIN_X, 0, DICE_COIN_W, 3, 6);
     sprites->coins_window = window;
     UiText_DrawCharacterAtOffsetFar((s32)MsgLuckyDiceCoins, window, DICE_LABEL_X, 0);

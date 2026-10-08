@@ -10,9 +10,9 @@ Engine_TaskWait:
 	.thumb_func
 Object_SetMode:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
-	.global Object_SetPosition
+	.global Engine_ObjectSetPosition
 	.thumb_func
-Object_SetPosition:
+Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
 	.global Object_CommitPosition
 	.thumb_func

@@ -33,7 +33,7 @@
 
 extern void *gWorkSlot[];
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 #define MOTES_PER_MEMBER 128 // 対象ひとりあたりの粒の数
 
@@ -107,7 +107,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
 	work->transfer_mode = 3;
 	work->transfer_value = 0x04040404;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	Audio_PlayCue(142);
+	AudioCommand_PlayFar(142);
 
 	for (frame = 0; frame != work->effect->count * 20 + 72; frame++)
 	{

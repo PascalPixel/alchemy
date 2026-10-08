@@ -24,6 +24,7 @@
 #include "SYSTEM.H"
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
+s32 AudioCommand_GetStateByteFar(void);
 
 #define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
 
@@ -203,7 +204,7 @@ s32 Battle_ApplyPresetItemsAndFlags(void)
 
 void AudioCommand_WaitForStateByteClear(void)
 {
-    while (Audio_Check() != 0) {
+    while (AudioCommand_GetStateByteFar() != 0) {
         WaitFrames(1);
     }
 }

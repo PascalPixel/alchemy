@@ -12,7 +12,7 @@ extern u32 Flash_Handler3;
 extern u32 Flash_Handler0;
 extern const void *gFlash;
 extern u32 Flash_Handler1;
-extern u32 Flash_Handler2;
+extern u32 gEraseFlashSector;
 extern u32 Flash_Handler4;
 
 s32 IdentifyFlash(void)
@@ -34,7 +34,7 @@ s32 IdentifyFlash(void)
     }
     Flash_Handler0 = (*chip)->handlers[0];
     Flash_Handler1 = (*chip)->handlers[1];
-    Flash_Handler2 = (*chip)->handlers[2];
+    gEraseFlashSector = (*chip)->handlers[2];
     Flash_Handler3 = (*chip)->handlers[3];
     Flash_Handler4 = (*chip)->handlers[4];
     gFlash = (*chip)->layout;

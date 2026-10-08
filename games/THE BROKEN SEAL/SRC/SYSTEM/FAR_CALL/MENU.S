@@ -32,9 +32,6 @@ Menu_ReleaseEntryObjectsFar:
 	.thumb_func
 UiIcon_PrepareObjectFar:
 	overlay_veneer UiIcon_PrepareObject
-	.global ItemMenu_Open
-	.thumb_func
-ItemMenu_Open:
 	.global ItemMenu_RunFar
 	.thumb_func
 ItemMenu_RunFar:

@@ -31,7 +31,7 @@ void SceneActor_WaitActorDescent(struct FieldActor *actor)
     s32 frames = 60;
 
     while (frames != 0) {
-        WaitFrames(1);
+        Engine_TaskWait(1);
         frames--;
         if (actor->y.fixed <= actor->terrain_height)
             break;
@@ -130,16 +130,16 @@ void HaidiaDou_SinkPillarColumn23(void)
 
             Effect_Spawn(x, 0, z, 0, 0, 0, 0x90000, o);
             Object_GetById(9)->y.fixed -= 0x8000;
-            Battle_WaitMode0(1);
+            Engine_EventWait(1);
         }
         Map_CopyCellAttributes(23, 41, 1, 1, 23, 39);
         Object_GetById(9)->priority_flags |= 2;
         Engine_GameFlagSet(0x200);
         Object_GetById(9)->y.fixed = -0x80000;
-        Object_SetModeById(9, 2);
+        Engine_ActorSetAnimation(9, 2);
         Engine_ObjectDispatchRelease(left);
         Engine_ObjectDispatchRelease(right);
-        Battle_WaitMode0(30);
+        Engine_EventWait(30);
     }
     Engine_EventEnd();
 }
@@ -170,16 +170,16 @@ void HaidiaDou_SinkPillarColumn27(void)
 
             Effect_Spawn(x, 0, z, 0, 0, 0, 0x90000, o);
             Object_GetById(10)->y.fixed -= 0x8000;
-            Battle_WaitMode0(1);
+            Engine_EventWait(1);
         }
         Map_CopyCellAttributes(31, 39, 2, 1, 27, 41);
         Object_GetById(10)->priority_flags |= 2;
         Engine_GameFlagSet(0x201);
         Object_GetById(10)->y.fixed = -0x80000;
-        Object_SetModeById(10, 2);
+        Engine_ActorSetAnimation(10, 2);
         Engine_ObjectDispatchRelease(left);
         Engine_ObjectDispatchRelease(right);
-        Battle_WaitMode0(30);
+        Engine_EventWait(30);
     }
     Engine_EventEnd();
 }
@@ -215,7 +215,7 @@ s32 FieldScene_RunPrimarySequence(s32 a0)
     if (Object_CheckMovementCollision(leader, to) == 0) {
         Engine_EventBegin();
         Object_SetMode(leader, 6);
-        WaitFrames(6);
+        Engine_TaskWait(6);
         Engine_AudioPlayCue(152);
         Object_SetMode(leader, 7);
         leader->speed = 0x30000;
@@ -245,20 +245,20 @@ void FieldScene_RunScene3a6SequenceA(void)
         Camera_SetSpeed(0x10000, 0x2000);
         Engine_CameraFollowActor(8, 1);
         Engine_CameraWaitForMove();
-        Battle_WaitMode0(60);
+        Engine_EventWait(60);
         Actor_FaceDirection(8, 0xc000, 20);
         Actor_SetAttachedEffect(8, 0x102);
         Engine_ActorRunRepeatedMotion(8, 2);
-        Battle_WaitMode0(20);
+        Engine_EventWait(20);
         Actor_SetMotionSpeed(8, 0x10000, 0x8000);
         Actor_WalkToAndWait(8, 0x318, 248);
         Engine_AudioPlayCue(152);
         record = Actor_Get(8);
         record->velocity_y = 0x80000;
         Actor_WalkToAndWait(8, 0x318, 0x118);
-        Battle_WaitMode0(20);
+        Engine_EventWait(20);
         Actor_FaceDirection(8, 0xc000, 20);
-        Battle_WaitMode0(30);
+        Engine_EventWait(30);
         Engine_EventEnd();
     }
 }
@@ -276,12 +276,12 @@ void FieldScene_RunScene3a6SequenceB(void)
             Engine_EventBegin();
             Actor_SetAttachedEffect(8, 0x102);
             Engine_ActorRunRepeatedMotion(8, 2);
-            Battle_WaitMode0(20);
+            Engine_EventWait(20);
             Actor_SetMotionSpeed(8, 0x20000, 0x10000);
             Actor_WalkToAndWait(8, 0x2f8, 0x118);
             Actor_WalkToAndWait(8, 0x2f8, 0x138);
             Actor_WalkToAndWait(8, 0x318, 0x138);
-            Battle_WaitMode0(10);
+            Engine_EventWait(10);
             Actor_FaceDirection(8, 0xc000, 20);
             record = Actor_Get(8);
             record->update = (void (*)(union FieldObject *))SceneActor_FaceActorZero;
@@ -324,6 +324,6 @@ void FieldScene_RunScene3a6SequenceC(void)
 void FieldScene_RunActor8ZeroStep(void)
 {
     Engine_EventBegin();
-    Object_SetModeById(8, 0);
+    Engine_ActorSetAnimation(8, 0);
     Engine_EventEnd();
 }

@@ -323,7 +323,7 @@ void Engine_ObjectCommitPosition();
 void VinasuHeya_SettlePushedBlocks(void);
 void VinasuHeya_StepActorWithDust();
 void VinasuHeya_SpawnRandomParticles();
-void Engine_ActorStartAction();
+void Object_RefreshSelectorById();
 void BattleFx_RunRisingObjectSequence();
 void BattleFx_PlayQueuedSound();
 void SetMapCellCollision(s32, s32, s32, s32);

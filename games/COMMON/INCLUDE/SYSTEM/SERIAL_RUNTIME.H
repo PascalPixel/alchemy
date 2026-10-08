@@ -78,11 +78,6 @@ LAYOUT_OFFSET_GUARD(SerialTransferState_Payload, struct SerialTransferState, pay
 #define SERIAL_RUNTIME (&gSerialRuntime)
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 
-#define SERIAL_ACTIVE_A gSerialSendSource
-#define SERIAL_VALUE_A gSerialSendSize
-#define SERIAL_ACTIVE_B gSerialReceiveDest
-#define SERIAL_VALUE_B gSerialReceivedSize
-
 #define START_DMA(source_, destination_, control_) do { \
     DMA3->source = (u32)(source_); \
     DMA3->destination = (u32)(destination_); \

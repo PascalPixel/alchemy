@@ -1,3 +1,4 @@
+#define OWN_AudioCommand_PlayFar
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -33,7 +34,6 @@
 void UiText_ShowPositionedMessageAndWait(s32 msg, s32 mode);
 s32 UiWork_IsComplete(void);
 void UiWork_FinalizePendingCore(void);
-void Audio_PlayCue(u8 mode);
 
 extern s32 gLoadedStateWord;
 extern u8 gOptionMirror;
@@ -483,7 +483,7 @@ s32 Save_WriteSelectedSlot(void)
                 UiWork_FinalizePendingCore();
             }
             gSaveSlot = slot;
-            Audio_PlayCue(85);
+            AudioCommand_PlayFar(85);
             UiText_ShowPositionedMessageAndWait((s32)MsgSaving, 13);
             while (UiWork_IsComplete() == 0) {
                 WaitFrames(1);

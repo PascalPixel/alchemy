@@ -1,3 +1,4 @@
+#define OWN_gGameState
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -14,6 +15,8 @@
 #include "HASHIRA.H"
 #include "FIELD_SCENE.H"
 #include "IO_REG.H"
+
+extern u8 gGameState[][2];
 
 #define OverlayObject_PrepareObject ((s32 (*)(s32,s32,s32,s32))OverlayObject_PrepareObject)
 
@@ -131,7 +134,7 @@ void StagedActor_StepDownUntilClamp(s32 index)
     cnt = 0;
     for (;;) {
         if (cnt > 31) return;
-        WaitFrames(1);
+        Engine_TaskWait(1);
         obj->scale_y += -0x1999;
         obj->y.fixed += -0xcccc;
         cnt++;
@@ -192,7 +195,7 @@ s32 FieldScene_RunScene3b3SequenceD(void)
 #if EDITION_INTERNATIONAL
     mode = (leader->facing + 0x2000) & 0xc000;
 #endif
-    if (gCell[249][0] != 0) {
+    if (gGameState[249][0] != 0) {
         return 0;
     }
     p = buf;
@@ -235,7 +238,7 @@ s32 FieldScene_RunScene3b3SequenceD(void)
     }
     Engine_EventBegin();
     Object_SetMode(leader, 6);
-    WaitFrames(6);
+    Engine_TaskWait(6);
     Engine_AudioPlayCue(152);
     Object_SetMode(leader, 7);
     leader->speed = 0x30000;
@@ -281,7 +284,7 @@ s32 SceneActor_ApplyCounterLowBitsAsMode(u8 *actor)
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
-    s16 scene = gGameState.scene;
+    s16 scene = ((struct GameState *)gGameState)->scene;
 
     if (scene == (s32)&SceneId_TakaraHashira1) {
         return gTakaraHashiraEntrances1;
@@ -313,7 +316,7 @@ const u32 *Scene_GetExits(void)
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-    s16 scene = gGameState.scene;
+    s16 scene = ((struct GameState *)gGameState)->scene;
 
     if (scene == (s32)&SceneId_TakaraHashira1) {
         return gTakaraHashiraPlacements1;

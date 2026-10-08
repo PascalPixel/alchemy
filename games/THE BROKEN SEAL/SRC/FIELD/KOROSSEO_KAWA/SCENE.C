@@ -92,7 +92,7 @@ void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
     Korosseo_ModeTaskMode = (u16)mode;
     Korosseo_ModeTaskParam = (u16)(param << 4);
 
-    Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateModeTask), 0xc80);
+    Engine_TaskAddCallback((s32)(Korosseo_UpdateModeTask), 0xc80);
 
     handler = (s32)KorosseoKawa_RoundSpans;
     if (mode == 2) {

@@ -7,9 +7,6 @@
 	.thumb_func
 Math_RemainderUnsigned:
 	overlay_veneer IwramUnsignedRemainder
-	.global WaitFrames
-	.thumb_func
-WaitFrames:
 	.global Engine_TaskWait
 	.thumb_func
 Engine_TaskWait:
@@ -46,9 +43,6 @@ Engine_MapCopyCellsTo:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global ObjectDispatch_SetSingleChildFlags
-	.thumb_func
-ObjectDispatch_SetSingleChildFlags:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
@@ -84,16 +78,10 @@ Engine_GameFlagClear:
 	.global Engine_EventWait
 	.thumb_func
 Engine_EventWait:
-	.global Battle_WaitMode0
-	.thumb_func
-Battle_WaitMode0:
 	overlay_veneer Battle_WaitMode0Far
 	.global Engine_EventBegin
 	.thumb_func
 Engine_EventBegin:
-	.global Battle_Reset
-	.thumb_func
-Battle_Reset:
 	overlay_veneer Battle_ResetFar
 	.global Engine_EventEnd
 	.thumb_func
@@ -110,24 +98,15 @@ Engine_EventChooseYesNo:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
-	.global Object_GetById
-	.thumb_func
-Object_GetById:
 	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorDestroy
 	.thumb_func
 Engine_ActorDestroy:
 	overlay_veneer ObjectTable_DestroyByIdFar
-	.global ObjectMotion_SetSpeedParameters
-	.thumb_func
-ObjectMotion_SetSpeedParameters:
 	.global Engine_ActorSetSpeed
 	.thumb_func
 Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
-	.global ObjectMotion_EnableActionAndSetCallback
-	.thumb_func
-ObjectMotion_EnableActionAndSetCallback:
 	.global Engine_ActorEnableActionCallback
 	.thumb_func
 Engine_ActorEnableActionCallback:
@@ -135,9 +114,6 @@ Engine_ActorEnableActionCallback:
 	.global Object_RefreshSelectorById
 	.thumb_func
 Object_RefreshSelectorById:
-	.global Engine_ActorStartAction
-	.thumb_func
-Engine_ActorStartAction:
 	overlay_veneer Object_RefreshSelectorByIdFar
 	.global Engine_ActorStop
 	.thumb_func
@@ -147,9 +123,6 @@ Engine_ActorStop:
 	.thumb_func
 Object_SetActionCallbackAndRefreshById:
 	overlay_veneer Object_SetActionCallbackAndRefreshByIdFar
-	.global ObjectMotion_ResetAndSetPosition
-	.thumb_func
-ObjectMotion_ResetAndSetPosition:
 	.global Engine_ActorSetDestination
 	.thumb_func
 Engine_ActorSetDestination:
@@ -158,16 +131,10 @@ Engine_ActorSetDestination:
 	.thumb_func
 Engine_ObjectMotionSetPositionAndCommit:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
-	.global ObjectMotion_ResetAndSetPositionInMode2
-	.thumb_func
-ObjectMotion_ResetAndSetPositionInMode2:
 	.global Engine_ActorWalkTo
 	.thumb_func
 Engine_ActorWalkTo:
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
-	.global ObjectMotion_SetPositionAndReset
-	.thumb_func
-ObjectMotion_SetPositionAndReset:
 	.global Engine_ActorWalkToAndWait
 	.thumb_func
 Engine_ActorWalkToAndWait:
@@ -178,15 +145,12 @@ ObjectMotion_CenterOnColumn:
 	overlay_veneer ObjectMotion_CenterOnColumnFar
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
-	.global ObjectMotion_CommitCurrentPositionAndActivate
+	.global Engine_ActorWaitForMove
 	.thumb_func
-ObjectMotion_CommitCurrentPositionAndActivate:
+Engine_ActorWaitForMove:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	.endif
 	.endif
-	.global ObjectMotion_SetHorizontalPositionWithTerrain
-	.thumb_func
-ObjectMotion_SetHorizontalPositionWithTerrain:
 	.global Engine_ActorSetPosition
 	.thumb_func
 Engine_ActorSetPosition:
@@ -207,9 +171,6 @@ Engine_ActorJump:
 	.thumb_func
 Engine_ActorStartRepeatedMotion:
 	overlay_veneer ObjectMotion_SetVariantCallbackFar
-	.global Motion_SetVarCbAndRefresh
-	.thumb_func
-Motion_SetVarCbAndRefresh:
 	.global Engine_ActorRunRepeatedMotion
 	.thumb_func
 Engine_ActorRunRepeatedMotion:
@@ -218,16 +179,10 @@ Engine_ActorRunRepeatedMotion:
 	.thumb_func
 Engine_ActorFaceActor:
 	overlay_veneer ObjectMotion_SetAngleTowardFar
-	.global ObjectGroup_ConfigureChildValue
-	.thumb_func
-ObjectGroup_ConfigureChildValue:
 	.global Engine_ActorSetChildValue
 	.thumb_func
 Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
-	.global Event_SetMessageId
-	.thumb_func
-Event_SetMessageId:
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
@@ -288,9 +243,6 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
-	.global Event_SetExitRequest
-	.thumb_func
-Event_SetExitRequest:
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
@@ -303,23 +255,14 @@ BattleFx_SetWeightedResult:
 	.thumb_func
 Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
-	.global Event_StartScreenTransition
-	.thumb_func
-Event_StartScreenTransition:
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:
 	overlay_veneer Event_StartScreenTransitionFar
-	.global Event_FinishScreenTransition
-	.thumb_func
-Event_FinishScreenTransition:
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
 	overlay_veneer Event_FinishScreenTransitionFar
-	.global Event_WaitTransitionFrames
-	.thumb_func
-Event_WaitTransitionFrames:
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
@@ -331,7 +274,4 @@ Battle_ResetEffectCounter:
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:
-	.global AudioCommand_Play
-	.thumb_func
-AudioCommand_Play:
 	overlay_veneer AudioCommand_PlayFar

@@ -13,10 +13,11 @@
 #include "TYPES.H"
 #include "BTLSYS.H"
 #include "text/MSG_IDS.H"
+void UiText_DrawNumberInWindowFar(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 
 #define UiWindow_ClearInteriorTilesFar ((void (*)(void*,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
 #define UiText_DrawStringInWindowFar ((void (*)(const void*,void*,s32,s32))UiText_DrawStringInWindowFar)
-#define UiNumber_DrawAt ((void (*)(s32,s32,void*,s32,s32))UiNumber_DrawAt)
+#define UiText_DrawNumberInWindowFar ((void (*)(s32,s32,void*,s32,s32))UiText_DrawNumberInWindowFar)
 
 
 extern struct CharacterMenuState *gMenuWork;
@@ -107,15 +108,15 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mod
     }
     for (i = 0; i <= 3; i++) {
         if (has_djinn)
-            UiNumber_DrawAt(status->djinn_owned_counts[i], 1, window, i * 32 + 120, row * 8 + 8);
+            UiText_DrawNumberInWindowFar(status->djinn_owned_counts[i], 1, window, i * 32 + 120, row * 8 + 8);
         if ((mode & 0xff) == 1) {
             if (has_djinn) {
-                UiNumber_DrawAt(status->djinn_active_counts[i], 1, window, i * 32 + 104, row * 8 + 8);
+                UiText_DrawNumberInWindowFar(status->djinn_active_counts[i], 1, window, i * 32 + 104, row * 8 + 8);
                 UiText_DrawStringInWindowFar(Menu_SlashString, window, i * 32 + 112, row * 8 + 8);
             }
-            UiNumber_DrawAt(Owner_GetResistanceValueFar(unit, i), 2, window, i * 32 + 112, row * 8 + 16);
-            UiNumber_DrawAt(status->elm[i].pow, 3, window, i * 32 + 104, row * 8 + 24);
-            UiNumber_DrawAt(status->elm[i].res, 3, window, i * 32 + 104, row * 8 + 32);
+            UiText_DrawNumberInWindowFar(Owner_GetResistanceValueFar(unit, i), 2, window, i * 32 + 112, row * 8 + 16);
+            UiText_DrawNumberInWindowFar(status->elm[i].pow, 3, window, i * 32 + 104, row * 8 + 24);
+            UiText_DrawNumberInWindowFar(status->elm[i].res, 3, window, i * 32 + 104, row * 8 + 32);
         }
     }
 }

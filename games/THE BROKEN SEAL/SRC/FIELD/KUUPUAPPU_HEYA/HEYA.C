@@ -24,7 +24,7 @@
 #define FieldScene_PrepareActors ((void (*)(const struct ScenePlacement*))FieldScene_PrepareActors)
 
 s32 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPosition *position);
-void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *object, s32 mode);
+void Object_SetMode(struct FieldActor *object, s32 mode);
 
 void UnitCalc();
 
@@ -152,17 +152,17 @@ s32 KuupuappuHeya_TryJumpTo(struct FixedPointPosition *pos)
     saved = *flags;
     if (Object_CheckMovementCollision(obj, pos) == 0) {
         Engine_EventBegin();
-        ObjectDispatch_ApplyArgumentToChildren(obj, 6);
+        Object_SetMode(obj, 6);
         Engine_TaskWait(6);
         Engine_AudioPlayCue(152);
-        ObjectDispatch_ApplyArgumentToChildren(obj, 7);
+        Object_SetMode(obj, 7);
         obj->speed = 0x30000;
         obj->acceleration = 0x20000;
         obj->velocity_y = 0x40000;
         *flags &= 0x7e;
         Engine_ActorSetSpriteFlags(obj, 0);
         Engine_ActorMoveToAndWait(0, ((union FieldCoordinate *)&pos->x)->part.pixel, ((union FieldCoordinate *)&pos->z)->part.pixel);
-        ObjectDispatch_ApplyArgumentToChildren(obj, 6);
+        Object_SetMode(obj, 6);
         Engine_ActorSetSpriteFlags(obj, 1);
         Engine_TaskWait(6);
         *flags = saved;

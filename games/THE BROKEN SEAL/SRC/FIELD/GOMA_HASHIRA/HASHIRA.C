@@ -15,9 +15,7 @@
 #include "CALL.H"
 #include "B5_CONTEXT.H"
 
-extern u8 *gWork;
 
-extern s16 Data_02000240[];
 
 
 
@@ -161,12 +159,12 @@ void ConfigureSceneForActorEightColumn(void)
     if (x == 20) {
         a4 = 18;
         a5 = 6;
-        Map_CopyCellAttributeRect(18, 40, 6, 3, a4, a5);
+        Engine_MapCopyCellAttributes(18, 40, 6, 3, a4, a5);
         Engine_GameFlagClear(0x302);
     } else {
         a4 = 18;
         a5 = 6;
-        Map_CopyCellAttributeRect(24, 40, 6, 3, a4, a5);
+        Engine_MapCopyCellAttributes(24, 40, 6, 3, a4, a5);
         Engine_GameFlagSet(0x302);
     }
     Engine_EventEnd();

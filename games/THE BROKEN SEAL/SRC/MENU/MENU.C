@@ -17,6 +17,7 @@
 #include "GLOBAL_CELLS.H"
 #include "NODE_CHAIN.H"
 #include "text/MSG_IDS.H"
+s32 GameFlag_TestFar(s32 flag);
 
 #define UiText_DrawCharacterAtOffset ((void (*)(s32, struct UiWindow *, s32, s32))UiText_DrawCharacterAtOffset)
 #define Menu_AnimatedCursorTiles ((u8 *)&Menu_AnimatedCursorTiles)
@@ -90,7 +91,7 @@ void MenuSelection_DrawFrame(void)
             }
         }
         if (node->scale != 0) {
-            if (GameFlag_IsSet(0x103) != 0) {
+            if (GameFlag_TestFar(0x103) != 0) {
                 if (state->records[14].kind == 1) {
                     e->mode = 1;
                 } else {
@@ -129,7 +130,7 @@ void MenuSelection_DrawFrame(void)
             te->y = te->y + 0xf0;
             transfer->scale = transfer->scale + transfer->scale_step;
         }
-        if (GameFlag_IsSet(0x103) != 0) {
+        if (GameFlag_TestFar(0x103) != 0) {
             te->mode = 1;
         }
         Runtime_PushSlotEntry((s32 *)te, 248);
@@ -160,7 +161,7 @@ void MenuSelection_DrawFrame(void)
             e->affine = 0;
             e->param = 0;
         }
-        if (GameFlag_IsSet(0x103) != 0) {
+        if (GameFlag_TestFar(0x103) != 0) {
             if (state->records[14].kind == 1) {
                 e->mode = 1;
             } else {
@@ -197,7 +198,7 @@ void MenuSelection_DrawFrame(void)
         }
         cursor_entry->y = cursor->y + Menu_CursorBobOffsets[(gFrameTick >> 2) & 15] - 32;
         cursor_entry->x = cursor->x - 4;
-        if (GameFlag_IsSet(0x103) != 0) {
+        if (GameFlag_TestFar(0x103) != 0) {
             if (state->records[14].kind == 1) {
                 cursor_entry->mode = 1;
             } else {
@@ -232,7 +233,7 @@ void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index)
     }
     tmp = frames + frame * 128;
     entry->tile = VramBlock_LoadCached(state->records[index].slot, 128, tmp);
-    if (GameFlag_IsSet(0x103)) {
+    if (GameFlag_TestFar(0x103)) {
         if (state->records[14].kind == 1)
             entry->mode = 1;
         else

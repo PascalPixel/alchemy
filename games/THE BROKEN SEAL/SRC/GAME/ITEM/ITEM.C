@@ -21,6 +21,8 @@
 #include "BTLSYS.H"
 #include "BTLCALC.H"
 #include "UI.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
+void UnitCalcFar(s32 unit_id);
 
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 
@@ -85,14 +87,14 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     owner = UnitGetFar(owner_id);
     work = gMenuWork;
     item_id = 0x1ff & owner->inventory[slot];
-    item = Item_Get(item_id);
+    item = Item_GetDirectFar(item_id);
     result = BattleEffect_ApplyToTargets(
         0x3fff & item->action_id,
         owner_id,
         target_id,
         1);
     if (result != -1) {
-        item = Item_Get(owner->inventory[slot]);
+        item = Item_GetDirectFar(owner->inventory[slot]);
         if (item->use_type == 1) {
             Inventory_RemoveFar(owner_id, slot);
             work->item_count =
@@ -369,14 +371,14 @@ s32 BattleEffect_ApplyToTargets(
     }
 
     for (index = 0; index < runtime->party_count; index++)
-        BattleUnit_Recalculate(runtime->owner_ids[index]);
+        UnitCalcFar(runtime->owner_ids[index]);
     runtime->message_offset = result_code;
     return 0;
 }
 
 void Item_PlayUseAnimation(u32 item)
 {
-    Ability_PlayUseAnimation(Item_Get(item)->action_id & 0x3fff);
+    Ability_PlayUseAnimation(Item_GetDirectFar(item)->action_id & 0x3fff);
 }
 
 void Ability_PlayUseAnimation(s32 action)
@@ -533,7 +535,7 @@ s32 ItemMenu_Run(void)
     WaitFrames(1);
     Scheduler_DisableOverlayCallbacksWithFlags();
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    Runtime_BumpFree(menu->saved);
+    MemFree(menu->saved);
     Runtime_ReleaseHeapBlock(55);
     Event_ClearInvalidPackedValuesFar();
     gGameState.mode = old_mode;

@@ -29,6 +29,7 @@
 #include "BTLEV.H"
 #include "BTLWORK.H"
 #include "ANIMSPR.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 #define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(void*,s32))ObjectDispatch_ApplyValueToChildrenFar)
 #define BattleFx_DispatchByIdRangeFar ((void (*)(struct BattlePresentationWork*))BattleFx_DispatchByIdRangeFar)
@@ -273,7 +274,7 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
 
     for (index = 0; index != side_count; index++) {
         if (index + side_start == actor_id) {
-            Object_SetMode(actor_record, 3);
+            ObjectDispatch_ApplyArgumentToChildrenFar(actor_record, 3);
         }
     }
 
@@ -413,7 +414,7 @@ s32 BattlePres_RunUnitAction(s16 *action)
         work.count = BattleParty_ListLivingUnits(1, work.actors);
     PtyStDrawFar(BtlWk->pty_st & ~1);
     object = BtlObjGet(work.actor)->object;
-    Object_SetMode(object, 3);
+    ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);
     if ((u16)action[5] <= 7) {
         work.side = 1;
@@ -445,7 +446,7 @@ s32 BattlePres_RunUnitAction(s16 *action)
         BattleFx_RunIceFleckBurstFar(&work);
         work.kind = 0;
         BattleFx_DispatchModeFar(&work);
-        Object_SetMode(object, 1);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
     } while (0);
     for (i = 0; i != work.count; i++)
         ObjMotRst(work.actors[i]);

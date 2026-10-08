@@ -29,7 +29,7 @@ Engine_MapCopyCellsTo:
 	.global Engine_ItemLoadIcon
 	.thumb_func
 Engine_ItemLoadIcon:
-	overlay_veneer ItemIcon_LoadTilesFar
+	overlay_veneer Ui_PrepareTransferForItemFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
 Engine_GameFlagIsSet:

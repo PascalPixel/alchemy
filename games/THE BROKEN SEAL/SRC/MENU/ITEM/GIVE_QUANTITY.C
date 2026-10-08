@@ -19,6 +19,8 @@
 #include "UI.H"
 #include "MENU_LIST.H"
 #include "text/MSG_IDS.H"
+void UiText_DrawNumberInWindowFar(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
+s32 GameFlag_TestFar(s32 flag);
 extern volatile s32 gKeysRepeat;
 extern volatile s32 gKeyState;
 
@@ -59,7 +61,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
         object = RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 80, 32);
         object->table.bits.index += 4;
         UiMenu_SlideCursor(GIVE_CURSOR_X, 40);
-        while (!GameFlag_IsSet(0x150)) {
+        while (!GameFlag_TestFar(0x150)) {
             if (changed) {
                 changed = 0;
                 quantity = (range + quantity) % range;
@@ -71,17 +73,17 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
                 Shop_FillSelectorFar(base + quantity + 1, 10, tiles);
                 Shop_FillSelectorFar(base, 2, tiles);
                 VramBlock_LoadCached(slot, 256, tiles);
-                UiNumber_DrawAt(quantity + 1, 2, window, 32, 32);
+                UiText_DrawNumberInWindowFar(quantity + 1, 2, window, 32, 32);
                 UiText_DrawCharacterAtOffsetFar((menu->selected_items[0] & 0x1ff) + (s32)MsgItemName,
                     window, 16, 8);
-                UiNumber_DrawAt(count - quantity - 1, 2, window, 16, 24);
+                UiText_DrawNumberInWindowFar(count - quantity - 1, 2, window, 16, 24);
 #if EDITION_INTERNATIONAL
                 if (single == 0)
-                    UiNumber_DrawAt(other_count + quantity + 1, 2, window, 80, 24);
+                    UiText_DrawNumberInWindowFar(other_count + quantity + 1, 2, window, 80, 24);
 #else
                 UiText_DrawCharacterAtOffsetFar((s32)MsgItemCounter, window, 32, 24);
                 if (single == 0) {
-                    UiNumber_DrawAt(other_count + quantity + 1, 2, window, 80, 24);
+                    UiText_DrawNumberInWindowFar(other_count + quantity + 1, 2, window, 80, 24);
                     UiText_DrawCharacterAtOffsetFar((s32)MsgItemCounter, window, 96, 24);
                 }
 #endif
@@ -116,7 +118,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
     RenderOutput_ClearListFar((void *)window);
     Runtime_ReleaseHeapBlock(14);
     menu->selected_item_icon->active = 13;
-    if (GameFlag_IsSet(0x150))
+    if (GameFlag_TestFar(0x150))
         quantity = -1;
     return quantity;
 }

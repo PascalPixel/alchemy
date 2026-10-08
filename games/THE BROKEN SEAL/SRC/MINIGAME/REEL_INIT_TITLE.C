@@ -27,8 +27,11 @@
 #include "TBS_EDITION.H"
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
+void UiWork_InitializeWithResourceCountersFar(void);
+s32 BattleEffect_LoadWorkFar(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
+void UiText_DrawNumberInWindowFar(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 
-#define UiNumber_DrawAt ((void (*)(s32,s32,struct UiWindow*,s32,s32))UiNumber_DrawAt)
+#define UiText_DrawNumberInWindowFar ((void (*)(s32,s32,struct UiWindow*,s32,s32))UiText_DrawNumberInWindowFar)
 #define RuntimeDispatch_NoOpHook ((void (*)(s32))RuntimeDispatch_NoOpHook)
 
 struct Reel {
@@ -171,8 +174,8 @@ void ReelGame_RunFrame(void)
 
     if (work->state == 0) {
         coins = PartyInventory_CountItemFar(228);
-        UiNumber_DrawAt(coins - work->bet, REEL_COIN_DIGITS, work->sub_window, REEL_COIN_X, 0);
-        UiNumber_DrawAt(work->bet, 2, work->sub_window, 64, 8);
+        UiText_DrawNumberInWindowFar(coins - work->bet, REEL_COIN_DIGITS, work->sub_window, REEL_COIN_X, 0);
+        UiText_DrawNumberInWindowFar(work->bet, 2, work->sub_window, 64, 8);
         if (work->pressed & KEY_B) {
             struct ReelSave *save = (struct ReelSave *)((u8 *)&gGameState + 12);
 
@@ -806,7 +809,7 @@ void ReelGame_Run(void)
         entry += 32;
         Resource_DecodeType01(entry, tiles);
         Dma_Set(tiles, (void *)REEL_JACKPOT_TILES, REEL_JACKPOT_COPY, REG_DMA3);
-        FarCall_WindowTable();
+        UiWork_InitializeWithResourceCountersFar();
         ReelGame_InitTitle();
 
         for (i = 0; i != 5; i++) {
@@ -839,9 +842,9 @@ void ReelGame_Run(void)
             }
         }
 
-        FarCall_EffectTable(46, 8, 7, 3, 2);
+        BattleEffect_LoadWorkFar(46, 8, 7, 3, 2);
         draw[0] = gWorkSlot[46];
-        FarCall_EffectTable(47, 8, 7, 3, 3);
+        BattleEffect_LoadWorkFar(47, 8, 7, 3, 3);
         draw[1] = gWorkSlot[47];
         Iwram_FillWords(canvas, size, 0);
         Dma_Set(canvas, (void *)0x06003500, DMA_ENABLE32 | DMA_32BIT | 0x8000 / 4, REG_DMA3);

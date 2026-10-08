@@ -20,11 +20,11 @@
 #include "BTLSYS.H"
 #include "DISPTRAN.H"
 
-void Object_SetMode(struct ObjectRuntime *, s32);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct ObjectRuntime *, s32);
 
-void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
-void Object_CommitPosition(struct ObjectRuntime *);
-void Audio_PlayCue(s32);
+void Object_SetMoveTargetFar(struct ObjectRuntime *, s32, s32, s32);
+void Script_WaitForEventTimeoutFar(struct ObjectRuntime *);
+void AudioCommand_PlayFar(s32);
 void Battle_WaitMode0(s32 arg0);
 
 extern struct EventRuntime *gEventWork;
@@ -35,9 +35,9 @@ s32 Scene_FadeColorFromWhite(void)
     s32 i;
     s32 c;
 
-    Audio_PlayCue(gGameState.scene_cue);
-    Audio_PlayCue(288);
-    Audio_PlayCue(147);
+    AudioCommand_PlayFar(gGameState.scene_cue);
+    AudioCommand_PlayFar(288);
+    AudioCommand_PlayFar(147);
     if (work->mode_19e == 3) {
         s32 color = 0x7fff;
 
@@ -92,7 +92,7 @@ void ObjectEffect_PrepareContextEffect(s32 value)
     object->velocity_z = zero;
     object->target_x = 0x80000000;
     object->target_z = 0x80000000;
-    Object_SetMode(object, value);
+    ObjectDispatch_ApplyArgumentToChildrenFar(object, value);
     WaitFrames(18);
 }
 
@@ -123,7 +123,7 @@ void ObjectEffect_EndContextEffect(s32 arg0)
     eff->param = 15;
     obj->x = (obj->x & mask) + 0x80000;
     obj->z &= mask;
-    Object_SetMode(obj, arg0);
+    ObjectDispatch_ApplyArgumentToChildrenFar(obj, arg0);
     WaitFrames(30);
     ctx->count = 1;
     ResourceMetadata_ClearRecordFar(ctx->entries[1]);
@@ -131,9 +131,9 @@ void ObjectEffect_EndContextEffect(s32 arg0)
     ctx->flags = 1;
     obj->acceleration = 0x10000;
     obj->speed_limit = 0x10000;
-    Object_SetPosition(obj,
+    Object_SetMoveTargetFar(obj,
         obj->x, obj->y, obj->z + 0x80000);
-    Object_CommitPosition(obj);
+    Script_WaitForEventTimeoutFar(obj);
 }
 
 s32 ObjectEffect_RunPendingFlagEvent(void)
@@ -166,9 +166,9 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
                        obj->terrain_height) {
                     WaitFrames(1);
                 }
-                Audio_PlayCue(159);
+                AudioCommand_PlayFar(159);
                 obj->y = obj->terrain_height;
-                Object_SetMode(obj, 22);
+                ObjectDispatch_ApplyArgumentToChildrenFar(obj, 22);
                 Battle_WaitMode0(15);
                 Object_AttachWorkTargetToObject(id, 1);
                 result = 3;

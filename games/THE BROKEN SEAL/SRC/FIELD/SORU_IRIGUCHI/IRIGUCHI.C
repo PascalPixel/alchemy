@@ -147,7 +147,7 @@ void SceneDialogue_RunFlag81aMessageBranch(void)
     } else {
         Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);
         if (Engine_GameFlagIsSet(0xf01) != 0) {
-            u16 *p = (u16 *)(gWork + 370);
+            u16 *p = (u16 *)((u8 *)gEventWork + 370);
             u16 val = 1;
             *p = val;
         }
@@ -213,7 +213,7 @@ void FieldScene_RunFlag821Dialogue(void)
     if (Engine_GameFlagIsSet(0x821) != 0) {
         Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefBothEyes, 1);
     } else if (Engine_GameFlagIsSet(0xf02) != 0) {
-        work = gWork;
+        work = (u8 *)gEventWork;
         Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);
         {
 
@@ -417,7 +417,7 @@ void Scene_UpdateFormationActor14Flags(void)
 s32 *SceneActor_FindSlotByTilePosition(s32 x, s32 z)
 {
 
-    s32 **slots = (s32 **)(gWork + 0x14);
+    s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
     u32 i;
 
     for (i = 8; i <= 65; i++) {
@@ -506,7 +506,7 @@ s32 Scene_Initialize(void)
 void SoruIriguchi_ApplyEntryState(void)
 {
     GameFlag_Set(0x144);
-    *(s32 *)((u8 *)gWork + 0x1c0) = 0x100;
+    *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x100;
     if (GameFlag_IsSet(0x814) != 0) {
         SoruIriguchi_CueTimer = 0;
         Task_AddCallback((void (*)(void))Scene_UpdateCueTimer, 0xc80);

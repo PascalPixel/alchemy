@@ -9,9 +9,6 @@ Engine_TaskWait:
 	.global Engine_TaskAddCallback
 	.thumb_func
 Engine_TaskAddCallback:
-	.global Scheduler_AddOrUpdateCallback
-	.thumb_func
-Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallback
 	.thumb_func
@@ -61,9 +58,9 @@ Object_Destroy:
 	.thumb_func
 Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
-	.global Object_SetPosition
+	.global Engine_ObjectSetPosition
 	.thumb_func
-Object_SetPosition:
+Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
 	.global Object_CommitPosition
 	.thumb_func
@@ -100,7 +97,7 @@ UiText_ShowCenteredMessage:
 	.global Engine_ItemLoadIcon
 	.thumb_func
 Engine_ItemLoadIcon:
-	overlay_veneer ItemIcon_LoadTilesFar
+	overlay_veneer Ui_PrepareTransferForItemFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
 Engine_GameFlagIsSet:

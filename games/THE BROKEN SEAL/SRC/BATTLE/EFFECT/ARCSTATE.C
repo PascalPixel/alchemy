@@ -21,10 +21,11 @@
 #include "FX_SCENE.H"
 #include "ANIMSPR.H"
 #include "text/MSG_IDS.H"
+void UiText_ShowPositionedMessageAndWaitFar(s32 no, s32 flags);
 
 #define BattleFx_SpawnDescendingArcParticles \
 	((void (*)(void *))BattleFx_SpawnDescendingArcParticles)
-#define UiText_DrawMessage ((void (*)(void *, s32))UiText_DrawMessage)
+#define UiText_ShowPositionedMessageAndWaitFar ((void (*)(void *, s32))UiText_ShowPositionedMessageAndWaitFar)
 
 #define ENA_PURUFU 150 // プルーフ
 #define ITEM_HANE 236  // せいなるはね
@@ -33,7 +34,7 @@
 extern u32 gFrameCount;
 #endif
 
-void UiText_DrawQuantity(s32 arg0, s32 arg1);
+void UiWork_PushValueSlotFar(s32 arg0, s32 arg1);
 
 //--------------------------------------------------------------------------
 // 演出の終わり：使う者の表示の flags を 5 フレームの周期で 3 と 1 に切り替える
@@ -96,10 +97,10 @@ void FieldEvent_ShowStatusMessage(void)
 	gGameState.avoid_distance = 0;
 	if (gGameState.avoid_by_item == 0)
 	{
-		UiText_DrawQuantity(ENA_PURUFU, 4);
-		UiText_DrawMessage(MsgAbilityWoreOff, 1);
+		UiWork_PushValueSlotFar(ENA_PURUFU, 4);
+		UiText_ShowPositionedMessageAndWaitFar(MsgAbilityWoreOff, 1);
 		return;
 	}
-	UiText_DrawQuantity(ITEM_HANE, 2);
-	UiText_DrawMessage(MsgItemWoreOff, 1);
+	UiWork_PushValueSlotFar(ITEM_HANE, 2);
+	UiText_ShowPositionedMessageAndWaitFar(MsgItemWoreOff, 1);
 }

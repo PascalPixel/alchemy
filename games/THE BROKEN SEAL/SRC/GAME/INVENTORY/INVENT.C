@@ -19,6 +19,7 @@
 #include "FIELD_EVENT.H"
 #include "BTLPTY.H"
 #include "B5_CONTEXT.H"
+s32 Menu_RunConfirmSelectionFar(s32, s32, s32, s32);
 
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
 
@@ -57,7 +58,7 @@ void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value)
 
 s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 force_bottom)
 {
-    struct EventPromptWork *work = (struct EventPromptWork *)gWork;
+    struct EventPromptWork *work = (struct EventPromptWork *)gEventWork;
     s32 sprite = ((struct ScenePlacement *)BattleAction_FindDescriptor(work->event.speaker))->sprite;
     struct UiWindow *window = (struct UiWindow *)work->event.message_window;
     struct UiWindow *side = (struct UiWindow *)work->event.side_window;
@@ -85,7 +86,7 @@ s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 force_bottom)
             use_bottom = 0;
     }
 
-    answer = Inventory_RequestMode(use_bottom, work->resource_base, work->width, 0);
+    answer = Menu_RunConfirmSelectionFar(use_bottom, work->resource_base, work->width, 0);
     if (answer != 0) {
         Object_SetModeById(actor, 4);
         UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);

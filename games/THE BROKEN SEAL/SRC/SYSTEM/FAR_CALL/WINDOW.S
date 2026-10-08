@@ -19,9 +19,6 @@ UiWindow_CreateFar:
 	.thumb_func
 UiWork_FinalizeFar:
 	overlay_veneer UiWork_Finalize
-	.global Party_Apply
-	.thumb_func
-Party_Apply:
 	.global Ui_AdjustValueWithoutLimitFar
 	.thumb_func
 Ui_AdjustValueWithoutLimitFar:
@@ -38,9 +35,6 @@ UiText_CopyMessageStringFar:
 	.thumb_func
 UiText_OpenMessageWindowFar:
 	overlay_veneer UiText_OpenMessageWindow
-	.global UiText_DrawMessage
-	.thumb_func
-UiText_DrawMessage:
 	.global UiText_ShowPositionedMessageAndWaitFar
 	.thumb_func
 UiText_ShowPositionedMessageAndWaitFar:
@@ -57,9 +51,6 @@ UiWork_IsIdleFar:
 	.thumb_func
 UiWork_SetBusyFlagsFar:
 	overlay_veneer UiWork_SetBusyFlags
-	.global UiWindow_Clear
-	.thumb_func
-UiWindow_Clear:
 	.global RenderOutput_PrepareForRedrawFar
 	.thumb_func
 RenderOutput_PrepareForRedrawFar:
@@ -76,9 +67,6 @@ UiWindow_DrawDividerLineFar:
 	.thumb_func
 UiText_DrawResourceFar:
 	overlay_veneer UiText_DrawResource
-	.global UiText_DrawAt
-	.thumb_func
-UiText_DrawAt:
 	.global UiText_DrawCharacterAtOffsetFar
 	.thumb_func
 UiText_DrawCharacterAtOffsetFar:
@@ -103,9 +91,6 @@ UiText_DrawNumberFar:
 	.thumb_func
 UiText_DrawNumberAtOffsetFar:
 	overlay_veneer UiText_DrawNumberAtOffset
-	.global UiNumber_DrawAt
-	.thumb_func
-UiNumber_DrawAt:
 	.global UiText_DrawNumberInWindowFar
 	.thumb_func
 UiText_DrawNumberInWindowFar:
@@ -153,6 +138,7 @@ UiText_GetResourceDimensionsAltFar:
 	.thumb_func
 UiWork_ClearValueNameTablesFar:
 	overlay_veneer UiWork_ClearValueNameTables
+	@ O2 pending: shared code calls this stub UiText_DrawQuantity while overlay veneers of that name target the other label
 	.global UiText_DrawQuantity
 	.thumb_func
 UiText_DrawQuantity:
@@ -257,9 +243,6 @@ UiTextResource_ReleaseFar:
 	overlay_veneer UiTextResource_Release
 	overlay_veneer Menu_RunSelectionHook
 	overlay_veneer Item_CallHandler48
-	.global ItemIcon_LoadTilesFar
-	.thumb_func
-ItemIcon_LoadTilesFar:
 	.global Ui_PrepareTransferForItemFar
 	.thumb_func
 Ui_PrepareTransferForItemFar:
@@ -276,9 +259,6 @@ UiWindow_FillFromSceneFar:
 	.global RenderOutput_RedrawSavedRectFar
 	.thumb_func
 RenderOutput_RedrawSavedRectFar:
-	.global UiWindow_Commit
-	.thumb_func
-UiWindow_Commit:
 	overlay_veneer RenderOutput_RedrawSavedRect
 	.global RenderOutput_ClearListFar
 	.thumb_func
@@ -315,9 +295,6 @@ BattleLayout_HighlightPartyPanelsFar:
 	.global RenderOutput_CreateLoadedFar
 	.thumb_func
 RenderOutput_CreateLoadedFar:
-	.global UiIcon_Draw
-	.thumb_func
-UiIcon_Draw:
 	overlay_veneer RenderOutput_CreateLoaded
 	overlay_veneer RenderOutput_CreateFromTable
 	overlay_veneer SaveState_WriteCurrentSlotPair
@@ -384,9 +361,6 @@ Menu_SelectEntry11To14Far:
 	.thumb_func
 Menu_SelectEntry19To1cFar:
 	overlay_veneer Menu_SelectEntry19To1c
-	.global Inventory_RequestMode
-	.thumb_func
-Inventory_RequestMode:
 	.global Menu_RunConfirmSelectionFar
 	.thumb_func
 Menu_RunConfirmSelectionFar:

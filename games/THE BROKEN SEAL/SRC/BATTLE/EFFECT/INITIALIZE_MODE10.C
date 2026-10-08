@@ -30,6 +30,7 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 #include "TRANSFORM.H"
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
 
 void AudioCommand_PlayFar(s32 cue);
 
@@ -173,8 +174,8 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 		{
 			s32 pose = (frame - 48) / 24 % 3;
 
-			Object_InitializeMode(work->objects[3], ThornVines_ObjectPoses[pose * 2]);
-			Object_InitializeMode(work->objects[4], ThornVines_ObjectPoses[pose * 2 + 1]);
+			AnimationObjects_SelectAnimationFar(work->objects[3], ThornVines_ObjectPoses[pose * 2]);
+			AnimationObjects_SelectAnimationFar(work->objects[4], ThornVines_ObjectPoses[pose * 2 + 1]);
 		}
 
 		// とげを 1 フレームに 1 本ずつ飛ばす
@@ -427,7 +428,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 						object->y = 128 << 16;
 					object->vertical_motion_strength = 0;
 					for (n = 0; (record = GetMotionRecordFar(slot->object, n)) != 0; n++)
-						Object_InitializeMode(record, 5);
+						AnimationObjects_SelectAnimationFar(record, 5);
 				}
 			}
 		}
@@ -557,12 +558,12 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 //--------------------------------------------------------------------------
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
-#define Object_InitializeMode ((s32 (*)(void *, s32))Object_InitializeMode)
+#define AnimationObjects_SelectAnimationFar ((s32 (*)(void *, s32))AnimationObjects_SelectAnimationFar)
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
 extern u8 gMapCellBuffer[];
 
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
 
 extern struct Cells03001ad0 gBgScroll;
@@ -668,7 +669,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 		pts[i][1] = BattleFx10_Points[i][1];
 	}
 
-	Audio_PlayCue(141);
+	AudioCommand_PlayFar(141);
 
 	//------------------------------------------------------------------
 	// 前半 : 岩、大きな氷塊、しぶき (A・B で後半へ)
@@ -805,23 +806,23 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 
 		if (frame == 32)
 		{
-			Audio_PlayCue(134);
+			AudioCommand_PlayFar(134);
 		}
 		if (frame == 64)
 		{
-			Audio_PlayCue(134);
+			AudioCommand_PlayFar(134);
 		}
 		if (frame == 104)
 		{
-			Audio_PlayCue(134);
+			AudioCommand_PlayFar(134);
 		}
 		if (frame == 176)
 		{
-			Audio_PlayCue(134);
+			AudioCommand_PlayFar(134);
 		}
 		if (frame == 226)
 		{
-			Audio_PlayCue(145);
+			AudioCommand_PlayFar(145);
 		}
 		Render_ResetTransformState();
 
@@ -962,7 +963,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 	}
 	BattleEffect_SetupBlendedDisplay();
 	REG_BLDALPHA = 0x1010;
-	Audio_PlayCue(289);
+	AudioCommand_PlayFar(289);
 
 	for (i = 0; i != 64; i++)
 	{
@@ -1002,11 +1003,11 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 		}
 		if (frame >= 9 && frame < 72 && (frame & 3) == 0)
 		{
-			Audio_PlayCue(132);
+			AudioCommand_PlayFar(132);
 		}
 		if (frame == 72)
 		{
-			Audio_PlayCue(145);
+			AudioCommand_PlayFar(145);
 		}
 		// 右上から斜めに落ちる塊 (40×80)
 		if (frame > 64)
@@ -1223,7 +1224,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
 			offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
 			if (frame == member * 20)
 			{
-				Audio_PlayCue(143);
+				AudioCommand_PlayFar(143);
 				ObjectGroup_UpdateMembers(work->effect->actors[member], 7, -1, member, 20);
 			}
 			// 落ちてきて y = 112 を越えたら消す

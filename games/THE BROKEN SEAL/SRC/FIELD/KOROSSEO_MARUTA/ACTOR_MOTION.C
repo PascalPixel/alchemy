@@ -8,7 +8,7 @@ void FieldScene_RunFourStepActorMotion(s32 event)
     extern s32 FieldScene_RunMiddleSequence();
     extern void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
     extern void Korosseo_RestoreCompetitor();
-    extern void Object_SetPosition();
+    extern void Engine_ObjectSetPosition();
     extern void Object_CommitPosition();
     extern void battle_owner_69();
 
@@ -47,17 +47,17 @@ void FieldScene_RunFourStepActorMotion(s32 event)
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 10);
             raised_y = 0x60000 + y;
-            Object_SetPosition(actor, x, raised_y, actor->z.fixed);
+            Engine_ObjectSetPosition(actor, x, raised_y, actor->z.fixed);
             Object_CommitPosition(actor);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 14);
             shifted_x = 0x400000 + x;
-            Object_SetPosition(actor, shifted_x, raised_y, actor->z.fixed);
+            Engine_ObjectSetPosition(actor, shifted_x, raised_y, actor->z.fixed);
             Object_CommitPosition(actor);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 10);
-            Object_SetPosition(actor, shifted_x, y + 0x360000, actor->z.fixed);
+            Engine_ObjectSetPosition(actor, shifted_x, y + 0x360000, actor->z.fixed);
             Object_CommitPosition(actor);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 15);
-            Object_SetPosition(actor, x + 0x300000, y + 0x360000, actor->z.fixed);
+            Engine_ObjectSetPosition(actor, x + 0x300000, y + 0x360000, actor->z.fixed);
             Object_CommitPosition(actor);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 12);
             Event_ShowMessage(event, 0);
@@ -76,7 +76,7 @@ void FieldScene_RunFourStepActorMotion(s32 event)
 void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z)
 {
     extern void ObjectDispatch_InitFromTable6();
-    extern void Object_SetPosition();
+    extern void Engine_ObjectSetPosition();
 
     s32 *record;
 
@@ -84,14 +84,14 @@ void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z)
     if (record != 0) {
         ObjectDispatch_InitFromTable6();
         Object_SetMode(record, 5);
-        Object_SetPosition(record, x << 16, record[3], z << 16);
+        Engine_ObjectSetPosition(record, x << 16, record[3], z << 16);
     }
 }
 
 void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x, s32 z)
 {
     extern void ObjectDispatch_InitFromTable6();
-    extern void Object_SetPosition();
+    extern void Engine_ObjectSetPosition();
     extern void Object_CommitPosition();
 
     s32 *record;
@@ -100,7 +100,7 @@ void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x, s32 z)
     if (record != 0) {
         ObjectDispatch_InitFromTable6();
         Object_SetMode(record, 5);
-        Object_SetPosition(record, x << 16, record[3], z << 16);
+        Engine_ObjectSetPosition(record, x << 16, record[3], z << 16);
         Object_CommitPosition(record);
         Object_SetMode(record, 1);
     }

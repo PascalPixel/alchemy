@@ -27,6 +27,8 @@
 #include "HEAP_STATE.H"
 #include "TYPES.H"
 #include "BTLPTY.H"
+struct BtlAct * BtlActGet(s32 action_id);
+void UnitCalcFar(s32 unit_id);
 
 #define UiWindow_Create ((struct RenderInput * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
 #define UiText_DrawCharacterAtOffset ((void (*)(s32, struct RenderInput *, s32, s32))UiText_DrawCharacterAtOffset)
@@ -35,7 +37,7 @@
 #define UiWindow_DrawThreeTileColumn ((s32 (*)(struct RenderInput*,s32,s32,s32,s32))UiWindow_DrawThreeTileColumn)
 
 #define Djinn_DeactivateFar ((void (*)(s32,s32,s32))Djinn_DeactivateFar)
-#define Ability_GetData ((struct AbilityData * (*)(s32))Ability_GetData)
+#define BtlActGet ((struct AbilityData * (*)(s32))BtlActGet)
 
 struct AbilityData {
     u8 field_00[2];
@@ -216,7 +218,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             rows = 5;
         i = page * 5 - 5;
         for (n = 0; n < rows && i < total; n++, i++) {
-            info = Ability_GetData(list[i]);
+            info = BtlActGet(list[i]);
             if (info->kind != 4)
                 UiWindow_SetTilemapEntry(win, 0x5001 + info->kind, 15, n * 2, 0);
 
@@ -243,7 +245,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             UiWindow_SetTilemapEntry(win, 0xf01e, 12, n * 2, 0);
 #endif
             UiText_DrawNumberInWindow(
-                Ability_GetData(list[i])->cost, 2, win, 104, n * 16);
+                BtlActGet(list[i])->cost, 2, win, 104, n * 16);
         }
 
         if (gained != 0) {
@@ -327,9 +329,9 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     }
 
     Iwram_CopyWords(unit, snap, 332);
-    Runtime_BumpFree(list);
-    Runtime_BumpFree(snap);
-    Runtime_BumpFree(buf);
+    MemFree(list);
+    MemFree(snap);
+    MemFree(buf);
     return win;
 }
 
@@ -901,7 +903,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 object->atk_lv = 0;
                 object->def_lv = 0;
                 object->agi_lv = 0;
-                BattleUnit_Recalculate(owner);
+                UnitCalcFar(owner);
                 atkDelta -= object->atk;
                 defDelta -= object->def;
                 agiDelta -= object->agi;
@@ -1498,7 +1500,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     UiWork_Finalize(list_win, 1);
     UiWindow_MarkVisibleTileAttributes();
     UiWork_SetAltFlagAndClearTable(0);
-    Runtime_BumpFree(tbl);
+    MemFree(tbl);
     WaitFrames(1);
     return (s32)code;
 }

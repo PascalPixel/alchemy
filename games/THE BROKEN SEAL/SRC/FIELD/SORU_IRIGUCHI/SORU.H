@@ -21,7 +21,6 @@ enum SanctumEntranceFlag {
 #define RECORD_B16(rec) (*(s16 *)((rec) + 18))
 
 extern s32 SoruIriguchi_CueTimer;
-extern u8 *gWork;
 
 void Battle_ResetEffectCounter(void);
 

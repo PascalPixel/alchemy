@@ -16,7 +16,7 @@
 #include "STAGED_ACTOR.H"
 #include "KAWA.H"
 
-#define Object_SetMoveTarget ((void (*)(struct FieldActor *, s32, s32, s32))Object_SetMoveTarget)
+#define Engine_ObjectSetPosition ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -105,7 +105,6 @@ struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct Fiel
 
 void StagedActor_PushActorAhead(void)
 {
-    extern s16 Data_02000240[];
 
     struct FieldActor *subject;
     struct FieldActor *target;
@@ -117,7 +116,7 @@ void StagedActor_PushActorAhead(void)
     s32 zero;
     s32 handle;
 
-    handle = *(s32 *)((u8 *)Data_02000240 + (idx << 1));
+    handle = *(s32 *)((u8 *)&gGameState + (idx << 1));
     subject = Object_GetById(handle);
 
     dir = subject->facing >> 12;
@@ -171,11 +170,11 @@ void StagedActor_PushActorAhead(void)
 
     target->speed = 0x3333;
     target->acceleration = 0x3333;
-    Object_SetMoveTarget(target, pos.x, pos.y, pos.z);
+    Engine_ObjectSetPosition(target, pos.x, pos.y, pos.z);
 
     subject->speed = 0x3333;
     subject->acceleration = 0x3333;
-    Object_SetMoveTarget(subject, pos.x, pos.y, pos.z);
+    Engine_ObjectSetPosition(subject, pos.x, pos.y, pos.z);
 
     Engine_AudioPlayCue(0xee);
     Script_WaitForEventTimeout(target);
@@ -191,14 +190,13 @@ void StagedActor_PushActorAhead(void)
 
 struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void)
 {
-    extern s16 Data_02000240[];
 
     struct FieldActor *rec;
     s32 facing;
     Position3 pos;
     struct FieldActor *hit;
 
-    rec = Object_GetById(((ActiveSubjectSlot *)Data_02000240)->handle);
+    rec = Object_GetById(((ActiveSubjectSlot *)&gGameState)->handle);
 
     facing = (rec->facing + 0x2000) & 0xc000;
 

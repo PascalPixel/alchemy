@@ -15,6 +15,8 @@
 #include "BTLSYS.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
+s32 Item_CanOwnerEquip(s32 owner, s32 item);
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 #define COMMAND_DISABLED (-1)
 #define COMMAND_AVAILABLE 1
@@ -25,7 +27,7 @@ void ItemMenu_BuildCmd(s8 *command_states)
     struct ItemDefinition *item;
 
     menu = gMenuWork;
-    item = Item_Get(ITEM_ID_MASK & menu->selected_items[0]);
+    item = Item_GetDirectFar(ITEM_ID_MASK & menu->selected_items[0]);
 
     if (item->type == 0) {
         command_states[ITEM_COMMAND_USE] = COMMAND_AVAILABLE;
@@ -133,7 +135,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
     s32 result = -1;
 
     masked &= ITEM_ID_MASK;
-    def = Item_Get(masked);
+    def = Item_GetDirectFar(masked);
 
     if (BattleFx_HasTriggerFar(masked)!= 0) {
         return 0;

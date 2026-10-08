@@ -32,6 +32,7 @@
 #include "TRANSFORM.H"
 #include "HEAP_STATE.H"
 #include "IO_REG.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 #define Object_SetMoveTargetFar \
@@ -55,7 +56,7 @@ struct Chip
 
 #define gChips ((struct Chip *)Ram_MapCellBuffer)
 
-void Object_ResetMotion(struct MotionObject *object);
+void ObjectDispatch_InitFromTable6Far(struct MotionObject *object);
 
 //--------------------------------------------------------------------------
 // 使い手が光って跳び上がり、炎の玉になって最初の対象へ落ち、破片を散らす
@@ -141,7 +142,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 			actor->auto_face_motion = 0;
 			actor->snap_to_target = 0;
 			Object_SetMoveTargetFar(actor, actor->x * 3, 0, actor->z);
-			Object_SetMode(actor, 2);
+			ObjectDispatch_ApplyArgumentToChildrenFar(actor, 2);
 			work->shake_frames = frame;
 			AudioCommand_PlayFar(136);
 		}
@@ -156,7 +157,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 			actor->velocity_x = 0;
 			actor->velocity_y = 0;
 			actor->z = target->z;
-			Object_ResetMotion(actor);
+			ObjectDispatch_InitFromTable6Far(actor);
 		}
 		// 1 フレームに横へ 15、下へ 8 ドット落ち、地面に着いたら破片を 256 個散らす
 		if (frame > 17)

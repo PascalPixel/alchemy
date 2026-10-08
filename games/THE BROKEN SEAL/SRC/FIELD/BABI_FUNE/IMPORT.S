@@ -34,9 +34,9 @@ Runtime_AllocateBlock:
 	.thumb_func
 Runtime_BumpAllocateAlternatePool:
 	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global VramBlock_LoadCached
+	.global Engine_VramLoad
 	.thumb_func
-VramBlock_LoadCached:
+Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
 	.global Resource_FindFreeEntry
 	.thumb_func
@@ -66,9 +66,9 @@ Engine_MapRedraw:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Engine_ObjectSetBlendMode
+	.global Engine_ActorSetSpriteFlags
 	.thumb_func
-Engine_ObjectSetBlendMode:
+Engine_ActorSetSpriteFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
@@ -94,9 +94,9 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
-	.global Inventory_PromptAndSetObjectMode
+	.global Engine_EventChooseYesNo
 	.thumb_func
-Inventory_PromptAndSetObjectMode:
+Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Object_GetById
 	.thumb_func
@@ -114,9 +114,9 @@ Engine_ActorEnableActionCallback:
 	.thumb_func
 Object_RefreshSelectorById:
 	overlay_veneer Object_RefreshSelectorByIdFar
-	.global ObjectMotion_SetPositionAndReset
+	.global Engine_ActorWalkToAndWait
 	.thumb_func
-ObjectMotion_SetPositionAndReset:
+Engine_ActorWalkToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	.global Engine_ActorWaitForMove
 	.thumb_func

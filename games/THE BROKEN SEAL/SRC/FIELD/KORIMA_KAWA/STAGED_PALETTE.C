@@ -15,13 +15,23 @@
 #include "STAGED_ACTOR_EFFECT.H"
 #include "RESOURCE_393.H"
 #include "FIELDOBJ.H"
+
+void Engine_ActorSetSpriteFlags(struct DispatchObject *object, u32 value);
+
+void Engine_MapCopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y);
+
+void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
+
+void Engine_AudioPlayCue(s32 cue);
+
+extern struct GameState gGameState;
 #ifdef MODERN
 // called before its definition below, which modern GCC refuses for an
 // implicit int declaration of a u16 function
 u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj);
 #endif
 
-#define ObjectDispatch_SetSingleChildFlags ((void (*)(u8*,s32))ObjectDispatch_SetSingleChildFlags)
+#define Engine_ActorSetSpriteFlags ((void (*)(u8*,s32))Engine_ActorSetSpriteFlags)
 
 
 struct SceneBeatSubject {
@@ -29,16 +39,16 @@ struct SceneBeatSubject {
     u8 marker;
 };
 
-void Battle_Reset(void);
-void Object_SetModeById(s32, s32);
-void ObjectMotion_OffsetPositionAndResetMotion(s32, s32, s32);
-void Battle_WaitMode0(s32);
+void Engine_EventBegin(void);
+void Engine_ActorSetAnimation(s32, s32);
+void Engine_ActorSetDestinationOffset(s32, s32, s32);
+void Engine_EventWait(s32);
 u8 *Object_GetById();
-void GameFlag_SetBit(s32);
-void BattleFx_FinishAction(void);
+void Engine_GameFlagSet(s32);
+void Engine_EventEnd(void);
 s32 Object_CheckMovementCollision(struct StagedActorEffect *actor, struct StagedActorEffectRequest *request);
-s32 GameFlag_Test();
-void WaitFrames(s32 actor_index);
+s32 Engine_GameFlagIsSet();
+void Engine_TaskWait(s32 actor_index);
 void Object_SetMode(struct StagedActorEffect *actor, s32 mode);
 void KorimaPalette_SaveFirst(void);
 void KorimaPalette_Capture(void);
@@ -51,14 +61,14 @@ static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
     /* FAKEMATCH: a direct call builds both stacked literals in r3; the reference builds palette 16 in r2 first. */
     void Engine_ActorSetAnimation(s32, s32); u8 *Object_GetById(s32);
 
-    Map_CopyCellAttributeRect(left, top, width, height, tile, palette);
+    Engine_MapCopyCellAttributes(left, top, width, height, tile, palette);
 }
 
 static __inline__ void DrawSceneBeat(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
     /* FAKEMATCH: a direct call builds both stacked literals in r3; the reference builds palette 16 in r2 first. */
-    Map_CopyCellAttributeRect(left, top, width, height, tile, palette);
+    Engine_MapCopyCellAttributes(left, top, width, height, tile, palette);
 }
 
 s32 Math_DivideSigned();
@@ -77,30 +87,30 @@ u8 *MapStagedScene_SelectTertiaryData(void) { return Data_02009038; }
 void FieldScene_RunActorTenPlacementScene(void)
 {
     /* FAKEMATCH: replacing the live zero below with 0 changes r5 allocation and the outgoing stack store order. */
-    void Object_SetModeById(s32, s32); u8 *Object_GetById(s32);
+    void Engine_ActorSetAnimation(s32, s32); u8 *Object_GetById(s32);
 
     struct StagedActorProbe result;
-    Battle_Reset();
+    Engine_EventBegin();
     if (StagedActor_FindClearPosition(&result)) {
         SceneActor_MoveAndRedraw(result);
         if (result.actor_slot == 10 && (result.position_x >> 20) == 12) {
             struct FieldActor *actor;
             s32 zero;
-            Object_SetModeById(10, 3);
-            ObjectMotion_OffsetPositionAndResetMotion(10, -18, 6);
-            Battle_WaitMode0(30);
-            Audio_PlayCue(240);
-            Object_SetModeById(10, 8);
+            Engine_ActorSetAnimation(10, 3);
+            Engine_ActorSetDestinationOffset(10, -18, 6);
+            Engine_EventWait(30);
+            Engine_AudioPlayCue(240);
+            Engine_ActorSetAnimation(10, 8);
             Object_GetById(10)[35] = 2;
             zero = 0;
             DrawPlacement(32, 20, 2, 4, 11, 16);
             StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, zero);
-            GameFlag_SetBit(0x201);
+            Engine_GameFlagSet(0x201);
             actor = Object_GetById(10);
-            ObjectDispatch_SetSingleChildFlags(actor, 0);
+            Engine_ActorSetSpriteFlags(actor, 0);
         }
     }
-    BattleFx_FinishAction();
+    Engine_EventEnd();
 }
 
 s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
@@ -113,34 +123,34 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
     s32 result = Object_CheckMovementCollision(actor, request);
 
     if (result == 0) {
-        Battle_Reset();
+        Engine_EventBegin();
         Object_SetMode(actor, 6);
-        WaitFrames(6);
-        Audio_PlayCue(152);
+        Engine_TaskWait(6);
+        Engine_AudioPlayCue(152);
         Object_SetMode(actor, 7);
         actor->move_rate_x = 0x30000;
         actor->move_rate_z = 0x20000;
         actor->elevation_rate = 0x40000;
         *flags &= 0x7e;
-        ObjectDispatch_SetSingleChildFlags(actor, 0);
+        Engine_ActorSetSpriteFlags(actor, 0);
         ObjectMotion_SetPositionAndCommit(0, request->cell_x, request->cell_z);
         Object_SetMode(actor, 6);
-        ObjectDispatch_SetSingleChildFlags(actor, 1);
+        Engine_ActorSetSpriteFlags(actor, 1);
         *flags = (u8)result;
-        Object_SetModeById(10, 7);
+        Engine_ActorSetAnimation(10, 7);
         actor->position_x += 0xffff0000;
         actor->position_z += 0xffff0000;
-        WaitFrames(2);
+        Engine_TaskWait(2);
         actor->position_x += 0xffff0000;
         actor->position_z += 0xffff0000;
-        WaitFrames(10);
+        Engine_TaskWait(10);
         actor->position_x += 0x10000;
         actor->position_z += 0x10000;
-        WaitFrames(4);
+        Engine_TaskWait(4);
         actor->position_x += 0x10000;
         actor->position_z += 0x10000;
         *flags = saved;
-        BattleFx_FinishAction();
+        Engine_EventEnd();
         return 1;
     }
     return 0;
@@ -154,7 +164,7 @@ void SceneActor_ApplyOffsetObjectPosition(void)
     pos.y = ((struct Resource393Object *)Object_GetById(0))->position_y;
     pos.z = ((struct Resource393Object *)Object_GetById(0))->position_z;
 #else
-    struct Resource393Object *obj = Object_GetById(Data_02000240.object_id);
+    struct Resource393Object *obj = Object_GetById(((struct Resource393Work *)&gGameState)->object_id);
     u32 xb = obj->position_x & 0xfff00000;
 
     pos.x = xb + 0x80000;
@@ -174,19 +184,19 @@ s32 KorimaKawa_PrepareWindowTransition(void)
     work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     FieldScene_RedrawActorFootprint(10);
 
-    if (GameFlag_Test(0x201) != 0) {
+    if (Engine_GameFlagIsSet(0x201) != 0) {
         struct SceneBeatSubject *subj = Object_GetById(10);
 
         subj->marker = 2;
         DrawSceneBeat(32, 20, 2, 4, 11, 16);
         StagedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
-        ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
     }
 
     FieldScene_RedrawActorFootprint(8);
     FieldScene_RedrawActorFootprint(9);
 
-    if (GameFlag_Test(0x845) == 0) {
+    if (Engine_GameFlagIsSet(0x845) == 0) {
         SceneEffect_AdjustPaletteColors(6);
     }
     return 0;
@@ -205,7 +215,7 @@ void SceneEffect_AdjustPaletteColors(s32 a)
     }
     KorimaPalette_Capture();
     KorimaPalette_SaveSecond();
-    BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
+    Engine_ColorBufferApplyTarget(0x10000, 0);
 }
 
 u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)

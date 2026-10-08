@@ -23,7 +23,7 @@ extern struct FieldStepWork *gEventWork;
 
 void Event_SetMessageId(s16 value)
 {
-    gWork->message = value;
+    ((struct EventRuntime *)gEventWork)->message = value;
 }
 
 s32 ObjectTable_ReadActiveValue(s32 key)

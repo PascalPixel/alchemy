@@ -22,9 +22,9 @@ MemFree:
 	.thumb_func
 Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
-	.global VramBlock_LoadCached
+	.global Engine_VramLoad
 	.thumb_func
-VramBlock_LoadCached:
+Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
 	.global Resource_FindFreeEntry
 	.thumb_func

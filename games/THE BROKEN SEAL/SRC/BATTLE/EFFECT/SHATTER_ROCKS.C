@@ -28,7 +28,7 @@
 #define Camera_ApplyShake ((void (*)(s32,s32))Camera_ApplyShake)
 
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -608,7 +608,7 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
         for (i = 0; i != rows; i++) {
             rock = &work->particles[i];
             if (frame == ShatterRocks_DropFrames[i] + 18) {
-                Audio_PlayCue(134);
+                AudioCommand_PlayFar(134);
                 work->shake_frames = 4;
             }
             if (frame >= ShatterRocks_DropFrames[i] + 18) {

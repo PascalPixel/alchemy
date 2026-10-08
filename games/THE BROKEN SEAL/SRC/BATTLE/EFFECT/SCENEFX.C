@@ -29,6 +29,7 @@
 #include "IWRAM_CALL.H"
 #include "MAP_SCROLL.H"
 #include "PROJECT.H"
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
 
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
@@ -36,7 +37,7 @@
 
 #define gBattleFxWork ((void *(*))&gBattleFxWork)
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void AudioCommand_PlayFar(s32 cue);
 
 struct Scale {
@@ -152,12 +153,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     if (mode == 1) {
         for (i = 0; i != 2; i++) {
-            struct AnimationObject *object = GetBattleEffectObject(483 + i * 0x2001);
+            struct AnimationObject *object = ResourceObject_CreateFar(483 + i * 0x2001);
 
             work->objects[i] = object;
             if (object != 0) {
                 object->flags = 0;
-                Object_InitializeMode(object, 2);
+                AnimationObjects_SelectAnimationFar(object, 2);
                 ((struct AnimationObject *)work->objects[i])->part[0].priority = 3;
             }
         }
@@ -588,7 +589,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
     BattleFx_SelectLivingTargets(work->effect);
     BattleFx_SpawnObjects(9, 379, 2);
     for (i = 0; i != 6; i++) {
-        struct AnimationObject *object = GetBattleEffectObject(390);
+        struct AnimationObject *object = ResourceObject_CreateFar(390);
 
         work->objects[9 + i] = object;
         if (object != 0) {
@@ -1099,7 +1100,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
         if (frame == 8)
             BattleEventRuntime_BeginPhaseFar(0x86);
         if (work->effect->variant != 0 && frame == 8)
-            Audio_PlayCue(0xd4);
+            AudioCommand_PlayFar(0xd4);
         EffectPosition_ApplyStepAndYOffset(work->effect->actor, &position);
         if (frame >= 6 && frame <= 11) {
             if (work->effect->side == 0)

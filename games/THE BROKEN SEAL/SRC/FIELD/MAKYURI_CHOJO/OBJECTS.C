@@ -17,13 +17,13 @@ void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 type)
 {
     struct FieldActor *object;
 
-    object = CreateOverlayObject(type, x, y, z);
+    object = Engine_ObjectCreate(type, x, y, z);
     if (object != NULL) {
         ((struct FieldSpritePriority *)object->sprite)->priority = 0;
         object->motion_flags = 0;
         object->collision_flags = 8;
-        SetOverlayObjectMode(object, 0);
-        SetOverlayObjectSlot(object, 14);
+        Engine_ActorSetSpriteFlags(object, 0);
+        ObjectGroup_SetChildValue(object, 14);
         RunOverlayObjectCommand1(object, 1);
         return object;
     }

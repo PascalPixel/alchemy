@@ -26,7 +26,7 @@
 
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused1, s32 unused2);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 
 #if EDITION_INTERNATIONAL
@@ -166,25 +166,25 @@ s32 ItemMenu_ChooseCmd(void)
 
         if ((gKeyState & KEY_A) != 0) {
             if (command_states[index] == -1) {
-                Audio_PlayCue(114);
+                AudioCommand_PlayFar(114);
             } else {
                 switch (index) {
                 case 0:
-                    Audio_PlayCue(174);
+                    AudioCommand_PlayFar(174);
                     break;
                 case 1:
-                    Audio_PlayCue(175);
+                    AudioCommand_PlayFar(175);
                     break;
                 case 2:
                 case 3:
                 case 5:
-                    Audio_PlayCue(112);
+                    AudioCommand_PlayFar(112);
                     break;
                 case 4:
-                    Audio_PlayCue(117);
+                    AudioCommand_PlayFar(117);
                     break;
                 default:
-                    Audio_PlayCue(112);
+                    AudioCommand_PlayFar(112);
                     break;
                 }
                 menu->list_mode = index;
@@ -192,7 +192,7 @@ s32 ItemMenu_ChooseCmd(void)
             }
         }
         if ((gKeyState & KEY_B) != 0) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             index = -1;
             menu->list_mode = index;
             break;
@@ -201,19 +201,19 @@ s32 ItemMenu_ChooseCmd(void)
         if ((gKeysRepeat & KEY_UP) != 0) {
             row -= 1;
             need_redraw = 1;
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
         } else if ((gKeysRepeat & KEY_DOWN) != 0) {
             row += 1;
             need_redraw = 1;
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
         } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
             col += 1;
             need_redraw = 1;
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
         } else if ((gKeysRepeat & KEY_LEFT) != 0) {
             col -= 1;
             need_redraw = 1;
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
         }
     }
 

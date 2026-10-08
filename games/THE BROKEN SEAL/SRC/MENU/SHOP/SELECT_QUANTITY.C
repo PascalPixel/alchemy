@@ -34,7 +34,7 @@
 #define Shop_FillSelector ((void (*)(s32,s32,void*))Shop_FillSelector)
 
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void WaitFrames(s32 frames);
 void UiWork_FinalizeFar(s32 window, s32 mode);
@@ -67,22 +67,22 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
             sprite->table.bits.index += 4;
             for (;;) {
                 if (gKeyState & KEY_A) {
-                    Audio_PlayCue(112);
+                    AudioCommand_PlayFar(112);
                     result = count + 1;
                     break;
                 }
                 if (gKeyState & KEY_B) {
-                    Audio_PlayCue(113);
+                    AudioCommand_PlayFar(113);
                     result = -1;
                     break;
                 }
                 if (gKeysRepeat & KEY_LEFT) {
-                    Audio_PlayCue(111);
+                    AudioCommand_PlayFar(111);
                     changed = 1;
                     count--;
                 }
                 if (gKeysRepeat & KEY_RIGHT) {
-                    Audio_PlayCue(111);
+                    AudioCommand_PlayFar(111);
                     changed = 1;
                     count++;
                 }

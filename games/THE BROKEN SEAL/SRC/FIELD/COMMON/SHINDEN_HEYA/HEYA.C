@@ -20,7 +20,6 @@
 void ShindenHeya_SpawnOwnerEffect();
 
 
-extern s16 Data_02000240[];
 void Event_CallWithLastActiveObjectId();
 void AudioCommand_WaitForCompletion();
 
@@ -86,7 +85,7 @@ s32 UpdateFacingFromResolvedObject(struct FacingObject *object)
 {
     struct FacingObject *target;
 
-    target = ResolveFacingObject(object->unknown_64);
+    target = Object_GetById(object->unknown_64);
     object->facing = CalculateFacingAngle(
         target->position_z - object->position_z,
         target->position_x - object->position_x
@@ -117,7 +116,7 @@ void *SceneData_SelectPlacementTableBySubstate(void)
     {
         s32 off = 450;
 
-        sub = *(s16 *)((u8 *)Data_02000240 + off);
+        sub = *(s16 *)((u8 *)&gGameState + off);
     }
     switch ((s32)sub) {
     case 1:
@@ -145,9 +144,8 @@ void *SceneData_SelectPlacementTableBySubstate(void)
 
 u8 *SceneData_SelectTableBySceneIdAndFlags(void)
 {
-    extern s16 Data_02000240[];
 
-    s16 *tbl = Data_02000240;
+    s16 *tbl = (s16 *)&gGameState;
     s32 no = tbl[225];
 
     switch (no) {

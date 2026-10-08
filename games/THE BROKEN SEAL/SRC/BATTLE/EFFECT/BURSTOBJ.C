@@ -26,6 +26,7 @@
 #include "OBJECT_EFX.H"
 #include "MOTOBJ.H"
 #include "OBJECT_DISPATCH.H"
+void AudioCommand_PlayFar(s32 cue);
 
 #define Motion_SetTargetPositionFromMagnitudeAngle \
 	((void (*)(void *, s32, s32))Motion_SetTargetPositionFromMagnitudeAngle)
@@ -63,7 +64,7 @@ void						*BattleFx_FindMatchingEvent(u32 kind, u32 entry_index, s32 *size);
 void						 BattleFx_ApplyColorToSourceBuffer(u32 battle_value, s32 enabled);
 extern struct BattleFxScene *gEffectWork;
 
-void Object_SetMode(void *, s32);
+void ObjectDispatch_ApplyArgumentToChildrenFar(void *, s32);
 
 struct BurstParticleVector
 {
@@ -106,9 +107,7 @@ struct BurstParticleVisualGroup
 };
 
 void Animation_ApplyChildValuesFar(struct FieldActor *, s32);
-void Object_SetPosition(struct FieldActor *, s32, s32, s32);
-void Object_CommitPosition(void *object);
-void Audio_PlayCue(s32 sound);
+void Script_WaitForEventTimeoutFar(void *object);
 
 //--------------------------------------------------------------------------
 // イマジンの効果中なら打ち切る
@@ -127,7 +126,7 @@ void ResetSceneTransitionEffect(void)
 
 	if (state->active != 0)
 	{
-		Audio_PlayCue(SOUND_SCENE_TRANSITION);
+		AudioCommand_PlayFar(SOUND_SCENE_TRANSITION);
 		Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
 
 		zero = 0;
@@ -167,12 +166,12 @@ void BattleFx_RunBurstParticleMainObject(void)
 	if (tgt != NULL)
 	{
 		BattleEffect_SpawnBurstParticleField();
-		Object_SetMode(tgt, 2);
+		ObjectDispatch_ApplyArgumentToChildrenFar(tgt, 2);
 		tgt->collision_flags = 0;
 		ObjectDispatch_SetSingleChildFlagsFar(tgt, 0);
 		tgt->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
 		WaitFrames(10);
-		Audio_PlayCue(SOUND_RECOVERY);
+		AudioCommand_PlayFar(SOUND_RECOVERY);
 		WaitFrames(40);
 		BattleFx_PrepareBufferInterpolation();
 	}
@@ -189,7 +188,7 @@ void BattleFx_RunBurstParticles(void)
 	s32							n;
 
 	BattleEffect_SpawnBurstParticleField();
-	Audio_PlayCue(SOUND_HEAVY_IMPACT);
+	AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
 	p = &pos;
 	n = FALL_LAST;
 	do
@@ -276,7 +275,7 @@ void BattleEffect_SpawnBurstParticleField(void)
 			obj->speed = 0x18000;
 			obj->motion_flags = 0;
 			Animation_ApplyChildValuesFar(obj, 11);
-			Object_SetMode(obj, 7);
+			ObjectDispatch_ApplyArgumentToChildrenFar(obj, 7);
 			ObjectDispatch_InitializeFar(
 				(struct DispatchObject *)obj, BattleFx_CommonParticleScript + 1);
 			ObjectDispatch_SetSingleChildFlagsFar(obj, 1);
@@ -289,9 +288,9 @@ void BattleEffect_SpawnBurstParticleField(void)
 				Vector_AddPolarOffset(0xe0000, work->angle, pos);
 			dist = Random16() * 6 + 0x40000;
 			Vector_AddPolarOffset(dist, Random16(), pos);
-			Object_SetPosition(obj, pos[0], pos[1], pos[2]);
+			Object_SetMoveTargetFar(obj, pos[0], pos[1], pos[2]);
 		}
-		Audio_PlayCue(131);
+		AudioCommand_PlayFar(131);
 		WaitFrames(2);
 	}
 	WaitFrames(8);
@@ -339,9 +338,9 @@ void BattleEffect_RunTargetedItemBreak(void)
 			Motion_SetTargetPositionFromMagnitudeAngle(obj, 0xe0000, obj->angle);
 	}
 
-	Object_CommitPosition(pair[0]);
+	Script_WaitForEventTimeoutFar(pair[0]);
 	tgt->update = (void (*)(union FieldObject *))ObjectGroup_ApplyRandomChildValues;
-	Audio_PlayCue(130);
+	AudioCommand_PlayFar(130);
 	tgt->motion_flags = 4;
 
 	// 1/4 ドットずつ 32 ドット上げる

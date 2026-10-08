@@ -32,7 +32,7 @@
 
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 #define EMBER(n) (&((struct EffectStep *)Ram_MapCellBuffer)[n])
 
@@ -171,7 +171,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 					ember->variant = 0;
 					ember->x = screen.x;
 					ember->y = screen.y;
-					Audio_PlayCue(136);
+					AudioCommand_PlayFar(136);
 					ObjectGroup_UpdateMembers(work->effect->actors[i % work->effect->count], 10, 5,
 						i % work->effect->count, 4);
 					work->shake_frames = 2;

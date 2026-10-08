@@ -57,5 +57,5 @@ void StatusMenu_ShowOwnerProgressMessage(
     buffer = MemAlloc(PROGRESS_TEXT_MAX * 2);
     UiText_CopyMessageStringFar(message_variant + (s32)MsgProgressHelp, buffer, PROGRESS_TEXT_MAX);
     UiText_RenderWideStringAtOffsetFar(buffer, destination, 0, -1);
-    Runtime_BumpFree(buffer);
+    MemFree(buffer);
 }

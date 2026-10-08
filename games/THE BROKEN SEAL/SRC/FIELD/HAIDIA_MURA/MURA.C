@@ -20,11 +20,11 @@
 
 s32 Engine_GameFlagIsSet();
 void Engine_EventBegin();
-void Battle_WaitMode0();
+void Engine_EventWait();
 void ObjectMotion_SetSpeedParameters();
 void Engine_MessageShowCentered();
 void Engine_MapRedraw();
-void Object_SetModeById();
+void Engine_ActorSetAnimation();
 void Engine_EventEnd();
 void Engine_EventSetMessage();
 void Engine_EventShowMessageAndWait();
@@ -404,8 +404,8 @@ void HaidiaMura_RunCameraRiseScene(void)
         cam = gMapWork[0];
         Engine_EventBegin();
         Actor_SetSpeed(0, 0x10000, 0x8000);
-        Object_SetModeById(0, 1);
-        Battle_WaitMode0(2);
+        Engine_ActorSetAnimation(0, 1);
+        Engine_EventWait(2);
         Engine_EventSetMessage((s32)MsgHaidiaRrruffRrrruff);
         Engine_EventShowMessageAndWait(15, 0, 2);
         Engine_EventShowMessageAndWait(16, 0, 2);
@@ -418,22 +418,22 @@ void HaidiaMura_RunCameraRiseScene(void)
         n = 0;
         do {
             pos[2] += 0x20000;
-            Battle_WaitMode0(1);
+            Engine_EventWait(1);
             n++;
             Engine_MapRedraw();
         } while (n != 40);
-        Battle_WaitMode0(60);
+        Engine_EventWait(60);
         Engine_MessageShowCentered((s32)MsgHaidiaPuppiesPlayingOver, 1);
         n = 0;
-        Battle_WaitMode0(6);
+        Engine_EventWait(6);
         do {
             pos[2] -= 0x20000;
-            Battle_WaitMode0(1);
+            Engine_EventWait(1);
             n++;
             Engine_MapRedraw();
         } while (n != 40);
         *cam = saved;
-        Battle_WaitMode0(60);
+        Engine_EventWait(60);
         Actor_WalkToAndWait(0, 70, 0x2e5);
         Engine_EventEnd();
     }
@@ -1697,13 +1697,13 @@ void FieldScene_RunLargeStagingSequence(void)
     rec8->update = (void (*)(union FieldObject *))Effect_ConfigureSpawnedParticle;
     Engine_EventWait(4);
     Actor_SetSpeed(14, 0x20000, 0x20000);
-    Call4(Object_SetPosition, (s32)rec8, 0x1980000, 0xd00000, 0x2480000);
+    Call4(Engine_ObjectSetPosition, (s32)rec8, 0x1980000, 0xd00000, 0x2480000);
     Engine_EventWait(40);
     Actor_SetSpeed(9, 0x2666, 0x1333);
     Actor_SetSpeed(14, 0x2666, 0x1333);
     /* FAKEMATCH: the reference looks actor 9 up here and drops the result. */
     Object_GetById(9);
-    Object_SetPosition((s32)rec8, 0x1880000, 0xd00000, 0x2480000);
+    Engine_ObjectSetPosition((s32)rec8, 0x1880000, 0xd00000, 0x2480000);
     Actor_MoveToAndWait(9, 0x17a, 0x248);
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x2005, 0, 10);
@@ -2677,7 +2677,7 @@ void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z)
         position[1] = particle[3];
         position[2] = particle[4];
         Vector_AddPolarOffset(delta_x, delta_z, position);
-        Object_SetPosition((s32)particle, position[0], position[1], position[2]);
+        Engine_ObjectSetPosition((s32)particle, position[0], position[1], position[2]);
     }
 }
 

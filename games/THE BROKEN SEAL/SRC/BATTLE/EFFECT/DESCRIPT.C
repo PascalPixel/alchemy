@@ -115,7 +115,7 @@ typedef struct
 	s16 limit;
 } EffectDescriptorWorkView;
 
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 
 extern volatile u32 gKeysHeld;
 void				BattleFx_RunRisingObjectSequence(s32, s32, s32);
@@ -457,14 +457,14 @@ s32 BattleAction_RunDescriptor(s32 value)
 			switch (kind)
 			{
 			case 0:
-				Audio_PlayCue(123);
+				AudioCommand_PlayFar(123);
 				break;
 			case 32:
-				Audio_PlayCue(128);
+				AudioCommand_PlayFar(128);
 				ObjectEffect_BeginContextEffect26();
 				break;
 			case 48:
-				Audio_PlayCue(129);
+				AudioCommand_PlayFar(129);
 				ObjectEffect_BeginContextEffect25();
 				break;
 			}

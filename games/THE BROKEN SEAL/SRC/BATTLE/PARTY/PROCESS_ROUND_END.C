@@ -23,6 +23,7 @@
 #include "OBJDISP.H"
 #include "IWRAM_CALL.H"
 #include "BTLCALC.H"
+void UnitCalcFar(s32 unit_id);
 
 #define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct MotionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
 #define BattlePres_SetActorModeAndAction ((void (*)(s32))BattlePres_SetActorModeAndAction)
@@ -39,10 +40,10 @@ struct BattleGroupOrder {
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 s32 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
 s32 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
-void Object_SetMode(struct MotionObject *object, s32 animation);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct MotionObject *object, s32 animation);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void BattlePresentation_WaitForAdvance(void);
 
 s32 Battle_ProcessRoundEnd(void)
@@ -89,8 +90,8 @@ s32 Battle_ProcessRoundEnd(void)
                         BtlEvPush(BEV_REDRAW, 0);
                         MES_PUSH(MsgDjinnSet);
                         BtlEvPush(BEV_OBJ_END, id);
-                        Audio_PlayCue(212);
-                        Object_SetMode(BtlObjGet(id)->object, 3);
+                        AudioCommand_PlayFar(212);
+                        ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(id)->object, 3);
                         ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(id)->object, 32);
                         element = expired_entry->element;
                         Djinn_ActivateFar(id, element, expired_entry->index);
@@ -144,7 +145,7 @@ s32 Battle_ProcessRoundEnd(void)
                     } else {
                         UiText_ShowMessageAndWaitCoreFar((s32)MsgHpRecover);
                     }
-                    Audio_PlayCue(175);
+                    AudioCommand_PlayFar(175);
                     BattlePresentation_WaitForAdvance();
                 }
                 if (unit->ep_regen != 0 && unit->ep != unit->max_ep) {
@@ -160,7 +161,7 @@ s32 Battle_ProcessRoundEnd(void)
                     } else {
                         UiText_ShowMessageAndWaitCoreFar((s32)MsgEpRecover);
                     }
-                    Audio_PlayCue(175);
+                    AudioCommand_PlayFar(175);
                     BattlePresentation_WaitForAdvance();
                 }
             }
@@ -329,7 +330,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
         if (best >= 0 && unit->elm_lv[best] < most) {
             unit->elm_lv[best] = most;
         }
-        BattleUnit_Recalculate(id);
+        UnitCalcFar(id);
         for (i = 0; i <= 3; i++) {
             order = unit->elm[i].pow - before->elm[i].pow;
             if (order > 0) {
@@ -340,8 +341,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
                 BtlEvPush(BEV_SE, 175);
                 MES_PUSH(MsgEarthPowerUp + i);
                 BtlEvPush(BEV_OBJ_END, id);
-                Audio_PlayCue(212);
-                Object_SetMode(BtlObjGet(id)->object, 3);
+                AudioCommand_PlayFar(212);
+                ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(id)->object, 3);
                 ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(id)->object, 32);
                 BattleFx_PlayUnitElementEffect(id, i, 2, most - 1);
                 BattleEventRuntime_WaitForReady();
@@ -418,5 +419,5 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
         }
         BattleEv_DispatchQueued();
     }
-    BattleUnit_Recalculate(id);
+    UnitCalcFar(id);
 }

@@ -86,9 +86,9 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
-	.global Inventory_PromptAndSetObjectMode
+	.global Engine_EventChooseYesNo
 	.thumb_func
-Inventory_PromptAndSetObjectMode:
+Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Object_GetById
 	.thumb_func
@@ -106,9 +106,9 @@ Engine_ActorSetDestination:
 	.thumb_func
 Engine_ObjectMotionSetPositionAndCommit:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
-	.global ObjectMotion_ResetAndSetPositionInMode2
+	.global Engine_ActorWalkTo
 	.thumb_func
-ObjectMotion_ResetAndSetPositionInMode2:
+Engine_ActorWalkTo:
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
 	.global Engine_ActorWalkToAndWait
 	.thumb_func

@@ -67,11 +67,11 @@ struct CaptureResource
 
 struct CaptureObject *Object_GetById(s32 id);
 void				  WaitFrames(s32 frames);
-void				  Audio_PlayCue(s32 cue);
+void				  AudioCommand_PlayFar(s32 cue);
 void				  ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 struct CaptureObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void				  Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
-void				  Object_SetMode(struct CaptureObject *object, s32 mode);
+void				  ObjectDispatch_ApplyArgumentToChildrenFar(struct CaptureObject *object, s32 mode);
 void ObjectDispatch_SetSingleChildFlagsFar(struct CaptureObject *object, s32 value);
 void ObjectDispatch_ReleaseFar(struct CaptureObject *object);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
@@ -119,18 +119,18 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 	Shop_RestoreSceneTilesFar(PALETTE_TRANSFORM_TINT | (16 << 10) | (4 << 5) | 4);
 	WaitFrames(30);
 	jin->visible = 0;
-	Audio_PlayCue(173);
+	AudioCommand_PlayFar(173);
 	Motion_SetVarCbAndRefresh(id, 1);
-	Audio_PlayCue(175);
+	AudioCommand_PlayFar(175);
 	Motion_SetVarCbAndRefresh(id, 1);
 	WaitFrames(20);
 
 	// 3・5・7 ドット/フレームで 3 回跳ねる
-	Audio_PlayCue(152);
+	AudioCommand_PlayFar(152);
 	ObjectMotion_Launch(id, 3, 14);
-	Audio_PlayCue(152);
+	AudioCommand_PlayFar(152);
 	ObjectMotion_Launch(id, 5, 16);
-	Audio_PlayCue(152);
+	AudioCommand_PlayFar(152);
 	ObjectMotion_Launch(id, 7, 18);
 	WaitFrames(20);
 
@@ -153,7 +153,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 			copy->callback = (void *)BattleFx_HalveDistanceToTarget;
 			copy->facing = jin->facing;
 			Animation_ApplyChildValuesFar(copy, 9);
-			Object_SetMode(copy, 0);
+			ObjectDispatch_ApplyArgumentToChildrenFar(copy, 0);
 			ObjectDispatch_SetSingleChildFlagsFar(copy, 0);
 			resource = Object_ReplaceResourceEntry(copy->sprite, resource);
 			copy->linked = previous;
@@ -163,7 +163,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 
 	// 8 ドットずつ 15 フレーム昇らせ、ジンと残像を消す
 	resource_id = resource->id;
-	Audio_PlayCue(153);
+	AudioCommand_PlayFar(153);
 	jin->mode = 0;
 	for (remaining = 14; remaining >= 0; remaining--)
 	{
@@ -179,7 +179,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 	WaitFrames(10);
 	ObjectMotion_ArmCallback(gGameState.selected_actor, 0x4000, 0);
 	WaitFrames(20);
-	Object_SetMode(Object_GetById(gGameState.selected_actor), 28);
+	ObjectDispatch_ApplyArgumentToChildrenFar(Object_GetById(gGameState.selected_actor), 28);
 	WaitFrames(20);
 
 	// 粒 (種類 240) を 1 フレームに 1 つずつ出す。動きは BattleFx_UpdateRandomTargetParticle

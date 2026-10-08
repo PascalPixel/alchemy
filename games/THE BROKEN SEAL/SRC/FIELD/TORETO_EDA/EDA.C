@@ -33,8 +33,7 @@ union SceneCell {
     s16 h[2];
 };
 
-extern s32 gCell[];
-extern u8 *gWork;
+extern s32 gGameState[];
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
 #endif
@@ -86,7 +85,7 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     s32 dz = bz;
     s32 h;
 
-    obj = (struct SceneObject *)Object_GetById(gCell[125]);
+    obj = (struct SceneObject *)Object_GetById(gGameState[125]);
     dx <<= 20;
     dz <<= 20;
 
@@ -140,12 +139,12 @@ void Scene_ApplyOffset0Neg6(void)
 
 void ToretoEda_PlayCueAndSelectTouchedExit(void)
 {
-    u8 *state = gWork;
+    u8 *state = (u8 *)gEventWork;
     s16 *cnt;
 
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     cnt = (s16 *)(state + 0x16C);
-    Event_SetExitRequest(*cnt);
+    Engine_EventRequestExit(*cnt);
 }
 
 void Effect_SetAlphaBlendForScene9(void)
@@ -182,8 +181,8 @@ u8 *ToretoEda_GetEvents(void)
 
 void Scene_RunTwoCallSequence(void)
 {
-    Battle_Reset();
-    BattleFx_FinishAction();
+    Engine_EventBegin();
+    Engine_EventEnd();
 }
 
 void State_RunEmptyHookFirst(void)
@@ -270,5 +269,5 @@ void Effect_SetBg3HofsSplit(void)
 void ToretoEda_StartBg3Split(void)
 {
     Runtime_SetIrqHandler(1, 0, Effect_UpdateBg3HofsByVcount);
-    Scheduler_AddOrUpdateCallback((s32)(Effect_SetBg3HofsSplit), 0xc80);
+    Engine_TaskAddCallback((s32)(Effect_SetBg3HofsSplit), 0xc80);
 }

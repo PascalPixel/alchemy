@@ -10,7 +10,7 @@
 #include "LOG_ROLLING.H"
 #include "text/MSG_IDS.H"
 
-void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
+void Engine_ObjectSetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
 void ObjectDispatch_WaitForValue16(struct FieldActor *object);
 
 void WriteU32AsHex(u8 *hex_text, u32 value)
@@ -93,7 +93,7 @@ s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(StageEffect_02003d88 *source)
 
     StageEffect_02003d88 *effect = Object_GetById(source->linked_effect_slot);
 
-    Object_SetPosition(effect, source->x, source->y + 0x240000, source->z);
+    Engine_ObjectSetPosition(effect, source->x, source->y + 0x240000, source->z);
     effect->state = 0;
     Engine_ObjectSetScript(effect, (s32)gColossoLinkedEffect);
     Engine_AudioPlayCue(83);
@@ -129,7 +129,7 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
     *wait = *cue;
     actor->acceleration = 0x4000;
     actor->speed = 0x10000;
-    Object_SetPosition(actor, x, 0, z);
+    Engine_ObjectSetPosition(actor, x, 0, z);
     Engine_GameFlagSet(0x211);
     Engine_ObjectSetScript(actor, KorosseoMaruta_PlaceScript);
     while (*wait != 0) {

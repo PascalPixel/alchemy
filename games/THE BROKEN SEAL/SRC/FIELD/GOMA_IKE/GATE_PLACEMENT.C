@@ -15,6 +15,16 @@ extern struct Resource388Runtime *gEventWork;
 
 #include "RESOURCE_388_RUNTIME.H"
 
+s32 Engine_GameFlagIsSet(s32);
+
+void Engine_ActorSetPosition(s32, s32, s32);
+
+u8 Engine_ActorSetSpriteFlags(s32, s32);
+
+u8 Engine_ActorSetAnimation(s32, s32);
+
+u8 Engine_MapCopyCellAttributes(s32, s32, s32, s32, s32, s32);
+
 extern void *Object_GetById(u32);
 
 u8 *SceneData_GetPrimaryTable(void)
@@ -55,16 +65,16 @@ s32 Scene_PlaceActor8OnGate300(void)
     work = gEventWork;
     work->setup_request_1c0 = 0x204;
     work->setup_value_1c8 = 0x18;
-    if (Resource388_TestSetupGate(0x300) != 0) {
-        Resource388_SetSlotPosition(8, pos_x, pos_z);
-        Resource388_SetSlotMode(8, 2);
-        Resource388_SetSlotOption((s32)Object_GetById(8), 0);
+    if (Engine_GameFlagIsSet(0x300) != 0) {
+        Engine_ActorSetPosition(8, pos_x, pos_z);
+        Engine_ActorSetAnimation(8, 2);
+        Engine_ActorSetSpriteFlags((s32)Object_GetById(8), 0);
         ((struct Resource388SlotView *)Object_GetById(8))->unknown_23 = 2;
         state = 0;
         ((struct Resource388SlotView *)Object_GetById(8))->unknown_59 = state;
         arg5 = 0xB;
         arg6 = 6;
-        Resource388_QueueSlotCommand(0xB, 0x24, 5, 5, arg5, arg6);
+        Engine_MapCopyCellAttributes(0xB, 0x24, 5, 5, arg5, arg6);
     }
     return 0;
 }

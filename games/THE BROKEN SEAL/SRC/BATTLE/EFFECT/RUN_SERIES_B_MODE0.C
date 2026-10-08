@@ -40,7 +40,7 @@
 
 void BattleFx_PrepareCanvasEffect(
 	struct BattleEffectArgument *effect, s32 kind, s32 side, s32 narrow, s32 *x, s32 *y);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 //--------------------------------------------------------------------------
 // mode ごとの入口
@@ -216,7 +216,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 		flags = GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X;
 	else
 		flags = GOUSEI_CLIP_X | GOUSEI_CLIP_Y;
-	Audio_PlayCue(142);
+	AudioCommand_PlayFar(142);
 
 	for (frame = 0; frame != work->effect->count * 8 + 108; frame++)
 	{
@@ -254,7 +254,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 			s32 height = Battle_GetObjectTableValueFar(work->effect->actors[member]) * 2 / 3;
 
 			if (frame == member * 8 + 80)
-				Audio_PlayCue(212);
+				AudioCommand_PlayFar(212);
 			Render_ResetTransformState();
 			Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
 			// 対象の 2/3 の高さを中心にする

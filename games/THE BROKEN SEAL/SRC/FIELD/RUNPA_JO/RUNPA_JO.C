@@ -19,6 +19,16 @@
 #include "MAP_SCROLL.H"
 #include "text/MSG_IDS.H"
 
+void Engine_TaskWait(s32 frames);
+
+void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
+
+void Engine_ActorWaitForMove(s32 actor);
+
+void Engine_MapCopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y);
+
+void Object_RefreshSelectorById(s32 actor);
+
 
 
 
@@ -111,8 +121,8 @@ void ConfigureSceneActor12(void)
     s32 actor_slot = 15;
     struct FieldActor *actor;
 
-    Map_CopyCellAttributeRect(15, 20, 1, 1, actor_slot, 22);
-    Map_CopyCellAttributeRect(17, 23, 1, 3, actor_slot, 23);
+    Engine_MapCopyCellAttributes(15, 20, 1, 1, actor_slot, 22);
+    Engine_MapCopyCellAttributes(17, 23, 1, 3, actor_slot, 23);
     actor = Object_GetById(12);
     if (actor != 0) {
         Engine_ActorSetSpriteFlags(actor, 0);
@@ -132,7 +142,7 @@ void EV50_START(void)
 
     OBJ_SPD(12, 0x10000, 0x8000);
     Actor_SetDestination(12, 248, 0x178);
-    ObjectMotion_CommitCurrentPositionAndActivate(12);
+    Engine_ActorWaitForMove(12);
     SE(215);
     WAIT(60);
     ConfigureSceneActor12();
@@ -266,7 +276,7 @@ void PlaceSceneObjectPairFromTableC(s32 table_index)
 
     Engine_MapCopyCells(1, 0x50, 1, 3, position_x, position_z);
     Engine_MapCopyCells(2, 0x50, 1, 1, position_x + 1, position_z);
-    Map_CopyCellAttributeRect(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
+    Engine_MapCopyCellAttributes(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
 }
 
 void EV40_C(void)
@@ -365,7 +375,7 @@ void EV08_KAGI(void)
 {
 
     Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x108, 0x318);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     WAIT(10);
     OBJ_MODE(ACTOR_PARTY_LEADER, 1);
@@ -456,7 +466,7 @@ void EV91_SET(void)
 {
     EV_BEGIN();
     Engine_ActorStop(9);
-    ObjectMotion_OffsetPositionAndResetMotion(9, 0, 0);
+    Engine_ActorSetDestinationOffset(9, 0, 0);
     OBJ_MODE(9, 0);
     OBJ_FACE(9, ACTOR_PARTY_LEADER, 0);
     Engine_ActorShowEmote(9, 256, 0);
@@ -840,7 +850,7 @@ void TriggerScene40AtVillagePath(void)
 void RunActor9ScriptedSequence(void)
 {
     EV_BEGIN();
-    ObjectMotion_OffsetPositionAndResetMotion(9, 0, 0);
+    Engine_ActorSetDestinationOffset(9, 0, 0);
     Engine_ActorEnableActionCallback(9, 1);
     Engine_ActorStop(9);
     OBJ_MODE(9, 0);
@@ -864,12 +874,12 @@ void RunActorScriptedSequenceA(s32 actor_id)
     EV_BEGIN();
     EV_BEGIN();
     Engine_ActorShowEmote(actor_id, 256, 1);
-    ObjectMotion_OffsetPositionAndResetMotion(actor_id, 0, 0);
+    Engine_ActorSetDestinationOffset(actor_id, 0, 0);
     Engine_ActorEnableActionCallback(actor_id, 1);
     OBJ_MODE(actor_id, 0);
     OBJ_FACE(actor_id, ACTOR_PARTY_LEADER, 0);
     OBJ_MODE(ACTOR_PARTY_LEADER, 1);
-    ObjectMotion_OffsetPositionAndResetMotion(actor_id, 0, 0);
+    Engine_ActorSetDestinationOffset(actor_id, 0, 0);
     Engine_ActorEnableActionCallback(actor_id, 1);
     Engine_ActorStop(actor_id);
     OBJ_MODE(actor_id, 0);
@@ -1055,7 +1065,7 @@ void EV31_BANPEI(void)
     OBJ_FACE(14, ACTOR_PARTY_LEADER, 0);
     WAIT(70);
     OBJ_WALK(12, 672, 88);
-    ObjectMotion_CommitCurrentPositionAndActivate(12);
+    Engine_ActorWaitForMove(12);
 #if EDITION_INTERNATIONAL
     OBJ_FACE(12, ACTOR_PARTY_LEADER, 0);
 #endif
@@ -1106,7 +1116,7 @@ void EV32_KARA(void)
 void EV50_MAIN(void)
 {
     EV_BEGIN();
-    ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, 0);
+    Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
     OBJ_MODE(ACTOR_PARTY_LEADER, 1);
     OBJ_FACE(12, ACTOR_PARTY_LEADER, 0);
@@ -1159,19 +1169,19 @@ void EV51_MAIN(void)
 void ConfigureInteractionRegionA(void)
 {
     Engine_MapCopyCells(2, 82, 1, 2, 21, 81);
-    Map_CopyCellAttributeRect(21, 32, 1, 1, 21, 34);
+    Engine_MapCopyCellAttributes(21, 32, 1, 1, 21, 34);
 }
 
 void ConfigureInteractionRegionB(void)
 {
     Engine_MapCopyCells(2, 84, 1, 2, 6, 55);
-    Map_CopyCellAttributeRect(5, 9, 1, 1, 6, 10);
+    Engine_MapCopyCellAttributes(5, 9, 1, 1, 6, 10);
 }
 
 void ConfigureInteractionRegionC(void)
 {
     Engine_MapCopyCells(2, 86, 1, 2, 27, 62);
-    Map_CopyCellAttributeRect(26, 16, 1, 1, 27, 17);
+    Engine_MapCopyCellAttributes(26, 16, 1, 1, 27, 17);
 }
 
 void EV52_IDO(void)
@@ -1214,16 +1224,16 @@ void EV00_HANTEI1(void)
 {
     Engine_MapCopyCells(5, 77, 1, 2, 17, 82);
     Engine_MapCopyCells(5, 77, 1, 2, 3, 55);
-    Map_CopyCellAttributeRect(15, 33, 1, 1, 17, 35);
-    Map_CopyCellAttributeRect(3, 8, 1, 1, 3, 10);
+    Engine_MapCopyCellAttributes(15, 33, 1, 1, 17, 35);
+    Engine_MapCopyCellAttributes(3, 8, 1, 1, 3, 10);
 }
 
 void EV00_HANTEI2(void)
 {
     Engine_MapCopyCells(8, 77, 1, 2, 17, 82);
     Engine_MapCopyCells(8, 77, 1, 2, 3, 55);
-    Map_CopyCellAttributeRect(18, 35, 1, 1, 17, 35);
-    Map_CopyCellAttributeRect(2, 10, 1, 1, 3, 10);
+    Engine_MapCopyCellAttributes(18, 35, 1, 1, 17, 35);
+    Engine_MapCopyCellAttributes(2, 10, 1, 1, 3, 10);
 }
 
 void EV08_TANSU(void)
@@ -1274,10 +1284,10 @@ void RunpaJo_GatherPartyAroundActorTwelve(void)
     OBJ_WALK(MEARI, 440, 184);
     OBJ_SPD(GERALD, 0xb333, 0x5999);
     OBJ_WALK(GERALD, 448, 240);
-    ObjectMotion_CommitCurrentPositionAndActivate(IWAN);
+    Engine_ActorWaitForMove(IWAN);
     OBJ_FACE(IWAN, 12, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
-    ObjectMotion_CommitCurrentPositionAndActivate(MEARI);
+    Engine_ActorWaitForMove(GERALD);
+    Engine_ActorWaitForMove(MEARI);
     OBJ_FACE(GERALD, 12, 0);
     OBJ_FACE(MEARI, 12, 0);
     WAIT(15);
@@ -1319,7 +1329,7 @@ void RunpaJo_RevealMonster(void)
     OBJ_WALK(11, 472, 180);
     OBJ_WALK(15, 472, 180);
     Engine_CameraFollowActor(11, 1);
-    ObjectMotion_CommitCurrentPositionAndActivate(11);
+    Engine_ActorWaitForMove(11);
     OBJ_MODE(11, 4);
     WAIT(30);
 }
@@ -1335,11 +1345,11 @@ void RunpaJo_PositionPartyForMonster(void)
     OBJ_WALK(MEARI, 440, 232);
     OBJ_SPD(GERALD, 0x10000, 0x8000);
     OBJ_WALK(GERALD, 480, 224);
-    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+    Engine_ActorWaitForMove(GERALD);
     OBJ_DIR(GERALD, 0xc000, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(IWAN);
+    Engine_ActorWaitForMove(IWAN);
     OBJ_DIR(IWAN, 0xc000, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(MEARI);
+    Engine_ActorWaitForMove(MEARI);
     OBJ_DIR(MEARI, 0xc000, 0);
     OBJ_DIR(ACTOR_PARTY_LEADER, 0xc000, 0);
 }
@@ -1364,7 +1374,7 @@ void EV20_DEMO(void)
         WAIT(30);
         OBJ_SPD(IWAN, 45875, 22937);
         OBJ_WALK(2, 464, 192);
-        ObjectMotion_CommitCurrentPositionAndActivate(IWAN);
+        Engine_ActorWaitForMove(IWAN);
         WAIT(30);
         OBJ_DIR(ACTOR_PARTY_LEADER, 16384, 0);
         OBJ_DIR(IWAN, 16384, 0);
@@ -1376,11 +1386,11 @@ void EV20_DEMO(void)
         MES_SET(text_line);
         MES_PUT(13, 0);
         OBJ_WALK(13, 458, 272);
-        ObjectMotion_CommitCurrentPositionAndActivate(13);
+        Engine_ActorWaitForMove(13);
         OBJ_DIR(13, 20480, 0);
         WAIT(40);
         Actor_SetDestinationOffset(13, -8, 8);
-        ObjectMotion_CommitCurrentPositionAndActivate(13);
+        Engine_ActorWaitForMove(13);
         WAIT(60);
         SE(155);
         Engine_MessageShowCentered(text_line + 1, 1);
@@ -1426,7 +1436,7 @@ void EV20_DEMO(void)
         RunpaJo_GatherPartyAroundActorTwelve();
         OBJ_SPD(IWAN, 45875, 22937);
         OBJ_WALK(2, 464, 192);
-        ObjectMotion_CommitCurrentPositionAndActivate(IWAN);
+        Engine_ActorWaitForMove(IWAN);
         WAIT(30);
         MES_SET(text_line + 2);
         MES_PUT(IWAN, 0);
@@ -1443,7 +1453,7 @@ void EV20_DEMO(void)
         WAIT(20);
         OBJ_SPD(12, 26214, 13107);
         OBJ_WALK(12, 520, 208);
-        ObjectMotion_CommitCurrentPositionAndActivate(12);
+        Engine_ActorWaitForMove(12);
         OBJ_MODE(12, 1);
         WAIT(20);
         OBJ_DIR(12, 45056, 0);
@@ -1467,7 +1477,7 @@ void EV20_DEMO(void)
         Engine_ActorSetAnimationAndWait(12, 3);
         WAIT(40);
         OBJ_WALK(2, 480, 200);
-        ObjectMotion_CommitCurrentPositionAndActivate(IWAN);
+        Engine_ActorWaitForMove(IWAN);
         Engine_ActorFaceEachOther(IWAN, 12, 0);
         WAIT(60);
         MES_SET(text_line + 6);
@@ -1495,7 +1505,7 @@ void EV20_DEMO(void)
         OBJ_SPD(13, 52428, 26214);
         OBJ_WALK(13, 456, 304);
         Engine_CameraFollowActor(13, 1);
-        ObjectMotion_CommitCurrentPositionAndActivate(13);
+        Engine_ActorWaitForMove(13);
         Engine_CameraFollowActor(GERALD, 1);
         OBJ_EMO(ACTOR_PARTY_LEADER, 258, 0);
         OBJ_EMO(IWAN, 258, 0);
@@ -1533,12 +1543,12 @@ void EV20_DEMO(void)
         MES_SET(text_line + 13);
         MES_PUT(13, 0);
         OBJ_WALK(1, 456, 248);
-        ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+        Engine_ActorWaitForMove(GERALD);
         OBJ_DIR(1, 16384, 0);
         MES_SET(text_line + 14);
         MES_PUT(GERALD, 0);
         OBJ_WALK(2, 472, 216);
-        ObjectMotion_CommitCurrentPositionAndActivate(IWAN);
+        Engine_ActorWaitForMove(IWAN);
         OBJ_DIR(2, 16384, 0);
         WAIT(10);
         MES_SET(text_line + 15);
@@ -1548,7 +1558,7 @@ void EV20_DEMO(void)
         MES_SET(text_line + 16);
         MES_PUT(12, 0);
         OBJ_WALK(3, 440, 216);
-        ObjectMotion_CommitCurrentPositionAndActivate(MEARI);
+        Engine_ActorWaitForMove(MEARI);
         OBJ_FACE(MEARI, 13, 0);
         Engine_ActorSetAnimationAndWait(MEARI, 3);
         WAIT(10);
@@ -1575,11 +1585,11 @@ void EV20_DEMO(void)
         MES_SET(text_line + 21);
         MES_PUT(13, 0);
         OBJ_WALK(13, 456, 280);
-        ObjectMotion_CommitCurrentPositionAndActivate(13);
+        Engine_ActorWaitForMove(13);
         OBJ_DIR(13, 20480, 0);
         WAIT(80);
         Actor_SetDestinationOffset(13, -8, 8);
-        ObjectMotion_CommitCurrentPositionAndActivate(13);
+        Engine_ActorWaitForMove(13);
         WAIT(60);
         SE(155);
         Engine_MessageShowCentered((s32)MsgRunpaDodonpaPulledLever, 1);
@@ -1747,22 +1757,22 @@ void FieldScene_RunMainScriptSequence(void)
     OBJ_SPD(MEARI, 0x8000, 0x4000);
     OBJ_SPD(IWAN, 0x8000, 0x4000);
     OBJ_WALK(GERALD, 416, 216);
-    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+    Engine_ActorWaitForMove(GERALD);
     OBJ_WALK(GERALD, 416, 248);
-    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+    Engine_ActorWaitForMove(GERALD);
     OBJ_WALK(GERALD, 440, 248);
-    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+    Engine_ActorWaitForMove(GERALD);
     OBJ_DIR(GERALD, 0xc000, 0);
     OBJ_WALK(ACTOR_PARTY_LEADER, 440, 216);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     OBJ_DIR(ACTOR_PARTY_LEADER, 0, 0);
     OBJ_WALK(MEARI, 488, 248);
-    ObjectMotion_CommitCurrentPositionAndActivate(MEARI);
+    Engine_ActorWaitForMove(MEARI);
     OBJ_WALK(MEARI, 456, 248);
-    ObjectMotion_CommitCurrentPositionAndActivate(MEARI);
+    Engine_ActorWaitForMove(MEARI);
     OBJ_DIR(MEARI, 0xc000, 0);
     OBJ_WALK(IWAN, 456, 216);
-    ObjectMotion_CommitCurrentPositionAndActivate(IWAN);
+    Engine_ActorWaitForMove(IWAN);
     OBJ_DIR(IWAN, 0x8000, 0);
     Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 0);
     Engine_ActorFaceEachOther(MEARI, IWAN, 0);
@@ -1786,7 +1796,7 @@ void FieldScene_RunMainScriptSequence(void)
     OBJ_SPD(15, 0x1999, 0xccc);
     Actor_SetDestinationOffset(11, -24, 0);
     Actor_SetDestinationOffset(15, -24, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     SE(0x120);
     WAIT(60);
     OBJ_DIR(ACTOR_PARTY_LEADER, 0x4000, 0);
@@ -1804,25 +1814,25 @@ void FieldScene_RunMainScriptSequence(void)
     OBJ_SPD(IWAN, 0xb333, 0x5999);
     OBJ_SPD(MEARI, 0xb333, 0x5999);
     OBJ_WALK(ACTOR_PARTY_LEADER, 456, 184);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     OBJ_MODE(ACTOR_PARTY_LEADER, 1);
     OBJ_DIR(ACTOR_PARTY_LEADER, 0x4000, 0);
     OBJ_WALK(GERALD, 464, 256);
-    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+    Engine_ActorWaitForMove(GERALD);
     OBJ_WALK(GERALD, 480, 248);
-    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+    Engine_ActorWaitForMove(GERALD);
     OBJ_WALK(GERALD, 440, 192);
-    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+    Engine_ActorWaitForMove(GERALD);
     OBJ_MODE(GERALD, 1);
     OBJ_DIR(GERALD, 0x4000, 0);
     OBJ_WALK(MEARI, 488, 248);
-    ObjectMotion_CommitCurrentPositionAndActivate(MEARI);
+    Engine_ActorWaitForMove(MEARI);
     OBJ_WALK(MEARI, 488, 184);
     OBJ_WALK(IWAN, 472, 184);
-    ObjectMotion_CommitCurrentPositionAndActivate(IWAN);
+    Engine_ActorWaitForMove(IWAN);
     OBJ_MODE(IWAN, 1);
     OBJ_DIR(IWAN, 0x4000, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(MEARI);
+    Engine_ActorWaitForMove(MEARI);
     OBJ_MODE(MEARI, 1);
     OBJ_DIR(MEARI, 0x4000, 0);
     WAIT(30);
@@ -1859,7 +1869,7 @@ void FieldScene_RunMainScriptSequence(void)
     Engine_ActorSetAnimationAndWait(12, 3);
     OBJ_EMO(GERALD, 0x103, 60);
     OBJ_WALK(GERALD, 440, 208);
-    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+    Engine_ActorWaitForMove(GERALD);
     OBJ_FACE(GERALD, ACTOR_PARTY_LEADER, 0);
     MES_SET((script_b + 5));
     MES_PUT(GERALD, 0);
@@ -1880,7 +1890,7 @@ void FieldScene_RunMainScriptSequence(void)
     MES_SET((script_b + 7));
     MES_PUT(12, 0);
     OBJ_WALK(GERALD, 448, 208);
-    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+    Engine_ActorWaitForMove(GERALD);
     OBJ_MODE(GERALD, 1);
     OBJ_FACE(GERALD, 12, 0);
     MES_SET((script_b + 8));
@@ -1925,7 +1935,7 @@ void FieldScene_RunMainScriptSequence(void)
     MES_PUT(12, 0);
     OBJ_EMO(GERALD, 0x107, 110);
     OBJ_WALK(GERALD, 456, 212);
-    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+    Engine_ActorWaitForMove(GERALD);
     OBJ_MODE(GERALD, 1);
     MES_SET((script_b + 16));
     MES_PUT(GERALD, 0);
@@ -1989,12 +1999,12 @@ void FieldScene_RunMainScriptSequence(void)
     MES_SET(script_c);
     MES_PUT(13, 0);
     OBJ_WALK(14, 456, 280);
-    ObjectMotion_CommitCurrentPositionAndActivate(14);
+    Engine_ActorWaitForMove(14);
     OBJ_WALK(14, 440, 256);
     Camera_MoveTo(0x1c80000, -1, 0xe00000, 1);
     MES_SET((script_c + 1));
     MES_PUT(14, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(14);
+    Engine_ActorWaitForMove(14);
     OBJ_DIR(14, 0xd000, 0);
     OBJ_EMO(13, 0x102, 80);
     OBJ_MODE(14, 4);
@@ -2036,7 +2046,7 @@ void FieldScene_RunMainScriptSequence(void)
     WAIT(80);
     Actor_SetAttachedEffect(13, 0);
     OBJ_WALK(14, 496, 240);
-    ObjectMotion_CommitCurrentPositionAndActivate(14);
+    Engine_ActorWaitForMove(14);
     OBJ_FACE(14, 12, 0);
     WAIT(20);
     OBJ_FACE(12, 14, 0);
@@ -2197,26 +2207,26 @@ void FieldScene_RunMainScriptSequence(void)
     if (record != 0) {
         Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+    Engine_ActorWaitForMove(GERALD);
     OBJ_POS_SET(GERALD, 0, 0);
     OBJ_MODE(IWAN, 2);
     record = Actor_Get(0);
     if (record != 0) {
         Actor_SetDestination(IWAN, record->x.part.pixel, record->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(IWAN);
+    Engine_ActorWaitForMove(IWAN);
     OBJ_POS_SET(IWAN, 0, 0);
     OBJ_MODE(MEARI, 2);
     record = Actor_Get(0);
     if (record != 0) {
         Actor_SetDestination(MEARI, record->x.part.pixel, record->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(MEARI);
+    Engine_ActorWaitForMove(MEARI);
     OBJ_POS_SET(MEARI, 0, 0);
     WAIT(30);
     OBJ_SPD(12, 0x6666, 0x3333);
     OBJ_WALK(12, 472, 184);
-    ObjectMotion_CommitCurrentPositionAndActivate(12);
+    Engine_ActorWaitForMove(12);
     OBJ_MODE(12, 1);
     OBJ_DIR(12, 0x3000, 0);
     OBJ_FACE(14, ACTOR_PARTY_LEADER, 0);
@@ -2239,9 +2249,9 @@ void FieldScene_RunMainScriptSequence(void)
     Engine_ActorSetSpritePriority(12, 0);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 0);
     OBJ_WALK(12, 480, 216);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     OBJ_FACE(ACTOR_PARTY_LEADER, 14, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(12);
+    Engine_ActorWaitForMove(12);
     OBJ_FACE(12, 14, 0);
     OBJ_DIR(12, 0x3000, 0);
     OBJ_MODE(ACTOR_PARTY_LEADER, 3);
@@ -2252,15 +2262,15 @@ void FieldScene_RunMainScriptSequence(void)
     WAIT(100);
     OBJ_WALK(12, 480, 248);
     OBJ_WALK(ACTOR_PARTY_LEADER, 456, 248);
-    ObjectMotion_CommitCurrentPositionAndActivate(12);
+    Engine_ActorWaitForMove(12);
     OBJ_WALK(12, 456, 248);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     OBJ_WALK(ACTOR_PARTY_LEADER, 456, 360);
-    ObjectMotion_CommitCurrentPositionAndActivate(12);
+    Engine_ActorWaitForMove(12);
     OBJ_WALK(12, 456, 360);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     OBJ_WALK(ACTOR_PARTY_LEADER, 352, 360);
-    ObjectMotion_CommitCurrentPositionAndActivate(12);
+    Engine_ActorWaitForMove(12);
     OBJ_WALK(12, 352, 360);
     WAIT(20);
     SE(17);
@@ -2439,13 +2449,13 @@ void EV24_MAIN(void)
         WAIT(30);
         OBJ_SPD(PRIMARY_ID, 6553, 3276);
         Actor_SetDestinationOffset(PRIMARY_ID, -4, 0);
-        ObjectMotion_CommitCurrentPositionAndActivate(PRIMARY_ID);
+        Engine_ActorWaitForMove(PRIMARY_ID);
         OBJ_MODE(PRIMARY_ID, 3);
         WAIT(60);
         OBJ_SPD(PRIMARY_ID, 13107, 6553);
         Actor_SetDestinationOffset(PRIMARY_ID, -6, 0);
         OBJ_FACE(PRIMARY_ID, 0, 0);
-        ObjectMotion_CommitCurrentPositionAndActivate(PRIMARY_ID);
+        Engine_ActorWaitForMove(PRIMARY_ID);
         MES_SET(sequence_id + 1);
         MES_PUT(PRIMARY_ID, 0);
         Engine_ActorRunRepeatedMotion(PRIMARY_ID, 1);
@@ -2457,19 +2467,19 @@ void EV24_MAIN(void)
         WAIT(60);
         OBJ_SPD(DERIVED_ID, 26214, 13107);
         OBJ_WALK(DERIVED_ID, 880, 112);
-        ObjectMotion_CommitCurrentPositionAndActivate(DERIVED_ID);
+        Engine_ActorWaitForMove(DERIVED_ID);
         OBJ_DIR(DERIVED_ID, 53248, 0);
         MES_SET(sequence_id + 3);
         MES_PUT(PRIMARY_ID, 0);
         OBJ_MODE(PRIMARY_ID, 3);
         WAIT(70);
         Actor_SetDestinationOffset(PRIMARY_ID, 8, 0);
-        ObjectMotion_CommitCurrentPositionAndActivate(PRIMARY_ID);
+        Engine_ActorWaitForMove(PRIMARY_ID);
         OBJ_MODE(PRIMARY_ID, 5);
         MES_SET(sequence_id + 4);
         MES_PUT(PRIMARY_ID, 0);
         OBJ_WALK(0, 896, 120);
-        ObjectMotion_CommitCurrentPositionAndActivate(0);
+        Engine_ActorWaitForMove(0);
         Engine_ActorFaceEachOther(0, DERIVED_ID, 0);
         WAIT(60);
         OBJ_MODE(DERIVED_ID, 3);
@@ -2534,7 +2544,7 @@ void EV20_MAIN(void)
         if (FLAG_CHK(0x227) == 0) {
             Engine_ActorJump(20, 4, 0);
             Engine_ActorStop(20);
-            Engine_ObjectRefreshSelectorById(20);
+            Object_RefreshSelectorById(20);
             WAIT(20);
             msg = (s32)MsgRunpaWhWhWho;
             MES_SET(msg);
@@ -2685,9 +2695,9 @@ void FieldScene_InstallSceneTasks(void)
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Task_AddCallback((s32)FieldScene_UpdateActorEighteenInteraction, 3200);
         Task_AddCallback((s32)TriggerScene41AtVillagePath, 3200);
-        WaitFrames(1);
+        Engine_TaskWait(1);
         Engine_MapRedraw();
-        WaitFrames(1);
+        Engine_TaskWait(1);
         Map_CopyCells(101, 9, 10, 8, 110, 9);
         Engine_MapSetWorkFlagBits9To11(0xe00);
         break;
@@ -2707,7 +2717,7 @@ void FieldScene_InstallSceneTasks(void)
     Engine_ActorSetChildValue(21, 1);
     Engine_ActorSetChildValue(12, 1);
     Engine_ActorSetChildValue(13, 1);
-    WaitFrames(1);
+    Engine_TaskWait(1);
 }
 
 void FieldScene_SetupActorsForScene(void)
@@ -2737,9 +2747,9 @@ void FieldScene_SetupActorsForScene(void)
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Engine_MapSetWorkFlagBits9To11(0xe00);
         Task_AddCallback(FieldScene_UpdateActorPairInteraction, 3200);
-        WaitFrames(1);
+        Engine_TaskWait(1);
         Engine_MapRedraw();
-        WaitFrames(1);
+        Engine_TaskWait(1);
         break;
     case 10:
     case 13:
@@ -2758,9 +2768,9 @@ void FieldScene_SetupActorsForScene(void)
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Engine_MapSetWorkFlagBits9To11(0xe00);
         Task_AddCallback(FieldScene_UpdateActorSeventeenInteraction, 3200);
-        WaitFrames(1);
+        Engine_TaskWait(1);
         Engine_MapRedraw();
-        WaitFrames(1);
+        Engine_TaskWait(1);
         break;
     case 11:
     case 12:

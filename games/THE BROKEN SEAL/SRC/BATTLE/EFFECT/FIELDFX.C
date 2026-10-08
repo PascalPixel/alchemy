@@ -53,14 +53,14 @@ struct Output_08097f80
 void Vector_AddPolarOffset(s32, s32, struct Output_08097f80 *);
 
 extern struct BattleFxScene *gEffectWork;
-void						 Object_SetMode(void *object, s32 mode);
+void						 ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
 
 extern void *Object_Spawn(s32, s32, s32, s32);
-extern void	 Object_SetMode(void *, s32);
+extern void	 ObjectDispatch_ApplyArgumentToChildrenFar(void *, s32);
 
-extern void Audio_PlayCue(s32);
+extern void AudioCommand_PlayFar(s32);
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-s32 Object_CommitPosition();
+s32 Script_WaitForEventTimeoutFar();
 
 extern void ObjectDispatch_ReleaseFar(void *object);
 
@@ -97,7 +97,7 @@ extern volatile u32 gKeysHeld;
 extern volatile u32 gFrameCount;
 
 void AudioCommand_PlayFar(s32 cue);
-s32	 Object_CheckMovementCollision(struct FxObject *object, struct Output_08097f80 *position);
+s32	 Map_CheckObjectStepFar(struct FxObject *object, struct Output_08097f80 *position);
 struct FxObject *Object_GetById(s32 id);
 void			 Animation_ApplyChildValuesFar(struct FxObject *object, s32 value);
 
@@ -175,7 +175,7 @@ void BattleFx_SteerPushedTarget(s32 target_id)
 			position.z = target->z;
 			Vector_AddPolarOffset(16 << 16, angle, &position);
 			Object_SetMoveTargetFar(pusher, position.x, position.y, position.z);
-			Object_SetMode(pusher, 1);
+			ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 1);
 			pusher->velocity_x = 0;
 			pusher->velocity_y = 0;
 			pusher->velocity_z = 0;
@@ -189,7 +189,7 @@ void BattleFx_SteerPushedTarget(s32 target_id)
 		Vector_AddPolarOffset(16 << 16, angle, &position);
 		Vector_AddPolarOffset(2 << 16, dir, &position);
 		Object_SetMoveTargetFar(pusher, position.x, position.y, position.z);
-		Object_CommitPosition(pusher);
+		Script_WaitForEventTimeoutFar(pusher);
 		position.x = target->x;
 		position.y = target->y;
 		position.z = target->z;
@@ -198,9 +198,9 @@ void BattleFx_SteerPushedTarget(s32 target_id)
 		beyond.y = target->y;
 		beyond.z = target->z;
 		Vector_AddPolarOffset(32 << 16, dir, &beyond);
-		if (Object_CheckMovementCollision(target, &position) > 0)
+		if (Map_CheckObjectStepFar(target, &position) > 0)
 		{
-			Object_SetMode(pusher, 4);
+			ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
 			if ((gFrameCount & 15) == 0)
 				AudioCommand_PlayFar(SOUND_MENU_ERROR);
 			continue;
@@ -210,7 +210,7 @@ void BattleFx_SteerPushedTarget(s32 target_id)
 			goto move;
 		if (hit != user)
 		{
-			Object_SetMode(pusher, 4);
+			ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
 			if ((gFrameCount & 15) == 0)
 				AudioCommand_PlayFar(SOUND_MENU_ERROR);
 			continue;
@@ -222,7 +222,7 @@ void BattleFx_SteerPushedTarget(s32 target_id)
 		cell_z = user->z & CELL_MASK;
 		if (cell_x == (p->x & CELL_MASK) && cell_z == (p->z & CELL_MASK))
 		{
-			Object_SetMode(pusher, 4);
+			ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
 			if ((gFrameCount & 15) == 0)
 				AudioCommand_PlayFar(SOUND_MENU_ERROR);
 			continue;
@@ -231,7 +231,7 @@ void BattleFx_SteerPushedTarget(s32 target_id)
 			goto move;
 		if (Map_GetCellAttributeLowNibbleFar(user->mode, beyond.x, beyond.z) != 0)
 		{
-			Object_SetMode(pusher, 4);
+			ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
 			if ((gFrameCount & 15) == 0)
 				AudioCommand_PlayFar(SOUND_MENU_ERROR);
 			continue;
@@ -243,7 +243,7 @@ void BattleFx_SteerPushedTarget(s32 target_id)
 		AudioCommand_PlayFar(175);
 		x = position.x;
 		z = position.z;
-		Object_SetMode(pusher, BattleFx_QuadrantModes[(u16)(angle - dir) >> 14]);
+		ObjectDispatch_ApplyArgumentToChildrenFar(pusher, BattleFx_QuadrantModes[(u16)(angle - dir) >> 14]);
 		WaitFrames(15);
 		target->unknown_5b = 0;
 		target->speed = 0x3333;
@@ -261,7 +261,7 @@ void BattleFx_SteerPushedTarget(s32 target_id)
 			user->lift = 0x3333;
 			Object_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
 		}
-		Object_CommitPosition(target);
+		Script_WaitForEventTimeoutFar(target);
 		target->x = x;
 		target->z = z;
 		target->velocity_x = 0;
@@ -357,7 +357,7 @@ void BattleFx_RunItemBreakSequence(void)
 	BattleFx_SnapScaleToFull(object);
 	if (object != 0)
 	{
-		Object_SetMode(object, 4);
+		ObjectDispatch_ApplyArgumentToChildrenFar(object, 4);
 		WaitFrames(30);
 	}
 	BattleFx_PrepareBufferInterpolation();
@@ -391,7 +391,7 @@ void *BattleFx_StartItemBreak(void *object)
 	parent->speed_limit = 2 << 16;
 	parent->acceleration = 2 << 16;
 	parent->motion_flags = 0;
-	Object_SetMode(parent, 3);
+	ObjectDispatch_ApplyArgumentToChildrenFar(parent, 3);
 	Motion_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
 
 	// 粒：向きの ±45° へ 8〜32 ドット、速さ 1〜2 ドット
@@ -414,7 +414,7 @@ void *BattleFx_StartItemBreak(void *object)
 				child, dist, ((jitter - Random16()) >> 3) + src->angle);
 		}
 	}
-	Audio_PlayCue(SOUND_ITEM_BREAK);
+	AudioCommand_PlayFar(SOUND_ITEM_BREAK);
 	return parent;
 }
 
@@ -439,7 +439,7 @@ void BattleFx_SnapScaleToFull(struct MotionObject *obj)
 			obj->scale_x = next;
 			obj->scale_y = next;
 		}
-		Object_CommitPosition();
+		Script_WaitForEventTimeoutFar();
 	}
 }
 
@@ -454,7 +454,7 @@ void UpdateRisingParticleBurst(void *object)
 	s32					 dist;
 	u32					 spread;
 
-	Audio_PlayCue(154);
+	AudioCommand_PlayFar(154);
 	for (i = 30; i >= 0; i--)
 	{
 		src->y += 1 << 16;
@@ -485,7 +485,7 @@ void UpdateRisingParticleBurst(void *object)
 			Motion_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
 		}
 	}
-	Audio_PlayCue(131);
+	AudioCommand_PlayFar(131);
 	ObjectDispatch_ReleaseFar(src);
 }
 

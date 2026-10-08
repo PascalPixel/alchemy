@@ -39,20 +39,19 @@ extern const s32 HaidiaDou_WalkTargets[];
 
 s32 SceneActor_FaceActorZero(struct FieldActor *obj);
 
-void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
-void Object_SetModeById(s32 actor, s32 mode);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
+void Engine_TaskWait(s32 frames);
+void Engine_EventWait(s32 frames);
+void Engine_ActorWaitForMove(s32 actor);
+void Engine_ActorSetAnimation(s32 actor, s32 mode);
+void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
+void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
 
 static __inline__ void Actor_SetMotionSpeed(s32 actor, s32 speed, s32 acceleration)
 {
     /* FAKEMATCH: a direct call changes HaidiaDou_ToppleActorNine from sub sp, sp, #8 to ldr r6, .L0 (117/118 assembly lines). */
-    ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+    Engine_ActorSetSpeed(actor, speed, acceleration);
 }
 
-void Object_SetPosition(Obj *, s32, s32, s32);
 void Object_CommitPosition(Obj *);
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 s32 ArcTan2(s32 dz, s32 dx);

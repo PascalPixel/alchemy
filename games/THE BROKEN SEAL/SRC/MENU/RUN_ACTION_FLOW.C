@@ -11,6 +11,7 @@
 #include "TYPES.H"
 #include "MENU_LIST.H"
 #include "BTLSYS.H"
+s32 GameFlag_TestFar(s32 flag);
 
 extern struct CharacterMenuState *gMenuWork;
 
@@ -78,7 +79,7 @@ s32 CharacterMenu_SelectOwner(s32 slot)
     cursor->active = 1;
     cursor->anim_step = 0;
     RenderOutput_RedrawSavedRectFar(menu->owner_window);
-    if (GameFlag_IsSet(0x172))
+    if (GameFlag_TestFar(0x172))
         UiWindow_DrawDividerLineFar((s32)menu->owner_window, 9, 1, 9, 3);
     if (index == -1)
         menu->owner_index[slot] = 0;

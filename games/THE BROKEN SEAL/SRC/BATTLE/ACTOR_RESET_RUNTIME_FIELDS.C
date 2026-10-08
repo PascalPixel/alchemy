@@ -93,7 +93,7 @@ struct AdvanceSprite
 
 extern volatile u32 gFrameCount;
 extern volatile u32 gKeysHeld;
-void				Audio_PlayCue(s32 cue);
+void				AudioCommand_PlayFar(s32 cue);
 
 //--------------------------------------------------------------------------
 // ウィンドウの位置に矢印を出し、送りのキーを待つ
@@ -151,7 +151,7 @@ loop:
 		frame++;
 		goto loop;
 	}
-	Audio_PlayCue(111);
+	AudioCommand_PlayFar(111);
 	Resource_ResetEntry(slot);
 	WaitFrames(1);
 }

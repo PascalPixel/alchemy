@@ -30,14 +30,12 @@ void SceneActor_TurnTowardTableAngle(union FieldObject *object);
 
 void BattleFx_RunPageEffectForSlot();
 void BattleFx_SetPhaseRequest();
-void Object_SetPosition();
 void Object_CommitPosition();
 s32 PartyInventory_FindOwner();
 void PartyInventory_Discard();
 void Battle_ResetEffectCounter();
 void Audio_PlayCueFromEventWork();
 void ObjectDispatch_ApplyValueToChildren();
-void *ObjectTable_Get();
 void Vector_AddPolarOffset();
 s32 GetMapCellCollision();
 s32 Map_GetTerrainHeight();

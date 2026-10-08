@@ -69,13 +69,13 @@ struct HopActor
 struct HopActor *Object_GetById(s32 id);
 void			 Battle_Reset(void);
 void			 WaitFrames(s32 frames);
-void			 Audio_PlayCue(s32 cue);
+void			 AudioCommand_PlayFar(s32 cue);
 void			 ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void			 ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-void			 Object_CommitPosition(struct HopActor *actor);
+void			 Script_WaitForEventTimeoutFar(struct HopActor *actor);
 struct HopActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void			 Animation_ApplyChildValuesFar(struct HopActor *actor, s32 value);
-void			 Object_SetMode(struct HopActor *actor, s32 mode);
+void			 ObjectDispatch_ApplyArgumentToChildrenFar(struct HopActor *actor, s32 mode);
 void			 ObjectDispatch_SetSingleChildFlagsFar(struct HopActor *actor, s32 value);
 void			 BattleFx_FinishAction(void);
 
@@ -127,9 +127,9 @@ void EventActor_RunHopAndLeapSequence(s32 id)
 	dir = (Object_GetById(gGameState.selected_actor)->facing + 0x2000) & 0xc000;
 	Battle_Reset();
 	WaitFrames(10);
-	Audio_PlayCue(173);
+	AudioCommand_PlayFar(173);
 	Motion_SetVarCbAndRefresh(id, 1);
-	Audio_PlayCue(175);
+	AudioCommand_PlayFar(175);
 	Motion_SetVarCbAndRefresh(id, 1);
 	back = dir + 0x8000;
 	WaitFrames(20);
@@ -143,17 +143,17 @@ void EventActor_RunHopAndLeapSequence(s32 id)
 	// 向いた方の逆へ 16 ドットずつ 3 回跳ねる
 	dist = 16 << 16;
 	Motion_SetTargetPositionFromMagnitudeAngle(actor, dist, dir);
-	Audio_PlayCue(152);
+	AudioCommand_PlayFar(152);
 	ObjectMotion_Launch(id, 4, 0);
-	Object_CommitPosition(actor);
+	Script_WaitForEventTimeoutFar(actor);
 	Motion_SetTargetPositionFromMagnitudeAngle(actor, dist, dir);
-	Audio_PlayCue(152);
+	AudioCommand_PlayFar(152);
 	ObjectMotion_Launch(id, 4, 0);
-	Object_CommitPosition(actor);
+	Script_WaitForEventTimeoutFar(actor);
 	Motion_SetTargetPositionFromMagnitudeAngle(actor, dist, dir);
-	Audio_PlayCue(152);
+	AudioCommand_PlayFar(152);
 	ObjectMotion_Launch(id, 4, 0);
-	Object_CommitPosition(actor);
+	Script_WaitForEventTimeoutFar(actor);
 	WaitFrames(20);
 
 	// 同じスプライトの分身を作り、ひとつ前を追いかけるようにつなぐ
@@ -182,7 +182,7 @@ void EventActor_RunHopAndLeapSequence(s32 id)
 			copy->facing = actor->facing;
 			copy->sprite->priority = 0;
 			Animation_ApplyChildValuesFar(copy, value);
-			Object_SetMode(copy, 0);
+			ObjectDispatch_ApplyArgumentToChildrenFar(copy, 0);
 			ObjectDispatch_SetSingleChildFlagsFar(copy, 0);
 			res = Object_ReplaceResourceEntry(copy->sprite, res);
 			copy->linked = prev;
@@ -192,7 +192,7 @@ void EventActor_RunHopAndLeapSequence(s32 id)
 
 	// 向いた方へ 64 ドット跳び、動きを止める
 	Motion_SetTargetPositionFromMagnitudeAngle(actor, 64 << 16, dir + 0x8000);
-	Audio_PlayCue(136);
+	AudioCommand_PlayFar(136);
 	ObjectMotion_Launch(id, 12, 0);
 	WaitFrames(24);
 	actor->mode = 0;
@@ -202,7 +202,7 @@ void EventActor_RunHopAndLeapSequence(s32 id)
 	actor->target_x = 0x80000000;
 	actor->target_z = 0x80000000;
 	actor->target_y = 0x80000000;
-	Object_SetMode(actor, 0);
+	ObjectDispatch_ApplyArgumentToChildrenFar(actor, 0);
 	actor->sprite->priority = 2;
 	BattleFx_FinishAction();
 }
@@ -297,7 +297,7 @@ void FieldObject_PlaceSceneActors(void)
 
 					Object_SetPositionAndResetMotionFar(obj, sel->x, sel->y, sel->z - (32 << 16));
 				}
-				Object_SetMode(obj, 1);
+				ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
 			}
 		}
 	}

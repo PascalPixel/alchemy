@@ -37,7 +37,7 @@ extern u8 gSuharaHeyaPlacements96f[];
 extern u8 gSuharaHeyaEvents[];
 extern u8 gSuharaHeyaEvents96f[];
 
-void Engine_AudioPlayCueFromEventWork(void);
+void Audio_PlayCueFromEventWork(void);
 void Engine_InnCheckIn(s32 first, s32 second);
 void Engine_ShopConfirmAct(s32 first);
 #endif

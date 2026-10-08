@@ -51,7 +51,7 @@ static __inline__ void ClearWords(ClearWordsFn clear, void *destination, s32 siz
 	clear(destination, size);
 }
 
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 
 // REG_DISPCNT への書き込みを I/O 書き込みキューに積む（IME を止めて）
 #define QUEUE_DISPLAY_CONTROL(control)                                                                \
@@ -281,7 +281,7 @@ void BattleFx_EndCanvasLayer(void)
 	struct BtlWork			*btl = *(gWorkSlot + HEAP_SLOT_BATTLE);
 	s32						 i;
 
-	Audio_PlayCue(289);
+	AudioCommand_PlayFar(289);
 	gBgScroll[1].x = work->saved_bg1_x;
 	gBgScroll[1].y = work->saved_bg1_y;
 	gProjection.center_x = 120;

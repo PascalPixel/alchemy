@@ -29,11 +29,12 @@
 #include "BTLDISP.H"
 #include "RAM_BUFFER.H"
 #include "TRANSFORM.H"
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
 
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
-#define Object_InitializeMode ((void (*)(void *, s32))Object_InitializeMode)
+#define AnimationObjects_SelectAnimationFar ((void (*)(void *, s32))AnimationObjects_SelectAnimationFar)
 
 struct Point2D
 {
@@ -172,10 +173,10 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 		{
 			if (mode == 0)
 			{
-				Object_InitializeMode(work->objects[0], 8);
-				Object_InitializeMode(work->objects[1], 9);
-				Object_InitializeMode(work->objects[3], 10);
-				Object_InitializeMode(work->objects[4], 11);
+				AnimationObjects_SelectAnimationFar(work->objects[0], 8);
+				AnimationObjects_SelectAnimationFar(work->objects[1], 9);
+				AnimationObjects_SelectAnimationFar(work->objects[3], 10);
+				AnimationObjects_SelectAnimationFar(work->objects[4], 11);
 			}
 			for (i = 0; i != work->effect->count; i++)
 			{
@@ -409,17 +410,17 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 		{
 			if (frame == 128)
 			{
-				Object_InitializeMode(work->objects[0], 8);
-				Object_InitializeMode(work->objects[1], 9);
-				Object_InitializeMode(work->objects[3], 10);
-				Object_InitializeMode(work->objects[4], 11);
+				AnimationObjects_SelectAnimationFar(work->objects[0], 8);
+				AnimationObjects_SelectAnimationFar(work->objects[1], 9);
+				AnimationObjects_SelectAnimationFar(work->objects[3], 10);
+				AnimationObjects_SelectAnimationFar(work->objects[4], 11);
 			}
 			if (frame == 176)
 			{
-				Object_InitializeMode(work->objects[0], 0);
-				Object_InitializeMode(work->objects[1], 1);
-				Object_InitializeMode(work->objects[3], 3);
-				Object_InitializeMode(work->objects[4], 4);
+				AnimationObjects_SelectAnimationFar(work->objects[0], 0);
+				AnimationObjects_SelectAnimationFar(work->objects[1], 1);
+				AnimationObjects_SelectAnimationFar(work->objects[3], 3);
+				AnimationObjects_SelectAnimationFar(work->objects[4], 4);
 			}
 			BattleFx_PlaceFormationObjects(3, focus.x, focus.y);
 		}

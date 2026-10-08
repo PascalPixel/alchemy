@@ -158,7 +158,7 @@ void FieldMotes_Update(void)
                 } else {
                     mote->tile = work->tile_base;
                 }
-                if ((Data_03001e40 >> 3) & 1)
+                if ((*(unsigned long *)&gFrameCount >> 3) & 1)
                     mote->tile += 4;
                 mote->x = x;
                 mote->y = y - (mote->delay >> 2);
@@ -274,7 +274,7 @@ void FieldEffect_UpdateSparkles(void)
                 sparkle->x = sx;
                 sparkle->shape = 0;
                 sparkle->size = 1;
-                frames = Data_03001e40;
+                frames = *(unsigned long *)&gFrameCount;
                 sparkle->y = sy;
                 sparkle->matrix = ((frames >> 1) & 1) << 3;
                 Runtime_PushSlotEntry(sparkle, 240);

@@ -16,17 +16,11 @@ Object_ApplyProjectedPlacementFar:
 	.global AnimationObjects_SelectAnimationFar
 	.thumb_func
 AnimationObjects_SelectAnimationFar:
-	.global Object_InitializeMode
-	.thumb_func
-Object_InitializeMode:
 	overlay_veneer AnimationObjects_SelectAnimation
 	overlay_veneer AnimationObjects_SetActiveFrameTimers
 	.global ResourceObject_CreateFar
 	.thumb_func
 ResourceObject_CreateFar:
-	.global GetBattleEffectObject
-	.thumb_func
-GetBattleEffectObject:
 	overlay_veneer ResourceObject_Create
 	.global ResourceObject_ReleaseFar
 	.thumb_func
@@ -55,6 +49,7 @@ Animation_SetWorkEntryFar:
 	.thumb_func
 ObjectSystem_InitializeFar:
 	overlay_veneer ObjectSystem_Initialize
+	@ O2 pending: shared code calls this stub Object_SetMode while overlay veneers of that name target the other label
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
@@ -92,9 +87,6 @@ ObjectDispatch_InitFromTable0Far:
 	.thumb_func
 Object_CreateFar:
 	overlay_veneer FieldObject_Create
-	.global Object_Destroy
-	.thumb_func
-Object_Destroy:
 	.global ObjectDispatch_ReleaseFar
 	.thumb_func
 ObjectDispatch_ReleaseFar:
@@ -142,9 +134,6 @@ Map_UpdateCurrentTileBlockFar:
 	.thumb_func
 WorldMap_LoadGraphicsFar:
 	overlay_veneer WorldMap_LoadGraphics
-	.global Object_ResetMotion
-	.thumb_func
-Object_ResetMotion:
 	.global ObjectDispatch_InitFromTable6Far
 	.thumb_func
 ObjectDispatch_InitFromTable6Far:
@@ -153,16 +142,10 @@ ObjectDispatch_InitFromTable6Far:
 	.thumb_func
 ObjectDispatch_WaitForValue16Far:
 	overlay_veneer ObjectDispatch_WaitForValue16
-	.global Object_SetPosition
-	.thumb_func
-Object_SetPosition:
 	.global Object_SetMoveTargetFar
 	.thumb_func
 Object_SetMoveTargetFar:
 	overlay_veneer Object_SetMoveTarget
-	.global Object_CommitPosition
-	.thumb_func
-Object_CommitPosition:
 	.global Script_WaitForEventTimeoutFar
 	.thumb_func
 Script_WaitForEventTimeoutFar:

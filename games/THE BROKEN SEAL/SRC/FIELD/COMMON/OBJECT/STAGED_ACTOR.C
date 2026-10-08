@@ -16,31 +16,33 @@
 #include "FIELDRUN.H"
 #include "MAP.H"
 #include "MAP_SCROLL.H"
+
+void Engine_MapCopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y);
 extern u8 gMapCellBuffer[];
 
-extern u8 *gWork;
+extern u8 *gEventWork;
 extern s32 StagedActor_DirectionSteps[];
 extern s32 StagedActor_FootprintBounds[];
 
-extern void WaitFrames(s32);
+extern void Engine_TaskWait(s32);
 extern void Object_SetMode(void *, s32);
-extern void Object_SetPosition(void *, s32, s32, s32);
+extern void Engine_ObjectSetPosition(void *, s32, s32, s32);
 extern void Object_CommitPosition(void *);
 extern s32 Object_CheckMovementCollision(void *, s32 *);
 extern void *Object_GetById(u32);
-extern void Battle_WaitMode0(s32);
-extern void ObjectMotion_SetSpeedParameters(s32, s32, s32);
-extern void ObjectMotion_OffsetPositionAndResetMotion(s32, s32, s32);
-extern void ObjectMotion_CommitCurrentPositionAndActivate(s32);
-extern void Object_SetModeById(s32, s32);
+extern void Engine_EventWait(s32);
+extern void Engine_ActorSetSpeed(s32, s32, s32);
+extern void Engine_ActorSetDestinationOffset(s32, s32, s32);
+extern void Engine_ActorWaitForMove(s32);
+extern void Engine_ActorSetAnimation(s32, s32);
 extern void BattleFx_PlayQueuedSound(void);
-extern void Audio_PlayCue(s32);
+extern void Engine_AudioPlayCue(s32);
 
 static __inline__ void ConfigureStagedActorMotion(
     s32 actor_id, s32 movement_rate, s32 movement_step)
 {
     /* FAKEMATCH: needed to match: a direct call loads rate and step before actor 0; this boundary sets r0 before those literals. */
-    ObjectMotion_SetSpeedParameters(actor_id, movement_rate, movement_step);
+    Engine_ActorSetSpeed(actor_id, movement_rate, movement_step);
 }
 
 s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
@@ -57,7 +59,7 @@ s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 
 struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *origin)
 {
-    struct FieldStepWork *work = (struct FieldStepWork *)gWork;
+    struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
     struct ObjectRuntime **slots = work->actors;
     u32 i;
 
@@ -119,14 +121,14 @@ void StagedActor_AdvancePair(void)
 
     Object_SetMode(lead, 8);
     rate = 0x3333;
-    WaitFrames(15);
-    Audio_PlayCue(185);
+    Engine_TaskWait(15);
+    Engine_AudioPlayCue(185);
     next->move_rate_x = rate;
     next->move_rate_z = rate;
-    Object_SetPosition(next, dst[0], dst[1], dst[2]);
+    Engine_ObjectSetPosition(next, dst[0], dst[1], dst[2]);
     lead->move_rate_x = rate;
     lead->move_rate_z = rate;
-    Object_SetPosition(lead, dst[0], dst[1], dst[2]);
+    Engine_ObjectSetPosition(lead, dst[0], dst[1], dst[2]);
     Object_CommitPosition(next);
     BattleFx_PlayQueuedSound();
     next->x.value = dst[0];
@@ -214,7 +216,7 @@ done:
 
 u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint)
 {
-    struct FieldStepWork *work = (struct FieldStepWork *)gWork;
+    struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
     struct StagedActor *player = Object_GetById(0);
     struct ObjectRuntime **list;
     u32 i, j;
@@ -391,9 +393,9 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 
     StagedActor_FillGridAttributeRectangle(0, tile_position.x, tile_position.z, horizontal_extent,
                                            vertical_extent, 0);
-    ObjectMotion_SetSpeedParameters(0, 0x8000, 0x1999);
-    Object_SetModeById(0, 8);
-    Battle_WaitMode0(15);
+    Engine_ActorSetSpeed(0, 0x8000, 0x1999);
+    Engine_ActorSetAnimation(0, 8);
+    Engine_EventWait(15);
 
     {
         s32 horizontal_delta = probe.position_x - original_position.x;
@@ -406,38 +408,38 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
             if (vertical_delta < 0)
                 vertical_delta += 0x1ffff;
             vertical_delta >>= 17;
-            ObjectMotion_OffsetPositionAndResetMotion(0, horizontal_delta, vertical_delta);
+            Engine_ActorSetDestinationOffset(0, horizontal_delta, vertical_delta);
         }
     }
 
     ((struct StagedActor *)Object_GetById(0))->movement_callback = (u32)StagedActor_StopBlockedMotion;
-    Battle_WaitMode0(4);
+    Engine_EventWait(4);
     if ((u32)(direction - 6) <= 7)
         Object_SetMode(actor, 3);
     else
         Object_SetMode(actor, 2);
 
-    Audio_PlayCue(239);
-    Object_SetPosition(actor, probe.position_x, probe.position_y,
+    Engine_AudioPlayCue(239);
+    Engine_ObjectSetPosition(actor, probe.position_x, probe.position_y,
                        probe.position_z);
-    ObjectMotion_CommitCurrentPositionAndActivate(0);
-    Object_SetModeById(0, 2);
+    Engine_ActorWaitForMove(0);
+    Engine_ActorSetAnimation(0, 2);
     ConfigureStagedActorMotion(0, 0x4ccc, 0x1999);
 
     {
         s32 packed_orientation = StagedActor_DirectionSteps[direction];
-        ObjectMotion_OffsetPositionAndResetMotion(0, ((s16)(packed_orientation >> 16)) / 2,
+        Engine_ActorSetDestinationOffset(0, ((s16)(packed_orientation >> 16)) / 2,
                                                   ((s16)packed_orientation) / 2);
     }
     if (probe.callback != 0)
         probe.callback();
 
-    ObjectMotion_CommitCurrentPositionAndActivate(0);
-    Object_SetModeById(0, 1);
+    Engine_ActorWaitForMove(0);
+    Engine_ActorSetAnimation(0, 1);
     ((struct StagedActor *)Object_GetById(0))->movement_callback = 0;
     Object_CommitPosition(actor);
-    Audio_PlayCue(288);
-    Audio_PlayCue(213);
+    Engine_AudioPlayCue(288);
+    Engine_AudioPlayCue(213);
 
     actor->x.value = probe.position_x;
     actor->z.value = probe.position_z;
@@ -465,7 +467,7 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
         horizontal_origin = workspace->layers[1].offset_x >> 20;
         vertical_origin = workspace->layers[1].offset_y >> 20;
 
-        Call6(Map_CopyCellAttributeRect, probe.position_x, probe.position_z, horizontal_extent, vertical_extent, horizontal_origin + probe.position_x, vertical_origin + probe.position_z);
+        Call6(Engine_MapCopyCellAttributes, probe.position_x, probe.position_z, horizontal_extent, vertical_extent, horizontal_origin + probe.position_x, vertical_origin + probe.position_z);
         StagedActor_FillGridAttributeRectangle(0, probe.position_x, probe.position_z,
                                                horizontal_extent, vertical_extent, 255);
         StagedActor_FillGridAttributeRectangle(2, probe.position_x, probe.position_z,
@@ -486,7 +488,7 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
         horizontal_origin += original_position.x;
         vertical_origin += original_position.z;
 
-        Map_CopyCellAttributeRect(horizontal_origin, vertical_origin, horizontal_extent,
+        Engine_MapCopyCellAttributes(horizontal_origin, vertical_origin, horizontal_extent,
                                        vertical_extent, original_position.x,
                                        original_position.z);
         StagedActor_FillGridAttributeRectangle(2, original_position.x, original_position.z,
@@ -544,7 +546,7 @@ s32 FieldScene_RedrawActorFootprint(s32 id)
     probe.position_z >>= 20;
     idx = work->layers[1].offset_x >> 20;
     dst_z = work->layers[1].offset_y >> 20;
-    Map_CopyCellAttributeRect(probe.position_x, probe.position_z, width, height, idx + probe.position_x, dst_z + probe.position_z);
+    Engine_MapCopyCellAttributes(probe.position_x, probe.position_z, width, height, idx + probe.position_x, dst_z + probe.position_z);
     StagedActor_FillGridAttributeRectangle(0, probe.position_x, probe.position_z, width, height, 255);
     StagedActor_FillGridAttributeRectangle(2, probe.position_x, probe.position_z, width, height, 255);
     return 1;

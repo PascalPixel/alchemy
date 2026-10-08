@@ -322,7 +322,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         Owner_RefreshClassActions(owner);
         UnitCalc(owner);
     }
-    Runtime_BumpFree(work);
+    MemFree(work);
     return res;
 }
 

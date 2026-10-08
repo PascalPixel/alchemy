@@ -236,8 +236,8 @@ gFlashNumRemainingBytes:
 	.global Flash_Handler1
 Flash_Handler1:
 	.space 0x00000004
-	.global Flash_Handler2
-Flash_Handler2:
+	.global gEraseFlashSector
+gEraseFlashSector:
 	.space 0x00000004
 	.global Flash_Handler4
 Flash_Handler4:

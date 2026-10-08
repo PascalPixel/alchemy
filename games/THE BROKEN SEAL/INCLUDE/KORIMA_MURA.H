@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-extern u8 *gWork;
 
 extern s32 gFallingEffectOffset;
 extern s32 gFallingEffectWidth;

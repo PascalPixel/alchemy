@@ -153,9 +153,9 @@ Engine_ActorSetSpeed:
 	.thumb_func
 Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
-	.global Engine_ActorStartAction
+	.global Object_RefreshSelectorById
 	.thumb_func
-Engine_ActorStartAction:
+Object_RefreshSelectorById:
 	overlay_veneer Object_RefreshSelectorByIdFar
 	.global Engine_ActorSetDestination
 	.thumb_func

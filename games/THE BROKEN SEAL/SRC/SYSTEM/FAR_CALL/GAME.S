@@ -10,23 +10,18 @@ Trade_GetOfferStateFar:
 	.global UnitGetFar
 	.thumb_func
 UnitGetFar:
-	.global Runtime_GetObject
-	.thumb_func
-Runtime_GetObject:
 	overlay_veneer UnitGet
-	.global BattleUnit_Recalculate
-	.thumb_func
-BattleUnit_Recalculate:
 	.global UnitCalcFar
 	.thumb_func
 UnitCalcFar:
 	overlay_veneer UnitCalc
-	.global Item_GetDirectFar
-	.thumb_func
-Item_GetDirectFar:
+	@ O2 pending: shared code calls this stub Item_Get while overlay veneers of that name target the other label
 	.global Item_Get
 	.thumb_func
 Item_Get:
+	.global Item_GetDirectFar
+	.thumb_func
+Item_GetDirectFar:
 	overlay_veneer Item_GetDirect
 	.global Shop_GetSelectionState
 	.thumb_func
@@ -40,9 +35,6 @@ Inventory_AddItemFar:
 	.thumb_func
 PartyInventory_AddFar:
 	overlay_veneer PartyInventory_Add
-	.global Item_FindSlot
-	.thumb_func
-Item_FindSlot:
 	.global Inventory_FindFar
 	.thumb_func
 Inventory_FindFar:
@@ -76,15 +68,9 @@ Inventory_RepairFar:
 	.thumb_func
 Inventory_GetEquippedItemFar:
 	overlay_veneer Inventory_GetEquippedItem
-	.global Ability_GetData
-	.thumb_func
-Ability_GetData:
 	.global BtlActGet
 	.thumb_func
 BtlActGet:
-	.global BattleAction_GetDirectFar
-	.thumb_func
-BattleAction_GetDirectFar:
 	overlay_veneer BattleAction_GetDirect
 	.global OwnerAction_AddFar
 	.thumb_func
@@ -105,9 +91,6 @@ GameState_InitDefaultsFar:
 	.thumb_func
 Owner_GetValueIfLevelThresholdReachedFar:
 	overlay_veneer Owner_GetValueIfLevelThresholdReached
-	.global GameFlag_IsSet
-	.thumb_func
-GameFlag_IsSet:
 	.global GameFlag_TestFar
 	.thumb_func
 GameFlag_TestFar:
@@ -256,9 +239,6 @@ Djinn_IsActiveFar:
 	.thumb_func
 Trade_CanOfferDjinnFar:
 	overlay_veneer Trade_CanOfferDjinn
-	.global Item_CanOwnerEquipDirectFar
-	.thumb_func
-Item_CanOwnerEquipDirectFar:
 	.global Item_CanOwnerEquip
 	.thumb_func
 Item_CanOwnerEquip:
@@ -283,9 +263,6 @@ Item_GetEquipmentGroupFar:
 	.thumb_func
 Item_AdjustCounterFar:
 	overlay_veneer Item_AdjustCounter
-	.global Ability_GetAvailability
-	.thumb_func
-Ability_GetAvailability:
 	.global Inventory_CountFar
 	.thumb_func
 Inventory_CountFar:

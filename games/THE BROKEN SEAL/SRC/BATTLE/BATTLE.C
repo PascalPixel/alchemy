@@ -20,6 +20,7 @@
 #include "ANIMSPR.H"
 #include "BTLDISP.H"
 #include "FIELD_EVENT.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 #define ObjectDispatch_ApplyValueToChildrenFar \
 	((void (*)(struct MotionObject *, s32))ObjectDispatch_ApplyValueToChildrenFar)
@@ -335,6 +336,6 @@ s32 BattlePres_SetActorModeAndAction(s32 id)
 		mode = 5 - mode;
 	}
 
-	Object_SetMode(BtlObjGet(id)->object, mode);
+	ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(id)->object, mode);
 	ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(id)->object, (id & 3) + 14);
 }

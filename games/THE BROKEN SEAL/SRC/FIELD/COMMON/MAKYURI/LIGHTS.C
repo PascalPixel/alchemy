@@ -52,7 +52,7 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
         st->region = region;
         return;
     }
-    actor = ObjectTable_Get(gGameState.selected_actor);
+    actor = Engine_ActorLookup(gGameState.selected_actor);
     z = actor->z;
     cell = (struct MapCell *)Ram_MapCellBuffer + ((z / 0x100000) << 7) + actor->x / 0x100000;
     if (st->lit != 0 && st->lower != 0) {

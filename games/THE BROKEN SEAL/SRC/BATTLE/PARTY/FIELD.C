@@ -30,6 +30,8 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "DISPTRAN.H"
 #include "text/MSG_IDS.H"
+void UiWork_InitializeWithResourceCountersFar(void);
+s32 GameFlag_TestFar(s32 flag);
 
 #define gOverlayArea (*(struct OverlayEntries *)&gOverlayArea)
 
@@ -48,7 +50,7 @@
 
 s32 Party_CountActiveOwnersFar(void);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -73,11 +75,11 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
         BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
         BattleFx_StartBufferInterpolation(4);
         if (amount < -10)
-            Audio_PlayCue(SOUND_HEAVY_IMPACT);
+            AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
         else
-            Audio_PlayCue(133);
+            AudioCommand_PlayFar(133);
     } else {
-        Audio_PlayCue(SOUND_RECOVERY);
+        AudioCommand_PlayFar(SOUND_RECOVERY);
     }
 
     count = Party_CountActiveOwnersFar();
@@ -132,7 +134,7 @@ s32 BattleParty_ApplyStatusDamage(void)
     if (result != 0) {
         BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
         BattleFx_StartBufferInterpolation(4);
-        Audio_PlayCue(133);
+        AudioCommand_PlayFar(133);
     }
 
     return result;
@@ -224,10 +226,10 @@ struct MenuCtrl {
 };
 
 void WaitFrames(s32 frames);
-void Object_SetMode(struct FieldActor *actor, s32 mode);
-void Object_ResetMotion(struct FieldActor *actor);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *actor, s32 mode);
+void ObjectDispatch_InitFromTable6Far(struct FieldActor *actor);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
-void UiText_DrawQuantity(s32 quantity, s32 mode);
+void UiWork_PushValueSlotFar(s32 quantity, s32 mode);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void ObjectTable_Snapshot(void);
@@ -285,13 +287,13 @@ s32 Field_RunScene(s32 entrance)
     }
     work->mode = mode;
     ObjectSystem_InitializeFar(mode);
-    FarCall_WindowTable();
+    UiWork_InitializeWithResourceCountersFar();
     BattleFx_ResetCounters();
     work->view = gOverlayArea.view();
     BattleMap_ApplyEntranceView();
     gOverlayArea.place();
     ObjectTable_ResetForObject();
-    if (GameFlag_IsSet(0x109) != 0)
+    if (GameFlag_TestFar(0x109) != 0)
         ObjectTable_Restore();
     if (gGameState.pending_djinn_event != 0)
         FieldObject_PlaceSceneActors();
@@ -314,7 +316,7 @@ s32 Field_RunScene(s32 entrance)
         GameFlag_SetBitFar(0x144);
     }
     work->cells = Ram_MapCellBuffer;
-    if (GameFlag_IsSet(0x109) == 0) {
+    if (GameFlag_TestFar(0x109) == 0) {
         Party_ResolveTablePair();
         gGameState.hazard_limit = 16;
         gGameState.hazard_mode = 0;
@@ -340,7 +342,7 @@ s32 Field_RunScene(s32 entrance)
             if (ObjectEffect_RunPendingFlagEvent() == 0)
                 WaitFrames((work->transition_frames + 1) / 2);
         }
-        if (GameFlag_IsSet(0x12f) != 0) {
+        if (GameFlag_TestFar(0x12f) != 0) {
             GameFlag_ClearBitFar(0x12f);
             UiTimedNotice_CreateFar(gGameState.scene);
         }
@@ -360,7 +362,7 @@ s32 Field_RunScene(s32 entrance)
     for (;;) {
         GameFlag_SetBitFar(0x104);
         actor = work->actors[gGameState.selected_actor];
-        Object_ResetMotion(actor);
+        ObjectDispatch_InitFromTable6Far(actor);
         gGameState.x = actor->x.fixed;
         gGameState.y = 0;
         gGameState.z = actor->z.fixed;
@@ -383,20 +385,20 @@ s32 Field_RunScene(s32 entrance)
                     Battle_InitializeRenderObject();
                     Battle_SetObjectFlag5bWhenMode3();
                     for (i = 0; i < work->count; i++) {
-                        Object_SetMode(actor, 22);
-                        UiText_DrawQuantity(work->quantities[i], 1);
+                        ObjectDispatch_ApplyArgumentToChildrenFar(actor, 22);
+                        UiWork_PushValueSlotFar(work->quantities[i], 1);
                         UiText_ShowPositionedMessageAndWaitFar((s32)MsgFieldStrengthExhausted, 1);
                     }
                     if (work->survived == 0) {
                         struct BtlUnit *vitals;
 
                         if (gGameState.selected_actor == 0) {
-                            if (GameFlag_IsSet(32) != 0)
-                                Object_SetMode(actor, 21);
+                            if (GameFlag_TestFar(32) != 0)
+                                ObjectDispatch_ApplyArgumentToChildrenFar(actor, 21);
                             else
-                                Object_SetMode(actor, 37);
+                                ObjectDispatch_ApplyArgumentToChildrenFar(actor, 37);
                         } else {
-                            Object_SetMode(actor, 19);
+                            ObjectDispatch_ApplyArgumentToChildrenFar(actor, 19);
                         }
                         AudioCommand_PlayFar(59);
                         UiText_ShowPositionedMessageAndWaitFar((s32)MsgFieldPartyAnnihilated, 1);
@@ -478,7 +480,7 @@ s32 Field_RunScene(s32 entrance)
                 GameFlag_SetBitFar(0x106);
                 if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
                     Menu_RunSelectionWithCursorObjectFar();
-                } else if (GameFlag_IsSet(0x107) != 0) {
+                } else if (GameFlag_TestFar(0x107) != 0) {
                     work->event = 250;
                 } else {
                     work->unknown_cc0 = 0;
@@ -519,13 +521,13 @@ s32 Field_RunScene(s32 entrance)
                     Menu_RunSelectionFar();
                 } else if (gDebugMode != 0 && (gKeysHeld & KEY_L) != 0) {
                     Debug_RunPaletteEditor();
-                } else if (GameFlag_IsSet(0x107) != 0) {
+                } else if (GameFlag_TestFar(0x107) != 0) {
                     work->event = 250;
                 } else {
                     Battle_ResetEffectCounter();
                     UiTimedNotice_CloseIfActiveFar();
                     gGameState.return_cue = AudioCommand_GetSecondaryStateByteFar();
-                    if (GameFlag_IsSet(0x17e) == 0) {
+                    if (GameFlag_TestFar(0x17e) == 0) {
                         struct MenuCtrl *ctrl = gMenuCtrlWork;
                         u8 *owner = ResourceBlockOwners;
                         s32 free = 0;
@@ -566,7 +568,7 @@ s32 Field_RunScene(s32 entrance)
         do {
             WaitFrames(1);
             actor = work->actors[gGameState.selected_actor];
-            if (gDebugMode == 0 || GameFlag_IsSet(0x163) == 0)
+            if (gDebugMode == 0 || GameFlag_TestFar(0x163) == 0)
                 Field_ProcessStep(actor->terrain_id, actor->x.fixed, actor->y.fixed, actor->z.fixed);
         } while (BattleFx_SumCounters() == 0);
     }

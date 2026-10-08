@@ -25,9 +25,9 @@
 #include "GRAPHICS.H"
 #include "TRANSFORM.H"
 #include "FIELD.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
-void Object_ResetMotion(struct MotionObject *);
-void Object_SetPosition(struct MotionObject *, s32, s32, s32);
+void ObjectDispatch_InitFromTable6Far(struct MotionObject *);
 
 extern u8  gBattleFxWork[];
 extern u16 ParticleStreams_CellOffsets[];
@@ -55,7 +55,6 @@ extern u16 Volley_PelletOffsets[];
 
 void BattleFx_PrepareCanvasEffect(
 	struct BattleEffectArgument *effect, s32 kind, s32 side, s32 mode, s32 *x, s32 *y);
-void AudioCommand_PlayFar(s32 value);
 
 struct BlitterPair
 {
@@ -623,9 +622,9 @@ void BattleFx_InitializeRisingObject(s32 id)
 	obj->vertical_motion_phase = 0;
 	obj->auto_face_motion = 0;
 	obj->snap_to_target = 1;
-	Object_ResetMotion(obj);
-	Object_SetPosition(obj, slot->anchor_x, 0, slot->anchor_z);
-	Object_SetMode(obj, 1);
+	ObjectDispatch_InitFromTable6Far(obj);
+	Object_SetMoveTargetFar(obj, slot->anchor_x, 0, slot->anchor_z);
+	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
 }
 
 //--------------------------------------------------------------------------
@@ -659,7 +658,7 @@ void BattleFx_SetApproachMotion(s32 id, s32 tgt_id, s32 frames)
 	obj->velocity_y = 0;
 	obj->vertical_motion_phase = 0;
 	obj->auto_face_motion = 1;
-	Object_ResetMotion(obj);
-	Object_SetPosition(obj, x, 0, z);
-	Object_SetMode(obj, 2);
+	ObjectDispatch_InitFromTable6Far(obj);
+	Object_SetMoveTargetFar(obj, x, 0, z);
+	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
 }

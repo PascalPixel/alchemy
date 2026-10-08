@@ -20,6 +20,9 @@
 #include "UI.H"
 #include "BTLSYS.H"
 #include "text/MSG_IDS.H"
+s32 GameFlag_TestFar(s32 flag);
+struct BtlAct * BtlActGet(s32 action_id);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
 
 #define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
 #define gKeyState (*(volatile u32 *)&gKeyState)
@@ -33,7 +36,7 @@ struct AnimationObject;
 extern volatile u32 gKeysHeld;
 
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 #define ACTION_ID_MASK 0x3fff
 #define LIST_PAGE_SIZE 5
 
@@ -138,7 +141,7 @@ s32 PsynergyMenu_RunList(s32 pane)
     window = menu->list_window;
     done = 0;
 
-    while (done == 0 && GameFlag_IsSet(0x150) == 0) {
+    while (done == 0 && GameFlag_TestFar(0x150) == 0) {
         owner = UnitGetFar(menu->owner_ids[pane]);
         if (menu->mode != 0) {
             menu->psynergy_count =
@@ -153,7 +156,7 @@ s32 PsynergyMenu_RunList(s32 pane)
         changed = 1;
         menu->pane_icon[pane]->active = 1;
 
-        while (GameFlag_IsSet(0x150) == 0) {
+        while (GameFlag_TestFar(0x150) == 0) {
 #if EDITION_INTERNATIONAL
             UiMenu_PositionCursor(88, state.row * 16 + 36);
 #else
@@ -182,7 +185,7 @@ s32 PsynergyMenu_RunList(s32 pane)
                     icon->sentinel = 250;
                 }
                 for (i = 0; i < menu->owner_count; i++) {
-                    Object_InitializeMode(menu->tab_objects[i], 1);
+                    AnimationObjects_SelectAnimationFar(menu->tab_objects[i], 1);
                 }
             }
 
@@ -209,13 +212,13 @@ s32 PsynergyMenu_RunList(s32 pane)
 
             if (menu->mode == 0) {
                 if ((gKeyState & KEY_SELECT) != 0 && prompt == 0) {
-                    ability = Ability_GetData(
+                    ability = BtlActGet(
                         menu->psynergies[state.selected_index] &
                         ACTION_ID_MASK);
                     if (ability->type_0c == 0) {
-                        Audio_PlayCue(114);
+                        AudioCommand_PlayFar(114);
                     } else {
-                        Audio_PlayCue(174);
+                        AudioCommand_PlayFar(174);
                         prompt = 1;
                         menu->flags |= 2;
                         UiWindow_ClearInteriorTilesFar(window, 0, 88, 120, 96);
@@ -232,7 +235,7 @@ s32 PsynergyMenu_RunList(s32 pane)
 
             if ((gKeyState & KEY_A) != 0) {
                 if (menu->mode != 0) {
-                    Audio_PlayCue(130);
+                    AudioCommand_PlayFar(130);
                     result = menu->psynergies[state.selected_index];
                     done = 1;
                     break;
@@ -242,16 +245,16 @@ s32 PsynergyMenu_RunList(s32 pane)
                 }
                 if (PsynergyMenu_IsActionRestricted(
                         menu->psynergies[state.selected_index]) != 0) {
-                    Audio_PlayCue(114);
+                    AudioCommand_PlayFar(114);
                     continue;
                 }
-                ability = Ability_GetData(
+                ability = BtlActGet(
                     menu->psynergies[state.selected_index] & ACTION_ID_MASK);
                 if (ability->pp_cost > owner->ep) {
-                    Audio_PlayCue(114);
+                    AudioCommand_PlayFar(114);
                     goto no_accept;
                 }
-                Audio_PlayCue(173);
+                AudioCommand_PlayFar(173);
                 result = menu->psynergies[state.selected_index];
                 done = 1;
                 break;
@@ -259,7 +262,7 @@ s32 PsynergyMenu_RunList(s32 pane)
 
         no_accept:
             if ((gKeyState & KEY_B) != 0) {
-                Audio_PlayCue(113);
+                AudioCommand_PlayFar(113);
                 result = -1;
                 done = 1;
                 break;
@@ -269,7 +272,7 @@ s32 PsynergyMenu_RunList(s32 pane)
                  (gKeysRepeat & KEY_L) != 0) &&
                 (gKeysHeld & KEY_SELECT) == 0) {
                 mode = menu->mode != 0 ? 1 : 2;
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 menu->selected_index_by_owner[menu->owner_ids[pane]] =
                     state.selected_index;
                 tab = menu->tab_index[pane];
@@ -298,12 +301,12 @@ s32 PsynergyMenu_RunList(s32 pane)
 
             if ((gKeyState & KEY_L) != 0 &&
                 (gKeysHeld & KEY_SELECT) != 0) {
-                ability = Ability_GetData(
+                ability = BtlActGet(
                     menu->psynergies[state.selected_index] & ACTION_ID_MASK);
                 if (ability->type_0c == 0) {
-                    Audio_PlayCue(114);
+                    AudioCommand_PlayFar(114);
                 } else {
-                    Audio_PlayCue(130);
+                    AudioCommand_PlayFar(130);
                     if (PsynergyMenu_SetShortcut(
                             menu->owner_ids[pane],
                             menu->psynergies[state.selected_index],
@@ -318,16 +321,16 @@ s32 PsynergyMenu_RunList(s32 pane)
 
             if ((gKeyState & KEY_R) != 0 &&
                 (gKeysHeld & KEY_SELECT) != 0) {
-                ability = Ability_GetData(
+                ability = BtlActGet(
                     menu->psynergies[state.selected_index] & ACTION_ID_MASK);
                 if (ability->type_0c == 0) {
-                    Audio_PlayCue(114);
+                    AudioCommand_PlayFar(114);
                 } else {
                     if (PsynergyMenu_SetShortcut(
                             menu->owner_ids[pane],
                             menu->psynergies[state.selected_index],
                             1) != 0) {
-                        Audio_PlayCue(130);
+                        AudioCommand_PlayFar(130);
                         result = menu->psynergies[state.selected_index];
                         menu->mode = 2;
                         done = 1;
@@ -344,7 +347,7 @@ s32 PsynergyMenu_RunList(s32 pane)
     menu->selected_index_by_owner[menu->owner_ids[pane]] =
         state.selected_index;
     menu->pane_action[pane] = result;
-    if (GameFlag_IsSet(0x150) != 0) {
+    if (GameFlag_TestFar(0x150) != 0) {
         result = -1;
     }
     WaitFrames(1);

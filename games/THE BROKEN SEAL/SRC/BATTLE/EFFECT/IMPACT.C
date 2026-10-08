@@ -36,7 +36,7 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectPosition *outp
 
 void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
 
-void				  Audio_PlayCue(s32 cue);
+void				  AudioCommand_PlayFar(s32 cue);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 s32 RunBattleEffect04();
@@ -113,7 +113,7 @@ s32 SpawnHeavyImpactEffect(struct MotionObject *src)
 	struct ObjectRuntime *frag;
 	s32					  i;
 
-	Audio_PlayCue(SOUND_HEAVY_IMPACT);
+	AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
 	pos.x = src->x;
 	pos.y = src->y;
 	pos.z = src->z;

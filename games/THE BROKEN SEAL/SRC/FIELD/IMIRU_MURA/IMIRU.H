@@ -10,7 +10,6 @@
 #include "FACING_OBJECT.H"
 
 #include "BATTLE_EFFECT_RUNTIME.H"
-#define Data_03001ebc ((u8 *)&Data_03001ebc)
 #include "OBJECT_LOOKUP.H"
 #define ObjectTable_Get ((struct Subject_02001fa4 * (*)())ObjectTable_Get)
 extern u8 gEffectWork[];

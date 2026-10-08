@@ -22,6 +22,7 @@
 #include "BTLCALC.H"
 #include "EVENTWRK.H"
 #include "text/MSG_IDS.H"
+void UnitCalcFar(s32 unit_id);
 
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 
@@ -101,7 +102,7 @@ s32 Menu_OpenConfirmPrompt(void)
     UiWork_SetAltFlagAndClearTableFar(0);
     CopyWords(Iwram_CopyWords, PROMPT_TILES, saved, PROMPT_TILES_SIZE);
     ((struct UiRenderWork *)((void **)&gMenuCtrlWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL])->menu_busy = 0;
-    Runtime_BumpFree(saved);
+    MemFree(saved);
     WaitFrames(1);
     Scheduler_DisableOverlayCallbacksWithFlags();
 #endif
@@ -114,7 +115,7 @@ s32 Menu_OpenConfirmPrompt(void)
 
 
 void ItemMenu_DrawMsg(s32 unused, s32 message);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
 {
@@ -244,7 +245,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                 action = BtlActGet(work->pane_action[0] & 0x3fff);
                 UnitEpAddFar(work->owner_ids[0], -action->pp_cost);
             }
-            BattleUnit_Recalculate(work->owner_ids[0]);
+            UnitCalcFar(work->owner_ids[0]);
             if (result != -1) {
                 Menu_DrawOwnerStatusPanel(work->status_window, work->owner_ids[1], 0, 0);
                 Ability_PlayUseAnimation(work->pane_action[0] & 0x3fff);
@@ -252,7 +253,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                 InventoryMenu_ShowModalMessage(
                     work->use_result + (s32)MsgItemUseResult, 0, -1);
             } else {
-                Audio_PlayCue(114);
+                AudioCommand_PlayFar(114);
                 RenderOutput_ClearListFar((s32)work->info_window);
                 InventoryMenu_ShowModalMessage(
                     work->use_result + (s32)MsgItemUseResult,

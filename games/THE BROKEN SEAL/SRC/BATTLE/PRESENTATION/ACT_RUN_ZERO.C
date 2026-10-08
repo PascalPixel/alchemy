@@ -11,6 +11,7 @@
 #include "SCENE.H"
 #include "BATTLE_FORMATION.H"
 #include "CHARACTER.H"
+s32 GameFlag_TestFar(s32 flag);
 void BattlePresentation_SetPaletteLevel(s32 unused, s32 level);
 
 void BattlePres_RunWithZeroArguments(void)
@@ -54,7 +55,7 @@ s32 Party_ComputeEligibleMemberAverage(s32 record_id)
         enemy = Owner_GetRecordFar(id + 8);
         if (enemy == 0)
             continue;
-        if (enemy->level > 3 && !GameFlag_IsSet(372) && !GameFlag_IsSet(id + 1544))
+        if (enemy->level > 3 && !GameFlag_TestFar(372) && !GameFlag_TestFar(id + 1544))
             return -2;
         sum += enemy->level;
         count++;

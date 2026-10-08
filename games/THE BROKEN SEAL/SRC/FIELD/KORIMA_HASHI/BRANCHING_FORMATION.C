@@ -61,25 +61,24 @@ s32 KorimaHashi_PartyFlag __attribute__((section(".bss")));
 s32 KorimaHashi_SparkleSound __attribute__((section(".bss")));
 
 
-void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
-void Object_SetModeById(s32 actor, s32 mode);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Engine_TaskWait(s32 frames);
+void Engine_EventWait(s32 frames);
+void Engine_ActorWaitForMove(s32 actor);
+void Engine_ActorSetAnimation(s32 actor, s32 mode);
+void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
+void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
 
 static __inline__ void Actor_SetMotionSpeed(s32 actor, s32 speed, s32 acceleration)
 {
     /* FAKEMATCH: a direct call changes FieldScene_RunBranchingFormationPresentation from ldr r6, .L0 to ldr r7, .L0 (2674/2678 assembly lines). */
-    ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+    Engine_ActorSetSpeed(actor, speed, acceleration);
 }
 
 static __inline__ void Actor_OffsetDestination(s32 actor, s32 dx, s32 dz)
 {
     /* FAKEMATCH: a direct call changes FieldScene_RunBranchingFormationPresentation from mov r0, #3 to neg r1, r1 (2674/2674 assembly lines). */
-    ObjectMotion_OffsetPositionAndResetMotion(actor, dx, dz);
+    Engine_ActorSetDestinationOffset(actor, dx, dz);
 }
-void Object_SetPosition(struct Obj *object, s32 x, s32 y, s32 z);
 
 s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
 
@@ -87,7 +86,7 @@ static __inline__ void DrawPlacement(
     s32 left, s32 top, s32 width, s32 height, s32 tile, s32 palette)
 {
     /* FAKEMATCH: a direct call changes FieldScene_RunTile10x20Transition from mov r2, #17 to mov r3, #19 (79/79 assembly lines). */
-    Map_CopyCellAttributeRect(left, top, width, height, tile, palette);
+    Engine_MapCopyCellAttributes(left, top, width, height, tile, palette);
 }
 
 s32 Object_CheckMovementCollision(struct StagedActorEffect *actor, struct StagedActorEffectRequest *request);
@@ -131,11 +130,11 @@ void FieldScene_RunTile10x20Transition(void)
             u8 *actor;
             s32 zero;
 
-            Object_SetModeById(10, 3);
+            Engine_ActorSetAnimation(10, 3);
             Actor_OffsetDestination(10, -18, 6);
-            Battle_WaitMode0(30);
+            Engine_EventWait(30);
             Engine_AudioPlayCue(240);
-            Object_SetModeById(10, 8);
+            Engine_ActorSetAnimation(10, 8);
             Object_GetById(10)->priority_flags = 2;
             zero = 0;
             DrawPlacement(0, 17, 2, 4, 19, 17);
@@ -159,7 +158,7 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
     if (ret == 0) {
         Engine_EventBegin();
         Object_SetMode((struct FieldActor *)actor, 6);
-        WaitFrames(6);
+        Engine_TaskWait(6);
         Engine_AudioPlayCue(152);
         Object_SetMode((struct FieldActor *)actor, 7);
         actor->move_rate_x = 0x30000;
@@ -171,16 +170,16 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
         Object_SetMode((struct FieldActor *)actor, 6);
         Engine_ActorSetSpriteFlags((struct FieldActor *)actor, 1);
         *flags = (u8)ret;
-        Object_SetModeById(10, 7);
+        Engine_ActorSetAnimation(10, 7);
         actor->position_x += 0xffff0000;
         actor->position_z += 0xffff0000;
-        WaitFrames(2);
+        Engine_TaskWait(2);
         actor->position_x += 0xffff0000;
         actor->position_z += 0xffff0000;
-        WaitFrames(10);
+        Engine_TaskWait(10);
         actor->position_x += 0x10000;
         actor->position_z += 0x10000;
-        WaitFrames(4);
+        Engine_TaskWait(4);
         actor->position_x += 0x10000;
         actor->position_z += 0x10000;
         *flags = saved;
@@ -264,7 +263,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
-    WaitFrames(1);
+    Engine_TaskWait(1);
     Camera_MoveTo(0xf60000, -1, 0x25c0000, 0);
     party = &KorimaHashi_PartyFlag;
     *party = GameFlag_IsSet(3);
@@ -293,9 +292,9 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Engine_ActorEnableActionCallback(20, entry_action);
     Engine_ActorEnableActionCallback(21, entry_action);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x740000, 0x25a0000);
-    WaitFrames(1);
+    Engine_TaskWait(1);
     Engine_MapRedraw();
-    WaitFrames(1);
+    Engine_TaskWait(1);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Actor_SetMotionSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
@@ -334,7 +333,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     SceneActor_SetPairZeroAndValue(2, 0x8000, 20);
     SceneActor_SetPairZeroAndValue(2, 0x4000, 40);
     Actor_ShowEmote(IWAN, 0x101, 0);
-    Battle_WaitMode0(60);
+    Engine_EventWait(60);
     Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
     SceneActor_SetPairZeroAndValue(0, 0x6000, 60);
     SceneActor_SetPairZeroAndValue(3, 0x2000, 10);
@@ -342,7 +341,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     SceneActor_SetPairZeroAndValue(0, 0xa000, 10);
     Actor_ShowEmote(GERALD, 0x101, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
     SceneActor_SetPairZeroAndValue(0, 0x6000, 10);
     Engine_ActorRunRepeatedMotion(GERALD, 2);
@@ -360,7 +359,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     SceneActor_SetPairZeroAndValue(0, 0xe000, 30);
     Engine_ActorRunRepeatedMotion(IWAN, 2);
     Actor_ShowEmote(IWAN, 0x100, 0);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
     SceneActor_SetPairZeroAndValue(0, 0x6000, 20);
     SceneActor_SetPairZeroAndValue(2, 0xc000, 10);
@@ -368,81 +367,81 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Audio_PlayCue(206);
     ColorBuffer_ApplyTarget(0x7fff, 0);
     Engine_ColorBufferInterpolate(1);
-    WaitFrames(1);
+    Engine_TaskWait(1);
     KorimaHashi_SparkleSound = 1;
     Engine_TaskAddCallback(SceneEffect_SpawnObject26EveryEightFrames, 0xc80);
-    WaitFrames(20);
+    Engine_TaskWait(20);
     ColorBuffer_ApplyTarget(0x405210, 1);
     ColorBuffer_ApplyTarget(0x10000, 2);
     Engine_ColorBufferInterpolate(120);
-    WaitFrames(60);
+    Engine_TaskWait(60);
     motion_action = KorimaHashi_PartyAction;
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, motion_action);
     Engine_ActorEnableActionCallback(GERALD, motion_action);
     Engine_ActorEnableActionCallback(IWAN, motion_action);
     Engine_ActorEnableActionCallback(MEARI, motion_action);
-    Battle_WaitMode0(100);
+    Engine_EventWait(100);
     Event_SayThenWait(GERALD, 20);
     Event_SayThenWait(IWAN, 40);
     if (KorimaHashi_PartyFlag != 0) {
-        Battle_WaitMode0(40);
+        Engine_EventWait(40);
         Actor_ShowEmote(MEARI, 0x102, 0);
-        Battle_WaitMode0(40);
+        Engine_EventWait(40);
         Event_SayThenWait(MEARI, 40);
     } else {
         gEventWork->message += 1;
     }
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     if (KorimaHashi_PartyFlag != 0) {
         record = Object_GetById(3);
         record->velocity_y = 0x20000;
-        Battle_WaitMode0(10);
+        Engine_EventWait(10);
         Actor_SetMotionSpeed(MEARI, 0x20000, 0x20000);
         Actor_OffsetDestination(MEARI, -2, 0);
         Engine_ActorEnableActionCallback(MEARI, KorimaHashi_ResetAction);
         record = Object_GetById(3);
         Engine_ActorSetSpriteFlags(record, 0);
-        Object_SetModeById(MEARI, 19);
-        Battle_WaitMode0(10);
+        Engine_ActorSetAnimation(MEARI, 19);
+        Engine_EventWait(10);
     }
     record = Object_GetById(0);
     record->velocity_y = 0x20000;
-    Battle_WaitMode0(10);
+    Engine_EventWait(10);
     Actor_SetMotionSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
     reset_action = KorimaHashi_ResetAction;
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, reset_action);
     record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
-    Object_SetModeById(ACTOR_PARTY_LEADER, 19);
-    Battle_WaitMode0(20);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
+    Engine_EventWait(20);
     record = Object_GetById(1);
     record->velocity_y = 0x20000;
-    Battle_WaitMode0(10);
+    Engine_EventWait(10);
     Actor_SetMotionSpeed(GERALD, 0x20000, 0x20000);
     Engine_ActorEnableActionCallback(GERALD, reset_action);
     record = Object_GetById(1);
     Engine_ActorSetSpriteFlags(record, 0);
-    Object_SetModeById(GERALD, 19);
-    Battle_WaitMode0(40);
+    Engine_ActorSetAnimation(GERALD, 19);
+    Engine_EventWait(40);
     record = Object_GetById(2);
     record->velocity_y = 0x20000;
-    Battle_WaitMode0(10);
+    Engine_EventWait(10);
     Engine_ActorEnableActionCallback(IWAN, reset_action);
     record = Object_GetById(2);
     Engine_ActorSetSpriteFlags(record, 0);
-    Object_SetModeById(IWAN, 19);
+    Engine_ActorSetAnimation(IWAN, 19);
     KorimaHashi_SparkleSound = 0;
-    Battle_WaitMode0(160);
+    Engine_EventWait(160);
     Engine_TaskRemoveCallback(SceneEffect_SpawnObject26EveryEightFrames);
-    Battle_WaitMode0(120);
+    Engine_EventWait(120);
     ColorBuffer_ApplyTarget(0x406218, 1);
     Engine_ColorBufferInterpolate(60);
-    WaitFrames(60);
+    Engine_TaskWait(60);
     gFallingEffectWidth = 0;
     gFallingEffectOffset = 0x800000;
     gFallingEffectState = 1;
     Engine_TaskAddCallback(FieldScene_UpdateFallingEffect, 0xc80);
-    Battle_WaitMode0(180);
+    Engine_EventWait(180);
     Audio_PlayCue(21);
     Event_SayThenWait(GERALD, 80);
     Event_SayThenWait(IWAN, 40);
@@ -450,22 +449,22 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_ShowEmote(GERALD, 0x102, 0);
     Actor_ShowEmote(IWAN, 0x102, 0);
     Actor_ShowEmote(MEARI, 0x102, 0);
-    Battle_WaitMode0(60);
+    Engine_EventWait(60);
     Event_SayThenWait(IWAN, 20);
     gFallingEffectState = 2;
     Engine_ActorStartRepeatedMotion(IWAN, 2);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Engine_ActorStartRepeatedMotion(GERALD, 1);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorStartRepeatedMotion(MEARI, 1);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Engine_ActorStartRepeatedMotion(IWAN, 3);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Engine_ActorStartRepeatedMotion(GERALD, 2);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Engine_ActorStartRepeatedMotion(MEARI, 2);
     Actor_ShowEmote(GERALD, 0x102, 0);
     Event_SayThenWait(GERALD, 20);
@@ -508,23 +507,23 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Engine_ActorEnableActionCallback(16, formation_action);
     if (gFallingEffectState != 0) {
         do {
-            WaitFrames(1);
+            Engine_TaskWait(1);
         } while (gFallingEffectState != 0);
     }
-    Battle_WaitMode0(0x12c);
+    Engine_EventWait(0x12c);
     Engine_TaskRemoveCallback(FieldScene_UpdateFallingEffect);
-    Battle_WaitMode0(120);
+    Engine_EventWait(120);
     Audio_PlayCue(17);
     ColorBuffer_ApplyTarget(0x10000, 1);
     Engine_ColorBufferInterpolate(60);
-    WaitFrames(60);
+    Engine_TaskWait(60);
     Engine_ActorStop(13);
     Engine_ActorStop(14);
     if (KorimaHashi_PartyFlag != 0) {
         Engine_ActorStop(15);
     }
     Engine_ActorStop(16);
-    WaitFrames(1);
+    Engine_TaskWait(1);
     finish_action = KorimaHashi_FinishAction;
     Engine_ActorEnableActionCallback(13, finish_action);
     Engine_ActorEnableActionCallback(14, finish_action);
@@ -532,41 +531,41 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Engine_ActorEnableActionCallback(15, finish_action);
     }
     Object_SetActionCallbackAndRefreshById(16, finish_action);
-    Battle_WaitMode0(80);
+    Engine_EventWait(80);
     Engine_ActorRunRepeatedMotion(GERALD, 2);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Event_OpenMessage(GERALD, 0);
     Actor_SetPosition(11, 0xdc0000, 0x1ee0000);
     Actor_SetPosition(12, 0xdc0000, 0x1ee0000);
-    WaitFrames(1);
+    Engine_TaskWait(1);
     if (Engine_EventChooseYesNo(11, 0) == 1) {
         gEventWork->message += 1;
     }
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(IWAN, 2);
     Event_SayThenWait(IWAN, 20);
     if (KorimaHashi_PartyFlag != 0) {
         Engine_ActorRunRepeatedMotion(MEARI, 2);
-        Battle_WaitMode0(10);
+        Engine_EventWait(10);
         Engine_EventSetMessage((s32)MsgKorimaKnowThoseFieldsWere);
         Event_SayThenWait(MEARI, 40);
     }
     Engine_ActorStartRepeatedMotion(GERALD, 1);
     Actor_ShowEmote(GERALD, 0x101, 0);
-    Battle_WaitMode0(80);
+    Engine_EventWait(80);
     Engine_ActorRunRepeatedMotion(IWAN, 2);
     Engine_EventSetMessage((s32)MsgKorimaWasOurPsynergy);
     Event_SayThenWait(IWAN, 40);
     Engine_ActorRunRepeatedMotion(GERALD, 3);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Engine_ActorSetSpritePriority(GERALD, 2);
     Object_GetById(1)->priority_flags |= 1;
     record = Object_GetById(1);
     Engine_ActorSetSpriteFlags(record, 1);
     Engine_ActorJump(GERALD, 6, 0);
     Actor_OffsetDestination(GERALD, -3, 0);
-    Object_SetModeById(GERALD, 1);
+    Engine_ActorSetAnimation(GERALD, 1);
     SceneActor_SetPairZeroAndValue(1, 0x4000, 60);
     Event_SayThenWait(GERALD, 20);
     Engine_ActorStartRepeatedMotion(GERALD, 2);
@@ -574,33 +573,33 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
     SceneActor_SetPairZeroAndValue(1, 0x2000, 20);
     Actor_ShowEmote(GERALD, 0x101, 0);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     SceneActor_SetPairZeroAndValue(1, 0x6000, 40);
     SceneActor_SetPairZeroAndValue(1, 0x2000, 20);
     SceneActor_SetPairZeroAndValue(1, 0x6000, 20);
     SceneActor_SetPairZeroAndValue(1, 0x2000, 10);
     Engine_ActorJump(GERALD, 2, 0);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Engine_ActorJump(GERALD, 2, 0);
-    Battle_WaitMode0(10);
+    Engine_EventWait(10);
     Engine_ActorJump(GERALD, 4, 0);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Event_SayThenWait(GERALD, 20);
     if (KorimaHashi_PartyFlag != 0) {
         Actor_ShowEmote(MEARI, 0x100, 0);
-        Battle_WaitMode0(60);
+        Engine_EventWait(60);
         Engine_ActorRunRepeatedMotion(MEARI, 2);
-        Battle_WaitMode0(80);
+        Engine_EventWait(80);
         Engine_ActorSetSpritePriority(MEARI, 2);
         Object_GetById(3)->priority_flags |= 1;
         record = Object_GetById(3);
         Engine_ActorSetSpriteFlags(record, 1);
         Engine_ActorJump(MEARI, 4, 0);
         Actor_OffsetDestination(MEARI, -2, 0);
-        Object_SetModeById(MEARI, 1);
+        Engine_ActorSetAnimation(MEARI, 1);
         SceneActor_SetPairZeroAndValue(3, 0xe000, 60);
         Engine_ActorRunRepeatedMotion(MEARI, 2);
-        Battle_WaitMode0(20);
+        Engine_EventWait(20);
         Event_SayThenWait(MEARI, 20);
     } else {
         gEventWork->message += 1;
@@ -611,30 +610,30 @@ void FieldScene_RunBranchingFormationPresentation(void)
     SceneActor_SetPairZeroAndValue(1, 0x2000, 10);
     Event_SayThenWait(GERALD, 20);
     Engine_ActorSetAnimationAndWait(GERALD, 3);
-    Battle_WaitMode0(10);
+    Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(IWAN, 1);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(IWAN, 2);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Engine_ActorSetSpritePriority(IWAN, 2);
     Object_GetById(2)->priority_flags |= 1;
     record = Object_GetById(2);
     Engine_ActorSetSpriteFlags(record, 1);
     Engine_ActorJump(IWAN, 4, 0);
-    Object_SetModeById(IWAN, 1);
+    Engine_ActorSetAnimation(IWAN, 1);
     Actor_FaceDirection(IWAN, FACING_NORTH, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Battle_WaitMode0(10);
+    Engine_EventWait(10);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
     Object_GetById(0)->priority_flags |= 1;
     record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 1);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
-    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     SceneActor_SetPairZeroAndValue(0, 0x6000, 60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
     Actor_ShowEmote(IWAN, 0x105, 0);
-    Battle_WaitMode0(60);
+    Engine_EventWait(60);
     SceneActor_SetPairZeroAndValue(0, 0xa000, 20);
     Engine_ActorSetAnimationAndWait(GERALD, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -643,18 +642,18 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_FaceDirection(IWAN, FACING_NORTH, 0);
     Engine_ActorSetAnimationAndWait(IWAN, 3);
     Event_SayThenWait(IWAN, 20);
-    Object_SetModeById(ACTOR_PARTY_LEADER, 3);
-    Object_SetModeById(MEARI, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(MEARI, 3);
     Engine_ActorSetAnimationAndWait(GERALD, 3);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(IWAN, 1);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Event_OpenMessage(IWAN, 0);
-    Object_SetModeById(IWAN, 3);
+    Engine_ActorSetAnimation(IWAN, 3);
     Actor_FaceDirection(IWAN, FACING_NORTHEAST, 0);
     Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Object_SetModeById(IWAN, 3);
+        Engine_ActorSetAnimation(IWAN, 3);
         Engine_ActorSetAnimationAndWait(GERALD, 3);
         gEventWork->message += 1;
     } else {
@@ -673,23 +672,23 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Engine_ActorRunRepeatedMotion(MEARI, 2);
         SceneActor_SetPairZeroAndValue(3, 0, 20);
         SceneActor_SetPairZeroAndValue(3, 0x2000, 10);
-        Object_SetModeById(MEARI, 4);
+        Engine_ActorSetAnimation(MEARI, 4);
         Event_SayThenWait(MEARI, 10);
     } else {
         gEventWork->message += 1;
     }
     Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
     SceneActor_SetPairZeroAndValue(0, 0xa000, 10);
-    Object_SetModeById(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimationAndWait(GERALD, 3);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
     SceneActor_SetPairZeroAndValue(1, 0x4000, 10);
     Engine_ActorSetAnimationAndWait(IWAN, 4);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
     Actor_ShowEmote(GERALD, 0x102, 0);
-    Battle_WaitMode0(80);
+    Engine_EventWait(80);
     SceneActor_SetPairZeroAndValue(2, 0xe000, 10);
     Engine_ActorStartRepeatedMotion(IWAN, 2);
     Event_SayThenWait(IWAN, 20);
@@ -701,14 +700,14 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Engine_ActorSetAnimationAndWait(IWAN, 3);
     Event_SayThenWait(IWAN, 10);
     Actor_SetAttachedEffect(GERALD, 0x102);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Event_SayThenWait(GERALD, 20);
     Engine_ActorSetAnimationAndWait(IWAN, 3);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Actor_ShowEmote(GERALD, 0x102, 0);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Event_SayThenWait(GERALD, 20);
-    Object_SetModeById(IWAN, 3);
+    Engine_ActorSetAnimation(IWAN, 3);
     Event_SayThenWait(IWAN, 10);
     Engine_ActorRunRepeatedMotion(GERALD, 2);
     SceneActor_SetPairZeroAndValue(1, 0x2000, 10);
@@ -717,26 +716,26 @@ void FieldScene_RunBranchingFormationPresentation(void)
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorSetAnimationAndWait(GERALD, 3);
     } else {
-        Battle_WaitMode0(20);
+        Engine_EventWait(20);
         Engine_ActorRunRepeatedMotion(GERALD, 2);
-        Battle_WaitMode0(40);
+        Engine_EventWait(40);
         gEventWork->message += 1;
     }
     Event_ShowMessage(GERALD, 0);
     Audio_PlayCue(21);
     ColorBuffer_ApplyTarget(0x406218, 1);
     Engine_ColorBufferInterpolate(60);
-    WaitFrames(60);
+    Engine_TaskWait(60);
     gFallingEffectWidth = 0;
     gFallingEffectOffset = 0x800000;
     gFallingEffectState = 1;
     Engine_TaskAddCallback(FieldScene_UpdateFallingEffect, 0xc80);
-    Battle_WaitMode0(80);
+    Engine_EventWait(80);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorStartRepeatedMotion(GERALD, 2);
     Engine_ActorStartRepeatedMotion(MEARI, 2);
     Engine_ActorRunRepeatedMotion(IWAN, 2);
-    Battle_WaitMode0(60);
+    Engine_EventWait(60);
     SceneActor_SetPairZeroAndValue(2, 0xc000, 10);
     Engine_EventSetMessage((s32)MsgKorimaWatchOutItsHappeningAgain);
     Event_SayThenWait(IWAN, 10);
@@ -766,10 +765,10 @@ void FieldScene_RunBranchingFormationPresentation(void)
     }
     Actor_SetPosition(16, 0xe30000, 0x2440000);
     Engine_ActorEnableActionCallback(16, formation_action);
-    Battle_WaitMode0(120);
+    Engine_EventWait(120);
     gFallingEffectState = 3;
     do {
-        WaitFrames(1);
+        Engine_TaskWait(1);
     } while (gFallingEffectState != 0);
     Event_SayThenWait(11, 80);
     Event_SayThenWait(12, 20);
@@ -777,23 +776,23 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_ShowEmote(GERALD, 0x101, 0);
     Actor_ShowEmote(IWAN, 0x101, 0);
     Actor_ShowEmote(MEARI, 0x101, 0);
-    Battle_WaitMode0(60);
+    Engine_EventWait(60);
     Event_SayThenWait(12, 20);
-    Object_SetModeById(ACTOR_PARTY_LEADER, 3);
-    Object_SetModeById(GERALD, 3);
-    Object_SetModeById(MEARI, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimation(MEARI, 3);
     Engine_ActorSetAnimationAndWait(IWAN, 3);
     Event_SayThenWait(12, 10);
-    Object_SetModeById(ACTOR_PARTY_LEADER, 3);
-    Object_SetModeById(GERALD, 3);
-    Object_SetModeById(MEARI, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimation(MEARI, 3);
     Engine_ActorSetAnimationAndWait(IWAN, 3);
     Event_SayThenWait(12, 10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
     Actor_ShowEmote(GERALD, 0x100, 0);
     Actor_ShowEmote(IWAN, 0x100, 0);
     Actor_ShowEmote(MEARI, 0x100, 0);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Event_SayThenWait(11, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
@@ -818,15 +817,15 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_FaceDirection(GERALD, FACING_NORTH, 0);
     Actor_FaceDirection(IWAN, FACING_NORTH, 0);
     SceneActor_SetPairZeroAndValue(3, 0xc000, 10);
-    Object_SetModeById(ACTOR_PARTY_LEADER, 4);
-    Object_SetModeById(GERALD, 4);
-    Object_SetModeById(MEARI, 4);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
+    Engine_ActorSetAnimation(GERALD, 4);
+    Engine_ActorSetAnimation(MEARI, 4);
     Engine_ActorSetAnimationAndWait(IWAN, 4);
-    Battle_WaitMode0(60);
+    Engine_EventWait(60);
     Event_SayThenWait(12, 10);
-    Object_SetModeById(ACTOR_PARTY_LEADER, 3);
-    Object_SetModeById(GERALD, 3);
-    Object_SetModeById(MEARI, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimation(MEARI, 3);
     Engine_ActorSetAnimationAndWait(IWAN, 3);
     Event_SayThenWait(12, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
@@ -852,31 +851,31 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_ShowEmote(GERALD, 0x102, 0);
     Actor_ShowEmote(MEARI, 0x102, 0);
     Actor_ShowEmote(IWAN, 0x102, 0);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Event_SayThenWait(12, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(GERALD, FACING_NORTH, 0);
     Actor_FaceDirection(IWAN, FACING_NORTH, 0);
     SceneActor_SetPairZeroAndValue(3, 0xc000, 10);
     Event_SayThenWait(12, 10);
-    Object_SetModeById(ACTOR_PARTY_LEADER, 3);
-    Object_SetModeById(GERALD, 3);
-    Object_SetModeById(MEARI, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimation(MEARI, 3);
     Engine_ActorSetAnimationAndWait(IWAN, 3);
-    Battle_WaitMode0(60);
+    Engine_EventWait(60);
     Event_ShowMessage(12, 0);
     Event_ShowMessage(11, 0);
     Engine_TaskRemoveCallback(FieldScene_UpdateFallingEffect);
-    Battle_WaitMode0(80);
+    Engine_EventWait(80);
     ColorBuffer_ApplyTarget(0x10000, 1);
     Engine_ColorBufferInterpolate(60);
-    WaitFrames(80);
+    Engine_TaskWait(80);
     Engine_ActorStop(13);
     Engine_ActorStop(14);
     party_flag = &KorimaHashi_PartyFlag;
     Engine_ActorStop(15);
     Engine_ActorStop(16);
-    WaitFrames(1);
+    Engine_TaskWait(1);
     finish_action = KorimaHashi_FinishAction;
     Engine_ActorEnableActionCallback(13, finish_action);
     Engine_ActorEnableActionCallback(14, finish_action);
@@ -884,7 +883,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Engine_ActorEnableActionCallback(15, finish_action);
     }
     Object_SetActionCallbackAndRefreshById(16, finish_action);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
     Engine_ActorSetSpritePriority(GERALD, 2);
     Engine_ActorSetSpritePriority(IWAN, 2);
@@ -900,14 +899,14 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_FaceDirection(MEARI, FACING_EAST, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorRunRepeatedMotion(GERALD, 2);
-        Battle_WaitMode0(10);
+        Engine_EventWait(10);
         Event_OpenMessage(GERALD, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
             SceneActor_SetPairZeroAndValue(3, 0, 20);
             Actor_ShowEmote(GERALD, 0x101, 0);
             Actor_ShowEmote(IWAN, 0x101, 0);
             Actor_ShowEmote(MEARI, 0x101, 0);
-            Battle_WaitMode0(40);
+            Engine_EventWait(40);
             SceneActor_SetPairZeroAndValue(1, 0x4000, 20);
             Event_SayThenWait(GERALD, 10);
             SceneActor_SetPairZeroAndValue(2, 0xc000, 20);
@@ -920,33 +919,33 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Actor_ShowEmote(GERALD, 0x102, 0);
             Actor_ShowEmote(IWAN, 0x102, 0);
             Actor_ShowEmote(MEARI, 0x102, 0);
-            Battle_WaitMode0(40);
+            Engine_EventWait(40);
             SceneActor_SetPairZeroAndValue(1, 0x4000, 20);
             Engine_EventSetMessage((s32)MsgKorimaHesAsStumpedAsWe);
             Event_SayThenWait(GERALD, 20);
             Engine_ActorSetAnimationAndWait(IWAN, 3);
             Event_SayThenWait(IWAN, 20);
         }
-        Object_SetModeById(MEARI, 3);
+        Engine_ActorSetAnimation(MEARI, 3);
         Engine_ActorSetAnimationAndWait(GERALD, 3);
         goto ivan_bows;
     }
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(GERALD, 3);
-    Battle_WaitMode0(10);
+    Engine_EventWait(10);
     Engine_EventSetMessage((s32)MsgKorimaYoureRobinThereIsntMuch);
     Event_SayThenWait(GERALD, 10);
     Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
     SceneActor_SetPairZeroAndValue(0, 0x6000, 20);
-    Object_SetModeById(GERALD, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    Battle_WaitMode0(10);
+    Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(IWAN, 4);
     Event_OpenMessage(IWAN, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Battle_WaitMode0(20);
+        Engine_EventWait(20);
         Actor_ShowEmote(IWAN, 0x103, 0);
-        Battle_WaitMode0(40);
+        Engine_EventWait(40);
         SceneActor_SetPairZeroAndValue(2, 0xe000, 10);
         Event_SayThenWait(IWAN, 10);
         if (*party_flag != 0) {
@@ -958,11 +957,11 @@ void FieldScene_RunBranchingFormationPresentation(void)
         }
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
         Actor_ShowEmote(GERALD, 0x102, 0);
-        Battle_WaitMode0(40);
+        Engine_EventWait(40);
         Engine_ActorRunRepeatedMotion(GERALD, 2);
         Event_SayThenWait(GERALD, 20);
         Actor_ShowEmote(GERALD, 0x105, 0);
-        Battle_WaitMode0(120);
+        Engine_EventWait(120);
         Event_SayThenWait(IWAN, 40);
         if (KorimaHashi_PartyFlag != 0) {
             SceneActor_SetPairZeroAndValue(3, 0x2000, 10);
@@ -971,7 +970,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         } else {
             gEventWork->message += 1;
         }
-        Battle_WaitMode0(60);
+        Engine_EventWait(60);
         Engine_ActorRunRepeatedMotion(IWAN, 2);
         if (KorimaHashi_PartyFlag != 0) {
             SceneActor_SetPairZeroAndValue(2, 0xa000, 40);
@@ -980,18 +979,18 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Event_SayThenWait(IWAN, 10);
         Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
         Engine_ActorRunRepeatedMotion(GERALD, 2);
-        Battle_WaitMode0(40);
+        Engine_EventWait(40);
         Event_SayThenWait(IWAN, 20);
         Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
         Engine_ActorSetAnimationAndWait(GERALD, 3);
-        Battle_WaitMode0(20);
-        Object_SetModeById(MEARI, 3);
+        Engine_EventWait(20);
+        Engine_ActorSetAnimation(MEARI, 3);
         ivan_bows:;
         Engine_ActorSetAnimationAndWait(IWAN, 3);
         goto leave;
     }
     Actor_ShowEmote(IWAN, 0x105, 0);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Engine_ActorSetAnimationAndWait(IWAN, 3);
     Engine_EventSetMessage((s32)MsgKorimaThatsReliefRobinThoughtYoud);
     Event_SayThenWait(IWAN, 20);
@@ -1004,32 +1003,32 @@ void FieldScene_RunBranchingFormationPresentation(void)
     }
     Actor_ShowEmote(GERALD, 0x102, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(GERALD, 2);
     Event_SayThenWait(GERALD, 20);
     Actor_ShowEmote(IWAN, 0x105, 0);
-    Battle_WaitMode0(80);
+    Engine_EventWait(80);
     Event_SayThenWait(IWAN, 40);
     if (KorimaHashi_PartyFlag != 0) {
         SceneActor_SetPairZeroAndValue(3, 0x2000, 20);
-        Object_SetModeById(MEARI, 4);
+        Engine_ActorSetAnimation(MEARI, 4);
         Event_SayThenWait(MEARI, 40);
     } else {
         gEventWork->message += 1;
     }
     Engine_ActorRunRepeatedMotion(IWAN, 2);
-    Battle_WaitMode0(20);
+    Engine_EventWait(20);
     Event_SayThenWait(IWAN, 20);
     Engine_ActorStartRepeatedMotion(GERALD, 2);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Battle_WaitMode0(40);
+    Engine_EventWait(40);
     Event_SayThenWait(IWAN, 20);
     leave:;
     Audio_PlayCue(17);
     Actor_SetMotionSpeed(GERALD, 0x13333, 0x9999);
     Actor_SetMotionSpeed(IWAN, 0x13333, 0x9999);
     Actor_SetMotionSpeed(MEARI, 0x13333, 0x9999);
-    Object_SetModeById(GERALD, 2);
+    Engine_ActorSetAnimation(GERALD, 2);
     {
         struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -1037,9 +1036,9 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Actor_SetDestination(GERALD, leader->x.part.pixel, leader->z.part.pixel);
         }
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(GERALD);
+    Engine_ActorWaitForMove(GERALD);
     Actor_SetPosition(GERALD, 0, 0);
-    Object_SetModeById(IWAN, 2);
+    Engine_ActorSetAnimation(IWAN, 2);
     {
         struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -1047,10 +1046,10 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Actor_SetDestination(IWAN, leader->x.part.pixel, leader->z.part.pixel);
         }
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(IWAN);
+    Engine_ActorWaitForMove(IWAN);
     Actor_SetPosition(IWAN, 0, 0);
     if (KorimaHashi_PartyFlag != 0) {
-        Object_SetModeById(MEARI, 2);
+        Engine_ActorSetAnimation(MEARI, 2);
         {
             struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -1058,7 +1057,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
                 Actor_SetDestination(MEARI, leader->x.part.pixel, leader->z.part.pixel);
             }
         }
-        ObjectMotion_CommitCurrentPositionAndActivate(MEARI);
+        Engine_ActorWaitForMove(MEARI);
         Actor_SetPosition(MEARI, 0, 0);
     }
     GameFlag_Set(0x843);
@@ -1071,13 +1070,13 @@ void FieldScene_RunBranchingFormationPresentation(void)
 void Event_SayThenWait(s32 speaker, s32 frames)
 {
     Engine_EventShowMessage(speaker, 0);
-    Battle_WaitMode0(frames);
+    Engine_EventWait(frames);
 }
 
 void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 {
     Engine_ActorFaceDirection(a, b, 0);
-    Battle_WaitMode0(c);
+    Engine_EventWait(c);
 }
 
 s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct Struct2798 *p)
@@ -1123,7 +1122,7 @@ void SceneEffect_SpawnObject26EveryEightFrames(void)
     obj->f34 = 0x80000;
     obj->f55 = phase;
     Object_SetMode((struct FieldActor *)obj, 2);
-    Object_SetPosition(obj, c3, 0, c4);
+    ((void (*)(struct Obj *object, s32 x, s32 y, s32 z))Engine_ObjectSetPosition)(obj, c3, 0, c4);
     Engine_ObjectSetScript((struct FieldActor *)obj, (const s32 *)KorimaHashi_Object26Script);
 }
 

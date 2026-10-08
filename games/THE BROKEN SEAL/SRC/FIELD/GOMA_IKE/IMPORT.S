@@ -2,27 +2,27 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Resource388_QueueSlotCommand
+	.global Engine_MapCopyCellAttributes
 	.thumb_func
-Resource388_QueueSlotCommand:
+Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Resource388_SetSlotOption
+	.global Engine_ActorSetSpriteFlags
 	.thumb_func
-Resource388_SetSlotOption:
+Engine_ActorSetSpriteFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global Resource388_TestSetupGate
+	.global Engine_GameFlagIsSet
 	.thumb_func
-Resource388_TestSetupGate:
+Engine_GameFlagIsSet:
 	overlay_veneer GameFlag_TestFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
 	overlay_veneer Object_GetByIdFar
-	.global Resource388_SetSlotPosition
+	.global Engine_ActorSetPosition
 	.thumb_func
-Resource388_SetSlotPosition:
+Engine_ActorSetPosition:
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Resource388_SetSlotMode
+	.global Engine_ActorSetAnimation
 	.thumb_func
-Resource388_SetSlotMode:
+Engine_ActorSetAnimation:
 	overlay_veneer Object_SetModeByIdFar

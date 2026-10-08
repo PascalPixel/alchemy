@@ -793,7 +793,7 @@ void FieldScene_RunLeaderSurpriseApproach(void)
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     Engine_EventBegin();
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gVinasuLeaderApproachScript);
-    Engine_ActorStartAction(0);
+    Object_RefreshSelectorById(0);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 6);
     actor->velocity_y = 0x40000;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x40000, 0x20000);
@@ -819,10 +819,9 @@ void FieldScene_RunLeaderSurpriseApproach(void)
 
 void FieldScene_RunStatueDialogueSequence(void)
 {
-    extern struct EventWorkState *gWork;
     struct EventWorkState *work;
 
-    work = gWork;
+    work = (struct EventWorkState *)gEventWork;
     work->field_cba = 0;
     work->field_cb6 = 1;
     Engine_EventBegin();

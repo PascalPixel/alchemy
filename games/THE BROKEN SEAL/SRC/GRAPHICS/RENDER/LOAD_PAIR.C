@@ -18,6 +18,7 @@
 #include "RESOURCE.H"
 #include "TBS_EDITION.H"
 #include "text/MSG_IDS.H"
+s32 AudioCommand_GetStateByteFar(void);
 
 #define gKeyState (*(volatile u32 *)&gKeyState)
 
@@ -29,7 +30,7 @@ void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
 s32 Localization_LookupEntryId(s32);
 void UiWork_PushValueSlot(s32, s32);
 struct UiChannelSlot *UiText_QueueRenderEntries();
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 
 
 void Party_ShowPairJoinedMessage(s32 first, s32 second)
@@ -76,13 +77,13 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
 
         UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)MsgPairJoinedParty), 68, 2, zero);
 
-        Audio_PlayCue(81);
+        AudioCommand_PlayFar(81);
 
         do {
             Runtime_PushSlotEntry(entry1, 250);
             Runtime_PushSlotEntry(entry2, 250);
             WaitFrames(1);
-        } while (Audio_Check() != 0 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+        } while (AudioCommand_GetStateByteFar() != 0 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
         UiWork_Finalize(window, 2);
         WaitFrames(1);

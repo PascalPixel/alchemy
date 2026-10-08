@@ -62,9 +62,6 @@ Resource_ResetEntry:
 	.thumb_func
 Resource_ActivateEntry:
 	overlay_veneer Resource_ActivateEntryFar
-	.global VramBlock_LoadCached
-	.thumb_func
-VramBlock_LoadCached:
 	.global Engine_VramLoad
 	.thumb_func
 Engine_VramLoad:
@@ -161,9 +158,6 @@ PartyTalkMenu_Choose:
 	.thumb_func
 Resource_LoadFixedBlockBIntoFreeSlot:
 	overlay_veneer Resource_LoadFixedBlockBIntoFreeSlotFar
-	.global Engine_OwnerGetState
-	.thumb_func
-Engine_OwnerGetState:
 	.global UnitGet
 	.thumb_func
 UnitGet:
@@ -200,16 +194,10 @@ GameFlag_SetByte:
 	.thumb_func
 Party_CountActiveOwners:
 	overlay_veneer Party_CountActiveOwnersFar
-	.global Engine_PartyAddActiveOwner
-	.thumb_func
-Engine_PartyAddActiveOwner:
 	.global Party_AddActiveOwner
 	.thumb_func
 Party_AddActiveOwner:
 	overlay_veneer Party_AddActiveOwnerFar
-	.global Engine_PartyRemoveActiveOwner
-	.thumb_func
-Engine_PartyRemoveActiveOwner:
 	.global Party_RemoveActiveOwner
 	.thumb_func
 Party_RemoveActiveOwner:
@@ -262,9 +250,9 @@ Engine_ActorWalkTo:
 	.thumb_func
 Engine_ActorWalkToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
-	.global ObjectMotion_CommitCurrentPositionAndActivate
+	.global Engine_ActorWaitForMove
 	.thumb_func
-ObjectMotion_CommitCurrentPositionAndActivate:
+Engine_ActorWaitForMove:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	.global Engine_ActorSetPosition
 	.thumb_func
@@ -330,9 +318,6 @@ Engine_ActorShowEmote:
 	.thumb_func
 Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
-	.global Engine_ObjectAttachWorkTarget
-	.thumb_func
-Engine_ObjectAttachWorkTarget:
 	.global Engine_CameraFollowActor
 	.thumb_func
 Engine_CameraFollowActor:

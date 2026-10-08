@@ -478,7 +478,7 @@ void UnitCalc(s32 owner)
         st->ep = value;
     }
 
-    Runtime_BumpFree(work);
+    MemFree(work);
 }
 
 void GameFlag_RefreshLureCap(void)

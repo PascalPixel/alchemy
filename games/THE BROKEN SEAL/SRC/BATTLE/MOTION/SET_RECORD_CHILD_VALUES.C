@@ -20,6 +20,7 @@
 #include "FIELD_EVENT.H"
 #include "BTLOBJ.H"
 #include "MENU_LIST.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
 {
@@ -90,7 +91,7 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
     BattlePres_SetActorModes(0, 0);
     PtyStDrawFar(BtlWk->pty_st & ~1);
     object = BtlObjGet(work.actor)->object;
-    Object_SetMode(object, 3);
+    ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
     AudioCommand_PlayFar(0x9a);
     if (mode & 2)
@@ -130,7 +131,7 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
             BattlePres_RunWithZeroArguments();
         }
         BattleEventRuntime_WaitForReady();
-        Object_SetMode(object, 1);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
         for (i = 0; i != work.count; i++)
             ObjMotRst(work.actors[i]);
     }

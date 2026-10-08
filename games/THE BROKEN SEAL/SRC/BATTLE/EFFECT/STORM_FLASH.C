@@ -23,7 +23,7 @@
 
 #define BattleFx_ApplyColorToTargetBuffer ((void (*)(void*,s32))BattleFx_ApplyColorToTargetBuffer)
 
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 
 extern void *Data_03001ec8[];
 
@@ -122,9 +122,9 @@ void BattleFx_UpdateStormFlash(void)
             u32 b = Random16();
             work->timer = ((a * 400) >> 16) - ((b * 100) >> 16) + 150;
             if (work->loud != 0)
-                Audio_PlayCue(172);
+                AudioCommand_PlayFar(172);
             else
-                Audio_PlayCue(171);
+                AudioCommand_PlayFar(171);
         }
     case 5:
     case 10:

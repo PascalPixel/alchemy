@@ -23,11 +23,10 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "IO_REG.H"
 #include "BTLDISP.H"
+void Audio_PlayCue(s32 cue);
 
 extern u8 gMapCellBuffer[];
 
-void Audio_PlayCue(s32 cue);
-void Object_SetPosition(void *object, s32 a, s32 b, s32 c);
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
@@ -111,7 +110,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 		screen_y = (curve[1] >> 16) + ((Trig_Cos(spin) << 2) >> 16) + 16;
 		if (frame == 88)
 		{
-			Audio_PlayCue(134);
+			AudioCommand_PlayFar(134);
 		}
 		if (frame == 32)
 		{
@@ -254,7 +253,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 			member_object->vertical_motion_strength = 0;
 			member_object->auto_face_motion = 0;
 			member_object->snap_to_target = 0;
-			Object_SetPosition(member_object, member_object->x << 1, 0, member_object->z);
+			Object_SetMoveTargetFar(member_object, member_object->x << 1, 0, member_object->z);
 			ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 5, -1, 0);
 		}
 		if (frame == 120)

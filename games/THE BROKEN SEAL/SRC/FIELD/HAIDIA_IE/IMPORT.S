@@ -10,9 +10,9 @@ Math_RemainderUnsigned:
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
-	.global Scheduler_AddOrUpdateCallback
+	.global Engine_TaskAddCallback
 	.thumb_func
-Scheduler_AddOrUpdateCallback:
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallback
 	.thumb_func
@@ -54,9 +54,9 @@ Engine_MapAnimateCells:
 	.thumb_func
 Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
-	.global Scene_CopyCellAttributes
+	.global Engine_MapCopyCellAttributes
 	.thumb_func
-Scene_CopyCellAttributes:
+Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func

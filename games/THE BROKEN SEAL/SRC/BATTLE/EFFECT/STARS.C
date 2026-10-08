@@ -30,6 +30,7 @@
 #include "BTLTYPE.H"
 #include "IO_REG.H"
 #include "RAM_BUFFER.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 #define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)
 #define SceneTransform_ApplyScale ((void (*)(struct Vector3*))SceneTransform_ApplyScale)
@@ -40,7 +41,7 @@
 
 extern u8 gMapCellBuffer[];
 
-void Object_ResetMotion(struct MotionObject *object);
+void ObjectDispatch_InitFromTable6Far(struct MotionObject *object);
 
 void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
 {
@@ -75,7 +76,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     BattleFx_BeginCanvasLayer(1);
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
-    Object_SetMode(caster, 2);
+    ObjectDispatch_ApplyArgumentToChildrenFar(caster, 2);
     ObjectDispatch_ApplyValueToChildrenFar(caster, 48);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     work->transfer_mode = 2;
@@ -172,7 +173,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
                     target->velocity_y = 0x50000;
                     target->vertical_motion_strength = 0xab85;
                     target->auto_face_motion = 0;
-                    Object_ResetMotion(target);
+                    ObjectDispatch_InitFromTable6Far(target);
                     if (target->x < 0)
                         Object_SetMoveTargetFar(target, target->x - 0x280000, 0, target->z);
                     else

@@ -23,7 +23,7 @@ void UiText_ShowPositionedMessageAndWait(s32, s32);
 
 s32 UiWork_IsComplete(void);
 void UiWork_FinalizePendingCore(void);
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 
 
 s32 SaveState_ProcessSelectedSlot(void)
@@ -83,7 +83,7 @@ s32 SaveState_ConfirmAndProcessSelectedSlot(void)
         UiWork_FinalizePendingCore();
     } else {
         UiWork_FinalizePendingCore();
-        Audio_PlayCue(85);
+        AudioCommand_PlayFar(85);
         result = SaveState_ProcessSelectedSlot();
         if (result >= 0) {
             UiText_ShowPositionedMessageAndWait((s32)MsgGameSaved, 1);

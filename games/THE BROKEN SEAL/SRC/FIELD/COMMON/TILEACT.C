@@ -12,6 +12,7 @@
 #include "EVENT_RUNTIME.H"
 #include "FIELD_SCENE.H"
 #include "text/MSG_IDS.H"
+s32 GameFlag_TestFar(s32 flag);
 
 #define EffectRuntime_GetCurrentObject ((void * (*)(s32))EffectRuntime_GetCurrentObject)
 #define EffectRuntime_PrepareRisingObject ((void (*)(void*))EffectRuntime_PrepareRisingObject)
@@ -21,10 +22,10 @@ extern struct EventRuntime *gEventWork;
 
 
 void WaitFrames(s32 frames);
-void Object_SetMode(void *object, s32 mode);
+void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
 void ObjectDispatch_ReleaseFar(void *object);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
-void UiText_DrawQuantity(s32 quantity, s32 slot);
+void UiWork_PushValueSlotFar(s32 quantity, s32 slot);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void Party_AdjustCoinsFar(s32 coins);
@@ -74,7 +75,7 @@ s32 Field_RunTileAction(s32 tile)
                 if ((action & 0x0f000000) != 0) {
                     if (GameFlag_IsConditionActive(condition) != 0)
                         ((void (*)(s32))descriptor->value)(gGameState.selected_actor);
-                    if (GameFlag_IsSet(0x142) != 0)
+                    if (GameFlag_TestFar(0x142) != 0)
                         UiText_ShowPositionedMessageAndWaitFar((s32)MsgTileResult + n, 1);
                 } else {
                     if (GameFlag_IsConditionActive(condition) != 0)
@@ -101,14 +102,14 @@ s32 Field_RunTileAction(s32 tile)
                             object = EffectRuntime_GetCurrentObject(tile);
                             EffectRuntime_PrepareRisingObject(object);
                             AudioCommand_PlayFar(83);
-                            UiText_DrawQuantity((*(const u16 *)&descriptor->value), 5);
+                            UiWork_PushValueSlotFar((*(const u16 *)&descriptor->value), 5);
                             UiText_ShowPositionedMessageAndWaitFar((s32)MsgGotPsynergyStone, 3);
                             BattleParty_ApplyDrain(999, 0);
                             UiWindow_CreateWithLayoutBoundsFar(1);
                             AudioCommand_PlayFar(126);
                             UiText_ShowPositionedMessageAndWaitFar((s32)MsgGotPsynergyStone + 1, 1);
                             UiWork_FinalizeAndReleaseBlock16Far();
-                            Object_SetMode(object, 2);
+                            ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
                             AudioCommand_PlayFar(246);
                             Battle_WaitMode0(30);
                             UiText_ShowPositionedMessageAndWaitFar((s32)MsgGotPsynergyStone + 2, 1);
@@ -140,7 +141,7 @@ s32 Field_RunTileAction(s32 tile)
                                 EffectRuntime_SetMode2(tile);
                             EffectRuntime_PrepareRisingObject(object);
                             AudioCommand_PlayFar(83);
-                            UiText_DrawQuantity((*(const u16 *)&descriptor->value), 5);
+                            UiWork_PushValueSlotFar((*(const u16 *)&descriptor->value), 5);
                             UiText_ShowPositionedMessageAndWaitFar((s32)MsgGotCoins, 3);
                             Party_AdjustCoinsFar((*(const u16 *)&descriptor->value));
                             if (condition != -1)
@@ -155,7 +156,7 @@ s32 Field_RunTileAction(s32 tile)
                             owner = PartyInventory_AddFar((*(const u16 *)&descriptor->value));
                             n = 0xffff;
                             if (owner == -1) {
-                                UiText_DrawQuantity(descriptor->value & 0xfff, 2);
+                                UiWork_PushValueSlotFar(descriptor->value & 0xfff, 2);
                                 UiText_ShowPositionedMessageAndWaitFar((s32)MsgFoundItem, 1);
                                 UiText_ShowPositionedMessageAndWaitFar((s32)MsgFoundItem + 4, 1);
                                 Object_DestroyIfPresent(object);
@@ -166,11 +167,11 @@ s32 Field_RunTileAction(s32 tile)
                                     EffectRuntime_SetMode2(tile);
                                 EffectRuntime_PrepareRisingObject(object);
                                 AudioCommand_PlayFar(83);
-                                UiText_DrawQuantity(descriptor->value & n, 2);
+                                UiWork_PushValueSlotFar(descriptor->value & n, 2);
                                 if (owner == gGameState.selected_actor) {
                                     UiText_ShowPositionedMessageAndWaitFar((s32)MsgKorosseoRobinGotItem, 3);
                                 } else {
-                                    UiText_DrawQuantity(owner, 1);
+                                    UiWork_PushValueSlotFar(owner, 1);
                                     UiText_ShowPositionedMessageAndWaitFar((s32)MsgGaveItemToMember, 3);
                                 }
                                 if (condition != -1)

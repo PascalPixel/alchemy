@@ -36,7 +36,7 @@ void Korosseo_ShowItemIcon(s32 id, s32 item)
             zero = none;
             Dma_Set((const void *)&zero, (void *)base, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x20, REG_DMA3);
             ItemIcon_LoadTilesFar(item);
-            tile = VramBlock_LoadCached(spr->slot, 128, base);
+            tile = Engine_VramLoad(spr->slot, 128, base);
             Runtime_ReleaseHeapBlock(17);
             obj->unknown_5c = one;
             ResourceMetadata_ClearRecord(spr->entries[0]);

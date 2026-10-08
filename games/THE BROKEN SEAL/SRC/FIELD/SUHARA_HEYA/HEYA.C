@@ -359,7 +359,7 @@ void Scene_RunPrimaryScript(void)
         Actor_WaitForMove(19);
         Actor_SetPosition(19, 0, 0);
         Event_Wait(10);
-        Engine_AudioPlayCueFromEventWork();
+        Audio_PlayCueFromEventWork();
         Event_End();
     }
 }

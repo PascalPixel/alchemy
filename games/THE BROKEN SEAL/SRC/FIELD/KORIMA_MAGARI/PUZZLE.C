@@ -48,7 +48,7 @@ struct TileRun2 {
 };
 
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *point);
-void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
+void Engine_ObjectSetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
 void Object_CommitPosition(struct FieldActor *object);
 void KorimaPalette_SaveFirst(void);
 void KorimaPalette_SaveSecond(void);
@@ -60,11 +60,11 @@ void State_ApplyRectByLayoutSelector(void)
     if (**(s16 **)0x020092c4 == 1) {
         s32 fifth = 4;
         s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
+        Engine_MapCopyCellAttributes(0, 0, 1, 4, fifth, sixth);
     } else {
         s32 fifth = 6;
         s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
+        Engine_MapCopyCellAttributes(0, 0, 1, 4, fifth, sixth);
     }
 }
 
@@ -84,11 +84,11 @@ void Scene_RepaintBoardRecords(void)
     if (*gKorimaMagariLayout != 0) {
         { s32 f4 = 32; s32 g4 = 0; Engine_MapCopyCells(0, 32, 32, 32, f4, g4); }
         { s32 f5 = 64; s32 g5 = 0; Engine_MapCopyCells(32, 32, 32, 32, f5, g5); }
-        { s32 f6 = 0; s32 g6 = 0; Map_CopyCellAttributeRect(0, 32, 32, 32, f6, g6); }
+        { s32 f6 = 0; s32 g6 = 0; Engine_MapCopyCellAttributes(0, 32, 32, 32, f6, g6); }
     } else {
         { s32 f7 = 32; s32 g7 = 0; Engine_MapCopyCells(0, 64, 32, 32, f7, g7); }
         { s32 f8 = 64; s32 g8 = 0; Engine_MapCopyCells(32, 64, 32, 32, f8, g8); }
-        { s32 f9 = 0; s32 g9 = 0; Map_CopyCellAttributeRect(0, 64, 32, 32, f9, g9); }
+        { s32 f9 = 0; s32 g9 = 0; Engine_MapCopyCellAttributes(0, 64, 32, 32, f9, g9); }
     }
 
     if (record[0] != -1) {
@@ -124,10 +124,10 @@ void Scene_RepaintBoardRecords(void)
     { s32 f10 = 10; s32 g10 = 50; Engine_MapCopyCells(70, 42, 1, 1, f10, g10); }
 
     if (*gKorimaMagariLayout == 1) {
-        { s32 f11 = 0; s32 g11 = 0; Map_CopyCellAttributeRect(0, 32, 32, 32, f11, g11); }
+        { s32 f11 = 0; s32 g11 = 0; Engine_MapCopyCellAttributes(0, 32, 32, 32, f11, g11); }
         State_StampRecordCells(gKorimaMagariRecords, 254);
     } else {
-        { s32 f12 = 0; s32 g12 = 0; Map_CopyCellAttributeRect(0, 64, 32, 32, f12, g12); }
+        { s32 f12 = 0; s32 g12 = 0; Engine_MapCopyCellAttributes(0, 64, 32, 32, f12, g12); }
         State_StampRecordCells(gKorimaMagariRecords, 255);
     }
 
@@ -145,7 +145,7 @@ void State_UpdateScrollRegistersWithPreset(void)
     destination = (volatile u32 *)0x04000014;
 
     if (line == 227 || line <= 52) {
-        if (((Random16() * 100) >> 16) < KorimaMagari_ShakeChance) {
+        if (((((u32 (*)(void))Engine_RandomNext)() * 100) >> 16) < KorimaMagari_ShakeChance) {
             source = KorimaMagari_ShakeScroll;
         }
     }
@@ -301,8 +301,8 @@ void KorimaMagari_RunReturnSequence(void)
     Engine_AudioPlayCue(0x120);
     v5 = 9;
     Engine_AudioPlayCue(213);
-    Map_CopyCellAttributeRect(5, 9, 1, 4, 6, v5);
-    Map_CopyCellAttributeRect(0, 0, 1, 4, 4, v5);
+    Engine_MapCopyCellAttributes(5, 9, 1, 4, 6, v5);
+    Engine_MapCopyCellAttributes(0, 0, 1, 4, 4, v5);
     *gKorimaMagariReturned = 1;
     Engine_EventEnd();
 }
@@ -329,8 +329,8 @@ void KorimaMagari_RunDepartSequence(void)
     Engine_AudioPlayCue(0x120);
     v5 = 9;
     Engine_AudioPlayCue(213);
-    Map_CopyCellAttributeRect(5, 9, 1, 4, 4, v5);
-    Map_CopyCellAttributeRect(0, 0, 1, 4, 6, v5);
+    Engine_MapCopyCellAttributes(5, 9, 1, 4, 4, v5);
+    Engine_MapCopyCellAttributes(0, 0, 1, 4, 6, v5);
     *gKorimaMagariReturned = 0;
     Engine_EventEnd();
 }
@@ -346,8 +346,8 @@ s32 KorimaMagari_SetupBoard(void)
         (*(u16 * *)&gKorimaMagariRecords) = (u16 *)gSceneState + 2;
     } while (0);
     Engine_MapCopyCells(32, 0, 64, 32, 0, 64);
-    Map_CopyCellAttributeRect(0, 0, 32, 32, 0, 64);
-    Map_CopyCellAttributeRect(32, 0, 32, 32, 0, 32);
+    Engine_MapCopyCellAttributes(0, 0, 32, 32, 0, 64);
+    Engine_MapCopyCellAttributes(32, 0, 32, 32, 0, 32);
     if (Engine_GameFlagIsSet(0x109) == 0) {
         Dma_Set(KorimaMagari_DefaultRecords, ((u16 *)gKorimaMagariRecords), DMA_ENABLE32 | DMA_32BIT | 0x12, REG_DMA3);
         *gKorimaMagariReturned = 0;
@@ -517,7 +517,7 @@ void Scene_PushBlockAlongRun(struct TileRun2 *runs)
     actor->acceleration = 0x3333;
     Audio_PlayCue(239);
     Object_SetMode(actor, KorimaMagari_PushAnimations[quarter]);
-    Object_SetPosition(actor, x, 0, z);
+    Engine_ObjectSetPosition(actor, x, 0, z);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(0, 2);
     ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 0x1e0), actor);

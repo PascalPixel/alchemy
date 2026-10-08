@@ -1383,7 +1383,7 @@ void FieldScene_RunScene39eSequenceA(void)
 
     Engine_EventBegin();
     base5_200a5b9 = (s32)FieldScene_SpawnRandomizedParticle;
-    Engine_ScheduleCallbackFar(base5_200a5b9, 0xc80);
+    ((void (*)())Engine_TaskAddCallback)(base5_200a5b9, 0xc80);
     Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
     gEventWork->transition_frames = 60;
     Engine_EventCloseScreen();

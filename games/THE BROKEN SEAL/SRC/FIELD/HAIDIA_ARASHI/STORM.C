@@ -500,8 +500,8 @@ void HaidiaArashi_CopyLeaderSpritePriority(void)
 
     src = (Ent *)Object_GetById(0)->sprite;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    ObjectMotion_SetActionVariant(22, ((struct FieldSpritePriority *)src)->priority);
-    ObjectMotion_SetActionVariant(8, ((struct FieldSpritePriority *)src)->priority);
+    Engine_ActorSetSpritePriority(22, ((struct FieldSpritePriority *)src)->priority);
+    Engine_ActorSetSpritePriority(8, ((struct FieldSpritePriority *)src)->priority);
 #else
     dst = (Ent *)Object_GetById(22)->sprite;
     ((struct FieldSpritePriority *)dst)->priority = ((struct FieldSpritePriority *)src)->priority;

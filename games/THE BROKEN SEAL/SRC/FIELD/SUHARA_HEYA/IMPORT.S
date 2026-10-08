@@ -106,9 +106,9 @@ Engine_CameraWaitForMove:
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetExitRequestFar
-	.global Engine_AudioPlayCueFromEventWork
+	.global Audio_PlayCueFromEventWork
 	.thumb_func
-Engine_AudioPlayCueFromEventWork:
+Audio_PlayCueFromEventWork:
 	overlay_veneer Audio_PlayCueFromEventWorkFar
 	.global Motion_LaunchFromFocusedObject
 	.thumb_func

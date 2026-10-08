@@ -15,7 +15,7 @@
 #include "SOUND_IDS.H"
 #include "BTLSYS.H"
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 #include "KEYSTATE.H"
 #include "IO_REG.H"
@@ -39,14 +39,14 @@ void UiWork_ClearMenuBusy(void)
 
 s32 Audio_PlayCueReturnOne(s32 cue)
 {
-    Audio_PlayCue(cue);
+    AudioCommand_PlayFar(cue);
     return 1;
 }
 
 void Menu_CancelSoundTick(void)
 {
     if (gKeyState & KEY_START) {
-        Audio_PlayCue(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         GameFlag_SetBitFar(0x150);
         Scheduler_RemoveCallback(Menu_CancelSoundTick);
     }

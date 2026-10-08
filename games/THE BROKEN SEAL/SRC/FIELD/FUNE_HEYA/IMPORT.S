@@ -9,16 +9,10 @@ Engine_TaskWait:
 	.global Engine_TaskAddCallback
 	.thumb_func
 Engine_TaskAddCallback:
-	.global Scheduler_AddOrUpdateCallback
-	.thumb_func
-Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Engine_RandomNext
 	.thumb_func
 Engine_RandomNext:
-	.global Random16
-	.thumb_func
-Random16:
 	overlay_veneer Random16Far
 	.global Engine_HeapAllocate
 	.thumb_func
@@ -71,7 +65,7 @@ UiText_ShowCenteredMessage:
 	.global Engine_ItemLoadIcon
 	.thumb_func
 Engine_ItemLoadIcon:
-	overlay_veneer ItemIcon_LoadTilesFar
+	overlay_veneer Ui_PrepareTransferForItemFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
 Engine_GameFlagIsSet:
@@ -91,9 +85,6 @@ PartyInventory_Discard:
 	.global Engine_EventWait
 	.thumb_func
 Engine_EventWait:
-	.global Battle_WaitMode0
-	.thumb_func
-Battle_WaitMode0:
 	overlay_veneer Battle_WaitMode0Far
 	.global Engine_EventBegin
 	.thumb_func
@@ -162,16 +153,10 @@ Engine_ActorWaitForMove:
 	.global Engine_ActorSetPosition
 	.thumb_func
 Engine_ActorSetPosition:
-	.global ObjectMotion_SetHorizontalPositionWithTerrain
-	.thumb_func
-ObjectMotion_SetHorizontalPositionWithTerrain:
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Engine_ActorSetAnimation
 	.thumb_func
 Engine_ActorSetAnimation:
-	.global Object_SetModeById
-	.thumb_func
-Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
 	.global Object_SetActionById
 	.thumb_func
@@ -236,17 +221,14 @@ Engine_EventAskYesNo:
 	.global Engine_ActorFaceDirection
 	.thumb_func
 Engine_ActorFaceDirection:
-	.global ObjectMotion_ArmCallback
-	.thumb_func
-ObjectMotion_ArmCallback:
 	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Ui_SetRenderResultFromObject
 	.thumb_func
 Ui_SetRenderResultFromObject:
 	overlay_veneer Ui_SetRenderResultFromObjectFar
-	.global ObjectMotion_SetActionVariant
+	.global Engine_ActorSetSpritePriority
 	.thumb_func
-ObjectMotion_SetActionVariant:
+Engine_ActorSetSpritePriority:
 	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Engine_ActorShowEmote
 	.thumb_func

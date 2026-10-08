@@ -39,8 +39,8 @@
 
 #define FLASH_SHEET (64 * 128) // 剣の絵 (64×128) の後ろに閃光の絵を置く
 
-void Object_SetMode(void *object, s32 mode);
-void Audio_PlayCue(s32 cue);
+void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
+void AudioCommand_PlayFar(s32 cue);
 
 //--------------------------------------------------------------------------
 // 剣を 40 フレーム描き (10 フレームで振り下ろす)、16 と 24 フレーム目に
@@ -72,7 +72,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 	BattleFx_BeginCanvasLayer(1);
 	REG_BLDALPHA = 0x1010;
 	BattleFx_FetchRectangleBlitters(work->effect->side, blit);
-	Object_SetMode(user, 2);
+	ObjectDispatch_ApplyArgumentToChildrenFar(user, 2);
 	ObjectDispatch_ApplyValueToChildrenFar(user, 48);
 
 	Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work->sheet, 1, 1);
@@ -130,7 +130,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 	{
 		if (frame == 4)
 		{
-			Audio_PlayCue(212);
+			AudioCommand_PlayFar(212);
 		}
 		if (frame == 8)
 		{
@@ -138,7 +138,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 		}
 		if (frame == 18)
 		{
-			Audio_PlayCue(145);
+			AudioCommand_PlayFar(145);
 		}
 		if (frame == 40)
 		{

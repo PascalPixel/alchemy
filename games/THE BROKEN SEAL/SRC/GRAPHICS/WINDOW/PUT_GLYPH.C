@@ -85,7 +85,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character,
         if ((u16)mark != 0)
             result += draw(window, (u16)mark, x + result, y, font);
 #endif
-        Runtime_BumpFree(draw);
+        MemFree(draw);
         return result;
     }
 

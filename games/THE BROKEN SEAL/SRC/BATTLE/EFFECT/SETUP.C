@@ -14,6 +14,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "FIELD_EVENT.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 void Object_EnableEffectSpawnCallback(void)
 {
@@ -74,7 +75,7 @@ extern volatile s32 gKeyState;
 
 void Battle_UpdateModeFromShoulderButtons(void)
 {
-    struct BattleRuntime *runtime = Data_03001ebc;
+    struct BattleRuntime *runtime = (struct BattleRuntime *)gEventWork;
 
     if (gDebugMode != 0) {
         if (gKeyState & KEY_L) {
@@ -88,7 +89,7 @@ void Battle_UpdateModeFromShoulderButtons(void)
 
 void Battle_WaitMode0(s32 frames)
 {
-    if (Data_03001ebc->mode_1cc == 0 && frames != 0) {
+    if (((struct BattleRuntime *)gEventWork)->mode_1cc == 0 && frames != 0) {
         WaitFrames(frames);
     }
 }
@@ -105,17 +106,17 @@ void Battle_InitializeRenderObject(void)
     object->unknown_24 = 0;
     object->unknown_2c = 0;
     if (gGameState.movement_mode == 1) {
-        Object_SetMode((s32)object, 0xC);
+        ObjectDispatch_ApplyArgumentToChildrenFar((s32)object, 0xC);
         return;
     }
-    Object_SetMode((s32)object, 1);
+    ObjectDispatch_ApplyArgumentToChildrenFar((s32)object, 1);
 }
 
 void Battle_ResetEffectCounter(void);
 
 void Battle_Reset(void)
 {
-    struct BattleRuntime *runtime = Data_03001ebc;
+    struct BattleRuntime *runtime = (struct BattleRuntime *)gEventWork;
 
     UiTimedNotice_CloseIfActiveFar();
     Battle_InitializeRenderObject();

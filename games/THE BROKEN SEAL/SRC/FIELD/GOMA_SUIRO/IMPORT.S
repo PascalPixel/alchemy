@@ -6,9 +6,9 @@
 	.thumb_func
 __divsi3:
 	overlay_veneer IwramSignedDivide
-	.global WaitFrames
+	.global Engine_TaskWait
 	.thumb_func
-WaitFrames:
+Engine_TaskWait:
 	overlay_veneer WaitFramesFar
 	.global Trig_Sin
 	.thumb_func
@@ -30,9 +30,9 @@ Engine_ObjectSetScript:
 	.thumb_func
 Engine_ObjectCreate:
 	overlay_veneer Object_CreateFar
-	.global Map_CopyCellAttributeRect
+	.global Engine_MapCopyCellAttributes
 	.thumb_func
-Map_CopyCellAttributeRect:
+Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
@@ -42,9 +42,9 @@ Engine_ActorSetSpriteFlags:
 	.thumb_func
 Engine_ObjectSetBlendMode:
 	overlay_veneer ObjectDispatch_SetChildBlendModeFar
-	.global Runtime_SetWorkTripleIfNonNegative
+	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
-Runtime_SetWorkTripleIfNonNegative:
+Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Map_WaitWorkValuesBelow256
 	.thumb_func
@@ -54,9 +54,9 @@ Map_WaitWorkValuesBelow256:
 	.thumb_func
 Engine_GameFlagIsSet:
 	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+	.global Engine_GameFlagSet
 	.thumb_func
-GameFlag_SetBit:
+Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
 	.global Engine_GameFlagClear
 	.thumb_func
@@ -66,31 +66,31 @@ Engine_GameFlagClear:
 	.thumb_func
 Object_GetById:
 	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_SetSpeedParameters
+	.global Engine_ActorSetSpeed
 	.thumb_func
-ObjectMotion_SetSpeedParameters:
+Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
-	.global ObjectMotion_ResetAndSetPosition
+	.global Engine_ActorSetDestination
 	.thumb_func
-ObjectMotion_ResetAndSetPosition:
+Engine_ActorSetDestination:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
-	.global ObjectMotion_CommitCurrentPositionAndActivate
+	.global Engine_ActorWaitForMove
 	.thumb_func
-ObjectMotion_CommitCurrentPositionAndActivate:
+Engine_ActorWaitForMove:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	.global Engine_ActorSetPosition
 	.thumb_func
 Engine_ActorSetPosition:
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Object_SetModeById
+	.global Engine_ActorSetAnimation
 	.thumb_func
-Object_SetModeById:
+Engine_ActorSetAnimation:
 	overlay_veneer Object_SetModeByIdFar
 	.global ObjectGroup_SetChildValue
 	.thumb_func
 ObjectGroup_SetChildValue:
 	overlay_veneer ObjectGroup_SetChildValueFar
-	.global Audio_PlayCue
+	.global Engine_AudioPlayCue
 	.thumb_func
-Audio_PlayCue:
+Engine_AudioPlayCue:
 	overlay_veneer AudioCommand_PlayFar

@@ -14,7 +14,6 @@
 #include "FIELD_EFFECT.H"
 
 #include "BATTLE_EFFECT_RUNTIME.H"
-#define Data_03001ebc ((u8 *)&Data_03001ebc)
 
 struct Obj {
     u8 pad00[6];
@@ -115,7 +114,7 @@ extern u8 Data_0200ad74[];
 extern u8 Data_0200afa0[];
 extern const u8 Data_0200ac90[];
 extern const u8 Data_0200adf0[];
-extern struct PairWork *Data_03001f30;
+extern struct PairWork *gEffectWork;
 
 void BattleEffect_CleanupSceneObjects(void);
 void BattleFx_SetBlock30ValuesMaxZero(void);
@@ -131,7 +130,6 @@ void Engine_MapRedraw();
 void Engine_TaskWait();
 void BattleFx_StartTwelveFrameBlend();
 void FieldFx_StartGroundParticles();
-s32 Scene_CopyCellAttributes();
 void Object_SetTargetAndCallback();
 void Engine_ActorSetSpriteFlags();
 void Engine_ActorSetAnimation();

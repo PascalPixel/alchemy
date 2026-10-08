@@ -79,7 +79,7 @@ PartyInventory_Add:
 	.global Engine_DebugGetAbility
 	.thumb_func
 Engine_DebugGetAbility:
-	overlay_veneer BattleAction_GetDirectFar
+	overlay_veneer BtlActGet
 	.endif
 	.global Party_ListActiveOwners
 	.thumb_func
@@ -117,21 +117,21 @@ Engine_EventShowMessage:
 Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
 	.else
-	.global Battle_Reset
+	.global Engine_EventBegin
 	.thumb_func
-Battle_Reset:
+Engine_EventBegin:
 	overlay_veneer Battle_ResetFar
-	.global BattleFx_FinishAction
+	.global Engine_EventEnd
 	.thumb_func
-BattleFx_FinishAction:
+Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
 	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_SetHorizontalPositionWithTerrain
+	.global Engine_ActorSetPosition
 	.thumb_func
-ObjectMotion_SetHorizontalPositionWithTerrain:
+Engine_ActorSetPosition:
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Engine_ActorSetAnimation
 	.thumb_func

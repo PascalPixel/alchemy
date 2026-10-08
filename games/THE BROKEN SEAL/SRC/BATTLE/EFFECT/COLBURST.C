@@ -30,7 +30,7 @@
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
 extern u8 gMapCellBuffer[];
-void	  Audio_PlayCue(s32 cue);
+void	  AudioCommand_PlayFar(s32 cue);
 
 #define HI(v) (((s16 *)&(v))[1]) // 16.16 固定小数の整数部
 
@@ -97,7 +97,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
 	else
 		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_YOMI);
 	draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-	Audio_PlayCue(212);
+	AudioCommand_PlayFar(212);
 	for (frame = 0; frame != 21; frame++)
 	{
 		if (frame <= 3)

@@ -9,6 +9,7 @@
 #include "MENU_LIST.H"
 #include "INVENTORY.H"
 #include "GAME.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 s32 Inventory_RemoveFirstUnflagged(s32 owner);
 
@@ -91,7 +92,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
 
     if (mode == 1)
         style = 0x100;
-    switch (Item_Get(item & ITEM_ID_MASK)->type) {
+    switch (Item_GetDirectFar(item & ITEM_ID_MASK)->type) {
     case 0:
         Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);
         break;
@@ -127,7 +128,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
                 Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);
             }
             Iwram_CopyWords(state, saved, size);
-            Runtime_BumpFree(saved);
+            MemFree(saved);
         }
         break;
     case 6:
@@ -154,7 +155,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
                 Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);
             }
             Iwram_CopyWords(state, saved, size);
-            Runtime_BumpFree(saved);
+            MemFree(saved);
         }
         break;
     }

@@ -32,7 +32,7 @@ struct FlashChipType {
 extern struct FlashInfo08007220 Flash_ChipAtmel;
 extern const struct FlashChipType Flash_ChipUnknown;
 extern u32 Flash_Handler1;
-extern u32 Flash_Handler2;
+extern u32 gEraseFlashSector;
 #ifndef OWN_Flash_Handler4
 extern u32 Flash_Handler4;
 #endif
@@ -196,7 +196,6 @@ extern s32 BattleMotion_VariantAcceleration[];
 extern s32 BattleMotion_VariantDistancePercent[];
 extern s32 BattleMotion_VariantSpeedLimit[];
 extern s32 BattleMotion_VariantVelocityY[];
-extern u8 Data_03001e8c[];
 extern u8 Data_03001e90[];
 extern u16 Graphics_ExpandNibbleTable[];
 extern const u8 Resource_PatchThumbBranchCode[];

@@ -20,10 +20,10 @@
 #include "IWRAM_CALL.H"
 #include "RESOURCE.H"
 #include "IO_REG.H"
+void AudioCommand_PlayFar(s32 cue);
 
 #define gBattleFxWork ((u8 **)&gBattleFxWork)
 
-s32 Audio_PlayCue(s32);
 
 static __inline__ void FillWords(void *dst, s32 size, s32 value)
 {
@@ -41,7 +41,7 @@ s32 Runtime_BlankDisplayLoadValueAndRun(void)
 {
 	REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
 	gRandomSeed = gGameState.play_time;
-	Audio_PlayCue(9);
+	AudioCommand_PlayFar(9);
 	ReelGame_Run();
 	return 0;
 }

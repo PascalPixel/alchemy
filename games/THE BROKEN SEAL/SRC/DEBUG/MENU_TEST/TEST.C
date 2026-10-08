@@ -24,7 +24,7 @@
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 
-void Event_SetMessageId(s16 message);
+void Engine_EventSetMessage(s16 message);
 
 
 void Engine_AudioPlayCue(s32 cue);
@@ -150,8 +150,8 @@ void SceneState_ApplyBlockDa2(void)
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 void DebugMenu_RunMessageTest(void)
 {
-    Event_SetMessageId(MSGNO(MsgBattleAdditionalPsynergyHelp));
-    Event_SetMessageId(MSGNO(MsgHaidiaComeOnHurry));
+    Engine_EventSetMessage(MSGNO(MsgBattleAdditionalPsynergyHelp));
+    Engine_EventSetMessage(MSGNO(MsgHaidiaComeOnHurry));
     BattleEv_RunWait(-1, 0);
 }
 #endif

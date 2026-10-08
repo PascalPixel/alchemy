@@ -22,6 +22,7 @@
 #include "RESOURCE_IDS.H"
 #include "BTLSYS.H"
 #include "UIFLOW.H"
+void AudioCommand_PlayFar(s32 cue);
 
 #define gKeyState ((u8 *)&gKeyState)
 #define gKeysRepeat ((u8 *)&gKeysRepeat)
@@ -118,17 +119,17 @@ redraw_menu:
     WaitFrames(1);
     if (*(volatile s32 *)gKeyState & KEY_A) {
         result = page;
-        Audio_PlayCue(SOUND_MENU_CONFIRM);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
     } else if (*(volatile s32 *)gKeyState & (KEY_B | KEY_START)) {
         result = -1;
-        Audio_PlayCue(SOUND_MENU_CANCEL);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
     } else {
         if (*(volatile s32 *)gKeysRepeat & KEY_UP) {
-            Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+            AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
             page -= 1;
             redraw = 1;
         } else if (*(volatile s32 *)gKeysRepeat & KEY_DOWN) {
-            Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+            AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
             page += 1;
             redraw = 1;
         }

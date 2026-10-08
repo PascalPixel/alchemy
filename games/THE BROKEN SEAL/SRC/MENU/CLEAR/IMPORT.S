@@ -10,13 +10,13 @@ __divsi3:
 	.thumb_func
 __modsi3:
 	overlay_veneer IwramSignedRemainder
-	.global WaitFrames
+	.global Engine_TaskWait
 	.thumb_func
-WaitFrames:
+Engine_TaskWait:
 	overlay_veneer WaitFramesFar
-	.global Scheduler_AddOrUpdateCallback
+	.global Engine_TaskAddCallback
 	.thumb_func
-Scheduler_AddOrUpdateCallback:
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Engine_TaskRemoveCallback
 	.thumb_func
@@ -166,9 +166,9 @@ GameState_InitDefaults:
 	.thumb_func
 Engine_GameFlagIsSet:
 	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+	.global Engine_GameFlagSet
 	.thumb_func
-GameFlag_SetBit:
+Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
 	.global GameFlag_ClearBit
 	.thumb_func
@@ -194,9 +194,9 @@ Runtime_GetBuildStampTime:
 	.thumb_func
 InventorySnapshot_Restore:
 	overlay_veneer InventorySnapshot_RestoreFar
-	.global Battle_WaitMode0
+	.global Engine_EventWait
 	.thumb_func
-Battle_WaitMode0:
+Engine_EventWait:
 	overlay_veneer Battle_WaitMode0Far
 	.global Object_GetById
 	.thumb_func
@@ -206,17 +206,17 @@ Object_GetById:
 	.thumb_func
 Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
-	.global Event_StartScreenTransition
+	.global Engine_EventOpenScreen
 	.thumb_func
-Event_StartScreenTransition:
+Engine_EventOpenScreen:
 	overlay_veneer Event_StartScreenTransitionFar
-	.global Event_FinishScreenTransition
+	.global Engine_EventCloseScreen
 	.thumb_func
-Event_FinishScreenTransition:
+Engine_EventCloseScreen:
 	overlay_veneer Event_FinishScreenTransitionFar
-	.global Event_WaitTransitionFrames
+	.global Engine_EventWaitForScreen
 	.thumb_func
-Event_WaitTransitionFrames:
+Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitTransitionFramesFar
 	.global Object_CallSpawnRoutineAtOrigin
 	.thumb_func

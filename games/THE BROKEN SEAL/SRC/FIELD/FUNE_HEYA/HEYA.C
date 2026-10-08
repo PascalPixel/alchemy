@@ -76,7 +76,6 @@ struct EffectRecord {
     u8 active;
 };
 
-extern u8 Data_02000240[];
 
 void Battle_ResetEffectCounter();
 void FieldScene_CallPairWith10(s32 a, u16 b);
@@ -91,7 +90,7 @@ s32 SceneActor_CheckBucketOffsetPoint();
 #ifndef MODERN // the prototype above holds; modern GCC refuses this one
 void FieldScene_CallPairWith10();
 #endif
-void ObjectMotion_SetActionVariant();
+void Engine_ActorSetSpritePriority();
 
 struct Walker {
     u8 unknown_00[0x4c];
@@ -317,7 +316,7 @@ s32 FuneHeya_GetStepScript(void)
 
 u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
 {
-    s16 *tbl = ((s16 *)Data_02000240);
+    s16 *tbl = (s16 *)&gGameState;
     s32 scene = tbl[225];
 
     switch (scene) {
@@ -835,7 +834,7 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
 
     rec4 = Object_GetById(0);
     v8 = 1;
-    ObjectMotion_SetActionVariant(a0, 2);
+    Engine_ActorSetSpritePriority(a0, 2);
     {
         struct FieldActor *record = Object_GetById(a0);
 

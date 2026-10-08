@@ -1,3 +1,4 @@
+#define OWN_AudioCommand_PlayFar
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -14,7 +15,7 @@
 
 #define SCENE_RECORD(id) (&Field_SceneTable[id])
 
-extern void Audio_PlayCue(s16 arg0);
+extern void AudioCommand_PlayFar(s16 arg0);
 
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep)
 {
@@ -56,5 +57,5 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep)
 
 void Audio_PlayCueFromEventWork(void)
 {
-    Audio_PlayCue(gGameState.cue);
+    AudioCommand_PlayFar(gGameState.cue);
 }

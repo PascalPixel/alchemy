@@ -23,7 +23,7 @@
 void Vector_AddPolarOffset(s32, u32, struct FieldPosition *);
 extern struct EventRuntime *gEventWork;
 
-void Audio_PlayCue(s32 sound_id);
+void AudioCommand_PlayFar(s32 sound_id);
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 
 extern u8 gMapCellBuffer[];
@@ -50,14 +50,14 @@ enum StepTileEvent {
 #define STEP_FLAG_DOUBLE_SPEED 0x167
 #define STEP_CUE_EFFECT 139
 void BattleParty_ApplyDrain(s32 steps, s32 unused);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 void BattleFx_ResetCounters(void)
 {
   short cleared_value;
   struct BattleEffectCounterState *state;
   cleared_value = 0;
-  state = Data_03001ebc;
+  state = (struct BattleEffectCounterState *)gEventWork;
   state->counters[0] = cleared_value;
   state->counters[1] = 0;
   state->counters[2] = 0;
@@ -74,7 +74,7 @@ void BattleFx_ResetCounters(void)
 
 s32 BattleFx_SumCounters(void)
 {
-    struct BattleEffectCounterState *state = Data_03001ebc;
+    struct BattleEffectCounterState *state = (struct BattleEffectCounterState *)gEventWork;
 
     return state->counters[0] + state->counters[1] + state->counters[2]
          + state->counters[3] + state->counters[4] + state->counters[5]
@@ -182,7 +182,7 @@ loop:
             z >= REGION_FIXED(min_z)&&
             z < REGION_FIXED(max_z)) {
             runtime->value_170 = (u16)selected_value;
-            Audio_PlayCue(123);
+            AudioCommand_PlayFar(123);
             Battle_InitializeRenderObject();
             return;
         }
@@ -266,7 +266,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
             work->encounter_steps = sum & 0xffff;
             BattleParty_ApplyDrain(n, 0);
             if (BattlePlacement_UpdateTimedEntriesFar())
-                Audio_PlayCue(STEP_CUE_EFFECT);
+                AudioCommand_PlayFar(STEP_CUE_EFFECT);
             Event_ClearInvalidPackedValues();
             fell = BattleParty_ApplyStatusDamage();
         }

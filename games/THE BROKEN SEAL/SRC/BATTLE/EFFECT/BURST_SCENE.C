@@ -37,7 +37,7 @@
 void BattleFx_PrepareCanvasEffect(
 	struct BattleEffectArgument *effect, s32 kind, s32 side, s32 anchor, s32 *out_x, s32 *out_y);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 //--------------------------------------------------------------------------
 // 対象に何度も重ねて弾ける連撃
@@ -215,7 +215,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 					if (i & 1)
 						BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 7);
 					work->shake_frames = 4;
-					Audio_PlayCue(134);
+					AudioCommand_PlayFar(134);
 				}
 				for (j = 0; j != BurstScene_Records[variant * 7 + 3]; j++)
 					((struct EffectStep *)Ram_MapCellBuffer)[i * 32 + j].variant =
@@ -405,7 +405,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 	// 岩のオブジェクト
 	for (i = 0; i != 11; i++)
 	{
-		struct AnimationObject *obj = GetBattleEffectObject(390);
+		struct AnimationObject *obj = ResourceObject_CreateFar(390);
 
 		work->objects[i] = obj;
 		if (obj != 0)

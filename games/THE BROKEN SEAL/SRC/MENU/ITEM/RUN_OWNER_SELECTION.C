@@ -26,7 +26,7 @@ void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 #if !EDITION_INTERNATIONAL
 #endif
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
 {
@@ -92,17 +92,17 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
                 InventoryMenu_SortByListOrder(owner->inventory, sort_mode);
                 sort_mode++;
                 ItemMenu_RefreshOwner(owner_ids[selection], 0);
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
             } else if (ItemMenu_Count(owner_ids[selection])) {
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
                 result = owner_ids[selection];
                 break;
             } else {
-                Audio_PlayCue(114);
+                AudioCommand_PlayFar(114);
             }
         }
         if (gKeyState & KEY_B) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             result = -1;
             break;
         }
@@ -115,12 +115,12 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
             pending = 1;
         }
         if (gKeysRepeat & KEY_LEFT) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             selection--;
             pending = 1;
         }
         if (gKeysRepeat & KEY_RIGHT) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             selection++;
             pending = 1;
         }

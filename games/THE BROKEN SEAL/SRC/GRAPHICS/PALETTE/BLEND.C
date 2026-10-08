@@ -18,6 +18,7 @@
 #include "SCENE.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
+s32 GameFlag_TestFar(s32 flag);
 
 extern struct DisplayTransitionState *gDisplayTransition;
 
@@ -108,7 +109,7 @@ void BattlePalette_UpdateBlend(void)
     u8 *base;
     s32 i;
 
-    if (GameFlag_IsSet(0x152) != 0) {
+    if (GameFlag_TestFar(0x152) != 0) {
         return;
     }
     if (work->duration == 0) {

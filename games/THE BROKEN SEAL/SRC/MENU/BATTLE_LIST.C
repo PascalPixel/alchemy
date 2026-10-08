@@ -14,6 +14,7 @@
 #include "MENU_LIST.H"
 #include "ITEM.H"
 #include "text/MSG_IDS.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 
 
@@ -136,7 +137,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
                     if (entry == 0) {
                         break;
                     }
-                    Item_Get(entry);
+                    Item_GetDirectFar(entry);
                     UiWork_SetParamNibble(15);
                     if (Item_ClassifyUseAbility(owner, entry) != 0) {
                         UiWork_SetParamNibble(4);
@@ -233,7 +234,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
         if ((gKeyState & KEY_A) != 0) {
             if (count != 0) {
                 result = page + row;
-                Item_Get(entries[result]);
+                Item_GetDirectFar(entries[result]);
                 reason = 0;
                 if ((entries[result] & INVENTORY_BROKEN) == 0) {
                     reason = Item_ClassifyUseAbility(owner, entries[result]);

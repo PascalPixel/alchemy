@@ -219,7 +219,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
                     tmp = (u8 *)MemAlloc(0x400);
                     draw(Resource_DecompressLz(e->frames[e->frame], tmp),
                          buf, e->param);
-                    Runtime_BumpFree(tmp);
+                    MemFree(tmp);
                 } else {
                     decoded = Iwram_Decompress(e->frames[e->frame], buf);
                     if (decoded != 0) {
@@ -271,7 +271,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
                 dst++;
                 src++;
             }
-            Runtime_BumpFree(mask);
+            MemFree(mask);
         }
 
         tile = VramBlock_LoadCached(obj->slot, size, 0);
@@ -282,7 +282,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
         obj->part[0].tile = tile;
         obj->dirty = 0;
         ctx->used += size;
-        Runtime_BumpFree(buf);
+        MemFree(buf);
     }
 
     if (held == 0) {

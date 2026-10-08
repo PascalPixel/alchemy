@@ -2,16 +2,13 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global WaitFrames
-	.thumb_func
-WaitFrames:
 	.global Engine_TaskWait
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
-	.global Scheduler_AddOrUpdateCallback
+	.global Engine_TaskAddCallback
 	.thumb_func
-Scheduler_AddOrUpdateCallback:
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallback
 	.thumb_func
@@ -29,9 +26,9 @@ Runtime_AllocateHeapBlock:
 	.thumb_func
 Runtime_ReleaseHeapBlock:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
-	.global VramBlock_LoadCached
+	.global Engine_VramLoad
 	.thumb_func
-VramBlock_LoadCached:
+Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
 	.global ResourceMetadata_ClearRecord
 	.thumb_func
@@ -49,24 +46,18 @@ ObjectDispatch_ApplyValueToChildren:
 	.thumb_func
 Engine_ObjectSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Object_SetPosition
+	.global Engine_ObjectSetPosition
 	.thumb_func
-Object_SetPosition:
+Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
 	.global Object_CommitPosition
 	.thumb_func
 Object_CommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
-	.global Map_CopyMetatileCellsRect
-	.thumb_func
-Map_CopyMetatileCellsRect:
 	.global Engine_MapCopyCells
 	.thumb_func
 Engine_MapCopyCells:
 	overlay_veneer Map_CopyMetatileCellsRectFar
-	.global Map_CopyCellAttributeRect
-	.thumb_func
-Map_CopyCellAttributeRect:
 	.global Engine_MapCopyCellAttributes
 	.thumb_func
 Engine_MapCopyCellAttributes:
@@ -94,38 +85,23 @@ PartyInventory_Remove:
 	.global Engine_GameFlagIsSet
 	.thumb_func
 Engine_GameFlagIsSet:
-	.global Engine_TestTriggerFlag
-	.thumb_func
-Engine_TestTriggerFlag:
 	overlay_veneer GameFlag_TestFar
 	.global Engine_GameFlagSet
 	.thumb_func
 Engine_GameFlagSet:
-	.global Engine_SetTriggerFlag
-	.thumb_func
-Engine_SetTriggerFlag:
 	overlay_veneer GameFlag_SetBitFar
 	.global Engine_GameFlagClear
 	.thumb_func
 Engine_GameFlagClear:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Battle_WaitMode0
-	.thumb_func
-Battle_WaitMode0:
 	.global Engine_EventWait
 	.thumb_func
 Engine_EventWait:
 	overlay_veneer Battle_WaitMode0Far
-	.global Battle_Reset
-	.thumb_func
-Battle_Reset:
 	.global Engine_EventBegin
 	.thumb_func
 Engine_EventBegin:
 	overlay_veneer Battle_ResetFar
-	.global BattleFx_FinishAction
-	.thumb_func
-BattleFx_FinishAction:
 	.global Engine_EventEnd
 	.thumb_func
 Engine_EventEnd:
@@ -138,16 +114,10 @@ Engine_PartyGiveItem:
 	.thumb_func
 Object_GetById:
 	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_SetSpeedParameters
-	.thumb_func
-ObjectMotion_SetSpeedParameters:
 	.global Engine_ActorSetSpeed
 	.thumb_func
 Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
-	.global ObjectMotion_ResetAndSetPosition
-	.thumb_func
-ObjectMotion_ResetAndSetPosition:
 	.global Engine_ActorSetDestination
 	.thumb_func
 Engine_ActorSetDestination:
@@ -160,16 +130,10 @@ Engine_ActorWalkTo:
 	.thumb_func
 Engine_ActorWalkToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
-	.global ObjectMotion_OffsetPositionAndResetMotion
-	.thumb_func
-ObjectMotion_OffsetPositionAndResetMotion:
 	.global Engine_ActorSetDestinationOffset
 	.thumb_func
 Engine_ActorSetDestinationOffset:
 	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
-	.global ObjectMotion_CommitCurrentPositionAndActivate
-	.thumb_func
-ObjectMotion_CommitCurrentPositionAndActivate:
 	.global Engine_ActorWaitForMove
 	.thumb_func
 Engine_ActorWaitForMove:
@@ -178,9 +142,6 @@ Engine_ActorWaitForMove:
 	.thumb_func
 Engine_ActorSetPosition:
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Object_SetModeById
-	.thumb_func
-Object_SetModeById:
 	.global Engine_ActorSetAnimation
 	.thumb_func
 Engine_ActorSetAnimation:
@@ -245,13 +206,7 @@ BattleFx_RunPageEffectForSlot:
 	.thumb_func
 BattleFx_PlayQueuedSound:
 	overlay_veneer BattleFx_PlayQueuedSoundFar
-	.global Audio_PlayCue
-	.thumb_func
-Audio_PlayCue:
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:
-	.global AudioCommand_Play
-	.thumb_func
-AudioCommand_Play:
 	overlay_veneer AudioCommand_PlayFar

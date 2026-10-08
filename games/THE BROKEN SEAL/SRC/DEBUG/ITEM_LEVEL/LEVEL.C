@@ -417,12 +417,12 @@ s32 FieldScene_RunEntrySetup(void)
 void ItemLevel_RunMotionTest(void)
 {
     /* FAKEMATCH: Call3 places the actor argument before the coordinate shifts; the ordinary direct call schedules it after both shifts. */
-    Battle_Reset();
+    Engine_EventBegin();
     Engine_ActorSetAnimation(10, 2);
     Engine_ActorSetAnimation(11, 4);
     ObjectMotion_WaitForAnimationChange(10);
-    Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 11, 312 << 16, 416 << 16);
-    BattleFx_FinishAction();
+    Call3(Engine_ActorSetPosition, 11, 312 << 16, 416 << 16);
+    Engine_EventEnd();
 }
 #endif
 

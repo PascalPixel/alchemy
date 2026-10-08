@@ -5,8 +5,10 @@
 
 #define NULL ((void *)0)
 
-void *CreateOverlayObject(s32, s32, s32, s32);
-void SetOverlayObjectMode(void *, s32);
-void SetOverlayObjectSlot(void *, s32);
+struct FieldActor;
+
+struct FieldActor *Engine_ObjectCreate(s32, s32, s32, s32);
+void Engine_ActorSetSpriteFlags(struct FieldActor *, s32);
+void ObjectGroup_SetChildValue(struct FieldActor *, s32);
 
 #endif

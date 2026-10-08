@@ -23,6 +23,7 @@
 #include "TBS_EDITION.H"
 #include "ITEM.H"
 #include "text/MSG_IDS.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 #define gKeyState (*(volatile u32 *)&gKeyState)
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
@@ -406,7 +407,7 @@ void Shop_PlaceCursor(void *window, s32 x, s32 y)
 void UiWork_FinalizeFar(s32 window, s32 style);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void PsynergyMenu_InitializeEntryObjectsFar(s32 window, s32 column, s32 row, s32 height, s32 flags);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 s32 Shop_SelBuy(void)
 {
@@ -450,7 +451,7 @@ next_page:
         if (redraw != 0) {
             ids = shop->stock_item_ids;
             item_id = ids[cursor];
-            stock_item = Item_Get(item_id);
+            stock_item = Item_GetDirectFar(item_id);
             redraw = 0;
             Shop_PlaceCursor((void *)stock_window, cursor % 7 * 32 - 8, 8);
             shop->mode = 4;
@@ -461,12 +462,12 @@ next_page:
         }
         if ((gKeyState & KEY_A) != 0) {
             selected = cursor;
-            Audio_PlayCue(SOUND_MENU_CONFIRM);
+            AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
             result = 0;
             goto stock_done;
         }
         if ((gKeyState & KEY_B) != 0) {
-            Audio_PlayCue(SOUND_MENU_CANCEL);
+            AudioCommand_PlayFar(SOUND_MENU_CANCEL);
             result = -1;
             goto stock_done;
         }
@@ -475,7 +476,7 @@ next_page:
             cursor--;
             cursor = (cursor + count) % count;
             if (prev != cursor) {
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
             }
         }
@@ -484,7 +485,7 @@ next_page:
             cursor++;
             cursor = (cursor + count) % count;
             if (prev != cursor) {
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
             }
         }
@@ -512,7 +513,7 @@ stock_done:
 
     shop->selected_item = shop->stock_item_ids[selected];
     UiMessage_ShowAndWait((s32)MsgWhoGetsThis);
-    item = Item_Get(shop->selected_item);
+    item = Item_GetDirectFar(shop->selected_item);
     quantity = 1;
     member = 0;
     ask_again = 0;
@@ -545,7 +546,7 @@ stock_done:
         if ((gKeyState & KEY_A) != 0) {
             slot = Inventory_AddItemFar(member, shop->selected_item);
             if (slot < 0) {
-                Audio_PlayCue(SOUND_MENU_CANCEL);
+                AudioCommand_PlayFar(SOUND_MENU_CANCEL);
                 UiWork_PushValueSlotFar(member, 1);
                 UiWork_PushValueSlotFar(shop->selected_item, 2);
                 if (Inventory_CountFar(member) == 15)
@@ -556,7 +557,7 @@ stock_done:
             }
             Inventory_RemoveFar(member, slot);
             if ((u32)item->price > gGameState.coins) {
-                Audio_PlayCue(SOUND_MENU_CANCEL);
+                AudioCommand_PlayFar(SOUND_MENU_CANCEL);
                 UiMessage_ShowAndRestoreState((s32)MsgBuyNotEnoughMoney);
                 result = -1;
                 goto party_done;
@@ -569,7 +570,7 @@ stock_done:
                     continue;
                 }
             }
-            Audio_PlayCue(SOUND_MENU_CONFIRM);
+            AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
             WaitFrames(1);
             quantity = Shop_SelBuyNum(member, shop->selected_item);
             ask_again = 1;
@@ -581,17 +582,17 @@ stock_done:
             goto party_done;
         }
         if ((gKeyState & KEY_B) != 0) {
-            Audio_PlayCue(SOUND_MENU_CANCEL);
+            AudioCommand_PlayFar(SOUND_MENU_CANCEL);
             result = -1;
             goto party_done;
         }
         if ((gKeysRepeat & KEY_LEFT) != 0) {
-            Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+            AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
             cursor--;
             redraw = 1;
         }
         if ((gKeysRepeat & KEY_RIGHT) != 0) {
-            Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+            AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
             cursor++;
             redraw = 1;
         }

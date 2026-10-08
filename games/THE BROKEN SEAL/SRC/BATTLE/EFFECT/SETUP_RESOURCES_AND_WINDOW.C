@@ -87,7 +87,7 @@ void BattleFx_SetupResourcesAndWindow(void)
         *oam++ = 0;
         *oam++ = attr;
     }
-    Runtime_BumpFree(pal);
+    MemFree(pal);
     if (GameFlag_TestFar(284)) {
         work->x = 240 << 15;
         work->y = 160 << 15;

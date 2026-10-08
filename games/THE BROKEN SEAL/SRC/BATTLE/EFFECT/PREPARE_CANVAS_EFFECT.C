@@ -29,7 +29,7 @@
 
 #define SceneTransform_ApplyPosition ((void (*)(s32 *))SceneTransform_ApplyPosition)
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -167,7 +167,7 @@ void BattleFx_PrepareCanvasEffect(
 		if (frame > 75)
 			REG_BLDALPHA = (168 - frame * 2) | 0x1000;
 		if (frame == 8)
-			Audio_PlayCue(212);
+			AudioCommand_PlayFar(212);
 		Render_ResetTransformState();
 		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
 		if (frame >= 6 && frame <= 45)

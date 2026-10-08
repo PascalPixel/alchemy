@@ -15,6 +15,7 @@
 #include "ITEM.H"
 #include "BATTLE_UNIT.H"
 #include "BTLSYS.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 /* FAKEMATCH: three more names of the one table keep each case's own literal slot; one name folds the switch to a single load. */
 extern u8 RenderResource_PairSourceTable[], PairSource1[] __asm__("RenderResource_PairSourceTable"), PairSource2[] __asm__("RenderResource_PairSourceTable"), PairSource3[] __asm__("RenderResource_PairSourceTable");
@@ -48,7 +49,7 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot)
 void Ui_PrepareTransferForItem(s32 code)
 {
     GlyphTransfer *state = gGlyphWork;
-    struct ItemDefinition *item = Item_Get(0x1ff & code);
+    struct ItemDefinition *item = Item_GetDirectFar(0x1ff & code);
 
     if (code != 0) {
         state->encoded = UiIcon_ItemIconPointers[item->icon];

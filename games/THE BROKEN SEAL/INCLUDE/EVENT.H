@@ -4,7 +4,7 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#define WAIT(n)                 Battle_WaitMode0(n)
+#define WAIT(n)                 Engine_EventWait(n)
 
 #define MES_SET(m)              Engine_EventSetMessage(m)
 #define MES_PUT(no, f)          Engine_EventShowMessage((no), (f))
@@ -15,7 +15,7 @@
 #define OBJ_SPD(no, s, a)       Actor_SetSpeed((no), (s), (a))
 #define OBJ_DIR(no, d, t)       Actor_FaceDirection((no), (d), (t))
 #define OBJ_FACE(no, to, t)     Engine_ActorFaceActor((no), (to), (t))
-#define OBJ_MODE(no, m)         Object_SetModeById((no), (m))
+#define OBJ_MODE(no, m)         Engine_ActorSetAnimation((no), (m))
 #define OBJ_EMO(no, e, t)       Actor_ShowEmote((no), (e), (t))
 
 #define FLAG_CHK(f)             GameFlag_IsSet(f)

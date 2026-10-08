@@ -34,6 +34,10 @@
 #include "UI.H"
 #include "MENU_LIST.H"
 #include "BTLPTY.H"
+void UiWork_PushValueSlotFar(s32, s32);
+struct BtlAct * BtlActGet(s32 action_id);
+struct ItemDefinition *Item_GetDirectFar(s32 item);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
 
 #define Battle_FindTaggedSlotByValue ((s32 (*)(s32))Battle_FindTaggedSlotByValue)
 
@@ -186,10 +190,10 @@ select_again:
 		}
 		if (use_item != 0)
 		{
-			item = Item_Get(unit->inventory[0]);
+			item = Item_GetDirectFar(unit->inventory[0]);
 			if (item->use_type == 1)
 			{
-				item_act = Ability_GetData(item->action_id);
+				item_act = BtlActGet(item->action_id);
 				act_no = item->action_id;
 				req->command = CMD_ITEM;
 				tgt_flg = item_act->tgt_flg;
@@ -217,7 +221,7 @@ select_again:
 		goto finish_target;
 
 	// ぼうぎょ・にげるのわざは、自分を対象にする
-	act = Ability_GetData(act_no);
+	act = BtlActGet(act_no);
 	efx = act->efx;
 	switch (efx)
 	{
@@ -403,7 +407,7 @@ extern volatile u32 gFrameCount;
 extern volatile s32 gFrameTick;
 extern volatile s32 gKeysPressedLatch;
 
-void Object_SetMode(void *object, s32 mode);
+void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
 
 //--------------------------------------------------------------------------
 // スケジューラから呼ばれ、BtlTgtExec が積んだイベントを順に実行する
@@ -469,16 +473,16 @@ void BattleEvent_Playback(void)
 						Battle_SetRuntimeFlagBit0(ev, ev->queue.operands[i]);
 						break;
 					case BEV_UNIT: // メッセージに入れる名前
-						UiText_DrawQuantity(ev->queue.operands[i], 1);
+						UiWork_PushValueSlotFar(ev->queue.operands[i], 1);
 						break;
 					case BEV_NUM: // メッセージに入れる数
-						UiText_DrawQuantity(ev->queue.operands[i], 5);
+						UiWork_PushValueSlotFar(ev->queue.operands[i], 5);
 						break;
 					case BEV_ITEM: // メッセージに入れるアイテム名
-						UiText_DrawQuantity(ev->queue.operands[i] & 0x1ff, 2);
+						UiWork_PushValueSlotFar(ev->queue.operands[i] & 0x1ff, 2);
 						break;
 					case BEV_ACT: // メッセージに入れるわざ名
-						UiText_DrawQuantity(ev->queue.operands[i] & 0x3fff, 4);
+						UiWork_PushValueSlotFar(ev->queue.operands[i] & 0x3fff, 4);
 						break;
 					case BEV_MARK:
 						gBattleDisplayWork->marked = 1;
@@ -504,7 +508,7 @@ void BattleEvent_Playback(void)
 						if (ev->pending_cue > 0)
 							AudioCommand_PlayFar(ev->pending_cue);
 						ev->actor_id = ev->queue.operands[i];
-						Object_SetMode(BtlObjGet(ev->actor_id)->object, POSE_DAMAGE);
+						ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(ev->actor_id)->object, POSE_DAMAGE);
 						ev->phase = PLAY_HIT;
 						ev->timer = 0;
 						break;
@@ -522,9 +526,9 @@ void BattleEvent_Playback(void)
 							(rec = GetMotionRecord(BtlObjGet(ev->actor_id)->object, n)) != 0; n++)
 						{
 							if (unit->side != BATTLE_UNIT_ENEMY)
-								Object_InitializeMode(rec, 4);
+								AnimationObjects_SelectAnimationFar(rec, 4);
 							else
-								Object_InitializeMode(rec, 5);
+								AnimationObjects_SelectAnimationFar(rec, 5);
 						}
 						if (unit->side == BATTLE_UNIT_ENEMY)
 						{

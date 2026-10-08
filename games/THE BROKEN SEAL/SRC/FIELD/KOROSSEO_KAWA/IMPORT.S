@@ -10,9 +10,9 @@ __divsi3:
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
-	.global Scheduler_AddOrUpdateCallback
+	.global Engine_TaskAddCallback
 	.thumb_func
-Scheduler_AddOrUpdateCallback:
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Engine_TaskRemoveCallback
 	.thumb_func
@@ -62,9 +62,6 @@ Resource_ResetEntry:
 	.thumb_func
 Resource_ActivateEntry:
 	overlay_veneer Resource_ActivateEntryFar
-	.global VramBlock_LoadCached
-	.thumb_func
-VramBlock_LoadCached:
 	.global Engine_VramLoad
 	.thumb_func
 Engine_VramLoad:
@@ -116,9 +113,6 @@ ObjectDispatch_WaitForValue16:
 	.global Engine_ObjectSetPosition
 	.thumb_func
 Engine_ObjectSetPosition:
-	.global Object_SetMoveTarget
-	.thumb_func
-Object_SetMoveTarget:
 	overlay_veneer Object_SetMoveTargetFar
 	.global Script_WaitForEventTimeout
 	.thumb_func
@@ -168,9 +162,6 @@ PartyTalkMenu_Choose:
 	.thumb_func
 Resource_LoadFixedBlockBIntoFreeSlot:
 	overlay_veneer Resource_LoadFixedBlockBIntoFreeSlotFar
-	.global Engine_OwnerGetState
-	.thumb_func
-Engine_OwnerGetState:
 	.global UnitGet
 	.thumb_func
 UnitGet:
@@ -203,16 +194,10 @@ GameFlag_SetByte:
 	.thumb_func
 GetPartyMemberCount:
 	overlay_veneer Party_CountActiveOwnersFar
-	.global Engine_PartyAddActiveOwner
-	.thumb_func
-Engine_PartyAddActiveOwner:
 	.global Party_AddActiveOwner
 	.thumb_func
 Party_AddActiveOwner:
 	overlay_veneer Party_AddActiveOwnerFar
-	.global Engine_PartyRemoveActiveOwner
-	.thumb_func
-Engine_PartyRemoveActiveOwner:
 	.global Party_RemoveActiveOwner
 	.thumb_func
 Party_RemoveActiveOwner:
@@ -240,9 +225,6 @@ Engine_EventChooseYesNo:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
-	.global GetPartyInteractionRecord
-	.thumb_func
-GetPartyInteractionRecord:
 	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorDestroy
 	.thumb_func
@@ -328,9 +310,6 @@ Engine_ActorSetSpritePriority:
 	.thumb_func
 Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
-	.global Engine_ObjectAttachWorkTarget
-	.thumb_func
-Engine_ObjectAttachWorkTarget:
 	.global Engine_CameraFollowActor
 	.thumb_func
 Engine_CameraFollowActor:

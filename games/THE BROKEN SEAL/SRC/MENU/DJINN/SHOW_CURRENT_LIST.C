@@ -24,7 +24,7 @@ extern struct DjinnMenuWork *gMenuWork;
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void UiWindow_DrawDividerLineFar(s32 window, u32 x1, u32 y1, u32 x2, u32 y2);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, u32 mode);
 
@@ -37,7 +37,7 @@ s32 DjinnMenu_ShowCurrentList(void)
 
     menu = gMenuWork;
     ItemMenu_ResetCategory();
-    Audio_PlayCue(112);
+    AudioCommand_PlayFar(112);
     RenderOutput_RedrawSavedRectFar(menu->help_window);
     UiText_DrawCharacterAtOffsetFar((s32)MsgReturnHelp, menu->help_window, 0, 16);
     menu->cursor->active = 13;
@@ -88,6 +88,6 @@ s32 DjinnMenu_ShowCurrentList(void)
     }
     menu->cursor->active = 1;
     menu->second_cursor->active = 1;
-    Audio_PlayCue(113);
+    AudioCommand_PlayFar(113);
     /* FAKEMATCH: the caller ignores the result, but the reference retains a value-returning epilogue after this void audio call. */
 }

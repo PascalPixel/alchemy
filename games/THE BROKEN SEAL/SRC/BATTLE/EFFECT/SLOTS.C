@@ -20,6 +20,7 @@
 #include "IO_REG.H"
 #include "BTLSYS.H"
 #include "text/MSG_IDS.H"
+void UiText_ShowPositionedMessageAndWaitFar(s32 no, s32 flags);
 
 #define BattleFx_UpdatePairedArcSpawner ((void (*)(void))BattleFx_UpdatePairedArcSpawner)
 
@@ -27,7 +28,7 @@ extern struct BattleFxScene *gEffectWork;
 void WaitFrames(s32);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ArcEffectObject *, s32);
 void Animation_ApplyChildValuesFar(struct ArcEffectObject *, s32);
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 
 void Object_ApplyProjectedPlacementFar(struct AnimationObject *sprite, s32 *position, s32 *scale, s32 mode);
 s32 ArcTan2(s32 x, s32 y);
@@ -63,7 +64,7 @@ void RunBattleEffect16(void)
         object->phase = zero;
         object->step = zero;
     }
-    Audio_PlayCue(0x8c);
+    AudioCommand_PlayFar(0x8c);
     WaitFrames(15);
     object->phase = 1;
     WaitFrames(10);
@@ -80,7 +81,7 @@ void RunBattleEffect16(void)
     object->angle = angle;
     Scheduler_AddOrUpdateCallback(BattleFx_UpdateEffect16State, 0xc80);
     WaitFrames(15);
-    Audio_PlayCue(0xae);
+    AudioCommand_PlayFar(0xae);
     WaitFrames(55);
     Scheduler_RemoveCallback(BattleFx_UpdateEffect16State);
     if (gGameState.cloaked != 0)
@@ -89,7 +90,7 @@ void RunBattleEffect16(void)
         ObjectDispatch_SetSingleChildFlagsFar(object, 1);
     Animation_ApplyChildValuesFar(object, 0);
     Resource_ResetEntry(scene->arc_tile_slot);
-    UiText_DrawMessage((s32)MsgMonstersAttackLess, 1);
+    UiText_ShowPositionedMessageAndWaitFar((s32)MsgMonstersAttackLess, 1);
 }
 
 void EffectSlot_Update(struct EffectSlot *effect)

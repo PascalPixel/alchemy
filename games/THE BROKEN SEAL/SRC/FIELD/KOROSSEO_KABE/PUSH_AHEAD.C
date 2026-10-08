@@ -1,6 +1,5 @@
 #include "TASK.H"
 
-extern s16 gCell[];
 
 s32 *SceneData_FindSlotAtPosition(s32 *pos, void *self)
 {
@@ -32,7 +31,7 @@ void StagedActor_PushActorAhead(void)
     s32 zero;
     s32 handle;
 
-    handle = *(s32 *)((u8 *)gCell + (idx << 1));
+    handle = *(s32 *)((u8 *)&gGameState + (idx << 1));
     subject = (KabeSceneRecord *)Object_GetById(handle);
 
     dir = subject->facing >> 12;

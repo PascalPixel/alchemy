@@ -28,7 +28,6 @@ struct WorkPointers {
     u8 *scene;
 };
 
-extern struct WorkPointers gWork;
 
 typedef struct {
     s32 f0;

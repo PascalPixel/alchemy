@@ -16,6 +16,7 @@
 #include "ITEMGIFT.H"
 #include "BTLSYS.H"
 #include "text/MSG_IDS.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 
 extern void UiWork_PushValueSlotFar(s32, s32);
@@ -46,7 +47,7 @@ extern struct EventRuntime *gEventWork;
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiText_ShowPositionedMessageAndWaitFar(void *message, s32 position);
 void UiWork_FinalizePendingCoreFar(void);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 s32 PartyInventory_GiveItem(s32 item, s32 unused)
 {
@@ -79,7 +80,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused)
         UiText_ShowPositionedMessageAndWaitFar(MsgWhatWillYouDrop, 1);
         result = Shop_PickUnitItemFar(&member, &slot);
         if (result == -1) {
-            if (Item_Get(item)->flags & ITEM_INDISPENSABLE) {
+            if (Item_GetDirectFar(item)->flags & ITEM_INDISPENSABLE) {
                 UiWork_PushValueSlotFar(item, 2);
                 UiText_ShowPositionedMessageAndWaitFar(MsgWhatWillYouDrop + 4, 1);
                 goto retry;
@@ -114,7 +115,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused)
             for (i = 0; i < count; i++)
                 Inventory_DiscardFar(member, slot);
             owner = PartyInventory_AddFar(item);
-            Audio_PlayCue(83);
+            AudioCommand_PlayFar(83);
             if (owner == gGameState.selected_actor) {
 #if defined(TBS_EDITION_DE)
                 if (item == ITEM_BLACK_ORB)
@@ -136,7 +137,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused)
             return owner;
         }
     } else {
-        Audio_PlayCue(83);
+        AudioCommand_PlayFar(83);
 #if defined(TBS_EDITION_DE)
         if (item == ITEM_BLACK_ORB)
             UiText_ShowPositionedMessageAndWaitFar(MsgGotBlackOrb, 3);

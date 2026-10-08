@@ -13,6 +13,7 @@
 #include "SCENE.H"
 #include "RESOURCE.H"
 #include "ITEM.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 extern void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 slot);
 
@@ -68,7 +69,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers)
 
     overlay = 0;
     count = 0;
-    item = Item_Get(code & 0x1ff);
+    item = Item_GetDirectFar(code & 0x1ff);
     work = gGlyphWork;
     if (work == NULL)
         return -1;

@@ -7,23 +7,17 @@
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
-	.global Scheduler_AddOrUpdateCallback
-	.thumb_func
-Scheduler_AddOrUpdateCallback:
 	.global Engine_TaskAddCallback
 	.thumb_func
 Engine_TaskAddCallback:
-	.global Scheduler_AddOrUpdateCallback
-	.thumb_func
-Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallback
 	.thumb_func
 Scheduler_RemoveCallback:
 	overlay_veneer Scheduler_RemoveCallbackFar
-	.global Random16
+	.global Engine_RandomNext
 	.thumb_func
-Random16:
+Engine_RandomNext:
 	overlay_veneer Random16Far
 	.global ArcTan2
 	.thumb_func
@@ -41,9 +35,9 @@ Engine_HeapRelease:
 	.thumb_func
 Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
-	.global ObjectDispatch_ApplyArgumentToChildren
+	.global Object_SetMode
 	.thumb_func
-ObjectDispatch_ApplyArgumentToChildren:
+Object_SetMode:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	.global Engine_ObjectCreate
 	.thumb_func
@@ -57,17 +51,17 @@ Engine_ObjectDispatchRelease:
 	.thumb_func
 Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
-	.global Object_SetMoveTarget
+	.global Engine_ObjectSetPosition
 	.thumb_func
-Object_SetMoveTarget:
+Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
 	.global Engine_MapCopyCellsTo
 	.thumb_func
 Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
-	.global Map_CopyMetatileCellsRect
+	.global Engine_MapCopyCells
 	.thumb_func
-Map_CopyMetatileCellsRect:
+Engine_MapCopyCells:
 	overlay_veneer Map_CopyMetatileCellsRectFar
 	.global Engine_MapCopyCellAttributes
 	.thumb_func
@@ -90,7 +84,7 @@ Engine_MessageShowCentered:
 	.global Engine_ItemLoadIcon
 	.thumb_func
 Engine_ItemLoadIcon:
-	overlay_veneer ItemIcon_LoadTilesFar
+	overlay_veneer Ui_PrepareTransferForItemFar
 	.global UnitGet
 	.thumb_func
 UnitGet:
@@ -147,16 +141,10 @@ Party_RemoveOwnerRestored:
 	.thumb_func
 Engine_PartyGiveItem:
 	overlay_veneer PartyInventory_GiveItemFar
-	.global Engine_UiWorkWaitThenFinalizeCapacity
-	.thumb_func
-Engine_UiWorkWaitThenFinalizeCapacity:
 	.global Engine_EventChooseYesNo
 	.thumb_func
 Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global Object_GetById
-	.thumb_func
-Object_GetById:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -204,9 +192,6 @@ Engine_ActorSetPosition:
 	.global Engine_ActorSetAnimation
 	.thumb_func
 Engine_ActorSetAnimation:
-	.global Object_SetModeById
-	.thumb_func
-Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
 	.global Engine_ActorSetAnimationAndWait
 	.thumb_func
@@ -326,9 +311,6 @@ BattleFx_PlayCueAndStartEmitterOnTarget:
 	.thumb_func
 Engine_ItemShowFound:
 	overlay_veneer BattleFx_StartEffectObject22Far
-	.global ObjectTable_Get
-	.thumb_func
-ObjectTable_Get:
 	.global Engine_ActorLookup
 	.thumb_func
 Engine_ActorLookup:
@@ -361,9 +343,6 @@ Engine_PsynergyRaiseHands:
 	.thumb_func
 Ui_SetBank15PaletteAndClearRenderMode:
 	overlay_veneer Ui_SetBank15PaletteAndClearRenderModeFar
-	.global Engine_AudioPlaySceneCue
-	.thumb_func
-Engine_AudioPlaySceneCue:
 	.global Audio_PlayCueFromEventWork
 	.thumb_func
 Audio_PlayCueFromEventWork:

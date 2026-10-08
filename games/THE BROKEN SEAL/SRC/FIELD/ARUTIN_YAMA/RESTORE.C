@@ -19,7 +19,7 @@
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
 
-#define ObjectTable_Get ((struct FieldActor * (*)(s32))ObjectTable_Get)
+#define Engine_ActorLookup ((struct FieldActor * (*)(s32))Engine_ActorLookup)
 #define Data_03001ed0 (*(u16 * *)&Data_03001ed0)
 
 void FieldScene_RunOpeningAuxiliarySequence();
@@ -28,7 +28,6 @@ void Engine_MapCopyCellAttributes();
 void Engine_ObjectSetTargetAndCallback();
 void SceneActor_ClearCollisionFlagAndPlaceMarker();
 void SceneState_ForwardByRuntimeSelector();
-extern u8 Data_02000240[];
 
 void Vector_AddPolarOffset(s32 distance, s32 angle, union FieldCoordinate *pos);
 
@@ -165,7 +164,7 @@ void ArutinYama_RestoreAreaThree(void)
         Actor_SetPosition(9, 0, 0);
     } else {
         ArutinYama_StartPaletteAnim();
-        if (GameFlag_IsSet(0x109) == 0 && (*(struct GameState *)Data_02000240).entrance == 99) {
+        if (GameFlag_IsSet(0x109) == 0 && gGameState.entrance == 99) {
             FieldScene_RunScene3a4SequenceF();
         } else {
             Map_CopyCellAttributes(38, 24, 1, 2, 37, 24);
@@ -190,7 +189,6 @@ void ArutinYama_RestoreAreaFour(void)
 {
     extern u8 ArutinYama_RiseTimer[];
 
-    extern u8 Data_02000240[];
 
     if (GameFlag_IsSet(0x8fe) != 0) {
         *(u16 *)(((u8 *)gMapWork[0]) + 20) &= ~0x200;
@@ -199,7 +197,7 @@ void ArutinYama_RestoreAreaFour(void)
     }
     {
         s32 index = 225;
-        if ((u32)((((u16 *)Data_02000240)[index] - 6) << 16) <= 0x10000) {
+        if ((u32)((((u16 *)&gGameState)[index] - 6) << 16) <= 0x10000) {
             GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
         }
     }
@@ -852,7 +850,7 @@ void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
     ResourceMetadata_ClearRecord(*(s32 *)((u8 *)sprite + 44));
     *(s32 *)((u8 *)sprite + 44) = 0;
     ((u8 *)sprite)[37] = 1;
-    leader = ObjectTable_Get(gGameState.selected_actor);
+    leader = Engine_ActorLookup(gGameState.selected_actor);
     Engine_AudioPlayCue(152);
     leader->x.fixed = x;
     leader->velocity_y = 0x60000;
@@ -998,7 +996,7 @@ void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
 void ArutinYama_RunRollingObject(s32 id, s32 heading)
 {
     struct FieldActor *object = Object_GetById(id);
-    struct FieldActor *leader = ObjectTable_Get(gGameState.selected_actor);
+    struct FieldActor *leader = Engine_ActorLookup(gGameState.selected_actor);
     union FieldCoordinate pos[3];
     union FieldCoordinate *p;
     struct Byte zero;

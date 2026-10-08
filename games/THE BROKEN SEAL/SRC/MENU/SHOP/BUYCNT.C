@@ -13,8 +13,12 @@
 #include "TBS_EDITION.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
+void RenderOutput_PrepareForRedrawFar(s32 window);
+s32 Inventory_FindFar(s32 unit_id, s32 item_id);
+struct ItemDefinition *Item_GetDirectFar(s32 item);
+struct RenderOutput *RenderOutput_CreateLoadedFar(s32 code, s32 layers, struct RenderInput *input, s32 x, s32 y);
 
-#define UiIcon_Draw ((struct RenderOutput * (*)(u16,s32,s32,s32,s32))UiIcon_Draw)
+#define RenderOutput_CreateLoadedFar ((struct RenderOutput * (*)(u16,s32,s32,s32,s32))RenderOutput_CreateLoadedFar)
 
 void UiWork_PushValueSlotFar(s32 kosuu, s32 style);
 
@@ -38,8 +42,8 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
     x = 8;
     y = 8;
     if (window != 0) {
-        UiWindow_Clear(window);
-        slot = Item_FindSlot(unit_id, item_id);
+        RenderOutput_PrepareForRedrawFar(window);
+        slot = Inventory_FindFar(unit_id, item_id);
         if (slot != -1) {
             off = slot * 2 + 216;
             UiWork_PushValueSlotFar((*(u16 *)(unit + off) >> 11) + 1, 5);
@@ -52,7 +56,7 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
         if (*(u16 *)(unit + first_offset) != 0) {
             for (;;) {
                 item_offset = item_index * 2 + 216;
-                icon = (u8 *)UiIcon_Draw(*(u16 *)(unit + item_offset), 27,
+                icon = (u8 *)RenderOutput_CreateLoadedFar(*(u16 *)(unit + item_offset), 27,
                                      window, x, y);
                 icon[15] = 252;
                 x += 16;
@@ -94,11 +98,11 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 
     shop = gMenuWork;
     unit = UnitGetFar(unit_id);
-    item = Item_Get(item_id);
+    item = Item_GetDirectFar(item_id);
     result = 1;
     if (item->flags & 0x10) {
         UiMessage_ShowAndWait((s32)MsgHowManyToBuy);
-        slot = Item_FindSlot(unit_id, item_id);
+        slot = Inventory_FindFar(unit_id, item_id);
         if (slot != -1) {
             quantity = (unit->inventory[slot] >> 11) + 1;
         } else {

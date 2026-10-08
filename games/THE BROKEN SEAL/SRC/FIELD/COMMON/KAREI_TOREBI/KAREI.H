@@ -14,7 +14,6 @@ void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 
-extern s16 Data_02000240[];
 
 #include "TYPES.H"
 
@@ -47,7 +46,6 @@ void Engine_EventBegin(void);
 #include "TYPES.H"
 
 #include "BATTLE_EFFECT_RUNTIME.H"
-#define Data_03001ebc (*(u8 * *)&Data_03001ebc)
 #include "WINDOW.H"
 #define UiWindow_Create ((s32 (*)())UiWindow_Create)
 

@@ -159,7 +159,6 @@ typedef struct OrbitingSceneObject {
 void Party_SetFields1ceAnd1d0(s32 arg0, s32 arg1);
 void BattleFx_SetWeightedResult(s32 arg0, s32 arg1);
 
-void Battle_Reset(s32 arg0);
 
 void InitializeSwayingSceneObject();
 void SetMapCellCollision();
@@ -169,12 +168,11 @@ union GameStateRows {
 };
 
 void SpawnRadialEffectBurst();
-void ObjectMotion_SetActionVariant();
+void Engine_ActorSetSpritePriority();
 void Engine_MapCopyCellAttributes();
 
 void BattleFx_SetWeightedResult();
 
-void Object_SetPosition(Obj *, s32, s32, s32);
 void Object_CommitPosition(Obj *);
 void Vector_AddPolarOffset(s32 arg0, s32 arg1, struct V *arg2);
 s32 Object_CheckMovementCollision(struct S *arg0, struct V *arg1);
@@ -283,12 +281,11 @@ void SpawnRadialEffectBurst(void)
 
 void InitializePrologueSceneState(void)
 {
-    extern u8 Data_02000240[];
 
     u8 *base;
 
     Engine_EventBegin();
-    base = Data_02000240;
+    base = (u8 *)&gGameState;
     Party_SetFields1ceAnd1d0(*(s16 *)(base + 448), 5);
     base[555] = 3;
     BattleFx_SetWeightedResult(84, 5);
@@ -319,7 +316,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 void StartScriptedSceneMessage(s32 message_id)
 {
-    Battle_Reset(message_id);
+    ((void (*)(s32 arg0))Engine_EventBegin)(message_id);
     Engine_ActorSetPosition(8, 0, 0);
     Engine_GameFlagSet(4055);
     Engine_ItemShowFound(ITEM_NUT, 3);
@@ -492,7 +489,7 @@ void FieldScene_HandleEscapeColumn(void)
 #else
     Engine_ActorSetSpriteFlags((u8 *)Object_GetById(8), zero);
 #endif
-    ObjectMotion_SetActionVariant(8, 3);
+    Engine_ActorSetSpritePriority(8, 3);
 
 #if EDITION_INTERNATIONAL
     entity->motion_flags = 0;
@@ -734,7 +731,7 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
 
         p->f30 = 0x10000;
         p->f34 = 0x8000;
-        Object_SetPosition(p, x, p->f0c, y);
+        ((void (*)(Obj *, s32, s32, s32))Engine_ObjectSetPosition)(p, x, p->f0c, y);
     }
     Object_SetMode(p, 27);
     {
@@ -743,7 +740,7 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
 
         q->f30 = 0x10000;
         q->f34 = 0x8000;
-        Object_SetPosition(q, x, q->f0c, y);
+        ((void (*)(Obj *, s32, s32, s32))Engine_ObjectSetPosition)(q, x, q->f0c, y);
     }
     if (x_offset < 0 || z_offset < 0) {
         Object_SetMode(q, 4);
@@ -2059,7 +2056,7 @@ void InitializeSwayingSceneObject(void)
     u8 *transfer;
     s32 zero;
 
-    actor = GetOrbitingSceneObject();
+    actor = ((s32 (*)())Object_GetById)();
     sprite = actor->sprite;
     sprite->flags_09_mode = 1;
     sprite->flags_05_bit_5 = 0;

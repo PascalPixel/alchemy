@@ -19,6 +19,7 @@
 #include "A9_MOTION.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 
 s32 Menu_ReservedStatusOne(void)
@@ -61,7 +62,7 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items)
     for (i = 0; i < 15; i++) {
         if (items[i] & INVENTORY_EQUIPPED) {
             item = items[i] & ITEM_ID_MASK;
-            switch (Item_Get(item)->type) {
+            switch (Item_GetDirectFar(item)->type) {
             case 1:
                 UiText_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, NAME_X, 8);
                 break;
@@ -124,7 +125,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items)
         if (items[i] != 0 && (items[i] & INVENTORY_EQUIPPED) != 0) {
             icon = state->entry_icons[i];
             if (icon != 0) {
-                switch (Item_Get(items[i] & ITEM_ID_MASK)->type) {
+                switch (Item_GetDirectFar(items[i] & ITEM_ID_MASK)->type) {
                 case 1:
                     icon->x = 216;
                     icon->y = 32;

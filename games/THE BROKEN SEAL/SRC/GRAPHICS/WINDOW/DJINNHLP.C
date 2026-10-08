@@ -18,6 +18,7 @@
 #include "DJINN_MENU.H"
 #include "HEAP_STATE.H"
 #include "text/MSG_IDS.H"
+void RenderOutput_PrepareForRedrawFar(s32 window);
 
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 #define gKeyState (*(volatile u32 *)&gKeyState)
@@ -25,7 +26,7 @@
 
 
 extern struct DjinnMenuWork *gMenuWork;
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 
 s32 Menu_DrawAtWindowOffset(void *win, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5)
@@ -108,7 +109,7 @@ s32 DjinnMenu_ShowHelp(void)
     selection = 0;
     RenderOutput_ClearListFar(menu->list_window);
     WaitFrames(1);
-    UiWindow_Clear(menu->help_window);
+    RenderOutput_PrepareForRedrawFar(menu->help_window);
     message = (s32)MsgDjinnInfoPrompt;
     UiText_DrawCharacterAtOffsetFar(message, menu->help_window, 0, 0);
     message++;
@@ -126,7 +127,7 @@ s32 DjinnMenu_ShowHelp(void)
         cnt++;
     } while (cnt <= 6);
     do {
-        UiWindow_Clear(win_a);
+        RenderOutput_PrepareForRedrawFar(win_a);
         UiText_DrawResourceFar(selection + (s32)MsgDjinnInfoTopic, win_a, 0, 0);
         channel = (struct UiChannelSlot *)UiText_OpenEntryMessageFar(win_b, selection + (s32)MsgDjinnInfoText);
         Menu_DrawAtWindowOffset((void *)list, 0, previous, 6, 1, 15);
@@ -138,29 +139,29 @@ s32 DjinnMenu_ShowHelp(void)
             if (gKeysRepeat & (KEY_RIGHT | KEY_DOWN)) {
                 selection++;
                 selection = Menu_GetModuloOfSum(selection, 7);
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 break;
             } else if (gKeysRepeat & (KEY_LEFT | KEY_UP)) {
                 selection--;
                 selection = Menu_GetModuloOfSum(selection, 7);
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 break;
             } else if (gKeyState & KEY_START) {
-                Audio_PlayCue(113);
+                AudioCommand_PlayFar(113);
                 result = -2;
                 break;
             } else if (gKeyState & (KEY_B | KEY_SELECT)) {
-                Audio_PlayCue(113);
+                AudioCommand_PlayFar(113);
                 result = -1;
                 break;
             } else if (gKeyState & KEY_A) {
                 if (UiWork_IsCompleteFar()) {
                     selection++;
                     selection = Menu_GetModuloOfSum(selection, 7);
-                    Audio_PlayCue(112);
+                    AudioCommand_PlayFar(112);
                     break;
                 } else {
-                    Audio_PlayCue(111);
+                    AudioCommand_PlayFar(111);
                 }
             }
         }
@@ -169,7 +170,7 @@ s32 DjinnMenu_ShowHelp(void)
             work->glyph_resource = 99;
         }
         ((struct UiRenderWork *)gWindowWork[0])->page_arrow_shown = 0;
-        UiWindow_Clear(win_b);
+        RenderOutput_PrepareForRedrawFar(win_b);
         {
             struct UiWindow *window = channel->work;
 
@@ -188,9 +189,9 @@ s32 DjinnMenu_ShowHelp(void)
     UiWork_FinalizeFar(win_b, 1);
     UiWindow_MarkVisibleTileAttributesFar();
     if (result == -2) {
-        UiWindow_Clear(menu->help_window);
-        UiWindow_Clear(menu->list_window);
-        UiWindow_Clear(*(s32 *)(menu->unknown_000 + 0x10));
+        RenderOutput_PrepareForRedrawFar(menu->help_window);
+        RenderOutput_PrepareForRedrawFar(menu->list_window);
+        RenderOutput_PrepareForRedrawFar(*(s32 *)(menu->unknown_000 + 0x10));
         ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 0;
     }
     Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);

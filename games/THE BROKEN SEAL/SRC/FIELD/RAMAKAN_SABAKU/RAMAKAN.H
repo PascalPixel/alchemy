@@ -9,7 +9,6 @@
 
 #define NULL ((void *)0)
 
-extern u8 *gWork;
 
 void BattleFx_RunPageEffectForSlot();
 void RamakanSabaku_UpdateTravelDust(void);

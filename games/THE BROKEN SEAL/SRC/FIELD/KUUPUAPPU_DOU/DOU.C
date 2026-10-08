@@ -724,7 +724,7 @@ void SceneActor_TransformAndApplyRecordPosition(s32 *rec, s32 v0, s32 v1)
     pos[1] = rec[3];
     pos[2] = rec[4];
     Vector_AddPolarOffset(v0, v1, pos);
-    Object_SetMoveTarget(rec, pos[0], pos[1], pos[2]);
+    Engine_ObjectSetPosition(rec, pos[0], pos[1], pos[2]);
 }
 
 void KuupuappuDou_SpawnPuffs(struct FieldActor *source)
@@ -773,7 +773,7 @@ void SceneActor_InitSlots10To15AndStartTask(void)
     {
         s32 rank = 0xc80;
 
-        Scheduler_AddOrUpdateCallback((s32)FieldScene_RunScene3a7SequenceD, rank);
+        Engine_TaskAddCallback((s32)FieldScene_RunScene3a7SequenceD, rank);
     }
 }
 
@@ -798,7 +798,7 @@ void SceneActor_SetupActors11To14AndInstallTask(void)
     {
         s32 rate = 0xc80;
 
-        Scheduler_AddOrUpdateCallback((s32)FieldScene_RunOpeningAuxiliarySequence, rate);
+        Engine_TaskAddCallback((s32)FieldScene_RunOpeningAuxiliarySequence, rate);
     }
 }
 
@@ -873,7 +873,7 @@ s32 KuupuappuDou_ApplyEntryState(void)
                 Engine_ActorSetAnimation(21, 5);
                 SceneActor_MarkSlot21AndSetFlag205();
             }
-            Scheduler_AddOrUpdateCallback((s32)SceneState_DispatchByActorZeroDepth, 0xc80);
+            Engine_TaskAddCallback((s32)SceneState_DispatchByActorZeroDepth, 0xc80);
             break;
         case 10:
         case 11:

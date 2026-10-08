@@ -13,6 +13,12 @@
 
 #include "RESOURCE_37C_RUNTIME.H"
 
+s32 Engine_GameFlagIsSet(s32);
+
+void Engine_WorkSetValuesIfNonNegative(s32, s32, s32);
+
+void Engine_GameFlagSet(s32);
+
 u8 *State_Run(void)
 {
     return SoruDou_SceneTable0;
@@ -46,10 +52,10 @@ s32 Resource37c_Run(void)
     s32 scale_z = 0x10000;
 
     RESOURCE37C_RUNTIME->setup_request_1c0 = 0x204;
-    Resource37c_SetSetupFlag(0x144);
-    if (Resource37c_TestSetupGate(0x814) != 0) {
+    Engine_GameFlagSet(0x144);
+    if (Engine_GameFlagIsSet(0x814) != 0) {
         Resource37c_QueueSoundCue(0x8D);
-        Resource37c_SetViewScale(scale_x, scale_y, scale_z);
+        Engine_WorkSetValuesIfNonNegative(scale_x, scale_y, scale_z);
         Resource37c_FinalizeSetup();
     }
     return 0;

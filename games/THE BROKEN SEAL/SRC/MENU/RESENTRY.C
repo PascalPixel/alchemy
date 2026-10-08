@@ -20,7 +20,7 @@
 #define UiText_DrawCharacterAtOffset ((void (*)(s32, void *, s32, s32))UiText_DrawCharacterAtOffset)
 
 void RenderOutput_PrepareForRedraw(void *work);
-void Audio_PlayCue(s32 sound_id);
+void AudioCommand_PlayFar(s32 sound_id);
 
 static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs)
 {
@@ -72,13 +72,13 @@ s32 Menu_SelectResource(s32 start, s32 goal)
             break;
 
         state->selection = state->selection + step;
-        Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         delay = 0;
         pos += step;
     }
 
     WaitFrames(48);
-    Audio_PlayCue(SOUND_MENU_CONFIRM);
+    AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
     return goal;
 }
 
@@ -90,7 +90,7 @@ void Menu_LoadResourceSlot(s32 slot, s32 index)
 
     Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
     VramBlock_LoadCached(slot, size, buffer);
-    Runtime_BumpFree(buffer);
+    MemFree(buffer);
 }
 
 void Menu_AppendResourceEntry(s32 no)

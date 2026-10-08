@@ -26,9 +26,6 @@ Object_SetMode:
 	.thumb_func
 Engine_ObjectSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global CreateOverlayObject
-	.thumb_func
-CreateOverlayObject:
 	.global Engine_ObjectCreate
 	.thumb_func
 Engine_ObjectCreate:
@@ -40,9 +37,6 @@ Engine_MapCopyCellAttributes:
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
 Engine_ActorSetSpriteFlags:
-	.global SetOverlayObjectMode
-	.thumb_func
-SetOverlayObjectMode:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
 	.global Engine_ObjectSetBlendMode
 	.thumb_func
@@ -167,9 +161,6 @@ Engine_ActorFaceEachOther:
 	.global ObjectGroup_SetChildValue
 	.thumb_func
 ObjectGroup_SetChildValue:
-	.global SetOverlayObjectSlot
-	.thumb_func
-SetOverlayObjectSlot:
 	overlay_veneer ObjectGroup_SetChildValueFar
 	.global Engine_EventSetMessage
 	.thumb_func

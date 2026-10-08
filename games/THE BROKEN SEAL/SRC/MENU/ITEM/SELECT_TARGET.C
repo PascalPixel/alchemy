@@ -55,7 +55,7 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
 void GameFlag_ClearBitFar(s32 flag);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 s32 ItemMenu_SelectTarget(s32 mode)
 {
@@ -148,25 +148,25 @@ s32 ItemMenu_SelectTarget(s32 mode)
         WaitFrames(1);
         if (gKeyState & KEY_A) {
             if (mode == 1 && selection == menu->pane_index[0]) {
-                Audio_PlayCue(114);
+                AudioCommand_PlayFar(114);
                 continue;
             }
-            Audio_PlayCue(112);
+            AudioCommand_PlayFar(112);
             result = menu->owner_ids[selection];
             break;
         }
         if (gKeyState & KEY_B) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             result = 255;
             break;
         }
         if (gKeysRepeat & KEY_LEFT) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             selection--;
             pending = 1;
         }
         if (gKeysRepeat & KEY_RIGHT) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             pending = 1;
             selection++;
         }

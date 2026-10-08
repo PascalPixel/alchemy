@@ -81,12 +81,12 @@ void FieldScene_RunScene3b3SequenceA(void)
     }
     TakaraHashira_ShakeChance = 0;
     Engine_TaskAddCallback(CopyAndOffsetCoordinatePreset, 0xc80);
-    WaitFrames(1);
+    Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, TakaraHashira_JitterBackgroundScroll);
     Engine_AudioPlayCue(231);
     TakaraHashira_ShakeChance = 0;
     do {
-        WaitFrames(1);
+        Engine_TaskWait(1);
     } while (++TakaraHashira_ShakeChance <= 100);
     Engine_AudioPlayCue(0x121);
     if (Engine_GameFlagIsSet(0x200) == 0) {
@@ -96,12 +96,12 @@ void FieldScene_RunScene3b3SequenceA(void)
         Engine_MapCopyCellsTo(0, 64, 32, 0, 32, 32);
         Engine_MapCopyCellsTo(32, 64, 64, 0, 32, 32);
     }
-    WaitFrames(1);
+    Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
-    WaitFrames(1);
+    Engine_TaskWait(1);
     Engine_TaskRemoveCallback((s32)CopyAndOffsetCoordinatePreset);
     Engine_MapRedraw();
-    WaitFrames(30);
+    Engine_TaskWait(30);
 }
 
 void FieldScene_RunFlaggedDisplayScene(void)

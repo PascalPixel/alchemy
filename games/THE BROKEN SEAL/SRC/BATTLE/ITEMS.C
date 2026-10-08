@@ -21,6 +21,8 @@
 #include "MOTOBJ.H"
 #include "ANIMSPR.H"
 #include "text/MSG_IDS.H"
+struct BtlAct * BtlActGet(s32 action_id);
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 #define BattleEffect_SelectNearbyObject ((s32 (*)(u32))BattleEffect_SelectNearbyObject)
 
@@ -98,7 +100,7 @@ void Battle_ResetEffectCounter(void)
   void **cell;
   u8 *counter;
   int zero;
-  cell = (void **)&Data_03001ebc;
+  cell = (void **)&gEventWork;
   runtime = *cell;
   counter = (u8 *)&((struct BattleRuntime *)runtime)->unknown_cb6;
   zero = 0;
@@ -112,7 +114,7 @@ void Battle_ResetEffectCounter(void)
 s32 Event_FindFacingTrigger(s32 source)
 {
     /* FAKEMATCH: needed to match: the word-result call avoids the two narrowing shifts added by the u8 declaration */
-    struct FieldStepWork *runtime = (struct FieldStepWork *)Data_03001ebc;
+    struct FieldStepWork *runtime = (struct FieldStepWork *)gEventWork;
     const struct SceneEvent *trigger = runtime->events;
     s32 facing = ((struct MotionObject *)ObjectTable_Get(
         gGameState.selected_actor))->angle;
@@ -239,7 +241,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         flag = 0x142;
         GameFlag_ClearBitFar(0x143);
         GameFlag_SetBitFar(flag);
-        action_id = Item_Get(item_id)->action_id;
+        action_id = Item_GetDirectFar(item_id)->action_id;
         runtime = (struct ItemCommandRuntime *)gEventWork;
 
         if (action_id != 0) {
@@ -275,7 +277,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             runtime->resolving_action = 0;
             BattleEffect_CleanupSceneObjects();
 
-            if (Item_Get(item_id)->use_type & 1)
+            if (Item_GetDirectFar(item_id)->use_type & 1)
                 GameFlag_SetBitFar(0x143);
         }
     }
@@ -290,7 +292,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
 {
     /* FAKEMATCH: needed to match: the word-result call avoids the two narrowing shifts added by the u8 declaration */
-    struct FieldStepWork *runtime = (struct FieldStepWork *)Data_03001ebc;
+    struct FieldStepWork *runtime = (struct FieldStepWork *)gEventWork;
     const struct SceneEvent *event = runtime->events;
     s32 reference = ((struct MotionObject *)ObjectTable_Get(
         gGameState.selected_actor))->angle;
@@ -342,7 +344,7 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 
     index = packed & 0x3FF;
     mode = ((u32)packed >> 10) & 0xF;
-    object = Ability_GetData(index)->type_0c;
+    object = BtlActGet(index)->type_0c;
     ObjectTable_Get(gGameState.selected_actor);
     first = (void *)BattleFx_FindMatchingEvent(0x30000005, object, &output);
     second = (void *)BattleFx_FindMatchingEvent(0x20000005, object, &output);

@@ -342,7 +342,7 @@ void RamakanSabaku_ShowRandomPartyLine(s32 a0)
 
 void RamakanSabaku_RaiseQuarterTriggers(void)
 {
-    struct EventWork *work = (struct EventWork *)gWork;
+    struct EventWork *work = (struct EventWork *)gEventWork;
     u8 *state = (u8 *)&gGameState;
     s32 percent = *(s16 *)(state + 0x232) * 100 / *(s16 *)(state + 0x22c);
 
@@ -415,7 +415,7 @@ void RamakanSabaku_SweepBack(void)
     u16 *hold;
     s32 zero;
 
-    work = gWork;
+    work = (u8 *)gEventWork;
     frames = 60;
     best = 0xf00000;
     GameFlag_Set(0x200);

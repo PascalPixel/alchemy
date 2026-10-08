@@ -23,8 +23,8 @@
 
 void Resource_DecodeByteLz(void *source, void *destination);
 
-s32 ItemMenu_Open(void);
-extern u8 *gWork;
+s32 ItemMenu_RunFar(void);
+extern u8 *gEventWork;
 
 
 void Menu_LoadSelectedResource(void)
@@ -86,7 +86,7 @@ s32 Menu_RunTopSelection(void)
     s32 sel;
     u8 *state;
 
-    state = gWork;
+    state = gEventWork;
     sel = 0;
 
 loop:
@@ -114,7 +114,7 @@ loop:
             goto loop;
         break;
     case 2:
-        ret = ItemMenu_Open();
+        ret = ItemMenu_RunFar();
         if (ret != 0)
             goto loop;
         break;

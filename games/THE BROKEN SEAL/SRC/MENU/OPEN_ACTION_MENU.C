@@ -105,8 +105,8 @@ s32 ActionMenu_Open(void)
 #endif
     CopyWords(Iwram_CopyWords, (void *)0x05000000, palette, 64);
     CopyWords(Iwram_CopyWords, (void *)0x06004000, tiles, SAVED_TILE_BYTES);
-    Runtime_BumpFree(tiles);
-    Runtime_BumpFree(palette);
+    MemFree(tiles);
+    MemFree(palette);
     ((struct UiRenderWork *)((void **)&gMenuCtrlWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL])->menu_busy = 1;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);

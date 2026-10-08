@@ -27,7 +27,7 @@ void Bios_CpuSet(const void *source, void *destination, u32 control);
 
 struct SoundPlayer;
 struct AudioTrackSlotWork;
-extern struct AudioTrackSlotWork *gScratchWord;
+extern struct AudioTrackSlotWork *Flash_Handler3;
 extern struct SoundPlayer gMusicPlayerBgm;
 extern struct SoundPlayer gMusicPlayerFanfare;
 extern struct SoundPlayer Sound_Player3;

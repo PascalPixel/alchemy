@@ -1,3 +1,4 @@
+#define OWN_AudioCommand_PlayFar
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -17,12 +18,12 @@
 
 #define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)
 
-s32 Audio_PlayCue(s32);
+s32 AudioCommand_PlayFar(s32);
 
 s32 Runtime_BlankDisplayAndRun(void)
 {
     REG_DISPCNT = 0x40;
-    Audio_PlayCue(9);
+    AudioCommand_PlayFar(9);
     LuckyDice_Run();
     return 0;
 }

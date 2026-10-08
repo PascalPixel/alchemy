@@ -221,7 +221,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
     return completed;
 }
 
-void Object_SetMode(void *object, s32 mode);
+void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
 
 s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
@@ -271,7 +271,7 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
             if ((target <= 7) != (units[i] <= 7))
                 BattlePres_SetActorRecordMode(units[i], 1);
         } else {
-            Object_SetMode(object, 3);
+            ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
         }
     }
     AudioCommand_PlayFar(0x9a);

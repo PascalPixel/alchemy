@@ -50,7 +50,6 @@ extern u8 ArutinMura_TriggerTable[];
 
 s32 Battle_GetWorkObject1e0();
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);
-u32 Random16(void);
 void SceneEffect_UpdateDriftingParticle(struct SceneMotion *work);
 void SceneEffect_SpawnDriftingParticle(void);
 

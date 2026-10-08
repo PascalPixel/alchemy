@@ -21,7 +21,7 @@ struct MapWork {
 void Engine_MapCopyCellAttributes();
 s32 OverlayObject_PrepareObjectWithCommand15();
 void OverlayObject_WaitUntilIdle();
-void Engine_ActorStartAction();
+void Object_RefreshSelectorById();
 
 void VinasuHeya_ShiftBridge(void)
 {
@@ -154,7 +154,7 @@ void VinasuHeya_RunCellPushScene(void)
                 Object_GetById(10)->priority_flags |= 2;
                 Engine_ActorSetPosition(10, 0x3280000, 0x2d80000);
                 Engine_ActorEnableActionCallback(10, gVinasuPushScript);
-                Engine_ActorStartAction(10);
+                Object_RefreshSelectorById(10);
                 Engine_EventWait(30);
                 Engine_AudioPlayCue(158);
                 Engine_MapAnimateCells(gVinasuPushCells, 110, 41);

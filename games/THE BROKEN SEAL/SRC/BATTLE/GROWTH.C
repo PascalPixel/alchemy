@@ -122,7 +122,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
         result = 1;
     }
 
-    Runtime_BumpFree(pool);
+    MemFree(pool);
     return result;
 }
 
@@ -198,7 +198,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 
     state->level += levels;
     UnitCalcFar(owner);
-    Runtime_BumpFree(base);
+    MemFree(base);
 }
 
 #if EDITION_INTERNATIONAL

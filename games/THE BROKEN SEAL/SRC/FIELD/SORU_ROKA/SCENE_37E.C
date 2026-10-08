@@ -15,6 +15,10 @@ extern struct Resource37deSceneRuntime *gEventWork;
 
 #include "RESOURCE_37DE_SCENE.H"
 
+s32 Engine_GameFlagIsSet(s32);
+
+void Engine_WorkSetValuesIfNonNegative(s32, s32, s32);
+
 u8 *SceneData_GetScriptTable(void)
 {
     return SoruRoka_SceneTable0;
@@ -51,9 +55,9 @@ s32 Scene_InitSceneRequestAndCameraZoom(void)
     runtime = gEventWork;
     runtime->scene_request_1c0 = 0x204;
     runtime->scene_setup_word_1c8 = 0x10;
-    if (TestSceneFlag(0x814) != 0) {
+    if (Engine_GameFlagIsSet(0x814) != 0) {
         QueueSceneSound(0x8D);
-        SetCameraZoom(zoom_x, zoom_y, zoom_z);
+        Engine_WorkSetValuesIfNonNegative(zoom_x, zoom_y, zoom_z);
         InitializeSceneRecordBuffer();
     }
     return 0;

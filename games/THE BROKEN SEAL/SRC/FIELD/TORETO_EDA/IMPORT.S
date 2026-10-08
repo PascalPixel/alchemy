@@ -2,9 +2,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Scheduler_AddOrUpdateCallback
+	.global Engine_TaskAddCallback
 	.thumb_func
-Scheduler_AddOrUpdateCallback:
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Runtime_SetIrqHandler
 	.thumb_func
@@ -18,21 +18,21 @@ SerialRuntime_PollAndTransfer:
 	.thumb_func
 Map_GetTerrainHeight:
 	overlay_veneer Map_GetTerrainHeightFar
-	.global Battle_Reset
+	.global Engine_EventBegin
 	.thumb_func
-Battle_Reset:
+Engine_EventBegin:
 	overlay_veneer Battle_ResetFar
-	.global BattleFx_FinishAction
+	.global Engine_EventEnd
 	.thumb_func
-BattleFx_FinishAction:
+Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
 	overlay_veneer Object_GetByIdFar
-	.global Event_SetExitRequest
+	.global Engine_EventRequestExit
 	.thumb_func
-Event_SetExitRequest:
+Engine_EventRequestExit:
 	overlay_veneer Event_SetExitRequestFar
 	.global BattleFx_SetPhaseRequest
 	.thumb_func
@@ -42,7 +42,7 @@ BattleFx_SetPhaseRequest:
 	.thumb_func
 DisplayTransition_InitializeBattleEffectState:
 	overlay_veneer DisplayTransition_InitializeBattleEffectStateFar
-	.global Audio_PlayCue
+	.global Engine_AudioPlayCue
 	.thumb_func
-Audio_PlayCue:
+Engine_AudioPlayCue:
 	overlay_veneer AudioCommand_PlayFar

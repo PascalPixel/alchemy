@@ -32,6 +32,7 @@
 #include "DISPTRAN.H"
 #include "BTLSYS.H"
 #include "LAYOUT_GUARD.H"
+void Ui_PrepareTransferForItemFar(s32 item);
 
 #define gOverlayArea (*(struct FieldMapState *)&gOverlayArea)
 
@@ -52,7 +53,7 @@ LAYOUT_OFFSET_GUARD(ParticleEmitter_active_offset, struct ObjectRuntime, flags, 
 LAYOUT_OFFSET_GUARD(ParticleEffectObject_child_offset, struct ObjectRuntime, animation, 0x50);
 
 extern void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
-extern void Object_SetMode(struct ObjectRuntime *, s32);
+extern void ObjectDispatch_ApplyArgumentToChildrenFar(struct ObjectRuntime *, s32);
 
 // イベントのキャラ (向きと位置)
 struct EfxSrc
@@ -111,7 +112,7 @@ void		   ObjectDispatch_ReleaseFar(void *object);
 #define BATTLE_ACTIVE_OFS 0xcb8 // gEventWork：効果が動いていれば 0 以外
 struct EffectObject_0808f1c0;
 
-void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
+void Object_SetMoveTargetFar(struct ObjectRuntime *, s32, s32, s32);
 
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 
@@ -261,7 +262,7 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter)
 
 		// パーツ 0 の 9 バイト目：bit 2〜3 を 1 にする
 		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_ParticleScript);
-		Object_SetMode(obj, 0);
+		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
 		mask = 13;
 		flags = ((u8 *)&((struct AnimationObject *)obj->animation)->part[0])[9];
 		mask = -mask;
@@ -352,7 +353,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 
 		// アイテムの絵を作業領域 17 へ読み、VRAM のタイルへ送る
 		buf = Runtime_AllocateHeapBlock(17, 0x608);
-		ItemIcon_LoadTilesFar(item);
+		Ui_PrepareTransferForItemFar(item);
 
 		((struct TileBits *)((u8 *)vis + 8))->tile =
 			VramBlock_LoadCached(vis->slot, 128, (u8 *)buf + 0x400);
@@ -385,9 +386,9 @@ void EffectRuntime_PrepareRisingObject(struct ObjectRuntime *object)
 	object->acceleration = 1 << 16;
 	object->speed_limit = 2 << 16;
 	object->flags = 0;
-	Object_SetPosition(object, actor->x, actor->y + (36 << 16), actor->z);
+	Object_SetMoveTargetFar(object, actor->x, actor->y + (36 << 16), actor->z);
 	WaitFrames(3);
-	Object_SetMode(actor, 28);
+	ObjectDispatch_ApplyArgumentToChildrenFar(actor, 28);
 	ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_RisingPulseScript);
 	actor->angle = 0x4000;
 }
@@ -425,7 +426,7 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
 		{
 			WaitFrames(80);
 		}
-		Object_SetMode(actor, 1);
+		ObjectDispatch_ApplyArgumentToChildrenFar(actor, 1);
 	}
 }
 
@@ -460,7 +461,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
 		mask |= 4;
 		visual->flags_b = mask;
 
-		ItemIcon_LoadTilesFar(value);
+		Ui_PrepareTransferForItemFar(value);
 		VramBlock_LoadCached(visual->value_1c, 128, (u8 *)handle + 0x400);
 		Runtime_ReleaseHeapBlock(17);
 
@@ -470,7 +471,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
 			EffectRuntime_PrepareRisingObject((struct ObjectRuntime *)object);
 
 		WaitFrames(80);
-		Object_SetMode(actor, 1);
+		ObjectDispatch_ApplyArgumentToChildrenFar(actor, 1);
 		ObjectDispatch_ReleaseFar(object);
 	}
 }
@@ -551,7 +552,7 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source
 		u8	flags;
 
 		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_ParticleScript);
-		Object_SetMode(obj, 0);
+		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
 		mask = 13;
 		flags = ((u8 *)&((struct AnimationObject *)obj->animation)->part[0])[9];
 		mask = -mask;

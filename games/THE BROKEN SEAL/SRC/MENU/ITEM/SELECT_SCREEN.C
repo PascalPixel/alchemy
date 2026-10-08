@@ -111,7 +111,7 @@ s32 RunAssetSelectionScreen(void)
     UiWork_SetAltFlagAndClearTableFar(0);
     CopyWords(copy, (void *)0x06004000, backup, size);
     ((struct UiRenderWork *)*process)->menu_busy = 0;
-    Runtime_BumpFree(backup);
+    MemFree(backup);
     WaitFrames(1);
     Scheduler_DisableOverlayCallbacksWithFlags();
 #endif

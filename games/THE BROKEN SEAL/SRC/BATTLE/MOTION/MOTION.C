@@ -18,12 +18,12 @@
 #include "BTLDISP.H"
 #include "BTLSYS.H"
 #include "FIELD_EVENT.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 #define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)
 
 
-void Object_ResetMotion(struct MotionObject *);
-void Object_SetPosition(struct MotionObject *, s32, s32, s32);
+void ObjectDispatch_InitFromTable6Far(struct MotionObject *);
 s32 ArcTan2(s32, s32);
 
 
@@ -69,8 +69,8 @@ void ObjMotRst(s32 slot_id)
     object->vertical_motion_phase = zero;
     object->auto_face_motion = zero;
     object->snap_to_target = 1;
-    Object_ResetMotion(object);
-    Object_SetPosition(object, slot->anchor_x, 0, slot->anchor_z);
+    ObjectDispatch_InitFromTable6Far(object);
+    Object_SetMoveTargetFar(object, slot->anchor_x, 0, slot->anchor_z);
     z = slot->anchor_z;
     if (z < 0)
         z += 7;
@@ -91,9 +91,9 @@ void BattleMotion_SetupEscapeObject(s32 object_id)
     object->vertical_motion_strength = 0x7851;
     object->vertical_motion_phase = 0;
     object->auto_face_motion = 0;
-    Object_ResetMotion(object);
-    Object_SetPosition(object, slot->anchor_x * 3, 0, slot->anchor_z);
-    Object_SetMode(object, 1);
+    ObjectDispatch_InitFromTable6Far(object);
+    Object_SetMoveTargetFar(object, slot->anchor_x * 3, 0, slot->anchor_z);
+    ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
 }
 
 void BattleMotion_InterpolatePosition(struct BtlObj *start_slot,
@@ -121,8 +121,8 @@ void BattleMotion_InterpolatePosition(struct BtlObj *start_slot,
     start->vertical_motion_strength = 0xab85;
     start->vertical_motion_phase = 0;
     start->auto_face_motion = 1;
-    Object_SetPosition(start, x, 0, start_z + z_step);
-    Object_SetMode(start, 2);
+    Object_SetMoveTargetFar(start, x, 0, start_z + z_step);
+    ObjectDispatch_ApplyArgumentToChildrenFar(start, 2);
 }
 
 void BattleMotion_SetObjectPosition(struct BtlObj *slot)
@@ -134,7 +134,7 @@ void BattleMotion_SetObjectPosition(struct BtlObj *slot)
     object->vertical_motion_strength = 0xab85;
     object->vertical_motion_phase = 0;
     object->auto_face_motion = 0;
-    Object_SetPosition(object, slot->anchor_x, 0, slot->anchor_z);
+    Object_SetMoveTargetFar(object, slot->anchor_x, 0, slot->anchor_z);
 }
 
 void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id)
@@ -151,9 +151,9 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id)
     object->vertical_motion_strength = 0x9999;
     object->vertical_motion_phase = 0;
     object->auto_face_motion = 0;
-    Object_ResetMotion(object);
+    ObjectDispatch_InitFromTable6Far(object);
     scaled_x = slot->anchor_x * 3;
-    Object_SetPosition(object, (s32)(scaled_x + (scaled_x >> 0x1F)) >> 1, 0, slot->anchor_z);
+    Object_SetMoveTargetFar(object, (s32)(scaled_x + (scaled_x >> 0x1F)) >> 1, 0, slot->anchor_z);
 }
 
 void BattleMotion_InitializeObject(s32 id)
@@ -167,11 +167,11 @@ void BattleMotion_InitializeObject(s32 id)
     object->vertical_motion_strength = 0x9999;
     object->vertical_motion_phase = 0;
     object->auto_face_motion = 0;
-    Object_ResetMotion(object);
-    Object_SetPosition(object,
+    ObjectDispatch_InitFromTable6Far(object);
+    Object_SetMoveTargetFar(object,
                        Iwram_MulQ16(slot->anchor_x, 0x14ccc),
                        0, slot->anchor_z);
-    Object_SetMode(object, 5);
+    ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
 }
 
 void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
@@ -191,12 +191,12 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
         object->vertical_motion_strength = 0x9999;
         object->vertical_motion_phase = 0;
         object->auto_face_motion = 0;
-        Object_ResetMotion(object);
+        ObjectDispatch_InitFromTable6Far(object);
         scale = slot->anchor_x;
         x = (scale * BattleMotion_VariantDistancePercent[variant]) / 100;
-        Object_SetPosition(object, x, 0, slot->anchor_z);
+        Object_SetMoveTargetFar(object, x, 0, slot->anchor_z);
     }
-    Object_SetMode(object, 5);
+    ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
 }
 
 void BattleMotion_ApproachTarget(
@@ -235,9 +235,9 @@ void BattleMotion_ApproachTarget(
     object->velocity_y = initial_velocity_y;
     object->vertical_motion_strength = 0xab85;
     object->auto_face_motion = 1;
-    Object_ResetMotion(object);
-    Object_SetPosition(object, x, 0, z);
-    Object_SetMode(object, 2);
+    ObjectDispatch_InitFromTable6Far(object);
+    Object_SetMoveTargetFar(object, x, 0, z);
+    ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
 }
 
 void BattleMotion_ResetSlotObjectMode2(s32 id)
@@ -245,8 +245,8 @@ void BattleMotion_ResetSlotObjectMode2(s32 id)
     struct MotionObject *object;
 
     object = BtlObjGet(id)->object;
-    Object_ResetMotion(object);
-    Object_SetMode(object, 2);
+    ObjectDispatch_InitFromTable6Far(object);
+    ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
 }
 
 void BattleMotion_ReservedNoOp83B0()

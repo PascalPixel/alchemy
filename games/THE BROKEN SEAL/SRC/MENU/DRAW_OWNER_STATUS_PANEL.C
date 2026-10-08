@@ -17,6 +17,8 @@
 #include "BTLSYS.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
+s32 Item_CanOwnerEquip(s32 owner, s32 item);
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 
@@ -58,7 +60,7 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
     state = gMenuWork;
     unit = UnitGetFar(owner);
     item = unit->inventory[slot];
-    def = Item_Get(item & 0x1ff);
+    def = Item_GetDirectFar(item & 0x1ff);
     if (!(mode & 0x100))
         created = UiWindow_UpdateOrCreate((s32 *)&state->status_window, 0, 5, 13, 12, 258);
     window = (s32)state->status_window;
@@ -138,7 +140,7 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         UnitCalcFar(owner);
         UiText_DrawStatComparison(unit, backup, window);
         Owner_Copy(unit, backup);
-        Runtime_BumpFree(backup);
+        MemFree(backup);
         break;
     }
     case 4: {

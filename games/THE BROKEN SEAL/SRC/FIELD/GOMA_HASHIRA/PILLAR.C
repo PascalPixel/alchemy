@@ -1,3 +1,4 @@
+#define OWN_gGameState
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -22,18 +23,18 @@
 #define Field_TryJumpForward ((void (*)(void))Field_TryJumpForward)
 
 s32 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPosition *position);
-void WaitFrames(s32 frames);
+void Engine_TaskWait(s32 frames);
 #endif
 
 void Engine_EventBegin(void);
 void Engine_EventEnd(void);
-void Battle_WaitMode0(s32 frames);
+void Engine_EventWait(s32 frames);
 void Engine_ActorSetSpriteFlags();
 void Engine_ObjectSetBlendMode();
 void Engine_ActorSetPosition(s32 actor, s32 fixed_x, s32 fixed_z);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
+void Engine_ActorWaitForMove(s32 actor);
+void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
 void Engine_ActorSetDestination(s32 actor, s32 x, s32 z);
 s32 Engine_RandomNext(void);
 void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
@@ -41,11 +42,11 @@ void Engine_MapRenderWaitForValues(void);
 #if EDITION_INTERNATIONAL
 s32 Engine_GameFlagSet(s32 flag);
 #endif
-void Audio_PlayCue(s32 cue);
+void Engine_AudioPlayCue(s32 cue);
 #if EDITION_INTERNATIONAL
 struct FieldActor *Object_GetById();
 #endif
-void ObjectGroup_ConfigureChildValue();
+void Engine_ActorSetChildValue();
 #if EDITION_INTERNATIONAL
 void Engine_TaskAddCallback();
 void Engine_TaskRemoveCallback();
@@ -64,7 +65,7 @@ static __inline__ void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s
                                               s32 dest_x, s32 dest_y)
 {
     /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
-    Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
+    Engine_MapCopyCellAttributes(src_x, src_y, width, height, dest_x, dest_y);
 }
 #endif
 
@@ -72,9 +73,8 @@ void Engine_ActorFaceDirection();
 void Engine_ActorShowEmote();
 void Engine_ActorStartRepeatedMotion();
 void Engine_ActorJump();
-void Object_SetModeById();
-extern u8 *gWork;
-extern s16 Data_02000240[];
+void Engine_ActorSetAnimation();
+extern s16 gGameState[];
 
 s32 GomaHashira_Actor13Frames;
 
@@ -99,32 +99,32 @@ void FieldScene_RunPillarSequence(void)
         p0->terrain_id = 1;
         r2 = (s32)Object_GetById(11);
         Engine_ActorSetSpriteFlags(r2, 0);
-        ObjectGroup_ConfigureChildValue(11, 14);
+        Engine_ActorSetChildValue(11, 14);
         r3 = (s32)Object_GetById(11);
         Engine_ObjectSetBlendMode(r3, 1);
         Engine_ActorSetPosition(11, 0x19e0000, 0xf00000);
-        Battle_WaitMode0(10);
+        Engine_EventWait(10);
         base = (s32)FieldScene_RunPrimarySequence;
         Engine_TaskAddCallback(base, 0xc80);
-        Audio_PlayCue(141);
-        ObjectMotion_OffsetPositionAndResetMotion(9, 1, 0);
-        ObjectMotion_CommitCurrentPositionAndActivate(9);
-        Battle_WaitMode0(10);
-        ObjectMotion_OffsetPositionAndResetMotion(9, 2, 0);
-        ObjectMotion_CommitCurrentPositionAndActivate(9);
+        Engine_AudioPlayCue(141);
+        Engine_ActorSetDestinationOffset(9, 1, 0);
+        Engine_ActorWaitForMove(9);
+        Engine_EventWait(10);
+        Engine_ActorSetDestinationOffset(9, 2, 0);
+        Engine_ActorWaitForMove(9);
         r4 = (s32)Object_GetById(9);
         *(s32 *)(r4 + 68) = zero;
         r5 = (s32)Object_GetById(9);
         *(s32 *)(r5 + 72) = 0x9999;
-        Battle_WaitMode0(3);
-        ObjectMotion_SetSpeedParameters(9, 0x28000, 0x4000);
-        Audio_PlayCue(0x120);
+        Engine_EventWait(3);
+        Engine_ActorSetSpeed(9, 0x28000, 0x4000);
+        Engine_AudioPlayCue(0x120);
         Engine_ActorSetDestination(9, 0x1a0, 200);
         r6 = (s32)Object_GetById(9);
         Engine_ActorSetSpriteFlags(r6, 0);
         Engine_TaskRemoveCallback(base);
-        Battle_WaitMode0(12);
-        Audio_PlayCue(189);
+        Engine_EventWait(12);
+        Engine_AudioPlayCue(189);
         rec7 = ((s32 (*)())Object_GetById)(9);
         v1 = Engine_RandomNext();
         a0 = *(s32 *)(rec7 + 8);
@@ -143,8 +143,8 @@ void FieldScene_RunPillarSequence(void)
         v3 = Engine_RandomNext();
         n = -n;
         Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, zero, n, (s32)((u32)(v3 << 1) >> 16), zero);
-        Battle_WaitMode0(20);
-        Audio_PlayCue(154);
+        Engine_EventWait(20);
+        Engine_AudioPlayCue(154);
         Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
         Engine_MapRenderWaitForValues();
@@ -166,7 +166,7 @@ void FieldScene_RunPillarBurst(void)
     if (x == 38 && z == 14) {
         Object_GetById(10)->y.fixed = -0x20000;
         Object_GetById(10)->target_y = Object_GetById(10)->y.fixed;
-        Audio_PlayCue(188);
+        Engine_AudioPlayCue(188);
         GomaHashira_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
             Object_GetById(10)->z.fixed, 0x8000, 0, 0, 1);
         GomaHashira_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
@@ -219,8 +219,8 @@ void FieldScene_TryJumpForward(void)
     if (Object_CheckMovementCollision(obj, pos) == 0) {
         Engine_EventBegin();
         Object_SetMode(obj, 6);
-        WaitFrames(6);
-        Audio_PlayCue(152);
+        Engine_TaskWait(6);
+        Engine_AudioPlayCue(152);
         Object_SetMode(obj, 7);
         obj->speed = 0x30000;
         obj->acceleration = 0x20000;
@@ -246,7 +246,7 @@ void GomaHashira_DriveActor13Idle(void)
     u8 *work;
     s32 t;
 
-    work = gWork;
+    work = (u8 *)gEventWork;
     t = ++GomaHashira_Actor13Frames;
     switch (t) {
     case 60:
@@ -261,10 +261,10 @@ void GomaHashira_DriveActor13Idle(void)
         Engine_ActorJump(13, 4, 0);
         break;
     case 480:
-        Object_SetModeById(13, 4);
+        Engine_ActorSetAnimation(13, 4);
         break;
     }
     /* FAKEMATCH: the 99 goes through the counter variable so it is built with movs instead of a halfword pool constant. */
-    if (Data_02000240[282] == 0)
+    if (gGameState[282] == 0)
         *(u16 *)(work + 0x182) = t = 99;
 }

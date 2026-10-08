@@ -206,10 +206,9 @@ void FieldScene_RunIndexedStep8(void)
 
 s32 Scene_RunSupplementalSequenceOne(void)
 {
-    extern u8 *gWork;
 
     struct FieldActor *record;
-    u8 **scene = (u8 **)&gWork;
+    u8 **scene = (u8 **)&gEventWork;
 
     *(s32 *)(scene[0] + 0x1c0) = 0x209;
     if (Engine_GameFlagIsSet(0x834) != 0) {

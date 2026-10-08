@@ -27,7 +27,7 @@
 #define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
 
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 
 void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
@@ -92,9 +92,9 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
     for (frame = 0; frame != 98; frame++) {
         struct BattleCamera *camera = gCameraWork;
         if (frame == 8)
-            Audio_PlayCue(212);
+            AudioCommand_PlayFar(212);
         if (frame == 80)
-            Audio_PlayCue(142);
+            AudioCommand_PlayFar(142);
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
         if (frame >= 30 && frame < 70) {
@@ -190,7 +190,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
             position[2] = object->z;
             SceneTransform_ApplyPosition(position);
             if (frame == start + 30)
-                Audio_PlayCue(126);
+                AudioCommand_PlayFar(126);
             if (frame == start + 40)
                 ObjectGroup_UpdateMembers(work->effect->actors[member], 7, -1, -1, 0);
             if (frame == start + 64)

@@ -16,11 +16,11 @@
 #include "text/MSG_IDS.H"
 
 
-void Battle_WaitMode0(s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
-void Object_SetModeById(s32 actor, s32 animation);
+void Engine_EventWait(s32 frames);
+void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
+void Engine_ActorWaitForMove(s32 actor);
+void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
+void Engine_ActorSetAnimation(s32 actor, s32 animation);
 
 struct EffectRecord {
     u8 pad[9];
@@ -108,15 +108,15 @@ void FieldScene_RunScene3beSequenceB(void)
 
     if (GameFlag_IsSet(0x98a) == 0 && GameFlag_IsSet(0x9a0) != 0) {
         Engine_EventBegin();
-        ObjectMotion_SetSpeedParameters(11, 0x10000, 0x8000);
+        Engine_ActorSetSpeed(11, 0x10000, 0x8000);
         leader = Actor_Get(ACTOR_PARTY_LEADER);
         if (leader != 0) {
             Actor_SetPosition(11, leader->x.fixed, leader->z.fixed);
         }
-        ObjectMotion_OffsetPositionAndResetMotion(11, -8, 16);
-        ObjectMotion_CommitCurrentPositionAndActivate(11);
+        Engine_ActorSetDestinationOffset(11, -8, 16);
+        Engine_ActorWaitForMove(11);
         Actor_FaceDirection(11, 0xd000, 0);
-        Battle_WaitMode0(10);
+        Engine_EventWait(10);
         Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
         Engine_EventSetMessage((s32)MsgKaragoruWhyGoingBackRobinDo);
         Event_OpenMessage(11, 0);
@@ -124,25 +124,25 @@ void FieldScene_RunScene3beSequenceB(void)
             Event_ShowMessage(11, 0);
             Actor_WalkTo(11, 152, 232);
             GameFlag_Clear(0x9a0);
-            ObjectMotion_CommitCurrentPositionAndActivate(11);
-            Object_SetModeById(11, 1);
+            Engine_ActorWaitForMove(11);
+            Engine_ActorSetAnimation(11, 1);
             gGameState.saved_scene = (s32)&SceneId_TorebiHeya;
             gGameState.saved_entrance = 30;
         } else {
             gEventWork->message += 1;
             Event_ShowMessage(11, 0);
-            Object_SetModeById(11, 2);
+            Engine_ActorSetAnimation(11, 2);
             leader = Actor_Get(ACTOR_PARTY_LEADER);
             if (leader != 0) {
                 Actor_SetDestination(11, leader->x.part.pixel, leader->z.part.pixel);
             }
-            ObjectMotion_CommitCurrentPositionAndActivate(11);
+            Engine_ActorWaitForMove(11);
             Actor_SetPosition(11, 0, 0);
-            Battle_WaitMode0(30);
-            Object_SetModeById(ACTOR_PARTY_LEADER, 2);
-            ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, 16);
-            ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
-            Object_SetModeById(ACTOR_PARTY_LEADER, 1);
+            Engine_EventWait(30);
+            Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+            Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
+            Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+            Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
         }
         Engine_EventEnd();
     }

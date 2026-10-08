@@ -10,9 +10,9 @@ Engine_TaskWait:
 	.thumb_func
 Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Random16
+	.global Engine_RandomNext
 	.thumb_func
-Random16:
+Engine_RandomNext:
 	overlay_veneer Random16Far
 	.global Engine_MathSin
 	.thumb_func

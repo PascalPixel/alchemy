@@ -18,6 +18,7 @@
 #include "WORKSPACE_OPTIONS.H"
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
+s32 GameFlag_TestFar(s32 flag);
 
 #define Resource_FixedBlockBTiles ((const u8 *)&Resource_FixedBlockBTiles)
 #define UiWindow_Create ((struct RenderInput * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
@@ -83,7 +84,7 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
 
     rows = WORKSPACE_ROWS;
     work = gSelectionWork;
-    settings_only = GameFlag_IsSet(FLAG_WORKSPACE_SETTINGS_ONLY);
+    settings_only = GameFlag_TestFar(FLAG_WORKSPACE_SETTINGS_ONLY);
     first = 0;
     if (settings_only != 0) {
         rows = 1;

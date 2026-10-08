@@ -29,8 +29,8 @@
 
 extern u8 gMapCellBuffer[];
 
-void Audio_PlayCue(s32);
-void Object_SetMode(struct ObjectRuntime *, s32);
+void AudioCommand_PlayFar(s32);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct ObjectRuntime *, s32);
 
 void *ObjectTable_Get(u32);
 
@@ -54,8 +54,8 @@ void CheckObjectMapTile(void)
 	s32					  x;
 	s32					  y;
 
-	slot = (u32)&gWork;
-	ev = gWork;
+	slot = (u32)&gEventWork;
+	ev = gEventWork;
 	obj = ObjectTable_Get(gGameState.selected_actor);
 	tile = (u8 *)*(struct MapState **)(slot - 76); // gMapWork[0]
 
@@ -117,9 +117,9 @@ void MapEvent_RunTileTriggerSequence(void)
 	anim = obj->animation;
 	entry = anim->entries[0];
 
-	Audio_PlayCue(154);
+	AudioCommand_PlayFar(154);
 	Scheduler_RemoveCallback(CheckObjectMapTile);
-	Object_SetMode(obj, 0);
+	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
 	((struct ScriptMotionObject *)obj)->hook = 0;
 
 	for (i = 0; i < 5; ++i)
@@ -172,8 +172,8 @@ void BattleFx_RunFlashingCallbackSequence(void)
 	u32						n;
 	void (*check)(void);
 
-	Audio_PlayCue(130);
-	Object_SetMode(obj, 0);
+	AudioCommand_PlayFar(130);
+	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
 	((struct ScriptMotionObject *)obj)->hook = 0;
 	n = 0;
 	do
@@ -460,7 +460,7 @@ void RunBattleEffect05(void)
 				mote->callback = (void *)BattleFx_UpdateDriftingFallObject;
 				mote->flag = 0;
 				mote->sprite->mode = 2;
-				Object_SetMode((struct ObjectRuntime *)mote, 8);
+				ObjectDispatch_ApplyArgumentToChildrenFar((struct ObjectRuntime *)mote, 8);
 				Animation_ApplyChildValuesFar(mote, 7);
 			}
 			WaitFrames(6);

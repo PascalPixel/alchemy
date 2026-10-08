@@ -107,7 +107,6 @@ void Engine_EventEnd();
 
 void Korosseo_FinishSoloRound();
 s32 FieldScene_RunMiddleSequence();
-void Object_SetPosition();
 void Object_CommitPosition();
 
 
@@ -174,14 +173,6 @@ void ColossoLogRollingStage_ConfigureGridRegion(void)
 
 void ColossoLogRollingStage_ConfigurePrimaryObjects(void)
 {
-#ifdef MODERN
-    // modern GCC holds one type for a name in a file
-    extern void Object_SetPosition_modern(PrimaryStageObject *, s32, s32, s32) __asm__("Object_SetPosition");
-#define Object_SetPosition Object_SetPosition_modern
-#else
-    extern void Object_SetPosition(PrimaryStageObject *, s32, s32, s32);
-#endif
-
     PrimaryStageObject *object;
 
     object = Object_GetById(9);
@@ -191,24 +182,20 @@ void ColossoLogRollingStage_ConfigurePrimaryObjects(void)
     object = Object_GetById(11);
     object->move_rate_z = 0x6666;
     object->move_rate_x = 0xCCCC;
-    Object_SetPosition(object, object->x, 0x200000, object->y);
+    ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(object, object->x, 0x200000, object->y);
 
     object = Object_GetById(10);
     object->move_rate_z = 0x6666;
     object->move_rate_x = 0xCCCC;
-    Object_SetPosition(object, object->x, 0x40000, object->y);
+    ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(object, object->x, 0x40000, object->y);
 
     Engine_GameFlagSet(0x362);
     Engine_MapCopyCellAttributes(15, 12, 1, 1, 13, 12);
     Engine_MapCopyCellAttributes(14, 12, 1, 1, 9, 12);
 }
-#ifdef MODERN
-#undef Object_SetPosition
-#endif
 
 void FieldScene_RunClosingAuxiliarySequence(void)
 {
-    extern void Object_SetPosition();
 
     s32 actor;
     s32 lowered;
@@ -228,18 +215,18 @@ void FieldScene_RunClosingAuxiliarySequence(void)
         log->motion_flags = lowered;
         log->acceleration = 0x6666;
         log->speed = 0xcccc;
-        Object_SetPosition(log, log->x.fixed, 0x200000, log->z.fixed);
+        ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(log, log->x.fixed, 0x200000, log->z.fixed);
         log = Object_GetById(10);
         log->motion_flags = lowered;
         log->acceleration = 0x6666;
         log->speed = 0xcccc;
-        Call4(Object_SetPosition, (s32)log, log->x.fixed, 0x40000, log->z.fixed);
+        Call4(Engine_ObjectSetPosition, (s32)log, log->x.fixed, 0x40000, log->z.fixed);
         rider = Object_GetById(actor);
         flags = &rider->motion_flags;
         *flags = lowered;
         rider->acceleration = 0x6666;
         rider->speed = 0xcccc;
-        Object_SetPosition(rider, rider->x.fixed, 0x40000, rider->z.fixed);
+        ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(rider, rider->x.fixed, 0x40000, rider->z.fixed);
         Engine_ActorSetSpriteFlags(rider, 1);
         Engine_ActorWaitForMove(actor);
         Map_CopyCellAttributes(0, 24, 1, 1, 9, 12);
@@ -253,7 +240,6 @@ void FieldScene_RunClosingAuxiliarySequence(void)
 
 void ColossoLogRollingStage_ConfigureSecondaryObjects(void)
 {
-    extern void Object_SetPosition();
 
     s16 *table;
     SecondaryStageObject *object;
@@ -266,13 +252,13 @@ void ColossoLogRollingStage_ConfigureSecondaryObjects(void)
     object->state = 0;
     object->move_rate_z = 0x6666;
     object->move_rate_x = 0xcccc;
-    Object_SetPosition(object, object->x, 0x40000, object->z);
+    ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(object, object->x, 0x40000, object->z);
 
     object = Object_GetById(10);
     object->state = 0;
     object->move_rate_z = 0x6666;
     object->move_rate_x = 0xcccc;
-    Object_SetPosition(object, object->x, 0x200000, object->z);
+    ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(object, object->x, 0x200000, object->z);
 
     Engine_ActorWaitForMove(10);
     {
@@ -286,7 +272,6 @@ void ColossoLogRollingStage_ConfigureSecondaryObjects(void)
 
 void FieldScene_RunFinalAuxiliarySequence(void)
 {
-    extern void Object_SetPosition();
 
     struct FieldActor *probe;
     struct FieldActor *log;
@@ -306,16 +291,16 @@ void FieldScene_RunFinalAuxiliarySequence(void)
             log->motion_flags = 0;
             log->acceleration = 0x6666;
             log->speed = 0xcccc;
-            Call4(Object_SetPosition, (s32)log, log->x.fixed, 0x40000, log->z.fixed);
+            Call4(Engine_ObjectSetPosition, (s32)log, log->x.fixed, 0x40000, log->z.fixed);
             upper = Object_GetById(11);
             upper->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
             upper->acceleration = 0x6666;
             upper->speed = 0xcccc;
-            Object_SetPosition(upper, upper->x.fixed, 0x200000, upper->z.fixed);
+            ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(upper, upper->x.fixed, 0x200000, upper->z.fixed);
             lower = Object_GetById(10);
             lower->acceleration = 0x6666;
             lower->speed = 0xcccc;
-            Object_SetPosition(lower, lower->x.fixed, 0x40000, lower->z.fixed);
+            ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(lower, lower->x.fixed, 0x40000, lower->z.fixed);
             Engine_GameFlagSet(0x368);
             Engine_MapCopyCellAttributes(15, 12, 1, 1, 13, z);
             Engine_MapCopyCellAttributes(1, 25, 1, 1, x, z);
@@ -442,7 +427,6 @@ s32 ColossoLogRollingStage_CheckPathClearance(s32 x, s32 y)
 void FieldScene_RunEarlySequence(void)
 {
     extern void Vector_AddPolarOffset();
-    extern void Object_SetPosition();
     extern void ObjectDispatch_InitFromTable4WithArgument();
     extern void Object_CommitPosition();
 
@@ -513,7 +497,7 @@ moved:
     acceleration = 0x3333;
     log->acceleration = acceleration;
     Object_SetMode(log, mode);
-    Object_SetPosition(log, x, 0, z);
+    ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(log, x, 0, z);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(actor, 2);
     work = Runtime_AllocateBlock(27, 0xccc);
@@ -521,7 +505,7 @@ moved:
     Actor_SetSpeed(actor, 0x8000, acceleration);
     Audio_PlayCue(239);
     Object_SetMode(rider, 2);
-    Object_SetPosition(rider, ((steps * step) << 16) + rider->x.fixed, 0, rider->z.fixed);
+    ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(rider, ((steps * step) << 16) + rider->x.fixed, 0, rider->z.fixed);
     Object_CommitPosition(rider);
     Object_SetMode(rider, 1);
     Object_CommitPosition(log);
@@ -596,7 +580,6 @@ void ColossoLogRollingStage_WaitForSceneEventTask(void)
 
 void ColossoLogRollingStage_OffsetActiveActor(void)
 {
-    extern void Object_SetPosition(StageObstacleActor *, s32, s32, s32);
     extern void Object_CommitPosition(StageObstacleActor *);
 
     StageObstacleActor *actor;
@@ -612,13 +595,12 @@ void ColossoLogRollingStage_OffsetActiveActor(void)
     Engine_ActorSetAttachedEffect(*slot, 258);
     Object_SetMode(actor, 5);
     z = actor->z & 0xFFF00000;
-    Object_SetPosition(actor, actor->x, actor->y, z + 0x180000);
+    ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(actor, actor->x, actor->y, z + 0x180000);
     Object_CommitPosition(actor);
 }
 
 void ColossoLogRollingStage_ClampAndOffsetActiveActor(void)
 {
-    extern void Object_SetPosition(StageObstacleActor *, s32, s32, s32);
     extern void Object_CommitPosition(StageObstacleActor *);
     extern void BattleFx_RunRisingObjectSequence(s32, s32, s32);
 
@@ -637,7 +619,7 @@ void ColossoLogRollingStage_ClampAndOffsetActiveActor(void)
     actor->move_rate_x = 0x20000;
     Object_SetMode(actor, 5);
     z = actor->z & 0xFFF00000;
-    Object_SetPosition(actor, actor->x, actor->y, z + 0xC0000);
+    ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(actor, actor->x, actor->y, z + 0xC0000);
     Object_CommitPosition(actor);
     Engine_ActorSetAttachedEffect(*slot, 258);
     BattleFx_RunRisingObjectSequence(*slot, 6, 0);
@@ -1334,24 +1316,24 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
         pan1->motion_flags = 0;
         pan1->acceleration = 0x6666;
         pan1->speed = 0xcccc;
-        Call4(Object_SetPosition, (s32)pan1, pan1->x.fixed, 4 << 16, pan1->z.fixed);
+        Call4(Engine_ObjectSetPosition, (s32)pan1, pan1->x.fixed, 4 << 16, pan1->z.fixed);
         pan2 = Object_GetById(11);
         pan2->motion_flags = 0;
         pan2->acceleration = 0x6666;
         pan2->speed = 0xcccc;
-        Call4(Object_SetPosition, (s32)pan2, pan2->x.fixed, 32 << 16, pan2->z.fixed);
+        Call4(Engine_ObjectSetPosition, (s32)pan2, pan2->x.fixed, 32 << 16, pan2->z.fixed);
         Object_CommitPosition(pan2);
         Engine_EventWait(45);
         back1 = Object_GetById(10);
         back1->motion_flags = 0;
         back1->acceleration = 0x6666;
         back1->speed = 0xcccc;
-        Object_SetPosition(back1, back1->x.fixed, 32 << 16, back1->z.fixed);
+        ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(back1, back1->x.fixed, 32 << 16, back1->z.fixed);
         back2 = Object_GetById(11);
         back2->motion_flags = 0;
         back2->acceleration = 0x6666;
         back2->speed = 0xcccc;
-        Object_SetPosition(back2, back2->x.fixed, 4 << 16, back2->z.fixed);
+        ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(back2, back2->x.fixed, 4 << 16, back2->z.fixed);
         Object_CommitPosition(back2);
         Engine_EventWait(15);
         Engine_EventShowMessage(scene, 0);

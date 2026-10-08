@@ -21,5 +21,5 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
     }
     *output = 0;
     UiText_RenderWideStringAtOffset(buffer, arg1, arg2, arg3);
-    Runtime_BumpFree(buffer);
+    MemFree(buffer);
 }

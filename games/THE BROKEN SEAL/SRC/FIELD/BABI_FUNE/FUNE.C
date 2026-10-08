@@ -208,7 +208,7 @@ void BabiFune_UpdateWaves(void)
             actor->motion_flags = 0;
             actor->priority_flags = 2;
             actor->sprite->priority = 2;
-            Engine_ObjectSetBlendMode(actor, OBJECT_BLEND_NORMAL);
+            Engine_ActorSetSpriteFlags(actor, OBJECT_BLEND_NORMAL);
             Object_SetMode(actor, 0);
         }
     }

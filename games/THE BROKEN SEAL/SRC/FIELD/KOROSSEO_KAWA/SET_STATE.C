@@ -61,9 +61,8 @@ void SceneState_RaiseTriggerOnPsynergyTarget(void)
 
 void FieldScene_RunNearestActor165Scene(void)
 {
-    extern u8 *Data_03001ebc;
 
-    u8 *state = Data_03001ebc;
+    u8 *state = (u8 *)gEventWork;
     s32 best = 8;
     s32 bestd = 0x100000;
     s32 n = gGameState.selected_actor;

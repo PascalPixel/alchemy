@@ -1,3 +1,4 @@
+#define OWN_AudioCommand_PlayFar
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -17,7 +18,7 @@
 
 #define InventoryMenu_ShowModalMessage ((s32 (*)(s32,s32,s32))InventoryMenu_ShowModalMessage)
 
-s32 Audio_PlayCue(s32);
+s32 AudioCommand_PlayFar(s32);
 
 s32 ItemMenu_Use(void)
 {
@@ -29,7 +30,7 @@ s32 ItemMenu_Use(void)
         menu->selected_slots[0], menu->pane_owner[0], menu->pane_owner[1]);
 
     if (result == -1) {
-        Audio_PlayCue(SOUND_MENU_ERROR);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
         RenderOutput_ClearListFar(menu->info_window);
         InventoryMenu_ShowModalMessage(
             menu->message_offset + (s32)MsgItemUseResult, result, result);

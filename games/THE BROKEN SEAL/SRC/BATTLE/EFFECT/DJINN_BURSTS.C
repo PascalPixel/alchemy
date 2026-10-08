@@ -29,7 +29,7 @@
 
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 #define HI(v) (((s16 *)&(v))[1])							   // 16.16 固定小数の整数部
 #define MOTE(n) (&((struct EffectStep *)Ram_MapCellBuffer)[n]) // 破片の粒 (最大 512)
@@ -78,7 +78,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
 		work->particles[i].variant = -1;
 	for (i = 0; i != 512; i++)
 		MOTE(i)->variant = -1;
-	Audio_PlayCue(162);
+	AudioCommand_PlayFar(162);
 	frame = 0;
 	do
 	{
@@ -96,7 +96,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
 				flame->variant++;
 				if (flame->variant == 5)
 				{
-					Audio_PlayCue(133);
+					AudioCommand_PlayFar(133);
 					work->shake_frames = 4;
 					for (j = 0; j != 32; j++)
 					{
@@ -224,7 +224,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
 	}
 	for (i = 0; i != 512; i++)
 		MOTE(i)->variant = -1;
-	Audio_PlayCue(171);
+	AudioCommand_PlayFar(171);
 	frame = 0;
 	angle = 0x8000; // 180°
 	do
@@ -267,7 +267,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
 						mote->velocity_y = (Trig_Cos(dir) * speed) >> 6;
 						mote->variant = (Random16() & 15) + 32; // 寿命 32〜47 フレーム
 					}
-					Audio_PlayCue(133);
+					AudioCommand_PlayFar(133);
 					work->shake_frames = 4;
 					for (j = 0; j != work->effect->count; j++)
 					{

@@ -82,9 +82,9 @@ Engine_MapCopyCellAttributes:
 	.thumb_func
 Engine_ActorSetSpriteFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global Engine_MapRenderSetValues
+	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
-Engine_MapRenderSetValues:
+Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Graphics_EnableObjLayerAndCallbacks
 	.thumb_func
@@ -113,7 +113,7 @@ UiText_ShowCenteredMessage:
 	.global Engine_ItemLoadIcon
 	.thumb_func
 Engine_ItemLoadIcon:
-	overlay_veneer ItemIcon_LoadTilesFar
+	overlay_veneer Ui_PrepareTransferForItemFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
 Engine_GameFlagIsSet:

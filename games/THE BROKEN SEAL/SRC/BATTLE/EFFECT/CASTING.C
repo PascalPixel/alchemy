@@ -37,10 +37,10 @@
 
 typedef BattleEffectDrawRectangle RectangleBlit; // キャンバスへの合成描画
 
-void Object_SetMode(void *object, s32 mode);
+void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
 void Graphics_PackTileRows();
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 static __inline__ void LoadResource(const void *id, void *dest, s32 skip, s32 copy)
 {
@@ -325,7 +325,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	caster_actor->vertical_motion_strength = 0;
 	EffectPosition_ApplyStepAndYOffset(work->effect->actor, caster_screen);
 	caster_screen->x = caster_screen->x / 2;
-	Audio_PlayCue(212);
+	AudioCommand_PlayFar(212);
 
 	//------------------------------------------------------------------
 	// 集める（32 フレーム）
@@ -460,7 +460,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 		Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
 		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-		Object_SetMode(caster_actor, 3);
+		ObjectDispatch_ApplyArgumentToChildrenFar(caster_actor, 3);
 		if (kind == 15)
 		{
 			BattleFx_RunProjectileVolley(command, 9);
@@ -1200,7 +1200,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 						step->x -= 6;
 						if (step->x < 0 && ((i & 7) == 0 || i == 63))
 						{
-							Audio_PlayCue(133);
+							AudioCommand_PlayFar(133);
 							ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 4);
 						}
 					}
@@ -1330,7 +1330,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 		}
 		if (frame == 4)
 		{
-			Audio_PlayCue(134);
+			AudioCommand_PlayFar(134);
 		}
 		if (frame == 6)
 		{

@@ -20,11 +20,11 @@
 extern struct FieldStepWork *gEventWork;
 struct ObjectRuntime *Object_GetById(s32 id);
 void Vector_AddPolarOffset(s32 distance, s32 angle, struct FieldPosition *position);
-s32 Object_CheckMovementCollision(struct ObjectRuntime *actor, struct FieldPosition *position);
+s32 Map_CheckObjectStepFar(struct ObjectRuntime *actor, struct FieldPosition *position);
 void Battle_Reset(void);
-void Object_SetMode(struct ObjectRuntime *actor, s32 mode);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct ObjectRuntime *actor, s32 mode);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *actor, s32 value);
 void BattleFx_FinishAction(void);
 
@@ -33,7 +33,7 @@ void BattleFx_FinishAction(void);
 #define TILE_CELLS_ABOVE ((struct MapCell *)(Ram_MapCellBuffer - 0x200))
 void ObjectMotion_ArmCallback(s32, s32, s32);
 void Object_RefreshSelectorById(s32);
-void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
+void Object_SetMoveTargetFar(struct ObjectRuntime *, s32, s32, s32);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32);
 void Battle_WaitMode0(s32);
 
@@ -60,32 +60,32 @@ again:
     pos->y = leader->y;
     pos->z = (leader->z & step) + 0x80000;
     Vector_AddPolarOffset(0x100000, angle, pos);
-    if (Object_CheckMovementCollision(leader, pos) == 1)
+    if (Map_CheckObjectStepFar(leader, pos) == 1)
         return -1;
     pos->x = (leader->x & step) + 0x80000;
     pos->y = leader->y;
     pos->z = (leader->z & step) + 0x80000;
     Vector_AddPolarOffset(0x200000, angle, pos);
-    if (Object_CheckMovementCollision(leader, pos) != 0)
+    if (Map_CheckObjectStepFar(leader, pos) != 0)
         goto done;
     if (leader->animation_kind == 1)
         child_mode = ((struct FieldSprite *)leader->animation)->flags;
     Battle_Reset();
-    Object_SetMode(leader, 6);
+    ObjectDispatch_ApplyArgumentToChildrenFar(leader, 6);
     WaitFrames(6);
-    Audio_PlayCue(152);
-    Object_SetMode(leader, 7);
+    AudioCommand_PlayFar(152);
+    ObjectDispatch_ApplyArgumentToChildrenFar(leader, 7);
     leader->speed_limit = 0x30000;
     leader->acceleration = 0x20000;
     leader->velocity_y = 0x40000;
     *flags &= 0x7e;
     ObjectDispatch_SetSingleChildFlagsFar(leader, child_mode & 0xfe);
     ObjectMotion_SetPositionAndCommit(gGameState.selected_actor, ((union FieldCoordinate *)&pos->x)->part.pixel, ((union FieldCoordinate *)&pos->z)->part.pixel);
-    Object_SetMode(leader, 6);
+    ObjectDispatch_ApplyArgumentToChildrenFar(leader, 6);
     ObjectDispatch_SetSingleChildFlagsFar(leader, child_mode);
     if ((target = Object_FindNearestFacingTarget(leader, 207)) != NULL
         || (target = Object_FindNearestFacingTarget(leader, 205)) != NULL) {
-        Object_SetMode(target, 7);
+        ObjectDispatch_ApplyArgumentToChildrenFar(target, 7);
         lift = 0xffff0000;
         leader->y += lift;
         leader->terrain_height += lift;
@@ -107,7 +107,7 @@ again:
     if (work != NULL)
         work->encounter_steps += Iwram_MulQ16(work->encounter_rate, 0x200000);
     if (GetMapCellCollisionFar(leader->terrain_id, pos->x, pos->z) == 0xf9) {
-        Object_SetMode(leader, 1);
+        ObjectDispatch_ApplyArgumentToChildrenFar(leader, 1);
         WaitFrames(6);
         goto again;
     }
@@ -149,8 +149,8 @@ s32 FieldEffect_UpdateGridPlacement(void)
             object->action_flags = 1;
             object->flags = 0;
             ObjectDispatch_SetSingleChildFlagsFar(object, 0);
-            Object_SetMode(object, 13);
-            Object_SetPosition(object, grid_x << 16,
+            ObjectDispatch_ApplyArgumentToChildrenFar(object, 13);
+            Object_SetMoveTargetFar(object, grid_x << 16,
                 object->y - 0x100000, (grid_z << 16) + 0x100000);
             ObjectMotion_CommitCurrentPositionAndActivate(gGameState.selected_actor);
             gGameState.movement_mode = 1;
@@ -158,7 +158,7 @@ s32 FieldEffect_UpdateGridPlacement(void)
             goto failure;
         }
     } else {
-        Object_SetMode(object, 10);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 10);
         object->flags = 3;
         object->velocity_y = 0x40000;
         object->terrain_height = object->y;
@@ -209,9 +209,9 @@ s32 battle_owner_69(void)
 
             object->action_flags = 0;
             ObjectMotion_SetPositionAndCommit(gGameState.selected_actor, grid_x, grid_z);
-            Object_SetMode(object, 6);
+            ObjectDispatch_ApplyArgumentToChildrenFar(object, 6);
             WaitFrames(4);
-            Object_SetMode(object, 7);
+            ObjectDispatch_ApplyArgumentToChildrenFar(object, 7);
             object->velocity_y = 0x40000;
             WaitFrames(4);
             object->flags = 0;
@@ -219,7 +219,7 @@ s32 battle_owner_69(void)
             ObjectDispatch_SetSingleChildFlagsFar(object, child_mode);
             object->speed_limit = 0x10000;
             object->velocity_y = 0;
-            Object_SetMode(object, 12);
+            ObjectDispatch_ApplyArgumentToChildrenFar(object, 12);
             WaitFrames(4);
             gGameState.movement_mode = 1;
             object->action_flags = 1;
@@ -229,8 +229,8 @@ s32 battle_owner_69(void)
         }
     } else {
         object->flags = 0;
-        Object_SetMode(object, 11);
-        Object_SetPosition(object, grid_x << 16, object->y + 0x80000,
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 11);
+        Object_SetMoveTargetFar(object, grid_x << 16, object->y + 0x80000,
             (grid_z << 16) - 0x100000);
         ObjectMotion_CommitCurrentPositionAndActivate(gGameState.selected_actor);
         object->flags = 3;

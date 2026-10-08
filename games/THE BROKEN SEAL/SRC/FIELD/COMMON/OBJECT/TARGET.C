@@ -20,8 +20,10 @@
 #include "BTLPTY.H"
 #include "B5_CONTEXT.H"
 #include "FIELD_EVENT.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
+void ObjectDispatch_ReleaseFar(struct DispatchObject *work);
 
-#define Object_Destroy ((void (*)(void*))Object_Destroy)
+#define ObjectDispatch_ReleaseFar ((void (*)(void*))ObjectDispatch_ReleaseFar)
 
 struct LinkedEffectObject {
     u8 unknown_00[8];
@@ -43,7 +45,7 @@ void *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 s32 ArcTan2(s32, s32);
-void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
+void Object_SetMoveTargetFar(struct ObjectRuntime *, s32, s32, s32);
 
 void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
 {
@@ -66,7 +68,7 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
         child = object->resource;
         if (child == 0)
             return;
-        Object_Destroy(child);
+        ObjectDispatch_ReleaseFar(child);
         /* FAKEMATCH: needed to match: reuse the null visual value for the child link. */
         object->resource = (struct LinkedEffectObject *)visual;
         return;
@@ -78,12 +80,12 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
     mode = flags & 3;
     switch (mode) {
     case 1:
-        Object_SetMode((struct ObjectRuntime *)child, 1);
+        ObjectDispatch_ApplyArgumentToChildrenFar((struct ObjectRuntime *)child, 1);
         object->resource = child;
         child->counter = 1;
         break;
     case 2:
-        Object_SetMode((struct ObjectRuntime *)child, 2);
+        ObjectDispatch_ApplyArgumentToChildrenFar((struct ObjectRuntime *)child, 2);
         ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)ObjectMotion_WaitScript);
         child->counter = 1;
         break;
@@ -152,12 +154,12 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object)
         if (distance >= step) {
             newX = object->x +
                 (cellX << 20) / step;
-            Object_SetPosition(object, newX, object->y,
+            Object_SetMoveTargetFar(object, newX, object->y,
                           object->z +
                               __divsi3(cellY << 20, step));
-            Object_SetMode(object, 2);
+            ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
         } else {
-            Object_SetMode(object, 1);
+            ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
         }
     }
     return 1;

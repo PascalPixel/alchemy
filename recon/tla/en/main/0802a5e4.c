@@ -33,6 +33,6 @@ void Tilemap_ConvertBuffer(void)
         } while (0);
     }
     routine((gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
-    Runtime_BumpFree(routine);
-    Runtime_BumpFree(saved);
+    MemFree(routine);
+    MemFree(saved);
 }

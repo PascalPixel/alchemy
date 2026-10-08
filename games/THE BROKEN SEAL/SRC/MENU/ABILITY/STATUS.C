@@ -38,7 +38,7 @@ struct PsynergyMenuIcon {
 
 struct BtlUnit;
 void Menu_SpawnIconEntries(struct PsynergyMenuState *, s32);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void ItemMenu_HideAllIcons(void);
 
 s32 PsynergyMenu_SelectAction(void)
@@ -116,20 +116,20 @@ s32 PsynergyMenu_SelectAction(void)
             if (nav == -1)
                 redraw = 0;
             if (gKeyState & KEY_A) {
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
                 result = 1;
                 done = 1;
                 break;
             }
             if (gKeyState & KEY_B) {
-                Audio_PlayCue(113);
+                AudioCommand_PlayFar(113);
                 result = -1;
                 done = 1;
                 Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
                 break;
             }
             if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 tab = menu->tab_index[0];
                 menu->selected_index_by_owner[menu->owner_table[tab]] = state.selected_index;
                 if (gKeysRepeat & KEY_R)

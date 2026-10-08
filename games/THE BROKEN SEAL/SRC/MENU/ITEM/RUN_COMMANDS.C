@@ -18,6 +18,7 @@
 #include "GLOBAL_CELLS.H"
 #include "MENU_LIST.H"
 #include "text/MSG_IDS.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 #define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
 #define Item_AdjustCounterFar ((void (*)(s32,s32))Item_AdjustCounterFar)
@@ -40,7 +41,7 @@ static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32
 }
 
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused, s32 style);
 
 enum ItemMenuStep {
@@ -277,7 +278,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 
         case ITEM_STEP_DROP:
             ItemMenu_HideAllIcons();
-            item = Item_Get(menu->selected_items[0] & ITEM_ID_MASK);
+            item = Item_GetDirectFar(menu->selected_items[0] & ITEM_ID_MASK);
             result = 0;
             if ((item->flags & ITEM_STACKABLE) != 0) {
                 qty = (menu->selected_items[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
@@ -339,7 +340,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 
         case ITEM_STEP_GIVE:
             aborted = 0;
-            item = Item_Get(menu->selected_items[0] & ITEM_ID_MASK);
+            item = Item_GetDirectFar(menu->selected_items[0] & ITEM_ID_MASK);
             if ((item->flags & ITEM_STACKABLE) != 0) {
                 qty = InventoryMenu_GetItemQuantity(
                     menu->pane_owner[1], menu->selected_items[0] & ITEM_ID_MASK);
@@ -428,9 +429,9 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                         menu->pane_owner[1], menu->selected_slots[1], 0, menu->pane_owner[1]);
                     InventoryMenu_ShowModalMessage(
                         (s32)MsgEquippedIt, 15, 14);
-                    item = Item_Get(menu->selected_items[0]);
+                    item = Item_GetDirectFar(menu->selected_items[0]);
                     if ((item->flags & ITEM_CURSED) != 0) {
-                        Audio_PlayCue(0x67);
+                        AudioCommand_PlayFar(0x67);
                         RenderOutput_ClearListFar(menu->info_window);
                         InventoryMenu_ShowModalMessage(
                             (s32)MsgEquippedIt + 7, MODAL_SHORT_X, 14);
@@ -477,7 +478,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             moved_target = 0;
             while (moved_target <= 29) {
                 if ((menu->selected_items[1] & INVENTORY_EQUIPPED) != 0) {
-                    item = Item_Get(menu->selected_items[1] & ITEM_ID_MASK);
+                    item = Item_GetDirectFar(menu->selected_items[1] & ITEM_ID_MASK);
                     if ((item->flags & ITEM_CANNOT_UNEQUIP) != 0) {
                         aborted = 1;
                     }
@@ -549,9 +550,9 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                             menu->pane_owner[1], menu->selected_slots[1], 0, menu->pane_owner[1]);
                         InventoryMenu_ShowModalMessage(
                             (s32)MsgEquippedIt, 15, 14);
-                        item = Item_Get(menu->selected_items[0]);
+                        item = Item_GetDirectFar(menu->selected_items[0]);
                         if ((item->flags & ITEM_CURSED) != 0) {
-                            Audio_PlayCue(0x67);
+                            AudioCommand_PlayFar(0x67);
                             RenderOutput_ClearListFar(menu->info_window);
                             InventoryMenu_ShowModalMessage(
                                 (s32)MsgEquippedIt + 7, MODAL_SHORT_X, 14);
@@ -567,8 +568,8 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     }
                 }
             }
-            Runtime_BumpFree(target_copy);
-            Runtime_BumpFree(source_copy);
+            MemFree(target_copy);
+            MemFree(source_copy);
             Event_ClearInvalidPackedValuesFar();
             state = ITEM_STEP_OWNER;
             break;
@@ -599,9 +600,9 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 menu->pane_owner[0], menu->selected_slots[0], 0, menu->pane_owner[0]);
             RenderOutput_ClearListFar(menu->info_window);
             InventoryMenu_ShowModalMessage((s32)MsgEquippedIt, 15, 8);
-            item = Item_Get(menu->selected_items[0]);
+            item = Item_GetDirectFar(menu->selected_items[0]);
             if ((item->flags & ITEM_CURSED) != 0) {
-                Audio_PlayCue(0x67);
+                AudioCommand_PlayFar(0x67);
                 RenderOutput_ClearListFar(menu->info_window);
                 InventoryMenu_ShowModalMessage(
                     (s32)MsgEquippedIt + 7, MODAL_SHORT_X, 8);

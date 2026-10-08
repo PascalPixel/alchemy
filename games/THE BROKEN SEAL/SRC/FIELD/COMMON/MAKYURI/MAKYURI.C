@@ -21,7 +21,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, union FieldCoordinate *pos);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 void OverlayObject_SpawnKind24AtObject(struct FieldActor *actor);
-void Object_SetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
+void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 
 extern const s32 Makyuri_ScaleCounterScript[];
 #include "KEYSTATE.H"
@@ -109,7 +109,7 @@ void Makyuri_RunActorMove(void)
             obj->priority_flags = 2;
             obj->speed = 0x40000;
             obj->acceleration = 0x20000;
-            Object_SetPosition(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
+            Engine_ObjectSetPosition(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
             if (sprite != NULL) {
                 AnimationObjects_SelectAnimation(sprite, 6);
                 zero = 0;
@@ -128,8 +128,8 @@ void Makyuri_RunActorMove(void)
         }
     }
     Object_SetMode(actor, 6);
-    WaitFrames(3);
-    Audio_PlayCue(152);
+    Engine_TaskWait(3);
+    Engine_AudioPlayCue(152);
     Object_SetMode(actor, 7);
     actor->speed = 0x30000;
     actor->acceleration = 0x20000;
@@ -138,25 +138,25 @@ void Makyuri_RunActorMove(void)
     Engine_ActorSetSpriteFlags(actor, 0);
     Engine_ActorMoveToAndWait(0, pos[0].part.pixel, pos[2].part.pixel);
     Object_SetMode(actor, 6);
-    WaitFrames(2);
+    Engine_TaskWait(2);
     if (to->collision_code != state->level)
         Engine_ActorSetSpriteFlags(actor, 1);
     else
-        Audio_PlayCue(215);
-    WaitFrames(1);
+        Engine_AudioPlayCue(215);
+    Engine_TaskWait(1);
     *flags = saved;
     if (to->collision_code == state->level && state->effect == NULL) {
         Object_SetMode(actor, 18);
-        Audio_PlayCue(241);
+        Engine_AudioPlayCue(241);
         for (i = 0;; i++) {
             if ((i & 15) == 0)
                 OverlayObject_SpawnKind24AtObject(actor);
             if (i > 31 && gKeyState != 0)
                 break;
-            WaitFrames(1);
+            Engine_TaskWait(1);
         }
-        Audio_PlayCue(0x120);
-        WaitFrames(1);
+        Engine_AudioPlayCue(0x120);
+        Engine_TaskWait(1);
         actor->x.fixed = state->target_x;
         actor->z.fixed = state->target_z;
         Engine_ActorSetSpriteFlags(actor, 1);

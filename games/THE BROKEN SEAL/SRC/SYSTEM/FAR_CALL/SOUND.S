@@ -11,6 +11,7 @@ AudioEngine_RunMixerFar:
 	.thumb_func
 Audio_InitializeRuntimeDefaultsFar:
 	overlay_veneer Audio_InitializeRuntimeDefaults
+	@ O2 pending: shared code calls this stub Audio_PlayCue while overlay veneers of that name target the other label
 	.global Audio_PlayCue
 	.thumb_func
 Audio_PlayCue:
@@ -33,9 +34,6 @@ MusicCommand_SetPitchAndUpdateFrequencyFar:
 	.global AudioCommand_GetStateByteFar
 	.thumb_func
 AudioCommand_GetStateByteFar:
-	.global Audio_Check
-	.thumb_func
-Audio_Check:
 	overlay_veneer AudioCommand_GetStateByte
 	overlay_veneer AudioTest_RunParameterController
 	overlay_veneer AudioCommand_StopAllPlayers

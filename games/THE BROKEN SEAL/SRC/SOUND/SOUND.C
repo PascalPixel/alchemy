@@ -82,7 +82,7 @@ void Audio_InitializeRuntimeDefaults(void)
 
     Audio_Initialize();
     gAudioSecondaryState = 0xff;
-    RomBytes_02003000 = 0;
+    gMusicRestoreDelay = 0;
     gMusicVolumeTarget = 0x100;
     gMusicVolume = 0x100;
     gMusicVolumeStep = 4;

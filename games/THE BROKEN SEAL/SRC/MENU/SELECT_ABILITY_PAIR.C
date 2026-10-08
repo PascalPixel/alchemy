@@ -16,6 +16,7 @@
 #include "GAME_STATE.H"
 #include "UIFLOW.H"
 #include "text/MSG_IDS.H"
+struct BtlAct * BtlActGet(s32 action_id);
 
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 #define gKeyState (*(volatile u32 *)&gKeyState)
@@ -103,10 +104,10 @@ void Debug_SelectAbilityPair(void)
                 RenderOutput_RedrawSavedRect(info);
                 UiText_DrawCharacterAtOffset((s32)MsgPsynergyNeedMorePp, info, 0, 16);
                 if (row != 0) {
-                    cost = Ability_GetData(list[second].ability)->pp_cost;
+                    cost = BtlActGet(list[second].ability)->pp_cost;
                     ability = list[second].ability;
                 } else {
-                    cost = Ability_GetData(list[first].ability)->pp_cost;
+                    cost = BtlActGet(list[first].ability)->pp_cost;
                     ability = list[first].ability;
                 }
                 UiText_DrawNumberAtOffset(cost, 2, info, 64, 16);
@@ -158,5 +159,5 @@ void Debug_SelectAbilityPair(void)
         UiWork_Finalize(info, 1);
         WaitFrames(1);
     }
-    Runtime_BumpFree(list);
+    MemFree(list);
 }

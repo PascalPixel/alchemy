@@ -41,7 +41,7 @@ void UiWindow_FillFromScene(void *dst)
 
         Dma_Set((void *)Tile_BuildMetatiles, code, 0x84000000 | (size >> 2), REG_DMA3);
         code(dst, scene);
-        Runtime_BumpFree(code);
+        MemFree(code);
     }
 }
 

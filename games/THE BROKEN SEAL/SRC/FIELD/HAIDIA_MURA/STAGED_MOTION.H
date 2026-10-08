@@ -171,7 +171,7 @@ void Graphics_EnableObjLayerAndCallbacks();
 void ObjectDispatch_StopCallbacksAndHideLayers();
 void UiText_ShowCenteredMessage();
 void Audio_PlayCueFromEventWork();
-void Object_SetPosition();
+void Engine_ObjectSetPosition();
 void HaidiaMura_MoveActorAlongLowerZPath(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void HaidiaMura_OpenVillagerLane(void);
 s32 SceneActor_RunStep18WhenTargetSet();

@@ -17,6 +17,8 @@
 #include "GAME_STATE.H"
 #include "FIXED_MATH.H"
 #include "MOTOBJ.H"
+void AudioCommand_PlayFar(s32 cue);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 extern struct BattleFxScene *gEffectWork;
 
@@ -53,23 +55,23 @@ void BattleFx_FinishHeavyImpact(s32 jin_id)
 		BattleFx_InitializeSlots();
 		scene = gEffectWork;
 		Shop_RestoreSceneTilesFar(0x20118c);
-		Audio_PlayCue(173);
+		AudioCommand_PlayFar(173);
 		Motion_SetVarCbAndRefresh(jin_id, 1);
 	} while (0);
-	Audio_PlayCue(174);
+	AudioCommand_PlayFar(174);
 	Motion_SetVarCbAndRefresh(jin_id, 1);
 	/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
 	do
 	{
-		Audio_PlayCue(175);
+		AudioCommand_PlayFar(175);
 		Motion_SetVarCbAndRefresh(jin_id, 1);
 		WaitFrames(20);
 
 		// 回転してから高く跳ねる
-		Audio_PlayCue(140);
+		AudioCommand_PlayFar(140);
 		jin->update = BattleFx_AdvanceSpinAngle;
 		WaitFrames(40);
-		Audio_PlayCue(153);
+		AudioCommand_PlayFar(153);
 		ObjectMotion_Launch(jin_id, 12, 22);
 
 		// ジンの画面位置から光の粒を 24 個出す
@@ -78,7 +80,7 @@ void BattleFx_FinishHeavyImpact(s32 jin_id)
 		pos.z = jin->z;
 		Camera_WorldToScreen(&pos);
 		ObjectDispatch_ReleaseFar(jin);
-		Audio_PlayCue(164);
+		AudioCommand_PlayFar(164);
 		slot = scene->slots;
 		cnt = 23;
 		do
@@ -101,9 +103,9 @@ void BattleFx_FinishHeavyImpact(s32 jin_id)
 	WaitFrames(60);
 	ObjectMotion_ArmCallback(gGameState.selected_actor, 0x4000, 0);
 	WaitFrames(20);
-	Object_SetMode(Object_GetById(gGameState.selected_actor), 28);
+	ObjectDispatch_ApplyArgumentToChildrenFar(Object_GetById(gGameState.selected_actor), 28);
 	WaitFrames(40);
-	Audio_PlayCue(164);
+	AudioCommand_PlayFar(164);
 	WaitFrames(100);
 	Shop_InitEffectFar();
 	BattleFx_ClearActiveSlotsAndScheduleUpdates();

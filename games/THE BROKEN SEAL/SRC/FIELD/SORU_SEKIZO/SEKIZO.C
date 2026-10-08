@@ -1,3 +1,4 @@
+#define OWN_gGameState
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "MEM.H"
@@ -10,14 +11,16 @@
 #include "CALL.H"
 #include "text/MSG_IDS.H"
 
+extern u16 gGameState[][1];
+
 
 enum StatueHallActor {
     ACTOR_SUKURETA = ACTOR_FIRST_PLACED
 };
 
 void Event_SayThenWait();
-void ObjectMotion_ResetAndSetPositionInMode2();
-s32 Inventory_PromptAndSetObjectMode();
+void Engine_ActorWalkTo();
+s32 Engine_EventChooseYesNo();
 s32 UiText_OpenMessageAtObject();
 
 struct FocusPoint {
@@ -314,7 +317,7 @@ void FieldScene_RunStagedActorScene(void)
     Actor_FaceDirection(8, 0x8000, 0);
     Engine_EventWait(10);
     Actor_SetSpeed(8, 0x13333, 0x9999);
-    ObjectMotion_ResetAndSetPositionInMode2(8, 0x1b0, 200);
+    Engine_ActorWalkTo(8, 0x1b0, 200);
     Engine_EventWait(20);
     Camera_SetSpeed(0x26666, 0x4ccc);
     Camera_MoveTo(0x1200000, -1, 0xab0000, 1);
@@ -364,7 +367,7 @@ void FieldScene_RunStagedActorScene(void)
     Actor_FaceDirection(0, 0x4000, 0);
     Actor_FaceDirection(5, 0x4000, 0);
     Actor_FaceDirection(1, 0x4000, 0);
-    if (Inventory_PromptAndSetObjectMode(0, 0) == 0) {
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventSetMessage((s32)MsgSoruHonestlyDoubtUnderstand);
     } else {
         Engine_EventSetMessage((s32)MsgSoruHmphWellTold);
@@ -602,7 +605,7 @@ s32 Scene_RunGuardSequenceB(void)
     Engine_ActorSetSpriteFlags((s32)Object_GetById(18), 0);
     Object_GetById(18)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(18, 1);
-    if ((u32)((gCell[225][0] - 3) << 16) > 0x10000) {
+    if ((u32)((gGameState[225][0] - 3) << 16) > 0x10000) {
         Actor_SetPosition(JASMINE, 0, 0);
         Actor_SetPosition(GERALD, 0, 0);
     }
@@ -663,7 +666,7 @@ s32 Scene_RunGuardSequenceB(void)
         Map_CopyCellsTo(4, 58, 36, 43, 4, 1);
     }
     {
-    s16 *state = (s16 *)gCell;
+    s16 *state = (s16 *)gGameState;
 
     if (state[225] == 3) {
         if (GameFlag_IsSet(0x30a) != 0) {

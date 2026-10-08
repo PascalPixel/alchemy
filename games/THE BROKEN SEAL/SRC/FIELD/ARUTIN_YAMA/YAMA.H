@@ -11,7 +11,6 @@
 #include "FIELD_SCENE.H"
 
 #include "BATTLE_EFFECT_RUNTIME.H"
-#define Data_03001ebc ((u8 *)&Data_03001ebc)
 
 enum {
     ITEM_FROST_JEWEL = 202

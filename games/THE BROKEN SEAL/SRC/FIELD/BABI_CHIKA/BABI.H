@@ -103,7 +103,7 @@ extern u8 Data_0200ba74[];
 extern u8 Data_0200bc0c[];
 extern u8 Data_0200bef4[];
 
-void Object_SetPosition();
+void Engine_ObjectSetPosition();
 s32 Object_CheckMovementCollision();
 s32 Vector_AddPolarOffset();
 s32 Battle_GetWorkObject1e0();

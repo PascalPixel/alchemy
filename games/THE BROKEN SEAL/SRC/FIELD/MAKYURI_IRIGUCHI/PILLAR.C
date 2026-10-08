@@ -14,7 +14,6 @@
 
 #define Makyuri_PillarScript ((u8 (*))&Makyuri_PillarScript)
 
-#define FrameCounter gFrameCount
 
 struct FollowDetail {
     u8 unknown_00[5];
@@ -50,7 +49,6 @@ struct WorkPointers {
     u8 *scene;
 };
 
-extern struct WorkPointers gWork;
 
 struct Sprite39b {
     u8 pad[9];
@@ -123,7 +121,7 @@ s32 Makyuri_FollowLeader(struct FieldActor *actor)
         actor->z.fixed += dz;
     }
     sprite = (struct FollowSprite *)actor->sprite;
-    sprite->detail->shade = ((FrameCounter >> 1) & 1) * 7;
+    sprite->detail->shade = ((gFrameCount >> 1) & 1) * 7;
     sprite->visible = 1;
     return 1;
 }
@@ -163,7 +161,7 @@ void MakyuriHeya_SpawnSparkPair(void)
             sprite->flags = 0;
         }
     }
-    Audio_PlayCue(130);
+    Engine_AudioPlayCue(130);
 }
 
 void MakyuriIriguchi_RaisePillar(void)
@@ -177,7 +175,7 @@ void MakyuriIriguchi_RaisePillar(void)
 
     /* FAKEMATCH: the event work pointer is read as globals - 8, so the pool holds the scene pointer's address and the base is derived from it. */
     {
-        u8 **globals = &gWork.scene;
+        u8 **globals = &((struct WorkPointers *)&gEventWork)->scene;
 
         state = *(struct PillarState **)globals[0];
         leader = (*(struct Work **)(globals - 8))->actors[gGameState.selected_actor];
@@ -208,7 +206,7 @@ void MakyuriIriguchi_RaisePillar(void)
     }
     for (step = state->step; step <= 2; step++) {
         MakyuriHeya_SpawnSparkPair();
-        WaitFrames(30);
+        Engine_TaskWait(30);
         pillar[84] = 1;
         Object_SetMode(pillar, 5 - step);
     }

@@ -30,7 +30,7 @@
 
 extern void *gWorkSlot[];
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 {
@@ -113,7 +113,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 				screen.x /= 2;
 				screen.y -= 8;
 				if (frame == FirePillars_StartFrames[pillar])
-					Audio_PlayCue(145);
+					AudioCommand_PlayFar(145);
 				if (frame >= FirePillars_StartFrames[pillar] + 4)
 				{
 					s32 scroll = (frame * 16 + pillar * 25) % 104;

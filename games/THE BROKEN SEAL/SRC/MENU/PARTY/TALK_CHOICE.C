@@ -25,7 +25,7 @@
 #define ShopCursor_SetPositionImmediateFar ((void (*)(union MenuCursor*,s32,s32))ShopCursor_SetPositionImmediateFar)
 
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 
 extern u8 Resource_FixedBlockBTiles[];
@@ -77,26 +77,26 @@ s32 PartyTalkMenu_Choose(void)
         }
         ShopCursor_AdvanceFar(&cursor);
         if (gKeysRepeat & KEY_UP) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             row--;
             moved = 1;
             if (row == -1)
                 row = 2;
         }
         if (gKeysRepeat & KEY_DOWN) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             row++;
             moved = 1;
             if (row == 3)
                 row = 0;
         }
         if (gKeysRepeat & KEY_B) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             row = -1;
             goto close;
         }
     } while (!(gKeysRepeat & KEY_A));
-    Audio_PlayCue(112);
+    AudioCommand_PlayFar(112);
 close:
     UiWork_Finalize(window, 2);
     WaitFrames(1);

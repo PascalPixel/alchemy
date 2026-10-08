@@ -114,9 +114,9 @@ Engine_ActorRunRepeatedMotion:
 	.thumb_func
 Object_LinkPair:
 	overlay_veneer Object_LinkPairFar
-	.global ObjectGroup_ConfigureChildValue
+	.global Engine_ActorSetChildValue
 	.thumb_func
-ObjectGroup_ConfigureChildValue:
+Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Engine_EventSetMessage
 	.thumb_func

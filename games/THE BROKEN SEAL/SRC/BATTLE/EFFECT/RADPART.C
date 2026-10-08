@@ -43,7 +43,7 @@ struct EffectOwner
 struct ObjectRuntime *Object_GetById(u32 actor);
 void				  BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 extern struct BattleFxScene *gEffectWork;
 void						 Motion_SetVarCbAndRefresh(s32, s32);
@@ -88,7 +88,7 @@ struct SpreadPosition
 	s32 z;
 };
 
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 
 extern const s32 BattleFx_CommonParticleScript[];
 
@@ -119,7 +119,7 @@ struct CaptureObject
 };
 
 void				  ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-void				  Object_SetMode(struct ObjectRuntime *object, s32 mode);
+void				  ObjectDispatch_ApplyArgumentToChildrenFar(struct ObjectRuntime *object, s32 mode);
 void				  ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void				  Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
@@ -199,7 +199,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
 		effect->flags = 0;
 		effect->age = 0;
 		if ((gFrameTick & 1) != 0)
-			Audio_PlayCue(134);
+			AudioCommand_PlayFar(134);
 	}
 	else if (state == 1)
 	{
@@ -238,7 +238,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
 		effect->target_z = position.z;
 		effect->state++;
 		if ((gFrameTick & 1) != 0)
-			Audio_PlayCue(145);
+			AudioCommand_PlayFar(145);
 	}
 	else if (state == 4)
 	{
@@ -280,19 +280,19 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
 	WaitFrames(30);
 	ObjectMotion_ArmCallback(arg, 0x4000, 0);
 	WaitFrames(20);
-	Audio_PlayCue(173);
+	AudioCommand_PlayFar(173);
 	Motion_SetVarCbAndRefresh(arg, 1);
-	Audio_PlayCue(174);
+	AudioCommand_PlayFar(174);
 	Motion_SetVarCbAndRefresh(arg, 1);
-	Audio_PlayCue(175);
+	AudioCommand_PlayFar(175);
 	Motion_SetVarCbAndRefresh(arg, 1);
 	WaitFrames(20);
-	Audio_PlayCue(140);
+	AudioCommand_PlayFar(140);
 	source_object->callback = (void *)BattleFx_AdvanceAngleWithRamp;
 	source_object->timer = 0;
 	WaitFrames(80);
 	source_object->callback = (void *)BattleFx_ShrinkObjectAndDestroySlow;
-	Object_SetMode((struct ObjectRuntime *)source_object, 3);
+	ObjectDispatch_ApplyArgumentToChildrenFar((struct ObjectRuntime *)source_object, 3);
 
 	position.x = source_object->x;
 	position.y = source_object->y;
@@ -320,7 +320,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
 	WaitFrames(60);
 	ObjectMotion_ArmCallback(gGameState.selected_actor, 0x4000, 0);
 	WaitFrames(20);
-	Object_SetMode(Object_GetById(gGameState.selected_actor), 28);
+	ObjectDispatch_ApplyArgumentToChildrenFar(Object_GetById(gGameState.selected_actor), 28);
 	{
 		s32 next_state;
 
@@ -441,7 +441,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
 		effect->state++;
 
 		if ((gFrameTick & 1) != 0)
-			Audio_PlayCue(0x90);
+			AudioCommand_PlayFar(0x90);
 	}
 	else if (state == 1)
 	{
@@ -476,22 +476,22 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
 	Shop_RestoreSceneTilesFar(0x201204);
 	WaitFrames(30);
 	djinni->visible = 0;
-	Audio_PlayCue(152);
+	AudioCommand_PlayFar(152);
 	ObjectMotion_Launch(arg, 4, 15);
-	Audio_PlayCue(152);
+	AudioCommand_PlayFar(152);
 	ObjectMotion_Launch(arg, 4, 15);
 	WaitFrames(30);
 	djinni->callback = (void *)BattleFx_AdvanceSpinAngle;
-	Audio_PlayCue(153);
+	AudioCommand_PlayFar(153);
 	ObjectMotion_Launch(arg, 8, 22);
-	Audio_PlayCue(140);
+	AudioCommand_PlayFar(140);
 	Runtime_SetWorkTripleIfNonNegativeFar(0x14ccc, 0x14ccc, 0x10000);
 	djinni->callback = (void *)BattleFx_ShrinkObjectAndDestroyFast;
-	Object_SetMode((struct ObjectRuntime *)djinni, 3);
+	ObjectDispatch_ApplyArgumentToChildrenFar((struct ObjectRuntime *)djinni, 3);
 	WaitFrames(90);
 	ObjectMotion_ArmCallback(gGameState.selected_actor, 0x4000, 0);
 	WaitFrames(20);
-	Object_SetMode(Object_GetById(gGameState.selected_actor), 28);
+	ObjectDispatch_ApplyArgumentToChildrenFar(Object_GetById(gGameState.selected_actor), 28);
 	WaitFrames(30);
 	Runtime_SetWorkTripleIfNonNegativeFar(0x19999, 0x19999, 0x10000);
 
@@ -551,15 +551,15 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
 			djinni->angle = (remaining << 16) / 24;
 			djinni->callback = (void *)BattleFx_UpdateDescendingOrbitObject;
 			djinni->mode = 0;
-			Object_SetMode((struct ObjectRuntime *)djinni, 7);
+			ObjectDispatch_ApplyArgumentToChildrenFar((struct ObjectRuntime *)djinni, 7);
 			Animation_ApplyChildValuesFar(djinni, 11);
 		}
 	}
 
 	WaitFrames(100);
-	Audio_PlayCue(288);
+	AudioCommand_PlayFar(288);
 	WaitFrames(1);
-	Audio_PlayCue(151);
+	AudioCommand_PlayFar(151);
 	position[0] = leader->x;
 	position[1] = leader->y + 0x120000;
 	position[2] = leader->z;
@@ -632,7 +632,7 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
 			effect->max_speed = Random16() + 0x23333;
 			effect->scale_x = 0x8000;
 			effect->scale_y = 0x8000;
-			Audio_PlayCue(143);
+			AudioCommand_PlayFar(143);
 
 			if (*state_pointer == 1)
 				(*state_pointer)--;

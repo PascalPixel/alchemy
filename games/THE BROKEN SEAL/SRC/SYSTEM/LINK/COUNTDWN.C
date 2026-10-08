@@ -61,7 +61,7 @@ struct LinkCountdownState {
 
 extern struct LinkSignature gLinkPeerSignatures[];
 void UiText_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4);
-void Audio_PlayCue(s32 soundId);
+void AudioCommand_PlayFar(s32 soundId);
 
 
 void UpdateLinkSessionCountdown(void)
@@ -156,7 +156,7 @@ timer_ready:
 
         seconds = (timer + FRAMES_PER_SECOND - 1) / FRAMES_PER_SECOND;
         if (seconds != 0 && seconds *FRAMES_PER_SECOND == timer)
-            Audio_PlayCue(SOUND_TRIPLE_TONE_LOW);
+            AudioCommand_PlayFar(SOUND_TRIPLE_TONE_LOW);
 
         if (state->displayHandle != 0)
             UiText_DrawNumberInWindow(seconds, 2, state->displayHandle, 16, 8);

@@ -21,6 +21,8 @@
 #include "GAME_STATE.H"
 #include "BTLSYS.H"
 
+extern struct EventRuntime *gEventWork;
+
 #define gKeyState (*(volatile u32 *)&gKeyState)
 
 u32 Random16(void);
@@ -747,7 +749,7 @@ u32 Field_StoreAssignedKeyValue(u32 value)
 {
     u32 selector = value >> 14;
     u32 request = 0x3FFF & value;
-    struct FieldStepWork *work = (struct FieldStepWork *)gWork;
+    struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
 
     if (GameFlag_TestFar(0x107) != 0) {
         StoreHalfword((s16 *)&work->raised_trigger, 0xFA);
@@ -773,7 +775,7 @@ u32 Field_StoreAssignedKeyValue(u32 value)
 
 s32 Field_CheckConfiguredKeys(void)
 {
-    struct EventRuntime *work = gWork;
+    struct EventRuntime *work = gEventWork;
     /* FAKEMATCH: needed to match: local halfword addresses and signed values avoid two extra literal-1 loads and 24 extra bytes. */
     s32 result = 0;
 

@@ -17,6 +17,7 @@
 #include "BTLSYS.H"
 #include "ITEM.H"
 #include "text/MSG_IDS.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 #define gKeyState (*(volatile u32 *)&gKeyState)
 
@@ -138,7 +139,7 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
 
     row = 0;
     consumable = 0;
-    def = Item_Get(item & ITEM_ID_MASK);
+    def = Item_GetDirectFar(item & ITEM_ID_MASK);
     if (def->type != 0) {
         found = 0;
         /* FAKEMATCH: the two bonus fields are tested as one masked word. */

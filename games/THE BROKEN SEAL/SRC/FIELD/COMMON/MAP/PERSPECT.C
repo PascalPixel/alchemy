@@ -335,7 +335,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
         state->tile_ids[28] = 0x11c;
         Map_UpdateCurrentTileBlock();
     }
-    Runtime_BumpFree(buffer);
+    MemFree(buffer);
 }
 
 void MapAnimation_ApplyAffineFrame(void)

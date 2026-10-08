@@ -149,14 +149,14 @@ s32 SerialRuntime_BeginTransferA(void *source, s32 transfer_value)
 
     /* FAKEMATCH: sharing the integer address carrier with the result keeps the source in r0 through the busy check. A separate result is hoisted into r0 and moves the source to another register. */
     value = (s32)source;
-    active = &SERIAL_ACTIVE_A;
+    active = &gSerialSendSource;
     busy = *active;
     transfer = transfer_value;
     /* FAKEMATCH: assigning active twice selects r5 for active and r6 for transfer; one-pass blocks preserve store order. */
     do {
         state = &gSerialTransfer;
     } while (0);
-    active = &SERIAL_ACTIVE_A;
+    active = &gSerialSendSource;
     if (busy == 0)
         goto begin_transfer;
     value = -1;
@@ -168,7 +168,7 @@ begin_transfer:
     *ime = (u32)ime;
     do {
         state->status = 0x80;
-        SERIAL_VALUE_A = transfer;
+        gSerialSendSize = transfer;
         gSerialBlockSequence = 0;
         *active = value;
         state->active = 1;
@@ -192,7 +192,7 @@ s32 SerialRuntime_BeginTransferB(void *destination)
     /* FAKEMATCH: sharing the integer address carrier with the result keeps the destination in r0 through the busy check. A separate result is hoisted into r0 and makes the function save another register. */
     value = (s32)destination;
     state = &gSerialTransfer;
-    active = &SERIAL_ACTIVE_B;
+    active = &gSerialReceiveDest;
     busy = *active;
     if (busy == 0)
         goto begin_transfer;
@@ -206,7 +206,7 @@ begin_transfer:
     /* FAKEMATCH: the one-pass block keeps the IME read and write ahead of the transfer stores, as in SerialRuntime_BeginTransferA. */
     do {
         state->status = 0x81;
-        SERIAL_VALUE_B = 0;
+        gSerialReceivedSize = 0;
         state->active = 1;
         *active = value;
     } while (0);

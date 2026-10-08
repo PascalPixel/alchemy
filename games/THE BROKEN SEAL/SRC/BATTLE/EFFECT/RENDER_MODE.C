@@ -30,7 +30,7 @@
 #define SceneTransform_ApplyPosition ((void (*)(s32 *))SceneTransform_ApplyPosition)
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 #define CONVERGES(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
 #define DECAYS(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
@@ -137,7 +137,7 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
 	work->transfer_mode = 2;
 	work->transfer_value = 75;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	Audio_PlayCue(142);
+	AudioCommand_PlayFar(142);
 
 	for (frame = 0; frame != total; frame++)
 	{

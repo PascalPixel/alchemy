@@ -26,15 +26,15 @@ struct FieldCueWork {
 };
 
 extern struct FieldCueWork *gEventWork;
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 
 void ObjectMotion_SetActionVariant(u32, s32);
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);
 void Battle_WaitMode0(s32);
-void Object_ResetMotion(struct ObjectRuntime *);
-void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
-void Object_CommitPosition(struct ObjectRuntime *);
-void Object_SetMode(struct ObjectRuntime *, s32);
+void ObjectDispatch_InitFromTable6Far(struct ObjectRuntime *);
+void Object_SetMoveTargetFar(struct ObjectRuntime *, s32, s32, s32);
+void Script_WaitForEventTimeoutFar(struct ObjectRuntime *);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct ObjectRuntime *, s32);
 
 struct BurstParticle {
     u8 pad_00[8];
@@ -70,8 +70,8 @@ void BattleFx_SetQueuedSoundAndPlay(s32 sound_id)
     if ((s16)sound_id == -1) {
         sound_id = 0x121;
     }
-    Audio_PlayCue(0x12a);
-    Audio_PlayCue(sound_id);
+    AudioCommand_PlayFar(0x12a);
+    AudioCommand_PlayFar(sound_id);
 }
 
 void BattleFx_PlayQueuedSound(void)
@@ -79,7 +79,7 @@ void BattleFx_PlayQueuedSound(void)
     s16 sound_id = gEventWork->queued_sound;
 
     if (sound_id != -1)
-        Audio_PlayCue(sound_id);
+        AudioCommand_PlayFar(sound_id);
 }
 
 struct ObjectRuntime *Object_GetById(u32 object_id)
@@ -121,7 +121,7 @@ void ObjectMotion_EnableActionAndResetMotion(u32 object_id)
     if (object != NULL) {
         enabled = 1;
         object->action_flags = enabled | object->action_flags;
-        Object_ResetMotion(object);
+        ObjectDispatch_InitFromTable6Far(object);
     }
 }
 
@@ -162,8 +162,8 @@ void ObjectMotion_ResetAndSetPosition(u32 object_id, s32 x, s32 z)
 
     if (object != NULL) {
         object->movement_state = 0;
-        Object_ResetMotion(object);
-        Object_SetPosition(object, x << 16, object->y, z << 16);
+        ObjectDispatch_InitFromTable6Far(object);
+        Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
     }
 }
 
@@ -173,9 +173,9 @@ void ObjectMotion_SetPositionAndCommit(u32 object_id, s32 x, s32 z)
 
     if (object != NULL) {
         object->movement_state = 0;
-        Object_ResetMotion(object);
-        Object_SetPosition(object, x << 16, object->y, z << 16);
-        Object_CommitPosition(object);
+        ObjectDispatch_InitFromTable6Far(object);
+        Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
+        Script_WaitForEventTimeoutFar(object);
     }
 }
 
@@ -185,9 +185,9 @@ void ObjectMotion_ResetAndSetPositionInMode2(u32 object_id, s32 x, s32 z)
 
     if (object != NULL) {
         object->movement_state = 0;
-        Object_ResetMotion(object);
-        Object_SetMode(object, 2);
-        Object_SetPosition(object, x << 16, object->y, z << 16);
+        ObjectDispatch_InitFromTable6Far(object);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+        Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
     }
 }
 
@@ -197,11 +197,11 @@ void ObjectMotion_SetPositionAndReset(u32 object_id, s32 x, s32 z)
 
     if (object != NULL) {
         object->movement_state = 0;
-        Object_ResetMotion(object);
-        Object_SetMode(object, 2);
-        Object_SetPosition(object, x << 16, object->y, z << 16);
-        Object_CommitPosition(object);
-        Object_SetMode(object, 1);
+        ObjectDispatch_InitFromTable6Far(object);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+        Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
+        Script_WaitForEventTimeoutFar(object);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
     }
 }
 
@@ -223,14 +223,14 @@ void ObjectMotion_CenterOnColumn(u32 object_id, s32 action, s32 z_offset)
         snapped_angle *= 16;
         angle_remainder = current_angle - snapped_angle;
         object->movement_state = 0;
-        Object_ResetMotion(object);
-        Object_SetMode(object, 2);
-        Object_SetPosition(object,
+        ObjectDispatch_InitFromTable6Far(object);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+        Object_SetMoveTargetFar(object,
             object->x + ((8 - angle_remainder) << 16),
             object->y, object->z);
-        Object_CommitPosition(object);
+        Script_WaitForEventTimeoutFar(object);
         ObjectMotion_SetActionVariant(object_id, action);
-        Object_SetPosition(object, object->x, object->y,
+        Object_SetMoveTargetFar(object, object->x, object->y,
             object->z + (z_offset << 16));
     }
 }
@@ -241,8 +241,8 @@ void ObjectMotion_OffsetPositionAndResetMotion(u32 object_id, s32 x_offset, s32 
 
     if (object != NULL) {
         object->movement_state = 0;
-        Object_ResetMotion(object);
-        Object_SetPosition(object, object->x + (x_offset << 16),
+        ObjectDispatch_InitFromTable6Far(object);
+        Object_SetMoveTargetFar(object, object->x + (x_offset << 16),
             object->y, object->z + (z_offset << 16));
     }
 }
@@ -253,9 +253,9 @@ void ObjectMotion_OffsetPositionAndReset(u32 object_id, s32 x_offset, s32 z_offs
 
     if (object != NULL) {
         object->movement_state = 0;
-        Object_ResetMotion(object);
-        Object_SetMode(object, 2);
-        Object_SetPosition(object, object->x + (x_offset << 16),
+        ObjectDispatch_InitFromTable6Far(object);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
+        Object_SetMoveTargetFar(object, object->x + (x_offset << 16),
             object->y, object->z + (z_offset << 16));
     }
 }
@@ -266,8 +266,8 @@ void ObjectMotion_CommitPositionAndActivate(u32 object_id, s32 x_offset, s32 z_o
 
     ObjectMotion_OffsetPositionAndReset(object_id, x_offset, z_offset);
     if (object != NULL) {
-        Object_CommitPosition(object);
-        Object_SetMode(object, 1);
+        Script_WaitForEventTimeoutFar(object);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
     }
 }
 
@@ -283,7 +283,7 @@ void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
         if (other != NULL)
             ObjectMotion_SetHorizontalPositionWithTerrain(arg0, other->x, other->z);
         object->movement_state = 0;
-        Object_SetMode(object, 2);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
         ObjectMotion_OffsetPositionAndResetMotion(arg0, arg1, arg2);
         ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)&ObjectMotion_LaunchScript);
         object->action = arg3;
@@ -295,8 +295,8 @@ void ObjectMotion_CommitCurrentPositionAndActivate(u32 object_id)
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
     if (object != NULL) {
-        Object_CommitPosition(object);
-        Object_SetMode(object, 1);
+        Script_WaitForEventTimeoutFar(object);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
     }
 }
 
@@ -310,7 +310,7 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 object_id, s32 x, s32 z)
 
     object = ObjectTable_Get(object_id);
     if (object != NULL) {
-        Object_ResetMotion(object);
+        ObjectDispatch_InitFromTable6Far(object);
         object->velocity_x = 0;
         object->velocity_y = 0;
         object->velocity_z = 0;
@@ -346,7 +346,7 @@ void ObjectMotion_SetPositionWithTerrain(u32 object_id, s32 x, s32 y, s32 z)
 
     object = ObjectTable_Get(object_id);
     if (object != NULL) {
-        Object_ResetMotion(object);
+        ObjectDispatch_InitFromTable6Far(object);
         object->velocity_x = 0;
         object->velocity_y = 0;
         object->velocity_z = 0;
@@ -379,7 +379,7 @@ void Object_SetModeById(u32 object_id, s32 action)
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
     if (object != NULL)
-        Object_SetMode(object, action);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, action);
 }
 
 void Object_SetActionById(u32 object_id, s32 action)
@@ -435,9 +435,9 @@ void ObjectMotion_Launch(u32 object_id, s32 speed, s32 event_id)
         *object_flags = updated_flags;
         object->velocity_y = vertical_velocity;
         if (speed > 5) {
-            Audio_PlayCue(0x99);
+            AudioCommand_PlayFar(0x99);
         } else {
-            Audio_PlayCue(0x98);
+            AudioCommand_PlayFar(0x98);
         }
         Battle_WaitMode0(event_id);
     }
@@ -505,11 +505,11 @@ void BattleFx_SpawnBurstParticle(struct BurstParticle *source, s32 optional)
         child = object->child;
         switch (Random16() & 1) {
         case 1:
-            Object_SetMode((struct ObjectRuntime *)object, 2);
+            ObjectDispatch_ApplyArgumentToChildrenFar((struct ObjectRuntime *)object, 2);
             ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_BurstParticleScriptA);
             break;
         default:
-            Object_SetMode((struct ObjectRuntime *)object, 1);
+            ObjectDispatch_ApplyArgumentToChildrenFar((struct ObjectRuntime *)object, 1);
             ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_BurstParticleScriptB);
             break;
         }
@@ -540,21 +540,21 @@ void BattleFx_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 o
     object = Object_GetById(sequence_arg);
     base_z = object->z;
     if (object != 0) {
-        Audio_PlayCue(0x121);
-        Object_SetMode(object, mode_or_frame);
+        AudioCommand_PlayFar(0x121);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, mode_or_frame);
         WaitFrames(10);
         object_flags = &object->flags;
-        Object_SetMode(object, 1);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
         {
             u8 flags = 2;
             flags |= *object_flags;
             *object_flags = flags;
         }
         object->velocity_y = 0x40000;
-        Object_SetPosition(object, object->x, object->y,
+        Object_SetMoveTargetFar(object, object->x, object->y,
             base_z + 0xC0000);
         WaitFrames(6);
-        Audio_PlayCue(0xD9);
+        AudioCommand_PlayFar(0xD9);
         mode_or_frame = 0;
         ObjectMotion_ArmCallback(sequence_arg, 0x5000, 0);
         *object_flags = 0;
@@ -570,9 +570,9 @@ void BattleFx_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 o
         } while ((u32)mode_or_frame <= 0xD);
         *object_flags = 3;
         object->velocity_y = 0x30000;
-        Object_SetPosition(object, object->x, object->y,
+        Object_SetMoveTargetFar(object, object->x, object->y,
             base_z + 0x100000);
-        Object_CommitPosition(object);
+        Script_WaitForEventTimeoutFar(object);
         mode_or_frame = 0;
         if (object->y > object->terrain_height) {
 wait_for_target_y:

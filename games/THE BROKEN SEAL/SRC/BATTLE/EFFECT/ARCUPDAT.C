@@ -22,6 +22,7 @@
 #include "OBJECT_EFX.H"
 #include "FIXED_MATH.H"
 #include "FIELD_EVENT.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 #define ObjectDispatch_ApplyValueToChildrenFar \
 	((void (*)(struct ObjectRuntime *, s32))ObjectDispatch_ApplyValueToChildrenFar)
@@ -71,7 +72,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
 		obj->unknown_23 = 4;
 		((struct AnimationObject *)obj->animation)->part[0].priority = 0;
 		ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
-		Object_SetMode(obj, 1);
+		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
 	}
 	return obj;
 }

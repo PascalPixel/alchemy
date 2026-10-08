@@ -10,9 +10,9 @@ __divsi3:
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
-	.global Engine_ScheduleCallbackFar
+	.global Engine_TaskAddCallback
 	.thumb_func
-Engine_ScheduleCallbackFar:
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Scheduler_RemoveCallback
 	.thumb_func

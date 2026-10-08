@@ -53,7 +53,7 @@ struct DualPuff
 };
 
 void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 
 #define PUFFS ((struct EffectStep *)Ram_MapCellBuffer) // とげの土けむり
 
@@ -259,7 +259,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 								{
 									if (!(i & 1))
 									{
-										Audio_PlayCue(133);
+										AudioCommand_PlayFar(133);
 									}
 									ObjectGroup_UpdateMembers(work->effect->actors[n], 7, 5, n, 3);
 								}
@@ -394,7 +394,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
 	{
 		if (frame == 32)
 		{
-			Audio_PlayCue(143);
+			AudioCommand_PlayFar(143);
 			for (i = 0; i != work->effect->count; i++)
 				ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 16);
 		}
@@ -585,7 +585,7 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect)
 			{
 				if (frame == start + 4)
 				{
-					Audio_PlayCue(132);
+					AudioCommand_PlayFar(132);
 					ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 3);
 				}
 			}

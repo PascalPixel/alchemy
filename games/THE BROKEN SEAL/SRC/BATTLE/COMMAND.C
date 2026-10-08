@@ -26,6 +26,9 @@
 #include "MOTOBJ.H"
 #include "ITEM.H"
 #include "IO_REG.H"
+s32 GameFlag_TestFar(s32 flag);
+struct BtlAct * BtlActGet(s32 action_id);
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 #define Battle_GetTaggedSlotValue ((s32 (*)(s32))Battle_GetTaggedSlotValue)
 #define Trade_AddOfferFar ((void (*)(s32, s32, s32))Trade_AddOfferFar)
@@ -52,13 +55,13 @@
 #define MIKATA_MAX 7   // 仲間の番号の上限
 #define TGT_MAX 14
 
-void					   UiText_DrawQuantity(s32 value, s32 slot);
+void					   UiWork_PushValueSlotFar(s32 value, s32 slot);
 void					   UiText_ShowMessageAndWaitCoreFar(s32 message);
 void					   Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
 void					   Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 s32						   BattleEventRuntime_SchedulePhase(s32 frames);
 void					   AudioCommand_PlayFar(s32 cue);
-void					   Object_SetMode(struct MotionObject *object, s32 mode);
+void					   ObjectDispatch_ApplyArgumentToChildrenFar(struct MotionObject *object, s32 mode);
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 void					   BattlePresentation_WaitForAdvance(void);
 
@@ -79,7 +82,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	//----------------------------------------------------------------------
 	s32 TgtSet(s32 no)
 	{
-		struct BtlAct *act = Ability_GetData(no);
+		struct BtlAct *act = BtlActGet(no);
 		s32			   mode = act->target_mode;
 		s32			   dead_ok = 0;
 		s32			   cnt;
@@ -164,7 +167,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			plan->target_count = cnt;
 			if (cnt <= 0)
 			{
-				UiText_DrawQuantity(req->unit_id, 1);
+				UiWork_PushValueSlotFar(req->unit_id, 1);
 				UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
 				if (unit->guard_lv == 0)
 					unit->guard_lv = 1;
@@ -186,7 +189,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		return -2;
 
 	// デバッグ：R を押していれば敵全員 (SELECT も押せば味方全員) を倒す
-	if (BATTLE_AUTO_MODE && GameFlag_IsSet(0x16d) && (BATTLE_OPTIONS & KEY_R))
+	if (BATTLE_AUTO_MODE && GameFlag_TestFar(0x16d) && (BATTLE_OPTIONS & KEY_R))
 	{
 		s32 teki = 1;
 		s32 i;
@@ -219,26 +222,26 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	if (unit->miugoki)
 	{
 		unit->miugoki = 0;
-		UiText_DrawQuantity(req->unit_id, 1);
+		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiText_ShowMessageAndWaitCoreFar((s32)MsgUnableToMove);
 		return -1;
 	}
 	if (unit->nemuri)
 	{
-		UiText_DrawQuantity(req->unit_id, 1);
+		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiText_ShowMessageAndWaitCoreFar((s32)MsgIsAsleep);
 		return -1;
 	}
 	if (unit->shibire)
 	{
-		UiText_DrawQuantity(req->unit_id, 1);
+		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiText_ShowMessageAndWaitCoreFar((s32)MsgIsParalyzed);
 		return -1;
 	}
 	// かなしばりは 1/4 で動けない
 	if ((unit->restraint & 1) && req->command != CMD_BOUGYO && (BtlRndFar() & 3) == 0)
 	{
-		UiText_DrawQuantity(req->unit_id, 1);
+		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiText_ShowMessageAndWaitCoreFar((s32)MsgIsBound);
 		return -1;
 	}
@@ -266,7 +269,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		}
 		else
 		{
-			UiText_DrawQuantity(req->unit_id, 1);
+			UiWork_PushValueSlotFar(req->unit_id, 1);
 			UiText_ShowMessageAndWaitCoreFar((s32)MsgActorRuns);
 		}
 		BattlePresentation_WaitForAdvance();
@@ -280,11 +283,11 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			return -1;
 		if (act_no != WAZA_KOUGEKI)
 		{
-			UiText_DrawQuantity(req->unit_id, 1);
-			UiText_DrawQuantity(Inventory_GetEquippedItemFar(unit, 1), 2);
+			UiWork_PushValueSlotFar(req->unit_id, 1);
+			UiWork_PushValueSlotFar(Inventory_GetEquippedItemFar(unit, 1), 2);
 			UiText_ShowMessageAndWaitCoreFar((s32)MsgWeaponHowls);
 			BattleEv_MarkDisplay();
-			UiText_DrawQuantity(act_no, 4);
+			UiWork_PushValueSlotFar(act_no, 4);
 			UiText_ShowMessageAndWaitCoreFar((s32)MsgWeaponHowls + 1);
 		}
 		break;
@@ -295,11 +298,11 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		s32			   ok = 1;
 
 		act_no = req->parameter;
-		act = Ability_GetData(act_no);
+		act = BtlActGet(act_no);
 		if (TgtSet(act_no) == -1)
 			return -1;
-		UiText_DrawQuantity(req->unit_id, 1);
-		UiText_DrawQuantity(act_no, 4);
+		UiWork_PushValueSlotFar(req->unit_id, 1);
+		UiWork_PushValueSlotFar(act_no, 4);
 		UiText_ShowMessageAndWaitCoreFar((s32)MsgActorCasts);
 		// EPが足りないか、ふうじなら失敗
 		if (unit->ep < act->pp_cost)
@@ -331,15 +334,15 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 
 		if (req->parameter < 0)
 		{
-			UiText_DrawQuantity(req->unit_id, 1);
+			UiWork_PushValueSlotFar(req->unit_id, 1);
 			UiText_ShowMessageAndWaitCoreFar((s32)MsgItemAlreadyUsed);
 			return -1;
 		}
-		item = Item_Get(unit->inventory[req->parameter]);
+		item = Item_GetDirectFar(unit->inventory[req->parameter]);
 		act_no = item->action_id;
 		if (act_no == 0 || (unit->inventory[req->parameter] & 0x400))
 		{
-			UiText_DrawQuantity(req->unit_id, 1);
+			UiWork_PushValueSlotFar(req->unit_id, 1);
 			UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
 			if (unit->guard_lv == 0)
 				unit->guard_lv = 1;
@@ -347,8 +350,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		}
 		if (TgtSet(act_no) == -1)
 			return -1;
-		UiText_DrawQuantity(req->unit_id, 1);
-		UiText_DrawQuantity(unit->inventory[req->parameter], 2);
+		UiWork_PushValueSlotFar(req->unit_id, 1);
+		UiWork_PushValueSlotFar(unit->inventory[req->parameter], 2);
 		if (item->use_type == 2 || item->use_type == 0)
 		{
 			switch (item->type)
@@ -374,7 +377,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 
 	case CMD_BOUGYO:
 	case CMD_BOUGYO2:
-		UiText_DrawQuantity(req->unit_id, 1);
+		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
 		return -1;
 
@@ -388,9 +391,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		act_no = req->parameter;
 		if (TgtSet(act_no) == -1)
 			return -1;
-		UiText_DrawQuantity(req->unit_id, 1);
-		UiText_DrawQuantity(act_no, 4);
-		if ((Ability_GetData(act_no)->tgt_flg & 15) == 6)
+		UiWork_PushValueSlotFar(req->unit_id, 1);
+		UiWork_PushValueSlotFar(act_no, 4);
+		if ((BtlActGet(act_no)->tgt_flg & 15) == 6)
 			mes = (s32)MsgActorUnleashesAbility;
 		else
 			mes = (s32)MsgActorUsesAbility;
@@ -464,7 +467,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			if (Trade_CanOfferDjinnFar(
 					req->unit_id, DJINN_ELEMENT(req->parameter), DJINN_INDEX(req->parameter)))
 			{
-				Ability_GetData(act_no);
+				BtlActGet(act_no);
 				BattlePres_SetActorModes(0, 0);
 				Djinn_ActivateFar(
 					req->unit_id, DJINN_ELEMENT(req->parameter), DJINN_INDEX(req->parameter));
@@ -481,15 +484,15 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 				BtlEvPush(BEV_MES, (s32)MsgDjinnSet);
 				BtlEvPush(BEV_OBJ_END, req->unit_id);
 				AudioCommand_PlayFar(212);
-				Object_SetMode(BtlObjGet(req->unit_id)->object, 3);
+				ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(req->unit_id)->object, 3);
 				ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(req->unit_id)->object, 32);
 				BattleFx_PlayUnitElementEffect(req->unit_id, DJINN_ELEMENT(req->parameter), 3, 0);
 				BattleEventRuntime_WaitForReady();
 				return -2;
 			}
 			// リカバリー中
-			UiText_DrawQuantity(req->unit_id, 1);
-			UiText_DrawQuantity(act_no, 4);
+			UiWork_PushValueSlotFar(req->unit_id, 1);
+			UiWork_PushValueSlotFar(act_no, 4);
 			AudioCommand_PlayFar(114);
 			UiText_ShowMessageAndWaitCoreFar((s32)MsgDjinnInRecovery);
 			WaitFrames(60);
@@ -503,9 +506,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 				return -1;
 			Trade_AddOfferFar(
 				req->unit_id, DJINN_ELEMENT(req->parameter), DJINN_INDEX(req->parameter));
-			act = Ability_GetData(act_no);
-			UiText_DrawQuantity(req->unit_id, 1);
-			UiText_DrawQuantity(act_no, 4);
+			act = BtlActGet(act_no);
+			UiWork_PushValueSlotFar(req->unit_id, 1);
+			UiWork_PushValueSlotFar(act_no, 4);
 			UiText_ShowMessageAndWaitCoreFar((s32)MsgActorUnleashesDjinn);
 			plan->elm = act->damage_class;
 		}
@@ -535,13 +538,13 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			return -1;
 		if (i != 4)
 		{
-			UiText_DrawQuantity(req->unit_id, 1);
-			UiText_DrawQuantity(act_no, 4);
+			UiWork_PushValueSlotFar(req->unit_id, 1);
+			UiWork_PushValueSlotFar(act_no, 4);
 			UiText_ShowMessageAndWaitCoreFar((s32)MsgSummonLacksDjinn);
 			return -1;
 		}
-		UiText_DrawQuantity(req->unit_id, 1);
-		UiText_DrawQuantity(act_no, 4);
+		UiWork_PushValueSlotFar(req->unit_id, 1);
+		UiWork_PushValueSlotFar(act_no, 4);
 		UiText_ShowMessageAndWaitCoreFar((s32)MsgActorSummons);
 		// 使うスタンバイのジンに印 (-2) をつける
 		for (i = 0; i != list->count; i++)
@@ -595,7 +598,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 				break;
 			}
 		}
-		UiText_DrawQuantity(req->unit_id, 1);
+		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiText_ShowMessageAndWaitCoreFar((s32)MsgActorAttacks);
 		// 外れ：まぼろしなら 153/256、ほかに 1/32
 		// 相手が動けなければ外れない
@@ -610,7 +613,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			if ((BtlRndFar() & 31) == 0)
 				plan->tgt_adj[0] = 0;
 		} while (0);
-		if (GameFlag_IsSet(366))
+		if (GameFlag_TestFar(366))
 			plan->tgt_adj[0] = 0;
 		// 会心：1/32、または装備による確率
 		if (tgt->hp != 0)
@@ -627,7 +630,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	//----------------------------------------------------------------------
 	else
 	{
-		struct BtlAct *act = Ability_GetData(act_no);
+		struct BtlAct *act = BtlActGet(act_no);
 
 		plan->elm = act->damage_class;
 		plan->presentation_flags = 0;

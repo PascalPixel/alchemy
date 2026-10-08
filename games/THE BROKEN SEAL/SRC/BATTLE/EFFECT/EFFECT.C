@@ -54,7 +54,7 @@ void UiText_ShowPositionedMessageAndWaitFar(s32, s32);
 void Battle_Reset();
 
 void Vector_AddPolarOffset(s32, s32, s32 *);
-void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
+void Object_SetMoveTargetFar(struct ObjectRuntime *, s32, s32, s32);
 
 //--------------------------------------------------------------------------
 // 効果の種類 (animation) ごとに本体を走らせる
@@ -350,6 +350,6 @@ void Motion_SetTargetPositionFromMagnitudeAngle(
 		pos[1] = object->y;
 		pos[2] = object->z;
 		Vector_AddPolarOffset(magnitude, angle, pos);
-		Object_SetPosition(object, pos[0], pos[1], pos[2]);
+		Object_SetMoveTargetFar(object, pos[0], pos[1], pos[2]);
 	}
 }

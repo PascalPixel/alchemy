@@ -81,7 +81,7 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
     }
     *output = 0;
     UiText_RenderWideStringAtOffset((u16 *)buffer, (struct UiWindow *)arg1, arg2, arg3);
-    Runtime_BumpFree(buffer);
+    MemFree(buffer);
 }
 
 void UiText_DrawStringAtOffset(
@@ -124,7 +124,7 @@ void UiText_DrawStringAtOffset(
             (u16 *)src,
             (u16 *)dst,
             phase);
-        Runtime_BumpFree(buffer);
+        MemFree(buffer);
     }
 }
 
@@ -142,7 +142,7 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
     x >>= 3;
     y >>= 3;
     UiText_RenderWideStringInWindow((s16 *)buffer, (struct UiWindow *)arg1, x, y);
-    Runtime_BumpFree(buffer);
+    MemFree(buffer);
 }
 
 void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)

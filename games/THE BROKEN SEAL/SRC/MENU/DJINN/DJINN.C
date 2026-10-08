@@ -24,6 +24,8 @@
 #include "WINDOW.H"
 #include "GAME_STATE.H"
 #include "BTLSYS.H"
+void UiText_DrawNumberInWindowFar(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
+struct BtlAct * BtlActGet(s32 action_id);
 
 #define gWindowWork (*(struct UiWork * *)&gWindowWork)
 
@@ -57,7 +59,7 @@ void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 #undef Djinn_DeactivateFar
 #define Djinn_ActivateFar ((s32 (*)(s32, s32, s32))Djinn_ActivateFar)
 s32 Trade_RemoveOfferFar(s32 owner, s32 element, s32 number);
-void UiText_DrawQuantity(s32 value, s32 kind);
+void UiWork_PushValueSlotFar(s32 value, s32 kind);
 struct UiWindow *UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, u32 flags);
 void UiWork_FinalizeFar(struct UiWindow *work, s32 mode);
 void UiWindow_ApplyRectAtObjectOrigin(s32 window, s32 x, s32 y, s32 width, s32 height, s32 kind);
@@ -165,7 +167,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             UiText_DrawStringAtOffsetFar(owner->name, window, 0, 0);
             UiText_DrawCharacterAtOffsetFar(owner->class_index + (s32)MsgClassName, window, 0, 8);
             UiText_DrawStringAtOffsetFar(DjinnMenu_TextLevel, window, 48, 0);
-            UiNumber_DrawAt(owner->level, 2, window, 72, 0);
+            UiText_DrawNumberInWindowFar(owner->level, 2, window, 72, 0);
             if (mode == 0)
                 UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnCharacterStatus, window, 0, 16);
             if (sel != -1)
@@ -174,13 +176,13 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             if (mode == 1) {
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
                 UiWindow_SetTilemapEntryFar(state->help_window, DJINN_ELEMENT(state->pair_entries[0]) + 0x5001, 0, 0, 0);
-                UiText_DrawQuantity(state->shown_owner[0], 1);
-                UiText_DrawQuantity(DJINN_ELEMENT(state->pair_entries[0]) * 20 + DJINN_NUMBER(state->pair_entries[0]) + 300, 4);
+                UiWork_PushValueSlotFar(state->shown_owner[0], 1);
+                UiWork_PushValueSlotFar(DJINN_ELEMENT(state->pair_entries[0]) * 20 + DJINN_NUMBER(state->pair_entries[0]) + 300, 4);
                 UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnOwnerLabel, state->help_window, 8, 0);
 #else
-                UiText_DrawQuantity(state->shown_owner[0], 1);
+                UiWork_PushValueSlotFar(state->shown_owner[0], 1);
                 UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnOwnerLabel, state->help_window, 0, 0);
-                UiText_DrawQuantity(DJINN_ELEMENT(state->pair_entries[0]) * 20 + DJINN_NUMBER(state->pair_entries[0]) + 300, 4);
+                UiWork_PushValueSlotFar(DJINN_ELEMENT(state->pair_entries[0]) * 20 + DJINN_NUMBER(state->pair_entries[0]) + 300, 4);
                 UiWindow_SetTilemapEntryFar(state->help_window, DJINN_ELEMENT(state->pair_entries[0]) + 0x5001, 6, 0, 0);
                 UiText_DrawCharacterAtOffsetFar((s32)&MsgDjinnOwnerLabel + 1, state->help_window, 56, 0);
 #endif
@@ -763,20 +765,20 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
 
     if (page == 0) {
         if (mode == 3) {
-            UiNumber_DrawAt(state->max_hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_MAX_X, y * 8 + 56);
-            UiNumber_DrawAt(state->max_ep, PREVIEW_DIGITS, window, x * 8 + PREVIEW_MAX_X, y * 8 + 64);
-            UiNumber_DrawAt(state->hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 56);
-            UiNumber_DrawAt(state->ep, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
+            UiText_DrawNumberInWindowFar(state->max_hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_MAX_X, y * 8 + 56);
+            UiText_DrawNumberInWindowFar(state->max_ep, PREVIEW_DIGITS, window, x * 8 + PREVIEW_MAX_X, y * 8 + 64);
+            UiText_DrawNumberInWindowFar(state->hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 56);
+            UiText_DrawNumberInWindowFar(state->ep, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
             UiText_DrawStringAtOffsetFar(DjinnMenu_TextSlash, window, x * 8 + PREVIEW_SLASH_X, y * 8 + 56);
             UiText_DrawStringAtOffsetFar(DjinnMenu_TextSlash, window, x * 8 + PREVIEW_SLASH_X, y * 8 + 64);
         } else {
-            UiNumber_DrawAt(state->hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 56);
-            UiNumber_DrawAt(state->ep, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
+            UiText_DrawNumberInWindowFar(state->hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 56);
+            UiText_DrawNumberInWindowFar(state->ep, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
         }
-        UiNumber_DrawAt(state->atk, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 72);
-        UiNumber_DrawAt(state->def, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 80);
-        UiNumber_DrawAt(state->agi, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 88);
-        UiNumber_DrawAt(state->luck, 2, window, x * 8 + PREVIEW_LUCK_X, y * 8 + 96);
+        UiText_DrawNumberInWindowFar(state->atk, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 72);
+        UiText_DrawNumberInWindowFar(state->def, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 80);
+        UiText_DrawNumberInWindowFar(state->agi, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 88);
+        UiText_DrawNumberInWindowFar(state->luck, 2, window, x * 8 + PREVIEW_LUCK_X, y * 8 + 96);
     }
 
     switch (mode) {
@@ -812,7 +814,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
 
         UiText_DrawStringAtOffsetFar(state->name, window, x * 8 + 40, y * 8);
         UiText_DrawStringAtOffsetFar(DjinnMenu_TextLevel, window, x * 8 + 40, y * 8 + 16);
-        UiNumber_DrawAt(state->level, 2, window, x * 8 + 88, y * 8 + 16);
+        UiText_DrawNumberInWindowFar(state->level, 2, window, x * 8 + 88, y * 8 + 16);
         label = (s32)MsgPreviewStatLabel;
         UiText_DrawCharacterAtOffsetFar(label, window, x * 8, y * 8 + 56);
         UiText_DrawCharacterAtOffsetFar(label + 1, window, x * 8, y * 8 + 64);
@@ -851,42 +853,42 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
         icon_x = x * 8 + 70;
 #endif
         if (state->hp != saved->hp) {
-            UiNumber_DrawAt(state->hp, 4, window, x * 8 + 72, y * 8 + 56);
+            UiText_DrawNumberInWindowFar(state->hp, 4, window, x * 8 + 72, y * 8 + 56);
             if (state->hp > saved->hp)
                 UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 56, 0);
             else
                 UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 56, 1);
         }
         if (state->ep != saved->ep) {
-            UiNumber_DrawAt(state->ep, 4, window, x * 8 + 72, y * 8 + 64);
+            UiText_DrawNumberInWindowFar(state->ep, 4, window, x * 8 + 72, y * 8 + 64);
             if (state->ep > saved->ep)
                 UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 64, 0);
             else
                 UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 64, 1);
         }
         if (state->atk != saved->atk) {
-            UiNumber_DrawAt(state->atk, 4, window, x * 8 + 72, y * 8 + 72);
+            UiText_DrawNumberInWindowFar(state->atk, 4, window, x * 8 + 72, y * 8 + 72);
             if (state->atk > saved->atk)
                 UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 72, 0);
             else
                 UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 72, 1);
         }
         if (state->def != saved->def) {
-            UiNumber_DrawAt(state->def, 4, window, x * 8 + 72, y * 8 + 80);
+            UiText_DrawNumberInWindowFar(state->def, 4, window, x * 8 + 72, y * 8 + 80);
             if (state->def > saved->def)
                 UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 80, 0);
             else
                 UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 80, 1);
         }
         if (state->agi != saved->agi) {
-            UiNumber_DrawAt(state->agi, 4, window, x * 8 + 72, y * 8 + 88);
+            UiText_DrawNumberInWindowFar(state->agi, 4, window, x * 8 + 72, y * 8 + 88);
             if (state->agi > saved->agi)
                 UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 88, 0);
             else
                 UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 88, 1);
         }
         if (state->luck != saved->luck) {
-            UiNumber_DrawAt(state->luck, 2, window, x * 8 + 88, y * 8 + 96);
+            UiText_DrawNumberInWindowFar(state->luck, 2, window, x * 8 + 88, y * 8 + 96);
             if (state->luck > saved->luck)
                 UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 96, 0);
             else
@@ -918,7 +920,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
                 UiWork_SetParamNibbleFar(15);
             UiText_DrawCharacterAtOffsetFar((s32)MsgAbilityName + (actions[first] & 0x3fff), window,
                 x * 8 + 16, (y + line * 2) * 8 + 8);
-            UiText_DrawNumberAtOffsetFar(Ability_GetData(actions[first])->pp_cost, 2, window,
+            UiText_DrawNumberAtOffsetFar(BtlActGet(actions[first])->pp_cost, 2, window,
                 x * 8 + 88, (y + line * 2) * 8 + 8);
             line++;
         }
@@ -949,6 +951,6 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
     if (page == 0)
         SideObject_CreateFar(owner, 0, side, window, 0, 0);
     Unit_Copy(state, saved);
-    Runtime_BumpFree(saved);
+    MemFree(saved);
     return 1;
 }

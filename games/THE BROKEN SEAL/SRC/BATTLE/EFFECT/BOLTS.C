@@ -30,7 +30,7 @@
 
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 #define SPARK_COUNT 1024
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
@@ -108,7 +108,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
 	work->transfer_mode = 2;
 	work->transfer_value = 75;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	Audio_PlayCue(138);
+	AudioCommand_PlayFar(138);
 
 	for (frame = 0; frame != 64; frame++)
 	{

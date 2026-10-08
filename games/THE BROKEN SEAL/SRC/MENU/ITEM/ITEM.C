@@ -13,6 +13,7 @@
 #include "INVENTORY_MENU.H"
 #include "OWNER_STATE.H"
 #include "UI.H"
+s32 Item_CanOwnerEquip(s32 owner, s32 item);
 
 #define gFrameCount (*(s32 *)&gFrameCount)
 

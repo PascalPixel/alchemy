@@ -115,10 +115,9 @@ enum { CabinSpeakerRequest = 0xa01b };
 
 void Object_SetActionById();
 
-void ObjectMotion_SetHorizontalPositionWithTerrain();
 void FuneHeya_PoseSceneActor();
 void ObjectMotion_WaitForAnimationChange();
-void ObjectMotion_ArmCallback();
+void Engine_ActorFaceDirection();
 void Engine_EventWaitForScreen();
 void Event_CallWithLastActiveObjectId();
 u8 *Battle_GetWorkObject1e0();
@@ -1975,7 +1974,7 @@ void FieldScene_CallPairWith10(s32 a, u16 b)
 
 void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d)
 {
-    ObjectMotion_SetHorizontalPositionWithTerrain(a, b << 16, c << 16, d);
+    ((void (*)())Engine_ActorSetPosition)(a, b << 16, c << 16, d);
     ((struct FieldActor *)Object_GetById(a))->facing = d;
 }
 
@@ -2002,7 +2001,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
     case 0:
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
         Actor_FaceDirection(GERALD, FACING_WEST, 0);
-        ObjectMotion_ArmCallback(2, 0, 0);
+        Engine_ActorFaceDirection(2, 0, 0);
         Actor_FaceDirection(MEARI, FACING_WEST, opt);
         break;
     case 1:
@@ -2118,7 +2117,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
             Engine_ActorSetAnimation(16, 1);
             rec = Object_GetById(16);
             SetPose(rec, 0x5000);
-            Object_SetModeById(17, 1);
+            Engine_ActorSetAnimation(17, 1);
             rec = Object_GetById(17);
             SetPose(rec, 0x3000);
             rec = Object_GetById(17);
@@ -2182,7 +2181,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
-        Battle_WaitMode0(20);
+        Engine_EventWait(20);
         break;
     case 16:
         Actor_SetPosition(8, 0, 0);
@@ -2675,7 +2674,7 @@ void FieldScene_RunExtendedFormationPresentation(void)
     Object_SetActionCallbackAndRefreshById(3, action);
     GameFlag_Set(0x302);
     FuneHeya_CueTimer = 0;
-    Scheduler_AddOrUpdateCallback((s32)Scene_UpdateCueTimer, 0xc80);
+    Engine_TaskAddCallback((s32)Scene_UpdateCueTimer, 0xc80);
     FieldScene_RunSceneStep(23, 0, 0);
     Engine_ActorDestroy(27);
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);

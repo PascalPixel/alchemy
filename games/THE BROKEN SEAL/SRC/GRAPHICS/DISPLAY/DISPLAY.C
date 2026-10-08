@@ -101,7 +101,7 @@ void RenderOutput_PrepareForRedraw(struct UiWindow *work);
 void UiText_DrawCharacter(u8 *base, s32 index, u32 kind);
 s32 *Trade_GetOfferStateFar(s32 index);
 s32 BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 s32 Ui_RunSelectionScreen(s32 mode)
 {
@@ -324,15 +324,15 @@ s32 Ui_RunSelectionScreen(s32 mode)
             break;
         }
         if (mode != 0 && (keys & 2)) {
-            Audio_PlayCue(0x71);
+            AudioCommand_PlayFar(0x71);
             result = -1;
             break;
         }
         if (repeat & 0x90) {
-            Audio_PlayCue(0x6f);
+            AudioCommand_PlayFar(0x6f);
             work->selection = (work->selection + 1) % work->count;
         } else if (repeat & 0x60) {
-            Audio_PlayCue(0x6f);
+            AudioCommand_PlayFar(0x6f);
             work->selection = (work->selection + work->count - 1) % work->count;
         } else if (gLinkCountdownWork->active == 0) {
             result = work->kinds[0];
@@ -365,7 +365,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
     Scheduler_RemoveCallback(Graphics_SetBg1Priority3);
     Runtime_SetIrqHandler(2, 0, 0);
     IO_WRITE_QUEUE_PUSH(0x04000000, 0x1541, 0x20000);
-    Runtime_BumpFree(work);
+    MemFree(work);
     render->menu_busy = 0;
     WaitFrames(1);
     return result;

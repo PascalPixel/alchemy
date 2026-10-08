@@ -37,6 +37,5 @@ struct WorkPointers {
     struct EventRuntime *event;
 };
 
-extern struct EventRuntime *gWork;
 
 #endif

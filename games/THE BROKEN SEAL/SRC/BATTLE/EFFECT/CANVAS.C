@@ -80,7 +80,7 @@ void Audio_PlayCue(s32);
 	} while (0)
 
 //--------------------------------------------------------------------------
-// キャンバス面を開く（背景を暗くし、BG2 をキャンバスにする）
+// キャンバス面を開く（背景パレットをフェードさせ、BG2 をキャンバスにする）
 // bg_control : REG_BG2CNT に足す値
 //--------------------------------------------------------------------------
 void BattleFx_BeginCanvasLayer(s32 bg_control)
@@ -107,7 +107,7 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
 	gBgScroll[1].y = 32;
 	WaitFrames(1);
 
-	// 背景のパレットを落としていく
+	// 背景パレットのフェードを始める
 	BattlePresentation_ConfigurePaletteFadeFar(1, btl->background, 0);
 	work->fade_frames = 0;
 	work->fade_step = 0;
@@ -162,7 +162,7 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
 }
 
 //--------------------------------------------------------------------------
-// キャンバス面を開く（ウインドウなしで始め、背景を 24 フレームで落とす版）
+// キャンバス面を開く（ウインドウなしで始め、fade_frames を 24 にする版）
 // bg_control : REG_BG2CNT に足す値
 //--------------------------------------------------------------------------
 void BattleFx_OpenCanvasLayer(s32 bg_control)
@@ -271,7 +271,7 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
 }
 
 //--------------------------------------------------------------------------
-// キャンバス面を閉じ、背景の明るさを 8 フレームで戻す
+// キャンバス面を閉じ、背景パレットのレベルを 8 フレームで 21 から 0 へ戻す
 //--------------------------------------------------------------------------
 void BattleFx_EndCanvasLayer(void)
 {

@@ -322,7 +322,7 @@
     "*/games/THE BROKEN SEAL/SRC/DEBUG/BROWSE_GLYPHS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SLIDER.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/UI/MARKS.o"(.rodata)
-    "*/recon/tbs/fr/rom.o"(.rom.00028e9c)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/UI/MENU_ICONS.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/FIXBLK.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/LABELS.o"(.rodata)
     "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)

@@ -421,7 +421,11 @@ UiIcon_Item078:
 UiIcon_Item079:
 	.incbin "GRAPHICS/UI/MENU_ICONS/ITEM_079.icon4"
 UiIcon_Item080:
+	.ifdef TBS_EDITION_JA
+	.incbin "GRAPHICS/UI/MENU_ICONS/ITEM_080_JA.icon4"
+	.else
 	.incbin "GRAPHICS/UI/MENU_ICONS/ITEM_080.icon4"
+	.endif
 UiIcon_Item081:
 	.incbin "GRAPHICS/UI/MENU_ICONS/ITEM_081.icon4"
 UiIcon_Item082:
@@ -457,7 +461,11 @@ UiIcon_Item096:
 UiIcon_Item097:
 	.incbin "GRAPHICS/UI/MENU_ICONS/ITEM_097.icon4"
 UiIcon_Item098:
+	.ifdef TBS_EDITION_JA
+	.incbin "GRAPHICS/UI/MENU_ICONS/ITEM_098_JA.icon4"
+	.else
 	.incbin "GRAPHICS/UI/MENU_ICONS/ITEM_098.icon4"
+	.endif
 UiIcon_Item099:
 	.incbin "GRAPHICS/UI/MENU_ICONS/ITEM_099.icon4"
 UiIcon_Item100:
@@ -1120,9 +1128,33 @@ UiIcon_Psynergy089:
 UiIcon_Psynergy090:
 	.incbin "GRAPHICS/UI/MENU_ICONS/PSYNERGY_090.icon4"
 UiIcon_Psynergy091:
+	.ifdef TBS_EDITION_DE
+	.incbin "GRAPHICS/UI/MENU_ICONS/PSYNERGY_091_DE.icon4"
+	.else
+	.ifdef TBS_EDITION_ES
+	.incbin "GRAPHICS/UI/MENU_ICONS/PSYNERGY_091_ES.icon4"
+	.else
+	.ifdef TBS_EDITION_FR
+	.incbin "GRAPHICS/UI/MENU_ICONS/PSYNERGY_091_ES.icon4"
+	.else
 	.incbin "GRAPHICS/UI/MENU_ICONS/PSYNERGY_091.icon4"
+	.endif
+	.endif
+	.endif
 UiIcon_Psynergy092:
+	.ifdef TBS_EDITION_DE
+	.incbin "GRAPHICS/UI/MENU_ICONS/PSYNERGY_092_DE.icon4"
+	.else
+	.ifdef TBS_EDITION_ES
+	.incbin "GRAPHICS/UI/MENU_ICONS/PSYNERGY_092_ES.icon4"
+	.else
+	.ifdef TBS_EDITION_FR
+	.incbin "GRAPHICS/UI/MENU_ICONS/PSYNERGY_092_ES.icon4"
+	.else
 	.incbin "GRAPHICS/UI/MENU_ICONS/PSYNERGY_092.icon4"
+	.endif
+	.endif
+	.endif
 UiIcon_Psynergy093:
 	.incbin "GRAPHICS/UI/MENU_ICONS/PSYNERGY_093.icon4"
 UiIcon_Psynergy094:

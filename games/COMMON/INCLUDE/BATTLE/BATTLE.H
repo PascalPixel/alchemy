@@ -498,6 +498,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect);
 #endif
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y);
 void BattleEffect_RunPhasedRadialParticleSequence(s32 arg);
+void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect);
 #ifndef OWN_BattleEffect_RunStagedParticles
 void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect);
 #endif
@@ -967,7 +968,6 @@ void UiWindow_CreateWithLayoutBoundsFar(s32 value);
 void UiWork_InitializeFar(s32 mode);
 void UiWork_ResetFreeChannelFar(void);
 void UiWork_SetBusyFlagsFar(s32);
-void Unnamed_080ea0d8(s32 *);
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
 #endif
 

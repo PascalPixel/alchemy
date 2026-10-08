@@ -214,12 +214,15 @@ fn compare(root: &Path, target: DecompTarget, loaded: &Loaded, main: &Loaded, un
         let text = fs::read(&path).map(|b| String::from_utf8_lossy(&b).into_owned()).unwrap_or_default();
         sources.push((path, text));
     }
-    compare_source(root, target, loaded, main, &objects, &merge(&sources), id)
+    let family = crate::compiler::routing::family_for_source(target.compiler, &sources[0].0.to_string_lossy());
+    compare_source(root, target, loaded, main, &objects, &merge(&sources), id, family)
 }
 
 /// A merged source compiled with the edition's own steps, its sections compared
-/// with `objects`' pieces as today's build placed them in `loaded`.
-pub fn compare_source(root: &Path, target: DecompTarget, loaded: &Loaded, main: &Loaded, objects: &[&str], text: &str, id: &str) -> Outcome {
+/// with `objects`' pieces as today's build placed them in `loaded`. The
+/// merged copy lives under out/, so it takes the compiler its sources route to.
+#[allow(clippy::too_many_arguments)]
+pub fn compare_source(root: &Path, target: DecompTarget, loaded: &Loaded, main: &Loaded, objects: &[&str], text: &str, id: &str, family: crate::compiler::routing::CompilerFamily) -> Outcome {
     let image = &loaded.image;
     let fail = |verdict: &str, detail: String| Outcome { verdict: verdict.to_string(), detail };
     let directory = root.join(target.output_dir).join("obj/units");
@@ -231,7 +234,7 @@ pub fn compare_source(root: &Path, target: DecompTarget, loaded: &Loaded, main: 
     if let Err(e) = fs::write(&source, text) {
         return fail("error", e.to_string());
     }
-    let steps = match crate::build_rom::c_steps(target, &source, &object) {
+    let steps = match crate::build_rom::c_steps_routed(target, &source, &object, Some(family)) {
         Ok(steps) => steps,
         Err(e) => return fail("error", e),
     };

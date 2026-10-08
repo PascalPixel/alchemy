@@ -235,7 +235,6 @@ void Menu_StepLeft(struct SelectionScreen *state)
 {
     struct SelectionNode *node;
     u16 *ids;
-    register s32 y asm("r1"); /* FAKEMATCH: keeps the row offset in r1 */
     s32 i;
 
     Menu_ReloadNodeResource(state, state->cursor_index);
@@ -255,14 +254,14 @@ void Menu_StepLeft(struct SelectionScreen *state)
             }
         } else {
             node = state->head;
-            y = 64;
+            i = 64;
             { register s32 z asm("r0") = 0; /* FAKEMATCH: the zero goes through r0 */
-            state->records[1].kind = i = z; }
+            state->records[1].kind = z; }
             while (node->next != NULL) {
-                node->target_x = node->x + y;
+                node->target_x = node->x + i;
                 node->dx = 12;
                 node = node->next;
-                y -= 16;
+                i -= 16;
             }
             node = state->head;
             while (node->x != node->target_x)
@@ -283,12 +282,12 @@ void Menu_StepLeft(struct SelectionScreen *state)
                 } while (node != NULL);
             }
             node = state->head;
-            y = state->base_x;
+            i = state->base_x;
             while (node->next != NULL) {
-                node->target_x = y;
+                node->target_x = i;
                 node->dx = 0xfff4;
                 node = node->next;
-                y += 16;
+                i += 16;
             }
             state->records[0].kind = 1;
         }

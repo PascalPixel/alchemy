@@ -79,12 +79,9 @@ void Debug_SelectAbilityPair(void)
             VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
             cursor = RenderOutput_Create(slot, 0x40000000, win, 0, 0);
         }
-        {
-            /* FAKEMATCH: pin the title's message to r5, where the plain form puts it. */
-            register s32 message asm("r5") = (s32)MsgPanelHpMaxLabel;
-
-            UiText_DrawCharacterAtOffset(message, title, 16, 0);
-        }
+        /* FAKEMATCH: needed to match: the title message reuses the slot variable */
+        slot = (s32)MsgPanelHpMaxLabel;
+        UiText_DrawCharacterAtOffset(slot, title, 16, 0);
         for (;;) {
             if (redraw != 0) {
                 redraw = 0;

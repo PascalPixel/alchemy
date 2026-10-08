@@ -48,7 +48,14 @@ const INTEGER_SUFFIXES: &[&str] = &[
     "llu", "ul", "lu", "ll", "u", "l",
 ];
 const LOGO: std::ops::Range<usize> = 0x04..0xa0;
-const LOGO_REASON: &str = "Nintendo logo from a GBA cartridge header: ROM material";
+const LOGO_REASON: &str = "Nintendo logo from a GBA cartridge header: L1 keeps it only in tools/alchemy/src/gbafix.rs, the build's header fix-up";
+/// The one file L1 lets hold the logo, as pret keeps it only in tools/gbafix.
+const LOGO_SOURCE: &str = "tools/alchemy/src/gbafix.rs";
+/// Data directives a numeric run reads through, as an assembler table
+/// spells its bytes line by line.
+const DATA_DIRECTIVES: &[&str] = &[
+    ".byte", ".2byte", ".hword", ".short", ".4byte", ".word", ".long", ".int", ".8byte", ".quad",
+];
 const UNREGISTERED: &str = "unregistered binary: pret commits only editable build inputs";
 const GREY_SHEET: &str =
     "PNG is a grey sheet: an indexed asset carries its real palette, not a grey ramp";
@@ -778,18 +785,7 @@ fn numeric(token: &[u8]) -> bool {
     if token.len() == 2 && token.iter().all(u8::is_ascii_hexdigit) {
         return true;
     }
-    let body = INTEGER_SUFFIXES
-        .iter()
-        .find_map(|suffix| {
-            let split = token
-                .len()
-                .checked_sub(suffix.len())
-                .filter(|split| *split > 0)?;
-            token[split..]
-                .eq_ignore_ascii_case(suffix.as_bytes())
-                .then(|| &token[..split])
-        })
-        .unwrap_or(token);
+    let body = without_suffix(token);
     let digits = |digits: &[u8], limit: usize, valid: fn(&u8) -> bool| {
         !digits.is_empty() && digits.len() <= limit && digits.iter().all(valid)
     };
@@ -800,8 +796,79 @@ fn numeric(token: &[u8]) -> bool {
         _ => digits(body, 20, u8::is_ascii_digit),
     }
 }
+fn without_suffix(token: &[u8]) -> &[u8] {
+    INTEGER_SUFFIXES
+        .iter()
+        .find_map(|suffix| {
+            let split = token
+                .len()
+                .checked_sub(suffix.len())
+                .filter(|split| *split > 0)?;
+            token[split..]
+                .eq_ignore_ascii_case(suffix.as_bytes())
+                .then(|| &token[..split])
+        })
+        .unwrap_or(token)
+}
+fn numeric_separator(byte: &u8) -> bool {
+    byte.is_ascii_whitespace() || b",;:()[]{}\\\"'".contains(byte)
+}
+/// The bytes one numeric token spells: a decimal value as one byte (-128
+/// to 255), a two-digit token as hex when `pairs` reads a dump, and a hex
+/// or binary value as little-endian bytes as wide as its digits.
+fn token_bytes(token: &[u8], pairs: bool) -> Option<Vec<u8>> {
+    let (negative, token) = match token {
+        [b'-', rest @ ..] => (true, rest),
+        [b'+', rest @ ..] => (false, rest),
+        _ => (false, token),
+    };
+    let body = without_suffix(token);
+    let (digits, radix, width) = match body {
+        [b'0', b'x' | b'X', rest @ ..] => (rest, 16, rest.len().div_ceil(2)),
+        [b'x' | b'X', rest @ ..] if rest.len() <= 2 => (rest, 16, 1),
+        [b'0', b'b' | b'B', rest @ ..] => (rest, 2, rest.len().div_ceil(8)),
+        _ if pairs && body.len() == 2 => (body, 16, 1),
+        _ => (body, 10, 1),
+    };
+    let width = width.max(1).next_power_of_two();
+    if digits.is_empty() || width > 8 || (negative && radix != 10) {
+        return None;
+    }
+    let value = u64::from_str_radix(std::str::from_utf8(digits).ok()?, radix).ok()?;
+    match (negative, radix) {
+        (true, _) => (1..=128)
+            .contains(&value)
+            .then(|| vec![(256 - value) as u8]),
+        (false, 10) => u8::try_from(value).ok().map(|byte| vec![byte]),
+        (false, _) => Some(value.to_le_bytes()[..width].to_vec()),
+    }
+}
+/// Whether a text spells `needle` as a run of numbers: an array of bytes,
+/// halfwords or words, assembler data lines, escapes or a hex dump.
+fn spells(text: &[u8], needle: &[u8]) -> bool {
+    [false, true].into_iter().any(|pairs| {
+        let mut run = Vec::new();
+        for token in text
+            .split(numeric_separator)
+            .filter(|token| !token.is_empty())
+        {
+            if let Some(bytes) = token_bytes(token, pairs) {
+                run.extend(bytes);
+            } else if !DATA_DIRECTIVES
+                .iter()
+                .any(|directive| token.eq_ignore_ascii_case(directive.as_bytes()))
+            {
+                if contains(&run, needle) {
+                    return true;
+                }
+                run.clear();
+            }
+        }
+        contains(&run, needle)
+    })
+}
 fn numeric_elements(text: &[u8]) -> usize {
-    let separator = |byte: &u8| byte.is_ascii_whitespace() || b",;:()[]{}\\\"'".contains(byte);
+    let separator = numeric_separator;
     let (mut total, mut run) = (0, 0);
     for token in text.split(separator).filter(|token| !token.is_empty()) {
         if numeric(token) {
@@ -926,7 +993,8 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
     if json_path(path) {
         return Some(JSON_REASON);
     }
-    if logo.is_some_and(|logo| contains(data, logo)) {
+    let logo = logo.filter(|_| path != LOGO_SOURCE);
+    if logo.is_some_and(|logo| contains(data, logo) || (!binary(data) && spells(data, logo))) {
         return Some(LOGO_REASON);
     }
     if listed(extension(path), &["asm", "inc", "s"]) && incbin(path, data) {
@@ -2817,6 +2885,75 @@ mod tests {
     #[test]
     fn publication_fixtures_follow_the_current_policy() {
         check_fixtures().unwrap();
+    }
+
+    #[test]
+    fn the_logo_spelled_in_numbers_is_rejected_outside_the_fix_up_tool() {
+        let logo = logo_fixture();
+        let joined = |bytes: &[u8], format: &dyn Fn(&u8) -> String, separator: &str| {
+            bytes.iter().map(format).collect::<Vec<_>>().join(separator)
+        };
+        let hex = |byte: &u8| format!("0x{byte:02x}");
+        let array = format!("const LOGO: [u8; 156] = [{}];\n", joined(&logo, &hex, ", "));
+        let rows = logo
+            .chunks(12)
+            .map(|row| format!("\t.byte {}\n", joined(row, &hex, ", ")))
+            .collect::<String>();
+        let words = logo
+            .chunks(4)
+            .map(|word| {
+                let word = u32::from_le_bytes(word.try_into().unwrap());
+                format!("\t.4byte 0x{word:08x}\n")
+            })
+            .collect::<String>();
+        let spelled = [
+            ("tools/alchemy/src/header.rs", array.clone()),
+            ("tools/gbafix/src/gbafix.rs", array.clone()),
+            (
+                "tools/alchemy/src/escapes.rs",
+                format!(
+                    "const LOGO: &[u8] = b\"{}\";\n",
+                    joined(&logo, &|byte| format!("\\x{byte:02x}"), "")
+                ),
+            ),
+            (
+                "tools/alchemy/src/dump.rs",
+                format!("// {}\n", joined(&logo, &|byte| format!("{byte:02x}"), " ")),
+            ),
+            ("games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEAD.S", rows),
+            ("games/THE LOST AGE/SRC/SYSTEM/ROM_HEAD.S", words),
+            (
+                "games/THE BROKEN SEAL/SRC/SYSTEM/LOGO.C",
+                format!(
+                    "const s8 logo[] = {{{}}};\n",
+                    joined(&logo, &|byte| (*byte as i8).to_string(), ", ")
+                ),
+            ),
+        ];
+        for (path, text) in spelled {
+            let reason = publication_reason(path, text.as_bytes(), Some(&logo));
+            assert_eq!(reason, Some(LOGO_REASON), "{path}");
+        }
+        let exempt = publication_reason(LOGO_SOURCE, array.as_bytes(), Some(&logo));
+        assert_eq!(exempt, None, "the fix-up tool keeps the logo (L1)");
+        let header = "tools/alchemy/src/header.rs";
+        assert_eq!(publication_reason(header, array.as_bytes(), None), None);
+        let part = joined(&logo[1..], &hex, ", ");
+        let part = format!("const PART: [u8; 155] = [{part}];\n");
+        let partial = publication_reason(header, part.as_bytes(), Some(&logo));
+        assert_eq!(partial, None, "155 of the logo's bytes are not the logo");
+    }
+
+    #[test]
+    fn only_the_fix_up_tool_may_carry_the_real_logo() {
+        let source = include_str!("../gbafix.rs").as_bytes();
+        let logo = crate::gbafix::NINTENDO_LOGO;
+        assert!(spells(source, &logo));
+        assert_eq!(publication_reason(LOGO_SOURCE, source, Some(&logo)), None);
+        assert_eq!(
+            publication_reason("tools/alchemy/src/header.rs", source, Some(&logo)),
+            Some(LOGO_REASON)
+        );
     }
 
     #[test]

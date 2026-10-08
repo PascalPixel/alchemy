@@ -953,37 +953,6 @@ DisplayScroll_Font:
 Title_PromptTiles:
 	.incbin "baserom.gba", 0x000f38bc, 0x000000ee
 	.incbin "baserom.gba", 0x000f39aa, 0x00000001
-	.section .unidentified.080fb7a0,"a"
-	.global Sound_CommandTableTemplate
-Sound_CommandTableTemplate:
-	.incbin "baserom.gba", 0x000fb7a0, 0x00000090
-	.global Sound_PcmPitchCodes
-Sound_PcmPitchCodes:
-	.incbin "baserom.gba", 0x000fb830, 0x000000b4
-	.global Sound_PcmFrequencySteps
-Sound_PcmFrequencySteps:
-	.incbin "baserom.gba", 0x000fb8e4, 0x00000030
-	.global Sound_FrameLengths
-Sound_FrameLengths:
-	.incbin "baserom.gba", 0x000fb914, 0x00000018
-	.global Sound_CgbPitchCodes
-Sound_CgbPitchCodes:
-	.incbin "baserom.gba", 0x000fb92c, 0x00000084
-	.global Sound_CgbFrequencySteps
-Sound_CgbFrequencySteps:
-	.incbin "baserom.gba", 0x000fb9b0, 0x00000018
-	.global Sound_NoisePitchCodes
-Sound_NoisePitchCodes:
-	.incbin "baserom.gba", 0x000fb9c8, 0x0000003c
-	.global Sound_Cgb3LevelCodes
-Sound_Cgb3LevelCodes:
-	.incbin "baserom.gba", 0x000fba04, 0x00000010
-	.global Sound_ClockLengths
-Sound_ClockLengths:
-	.incbin "baserom.gba", 0x000fba14, 0x00000034
-	.global Sound_ExtendedCommandTable
-Sound_ExtendedCommandTable:
-	.incbin "baserom.gba", 0x000fba48, 0x00000030
 	.section .unidentified.080fc504,"a"
 	.incbin "baserom.gba", 0x000fc504, 0x00000090
 	.section .unidentified.080fc624,"a"

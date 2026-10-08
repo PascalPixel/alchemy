@@ -786,7 +786,7 @@
     "*/games/COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_PAN_OR_SWEEP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SOUND/EMPTY_CALLBACK.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SOUND/SOUND.o"(.rodata)
-    "*/recon/tbs/es/rom.o"(.rom.000fdfa0)
+    "*/games/COMMON/SRC/SOUND/TABLES.o"(.rodata)
     "*/games/THE BROKEN SEAL/SOUND/VOICES.o"(.rodata)
     "*/recon/tbs/es/rom.o"(.rom.000fed04)
     "*/games/THE BROKEN SEAL/SOUND/CGB_WAVES.o"(.rodata)

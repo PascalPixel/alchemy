@@ -34,7 +34,7 @@ void BattleEv_RunWait(s32 action, s32 flag)
     asm("" : "+r"(action) : : "r5", "r6", "r8");
     WaitFrames(1);
     message_id = ObjectTable_ReadActiveValue(action);
-    /* FAKEMATCH: the earlier counter zero lives across the clobber in r8; seed it afterwards. */
+    /* FAKEMATCH: needed to match: the earlier counter zero lives across the clobber in r8 */
     frames = 0;
     if (action <= 7) {
         masked_action = action & 0x0fff;

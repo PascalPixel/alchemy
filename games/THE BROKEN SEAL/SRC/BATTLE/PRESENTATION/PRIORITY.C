@@ -20,7 +20,7 @@
 static __inline__ void CopyWords(
     void *destination, const void *source, s32 size)
 {
-    /* FAKEMATCH: a direct call changes BattleQueue_SortByPriority from mov r7, r1 to sub sp, sp, #20 (123/126 assembly lines). */
+    /* FAKEMATCH: needed to match: a direct call changes BattleQueue_SortByPriority from mov r7, r1 to sub sp, sp, #20 */
     Iwram_CopyWords(destination, source, size);
 }
 

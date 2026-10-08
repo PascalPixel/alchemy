@@ -137,7 +137,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 	Resource_LoadAndDecompress(
 		(s32)&ResourceId_ParticleSpritesD, work->sheet + SERIES_B_FLARES, 0, 0);
 	Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + SERIES_B_BURST, 1, 1);
-	/* FAKEMATCH: forwarded through Call3, each palette copy loads its routine before it shifts the destination, as the reference does. */
+	/* FAKEMATCH: needed to match: forwarded through Call3, each palette copy loads its routine before it shifts the destination, as the reference does */
 	if (mode == 3 || mode == 5)
 	{
 		Resource_LoadAndDecompress(
@@ -220,7 +220,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 
 	for (frame = 0; frame != work->effect->count * 8 + 108; frame++)
 	{
-		/* FAKEMATCH: WORK_SLOT keeps the slot offset in the literal as native does; indexing gWorkSlot loads the base and adds it. */
+		/* FAKEMATCH: needed to match: WORK_SLOT keeps the slot offset in the literal as native does */
 		struct BattleCamera *camera = WORK_SLOT(HEAP_SLOT_CAMERA);
 
 		if (frame == 80)

@@ -66,10 +66,7 @@ void BattleActor_CommitPlacementFar(void);
 
 static __inline__ void CopyWords(void *destination, const void *source, s32 size)
 {
-    /* FAKEMATCH: called directly, the constant arguments are loaded before
-       the routine's address and the size's lsls lands ahead of it (2 of
-       1631 lines at each of the two VRAM copies); through the inline
-       parameters the routine is loaded first, as in the reference. */
+    /* FAKEMATCH: needed to match: called directly, the constant arguments are loaded before the routine's address and the size's lsls lands ahead of it */
     Iwram_CopyWords(destination, source, size);
 }
 

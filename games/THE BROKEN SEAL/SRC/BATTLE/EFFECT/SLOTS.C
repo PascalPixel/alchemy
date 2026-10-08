@@ -229,7 +229,7 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
     if (object != NULL)
         object[9] &= ~0x0c;
     EffectSlot_SetPosition(effect, x, z);
-    /* FAKEMATCH: 1.0 is held in a local, set before max_speed, so the object reload is scheduled ahead of the three unit stores */
+    /* FAKEMATCH: needed to match: 1.0 is held in a local, set before max_speed, so the object reload is scheduled ahead of the three unit stores */
     unit = 0x10000;
     effect->max_speed = 0x20000;
     effect->acceleration = effect->scale_y = effect->scale_x = unit;

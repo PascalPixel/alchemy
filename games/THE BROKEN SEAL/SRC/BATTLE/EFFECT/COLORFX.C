@@ -27,7 +27,7 @@ s32 Audio_PlayCue(s32);
 
 static __inline__ void FillWords(void *dst, s32 size, s32 value)
 {
-	/* FAKEMATCH: a direct call changes BattlePres_ProcessPendingTileTransfer from mov r0, r4 to lsl r1, r1, #8 (86/86 assembly lines). */
+	/* FAKEMATCH: needed to match: a direct call changes BattlePres_ProcessPendingTileTransfer from mov r0, r4 to lsl r1, r1, #8 */
 	Iwram_FillWords(dst, size, value);
 }
 

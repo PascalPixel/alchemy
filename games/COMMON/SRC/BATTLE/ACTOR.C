@@ -76,7 +76,7 @@ void BattleActor_RemoveFromLists(s32 id)
 #endif
 
 	// 敵の並び
-	/* FAKEMATCH: the goto loop avoids the pointer walk and saved 0xfe constant produced by a for loop. */
+	/* FAKEMATCH: needed to match: the goto loop avoids the pointer walk and saved 0xfe constant produced by a for loop */
 	do
 	{
 		j = 0;

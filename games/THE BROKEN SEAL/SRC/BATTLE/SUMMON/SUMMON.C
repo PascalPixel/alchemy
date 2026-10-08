@@ -43,7 +43,7 @@ s32 Summon_IsEntryFlagged(s32 index)
 
 u32 Battle_GetSpriteFlagNibble(u32 index)
 {
-    /* FAKEMATCH: separate result selection preserves extract/return move order; a conditional expression reorders them. */
+    /* FAKEMATCH: needed to match: separate result selection preserves extract/return move order */
     u32 value;
     u32 result;
 
@@ -59,7 +59,7 @@ u32 Battle_GetSpriteFlagNibble(u32 index)
 
 u32 Battle_GetSpriteFlagHighBits(u32 index)
 {
-    /* FAKEMATCH: zero-result selection retains the compare and return move removed by a direct shift. */
+    /* FAKEMATCH: needed to match: zero-result selection retains the compare and return move removed by a direct shift */
     u32 value;
     u32 result;
 

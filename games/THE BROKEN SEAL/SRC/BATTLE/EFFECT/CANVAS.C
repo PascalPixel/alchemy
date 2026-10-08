@@ -47,7 +47,7 @@ typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 
 static __inline__ void ClearWords(ClearWordsFn clear, void *destination, s32 size)
 {
-	/* FAKEMATCH: direct calls share the size in r5 and move the routine to r6, changing the canvas tails. */
+	/* FAKEMATCH: needed to match: direct calls share the size in r5 and move the routine to r6, changing the canvas tails */
 	clear(destination, size);
 }
 
@@ -85,7 +85,7 @@ void Audio_PlayCue(s32);
 //--------------------------------------------------------------------------
 void BattleFx_BeginCanvasLayer(s32 bg_control)
 {
-	/* FAKEMATCH: the one-pass IME read and u16 count store preserve queue scheduling and whole-function pointer lifetimes. */
+	/* FAKEMATCH: needed to match: the one-pass IME read and u16 count store preserve queue scheduling and whole-function pointer lifetimes */
 
 	struct BattleEffectWork		*work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
 	struct BtlWork				*btl = *(gWorkSlot + HEAP_SLOT_BATTLE);
@@ -167,7 +167,7 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
 //--------------------------------------------------------------------------
 void BattleFx_OpenCanvasLayer(s32 bg_control)
 {
-	/* FAKEMATCH: the one-pass IME read and u16 count store preserve queue scheduling and whole-function pointer lifetimes. */
+	/* FAKEMATCH: needed to match: the one-pass IME read and u16 count store preserve queue scheduling and whole-function pointer lifetimes */
 
 	struct BattleEffectWork		*work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
 	struct BtlWork				*btl = *(gWorkSlot + HEAP_SLOT_BATTLE);
@@ -275,7 +275,7 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
 //--------------------------------------------------------------------------
 void BattleFx_EndCanvasLayer(void)
 {
-	/* FAKEMATCH: the one-pass IME/queue scopes and u16 count store preserve scheduling, loading the queue before the preceding store. */
+	/* FAKEMATCH: needed to match: the one-pass IME/queue scopes and u16 count store preserve scheduling, loading the queue before the preceding store */
 
 	struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
 	struct BtlWork			*btl = *(gWorkSlot + HEAP_SLOT_BATTLE);

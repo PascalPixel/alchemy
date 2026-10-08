@@ -432,7 +432,7 @@ s32 BattlePres_RunUnitAction(s16 *action)
         for (j = 0; j != animation->count - 1; j++)
             work.params[i][j] = animation->entries[j]->param;
     }
-    /* FAKEMATCH: the one-pass stages force fresh work pointers in the reset loop and place the dispatch argument before the kind store. */
+    /* FAKEMATCH: needed to match: the one-pass stages force fresh work pointers in the reset loop and place the dispatch argument before the kind store */
     do {
         work.kind = 0;
         work.variant = 0;

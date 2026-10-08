@@ -63,7 +63,7 @@ void BattleFx_PrepareCanvasEffect(
 	sheet = heap_cache[2];
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0);
-	/* FAKEMATCH: the canvas size sits in a local set here, well ahead of the two clears that use it; as a literal at the calls GCC keeps it in one register across them, where the ROM builds it at each call. */
+	/* FAKEMATCH: needed to match: the canvas size sits in a local set here, well ahead of the two clears that use it */
 	size = 0x4000;
 	work->fade_frames = 24;
 	work->fade_step = 0;

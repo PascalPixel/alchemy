@@ -55,7 +55,7 @@ void Scene_AssignViewFlags(struct SceneRegionEntry *entry)
 	GameFlag_SetBitFar(FLG_OUT);
 	while (entry->id != -1)
 	{
-		/* FAKEMATCH: reading the flag through a u16 adds one loop instruction, which keeps loop-invariant motion to the reference's single hoisted bound address. */
+		/* FAKEMATCH: needed to match: the flag read through a u16 keeps loop.c to one hoisted bound address */
 		u16 raw = entry->flag;
 		s16 flag = raw;
 
@@ -139,7 +139,7 @@ void BattleEffect_ClearOutOfBoundsObjects(void)
 //--------------------------------------------------------------------------
 void BattleEffect_ClearAllObjects(void)
 {
-	/* FAKEMATCH: the original one-bit display flag clear keeps the signed mask and saved loop registers; a full-byte owner mask changes the frame. */
+	/* FAKEMATCH: needed to match: the original one-bit display flag clear keeps the signed mask and saved loop registers */
 	struct EventWork	  *work = gEventWork;
 	struct ScenePlacement *table;
 	s32					   i;

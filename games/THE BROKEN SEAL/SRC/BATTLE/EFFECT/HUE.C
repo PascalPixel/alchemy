@@ -126,7 +126,7 @@ s32 BattleFx_HueChannelRamp(s32 angle, s32 low, s32 high)
 	{
 		if (angle >= 60 << 16 && angle < 180 << 16)
 			return high;
-		/* FAKEMATCH: the goto places the low return after the divide. */
+		/* FAKEMATCH: needed to match: the goto places the low return after the divide */
 		if (!(angle >= 180 << 16 && angle < 240 << 16))
 			goto out;
 		product = Iwram_MulQ16(high, (240 << 16) - angle);

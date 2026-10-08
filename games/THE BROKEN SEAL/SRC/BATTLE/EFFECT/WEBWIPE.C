@@ -32,13 +32,13 @@
 
 static __inline__ void CopyWords(void *destination, const void *source, s32 size)
 {
-    /* FAKEMATCH: a direct call changes BattlePresentation_ProcessPendingGraphicsTransfer from push {r5, r6, lr} to push {r5, r6, r7, lr} (122/122 assembly lines). */
+    /* FAKEMATCH: needed to match: a direct call changes BattlePresentation_ProcessPendingGraphicsTransfer from push {r5, r6, lr} to push {r5, r6, r7, lr} */
     Iwram_CopyWords(destination, source, size);
 }
 
 static __inline__ void FillWords(void *destination, s32 size, s32 value)
 {
-    /* FAKEMATCH: a direct call changes BattlePresentation_ProcessPendingGraphicsTransfer from mov r0, r5 to lsl r1, r1, #7 (122/122 assembly lines). */
+    /* FAKEMATCH: needed to match: a direct call changes BattlePresentation_ProcessPendingGraphicsTransfer from mov r0, r5 to lsl r1, r1, #7 */
     Iwram_FillWords(destination, size, value);
 }
 
@@ -58,7 +58,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
     register s32 frame __asm__("r9");
     s32 i;
 
-    /* FAKEMATCH: the reference holds the slot table address in the register that later holds the size, and the blend register address in the one that later holds the step; only variables assigned twice do that. */
+    /* FAKEMATCH: needed to match: size and step first hold the slot table and blend register addresses, sharing their registers */
     size = (s32)&Ram_WorkSlot[40];
     canvas = *(void **)size;
     work = *(struct BattleEffectWork **)(size - 4);

@@ -40,7 +40,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected)
     struct AnimationObject *record = GetMotionRecord(object, 0);
     s32 scaled;
     s32 factor;
-    /* FAKEMATCH: the input position BattleMotion_ProjectPosition fills, unused here; it is the native frame's 12 bytes. */
+    /* FAKEMATCH: needed to match: the input position BattleMotion_ProjectPosition fills, unused here */
     struct EffectPosition input;
 
     Camera_ApplyTransformByFlag();

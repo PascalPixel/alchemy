@@ -132,7 +132,7 @@ void BattleFx_SteerLiftedTarget(s32 id)
 	ObjectDispatch_InitializeFar((struct DispatchObject *)src, BattleFx_SourceHoldScript);
 
 	// 持ち手を左右 32 ドットに出し、対象の左右 16 ドットへ動かす
-	/* FAKEMATCH: the position is reached through this pointer everywhere but in the steering loop's first part, which names the position itself; that keeps the pointer in r10 and gives the loop its own copy. */
+	/* FAKEMATCH: needed to match: the position is reached through this pointer everywhere but in the steering loop's first part, which names the position itself */
 	p = &pos;
 	p->x = work->x;
 	p->y = work->y + (16 << 16);
@@ -221,7 +221,7 @@ void BattleFx_SteerLiftedTarget(s32 id)
 		pos.z = target->z;
 		Vector_AddPolarOffset(16 << 16, angle, &pos);
 		i = ScriptObject_CheckOverlapFar(target, &pos);
-		/* FAKEMATCH: entering the blocked path from both tests keeps it ahead of the drop path, as the ROM lays them out. */
+		/* FAKEMATCH: needed to match: entering the blocked path from both tests keeps it ahead of the drop path, as the ROM lays them out */
 		if (i != 0)
 			goto blocked;
 		if (ObjProbeUp(target, p) > 0)

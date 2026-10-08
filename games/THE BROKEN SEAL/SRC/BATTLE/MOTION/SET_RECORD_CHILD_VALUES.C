@@ -29,7 +29,7 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
     struct AnimationObject *record;
     struct AnimationEntry *child;
     struct AnimationEntry **children;
-    /* FAKEMATCH: cached compound assignment keeps 94 bytes but changes registers and store order. The cached byte read preserves allocation. */
+    /* FAKEMATCH: needed to match: cached compound assignment keeps 94 bytes but changes registers and store order */
     u8 mask = 0xff;
     u8 frame;
 

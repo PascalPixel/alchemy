@@ -144,14 +144,14 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
 
             state->count = count;
             state->check = BtlRndFar();
-            /* FAKEMATCH: the one-pass IME scope keeps the seed copy between writes and reloads state after the first write. */
+            /* FAKEMATCH: needed to match: the one-pass IME scope keeps the seed copy between writes and reloads state after the first write */
             do {
                 ime = &REG_IME;
                 saved = *ime;
                 *ime = (u32)ime;
             } while (0);
             gBattleRandomSeed = state->seed = gRandomSeed;
-            do { /* FAKEMATCH: the one-pass restore, see above */
+            do { /* FAKEMATCH: needed to match: the one-pass restore, see above */
                 *ime = saved;
             } while (0);
             if (BattleLink_SendActions() < 0 || BattleLink_ReceiveActions() < 0)

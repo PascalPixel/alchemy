@@ -348,7 +348,7 @@ void BattleFx_RunItemBreakSequence(void)
 	scene = gEffectWork;
 	object = scene->main_object;
 
-	/* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+	/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
 	do
 	{
 		BattleEffect_InitializeSharedScene();
@@ -453,8 +453,6 @@ void UpdateRisingParticleBurst(void *object)
 	s32					 i;
 	s32					 dist;
 	u32					 spread;
-	/* FAKEMATCH: holds 0x10000 in sl across the burst loop; a plain local folds to the constant. */
-	register s32 unit asm("sl");
 
 	Audio_PlayCue(154);
 	for (i = 30; i >= 0; i--)
@@ -465,14 +463,14 @@ void UpdateRisingParticleBurst(void *object)
 		src->scale_y += -0x800;
 		WaitFrames(1);
 	}
-	i = 7;
-	unit = 0x10000;
-	for (; i >= 0; i--)
+	for (i = 7; i >= 0; i--)
 	{
 		child = Object_Spawn(285, src->x, src->y, src->z);
 		if (child != 0)
 		{
 			s32 speed;
+			/* FAKEMATCH: needed to match: a block-local 1.0 keeps 0x10000 in one register for both uses */
+			s32 unit = 0x10000;
 
 			ObjectDispatch_InitializeFar((struct DispatchObject *)child, BattleFx_FragmentScript);
 			speed = Random16();

@@ -517,7 +517,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		struct DjinnRecoveryList	  *list;
 		s32							   side;
 		u8							   counts[4];
-		/* FAKEMATCH: unread; the reference frame keeps 8 bytes below counts. */
+		/* FAKEMATCH: needed to match: unread: the reference frame keeps 8 bytes below counts */
 		u8	unused[8];
 		s32 i;
 
@@ -599,7 +599,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		UiText_ShowMessageAndWaitCoreFar((s32)MsgActorAttacks);
 		// 外れ：まぼろしなら 153/256、ほかに 1/32
 		// 相手が動けなければ外れない
-		/* FAKEMATCH: the one-pass block keeps the native test order; the same tests as one if condition change 44 instructions. */
+		/* FAKEMATCH: needed to match: the one-pass block keeps the native test order */
 		do
 		{
 			if (tgt->hp == 0 || tgt->nemuri != 0 || tgt->shibire != 0 || tgt->miugoki != 0

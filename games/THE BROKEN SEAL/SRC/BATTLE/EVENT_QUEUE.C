@@ -26,7 +26,7 @@ s32 ActivateBattleObjectSlot(s32 arg0);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
-    /* FAKEMATCH: the shared discard-only result type preserves TBS epilogue register choice. No result is taken from the void destructor or returned. */
+    /* FAKEMATCH: needed to match: the shared discard-only result type preserves TBS epilogue register choice */
     struct BtlUnit *creature;
     struct BtlObj *runtime;
 

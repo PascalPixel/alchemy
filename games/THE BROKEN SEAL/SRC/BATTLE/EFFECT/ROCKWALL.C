@@ -93,7 +93,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 
 	// 背景のキャラ (VRAM 0x06008000 から 0x8000 バイト) を写し、
 	// x 32〜71・y 96〜111 の帯を sheet の先頭へ切り出す
-	/* FAKEMATCH: forwarded through Call3, the copy loads the buffer address straight into r0, so the loop below loads its own after the call. */
+	/* FAKEMATCH: needed to match: forwarded through Call3, the copy loads the buffer address straight into r0, so the loop below loads its own after the call */
 	Call3((void (*)())Iwram_CopyWords, (s32)Ram_MapCellBuffer, 0x06008000, 0x8000);
 	for (row = 0; row != 16; row++)
 	{

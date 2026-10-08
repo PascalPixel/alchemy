@@ -134,7 +134,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
 		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_NURI);
 	second_slot = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-	/* FAKEMATCH: the columns draw through a second pointer to the pair, whose address the frame keeps in a stack slot. */
+	/* FAKEMATCH: needed to match: the columns draw through a second pointer to the pair, whose address the frame keeps in a stack slot */
 	draw = rectangle;
 	draw[1] = second_slot;
 
@@ -274,7 +274,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 						// 4・8 フレーム目に、空きの土けむりをひとつ根もとに出す
 						if ((frame == react_frame) || (frame == (start + 8)))
 						{
-							/* FAKEMATCH: the scan reuses length as its puff pointer; a pointer variable of its own takes another register. */
+							/* FAKEMATCH: needed to match: the scan reuses length as its puff pointer */
 							length = (u32)gMapCellBuffer;
 							n = 0;
 							while (n != 512)

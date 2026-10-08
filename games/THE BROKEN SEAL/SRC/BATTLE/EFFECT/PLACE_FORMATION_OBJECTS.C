@@ -280,7 +280,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 	// BG の文字ブロック 1 を消して終わる
 	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
 	{
-		/* FAKEMATCH: the routine's address is loaded before the size, as a call through a local makes it. */
+		/* FAKEMATCH: needed to match: the routine's address is loaded before the size, as a call through a local makes it */
 		s32 (*clear)(void *, s32) = Iwram_ClearWords;
 
 		clear(BG_CHAR_BLOCK(1), 0x4000);

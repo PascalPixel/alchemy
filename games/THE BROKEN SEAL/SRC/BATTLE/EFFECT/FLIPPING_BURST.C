@@ -55,7 +55,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 	void				   **cursor;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	/* FAKEMATCH: an unused second blitter word; the native frame keeps an 8-byte draw slot (sp+48..55, the upper word never accessed), 84 bytes against 80 without it. */
+	/* FAKEMATCH: needed to match: an unused second blitter word fills the frame's 8-byte draw slot */
 	DrawRectangleFn		  draw[2];
 	struct BtlObj		 *first;
 	struct BtlObj		 *second;
@@ -389,7 +389,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 		break;
 	}
 	{
-		/* FAKEMATCH: called through a pointer, the routine's address loads before the palette's. */
+		/* FAKEMATCH: needed to match: called through a pointer, the routine's address loads before the palette's */
 		s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
 
 		copy((void *)BG_PLTT, palette, 128);
@@ -515,7 +515,7 @@ extern u16 BattlePieceOffset[];
 //--------------------------------------------------------------------------
 void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect)
 {
-	/* FAKEMATCH: never read; the native frame keeps 12 unused bytes at sp+44..55, exactly this struct. */
+	/* FAKEMATCH: needed to match: never read: the native frame keeps 12 unused bytes at sp+44..55, exactly this struct */
 	struct EffectPosition		 position;
 	struct BattleEffectWork		*work;
 	void						*canvas;
@@ -609,7 +609,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	draw1 = cache[HEAP_SLOT_BLITTER_ALTERNATE];
 
 	// 片：中心 (32, 60) から外へ、距離の 1/4 の速さで飛ぶ
-	/* FAKEMATCH: the copy and fill operands set here, before the piece loop, so CSE does not share them and the pair reloads both as the native does; written at the calls they leave 45/1051. */
+	/* FAKEMATCH: needed to match: the copy and fill operands set here, before the piece loop, so CSE does not share them and the pair reloads both as the native does */
 	cell_size = 0x7800;
 	cells = Ram_MapCellBuffer;
 	cell_fill = 0x01010101;

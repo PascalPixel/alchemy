@@ -77,7 +77,7 @@ void BattleFx_RunFortyEightFrameMode2(struct BattleEffectArgument *effect)
 
 static __inline__ void CopyPalette(WordCopy copy, void *dst, const void *src, s32 size)
 {
-	/* FAKEMATCH: the three palette copies share the routine's address but build the palette address again at each call, which only an inlined constant argument compiles to; a direct call keeps it in a register. */
+	/* FAKEMATCH: needed to match: the inlined copy shares the routine address and rebuilds the palette address at each call */
 	copy(dst, src, size);
 }
 
@@ -142,7 +142,7 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
 		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
 	work->transfer_mode = 2;
-	/* FAKEMATCH: reading the second blitter through the slot pointer's own variable keeps it in that register between the two transfer stores; a direct assignment only orders three instructions differently. */
+	/* FAKEMATCH: needed to match: reading the second blitter through the slot pointer's own variable keeps it in that register between the two transfer stores */
 	state += 188; // gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE]
 	state = *(u8 **)state;
 	work->transfer_value = 50; // 転送のたびに半分へ減らして残像にする

@@ -119,7 +119,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
         }
         BattlePres_SetActorModeAndAction(id);
     }
-    /* FAKEMATCH: the goto rotation preserves indexed list reads; a for loop becomes a pointer walk. */
+    /* FAKEMATCH: needed to match: the goto rotation preserves indexed list reads */
     if (refresh) {
         i = 0;
         if ((resource = list[0]) != 255) {

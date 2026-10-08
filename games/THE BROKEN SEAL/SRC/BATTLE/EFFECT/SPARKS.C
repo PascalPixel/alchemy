@@ -33,7 +33,7 @@ extern u8 gMapCellBuffer[];
 
 static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)
 {
-    /* FAKEMATCH: forwarding the copy through this helper loads the routine's address before the palette address is shifted into place; a direct call swaps those two instructions at both palette copies. */
+    /* FAKEMATCH: needed to match: forwarding the copy through this helper loads the routine's address before the palette address is shifted into place */
     copy(destination, source, size);
 }
 

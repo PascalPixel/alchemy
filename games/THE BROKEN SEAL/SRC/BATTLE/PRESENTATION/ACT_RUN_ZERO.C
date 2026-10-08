@@ -11,11 +11,11 @@
 #include "SCENE.H"
 #include "BATTLE_FORMATION.H"
 #include "CHARACTER.H"
-volatile unsigned long long BattlePresentation_SetPaletteLevel(s32, s32);
+void BattlePresentation_SetPaletteLevel(s32 unused, s32 level);
 
 void BattlePres_RunWithZeroArguments(void)
 {
-  BattlePresentation_SetPaletteLevel((unsigned long) 0, 0);
+  BattlePresentation_SetPaletteLevel(0, 0);
 }
 
 typedef void (*InterruptHandler)(void);
@@ -35,7 +35,7 @@ s32 Party_ComputeEligibleMemberAverage(s32 record_id)
     s32 id;
     s32 sum;
     s32 count;
-    /* FAKEMATCH: an unread seven-word level table, the native frame's 28 bytes. */
+    /* FAKEMATCH: needed to match: an unread seven-word level table, the native frame's 28 bytes */
     s32 levels[7];
 
     count = 0;

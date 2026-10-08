@@ -297,7 +297,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
     void *canvas;
     struct MotionObject *object;
     struct EffectPosition position;
-    /* FAKEMATCH: only draw[0] is loaded and read; the unused second routine word, a real DrawRectangle, is the 4 bytes the native frame keeps between the routine and the position. */
+    /* FAKEMATCH: needed to match: only draw[0] is used: the second word fills four bytes of the frame */
     DrawRectangle draw[2];
     s32 frames;
     s32 frame;
@@ -323,7 +323,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
     Resource_LoadAndDecompress((s32)&ResourceId_MagentaTailSheet, Ram_MapCellBuffer, 1, 0);
     if (mode == 0) {
         void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-        /* FAKEMATCH: the copier address is set before the costly 0x05000000 operand, as the reference loads it */
+        /* FAKEMATCH: needed to match: the copier address is set before the costly 0x05000000 operand, as the reference loads it */
         s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
 
         copy((void *)0x05000000, palette, 128);

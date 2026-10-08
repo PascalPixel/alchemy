@@ -57,7 +57,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 	REG_BLDALPHA = 0x1010;
 	Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1, 1);
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-	/* FAKEMATCH: forwarded through Call3, each palette copy loads its routine before it shifts the destination, as the reference does. */
+	/* FAKEMATCH: needed to match: forwarded through Call3, each palette copy loads its routine before it shifts the destination, as the reference does */
 	if (work->effect->variant == 0)
 		Call3((void (*)())Iwram_CopyWords, (s32)BG_PLTT,
 			(s32)Resource_GetTableEntry((s32)&ResourceId_RedPaletteB), 128);

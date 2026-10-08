@@ -110,7 +110,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
         s32 mag;
         s32 ang;
 
-        /* FAKEMATCH: the mask is loaded into the magnitude before the random word is taken in, as the native code does; masking the call's result keeps the mask in a scratch register. */
+        /* FAKEMATCH: needed to match: the mask is loaded into the magnitude before the random word is taken in, as the native code does */
         mag = 0x1FF;
         mag &= Random16();
         ang = Random16() & 0xFFFF;
@@ -508,11 +508,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
     zoom = 0x80000;
     near = 0xffff;
     far = 0;
-    /* FAKEMATCH: instruction order: the palette address is set with the
-       initial values, so its pseudo spans the ramp loop and reload
-       rematerialises 0x05000000 at the copy, with the call address load
-       between its two halves as the native's; as a literal argument 2 of
-       2455 rows differ, set at its declaration 848. */
+    /* FAKEMATCH: needed to match: the palette address set with the initial values spans the ramp loop, so reload rematerialises 0x05000000 at the copy */
     colors = (void *)0x05000000;
     Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageB, work->sheet + 0x600, 0, 0);
@@ -544,15 +540,9 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 
     for (i = 0; i != 128; i++) {
         s32 angle = Random16() & 0xffff;
-        /* FAKEMATCH: a form the bytes prove: the amplitude is a value, not
-           a literal: the native hoists 255 into sl and multiplies with muls;
-           a literal 255 is synthesised as lsls and subs, and 142 of 2455
-           rows differ. */
+        /* FAKEMATCH: needed to match: a form the bytes prove: the amplitude is a value, not a literal: the native hoists 255 into sl and multiplies with muls */
         s32 amp = 255;
-        /* FAKEMATCH: register choice: the velocities' zero is a value set
-           at the top of the body, which loop.c hoists into r8 as the
-           native's; literal zeros are rematerialised in the loop
-           (movs r3, #0) and 138 of 2455 rows differ. */
+        /* FAKEMATCH: needed to match: register choice: the velocities' zero is a value set at the top of the body, which loop.c hoists into r8 as the native's */
         s32 speed = 0;
         SPARKS[i].x = (Trig_Sin(angle) * amp) >> 2;
         SPARKS[i].z = (Trig_Cos(angle) * amp) >> 2;
@@ -567,13 +557,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
     *(u16 *)0x0400000c = 0x784;
 
     for (frame = 0; frame != 160 && (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B))); frame++) {
-        /* FAKEMATCH: a form the bytes prove, and instruction order: the
-           frame > 143 block calls through a pointer to the slot table (the
-           native keeps gWorkSlot's base at sp+56 and adds 188 there),
-           where the other blocks load gWorkSlot+188 itself; set at the top
-           of each frame, loop.c hoists it after the scene addresses as the
-           native. Set once before the loop, 22 of 2455 rows differ; called
-           through ((DrawRectangle *)gWorkSlot)[47] as the other blocks, 581. */
+        /* FAKEMATCH: needed to match: the frame > 143 block calls through a pointer to the slot table (base kept at sp+56) */
         slots = (DrawRectangle *)gWorkSlot;
         if (frame == 143) {
             Iwram_FillWords(canvas, 0x4000, 0x2a2a2a2a);
@@ -737,11 +721,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
             work->transfer_value = 75;
             if (n <= 6) {
                 s32 cell = n * 770 + ParticleStreams_CellOffsets[7] + 0x2710;
-                /* FAKEMATCH: a form the bytes prove: the height is a value,
-                   as the burst block's: the native hoists high / 2 into fp
-                   and subtracts the register (8 and 16 rematerialised), and
-                   the frame is the native's 184 bytes; as literals the frame
-                   is 180 and 690 of 2455 rows differ. */
+                /* FAKEMATCH: needed to match: the height is a value, so high / 2 is hoisted into fp */
                 s32 high = 8;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -1001,10 +981,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 
         if (frame >= 72 && frame < 76) {
             s32 r2 = (frame << 4) - 1136;
-            /* FAKEMATCH: a form the bytes prove: the size is a value, as the
-               other particle draws': the native hoists 5 and 20 into fp and
-               sl and indexes the cell table at 20 - 2; as literals the index
-               folds and 100 of 2455 rows differ. */
+            /* FAKEMATCH: needed to match: the size is a value, so 5 and 20 are hoisted into fp and sl */
             s32 size = 10;
             for (i = 0; i != 256; i++) {
                 s32 angle = i << 8;
@@ -1032,11 +1009,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
                         half = radius / 2;
                         dx = (half * sx) / 8;
                         right = cx + dx;
-                        /* FAKEMATCH: a dead branch between the edges restores what the bytes
-                           prove: CSE and reload saw a label here (each store group of the first
-                           half loads its own 20, cx is loaded for each edge) and no code is
-                           left; without it 1949 of 2455 rows differ, with two divisions
-                           instead 26. */
+                        /* FAKEMATCH: needed to match: a dead branch restores the label CSE and reload saw between the edges */
                         if (dx > cx) {
                             left = 0;
                         }
@@ -1075,11 +1048,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
                         half2 = slope / 2;
                         dx = (half2 * sx) / 8;
                         right = cx + dx;
-                        /* FAKEMATCH: a dead branch between the edges restores what the bytes
-                           prove: CSE and reload saw a label here (each store group of the first
-                           half loads its own 20, cx is loaded for each edge) and no code is
-                           left; without it 1949 of 2455 rows differ, with two divisions
-                           instead 26. */
+                        /* FAKEMATCH: needed to match: a dead branch restores the label CSE and reload saw between the edges */
                         if (dx > cx) {
                             left = 0;
                         }
@@ -1217,7 +1186,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
         Runtime_ReleaseHeapBlock(47);
 
         if (frame > 63) {
-            /* FAKEMATCH: forced temporary: the shake value through an s32 keeps the AND constant an immediate and the instruction count native's; stored straight into gBgScroll[1].y, the constant comes from the pool and 17 rows differ (draft 2456 against 2455) */
+            /* FAKEMATCH: needed to match: forced temporary: the shake value through an s32 keeps the AND constant an immediate and the instruction count native's */
             s32 shake = (Random16() & 3) + 30;
 
             gBgScroll[1].y = shake;

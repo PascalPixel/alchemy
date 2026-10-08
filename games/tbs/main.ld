@@ -87,8 +87,6 @@ SECTIONS
     "*/games/tbs/src/system/memory/memory.o"(.text)
     "*/games/common/src/graphics/render/render.o"(.text)
     "*/games/tbs/src/graphics/palette/gfxutil.o"(.text)
-    "*/games/tbs/src/system/save/initialize_workspace.o"(.text)
-    "*/games/tbs/src/system/save/state.o"(.text)
     "*/games/tbs/src/system/link/sio_time.o"(.text)
     "*/games/common/src/system/link/sio_xchg.o"(.text)
     "*/games/tbs/src/system/link/link.o"(.text)

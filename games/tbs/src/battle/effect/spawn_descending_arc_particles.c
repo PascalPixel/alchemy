@@ -12,6 +12,7 @@
 #include "types.h"
 #include "scene_ids.h"
 #include "fx_scene.h"
+#include "game_state.h"
 
 struct ArcParticle {
     u8 unknown_00[8];
@@ -25,13 +26,6 @@ struct ArcParticle {
     struct ArcParticle *source;
 };
 
-struct BattleEffect16GlobalState {
-    u8 unknown_000[0x1DA];
-    s16 scene;
-};
-
-extern struct BattleEffect16GlobalState gGameState;
-
 void ObjectDispatch_ReleaseFar(void);
 
 void BattleFx_UpdateDescendingParticlePositiveArc(struct ArcParticle *particle)
@@ -43,7 +37,7 @@ void BattleFx_UpdateDescendingParticlePositiveArc(struct ArcParticle *particle)
 
     limit = particle->floor + 0xA0000;
     source = particle->source;
-    if (gGameState.scene == (s32)&SceneId_Clear)
+    if (gGameState.map == (s32)&SceneId_Clear)
         limit = particle->floor + 0x40000;
 
     y = particle->y;
@@ -71,7 +65,7 @@ void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle)
 
     limit = particle->floor + 0xA0000;
     source = particle->source;
-    if (gGameState.scene == (s32)&SceneId_Clear)
+    if (gGameState.map == (s32)&SceneId_Clear)
         limit = particle->floor + 0x40000;
 
     y = particle->y;

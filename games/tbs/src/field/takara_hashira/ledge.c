@@ -1,4 +1,3 @@
-#define OWN_gGameState
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -15,8 +14,6 @@
 #include "hashira.h"
 #include "field_scene.h"
 #include "io_reg.h"
-
-extern u8 gGameState[][2];
 
 #define OverlayObject_PrepareObject ((s32 (*)(s32,s32,s32,s32))OverlayObject_PrepareObject)
 
@@ -195,7 +192,7 @@ s32 FieldScene_RunScene3b3SequenceD(void)
 #if EDITION_INTERNATIONAL
     mode = (leader->facing + 0x2000) & 0xc000;
 #endif
-    if (gGameState[249][0] != 0) {
+    if (gGameState.movement_mode != 0) {
         return 0;
     }
     p = buf;
@@ -284,7 +281,7 @@ s32 SceneActor_ApplyCounterLowBitsAsMode(u8 *actor)
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
-    s16 scene = ((struct GameState *)gGameState)->scene;
+    s16 scene = gGameState.scene;
 
     if (scene == (s32)&SceneId_TakaraHashira1) {
         return gTakaraHashiraEntrances1;
@@ -316,7 +313,7 @@ const u32 *Scene_GetExits(void)
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-    s16 scene = ((struct GameState *)gGameState)->scene;
+    s16 scene = gGameState.scene;
 
     if (scene == (s32)&SceneId_TakaraHashira1) {
         return gTakaraHashiraPlacements1;

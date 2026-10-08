@@ -24,9 +24,6 @@ s32 Effect_SoundAndFlash();
 void BattleFx_StartTwelveFrameBlend();
 void Engine_MapCopyCellAttributes();
 void Scene_LeaveForMtAleph();
-struct GameState;
-extern struct GameState gGameState;
-
 void Object_SetActionCallbackAndRefreshById();
 
 

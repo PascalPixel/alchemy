@@ -21,6 +21,7 @@
 #include "btlsys.h"
 #include "btlcalc.h"
 #include "ui.h"
+#include "game_state.h"
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 void UnitCalcFar(s32 unit_id);
 
@@ -37,11 +38,6 @@ extern struct InventoryMenuState *gMenuWork;
 void UiWork_PushValueSlotFar(s32, s32);
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-
-struct ItemMenuModeState {
-    u8 reserved_000[0x20c];
-    u8 mode;
-};
 
 struct ItemMenuDisplayState {
     u16 reserved_00[2];
@@ -73,8 +69,6 @@ struct ItemMenuWork {
     u8 reserved_218;
     u8 count;
 };
-
-extern struct ItemMenuModeState gGameState;
 
 s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
 {
@@ -482,8 +476,8 @@ s32 ItemMenu_Run(void)
     s32 zero;
 
     menu = Runtime_AllocateHeapBlock(55, 0xa70);
-    old_mode = gGameState.mode;
-    gGameState.mode = 2;
+    old_mode = gGameState.message_speed;
+    gGameState.message_speed = 2;
     state = gMenuCtrlWork->busy = 1;
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
@@ -538,7 +532,7 @@ s32 ItemMenu_Run(void)
     MemFree(menu->saved);
     Runtime_ReleaseHeapBlock(55);
     Event_ClearInvalidPackedValuesFar();
-    gGameState.mode = old_mode;
+    gGameState.message_speed = old_mode;
     return 1;
 }
 

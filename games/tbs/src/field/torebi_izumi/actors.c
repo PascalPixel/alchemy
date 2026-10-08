@@ -1,8 +1,6 @@
-#define OWN_gGameState
 #include "topic.h"
 #include "types.h"
-
-extern s8 gGameState[];
+#include "game_state.h"
 
 void ObjectDispatch_ApplyValueToChildren();
 
@@ -23,11 +21,11 @@ s32 SceneDialogue_PickTopicVariantId(s32 topic)
         topic = (s32)((unsigned int)(Engine_RandomNext() * 5) >> 16);
     }
 
-    cursor = gGameState[308 + topic];
+    cursor = gGameState.won_prizes[8 + topic];
 
     variant = (cursor + (s32)((unsigned int)(Engine_RandomNext() * 2) >> 16) + 4) % 3;
 
-    gGameState[308 + topic] = (s8)variant;
+    gGameState.won_prizes[8 + topic] = (s8)variant;
 
     return TorebiIzumi_TopicIds[topic * 3 + variant];
 }

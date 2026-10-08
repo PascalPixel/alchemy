@@ -1,4 +1,3 @@
-#define OWN_gGameState
 #include "callback_scheduler.h"
 #include "resource.h"
 #include "mem.h"
@@ -10,9 +9,6 @@
 #include "field_scene.h"
 #include "call.h"
 #include "text/msg_ids.h"
-
-extern u16 gGameState[][1];
-
 
 enum StatueHallActor {
     ACTOR_SUKURETA = ACTOR_FIRST_PLACED
@@ -605,7 +601,7 @@ s32 Scene_RunGuardSequenceB(void)
     Engine_ActorSetSpriteFlags((s32)Object_GetById(18), 0);
     Object_GetById(18)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(18, 1);
-    if ((u32)((gGameState[225][0] - 3) << 16) > 0x10000) {
+    if ((u32)(((u16)gGameState.entrance - 3) << 16) > 0x10000) {
         Actor_SetPosition(JASMINE, 0, 0);
         Actor_SetPosition(GERALD, 0, 0);
     }
@@ -665,10 +661,7 @@ s32 Scene_RunGuardSequenceB(void)
         Map_CopyCellsTo(4, 31, 18, 11, 2, 1);
         Map_CopyCellsTo(4, 58, 36, 43, 4, 1);
     }
-    {
-    s16 *state = (s16 *)gGameState;
-
-    if (state[225] == 3) {
+    if (gGameState.entrance == 3) {
         if (GameFlag_IsSet(0x30a) != 0) {
             Actor_SetPosition(GERALD, 0, 0);
             Actor_SetPosition(JASMINE, 0, 0);
@@ -677,7 +670,7 @@ s32 Scene_RunGuardSequenceB(void)
             GameFlag_Set(0x30a);
         }
     }
-    if (state[225] == 4) {
+    if (gGameState.entrance == 4) {
         if (GameFlag_IsSet(0x30b) != 0) {
             Actor_SetPosition(GERALD, 0, 0);
             Actor_SetPosition(JASMINE, 0, 0);
@@ -685,7 +678,6 @@ s32 Scene_RunGuardSequenceB(void)
             FieldScene_RunStagedActorScene();
             GameFlag_Set(0x30b);
         }
-    }
     }
     if (GameFlag_IsSet(0x814) != 0) {
         BattleFx_SetQueuedSoundAndPlay(141);

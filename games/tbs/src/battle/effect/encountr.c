@@ -17,6 +17,7 @@
 #include "iwram_call.h"
 #include "eventwrk.h"
 #include "battle_unit.h"
+#include "game_state.h"
 
 #define BattleFx_SetSpecialFromTable ((void (*)(void))BattleFx_SetSpecialFromTable)
 
@@ -54,21 +55,7 @@ struct EncounterZone
 	u8	weights[8]; // 各グループの重み
 };
 
-struct FieldPartyState
-{
-	u8	unknown_000[0x1c0];
-	s16 scene;
-	s16 entrance;
-	u8	unknown_1c4[0x74];
-	s32 encounter_steps;
-	u8	unknown_23c[8];
-	s32 encounters_off;
-	u8	unknown_248[4];
-	s16 no_encounters;
-};
-
 extern struct EventWork		 *gEventWork;
-extern struct FieldPartyState gGameState;
 extern struct EncounterZone	  Encounter_EnemyGroupTable[];
 struct BtlUnit				 *UnitGetFar(s32 unit);
 u32							  Random16(void);
@@ -184,7 +171,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
 		return 0;
 	if (zone == 0)
 		return 0;
-	if (gGameState.no_encounters != 0)
+	if (gGameState.cloaked != 0)
 		return 0;
 	entry = &Encounter_EnemyGroupTable[zone];
 	rate = entry->rate;
@@ -204,7 +191,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
 		level = 0;
 	if (level > 5)
 		level = 5;
-	if (level > 0 && gGameState.encounters_off != 0)
+	if (level > 0 && gGameState.avoid_distance != 0)
 		return 0;
 	rate += level * 5;
 

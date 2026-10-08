@@ -1,4 +1,3 @@
-#define OWN_gGameState
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -15,6 +14,7 @@
 #include "call.h"
 #include "tbs_edition.h"
 #include "fieldobj.h"
+#include "game_state.h"
 #if !EDITION_INTERNATIONAL
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "field_event.h"
@@ -74,7 +74,6 @@ void Engine_ActorShowEmote();
 void Engine_ActorStartRepeatedMotion();
 void Engine_ActorJump();
 void Engine_ActorSetAnimation();
-extern s16 gGameState[];
 
 s32 GomaHashira_Actor13Frames;
 
@@ -265,6 +264,6 @@ void GomaHashira_DriveActor13Idle(void)
         break;
     }
     /* FAKEMATCH: the 99 goes through the counter variable so it is built with movs instead of a halfword pool constant. */
-    if (gGameState[282] == 0)
+    if (gGameState.pending_djinn_event == 0)
         *(u16 *)(work + 0x182) = t = 99;
 }

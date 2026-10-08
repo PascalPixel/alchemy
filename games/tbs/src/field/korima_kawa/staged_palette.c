@@ -15,6 +15,7 @@
 #include "staged_actor_effect.h"
 #include "resource_393.h"
 #include "fieldobj.h"
+#include "game_state.h"
 
 void Engine_ActorSetSpriteFlags(struct DispatchObject *object, u32 value);
 
@@ -24,7 +25,6 @@ void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
 
 void Engine_AudioPlayCue(s32 cue);
 
-extern struct GameState gGameState;
 #ifdef MODERN
 // called before its definition below, which modern GCC refuses for an
 // implicit int declaration of a u16 function
@@ -164,7 +164,7 @@ void SceneActor_ApplyOffsetObjectPosition(void)
     pos.y = ((struct Resource393Object *)Object_GetById(0))->position_y;
     pos.z = ((struct Resource393Object *)Object_GetById(0))->position_z;
 #else
-    struct Resource393Object *obj = Object_GetById(((struct Resource393Work *)&gGameState)->object_id);
+    struct Resource393Object *obj = Object_GetById(gGameState.selected_actor);
     u32 xb = obj->position_x & 0xfff00000;
 
     pos.x = xb + 0x80000;

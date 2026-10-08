@@ -32,7 +32,6 @@ void Effect_Spawn();
 
 void MogoruMori_SpawnPuffRing();
 void Party_SetFields1ceAnd1d0();
-extern struct GameState gGameState;
 
 extern struct EventWork *gEventWork;
 void Engine_TaskWait();

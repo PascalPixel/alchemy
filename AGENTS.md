@@ -335,8 +335,8 @@ never a file or a function.
   2.96's whole function): Tile_BuildMetatiles matched without its two order
   devices, but Transform_UpdateVertices matched under neither even with 8 of
   its 19 devices removed, and the hybrid is no stock compiler, so the
-  question is closed (Pascal, 2026-10-08: a limited set of stock compilers;
-  study branches k3-metatile, k3-vertices). What scheduling
+  question is closed (Pascal, 2026-10-08: a limited set of stock compilers).
+  What scheduling
   remains is a difference of instruction order, which S2 handles in the
   source. The lead's decision under Pascal's delegation (Pascal, 2026-10-07:
   an ARM mode in agscc, or agbcc for its provenance, never anyone else's

@@ -307,11 +307,11 @@ Resource_DirectoryTable:
 	resource , Monster_RedWarriorSprites
 	resource , Monster_SwordGirlSprites
 	resource Map001, Field_Map001
-	resource , Resource_Data129
-	resource , Resource_Data12A
-	resource , Resource_Data12B
-	resource , Resource_Data12C
-	resource , Resource_Data12D
+	resource , Tileset_BlankPalette
+	resource , Tileset_BlankTilesA
+	resource , Tileset_BlankTilesB
+	resource , Tileset_BlankTilesC
+	resource , Tileset_BlankTilesD
 	resource , Field_Map000
 	resource , Tileset_Set00Palette
 	resource , Tileset_Set00TilesA
@@ -449,7 +449,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set21TilesA
 	resource , Tileset_Set21TilesB
 	resource , Tileset_Set21TilesC
-	resource , Resource_Data1B7
+	resource , Tileset_Set21TilesD
 	resource , Field_Map029
 	resource , Tileset_Set22Palette
 	resource , Tileset_Set22TilesA
@@ -484,7 +484,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set28Palette
 	resource , Tileset_Set28TilesA
 	resource , Tileset_Set28TilesB
-	resource , Resource_Data1DA
+	resource , Tileset_Set28TilesC
 	resource , Tileset_Set28TilesD
 	resource , Field_Map037
 	resource , Tileset_Set29Palette

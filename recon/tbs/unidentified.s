@@ -1851,30 +1851,6 @@ BattleFx_IceShardSheet:
 	.global BattleFx_IceBlockSheet
 BattleFx_IceBlockSheet:
 	.incbin "baserom.gba", 0x00401d9c, 0x00001588
-	.section .unidentified.084baaa4,"a"
-	.global Resource_Data129
-Resource_Data129:
-	.incbin "baserom.gba", 0x004baaa4, 0x0000000c
-	.global Resource_Data12A
-Resource_Data12A:
-	.incbin "baserom.gba", 0x004baab0, 0x00000150
-	.global Resource_Data12B
-Resource_Data12B:
-	.incbin "baserom.gba", 0x004bac00, 0x00000140
-	.global Resource_Data12C
-Resource_Data12C:
-	.incbin "baserom.gba", 0x004bad40, 0x00000140
-	.global Resource_Data12D
-Resource_Data12D:
-	.incbin "baserom.gba", 0x004bae80, 0x00000140
-	.section .unidentified.0857a09c,"a"
-	.global Resource_Data1B7
-Resource_Data1B7:
-	.incbin "baserom.gba", 0x0057a09c, 0x00001cec
-	.section .unidentified.085abb38,"a"
-	.global Resource_Data1DA
-Resource_Data1DA:
-	.incbin "baserom.gba", 0x005abb38, 0x000022d8
 	.section .unidentified.085c4e05,"a"
 	.incbin "baserom.gba", 0x005c4e05, 0x00000003
 	.section .unidentified.085c753a,"a"

@@ -4,7 +4,9 @@
 //! are given, the title, game code, maker code and version, with -p padding
 //! to a power of two. pret's header source reserves the logo as
 //! `.space 156` and leaves the complement 0, and its Makefiles run
-//! `gbafix ROM -p --silent` right after objcopy (L1).
+//! `gbafix ROM -p --silent` right after objcopy (L1). The build does the
+//! same to every ROM it links, both games and all twelve editions; its own
+//! zero fill pads the image to the cartridge size instead of -p.
 
 use std::fs;
 use std::ops::Range;
@@ -21,7 +23,9 @@ Nintendo logo at 0x04, the fixed byte 0x96 at 0xb2 and device type 0 at
   -cCODE      set the four-character game code
   -mMAKER     set the two-character maker code
   -rVERSION   set the version byte (decimal, 0x hexadecimal or 0 octal)
-  --silent    print nothing when the ROM is fixed";
+  --silent    print nothing when the ROM is fixed
+The build runs the same fix-up, without -p, on every ROM it links, right
+after objcopy.";
 
 /// The cartridge header fills the first 0xc0 bytes of a GBA ROM.
 pub(crate) const HEADER_SIZE: usize = 0xc0;

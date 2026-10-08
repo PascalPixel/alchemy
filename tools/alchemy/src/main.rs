@@ -56,7 +56,7 @@ Set up and build
   check         one repository contract check
   worktree      prepare a new git worktree before its first build
   gbafix        fix a ROM's cartridge header as pret's gbafix: Nintendo logo and
-                complement check
+                complement check; the build runs it on every ROM it links
 
 Choose what to match
   deps          what not-yet-C code calls and blocks: what unblocks the most

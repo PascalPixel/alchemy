@@ -48,4 +48,6 @@ pub(crate) fn main() {
     println!("cargo:rustc-env=ALCHEMY_ENCODER={encoder}");
     let rule = digest(tools, &["alchemy/src/build_rom.rs"]);
     println!("cargo:rustc-env=ALCHEMY_LINK_RULE={rule}");
+    let header = digest(tools, &["alchemy/src/gbafix.rs"]);
+    println!("cargo:rustc-env=ALCHEMY_HEADER_FIX={header}");
 }

@@ -142,7 +142,7 @@ void FieldScene_RunFlags8B2And8B3Steps(void)
             GameFlag_Set(0x8b2);
         }
     }
-    Audio_PlayCue(123);
+    Event_PlayCue(123);
     Engine_EventRequestExit(3);
     Engine_EventEnd();
 }
@@ -449,10 +449,10 @@ void RamakanSabaku_SweepBack(void)
         FieldObject_SetPosition(actor, spot->x, 0, spot->z);
     }
     Actor_Get(ACTOR_PARTY_LEADER)->velocity_y = 0x60000;
-    Audio_PlayCue(152);
+    Event_PlayCue(152);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     RamakanSabaku_WaitForActorHeight((u8 *)leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
-    Audio_PlayCue(241);
+    Event_PlayCue(241);
     {
         struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -498,8 +498,8 @@ void RamakanSabaku_SweepBack(void)
         Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, frames, frames,
                      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, &puff);
     }
-    Audio_PlayCue(0x120);
-    Audio_PlayCue(152);
+    Event_PlayCue(0x120);
+    Event_PlayCue(152);
     Actor_Get(ACTOR_PARTY_LEADER)->velocity_y = 0x60000;
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Event_Wait(10);
@@ -752,7 +752,7 @@ void RamakanSabaku_PlayStartledRetreat(void)
             Engine_EventWait(2);
             Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
             Engine_EventWait(30);
-            Audio_PlayCue(148);
+            Event_PlayCue(148);
             Engine_ActorRunRepeatedMotion(8, 2);
             Engine_EventWait(20);
             Actor_SetSpeed(8, 0x28000, 0x14000);

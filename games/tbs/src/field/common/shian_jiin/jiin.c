@@ -222,7 +222,7 @@ void Scene_RunScene39eSequenceB(void)
         Engine_EventWait(5);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
         Object_GetById(8)->paused = 0;
-        Audio_PlayCue(152);
+        Event_PlayCue(152);
         record = Actor_Get(8);
         record->velocity_y = 0x80000;
         Engine_ActorSetAnimation(8, 1);
@@ -238,7 +238,7 @@ void Scene_RunScene39eSequenceB(void)
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 0x1f8);
         Engine_EventWait(5);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
-        Audio_PlayCue(152);
+        Event_PlayCue(152);
         Object_GetById(8)->paused = rec7;
         record = Actor_Get(8);
         record->velocity_y = 0x80000;
@@ -784,7 +784,7 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Actor_WalkToAndWait(16, 154 << 1, 248);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 128 << 6, 0);
     Actor_FaceDirection(16, 192 << 8, 20);
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((const u16 *)ShianJiin_CellStepsB, 78, 13);
     Engine_ActorRunRepeatedMotion(16, 2);
     Engine_EventWait(20);
@@ -824,7 +824,7 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Engine_ActorWaitForMove(18);
     Actor_FaceDirection(18, 160 << 7, 0);
     Engine_ActorWaitForMove(17);
-    Audio_PlayCue(159);
+    Event_PlayCue(159);
     Map_AnimateCells((const u16 *)ShianJiin_CellStepsC, 78, 13);
     Event_ShowMessageAndWait(18, 0, 20);
     Actor_FaceActor(9, 17, 0);
@@ -955,7 +955,7 @@ void FieldScene_RunSecondEnsembleBeat(void)
 
         sprite->rotation = rotation;
     }
-    Audio_PlayCue(124);
+    Event_PlayCue(124);
     Event_ShowMessageAndWait(18, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 192 << 8, 20);
     Actor_WalkToAndWait(16, 128 << 1, 240);
@@ -1237,7 +1237,7 @@ void FieldScene_RunEnsembleStoryBeat(void)
 
         sprite->rotation = rotation;
     }
-    Audio_PlayCue(124);
+    Event_PlayCue(124);
     Engine_EventWait(40);
     Actor_WalkToAndWait(15, 216, 152);
     Actor_FaceDirection(15, 0x4000, 30);
@@ -1260,7 +1260,7 @@ void StartSchoolDoorEvent(void)
         Engine_MessageShowCentered((s32)MsgShianItIsLocked, 1);
         Engine_EventEnd();
     } else {
-        Audio_PlayCue(158);
+        Event_PlayCue(158);
         Map_AnimateCells((const u16 *)ShianJiin_CellStepsB, 78, 13);
         Actor_SetSpeed(0, 0x8000, 0x4000);
         Actor_WalkToAndWait(0, 306, 248);
@@ -1412,7 +1412,7 @@ void ShianJiin_RunExitTransition(void)
     s32 record;
 
     Engine_EventBegin();
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     Map_AnimateCells((const u16 *)ShianJiin_CellStepsA, 77, 8);
     Object_GetById(0)->motion_flags = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
@@ -1440,7 +1440,7 @@ void ShianJiin_AskIfCurious(void)
     Actor_SetAttachedEffect(8, 0x102);
     Engine_EventWait(60);
     Object_GetById(8)->paused = 0;
-    Audio_PlayCue(152);
+    Event_PlayCue(152);
     record = Actor_Get(8);
     record->velocity_y = 0x80000;
     Engine_ActorSetAnimation(8, 1);

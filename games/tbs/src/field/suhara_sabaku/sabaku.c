@@ -165,7 +165,7 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
             Actor_SetDestination((s32)p6, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove((s32)p6);
-        Audio_PlayCue(244);
+        Event_PlayCue(244);
         Engine_TaskAddCallback((s32)SuharaSabaku_SyncSelectedActorProgress, 0xc80);
         rec7->motion_flags = rec2;
         Engine_ObjectSetPosition((s32)rec7, rec7->x.fixed, rec7->y.fixed + 0x200000, rec7->z.fixed);

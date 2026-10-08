@@ -83,14 +83,14 @@ void RunEventScript01(void)
     Engine_EventWait(20);
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     BattleFx_SetBlock30Values12Zero();
-    Audio_PlayCue(145);
+    Event_PlayCue(145);
     Engine_EventWait(30);
     BattleFx_SetBlock30Values12Zero();
-    Audio_PlayCue(145);
+    Event_PlayCue(145);
     Engine_CameraWaitForMove();
     Work_SetValuesIfNonNegative(0x20000, 0x30000, 0x10000);
     BattleFx_SetBlock30Values12Zero();
-    Audio_PlayCue(145);
+    Event_PlayCue(145);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Engine_EventWait(60);
@@ -126,7 +126,7 @@ void RunEventScript01(void)
     Engine_EventWait(60);
     Work_SetValuesIfNonNegative(0x20000, 0x30000, 0x10000);
     BattleFx_SetBlock30Values12Zero();
-    Audio_PlayCue(145);
+    Event_PlayCue(145);
     Engine_EventWait(60);
     Engine_ActorFaceEachOther(8, 9, 0);
     Engine_ActorFaceEachOther(10, 11, 0);
@@ -319,7 +319,7 @@ void RunEventScript01(void)
     Actor_WalkToAndWait(8, 255, 0x1bd);
     Engine_EventWait(40);
     Map_AnimateCells(0x2008ea0, 45, 11);
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     Engine_EventWait(30);
     Actor_WalkTo(8, 255, 0x186);
     Engine_EventWait(20);
@@ -345,7 +345,7 @@ void RunEventScript01(void)
     Engine_EventWait(40);
     Work_SetValuesIfNonNegative(0x20000, 0x30000, 0x10000);
     BattleFx_SetBlock30Values12Zero();
-    Audio_PlayCue(145);
+    Event_PlayCue(145);
     Engine_EventWait(30);
     work = gEventWork;
     work->start_transition = 0;

@@ -156,7 +156,7 @@ void TakaraAshiba_StartActorFifteenJump(void)
         Engine_ActorRunRepeatedMotion(15, 2);
         Engine_EventWait(20);
         Actor_SetSpeed(15, 0x10000, 0x8000);
-        Audio_PlayCue(152);
+        Event_PlayCue(152);
         record = Object_GetById(15);
         record->velocity_y = 0x80000;
         Actor_WalkToAndWait(15, 0x248, 0x2a8);
@@ -184,7 +184,7 @@ void TakaraAshiba_RunActorFifteenSprint(void)
             Engine_ActorRunRepeatedMotion(15, 2);
             Engine_EventWait(20);
             Actor_SetSpeed(15, 0x10000, 0x8000);
-            Audio_PlayCue(152);
+            Event_PlayCue(152);
             record = Object_GetById(15);
             record->velocity_y = 0xa0000;
             Actor_WalkToAndWait(15, 0x248, 0x298);
@@ -196,7 +196,7 @@ void TakaraAshiba_RunActorFifteenSprint(void)
             Actor_WalkToAndWait(15, 0x2e8, 0x298);
             Actor_WalkToAndWait(15, 0x338, 0x298);
             Engine_EventWait(10);
-            Audio_PlayCue(208);
+            Event_PlayCue(208);
             Work_SetValuesIfNonNegative(0x40000, 0x20000, 0x10000);
             Engine_EventWait(20);
             Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -222,7 +222,7 @@ void TakaraAshiba_ReturnActorFifteen(void)
         record = Object_GetById(15);
         record->sprite->rotation = 0;
         ObjectDispatch_ApplyValueToChildren(record, 16);
-        Audio_PlayCue(152);
+        Event_PlayCue(152);
         record = Object_GetById(15);
         record->velocity_y = 0x80000;
         Actor_FaceDirection(15, 0x8000, 30);
@@ -230,7 +230,7 @@ void TakaraAshiba_ReturnActorFifteen(void)
         Engine_ActorRunRepeatedMotion(15, 2);
         Engine_EventWait(20);
         Actor_SetSpeed(15, 0x10000, 0x8000);
-        Audio_PlayCue(152);
+        Event_PlayCue(152);
         record = Object_GetById(15);
         record->velocity_y = 0x40000;
         Actor_WalkToAndWait(15, 0x370, 0x2a8);
@@ -336,7 +336,7 @@ void TakaraAshiba_OpenPlatformPassage(s32 a0)
     s32 record;
 
     if ((a0 & 0x100) != 0) {
-        Audio_PlayCue(157);
+        Event_PlayCue(157);
         Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
         Map_CopyCells(84, 29, 1, 3, 70, 49);
@@ -519,7 +519,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1e666, 0xf333);
     Actor_SetSpeed(8, 0x1e666, 0xf333);
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(8, record->x.part.pixel, record->z.part.pixel);
@@ -527,7 +527,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Engine_ActorWaitForMove(8);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
     Engine_EventWait(4);
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
 #if EDITION_INTERNATIONAL
     Actor_SetDestinationOffset(8, 0, 16);
 #else
@@ -563,7 +563,7 @@ void FieldScene_RunScene3b4SequenceA(void)
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
     Actor_SetSpeed(9, 0x1b333, 0xd999);
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(9, record->x.part.pixel, record->z.part.pixel);
@@ -574,7 +574,7 @@ void FieldScene_RunScene3b4SequenceA(void)
 #else
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
 #endif
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     Engine_EventWait(4);
     Actor_SetDestinationOffset(9, 0, 16);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -630,7 +630,7 @@ void FieldScene_RunPrimarySequence(void)
         Engine_EventBegin();
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
         Actor_SetSpeed(10, 0x1b333, 0xd999);
-        Audio_PlayCue(188);
+        Event_PlayCue(188);
         record = Object_GetById(0);
         if (record != 0) {
             Actor_SetDestination(10, record->x.part.pixel, record->z.part.pixel);
@@ -642,7 +642,7 @@ void FieldScene_RunPrimarySequence(void)
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
 #endif
         Engine_EventWait(4);
-        Audio_PlayCue(188);
+        Event_PlayCue(188);
         Actor_SetDestinationOffset(10, 0, 16);
         Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
         Actor_SetDestination(10, 0x108, 0x168);
@@ -715,7 +715,7 @@ void FieldScene_RunScene3b4SequenceB(void)
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
     Actor_SetSpeed(12, 0x1b333, 0xd999);
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(12, record->x.part.pixel, record->z.part.pixel);
@@ -726,7 +726,7 @@ void FieldScene_RunScene3b4SequenceB(void)
 #else
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
 #endif
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     Actor_SetDestinationOffset(12, 0, 16);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetDestination(12, 0x138, 232);

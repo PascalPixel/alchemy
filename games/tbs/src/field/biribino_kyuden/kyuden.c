@@ -903,7 +903,7 @@ void FieldScene_RunPalaceGreeting(void)
     Engine_EventWait(20);
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_GameFlagSet(0x200);
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     Map_ClearLayerEntryFlag(1);
     Map_ClearLayerEntryFlag(2);
     Engine_ActorSetPosition(19, 0x1000000, 0x2780000);

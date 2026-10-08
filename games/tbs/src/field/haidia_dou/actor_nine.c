@@ -14,8 +14,8 @@ void HaidiaDou_ToppleActorNine(void)
     Engine_EventWait(15);
     Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
     Engine_EventWait(4);
-    Audio_PlayCue(0x120);
-    Audio_PlayCue(239);
+    Event_PlayCue(0x120);
+    Event_PlayCue(239);
     Actor_SetMotionSpeed(9, 0x8000, 0x1999);
     Engine_ActorSetAnimation(9, 2);
     zero = 0;
@@ -26,8 +26,8 @@ void HaidiaDou_ToppleActorNine(void)
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_ActorWaitForMove(9);
-    Audio_PlayCue(0x120);
-    Audio_PlayCue(213);
+    Event_PlayCue(0x120);
+    Event_PlayCue(213);
     Engine_ActorSetAnimation(9, 3);
     Object_GetById(9)->motion_flags = 3;
     Engine_ActorSetDestinationOffset(9, 6, 0);
@@ -38,7 +38,7 @@ void HaidiaDou_ToppleActorNine(void)
     StagedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
     StagedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
     GameFlag_Set(0x202);
-    Audio_PlayCue(240);
+    Event_PlayCue(240);
     Engine_EventEnd();
 }
 

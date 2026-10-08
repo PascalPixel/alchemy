@@ -727,7 +727,7 @@ void FieldScene_BuildActorPresentationGroup(void)
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
-    Audio_PlayCue(247);
+    Event_PlayCue(247);
     Engine_ActorSetAnimation(8, 2);
     Engine_ActorSetAnimation(9, 2);
     Engine_ActorSetAnimation(10, 2);
@@ -864,7 +864,7 @@ void FieldScene_RunMiddleSequence(void)
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
-    Audio_PlayCue(247);
+    Event_PlayCue(247);
     Engine_ActorSetAnimation(8, 2);
     Engine_ActorSetAnimation(9, 2);
     Engine_ActorSetAnimation(10, 2);
@@ -947,15 +947,15 @@ void FieldScene_RunMiddleSequence(void)
     rec->scale_x = 0x10000;
     rec->scale_y = 0x10000;
     Engine_EventWait(10);
-    Audio_PlayCue(107);
+    Event_PlayCue(107);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Engine_EventWait(10);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Actor_SetSpeed(17, 0x19999, 0xcccc);
     Actor_WalkToAndWait(17, 208, 0x3a0);
-    Audio_PlayCue(92);
+    Event_PlayCue(92);
     Actor_FaceDirection(17, 0x3000, 20);
     Engine_ActorSetAnimation(17, 9);
     Engine_EventWait(20);

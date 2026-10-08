@@ -289,7 +289,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
-        Audio_PlayCue(228);
+        Event_PlayCue(228);
         leader->update = (void (*)(union FieldObject *))SceneEffect_SpawnTwoRandomizedParticles;
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
         Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
@@ -417,7 +417,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
-    Audio_PlayCue(204);
+    Event_PlayCue(204);
     actor->motion_flags = 3;
     Engine_EventWait(24);
     options.palette = 7;
@@ -436,7 +436,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
         Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocity[0], velocity[1],
                       velocity[2], 0x1090001, &options);
     }
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
     Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
@@ -828,7 +828,7 @@ void FieldScene_RunStatueDialogueSequence(void)
     ColorBuffer_ApplyTarget(0x10005, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_EventWait(100);
-    Audio_PlayCue(142);
+    Event_PlayCue(142);
     Engine_EventWait(30);
     ColorBuffer_ApplyTarget(0x7fff, 0);
     Engine_ColorBufferInterpolate(60);
@@ -1927,7 +1927,7 @@ void Scene_RunScene3c8SequenceA(void)
         ((union FieldObject *)actor)->effect.velocity_x = 0;
         Map_CopyCellAttributes(6, 44, 1, 1, gVinasuPillarCells[slot].x, gVinasuPillarCells[slot].z);
         OverlayObject_WaitUntilIdle(actor);
-        Audio_PlayCue(188);
+        Event_PlayCue(188);
         actor->collision_flags = 0;
         *motion = 0;
         actor->y.fixed = -0x100000;
@@ -2933,7 +2933,7 @@ void FieldScene_RunLeaderDropSequence(void)
     leader->motion_flags = 0;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    Audio_PlayCue(204);
+    Event_PlayCue(204);
     Engine_EventWait(30);
     leader->motion_flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     Engine_EventWait(24);
@@ -2968,8 +2968,8 @@ void FieldScene_RunLeaderDropSequence(void)
     Engine_EventWait(60);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
     Engine_ActorSetSpritePriority(20, 1);
-    Audio_PlayCue(17);
-    Audio_PlayCue(0x134);
+    Event_PlayCue(17);
+    Event_PlayCue(0x134);
     GameFlag_Set(0x101);
     for (i = 0; i < 128; i++) {
         leader->y.fixed += 1 << 16;

@@ -507,7 +507,7 @@ void RunSceneArrivalSetup(void)
     s32 two = 2;
 
     Engine_EventBegin();
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     Map_CopyCellsTo(36, 23, 43, 12, two, two);
     Engine_TaskWait(5);
     Map_CopyCellsTo(39, 23, 43, 12, two, two);
@@ -554,10 +554,10 @@ void FieldScene_RunStagedGroupSequence(void)
         Actor_SetPosition(33, PIXELS(332), PIXELS(264));
         Actor_SetPosition(34, PIXELS(332), PIXELS(280));
         Actor_SetPosition(21, PIXELS(364), PIXELS(272));
-        Audio_PlayCue(17);
+        Event_PlayCue(17);
         Ui_SetRenderResultFromObject(20);
         UiText_ShowCenteredMessage((s32)MsgKareiOkListeningLets, 1, 0);
-        Audio_PlayCue(9);
+        Event_PlayCue(9);
         Engine_EventWait(10);
         Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
         if (work->touched_trigger == 9) {
@@ -956,7 +956,7 @@ void FieldScene_RunStagedGroupSequence(void)
         Engine_ActorDestroy(32);
         Engine_ActorDestroy(33);
         Engine_ActorDestroy(34);
-        Audio_PlayCue(17);
+        Event_PlayCue(17);
         if (work->touched_trigger == 9) {
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 224, 458);
             leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -969,7 +969,7 @@ void FieldScene_RunStagedGroupSequence(void)
         Audio_PlayCueFromEventWork();
         GameFlag_Set(0x911);
     } else {
-        Audio_PlayCue(123);
+        Event_PlayCue(123);
         Engine_EventRequestExit(work->touched_trigger);
         Engine_EventCloseScreen();
         Engine_EventWaitForScreen();
@@ -1524,7 +1524,7 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
     Actor_Get(9)->steering_flags |= ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(IWAN, 192, 232);
     Actor_FaceDirection(IWAN, FACING_NORTH, 0);
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     Map_CopyCellsTo(36, 23, 43, 12, 2, 2);
     Engine_TaskWait(5);
     Map_CopyCellsTo(39, 23, 43, 12, 2, 2);
@@ -1575,7 +1575,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Engine_EventOpenScreen();
     Camera_SetSpeed(0x19999, 0x3333);
     Camera_MoveTo(0x1b80000, -1, 0x1900000, 1);
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     Actor_SetSpeed(9, 0x19999, 0xcccc);
     Actor_WalkToAndWait(9, 0x1b8, 0x190);
     Camera_SetSpeed(0xc000, 0x1800);
@@ -1583,7 +1583,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_SetSpeed(9, 0xcccc, 0x6666);
     Actor_WalkToAndWait(9, 0x1b8, 0x12c);
     Engine_ActorSetAnimation(9, 0);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Engine_EventWait(40);
     Actor_SetSpeed(11, 0xcccc, 0x6666);
     Actor_SetPosition(11, 0x1b70000, 0x1320000);
@@ -1770,7 +1770,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_WalkToAndWait(8, 0x10c, 198);
     Actor_FaceDirection(8, 0xc000, 10);
     Engine_ActorRunRepeatedMotion(8, 2);
-    Audio_PlayCue(125);
+    Event_PlayCue(125);
     Map_CopyCellsTo(71, 60, 76, 11, 2, 1);
     Map_CopyCellAttributes(71, 60, 2, 1, 16, 11);
     Engine_EventWait(20);
@@ -1819,7 +1819,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b7, 0x138);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b7, 0x132);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     Actor_SetSpeed(9, 0xcccc, 0x6666);
     Camera_SetSpeed(0x10000, 0x2000);
     Camera_MoveTo(0x1b80000, -1, 0x1a40000, 1);
@@ -1829,7 +1829,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_SetSpeed(9, 0x19999, 0xcccc);
     Actor_WalkToAndWait(9, 0x1b8, 0x1f4);
     Actor_WalkTo(9, 0x1b8, 0x258);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     work = gEventWork;
     work->transition_frames = 24;
     work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -2064,7 +2064,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     } else if (!GameFlag_IsSet(0x302) && a->x.part.pixel <= 245 && (gFrameCount & 1) == 0) {
         if (!GameFlag_IsSet(0x202)) {
             BattleFx_SetQueuedSoundAndPlay(-1);
-            Audio_PlayCue(230);
+            Event_PlayCue(230);
             GameFlag_Set(0x202);
         }
         FieldScene_RunScene3a8SequenceA(a->x.fixed, a->y.fixed, a->z.fixed);
@@ -2072,7 +2072,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     if (!GameFlag_IsSet(0x303) && b->x.part.pixel <= 709 && (gFrameCount & 1) == 0) {
         if (!GameFlag_IsSet(0x203)) {
             BattleFx_SetQueuedSoundAndPlay(-1);
-            Audio_PlayCue(230);
+            Event_PlayCue(230);
             GameFlag_Set(0x203);
         }
         FieldScene_RunScene3a8SequenceA(b->x.fixed, b->y.fixed, b->z.fixed);

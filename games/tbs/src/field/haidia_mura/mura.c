@@ -245,7 +245,7 @@ void HaidiaMura_OpenExitEleven(void)
     u32 i;
     s32 record;
 
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     Map_AnimateCells((s32)gHaidiaMuraCellAnimC, 45, 11);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x101, 0x1a4);
     Engine_EventRequestExit(11);
@@ -284,7 +284,7 @@ void HaidiaMura_OpenExitFive(void)
     u32 i;
     s32 record;
 
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((u32)gHaidiaMuraCellAnimA, 54, 32);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x196, 0x2d7);
     Engine_EventRequestExit(5);
@@ -295,7 +295,7 @@ void HaidiaMura_OpenExitSix(void)
     u32 i;
     s32 record;
 
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((u32)gHaidiaMuraCellAnimB, 45, 39);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x106, 0x325);
     Engine_EventRequestExit(6);
@@ -328,7 +328,7 @@ void SceneDialogue_RunFlag815GatedStep(void)
 
 void FieldScene_RunPrimarySequence(void)
 {
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((s32)gHaidiaMuraCellAnimB, 49, 69);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 0x466);
     Engine_EventRequestExit(8);
@@ -336,7 +336,7 @@ void FieldScene_RunPrimarySequence(void)
 
 void FieldScene_RunScene373SequenceA(void)
 {
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((s32)gHaidiaMuraCellAnimD, 52, 76);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x176, 0x4d6);
     Engine_EventRequestExit(9);
@@ -344,7 +344,7 @@ void FieldScene_RunScene373SequenceA(void)
 
 void FieldScene_RunPrimarySequenceSecond(void)
 {
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((s32)gHaidiaMuraCellAnimA, 35, 74);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
     Engine_EventRequestExit(10);
@@ -1677,7 +1677,7 @@ void FieldScene_RunLargeStagingSequence(void)
     FieldScene_RunStep8C();
     Engine_ActorSetAnimation(GERALD, 17);
     Event_ShowMessageAndWait(0x2001, 0, 20);
-    Audio_PlayCue(131);
+    Event_PlayCue(131);
     for (i = 0; i < 60; i++) {
         OverlayObject_UpdateOnFrameBit1(Object_GetById(GERALD));
         Engine_TaskWait(1);
@@ -2249,7 +2249,7 @@ void Scene_RepairTheHouse(void)
     Engine_ActorSetAnimation(ACTOR_DORA, 7);
     Engine_EventWait(5);
     Event_ShowTwoMessagesAndWait(21, 14, 2, 24, 2, 1, 10, 14, 4, 14, none);
-    Audio_PlayCue(161);
+    Event_PlayCue(161);
     rec = Actor_Get(ACTOR_DORA);
     rec->sprite->flags = none;
     rec->steering_flags &= 0xfe;
@@ -2277,7 +2277,7 @@ void Scene_RepairTheHouse(void)
     Actor_ShowEmote(GERALD, 256, 10);
     Engine_ActorSetAnimation(GERALD, 13);
     Engine_ActorJump(GERALD, 2, 5);
-    Audio_PlayCue(143);
+    Event_PlayCue(143);
     Work_SetValuesIfNonNegative(0, 0x40000, 0x10000);
     Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
     Engine_ActorSetSpriteFlags(Actor_Get(GERALD), 0);
@@ -2352,7 +2352,7 @@ void Scene_RepairTheHouse(void)
     Engine_ActorJump(GERALD, 2, 5);
     Engine_ActorSetSpriteFlags(Actor_Get(GERALD), 0);
     Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
-    Audio_PlayCue(143);
+    Event_PlayCue(143);
     Work_SetValuesIfNonNegative(0, 0x40000, 0x10000);
     Engine_ActorRunRepeatedMotion(GERALD, 3);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);

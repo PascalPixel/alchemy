@@ -85,7 +85,7 @@ void FieldScene_RunActor23SequenceOnceByFlag867(void)
     s32 record;
 
     Engine_EventBegin();
-    Audio_PlayCue(100);
+    Event_PlayCue(100);
     Engine_EventWait(40);
     if (GameFlag_IsSet(0x867) == 0) {
         Actor_SetAttachedEffect(23, 0x102);

@@ -15,6 +15,7 @@
 #include "system.h"
 #include "uiflow.h"
 #include "text/msg_ids.h"
+#include "game_state.h"
 
 #define UiWindow_Create ((struct Work * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
@@ -29,19 +30,12 @@ void UiText_DrawNumber(s32 n, s32 digits, s32 work, s32 x, s32 y);
 void UiText_DrawString(u8 *str, s32 work, s32 x, s32 y);
 void UiText_DrawResource(s32 no, s32 work, s32 x, s32 y);
 
-struct MenuDefaults {
-    u8 padding_000[0x1C8];
-    s16 primary;
-    s16 secondary;
-};
-
 struct TextObject {
     u8 storage[12];
 };
 
 void UiTextResource_Initialize(struct TextObject *object, s32 *resource);
 void UiTextResource_SetPosition(struct TextObject *object, s32 x, s32 y);
-extern struct MenuDefaults gGameState;
 extern volatile u32 gKeysHeld;
 
 
@@ -75,8 +69,8 @@ s16 Menu_RunSelection(void)
 
     work = 0;
     mode = 0;
-    primary = gGameState.primary;
-    secondary = gGameState.secondary;
+    primary = gGameState.default_scene;
+    secondary = gGameState.default_entrance;
     work = UiWindow_Create(0, 7, 30, 5, 2);
     Menu_DrawSelectionRow(work, primary, &secondary);
     UiTextResource_Initialize(&object, &resource);

@@ -1166,7 +1166,7 @@ void FieldScene_RunMainCutsceneSequence(void)
 {
     s16 *position;
 
-    Audio_PlayCue(30);
+    Event_PlayCue(30);
     Event_Begin();
     Event_SetMessage((s32)MsgTorebiWaitingCompanions);
     Engine_EventOpenScreen();
@@ -2053,7 +2053,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Actor_SetAnimation(3, 3);
     Actor_SetAnimationAndWait(IWAN, 3);
     Event_Wait(30);
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     Actor_SetSpeed(1, 0x13333, 0x9999);
     Actor_SetSpeed(2, 0x13333, 0x9999);
     Actor_SetSpeed(MEARI, 0x13333, 0x9999);
@@ -2086,7 +2086,7 @@ void TorebiKyuden_LeaveThroughDoor(void)
 
     work = (struct EventWork *)((u8 **)&gEventWork)[0];
     Event_Begin();
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
     if (work->touched_trigger == 32) {
@@ -2116,7 +2116,7 @@ void RunSceneEffectSetup(void)
 {
     Event_Begin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells(TorebiKyuden_CellSteps, 36, 10);
     Actor_CenterAndWalk(0, 2, -16);
     Event_Wait(16);

@@ -473,6 +473,9 @@ fn includers_of(root: &Path, header: &str) -> Result<Vec<String>, String> {
 fn strip_guard(text: &str) -> String {
     let lines: Vec<&str> = text.lines().collect();
     let code: Vec<usize> = (0..lines.len()).filter(|&i| !lines[i].trim().is_empty() && !lines[i].trim_start().starts_with("//")).collect();
+    // Includes may stand before the guard; they stay.
+    let first = code.iter().position(|&i| !lines[i].trim_start().starts_with("#include")).unwrap_or(code.len());
+    let code = &code[first..];
     if code.len() >= 3 {
         let (a, b, z) = (code[0], code[1], *code.last().unwrap());
         let guard = lines[a].trim().strip_prefix("#ifndef ").map(str::trim);
@@ -819,6 +822,7 @@ mod tests {
     fn guards_of_inlined_headers_go() {
         assert_eq!(strip_guard("#ifndef A_H\n#define A_H\n\nvoid f(void);\n\n#endif\n"), "void f(void);\n");
         assert_eq!(strip_guard("void f(void);\n"), "void f(void);\n");
+        assert_eq!(strip_guard("#include \"a.h\"\n#ifndef B_H\n#define B_H\nvoid f(void);\n#endif\n"), "#include \"a.h\"\nvoid f(void);\n");
     }
 
     #[test]

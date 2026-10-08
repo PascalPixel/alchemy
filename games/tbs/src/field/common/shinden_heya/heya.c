@@ -633,7 +633,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     Engine_ActorSetAnimation(8, 0);
     Actor_SetChildValue(8, 0x100);
     ShindenHeya_CopyActorPose();
-    Audio_PlayCue(0xc4);
+    Event_PlayCue(0xc4);
     ShindenHeya_SpawnOwnerEffect(8, 0x1200);
     Engine_EventWait(0x20);
     ShindenHeya_SpawnOwnerEffect(8, 0x1200);
@@ -699,7 +699,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     Engine_ActorSetAnimation(8, 0);
     Actor_SetChildValue(8, 0x100);
     ShindenHeya_CopyActorPose();
-    Audio_PlayCue(0xc4);
+    Event_PlayCue(0xc4);
     ShindenHeya_SpawnOwnerEffect(8, 0x1200);
     Engine_EventWait(0x20);
     ShindenHeya_SpawnOwnerEffect(8, 0x1200);
@@ -920,7 +920,7 @@ dialogue:
         ColorBuffer_ApplyTarget(0, 0);
         Engine_ColorBufferInterpolate(0x78);
         Engine_EventWait(0x78);
-        Audio_PlayCue(0x56);
+        Event_PlayCue(0x56);
         AudioCommand_WaitForCompletion();
         GameFlag_Set(0x9f0);
         Engine_EventRequestExit(0x1e);
@@ -1011,19 +1011,19 @@ void FieldScene_RunActorUpdateSequence(void)
     Engine_EventWait(30);
     Event_ShowMessage(8, 0);
     Engine_EventWait(80);
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     Engine_ColorBufferApplyTarget(0x10005, 1);
     Engine_ColorBufferInterpolate(60);
     Engine_EventWait(40);
     Camera_SetSpeed(0x6666, 0xccc);
     Camera_MoveTo(0xc00000, -1, 0x680000, 1);
     Engine_EventWait(120);
-    Audio_PlayCue(21);
-    Audio_PlayCue(0x134);
+    Event_PlayCue(21);
+    Event_PlayCue(0x134);
     Actor_SetPosition(13, 0xc80000, 0x80000);
     Actor_SetSpeed(13, 0x6666, 0x3333);
     Actor_MoveToAndWait(13, 200, 72);
-    Audio_PlayCue(0x120);
+    Event_PlayCue(0x120);
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_ActorSetAnimation(8, 0);
@@ -1047,8 +1047,8 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_ShowMessage(13, 0);
     Engine_EventWait(60);
     Engine_ActorSetChildValue(13, 0x100);
-    Audio_PlayCue(17);
-    Audio_PlayCue(0x134);
+    Event_PlayCue(17);
+    Event_PlayCue(0x134);
     for (i = 0; i < 32; i++) {
         ShindenHeya_SpawnActorSpark(13);
         Engine_EventWait(4);
@@ -1057,7 +1057,7 @@ void FieldScene_RunActorUpdateSequence(void)
         record = Object_GetById(13);
         record->scale_y += -0x28f;
     }
-    Audio_PlayCue(0x120);
+    Event_PlayCue(0x120);
     Actor_SetChildValue(13, 0);
     Actor_SetPosition(13, 0, 0);
     Engine_EventWait(40);
@@ -1068,7 +1068,7 @@ void FieldScene_RunActorUpdateSequence(void)
     Engine_EventWait(120);
     ShindenHeya_ResetActorUpdate();
     Engine_ActorSetAnimation(8, 1);
-    Audio_PlayCue(2);
+    Event_PlayCue(2);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(20);

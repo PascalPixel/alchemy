@@ -14,6 +14,7 @@
 #include "resource_397.h"
 #include "io_reg.h"
 #include "irq.h"
+#include "game_state.h"
 
 extern struct EventWork *gEventWork;
 extern u8 gDisplayTransition[];
@@ -33,7 +34,6 @@ union SceneCell {
     s16 h[2];
 };
 
-extern s32 gGameState[];
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
 #endif
@@ -85,7 +85,7 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     s32 dz = bz;
     s32 h;
 
-    obj = (struct SceneObject *)Object_GetById(gGameState[125]);
+    obj = (struct SceneObject *)Object_GetById(gGameState.selected_actor);
     dx <<= 20;
     dz <<= 20;
 

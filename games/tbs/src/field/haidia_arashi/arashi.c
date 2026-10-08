@@ -383,7 +383,7 @@ void HaidiaArashi_OpenGateRoute(void)
     s32 record;
 
     if (GameFlag_IsSet(0x206) == 0) {
-        Audio_PlayCue(158);
+        Event_PlayCue(158);
         Map_AnimateCells(HaidiaArashi_CellSteps2, 45, 39);
     }
     if (GameFlag_IsSet(0x835) == 0) {
@@ -435,7 +435,7 @@ void HaidiaArashi_OpenRouteTen(void)
     u32 i;
     s32 record;
 
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 74);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
     Engine_EventWait(3);
@@ -447,7 +447,7 @@ void HaidiaArashi_OpenRouteTwelve(void)
     u32 i;
     s32 record;
 
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 73);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
     Engine_EventWait(3);
@@ -459,7 +459,7 @@ void HaidiaArashi_OpenRouteThirteen(void)
     u32 i;
     s32 record;
 
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells(HaidiaArashi_CellSteps2, 38, 72);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 146, 0x49e);
     Engine_EventWait(3);
@@ -719,7 +719,7 @@ void Scene_DoraSendsRobinToThePlaza(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     BattleFx_SetBlock30Values128One();
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((const u16 *)HaidiaArashi_CellSteps1, 50, 44);
     Actor_SetAttachedEffect(22, 0x101);
     Actor_SetSpeed(ACTOR_DORA, 0xcccc, 0x6666);
@@ -953,9 +953,9 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             u8 flags = leader->priority_flags;
 
             Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-            Audio_PlayCue(141);
+            Event_PlayCue(141);
             Engine_TaskWait(40);
-            Audio_PlayCue(145);
+            Event_PlayCue(145);
             Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
             Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
             Actor_SetPosition(13, 0, 0x2bf0000);
@@ -966,7 +966,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             actor->bounce = 0x8000;
             Actor_WalkToAndWait(13, 64, 0x2bf);
             Engine_EventWait(40);
-            Audio_PlayCue(0x121);
+            Event_PlayCue(0x121);
             Work_SetValuesIfNonNegative(-1, -1, 0xe666);
             Engine_MapWaitWorkValuesBelow256();
             BattleFx_PlayQueuedSound();
@@ -1329,11 +1329,11 @@ void Scene_BoulderFalls(void)
         Event_CallWithLastActiveObjectId((s32)HaidiaArashi_LastObjectCall);
         SceneState_SetValue140Mode0();
         Engine_TaskWait(1);
-        Audio_PlayCue(141);
+        Event_PlayCue(141);
         Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
         Engine_EventWait(30);
         Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-        Audio_PlayCue(145);
+        Event_PlayCue(145);
         Engine_EventWait(30);
         actor = Actor_Get(ACTOR_PARTY_LEADER);
         if (actor != NULL) {
@@ -1347,10 +1347,10 @@ void Scene_BoulderFalls(void)
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
         Actor_ShowEmote(22, 0x100, 30);
         Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-        Audio_PlayCue(145);
+        Event_PlayCue(145);
         Engine_EventWait(40);
         Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-        Audio_PlayCue(145);
+        Event_PlayCue(145);
         Engine_EventWait(20);
         Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
         Actor_SetAttachedEffect(22, 0x102);
@@ -1394,35 +1394,35 @@ void Scene_BoulderFalls(void)
         record->y.fixed = shifted;
         record->target_y = shifted;
         Actor_SetSpeed(19, 0xcccc, 0x6666);
-        Audio_PlayCue(145);
+        Event_PlayCue(145);
         Actor_MoveToAndWait(19, 114, 0x14d);
         Engine_ActorSetAnimation(19, 2);
         Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-        Audio_PlayCue(145);
+        Event_PlayCue(145);
         *phase = 0;
         Actor_SetSpeed(19, 0x6666, 0x3333);
         Actor_MoveToAndWait(19, 114, 0x12c);
         Engine_ActorSetAnimation(19, 2);
         Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-        Audio_PlayCue(145);
+        Event_PlayCue(145);
         *phase = 2;
         Actor_SetSpeed(19, 0xcccc, 0x6666);
         Actor_MoveToAndWait(19, 114, 0x14d);
         Engine_ActorSetAnimation(19, 2);
         Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-        Audio_PlayCue(145);
+        Event_PlayCue(145);
         *phase = 0;
         Actor_SetSpeed(19, 0x6666, 0x3333);
         Actor_MoveToAndWait(19, 114, 0x12c);
         Engine_ActorSetAnimation(19, 2);
         Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-        Audio_PlayCue(145);
+        Event_PlayCue(145);
         *phase = 2;
         Actor_SetSpeed(19, 0xcccc, 0x6666);
         Actor_MoveToAndWait(19, 114, 0x14d);
         Engine_ActorSetAnimation(19, 2);
         Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-        Audio_PlayCue(145);
+        Event_PlayCue(145);
         *phase = 1;
         Engine_EventWait(20);
         Actor_SetAttachedEffect(32, 0x102);
@@ -1449,7 +1449,7 @@ void Scene_BoulderFalls(void)
         Engine_ActorSetAnimation(29, 9);
         Engine_EventWait(10);
         Event_ShowMessageAndWait(29, 0, 20);
-        Audio_PlayCue(0x121);
+        Event_PlayCue(0x121);
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
         Camera_SetSpeed(0x60000, 0xc000);
         Camera_MoveTo(0x540000, -1, 0x2340000, 1);
@@ -1791,7 +1791,7 @@ void HaidiaArashi_RunRiverSearch(void)
     Actor_SetSpeed(9, 0x19999, 0xcccc);
     Engine_ActorEnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptA);
     Object_SetActionCallbackAndRefreshById(9, (s32)HaidiaArashi_ActorNineScriptA);
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((const u16 *)HaidiaArashi_CellSteps2, 38, 72);
     Engine_EventWait(10);
     Actor_WalkToAndWait(9, 149, 0x497);
@@ -1819,12 +1819,12 @@ void HaidiaArashi_RunRiverSearch(void)
     Engine_ActorEnableActionCallback(25, (const u8 *)script);
     Object_RefreshSelectorById(26);
     Engine_EventWait(10);
-    Audio_PlayCue(159);
+    Event_PlayCue(159);
     Map_AnimateCells((const u16 *)HaidiaArashi_CellSteps5, 38, 72);
     Engine_EventWait(30);
     BattleFx_PlayQueuedSound();
     Camera_MoveTo(0x700000, -1, 0x4c90000, 1);
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((const u16 *)HaidiaArashi_CellSteps1, 35, 73);
     Engine_EventWait(20);
     BattleFx_PlayQueuedSound();
@@ -1832,7 +1832,7 @@ void HaidiaArashi_RunRiverSearch(void)
     Engine_EventWait(20);
     Engine_ActorEnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptB);
     Engine_EventWait(40);
-    Audio_PlayCue(159);
+    Event_PlayCue(159);
     Map_AnimateCells((const u16 *)HaidiaArashi_CellSteps4, 35, 73);
     Object_RefreshSelectorById(26);
     BattleFx_PlayQueuedSound();
@@ -2114,7 +2114,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     Actor_EnableActionCallback(0, HaidiaArashi_GatherPath0);
     Object_SetActionCallbackAndRefreshById(22, HaidiaArashi_GatherPath22);
     Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-    Audio_PlayCue(145);
+    Event_PlayCue(145);
     Event_Wait(20);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Event_Wait(60);
@@ -2152,24 +2152,24 @@ void Scene_RunActorGroupDepartureSequence(void)
     Actor_EnableActionCallback(22, moveActions);
     Actor_EnableActionCallback(8, moveActions);
     Event_Wait(10);
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-    Audio_PlayCue(145);
+    Event_PlayCue(145);
     Event_Wait(30);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Event_Wait(120);
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-    Audio_PlayCue(145);
+    Event_PlayCue(145);
     Event_Wait(40);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Event_Wait(60);
     Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-    Audio_PlayCue(145);
+    Event_PlayCue(145);
     Event_Wait(20);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Event_Wait(60);
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-    Audio_PlayCue(145);
+    Event_PlayCue(145);
     Event_Wait(40);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Event_Wait(60);

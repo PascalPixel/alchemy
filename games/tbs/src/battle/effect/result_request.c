@@ -20,8 +20,6 @@
 #define BattleFx_GetPhaseResult ((s16 (*)(s32))BattleFx_GetPhaseResult)
 extern struct EventRuntime *gEventWork;
 
-extern struct GameState gGameState;
-
 #define CHOJO 98	  // 頂上の嵐の背景で戦うエンカウント表
 #define TOBANAI 0x800 // ジンを跳ねさせない
 #define JIN_0 300	  // ジン 0 番の pending_djinn_event

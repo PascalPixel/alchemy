@@ -450,7 +450,7 @@ void KorosseoKawa_RaisePipes(void)
     Engine_EventWait(6);
     actor->speed = 0x8000;
     actor->acceleration = 0x3333;
-    Audio_PlayCue(239);
+    Event_PlayCue(239);
     Object_SetMode(actor, 2);
     ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)(actor, actor->x.fixed - 0x300000, 0, actor->z.fixed);
     Engine_EventWait(6);
@@ -462,8 +462,8 @@ void KorosseoKawa_RaisePipes(void)
     Engine_ActorSetAnimation(leader_id, 1);
     Script_WaitForEventTimeout(actor);
     Object_SetMode(actor, 1);
-    Audio_PlayCue(288);
-    Audio_PlayCue(213);
+    Event_PlayCue(288);
+    Event_PlayCue(213);
     Engine_EventWait(15);
     Engine_EventEnd();
     Map_CopyCellAttributes(37, 7, 1, 4, 34, 7);

@@ -142,7 +142,7 @@ void Scene_RunScene3c3SequenceC(void)
     arg = *(s16 *)(*(u8 **)&gEventWork + 0x16c);
     Actor_Get(0)->motion_flags = 0;
     v5 = 2;
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_CopyCellsTo(66, 36, 71, 8, v5, v5);
     Engine_TaskWait(4);
     Map_CopyCellsTo(68, 36, 71, 8, v5, v5);

@@ -7,40 +7,893 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "edition.h"
+#include "global_cells.h"
 #include "hashira.h"
-#include "types.h"
-#include "field_event.h"
-#include "call.h"
-#include "field_scene.h"
 #include "staged_actor.h"
+#include "types.h"
+#include "dma.h"
+#include "io_reg.h"
+#include "edition.h"
+#include "field_event.h"
+#include "field_scene.h"
+#include "text/msg_ids.h"
+#include "call.h"
 #include "field_service.h"
 
-s32 FieldScene_RunScene3b3SequenceD(void);
+void OverlayObject_SetCallbackAndMode2();
+s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no);
+void SceneEffect_SpawnRandomizedParticle();
+void StagedActor_PlaceAtObjectTenCell();
+void TakaraHashira_DropActorTen();
+void TakaraHashira_PrepLoweredActor();
+void TakaraHashira_ReleasePillarRider();
+void TakaraHashira_RestoreFlaggedPillar();
+
+extern struct StagedActorFootprint StagedActor_FootprintBounds[];
+
+void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
+{
+    s32 cnt = 60;
+
+    for (;;) {
+        if (cnt == 0) {
+            break;
+        }
+        Engine_TaskWait(1);
+        if (*(u32 *)(obj + 12) == *(u32 *)(obj + 20)) {
+            break;
+        }
+        cnt--;
+    }
+
+    *(u32 *)(obj + 0x28) = 0;
+    *(u32 *)(obj + 0x3c) = 0x80000000;
+    *(u32 *)(obj + 12) = *(u32 *)(obj + 20);
+}
+
+void SceneActor_WaitHeightBelowLimit(struct FieldActor *obj, s32 limit)
+{
+    s32 cnt = 60;
+
+    for (;;) {
+        if (cnt == 0) {
+            break;
+        }
+        Engine_TaskWait(1);
+        if (obj->y.fixed <= obj->terrain_height) {
+            break;
+        }
+        if (obj->y.fixed <= limit) {
+            break;
+        }
+        cnt--;
+    }
+
+    obj->velocity_y = 0;
+    obj->target_y = 0x80000000;
+}
+
+s32 FieldScene_QueryActorFootprint(s32 id, s32 *width, s32 *depth, struct StagedActorProbe *probe, s32 *left, s32 *top)
+{
+    u8 *map = gMapWork[0];
+    struct StagedActor *actor = (struct StagedActor *)Object_GetById(id);
+    u32 i;
+    s32 a;
+    s32 b;
+
+    i = 0;
+    if (actor->animation->entries[0]->anim_id != StagedActor_FootprintKinds[i]) {
+    miss:
+        probe->footprint_index = 7;
+        if (++i > 5) {
+            goto check;
+        }
+        if (actor->animation->entries[0]->anim_id != StagedActor_FootprintKinds[i]) {
+            goto miss;
+        }
+    }
+    probe->footprint_index = i;
+check:
+    if ((u32)probe->footprint_index > 6) {
+        return 0;
+    }
+    probe->position_x = actor->x.value;
+    probe->position_y = actor->y;
+    probe->position_z = actor->z.value;
+    a = StagedActor_FootprintBounds[probe->footprint_index].z0;
+    if (a < 0) {
+        a = -a;
+    }
+    b = StagedActor_FootprintBounds[probe->footprint_index].z1;
+    if (b < 0) {
+        b = -b;
+    }
+    *depth = (a + b) >> 4;
+    a = StagedActor_FootprintBounds[probe->footprint_index].x0;
+    if (a < 0) {
+        a = -a;
+    }
+    b = StagedActor_FootprintBounds[probe->footprint_index].x1;
+    if (b < 0) {
+        b = -b;
+    }
+    *width = (a + b) >> 4;
+    probe->position_x += StagedActor_FootprintBounds[probe->footprint_index].x0 << 16;
+    {
+        s32 step = StagedActor_FootprintBounds[probe->footprint_index].z0 << 16;
+
+        a = probe->position_z;
+        a += step;
+        a >>= 20;
+        probe->position_z = a;
+    }
+    probe->position_x >>= 20;
+    *left = *(s32 *)(map + 0x13c) >> 20;
+    *top = *(s32 *)(map + 0x140) >> 20;
+    return 1;
+}
+
+s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
+{
+    struct FieldActor *obj = Object_GetById(no);
+    u32 out20, out16;
+    s32 out12, out8;
+    s32 rec[6];
+    s32 r2, r4;
+    u8 mask;
+
+    if (FieldScene_QueryActorFootprint(no, &out20, &out16, rec, &out12, &out8) == 0) {
+        return 0;
+    }
+
+    r2 = rec[2];
+    r4 = rec[4];
+    Engine_MapCopyCellAttributes(2, 2, out20, out16, r2, r4);
+
+    Object_SetMode(obj, 4);
+    mask = 2;
+    obj->priority_flags = obj->priority_flags | mask;
+
+    if (out20 > out16) {
+        Engine_MapCopyCellsTo(70, 40, rec[2] + 32, rec[4] + 2, out20, out16);
+    } else {
+        Engine_MapCopyCellsTo(68, 40, rec[2] + 32, rec[4] + 2, out20, out16);
+    }
+
+    return 1;
+}
+
+s32 SceneActor_ApplyPlacementQuery(u8 *no)
+{
+    struct FieldActor *obj = Object_GetById(no);
+    s32 out20, out16, out12, out8;
+    s32 rec[6];
+
+    if (FieldScene_QueryActorFootprint(no, &out20, &out16, rec, &out12, &out8) == 0) {
+        return 0;
+    }
+
+    {
+        s32 x = out12 + rec[2];
+        s32 z = out8 + rec[4];
+
+        Engine_MapCopyCellAttributes(x, z, out20, out16, rec[2], rec[4]);
+        StagedActor_FillGridAttributeRectangle(0, rec[2], rec[4], out20, out16, 255);
+    }
+
+    Object_SetMode(obj, 1);
+    obj->priority_flags &= 0xfd;
+
+    return 1;
+}
+
+void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
+{
+    struct MapState *map = gMapWork[0];
+
+    if (map != 0) {
+        u32 *cell = (u32 *)map->layers[layer].cells;
+
+        cell += x + (y << 7);
+        Dma_Set(cell, dst, 0x84000001, REG_DMA3);
+        {
+            volatile u32 *dma = REG_DMA3;
+
+            while (dma[2] & 0x80000000)
+                ;
+        }
+    }
+}
+
+#define OverlayObject_PrepareObject ((s32 (*)(s32,s32,s32,s32))OverlayObject_PrepareObject)
+
+extern s32 StagedActor_DirectionSteps[];
+
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+
+void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *src)
+{
+    struct MapState *map = gMapWork[0];
+
+    if (map != 0) {
+        struct MapCell *cell = map->layers[layer].cells;
+
+        cell += x + (y << 7);
+
+        cell->layer = src->layer;
+        /* FAKEMATCH: the kind is read as the top of the source byte, not through the bitfield, as the reference loads it. */
+        cell->kind = ((u8 *)src)[1] >> 6;
+        cell->height = src->height;
+        cell->event = src->event;
+    }
+}
+
+s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
+{
+    struct FieldActor *actor = Object_GetById(id);
+    s32 found;
+    s32 object;
+    s32 height;
+    s32 level;
+    s32 top;
+    u32 row;
+    u32 rows;
+    s32 z;
+    s32 y;
+    s32 x;
+    s32 kind;
+
+    found = 0;
+    object = found;
+    Engine_ActorSetSpriteFlags(actor, found);
+    height = Map_GetTerrainHeight(2, actor->x.fixed, actor->z.fixed);
+    level = height / 0x100000;
+    rows = level;
+    if (level < 0) {
+        rows = -level;
+    }
+    rows++;
+    for (row = 0; row <= rows; row++) {
+        top = Map_GetTerrainHeight(actor->terrain_id, actor->x.fixed, (row << 20) + actor->z.fixed);
+        top /= 0x100000;
+        if (level < top) {
+            x = ((actor->x.fixed >> 20) << 20) + 0x80000;
+            if (far == 0) {
+                row += 2;
+                z = ((row + (actor->z.fixed >> 20)) << 20) + 0x20000;
+                y = top << 20;
+                kind = 223;
+            } else {
+                row += 3;
+                z = ((row + (actor->z.fixed >> 20)) << 20) - 0x20000;
+                y = top << 20;
+                kind = 253;
+            }
+            /* FAKEMATCH: a do-while(0) around the object and height lets sched2 issue the height arithmetic first, as the reference does */
+            do {
+                object = OverlayObject_PrepareObject(x, y, z, kind);
+                height = actor->z.fixed - z + y;
+            } while (0);
+            found = 1;
+            break;
+        }
+    }
+    SceneActor_WaitHeightBelowLimit(actor, height);
+    actor->x.fixed = 0;
+    actor->y.fixed = 0;
+    actor->z.fixed = 0;
+    if (object != 0) {
+        Engine_ObjectDispatchRelease((void *)object);
+    }
+    return found;
+}
+
+void StagedActor_StepDownUntilClamp(s32 index)
+{
+    struct FieldActor *obj = Object_GetById(index);
+    u32 cnt;
+
+    obj->motion_flags = 0;
+
+    cnt = 0;
+    for (;;) {
+        if (cnt > 31) return;
+        Engine_TaskWait(1);
+        obj->scale_y += -0x1999;
+        obj->y.fixed += -0xcccc;
+        cnt++;
+        if (obj->scale_y <= 0x1998) {
+            obj->scale_y = 0x1999;
+            return;
+        }
+    }
+}
+
+void FieldScene_RunPrimarySequence(void)
+{
+    s32 FieldScene_RunScene3b3SequenceD();
+
+    struct FieldActor *rec;
+    s32 flag;
+    s32 p6;
+    s32 p5;
+    s32 record;
+    s32 v1;
+    s32 v2;
+    s32 v3;
+    u8 *base;
+    u8 slot16[40];
+
+    rec = Object_GetById(ACTOR_PARTY_LEADER);
+    flag = gFrameCount & 3;
+    if (flag == 0) {
+        base = slot16;
+        *(s32 *)(base + 4) = 10;
+        *(s32 *)(base + 8) = 0xb333;
+        *(s32 *)(base + 12) = 0xb333;
+        v1 = Engine_RandomNext();
+        p6 = rec->x.fixed + ((((u32)((v1 << 4) + v1) >> 16) - 8) << 16);
+        v2 = Engine_RandomNext();
+        p5 = rec->z.fixed + ((((u32)((v2 << 4) + v2) >> 16) - 8) << 16);
+        v3 = Engine_RandomNext();
+        record = Math_Divide((((u32)((v3 << 2) + v3) >> 16) << 16) + 0x30000, 10);
+        Effect_Spawn(p6, rec->y.fixed, p5, 0, record, flag, 0x90001, (s32)base);
+    }
+}
+
+s32 FieldScene_RunScene3b3SequenceD(void)
+{
+    struct FieldActor *leader;
+    u8 *flags;
+    s32 saved;
+    s32 mode;
+#if !EDITION_INTERNATIONAL
+    s32 step;
+#endif
+    s32 *p;
+    s32 buf[3];
+
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    flags = &leader->motion_flags;
+    saved = *flags;
+#if EDITION_INTERNATIONAL
+    mode = (leader->facing + 0x2000) & 0xc000;
+#endif
+    if (gGameState.movement_mode != 0) {
+        return 0;
+    }
+    p = buf;
+#if EDITION_INTERNATIONAL
+    p[0] = (leader->x.fixed & -0x100000) + 0x80000;
+    p[1] = leader->y.fixed;
+    p[2] = (leader->z.fixed & -0x100000) + 0x80000;
+    Vector_AddPolarOffset(0x100000, mode, p);
+#else
+    mode = leader->facing >> 12;
+    step = StagedActor_DirectionSteps[mode];
+    p[0] = leader->x.fixed + (step & 0xffff0000);
+    p[1] = leader->y.fixed;
+    step <<= 16;
+    p[2] = leader->z.fixed + step;
+#endif
+    if (Object_CheckMovementCollision(leader, p) == 1) {
+        goto reject;
+    }
+    if (StagedActor_FindAtTile(p, (struct StagedActor *)leader) != 0) {
+        goto reject;
+    }
+#if EDITION_INTERNATIONAL
+    p[0] = (leader->x.fixed & -0x100000) + 0x80000;
+    p[1] = leader->y.fixed;
+    p[2] = (leader->z.fixed & -0x100000) + 0x80000;
+    Vector_AddPolarOffset(0x200000, mode, p);
+#else
+    step = StagedActor_DirectionSteps[mode];
+    p[0] = leader->x.fixed + ((step & 0xffff0000) * 2);
+    p[1] = leader->y.fixed;
+    step <<= 17;
+    p[2] = leader->z.fixed + step;
+#endif
+    if (StagedActor_FindAtTile(p, (struct StagedActor *)leader) != 0) {
+        goto reject;
+    }
+    if (Object_CheckMovementCollision(leader, p) != 0) {
+        goto reject;
+    }
+    Engine_EventBegin();
+    Object_SetMode(leader, 6);
+    Engine_TaskWait(6);
+    Engine_AudioPlayCue(152);
+    Object_SetMode(leader, 7);
+    leader->speed = 0x30000;
+    leader->acceleration = 0x20000;
+    leader->velocity_y = 0x40000;
+    *flags &= 126;
+    Engine_ActorSetSpriteFlags(leader, 0);
+    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, ((s16 *)p)[1], ((s16 *)p)[5]);
+    Object_SetMode(leader, 6);
+    Engine_ActorSetSpriteFlags(leader, 1);
+    *flags = saved;
+    Engine_EventEnd();
+    return 1;
+reject:
+    return 0;
+}
+
+void FieldScene_RunScene3b3SequenceE(union FieldObject *object)
+{
+    s32 velocity_x;
+    s32 velocity_y;
+    s32 velocity_z;
+
+    object->effect.x += object->effect.velocity_x;
+    object->effect.y += object->effect.velocity_y;
+    object->effect.z += object->effect.velocity_z;
+    velocity_x = object->effect.velocity_x;
+    velocity_y = object->effect.velocity_y;
+    velocity_z = object->effect.velocity_z;
+    object->effect.velocity_x = velocity_x - Math_Divide(velocity_x, 10);
+    object->effect.velocity_y = velocity_y - Math_Divide(velocity_y, 3);
+    object->effect.velocity_z = velocity_z - Math_Divide(velocity_z, 10);
+    object->effect.scale_x += object->effect.scale_rate_x;
+    object->effect.scale_y += object->effect.scale_rate_y;
+    object->effect.sprite->rotation += object->effect.spin;
+}
+
+s32 SceneActor_ApplyCounterLowBitsAsMode(u8 *actor)
+{
+    ObjectGroup_SetChildValue(actor, *(u16 *)(actor + 100) & 15);
+    return 0;
+}
+
+const struct SceneEntrance *Scene_GetEntrances(void)
+{
+    s16 scene = gGameState.scene;
+
+    if (scene == (s32)&SceneId_TakaraHashira1) {
+        return gTakaraHashiraEntrances1;
+    }
+    if (scene == (s32)&SceneId_TakaraHashira2) {
+        return gTakaraHashiraEntrances2;
+    }
+    if (scene == (s32)&SceneId_TakaraHashira3) {
+        return gTakaraHashiraEntrances3;
+    }
+    if (scene == (s32)&SceneId_TakaraHashira4) {
+        return gTakaraHashiraEntrances4;
+    }
+    if (scene == (s32)&SceneId_TakaraHashira5) {
+        return gTakaraHashiraEntrances5;
+    }
+    return gTakaraHashiraEntrancesOther;
+}
+
+const struct SceneRegion *Scene_GetRegions(void)
+{
+    return 0;
+}
+
+const u32 *Scene_GetExits(void)
+{
+    return gTakaraHashiraExits;
+}
+
+const struct ScenePlacement *Scene_GetPlacements(void)
+{
+    s16 scene = gGameState.scene;
+
+    if (scene == (s32)&SceneId_TakaraHashira1) {
+        return gTakaraHashiraPlacements1;
+    }
+    if (scene == (s32)&SceneId_TakaraHashira2) {
+        return gTakaraHashiraPlacements2;
+    }
+    if (scene == (s32)&SceneId_TakaraHashira3) {
+        return gTakaraHashiraPlacements3;
+    }
+    if (scene == (s32)&SceneId_TakaraHashira5) {
+        return gTakaraHashiraPlacements5;
+    }
+    return gTakaraHashiraPlacementsOther;
+}
+
+void FieldScene_RunTransitionOrFallback(void)
+{
+    Engine_EventBegin();
+    if (FieldScene_RunScene3b3SequenceD() == 0)
+        StagedActor_AdvancePair();
+    Engine_EventEnd();
+}
+
+void SceneState_ApplyPlacementResult(void)
+{
+    struct StagedActorProbe out;
+
+    Engine_EventBegin();
+    if (StagedActor_FindClearPosition(&out) != 0)
+        SceneActor_MoveAndRedraw(out);
+    Engine_EventEnd();
+}
+
+void TakaraHashira_JitterBackgroundScroll(void)
+{
+	extern u32 gBgScroll[];
+    u32 line = REG_VCOUNT;
+    u32 *src = &gBgScroll[1];
+    volatile u32 *reg = (volatile u32 *)0x04000014;
+
+    if (line == 227 || line <= 46) {
+        if ((u32)(Engine_RandomNext() * 100) >> 16 < TakaraHashira_ShakeChance) {
+            src = ((u32 *)TakaraHashira_ShakenScroll);
+        }
+    }
+    *reg = *src++;
+    reg = (volatile u32 *)0x04000018;
+    *reg++ = *src++;
+    *reg = *src;
+}
+
+#define TakaraHashira_ReadMapCell ((void (*)(s32,s32,s32,struct MapCell*))TakaraHashira_ReadMapCell)
+#define OverlayObject_WaitUntilSettledAndReset ((void (*)(struct FieldActor*))OverlayObject_WaitUntilSettledAndReset)
+
+#define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
+
+struct PillarSlot {
+    s32 x;
+    s32 y;
+    s32 z;
+    struct MapCell cell;
+    s32 flag;
+};
+
+extern struct PillarSlot TakaraHashira_PillarSlots[];
+#define DMA3 ((volatile u32 *)0x040000d4)
+
+static __inline__ void Dma_Wait(volatile u32 *dma)
+{
+    while (dma[2] & 0x80000000)
+        ;
+}
+
+void CopyAndOffsetCoordinatePreset(void)
+{
+	extern u16 gBgScroll[];
+    u32 *destination;
+    const u32 *source;
+    u16 *coordinates;
+
+    source = (const u32 *)&gBgScroll[2];
+    destination = (u32 *)TakaraHashira_ShakenScroll;
+    *destination++ = *source++;
+    *destination++ = *source++;
+    *destination = *source;
+    coordinates = (u16 *)TakaraHashira_ShakenScroll;
+    coordinates[1] += 0xc0;
+    coordinates[3] += 0xc0;
+    coordinates[5] += 0xc0;
+}
+
+void FieldScene_RunScene3b3SequenceA(void)
+{
+    s32 record;
+
+    record = Engine_GameFlagIsSet(0x200);
+    if (record == 0) {
+        Map_DrawCellPanel(10, 19, 16, 5, record, 10, 31);
+        Map_DrawCellPanel(10, 51, 16, 5, 1, 10, 31);
+        Map_DrawCellPanel(42, 51, 16, 5, 2, 10, 31);
+    } else {
+        Map_DrawCellPanel(10, 19, 16, 5, 0, 10, 31);
+        Map_DrawCellPanel(10, 83, 16, 5, 1, 10, 31);
+        Map_DrawCellPanel(42, 83, 16, 5, 2, 10, 31);
+    }
+    TakaraHashira_ShakeChance = 0;
+    Engine_TaskAddCallback(CopyAndOffsetCoordinatePreset, 0xc80);
+    Engine_TaskWait(1);
+    Runtime_SetIrqHandler(1, 0, TakaraHashira_JitterBackgroundScroll);
+    Engine_AudioPlayCue(231);
+    TakaraHashira_ShakeChance = 0;
+    do {
+        Engine_TaskWait(1);
+    } while (++TakaraHashira_ShakeChance <= 100);
+    Engine_AudioPlayCue(0x121);
+    if (Engine_GameFlagIsSet(0x200) == 0) {
+        Engine_MapCopyCellsTo(0, 32, 32, 0, 32, 32);
+        Engine_MapCopyCellsTo(32, 32, 64, 0, 32, 32);
+    } else {
+        Engine_MapCopyCellsTo(0, 64, 32, 0, 32, 32);
+        Engine_MapCopyCellsTo(32, 64, 64, 0, 32, 32);
+    }
+    Engine_TaskWait(1);
+    Runtime_SetIrqHandler(1, 0, 0);
+    Engine_TaskWait(1);
+    Engine_TaskRemoveCallback((s32)CopyAndOffsetCoordinatePreset);
+    Engine_MapRedraw();
+    Engine_TaskWait(30);
+}
+
+void FieldScene_RunFlaggedDisplayScene(void)
+{
+    u32 i;
+    u8 *queried;
+    struct FieldActor *record;
+
+    Engine_EventBegin();
+    Camera_SetSpeed(0x10000, 0x2000);
+    Camera_MoveTo(0x1190000, -1, 0x1b00000, 1);
+    Engine_CameraWaitForMove();
+    Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
+    queried = GameFlag_IsSet(QUERY_FLAG);
+    if (queried == 0) {
+        Event_PlayCue(232);
+        Map_AnimateCells(TakaraHashira_ShiftSteps1, 84, 24);
+        Engine_EventWait(30);
+        Event_PlayCue(240);
+        Engine_ActorSetSpritePriority(REC_ID, 1);
+        Object_GetById(REC_ID)->motion_flags = queried;
+        record = Actor_Get(REC_ID);
+        record->y.fixed = -0x200000;
+        Actor_SetPosition(REC_ID, 0x1100000, 0x1a00000);
+        Engine_ActorSetAnimation(REC_ID, 1);
+        Map_AnimateCells(TakaraHashira_ShiftSteps3, 80, 24);
+        Map_AnimateCells(TakaraHashira_ShiftSteps5, 80, 28);
+        Map_CopyCellsTo(65, 40, 16, 27, 2, 4);
+        FieldScene_RunScene3b3SequenceA();
+        SceneActor_ApplyPlacementQueryAndTag(9);
+        SceneActor_ApplyPlacementQueryAndTag(10);
+        SceneActor_ApplyPlacementQueryAndTag(11);
+        SceneActor_ApplyPlacementQueryAndTag(12);
+        SceneActor_ApplyPlacementQueryAndTag(13);
+        SceneActor_ApplyPlacementQueryAndTag(14);
+        SceneActor_ApplyPlacementQueryAndTag(15);
+        Map_CopyCellAttributes(24, 3, 1, 1, 24, 8);
+        GameFlag_Set(QUERY_FLAG);
+    } else {
+        Event_PlayCue(232);
+        Map_AnimateCells(TakaraHashira_ShiftSteps2, 84, 24);
+        Engine_EventWait(30);
+        Event_PlayCue(230);
+        Object_GetById(REC_ID)->motion_flags = 0;
+        record = Actor_Get(REC_ID);
+        record->y.fixed = -0x200000;
+        Actor_SetPosition(REC_ID, 0x1100000, 0x1b40000);
+        Engine_ActorSetAnimation(REC_ID, 2);
+        Map_CopyCellsTo(65, 45, 16, 27, 2, 4);
+        Map_AnimateCells(TakaraHashira_ShiftSteps4, 80, 24);
+        FieldScene_RunScene3b3SequenceA();
+        SceneActor_ApplyPlacementQuery(9);
+        SceneActor_ApplyPlacementQuery(10);
+        SceneActor_ApplyPlacementQuery(11);
+        SceneActor_ApplyPlacementQuery(12);
+        SceneActor_ApplyPlacementQuery(13);
+        SceneActor_ApplyPlacementQuery(14);
+        SceneActor_ApplyPlacementQuery(15);
+        Map_CopyCellAttributes(24, 4, 1, 1, 24, 8);
+        GameFlag_Clear(QUERY_FLAG);
+    }
+    Engine_EventEnd();
+}
+
+s32 TakaraHashira_SyncPriorityIfBehind(struct FieldActor *actor, struct FieldActor *front)
+{
+    s32 result = 0;
+
+    if (front->x.fixed == actor->x.fixed && front->y.fixed == actor->y.fixed
+        && front->z.fixed == actor->z.fixed) {
+        return result;
+    }
+    if (front->x.fixed - 0x100000 < actor->x.fixed && actor->x.fixed < front->x.fixed + 0x100000
+        && front->y.fixed / 0x10000 == actor->y.fixed / 0x10000
+        && front->z.fixed > actor->z.fixed && front->z.fixed - 0x200000 < actor->z.fixed) {
+        if (SPRITE_OF(actor)->priority < SPRITE_OF(front)->priority) {
+            actor->priority_flags &= ~1;
+            SPRITE_OF(actor)->priority = SPRITE_OF(front)->priority;
+            SPRITE_OF(actor)->second_priority = SPRITE_OF(front)->second_priority;
+        }
+        result = 1;
+    }
+    return result;
+}
+
+s32 TakaraHashira_SyncPriorityIfAhead(struct FieldActor *front, struct FieldActor *actor)
+{
+    s32 result = 0;
+
+    if (actor->x.fixed == front->x.fixed && actor->y.fixed == front->y.fixed
+        && actor->z.fixed == front->z.fixed) {
+        return result;
+    }
+    if (front->x.fixed - 0x100000 < actor->x.fixed && actor->x.fixed < front->x.fixed + 0x100000
+        && actor->y.fixed / 0x10000 == front->y.fixed / 0x10000
+        && front->z.fixed > actor->z.fixed && front->z.fixed - 0x200000 < actor->z.fixed) {
+        if (SPRITE_OF(front)->priority > SPRITE_OF(actor)->priority) {
+            actor->priority_flags &= ~1;
+            SPRITE_OF(actor)->priority = SPRITE_OF(front)->priority;
+            SPRITE_OF(actor)->second_priority = SPRITE_OF(front)->second_priority;
+        }
+        result = 1;
+    }
+    return result;
+}
+
+s32 TakaraHashira_UpdateActorPriority(struct FieldActor *actor)
+{
+    struct FieldActor *leader = Object_GetById(0);
+    s32 hit;
+    u32 id;
+
+    if (((s8 *)gEventWork)[0xcc7] == 1) {
+        actor->sprite->priority = leader->sprite->priority;
+        actor->collision_flags |= 1;
+        return 0;
+    }
+    hit = TakaraHashira_SyncPriorityIfBehind(actor, leader);
+    for (id = 8; id <= 11; id++) {
+        hit += TakaraHashira_SyncPriorityIfBehind(actor, Object_GetById(id));
+    }
+    if (hit != 0) {
+        for (id = 8; id <= 11; id++) {
+            TakaraHashira_SyncPriorityIfAhead(actor, Object_GetById(id));
+        }
+    }
+    if (actor->y.fixed < leader->y.fixed) {
+        actor->priority_flags |= 2;
+        actor->collision_flags &= 254;
+        if (actor->sprite->priority < leader->sprite->priority) {
+            actor->priority_flags &= 254;
+            SPRITE_OF(actor)->priority = SPRITE_OF(leader)->priority;
+            SPRITE_OF(actor)->second_priority = SPRITE_OF(leader)->second_priority;
+            hit = 1;
+        }
+    } else {
+        actor->priority_flags &= 253;
+        actor->collision_flags |= 1;
+    }
+    if (hit == 0) {
+        actor->priority_flags |= 1;
+    }
+    return 0;
+}
+
+void TakaraHashira_SortPillarActors(void)
+{
+    u32 i;
+    u32 j;
+    struct FieldActor *a;
+    struct FieldActor *b;
+    u8 actor[112];
+    s32 slot[3];
+
+    for (i = 0; i <= 2; i++) {
+        a = Object_GetById(i + 8);
+        for (j = i; j <= 3; j++) {
+            b = Object_GetById(j + 8);
+            if (a->y.fixed <= b->y.fixed && a->z.fixed < b->z.fixed) {
+                continue;
+            }
+            Dma_Set(b, actor, 0x8400001c, DMA3);
+            Dma_Wait(DMA3);
+            Dma_Set(a, b, 0x8400001c, DMA3);
+            Dma_Wait(DMA3);
+            Dma_Set(actor, a, 0x8400001c, DMA3);
+            Dma_Wait(DMA3);
+            Dma_Set(&TakaraHashira_PillarSlots[j], slot, 0x84000004, DMA3);
+            Dma_Wait(DMA3);
+            Dma_Set(&TakaraHashira_PillarSlots[i], &TakaraHashira_PillarSlots[j], 0x84000004, DMA3);
+            Dma_Wait(DMA3);
+            Dma_Set(slot, &TakaraHashira_PillarSlots[i], 0x84000004, DMA3);
+            Dma_Wait(DMA3);
+            if (Engine_GameFlagIsSet(TakaraHashira_PillarSlots[i].flag) && !Engine_GameFlagIsSet(TakaraHashira_PillarSlots[j].flag)) {
+                Engine_GameFlagClear(TakaraHashira_PillarSlots[i].flag);
+                Engine_GameFlagSet(TakaraHashira_PillarSlots[j].flag);
+            } else if (!Engine_GameFlagIsSet(TakaraHashira_PillarSlots[i].flag) && Engine_GameFlagIsSet(TakaraHashira_PillarSlots[j].flag)) {
+                Engine_GameFlagSet(TakaraHashira_PillarSlots[i].flag);
+                Engine_GameFlagClear(TakaraHashira_PillarSlots[j].flag);
+            }
+        }
+    }
+}
+
+struct PillarActor {
+    u8 unknown_00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 unknown_14[14];
+    u8 unknown_22;
+    u8 priority_flags;
+    s32 velocity_x;
+    s32 velocity_y;
+    u8 unknown_2c[0x29];
+    u8 motion_flags;
+};
+
+s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
+
+void TakaraHashira_UpdatePillarActors(void)
+{
+    u32 id;
+    struct PillarActor *actor;
+    u8 *flags;
+    u32 i;
+    u32 k;
+    struct PillarActor *other;
+    struct MapCell cell;
+
+    for (id = 8; id <= 11; id++) {
+        actor = (struct PillarActor *)Object_GetById(id);
+        actor->unknown_22 = 2;
+        i = id - 8;
+        if ((actor->x >> 20) == TakaraHashira_PillarSlots[i].x && (actor->z >> 20) == TakaraHashira_PillarSlots[i].z
+            && actor->velocity_y == 0) {
+            continue;
+        }
+        Dma_Set(&actor->x, TakaraHashira_ProbePosition, 0x84000003, DMA3);
+        Dma_Wait(DMA3);
+        if (Object_CheckMovementCollision(actor, TakaraHashira_ProbePosition) == -1) {
+            actor->motion_flags = 3;
+        }
+        flags = &actor->motion_flags;
+        TakaraHashira_SetCellAttributes(0, TakaraHashira_PillarSlots[i].x, TakaraHashira_PillarSlots[i].z,
+                                        &TakaraHashira_PillarSlots[i].cell);
+        TakaraHashira_SetCellAttributes(2, TakaraHashira_PillarSlots[i].x, TakaraHashira_PillarSlots[i].z,
+                                        &TakaraHashira_PillarSlots[i].cell);
+        if (*flags & 1) {
+            if (GetMapCellCollision(2, actor->x, actor->z) == 50) {
+                Engine_AudioPlayCue(189);
+                /* FAKEMATCH: the byte view keeps these flag updates out of the record's alias set; field stores reallocate the loop (score 2573). */
+                *(u8 *)&actor->priority_flags &= 254;
+                TakaraHashira_LowerActorToLedge(id, 1);
+                *(u8 *)&actor->priority_flags |= 1;
+            } else if (GetMapCellCollision(2, actor->x, actor->z) == 51) {
+                SceneActor_WaitHeightBelowLimit((struct FieldActor *)actor, 0);
+                Engine_AudioPlayCue(189);
+                actor->y = 0;
+                /* FAKEMATCH: the byte view keeps these flag updates out of the record's alias set; field stores reallocate the loop (score 2573). */
+                *(u8 *)&actor->priority_flags &= 254;
+                StagedActor_StepDownUntilClamp(id);
+                actor->x = 0;
+                actor->y = 0;
+                actor->z = 0;
+                *(u8 *)&actor->priority_flags |= 1;
+            } else {
+                OverlayObject_WaitUntilSettledAndReset((struct FieldActor *)actor);
+            }
+            *flags = 0;
+        }
+        TakaraHashira_ReadMapCell(0, actor->x >> 20, actor->z >> 20, &TakaraHashira_PillarSlots[i].cell);
+        if (actor->y >= 0) {
+            TakaraHashira_ReadMapCell(0, 27, (actor->y >> 20) + 6, &cell);
+            TakaraHashira_SetCellAttributes(0, actor->x >> 20, actor->z >> 20, &cell);
+            cell.kind = TakaraHashira_PillarSlots[i].cell.kind;
+            TakaraHashira_SetCellAttributes(2, actor->x >> 20, actor->z >> 20, &cell);
+        }
+        TakaraHashira_PillarSlots[i].x = actor->x >> 20;
+        TakaraHashira_PillarSlots[i].y = actor->y >> 20;
+        TakaraHashira_PillarSlots[i].z = actor->z >> 20;
+        for (k = 0; k <= 3; k++) {
+            if (k == i) {
+                continue;
+            }
+            Engine_GameFlagClear(TakaraHashira_PillarSlots[k].flag);
+            other = (struct PillarActor *)Object_GetById(k + 8);
+            if ((actor->x >> 20) == (other->x >> 20) && (actor->z >> 20) == (other->z >> 20)
+                && actor->y > other->y) {
+                Engine_GameFlagSet(TakaraHashira_PillarSlots[k].flag);
+            }
+        }
+    }
+    TakaraHashira_SortPillarActors();
+}
+
 void FieldEffect_UpdateGridPlacement(void);
 
-void Engine_MapCopyCellAttributes();
-
 void ObjectMotion_WaitForAnimationChange();
-void SceneEffect_SpawnRandomizedParticle();
 
 struct Probe {
     s32 word[6];
 };
-
-void StagedActor_PlaceAtObjectTenCell();
-void TakaraHashira_DropActorTen();
-
-
-extern u8 TakaraHashira_PillarSlots[];
-void SceneActor_ApplyPlacementQueryAndTag();
 void BattleFx_StartFadeOverlay();
-void TakaraHashira_ReleasePillarRider();
-void OverlayObject_SetCallbackAndMode2();
-void TakaraHashira_PrepLoweredActor();
-void TakaraHashira_RestoreFlaggedPillar();
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 void TakaraHashira_PushPillar(void)
 {

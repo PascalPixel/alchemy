@@ -222,7 +222,7 @@ void FieldScene_RunEarlySequence(void)
     }
     v5 = (s32)((s32)(*(u16 *)(p7 + 0x16c) - 3) << 16) >> 16;
     if (v5 == 6) {
-        Audio_PlayCue(188);
+        Event_PlayCue(188);
     } else {
         Engine_AudioPlayCue(158);
     }

@@ -312,7 +312,7 @@ static inline void GameFlag_Clear(s32 flag)
 }
 
 #ifndef FIELD_STAGED_ACTOR_IMPORTS
-static inline void Audio_PlayCue(s32 cue)
+static inline void Event_PlayCue(s32 cue)
 {
     Engine_AudioPlayCue(cue);
 }

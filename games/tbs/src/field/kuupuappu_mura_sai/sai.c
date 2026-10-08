@@ -384,7 +384,7 @@ void FieldScene_RunActor21SequenceOnce(void)
     s32 record;
 
     Engine_EventBegin();
-    Audio_PlayCue(100);
+    Event_PlayCue(100);
     Engine_EventWait(40);
     if (GameFlag_IsSet(0x867) == 0) {
         Actor_SetAttachedEffect(21, 0x102);

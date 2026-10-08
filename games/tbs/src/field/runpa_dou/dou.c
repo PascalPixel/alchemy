@@ -93,9 +93,9 @@ void GatePuddle_Freeze(void)
         pillar->priority_flags = ACTOR_PRIORITY_AUTOMATIC;
     }
     if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) == 0) {
-        Audio_PlayCue(SOUND_GATE_MOVE);
+        Event_PlayCue(SOUND_GATE_MOVE);
         Gate_DrawPropped();
-        Audio_PlayCue(SOUND_PUZZLE_SOLVED);
+        Event_PlayCue(SOUND_PUZZLE_SOLVED);
         GameFlag_Set(FLAG_CAVE_GATE_RAISED);
     }
 }
@@ -134,7 +134,7 @@ void LoweringSwitch_Flip(void)
     if (GameFlag_IsSet(FLAG_CAVE_GATE_LOWERED) == 0) {
         if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) == 0) {
             Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
-            Audio_PlayCue(SOUND_GATE_MOVE);
+            Event_PlayCue(SOUND_GATE_MOVE);
             Gate_Lower();
             GameFlag_Set(FLAG_CAVE_GATE_LOWERED);
             GameFlag_Clear(FLAG_CAVE_GATE_RAISED);
@@ -162,7 +162,7 @@ void RaisingSwitch_Flip(void)
     if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) == 0) {
         if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) == 0) {
             Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
-            Audio_PlayCue(SOUND_GATE_MOVE);
+            Event_PlayCue(SOUND_GATE_MOVE);
             Gate_Raise();
             GameFlag_Set(FLAG_CAVE_GATE_RAISED);
             GameFlag_Clear(FLAG_CAVE_GATE_LOWERED);

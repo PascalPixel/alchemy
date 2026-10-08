@@ -19,6 +19,24 @@ struct PillarWork {
 
 #define PILLAR_WORK (*(struct PillarWork **)&gWorkSlot[36])
 
+struct MapCell {
+    u32 tile : 12;
+    u32 layer : 2;
+    u32 kind : 2;
+    u32 height : 8;
+    u32 event : 8;
+};
+
+struct MapLayer {
+    struct MapCell *cells;
+    u8 pad04[44];
+};
+
+struct MapState {
+    u8 pad000[0x130];
+    struct MapLayer layers[1];
+};
+
 extern u8 TakaraHashira_ActionTable[];
 extern u16 TakaraHashira_ShiftSteps1[];
 extern u16 TakaraHashira_ShiftSteps2[];

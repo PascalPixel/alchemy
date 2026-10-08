@@ -198,6 +198,13 @@ impl Layout {
     }
 }
 
+/// A byte of the image against the merged object's: a place the image
+/// holds no bytes for (a NOLOAD section, such as an overlay's .data kept
+/// with its bss) has nothing to judge.
+fn differs(expected: Option<u8>, got: Option<u8>) -> bool {
+    expected.is_some() && got != expected
+}
+
 pub struct Outcome {
     pub verdict: String,
     pub detail: String,
@@ -379,7 +386,7 @@ pub fn compare_source(root: &Path, target: DecompTarget, loaded: &Loaded, main: 
             for k in 0..*s {
                 let expected = loaded.elf.section_at(a + k).and_then(|(sec, at)| sec.bytes.get(at).copied());
                 let got = if hidden.contains(&(o + k)) { expected } else { data.get((o + k) as usize).copied() };
-                if got != expected {
+                if differs(expected, got) {
                     differ += 1;
                     first.get_or_insert(a + k);
                 }
@@ -507,6 +514,14 @@ mod tests {
         assert_eq!(merged.matches("void f(void);").count(), 1);
         assert!(merged.contains("void h(void)"));
         assert!(merged.find("void f(void)\n{").unwrap() < merged.find("void h(void)").unwrap());
+    }
+
+    #[test]
+    fn bytes_the_image_does_not_hold_are_not_judged() {
+        assert!(!differs(None, Some(7)));
+        assert!(!differs(Some(7), Some(7)));
+        assert!(differs(Some(7), Some(0)));
+        assert!(differs(Some(7), None));
     }
 
     #[test]

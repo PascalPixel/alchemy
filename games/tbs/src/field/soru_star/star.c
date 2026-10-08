@@ -184,7 +184,7 @@ void Scene_BagMercuryStar(void)
     s32 mes;
 
     Engine_EventBegin();
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     for (i = 0; i != 6; i++) {
         ColorBuffer_ApplyTarget(0x404a4e, 1);
         Engine_ColorBufferInterpolate(8);
@@ -204,7 +204,7 @@ void Scene_BagMercuryStar(void)
     Engine_CameraWaitForMove();
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     Engine_EventWait(20);
-    Audio_PlayCue(144);
+    Event_PlayCue(144);
     Engine_MapAnimateCells(SoruStar_StarCells, 84, 4);
     Map_CopyCellAttributes(0, 0, 1, 1, 29, 4);
     Map_CopyCellsTo(87, 42, 29, 6, 1, 2);
@@ -214,7 +214,7 @@ void Scene_BagMercuryStar(void)
     Engine_CameraWaitForMove();
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     Engine_EventWait(20);
-    Audio_PlayCue(144);
+    Event_PlayCue(144);
     Engine_MapAnimateCells(SoruStar_StarCells, 76, 21);
     Map_CopyCellAttributes(0, 0, 1, 1, 21, 21);
     Map_CopyCellsTo(87, 42, 21, 23, 1, 2);
@@ -225,7 +225,7 @@ void Scene_BagMercuryStar(void)
     Engine_CameraWaitForMove();
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     Engine_EventWait(20);
-    Audio_PlayCue(144);
+    Event_PlayCue(144);
     Engine_MapAnimateCells(SoruStar_StarCells, 76, 29);
     Map_CopyCellAttributes(0, 0, 1, 1, 21, 29);
     Map_CopyCellsTo(87, 42, 21, 31, 1, 2);
@@ -240,7 +240,7 @@ void Scene_BagMercuryStar(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(40);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Engine_EventWait(20);
@@ -294,7 +294,7 @@ void Scene_BagJupiterStar(void)
     u32 i;
     s32 obj;
 
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     for (i = 0; i != 6; i++) {
         ColorBuffer_ApplyTarget(0x4049d2, 1);
         Engine_ColorBufferInterpolate(8);
@@ -313,7 +313,7 @@ void Scene_BagJupiterStar(void)
     Engine_CameraWaitForMove();
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     Engine_EventWait(20);
-    Audio_PlayCue(144);
+    Event_PlayCue(144);
     Engine_MapAnimateCells(SoruStar_StarCells, 65, 31);
     Map_CopyCellAttributes(0, 0, 1, 1, 10, 31);
     Map_CopyCellsTo(87, 42, 10, 33, 1, 2);
@@ -324,7 +324,7 @@ void Scene_BagJupiterStar(void)
     Engine_CameraWaitForMove();
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     Engine_EventWait(20);
-    Audio_PlayCue(144);
+    Event_PlayCue(144);
     Engine_MapAnimateCells(SoruStar_StarCells, 79, 9);
     Map_CopyCellAttributes(0, 0, 1, 1, 24, 9);
     Map_CopyCellsTo(87, 42, 24, 11, 1, 2);
@@ -335,7 +335,7 @@ void Scene_BagJupiterStar(void)
     Engine_CameraWaitForMove();
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     Engine_EventWait(20);
-    Audio_PlayCue(144);
+    Event_PlayCue(144);
     Engine_MapAnimateCells(SoruStar_StarCells, 91, 10);
     Map_CopyCellAttributes(0, 0, 1, 1, 36, 10);
     Map_CopyCellsTo(87, 42, 36, 12, 1, 2);
@@ -350,7 +350,7 @@ void Scene_BagJupiterStar(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(40);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Engine_EventWait(20);
@@ -367,7 +367,7 @@ void FieldScene_StagePairedActors(void)
     u32 i;
     struct FieldActor *record;
 
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 231, 0x1ea);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
@@ -478,7 +478,7 @@ void FieldScene_RunElementalStarDemand(void)
     Camera_MoveTo(0x1d70000, -1, 0x1350000, 1);
     Engine_CameraWaitForMove();
     Engine_ActorSetPosition(8, 0x1d70000, 0x1220000);
-    Audio_PlayCue(190);
+    Event_PlayCue(190);
     Engine_ActorSetSpritePriority(12, 2);
     for (i = 0; i != 90; i++) {
         star->y.fixed -= 0x1999;
@@ -691,7 +691,7 @@ void Scene_UnmaskGarcia(void)
     s32 mes_a;
     s32 mes_b;
 
-    Audio_PlayCue(161);
+    Event_PlayCue(161);
     Engine_ActorRunRepeatedMotion(ACTOR_GARCIA_MASKED, 3);
     Engine_EventWait(40);
     other = Object_GetById(ACTOR_GARCIA_MASKED);
@@ -860,19 +860,19 @@ void Scene_UnmaskGarcia(void)
     Actor_WalkToAndWait(GERALD, 0x116, 0x1e0);
     obj->speed = 0x30000;
     obj->acceleration = 0x20000;
-    Audio_PlayCue(153);
+    Event_PlayCue(153);
     obj->velocity_y = 0x60000;
     Engine_ActorSetAnimation(GERALD, 7);
     Actor_MoveToAndWait(GERALD, 0x138, 0x1d6);
     Engine_ActorSetAnimation(GERALD, 1);
     Engine_EventWait(30);
-    Audio_PlayCue(153);
+    Event_PlayCue(153);
     obj->velocity_y = 0x60000;
     Engine_ActorSetAnimation(GERALD, 7);
     Actor_MoveToAndWait(GERALD, 0x156, 0x1d6);
     Engine_ActorSetAnimation(GERALD, 1);
     Engine_EventWait(30);
-    Audio_PlayCue(153);
+    Event_PlayCue(153);
     obj->velocity_y = 0x60000;
     Engine_ActorSetAnimation(GERALD, 7);
     Actor_MoveToAndWait(GERALD, 0x178, 0x1d6);
@@ -939,7 +939,7 @@ void Scene_AlexTakesStars(void)
     Engine_ActorSetSpriteFlags(record, 0);
     rec = Object_GetById(ACTOR_ALEX);
     rec->motion_flags = none;
-    Audio_PlayCue(220);
+    Event_PlayCue(220);
     for (i = 0; i != 30; i++) {
         rec->y.fixed += 0x10000;
         Engine_EventWait(1);
@@ -1015,19 +1015,19 @@ void Scene_AlexTakesStars(void)
     rec->steering_flags |= ACTOR_FACES_MOTION;
     rec->speed = 0x30000;
     rec->acceleration = 0x20000;
-    Audio_PlayCue(153);
+    Event_PlayCue(153);
     rec->velocity_y = 0x60000;
     Engine_ActorSetAnimation(GERALD, 7);
     Actor_MoveToAndWait(GERALD, 0x156, 0x1d6);
     Engine_ActorSetAnimation(GERALD, 1);
     Engine_EventWait(30);
-    Audio_PlayCue(153);
+    Event_PlayCue(153);
     rec->velocity_y = 0x60000;
     Engine_ActorSetAnimation(GERALD, 7);
     Actor_MoveToAndWait(GERALD, 0x138, 0x1d6);
     Engine_ActorSetAnimation(GERALD, 1);
     Engine_EventWait(30);
-    Audio_PlayCue(153);
+    Event_PlayCue(153);
     rec->velocity_y = 0x60000;
     Engine_ActorSetAnimation(GERALD, 7);
     Actor_MoveToAndWait(GERALD, 0x116, 0x1e0);
@@ -1155,7 +1155,7 @@ void Scene_BagMarsStar(void)
     struct FieldActor *leader;
 
     Engine_EventBegin();
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     for (pass = 0; pass != 6; pass++) {
         ColorBuffer_ApplyTarget(0x4039d2, 1);
         Engine_ColorBufferInterpolate(8);
@@ -1167,7 +1167,7 @@ void Scene_BagMarsStar(void)
             Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
         }
     }
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Map_CopyCellsTo(0, 40, 13, 46, 3, 3);
     Engine_EventWait(20);
@@ -1191,14 +1191,14 @@ void Scene_BagMarsStar(void)
     Actor_WalkToAndWait(GERALD, 218, 172);
     Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
-    Audio_PlayCue(145);
+    Event_PlayCue(145);
     Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
     Engine_EventWait(20);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
     Actor_FaceDirection(GERALD, 0x5000, 50);
-    Audio_PlayCue(144);
+    Event_PlayCue(144);
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Actor_FaceDirection(GERALD, FACING_EAST, 50);
@@ -1207,7 +1207,7 @@ void Scene_BagMarsStar(void)
     Actor_FaceDirection(GERALD, FACING_WEST, 50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xb000, 0);
     Actor_FaceDirection(GERALD, 0xd000, 0);
-    Audio_PlayCue(144);
+    Event_PlayCue(144);
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
     Engine_EventWait(30);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
@@ -1341,7 +1341,7 @@ void Scene_EnterStarRoom(void)
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
     Actor_SetPosition(8, 0x1d70000, 0x1220000);
-    Audio_PlayCue(190);
+    Event_PlayCue(190);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
     for (i = 0; i != 90; i++) {
         rising->y.fixed += -0x1999;
@@ -1474,7 +1474,7 @@ void Scene_EnterStarRoom(void)
     Camera_MoveTo(0x1d70000, -1, 0x1350000, 1);
     Engine_CameraWaitForMove();
     Actor_SetPosition(8, 0x1d70000, 0x1220000);
-    Audio_PlayCue(190);
+    Event_PlayCue(190);
     Engine_ActorSetSpritePriority(ACTOR_SUKURETA, 2);
     for (i = 0; i != 90; i++) {
         rising->y.fixed += -0x1999;
@@ -1806,7 +1806,7 @@ void Scene_EnterStarRoom(void)
     Engine_TaskWait(6);
     rising->speed = 0x30000;
     rising->acceleration = 0x20000;
-    Audio_PlayCue(153);
+    Event_PlayCue(153);
     rising->velocity_y = (height << 11);
     Actor_MoveToAndWait(ACTOR_SUKURETA, 0x1d7, 0x18b);
     Engine_TaskWait(6);
@@ -1849,7 +1849,7 @@ void Scene_EnterStarRoom(void)
     Engine_TaskWait(6);
     rising->speed = 0x30000;
     rising->acceleration = 0x20000;
-    Audio_PlayCue(153);
+    Event_PlayCue(153);
     rising->velocity_y = (height << 11);
     Actor_MoveToAndWait(ACTOR_SUKURETA, 0x1d7, 0x168);
     Engine_TaskWait(6);

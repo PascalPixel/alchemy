@@ -26,7 +26,7 @@ void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane, s32 destX
             dst = (u32 *)(BG_SCREEN_BLOCK(5) + 64) + index;
             *dst = *src;
 
-        /* FAKEMATCH: end is a forced temporary for the bound's evaluation order. */
+        /* FAKEMATCH: needed to match: end is a forced temporary for the bound's evaluation order. */
         } while (end = destX + width, ++col < end);
         cell += 128 - width;
     }

@@ -1087,7 +1087,7 @@ void FieldScene_RunScene39aSequenceA(void)
 void ImiruFuchin_ApplyEntrySetup(void)
 {
     struct FieldActor *actor;
-    /* FAKEMATCH: the shared zero/address-word lifetime avoids swapping registers and adding a heap-cell add. */
+    /* FAKEMATCH: needed to match: the shared zero/address-word lifetime avoids swapping registers and adding a heap-cell add. */
     s32 value;
 
     ImiruFuchin_ApplyRoomLayout();
@@ -1260,7 +1260,7 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
     struct FieldEffect *obj;
     struct FieldSprite *spr;
     const s32 *script;
-    /* FAKEMATCH: copying three scripts keeps the 12-byte frame and prevents an early scale-script load. */
+    /* FAKEMATCH: needed to match: copying three scripts keeps the 12-byte frame and prevents an early scale-script load. */
     struct CaveEffectScripts scripts = *(const struct CaveEffectScripts *)gEffectScripts;
 
     obj = (struct FieldEffect *)Engine_ObjectCreate(222, x, y, z);
@@ -1520,7 +1520,7 @@ continue_probe:
         }
 
 advance_probe:
-        /* FAKEMATCH: retain the measured second probe call's stack-address order. */
+        /* FAKEMATCH: needed to match: retain the measured second probe call's stack-address order. */
         FieldVector_AddPolarOffset(0x100000, heading, &probe);
         marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
         if (marker != 255) {

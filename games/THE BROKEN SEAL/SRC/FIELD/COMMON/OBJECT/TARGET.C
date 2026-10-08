@@ -67,7 +67,7 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
         if (child == 0)
             return;
         Object_Destroy(child);
-        /* FAKEMATCH: reuse the null visual value for the child link. */
+        /* FAKEMATCH: needed to match: reuse the null visual value for the child link. */
         object->resource = (struct LinkedEffectObject *)visual;
         return;
     }

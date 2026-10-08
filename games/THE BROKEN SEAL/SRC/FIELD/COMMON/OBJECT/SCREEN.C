@@ -16,7 +16,7 @@ s32 Object_GetScreenPosition(s32 object_id, s32 *position)
 
     if (object == 0)
         return -1;
-    /* FAKEMATCH: the adjacent coordinate-word read avoids four bytes added by separate named bases. */
+    /* FAKEMATCH: needed to match: the adjacent coordinate-word read avoids four bytes added by separate named bases. */
     camera = &((struct MapScrollWork *)gMapWork[0])->view_x;
     camera_x = camera[0] & 0xffff0000;
     camera_z = camera[1] & 0xffff0000;

@@ -197,7 +197,7 @@ void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
 //--------------------------------------------------------------------------
 void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y)
 {
-	/* FAKEMATCH: word/index temporaries preserve register allocation; the plain body allocates differently and uses a 40-byte frame. */
+	/* FAKEMATCH: needed to match: word/index temporaries preserve register allocation; the plain body allocates differently and uses a 40-byte frame. */
 	s32					   y;
 	u32					  *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
 	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[dst_y * 128 + dst_x];

@@ -1481,7 +1481,7 @@ void ShianJiin_AskIfCurious(void)
         Actor_ShowEmote(8, 0x102, 60);
         Engine_EventSetMessage((s32)MsgShianCanReadMindsKnowCurious);
         Event_OpenMessage(8, 0);
-        /* FAKEMATCH: repeating through this label preserves the question's block order. */
+        /* FAKEMATCH: needed to match: repeating through this label preserves the question's block order. */
     ask_again:
         if (Engine_EventChooseYesNo(0, 0) == 1) {
             Engine_EventWait(10);

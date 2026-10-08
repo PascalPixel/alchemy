@@ -40,8 +40,8 @@ struct PushState {
 
 static __inline__ s32 CheckMove(struct FieldActor *actor, union FieldCoordinate *pos)
 {
-    /* FAKEMATCH: the inline boundary rematerializes pos for the collision call. */
-    /* FAKEMATCH: the inline call keeps add r1, sp, #16 instead of mov r1, fp. */
+    /* FAKEMATCH: needed to match: the inline boundary rematerializes pos for the collision call. */
+    /* FAKEMATCH: needed to match: the inline call keeps add r1, sp, #16 instead of mov r1, fp. */
     return Object_CheckMovementCollision(actor, pos);
 }
 
@@ -68,7 +68,7 @@ void Makyuri_RunActorMove(void)
     u8 zero;
     union FieldCoordinate pos[3];
 
-    /* FAKEMATCH: the relative slot-35 load avoids an extra base load and pool word. */
+    /* FAKEMATCH: needed to match: the relative slot-35 load avoids an extra base load and pool word. */
     state = **(struct PushState ***)((u8 *)&gEventWork
         + (35 - HEAP_SLOT_EVENT) * sizeof(gWorkSlot[0]));
     work = (struct FieldStepWork *)gEventWork;
@@ -171,7 +171,7 @@ void Makyuri_TickSpawnTimer(void)
     struct SceneTimer *timer;
     struct FieldActor *point;
 
-    /* FAKEMATCH: deriving slot 27 from slot 35 keeps the timer at 72 bytes instead of 76. */
+    /* FAKEMATCH: needed to match: deriving slot 27 from slot 35 keeps the timer at 72 bytes instead of 76. */
     {
         struct SceneTimer ***scene = (struct SceneTimer ***)((u8 *)&gEventWork
             + (35 - HEAP_SLOT_EVENT) * sizeof(gWorkSlot[0]));

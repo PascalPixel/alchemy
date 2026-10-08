@@ -108,7 +108,7 @@ void FieldScene_RunPaletteRampSequence(void)
     Engine_MapCopyCellsTo(65, 53, 88, 24, 2, 2);
     DisplayBlend_EnableRunScript();
     SetBlendTarget(0x3f42);
-    /* FAKEMATCH: keep the initial value/port publication boundary. */
+    /* FAKEMATCH: needed to match: keep the initial value/port publication boundary. */
     do {
         s32 value = 0x100c;
 
@@ -546,7 +546,7 @@ void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                /* FAKEMATCH: byte access avoids a dead byte zero and preserves the motion/spin zero and address registers. */
+                /* FAKEMATCH: needed to match: byte access avoids a dead byte zero and preserves the motion/spin zero and address registers. */
                 *(u8 *)&part->display_flags |= 1;
                 sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;

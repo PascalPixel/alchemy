@@ -650,7 +650,7 @@ void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj, u32 on)
 {
 	if (obj != 0 && obj->kind == 1)
 	{
-		/* FAKEMATCH: the packed bit access preserves mask/register order; a byte mask changes it at the same 40-byte size. */
+		/* FAKEMATCH: needed to match: the packed bit access preserves mask/register order; a byte mask changes it at the same 40-byte size. */
 		struct ChildDisplayFlags *state = obj->target.child;
 		state->field_1 = on;
 	}
@@ -806,7 +806,7 @@ void Render_PlaceProjectedSprite(void *sprite, s32 *position, s32 *scale, s32 an
 //--------------------------------------------------------------------------
 void ObjectSystem_UpdateCamera(void)
 {
-	/* FAKEMATCH: unused; the native frame keeps room for three points above the position. */
+	/* FAKEMATCH: needed to match: unused; the native frame keeps room for three points above the position. */
 	struct CameraPoint	 spare[3];
 	s32					 cnt;
 	struct CameraState	*map;
@@ -835,7 +835,7 @@ void ObjectSystem_UpdateCamera(void)
 	cam_z = cam[1] & 0xffff0000;
 	sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
 	// 絵を置く処理（Render_DecodeFrame）を作業領域へ写す
-	/* FAKEMATCH: the do-while keeps the copy between the runtime loads and the count reset. */
+	/* FAKEMATCH: needed to match: the do-while keeps the copy between the runtime loads and the count reset. */
 	do
 	{
 		size = (u32)Render_DecodeFrameCodeSize;
@@ -959,12 +959,12 @@ void ObjectSystem_UpdateCameraFixed(void)
 	void				*spr;
 	s32					 scale2[2];
 	s32					 scale[2];
-	/* FAKEMATCH: unused; the native frame keeps room for two points above the scales. */
+	/* FAKEMATCH: needed to match: unused; the native frame keeps room for two points above the scales. */
 	struct CameraPoint spare[2];
 
 	cam = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);
 	sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
-	/* FAKEMATCH: the do-while keeps the size load after the runtime loads. */
+	/* FAKEMATCH: needed to match: the do-while keeps the size load after the runtime loads. */
 	do
 	{
 		size = (u32)Render_DecodeFrameCodeSize;

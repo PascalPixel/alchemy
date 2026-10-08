@@ -33,13 +33,13 @@ void UiTextResource_SetPosition(struct TextCursor *cursor, s32 x, s32 y);
 
 static inline void TextCursor_Initialize(struct TextCursor *cursor, s32 *slot)
 {
-    /* FAKEMATCH: a direct call lets GCC 2.96 keep the cursor's address in a register across the calls. */
+    /* FAKEMATCH: needed to match: a direct call lets GCC 2.96 keep the cursor's address in a register across the calls. */
     UiTextResource_Initialize(cursor, slot);
 }
 
 static inline void TextCursor_SetPosition(struct TextCursor *cursor, s32 x, s32 y)
 {
-    /* FAKEMATCH: a direct call lets GCC 2.96 keep the cursor's address in a register across the calls. */
+    /* FAKEMATCH: needed to match: a direct call lets GCC 2.96 keep the cursor's address in a register across the calls. */
     UiTextResource_SetPosition(cursor, x, y);
 }
 

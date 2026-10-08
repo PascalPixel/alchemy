@@ -39,7 +39,7 @@ extern void Audio_PlayCue(s32);
 static __inline__ void ConfigureStagedActorMotion(
     s32 actor_id, s32 movement_rate, s32 movement_step)
 {
-    /* FAKEMATCH: a direct call loads rate and step before actor 0; this boundary sets r0 before those literals. */
+    /* FAKEMATCH: needed to match: a direct call loads rate and step before actor 0; this boundary sets r0 before those literals. */
     ObjectMotion_SetSpeedParameters(actor_id, movement_rate, movement_step);
 }
 
@@ -334,7 +334,7 @@ found:
 
 void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 {
-    /* FAKEMATCH: the integer cell read keeps incoming probe spills before the cache load. */
+    /* FAKEMATCH: needed to match: the integer cell read keeps incoming probe spills before the cache load. */
     struct MapScrollWork *workspace;
     struct StagedActor *actor;
     struct StagedActorProbePosition original_position;

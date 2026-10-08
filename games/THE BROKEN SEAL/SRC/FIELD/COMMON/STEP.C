@@ -196,9 +196,9 @@ loop:
 
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 {
-    /* FAKEMATCH: the StepOwner read prefix preserves the party-load order and the 44-byte frame. */
+    /* FAKEMATCH: needed to match: the StepOwner read prefix preserves the party-load order and the 44-byte frame. */
     struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
-    /* FAKEMATCH: gEventWork[-19] shares one pool load for the event and map work pointers. */
+    /* FAKEMATCH: needed to match: gEventWork[-19] shares one pool load for the event and map work pointers. */
     struct MapState *map = ((struct MapState **)&gEventWork)[-19];
     s32 selected = gGameState.selected_actor;
     struct ObjectRuntime *actor = work->actors[selected];

@@ -28,7 +28,7 @@ struct ShortcutState {
 
 s32 Object_CollectResources(struct AbilityListEntry *output)
 {
-    /* FAKEMATCH: retain the initial byte-offset resource read and integer output-cursor address. */
+    /* FAKEMATCH: needed to match: retain the initial byte-offset resource read and integer output-cursor address. */
     u16 object_ids[14];
     s32 output_count = 0;
     s32 object_count = Party_ListActiveOwnersFar(object_ids);

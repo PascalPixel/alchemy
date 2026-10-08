@@ -105,7 +105,7 @@ void Party_SetReturnPoint(s32 reason)
         if (GameFlag_TestFar(32)) {
             for (i = 0; i < 2; i++) {
                 unit = UnitGetFar(i);
-                /* FAKEMATCH: the one-pass block keeps both copies ahead of the ratio */
+                /* FAKEMATCH: needed to match: the one-pass block keeps both copies ahead of the ratio */
                 do {
                     unit->hp = unit->max_hp;
                     unit->ep = unit->max_ep;

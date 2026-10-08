@@ -16,16 +16,6 @@
 
 extern struct StagedActorFootprint StagedActor_FootprintBounds[];
 
-struct MapLayer {
-    u32 *cells;
-    u8 pad04[44];
-};
-
-struct MapState {
-    u8 pad000[0x130];
-    struct MapLayer layers[1];
-};
-
 void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 {
     s32 cnt = 60;
@@ -187,7 +177,7 @@ void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
     struct MapState *map = gMapWork[0];
 
     if (map != 0) {
-        u32 *cell = map->layers[layer].cells;
+        u32 *cell = (u32 *)map->layers[layer].cells;
 
         cell += x + (y << 7);
         Dma_Set(cell, dst, 0x84000001, REG_DMA3);

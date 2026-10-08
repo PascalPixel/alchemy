@@ -22,14 +22,6 @@ extern u16 gBgScroll[];
 #define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
 
 
-struct MapCell {
-    u32 tile : 12;
-    u32 layer : 2;
-    u32 kind : 2;
-    u32 height : 8;
-    u32 event : 8;
-};
-
 struct PillarSlot {
     s32 x;
     s32 y;

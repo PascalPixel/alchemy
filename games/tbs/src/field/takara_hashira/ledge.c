@@ -19,24 +19,6 @@
 
 extern s32 StagedActor_DirectionSteps[];
 
-struct MapCell {
-    u32 tile : 12;
-    u32 layer : 2;
-    u32 kind : 2;
-    u32 height : 8;
-    u32 event : 8;
-};
-
-struct MapLayer {
-    struct MapCell *cells;
-    u8 pad04[44];
-};
-
-struct MapState {
-    u8 pad000[0x130];
-    struct MapLayer layers[1];
-};
-
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 

@@ -81,20 +81,27 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
 
 void WaitFrames(s32 frames)
 {
+    /* FAKEMATCH: the stack pointer as a register variable; reading and assigning it emits each mov to or from sp. */
+    register u8 *sp __asm__("sp");
     u32 i;
-    u8 *base;
+    /* FAKEMATCH: base stays in sl, where the native keeps it across the frame loop. */
+    register u8 *base __asm__("sl");
     u32 line;
     s32 j;
     s16 dispcnt;
     s16 backdrop;
 
-    CAMELOT_ASM("reads the stack pointer")
-    __asm__ volatile("mov %0, sp" : "=r"(base));
+    base = sp;
+    /* FAKEMATCH: an empty barrier keeps the stack-limit load after the copy of sp. */
+    __asm__ volatile("");
     if (base < Ram_FrameWaitStackTop) {
-        gSavedStackSize = Ram_FrameWaitStackTop - base;
+        u8 *top = Ram_FrameWaitStackTop;
+
+        gSavedStackSize = top - base;
         Dma_Set(base, gSavedStack, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
-        CAMELOT_ASM("moves the stack pointer")
-        __asm__ volatile("mov sp, %0" : : "r"Ram_FrameWaitStackTop);
+        /* FAKEMATCH: an operand-only barrier adds a use of top, which gives it r4 ahead of the DMA control constant. */
+        __asm__ volatile("" : : "r"(top));
+        sp = top;
     }
     for (i = 0; i < frames; i++) {
         gSchedulerStatus = 1;
@@ -212,12 +219,15 @@ void WaitFrames(s32 frames)
         }
     }
     if (gSavedStackSize) {
-        CAMELOT_ASM("reads the stack pointer")
-        __asm__ volatile("mov %0, sp" : "+r"(base) : : "memory");
+        /* FAKEMATCH: base stays live in sl across the loop, and the memory barrier keeps the reload of the saved size. */
+        __asm__ volatile("" : "+r"(base) : : "memory");
+        base = sp;
+        /* FAKEMATCH: an operand-only barrier keeps the copy of sp in sl. */
+        __asm__ volatile("" : "+r"(base));
         base -= gSavedStackSize;
+        sp = base;
         /* FAKEMATCH: the operand-only asm flushes CSE, preserving the measured reload of the saved-stack-size address. */
-        CAMELOT_ASM("moves the stack pointer")
-        __asm__ volatile("mov sp, %0" : : "r"(base));
+        __asm__ volatile("" : : "r"(base));
         Dma_Set(gSavedStack, base, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
         while (DMA3->control & DMA_ENABLE32)
             ;

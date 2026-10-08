@@ -46,27 +46,14 @@ void Palette_CopyBanksWithBrightnessOffset(s32 ofs)
 			u32 color;
 			s32 b;
 			s32 g;
-#if GAME_TLA
-			/* FAKEMATCH: the red-mask copy requires r1 before the channel shifts. */
-			register s32 r __asm__("r1");
-#else
 			s32 r;
-#endif
 			s32 val;
 
 			idx = bank * 16 + col;
 			color = ((u16 *)0x05000000)[idx];
-#if GAME_TLA
-			/* FAKEMATCH: copy the red mask after the color load, before the channel shifts. */
-			__asm__("add %0, %1, #0" : "=r"(r) : "r"(mask), "r"(color));
-#endif
 			b = (color >> 10) & mask;
 			g = (color >> 5) & mask;
-#if GAME_TLA
-			r &= color;
-#else
 			r = color & mask;
-#endif
 			b += ofs;
 			g += ofs;
 			r += ofs;

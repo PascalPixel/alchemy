@@ -1,3 +1,10 @@
+#include "BTLCALC.H"
+#include "TYPES.H"
+#include "SCENE.H"
+#include "ITEM.H"
+#include "INVENTORY.H"
+#include "BATTLE_RANDOM.H"
+#include "BTLTYPE.H"
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -7,24 +14,41 @@
 #include "MINIGAME.H"
 #include "SOUND.H"
 #include "SYSTEM.H"
-#include "INVENTORY.H"
-#include "BATTLE_RANDOM.H"
 #include "FIXED_MATH.H"
 #include "BATTLE_EFFECT_CHANCE.H"
-#include "TYPES.H"
 #include "RUNTIME_INTERFACES.H"
 #include "GAME_FLAGS.H"
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 #include "CHARACTER.H"
 #include "BTLPTY.H"
+#include "GAME_STATE.H"
+
+s32 Equipment_GetUnleashRateBonus(struct BtlUnit *owner)
+{
+    s32 sum;
+    s32 i;
+    s32 j;
+    struct ItemDefinition *item;
+
+    sum = 0;
+    for (i = 0; i < 15; i++) {
+        if (owner->inventory[i] & 0x200) {
+            item = Item_GetDirect(owner->inventory[i]);
+            for (j = 0; j < 4; j++) {
+                if (item->effects[j].kind == 23)
+                    sum += item->effects[j].amount;
+            }
+        }
+    }
+    if (sum < 0)
+        sum = 0;
+    return sum;
+}
 
 #define BattleRandomPercent ((s32 (*)(void))BattleRandomPercent)
 
-
-
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit);
-u32 GameFlag_SetBit(u32 flag);
 u32 *Trade_AddOffer(u32 owner, u32 index, u32 bit);
 s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit);
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit);
@@ -244,6 +268,7 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index)
 
 s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
 {
+	u32 GameFlag_SetBit(u32 flag);
     void *entry = state + index * 20 + 48;
     s32 best_no = 0;
     s32 best_val = 999;
@@ -490,4 +515,101 @@ s32 Party_SumDjinnCounts(s32 index)
         } while (remaining != 0);
     }
     return result;
+}
+
+void Inventory_AddAndEquip(s32 owner, s32 target)
+{
+    struct BtlUnit *state = UnitGet(owner);
+    u16 *entry;
+    s32 index;
+
+    Inventory_AddItem(owner, target);
+    index = 0;
+    entry = state->inventory;
+    do {
+        if (*entry++ == target)
+            Inventory_Equip(owner, index);
+        index++;
+    } while (index < INVENTORY_SLOTS);
+}
+
+#define INVENTORY_SNAPSHOT_SENTINEL 0x6774
+void Owner_RefreshActiveRatios(s32 mode);
+
+void InventorySnapshot_Save(void)
+{
+	void GameFlag_SetBit(s32 flag);
+    u16 *save;
+    struct BtlUnit *unit;
+    s16 *inventory;
+    s32 owner;
+    s32 i;
+    s32 n;
+    s16 first;
+    s16 second;
+
+    save = gInventorySnapshot;
+    if (*save != INVENTORY_SNAPSHOT_SENTINEL) {
+        *save++ = INVENTORY_SNAPSHOT_SENTINEL;
+        first = gGameState.first_shortcut;
+        second = gGameState.second_shortcut;
+        for (owner = 0; owner < 4; owner++) {
+            unit = (struct BtlUnit *)UnitGet(owner);
+            for (n = 0; n < 15; n++)
+                *save++ = unit->inventory[n];
+            for (n = 0; n < 15; n++) {
+                if (Item_GetDirect(unit->inventory[n])->type != 6)
+                    unit->inventory[n] = 0;
+            }
+            n = 0;
+            inventory = (s16 *)unit->inventory;
+            for (i = 0; i < 15; i++) {
+                if (inventory[i] != 0)
+                    inventory[n++] = inventory[i];
+            }
+            for (; n < 15; n++)
+                inventory[n] = 0;
+            Owner_RefreshDerivedData(owner);
+            UnitCalc(owner);
+        }
+        *save++ = first;
+        *save++ = second;
+        inventory = (s16 *)gGameState.active_owners;
+        save[0] = inventory[0];
+        save[1] = inventory[1];
+        Inventory_AddAndEquip(0, 16);
+        GameFlag_SetBit(0x952);
+    }
+    Owner_RefreshActiveRatios(1);
+}
+
+void InventorySnapshot_Restore(void)
+{
+    s32 owner;
+    u16 *source = gInventorySnapshot;
+
+    if (*source++ == INVENTORY_SNAPSHOT_SENTINEL) {
+        owner = 0;
+        do {
+            u16 *inventory =
+                ((struct BtlUnit *)UnitGet(owner))->inventory;
+            s32 remaining = 14;
+
+            do {
+                *inventory++ = *source++;
+                remaining--;
+            } while (remaining >= 0);
+            Owner_RefreshDerivedData(owner);
+            UnitCalc(owner);
+            owner++;
+        } while (owner <= 3);
+
+        gGameState.first_shortcut = *source++;
+        gGameState.second_shortcut = *source++;
+        *(u16 *)((u8 *)gGameState.active_owners) = *source++;
+        *(u16 *)((u8 *)gGameState.active_owners + 2) = *source;
+        source = gInventorySnapshot;
+        *source = 0;
+        GameFlag_ClearBit(0x952);
+    }
 }

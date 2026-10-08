@@ -32,6 +32,16 @@ need not reach that form at once, but every change moves toward it (W8), and
 the last pass before both games are declared finished, alongside removing
 FAKEMATCH (S2), camelotizes what remains.
 
+A game is finished when all six hold (Pascal, 2026-10-08):
+
+1. 100% DONE in all six editions.
+2. Every asset ported: nothing reaches the ROM as copied bytes; all data is
+   editable source our tools build (A1).
+3. `recon/<game>` removed: no scaffold, draft or edition scaffolding left.
+4. FAKEMATCH at 0%: no tagged device left (S2).
+5. A limited set of stock compilers builds all of it (K1–K3).
+6. The codebase camelotized (S3).
+
 ## Where things are
 
 - `games/<GAME>/SRC`, `INCLUDE`, `SOUND`, `TEXT` and `games/COMMON` hold the
@@ -314,7 +324,13 @@ never a file or a function.
   by default and differs in loop and stack-slot habits throughout. Copying
   2.96's `arm_adjust_cost` into agbcc_arm closed Tile_BuildMetatiles' six
   scheduling instructions but was a compiler change fitted to one function
-  (K3) and carried GCC code here; it is not a route. What scheduling
+  (K3) and carried GCC code here; it is not a route. Measured again over
+  all game ARM C on 2026-10-08 (2.96's anti/output-dependence rule alone and
+  2.96's whole function): Tile_BuildMetatiles matched without its two order
+  devices, but Transform_UpdateVertices matched under neither even with 8 of
+  its 19 devices removed, and the hybrid is no stock compiler, so the
+  question is closed (Pascal, 2026-10-08: a limited set of stock compilers;
+  study branches k3-metatile, k3-vertices). What scheduling
   remains is a difference of instruction order, which S2 handles in the
   source. The lead's decision under Pascal's delegation (Pascal, 2026-10-07:
   an ARM mode in agscc, or agbcc for its provenance, never anyone else's

@@ -437,15 +437,16 @@ void FieldScene_RunScene3b2SequenceA(void)
     rec7 = GameFlag_IsSet((((union GameStateRows *)&gGameState)->halves[224][0] + (0x8d2 - (s32)&SceneId_TakaraShima6)));
     if (rec7 != 0) {
         Actor_SetPosition(8, 0x28a0000, 0xa80000);
-        *(volatile s32 *)((s32)rec8 + 12) = -0x200000;
+        *(s32 *)(rec8 + 12) = -0x200000;
         record = Actor_Get(8);
         Engine_ActorSetSpriteFlags(record, 0);
         Engine_ActorSetSpritePriority(8, 3);
         rec8[85] = 0;
         {
-            u8 value = *(volatile u8 *)&rec8[35];
+            /* FAKEMATCH: needed to match: the merged flags in a word temporary keep the byte load in r2. */
+            s32 value = rec8[35] | 2;
 
-            rec8[35] = (u8)(value | 2);
+            rec8[35] = value;
         }
         Map_CopyCellAttributes(42, 10, 1, 1, 40, 10);
     } else {

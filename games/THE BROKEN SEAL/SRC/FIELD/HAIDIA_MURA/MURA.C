@@ -2256,12 +2256,8 @@ void Scene_RepairTheHouse(void)
     Event_ShowTwoMessagesAndWait(21, 14, 2, 24, 2, 1, 10, 14, 4, 14, none);
     Audio_PlayCue(161);
     rec = Actor_Get(ACTOR_DORA);
-    {
-        u8 value = *(volatile u8 *)&rec->steering_flags;
-
-        rec->sprite->flags = none;
-        rec->steering_flags = (u8)(value & 0xfe);
-    }
+    rec->sprite->flags = none;
+    rec->steering_flags &= 0xfe;
     Actor_SetSpeed(ACTOR_DORA, 0x30000, 0x18000);
     Actor_WalkToAndWait(ACTOR_DORA, 364, 815);
     Engine_EventWait(4);

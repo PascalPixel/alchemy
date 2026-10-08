@@ -496,10 +496,10 @@ s32 TakaraHashira_SetupArea(void)
         TakaraHashira_PrepLoweredActor(14);
         {
             u8 *flags = &Object_GetById(14)->collision_flags;
-            /* FAKEMATCH: retain the flag read before its merge. */
-            u8 value = *(volatile u8 *)flags;
+            /* FAKEMATCH: needed to match: the merged flags in a word temporary keep the byte load in r2. */
+            s32 value = *flags | 8;
 
-            *flags = (u8)(value | 8);
+            *flags = value;
         }
         if (Engine_GameFlagIsSet(0x202) == 0) {
             Object_GetById(13)->scale_x = 0x18000;

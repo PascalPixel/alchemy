@@ -15,6 +15,7 @@
 #include "global_cells.h"
 #include "runtime_interfaces.h"
 #include "io_reg.h"
+#include "irq.h"
 
 u32 Random16(void);
 
@@ -53,8 +54,7 @@ u32 SaveState_SelectWriteSlot(s32 mode)
 
 s32 _call_via_r3(s32, s32, s32, s32);
 
-u32 SaveState_WriteWorkspaceSlot(code)
-u16 code;
+u32 SaveState_WriteWorkspaceSlot(s32 sector)
 {
     s32 *param = &Flash_Handler0;
     s32 result;
@@ -62,7 +62,7 @@ u16 code;
     s32 value;
 
     work = gSaveWorkspace;
-    value = code & 0xFFFF;
+    value = (u16)sector;
     if ((_call_via_r3(value, (s32)&work->slot,
                        (s32)param, *param) << 0x10) != 0) {
         return 1U;
@@ -308,10 +308,6 @@ s32 SaveState_LoadSummaryRecords(void)
     } while (group <= 2);
     return count;
 }
-
-typedef void (*InterruptHandler)(void);
-
-void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler);
 
 u32 SaveState_ReleaseWorkspace(void)
 {

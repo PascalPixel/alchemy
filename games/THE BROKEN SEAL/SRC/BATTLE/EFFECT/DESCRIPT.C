@@ -502,7 +502,7 @@ s32 Battle_DispatchInputEvent(s32 event)
 			work->limit = 0;
 		}
 		break;
-	case 0xfd: // 下か上で、シーンごとの処理
+	case 0xfd: // 下なら FieldEffect_UpdateGridPlacement、上なら battle_owner_69
 		if (work->limit > 12)
 		{
 			if (gKeysHeld & KEY_DOWN)

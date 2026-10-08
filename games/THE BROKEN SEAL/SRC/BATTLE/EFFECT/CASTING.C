@@ -862,8 +862,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 		}
 		else if (kind == 14)
 		{
-			// 下からせり上がる柱（17 幅の絵を縦に流す）と、根もとから粒
-			s32 rise;
+			// 上から降りてくる柱（17 幅の絵を下へ流す）と、対象の位置から出る粒
+			s32 fall;
 			s32 scroll;
 			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -876,10 +876,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 				s32			   column_y;
 				s32			   top;
 				origin_x = target_screen->x / 2;
-				rise = frame * 32 - 232;
+				fall = frame * 32 - 232;
 				scroll = frame * 16 - 48;
-				if (rise > 0)
-					rise = 0;
+				if (fall > 0)
+					fall = 0;
 				while (scroll > 104)
 					scroll -= 104;
 				BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
@@ -887,7 +887,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 				draw = (RectangleBlit *)gWorkSlot;
 				draw += HEAP_SLOT_BLITTER_ALTERNATE;
 				column_x = origin_x - 8;
-				column_y = rise + scroll;
+				column_y = fall + scroll;
 				top = column_y - 104;
 				width = 17;
 				tile_height = 104;
@@ -895,7 +895,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 				DrawScrolledImage(canvas, Ram_MapCellBuffer, column_x, column_y, width, tile_height,
 					scroll, draw);
 				(*draw)(
-					canvas, Ram_MapCellBuffer + 0x6e8, origin_x - width, rise + 47, width * 2, 65);
+					canvas, Ram_MapCellBuffer + 0x6e8, origin_x - width, fall + 47, width * 2, 65);
 				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 				if (frame == 8)
 				{

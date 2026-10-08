@@ -178,7 +178,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
 
     for (;;) {
         {
-            /* FAKEMATCH: block scope: with this block's notes the main loop's shared 0 has the lifetime of 11 at which loop.c hoists it, so gBgScroll[1].x takes the pool-loaded 0 the bytes show; without the block 120 rows differ and two instructions go */
+            /* FAKEMATCH: frame declared in its own block: with this block's notes the main loop's shared 0 has the lifetime of 11 at which loop.c hoists it, so gBgScroll[1].x takes the pool-loaded 0 the bytes show; without the block 120 rows differ and two instructions go */
             s32 frame = gFrameCount;
             scale = Ui_BounceScales[(frame * 2) & 31];
             scale = (scale - 256) / 4 + 304;
@@ -186,7 +186,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
             work->affine.scale_y = scale;
         }
         {
-            /* FAKEMATCH: block scope, as the block above: the two blocks' notes together give the shared 0 the hoisting lifetime of 11 (the pool-loaded 0 the bytes show); without this block 120 rows differ */
+            /* FAKEMATCH: bg declared in its own block, as frame above (a bare block or an inlined bg also gives 120): the two blocks' notes together give the shared 0 the hoisting lifetime of 11 (the pool-loaded 0 the bytes show); without this block 120 rows differ */
             struct BgScroll *bg = gBgScroll;
             bg[1].x = 0;
             bg[1].y = 32;

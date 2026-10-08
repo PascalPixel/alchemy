@@ -129,7 +129,7 @@ Character_SpriteTable:
 @ 子供のころ (フラグ 32)
 	.global Character_ChildSpriteTable
 Character_ChildSpriteTable:
-	.2byte 18, 19, 2, 3, 36, 48, 6, 7
+	.2byte 18, 19, 2, 3, 36, 48, 6, 7	@ ロビン(こ), ジェラルド(こ), ...
 	.global Ui_PairBobOffsets
 Ui_PairBobOffsets:
 	.ifdef TBS_EDITION_ES

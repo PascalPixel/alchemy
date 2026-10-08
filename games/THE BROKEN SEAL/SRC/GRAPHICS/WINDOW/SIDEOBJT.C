@@ -1,13 +1,13 @@
 #include "TYPES.H"
 #include "CHARA.H"
 
-// {キャラ番号, 顔番号} の組, -1 で終わり
+// {絵の番号, 顔の番号} の組, -1 で終わり
 const s16 Portrait_CharacterMap[20] =
 {
 	ROBIN, ROBIN,			/* ロビン */
-	18, 56,					/* ロビン(こ) */
+	ROBIN_KO, KAO_ROBIN_KO,	/* ロビン(こ) */
 	GERALD, GERALD,			/* ジェラルド */
-	19, 57,					/* ジェラルド(こ) */
+	GERALD_KO, KAO_GERALD_KO,	/* ジェラルド(こ) */
 	IWAN, IWAN,				/* イワン */
 	MEARI, MEARI,			/* メアリー */
 	GARUSHIA, GARUSHIA,		/* ガルシア */

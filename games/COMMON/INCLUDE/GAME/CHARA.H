@@ -17,4 +17,12 @@
 
 #define BTL_CHARA(no)   (300 + (no))    /* 戦闘キャラ */
 
+/* 子供のころの絵 (フラグ 32 のあいだ); 仲間 8 人の絵の番号はキャラ番号と同じ */
+#define ROBIN_KO        18      /* ロビン(こ) */
+#define GERALD_KO       19      /* ジェラルド(こ) */
+
+/* 顔の番号 */
+#define KAO_ROBIN_KO    56      /* ロビン(こ) */
+#define KAO_GERALD_KO   57      /* ジェラルド(こ) */
+
 #endif

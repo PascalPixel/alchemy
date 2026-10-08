@@ -10,7 +10,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3bd_overlay.o"(.rodata.x0200beb4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/DATA.o"(.data)
     }
     .bss : { "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/DOU.o"(.bss COMMON) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

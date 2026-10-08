@@ -15,7 +15,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/PILLAR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3b3_overlay.o"(.rodata.x0200abf8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/DATA.o"(.data)
     }
     .bss : { "*/resource_3b3_overlay.o"(.bss) }
     /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }

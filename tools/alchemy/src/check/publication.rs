@@ -346,9 +346,16 @@ fn incbin(path: &str, data: &[u8]) -> bool {
         ["games", game, "SOUND", .., _] if *game != "COMMON"
     );
     let asset_source = matches!(parts.as_slice(), ["games", _, "SRC", .., _]);
+    // A game's overlay streams, which the build links from the overlays it
+    // builds, live in one source beside the overlays' link scripts.
+    let overlay_source = matches!(
+        parts.as_slice(),
+        ["games", game, "SRC", "SYSTEM", "OVERLAY", "OVERLAYS.S"] if *game != "COMMON"
+    );
     let text = String::from_utf8_lossy(data);
     text.split(['\n', '\r'])
-        .filter(|line| !(scaffolding && (base_rom.is_match(line) || overlay.is_match(line))))
+        .filter(|line| !(scaffolding && base_rom.is_match(line)))
+        .filter(|line| !((scaffolding || overlay_source) && overlay.is_match(line)))
         .filter(|line| !(sound_source && built_sound.is_match(line)))
         .filter(|line| !(asset_source && is_built_graphics(line)))
         .any(|line| {
@@ -3039,6 +3046,32 @@ mod tests {
             "recon/tbs/overlays.s",
             b".incbin \"overlays/resource_36f.bin\"\n"
         ));
+    }
+
+    #[test]
+    fn a_games_overlay_source_may_incbin_only_its_built_overlay_streams() {
+        let source = "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY/OVERLAYS.S";
+        let overlay = b"Resource_Overlay36F:\n\t.incbin \"overlays/resource_36f.lz\"\n";
+        assert!(!super::incbin(source, overlay));
+        assert!(!super::incbin("games/THE LOST AGE/SRC/SYSTEM/OVERLAY/OVERLAYS.S", overlay));
+        for path in [
+            "games/COMMON/SRC/SYSTEM/OVERLAY/OVERLAYS.S",
+            "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY/OVL_36F.S",
+            "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAYS.S",
+            "games/THE BROKEN SEAL/SRC/OVERLAY/OVERLAYS.S",
+            "games/THE BROKEN SEAL/SOUND/OVERLAYS.S",
+        ] {
+            assert!(super::incbin(path, overlay), "{path}");
+        }
+        for line in [
+            b".incbin \"baserom.gba\", 0x007795e6, 0x00000002\n".as_slice(),
+            b".incbin \"overlays/resource_36f.bin\"\n",
+            b".incbin \"overlays/resource_36f.lz\", 0, 16\n",
+            b".incbin \"overlays/../../roms/tbs-en.gba\"\n",
+            b".incbin \"OVERLAYS/RESOURCE_36F.lz\"\n",
+        ] {
+            assert!(super::incbin(source, line), "{}", String::from_utf8_lossy(line));
+        }
     }
 
     #[test]

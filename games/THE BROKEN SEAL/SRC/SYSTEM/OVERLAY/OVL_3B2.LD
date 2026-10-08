@@ -11,7 +11,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/SHIMA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3b2_overlay.o"(.rodata.x0200b15c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/DATA.o"(.data)
     }
     /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }
 }

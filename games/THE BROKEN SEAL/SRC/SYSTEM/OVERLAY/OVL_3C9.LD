@@ -12,7 +12,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3c9_overlay.o"(.rodata.x0200df10)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/DATA.o"(.data)
     }
     .bss (NOLOAD) :
     {

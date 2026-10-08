@@ -5,7 +5,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/TITLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/IMPORT.o"(.text)
-        "*/resource_36f_overlay.o"(.rodata.x020085f8)
+        "*/games/THE BROKEN SEAL/SRC/MENU/TITLE/DATA.o"(.data)
     }
     .bss (NOLOAD) :
     {

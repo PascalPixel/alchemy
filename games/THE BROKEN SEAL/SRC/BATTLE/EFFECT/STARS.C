@@ -330,13 +330,13 @@ struct ScalePair {
     s32 y;
 };
 extern const struct ScalePair BattleFx_StarsUnitScale;
-extern u8 Data_080ee15a[];
-extern u8 Data_080ee163[];
-extern u16 Data_080ee16c[];
-extern u8 Data_080ee174[];
-extern u8 Data_080ee177[];
-extern u8 Data_080ee17a[];
-extern u16 Data_080ee17e[];
+extern u8 WhirlwindComets_GridX[];
+extern u8 WhirlwindComets_GridY[];
+extern u16 WhirlwindComets_Frames[];
+extern u8 WhirlwindComets_CellWidths[];
+extern u8 WhirlwindComets_CellHeights[];
+extern u8 WhirlwindComets_CellBiasY[];
+extern u16 WhirlwindComets_CellOffsets[];
 s32 ArcTan2(s32 x, s32 z);
 void Object_ApplyProjectedPlacementFar(void *handle, struct Placement *place, struct ScalePair *scale,
     s32 mode);
@@ -490,7 +490,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 
                 slot = 0;
                 do {
-                    if (frame == Data_080ee16c[slot]) {
+                    if (frame == WhirlwindComets_Frames[slot]) {
                         object->velocity_y = 0;
                         ObjectGroup_UpdateMembers(
                             runtime->effect->actors[index],
@@ -648,10 +648,10 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
             place.unknown_0c = 0;
             index = 0;
             do {
-                place.x = (Data_080ee15a[index] << 16) + wave.x + 0x280000;
+                place.x = (WhirlwindComets_GridX[index] << 16) + wave.x + 0x280000;
                 place.y = 0xff0000 + index * 0x400000;
                 place.z =
-                    ((Data_080ee163[index] + index * 64) << 16) + wave.y;
+                    ((WhirlwindComets_GridY[index] + index * 64) << 16) + wave.y;
                 Object_ApplyProjectedPlacementFar(runtime->objects[index], &place, &scale, 0);
                 index++;
             } while (index != 9);
@@ -723,7 +723,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 
                 slot = 0;
                 do {
-                    if (frame == Data_080ee16c[slot]) {
+                    if (frame == WhirlwindComets_Frames[slot]) {
                         s32 speed;
                         s32 angle;
 
@@ -743,7 +743,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
                         } while (index != 96);
                     }
 
-                    if (frame >= Data_080ee16c[0]) {
+                    if (frame >= WhirlwindComets_Frames[0]) {
                         spark = ((struct EffectStep *)Ram_MapCellBuffer);
                         index = 0;
                         do {
@@ -805,11 +805,11 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
                             size = 2;
                         draw.rect_alt(
                             draw_destination,
-                            (u8 *)runtime + Data_080ee17e[size],
+                            (u8 *)runtime + WhirlwindComets_CellOffsets[size],
                             mark->x,
-                            mark->y - Data_080ee17a[size],
-                            Data_080ee174[size],
-                            Data_080ee177[size]);
+                            mark->y - WhirlwindComets_CellBiasY[size],
+                            WhirlwindComets_CellWidths[size],
+                            WhirlwindComets_CellHeights[size]);
                         mark->x -= 8;
                         mark->y += 2;
 

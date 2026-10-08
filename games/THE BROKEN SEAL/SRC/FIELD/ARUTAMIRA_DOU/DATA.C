@@ -1,0 +1,323 @@
+#include "TYPES.H"
+#include "ABILITY_IDS.H"
+#include "FIELD_SCENE.H"
+#include "ITEM_IDS.H"
+#include "OBJCMD.H"
+#include "text/MSG_IDS.H"
+
+void ArutamiraDou_ApplyRoomVisuals(void);
+void ArutamiraDou_AskAboutRockOrder(void);
+void ArutamiraDou_HopSelectedActor(void);
+void ArutamiraDou_RespawnActorObject(void);
+void ArutamiraDou_SettleActorOnCell(void);
+void ArutamiraDou_TurnRock(void);
+void FieldScene_RunActorElevenCellSetup(void);
+void FieldScene_RunBranchingCutsceneSequence(void);
+void FieldScene_RunExtendedActorPresentation(void);
+void FieldScene_RunFlagGatedActorEightDialogue(void);
+void FieldScene_RunGuardedSixWordStep(void);
+void FieldScene_RunIndexedStep0(void);
+void FieldScene_RunIndexedStep1(void);
+void FieldScene_RunIndexedStep2(void);
+void FieldScene_RunIndexedStep3(void);
+void FieldScene_RunIndexedStep4(void);
+void FieldScene_RunIndexedStep5(void);
+void FieldScene_RunTwoCallSequence(void);
+void FieldScene_SetActor13Value41(void);
+void SceneState_MarkObjectWhenActorElevenAhead(void);
+void SceneState_RunFlag200SetupAndPlaceActors16To20(void);
+extern u8 gArutamiraActorWheelWork[];
+
+s16 StagedActor_DirectionSteps[] = {
+	0, 16,
+	0, 16,
+	0, 16,
+	16, 0,
+	16, 0,
+	16, 0,
+	16, 0,
+	0, -16,
+	0, -16,
+	0, -16,
+	0, -16,
+	-16, 0,
+	-16, 0,
+	-16, 0,
+	-16, 0,
+	0, 16,
+};
+
+u32 StagedActor_FootprintKinds[] = {
+	207, 205, 228, 229, 298, 297,
+};
+
+s32 StagedActor_FootprintBounds[] = {
+	-32, -8, 32, 8,
+	-8, -32, 8, 32,
+	-32, -16, 32, 0,
+	-8, -32, 8, 32,
+	-32, -8, 32, 8,
+	-8, -32, 8, 32,
+};
+
+void (*ArutamiraDou_ClearTarget[])(void) = {
+	gArutamiraActorWheelWork,
+};
+
+struct SceneEntrance ArutamiraDou_SceneTableA[] = {
+	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 456, 0, 504, FACING_NORTH, 0, 0, 0, 544, 528, 0 },
+	{ 2, CONDITION_ALWAYS, 280, 0, 360, FACING_SOUTH, 0, 0, 0, 544, 528, 0 },
+	{ 3, CONDITION_ALWAYS, 120, 0, 696, FACING_NORTH, 0, 0, 552, 240, 720, 0 },
+	{ 4, CONDITION_ALWAYS, 120, 0, 600, FACING_SOUTH, 0, 0, 552, 240, 720, 0 },
+	{ 10, CONDITION_ALWAYS, 392, 0, 504, FACING_SOUTH, 0, 48, 16, 496, 672, 0 },
+	{ 11, CONDITION_ALWAYS, 136, 0, 104, FACING_SOUTH, 0, 48, 16, 496, 672, 0 },
+	{ 20, CONDITION_ALWAYS, 232, 0, 216, FACING_SOUTH, 0, 64, 48, 592, 576, 0 },
+	{ 21, CONDITION_ALWAYS, 328, 0, 264, FACING_SOUTH, 0, 64, 48, 592, 576, 0 },
+	{ 30, CONDITION_ALWAYS, 200, 0, 424, FACING_SOUTH, 0, 48, 80, 576, 480, 0 },
+	{ 31, CONDITION_ALWAYS, 520, 0, 328, FACING_SOUTH, 0, 48, 80, 576, 480, 0 },
+	{ 40, CONDITION_ALWAYS, 680, 0, 152, FACING_SOUTH, 0, 0, 0, 768, 512, 0 },
+	{ 41, CONDITION_ALWAYS, 40, 0, 248, FACING_SOUTH, 0, 0, 0, 768, 512, 0 },
+	{ 50, CONDITION_ALWAYS, 296, 0, 392, FACING_SOUTH, 0, 160, 304, 576, 704, 0 },
+	{ 51, CONDITION_ALWAYS, 424, 0, 392, FACING_SOUTH, 0, 160, 304, 576, 704, 0 },
+	{ 52, CONDITION_ALWAYS, 504, 0, 232, FACING_NORTH, 0, 384, 64, 624, 240, 0 },
+	{ 53, CONDITION_ALWAYS, 504, 0, 152, FACING_SOUTH, 0, 384, 64, 624, 240, 0 },
+	{ 54, CONDITION_ALWAYS, 184, 0, 216, FACING_NORTH, 0, 64, 64, 304, 240, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 ArutamiraDou_SceneTableB[] = {
+	SCENE_EXITS(146),
+	SCENE_EXIT(1, 2, 24),
+	SCENE_EXIT(2, 146, 3),
+	SCENE_EXIT(3, 146, 2),
+	SCENE_EXIT(4, 147, 10),
+	SCENE_EXIT(0, 147, 0),
+	SCENE_EXIT(10, 146, 4),
+	SCENE_EXIT(11, 148, 20),
+	SCENE_EXIT(0, 148, 0),
+	SCENE_EXIT(20, 147, 11),
+	SCENE_EXIT(21, 149, 30),
+	SCENE_EXIT(0, 149, 0),
+	SCENE_EXIT(30, 148, 21),
+	SCENE_EXIT(31, 150, 40),
+	SCENE_EXIT(0, 150, 0),
+	SCENE_EXIT(40, 149, 31),
+	SCENE_EXIT(41, 151, 50),
+	SCENE_EXIT(0, 151, 0),
+	SCENE_EXIT(50, 150, 41),
+	SCENE_EXIT(51, 151, 52),
+	SCENE_EXIT(52, 151, 51),
+	SCENE_EXIT(53, 151, 54),
+	SCENE_EXIT(54, 151, 53),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement gArutamiraDouPlacementsOther[] = {
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gArutamiraDouPlacements2[] = {
+	{ ACTOR_GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ ACTOR_IVAN, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ ACTOR_MIA, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x41, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(232), 0, PIXELS(160), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x34, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xa3, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(-64), 0, PIXELS(-64), FACING_NORTH, TALK_KEEP_FACING, 0 },
+	{ 0xa3, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(-64), 0, PIXELS(-64), FACING_NORTH, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gArutamiraDouPlacements4[] = {
+	{ 0x129, CONDITION_ALWAYS, 7,
+		PIXELS(328), 0, PIXELS(256), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x12a, CONDITION_ALWAYS, 7,
+		PIXELS(352), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x12a, CONDITION_ALWAYS, 7,
+		PIXELS(368), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(376), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(472), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x5d, 0x71, ACTOR_STAND,
+		PIXELS(264), 0, PIXELS(200), FACING_SOUTHWEST, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gArutamiraDouPlacements6[] = {
+	{ 0x129, CONDITION_ALWAYS, 7,
+		PIXELS(392), 0, PIXELS(416), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x12a, CONDITION_ALWAYS, 7,
+		PIXELS(416), 0, PIXELS(456), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x129, CONDITION_ALWAYS, 7,
+		PIXELS(456), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x124, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(488), PIXELS(8), PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x124, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(472), PIXELS(40), PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x124, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(504), PIXELS(56), PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x124, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(536), PIXELS(40), PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x124, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(520), PIXELS(8), PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x125, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(440), 0, PIXELS(190), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x125, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(472), 0, PIXELS(174), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x125, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(504), 0, PIXELS(174), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x125, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(536), 0, PIXELS(174), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x125, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(568), 0, PIXELS(190), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 ArutamiraDou_PulseScales[] = {
+	0x10000, 0x11999, 0x13333, 0x11999,
+};
+
+s32 gAltmillerActionA[] = {
+	SC_ARG(2),
+	SC_MOVE_BY(0, 0, PIXELS(-32)),
+	SC_SYNC,
+	SC_MOVE_BY(PIXELS(-64), 0, 0),
+	SC_SYNC,
+	SC_MOVE_BY(0, 0, PIXELS(-64)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_END,
+};
+
+s32 gAltmillerActionB[] = {
+	SC_ARG(2),
+	SC_MOVE_BY(PIXELS(16), 0, 0),
+	SC_SYNC,
+	SC_MOVE_BY(0, 0, PIXELS(32)),
+	SC_SYNC,
+	SC_MOVE_BY(PIXELS(48), 0, 0),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_END,
+};
+
+s32 gAltmillerActionC[] = {
+	SC_ARG(2),
+	SC_MOVE_BY(0, 0, PIXELS(16)),
+	SC_SYNC,
+	SC_MOVE_BY(PIXELS(16), 0, 0),
+	SC_SYNC,
+	SC_MOVE_BY(0, 0, PIXELS(32)),
+	SC_SYNC,
+	SC_MOVE_BY(PIXELS(32), 0, 0),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_END,
+};
+
+s32 gAltmillerActionD[] = {
+	SC_ARG(2),
+	SC_MOVE_BY(0, 0, PIXELS(32)),
+	SC_SYNC,
+	SC_MOVE_BY(PIXELS(16), 0, 0),
+	SC_SYNC,
+	SC_MOVE_BY(0, 0, PIXELS(32)),
+	SC_SYNC,
+	SC_MOVE_BY(PIXELS(16), 0, 0),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_END,
+};
+
+struct SceneEvent gArutamiraDouEventsOther[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
+	{ 0x31, 4, CONDITION_ALWAYS, 4 },
+	{ EVENT_TOUCH, 60, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep0) },
+	{ EVENT_TOUCH, 61, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep1) },
+	{ EVENT_TOUCH, 62, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep2) },
+	{ EVENT_TOUCH, 63, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep3) },
+	{ EVENT_TOUCH, 64, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep4) },
+	{ EVENT_TOUCH, 65, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep5) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_ApplyRoomVisuals) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunFlag200SetupAndPlaceActors16To20) },
+	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_RespawnActorObject) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutamiraDouEvents2[] = {
+	{ 0x21, 10, CONDITION_ALWAYS, 10 },
+	{ 0x31, 11, CONDITION_ALWAYS, 11 },
+	{ EVENT_TALK, 8, 0x960, EVENT_SCRIPT(FieldScene_RunBranchingCutsceneSequence) },
+	{ EVENT_TALK, 8, 0xf30, EVENT_SCRIPT(ArutamiraDou_AskAboutRockOrder) },
+	{ EVENT_TALK, 8, 0x962, EVENT_SCRIPT(FieldScene_RunExtendedActorPresentation) },
+	{ EVENT_TOUCH, 19, 0x961, EVENT_SCRIPT(FieldScene_RunFlagGatedActorEightDialogue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x960, EVENT_SCRIPT(FieldScene_RunBranchingCutsceneSequence) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xf30, MSGNO(MsgArutamiraNeedDraught) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x962, EVENT_SCRIPT(FieldScene_RunExtendedActorPresentation) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunFlag200SetupAndPlaceActors16To20) },
+	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_RespawnActorObject) },
+	{ SEARCH(SEARCH_CHEST), 100, 0xef5, 0x500005 },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutamiraDouEvents3[] = {
+	{ 0x21, 20, CONDITION_ALWAYS, 20 },
+	{ 0x31, 21, CONDITION_ALWAYS, 21 },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunFlag200SetupAndPlaceActors16To20) },
+	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_RespawnActorObject) },
+	{ SEARCH(SEARCH_CHEST), 100, 0xf9c, FIND_ITEM(ITEM_VIAL) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutamiraDouEvents4[] = {
+	{ 0x21, 30, CONDITION_ALWAYS, 30 },
+	{ 0x31, 31, CONDITION_ALWAYS, 31 },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 72, 0x211, EVENT_SCRIPT(ArutamiraDou_HopSelectedActor) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 73, 0x211, EVENT_SCRIPT(ArutamiraDou_HopSelectedActor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 74, 0x211, EVENT_SCRIPT(ArutamiraDou_HopSelectedActor) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 75, 0x211, EVENT_SCRIPT(ArutamiraDou_HopSelectedActor) },
+	{ 0x202, 71, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunGuardedSixWordStep) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 77, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTwoCallSequence) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_SettleActorOnCell) },
+	{ 0x10001815, 11, 0x211, EVENT_SCRIPT(SceneState_MarkObjectWhenActorElevenAhead) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x211, EVENT_SCRIPT(FieldScene_RunActorElevenCellSetup) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetActor13Value41) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutamiraDouEvents5[] = {
+	{ 0x21, 40, CONDITION_ALWAYS, 40 },
+	{ 0x31, 41, CONDITION_ALWAYS, 41 },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunFlag200SetupAndPlaceActors16To20) },
+	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_RespawnActorObject) },
+	{ SEARCH(SEARCH_CHEST), 100, 0xf9d, FIND_ITEM(0xc0) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gArutamiraDouEvents6[] = {
+	{ 0x21, 50, CONDITION_ALWAYS, 50 },
+	{ EVENT_EXIT, 51, CONDITION_ALWAYS, 51 },
+	{ EVENT_EXIT, 52, CONDITION_ALWAYS, 52 },
+	{ EVENT_EXIT, 53, CONDITION_ALWAYS, 53 },
+	{ EVENT_EXIT, 54, CONDITION_ALWAYS, 54 },
+	{ 0x202, 70, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunGuardedSixWordStep) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_TurnRock) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_TurnRock) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_TurnRock) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_TurnRock) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_TurnRock) },
+	{ SEARCH(SEARCH_CHEST), 100, 0xf30, FIND_ITEM(0xed) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_ApplyRoomVisuals) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunFlag200SetupAndPlaceActors16To20) },
+	{ SCENE_EVENTS_END },
+};

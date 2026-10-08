@@ -5,7 +5,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/EDA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/IMPORT.o"(.text)
-        "*/resource_397_overlay.o"(.rodata.x0200835c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/DATA.o"(.data)
     }
     .bss ALIGN(16) (NOLOAD) :
     {

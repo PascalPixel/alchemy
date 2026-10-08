@@ -12,7 +12,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/LOBBY.o"(.rodata)
-        "*/resource_3cb_overlay.o"(.rodata.x02009928)
+        "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/DATA.o"(.data)
     }
     .bss (NOLOAD) :
     {

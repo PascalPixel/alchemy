@@ -7,7 +7,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/RESTART.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/ACTORS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/IMPORT.o"(.text)
-        "*/resource_378_overlay.o"(.rodata.x0200b740)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/DATA.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

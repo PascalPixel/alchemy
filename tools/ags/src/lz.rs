@@ -9,6 +9,13 @@ const PALETTE_REACH: usize = 4095;
 const GENERAL_LONGEST: usize = 137;
 const PALETTE_LONGEST: usize = 272;
 const MTF4_WINDOW: usize = 4123;
+/// The tile packer's ring holds 0x1100 bytes: the window and a read-ahead,
+/// so near the end of input it still reaches PACKER's 4126 bytes back.
+const MTF4: Ring = Ring {
+    window: MTF4_WINDOW,
+    read_ahead: 0x1100 - MTF4_WINDOW,
+    max_distance: 4126,
+};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct Ring {
@@ -215,7 +222,9 @@ fn mtf4_tokens(decoded: &[u8]) -> Vec<Mtf4LzToken> {
     let mut position = 0;
     let mut tokens = Vec::new();
     while position < decoded.len() {
-        let lowest = position.saturating_sub(MTF4_WINDOW);
+        let lowest = MTF4
+            .oldest(position, decoded.len())
+            .max(position.saturating_sub(MTF4.max_distance));
         match matcher.search(position, GENERAL_LONGEST, lowest) {
             Token::Copy { length, distance } => {
                 tokens.push(Mtf4LzToken::Copy {
@@ -247,4 +256,57 @@ pub fn compress_mtf4(decoded: &[u8]) -> Result<Vec<u8>, String> {
 
 pub fn compress_arena(decoded: &[u8], arena: &[u8]) -> Result<Vec<u8>, String> {
     crate::assets::lz::compress_arena(decoded, arena).map_err(|error| error.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Noise with one 8-byte run repeated 4126 bytes after itself, ending at `end`.
+    fn noise_with_echo(end: usize) -> Vec<u8> {
+        let mut seed = 0x1234_5678u32;
+        let mut data: Vec<u8> = (0..0x4000)
+            .map(|_| {
+                seed = seed.wrapping_mul(1_103_515_245).wrapping_add(12_345);
+                (seed >> 16) as u8
+            })
+            .collect();
+        let echo = [0x5a, 0xa5, 0x3c, 0xc3, 0x0f, 0xf0, 0x69, 0x96];
+        data[end - 8 - 4126..end - 4126].copy_from_slice(&echo);
+        data[end - 8..end].copy_from_slice(&echo);
+        data
+    }
+
+    fn copy_at(data: &[u8], at: usize) -> Option<(u32, u32)> {
+        let mut position = 0;
+        for token in mtf4_tokens(data) {
+            let length = match token {
+                Mtf4LzToken::Literal { .. } => 1,
+                Mtf4LzToken::Copy { length, distance } if position == at => {
+                    return Some((length, distance));
+                }
+                Mtf4LzToken::Copy { length, .. } => length as usize,
+            };
+            position += length;
+            if position > at {
+                return None;
+            }
+        }
+        None
+    }
+
+    #[test]
+    fn the_tile_packer_reaches_further_back_only_near_the_end() {
+        let late = noise_with_echo(0x4000 - 100);
+        assert_eq!(copy_at(&late, 0x4000 - 108), Some((8, 4126)));
+        let middle = noise_with_echo(0x2000);
+        assert_ne!(copy_at(&middle, 0x2000 - 8).map(|copy| copy.1), Some(4126));
+        for data in [late, middle] {
+            let mut stream = compress_mtf4(&data).unwrap();
+            stream.resize(stream.len() + 4, 0);
+            let (decoded, _) =
+                crate::assets::lz::decode_mtf4_lz(&stream, 0, stream.len(), 0x4000).unwrap();
+            assert_eq!(decoded, data);
+        }
+    }
 }

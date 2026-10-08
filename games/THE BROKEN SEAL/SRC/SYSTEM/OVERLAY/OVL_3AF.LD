@@ -8,7 +8,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ACTORS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ARRIVAL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/IMPORT.o"(.text)
-        "*/resource_3af_overlay.o"(.rodata.x0200c464)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/DATA.o"(.data)
     }
     .bss ALIGN(16) (NOLOAD) :
     {

@@ -8,7 +8,7 @@
 
 extern const u8 ReelGame_FrameSpriteX[];
 extern const u8 ReelGame_FrameSpriteY[];
-extern u16 ReelGame_SparkCellOffsets[];
+extern const u16 ReelGame_SparkCellOffsets[];
 extern const u8 ReelGame_SymbolPrizes[];
 extern const u8 ReelGame_TitleLetterTiles[];
 extern const u8 ReelGame_TitleLetterWidths[];

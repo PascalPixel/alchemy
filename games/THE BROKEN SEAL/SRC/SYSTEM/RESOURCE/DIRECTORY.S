@@ -40,30 +40,30 @@ Resource_DirectoryTable:
 	resource WorldMapPicture, Field_WorldMapPicture
 	resource IntroTilesB, Title_IntroTilesB
 	resource SuharaGateBackdrop, Battle_SuharaGateBackdrop
-	resource , Battle_TakaraShimaBackdrop
-	resource , Battle_TakaraShimaCaveBackdrop
-	resource , Battle_KorosseoBackdrop
+	resource TakaraShimaBackdrop, Battle_TakaraShimaBackdrop
+	resource TakaraShimaCaveBackdrop, Battle_TakaraShimaCaveBackdrop
+	resource KorosseoBackdrop, Battle_KorosseoBackdrop
 	resource VinasuChojoStormBackdrop, Battle_VinasuChojoStormBackdrop
-	resource , Battle_VinasuChojoBackdrop
-	resource , Battle_VinasuHeyaBackdrop
-	resource , Battle_SuharaSabakuBackdrop
-	resource , Battle_ArutamiraDouBackdrop
-	resource , Battle_BabiChikaBackdrop
-	resource , Battle_BabiIriguchiBackdrop
-	resource , Battle_RamakanSabakuBackdrop
-	resource , Battle_MogoruMoriBackdrop
-	resource , Battle_MakyuriChojoBackdrop
-	resource , Battle_FuneHeyaBackdrop
-	resource , Battle_ImiruFuchinBackdrop
-	resource , Battle_KorimaMoriBackdrop
-	resource , Battle_ToretoHeyaBackdrop
-	resource , Battle_GomaDouBackdrop
-	resource , Battle_InteriorBackdrop
-	resource , Battle_ArutinYamaBackdrop
-	resource , Battle_FuneKanpanBackdrop
-	resource , Battle_MakyuriHeyaBackdrop
-	resource , Battle_HaidiaArashiBackdrop
-	resource , Battle_ToretoEdaBackdrop
+	resource VinasuChojoBackdrop, Battle_VinasuChojoBackdrop
+	resource VinasuHeyaBackdrop, Battle_VinasuHeyaBackdrop
+	resource SuharaSabakuBackdrop, Battle_SuharaSabakuBackdrop
+	resource ArutamiraDouBackdrop, Battle_ArutamiraDouBackdrop
+	resource BabiChikaBackdrop, Battle_BabiChikaBackdrop
+	resource BabiIriguchiBackdrop, Battle_BabiIriguchiBackdrop
+	resource RamakanSabakuBackdrop, Battle_RamakanSabakuBackdrop
+	resource MogoruMoriBackdrop, Battle_MogoruMoriBackdrop
+	resource MakyuriChojoBackdrop, Battle_MakyuriChojoBackdrop
+	resource FuneHeyaBackdrop, Battle_FuneHeyaBackdrop
+	resource ImiruFuchinBackdrop, Battle_ImiruFuchinBackdrop
+	resource KorimaMoriBackdrop, Battle_KorimaMoriBackdrop
+	resource ToretoHeyaBackdrop, Battle_ToretoHeyaBackdrop
+	resource GomaDouBackdrop, Battle_GomaDouBackdrop
+	resource InteriorBackdrop, Battle_InteriorBackdrop
+	resource ArutinYamaBackdrop, Battle_ArutinYamaBackdrop
+	resource FuneKanpanBackdrop, Battle_FuneKanpanBackdrop
+	resource MakyuriHeyaBackdrop, Battle_MakyuriHeyaBackdrop
+	resource HaidiaArashiBackdrop, Battle_HaidiaArashiBackdrop
+	resource ToretoEdaBackdrop, Battle_ToretoEdaBackdrop
 	resource BeachBackdrop, Battle_BeachBackdrop
 	resource SnowfieldBackdrop, Battle_SnowfieldBackdrop
 	resource GrasslandBackdrop, Battle_GrasslandBackdrop
@@ -307,11 +307,11 @@ Resource_DirectoryTable:
 	resource RedWarriorSprites, Monster_RedWarriorSprites
 	resource SwordGirlSprites, Monster_SwordGirlSprites
 	resource Map001, Field_Map001
-	resource , Resource_Data129
-	resource , Resource_Data12A
-	resource , Resource_Data12B
-	resource , Resource_Data12C
-	resource , Resource_Data12D
+	resource , Tileset_BlankPalette
+	resource , Tileset_BlankTilesA
+	resource , Tileset_BlankTilesB
+	resource , Tileset_BlankTilesC
+	resource , Tileset_BlankTilesD
 	resource , Field_Map000
 	resource , Tileset_Set00Palette
 	resource , Tileset_Set00TilesA
@@ -449,7 +449,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set21TilesA
 	resource , Tileset_Set21TilesB
 	resource , Tileset_Set21TilesC
-	resource , Resource_Data1B7
+	resource , Tileset_Set21TilesD
 	resource , Field_Map029
 	resource , Tileset_Set22Palette
 	resource , Tileset_Set22TilesA
@@ -484,7 +484,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set28Palette
 	resource , Tileset_Set28TilesA
 	resource , Tileset_Set28TilesB
-	resource , Resource_Data1DA
+	resource , Tileset_Set28TilesC
 	resource , Tileset_Set28TilesD
 	resource , Field_Map037
 	resource , Tileset_Set29Palette
@@ -1010,3 +1010,26 @@ Resource_DirectoryTable:
 	resource , 0
 	resource , 0
 	resource , 0
+
+@ ビルドの日時（年月日時分秒、二桁ずつ）
+	.global Resource_BuildStamp
+Resource_BuildStamp:
+	.ifdef TBS_EDITION_JA
+	.asciz "010628184502\n"
+	.endif
+	.ifdef TBS_EDITION_EN
+	.asciz "010918151347\n"
+	.endif
+	.ifdef TBS_EDITION_FR
+	.asciz "011219190202\n"
+	.endif
+	.ifdef TBS_EDITION_DE
+	.asciz "020109152237\n"
+	.endif
+	.ifdef TBS_EDITION_ES
+	.asciz "020205181231\n"
+	.endif
+	.ifdef TBS_EDITION_IT
+	.asciz "020206164027\n"
+	.endif
+	.balign 4

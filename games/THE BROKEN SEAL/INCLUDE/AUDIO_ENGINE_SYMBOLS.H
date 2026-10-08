@@ -30,7 +30,7 @@ struct AudioTrackSlotWork;
 extern struct AudioTrackSlotWork *gScratchWord;
 extern struct SoundPlayer gMusicPlayerBgm;
 extern struct SoundPlayer gMusicPlayerFanfare;
-extern struct SoundPlayer Data_02004360;
+extern struct SoundPlayer Sound_Player3;
 extern u16 gMusicPlayerVolumes[8];
 extern u8 gMusicRestoreDelay;
 

@@ -16,11 +16,49 @@
 #include "IO_REG.H"
 #include "MAP_SCROLL.H"
 #include "HEAP_STATE.H"
+#include "RESOURCE_IDS.H"
 
 
 typedef s32 (*PackedDecoder)(u8 *source, u32 destination, u32 fill);
 
 extern u32 gFrameTick;
+
+// スタッフロールで順に映す戦闘背景（0 で消す）
+const u32 DisplayScroll_SlideResources[] = {
+	(u32)&ResourceId_HaidiaArashiBackdrop,
+	(u32)&ResourceId_SoruShindenBackdrop,
+	(u32)&ResourceId_GrasslandBackdrop,
+	(u32)&ResourceId_InteriorBackdrop,
+	(u32)&ResourceId_ForestBackdrop,
+	(u32)&ResourceId_GomaDouBackdrop,
+	(u32)&ResourceId_KorimaMoriBackdrop,
+	(u32)&ResourceId_ToretoHeyaBackdrop,
+	(u32)&ResourceId_ToretoEdaBackdrop,
+	(u32)&ResourceId_SnowfieldBackdrop,
+	(u32)&ResourceId_MakyuriHeyaBackdrop,
+	(u32)&ResourceId_MakyuriChojoBackdrop,
+	(u32)&ResourceId_ImiruFuchinBackdrop,
+	(u32)&ResourceId_MogoruMoriBackdrop,
+	(u32)&ResourceId_ArutinYamaBackdrop,
+	(u32)&ResourceId_RamakanSabakuBackdrop,
+	(u32)&ResourceId_FuneKanpanBackdrop,
+	(u32)&ResourceId_FuneHeyaBackdrop,
+	(u32)&ResourceId_BeachBackdrop,
+	(u32)&ResourceId_KorosseoBackdrop,
+	(u32)&ResourceId_ArutamiraDouBackdrop,
+	(u32)&ResourceId_SuharaSabakuBackdrop,
+	(u32)&ResourceId_TakaraShimaCaveBackdrop,
+	(u32)&ResourceId_TakaraShimaBackdrop,
+	(u32)&ResourceId_SuharaGateBackdrop,
+	(u32)&ResourceId_BabiChikaBackdrop,
+	(u32)&ResourceId_BabiIriguchiBackdrop,
+	(u32)&ResourceId_VinasuHeyaBackdrop,
+	(u32)&ResourceId_VinasuChojoBackdrop,
+	(u32)&ResourceId_VinasuChojoStormBackdrop,
+	(u32)&ResourceId_DuskCloudsBackdrop,
+	(u32)&ResourceId_VioletSkyBackdrop,
+	0				// 消す
+};
 
 void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
 {

@@ -15,6 +15,11 @@
 #include "STAGED_ACTOR_EFFECT.H"
 #include "RESOURCE_393.H"
 #include "FIELDOBJ.H"
+#ifdef MODERN
+// called before its definition below, which modern GCC refuses for an
+// implicit int declaration of a u16 function
+u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj);
+#endif
 
 #define ObjectDispatch_SetSingleChildFlags ((void (*)(u8*,s32))ObjectDispatch_SetSingleChildFlags)
 

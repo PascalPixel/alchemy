@@ -24,7 +24,9 @@
 #define RamakanSabaku_SandCounter (*(s16 *)&RamakanSabaku_SandCounter)
 #define RamakanSabaku_SandPhase (*(s16 *)&RamakanSabaku_SandPhase)
 
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
+#endif
 
 void RamakanSabaku_RunSandstorm(void)
 {

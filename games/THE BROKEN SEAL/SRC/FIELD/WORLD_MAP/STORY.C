@@ -30,7 +30,9 @@ enum {
 };
 
 s32 __umodsi3(u32 value, s32 divisor);
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
+#endif
 
 void Event_SetDestination(s32 scene, s32 entrance);
 

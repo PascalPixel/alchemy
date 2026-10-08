@@ -35,9 +35,13 @@ union SceneCell {
 
 extern s32 gCell[];
 extern u8 *gWork;
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
+#endif
 extern s32 gKeysHeld;
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern s32 gKeysRepeat;
+#endif
 
 static u16 sTransferHeader[16];
 static u8 sTransferData[0x60];

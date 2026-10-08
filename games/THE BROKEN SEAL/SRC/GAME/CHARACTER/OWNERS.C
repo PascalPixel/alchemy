@@ -34,6 +34,11 @@ struct ElementLevelBonus {
 extern const struct ElementLevelBonus Element_PowerResistByLevel[16];
 
 s32 GameFlag_Test(s32 flag);
+#ifdef MODERN
+// called before its definition below, which modern GCC refuses for an
+// implicit int declaration of a u32 function
+u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2]);
+#endif
 
 #if EDITION_INTERNATIONAL
 #define ENEMY_SUFFIX_FIRST '1'

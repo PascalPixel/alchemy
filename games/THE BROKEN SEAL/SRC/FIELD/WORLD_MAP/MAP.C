@@ -1284,14 +1284,11 @@ listened:
         goto learn;
     Event_ShowMessage(DJINNI, 0);
     {
-        s32 far = z;
-        register s32 near asm("r2") = x; /* FAKEMATCH: pins x to r2 */
-        s32 tile_x;
-        register s32 tile_z asm("r2"); /* FAKEMATCH: reuses r2 for the tile z */
+        s32 tile_x = x >> 16;
+        s32 tile_z = z >> 16;
 
-        asm volatile("" : : "r"(far), "r"(near)); /* FAKEMATCH: copies z before x */
-        tile_x = near >> 16;
-        asm("asr %0, %1, #16" : "=l"(tile_z) : "l"(far), "l"(tile_x)); /* FAKEMATCH: shifts z into r2 after the tile x */
+        asm("" : "=r"(tile_z) : "0"(tile_z) : "r3"); /* FAKEMATCH: clobbers r3, a dependent of the z copy and not of the x copy */
+        asm("" : "=r"(tile_z) : "0"(tile_z) : "r3"); /* FAKEMATCH: a second one outnumbers the x copy's, so sched2 copies z first */
         Actor_WalkToAndWait(DJINNI, tile_x, tile_z);
     }
 finish:

@@ -18,7 +18,9 @@
 #include "FIELD_SERVICE.H"
 #include "FIELD_EFFECT.H"
 
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
+#endif
 void Engine_AudioPlayCue();
 s32 Engine_RandomNext();
 void Effect_Spawn();

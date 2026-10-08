@@ -11,7 +11,9 @@
 
 #include "GAME_STATE.H"
 
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
+#endif
 
 struct EventWork {
     u8 unknown_000[0x34];
@@ -217,6 +219,12 @@ static inline void Camera_SetSpeed(s32 speed, s32 acceleration)
     Engine_CameraSetSpeed(speed, acceleration);
 }
 
+#ifdef MODERN
+// FIELD.H declares the engine's GameFlag_IsSet; modern GCC refuses this
+// static one under the same name
+#undef GameFlag_IsSet
+#define GameFlag_IsSet RunpaJo_GameFlagIsSet
+#endif
 static inline s32 GameFlag_IsSet(s32 flag)
 {
     return Engine_GameFlagIsSet(flag);

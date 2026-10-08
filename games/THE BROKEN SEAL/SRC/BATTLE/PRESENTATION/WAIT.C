@@ -16,7 +16,7 @@
 extern volatile u32 gKeysHeld;
 
 struct UiWindow;
-struct UiWindow *UiText_OpenMessageAtObject(s32 actor_and_flags);
+struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 flags);
 
 void Battle_WaitMode0(s32 mode);
 extern struct EventRuntime *gEventWork;
@@ -26,16 +26,13 @@ void BattleEv_RunWait(s32 action, s32 flag)
 {
     s32 masked_action;
     struct EventRuntime *runtime = gEventWork;
-    struct UiWindow *window = UiText_OpenMessageAtObject(action);
+    struct UiWindow *window = UiText_OpenMessageAtObject(action, flag);
     s32 message_id;
     u32 frames;
 
-    /* FAKEMATCH: the later boundary swaps window r8/message sl; exclude r8 before message is defined. */
-    asm("" : "+r"(action) : : "r5", "r6", "r8");
+    frames = 0;
     WaitFrames(1);
     message_id = ObjectTable_ReadActiveValue(action);
-    /* FAKEMATCH: needed to match: the earlier counter zero lives across the clobber in r8 */
-    frames = 0;
     if (action <= 7) {
         masked_action = action & 0x0fff;
 
@@ -72,7 +69,7 @@ s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
     struct EventRuntime *runtime;
     struct GameState *save;
 
-    UiText_OpenMessageAtObject(object_id);
+    UiText_OpenMessageAtObject(object_id, action_id);
     save = &gGameState;
     result = Inventory_PromptAndSetObjectMode(save->selected_actor, 0);
     if (result == 0) {

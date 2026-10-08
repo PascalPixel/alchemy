@@ -329,7 +329,7 @@ struct ScalePair {
     s32 x;
     s32 y;
 };
-extern const struct ScalePair Data_080eda78;
+extern const struct ScalePair BattleFx_StarsUnitScale;
 extern u8 Data_080ee15a[];
 extern u8 Data_080ee163[];
 extern u16 Data_080ee16c[];
@@ -631,7 +631,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
         }
 
         if (frame > 159) {
-            scale = Data_080eda78;
+            scale = BattleFx_StarsUnitScale;
             size = 16;
             if (frame - 160 <= 64)
                 size = 32;

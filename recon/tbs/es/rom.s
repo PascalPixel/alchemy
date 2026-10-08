@@ -56,56 +56,7 @@ Debug_PaletteSwatchTiles:
 	.incbin "baserom.gba", 0x000a3626, 0x000001b2
 	.section .rom.000e6172, "ax"
 	.incbin "baserom.gba", 0x000e6172, 0x00000002
-	.section .rom.000f1278, "ax"
-	.global Data_080eda78
-Data_080eda78:
-	.incbin "baserom.gba", 0x000f1278, 0x00000008
-	.global BattleFx10_UnitScale
-BattleFx10_UnitScale:
-	.incbin "baserom.gba", 0x000f1280, 0x00000008
-	.global RockWall_Heights
-RockWall_Heights:
-	.incbin "baserom.gba", 0x000f1288, 0x00000010
-	.global Mode12_Points
-Mode12_Points:
-	.incbin "baserom.gba", 0x000f1298, 0x00000018
-	.global RisingWall_UnitScale
-RisingWall_UnitScale:
-	.incbin "baserom.gba", 0x000f12b0, 0x00000008
-	.global Formation_NormalScale
-Formation_NormalScale:
-	.incbin "baserom.gba", 0x000f12b8, 0x00000008
-	.global Formation_SmallScale
-Formation_SmallScale:
-	.incbin "baserom.gba", 0x000f12c0, 0x00000008
-	.global CirclingScene_UnitScale
-CirclingScene_UnitScale:
-	.incbin "baserom.gba", 0x000f12c8, 0x00000008
-	.global ShockwaveScene_UnitScale
-ShockwaveScene_UnitScale:
-	.incbin "baserom.gba", 0x000f12d0, 0x00000008
-	.global ObjectRow_SweepPair
-ObjectRow_SweepPair:
-	.incbin "baserom.gba", 0x000f12d8, 0x00000008
-	.global ObjectRow_RisePair
-ObjectRow_RisePair:
-	.incbin "baserom.gba", 0x000f12e0, 0x00000008
-	.global BattleFx6_UnitScale
-BattleFx6_UnitScale:
-	.incbin "baserom.gba", 0x000f12e8, 0x00000008
-	.section .rom.000f1648, "ax"
-	.global ParticleStreams_CellOffsets
-ParticleStreams_CellOffsets:
-	.incbin "baserom.gba", 0x000f1648, 0x00000014
-	.global BattleFx6_FlareCells
-BattleFx6_FlareCells:
-	.incbin "baserom.gba", 0x000f165c, 0x00000028
-	.global BattleFx_PuffCells
-BattleFx_PuffCells:
-	.incbin "baserom.gba", 0x000f1684, 0x00000012
-	.global BattleFx_PuffSizes
-BattleFx_PuffSizes:
-	.incbin "baserom.gba", 0x000f1696, 0x00000009
+	.section .rom.000f169f, "ax"
 	.global PuffArc_CellWidths
 PuffArc_CellWidths:
 	.incbin "baserom.gba", 0x000f169f, 0x00000006

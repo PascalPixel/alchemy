@@ -749,9 +749,10 @@
     "*/games/COMMON/SRC/BATTLE/EFFECT/WAIT_TWELVE_FRAMES_THEN_SET_FIELD.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/COLBURST.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_GOUSEI_BUILD.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000f1278)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FXSCALES.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_GOUSEI.o"(.text .rodata .data .padding)
-    "*/recon/tbs/es/rom.o"(.rom.000f1648)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CELLOFS.o"(.rodata)
+    "*/recon/tbs/es/rom.o"(.rom.000f169f)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_GOUSEI_IRO.o"(.text .rodata .data .padding)
     "*/recon/tbs/es/rom.o"(.rom.000f2814)
     . = ABSOLUTE(0x080f3000);

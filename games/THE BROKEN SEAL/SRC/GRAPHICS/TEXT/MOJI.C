@@ -9,9 +9,17 @@ struct UiTextWindow {
 
 extern const u8 UiText_GlyphWidths[];
 extern u8 UiText_Glyphs[];
+#if defined(TBS_EDITION_JA)
+extern u8 UiText_KanjiGlyphs[];
+#endif
 
-/* FAKEMATCH: px & 7 through an asm: stock charges its anti dependence on the mla, which reads r3, the multiply's 16 cycles, tying it with the VRAM add; an asm's links cost 1, so the add and its orr follow the mask shift as native (8 to 0; European 8 to 0) */
+/* FAKEMATCH: px & 7 through an asm: stock charges its anti dependence on the mla, which reads r3, the multiply's 16 cycles, tying it with the VRAM add; an asm's links cost 1, so the add and its orr follow the mask shift as native (8 to 0; European 8 to 0; Japanese 8 to 0) */
 #define UiText_Dot(px) ({ u32 dot_; asm("and %0, %1, #7" : "=r"(dot_) : "r"(px)); dot_; })
+
+#if defined(TBS_EDITION_JA)
+/* FAKEMATCH: s copied to d through an empty asm, for the Japanese loads and stores the bytes put between a compare and its branch; measured where used */
+#define UiText_Keep(d, s) ({ asm("" : "=r"(d) : "0"(s)); d; })
+#endif
 
 #define UiText_PlotPixel(width, px, py, color) \
 { \
@@ -26,6 +34,104 @@ extern u8 UiText_Glyphs[];
 
 s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x0, u32 y0, u8 *font)
 {
+#if defined(TBS_EDITION_JA)
+    /* FAKEMATCH: an unused 64-byte local: native's frame is 100 bytes, 36 of spill slots and 64 above them (6 to 0) */
+    u8 buf[64];
+    /* FAKEMATCH: x in r8, where native keeps it: GCSE's register for the font loop's copy of x (below) then prefers r8 through x = xt, so the copies it inserts emit nothing; with x a pseudo, x and y swap r8 and r7 (42 to 0) */
+    register u32 x asm("r8");
+    u32 xt;
+    u32 y;
+    u16 *rows;
+    s32 ret;
+    u32 width;
+    s32 bits;
+    u32 b;
+    u32 row;
+    u32 pass;
+    u32 col;
+    /* FAKEMATCH: code in ip: GCSE's copy of ch - 222 from the head then shares it and the wide arm's copy vanishes, and font takes lr (11 to 0) */
+    register u32 code asm("ip");
+    /* FAKEMATCH: ofs in r3, as English's (44 to 0) */
+    register u32 ofs asm("r3");
+    u32 gw;
+
+    /* FAKEMATCH: x's copy through an asm, as English's (6 to 0) */
+    asm("mov %0, %1" : "=r"(x) : "r"(x0));
+    /* FAKEMATCH: y's copy through an asm, as English's (4 to 0) */
+    asm("mov %0, %1" : "=r"(y) : "r"(y0));
+    width = win->width;
+    /* FAKEMATCH: the width store sits between the cmp and the branch, as English's through b (6 to 0) */
+    asm("" : "=r"(font) : "0"(font) : "memory");
+    if (ch < 256 || (font != 0 && ch - 222 < 2)) {
+        if (font != 0) {
+            /* 1bpp, 10 bytes a glyph, low bit leftmost; 222 and 223 draw the glyphs of 254 and 255 two dots left and one up, 2 wide */
+            u8 *next;
+            u32 color;
+            s32 w;
+            u32 px;
+            u8 *f;
+            u32 c;
+            /* FAKEMATCH: the font base in lr: f's copy into lr gives it native's register; left in f, f takes r0 and font r2 (33 to 0) */
+            register u8 *base asm("lr");
+
+            color = 0x1111;
+            w = 8;
+            x++;
+            /* FAKEMATCH: font copied to f in this block: sched1 moves a single-set copy to its block's end, past the compare, and sched2 keeps it in the branch's slot by its later LUID, so the colour store follows the compare on its hazard as the bytes show (cmp r3, #1; str r2, [sp, #16]; bhi); stock charges a store's link to the branch 2 cycles, so without it the compare takes the slot (2 to 0) */
+            UiText_Keep(f, font);
+            /* FAKEMATCH: ch - 222 through an asm: compiled, its anti dependence on the w store (r3) costs the store's 2 cycles and gives the compare priority 2, above the colour store's 1; an asm's links cost 1 (2 to 0) */
+            asm("sub %0, %1, #222" : "=r"(c) : "r"(ch));
+            if (c < 2) {
+                ch += 32;
+                x -= 2;
+                y--;
+                w = 2;
+            }
+            ch -= 32;
+            base = f;
+            ofs = ch * 10;
+            next = base + ofs;
+            row = 0;
+            b = *next;
+            next++;
+            /* FAKEMATCH: x copied through xt before the loop, at its head and at its step, on one line so that GCSE sees one expression: PRE inserts the copy after the entry and latch compares, where it keeps the branch's slot, and the byte loads follow the compares as the bytes show (cmp r7, #31; ldrb ip, [lr, r3]; bhi and cmp r3, #31; ldrb ip, [r9], #1; bls); stock charges a load's link to the branch 2 cycles, so without it the compares take the slot (4 to 0) */
+            for (UiText_Keep(xt, x); y + row < 32; UiText_Keep(xt, x)) { x = UiText_Keep(xt, x);
+                for (col = 0; b != 0; col++, b >>= 1) {
+                    if (b & 1) {
+                        px = x + col;
+                        /* FAKEMATCH: px & 7 through UiText_Dot's asm, measured there */
+                        UiText_PlotPixel(width, px, y + row, color);
+                    }
+                }
+                if (++row >= 10)
+                    break;
+                b = *next++;
+            }
+            return w;
+        }
+        code = ch - 222;
+        ofs = (ch - 32) * 26;
+        rows = (u16 *)(UiText_Glyphs + ofs);
+        rows++;
+        /* FAKEMATCH: the rows store comes before the glyph width load, as the European branch's (2 to 0) */
+        asm volatile("" : : : "memory");
+        gw = *(u16 *)(UiText_Glyphs + ofs);
+    } else {
+        /* 24 bytes a glyph, 10 dots wide */
+        code = ch - 222;
+        rows = (u16 *)UiText_KanjiGlyphs + (ch - 256) * 12;
+        gw = 10;
+    }
+    if (code < 2) {
+        x -= 3;
+        y -= 2;
+        ret = 0;
+        /* FAKEMATCH: the ret store sits next to the branch, as English's (2 to 0) */
+        asm volatile("");
+    } else {
+        ret = gw;
+    }
+#else
     u32 x;
     u32 y;
     u16 *rows;
@@ -160,6 +266,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x0, u32 y0, u8 *fo
         ret = *(u16 *)(UiText_Glyphs + ofs);
     }
 #endif
+#endif
     for (pass = 0; pass < 4; pass++) {
         u16 *next;
         u32 color;
@@ -197,7 +304,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x0, u32 y0, u8 *fo
                 break;
             bits = *next++;
             bits <<= 16;
-            /* FAKEMATCH: the next pointer's reload store sits next to the loop branch: this asm's memory clobber takes the store's dependence at cost 1, where stock charges the branch 2 (2 to 0; European 2 to 0) */
+            /* FAKEMATCH: the next pointer's reload store sits next to the loop branch: this asm's memory clobber takes the store's dependence at cost 1, where stock charges the branch 2 (2 to 0; European 2 to 0; Japanese 2 to 0) */
             asm("" : "=r"(bits) : "0"(bits) : "memory");
         }
     }

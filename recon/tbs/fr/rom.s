@@ -970,21 +970,6 @@ DisplayScroll_Font:
 	.global Title_PromptTiles
 Title_PromptTiles:
 	.incbin "baserom.gba", 0x000f68bc, 0x000000e6
-	.global Data_080f39ab
-Data_080f39ab:
-	.incbin "baserom.gba", 0x000f69a2, 0x00000006
-	.global Title_PromptBlendLevels
-Title_PromptBlendLevels:
-	.incbin "baserom.gba", 0x000f69a8, 0x0000003c
-	.global Palette_ChannelCurve
-Palette_ChannelCurve:
-	.incbin "baserom.gba", 0x000f69e4, 0x00000040
-	.global Palette_ChannelCurveLight
-Palette_ChannelCurveLight:
-	.incbin "baserom.gba", 0x000f6a24, 0x00000040
-	.global Palette_ChannelCurveContrast
-Palette_ChannelCurveContrast:
-	.incbin "baserom.gba", 0x000f6a64, 0x00000040
 	.section .rom.000f83dc, "ax"
 	.incbin "baserom.gba", 0x000f83dc, 0x00000020
 	.global Data_080f53fc

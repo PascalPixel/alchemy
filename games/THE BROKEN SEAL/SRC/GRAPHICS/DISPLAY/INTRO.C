@@ -54,6 +54,17 @@ s32 Resource_DecodeByteLz(const void *source, void *destination);
 
 extern u8 gDebugPaused;
 
+// 六列のスプライトの x
+const u8 Title_IntroSpriteColumns[] = { 96, 136, 140, 160, 168, 184 };
+
+// プロンプトの明るさ（60 フレームで一巡）
+const u8 Title_PromptBlendLevels[60] = {
+	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+	16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+	16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+	15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+};
+
 #define ENTRY(i, word) (work->area.objects[i][word])
 
 #define WRAP256(v) \
@@ -63,7 +74,7 @@ extern u8 gDebugPaused;
         (v) += 256
 
 #define PLACE(column, half) \
-    x = Data_080f39ab[column] - (half); \
+    x = Title_IntroSpriteColumns[column] - (half); \
     y = (top - base) * ((x + (half)) - 104) / 80 + base - (half); \
     WRAP256(y)
 

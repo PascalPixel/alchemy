@@ -280,8 +280,6 @@
         "*/games/COMMON/SRC/SYSTEM/LINK/CREATE_COUNTDOWN_LABEL_WINDOW.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/GLYPH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY.o"(.text)
-        "*/recon/tbs/raw/08021e6a.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/08021e6c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SET_RECT_HIGHLIGHT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/DJINNDIF.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/RENDER/CREATE_OUTPUT_FROM_RESOURCE_SLOT.o"(.text)

@@ -167,12 +167,6 @@ Map_LayeredScenes:
 	.global UiText_DrawGlyphArm
 UiText_DrawGlyphArm:
 	.incbin "baserom.gba", 0x000155d0, 0x0000030c
-	.section .rom.00021ece, "ax"
-	.incbin "baserom.gba", 0x00021ece, 0x00000002
-	.global Ui_RunSelectionScreen
-	.thumb_func
-Ui_RunSelectionScreen:
-	.incbin "baserom.gba", 0x00021ed0, 0x00000900
 	.section .rom.00027170, "ax"
 	.global Battle_CollectPartyCommands
 	.type Battle_CollectPartyCommands, %function

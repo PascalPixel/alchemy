@@ -8,27 +8,15 @@
 #include "sound.h"
 #include "system.h"
 #include "audio_engine_types.h"
-
-extern struct SoundPlayer gMusicPlayerBgm;
-extern u8 gMusicPlayerFanfare[];
-
-extern u8 gMusicRestoreDelay;
-extern u16 gMusicVolume;
-extern u16 gMusicPitchStep;
-extern u16 gMusicVolumeStep;
-extern u16 gMusicPitchTarget;
-extern u16 gMusicVolumeTarget;
-extern u16 gMusicPitch;
-
+#include "audio_engine_symbols.h"
 
 void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
 {
-    /* FAKEMATCH: the player byte prefix keeps status+4 as a byte displacement; a typed field folds it into the literal. */
     s32 delta;
 
     if (gMusicRestoreDelay != 0) {
         if (gMusicRestoreDelay == 1) {
-            if (gMusicPlayerFanfare[(u32)&((struct SoundPlayer *)0)->status] == 0) {
+            if ((u8)gMusicPlayerFanfare.status == 0) {
                 gMusicRestoreDelay = 0;
                 gMusicVolumeTarget = 0x100;
             }

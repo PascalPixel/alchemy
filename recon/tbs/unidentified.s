@@ -19,10 +19,6 @@ Party_PairResolveRules:
 	.global RomWords_0809e270
 RomWords_0809e270:
 	.incbin "baserom.gba", 0x0009e270, 0x00000218
-	.section .unidentified.0809e4ce,"a"
-	.global Debug_PaletteSwatchTiles
-Debug_PaletteSwatchTiles:
-	.incbin "baserom.gba", 0x0009e4ce, 0x000001b2
 	.section .unidentified.080ede9f,"a"
 	.global PuffArc_CellWidths
 PuffArc_CellWidths:

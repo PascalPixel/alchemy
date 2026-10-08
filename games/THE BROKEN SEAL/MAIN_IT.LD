@@ -476,7 +476,7 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ZONEDATA.o"(.rodata)
     "*/recon/tbs/it/rom.o"(.rom.0009db48)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BTLCUE.o"(.rodata)
-    "*/recon/tbs/it/rom.o"(.rom.0009e626)
+    "*/games/THE BROKEN SEAL/SRC/DEBUG/SWATCH.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FXDATA.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/FIELD/SCENES.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/SCRIPTS.o"(.rodata)

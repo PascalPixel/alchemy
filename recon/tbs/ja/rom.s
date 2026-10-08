@@ -37,10 +37,6 @@ Party_PairResolveRules:
 	.global RomWords_0809e270
 RomWords_0809e270:
 	.incbin "baserom.gba", 0x00095254, 0x00000218
-	.section .rom.000954b2, "ax"
-	.global Debug_PaletteSwatchTiles
-Debug_PaletteSwatchTiles:
-	.incbin "baserom.gba", 0x000954b2, 0x000001b2
 	.section .rom.000d9972, "ax"
 	.incbin "baserom.gba", 0x000d9972, 0x00000002
 	.section .rom.000e4e9f, "ax"

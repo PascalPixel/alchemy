@@ -7,7 +7,8 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 const USAGE: &str = "usage: alchemy check layout [--report]\n\
-Refuses every tile-sheet PNG whose finder layout beats the drawn one clearly;\n\
+Refuses every tile-sheet PNG whose finder layout beats the drawn one clearly, unless\n\
+it is the best arrangement of the whole sprites its recipe names;\n\
 --report lists every sheet with both scores instead.";
 
 pub const MARGIN: f64 = 0.1;
@@ -196,6 +197,9 @@ pub struct Judgement {
     pub best_score: f64,
     pub runs: Vec<SpriteRun>,
     pub runs_score: f64,
+    /// The best score of any arrangement of whole sprites, when the recipe
+    /// names a sprite shape (A4).
+    pub sprites_score: Option<f64>,
     pub bitmap: bool,
 }
 
@@ -226,8 +230,18 @@ impl Judgement {
         }
     }
 
+    /// A sheet whose recipe names a sprite shape can only be drawn as whole
+    /// sprites; drawn as their best arrangement, a finder layout that cuts
+    /// them is no drawing A2 allows. Glyph strips need this: letters stacked
+    /// without leading join across every row, so the finder's cut columns
+    /// outscore any honest arrangement of the words.
+    pub fn best_of_its_sprites(&self) -> bool {
+        self.sprites_score
+            .is_some_and(|best| self.drawn_score >= best)
+    }
+
     pub fn banked(&self) -> bool {
-        self.found_score() - self.drawn_score > MARGIN
+        self.found_score() - self.drawn_score > MARGIN && !self.best_of_its_sprites()
     }
 }
 
@@ -269,6 +283,19 @@ pub fn judge(png: &[u8], form: &str) -> Result<Option<Judgement>, String> {
     } else {
         Vec::new()
     };
+    let sprites_score = (meta != (1, 1)).then(|| {
+        let sprites = count / (meta.0 * meta.1);
+        (1..=sprites)
+            .filter(|wide| sprites.is_multiple_of(*wide))
+            .map(|wide| {
+                let layout = TileLayout {
+                    meta,
+                    tiles_wide: wide * meta.0,
+                };
+                tile_sheet_score(&tiles, bpp, layout)
+            })
+            .fold(0.0, f64::max)
+    });
     Ok(Some(Judgement {
         tiles: count,
         drawn,
@@ -277,6 +304,7 @@ pub fn judge(png: &[u8], form: &str) -> Result<Option<Judgement>, String> {
         best_score: tile_sheet_score(&tiles, bpp, best),
         runs_score: sprite_runs_score(&tiles, bpp, &runs),
         runs,
+        sprites_score,
         bitmap: form == BITMAP,
     }))
 }
@@ -346,8 +374,12 @@ fn run(root: &Path, report: bool) -> Result<(), String> {
             })
             .collect::<Vec<_>>()
             .join(" ");
+        let sprites = judgement
+            .sprites_score
+            .map(|best| format!(", best whole sprites ({best:.3})"))
+            .unwrap_or_default();
         let line = format!(
-            "{name} .{}: drawn {} ({:.3}), finder {} ({:.3}), sprite runs {runs} ({:.3})",
+            "{name} .{}: drawn {} ({:.3}), finder {} ({:.3}), sprite runs {runs} ({:.3}){sprites}",
             recipe.form,
             describe(judgement.drawn),
             judgement.drawn_score,
@@ -502,6 +534,58 @@ mod tests {
         let png = png_from_bitmap(&pixels, &[0u8; 32], 8).unwrap();
         let judgement = judge(&png, "4bpp").unwrap().unwrap();
         assert!(judgement.banked(), "{judgement:?}");
+    }
+
+    /// A 32x8 sprite of four glyph tiles, or a blank one: each glyph a box
+    /// with a shadow row beneath and an empty column after, as a font draws
+    /// letters without leading.
+    fn glyph_strip(sprites: &[bool], sprites_wide: usize) -> Vec<u8> {
+        let glyph = |x: usize, y: usize| {
+            if x < 7 && (y == 0 || y == 6 || x == 0 || x == 6) {
+                15
+            } else {
+                u8::from(y == 7 && (1..7).contains(&x))
+            }
+        };
+        let width = sprites_wide * 32;
+        let mut pixels = vec![0u8; sprites.len() * 32 * 8];
+        for (sprite, &drawn) in sprites.iter().enumerate() {
+            let (left, top) = (sprite % sprites_wide * 32, sprite / sprites_wide * 8);
+            for y in 0..8 {
+                for x in 0..32 {
+                    if drawn {
+                        pixels[(top + y) * width + left + x] = glyph(x % 8, y);
+                    }
+                }
+            }
+        }
+        pixels
+    }
+
+    #[test]
+    fn a_glyph_strip_drawn_as_its_best_whole_sprites_passes() {
+        let palette = [0u8; 32];
+        let sprites = [false, false, false, true, true, true];
+        let png = png_from_bitmap(&glyph_strip(&sprites, 1), &palette, 32).unwrap();
+        let judgement = judge(&png, "4bpp32x8").unwrap().unwrap();
+        assert!(
+            judgement.found_score() - judgement.drawn_score > MARGIN,
+            "the finder's cut columns beat the words: {judgement:?}"
+        );
+        assert_ne!(judgement.best.meta, (4, 1), "{judgement:?}");
+        assert!(judgement.best_of_its_sprites(), "{judgement:?}");
+        assert!(!judgement.banked(), "{judgement:?}");
+        let png = png_from_bitmap(&glyph_strip(&sprites, 2), &palette, 64).unwrap();
+        let worse = judge(&png, "4bpp32x8").unwrap().unwrap();
+        assert!(!worse.best_of_its_sprites(), "{worse:?}");
+        assert!(
+            worse.banked(),
+            "a worse arrangement of the sprites: {worse:?}"
+        );
+        let png = png_from_bitmap(&glyph_strip(&sprites, 1), &palette, 32).unwrap();
+        let plain = judge(&png, "4bpp").unwrap().unwrap();
+        assert_eq!(plain.sprites_score, None);
+        assert!(plain.banked(), "no sprite shape named: {plain:?}");
     }
 
     fn map_sibling(name: &str) -> Result<Vec<u8>, String> {

@@ -14,7 +14,9 @@ use std::sync::Mutex;
 
 const USAGE: &str = "usage: alchemy build rom [--target GAME-EDITION] [--script FILE] [--output DIR] [--keep-going]\n\
 Compile and assemble every object the linker script lists, link them in its\n\
-order and write the ROM image beside the linker map. Japanese TBS is the default.\n\
+order, write the ROM image beside the linker map and fix its cartridge header\n\
+(Nintendo logo and complement check) as pret's gbafix does. Japanese TBS is\n\
+the default.\n\
 --keep-going writes the\n\
 image despite link errors, for locating differences; it never passes a compare.";
 
@@ -205,7 +207,7 @@ fn link_indexed(
             ],
             root,
         )?;
-        pad_to_cartridge(&image)?;
+        finish_image(&image)?;
         if !keep_going {
             index.record(&products, &key, Vec::new())?;
         }
@@ -246,6 +248,7 @@ fn link_key(
 ) -> Result<String, String> {
     let mut hasher = Sha256::new();
     hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
+    hasher.update(env!("ALCHEMY_HEADER_FIX").as_bytes());
     hasher.update(portable(root, arguments.join("\0").as_bytes()));
     hasher.update(text.as_bytes());
     for object in objects {
@@ -404,14 +407,15 @@ fn parallel<T: Sync, R: Send>(
         .collect())
 }
 
-fn pad_to_cartridge(image: &Path) -> Result<(), String> {
+/// Finishes the image objcopy wrote: the cartridge header fix-up pret's
+/// Makefiles run right after objcopy (`gbafix ROM -p --silent`), the
+/// Nintendo logo and the complement check, then zero padding to the
+/// cartridge's size.
+fn finish_image(image: &Path) -> Result<(), String> {
     let mut bytes = fs::read(image).map_err(|error| format!("{}: {error}", image.display()))?;
-    let size = cartridge_size(bytes.len());
-    if size != bytes.len() {
-        bytes.resize(size, 0);
-        fs::write(image, bytes).map_err(|error| format!("{}: {error}", image.display()))?;
-    }
-    Ok(())
+    crate::gbafix::fix(&mut bytes, &crate::gbafix::Fields::default(), false);
+    bytes.resize(cartridge_size(bytes.len()), 0);
+    fs::write(image, bytes).map_err(|error| format!("{}: {error}", image.display()))
 }
 
 fn cartridge_size(length: usize) -> usize {

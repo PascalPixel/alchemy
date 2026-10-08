@@ -1,10 +1,3 @@
-	.section .rom.00000000, "ax"
-	.global Rom_Start
-Rom_Start:
-	.incbin "baserom.gba", 0x00000000, 0x000000af
-	.global Rom_LanguageCode
-Rom_LanguageCode:
-	.incbin "baserom.gba", 0x000000af, 0x00000011
 	.section .rom.00002e00, "ax"
 	.incbin "baserom.gba", 0x00002e00, 0x00000020
 	.section .rom.00007380, "ax"

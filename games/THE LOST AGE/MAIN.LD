@@ -14,7 +14,7 @@ SECTIONS
     ewram (NOLOAD) : { "*/recon/tla/sym_ewram.o"(.sym_ewram) } > EWRAM
     .rom_start :
     {
-    "*/recon/tla/ja/rom.o"(.rom.00000000)
+    "*/games/THE LOST AGE/SRC/SYSTEM/ROM_HEAD.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/BOOT.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SYSTEM/ENTRY.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SOUND/DRIVER/RESAMPLER_RECORDS.o"(.text .rodata .data .padding)

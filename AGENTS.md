@@ -50,6 +50,11 @@ A game is finished when all six hold (Pascal, 2026-10-08):
   one listing per function or run. `recon/<game>/en/MAIN.LD` is the English
   object order; German, Spanish, French and Italian follow it through their
   own `recon/<game>/<lang>/MAIN.LD`.
+- `games/<GAME>/SRC/SYSTEM/ROM_HEAD.S` is the cartridge header, linked
+  first in every edition, as pret's `rom_header.s`: the logo is
+  `.space 156` and the complement 0. Right after objcopy the build runs
+  the header fix-up (`alchemy gbafix`, pret's gbafix) on every ROM it
+  links, which writes the logo and the complement (L1).
 - `games/THE BROKEN SEAL/INCLUDE/EVENT.H` is the scene command vocabulary
   (S3); `FIELD_EVENT.H` and `FIELD_SERVICE.H` hold the script layer the
   commands expand to.
@@ -122,9 +127,10 @@ or functions is exactly this cheating.
 
 - **O1** ROM bytes reach the build only through pret's
   `.incbin "baserom.gba", OFFSET, SIZE` scaffold in `recon/<game>`, which never
-  counts. Nothing else derived from the ROM or the expected output (bytes,
-  addresses, sizes, tokens, tables, hashes) may steer the build or the count,
-  `out/` included; reports under `out/` are for people only.
+  counts, and the cartridge logo the header fix-up writes (L1). Nothing else
+  derived from the ROM or the expected output (bytes, addresses, sizes,
+  tokens, tables, hashes) may steer the build or the count, `out/` included;
+  reports under `out/` are for people only.
   _Check: publication._
 - **O2** Every name is defined where its bytes are, as a C definition or a
   label, and layout is the linker scripts' object order. No equate, alias,

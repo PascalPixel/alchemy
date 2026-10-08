@@ -1,6 +1,6 @@
 .rom_start :
 {
-    "*/recon/tbs/es/rom.o"(.rom.00000000)
+    "*/games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEAD.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/RUNTIME.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/ENTRY.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SOUND/DRIVER/RESAMPLER_KERNELS.o"(.text .rodata .data .padding)

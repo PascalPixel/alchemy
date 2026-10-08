@@ -98,19 +98,11 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 				c = Iwram_SignedDivide(r + ((c >> 5) & 31) + ((c >> 10) & 31), 10);
 				r = c * 4 + 5;
 				b = c * 3 + 5;
-				/* FAKEMATCH: keep the native channel copy order after the ordinary shared-color form rotates r5-r7. */
-				__asm__("" : "+r"(r));
 				g = b;
-				/* FAKEMATCH: preserve separate native channel lower-clamp lifetimes; ordinary assignments merge their tests. */
-				__asm__("" : "+r"(g));
 				if (r < 8)
 					r = 8;
-				if (b < 8)
-				{
+				if (g < 8)
 					g = 8;
-					/* FAKEMATCH: retain the second native blue test on the clamped path after ordinary tests merge. */
-					__asm__("" : : "r"(b));
-				}
 				if (b < 8)
 					b = 8;
 				if (r > 28)
@@ -255,7 +247,6 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 		u32 tb;
 		s32 r;
 		s32 g;
-		s32 b;
 
 		tr = mode & 31;
 		tg = (mode >> 5) & 31;

@@ -114,8 +114,7 @@ void RunBattleEffect03(void)
 
 	// 中心の 1 個
 	target = Object_Spawn(233, 0, 0, 0);
-	/* FAKEMATCH: the ROM keeps object as a second copy of the new spark (r5 beside r6); a plain object = target is copy-propagated away by gcse. */
-	asm("" : "=r"(object) : "0"(target));
+	object = target;
 	if (target != 0)
 	{
 		target->scale_y = 0xb333;
@@ -134,6 +133,8 @@ void RunBattleEffect03(void)
 		// 2 フレームごとに子の値を切り替える（4 回に 1 回は 10）
 		for (i = 0; i < 30; i++)
 		{
+			/* FAKEMATCH: needed to match: the ROM keeps object as a second register copy of the spark (r5 beside r6); this redundant reassignment stops gcse copy-propagating object = target away, and loop then drops it (differ 1 without it). */
+			target = object;
 			if (i & 3)
 				Animation_ApplyChildValuesFar(object, 9);
 			else

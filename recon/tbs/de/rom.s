@@ -1,5 +1,3 @@
-	.section .rom.00002e00, "ax"
-	.incbin "baserom.gba", 0x00002e00, 0x00000020
 	.section .rom.00007a98, "ax"
 	.incbin "baserom.gba", 0x00007a98, 0x00000024
 	.section .rom.00007b68, "ax"

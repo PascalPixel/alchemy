@@ -55,7 +55,6 @@
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/EXECUTE_TRANSFER.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/PATCH_THUMB_BRANCH.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/RELEASE_HEAP_BLOCK.o"(.text .rodata .data .padding)
-    "*/recon/tbs/de/rom.o"(.rom.00002e00)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/INITIALIZE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/IDLE_FOREVER.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/RESOURCE.o"(.text)

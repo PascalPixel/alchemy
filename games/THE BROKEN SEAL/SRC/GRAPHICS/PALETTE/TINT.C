@@ -14,6 +14,10 @@
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
 #include "HEAP_STATE.H"
+#include "MEM.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "SCENE.H"
+#include "GLOBAL_CELLS.H"
 
 #define QUEUE_PALETTE(source, destination) {                                \
         u32 saved;                                                          \
@@ -77,7 +81,6 @@ void TitlePalette_UpdateFade(void)
     }
     QUEUE_PALETTE(bank + 256, 0x05000200);
 }
-
 
 void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 {
@@ -321,5 +324,62 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         if (half == 2)
             mode += 0x600;
         Dma_Set((const void *)mode, dst, ((cnt * 6) >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+    }
+}
+
+void TitlePalette_InitializeBuffers(void)
+{
+    volatile u32 zero;
+    struct TitlePaletteWork *buffer;
+    s32 operation;
+
+    buffer = Runtime_AllocateBlock(32, sizeof(*buffer));
+    zero = 0;
+    Dma_Set(&zero, buffer, 0x85000c01, REG_DMA3);
+    Dma_Set((void *)0x05000000, buffer, 0x84000080, REG_DMA3);
+    Dma_Set((void *)0x05000200, &buffer->palette[256], 0x84000080, REG_DMA3);
+    Graphics_TransformPaletteBuffer(0x10000, buffer->palette, buffer->target, 0);
+    operation = 3200;
+    Scheduler_AddOrUpdateCallback(TitlePalette_UpdateFade, operation);
+}
+
+void Runtime_ScheduleCallbackAndReleaseBlock32A(void)
+{
+    Scheduler_RemoveCallback(&TitlePalette_UpdateFade);
+    Runtime_ReleaseHeapBlock(0x20);
+}
+
+void Graphics_TransformLargePalette(s32 index, s32 transform)
+{
+    struct TitlePaletteWork *target = Data_03001ed0;
+
+    if (target != NULL)
+        Graphics_TransformPaletteBuffer(index, target->palette, target->target, transform);
+}
+
+void Graphics_TransformSmallPalette(s32 index, s32 transform)
+{
+    struct TitlePaletteWork *target = Data_03001ed0;
+
+    if (target != NULL)
+        Graphics_TransformPaletteBuffer(index, target, target->current, transform);
+}
+
+void Graphics_SetPaletteTransformValue(s32 value)
+{
+    struct TitlePaletteWork *target = Data_03001ed0;
+
+    if (target != NULL)
+        target->palette[0] = value;
+}
+
+void Graphics_UpdatePaletteInterpolation(s32 value)
+{
+    struct TitlePaletteWork *state = Data_03001ed0;
+
+    if (state != NULL) {
+        state->duration = value;
+        state->step = 0;
+        Graphics_InterpolatePaletteBuffers((s16 *)state->current, (s16 *)state->target, (s16 *)state->delta, value);
     }
 }

@@ -328,11 +328,10 @@ s32 Scene_RunEntrySetup(void)
             BattleFx_SetQueuedSoundAndPlay(170);
             DisplayBlend_EnableRunScript();
             {
-                /* FAKEMATCH: pins the zero to r3. */
-                register s32 zero asm("r3");
+                s32 zero = 0;
 
-                /* FAKEMATCH: sets the zero before the address load. */
-                asm("mov %0, #0" : "=l"(zero));
+                /* FAKEMATCH: volatile empty asm barrier on the zero: movs r3, #0 stays before the register address load as native; as a plain empty asm the address load goes first (1 of 1689 rows differ); arm_reorg counts it as 4 bytes, so with no asm here the pools move (81 rows differ) */
+                asm volatile("" : "+l"(zero));
                 REG_BLDCNT = zero;
                 /* FAKEMATCH: keeps the store before the next call setup. */
                 asm volatile("");

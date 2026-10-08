@@ -140,7 +140,7 @@
     "*/games/COMMON/SRC/SYSTEM/SAVE/ERASE_ATMEL_FLASH_BLOCK.o"(.rodata)
     "*/games/COMMON/SRC/SYSTEM/SAVE/PROGRAM_ATMEL_FLASH_SECTOR.o"(.rodata)
     "*/games/COMMON/SRC/SYSTEM/SAVE/PROGRAM_ATMEL_FLASH_BLOCK.o"(.rodata)
-    "*/recon/tbs/fr/rom.o"(.rom.00007c74)
+    . = ABSOLUTE(0x08008800);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/FIELD.o"(.text .rodata .data .padding)
     "*/recon/tbs/fr/rom.o"(.rom.00008ab8)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/DECODE.o"(.text .rodata .data .padding)
@@ -186,6 +186,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/FIND_NEXT_NUMBER_WITH_METADATA.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/GRID.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.00012720)
+    . = ABSOLUTE(0x08014000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/WINDOW.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DECODE_SYMBOL.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/LOOKUP_SYMBOL.o"(.text .rodata .data .padding)
@@ -309,6 +310,7 @@
     "*/recon/tbs/fr/rom.o"(.rom.00032ecc)
     "*/games/THE BROKEN SEAL/TEXT/MESSAGES.o"(.rodata)
     "*/recon/tbs/fr/rom.o"(.rom.00073a6c)
+    . = ABSOLUTE(0x0807c000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/GAME.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/CHARACTER.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/RATIOS.o"(.text)
@@ -327,6 +329,7 @@
     "*/games/THE BROKEN SEAL/SRC/GAME/INVENTORY/ADD_AND_EQUIP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/INVENTORY/RESTORE_SNAPSHOT.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.0007f828)
+    . = ABSOLUTE(0x0808f000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/OBJECT.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/SELECT_GROUP_ENTRY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DATA_GET_RESOURCE_GROUP.o"(.text)
@@ -431,6 +434,7 @@
     "*/recon/tbs/fr/rom.o"(.rom.000a1568)
     "*/games/THE BROKEN SEAL/SRC/FIELD/SCENES.o"(.rodata)
     "*/recon/tbs/fr/rom.o"(.rom.000a4948)
+    . = ABSOLUTE(0x080a5800);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/MENU.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/DISABLE_OVERLAY_CALLBACKS_WITH_FLAGS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/ENABLE_OVERLAY_CALLBACKS_WITH_FLAGS.o"(.text)
@@ -509,6 +513,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/CREATE_WITH_LOADED_RESOURCE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/ARROWS.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000b32bc)
+    . = ABSOLUTE(0x080b4000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/SHOP.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/VISIT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/SHOP.o"(.text)
@@ -527,6 +532,7 @@
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/INN.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/ITEM_SELECTION.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000b7940)
+    . = ABSOLUTE(0x080b9000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/BATTLE.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECODE.o"(.text .rodata .data .padding)
     "*/recon/tbs/fr/rom.o"(.rom.000b9204)
@@ -607,6 +613,7 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/SUMMON.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/SPOILS.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000c6a22)
+    . = ABSOLUTE(0x080cc800);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/EFFECT.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/FALLING.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_FIVE_MODE_MODE0.o"(.text)
@@ -696,6 +703,7 @@
     "*/recon/tbs/fr/rom.o"(.rom.000f1648)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_GOUSEI_IRO.o"(.text .rodata .data .padding)
     "*/recon/tbs/fr/rom.o"(.rom.000f2814)
+    . = ABSOLUTE(0x080f3000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/SCROLL.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_SEKIWA.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_TENKAI.o"(.text .rodata .data .padding)
@@ -707,6 +715,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SLIDES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/CREDITS.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000f3a5c)
+    . = ABSOLUTE(0x080f5000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/PALETTE.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/INTRO.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SPLASH.o"(.text)
@@ -716,15 +725,18 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/TITLE.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/PALETTE.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000f68bc)
+    . = ABSOLUTE(0x080f7000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/BLANK_RUN.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CAMERA/CAMERA.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/SCALE_RGB555_BUFFER.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000f83dc)
+    . = ABSOLUTE(0x080f9000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/BLANK_LOAD.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/COLORFX.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MINIGAME/REEL_INIT_TITLE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SOUND/TRACK_SLOT_BUFFER.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000fb708)
+    . = ABSOLUTE(0x080fb800);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/SOUND.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SOUND/COMMAND_PLAY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SOUND/MUSIC_PLAYER_STEP_VOLUME_AND_PITCH_TOWARD_TARGETS.o"(.text)
@@ -1042,7 +1054,7 @@
     "*/games/COMMON/SOUND/SEQUENCE/SE_309.o"(.rodata)
     "*/games/COMMON/SOUND/SEQUENCE/SE_310.o"(.rodata)
     "*/games/COMMON/SOUND/SEQUENCE/SE_311.o"(.rodata)
-    "*/recon/tbs/fr/rom.o"(.rom.00186e98)
+    . = ABSOLUTE(0x08187800);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/RESOURCE.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/METADATA_GET_RECORD.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/SPRITE/SPRITES.o"(.rodata)
@@ -1051,7 +1063,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/ANIMREF1.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/ANIMREF2.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/SPRITE/SPRITES.o"(.rodata.b)
-    "*/recon/tbs/fr/rom.o"(.rom.003217d8)
+    . = ABSOLUTE(0x08321800);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/DIRECTORY.o"(.rodata)
     "*/recon/tbs/fr/rom.o"(.rom.003227a0)
     "*/games/COMMON/SRC/GRAPHICS/UI/WINDOW_TILES.o"(.rodata)

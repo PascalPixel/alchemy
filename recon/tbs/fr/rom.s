@@ -42,8 +42,6 @@ Flash_ChipAtmel:
 	.global Flash_ChipAtmelLayout
 Flash_ChipAtmelLayout:
 	.incbin "baserom.gba", 0x00007c20, 0x0000002c
-	.section .rom.00007c74, "ax"
-	.incbin "baserom.gba", 0x00007c74, 0x00000b8c
 	.section .rom.00008ab8, "ax"
 	.global ResourceSlot_ConversionTables
 ResourceSlot_ConversionTables:
@@ -158,7 +156,7 @@ Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x00012ee0, 0x000000a4
 	.global Map_LayeredScenes
 Map_LayeredScenes:
-	.incbin "baserom.gba", 0x00012f84, 0x0000107c
+	.incbin "baserom.gba", 0x00012f84, 0x000008c5
 	.section .rom.000288c8, "ax"
 	.global WorkspaceOptions_SliderTiles
 WorkspaceOptions_SliderTiles:
@@ -406,7 +404,7 @@ NameEntry_KeyboardTilemap:
 	.incbin "baserom.gba", 0x00073ac8, 0x00000104
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
-	.incbin "baserom.gba", 0x00073bcc, 0x00008434
+	.incbin "baserom.gba", 0x00073bcc, 0x00000004
 	.section .rom.0007f828, "ax"
 	.global Character_ElementGroupTable
 Character_ElementGroupTable:
@@ -455,7 +453,7 @@ Element_PowerResistCurve:
 	.incbin "baserom.gba", 0x0008e258, 0x00000014
 	.global Djinn_DefinitionTable
 Djinn_DefinitionTable:
-	.incbin "baserom.gba", 0x0008e26c, 0x00000d94
+	.incbin "baserom.gba", 0x0008e26c, 0x000003b6
 	.section .rom.000a1568, "ax"
 	.global Data_0809c410
 Data_0809c410:
@@ -653,7 +651,7 @@ gEffectScripts:
 	.incbin "baserom.gba", 0x000a5284, 0x0000000c
 	.global WorldMap_PlaceMarkers
 WorldMap_PlaceMarkers:
-	.incbin "baserom.gba", 0x000a5290, 0x00000570
+	.incbin "baserom.gba", 0x000a5290, 0x0000014c
 	.section .rom.000b32bc, "ax"
 	.global UiIcon_ResourceTiles
 UiIcon_ResourceTiles:
@@ -749,7 +747,7 @@ CharacterMenu_CursorWidths:
 	.global RomBytes_080af304
 FourObjectMotion_ResourceIds:
 RomBytes_080af304:
-	.incbin "baserom.gba", 0x000b3b74, 0x0000048c
+	.incbin "baserom.gba", 0x000b3b74, 0x0000000d
 	.section .rom.000b7940, "ax"
 	.global Shop_HandTiles
 Shop_HandTiles:
@@ -795,7 +793,7 @@ Data_080b4ab2:
 	.incbin "baserom.gba", 0x000b8ab2, 0x00000004
 	.global Inn_PriceMultipliers
 Inn_PriceMultipliers:
-	.incbin "baserom.gba", 0x000b8ab6, 0x0000054a
+	.incbin "baserom.gba", 0x000b8ab6, 0x0000000c
 	.section .rom.000b9204, "ax"
 	.incbin "baserom.gba", 0x000b9204, 0x00000008
 	.section .rom.000b9218, "ax"
@@ -915,7 +913,7 @@ RomBytes_080c73f8:
 	.incbin "baserom.gba", 0x000cb410, 0x00000028
 	.global Summon_EntryTable
 Summon_EntryTable:
-	.incbin "baserom.gba", 0x000cb438, 0x000013c8
+	.incbin "baserom.gba", 0x000cb438, 0x0000055b
 	.section .rom.000e6172, "ax"
 	.incbin "baserom.gba", 0x000e6172, 0x00000002
 	.section .rom.000f1278, "ax"
@@ -1701,7 +1699,7 @@ RisingBurst_SparkSizes:
 	.incbin "baserom.gba", 0x000f2814, 0x00000020
 	.global SentouKouka_BitOperands
 SentouKouka_BitOperands:
-	.incbin "baserom.gba", 0x000f2834, 0x000007cc
+	.incbin "baserom.gba", 0x000f2834, 0x00000020
 	.section .rom.000f3a5c, "ax"
 	.global DisplayScroll_SlideResources
 DisplayScroll_SlideResources:
@@ -1714,7 +1712,7 @@ DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x000f42a4, 0x00000544
 	.global DisplayScroll_Font
 DisplayScroll_Font:
-	.incbin "baserom.gba", 0x000f47e8, 0x00000818
+	.incbin "baserom.gba", 0x000f47e8, 0x000002f3
 	.section .rom.000f68bc, "ax"
 	.global Title_PromptTiles
 Title_PromptTiles:
@@ -1733,7 +1731,7 @@ Palette_ChannelCurveLight:
 	.incbin "baserom.gba", 0x000f6a24, 0x00000040
 	.global Palette_ChannelCurveContrast
 Palette_ChannelCurveContrast:
-	.incbin "baserom.gba", 0x000f6a64, 0x0000059c
+	.incbin "baserom.gba", 0x000f6a64, 0x00000040
 	.section .rom.000f83dc, "ax"
 	.incbin "baserom.gba", 0x000f83dc, 0x00000020
 	.global Data_080f53fc
@@ -1747,7 +1745,7 @@ Data_080f5408:
 	.incbin "baserom.gba", 0x000f8408, 0x00000012
 	.global Data_080f541a
 Data_080f541a:
-	.incbin "baserom.gba", 0x000f841a, 0x00000be6
+	.incbin "baserom.gba", 0x000f841a, 0x0000000c
 	.section .rom.000fb708, "ax"
 	.global ReelGame_SparkCellOffsets
 ReelGame_SparkCellOffsets:
@@ -1766,7 +1764,7 @@ ReelGame_FrameSpriteY:
 	.incbin "baserom.gba", 0x000fb738, 0x0000000e
 	.global ReelGame_TitleLetterWidths
 ReelGame_TitleLetterWidths:
-	.incbin "baserom.gba", 0x000fb746, 0x000000ba
+	.incbin "baserom.gba", 0x000fb746, 0x00000008
 	.section .rom.000fdfa0, "ax"
 	.global Sound_CommandTableTemplate
 Sound_CommandTableTemplate:
@@ -1804,10 +1802,6 @@ Sound_ExtendedCommandTable:
 	.global Sound_PlayerSlots
 Sound_PlayerSlots:
 	.incbin "baserom.gba", 0x000fee24, 0x00000060
-	.section .rom.00186e98, "ax"
-	.incbin "baserom.gba", 0x00186e98, 0x00000968
-	.section .rom.003217d8, "ax"
-	.incbin "baserom.gba", 0x003217d8, 0x00000028
 	.section .rom.003227a0, "ax"
 	.global Resource_BuildStamp
 Resource_BuildStamp:

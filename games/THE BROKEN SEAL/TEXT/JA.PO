@@ -9255,11 +9255,11 @@ msgctxt "MsgSlotsBet"
 msgid "02311"
 msgstr "ベット"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceCoins"
 msgid "02312"
 msgstr "コイン"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceWinnings"
 msgid "02313"
 msgstr "しはらい"
 
@@ -9295,11 +9295,11 @@ msgctxt "MsgSlotsStart"
 msgid "02321"
 msgstr "A スロットスタート"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceThrow"
 msgid "02322"
 msgstr "A なげる"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceQuit"
 msgid "02323"
 msgstr "B やめる"
 

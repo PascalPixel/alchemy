@@ -34,9 +34,9 @@ struct ItemBreakFragmentSource
 struct ItemBreakFragmentObject
 {
 	u8	reserved_00[72];
-	s32 field_48;
+	s32 field_48; // 重力（gravity と同じ位置）
 	u8	reserved_4c[9];
-	u8	mode_55;
+	u8	mode_55; // motion_flags と同じ位置
 	u8	reserved_56[8];
 	u16 field_5e;
 };

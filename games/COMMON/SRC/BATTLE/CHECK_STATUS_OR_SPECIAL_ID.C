@@ -16,5 +16,5 @@ u32 Ability_CheckStatusOrSpecialId(s32 act_no)
 	if (act_no == 126) // エナジードレイン
 		return 1;
 	ep = BtlActGet(act_no)->pp_cost;
-	return (u32)((0 - ep) | ep) >> 31; // ep != 0
+	return (u32)((0 - ep) | ep) >> 31; // ep が 0 でなければ 1
 }

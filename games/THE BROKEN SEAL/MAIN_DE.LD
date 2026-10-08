@@ -775,7 +775,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/TINT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/TITLE.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/PALETTE.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000f4ed0)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/PROMPT.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/INTRO.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/CURVE.o"(.rodata)
     . = ABSOLUTE(0x080f5600);

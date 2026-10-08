@@ -568,17 +568,13 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destinati
 {
     struct MapCopyCommand *record = (struct MapCopyCommand *)command;
     u32 source = record->source;
-    /* FAKEMATCH: the fixed r3 sentinel preserves the r3/ip comparison registers. */
-    register u32 end __asm__("r3") = 0xffff;
-    /* FAKEMATCH: compare an ip snapshot and retain the entry in r0. */
-    register u32 test __asm__("ip") = source;
+    u32 end = 0xffff;
+    u32 test = source;
 
-    /* FAKEMATCH: the ip snapshot prevents comparing in r0 and dropping the register copy. */
-    __asm__ ("" : "+r" (test), "+r" (end));
-
+    /* FAKEMATCH: compares an ip copy of the entry and keeps the entry itself in r0. */
+    __asm__("" : "+r"(test));
     if (test != end) {
-        /* FAKEMATCH: the r9 sentinel preserves six register choices. */
-        register u32 stop __asm__("r9") = end;
+        u32 stop = end;
         s16 *args = (s16 *)(command + 1);
 
         while (1) {
@@ -594,11 +590,14 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destinati
             record++;
             WaitFrames((u16)delay);
             source = record->source;
-            test = source;
-            /* FAKEMATCH: the post-wait ip snapshot prevents comparing in r0 and dropping its register copy. */
-            __asm__ ("" : "+r" (test));
-            if (test == stop)
-                break;
+            {
+                u32 next = source;
+
+                /* FAKEMATCH: the same ip copy after the wait. */
+                __asm__("" : "+r"(next));
+                if (next == stop)
+                    break;
+            }
         }
     }
 }

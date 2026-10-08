@@ -2470,6 +2470,5 @@
         "*/games/THE BROKEN SEAL/SRC/MAP/MAP_179/MAP.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.08778c6b)
         "*/recon/tbs/unidentified.o"(.unidentified.08778c6c)
-        "*/recon/tbs/overlays.o"(.overlays)
-        "*/recon/tbs/unidentified.o"(.unidentified.087fd4b9)
+        "*/games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY/OVERLAYS.o"(.overlays)
     }

@@ -2424,7 +2424,7 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.00770997)
     "*/games/THE BROKEN SEAL/SRC/MAP/MAP_179/MAP.o"(.rodata)
     "*/recon/tbs/ja/rom.o"(.rom.007711ff)
-    "*/recon/tbs/ja/overlays.o"(.overlays)
+    "*/games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY/OVERLAYS.o"(.overlays)
 } > ROM
     IwramRuntime_Rom = LOADADDR(.iwram_runtime);
     Sound_Mixer = LOADADDR(.iwram_mixer) + 1;

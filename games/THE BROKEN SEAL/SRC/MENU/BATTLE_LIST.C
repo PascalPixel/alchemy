@@ -57,11 +57,12 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
     cursor_handle = Resource_LoadIntoFreeSlot(128);
     message_window = UiWindow_Create(0, 5, 30, 4, 42);
     icon_count = 0;
-    page = ((struct MenuCell *)gWindowWork[42])->page;
-    row = ((struct MenuCell *)gWindowWork[42])->row;
-    preferred_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
-    /* FAKEMATCH: restore the saved row before preparing the window call. */
-    __asm__ volatile ("");
+    /* FAKEMATCH: needed to match: a one-pass block restores the saved row before the window call */
+    do {
+        page = ((struct MenuCell *)gWindowWork[42])->page;
+        row = ((struct MenuCell *)gWindowWork[42])->row;
+        preferred_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
+    } while (0);
     window = UiWindow_Create(15, 9, 15, BATTLE_LIST_ROWS * 2 + 1, 6);
 
     for (i = 0; i < BATTLE_LIST_ROWS; i++) {

@@ -128,12 +128,12 @@ void Menu_ReleaseEntryObjects(void)
 
 void Menu_UpdateEntryObjectTransforms(void)
 {
-    /* FAKEMATCH: volatile transforms, signed sprite-byte writes and the byte cursor preserve loop registers and write order. */
+    /* FAKEMATCH: signed sprite-byte writes and the byte cursor preserve loop registers and write order. */
     u8 *p;
     s32 pos[2];
     s32 trans[4];
     s32 *pp;
-    volatile s32 *tp;
+    s32 *tp;
     s16 *hp;
     s32 i;
     s32 cnt;
@@ -158,9 +158,12 @@ void Menu_UpdateEntryObjectTransforms(void)
                 pp[1] = *(s32 *)(p + 64);
                 tp[1] = top;
                 tp[0] = hp[0] << 16;
-                tp[2] = (hp[8] << 16) + top;
+                /* FAKEMATCH: needed to match: a one-pass block keeps the transform stores in order */
+                do {
+                    tp[2] = (hp[8] << 16) + top;
+                } while (0);
                 tp[3] = 0;
-                Object_ApplyProjectedPlacementFar(obj, (s32 *)tp, pp, 0x4000);
+                Object_ApplyProjectedPlacementFar(obj, tp, pp, 0x4000);
             }
             i++;
             hp++;

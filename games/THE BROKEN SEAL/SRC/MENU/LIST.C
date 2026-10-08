@@ -65,11 +65,12 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
     unit = UnitGetFar(unit_id);
     message_window = UiWindow_Create(0, 5, 30, 4, 42);
     icon_count = BATTLE_LIST_ROWS;
-    page = ((struct MenuCell *)gWindowWork[42])->page;
-    row = ((struct MenuCell *)gWindowWork[42])->row;
-    preferred_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
-    /* FAKEMATCH: finish restoring the row before setting up the list window. */
-    __asm__ volatile ("");
+    /* FAKEMATCH: needed to match: a one-pass block restores the saved row before the list window */
+    do {
+        page = ((struct MenuCell *)gWindowWork[42])->page;
+        row = ((struct MenuCell *)gWindowWork[42])->row;
+        preferred_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
+    } while (0);
     window = UiWindow_Create(9, 9, 21, BATTLE_LIST_ROWS * 2 + 1, 6);
 
     for (i = 0; i < BATTLE_LIST_ROWS; i++) {

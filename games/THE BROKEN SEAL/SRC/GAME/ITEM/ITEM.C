@@ -685,10 +685,11 @@ s32 DjinnMenu_RunScreen(void)
                         break;
                     }
                 }
-                menu->selection[0] = column + found * DJINN_LIST_ROWS;
+                /* FAKEMATCH: needed to match: a one-pass block builds the selection address before found * 10 */
+                do {
+                    menu->selection[0] = column + found * DJINN_LIST_ROWS;
+                } while (0);
                 menu->cursor->active = 1;
-                /* FAKEMATCH: a barrier, so sched2 builds the selection address before found * 10. */
-                __asm__("");
             }
             state = 0;
             break;
@@ -737,10 +738,11 @@ s32 DjinnMenu_RunScreen(void)
                         break;
                     }
                 }
-                menu->selection[0] = column + found * DJINN_LIST_ROWS;
+                /* FAKEMATCH: needed to match: a one-pass block builds the selection address before found * 10 */
+                do {
+                    menu->selection[0] = column + found * DJINN_LIST_ROWS;
+                } while (0);
                 menu->cursor->active = 1;
-                /* FAKEMATCH: a barrier, so sched2 builds the selection address before found * 10. */
-                __asm__("");
             }
             state = 2;
             break;

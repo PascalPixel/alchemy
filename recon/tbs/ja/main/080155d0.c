@@ -3,8 +3,9 @@
  * glyph, eight dots a row read low bit first; codes 222 and 223 shift the glyph (ch + 32,
  * x - 1, y - 1, width 2, else width 8); wide glyphs come from UiText_KanjiGlyphs, 24 bytes
  * each with no width word (gw 10); the frame is 100 bytes.
- * Stock agbcc_arm (2026-10-08, S13 session 4): differ 8 against the ROM extent (195 and 195
- *   instructions, 4 rows each side; diff cannot score this ARM scaffold). Reshaping:
+ * Stock agbcc_arm (2026-10-08, S13 session 4): differ 8 against the ROM extent. Since the
+ *   staging merge, alchemy diff --edition tbs-ja --arm scores the scaffold itself: listing
+ *   193, draft 193, common 189, differ 8 (2026-10-08, session 5). Reshaping:
  *   ch -= 32 in place (native's sub r1, r1, #32), next = font + ofs then next++ with the first
  *   row read through it (next takes r9, colour spills), row = 0 after next, code assigned last
  *   in the wide arm, and the plot macro's VRAM base before sub (shared with the other five).
@@ -22,6 +23,14 @@
  *   takes this draft to differ 0 without its scheduling devices (keeping the two register
  *   pins and the frame local), as it does the European branch with ofs in r3 alone. So the
  *   Japanese edition stays on its scaffold until K3 settles the anti-dependence cost habit.
+ *   Session 5 (2026-10-08) re-derived this from agbcc_arm's sched.c: the branch is scheduled
+ *   first, the compare is then always ready (cost 1, class 3, the highest LUID left), and
+ *   only a strictly higher priority displaces it; a tie goes to the compare, and a store's
+ *   or load's hazard only wins a tie from T-3 on. An empty asm consuming the store or load
+ *   (to sit at T-2 with it at T-3) carries only its producers' priority, at most the
+ *   compare's here; an asm emitting the load itself costs 1 but loses the same tie; and no
+ *   asm can sit between a compare and its branch in the RTL. No S2 device reaches these
+ *   three spots under stock.
  */
 #include "TYPES.H"
 
@@ -104,8 +113,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x0, u32 y0, u8 *fo
                     if (b & 1) {
                         px = x + col;
                         /* FAKEMATCH: px & 7 through UiText_Dot's asm, measured there */
-                        /* FAKEMATCH: px & 7 through UiText_Dot's asm, measured there */
-                    UiText_PlotPixel(width, px, y + row, color);
+                        UiText_PlotPixel(width, px, y + row, color);
                     }
                 }
                 if (++row >= 10)

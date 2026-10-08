@@ -25,7 +25,6 @@
 #include "IO_REG.H"
 
 #define FarCall_EffectTable ((s32 (*)(s32,s32,s32,s32,s32))FarCall_EffectTable)
-#define BattleMotion_ProjectScaledPosition ((void (*)(s32,struct EffectPosition*))BattleMotion_ProjectScaledPosition)
 #define BattleFx_RunIceFleckBurstFar ((void (*)(struct EffectLaunch*))BattleFx_RunIceFleckBurstFar)
 
 #define gTransitionWork (*(s32 * *)&gTransitionWork)
@@ -56,14 +55,14 @@ s32 BattleFx_InitializeStarField(s32 mode)
     u8 *data;
     s32 scale;
     s32 zero;
-    /* FAKEMATCH: an unused Spark, the 28 bytes the native frame reserves. */
+    /* FAKEMATCH: needed to match: an unused Spark, the 28 bytes the native frame reserves. */
     struct Spark unused;
 
     gTransitionWork[2] = 1;
     work = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
     Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
-    /* FAKEMATCH: the empty statement keeps the multiply routine's address load ahead of the spark cursor. */
-    __asm__("");
+    /* FAKEMATCH: needed to match: the empty loop ends a scheduling region, keeping the multiply routine's address load ahead of the spark cursor. */
+    do { } while (0);
     for (i = 0; i < 16; i++) {
         s32 angle = Random16();
         u32 radius = Random16() + 0x10000;
@@ -117,7 +116,7 @@ s32 BattleFx_InitializeStarField(s32 mode)
         break;
     }
     Dma_Set(data, BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 32, REG_DMA3);
-    /* FAKEMATCH: the two one-pass blocks keep the BG2 origin and matrix writes in source order, the zero loaded first. */
+    /* FAKEMATCH: needed to match: the two one-pass blocks keep the BG2 origin and matrix writes in source order, the zero loaded first. */
     do {
         zero = 0;
         REG_BG2X = zero;
@@ -208,11 +207,11 @@ struct EffectLaunch {
 extern void *gWorkSlot[];
 
 
-/* FAKEMATCH: the write goes through its own int, which loads each value as a word, and the do/while (0) ends a scheduling region after it, as in the slideshow's register writes. */
+/* FAKEMATCH: needed to match: the write goes through its own int, which loads each value as a word, and the do/while (0) ends a scheduling region after it, as in the slideshow's register writes. */
 #define Io_Write16(reg, value) \
     do { \
-        /* FAKEMATCH: the one-pass register-write boundary preserves measured instruction scheduling. */ \
-        /* FAKEMATCH: the register-write word temporary preserves measured value allocation. */ \
+        /* FAKEMATCH: needed to match: the one-pass register-write boundary preserves measured instruction scheduling. */ \
+        /* FAKEMATCH: needed to match: the register-write word temporary preserves measured value allocation. */ \
         s32 value_ = (value); \
         (reg) = value_; \
     } while (0)
@@ -224,7 +223,7 @@ extern void *gWorkSlot[];
         s32 count; \
  \
         q = &gIoWriteQueue; \
-        /* FAKEMATCH: the one-pass block keeps the saved copy ahead of the IME store, as in the IO write queue. */ \
+        /* FAKEMATCH: needed to match: the one-pass block keeps the saved copy ahead of the IME store, as in the IO write queue. */ \
         do { \
             find_ime; \
             saved = *ime; \
@@ -238,7 +237,7 @@ extern void *gWorkSlot[];
             *destination++ = 0x04000028; \
             *destination = 0x84000002; \
         } \
-        /* FAKEMATCH: the one-pass block keeps the IME restore ahead of the next statement. */ \
+        /* FAKEMATCH: needed to match: the one-pass block keeps the IME restore ahead of the next statement. */ \
         do { \
             *ime = saved; \
         } while (0); \
@@ -246,13 +245,13 @@ extern void *gWorkSlot[];
 
 void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 {
-    /* FAKEMATCH: an unread ten-word launch tail, the native frame's 40 extra bytes. */
+    /* FAKEMATCH: needed to match: an unread ten-word launch tail, the native frame's 40 extra bytes. */
     s32 spare[10];
     struct EffectPosition position;
     struct EffectPosition position2;
     struct EffectLaunch launch;
     struct EffectLaunch launch2;
-    /* FAKEMATCH: the reference holds the address of slot 12 in the register that later holds the IME address; only a variable assigned twice does that. The session is slot 9, read three words below it. */
+    /* FAKEMATCH: needed to match: one variable, assigned twice, holds slot 12's address and later the IME address, as the bytes do; the session is slot 9, three words below. */
     volatile u16 *ime = (volatile u16 *)&gWorkSlot[12];
     struct BtlWork *session = *(struct BtlWork **)((u8 *)ime - 12);
     struct Bg2OriginWork *work;
@@ -280,14 +279,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
             work = gWorkSlot[39];
             if (frame <= 24)
                 Graphics_ScaleRgb555Clamped(session->palette, (u16 *)0x050000c0, *brightness = 0x10000 - frame * 1092, 128);
-            {
-
-                /* FAKEMATCH: the second argument is pinned to r1 to load it first. */
-                register struct EffectPosition *out __asm__("r1");
-
-                out = pos;
-                BattleMotion_ProjectScaledPosition(unit, out);
-            }
+            BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
             work->origin_x = (64 - pos->x) << 8;
             work->origin_y = (64 - pos->y) << 8;
             BG2_QUEUE_ORIGIN(ime, (void)0, &work->origin_x);
@@ -299,7 +291,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
         BattlePresentation_PrepareSceneFar(kind);
         for (frame = 0; frame < 40; frame++) {
             work = gWorkSlot[39];
-            BattleMotion_ProjectScaledPosition(unit, &position2);
+            BattleMotion_ProjectScaledPosition(unit, (s32 *)&position2);
             work->origin_x = (64 - position2.x) << 8;
             work->origin_y = (64 - position2.y) << 8;
             {

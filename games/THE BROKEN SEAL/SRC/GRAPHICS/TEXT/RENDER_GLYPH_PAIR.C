@@ -70,7 +70,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
             Iwram_ExpandBitRuns(input, dst + 50, transparent);
             Iwram_ExpandBitRuns(input, dst + 32, colour);
             Iwram_ExpandBitRuns(input, dst + 33, colour);
-            /* FAKEMATCH: the signed halfword width grows through its shifted form. */
+            /* FAKEMATCH: needed to match: the signed halfword width grows through its shifted form. */
             second_width = ((second_width << 16) + 0x10000) >> 16;
         } else {
             u8 *dst = buf + length;
@@ -126,8 +126,8 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
     s32 nibble;
     u32 value;
 
-    /* FAKEMATCH: the out input schedules its spill before the work-address load; the plain version reverses them. */
-    asm ("" : : "r" (out));
+    /* FAKEMATCH: needed to match: the empty loop ends a scheduling region, keeping the spill of out ahead of the work-address load. */
+    do { } while (0);
     work = (struct UiRenderWork *)gWindowWork[0];
     mark = 0;
     mark_code = UiText_MarkGlyphCodes[code >> 14];
@@ -163,7 +163,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
         Iwram_ExpandBitRuns(input, buf + 32, colour);
         Iwram_ExpandBitRuns(input, buf + 33, colour);
         if (mark != 0) {
-            /* FAKEMATCH: assigning digits in the mark argument makes the argument register compute buf + 7 before its loop copy. */
+            /* FAKEMATCH: needed to match: assigning digits in the mark argument makes the argument register compute buf + 7 before its loop copy. */
             Iwram_ExpandBitRuns(mark, digits = buf + 7, colour);
             Iwram_ExpandBitRuns(mark, buf + 8, colour);
         }
@@ -174,7 +174,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
             Iwram_ExpandBitRuns(mark, buf + 24, transparent);
         Iwram_ExpandBitRuns(input, buf + 32, colour);
         if (mark != 0) {
-            /* FAKEMATCH: this mark path needs the same argument-before-loop order as the outlined path. */
+            /* FAKEMATCH: needed to match: this mark path needs the same argument-before-loop order as the outlined path. */
             Iwram_ExpandBitRuns(mark, digits = buf + 7, colour);
         }
     }

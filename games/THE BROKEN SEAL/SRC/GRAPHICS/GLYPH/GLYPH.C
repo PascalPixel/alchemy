@@ -1,5 +1,5 @@
 #include "TYPES.H"
-/* FAKEMATCH: this file reads UiIcon_FramePointerTable through its own declaration; the shop's changes its code. */
+/* FAKEMATCH: needed to match: this file reads UiIcon_FramePointerTable through its own declaration; the shop's changes its code. */
 extern u8 *UiIcon_FramePointerTable[];
 #include "BATTLE.H"
 #include "DEBUG.H"
@@ -38,7 +38,7 @@ extern const u8 Menu_AnimatedCursorTiles[];
 
 static __inline__ void ResetCursor(struct GlyphCursor *cursor)
 {
-    /* FAKEMATCH: keep the cursor-subrecord base for the paired row stores. */
+    /* FAKEMATCH: needed to match: keep the cursor-subrecord base for the paired row stores. */
     cursor->cursor = 0;
 }
 
@@ -124,7 +124,7 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
     {
         u32 size;
 
-        /* FAKEMATCH: retain the size load after saving both arguments. */
+        /* FAKEMATCH: needed to match: retain the size load after saving both arguments. */
         do {
             size = (u32)Tile_Decompress4bppCodeSize;
         } while (0);

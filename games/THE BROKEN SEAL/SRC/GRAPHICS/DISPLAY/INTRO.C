@@ -169,7 +169,7 @@ void Title_LoadIntroBackgrounds(void)
     Dma_Set(Ram_MapCellBuffer + 0x2940, BG_CHAR_BLOCK(0), 0x80002760, REG_DMA3);
     Dma_Set(Ram_MapCellBuffer + 0xa140, (void *)0x06004ec0, 0x80004ec0, REG_DMA3);
 
-    /* FAKEMATCH: goto loops and a tile counted in its high half keep the increment's constant inside each strip, where the loop pass would hoist it. */
+    /* FAKEMATCH: needed to match: goto loops and a tile counted in its high half keep the increment's constant inside each strip, where the loop pass would hoist it. */
     blank = 0x1ff;
     map = (u16 *)BG_SCREEN_BLOCK(30);
     tile = 0x267;
@@ -321,7 +321,7 @@ s32 Title_ShowIntro(s32 prompt)
     gCpuLoadDisplayEnabled = result;
     Title_LoadIntroBackgrounds();
     TitlePalette_InitializeBuffers();
-    /* FAKEMATCH: the ignored scalar-return call preserves argument-move order; the void callee declaration swaps the moves in five editions. */
+    /* FAKEMATCH: needed to match: the ignored scalar-return call preserves argument-move order; the void callee declaration swaps the moves in five editions. */
     Graphics_TransformSmallPalette(2, 0);
     {
         volatile u16 *ime;
@@ -330,7 +330,7 @@ s32 Title_ShowIntro(s32 prompt)
         s32 count;
 
         q = &gIoWriteQueue;
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+        /* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
         do {
             ime = &REG_IME;
             old = *ime;
@@ -427,7 +427,7 @@ s32 Title_ShowIntro(s32 prompt)
         }
         WaitFrames(1);
     }
-    /* FAKEMATCH: the row is a goto loop, as in the background set-up; a for loop frees a register and moves the parameter off the stack. */
+    /* FAKEMATCH: needed to match: the row is a goto loop, as in the background set-up; a for loop frees a register and moves the parameter off the stack. */
     for (; i < 20; i++) {
         j = 0;
     cell:

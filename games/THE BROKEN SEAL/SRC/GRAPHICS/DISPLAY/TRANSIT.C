@@ -53,7 +53,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
     s32 value;
     s32 kind;
 
-    /* FAKEMATCH: one-pass IME scopes and count stores preserve saved-IME and queue load order; the map-work word prefix preserves address order. */
+    /* FAKEMATCH: needed to match: one-pass IME scopes and count stores preserve saved-IME and queue load order; the map-work word prefix preserves address order. */
     kind = (mode >> 8) & 0xff;
     work = Ram_MapWork;
     display = *(struct DisplayTransitionWindow **)work;

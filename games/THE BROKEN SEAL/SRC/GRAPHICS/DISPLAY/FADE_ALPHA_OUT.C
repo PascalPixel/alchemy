@@ -10,7 +10,7 @@ void Graphics_FadeAlphaOut(void)
     alpha_step = 1;
     do
     {
-      /* FAKEMATCH: the one-pass block keeps alpha_step addition after loading the WaitFrames argument into r0. */
+      /* FAKEMATCH: needed to match: the one-pass block keeps alpha_step addition after loading the WaitFrames argument into r0. */
       do
       {
         REG_BLDALPHA = 0x1010 - alpha_step;

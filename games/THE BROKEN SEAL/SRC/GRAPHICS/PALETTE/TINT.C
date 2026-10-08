@@ -20,7 +20,7 @@
                                                                             \
         q = &gIoWriteQueue;                                                 \
         do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
+            /* FAKEMATCH: needed to match: removing this one-pass boundary changes measured instruction scheduling. */ \
             ime = &REG_IME;                                                 \
             saved = *ime;                                                   \
         } while (0);                                                        \
@@ -38,7 +38,7 @@
 
 void TitlePalette_UpdateFade(void)
 {
-    /* FAKEMATCH: IME scopes, count stores and pointer lifetime preserve queue order; the byte-slot read avoids an extra add #128. */
+    /* FAKEMATCH: needed to match: IME scopes, count stores and pointer lifetime preserve queue order; the byte-slot read avoids an extra add #128. */
     struct TitlePaletteWork *work = *(struct TitlePaletteWork **)((u8 *)gWorkSlot + 32 * sizeof(void *));
     u16 *delta = work->delta;
     u16 *current;

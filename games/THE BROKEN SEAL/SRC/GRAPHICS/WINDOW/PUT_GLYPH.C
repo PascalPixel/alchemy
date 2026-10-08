@@ -89,13 +89,14 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character,
         return result;
     }
 
+    if (character == ' ') {
 #if !EDITION_INTERNATIONAL
-    width = 7;
+        width = 7;
 #else
-    width = 5;
+        width = 5;
 #endif
-    if (character == ' ')
         goto done;
+    }
     {
         u32 tiles[32];
         struct RenderOutput *output;
@@ -107,8 +108,6 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character,
             return 0;
         index = (output - work->outputs) * 4;
         output->active = 1;
-        /* FAKEMATCH: keeps the space width out of CSE, which would store its register for outline 3's 5. */
-        __asm__("" : "+r"(width));
         output->kind = 0;
         if (mode == 1) {
             width = 1;
@@ -249,7 +248,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         attr->x = (win->x + (column + *(u16 *)&win->width)) * 8 + 4;
         row = (u8)win->y + (row = (u8)win->height + 254);
         attr->y = row * 8 - 1;
-        /* FAKEMATCH: the embedded OAM view preserves packed/logical position store order changed by byte-span and scalar views. */
+        /* FAKEMATCH: needed to match: the embedded OAM view preserves packed/logical position store order changed by byte-span and scalar views. */
         out->x = attr->x;
         out->y = attr->y;
         out->link_word = 0;
@@ -302,7 +301,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         attr->x = (left + (column + *(u16 *)&win->width)) * 8 + 4;
         row = (u8)win->y + (row = (u8)win->height + 254);
         attr->y = row * 8 + 1;
-        /* FAKEMATCH: the embedded OAM view preserves packed/logical position store order changed by byte-span and scalar views. */
+        /* FAKEMATCH: needed to match: the embedded OAM view preserves packed/logical position store order changed by byte-span and scalar views. */
         out->x = attr->x;
         out->y = attr->y;
         out->link_word = 0;

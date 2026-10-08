@@ -31,7 +31,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
     s32 pz = *pos++;
     s32 pw = *pos;
     s32 slot;
-    /* FAKEMATCH: the two unused arrays supply 24 bytes of the 68-byte frame; removing them leaves 44 bytes. */
+    /* FAKEMATCH: needed to match: the two unused arrays supply 24 bytes of the 68-byte frame; removing them leaves 44 bytes. */
     s32 ground[3];
     s32 screen[3];
     struct AffineTransform effect;

@@ -46,7 +46,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
 
     window = NULL;
     entry1 = sprite1;
-    /* FAKEMATCH: the null window is also the style argument (ROM passes its register). */
+    /* FAKEMATCH: needed to match: the null window is also the style argument (ROM passes its register). */
     window = UiWindow_Create(1, 1, 28, 5, (s32)window);
     zero = 0;
 

@@ -71,7 +71,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
         if (e->script == 0) {
             continue;
         }
-        /* FAKEMATCH: explicit timer-test lifetime keeps command back-edges and the decoded frame value separate from the hold reload. */
+        /* FAKEMATCH: needed to match: explicit timer-test lifetime keeps command back-edges and the decoded frame value separate from the hold reload. */
     read_command:
         if ((s16)e->timer > 0)
             goto advance_timer;
@@ -191,7 +191,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
                 continue;
             }
             key = (key << 8) | i;
-            /* FAKEMATCH: the first shift written apart and the scan left by goto keep the scan unrotated, with its step at the top. */
+            /* FAKEMATCH: needed to match: the first shift written apart and the scan left by goto keep the scan unrotated, with its step at the top. */
             k = n;
             if (k >= 0 && order[k] > key) {
                 order[k + 1] = order[k];

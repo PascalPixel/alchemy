@@ -20,7 +20,7 @@ typedef void (*ConvertFn)(void *dst, const void *src, const void *saved);
 
 static __inline__ void CopyWords(void *dst, const void *src, s32 size)
 {
-    /* FAKEMATCH: a direct call changes Tilemap_ConvertBuffer from mov r6, r8 to mov r6, sl (52/56 assembly lines). */
+    /* FAKEMATCH: needed to match: a direct call changes Tilemap_ConvertBuffer from mov r6, r8 to mov r6, sl (52/56 assembly lines). */
     Iwram_CopyWords(dst, src, size);
 }
 
@@ -53,7 +53,7 @@ void Tilemap_ConvertBuffer(void)
     u32 size;
 
     size = 0x8000;
-    /* FAKEMATCH: the two do-while blocks keep each allocation next to the transfer that uses it */
+    /* FAKEMATCH: needed to match: the two do-while blocks keep each allocation next to the transfer that uses it */
     do {
         saved = (u8 *)Runtime_BumpAllocateAlternatePool(size);
         CopyWords(saved, Ram_MapCellBuffer, size);

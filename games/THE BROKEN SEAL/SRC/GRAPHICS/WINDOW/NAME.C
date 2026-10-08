@@ -335,11 +335,11 @@ s32 NameEntry_EditOwnerName(s32 entry)
         ShopCursor_MoveTowardTargetFar(&caret);
         {
             u32 frame = (gFrameTick >> 1) & 7;
-            /* FAKEMATCH: the caret sprite lives in r5, as the native allocates it. */
-            register struct RenderOutput *o asm("r5") = caret.output;
 
-            ((struct FieldSprite *)o->unknown_10)->x = o->x + NameEntry_CaretWave[frame];
-            ((struct FieldSprite *)o->unknown_10)->y = o->y + NameEntry_CaretWave[(frame + 5) & 7];
+            /* FAKEMATCH: needed to match: slot carries the caret sprite here too; a pointer of its own takes r4 instead of r5. */
+            slot = (s32)caret.output;
+            ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->x = ((struct RenderOutput *)slot)->x + NameEntry_CaretWave[frame];
+            ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->y = ((struct RenderOutput *)slot)->y + NameEntry_CaretWave[(frame + 5) & 7];
         }
         if (gKeysRepeat & KEY_UP) {
             Audio_PlayCue(111);
@@ -564,11 +564,11 @@ s32 NameEntry_EditOwnerName(s32 entry)
         ShopCursor_MoveTowardTargetFar(&caret);
         {
             u32 frame = (gFrameTick >> 1) & 7;
-            /* FAKEMATCH: the caret sprite lives in r5, as the native allocates it; unpinned it takes r4 (differ 20). */
-            register struct RenderOutput *o asm("r5") = caret.output;
 
-            ((struct FieldSprite *)o->unknown_10)->x = o->x + NameEntry_CaretWave[frame];
-            ((struct FieldSprite *)o->unknown_10)->y = o->y + NameEntry_CaretWave[(frame + 5) & 7];
+            /* FAKEMATCH: needed to match: slot carries the caret sprite here too; a pointer of its own takes r4 instead of r5. */
+            slot = (s32)caret.output;
+            ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->x = ((struct RenderOutput *)slot)->x + NameEntry_CaretWave[frame];
+            ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->y = ((struct RenderOutput *)slot)->y + NameEntry_CaretWave[(frame + 5) & 7];
         }
         if (gKeysRepeat & KEY_UP) {
             Audio_PlayCue(111);

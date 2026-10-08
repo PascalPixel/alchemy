@@ -239,7 +239,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         obj = ObjectTable_Get(gGameState.selected_actor);
         cx = (obj->x - ax) / 0x10000;
         cy = ((obj->z - obj->y) - ay) / 0x10000 - 16;
-        /* FAKEMATCH: the native reads the frame counter here, where mode 8 forms its index, and discards it. */
+        /* FAKEMATCH: needed to match: the native reads the frame counter here, where mode 8 forms its index, and discards it. */
         gFrameCount;
         *dst++ = state->active;
         *dst++ = state->mask;
@@ -332,7 +332,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         obj = ObjectTable_Get(gGameState.selected_actor);
         cx = (obj->x - ax) / 0x10000;
         cy = ((obj->z - obj->y) - ay) / 0x10000 - 16;
-        /* FAKEMATCH: the native reads the frame counter here, where mode 8 forms its index, and discards it. */
+        /* FAKEMATCH: needed to match: the native reads the frame counter here, where mode 8 forms its index, and discards it. */
         gFrameCount;
         *dst++ = state->mask;
         *dst++ = state->active;
@@ -373,7 +373,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         obj = ObjectTable_Get(gGameState.selected_actor);
         cx = (obj->x - ax) / 0x10000;
         cy = ((obj->z - obj->y) - ay) / 0x10000 - 8;
-        /* FAKEMATCH: the native reads the frame counter here, where mode 8 forms its index, and discards it. */
+        /* FAKEMATCH: needed to match: the native reads the frame counter here, where mode 8 forms its index, and discards it. */
         gFrameCount;
         *dst++ = state->mask;
         *dst++ = state->active;

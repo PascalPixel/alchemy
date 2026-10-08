@@ -47,7 +47,7 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed)
 
     work = (struct UiRenderWork *)gWindowWork[0];
     work->result[0] = (packed << 4) >> 20;
-    /* FAKEMATCH: retain the null window as the scroll and layout zero. */
+    /* FAKEMATCH: needed to match: retain the null window as the scroll and layout zero. */
     window = NULL;
     work->result[1] = (u32)window;
     packed &= 0xffff;

@@ -192,7 +192,7 @@ void Menu_AdvanceWorkspaceIndexModulo3(struct WorkspaceWork *work)
 
 void GraphicsPalette_DecrementSelectedCounter(s32 work)
 {
-    /* FAKEMATCH: byte-lane arithmetic preserves address additions that direct fields fold into literal offsets. */
+    /* FAKEMATCH: needed to match: byte-lane arithmetic preserves address additions that direct fields fold into literal offsets. */
     u8 *p;
     u16 sel;
     s32 off;
@@ -221,7 +221,7 @@ void GraphicsPalette_DecrementSelectedCounter(s32 work)
 
 void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
 {
-    /* FAKEMATCH: byte-lane arithmetic preserves address additions that direct fields fold into literal offsets. */
+    /* FAKEMATCH: needed to match: byte-lane arithmetic preserves address additions that direct fields fold into literal offsets. */
     u8 *sp;
     u16 sel;
     s32 off;

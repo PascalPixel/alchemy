@@ -80,7 +80,7 @@ void UiTimedNotice_Create(void)
     work->window = window;
     UiText_DrawResource(resource, (s32)window, 0, 0);
     timer = &work->countdown;
-    frames = 90; /* FAKEMATCH: a word temporary keeps 90 out of the HImode pool. */
+    frames = 90; /* FAKEMATCH: needed to match: a word temporary keeps 90 out of the HImode pool. */
     *timer = frames;
     Scheduler_AddOrUpdateCallback(UiTimedNotice_Tick, 0xc80);
 }

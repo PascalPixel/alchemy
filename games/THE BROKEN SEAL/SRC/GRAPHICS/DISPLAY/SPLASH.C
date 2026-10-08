@@ -64,7 +64,7 @@ row:
         {
             s32 old = tile;
 
-            /* FAKEMATCH: keep the signed tile wrap in the high half. */
+            /* FAKEMATCH: needed to match: keep the signed tile wrap in the high half. */
             tile = ((old << 16) + 0x10000) >> 16;
             *map++ = old;
         }
@@ -132,10 +132,7 @@ s32 Title_ShowAnimatedSplash(void)
 {
     s32 result;
     u32 i;
-    /* FAKEMATCH: separate the post-decode buffer carrier from the resource-number carrier. */
-    register u8 *buffer __asm__("r6");
-    /* FAKEMATCH: keep the decode destination carrier distinct until the buffer copy. */
-    register u8 *decode __asm__("r5");
+    u8 *buffer;
     s32 resource;
 
     gOamCopyEnabled = 1;
@@ -148,9 +145,10 @@ s32 Title_ShowAnimatedSplash(void)
     REG_BG2CNT = 0x685;
     REG_DISPCNT = 0x1440;
     gBgScroll[2].y = result;
-    decode = Ram_MapCellBuffer;
-    Resource_DecodeType01(Resource_GetTableEntry(resource), decode);
-    buffer = decode;
+    /* FAKEMATCH: needed to match: i carries the decode destination before it counts; a pointer of its own is coalesced with buffer (31 differ). */
+    i = (u32)Ram_MapCellBuffer;
+    Resource_DecodeType01(Resource_GetTableEntry(resource), (u8 *)i);
+    buffer = (u8 *)i;
     Dma_Set(buffer, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 0x1c0 / 4, REG_DMA3);
     buffer += 0x1c0;
     Dma_Set(buffer, BG_SCREEN_BLOCK(6), DMA_ENABLE32 | DMA_32BIT | 0x800 / 4, REG_DMA3);
@@ -168,7 +166,7 @@ s32 Title_ShowAnimatedSplash(void)
     Blend_WaitForTransition();
     REG_DISPCNT = 0x1540;
     for (i = 0; i < 120; i++) {
-        /* FAKEMATCH: the unsigned address sum retains the DMA source operand order. */
+        /* FAKEMATCH: needed to match: the unsigned address sum retains the DMA source operand order. */
         Dma_Set((void *)((((gFrameCount >> 3) & 3) << 10) + (u32)buffer), BG_CHAR_BLOCK(1) + 0x100, DMA_ENABLE32 | DMA_32BIT | 0x340 / 4, REG_DMA3);
         if (gKeyState & (KEY_A | KEY_START))
             break;

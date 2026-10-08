@@ -555,7 +555,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set41TilesD
 	resource , Field_Map052
 	resource , Tileset_Set42Palette
-	resource , Resource_Data221
+	resource , Tileset_Set42TilesA
 	resource , Tileset_Set42TilesB
 	resource , Tileset_Set42TilesC
 	resource , Tileset_Set42TilesD

@@ -3,10 +3,6 @@
 	.global Title_IntroGraphicsC
 Title_IntroGraphicsC:
 	.incbin "baserom.gba", 0x0032b09c, 0x000086f8
-	.section .rom.00609114, "ax"
-	.global Resource_Data221
-Resource_Data221:
-	.incbin "baserom.gba", 0x00609114, 0x00002904
 	.section .rom.007177b8, "ax"
 	.global Resource_Data2EE
 Resource_Data2EE:

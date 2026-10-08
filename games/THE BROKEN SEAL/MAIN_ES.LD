@@ -1635,7 +1635,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/SET_41/TILES_D.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/MAP/MAP_052/MAP.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/SET_42/PALETTE.o"(.rodata)
-    "*/recon/tbs/es/rom.o"(.rom.0060ac10)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/SET_42/TILES_A.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/SET_42/TILES_B.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/SET_42/TILES_C.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/SET_42/TILES_D.o"(.rodata)

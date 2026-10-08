@@ -78,7 +78,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
 		/* FAKEMATCH: calling through a local copy of the routine's address loads that address before the palette address is shifted into place; the direct call swaps those two instructions. */
 		WordCopy copy = Iwram_CopyWords;
 
-		copy((void *)0x05000000, palette, 128); // BG パレット
+		copy((void *)BG_PLTT, palette, 128);
 	}
 
 	// 火花をすべて止める

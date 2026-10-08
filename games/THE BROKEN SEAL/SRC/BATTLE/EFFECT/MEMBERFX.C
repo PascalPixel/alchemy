@@ -86,7 +86,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 	BattleFx_BeginCanvasLayer(0);
 	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), sprites);
 	palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
-	Iwram_CopyWords((void *)0x05000000, palette, 128); // BG パレット
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 	palette += 128;
 	Resource_DecodeType01(palette, work);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
@@ -149,7 +149,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 		if (frame == 16)
 		{
 			palette = Resource_GetTableEntry((s32)&ResourceId_FlameballSheet);
-			Iwram_CopyWords((void *)0x05000000, palette, 128);
+			Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 			palette += 128;
 			Resource_DecodeType01(palette, work);
 			actor->vertical_motion_strength = 0;
@@ -285,11 +285,11 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0);
 	palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
-	PalCopy(Iwram_CopyWords, (void *)0x05000000, palette, 128);
+	PalCopy(Iwram_CopyWords, (void *)BG_PLTT, palette, 128);
 	palette += 128;
 	Resource_DecodeType01(palette, work);
 	palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-	PalCopy(Iwram_CopyWords, (void *)0x05000000, palette, 128);
+	PalCopy(Iwram_CopyWords, (void *)BG_PLTT, palette, 128);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
 	draw.upper = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
@@ -410,7 +410,7 @@ void BattleFx_RunMemberOrbit(void *effect)
 	BattleFx_BeginCanvasLayer(0);
 	REG_BG2PA = 0x100;
 	palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
-	Iwram_CopyWords((void *)0x05000000, palette, 128);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 	Resource_DecodeType01((u8 *)palette + 128, work);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
 	draw[0] = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
@@ -563,7 +563,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
 		pal = (s32)&ResourceId_MarsDjinnSheet;
 	else
 		pal = (s32)&ResourceId_MercuryDjinnSheet;
-	Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(pal), 128);
+	Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(pal), 128);
 	BattleFx_FetchRectangleBlitters(work->effect->side, draw);
 
 	// 粒 : 使い手の体の高さから、どの向きにも 2 ドットまでの速さで散る

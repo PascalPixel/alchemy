@@ -100,18 +100,18 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
 		BattleFx_PrepareCanvasEffect(
 			effect, mode, work->effect->side ^ work->effect->prelude, 0, &djinn_x, &djinn_y);
 	palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
-	PalCopy(Iwram_CopyWords, (void *)0x05000000, palette, 128); // BG パレット
+	PalCopy(Iwram_CopyWords, (void *)BG_PLTT, palette, 128);
 	palette += 128;
 	Resource_DecodeType01(palette, work);
 	palette = Resource_GetTableEntry((s32)&ResourceId_CrescentMoonSheet);
-	PalCopy(Iwram_CopyWords, (void *)0x05000000, palette, 128);
+	PalCopy(Iwram_CopyWords, (void *)BG_PLTT, palette, 128);
 	palette += 128;
 	Resource_DecodeType01(palette, work->sheet + PIC_MOTE);
 	if (mode == 0)
 		palette = Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet);
 	else
 		palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);
-	PalCopy(Iwram_CopyWords, (void *)0x05000000, palette, 128);
+	PalCopy(Iwram_CopyWords, (void *)BG_PLTT, palette, 128);
 	palette += 128;
 	Resource_DecodeType01(palette, work->sheet + PIC_DJINN);
 

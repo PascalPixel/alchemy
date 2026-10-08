@@ -180,10 +180,10 @@ void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *obj)
 //--------------------------------------------------------------------------
 void Ui_FillBank15PaletteGrey(void)
 {
-	volatile s16 *p;
+	volatile u16 *p;
 
 	((struct UiRenderWork *)gWindowWork[0])->mode = 1;
-	p = (s16 *)0x050001e2; // パレット 15 の色 1
+	p = &BG_PLTT_COLOR(15, 1);
 	*p = GREY28;
 	p += 2;
 	*p = GREY28;
@@ -217,10 +217,10 @@ void Ui_SetBank15PaletteAndClearRenderMode(void)
 
 	work = gWindowWork[0];
 	Scheduler_RemoveCallback(BattleFx_ArmBg0HBlankDma);
-	*(volatile s16 *)0x050001e2 = 0x7fff; // 色 1 : 白
-	*(s16 *)0x050001e6 = 0;				  // 色 3 : 黒
-	*(volatile s16 *)0x050001f6 = 0x294a; // 色 11 : 灰 (10)
-	*(volatile s16 *)0x050001f8 = 0x5294; // 色 12 : 灰 (20)
+	BG_PLTT_COLOR(15, 1) = 0x7fff;	// 白
+	BG_PLTT_COLOR(15, 3) = 0;		// 黒
+	BG_PLTT_COLOR(15, 11) = 0x294a; // 灰 (10)
+	BG_PLTT_COLOR(15, 12) = 0x5294; // 灰 (20)
 	PaletteGlow_UpdateFar(gGameState.palette_glow[0], gGameState.palette_glow[1]);
 	((struct UiRenderWork *)work)->mode = 0;
 }

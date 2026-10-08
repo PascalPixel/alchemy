@@ -67,6 +67,19 @@ A game is finished when all six hold (Pascal, 2026-10-08):
    Order (Pascal, 2026-10-08): first 100% by pret's standard (W3), then this
    structure as the first order of camelotizing.
 
+   Camelotizing runs in stages, each byte-identical in all twelve editions
+   (`alchemy keep`) (Pascal, 2026-10-08):
+   1. Mechanical: formatting, dead files and code (`alchemy dead`),
+      includes and prototypes, the modern build's type warnings, stale
+      FAKEMATCH devices (`alchemy sweep`) and undefined behaviour behind a
+      `BUGFIX` switch for the modern build.
+   2. Structure: Camelot's translation units, repeated code folded into
+      `games/COMMON` helpers, macros and inline layers, and the global
+      layers above.
+   3. Meaning: names and comments from evidence, assets named through
+      their modules; linters flag what remains, and an unknown keeps its
+      placeholder.
+
 ## Where things are
 
 - `games/<GAME>/SRC`, `INCLUDE`, `SOUND`, `TEXT` and `games/COMMON` hold the

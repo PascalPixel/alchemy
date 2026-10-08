@@ -14179,7 +14179,7 @@ msgctxt "MsgDjinnTutorialSetAgain"
 msgid "03542"
 msgstr "そして リカバリーがおわれば{line_break}ボクらは また じぶんたちで{line_break}セットのじょうたいにもどります。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnUnleashHint"
 msgid "03543"
 msgstr "これで ボクたちを{line_break}セットじょうたいから{line_break}ときはなてるんですよ!{end_wait}"
 

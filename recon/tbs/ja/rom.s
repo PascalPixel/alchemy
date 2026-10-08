@@ -167,12 +167,6 @@ Map_LayeredScenes:
 	.global UiText_DrawGlyphArm
 UiText_DrawGlyphArm:
 	.incbin "baserom.gba", 0x000155d0, 0x0000030c
-	.section .rom.00027170, "ax"
-	.global Battle_CollectPartyCommands
-	.type Battle_CollectPartyCommands, %function
-	.thumb_func
-Battle_CollectPartyCommands:
-	.incbin "baserom.gba", 0x00027170, 0x0000108c
 	.section .rom.00029968, "ax"
 	.global WorkspaceOptions_SliderTiles
 WorkspaceOptions_SliderTiles:

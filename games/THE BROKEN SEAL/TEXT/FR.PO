@@ -12715,7 +12715,7 @@ msgctxt "MsgDjinnTutorialSetAgain"
 msgid "03176"
 msgstr "Après avoir récupéré, nous{line_break}nous lierons à nouveau,{line_break}prêts à agir.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnUnleashHint"
 msgid "03177"
 msgstr "C'est tout ce qu'il{line_break}faut savoir pour{line_break}utiliser un Djinn lié!{end_wait}"
 

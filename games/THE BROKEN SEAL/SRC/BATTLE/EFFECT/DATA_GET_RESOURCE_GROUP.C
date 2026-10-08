@@ -1,11 +1,16 @@
+//--------------------------------------------------------------------------
+// DATA_GET_RESOURCE_GROUP.C
+// シーン表：シーンのグループ番号
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
-#include "SCENE.H"
+#include "FIELDRUN.H"
 
-extern const u8 Field_SceneTable[];
-
-s8 BattleFx_GetResourceGroup(s32 effect_index)
+//--------------------------------------------------------------------------
+// シーンが属するグループを返す
+// scene : シーン番号
+//--------------------------------------------------------------------------
+s8 BattleFx_GetResourceGroup(s32 scene)
 {
-  u8 *entry;
-  entry = (u8 *)((effect_index * 8) + Field_SceneTable);
-  return *((u8 *)(2 + entry));
+	return Field_SceneTable[scene].group;
 }

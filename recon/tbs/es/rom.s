@@ -168,10 +168,6 @@ Script_OperandHandlerTable:
 	.global Map_LayeredScenes
 Map_LayeredScenes:
 	.incbin "baserom.gba", 0x00012f84, 0x0000107c
-	.section .rom.000145d0, "ax"
-	.global UiText_DrawGlyphArm
-UiText_DrawGlyphArm:
-	.incbin "baserom.gba", 0x000145d0, 0x000002f4
 	.section .rom.00020ea6, "ax"
 	.incbin "baserom.gba", 0x00020ea6, 0x000008fe
 	.section .rom.000262d4, "ax"

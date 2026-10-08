@@ -69,8 +69,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     s32 result;
     /* FAKEMATCH: regmove copies a live pseudo operand of each help-line and into its result (adds r3, r1, #0); native copies the mask (mov r3, r8; movs r3, #224; movs r3, #31), which regmove leaves to reload only when the other operand is a hard register. attr in r2 as native. */
     register u32 attr asm("r2");
-    /* FAKEMATCH: the shared 0 and the element mask 224 tie at allocation priority 769 (4 refs over 104 insns, 7 over 182) and 224 wins by pseudo number; native keeps 0 in sl and rebuilds 224 at each use. */
-    register s32 zero asm("sl");
+    s32 zero;
     s32 i;
     s32 j;
 
@@ -289,9 +288,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
                     Iwram_CopyWords(saved, render, size);
                     work = UiText_OpenMessageWindowFar((s32)MsgDjinnTutorialSetChanges, 8, 0, 1);
-                    /* FAKEMATCH: the active = 1 chain (mov r4, r9; ldr; strb) outranks the work copy in sched2, so the copy landed after the store; an empty asm is a scheduling barrier that keeps the copy right after the call as native. */
-                    asm("");
-                    state->cursor->active = 1;
+                    /* FAKEMATCH: needed to match: a one-pass block keeps the window copy before the cursor store */
+                    do {
+                        state->cursor->active = 1;
+                    } while (0);
                     UiMenu_SlideCursor(2, 96);
                     gGameState.message_speed = 1;
                     while (UiWork_IsCompleteFar() == 0) {
@@ -304,9 +304,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                     dirty = 1;
                     scene->tutorial_timer = 0;
                     scene->tutorial_step = 11;
-                    /* FAKEMATCH: the mov from r9 for active = 13 outranks the step store in sched2; an empty asm barrier keeps the store first as native. */
-                    asm("");
-                    state->cursor->active = 13;
+                    /* FAKEMATCH: needed to match: a one-pass block keeps the step store before the cursor store */
+                    do {
+                        state->cursor->active = 13;
+                    } while (0);
                 }
                 break;
             case 11:
@@ -315,9 +316,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
                     Iwram_CopyWords(saved, render, size);
                     work = UiText_OpenMessageWindowFar((s32)MsgDjinnTutorialClassPsynergy, 8, 0, 1);
-                    /* FAKEMATCH: the active = 1 chain (mov r4, r9; ldr; strb) outranks the work copy in sched2, so the copy landed after the store; an empty asm is a scheduling barrier that keeps the copy right after the call as native. */
-                    asm("");
-                    state->cursor->active = 1;
+                    /* FAKEMATCH: needed to match: a one-pass block keeps the window copy before the cursor store */
+                    do {
+                        state->cursor->active = 1;
+                    } while (0);
                     UiMenu_SlideCursor(106, 56);
                     gGameState.message_speed = 1;
                     while (UiWork_IsCompleteFar() == 0) {
@@ -331,9 +333,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                     dirty = 1;
                     scene->tutorial_timer = 0;
                     scene->tutorial_step = 12;
-                    /* FAKEMATCH: the mov from r9 for active = 13 outranks the step store in sched2; an empty asm barrier keeps the store first as native. */
-                    asm("");
-                    state->cursor->active = 13;
+                    /* FAKEMATCH: needed to match: a one-pass block keeps the step store before the cursor store */
+                    do {
+                        state->cursor->active = 13;
+                    } while (0);
                 }
                 break;
             default:
@@ -582,8 +585,6 @@ s32 DjinnMenu_ShowOwnerStatus(void)
     frame = 0;
     menu->cursor->active = 13;
     result = 0;
-    /* FAKEMATCH: the cursor initialization uses a fresh zero instead of a spilled scalar initializer. */
-    __asm__("" : "+r" (result));
     cursor[1] = cursor[0] = result;
     for (side = 3; side >= 0; side--)
         menu->owner_y[side] = 200;
@@ -637,9 +638,10 @@ s32 DjinnMenu_ShowOwnerStatus(void)
             }
             UiWindow_SetTilemapEntryFar(window, 0xf128, window->width - page[side] - 3, -1, 0);
             UiWindow_SetTilemapEntryFar(window, 0xf129, window->width - 2, -1, 0);
-            /* FAKEMATCH: without this scheduling barrier, the page-cap arguments and dirty offset differ by six instruction swaps. */
-            __asm__("");
-            render->dirty |= 2 << (window->y >> 2);
+            /* FAKEMATCH: needed to match: a one-pass block keeps the page-cap arguments before the dirty update */
+            do {
+                render->dirty |= 2 << (window->y >> 2);
+            } while (0);
         }
         frame++;
         blink = frame % 60 - 5;

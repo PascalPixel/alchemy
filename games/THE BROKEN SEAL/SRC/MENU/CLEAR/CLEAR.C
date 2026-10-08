@@ -839,19 +839,20 @@ s32 SaveMenu_Run(void)
                 v6 = encoded_size;
             }
             for (v7 = page * 50, n = 0; v7 != v6; v7++, n++) {
-                /* FAKEMATCH: the row's copy from r0 goes to r1 (value) or folds into r0; the native copies it to r3 and shifts it there */
-                register s32 row asm("r3");
-
                 /* FAKEMATCH: the loop note ends the CSE path, which otherwise carries the glyph address into both draw calls for gcse to hoist out of the loop; the native rebuilds sp + 24 at each call */
                 do {
                     Clear_NameEntryCharacter(password[v7] & 63, glyph);
                 } while (0);
                 record = __modsi3(v7, 10);
                 if (record > 4) {
+                    s32 row;
+
                     rec7 = __modsi3(n, 10);
                     row = __divsi3(n, 10);
                     UiText_DrawString(glyph, page_window, rec7 * 12 + 18, (row << 4) + 2);
                 } else {
+                    s32 row;
+
                     rec7 = __modsi3(n, 10);
                     row = __divsi3(n, 10);
                     UiText_DrawString(glyph, page_window, rec7 * 12 + 8, (row << 4) + 2);

@@ -1,9 +1,23 @@
-#include "types.h"
-#include "callback_scheduler.h"
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "menu.h"
+#include "minigame.h"
+#include "sound.h"
+#include "system.h"
+#include "mem.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "system.h"
+#include "io_write_queue.h"
+#include "callback_scheduler.h"
 #include "irq.h"
+#include "types.h"
+#include "scene.h"
+#include "resource.h"
+#include "resource_ids.h"
+#include "global_cells.h"
 #include "cartboot.h"
 #include "ram_buffer.h"
 #include "serial_runtime.h"
@@ -11,6 +25,244 @@
 #include "keystate.h"
 #include "input.h"
 #include "oam.h"
+#include "map_scroll.h"
+#include "heap_state.h"
+
+extern u8 gDebugMode;
+extern u8 gCpuLoadDisplayEnabled;
+extern u8 gOamCopyEnabled;
+
+void WaitFrames(s32 frames);
+
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#define HALT_ON_GAMEPAK_IRQ 1
+#endif
+
+void System_Initialize(void)
+{
+    volatile u32 zero;
+
+    {
+        volatile u16 *dma0 = REG_DMA0;
+
+        dma0[5] &= 0xc5ff;
+        dma0[5] &= 0x7fff;
+        dma0[5];
+    }
+    /* FAKEMATCH: the do-while wraps pin the register writes in place. */
+    do { u32 value = WAITCNT_GAME; REG_WAITCNT = value; } while (0);
+    zero = 0;
+    Dma_Set((const void *)&zero, (void *)0x03000000, 0x85001e00, REG_DMA3);
+    Runtime_InitializeHeap();
+    Runtime_InstallIwramAndIrqs();
+    *(u32 *)&gIoWriteQueue.count = 0;
+    gDebugTextEnabled = 0;
+    gDebugMode = 0;
+    gCpuLoadDisplayEnabled = 0;
+    Resource_LoadWorkHeader();
+    Ui_LoadWindowGraphics();
+    Bg0_ClearTilemap();
+    REG_DISPCNT = 0x140;
+    Runtime_SetIrqHandler(0, 1, (void (*)(void))System_VBlankHandler);
+#if defined(HALT_ON_GAMEPAK_IRQ)
+    Runtime_SetIrqHandler(13, 1, IwramHalt);
+#endif
+    do { u32 value = KEYCNT_SOFT_RESET; REG_KEYCNT = value; } while (0);
+    Audio_InitializeRuntimeDefaultsFar();
+    Resource_InitializeTable();
+    Scheduler_ResetTaskTable();
+    gCartridgeResetMarker = 0;
+    gOamCopyEnabled = 1;
+    gSleepDisabled = 0;
+    WaitFrames(10);
+    Game_ResetForNewGameFar(0);
+}
+
+void Runtime_IdleForever(void)
+{
+    for (;;) {
+        (void)*(volatile u32 *)&gKeyState;
+        WaitFrames(1);
+    }
+}
+
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+
+s32 System_GetLanguage(void)
+{
+    s32 language;
+
+    switch (Rom_LanguageCode) {
+    case 'D':
+        language = 1;
+        break;
+    case 'F':
+        language = 2;
+        break;
+    case 'S':
+        language = 3;
+        break;
+    case 'I':
+        language = 4;
+        break;
+    default:
+        language = 0;
+        break;
+    }
+    return language;
+}
+#endif
+
+void RuntimeDispatch_ReservedNoOpA(void)
+{
+}
+
+void RuntimeDispatch_ReservedNoOpB(void)
+{
+}
+
+void RuntimeDispatch_ReservedNoOpC(void)
+{
+}
+
+void RuntimeDispatch_ReservedNoOpD(void)
+{
+}
+
+void RuntimeDispatch_ReservedNoOpE(void)
+{
+}
+
+s32 RuntimeDispatch_ReturnZero(void)
+{
+    return 0;
+}
+
+struct ResourceWork {
+    u32 header[3];
+    u32 cursor;
+};
+
+void Resource_LoadWorkHeader(void)
+{
+    const void *header;
+    struct ResourceWork *work;
+
+    header = (const void *)Resource_GetTableEntry((u32)&ResourceId_BuildStamp);
+    work = (struct ResourceWork *)&Data_03007804;
+    Dma_Set(header, work, 0x84000003, REG_DMA3);
+    work->cursor = 0;
+}
+
+void RuntimeDispatch_NoOpHook(void)
+{
+}
+
+void *Resource_GetTableEntry(s32 index)
+{
+    return Resource_DirectoryTable[index];
+}
+
+void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byte_length)
+{
+    s32 entry_count;
+    s32 entry_index;
+
+    entry_count = byte_length >> 1;
+    entry_index = 1;
+    entries++;
+    if (entry_index < entry_count) {
+        u32 next_marker_mask;
+        u32 current_marker_mask;
+        u32 payload_mask = 0x7ff;
+        next_marker_mask = 0xf800;
+        current_marker_mask = 0xf000;
+        entries -= 2;
+        do {
+            u16 current_entry;
+            u16 next_entry;
+            u32 next_marker_bits;
+            u32 current_marker_bits;
+
+            next_entry = entries[2];
+            next_marker_bits = next_entry & next_marker_mask;
+            entries++;
+            if (next_marker_bits == next_marker_mask) {
+                current_entry = entries[0];
+                current_marker_bits = current_entry & next_marker_bits;
+                if (current_marker_bits == current_marker_mask) {
+                    u32 packed_offset;
+                    u32 adjusted_current;
+                    u32 adjusted_next;
+
+                    packed_offset = (((current_entry & payload_mask) << 12)
+                        | ((next_entry & payload_mask) * 2)) - (entry_index * 2);
+                    adjusted_current = ((packed_offset >> 12) & payload_mask)
+                        | current_marker_bits;
+                    adjusted_next = ((packed_offset >> 1) & payload_mask)
+                        | next_marker_bits;
+                    entries[0] = adjusted_current;
+                    entries[1] = adjusted_next;
+                }
+            }
+            entry_index++;
+        } while (entry_index < entry_count);
+    }
+}
+
+void Resource_LoadCode(u32 index, void *destination)
+{
+    void (*routine)(void *, s32);
+    s32 end;
+    u32 size;
+
+    end = Resource_DecodeType01((const void *)Resource_GetTableEntry(index), destination);
+    /* FAKEMATCH: the wrapper keeps the size load after the decode. */
+    do {
+        size = (u32)Resource_PatchThumbBranchCodeSize;
+    } while (0);
+    routine = (void (*)(void *, s32))MemAlloc(size);
+    Dma_Set((const void *)Resource_PatchThumbBranch, routine, 0x84000000 | (size >> 2), REG_DMA3);
+    routine(destination, end);
+    MemFree(routine);
+}
+
+void Runtime_IgnoreInterrupt(void)
+{
+}
+
+void Runtime_InstallIwramAndIrqs(void)
+{
+    volatile u16 *ime;
+    s32 zero;
+    u8 *iwram;
+    s32 value;
+    s32 one;
+
+    ime = &REG_IME;
+    zero = 0;
+    /* FAKEMATCH: the do-while keeps the REG_IME store ahead of the IWRAM address load. */
+    do {
+        *ime = zero;
+    } while (0);
+    iwram = IwramIrqMain;
+    Dma_Set((const void *)IwramRuntime_Rom, iwram, 0x84000500, REG_DMA3);
+    gIrqVector = iwram;
+    Dma_Set((const void *)Runtime_IrqHandlers, (void *)gIrqHandlers, 0x8400000e, REG_DMA3);
+    REG_DISPSTAT = zero;
+    value = 0xc3ff;
+    REG_KEYCNT = value;
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    value = 0x3001;
+#else
+    value = 0x1001;
+#endif
+    REG_IE = value;
+    one = 1;
+    *ime = one;
+}
 
 #define Io_Write16(v, reg)                                                     \
     do { \
@@ -238,4 +490,162 @@ void WaitFrames(s32 frames)
 void Runtime_SetMainState19(void)
 {
     gKeyRepeatTimer = 19;
+}
+
+#define KEY_REPEAT_FIRST 19
+#define KEY_REPEAT_NEXT  6
+
+void Input_UpdateKeyRepeatAndDirection(void)
+{
+    /* FAKEMATCH: volatile reads and the repeat clear preserve separate input-cell rereads. */
+    s32 delay = gKeyRepeatTimer;
+    u32 keys;
+    u32 axis = 0;
+    u32 dirs;
+    u32 mask;
+    volatile u32 *repeat;
+
+    if (delay <= 0) {
+        gKeysRepeat = gKeysHeld;
+        keys = *(volatile u32 *)&gKeysRepeat;
+        if (delay == 0)
+            gKeyRepeatTimer = KEY_REPEAT_NEXT;
+        else
+            gKeyRepeatTimer = KEY_REPEAT_FIRST;
+    } else {
+        *(volatile u32 *)&gKeysRepeat = 0;
+        keys = gKeysRepeat;
+    }
+
+    if (keys != 0) {
+        dirs = 0;
+        if (keys & KEY_UP)
+            dirs = 1;
+        if (keys & KEY_DOWN)
+            dirs++;
+        if (keys & KEY_LEFT)
+            dirs++;
+        if (keys & KEY_RIGHT)
+            dirs++;
+
+        repeat = &gKeysRepeatDirected;
+        *repeat = keys;
+        switch (dirs) {
+        default:
+            gKeysDirection = KEYS_HORIZONTAL;
+            mask = 0xffff & ~KEYS_DPAD;
+            *repeat &= mask;
+            break;
+        case 0:
+            gKeysDirection = KEYS_HORIZONTAL;
+            break;
+        case 1:
+            gKeysDirection = keys & KEYS_DPAD;
+            break;
+        case 2:
+            if ((*(volatile u32 *)&gKeysDirection & *repeat) == 0)
+                gKeysDirection = KEYS_HORIZONTAL;
+            *repeat &= *(volatile u32 *)&gKeysDirection ^ 0xffff;
+            break;
+        case 3:
+            if (gKeysDirection & KEYS_HORIZONTAL)
+                axis = KEYS_HORIZONTAL;
+            if (*(volatile u32 *)&gKeysDirection & KEYS_VERTICAL)
+                axis = KEYS_VERTICAL;
+            mask = 0xffff ^ axis;
+            gKeysDirection = keys & mask;
+            *repeat &= mask;
+            break;
+        }
+    } else {
+        gKeysRepeatDirected = keys;
+    }
+
+    *(volatile u32 *)&gKeyState =
+        (gKeysHeld ^ gKeysHeldLast)
+        & *(volatile u32 *)&gKeysHeld;
+    gKeysHeldLast = *(volatile u32 *)&gKeysHeld;
+}
+
+extern u16 gLinkStatus;
+
+#define SOUND_PRESET_COUNT 5
+#define SOUND_PRESET_SIZE 152
+
+void System_VBlankHandler(void)
+{
+    u32 keys;
+    void (*hook)(void);
+
+    {
+        volatile u16 *dma0 = REG_DMA0;
+
+        dma0[5] &= ~DMA_START_HBLANK_REPEAT;
+        dma0[5] &= ~DMA_ENABLE;
+        dma0[5];
+    }
+    if (gSerialExchangeActive != 0) {
+        u16 *status = &gLinkStatus;
+        *status = SerialRuntime_ExchangePayloads((void *)&gSerialTransfer, (void *)gSerialPeerPayloads);
+        SerialRuntime_StepBlockTransfer();
+    }
+    MusicPlayer_StepVolumeAndPitchTowardTargetsFar();
+    BlendTransition_Update();
+    if (gFrameRenderPending != 0) {
+        if (gOamCopyEnabled != 0)
+            Dma_Set(((union HeapState *)gWorkSlot)->slots[52], OAM, DMA_ENABLE32 | DMA_32BIT | 0x100, REG_DMA3);
+        Dma_Set(gBgScroll, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
+        IoWriteQueue_FlushPending();
+        gFrameRenderPending = 0;
+    }
+    hook = Data_03001cfc;
+    if (hook != 0) {
+        Data_03001cfc = 0;
+        hook();
+    }
+    Runtime_InvokeCallbacksByKey(0x480);
+    keys = REG_KEYINPUT ^ KEYS_MASK;
+    {
+        u32 pressed = keys & ~gKeysHeld;
+
+        gKeyState = pressed;
+        gKeysPressedLatch |= pressed;
+    }
+    /* FAKEMATCH: the volatile store keeps the held-key reload in the repeat test after the write; the shared cell's declared type is unchanged. */
+    *(volatile u32 *)&gKeysHeld = keys;
+    if (keys == 0) {
+        gKeyRepeatTimer = 19;
+        gKeysRepeat = keys;
+    } else if (gKeysHeld & (gKeysHeldAtVBlank ^ 0xffff)) {
+        gKeyRepeatTimer = -1;
+        gKeysRepeat = keys;
+    } else if (gKeyRepeatTimer > 0) {
+        gKeyRepeatTimer--;
+    }
+    gKeysHeldAtVBlank = keys;
+    gFrameTick++;
+    gLagFrameCount++;
+    gVBlankDone = 1;
+    SoundDriver_EnterMixer();
+}
+
+s32 Sound_LoadPresetParameters(s32 preset)
+{
+    s32 index;
+
+    index = preset;
+    if ((u32)preset > SOUND_PRESET_COUNT - 1) {
+        index = 0;
+    }
+    Dma_Set(IwramCodeRecords + index * SOUND_PRESET_SIZE, Data_03000bd8, 0x84000026,
+            REG_DMA3);
+    return 0;
+}
+
+void Sound_ReservedNoOpA(void)
+{
+}
+
+void Sound_ReservedNoOpB(void)
+{
 }

@@ -149,6 +149,7 @@ publication-check:
 	$(CHECK) publication --tree
 	$(CHECK) layout
 	$(CHECK) dead
+	$(CHECK) aliases
 	$(CHECK) devices
 	$(CHECK) hygiene
 

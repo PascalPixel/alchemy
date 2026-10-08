@@ -1,0 +1,92 @@
+game	symbols	reason
+tbs	AudioCommand_PlayFar,Audio_PlayCue	O2 pending: far stub shared code calls by one name while overlay veneers of that name target the other
+tbs	AudioEngine_RunMixerFar,FarCall_SoundTable	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	BattleEffect_LoadWorkFar,FarCall_EffectTable	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	Battle_ApplyPresetItemsAndFlagsFar,FarCall_ShopTable	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	DebugBattle_RunMenuFar,FarCall_BattleTable	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	DisplayScroll_RunSlideshowFar,FarCall_ScrollTable	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	FarCall_BlankLoadTable,Runtime_BlankDisplayLoadValueAndRunFar	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	FarCall_BlankRunTable,Runtime_BlankDisplayAndRunFar	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	FarCall_FieldTable,ObjectSystem_ConfigureFar	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	FarCall_GameTable,Trade_GetOfferStateFar	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	FarCall_MenuTable,RunAssetSelectionScreenFar	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	FarCall_ObjectTable,Field_RunSceneFar	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	FarCall_PaletteTable,Title_ShowIntroFar	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	FarCall_ResourceTable,Resource_GetMetadataRecordFar	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	FarCall_RuntimeTable,WaitFramesFar	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	FarCall_WindowTable,UiWork_InitializeWithResourceCountersFar	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
+tbs	Item_Get,Item_GetDirectFar	O2 pending: far stub shared code calls by one name while overlay veneers of that name target the other
+tbs	IwramCodeRecordsEnd,SoundDriver_EnterMixer	end of the IWRAM code records, which is where the mixer entry starts
+tbs	Map_CheckObjectStepFar,Object_CheckMovementCollision	far stub shared code calls by one name while overlay veneers of that name target the other, as the O2 pending stubs; not yet marked in source
+tbs	ObjectDispatch_ApplyArgumentToChildrenFar,Object_SetMode	O2 pending: far stub shared code calls by one name while overlay veneers of that name target the other
+tbs	UiText_DrawQuantity,UiWork_PushValueSlotFar	O2 pending: far stub shared code calls by one name while overlay veneers of that name target the other
+tla	AudioCommand_InvokeSlot35,Func_081c2328	⚓️ scaffold, pending
+tla	AudioEngine_RunMixerFar,Resource_FarCall010	⚓️ scaffold, pending
+tla	Audio_AreaCueTable,Scene_CueRuleTable	⚓️ scaffold, pending
+tla	BattleFx_DecodeFrame,BattleFx_DecodeFrameCode	⚓️ scaffold, pending
+tla	BattleFx_PatchTemplate,BattleFx_PatchTemplateCode	⚓️ scaffold, pending
+tla	BattleUnit_Recalculate,UnitCalcFar	⚓️ scaffold, pending
+tla	ColorBuffer_BrightenPartialKernel,ColorBuffer_BrightenPartialKernelCode	⚓️ scaffold, pending
+tla	ColorBuffer_DarkenPartialKernel,ColorBuffer_DarkenPartialKernelCode	⚓️ scaffold, pending
+tla	ColorBuffer_HalveNonzeroKernel,ColorBuffer_HalveNonzeroKernelCode	⚓️ scaffold, pending
+tla	ColorBuffer_ScaleKernel,ColorBuffer_ScaleKernelCode	⚓️ scaffold, pending
+tla	ColorBuffer_ScaleNonzeroThreeQuartersKernel,ColorBuffer_ScaleNonzeroThreeQuartersKernelCode	⚓️ scaffold, pending
+tla	Data_08021824,Func_08021824	⚓️ scaffold, pending
+tla	Data_080385e0,Func_080385e0	⚓️ scaffold, pending
+tla	Data_081380ac,Func_081380ac	⚓️ scaffold, pending
+tla	Data_08138fc8,Func_08138fc8	⚓️ scaffold, pending
+tla	Data_081391c8,Func_081391c8	⚓️ scaffold, pending
+tla	Data_081393d8,Func_081393d8	⚓️ scaffold, pending
+tla	Data_081395f8,Func_081395f8	⚓️ scaffold, pending
+tla	Data_08139aac,Func_08139aac	⚓️ scaffold, pending
+tla	Data_08139f70,Func_08139f70	⚓️ scaffold, pending
+tla	Data_0813a444,Func_0813a444	⚓️ scaffold, pending
+tla	Data_0813a924,Func_0813a924	⚓️ scaffold, pending
+tla	Data_0813ae14,Func_0813ae14	⚓️ scaffold, pending
+tla	Data_0813b2ec,Func_0813b2ec	⚓️ scaffold, pending
+tla	Data_0813b7a0,Func_0813b7a0	⚓️ scaffold, pending
+tla	Data_0813b9a0,Func_0813b9a0	⚓️ scaffold, pending
+tla	Func_0200061c,Func_02000644	⚓️ scaffold, pending
+tla	Func_0802b7e0,GetWorldMapCollision	⚓️ scaffold, pending
+tla	Func_080c8000,Resource_FarCall006	⚓️ scaffold, pending
+tla	Func_080ccd78,SceneEvent_FindActiveRecord	⚓️ scaffold, pending
+tla	Func_080d3a10,Func_080eb01c	⚓️ scaffold, pending
+tla	Func_080dbb78,Map_GetCellAtPosition	⚓️ scaffold, pending
+tla	Func_080dbcd8,Map_TestSpecialTerrainPair	⚓️ scaffold, pending
+tla	Func_080f8000,Resource_FarCall007	⚓️ scaffold, pending
+tla	Func_08108000,Resource_FarCall008	⚓️ scaffold, pending
+tla	Func_08118000,Resource_FarCall009	⚓️ scaffold, pending
+tla	Func_08138000,Resource_FarCall00C	⚓️ scaffold, pending
+tla	Func_081a0000,Resource_FarCall00A	⚓️ scaffold, pending
+tla	Func_081a6000,Resource_FarCall00B	⚓️ scaffold, pending
+tla	Func_081b2000,Resource_FarCall00E	⚓️ scaffold, pending
+tla	Func_081c0428,Pcm_KeyToFrequencyWorkCopy	⚓️ scaffold, pending
+tla	IwramDivide,IwramSignedDivide	Camelot's fixed IWRAM divide entry, signed and unsigned at one address
+tla	Math_DotProductQ16,Math_DotProductQ16Code	⚓️ scaffold, pending
+tla	Model_Decode,Model_DecodeCode	⚓️ scaffold, pending
+tla	RenderOutput_AcquireFree,Tile_ExpandOpaqueEnd	⚓️ scaffold, pending
+tla	Render_BuildOamListKernel,Render_BuildOamListKernelCode	⚓️ scaffold, pending
+tla	Render_ConvertMap,Render_ConvertMapCode	⚓️ scaffold, pending
+tla	Render_CopyStrided,Render_CopyStridedCode	⚓️ scaffold, pending
+tla	Render_DecodeFrame,Render_DecodeFrameCode	⚓️ scaffold, pending
+tla	Render_DrawMap,Render_DrawMapCode	⚓️ scaffold, pending
+tla	Resource_Decode01,Resource_Decode01Code	⚓️ scaffold, pending
+tla	Resource_Decode2,Resource_Decode2Code	⚓️ scaffold, pending
+tla	Resource_Decode2End,Resource_ExecuteTransfer,Resource_ExecuteTransferCode	⚓️ scaffold, pending
+tla	Resource_DecodeByteLz,Resource_DecodeByteLzCode	⚓️ scaffold, pending
+tla	Resource_DecodeHalfwordLz,Resource_DecodeHalfwordLzCode	⚓️ scaffold, pending
+tla	Resource_FarCall003,Resource_GetMetadataRecordFarFar	⚓️ scaffold, pending
+tla	Resource_FarCall004,UiWork_InitializeWithResourceCountersFar	⚓️ scaffold, pending
+tla	Resource_FarCall005,Trade_GetOfferStateFar	⚓️ scaffold, pending
+tla	Resource_FarCall00D,Runtime_BlankDisplayAndRunFar	⚓️ scaffold, pending
+tla	Resource_FarCall00F,Runtime_BlankDisplayAndRunSceneFar	⚓️ scaffold, pending
+tla	Resource_PatchThumbBranch,Resource_PatchThumbBranchCode	⚓️ scaffold, pending
+tla	SentouKouka_Tenkai,SentouKouka_TenkaiCode	⚓️ scaffold, pending
+tla	SentouKouka_Tenkai2,SentouKouka_Tenkai2Code	⚓️ scaffold, pending
+tla	SentouKouka_Tenkai2Case2,SentouKouka_TenkaiCommands2	⚓️ scaffold, pending
+tla	SentouKouka_TenkaiCase2,SentouKouka_TenkaiCommands	⚓️ scaffold, pending
+tla	Text_DecodeSymbol,Text_DecodeSymbolCode	⚓️ scaffold, pending
+tla	Text_LookupSymbol,Text_LookupSymbolCode	⚓️ scaffold, pending
+tla	Tile_Decompress4bpp,Tile_Decompress4bppCode	⚓️ scaffold, pending
+tla	Tile_Decompress4bppEnd,Tile_ExpandMasked,Tile_ExpandMaskedCode	⚓️ scaffold, pending
+tla	Tile_ExpandMaskedEnd,Tile_ExpandOpaque,Tile_ExpandOpaqueCode	⚓️ scaffold, pending

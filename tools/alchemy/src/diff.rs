@@ -759,7 +759,7 @@ mod tests {
             symbols: vec![(ROM + 0x100, "First".into()), (ROM + 0x118, "Next".into())],
         };
         let map = Map { placed: vec![section.clone()] };
-        let symbol = |name: &str, value, kind| crate::elf::Symbol { name: name.into(), value, size: 0, kind, section: 1 };
+        let symbol = |name: &str, value, kind| crate::elf::Symbol { name: name.into(), value, size: 0, kind, bind: 1, section: 1 };
         let mut elf = Elf { sections: vec![], symbols: vec![symbol("First", ROM + 0x101, 2), symbol("Next", ROM + 0x119, 2)] };
         assert_eq!(scaffold_extent(&map, &elf, "First").unwrap(), (ROM + 0x100, ROM + 0x118, ROM, "First".into()));
         assert_eq!(scaffold_extent(&map, &elf, "08000100").unwrap().1, ROM + 0x118);

@@ -9,6 +9,8 @@ pub struct Symbol {
     pub value: u32,
     pub size: u32,
     pub kind: u8,
+    /// STB_LOCAL 0, STB_GLOBAL 1, STB_WEAK 2.
+    pub bind: u8,
     pub section: u16,
 }
 
@@ -93,6 +95,7 @@ impl Elf {
                         value: word(entry, 4)?,
                         size: word(entry, 8)?,
                         kind: info & 0xf,
+                        bind: info >> 4,
                         section: half(entry, 14)?,
                     });
                 }

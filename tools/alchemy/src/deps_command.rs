@@ -574,7 +574,7 @@ mod tests {
     use crate::elf::{Section, Symbol as ElfSymbol};
 
     fn symbol(name: &str, value: u32, kind: u8) -> ElfSymbol {
-        ElfSymbol { name: name.into(), value, size: 0, kind, section: 1 }
+        ElfSymbol { name: name.into(), value, size: 0, kind, bind: 1, section: 1 }
     }
 
     #[test]

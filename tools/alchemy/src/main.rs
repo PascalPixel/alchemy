@@ -1,6 +1,7 @@
 use std::process::ExitCode;
 
 mod adopt;
+mod adopt_data;
 mod adopt_into;
 mod assembly {
     pub mod addresses;
@@ -70,6 +71,10 @@ Match one function
   adopt         the C into its module (--into) and out of all scaffolding
   label         name English-only scaffold data in the other editions
 
+Adopt data
+  adopt-data    a data block's object into all six linker scripts and its
+                bytes out of every edition's scaffold, splitting sections
+
 Check the whole build
   objects       what differs from the reference ROM, object or placement
   progress      DONE in every edition from the verified linker maps
@@ -111,6 +116,7 @@ fn main() -> ExitCode {
         "deps" => deps_command::entry(rest),
         "adopt" => result(adopt::run(rest)),
         "label" => result(label::run(rest)),
+        "adopt-data" => result(adopt_data::run(rest)),
         "queues" => result(queues::run(rest)),
         "integrate" => result(integrate::run(rest)),
         "keep" => result(keep::run(rest)),

@@ -504,6 +504,7 @@ alchemy sizes DRAFT.c [SIZE]           # struct sizes; the locals that fill a fr
 alchemy show EDITION FUNCTION          # a built function beside the ROM
 alchemy adopt ADDR LABEL NAME [--into MODULE.C]   # into its module, out of all scaffolding
 alchemy label NAME ENGLISH_ADDR LEN    # name English-only scaffold data in other editions
+alchemy adopt-data OBJECT PIECE...     # a data block's object into all six scripts, out of all scaffolds
 # Check the whole build
 alchemy objects EDITION...             # what differs from the ROM, object or placement
 make progress                          # DONE, one line per edition (alchemy progress)

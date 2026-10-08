@@ -1914,12 +1914,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
     void *colors;
 
     cache = &gBattleFxWork[1];
-    /* FAKEMATCH: a form the bytes prove: one IME pointer for the whole
-       function, set at entry, as canvas.c's; it gets no register and reload
-       rematerialises 0x04000208 at each queue write, whose IME store is the
-       pointer's low half 0x208, as the native. A pointer per queue write
-       differs in 397 of 2455 rows. */
-    ime = (volatile u16 *)0x04000208;
+    ime = (u16 *)0x04000208;
     canvas = cache[0];
     work = cache[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
     ctrl = cache[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE_CANVAS];

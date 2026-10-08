@@ -2717,8 +2717,7 @@ void SceneActor_SetModeByFrameBit1(s32 o)
         Engine_ObjectSetPartPalettes(o, 0);
     }
     {
-        /* FAKEMATCH: needed to match: the frame counter's address is taken before the shake period, as the % operator would order it. */
-        volatile u32 *frame = &gFrameCount;
+        u32 *frame = &gFrameCount;
 
         v = (HaidiaArashi_ShakeShift << 3) + 16;
         if (Math_RemainderUnsigned(*frame, v) == 0) {

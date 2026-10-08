@@ -1,8 +1,8 @@
 #include "TYPES.H"
-/* FAKEMATCH: this file reads Portrait_CharacterMap through its own declaration; the shop's changes its code. */
+/* FAKEMATCH: needed to match: this file reads Portrait_CharacterMap through its own declaration; the shop's changes its code. */
 #define OWN_SideObject_CharacterIdMap
 extern const s16 Portrait_CharacterMap[];
-/* FAKEMATCH: this file reads Portrait_SpriteMap through its own declaration; the shop's changes its code. */
+/* FAKEMATCH: needed to match: this file reads Portrait_SpriteMap through its own declaration; the shop's changes its code. */
 #define OWN_SideObject_ActorKindIdMap
 extern const s16 Portrait_SpriteMap[];
 #include "BATTLE.H"

@@ -104,13 +104,13 @@ s32 Resource_DecodeType01(const void *source, void *destination)
     s32 result;
     u32 size;
 
-    /* FAKEMATCH: the wrapper keeps the size load after the parameter copies. */
+    /* FAKEMATCH: needed to match: the wrapper keeps the size load after the parameter copies. */
     do {
         size = (u32)Resource_DecodeType01CodeSize;
     } while (0);
     routine = (s32 (*)(const void *, void *))MemAlloc(size);
     Dma_Set((const void *)Resource_DecodeType01Arm, routine, 0x84000000 | (size >> 2), REG_DMA3);
-    /* FAKEMATCH: so is the call, which keeps the argument loads in order. */
+    /* FAKEMATCH: needed to match: so is the call, which keeps the argument loads in order. */
     do {
         result = routine(source, destination);
     } while (0);
@@ -124,13 +124,13 @@ s32 Resource_DecodeType2(const void *source, void *destination)
     s32 result;
     u32 size;
 
-    /* FAKEMATCH: the wrapper keeps the size load after the parameter copies. */
+    /* FAKEMATCH: needed to match: the wrapper keeps the size load after the parameter copies. */
     do {
         size = (u32)Resource_Decode2CodeSize;
     } while (0);
     routine = (s32 (*)(const void *, void *))MemAlloc(size);
     Dma_Set((const void *)Resource_Decode2, routine, 0x84000000 | (size >> 2), REG_DMA3);
-    /* FAKEMATCH: so is the call, which keeps the argument loads in order. */
+    /* FAKEMATCH: needed to match: so is the call, which keeps the argument loads in order. */
     do {
         result = routine(source, destination);
     } while (0);
@@ -144,13 +144,13 @@ s32 Resource_DecodeByteLz(const void *source, void *destination)
     s32 result;
     u32 size;
 
-    /* FAKEMATCH: the wrapper keeps the size load after the parameter copies. */
+    /* FAKEMATCH: needed to match: the wrapper keeps the size load after the parameter copies. */
     do {
         size = (u32)Resource_DecodeByteLzCodeSize;
     } while (0);
     routine = (s32 (*)(const void *, void *))MemAlloc(size);
     Dma_Set((const void *)Resource_DecodeByteLzArm, routine, 0x84000000 | (size >> 2), REG_DMA3);
-    /* FAKEMATCH: so is the call, which keeps the argument loads in order. */
+    /* FAKEMATCH: needed to match: so is the call, which keeps the argument loads in order. */
     do {
         result = routine(source, destination);
     } while (0);

@@ -21,7 +21,7 @@ void Ui_RunCopiedRoutine(GlyphTransfer *work)
     u32 size;
     void *code;
 
-    /* FAKEMATCH: the do-while keeps the size load after the arguments. */
+    /* FAKEMATCH: needed to match: the do-while keeps the size load after the arguments. */
     do { size = (u32)Tile_Decompress4bppCodeSize; } while (0);
     code = Runtime_AllocateHeapBlock(49, size);
     Dma_Set((const void *)Tile_Decompress4bpp, code, 0x84000000 | (size >> 2), REG_DMA3);

@@ -25,7 +25,7 @@ typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
 static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 {
-    /* FAKEMATCH: in Japanese, a direct call loads the fill value before the routine and reverses pool order. */
+    /* FAKEMATCH: needed to match: in Japanese, a direct call loads the fill value before the routine and reverses pool order. */
     return fill(dst, size, value);
 }
 #endif
@@ -86,7 +86,7 @@ void UiWork_Initialize(s32 kind)
     Iwram_ClearWords(work, RENDER_WORK_SIZE);
 #endif
     work->dirty = 1;
-    /* FAKEMATCH: the 99 goes through an s32 local and a u16 pointer so it is a movs, not a halfword pool constant */
+    /* FAKEMATCH: needed to match: the 99 goes through an s32 local and a u16 pointer so it is a movs, not a halfword pool constant */
     half = &work->glyph_resource;
     value = 99;
     *half = value;

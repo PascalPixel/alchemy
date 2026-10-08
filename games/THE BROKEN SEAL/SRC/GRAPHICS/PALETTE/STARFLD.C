@@ -55,7 +55,7 @@ s32 BattleFx_InitializeStarField(s32 mode)
     u8 *data;
     s32 scale;
     s32 zero;
-    /* FAKEMATCH: an unused Spark, the 28 bytes the native frame reserves. */
+    /* FAKEMATCH: needed to match: an unused Spark, the 28 bytes the native frame reserves. */
     struct Spark unused;
 
     gTransitionWork[2] = 1;
@@ -116,7 +116,7 @@ s32 BattleFx_InitializeStarField(s32 mode)
         break;
     }
     Dma_Set(data, BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 32, REG_DMA3);
-    /* FAKEMATCH: the two one-pass blocks keep the BG2 origin and matrix writes in source order, the zero loaded first. */
+    /* FAKEMATCH: needed to match: the two one-pass blocks keep the BG2 origin and matrix writes in source order, the zero loaded first. */
     do {
         zero = 0;
         REG_BG2X = zero;
@@ -207,11 +207,11 @@ struct EffectLaunch {
 extern void *gWorkSlot[];
 
 
-/* FAKEMATCH: the write goes through its own int, which loads each value as a word, and the do/while (0) ends a scheduling region after it, as in the slideshow's register writes. */
+/* FAKEMATCH: needed to match: the write goes through its own int, which loads each value as a word, and the do/while (0) ends a scheduling region after it, as in the slideshow's register writes. */
 #define Io_Write16(reg, value) \
     do { \
-        /* FAKEMATCH: the one-pass register-write boundary preserves measured instruction scheduling. */ \
-        /* FAKEMATCH: the register-write word temporary preserves measured value allocation. */ \
+        /* FAKEMATCH: needed to match: the one-pass register-write boundary preserves measured instruction scheduling. */ \
+        /* FAKEMATCH: needed to match: the register-write word temporary preserves measured value allocation. */ \
         s32 value_ = (value); \
         (reg) = value_; \
     } while (0)
@@ -223,7 +223,7 @@ extern void *gWorkSlot[];
         s32 count; \
  \
         q = &gIoWriteQueue; \
-        /* FAKEMATCH: the one-pass block keeps the saved copy ahead of the IME store, as in the IO write queue. */ \
+        /* FAKEMATCH: needed to match: the one-pass block keeps the saved copy ahead of the IME store, as in the IO write queue. */ \
         do { \
             find_ime; \
             saved = *ime; \
@@ -237,7 +237,7 @@ extern void *gWorkSlot[];
             *destination++ = 0x04000028; \
             *destination = 0x84000002; \
         } \
-        /* FAKEMATCH: the one-pass block keeps the IME restore ahead of the next statement. */ \
+        /* FAKEMATCH: needed to match: the one-pass block keeps the IME restore ahead of the next statement. */ \
         do { \
             *ime = saved; \
         } while (0); \
@@ -245,13 +245,13 @@ extern void *gWorkSlot[];
 
 void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 {
-    /* FAKEMATCH: an unread ten-word launch tail, the native frame's 40 extra bytes. */
+    /* FAKEMATCH: needed to match: an unread ten-word launch tail, the native frame's 40 extra bytes. */
     s32 spare[10];
     struct EffectPosition position;
     struct EffectPosition position2;
     struct EffectLaunch launch;
     struct EffectLaunch launch2;
-    /* FAKEMATCH: the reference holds the address of slot 12 in the register that later holds the IME address; only a variable assigned twice does that. The session is slot 9, read three words below it. */
+    /* FAKEMATCH: needed to match: one variable, assigned twice, holds slot 12's address and later the IME address, as the bytes do; the session is slot 9, three words below. */
     volatile u16 *ime = (volatile u16 *)&gWorkSlot[12];
     struct BtlWork *session = *(struct BtlWork **)((u8 *)ime - 12);
     struct Bg2OriginWork *work;

@@ -62,7 +62,7 @@ const u32 DisplayScroll_SlideResources[] = {
 
 void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
 {
-    /* FAKEMATCH: the inline queue write keeps the one-pass IME read and u16 count-store scheduling. */
+    /* FAKEMATCH: needed to match: the inline queue write keeps the one-pass IME read and u16 count-store scheduling. */
     u8 *data;
     u32 palette;
     u32 fill;
@@ -97,7 +97,7 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
         s32 count;
 
         q = &gIoWriteQueue;
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+        /* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
         do {
             ime = &REG_IME;
             saved = *ime;
@@ -161,11 +161,11 @@ extern u8 gOptionMirror;
 
 void WaitFrames(s32 frames);
 
-/* FAKEMATCH: the int temporary and one-pass write keep word-value construction, register order and a single literal pool. */
+/* FAKEMATCH: needed to match: the int temporary and one-pass write keep word-value construction, register order and a single literal pool. */
 #define Io_Write16(reg, value) \
     do { \
-        /* FAKEMATCH: the one-pass register-write boundary preserves measured instruction scheduling. */ \
-        /* FAKEMATCH: the register-write word temporary preserves measured value allocation. */ \
+        /* FAKEMATCH: needed to match: the one-pass register-write boundary preserves measured instruction scheduling. */ \
+        /* FAKEMATCH: needed to match: the register-write word temporary preserves measured value allocation. */ \
         s32 value_ = (value); \
         (reg) = value_; \
     } while (0)

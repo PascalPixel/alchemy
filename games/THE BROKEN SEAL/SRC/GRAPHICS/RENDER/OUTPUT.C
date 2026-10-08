@@ -21,7 +21,7 @@ struct RenderOutput *RenderOutput_Create(
     s32 offset_x,
     s32 offset_y)
 {
-    /* FAKEMATCH: the ignored scalar-return call keeps mov after the stores; direct void-call forms reorder it. */
+    /* FAKEMATCH: needed to match: the ignored scalar-return call keeps mov after the stores; direct void-call forms reorder it. */
     s32 x;
     struct RenderOutput *output;
     s32 y;

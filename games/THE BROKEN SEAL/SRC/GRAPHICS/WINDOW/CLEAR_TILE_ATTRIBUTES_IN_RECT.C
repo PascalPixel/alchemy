@@ -20,19 +20,19 @@
 
 static __inline__ void ClearWords(void *dest, s32 size)
 {
-    /* FAKEMATCH: through this wrapper the pen table's address is the call's r0 and is set again in each colour arm, as listed; a direct call keeps it in r10 from the call on (44 differing lines). */
+    /* FAKEMATCH: needed to match: through this wrapper the pen table's address is reloaded into r0 in each colour arm; a direct call keeps it in r10 (44 differ). */
     Iwram_ClearWords(dest, size);
 }
 
 static __inline__ void FillWords(void *dest, s32 size, u32 value)
 {
-    /* FAKEMATCH: through this wrapper both arms load the canvas before the routine and the fill value, as listed; a direct call loads the fill value first (8 differing lines). */
+    /* FAKEMATCH: needed to match: through this wrapper both arms load the canvas before the routine and the fill value; a direct call loads the fill value first (8 differ). */
     Iwram_FillWords(dest, size, value);
 }
 
 s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
 {
-    /* FAKEMATCH: an unread 32-byte reserve, the native frame's extra bytes (the frame is 36 bytes without it). */
+    /* FAKEMATCH: needed to match: an unread 32-byte reserve, the native frame's extra bytes (the frame is 36 bytes without it). */
     u32 reserve[8];
     u8 pens[16];
     struct UiRenderWork *work;

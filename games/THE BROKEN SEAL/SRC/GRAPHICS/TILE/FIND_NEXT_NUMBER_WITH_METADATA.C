@@ -104,7 +104,7 @@ restart:
         ResourceMetadata_Register((struct AnimationObject *)alt, ent[1].no);
         ResourceMetadata_Register((struct AnimationObject *)alt, ent[2].no);
         ResourceMetadata_Register((struct AnimationObject *)alt, ent[3].no);
-        /* FAKEMATCH: the native adds the flags offset to the object's own register (r5) in place; a separate address takes a copy. */
+        /* FAKEMATCH: needed to match: the native adds the flags offset to the object's own register (r5) in place; a separate address takes a copy. */
         alt = (s32)&((struct AnimationObject *)alt)->flags;
         *(u8 *)alt = flag;
     }
@@ -317,7 +317,7 @@ next:
 
 s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step)
 {
-    /* FAKEMATCH: the cancelling step initializer preserves the incoming argument moves; a plain initializer reverses them. */
+    /* FAKEMATCH: needed to match: the cancelling step initializer preserves the incoming argument moves; a plain initializer reverses them. */
     s32 value = start;
     s32 delta = step + value - value;
 

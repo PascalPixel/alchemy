@@ -49,7 +49,7 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
                 } while (col != 0);
             }
 
-            /* FAKEMATCH: the do-while (0) keeps the row counter update after the dirty-byte store instead of filling the load delay. */
+            /* FAKEMATCH: needed to match: the do-while (0) keeps the row counter update after the dirty-byte store instead of filling the load delay. */
             do {
                 ((struct UiRenderWork *)base)->dirty |= 2 << ((u32)y >> 2);
             } while (0);

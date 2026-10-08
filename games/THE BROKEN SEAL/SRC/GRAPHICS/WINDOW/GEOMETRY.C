@@ -79,7 +79,7 @@ loop:
 
 void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
 {
-    /* FAKEMATCH: the halfword window view keeps geometry reads before scratch stores; direct fields reorder them. */
+    /* FAKEMATCH: needed to match: the halfword window view keeps geometry reads before scratch stores; direct fields reorder them. */
     struct UiWindowInterpolationScratch scratch;
     s32 frame;
     s32 duration;

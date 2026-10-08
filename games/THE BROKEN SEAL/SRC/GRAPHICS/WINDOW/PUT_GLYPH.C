@@ -248,7 +248,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         attr->x = (win->x + (column + *(u16 *)&win->width)) * 8 + 4;
         row = (u8)win->y + (row = (u8)win->height + 254);
         attr->y = row * 8 - 1;
-        /* FAKEMATCH: the embedded OAM view preserves packed/logical position store order changed by byte-span and scalar views. */
+        /* FAKEMATCH: needed to match: the embedded OAM view preserves packed/logical position store order changed by byte-span and scalar views. */
         out->x = attr->x;
         out->y = attr->y;
         out->link_word = 0;
@@ -301,7 +301,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         attr->x = (left + (column + *(u16 *)&win->width)) * 8 + 4;
         row = (u8)win->y + (row = (u8)win->height + 254);
         attr->y = row * 8 + 1;
-        /* FAKEMATCH: the embedded OAM view preserves packed/logical position store order changed by byte-span and scalar views. */
+        /* FAKEMATCH: needed to match: the embedded OAM view preserves packed/logical position store order changed by byte-span and scalar views. */
         out->x = attr->x;
         out->y = attr->y;
         out->link_word = 0;

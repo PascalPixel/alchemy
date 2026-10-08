@@ -41,7 +41,7 @@ void UiText_PrepareMessageWork(s32 argument)
     struct UiRenderWork *state;
     struct BattleDisplayWork *control;
 
-    /* FAKEMATCH: retain the scalar result lifetime and the goto-joined window paths; an if/else with direct 0 and 1 drops the r8/r9 values. The heap-slot range reads need no volatile view. */
+    /* FAKEMATCH: needed to match: retain the scalar result lifetime and the goto-joined window paths; an if/else with direct 0 and 1 drops the r8/r9 values. The heap-slot range reads need no volatile view. */
     state = ((struct BattleMessageSlotRange *)gWindowWork)->render;
     control = ((struct BattleMessageSlotRange *)gWindowWork)->display;
     result = 0;
@@ -99,7 +99,7 @@ s32 UiText_OpenEntryMessage(s32 window, s32 argument)
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
     s32 entry;
     s32 result = 0;
-    /* FAKEMATCH: four unread render entry slots, the native frame's eight extra bytes. */
+    /* FAKEMATCH: needed to match: four unread render entry slots, the native frame's eight extra bytes. */
     u16 entries[4];
 
     work->result[0] = 0;

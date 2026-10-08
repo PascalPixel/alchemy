@@ -158,7 +158,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
 
     object = gSpriteObjects;
     count = 0;
-    /* FAKEMATCH: the precomputed slot lane keeps the offset addition outside the loop; typed indexing moves it inside. */
+    /* FAKEMATCH: needed to match: the precomputed slot lane keeps the offset addition outside the loop; typed indexing moves it inside. */
     offset = (3 & slot) * sizeof(void *) + (u32)&((struct AnimationObject *)0)->entries;
     index = 0;
     do {
@@ -211,7 +211,7 @@ void Battle_PlaceActorsByFormationKind(void)
     u32 i;
 
     scale = Battle_FormationPlacementScale;
-    /* FAKEMATCH: loading heap slot 9 relative to slot 4 avoids a second RAM-base load and eight bytes. */
+    /* FAKEMATCH: needed to match: loading heap slot 9 relative to slot 4 avoids a second RAM-base load and eight bytes. */
     table = *(struct AnimationPosition **)((u8 *)&gSpriteObjects + (9 - 4) * sizeof(((union HeapState *)0)->slots[0]));
 
     switch (kind) {

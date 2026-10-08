@@ -32,7 +32,7 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed)
 
 void Graphics_SetBg1Priority3(void)
 {
-    /* FAKEMATCH: the runtime mask keeps Thumb's negation; direct ~3 adds halfword literal loads. */
+    /* FAKEMATCH: needed to match: the runtime mask keeps Thumb's negation; direct ~3 adds halfword literal loads. */
     u32 mask = 4;
     u32 value = REG_BG1CNT;
 
@@ -44,7 +44,7 @@ void Graphics_SetBg1Priority3(void)
 
 void Graphics_ClearBg1ControlBit2(void)
 {
-    /* FAKEMATCH: the runtime mask keeps Thumb's negation; direct ~3 adds halfword literal loads. */
+    /* FAKEMATCH: needed to match: the runtime mask keeps Thumb's negation; direct ~3 adds halfword literal loads. */
     u32 mask = 4;
     u32 value = REG_BG1CNT;
 
@@ -59,7 +59,7 @@ void Graphics_InstallBg1VCountHandler(void)
     s32 zero = 0;
 
     *(volatile u16 *)address = zero;
-    /* FAKEMATCH: the do-while keeps the handler load ahead of the index. */
+    /* FAKEMATCH: needed to match: the do-while keeps the handler load ahead of the index. */
     do { address = (u32)Graphics_ClearBg1ControlBit2; } while (0);
     Runtime_SetIrqHandler(2, 136, (InterruptHandler)address);
 }
@@ -178,7 +178,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
 
     for (;;) {
         {
-            /* FAKEMATCH: frame declared in its own block: with this block's notes the main loop's shared 0 has the lifetime of 11 at which loop.c hoists it, so gBgScroll[1].x takes the pool-loaded 0 the bytes show; without the block 120 rows differ and two instructions go */
+            /* FAKEMATCH: needed to match: frame in its own block gives the loop's shared 0 the lifetime at which loop.c hoists it, so gBgScroll[1].x takes the pool-loaded 0 (120 rows differ without it). */
             s32 frame = gFrameCount;
             scale = Ui_BounceScales[(frame * 2) & 31];
             scale = (scale - 256) / 4 + 304;
@@ -186,7 +186,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
             work->affine.scale_y = scale;
         }
         {
-            /* FAKEMATCH: bg declared in its own block, as frame above (a bare block or an inlined bg also gives 120): the two blocks' notes together give the shared 0 the hoisting lifetime of 11 (the pool-loaded 0 the bytes show); without this block 120 rows differ */
+            /* FAKEMATCH: needed to match: bg in its own block, as frame above (120 rows differ without it). */
             struct BgScroll *bg = gBgScroll;
             bg[1].x = 0;
             bg[1].y = 32;
@@ -214,7 +214,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                             volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + MADO_X;
                             s32 ofs = 0x100;
                             s32 mask = 3;
-                            /* FAKEMATCH: tmp is a forced temporary set twice, first to the tile, then to the column's index. It restores a form the bytes prove, the tile kept as a block inside the column loop: recomputed every column from the row pattern, the column and 0x100 (adds r3, r7, r0; adds r3, r3, r7). A register set twice is no giv, so loop.c leaves it there; as plain expressions, or as two variables, the tile becomes a giv of the column loop, reduced into its own register set before the loop and stepped each column. Without tmp here 267, in both modes 846. */
+                            /* FAKEMATCH: needed to match: tmp, set twice (the tile, then the column's index), is no giv, so the tile is recomputed in the column loop as the bytes show (adds r3, r7, r0; adds r3, r3, r7); 267 differ without it, 846 in both modes. */
                             vram[panel * 3 + cnt * 32 + (col & mask) - count * 3] = tmp = panel * 16 + cnt * 4 + col + ofs;
                             tmp = col & mask;
                             *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp - count * 3 + MADO_X) = 0;
@@ -232,7 +232,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     }
                 }
                 for (panel = 0; panel < work->count; panel++) {
-                    do { } while (0); /* FAKEMATCH: restores the CSE block boundary at the head of the panel body: without it cse_around_loop replaces the body's 432 with the end test's register, so the exit test reloads work->count instead of comparing count (cmp lr, fp), 0 -> 223 */
+                    do { } while (0); /* FAKEMATCH: needed to match: the empty loop restores the CSE block boundary at the panel body's head, so the exit test compares count instead of reloading work->count (223 differ without it). */
                     count = work->count;
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
@@ -242,7 +242,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                             volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + 20;
                             s32 ofs = 0x100;
                             s32 mask = 3;
-                            /* FAKEMATCH: as in mode 1: tmp, a forced temporary set twice (the tile, then the column's index), is no giv, so the tile stays a block inside the column loop, recomputed every column (adds r3, r7, r0; adds r3, r3, r7) instead of reduced into its own register. Without tmp here 271, in both modes 846. */
+                            /* FAKEMATCH: needed to match: tmp, as in mode 1 (271 differ without it, 846 in both modes). */
                             vram[panel * 3 + cnt * 32 + (col & mask) - count * 3] = tmp = panel * 16 + cnt * 4 + col + ofs;
                             tmp = col & mask;
                             *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp - count * 3 + 20) = 0;

@@ -941,7 +941,7 @@ const u8 DisplayScroll_GlyphWidths[96] = {
 
 void DisplayScroll_UpdateObjects(void)
 {
-    /* FAKEMATCH: the two-word OAM walk preserves stores and registers reversed by named fields. */
+    /* FAKEMATCH: needed to match: the two-word OAM walk preserves stores and registers reversed by named fields. */
     u32 frame = gScratchWord;
     u32 fine = frame & 7;
     s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
@@ -984,7 +984,7 @@ void DisplayScroll_RenderEnteringLine(void)
 
 void DisplayScroll_InitObjectTable(void)
 {
-    /* FAKEMATCH: pointer-cell and postincrement stores retain 376 bytes; direct typed stores produce 368. */
+    /* FAKEMATCH: needed to match: pointer-cell and postincrement stores retain 376 bytes; direct typed stores produce 368. */
     volatile u32 fill;
     u32 *entry;
     u32 i;
@@ -1046,7 +1046,7 @@ void DisplayScroll_InitObjectTable(void)
 
 static __inline__ void DisplayScroll_CopyWords(void *destination, void *source, s32 size)
 {
-    /* FAKEMATCH: a direct call keeps the size in r5 for the fill that follows and puts the row total in r6; through this the size is built in r2. */
+    /* FAKEMATCH: needed to match: a direct call keeps the size in r5 for the fill that follows and puts the row total in r6; through this the size is built in r2. */
     Iwram_CopyWords(destination, source, size);
 }
 
@@ -1091,7 +1091,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
     else if (align == 1)
         x = (width - pos) / 2;
 
-    /* FAKEMATCH: nothing reads this pointer before the glyph row sets it; without the assignment the first character is fetched through r2 and the text pointer stepped with a constant in r3. */
+    /* FAKEMATCH: needed to match: an assignment nothing reads; without it the first character is fetched through r2 and the text pointer stepped by a constant in r3. */
     p = text;
     pos = 0;
     while ((c = *text++) != 0) {

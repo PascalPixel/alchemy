@@ -68,7 +68,7 @@ void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette)
                 p++;
             }
             ((struct UiRenderWork *)base)->dirty |= 2 << ((u32)y >> 2);
-            /* FAKEMATCH: a do-while(0) around the row count decrement keeps the reference register order */
+            /* FAKEMATCH: needed to match: a do-while(0) around the row count decrement keeps the reference register order */
             do {
                 height--;
             } while (0);
@@ -99,7 +99,7 @@ s32 DjinnMenu_ShowHelp(void)
     s32 cnt;
     s32 list_message;
 
-    /* FAKEMATCH: the menu/render heap-cell slice avoids four bytes and changed literal order from separate named cells. */
+    /* FAKEMATCH: needed to match: the menu/render heap-cell slice avoids four bytes and changed literal order from separate named cells. */
     slot_cells = (void **)&gMenuWork;
     menu = slot_cells[0];
     work = slot_cells[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU];

@@ -365,7 +365,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
             u32 size;
             void *code;
 
-            /* FAKEMATCH: the one-pass block loads the size before the slot number, as in SYMBOL.C. */
+            /* FAKEMATCH: needed to match: the one-pass block loads the size before the slot number, as in SYMBOL.C. */
             do {
                 size = (u32)Text_DecodeSymbolCodeSize;
             } while (0);
@@ -881,7 +881,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
             u32 size;
             void *code;
 
-            /* FAKEMATCH: plain assignment and const initialization reverse the two slot/size argument moves; the one-pass block preserves their native order. */
+            /* FAKEMATCH: needed to match: plain assignment and const initialization reverse the two slot/size argument moves; the one-pass block preserves their native order. */
             do {
                 size = (u32)Text_DecodeSymbolCodeSize;
             } while (0);

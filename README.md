@@ -7,19 +7,23 @@ form people can read, change and build on.
 
 ## Progress
 
-<img src="https://raw.githubusercontent.com/PascalPixel/alchemy/progress/PROGRESS_CHART.png" width="838" alt="How much of each game is rebuilt, day by day since 16 July 2026">
+<img src="https://raw.githubusercontent.com/PascalPixel/alchemy/progress/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026">
 
 <img src="https://raw.githubusercontent.com/PascalPixel/alchemy/progress/PROGRESS.png" width="838" alt="A map of the project's files by size">
 
-The percentages are how much of each game’s code has been rewritten so that it
-rebuilds the original exactly, in all six languages (Japanese, English,
-German, Spanish, French and Italian). A piece only counts once every language
-that uses it comes out byte for byte identical. The Broken Seal comes first;
+Each game has two percentages. Code is how much of the game’s code has been
+rewritten so that it rebuilds the original exactly, in all six languages
+(Japanese, English, German, Spanish, French and Italian). Data is how much of
+everything else on the cartridge (pictures, music, text, tables) is built from
+our own source files rather than copied from the original. A piece only counts
+once every language that uses it comes out byte for byte identical, and a
+game is only 100% done when both numbers are. The Broken Seal comes first;
 The Lost Age has just started. Both pictures redraw themselves after every
 change.
 
-The chart shows that climb day by day, and the colours along the bottom show
-which AI models did the work. Sudden drops are honesty checks: when we find
+The chart shows that climb day by day: code as the thick line and data,
+measured since 8 October 2026, as the thin one. The colours along the bottom
+show which AI models did the work. Sudden drops are honesty checks: when we find
 something that only looked finished, it comes back off the count until it’s
 done properly. The map below it shows the whole project by size: everything
 in light rose is still waiting to be rewritten.

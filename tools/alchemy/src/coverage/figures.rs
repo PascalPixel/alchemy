@@ -4,7 +4,7 @@ use std::time::Instant;
 
 const USAGE: &str = r#"usage: alchemy figure [--no-record] [--times]
 After a build of all twelve editions (make compare-editions), measures DONE
-for both games, records it as today's row of recon/tbs/metrics/history.tsv
+for both games, records it as today's row of history.tsv beside the figures
 with the commits' models, and redraws PROGRESS_CHART.png and PROGRESS.png.
 --no-record redraws both from the history as it stands; --times prints how
 long each step took."#;

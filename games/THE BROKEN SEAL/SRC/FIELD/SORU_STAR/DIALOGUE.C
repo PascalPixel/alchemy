@@ -937,19 +937,14 @@ void Event_SayThenWait(s32 speaker, s32 frames)
 
 s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z)
 {
-    register GlyphTransfer *glyph asm("r8"); /* FAKEMATCH: pins the glyph buffer to r8 */
+    GlyphTransfer *glyph;
     struct FieldActor *actor;
     struct FieldSprite *sprite;
     u8 *flags;
     s32 owner;
     s32 slot;
 
-    {
-        register s32 zero asm("r0"); /* FAKEMATCH: builds the zero in r0 */
-
-        asm("mov %0, #0" : "=l"(zero)); /* FAKEMATCH: the zero is not a reloadable constant */
-        glyph = (GlyphTransfer *)zero;
-    }
+    glyph = NULL;
     actor = Engine_ObjectCreate(22, x, y, z);
     owner = PartyInventory_FindOwner(224);
     slot = Inventory_Find(owner, 224);

@@ -182,9 +182,15 @@ const CATCH_ALL: &str = ".text .text.unlikely .text.hot .text.startup .glue_7 .g
 /// widened to GCC's names, and a catch-all ROM section after the last one.
 pub(crate) fn main_script(text: &str) -> String {
     let object = regex::Regex::new(r#"("\*/[^"]+\.o")\(([^)]*)\)"#).expect("static pattern");
+    // A far-call bank pinned where Camelot's bytes put it stays there while the
+    // modern code before it fits, and follows that code once it does not.
+    let pin = regex::Regex::new(r"^(\s*)\. = ABSOLUTE\((0x[0-9a-fA-F]+)\);$").expect("static pattern");
     let mut lines: Vec<String> = text
         .lines()
         .map(|line| {
+            if let Some(capture) = pin.captures(line) {
+                return format!("{}. = MAX(ABSOLUTE(.), {});", &capture[1], &capture[2]);
+            }
             object
                 .replace_all(line, |capture: &regex::Captures| {
                     format!("{}({})", &capture[1], widened(&capture[2]))
@@ -614,12 +620,13 @@ mod tests {
 
     #[test]
     fn the_main_script_widens_sections_and_ends_rom_with_a_catch_all() {
-        let text = "SECTIONS\n{\n    .rom_main :\n    {\n    \"*/A.o\"(.text .rodata .data .padding)\n    \"*/B.o\"(.text)\n} > ROM\n    .iwram_mixer 0x3007000 :\n    {\n    } > IWRAM AT>ROM\n    .rom_tail :\n    {\n    \"*/C.o\"(.rodata)\n    } > ROM\n    X = LOADADDR(.iwram_mixer);\n    /DISCARD/ : { \"*/D.o\"(.text.spawn) }\n}\n";
+        let text = "SECTIONS\n{\n    .rom_main :\n    {\n    \"*/A.o\"(.text .rodata .data .padding)\n    \"*/B.o\"(.text)\n        . = ABSOLUTE(0x080f0000);\n} > ROM\n    .iwram_mixer 0x3007000 :\n    {\n    } > IWRAM AT>ROM\n    .rom_tail :\n    {\n    \"*/C.o\"(.rodata)\n    } > ROM\n    X = LOADADDR(.iwram_mixer);\n    /DISCARD/ : { \"*/D.o\"(.text.spawn) }\n}\n";
         let out = main_script(text);
         assert!(out.contains("\"*/A.o\"(.text .text.unlikely .text.hot .text.startup .rodata .rodata.str* .rodata.cst* .data .padding)"));
         assert!(out.contains("\"*/B.o\"(.text .text.unlikely .text.hot .text.startup)"));
         assert!(out.contains("\"*/C.o\"(.rodata .rodata.str* .rodata.cst*)"));
         assert!(out.contains("\"*/D.o\"(.text.spawn)"), "named sections stay as they are");
+        assert!(out.contains("        . = MAX(ABSOLUTE(.), 0x080f0000);\n"), "a bank pin yields");
         let catch = out.find(".rom_modern").unwrap();
         assert!(catch > out.find(".rom_tail").unwrap());
         assert!(catch < out.find("X = LOADADDR").unwrap());

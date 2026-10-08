@@ -101,27 +101,6 @@ struct SceneHeader {
 
 extern u8 gMapLayerData[];
 
-static __inline__ s32 Scene_Call2(s32 left, s32 right, void *routine)
-{
-    /* FAKEMATCH: fixed registers place the call operands in r0 and r1. */
-    register s32 result __asm__("r0") = left; /* FAKEMATCH: the result shares the left operand's r0 register. */
-    register s32 factor __asm__("r1") = right;
-
-    /* FAKEMATCH: the inline call marks r3 as changed across layer multiplies. */
-    __asm__ volatile(".align 2\n\tmov ip, pc\n\tbx %2\n\t"
-#ifdef MODERN
-                     // modern GCC refuses a clobber of factor's own r1
-                     : "+r"(result), "+r"(factor)
-                     : "r"(routine)
-                     : "r2", "r3", "ip", "cc");
-#else
-                     : "+r"(result)
-                     : "r"(factor), "r"(routine)
-                     : "r1", "r2", "r3", "ip", "cc");
-#endif
-    return result;
-}
-
 s32 Map_LoadLayeredScene(s32 index)
 {
     struct SceneEntry *entry;
@@ -196,8 +175,20 @@ s32 Map_LoadLayeredScene(s32 index)
         layer->scale_x = scroll_x;
         layer->scale_y = scroll_y;
         layer->cells = (struct MapCell *)Ram_MapCellBuffer + (y >> 1) * 128 + (x >> 1);
-        layer->x = Scene_Call2(*scale_x, scroll_x, IwramMulQ16ReturnIp) + base_x;
-        layer->y = Scene_Call2(*scale_y, scroll_y, IwramMulQ16ReturnIp) + base_y;
+        {
+            s32 v = Iwram_MulQ16(*scale_x, scroll_x);
+
+            /* FAKEMATCH: empty asm with an r3 clobber after the reviewed IWRAM multiply call (which leaves r3 intact): register choice only, the layer loop keeps its native allocation (7 of 377 rows differ as a volatile barrier, 331 of 395 without) */
+            asm("" : "+r"(v) : : "r3");
+            layer->x = v + base_x;
+        }
+        {
+            s32 v = Iwram_MulQ16(*scale_y, scroll_y);
+
+            /* FAKEMATCH: the same r3 clobber, measured above */
+            asm("" : "+r"(v) : : "r3");
+            layer->y = v + base_y;
+        }
         source++;
         layer++;
     }

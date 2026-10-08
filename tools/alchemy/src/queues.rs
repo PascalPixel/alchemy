@@ -84,7 +84,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let header: Vec<&str> = lines.next().unwrap_or("").split('\t').collect();
     let column = |name: &str| header.iter().position(|h| *h == name).ok_or(format!("{name} missing from {}", report.display()));
     let (ci, ca, cn, co, cb, cc, cd, cs) = (column("image")?, column("address")?, column("name")?, column("origin")?, column("bytes")?, column("callers")?, column("draft")?, column("source")?);
-    let script_path = format!("recon/{game}/en/MAIN.LD");
+    let script_path = crate::targets::edition_script_path(game, "en").to_string_lossy().into_owned();
     let script = std::fs::read_to_string(root.join(&script_path)).map_err(|e| e.to_string())?;
     let run_of = runs(&script, game);
 

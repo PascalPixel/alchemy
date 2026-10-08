@@ -323,7 +323,7 @@ fn incbin(path: &str, data: &[u8]) -> bool {
     )
     .expect("built sound pattern");
     let built_graphics = regex::Regex::new(
-        r#"^\s*\.incbin\s+"((?:COMMON/)?(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.[a-z0-9.]+)"\s*$"#,
+        r#"^\s*\.incbin\s+"((?:COMMON/)?([A-Z][A-Z0-9_]*)(?:/[A-Z0-9_]+)+\.[a-z0-9.]+)"\s*$"#,
     )
     .expect("built graphics pattern");
     let built_font = regex::Regex::new(
@@ -332,7 +332,7 @@ fn incbin(path: &str, data: &[u8]) -> bool {
     let is_built_graphics = |line: &str| {
         built_graphics
             .captures(line)
-            .is_some_and(|capture| ags::resource::is_recipe(&capture[1]))
+            .is_some_and(|capture| &capture[2] != "SOUND" && ags::resource::is_recipe(&capture[1]))
             || built_font.captures(line).is_some_and(|capture| {
                 ags::resource::is_recipe(&capture[1])
                     && font_range(&capture[2])
@@ -1417,8 +1417,9 @@ fn loaded_pointer_words(words: &[Option<u32>], start: usize, register: u32) -> b
 }
 fn raw_address_reason(path: &str, text: &str) -> Option<&'static str> {
     let parts = path.split('/').collect::<Vec<_>>();
-    if !matches!(parts.as_slice(), ["recon", _, "raw", .., leaf] if extension(leaf).eq_ignore_ascii_case("s"))
-    {
+    let listing = matches!(parts.as_slice(), ["recon", _, "raw", .., leaf] if extension(leaf).eq_ignore_ascii_case("s"));
+    let overlay_data = matches!(parts.as_slice(), ["games", _, "SRC", "SYSTEM", "OVERLAY", leaf] if extension(leaf) == "S");
+    if !listing && !overlay_data {
         return None;
     }
     static CALL: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
@@ -1793,7 +1794,7 @@ fn shared_root_reason(path: &str) -> Option<&'static str> {
          and SOUND/ sequences and samples",
     )
 }
-const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, an edition's assembly scaffold and MAIN.LD, C drafts under an edition and metrics/history.tsv";
+const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, an edition's assembly scaffold and MAIN.LD and C drafts under an edition";
 fn recon_path_reason(path: &str) -> Option<&'static str> {
     let components: Vec<_> = path.split('/').collect();
     let [top, rest @ ..] = components.as_slice() else {
@@ -1816,7 +1817,6 @@ fn recon_path_reason(path: &str) -> Option<&'static str> {
             [g, "raw", "overlays", leaf] => game(g) && named(leaf, &["s", "ld"]),
             [g, e, "MAIN.LD"] => game(g) && edition(e),
             [g, e, leaf] if named(leaf, &["s"]) => game(g) && edition(e),
-            ["tbs", "metrics", "history.tsv"] => true,
             [g, e, .., leaf] => game(g) && edition(e) && named(leaf, &["c", "h"]),
             _ => false,
         };
@@ -3126,6 +3126,28 @@ mod tests {
     }
 
     #[test]
+    fn any_module_may_incbin_the_tables_the_build_makes() {
+        let items = "games/THE BROKEN SEAL/SRC/BATTLE/ITEM/ITEMS.S";
+        for line in [
+            ".incbin \"BATTLE/ITEM/ITEMS.table\"\n",
+            ".incbin \"GAME/CLASS/CLASSES.table.lz\"\n",
+            ".incbin \"COMMON/MENU/ICONS/ARROW.4bpp\"\n",
+        ] {
+            assert!(!super::incbin(items, line.as_bytes()), "{line}");
+            assert!(super::incbin("games/THE BROKEN SEAL/SOUND/ITEMS.S", line.as_bytes()), "{line}");
+        }
+        for line in [
+            ".incbin \"BATTLE/X.bin\"\n",
+            ".incbin \"BATTLE/ITEM/ITEMS.TSV\"\n",
+            ".incbin \"battle/ITEM/ITEMS.table\"\n",
+            ".incbin \"SOUND/SAMPLE/X.table\"\n",
+            ".incbin \"BATTLE/../../roms/tbs-en.table\"\n",
+        ] {
+            assert!(super::incbin(items, line.as_bytes()), "{line}");
+        }
+    }
+
+    #[test]
     fn generated_fonts_allow_only_constant_character_layout_ranges() {
         let path = "games/COMMON/SRC/GRAPHICS/FONT/TEXT.S";
         for line in [
@@ -3270,6 +3292,13 @@ mod tests {
         }
         assert!(
             raw_address_reason("games/THE LOST AGE/SRC/ROUTINE.S", "bl 0x08000100\n").is_none()
+        );
+        assert_eq!(
+            raw_address_reason(
+                "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY/OVL_3A7.S",
+                "ldr r0, =0x02000000\nldr r1, [r0]\n"
+            ),
+            Some(RAW_ADDRESS_REASON)
         );
     }
 

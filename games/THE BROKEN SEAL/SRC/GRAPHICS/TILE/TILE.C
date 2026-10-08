@@ -16,7 +16,8 @@
 #include "BATTLE_UNIT.H"
 #include "BTLSYS.H"
 
-extern u8 RenderResource_PairSourceTable;
+/* FAKEMATCH: three more names of the one table keep each case's own literal slot; one name folds the switch to a single load. */
+extern u8 RenderResource_PairSourceTable[], PairSource1[] __asm__("RenderResource_PairSourceTable"), PairSource2[] __asm__("RenderResource_PairSourceTable"), PairSource3[] __asm__("RenderResource_PairSourceTable");
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *, s32);
 extern GlyphTransfer *gGlyphWork;
@@ -27,34 +28,22 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot)
     void *source;
     switch (value) {
     case 1:
-        /* FAKEMATCH: plain C folds the switch; retain each case's literal load. */
-        asm volatile("ldr %0, .LPairSourceFirst" : "=r"(source));
+        source = PairSource1;
         break;
     case 2:
-        /* FAKEMATCH: retain the second case's separate literal load. */
-        asm volatile("ldr %0, .LPairSourceSecond" : "=r"(source));
+        source = PairSource2;
         break;
     case 3:
-        /* FAKEMATCH: retain the third case's separate literal load. */
-        asm volatile("ldr %0, .LPairSourceThird" : "=r"(source));
+        source = PairSource3;
         break;
     case 0:
     default:
-        /* FAKEMATCH: retain the default case's separate literal load. */
-        asm volatile("ldr %0, .LPairSourceDefault" : "=r"(source));
+        source = RenderResource_PairSourceTable;
         break;
     }
     VramBlock_LoadCached(slot, 32, source);
     return 1;
 }
-
-/* FAKEMATCH: four literal slots for the sole table name; include them in the function extent. */
-asm(".align 2\n"
-    ".LPairSourceFirst:\n.word RenderResource_PairSourceTable\n"
-    ".LPairSourceSecond:\n.word RenderResource_PairSourceTable\n"
-    ".LPairSourceThird:\n.word RenderResource_PairSourceTable\n"
-    ".LPairSourceDefault:\n.word RenderResource_PairSourceTable\n"
-    ".size RenderResource_LoadTableEntry, .-RenderResource_LoadTableEntry");
 
 void Ui_PrepareTransferForItem(s32 code)
 {

@@ -1,6 +1,7 @@
 recon/*/*/rom.s merge=alchemy-scaffold
 recon/*/*/MAIN.LD merge=alchemy-lines
-games/*/MAIN.LD merge=alchemy-lines
+games/*/MAIN*.LD merge=alchemy-lines
 recon/*/raw/overlays/*.ld merge=alchemy-lines
+games/*/SRC/SYSTEM/OVERLAY/*.LD merge=alchemy-lines
 /PROGRESS.png merge=generated binary
 /PROGRESS_CHART.png merge=generated binary

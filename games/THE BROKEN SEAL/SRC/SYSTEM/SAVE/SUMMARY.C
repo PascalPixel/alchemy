@@ -242,19 +242,20 @@ u32 SaveState_BuildSummaryHeader(void)
     }
     summary->has_flag_20 = GameFlag_TestFar(32) != 0;
     {
-        /* FAKEMATCH: keeps the bound in r1 */
+        /* FAKEMATCH: keeps the bound in r1 (5 of 185 rows differ without) */
         register s32 n asm("r1");
         u32 *frame = &gGameState.build_stamp;
         u32 frames;
 
         n = 242;
-        /* FAKEMATCH: issues the bound's first half before the frame load */
+        /* FAKEMATCH: empty asm barrier: issues the bound's first half before the frame load (2 of 185 rows differ without) */
         asm("" : "+r"(n) : "r"(frame));
         frames = *frame;
         word = GameFlagBytes;
         i = 0;
-        /* FAKEMATCH: finishes the bound after the loop setup, before the store */
-        asm("lsl %0, %0, #2" : "+r"(n) : "r"(word), "r"(i), "r"(frames));
+        /* FAKEMATCH: empty asm barrier: the bound's shift, in C, waits on the loop setup and goes before the store as native; as the plain constant 968 its two halves sit together after the frame load (6 of 185 rows differ) */
+        asm("" : "+r"(n) : "r"(word), "r"(i), "r"(frames));
+        n <<= 2;
         summary->frames = frames;
         goto test;
         do {

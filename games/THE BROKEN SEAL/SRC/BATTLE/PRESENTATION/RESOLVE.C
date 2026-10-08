@@ -176,8 +176,9 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
     BattlePres_SetActorModes(0, 0);
 
     if (plan->aid <= 7) {
-        /* FAKEMATCH: an opaque copy keeps cse from folding party_mode to the constant zero */
-        asm("mov %0, %1" : "=r"(party_mode) : "r"(completed));
+        party_mode = completed;
+        /* FAKEMATCH: empty asm barrier on party_mode: cse no longer knows the copy of completed is zero, so it is adds r2, r7, #0 as native, not movs r2, #0 (1 of 108 rows differ without) */
+        asm("" : "+r"(party_mode));
 
         if (scene->encounter_mode != 2) {
             party_mode = 1;

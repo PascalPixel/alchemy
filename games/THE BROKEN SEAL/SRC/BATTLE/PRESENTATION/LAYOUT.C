@@ -55,8 +55,9 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
     s32 result = 0;
     s32 sprite_value = Summon_GetEntryValue(actor->class_id);
 
-    /* FAKEMATCH: an opaque copy keeps cse from folding pass to the constant zero */
-    asm("mov %0, %1" : "=r"(pass) : "r"(result));
+    pass = result;
+    /* FAKEMATCH: empty asm barrier on pass: cse no longer knows the copy of result is zero, so pass starts as mov r4, r10 as native, not movs r4, #0 (1 of 119 rows differ without) */
+    asm("" : "+r"(pass));
     do {
         s32 slot;
 
@@ -122,12 +123,9 @@ s32 Resource_FindFreeSlot(s32 key)
     for (index = 0;; index++) {
         entry = Resource_SlotAssignments[index];
         if (key == (entry & 0x1ff)) {
-#ifdef MODERN
+            /* FAKEMATCH: empty asm barrier with a memory clobber: it ends cse's memory equivalence, so the entry is reread, ldrh [table, index], as native; without it cse reuses the first load (23 of 25 rows differ) */
+            asm("" ::: "memory");
             value = Resource_SlotAssignments[index];
-#else
-            /* FAKEMATCH: rereads the entry as [table, index]; cse otherwise swaps the operands */
-            asm("ldrh %0, [%1, %2]" : "=r"(value) : "r"(Resource_SlotAssignments), "r"(index * 2));
-#endif
             result = value >> 9;
             goto done;
         }

@@ -72,7 +72,7 @@ A game is finished when all six hold (Pascal, 2026-10-08):
 - `.github/workflows/progress.yml` publishes progress after each push to main:
   the `progress` branch holds `history.tsv` and README's two figures, written
   only by CI. `make figure` draws the same two figures locally from
-  `recon/tbs/metrics/history.tsv`, a private copy of that history.
+  `history.tsv` beside them, a private copy of that history.
 
 ## Rules
 

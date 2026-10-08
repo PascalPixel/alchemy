@@ -102,7 +102,7 @@ impl History {
     }
 }
 
-pub(crate) const PATH: &str = "recon/tbs/metrics/history.tsv";
+pub(crate) const PATH: &str = "history.tsv";
 pub(crate) fn path(root: &Path) -> std::path::PathBuf {
     root.join(PATH)
 }

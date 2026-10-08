@@ -1794,7 +1794,7 @@ fn shared_root_reason(path: &str) -> Option<&'static str> {
          and SOUND/ sequences and samples",
     )
 }
-const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, an edition's assembly scaffold and MAIN.LD, C drafts under an edition and metrics/history.tsv";
+const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, an edition's assembly scaffold and MAIN.LD and C drafts under an edition";
 fn recon_path_reason(path: &str) -> Option<&'static str> {
     let components: Vec<_> = path.split('/').collect();
     let [top, rest @ ..] = components.as_slice() else {
@@ -1817,7 +1817,6 @@ fn recon_path_reason(path: &str) -> Option<&'static str> {
             [g, "raw", "overlays", leaf] => game(g) && named(leaf, &["s", "ld"]),
             [g, e, "MAIN.LD"] => game(g) && edition(e),
             [g, e, leaf] if named(leaf, &["s"]) => game(g) && edition(e),
-            ["tbs", "metrics", "history.tsv"] => true,
             [g, e, .., leaf] => game(g) && edition(e) && named(leaf, &["c", "h"]),
             _ => false,
         };

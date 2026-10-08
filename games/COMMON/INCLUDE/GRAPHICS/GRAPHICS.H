@@ -102,7 +102,7 @@ extern u8 Data_03001400[];
 #endif
 extern u8 Data_03001e90[];
 extern u8 Data_03001e9c[];
-extern const struct ArticleTable Data_08033e40;
+extern const struct ArticleTable UiText_ArticleTable;
 struct TileMask {
     u32 word0;
     u32 word1;

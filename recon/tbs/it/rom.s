@@ -4,14 +4,6 @@
 	.incbin "baserom.gba", 0x00007b78, 0x00000004
 	.section .rom.0000caca, "ax"
 	.incbin "baserom.gba", 0x0000caca, 0x00000002
-	.section .rom.00033f6c, "ax"
-	.incbin "baserom.gba", 0x00033f6c, 0x0000003c
-	.global Data_08033e40
-Data_08033e40:
-	.incbin "baserom.gba", 0x00033fa8, 0x0000003c
-	.global UiText_ItemPossessives
-UiText_ItemPossessives:
-	.incbin "baserom.gba", 0x00033fe4, 0x00000010
 	.section .rom.00072c78, "ax"
 	.global UiText_ItemGenders
 UiText_ItemGenders:

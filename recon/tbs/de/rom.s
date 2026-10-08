@@ -22,23 +22,12 @@ UiIcon_PsynergyIconPointersEnd:
 	.global UiIcon_MiscIconPointers
 UiIcon_MiscIconPointers:
 	.incbin "baserom.gba", 0x0002f568, 0x00000800
-	.section .rom.00032bd4, "ax"
-	.incbin "baserom.gba", 0x00032bd4, 0x00000024
-	.global Data_08033e40
-Data_08033e40:
-	.incbin "baserom.gba", 0x00032bf8, 0x00000080
-	.global UiText_ItemPossessives
-UiText_ItemPossessives:
-	.incbin "baserom.gba", 0x00032c78, 0x00000010
 	.section .rom.0007a770, "ax"
 	.global UiText_ItemGenders
 UiText_ItemGenders:
 	.incbin "baserom.gba", 0x0007a770, 0x0000010d
 	.section .rom.0007a886, "ax"
 	.incbin "baserom.gba", 0x0007a886, 0x00000002
-	.global UiText_NumberWords
-UiText_NumberWords:
-	.incbin "baserom.gba", 0x0007a888, 0x00000040
 	.section .rom.000a08d8, "ax"
 	.global Battle_LocationRules
 Battle_LocationRules:

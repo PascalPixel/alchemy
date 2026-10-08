@@ -22,17 +22,6 @@ UiIcon_PsynergyIconPointersEnd:
 	.global UiIcon_MiscIconPointers
 UiIcon_MiscIconPointers:
 	.incbin "baserom.gba", 0x0002fa60, 0x00000800
-	.section .rom.000330b4, "ax"
-	.incbin "baserom.gba", 0x000330b4, 0x0000001c
-	.global Data_08033e40
-Data_08033e40:
-	.incbin "baserom.gba", 0x000330d0, 0x00000030
-	.global UiText_IndefiniteArticles
-UiText_IndefiniteArticles:
-	.incbin "baserom.gba", 0x00033100, 0x00000020
-	.global UiText_ItemPossessives
-UiText_ItemPossessives:
-	.incbin "baserom.gba", 0x00033120, 0x00000008
 	.section .rom.000a22c8, "ax"
 	.global Battle_LocationRules
 Battle_LocationRules:

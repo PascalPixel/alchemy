@@ -20,14 +20,6 @@ UiIcon_PsynergyIconPointersEnd:
 	.global UiIcon_MiscIconPointers
 UiIcon_MiscIconPointers:
 	.incbin "baserom.gba", 0x0002f858, 0x00000800
-	.section .rom.00032ecc, "ax"
-	.incbin "baserom.gba", 0x00032ecc, 0x0000002c
-	.global Data_08033e40
-Data_08033e40:
-	.incbin "baserom.gba", 0x00032ef8, 0x00000020
-	.global UiText_ItemPronoun
-UiText_ItemPronoun:
-	.incbin "baserom.gba", 0x00032f18, 0x00000006
 	.section .rom.000a22c8, "ax"
 	.global Battle_LocationRules
 Battle_LocationRules:

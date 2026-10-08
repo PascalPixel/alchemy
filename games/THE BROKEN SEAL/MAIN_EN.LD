@@ -327,7 +327,7 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/LABELS.o"(.rodata)
         "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/FONT/MARK_CODES.o"(.rodata)
-        "*/recon/tbs/unidentified.o"(.unidentified.08033e24)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/ARTICLE.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SPRANIM.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/MENU/CURSOR.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SCALES.o"(.rodata)
@@ -337,6 +337,7 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDATA.o"(.rodata)
         "*/games/THE BROKEN SEAL/TEXT/MESSAGES.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/TEXTSPD.o"(.rodata)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/NUMWORDS.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/MENU/SLIDPAL.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/KEYBOARD.o"(.rodata)
         . = ABSOLUTE(0x08077000);

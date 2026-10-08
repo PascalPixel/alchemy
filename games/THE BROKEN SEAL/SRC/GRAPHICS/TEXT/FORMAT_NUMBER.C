@@ -130,7 +130,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
             name += 2;
     } else {
         kind = 0;
-        tbl = Data_08033e40;
+        tbl = UiText_ArticleTable;
 #if defined(TBS_EDITION_ES)
         indefinite_tbl = UiText_IndefiniteArticles;
 #endif
@@ -205,7 +205,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
     }
     if (no == 1 || (no == 3 && plural == 0)) {
         kind = 0;
-        tbl = Data_08033e40;
+        tbl = UiText_ArticleTable;
         head = name[0];
         if (head == 29) {
             kind = name[1] - 1;

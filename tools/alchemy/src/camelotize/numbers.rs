@@ -56,7 +56,7 @@ fn hex(text: &str) -> Option<Hex> {
 /// hex digits repeat.
 fn fixed_point(value: u64) -> bool {
     let low = value & 0xFFF;
-    value >= 0x1000 && (value % 0x100 == 0 || (low >> 8 == low & 0xF && (low >> 4) & 0xF == low & 0xF))
+    value >= 0x1000 && (value.is_multiple_of(0x100) || (low >> 8 == low & 0xF && (low >> 4) & 0xF == low & 0xF))
 }
 
 /// Two small bytes packed in one word: a blend pair (0x80c) or a sprite
@@ -618,7 +618,7 @@ fn quantity(c: &Context, i: usize, h: &Hex) -> bool {
     let plain = |span: Range<usize>| !names(tokens, span).any(|n| c.characters.contains(n) || in_units(n) || says_offset_or_id(n) || n.starts_with("unknown"));
     // Arithmetic only below 0x400 and off whole multiples of 0x100, which
     // are fixed-point steps.
-    let small = h.value < 0x400 && h.value % 0x100 != 0;
+    let small = h.value < 0x400 && !h.value.is_multiple_of(0x100);
     command_argument(tokens, groups, i, c.commands)
         || (loop_bound(tokens, groups, i) && plain(statement(tokens, i)))
         || (small && arithmetic(tokens, i, &c.tainted, &c.characters))

@@ -161,7 +161,7 @@ pub enum Expr {
     Index(Box<Expr>, Box<Expr>),
     Member(Box<Expr>, String, bool),
     Cast(TypeName, Box<Expr>),
-    SizeofExpr(Box<Expr>),
+    SizeofValue(Box<Expr>),
     SizeofType(TypeName),
 }
 
@@ -180,7 +180,7 @@ impl Expr {
             Expr::Assign(..) => 2,
             Expr::Cond(..) => 3,
             Expr::Binary(op, ..) => op.precedence(),
-            Expr::Unary(..) | Expr::Cast(..) | Expr::SizeofExpr(..) | Expr::SizeofType(..) => 14,
+            Expr::Unary(..) | Expr::Cast(..) | Expr::SizeofValue(..) | Expr::SizeofType(..) => 14,
             _ => 15,
         }
     }
@@ -198,7 +198,7 @@ impl Expr {
             | Expr::PostDec(a)
             | Expr::Member(a, ..)
             | Expr::Cast(_, a)
-            | Expr::SizeofExpr(a) => vec![a],
+            | Expr::SizeofValue(a) => vec![a],
             Expr::Binary(_, a, b)
             | Expr::Assign(_, a, b)
             | Expr::Comma(a, b)
@@ -498,7 +498,7 @@ fn write_expr(expr: &Expr, _minimum: u8, out: &mut String) {
             out.push(')');
             write_paren(operand, 14, out);
         }
-        Expr::SizeofExpr(operand) => {
+        Expr::SizeofValue(operand) => {
             out.push_str("sizeof(");
             write_expr(operand, 0, out);
             out.push(')');

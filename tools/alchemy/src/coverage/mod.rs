@@ -154,65 +154,6 @@ fn parse_measurement(text: &str) -> Result<[Option<GameDone>; 2], String> {
     }
     Ok(games)
 }
-#[cfg(test)]
-mod tests {
-    use super::{measurement_text, parse_measurement, status_line};
-    use crate::coverage::progress::GameDone;
-
-    #[test]
-    fn status_shows_each_verified_game_or_pending() {
-        let sun = GameDone {
-            game_c: 250,
-            game_asm: 340,
-            executable: 1000,
-            data: 992,
-            data_total: 1000,
-            ..GameDone::default()
-        };
-        assert_eq!(
-            status_line(Some(sun), None),
-            "☀️ code 59.00% data 99.20% · ⚓️ pending"
-        );
-        let anchor = GameDone {
-            game_c: 10,
-            game_asm: 50,
-            veneers: 30,
-            executable: 1000,
-            ..GameDone::default()
-        };
-        assert_eq!(
-            status_line(Some(sun), Some(anchor)),
-            "☀️ code 59.00% data 99.20% · ⚓️ code 6.00% data 0.00%"
-        );
-    }
-
-    #[test]
-    fn a_measurement_survives_its_trip_to_ci() {
-        let sun = GameDone {
-            common_asm: 1,
-            common_c: 2,
-            game_asm: 3,
-            game_c: 4,
-            executable: 100,
-            veneers: 1,
-            data: 7,
-            data_total: 9,
-        };
-        let text = measurement_text(Some(sun), None);
-        assert_eq!(parse_measurement(&text).unwrap(), [Some(sun), None]);
-        assert!(parse_measurement("game\n").is_err());
-        assert!(parse_measurement(&format!("{text}tbs\t1\t2\t3\t4\t100\t1\t0\t0\n")).is_err());
-        assert!(parse_measurement(&format!("{text}tla\t1\t2\n")).is_err());
-        assert!(parse_measurement(&text.replace("\t7\t9", "\t9\t7")).is_err());
-        // A code-only measurement from before DONE data still reads.
-        let old = "game\tcommon_asm\tcommon_c\tgame_asm\tgame_c\texecutable\tveneers\n\
-                   tla\t1\t2\t3\t4\t100\t1\n";
-        let [None, Some(anchor)] = parse_measurement(old).unwrap() else {
-            panic!("a code-only measurement reads")
-        };
-        assert_eq!((anchor.bytes(), anchor.data_total), (10, 0));
-    }
-}
 fn render_figures(
     root: &Path,
     history: &history::History,
@@ -284,5 +225,64 @@ pub fn entry(arguments: &[String]) {
             eprintln!("error: {error}");
             std::process::exit(1);
         }
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::{measurement_text, parse_measurement, status_line};
+    use crate::coverage::progress::GameDone;
+
+    #[test]
+    fn status_shows_each_verified_game_or_pending() {
+        let sun = GameDone {
+            game_c: 250,
+            game_asm: 340,
+            executable: 1000,
+            data: 992,
+            data_total: 1000,
+            ..GameDone::default()
+        };
+        assert_eq!(
+            status_line(Some(sun), None),
+            "☀️ code 59.00% data 99.20% · ⚓️ pending"
+        );
+        let anchor = GameDone {
+            game_c: 10,
+            game_asm: 50,
+            veneers: 30,
+            executable: 1000,
+            ..GameDone::default()
+        };
+        assert_eq!(
+            status_line(Some(sun), Some(anchor)),
+            "☀️ code 59.00% data 99.20% · ⚓️ code 6.00% data 0.00%"
+        );
+    }
+
+    #[test]
+    fn a_measurement_survives_its_trip_to_ci() {
+        let sun = GameDone {
+            common_asm: 1,
+            common_c: 2,
+            game_asm: 3,
+            game_c: 4,
+            executable: 100,
+            veneers: 1,
+            data: 7,
+            data_total: 9,
+        };
+        let text = measurement_text(Some(sun), None);
+        assert_eq!(parse_measurement(&text).unwrap(), [Some(sun), None]);
+        assert!(parse_measurement("game\n").is_err());
+        assert!(parse_measurement(&format!("{text}tbs\t1\t2\t3\t4\t100\t1\t0\t0\n")).is_err());
+        assert!(parse_measurement(&format!("{text}tla\t1\t2\n")).is_err());
+        assert!(parse_measurement(&text.replace("\t7\t9", "\t9\t7")).is_err());
+        // A code-only measurement from before DONE data still reads.
+        let old = "game\tcommon_asm\tcommon_c\tgame_asm\tgame_c\texecutable\tveneers\n\
+                   tla\t1\t2\t3\t4\t100\t1\n";
+        let [None, Some(anchor)] = parse_measurement(old).unwrap() else {
+            panic!("a code-only measurement reads")
+        };
+        assert_eq!((anchor.bytes(), anchor.data_total), (10, 0));
     }
 }

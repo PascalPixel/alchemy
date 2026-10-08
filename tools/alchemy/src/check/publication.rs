@@ -2327,7 +2327,7 @@ mod tests {
         ]
         .concat();
         let palette: Vec<u8> = (0..1usize << depth)
-            .flat_map(|index| [(index * 255 >> depth) as u8; 3])
+            .flat_map(|index| [((index * 255) >> depth) as u8; 3])
             .collect();
         [
             PNG_SIGNATURE.as_slice(),

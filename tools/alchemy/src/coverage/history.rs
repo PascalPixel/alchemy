@@ -693,7 +693,6 @@ mod tests {
             date: date.into(),
             author: "Pascal Pixel".into(),
             trailers: trailers.into(),
-            ..sessions::Commit::default()
         };
         let days = count_models(&[
             commit(FROZEN_THROUGH, "Sol 6 <agent@example.com>"),

@@ -273,7 +273,7 @@ fn function_calls(text: &str) -> Vec<(String, BTreeSet<String>)> {
         if let Some((_, calls)) = current.as_mut() {
             let mut rest = line.as_str();
             while let Some(name) = called(rest) {
-                let at = rest.find(&format!("{name}")).unwrap_or(0) + name.len();
+                let at = rest.find(&name.to_string()).unwrap_or(0) + name.len();
                 calls.insert(name);
                 rest = &rest[at..];
             }

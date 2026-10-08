@@ -167,6 +167,7 @@ language-check:
 
 test:
 	$(CARGO) test --offline --quiet --release --workspace --manifest-path $(TOOLS)/Cargo.toml
+	$(CARGO) clippy --offline --quiet --release --workspace --all-targets --manifest-path $(TOOLS)/Cargo.toml -- -D warnings
 
 test-integration: toolchain-check
 	$(CARGO) test --offline --quiet --release --workspace --manifest-path $(TOOLS)/Cargo.toml -- --ignored

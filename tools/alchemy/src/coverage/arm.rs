@@ -736,9 +736,9 @@ pub(crate) fn inventory(
     name: &str,
     placed: &[Placed<'_>],
     uncredited: &[(i64, i64)],
-    describe: &dyn Fn(&Placed<'_>) -> Result<(String, &'static str), String>,
+    describe: &Describe<'_>,
     defined: &dyn Fn(&Placed<'_>) -> Result<Vec<Label>, String>,
-    own: &dyn Fn(&Placed<'_>) -> Result<Option<Vec<(u32, Mode)>>, String>,
+    own: &Own<'_>,
 ) -> Result<(Vec<ArmRow>, Vec<ArmRow>), String> {
     let mut pieces = Vec::new();
     for p in placed.iter().filter(|p| p.size > 0 && p.address >= 0 && image.executable(p.address as u32)) {
@@ -921,6 +921,11 @@ impl ArmTally {
         self.c + self.assembly + self.library
     }
 }
+
+/// A placed object's description and kind.
+type Describe<'f> = dyn Fn(&Placed<'_>) -> Result<(String, &'static str), String> + 'f;
+/// The ARM or Thumb ranges an object marks as its own, if it marks any.
+type Own<'f> = dyn Fn(&Placed<'_>) -> Result<Option<Vec<(u32, Mode)>>, String> + 'f;
 
 #[cfg(test)]
 mod tests {

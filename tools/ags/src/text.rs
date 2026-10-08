@@ -467,8 +467,10 @@ mod tests {
 
     #[test]
     fn the_catalogue_end_is_one_past_its_last_message() {
-        let mut catalog = Catalog::default();
-        catalog.entries = vec![entry(0, UNNAMED), entry(1, "MsgFirst"), entry(2, UNNAMED)];
+        let mut catalog = Catalog {
+            entries: vec![entry(0, UNNAMED), entry(1, "MsgFirst"), entry(2, UNNAMED)],
+            ..Catalog::default()
+        };
         let names = catalog_names(&catalog).unwrap();
         assert_eq!(names, vec![("MsgFirst".to_owned(), 1), (END.to_owned(), 3)]);
         catalog.entries.push(entry(3, END));

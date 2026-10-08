@@ -180,7 +180,7 @@ fn walk(expr: &Expr, env: &Env, mode: Mode, effects: &mut Effects) {
         | Expr::Char(_)
         | Expr::Str(_)
         | Expr::SizeofType(_)
-        | Expr::SizeofExpr(_) => {}
+        | Expr::SizeofValue(_) => {}
         Expr::Member(base, _, true) => {
             walk(base, env, Mode::Read, effects);
             memory(effects, mode);

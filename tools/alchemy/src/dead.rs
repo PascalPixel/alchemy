@@ -209,11 +209,10 @@ impl Linked {
                     continue;
                 };
                 let text = String::from_utf8_lossy(&bytes);
-                if file.ends_with(".C") || file.ends_with(".c") {
-                    if direct.contains(&file) {
+                if (file.ends_with(".C") || file.ends_with(".c"))
+                    && direct.contains(&file) {
                         compiled.push(file.clone());
                     }
-                }
                 if !(file.ends_with(".C")
                     || file.ends_with(".c")
                     || file.ends_with(".H")
@@ -878,7 +877,6 @@ fn inside_modern(chains: &[Chain], chain: &Chain) -> bool {
     false
 }
 
-/// A chain nested in an arm that is itself dead is reported through that arm.
 // ---------------------------------------------------------------------------
 // Declarations
 

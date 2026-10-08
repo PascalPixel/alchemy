@@ -230,7 +230,7 @@ fn walk_expr(expr: &mut Expr, ctx: Ctx, env: &Env, visit: &mut Visit) -> bool {
         Expr::Ident(_) | Expr::Number(_) | Expr::Char(_) | Expr::Str(_) | Expr::SizeofType(_) => {
             false
         }
-        Expr::SizeofExpr(operand) => walk_expr(
+        Expr::SizeofValue(operand) => walk_expr(
             operand,
             Ctx {
                 sink: Sink::Full,
@@ -1091,6 +1091,7 @@ fn declaration_sites(stmts: &[Stmt], env: &Env) -> Vec<DeclSite> {
     sites
 }
 
+#[allow(clippy::ptr_arg)] // every block mutation shares one signature, which may resize
 fn declaration_apply(stmts: &mut Vec<Stmt>, site: DeclSite, _: &Env, rng: &mut Rng) -> bool {
     match site {
         DeclSite::Swap(a, b) => stmts.swap(a, b),
@@ -1238,7 +1239,7 @@ fn replace_first(expr: &mut Expr, part: &Expr, with: &Expr, replaced: &mut bool)
         | Expr::PostDec(a)
         | Expr::Member(a, ..)
         | Expr::Cast(_, a)
-        | Expr::SizeofExpr(a) => replace_first(a, part, with, replaced),
+        | Expr::SizeofValue(a) => replace_first(a, part, with, replaced),
         Expr::Binary(_, a, b) | Expr::Assign(_, a, b) | Expr::Comma(a, b) | Expr::Index(a, b) => {
             replace_first(a, part, with, replaced);
             replace_first(b, part, with, replaced);
@@ -1336,9 +1337,9 @@ fn share_temporary(function: &mut Function, env: &Env, rng: &mut Rng) -> bool {
     let mut block = 0;
     walk_blocks(&mut function.body, &mut |stmts| {
         let start = leading_declarations(stmts);
-        for index in start..stmts.len() {
+        for (index, stmt) in stmts.iter_mut().enumerate().skip(start) {
             let mut ordinal = 0;
-            hoistable(&mut stmts[index], env, &mut |expr| {
+            hoistable(stmt, env, &mut |expr| {
                 if let Some(spelling) = env
                     .type_of(expr)
                     .map(|ty| ty.decay())
@@ -1573,10 +1574,12 @@ fn remove_one(function: &mut Function, name: &str, env: &Env) -> bool {
                         }
                     }
                 }
-                Stmt::Expr(Expr::Assign(None, target, value)) if matches!(target.as_ref(), Expr::Ident(t) if t == name) => {
-                    if total == 2 && value.mentions(name) == 0 {
-                        definition = Some((index, value.as_ref().clone(), false));
-                    }
+                Stmt::Expr(Expr::Assign(None, target, value))
+                    if matches!(target.as_ref(), Expr::Ident(t) if t == name)
+                        && total == 2
+                        && value.mentions(name) == 0 =>
+                {
+                    definition = Some((index, value.as_ref().clone(), false));
                 }
                 _ => {}
             }
@@ -1691,7 +1694,7 @@ fn replace_stmt_ident(stmt: &mut Stmt, name: &str, with: &Expr) {
             | Expr::PostDec(a)
             | Expr::Member(a, ..)
             | Expr::Cast(_, a)
-            | Expr::SizeofExpr(a) => in_expr(a, name, with),
+            | Expr::SizeofValue(a) => in_expr(a, name, with),
             Expr::Binary(_, a, b)
             | Expr::Assign(_, a, b)
             | Expr::Comma(a, b)
@@ -2218,6 +2221,7 @@ fn register_sites(stmts: &[Stmt], env: &Env) -> Vec<usize> {
         .collect()
 }
 
+#[allow(clippy::ptr_arg)] // every block mutation shares one signature, which may resize
 fn register_apply(stmts: &mut Vec<Stmt>, index: usize, _: &Env, _: &mut Rng) -> bool {
     let Stmt::Decl(decl) = &mut stmts[index] else {
         return false;
@@ -2247,6 +2251,7 @@ fn braced(stmt: Stmt) -> Stmt {
     }
 }
 
+#[allow(clippy::ptr_arg)] // every block mutation shares one signature, which may resize
 fn invert_apply(stmts: &mut Vec<Stmt>, index: usize, _: &Env, _: &mut Rng) -> bool {
     let Stmt::If(cond, then, Some(other)) = stmts[index].clone() else {
         return false;

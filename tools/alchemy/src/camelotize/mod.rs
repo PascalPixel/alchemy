@@ -195,7 +195,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         1
     };
     let next = std::sync::atomic::AtomicUsize::new(0);
-    let results: Vec<std::sync::Mutex<Option<Result<Option<(PathBuf, String, String, usize)>, String>>>> =
+    let results: Vec<std::sync::Mutex<Option<Result<Rewritten, String>>>> =
         files.iter().map(|_| std::sync::Mutex::new(None)).collect();
     std::thread::scope(|scope| {
         for _ in 0..workers {
@@ -275,3 +275,6 @@ fn one(root: &Path, rewrite: &str, name: &str) -> Result<Option<(PathBuf, String
     };
     Ok(Some((file, text, out, count)))
 }
+
+/// A rewritten file: its path, old text, new text and change count.
+type Rewritten = Option<(PathBuf, String, String, usize)>;

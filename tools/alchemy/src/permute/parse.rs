@@ -210,11 +210,8 @@ impl<'a> Parser<'a> {
     fn specifiers(&mut self) -> Result<Vec<String>> {
         let mut specs = Vec::new();
         let mut typed = false;
-        loop {
-            let word = match self.peek() {
-                Some(Tok::Ident(word)) => word.clone(),
-                _ => break,
-            };
+        while let Some(Tok::Ident(word)) = self.peek() {
+            let word = word.clone();
             if word == "__attribute__" {
                 self.skip_attribute()?;
                 continue;
@@ -330,11 +327,8 @@ impl<'a> Parser<'a> {
         // after a name or a closing bracket.
         let mut parameters: Vec<bool> = Vec::new();
         let mut previous: Option<Tok> = None;
-        loop {
-            let tok = match self.peek() {
-                Some(tok) => tok.clone(),
-                None => break,
-            };
+        while let Some(tok) = self.peek() {
+            let tok = tok.clone();
             match &tok {
                 Tok::Punct(p) if depth == 0 && matches!(*p, "," | ";" | "=" | ":" | "{") => break,
                 Tok::Punct(")") if depth == 0 => break,
@@ -717,7 +711,7 @@ impl<'a> Parser<'a> {
                 self.expect(")")?;
                 return Ok(Expr::SizeofType(name));
             }
-            return Ok(Expr::SizeofExpr(Box::new(self.unary()?)));
+            return Ok(Expr::SizeofValue(Box::new(self.unary()?)));
         }
         self.postfix()
     }
@@ -947,7 +941,7 @@ pub(crate) fn scan_definitions(tokens: &[Token]) -> Vec<(String, usize, usize, u
             Tok::Punct(";") if depth == 0 => boundary = index + 1,
             Tok::Ident(ident) if depth == 0 => {
                 if let Some(Tok::Punct("(")) = tokens.get(index + 1).map(|token| &token.tok) {
-                    if let Some(close) = matching(&tokens, index + 1) {
+                    if let Some(close) = matching(tokens, index + 1) {
                         let open = tokens[close + 1..]
                             .iter()
                             .position(|token| !matches!(token.tok, Tok::Comment(_)))
@@ -987,7 +981,7 @@ fn locate_at(
         .position(|token| !matches!(token.tok, Tok::Comment(_)))
         .map_or(name_index, |at| boundary + at);
     let header = source[tokens[first].start..tokens[open].start].to_string();
-    let close_body = matching(&tokens, open).ok_or("unterminated function body")?;
+    let close_body = matching(tokens, open).ok_or("unterminated function body")?;
     let mut names = typedefs.clone();
     let params = parameters(&tokens[name_index + 2..close], &mut names)?;
     let mut parser = Parser::new(tokens[open + 1..close_body].to_vec(), &mut names);

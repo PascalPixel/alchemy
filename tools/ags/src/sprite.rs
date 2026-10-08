@@ -357,7 +357,7 @@ impl Bank {
         let image =
             indexed_bitmap_png(&png).map_err(|error| format!("{built}: {name}: {}", error.0))?;
         let (width, height) = (record.bytes[0] as usize, record.bytes[1] as usize);
-        if image.width as usize != width || height == 0 || image.height as usize % height != 0 {
+        if image.width as usize != width || height == 0 || !(image.height as usize).is_multiple_of(height) {
             return Err(format!(
                 "{built}: {name} is not {width}x{height} frames stacked"
             ));

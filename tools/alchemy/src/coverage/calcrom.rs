@@ -32,7 +32,7 @@ pub(crate) struct Game {
     /// Each other edition's English-credited units that it does not link
     /// as credit, with their English bytes and whether the edition has
     /// them at all (false: absent, outside that edition's total).
-    pub missing: Vec<(&'static str, Vec<(Unit, i64, bool)>)>,
+    pub missing: Vec<(&'static str, Missing)>,
 }
 impl Game {
     pub fn combined(&self) -> Counted {
@@ -1092,3 +1092,7 @@ mod padding_tests {
         assert_eq!(measurement.credits[&unit].uncredited, 4);
     }
 }
+
+/// An edition's missing units: each with its English bytes and whether
+/// the edition has it at all.
+pub type Missing = Vec<(Unit, i64, bool)>;

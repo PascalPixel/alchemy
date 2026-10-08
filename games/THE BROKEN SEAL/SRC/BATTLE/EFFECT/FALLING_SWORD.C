@@ -419,7 +419,11 @@ void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
             *ime = (u16)ime; \
             count = q->count; \
             if (count <= 31) { \
-                u32 *destination = (u32 *)((u8 *)q + count * 12 + 4); \
+                u32 *destination = q->entries[count]; \
+                /* FAKEMATCH: the count stored through a u16 pointer, as \
+                   IO_WRITE_QUEUE.H's and CANVAS.C's queue writes (the same \
+                   halfword store, scheduled as the native's); stored as \
+                   q->count, 8 of 2455 rows differ. */ \
                 *(u16 *)&q->count = count + 1; \
                 *destination++ = (value); \
                 *destination++ = (address); \
@@ -466,6 +470,11 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
     void *colors;
 
     cache = &gBattleFxWork[1];
+    /* FAKEMATCH: a form the bytes prove: one IME pointer for the whole
+       function, set at entry, as CANVAS.C's; it gets no register and reload
+       rematerialises 0x04000208 at each queue write, whose IME store is the
+       pointer's low half 0x208, as the native. A pointer per queue write
+       differs in 397 of 2455 rows. */
     ime = (volatile u16 *)0x04000208;
     canvas = cache[0];
     work = cache[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
@@ -499,6 +508,11 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
     zoom = 0x80000;
     near = 0xffff;
     far = 0;
+    /* FAKEMATCH: instruction order: the palette address is set with the
+       initial values, so its pseudo spans the ramp loop and reload
+       rematerialises 0x05000000 at the copy, with the call address load
+       between its two halves as the native's; as a literal argument 2 of
+       2455 rows differ, set at its declaration 848. */
     colors = (void *)0x05000000;
     Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageB, work->sheet + 0x600, 0, 0);
@@ -530,7 +544,15 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 
     for (i = 0; i != 128; i++) {
         s32 angle = Random16() & 0xffff;
+        /* FAKEMATCH: a form the bytes prove: the amplitude is a value, not
+           a literal: the native hoists 255 into sl and multiplies with muls;
+           a literal 255 is synthesised as lsls and subs, and 142 of 2455
+           rows differ. */
         s32 amp = 255;
+        /* FAKEMATCH: register choice: the velocities' zero is a value set
+           at the top of the body, which loop.c hoists into r8 as the
+           native's; literal zeros are rematerialised in the loop
+           (movs r3, #0) and 138 of 2455 rows differ. */
         s32 speed = 0;
         SPARKS[i].x = (Trig_Sin(angle) * amp) >> 2;
         SPARKS[i].z = (Trig_Cos(angle) * amp) >> 2;
@@ -545,6 +567,13 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
     *(u16 *)0x0400000c = 0x784;
 
     for (frame = 0; frame != 160 && (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B))); frame++) {
+        /* FAKEMATCH: a form the bytes prove, and instruction order: the
+           frame > 143 block calls through a pointer to the slot table (the
+           native keeps gWorkSlot's base at sp+56 and adds 188 there),
+           where the other blocks load gWorkSlot+188 itself; set at the top
+           of each frame, loop.c hoists it after the scene addresses as the
+           native. Set once before the loop, 22 of 2455 rows differ; called
+           through ((DrawRectangle *)gWorkSlot)[47] as the other blocks, 581. */
         slots = (DrawRectangle *)gWorkSlot;
         if (frame == 143) {
             Iwram_FillWords(canvas, 0x4000, 0x2a2a2a2a);
@@ -708,6 +737,11 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
             work->transfer_value = 75;
             if (n <= 6) {
                 s32 cell = n * 770 + ParticleStreams_CellOffsets[7] + 0x2710;
+                /* FAKEMATCH: a form the bytes prove: the height is a value,
+                   as the burst block's: the native hoists high / 2 into fp
+                   and subtracts the register (8 and 16 rematerialised), and
+                   the frame is the native's 184 bytes; as literals the frame
+                   is 180 and 690 of 2455 rows differ. */
                 s32 high = 8;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -967,6 +1001,10 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 
         if (frame >= 72 && frame < 76) {
             s32 r2 = (frame << 4) - 1136;
+            /* FAKEMATCH: a form the bytes prove: the size is a value, as the
+               other particle draws': the native hoists 5 and 20 into fp and
+               sl and indexes the cell table at 20 - 2; as literals the index
+               folds and 100 of 2455 rows differ. */
             s32 size = 10;
             for (i = 0; i != 256; i++) {
                 s32 angle = i << 8;

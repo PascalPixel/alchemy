@@ -163,10 +163,6 @@ Script_OperandHandlerTable:
 	.global Map_LayeredScenes
 Map_LayeredScenes:
 	.incbin "baserom.gba", 0x000136e4, 0x0000191c
-	.section .rom.000155d0, "ax"
-	.global UiText_DrawGlyphArm
-UiText_DrawGlyphArm:
-	.incbin "baserom.gba", 0x000155d0, 0x0000030c
 	.section .rom.00029968, "ax"
 	.global WorkspaceOptions_SliderTiles
 WorkspaceOptions_SliderTiles:

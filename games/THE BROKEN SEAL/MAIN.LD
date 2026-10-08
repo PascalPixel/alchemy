@@ -204,7 +204,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/WINDOW.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DECODE_SYMBOL.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/LOOKUP_SYMBOL.o"(.text .rodata .data .padding)
-    "*/recon/tbs/ja/rom.o"(.rom.000155d0)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/MOJI.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/TILE/METATILE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECOMPRESS_4BPP.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECOMPRESS_4BPP_NIBBLES.o"(.text .rodata .data .padding)

@@ -1,3 +1,12 @@
+#include "types.h"
+#include "io_reg.h"
+#include "heap_state.h"
+#include "btlpty.h"
+#include "scene.h"
+#include "global_cells.h"
+#include "btlwork.h"
+#include "btlsys.h"
+#include "btldisp.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -7,24 +16,38 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
-#include "heap_state.h"
-#include "scene.h"
 #include "iwram_call.h"
 #include "battle_command.h"
-#include "btlsys.h"
-#include "btlpty.h"
 #include "btltype.h"
 #include "btlmes.h"
-#include "btldisp.h"
-#include "system.h"
 #include "btlobj.h"
-#include "io_reg.h"
-#include "btlwork.h"
 #include "motobj.h"
 #include "animspr.h"
 #include "callback_scheduler.h"
 #include "transform.h"
+
+extern u8 gKeysHeld[];
+
+void BattlePres_AdjustCameraByShoulderKeysAlt(void)
+{
+    struct BattleCamera *cam = *(gWorkSlot + HEAP_SLOT_CAMERA);
+    struct BattlePresentationTransition *trans = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
+    volatile u32 *keys = (volatile u32 *)gKeysHeld;
+
+    if ((*keys & KEY_L) != 0) {
+        cam->yaw += 512;
+    }
+    if ((*keys & KEY_R) != 0) {
+        cam->yaw -= 512;
+    }
+    if (trans->flag == 0) {
+        BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
+    }
+}
+
+void Battle_ReservedNoOp9B2C(void)
+{
+}
 
 #define Camera_StoreSceneParameters ((void (*)(s32,u32,s32))Camera_StoreSceneParameters)
 #define BattleUnit_ProcessTurnEnd ((void (*)(struct BtlPlan*))BattleUnit_ProcessTurnEnd)

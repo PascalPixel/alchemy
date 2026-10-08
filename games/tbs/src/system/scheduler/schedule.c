@@ -7,9 +7,9 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
+#include "types.h"
 #include "affine.h"
 #include "resource.h"
-#include "types.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
 #include "global_cells.h"
@@ -23,10 +23,22 @@
 #include "low_runtime.h"
 #include "oam.h"
 
+extern u8 IwramClearWords[];
+#define gObjAffineCount (*(u8 (*)[])&gObjAffineCount)
+
+s32 _call_via_r3(s32, s32, s32, s32);
+
+void Graphics_ResetFrameState(void)
+{
+    gObjAffineCount[0] = 0;
+    _call_via_r3(((u32)&Data_03001400), 0x400, ((u32)&gObjAffineCount), (u32)IwramClearWords);
+}
+
+#undef gObjAffineCount
+
 #define Data_03001400 ((void *(*))&Data_03001400)
 
 typedef void (*OamBuildRoutine)(void *work);
-
 
 s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
 {

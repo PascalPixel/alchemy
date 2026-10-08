@@ -17,7 +17,6 @@
 #include "canvas.h"
 #include "types.h"
 #include "iwram_call.h"
-#include "system.h"
 #include "battle_efx.h"
 #include "battle_effect_work.h"
 #include "callback_scheduler.h"
@@ -26,6 +25,7 @@
 #include "effect_step.h"
 #include "b5_context.h"
 #include "io_reg.h"
+#include "dma.h"
 
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
@@ -264,4 +264,594 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *effect)
 	}
 	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
 	BattleFx_EndCanvasLayer();
+}
+
+#define DMA3_REGISTERS (REG_DMA3)
+#define DMA_COPY_WORDS(n) (0x84000000 | (n))
+
+#define BRANCH_FIELD(site, target) \
+    ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
+
+s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode)
+{
+    const u32 *src;
+    u32 *dst;
+    u32 *no_rows;
+    u32 *no_columns;
+    u32 *row;
+    u32 *skip;
+    u32 *run;
+    u32 *cell;
+    const u32 *end;
+    s32 words;
+
+#define PUT(word) words++
+#define COPY(n) words += (n); src += (n)
+#define COPY_FROM(from, n) words += (n)
+#define COPY_TWICE(from, n) words += (n); words += (n)
+#define PUT_BRANCH(target) words++
+#define MARK(site)
+#define PATCH(site)
+
+    words = 0;
+    src = SentouKouka_Gousei;
+
+    COPY(3);
+    if (mode == GOUSEI_KASAN) {
+        COPY_FROM(SentouKouka_Mask, 3);
+    }
+
+    if ((flags & GOUSEI_FLIP) == GOUSEI_FLIP_X) {
+        COPY_FROM(src, 3);
+    }
+    src += 3;
+    if ((flags & GOUSEI_FLIP) == GOUSEI_FLIP_Y) {
+        COPY_FROM(src, 4);
+    }
+    src += 4;
+    if ((flags & GOUSEI_FLIP) == GOUSEI_FLIP) {
+        COPY_FROM(src, 3);
+    }
+    src += 3;
+    if ((flags & GOUSEI_FLIP) == 0) {
+        PUT(src[0]);
+    }
+    src += 1;
+
+    if ((flags & GOUSEI_CLIP_Y) != 0) {
+        PUT(src[0]);
+        PUT(src[1]);
+        if ((flags & GOUSEI_FLIP_Y) != 0) {
+            PUT(src[2]);
+        } else {
+            PUT(src[3]);
+        }
+        PUT(src[4]);
+        PUT(src[5]);
+        PUT(src[6] + (1 << height_shift));
+        PUT(src[7] + (1 << height_shift));
+    }
+    src += 8;
+
+    PUT(*src++);
+    MARK(no_rows);
+    PUT(*src++);
+
+    if ((flags & GOUSEI_CLIP_X) == 0) {
+        PUT(src[0] + (1 << width_shift) - 1);
+    }
+    src += 1;
+    if ((flags & GOUSEI_CLIP_X) != 0) {
+        PUT(src[0]);
+        PUT(src[1]);
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            PUT(src[2]);
+            PUT(src[3]);
+        } else {
+            PUT(src[4]);
+            PUT(src[5]);
+        }
+        PUT(src[6]);
+        PUT(src[7]);
+        PUT(src[8] + SentouKouka_BitOperands[width_shift]);
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            PUT(src[9]);
+        } else {
+            PUT(src[10]);
+        }
+        PUT(src[11] + SentouKouka_BitOperands[width_shift]);
+    }
+    src += 12;
+
+    PUT(*src++);
+    MARK(no_columns);
+    PUT(*src++);
+
+    COPY(6);
+
+    PUT(*src++);
+    if ((flags & GOUSEI_CLIP_X) == 0) {
+        PUT(src[0]);
+    }
+    src += 1;
+
+    COPY(5);
+
+    MARK(row);
+    PUT(src[0]);
+    PUT(src[1] + (1 << (height_shift - 3)) - 1);
+    PUT(src[2] + ((width_shift - 3) << 7));
+    PUT(src[3]);
+    src += 4;
+
+    if ((flags & GOUSEI_CLIP_X) == 0) {
+        PUT(src[0]);
+    }
+    src += 1;
+
+    PUT(*src++);
+    MARK(skip);
+    PUT(*src++);
+    if ((flags & GOUSEI_FLIP_X) != 0) {
+        PUT(src[0]);
+    } else {
+        PUT(src[1]);
+    }
+    src += 2;
+
+    MARK(run);
+    switch (mode) {
+    default:
+    case GOUSEI_YOMI:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_YomiGyaku, 2);
+        } else {
+            COPY_FROM(SentouKouka_YomiJun, 2);
+        }
+        break;
+    case GOUSEI_NURI:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_NuriGyaku, 4);
+        } else {
+            COPY_FROM(SentouKouka_NuriJun, 4);
+        }
+        break;
+    case GOUSEI_HIKAKU:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_HikakuGyaku, 4);
+        } else {
+            COPY_FROM(SentouKouka_HikakuJun, 4);
+        }
+        break;
+    case GOUSEI_KASAN:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_KasanGyaku, 6);
+        } else {
+            COPY_FROM(SentouKouka_KasanJun, 6);
+        }
+        break;
+    }
+    src += 4;
+
+    PUT(*src++);
+    PUT_BRANCH(run);
+    PUT(*src++);
+    if ((flags & GOUSEI_CLIP_X) == 0) {
+        PUT(src[0]);
+        PUT(src[1]);
+    }
+    src += 2;
+    PATCH(skip);
+
+    PUT(*src++);
+    MARK(skip);
+    PUT(*src++);
+
+    MARK(cell);
+    switch (mode) {
+    default:
+    case GOUSEI_YOMI:
+        {
+            s32 i;
+
+            for (i = 0; i < 8; i++) {
+                if ((flags & GOUSEI_FLIP_X) != 0) {
+                    COPY_FROM(SentouKouka_YomiGyaku, 2);
+                } else {
+                    COPY_FROM(SentouKouka_YomiJun, 2);
+                }
+            }
+        }
+        break;
+    case GOUSEI_NURI:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_Nuri8Gyaku, 25);
+        } else {
+            COPY_FROM(SentouKouka_Nuri8Jun, 25);
+        }
+        break;
+    case GOUSEI_HIKAKU:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_TWICE(SentouKouka_Hikaku4Gyaku, 16);
+        } else {
+            COPY_TWICE(SentouKouka_Hikaku4Jun, 16);
+        }
+        break;
+    case GOUSEI_KASAN:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_TWICE(SentouKouka_IroGyaku, 14);
+        } else {
+            COPY_TWICE(SentouKouka_IroJun, 14);
+        }
+        break;
+    }
+    src += 4;
+
+    PUT(*src++);
+    if ((flags & GOUSEI_CLIP_X) == 0) {
+        PUT(src[0]);
+        PUT(src[1]);
+    }
+    src += 2;
+
+    PUT(*src++);
+    PUT_BRANCH(cell);
+    PATCH(skip);
+
+    PUT(*src++);
+    MARK(skip);
+    PUT(*src++);
+    if ((flags & GOUSEI_FLIP_X) != 0) {
+        PUT(src[0]);
+    } else {
+        PUT(src[1]);
+    }
+    src += 2;
+
+    MARK(run);
+    switch (mode) {
+    default:
+    case GOUSEI_YOMI:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_YomiGyaku, 2);
+        } else {
+            COPY_FROM(SentouKouka_YomiJun, 2);
+        }
+        break;
+    case GOUSEI_NURI:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_NuriGyaku, 4);
+        } else {
+            COPY_FROM(SentouKouka_NuriJun, 4);
+        }
+        break;
+    case GOUSEI_HIKAKU:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_HikakuGyaku, 4);
+        } else {
+            COPY_FROM(SentouKouka_HikakuJun, 4);
+        }
+        break;
+    case GOUSEI_KASAN:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_KasanGyaku, 6);
+        } else {
+            COPY_FROM(SentouKouka_KasanJun, 6);
+        }
+        break;
+    }
+    src += 4;
+
+    PUT(*src++);
+    PUT_BRANCH(run);
+    PATCH(skip);
+
+    COPY(3);
+
+    PUT_BRANCH(row);
+    PATCH(no_rows);
+    PATCH(no_columns);
+
+    PUT(*src++);
+    PUT(*src++);
+
+#undef PUT
+#undef COPY
+#undef COPY_FROM
+#undef COPY_TWICE
+#undef PUT_BRANCH
+#undef MARK
+#undef PATCH
+
+    /* FAKEMATCH: needed to match: one-pass blocks keep each writing step together and in list order while allowing scheduling within each step */
+#define PUT(word) do { *dst++ = (word); } while (0)
+#define COPY(n) do { \
+        Dma_Set(src, dst, DMA_COPY_WORDS(n), DMA3_REGISTERS); \
+        dst += (n); \
+        src += (n); \
+    } while (0)
+#define COPY_FROM(from, n) do { \
+        Dma_Set(from, dst, DMA_COPY_WORDS(n), DMA3_REGISTERS); \
+        dst += (n); \
+    } while (0)
+#define COPY_TWICE(from, n) do { \
+        const u32 *part = (from); \
+        Dma_Set(part, dst, DMA_COPY_WORDS(n), DMA3_REGISTERS); \
+        dst += (n); \
+        Dma_Set(part, dst, DMA_COPY_WORDS(n), DMA3_REGISTERS); \
+        dst += (n); \
+    } while (0)
+#define PUT_BRANCH(target) do { \
+        *dst = *src++ + BRANCH_FIELD(dst, target); \
+        dst++; \
+    } while (0)
+#define MARK(site) site = dst
+#define PATCH(site) do { *(site) |= BRANCH_FIELD(site, dst); } while (0)
+
+    dst = (u32 *)Runtime_AllocateHeapBlock(slot, words << 2);
+    src = SentouKouka_Gousei;
+
+    COPY(3);
+    if (mode == GOUSEI_KASAN) {
+        COPY_FROM(SentouKouka_Mask, 3);
+    }
+
+    if ((flags & GOUSEI_FLIP) == GOUSEI_FLIP_X) {
+        COPY_FROM(src, 3);
+    }
+    src += 3;
+    if ((flags & GOUSEI_FLIP) == GOUSEI_FLIP_Y) {
+        COPY_FROM(src, 4);
+    }
+    src += 4;
+    if ((flags & GOUSEI_FLIP) == GOUSEI_FLIP) {
+        COPY_FROM(src, 3);
+    }
+    src += 3;
+    if ((flags & GOUSEI_FLIP) == 0) {
+        PUT(src[0]);
+    }
+    src += 1;
+
+    if ((flags & GOUSEI_CLIP_Y) != 0) {
+        PUT(src[0]);
+        PUT(src[1]);
+        if ((flags & GOUSEI_FLIP_Y) != 0) {
+            PUT(src[2]);
+        } else {
+            PUT(src[3]);
+        }
+        PUT(src[4]);
+        PUT(src[5]);
+        PUT(src[6] + (1 << height_shift));
+        PUT(src[7] + (1 << height_shift));
+    }
+    src += 8;
+
+    PUT(*src++);
+    MARK(no_rows);
+    PUT(*src++);
+
+    if ((flags & GOUSEI_CLIP_X) == 0) {
+        PUT(src[0] + (1 << width_shift) - 1);
+    }
+    src += 1;
+    if ((flags & GOUSEI_CLIP_X) != 0) {
+        PUT(src[0]);
+        PUT(src[1]);
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            PUT(src[2]);
+            PUT(src[3]);
+        } else {
+            PUT(src[4]);
+            PUT(src[5]);
+        }
+        PUT(src[6]);
+        PUT(src[7]);
+        PUT(src[8] + SentouKouka_BitOperands[width_shift]);
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            PUT(src[9]);
+        } else {
+            PUT(src[10]);
+        }
+        PUT(src[11] + SentouKouka_BitOperands[width_shift]);
+    }
+    src += 12;
+
+    PUT(*src++);
+    MARK(no_columns);
+    PUT(*src++);
+
+    COPY(6);
+
+    PUT(*src++);
+    if ((flags & GOUSEI_CLIP_X) == 0) {
+        PUT(src[0]);
+    }
+    src += 1;
+
+    COPY(5);
+
+    MARK(row);
+    PUT(src[0]);
+    PUT(src[1] + (1 << (height_shift - 3)) - 1);
+    PUT(src[2] + ((width_shift - 3) << 7));
+    PUT(src[3]);
+    src += 4;
+
+    if ((flags & GOUSEI_CLIP_X) == 0) {
+        PUT(src[0]);
+    }
+    src += 1;
+
+    PUT(*src++);
+    MARK(skip);
+    PUT(*src++);
+    if ((flags & GOUSEI_FLIP_X) != 0) {
+        PUT(src[0]);
+    } else {
+        PUT(src[1]);
+    }
+    src += 2;
+
+    MARK(run);
+    switch (mode) {
+    default:
+    case GOUSEI_YOMI:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_YomiGyaku, 2);
+        } else {
+            COPY_FROM(SentouKouka_YomiJun, 2);
+        }
+        break;
+    case GOUSEI_NURI:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_NuriGyaku, 4);
+        } else {
+            COPY_FROM(SentouKouka_NuriJun, 4);
+        }
+        break;
+    case GOUSEI_HIKAKU:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_HikakuGyaku, 4);
+        } else {
+            COPY_FROM(SentouKouka_HikakuJun, 4);
+        }
+        break;
+    case GOUSEI_KASAN:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_KasanGyaku, 6);
+        } else {
+            COPY_FROM(SentouKouka_KasanJun, 6);
+        }
+        break;
+    }
+    src += 4;
+
+    PUT(*src++);
+    PUT_BRANCH(run);
+    PUT(*src++);
+    if ((flags & GOUSEI_CLIP_X) == 0) {
+        PUT(src[0]);
+        PUT(src[1]);
+    }
+    src += 2;
+    PATCH(skip);
+
+    PUT(*src++);
+    MARK(skip);
+    PUT(*src++);
+
+    MARK(cell);
+    switch (mode) {
+    default:
+    case GOUSEI_YOMI:
+        {
+            s32 i;
+
+            for (i = 0; i < 8; i++) {
+                if ((flags & GOUSEI_FLIP_X) != 0) {
+                    COPY_FROM(SentouKouka_YomiGyaku, 2);
+                } else {
+                    COPY_FROM(SentouKouka_YomiJun, 2);
+                }
+            }
+        }
+        break;
+    case GOUSEI_NURI:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_Nuri8Gyaku, 25);
+        } else {
+            COPY_FROM(SentouKouka_Nuri8Jun, 25);
+        }
+        break;
+    case GOUSEI_HIKAKU:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_TWICE(SentouKouka_Hikaku4Gyaku, 16);
+        } else {
+            COPY_TWICE(SentouKouka_Hikaku4Jun, 16);
+        }
+        break;
+    case GOUSEI_KASAN:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_TWICE(SentouKouka_IroGyaku, 14);
+        } else {
+            COPY_TWICE(SentouKouka_IroJun, 14);
+        }
+        break;
+    }
+    src += 4;
+
+    PUT(*src++);
+    if ((flags & GOUSEI_CLIP_X) == 0) {
+        PUT(src[0]);
+        PUT(src[1]);
+    }
+    src += 2;
+
+    PUT(*src++);
+    PUT_BRANCH(cell);
+    PATCH(skip);
+
+    PUT(*src++);
+    MARK(skip);
+    PUT(*src++);
+    if ((flags & GOUSEI_FLIP_X) != 0) {
+        PUT(src[0]);
+    } else {
+        PUT(src[1]);
+    }
+    src += 2;
+
+    MARK(run);
+    switch (mode) {
+    default:
+    case GOUSEI_YOMI:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_YomiGyaku, 2);
+        } else {
+            COPY_FROM(SentouKouka_YomiJun, 2);
+        }
+        break;
+    case GOUSEI_NURI:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_NuriGyaku, 4);
+        } else {
+            COPY_FROM(SentouKouka_NuriJun, 4);
+        }
+        break;
+    case GOUSEI_HIKAKU:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_HikakuGyaku, 4);
+        } else {
+            COPY_FROM(SentouKouka_HikakuJun, 4);
+        }
+        break;
+    case GOUSEI_KASAN:
+        if ((flags & GOUSEI_FLIP_X) != 0) {
+            COPY_FROM(SentouKouka_KasanGyaku, 6);
+        } else {
+            COPY_FROM(SentouKouka_KasanJun, 6);
+        }
+        break;
+    }
+    src += 4;
+
+    PUT(*src++);
+    PUT_BRANCH(run);
+    PATCH(skip);
+
+    COPY(3);
+
+    PUT_BRANCH(row);
+    PATCH(no_rows);
+    PATCH(no_columns);
+
+    PUT(*src++);
+    PUT(*src++);
+
+#define ParticleStreams_CellOffsets ((const u32 (*))&ParticleStreams_CellOffsets)
+
+    end = ParticleStreams_CellOffsets;
+    return src == end;
 }

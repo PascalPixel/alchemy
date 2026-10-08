@@ -22,7 +22,6 @@
 #include "io_reg.h"
 #include "callback_scheduler.h"
 #include "battle_status_icon.h"
-#include "system.h"
 #include "iwram_call.h"
 #include "vram_block.h"
 #include "btlev.h"
@@ -34,6 +33,7 @@
 #include "ui.h"
 #include "menu_list.h"
 #include "btlpty.h"
+
 void UiWork_PushValueSlotFar(s32, s32);
 struct BtlAct * BtlActGet(s32 action_id);
 struct ItemDefinition *Item_GetDirectFar(s32 item);
@@ -744,4 +744,38 @@ void BattleEvent_Playback(void)
 			return;
 		}
 	}
+}
+
+u32 BattleEventRuntime_Reset(void)
+{
+    struct BattleEventState *events;
+
+    events = &BtlWk->events;
+    events->phase = BATTLE_PLAYBACK_IDLE;
+    events->queue.count = 0;
+    events->event_index = 0;
+    events->timer = 0;
+    events->queue.target_index = 0;
+    events->pending_cue = 0x86;
+    events->flags = 0;
+}
+
+s32 BattleEventRuntime_WaitForReady(void)
+{
+    s32 state;
+    struct BattleEventState *events;
+
+    events = &BtlWk->events;
+    state = events->phase;
+    if (state == BATTLE_PLAYBACK_IDLE) {
+        events->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
+        state = BATTLE_PLAYBACK_RESOLVE_TARGET;
+    }
+    if (state != BATTLE_PLAYBACK_READY) {
+        do {
+            WaitFrames(1U);
+        } while (events->phase != BATTLE_PLAYBACK_READY);
+    }
+    Scheduler_RemoveCallback(BattleEvent_Playback);
+    return BattleEventRuntime_Reset();
 }

@@ -7,14 +7,539 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "mem.h"
 #include "resource.h"
+#include "mem.h"
 #include "types.h"
 #include "animspr.h"
 #include "global_cells.h"
-#include "metadata_lookup.h"
 #include "dma.h"
+#include "iwram_call.h"
 #include "io_reg.h"
+#include "heap_state.h"
+#include "affine.h"
+#include "callback_scheduler.h"
+#include "scene.h"
+#include "object_dispatch.h"
+#include "metadata_lookup.h"
+
+#define Animation_SetWorkEntry ((void (*)(void*,s32))Animation_SetWorkEntry)
+
+#define gMenuCtrlWork ((void *(*))&gMenuCtrlWork)
+#define Render_DecodeFrame ((const u8 (*))&Render_DecodeFrame)
+
+typedef void (*DrawFn)(const void *src, void *dst, s32 param);
+typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
+
+s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
+{
+    s32 changed;
+    u32 size;
+    struct ObjectSystemWork *ctx;
+    DrawFn draw;
+    s32 held;
+    struct AnimationEntry *e;
+    void *block;
+    u8 *buf;
+    u8 *tmp;
+    void *decoded;
+    u16 order[4];
+    s32 i;
+    s32 k;
+    s32 n;
+    u32 key;
+    s32 arg;
+    s32 base;
+    u32 attr;
+    s32 tile;
+
+    changed = 0;
+    ctx = (struct ObjectSystemWork *)gMenuCtrlWork[0];
+    held = 1;
+    draw = (DrawFn)gMenuCtrlWork[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
+    if (draw == 0) {
+        block = (void *)Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER, (s32)Render_DecodeFrameCodeSize);
+        Dma_Set(Render_DecodeFrame, block,
+                (((u32)Render_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) | (DMA_ENABLE32 | DMA_32BIT),
+                REG_DMA3);
+        draw = (DrawFn)gMenuCtrlWork[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
+        held = 0;
+    }
+
+    for (i = 0; i < obj->count; i++) {
+        e = obj->entries[i];
+        if (e == 0) {
+            continue;
+        }
+        if (e->script == 0) {
+            continue;
+        }
+        /* FAKEMATCH: needed to match: explicit timer-test lifetime keeps command back-edges and the decoded frame value separate from the hold reload. */
+    read_command:
+        if ((s16)e->timer > 0)
+            goto advance_timer;
+        base = e->script[e->pos++];
+        arg = e->script[e->pos++];
+        switch (base) {
+        case 254:
+            Animation_SetWorkEntry(e, arg);
+            obj->last_no = arg;
+            break;
+        case 253:
+            e->pos = arg;
+            break;
+        case 245:
+            e->timer += arg << 4;
+            break;
+        case 241:
+            e->pos -= 2;
+            goto framed;
+        case 240:
+            e->kind = arg;
+            break;
+        case 255:
+            e->frame_base = 255;
+            base = 255;
+            e->timer += arg << 4;
+            goto select_direction;
+        case 239:
+            e->frame_base = 255;
+            e->script = 0;
+            base = 255;
+            obj->count--;
+            goto select_direction;
+        case 242:
+        case 243:
+        case 244:
+        case 246:
+        case 247:
+        case 248:
+        case 249:
+        case 250:
+        case 252:
+            break;
+        default:
+            e->frame_base = base;
+            e->timer += arg << 4;
+            goto select_direction;
+        }
+        goto read_command;
+    advance_timer:
+        e->timer = e->timer - e->step;
+    framed:
+        base = e->frame_base;
+    select_direction:
+        switch (e->kind) {
+        case 1:
+            attr = AnimationFacing_Kind1[dir >> 13];
+            break;
+        case 2:
+        case 20:
+            attr = AnimationFacing_Kind2[dir >> 13];
+            break;
+        case 22:
+            attr = AnimationFacing_Kind22[dir >> 13];
+            break;
+        case 3:
+            attr = AnimationFacing_Kind3[dir >> 12];
+            break;
+        case 4:
+            attr = AnimationFacing_Kind4[dir >> 10];
+            break;
+        case 5:
+            attr = AnimationFacing_Kind5[dir >> 12];
+            break;
+        case 6:
+            attr = AnimationFacing_Kind6[dir >> 10];
+            break;
+        case 8:
+            attr = AnimationFacing_Kind8[((u32)(dir << 16) + 0x10000000) >> 29];
+            break;
+        case 88:
+            attr = AnimationFacing_Kind88[((u32)(dir << 16) + 0x10000000) >> 29];
+            break;
+        default:
+            attr = 0;
+            break;
+        }
+        base += attr & 7;
+        if (i == 0 && (attr >> 7) != 0) {
+            changed = 1;
+        }
+        if (e->frame != base) {
+            e->frame = base;
+            obj->dirty = 1;
+        }
+    }
+
+    if (obj->dirty != 0) {
+        size = obj->width * obj->height;
+        buf = (u8 *)MemAlloc(size);
+        Iwram_ClearWords(buf, size);
+
+        n = -1;
+        for (i = obj->count - 1; i >= 0; i--) {
+            e = obj->entries[i];
+            if (e == 0) {
+                continue;
+            }
+            if (e->frames == 0) {
+                continue;
+            }
+            if (e->frame == 255) {
+                continue;
+            }
+            key = e->priority;
+            if (key > 3) {
+                continue;
+            }
+            key = (key << 8) | i;
+            /* FAKEMATCH: needed to match: the first shift written apart and the scan left by goto keep the scan unrotated, with its step at the top. */
+            k = n;
+            if (k >= 0 && order[k] > key) {
+                order[k + 1] = order[k];
+                for (;;) {
+                    k--;
+                    if (k < 0)
+                        goto insert;
+                    if (order[k] <= key)
+                        goto insert;
+                    order[k + 1] = order[k];
+                }
+            }
+        insert:
+            order[k + 1] = key;
+            n++;
+        }
+        n++;
+
+        for (i = 0; i < n; i++) {
+            e = obj->entries[*(u8 *)&order[i]];
+            if (e->mode == 1) {
+                Resource_DecodeType01(e->frames[e->frame], buf);
+            } else if (e->mode == 3) {
+                if (e->param != 0) {
+                    tmp = (u8 *)MemAlloc(0x400);
+                    draw(Resource_DecompressLz(e->frames[e->frame], tmp),
+                         buf, e->param);
+                    MemFree(tmp);
+                } else {
+                    decoded = Iwram_Decompress(e->frames[e->frame], buf);
+                    if (decoded != 0) {
+                        draw(decoded, buf, 0);
+                    }
+                }
+            } else {
+                draw(e->frames[e->frame], buf, e->param);
+            }
+        }
+
+        if ((obj->flags & 2) != 0) {
+            u8 *mask;
+            u8 edge;
+            u8 fill;
+            u32 w;
+            u32 h;
+            u8 *src;
+            u8 *dst;
+
+            mask = (u8 *)MemAlloc(size);
+            w = obj->width;
+            h = obj->height;
+            edge = ctx->edge;
+            fill = ctx->fill;
+            Iwram_ClearWords(mask, size);
+            src = buf + w + 1;
+            dst = mask + w + 1;
+            for (i = 1; i < h - 1; i++) {
+                for (k = 1; k < w - 1; k++) {
+                    if (src[-1] != 0 && src[1] != 0 &&
+                        *(src - w) != 0 && src[w] != 0) {
+                        *dst = 1;
+                    }
+                    dst++;
+                    src++;
+                }
+                dst += 2;
+                src += 2;
+            }
+            src = buf;
+            dst = mask;
+            for (i = 0; i < size; i++) {
+                if (*dst != 0) {
+                    *src = fill;
+                } else if (*src != 0) {
+                    *src = edge;
+                }
+                dst++;
+                src++;
+            }
+            MemFree(mask);
+        }
+
+        tile = VramBlock_LoadCached(obj->slot, size, 0);
+        {
+            void *vram = (void *)(0x06010000 + (tile << 5));
+            ((UploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(buf, obj->width, obj->height, vram);
+        }
+        obj->part[0].tile = tile;
+        obj->dirty = 0;
+        ctx->used += size;
+        MemFree(buf);
+    }
+
+    if (held == 0) {
+        Runtime_ReleaseHeapBlock(52);
+    }
+    return changed;
+}
+
+void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screen_x,
+    s32 height, s32 screen_y, s32 ground_height, s32 *scale)
+{
+    u32 half_width = sprite->width >> 1;
+    u32 half_height = sprite->height >> 1;
+    s32 margin_x = 8;
+    s32 margin_y = 4;
+    s32 affine = 1;
+    s32 scale_x = *scale++;
+    s32 scale_y = *scale;
+    s32 x;
+    s32 y;
+    struct AnimationSpritePart *shadow;
+
+    if (scale_x > 0x10000 || scale_y > 0x10000) {
+        affine = 3;
+        margin_x = 16;
+        margin_y = 8;
+        half_width <<= 1;
+        half_height <<= 1;
+    }
+    x = (screen_x >> 16) - half_width;
+    y = ((screen_y - height) >> 16) - half_height
+        - ((((sprite->height >> 1) - sprite->offset_y) * scale_y
+            + 0xffff) >> 16);
+    sprite->part[0].affine = affine;
+    sprite->part[0].x = x;
+    sprite->part[0].y = y;
+    x = (screen_x >> 16) - margin_x;
+    y = ((screen_y - ground_height) >> 16) - margin_y;
+    shadow = &sprite->part[1];
+    shadow->affine = affine;
+    shadow->x = x;
+    shadow->y = y;
+}
+
+#undef gMenuCtrlWork
+
+#define gMenuCtrlWork ((u8 (*))&gMenuCtrlWork)
+
+void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
+{
+    s32 matrix;
+    u32 half_width = sprite->width >> 1;
+    u32 half_height = sprite->height >> 1;
+    s32 size = 8;
+    s32 size_half = 4;
+    s32 affine;
+    s32 scale_x = *scale++;
+    s32 px = *pos++;
+    s32 scale_y = *scale;
+    s32 py = *pos++;
+    s32 pz = *pos++;
+    s32 pw = *pos;
+    s32 slot;
+    /* FAKEMATCH: needed to match: the two unused arrays supply 24 bytes of the 68-byte frame; removing them leaves 44 bytes. */
+    s32 ground[3];
+    s32 screen[3];
+    struct AffineTransform effect;
+    s32 flip;
+    s32 x;
+    s32 y;
+    s32 depth;
+    struct AnimationSpritePart *part;
+
+    flip = Sprite_ComposeAnimationFrame(sprite, mode);
+    if (flip == 0 && scale_x == 0x10000 && scale_y == scale_x && sprite->rotation == 0) {
+        affine = 0;
+        matrix = 0;
+    } else {
+        affine = 1;
+        effect.angle = sprite->rotation;
+        effect.scale_x = scale_x >> 8;
+        effect.scale_y = scale_y >> 8;
+        if (flip != 0)
+            effect.scale_x = -effect.scale_x;
+        matrix = AffineMatrix_BuildForEffect(&effect);
+    }
+    if (scale_x > 0x10000 || scale_y > 0x10000) {
+        affine = 3;
+        half_width <<= 1;
+        half_height <<= 1;
+        size = 16;
+        size_half = 8;
+    }
+    if (py <= -0x640000) {
+        slot = 1;
+        depth = 0;
+    } else {
+        slot = (pz >> 17) + 10;
+        depth = 2;
+    }
+    y = ((pz - pw) >> 16) - size_half;
+    if (sprite->flags & 1) {
+        if (y < 160) {
+            part = &sprite->part[1];
+            part->affine = affine;
+            part->affine_index = matrix;
+            part->x = (px >> 16) - size;
+            part->y = y;
+            Runtime_PushSlotEntry(part, depth);
+        }
+    }
+    x = (px >> 16) - half_width + ((sprite->offset_x * scale_x + 0xffff) >> 16);
+    y = ((pz - py) >> 16) - half_height
+        - ((scale_y * ((sprite->height >> 1) - sprite->offset_y) + 0xffff) >> 16);
+    if (x < 240 && y < 160) {
+        part = &sprite->part[0];
+        part->x = x;
+        part->y = y;
+        part->affine = affine;
+        part->affine_index = matrix;
+        Runtime_PushSlotEntry(part, slot);
+    }
+}
+
+void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point, s32 *scale, s32 mode, s32 depth)
+{
+    s32 flip;
+    u32 half_height;
+    u32 size;
+    s32 affine;
+    s32 half_width;
+    s32 ground[3];
+    s32 screen[3];
+    struct AffineTransform effect;
+    s32 z;
+    s32 base;
+    s32 scale_x;
+    s32 scale_y;
+    s32 offset_x;
+    s32 offset_y;
+    s32 slot;
+
+    affine = 1;
+    if ((*(struct ObjectSystemWork **)gMenuCtrlWork)->suspended != 0)
+        goto hide;
+    z = Render_ProjectPoint(point, screen);
+    if (screen[2] == 0)
+        goto hide;
+    if (screen[0] < -32)
+        goto hide;
+    if (screen[0] > 272)
+        goto hide;
+    if (screen[1] < -32)
+        goto hide;
+    if (screen[1] > 208)
+        goto hide;
+    if (sprite->display_flags & 2)
+        z = sprite->scale;
+    else
+        z = Iwram_MulQ16(z, sprite->scale);
+    half_width = sprite->width >> 1;
+    half_height = sprite->height >> 1;
+    size = 8;
+    flip = Sprite_ComposeAnimationFrame(sprite, mode);
+    base = (z + 0x400) & -0x800;
+    scale_x = Iwram_MulQ16(base, *scale++);
+    scale_y = Iwram_MulQ16(base, *scale);
+    if (scale_x > 0x1f7ff)
+        scale_x = 0x1f800;
+    if (scale_y > 0x1f7ff)
+        scale_y = 0x1f800;
+    offset_x = Iwram_MulQ16(sprite->offset_x, scale_x);
+    offset_y = -Iwram_MulQ16((sprite->height >> 1) - sprite->offset_y, scale_y);
+    if (scale_x > 0x10000 || scale_y > 0x10000) {
+        affine = 3;
+        half_width <<= 1;
+        half_height <<= 1;
+        size = 16;
+    } else if (scale_x == 0x10000 && sprite->rotation == 0 && scale_y == scale_x) {
+        affine = 0;
+    }
+    if (affine != 0) {
+        effect.angle = sprite->rotation;
+        effect.scale_x = scale_x >> 8;
+        if (flip != 0) {
+            effect.scale_x = -effect.scale_x;
+            offset_x = -offset_x;
+        }
+        effect.scale_y = scale_y >> 8;
+        z = AffineMatrix_BuildForEffect(&effect);
+    } else if (flip != 0) {
+        z = 8;
+        offset_x = -offset_x;
+    } else {
+        z = 0;
+    }
+    sprite->part[0].x = screen[0] - half_width + offset_x;
+    sprite->part->y = screen[1] - half_height + offset_y;
+    sprite->part[0].affine = affine;
+    sprite->part[0].affine_index = z;
+    if (depth == 0) {
+        slot = (0x200 - screen[2]) / 2 + 128;
+        if (slot <= 0)
+            slot = 1;
+        Runtime_PushSlotEntry(sprite, slot);
+    } else {
+        Runtime_PushSlotEntry(sprite, depth);
+    }
+    if (sprite->flags & 1) {
+        struct AnimationSpritePart *shadow;
+
+        ground[0] = point[0];
+        ground[1] = 0;
+        ground[2] = point[2];
+        Render_ProjectPoint(ground, screen);
+        shadow = &sprite->part[1];
+        shadow->x = screen[0] - size;
+        shadow->y = screen[1] - (size >> 1) + 2;
+        shadow->affine = affine;
+        shadow->affine_index = z;
+        if (depth == 0)
+            Runtime_PushSlotEntry(shadow, 0);
+        else
+            Runtime_PushSlotEntry(shadow, depth);
+    }
+    return;
+hide:
+    if (!(sprite->display_flags & 1)) {
+        Resource_ActivateEntry(sprite->slot);
+        sprite->dirty = 1;
+    }
+}
+
+void ObjectGroup_SetChildValueUnlessFifteen(void *raw_parent, u32 value)
+{
+    struct AnimationObject *parent = raw_parent;
+    if (parent != 0) {
+        u32 n = parent->count;
+
+        if (n != 0) {
+            struct AnimationEntry **p = parent->entries;
+            u32 cnt = n;
+            do {
+                struct AnimationEntry *child = *p++;
+                if (child->param != 15)
+                    child->param = value;
+                cnt--;
+            } while (cnt != 0);
+        }
+        parent->dirty = 1;
+    }
+}
+
+#undef Animation_SetWorkEntry
+#undef gMenuCtrlWork
 
 struct ResourceSlotNumber {
     u16 resource;

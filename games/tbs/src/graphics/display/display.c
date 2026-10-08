@@ -7,25 +7,107 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
+#include "mem.h"
 #include "types.h"
+#include "resource.h"
+#include "glyph.h"
+#include "resource_ids.h"
+#include "dma.h"
+#include "tbs_edition.h"
+#include "io_reg.h"
 #include "scene.h"
 #include "global_cells.h"
 #include "render_input.h"
-#include "system.h"
-#include "io_reg.h"
 #include "irq.h"
 #include "affine.h"
 #include "callback_scheduler.h"
-#include "resource.h"
-#include "mem.h"
 #include "fixed_math.h"
 #include "io_write_queue.h"
 #include "window.h"
-#include "glyph.h"
 #include "uiflow.h"
 #include "menu_list.h"
 #include "map_scroll.h"
 #include "text/msg_ids.h"
+#include "btlwork.h"
+#include "character_menu.h"
+#include "battle_unit.h"
+#include "btlsys.h"
+
+u32 Resource_DecodeByteLz(const void *, void *);
+
+typedef struct
+{
+    u16 code : 10;
+    u16 style : 6;
+} CharacterCell;
+
+s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1)
+{
+    GlyphTransfer *buffer = Runtime_AllocateHeapBlock(0x11, sizeof(GlyphTransfer));
+    u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+    u8 **slot = &buffer->encoded;
+    void *target = (void *)((u32)base + base[arg1]);
+    s32 ret;
+
+    *slot = target;
+    Resource_DecodeByteLz(target, buffer);
+    ret = Resource_GetBuffer(arg0, (s32)buffer);
+    Runtime_ReleaseHeapBlock(0x11);
+    return ret;
+}
+
+void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
+{
+    GlyphTransfer *decoded;
+    u8 *font;
+    u8 *remapped;
+    u8 *src;
+    u8 *dst;
+    s32 i;
+    u32 index;
+
+    decoded = (GlyphTransfer *)Runtime_AllocateHeapBlock(17, sizeof(*decoded));
+    font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
+    decoded->encoded = font + ((u16 *)font)[glyph];
+    Resource_DecodeByteLz(decoded->encoded, decoded);
+    remapped = MemAlloc(0x400);
+    src = decoded->input;
+    dst = remapped;
+    for (i = 0; i < 0x400; i++) {
+        index = *src++;
+        if (palette->slot[index] == 255) {
+            palette->slot[index] = palette->count;
+            if (palette->count < 64) {
+                ((u16 *)0x05000000)[palette->count] = ((u16 *)0x05000200)[index];
+                palette->count++;
+            }
+        }
+        *dst++ = palette->slot[index];
+    }
+    Dma_Set(remapped, (void *)(0x06004000 + tile * 64), 0x84000100, REG_DMA3);
+    MemFree(remapped);
+    Runtime_ReleaseHeapBlock(17);
+}
+
+void UiText_DrawCharacter(u8 *base, s32 index, u32 value)
+{
+    u8 *entry;
+    s32 offset;
+    s32 store_offset;
+    s32 load_offset;
+
+    offset = index * 28;
+    entry = base + offset + 0x104;
+    ((s32 (*)())UiText_LoadRemappedGlyph)(base, value, index * 16, index * 16);
+    store_offset = offset + 0x11C;
+    *(u32 *)(base + store_offset) = value;
+    /* FAKEMATCH: needed to match: the empty do-while around this store only moves the scheduler; the reference sets the constant after the value store. */
+    do { *(u32 *)(entry + 4) = 0x80002000; } while (0);
+    *(u32 *)(entry + 8) = 0;
+    load_offset = offset + 0x110;
+    ((CharacterCell *)(entry + 8))->code =
+        Resource_LoadIndexedIntoBuffer(*(u16 *)(base + load_offset), value);
+}
 
 s32 UiWork_IsComplete(void);
 struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed);
@@ -369,4 +451,141 @@ s32 Ui_RunSelectionScreen(s32 mode)
     render->menu_busy = 0;
     WaitFrames(1);
     return result;
+}
+
+void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
+{
+    u8 *base = gWindowWork[0];
+
+    alt &= 1;
+    alt <<= 12;
+
+    if (x < 0) {
+        width += x;
+        x = 0;
+    }
+    if (x + width > 29) {
+        width = 30 - x;
+    }
+    if (y < 0) {
+        height += y;
+        y = 0;
+    }
+    if (y + height > 29) {
+        height = 20 - y;
+    }
+
+    if (width > 0 && height > 0) {
+        do {
+            u16 *p = &((u16 (*)[32])base)[y][x];
+            s32 col = width;
+
+            if (col != 0) {
+                do {
+                    u32 tile = *p;
+                    tile = (tile & ~0x1000) | alt;
+                    col--;
+                    *p = tile;
+                    p++;
+                } while (col != 0);
+            }
+
+            /* FAKEMATCH: needed to match: the do-while (0) keeps the row counter update after the dirty-byte store instead of filling the load delay. */
+            do {
+                ((struct UiRenderWork *)base)->dirty |= 2 << ((u32)y >> 2);
+            } while (0);
+            height--;
+            y++;
+        } while (height != 0);
+    }
+}
+
+s32 BattleLayout_HighlightPartyPanels(u16 *ids)
+{
+    struct BtlWork *battle = BtlWk;
+    s32 count;
+    s32 i;
+    s32 j;
+
+    count = BattleParty_ListActorIdsFar(1, 0);
+    Ui_SetRectHighlight(29 - count * 6, 0, 25, 5, 15);
+    i = 0;
+    if (ids[0] != 0xff) {
+    next_id:
+        for (j = 0; j < 4 && battle->party_units[j] != ids[i]; j++) {
+            if (battle->party_units[j] == 0xff) {
+                j = 4;
+                break;
+            }
+        }
+        if (j != 4)
+            Ui_SetRectHighlight(29 - (count - j) * 6, 0, 7, 5, 14);
+        if (++i < 4 && ids[i] != 0xff)
+            goto next_id;
+    }
+    return 0;
+}
+
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+
+s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
+{
+    /* FAKEMATCH: no caller uses a result. The original scalar boundary keeps pop {r1}; the ordinary void definition changes it to pop {r0}. */
+    s16 *dst;
+    s32 n;
+    u8 *src;
+
+    dst = out;
+    Text_FormatSignedDecimalToWork(value);
+    src = (u8 *)((u32)&gNumberTextBuffer);
+    n = 0xD;
+    do {
+        n -= 1;
+        *dst = *src;
+        src += 1;
+        dst += 1;
+    } while (n >= 0);
+}
+
+s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid, const struct OwnerActionSlot *newGrid, u16 *out, s32 *gained, s32 *lost)
+{
+    s32 i;
+    s32 j;
+    s32 count;
+    s32 added;
+    s32 removed;
+
+    added = 0;
+    removed = 0;
+    count = 0;
+    for (i = 0; i < 32 && newGrid[i].encoded_action != 0; i++) {
+        if (BtlActGet(newGrid[i].encoded_action)->tgt_flg & 0x80) {
+            out[count] = newGrid[i].encoded_action & 0x3fff;
+            count++;
+            for (j = 0; j < 32; j++) {
+                if (((newGrid[i].encoded_action ^ oldGrid[j].encoded_action) & 0x3fff) == 0)
+                    break;
+            }
+            if (j == 32) {
+                added++;
+                out[count - 1] |= 0x8000;
+            }
+        }
+    }
+    for (i = 0; i < 32 && oldGrid[i].encoded_action != 0; i++) {
+        if (BtlActGet(oldGrid[i].encoded_action)->tgt_flg & 0x80) {
+            for (j = 0; j < 32; j++) {
+                if (((oldGrid[i].encoded_action ^ newGrid[j].encoded_action) & 0x3fff) == 0)
+                    break;
+            }
+            if (j == 32) {
+                removed++;
+                out[count] = (oldGrid[i].encoded_action & 0x3fff) | 0x4000;
+                count++;
+            }
+        }
+    }
+    *gained = added;
+    *lost = removed;
+    return count;
 }

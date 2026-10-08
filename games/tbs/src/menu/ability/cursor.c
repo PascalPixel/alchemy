@@ -13,6 +13,9 @@
 #include "animspr.h"
 #include "field_sprite.h"
 #include "resource.h"
+#include "scene.h"
+#include "m7_interfaces.h"
+#include "global_cells.h"
 
 void Object_ApplyProjectedPlacementFar(void *, s32 *, s32 *, s32);
 
@@ -239,4 +242,45 @@ void UiMenu_SlideCursor(s32 x, s32 y)
         if (steps != 0)
             WaitFrames(1);
     } while (steps != 0);
+}
+
+void PsynergyMenu_ReservedNoOp(void)
+{
+}
+
+void PsynergyMenu_RefreshOwnerEntriesDefault(void)
+{
+    PsynergyMenu_RefreshOwnerEntries(0x6C, 0x28, 8);
+}
+
+void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns)
+{
+    struct RenderOutput **slot;
+    struct RenderOutput **scan;
+    s32 index;
+
+    index = 0;
+    slot = gMenuWork->entry_icons;
+    scan = slot;
+    do {
+        if (*scan++ != NULL) {
+            PsynergyMenu_PositionOwnerEntry(slot, index, origin_x, origin_y, columns);
+        }
+        index++;
+        slot++;
+    } while (index <= 0x1F);
+}
+
+void PsynergyMenu_PositionOwnerEntry(struct RenderOutput **slot, s32 index,
+    s32 origin_x, s32 origin_y,
+    s32 columns) {
+    struct RenderOutput *object;
+
+    if (index > 0x1F) {
+        index = 0;
+    }
+    object = *slot;
+    object->y = (index / columns) * 0x10 + origin_y;
+    object->x = (index % columns) * 0x10 + origin_x;
+    UiIcon_PrepareObject(object);
 }

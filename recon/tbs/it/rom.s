@@ -39,8 +39,6 @@ DisplayScroll_LineTable:
 	.global Title_PromptTiles
 Title_PromptTiles:
 	.incbin "baserom.gba", 0x000f38bc, 0x000000c7
-	.section .rom.000fc504, "ax"
-	.incbin "baserom.gba", 0x000fc504, 0x00000090
 	.section .rom.0032b09b, "ax"
 	.incbin "baserom.gba", 0x0032b09b, 0x00000001
 	.global Title_IntroGraphicsC
@@ -50,24 +48,14 @@ Title_IntroGraphicsC:
 	.global Title_IntroTilesB
 Title_IntroTilesB:
 	.incbin "baserom.gba", 0x0033abfc, 0x00000688
-	.section .rom.005d7226, "ax"
-	.incbin "baserom.gba", 0x005d7226, 0x00000002
-	.section .rom.005ed63e, "ax"
-	.incbin "baserom.gba", 0x005ed63e, 0x00000002
 	.section .rom.00609114, "ax"
 	.global Resource_Data221
 Resource_Data221:
 	.incbin "baserom.gba", 0x00609114, 0x00002904
-	.section .rom.00690d29, "ax"
-	.incbin "baserom.gba", 0x00690d29, 0x00000003
-	.section .rom.006d54e9, "ax"
-	.incbin "baserom.gba", 0x006d54e9, 0x00000003
 	.section .rom.007177b8, "ax"
 	.global Resource_Data2EE
 Resource_Data2EE:
 	.incbin "baserom.gba", 0x007177b8, 0x00001164
-	.section .rom.00745523, "ax"
-	.incbin "baserom.gba", 0x00745523, 0x00000001
 	.section .rom.007557a0, "ax"
 	.global Tileset_Palette47
 Tileset_Palette47:

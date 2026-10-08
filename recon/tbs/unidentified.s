@@ -33,8 +33,6 @@ DisplayScroll_LineTable:
 Title_PromptTiles:
 	.incbin "baserom.gba", 0x000f38bc, 0x000000ee
 	.incbin "baserom.gba", 0x000f39aa, 0x00000001
-	.section .unidentified.080fc504,"a"
-	.incbin "baserom.gba", 0x000fc504, 0x00000090
 	.section .unidentified.0832b0a6,"a"
 	.incbin "baserom.gba", 0x0032b0a6, 0x00000002
 	.global Title_IntroGraphicsC
@@ -44,24 +42,14 @@ Title_IntroGraphicsC:
 	.global Title_IntroTilesB
 Title_IntroTilesB:
 	.incbin "baserom.gba", 0x0033ac08, 0x000002b4
-	.section .unidentified.085d764a,"a"
-	.incbin "baserom.gba", 0x005d764a, 0x00000002
-	.section .unidentified.085eda62,"a"
-	.incbin "baserom.gba", 0x005eda62, 0x00000002
 	.section .unidentified.08609520,"a"
 	.global Resource_Data221
 Resource_Data221:
 	.incbin "baserom.gba", 0x00609520, 0x00002904
-	.section .unidentified.08691135,"a"
-	.incbin "baserom.gba", 0x00691135, 0x00000003
-	.section .unidentified.086d58f5,"a"
-	.incbin "baserom.gba", 0x006d58f5, 0x00000003
 	.section .unidentified.08717b8c,"a"
 	.global Resource_Data2EE
 Resource_Data2EE:
 	.incbin "baserom.gba", 0x00717b8c, 0x00001164
-	.section .unidentified.087458f7,"a"
-	.incbin "baserom.gba", 0x007458f7, 0x00000001
 	.section .unidentified.0875bdd8,"a"
 	.global Resource_Data326
 Resource_Data326:

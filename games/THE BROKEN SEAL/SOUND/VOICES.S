@@ -237,3 +237,8 @@ Sound_SeVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x09, 60, 0, 0, 0, 0, 6, 0, 3
+	@ UNKNOWN: four runs of 36 bytes, 0 and 1 alternating; no code or table reaches them
+	.fill 36, 1, 0
+	.fill 36, 1, 1
+	.fill 36, 1, 0
+	.fill 36, 1, 1

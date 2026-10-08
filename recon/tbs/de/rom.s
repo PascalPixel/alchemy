@@ -26,8 +26,6 @@ UiIcon_MiscIconPointers:
 	.global UiText_ItemGenders
 UiText_ItemGenders:
 	.incbin "baserom.gba", 0x0007a770, 0x0000010d
-	.section .rom.0007a886, "ax"
-	.incbin "baserom.gba", 0x0007a886, 0x00000002
 	.section .rom.000a08d8, "ax"
 	.global Battle_LocationRules
 Battle_LocationRules:
@@ -59,8 +57,6 @@ DisplayScroll_LineTable:
 	.global Title_PromptTiles
 Title_PromptTiles:
 	.incbin "baserom.gba", 0x000f4ed0, 0x000000f4
-	.section .rom.000fd304, "ax"
-	.incbin "baserom.gba", 0x000fd304, 0x00000090
 	.section .rom.0032ae9b, "ax"
 	.incbin "baserom.gba", 0x0032ae9b, 0x00000001
 	.global Title_IntroGraphicsC
@@ -70,24 +66,14 @@ Title_IntroGraphicsC:
 	.global Title_IntroTilesB
 Title_IntroTilesB:
 	.incbin "baserom.gba", 0x0033a9fc, 0x00000878
-	.section .rom.005d783e, "ax"
-	.incbin "baserom.gba", 0x005d783e, 0x00000002
-	.section .rom.005edc56, "ax"
-	.incbin "baserom.gba", 0x005edc56, 0x00000002
 	.section .rom.00609718, "ax"
 	.global Resource_Data221
 Resource_Data221:
 	.incbin "baserom.gba", 0x00609718, 0x00002904
-	.section .rom.0069132d, "ax"
-	.incbin "baserom.gba", 0x0069132d, 0x00000003
-	.section .rom.006d5aed, "ax"
-	.incbin "baserom.gba", 0x006d5aed, 0x00000003
 	.section .rom.00717db0, "ax"
 	.global Resource_Data2EE
 Resource_Data2EE:
 	.incbin "baserom.gba", 0x00717db0, 0x00001164
-	.section .rom.00745b17, "ax"
-	.incbin "baserom.gba", 0x00745b17, 0x00000001
 	.section .rom.00755d90, "ax"
 	.global Tileset_Palette47
 Tileset_Palette47:

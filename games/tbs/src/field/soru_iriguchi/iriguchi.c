@@ -118,7 +118,7 @@ void FieldScene_RunScene37fSequenceA(void)
     Engine_EventBegin();
     v5 = 3;
     v6 = 2;
-    Audio_PlayCue(181);
+    Event_PlayCue(181);
     Map_CopyCellsTo(16, 28, 21, 3, v5, v6);
     Engine_TaskWait(10);
     Map_CopyCellsTo(16, 30, 21, 3, v5, v6);
@@ -169,7 +169,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Engine_EventBegin();
             Battle_ResetEffectCounter();
             v5 = 1;
-            Audio_PlayCue(182);
+            Event_PlayCue(182);
             Map_CopyCellsTo(0, 70, 30, 42, v5, v5);
             Engine_MapRedraw();
             Engine_EventWait(40);
@@ -177,7 +177,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Engine_MessageShowCentered(id, 1);
             Engine_EventWait(20);
             v6 = 3;
-            Audio_PlayCue(183);
+            Event_PlayCue(183);
             Map_CopyCellsTo(0, 29, 3, 1, v6, 2);
             Map_CopyCellAttributes(0, 29, 3, 2, v6, v5);
             Map_CopyCellsTo(1, 109, 4, 81, v5, v5);
@@ -1067,7 +1067,7 @@ void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
     } else {
         value = Engine_RandomNext();
         if (((u32)(((value << 4) - value) << 3) >> 16) == 0) {
-            Audio_PlayCue(138);
+            Event_PlayCue(138);
             Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
             *timer = 80;
         }

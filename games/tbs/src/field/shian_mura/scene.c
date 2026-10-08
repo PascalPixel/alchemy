@@ -299,7 +299,7 @@ void FieldScene_RunPrimarySequence(void)
     Engine_ActorSetAnimation(18, 1);
     Engine_ActorRunRepeatedMotion(18, 2);
     Engine_EventWait(10);
-    Audio_PlayCue(228);
+    Event_PlayCue(228);
     puddle->scale_x = 0x4ccc;
     puddle->scale_y = 0x4ccc;
     record = Object_GetById(18);

@@ -483,7 +483,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     OverlayObject_InitWithRandomFields(9);
     Engine_ActorJump(8, 4, 20);
     Engine_ActorJump(8, 6, 40);
-    Audio_PlayCue(29);
+    Event_PlayCue(29);
     GameFlag_Set(0x8f0);
     Engine_EventSetMessage((s32)MsgFuneMonsters2);
     Event_ShowMessageAndWait(16, 0, 20);
@@ -545,7 +545,7 @@ void FieldScene_RunPrimarySequence(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(0x12c);
-    Audio_PlayCue(147);
+    Event_PlayCue(147);
     Engine_EventWait(100);
     Engine_ActorStop(9);
     Engine_ActorStop(10);
@@ -587,7 +587,7 @@ void FieldScene_RunPrimarySequence(void)
     Engine_TaskWait(1);
     Engine_ActorRunRepeatedMotion(8, 1);
     Actor_FaceDirection(8, 0x3000, 0);
-    Audio_PlayCue(29);
+    Event_PlayCue(29);
     GameFlag_Set(0x8f0);
     for (i = 0; i < 32; i++) {
         actor->scale_x += 0xccc;
@@ -610,7 +610,7 @@ void FieldScene_RunPrimarySequence(void)
     actor->gravity = 0x30000;
     Engine_EventWait(20);
     Engine_ActorJump(8, 6, 20);
-    Audio_PlayCue(147);
+    Event_PlayCue(147);
     Engine_EventWait(20);
     Engine_ActorEnableActionCallback(8, FuneHobashira_WaveActions);
     Engine_EventWait(80);
@@ -618,7 +618,7 @@ void FieldScene_RunPrimarySequence(void)
     Actor_SetSpeed(17, 0x10000, 0x8000);
     actor->bounce = 0x1999;
     actor->gravity = 0xb333;
-    Audio_PlayCue(153);
+    Event_PlayCue(153);
     actor->velocity_y = 0x80000;
     Actor_SetDestination(17, 132, 0x168);
     Actor_SetDestination(18, 132, 0x168);

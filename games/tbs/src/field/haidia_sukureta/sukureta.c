@@ -322,7 +322,7 @@ void Scene_PlanSanctumVisit(void)
         Actor_FaceDirection(GERALD, FACING_NORTH, 0);
         Actor_FaceDirection(JASMINE, 0xb000, 20);
         Actor_FaceDirection(ACTOR_SUKURETA, 0xb000, 10);
-        Audio_PlayCue(158);
+        Event_PlayCue(158);
         Map_AnimateCells(Sukureta_GateCells, 43, 8);
         Actor_SetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
         Actor_WalkToAndWait(ACTOR_SUKURETA, 232, 218);
@@ -435,7 +435,7 @@ void Scene_OverhearSaturosAndMenardi(void)
     }
 
     Engine_EventBegin();
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
     evt = (s32)MsgHaidiaTheyKnowLittleOfThe;
@@ -472,7 +472,7 @@ void Scene_OverhearSaturosAndMenardi(void)
     Camera_MoveTo(0xd70000, -1, 0x1590000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
-    Audio_PlayCue(61);
+    Event_PlayCue(61);
 
     Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
     Engine_ActorSetAnimation(ACTOR_SATUROS, 4);
@@ -610,7 +610,7 @@ void Scene_OverhearSaturosAndMenardi(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 1, 20);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimationAndWait(GERALD, 3);
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
 
     Engine_ActorSetAnimation(GERALD, 2);
     record = Object_GetById(0);

@@ -281,7 +281,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Scheduler_RemoveCallback((s32)FieldScene_RunStep15);
     Scheduler_RemoveCallback((s32)FieldScene_RunStep20);
     Engine_TaskWait(1);
-    Audio_PlayCue(161);
+    Event_PlayCue(161);
     Actor_SetChildValue(15, 0);
     Actor_SetChildValue(20, 0);
     Engine_EventWait(40);
@@ -360,7 +360,7 @@ void HaidiaIe_RequestBackdropExit(s32 no)
 
 void FieldScene_RunSupplementalSequenceOne(void)
 {
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 44, 7);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 0x117);
     HaidiaIe_RequestBackdropExit(1);
@@ -368,7 +368,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 
 void FieldScene_RunSupplementalSequenceTwo(void)
 {
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     Map_CopyCellsTo(0, 63, 51, 8, 2, 2);
     Engine_TaskWait(10);
     Map_CopyCellsTo(2, 63, 51, 8, 2, 2);
@@ -381,7 +381,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 
 void FieldScene_RunSupplementalSequenceThree(void)
 {
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 43, 15);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 230, 0x197);
     HaidiaIe_RequestBackdropExit(3);
@@ -389,7 +389,7 @@ void FieldScene_RunSupplementalSequenceThree(void)
 
 void FieldScene_RunSupplementalSequenceFour(void)
 {
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 52, 18);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 0x1a3);
     HaidiaIe_RequestBackdropExit(4);
@@ -397,7 +397,7 @@ void FieldScene_RunSupplementalSequenceFour(void)
 
 void FieldScene_RunSupplementalSequenceFive(void)
 {
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 41, 32);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 200, 0x222);
     HaidiaIe_RequestBackdropExit(5);
@@ -405,7 +405,7 @@ void FieldScene_RunSupplementalSequenceFive(void)
 
 void FieldScene_RunSupplementalSequenceSix(void)
 {
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 35, 36);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x263);
     HaidiaIe_RequestBackdropExit(6);
@@ -413,7 +413,7 @@ void FieldScene_RunSupplementalSequenceSix(void)
 
 void FieldScene_RunSupplementalSequenceSeven(void)
 {
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 51, 39);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 358, 0x29e);
     HaidiaIe_RequestBackdropExit(7);

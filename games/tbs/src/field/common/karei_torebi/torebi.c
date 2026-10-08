@@ -326,7 +326,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
                 Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
                 Engine_EventWait(10);
                 gEventWork->message++;
-                Audio_PlayCue(113);
+                Event_PlayCue(113);
                 Event_ShowMessage(8, 0);
                 goto L_02000660;
             }
@@ -409,7 +409,7 @@ void KareiTorebi_DeliverParentsMessage(void)
 void KareiTorebi_LeaveScene(void)
 {
     Engine_EventBegin();
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
     if (gGameState.scene == (s32)&SceneId_KareiTorebi1) {
@@ -687,7 +687,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Actor_WalkByAndWait(10, 24, 0);
     Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkBy(10, -16, 0);
-    Audio_PlayCue(153);
+    Event_PlayCue(153);
     Actor_SetSpeed(13, 0x26666, 0x13333);
     Actor_WalkByAndWait(13, 16, 0);
     Engine_EventWait(10);
@@ -695,16 +695,16 @@ void FieldScene_RunScene3aeSequenceB(void)
     Object_GetById(10)->steering_flags |= ACTOR_FACES_MOTION;
     Actor_SetAttachedEffect(13, 0x102);
     Engine_ActorStartRepeatedMotion(13, 2);
-    Audio_PlayCue(155);
+    Event_PlayCue(155);
     Engine_EventWait(10);
-    Audio_PlayCue(155);
+    Event_PlayCue(155);
     Engine_EventWait(10);
-    Audio_PlayCue(155);
+    Event_PlayCue(155);
     Engine_EventWait(10);
     Engine_EventWait(20);
     Actor_SetSpeed(13, 0x6666, 0x3333);
     Engine_ActorJump(13, 6, 0);
-    Audio_PlayCue(159);
+    Event_PlayCue(159);
     Actor_WalkByAndWait(13, -8, 0);
     Engine_EventWait(20);
     Event_ShowMessage(10, 0);
@@ -784,7 +784,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Actor_WalkByAndWait(10, 8, 0);
     Engine_ActorJump(10, 6, 0);
     Actor_WalkByAndWait(10, 24, 0);
-    Audio_PlayCue(133);
+    Event_PlayCue(133);
     Engine_ActorJump(16, 6, 0);
     Engine_ActorEnableActionCallback(16, KareiTorebi_ActorSixteenScript);
     Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
@@ -799,7 +799,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Actor_WalkByAndWait(10, -12, 4);
     Actor_FaceDirection(10, FACING_SOUTH, 0);
     Object_GetById(10)->steering_flags |= ACTOR_FACES_MOTION;
-    Audio_PlayCue(159);
+    Event_PlayCue(159);
     Engine_EventWait(20);
     Actor_ShowEmote(11, 0x102, 50);
     Actor_SetSpeed(11, 0x18000, 0xc000);

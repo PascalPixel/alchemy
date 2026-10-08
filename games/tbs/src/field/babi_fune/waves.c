@@ -101,7 +101,7 @@ void BabiFune_RunDeparture(void)
     BabiFune_Call3(Engine_ActorWalkToAndWait, 0, 312, 232);
     BabiFune_Call3((void (*)(s32, s32, s32))Engine_ActorFaceDirection, 0, 0xc000, 0);
     Event_Wait(40);
-    Audio_PlayCue(140);
+    Event_PlayCue(140);
     for (i = 0; i <= 15; i++) {
         /* FAKEMATCH: the one-pass block keeps the colour's two shifts in source order. */
         do {
@@ -119,7 +119,7 @@ void BabiFune_RunDeparture(void)
         u16 dim = 0x810;
 
         for (flash = 0; flash < 3; flash++) {
-            Audio_PlayCue(212);
+            Event_PlayCue(212);
             REG_BLDALPHA = bright;
             Event_Wait(3);
             /* FAKEMATCH: the one-pass block places the counter step after the wait's argument. */
@@ -134,7 +134,7 @@ void BabiFune_RunDeparture(void)
     BabiFune_AddTask(BabiFune_UpdateWaves, TASK_PRIORITY_SCENE);
     BabiFune_DriftActive = 1;
     Event_Wait(20);
-    Audio_PlayCue(163);
+    Event_PlayCue(163);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Event_Wait(60);
     BabiFune_DriftActive = 1;
@@ -156,9 +156,9 @@ void BabiFune_RunDeparture(void)
     REG_BG2CNT = cnt = (REG_BG2CNT & 0xfffc) | 3;
     REG_BG1CNT = cnt = (REG_BG1CNT & 0xfffc) | 2;
     BabiFune_ShimmerActive = 0;
-    Audio_PlayCue(288);
+    Event_PlayCue(288);
     Task_Wait(1);
-    Audio_PlayCue(145);
+    Event_PlayCue(145);
     {
         u16 blend = 191;
 
@@ -180,7 +180,7 @@ void BabiFune_RunDeparture(void)
         Event_Wait(8);
     }
     BabiFune_AddTask(BabiFune_CyclePalette, TASK_PRIORITY_SCENE);
-    Audio_PlayCue(80);
+    Event_PlayCue(80);
     AudioCommand_WaitForStateByteClear();
     Event_Wait(20);
     Event_End();

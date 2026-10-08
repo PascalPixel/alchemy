@@ -587,7 +587,7 @@ void FieldScene_RunExtendedActorChoreography(void)
     s32 request_b;
     s32 request_c;
 
-    Audio_PlayCue(28);
+    Event_PlayCue(28);
     Camera_SetSpeed(0x26666, 0x4ccc);
     ConfigureSceneMotionFlags(0x1c80000, -1, 0x2880000, 0x10000014);
     Engine_ActorRunRepeatedMotion(9, 1);
@@ -727,7 +727,7 @@ void FieldScene_RunExtendedActorChoreography(void)
     Engine_ActorSetAnimationAndWait(8, 3);
     FieldScene_RunStepThen10(8);
     Actor_FaceDirection(8, FACING_WEST, 20);
-    Audio_PlayCue(19);
+    Event_PlayCue(19);
     Engine_ActorStartRepeatedMotion(8, 2);
     request_c = 0x8008;
     Actor_ShowEmote(8, 0x100, 80);
@@ -763,7 +763,7 @@ void FieldScene_RunExtendedActorChoreography(void)
     Engine_ActorJump(8, 4, 0);
     Actor_FaceDirection(8, 0x5000, 20);
     FieldScene_RunStepThen10(8);
-    Audio_PlayCue(28);
+    Event_PlayCue(28);
     Engine_ActorStartRepeatedMotion(8, 3);
     FieldScene_RunStepThen10(8);
     Actor_ShowEmote(13, 0x101, 60);
@@ -811,7 +811,7 @@ void FieldScene_RunExtendedActorChoreography(void)
     Actor_FaceDirection(9, 0xb000, 0);
     Actor_FaceDirection(12, 0x3000, 0);
     Actor_FaceDirection(11, 0xb000, 0);
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     Actor_SetSpeed(10, 0x10000, 0x8000);
     Actor_WalkToAndWait(10, 0x1e8, 0x2ae);
     Actor_FaceDirection(10, 0xb000, 0);
@@ -1560,7 +1560,7 @@ void FuneHeya_CastOff(void)
     Engine_ActorJump(8, 4, 20);
     rec7 = (s32)FuneHeya_PlaceAnchorCharm();
     Engine_EventWait(20);
-    Audio_PlayCue(214);
+    Event_PlayCue(214);
     Engine_ObjectSetScript(rec7, FuneHeya_Script01);
     Engine_EventWait(40);
     Engine_ActorSetAnimationAndWait(8, 3);
@@ -2581,17 +2581,17 @@ void FieldScene_RunExtendedFormationPresentation(void)
     FieldScene_InstallFlaggedActors10To17(16);
     ConfigureSceneMotionFlags(0x1b60000, -1, 0xae0000, 0x1000001);
     FieldScene_RunSceneStep(8, 1, 20);
-    Audio_PlayCue(19);
-    Audio_PlayCue(181);
+    Event_PlayCue(19);
+    Event_PlayCue(181);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Engine_EventWait(10);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_EventWait(80);
-    Audio_PlayCue(181);
+    Event_PlayCue(181);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Engine_EventWait(10);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Audio_PlayCue(63);
+    Event_PlayCue(63);
     GameFlag_Set(0x11a);
     Actor_SetAttachedEffect(MEARI, 0x102);
     Engine_EventWait(40);

@@ -416,7 +416,7 @@ void FieldScene_RunSecondarySequence(void)
     Object_GetById(22)->motion_flags = 2;
     Engine_ActorSetSpritePriority(22, 2);
     Map_CopyCellsTo(34, 0, 1, 2, 4, 18);
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Engine_EventWait(20);
     Actor_SetPosition(22, 0x480000, 0x1380000);
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
@@ -430,7 +430,7 @@ void FieldScene_RunSecondarySequence(void)
     Actor_WalkByAndWait(22, 0, 16);
 #endif
     Engine_MapCopyCellsTo(32, 0, 1, 2, 4, 18);
-    Audio_PlayCue(159);
+    Event_PlayCue(159);
     Engine_EventWait(20);
     Event_ShowMessage(22, 0);
     Engine_EventWait(10);
@@ -583,13 +583,13 @@ void FieldScene_RunSecondarySequence(void)
     Actor_FaceDirection(22, 0xc000, 0);
     Engine_EventWait(20);
     Map_CopyCellsTo(34, 0, 1, 2, 4, 18);
-    Audio_PlayCue(158);
+    Event_PlayCue(158);
     Engine_EventWait(10);
     Actor_WalkByAndWait(22, 0, -16);
     Actor_SetPosition(22, 0, 0);
     Engine_EventWait(10);
     Engine_MapCopyCellsTo(32, 0, 1, 2, 4, 18);
-    Audio_PlayCue(159);
+    Event_PlayCue(159);
     Engine_EventWait(50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 0);

@@ -482,7 +482,7 @@ moved:
     work = Runtime_AllocateBlock(27, 0xccc);
     ObjectDispatch_InitFromTable4WithArgument(work->view_center, log);
     Actor_SetSpeed(actor, 0x8000, acceleration);
-    Audio_PlayCue(239);
+    Event_PlayCue(239);
     Object_SetMode(rider, 2);
     ((void (*)(PrimaryStageObject *, s32, s32, s32))Engine_ObjectSetPosition)(rider, ((steps * step) << 16) + rider->x.fixed, 0, rider->z.fixed);
     Object_CommitPosition(rider);
@@ -499,12 +499,12 @@ moved:
         column = 84;
         Map_CopyCellAttributes(86, 10, 1, 2, column, 10);
         Map_CopyCellAttributes(86, 9, 1, 1, column, 12);
-        Audio_PlayCue(0x120);
-        Audio_PlayCue(240);
+        Event_PlayCue(0x120);
+        Event_PlayCue(240);
     } else {
         Object_SetMode(log, 1);
-        Audio_PlayCue(0x120);
-        Audio_PlayCue(213);
+        Event_PlayCue(0x120);
+        Event_PlayCue(213);
         column = x >> 20;
         Map_CopyCellAttributes(85, 9, 1, 4, column, 9);
         Map_CopyCellAttributes(85, 9, 1, 4, column, 61);

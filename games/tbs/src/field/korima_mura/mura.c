@@ -704,8 +704,8 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
     FieldScene_RunPairedStepB(0, 0x6000, 20);
     FieldScene_RunPairedStepB(2, 0xc000, 10);
-    Audio_PlayCue(17);
-    Audio_PlayCue(206);
+    Event_PlayCue(17);
+    Event_PlayCue(206);
     ColorBuffer_ApplyTarget(0x7fff, 0);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(1);
@@ -786,7 +786,7 @@ void FieldScene_RunExtendedActorSequence(void)
     *falling = 1;
     Engine_TaskAddCallback(FieldScene_UpdateFallingEffect, 0xc80);
     Engine_EventWait(180);
-    Audio_PlayCue(21);
+    Event_PlayCue(21);
     FieldScene_RunPairedStepA(1, 80);
     FieldScene_RunPairedStepA(2, 40);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
@@ -831,7 +831,7 @@ void FieldScene_RunExtendedActorSequence(void)
     Engine_ActorSetSpritePriority(MEARI, 3);
     KorimaMura_PendingPose = value;
     Engine_TaskAddCallback(SceneActor_SetActors19To22HeightByFrameParity, 0xc80);
-    Audio_PlayCue(220);
+    Event_PlayCue(220);
     Object_GetById(19)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(19, 2);
     Actor_SetPosition(19, 0x780000, 0xf80000);
@@ -859,7 +859,7 @@ void FieldScene_RunExtendedActorSequence(void)
     Engine_EventWait(0x12c);
     Engine_TaskRemoveCallback(FieldScene_UpdateFallingEffect);
     Engine_EventWait(120);
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     ColorBuffer_ApplyTarget(0x10000, 1);
     Engine_ColorBufferInterpolate(60);
     Engine_TaskWait(60);
@@ -1068,7 +1068,7 @@ void FieldScene_RunExtendedActorSequence(void)
         gEventWork->message++;
     }
     Event_ShowMessage(GERALD, 0);
-    Audio_PlayCue(21);
+    Event_PlayCue(21);
     ColorBuffer_ApplyTarget(0x406218, 1);
     Engine_ColorBufferInterpolate(60);
     Engine_TaskWait(60);
@@ -1100,7 +1100,7 @@ void FieldScene_RunExtendedActorSequence(void)
     Engine_ActorSetSpritePriority(IWAN, 3);
     Engine_ActorSetSpritePriority(MEARI, 3);
     *again = 2;
-    Audio_PlayCue(220);
+    Event_PlayCue(220);
     Actor_SetPosition(19, 0x780000, 0xf80000);
     actions_c = KorimaMura_ActionTable6;
     Engine_ActorEnableActionCallback(19, actions_c);
@@ -1372,7 +1372,7 @@ relieved:
     Engine_EventWait(40);
     FieldScene_RunPairedStepA(2, 20);
 leave:
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     Actor_SetSpeed(GERALD, 0x13333, 0x9999);
     Actor_SetSpeed(IWAN, 0x13333, 0x9999);
     Actor_SetSpeed(MEARI, 0x13333, 0x9999);

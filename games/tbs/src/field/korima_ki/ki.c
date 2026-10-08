@@ -192,7 +192,7 @@ void RunEventScript01(void)
     ColorBuffer_ApplyTarget(0x406218, 1);
     Engine_ColorBufferInterpolate(20);
     Engine_TaskWait(40);
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     gKorimaKiSparkSound = 1;
     Engine_TaskAddCallback(PaletteScene_SpawnEffect, 0xc80);
     Engine_TaskWait(30);
@@ -202,7 +202,7 @@ void RunEventScript01(void)
     Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
-    Audio_PlayCue(133);
+    Event_PlayCue(133);
     rec8->velocity_y = 0x50000;
     rec8->gravity = 0x4000;
     rec8->bounce = 0xa000;
@@ -213,7 +213,7 @@ void RunEventScript01(void)
     do {
         Engine_TaskWait(1);
     } while (rec8->velocity_y <= 0);
-    Audio_PlayCue(161);
+    Event_PlayCue(161);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
     Engine_EventWait(120);
     Engine_TaskRemoveCallback(PaletteScene_SpawnEffect);
@@ -259,7 +259,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     actorThreeEnabled = GameFlag_IsSet(3);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x148, 212);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     Engine_MessageShowCentered((s32)MsgKorimaWaterHermesSeepedIntoTret, 1);
     Actor_SetSpeed(GERALD, 0x10000, 0x8000);
     Actor_SetSpeed(IWAN, 0x10000, 0x8000);
@@ -294,18 +294,18 @@ void PaletteScene_RunActorTransitionSequence(void)
     Camera_SetSpeed(0x33333, 0x6666);
     Camera_MoveTo(0x1000000, -1, 0xfe0000, 1);
     Engine_CameraWaitForMove();
-    Audio_PlayCue(246);
+    Event_PlayCue(246);
     Engine_EventWait(40);
     Actor_FaceDirection(IWAN, FACING_SOUTHEAST, 20);
     Camera_MoveTo(0x19d0000, -1, 0x1050000, 1);
     Engine_CameraWaitForMove();
-    Audio_PlayCue(246);
+    Event_PlayCue(246);
     Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_FaceDirection(MEARI, FACING_SOUTH, 20);
     Camera_MoveTo(0x1460000, -1, 0x1800000, 1);
     Engine_CameraWaitForMove();
-    Audio_PlayCue(246);
+    Event_PlayCue(246);
     if (*transitionState != 24) {
         do {
             Engine_TaskWait(1);
@@ -331,7 +331,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_EventWait(40);
     KorimaKi_PlayGesture(10, 1);
     Engine_EventWait(40);
-    Audio_PlayCue(7);
+    Event_PlayCue(7);
     Engine_EventSetMessage((s32)MsgKorimaFeelGreatPowerSpreadingThrough);
     Event_ShowMessage(8, 0);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -598,7 +598,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Engine_ActorSetAnimation(GERALD, 3);
     Engine_ActorSetAnimation(MEARI, 3);
     Engine_ActorSetAnimationAndWait(IWAN, 3);
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     finalActions = SceneAction_GroupFinish;
     Engine_ActorEnableActionCallback(GERALD, finalActions);
     if (actorThreeEnabled != 0) {
@@ -616,7 +616,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Event_ShowMessageAndWait(0x4009, 0, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     GameFlag_Set(0x845);
-    Audio_PlayCue(1);
+    Event_PlayCue(1);
     PaletteScene_SetRecordValue(184, 185);
 }
 

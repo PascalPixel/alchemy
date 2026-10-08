@@ -107,7 +107,7 @@ void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
 void Engine_ActorWaitForMove(s32 actor);
 void Engine_MapCopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void Engine_ActorSetAnimation(s32 actor, s32 animation);
-static inline void Audio_PlayCue(s32 cue)
+static inline void Event_PlayCue(s32 cue)
 {
     Engine_AudioPlayCue(cue);
 }

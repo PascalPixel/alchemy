@@ -363,8 +363,8 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
     SceneActor_SetPairZeroAndValue(0, 0x6000, 20);
     SceneActor_SetPairZeroAndValue(2, 0xc000, 10);
-    Audio_PlayCue(17);
-    Audio_PlayCue(206);
+    Event_PlayCue(17);
+    Event_PlayCue(206);
     ColorBuffer_ApplyTarget(0x7fff, 0);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(1);
@@ -442,7 +442,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     gFallingEffectState = 1;
     Engine_TaskAddCallback(FieldScene_UpdateFallingEffect, 0xc80);
     Engine_EventWait(180);
-    Audio_PlayCue(21);
+    Event_PlayCue(21);
     Event_SayThenWait(GERALD, 80);
     Event_SayThenWait(IWAN, 40);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
@@ -485,7 +485,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Engine_ActorSetSpritePriority(MEARI, 3);
     KorimaHashi_TriggerPending = 0;
     Engine_TaskAddCallback(KorimaHashi_AlternateBridgePostHeights, 0xc80);
-    Audio_PlayCue(220);
+    Event_PlayCue(220);
     Object_GetById(13)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(13, 2);
     Actor_SetPosition(13, 0xfd0000, 0x25b0000);
@@ -513,7 +513,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Engine_EventWait(0x12c);
     Engine_TaskRemoveCallback(FieldScene_UpdateFallingEffect);
     Engine_EventWait(120);
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     ColorBuffer_ApplyTarget(0x10000, 1);
     Engine_ColorBufferInterpolate(60);
     Engine_TaskWait(60);
@@ -722,7 +722,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         gEventWork->message += 1;
     }
     Event_ShowMessage(GERALD, 0);
-    Audio_PlayCue(21);
+    Event_PlayCue(21);
     ColorBuffer_ApplyTarget(0x406218, 1);
     Engine_ColorBufferInterpolate(60);
     Engine_TaskWait(60);
@@ -753,7 +753,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Engine_ActorSetSpritePriority(IWAN, 3);
     Engine_ActorSetSpritePriority(MEARI, 3);
     gFallingEffectState = 2;
-    Audio_PlayCue(220);
+    Event_PlayCue(220);
     Actor_SetPosition(13, 0xfd0000, 0x25b0000);
     formation_action = KorimaHashi_FormationAction;
     Engine_ActorEnableActionCallback(13, formation_action);
@@ -1024,7 +1024,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Engine_EventWait(40);
     Event_SayThenWait(IWAN, 20);
     leave:;
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     Actor_SetMotionSpeed(GERALD, 0x13333, 0x9999);
     Actor_SetMotionSpeed(IWAN, 0x13333, 0x9999);
     Actor_SetMotionSpeed(MEARI, 0x13333, 0x9999);

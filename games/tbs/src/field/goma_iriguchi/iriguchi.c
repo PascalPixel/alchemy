@@ -181,7 +181,7 @@ void FieldScene_RunScene387SequenceD(void)
     Engine_EventWait(20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
     Actor_SetSpeed(9, 0x3333, 0x1999);
-    Audio_PlayCue(185);
+    Event_PlayCue(185);
     v5 = (11 - (p5->touched_trigger << 1)) << 4;
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, v5, 0);
     Actor_SetDestinationOffset(9, v5, 0);

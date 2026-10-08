@@ -21,7 +21,7 @@
 #define FLAG_CHK(f)             GameFlag_IsSet(f)
 #define FLAG_SET(f)             GameFlag_Set(f)
 
-#define SE(n)                   Audio_PlayCue(n)
+#define SE(n)                   Event_PlayCue(n)
 
 #define EV_BEGIN()              Engine_EventBegin()
 #define EV_END()                Engine_EventEnd()

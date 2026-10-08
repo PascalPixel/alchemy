@@ -301,7 +301,7 @@ void FieldScene_RunFourActorEncounter(void)
     Object_GetById(0)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
     PartyInventory_FindOwner(184);
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
@@ -334,7 +334,7 @@ void FieldScene_RunFourActorEncounter(void)
     Engine_CameraWaitForMove();
     Engine_EventWait(10);
     v5 = 10;
-    Audio_PlayCue(123);
+    Event_PlayCue(123);
     Map_CopyCellAttributes(26, 3, 1, 2, v5, 8);
     Map_CopyCells(26, 38, 1, 1, v5, 43);
     Engine_TaskWait(4);
@@ -356,7 +356,7 @@ void FieldScene_RunFourActorEncounter(void)
     Engine_EventWait(40);
     ToretoHeya_PlayGesture(1);
     Engine_EventWait(60);
-    Audio_PlayCue(21);
+    Event_PlayCue(21);
     ToretoHeya_PlayGesture(4);
     Event_ShowMessageAndWait(0x8009, 0, 20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);

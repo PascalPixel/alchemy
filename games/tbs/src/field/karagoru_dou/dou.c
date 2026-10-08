@@ -265,7 +265,7 @@ void ActorPresentation_RunActorNineThresholdScene(void)
         Actor_SetPosition(9, 0, 0);
         Actor_SetPosition(10, 45613056, 18874368);
         Engine_ActorSetAnimation(10, 3);
-        Audio_PlayCue(154);
+        Event_PlayCue(154);
         GameFlag_Set(2469);
     }
     Engine_EventEnd();

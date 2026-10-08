@@ -829,7 +829,7 @@ void FieldScene_RunSetupSequence(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
     Actor_SetSpeed(IWAN, 0xcccc, 0x6666);
-    Audio_PlayCue(19);
+    Event_PlayCue(19);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x180, 0x198);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_SetPosition(GERALD, 0x1800000, 0x1980000);
@@ -842,7 +842,7 @@ void FieldScene_RunSetupSequence(void)
         Engine_EventWait(40);
         SceneState_SetValue2ThenFinish();
         Engine_EventSetMessage((s32)MsgKuupuappuDoPossessStrangePowers);
-        Audio_PlayCue(60);
+        Event_PlayCue(60);
         Engine_EventWait(30);
         SceneEffect_ApplyThreeValuesAndFinish(2, 3, 30);
         SceneActor_SetModeZeroAndValue(2, 30);
@@ -884,7 +884,7 @@ void FieldScene_RunSetupSequence(void)
         Event_OpenMessage(IWAN, 0);
         goto L_join_setup_paths;
     }
-    Audio_PlayCue(60);
+    Event_PlayCue(60);
     Engine_EventSetMessage((s32)MsgKuupuappuWouldReallyWouldHelpMe);
     Event_OpenMessage(IWAN, 0);
     L_join_setup_paths:;
@@ -1270,7 +1270,7 @@ void FieldScene_RunOpeningSequenceHead(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
     gEventWork->transition_frames = 16;
-    Audio_PlayCue(123);
+    Event_PlayCue(123);
     Engine_EventRequestExit(15);
 }
 
@@ -2347,7 +2347,7 @@ void RunDialoguePromptScene(void)
     Actor_FaceDirection(9, 0, 0);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(9, 2);
-    Audio_PlayCue(124);
+    Event_PlayCue(124);
     Engine_ActorSetAnimation(15, 4);
     Actor_SetPosition(18, 0x3680000, 0x1a80000);
     Engine_ActorSetSpritePriority(18, 1);
@@ -2381,7 +2381,7 @@ void RunDialoguePromptScene(void)
     Actor_FaceDirection(14, 0, 0);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(14, 2);
-    Audio_PlayCue(124);
+    Event_PlayCue(124);
     Engine_ActorSetAnimation(16, 4);
     {
         struct FieldActor *rec;

@@ -105,7 +105,7 @@ void Scene_RunPrimaryScript(void)
     struct FieldActor *record;
     GameFlag_Set(2480);
     if (GameFlag_IsSet(2442) == 0) {
-        Audio_PlayCue(30);
+        Event_PlayCue(30);
         Event_Begin();
         Camera_MoveTo(24117248, -1, 6815744, 1);
         Actor_WalkToAndWait(0, 368, 160);
@@ -349,7 +349,7 @@ void Scene_RunPrimaryScript(void)
         Event_Wait(20);
         Actor_SetAnimationAndWait(19, 3);
         Event_Wait(30);
-        Audio_PlayCue(30);
+        Event_PlayCue(30);
         Actor_SetSpeed(19, 78643, 39321);
         Actor_SetAnimation(19, 2);
         record = Actor_Get(0);

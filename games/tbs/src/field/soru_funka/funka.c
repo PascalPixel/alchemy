@@ -139,7 +139,7 @@ void Scene_SaturosTakesHostages(void)
     void Actor_ShowEmote();
     void ColorBuffer_ApplyTarget();
     void Engine_ColorBufferInterpolate();
-    void Audio_PlayCue();
+    void Event_PlayCue();
 
     u32 i;
     u8 *record;
@@ -151,7 +151,7 @@ void Scene_SaturosTakesHostages(void)
     p7 = *(u8 **)base5_3001ec4;
     Engine_EventBegin();
     *(s32 *)(((s32)p7 + 0x40c)) = 0;
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0xe80000, 0x9c0000);
     Actor_SetPosition(GERALD, 0xda0000, 0xac0000);
@@ -180,14 +180,14 @@ void Scene_SaturosTakesHostages(void)
     ColorBuffer_ApplyTarget(0x7fff, 0);
     Engine_ColorBufferInterpolate(4);
     Engine_EventWait(16);
-    Audio_PlayCue(144);
+    Event_PlayCue(144);
     ColorBuffer_ApplyTarget(0x10000, 0);
     Engine_ColorBufferInterpolate(4);
     Engine_EventWait(4);
     ColorBuffer_ApplyTarget(0x7fff, 0);
     Engine_ColorBufferInterpolate(4);
     Engine_EventWait(4);
-    Audio_PlayCue(144);
+    Event_PlayCue(144);
     ColorBuffer_ApplyTarget(0x10000, 0);
     Engine_ColorBufferInterpolate(48);
     Engine_EventWait(48);
@@ -221,7 +221,7 @@ void Scene_SaturosTakesHostages(void)
     record = Object_GetById(15);
     record[85] = 5;
     *(s32 *)(((s32)p7 + 0x40c)) = 1;
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Engine_EventWait(150);
@@ -240,7 +240,7 @@ void Scene_SaturosTakesHostages(void)
     Camera_SetSpeed(0x66666, 0xcccc);
     Camera_MoveTo(0x1480000, -1, 0x12b0000, 1);
     Engine_CameraWaitForMove();
-    Audio_PlayCue(167);
+    Event_PlayCue(167);
     ColorBuffer_ApplyTarget(0x205294, 2);
     Engine_ColorBufferInterpolate(20);
     Engine_TaskWait(20);
@@ -258,11 +258,11 @@ void Scene_SaturosTakesHostages(void)
     Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 20);
     FieldScene_RunVariantStep(1, 20, 0);
     *(s32 *)(((s32)p7 + 0x40c)) = 0;
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     Engine_EventWait(80);
     *(s32 *)(((s32)p7 + 0x40c)) = 1;
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     FieldScene_RunVariantStep(0, 20, 60);
@@ -518,14 +518,14 @@ void SoruFunka_RaiseAndShrinkActor(s32 a0)
     Engine_ActorSetSpriteFlags(rec2, 0);
     Actor_SetChildValue(a0, 0x100);
     rec7->motion_flags = 0;
-    Audio_PlayCue(201);
+    Event_PlayCue(201);
     i = 0;
     do {
         rec7->y.fixed += 0x8000;
         Engine_EventWait(1);
         i++;
     } while (i != 60);
-    Audio_PlayCue(190);
+    Event_PlayCue(190);
     i = 0;
     do {
         rec7->y.fixed += 0x1999;
@@ -769,7 +769,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_TaskRemoveCallback(SceneState_UpdateRandomTimerLevel);
     gEmberMask = 3;
     Engine_EventWait(80);
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     ColorBuffer_ApplyTarget(0x7fff, 0);
     Engine_ColorBufferInterpolate(40);
     Engine_EventWait(40);
@@ -942,7 +942,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_EventWait(10);
 
-    Audio_PlayCue(23);
+    Event_PlayCue(23);
     FieldScene_RunVariantStep(1, 4, 0);
     quake->fading = 0;
     Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
@@ -1032,7 +1032,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_EventWait(40);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorStartRepeatedMotion(GERALD, 2);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     ColorBuffer_ApplyTarget(0x10000, 1);
     Engine_ColorBufferInterpolate(40);
     quake->fading = 1;
@@ -1078,7 +1078,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Actor_FaceDirection(GERALD, FACING_NORTHWEST + FACING_STEP, 0);
     Engine_EventWait(10);
 
-    Audio_PlayCue(107);
+    Event_PlayCue(107);
     Engine_TaskAddCallback(FieldScene_RunRandomHalfBranch, TASK_PRIORITY_SCENE);
     Engine_EventWait(10);
     Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT, 0);
@@ -1104,7 +1104,7 @@ void Scene_RunExtendedEffectPresentation(void)
     ColorBuffer_ApplyTarget(0x10000, 1);
     Engine_ColorBufferInterpolate(60);
     Engine_EventWait(30);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Engine_TaskRemoveCallback(FieldScene_RunRandomHalfBranch);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     wait = 16;
@@ -1240,7 +1240,7 @@ void Scene_RunExtendedEffectPresentation(void)
     ColorBuffer_ApplyTarget(0x20119e, 1);
     Engine_ColorBufferInterpolate(20);
     Engine_EventWait(20);
-    Audio_PlayCue(107);
+    Event_PlayCue(107);
     Engine_TaskAddCallback(FieldScene_RunLateRandomHalfBranch, TASK_PRIORITY_SCENE);
     Engine_EventWait(20);
     Camera_SetSpeed(0x10000, 0x2000);
@@ -1268,7 +1268,7 @@ void Scene_RunExtendedEffectPresentation(void)
     ColorBuffer_ApplyTarget(0x10000, 1);
     Engine_ColorBufferInterpolate(60);
     Engine_EventWait(30);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Engine_TaskRemoveCallback(FieldScene_RunLateRandomHalfBranch);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     wait = 8;
@@ -1290,7 +1290,7 @@ void Scene_RunExtendedEffectPresentation(void)
     ColorBuffer_ApplyTarget(0x20119e, 1);
     Engine_ColorBufferInterpolate(20);
     Engine_EventWait(20);
-    Audio_PlayCue(107);
+    Event_PlayCue(107);
     Engine_TaskAddCallback(FieldScene_RunRandomHalfBranch, TASK_PRIORITY_SCENE);
     Engine_EventWait(40);
     Engine_ObjectMotionSetPositionAndCommit(ACTOR_WISE_ONE, 127, 110);
@@ -1304,7 +1304,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_TaskAddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
     ColorBuffer_ApplyTarget(0x10000, 1);
     Engine_ColorBufferInterpolate(60);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Engine_EventWait(30);
     Engine_TaskRemoveCallback(FieldScene_RunRandomHalfBranch);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
@@ -1317,13 +1317,13 @@ void Scene_RunExtendedEffectPresentation(void)
     }
     SceneState_ApplyRectsByCondition(0);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
-    Audio_PlayCue(107);
-    Audio_PlayCue(63);
+    Event_PlayCue(107);
+    Event_PlayCue(63);
     Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
     ColorBuffer_ApplyTarget(0x20119e, 1);
     Engine_ColorBufferInterpolate(20);
     Engine_EventWait(20);
-    Audio_PlayCue(107);
+    Event_PlayCue(107);
     Engine_TaskAddCallback(FieldScene_RunLateRandomHalfBranch, TASK_PRIORITY_SCENE);
     Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 3);
     Engine_TaskRemoveCallback(FieldScene_RunActor15TwoStep);
@@ -1337,7 +1337,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_TaskRemoveCallback(FieldScene_RunActor15TwoStep);
     Engine_TaskWait(1);
     Actor_SetChildValue(ACTOR_WISE_ONE, 0);
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     Engine_EventWait(100);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
     Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 2, 0);
@@ -1346,7 +1346,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_ActorRunRepeatedMotion(GERALD, 3);
     Event_ShowMessage(GERALD, 0);
     Engine_EventWait(20);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTHEAST + FACING_STEP, 0);
     Engine_EventWait(20);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
@@ -1449,7 +1449,7 @@ void FieldScene_RunFourWayEffectSequence(u32 mode)
     void Actor_ShowEmote(s32, s32, s32);
     void ColorBuffer_ApplyTarget(s32, s32);
     void Engine_ColorBufferInterpolate(s32);
-    void Audio_PlayCue(s32);
+    void Event_PlayCue(s32);
 
     u32 i, zero;
     s32 x, y, z;
@@ -1465,7 +1465,7 @@ void FieldScene_RunFourWayEffectSequence(u32 mode)
     case 3: ColorBuffer_ApplyTarget(0x403a52, 1); break;
     }
     Engine_ColorBufferInterpolate(60);
-    Audio_PlayCue(214);
+    Event_PlayCue(214);
     i = 0;
     zero = i;
     for (pos = &Funka_ArcOrigins[0][0]; i <= 9; i++, pos += 2) {
@@ -1494,7 +1494,7 @@ void FieldScene_RunFourWayEffectSequence(u32 mode)
     }
     Engine_TaskWait(20);
     Engine_TaskAddCallback(SceneEffect_AdvanceTenEntryTimers, 3200);
-    Audio_PlayCue(246);
+    Event_PlayCue(246);
     gArcEffectTimers[0] = 1; Engine_TaskWait(6);
     gArcEffectTimers[1] = 1; Engine_TaskWait(6);
     gArcEffectTimers[2] = 1; Engine_TaskWait(6);

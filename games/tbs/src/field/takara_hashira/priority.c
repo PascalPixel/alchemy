@@ -117,10 +117,10 @@ void FieldScene_RunFlaggedDisplayScene(void)
     Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
     queried = GameFlag_IsSet(QUERY_FLAG);
     if (queried == 0) {
-        Audio_PlayCue(232);
+        Event_PlayCue(232);
         Map_AnimateCells(TakaraHashira_ShiftSteps1, 84, 24);
         Engine_EventWait(30);
-        Audio_PlayCue(240);
+        Event_PlayCue(240);
         Engine_ActorSetSpritePriority(REC_ID, 1);
         Object_GetById(REC_ID)->motion_flags = queried;
         record = Actor_Get(REC_ID);
@@ -141,10 +141,10 @@ void FieldScene_RunFlaggedDisplayScene(void)
         Map_CopyCellAttributes(24, 3, 1, 1, 24, 8);
         GameFlag_Set(QUERY_FLAG);
     } else {
-        Audio_PlayCue(232);
+        Event_PlayCue(232);
         Map_AnimateCells(TakaraHashira_ShiftSteps2, 84, 24);
         Engine_EventWait(30);
-        Audio_PlayCue(230);
+        Event_PlayCue(230);
         Object_GetById(REC_ID)->motion_flags = 0;
         record = Actor_Get(REC_ID);
         record->y.fixed = -0x200000;

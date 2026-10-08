@@ -155,9 +155,9 @@ void FieldScene_RunFourActorPresentation(void)
     Engine_TaskWait(1);
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_EventOpenScreen();
@@ -478,7 +478,7 @@ void RunScene58Sequence(void)
     Actor_FaceDirection(MEARI, FACING_EAST, 10);
     Engine_ActorSetAnimation(MEARI, 0x10);
     Event_ShowMessageAndWait(MEARI, 0, 60);
-    Audio_PlayCue(0x11);
+    Event_PlayCue(0x11);
     Actor_SetPosition(5, PIXELS(0xD8), PIXELS(0xC8));
     Event_ShowMessageAndWait(JASMINE, 0, 20);
     Actor_SetPosition(5, PIXELS(0x78), PIXELS(0xA0));
@@ -504,7 +504,7 @@ void RunScene58Sequence(void)
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(0x15, 1);
     Engine_EventWait(20);
-    Audio_PlayCue(0x3D);
+    Event_PlayCue(0x3D);
     Event_ShowMessageAndWait(0x15, 0, 20);
     Engine_ActorRunRepeatedMotion(0x17, 1);
     Engine_EventWait(20);
@@ -685,7 +685,7 @@ void RunScene58Sequence(void)
     Engine_EventWait(40);
     Actor_SetSpeed(0x17, 0x30000, 0x20000);
     Actor_Get(0x17)->velocity_y = 0x40000;
-    Audio_PlayCue(0x98);
+    Event_PlayCue(0x98);
     Actor_Get(0x17)->motion_flags &= 0x7e;
     Engine_ActorSetSpriteFlags(Object_GetById(0x17), 0);
     Object_GetById(0x11)->motion_flags = 4;
@@ -839,11 +839,11 @@ void RunScene59Sequence(void)
     Engine_EventWait(20);
     Event_ShowMessageAndWait(0x16, 0, 30);
     Actor_SetPosition(0x18, PIXELS(0x138), PIXELS(0x70));
-    Audio_PlayCue(0x120);
+    Event_PlayCue(0x120);
     Event_ShowMessageAndWait(0x18, 0, 20);
     Actor_ShowEmote(MEARI, 0x100, 60);
     Event_ShowMessageAndWait(MEARI, 0, 30);
-    Audio_PlayCue(0x1D);
+    Event_PlayCue(0x1D);
     Camera_SetSpeed(0x0000cccc, 0x00001999);
     Engine_EventGetViewCenter()->motion_flags = 0;
     Camera_MoveTo(PIXELS(0x150), -1, PIXELS(0xA8), 1);
@@ -1200,7 +1200,7 @@ void RunScene59Sequence(void)
     MakyuriChojo_LowerCollectedActors();
     Engine_ActorSetSpritePriority(0x11, 1);
     Engine_ActorSetSpritePriority(0x12, 1);
-    Audio_PlayCue(0x11);
+    Event_PlayCue(0x11);
     Camera_MoveTo(PIXELS(0x150), -1, PIXELS(0xD8), 1);
     Engine_CameraWaitForMove();
     Engine_ActorSetAnimationAndWait(IWAN, 4);

@@ -113,7 +113,7 @@ void Scene_ShineLeftBeam(void)
             Camera_SetSpeed(0x20000, 0x4000);
             Camera_MoveTo(0x11e0000, -1, 0x920000, 1);
             Engine_CameraWaitForMove();
-            Audio_PlayCue(186);
+            Event_PlayCue(186);
             Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
             if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
                 Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
@@ -140,7 +140,7 @@ void Scene_ShineRightBeam(void)
             Camera_SetSpeed(0x20000, 0x4000);
             Camera_MoveTo(0x11e0000, -1, 0x920000, 1);
             Engine_CameraWaitForMove();
-            Audio_PlayCue(186);
+            Event_PlayCue(186);
             Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
             if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0) {
                 Map_CopyCellsTo(8, 60, 17, 39, 2, 2);

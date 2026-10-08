@@ -258,7 +258,7 @@ void FieldScene_RunFlag9a9GuardedScene(void)
         KuupuappuDou_PushBlockAhead();
         if (IsActor9AtTile15x54()!= 0) {
             GameFlag_Set(0x9a9);
-            Audio_PlayCue(80);
+            Event_PlayCue(80);
             SceneState_ApplyThreeRects();
         }
     }
@@ -286,7 +286,7 @@ void FieldScene_RunScene3a7SequenceA(void)
     if (GameFlag_IsSet(0x9a9) == 0) {
         if (IsActor9AtTile15x54()!= 0) {
             GameFlag_Set(0x9a9);
-            Audio_PlayCue(80);
+            Event_PlayCue(80);
             SceneState_ApplyThreeRects();
         }
     }
@@ -340,7 +340,7 @@ void FieldScene_RunGuardedStep9AAAfterSetup(void)
     if (GameFlag_IsSet(0x9aa) == 0) {
         if (SceneActor_IsActor10AtTile16x12()!= 0) {
             if (GameFlag_IsSet(0x207) == 0) {
-                Audio_PlayCue(80);
+                Event_PlayCue(80);
                 SceneState_ApplyThreeRectsRows9And10();
                 GameFlag_Set(0x9aa);
             }
@@ -360,7 +360,7 @@ void FieldScene_RunGuardedStep9AA(void)
     if (GameFlag_IsSet(0x9aa) == 0) {
         if (SceneActor_IsActor10AtTile16x12()!= 0) {
             if (GameFlag_IsSet(0x207) == 0) {
-                Audio_PlayCue(80);
+                Event_PlayCue(80);
                 SceneState_ApplyThreeRectsRows9And10();
                 GameFlag_Set(0x9aa);
             }
@@ -535,7 +535,7 @@ void KuupuappuDou_RunRumble(void)
     }
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Audio_PlayCue(163);
+    Event_PlayCue(163);
     for (frames = 0x1df; frames >= 0; frames--) {
         u32 drift = (u32)(Random_Next() << 11) >> 16;
 
@@ -556,7 +556,7 @@ void KuupuappuDou_RunRumble(void)
         frames++;
     } while (frames <= 69);
     Map_CopyCells(19, 83, 15, 8, 19, 91);
-    Audio_PlayCue(0x120);
+    Event_PlayCue(0x120);
     Engine_MapRedraw();
     Engine_MapRenderWaitForValues();
     Engine_EventEnd();
@@ -574,13 +574,13 @@ void FieldScene_RunScene3a7SequenceB(void)
         GameFlag_Set(0x9a8);
         v5 = 27;
         v6 = 92;
-        Audio_PlayCue(155);
+        Event_PlayCue(155);
         Map_CopyCells(107, 27, 1, 1, v6, v5);
         Engine_EventWait(39);
         Map_CopyCells(108, 27, 1, 1, v6, v5);
         Engine_EventWait(50);
         v6 = 25;
-        Audio_PlayCue(156);
+        Event_PlayCue(156);
         Map_CopyCells(1, 24, 1, 2, v6, v5);
         Engine_EventWait(40);
         Map_CopyCells(2, 24, 1, 2, v6, v5);
@@ -648,7 +648,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
                     rec7->gravity = 0;
                     rec7->velocity_y = 0;
                     rec7->paused = 0;
-                    Audio_PlayCue(106);
+                    Event_PlayCue(106);
                 }
             }
         }
@@ -656,13 +656,13 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Engine_ActorSetAnimation(10, 1);
             if (GameFlag_IsSet(0x207) == 0) {
                 GameFlag_Set(0x207);
-                Audio_PlayCue(204);
+                Event_PlayCue(204);
             } else {
-                Audio_PlayCue(106);
+                Event_PlayCue(106);
             }
         }
         if (SceneActor_LiftLowActorOnSubjectTile(9) != 0) {
-            Audio_PlayCue(106);
+            Event_PlayCue(106);
         }
     }
 }

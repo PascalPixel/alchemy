@@ -689,7 +689,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_SetSpeed(11, 0x19999, 0x6666);
     Actor_SetSpeed(12, 0x19999, 0x6666);
     Actor_SetSpeed(13, 0x19999, 0x6666);
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     Engine_ActorEnableActionCallback(10, gTransferArrive10);
     Engine_EventWait(20);
     Engine_ActorEnableActionCallback(11, gTransferArrive11);
@@ -697,7 +697,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_ActorEnableActionCallback(12, gTransferArrive12);
     Engine_EventWait(20);
     Object_SetActionCallbackAndRefreshById(13, gTransferArrive13);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetPosition(GERALD, record->x.fixed, record->z.fixed);
@@ -717,7 +717,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_FaceDirection(GERALD, 0xa000, 60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
     Actor_FaceDirection(GERALD, 0x6000, 10);
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     Engine_ActorEnableActionCallback(10, gTransferDepart10);
     Engine_EventWait(20);
     Engine_ActorEnableActionCallback(11, gTransferDepart11);
@@ -727,7 +727,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     Actor_FaceDirection(GERALD, 0x4000, 10);
     Object_SetActionCallbackAndRefreshById(13, gTransferDepart13);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Engine_EventWait(20);
     Battle_ClearObjectFlag5bWhenMode3();
     Engine_ActorSetAnimation(10, 1);
@@ -784,10 +784,10 @@ void FieldScene_RunActorTransferSequence(void)
     Event_ShowMessageAndWait(9, 0, 20);
     Engine_ActorSetAnimationAndWait(8, 3);
     Battle_ClearObjectFlag5bWhenMode3();
-    Audio_PlayCue(107);
+    Event_PlayCue(107);
     Camera_SetSpeed(0x40000, 0x40000);
     WorldMap_ShakeTransferStartCamera();
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Actor_ShowEmote(8, 0x100, 0);
     Actor_ShowEmote(9, 0x100, 0);
     Actor_FaceDirection(8, 0x8000, 0);
@@ -827,7 +827,7 @@ void FieldScene_RunActorTransferSequence(void)
     record->velocity_y = 0x60000;
     record = Object_GetById(8);
     record->velocity_y = 0x60000;
-    Audio_PlayCue(145);
+    Event_PlayCue(145);
     Camera_SetSpeed(0x40000, 0x40000);
     WorldMap_ShakeTransferLandingCamera();
     WorldMap_ShakeTransferLandingCamera();
@@ -867,7 +867,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_WalkToAndWait(9, 0x1608, 0x6c8);
     Actor_WalkToAndWait(9, 0x1608, 0x6d8);
     Actor_SetPosition(9, 0, 0);
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     Engine_ActorEnableActionCallback(10, gTransferReturn10);
     Engine_ActorEnableActionCallback(11, gTransferReturn11);
     Engine_EventWait(40);
@@ -896,7 +896,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_FaceDirection(GERALD, 0xc000, 0);
     Object_RefreshSelectorById(13);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Camera_SetSpeed(0x40000, 0x8000);
     Camera_MoveTo(0x16f80000, -1, 0x6480000, 1);
     Engine_CameraWaitForMove();
@@ -991,7 +991,7 @@ void WorldMap_UpdateTransferredActorLanding(void)
     if (actor->y.fixed < 0xa0000) {
         actor->y.fixed = 0xa0000;
         if (GameFlag_IsSet(0x200) == 0) {
-            Audio_PlayCue(145);
+            Event_PlayCue(145);
             Object_SetMode(actor, 3);
             GameFlag_Set(0x200);
             actor->timer = 1;
@@ -1172,7 +1172,7 @@ void WorldMap_ShowDjinnTutorial(void)
     Engine_EventSetMessage((s32)MsgWorldMapAfterBringingDjinniIntoYour);
     Event_ShowMessage(8, 0);
     Engine_EventWait(30);
-    Audio_PlayCue(111);
+    Event_PlayCue(111);
     Menu_AnimateSelectionToEntry(0, 2);
     GameFlag_Clear(0x16f);
     GameFlag_Clear(0x171);
@@ -1252,7 +1252,7 @@ void WorldMap_MeetVenusDjinni(void)
         Engine_ObjectSetPartPalettes(djinni, 0);
         djinni->gravity = 0x10000;
         Event_ShowMessage(DJINNI, 0);
-        Audio_PlayCue(131);
+        Event_PlayCue(131);
         Engine_PsynergyBegin(140, 0);
         for (i = 59; i >= 0; i--) {
             if (gFrameCount & 2)
@@ -1329,13 +1329,13 @@ void WorldMap_MeetVenusDjinni(void)
         Event_ShowMessage(DJINNI, 0);
 listened:
         UiWork_PushValueSlot(300, 4);
-        Audio_PlayCue(81);
+        Event_PlayCue(81);
         count = (s32)MsgWorldMapAbilityVenusDjinni;
         Message_ShowCentered(count++, 3);
         Event_SetMessage(count);
         Actor_Jump(DJINNI, 2, 20);
         Event_ShowMessage(DJINNI, 0);
-        Audio_PlayCue(9);
+        Event_PlayCue(9);
         WorldMap_ShowDjinnTutorial();
         Battle_ClearObjectFlag5bWhenMode3();
         return;
@@ -1357,7 +1357,7 @@ listened:
     Event_ShowMessage(DJINNI, 0);
     Actor_RunRepeatedMotion(DJINNI, 2);
     Event_ShowMessage(DJINNI, 0);
-    Audio_PlayCue(111);
+    Event_PlayCue(111);
     Menu_AnimateSelectionToEntry(0, 2);
     GameFlag_Set(0x16f);
     GameFlag_Clear(0x171);
@@ -1397,7 +1397,7 @@ learn:
     Event_ShowMessage(DJINNI, 0);
     Battle_ClearObjectFlag5bWhenMode3();
     BattleFx_RunPageEffectForSlot(DJINNI, 0, 0);
-    Audio_PlayCue(42);
+    Event_PlayCue(42);
     Event_End();
     GameFlag_Clear(FLAG_DJINNI_MET);
     GameFlag_Clear(0x16f);
@@ -1430,7 +1430,7 @@ void WorldMap_DisembarkCarriage(void)
     Engine_EventWait(20);
     Actor_SetPosition(10, 0x15680000, 0x8380000);
     Engine_TaskWait(1);
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     Actor_SetSpeed(10, 0x19999, 0x6666);
     Engine_ActorSetAnimation(10, 2);
     Actor_MoveToAndWait(10, 0x156d, 0x858);
@@ -1440,7 +1440,7 @@ void WorldMap_DisembarkCarriage(void)
     Actor_MoveToAndWait(10, 0x15a8, 0x86e);
     Actor_MoveToAndWait(10, 0x15e8, 0x878);
     Engine_ActorSetAnimation(10, 1);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Engine_EventWait(20);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x15d80000, 0x8780000);
     Engine_TaskWait(1);
@@ -1448,7 +1448,7 @@ void WorldMap_DisembarkCarriage(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x15c8, 0x878);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 40);
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     Engine_ActorSetAnimation(10, 2);
     Actor_MoveToAndWait(10, 0x15f8, 0x878);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
@@ -1460,7 +1460,7 @@ void WorldMap_DisembarkCarriage(void)
     Actor_MoveToAndWait(10, 0x1572, 0x858);
     Actor_MoveToAndWait(10, 0x1568, 0x838);
     Actor_SetPosition(10, 0, 0);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Engine_EventWait(40);
     Camera_MoveTo(0x15d80000, -1, 0x8580000, 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
@@ -1909,7 +1909,7 @@ void FieldScene_RunActorPresentationSequence(void)
     Engine_ActorStartRepeatedMotion(8, 2);
     Event_ShowMessageAndWait(8, 0, 60);
     Map_LoadDefaultCellsAndUpdateBlock();
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     ColorBuffer_ApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_TaskWait(120);
@@ -2176,7 +2176,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
             Actor_SetDestination(id, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove(id);
-        Audio_PlayCue(244);
+        Event_PlayCue(244);
         Engine_TaskAddCallback((s32)StoryScene_UpdateSelectedActorProgress, 0xc80);
         actor->motion_flags = rec2;
         Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x200000, actor->z.fixed);
@@ -2226,7 +2226,7 @@ void WorldMap_RaiseActors(void)
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
-    Audio_PlayCue(219);
+    Event_PlayCue(219);
     Engine_ActorSetSpriteFlags(actor, 0);
     other->motion_flags = 0;
     actor->motion_flags = 0;

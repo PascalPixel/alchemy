@@ -531,7 +531,7 @@ void FieldScene_RunEarlySequence(void)
     s32 v;
 
     p5 = gMapWork[0];
-    Audio_PlayCue(230);
+    Event_PlayCue(230);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Engine_EventWait(10);
     rec = p5 + 356;
@@ -556,7 +556,7 @@ void FieldScene_RunEarlySequence(void)
     } while ((u32)(v << 16) <= 0x640000);
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_EventWait(30);
     Map_CopyCellAttributes(0, 0, 1, 2, 3, 14);
@@ -574,7 +574,7 @@ void FieldScene_RunScene3a4SequenceH(void)
 
     p5 = gMapWork[0];
     Map_CopyCells(93, 41, 16, 4, 77, 28);
-    Audio_PlayCue(230);
+    Event_PlayCue(230);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Engine_EventWait(10);
     rec = p5 + 356;
@@ -591,7 +591,7 @@ void FieldScene_RunScene3a4SequenceH(void)
     } while ((u32)(v << 16) <= 0x640000);
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_EventWait(30);
     Map_CopyCells(77, 41, 16, 4, 77, 28);
@@ -611,7 +611,7 @@ void FieldScene_RunScene3a4SequenceI(void)
     Map_CopyCellsTo(113, 31, 103, 17, 1, 1);
     Map_CopyCellsTo(111, 32, 104, 18, 3, 2);
     Map_CopyCellsTo(64, 32, 103, 18, 1, 2);
-    Audio_PlayCue(230);
+    Event_PlayCue(230);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Engine_EventWait(10);
     rec = p8 + 356;
@@ -628,7 +628,7 @@ void FieldScene_RunScene3a4SequenceI(void)
     } while ((u32)(v << 16) <= 0x640000);
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_EventWait(30);
     Map_CopyCellsTo(103, 14, 103, 17, 4, 3);
@@ -704,7 +704,7 @@ void FieldScene_RunScene3a4SequenceC(void)
 
     Engine_EventBegin();
     Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
-    Audio_PlayCue(125);
+    Event_PlayCue(125);
     if (GameFlag_IsSet(0x326) != 0) {
         Map_CopyCellAttributes(15, 93, 1, 1, 16, 92);
         Map_CopyCellsTo(47, 29, 16, 28, 1, 2);
@@ -728,7 +728,7 @@ void FieldScene_RunScene3a4SequenceD(void)
 
     Engine_EventBegin();
     Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
-    Audio_PlayCue(125);
+    Event_PlayCue(125);
     if (GameFlag_IsSet(0x327) != 0) {
         Map_CopyCellAttributes(28, 82, 1, 1, 29, 81);
         Map_CopyCellsTo(47, 28, 29, 17, 1, 2);
@@ -764,7 +764,7 @@ void ArutinYama_PushMovableObject(void)
 
     Engine_EventBegin();
     Map_CopyCellAttributes(24, 27, 2, 1, 24, 26);
-    Audio_PlayCue(185);
+    Event_PlayCue(185);
     Actor_SetSpeed(10, 0x3333, 0x1999);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
     Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
@@ -794,10 +794,10 @@ void ArutinYama_SwingActorIntoSetPiece(void)
     x = actor->x.fixed;
     y = actor->y.fixed;
     Event_Begin();
-    Audio_PlayCue(141);
+    Event_PlayCue(141);
     Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
     Event_Wait(10);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Event_Wait(20);
 
@@ -844,10 +844,10 @@ fallen:
 settled:
     Task_Wait(1);
     sprite->rotation = 0xc000;
-    Audio_PlayCue(183);
+    Event_PlayCue(183);
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
     Event_Wait(20);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     FieldScene_RunSharedSetPiece(5);
     Event_End();
@@ -998,7 +998,7 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 100);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 60);
-    Audio_PlayCue(183);
+    Event_PlayCue(183);
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
     Engine_EventWait(20);
     actor9->scale_x = 0x13333;
@@ -1013,16 +1013,16 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     actor8->scale_x = 0x20000;
     actor8->scale_y = 0x20000;
     Engine_EventWait(10);
-    Audio_PlayCue(183);
+    Event_PlayCue(183);
     Work_SetValuesIfNonNegative(0x40000, 0x20000, 0x10000);
     Engine_EventWait(20);
     actor10->x.fixed += 0xe0000;
     actor10->y.fixed += -0x80000;
     actor10->sprite->rotation = 0xc000;
-    Audio_PlayCue(107);
+    Event_PlayCue(107);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 80);
-    Audio_PlayCue(55);
+    Event_PlayCue(55);
     Work_SetValuesIfNonNegative(0x10000, 0x30000, 0x10000);
     Engine_ActorSetSpritePriority(8, 0);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 0);
@@ -1051,7 +1051,7 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     } while ((s16)actor8->timer == 0);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
     Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     actor9->x.fixed = 0x3120000;
     actor9->update = NULL;
@@ -1074,7 +1074,7 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Engine_EventWait(80);
     Engine_TaskRemoveCallback(FieldScene_RunScene3a4SequenceG);
     Engine_EventWait(60);
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_EventWait(120);
     if (GameFlag_IsSet(0x205) != 0) {
@@ -1092,7 +1092,7 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
     Camera_MoveTo(0x3140000, -0x400000, 0x2620000, 1);
     Engine_CameraWaitForMove();
-    Audio_PlayCue(148);
+    Event_PlayCue(148);
     Engine_EventWait(240);
     if (GameFlag_IsSet(0x205) != 0) {
         Camera_SetSpeed(0x40000, 0x8000);
@@ -1143,7 +1143,7 @@ void FieldScene_RunFallingRocksWarning(void)
         Actor_WalkToAndWait(GERALD, 0x318, 110);
         Engine_EventWait(1);
         Object_GetById(GERALD)->steering_flags |= ACTOR_FACES_MOTION;
-        Audio_PlayCue(161);
+        Event_PlayCue(161);
         Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
         Object_GetById(GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
         Actor_WalkToAndWait(GERALD, 0x318, 120);
@@ -1155,7 +1155,7 @@ void FieldScene_RunFallingRocksWarning(void)
         }
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
         Engine_EventWait(80);
-        Audio_PlayCue(141);
+        Event_PlayCue(141);
         Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
         Engine_EventWait(40);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
@@ -2218,7 +2218,7 @@ void FieldScene_RunLateAuxiliarySequence(void)
     Camera_MoveTo(0x1480000, -1, 0x570000, 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 116);
-    Audio_PlayCue(148);
+    Event_PlayCue(148);
     Engine_TaskAddCallback(SceneAudio_PlayCue183EverySixtyTicks, 3200);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Actor_SetSpeed(8, 0x1999, 0xccc);
@@ -2317,10 +2317,10 @@ void RunEventScript01(void)
     Actor_ShowEmote(GERALD, 0x101, 0);
     Actor_ShowEmote(IWAN, 0x101, 0);
     Actor_ShowEmote(MEARI, 0x101, 40);
-    Audio_PlayCue(190);
+    Event_PlayCue(190);
     Actor_SetChildValue(8, 7);
     Engine_EventWait(10);
-    Audio_PlayCue(0x121);
+    Event_PlayCue(0x121);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_FaceDirection(GERALD, 0xc000, 0);
     Actor_FaceDirection(IWAN, 0xc000, 0);
@@ -2329,7 +2329,7 @@ void RunEventScript01(void)
     Actor_ShowEmote(GERALD, 0x100, 0);
     Actor_ShowEmote(IWAN, 0x100, 0);
     Actor_ShowEmote(MEARI, 0x100, 40);
-    Audio_PlayCue(103);
+    Event_PlayCue(103);
     update = (s32)SceneActor_SetActor8ModeByCounterBit;
     Task_AddCallback((void (*)(void))update, 0xc80);
     celebrate = (s32)ArutinYama_CelebrateScript;

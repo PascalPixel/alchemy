@@ -763,12 +763,12 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Engine_ActorRunRepeatedMotion(MEARI, 1);
     Engine_EventWait(10);
     Event_ShowMessage(MEARI, 0);
-    Audio_PlayCue(131);
+    Event_PlayCue(131);
     ColorBuffer_ApplySource(0x10000, 0);
     ColorBuffer_ApplyTarget(0x207e9f, 0);
     Engine_ColorBufferInterpolate(10);
     Engine_TaskWait(1);
-    Audio_PlayCue(220);
+    Event_PlayCue(220);
     Engine_TaskWait(40);
     ColorBuffer_ApplyTarget(0x10000, 0);
     Engine_ColorBufferInterpolate(60);
@@ -803,7 +803,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x40000, 0x20000);
     Actor_SetSpeed(GERALD, 0x40000, 0x20000);
     Actor_SetSpeed(IWAN, 0x40000, 0x20000);
-    Audio_PlayCue(152);
+    Event_PlayCue(152);
     (Object_GetById(0))->steering_flags &= ~ACTOR_FACES_MOTION;
     (Object_GetById(1))->steering_flags &= ~ACTOR_FACES_MOTION;
     (Object_GetById(2))->steering_flags &= ~ACTOR_FACES_MOTION;

@@ -123,7 +123,7 @@ void SceneDialogue_RunActor13Message1961(void)
 
 void FieldScene_RunPrimaryScript(void)
 {
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     Map_AnimateCells(YamaRama_BoulderCells, 67, 6);
     Object_GetById(0)->motion_flags = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
@@ -232,12 +232,12 @@ void FieldScene_RunScene3a2SequenceA(void)
     Engine_ActorSetAnimationAndWait(8, 3);
     Engine_EventWait(20);
     Actor_FaceDirection(8, 0xc000, 30);
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     Map_AnimateCells(YamaRama_BoulderCells, 67, 6);
     Actor_SetSpeed(8, 0xcccc, 0x6666);
     Actor_WalkToAndWait(8, 136, 136);
     Actor_SetPosition(8, 0, 0);
-    Audio_PlayCue(188);
+    Event_PlayCue(188);
     Map_AnimateCells(YamaRama_BoulderCellsBack, 67, 6);
     Engine_EventWait(60);
     BattleFx_PlayQueuedSound();
@@ -513,7 +513,7 @@ void Scene_RunActorSequence(void)
     Engine_ActorSetAnimation(8, 5);
     Engine_ActorSetAnimation(10, 6);
     Engine_EventWait(20);
-    Audio_PlayCue(125);
+    Event_PlayCue(125);
     Actor_SetDestinationOffset(8, 2, 0);
     Actor_SetDestinationOffset(9, 2, 0);
     Actor_SetDestinationOffset(10, 2, 0);
@@ -522,7 +522,7 @@ void Scene_RunActorSequence(void)
     Engine_ActorSetAnimation(8, 5);
     Engine_ActorSetAnimation(10, 6);
     Engine_EventWait(20);
-    Audio_PlayCue(125);
+    Event_PlayCue(125);
     Actor_SetDestinationOffset(8, 4, 0);
     Actor_SetDestinationOffset(9, 4, 0);
     Actor_SetDestinationOffset(10, 4, 0);
@@ -541,7 +541,7 @@ void Scene_RunActorSequence(void)
     Engine_ActorSetAnimation(8, 5);
     Engine_ActorSetAnimation(10, 6);
     Engine_EventWait(20);
-    Audio_PlayCue(125);
+    Event_PlayCue(125);
     Actor_SetDestinationOffset(8, 2, 0);
     Actor_SetDestinationOffset(9, 2, 0);
     Actor_SetDestinationOffset(10, 2, 0);
@@ -550,7 +550,7 @@ void Scene_RunActorSequence(void)
     Engine_ActorSetAnimation(8, 5);
     Engine_ActorSetAnimation(10, 6);
     Engine_EventWait(20);
-    Audio_PlayCue(125);
+    Event_PlayCue(125);
     Actor_SetDestinationOffset(8, 4, 0);
     Actor_SetDestinationOffset(9, 4, 0);
     Actor_SetDestinationOffset(10, 4, 0);

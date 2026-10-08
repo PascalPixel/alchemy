@@ -252,15 +252,15 @@ play:
         UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
     }
     Task_Wait(5);
-    Audio_PlayCue(116);
+    Event_PlayCue(116);
     for (;;) {
         if (gKeyState & KEY_A) {
-            Audio_PlayCue(112);
+            Event_PlayCue(112);
             result = 0;
             break;
         }
         if (gKeyState & KEY_B) {
-            Audio_PlayCue(113);
+            Event_PlayCue(113);
             result = -1;
             break;
         }
@@ -319,15 +319,15 @@ play:
         UiText_DrawCharacterAtOffset(result, window, 0, 0);
         UiText_DrawCharacterAtOffset(result + 1, window, 0, 8);
         Task_Wait(5);
-        Audio_PlayCue(116);
+        Event_PlayCue(116);
         for (;;) {
             if (gKeyState & KEY_A) {
-                Audio_PlayCue(112);
+                Event_PlayCue(112);
                 result = 0;
                 break;
             }
             if (gKeyState & KEY_B) {
-                Audio_PlayCue(113);
+                Event_PlayCue(113);
                 result = -1;
                 break;
             }
@@ -349,12 +349,12 @@ play:
     if (choice == 0) {
         if (result != 4) {
             Party_AdjustCoins(Data_0200200c[result]);
-            Audio_PlayCue(91);
+            Event_PlayCue(91);
             UiWork_PushValueSlot(Data_0200200c[result], 5);
             Event_SetMessage((s32)MsgTorebiWonNumberCoin);
             Event_ShowMessage(-1, 0);
         } else {
-            Audio_PlayCue(113);
+            Event_PlayCue(113);
             Event_Wait(10);
         }
     } else {

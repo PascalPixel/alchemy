@@ -127,9 +127,9 @@ void KareiKyuden_LeaveThroughDoor(void)
     Engine_EventBegin();
     Engine_EventWait(10);
     if (p5->touched_trigger == 4) {
-        Audio_PlayCue(188);
+        Event_PlayCue(188);
     } else {
-        Audio_PlayCue(158);
+        Event_PlayCue(158);
     }
     Map_ClearLayerEntryFlag(1);
     Map_ClearLayerEntryFlag(2);

@@ -85,7 +85,7 @@ s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj)
             if (obj->target_x == ACTOR_NO_TARGET && obj->target_y == obj->target_x
                 && obj->target_z == obj->target_y) {
                 GULL(obj)->step++;
-                Audio_PlayCue(146);
+                Event_PlayCue(146);
                 if (GULL(obj)->right_side != 0)
                     Actor_FaceDirection(21, 0xd000, 0);
                 else
@@ -170,7 +170,7 @@ s32 FuneKanpan_UpdateHoverGullB(struct FieldActor *obj)
             if (obj->target_x == ACTOR_NO_TARGET && obj->target_y == obj->target_x
                 && obj->target_z == obj->target_y) {
                 GULL(obj)->step++;
-                Audio_PlayCue(146);
+                Event_PlayCue(146);
                 if (GULL(obj)->right_side != 0)
                     Actor_FaceDirection(22, 0xd000, 0);
                 else

@@ -377,7 +377,7 @@ void Door_Enter(void)
             actor->motion_flags = 0;
         }
     }
-    Audio_PlayCue(SOUND_DOOR_OPEN);
+    Event_PlayCue(SOUND_DOOR_OPEN);
     index = work->touched_trigger - TRIGGER_FIRST_HOME_DOOR;
     Map_AnimateCells(gLunpaDoors[index].steps, gLunpaDoors[index].x, gLunpaDoors[index].y);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -415,7 +415,7 @@ void FortressGate_Enter(void)
     Actor_Get(ACTOR_PARTY_LEADER)->motion_flags = 0;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -8);
-    Audio_PlayCue(SOUND_DOOR_OPEN);
+    Event_PlayCue(SOUND_DOOR_OPEN);
     Map_CopyCells(53, 4, 2, 2, 41, 4);
     Engine_EventWait(10);
     Map_CopyCells(53, 6, 2, 2, 41, 4);
@@ -447,7 +447,7 @@ void HiddenSwitch_Pull(void)
         return;
     }
     Actor_SetPosition(ACTOR_SWITCH_GLINT, 0, 0);
-    Audio_PlayCue(SOUND_HIDDEN_PASSAGE_OPEN);
+    Event_PlayCue(SOUND_HIDDEN_PASSAGE_OPEN);
     Engine_TaskWait(1);
     Map_CopyCells(32, 45, 3, 4, 1, 14);
     Map_CopyCells(35, 45, 3, 4, 33, 14);
@@ -647,16 +647,16 @@ void Party_ThrownOut(void)
     Actor_SetDestination(ACTOR_PARTY_LEADER, 160, 296);
     Engine_TaskAddCallback(Leader_KickUpDust, TASK_PRIORITY_SCENE);
     Engine_EventWait(1);
-    Audio_PlayCue(SOUND_SCUFFLE);
+    Event_PlayCue(SOUND_SCUFFLE);
     Engine_EventWait(20);
     Engine_ActorSetSpritePriority(ACTOR_LEFT_GUARD, 3);
     Engine_ActorSetSpritePriority(ACTOR_RIGHT_GUARD, 3);
-    Audio_PlayCue(SOUND_SCUFFLE);
+    Event_PlayCue(SOUND_SCUFFLE);
     Engine_EventWait(30);
     Actor_Get(ACTOR_LEFT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Actor_Get(ACTOR_RIGHT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
-    Audio_PlayCue(SOUND_SCUFFLE);
+    Event_PlayCue(SOUND_SCUFFLE);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
     Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
@@ -670,7 +670,7 @@ void Party_ThrownOut(void)
     }
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SPRAWLED);
-    Audio_PlayCue(SOUND_LANDING_THUD);
+    Event_PlayCue(SOUND_LANDING_THUD);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
     Engine_TaskAddCallback(Leader_KickUpDust, TASK_PRIORITY_SCENE);
     Engine_EventWait(2);

@@ -899,7 +899,7 @@ void FieldScene_RunScene37bSequenceA(void)
     if (record != 0) {
         if ((record->z.fixed >> 20) == 8) {
             Engine_EventBegin();
-            Audio_PlayCue(185);
+            Event_PlayCue(185);
             Actor_SetSpeed(17, 0x3333, 0x1999);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
             Object_GetById(17)->steering_flags &= ~ACTOR_FACES_MOTION;

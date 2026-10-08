@@ -566,7 +566,7 @@ void UpdateStatueLight1(void)
     if ((Random_Next() & 3) != 0) {
         switch (SoruNichigetsu_Light1Timer) {
         case 0:
-            Audio_PlayCue(0xbb);
+            Event_PlayCue(0xbb);
             Map_CopyCellsTo(0x2e, 0x3b, 30, 0x21, 1, 5);
             break;
         case 1:
@@ -738,7 +738,7 @@ void FieldScene_PrepareStatueTransition(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(40);
-    Audio_PlayCue(171);
+    Event_PlayCue(171);
     ColorBuffer_ApplyTarget(0x10005, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_EventWait(32);
@@ -765,31 +765,31 @@ void Scene_SpringStatueTrap(void)
     Engine_EventWait(30);
     SetSolShindenActorStep(32784, 20);
     for (outer_pair = 0; outer_pair != 4; outer_pair++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(12);
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(12);
     }
     for (second_pair = 0; second_pair != 6; second_pair++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(8);
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(8);
     }
     for (middle_pair = 0; middle_pair != 8; middle_pair++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(6);
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(6);
     }
     for (fourth_pair = 0; fourth_pair != 10; fourth_pair++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(4);
         Engine_AudioPlayCue(246);
@@ -797,10 +797,10 @@ void Scene_SpringStatueTrap(void)
         Engine_EventWait(4);
     }
     for (inner_pair = 0; inner_pair != 12; inner_pair++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(2);
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(2);
     }
@@ -835,10 +835,10 @@ void FieldScene_RunClosingSequence(void)
     Engine_EventWait(30);
     SetSolShindenActorStep(32784, 20);
     for (i = 0; i != 4; i++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(12);
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(12);
     }
@@ -853,34 +853,34 @@ void FieldScene_RunClosingSequence(void)
     Task_AddCallback(UpdateStatueLight3, 3200);
     Engine_TaskAddCallback((s32)UpdateStatueLight4, 3200);
     for (i = 0; i != 6; i++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(5);
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(5);
     }
     for (i = 0; i != 8; i++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(4);
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(4);
     }
     for (i = 0; i != 10; i++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(3);
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(3);
     }
     for (i = 0; i != 12; i++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(2);
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(2);
     }
@@ -941,46 +941,46 @@ void FieldScene_RunFlaggedSequence(void)
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     for (i6 = 0; i6 != 4; i6++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup2();
         Engine_EventWait(12);
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup4();
         Engine_EventWait(12);
     }
     for (i7 = 0; i7 != 6; i7++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup2();
         Engine_EventWait(8);
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup4();
         Engine_EventWait(8);
     }
     for (i8 = 0; i8 != 8; i8++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup2();
         Engine_EventWait(6);
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup4();
         Engine_EventWait(6);
     }
     for (i9 = 0; i9 != 10; i9++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup2();
         Engine_EventWait(4);
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup4();
         Engine_EventWait(4);
     }
     for (i10 = 0; i10 != 12; i10++) {
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup2();
         Engine_EventWait(2);
-        Audio_PlayCue(246);
+        Event_PlayCue(246);
         SetStatueLightGroup4();
         Engine_EventWait(2);
     }
-    Audio_PlayCue(246);
+    Event_PlayCue(246);
     SetStatueLightGroup2();
     Engine_EventWait(6);
     if (GameFlag_IsSet(2082) == 0) {

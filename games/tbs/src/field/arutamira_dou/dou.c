@@ -559,22 +559,22 @@ void ArutamiraDou_TurnRock(s32 action)
     if (state == 0) {
         if (action == 16) {
             state = 1;
-            Audio_PlayCue(110);
+            Event_PlayCue(110);
         } else {
-            Audio_PlayCue(114);
+            Event_PlayCue(114);
         }
         gSceneState[0] = 0;
     } else if (state == 1) {
         if (action == 16) {
-            Audio_PlayCue(110);
+            Event_PlayCue(110);
         } else if (action == 20) {
             state = 2;
-            Audio_PlayCue(110);
+            Event_PlayCue(110);
             Task_Wait(30);
             angle = ArutamiraDou_Wheel->angle;
             for (i = 0; i <= 4; i++) {
                 SceneActor_SetPositionFromTransformedBase(i + 11, 0x180000, angle);
-                Audio_PlayCue(151);
+                Event_PlayCue(151);
                 actor = Actor_Get(i + 11);
                 actor->scale_x = 0;
                 size = 0x6666;
@@ -589,17 +589,17 @@ void ArutamiraDou_TurnRock(s32 action)
             Task_Wait(30);
             won = 1;
         } else {
-            Audio_PlayCue(114);
+            Event_PlayCue(114);
             state = 0;
         }
     } else if (state == 2) {
         if (action != chosen + 16) {
             state = 0;
-            Audio_PlayCue(114);
+            Event_PlayCue(114);
             Task_Wait(30);
             for (i = 0; i <= 4; i++) {
                 actor = Actor_Get(i + 11);
-                Audio_PlayCue(151);
+                Event_PlayCue(151);
                 for (size = actor->scale_x; actor->scale_x > 0x6666; size -= 0xc00) {
                     actor->scale_y = size;
                     actor->scale_x = size;
@@ -608,7 +608,7 @@ void ArutamiraDou_TurnRock(s32 action)
                 Actor_SetPosition(i + 11, 0, 0);
             }
         } else {
-            Audio_PlayCue(110);
+            Event_PlayCue(110);
             won = 1;
             Task_Wait(30);
         }
@@ -629,7 +629,7 @@ void ArutamiraDou_TurnRock(s32 action)
                 Task_Wait(1);
             }
             Task_Wait(10);
-            Audio_PlayCue(110);
+            Event_PlayCue(110);
         } else {
             rock[0] = 99;
             while (ArutamiraDou_Wheel->phase != 2) {
@@ -641,7 +641,7 @@ void ArutamiraDou_TurnRock(s32 action)
             Engine_EventWait(20);
             Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
             ArutamiraDou_Wheel->phase = 99;
-            Audio_PlayCue(190);
+            Event_PlayCue(190);
             reach = 0x180000;
             angle = ArutamiraDou_Wheel->angle;
             do {
@@ -660,7 +660,7 @@ void ArutamiraDou_TurnRock(s32 action)
                 Actor_SetPosition(i + 11, 0, 0);
             }
             ArutamiraDou_ReleaseWallBurst();
-            Audio_PlayCue(80);
+            Event_PlayCue(80);
         }
         Engine_TaskRemoveCallback(ArutamiraDou_SpinActorWheel);
     }
@@ -730,7 +730,7 @@ void FieldScene_RunExtendedActorPresentation(void)
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(60);
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     actor->sprite->rotation = 0;
     Engine_ActorJump(8, 10, 70);
     for (i = 0; i < 30; i++) {
@@ -750,7 +750,7 @@ void FieldScene_RunExtendedActorPresentation(void)
         Actor_SetPosition(9, PIXELS(x), PIXELS(z));
     }
     actor->sprite->flags = 0;
-    Audio_PlayCue(30);
+    Event_PlayCue(30);
     Actor_SetSpeed(9, 0xcccc, 0x6666);
     Actor_WalkByAndWait(9, 32, 32);
     Actor_FaceDirection(9, FACING_SOUTH, 0);
@@ -1445,7 +1445,7 @@ void FieldScene_RunExtendedActorPresentation(void)
         Engine_EventWait(30);
         Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 2, 70);
     }
-    Audio_PlayCue(17);
+    Event_PlayCue(17);
     Actor_SetSpeed(GERALD, 0x13333, 0x9999);
     Actor_SetSpeed(IWAN, 0x13333, 0x9999);
     Actor_SetSpeed(MEARI, 0x13333, 0x9999);

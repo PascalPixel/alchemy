@@ -488,7 +488,7 @@ void FuneKanpan_OpenFirstDoor(void)
     s32 record;
 
     if (GameFlag_IsSet(0x271) == 0) {
-        Audio_PlayCue(158);
+        Event_PlayCue(158);
         Map_CopyCellsTo(30, 94, 13, 94, 1, 3);
         GameFlag_Set(0x271);
     }
@@ -500,7 +500,7 @@ void FuneKanpan_OpenSecondDoor(void)
     s32 record;
 
     if (GameFlag_IsSet(0x272) == 0) {
-        Audio_PlayCue(158);
+        Event_PlayCue(158);
         Map_CopyCellsTo(30, 108, 13, 108, 1, 2);
         GameFlag_Set(0x272);
     }

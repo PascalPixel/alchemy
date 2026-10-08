@@ -229,7 +229,7 @@ void FieldScene_RunScene398SequenceB(void)
     if (GameFlag_IsSet(0x302) == 0) {
         Engine_EventBegin();
         Engine_EventWait(40);
-        Audio_PlayCue(210);
+        Event_PlayCue(210);
         v5 = 36;
         Engine_ActorSetAnimationAndWait(17, 6);
         Map_CopyCellAttributes(0, 1, 1, 1, v5, 22);
@@ -242,7 +242,7 @@ void FieldScene_RunScene398SequenceB(void)
     if (GameFlag_IsSet(0x302) != 0) {
         Engine_EventBegin();
         Engine_EventWait(40);
-        Audio_PlayCue(220);
+        Event_PlayCue(220);
         v5 = 36;
         Engine_ActorSetAnimationAndWait(17, 2);
         Map_CopyCellAttributes(1, 1, 1, 1, v5, 22);

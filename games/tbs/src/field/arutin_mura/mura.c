@@ -333,7 +333,7 @@ void FieldScene_RunEarlySequence(void)
     a = *(s16 *)(tbl + o4);
     b = *(s16 *)(tbl + o4 + 2);
     if (idx == 1) {
-        Audio_PlayCue(188);
+        Event_PlayCue(188);
         Map_CopyCellsTo(42, 33, a, b, 2, 2);
         c = a + 2;
         Map_CopyCellsTo(42, 35, c, b, 2, 2);
@@ -342,7 +342,7 @@ void FieldScene_RunEarlySequence(void)
         Map_CopyCellsTo(40, 35, c, b, 2, 2);
         Engine_EventWait(4);
     } else {
-        Audio_PlayCue(158);
+        Event_PlayCue(158);
         if (idx == 3) {
             Map_CopyCellsTo(33, 42, 8, 17, 1, 2);
         }
@@ -376,7 +376,7 @@ void FieldScene_RunScene3a3SequenceB(void)
     work = gEventWork;
     Engine_EventBegin();
     Object_GetById(0)->motion_flags = 0;
-    Audio_PlayCue(123);
+    Event_PlayCue(123);
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
     Engine_EventRequestExit(work->touched_trigger);
     Engine_EventCloseScreen();
@@ -395,7 +395,7 @@ void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
         work->y += -0x18000;
         if (work->y < work->ground) {
             if (work->active != 0) {
-                Audio_PlayCue(229);
+                Event_PlayCue(229);
                 work->active = 0;
                 work->delay = 4;
                 Work_SetValuesIfNonNegative(0, 0x10000, 0x10000);
@@ -407,7 +407,7 @@ void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
         work->state = 0;
     }
     if (work->timer == 0) {
-        Audio_PlayCue(152);
+        Event_PlayCue(152);
         work->active = 1;
         Object_SetMode(work, 2);
         work->velocity = 0x30000;
@@ -428,7 +428,7 @@ void FieldScene_RunScene3a3SequenceC(void)
     Actor_SetSpeed(18, 0x13333, 0x9999);
     Actor_MoveToAndWait(18, 28, 0x1cc);
     Actor_MoveToAndWait(18, 24, 0x1c0);
-    Audio_PlayCue(229);
+    Event_PlayCue(229);
     Engine_ActorDestroy(18);
     Work_SetValuesIfNonNegative(0, 0x10000, 0x10000);
     Engine_EventWait(4);
@@ -662,7 +662,7 @@ void ArutinMura_RunDriftEndScene(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     Actor_FaceDirection(18, 0, 20);
     Actor_FaceDirection(18, 0xd000, 40);
-    Audio_PlayCue(147);
+    Event_PlayCue(147);
     Engine_ActorRunRepeatedMotion(18, 2);
     Engine_EventWait(20);
     Actor_FaceDirection(18, 0xb000, 40);

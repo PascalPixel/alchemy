@@ -515,7 +515,7 @@ void Scene_PushBlockAlongRun(struct TileRun2 *runs)
     Engine_EventWait(6);
     actor->speed = 0x8000;
     actor->acceleration = 0x3333;
-    Audio_PlayCue(239);
+    Event_PlayCue(239);
     Object_SetMode(actor, KorimaMagari_PushAnimations[quarter]);
     Engine_ObjectSetPosition(actor, x, 0, z);
     Engine_EventWait(6);
@@ -527,8 +527,8 @@ void Scene_PushBlockAlongRun(struct TileRun2 *runs)
     Engine_ActorSetAnimation(0, 1);
     Object_CommitPosition(actor);
     Object_SetMode(actor, 1);
-    Audio_PlayCue(0x120);
-    Audio_PlayCue(213);
+    Event_PlayCue(0x120);
+    Event_PlayCue(213);
     Engine_EventWait(15);
     Engine_EventEnd();
 }

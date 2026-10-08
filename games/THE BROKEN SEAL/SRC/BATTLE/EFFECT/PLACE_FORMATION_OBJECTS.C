@@ -22,55 +22,70 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
-
-struct Scale { s32 x; s32 y; };
-struct Placement { s32 x; s32 y; s32 z; s32 w; };
+struct Scale
+{
+	s32 x;
+	s32 y;
+};
+struct Placement
+{
+	s32 x;
+	s32 y;
+	s32 z;
+	s32 w;
+};
 
 extern const struct Scale Formation_NormalScale;
 extern const struct Scale Formation_SmallScale;
 
-void Object_ApplyProjectedPlacementFar(void *object, struct Placement *pos, struct Scale *scale, s32 flags);
+void Object_ApplyProjectedPlacementFar(
+	void *object, struct Placement *pos, struct Scale *scale, s32 flags);
 
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 {
-    struct BattleEffectWork *work = (struct BattleEffectWork *)*(void **)gBattleFxWork;
-    struct Scale normal = Formation_NormalScale;
-    struct Scale small = Formation_SmallScale;
-    struct Placement pos;
-    s32 i;
+	struct BattleEffectWork *work = *(void **)gBattleFxWork;
+	struct Scale			 normal = Formation_NormalScale;
+	struct Scale			 small = Formation_SmallScale;
+	struct Placement		 pos;
+	s32						 i;
 
-    pos.w = 0;
-    pos.y = 0xff0000;
-    switch (formation) {
-    case 0:
-        for (i = 0; i != 9; i++) {
-            pos.x = (i % 3 << 21) + x;
-            pos.z = (i / 3 << 21) + z;
-            Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
-        }
-        break;
-    case 1:
-        for (i = 0; i != 12; i++) {
-            pos.x = (Formation_TwelveX[i] << 16) + x - 0x100000;
-            pos.z = (Formation_TwelveZ[i] << 16) + z - 0x200000;
-            Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
-        }
-        break;
-    case 2:
-        for (i = 0; i != 8; i++) {
-            pos.x = (Formation_RightEightX[i] << 16) + x + 0x100000;
-            pos.z = (Formation_RightEightZ[i] << 16) + z;
-            Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
-        }
-        break;
-    case 3:
-        for (i = 0; i != 8; i++) {
-            pos.x = (Formation_SmallEightX[i] << 16) + x;
-            pos.z = (Formation_SmallEightZ[i] << 16) + z;
-            Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &small, 0);
-        }
-        break;
-    }
+	pos.w = 0;
+	pos.y = 0xff0000;
+	switch (formation)
+	{
+	case 0:
+		for (i = 0; i != 9; i++)
+		{
+			pos.x = (i % 3 << 21) + x;
+			pos.z = (i / 3 << 21) + z;
+			Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
+		}
+		break;
+	case 1:
+		for (i = 0; i != 12; i++)
+		{
+			pos.x = (Formation_TwelveX[i] << 16) + x - 0x100000;
+			pos.z = (Formation_TwelveZ[i] << 16) + z - 0x200000;
+			Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
+		}
+		break;
+	case 2:
+		for (i = 0; i != 8; i++)
+		{
+			pos.x = (Formation_RightEightX[i] << 16) + x + 0x100000;
+			pos.z = (Formation_RightEightZ[i] << 16) + z;
+			Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
+		}
+		break;
+	case 3:
+		for (i = 0; i != 8; i++)
+		{
+			pos.x = (Formation_SmallEightX[i] << 16) + x;
+			pos.z = (Formation_SmallEightZ[i] << 16) + z;
+			Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &small, 0);
+		}
+		break;
+	}
 }
 
 void Audio_PlayCue(s32 cue);
@@ -81,149 +96,158 @@ extern struct EffectStep gMapCellBuffer[];
 
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 {
-    void **heap_cache;
-    void **cursor;
-    struct BattleEffectWork *work;
-    void *canvas;
-    DrawRectangle spark;
-    DrawRectangle flare;
-    u8 *sheet;
-    s32 origin_x;
-    struct EffectStep *step;
-    s32 frame;
-    s32 i;
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	DrawRectangle			 spark;
+	DrawRectangle			 flare;
+	u8						*sheet;
+	s32						 origin_x;
+	struct EffectStep		*step;
+	s32						 frame;
+	s32						 i;
 
-    heap_cache = (void **)gBattleFxWork;
-    cursor = heap_cache;
-    work = *cursor++;
-    canvas = *cursor;
-    sheet = heap_cache[2];
-    origin_x = x;
-    x += 0x280000;
-    x /= 2;
-    REG_BG2PA = 0x80;
-    REG_BG2X = 0;
-    REG_BLDCNT = 0x3f46;
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-    flare = heap_cache[7];
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
-    spark = heap_cache[8];
-    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + 0x59d8, 0, 0);
-    work->transfer_mode = 2;
-    work->transfer_value = 50;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	sheet = heap_cache[2];
+	origin_x = x;
+	x += 0x280000;
+	x /= 2;
+	REG_BG2PA = 0x80;
+	REG_BG2X = 0;
+	REG_BLDCNT = 0x3f46;
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	flare = heap_cache[7];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+	spark = heap_cache[8];
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + 0x59d8, 0, 0);
+	work->transfer_mode = 2;
+	work->transfer_value = 50;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-    for (i = 0; i != 64; i++) {
-        s32 speed = (Random16() & 255) + 256;
-        s32 angle = Random16() & 0xffff;
+	for (i = 0; i != 64; i++)
+	{
+		s32 speed = (Random16() & 255) + 256;
+		s32 angle = Random16() & 0xffff;
 
-        work->particles[i].x = x;
-        work->particles[i].y = y;
-        work->particles[i].velocity_x = (Trig_Sin(angle) * speed) >> 7;
-        work->particles[i].velocity_y = -((Trig_Cos(angle) * speed) >> 6);
-        work->particles[i].variant = (Random16() & 15) + 16;
-    }
+		work->particles[i].x = x;
+		work->particles[i].y = y;
+		work->particles[i].velocity_x = (Trig_Sin(angle) * speed) >> 7;
+		work->particles[i].velocity_y = -((Trig_Cos(angle) * speed) >> 6);
+		work->particles[i].variant = (Random16() & 15) + 16;
+	}
 
-    for (i = 0; i != 3; i++) {
-        work->particles[61 + i].x = x;
-        work->particles[61 + i].y = y;
-        work->particles[61 + i].velocity_x = (Trig_Sin(i * 0x5555) * 32) >> 6;
-        work->particles[61 + i].velocity_y = -((Trig_Cos(i * 0x5555) * 32) >> 5);
-    }
+	for (i = 0; i != 3; i++)
+	{
+		work->particles[61 + i].x = x;
+		work->particles[61 + i].y = y;
+		work->particles[61 + i].velocity_x = (Trig_Sin(i * 0x5555) * 32) >> 6;
+		work->particles[61 + i].velocity_y = -((Trig_Cos(i * 0x5555) * 32) >> 5);
+	}
 
-    for (i = 0; i != 64; i++) {
-        s32 speed = (Random16() & 255) + 32;
-        s32 angle = Random16() & 0xffff;
+	for (i = 0; i != 64; i++)
+	{
+		s32 speed = (Random16() & 255) + 32;
+		s32 angle = Random16() & 0xffff;
 
-        gMapCellBuffer[i].x = x;
-        gMapCellBuffer[i].y = y;
-        gMapCellBuffer[i].velocity_x = (Trig_Sin(angle) * speed) >> 6;
-        gMapCellBuffer[i].velocity_y = -((Trig_Cos(angle) * speed) >> 5);
-        gMapCellBuffer[i].variant = (Random16() & 15) + 20;
-    }
+		gMapCellBuffer[i].x = x;
+		gMapCellBuffer[i].y = y;
+		gMapCellBuffer[i].velocity_x = (Trig_Sin(angle) * speed) >> 6;
+		gMapCellBuffer[i].velocity_y = -((Trig_Cos(angle) * speed) >> 5);
+		gMapCellBuffer[i].variant = (Random16() & 15) + 20;
+	}
 
-    for (frame = 0; frame != 72; frame++) {
-        if (frame == 4)
-            Audio_PlayCue(0x9a);
-        if (frame == 32)
-            Audio_PlayCue(0xd4);
-        if (frame <= 47) {
-            s32 cell = (frame - 8) / 5;
-            u32 width;
-            u32 height;
+	for (frame = 0; frame != 72; frame++)
+	{
+		if (frame == 4)
+			Audio_PlayCue(0x9a);
+		if (frame == 32)
+			Audio_PlayCue(0xd4);
+		if (frame <= 47)
+		{
+			s32 cell = (frame - 8) / 5;
+			u32 width;
+			u32 height;
 
-            if (cell < 0)
-                cell = 0;
-            flare(canvas, work->sheet + ImpactBurst_CellSourceOffsets[cell],
-                (x >> 16) - ((width = ImpactBurst_CellWidths[cell]) >> 1),
-                (y >> 16) - ((height = ImpactBurst_CellHeights[cell]) >> 1),
-                width, height);
-        }
+			if (cell < 0)
+				cell = 0;
+			flare(canvas, work->sheet + ImpactBurst_CellSourceOffsets[cell],
+				(x >> 16) - ((width = ImpactBurst_CellWidths[cell]) >> 1),
+				(y >> 16) - ((height = ImpactBurst_CellHeights[cell]) >> 1), width, height);
+		}
 
-        for (i = 0, step = work->particles; i != 30; i++, step++) {
-            if (frame > i / 2 && step->variant > 0) {
-                s32 size;
-                s32 px;
-                s32 py;
+		for (i = 0, step = work->particles; i != 30; i++, step++)
+		{
+			if (frame > i / 2 && step->variant > 0)
+			{
+				s32 size;
+				s32 px;
+				s32 py;
 
-                step->variant--;
-                EffectStep_AdvanceWithGravity2D(step, 60, 0);
-                size = step->variant / 16 + 3;
-                px = HI(step->x);
-                py = HI(step->y);
-                spark(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
-                    px - size / 2, py - size, size, size * 2);
-            }
-        }
+				step->variant--;
+				EffectStep_AdvanceWithGravity2D(step, 60, 0);
+				size = step->variant / 16 + 3;
+				px = HI(step->x);
+				py = HI(step->y);
+				spark(canvas, sheet + ParticleStreams_CellOffsets[size - 1], px - size / 2,
+					py - size, size, size * 2);
+			}
+		}
 
-        for (i = 0, step = gMapCellBuffer; i != 60; i++, step++) {
-            if (frame > 35 && step->variant > 0) {
-                s32 size;
-                s32 px;
-                s32 py;
+		for (i = 0, step = gMapCellBuffer; i != 60; i++, step++)
+		{
+			if (frame > 35 && step->variant > 0)
+			{
+				s32 size;
+				s32 px;
+				s32 py;
 
-                step->variant--;
-                EffectStep_AdvanceWithGravity2D(step, 60, 0);
-                size = step->variant / 16 + 1;
-                px = HI(step->x);
-                py = HI(step->y);
-                spark(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
-                    px - size / 2, py - size, size, size * 2);
-            }
-        }
+				step->variant--;
+				EffectStep_AdvanceWithGravity2D(step, 60, 0);
+				size = step->variant / 16 + 1;
+				px = HI(step->x);
+				py = HI(step->y);
+				spark(canvas, sheet + ParticleStreams_CellOffsets[size - 1], px - size / 2,
+					py - size, size, size * 2);
+			}
+		}
 
-        for (i = 0; i != 3; i++) {
-            struct EffectStep *shard = &work->particles[61 + i];
+		for (i = 0; i != 3; i++)
+		{
+			struct EffectStep *shard = &work->particles[61 + i];
 
-            if (frame >= 36 && frame <= 63) {
-                s32 cell;
-                s32 px;
-                s32 py;
+			if (frame >= 36 && frame <= 63)
+			{
+				s32 cell;
+				s32 px;
+				s32 py;
 
-                EffectStep_AdvanceWithGravity2D(shard, 64, 0);
-                cell = (frame - 36) / 7;
-                px = HI(shard->x);
-                py = HI(shard->y);
-                flare(canvas, work->sheet + cell * 0x120 + 0x59d8,
-                    px - 6, py - 12, 12, 24);
-            }
-        }
+				EffectStep_AdvanceWithGravity2D(shard, 64, 0);
+				cell = (frame - 36) / 7;
+				px = HI(shard->x);
+				py = HI(shard->y);
+				flare(canvas, work->sheet + cell * 0x120 + 0x59d8, px - 6, py - 12, 12, 24);
+			}
+		}
 
-        if (frame <= 35)
-            BattleFx_PlaceFormationObjects(formation, origin_x, y);
-        work->transfer_pending = 1;
-        WaitFrames(1);
-    }
+		if (frame <= 35)
+			BattleFx_PlaceFormationObjects(formation, origin_x, y);
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
 
-    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
-    {
-        /* FAKEMATCH: the routine's address is loaded before the size, as a call through a local makes it. */
-        s32 (*clear)(void *, s32) = Iwram_ClearWords;
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	{
+		/* FAKEMATCH: the routine's address is loaded before the size, as a call through a local makes it. */
+		s32 (*clear)(void *, s32) = Iwram_ClearWords;
 
-        clear(BG_CHAR_BLOCK(1), 0x4000);
-    }
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+		clear(BG_CHAR_BLOCK(1), 0x4000);
+	}
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 }

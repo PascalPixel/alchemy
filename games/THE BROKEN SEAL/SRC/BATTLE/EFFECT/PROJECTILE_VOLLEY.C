@@ -12,83 +12,80 @@
 #include "MOTOBJ.H"
 #include "FIELD_EVENT.H"
 
-#define ObjectDispatch_ApplyValueToChildrenFar ((s32 (*)(s32,s32))ObjectDispatch_ApplyValueToChildrenFar)
+#define ObjectDispatch_ApplyValueToChildrenFar \
+	((s32 (*)(s32, s32))ObjectDispatch_ApplyValueToChildrenFar)
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
+#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 void BattleFx_RunMode0(void *effect)
 {
-    BattleFx_RunProjectileVolley(effect, 0);
+	BattleFx_RunProjectileVolley(effect, 0);
 }
 
 void BattleFx_RunMode1(void *effect)
 {
-    BattleFx_RunProjectileVolley(effect, 1);
+	BattleFx_RunProjectileVolley(effect, 1);
 }
 
 void BattleFx_RunMode2(void *effect)
 {
-    BattleFx_RunProjectileVolley(effect, 2);
+	BattleFx_RunProjectileVolley(effect, 2);
 }
 
 void BattleFx_RunMode3(void *effect)
 {
-    BattleFx_RunProjectileVolley(effect, 3);
+	BattleFx_RunProjectileVolley(effect, 3);
 }
 
 void BattleFx_RunMode11(void *effect)
 {
-    BattleFx_RunProjectileVolley(effect, 0xB);
+	BattleFx_RunProjectileVolley(effect, 0xB);
 }
 
 void BattleFx_RunMode4(void *effect)
 {
-    BattleFx_RunProjectileVolley(effect, 4);
+	BattleFx_RunProjectileVolley(effect, 4);
 }
 
 void BattleEffect_RunMode5WithAction(void *effect)
 {
-    s32 object;
+	s32 object;
 
-    object =
-        (s32)GetBattleObjectSlotFar(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
-    Object_SetMode(object, 2);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
-    BattleFx_RunProjectileVolley(effect, 5);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+	object = (s32)GetBattleObjectSlotFar(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
+	Object_SetMode(object, 2);
+	ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+	BattleFx_RunProjectileVolley(effect, 5);
+	ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
 }
 
 void BattleFx_RunMode6WithAction(void *effect)
 {
-    s32 object;
+	s32 object;
 
-    object =
-        (s32)GetBattleObjectSlotFar(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
-    Object_SetMode(object, 2);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
-    BattleFx_RunProjectileVolley(effect, 6);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+	object = (s32)GetBattleObjectSlotFar(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
+	Object_SetMode(object, 2);
+	ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+	BattleFx_RunProjectileVolley(effect, 6);
+	ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
 }
 
 void BattleFx_RunMode7(void *effect)
 {
-    BattleFx_RunProjectileVolley(effect, 7);
+	BattleFx_RunProjectileVolley(effect, 7);
 }
 
 void BattleFx_RunMode10(void *effect)
 {
-    BattleFx_RunProjectileVolley(effect, 0xA);
+	BattleFx_RunProjectileVolley(effect, 0xA);
 }
 
 void BattleFx_RunMode9WithAction(void *effect)
 {
-    s32 object;
+	s32 object;
 
-    object =
-        (s32)GetBattleObjectSlotFar(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
-    Object_SetMode(object, 2);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
-    BattleFx_RunProjectileVolley(effect, 9);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
+	object = (s32)GetBattleObjectSlotFar(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
+	Object_SetMode(object, 2);
+	ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
+	BattleFx_RunProjectileVolley(effect, 9);
+	ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
 }

@@ -13,5 +13,5 @@ extern u32 gKeysHeld;
 
 u16 BattleFx_GetCycledTableWord(void)
 {
-    return BattleFx_CyclePatternWords[(gKeysHeld >> 4) & 15];
+	return BattleFx_CyclePatternWords[(gKeysHeld >> 4) & 15];
 }

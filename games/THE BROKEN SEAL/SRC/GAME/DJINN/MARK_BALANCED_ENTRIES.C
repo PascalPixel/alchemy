@@ -46,7 +46,7 @@ s32 UiWork_SetParamNibbleFar(s32 color);
 s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
 void Menu_RunPairedEntryAction(s32, s32);
-void FourObjectMotion_SetSlotPhase(s32, s32);
+// FourObjectMotion_SetSlotPhase は宣言なしで呼ぶ (C89 の暗黙の int): その呼び出しは r1 を r0 より先に設定する
 s32 Trig_Sin(s32);
 s32 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
 
@@ -526,15 +526,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         WaitFrames(1);
     }
 
-    {
-        /* FAKEMATCH: the two sets of each call tie in sched2 (priority 186, three dependents each) and expand_call emits r0 first, so LUID puts r0 first; native sets r1 first. The phase held in r1 is set before each call. */
-        register s32 phase asm("r1");
-
-        phase = 0;
-        FourObjectMotion_SetSlotPhase(0, phase);
-        phase = 0;
-        FourObjectMotion_SetSlotPhase(1, phase);
-    }
+    FourObjectMotion_SetSlotPhase(0, 0);
+    FourObjectMotion_SetSlotPhase(1, 0);
     Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
 
     ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 1;

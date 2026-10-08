@@ -26,7 +26,7 @@
 	((void (*)(void *, s32))ObjectGroup_SetChildValueUnlessFifteenFar)
 #define ObjectGroup_ApplyRandomChildValues ((void (*)(void))ObjectGroup_ApplyRandomChildValues)
 
-#define TSUBU_MAX 24 // 粒の数 (エフェクト枠の数)
+#define SLOT_MAX 24 // エフェクト枠の数 (粒の数)
 
 //--------------------------------------------------------------------------
 // 毎フレームの更新 : timer に比例して回転をだんだん速める
@@ -188,7 +188,7 @@ void BattleFx_RunEffect15(void)
 		i++;
 		WaitFrames(1);
 		slot++;
-	} while (i < TSUBU_MAX);
+	} while (i < SLOT_MAX);
 	WaitFrames(70);
 
 	// 飛んでいる粒を、着いたら消える状態にする
@@ -199,7 +199,7 @@ void BattleFx_RunEffect15(void)
 		if (scene->slots[i].active != 0)
 			scene->slots[i].state = last;
 		i++;
-	} while (i < TSUBU_MAX);
+	} while (i < SLOT_MAX);
 	WaitFrames(40);
 	BattleFx_PrepareBufferInterpolation();
 	WaitFrames(10);

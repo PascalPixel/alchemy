@@ -59,7 +59,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 	sprites = heap[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(1);
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
 	draw[0] = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
 	Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
 	Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, work->sheet + 0xc56, 1, 1);
@@ -126,7 +126,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 				}
 			}
 
-			// 光 : 足もとから上のでたらめな位置に、でたらめな色で描く
+			// 光 : 足もとから上のでたらめな位置に、でたらめな向き (左右・上下反転) で描く
 			if (frame >= start + 2 && frame < start + 24)
 			{
 				for (j = 0; j != LightningBolts_Counts[work->effect->variant * 4 + 1]; j++)
@@ -143,7 +143,8 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 					x -= (BattleFx_GlintCellWidths[kind] >> 1);
 
 					BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-						LightningBolts_GlintPalettes[Random16() & 3] | 3,
+						LightningBolts_GlintPalettes[Random16() & 3]
+							| GOUSEI_CLIP_X | GOUSEI_CLIP_Y,
 						LightningBolts_GlintModes[work->effect->variant]);
 					BLIT_ALT(canvas, work->sheet + BattleFx_GlintCellOffsets[kind], x, y,
 						BattleFx_GlintCellWidths[kind], BattleFx_GlintCellHeights[kind]);

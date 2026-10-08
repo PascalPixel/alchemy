@@ -25,7 +25,6 @@
 #include "IO_REG.H"
 
 #define FarCall_EffectTable ((s32 (*)(s32,s32,s32,s32,s32))FarCall_EffectTable)
-#define BattleMotion_ProjectScaledPosition ((void (*)(s32,struct EffectPosition*))BattleMotion_ProjectScaledPosition)
 #define BattleFx_RunIceFleckBurstFar ((void (*)(struct EffectLaunch*))BattleFx_RunIceFleckBurstFar)
 
 #define gTransitionWork (*(s32 * *)&gTransitionWork)
@@ -280,14 +279,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
             work = gWorkSlot[39];
             if (frame <= 24)
                 Graphics_ScaleRgb555Clamped(session->palette, (u16 *)0x050000c0, *brightness = 0x10000 - frame * 1092, 128);
-            {
-
-                /* FAKEMATCH: the second argument is pinned to r1 to load it first. */
-                register struct EffectPosition *out __asm__("r1");
-
-                out = pos;
-                BattleMotion_ProjectScaledPosition(unit, out);
-            }
+            BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
             work->origin_x = (64 - pos->x) << 8;
             work->origin_y = (64 - pos->y) << 8;
             BG2_QUEUE_ORIGIN(ime, (void)0, &work->origin_x);
@@ -299,7 +291,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
         BattlePresentation_PrepareSceneFar(kind);
         for (frame = 0; frame < 40; frame++) {
             work = gWorkSlot[39];
-            BattleMotion_ProjectScaledPosition(unit, &position2);
+            BattleMotion_ProjectScaledPosition(unit, (s32 *)&position2);
             work->origin_x = (64 - position2.x) << 8;
             work->origin_y = (64 - position2.y) << 8;
             {

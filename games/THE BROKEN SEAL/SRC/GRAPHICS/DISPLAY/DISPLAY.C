@@ -100,7 +100,7 @@ struct SelectionWork {
 void RenderOutput_PrepareForRedraw(struct UiWindow *work);
 void UiText_DrawCharacter(u8 *base, s32 index, u32 kind);
 s32 *Trade_GetOfferStateFar(s32 index);
-void BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
+s32 BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 
 s32 Ui_RunSelectionScreen(s32 mode)
@@ -295,10 +295,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                                 message = UiText_ShowMessageAndWaitComplete((s32)&MsgDjinnTutorialUnleashCommand, 15, 8);
                             else if (kind == 16)
                                 message = UiText_ShowMessageAndWaitComplete((s32)&MsgDjinnTutorialSummon, 15, 8);
-                            {
-                                register s32 y asm("r1") = 155; /* FAKEMATCH: the prompt y is set before x (movs r1, #155; movs r0, #102): as plain arguments sched2 keeps r0 first (equal priority, LUID order), 0 -> 2 */
-                                BattlePresentation_WaitForPromptAtFar(102, y);
-                            }
+                            BattlePresentation_WaitForPromptAtFar(102, 155);
                             UiWork_Finalize(message, 1);
                             runtime->auto_enabled++;
                             runtime->auto_delay = 45;

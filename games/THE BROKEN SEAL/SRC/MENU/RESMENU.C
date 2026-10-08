@@ -861,8 +861,6 @@ void AffineEffect_UpdateFrame(void)
     s32 matrix;
     s32 edge;
 
-    /* FAKEMATCH: register choice, measured 42 instructions without. */
-    register s32 x asm("r0");
     s32 y;
     u32 end;
     u32 i;
@@ -918,16 +916,15 @@ void AffineEffect_UpdateFrame(void)
     if (work->row == 0) {
         struct WindowBuffer *window;
 
-        /* FAKEMATCH: register choice, measured 4 instructions without. */
-        register s32 span asm("r2");
+        s32 span;
 
         buffers = gDisplayTransition;
         if (buffers == 0 || work->count == 0)
             return;
         window = (struct WindowBuffer *)(buffers + buffers[0x539] * 644);
-        x = work->entries[work->selection].x;
+        edge = work->entries[work->selection].x;
         span = (scale * 12 - 2817) / 256;
-        edge = ((x - span) << 8) + (x + span) + 23;
+        edge = ((edge - span) << 8) + (edge + span) + 23;
         end = work->entries[work->selection].y + 24;
         end += (scale * 32 - 7937) / 512 + 1;
         line = &window->lines[24].span;
@@ -952,16 +949,15 @@ void AffineEffect_UpdateFrame(void)
         struct WindowBuffer *window;
         s32 start;
 
-        /* FAKEMATCH: register choice, measured 4 instructions without. */
-        register s32 span asm("r3");
+        s32 span;
 
         buffers = gDisplayTransition;
         if (buffers == 0 || work->count == 0)
             return;
         window = (struct WindowBuffer *)(buffers + buffers[0x539] * 644);
-        x = work->entries[work->selection].x;
+        edge = work->entries[work->selection].x;
         span = (scale * 12 - 2817) / 256;
-        edge = ((x - span) << 8) + (x + span) + 23;
+        edge = ((edge - span) << 8) + (edge + span) + 23;
         start = work->entries[work->selection].y;
         start -= (scale * 32 - 7937) / 512 + 1;
         line = &window->lines[start].span;

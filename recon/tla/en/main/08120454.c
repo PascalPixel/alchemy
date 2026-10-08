@@ -1,6 +1,7 @@
 /* BtlTgtExec, tla-en 0x08120454.
- * alchemy diff: listing 3450 instructions, draft 3450, common 3422,
- * differ 56 (2026-10-08; 70 before this session's order devices, below).
+ * alchemy diff: listing 3450 instructions, draft 3450, common 3426,
+ * differ 48 (2026-10-08; 56 before the HP drain below, 70 before the
+ * order devices).
  * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
  * SEAL/SRC/BATTLE/TGTEXEC.C) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
@@ -322,7 +323,24 @@
  * length 4 or 6) 59 against 71 on the same scorer, but the ROM
  * interleaves split pieces with other insns (movs r4, #160; ldr r0;
  * lsls r4 ...), so the split does happen before sched2 and the idea is
- * refuted; one or two cycles more for every sp-based load 131, 159. */
+ * refuted; one or two cycles more for every sp-based load 131, 159.
+ * 2026-10-08, the HP drain, 48 (common 3426): ap = dealt before
+ * dmg = actor->hp, ap /= 2 in the 60 branch, kind = ap. The listing's
+ * ldr r7 is ap (r7 everywhere), loaded from dealt's slot before the
+ * test; cse keeps dealt, which lives longer, in the halving, and reload
+ * takes spilled dealt from r7 instead of its slot (adds r0, r7, #0);
+ * kind takes the result in r6. ap = dealt / 2 in the branch scores the
+ * same; ap read after dmg = actor->hp 291
+ * (ap and kind then share r6, and ap leaves r7 everywhere), and every
+ * other function-level variable for the halving 84 to 1699 (spilled or
+ * in r1). Left there: the ldr r7 issues before the hp copy (adds r2,
+ * r5, #0) where the listing issues it after, a sched2 tie (both
+ * priority 1) broken by insn order, which needs ap read after hp.
+ * Score in every edition: 48 in tla-en; 50 in ja, de, es, fr and it,
+ * whose 2 extra rows are the diff decoding the via-lr BL half and the
+ * movs after it as one strb.w, not a difference; so all six editions
+ * share this source as it stands. With the drain: no single asm("")
+ * after any statement improves on 48. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -1559,10 +1577,11 @@ pow_end:
 
         case 31:
         case 60:
+            ap = dealt;
             dmg = actor->hp;
             if (action->efx == 60)
-                dealt /= 2;
-            kind = dealt;
+                ap /= 2;
+            kind = ap;
             dmg += kind;
             if (dmg > actor->max_hp) {
                 dmg = actor->max_hp;

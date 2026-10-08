@@ -1684,7 +1684,7 @@ void MakyuriHeya_CastPsynergyAtActor11(void)
     u8 *addr;
     u8 v;
 
-    p5 = *(volatile s32 *)gEffectWork;
+    p5 = *(u8 **)gEffectWork;
     Actor_SetPosition(11, 0x3480000, 0x2580000);
     Engine_PsynergyBegin(93, 1);
     Engine_PsynergySetTarget(3, 11);

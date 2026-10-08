@@ -26,12 +26,6 @@
 
 void BattleFx_SetWeightedResult(s32 actor, s32 mode);
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
-
 void Event_SetDestination(s32 scene, s32 entrance);
 
 
@@ -441,44 +435,38 @@ void SuharaSabaku_EnableEffectChildOption(void)
 
 void SuharaSabaku_MeetActor(s32 a0, s32 actor)
 {
-    register s32 a1 asm("r6") = actor; /* FAKEMATCH: pins the actor id to r6 */
-    union GameStateRows *state;
+    struct GameState *state;
 
     if (gEventWork->raised_trigger == 99) {
-        {
-            u16 *target = (u16 *)&gEventWork->raised_trigger;
-            u16 shown = 0;
-
-            *target = shown;
-        }
+        gEventWork->raised_trigger = 0;
     }
     Engine_GameFlagClear(0x20f);
     if (gGameState.scene == (s32)&SceneId_SuharaSabaku1) {
-        Engine_GameFlagSet((a1 + 0x2f9));
+        Engine_GameFlagSet((actor + 0x2f9));
     } else {
         if (gGameState.scene == (s32)&SceneId_SuharaSabaku2) {
-            Engine_GameFlagSet((a1 + 0x309));
+            Engine_GameFlagSet((actor + 0x309));
         }
     }
     GameFlag_SetByte(0x210, 0);
     BattleFx_SetWeightedResult(98, 5);
-    /* FAKEMATCH: publish the byte before retaining the scene pointer. */
+    /* FAKEMATCH: needed to match: the one-pass block stores the battle start before the scene pointer is kept. */
     do {
-        ((union GameStateRows *)&gGameState)->bytes[277][1] = 3;
+        gGameState.battle_start = 3;
     } while (0);
-    state = (union GameStateRows *)&gGameState;
-    if (state->halves[224][0] == (s32)&SceneId_SuharaSabaku2) {
-        if (a1 == 11) {
+    state = &gGameState;
+    if (state->scene == (s32)&SceneId_SuharaSabaku2) {
+        if (actor == 11) {
             BattleFx_SetWeightedResult(98, 7);
         } else {
-            if (a1 == 12) {
+            if (actor == 12) {
                 BattleFx_SetWeightedResult(98, 6);
                 Engine_ActorStop(12);
                 Engine_ActorSetPosition(12, 0, 0);
             }
         }
     }
-    Object_GetById(state->words[125])->motion_flags = 3;
+    Object_GetById(gGameState.selected_actor)->motion_flags = 3;
 }
 
 void SuharaSabaku_DropAndLeave(void)

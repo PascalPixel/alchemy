@@ -1148,13 +1148,10 @@ void SceneEffect_UpdateObjectByFrameParity(s32 a)
 
 void SceneState_ForwardByRuntimeWordBits(s32 a)
 {
-    /* FAKEMATCH: the volatile frame-cell view retains three separate reads of gFrameCount. */
-    volatile u32 *p = (u32 *)&gFrameCount;
-
-    if (*p & 1) {
-        Engine_ObjectSetPartPalettes(a, Math_RemainderUnsigned(*p >> 1, 6));
+    if (gFrameCount & 1) {
+        Engine_ObjectSetPartPalettes(a, Math_RemainderUnsigned(gFrameCount >> 1, 6));
     }
-    if (Math_RemainderUnsigned(*p, 15) == 0) {
+    if (Math_RemainderUnsigned(gFrameCount, 15) == 0) {
         VinasuChojo_SpawnLinkedPairEffects(a);
     }
 }

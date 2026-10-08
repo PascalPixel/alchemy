@@ -1312,21 +1312,19 @@ void OverlayObject_UpdateOnFrameBit1(s32 obj)
 
 void SceneEffect_UpdateByFrameBits(s32 no)
 {
-    volatile s32 *p = (volatile s32 *)&gFrameCount;
-    if ((*p & 1) != 0) {
-        s32 t = Math_RemainderUnsigned((u32)*p >> 1, 6);
+    if ((gFrameCount & 1) != 0) {
+        s32 t = Math_RemainderUnsigned(gFrameCount >> 1, 6);
         Engine_ObjectSetPartPalettes(no, t);
     }
-    if ((*p & 15) == 0) {
+    if ((gFrameCount & 15) == 0) {
         HaidiaIe_SpawnEffectPair(no);
     }
 }
 
 void SceneEffect_UpdateByFrameBit(s32 no)
 {
-    volatile s32 *p = (volatile s32 *)&gFrameCount;
-    if ((*p & 1) != 0) {
-        s32 t = Math_RemainderUnsigned((u32)*p >> 1, 6);
+    if ((gFrameCount & 1) != 0) {
+        s32 t = Math_RemainderUnsigned(gFrameCount >> 1, 6);
         Engine_ObjectSetPartPalettes(no, t);
     }
 }

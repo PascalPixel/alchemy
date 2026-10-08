@@ -174,7 +174,6 @@ void ConfigureSceneForActorEightColumn(void)
 
 void FieldScene_RunPrimarySequence(void)
 {
-    volatile s32 *state = (volatile s32 *)&gFrameCount;
     s32 flags;
     s32 a0;
     s32 a2;
@@ -182,7 +181,7 @@ void FieldScene_RunPrimarySequence(void)
     s32 rec7a, reca, v1a, v2a, v3a, ta, ua, na;
     s32 rec7b, recb, v1b, v2b, v3b, tb, ub, nb;
 
-    flags = *state & 7;
+    flags = gFrameCount & 7;
     if (flags == 0) {
         rec7a = (u8 *)Object_GetById(9);
         v1a = Engine_RandomNext();
@@ -202,7 +201,7 @@ void FieldScene_RunPrimarySequence(void)
         v3a = Engine_RandomNext();
         na = -na;
         Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, 0, na, (s32)((u32)(v3a << 1) >> 16), flags);
-        flags = *state & 15;
+        flags = gFrameCount & 15;
         if (flags == 0) {
             rec7b = (u8 *)Object_GetById(9);
             v1b = Engine_RandomNext();

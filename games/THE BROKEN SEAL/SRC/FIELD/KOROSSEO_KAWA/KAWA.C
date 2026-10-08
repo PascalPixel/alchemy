@@ -893,15 +893,7 @@ void KorosseoKawa_RunStageIntro(s32 scene)
         if (path == 0) {
             Engine_EventSetMessage((s32)MsgKorosseoCallRockChallenge);
             Camera_SetSpeed(0x30000, 0x6000);
-            {
-                s32 x = 0xa4;
-                s32 y = 1;
-                s32 z = 0xa8;
-
-                /* FAKEMATCH: the native move loads x, y, z and the pan before shifting any of them. */
-                asm("" : "+r"(x), "+r"(y), "+r"(z));
-                Camera_MoveTo(x << 17, -y, z << 16, 1);
-            }
+            Camera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(scene, 0);
             Korosseo_FadeInCompetitor(0, 280, 200);
@@ -1033,15 +1025,7 @@ void Korosseo_RunBrokenBridgeIntro(s32 scene)
             Engine_EventSetMessage((s32)MsgKorosseoTheyCallBrokenBridge);
             SceneState_ResetCounterAndStartTask();
             Camera_SetSpeed(0x30000, 0x6000);
-            {
-                s32 x = 0xd2;
-                s32 y = 1;
-                s32 z = 0xd8;
-
-                /* FAKEMATCH: the native move loads x, y, z and the pan before shifting any of them. */
-                asm("" : "+r"(x), "+r"(y), "+r"(z));
-                Camera_MoveTo(x << 18, -y, z << 16, 1);
-            }
+            Camera_MoveTo(PIXELS(840), -1, PIXELS(216), 1);
             Engine_CameraWaitForMove();
             Event_ShowMessage(scene, 0);
             SceneState_SetMode66AndPassOpeningSequence();
@@ -1081,15 +1065,7 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
     if (path == 0) {
         Engine_EventSetMessage((s32)MsgKorosseoPlaceNormallyCalledLumberWater);
         Camera_SetSpeed(0x30000, 0x6000);
-        {
-            s32 x = 0x88;
-            s32 y = 1;
-            s32 z = 0xa8;
-
-            /* FAKEMATCH: the native move loads x, y, z and the pan before shifting any of them. */
-            asm("" : "+r"(x), "+r"(y), "+r"(z));
-            Camera_MoveTo(x << 19, -y, z << 16, 1);
-        }
+        Camera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
         Engine_CameraWaitForMove();
         Event_ShowMessage(scene, 0);
         SceneState_StoreParamsAndInitTable(120, 72, 0);

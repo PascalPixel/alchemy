@@ -1854,12 +1854,7 @@ void Scene_RepairTheHouse(void)
     s32 turn_back;
     s32 turn_side;
     struct FieldActor *turned;
-#if EDITION_INTERNATIONAL
     s32 none;
-#else
-    /* FAKEMATCH: the plain Japanese repair keeps zero in r5 and the mask in r6; the original stores zero through r6. */
-    register s32 none asm("r6");
-#endif
     s32 flag;
     s32 callback_a;
     s32 callback_b;
@@ -2256,12 +2251,8 @@ void Scene_RepairTheHouse(void)
     Event_ShowTwoMessagesAndWait(21, 14, 2, 24, 2, 1, 10, 14, 4, 14, none);
     Audio_PlayCue(161);
     rec = Actor_Get(ACTOR_DORA);
-    {
-        u8 value = *(volatile u8 *)&rec->steering_flags;
-
-        rec->sprite->flags = none;
-        rec->steering_flags = (u8)(value & 0xfe);
-    }
+    rec->sprite->flags = none;
+    rec->steering_flags &= 0xfe;
     Actor_SetSpeed(ACTOR_DORA, 0x30000, 0x18000);
     Actor_WalkToAndWait(ACTOR_DORA, 364, 815);
     Engine_EventWait(4);
@@ -2302,7 +2293,10 @@ void Scene_RepairTheHouse(void)
         rec->scale_y += 0x1999;
         Engine_EventWait(1);
     }
+#if EDITION_INTERNATIONAL
+    /* FAKEMATCH: needed to match: only the international repair sets none again here, which decides whether none or the 0xfe mask takes r5. */
     none = 0;
+#endif
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(GERALD, 2);
     Actor_FaceDirection(GERALD, 0x5000, 30);
@@ -2852,8 +2846,6 @@ void OverlayObject_UpdateOnFrameBit1(s32 p)
 
 void SceneEffect_UpdateObjectOnOddFrames(s32 p)
 {
-    extern volatile u32 gFrameCount;
-
     if ((gFrameCount & 1) != 0)
         Engine_ObjectSetPartPalettes(p, (gFrameCount >> 1) % 6);
     if ((gFrameCount & 0xf) == 0)
@@ -2862,8 +2854,6 @@ void SceneEffect_UpdateObjectOnOddFrames(s32 p)
 
 void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p)
 {
-    extern volatile u32 gFrameCount;
-
     if ((gFrameCount & 1) != 0)
         Engine_ObjectSetPartPalettes(p, (gFrameCount >> 1) % 6);
 }

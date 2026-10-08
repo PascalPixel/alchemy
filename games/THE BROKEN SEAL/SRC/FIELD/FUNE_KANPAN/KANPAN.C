@@ -123,8 +123,6 @@ void Engine_ActorFaceDirection();
 void Engine_ActorWalkTo();
 void Engine_ActorSetAttachedEffect();
 
-#define SCENE_PHASE (*(s32 *)(*(u8 *volatile *)&Data_03001ebc + 0x1c0))
-
 void FieldScene_RunStepThen10(s32 actor);
 void Engine_ActorStartAction(s32 actor);
 
@@ -1676,40 +1674,27 @@ void FieldScene_ConfigureLeadActors(void)
 
 void FieldScene_ConfigureThreeActors(void)
 {
-    /* FAKEMATCH: retained volatile pointer and halfword accesses preserve the current access ordering. */
-
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    record = (s32)Object_GetById(0);
+    record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
     Actor_SetPosition(20, 0xc40000, 0x1f60000);
-    record = (s32)Object_GetById(20);
-    {
-        s32 shown = 0xa000;
-
-        *(volatile u16 *)(record + 6) = shown;
-    }
+    record = Object_GetById(20);
+    record->facing = 0xa000;
     Actor_SetPosition(22, 0xb80000, 0x20c0000);
-    record = (s32)Object_GetById(22);
-    {
-        s32 shown = 0xb000;
-
-        *(volatile u16 *)(record + 6) = shown;
-    }
+    record = Object_GetById(22);
+    record->facing = 0xb000;
     Engine_ActorSetSpritePriority(21, 1);
     Actor_SetPosition(21, 0xb80000, 0x2780000);
-    record = (s32)Object_GetById(21);
-    {
-        s32 shown = 0xb000;
-
-        *(volatile u16 *)(record + 6) = shown;
-    }
-    SCENE_PHASE = 0x202;
+    record = Object_GetById(21);
+    record->facing = 0xb000;
+    /* FAKEMATCH: needed to match: the work pointer is read as a word, which may alias the facing stores, so they stay ahead of its load. */
+    *(s32 *)(*(s32 *)&Data_03001ebc + 0x1c0) = 0x202;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);

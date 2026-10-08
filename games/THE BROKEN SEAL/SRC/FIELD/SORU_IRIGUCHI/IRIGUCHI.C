@@ -506,7 +506,7 @@ s32 Scene_Initialize(void)
 void SoruIriguchi_ApplyEntryState(void)
 {
     GameFlag_Set(0x144);
-    *(s32 *)((*(u8 *volatile *)&gWork + 0x1c0)) = 0x100;
+    *(s32 *)((u8 *)gWork + 0x1c0) = 0x100;
     if (GameFlag_IsSet(0x814) != 0) {
         SoruIriguchi_CueTimer = 0;
         Task_AddCallback((void (*)(void))Scene_UpdateCueTimer, 0xc80);

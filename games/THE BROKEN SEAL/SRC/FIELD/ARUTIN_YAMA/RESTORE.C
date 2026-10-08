@@ -491,12 +491,11 @@ void FieldScene_RunScene3a4SequenceG(void)
 {
     struct FieldActor *spark;
     s32 scale;
-    volatile u32 *frame = &gFrameCount;
 
-    if (*frame % 3 == 0) {
+    if (gFrameCount % 3 == 0) {
         spark = (struct FieldActor *)Object_Create(200, (((u32)(Engine_RandomNext() * 48) >> 16) << 16) + 0x2fd0000, -0x400000, 0x2600000);
         if (spark != NULL) {
-            if (*frame % 9 == 0) {
+            if (gFrameCount % 9 == 0) {
                 if ((u32)(Engine_RandomNext() << 1) >> 16 != 0)
                     Engine_AudioPlayCue(145);
                 else

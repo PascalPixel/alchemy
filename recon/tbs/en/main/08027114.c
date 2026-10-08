@@ -1,8 +1,8 @@
-/* 08027114: differ 56 against the 1727-line parent listing (draft 1773,
- * common 1722), 46 of them the two nested helpers' lines (see below):
- * 10 real; by symbol 10 in every other edition. Frame 100 as native.
- * Left: the opening handshake's miss = 0 (native before the 'T' store)
- * and the reload register of its third count = -1 (r3, native r1).
+/* 08027114: differ 52 against the 1727-line parent listing (draft 1773,
+ * common 1724), 46 of them the two nested helpers' lines (see below):
+ * 6 real; by symbol 6 in every other edition. Frame 100 as native.
+ * Left: the reload register of the opening handshake's third count = -1
+ * (r3, native r1).
  * 2026-10-08: the GCSE bucket-order device (dead hdr stores, see its tag)
  * gives the native spill slots: 150 -> 102. An empty asm in each of the
  * psynergy, djinn and item cases counts four bytes in arm_reorg and puts
@@ -11,6 +11,7 @@
  * psynergy and item cases and after the owner status call, and the actor
  * lookup called as returning a doubleword: 66 -> 56. French draws the
  * command name at 14, and the European item window is 16 wide.
+ * A one-pass block around the opening handshake loop: 56 -> 52.
  * The draft emits its two nested helpers first, 080270ac/080270d8, adopted on
  * their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent with FAKEMATCH static-chain devices; compiled
@@ -341,9 +342,14 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
         sync[6] = 'S';
         sync[7] = 'T';
         miss = 0;
-        goto handshake_check;
+        /* FAKEMATCH: instruction order only: the one-pass block's loop
+           notes before the jump end the schedule there, so miss = 0 and the
+           'T' store go out before the copies of the side and pause
+           pointers that PRE puts before the jump, as native; its LOOP_CONT
+           note keeps jump from copying the check in front (differ 4). */
+        do {
+            goto handshake_check;
 handshake_loop:
-        {
             if ((gLinkStatus & 3) != 3) {
                 if (++miss > 24) {
                     count = -1;
@@ -364,12 +370,12 @@ handshake_loop:
                 }
             }
             WaitFrames(1);
-        }
 handshake_check:
-        peer = gLinkPeerSignatures[link->link_side ^ 1];
-        if (link->link_paused == 0) {
-            goto handshake_loop;
-        }
+            peer = gLinkPeerSignatures[link->link_side ^ 1];
+            if (link->link_paused == 0) {
+                goto handshake_loop;
+            }
+        } while (0);
         count = -1;
 handshake_failed:
         state->enabled = 0;

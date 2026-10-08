@@ -16,7 +16,7 @@ use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
 const USAGE: &str = r#"usage: alchemy camelotize [--dry-run] REWRITE FILE.C...
-Rewrites maintained C the way Camelot wrote it, in place, and prints how
+Applies Alchemy's mechanical source cleanup in place and prints how
 many places changed in each file; --dry-run counts them and writes
 nothing. REWRITE is one of:
   actors        byte offsets on field actors as struct FieldActor members

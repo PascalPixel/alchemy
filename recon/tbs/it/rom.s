@@ -167,7 +167,11 @@ Script_OperandHandlerTable:
 Map_LayeredScenes:
 	.incbin "baserom.gba", 0x00013784, 0x0000187c
 	.section .rom.00021e12, "ax"
-	.incbin "baserom.gba", 0x00021e12, 0x000008fe
+	.incbin "baserom.gba", 0x00021e12, 0x00000002
+	.global Ui_RunSelectionScreen
+	.thumb_func
+Ui_RunSelectionScreen:
+	.incbin "baserom.gba", 0x00021e14, 0x000008fc
 	.section .rom.00027240, "ax"
 	.global Battle_CollectPartyCommands
 	.type Battle_CollectPartyCommands, %function

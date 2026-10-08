@@ -1,3 +1,57 @@
+/* Final trials from54, removed: a late readonly pattern expression gives271
+ * and an extra stack slot; equivalent pattern shifts838, factored multiply54.
+ * Ordinary closing render/address locals and a C-only render/r3 binding
+ * remain54; readonly render/r3 gives58; readonly final-address/r2 remains54.
+ * A readonly step/r1 after ordinary cnt++ gives63 and one extra instruction.
+ */
+/* Trial from54, removed: mode1 disappearing panel boundary is unchanged54.
+ * Explicit row pattern induction/r5 plus a memory-constrained row copy gives422.
+ * Current RTL still ranks index-copy354 (9refs/17insns) above pattern-copy345
+ * (9/18), with identical conflicts and LO_REGS preferences.
+ */
+/* 2026-10-08 queue3 release entry: all six differ54, not matched; localizations
+ * listing/draft1037, common1010; JA listing/draft1036, common1009.
+ * Loading count before the zero and the original zero-before-load
+ * form both give56; a readonly input of the count address beside zero restores
+ * the native address; zero; load schedule. Release body and closing allocation
+ * remain as at56. Rejected trials from56: short closing tile/r6 initializer
+ * gives93 at u16,66 at s32,58 with readonly input,56 copying after the window
+ * call; it moves tile from fp to native lr but is not an improvement. Paired
+ * saved mask/tile initializers give108; fixed ip/lr copies give198. Scoped
+ * release counter/r8 with known-zero handoff gives68; explicit entry-pointer
+ * traversal64, resource-field pointer62, readonly step/r1 gives60. Ordinary
+ * while cleanup is unchanged56. All those trial devices are removed.
+ */
+/* 2026-10-07 queue3 cleanup copies: all six differ56, not matched. JA
+ * listing/draft1036, common1008; localizations listing/draft1037, common1009.
+ * Short mode/r7 binding restores the cleanup mode copy/compare (70 -> 66).
+ * A scoped reset zero restores address allocation/order (66 -> 60); binding
+ * that zero to r6 restores the two remaining reset instructions (60 -> 56).
+ * Neither new binding needs an asm constraint. Remaining: content-loop
+ * row-copy allocation, release initializer scheduling and increment register,
+ * closing flag address registers, and closing constants/counter scheduling.
+ * Trials from56, removed: deleting the release zero's readonly constraint65
+ * (five extra instructions), plain cnt=0 gives58, readonly zero after plain
+ * initialization63; scoped closing one60, one/r3 unchanged56; increment/r1
+ * without a constraint68 (four extra instructions).
+ */
+/* Trial (queue3 from70, none kept): seed mode-1 pattern before the column loop and restore its base at the loop end311. Chained pattern calculation in both modes78: copies become native but row induction registers still swap. A narrow readonly row-pattern/r5 handoff on that chained form251. Inline tile-store wrapper234 with separate pointer additions,106 with the original grouped index,106 with reversed parameter order; removed. TLA's current listing080457d0 has the same native pattern/r5 and index/r6 with copies to sp4/ip, but has no C draft. Restored the70 form. */
+/* 2026-10-07 queue3 release counter: all six differ70, not matched. JA listing/draft1036, common1001; the five localizations listing/draft1037, common1002. A short tagged readonly zero/r0 restores the native release-counter initialization register (72 -> 70), but it is scheduled before the count address. An ordinary separate release counter gives98; fixed r8 gives82; a read/write zero/r0 gives74 and four extra instructions because the starting zero is no longer known. A readonly step/r1 with cnt += step gives76; retaining ordinary ++cnt with that step gives79. Those trials are removed. */
+/* 2026-10-07 queue3 edition layouts: all six differ72, not matched. JA listing/draft1036, common1000; EN/DE/ES/FR/IT listing/draft1037, common1001. JA's mode1 window is x23,width7, its sprites x179, blank-map offset5 and content at VRAMfd6e/mapx23; the localizations use x22,width8,x171,offset4,fd6c/mapx22. These native layout differences are now conditional C; JA was119. The five non-English scaffolds now name this function, leaving their preceding two padding bytes intact. Remaining72 in every edition are the shared allocation/order differences below. */
+/* Trial (queue3 from72, none kept): mode-1 row-local pattern292; readonly generic pattern input inside the column102; volatile row pattern407. Baseline index/pattern copies have identical global conflict sets and LO_REGS costs; index's9refs/17insns outrank pattern's9/18, and reload keeps pattern in ip while spilling index. Chaining the pattern expression reverses copy priority but also reverses row-biv priority, as measured above. */
+/* 2026-10-07 queue3 continuation: differ 72 (listing 1037, draft 1037, common 1001), not matched. Closing byte-offset addition restores native operand order (76 -> 74). Correcting WaitForPromptAtFar to the adopted target's s32 result restores tutorial argument order (74 -> 72); CountValidEntriesFar also takes its existing s32 result, unchanged score. Remaining: row copies exchanged between ip/sp+4, mode-1 gap*2 spill order, and register choices around the main-loop exit and closing setup. */
+/* Trial (queue3 from 76, none kept): narrow mode-1 index/r3 handoff 442, ordinary index expression input 434. Closing mask before UiWork_Finalize 90; mask and tile before it 115; narrow mask/r5 handoff, readonly or read/write, 141. Reversed pointer addition still76; byte-offset addition74, kept with its measured tag. */
+/* Trial (queue3 at 76, none kept): narrow mode-1 pattern/r7 after a named pointer address 501, with the original indexed address 433, fixed register without the extra asm 418; an inline RHS handoff 415. A generic read/write identity on the normal column pattern keeps the loop shape but gives 106. Shared tmp3 across modes 770; a disappearing column CSE boundary and duplicate early pattern calculation both 76. u16 tmp3 gives 222, u32 tmp3 76. These do not separate the row-biv priority from the opposite priority needed by its per-row copy. */
+/* 2026-10-07 queue3 invariant correction: differ 76 (listing 1037, draft 1037, common 999), not matched. Preserving a scroll zero outside the main loop restores its native pool load and the mode-1 pool placement (155 -> 93). The upward selection wrap in native's selection + count order now removes its extra pointer reload (93 -> 76). Left: row copies exchanged between ip/sp+4, the mode-1 gap*2 spill order, one tutorial argument's order, register choices after the main-loop join and closing address operands. */
+/* Trial (queue3 from 155/76, none kept): content-loop-only permute, 4 minutes, 2 jobs, seed 103, 12,678 candidates, no improvement (heat unavailable for the macro-wrapped function). Reusing i for the invariant zero also 76; a u16 zero 138. A short-lived closing tile constant in r6 gives 81; an ordinary tile local across UiWork_Finalize gives 115. Column + pattern gives 80; unsigned row index 76. Removing the closing address constraint gives 99; read/write versus readonly constraints both 76. */
+/* 2026-10-07 queue3 lifetime correction: differ 155 (listing 1037, draft 1036, common 959), not matched. Separate per-mode count locals and shared gap = count * 3 inside the column loops restore native count/fp, gap/sl and work/r9 together (169 -> 155), without another device. Gap computed at panel scope gives 651; before the pattern or in the indexed-store expression stays 155. Left: row copies exchanged between ip/sp+4, the mode-1 gap*2 spill's order, the main-loop zero, closing address operands and literal-pool placement. */
+/* Trial (queue3 from 155, none kept): chained pattern computation restores index/ip and pattern/sp+4 but exchanges the row induction registers r5/r6 (163). A mode-1 row-local pattern with a memory input 319, with a read/write register constraint 344; a pattern shared by both modes 510. The chained form's index biv has 15 refs/26 insns, pattern 15/27, so index wins r5; precomputing pattern reverses that order but also reverses which row copy survives reload. */
+/* 2026-10-07 queue3 continuation: differ 169 (listing 1037, draft 1036, common 952), not matched. A readonly address constraint retains the closing tile loop's native separate add before strh (172 -> 169); naming the pointer alone gives 174. The preceding add still reverses its commutative operands. Count/sl versus count*3/fp, row copies, the main-loop zero and literal-pool placement remain. */
+/* Trial (queue3 continuation, none kept): mode-1 row index constrained to ip at row scope 469 (read-only also 469), normal index with a fixed copy 390, read/write handoff back to index 475; extra row-index input inside the column loop 356; fixed ip inside the column loop 570 (read-only 917); a high-register constraint fails reload with an internal compiler error. Plain index before pattern inside the column loop 380. The baseline's index copy already outranks its pattern copy (9 refs/17 insns versus 9/18); reload still spills the index. Scroll zero through a cast pointer 174, identity asm 180, volatile field 175, all rejected. Closing address readonly versus read/write both 169; post-store constraint 171, repeated pre-store expression 365, indexed address 182. A narrow fp handoff for the mode-1 count load on 169 gives 290 and prevents its native hoist. */
+/* Trial (queue3 after 172, none kept): separate per-mode counts 278 (count gets native fp, but count*3 now outranks work and takes r9); fixed work r9 951; a narrow work-to-r9 asm input in both column loops 868. Shared count has 18 refs over 80 insns, work 84/696, count*3 9/38; separate counts shorten count*3's lifetime to 17. Named count*3, const pattern, row-scope tmp3 and panel-scope tmp3 all 172; tmp3 shared by both modes 793. Moving rebuild = 0 after menu_busy 169 changes native store order and removes another instruction, rejected. Explicit else-if (mode == 0) and a default/case-0 switch without the dead CSE branch both 227. alchemy permute 10 minutes, 2 jobs, seed 73 from 196: 25,822 candidates, no improvement. */
+/* 2026-10-07 queue3: differ 172 (listing 1037, draft 1035, common 950), not matched. A tagged dead CSE boundary in the mode-0 panel loop removes its separate limit reload and restores the panel*2 spill (237 -> 204). Naming the per-column pattern before the address expression then gives native's row induction registers r5/r6 (204 -> 196), although their per-row copies remain exchanged between ip and sp+4. Moving message into its tutorial conditional restores the native spill-slot order (196 -> 172). The row pattern can share tmp3 at the same score; kept. Left: count and count*3 exchanged between sl/fp, the per-row copies, the main-loop zero shared with rebuild, and literal-pool placement. */
+/* Trial (queue3, from 204): fixed count r11 806; count shared with both blank-loop tests 538; unsigned count 204; pattern computed as the whole value before the store 260; just the row pattern named before the store 196, kept; explicit pattern and index 577; memory asm on pattern 737; shared pattern across both modes 509; a dead branch between scroll and rebuild stores 196, no effect. alchemy permute 10 minutes, 2 jobs, seed 53 from 237: 20,095 candidates, no improvement. */
+/* Trial (2026-10-07 queue3, baseline 237, none kept): an unconditional goto after the mode-0 content loop disappears before CSE (237); a redundant mode test there 420, the loop exit test repeated there 429; both content loops assigning count in their condition 427; mode-0 for (;;) with an explicit break 497; a redundant count != work->count break after the count load 372; an empty volatile asm before the outer increment 237; fixed count in r11 810; count loaded before and used as the limit of both content loops 370, mode 0 alone 345; count loaded before the mode branch 586. */
 /* Stubborn (2026-10-07, S10-08021e6c session 4): differ 357 -> 237 (listing 1037, draft 1038, common 919). Not matched. count is one variable for both content loops, declared at the rebuild block (s32 count; then count = work->count inside each panel loop): its pseudo now outranks work in global.c's priority (floor_log2(n) * n / live: count 15 refs over 43 insns, 1.05; work 88 over 698, 0.756; count * 3 9 over 38, 0.71), so work takes r9 as native everywhere. Left: count in sl and count * 3 in fp (native fp and sl: native ranks count * 3 above work and count below it), the mode-0 content loop's exit test still reloads work->count through 432 to a spill at sp+24 (native cmp lr, fp), the index and pattern row bivs swapped (native index r6, pattern r5), the 0 stored to gBgScroll[1].x shared with rebuild = 0 (native a pool 0), the stack slots below scale 4 or 8 lower than native, the literal pool after the mode-1 blank loop. */
 /* Trial (S10 session 4, from 357): mode-0 count at block scope (s32 count; count = work->count in the panel loop): 357; mode-0 as count = work->count; for (panel = 0; panel < count; ...): 339 (draft 1030); the same in mode 1 too: 370; count shared by both modes at the rebuild block: 237 (kept); count shared and panel shared too: 237; count shared but either mode's own s32 count = work->count: 357 each; i or num (function scope) as count: 237 and 332; work->selection + work->count - 1 in the up-repeat modulus on 237: 258 (native's operand order, but one instruction fewer elsewhere); (panel - count) * 3 in both stores: 659; a separate ofs = count * 3: 916. */
 /* Diagnosis (S10 session 4, at 237): the mode-0 exit-test reload is cse.c's cse_around_loop (cse1). The mode-0 panel loop's end test is followed directly by its NOTE_INSN_LOOP_END, so cse_basic_block ends there and copies the end test's 432 register (reg 409) into the loop preheader; the body's count load then reuses that 432 and loop.c hoists the end test's work->count load to its own spill. The mode-1 loop's end test is followed by the jump over the else branch, so no around-loop, and its end test CSEs into count (cmp lr, fp), as native does in both. Native's mode-0 loop therefore either ends in a jump at cse1 time or its extended block alters a jump (cse_jumps_altered), and the source shape that gives that is still unknown. If found, work also loses the mode-0 refs (mov r4, r9; ldr [r4, r2]) and may fall below count * 3 in priority, native's order. Trials on 237: mode-0 limit as work->count > panel 243; mode-0 blank limit as work->count + panel < 6 256; mode-0 panels as panel = 0; if (...) do { ... panel++; } while (panel < work->count) 267; a trailing empty statement 237; the branches swapped as if (mode == 0) { mode 0 } else { mode 1 } 281 (lays mode 0 out first, unlike native); alchemy permute 5 min, 2 jobs, seed 41, --heat: no candidate beat 237. */
@@ -102,8 +156,8 @@ extern void Runtime_SetIrqHandler(u32 irq, s32 line, void (*handler)(void));
 extern void Graphics_SetBg1Priority3(void);
 extern void Graphics_ClearBg1ControlBit2(void);
 extern struct TradeOfferState *Trade_GetOfferStateFar(s32 index);
-extern void BattlePlacement_CountValidEntriesFar(s32 index, u8 *party);
-extern void BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
+extern s32 BattlePlacement_CountValidEntriesFar(s32 index, u8 *party);
+extern s32 BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
 extern void Audio_PlayCue(s32 cue);
 
 s32 Ui_RunSelectionScreen(s32 mode)
@@ -113,11 +167,11 @@ s32 Ui_RunSelectionScreen(s32 mode)
     struct SelectionWork *work;
     struct MenuCell *runtime;
     s32 rebuild, trade_count, scale, result;
-    struct UiWindow *message;
     s32 cnt;
     s32 keys, repeat;
     s32 slot;
     s32 i, num;
+    s32 scroll_x;
 
     render = (struct UiRenderWork *)gWindowWork[0];
     slot = Resource_LoadIntoFreeSlot(0x400);
@@ -130,7 +184,11 @@ s32 Ui_RunSelectionScreen(s32 mode)
     if (mode == 0)
         work->window = UiWindow_Create(20, 17, 10, 3, 6);
     else
+#if defined(TBS_EDITION_JA)
+        work->window = UiWindow_Create(23, 17, 7, 3, 6);
+#else
         work->window = UiWindow_Create(22, 17, 8, 3, 6);
+#endif
     work->previous = -1;
     if (mode == 0) {
         num = 0;
@@ -172,7 +230,11 @@ s32 Ui_RunSelectionScreen(s32 mode)
             s32 x = (cnt - work->count) * 24;
             work->entries[cnt].pos_x = x + 155;
             if (mode != 0)
+#if defined(TBS_EDITION_JA)
+                work->entries[cnt].pos_x = x + 179;
+#else
                 work->entries[cnt].pos_x = x + 171;
+#endif
             work->entries[cnt].pos_y = 136;
             cnt++;
         } while (cnt < work->count);
@@ -180,24 +242,34 @@ s32 Ui_RunSelectionScreen(s32 mode)
     Scheduler_AddOrUpdateCallback(Graphics_SetBg1Priority3, 0x480);
     Runtime_SetIrqHandler(2, 136, Graphics_ClearBg1ControlBit2);
 
+    /* FAKEMATCH: Native carries the scroll zero into this loop and reloads it
+     * from the pool. Recreating 0 inside is not moved by loop.c (life 9,
+     * savings 4) and later shares rebuild's zero; this outer lifetime restores
+     * the native pool load and its placement, differ 155 -> 93. */
+    scroll_x = 0;
     for (;;) {
         scale = Ui_BounceScales[(gFrameCount * 2) & 31];
         scale = (scale - 256) / 4 + 304;
         work->affine.scale_x = scale;
         work->affine.scale_y = scale;
-        gBgScroll[1].x = 0;
+        gBgScroll[1].x = scroll_x;
         gBgScroll[1].y = 32;
         if (rebuild != 0) {
-            s32 count;
+            s32 gap;
             rebuild = 0;
             render->menu_busy = 1;
             if (mode) {
                 s32 panel;
+                s32 count;
                 for (panel = 0; panel < 6 - work->count; panel++) {
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
                         for (col = 0; col <= 2; col++)
+#if defined(TBS_EDITION_JA)
+                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + 5 + (col & 3)) = 0xf07f;
+#else
                             *(render->tilemap + (cnt + 17) * 32 + panel * 3 + 4 + (col & 3)) = 0xf07f;
+#endif
                     }
                 }
                 for (panel = 0; panel < work->count; panel++) {
@@ -205,15 +277,23 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
                         for (col = 0; col <= 2; col++) {
-                            s32 tmp3;
-                            ((u16 *)0x0600fd6c)[panel * 3 + cnt * 32 + (col & 3) - count * 3] = tmp3 = panel * 16 + cnt * 4 + col + 0x100;
+                            s32 tmp3 = panel * 16 + cnt * 4;
+                            gap = count * 3;
+#if defined(TBS_EDITION_JA)
+                            ((u16 *)0x0600fd6e)[panel * 3 + cnt * 32 + (col & 3) - gap] = tmp3 = tmp3 + col + 0x100;
                             tmp3 = col & 3;
-                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - count * 3 + 22) = 0;
+                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - gap + 23) = 0;
+#else
+                            ((u16 *)0x0600fd6c)[panel * 3 + cnt * 32 + (col & 3) - gap] = tmp3 = tmp3 + col + 0x100;
+                            tmp3 = col & 3;
+                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - gap + 22) = 0;
+#endif
                         }
                     }
                 }
             } else {
                 s32 panel;
+                s32 count;
                 for (panel = 0; panel < 6 - work->count; panel++) {
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
@@ -222,14 +302,24 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     }
                 }
                 for (panel = 0; panel < work->count; panel++) {
+                    /* FAKEMATCH: The native mode-0 loop's CSE block ends before
+                     * its count load. This dead branch leaves that boundary
+                     * through jump.c and disappears in cse.c: differ 237 ->
+                     * 204, removing the separately hoisted limit reload and
+                     * restoring the native panel*2 spill. Ordinary for,
+                     * do-while, early-break and goto shapes kept the reload. */
+                    s32 dead = panel;
+                    if (dead == 0 && panel != 0)
+                        continue;
                     count = work->count;
                     for (cnt = 0; cnt <= 2; cnt++) {
                         s32 col;
                         for (col = 0; col <= 2; col++) {
-                            s32 tmp3;
-                            ((u16 *)0x0600fd68)[panel * 3 + cnt * 32 + (col & 3) - count * 3] = tmp3 = panel * 16 + cnt * 4 + col + 0x100;
+                            s32 tmp3 = panel * 16 + cnt * 4;
+                            gap = count * 3;
+                            ((u16 *)0x0600fd68)[panel * 3 + cnt * 32 + (col & 3) - gap] = tmp3 = tmp3 + col + 0x100;
                             tmp3 = col & 3;
-                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - count * 3 + 20) = 0;
+                            *(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp3 - gap + 20) = 0;
                         }
                     }
                 }
@@ -278,6 +368,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                     s32 kind = work->kinds[work->selection];
                     if (kind == 16 || (trade_count == 0 && kind == 15)) {
                         if (runtime->auto_enabled == 1) {
+                            struct UiWindow *message;
                             if (kind == 15)
                                 message = UiText_ShowMessageAndWaitComplete((s32)&MsgDjinnTutorialUnleashCommand, 15, 8);
                             else if (kind == 16)
@@ -320,21 +411,41 @@ s32 Ui_RunSelectionScreen(s32 mode)
             work->selection = __modsi3(work->selection + 1, work->count);
         } else if (repeat & 0x60) {
             Audio_PlayCue(0x6f);
-            work->selection = __modsi3(work->count + work->selection - 1, work->count);
+            work->selection = __modsi3(work->selection + work->count - 1, work->count);
         } else if (gLinkCountdownWork->active == 0) {
             result = work->kinds[0];
             break;
         }
         QueueIoWriteDelay2(0x04000000, 0x1741);
-        render->menu_busy = 0;
+        {
+            /* FAKEMATCH: Native keeps the menu reset zero in r6. A scoped ordinary zero restores address registers/order but uses r2, differ60; this short binding restores the copy/store registers, differ56. */
+            register s32 zero __asm__("r6") = 0;
+            render->menu_busy = zero;
+        }
         WaitFrames(1);
     }
-    if (mode != 0)
-        gLinkCountdownWork->command_selection[1] = work->selection;
-    else
-        gLinkCountdownWork->command_selection[0] = work->selection;
-    for (cnt = 0; cnt < work->count; cnt++)
-        Resource_ResetEntry(work->entries[cnt].resource);
+    {
+        /* FAKEMATCH: The native cleanup reloads mode into r7. A block-local ordinary copy retains r5 and differ70; this short binding restores the copy and compare registers, differ66. No asm constraint is needed. */
+        register s32 m __asm__("r7") = mode;
+        if (m != 0)
+            gLinkCountdownWork->command_selection[1] = work->selection;
+        else
+            gLinkCountdownWork->command_selection[0] = work->selection;
+    }
+    {
+        s32 *count = &work->count;
+        /* FAKEMATCH: Native initializes the shared release counter through r0. An ordinary separate counter gives98, fixed r8 gives82; this short readonly zero restores r0 (72 -> 70). */
+        register s32 n __asm__("r0") = 0;
+        /* FAKEMATCH: Retain the native zero register; read/write loses the known-zero loop start and gives74. Plain zero-first and count-load-first both give56; the readonly count address restores address; zero; load order, differ54. */
+        __asm__("" : : "r"(n), "r"(count));
+        cnt = n;
+        if (cnt < *count) {
+            do {
+                Resource_ResetEntry(work->entries[cnt].resource);
+                cnt++;
+            } while (cnt < work->count);
+        }
+    }
     render->menu_busy = 1;
     UiWork_Finalize(work->window, 1);
     {
@@ -342,8 +453,13 @@ s32 Ui_RunSelectionScreen(s32 mode)
         for (panel = 0; panel <= 6; panel++) {
             for (cnt = 0; cnt <= 2; cnt++) {
                 s32 col;
-                for (col = 0; col <= 2; col++)
-                    *(render->tilemap + (cnt + 17) * 32 + panel * 3 + 5 + (col & 3)) = 0xf07f;
+                for (col = 0; col <= 2; col++) {
+                    /* FAKEMATCH: Native adds the column byte offset before the row address; either pointer-add order reverses those operands (76), while byte addition restores them (74). */
+                    u16 *dst = (u16 *)((col & 3) * 2 + (u32)(render->tilemap + (cnt + 17) * 32 + panel * 3 + 5));
+                    /* FAKEMATCH: Native keeps the final address add apart from strh. An explicit pointer still combines strh [r3, r7] (174); this readonly use retains adds; strh [r3] (169). */
+                    __asm__("" : : "r"(dst));
+                    *dst = 0xf07f;
+                }
             }
         }
     }

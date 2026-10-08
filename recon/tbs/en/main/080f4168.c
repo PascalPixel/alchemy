@@ -1,4 +1,233 @@
-/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 1974, differ 1918.
+/* 080f4168 LuckyDice_Run: uncredited draft; listing 2046, draft 2033, differ 1577.
+ * One native mov sl,r2 now replaces the first C copy plus empty boundary.
+ * All actual affine operations stay identical; the pool-skip branch moves
+ * past the second base load, removing an alignment halfword and restoring
+ * native's146-byte physical backedge (the empty-boundary form was148).
+ * This removes conservative extra length from our own copy/boundary pair,
+ * not by adding padding or changing an address. Four explicit copy devices,
+ * then two, then only the first all produce identical2033/1577/common1251;
+ * retain only the first. Plain C plus its empty boundary remains1581.
+ * The mov copies the unchanged unsigned value from r2 into sl without
+ * touching flags; its memory clobber preserves the following base reload.
+ * Remaining pool placement differs: native skips after the second store,
+ * while this draft still skips after the second base load. Frame stays768.
+ * All four affine accesses now retain their native read/modify/write
+ * lifetimes. Separate reads/stores reload the base after OR, instead of
+ * recopying the offset. Short base bindings use r2 for b and r1 for c/d;
+ * the third store's base remains live for the fourth read. That removes
+ * one excess base load and restores the executed loop instruction count. Shift
+ * inputs stay r2 until copied to sl, and the last words stay r3. The loop
+ * counter/update registers also match.2034/1636 ->2033/1581, frame768.
+ * Second-access trials: plain split2034/1640; base/r2 1632 but halfword
+ * hoists into the first store; store boundary1634; shifted r2/sl1626.
+ * Tail trials: plain split/reused base2033/1651; base/r1 1609; word/r3 1593;
+ * shift/r2 1583. Third base before the shift in source remains1583; one
+ * empty boundary exchanges that difference for reversed loads, still1583;
+ * the halfword-before-base memory boundary then gives the retained1581.
+ * Remaining affine differences: depth cursor spill32 rather than4, setup
+ * registers/order, zero loads swapped between r1/r2, and pool placement.
+ * The first affine access now retains native's sl copy and later r1 reload.
+ * A short shifted value in r2, C copy to sl, empty memory boundary observing
+ * both values, then scoped base/r2 makes that complete access instruction
+ * exact:2032/1644 ->2034/1636, frame768. All four halfword pointers and offset
+ * givs stay correct; the term/base bindings die before the second access.
+ * Earlier real-mov trials: unconstrained input2034/1654, input/r2 plus memory
+ * 2034/1648, scoped base/r2 2034/1638. C plus empty boundary without observing
+ * the shifted input uses r3,2034/1642; observing it gives the retained1636.
+ * No real instruction asm is retained. Resource base is now u8 * as the
+ * pointer API and byte advances require; removing integer casts changes
+ * no generated instructions. Resource ids remain whole linker symbols.
+ * The shadow depth boundary now clobbers memory instead of taking the
+ * stored depth as an operand. Both native stores remain, without the extra
+ * address use: projection/die/depth recover r5/r6/r7,1658 ->1644. Frame768
+ * and instruction count2032 are unchanged. Matrix-first still spills its
+ * advancing value:2039/1773/frame772. Assigning point x/y/z gives2031/1641
+ * but stores x before y unlike native; matrix-first with that order gives
+ * 2039/1777/frame772. Those two source-order trials are not retained.
+ * Shadow screen coordinates now have loop-local sx/sy lifetimes. Native
+ * reads both coordinates before the visibility test; reading proj directly
+ * delayed x and rematerialized the projection address. Locals restore those
+ * loads and remove the extra address add:2033/1665 ->2032/1658, frame768.
+ * With matrix-first packing, global x/y gives2043/1833/frame776, scoped
+ * sx/sy2039/1797/frame772. A low point-pointer boundary before the loop
+ * gives2041/1819; four ordinary projection cursors2038/1800, all four
+ * constrained low2039/1805. Each still spills the matrix, frame772. Rejected.
+ * Shadow matrix lifetime trials after the typed-point cleanup, none kept:
+ * a plain local observed before projection gives2040/1810/frame772;
+ * a high-register input triggers note_invalid_constants at arm.c:5414;
+ * fixed r9 gives2036/1810/frame772, rebuilding the matrix value inside
+ * each iteration and spilling attr2's offset rather than the point pointer.
+ * Render_ProjectPoint now uses its current GFXUTIL.C/FIELD.H signature,
+ * s32 * rather than void *, with the named x members passed as input.
+ * All generated instructions remain identical. The neighboring projected
+ * sprite renderer assigns its ground coordinates x/y/z; that order here
+ * gives2032/1666, or2040/1810/frame772 with matrix-first packing. Not kept.
+ * The projection input uses the existing FixedPointPosition type: its
+ * verified x/y/z offsets0/4/8 and size12 fit this fixed-point input exactly.
+ * Generated instructions are unchanged from point[3]. Matrix-first stays
+ * 2040/1808 with that type; combine it with the native affine sl term:
+ * 2042/1846/frame772, so no new register binding is retained.
+ * Shadow follow-ups, none kept: observing the whole depth array in the
+ * memory input2037/1805; matrix local inside the draw2040/1808/frame772;
+ * named point pointer2039/1807, opaque before projection2041/1819, short
+ * fixed-r4 copy2043/1821, ordinary register keyword2039/1807. The fixed
+ * trial copies r4 back to a saved register rather than spilling around the
+ * call. Unsigned inline matrix arithmetic is unchanged1665; distributing
+ * the shift/add gives2035/1663 but constructs its extra constant inside
+ * the loop, not native's advancing value. Function-scope mat2040/1808,
+ * an explicit packed counter2040/1800, both frame772. Matrix-first OR also
+ * restores its induction but spills2040/1808/frame772; matrix-last OR is
+ * unchanged2033/1665. Native's point pointer, matrix and depth-address
+ * lifetimes must be recovered together; no additional binding is kept.
+ * Shadow depth keeps native's two stores: projected depth first, then depth
+ * plus the die's height. Plain consecutive assignments delete the first
+ * store. A memory-input boundary preserves it (2034/1670), but reloading
+ * depth adds a load native lacks. Keep the intermediate in a local dep:
+ * 2033/1665, frame768, both stores and the intervening add remain. The plain
+ * dep form without the memory input is2033/1675, identical to no local.
+ * A volatile first store instead is2039/1703. Hoisting the shadow matrix
+ * index into a loop local restores its advancing value, but spills it and
+ * enlarges the frame to772 (2038/1792); not kept. Native keeps that matrix
+ * value in r9 and temporarily saves its point pointer across projection.
+ * Keep squared distance in a separate local d2: native builds it directly
+ * in the square-root argument r0, then keeps the resulting distance in r5.
+ * Reusing dist kept both values in r5 and added an argument copy. Splitting
+ * those units removes that instruction: 2034/1680 -> 2033/1675.
+ * Further rejected trials from 1680: short resource increment bindings in
+ * r0/r1 select native's registers but add palette-address materialization,
+ * 2038/1720. A physics-condition source search (seed43, two jobs, interrupted
+ * at 16 distinct candidates) only adds a redundant bool, differ1668 at the
+ * same weighted26330. A two-minute spin-region search (seed47, two jobs,
+ * 2841 candidates) gives weighted26260/differ1680 by moving the decrement
+ * after the stopped check, opposite native's ordering. Neither is kept.
+ * Empty and memory barriers before the variant addition are unchanged1680.
+ * An opaque byte index at that access gives2034/1686 and restores base+index,
+ * but the following decrement reconstructs its address instead of reusing
+ * the cursor. Combine that with an explicit loop-local step pointer:
+ * 2032/1706; with an independently advancing cursor:2031/1707. Not kept.
+ * Resource setup now names its changing destination: decode into work RAM,
+ * then DMA to VRAM. This restores native's repeated work-RAM address loads
+ * instead of retaining that constant in r5; frame remains 768. A scoped
+ * four-minute resource-source search (seed33, two jobs) reached 2033/1645,
+ * but redundant casts and resource-result copy chains were removed; the
+ * readable destination form is 2034/1680. One shared dst and two separate
+ * destinations compile identically; initializing dst before base advances
+ * is also identical. A post-decode r5..r11 clobber only moved the retained
+ * constant to r7 (1731 -> 1729), so was rejected. Whole-function permute
+ * cannot rewrite inline assembly; the source search excluded those blocks.
+ * Affine trials from 1680, not kept: explicit halfword term before obj load
+ * 2029/1663, but removes native's high-register copies and six loop instructions;
+ * reuse global x 2025/1823; +h output triggers a reload_cse compiler ICE.
+ * A scoped fixed sl term gives 2036/1706 and native's depth spill at sp+4,
+ * but shifts all low pointer registers. Add r1 clobber: 2036/1666, restores
+ * pointer registers but moves depth back to sp+32. Explicit base reloads
+ * between each high-offset affine read/write: 2036/1700 with the clobber,
+ * 2036/1714 without it. Explicit depth cursor: 2033/1765. Keep the verified
+ * affine form while its remaining lifetime and spill ordering is unresolved.
+ * Split affine pointer constraints: 1754 -> 1746, all four halfword
+ * pointers and four object offsets now use native's registers. An input
+ * instead of an output for pa alone was unchanged at 1754. Initialize
+ * order[] with a two-iteration != loop: 2035/1731. GCC unrolls it and
+ * puts the order base at native sp+44, restoring render+12 at48, flash52,
+ * stopped56, projection base60. The affine depth cursor still spills at32
+ * (native4), physics spin cursor at28 (native32), and its byte offset at24
+ * (native28). Native's initial order[0] store retains i/r11; draft uses 0.
+ * Order init with <2: 2038/1746, stores reverse and key reload returns;
+ * sorting from i=0 instead of1: 2036/1738; retain init i with an asm input:
+ * 2041/1771. Native's physics spin variant load uses base plus byte offset,
+ * other accesses use a cursor. Local opaque base at that one access:
+ * 2035/1741, but subsequent decrement becomes indexed too. Explicit step
+ * pointer: 2033/1757; opaque step: 2031/1761; independent step cursor:
+ * 2032/1756; step lifetime input: 2036/1892. None kept. Index inputs on the
+ * two y paths: 2035/1757. Unused-output asm blocks: 2035/1731, identical
+ * assembled diff to no device; native's unused index loads already survive
+ * naturally. No extra CSE-block device is needed there.
+ * Affine obj now has block scope: 1776 -> 1754; b/c/d halfword pointers
+ * take native's r5/r4/r0. The first pointer and offset remain swapped,
+ * r6/r7 instead of native's r7/r6. Sharing obj across the earlier object
+ * loops remains better: scoping every copy shrinks the frame to 764 and
+ * scores 2039/1935. Added affine input pa: 1766; pa at function scope:
+ * 1766; fixed r7 temporary even with a regular copy-back corrupts the
+ * depth giv in generated code, rejected. Explicit offa counter: 1758;
+ * omit its low-register input: 1884 and frame 764; input-only pointer
+ * constraints: 1758 with pa/pb/pc/pd in r7/r6/r5/r4 and offa in r0.
+ * Input order does not change that; explicit offa with input-only gives
+ * 1758 with the same register order as the output form. Not kept.
+ * Fade-out counter increment moved before the second palette call or into
+ * the scale expression: 1776 unchanged. A captured next counter before
+ * WaitFrames: 1796, bound to r7: 1772; a loop-local scale: 1776. Not kept.
+ * Fill count increment before the last object store: 1847, loses off1 giv.
+ * Keep obj live through the count increment: 1830, fill body matches but
+ * earlier allocation regresses; fill-local obj: 1847. Not kept.
+ * Session 2026-10-07 (completion queue 2, affine continuation): the frame
+ * now matches native's 768. Four ordinary halfword pointers constrained to
+ * low registers, with the first object offset also low at the loop boundary,
+ * restore the depth-pointer spill without hard-register variable overlap.
+ * The depth pointer currently spills at sp+32, native sp+4. Giving each
+ * object access its own loop-local copy adds native's repeated base loads:
+ * 2036 instructions/differ 1776, from 2030/1892 at the previous checkpoint.
+ * All 13 principal local spill slots and the arrays now have native offsets.
+ * Trial: +m on affine obj: 2049/2023, wrong pointer slot; separate obj copies
+ * alone: 2034/1904, frame 764. Taking &sprites and using it directly in the
+ * affine loop: 2038/1820, but sprites split between sp+64 and sp+60.
+ * Direct affine sprites without address-taking: 2005/1863, offset givs fold.
+ * Hard-register pointer variables inside the loop also overlap offset givs;
+ * earlyclobber inputs do not cure the generated value corruption. Rejected.
+ * Ordinary low pointer constraints alone: 2032/1898, frame 764; add the low
+ * first-offset input: 2034/1780, frame 768; separate object copies: 2036/1776.
+ * Clobber r1: 2030/1756, but moves all four offsets high; making offa an
+ * output: 2028/1766, but replaces its giv with a multiply each iteration.
+ * Separate full-word zero temporaries: 2029/1767, immediate move and copy
+ * instead of native's two pool loads. These lower-scoring forms are not kept.
+ * The assembled affine zero loads are now both full-word pool loads, as
+ * native; the compiler's .s spells ldrh but the assembled diff shows ldr.
+ * Remaining affine differences: halfword-address register order, base
+ * reloads during each read-modify-write, and the depth-pointer spill's
+ * placement. Both affine loop backedges are -146 bytes; the whole native
+ * function still has 10 more instructions.
+ * Previous checkpoint: the frame was 764, native 768;
+ * the initial draft was 1974 instructions, differ 1918, frame 756.
+ * Pointer declarations follow their allocation order again, followed by
+ * frame/state/bet/timer/kind/winnings/counter/digits/count: their spill slots
+ * followed native's order, each at native minus 4. The missing word was
+ * the affine depth-pointer spill, not another unused local.
+ * The opening tile loop is instruction-exact: i counts bytes, row and j
+ * have block scope, and the tagged dst/step constraints keep the address
+ * add outside strh and restore native's r2/r7 choices. Direct byte indexing
+ * with block-local counters was differ 1938; separating the add was 1932;
+ * dst in r2 was 1872, dst/step in r2/r7 was 1886 but made the loop exact.
+ * Advancing base before both resource decodes is the native source form
+ * (1886 unchanged, 1978 -> 1980 instructions); do-while main: unchanged.
+ * loop.c has two independent obstacles at each object loop: it folds the
+ * invariant sprites pointer into DEST_ADDR givs, then derives sequential
+ * offset givs from one another if their lifetimes do not overlap. Compute
+ * both/four named-field offsets first, then make a loop-local copy obj of
+ * sprites opaque through +rm. The offsets overlap, obj stays in the loop,
+ * and sprites remains invariant outside it, so help_window can stay hoisted.
+ * Faces/clear/affine loops: 2008 instructions, differ 1888, frame 756;
+ * all object loops: 2024, differ 1908, frame 764. Scoped stopped: unchanged.
+ * +r on sprites itself added a spill store (1981); +m moved it to a local
+ * frame object (2021); volatile integer sprite base was 2065. +rm on sprites
+ * itself removed parent-loop invariants and shrank the frame: not kept.
+ * The two discarded gKeysRepeat reads are present in the listing before
+ * gKeysHeld. (void) expressions give native's r7/r0/r3 load sequence exactly
+ * where assignments to key did not: 2025 instructions, differ 1911.
+ * EN.PO proves Coins 02310, Winnings 02311, Throw 02320, Quit 02321. Keeping
+ * Coins as a linker symbol and using +1/+10/+11 restores native's shared
+ * pool base without redefining any message name: 2030, differ 1892.
+ * Named-field OBJ_OFF expressions compile identically to arithmetic offsets.
+ * The affine loop still keeps its advancing depth pointer in r0 and obj in
+ * r4; native spills the former at sp+4, reloads sprites, and keeps its four
+ * halfword pointers in r7/r5/r4/r0. Fixed-register pointer trials were not
+ * kept: direct hard bindings let loop.c reuse a hard register; copying them
+ * back into ordinary pointers avoided that but added five copies (1881).
+ * Broad permute (4 min, 2 jobs, seed 19, --heat), from the initial draft:
+ * best weighted 48620/differ 1791, second 48720/1766. Neither kept: 93-96
+ * rewrites, including unrelated shared temporaries and redundant copy chains;
+ * a lower score there did not establish a readable native source form.
+ * Remaining: one spill word; affine allocation and zero loads; shared
+ * resource scratch constants; other register choices and message scheduling.
+ * Earlier attempts:
  * Restore compilation with the current RuntimeDispatch_NoOpHook declaration.
  * Use the verified BattleEffectWork/EffectStep, BattleCamera, GameState and
  * map-scroll layouts, existing hardware/IWRAM declarations and whole messages.
@@ -119,6 +348,7 @@
 #include "BTLDISP.H"
 #include "IWRAM_CALL.H"
 #include "TRANSFORM.H"
+#include "FIXED_POINT_POSITION.H"
 #include "RESOURCE_IDS.H"
 #include "text/MSG_IDS.H"
 
@@ -135,6 +365,8 @@ struct LuckyDiceSprites {
     s32 help_window;
 };
 
+#define OBJ_OFF(n, field) ((u32)&((struct LuckyDiceSprites *)0)->obj[n].field)
+
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
 extern u8 gOamCopyEnabled;
@@ -150,7 +382,7 @@ void Camera_ResetSceneDefaults(void);
 void Scheduler_ResetTaskTable(void);
 s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale, s32 count);
 void Render_ResetTransformState(void);
-s32 Render_ProjectPoint(void *point, s32 *out);
+s32 Render_ProjectPoint(s32 *point, s32 *out);
 u32 __umodsi3(u32 numerator, u32 denominator);
 void FarCall_WindowTable(void);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
@@ -164,7 +396,7 @@ void LuckyDice_Run(void)
     u16 palette[256];
     s32 depth[4];
     s32 results[4];
-    s32 point[3];
+    struct FixedPointPosition point;
     s32 proj[3];
     /* FAKEMATCH: native frame keeps 32 unused bytes at sp+168..200, between proj and the affine halfwords */
     s32 unused[8];
@@ -178,20 +410,22 @@ void LuckyDice_Run(void)
     s32 faces[2];
     s32 order[2];
     s32 matches[2];
-    struct BattleCamera *render;
+    u16 *obj_palette;
     struct BattleEffectWork *work;
+    struct LuckyDiceSprites *sprites;
+    struct LuckyDiceSprites *obj;
+    struct BattleCamera *render;
     struct EffectStep *die;
     struct EffectStep *other;
-    s32 state;
     s32 frame;
+    s32 state;
+    s32 bet;
     s32 timer;
     s32 kind;
     s32 winnings;
     s32 counter;
-    s32 bet;
     s32 digits;
     s32 count;
-    s32 stopped;
     s32 reset;
     s32 window;
     s32 i;
@@ -205,7 +439,7 @@ void LuckyDice_Run(void)
     s32 tile;
     s32 key;
     s32 row;
-    s32 base;
+    u8 *base;
     s32 pos;
     s32 dx;
     s32 dy;
@@ -216,8 +450,7 @@ void LuckyDice_Run(void)
     s32 scale;
     s32 pairs;
     s16 value;
-    struct LuckyDiceSprites *sprites;
-    u16 *obj_palette;
+    void *dst;
 
     Runtime_AllocateHeapBlock(41, 0x60e);
     obj_palette = Runtime_AllocateHeapBlock(40, 0x200);
@@ -230,23 +463,40 @@ void LuckyDice_Run(void)
     gOamCopyEnabled = 0;
 
     i = 0;
-    for (row = 0; row != 20; row++) {
-        for (j = 0; j != 32; j++) {
-            ((u16 *)0x06003000)[i] = j + row * 30;
-            i++;
+    {
+        s32 row;
+        s32 j;
+
+        for (row = 0; row != 20; row++) {
+            for (j = 0; j != 32; j++) {
+                /* FAKEMATCH: native holds the separate tile address in r2; direct indexing folds the add into strh. */
+                register u16 *dst asm("r2") = (u16 *)(0x06003000 + i);
+                /* FAKEMATCH: native holds the two-byte stride in r7 before the store. */
+                register s32 step asm("r7") = 2;
+                /* FAKEMATCH: keep the address add separate and restore native's r2/r7 scheduling. */
+                __asm__("" : "+r"(dst) : "r"(step));
+                *dst = j + row * 30;
+                i += step;
+            }
         }
     }
 
-    base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceBoard);
-    Dma_Set((void *)base, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
+    base = Resource_GetTableEntry((s32)&ResourceId_LuckyDiceBoard);
+    Dma_Set(base, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x05000000, palette, 0x84000080, (volatile u32 *)0x040000d4);
-    Resource_DecodeType01((void *)(base + 0x1c0), (void *)0x02010000);
-    Dma_Set((void *)0x02010000, (void *)0x06004000, 0x84002580, (volatile u32 *)0x040000d4);
-    base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
-    Dma_Set((void *)base, obj_palette, 0x84000080, (volatile u32 *)0x040000d4);
-    Dma_Set((void *)base, (void *)0x05000200, 0x84000080, (volatile u32 *)0x040000d4);
-    Resource_DecodeType01((void *)(base + 0x200), (void *)0x02010000);
-    Dma_Set((void *)0x02010000, (void *)0x06010000, 0x84001f00, (volatile u32 *)0x040000d4);
+    base += 0x1c0;
+    dst = (void *)0x02010000;
+    Resource_DecodeType01(base, dst);
+    dst = (void *)0x06004000;
+    Dma_Set((void *)0x02010000, dst, 0x84002580, (volatile u32 *)0x040000d4);
+    base = Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
+    Dma_Set(base, obj_palette, 0x84000080, (volatile u32 *)0x040000d4);
+    Dma_Set(base, (void *)0x05000200, 0x84000080, (volatile u32 *)0x040000d4);
+    base += 0x200;
+    dst = (void *)0x02010000;
+    Resource_DecodeType01(base, dst);
+    dst = (void *)0x06010000;
+    Dma_Set((void *)0x02010000, dst, 0x84001f00, (volatile u32 *)0x040000d4);
     Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, 0, 256);
     Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, 0, 256);
 
@@ -302,11 +552,11 @@ void LuckyDice_Run(void)
     UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
     window = UiWindow_CreateFar(22, 16, 8, 4, 6);
     sprites->help_window = window;
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 11, sprites->help_window, 0, 8);
 
     frame = 0;
-    for (;;) {
+    do {
         reset = 0;
         if (frame <= 16) {
             Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, frame << 12, 256);
@@ -332,8 +582,14 @@ void LuckyDice_Run(void)
         sprites->obj[count].attr2 = 0x3a8;
         count++;
         for (i = 0; i != 2; i++) {
-            sprites->obj[count].attr01 = (32 + i * 16) | 0x40202000;
-            sprites->obj[count].attr2 = faces[i] * 8 + 0x3b0;
+            u32 off0 = OBJ_OFF(count, attr01);
+            u32 off1 = OBJ_OFF(count, attr2);
+
+            obj = sprites;
+            /* FAKEMATCH: native keeps the object base inside the loop and the two object offsets simultaneously live. */
+            __asm__ volatile("" : "+rm"(obj));
+            *(u32 *)((u8 *)obj + off0) = (32 + i * 16) | 0x40202000;
+            *(u32 *)((u8 *)obj + off1) = faces[i] * 8 + 0x3b0;
             count++;
         }
 
@@ -343,8 +599,13 @@ void LuckyDice_Run(void)
                     Audio_PlayCue(0x12f);
                 }
                 if (timer >= i * 5) {
-                    sprites->obj[count].attr01 = 0x80002040 | ((56 + i * 32) << 16);
-                    sprites->obj[count].attr2 = results[i] * 32 + 152;
+                    u32 off0 = OBJ_OFF(count, attr01);
+                    u32 off1 = OBJ_OFF(count, attr2);
+                    obj = sprites;
+                    /* FAKEMATCH: native retains independent object offsets. */
+                    __asm__ volatile("" : "+rm"(obj));
+                    *(u32 *)((u8 *)obj + off0) = 0x80002040 | ((56 + i * 32) << 16);
+                    *(u32 *)((u8 *)obj + off1) = results[i] * 32 + 152;
                     count++;
                 }
             }
@@ -354,8 +615,13 @@ void LuckyDice_Run(void)
                     tile = Data_080f5400[kind] * 8 + 152;
                     x = 0x278 - n * 16;
                     for (j = 0; j != n; j++) {
-                        sprites->obj[count].attr01 = (((x & 0x1ff) << 16) | 96) | 0x80002000;
-                        sprites->obj[count].attr2 = tile;
+                        u32 off0 = OBJ_OFF(count, attr01);
+                        u32 off1 = OBJ_OFF(count, attr2);
+                        obj = sprites;
+                        /* FAKEMATCH: native retains independent object offsets. */
+                        __asm__ volatile("" : "+rm"(obj));
+                        *(u32 *)((u8 *)obj + off0) = (((x & 0x1ff) << 16) | 96) | 0x80002000;
+                        *(u32 *)((u8 *)obj + off1) = tile;
                         count++;
                         tile += 32;
                         x += 32;
@@ -382,7 +648,7 @@ void LuckyDice_Run(void)
                 }
                 window = UiWindow_CreateFar(9 - digits / 2, 16, digits + 12, 3, 6);
                 sprites->winnings_window = window;
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 1, window, 0, 0);
                 UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, sprites->winnings_window, digits * 8 + 48, 0);
                 UiText_DrawNumberInWindowFar(winnings, digits, sprites->winnings_window, 48, 0);
             }
@@ -398,8 +664,8 @@ void LuckyDice_Run(void)
                     state = 0;
                     window = UiWindow_CreateFar(22, 16, 8, 4, 6);
                     sprites->help_window = window;
-                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
-                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 11, sprites->help_window, 0, 8);
                     reset = 1;
                 }
             }
@@ -415,12 +681,16 @@ void LuckyDice_Run(void)
                 UiWork_FinalizeFar(sprites->winnings_window, 1);
                 window = UiWindow_CreateFar(22, 16, 8, 4, 6);
                 sprites->help_window = window;
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
-                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceQuit, sprites->help_window, 0, 8);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 11, sprites->help_window, 0, 8);
                 reset = 1;
             }
             counter++;
         } else if (state == 0 && frame > 17) {
+            /* FAKEMATCH: native retains two unused key-repeat reads before
+             * the held-key test; the blocks that used them have no code left. */
+            (void)gKeysRepeat;
+            (void)gKeysRepeat;
             if (gKeysHeld & KEY_UP) {
                 work->particles[0].y += 0x40000;
                 work->particles[1].y += 0x40000;
@@ -490,8 +760,9 @@ void LuckyDice_Run(void)
             } while (faces[0] == faces[1]);
         }
 
-        order[0] = 0;
-        order[1] = 1;
+        for (i = 0; i != 2; i++) {
+            order[i] = i;
+        }
         for (i = 1; i < 2; i++) {
             key = order[i];
             for (j = i - 1; j >= 0 && work->particles[order[j]].z > work->particles[key].z; j--) {
@@ -502,7 +773,7 @@ void LuckyDice_Run(void)
 
         for (i = 0; i != 2; i++) {
             die = &work->particles[order[i]];
-            Render_ProjectPoint(die, proj);
+            Render_ProjectPoint(&die->x, proj);
             if (proj[2] < 0x15e) {
                 proj[2] = 0x15e;
             }
@@ -514,48 +785,75 @@ void LuckyDice_Run(void)
             x = proj[0] - d;
             y = proj[1] - d;
             if (y + 96 > -16) {
-                sprites->obj[count].attr01 = ((order[i] << 25) | (((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x40002300;
-                sprites->obj[count].attr2 = (Data_080f5408[die->variant / 1024] << 3) | 0x400;
+                u32 off0 = OBJ_OFF(count, attr01);
+                u32 off1 = OBJ_OFF(count, attr2);
+                obj = sprites;
+                /* FAKEMATCH: native retains independent object offsets. */
+                __asm__ volatile("" : "+rm"(obj));
+                *(u32 *)((u8 *)obj + off0) = ((order[i] << 25) | (((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x40002300;
+                *(u32 *)((u8 *)obj + off1) = (Data_080f5408[die->variant / 1024] << 3) | 0x400;
                 count++;
             }
         }
 
         if (state == 0) {
             for (i = 0; i != 2; i++) {
-                Render_ProjectPoint(&work->particles[i], proj);
+                u32 off0 = OBJ_OFF(count, attr01);
+                u32 off1 = OBJ_OFF(count, attr2);
+
+                Render_ProjectPoint(&work->particles[i].x, proj);
                 n = depth[order[i]] / 2 + 128;
                 x = proj[0] - __divsi3(0x800, n);
                 y = proj[1] + __divsi3(0x300, n);
-                sprites->obj[count].attr01 = ((((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x80002000;
+                obj = sprites;
+                /* FAKEMATCH: native retains independent object offsets. */
+                __asm__ volatile("" : "+rm"(obj));
+                *(u32 *)((u8 *)obj + off0) = ((((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x80002000;
                 if (i == 1) {
-                    sprites->obj[count].attr01 |= 0x10000000;
+                    *(u32 *)((u8 *)obj + off0) |= 0x10000000;
                 }
-                sprites->obj[count].attr2 = 0x958;
+                *(u32 *)((u8 *)obj + off1) = 0x958;
                 count++;
             }
         }
 
         for (i = 0; i != 2; i++) {
-            point[1] = 0;
-            point[0] = work->particles[i].x;
-            point[2] = work->particles[i].z;
-            Render_ProjectPoint(point, proj);
+            s32 dep;
+            s32 sx, sy;
+
+            point.y = 0;
+            point.x = work->particles[i].x;
+            point.z = work->particles[i].z;
+            Render_ProjectPoint(&point.x, proj);
             if (proj[2] < 0x15e) {
                 proj[2] = 0x15e;
             }
             if (proj[2] > 0x28a) {
                 proj[2] = 0x28a;
             }
-            depth[2 + i] = proj[2] - 0x15e;
-            depth[2 + i] += *((s16 *)&work->particles[i].y + 1);
-            if (proj[1] + 88 > -16) {
-                sprites->obj[count].attr01 = ((((proj[0] + 0x270) & 0x1ff) << 16) | ((i + 2) << 25)) | ((proj[1] + 0x158) & 255) | 0x40002300;
-                sprites->obj[count].attr2 = 0x890;
+            dep = proj[2] - 0x15e;
+            depth[2 + i] = dep;
+            /* FAKEMATCH: native stores projected depth before adding height; plain C deletes that store. Memory clobber keeps the store without an address operand, restoring r5/r6/r7 (1658 to1644). */
+            __asm__ volatile("" : : : "memory");
+            dep += *((s16 *)&work->particles[i].y + 1);
+            depth[2 + i] = dep;
+            sx = proj[0];
+            sy = proj[1];
+            if (sy + 88 > -16) {
+                u32 off0 = OBJ_OFF(count, attr01);
+                u32 off1 = OBJ_OFF(count, attr2);
+                obj = sprites;
+                /* FAKEMATCH: native retains independent object offsets. */
+                __asm__ volatile("" : "+rm"(obj));
+                *(u32 *)((u8 *)obj + off0) = ((((sx + 0x270) & 0x1ff) << 16) | ((i + 2) << 25)) | ((sy + 0x158) & 255) | 0x40002300;
+                *(u32 *)((u8 *)obj + off1) = 0x890;
                 count++;
             }
         }
 
         if (state == 1) {
+            s32 stopped;
+
             stopped = 0;
             die = work->particles;
             for (i = 0; i != 2; i++) {
@@ -565,12 +863,14 @@ void LuckyDice_Run(void)
                 other = work->particles;
                 for (j = 0; j != 2; j++) {
                     if (i != j) {
+                        s32 d2;
+
                         dx = (die->x - other->x) >> 16;
                         dy = (die->y - other->y) >> 16;
                         dz = (die->z - other->z) >> 16;
-                        dist = dx * dx + dy * dy + dz * dz;
-                        if (dist <= 0x9c3) {
-                            dist = Iwram_Sqrt(dist);
+                        d2 = dx * dx + dy * dy + dz * dz;
+                        if (d2 <= 0x9c3) {
+                            dist = Iwram_Sqrt(d2);
                             die->velocity_x += __divsi3(dx << 15, dist);
                             die->velocity_y += __divsi3(dy << 15, dist);
                             die->velocity_z += __divsi3(dz << 15, dist);
@@ -704,26 +1004,120 @@ void LuckyDice_Run(void)
         }
 
         for (; count != 128; count++) {
-            sprites->obj[count].attr01 = 0x40f02000;
-            sprites->obj[count].attr2 = 0;
+            u32 off0 = OBJ_OFF(count, attr01);
+            u32 off1 = OBJ_OFF(count, attr2);
+
+            obj = sprites;
+            /* FAKEMATCH: native keeps the object base inside the loop and the two object offsets simultaneously live. */
+            __asm__ volatile("" : "+rm"(obj));
+            *(u32 *)((u8 *)obj + off0) = 0x40f02000;
+            *(u32 *)((u8 *)obj + off1) = 0;
         }
 
-        for (i = 0; i != 4; i++) {
-            value = depth[i] / 2 + 128;
-            affine_a = value;
-            affine_b = 0;
-            affine_c = 0;
-            affine_d = value;
-            sprites->obj[i * 4 + 0].attr2 |= affine_a << 16;
-            sprites->obj[i * 4 + 1].attr2 |= affine_b << 16;
-            sprites->obj[i * 4 + 2].attr2 |= affine_c << 16;
-            sprites->obj[i * 4 + 3].attr2 |= affine_d << 16;
+        {
+            struct LuckyDiceSprites *obj;
+            volatile u16 *pa = &affine_a;
+            volatile u16 *pb = &affine_b;
+            volatile u16 *pc = &affine_c;
+            volatile u16 *pd = &affine_d;
+
+            for (i = 0; i != 4; i++) {
+                u32 offa = OBJ_OFF(i * 4 + 0, attr2);
+                u32 offb = OBJ_OFF(i * 4 + 1, attr2);
+                u32 offc = OBJ_OFF(i * 4 + 2, attr2);
+                u32 offd = OBJ_OFF(i * 4 + 3, attr2);
+
+                /* FAKEMATCH: native's first halfword pointer is r7; a separate boundary swaps it with the first offset as native does (1754 to 1746). */
+                __asm__ volatile("" : "+l"(pa));
+                /* FAKEMATCH: native keeps the other three pointers and first offset low; restores the depth-pointer spill and 768-byte frame (764 without). */
+                __asm__ volatile("" : "+l"(pb), "+l"(pc), "+l"(pd) : "l"(offa));
+                value = depth[i] / 2 + 128;
+                *pa = value;
+                *pb = 0;
+                *pc = 0;
+                *pd = value;
+                {
+                    /* FAKEMATCH: native saves the first shifted affine value in sl; ordinary source omits this high-register copy and its later reload. */
+                    register u32 term asm("sl");
+                    /* FAKEMATCH: native forms that shifted halfword in r2 before reusing r2 for the object base. */
+                    register u32 shifted asm("r2") = (u32)*pa << 16;
+                    /* FAKEMATCH: native then reloads the first object's base in r2; the shared affine base otherwise stays in r1. */
+                    register struct LuckyDiceSprites *p asm("r2");
+
+                    /* FAKEMATCH: native's single r2-to-sl copy replaces our C-copy/empty-boundary pair; the identical operations put the pool-skip branch later and remove extra alignment (1581 to1577, backedge148 to146). One copy suffices; no padding or address is added. */
+                    __asm__("mov %0, %1" : "=r"(term) : "r"(shifted) : "memory");
+                    p = sprites;
+                    /* FAKEMATCH: native reloads the object base for each affine field. */
+                    __asm__ volatile("" : "+r"(p));
+                    *(u32 *)((u8 *)p + offa) |= term;
+                }
+                /* FAKEMATCH: native completes the first object store before reading the second halfword; otherwise the read hoists and uses r1. */
+                __asm__ volatile("" : : : "memory");
+                {
+                    /* FAKEMATCH: native second halfword also passes from r2 to sl; ordinary source selects r1. */
+                    register u32 term asm("sl");
+                    /* FAKEMATCH: keep native's r2 shift before r2 becomes the object base. */
+                    register u32 shifted asm("r2") = (u32)*pb << 16;
+                    u32 word;
+                    /* FAKEMATCH: native second affine base uses r2, then is reloaded there after its lifetime ends at the field load. */
+                    register struct LuckyDiceSprites *p asm("r2");
+
+                    term = shifted;
+                    /* FAKEMATCH: native copies the shift before reloading the second object's base. */
+                    __asm__("" : "+r"(term) : "r"(shifted) : "memory");
+                    p = sprites;
+                    /* FAKEMATCH: native reloads the object base before reading the second affine field. */
+                    __asm__ volatile("" : "+r"(p));
+                    word = *(u32 *)((u8 *)p + offb);
+                    word |= term;
+                    p = sprites;
+                    /* FAKEMATCH: native reloads the base after OR; otherwise the compiler recopies the offset instead. */
+                    __asm__ volatile("" : "+r"(p));
+                    *(u32 *)((u8 *)p + offb) = word;
+                }
+                {
+                    /* FAKEMATCH: native last two halfwords pass through r2 into sl before their offset uses r2. */
+                    register u32 term asm("sl");
+                    /* FAKEMATCH: native shift source is r2; the unconstrained word lifetime uses r3. */
+                    register u32 shifted asm("r2") = *pc;
+                    /* FAKEMATCH: native keeps the last two affine words in r3, leaving r2 for their offsets. */
+                    register u32 word asm("r3");
+                    /* FAKEMATCH: native third/fourth affine base uses r1; the unconstrained split uses r2 and shifts both field registers. */
+                    register struct LuckyDiceSprites *p asm("r1");
+
+                    /* FAKEMATCH: native reads the third halfword before reloading the base; the following shift boundary alone reverses those loads. */
+                    __asm__("" : "+r"(shifted) : : "memory");
+                    p = sprites;
+                    /* FAKEMATCH: native reloads the third base between halfword load and shift; source order alone leaves the shift first. */
+                    __asm__("" : "+r"(shifted) : "r"(p));
+                    shifted <<= 16;
+                    term = shifted;
+                    /* FAKEMATCH: native reloads the base before reading the third affine field. */
+                    __asm__ volatile("" : "+r"(p), "+r"(term) : "r"(shifted));
+                    word = *(u32 *)((u8 *)p + offc);
+                    word |= term;
+                    p = sprites;
+                    /* FAKEMATCH: native reloads the base after OR before storing the third affine field. */
+                    __asm__ volatile("" : "+r"(p) : "r"(word));
+                    *(u32 *)((u8 *)p + offc) = word;
+                    shifted = (u32)*pd << 16;
+                    term = shifted;
+                    /* FAKEMATCH: native consumes the shifted halfword before reusing r2 for the fourth offset. */
+                    __asm__("" : "+r"(term) : "r"(shifted));
+                    word = *(u32 *)((u8 *)p + offd);
+                    word |= term;
+                    p = sprites;
+                    /* FAKEMATCH: native keeps the third store's base for the fourth read, then reloads it after OR. */
+                    __asm__ volatile("" : "+r"(p) : "r"(word));
+                    *(u32 *)((u8 *)p + offd) = word;
+                }
+            }
         }
 
         Dma_Set(sprites->obj, (void *)0x07000000, 0x84000100, (volatile u32 *)0x040000d4);
         WaitFrames(1);
         frame++;
-    }
+    } while (1);
 
     for (i = 0; i != 17; i++) {
         scale = 0x10000 - (i << 12);

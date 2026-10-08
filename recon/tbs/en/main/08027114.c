@@ -1,3 +1,67 @@
+/* Trial from1255, removed: short ability/sl readonly handoff gives1479 and
+ * frame92; a C-only round trip1458 and92. Both spill the captured-state
+ * address but remove two other native stack slots. Explicit availability
+ * if/else gives1277 with frame100; u8 availability1485 with frame104.
+ */
+/* 2026-10-07 queue3 Japanese layout correction: native summon window width14
+ * and requirement columns10/11, versus the localizations'17 and13/14, now
+ * have a Japanese branch. JA bounded parent diff1219 (listing1729,draft1768,
+ * common1139; was1221), EN parent-listing diff remains1255. JA's parent-only
+ * diff excludes the nested helpers that EN's raw-listing comparison includes.
+ * Trials, removed: placing store_target after case1, inside or just outside
+ * its scope, gives1276; the explicit final-cost loop exits there give1301.
+ */
+/* 2026-10-07 queue3 window/cost-loop correction: differ 1255 (listing 1727,
+ * draft 1814, common 1143), not matched; frame 100. A tagged case-16 window
+ * in fp restores its native register (1287 -> 1274); writing the final cost
+ * loop as subtraction in the <= arm and zero/break in its else improves to
+ * 1255. The captured-state address now occupies sl, still not native's sp+36.
+ * Commands survive resource loads, summon columns advance only for nonzero
+ * requirements, and menu retries still skip the three COUNTDOWN resets.
+ * Menu_BuildLocalizedPatternTiles, BattleLayout_HighlightPartyPanels and
+ * CountValidEntriesFar now use their existing s32 result types, score-neutral.
+ * Remaining: captured-state spill, row/loop boundaries, scheduling and pools;
+ * the nested helpers still add rows to this parent diff.
+ * Trials, rejected: case-local ability unchanged1274; also fixing it in sl
+ * spills the state address but reduces the frame to92 and gives1392. Plain
+ * mode with those two pointer bindings1341, then djinn/r9 gives1296, then
+ * sprite/r8 gives1450. Final cost zero followed by goto instead of break
+ * gives1337 before reversing the branch; goto in the reversed else is1255.
+ * Removing the window constraint from1255 gives1290; ordinary mode1299.
+ */
+/* 2026-10-07 queue3 command-register correction: differ 1287 (listing 1727,
+ * draft 1814, common 1127), not matched. With the corrected case scopes,
+ * direct resource-result assignments preserve 1309 and remove the redundant
+ * tile local. A tagged mode/r6 binding then removes ten instructions of
+ * caller-save traffic and keeps the native 100-byte frame (1309 -> 1287).
+ * The command survives the tile loader; summon columns and retry scopes
+ * remain corrected. Ordinary shared mode-2/item handles give 1467; shared
+ * mode-7/mode-2 status buffers give 1357, both rejected. Still unmatched:
+ * &state remains in fp, loop boundaries, scheduling, pools, and other
+ * register choices; the nested helpers still add rows to this parent diff.
+ */
+/* Trial (queue3 after 1309): final cost loop as while (required <= available),
+ * with an exit after j reaches 4 and the zero store after the loop: 1573.
+ * Restored the for loop; no additional device or source change kept. */
+/* 2026-10-07 queue3: differ 1309 (listing 1727, draft 1824, common 1121).
+ * Corrected three source behaviors against the current listing: the command
+ * selected in mode survives Resource_LoadIndexedIntoBuffer (only its r0 result
+ * is the sprite tile; the subsequent compare and switch use r6); the summon
+ * cost display advances its column only for nonzero requirements (the native
+ * add #2 is inside the conditional); every menu retry skips the three initial
+ * COUNTDOWN resets, so the labels follow those stores. A separate tile local
+ * holds resource results. Scoping djinn and ok to case 16 restores the native
+ * 100-byte frame. Remaining: allocation throughout, including &state in fp
+ * where native spills it at sp+36, loop entry tests, scheduling and pools.
+ * No compiler devices retained. The nested helpers are still emitted by the
+ * draft and count as extra rows against the parent-only listing.
+ * Trials: corrected direct command-tile assignment 1398; all resource results
+ * direct 1429; mode fixed r6 1441 (direct results 1401), ok fixed r4 1450;
+ * neither kept. Glyph column correction 1400, retry labels 1386; command tile
+ * through cur 1412; separate tile local for all four results 1415; case-local
+ * djinn and ok 1309, kept. Original command overwrite is semantically wrong
+ * even though its normalized score was lower.
+ */
 /* 08027114: differ 1366 against the 1727-line parent listing (draft 1823,
  * common 1092; was 2131).
  * The draft also emits the two preceding nested helpers, 080270ac/080270d8,
@@ -136,7 +200,7 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 id, s32 handle);
 s32 Resource_LoadKind26EntryToBuffer(s32 id, s32 handle);
 void Graphics_ExpandVramTilesByColorTable(s32 destination);
 void Link_DrawShiftedTilePair(s32 destination);
-void Menu_BuildLocalizedPatternTiles(void);
+s32 Menu_BuildLocalizedPatternTiles(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 period);
 void UpdateLinkSessionCountdown(void);
 void Battle_DrawPartyPanelsWithEmptyList(void);
@@ -160,7 +224,7 @@ s32 Item_ClassifyUseAbility(s32 actor, s32 item);
 s32 BattleTarget_RunSelection(s32 actor, s32 a, s32 b, s32 kind);
 void UiWindow_PutGlyph(struct UiWindow *win, s32 id, s32 pos, s32 arg3, u32 arg4);
 s32 Ui_RunSelectionScreen(s32 mode);
-void BattleLayout_HighlightPartyPanels(u16 *header);
+s32 BattleLayout_HighlightPartyPanels(u16 *header);
 void Ui_RunOwnerStatusScreen(void *block, s32 handle, s32 actor);
 s32 Battle_SelectAbility(s32 actor, s32 mode);
 s32 SummonMenu_SelectSummon(s32 a, s32 b, const u8 *standby);
@@ -173,11 +237,10 @@ s32 Djinn_IsActiveFar(s32 actor, s32 element, s32 index);
 s32 BattleParty_ListActorIdsFar(s32 mode, void *block);
 void Camera_ConfigureSceneFar(s32 offset);
 void BattlePres_SetActorModesFar(u16 *header, s32 mode);
-void BattlePlacement_CountValidEntriesFar(s32 mode, u8 *cost);
+s32 BattlePlacement_CountValidEntriesFar(s32 mode, u8 *cost);
 
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 count)
 {
-    const struct SummonDefinition *djinn;
     struct LinkRoundState *state;
     struct BtlWork *link;
     struct BtlWork *session;
@@ -193,7 +256,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     u16 hdr[2];
     s32 aux;
     s32 actorId;
-    s32 mode;
+    /* FAKEMATCH: Native retains commands and menu selections in r6. Ordinary allocation puts mode in caller-saved r4; sharing competing handles/buffers gives 1467/1357. Binding mode reduces save traffic and removes ten instructions overall, 1309 -> 1287, with frame100; removing it after the window/cost-loop change gives1299 instead of1255. */
+    register s32 mode __asm__("r6");
     s32 kind;
     s32 param;
     s32 res1024;
@@ -202,7 +266,6 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
     s32 cnt;
     s32 sel;
     s32 cost;
-    s32 ok;
     s32 i;
     s32 k;
     s32 cur;
@@ -367,8 +430,7 @@ handshake_done:
             slot = &COUNTDOWN->entries[2];
             slot->oam.word.attr01 = 0x80000400;
             slot->oam.word.attr23 = 0;
-            mode = Ui_LoadEntryForKind(actor->class_id, res512);
-            slot->oam.f.tile = mode;
+            slot->oam.f.tile = Ui_LoadEntryForKind(actor->class_id, res512);
             slot->oam.f.x = 0;
             slot->oam.f.y = 0x80;
             slot->oam.f.palette = 14;
@@ -413,8 +475,7 @@ mark_visible:
             slot = &COUNTDOWN->entries[0];
             slot->oam.word.attr23 = 0;
             slot->oam.word.attr01 = 0x80002400;
-            mode = Resource_LoadIndexedIntoBuffer(res1024, mode);
-            slot->oam.f.tile = mode;
+            slot->oam.f.tile = Resource_LoadIndexedIntoBuffer(res1024, mode);
             if (mode == 15) {
                 slot->oam.f.x = 128;
             } else {
@@ -444,10 +505,10 @@ mark_visible:
                 s32 handle;
 
                 Audio_PlayCue(112);
-psynergy_menu:
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
+psynergy_menu:
                 state->entries[0].oam.f.x = 48;
                 cnt = 0;
                 k = 0;
@@ -488,8 +549,7 @@ psynergy_menu:
                 slot->oam.word.attr23 = 0;
                 slot->oam.f.x = (win->x << 3) + 8;
                 slot->oam.f.y = (u8)((win->y << 3) + 4);
-                mode = Resource_LoadIndexedEntryToBuffer(param, handle);
-                slot->oam.f.tile = mode;
+                slot->oam.f.tile = Resource_LoadIndexedEntryToBuffer(param, handle);
                 state->entryActive[1] = 1;
                 ui->level = 5;
                 if ((s32)ability->pp_cost > (s32)actor->ep) {
@@ -522,16 +582,20 @@ psynergy_menu:
             }
 
             case 16: {
-                struct UiWindow *win;
+                const struct SummonDefinition *djinn;
+                /* FAKEMATCH: Native retains the summon window in fp. Its own ordinary local gives 1290 with the reshaped final-cost branch; this binding restores the window register (1255). */
+                register struct UiWindow *win __asm__("r11");
                 struct MenuSprite *slot;
                 s32 handle;
                 s32 j;
+                s32 n;
+                s32 ok;
 
                 Audio_PlayCue(112);
-djinn_menu:
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
+djinn_menu:
                 state->entries[0].oam.f.x = 80;
                 BattleLayout_HighlightPartyPanels(hdr);
                 mode = SummonMenu_SelectSummon(0, 0, state->cost[i]);
@@ -546,7 +610,11 @@ djinn_menu:
                 djinn = SummonDefinition_Get(mode);
                 ability = Ability_GetData(djinn->name_message_id);
                 handle = Resource_LoadIntoFreeSlot(128);
+#if defined(TBS_EDITION_JA)
+                win = UiWindow_Create(10, 17, 14, 3, 6);
+#else
                 win = UiWindow_Create(10, 17, 17, 3, 6);
+#endif
                 for (j = 0; j <= 3; j++) {
                     if (djinn->djinn_required[j] > state->cost[i][j]) {
                         break;
@@ -565,10 +633,17 @@ djinn_menu:
                 }
                 UiText_DrawCharacterAtOffset(SummonDefinition_Get(mode)->name_message_id + 819,
                                              win, 16, 0);
+                n = 0;
                 for (j = 0; j <= 3; j++) {
                     if (djinn->djinn_required[j] != 0) {
-                        UiWindow_SetTilemapEntry(win, j + 20481, j * 2 + 13, 0, 0);
-                        UiWindow_PutGlyph(win, djinn->djinn_required[j] + 48, j * 2 + 14, 0, 0);
+#if defined(TBS_EDITION_JA)
+                        UiWindow_SetTilemapEntry(win, j + 20481, n * 2 + 10, 0, 0);
+                        UiWindow_PutGlyph(win, djinn->djinn_required[j] + 48, n * 2 + 11, 0, 0);
+#else
+                        UiWindow_SetTilemapEntry(win, j + 20481, n * 2 + 13, 0, 0);
+                        UiWindow_PutGlyph(win, djinn->djinn_required[j] + 48, n * 2 + 14, 0, 0);
+#endif
+                        n++;
                     }
                 }
                 if (ok != 0) {
@@ -586,11 +661,12 @@ djinn_menu:
                     goto djinn_menu;
                 }
                 for (j = 0; j <= 3; j++) {
-                    if (djinn->djinn_required[j] > state->cost[i][j]) {
+                    if (djinn->djinn_required[j] <= state->cost[i][j]) {
+                        state->cost[i][j] = (u8)(state->cost[i][j] - djinn->djinn_required[j]);
+                    } else {
                         state->cost[i][j] = 0;
                         break;
                     }
-                    state->cost[i][j] = (u8)(state->cost[i][j] - djinn->djinn_required[j]);
                 }
                 goto store_target;
 
@@ -604,10 +680,10 @@ djinn_menu:
                 s32 index;
 
                 Audio_PlayCue(112);
-summon_menu:
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
+summon_menu:
                 state->entries[0].oam.f.x = 144;
                 COUNTDOWN->result[i] = 0x80000000;
                 mode = Battle_SelectAbility(actorId, 1);
@@ -671,10 +747,10 @@ summon_menu:
                 s32 handle;
 
                 Audio_PlayCue(112);
-item_menu:
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
+item_menu:
                 state->entries[0].oam.f.x = 96;
                 cnt = 0;
                 cur = actor->inventory[0];
@@ -728,8 +804,7 @@ item_menu:
                 slot->oam.word.attr23 = 0;
                 slot->oam.f.x = (win->x << 3) + 8;
                 slot->oam.f.y = (u8)((win->y << 3) + 4);
-                mode = Resource_LoadKind26EntryToBuffer(actor->inventory[sel], handle);
-                slot->oam.f.tile = mode;
+                slot->oam.f.tile = Resource_LoadKind26EntryToBuffer(actor->inventory[sel], handle);
                 state->entryActive[1] = 1;
                 UiText_DrawCharacterAtOffset((actor->inventory[sel] & 0x1ff) + 386,
                                              win, 24, 0);

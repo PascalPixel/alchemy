@@ -6,4 +6,5 @@ Title_CamelotLogo:
 	.incbin "GRAPHICS/TITLE/CAMELOT_LOGO_JA.parts.lz"
 	.else
 	.incbin "GRAPHICS/TITLE/CAMELOT_LOGO.parts.lz"
+	.byte 0x04, 0x18, 0x03	@ PACKER: left in the buffer by Title_IntroGraphicsC+0x1829
 	.endif

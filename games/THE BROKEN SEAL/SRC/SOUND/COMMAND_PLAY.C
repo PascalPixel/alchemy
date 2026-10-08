@@ -27,7 +27,7 @@ void AudioCommand_Play(s32 id)
         gAudioSecondaryState = 19;
     } else if (id == AUDIO_CUE_FADE_SLOT3) {
         gMusicPlayerVolumes[3] = 0;
-        MusicPlayer_FadeOut(&Data_02004360, 3);
+        MusicPlayer_FadeOut(&Sound_Player3, 3);
     } else if (id >= AUDIO_SONG_FIRST) {
         player = Sound_SongTable[id].slot;
         if (player == 7) {

@@ -164,8 +164,8 @@ Sound_Player4:
 	.global Sound_WorkBytes
 Sound_WorkBytes:
 	.space 0x00000010
-	.global Data_02004360
-Data_02004360:
+	.global Sound_Player3
+Sound_Player3:
 	.space 0x00000040
 	.global Sound_Tracks0
 Sound_Tracks0:

@@ -40,30 +40,30 @@ Resource_DirectoryTable:
 	resource WorldMapPicture, Field_WorldMapPicture
 	resource IntroTilesB, Title_IntroTilesB
 	resource SuharaGateBackdrop, Battle_SuharaGateBackdrop
-	resource , Battle_TakaraShimaBackdrop
-	resource , Battle_TakaraShimaCaveBackdrop
-	resource , Battle_KorosseoBackdrop
+	resource TakaraShimaBackdrop, Battle_TakaraShimaBackdrop
+	resource TakaraShimaCaveBackdrop, Battle_TakaraShimaCaveBackdrop
+	resource KorosseoBackdrop, Battle_KorosseoBackdrop
 	resource VinasuChojoStormBackdrop, Battle_VinasuChojoStormBackdrop
-	resource , Battle_VinasuChojoBackdrop
-	resource , Battle_VinasuHeyaBackdrop
-	resource , Battle_SuharaSabakuBackdrop
-	resource , Battle_ArutamiraDouBackdrop
-	resource , Battle_BabiChikaBackdrop
-	resource , Battle_BabiIriguchiBackdrop
-	resource , Battle_RamakanSabakuBackdrop
-	resource , Battle_MogoruMoriBackdrop
-	resource , Battle_MakyuriChojoBackdrop
-	resource , Battle_FuneHeyaBackdrop
-	resource , Battle_ImiruFuchinBackdrop
-	resource , Battle_KorimaMoriBackdrop
-	resource , Battle_ToretoHeyaBackdrop
-	resource , Battle_GomaDouBackdrop
-	resource , Battle_InteriorBackdrop
-	resource , Battle_ArutinYamaBackdrop
-	resource , Battle_FuneKanpanBackdrop
-	resource , Battle_MakyuriHeyaBackdrop
-	resource , Battle_HaidiaArashiBackdrop
-	resource , Battle_ToretoEdaBackdrop
+	resource VinasuChojoBackdrop, Battle_VinasuChojoBackdrop
+	resource VinasuHeyaBackdrop, Battle_VinasuHeyaBackdrop
+	resource SuharaSabakuBackdrop, Battle_SuharaSabakuBackdrop
+	resource ArutamiraDouBackdrop, Battle_ArutamiraDouBackdrop
+	resource BabiChikaBackdrop, Battle_BabiChikaBackdrop
+	resource BabiIriguchiBackdrop, Battle_BabiIriguchiBackdrop
+	resource RamakanSabakuBackdrop, Battle_RamakanSabakuBackdrop
+	resource MogoruMoriBackdrop, Battle_MogoruMoriBackdrop
+	resource MakyuriChojoBackdrop, Battle_MakyuriChojoBackdrop
+	resource FuneHeyaBackdrop, Battle_FuneHeyaBackdrop
+	resource ImiruFuchinBackdrop, Battle_ImiruFuchinBackdrop
+	resource KorimaMoriBackdrop, Battle_KorimaMoriBackdrop
+	resource ToretoHeyaBackdrop, Battle_ToretoHeyaBackdrop
+	resource GomaDouBackdrop, Battle_GomaDouBackdrop
+	resource InteriorBackdrop, Battle_InteriorBackdrop
+	resource ArutinYamaBackdrop, Battle_ArutinYamaBackdrop
+	resource FuneKanpanBackdrop, Battle_FuneKanpanBackdrop
+	resource MakyuriHeyaBackdrop, Battle_MakyuriHeyaBackdrop
+	resource HaidiaArashiBackdrop, Battle_HaidiaArashiBackdrop
+	resource ToretoEdaBackdrop, Battle_ToretoEdaBackdrop
 	resource BeachBackdrop, Battle_BeachBackdrop
 	resource SnowfieldBackdrop, Battle_SnowfieldBackdrop
 	resource GrasslandBackdrop, Battle_GrasslandBackdrop
@@ -1010,3 +1010,26 @@ Resource_DirectoryTable:
 	resource , 0
 	resource , 0
 	resource , 0
+
+@ ビルドの日時（年月日時分秒、二桁ずつ）
+	.global Resource_BuildStamp
+Resource_BuildStamp:
+	.ifdef TBS_EDITION_JA
+	.asciz "010628184502\n"
+	.endif
+	.ifdef TBS_EDITION_EN
+	.asciz "010918151347\n"
+	.endif
+	.ifdef TBS_EDITION_FR
+	.asciz "011219190202\n"
+	.endif
+	.ifdef TBS_EDITION_DE
+	.asciz "020109152237\n"
+	.endif
+	.ifdef TBS_EDITION_ES
+	.asciz "020205181231\n"
+	.endif
+	.ifdef TBS_EDITION_IT
+	.asciz "020206164027\n"
+	.endif
+	.balign 4

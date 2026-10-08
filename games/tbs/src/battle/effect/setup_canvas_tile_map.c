@@ -11,10 +11,10 @@
 #include "iwram_call.h"
 #include "system.h"
 #include "io_reg.h"
+#include "btlwork.h"
+#include "map_scroll.h"
 
 #define BattlePresentation_ConfigurePaletteFadeFar ((void (*)(s32,s32,s32))BattlePresentation_ConfigurePaletteFadeFar)
-
-extern u8 BtlWk[];
 
 typedef s32 (*ClearFn)(void *dst, s32 size);
 typedef s32 (*FillFn)(void *dst, s32 size, u32 value);
@@ -41,11 +41,9 @@ struct BattleLayer {
     s32 offset;
 };
 
-extern u16 gBgScroll[];
-
 void BattleFx_SetupCanvasTileMap(void)
 {
-    u8 **cells = (u8 **)BtlWk;
+    u8 **cells = (u8 **)&BtlWk;
     void *canvas = cells[31];
     struct BattleScreen *screen = (struct BattleScreen *)cells[0];
     struct BattleLayer *layer = (struct BattleLayer *)cells[35];
@@ -55,7 +53,7 @@ void BattleFx_SetupCanvasTileMap(void)
 
     BattleFx_ClearActorTimers();
     BattlePresentation_ConfigurePaletteFadeFar(2, screen->palette_fade, 0);
-    gBgScroll[3] = 32;
+    gBgScroll[1].y = 32;
     layer->offset = 0;
     ClearWords(Iwram_ClearWords, (void *)0x06003fc0, 64);
     FillWords(Iwram_FillWords, (void *)0x0600f900, 0x200, -1);

@@ -2,24 +2,6 @@
 	.incbin "baserom.gba", 0x00007a68, 0x00000024
 	.section .rom.00007b38, "ax"
 	.incbin "baserom.gba", 0x00007b38, 0x00000004
-	.section .rom.0000caca, "ax"
-	.incbin "baserom.gba", 0x0000caca, 0x00000002
-	.section .rom.00029f3c, "ax"
-	.global UiIcon_ItemIconPointers
-UiIcon_ItemIconPointers:
-	.incbin "baserom.gba", 0x00029f3c, 0x000003fc
-	.global UiIcon_ItemIconPointersEnd
-UiIcon_ItemIconPointersEnd:
-	.incbin "baserom.gba", 0x0002a338, 0x00003b9c
-	.global UiIcon_PsynergyIconPointers
-UiIcon_PsynergyIconPointers:
-	.incbin "baserom.gba", 0x0002ded4, 0x00000280
-	.global UiIcon_PsynergyIconPointersEnd
-UiIcon_PsynergyIconPointersEnd:
-	.incbin "baserom.gba", 0x0002e154, 0x00002798
-	.global UiIcon_MiscIconPointers
-UiIcon_MiscIconPointers:
-	.incbin "baserom.gba", 0x000308ec, 0x00000800
 	.section .rom.00094164, "ax"
 	.global Battle_LocationRules
 Battle_LocationRules:
@@ -37,8 +19,6 @@ Party_PairResolveRules:
 	.global RomWords_0809e270
 RomWords_0809e270:
 	.incbin "baserom.gba", 0x00095254, 0x00000218
-	.section .rom.000d9972, "ax"
-	.incbin "baserom.gba", 0x000d9972, 0x00000002
 	.section .rom.000e7ae0, "ax"
 	.incbin "baserom.gba", 0x000e7ae0, 0x00000885
 	.global DisplayScroll_GlyphWidths

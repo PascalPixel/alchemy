@@ -336,6 +336,7 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/CURFRAME.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDATA.o"(.rodata)
         "*/games/THE BROKEN SEAL/TEXT/MESSAGES.o"(.rodata)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/GENDERS.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/TEXTSPD.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/NUMWORDS.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/MENU/SLIDPAL.o"(.rodata)

@@ -1,7 +1,3 @@
-	.section .unidentified.08007a68,"a"
-	.incbin "baserom.gba", 0x00007a68, 0x00000024
-	.section .unidentified.08007b38,"a"
-	.incbin "baserom.gba", 0x00007b38, 0x00000004
 	.section .unidentified.0809d170,"a"
 	.global Battle_LocationRules
 Battle_LocationRules:

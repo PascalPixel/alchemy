@@ -4,14 +4,11 @@ extern u8 *gFlash;
 
 s32 CountRemainingErasedFlashBytes(u8 *ptr)
 {
-    s32 remaining = *(s32 *)(gFlash + 4);
+    s32 remaining;
 
-    while (remaining != 0) {
-        u8 byte = *ptr;
-        ptr++;
-        if (byte != 0xff)
+    for (remaining = *(s32 *)(gFlash + 4); remaining != 0; remaining--) {
+        if (*ptr++ != 0xff)
             break;
-        remaining--;
     }
     return remaining;
 }

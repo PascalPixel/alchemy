@@ -392,15 +392,13 @@ Data_08017d10:
 	.global Flash_Chips
 Flash_Chips:
 	.incbin "baserom.gba", 0x00017d90, 0x00000014
-	.section .rom.00017dec, "ax"
-	.incbin "baserom.gba", 0x00017dec, 0x00000024
 	.section .rom.00017e28, "ax"
 	.incbin "baserom.gba", 0x00017e28, 0x00000018
 	.global Flash_ChipUnknown
 Flash_ChipUnknown:
 	.incbin "baserom.gba", 0x00017e40, 0x00000058
-	.section .rom.00017ebc, "ax"
-	.incbin "baserom.gba", 0x00017ebc, 0x0000008c
+	.section .rom.00017ec0, "ax"
+	.incbin "baserom.gba", 0x00017ec0, 0x00000088
 	.section .rom.00017f50, "ax"
 	.incbin "baserom.gba", 0x00017f50, 0x00000018
 	.global Flash_ChipAtmel

@@ -55,7 +55,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
     struct BtlWork *session = *(gWorkSlot + HEAP_SLOT_BATTLE);
     u16 *palette;
 
-    /* FAKEMATCH: the one-pass block keeps the size load after the session load and the decoder call after the copy. */
+    /* FAKEMATCH: needed to match: the one-pass block keeps the size load after the session load and the decoder call after the copy */
     do {
         u32 size = (u32)BitDecoder_Size;
         void *decoder = Runtime_AllocateHeapBlock(49, size);

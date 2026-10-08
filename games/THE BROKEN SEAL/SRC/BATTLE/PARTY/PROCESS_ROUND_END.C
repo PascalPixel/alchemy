@@ -283,7 +283,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
                     break;
                 }
             }
-            /* FAKEMATCH: one temporary for the sentinel and the third scan's count puts the -1 in r3 and the order copy before the count load. */
+            /* FAKEMATCH: needed to match: one temporary for the sentinel and the third scan's count puts the -1 in r3 and the order copy before the count load */
             tmp = -1;
             if (owner == tmp) {
                 break;

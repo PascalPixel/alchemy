@@ -94,7 +94,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
         *blend_y = zero;
         sixteen = 16;
 
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+        /* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
         do {
             blend_y[-1] = sixteen;
         } while (0);
@@ -125,7 +125,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
 
 s32 BattleFx_UpdateStarField(void)
 {
-    /* FAKEMATCH: the ignored non-void result keeps the return-address pop in r1. */
+    /* FAKEMATCH: needed to match: the ignored non-void result keeps the return-address pop in r1 */
     s32 j;
     s32 frame;
     u32 size;

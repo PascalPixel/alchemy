@@ -75,9 +75,7 @@ void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
 
 static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)
 {
-    /* FAKEMATCH: the palette copies share the routine's address but build
-       the palette address again at each call, which only an inlined constant
-       argument compiles to; a direct call keeps it in a register. */
+    /* FAKEMATCH: needed to match: the inlined copy shares the routine address and rebuilds the palette address at each call */
     copy(destination, source, size);
 }
 
@@ -197,10 +195,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                         ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
                         BattleEventRuntime_BeginPhaseFar(133);
                     }
-                    /* FAKEMATCH: restores the CSE block boundary the bytes prove
-                       after the hit block: native recomputes k << 3 and
-                       gShots + k * 448 for the step instead of reusing the hit
-                       test's, so CSE pass 1's block ended here, leaving no code. */
+                    /* FAKEMATCH: needed to match: restores the CSE block boundary after the hit block (k << 3 is recomputed) */
                     do { } while (0);
                     if (shot->variant >= 0) {
                         s32 step = (frame - k * 8) / 3;
@@ -222,9 +217,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 
                             shot->y = 0;
                             shot->variant = 1;
-                            /* FAKEMATCH: native loads the table address before the row
-                               (r0, r1); records[mode * 2] puts the multiply first in the
-                               address and reload loads the row first (68 -> 64). */
+                            /* FAKEMATCH: needed to match: native loads the table address before the row (r0, r1) */
                             row = mode * 2;
                             if (records[row] == 0)
                                 count = 4;
@@ -234,11 +227,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
                                 struct EffectStep *burst;
                                 s32 group = k * 4;
 
-                                /* FAKEMATCH: restores the CSE block boundary the bytes prove
-                                   between group's set and group * 8: native shifts the
-                                   hoisted k << 2 by 3 in the loop and leaves the address
-                                   unreduced, where one CSE pass 1 block folds them into
-                                   k << 5, so that block ended here, leaving no code. */
+                                /* FAKEMATCH: needed to match: restores the CSE block boundary between group's set and group * 8 */
                                 do { } while (0);
                                 burst = &gBursts[group * 8 + i];
 

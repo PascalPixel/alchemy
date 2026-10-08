@@ -19,7 +19,7 @@
 
 static __inline__ void FillWords(void *dst, s32 size, s32 value)
 {
-    /* FAKEMATCH: a direct call changes BattlePresentation_BuildTilemap from push {r5, r6, lr} to push {r5, r6, r7, lr} (45/44 assembly lines). */
+    /* FAKEMATCH: needed to match: a direct call changes BattlePresentation_BuildTilemap from push {r5, r6, lr} to push {r5, r6, r7, lr} */
     Iwram_FillWords(dst, size, value);
 }
 
@@ -57,7 +57,7 @@ void BattlePres_UpdateHBlankScroll(void)
         records = *(struct BattleAffineHdma **)&gWorkSlot[10];
         record = records->lines[records->page];
         control = record[0];
-        /* FAKEMATCH: the do-while keeps the BG2CNT address load after the record read. */
+        /* FAKEMATCH: needed to match: the do-while keeps the BG2CNT address load after the record read */
         do {
             REG_BG2CNT = control;
         } while (0);

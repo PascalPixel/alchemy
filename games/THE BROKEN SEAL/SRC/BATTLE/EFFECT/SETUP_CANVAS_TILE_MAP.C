@@ -21,13 +21,13 @@ typedef s32 (*FillFn)(void *dst, s32 size, u32 value);
 
 static __inline__ void ClearWords(ClearFn clear, void *dst, s32 size)
 {
-    /* FAKEMATCH: direct calls share the 0x4000 size in r5 and move the clear routine to r6. */
+    /* FAKEMATCH: needed to match: direct calls share the 0x4000 size in r5 and move the clear routine to r6 */
     clear(dst, size);
 }
 
 static __inline__ void FillWords(FillFn fill, void *dst, s32 size, s32 value)
 {
-    /* FAKEMATCH: a direct call loads the destination before the routine and reverses their pool words. */
+    /* FAKEMATCH: needed to match: a direct call loads the destination before the routine and reverses their pool words */
     fill(dst, size, value);
 }
 

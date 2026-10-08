@@ -75,7 +75,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
 	if (work->effect->variant != 2)
 	{
 		void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
-		/* FAKEMATCH: calling through a local copy of the routine's address loads that address before the palette address is shifted into place; the direct call swaps those two instructions. */
+		/* FAKEMATCH: needed to match: calling through a local copy of the routine's address loads that address before the palette address is shifted into place */
 		WordCopy copy = Iwram_CopyWords;
 
 		copy((void *)BG_PLTT, palette, 128);

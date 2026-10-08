@@ -115,7 +115,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
     draw[0] = cache[2];
-    /* FAKEMATCH: the one-pass block keeps the table address after the second read. */
+    /* FAKEMATCH: needed to match: the one-pass block keeps the table address after the second read */
     do {
         draw[1] = cache[3];
     } while (0);
@@ -233,7 +233,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
                             point[0] = trail->x;
 #if defined(TBS_EDITION_JA)
                             {
-                                /* FAKEMATCH: naming the result pointer keeps the point address in a register across this loop, as the Japanese build has it. */
+                                /* FAKEMATCH: needed to match: naming the result pointer keeps the point address in a register across this loop */
                                 struct EffectPosition *out = &screen;
 
                                 EffectPosition_ApplyBaseAndYOffset(point, out);

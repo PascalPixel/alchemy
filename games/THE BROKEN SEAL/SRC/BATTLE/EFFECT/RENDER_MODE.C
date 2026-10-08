@@ -101,7 +101,7 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
 		Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 0);
 		palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
 	}
-	/* FAKEMATCH: forwarded through Call3, the palette copy loads its routine before it shifts the destination, as the reference does. */
+	/* FAKEMATCH: needed to match: forwarded through Call3, the palette copy loads its routine before it shifts the destination, as the reference does */
 	Call3((void (*)())Iwram_CopyWords, (s32)BG_PLTT, (s32)palette, 128);
 	if (mode == 4)
 		Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);

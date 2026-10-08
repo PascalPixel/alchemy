@@ -126,7 +126,7 @@ loop:
 	offset = gBattleDisplayWork->offset;
 	QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
 	QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
-	/* FAKEMATCH: the one-pass loop keeps the BLDALPHA address load after the value. */
+	/* FAKEMATCH: needed to match: the one-pass loop keeps the BLDALPHA address load after the value */
 	do
 	{
 		u16 blend = 16;
@@ -179,7 +179,7 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y)
 	{
 		QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
 		QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
-		/* FAKEMATCH: the one-pass loop keeps the BLDALPHA address load after the value. */
+		/* FAKEMATCH: needed to match: the one-pass loop keeps the BLDALPHA address load after the value */
 		do
 		{
 			u16 blend = 16;

@@ -80,7 +80,7 @@ void						  BattleFx_SelectBattleCue(s32 zone);
 //--------------------------------------------------------------------------
 void BattleFx_SelectLocationRule(s32 use_rules)
 {
-	/* FAKEMATCH: the shift temporaries order the zero between the two stores. */
+	/* FAKEMATCH: needed to match: the shift temporaries order the zero between the two stores */
 	struct EventWork				*work;
 	s32								 map;
 	s32								 room;

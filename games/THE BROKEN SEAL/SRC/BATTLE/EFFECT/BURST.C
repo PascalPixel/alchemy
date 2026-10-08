@@ -70,7 +70,7 @@ void BattleFx_RunParticleFieldVariant3(s32 effect)
 //--------------------------------------------------------------------------
 void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 variant)
 {
-	/* FAKEMATCH: the blitter/camera declarations and independent store order preserve spill slots and loop preheader order. */
+	/* FAKEMATCH: needed to match: the blitter/camera declarations and independent store order preserve spill slots and loop preheader order */
 	void					**heap;
 	void					**cursor;
 	struct BattleEffectWork	 *work;

@@ -32,7 +32,7 @@
 
 static __inline__ s32 DivQ16(s32 divisor, s32 value)
 {
-    /* FAKEMATCH: a direct call keeps the divisor in r5 for the camera call; the reference builds it twice. */
+    /* FAKEMATCH: needed to match: a direct call keeps the divisor in r5 for the camera call */
     return Iwram_RatioMulQ14(divisor, value);
 }
 

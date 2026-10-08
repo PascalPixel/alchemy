@@ -161,7 +161,7 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
 				s32					 count;
 
 				q = &gIoWriteQueue;
-				/* FAKEMATCH: the one-pass block keeps the queue load first and the saved copy ahead of the IME store, as in the IO write queue. */
+				/* FAKEMATCH: needed to match: the one-pass block keeps the queue load first and the saved copy ahead of the IME store, as in the IO write queue */
 				do
 				{
 					ime = &REG_IME;
@@ -172,7 +172,7 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
 				if (count <= 31)
 				{
 					u32 *destination = q->entries[count];
-					/* FAKEMATCH: the count is stored through a u16 pointer, as in the IO write queue, which places the store after the entry address. */
+					/* FAKEMATCH: needed to match: the count is stored through a u16 pointer, as in the IO write queue, which places the store after the entry address */
 					*(u16 *)&q->count = count + 1;
 					*destination++ = (u32)(pal + 1);
 					*destination++ = (u32)&BG_PLTT[1];

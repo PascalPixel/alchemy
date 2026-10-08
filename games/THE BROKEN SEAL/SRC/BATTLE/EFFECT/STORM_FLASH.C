@@ -154,7 +154,7 @@ void FieldFx_StartGroundParticles(void)
     u32 i;
     s32 value;
 
-    /* FAKEMATCH: reusing the cursor preserves its register; one-pass blend writes keep callback argument setup after them. */
+    /* FAKEMATCH: needed to match: reusing the cursor preserves its register */
     work = Runtime_AllocateBlock(29, sizeof(struct GroundParticleWork));
     leader = ((struct MapScrollWork *)gMapWork[0])->origin;
     BattleFx_SetQueuedSoundAndPlay(170);

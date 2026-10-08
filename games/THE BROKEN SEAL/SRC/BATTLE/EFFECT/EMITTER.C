@@ -639,7 +639,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
 					case 0x500000:
 						if (entry->flag != -1 && GameFlag_TestFar(entry->flag) == 0)
 						{
-							/* FAKEMATCH: the spawned object reuses the actor variable, which keeps both in r5. */
+							/* FAKEMATCH: needed to match: the spawned object reuses the actor variable, which keeps both in r5 */
 							actor = (struct ObjectRuntime *)Object_CreateFar(
 								22, (x << 20) + (8 << 16), 0, (z << 20) + (8 << 16));
 							if (actor != 0)
@@ -676,7 +676,7 @@ void BattleFx_StartWindowHBlankDma(void)
 	channel[5] &= 0x7fff;
 	(void)channel[5];
 	REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-	/* FAKEMATCH: a do-while(0) around the WININ copy makes the reference load the value before the WININ address */
+	/* FAKEMATCH: needed to match: a do-while(0) around the WININ copy makes the reference load the value before the WININ address */
 	do
 	{
 		value = *src++;

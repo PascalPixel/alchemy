@@ -111,7 +111,7 @@ void Battle_ResetEffectCounter(void)
 
 s32 Event_FindFacingTrigger(s32 source)
 {
-    /* FAKEMATCH: the word-result call avoids the two narrowing shifts added by the u8 declaration. */
+    /* FAKEMATCH: needed to match: the word-result call avoids the two narrowing shifts added by the u8 declaration */
     struct FieldStepWork *runtime = (struct FieldStepWork *)Data_03001ebc;
     const struct SceneEvent *trigger = runtime->events;
     s32 facing = ((struct MotionObject *)ObjectTable_Get(
@@ -150,8 +150,8 @@ s32 Event_FindFacingTrigger(s32 source)
 
 s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 {
-    /* FAKEMATCH: retain the caller's r1=0; the callee's flag parameter is unused. */
-    /* FAKEMATCH: the ROM caller treats this call as setting r0 (an implicit-int style declaration); the callee itself returns void. */
+    /* FAKEMATCH: needed to match: retain the caller's r1=0: the callee's flag parameter is unused */
+    /* FAKEMATCH: needed to match: the ROM caller treats this call as setting r0 (an implicit-int style declaration) */
 
     s32 result;
     s32 item_id;
@@ -249,7 +249,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             if (action_id == 149 && !GameFlag_TestFar(0x144)) {
                 UiWork_PushValueSlotFar(item_id, 2);
                 UiText_ShowPositionedMessageAndWaitFar((s32)MsgUseItemQuestion, 13);
-                /* FAKEMATCH: the owner index doubles as the declined flag, which ranks it above best in global allocation (r6, best r7). */
+                /* FAKEMATCH: needed to match: the owner index doubles as the declined flag, which ranks it above best in global allocation (r6, best r7) */
                 i = Object_CallSpawnRoutineAtOrigin(1);
                 UiWork_FinalizePendingCoreFar();
                 if (i != 0)
@@ -289,7 +289,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
 s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
 {
-    /* FAKEMATCH: the word-result call avoids the two narrowing shifts added by the u8 declaration. */
+    /* FAKEMATCH: needed to match: the word-result call avoids the two narrowing shifts added by the u8 declaration */
     struct FieldStepWork *runtime = (struct FieldStepWork *)Data_03001ebc;
     const struct SceneEvent *event = runtime->events;
     s32 reference = ((struct MotionObject *)ObjectTable_Get(
@@ -331,7 +331,7 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
 
 s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 {
-    /* FAKEMATCH: the ROM caller treats this call as setting r0 (an implicit-int style declaration); the callee itself returns void. */
+    /* FAKEMATCH: needed to match: the ROM caller treats this call as setting r0 (an implicit-int style declaration) */
 
     s32 output;
     s32 index;

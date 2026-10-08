@@ -348,7 +348,7 @@ void BattleFx_RunItemBreakSequence(void)
 	scene = gEffectWork;
 	object = scene->main_object;
 
-	/* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+	/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
 	do
 	{
 		BattleEffect_InitializeSharedScene();

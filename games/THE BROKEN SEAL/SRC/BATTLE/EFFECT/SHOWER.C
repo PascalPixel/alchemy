@@ -55,7 +55,7 @@ typedef struct Spark {
 
 static __inline__ void CopyPalette(CopyWords copy, void *destination, const void *source, s32 size)
 {
-    /* FAKEMATCH: a direct call shifts the palette destination before loading the routine. */
+    /* FAKEMATCH: needed to match: a direct call shifts the palette destination before loading the routine */
     copy(destination, source, size);
 }
 
@@ -439,7 +439,7 @@ void BattleFx_RunSwirlingStars(void *object)
 
 void BattleFx_RunOrbitingSparks(void)
 {
-    /* FAKEMATCH: relative heap-cell loads preserve load and literal order; independent typed slots change both. */
+    /* FAKEMATCH: needed to match: relative heap-cell loads preserve load and literal order */
     void **heap_cache;
     void **cursor;
     struct BattleEffectWork *work;
@@ -448,7 +448,7 @@ void BattleFx_RunOrbitingSparks(void)
     struct EffectPosition center;
     struct EffectPosition pos;
     s32 frame;
-    /* FAKEMATCH: only draw[0] is loaded and read; the unused second word of this real DrawRectangleFn pair is the native frame's four bytes between the routine and the frame counter. */
+    /* FAKEMATCH: needed to match: only draw[0] is used: the second word fills four bytes of the frame */
     DrawRectangleFn draw[2];
     s32 member;
     struct BattleCamera *camera;
@@ -478,7 +478,7 @@ void BattleFx_RunOrbitingSparks(void)
         x_offset = 0;
     else
         x_offset = -112;
-    /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the seed counter is set before its pointer */
+    /* FAKEMATCH: needed to match: a one-pass loop is a sched2 barrier, so the seed counter is set before its pointer */
     do {
         REG_BG2X = x_offset << 8;
     } while (0);
@@ -510,7 +510,7 @@ void BattleFx_RunOrbitingSparks(void)
                 rec[1] = member_object->y;
                 rec[2] = member_object->z;
                 EffectPosition_ApplyBaseAndYOffset(rec, &center);
-                /* FAKEMATCH: sched2 barrier, so this store precedes the spark counter as in the reference */
+                /* FAKEMATCH: needed to match: sched2 barrier, so this store precedes the spark counter as in the reference */
                 do {
                     center.x += x_offset;
                 } while (0);

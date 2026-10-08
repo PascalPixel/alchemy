@@ -33,7 +33,7 @@ typedef s32 (*WordCopy)(void *, const void *, s32);
 
 static __inline__ void CopyWords(WordCopy copy, void *destination, const void *source, s32 size)
 {
-	/* FAKEMATCH: a direct call loads the destination and source before the routine, changing pool order. */
+	/* FAKEMATCH: needed to match: a direct call loads the destination and source before the routine, changing pool order */
 	copy(destination, source, size);
 }
 
@@ -50,7 +50,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 	void					*cells;
 	DrawRectangleFn			 rectangle[2];
 	struct MotionObject		*member_object;
-	/* FAKEMATCH: the second position is never used; it gives the frame its native 76 bytes. */
+	/* FAKEMATCH: needed to match: the second position is never used: it gives the frame its native 76 bytes */
 	struct EffectPosition pos[2];
 	s32					  curve[2];
 	s32					  draw_enabled;
@@ -63,7 +63,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
-	/* FAKEMATCH: the zero is held in sl through the setup calls; a literal 0 frees the register and reorders the prologue. */
+	/* FAKEMATCH: needed to match: the zero is held in sl through the setup calls */
 	zero_val = 0;
 	work->effect = object;
 	BattleFx_BeginTiledCanvas(0);
@@ -191,7 +191,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 			else
 			{
 				idx_a = 1;
-				/* FAKEMATCH: i is 160 here, so this is 0; a literal 0 drops a stack slot and shrinks the frame. */
+				/* FAKEMATCH: needed to match: i is 160 here, so this is 0: a literal 0 drops a stack slot and shrinks the frame */
 				idx_b = i >> 31;
 			}
 			if (frame <= 87)

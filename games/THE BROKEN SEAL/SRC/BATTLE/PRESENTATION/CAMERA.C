@@ -23,7 +23,7 @@
 
 static __inline__ s32 DivQ16(s32 divisor, s32 value)
 {
-    /* FAKEMATCH: a direct call finishes the value shift before the divisor load; the reference loads the divisor first. */
+    /* FAKEMATCH: needed to match: a direct call finishes the value shift before the divisor load */
     return Iwram_RatioMulQ14(divisor, value);
 }
 
@@ -88,7 +88,7 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
 void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 {
     s32 span = 0x01fe0000;
-    /* FAKEMATCH: mode intentionally remains uninitialized to preserve the match. */
+    /* FAKEMATCH: needed to match: mode intentionally remains uninitialized to preserve the match */
     s32 mode;
     struct BattleCamera *scene = gCameraWork;
     s32 *pos = scene->pos;

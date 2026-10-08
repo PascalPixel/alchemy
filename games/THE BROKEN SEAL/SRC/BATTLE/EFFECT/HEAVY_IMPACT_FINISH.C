@@ -45,7 +45,7 @@ void BattleFx_FinishHeavyImpact(s32 jin_id)
 	s32					  cnt;
 
 	jin = Object_GetById(jin_id);
-	/* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+	/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
 	do
 	{
 		if (jin == NULL)
@@ -58,7 +58,7 @@ void BattleFx_FinishHeavyImpact(s32 jin_id)
 	} while (0);
 	Audio_PlayCue(174);
 	Motion_SetVarCbAndRefresh(jin_id, 1);
-	/* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+	/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
 	do
 	{
 		Audio_PlayCue(175);

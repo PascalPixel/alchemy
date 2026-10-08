@@ -35,7 +35,7 @@ s32 Party_ComputeEligibleMemberAverage(s32 record_id)
     s32 id;
     s32 sum;
     s32 count;
-    /* FAKEMATCH: an unread seven-word level table, the native frame's 28 bytes. */
+    /* FAKEMATCH: needed to match: an unread seven-word level table, the native frame's 28 bytes */
     s32 levels[7];
 
     count = 0;

@@ -201,7 +201,7 @@ struct Half {
 
 void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 {
-    /* FAKEMATCH: the one-pass IME save orders its stack address first; argument assignment and a u32 restore preserve load order. */
+    /* FAKEMATCH: needed to match: the one-pass IME save orders its stack address first */
 
     struct BtlWork *screen = BtlWk;
     u16 *palette = screen->palette;
@@ -212,7 +212,7 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
         volatile u32 *slot = &ime;
         u16 *ime_reg = (u16 *)0x04000208;
 
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+        /* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
         do {
             *slot = *ime_reg;
             *ime_reg = (u32)ime_reg;
@@ -233,7 +233,7 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 {
-    /* FAKEMATCH: the IME save sits in one-pass loops, as in the IO write queue, and the green and blue mask is a one-halfword struct, which keeps it a pool constant held across the fade loop as in the ROM. */
+    /* FAKEMATCH: needed to match: one-pass IME save, as in the IO write queue, and a one-halfword struct mask held across the fade loop */
 
     struct BattleBackgroundView *transition = *(struct BattleBackgroundView **)gTransitionWork;
 
@@ -250,7 +250,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 
         q = &gIoWriteQueue;
         {
-            /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+            /* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
             do {
                 ime = &REG_IME;
                 saved = *ime;

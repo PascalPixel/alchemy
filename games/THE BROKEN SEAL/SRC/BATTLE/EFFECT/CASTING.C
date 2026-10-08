@@ -44,53 +44,53 @@ void Audio_PlayCue(s32 cue);
 
 static __inline__ void LoadResource(const void *id, void *dest, s32 skip, s32 copy)
 {
-	/* FAKEMATCH: Inline scope keeps each resource call's arguments local. */
+	/* FAKEMATCH: needed to match: inline scope keeps each resource call's arguments local */
 	Resource_LoadAndDecompress((s32)id, dest, skip, copy);
 }
 
 static __inline__ void PackRows(void *src, void *dest, s32 width, s32 height)
 {
-	/* FAKEMATCH: Keep packing arguments within their own inline scope. */
+	/* FAKEMATCH: needed to match: keep packing arguments within their own inline scope */
 	Graphics_PackTileRows(src, dest, width, height);
 }
 
 static __inline__ void ClearWords(void *dest, u32 size)
 {
-	/* FAKEMATCH: Inline scope makes each clearing call reload its byte count. */
+	/* FAKEMATCH: needed to match: inline scope makes each clearing call reload its byte count */
 	Iwram_ClearWords(dest, size);
 }
 
 static __inline__ void FillWords(void *dest, u32 size, u32 value)
 {
-	/* FAKEMATCH: Inline scope reloads the fill routine before its arguments. */
+	/* FAKEMATCH: needed to match: inline scope reloads the fill routine before its arguments */
 	Iwram_FillWords(dest, size, value);
 }
 
 static __inline__ void DrawImage(
 	void *canvas, const void *pixels, s32 x, s32 y, s32 width, s32 height, RectangleBlit *draw)
 {
-	/* FAKEMATCH: Inline scope reloads each image address at its drawing call. */
+	/* FAKEMATCH: needed to match: inline scope reloads each image address at its drawing call */
 	(*draw)(canvas, pixels, x, y, width, height);
 }
 
 static __inline__ void DrawTallImage(
 	void *canvas, const void *pixels, s32 x, s32 y, s32 width, RectangleBlit *draw)
 {
-	/* FAKEMATCH: Derive height inside the inline scope so the dimension stores reuse one register instead of keeping two argument temporaries alive. */
+	/* FAKEMATCH: needed to match: derive height inside the inline scope so the dimension stores reuse one register instead of keeping two argument temporaries alive */
 	(*draw)(canvas, pixels, x, y, width, width * 2);
 }
 
 static __inline__ void DrawScrolledImage(void *canvas, const void *pixels, s32 x, s32 y, s32 width,
 	s32 height, s32 scroll, RectangleBlit *draw)
 {
-	/* FAKEMATCH: Subtract the scrolled part inside the drawing scope. */
+	/* FAKEMATCH: needed to match: subtract the scrolled part inside the drawing scope */
 	(*draw)(canvas, pixels, x, y, width, height - scroll);
 }
 
 static __inline__ void DrawCroppedImage(
 	void *canvas, const void *pixels, s32 x, s32 y, s32 width, RectangleBlit *draw)
 {
-	/* FAKEMATCH: Keep the cropped height inside the drawing scope. */
+	/* FAKEMATCH: needed to match: keep the cropped height inside the drawing scope */
 	(*draw)(canvas, pixels, x, y, width, 91);
 }
 
@@ -136,7 +136,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	struct FixedPointPosition *motion;
 	s32						   kind_from_two;
 	s32						   kind_from_four;
-	/* FAKEMATCH: Declaration order preserves the two temporary stack slots. */
+	/* FAKEMATCH: needed to match: declaration order preserves the two temporary stack slots */
 	s32						   origin_x;
 	struct FixedPointPosition *position;
 	struct MotionObject		  *caster_actor;
@@ -175,7 +175,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	LoadResource(&ResourceId_ParticleSpritesA, sprites, 0, 0);
 	LoadResource(&ResourceId_FireStreakSheet, work, 1, 0);
 	LoadResource(&ResourceId_YellowOrbSheet, Ram_MapCellBuffer, 1, 0);
-	/* FAKEMATCH: Local dimensions preserve the packing argument order. */
+	/* FAKEMATCH: needed to match: local dimensions preserve the packing argument order */
 	{
 		s32 width = 40;
 		s32 height = 288;
@@ -286,7 +286,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 		work->transfer_value = 50;
 	}
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	/* FAKEMATCH: Retain each output pointer while preparing its call. */
+	/* FAKEMATCH: needed to match: retain each output pointer while preparing its call */
 	EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], target_screen = &target_pos);
 	EffectPosition_ApplyStepAndYOffset(work->effect->actor, caster_screen = &caster_pos);
 	BattleFx_FetchRectangleBlitters(work->effect->side, draw_pair = blitters);
@@ -379,7 +379,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 				Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
 				EffectPosition_ApplyBaseAndYOffset((s32 *)&djinn_pos, &spark_screen);
 				djinn_x = spark_screen.x;
-				/* FAKEMATCH: Keep signed halving in the loaded coordinate register. */
+				/* FAKEMATCH: needed to match: keep signed halving in the loaded coordinate register */
 				djinn_x += (u32)djinn_x >> 31;
 				djinn_x >>= 1;
 				spark_screen.x = djinn_x;
@@ -391,7 +391,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 		WaitFrames(1);
 		frame++;
 	} while (frame != 32);
-	/* FAKEMATCH: Restart the pointer's lifetime after gathering so the projection above uses the stack position directly. */
+	/* FAKEMATCH: needed to match: restart the pointer's lifetime after gathering so the projection above uses the stack position directly */
 	position = &djinn_pos;
 
 	//------------------------------------------------------------------
@@ -528,7 +528,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 				particle->velocity_x = ((Random16() & 255) - 127) << 12;
 				particle->velocity_y = ((Random16() & 255) - 64) << 12;
 			}
-			/* FAKEMATCH: Keep the final velocity store ahead of the lifetime calculation. */
+			/* FAKEMATCH: needed to match: keep the final velocity store ahead of the lifetime calculation */
 			do
 			{
 				particle->velocity_z = ((Random16() & 255) - 127) << 12;
@@ -1180,7 +1180,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 			{
 				struct EffectStep	  *step = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
 				struct EffectPosition *origin;
-				/* FAKEMATCH: A zero offset known only after global const propagation keeps the origin copy out of copy propagation, so the loop hoists it after the projection address. */
+				/* FAKEMATCH: needed to match: a zero offset known only after gcse keeps the origin copy, hoisted after the projection address */
 				s32 bias = 0;
 				for (i = 0; i != 64; i++, step++)
 				{
@@ -1191,7 +1191,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 						SceneTransform_ApplyPitch(step->velocity_x);
 						SceneTransform_ApplyYaw(step->velocity_y);
 						EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
-						/* FAKEMATCH: see bias above */
+						/* FAKEMATCH: needed to match: see bias above */
 						origin = (struct EffectPosition *)((u8 *)target_screen + bias);
 						projected.x = projected.x / 2 + origin->x / 2;
 						projected.y += origin->y + 32;
@@ -1236,7 +1236,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 			s32 image_y;
 			if (frame <= 5)
 			{
-				/* FAKEMATCH: Calculate each center before the shared centered draw; spell signed halving as an in-place rounding bias and shift. */
+				/* FAKEMATCH: needed to match: calculate each center before the shared centered draw */
 				if (work->effect->side == 0)
 				{
 					image_x = target_screen->x;
@@ -1312,7 +1312,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 			{
 				EffectPosition_ApplyBaseAndYOffset((s32 *)position, &projected);
 				djinn_x = projected.x;
-				/* FAKEMATCH: Keep signed halving in the loaded coordinate register. */
+				/* FAKEMATCH: needed to match: keep signed halving in the loaded coordinate register */
 				djinn_x += (u32)djinn_x >> 31;
 				djinn_x >>= 1;
 				projected.x = djinn_x;

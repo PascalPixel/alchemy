@@ -53,7 +53,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 #undef MARK
 #undef PATCH
 
-    /* FAKEMATCH: one-pass blocks keep each writing step together and in list order while allowing scheduling within each step. */
+    /* FAKEMATCH: needed to match: one-pass blocks keep each writing step together and in list order while allowing scheduling within each step */
 #define PUT(word) do { *dst++ = (word); } while (0)
 #define COPY(n) do { \
         Dma_Set(src, dst, DMA_COPY_WORDS(n), DMA3_REGISTERS); \

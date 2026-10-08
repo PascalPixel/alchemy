@@ -129,7 +129,7 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
     void **slot;
     struct BattleEffectWork *work;
     void *canvas;
-    /* FAKEMATCH: the family's blitter pair; this effect loads only one. */
+    /* FAKEMATCH: needed to match: the family's blitter pair: this effect loads only one */
     DrawRectangle draw[2];
     struct EffectStep *marker;
     s32 i;

@@ -100,7 +100,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
     transition = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_BACKGROUND, 32);
     Runtime_AllocateBlock(11, 0x280);
     target = camera->pos;
-    /* FAKEMATCH: the setup's zero held in result, a global pseudo, so global allocation gives it r7 as listed. */
+    /* FAKEMATCH: needed to match: the setup's zero held in result, a global pseudo, so global allocation gives it r7 as listed */
     result = 0;
     Iwram_ClearWords(owner_states, 0x7c8);
     Scheduler_ResetTaskTable();

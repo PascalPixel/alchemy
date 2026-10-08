@@ -42,7 +42,7 @@ void BattleActor_UpdateSpritePriorities(void)
 
 	// 全員の状態アイコン
 	BattleParty_ListActorIds(BATTLE_SIDE_BOTH, ids);
-	/* FAKEMATCH: the scan is rotated by hand with a goto, which keeps the loop pass off it; as a for loop it becomes a pointer walk. */
+	/* FAKEMATCH: needed to match: the scan is rotated by hand with a goto, which keeps the loop pass off it */
 	i = 0;
 	if (ids[i] != BATTLE_UNIT_LIST_END)
 	{
@@ -290,7 +290,7 @@ update:
 
 	if (anim >= 0 && changed != 0)
 	{
-		/* FAKEMATCH: storing the handle before testing failure avoids an extra unconditional branch. */
+		/* FAKEMATCH: needed to match: storing the handle before testing failure avoids an extra unconditional branch */
 		handle = ResourceMetadata_RegisterFar(rec, anim);
 		slot->animation_entry = (struct SpriteEntry *)handle;
 		if (handle == -1)

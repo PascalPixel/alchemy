@@ -2461,38 +2461,26 @@ Resource_Data1DA:
 	.incbin "baserom.gba", 0x005ba142, 0x00000002
 	.section .rom.005baf66, "ax"
 	.incbin "baserom.gba", 0x005baf66, 0x00000002
-	.section .rom.005bc2ab, "ax"
-	.incbin "baserom.gba", 0x005bc2ab, 0x00000001
 	.section .rom.005bc405, "ax"
 	.incbin "baserom.gba", 0x005bc405, 0x00000003
-	.section .rom.005be9c3, "ax"
-	.incbin "baserom.gba", 0x005be9c3, 0x00000001
 	.section .rom.005beb3a, "ax"
 	.incbin "baserom.gba", 0x005beb3a, 0x00000002
 	.section .rom.005c342d, "ax"
 	.incbin "baserom.gba", 0x005c342d, 0x00000003
 	.section .rom.005c3e95, "ax"
 	.incbin "baserom.gba", 0x005c3e95, 0x00000003
-	.section .rom.005c64d7, "ax"
-	.incbin "baserom.gba", 0x005c64d7, 0x00000001
 	.section .rom.005c663e, "ax"
 	.incbin "baserom.gba", 0x005c663e, 0x00000002
 	.section .rom.005c7785, "ax"
 	.incbin "baserom.gba", 0x005c7785, 0x00000003
-	.section .rom.005c94e3, "ax"
-	.incbin "baserom.gba", 0x005c94e3, 0x00000001
 	.section .rom.005c964a, "ax"
 	.incbin "baserom.gba", 0x005c964a, 0x00000002
-	.section .rom.005cbed9, "ax"
-	.incbin "baserom.gba", 0x005cbed9, 0x00000003
 	.section .rom.005cc00e, "ax"
 	.incbin "baserom.gba", 0x005cc00e, 0x00000002
 	.section .rom.005cec4a, "ax"
 	.incbin "baserom.gba", 0x005cec4a, 0x00000002
 	.section .rom.005d23e9, "ax"
 	.incbin "baserom.gba", 0x005d23e9, 0x00000003
-	.section .rom.005d5737, "ax"
-	.incbin "baserom.gba", 0x005d5737, 0x00000001
 	.section .rom.005d58b3, "ax"
 	.incbin "baserom.gba", 0x005d58b3, 0x00000001
 	.section .rom.005d8462, "ax"
@@ -2509,8 +2497,6 @@ Resource_Data1DA:
 	.incbin "baserom.gba", 0x005e5ce5, 0x00000003
 	.section .rom.005e5e27, "ax"
 	.incbin "baserom.gba", 0x005e5e27, 0x00000001
-	.section .rom.005e7397, "ax"
-	.incbin "baserom.gba", 0x005e7397, 0x00000001
 	.section .rom.005e7502, "ax"
 	.incbin "baserom.gba", 0x005e7502, 0x00000002
 	.section .rom.005e925d, "ax"
@@ -2521,12 +2507,8 @@ Resource_Data1DA:
 	.incbin "baserom.gba", 0x005ebb9e, 0x00000002
 	.section .rom.005ebcdf, "ax"
 	.incbin "baserom.gba", 0x005ebcdf, 0x00000001
-	.section .rom.005ed6f7, "ax"
-	.incbin "baserom.gba", 0x005ed6f7, 0x00000001
 	.section .rom.005eec72, "ax"
 	.incbin "baserom.gba", 0x005eec72, 0x00000002
-	.section .rom.005f01ae, "ax"
-	.incbin "baserom.gba", 0x005f01ae, 0x00000002
 	.section .rom.005f033e, "ax"
 	.incbin "baserom.gba", 0x005f033e, 0x00000002
 	.section .rom.005f25f7, "ax"
@@ -2539,8 +2521,6 @@ Resource_Data1DA:
 	.incbin "baserom.gba", 0x005fb7cb, 0x00000001
 	.section .rom.005fddff, "ax"
 	.incbin "baserom.gba", 0x005fddff, 0x00000001
-	.section .rom.00600957, "ax"
-	.incbin "baserom.gba", 0x00600957, 0x00000001
 	.section .rom.00600b1f, "ax"
 	.incbin "baserom.gba", 0x00600b1f, 0x00000001
 	.global Resource_Data221
@@ -2550,8 +2530,6 @@ Resource_Data221:
 	.incbin "baserom.gba", 0x00606f29, 0x00000003
 	.section .rom.0060849a, "ax"
 	.incbin "baserom.gba", 0x0060849a, 0x00000002
-	.section .rom.0060acc1, "ax"
-	.incbin "baserom.gba", 0x0060acc1, 0x00000003
 	.section .rom.0060ae31, "ax"
 	.incbin "baserom.gba", 0x0060ae31, 0x00000003
 	.section .rom.0060d6f3, "ax"
@@ -2562,8 +2540,6 @@ Resource_Data221:
 	.incbin "baserom.gba", 0x006111b5, 0x00000003
 	.section .rom.00612afb, "ax"
 	.incbin "baserom.gba", 0x00612afb, 0x00000001
-	.section .rom.0061df8e, "ax"
-	.incbin "baserom.gba", 0x0061df8e, 0x00000002
 	.section .rom.0061e14e, "ax"
 	.incbin "baserom.gba", 0x0061e14e, 0x00000002
 	.section .rom.006214b5, "ax"
@@ -2574,12 +2550,8 @@ Resource_Data221:
 	.incbin "baserom.gba", 0x00626787, 0x00000001
 	.section .rom.00627321, "ax"
 	.incbin "baserom.gba", 0x00627321, 0x00000003
-	.section .rom.00628182, "ax"
-	.incbin "baserom.gba", 0x00628182, 0x00000002
 	.section .rom.006282da, "ax"
 	.incbin "baserom.gba", 0x006282da, 0x00000002
-	.section .rom.00630127, "ax"
-	.incbin "baserom.gba", 0x00630127, 0x00000001
 	.section .rom.00630293, "ax"
 	.incbin "baserom.gba", 0x00630293, 0x00000001
 	.section .rom.0063302f, "ax"
@@ -2590,8 +2562,6 @@ Resource_Data221:
 	.incbin "baserom.gba", 0x006358c6, 0x00000002
 	.section .rom.006364da, "ax"
 	.incbin "baserom.gba", 0x006364da, 0x00000002
-	.section .rom.006475ad, "ax"
-	.incbin "baserom.gba", 0x006475ad, 0x00000003
 	.section .rom.00647742, "ax"
 	.incbin "baserom.gba", 0x00647742, 0x00000002
 	.section .rom.00648c52, "ax"
@@ -2600,12 +2570,8 @@ Resource_Data221:
 	.incbin "baserom.gba", 0x0064aa37, 0x00000001
 	.section .rom.0064baca, "ax"
 	.incbin "baserom.gba", 0x0064baca, 0x00000002
-	.section .rom.0064dd3a, "ax"
-	.incbin "baserom.gba", 0x0064dd3a, 0x00000002
 	.section .rom.0064ded1, "ax"
 	.incbin "baserom.gba", 0x0064ded1, 0x00000003
-	.section .rom.0064fe77, "ax"
-	.incbin "baserom.gba", 0x0064fe77, 0x00000001
 	.section .rom.00654c4e, "ax"
 	.incbin "baserom.gba", 0x00654c4e, 0x00000002
 	.section .rom.006586af, "ax"
@@ -2614,20 +2580,12 @@ Resource_Data221:
 	.incbin "baserom.gba", 0x0065b3e5, 0x00000003
 	.section .rom.0065d72d, "ax"
 	.incbin "baserom.gba", 0x0065d72d, 0x00000003
-	.section .rom.0065ef0b, "ax"
-	.incbin "baserom.gba", 0x0065ef0b, 0x00000001
 	.section .rom.0065f0bd, "ax"
 	.incbin "baserom.gba", 0x0065f0bd, 0x00000003
-	.section .rom.0066fa5e, "ax"
-	.incbin "baserom.gba", 0x0066fa5e, 0x00000002
 	.section .rom.0066fbbd, "ax"
 	.incbin "baserom.gba", 0x0066fbbd, 0x00000003
-	.section .rom.00673317, "ax"
-	.incbin "baserom.gba", 0x00673317, 0x00000001
 	.section .rom.0067347a, "ax"
 	.incbin "baserom.gba", 0x0067347a, 0x00000002
-	.section .rom.0067915d, "ax"
-	.incbin "baserom.gba", 0x0067915d, 0x00000003
 	.section .rom.0067bb43, "ax"
 	.incbin "baserom.gba", 0x0067bb43, 0x00000001
 	.section .rom.0067dd4e, "ax"
@@ -2636,8 +2594,6 @@ Resource_Data221:
 	.incbin "baserom.gba", 0x0067de8f, 0x00000001
 	.section .rom.0067f8a6, "ax"
 	.incbin "baserom.gba", 0x0067f8a6, 0x00000002
-	.section .rom.0068660d, "ax"
-	.incbin "baserom.gba", 0x0068660d, 0x00000003
 	.section .rom.0068678b, "ax"
 	.incbin "baserom.gba", 0x0068678b, 0x00000001
 	.section .rom.00688735, "ax"
@@ -2646,36 +2602,20 @@ Resource_Data221:
 	.incbin "baserom.gba", 0x0068aeae, 0x00000002
 	.section .rom.0068c715, "ax"
 	.incbin "baserom.gba", 0x0068c715, 0x00000003
-	.section .rom.00690136, "ax"
-	.incbin "baserom.gba", 0x00690136, 0x00000002
 	.section .rom.006902ff, "ax"
 	.incbin "baserom.gba", 0x006902ff, 0x00000001
-	.section .rom.0069b2e7, "ax"
-	.incbin "baserom.gba", 0x0069b2e7, 0x00000001
-	.section .rom.0069d433, "ax"
-	.incbin "baserom.gba", 0x0069d433, 0x00000001
 	.section .rom.0069d5bd, "ax"
 	.incbin "baserom.gba", 0x0069d5bd, 0x00000003
 	.section .rom.0069f042, "ax"
 	.incbin "baserom.gba", 0x0069f042, 0x00000002
-	.section .rom.006a2079, "ax"
-	.incbin "baserom.gba", 0x006a2079, 0x00000003
 	.section .rom.006a223f, "ax"
 	.incbin "baserom.gba", 0x006a223f, 0x00000001
-	.section .rom.006a3173, "ax"
-	.incbin "baserom.gba", 0x006a3173, 0x00000001
-	.section .rom.006a5226, "ax"
-	.incbin "baserom.gba", 0x006a5226, 0x00000002
 	.section .rom.006a53cd, "ax"
 	.incbin "baserom.gba", 0x006a53cd, 0x00000003
 	.section .rom.006aa3f7, "ax"
 	.incbin "baserom.gba", 0x006aa3f7, 0x00000001
-	.section .rom.006ad187, "ax"
-	.incbin "baserom.gba", 0x006ad187, 0x00000001
 	.section .rom.006ad347, "ax"
 	.incbin "baserom.gba", 0x006ad347, 0x00000001
-	.section .rom.006af83b, "ax"
-	.incbin "baserom.gba", 0x006af83b, 0x00000001
 	.section .rom.006afa0d, "ax"
 	.incbin "baserom.gba", 0x006afa0d, 0x00000003
 	.section .rom.006b1a9e, "ax"
@@ -2684,8 +2624,6 @@ Resource_Data221:
 	.incbin "baserom.gba", 0x006b3b9e, 0x00000002
 	.section .rom.006b6752, "ax"
 	.incbin "baserom.gba", 0x006b6752, 0x00000002
-	.section .rom.006b723f, "ax"
-	.incbin "baserom.gba", 0x006b723f, 0x00000001
 	.section .rom.006b7412, "ax"
 	.incbin "baserom.gba", 0x006b7412, 0x00000002
 	.section .rom.006b9d41, "ax"
@@ -2698,8 +2636,6 @@ Resource_Data221:
 	.incbin "baserom.gba", 0x006bebdd, 0x00000003
 	.section .rom.006c0f29, "ax"
 	.incbin "baserom.gba", 0x006c0f29, 0x00000003
-	.section .rom.006c2113, "ax"
-	.incbin "baserom.gba", 0x006c2113, 0x00000001
 	.section .rom.006c229a, "ax"
 	.incbin "baserom.gba", 0x006c229a, 0x00000002
 	.section .rom.006c67e6, "ax"
@@ -2708,60 +2644,32 @@ Resource_Data221:
 	.incbin "baserom.gba", 0x006c693b, 0x00000001
 	.section .rom.006c6a7b, "ax"
 	.incbin "baserom.gba", 0x006c6a7b, 0x00000001
-	.section .rom.006c774f, "ax"
-	.incbin "baserom.gba", 0x006c774f, 0x00000001
 	.section .rom.006c78ce, "ax"
 	.incbin "baserom.gba", 0x006c78ce, 0x00000002
-	.section .rom.006c9187, "ax"
-	.incbin "baserom.gba", 0x006c9187, 0x00000001
 	.section .rom.006c9309, "ax"
 	.incbin "baserom.gba", 0x006c9309, 0x00000003
-	.section .rom.006cad9b, "ax"
-	.incbin "baserom.gba", 0x006cad9b, 0x00000001
 	.section .rom.006caf15, "ax"
 	.incbin "baserom.gba", 0x006caf15, 0x00000003
-	.section .rom.006ccc53, "ax"
-	.incbin "baserom.gba", 0x006ccc53, 0x00000001
 	.section .rom.006ccd7f, "ax"
 	.incbin "baserom.gba", 0x006ccd7f, 0x00000001
 	.section .rom.006ccef5, "ax"
 	.incbin "baserom.gba", 0x006ccef5, 0x00000003
-	.section .rom.006ced9b, "ax"
-	.incbin "baserom.gba", 0x006ced9b, 0x00000001
 	.section .rom.006cef21, "ax"
 	.incbin "baserom.gba", 0x006cef21, 0x00000003
-	.section .rom.006cfe7f, "ax"
-	.incbin "baserom.gba", 0x006cfe7f, 0x00000001
-	.section .rom.006d1123, "ax"
-	.incbin "baserom.gba", 0x006d1123, 0x00000001
 	.section .rom.006d12de, "ax"
 	.incbin "baserom.gba", 0x006d12de, 0x00000002
-	.section .rom.006d3d82, "ax"
-	.incbin "baserom.gba", 0x006d3d82, 0x00000002
 	.section .rom.006d3ef5, "ax"
 	.incbin "baserom.gba", 0x006d3ef5, 0x00000003
-	.section .rom.006d52dd, "ax"
-	.incbin "baserom.gba", 0x006d52dd, 0x00000003
-	.section .rom.006d8ced, "ax"
-	.incbin "baserom.gba", 0x006d8ced, 0x00000003
 	.section .rom.006d8e97, "ax"
 	.incbin "baserom.gba", 0x006d8e97, 0x00000001
-	.section .rom.006db292, "ax"
-	.incbin "baserom.gba", 0x006db292, 0x00000002
 	.section .rom.006db421, "ax"
 	.incbin "baserom.gba", 0x006db421, 0x00000003
-	.section .rom.006de6a1, "ax"
-	.incbin "baserom.gba", 0x006de6a1, 0x00000003
 	.section .rom.006de882, "ax"
 	.incbin "baserom.gba", 0x006de882, 0x00000002
-	.section .rom.006e0e17, "ax"
-	.incbin "baserom.gba", 0x006e0e17, 0x00000001
 	.section .rom.006e0fa6, "ax"
 	.incbin "baserom.gba", 0x006e0fa6, 0x00000002
 	.section .rom.006e3b9e, "ax"
 	.incbin "baserom.gba", 0x006e3b9e, 0x00000002
-	.section .rom.006e46eb, "ax"
-	.incbin "baserom.gba", 0x006e46eb, 0x00000001
 	.section .rom.006e4852, "ax"
 	.incbin "baserom.gba", 0x006e4852, 0x00000002
 	.section .rom.006e7267, "ax"
@@ -2772,12 +2680,8 @@ Resource_Data221:
 	.incbin "baserom.gba", 0x006e9363, 0x00000001
 	.section .rom.006ea6db, "ax"
 	.incbin "baserom.gba", 0x006ea6db, 0x00000001
-	.section .rom.006ebc1f, "ax"
-	.incbin "baserom.gba", 0x006ebc1f, 0x00000001
 	.section .rom.006ebda9, "ax"
 	.incbin "baserom.gba", 0x006ebda9, 0x00000003
-	.section .rom.006ece87, "ax"
-	.incbin "baserom.gba", 0x006ece87, 0x00000001
 	.section .rom.006ed015, "ax"
 	.incbin "baserom.gba", 0x006ed015, 0x00000003
 	.section .rom.006eec69, "ax"
@@ -2788,8 +2692,6 @@ Resource_Data221:
 	.incbin "baserom.gba", 0x006f4b75, 0x00000003
 	.section .rom.006f647f, "ax"
 	.incbin "baserom.gba", 0x006f647f, 0x00000001
-	.section .rom.006f8527, "ax"
-	.incbin "baserom.gba", 0x006f8527, 0x00000001
 	.section .rom.006faf7b, "ax"
 	.incbin "baserom.gba", 0x006faf7b, 0x00000001
 	.section .rom.006fcbc7, "ax"
@@ -2808,39 +2710,18 @@ Resource_Data221:
 	.incbin "baserom.gba", 0x0070721d, 0x00000003
 	.section .rom.00708d9b, "ax"
 	.incbin "baserom.gba", 0x00708d9b, 0x00000001
-	.section .rom.00709fcb, "ax"
-	.incbin "baserom.gba", 0x00709fcb, 0x00000001
 	.section .rom.0070a125, "ax"
 	.incbin "baserom.gba", 0x0070a125, 0x00000003
-	.section .rom.0070d623, "ax"
-	.incbin "baserom.gba", 0x0070d623, 0x00000001
 	.section .rom.0070d78e, "ax"
 	.incbin "baserom.gba", 0x0070d78e, 0x00000002
-	.section .rom.0071012a, "ax"
-	.incbin "baserom.gba", 0x0071012a, 0x00000002
+	.section .rom.0071012c, "ax"
 	.global Resource_Data2EE
 Resource_Data2EE:
 	.incbin "baserom.gba", 0x0071012c, 0x00001164
-	.section .rom.00712a75, "ax"
-	.incbin "baserom.gba", 0x00712a75, 0x00000003
-	.section .rom.00715cbb, "ax"
-	.incbin "baserom.gba", 0x00715cbb, 0x00000001
-	.section .rom.007185b2, "ax"
-	.incbin "baserom.gba", 0x007185b2, 0x00000002
-	.section .rom.007218df, "ax"
-	.incbin "baserom.gba", 0x007218df, 0x00000001
-	.section .rom.00722c0e, "ax"
-	.incbin "baserom.gba", 0x00722c0e, 0x00000002
-	.section .rom.00723e07, "ax"
-	.incbin "baserom.gba", 0x00723e07, 0x00000001
 	.section .rom.00723f69, "ax"
 	.incbin "baserom.gba", 0x00723f69, 0x00000003
 	.section .rom.00726935, "ax"
 	.incbin "baserom.gba", 0x00726935, 0x00000003
-	.section .rom.00729e61, "ax"
-	.incbin "baserom.gba", 0x00729e61, 0x00000003
-	.section .rom.0072e29f, "ax"
-	.incbin "baserom.gba", 0x0072e29f, 0x00000001
 	.section .rom.0072e412, "ax"
 	.incbin "baserom.gba", 0x0072e412, 0x00000002
 	.section .rom.00732677, "ax"
@@ -2849,57 +2730,34 @@ Resource_Data2EE:
 	.incbin "baserom.gba", 0x00735e92, 0x00000002
 	.section .rom.007378ba, "ax"
 	.incbin "baserom.gba", 0x007378ba, 0x00000002
-	.section .rom.00739f67, "ax"
-	.incbin "baserom.gba", 0x00739f67, 0x00000001
 	.section .rom.0073bfcb, "ax"
 	.incbin "baserom.gba", 0x0073bfcb, 0x00000001
 	.section .rom.0073de87, "ax"
 	.incbin "baserom.gba", 0x0073de87, 0x00000001
 	.section .rom.007410d1, "ax"
 	.incbin "baserom.gba", 0x007410d1, 0x00000003
-	.section .rom.00742a93, "ax"
-	.incbin "baserom.gba", 0x00742a93, 0x00000001
 	.section .rom.00742c05, "ax"
 	.incbin "baserom.gba", 0x00742c05, 0x00000003
-	.section .rom.00745c12, "ax"
-	.incbin "baserom.gba", 0x00745c12, 0x00000002
 	.section .rom.00745dca, "ax"
 	.incbin "baserom.gba", 0x00745dca, 0x00000002
-	.section .rom.0074763b, "ax"
-	.incbin "baserom.gba", 0x0074763b, 0x00000001
 	.section .rom.007477ba, "ax"
 	.incbin "baserom.gba", 0x007477ba, 0x00000002
-	.section .rom.0074afc3, "ax"
-	.incbin "baserom.gba", 0x0074afc3, 0x00000001
 	.section .rom.0074b137, "ax"
 	.incbin "baserom.gba", 0x0074b137, 0x00000001
-	.section .rom.0074beff, "ax"
-	.incbin "baserom.gba", 0x0074beff, 0x00000001
 	.section .rom.0074c0a5, "ax"
 	.incbin "baserom.gba", 0x0074c0a5, 0x00000003
-	.section .rom.00750ee3, "ax"
-	.incbin "baserom.gba", 0x00750ee3, 0x00000001
 	.section .rom.007510ca, "ax"
 	.incbin "baserom.gba", 0x007510ca, 0x00000002
-	.section .rom.00754366, "ax"
-	.incbin "baserom.gba", 0x00754366, 0x00000002
+	.section .rom.00754368, "ax"
 	.global Resource_Data326
 Resource_Data326:
 	.incbin "baserom.gba", 0x00754368, 0x00004604
 	.section .rom.00758a72, "ax"
 	.incbin "baserom.gba", 0x00758a72, 0x00000002
-	.section .rom.0075a649, "ax"
-	.incbin "baserom.gba", 0x0075a649, 0x00000003
-	.section .rom.0075c0f9, "ax"
-	.incbin "baserom.gba", 0x0075c0f9, 0x00000003
 	.section .rom.0075c255, "ax"
 	.incbin "baserom.gba", 0x0075c255, 0x00000003
-	.section .rom.0076249b, "ax"
-	.incbin "baserom.gba", 0x0076249b, 0x00000001
 	.section .rom.0076259f, "ax"
 	.incbin "baserom.gba", 0x0076259f, 0x00000001
-	.section .rom.00762fbb, "ax"
-	.incbin "baserom.gba", 0x00762fbb, 0x00000001
 	.section .rom.007630a1, "ax"
 	.incbin "baserom.gba", 0x007630a1, 0x00000003
 	.section .rom.0076333d, "ax"
@@ -2908,8 +2766,6 @@ Resource_Data326:
 	.incbin "baserom.gba", 0x0076739a, 0x00000002
 	.section .rom.0076794e, "ax"
 	.incbin "baserom.gba", 0x0076794e, 0x00000002
-	.section .rom.007688e3, "ax"
-	.incbin "baserom.gba", 0x007688e3, 0x00000001
 	.section .rom.0076a2e6, "ax"
 	.incbin "baserom.gba", 0x0076a2e6, 0x00000002
 	.section .rom.0076af55, "ax"
@@ -2918,12 +2774,9 @@ Resource_Data326:
 	.incbin "baserom.gba", 0x0076b1fd, 0x00000003
 	.section .rom.0076c082, "ax"
 	.incbin "baserom.gba", 0x0076c082, 0x00000002
-	.section .rom.0076d213, "ax"
-	.incbin "baserom.gba", 0x0076d213, 0x00000001
 	.section .rom.0076d3db, "ax"
 	.incbin "baserom.gba", 0x0076d3db, 0x00000001
-	.section .rom.0076d727, "ax"
-	.incbin "baserom.gba", 0x0076d727, 0x00000001
+	.section .rom.0076d728, "ax"
 	.global Resource_Data340
 Resource_Data340:
 	.incbin "baserom.gba", 0x0076d728, 0x0000000c
@@ -2939,8 +2792,7 @@ Resource_Data343:
 	.global Resource_Data344
 Resource_Data344:
 	.incbin "baserom.gba", 0x0076db04, 0x00000140
-	.section .rom.0076df8f, "ax"
-	.incbin "baserom.gba", 0x0076df8f, 0x00000001
+	.section .rom.0076df90, "ax"
 	.global Resource_Data346
 Resource_Data346:
 	.incbin "baserom.gba", 0x0076df90, 0x0000000c
@@ -2956,8 +2808,7 @@ Resource_Data349:
 	.global Resource_Data34A
 Resource_Data34A:
 	.incbin "baserom.gba", 0x0076e36c, 0x00000140
-	.section .rom.0076e7f7, "ax"
-	.incbin "baserom.gba", 0x0076e7f7, 0x00000001
+	.section .rom.0076e7f8, "ax"
 	.global Resource_Data34C
 Resource_Data34C:
 	.incbin "baserom.gba", 0x0076e7f8, 0x0000000c
@@ -2973,8 +2824,7 @@ Resource_Data34F:
 	.global Resource_Data350
 Resource_Data350:
 	.incbin "baserom.gba", 0x0076ebd4, 0x00000140
-	.section .rom.0076f05f, "ax"
-	.incbin "baserom.gba", 0x0076f05f, 0x00000001
+	.section .rom.0076f060, "ax"
 	.global Resource_Data352
 Resource_Data352:
 	.incbin "baserom.gba", 0x0076f060, 0x0000000c
@@ -2990,8 +2840,7 @@ Resource_Data355:
 	.global Resource_Data356
 Resource_Data356:
 	.incbin "baserom.gba", 0x0076f43c, 0x00000140
-	.section .rom.0076f8c7, "ax"
-	.incbin "baserom.gba", 0x0076f8c7, 0x00000001
+	.section .rom.0076f8c8, "ax"
 	.global Resource_Data358
 Resource_Data358:
 	.incbin "baserom.gba", 0x0076f8c8, 0x0000000c
@@ -3007,8 +2856,7 @@ Resource_Data35B:
 	.global Resource_Data35C
 Resource_Data35C:
 	.incbin "baserom.gba", 0x0076fca4, 0x00000140
-	.section .rom.0077012f, "ax"
-	.incbin "baserom.gba", 0x0077012f, 0x00000001
+	.section .rom.00770130, "ax"
 	.global Resource_Data35E
 Resource_Data35E:
 	.incbin "baserom.gba", 0x00770130, 0x0000000c
@@ -3024,8 +2872,7 @@ Resource_Data361:
 	.global Resource_Data362
 Resource_Data362:
 	.incbin "baserom.gba", 0x0077050c, 0x00000140
-	.section .rom.00770997, "ax"
-	.incbin "baserom.gba", 0x00770997, 0x00000001
+	.section .rom.00770998, "ax"
 	.global Resource_Data364
 Resource_Data364:
 	.incbin "baserom.gba", 0x00770998, 0x0000000c
@@ -3041,8 +2888,7 @@ Resource_Data367:
 	.global Resource_Data368
 Resource_Data368:
 	.incbin "baserom.gba", 0x00770d74, 0x00000140
-	.section .rom.007711ff, "ax"
-	.incbin "baserom.gba", 0x007711ff, 0x00000001
+	.section .rom.00771200, "ax"
 	.global Resource_Data36A
 Resource_Data36A:
 	.incbin "baserom.gba", 0x00771200, 0x0000000c

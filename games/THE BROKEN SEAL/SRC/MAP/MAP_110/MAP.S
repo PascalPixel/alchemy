@@ -81,3 +81,4 @@ Field_Map110:
 	.incbin "MAP/MAP_110/MARKERS.table"
 	.endif
 	.endif
+	.balign 4, 0

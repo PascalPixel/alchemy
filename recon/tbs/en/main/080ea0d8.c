@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 2 of 2455 (listing 2455, draft 2455, common 2454).
+/* 080ea0d8: differ 0 of 2455 in English (listing 2455, draft 2455, common 2455).
  * Frame: 184 as native, and every spill slot (sp+104 canvas down to sp+12,
  * the frame giv) holds what the native's holds, with r4's caller-save word
  * at sp+8.
@@ -99,10 +99,12 @@
  *   the dead test on the product: cse2 swaps the product into the copy
  *   (28); one division without the branch lets CSE share 20 everywhere,
  *   inherits cx and gives half2 r7 before i (1949) (28 -> 2).
- * Left (2):
- * - Iwram_CopyWords after the ramp: the native schedules the call address
- *   load between the two halves of 0x05000000 (sched2 picks the r0 shift
- *   first here: equal priority, equal class, earlier LUID).
+ * - The palette copy after the ramp goes through colors, set with the other
+ *   initial values (as SCENEFX.C and BURST_SCENE.C keep colors): the pseudo
+ *   spans the ramp loop, gets no register, and reload rematerialises
+ *   0x05000000 at the argument, after the call address load, so sched2
+ *   puts the address load between the constant's two halves as the native
+ *   (2 -> 0). Set at the declaration, colors takes a register (848).
  * Earlier notes, still true:
  * Ramp: the eight clamped copies are a two-dimensional u8 [8][770] array at
  * work + 0x2710, indexed [i][j]: the constant then folds into the address
@@ -243,6 +245,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     struct EffectStep *p;
     DrawRectangle blit;
     volatile u16 *ime;
+    void *colors;
 
     cache = &gBattleFxWork[1];
     ime = (volatile u16 *)0x04000208;
@@ -278,6 +281,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     zoom = 0x80000;
     near = 0xffff;
     far = 0;
+    colors = (void *)0x05000000;
     Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageB, work->sheet + 0x600, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x95c, 1, 0);
@@ -297,7 +301,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         }
     }
 
-    Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet), 128);
+    Iwram_CopyWords(colors, Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet), 128);
 
     for (i = 0; i != 128; i++) {
         DUST[i].x = (Random16() & 15) + 72;

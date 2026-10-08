@@ -1040,6 +1040,9 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
     if json_text(text) {
         return Some(JSON_REASON);
     }
+    if let Some(reason) = patch_reason(path, data) {
+        return Some(reason);
+    }
     let table = (asset_game(path).is_some() && listed(extension(path), DATA_TABLE_EXTENSIONS))
         || (path.starts_with("recon/") && listed(extension(path), &["s", "inc"]));
     data_uri_reason(text)
@@ -4022,5 +4025,79 @@ mod tests {
         assert!(!error.contains("games/Y/SOUND/SEQUENCE/A.MID:"));
         assert!(error.contains("games/Y/Data/TABLE.JSON: JSON is banned"));
         assert!(!error.contains("games/X/SOUND"), "{error}");
+    }
+}
+
+/// The most edits one stream may list: Camelot's post-pack edits are single
+/// literals (W3), never a way to carry a stream's bytes.
+const PATCH_LITERALS: usize = 8;
+
+/// A post-pack patch (W3) must parse, list few literals, prove each one with
+/// a broad set of stand-ins, and mark every other row as a copy of a listed
+/// literal.
+fn patch_reason(path: &str, data: &[u8]) -> Option<&'static str> {
+    if !path.ends_with("_PATCH.TSV") {
+        return None;
+    }
+    let Ok(patch) = ags::patch::Patch::parse(path, data) else {
+        return Some("patch file does not parse as position, pack, ship, proof");
+    };
+    if patch.literals() > PATCH_LITERALS {
+        return Some("patch file lists more edited literals than a post-pack edit");
+    }
+    let literals: Vec<usize> = patch
+        .edits
+        .iter()
+        .filter(|edit| !edit.proof.starts_with("copy of"))
+        .map(|edit| edit.position)
+        .collect();
+    for edit in &patch.edits {
+        if let Some(origin) = edit.proof.strip_prefix("copy of ") {
+            if !origin
+                .trim()
+                .parse::<usize>()
+                .is_ok_and(|origin| literals.contains(&origin))
+            {
+                return Some("patch copy row names no listed literal");
+            }
+            continue;
+        }
+        let broad = edit
+            .proof
+            .strip_prefix("literal: ")
+            .and_then(|rest| rest.split_once(" of 255 stand-ins reproduce the stream"))
+            .and_then(|(count, _)| count.parse::<usize>().ok())
+            .is_some_and(|count| count >= 128);
+        if !broad {
+            return Some("patch literal lacks its proof: most stand-ins must reproduce the stream");
+        }
+    }
+    None
+}
+
+#[cfg(test)]
+mod patch_tests {
+    use super::patch_reason;
+
+    #[test]
+    fn a_proven_patch_passes_and_a_byte_carrier_does_not() {
+        let good = "position\tpack\tship\tproof\n\
+            10\t0x02\t0x01\tliteral: 254 of 255 stand-ins reproduce the stream; this is the lowest\n\
+            12\t0x02\t0x01\tcopy of 10\n";
+        assert_eq!(patch_reason("MAP/X/GRID_PATCH.TSV", good.as_bytes()), None);
+        let narrow = "position\tpack\tship\tproof\n\
+            10\t0x02\t0x01\tliteral: 3 of 255 stand-ins reproduce the stream\n";
+        assert!(patch_reason("MAP/X/GRID_PATCH.TSV", narrow.as_bytes()).is_some());
+        let orphan = "position\tpack\tship\tproof\n\
+            10\t0x02\t0x01\tliteral: 254 of 255 stand-ins reproduce the stream\n\
+            12\t0x02\t0x01\tcopy of 11\n";
+        assert!(patch_reason("MAP/X/GRID_PATCH.TSV", orphan.as_bytes()).is_some());
+        let mut many = String::from("position\tpack\tship\tproof\n");
+        for position in 0..9 {
+            many.push_str(&format!(
+                "{position}\t0x02\t0x01\tliteral: 254 of 255 stand-ins reproduce the stream\n"
+            ));
+        }
+        assert!(patch_reason("MAP/X/GRID_PATCH.TSV", many.as_bytes()).is_some());
     }
 }

@@ -43,13 +43,13 @@ Resource_Overlay370:
 Resource_Overlay371:
 	.incbin "overlays/resource_371.lz"
 	.ifdef TBS_EDITION_JA
-	.byte 0x03, 0x0c, 0xf7	@ PACKER: left in the buffer by Resource_Data326+0x3555
+	.byte 0x03, 0x0c, 0xf7	@ PACKER: left in the buffer by Field_VinasuHeya+0x3555
 	.endif
 	.ifdef TBS_EDITION_DE
-	.byte 0x03, 0xe6	@ PACKER: left in the buffer by Resource_Data326+0x3552
+	.byte 0x03, 0xe6	@ PACKER: left in the buffer by Field_VinasuHeya+0x3552
 	.endif
 	.ifdef TBS_EDITION_IT
-	.byte 0xe6, 0x03	@ PACKER: left in the buffer by Resource_Data326+0x3552
+	.byte 0xe6, 0x03	@ PACKER: left in the buffer by Field_VinasuHeya+0x3552
 	.endif
 	.balign 4, 0
 
@@ -77,13 +77,13 @@ Resource_Overlay372:
 Resource_Overlay373:
 	.incbin "overlays/resource_373.lz"
 	.ifdef TBS_EDITION_JA
-	.byte 0x6e, 0x2b, 0x82	@ PACKER: left in the buffer by Resource_Data326+0x3ac5
+	.byte 0x6e, 0x2b, 0x82	@ PACKER: left in the buffer by Field_VinasuHeya+0x3ac5
 	.endif
 	.ifdef TBS_EDITION_EN
-	.byte 0x2b, 0x82	@ PACKER: left in the buffer by Resource_Data326+0x3ac6
+	.byte 0x2b, 0x82	@ PACKER: left in the buffer by Field_VinasuHeya+0x3ac6
 	.endif
 	.ifdef TBS_EDITION_FR
-	.byte 0xab, 0x02, 0x3a	@ PACKER: left in the buffer by Resource_Data326+0x3ad9
+	.byte 0xab, 0x02, 0x3a	@ PACKER: left in the buffer by Field_VinasuHeya+0x3ad9
 	.endif
 	.balign 4, 0
 
@@ -792,13 +792,13 @@ Resource_Overlay39B:
 Resource_Overlay39C:
 	.incbin "overlays/resource_39c.lz"
 	.ifdef TBS_EDITION_JA
-	.byte 0xed, 0x93	@ PACKER: left in the buffer by Resource_Data326+0x411e
+	.byte 0xed, 0x93	@ PACKER: left in the buffer by Field_VinasuHeya+0x411e
 	.endif
 	.ifdef TBS_EDITION_EN
-	.byte 0x48	@ PACKER: left in the buffer by Resource_Data326+0x4127
+	.byte 0x48	@ PACKER: left in the buffer by Field_VinasuHeya+0x4127
 	.endif
 	.ifdef TBS_EDITION_DE
-	.byte 0x4e	@ PACKER: left in the buffer by Resource_Data326+0x416b
+	.byte 0x4e	@ PACKER: left in the buffer by Field_VinasuHeya+0x416b
 	.endif
 	.balign 4, 0
 

@@ -158,7 +158,12 @@ fn link_indexed(
         return Err(format!("{} lists no objects", script.display()));
     }
     let target = build.target;
-    base_rom(root, target, output)?;
+    if sources.iter().any(|source| source.starts_with("recon")) {
+        base_rom(root, target, output)?;
+    } else {
+        // No scaffold is linked: nothing in this build reads the ROM (O1).
+        let _ = fs::remove_file(output.join("baserom.gba"));
+    }
     prepare_assets(root, target, &sources, output, index)?;
     crate::build_text::build(root, target, output)?;
     let mut streamed = Vec::new();
@@ -921,8 +926,9 @@ fn plan(
     } else {
         let base = object
             .ancestors()
-            .find(|path| path.join("baserom.gba").exists())
-            .ok_or("the base ROM link is missing")?;
+            .find(|path| path.ends_with("obj"))
+            .and_then(Path::parent)
+            .ok_or("an object lies outside its build's obj directory")?;
         assembly_inputs(&mut hasher, root, target, source, base, index)?;
         vec![target_assembly_command(
             target,
@@ -1196,13 +1202,19 @@ fn asset_key(root: &Path, asset: &Asset, inputs: &[String]) -> Option<String> {
     hasher.update(env!("ALCHEMY_ENCODER").as_bytes());
     hasher.update(asset.built.as_bytes());
     let input = asset_input(root, asset).ok()?;
-    for path in std::iter::once(input.to_string_lossy().into_owned()).chain(inputs.iter().cloned())
-    {
-        let bytes = fs::read(root.join(&path)).ok()?;
+    hasher.update(fs::read(root.join(&input)).ok()?);
+    for path in inputs {
         hasher.update((path.len() as u64).to_le_bytes());
         hasher.update(path.as_bytes());
-        hasher.update((bytes.len() as u64).to_le_bytes());
-        hasher.update(bytes);
+        // A sibling the recipe looked for and did not find, such as an
+        // optional patch file, keys the asset by its absence.
+        match fs::read(root.join(path)) {
+            Ok(bytes) => {
+                hasher.update((bytes.len() as u64).to_le_bytes());
+                hasher.update(bytes);
+            }
+            Err(_) => hasher.update(u64::MAX.to_le_bytes()),
+        }
     }
     Some(format!("{:x}", hasher.finalize()))
 }

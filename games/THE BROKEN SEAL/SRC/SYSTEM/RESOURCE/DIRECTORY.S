@@ -555,7 +555,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set41TilesD
 	resource , Field_Map052
 	resource , Tileset_Set42Palette
-	resource , Resource_Data221
+	resource , Tileset_Set42TilesA
 	resource , Tileset_Set42TilesB
 	resource , Tileset_Set42TilesC
 	resource , Tileset_Set42TilesD
@@ -760,7 +760,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Palette32
 	resource , Field_Map134
 	resource , Field_Map135
-	resource , Resource_Data2EE
+	resource , Field_KaragoruDou
 	resource , Tileset_Palette33
 	resource , Field_Map136
 	resource , Tileset_Palette34
@@ -816,7 +816,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Palette48
 	resource , Field_Map161
 	resource , Field_Map162
-	resource , Resource_Data326
+	resource , Field_VinasuHeya
 	resource , Tileset_Palette49
 	resource , Field_Map163
 	resource , Tileset_Palette50

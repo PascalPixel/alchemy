@@ -12,6 +12,7 @@
 #include "mem.h"
 #include "resource.h"
 #include "types.h"
+#include "heap_state.h"
 #include "iwram_call.h"
 #include "battle_efx.h"
 #include "callback_scheduler.h"
@@ -36,7 +37,6 @@ static __inline__ void CopyWords(WordCopy copy, void *destination, const void *s
 	copy(destination, source, size);
 }
 
-extern u8 gWorkSlot[];
 #define PIXEL_BUFFER Ram_MapCellBuffer
 
 void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
@@ -289,7 +289,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void)
 		*palette++ = (i << 10) | (half << 5) | half;
 		i++;
 	} while (i != 32);
-	delays = *(u8 **)(gWorkSlot + 41 * 4);
+	delays = *(u8 **)&gWorkSlot[41];
 	end = 0;
 	speed = 16;
 	CopyWords(Iwram_CopyWords, PIXEL_BUFFER, (void *)0x06008000, 0x7800);

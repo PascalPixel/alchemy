@@ -11,6 +11,7 @@
 #include "mem.h"
 #include "resource.h"
 #include "types.h"
+#include "heap_state.h"
 #include "iwram_call.h"
 #include "resource_ids.h"
 #include "battle_efx.h"
@@ -27,7 +28,6 @@
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
-extern void *gWorkSlot[];
 extern u8 gMapCellBuffer[];
 
 

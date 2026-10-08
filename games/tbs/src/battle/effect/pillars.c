@@ -12,6 +12,7 @@
 #include "resource.h"
 #include "btldisp.h"
 #include "types.h"
+#include "heap_state.h"
 #include "iwram_call.h"
 #include "call.h"
 #include "battle_efx.h"
@@ -28,7 +29,6 @@
 
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
-extern void *gWorkSlot[];
 
 void AudioCommand_PlayFar(s32 cue);
 

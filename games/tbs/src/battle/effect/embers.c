@@ -15,6 +15,7 @@
 #include "canvas.h"
 #include "mem.h"
 #include "types.h"
+#include "heap_state.h"
 #include "io_reg.h"
 #include "resource.h"
 #include "iwram_call.h"
@@ -42,7 +43,6 @@ struct Point2D
 	s32 y;
 };
 
-extern u8 gWorkSlot[];
 extern u8 gMapCellBuffer[];
 
 struct BattleEffectTargetArgument;
@@ -509,7 +509,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 	u8						*palette;
 
 	// cursor は gWorkSlot[40] (キャンバス) を指す
-	cursor = (void **)(gWorkSlot + 40 * 4);
+	cursor = &gWorkSlot[40];
 	canvas = cursor[0];
 	work = cursor[-1];	  // [39] 作業領域
 	graphics = cursor[1]; // [41] 粒の絵

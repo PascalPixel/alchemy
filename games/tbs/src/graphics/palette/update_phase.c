@@ -2,7 +2,7 @@
 #include "iwram_call.h"
 #include "fixed_math.h"
 
-typedef s32 (*WordCopy)(void *destination, const void *source, s32 size);
+typedef s32 (*WordCopy)(void *, const void *, s32);
 
 static __inline__ void CopyPalette(WordCopy copy, void *destination,
                                    const void *source, s32 size)

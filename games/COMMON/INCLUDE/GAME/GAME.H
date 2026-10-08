@@ -8,6 +8,7 @@
 #include "BTLSMN.H"
 #include "BATTLE_UNIT.H"
 #include "ITEM.H"
+#include "CHARA.H"
 #if !GAME_TLA
 #include "CHARACTER.H"
 #include "PRESET_TABLE.H"

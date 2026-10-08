@@ -22,7 +22,6 @@ extern u8 RenderResource_PairSourceTable[], PairSource1[] __asm__("RenderResourc
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *, s32);
 extern GlyphTransfer *gGlyphWork;
-extern u8 *UiIcon_ItemIconPointers[];
 
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot)
 {

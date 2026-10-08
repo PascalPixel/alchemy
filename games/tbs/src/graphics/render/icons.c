@@ -15,21 +15,19 @@
 #include "scene.h"
 #include "btlsys.h"
 
-extern u8 UiIcon_ItemIconPointers[];
 
-extern u8 UiIcon_PsynergyIconPointers[];
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined);
 
 
 s32 Ui_CountIconTableEntries(void)
 {
-    return (UiIcon_ItemIconPointersEnd - UiIcon_ItemIconPointers) >> 2;
+    return UiIcon_ItemIconPointersEnd - UiIcon_ItemIconPointers;
 }
 
 s32 Ui_CountSecondTableEntries(void)
 {
-    return (UiIcon_PsynergyIconPointersEnd - UiIcon_PsynergyIconPointers) >> 2;
+    return UiIcon_PsynergyIconPointersEnd - UiIcon_PsynergyIconPointers;
 }
 
 void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 flag)

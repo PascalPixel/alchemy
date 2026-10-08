@@ -11,5 +11,5 @@
 
 s32 Ui_CountSecondTableEntries(void)
 {
-    return (UiIcon_PsynergyIconPointersEnd - UiIcon_PsynergyIconPointers) >> 2;
+    return UiIcon_PsynergyIconPointersEnd - UiIcon_PsynergyIconPointers;
 }

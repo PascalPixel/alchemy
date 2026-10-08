@@ -17,7 +17,6 @@ struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 extern void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 slot);
 
-extern u8 *UiIcon_ItemIconPointers[];
 
 void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src,
                    s32 *dst, s32 reuse)

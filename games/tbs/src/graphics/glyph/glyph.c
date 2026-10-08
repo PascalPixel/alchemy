@@ -23,7 +23,6 @@ extern u8 *UiIcon_FramePointerTable[];
 
 
 
-extern u8 *UiIcon_PsynergyIconPointers[];
 
 extern GlyphTransfer *gGlyphWork;
 

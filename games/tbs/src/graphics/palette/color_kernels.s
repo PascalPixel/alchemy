@@ -1,3 +1,5 @@
+@ C2: all three kernels save callee-saved r5/r6 (and further registers in
+@ BrightenKernel) without saving lr.
 .syntax unified
 	.arm
 	.global ColorBuffer_BrightenKernel

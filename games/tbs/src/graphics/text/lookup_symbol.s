@@ -1,3 +1,4 @@
+@ C2: rrx r3, r3 rotates through carry before the final bit shift.
 .syntax unified
 .text
 	.arm

@@ -1,3 +1,4 @@
+@ C2: bcc and bcs consume the carry set by lsls r3 in the bit-run loop.
 	.include "games/common/include/game/ed_asm.h"
 .syntax unified
 	.arm

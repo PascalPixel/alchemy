@@ -1,3 +1,4 @@
+@ C2: push {r5-r9} saves callee-saved registers without lr.
 .syntax unified
 	.arm
 	.global ColorBuffer_BrightenPartialKernel

@@ -1,3 +1,4 @@
+@ C2: movs r1, r0 copies and tests without a shift, followed by bxmi lr.
 .syntax unified
 	.arm
 

@@ -1,3 +1,6 @@
+@ C2: signed wrappers use unshifted movs and return through ip. The core
+@ returns quotient in r0 and remainder in r1; the remainder wrappers read
+@ that second result, a custom internal linkage.
 .syntax unified
 	.arm
 

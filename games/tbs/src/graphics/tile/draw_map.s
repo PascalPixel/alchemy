@@ -1,3 +1,4 @@
+@ C2: r11/fp is a tile-data address (add fp, r3, r7, lsr #26), not a frame.
 .syntax unified
 	.arm
 	.global TileMap_DrawRows

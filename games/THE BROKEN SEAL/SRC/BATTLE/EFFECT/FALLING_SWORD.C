@@ -886,6 +886,9 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
         }
 
         if (frame > 279) {
+            /* FAKEMATCH: palette RAM through a volatile pointer: the native keeps red's
+               mask 31 in the loop rather than hoisting it; a plain pointer differs
+               in 52 of 2455 rows. */
             volatile u16 *pal = (volatile u16 *)0x05000002;
             for (i = 0; i != 63; i++, pal++) {
                 s32 c = *pal;

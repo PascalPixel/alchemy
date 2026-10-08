@@ -12,13 +12,10 @@
 #include "resource.h"
 #include "system.h"
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
-
-
 void Runtime_IdleForever(void)
 {
     for (;;) {
-        (void)gKeyState;
+        (void)*(volatile u32 *)&gKeyState;
         WaitFrames(1);
     }
 }

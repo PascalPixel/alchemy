@@ -17,3 +17,9 @@ Sound_PlayerSlots:
 	music_player Sound_Player5, Sound_Tracks5, 2
 	music_player Sound_Player6, Sound_Tracks6, 2
 	music_player Sound_Player7, Sound_Tracks7, 2
+
+@ プレイヤー数はこの表の行数、ミキサーの最大ライン数は 0
+	.global Sound_PlayerCount
+	.equ Sound_PlayerCount, (. - Sound_PlayerSlots) / 12
+	.global Sound_MaxLines
+	.equ Sound_MaxLines, 0

@@ -9,9 +9,11 @@ const USAGE: &str = "usage: alchemy check hygiene\n\
 alchemy check hygiene --fix [--skip PREFIX]...\n\
 Fails on tracked .DS_Store, scratch and build output (*.o, *.elf, *.map,\n\
 *.log, *.i, backups, out/), binaries other than PNG, WAV, MIDI and PCM4\n\
-assets, empty files and text that is not UTF-8; and, in games/ and tools/,\n\
-on CRLF line endings, trailing whitespace (TSV fields excepted) and a\n\
-missing final newline.";
+assets, empty files and text that is not UTF-8; in games/ and recon/, on a\n\
+name in capitals other than a preprocessed assembly file (NAME.S) and on a\n\
+.S file whose name is not in capitals; and, in games/ and tools/, on CRLF\n\
+line endings, trailing whitespace (TSV fields excepted) and a missing final\n\
+newline.";
 
 const BINARY: [&str; 4] = ["png", "wav", "mid", "pcm4"];
 const SCRATCH: [&str; 14] = [
@@ -76,6 +78,38 @@ fn scan(root: &Path) -> Result<Vec<String>, String> {
 }
 
 pub(crate) fn reasons(path: &str, bytes: &[u8]) -> Vec<&'static str> {
+    let mut found: Vec<&'static str> = name_case_reason(path).into_iter().collect();
+    found.extend(content_reasons(path, bytes));
+    found
+}
+
+pub(crate) const NAME_CASE_REASON: &str = "file and folder names are lower case; only a preprocessed \
+assembly file is in capitals, name and extension (NAME.S)";
+
+/// The case rule for game sources and their scaffolding (S3): every folder
+/// and file under games/ and recon/ is named in lower case, except an
+/// assembly file the C preprocessor reads, whose capital `.S` extension opts
+/// it in, as GCC's driver reads it, and whose whole name is in capitals.
+pub(crate) fn name_case_reason(path: &str) -> Option<&'static str> {
+    let components: Vec<&str> = path.split('/').collect();
+    let [top, folders @ .., leaf] = components.as_slice() else {
+        return None;
+    };
+    if !matches!(*top, "games" | "recon") {
+        return None;
+    }
+    let lower = |name: &str| !name.bytes().any(|byte| byte.is_ascii_uppercase());
+    let preprocessed = leaf.rsplit_once('.').filter(|(_, extension)| *extension == "S");
+    let leaf_fits = if let Some((stem, _)) = preprocessed {
+        !leaf.bytes().any(|byte| byte.is_ascii_lowercase())
+            && stem.bytes().any(|byte| byte.is_ascii_uppercase())
+    } else {
+        lower(leaf)
+    };
+    (!(leaf_fits && folders.iter().all(|folder| lower(folder)))).then_some(NAME_CASE_REASON)
+}
+
+fn content_reasons(path: &str, bytes: &[u8]) -> Vec<&'static str> {
     let name = path.rsplit('/').next().unwrap_or(path);
     let extension = name.rsplit_once('.').map_or("", |(_, e)| e);
     if name == ".DS_Store" {
@@ -155,6 +189,7 @@ mod tests {
         assert_eq!(reasons("games/x.c", b""), ["empty file"]);
         assert!(reasons("games/x.png", b"\0\x89").is_empty());
         assert_eq!(reasons("games/x.dat", b"a\0b"), ["stray binary"]);
+        assert_eq!(reasons("games/X.c", b"x\n"), [NAME_CASE_REASON]);
         assert_eq!(reasons("games/x.c", b"\xff\xfe"), ["not UTF-8"]);
         assert_eq!(
             reasons("games/x.c", b"int a; \r\nint b;"),
@@ -162,6 +197,37 @@ mod tests {
         );
         assert!(reasons("games/x.tsv", b"a\t\n").is_empty());
         assert!(reasons("recon/x.s", b"a \n").is_empty());
+    }
+
+    #[test]
+    fn names_are_lower_case_but_preprocessed_assembly() {
+        for path in [
+            "games/tbs/src/battle/tgtexec.c",
+            "games/tbs/include/chara.h",
+            "games/tbs/main_en.ld",
+            "games/common/src/system/overlays.s",
+            "games/tbs/src/system/ROM_HEAD.S",
+            "recon/tla/raw/08000630.s",
+            "recon/tla/ja/main.ld",
+            "tools/alchemy/src/Main.rs",
+            "README.md",
+        ] {
+            assert_eq!(name_case_reason(path), None, "{path}");
+        }
+        for path in [
+            "games/tbs/src/battle/TGTEXEC.C",
+            "games/tbs/src/battle/TGTEXEC.c",
+            "games/tbs/SRC/battle/tgtexec.c",
+            "games/THE BROKEN SEAL/main.ld",
+            "games/tbs/src/system/rom_head.S",
+            "games/tbs/src/system/Rom_Head.S",
+            "games/tbs/src/system/ROM_HEAD.s",
+            "games/tbs/src/system/OVERLAY/ROM_HEAD.S",
+            "recon/tla/raw/08000630.S",
+            "recon/tla/de/MAIN.LD",
+        ] {
+            assert_eq!(name_case_reason(path), Some(NAME_CASE_REASON), "{path}");
+        }
     }
 
     #[test]

@@ -1849,6 +1849,9 @@ fn recon_path_reason(path: &str) -> Option<&'static str> {
     (!scaffolding).then_some(RECON_REASON)
 }
 fn native_path_reason(path: &str) -> Option<&'static str> {
+    if let Some(reason) = super::hygiene::name_case_reason(path) {
+        return Some(reason);
+    }
     if let Some(reason) = shared_root_reason(path).or_else(|| recon_path_reason(path)) {
         return Some(reason);
     }
@@ -2787,7 +2790,8 @@ mod tests {
                 Some(JSON_REASON),
             ),
             ("games/tla/data/table.tsv", empty(), native),
-            ("games/tla/SRC/battle/table.tsv", empty(), native),
+            ("games/tla/SRC/battle/table.tsv", empty(), Some("lower case")),
+            ("games/tla/src/battle/TABLE.tsv", empty(), Some("lower case")),
             ("Games/tbs/src/table.tsv", empty(), native),
             ("tools/alchemy/src/logo.rs", logo_include, include),
             ("tools/alchemy/src/header.rs", header_include, include),

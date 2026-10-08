@@ -1,8 +1,7 @@
-/* 08027114: differ 52 against the 1727-line parent listing (draft 1773,
- * common 1724), 46 of them the two nested helpers' lines (see below):
- * 6 real; by symbol 6 in every other edition. Frame 100 as native.
- * Left: the reload register of the opening handshake's third count = -1
- * (r3, native r1).
+/* 08027114: differ 46 against the 1727-line parent listing (draft 1773,
+ * common 1727): only the two nested helpers' lines (see below); the parent
+ * matches, and by symbol differ 0 in every other edition. Frame 100 as
+ * native.
  * 2026-10-08: the GCSE bucket-order device (dead hdr stores, see its tag)
  * gives the native spill slots: 150 -> 102. An empty asm in each of the
  * psynergy, djinn and item cases counts four bytes in arm_reorg and puts
@@ -12,6 +11,10 @@
  * lookup called as returning a doubleword: 66 -> 56. French draws the
  * command name at 14, and the European item window is 16 wide.
  * A one-pass block around the opening handshake loop: 56 -> 52.
+ * The mismatch and closing-check exits each clear state->enabled (jump2
+ * cross-jumps the two tails into one; the TLA twin 0804bc08 shows them
+ * half-merged), so reload allocates the mismatch path's state reload and the exit's -1 lands
+ * in r1: 52 -> 46 (twelve dead stores keep 775 buckets).
  * The draft emits its two nested helpers first, 080270ac/080270d8, adopted on
  * their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent with FAKEMATCH static-chain devices; compiled
@@ -366,7 +369,8 @@ handshake_loop:
                 }
                 if (!(peer[0] == 'E' && peer[1] == 'X' && peer[2] == 'E' && peer[3] == 'C')) {
                     count = -1;
-                    goto handshake_failed;
+                    state->enabled = 0;
+                    goto handshake_done;
                 }
             }
             WaitFrames(1);
@@ -377,7 +381,6 @@ handshake_check:
             }
         } while (0);
         count = -1;
-handshake_failed:
         state->enabled = 0;
     }
 handshake_done:
@@ -479,7 +482,7 @@ mark_visible:
             UiWindow_MarkVisibleTileAttributes();
             COUNTDOWN->entryActive[0] = 0;
             COUNTDOWN->result[i] = 0x80000000;
-            /* FAKEMATCH: register choice (spill slots) only: seventeen dead
+            /* FAKEMATCH: register choice (spill slots) only: twelve dead
                stores, one insn each until flow deletes them. GCSE sizes its
                expression table from the insn count (n / 2 | 1 buckets) and
                PRE numbers its reaching registers in bucket order, which is
@@ -487,16 +490,12 @@ mark_visible:
                hashes to 13922 and i << 1, i << 2, i << 4 to 13966, 13967,
                13969: with these stores the table has 775 buckets (747
                against 16, 17, 19), so the givs take sp+32, 28 and 24
-               before &hdr (sp+20) as in the native frame; without them 765
-               (152 against 196, 197, 199) puts &hdr above the givs. 775
-               needs 16 or 17 stores in every edition (Japanese is two
-               insns longer). Without them differ en 114, ja 68, de/es/it
-               70, fr 72 (with them 66, 20, 22, 24); every row they remove is
-               a spill slot's offset. */
-            hdr[0] = 0;
-            hdr[0] = 0;
-            hdr[0] = 0;
-            hdr[0] = 0;
+               before &hdr (sp+20) as in the native frame; without them 769
+               (80 against 124, 125, 127) puts &hdr above the givs. 775
+               needs 11 or 12 stores in every edition (Japanese is two
+               insns longer). Without them differ 50 in every edition (en
+               96 with the nested helpers' 46); every row they remove is a
+               spill slot's offset. */
             hdr[0] = 0;
             hdr[0] = 0;
             hdr[0] = 0;

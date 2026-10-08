@@ -35,7 +35,7 @@ void Audio_PlayCue(s32 cue);
 #define MOTE(n) (&((struct EffectStep *)Ram_MapCellBuffer)[n]) // 破片の粒 (最大 512)
 
 //--------------------------------------------------------------------------
-// 水星のジン：渦を巻いて近づきながら青い炎を 5 発、左へ撃つ
+// 水星のジン：(96, 60) のまわりを渦を巻いて回りながら、青い炎を 5 発左へ撃つ
 // 炎は 5 フレーム進むと 32 個の粒に砕ける
 //--------------------------------------------------------------------------
 void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
@@ -116,7 +116,8 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
 			}
 		}
 
-		// ジン：半径を 1 フレームに 2 ずつ縮めながら 32 フレームで 1 周する
+		// ジン：32 フレームで 1 周する。半径 64 - 2 × frame (横はその半分) は
+		// 32 フレームで 0 になって中心を通り、その後は反対側へ広がる
 		if (frame <= 95)
 		{
 			s32 x = ((Trig_Sin(frame << 11) * (64 - frame * 2)) >> 17) + 96;
@@ -125,7 +126,8 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
 			draw[1](canvas, work, x - 10, y - 17, 20, 34);
 			for (i = 0; i != 5; i++)
 			{
-				// 決まったフレームに炎を撃ち、その 6 フレーム後に対象が反応する
+				// 決まったフレームに炎を撃ち、その 6 フレーム後に対象のパレットを
+				// 6 フレーム 7 番に替えてアニメ 5 にし、動き 6 を与える
 				if (frame == MercuryDjinnFlames_LaunchFrames[i])
 				{
 					struct EffectStep *shot = &work->particles[i];
@@ -230,7 +232,8 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
 		if (frame == 56)
 			BattleEventRuntime_BeginPhaseFar(133);
 
-		// ジン：半径を 1 フレームに 2 ずつ縮めながら回る
+		// ジン：1 フレームに 11.25° 回る。半径 64 - 2 × frame (横はその半分) は
+		// 32 フレームで 0 になって中心を通り、その後は反対側へ広がる
 		if (frame <= 95)
 		{
 			s32 x = (Trig_Sin(angle) * (64 - frame * 2)) >> 17;

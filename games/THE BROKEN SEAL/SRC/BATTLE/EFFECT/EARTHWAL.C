@@ -178,7 +178,7 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
 		if (frame == 8 && mode == 0)
 			AudioCommand_PlayFar(126);
 
-		// 4 フレームごとに絵 0, 1, 2 と進め、その後は 1 と 2 を交互に (27 フレームまで)
+		// 4 フレームごとに絵 0, 1, 2 と進め、その後は 2 と 1 を交互に (27 フレームまで)
 		if (frame <= 31)
 		{
 			cell = frame / 4;

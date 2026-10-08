@@ -311,7 +311,8 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 			}
 		}
 
-		// 23〜87 フレームに 4 フレームごとに対象を光らせて揺らし、8 フレームごとに音
+		// 24〜84 フレームの 4 フレームごとに対象のパレットを 2 フレーム 7 番に替えて
+		// アニメ 5 にし、画面を揺らし、8 フレームごとに音を鳴らす
 		if (frame >= 23 && frame <= 87 && (frame & 3) == 0)
 		{
 			ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 2);

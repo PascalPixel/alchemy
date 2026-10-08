@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // EMBERS.C
-// バトル演出：隊列のオブジェクトを動かしながら、粒と閃光を降らせる 2 つの演出
+// バトル演出：粒を下から昇らせる演出と、粒を噴き上げて 3 本の柱を流す演出
 //--------------------------------------------------------------------------
 
 #include "BATTLE.H"
@@ -47,8 +47,8 @@ extern u8 gMapCellBuffer[];
 struct BattleEffectTargetArgument;
 void AudioCommand_PlayFar(s32 value);
 
-#define HI(v) (((s16 *)&(v))[1])					   // 16.16 固定小数の整数部
-#define DROPS ((struct EffectStep *)Ram_MapCellBuffer) // 降る粒 (最大 512)
+#define HI(v) (((s16 *)&(v))[1])						// 16.16 固定小数の整数部
+#define GRAINS ((struct EffectStep *)Ram_MapCellBuffer) // 昇る粒 (最大 512)
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
@@ -65,14 +65,16 @@ struct BlitterPair
 };
 
 //--------------------------------------------------------------------------
-// 208 フレームの演出。48〜159 フレームの間に A か B で 160 フレームへ飛ばす
+// 208 フレームの演出。49〜159 フレームに A か B を押すと 160 フレームへ飛ばす
 // mode : 0 なら 8 体の隊列を出して動かし、最後にその位置で ImpactBurst を起こす
-//        1 なら使い手の側で決まる位置から出し、LightningBolt のパレットで描く
-// 粒は 4 種類：
-//   particles[0..23]  閃光 (129〜175 フレームに 1 つずつ)
-//   particles[24..39] 筋 (上から落ちて、y = 55 で絵を繰り返す)
-//   particles[40..63] 火花 (41〜127 フレームの奇数フレームに 1 つずつ)
-//   DROPS[0..511]	   降る粒 (33〜175 フレーム、103 を過ぎると 8 つずつ)
+//        1 なら effect->side で決まる位置から火花と閃光を出し、
+//        LightningBolt のパレットで描く
+// 粒は 4 種類 (キャンバス座標、y は下向きが正)：
+//   GRAINS[0..511]    昇る粒：y = 112 から上へ加速して昇る。33〜103 フレームは
+//                     1 フレームに 1 つ、104〜175 フレームは 8 つずつ出す
+//   particles[40..63] 火花：41〜127 の奇数フレームに 1 つずつ、斜め上へ飛ぶ
+//   particles[0..23]  閃光：129〜175 フレームに 1 つずつ、横へ飛ぶ
+//   particles[24..39] 筋：上から斜めに落ち、y が 55 を越えたら絵を繰り返す
 //--------------------------------------------------------------------------
 void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 mode)
 {
@@ -155,7 +157,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 		streak->variant = -(Random16() & 31); // 落ち始めるまでの待ち
 	}
 	for (i = 0; i != 512; i++)
-		DROPS[i].variant = -1;
+		GRAINS[i].variant = -1;
 	if (mode == 0)
 	{
 		BattleFx_SelectLivingTargets((struct BattleEffectTargetArgument *)work->effect);
@@ -210,6 +212,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 		//------------------------------------------------------------------
 		// 新しい粒を出す
 		//------------------------------------------------------------------
+		// 昇る粒：y = 112 から上向きに出す
 		if (frame >= 33 && frame <= 175)
 		{
 			s32 spawned = 0;
@@ -219,23 +222,24 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 				limit = 8;
 			for (i = 0; i != 512; i++)
 			{
-				struct EffectStep *drop = &DROPS[i];
+				struct EffectStep *grain = &GRAINS[i];
 
-				if (drop->variant == -1)
+				if (grain->variant == -1)
 				{
-					drop->x = ((Random16() & 255) - 32) << 16;
-					drop->y = 112 << 16;
-					drop->velocity_x = ((Random16() & 127) + PaletteParticles_DropSpeeds[i & 3])
-									   << 9;
-					drop->velocity_y = -((Random16() & 127) + PaletteParticles_DropSpeeds[i & 3])
-									   << 11;
-					drop->variant = 0;
+					grain->x = ((Random16() & 255) - 32) << 16;
+					grain->y = 112 << 16;
+					grain->velocity_x = ((Random16() & 127) + PaletteParticles_DropSpeeds[i & 3])
+										<< 9;
+					grain->velocity_y = -((Random16() & 127) + PaletteParticles_DropSpeeds[i & 3])
+										<< 11;
+					grain->variant = 0;
 					spawned++;
 					if (spawned == limit)
 						break;
 				}
 			}
 		}
+		// 火花：奇数フレームに 1 つ、斜め上へ出す
 		if (frame >= 41 && frame <= 127)
 		{
 			s32 spawned = 0;
@@ -275,6 +279,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 			AudioCommand_PlayFar(141);
 		if (frame == 128)
 			AudioCommand_PlayFar(145);
+		// 閃光：1 フレームに 1 つ、横へ出す
 		if (frame >= 129 && frame <= 175)
 		{
 			s32 spawned = 0;
@@ -350,36 +355,38 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 			}
 		}
 
-		// 降る粒：128 フレームまでは上へ加速、その後は横へ流す
+		// 昇る粒：128 フレームまでは上へ加速し、その後は上昇の速さを保ったまま
+		// x の速度を毎フレーム減らして左へ曲げる (dir = -1 なら右、奇数番が強い)。
+		// 256 フレームで消える
 		if (frame <= 175)
 		{
 			for (i = 0; i != 512; i++)
 			{
-				struct EffectStep *drop = &DROPS[i];
+				struct EffectStep *grain = &GRAINS[i];
 
-				if (drop->variant >= 0)
+				if (grain->variant >= 0)
 				{
 					u8	size = PaletteParticles_DropSizes[i & 3];
 					s32 height = size * 2;
 
 					draw.hikaku(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
-						HI(drop->x) - size / 2, HI(drop->y) - size, size, height);
-					drop->x += drop->velocity_x * dir;
-					drop->y += drop->velocity_y;
+						HI(grain->x) - size / 2, HI(grain->y) - size, size, height);
+					grain->x += grain->velocity_x * dir;
+					grain->y += grain->velocity_y;
 					if (frame > 128)
 					{
 						if (i & 1)
-							drop->velocity_x += -0x8000;
+							grain->velocity_x += -0x8000;
 						else
-							drop->velocity_x += -0x2000;
+							grain->velocity_x += -0x2000;
 					}
 					else
 					{
-						drop->velocity_y += -0x400;
+						grain->velocity_y += -0x400;
 					}
-					drop->variant++;
-					if (drop->variant == 256)
-						drop->variant = -1;
+					grain->variant++;
+					if (grain->variant == 256)
+						grain->variant = -1;
 				}
 			}
 		}
@@ -486,9 +493,10 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 }
 
 //--------------------------------------------------------------------------
-// 124 フレームの演出。32〜97 フレームの間に A か B で 98 フレームへ飛ばす
+// 124 フレームの演出。33〜97 フレームに A か B を押すと 98 フレームへ飛ばす
 // 12 体の隊列を右から入れ、28 フレームと 32〜79 フレームに粒を噴き上げる
-// 32〜79 フレームには 3 本の柱 (FirePillarA の絵) を流す
+// 粒は重力で落ち、80 フレームを過ぎると上へ加速して昇る
+// 32〜79 フレームには 3 本の柱 (FirePillarA の絵) を上へ流す
 //--------------------------------------------------------------------------
 void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 {
@@ -574,12 +582,13 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 				focus.y += velocity.y;
 				velocity.x = velocity.x * 58 / 64;
 				velocity.y = velocity.y * 56 / 64;
-				if (focus.x <= 0x77ffff)
+				if (focus.x < 120 << 16)
 					velocity.x += 0x8000;
 			}
 			BattleFx_PlaceFormationObjects(1, focus.x, focus.y);
 
-			// 粒：(32, 96) を中心に、28 フレームに 256 個、32〜79 フレームに 16 個ずつ
+			// 粒：(32, 96) のまわりから上向きに、28 フレームに 256 個、
+			// 32〜79 フレームには 1 フレームに 16 個ずつ噴き上げる
 			if (frame == 28)
 			{
 				for (k = 0; k != 256; k++)
@@ -649,7 +658,9 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 					draw[0](canvas, work, k * 32 + ((frame / 4) & 31) - 32, 120 - rise, 32, 32);
 			}
 
-			// 粒：68 フレームを過ぎると大きくし、下向きのものは加算合成で描く
+			// 粒：68 フレームを過ぎると大きくし、落ちているものは加算合成で描く。
+			// 80 フレームまでは EmberColumns_Gravity で下へ、その後は上へ加速し、
+			// 速度は毎フレーム 62/64 に減らす。落ちながら y が 104 を越えたら消す
 			for (k = 0; k != 1024; k++)
 			{
 				spark = &sparks[k];
@@ -686,7 +697,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 				}
 			}
 
-			// 対象：30〜79 フレームに 12 フレームごとに跳ねさせる
+			// 対象：36・48・60・72 フレームにパレット 7 で跳ねさせ、6 フレーム後にパレットを戻す
 			if (frame <= 79)
 			{
 				for (k = 0; k != work->effect->count; k++)

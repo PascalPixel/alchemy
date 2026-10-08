@@ -43,8 +43,9 @@ void Object_SetMode(void *object, s32 mode);
 void Audio_PlayCue(s32 cue);
 
 //--------------------------------------------------------------------------
-// 剣は 40 フレームで振り下ろし、16 と 24 フレーム目に列ごとの閃光を出す
-// 列の x は FlameBlade_StrikeColumns (side ごとに 3 つ)
+// 剣を 40 フレーム描き (10 フレームで振り下ろす)、16 と 24 フレーム目に
+// 2 つの列で閃光を出し、6 フレーム後から火花を散らす
+// 列の x は FlameBlade_StrikeColumns (side ごとに 3 つ、使うのは最初の 2 つ)
 //--------------------------------------------------------------------------
 void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 {

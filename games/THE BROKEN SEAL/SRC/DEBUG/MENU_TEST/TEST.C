@@ -426,11 +426,9 @@ void CommandTable_ConfigureCommandGroups(void)
     s32 j;
 
     for (i = 0; i < 16; i++) {
-        for (j = 255; j >= 0; j--) {
+        for (j = 0; j < 256; j++) {
             buf[j] = 0;
         }
-        /* FAKEMATCH: The loop-index constraint avoids GCC's extra r6 address copy/save. */
-        asm("" : "+r"(i));
         for (j = 0; j < i + 32; j++) {
             buf[j] = MenuTest_BenchmarkCharacter + 1;
         }

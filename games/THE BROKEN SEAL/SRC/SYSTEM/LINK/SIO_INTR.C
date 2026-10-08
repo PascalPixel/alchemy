@@ -54,16 +54,12 @@ void SerialRuntime_HandleTransferInterrupt(void)
     struct SerialRuntime *send_state;
     struct SerialRuntime *receive_state;
     struct SerialRuntime *tail_state;
-    /* FAKEMATCH: a plain value snapshot delays stack allocation and the snapshot pointer in lr, and reverses indexed halfword operands. The volatile local and restricted view retain the measured order. */
-    volatile union SerialDataRegisters serial_data;
-    union SerialDataRegisters *const __restrict serial_snapshot =
-        (union SerialDataRegisters *)&serial_data;
+    u16 recv[4];
     volatile u32 *sio_control;
     s32 channel;
 
+    *(u64 *)recv = *(volatile u64 *)REG_SIODATA32;
     sio_control = &REG_SIOCNT;
-    *serial_snapshot =
-        *(volatile union SerialDataRegisters *)REG_SIODATA32;
     send_state = &gSerialRuntime;
     send_state->is_parent = (*sio_control << 25) >> 31;
 
@@ -89,14 +85,14 @@ receive_loop:
         s32 receive_index;
         u16 *incoming;
 
-        if (serial_snapshot->halfwords[channel] == 0xfefe &&
+        if (recv[channel] == 0xfefe &&
             receive_state->receive_index[channel] > 13) {
             receive_state->receive_index[channel] = -1;
         } else {
             receive_index = receive_state->receive_index[channel];
             incoming = receive_state->incoming_buffer[channel];
             incoming[receive_index] =
-                serial_snapshot->halfwords[channel];
+                recv[channel];
             if (receive_index == 13) {
                 u16 *swap = receive_state->ready_buffer[channel];
 

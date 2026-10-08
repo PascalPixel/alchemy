@@ -1,3 +1,8 @@
+//--------------------------------------------------------------------------
+// MAPFX.C
+// マップの表示範囲とズームの移り変わり、ほかのオブジェクトについて回るオブジェクト
+//--------------------------------------------------------------------------
+
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -21,166 +26,195 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 
 #include "MAP_SCROLL.H"
+#include "HEAP_STATE.H"
 
 #define WaitFrames ((s32 (*)(s32))WaitFrames)
 
-#define gScanlinePitch ((u8 (*))&gScanlinePitch)
+#define gScanlinePitch ((u8 *)&gScanlinePitch)
 
-
-struct Work_080936a0 {
-    u8 filler0[848];
-    u32 previous;
-    u32 current;
-    u16 kind;
-    u16 flags;
-};
+// スプライトの OAM 属性2 の上位バイト (bit 2〜3 が表示優先度)
+#define ATTR2_HI(spr) (((u8 *)&((struct AnimationObject *)(spr))->part[0])[9])
 
 s16 *BattleAction_FindDescriptor(s16 action);
 
 struct FieldActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void Object_SetMode(struct FieldActor *object, s32 mode);
-void Audio_PlayCue(s32 cue);
-void Battle_WaitMode0(s32 state);
+void			   Object_SetMode(struct FieldActor *object, s32 mode);
+void			   Audio_PlayCue(s32 cue);
+void			   Battle_WaitMode0(s32 state);
 
-void Map_SetViewBounds(s32 first, s32 second, s32 third, s32 fourth)
+//--------------------------------------------------------------------------
+// マップの表示範囲を決める
+//--------------------------------------------------------------------------
+void Map_SetViewBounds(s32 min_x, s32 min_y, s32 max_x, s32 max_y)
 {
-    struct MapScrollWork *work = gMapWork[0];
+	struct MapScrollWork *work = gMapWork[0];
 
-    work->min_x = first;
-    work->min_y = second;
-    work->max_x = third;
-    work->max_y = fourth;
+	work->min_x = min_x;
+	work->min_y = min_y;
+	work->max_x = max_x;
+	work->max_y = max_y;
 }
 
+//--------------------------------------------------------------------------
+// 毎フレームの処理 : ズームを前の値から目標へ 1 段すすめる
+// 画面中心のオブジェクトが止まっているあいだは待つ
+//--------------------------------------------------------------------------
 s32 BattleFx_StepRatioTransition(void)
 {
-    u8 *work;
-    s16 *duration;
-    s32 *from;
-    s16 *step;
-    s32 offset;
-    s32 delta;
+	struct PerspectiveWork *work;
+	s16					   *frames;
+	s32					   *from;
+	s16					   *step;
+	s32						zoom;
+	s32						delta;
 
-    work = gMapWork[0];
-    if ((*(u8 **)(Runtime_AllocateBlock(27, 0xccc) + 480))[91] != 0)
-        return;
-    duration = (s16 *)(work + 0x358);
-    if (*duration == 0)
-        return;
-    from = (s32 *)(work + 0x350);
-    delta = *(s32 *)(work + 0x354) - *from;
-    step = (s16 *)(work + 0x35a);
-    (*step)++;
-    offset = *from + __divsi3(delta * *step, *duration);
-    *(s32 *)(work + 0x34c) = Iwram_MulQ16(*(s32 *)(work + 0x348), offset);
-    *(u32 *)gScanlinePitch = *(u16 *)(work + 0x118) + 1;
-    if (*step == *duration) {
-        *duration = 0;
-        Scheduler_RemoveCallback((SchedulerCallback)BattleFx_StepRatioTransition);
-    }
+	work = gMapWork[0];
+	if (((struct EventWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT, 0xccc))->view_center->paused
+		!= 0)
+		return;
+	frames = (s16 *)&work->zoom_transition_frames;
+	if (*frames == 0)
+		return;
+	from = &work->previous_zoom;
+	delta = work->zoom - *from;
+	step = &work->zoom_transition_step;
+	(*step)++;
+	zoom = *from + __divsi3(delta * *step, *frames);
+	work->distance = Iwram_MulQ16(work->far_plane, zoom);
+	*(u32 *)gScanlinePitch = work->pitch + 1;
+	if (*step == *frames)
+	{
+		*frames = 0;
+		Scheduler_RemoveCallback((SchedulerCallback)BattleFx_StepRatioTransition);
+	}
 }
 
-void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
+//--------------------------------------------------------------------------
+// ズームの移り変わりを始める (イベントの mode が 3 のときだけ)
+// zoom   : 倍率 (16.16 固定小数)
+// frames : かけるフレーム数
+//--------------------------------------------------------------------------
+void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames)
 {
-    struct Work_080936a0 *state = gMapWork[0];
-    s32 handle;
-    s32 result;
+	struct PerspectiveWork *work = gMapWork[0];
+	s32						inv;
 
-    handle = (s32)Runtime_AllocateBlock(27, 0xccc);
-    if (*(s16 *)(handle + 414) != 3)
-        return;
-    {
-        s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14;
-        result = ratio(arg0, 0x10000);
-    }
-    state->previous = state->current;
-    state->current = result;
-    state->kind = arg1;
-    state->flags = 0;
-    Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_StepRatioTransition, 0xc94);
+	if (((struct EventWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT, 0xccc))->mode != 3)
+		return;
+	{
+		s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14;
+		inv = ratio(zoom, 0x10000); // 1 / zoom
+	}
+	work->previous_zoom = work->zoom;
+	work->zoom = inv;
+	work->zoom_transition_frames = frames;
+	work->zoom_transition_step = 0;
+	Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_StepRatioTransition, 0xc94);
 }
 
+//--------------------------------------------------------------------------
+// ズームの移り変わりが終わるまで待つ (イベントの mode が 3 のとき、最長 300 フレーム)
+//--------------------------------------------------------------------------
 void Event_WaitForZoomTransition(void)
 {
-    s32 frames;
-    u8 *work = gMapWork[0];
+	s32						frames;
+	struct PerspectiveWork *work = gMapWork[0];
 
-    if (((struct EventWork *)Runtime_AllocateBlock(0x1b, 0xccc))->mode == 3) {
-        frames = 0;
-        if (*(s16 *)&((struct PerspectiveWork *)work)->zoom_transition_frames != 0) {
-            do {
-                WaitFrames(1);
-                frames++;
-            } while (frames <= 0x12b && *(s16 *)&((struct PerspectiveWork *)work)->zoom_transition_frames != 0);
-        }
-    }
+	if (((struct EventWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT, 0xccc))->mode == 3)
+	{
+		frames = 0;
+		if (*(s16 *)&work->zoom_transition_frames != 0)
+		{
+			do
+			{
+				WaitFrames(1);
+				frames++;
+			} while (frames < 300 && *(s16 *)&work->zoom_transition_frames != 0);
+		}
+	}
 }
 
-s32 BattleFx_CopyLinkedObjectPosition(void *obj)
+//--------------------------------------------------------------------------
+// 毎フレームの処理 : 付いていく相手の位置に置き、y には絵の box_x と 8 ドットを足す
+//--------------------------------------------------------------------------
+s32 BattleFx_CopyLinkedObjectPosition(void *self)
 {
-    void *link;
+	struct FieldActor *obj = self;
+	struct FieldActor *link;
 
-    link = FIELD_AT_OFFSET(obj, void **, 0x68);
-    if (link != NULL) {
-        FIELD_AT_OFFSET(obj, s8 *, 0x55) = 0;
-        FIELD_AT_OFFSET(obj, s32 *, 8) = FIELD_AT_OFFSET(link, s32 *, 8);
-        FIELD_AT_OFFSET(obj, s32 *, 0xc) = FIELD_AT_OFFSET(link, s32 *, 0xc)
-            + ((s8)Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(FIELD_AT_OFFSET(obj, s16 *, 0x66)))->box_x << 16)
-            + 0x80000;
-        FIELD_AT_OFFSET(obj, s32 *, 0x14) = FIELD_AT_OFFSET(link, s32 *, 0x14);
-        FIELD_AT_OFFSET(obj, s32 *, 0x10) = FIELD_AT_OFFSET(link, s32 *, 0x10);
-    }
-    return 0;
+	link = *(struct FieldActor **)obj->unknown_68;
+	if (link != NULL)
+	{
+		obj->motion_flags = 0;
+		obj->x.fixed = link->x.fixed;
+		obj->y.fixed =
+			link->y.fixed
+			+ ((s8)Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(*(s16 *)&obj->work))
+					->box_x
+				<< 16)
+			+ (8 << 16);
+		obj->terrain_height = link->terrain_height;
+		obj->z.fixed = link->z.fixed;
+	}
+	return 0;
 }
 
-void BattleFx_SpawnLinked(
-    s32 resource_id,
-    s32 flags,
-    s32 state)
+//--------------------------------------------------------------------------
+// id のオブジェクトについて回るオブジェクト (種類 21) を出し、wait フレーム待つ
+// mode : 下位 4 ビットはオブジェクトの mode、下位 8 ビットが 6 なら音 110、
+//        0x100 で表示優先度 1 (なければ相手と同じ優先度)
+//--------------------------------------------------------------------------
+void BattleFx_SpawnLinked(s32 id, s32 mode, s32 wait)
 {
-    struct FieldActor *resource;
+	struct FieldActor *target;
 
-    if ((flags & 0xff) == 6) {
-        Audio_PlayCue(110);
-    }
+	if ((mode & 0xff) == 6)
+	{
+		Audio_PlayCue(110);
+	}
 
-    resource = ObjectTable_Get(resource_id);
-    if (resource != 0) {
-        struct FieldActor *object =
-            Object_CreateFar(21, resource->x.fixed, resource->y.fixed, resource->z.fixed);
+	target = ObjectTable_Get(id);
+	if (target != 0)
+	{
+		struct FieldActor *obj =
+			Object_CreateFar(21, target->x.fixed, target->y.fixed, target->z.fixed);
 
-        if (object != 0) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_LinkedObjectScript);
-            Object_SetMode(object, flags & 15);
-            object->motion_flags = 0;
-            object->timer = 0;
-            object->work = resource_id;
-            object->update = (void (*)(union FieldObject *))BattleFx_CopyLinkedObjectPosition;
-            object->sprite->flags = 0;
-            *(struct FieldActor **)&object->unknown_68[0] = resource;
+		if (obj != 0)
+		{
+			ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_LinkedObjectScript);
+			Object_SetMode(obj, mode & 15);
+			obj->motion_flags = 0;
+			obj->timer = 0;
+			obj->work = id;
+			obj->update = (void (*)(union FieldObject *))BattleFx_CopyLinkedObjectPosition;
+			obj->sprite->flags = 0;
+			*(struct FieldActor **)&obj->unknown_68[0] = target;
 
-            if ((flags & 0x100) != 0) {
-                s32 mask = 13;
-                u8 visual_flags = ((u8 *)&((struct AnimationObject *)object->sprite)->part[0])[9];
+			if ((mode & 0x100) != 0)
+			{
+				s32 mask = 13;
+				u8	attr = ATTR2_HI(obj->sprite);
 
-                mask = -mask;
-                mask &= visual_flags;
-                mask |= 4;
-                ((u8 *)&((struct AnimationObject *)object->sprite)->part[0])[9] = mask;
-            } else {
-                s32 copied_flags = 12;
-                u8 source_flags = ((u8 *)&((struct AnimationObject *)resource->sprite)->part[0])[9];
-                u8 flags;
-                s32 clear_mask = 13;
+				mask = -mask;
+				mask &= attr;
+				mask |= 4;
+				ATTR2_HI(obj->sprite) = mask;
+			}
+			else
+			{
+				s32 pri = 12;
+				u8	src = ATTR2_HI(target->sprite);
+				u8	dst;
+				s32 mask = 13;
 
-                copied_flags &= source_flags;
-                flags = ((u8 *)&((struct AnimationObject *)object->sprite)->part[0])[9];
-                clear_mask = -clear_mask;
-                clear_mask &= flags;
-                clear_mask |= copied_flags;
-                ((u8 *)&((struct AnimationObject *)object->sprite)->part[0])[9] = clear_mask;
-            }
-        }
-        Battle_WaitMode0(state);
-    }
+				pri &= src;
+				dst = ATTR2_HI(obj->sprite);
+				mask = -mask;
+				mask &= dst;
+				mask |= pri;
+				ATTR2_HI(obj->sprite) = mask;
+			}
+		}
+		Battle_WaitMode0(wait);
+	}
 }

@@ -54,7 +54,7 @@
         "*/games/tbs/src/system/resource/decode_2_loop.o"(.text .rodata .data .padding)
         "*/games/tbs/src/system/resource/execute_transfer.o"(.text .rodata .data .padding)
         "*/games/tbs/src/system/resource/patch_thumb_branch.o"(.text .rodata .data .padding)
-        "*/games/tbs/src/system/memory/release_heap_block.o"(.text .rodata .data .padding)
+        "*/recon/tbs/raw/heapfree.o"(.text .text.* .rodata .data .padding)
         "*/games/tbs/src/system/system.o"(.text)
         "*/games/tbs/src/system/io.o"(.text)
         "*/games/tbs/src/graphics/display/blend.o"(.text)

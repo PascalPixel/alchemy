@@ -702,7 +702,7 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_GOUSEI_BUILD.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000eda78)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_GOUSEI.o"(.text .rodata .data .padding)
-    "*/recon/tbs/it/rom.o"(.rom.000ede48)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/KOUKATBL.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_GOUSEI_IRO.o"(.text .rodata .data .padding)
     "*/recon/tbs/it/rom.o"(.rom.000ef014)
     . = ABSOLUTE(0x080f0000);

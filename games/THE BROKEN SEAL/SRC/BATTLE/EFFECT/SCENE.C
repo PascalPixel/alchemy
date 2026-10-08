@@ -193,7 +193,7 @@ void BattleEffect_InitializeSharedScene(void)
     if (GameFlag_TestFar(0x14d)) no = 5;
     if (GameFlag_TestFar(0x14e)) no = 6;
     if (GameFlag_TestFar(0x14f)) no = 7;
-    BattleFx_ApplyColorToTargetBuffer(Data_080a0108[no], 1);
+    BattleFx_ApplyColorToTargetBuffer(BattleFx_TargetColors[no], 1);
     BattleFx_StartBufferInterpolation(8);
 }
 

@@ -478,7 +478,7 @@
         "*/recon/tbs/unidentified.o"(.unidentified.0809e4ce)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FXDATA.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SCENES.o"(.rodata)
-        "*/recon/tbs/unidentified.o"(.unidentified.0809f7f0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/SCRIPTS.o"(.rodata)
         . = ABSOLUTE(0x080a1000);
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/MENU.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/DISABLE_OVERLAY_CALLBACKS_WITH_FLAGS.o"(.text)

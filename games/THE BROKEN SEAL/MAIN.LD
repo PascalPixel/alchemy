@@ -493,7 +493,7 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.000954b2)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FXDATA.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/FIELD/SCENES.o"(.rodata)
-    "*/recon/tbs/ja/rom.o"(.rom.000967d4)
+    "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/SCRIPTS.o"(.rodata)
     . = ABSOLUTE(0x08098000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/MENU.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/DISABLE_OVERLAY_CALLBACKS_WITH_FLAGS.o"(.text)

@@ -30,7 +30,7 @@
 
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
-extern const struct ScenePlacement Data_0809f810[2];
+extern const struct ScenePlacement Field_DefaultPlacements[2];
 void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object, u32 value);
 struct ObjectRuntime *Object_CreateFar(s32 character, s32 x, s32 y, s32 z);
 u32 Random16(void);
@@ -148,8 +148,8 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
     work = (struct FieldStepWork *)gEventWork;
     leader = gGameState.selected_actor;
     entry = (struct ScenePlacement *)((u8 *)work + 0x200);
-    entry[0] = Data_0809f810[0];
-    entry[1] = Data_0809f810[1];
+    entry[0] = Field_DefaultPlacements[0];
+    entry[1] = Field_DefaultPlacements[1];
     for (pos = 0; pos < 4; pos++)
         work->tables[pos] = 0;
     ObjectTable_ClearBattleSlots();

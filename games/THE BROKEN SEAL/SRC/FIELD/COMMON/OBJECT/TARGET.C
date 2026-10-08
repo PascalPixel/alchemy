@@ -84,7 +84,7 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
         break;
     case 2:
         Object_SetMode((struct ObjectRuntime *)child, 2);
-        ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)Data_0809fd38);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)ObjectMotion_WaitScript);
         child->counter = 1;
         break;
     }

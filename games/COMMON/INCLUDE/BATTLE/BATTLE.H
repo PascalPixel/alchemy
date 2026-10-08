@@ -236,7 +236,7 @@ extern u8 Crystal_ShardStarts[];
 extern u8 Crystal_ShardWidths[];
 extern const u8 BattleFx_SparkTiles[];
 extern const u8 BattleFx_QuadrantModes[];
-extern const s32 Data_080a0108[];
+extern const s32 BattleFx_TargetColors[];
 extern s32 Data_080c3604[];
 extern u8 Data_080c3620[];
 extern s32 Data_080c3628[];

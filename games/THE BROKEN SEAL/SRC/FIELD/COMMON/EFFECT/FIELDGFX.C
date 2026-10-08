@@ -318,7 +318,7 @@ void FieldEffect_InitSparkles(void)
 
     ClearDustWork(work);
     buf = Runtime_AllocateBlock(14, 0x400);
-    Resource_DecodeByteLz(Data_080a00b8, buf);
+    Resource_DecodeByteLz(FieldFx_SparkleTiles, buf);
     work->vram_entry = Resource_FindFreeEntry();
     work->tile_base = VramBlock_LoadCached(work->vram_entry, 0x200, buf);
     Runtime_ReleaseHeapBlock(14);

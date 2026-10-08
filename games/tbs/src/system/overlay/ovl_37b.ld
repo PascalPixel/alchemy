@@ -4,13 +4,11 @@ SECTIONS
     {
         "*/games/tbs/src/field/soru_sekizo/entry.o"(.text)
         "*/games/tbs/src/field/soru_sekizo/sekizo.o"(.text)
-        "*/games/tbs/src/field/soru_sekizo/beams.o"(.text)
         "*/games/tbs/src/field/soru_sekizo/import.o"(.text)
         "*/games/tbs/src/field/soru_sekizo/data.o"(.data)
     }
     .bss ALIGN(16) (NOLOAD) :
     {
-        "*/games/tbs/src/field/soru_sekizo/beams.o"(.bss COMMON)
         "*/games/tbs/src/field/soru_sekizo/sekizo.o"(.bss COMMON)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

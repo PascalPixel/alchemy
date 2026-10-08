@@ -2,21 +2,138 @@
 #include "resource.h"
 #include "mem.h"
 #include "global_cells.h"
-#include "statue_hall.h"
 #include "types.h"
 #include "field_event.h"
-#include "field_service.h"
 #include "field_scene.h"
+#include "field_service.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "menu.h"
+#include "minigame.h"
+#include "sound.h"
+#include "system.h"
+
+void Scene_RunGuardSequenceC();
+
+enum StatueHallFlag {
+    FLAG_STATUE_TRAP_SPRUNG = 0x813,
+    FLAG_LEFT_BEAM_SHINING = 0x816,
+    FLAG_RIGHT_BEAM_SHINING = 0x817
+};
+
+#define NULL ((void *)0)
+#define TARGET_ID 9
+#define GATE_CODE 2059
+
+struct Ent {
+    s32 f00;
+    u8 f04;
+    u8 f05;
+    u16 f06:9;
+    u16 f07:7;
+    s32 f08;
+};
+
+struct Cam {
+    u8 pad[228];
+    s32 x;
+    s32 y;
+};
+
+extern u8 SceneEventRuntime_ScriptData[];
+extern u8 SceneEventRuntime_MessageData[];
+extern u8 SceneEventRuntime_ActorData[];
+extern u8 SceneEventRuntime_EffectData[];
+extern s32 SoruSekizo_ScrollPhase;
+
+struct CellCopy {
+    s32 src_x;
+    s32 src_y;
+    s32 dest_x;
+    s32 dest_y;
+    s32 width;
+    s32 height;
+};
+
+struct SealScene {
+    struct CellCopy open;
+    struct CellCopy pulse_a;
+    struct CellCopy pulse_b;
+    struct CellCopy opened;
+    s32 flag;
+    s32 facing;
+    s32 dest_x;
+    s32 dest_z;
+    struct CellCopy stairs[3];
+    s32 actor;
+    s32 actor_x;
+    s32 actor_z;
+    s32 unknown_c4[3];
+};
+extern const u8 SoruSekizo_SpriteRowsGfx[];
+
+void SoruSekizo_RunStatueDropScene(void);
+void Resource_DecodeByteLz();
+void InitializeSceneRecordBuffer();
+void BattleFx_SetQueuedSoundAndPlay();
+void SetMapCellCollision();
+void SoruSekizo_RunEventSequence(s32, s32, s32, s32, s32);
+void SoruSekizo_OpenNorthwestSeal(void);
+void SoruSekizo_OpenNortheastSeal(void);
+void SoruSekizo_OpenSoutheastSeal(void);
+void SoruSekizo_OpenSouthwestSeal(void);
+void Scene_ShineLeftBeam(void);
+void Scene_ShineRightBeam(void);
+void SoruSekizo_OpenSeal(void);
+
+s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z);
+
+u8 *SceneEventRuntime_GetScriptData(void);
+s32 SceneEventRuntime_ReturnZero(void);
+u8 *SceneEventRuntime_GetMessageData(void);
+u8 *SceneEventRuntime_GetActorData(void);
+u8 *SceneEventRuntime_GetEffectData(void);
+s32 SceneEventRuntime_SelectInitialSceneByFlags(void);
+void Scene_OpenTheHole(void);
+void SceneEffect_UpdateScrollingSpriteRows(void);
+void SceneState_RunWhenSlotZeroFacingC000(void);
+void SceneState_RunWhenActorZeroFacing4000(void);
+void FieldScene_RunPrimarySequenceHead(void);
+s32 Scene_RunGuardSequenceB(void);
+void FieldScene_CallWhenCheck9_31_9(void);
+void FieldScene_RunGuardedStep11(void);
+void FieldScene_RunGuardedStep13(void);
+void FieldScene_RunGuardedStep15(void);
+void ConfigureSceneAndCheckActors(void);
+void ConfigureAlternateSceneAndCheckActors(void);
+void FieldScene_RunClosingSequence(void);
+void FieldScene_RunScene37bSequenceA(void);
+void FieldScene_RunFiveValueStep9(void);
+void FieldScene_RunFiveValueStep11(void);
+void FieldScene_ApplyRect13_31_12_30_12(void);
+void FieldScene_RunFiveValueStep15(void);
+void FieldScene_ApplyRect10_14_7_13_7(void);
+void SceneActor_UseActorTenCellAndNext(void);
+void SceneActor_MoveActor10ByRow(void);
+void FieldScene_ApplyRect12_21_7_22_7(void);
+void SceneActor_ApplyActorTwelveZCellPair(void);
+void SceneActor_RunSlot12ColumnStep(void);
+void Event_SayThenWait(s32 speaker, s32 frames);
+void FieldScene_SetupStagedActors(void);
+void FieldScene_RunStagedActorScene(void);
+void SoruSekizo_BlockLeftTriggerCell(void);
+void SoruSekizo_BlockRightTriggerCell(void);
 
 enum StatueHallActor {
     ACTOR_SUKURETA = ACTOR_FIRST_PLACED
 };
 
 void Event_SayThenWait();
-void Engine_ActorWalkTo();
-s32 Engine_EventChooseYesNo();
 s32 UiText_OpenMessageAtObject();
 
 struct FocusPoint {
@@ -29,9 +146,9 @@ struct FocusWork {
     struct FocusPoint *focus;
 };
 
-struct Ent SoruSekizo_SpriteRows[27];
-
-void Engine_MapCopyCellAttributes();
+// bss in this order: as commons of one object the linker would sort them itself
+static struct SealScene gSealScene;
+static struct Ent SoruSekizo_SpriteRows[27];
 
 u8 *SceneEventRuntime_GetScriptData(void)
 {
@@ -1251,4 +1368,127 @@ void SoruSekizo_OpenSoutheastSeal(void)
     p[47] = 664;
     p[48] = 200;
     SoruSekizo_OpenSeal();
+}
+
+#define COPY_CELLS(c) Map_CopyCellsTo((c).src_x, (c).src_y, (c).dest_x, (c).dest_y, (c).width, (c).height)
+
+void SoruSekizo_OpenSeal(void)
+{
+    struct SealScene *scene;
+    s32 result;
+    s32 i;
+
+    result = 0;
+    Engine_EventBegin();
+    if (!Engine_GameFlagIsSet(0x80f)) {
+        Engine_CameraSetSpeed(0x20000, 0x4000);
+        Engine_CameraMoveTo(0x2400000, -1, 0xac0000, 1);
+        Engine_CameraWaitForMove();
+        Engine_AudioPlayCue(186);
+        COPY_CELLS(gSealScene.open);
+        for (i = 0; i != 20; i++) {
+            Engine_AudioPlayCue(246);
+            COPY_CELLS(gSealScene.pulse_a);
+            Engine_EventWait(4);
+            Engine_AudioPlayCue(246);
+            COPY_CELLS(gSealScene.pulse_b);
+            Engine_EventWait(4);
+        }
+        scene = &gSealScene;
+        COPY_CELLS(scene->opened);
+        Engine_GameFlagSet(scene->flag);
+        result = SceneEventRuntime_SelectInitialSceneByFlags();
+        if (result == -1) {
+            if (!Engine_GameFlagIsSet(0x818)) {
+                Engine_CameraFollowActor(0, 1);
+                Object_GetById(0)->facing = scene->facing;
+                Actor_SetSpeed(0, 0x20000, 0x20000);
+                Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+                Engine_ActorJump(0, 4, 0);
+                Engine_ActorSetDestination(0, scene->dest_x, scene->dest_z);
+                COPY_CELLS(scene->stairs[0]);
+                COPY_CELLS(scene->stairs[1]);
+                COPY_CELLS(scene->stairs[2]);
+                Object_GetById(scene->actor)->steering_flags &= ~ACTOR_FACES_MOTION;
+                Engine_ObjectMotionSetPositionAndCommit(scene->actor, scene->actor_x, scene->actor_z);
+                Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
+                Engine_GameFlagClear(scene->flag);
+            }
+        } else if (result == 0 && Engine_GameFlagIsSet(0x818)) {
+            if (Engine_GameFlagIsSet(0x80b) && Engine_GameFlagIsSet(0x80d) && Engine_GameFlagIsSet(0x80e)) {
+                if (!GameFlag_IsSet(0x80f)) {
+                    Engine_GameFlagSet(0x80f);
+                    SoruSekizo_RunSealOpenedSequence();
+                }
+            } else if (Engine_GameFlagIsSet(0x812)) {
+                Engine_EventRequestExit(5);
+                result = 1;
+            }
+        }
+    }
+    if (result == 1) {
+        Engine_EventCloseScreen();
+        Engine_EventWaitForScreen();
+    }
+    Engine_EventEnd();
+}
+
+void Scene_ShineLeftBeam(void)
+{
+    u32 i;
+    s32 record;
+
+    Engine_EventBegin();
+    if (GameFlag_IsSet(0x818) == 0) {
+        if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) == 0) {
+            Camera_SetSpeed(0x20000, 0x4000);
+            Camera_MoveTo(0x11e0000, -1, 0x920000, 1);
+            Engine_CameraWaitForMove();
+            Event_PlayCue(186);
+            Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
+            if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
+                Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
+            }
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
+            Engine_EventWait(30);
+            GameFlag_Set(FLAG_LEFT_BEAM_SHINING);
+            if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
+                Scene_OpenTheHole();
+            }
+        }
+    }
+    Engine_EventEnd();
+}
+
+void Scene_ShineRightBeam(void)
+{
+    u32 i;
+    s32 record;
+
+    Engine_EventBegin();
+    if (GameFlag_IsSet(0x818) == 0) {
+        if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) == 0) {
+            Camera_SetSpeed(0x20000, 0x4000);
+            Camera_MoveTo(0x11e0000, -1, 0x920000, 1);
+            Engine_CameraWaitForMove();
+            Event_PlayCue(186);
+            Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
+            if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0) {
+                Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
+            }
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
+            Engine_EventWait(30);
+            GameFlag_Set(FLAG_RIGHT_BEAM_SHINING);
+            if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0) {
+                Scene_OpenTheHole();
+            }
+        }
+    }
+    Engine_EventEnd();
+}
+
+void Event_SayThenWait(s32 speaker, s32 frames)
+{
+    Engine_EventShowMessage(speaker, 0);
+    Engine_EventWait(frames);
 }

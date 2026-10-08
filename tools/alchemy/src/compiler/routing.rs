@@ -663,22 +663,20 @@ mod target_tests {
     }
     #[test]
     fn agbcc_families_keep_their_flag_sets() {
-        assert_eq!(
-            cflags_for_target_source(
-                CompilerTarget::Tbs,
-                "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C"
-            ),
-            agbcc_flash_cflags()
-        );
         for source in [
-            "games/COMMON/SRC/SOUND/ENGINE.C",
+            "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C",
             "games/COMMON/SRC/SYSTEM/SAVE/FLASH_ERASE_VERIFY.C",
+            "games/COMMON/SRC/SYSTEM/SAVE/FLASH_READ_ROUTINES.C",
         ] {
             assert_eq!(
                 cflags_for_target_source(CompilerTarget::Tbs, source),
-                agbcc_cflags()
+                agbcc_flash_cflags()
             );
         }
+        assert_eq!(
+            cflags_for_target_source(CompilerTarget::Tbs, "games/COMMON/SRC/SOUND/ENGINE.C"),
+            agbcc_cflags()
+        );
         assert_eq!(
             cflags_for_target_source(CompilerTarget::Tla, "SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C"),
             agbcc_cflags()

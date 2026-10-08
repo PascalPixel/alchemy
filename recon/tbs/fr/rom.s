@@ -1,24 +1,3 @@
-	.section .rom.00007a78, "ax"
-	.incbin "baserom.gba", 0x00007a78, 0x00000024
-	.section .rom.00007b48, "ax"
-	.incbin "baserom.gba", 0x00007b48, 0x00000004
-	.section .rom.000a22c8, "ax"
-	.global Battle_LocationRules
-Battle_LocationRules:
-	.incbin "baserom.gba", 0x000a22c8, 0x00000638
-	.section .rom.000a2b48, "ax"
-	.global Scene_InteractionRuleTable
-Scene_InteractionRuleTable:
-	.incbin "baserom.gba", 0x000a2b48, 0x000003e8
-	.global Scene_AreaNameRules
-Scene_AreaNameRules:
-	.incbin "baserom.gba", 0x000a2f30, 0x00000400
-	.global Party_PairResolveRules
-Party_PairResolveRules:
-	.incbin "baserom.gba", 0x000a3330, 0x00000098
-	.global RomWords_0809e270
-RomWords_0809e270:
-	.incbin "baserom.gba", 0x000a33c8, 0x00000218
 	.section .rom.000f3ae0, "ax"
 	.incbin "baserom.gba", 0x000f3ae0, 0x00000761
 	.global DisplayScroll_GlyphWidths
@@ -31,8 +10,6 @@ DisplayScroll_LineTable:
 	.global Title_PromptTiles
 Title_PromptTiles:
 	.incbin "baserom.gba", 0x000f68bc, 0x000000e6
-	.section .rom.000fed04, "ax"
-	.incbin "baserom.gba", 0x000fed04, 0x00000090
 	.section .rom.0032c89b, "ax"
 	.incbin "baserom.gba", 0x0032c89b, 0x00000001
 	.global Title_IntroGraphicsC
@@ -42,24 +19,14 @@ Title_IntroGraphicsC:
 	.global Title_IntroTilesB
 Title_IntroTilesB:
 	.incbin "baserom.gba", 0x0033c410, 0x000006a8
-	.section .rom.005d8e3a, "ax"
-	.incbin "baserom.gba", 0x005d8e3a, 0x00000002
-	.section .rom.005ef252, "ax"
-	.incbin "baserom.gba", 0x005ef252, 0x00000002
 	.section .rom.0060ad28, "ax"
 	.global Resource_Data221
 Resource_Data221:
 	.incbin "baserom.gba", 0x0060ad28, 0x00002904
-	.section .rom.0069293d, "ax"
-	.incbin "baserom.gba", 0x0069293d, 0x00000003
-	.section .rom.006d70fd, "ax"
-	.incbin "baserom.gba", 0x006d70fd, 0x00000003
 	.section .rom.007193cc, "ax"
 	.global Resource_Data2EE
 Resource_Data2EE:
 	.incbin "baserom.gba", 0x007193cc, 0x00001164
-	.section .rom.00747137, "ax"
-	.incbin "baserom.gba", 0x00747137, 0x00000001
 	.section .rom.0075d634, "ax"
 	.global Resource_Data326
 Resource_Data326:

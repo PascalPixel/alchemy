@@ -978,25 +978,6 @@ DisplayScroll_Font:
 	.global Title_PromptTiles
 Title_PromptTiles:
 	.incbin "baserom.gba", 0x000f4ed0, 0x000000f4
-	.section .rom.000f9cf8, "ax"
-	.global ReelGame_SparkCellOffsets
-ReelGame_SparkCellOffsets:
-	.incbin "baserom.gba", 0x000f9cf8, 0x00000014
-	.global ReelGame_SymbolPrizes
-ReelGame_SymbolPrizes:
-	.incbin "baserom.gba", 0x000f9d0c, 0x00000006
-	.global ReelGame_TitleLetterTiles
-ReelGame_TitleLetterTiles:
-	.incbin "baserom.gba", 0x000f9d12, 0x00000008
-	.global ReelGame_FrameSpriteX
-ReelGame_FrameSpriteX:
-	.incbin "baserom.gba", 0x000f9d1a, 0x0000000e
-	.global ReelGame_FrameSpriteY
-ReelGame_FrameSpriteY:
-	.incbin "baserom.gba", 0x000f9d28, 0x0000000e
-	.global ReelGame_TitleLetterWidths
-ReelGame_TitleLetterWidths:
-	.incbin "baserom.gba", 0x000f9d36, 0x00000008
 	.section .rom.000fc5a0, "ax"
 	.global Sound_CommandTableTemplate
 Sound_CommandTableTemplate:

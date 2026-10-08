@@ -76,6 +76,38 @@ struct ReelSave {
 extern volatile u32 gKeysHeld;
 extern u8 gDebugPaused;
 
+// 火花のセル（一辺 2..20 ピクセルの正方形）の位置
+const u16 ReelGame_SparkCellOffsets[] = { 0, 4, 20, 56, 120, 220, 364, 560, 816, 1140 };
+
+// リールの絵柄ごとの賞
+const u8 ReelGame_SymbolPrizes[] = { 0, 3, 1, 4, 2, 5 };
+
+// タイトルの文字ごとのタイル
+const u8 ReelGame_TitleLetterTiles[REEL_TITLE_LETTERS] = {
+#if defined(TBS_EDITION_JA)
+	0, 1, 2, 3, 4, 2, 5, 6
+#elif defined(TBS_EDITION_ES)
+	7, 0, 1, 2, 3, 4, 5, 6, 7
+#else
+	0, 1, 2, 3, 4, 5, 6, 7
+#endif
+};
+
+// 枠のスプライトの位置
+const u8 ReelGame_FrameSpriteX[] = { 2, 0, 232, 232, 32, 32, 200, 200, 28, 28, 208, 208, 219, 219 };
+const u8 ReelGame_FrameSpriteY[] = { 2, 152, 0, 152, 8, 104, 8, 104, 118, 140, 118, 140, 6, 108 };
+
+// タイトルの文字の送り幅
+const u8 ReelGame_TitleLetterWidths[REEL_TITLE_LETTERS] = {
+#if defined(TBS_EDITION_JA)
+	32, 24, 22, 28, 28, 22, 18
+#elif defined(TBS_EDITION_ES)
+	16, 28, 28, 26, 26, 28, 28, 20, 24
+#else
+	28, 28, 26, 26, 28, 28, 20, 24
+#endif
+};
+
 struct UiWindow *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiText_DrawCharacterAtOffsetFar(s32 message, struct UiWindow *window, s32 x, s32 y);
 void UiWork_FinalizeFar(struct UiWindow *window, s32 style);

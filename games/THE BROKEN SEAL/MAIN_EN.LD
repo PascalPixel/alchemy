@@ -738,7 +738,7 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/COLORFX.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MINIGAME/REEL_INIT_TITLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SOUND/TRACK_SLOT_BUFFER.o"(.text)
-        "*/recon/tbs/unidentified.o"(.unidentified.080f86f8)
+        "*/games/THE BROKEN SEAL/SRC/MINIGAME/REEL_INIT_TITLE.o"(.rodata)
         . = ABSOLUTE(0x080f9000);
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/SOUND.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SOUND/COMMAND_PLAY.o"(.text)

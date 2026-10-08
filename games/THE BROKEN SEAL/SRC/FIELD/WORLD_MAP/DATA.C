@@ -486,7 +486,7 @@ u32 gWorldMapExits[] = {
 	SCENE_EXITS_END,
 };
 
-s32 gWorldMapPlacement40[] = {
+s32 gWorldMapPlacement2[] = {
 	SC_CALL(StoryActor_ApplyFlaggedMode),
 	SC_END,
 };
@@ -496,12 +496,12 @@ s32 gWorldMapPlacement1[] = {
 	SC_END,
 };
 
-s32 gWorldMapPlacement45[] = {
+s32 gWorldMapPlacement4[] = {
 	SC_CALL(StoryActor_ApplyMapRotationWithCollision),
 	SC_END,
 };
 
-s32 gWorldMapPlacement44[] = {
+s32 gWorldMapPlacement3[] = {
 	SC_CALL(StoryActor_ResetPosition),
 	SC_CALL(StoryActor_ClearActiveFlag),
 	SC_END,
@@ -592,7 +592,7 @@ struct ScenePlacement gWorldMapPlacements[] = {
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0x112, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x116, CONDITION_ALWAYS, (s32)gWorldMapPlacement40,
+	{ 0x116, CONDITION_ALWAYS, (s32)gWorldMapPlacement2,
 		PIXELS(7568), 0, PIXELS(1384), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x117, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
 		PIXELS(4942), 0, PIXELS(2690), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -600,9 +600,9 @@ struct ScenePlacement gWorldMapPlacements[] = {
 		PIXELS(6036), 0, PIXELS(3458), FACING_WEST, TALK_KEEP_FACING, 0 },
 	{ 0xa1, IF_FLAG_SET(0x8a0), (s32)gWorldMapPlacement1,
 		PIXELS(4760), 0, PIXELS(440), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x121, 0x2f1, (s32)gWorldMapPlacement44,
+	{ 0x121, 0x2f1, (s32)gWorldMapPlacement3,
 		PIXELS(4392), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x39, CONDITION_ALWAYS, (s32)gWorldMapPlacement45,
+	{ 0x39, CONDITION_ALWAYS, (s32)gWorldMapPlacement4,
 		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ SCENE_TABLE_END },
 	{ ACTOR_GERALD, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,

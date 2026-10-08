@@ -60,13 +60,13 @@ s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 gSuharaSabakuPlacements10[] = {
+s32 gSuharaSabakuPlacements1_Data[] = {
 	SC_CALL(SuharaSabaku_ClearActorSpriteAndCollisionFlags),
 	SC_CALL(SuharaSabaku_ToggleActorActive),
 	SC_END,
 };
 
-s32 gSuharaSabakuPlacements23[] = {
+s32 gSuharaSabakuPlacements2_1[] = {
 	SC_CALL(SuharaSabaku_ClearActorSpriteAndCollisionFlags),
 	SC_CALL(SuharaSabaku_ToggleActorActive),
 	SC_END,
@@ -121,15 +121,15 @@ struct ScenePlacement gSuharaSabakuPlacementsOther[] = {
 };
 
 struct ScenePlacement gSuharaSabakuPlacements1[] = {
-	{ 0x121, 0x301, (s32)gSuharaSabakuPlacements10,
+	{ 0x121, 0x301, (s32)gSuharaSabakuPlacements1_Data,
 		PIXELS(56), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x121, 0x302, (s32)gSuharaSabakuPlacements10,
+	{ 0x121, 0x302, (s32)gSuharaSabakuPlacements1_Data,
 		PIXELS(456), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x121, 0x303, (s32)gSuharaSabakuPlacements10,
+	{ 0x121, 0x303, (s32)gSuharaSabakuPlacements1_Data,
 		PIXELS(120), 0, PIXELS(712), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x121, 0x304, (s32)gSuharaSabakuPlacements10,
+	{ 0x121, 0x304, (s32)gSuharaSabakuPlacements1_Data,
 		PIXELS(264), 0, PIXELS(712), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x121, 0x305, (s32)gSuharaSabakuPlacements10,
+	{ 0x121, 0x305, (s32)gSuharaSabakuPlacements1_Data,
 		PIXELS(440), 0, PIXELS(744), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0x39, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -137,13 +137,13 @@ struct ScenePlacement gSuharaSabakuPlacements1[] = {
 };
 
 struct ScenePlacement gSuharaSabakuPlacements2[] = {
-	{ 0x121, 0x311, (s32)gSuharaSabakuPlacements10,
+	{ 0x121, 0x311, (s32)gSuharaSabakuPlacements1_Data,
 		PIXELS(216), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x121, 0x312, (s32)gSuharaSabakuPlacements10,
+	{ 0x121, 0x312, (s32)gSuharaSabakuPlacements1_Data,
 		PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x121, 0x313, (s32)gSuharaSabakuPlacements10,
+	{ 0x121, 0x313, (s32)gSuharaSabakuPlacements1_Data,
 		PIXELS(408), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x121, 0x314, (s32)gSuharaSabakuPlacements23,
+	{ 0x121, 0x314, (s32)gSuharaSabakuPlacements2_1,
 		PIXELS(376), 0, PIXELS(632), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x121, 0x315, 7,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },

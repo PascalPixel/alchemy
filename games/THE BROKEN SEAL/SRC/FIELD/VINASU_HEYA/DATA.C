@@ -112,56 +112,64 @@ u32 gVinasuPillarCells[] = {
 	10, 43, 14, 43, 10, 46, 16, 46,
 };
 
-s32 gVinasuShapesPushedLeft = 0x70605;
-
-s32 gVinasuShapesPushedRight = 0x80604;
-
-s32 gVinasuShapesPushedUp = 0x80703;
-
-s32 gVinasuShapesPushedDown = 0x50403;
-
-u32 gVinasuSwitchShape0[] = {
-	0x80706,
+u8 gVinasuShapesPushedLeft[] = {
+	5, 6, 7, 0,
 };
 
-u32 gVinasuSwitchShape1[] = {
-	0x80706,
+u8 gVinasuShapesPushedRight[] = {
+	4, 6, 8, 0,
 };
 
-u32 gVinasuSwitchShape2[] = {
-	0x60504,
+u8 gVinasuShapesPushedUp[] = {
+	3, 7, 8, 0,
 };
 
-u32 gVinasuSwitchShape3[] = {
-	0x60504,
+u8 gVinasuShapesPushedDown[] = {
+	3, 4, 5, 0,
 };
 
-u16 gVinasuPillarShape0[] = {
-	7,
+u8 gVinasuSwitchShape0[] = {
+	6, 7, 8, 0,
 };
 
-u16 gVinasuPillarShape1[] = {
-	1280,
+u8 gVinasuSwitchShape1[] = {
+	6, 7, 8, 0,
 };
 
-u16 gVinasuPillarShape1Next[] = {
-	2048,
+u8 gVinasuSwitchShape2[] = {
+	4, 5, 6, 0,
 };
 
-u16 gVinasuPillarShape1NextNext[] = {
-	1280,
+u8 gVinasuSwitchShape3[] = {
+	4, 5, 6, 0,
 };
 
-u32 gVinasuPillarShape1NextNextNext[] = {
-	0x80700,
+u8 gVinasuPillarShape0[] = {
+	7, 0,
 };
 
-u16 gVinasuPillarShape6[] = {
-	3,
+u8 gVinasuPillarShape1[] = {
+	0, 5,
 };
 
-u16 gVinasuPillarShape7[] = {
-	3,
+u8 gVinasuPillarShape2[] = {
+	0, 8,
+};
+
+u8 gVinasuPillarShape3[] = {
+	0, 5,
+};
+
+u8 gVinasuPillarShape4[] = {
+	0, 7, 8, 0,
+};
+
+u8 gVinasuPillarShape5[] = {
+	3, 0,
+};
+
+u8 gVinasuPillarShape6[] = {
+	3, 0,
 };
 
 s32 *gEffectScripts[] = {
@@ -170,14 +178,14 @@ s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 gVinasuHeyaPlacements20[] = {
+s32 gVinasuHeyaPlacements2_0[] = {
 	SC_SET(0x23, 0x2126),
 	SC_SET(0x27, 1),
 	SC_CALL(VinasuHeya_UpdateChildFromTimer),
 	SC_END,
 };
 
-s32 gVinasuHeyaPlacements30[] = {
+s32 gVinasuHeyaPlacements3_Data[] = {
 	SC_SET(0x23, 0x2126),
 	SC_CALL(VinasuHeya_UpdateChildFromTimer),
 	SC_END,
@@ -199,7 +207,7 @@ s32 gVinasuLeaderApproachScript[] = {
 	SC_END,
 };
 
-s32 gVinasuHeyaPlacements21[] = {
+s32 gVinasuHeyaPlacements2_1[] = {
 	SC_SET(SW_SCALE_X, 0x9999),
 	SC_SET(SW_SCALE_Y, 0x9999),
 	SC_SET(SW_COLLISION, 0),
@@ -227,32 +235,32 @@ s32 gVinasuSprayScript[] = {
 	SC_FREE,
 };
 
-s32 gVinasuHeyaPlacements41[] = {
+s32 gVinasuHeyaPlacements4_1[] = {
 	SC_ARG(3),
 	SC_END,
 };
 
-s32 gVinasuHeyaPlacements53[] = {
+s32 gVinasuHeyaPlacements5_3[] = {
 	SC_ARG(4),
 	SC_END,
 };
 
-s32 gVinasuHeyaPlacements64[] = {
+s32 gVinasuHeyaPlacements6_4[] = {
 	SC_ARG(5),
 	SC_END,
 };
 
-s32 gVinasuHeyaPlacements52[] = {
+s32 gVinasuHeyaPlacements5_2[] = {
 	SC_ARG(6),
 	SC_END,
 };
 
-s32 gVinasuHeyaPlacements51[] = {
+s32 gVinasuHeyaPlacements5_1[] = {
 	SC_ARG(7),
 	SC_END,
 };
 
-s32 gVinasuHeyaPlacements63[] = {
+s32 gVinasuHeyaPlacements6_3[] = {
 	SC_ARG(8),
 	SC_END,
 };
@@ -311,7 +319,7 @@ s32 gVinasuRefusedPushScript[] = {
 	SC_FREE,
 };
 
-s32 gVinasuRefusedPushScriptNext[] = {
+s32 gVinasuSwitchPushScript0_0[] = {
 	SC_MOVE(PIXELS(728), 0, PIXELS(664)),
 	SC_SYNC,
 	SC_POS(PIXELS(728), 0, PIXELS(664)),
@@ -322,7 +330,7 @@ s32 gVinasuRefusedPushScriptNext[] = {
 	SC_END,
 };
 
-s32 gVinasuRefusedPushScriptNextNext[] = {
+s32 gVinasuSwitchPushScript0_1[] = {
 	SC_MOVE(PIXELS(776), 0, PIXELS(696)),
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(776)),
@@ -331,7 +339,7 @@ s32 gVinasuRefusedPushScriptNextNext[] = {
 	SC_END,
 };
 
-s32 gVinasuRefusedPushScriptNextNextNext[] = {
+s32 gVinasuSwitchPushScript1_0[] = {
 	SC_MOVE(PIXELS(776), 0, PIXELS(664)),
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(776)),
@@ -340,7 +348,7 @@ s32 gVinasuRefusedPushScriptNextNextNext[] = {
 	SC_END,
 };
 
-s32 gVinasuRefusedPushScriptNextNextNextNext[] = {
+s32 gVinasuSwitchPushScript1_1[] = {
 	SC_MOVE(PIXELS(840), 0, PIXELS(696)),
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(840)),
@@ -349,7 +357,7 @@ s32 gVinasuRefusedPushScriptNextNextNextNext[] = {
 	SC_END,
 };
 
-s32 gVinasuRefusedPushScriptNextNextNextNextNext[] = {
+s32 gVinasuSwitchPushScript2_1[] = {
 	SC_MOVE(PIXELS(776), 0, PIXELS(664)),
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(776)),
@@ -358,7 +366,7 @@ s32 gVinasuRefusedPushScriptNextNextNextNextNext[] = {
 	SC_END,
 };
 
-s32 gVinasuRefusedPushScriptNextNextNextNextNextNext[] = {
+s32 gVinasuSwitchPushScript2_0[] = {
 	SC_MOVE(PIXELS(728), 0, PIXELS(696)),
 	SC_SYNC,
 	SC_POS(PIXELS(728), 0, PIXELS(696)),
@@ -369,7 +377,7 @@ s32 gVinasuRefusedPushScriptNextNextNextNextNextNext[] = {
 	SC_END,
 };
 
-s32 gVinasuRefusedPushScriptNextNextNextNextNextNextNext[] = {
+s32 gVinasuSwitchPushScript3_1[] = {
 	SC_MOVE(PIXELS(840), 0, PIXELS(664)),
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(840)),
@@ -378,7 +386,7 @@ s32 gVinasuRefusedPushScriptNextNextNextNextNextNextNext[] = {
 	SC_END,
 };
 
-s32 gVinasuRefusedPushScriptNextNextNextNextNextNextNextNext[] = {
+s32 gVinasuSwitchPushScript3_0[] = {
 	SC_MOVE(PIXELS(776), 0, PIXELS(696)),
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(776)),
@@ -409,7 +417,7 @@ s32 gVinasuFirstGateOpenScript[] = {
 	SC_END,
 };
 
-s32 gVinasuFirstGateOpenScriptNext[] = {
+s32 gVinasuPillarPushScript7_0[] = {
 	SC_MOVE(PIXELS(264), 0, PIXELS(728)),
 	SC_SYNC,
 	SC_POS(PIXELS(264), 0, PIXELS(728)),
@@ -424,7 +432,7 @@ s32 gVinasuFirstGateOpenScriptNext[] = {
 	SC_END,
 };
 
-s32 gVinasuFirstGateOpenScriptNextNext[] = {
+s32 gVinasuPillarPushScript5_1[] = {
 	SC_MOVE(PIXELS(216), 0, PIXELS(696)),
 	SC_SYNC,
 	SC_POS(PIXELS(216), 0, PIXELS(696)),
@@ -439,7 +447,7 @@ s32 gVinasuFirstGateOpenScriptNextNext[] = {
 	SC_END,
 };
 
-s32 gVinasuFirstGateOpenScriptNextNextNext[] = {
+s32 gVinasuPillarPushScript5_0[] = {
 	SC_MOVE(PIXELS(264), 0, PIXELS(696)),
 	SC_SYNC,
 	SC_POS(PIXELS(264), 0, PIXELS(696)),
@@ -451,7 +459,7 @@ s32 gVinasuFirstGateOpenScriptNextNextNext[] = {
 	SC_END,
 };
 
-s32 gVinasuFirstGateOpenScriptNextNextNextNext[] = {
+s32 gVinasuPillarPushScript2_0[] = {
 	SC_MOVE(PIXELS(184), 0, PIXELS(632)),
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(184)),
@@ -460,7 +468,7 @@ s32 gVinasuFirstGateOpenScriptNextNextNextNext[] = {
 	SC_END,
 };
 
-s32 gVinasuFirstGateOpenScriptNextNextNextNextNext[] = {
+s32 gVinasuPillarPushScript3_0[] = {
 	SC_MOVE(PIXELS(248), 0, PIXELS(680)),
 	SC_SYNC,
 	SC_POS(PIXELS(248), 0, PIXELS(680)),
@@ -508,7 +516,7 @@ s32 gVinasuSecondGateScript[] = {
 	SC_END,
 };
 
-s32 gVinasuSecondGateScriptNext[] = {
+s32 gVinasuPillarPushScript6_0[] = {
 	SC_MOVE(PIXELS(168), 0, PIXELS(728)),
 	SC_SYNC,
 	SC_POS(PIXELS(168), 0, PIXELS(728)),
@@ -526,7 +534,7 @@ s32 gVinasuSecondGateScriptNext[] = {
 	SC_END,
 };
 
-s32 gVinasuSecondGateScriptNextNext[] = {
+s32 gVinasuPillarPushScript4_0[] = {
 	SC_MOVE(PIXELS(168), 0, PIXELS(664)),
 	SC_SYNC,
 	SC_POS(PIXELS(168), 0, PIXELS(664)),
@@ -538,7 +546,7 @@ s32 gVinasuSecondGateScriptNextNext[] = {
 	SC_END,
 };
 
-s32 gVinasuSecondGateScriptNextNextNext[] = {
+s32 gVinasuPillarPushScript0_0[] = {
 	SC_MOVE(PIXELS(216), 0, PIXELS(632)),
 	SC_SYNC,
 	SC_POS(PIXELS(216), 0, PIXELS(632)),
@@ -829,37 +837,37 @@ struct ScenePlacement gVinasuHeyaPlacements2[] = {
 		PIXELS(872), 0, PIXELS(120), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x100, 0x0, ACTOR_STAND,
 		PIXELS(840), 0, PIXELS(88), FACING_NORTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements20,
+	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
 		PIXELS(664), 0, PIXELS(792), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x114, 0x0, (s32)gVinasuHeyaPlacements21,
+	{ 0x114, 0x0, (s32)gVinasuHeyaPlacements2_1,
 		PIXELS(488), 0, PIXELS(536), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements20,
+	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
 		PIXELS(72), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements20,
+	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
 		PIXELS(72), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements20,
+	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
 		PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements20,
+	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
 		PIXELS(168), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements20,
+	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
 		PIXELS(72), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements20,
+	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
 		PIXELS(104), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements20,
+	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
 		PIXELS(136), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements20,
+	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
 		PIXELS(168), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements20,
+	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
 		PIXELS(200), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ SCENE_TABLE_END },
 };
 
 struct ScenePlacement gVinasuHeyaPlacements3[] = {
-	{ 0xfd, 0x0, (s32)gVinasuHeyaPlacements30,
+	{ 0xfd, 0x0, (s32)gVinasuHeyaPlacements3_Data,
 		PIXELS(248), 0, PIXELS(712), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xfd, 0x0, (s32)gVinasuHeyaPlacements30,
+	{ 0xfd, 0x0, (s32)gVinasuHeyaPlacements3_Data,
 		PIXELS(184), 0, PIXELS(824), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0xfd, 0x0, (s32)gVinasuHeyaPlacements30,
+	{ 0xfd, 0x0, (s32)gVinasuHeyaPlacements3_Data,
 		PIXELS(200), 0, PIXELS(824), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0x100, 0x0, ACTOR_STAND,
 		PIXELS(168), 0, PIXELS(392), FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -869,9 +877,9 @@ struct ScenePlacement gVinasuHeyaPlacements3[] = {
 };
 
 struct ScenePlacement gVinasuHeyaPlacements4[] = {
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements20,
+	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
 		PIXELS(808), 0, PIXELS(728), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements41,
+	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements4_1,
 		PIXELS(776), 0, PIXELS(712), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x11c, CONDITION_ALWAYS, 7,
 		PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -879,13 +887,13 @@ struct ScenePlacement gVinasuHeyaPlacements4[] = {
 };
 
 struct ScenePlacement gVinasuHeyaPlacements5[] = {
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements20,
+	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
 		PIXELS(888), 0, PIXELS(680), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements51,
+	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements5_1,
 		PIXELS(792), 0, PIXELS(680), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements52,
+	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements5_2,
 		PIXELS(808), 0, PIXELS(648), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements53,
+	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements5_3,
 		PIXELS(824), 0, PIXELS(680), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x11c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -905,15 +913,15 @@ struct ScenePlacement gVinasuHeyaPlacements6[] = {
 		PIXELS(152), 0, PIXELS(280), FACING_NORTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0x100, 0x0, ACTOR_STAND,
 		PIXELS(248), 0, PIXELS(120), FACING_NORTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements20,
+	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
 		PIXELS(136), 0, PIXELS(776), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements41,
+	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements4_1,
 		PIXELS(184), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements51,
+	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements5_1,
 		PIXELS(200), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements63,
+	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements6_3,
 		PIXELS(232), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements64,
+	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements6_4,
 		PIXELS(248), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x11c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -1139,7 +1147,7 @@ struct SceneEvent gVinasuHeyaEvents6[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u32 *gVinasuSwitchShapes[] = {
+u8 *gVinasuSwitchShapes[] = {
 	gVinasuSwitchShape0,
 	gVinasuSwitchShape1,
 	gVinasuSwitchShape2,
@@ -1147,30 +1155,30 @@ u32 *gVinasuSwitchShapes[] = {
 };
 
 s32 *gVinasuSwitchPushScript0[] = {
-	gVinasuRefusedPushScriptNext,
-	gVinasuRefusedPushScriptNextNext,
+	gVinasuSwitchPushScript0_0,
+	gVinasuSwitchPushScript0_1,
 	gVinasuRefusedPushScript,
 	gVinasuRefusedPushScript,
 };
 
 s32 *gVinasuSwitchPushScript1[] = {
-	gVinasuRefusedPushScriptNextNextNext,
-	gVinasuRefusedPushScriptNextNextNextNext,
+	gVinasuSwitchPushScript1_0,
+	gVinasuSwitchPushScript1_1,
 	gVinasuRefusedPushScript,
 	gVinasuRefusedPushScript,
 };
 
 s32 *gVinasuSwitchPushScript2[] = {
-	gVinasuRefusedPushScriptNextNextNextNextNextNext,
-	gVinasuRefusedPushScriptNextNextNextNextNext,
-	gVinasuRefusedPushScriptNextNextNextNextNextNext,
+	gVinasuSwitchPushScript2_0,
+	gVinasuSwitchPushScript2_1,
+	gVinasuSwitchPushScript2_0,
 	gVinasuRefusedPushScript,
 };
 
 s32 *gVinasuSwitchPushScript3[] = {
-	gVinasuRefusedPushScriptNextNextNextNextNextNextNextNext,
-	gVinasuRefusedPushScriptNextNextNextNextNextNextNext,
-	gVinasuRefusedPushScriptNextNextNextNextNextNextNextNext,
+	gVinasuSwitchPushScript3_0,
+	gVinasuSwitchPushScript3_1,
+	gVinasuSwitchPushScript3_0,
 	gVinasuRefusedPushScript,
 };
 
@@ -1181,12 +1189,19 @@ s32 * *gVinasuSwitchPushScripts[] = {
 	gVinasuSwitchPushScript3,
 };
 
-u32 gVinasuPillarShapes[] = {
-	(u32)gVinasuPillarShape0, (u32)gVinasuPillarShape1, (u32)((const u8 *)gVinasuPillarShape1 + 1), (u32)((const u8 *)gVinasuPillarShape1Next + 1), (u32)((const u8 *)gVinasuPillarShape1NextNext + 1), (u32)((const u8 *)gVinasuPillarShape1NextNextNext + 1), (u32)gVinasuPillarShape6, (u32)gVinasuPillarShape7,
+u8 *gVinasuPillarShapes[] = {
+	gVinasuPillarShape0,
+	gVinasuPillarShape1,
+	gVinasuPillarShape1 + 1,
+	gVinasuPillarShape2 + 1,
+	gVinasuPillarShape3 + 1,
+	gVinasuPillarShape4 + 1,
+	gVinasuPillarShape5,
+	gVinasuPillarShape6,
 };
 
 s32 *gVinasuPillarPushScript0[] = {
-	gVinasuSecondGateScriptNextNextNext,
+	gVinasuPillarPushScript0_0,
 	gVinasuRefusedPushScript,
 };
 
@@ -1195,33 +1210,33 @@ s32 *gVinasuPillarPushScript1[] = {
 };
 
 s32 *gVinasuPillarPushScript2[] = {
-	gVinasuFirstGateOpenScriptNextNextNextNext,
+	gVinasuPillarPushScript2_0,
 	gVinasuRefusedPushScript,
 };
 
 s32 *gVinasuPillarPushScript3[] = {
-	gVinasuFirstGateOpenScriptNextNextNextNextNext,
+	gVinasuPillarPushScript3_0,
 	gVinasuRefusedPushScript,
 };
 
 s32 *gVinasuPillarPushScript4[] = {
-	gVinasuSecondGateScriptNextNext,
+	gVinasuPillarPushScript4_0,
 	gVinasuRefusedPushScript,
 };
 
 s32 *gVinasuPillarPushScript5[] = {
-	gVinasuFirstGateOpenScriptNextNextNext,
-	gVinasuFirstGateOpenScriptNextNext,
+	gVinasuPillarPushScript5_0,
+	gVinasuPillarPushScript5_1,
 	gVinasuRefusedPushScript,
 };
 
 s32 *gVinasuPillarPushScript6[] = {
-	gVinasuSecondGateScriptNext,
+	gVinasuPillarPushScript6_0,
 	gVinasuRefusedPushScript,
 };
 
 s32 *gVinasuPillarPushScript7[] = {
-	gVinasuFirstGateOpenScriptNext,
+	gVinasuPillarPushScript7_0,
 	gVinasuRefusedPushScript,
 };
 

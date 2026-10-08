@@ -98,7 +98,7 @@ s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 gMogoruMoriPlacements20[] = {
+s32 gMogoruMoriPlacements2_0[] = {
 	SC_ARG(2),
 	SC_SET(0x23, 6),
 	SC_CALL(MogoruMori_CopyTimerToChild),
@@ -114,7 +114,7 @@ s32 MogoruMori_ActorScript[] = {
 	SC_END,
 };
 
-s32 gMogoruMoriPlacements13[] = {
+s32 gMogoruMoriPlacements1_1[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(SW_Y, 0),
 	SC_SET(SW_TARGET_Y, PIXELS(-32768)),
@@ -257,11 +257,11 @@ struct ScenePlacement gMogoruMoriPlacements1[] = {
 		PIXELS(376), 0, PIXELS(432), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xbf, 0x302, (s32)MogoruMori_ActorScript,
 		PIXELS(504), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x16, 0x300, (s32)gMogoruMoriPlacements13,
+	{ 0x16, 0x300, (s32)gMogoruMoriPlacements1_1,
 		PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x16, 0x301, (s32)gMogoruMoriPlacements13,
+	{ 0x16, 0x301, (s32)gMogoruMoriPlacements1_1,
 		PIXELS(376), 0, PIXELS(432), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x16, 0x302, (s32)gMogoruMoriPlacements13,
+	{ 0x16, 0x302, (s32)gMogoruMoriPlacements1_1,
 		PIXELS(504), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0x16, 0xfd4, 7,
 		PIXELS(632), 0, PIXELS(440), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -275,7 +275,7 @@ struct ScenePlacement gMogoruMoriPlacements2[] = {
 		PIXELS(592), 0, PIXELS(456), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcd, CONDITION_ALWAYS, 7,
 		PIXELS(648), 0, PIXELS(512), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x125, CONDITION_ALWAYS, (s32)gMogoruMoriPlacements20,
+	{ 0x125, CONDITION_ALWAYS, (s32)gMogoruMoriPlacements2_0,
 		PIXELS(584), 0, PIXELS(376), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xbf, 0x303, (s32)MogoruMori_ActorScript,
 		PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -283,11 +283,11 @@ struct ScenePlacement gMogoruMoriPlacements2[] = {
 		PIXELS(488), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xbf, 0x306, (s32)MogoruMori_ActorScript,
 		PIXELS(504), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x16, 0x303, (s32)gMogoruMoriPlacements13,
+	{ 0x16, 0x303, (s32)gMogoruMoriPlacements1_1,
 		PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x16, 0x304, (s32)gMogoruMoriPlacements13,
+	{ 0x16, 0x304, (s32)gMogoruMoriPlacements1_1,
 		PIXELS(488), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x16, 0x306, (s32)gMogoruMoriPlacements13,
+	{ 0x16, 0x306, (s32)gMogoruMoriPlacements1_1,
 		PIXELS(504), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0x5a, 0x32, ACTOR_STAND,
 		PIXELS(488), 0, PIXELS(568), FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -305,9 +305,9 @@ struct ScenePlacement gMogoruMoriPlacements3[] = {
 		PIXELS(600), 0, PIXELS(544), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcf, CONDITION_ALWAYS, 7,
 		PIXELS(544), 0, PIXELS(536), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x125, CONDITION_ALWAYS, (s32)gMogoruMoriPlacements20,
+	{ 0x125, CONDITION_ALWAYS, (s32)gMogoruMoriPlacements2_0,
 		PIXELS(696), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x125, CONDITION_ALWAYS, (s32)gMogoruMoriPlacements20,
+	{ 0x125, CONDITION_ALWAYS, (s32)gMogoruMoriPlacements2_0,
 		PIXELS(632), 0, PIXELS(408), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0xbf, 0x307, (s32)MogoruMori_ActorScript,
 		PIXELS(488), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -322,17 +322,17 @@ struct ScenePlacement gMogoruMoriPlacements3[] = {
 	{ 0xbf, CONDITION_ALWAYS, (s32)MogoruMori_ActorScript,
 		PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #endif
-	{ 0x16, 0x307, (s32)gMogoruMoriPlacements13,
+	{ 0x16, 0x307, (s32)gMogoruMoriPlacements1_1,
 		PIXELS(488), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x16, 0x308, (s32)gMogoruMoriPlacements13,
+	{ 0x16, 0x308, (s32)gMogoruMoriPlacements1_1,
 		PIXELS(424), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x16, 0x309, (s32)gMogoruMoriPlacements13,
+	{ 0x16, 0x309, (s32)gMogoruMoriPlacements1_1,
 		PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 #if !EDITION_INTERNATIONAL
-	{ 0x16, CONDITION_ALWAYS, (s32)gMogoruMoriPlacements13,
+	{ 0x16, CONDITION_ALWAYS, (s32)gMogoruMoriPlacements1_1,
 		PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 #else
-	{ 0x16, 0x30b, (s32)gMogoruMoriPlacements13,
+	{ 0x16, 0x30b, (s32)gMogoruMoriPlacements1_1,
 		PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 #endif
 	{ SCENE_TABLE_END },

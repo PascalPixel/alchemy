@@ -365,18 +365,18 @@ struct SceneEvent gTorebiMachiEvents3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 gTorebiMachiCellStep0[] = {
+u16 gTorebiMachiCellStepData[] = {
 	MAP_CELL_STEP(39, 32, 1, 2, 6), MAP_CELL_STEP(40, 32, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
 struct MapCellAnim gTorebiMachiCellSteps[] = {
-	{ gTorebiMachiCellStep0, 48, 6 },
-	{ gTorebiMachiCellStep0, 63, 4 },
-	{ gTorebiMachiCellStep0, 71, 8 },
-	{ gTorebiMachiCellStep0, 71, 4 },
-	{ gTorebiMachiCellStep0, 66, 21 },
-	{ gTorebiMachiCellStep0, 61, 24 },
-	{ gTorebiMachiCellStep0, 50, 26 },
-	{ gTorebiMachiCellStep0, 50, 22 },
-	{ gTorebiMachiCellStep0, 43, 20 },
+	{ gTorebiMachiCellStepData, 48, 6 },
+	{ gTorebiMachiCellStepData, 63, 4 },
+	{ gTorebiMachiCellStepData, 71, 8 },
+	{ gTorebiMachiCellStepData, 71, 4 },
+	{ gTorebiMachiCellStepData, 66, 21 },
+	{ gTorebiMachiCellStepData, 61, 24 },
+	{ gTorebiMachiCellStepData, 50, 26 },
+	{ gTorebiMachiCellStepData, 50, 22 },
+	{ gTorebiMachiCellStepData, 43, 20 },
 };

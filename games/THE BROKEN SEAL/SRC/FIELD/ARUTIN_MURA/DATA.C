@@ -23,7 +23,7 @@ void SceneDialogue_RunActor9Message1932(void);
 void SceneDialogue_ShowLine1918(void);
 void SceneState_SetFlag906ByActorNineteenX(void);
 
-s32 gArutinMuraPlacements2Data[] = {
+s32 gArutinMuraPlacements2_Data[] = {
 	SC_ADD(SW_COLLISION, 128),
 	SC_SET(SW_SPEED, 0x26666),
 	SC_SET(SW_ACCEL, 0x13333),
@@ -193,7 +193,7 @@ struct ScenePlacement gArutinMuraPlacements2[] = {
 		PIXELS(103), 0, PIXELS(744), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x80, 0x0, 3,
 		PIXELS(228), 0, PIXELS(756), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-	{ 0x7b, 0x0, (s32)gArutinMuraPlacements2Data,
+	{ 0x7b, 0x0, (s32)gArutinMuraPlacements2_Data,
 		PIXELS(350), 0, PIXELS(746), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6c, 0x0, ACTOR_STAND,
 		PIXELS(646), 0, PIXELS(734), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },

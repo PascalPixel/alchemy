@@ -90,7 +90,7 @@ s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 gBabiIriguchiPlacements30[] = {
+s32 gBabiIriguchiPlacements3_Data[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_LABEL(1),
@@ -223,13 +223,13 @@ struct ScenePlacement gBabiIriguchiPlacements3[] = {
 		PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0xee, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(296), 0, PIXELS(130), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ 0x98, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements30,
+	{ 0x98, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements3_Data,
 		PIXELS(176), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x74, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements30,
+	{ 0x74, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements3_Data,
 		PIXELS(240), 0, PIXELS(240), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x98, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements30,
+	{ 0x98, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements3_Data,
 		PIXELS(216), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x72, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements30,
+	{ 0x72, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements3_Data,
 		PIXELS(184), 0, PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };

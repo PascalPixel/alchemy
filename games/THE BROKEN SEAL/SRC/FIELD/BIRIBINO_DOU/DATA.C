@@ -20,7 +20,7 @@ void SceneState_ConfigureRegion0_0_21x14(void);
 void SceneState_ConfigureRegion1_0_21x14(void);
 void StagedActor_PushActorAhead(void);
 
-s32 gBiribinoDouPlacements10[] = {
+s32 gBiribinoDouPlacements1_Data[] = {
 	SC_CALL(SceneState_ApplyArgMode0AndReturnZero),
 	SC_END,
 };
@@ -115,11 +115,11 @@ struct ScenePlacement gBiribinoDouPlacements1[] = {
 		PIXELS(504), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0xf6, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(584), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0xe3, CONDITION_ALWAYS, (s32)gBiribinoDouPlacements10,
+	{ 0xe3, CONDITION_ALWAYS, (s32)gBiribinoDouPlacements1_Data,
 		PIXELS(296), 0, PIXELS(230), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xe3, CONDITION_ALWAYS, (s32)gBiribinoDouPlacements10,
+	{ 0xe3, CONDITION_ALWAYS, (s32)gBiribinoDouPlacements1_Data,
 		PIXELS(504), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xe3, CONDITION_ALWAYS, (s32)gBiribinoDouPlacements10,
+	{ 0xe3, CONDITION_ALWAYS, (s32)gBiribinoDouPlacements1_Data,
 		PIXELS(584), 0, PIXELS(376), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(344), 0, PIXELS(224), FACING_SOUTH, TALK_KEEP_FACING, 0 },

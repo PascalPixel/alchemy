@@ -556,19 +556,19 @@ struct SceneEvent gKareiMachiEvents6[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 KareiMachi_DoorCell0[] = {
+u16 KareiMachi_DoorCellData[] = {
 	MAP_CELL_STEP(35, 33, 1, 2, 5), MAP_CELL_STEP(37, 33, 1, 2, 5), MAP_CELL_STEPS_END,
 };
 
 struct MapCellAnim KareiMachi_DoorCells[] = {
-	{ KareiMachi_DoorCell0, 36, 10 },
-	{ KareiMachi_DoorCell0, 57, 7 },
-	{ KareiMachi_DoorCell0, 57, 11 },
-	{ KareiMachi_DoorCell0, 57, 23 },
-	{ KareiMachi_DoorCell0, 52, 25 },
-	{ KareiMachi_DoorCell0, 39, 14 },
-	{ KareiMachi_DoorCell0, 51, 14 },
-	{ KareiMachi_DoorCell0, 41, 25 },
+	{ KareiMachi_DoorCellData, 36, 10 },
+	{ KareiMachi_DoorCellData, 57, 7 },
+	{ KareiMachi_DoorCellData, 57, 11 },
+	{ KareiMachi_DoorCellData, 57, 23 },
+	{ KareiMachi_DoorCellData, 52, 25 },
+	{ KareiMachi_DoorCellData, 39, 14 },
+	{ KareiMachi_DoorCellData, 51, 14 },
+	{ KareiMachi_DoorCellData, 41, 25 },
 };
 
 s32 KareiMachi_Script02[] = {

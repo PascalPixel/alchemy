@@ -21,7 +21,7 @@ void SceneDialogue_RunFacingMessage(void);
 void SceneDialogue_RunFacingPrompt(void);
 void TorebiHeya_ComplainAboutScam(void);
 
-s32 Data_02009040Data[] = {
+s32 Data_02009040_Data[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_ADD(SW_SCALE_X, -0x5000),
@@ -200,7 +200,7 @@ struct ScenePlacement Data_02009040[] = {
 		PIXELS(568), 0, PIXELS(848), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x84, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(232), 0, PIXELS(592), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ 0x94, CONDITION_ALWAYS, (s32)Data_02009040Data,
+	{ 0x94, CONDITION_ALWAYS, (s32)Data_02009040_Data,
 		PIXELS(230), 0, PIXELS(648), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x42, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(864), 0, PIXELS(848), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -464,13 +464,13 @@ struct SceneEvent Data_020099d0[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 Data_02009dcc0[] = {
+u16 Data_02009dccData[] = {
 	MAP_CELL_STEP(2, 123, 1, 2, 6), MAP_CELL_STEP(4, 123, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
 struct MapCellAnim Data_02009dcc[] = {
-	{ Data_02009dcc0, 24, 100 },
-	{ Data_02009dcc0, 33, 100 },
-	{ Data_02009dcc0, 50, 99 },
-	{ Data_02009dcc0, 52, 109 },
+	{ Data_02009dccData, 24, 100 },
+	{ Data_02009dccData, 33, 100 },
+	{ Data_02009dccData, 50, 99 },
+	{ Data_02009dccData, 52, 109 },
 };

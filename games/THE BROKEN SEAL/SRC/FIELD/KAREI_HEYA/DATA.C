@@ -250,13 +250,13 @@ struct SceneEvent gKareiHeyaEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 KareiHeya_ArrivalPlacement0[] = {
+u16 KareiHeya_ArrivalPlacementData[] = {
 	MAP_CELL_STEP(7, 125, 1, 2, 5), MAP_CELL_STEP(8, 125, 1, 2, 5), MAP_CELL_STEPS_END,
 };
 
 struct MapCellAnim KareiHeya_ArrivalPlacements[] = {
-	{ KareiHeya_ArrivalPlacement0, 34, 98 },
-	{ KareiHeya_ArrivalPlacement0, 39, 98 },
-	{ KareiHeya_ArrivalPlacement0, 50, 96 },
-	{ KareiHeya_ArrivalPlacement0, 52, 107 },
+	{ KareiHeya_ArrivalPlacementData, 34, 98 },
+	{ KareiHeya_ArrivalPlacementData, 39, 98 },
+	{ KareiHeya_ArrivalPlacementData, 50, 96 },
+	{ KareiHeya_ArrivalPlacementData, 52, 107 },
 };

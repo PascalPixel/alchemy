@@ -1,12 +1,16 @@
-/* 08027114: differ 66 against the 1727-line parent listing (draft 1773,
- * common 1717), 46 of them the two nested helpers' lines (see below):
- * 20 real, all instruction order or register choice; by symbol ja 20,
- * de/es/it 22, fr 24. Frame 100 as native.
+/* 08027114: differ 56 against the 1727-line parent listing (draft 1773,
+ * common 1722), 46 of them the two nested helpers' lines (see below):
+ * 10 real; by symbol 10 in every other edition. Frame 100 as native.
+ * Left: the opening handshake's miss = 0 (native before the 'T' store)
+ * and the reload register of its third count = -1 (r3, native r1).
  * 2026-10-08: the GCSE bucket-order device (dead hdr stores, see its tag)
  * gives the native spill slots: 150 -> 102. An empty asm in each of the
  * psynergy, djinn and item cases counts four bytes in arm_reorg and puts
  * the literal pool where native has it (and the djinn ok computation
- * among the slot stores): 102 -> 66.
+ * among the slot stores): 102 -> 66. One-pass blocks after mode = 0 in the
+ * psynergy and item cases and after the owner status call, and the actor
+ * lookup called as returning a doubleword: 66 -> 56. French draws the
+ * command name at 14, and the European item window is 16 wide.
  * The draft emits its two nested helpers first, 080270ac/080270d8, adopted on
  * their own as Battle_DrawPartyPanelsWithEmptyList and
  * UiText_DrawWaitingForOpponent with FAKEMATCH static-chain devices; compiled
@@ -401,6 +405,12 @@ handshake_done:
             handle = BattleParty_ListActorIdsFar(sel, block);
             WaitFrames(1);
             Ui_RunOwnerStatusScreen(block, handle, *(u16 *)block);
+            /* FAKEMATCH: instruction order only: the one-pass block's loop
+               notes keep MemFree's argument out of the call's schedule, so
+               *block is loaded before block is copied to r0, as native
+               (differ 2). */
+            do {
+            } while (0);
             MemFree(block);
             continue;
         }
@@ -439,7 +449,11 @@ handshake_done:
 
             ent = &out[i];
             actorId = in[i];
-            actor = Runtime_GetObject(actorId);
+            /* FAKEMATCH: instruction order only: called as returning a
+               doubleword, the call also sets r1, so the r1 reload for
+               class_id no longer depends on the in reload and sched2 loads
+               i * 2 before in, as native (differ 2). */
+            actor = (struct BtlUnit *)(s32)((s64 (*)(s32))Runtime_GetObject)(actorId);
             COUNTDOWN->actorId = actorId;
             COUNTDOWN->unk_40 = 0;
             slot = &COUNTDOWN->entries[2];
@@ -473,7 +487,6 @@ mark_visible:
                insns longer). Without them differ en 114, ja 68, de/es/it
                70, fr 72 (with them 66, 20, 22, 24); every row they remove is
                a spill slot's offset. */
-            hdr[0] = 0;
             hdr[0] = 0;
             hdr[0] = 0;
             hdr[0] = 0;
@@ -536,7 +549,11 @@ mark_visible:
             switch (mode) {
             case 0:
                 win = UiWindow_Create(11, 17, 11, 3, 6);
+#if defined(TBS_EDITION_FR)
+                UiText_DrawCharacterAtOffset((s32)MsgCommandName, (struct RenderInput *)win, 14, 0);
+#else
                 UiText_DrawCharacterAtOffset((s32)MsgCommandName, (struct RenderInput *)win, 16, 0);
+#endif
                 state->entries[0].oam.f.x = 64;
                 Audio_PlayCue(112);
                 mode = BattleTarget_RunSelection(actorId, 1, 1, 0);
@@ -563,6 +580,11 @@ mark_visible:
 
                 Audio_PlayCue(112);
                 mode = 0;
+                /* FAKEMATCH: instruction order only: the one-pass block's loop
+                   notes end the schedule here, so mode = 0 goes out before the
+                   countdown base is loaded, as native (differ 4). */
+                do {
+                } while (0);
                 COUNTDOWN->unk_34 = mode;
                 COUNTDOWN->unk_30 = mode;
                 COUNTDOWN->unk_38 = mode;
@@ -814,6 +836,10 @@ summon_menu:
 
                 Audio_PlayCue(112);
                 mode = 0;
+                /* FAKEMATCH: instruction order only: as in the psynergy case,
+                   mode = 0 before the countdown base (differ 2). */
+                do {
+                } while (0);
                 COUNTDOWN->unk_34 = mode;
                 COUNTDOWN->unk_30 = mode;
                 COUNTDOWN->unk_38 = mode;
@@ -865,7 +891,12 @@ item_menu:
                 cost = ability->rng;
                 slot = &state->entries[1];
                 handle = Resource_LoadIntoFreeSlot(128);
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || \
+    defined(TBS_EDITION_IT)
+                win = UiWindow_Create(9, 17, 16, 3, 6);
+#else
                 win = UiWindow_Create(9, 17, 15, 3, 6);
+#endif
                 state->entries[0].oam.f.x = 48;
                 slot->oam.word.attr01 = 0x40000400;
                 slot->oam.word.attr23 = 0;

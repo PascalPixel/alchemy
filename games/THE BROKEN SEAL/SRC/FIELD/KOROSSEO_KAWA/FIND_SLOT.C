@@ -105,7 +105,6 @@ struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct Fiel
 
 void StagedActor_PushActorAhead(void)
 {
-    extern s16 Data_02000240[];
 
     struct FieldActor *subject;
     struct FieldActor *target;
@@ -117,7 +116,7 @@ void StagedActor_PushActorAhead(void)
     s32 zero;
     s32 handle;
 
-    handle = *(s32 *)((u8 *)Data_02000240 + (idx << 1));
+    handle = *(s32 *)((u8 *)&gGameState + (idx << 1));
     subject = Object_GetById(handle);
 
     dir = subject->facing >> 12;
@@ -191,14 +190,13 @@ void StagedActor_PushActorAhead(void)
 
 struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void)
 {
-    extern s16 Data_02000240[];
 
     struct FieldActor *rec;
     s32 facing;
     Position3 pos;
     struct FieldActor *hit;
 
-    rec = Object_GetById(((ActiveSubjectSlot *)Data_02000240)->handle);
+    rec = Object_GetById(((ActiveSubjectSlot *)&gGameState)->handle);
 
     facing = (rec->facing + 0x2000) & 0xc000;
 

@@ -1,3 +1,4 @@
+#define OWN_gGameState
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -17,7 +18,7 @@
 void Battle_ResetEffectCounter(void);
 
 
-extern u8 gCell[];
+extern u8 gGameState[];
 
 void RunPartyCountInteractionCopyA(s32 actorId)
 {
@@ -69,7 +70,7 @@ s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b)
 
     Battle_ResetEffectCounter();
     UiWork_PushValueSlot(b, 5);
-    v = gGameState.scene;
+    v = ((struct GameState *)gGameState)->scene;
     if (v == (s32)&SceneId_KorosseoKawa) {
         id = (s32)MsgKorosseoStageFirstFinalsMatch;
     } else if (v == (s32)&SceneId_KorosseoKabe) {
@@ -104,7 +105,7 @@ void KorosseoKabe_ShowFollowUpPrompt(s32 a, s32 b)
     s32 id;
 
     UiWork_PushValueSlot(b, 5);
-    v = gGameState.scene;
+    v = ((struct GameState *)gGameState)->scene;
     if (v == (s32)&SceneId_KorosseoKawa) {
         id = (s32)MsgKorosseoStageFirstFinalsMatch;
     } else if (v == (s32)&SceneId_KorosseoKabe) {
@@ -139,7 +140,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     if (mode != 3) {
         count = Party_CountActiveOwners();
         for (i = 0; i < count; i++) {
-            buf[i] = gCell[504 + i];
+            buf[i] = gGameState[504 + i];
         }
         if (count <= 1) {
             Engine_EventSetMessage((s32)MsgKorosseoDoYourBest);

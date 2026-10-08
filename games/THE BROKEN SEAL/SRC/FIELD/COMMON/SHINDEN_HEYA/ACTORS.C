@@ -60,7 +60,6 @@ void Ui_PrepareTransferForItem();
 
 s32 Math_RemainderUnsigned();
 
-extern s16 Data_02000240[];
 void FieldScene_RunSupplementalSequenceOne(void);
 
 void FieldScene_RunPairedActorChoreography(void)

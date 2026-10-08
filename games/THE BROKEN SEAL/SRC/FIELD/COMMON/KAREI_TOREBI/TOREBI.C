@@ -304,7 +304,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             msg = MSGNO(MsgYourCoins);
             UiText_DrawCharacterAtOffset(msg, rec7, 0, 0);
 #endif
-            base6_2000240 = (s32)Data_02000240;
+            base6_2000240 = (s32)&gGameState;
 #if !EDITION_INTERNATIONAL
             msg += MSGNO(MsgCoins) - MSGNO(MsgYourCoins);
 #endif

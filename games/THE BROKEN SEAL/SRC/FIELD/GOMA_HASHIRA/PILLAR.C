@@ -1,3 +1,4 @@
+#define OWN_gGameState
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -73,7 +74,7 @@ void Engine_ActorShowEmote();
 void Engine_ActorStartRepeatedMotion();
 void Engine_ActorJump();
 void Object_SetModeById();
-extern s16 Data_02000240[];
+extern s16 gGameState[];
 
 s32 GomaHashira_Actor13Frames;
 
@@ -264,6 +265,6 @@ void GomaHashira_DriveActor13Idle(void)
         break;
     }
     /* FAKEMATCH: the 99 goes through the counter variable so it is built with movs instead of a halfword pool constant. */
-    if (Data_02000240[282] == 0)
+    if (gGameState[282] == 0)
         *(u16 *)(work + 0x182) = t = 99;
 }

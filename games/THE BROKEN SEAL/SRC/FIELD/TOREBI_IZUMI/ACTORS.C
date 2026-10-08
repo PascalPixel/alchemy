@@ -1,7 +1,8 @@
+#define OWN_gGameState
 #include "TOPIC.H"
 #include "TYPES.H"
 
-extern s8 gCell[];
+extern s8 gGameState[];
 
 void ObjectDispatch_ApplyValueToChildren();
 
@@ -22,11 +23,11 @@ s32 SceneDialogue_PickTopicVariantId(s32 topic)
         topic = (s32)((unsigned int)(Engine_RandomNext() * 5) >> 16);
     }
 
-    cursor = gCell[308 + topic];
+    cursor = gGameState[308 + topic];
 
     variant = (cursor + (s32)((unsigned int)(Engine_RandomNext() * 2) >> 16) + 4) % 3;
 
-    gCell[308 + topic] = (s8)variant;
+    gGameState[308 + topic] = (s8)variant;
 
     return TorebiIzumi_TopicIds[topic * 3 + variant];
 }

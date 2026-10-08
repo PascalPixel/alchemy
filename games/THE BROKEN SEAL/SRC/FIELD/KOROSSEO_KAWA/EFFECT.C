@@ -160,7 +160,6 @@ s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a)
 
 s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 {
-    extern u8 Data_02000240[];
 
     u8 *work = gKorosseoWork;
     u8 *shared;
@@ -173,7 +172,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 
     flag = Engine_GameFlagIsSet(0x211);
 
-    shared = Data_02000240;
+    shared = (u8 *)&gGameState;
     rec = Object_GetById(((struct GameState *)shared)->selected_actor);
 
     if (*(s32 *)(work + 232) < rec->x.fixed) {
@@ -211,7 +210,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
         UiWork_PushValueSlot(handle_b, 2);
     }
 
-    shared = Data_02000240;
+    shared = (u8 *)&gGameState;
     UiWork_PushValueSlot(((struct GameState *)shared)->selected_actor, 1);
     Engine_MessageShowCentered((s32)MsgKorosseoRobinGotItem, 3);
     ObjectDispatch_WaitForValue16(rec);

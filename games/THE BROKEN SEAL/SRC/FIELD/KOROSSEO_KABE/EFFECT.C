@@ -2,7 +2,6 @@
 #include "text/MSG_IDS.H"
 
 
-extern s32 gCell[];
 
 void Text_WriteU32AsHex(u8 *buf, u32 value)
 {
@@ -98,7 +97,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
 
     flag = Engine_GameFlagIsSet(0x211);
 
-    shared = (u8 *)gCell;
+    shared = (u8 *)&gGameState;
     record = Object_GetById(((struct GameState *)shared)->selected_actor);
 
     if (*(s32 *)(workspace + 232) < record->x.fixed) {
@@ -136,7 +135,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
         UiWork_PushValueSlot(handleB, 2);
     }
 
-    shared = (u8 *)gCell;
+    shared = (u8 *)&gGameState;
     UiWork_PushValueSlot(((struct GameState *)shared)->selected_actor, 1);
     Engine_MessageShowCentered((s32)MsgKorosseoRobinGotItem, 3);
     ObjectDispatch_WaitForValue16(record);

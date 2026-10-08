@@ -1,3 +1,4 @@
+#define OWN_gGameState
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -14,6 +15,8 @@
 #include "STAGED_ACTOR.H"
 #include "KAWA.H"
 #include "text/MSG_IDS.H"
+
+extern u8 gGameState[];
 
 
 #define PartyTalkMenu_Choose ((s32 (*)(s32))PartyTalkMenu_Choose)
@@ -128,7 +131,7 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
 
     Battle_ResetEffectCounter();
     UiWork_PushValueSlot(competitor, 5);
-    scene = gGameState.scene;
+    scene = ((struct GameState *)gGameState)->scene;
     if (scene == (s32)&SceneId_KorosseoKawa) {
         message = (s32)MsgKorosseoStageFirstFinalsMatch;
     } else if (scene == (s32)&SceneId_KorosseoKabe) {
@@ -163,7 +166,7 @@ void SceneState_SendIdBySceneId(s32 speaker, s32 competitor)
     s32 message;
 
     UiWork_PushValueSlot(competitor, 5);
-    scene = gGameState.scene;
+    scene = ((struct GameState *)gGameState)->scene;
     if (scene == (s32)&SceneId_KorosseoKawa) {
         message = (s32)MsgKorosseoStageFirstFinalsMatch;
     } else if (scene == (s32)&SceneId_KorosseoKabe) {
@@ -177,7 +180,6 @@ void SceneState_SendIdBySceneId(s32 speaker, s32 competitor)
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 {
-    extern u8 Data_02000240[];
 
     struct FieldActor *rec;
     struct FieldActor *record;
@@ -200,7 +202,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     if (mode != 3) {
         count = GetPartyMemberCount();
         for (i = 0; i < count; i++) {
-            buf[i] = Data_02000240[504 + i];
+            buf[i] = gGameState[504 + i];
         }
         if (count <= 1) {
             Engine_EventSetMessage((s32)MsgKorosseoDoYourBest);

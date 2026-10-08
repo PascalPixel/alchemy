@@ -5,10 +5,6 @@ gSaveBuffer:
 	.global GameFlagBytes
 GameFlagBytes:
 	.space 0x00000200
-	.global Data_02000240
-Data_02000240:
-	.global gCell
-gCell:
 	.global gGameState
 gGameState:
 	.space 0x00000140
@@ -84,8 +80,6 @@ gSerialReceiveDest:
 	.global gSavedStack
 gSavedStack:
 	.space 0x00000c50
-	.global RomBytes_02003000
-RomBytes_02003000:
 	.global gMusicRestoreDelay
 gMusicRestoreDelay:
 	.space 0x00000004
@@ -192,16 +186,12 @@ Sound_Tracks6:
 Sound_Tracks7:
 	.space 0x000000a0
 	.space 0x00000040
-	.global gScratchWord
-gScratchWord:
 	.global Flash_Handler3
 Flash_Handler3:
 	.space 0x00000004
 	.global Flash_Handler0
 Flash_Handler0:
 	.space 0x00000004
-	.global Flash_Layout
-Flash_Layout:
 	.global gFlash
 gFlash:
 	.space 0x00000004
@@ -211,8 +201,6 @@ gFlashNumRemainingBytes:
 	.global Flash_Handler1
 Flash_Handler1:
 	.space 0x00000004
-	.global Flash_Handler2
-Flash_Handler2:
 	.global gEraseFlashSector
 gEraseFlashSector:
 	.space 0x00000004

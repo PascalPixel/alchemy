@@ -1,3 +1,4 @@
+#define OWN_gGameState
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -24,7 +25,7 @@
 
 void Engine_MapCopyCellAttributes();
 
-extern s16 gCell[];
+extern s16 gGameState[];
 
 extern u32 gKeysHeld;
 void Object_CommitPosition(struct FieldActor *object);
@@ -221,7 +222,7 @@ void FieldScene_SetFlag333AndDrawTiles(void)
 
 void KorosseoKabe_RunSelectedActorRisingEffect(void)
 {
-    s16 *tbl = gCell;
+    s16 *tbl = gGameState;
 
     BattleFx_RunRisingObjectSequence(((struct GameState *)tbl)->selected_actor, 6, 0);
 }
@@ -239,7 +240,7 @@ void SceneActor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2)
     s32 x;
     s32 y;
 
-    p = (MovedObject *)Object_GetById(gGameState.selected_actor);
+    p = (MovedObject *)Object_GetById(((struct GameState *)gGameState)->selected_actor);
     q = (MovedObject *)Object_GetById(a0);
     Engine_EventBegin();
     {
@@ -273,7 +274,7 @@ void SceneActor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2)
 
 void KorosseoKabe_PushAlignedWall(void)
 {
-    struct FieldActor *leader = Object_GetById(gGameState.selected_actor);
+    struct FieldActor *leader = Object_GetById(((struct GameState *)gGameState)->selected_actor);
     s32 x = leader->x.fixed >> 20;
     s32 push = 0;
     s32 block = 32;
@@ -303,7 +304,7 @@ void KorosseoKabe_PushAlignedWall(void)
 
 void KorosseoKabe_RollLogToCell(s32 id, s32 column, s32 row)
 {
-    s32 pusher = gGameState.selected_actor;
+    s32 pusher = ((struct GameState *)gGameState)->selected_actor;
     struct FieldActor *leader = Object_GetById(pusher);
     struct FieldActor *log = Object_GetById(id);
     s32 heading = (leader->facing + 0x1000) & 0xe000;
@@ -409,7 +410,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     s32 yd;
     struct FieldActor *record;
 
-    rec8 = Object_GetById(gGameState.selected_actor);
+    rec8 = Object_GetById(((struct GameState *)gGameState)->selected_actor);
     for (i = 22; i <= 25; i++) {
         rec7 = Object_GetById(i);
         rec7->paused = 0;
@@ -580,7 +581,7 @@ void KorosseoKabe_RunStageStart(void)
     BattleFx_SetWeightedResult(72, base - rec8 + 1);
     /* FAKEMATCH: the do/while keeps the stage flag store ahead of the pool load that follows it. */
     do {
-        gGameState.battle_start = 3;
+        ((struct GameState *)gGameState)->battle_start = 3;
     } while (0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKabe, 4);
     Event_SetDefeatDestination((s32)&SceneId_KorosseoKabe, 5);
@@ -867,7 +868,7 @@ void KorosseoKabe_RunStageIntro(s32 speaker)
     s32 result;
     struct FieldActor *actor;
 
-    if (gCell[225] == 2) {
+    if (gGameState[225] == 2) {
         Korosseo_FinishSoloRound();
     } else {
         Engine_EventBegin();
@@ -915,7 +916,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
     s32 rec;
     s32 record;
 
-    if (gGameState.entrance == 2) {
+    if (((struct GameState *)gGameState)->entrance == 2) {
         Korosseo_FinishSoloRound();
     } else {
         Engine_EventBegin();
@@ -961,7 +962,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
     s32 rec2;
     s32 record;
 
-    if (gGameState.entrance == 2) {
+    if (((struct GameState *)gGameState)->entrance == 2) {
         Korosseo_FinishSoloRound();
     } else {
         Engine_EventBegin();
@@ -1020,7 +1021,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 speaker)
     struct FieldActor *actor;
     s32 result;
 
-    if (gGameState.entrance == 2) {
+    if (((struct GameState *)gGameState)->entrance == 2) {
         Korosseo_FinishSoloRound();
         return;
     }
@@ -1075,7 +1076,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 speaker)
 
 void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row)
 {
-    s32 pusher = gGameState.selected_actor;
+    s32 pusher = ((struct GameState *)gGameState)->selected_actor;
     struct FieldActor *leader = Object_GetById(pusher);
     struct FieldActor *block = Object_GetById(id);
     s32 along_x = (block->x.fixed >> 20) != column / 2;
@@ -1116,7 +1117,7 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
 {
     s32 result;
 
-    if (gGameState.entrance == 2) {
+    if (((struct GameState *)gGameState)->entrance == 2) {
         Korosseo_FinishSoloRound();
         return;
     }

@@ -450,7 +450,6 @@ void SceneState_ApplyFlag90d(void)
 
 s32 HaidiaIe_RestoreEntryState(void)
 {
-    extern u8 Data_02000240[];
     extern u8 HaidiaIe_FaceTargetActions[];
     void HaidiaIe_RunActorPairEffectScene();
     void SceneState_SetValues352_365_2116_2117_40();

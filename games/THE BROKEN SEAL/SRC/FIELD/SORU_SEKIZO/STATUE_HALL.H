@@ -39,7 +39,6 @@ extern u8 SceneEventRuntime_MessageData[];
 extern u8 SceneEventRuntime_ActorData[];
 extern u8 SceneEventRuntime_EffectData[];
 extern s32 SoruSekizo_ScrollPhase;
-extern u16 gCell[][1];
 
 struct SealScene;
 extern struct SealScene gSealScene;

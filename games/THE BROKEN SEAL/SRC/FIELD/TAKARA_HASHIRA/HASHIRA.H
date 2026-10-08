@@ -41,7 +41,6 @@ typedef struct {
     s32 v[6];
 } PlacementResult;
 
-extern u8 gCell[][2];
 extern s32 TakaraHashira_ShakeChance;
 
 s32 FieldScene_QueryActorFootprint();

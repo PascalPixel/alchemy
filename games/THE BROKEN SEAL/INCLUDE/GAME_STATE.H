@@ -118,6 +118,8 @@ LAYOUT_OFFSET_GUARD(GameState_Cloaked, struct GameState, cloaked, 0x24c);
 LAYOUT_OFFSET_GUARD(GameState_LinkTallies, struct GameState, link_tallies, 0x2a4);
 LAYOUT_OFFSET_GUARD(GameState_StartStamp, struct GameState, start_stamp, 0x2b8);
 
+#ifndef OWN_gGameState
 extern struct GameState gGameState;
+#endif
 
 #endif

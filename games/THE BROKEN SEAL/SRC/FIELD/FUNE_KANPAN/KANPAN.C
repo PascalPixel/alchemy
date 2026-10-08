@@ -1,3 +1,4 @@
+#define OWN_gGameState
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -55,7 +56,7 @@ void FieldScene_RunStepThen10(s32 a);
 
 
 
-extern s16 gCell[][1];
+extern s16 gGameState[][1];
 
 void Engine_ActorSetSpritePriority();
 s32 Engine_GameFlagIsSet();
@@ -110,7 +111,6 @@ void Engine_ActorStop();
 void Engine_EventRequestExit();
 
 
-extern struct GameState gGameState;
 
 void OverlayObject_DecayFields24And28();
 void Party_SetFields1ceAnd1d0();
@@ -841,7 +841,7 @@ void FuneKanpan_ApplyEntryState(void)
     if (Engine_GameFlagIsSet(0x927) == 0) {
         SceneState_InitActorSlots8To19();
     }
-    switch (gCell[225][0]) {
+    switch (gGameState[225][0]) {
     case 4:
         Object_GetById(0)->sprite->priority = 1;
         break;
@@ -1093,7 +1093,7 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
             record->facing = facing;
         }
     }
-    if (gGameState.entrance == 6) {
+    if (((struct GameState *)gGameState)->entrance == 6) {
         FuneKanpan_RunRobinTalk();
     }
     Engine_EventEnd();
@@ -1605,12 +1605,12 @@ void FuneKanpan_RunJumpScene(void)
     Actor_WalkTo(IWAN, 248, 564);
     Actor_WalkTo(MEARI, 248, 564);
     Engine_EventWait(20);
-    gGameState.saved_scene = (s32)&SceneId_FuneHeya;
+    ((struct GameState *)gGameState)->saved_scene = (s32)&SceneId_FuneHeya;
     /* FAKEMATCH: the one-pass block keeps the entrance store ahead of the battle start's address; a plain store is scheduled after it. */
     do {
-        gGameState.saved_entrance = 30;
+        ((struct GameState *)gGameState)->saved_entrance = 30;
     } while (0);
-    gGameState.battle_start = 3;
+    ((struct GameState *)gGameState)->battle_start = 3;
     Party_SetFields1ceAnd1d0((s32)&SceneId_FuneKanpan, 16);
     BattleFx_SetWeightedResult(62, 3);
     Engine_EventEnd();

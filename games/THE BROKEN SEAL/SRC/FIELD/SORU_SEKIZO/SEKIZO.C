@@ -1,3 +1,4 @@
+#define OWN_gGameState
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "MEM.H"
@@ -9,6 +10,8 @@
 #include "FIELD_SCENE.H"
 #include "CALL.H"
 #include "text/MSG_IDS.H"
+
+extern u16 gGameState[][1];
 
 
 enum StatueHallActor {
@@ -602,7 +605,7 @@ s32 Scene_RunGuardSequenceB(void)
     Engine_ActorSetSpriteFlags((s32)Object_GetById(18), 0);
     Object_GetById(18)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(18, 1);
-    if ((u32)((gCell[225][0] - 3) << 16) > 0x10000) {
+    if ((u32)((gGameState[225][0] - 3) << 16) > 0x10000) {
         Actor_SetPosition(JASMINE, 0, 0);
         Actor_SetPosition(GERALD, 0, 0);
     }
@@ -663,7 +666,7 @@ s32 Scene_RunGuardSequenceB(void)
         Map_CopyCellsTo(4, 58, 36, 43, 4, 1);
     }
     {
-    s16 *state = (s16 *)gCell;
+    s16 *state = (s16 *)gGameState;
 
     if (state[225] == 3) {
         if (GameFlag_IsSet(0x30a) != 0) {

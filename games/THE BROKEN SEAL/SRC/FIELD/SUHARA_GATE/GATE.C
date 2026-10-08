@@ -39,8 +39,6 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 
 s32 SceneData_ReturnZero(void)
 {
-    extern s16 gCell[];
-
     return 0;
 }
 
@@ -138,13 +136,6 @@ s32 SuharaGate_EnterScene(void)
 
 void Scene_RunScene3c3SequenceC(void)
 {
-#ifdef MODERN
-    // modern GCC holds one type for a name in a file
-    extern u8 gCell_modern[] __asm__("gCell");
-#define gCell gCell_modern
-#else
-    extern u8 gCell[];
-#endif
     s32 arg;
     s32 v5;
 
@@ -159,9 +150,6 @@ void Scene_RunScene3c3SequenceC(void)
     Actor_CenterAndWalk(0, 3, -16);
     Engine_EventRequestExit(arg);
 }
-#ifdef MODERN
-#undef gCell
-#endif
 
 void Dialogue_ShowMessages8fbAnd8fc(void)
 {

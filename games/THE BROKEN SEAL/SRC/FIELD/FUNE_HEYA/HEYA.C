@@ -76,7 +76,6 @@ struct EffectRecord {
     u8 active;
 };
 
-extern u8 Data_02000240[];
 
 void Battle_ResetEffectCounter();
 void FieldScene_CallPairWith10(s32 a, u16 b);
@@ -317,7 +316,7 @@ s32 FuneHeya_GetStepScript(void)
 
 u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
 {
-    s16 *tbl = ((s16 *)Data_02000240);
+    s16 *tbl = (s16 *)&gGameState;
     s32 scene = tbl[225];
 
     switch (scene) {

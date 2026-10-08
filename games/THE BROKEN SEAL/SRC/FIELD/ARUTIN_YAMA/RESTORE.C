@@ -28,7 +28,6 @@ void Engine_MapCopyCellAttributes();
 void Engine_ObjectSetTargetAndCallback();
 void SceneActor_ClearCollisionFlagAndPlaceMarker();
 void SceneState_ForwardByRuntimeSelector();
-extern u8 Data_02000240[];
 
 void Vector_AddPolarOffset(s32 distance, s32 angle, union FieldCoordinate *pos);
 
@@ -165,7 +164,7 @@ void ArutinYama_RestoreAreaThree(void)
         Actor_SetPosition(9, 0, 0);
     } else {
         ArutinYama_StartPaletteAnim();
-        if (GameFlag_IsSet(0x109) == 0 && (*(struct GameState *)Data_02000240).entrance == 99) {
+        if (GameFlag_IsSet(0x109) == 0 && gGameState.entrance == 99) {
             FieldScene_RunScene3a4SequenceF();
         } else {
             Map_CopyCellAttributes(38, 24, 1, 2, 37, 24);
@@ -190,7 +189,6 @@ void ArutinYama_RestoreAreaFour(void)
 {
     extern u8 ArutinYama_RiseTimer[];
 
-    extern u8 Data_02000240[];
 
     if (GameFlag_IsSet(0x8fe) != 0) {
         *(u16 *)(((u8 *)gMapWork[0]) + 20) &= ~0x200;
@@ -199,7 +197,7 @@ void ArutinYama_RestoreAreaFour(void)
     }
     {
         s32 index = 225;
-        if ((u32)((((u16 *)Data_02000240)[index] - 6) << 16) <= 0x10000) {
+        if ((u32)((((u16 *)&gGameState)[index] - 6) << 16) <= 0x10000) {
             GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
         }
     }

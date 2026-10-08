@@ -33,7 +33,7 @@ union SceneCell {
     s16 h[2];
 };
 
-extern s32 gCell[];
+extern s32 gGameState[];
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
 #endif
@@ -85,7 +85,7 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     s32 dz = bz;
     s32 h;
 
-    obj = (struct SceneObject *)Object_GetById(gCell[125]);
+    obj = (struct SceneObject *)Object_GetById(gGameState[125]);
     dx <<= 20;
     dz <<= 20;
 

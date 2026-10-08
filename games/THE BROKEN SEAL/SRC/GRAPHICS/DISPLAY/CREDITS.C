@@ -26,7 +26,7 @@ struct DisplayScrollObject {
     u32 attr2;
 };
 
-extern u16 gScratchWord;
+extern u16 Flash_Handler3; // クレジットはフラッシュ用のワードを流用する
 extern u32 gFrameTick;
 
 // スタッフロールの空行
@@ -942,7 +942,7 @@ const u8 DisplayScroll_GlyphWidths[96] = {
 void DisplayScroll_UpdateObjects(void)
 {
     /* FAKEMATCH: needed to match: the two-word OAM walk preserves stores and registers reversed by named fields. */
-    u32 frame = gScratchWord;
+    u32 frame = Flash_Handler3;
     u32 fine = frame & 7;
     s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
     u32 *entry = (u32 *)(gFlashNumRemainingBytes + 24);
@@ -964,7 +964,7 @@ void DisplayScroll_UpdateObjects(void)
     }
     Dma_Set(gFlashNumRemainingBytes, OAM, 0x84000100, REG_DMA3);
     if (Flash_Handler0 == 0 && (gFrameTick & 3) == 0)
-        gScratchWord++;
+        Flash_Handler3++;
 }
 
 void DisplayScroll_RenderEnteringLine(void)
@@ -973,10 +973,10 @@ void DisplayScroll_RenderEnteringLine(void)
     s32 line;
 
     if (Flash_Handler0 == 0) {
-        current = gScratchWord;
-        if ((s16)gScratchWord / 8 != Flash_Layout / 8) {
-            line = (s16)gScratchWord / 8;
-            Flash_Layout = current;
+        current = Flash_Handler3;
+        if ((s16)Flash_Handler3 / 8 != *(s16 *)&gFlash / 8) {
+            line = (s16)Flash_Handler3 / 8;
+            *(s16 *)&gFlash = current;
             Flash_Handler0 = DisplayScroll_DrawLine(DisplayScroll_LineTable[line], ((line + 16) & 31) * 24, 1);
         }
     }
@@ -1035,8 +1035,8 @@ void DisplayScroll_InitObjectTable(void)
         *q = 0x300;
         entry += 2;
     }
-    gScratchWord = 0;
-    Flash_Layout = 0;
+    Flash_Handler3 = 0;
+    *(s16 *)&gFlash = 0;
     Flash_Handler0 = 0;
     Scheduler_AddOrUpdateCallback(DisplayScroll_UpdateObjects, 0x480);
     Scheduler_AddOrUpdateCallback(DisplayScroll_RenderEnteringLine, 0xc80);

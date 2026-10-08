@@ -91,11 +91,10 @@ s32 SaveState_ReadSlotAndCheckChecksum(s32 index)
 }
 
 typedef u16 (*EraseSectorProc)(u16);
-extern EraseSectorProc gEraseFlashSector;
 
 u16 SaveState_EraseSlotSector(u16 value)
 {
-    return gEraseFlashSector(value);
+    return ((EraseSectorProc)gEraseFlashSector)(value);
 }
 
 s32 SaveState_WriteRecord(s32 record_id, void *source)

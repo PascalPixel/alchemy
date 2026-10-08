@@ -387,7 +387,6 @@ void SceneActor_TurnTowardTableAngle(s32 z)
 
 void StagedActor_RunHeadingProbeStep(void)
 {
-    extern struct SharedData_02000240 Data_02000240;
 
     struct Subject_02001fa4 *subject;
     s32 probe[3];
@@ -398,7 +397,7 @@ void StagedActor_RunHeadingProbeStep(void)
     s32 x;
     u8 *p;
 
-    subject = ObjectTable_Get(Data_02000240.selected_subject);
+    subject = ObjectTable_Get(((struct SharedData_02000240 *)&gGameState)->selected_subject);
 
     for (;;) {
         heading = ImiruMura_SwayHeadings[(*(u32 *)gKeysHeld >> 4) & 15];

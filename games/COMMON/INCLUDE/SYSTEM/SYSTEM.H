@@ -32,7 +32,7 @@ struct FlashChipType {
 extern struct FlashInfo08007220 Flash_ChipAtmel;
 extern const struct FlashChipType Flash_ChipUnknown;
 extern u32 Flash_Handler1;
-extern u32 Flash_Handler2;
+extern u32 gEraseFlashSector;
 #ifndef OWN_Flash_Handler4
 extern u32 Flash_Handler4;
 #endif

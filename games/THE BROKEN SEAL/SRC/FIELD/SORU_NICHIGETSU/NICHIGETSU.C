@@ -1,3 +1,4 @@
+#define OWN_gGameState
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -33,8 +34,7 @@ void Engine_MapCopyCellAttributes();
 void SoruNichigetsu_RunLightScene();
 void BattleFx_SetQueuedSoundAndPlay();
 void InitializeSceneRecordBuffer();
-extern u8 Data_02000240[];
-extern s16 gCell[][1];
+extern s16 gGameState[][1];
 
 void InitializeSceneRecordBuffer(void);
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
@@ -1260,13 +1260,13 @@ s32 SoruNichigetsu_RestoreEntryState(void)
             Actor_SetPosition(16, 0x2400000, 0x780000);
         }
     }
-    if (gCell[225][0] == 4) {
+    if (gGameState[225][0] == 4) {
         if (GameFlag_IsSet(0x813) == 0) {
             Scene_SpringStatueTrap();
             Engine_GameFlagSet(0x813);
             done = 1;
         }
-    } else if (gCell[225][0] == 5) {
+    } else if (gGameState[225][0] == 5) {
         if (GameFlag_IsSet(0x812) == 0) {
             FieldScene_RunClosingSequence();
             Engine_GameFlagSet(0x812);
@@ -1276,7 +1276,7 @@ s32 SoruNichigetsu_RestoreEntryState(void)
             Engine_GameFlagClear(0x80e);
             done = 1;
         }
-    } else if (gCell[225][0] == 6) {
+    } else if (gGameState[225][0] == 6) {
         if (Engine_GameFlagIsSet(0x812) != 0) {
             FieldScene_RunFlaggedSequence();
             Engine_GameFlagSet(0x822);
@@ -1306,7 +1306,7 @@ s32 SoruNichigetsu_RestoreEntryState(void)
             Engine_MapCopyCellsTo(45, 28, 34, 10, 4, 2);
             Engine_MapCopyCellsTo(45, 30, 16, 10, 4, 2);
             Engine_MapCopyCellsTo(14, 45, 14, 41, 8, 4);
-            if (gCell[225][0] != 8) {
+            if (gGameState[225][0] != 8) {
                 if (Engine_GameFlagIsSet(0x814) == 0) {
                     if (Engine_GameFlagIsSet(0x819) != 0) {
                         Engine_MapCopyCellsTo(0, 32, 17, 39, 2, 1);
@@ -1359,7 +1359,7 @@ s32 SoruNichigetsu_RestoreEntryState(void)
     }
     L_02002510:;
     if (GameFlag_IsSet(0x309) == 0) {
-        if (gCell[225][0] != 8) {
+        if (gGameState[225][0] != 8) {
             goto L_0200254a;
         }
         SoruNichigetsu_RunLightScene();

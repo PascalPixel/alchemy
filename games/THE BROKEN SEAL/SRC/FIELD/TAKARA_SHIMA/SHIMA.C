@@ -283,12 +283,11 @@ void SpawnRadialEffectBurst(void)
 
 void InitializePrologueSceneState(void)
 {
-    extern u8 Data_02000240[];
 
     u8 *base;
 
     Engine_EventBegin();
-    base = Data_02000240;
+    base = (u8 *)&gGameState;
     Party_SetFields1ceAnd1d0(*(s16 *)(base + 448), 5);
     base[555] = 3;
     BattleFx_SetWeightedResult(84, 5);

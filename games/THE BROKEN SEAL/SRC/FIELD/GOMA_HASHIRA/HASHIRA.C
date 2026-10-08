@@ -16,7 +16,6 @@
 #include "B5_CONTEXT.H"
 
 
-extern s16 Data_02000240[];
 
 
 

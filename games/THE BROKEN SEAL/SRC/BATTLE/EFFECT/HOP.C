@@ -105,7 +105,7 @@ struct ActorDescriptor
 #define BUNSHIN_MAX 8 // 分身の数
 
 //--------------------------------------------------------------------------
-// 後ろへ3回跳ね、分身を引いて前へ跳ぶ
+// 後ろへ 3 回跳ね、分身を引いて前へ跳ぶ
 // id : 跳ねるオブジェクト
 //--------------------------------------------------------------------------
 void EventActor_RunHopAndLeapSequence(s32 id)
@@ -140,7 +140,7 @@ void EventActor_RunHopAndLeapSequence(s32 id)
 	Object_GetById(id)->collision_flags &= ~1;
 	actor->mode = 2;
 
-	// 向いた方の逆へ 16 ドットずつ3回跳ねる
+	// 向いた方の逆へ 16 ドットずつ 3 回跳ねる
 	dist = 16 << 16;
 	Motion_SetTargetPositionFromMagnitudeAngle(actor, dist, dir);
 	Audio_PlayCue(152);

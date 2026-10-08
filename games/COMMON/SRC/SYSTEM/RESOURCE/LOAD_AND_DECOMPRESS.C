@@ -1,17 +1,26 @@
+//--------------------------------------------------------------------------
+// LOAD_AND_DECOMPRESS.C
+// リソース：パレットつきのリソースを展開する
+//--------------------------------------------------------------------------
+
 #include "RESOURCE.H"
 #include "IWRAM_CALL.H"
 
-void Resource_LoadAndDecompress(s32 resource_id, void *destination,
-    s32 skip_palette, s32 copy_palette)
+//--------------------------------------------------------------------------
+// リソース id を dst に展開する。先頭 128 バイトがパレットのとき、
+// copy_pal なら BG パレットの先頭に写し、skip_pal ならとばして展開する
+//--------------------------------------------------------------------------
+void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal)
 {
-    u8 *resource = Resource_GetTableEntry(resource_id);
+	u8 *res = Resource_GetTableEntry(id);
 
-    if (copy_palette != 0) {
-        s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+	if (copy_pal != 0)
+	{
+		s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
 
-        copy((void *)0x05000000, resource, 0x80);
-    }
-    if (skip_palette != 0)
-        resource += 0x80;
-    Resource_DecodeType01(resource, destination);
+		copy((void *)0x05000000, res, 128);
+	}
+	if (skip_pal != 0)
+		res += 128;
+	Resource_DecodeType01(res, dst);
 }

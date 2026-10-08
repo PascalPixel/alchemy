@@ -1639,12 +1639,10 @@ void FieldScene_RunStepByRuntimeBits(s32 a)
 
 void SceneState_ForwardByRuntimeWordBits(s32 a)
 {
-    volatile u32 *p = &gFrameCount;
-
-    if (*p & 1) {
-        Engine_ObjectSetPartPalettes(a, (u32)Math_RemainderUnsigned(*p >> 1, 6));
+    if (gFrameCount & 1) {
+        Engine_ObjectSetPartPalettes(a, (u32)Math_RemainderUnsigned(gFrameCount >> 1, 6));
     }
-    if ((*p & 15) == 0) {
+    if ((gFrameCount & 15) == 0) {
         SoruFunka_SpawnEffectPair(a);
     }
 }

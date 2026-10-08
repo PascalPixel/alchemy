@@ -2852,8 +2852,6 @@ void OverlayObject_UpdateOnFrameBit1(s32 p)
 
 void SceneEffect_UpdateObjectOnOddFrames(s32 p)
 {
-    extern volatile u32 gFrameCount;
-
     if ((gFrameCount & 1) != 0)
         Engine_ObjectSetPartPalettes(p, (gFrameCount >> 1) % 6);
     if ((gFrameCount & 0xf) == 0)
@@ -2862,8 +2860,6 @@ void SceneEffect_UpdateObjectOnOddFrames(s32 p)
 
 void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p)
 {
-    extern volatile u32 gFrameCount;
-
     if ((gFrameCount & 1) != 0)
         Engine_ObjectSetPartPalettes(p, (gFrameCount >> 1) % 6);
 }

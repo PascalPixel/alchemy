@@ -324,9 +324,11 @@ void SceneActor_SetModeByFrameBit1(s32 o)
         Engine_ObjectSetPartPalettes(o, 0);
     }
     {
-        volatile s32 *q = (volatile s32 *)&gFrameCount;
+        /* FAKEMATCH: needed to match: the frame counter's address is taken before the shake period, as the % operator would order it. */
+        volatile u32 *frame = &gFrameCount;
+
         v = (HaidiaArashi_ShakeShift << 3) + 16;
-        if (Math_RemainderUnsigned(*q, v) == 0) {
+        if (Math_RemainderUnsigned(*frame, v) == 0) {
             HaidiaArashi_SpawnEffectPair((union PairObject *)o);
         }
     }
@@ -334,27 +336,25 @@ void SceneActor_SetModeByFrameBit1(s32 o)
 
 void OverlayObject_UpdateRandomSlotByFrame(s32 obj)
 {
-    volatile s32 *fc = (volatile s32 *)&gFrameCount;
     s32 t;
     s32 n;
 
-    if ((*fc & 1) != 0) {
-        t = (s32)((u32)*fc >> 1);
+    if ((gFrameCount & 1) != 0) {
+        t = (s32)(gFrameCount >> 1);
         Engine_ObjectSetPartPalettes(obj, Math_RemainderUnsigned(t, 6));
     }
     n = (HaidiaArashi_ShakeShift << 3) + 16;
-    if (Math_RemainderUnsigned(*fc, n) == 0) {
+    if (Math_RemainderUnsigned(gFrameCount, n) == 0) {
         HaidiaArashi_SpawnEffectPair((union PairObject *)obj);
     }
 }
 
 void HaidiaArashi_CycleObjectPalettes(s32 o)
 {
-    volatile s32 *p = (s32 *)&gFrameCount;
     s32 t;
 
-    if ((*p & 1) != 0) {
-        t = (s32)((u32)*p >> 1);
+    if ((gFrameCount & 1) != 0) {
+        t = (s32)(gFrameCount >> 1);
         Engine_ObjectSetPartPalettes(o, Math_RemainderUnsigned(t, 6));
     }
 }

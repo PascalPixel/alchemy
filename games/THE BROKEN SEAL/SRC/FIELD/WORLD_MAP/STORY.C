@@ -402,7 +402,7 @@ void StoryScene_UpdateSelectedActorProgress(void)
 
     actor = (struct FieldActor *)Object_GetById(gGameState.selected_actor);
     scene = gEventWork;
-    actor->facing = (u16)(*(volatile s32 *)&gFrameCount << 12);
+    actor->facing = (u16)(gFrameCount << 12);
 
     progress = GameFlag_GetByte(0x2f8);
     if (progress != 0) {

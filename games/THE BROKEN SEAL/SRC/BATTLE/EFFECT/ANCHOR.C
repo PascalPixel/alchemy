@@ -1,3 +1,8 @@
+//--------------------------------------------------------------------------
+// ANCHOR.C
+// エナジー演出 7：左右の二つの物体と、飛び散る破片
+//--------------------------------------------------------------------------
+
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -17,92 +22,108 @@
 #include "FIXED_MATH.H"
 #include "FIELD_SPRITE.H"
 
-#define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(void*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
+#define Motion_SetTargetPositionFromMagnitudeAngle \
+	((void (*)(void *, s32, s32))Motion_SetTargetPositionFromMagnitudeAngle)
 
 extern struct BattleFxScene *gEffectWork;
-void Object_CommitPosition(void *object);
-void Audio_PlayCue(s32 sound);
-struct MotionObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-extern const s32 BattleFx_FragmentScript[];
-void ObjectDispatch_ReleaseFar(void *object);
+void						 Object_CommitPosition(void *object);
+void						 Audio_PlayCue(s32 sound);
+struct MotionObject			*Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+extern const s32			 BattleFx_FragmentScript[];
+void						 ObjectDispatch_ReleaseFar(void *object);
 
 void Object_SetMode(void *, s32);
 
+#define HAHEN_MAX 24 // 破片の数
+
+//--------------------------------------------------------------------------
+// 対象のない演出 7
+// 演出の位置の左右 32 ドットに物体を出して動かし、破片を 24 個散らす
+//--------------------------------------------------------------------------
 void RunBattleEffect07(void)
 {
-    struct BattleFxScene *scene;
-    struct MotionObject *obj;
-    struct MotionObject *anchors[2];
-    struct ScatterPosition position;
-    struct MotionObject **walk;
-    s32 index;
-    s32 magnitude;
+	struct BattleFxScene  *work;
+	struct MotionObject	  *obj;
+	struct MotionObject	  *pair[2];
+	struct ScatterPosition pos;
+	struct MotionObject	 **walk;
+	s32					   n;
+	s32					   dist;
 
-    scene = gEffectWork;
-    BattleEffect_InitializeSharedScene();
-    position.x = scene->x;
-    position.y = scene->y + 0x100000;
-    position.z = scene->z;
-    anchors[0] = BattleFx_SpawnItemBreakMode3(
-        position.x + 0x200000, position.y, position.z, 0x8000);
-    anchors[1] = BattleFx_SpawnItemBreakMode3(
-        position.x - 0x200000, position.y, position.z, 0);
+	work = gEffectWork;
+	BattleEffect_InitializeSharedScene();
+	pos.x = work->x;
+	pos.y = work->y + 0x100000; // 16 ドット上
+	pos.z = work->z;
+	pair[0] = BattleFx_SpawnItemBreakMode3(pos.x + 0x200000, pos.y, pos.z, 0x8000);
+	pair[1] = BattleFx_SpawnItemBreakMode3(pos.x - 0x200000, pos.y, pos.z, 0);
 
-    WaitFrames(15);
-    walk = anchors;
-    for (index = 0; index < 2; index++) {
-        obj = *walk++;
-        if (obj != 0)
-            Motion_SetTargetPositionFromMagnitudeAngle(
-                obj, 0x180000, obj->angle);
-    }
+	// それぞれの向きへ 24 ドット動かす
+	WaitFrames(15);
+	walk = pair;
+	for (n = 0; n < 2; n++)
+	{
+		obj = *walk++;
+		if (obj != 0)
+			Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->angle);
+	}
 
-    Object_CommitPosition(anchors[0]);
-    Audio_PlayCue(134);
-    for (index = 0; index < 24; index++) {
-        position.x = scene->x;
-        position.y = scene->y + 0x100000;
-        position.z = scene->z;
-        obj = Object_Spawn(0x11d, position.x, position.y, position.z);
-        if (obj != 0) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_FragmentScript);
-            obj->speed_limit = Random16() + 0x20000;
-            obj->acceleration = 0x20000;
-            obj->motion_flags = 0;
-            magnitude = Random16() * 24 + 0x80000;
-            Motion_SetTargetPositionFromMagnitudeAngle(obj, magnitude, Random16());
-        }
-    }
+	// 破片：8-32 ドット先へ散る
+	Object_CommitPosition(pair[0]);
+	Audio_PlayCue(SOUND_HEAVY_IMPACT);
+	for (n = 0; n < HAHEN_MAX; n++)
+	{
+		pos.x = work->x;
+		pos.y = work->y + 0x100000;
+		pos.z = work->z;
+		obj = Object_Spawn(285, pos.x, pos.y, pos.z);
+		if (obj != 0)
+		{
+			ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_FragmentScript);
+			obj->speed_limit = Random16() + 0x20000;
+			obj->acceleration = 0x20000;
+			obj->motion_flags = 0;
+			dist = Random16() * 24 + 0x80000;
+			Motion_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
+		}
+	}
 
-    ObjectDispatch_ReleaseFar(anchors[0]);
-    ObjectDispatch_ReleaseFar(anchors[1]);
-    BattleFx_PrepareBufferInterpolation();
+	ObjectDispatch_ReleaseFar(pair[0]);
+	ObjectDispatch_ReleaseFar(pair[1]);
+	BattleFx_PrepareBufferInterpolation();
 }
 
+//--------------------------------------------------------------------------
+// 物体 215 を出し、回しながら 1/4 から等倍まで 24 フレームで大きくする
+// angle : 大きくなったあとの向き
+//--------------------------------------------------------------------------
 struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle)
 {
-    struct MotionObject *obj;
-    s32 scale;
+	struct MotionObject *obj;
+	s32					 scale;
 
-    Audio_PlayCue(SOUND_ITEM_BREAK);
-    obj = Object_Spawn(215, x, y, z);
-    if (obj != NULL) {
-        obj->scale_x = obj->scale_y = 0x4000;
-        obj->acceleration = obj->speed_limit = 0x30000;
-        ((struct FieldSprite *)obj->records)->priority = 0;
-        Object_SetMode(obj, 3);
-        scale = obj->scale_x;
-        if (scale < 0x10000) {
-            do {
-                scale += 0x800;
-                obj->scale_y = scale;
-                obj->scale_x = scale;
-                obj->angle += 0x2000;
-                WaitFrames(1);
-                scale = obj->scale_x;
-            } while (scale <= 0xffff);
-        }
-        obj->angle = angle;
-    }
-    return obj;
+	Audio_PlayCue(SOUND_ITEM_BREAK);
+	obj = Object_Spawn(215, x, y, z);
+	if (obj != NULL)
+	{
+		obj->scale_x = obj->scale_y = 0x4000;
+		obj->acceleration = obj->speed_limit = 0x30000; // 3 ドット/フレーム
+		((struct FieldSprite *)obj->records)->priority = 0;
+		Object_SetMode(obj, 3);
+		scale = obj->scale_x;
+		if (scale < 0x10000)
+		{
+			do
+			{
+				scale += 0x800;
+				obj->scale_y = scale;
+				obj->scale_x = scale;
+				obj->angle += 0x2000; // 1/8 回転
+				WaitFrames(1);
+				scale = obj->scale_x;
+			} while (scale <= 0xffff);
+		}
+		obj->angle = angle;
+	}
+	return obj;
 }

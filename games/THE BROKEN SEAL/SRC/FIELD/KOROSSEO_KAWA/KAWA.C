@@ -764,13 +764,13 @@ void FieldScene_RunCommandSequence(s32 a0)
     Engine_EventBegin();
     Actor_SetSpeed(a0, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
-    Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
-    Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
+    Actor_SetSpeed(GERALD, 0x10000, 0x8000);
+    Actor_SetSpeed(IWAN, 0x10000, 0x8000);
+    Actor_SetSpeed(MEARI, 0x10000, 0x8000);
     Engine_ActorSetPosition(0, x << 16, (z << 16) - 0x300000);
-    Actor_SetPosition(ACTOR_GERALD, (x << 16) - 0x100000, (z << 16) - 0x280000);
-    Actor_SetPosition(ACTOR_IVAN, (x << 16) + 0x100000, (z << 16) - 0x280000);
-    Actor_SetPosition(ACTOR_MIA, x << 16, (z << 16) - 0x200000);
+    Actor_SetPosition(GERALD, (x << 16) - 0x100000, (z << 16) - 0x280000);
+    Actor_SetPosition(IWAN, (x << 16) + 0x100000, (z << 16) - 0x280000);
+    Actor_SetPosition(MEARI, x << 16, (z << 16) - 0x200000);
     Actor_SetPosition(a0, x << 16, (z << 16) - 0x500000);
     actor = Object_GetById(0);
     actor->facing = 0xc000;
@@ -779,29 +779,29 @@ void FieldScene_RunCommandSequence(s32 a0)
     Engine_EventWaitForScreen();
     Engine_EventSetMessage((s32)MsgKorosseoSiteFirstFinalsBattle);
     Event_ShowMessage(a0, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x101, 60);
-    Event_ShowMessage(ACTOR_MIA, 0);
+    Actor_ShowEmote(MEARI, 0x101, 60);
+    Event_ShowMessage(MEARI, 0);
     Engine_ActorStartRepeatedMotion(a0, 3);
     Event_ShowMessage(a0, 0);
-    Actor_ShowEmote(ACTOR_IVAN, 0x101, 60);
-    Event_ShowMessage(ACTOR_IVAN, 0);
-    Actor_FaceActor(a0, ACTOR_IVAN, 0);
+    Actor_ShowEmote(IWAN, 0x101, 60);
+    Event_ShowMessage(IWAN, 0);
+    Actor_FaceActor(a0, IWAN, 0);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(a0, 3);
     Event_ShowMessage(a0, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
-    Event_ShowMessage(ACTOR_GERALD, 0);
-    Actor_ShowEmote(ACTOR_MIA, 0x101, 60);
-    Event_ShowMessage(ACTOR_MIA, 0);
+    Actor_ShowEmote(GERALD, 0x101, 60);
+    Event_ShowMessage(GERALD, 0);
+    Actor_ShowEmote(MEARI, 0x101, 60);
+    Event_ShowMessage(MEARI, 0);
     Actor_ShowEmote(a0, 0x102, 60);
     if (Event_AskYesNo(a0, 0) == 0) {
         do {
             Engine_EventSetMessage((s32)MsgKorosseoWarriorsEnterFinalsWithoutAny);
-            Engine_ActorSetAnimation(ACTOR_IVAN, 3);
+            Engine_ActorSetAnimation(IWAN, 3);
             Engine_EventWait(2);
-            Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+            Engine_ActorSetAnimation(GERALD, 3);
             Engine_EventWait(2);
-            Engine_ActorSetAnimation(ACTOR_MIA, 3);
+            Engine_ActorSetAnimation(MEARI, 3);
             Engine_EventWait(1);
             Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
             Engine_ActorSetAnimationAndWait(a0, 3);
@@ -840,41 +840,41 @@ void FieldScene_RunCommandSequence(s32 a0)
     Engine_ActorRunRepeatedMotion(a0, 2);
     Event_ShowMessage(a0, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0x8000, 0);
-    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
-    Event_ShowMessage(ACTOR_GERALD, 0);
-    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
-    Event_ShowMessage(ACTOR_IVAN, 0);
-    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
-    Event_ShowMessage(ACTOR_MIA, 0);
-    Engine_ActorSetAnimation(ACTOR_MIA, 3);
+    Actor_FaceDirection(GERALD, 0, 0);
+    Actor_FaceDirection(IWAN, 0x8000, 0);
+    Engine_ActorRunRepeatedMotion(GERALD, 2);
+    Event_ShowMessage(GERALD, 0);
+    Engine_ActorRunRepeatedMotion(IWAN, 2);
+    Event_ShowMessage(IWAN, 0);
+    Engine_ActorSetAnimationAndWait(MEARI, 3);
+    Event_ShowMessage(MEARI, 0);
+    Engine_ActorSetAnimation(MEARI, 3);
     Engine_EventWait(1);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
     Engine_EventWait(2);
-    Engine_ActorSetAnimation(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(IWAN, 3);
     Engine_EventWait(1);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_EventWait(6);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 2);
+    Engine_ActorSetAnimation(GERALD, 2);
     actor = Object_GetById(0);
     if (actor != 0) {
-        Actor_SetDestination(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
+        Actor_SetDestination(GERALD, actor->x.part.pixel, actor->z.part.pixel);
     }
-    Engine_ActorSetAnimation(ACTOR_IVAN, 2);
+    Engine_ActorSetAnimation(IWAN, 2);
     actor = Object_GetById(0);
     if (actor != 0) {
-        Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
+        Actor_SetDestination(IWAN, actor->x.part.pixel, actor->z.part.pixel);
     }
-    Engine_ActorSetAnimation(ACTOR_MIA, 2);
+    Engine_ActorSetAnimation(MEARI, 2);
     actor = Object_GetById(0);
     if (actor != 0) {
-        Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
+        Actor_SetDestination(MEARI, actor->x.part.pixel, actor->z.part.pixel);
     }
     Actor_WalkToAndWait(a0, x - 16, z - 64);
-    Actor_SetPosition(ACTOR_GERALD, 0, 0);
-    Actor_SetPosition(ACTOR_IVAN, 0, 0);
-    Actor_SetPosition(ACTOR_MIA, 0, 0);
+    Actor_SetPosition(GERALD, 0, 0);
+    Actor_SetPosition(IWAN, 0, 0);
+    Actor_SetPosition(MEARI, 0, 0);
     Actor_WalkToAndWait(a0, x - 16, z - 16);
     Actor_WalkToAndWait(a0, x, z);
     Actor_FaceDirection(a0, 0xc000, 10);
@@ -1139,7 +1139,7 @@ void SceneActor_PlaceSlots1To3FromWork(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Engine_ActorSetPosition(ACTOR_GERALD, x, y);
+        Engine_ActorSetPosition(GERALD, x, y);
     }
     {
         s32 x = GameFlag_GetByte(912);
@@ -1149,7 +1149,7 @@ void SceneActor_PlaceSlots1To3FromWork(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Engine_ActorSetPosition(ACTOR_IVAN, x, y);
+        Engine_ActorSetPosition(IWAN, x, y);
     }
     {
         s32 x = GameFlag_GetByte(928);
@@ -1159,6 +1159,6 @@ void SceneActor_PlaceSlots1To3FromWork(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Engine_ActorSetPosition(ACTOR_MIA, x, y);
+        Engine_ActorSetPosition(MEARI, x, y);
     }
 }

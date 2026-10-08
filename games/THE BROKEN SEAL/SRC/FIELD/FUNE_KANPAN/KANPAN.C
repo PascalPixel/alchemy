@@ -1566,46 +1566,46 @@ void FuneKanpan_RunJumpScene(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 598);
     actor = Object_GetById(ACTOR_PARTY_LEADER);
     if (actor != 0) {
-        Engine_ActorSetPosition(ACTOR_GERALD, actor->x.fixed, actor->z.fixed);
+        Engine_ActorSetPosition(GERALD, actor->x.fixed, actor->z.fixed);
     }
     actor = Object_GetById(ACTOR_PARTY_LEADER);
     if (actor != 0) {
-        Engine_ActorSetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+        Engine_ActorSetPosition(IWAN, actor->x.fixed, actor->z.fixed);
     }
     actor = Object_GetById(ACTOR_PARTY_LEADER);
     if (actor != 0) {
-        Engine_ActorSetPosition(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+        Engine_ActorSetPosition(MEARI, actor->x.fixed, actor->z.fixed);
     }
-    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
-    Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
-    Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
+    Actor_SetSpeed(GERALD, 0x10000, 0x8000);
+    Actor_SetSpeed(IWAN, 0x10000, 0x8000);
+    Actor_SetSpeed(MEARI, 0x10000, 0x8000);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 250, 584);
-    Actor_WalkTo(ACTOR_GERALD, 240, 600);
-    Actor_WalkTo(ACTOR_IVAN, 254, 600);
-    Engine_ActorWalkToAndWait(ACTOR_MIA, 248, 616);
+    Actor_WalkTo(GERALD, 240, 600);
+    Actor_WalkTo(IWAN, 254, 600);
+    Engine_ActorWalkToAndWait(MEARI, 248, 616);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 1);
-    Engine_ActorSetAnimation(ACTOR_IVAN, 1);
+    Engine_ActorSetAnimation(GERALD, 1);
+    Engine_ActorSetAnimation(IWAN, 1);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-    Engine_ActorFaceDirection(ACTOR_MIA, FACING_NORTH, 20);
+    Actor_FaceDirection(GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+    Engine_ActorFaceDirection(MEARI, FACING_NORTH, 20);
     Engine_AudioPlayCue(149);
     Engine_EventWait(40);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
-    Actor_SetAttachedEffect(ACTOR_IVAN, 0x102);
-    Engine_ActorSetAttachedEffect(ACTOR_MIA, 0x102);
+    Actor_SetAttachedEffect(GERALD, 0x102);
+    Actor_SetAttachedEffect(IWAN, 0x102);
+    Engine_ActorSetAttachedEffect(MEARI, 0x102);
     Engine_EventWait(60);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-    Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
-    Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
-    Actor_SetSpeed(ACTOR_MIA, 0xcccc, 0x6666);
+    Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
+    Actor_SetSpeed(IWAN, 0xcccc, 0x6666);
+    Actor_SetSpeed(MEARI, 0xcccc, 0x6666);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 564);
-    Actor_WalkTo(ACTOR_GERALD, 248, 564);
+    Actor_WalkTo(GERALD, 248, 564);
     Engine_EventWait(20);
-    Actor_WalkTo(ACTOR_IVAN, 248, 564);
-    Actor_WalkTo(ACTOR_MIA, 248, 564);
+    Actor_WalkTo(IWAN, 248, 564);
+    Actor_WalkTo(MEARI, 248, 564);
     Engine_EventWait(20);
     gGameState.saved_scene = (s32)&SceneId_FuneHeya;
     /* FAKEMATCH: the one-pass block keeps the entrance store ahead of the battle start's address; a plain store is scheduled after it. */

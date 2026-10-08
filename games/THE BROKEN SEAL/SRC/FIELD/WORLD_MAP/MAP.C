@@ -576,7 +576,7 @@ void FieldScene_RunActorTransferSequence(void)
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
-    Actor_SetSpeed(ACTOR_GERALD, 0x19999, 0xcccc);
+    Actor_SetSpeed(GERALD, 0x19999, 0xcccc);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x16fc, 0x628);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
     Actor_SetPosition(8, 0x16d80000, 0x6280000);
@@ -599,23 +599,23 @@ void FieldScene_RunActorTransferSequence(void)
     Audio_PlayCue(0x121);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
+        Actor_SetPosition(GERALD, record->x.fixed, record->z.fixed);
     }
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x1704, 0x640);
+    Actor_WalkToAndWait(GERALD, 0x1704, 0x640);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xa000, 20);
+    Actor_FaceDirection(GERALD, 0xa000, 20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
+    Actor_ShowEmote(GERALD, 0x101, 60);
     Actor_SetPosition(8, 0x16d80000, 0x6380000);
     Engine_TaskWait(1);
     Engine_EventSetMessage((s32)MsgWorldMapWeCantStayAnotherMinute);
     Event_ShowMessageAndWait(8, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0x6000, 40);
+    Actor_FaceDirection(GERALD, 0x6000, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xa000, 60);
+    Actor_FaceDirection(GERALD, 0xa000, 60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0x6000, 10);
+    Actor_FaceDirection(GERALD, 0x6000, 10);
     Audio_PlayCue(141);
     Engine_ActorEnableActionCallback(10, gTransferDepart10);
     Engine_EventWait(20);
@@ -624,7 +624,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_ActorEnableActionCallback(12, gTransferDepart12);
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 10);
+    Actor_FaceDirection(GERALD, 0x4000, 10);
     Object_SetActionCallbackAndRefreshById(13, gTransferDepart13);
     Audio_PlayCue(0x121);
     Engine_EventWait(20);
@@ -775,7 +775,7 @@ void FieldScene_RunActorTransferSequence(void)
     Object_SetActionCallbackAndRefreshById(13, gTransferReturn13);
     Battle_ClearObjectFlag5bWhenMode3();
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x170c0000, 0x6280000);
-    Actor_SetPosition(ACTOR_GERALD, 0x17140000, 0x6400000);
+    Actor_SetPosition(GERALD, 0x17140000, 0x6400000);
     Camera_SetSpeed(0x40000, 0x8000);
     Camera_MoveTo(0x16d80000, -1, 0x6480000, 1);
     Engine_CameraWaitForMove();
@@ -789,28 +789,28 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_ActorEnableActionCallback(12, action);
     Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
+    Actor_FaceDirection(GERALD, 0x8000, 0);
     Engine_ActorEnableActionCallback(13, action);
     Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
+    Actor_FaceDirection(GERALD, 0xc000, 0);
     Object_RefreshSelectorById(13);
     Audio_PlayCue(0x121);
     Camera_SetSpeed(0x40000, 0x8000);
     Camera_MoveTo(0x16f80000, -1, 0x6480000, 1);
     Engine_CameraWaitForMove();
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0xa000, 80);
+    Actor_FaceDirection(GERALD, 0xa000, 80);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimationAndWait(GERALD, 3);
     Engine_EventWait(20);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 2);
+    Engine_ActorSetAnimation(GERALD, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
+        Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
     }
-    Engine_ActorWaitForMove(ACTOR_GERALD);
-    Actor_SetPosition(ACTOR_GERALD, 0, 0);
+    Engine_ActorWaitForMove(GERALD);
+    Actor_SetPosition(GERALD, 0, 0);
     Camera_SetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x16d80000, -1, 0x6480000, 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);

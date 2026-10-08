@@ -912,35 +912,35 @@ void FieldScene_RunFlag986ActorOneScene(void)
             Engine_GameFlagSet(g);
             o = Object_GetById(ACTOR_PARTY_LEADER);
             if (o != 0) {
-                Engine_ActorSetPosition(ACTOR_GERALD, o->unk8, o->unk10);
+                Engine_ActorSetPosition(GERALD, o->unk8, o->unk10);
             }
-            Engine_ActorSetSpeed(ACTOR_GERALD, m1, m2);
-            Engine_ActorWalkToAndWait(ACTOR_GERALD, k, 88);
-            Engine_ActorWalkToAndWait(ACTOR_GERALD, k, 104);
-            Engine_ActorFaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+            Engine_ActorSetSpeed(GERALD, m1, m2);
+            Engine_ActorWalkToAndWait(GERALD, k, 88);
+            Engine_ActorWalkToAndWait(GERALD, k, 104);
+            Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 0);
             Engine_EventWait(20);
-            Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4);
+            Engine_ActorSetAnimationAndWait(GERALD, 4);
             Engine_EventWait(20);
             Engine_EventSetMessage((s32)MsgVinasuHmmmWeCantPushBlock);
-            Engine_EventShowMessageAndWait(ACTOR_GERALD, 0, 20);
-            Engine_ActorFaceDirection(ACTOR_GERALD, 0, 10);
-            Engine_ActorShowEmote(ACTOR_GERALD, h, 60);
-            Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+            Engine_EventShowMessageAndWait(GERALD, 0, 20);
+            Engine_ActorFaceDirection(GERALD, 0, 10);
+            Engine_ActorShowEmote(GERALD, h, 60);
+            Engine_ActorFaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
             Engine_EventWait(20);
-            Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
+            Engine_ActorRunRepeatedMotion(GERALD, 2);
             Engine_EventWait(20);
-            Engine_EventShowMessageAndWait(ACTOR_GERALD, 0, 20);
+            Engine_EventShowMessageAndWait(GERALD, 0, 20);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-            Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
+            Engine_ActorSetAnimationAndWait(GERALD, 3);
             Engine_EventWait(30);
-            Engine_ActorWalkToAndWait(ACTOR_GERALD, k, 88);
-            Engine_ActorSetAnimation(ACTOR_GERALD, 2);
+            Engine_ActorWalkToAndWait(GERALD, k, 88);
+            Engine_ActorSetAnimation(GERALD, 2);
             u = Object_GetById(ACTOR_PARTY_LEADER);
             if (u != 0) {
-                Engine_ActorSetDestination(ACTOR_GERALD, u->unkA, u->unk12);
+                Engine_ActorSetDestination(GERALD, u->unkA, u->unk12);
             }
-            Engine_ActorWaitForMove(ACTOR_GERALD);
-            Engine_ActorSetPosition(ACTOR_GERALD, 0, 0);
+            Engine_ActorWaitForMove(GERALD);
+            Engine_ActorSetPosition(GERALD, 0, 0);
             Engine_EventEnd();
         }
     }

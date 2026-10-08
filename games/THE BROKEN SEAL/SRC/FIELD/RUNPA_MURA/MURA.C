@@ -352,7 +352,7 @@ void Gerald_RefusesToReturn(void)
     Engine_EventBegin();
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     Engine_EventSetMessage((s32)MsgRunpaGeraldRefusesToReturn);
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Event_ShowMessage(GERALD, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 100);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 12);

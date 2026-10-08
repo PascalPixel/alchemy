@@ -627,26 +627,26 @@ void Scene_EnterSolSanctum(void)
     }
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_JASMINE, record->x.fixed, record->z.fixed);
+        Actor_SetPosition(JASMINE, record->x.fixed, record->z.fixed);
     }
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetPosition(ACTOR_GERALD, record->x.fixed, record->z.fixed);
+        Actor_SetPosition(GERALD, record->x.fixed, record->z.fixed);
     }
     Actor_SetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
-    Actor_SetSpeed(ACTOR_JASMINE, 0x9999, 0x4ccc);
-    Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
+    Actor_SetSpeed(JASMINE, 0x9999, 0x4ccc);
+    Actor_SetSpeed(GERALD, 0x9999, 0x4ccc);
+    Engine_ActorSetAnimation(GERALD, 2);
+    Engine_ActorSetAnimation(JASMINE, 2);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
-    Actor_SetDestinationOffset(ACTOR_GERALD, -16, 0);
-    Actor_SetDestinationOffset(ACTOR_JASMINE, 16, 0);
+    Actor_SetDestinationOffset(GERALD, -16, 0);
+    Actor_SetDestinationOffset(JASMINE, 16, 0);
     Actor_SetDestinationOffset(ACTOR_SUKURETA, 0, -32);
-    Engine_ActorWaitForMove(ACTOR_GERALD);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 0);
-    Engine_ActorSetAnimation(ACTOR_JASMINE, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTH, 0);
+    Engine_ActorWaitForMove(GERALD);
+    Engine_ActorSetAnimation(GERALD, 0);
+    Engine_ActorSetAnimation(JASMINE, 0);
+    Actor_FaceDirection(GERALD, FACING_NORTH, 0);
+    Actor_FaceDirection(JASMINE, FACING_NORTH, 0);
     Engine_ActorWaitForMove(ACTOR_SUKURETA);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
     Engine_EventWait(40);
@@ -660,28 +660,28 @@ void Scene_EnterSolSanctum(void)
     Event_AskYesNo(0x4008, 0);
     Engine_EventWait(20);
     Camera_MoveTo(0x4c80000, -1, 0x940000, 1);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 2);
+    Engine_ActorSetAnimation(GERALD, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, record->x.part.pixel, record->z.part.pixel);
+        Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
     }
-    Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
+    Engine_ActorSetAnimation(JASMINE, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Actor_SetDestination(ACTOR_JASMINE, record->x.part.pixel, record->z.part.pixel);
+        Actor_SetDestination(JASMINE, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
     record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_SUKURETA, record->x.part.pixel, record->z.part.pixel);
     }
-    Engine_ActorWaitForMove(ACTOR_GERALD);
-    Actor_SetPosition(ACTOR_GERALD, 0, 0);
-    Actor_SetPosition(ACTOR_JASMINE, 0, 0);
+    Engine_ActorWaitForMove(GERALD);
+    Actor_SetPosition(GERALD, 0, 0);
+    Actor_SetPosition(JASMINE, 0, 0);
     Engine_ActorWaitForMove(ACTOR_SUKURETA);
     Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 1);
-    Engine_ActorSetAnimation(ACTOR_JASMINE, 1);
+    Engine_ActorSetAnimation(GERALD, 1);
+    Engine_ActorSetAnimation(JASMINE, 1);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
     GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -708,32 +708,32 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
         Engine_ActorSetPosition(1, RECORD_A32(record), RECORD_B32(record));
 
     Actor_SetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
-    Actor_SetSpeed(ACTOR_JASMINE, 0x9999, 0x4ccc);
-    Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 2);
-    Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
+    Actor_SetSpeed(JASMINE, 0x9999, 0x4ccc);
+    Actor_SetSpeed(GERALD, 0x9999, 0x4ccc);
+    Engine_ActorSetAnimation(GERALD, 2);
+    Engine_ActorSetAnimation(JASMINE, 2);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
-    Actor_SetDestinationOffset(ACTOR_GERALD, -16, 0);
-    Actor_SetDestinationOffset(ACTOR_JASMINE, 16, 0);
+    Actor_SetDestinationOffset(GERALD, -16, 0);
+    Actor_SetDestinationOffset(JASMINE, 16, 0);
     Actor_SetDestinationOffset(8, 0, -16);
     Engine_ActorWaitForMove(8);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 0);
-    Engine_ActorSetAnimation(ACTOR_JASMINE, 0);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
-    Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHWEST, 0);
+    Engine_ActorSetAnimation(GERALD, 0);
+    Engine_ActorSetAnimation(JASMINE, 0);
+    Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(JASMINE, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 30);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 0);
-    Actor_FaceDirection(ACTOR_JASMINE, FACING_EAST, 0);
+    Actor_FaceDirection(GERALD, FACING_WEST, 0);
+    Actor_FaceDirection(JASMINE, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_WEST, 30);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
-    Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 0);
+    Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
+    Actor_FaceDirection(JASMINE, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_SOUTH, 30);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
-    Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(JASMINE, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 40);
     Engine_ActorRunRepeatedMotion(8, 2);
@@ -772,19 +772,19 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Engine_ActorSetAnimationAndWait(8, 3);
     Engine_EventWait(10);
 
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
-    Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHWEST, 10);
-    Actor_ShowEmote(ACTOR_GERALD, 0x101, 20);
+    Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(JASMINE, FACING_NORTHWEST, 10);
+    Actor_ShowEmote(GERALD, 0x101, 20);
     Engine_EventSetMessage((s32)MsgSoruWrongSukureta);
-    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
+    Event_ShowMessageAndWait(GERALD, 0, 10);
     Actor_ShowEmote(ACTOR_SUKURETA, 0x102, 60);
     Engine_ActorStartRepeatedMotion(ACTOR_SUKURETA, 2);
     Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
-    Engine_ActorStartRepeatedMotion(ACTOR_JASMINE, 2);
+    Engine_ActorStartRepeatedMotion(GERALD, 2);
+    Engine_ActorStartRepeatedMotion(JASMINE, 2);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
+    Actor_SetAttachedEffect(GERALD, 0x102);
     Actor_SetAttachedEffect(5, 0x102);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(8, 2);
@@ -798,9 +798,9 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Engine_ActorRunRepeatedMotion(5, 1);
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHWEST, 20);
-    Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
-    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
+    Actor_FaceDirection(JASMINE, FACING_NORTHWEST, 20);
+    Engine_ActorRunRepeatedMotion(JASMINE, 2);
+    Event_ShowMessageAndWait(JASMINE, 0, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
     Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
     Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
@@ -819,26 +819,26 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Engine_ActorJump(ACTOR_SUKURETA, 2, 20);
 
     Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 40);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_EAST, 20);
-    Event_OpenMessage(ACTOR_GERALD, 0);
+    Actor_FaceDirection(GERALD, FACING_EAST, 20);
+    Event_OpenMessage(GERALD, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventSetMessage((s32)MsgSoruDangerousSplitStay);
-        Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
+        Engine_ActorRunRepeatedMotion(GERALD, 1);
         Engine_EventShowMessageAndWait(1, 0, 10);
     } else {
         Engine_EventSetMessage((s32)MsgSoruCantSeriouslyWant);
-        Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 20);
-        Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
+        Actor_FaceDirection(JASMINE, FACING_WEST, 20);
+        Event_ShowMessageAndWait(JASMINE, 0, 10);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-        Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
-        Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHWEST, 60);
+        Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
+        Actor_FaceDirection(JASMINE, FACING_NORTHWEST, 60);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 40);
         Engine_ActorRunRepeatedMotion(1, 1);
         Engine_EventWait(10);
         Engine_ActorSetAnimationAndWait(1, 3);
         Engine_EventWait(10);
-        Actor_FaceDirection(ACTOR_GERALD, FACING_EAST, 0);
-        Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 30);
+        Actor_FaceDirection(GERALD, FACING_EAST, 0);
+        Actor_FaceDirection(JASMINE, FACING_WEST, 30);
         Engine_ActorRunRepeatedMotion(1, 1);
         Engine_EventWait(10);
         Engine_EventShowMessageAndWait(1, 0, 10);
@@ -850,13 +850,13 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Engine_ActorWaitForMove(8);
     Engine_ActorSetAnimation(8, 1);
     Engine_EventWait(6);
-    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
     Engine_ActorFaceDirection(5, FACING_NORTHWEST, 0);
     Engine_ActorWaitForMove(8);
     Engine_ActorSetAnimation(8, 1);
     Engine_EventWait(20);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
-    Engine_ActorSetAnimation(ACTOR_JASMINE, 3);
+    Engine_ActorSetAnimation(GERALD, 3);
+    Engine_ActorSetAnimation(JASMINE, 3);
     Engine_ActorSetAnimationAndWait(0, 3);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(1, 2);
@@ -874,11 +874,11 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
         Engine_ActorSetDestination(8, RECORD_A16(record), RECORD_B16(record));
 
     Engine_ActorWaitForMove(8);
-    Actor_SetPosition(ACTOR_GERALD, 0, 0);
-    Actor_SetPosition(ACTOR_JASMINE, 0, 0);
+    Actor_SetPosition(GERALD, 0, 0);
+    Actor_SetPosition(JASMINE, 0, 0);
     Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
-    Engine_ActorSetAnimation(ACTOR_GERALD, 1);
+    Engine_ActorSetAnimation(GERALD, 1);
     Engine_ActorSetAnimation(5, 1);
     GameFlag_Set(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
     Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);

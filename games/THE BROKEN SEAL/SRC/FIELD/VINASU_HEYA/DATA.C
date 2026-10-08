@@ -825,7 +825,7 @@ struct ScenePlacement gVinasuHeyaPlacements1[] = {
 };
 
 struct ScenePlacement gVinasuHeyaPlacements2[] = {
-	{ ACTOR_GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x70, 0x0, ACTOR_STAND,
 		PIXELS(128), 0, PIXELS(140), FACING_SOUTH, TALK_KEEP_FACING, 0 },

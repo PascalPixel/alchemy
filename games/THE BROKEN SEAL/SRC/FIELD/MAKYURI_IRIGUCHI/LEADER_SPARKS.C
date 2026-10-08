@@ -35,7 +35,7 @@ s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object)
             leader->z.fixed - object->z.fixed,
             leader->x.fixed - object->x.fixed);
     } else if (object->facing != 0xc000) {
-        Engine_ActorFaceDirection(ACTOR_MIA, 0xc000, 0);
+        Engine_ActorFaceDirection(MEARI, 0xc000, 0);
     }
     return 0;
 }

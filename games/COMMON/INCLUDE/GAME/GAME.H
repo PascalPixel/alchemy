@@ -33,7 +33,7 @@ extern const u8 Character_ElementGroupTable[];
 extern u32 Character_LevelExpTable[];
 extern s32 Character_StartingEquipOwnerIds[];
 extern s16 Djinn_ElementActorKinds[];
-extern s32 Data_08088db8[];
+extern s32 Owner_FourColumnValues[];
 extern const u16 Djinn_DefinitionTable[];
 extern const s16 Element_PowerResistCurve[5][2];
 extern const struct EnemyDefinition Enemy_Definitions[];

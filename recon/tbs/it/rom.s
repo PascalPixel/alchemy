@@ -16,55 +16,6 @@ UiText_ItemPossessives:
 	.global UiText_ItemGenders
 UiText_ItemGenders:
 	.incbin "baserom.gba", 0x00072c78, 0x0000010d
-	.section .rom.0007a828, "ax"
-	.global Character_ElementGroupTable
-Character_ElementGroupTable:
-	.incbin "baserom.gba", 0x0007a828, 0x00000008
-	.global Character_LevelExpTable
-Character_LevelExpTable:
-	.incbin "baserom.gba", 0x0007a830, 0x00000c60
-	.global Item_ArtifactSlotTable
-Item_ArtifactSlotTable:
-	.incbin "baserom.gba", 0x0007b490, 0x00000200
-	.global Character_StartingEquipOwnerIds
-Character_StartingEquipOwnerIds:
-	.incbin "baserom.gba", 0x0007b690, 0x00000018
-	.global Item_DefinitionTable
-Item_DefinitionTable:
-	.incbin "baserom.gba", 0x0007b6a8, 0x000037b0
-	.global BattleAction_DefinitionTable
-BattleAction_DefinitionTable:
-	.incbin "baserom.gba", 0x0007ee58, 0x00002070
-	.global Enemy_Definitions
-Enemy_Definitions:
-	.incbin "baserom.gba", 0x00080ec8, 0x00003624
-	.global Character_DefinitionTable
-Character_DefinitionTable:
-	.incbin "baserom.gba", 0x000844ec, 0x000005a0
-	.global Summon_OrderList
-Summon_OrderList:
-	.incbin "baserom.gba", 0x00084a8c, 0x00000010
-	.global Summon_DefinitionTable
-Summon_DefinitionTable:
-	.incbin "baserom.gba", 0x00084a9c, 0x00000080
-	.global Class_DefinitionTable
-Class_DefinitionTable:
-	.incbin "baserom.gba", 0x00084b1c, 0x0000429c
-	.global Data_08088db8
-Data_08088db8:
-	.incbin "baserom.gba", 0x00088db8, 0x00000040
-	.global Element_PowerResistByLevel
-Element_PowerResistByLevel:
-	.incbin "baserom.gba", 0x00088df8, 0x00000040
-	.global Enemy_ElementPresetTable
-Enemy_ElementPresetTable:
-	.incbin "baserom.gba", 0x00088e38, 0x00000420
-	.global Element_PowerResistCurve
-Element_PowerResistCurve:
-	.incbin "baserom.gba", 0x00089258, 0x00000014
-	.global Djinn_DefinitionTable
-Djinn_DefinitionTable:
-	.incbin "baserom.gba", 0x0008926c, 0x000003b6
 	.section .rom.0009c568, "ax"
 	.global Data_0809c410
 Data_0809c410:

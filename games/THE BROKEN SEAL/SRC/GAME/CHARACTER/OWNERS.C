@@ -285,7 +285,7 @@ const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id)
 
 s32 Owner_LookupFourColumnTable(s32 row, s32 column)
 {
-    return Data_08088db8[(row * 4) + column];
+    return Owner_FourColumnValues[(row * 4) + column];
 }
 
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])

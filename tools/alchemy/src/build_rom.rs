@@ -171,10 +171,10 @@ fn link_indexed(
         return Err(format!("{} lists no objects", script.display()));
     }
     let target = build.target;
-    if sources.iter().any(|source| source.starts_with("recon")) {
+    if needs_base_rom(root, output, &sources)? {
         base_rom(root, target, output)?;
     } else {
-        // No scaffold is linked: nothing in this build reads the ROM (O1).
+        // Raw listings need no reference ROM: only incbin scaffolds read it (O1).
         let _ = fs::remove_file(output.join("baserom.gba"));
     }
     prepare_assets(root, target, &sources, output, index)?;
@@ -828,6 +828,29 @@ fn condition(text: &str, defined: &[&str]) -> Result<bool, String> {
         holds |= defined.contains(&name) != (&capture[1] == "!");
     }
     Ok(holds)
+}
+
+fn needs_base_rom(root: &Path, output: &Path, sources: &[PathBuf]) -> Result<bool, String> {
+    let incbin = regex::Regex::new(r#"(?m)^\s*\.incbin\s+"baserom\.gba"\s*(?:,|$)"#)
+        .expect("static pattern");
+    for source in sources {
+        if !source.starts_with("recon")
+            || !matches!(
+                source.extension().and_then(|extension| extension.to_str()),
+                Some("s" | "S")
+            )
+        {
+            continue;
+        }
+        let included = with_includes(&[root, output], &root.join(source))?;
+        let visible = crate::compiler::assembly_source::without_comments(
+            &String::from_utf8_lossy(&included),
+        );
+        if incbin.is_match(&visible) {
+            return Ok(true);
+        }
+    }
+    Ok(false)
 }
 
 fn base_rom(root: &Path, target: DecompTarget, output: &Path) -> Result<(), String> {
@@ -1875,6 +1898,7 @@ fn included(directories: &[&Path], source: &Path, preprocessed: bool) -> Result<
             .chain(directories.iter().map(|directory| directory.join(include)))
             .find(|path| path.is_file())
             .unwrap_or_else(|| directories[0].join(include));
+        key.push(b'\n');
         key.extend_from_slice(&included(directories, &path, preprocessed)?);
     }
     Ok(key)
@@ -1883,6 +1907,60 @@ fn included(directories: &[&Path], source: &Path, preprocessed: bool) -> Result<
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_raw_listing_needs_no_base_rom() {
+        let root = tempfile::tempdir().unwrap();
+        fs::create_dir_all(root.path().join("recon/tbs/raw")).unwrap();
+        let source = PathBuf::from("recon/tbs/raw/moji.s");
+        fs::write(
+            root.path().join(&source),
+            "@ .incbin \"baserom.gba\", 0, 4\n\
+             /* .incbin \"baserom.gba\", 0, 4 */\n\
+             .text\n\
+             mov r0, r1\n\
+             .asciz \"baserom.gba\"\n\
+             .incbin \"graphics/font.4bpp\"\n",
+        )
+        .unwrap();
+        assert!(!needs_base_rom(root.path(), root.path(), &[source]).unwrap());
+    }
+
+    #[test]
+    fn an_incbin_scaffold_needs_the_base_rom() {
+        let root = tempfile::tempdir().unwrap();
+        fs::create_dir_all(root.path().join("recon/tbs/en")).unwrap();
+        let source = PathBuf::from("recon/tbs/en/rom.s");
+        fs::write(
+            root.path().join(&source),
+            "\t.incbin \"baserom.gba\", 0x100, 0x10\n",
+        )
+        .unwrap();
+        assert!(needs_base_rom(root.path(), root.path(), &[source]).unwrap());
+    }
+
+    #[test]
+    fn an_included_scaffold_needs_the_base_rom() {
+        let root = tempfile::tempdir().unwrap();
+        fs::create_dir_all(root.path().join("recon/tbs/en")).unwrap();
+        let source = PathBuf::from("recon/tbs/en/rom.s");
+        fs::write(root.path().join(&source), ".include \"scaffold.inc\"").unwrap();
+        fs::write(
+            root.path().join("scaffold.inc"),
+            ".incbin \"baserom.gba\", 0, 4\n",
+        )
+        .unwrap();
+        assert!(needs_base_rom(root.path(), root.path(), &[source]).unwrap());
+    }
+
+    #[test]
+    fn a_missing_scaffold_include_is_an_error() {
+        let root = tempfile::tempdir().unwrap();
+        fs::create_dir_all(root.path().join("recon/tbs/en")).unwrap();
+        let source = PathBuf::from("recon/tbs/en/rom.s");
+        fs::write(root.path().join(&source), ".include \"missing.inc\"\n").unwrap();
+        assert!(needs_base_rom(root.path(), root.path(), &[source]).is_err());
+    }
 
     #[test]
     fn built_asset_directories_are_the_module_ones() {

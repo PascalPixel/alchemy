@@ -217,7 +217,6 @@ void UiText_DrawPaddedLabel(s32 output, u8 *input)
 
 extern u32 gFrameTick;
 
-s32 Localization_LookupEntryId(s32 entry);
 s32 UiWindow_CreateWithSideObject(s32 entry, s32 side, s32 x, s32 y);
 void UiWindow_DrawDividerLine(struct RenderInput *window, s32 x0, s32 y0, s32 x1, s32 y1);
 void RenderOutput_PrepareForRedraw(struct RenderInput *window);

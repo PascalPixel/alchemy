@@ -25,7 +25,6 @@ s32 AudioCommand_GetStateByteFar(void);
 
 
 void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
-s32 Localization_LookupEntryId(s32);
 void UiWork_PushValueSlot(s32, s32);
 struct UiChannelSlot *UiText_QueueRenderEntries();
 void AudioCommand_PlayFar(s32);

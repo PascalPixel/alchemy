@@ -32,7 +32,6 @@ struct SideObjectRegistry {
 #endif
 };
 
-extern s32 Localization_LookupEntryId(s32);
 
 struct RenderOutput *CreateSideObject(
     s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)

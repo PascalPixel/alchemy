@@ -1,12 +1,12 @@
 #include "types.h"
+#include "graphics.h"
 #include "window.h"
 #include "render_input.h"
 #include "global_cells.h"
 #include "tbs_edition.h"
 
-extern s32 Localization_LookupEntryId();
 
-void UiWork_FinalizeEntityMatchingLocalizedId(void)
+void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry)
 {
     struct UiRenderWork *state;
     struct UiWindow *work;
@@ -17,7 +17,7 @@ void UiWork_FinalizeEntityMatchingLocalizedId(void)
 
     state = (struct UiRenderWork *)gWindowWork[0];
     work = state->windows;
-    id = Localization_LookupEntryId();
+    id = Localization_LookupEntryId(entry);
     if (id == -1)
         return;
 

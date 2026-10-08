@@ -1,10 +1,4 @@
 #include "types.h"
-/* FAKEMATCH: needed to match: this file reads Portrait_CharacterMap through its own declaration; the shop's changes its code. */
-#define OWN_SideObject_CharacterIdMap
-extern const s16 Portrait_CharacterMap[];
-/* FAKEMATCH: needed to match: this file reads Portrait_SpriteMap through its own declaration; the shop's changes its code. */
-#define OWN_SideObject_ActorKindIdMap
-extern const s16 Portrait_SpriteMap[];
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -22,7 +16,6 @@ extern const s16 Portrait_SpriteMap[];
 
 
 
-extern s32 Localization_LookupEntryId();
 extern s32 CreateSideObject();
 
 void UiWork_SetTwoEntriesTo999(void)

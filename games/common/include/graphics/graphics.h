@@ -384,9 +384,8 @@ void UiWork_CloseAndRelease(void);
 #endif
 void UiWork_CopyParamsToRenderWork(struct UiChannelSlot *channel);
 void UiWork_DrawByAttributes(struct UiWindow *window);
-#ifndef OWN_UiWork_FinalizeEntityMatchingLocalizedId
-void UiWork_FinalizeEntityMatchingLocalizedId(void);
-#endif
+void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry);
+s32 Localization_LookupEntryId(u32 entry);
 void UiWork_InitCountersAndScheduleRefresh(s32 initialize);
 s32 UiWork_IsIdle(struct UiWindow *window);
 void UiWork_ProcessAll(void);

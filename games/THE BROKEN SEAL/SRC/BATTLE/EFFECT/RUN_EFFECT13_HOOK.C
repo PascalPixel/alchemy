@@ -19,6 +19,7 @@
 #include "SYSTEM.H"
 #include "FIELD_EVENT.H"
 #include "MENU_LIST.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 #define Object_SetPositionAndResetMotionFar \
 	((void (*)(struct MotionObject *, s32, s32, s32))Object_SetPositionAndResetMotionFar)
@@ -85,7 +86,7 @@ void RunBattleEffect13(void)
 	object->angle = actor->angle;
 	object->speed_limit = 0x14ccc;
 	object->motion_flags = 0;
-	Object_SetMode(object, 5);
+	ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
 	Animation_ApplyChildValuesFar(object, 1);
 
 	// 目標へ伸ばす
@@ -104,7 +105,7 @@ void RunBattleEffect13(void)
 		step++;
 	} while (step < steps);
 	WaitFrames(10);
-	Object_SetMode(object, 6);
+	ObjectDispatch_ApplyArgumentToChildrenFar(object, 6);
 	WaitFrames(15);
 
 	// 2 ドットずつ 10 フレーム押し下げる
@@ -113,7 +114,7 @@ void RunBattleEffect13(void)
 		object->y -= 2 << 16;
 		WaitFrames(1);
 	}
-	Object_SetMode(object, 5);
+	ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
 	AudioCommand_PlayFar(132);
 	if (child != 0)
 		Object_SetPositionAndResetMotionFar(child, -(9 << 16), child->y, -(9 << 16));

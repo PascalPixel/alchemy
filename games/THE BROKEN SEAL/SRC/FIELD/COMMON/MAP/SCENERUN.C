@@ -18,6 +18,8 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "BTLSYS.H"
 #include "FLAG_IDS.H"
+s32 Runtime_BlankDisplayAndRunFar(s32 entrance);
+s32 Runtime_BlankDisplayLoadValueAndRunFar(s32 entrance);
 
 #define BattleFx_LoadResourceGroup ((void (*)(s32))BattleFx_LoadResourceGroup)
 
@@ -31,7 +33,7 @@ enum {
 extern u8 gDebugMode;
 
 void Audio_PlayCueFromEventWork(void);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 static __inline__ s32 Scene_RunTable(s32 entrance)
 {
@@ -40,7 +42,7 @@ static __inline__ s32 Scene_RunTable(s32 entrance)
     s32 result;
 
     Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
-    result = FarCall_BlankRunTable(entrance);
+    result = Runtime_BlankDisplayAndRunFar(entrance);
     Dma_Set(saved, palette, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
     Runtime_BumpFree(saved);
     return result;
@@ -53,7 +55,7 @@ static __inline__ s32 Scene_LoadTable(s32 entrance)
     s32 result;
 
     Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
-    result = FarCall_BlankLoadTable(entrance);
+    result = Runtime_BlankDisplayLoadValueAndRunFar(entrance);
     Dma_Set(saved, palette, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
     Runtime_BumpFree(saved);
     return result;
@@ -90,7 +92,7 @@ start:
         if (GameFlag_TestFar(0x101))
             GameFlag_ClearBitFar(0x101);
         else
-            Audio_PlayCue(0x120);
+            AudioCommand_PlayFar(0x120);
         record = &table[gGameState.scene];
         entrance = gGameState.entrance;
         {
@@ -132,7 +134,7 @@ start:
             else
                 Audio_PlayCueFromEventWork();
         } else if (gGameState.return_cue != -1) {
-            Audio_PlayCue(gGameState.return_cue);
+            AudioCommand_PlayFar(gGameState.return_cue);
         } else {
             Audio_PlayCueFromEventWork();
         }

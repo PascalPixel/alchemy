@@ -23,7 +23,7 @@
 
 void Resource_DecodeByteLz(void *source, void *destination);
 
-s32 ItemMenu_Open(void);
+s32 ItemMenu_RunFar(void);
 extern u8 *gEventWork;
 
 
@@ -114,7 +114,7 @@ loop:
             goto loop;
         break;
     case 2:
-        ret = ItemMenu_Open();
+        ret = ItemMenu_RunFar();
         if (ret != 0)
             goto loop;
         break;

@@ -21,7 +21,7 @@
 
 extern u8 gOamCopyEnabled;
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 void Title_NoOpPalette(void)
 {
@@ -38,7 +38,7 @@ s32 Title_ShowSplashScreen(s32 mode)
     s32 blank;
     s32 resource;
 
-    Audio_PlayCue(110);
+    AudioCommand_PlayFar(110);
     gOamCopyEnabled = 1;
     resource = (s32)&ResourceId_NintendoLogo;
     blank = 0x1ff;

@@ -18,6 +18,7 @@
 #include "MEM.H"
 #include "IO_REG.H"
 #include "FLAG_IDS.H"
+s32 GameFlag_TestFar(s32 flag);
 
 #define Scheduler_AddOrUpdateCallback ((void (*)(void (*)(void), s32))Scheduler_AddOrUpdateCallback)
 
@@ -210,7 +211,7 @@ s32 Map_LoadLayeredScene(s32 index)
         cnt = work->enabled[2] | BGCNT_CHAR_BASE(header->char_base[2]) | BGCNT_SCREEN_BASE(7);
         REG_BG1CNT = cnt;
     } while (0);
-    if (GameFlag_IsSet(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
+    if (GameFlag_TestFar(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
         GameFlag_ClearBitFar(FLAG_KEEP_LAYER_GRAPHICS);
     } else {
         buf = MemAlloc(0x4000);

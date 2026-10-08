@@ -29,7 +29,7 @@
 
 #define SceneTransform_ApplyPosition ((void (*)(s32 *))SceneTransform_ApplyPosition)
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 #define HI(v) (((s16 *)&(v))[1]) // 16.16 固定小数の整数部
 
@@ -108,9 +108,9 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 		Render_ResetTransformState();
 		SceneTransform_ApplyPosition(point);
 		if (frame >= 36 && frame < 64 && (frame & 3) == 0)
-			Audio_PlayCue(115);
+			AudioCommand_PlayFar(115);
 		if (frame == 85)
-			Audio_PlayCue(136);
+			AudioCommand_PlayFar(136);
 		for (i = 0; i != work->effect->count; i++)
 		{
 			if (frame == i * 4 + 40)

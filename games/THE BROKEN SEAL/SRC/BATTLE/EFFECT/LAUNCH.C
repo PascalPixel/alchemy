@@ -72,7 +72,7 @@ extern u32					 gFrameCount;
 #endif
 
 void Vector_AddPolarOffset(s32, s32, struct Output *);
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 
 //--------------------------------------------------------------------------
 // 粒の動き : 主オブジェクトの画面位置 (z + 8 ドット) から、0xc000 の向きの ±45 度へ
@@ -114,7 +114,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot)
 		slot->state++;
 
 		if ((gFrameCount & 2) != 0)
-			Audio_PlayCue(246);
+			AudioCommand_PlayFar(246);
 	}
 	else if (state == 1)
 	{
@@ -130,8 +130,8 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot)
 
 void Battle_Reset(void);
 void ObjectMotion_ArmCallback(s32, s32, s32);
-void Audio_PlayCue(s32);
-void Object_SetMode(void *, s32);
+void AudioCommand_PlayFar(s32);
+void ObjectDispatch_ApplyArgumentToChildrenFar(void *, s32);
 void Animation_ApplyChildValuesFar(void *, s32);
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 
@@ -155,14 +155,14 @@ void BattleFx_RunEffect15(void)
 	ObjectMotion_ArmCallback(scene->first_object_id, 0x4000, 0);
 	WaitFrames(30);
 	obj->update = (void (*)(union FieldObject *))ObjectGroup_ApplyRandomChildValues;
-	Audio_PlayCue(131);
-	Object_SetMode(obj, 28);
+	AudioCommand_PlayFar(131);
+	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 28);
 	WaitFrames(40);
 
 	// 回りはじめる
-	Audio_PlayCue(220);
+	AudioCommand_PlayFar(220);
 	Animation_ApplyChildValuesFar(obj, 0);
-	Object_SetMode(obj, 3);
+	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 3);
 	obj->update = (void (*)(union FieldObject *))BattleFx_UpdateSpinAngle;
 	obj->timer = 0;
 	WaitFrames(70);

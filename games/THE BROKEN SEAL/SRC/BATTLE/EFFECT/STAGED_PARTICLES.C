@@ -42,7 +42,7 @@ typedef struct Scale {
 } Scale;
 
 void Object_ApplyProjectedPlacementFar(void *object, s32 *position, const Scale *scale, s32 mode);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 extern const Scale StagedParticles_UnitScale;
 
@@ -192,7 +192,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
                 s32 y = HI(slash->y);
 
                 if (frame == i * 8 + 84)
-                    Audio_PlayCue(212);
+                    AudioCommand_PlayFar(212);
                 if (frame >= i * 8 + 85) {
                     slash->x += slash->velocity_x;
                     slash->y += slash->velocity_y;
@@ -315,7 +315,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
 
                         slash->variant = 0;
                         work->shake_frames = 2;
-                        Audio_PlayCue(134);
+                        AudioCommand_PlayFar(134);
                         member = i % 6;
                         if (member < work->effect->count) {
                             ObjectGroup_UpdateMembers(work->effect->actors[member], 7, 5, member, 8);

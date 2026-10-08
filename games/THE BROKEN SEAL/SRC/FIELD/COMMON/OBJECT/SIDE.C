@@ -16,6 +16,7 @@
 #include "GLOBAL_CELLS.H"
 #include "RUNTIME_INTERFACES.H"
 #include "BTLSYS.H"
+s32 GameFlag_TestFar(s32 flag);
 
 #define UiGlyph_LoadEntryWithPalette ((void (*)(s32,s32,s32*,s32*,s32,s32))UiGlyph_LoadEntryWithPalette)
 
@@ -43,7 +44,7 @@ struct RenderOutput *CreateSideObject(
     s32 id;
     s32 slot;
 
-    if (GameFlag_IsSet(32) != 0) {
+    if (GameFlag_TestFar(32) != 0) {
         if (object_kind == 0)
             object_kind = 18;
         if (object_kind == 1)

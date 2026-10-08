@@ -1,3 +1,4 @@
+#define OWN_AudioCommand_PlayFar
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -33,7 +34,7 @@
 #define SELECTION_ROWS 4
 #define ARROW_SCROLL_FRAMES 8
 
-void Audio_PlayCue(u32);
+void AudioCommand_PlayFar(u32);
 
 
 
@@ -77,10 +78,10 @@ u32 Menu_WaitForSelectionInput(u32 mode)
 
         if (mode != SELECTION_FIXED) {
             if (gKeysRepeat & KEY_RIGHT) {
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
                 Menu_StepRight(screen);
             } else if (gKeysRepeat & KEY_LEFT) {
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
                 Menu_StepLeft(screen);
             }
 
@@ -88,18 +89,18 @@ u32 Menu_WaitForSelectionInput(u32 mode)
                 result = screen->top + screen->cursor_index;
                 if (screen->head->kind == NODE_KIND_YES_NO) {
                     if (result == 0)
-                        Audio_PlayCue(SOUND_MENU_CONFIRM);
+                        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
                     else
-                        Audio_PlayCue(SOUND_MENU_CANCEL);
+                        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
                 } else {
-                    Audio_PlayCue(SOUND_MENU_CONFIRM);
+                    AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
                 }
                 return result;
             }
         }
 
         if (mode != 0 && (gKeyState & KEY_B)) {
-            Audio_PlayCue(SOUND_MENU_CANCEL);
+            AudioCommand_PlayFar(SOUND_MENU_CANCEL);
             return -1;
         }
     }

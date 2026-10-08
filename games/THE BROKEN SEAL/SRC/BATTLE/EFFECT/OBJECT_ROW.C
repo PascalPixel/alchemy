@@ -57,7 +57,7 @@ struct FxControl {
 
 
 void Object_ApplyProjectedPlacementFar(struct AnimationObject *object, struct FxPlacement *placement, struct FxPair *pair, s32 mode);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 {
@@ -135,19 +135,19 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
     for (frame = 0; frame != 120; frame++) {
         wave = 0;
         if (frame == 0) {
-            Audio_PlayCue(136);
+            AudioCommand_PlayFar(136);
         }
         if (frame == 26) {
-            Audio_PlayCue(141);
+            AudioCommand_PlayFar(141);
         }
         if (frame == 40) {
-            Audio_PlayCue(154);
+            AudioCommand_PlayFar(154);
         }
         if (frame == 72) {
-            Audio_PlayCue(154);
+            AudioCommand_PlayFar(154);
         }
         if (frame == 104) {
-            Audio_PlayCue(154);
+            AudioCommand_PlayFar(154);
         }
         if ((gKeysRepeat & (KEY_A | KEY_B)) != 0 && frame > 16) {
             break;
@@ -358,13 +358,13 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 
         if (frame == 8) {
             work->shake_frames = frame;
-            Audio_PlayCue(145);
+            AudioCommand_PlayFar(145);
         }
         if (frame == 11) {
-            Audio_PlayCue(145);
+            AudioCommand_PlayFar(145);
         }
         if (frame == 46) {
-            Audio_PlayCue(137);
+            AudioCommand_PlayFar(137);
         }
 
         for (i = 0; i != work->effect->count; i++) {
@@ -390,7 +390,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
                         k++;
                     } while (k != 32);
                     BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 1);
-                    Audio_PlayCue(134);
+                    AudioCommand_PlayFar(134);
                 }
             }
         }
@@ -412,7 +412,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
         } while (i != 192);
 
         if (frame == 48) {
-            Audio_PlayCue(136);
+            AudioCommand_PlayFar(136);
         }
         if (frame > 40) {
             s32 slide = (frame - 40) * 12;

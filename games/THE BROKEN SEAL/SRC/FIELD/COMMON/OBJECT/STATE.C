@@ -2,8 +2,9 @@
 #include "OBJDISP.H"
 #include "FIELDOBJ.H"
 #include "FIELD_EVENT.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
-void Object_ResetMotion(struct ObjectRuntime *);
+void ObjectDispatch_InitFromTable6Far(struct ObjectRuntime *);
 extern const u8 ObjectMotion_StepAngleScript[];
 
 void Object_SetTargetAndCallback(u32 object_id, s32 target_id, const void *callback)
@@ -50,8 +51,8 @@ void Object_ResetTargetAndSetMode1(u32 object_id)
         object->target_x = 0x80000000;
         object->target_y = 0x80000000;
         object->target_z = 0x80000000;
-        Object_ResetMotion(object);
-        Object_SetMode(object, 1);
+        ObjectDispatch_InitFromTable6Far(object);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
     }
 }
 

@@ -146,7 +146,7 @@ UiText_ShowCenteredMessage:
 	.global Engine_ItemLoadIcon
 	.thumb_func
 Engine_ItemLoadIcon:
-	overlay_veneer ItemIcon_LoadTilesFar
+	overlay_veneer Ui_PrepareTransferForItemFar
 	.global PaletteGlow_Update
 	.thumb_func
 PaletteGlow_Update:

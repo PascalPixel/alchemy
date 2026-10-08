@@ -25,7 +25,7 @@
 
 #define gBattleFxWork ((void *(*))&gBattleFxWork)
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 extern void *gWorkSlot[];
 
@@ -72,7 +72,7 @@ void BattleFx_RunBouncingSheep(void *object)
     work->transfer_mode = 1;
     work->transfer_value = 0;
     Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-    Audio_PlayCue(142);
+    AudioCommand_PlayFar(142);
     for (frame = 0; frame != 148; frame++) {
         struct BattleCamera *camera;
 
@@ -169,7 +169,7 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
             do {
                 start = i << 4;
                 if (frame == start) {
-                    Audio_PlayCue(143);
+                    AudioCommand_PlayFar(143);
                 }
                 if (frame < start) {
                     goto next;

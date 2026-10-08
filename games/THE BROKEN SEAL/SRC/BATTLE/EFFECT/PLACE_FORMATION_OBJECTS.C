@@ -105,7 +105,7 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 //--------------------------------------------------------------------------
 // 着弾
 //--------------------------------------------------------------------------
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 extern struct EffectStep gMapCellBuffer[];
 
@@ -196,9 +196,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 	for (frame = 0; frame != 72; frame++)
 	{
 		if (frame == 4)
-			Audio_PlayCue(154);
+			AudioCommand_PlayFar(154);
 		if (frame == 32)
-			Audio_PlayCue(212);
+			AudioCommand_PlayFar(212);
 
 		// 閃光：8 フレーム目から 5 フレームごとに次の絵
 		if (frame <= 47)

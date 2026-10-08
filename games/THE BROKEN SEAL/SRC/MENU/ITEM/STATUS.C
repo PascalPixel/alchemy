@@ -39,7 +39,7 @@ struct InventoryMenuIcon {
 
 
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 s32 ItemMenu_SelectItem(void)
 {
@@ -126,19 +126,19 @@ s32 ItemMenu_SelectItem(void)
                 redraw = 0;
 
             if (gKeyState & KEY_A) {
-                Audio_PlayCue(0x70);
+                AudioCommand_PlayFar(0x70);
                 result = 1;
                 done = 1;
                 break;
             }
             if (gKeyState & KEY_B) {
-                Audio_PlayCue(0x71);
+                AudioCommand_PlayFar(0x71);
                 result = -1;
                 done = 1;
                 break;
             }
             if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
-                Audio_PlayCue(0x6f);
+                AudioCommand_PlayFar(0x6f);
                 tab = menu->pane_index[0];
                 menu->selected_index_by_owner[menu->owner_ids[tab]] = state.selected_index;
                 if (gKeysRepeat & KEY_R)

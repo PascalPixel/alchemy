@@ -26,6 +26,8 @@
 #include "IO_REG.H"
 #include "BTLSYS.H"
 #include "text/MSG_IDS.H"
+void AudioCommand_PlayFar(s32 cue);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 extern struct BattleRuntime *gEventWork;
 
@@ -141,7 +143,7 @@ void EventObject_Initialize(void)
     event_object = event_state->main_object;
     event_value = (s16)event_state->action;
     event_index = event_value;
-    Object_SetMode(event_object, 0x14);
+    ObjectDispatch_ApplyArgumentToChildrenFar(event_object, 0x14);
     FIELD_AT_OFFSET(event_object, u32 *, 0x38) = *(s32 *)((u8 *)(event_object) + 8);
     FIELD_AT_OFFSET(event_object, s32 *, 0x3C) = FIELD_AT_OFFSET(event_object, s32 *, 0xC);
     FIELD_AT_OFFSET(event_object, s32 *, 0x40) = FIELD_AT_OFFSET(event_object, s32 *, 0x10);
@@ -149,7 +151,7 @@ void EventObject_Initialize(void)
     FIELD_AT_OFFSET(event_object, u32 *, 0x28) = 0;
     *(s32 *)((u8 *)(event_object) + 0x2C) = 0;
     if (event_state->visible != 0) {
-        Audio_PlayCue(212);
+        AudioCommand_PlayFar(212);
         FIELD_AT_OFFSET(event_object, s32 *, 0x6C) = CALLBACK_1;
     }
     if (event_state->active != 0) {
@@ -166,7 +168,7 @@ void EventObject_Initialize(void)
         if (event_state->visible != 0) {
             FIELD_AT_OFFSET(event_object, s32 *, 0x6C) = CALLBACK_2;
         }
-        Object_SetMode(event_object, 0x15);
+        ObjectDispatch_ApplyArgumentToChildrenFar(event_object, 0x15);
     } else {
         EffectRuntime_StopCurrentObject();
     }

@@ -16,6 +16,7 @@
 #include "BTLWORK.H"
 
 #include "BTLSYS.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 void BattleMotion_RunValueSequence(s32 id)
 {
@@ -25,7 +26,7 @@ void BattleMotion_RunValueSequence(s32 id)
     s32 remaining;
 
     UnitGetFar(id);
-    Object_SetMode(BtlObjGet(id)->object, 5);
+    ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(id)->object, 5);
 
     sel = selection;
     remaining = 1;

@@ -36,7 +36,7 @@
 
 typedef s32 (*CopyWords)(void *, const void *, s32);
 
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 typedef struct BattleEffectArgument Efx;
 
 typedef struct Spark {
@@ -225,7 +225,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     do {
         pick = frame % WORK_EFX->count;
         if (frame == 4) {
-            Audio_PlayCue(0x88);
+            AudioCommand_PlayFar(0x88);
         }
         if (mode != 6) {
             if (frame == 24) {

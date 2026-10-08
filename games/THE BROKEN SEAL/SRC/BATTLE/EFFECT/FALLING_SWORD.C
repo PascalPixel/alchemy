@@ -40,7 +40,7 @@
 #define SPARK ((struct EffectStep *)(Ram_MapCellBuffer + 684 * sizeof(struct EffectStep)))
 
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 {
@@ -142,13 +142,13 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
         }
 
         if (frame == 4) {
-            Audio_PlayCue(212);
+            AudioCommand_PlayFar(212);
         }
         if (frame == 32) {
-            Audio_PlayCue(164);
+            AudioCommand_PlayFar(164);
         }
         if (frame == 60) {
-            Audio_PlayCue(145);
+            AudioCommand_PlayFar(145);
             BattleEventRuntime_BeginPhaseFar(134);
         }
 
@@ -577,10 +577,10 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
         slots = (DrawRectangle *)gWorkSlot;
         if (frame == 143) {
             Iwram_FillWords(canvas, 0x4000, 0x2a2a2a2a);
-            Audio_PlayCue(145);
+            AudioCommand_PlayFar(145);
         }
         if (frame == 80) {
-            Audio_PlayCue(142);
+            AudioCommand_PlayFar(142);
         }
 
         if (frame < 0) {
@@ -816,17 +816,17 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 
     for (frame = 0; frame != 320; frame++) {
         if (frame == 66) {
-            Audio_PlayCue(145);
-            Audio_PlayCue(141);
+            AudioCommand_PlayFar(145);
+            AudioCommand_PlayFar(141);
         }
         if (frame == 155) {
-            Audio_PlayCue(162);
+            AudioCommand_PlayFar(162);
         }
         if (frame == 217) {
-            Audio_PlayCue(156);
+            AudioCommand_PlayFar(156);
         }
         if (frame == 280) {
-            Audio_PlayCue(157);
+            AudioCommand_PlayFar(157);
         }
         if (frame == 300) {
             BattleEventRuntime_BeginPhaseFar(145);

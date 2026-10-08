@@ -25,8 +25,10 @@
 #include "OBJECT_DISPATCH.H"
 #include "FIELD_EVENT.H"
 #include "BTLSYS.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
+void ObjectDispatch_ReleaseFar(struct DispatchObject *work);
 
-#define Object_Destroy ((void (*)(void*))Object_Destroy)
+#define ObjectDispatch_ReleaseFar ((void (*)(void*))ObjectDispatch_ReleaseFar)
 
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
@@ -94,13 +96,13 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
             Object_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
         }
         if (object) {
-            Object_SetMode(object, 1);
+            ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
             if (object->animation_kind == 1 && (sprite = (struct AnimationObject *)object->animation) != 0)
                 sprite->last_no = __umodsi3(Random16(), 30);
             object->angle = entry->facing;
             object->unknown_59 = 1;
             ObjectMotion_SetActionCallback(object, entry->behavior);
-            Object_SetMode(object, 1);
+            ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
             ((struct ScriptObjectRuntime *)object)->home_x = object->x / 0x10000;
             ((struct ScriptObjectRuntime *)object)->home_z = object->z / 0x10000;
             if (object->y != 0) {
@@ -127,7 +129,7 @@ void ObjectTable_DestroyAtIndex(s32 index)
     void *object = ObjectTable_Get(index);
 
     if (object != NULL) {
-        Object_Destroy(object);
+        ObjectDispatch_ReleaseFar(object);
         state->actors[index] = NULL;
     }
 }
@@ -173,7 +175,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
         object->terrain_height = object->y;
         object->flags = 0;
         ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
-        Object_SetMode(object, 12);
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 12);
     } else {
         gGameState.movement_mode = 0;
     }

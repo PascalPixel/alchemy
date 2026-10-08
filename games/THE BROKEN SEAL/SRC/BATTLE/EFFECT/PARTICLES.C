@@ -11,6 +11,7 @@
 #include "OBJECT_EFX.H"
 #include "SYSTEM.H"
 #include "FIELD_EVENT.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 struct FallPos
 {
@@ -79,7 +80,7 @@ void BattleFx_SpawnFallingParticles(void)
 	{
 		obj->motion_flags = ACTOR_FALLS;
 		obj->gravity = 0x1999; // 重力 0.1 ドット
-		Object_SetMode((struct FieldActor *)obj, 0);
+		ObjectDispatch_ApplyArgumentToChildrenFar((struct FieldActor *)obj, 0);
 		obj->unknown_5e = 12;
 		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
 	}

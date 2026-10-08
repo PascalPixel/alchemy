@@ -9,6 +9,7 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "ITEM.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 
 s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode)
@@ -48,7 +49,7 @@ s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode)
             for (i = 0; i < count; i++) {
                 if (items[i] == 0)
                     continue;
-                item = Item_Get(items[i]);
+                item = Item_GetDirectFar(items[i]);
                 if ((order[pass] & 0x7f) != item->type)
                     continue;
                 if ((order[pass] & 0x80) && (items[i] & 0x200) == 0)

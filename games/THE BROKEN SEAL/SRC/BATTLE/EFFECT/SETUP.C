@@ -14,6 +14,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "FIELD_EVENT.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 void Object_EnableEffectSpawnCallback(void)
 {
@@ -105,10 +106,10 @@ void Battle_InitializeRenderObject(void)
     object->unknown_24 = 0;
     object->unknown_2c = 0;
     if (gGameState.movement_mode == 1) {
-        Object_SetMode((s32)object, 0xC);
+        ObjectDispatch_ApplyArgumentToChildrenFar((s32)object, 0xC);
         return;
     }
-    Object_SetMode((s32)object, 1);
+    ObjectDispatch_ApplyArgumentToChildrenFar((s32)object, 1);
 }
 
 void Battle_ResetEffectCounter(void);

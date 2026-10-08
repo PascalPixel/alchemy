@@ -21,7 +21,7 @@
 
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void Runtime_SetMainState19(void);
 
 #define PAGE_LABEL_FIRST 49
@@ -55,7 +55,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
         page_forward = gKeysRepeat & KEY_RIGHT;
     }
     if (horizontal) {
-        Audio_PlayCue(111);
+        AudioCommand_PlayFar(111);
         if (--*page < 0)
             *page = pages - 1;
         if (*cursor + *page * per_page > count - 1) {
@@ -68,7 +68,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
         goto done;
     }
     if (page_forward) {
-        Audio_PlayCue(111);
+        AudioCommand_PlayFar(111);
         if (++*page > pages - 1)
             *page = 0;
         if (*cursor + *page * per_page > count - 1) {
@@ -81,7 +81,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
         goto done;
     }
     if (previous) {
-        Audio_PlayCue(111);
+        AudioCommand_PlayFar(111);
         if (--*cursor < 0) {
             *cursor = per_page - 1;
             *cursor = count - *page * per_page - 1;
@@ -94,7 +94,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
     if (next == 0)
         goto done;
     {
-        Audio_PlayCue(111);
+        AudioCommand_PlayFar(111);
         result = 0;
         if (++*cursor == count - *page * per_page)
             *cursor = result;

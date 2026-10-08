@@ -29,7 +29,7 @@
 
 void Menu_SpawnIconEntries(struct PsynergyMenuState *menu, s32 window);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 mode);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
 {
@@ -89,11 +89,11 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
         WaitFrames(1);
         if (gKeyState & KEY_A) {
             if (menu->psynergy_count) {
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
                 result = owner_ids[selection];
                 break;
             }
-            Audio_PlayCue(114);
+            AudioCommand_PlayFar(114);
         }
         if ((gKeyState & KEY_L) || (gKeyState & KEY_R)) {
             result = owner_ids[selection];
@@ -107,24 +107,24 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
             action_count = (s8)found;
             if (action_count == 0) {
                 menu->mode = action_count;
-                Audio_PlayCue(114);
+                AudioCommand_PlayFar(114);
             } else {
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
                 break;
             }
         }
         if (gKeyState & KEY_B) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             result = -1;
             break;
         }
         if (gKeysRepeat & KEY_LEFT) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             selection--;
             pending = 1;
         }
         if (gKeysRepeat & KEY_RIGHT) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             selection++;
             pending = 1;
         }
@@ -159,7 +159,7 @@ struct PsynergyTargetMarker {
 };
 
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
 {
@@ -246,22 +246,22 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
         UiMenu_PositionCursor(selection * 24 - 10, 16);
         WaitFrames(1);
         if (gKeyState & KEY_A) {
-            Audio_PlayCue(112);
+            AudioCommand_PlayFar(112);
             result = menu->owner_table[selection];
             break;
         }
         if (gKeyState & KEY_B) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             result = -1;
             break;
         }
         if (gKeysRepeat & KEY_LEFT) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             selection--;
             pending = 1;
         }
         if (gKeysRepeat & KEY_RIGHT) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             selection++;
             pending = 1;
         }

@@ -22,12 +22,12 @@
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "OBJECT_EFFECT.H"
+void AudioCommand_PlayFar(s32 cue);
 
 u16 ArcTan2(s32 deltaZ, s32 deltaX);
 
-extern void Object_SetMode(struct ParticleEffectObject *, s32);
+extern void ObjectDispatch_ApplyArgumentToChildrenFar(struct ParticleEffectObject *, s32);
 s32			Object_GetById(u32);
-s32			Audio_PlayCue(s32);
 
 #define OBJ_LAST 66 // 調べるオブジェクト番号の最後
 
@@ -249,8 +249,8 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode)
 	ret = 0;
 	if (obj != 0)
 	{
-		Audio_PlayCue(124);
-		Object_SetMode(obj, 4);
+		AudioCommand_PlayFar(124);
+		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 4);
 		WaitFrames(12);
 		ret = BattleFx_StartRandomParticleEmitter(effect, mode);
 	}

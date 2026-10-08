@@ -15,6 +15,7 @@
 #include "GLOBAL_CELLS.H"
 #include "BTLEV.H"
 #include "BTLWORK.H"
+void AudioCommand_PlayFar(s32 cue);
 void BattleEv_MarkDisplay(void)
 {
     gBattleDisplayWork->marked = 1;
@@ -48,7 +49,6 @@ void Battle_SetRuntimeFlagBit0(struct BattleEventState *runtime, u32 operand)
 }
 
 void UiWork_PushValueSlotFar(u32, u32);
-void Audio_PlayCue(u32);
 void BattleMotion_RunValueSequence();
 
 u32 BattleEv_DispatchQueued(void)
@@ -78,7 +78,7 @@ u32 BattleEv_DispatchQueued(void)
             UiWork_ClearValueNameTablesFar();
             break;
         case BEV_OBJ_BGN:
-            if (runtime->pending_cue > 0) Audio_PlayCue(runtime->pending_cue);
+            if (runtime->pending_cue > 0) AudioCommand_PlayFar(runtime->pending_cue);
             BattleMotion_RunValueSequence(queue->operands[i], 0, 0);
             break;
         case BEV_OBJ_RES:

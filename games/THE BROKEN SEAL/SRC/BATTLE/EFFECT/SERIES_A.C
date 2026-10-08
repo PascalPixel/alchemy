@@ -41,7 +41,7 @@
 
 void BattleFx_PrepareCanvasEffect(
 	struct BattleEffectArgument *effect, s32 kind, s32 side, s32 narrow, s32 *x, s32 *y);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 //--------------------------------------------------------------------------
 // mode ごとの入口
@@ -328,7 +328,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 			point[2] = object->z;
 			SceneTransform_ApplyPosition(point);
 			if (frame == start + 20)
-				Audio_PlayCue(SOUND_RECOVERY);
+				AudioCommand_PlayFar(SOUND_RECOVERY);
 			if (frame == start + 36)
 				ObjectGroup_UpdateMembers(work->effect->actors[member], 7, -1, member, 28);
 			if (frame > start)

@@ -40,7 +40,7 @@ extern u8 gOptionMirror;
 void WaitFrames(s32);
 void PaletteGlow_Update(s32, s32);
 void UiText_DrawResource(s32, struct RenderInput *, s32, s32);
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 
 struct RenderInput *Menu_OpenWorkspaceOptions(void)
 {
@@ -241,7 +241,7 @@ s32 Menu_RunWorkspaceOptions(void)
         WaitFrames(1);
 
         if (gKeyState & KEY_SELECT) {
-            Audio_PlayCue(112);
+            AudioCommand_PlayFar(112);
             preset = &work->preset;
             n = *preset + 1;
             *preset = n;
@@ -256,30 +256,30 @@ s32 Menu_RunWorkspaceOptions(void)
         }
         if (gKeyState & (KEY_A | KEY_START)) {
             result = 0;
-            Audio_PlayCue(112);
+            AudioCommand_PlayFar(112);
             break;
         }
         if (gKeyState & KEY_B) {
             result = -1;
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             break;
         }
         if (gKeysRepeat & KEY_UP) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             page--;
             redraw = 1;
         } else if (gKeysRepeat & KEY_DOWN) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             page++;
             redraw = 1;
         } else {
             if (gKeysRepeat & KEY_LEFT) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 work->option[page]--;
                 redraw = 1;
             }
             if (gKeysRepeat & KEY_RIGHT) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 work->option[page]++;
                 redraw = 1;
             }

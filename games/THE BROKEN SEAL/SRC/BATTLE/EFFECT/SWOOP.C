@@ -30,7 +30,7 @@
 extern u8 gMapCellBuffer[];
 void WaitFrames(s32);
 u32 Random16(void);
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
 
 extern struct Cells03001ad0 gBgScroll;
@@ -155,16 +155,16 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     frame = 0;
     do {
         if (frame == 24) {
-            Audio_PlayCue(162);
+            AudioCommand_PlayFar(162);
         }
         if (frame == 76) {
-            Audio_PlayCue(164);
+            AudioCommand_PlayFar(164);
         }
         if (frame == 154) {
-            Audio_PlayCue(142);
+            AudioCommand_PlayFar(142);
         }
         if (frame == 222) {
-            Audio_PlayCue(145);
+            AudioCommand_PlayFar(145);
         }
         if (frame >= 0 && frame < 16) {
             u16 *phase = (u16 *)Ram_MapCellBuffer;
@@ -418,7 +418,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         work->particles[i].x = seat[0] / 2;
     }
     Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1, 1);
-    Audio_PlayCue(0x121);
+    AudioCommand_PlayFar(0x121);
     REG_BG2PA = 0x80;
     REG_BLDALPHA = 0x1010;
 
@@ -430,7 +430,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         for (i = 0; i != 5; i++) {
             q4 = &work->particles[i];
             if (frame == i * 16 + 7) {
-                Audio_PlayCue(154);
+                AudioCommand_PlayFar(154);
             }
             if (frame >= i * 16 && q4->variant <= 31) {
                 s32 wobble = frame * 16 % 104;

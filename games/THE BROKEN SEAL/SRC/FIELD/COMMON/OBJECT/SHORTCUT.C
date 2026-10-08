@@ -10,8 +10,10 @@
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "GAME_STATE.H"
+struct BtlAct * BtlActGet(s32 action_id);
+struct BtlUnit *UnitGetFar(s32 object_id);
 
-#define Ability_GetData ((void * (*)(s32))Ability_GetData)
+#define BtlActGet ((void * (*)(s32))BtlActGet)
 
 #define ACTION_ID_MASK 0x3FFF
 
@@ -47,7 +49,7 @@ s32 Object_CollectResources(struct AbilityListEntry *output)
 
             id = *object_id;
             object_id++;
-            object = Runtime_GetObject(id);
+            object = UnitGetFar(id);
             index = 0;
             resource_offset = (u8 *)object->action_slots - (u8 *)object;
             resource_id =
@@ -61,7 +63,7 @@ s32 Object_CollectResources(struct AbilityListEntry *output)
                 pair = (struct AbilityListEntry *)
                     (output_count *sizeof(*pair) + (s32)output);
                 do {
-                    Ability_GetData(resource_id);
+                    BtlActGet(resource_id);
                     pair->owner = id;
                     pair->ability = resource_id;
                     output_count++;

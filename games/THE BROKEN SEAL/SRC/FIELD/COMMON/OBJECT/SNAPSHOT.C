@@ -12,11 +12,12 @@
 #include "ANIMSPR.H"
 #include "FIELD_EVENT.H"
 #include "IO_REG.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 extern struct ObjectRuntime Data_02001124[32];
 
 void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object, s32 value);
-void Object_ResetMotion(struct ObjectRuntime *object);
+void ObjectDispatch_InitFromTable6Far(struct ObjectRuntime *object);
 
 void ObjectTable_ClearBattleSlots(void)
 {
@@ -116,7 +117,7 @@ void ObjectTable_Restore(void)
             Dma_Set(copy, object, 0x84000000 | (sizeof(struct ObjectRuntime) / 4), REG_DMA3);
             frame = *frames;
             if (frame != 0)
-                Object_SetMode(object, frame);
+                ObjectDispatch_ApplyArgumentToChildrenFar(object, frame);
             ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, *next_frames);
             priority = *priorities;
             sprite->priority = priority;
@@ -129,7 +130,7 @@ void ObjectTable_Restore(void)
                 camera->terrain_height = y;
                 camera->y = y;
                 view[1] = y;
-                Object_ResetMotion(object);
+                ObjectDispatch_InitFromTable6Far(object);
             }
         }
         copy++;

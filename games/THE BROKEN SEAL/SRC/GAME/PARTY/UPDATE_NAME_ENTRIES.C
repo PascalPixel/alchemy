@@ -18,6 +18,8 @@
 #include "SERIAL_RUNTIME.H"
 #include "BTLSYS.H"
 #include "text/MSG_IDS.H"
+void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
+struct BtlUnit *UnitGetFar(s32 object_id);
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -49,7 +51,7 @@ s32 UpdateNameEntries(void)
     named_count = 0;
     index = 0;
     while (index <= 2) {
-        name_entry = Runtime_GetObject(index + 128);
+        name_entry = UnitGetFar(index + 128);
         if (SerialRuntime_BeginTransferB(name_entry) == -1) {
             break;
         }
@@ -58,7 +60,7 @@ s32 UpdateNameEntries(void)
             named_count += 1;
         }
         WaitFrames(2);
-        Party_Apply((s32)MsgEnemyLabel, name_text);
+        Ui_AdjustValueWithoutLimitFar((s32)MsgEnemyLabel, name_text);
         i = 0;
         if (name_text[i] != 0) {
             do {

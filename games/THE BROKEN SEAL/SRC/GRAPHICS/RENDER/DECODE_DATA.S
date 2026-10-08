@@ -3,7 +3,7 @@
 	.arm
 	.4byte 0x00000000
 	.4byte 0
-	.reloc .-4, R_ARM_ABS32_NOI, Object_CheckMovementCollision
+	.reloc .-4, R_ARM_ABS32_NOI, Map_CheckObjectStepFar
 	.4byte 0
 	.reloc .-4, R_ARM_ABS32_NOI, Map_CopyMetatileCellsRectFar
 	.global Render_DecodeFrameBuffer

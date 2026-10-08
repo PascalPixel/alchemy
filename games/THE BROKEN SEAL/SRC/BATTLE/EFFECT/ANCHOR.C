@@ -26,13 +26,13 @@
 	((void (*)(void *, s32, s32))Motion_SetTargetPositionFromMagnitudeAngle)
 
 extern struct BattleFxScene *gEffectWork;
-void						 Object_CommitPosition(void *object);
-void						 Audio_PlayCue(s32 sound);
+void						 Script_WaitForEventTimeoutFar(void *object);
+void						 AudioCommand_PlayFar(s32 sound);
 struct MotionObject			*Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 extern const s32			 BattleFx_FragmentScript[];
 void						 ObjectDispatch_ReleaseFar(void *object);
 
-void Object_SetMode(void *, s32);
+void ObjectDispatch_ApplyArgumentToChildrenFar(void *, s32);
 
 #define HAHEN_MAX 24 // 破片の数
 
@@ -69,8 +69,8 @@ void RunBattleEffect07(void)
 	}
 
 	// 破片：8-32 ドット先へ散る
-	Object_CommitPosition(pair[0]);
-	Audio_PlayCue(SOUND_HEAVY_IMPACT);
+	Script_WaitForEventTimeoutFar(pair[0]);
+	AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
 	for (n = 0; n < HAHEN_MAX; n++)
 	{
 		pos.x = work->x;
@@ -102,14 +102,14 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle
 	struct MotionObject *obj;
 	s32					 scale;
 
-	Audio_PlayCue(SOUND_ITEM_BREAK);
+	AudioCommand_PlayFar(SOUND_ITEM_BREAK);
 	obj = Object_Spawn(215, x, y, z);
 	if (obj != NULL)
 	{
 		obj->scale_x = obj->scale_y = 0x4000;
 		obj->acceleration = obj->speed_limit = 0x30000; // 3 ドット/フレーム
 		((struct FieldSprite *)obj->records)->priority = 0;
-		Object_SetMode(obj, 3);
+		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 3);
 		scale = obj->scale_x;
 		if (scale < 0x10000)
 		{

@@ -18,6 +18,7 @@
 #include "SYSTEM.H"
 #include "ANIMSPR.H"
 #include "FIELD_EVENT.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 void UiWork_PushValueSlotFar(s32 value, s32 mode);
 
@@ -41,7 +42,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
         character->hp = 0;
 
     slot = BtlObjGet(unit_id);
-    Object_SetMode(slot->object, 5);
+    ObjectDispatch_ApplyArgumentToChildrenFar(slot->object, 5);
     PtyStDrawFar(0);
     UiWork_ClearValueNameTablesFar();
 
@@ -72,7 +73,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
     }
 
     slot = BtlObjGet(unit_id);
-    Object_SetMode(slot->object, 1);
+    ObjectDispatch_ApplyArgumentToChildrenFar(slot->object, 1);
 }
 
 void BattleMotion_SetMode5AndActivateSlot(s32 unit_id)

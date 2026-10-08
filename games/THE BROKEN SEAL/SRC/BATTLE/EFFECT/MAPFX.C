@@ -38,8 +38,8 @@
 s16 *BattleAction_FindDescriptor(s16 action);
 
 struct FieldActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void			   Object_SetMode(struct FieldActor *object, s32 mode);
-void			   Audio_PlayCue(s32 cue);
+void			   ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 mode);
+void			   AudioCommand_PlayFar(s32 cue);
 void			   Battle_WaitMode0(s32 state);
 
 //--------------------------------------------------------------------------
@@ -170,7 +170,7 @@ void BattleFx_SpawnLinked(s32 id, s32 mode, s32 wait)
 
 	if ((mode & 0xff) == 6)
 	{
-		Audio_PlayCue(110);
+		AudioCommand_PlayFar(110);
 	}
 
 	target = ObjectTable_Get(id);
@@ -182,7 +182,7 @@ void BattleFx_SpawnLinked(s32 id, s32 mode, s32 wait)
 		if (obj != 0)
 		{
 			ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_LinkedObjectScript);
-			Object_SetMode(obj, mode & 15);
+			ObjectDispatch_ApplyArgumentToChildrenFar(obj, mode & 15);
 			obj->motion_flags = 0;
 			obj->timer = 0;
 			obj->work = id;

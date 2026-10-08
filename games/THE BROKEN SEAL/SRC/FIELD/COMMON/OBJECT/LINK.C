@@ -15,10 +15,11 @@
 #include "OBJECT_DISPATCH.H"
 #include "ANIMSPR.H"
 #include "SCRIPT_MOTION.H"
+void ObjectDispatch_ReleaseFar(struct DispatchObject *work);
 
 #define WaitFrames ((s32 (*)(s32))WaitFrames)
 
-#define Object_Destroy ((void (*)(void*))Object_Destroy)
+#define ObjectDispatch_ReleaseFar ((void (*)(void*))ObjectDispatch_ReleaseFar)
 
 s32 ArcTan2(s32, s32);
 void Battle_WaitMode0(s32);
@@ -103,7 +104,7 @@ void ObjectTable_DestroyById(s32 index)
     struct ObjectSlotTable *table = (struct ObjectSlotTable *)gEventWork;
 
     if (object != 0) {
-        Object_Destroy(object);
+        ObjectDispatch_ReleaseFar(object);
         table->slots[index] = NULL;
     }
 }

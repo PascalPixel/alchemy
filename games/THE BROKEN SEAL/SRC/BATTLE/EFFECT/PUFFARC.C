@@ -25,7 +25,7 @@
 #include "BTLDISP.H"
 #include "HEAP_STATE.H"
 
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 
 typedef struct Puff // work->particles と同じ置き場
 {
@@ -123,7 +123,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
 		work->transfer_value = 50;
 	}
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	Audio_PlayCue(136);
+	AudioCommand_PlayFar(136);
 	frame = 0;
 	do
 	{

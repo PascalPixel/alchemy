@@ -18,6 +18,7 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "text/MSG_IDS.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 #define gKeyState (*(volatile u32 *)&gKeyState)
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
@@ -28,10 +29,10 @@
 
 extern struct ShopRuntime *gMenuWork;
 void UiWork_FinalizeFar(s32, s32);
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiWork_FinalizePendingCoreFar(void);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 #define SPECIAL_ITEM 228
 
 s32 Shop_SelUnit(void)
@@ -86,23 +87,23 @@ s32 Shop_SelRepair(s32 unit_id)
                     price_window, item_id + (s32)MsgItemPlainName);
             }
             if ((gKeyState & KEY_A) != 0) {
-                Audio_PlayCue(SOUND_MENU_CONFIRM);
+                AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
                 result = 0;
                 goto done;
             }
             if ((gKeyState & KEY_B) != 0) {
-                Audio_PlayCue(SOUND_MENU_CANCEL);
+                AudioCommand_PlayFar(SOUND_MENU_CANCEL);
                 result = -1;
                 goto done;
             }
             if ((gKeysRepeat & KEY_LEFT) != 0) {
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
                 selection -= 1;
                 selection = (selection + item_count) % item_count;
                 redraw = 1;
             }
             if ((gKeysRepeat & KEY_RIGHT) != 0) {
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
                 selection += 1;
                 selection = (selection + item_count) % item_count;
                 redraw = 1;
@@ -113,7 +114,7 @@ s32 Shop_SelRepair(s32 unit_id)
                     selection += 15;
                 while (selection >= item_count)
                     selection -= 5;
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
             }
             if ((gKeysRepeat & KEY_DOWN) != 0) {
@@ -122,7 +123,7 @@ s32 Shop_SelRepair(s32 unit_id)
                     selection -= 15;
                 while (selection < 0)
                     selection += 5;
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
             }
             WaitFrames(1);
@@ -149,7 +150,7 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
     struct ShopRuntime *shop = gMenuWork;
     struct BtlUnit *unit = UnitGetFar(unit_id);
     s32 item_id = unit->inventory[slot] & 0x1ff;
-    struct ItemDefinition *item = Item_Get(item_id);
+    struct ItemDefinition *item = Item_GetDirectFar(item_id);
     s32 equipped = Inventory_FindEquippedFar(unit_id, item->type);
     u32 price = Shop_RepairPrice(unit->inventory[slot]);
     s32 message;
@@ -191,13 +192,13 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
     UiMessage_ShowAndRestoreState(message + 2);
     UiWork_FinalizePendingCoreFar();
     WaitFrames(10);
-    Audio_PlayCue(100);
+    AudioCommand_PlayFar(100);
     WaitFrames(110);
-    Audio_PlayCue(100);
+    AudioCommand_PlayFar(100);
     WaitFrames(110);
-    Audio_PlayCue(100);
+    AudioCommand_PlayFar(100);
     WaitFrames(110);
-    Audio_PlayCue(112);
+    AudioCommand_PlayFar(112);
     WaitFrames(20);
     unit->inventory[slot] = saved;
     Inventory_RepairFar(unit_id, slot);
@@ -249,7 +250,7 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
         if ((gKeyState & KEY_A) != 0) {
             slot = Inventory_AddItemFar(unit_id, shop->selected_item);
             if (slot < 0) {
-                Audio_PlayCue(0x71);
+                AudioCommand_PlayFar(0x71);
                 UiWork_PushValueSlotFar(unit_id, 1);
                 UiWork_PushValueSlotFar(shop->selected_item, 2);
                 if (Inventory_CountFar(unit_id) == 15)
@@ -259,7 +260,7 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
                 continue;
             }
             Inventory_RemoveFar(unit_id, slot);
-            Audio_PlayCue(0x65);
+            AudioCommand_PlayFar(0x65);
             UiMessage_ShowAndRestoreState((s32)MsgHereYouGo);
             Inventory_AddItemFar(unit_id, shop->selected_item);
             Party_AdjustSixDigitCounterBFar(-price);
@@ -268,16 +269,16 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
         }
         if ((gKeyState & KEY_B) != 0) {
             UiMessage_ShowAndRestoreState((s32)MsgDontWantIt);
-            Audio_PlayCue(0x71);
+            AudioCommand_PlayFar(0x71);
             goto done;
         }
         if (((gKeysRepeat) & KEY_LEFT) != 0) {
-            Audio_PlayCue(0x6f);
+            AudioCommand_PlayFar(0x6f);
             selected_index--;
             redraw = 1;
         }
         if (((gKeysRepeat) & KEY_RIGHT) != 0) {
-            Audio_PlayCue(0x6f);
+            AudioCommand_PlayFar(0x6f);
             selected_index++;
             redraw = 1;
         }

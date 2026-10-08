@@ -16,6 +16,8 @@
 #include "IWRAM_CALL.H"
 #include "ITEM.H"
 #include "text/MSG_IDS.H"
+s32 GameFlag_TestFar(s32 flag);
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 #define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
 
@@ -27,7 +29,7 @@ s32 __modsi3(s32, s32);
 void WaitFrames(s32 frames);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWork_FinalizeFar(s32, s32);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 void ItemMenu_DrawItemHead(void)
 {
@@ -64,29 +66,29 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
 
     win = UiWindow_CreateFar(13, 3, 17, 10, 2);
     slot = a0 & ITEM_ID_MASK;
-    Item_Get(slot);
-    UiText_DrawAt(slot + (s32)((u8 *)MsgItemName), win, 24, 0);
+    Item_GetDirectFar(slot);
+    UiText_DrawCharacterAtOffsetFar(slot + (s32)((u8 *)MsgItemName), win, 24, 0);
     text = (s32)MsgConfirmDrop;
 #if EDITION_INTERNATIONAL
-    UiText_DrawAt(text, win, 0, 16);
+    UiText_DrawCharacterAtOffsetFar(text, win, 0, 16);
 #else
-    UiText_DrawAt(text, win, 8, 16);
+    UiText_DrawCharacterAtOffsetFar(text, win, 8, 16);
 #endif
     text++;
 #if EDITION_INTERNATIONAL
-    UiText_DrawAt(text, win, 0, 24);
+    UiText_DrawCharacterAtOffsetFar(text, win, 0, 24);
 #else
-    UiText_DrawAt(text, win, 8, 24);
+    UiText_DrawCharacterAtOffsetFar(text, win, 8, 24);
 #endif
     label = (s32)MsgYes;
-    UiText_DrawAt(label, win, 24, 40);
+    UiText_DrawCharacterAtOffsetFar(label, win, 24, 40);
     label++;
-    UiText_DrawAt(label, win, 24, 56);
+    UiText_DrawCharacterAtOffsetFar(label, win, 24, 56);
     sel = 1;
     changed = 1;
     UiMenu_SlideCursor(104, 86);
     for (;;) {
-        if (GameFlag_IsSet(0x150) != 0) {
+        if (GameFlag_TestFar(0x150) != 0) {
             break;
         }
         {
@@ -98,11 +100,11 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
             sel = __modsi3(sel + 2, 2);
         }}
         if (gKeyState & KEY_A) {
-            Audio_PlayCue(112);
+            AudioCommand_PlayFar(112);
             break;
         }
         if (gKeyState & KEY_B) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             sel = 1;
             break;
         }
@@ -115,17 +117,17 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
             asm("" : "+l"(one));
             sel -= 1;
             changed = one;
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             }
         }
         if (*pad & 128) {
             sel += 1;
             changed = 1;
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
         }
         WaitFrames(1);
     }
-    if (GameFlag_IsSet(0x150) != 0) {
+    if (GameFlag_TestFar(0x150) != 0) {
         sel = 1;
     }
     UiWork_FinalizeFar(win, 1);
@@ -174,18 +176,18 @@ s32 ItemMenu_ConfirmEquip(s32 unused)
         UiMenu_SlideCursor(184, 5);
 #endif
         for (;;) {
-            if (GameFlag_IsSet(0x150))
+            if (GameFlag_TestFar(0x150))
                 break;
             if (changed) {
                 changed = 0;
                 sel = __modsi3(sel + 2, 2);
             }
             if (gKeyState & KEY_A) {
-                Audio_PlayCue(175);
+                AudioCommand_PlayFar(175);
                 break;
             }
             if (gKeyState & KEY_B) {
-                Audio_PlayCue(113);
+                AudioCommand_PlayFar(113);
                 sel = 1;
                 break;
             }
@@ -198,7 +200,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused)
 #endif
                 sel--;
                 changed = 1;
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
             }
 #if EDITION_INTERNATIONAL
             if (gKeysRepeat & KEY_RIGHT) {
@@ -207,12 +209,12 @@ s32 ItemMenu_ConfirmEquip(s32 unused)
 #endif
                 sel++;
                 changed = 1;
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
             }
             WaitFrames(1);
         }
     }
-    if (GameFlag_IsSet(0x150))
+    if (GameFlag_TestFar(0x150))
         sel = 1;
     if (sel == 1)
         CopyWords((WordCopyFn)Iwram_CopyWords, state, saved, BATTLE_UNIT_SIZE);

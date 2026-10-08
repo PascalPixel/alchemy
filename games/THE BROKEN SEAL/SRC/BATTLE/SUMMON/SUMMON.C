@@ -5,6 +5,7 @@
 #include "BTLWORK.H"
 #include "GAME_STATE.H"
 #include "ITEM.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 u32 Summon_GetLayoutKind(s32 index)
 {
@@ -94,7 +95,7 @@ u32 Item_EncodeBankedId(u32 value)
     if (base == 0)
         return 0;
     {
-        u8 flags = Item_Get(base)->flags;
+        u8 flags = Item_GetDirectFar(base)->flags;
 
         if (flags & 8)
             bank = 1;

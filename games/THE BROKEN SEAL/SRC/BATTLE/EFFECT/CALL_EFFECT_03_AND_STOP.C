@@ -69,9 +69,9 @@ extern struct BattleFxScene *gEffectWork;
 
 struct BattleEffect03Object *Object_Spawn(s32, s32, s32, s32);
 void						 WaitFrames(s32);
-void						 Audio_PlayCue(s32);
+void						 AudioCommand_PlayFar(s32);
 void						 Animation_ApplyChildValuesFar(struct BattleEffect03Object *, s32);
-void						 Object_CommitPosition(struct BattleEffect03Object *);
+void						 Script_WaitForEventTimeoutFar(struct BattleEffect03Object *);
 void						 ObjectDispatch_ReleaseFar(struct BattleEffect03Object *);
 
 //--------------------------------------------------------------------------
@@ -109,7 +109,7 @@ void RunBattleEffect03(void)
 	}
 
 	marker = last->marker;
-	Audio_PlayCue(130);
+	AudioCommand_PlayFar(130);
 	WaitFrames(110);
 
 	// 中心の 1 個
@@ -127,7 +127,7 @@ void RunBattleEffect03(void)
 		Animation_ApplyChildValuesFar(target, 7);
 	}
 
-	Audio_PlayCue(131);
+	AudioCommand_PlayFar(131);
 	WaitFrames(12);
 	if (target != 0)
 	{
@@ -144,7 +144,7 @@ void RunBattleEffect03(void)
 
 	// 火花
 	Animation_ApplyChildValuesFar(object, 0);
-	Audio_PlayCue(84);
+	AudioCommand_PlayFar(84);
 	if (object != 0)
 	{
 		target->callback = BattleFx_RunSparkEmitter;
@@ -163,7 +163,7 @@ void RunBattleEffect03(void)
 		target->velocity_y = 0x6666;
 		target->unknown_5a = 0;
 		Motion_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
-		Object_CommitPosition(target);
+		Script_WaitForEventTimeoutFar(target);
 		ObjectDispatch_ReleaseFar(target);
 	}
 	if (marker != 0x60)

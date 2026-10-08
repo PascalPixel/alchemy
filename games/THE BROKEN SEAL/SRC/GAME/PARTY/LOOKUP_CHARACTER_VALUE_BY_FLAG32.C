@@ -17,6 +17,7 @@
 #include "UIFLOW.H"
 #include "BTLSYS.H"
 #include "text/MSG_IDS.H"
+s32 AudioCommand_GetStateByteFar(void);
 
 #define gKeyState (*(volatile u32 *)&gKeyState)
 
@@ -27,7 +28,7 @@ void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
 s32 Localization_LookupEntryId(s32);
 void UiWork_PushValueSlot(s32, s32);
 struct UiChannelSlot *UiText_QueueRenderEntries();
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 void WaitFrames(s32);
 
 
@@ -74,12 +75,12 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 
         UiText_QueueRenderEntries(window, text, 36, 2, zero);
 
-        Audio_PlayCue(81);
+        AudioCommand_PlayFar(81);
 
         do {
             Runtime_PushSlotEntry(entry, 250);
             WaitFrames(1);
-        } while (Audio_Check() != 0 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+        } while (AudioCommand_GetStateByteFar() != 0 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
         UiWork_Finalize(window, 2);
         WaitFrames(1);
@@ -128,7 +129,7 @@ void Party_ShowJoinedMessage(s32 member)
         do {
             Runtime_PushSlotEntry(entry, 250);
             WaitFrames(1);
-        } while (Audio_Check() != 0 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+        } while (AudioCommand_GetStateByteFar() != 0 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
         UiWork_Finalize(window, 2);
         WaitFrames(1);
         Resource_ResetEntry(handle);

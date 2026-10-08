@@ -41,7 +41,7 @@ extern u8 MsgDjinnCompareConfirm[];
 extern u8 MsgDjinnTutorialClassPsynergy[];
 extern u8 MsgDjinnTutorialSetChanges[];
 s32 UiWork_FinalizeFar(s32, s32);
-void UiText_DrawQuantity(s32, s32);
+void UiWork_PushValueSlotFar(s32, s32);
 s32 UiWork_SetParamNibbleFar(s32 color);
 s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
@@ -352,7 +352,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 if (page == 1) {
                     UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnStatusHelp, (struct UiWindow *)state->help_window, 128, 16);
                 } else {
-                    UiText_DrawQuantity(
+                    UiWork_PushValueSlotFar(
                         state->shown_owner[page != 2], 1);
                     UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnPsyHelp, (struct UiWindow *)state->help_window, 128, 16);
                 }

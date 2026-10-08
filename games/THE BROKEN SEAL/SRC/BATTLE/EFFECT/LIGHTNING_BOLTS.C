@@ -28,7 +28,7 @@
 
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer) // 対象ひとりに 128 個
 // 光ごとに作りなおす 2 つめの描画関数
@@ -71,7 +71,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 	work->transfer_mode = 2;
 	work->transfer_value = 75;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	Audio_PlayCue(138);
+	AudioCommand_PlayFar(138);
 	for (frame = 0; frame != work->effect->count * 8 + 40; frame++)
 	{
 		if (frame == 24)

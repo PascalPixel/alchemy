@@ -28,14 +28,14 @@
 
 union PositionWord { s32 w; s16 h[2]; };
 
-void Audio_PlayCue(s32 sound_id);
+void AudioCommand_PlayFar(s32 sound_id);
 void EffectSlot_SetCallbackFar(
     struct EffectSlot *effect,
     void (*callback)(struct EffectSlot *));
 
 extern struct EventRuntime *gEventWork;
 void Event_WaitTransitionFramesFar(void);
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 void Event_StartScreenTransitionFar(void);
 
 enum InnMessageId {
@@ -82,7 +82,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     saved_kind = shop->cursor.anchor->active;
     shop->burst_member = 0xff;
     shop->cursor.anchor->active = 13;
-    Audio_PlayCue(Shop_PartyActionCues[shop->party_action]);
+    AudioCommand_PlayFar(Shop_PartyActionCues[shop->party_action]);
     Shop_RestoreSceneTiles(0x00202108);
     AnimationObjects_SetActiveTimerStepsFar(shop->party_member_icons[member], 0);
     WaitFrames(20);
@@ -125,7 +125,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     }
 
     WaitFrames(20);
-    Audio_PlayCue(126);
+    AudioCommand_PlayFar(126);
     shop->burst_member = -1;
     ObjectGroup_SetChildValueUnlessFifteenFar(shop->party_member_icons[member], 0);
     WaitFrames(20);
@@ -252,7 +252,7 @@ void Inn_PlaySleep(s32 room_price)
     WaitFrames(20);
     Event_FinishScreenTransitionFar();
     Event_WaitTransitionFramesFar();
-    Audio_PlayCue(86);
+    AudioCommand_PlayFar(86);
     AudioCommand_WaitForStateByteClear();
     WaitFrames(10);
     Event_StartScreenTransitionFar();

@@ -43,8 +43,8 @@ struct EffectParticle
 extern struct BattleFxScene *gEffectWork;
 
 void *Object_Spawn(s32, s32, s32, s32);
-void  Object_SetMode(void *, s32);
-void  Audio_PlayCue(s32);
+void  ObjectDispatch_ApplyArgumentToChildrenFar(void *, s32);
+void  AudioCommand_PlayFar(s32);
 void  Vector_AddPolarOffset(s32, s32, struct EffectVector *);
 void  ObjectDispatch_ReleaseFar(void *);
 
@@ -81,7 +81,7 @@ void RunBattleEffect14(void)
 		return;
 	}
 	BattleEffect_InitializeSharedScene();
-	Object_SetMode(tama, 2);
+	ObjectDispatch_ApplyArgumentToChildrenFar(tama, 2);
 	do
 	{
 		s32 scale;
@@ -96,7 +96,7 @@ void RunBattleEffect14(void)
 	} while (step < steps);
 	tama->scale_x = 0x1b333; // 横 1.7 倍
 	tama->scale_y = 0x14ccc; // 縦 1.3 倍
-	Audio_PlayCue(163);
+	AudioCommand_PlayFar(163);
 	WaitFrames(20);
 	if (scene->enabled == 0)
 	{
@@ -129,9 +129,9 @@ void RunBattleEffect14(void)
 		WaitFrames(20);
 		WaitFrames(120);
 	}
-	Object_SetMode(tama, 1);
+	ObjectDispatch_ApplyArgumentToChildrenFar(tama, 1);
 	WaitFrames(30);
-	Audio_PlayCue(136);
+	AudioCommand_PlayFar(136);
 	WaitFrames(20);
 	ObjectDispatch_ReleaseFar(tama);
 	BattleFx_PrepareBufferInterpolation();

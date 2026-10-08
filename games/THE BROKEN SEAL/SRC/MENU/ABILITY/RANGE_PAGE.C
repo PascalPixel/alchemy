@@ -133,6 +133,8 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 #include "PSYNERGY_MENU.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
+void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
+struct BtlAct * BtlActGet(s32 action_id);
 
 #define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
 #define UiText_DrawStringInWindowFar ((void (*)(u8*,s32,s32,s32))UiText_DrawStringInWindowFar)
@@ -159,7 +161,7 @@ s32 PsynergyMenu_DrawListPage(
 
     owner = UnitGetFar(menu->owner_ids[0]);
 
-    UiWindow_Commit(window);
+    RenderOutput_RedrawSavedRectFar(window);
 
     first = res->page * PAGE_ROWS;
     rows = (u8)(res->entry_count - first);
@@ -170,7 +172,7 @@ s32 PsynergyMenu_DrawListPage(
     Menu_SetPageIcons(PAGE_ROWS, first, window, LIST_ICONS_X, LIST_ICONS_Y);
     Menu_DrawPageIndicator(window, res->entry_count, PAGE_ROWS, res->page, 28);
 
-    UiText_DrawAt((s32)MsgPsynergyPp, window, LIST_PP_X, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, LIST_PP_X, 0);
 
     row = 0;
     if (rows > row) {
@@ -180,13 +182,13 @@ s32 PsynergyMenu_DrawListPage(
             s32 msg;
             s32 y;
             s32 range;
-            act = Ability_GetData(
+            act = BtlActGet(
                 ACT_ID_MASK & menu->psynergies[ofs]);
             msg = (menu->psynergies[ofs] & ACT_ID_MASK) +
                 (s32)MsgAbilityName;
             y = row * 16 + LIST_FIRST_ROW * 8;
 
-            UiText_DrawAt(msg, window, LIST_NAME_X, y);
+            UiText_DrawCharacterAtOffsetFar(msg, window, LIST_NAME_X, y);
             UiText_DrawNumberAtOffsetFar(act->pp_cost, 2, window, LIST_PP_NUMBER_X, y);
 
             range = act->rng;
@@ -203,11 +205,11 @@ s32 PsynergyMenu_DrawListPage(
     }
 
     if (menu->psynergy_count == 0) {
-        UiText_DrawAt((s32)MsgNoPsynergy, window, 96, LIST_EMPTY_Y);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgNoPsynergy, window, 96, LIST_EMPTY_Y);
     }
 
     UiText_DrawStringAtOffsetFar(owner->name, (void *)window, 40, 0);
-    UiText_DrawAt(
+    UiText_DrawCharacterAtOffsetFar(
         owner->class_index + (s32)MsgClassName, window, 0, 32);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
     UiText_DrawStringAtOffsetFar(&Menu_LvString, (void *)window, 0, 48);

@@ -79,7 +79,7 @@ PartyInventory_Add:
 	.global Engine_DebugGetAbility
 	.thumb_func
 Engine_DebugGetAbility:
-	overlay_veneer BattleAction_GetDirectFar
+	overlay_veneer BtlActGet
 	.endif
 	.global Party_ListActiveOwners
 	.thumb_func

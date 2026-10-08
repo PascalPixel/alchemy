@@ -25,6 +25,7 @@
 #include "text/MSG_IDS.H"
 
 #include "OBJECT_LOOKUP.H"
+void RenderOutput_PrepareForRedrawFar(s32 window);
 #define ObjectTable_Get ((struct MapObject * (*)(s32)) ObjectTable_Get)
 
 extern u8 gMapCellBuffer[];
@@ -361,7 +362,7 @@ markers:
 	if (work->shown != best)
 	{
 		work->shown = best;
-		UiWindow_Clear(work->window);
+		RenderOutput_PrepareForRedrawFar(work->window);
 		if (best != -1)
 		{
 			if (best == 0)

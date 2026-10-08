@@ -25,6 +25,7 @@
 #include "EFFECT_STEP.H"
 #include "MOTOBJ.H"
 #include "FIELD_EVENT.H"
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 #define Object_SetMoveTargetFar \
 	((void (*)(struct MotionObject *, s32, s32, s32))Object_SetMoveTargetFar)
@@ -209,7 +210,7 @@ void ObjectGroup_StoreObjectAndRunStep7(s32 a0, s32 a1, s32 a2)
 
 extern u8 gMapCellBuffer[];
 
-void Object_ResetMotion(struct MotionObject *object);
+void ObjectDispatch_InitFromTable6Far(struct MotionObject *object);
 
 void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 {
@@ -275,9 +276,9 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 		object->vertical_motion_strength = 0xdeb8;
 		object->vertical_motion_phase = 0;
 		object->auto_face_motion = 1;
-		Object_ResetMotion(object);
+		ObjectDispatch_InitFromTable6Far(object);
 		Object_SetMoveTargetFar(object, x, 0, z);
-		Object_SetMode(object, 2);
+		ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
 	}
 
 	for (frame = 0; frame != 70; frame++)

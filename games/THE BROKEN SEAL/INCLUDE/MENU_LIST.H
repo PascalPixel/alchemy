@@ -120,6 +120,8 @@ void UiWork_SetParamNibble(s32 param);
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 value);
 s32 Ui_FillVramBlockPattern(void);
 void Vram_CopyTile(s32 source, s32 destination);
+#ifndef OWN_AudioCommand_PlayFar
 void AudioCommand_PlayFar(s32 cue);
+#endif
 
 #endif

@@ -43,7 +43,7 @@ static __inline__ void FillWords(void *destination, s32 size, s32 value)
 }
 
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
 {
@@ -75,7 +75,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
     work->transfer_mode = 1;
     work->transfer_value = 0;
     Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-    Audio_PlayCue(143);
+    AudioCommand_PlayFar(143);
     frame = 0;
     step = 1;
     size = 32;

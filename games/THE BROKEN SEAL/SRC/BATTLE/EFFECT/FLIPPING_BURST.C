@@ -35,13 +35,12 @@
 #include "IO_WRITE_QUEUE.H"
 #include "MAP_SCROLL.H"
 #include "HEAP_STATE.H"
+void Audio_PlayCue(s32 cue);
 
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
-void Audio_PlayCue(s32 cue);
-void Object_ResetMotion(struct MotionObject *object);
-void Object_SetPosition(struct MotionObject *object, s32 x, s32 y, s32 z);
-void Object_SetMode(struct MotionObject *object, s32 mode);
+void ObjectDispatch_InitFromTable6Far(struct MotionObject *object);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct MotionObject *object, s32 mode);
 
 #define HI(v) (((s16 *)&(v))[1]) // 16.16 固定小数の整数部
 
@@ -91,9 +90,9 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 	z = user->z + percent * (target->z - user->z) / 100;
 	user_height = Battle_GetObjectTableValueFar(work->effect->actor);
 	target_height = Battle_GetObjectTableValueFar(work->effect->actors[0]);
-	Object_ResetMotion(user);
-	Object_SetPosition(user, x, 0, z);
-	Object_SetMode(user, 2);
+	ObjectDispatch_InitFromTable6Far(user);
+	Object_SetMoveTargetFar(user, x, 0, z);
+	ObjectDispatch_ApplyArgumentToChildrenFar(user, 2);
 	user->snap_to_target = 1;
 	user->auto_face_motion = 1;
 	user->acceleration = 2 << 16;
@@ -134,8 +133,8 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 			user->acceleration = 1 << 16;
 			user->speed_limit = 2 << 16;
 			user->auto_face_motion = 0;
-			Object_ResetMotion(user);
-			Object_SetPosition(user, 0, 0, user->z);
+			ObjectDispatch_InitFromTable6Far(user);
+			Object_SetMoveTargetFar(user, 0, 0, user->z);
 		}
 		Render_ResetTransformState();
 		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
@@ -172,13 +171,13 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 			user->scale_y = -user->scale_y;
 			user->y -= user_height;
 			target->y -= target_height;
-			Object_SetMode(user, 0);
+			ObjectDispatch_ApplyArgumentToChildrenFar(user, 0);
 		}
 		if (frame == 54)
 			BattleEventRuntime_BeginPhaseFar(134);
 		if (frame == 0)
 		{
-			Audio_PlayCue(136);
+			AudioCommand_PlayFar(136);
 			work->shake_frames = 6;
 		}
 		if (frame == 53)
@@ -259,7 +258,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 		blade->velocity_y = 8 << 16;
 		blade->x <<= 16;
 	}
-	Audio_PlayCue(212);
+	AudioCommand_PlayFar(212);
 	for (frame = 0; frame != 120; frame++)
 	{
 		if (frame <= 16)
@@ -318,7 +317,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 			ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 2);
 			work->shake_frames = 1;
 			if ((frame & 7) == 0)
-				Audio_PlayCue(133);
+				AudioCommand_PlayFar(133);
 		}
 		Camera_ApplyShake(8, 8);
 		ObjectGroup_TickMemberTimers();
@@ -333,7 +332,6 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 
 #define FLECKS ((struct EffectStep *)Ram_MapCellBuffer) // らせんの粒 (128 個)
 
-void AudioCommand_PlayFar(s32 value);
 
 struct BlitterPair
 {
@@ -643,22 +641,22 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	Iwram_FillWords((void *)0x050000c0, 0x100, 0x7fff7fff);
 	/* FAKEMATCH: r5 clobber prunes draw1's r5 preference (its load address is in r5); without it the piece constants swap r5/r7 and the fill routine takes r6, 173/1052. */
 	asm volatile("" ::: "r5");
-	Audio_PlayCue(212);
+	AudioCommand_PlayFar(212);
 	ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 3, 0, 30);
 
 	for (frame = 0; frame != 128; frame++)
 	{
 		if (frame == 2)
-			Audio_PlayCue(212);
+			AudioCommand_PlayFar(212);
 		if (frame == 3)
-			Audio_PlayCue(212);
+			AudioCommand_PlayFar(212);
 		if (frame == 28)
 			ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 3, -1, 0);
 		if (frame == 32)
-			Audio_PlayCue(149);
+			AudioCommand_PlayFar(149);
 		if (frame == 5)
 		{
-			Audio_PlayCue(145);
+			AudioCommand_PlayFar(145);
 			/* FAKEMATCH: barrier; sched2 otherwise loads 0x77a0 before reloading work, 2/1051. */
 			asm("");
 			gBgScroll[1].x = work->saved_bg1_x;

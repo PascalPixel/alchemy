@@ -58,7 +58,7 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(
 }
 
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
 {
@@ -177,7 +177,7 @@ void Battle_AwardSpoils(void)
         unit->experience += spoils->experience;
         while (Iwram_CopyWords(backup, unit, sizeof(struct BtlUnit)),
             Owner_GetValueIfLevelThresholdReachedFar(unit_id, gains) != 0) {
-            Audio_PlayCue(0x59);
+            AudioCommand_PlayFar(0x59);
             UiWork_ClearValueNameTablesFar();
             UiWork_PushValueSlotFar(unit->class_index, 3);
             UiWork_PushValueSlotFar(list[i], 1);
@@ -196,7 +196,7 @@ void Battle_AwardSpoils(void)
                         UiWork_PushValueSlotFar(unit->class_index, 3);
                         UiWork_PushValueSlotFar(unit_id, 1);
                         UiWork_PushValueSlotFar(learned & OWNER_ACTION_ID_MASK, 4);
-                        Audio_PlayCue(0x9a);
+                        AudioCommand_PlayFar(0x9a);
                         UiText_ShowMessageAndWaitCoreFar((s32)MsgAbilityMastered);
                         BattlePresentation_WaitForAdvance();
                     }

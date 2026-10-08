@@ -15,6 +15,8 @@
 #include "SHOP.H"
 #include "FIXED_POINT_POSITION.H"
 #include "text/MSG_IDS.H"
+void RenderOutput_PrepareForRedrawFar(s32 window);
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 extern struct ShopRuntime *gMenuWork;
 
@@ -39,7 +41,7 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 
         for (i = 0; i < 15; i++) {
             if (unit->inventory[i] & 0x200) {
-                if (Item_Get(unit->inventory[i])->flags & 1) {
+                if (Item_GetDirectFar(unit->inventory[i])->flags & 1) {
                     unit->inventory[i] ^= 0x200;
                     UnitCalcFar(id);
                 }
@@ -75,7 +77,7 @@ void Shop_DrawSelMsg(s32 target, s32 selection)
     variant = gMenuWork->party_action;
     message = Shop_ServicePrice(selection, variant);
     if (target != 0) {
-        UiWindow_Clear(target);
+        RenderOutput_PrepareForRedrawFar(target);
         if (Shop_CanServe(selection, variant) != 0) {
             variant = (s32)MsgReviveCost;
         } else {

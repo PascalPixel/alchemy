@@ -29,6 +29,7 @@
 #include "UI.H"
 #include "BTLCALC.H"
 #include "text/MSG_IDS.H"
+s32 GameFlag_TestFar(s32 flag);
 
 #define BattleParty_ReconcileDjinnRecovery ((void (*)(void))BattleParty_ReconcileDjinnRecovery)
 #define BattleSummon_UpdateAvailability ((void (*)(void))BattleSummon_UpdateAvailability)
@@ -124,7 +125,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
     Runtime_AllocateBlock(4, 0xe00);
     Runtime_AllocateBlock(3, 0x600);
     ObjectSystem_InitializeFar(4);
-    if (GameFlag_IsSet(FLAG_DJINN_TUTORIAL) != 0)
+    if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0)
         UiWork_InitializeFar(1);
     else
         UiWork_InitializeFar(0);
@@ -140,7 +141,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
     camera->distance = 0x1000000;
     object = BattleFormation_BuildEnemyList(battle->enm_grp);
 
-    if (GameFlag_IsSet(FLAG_LINK_BATTLE) != 0) {
+    if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
         battle->two_sided = 1;
         Battle_SetStart(4);
     }
@@ -169,7 +170,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
     cue = gGameState.scene_cue;
     if (cue != 0) {
         AudioCommand_PlayFar(cue);
-        if (GameFlag_IsSet(FLAG_LINK_BATTLE) != 0) {
+        if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
             AudioCommand_PlayFar(55);
             Sound_LoadPresetParameters(4);
         }
@@ -198,7 +199,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
     Summon_ClearWorkFields();
     battle->prompt_slot = Resource_LoadIntoFreeSlot(128);
     battle->encounter_mode = 0;
-    if (GameFlag_IsSet(FLAG_DJINN_TUTORIAL) != 0) {
+    if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0) {
         battle->encounter_mode = 1;
     } else if (gGameState.battle_start == 0) {
         if ((BtlRndFar() & 15) == 0)
@@ -223,7 +224,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
         PtyStDrawFar(battle->pty_st);
         Iwram_ClearWords(battle->actions, 0x140);
         Resource_ResetEntry(battle->prompt_slot);
-        if (GameFlag_IsSet(FLAG_AUTO_BATTLE) == 0) {
+        if (GameFlag_TestFar(FLAG_AUTO_BATTLE) == 0) {
             Runtime_GetRemainingIwram();
             Runtime_GetRemainingEwram();
             count = BattlePresentation_BuildActions(battle->actions);
@@ -241,7 +242,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
             actor = battle->actions[i].unit_id;
             Runtime_GetRemainingIwram();
             Runtime_GetRemainingEwram();
-            if (GameFlag_IsSet(FLAG_AUTO_BATTLE) == 0) {
+            if (GameFlag_TestFar(FLAG_AUTO_BATTLE) == 0) {
                 if (BattlePresentation_DispatchAction(&battle->actions[i], i == 0 ? 10 : 0) == 1)
                     goto interrupted;
             } else {
@@ -271,7 +272,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
         } else {
             WaitFrames(20);
         }
-        if (GameFlag_IsSet(FLAG_DJINN_TUTORIAL) == 0)
+        if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) == 0)
             continue;
 
         handle = UiText_OpenMessageWindowFar((s32)MsgTutorialUnleashed, 0, 4, 1);
@@ -287,7 +288,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 
 resolved:
     Battle_ClearSerialTransferPayload();
-    if (GameFlag_IsSet(FLAG_DJINN_TUTORIAL) == 0) {
+    if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) == 0) {
         if (battle->two_sided != 0)
             AudioCommand_PlayFar(58);
         if (battle->spoils.defeated != 0) {

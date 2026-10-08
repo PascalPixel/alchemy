@@ -19,6 +19,7 @@
 #include "BTLSYS.H"
 #include "OBJECT_RUNTIME.H"
 #include "text/MSG_IDS.H"
+void AudioCommand_PlayFar(s32 cue);
 
 #define gKeyState (*(volatile u32 *)&gKeyState)
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
@@ -273,7 +274,7 @@ s32 Sanctum_RunPartyService(void)
             WaitFrames(1);
             price = Shop_ServicePrice(unit_id, kind);
             if (Shop_CanServe(unit_id, kind) == 0) {
-                Audio_PlayCue(SOUND_MENU_CANCEL);
+                AudioCommand_PlayFar(SOUND_MENU_CANCEL);
                 continue;
             }
             UiWork_PushValueSlotFar(unit_id, 1);
@@ -286,7 +287,7 @@ s32 Sanctum_RunPartyService(void)
                 continue;
             }
             if (price > (u32)gGameState.coins) {
-                Audio_PlayCue(SOUND_MENU_CANCEL);
+                AudioCommand_PlayFar(SOUND_MENU_CANCEL);
                 UiMessage_ShowResolvedAndRestoreState(message + 1);
                 retry = 1;
                 continue;
@@ -306,16 +307,16 @@ s32 Sanctum_RunPartyService(void)
             }
             break;
         } else if ((gKeyState & KEY_B) != 0) {
-            Audio_PlayCue(SOUND_MENU_CANCEL);
+            AudioCommand_PlayFar(SOUND_MENU_CANCEL);
             break;
         } else {
             if ((gKeysRepeat & KEY_LEFT) != 0) {
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
                 selection -= 1;
             }
             if ((gKeysRepeat & KEY_RIGHT) != 0) {
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
                 selection += 1;
             }

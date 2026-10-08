@@ -26,6 +26,8 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "BTLOBJ.H"
 #include "FIELD_EVENT.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 #define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct MotionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
 #define BattleFx_DispatchByIdRangeFar ((void (*)(struct BattlePresentationWork*))BattleFx_DispatchByIdRangeFar)
@@ -266,7 +268,7 @@ s32 BattlePres_RunItem(struct BtlPlan *plan, s32 unused,
     BattlePres_BuildTargetList(plan, &work);
     BattlePres_SetActorModes(0, 0);
     object = BtlObjGet(work.actor)->object;
-    Object_SetMode(object, 3);
+    ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);
     if (plan->tgt_no[0] <= 7)
         work.side = 1;
@@ -310,13 +312,13 @@ s32 BattlePres_RunItem(struct BtlPlan *plan, s32 unused,
         WaitFrames(60);
     }
     BattleEventRuntime_WaitForReady();
-    Object_SetMode(object, 1);
+    ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
     for (i = 0; i != work.count; i++)
         ObjMotRst(work.actors[i]);
 
     unit = UnitGetFar(selection->unit_id);
     item = unit->inventory[selection->parameter];
-    def = Item_Get(item);
+    def = Item_GetDirectFar(item);
     if (def->use_type == 1) {
         s32 result = Inventory_RemoveFar(selection->unit_id, selection->parameter);
         s32 index = selection->parameter;

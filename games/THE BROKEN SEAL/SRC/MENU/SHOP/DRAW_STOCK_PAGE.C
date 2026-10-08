@@ -9,8 +9,11 @@
 #include "SYSTEM.H"
 #include "SHOP.H"
 #include "FIXED_MATH.H"
+void RenderOutput_PrepareForRedrawFar(s32 window);
+struct ItemDefinition *Item_GetDirectFar(s32 item);
+struct RenderOutput *RenderOutput_CreateLoadedFar(s32 code, s32 layers, struct RenderInput *input, s32 x, s32 y);
 
-#define UiIcon_Draw ((struct RenderOutput * (*)(s32,s32,s32,s32,s32))UiIcon_Draw)
+#define RenderOutput_CreateLoadedFar ((struct RenderOutput * (*)(s32,s32,s32,s32,s32))RenderOutput_CreateLoadedFar)
 extern struct ShopRuntime *gMenuWork;
 
 
@@ -35,7 +38,7 @@ void Shop_DrawStock(s32 window, s32 selected)
     item_count = shop->stock_count;
     first = selected - selected % 7;
     if (window != 0) {
-        UiWindow_Clear(window);
+        RenderOutput_PrepareForRedrawFar(window);
         if (first != 0) {
             icon = RenderOutput_CreateFar(shop->previous_page_icon, 0x40000000,
                                  (struct RenderInput *)window, 216, -16);
@@ -59,8 +62,8 @@ void Shop_DrawStock(s32 window, s32 selected)
             for (; (u32)slot <= 6 && first < (u32)item_count;
                  x += 32, slot++, item_id++, first++) {
                 stock_item = *item_id;
-                definition = Item_Get(stock_item);
-                icon = UiIcon_Draw(
+                definition = Item_GetDirectFar(stock_item);
+                icon = RenderOutput_CreateLoadedFar(
                     stock_item, 1, window, slot * 32, 0);
                 icon->sentinel = 252;
                 if (first == selected) {

@@ -283,8 +283,8 @@ struct MarkerWork
 struct ScriptObjectRuntime *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ScriptObjectRuntime *object, s32 value);
 void ObjectDispatch_ReleaseFar(struct ScriptObjectRuntime *object);
-void Object_SetMode(struct ScriptObjectRuntime *object, s32 mode);
-void Object_ResetMotion(struct ScriptObjectRuntime *object);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct ScriptObjectRuntime *object, s32 mode);
+void ObjectDispatch_InitFromTable6Far(struct ScriptObjectRuntime *object);
 
 //--------------------------------------------------------------------------
 // マーカーの位置に、対応するイベントの物体を置く
@@ -338,9 +338,9 @@ void Battle_PlaceMapMarkers(void)
 						ObjectDispatch_ReleaseFar(obj);
 						continue;
 					}
-					Object_SetMode(obj, 2);
+					ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
 				}
-				Object_ResetMotion(obj);
+				ObjectDispatch_InitFromTable6Far(obj);
 				obj->home_x = obj->x / 0x10000;
 				obj->home_z = obj->z / 0x10000;
 				obj->unknown_23 = 1;
@@ -366,8 +366,8 @@ void Battle_PlaceMapMarkers(void)
 					continue;
 				ObjectMotion_SnapToTerrain(obj);
 				ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
-				Object_ResetMotion(obj);
-				Object_SetMode(obj, 1);
+				ObjectDispatch_InitFromTable6Far(obj);
+				ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
 				obj->home_x = obj->x / 0x10000;
 				obj->home_z = obj->z / 0x10000;
 				obj->flags_59 = 1;

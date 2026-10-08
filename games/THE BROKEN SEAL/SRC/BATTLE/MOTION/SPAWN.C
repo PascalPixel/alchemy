@@ -74,7 +74,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
             object->record_storage_kind = 2;
             object->records = objects;
             Iwram_ClearWords(objects, 16);
-            res = GetBattleEffectObject(resource);
+            res = ResourceObject_CreateFar(resource);
             if (res != 0) {
                 res->scale = Iwram_MulQ16(res->scale, slot->scale);
                 object->height = Resource_GetMetadataRecordFar(resource)->box_y >> 1;
@@ -82,14 +82,14 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
                 objects = &((struct PairedObjectList *)table)->objects[1];
             }
             res->flags = 0;
-            res = GetBattleEffectObject(resource + 0x2001);
+            res = ResourceObject_CreateFar(resource + 0x2001);
             if (res != 0) {
                 res->scale = Iwram_MulQ16(res->scale, slot->scale);
                 *objects = res;
             }
             res->flags = 0;
         } else {
-            res = GetBattleEffectObject(slot->resource);
+            res = ResourceObject_CreateFar(slot->resource);
             if (res != 0) {
                 object->record_storage_kind = 1;
                 object->records = res;

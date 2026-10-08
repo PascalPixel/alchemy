@@ -178,9 +178,9 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
 	s32					  i;
 
 	work = gEventWork;
-	if (GameFlag_IsSet(351) != 0)
+	if (GameFlag_TestFar(351) != 0)
 		goto encounter;
-	if (GameFlag_IsSet(352) != 0 || GameFlag_IsSet(353) != 0)
+	if (GameFlag_TestFar(352) != 0 || GameFlag_TestFar(353) != 0)
 		return 0;
 	if (zone == 0)
 		return 0;
@@ -190,7 +190,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
 	rate = entry->rate;
 	if (rate == 0)
 		return 0;
-	if (GameFlag_IsSet(5) != 0)
+	if (GameFlag_TestFar(5) != 0)
 	{
 		level = (s32)UnitGetFar(5)->experience;
 		if (level > 130)

@@ -32,9 +32,9 @@ struct FallbackPosition
 extern struct BattleFxScene *gEffectWork;
 
 struct MotionObject *Object_Spawn(s32, s32, s32, s32);
-void				 Object_SetMode(struct MotionObject *, s32);
+void				 ObjectDispatch_ApplyArgumentToChildrenFar(struct MotionObject *, s32);
 void				 WaitFrames(s32);
-void				 Audio_PlayCue(s32);
+void				 AudioCommand_PlayFar(s32);
 u32					 Random16(void);
 void				 Vector_AddPolarOffset(s32, u32, s32 *);
 void				 ObjectDispatch_ReleaseFar(struct MotionObject *);
@@ -57,7 +57,7 @@ void BattleEffect_RunFallbackObjectTransition(void)
 	scene->y = user->y;
 	obj = Object_Spawn(250, 0, 0, 0);
 	step = 0;
-	Object_SetMode(obj, 0);
+	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
 	if (obj == 0)
 		return;
 
@@ -87,14 +87,14 @@ void BattleEffect_RunFallbackObjectTransition(void)
 	}
 
 	WaitFrames(5);
-	Object_SetMode(obj, 1);
-	Audio_PlayCue(SOUND_TRIPLE_TONE_LOW);
+	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
+	AudioCommand_PlayFar(SOUND_TRIPLE_TONE_LOW);
 	WaitFrames(10);
-	Audio_PlayCue(SOUND_TRIPLE_TONE_LOW);
+	AudioCommand_PlayFar(SOUND_TRIPLE_TONE_LOW);
 	WaitFrames(10);
-	Audio_PlayCue(SOUND_TRIPLE_TONE_LOW);
+	AudioCommand_PlayFar(SOUND_TRIPLE_TONE_LOW);
 	WaitFrames(10);
-	Audio_PlayCue(SOUND_TRIPLE_TONE_HIGH);
+	AudioCommand_PlayFar(SOUND_TRIPLE_TONE_HIGH);
 
 	// その周り 4 ドットに粒を置き、外へ飛ばしてから効果の位置へ戻す
 	slot = &scene->slots[0];

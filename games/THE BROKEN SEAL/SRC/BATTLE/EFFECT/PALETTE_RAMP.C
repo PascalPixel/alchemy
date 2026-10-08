@@ -27,7 +27,7 @@
 
 #define SceneTransform_ApplyPosition ((void (*)(s32 *))SceneTransform_ApplyPosition)
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 void BattleFx_RunPaletteRampMode0(struct BattleEffectArgument *effect)
 {
@@ -187,7 +187,7 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
 						draw[1](canvas, work->sheet + time / 4 % 6 * 1600, x - 20, y - 20, 40, 40);
 				}
 				if (time == 24)
-					Audio_PlayCue(143);
+					AudioCommand_PlayFar(143);
 				if (time >= 24 && time <= 60)
 				{
 					s32 level;

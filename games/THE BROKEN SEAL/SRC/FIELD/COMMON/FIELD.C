@@ -46,7 +46,7 @@ s32 Map_GetTerrainHeight(u32 layer, s32 x, s32 z);
 void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 value);
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
 s32 ArcTan2(s32 y, s32 x);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 extern u8 ResourceBlockOwners[];
 
 
@@ -79,7 +79,7 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
                 free++;
         }
         if (free - 136 < 0)
-            Audio_PlayCue(135);
+            AudioCommand_PlayFar(135);
     }
     if (gDebugMode != 0) {
         s32 mask;

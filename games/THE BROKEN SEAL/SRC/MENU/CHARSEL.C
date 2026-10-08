@@ -30,7 +30,7 @@
 #define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
 
 struct InventoryMenuState;
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void PsynergyMenu_InitializeEntryObjects();
 void Menu_SpawnIconEntries(struct InventoryMenuState *menu, s32 window);
 
@@ -80,18 +80,18 @@ s32 CharacterSelector_RunRearrange(void)
         UiMenu_PositionCursor(cursor * 24 - 10, 16);
         WaitFrames(1);
         if (gKeyState & KEY_A) {
-            Audio_PlayCue(0x70);
+            AudioCommand_PlayFar(0x70);
             result = 1;
             break;
         }
         if (gKeyState & KEY_B) {
-            Audio_PlayCue(0x71);
+            AudioCommand_PlayFar(0x71);
             result = -1;
             break;
         }
         if (gKeysRepeat & KEY_R) {
             if (CharacterSelector_MoveEntry(cursor, 1)) {
-                Audio_PlayCue(0x70);
+                AudioCommand_PlayFar(0x70);
                 cursor++;
                 Menu_ReleaseEntryObjects();
                 PsynergyMenu_InitializeEntryObjects(work->owner_window, 2, 2, 8, 0);
@@ -99,12 +99,12 @@ s32 CharacterSelector_RunRearrange(void)
                     work->owner_y[i] = 30;
                 work->owner_y[cursor] = 26;
             } else {
-                Audio_PlayCue(0x72);
+                AudioCommand_PlayFar(0x72);
             }
             WaitFrames(1);
         } else if (gKeysRepeat & KEY_L) {
             if (CharacterSelector_MoveEntry(cursor, 0)) {
-                Audio_PlayCue(0x70);
+                AudioCommand_PlayFar(0x70);
                 cursor--;
                 Menu_ReleaseEntryObjects();
                 PsynergyMenu_InitializeEntryObjects(work->owner_window, 2, 2, 8, 0);
@@ -112,7 +112,7 @@ s32 CharacterSelector_RunRearrange(void)
                     work->owner_y[i] = 30;
                 work->owner_y[cursor] = 26;
             } else {
-                Audio_PlayCue(0x72);
+                AudioCommand_PlayFar(0x72);
             }
             WaitFrames(1);
         } else if ((gKeyState & KEY_SELECT) && GameFlag_TestFar(48)) {
@@ -120,14 +120,14 @@ s32 CharacterSelector_RunRearrange(void)
             redraw = 1;
         } else {
             if (gKeysRepeat & KEY_LEFT) {
-                Audio_PlayCue(0x6f);
+                AudioCommand_PlayFar(0x6f);
                 if (count > 1) {
                     cursor--;
                     redraw = 1;
                 }
             }
             if (gKeysRepeat & KEY_RIGHT) {
-                Audio_PlayCue(0x6f);
+                AudioCommand_PlayFar(0x6f);
                 if (count > 1) {
                     redraw = 1;
                     cursor++;
@@ -174,12 +174,12 @@ s32 PsynergyMenu_SelectOwner(void)
         UiMenu_PositionCursor(selection * 24 - 10, 16);
         WaitFrames(1);
         if (gKeyState & KEY_A) {
-            Audio_PlayCue(112);
+            AudioCommand_PlayFar(112);
             result = 1;
             break;
         }
         if (gKeyState & KEY_B) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             result = -1;
             break;
         }
@@ -187,14 +187,14 @@ s32 PsynergyMenu_SelectOwner(void)
             volatile u32 *repeat = &gKeysRepeat;
 
             if (*repeat & 32) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 if (count > 1) {
                     selection--;
                     pending = 1;
                 }
             }
             if (*repeat & 16) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 if (count > 1) {
                     selection++;
                     pending = 1;
@@ -386,39 +386,39 @@ s32 CharacterMenu_SelectCommand(void)
             if (gKeysRepeat & KEYS_DPAD)
                 CharacterMenu_DrawSelectionCursor(pane, selected, entries, 1);
             if (gKeyState & KEY_A) {
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
                 done = 1;
                 result = 1;
                 break;
             }
             if (gKeyState & KEY_B) {
-                Audio_PlayCue(113);
+                AudioCommand_PlayFar(113);
                 done = 1;
                 result = -1;
                 break;
             }
             if (gKeysRepeat & KEY_UP) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 redraw = 1;
                 selected--;
             }
             if (gKeysRepeat & KEY_DOWN) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 redraw = 1;
                 selected++;
             }
             if (gKeysRepeat & KEY_RIGHT) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 redraw = 1;
                 pane++;
             }
             if (gKeysRepeat & KEY_LEFT) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 redraw = 1;
                 pane--;
             }
             if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 tab = menu->owner_index[0];
                 if (gKeysRepeat & KEY_R)
                     tab++;

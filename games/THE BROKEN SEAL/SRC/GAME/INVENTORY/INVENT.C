@@ -19,6 +19,7 @@
 #include "FIELD_EVENT.H"
 #include "BTLPTY.H"
 #include "B5_CONTEXT.H"
+s32 Menu_RunConfirmSelectionFar(s32, s32, s32, s32);
 
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
 
@@ -85,7 +86,7 @@ s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 force_bottom)
             use_bottom = 0;
     }
 
-    answer = Inventory_RequestMode(use_bottom, work->resource_base, work->width, 0);
+    answer = Menu_RunConfirmSelectionFar(use_bottom, work->resource_base, work->width, 0);
     if (answer != 0) {
         Object_SetModeById(actor, 4);
         UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);

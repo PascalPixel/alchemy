@@ -77,12 +77,12 @@ extern volatile u32			 gKeysHeld;
 extern volatile u32			 gFrameCount;
 
 void WaitFrames(s32 frames);
-void Object_CommitPosition(struct FxObject *object);
+void Script_WaitForEventTimeoutFar(struct FxObject *object);
 void AudioCommand_PlayFar(s32 cue);
 void ObjectDispatch_SetSingleChildFlagsFar(struct FxObject *object, s32 value);
-void Object_SetMode(struct FxObject *object, s32 mode);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FxObject *object, s32 mode);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct FxPosition *position);
-s32	 Object_CheckMovementCollision(struct FxObject *object, struct FxPosition *position);
+s32	 Map_CheckObjectStepFar(struct FxObject *object, struct FxPosition *position);
 struct FxObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void			 ObjectDispatch_ReleaseFar(struct FxObject *object);
 void			 Animation_ApplyChildValuesFar(struct FxObject *object, s32 value);
@@ -97,7 +97,7 @@ static __inline__ s32 ObjProbeUp(struct FxObject *obj, struct FxPosition *pos)
 	s32 hit;
 
 	obj->ground += 16 << 16;
-	hit = Object_CheckMovementCollision(obj, pos);
+	hit = Map_CheckObjectStepFar(obj, pos);
 	obj->ground -= 16 << 16;
 	return hit;
 }
@@ -152,8 +152,8 @@ void BattleFx_SteerLiftedTarget(s32 id)
 	p->z = target->z;
 	Object_SetMoveTargetFar(obj, p->x + (16 << 16), p->y, p->z);
 	Object_SetMoveTargetFar(right, p->x - (16 << 16), p->y, p->z);
-	Object_CommitPosition(obj);
-	Object_CommitPosition(right);
+	Script_WaitForEventTimeoutFar(obj);
+	Script_WaitForEventTimeoutFar(right);
 	obj->x = p->x + (16 << 16);
 	obj->velocity_x = 0;
 	right->x = p->x - (16 << 16);
@@ -202,8 +202,8 @@ void BattleFx_SteerLiftedTarget(s32 id)
 			pos.z = target->z;
 			Object_SetMoveTargetFar(hands[0], pos.x + (16 << 16), pos.y, pos.z);
 			Object_SetMoveTargetFar(hands[1], pos.x - (16 << 16), pos.y, pos.z);
-			Object_SetMode(hands[0], 1);
-			Object_SetMode(hands[1], 1);
+			ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 1);
+			ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 1);
 			continue;
 		}
 
@@ -214,8 +214,8 @@ void BattleFx_SteerLiftedTarget(s32 id)
 		Vector_AddPolarOffset(2 << 16, angle, &pos);
 		Object_SetMoveTargetFar(hands[0], pos.x + (16 << 16), pos.y, pos.z);
 		Object_SetMoveTargetFar(hands[1], pos.x - (16 << 16), pos.y, pos.z);
-		Object_CommitPosition(hands[0]);
-		Object_CommitPosition(hands[1]);
+		Script_WaitForEventTimeoutFar(hands[0]);
+		Script_WaitForEventTimeoutFar(hands[1]);
 		pos.x = target->x;
 		pos.y = target->ground;
 		pos.z = target->z;
@@ -227,8 +227,8 @@ void BattleFx_SteerLiftedTarget(s32 id)
 		if (ObjProbeUp(target, p) > 0)
 		{
 		blocked: // ふさがっている : 16 フレームごとにブザー
-			Object_SetMode(hands[0], 4);
-			Object_SetMode(hands[1], 4);
+			ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
+			ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
 			if ((gFrameCount & 15) == 0)
 				AudioCommand_PlayFar(SOUND_MENU_ERROR);
 			continue;
@@ -242,8 +242,8 @@ void BattleFx_SteerLiftedTarget(s32 id)
 			AudioCommand_PlayFar(175);
 			x = p->x;
 			z = p->z;
-			Object_SetMode(hands[0], 4);
-			Object_SetMode(hands[1], 4);
+			ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
+			ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
 			WaitFrames(15);
 			target->unknown_5b = i;
 			target->speed = 0x3333;
@@ -256,7 +256,7 @@ void BattleFx_SteerLiftedTarget(s32 id)
 			second->lift = 0x3333;
 			Object_SetMoveTargetFar(hands[0], p->x + (16 << 16), p->y, p->z);
 			Object_SetMoveTargetFar(second, p->x - (16 << 16), p->y, p->z);
-			Object_CommitPosition(target);
+			Script_WaitForEventTimeoutFar(target);
 			target->x = x;
 			target->z = z;
 			target->velocity_x = i;
@@ -269,8 +269,8 @@ void BattleFx_SteerLiftedTarget(s32 id)
 	//------------------------------------------------------------------
 	// 対象の位置から破片を飛ばして持ち手を消し、対象を跳ねさせて落とす
 	//------------------------------------------------------------------
-	Object_SetMode(hands[0], 4);
-	Object_SetMode(hands[1], 4);
+	ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
+	ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
 	Scheduler_RemoveCallback(BattleFx_SpawnFallingParticles);
 	AudioCommand_PlayFar(135);
 	WaitFrames(15);

@@ -14,6 +14,7 @@
 #include "GAME_STATE.H"
 #include "BTLSYS.H"
 #include "text/MSG_IDS.H"
+void UiWork_InitializeWithResourceCountersFar(void);
 
 #define gWindowWork (*(u8 * *)&gWindowWork)
 
@@ -36,7 +37,7 @@ extern volatile s32 gKeysRepeat;
 #define DEBUG_VIEW_LIMIT \
     ((s32)MsgRariberoHowDidSearchForSheba - (s32)MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely + 5)
 
-void UiText_DrawQuantity(s32, s32);
+void UiWork_PushValueSlotFar(s32, s32);
 s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
 void UiWork_FinalizeFar(s32, s32);
@@ -60,7 +61,7 @@ void DebugBattle_ViewMessages(void)
             break;
     }
     unit->name[14] = 0;
-    FarCall_WindowTable();
+    UiWork_InitializeWithResourceCountersFar();
     AudioCommand_PlayFar(71);
     for (;;) {
         index = 0;
@@ -72,11 +73,11 @@ void DebugBattle_ViewMessages(void)
         gGameState.message_speed = 2;
         for (;;) {
             UiWork_ClearValueNameTablesFar();
-            UiText_DrawQuantity(999, 5);
-            UiText_DrawQuantity(0, 3);
-            UiText_DrawQuantity(1, 1);
-            UiText_DrawQuantity(1, 2);
-            UiText_DrawQuantity(2, 4);
+            UiWork_PushValueSlotFar(999, 5);
+            UiWork_PushValueSlotFar(0, 3);
+            UiWork_PushValueSlotFar(1, 1);
+            UiWork_PushValueSlotFar(1, 2);
+            UiWork_PushValueSlotFar(2, 4);
             if (second == 0) {
                 message = (s32)MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely;
                 window = UiText_OpenMessageWindowFar(index + message, 2, 10, 4);

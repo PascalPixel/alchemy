@@ -16,6 +16,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
 
 struct PlacementDescriptor {
     u8 pad_00[0x2c];
@@ -48,11 +49,11 @@ void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
 
     for (i = 0; i < 4 && descriptor->kinds[i] != -1; i++) {
         struct AnimationObject *object =
-            GetBattleEffectObject(Party_RemapCharacterIdIfEnabledFar(descriptor->kinds[i],
+            ResourceObject_CreateFar(Party_RemapCharacterIdIfEnabledFar(descriptor->kinds[i],
                                         descriptor->variant));
 
         if (object != 0) {
-            Object_InitializeMode(object, 1);
+            AnimationObjects_SelectAnimationFar(object, 1);
             ((struct FieldSprite *)object)->flags = 0;
             ((struct FieldSprite *)object)->priority = 0;
         }

@@ -22,6 +22,7 @@
 #include "FIELD_SPRITE.H"
 #include "WORKSPACE_OPTIONS.H"
 #include "BTLSYS.H"
+void AudioCommand_PlayFar(s32 cue);
 
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 #define gKeyState (*(u32 *)&gKeyState)
@@ -342,7 +343,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
             ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->y = ((struct RenderOutput *)slot)->y + NameEntry_CaretWave[(frame + 5) & 7];
         }
         if (gKeysRepeat & KEY_UP) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             cursor_dirty = 1;
             row--;
             if (column != 18) {
@@ -354,7 +355,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
             }
         }
         if (gKeysRepeat & KEY_DOWN) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             cursor_dirty = 1;
             row++;
             if (column != 18) {
@@ -366,7 +367,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
             }
         }
         if (gKeysRepeat & KEY_LEFT) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             cursor_dirty = 1;
             column--;
             if (column == -1) {
@@ -378,7 +379,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
             }
         }
         if (gKeysRepeat & KEY_RIGHT) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             cursor_dirty = 1;
             column++;
             if (column == 19)
@@ -389,13 +390,13 @@ s32 NameEntry_EditOwnerName(s32 entry)
                 column = 0;
         }
         if (gKeyState & KEY_START) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             cursor_dirty = 1;
             column = 18;
             row = 5;
         }
         if (gKeysRepeat & KEY_B) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
 remove_character:
             if (length != 0) {
                 length--;
@@ -410,7 +411,7 @@ remove_character:
         }
         if (!(gKeysRepeat & KEY_A))
             continue;
-        Audio_PlayCue(112);
+        AudioCommand_PlayFar(112);
         if (column == 18) {
             if (row == 5) {
                 if (length == 0) {
@@ -571,7 +572,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
             ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->y = ((struct RenderOutput *)slot)->y + NameEntry_CaretWave[(frame + 5) & 7];
         }
         if (gKeysRepeat & KEY_UP) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             cursor_dirty = 1;
             row--;
             if (column != 18) {
@@ -589,7 +590,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
             }
         }
         if (gKeysRepeat & KEY_DOWN) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             cursor_dirty = 1;
             row++;
             if (column != 18) {
@@ -607,7 +608,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
             }
         }
         if (gKeysRepeat & KEY_LEFT) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             cursor_dirty = 1;
             column--;
             if (column == -1) {
@@ -620,7 +621,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
             }
         }
         if (gKeysRepeat & KEY_RIGHT) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             cursor_dirty = 1;
             column++;
             if (column == 19)
@@ -635,13 +636,13 @@ s32 NameEntry_EditOwnerName(s32 entry)
             }
         }
         if (gKeyState & KEY_START) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             cursor_dirty = 1;
             column = 18;
             row = 10;
         }
         if (gKeyState & KEY_SELECT) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
 change_keyboard:
             keyboard ^= 1;
             if (keyboard)
@@ -653,7 +654,7 @@ change_keyboard:
             continue;
         }
         if (gKeysRepeat & KEY_B) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
 remove_character:
             if (length != 0) {
                 length--;
@@ -675,7 +676,7 @@ remove_character:
         }
         if (!(gKeysRepeat & KEY_A))
             continue;
-        Audio_PlayCue(112);
+        AudioCommand_PlayFar(112);
         if (column == 18) {
             if (row == 10) {
                 if (length == 0) {
@@ -718,7 +719,7 @@ remove_character:
                 continue;
             dst = input + bytes;
             if (!NameEntry_AcceptsMark(character, input[bytes - 1])) {
-                Audio_PlayCue(113);
+                AudioCommand_PlayFar(113);
                 continue;
             }
             *dst = character;

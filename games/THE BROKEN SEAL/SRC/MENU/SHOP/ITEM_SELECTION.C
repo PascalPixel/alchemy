@@ -16,7 +16,7 @@ extern struct ShopRuntime *gMenuWork;
 
 void UiWork_FinalizeFar(s32 window, s32 style);
 void PsynergyMenu_InitializeEntryObjectsFar();
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 {
@@ -60,11 +60,11 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
         WaitFrames(1);
         if ((gKeyState & KEY_A) != 0) {
             if (Inventory_CountFar(unit_id) == 0) {
-                Audio_PlayCue(0x71);
+                AudioCommand_PlayFar(0x71);
                 continue;
             }
 
-            Audio_PlayCue(0x70);
+            AudioCommand_PlayFar(0x70);
             item_slot = Shop_SelUse(unit_id);
             if (item_slot == -1) {
                 shop->cursor.anchor->active = 4;
@@ -79,7 +79,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
         }
 
         if ((gKeyState & KEY_B) != 0) {
-            Audio_PlayCue(0x71);
+            AudioCommand_PlayFar(0x71);
             *selected_unit = -1;
             *selected_item = -1;
             result = -1;
@@ -87,12 +87,12 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
         }
 
         if ((gKeysRepeat & KEY_LEFT) != 0) {
-            Audio_PlayCue(0x6f);
+            AudioCommand_PlayFar(0x6f);
             selected_index--;
             redraw = 1;
         }
         if ((gKeysRepeat & KEY_RIGHT) != 0) {
-            Audio_PlayCue(0x6f);
+            AudioCommand_PlayFar(0x6f);
             selected_index++;
             redraw = 1;
         }
@@ -113,6 +113,9 @@ done:
 #include "SYSTEM.H"
 #include "UI.H"
 #include "text/MSG_IDS.H"
+void UiText_DrawNumberInWindowFar(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
+s32 Inventory_CountFar(s32);
+struct BtlUnit *UnitGetFar(s32 object_id);
 
 #define gKeyState (*(volatile u32 *)&gKeyState)
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
@@ -137,7 +140,7 @@ s32 Shop_SelUse(s32 actor)
     s32 x;
     s32 y;
 
-    object = Runtime_GetObject(actor);
+    object = UnitGetFar(actor);
     count = 1;
     result = 0;
     redraw = 1;
@@ -154,7 +157,7 @@ s32 Shop_SelUse(s32 actor)
     for (;;) {
         if (redraw != 0) {
             redraw = 0;
-            count = Ability_GetAvailability(actor);
+            count = Inventory_CountFar(actor);
             if (selection > count - 1)
                 selection = count - 1;
 
@@ -173,7 +176,7 @@ s32 Shop_SelUse(s32 actor)
         if ((gKeyState & KEY_A) != 0) {
             status = Inventory_CheckDiscardFar(actor, selection);
             if (status == 0) {
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
                 result = selection;
                 goto exit_loop;
             } else if (status == -4) {
@@ -181,7 +184,7 @@ s32 Shop_SelUse(s32 actor)
             } else if (result == -3) {
                 UiText_OpenMessageWindowFar((s32)MsgCannotRemoveIt, 8, 1, 2);
             }
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             while (UiWork_IsCompleteFar() == 0)
                 WaitFrames(1);
             UiWork_FinalizePendingCoreFar();
@@ -189,19 +192,19 @@ s32 Shop_SelUse(s32 actor)
         }
 
         if ((gKeyState & KEY_B) != 0) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             result = -1;
             goto exit_loop;
         }
 
         if ((gKeysRepeat & KEY_LEFT) != 0) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             selection -= 1;
             selection = (selection + count) % count;
             redraw = 1;
         }
         if ((gKeysRepeat & KEY_RIGHT) != 0) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             selection += 1;
             selection = (selection + count) % count;
             redraw = 1;
@@ -212,7 +215,7 @@ s32 Shop_SelUse(s32 actor)
                 selection += 15;
             while (selection >= count)
                 selection -= 5;
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             redraw = 1;
         }
         if ((gKeysRepeat & KEY_DOWN) != 0) {
@@ -221,7 +224,7 @@ s32 Shop_SelUse(s32 actor)
                 selection -= 15;
             while (selection < 0)
                 selection += 5;
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             redraw = 1;
         }
     }
@@ -243,7 +246,7 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
     if (window != 0) {
         s32 result;
 
-        UiWindow_Commit(window);
+        RenderOutput_RedrawSavedRectFar(window);
         UiText_DrawCharacterAtOffsetFar(masked + (s32)MsgItemName, window, 0, 0);
 
         result = Inventory_CheckDiscardFar(unit_id, item_id);
@@ -268,23 +271,23 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_IT)
             UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
-            UiNumber_DrawAt(total, 5, window, 40, 8);
+            UiText_DrawNumberInWindowFar(total, 5, window, 40, 8);
             UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 80, 8);
 #elif defined(TBS_EDITION_DE)
             UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 0, 8);
-            UiNumber_DrawAt(total, 5, window, 32, 8);
+            UiText_DrawNumberInWindowFar(total, 5, window, 32, 8);
             UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 72, 8);
 #elif defined(TBS_EDITION_ES)
             UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
-            UiNumber_DrawAt(total, 5, window, 40, 8);
+            UiText_DrawNumberInWindowFar(total, 5, window, 40, 8);
             UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 88, 8);
 #elif defined(TBS_EDITION_FR)
             UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
-            UiNumber_DrawAt(total, 5, window, 32, 8);
+            UiText_DrawNumberInWindowFar(total, 5, window, 32, 8);
             UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 72, 8);
 #else
             UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
-            UiNumber_DrawAt(total, 5, window, 40, 8);
+            UiText_DrawNumberInWindowFar(total, 5, window, 40, 8);
             UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 1, window, 80, 8);
 #endif
         }

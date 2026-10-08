@@ -33,7 +33,7 @@
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -78,7 +78,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
 	}
 	for (i = 0; i != 512; i++)
 		((struct EffectStep *)Ram_MapCellBuffer)[i].variant = -1;
-	Audio_PlayCue(141);
+	AudioCommand_PlayFar(141);
 	frame = 0;
 	angle = 0x8000;
 	do
@@ -115,7 +115,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
 						mote->variant = (Random16() & 15) + 32;
 					}
 					if (i & 1)
-						Audio_PlayCue(133);
+						AudioCommand_PlayFar(133);
 					work->shake_frames = 4;
 					for (j = 0; j != work->effect->count; j++)
 					{
@@ -222,7 +222,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
 		burst_offset += 16 * sizeof(struct EffectStep);
 	} while (member != 9);
 
-	Audio_PlayCue(0x88);
+	AudioCommand_PlayFar(0x88);
 	frame = 0;
 	curtain_y = -172;
 	do
@@ -243,7 +243,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
 		}
 		if (frame == 32)
 		{
-			Audio_PlayCue(0x91);
+			AudioCommand_PlayFar(0x91);
 			work->shake_frames = 8;
 			Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
 		}
@@ -589,7 +589,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
 					{
 						work->shake_frames = 8;
 						rock->variant = 0;
-						Audio_PlayCue(134);
+						AudioCommand_PlayFar(134);
 						ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 4);
 						BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
 					}

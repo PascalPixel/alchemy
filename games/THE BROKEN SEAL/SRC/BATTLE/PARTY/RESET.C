@@ -14,6 +14,7 @@
 #include "BTLPTY.H"
 #include "OWNER_STATE.H"
 #include "BTLSYS.H"
+void UnitCalcFar(s32 unit_id);
 
 #define Trade_AddOfferFar ((void (*)(s32,s32,s32))Trade_AddOfferFar)
 
@@ -70,7 +71,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
             unit->agi_lv = 0;
             unit->chouhatsu = 0;
 
-            BattleUnit_Recalculate(owners[i]);
+            UnitCalcFar(owners[i]);
             i++;
         } while (i < count);
     }

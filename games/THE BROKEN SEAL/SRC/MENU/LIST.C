@@ -22,6 +22,7 @@
 #include "FIXED_MATH.H"
 #include "UI.H"
 #include "HEAP_STATE.H"
+struct BtlAct * BtlActGet(s32 action_id);
 
 #define UiWindow_DrawThreeTileColumn ((void (*)(struct UiWindow*,s32,s32,s32,s32))UiWindow_DrawThreeTileColumn)
 
@@ -140,7 +141,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                     if (entry == 0) {
                         break;
                     }
-                    action = Ability_GetData(entry);
+                    action = BtlActGet(entry);
                     UiWindow_SetTilemapEntry(window, 0xf01f, 11, i * 2, 0);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
                     UiWindow_SetTilemapEntry(window, 0xf005, 12, i * 2, 0);
@@ -261,7 +262,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
         if ((gKeyState & KEY_A) != 0) {
             if (count != 0) {
                 result = page + row;
-                if ((Ability_GetData(actions[result])->tgt_flg & ACTION_USABLE_IN_BATTLE) != 0) {
+                if ((BtlActGet(actions[result])->tgt_flg & ACTION_USABLE_IN_BATTLE) != 0) {
                     break;
                 }
                 /* FAKEMATCH: a dead store here keeps the test above from being threaded past the break. */

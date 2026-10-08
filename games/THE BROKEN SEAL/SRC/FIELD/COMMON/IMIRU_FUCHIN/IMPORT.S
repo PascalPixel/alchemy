@@ -93,7 +93,7 @@ Engine_MessageShowCentered:
 	.global Engine_ItemLoadIcon
 	.thumb_func
 Engine_ItemLoadIcon:
-	overlay_veneer ItemIcon_LoadTilesFar
+	overlay_veneer Ui_PrepareTransferForItemFar
 	.global PartyInventory_FindOwner
 	.thumb_func
 PartyInventory_FindOwner:

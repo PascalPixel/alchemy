@@ -1,3 +1,4 @@
+#define OWN_Object_SetMoveTargetFar
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -50,9 +51,9 @@ void ObjectTable_AllocateAndSetObjectSpeed(s32 first, s32 second)
     ((struct ObjectRuntime *)owner->view_center)->acceleration = second;
 }
 
-void Object_ResetMotion(void *);
+void ObjectDispatch_InitFromTable6Far(void *);
 
-void Object_SetPosition(void *, s32, s32, s32);
+void Object_SetMoveTargetFar(void *, s32, s32, s32);
 
 void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter)
 {
@@ -82,7 +83,7 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
     maximum_x = camera_state->max_x + 0xFF880000;
     maximum_z = camera_state->max_y + object_z_offset + 0xFFC00000;
     camera_state->origin = &object->x;
-    Object_ResetMotion(object);
+    ObjectDispatch_InitFromTable6Far(object);
     if (position_x == -1) {
         position_x = object->x;
     }
@@ -113,7 +114,7 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
             Map_ApplyWorkOriginAndSpanFar();
         }
     } else {
-        Object_SetPosition(object, position_x, position_y, position_z);
+        Object_SetMoveTargetFar(object, position_x, position_y, position_z);
     }
 }
 
@@ -128,11 +129,11 @@ void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1)
     }
 }
 
-void Object_CommitPosition(struct ObjectRuntime *);
+void Script_WaitForEventTimeoutFar(struct ObjectRuntime *);
 
 void BattleFx_CommitObjectPositionAndWait(void)
 {
-    Object_CommitPosition((struct ObjectRuntime *)
+    Script_WaitForEventTimeoutFar((struct ObjectRuntime *)
         ((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->view_center);
     Battle_WaitMode0(2);
 }

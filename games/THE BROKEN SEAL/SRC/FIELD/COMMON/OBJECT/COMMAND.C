@@ -1,3 +1,4 @@
+#define OWN_AudioCommand_PlayFar
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -29,7 +30,7 @@
 s32 ArcTan2(s32, s32);
 
 void ObjectDispatch_ApplyArgumentToChildren(void *, s32);
-s32 Audio_PlayCue(s32);
+s32 AudioCommand_PlayFar(s32);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *, s32, s32, s32);
 
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
@@ -436,7 +437,7 @@ s32 Script_SkipCommand(struct ScriptInterpreter *interpreter)
 
 s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter)
 {
-    Audio_PlayCue(interpreter->script[interpreter->cursor + 1]);
+    AudioCommand_PlayFar(interpreter->script[interpreter->cursor + 1]);
     interpreter->cursor = (u16)interpreter->cursor + 2;
     return 1;
 }

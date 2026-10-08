@@ -24,6 +24,9 @@
 #include "BTLSYS.H"
 #include "MENU_RESULT.H"
 #include "text/MSG_IDS.H"
+s32 Item_CanOwnerEquip(s32 owner, s32 item);
+s32 GameFlag_TestFar(s32 flag);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
 
 #define RenderOutput_ClearListFar ((void (*)(void *))RenderOutput_ClearListFar)
 #define gKeyState (*(volatile u32 *)&gKeyState)
@@ -35,7 +38,7 @@ void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
 #endif
@@ -217,7 +220,7 @@ s32 ItemMenu_RunList(s32 pane)
     window = (s32)menu->list_window;
     done = 0;
 
-    while (done == 0 && GameFlag_IsSet(0x150) == 0) {
+    while (done == 0 && GameFlag_TestFar(0x150) == 0) {
         owner = UnitGetFar(menu->pane_owner[pane]);
         menu->item_count = ItemMenu_Collect(owner, menu->items, 0);
         ItemMenu_DrawIcons(menu->items, 0);
@@ -227,7 +230,7 @@ s32 ItemMenu_RunList(s32 pane)
         changed = 1;
         redraw = 1;
 
-        while (GameFlag_IsSet(0x150) == 0) {
+        while (GameFlag_TestFar(0x150) == 0) {
             UiMenu_PositionCursor(98, state.row * 16 + 36);
 
             if (changed != 0) {
@@ -254,7 +257,7 @@ s32 ItemMenu_RunList(s32 pane)
                     icon->sentinel = 250;
                 }
                 for (i = 0; i < menu->party_count; i++) {
-                    Object_InitializeMode(menu->owner_objects[i], 1);
+                    AnimationObjects_SelectAnimationFar(menu->owner_objects[i], 1);
                 }
             }
 
@@ -262,7 +265,7 @@ s32 ItemMenu_RunList(s32 pane)
                 for (i = 0; i < menu->party_count; i++) {
                     if (Item_CanOwnerEquip(menu->owner_ids[i],
                             ITEM_ID_MASK & menu->items[state.selected_index]) != 0) {
-                        Object_InitializeMode(menu->owner_objects[i], 3);
+                        AnimationObjects_SelectAnimationFar(menu->owner_objects[i], 3);
                     }
                 }
             }
@@ -284,13 +287,13 @@ s32 ItemMenu_RunList(s32 pane)
 
             if ((gKeyState & KEY_A) != 0
                 && menu->items[state.selected_index] != 0) {
-                Audio_PlayCue(173);
+                AudioCommand_PlayFar(173);
                 result = menu->items[state.selected_index];
                 done = 1;
                 break;
             }
             if ((gKeyState & KEY_B) != 0) {
-                Audio_PlayCue(113);
+                AudioCommand_PlayFar(113);
                 result = -1;
                 done = 1;
                 break;
@@ -298,10 +301,10 @@ s32 ItemMenu_RunList(s32 pane)
             if ((gKeysRepeat & KEY_R) != 0
                 || (gKeysRepeat & KEY_L) != 0) {
                 if (pane == 1) {
-                    Audio_PlayCue(114);
+                    AudioCommand_PlayFar(114);
                     WaitFrames(1);
                 } else {
-                    Audio_PlayCue(111);
+                    AudioCommand_PlayFar(111);
                     menu->selected_index_by_owner[menu->pane_owner[pane]] =
                         state.selected_index;
                     tab = menu->pane_index[pane];
@@ -333,7 +336,7 @@ s32 ItemMenu_RunList(s32 pane)
     menu->selected_slots[pane] = state.selected_index;
     menu->selected_index_by_owner[menu->pane_owner[pane]] = state.selected_index;
     menu->selected_items[pane] = result;
-    if (GameFlag_IsSet(0x150) != 0) {
+    if (GameFlag_TestFar(0x150) != 0) {
         result = -1;
     }
     WaitFrames(1);

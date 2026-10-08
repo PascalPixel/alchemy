@@ -92,7 +92,7 @@ UiTextResource_Release:
 	.global Ui_PrepareTransferForItem
 	.thumb_func
 Ui_PrepareTransferForItem:
-	overlay_veneer ItemIcon_LoadTilesFar
+	overlay_veneer Ui_PrepareTransferForItemFar
 	.global SaveState_CountRecordsExcludingFlagged
 	.thumb_func
 SaveState_CountRecordsExcludingFlagged:

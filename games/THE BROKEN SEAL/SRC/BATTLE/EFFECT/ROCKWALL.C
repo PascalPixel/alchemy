@@ -35,7 +35,7 @@
 
 #define CLIP (GOUSEI_CLIP_X | GOUSEI_CLIP_Y) // 上下左右ではみ出しを切る
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 // RockWall_Timings[variant] の並び
 enum
@@ -125,7 +125,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 	heights = RockWall_Heights;
 	work->shake_frames = 128;
-	Audio_PlayCue(141);
+	AudioCommand_PlayFar(141);
 
 	for (frame = 0; frame != RockWall_Timings[work->effect->variant][TIMING_FRAMES]; frame++)
 	{

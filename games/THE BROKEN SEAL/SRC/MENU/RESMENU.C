@@ -26,6 +26,10 @@
 #include "BTLSMN.H"
 #include "MENU_LIST.H"
 #include "SERIAL_RUNTIME.H"
+s32 GameFlag_TestFar(s32 flag);
+struct BtlAct * BtlActGet(s32 action_id);
+struct ItemDefinition *Item_GetDirectFar(s32 item);
+struct BtlUnit *UnitGetFar(s32 object_id);
 
 #define gKeyState (*(volatile u32 *)&gKeyState)
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
@@ -75,7 +79,7 @@ struct LinkRoundState {
 extern volatile u16 gLinkStatus;
 extern u8 gDebugMode;
 extern volatile u32 gKeysHeld;
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void Graphics_ExpandVramTilesByColorTable(s32 destination);
 void Menu_BuildLocalizedPatternTiles(void);
 void UpdateLinkSessionCountdown(void);
@@ -205,7 +209,7 @@ handshake_done:
         state->entryActive[2] = 0;
         state->actorId = -1;
         state->hintCount = 0;
-        if (GameFlag_IsSet(366) != 0) {
+        if (GameFlag_TestFar(366) != 0) {
             state->hintCount = 1;
             state->hintTimer = 60;
         }
@@ -253,7 +257,7 @@ handshake_done:
         if (mode != 14) {
             goto finish;
         }
-        Audio_PlayCue(154);
+        AudioCommand_PlayFar(154);
         i = 0;
         if (i >= count) {
             goto finish;
@@ -276,7 +280,7 @@ handshake_done:
                doubleword, the call also sets r1, so the r1 reload for
                class_id no longer depends on the in reload and sched2 loads
                i * 2 before in, as native (differ 2). */
-            actor = (struct BtlUnit *)(s32)((s64 (*)(s32))Runtime_GetObject)(actorId);
+            actor = (struct BtlUnit *)(s32)((s64 (*)(s32))UnitGetFar)(actorId);
             COUNTDOWN->actorId = actorId;
             COUNTDOWN->unk_40 = 0;
             slot = &COUNTDOWN->entries[2];
@@ -374,7 +378,7 @@ mark_visible:
                 UiText_DrawCharacterAtOffset((s32)MsgCommandName, (struct RenderInput *)win, 16, 0);
 #endif
                 state->entries[0].oam.f.x = 64;
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
                 mode = BattleTarget_RunSelection(actorId, 1, 1, 0);
                 UiWork_Finalize(win, 1);
                 if (mode == -1) {
@@ -397,7 +401,7 @@ mark_visible:
                 s32 k;
                 s32 cur;
 
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
                 mode = 0;
                 /* FAKEMATCH: instruction order only: the one-pass block's loop
                    notes end the schedule here, so mode = 0 goes out before the
@@ -416,7 +420,7 @@ psynergy_menu:
                 cur = actor->action_slots[k].encoded_action & 0x3fff;
                 if (cur != 0) {
                     do {
-                        if ((Ability_GetData(cur)->tgt_flg & 0x80) != 0) {
+                        if ((BtlActGet(cur)->tgt_flg & 0x80) != 0) {
                             pick[cnt] = k;
                             list[cnt] = cur;
                             cnt++;
@@ -435,7 +439,7 @@ psynergy_menu:
                     goto mark_visible;
                 }
                 param = actor->action_slots[pick[mode]].encoded_action & 0x3fff;
-                ability = Ability_GetData(param);
+                ability = BtlActGet(param);
                 cost = ability->rng;
                 slot = &state->entries[1];
                 handle = Resource_LoadIntoFreeSlot(128);
@@ -470,7 +474,7 @@ psynergy_menu:
                     UiWindow_SetTilemapEntry(win, ability->damage_class + 20481, 15, 0, 0);
                 }
                 ent->rng = cost;
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
                 mode = BattleTarget_RunSelection(actorId, ability->target_mode, cost,
                                                  Battle_ClassifyEntryKind((const struct BtlAct *)ability));
                 state->entryActive[1] = 0;
@@ -493,7 +497,7 @@ psynergy_menu:
                 s32 j;
                 s32 n;
 
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
@@ -514,7 +518,7 @@ djinn_menu:
                 WaitFrames(1);
                 slot = &state->entries[1];
                 djinn = SummonDefinition_Get(mode);
-                ability = Ability_GetData(djinn->name_message_id);
+                ability = BtlActGet(djinn->name_message_id);
                 handle = Resource_LoadIntoFreeSlot(128);
 #if EDITION_INTERNATIONAL
                 win = UiWindow_Create(10, 17, 17, 3, 6);
@@ -555,9 +559,9 @@ djinn_menu:
                     }
                 }
                 if (ok != 0) {
-                    Audio_PlayCue(112);
+                    AudioCommand_PlayFar(112);
                 } else {
-                    Audio_PlayCue(114);
+                    AudioCommand_PlayFar(114);
                 }
                 mode = BattleTarget_RunSelection(actorId, ability->target_mode, ability->rng,
                                                  Battle_ClassifyEntryKind((const struct BtlAct *)ability));
@@ -586,7 +590,7 @@ djinn_menu:
                 s32 element;
                 s32 index;
 
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
                 COUNTDOWN->unk_34 = 0;
                 COUNTDOWN->unk_30 = 0;
                 COUNTDOWN->unk_38 = 0;
@@ -604,7 +608,7 @@ summon_menu:
                 element = (param >> 8) & 15;
                 index = param & 255;
                 if (Djinn_IsActiveFar(actorId, element, index) != 0) {
-                    ability = Ability_GetData(Djinn_GetDefinitionHeaderFar(element, index));
+                    ability = BtlActGet(Djinn_GetDefinitionHeaderFar(element, index));
                     cost = ability->rng;
                     win = UiWindow_Create(11, 17, 10, 3, 6);
                     state->entries[0].oam.f.x = 64;
@@ -612,7 +616,7 @@ summon_menu:
                     UiText_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName, win, 16, 0);
                     ent->rng = cost;
                     WaitFrames(1);
-                    Audio_PlayCue(112);
+                    AudioCommand_PlayFar(112);
                     mode = BattleTarget_RunSelection(actorId, ability->target_mode, cost,
                                                      Battle_ClassifyEntryKind((const struct BtlAct *)ability));
                     if (state->hintCount != 0) {
@@ -639,7 +643,7 @@ summon_menu:
                 UiWork_SetParamNibble(15);
                 ent->rng = 1;
                 WaitFrames(1);
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
                 mode = BattleTarget_RunSelection(actorId, 4, 0, 7);
                 UiWork_Finalize(win, 1);
                 if (mode == -1) {
@@ -661,7 +665,7 @@ summon_menu:
                 s32 cur;
                 s32 sel;
 
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
                 mode = 0;
                 /* FAKEMATCH: instruction order only: as in the psynergy case,
                    mode = 0 before the countdown base (differ 2). */
@@ -679,7 +683,7 @@ item_menu:
                 cur = actor->inventory[k];
                 if (cur != 0) {
                     do {
-                        Item_Get(cur);
+                        Item_GetDirectFar(cur);
                         if (Item_ClassifyUseAbility(actorId, cur) == 0) {
                             list[cnt] = cur;
                             pick[cnt++] = k;
@@ -695,7 +699,7 @@ item_menu:
                 cur = actor->inventory[k];
                 if (cur != 0) {
                     do {
-                        Item_Get(cur);
+                        Item_GetDirectFar(cur);
                         if (Item_ClassifyUseAbility(actorId, cur) != 0) {
                             list[cnt] = cur;
                             pick[cnt++] = k;
@@ -714,7 +718,7 @@ item_menu:
                 }
                 sel = pick[mode];
                 param = sel;
-                ability = Ability_GetData(Item_Get(actor->inventory[sel])->action_id);
+                ability = BtlActGet(Item_GetDirectFar(actor->inventory[sel])->action_id);
                 cost = ability->rng;
                 slot = &state->entries[1];
                 handle = Resource_LoadIntoFreeSlot(128);
@@ -736,7 +740,7 @@ item_menu:
                 UiText_DrawCharacterAtOffset((actor->inventory[sel] & 0x1ff) + (s32)MsgItemName,
                                              (struct RenderInput *)win, 24, 0);
                 ent->rng = cost;
-                Audio_PlayCue(112);
+                AudioCommand_PlayFar(112);
                 mode = BattleTarget_RunSelection(actorId, ability->target_mode, cost,
                                                  Battle_ClassifyEntryKind((const struct BtlAct *)ability));
                 state->entryActive[1] = 0;
@@ -755,7 +759,7 @@ item_menu:
                 break;
             }
 
-            Audio_PlayCue(110);
+            AudioCommand_PlayFar(110);
             ent->unit_id = (u16)actorId;
             order = actor->agi;
             if (order != 0) {
@@ -1023,7 +1027,7 @@ void Menu_EndResourceSelection(void)
 void RenderOutput_PrepareForRedraw(void *);
 
 
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 
 s32 Menu_RunResourceSelectionLoop(s32 initial)
 {
@@ -1041,26 +1045,26 @@ redraw:
     for (;;) {
         WaitFrames(1);
         if (gKeyState & KEY_A) {
-            Audio_PlayCue(112);
+            AudioCommand_PlayFar(112);
             return work->selection;
         }
         if (gKeyState & KEY_B) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             return -1;
         }
         if (gKeyState & KEY_START) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             return -1;
         }
         if ((gKeysRepeat & KEY_LEFT) || (gKeysRepeat & KEY_UP)) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             work->selection--;
             if (work->selection < 0)
                 work->selection = work->count - 1;
             goto redraw;
         }
         if ((gKeysRepeat & KEY_RIGHT) || (gKeysRepeat & KEY_DOWN)) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             work->selection++;
             if (work->selection >= work->count)
                 work->selection = 0;

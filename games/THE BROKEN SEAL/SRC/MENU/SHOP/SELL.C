@@ -18,6 +18,10 @@
 #include "UI.H"
 #include "ITEM.H"
 #include "text/MSG_IDS.H"
+void RenderOutput_PrepareForRedrawFar(s32 window);
+s32 Item_CanOwnerEquip(s32 owner, s32 item);
+struct ItemDefinition *Item_GetDirectFar(s32 item);
+struct RenderOutput *RenderOutput_CreateLoadedFar(s32 code, s32 layers, struct RenderInput *input, s32 x, s32 y);
 
 #define gKeyState (*(volatile u32 *)&gKeyState)
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
@@ -26,14 +30,14 @@
 #define Party_AdjustSixDigitCounterBFar ((s32 (*)(s16))Party_AdjustSixDigitCounterBFar)
 #define Inventory_FindEquippedFar ((s32 (*)(s32,u8))Inventory_FindEquippedFar)
 #define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
-#define UiIcon_Draw ((struct RenderOutput * (*)(u16,s32,s32,s32,s32))UiIcon_Draw)
+#define RenderOutput_CreateLoadedFar ((struct RenderOutput * (*)(u16,s32,s32,s32,s32))RenderOutput_CreateLoadedFar)
 #define UiIcon_PrepareObjectFar ((void (*)(void*))UiIcon_PrepareObjectFar)
 #define Inventory_DiscardFar ((void (*)(s32,s32))Inventory_DiscardFar)
 
 extern struct ShopRuntime *gMenuWork;
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 void UiWork_PushValueSlotFar(u32 unit_id, u32 mode);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void UiWork_FinalizePendingCoreFar(void);
 void UiWork_FinalizeFar(s32, s32);
 void PsynergyMenu_InitializeEntryObjectsFar();
@@ -46,10 +50,10 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
     struct ItemDefinition *item;
 
     remaining = quantity;
-    item = Item_Get(item_id);
+    item = Item_GetDirectFar(item_id);
     added_slot = 0;
     replaced_slot = Inventory_FindEquippedFar(unit_id, item->type);
-    Audio_PlayCue(SOUND_SHOP_PURCHASE);
+    AudioCommand_PlayFar(SOUND_SHOP_PURCHASE);
     if (added_slot < remaining) {
         do {
             added_slot = Inventory_AddItemFar(unit_id, item_id);
@@ -70,7 +74,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
     struct ShopRuntime *menu = gMenuWork;
     struct BtlUnit *unit = (struct BtlUnit *)UnitGetFar(unit_id);
     s32 item_id = unit->inventory[slot] & 0x1ff;
-    struct ItemDefinition *info = Item_Get(item_id);
+    struct ItemDefinition *info = Item_GetDirectFar(item_id);
     s32 replaced;
     s32 menu_value;
 
@@ -82,7 +86,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 
     replaced = Inventory_FindEquippedFar(unit_id, info->type);
     if (replaced != -1) {
-        struct ItemDefinition *old_info = Item_Get(unit->inventory[replaced]);
+        struct ItemDefinition *old_info = Item_GetDirectFar(unit->inventory[replaced]);
 
         if (old_info->flags & 2)
             return 0;
@@ -99,7 +103,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
         Shop_DrawUnitGrid(menu_value, unit_id);
 
     if (info->flags & 1) {
-        Audio_PlayCue(103);
+        AudioCommand_PlayFar(103);
         UiWork_FinalizePendingCoreFar();
         UiText_OpenMessageWindowFar((s32)MsgBecameCursed, 8, 4, 2);
         while (UiWork_IsCompleteFar() == 0) {
@@ -122,11 +126,11 @@ s32 Shop_SellOld(s32 unit_id, s32 slot)
         return 0;
     }
     item_id = unit->inventory[slot] & 0x1ff;
-    if (Item_Get(item_id)->type == 6)
+    if (Item_GetDirectFar(item_id)->type == 6)
     {
         return 0;
     }
-    if (Item_Get(item_id)->flags & 8)
+    if (Item_GetDirectFar(item_id)->flags & 8)
     {
         return 0;
     }
@@ -138,9 +142,9 @@ s32 Shop_SalePrice(s32 item_id)
 {
     s32 price;
 
-    price = Item_Get(item_id)->price;
+    price = Item_GetDirectFar(item_id)->price;
 
-    if (Item_Get(item_id)->flags & 8) {
+    if (Item_GetDirectFar(item_id)->flags & 8) {
         price = 0;
     } else if (item_id & 0x400) {
         price = price / 2;
@@ -189,9 +193,9 @@ s32 Shop_PickUnit(void)
         if ((gKeyState & KEY_A) != 0) {
             WaitFrames(1);
             if (Inventory_CountFar(unit_id) == 0) {
-                Audio_PlayCue(SOUND_MENU_CANCEL);
+                AudioCommand_PlayFar(SOUND_MENU_CANCEL);
             } else {
-                Audio_PlayCue(SOUND_MENU_CONFIRM);
+                AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
                 if (shop->party_action == 1)
                     Shop_SelSell(unit_id);
                 else
@@ -204,7 +208,7 @@ s32 Shop_PickUnit(void)
         }
 
         if ((gKeyState & KEY_B) != 0) {
-            Audio_PlayCue(SOUND_MENU_CANCEL);
+            AudioCommand_PlayFar(SOUND_MENU_CANCEL);
             Menu_ReleaseEntryObjectsFar();
             UiWork_FinalizeFar(list_window, 2);
             UiWork_FinalizeFar(shop->item_window, 2);
@@ -214,12 +218,12 @@ s32 Shop_PickUnit(void)
         }
 
         if ((gKeysRepeat & KEY_LEFT) != 0) {
-            Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+            AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
             selection--;
             redraw = 1;
         }
         if ((gKeysRepeat & KEY_RIGHT) != 0) {
-            Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+            AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
             selection++;
             redraw = 1;
         }
@@ -274,23 +278,23 @@ s32 Shop_SelSell(s32 unit_id)
             }
 
             if ((gKeyState & KEY_A) != 0) {
-                Audio_PlayCue(SOUND_MENU_CONFIRM);
+                AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
                 result = 0;
                 goto done;
             }
             if ((gKeyState & KEY_B) != 0) {
-                Audio_PlayCue(SOUND_MENU_CANCEL);
+                AudioCommand_PlayFar(SOUND_MENU_CANCEL);
                 result = -1;
                 goto done;
             }
             if ((gKeysRepeat & KEY_LEFT) != 0) {
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
                 selection -= 1;
                 selection = (selection + item_count) % item_count;
                 redraw = 1;
             }
             if ((gKeysRepeat & KEY_RIGHT) != 0) {
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
                 selection += 1;
                 selection = (selection + item_count) % item_count;
                 redraw = 1;
@@ -301,7 +305,7 @@ s32 Shop_SelSell(s32 unit_id)
                     selection += 15;
                 while (selection >= item_count)
                     selection -= 5;
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
             }
             if ((gKeysRepeat & KEY_DOWN) != 0) {
@@ -310,7 +314,7 @@ s32 Shop_SelSell(s32 unit_id)
                     selection -= 15;
                 while (selection < 0)
                     selection += 5;
-                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
             }
             WaitFrames(1);
@@ -345,7 +349,7 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
     x = 8;
     y = 0;
     if (window != 0) {
-        UiWindow_Clear(window);
+        RenderOutput_PrepareForRedrawFar(window);
         if (Inventory_CountFar(unit_id) == 0) {
 #if defined(TBS_EDITION_IT)
             UiText_DrawResourceFar((s32)MsgNoItems, window, 20, 12);
@@ -356,7 +360,7 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
             slot = 0;
             do {
                 if (unit->inventory[slot] != 0) {
-                    icon = UiIcon_Draw(
+                    icon = RenderOutput_CreateLoadedFar(
                         unit->inventory[slot],
                         27, window, x, y);
                     icon->sentinel = 252;
@@ -396,7 +400,7 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
 
     shop = gMenuWork;
     unit = UnitGetFar(unit_id);
-    item = Item_Get(unit->inventory[slot]);
+    item = Item_GetDirectFar(unit->inventory[slot]);
     result = 1;
     effect = Shop_SalePrice(unit->inventory[slot]);
     state = Shop_GetSelectionState(unit_id, slot);
@@ -421,7 +425,7 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
     struct ShopRuntime *shop = gMenuWork;
     struct BtlUnit *unit = UnitGetFar(unit_id);
     s32 item_id = unit->inventory[slot] & 0x1ff;
-    struct ItemDefinition *item = Item_Get(item_id);
+    struct ItemDefinition *item = Item_GetDirectFar(item_id);
     u8 rare = item->flags & 4;
     s32 all = 0;
     s32 total;
@@ -464,7 +468,7 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
         UiMessage_ShowAndRestoreState(message);
         return;
     }
-    Audio_PlayCue(102);
+    AudioCommand_PlayFar(102);
     for (i = 0; i < count; i++)
         Inventory_DiscardFar(unit_id, slot);
     Party_AdjustCoinsFar(total);
@@ -479,7 +483,7 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
 
 s32 Shop_RepairPrice(s32 item_id)
 {
-    s32 result = Item_Get(item_id)->price / 4;
+    s32 result = Item_GetDirectFar(item_id)->price / 4;
 
     if ((item_id & 0x400) == 0) {
         result = 0;

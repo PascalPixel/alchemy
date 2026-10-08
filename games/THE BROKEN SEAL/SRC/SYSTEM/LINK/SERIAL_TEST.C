@@ -17,7 +17,7 @@
 extern u8 gMapCellBuffer[];
 extern const u8 Rom_Start[];
 
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 
 void RuntimeWait_BusyLoopTick(void)
 {
@@ -31,7 +31,7 @@ void SerialTest_Run(void)
     s32 tick;
     volatile u32 zero;
 
-    Audio_PlayCue(3);
+    AudioCommand_PlayFar(3);
     SerialRuntime_Initialize();
     n = 19;
     tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;

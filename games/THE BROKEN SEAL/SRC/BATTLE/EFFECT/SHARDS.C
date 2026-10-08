@@ -18,13 +18,13 @@
 #define Motion_SetTargetPositionFromMagnitudeAngle ((void (*)(void*,s32,s32))Motion_SetTargetPositionFromMagnitudeAngle)
 
 extern struct BattleFxScene *gEffectWork;
-void Object_CommitPosition(void *object);
-void Audio_PlayCue(s32 sound);
+void Script_WaitForEventTimeoutFar(void *object);
+void AudioCommand_PlayFar(s32 sound);
 struct MotionObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 extern const s32 BattleFx_FragmentScript[];
 void ObjectDispatch_ReleaseFar(void *object);
 
-void Object_SetMode(void *, s32);
+void ObjectDispatch_ApplyArgumentToChildrenFar(void *, s32);
 
 void RunBattleEffect11(void)
 {
@@ -55,8 +55,8 @@ void RunBattleEffect11(void)
                 obj, 0x180000, obj->angle);
     }
 
-    Object_CommitPosition(anchors[0]);
-    Audio_PlayCue(134);
+    Script_WaitForEventTimeoutFar(anchors[0]);
+    AudioCommand_PlayFar(134);
     for (index = 0; index < 24; index++) {
         position.x = scene->x;
         position.y = scene->y + 0x100000;
@@ -82,7 +82,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle
     struct MotionObject *obj;
     s32 scale;
 
-    Audio_PlayCue(SOUND_ITEM_BREAK);
+    AudioCommand_PlayFar(SOUND_ITEM_BREAK);
     obj = Object_Spawn(215, x, y, z);
     if (obj != NULL) {
         obj->scale_y = 0x4000;
@@ -90,7 +90,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle
         obj->speed_limit = 0x30000;
         obj->acceleration = 0x30000;
         obj->auto_face_motion = 0;
-        Object_SetMode(obj, 1);
+        ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
         scale = obj->scale_x;
         if (scale < 0x10000) {
             do {

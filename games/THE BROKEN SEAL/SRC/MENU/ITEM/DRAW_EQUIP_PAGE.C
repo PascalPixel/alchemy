@@ -18,6 +18,7 @@
 #include "TBS_EDITION.H"
 #include "MENU_LIST.H"
 #include "text/MSG_IDS.H"
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 #define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
 
@@ -67,7 +68,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
 
     for (row = 0; row < PAGE_ROWS; row++) {
         if (row == state->row) {
-            item = Item_Get(menu->items[state->selected_index] & ITEM_ID_MASK);
+            item = Item_GetDirectFar(menu->items[state->selected_index] & ITEM_ID_MASK);
             if (item->element != 4) {
                 UiWindow_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1, 0);
                 Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1, 14);
@@ -75,7 +76,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
                 Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 14, 1, 14);
             }
         } else {
-            item = Item_Get(menu->items[base + row] & ITEM_ID_MASK);
+            item = Item_GetDirectFar(menu->items[base + row] & ITEM_ID_MASK);
             if (item->element != 4) {
                 UiWindow_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1, 4);
                 Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1, 15);
@@ -90,7 +91,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
     }
 
     if (menu->items[state->selected_index] & 0x200) {
-        item = Item_Get(menu->items[state->selected_index] & ITEM_ID_MASK);
+        item = Item_GetDirectFar(menu->items[state->selected_index] & ITEM_ID_MASK);
         switch (item->type) {
         case 1:
             Render_SetTilemapFlagRect((s32)menu->equip_window, EQUIP_SLOT_X, 1, EQUIP_SLOT_WIDTH, 1, 14);

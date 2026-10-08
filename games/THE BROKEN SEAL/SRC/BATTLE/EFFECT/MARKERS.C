@@ -53,7 +53,7 @@ struct EffectTarget
 void BattleFx_ApplyColorToSourceBuffer(s32, s32);
 void WaitFrames(s32);
 s32	 BattleFx_FindMatchingEvent(s32, s32, s32 *);
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
 
 //--------------------------------------------------------------------------
 // 戦闘エフェクト 8 番
@@ -86,7 +86,7 @@ void RunBattleEffect08(void)
 	ev = BattleFx_FindMatchingEvent(0x50000005, 8, &arg);
 	if (ev != 0)
 		BattleFx_RunEventAction(ev, gGameState.selected_actor, arg);
-	Audio_PlayCue(131);
+	AudioCommand_PlayFar(131);
 
 	// イベントのワークに中心 (ドット) と時間を入れ、近くに印を出す
 	scene->active = 1;

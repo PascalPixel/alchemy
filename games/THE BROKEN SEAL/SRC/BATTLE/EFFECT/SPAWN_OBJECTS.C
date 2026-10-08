@@ -25,7 +25,7 @@ void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant)
         return;
     }
     do {
-        struct AnimationObject *object = GetBattleEffectObject(kind);
+        struct AnimationObject *object = ResourceObject_CreateFar(kind);
 
         work->objects[entry_index] = object;
         if (object != 0) {

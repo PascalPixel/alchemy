@@ -30,6 +30,7 @@
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
+void Audio_PlayCue(s32 cue);
 
 #define ObjectGroup_SetChildValueUnlessFifteenFar \
 	((void (*)(s32, s32))ObjectGroup_SetChildValueUnlessFifteenFar)
@@ -48,11 +49,9 @@ struct BurstPosition
 extern struct BattleFxScene *gEffectWork;
 
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct BurstPosition *pos);
-void Object_SetMode(struct FieldActor *object, s32 mode);
-void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
-s32	 Object_CheckMovementCollision(struct FieldActor *object, struct BurstPosition *pos);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 mode);
+s32	 Map_CheckObjectStepFar(struct FieldActor *object, struct BurstPosition *pos);
 void Animation_ApplyChildValuesFar(struct FieldActor *object, s32 value);
-void Audio_PlayCue(s32 cue);
 
 struct FieldActor *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
@@ -115,7 +114,7 @@ void RunBattleEffect04(void)
 	scene = gEffectWork;
 	tgt = scene->child;
 	BattleEffect_InitializeSharedScene();
-	Audio_PlayCue(130);
+	AudioCommand_PlayFar(130);
 	slot = scene->slots;
 
 	// 使う者の頭上から、光を 2 フレームおきに 12 個はじけさせる
@@ -152,7 +151,7 @@ void RunBattleEffect04(void)
 	obj->speed = 4 << 16;
 	obj->acceleration = 4 << 16;
 	obj->motion_flags = 0;
-	Object_SetMode(obj, 5);
+	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 5);
 	Animation_ApplyChildValuesFar(obj, 3);
 	scale = obj->scale_x;
 	if (scale < 0x10000)
@@ -181,7 +180,7 @@ void RunBattleEffect04(void)
 			copy->speed = 4 << 16;
 			copy->acceleration = 4 << 16;
 			copy->motion_flags = 0;
-			Object_SetMode(copy, 5);
+			ObjectDispatch_ApplyArgumentToChildrenFar(copy, 5);
 			Animation_ApplyChildValuesFar(copy, 2);
 			res = Object_ReplaceResourceEntry((struct AnimationObject *)copy->sprite, res);
 		}
@@ -203,7 +202,7 @@ void RunBattleEffect04(void)
 		pos.y = scene->y + UE;
 		pos.z = scene->z;
 	}
-	Object_SetPosition(obj, pos.x, pos.y, pos.z);
+	Object_SetMoveTargetFar(obj, pos.x, pos.y, pos.z);
 	ObjectDispatch_InitializeFar(
 		(struct DispatchObject *)obj, BattleFx_BurstParticleObjectScript + 4);
 	for (i = 0; i < 3; i++)
@@ -212,7 +211,7 @@ void RunBattleEffect04(void)
 		if (copy != NULL)
 		{
 			WaitFrames(3);
-			Object_SetPosition(copy, pos.x, pos.y, pos.z);
+			Object_SetMoveTargetFar(copy, pos.x, pos.y, pos.z);
 			ObjectDispatch_InitializeFar(
 				(struct DispatchObject *)copy, BattleFx_CommonParticleScript + 1);
 		}
@@ -238,12 +237,12 @@ void RunBattleEffect04(void)
 		pos.y = tgt->y.fixed;
 		pos.z = tgt->z.fixed;
 		Vector_AddPolarOffset(16 << 16, scene->angle, &pos);
-		if (Object_CheckMovementCollision(tgt, &pos) == 0
+		if (Map_CheckObjectStepFar(tgt, &pos) == 0
 			&& ScriptObject_CheckOverlapFar(tgt, &pos) == 0)
 		{
 			tgt->acceleration = 1 << 16;
 			tgt->speed = 1 << 16;
-			Object_SetPosition(tgt, pos.x, pos.y, pos.z);
+			Object_SetMoveTargetFar(tgt, pos.x, pos.y, pos.z);
 		}
 	}
 
@@ -394,7 +393,7 @@ void BattleFx_RunOrbitingParticles(void)
 	scene = gEffectWork;
 	tgt = scene->child;
 	BattleEffect_InitializeSharedScene();
-	Audio_PlayCue(115);
+	AudioCommand_PlayFar(115);
 
 	// 3 フレームおきに粒を出す。大きさ 0.5〜1 倍、まわる向きはでたらめ
 	// 中心は scene の位置から 2〜6 ドットずらす
@@ -438,12 +437,12 @@ void BattleFx_RunOrbitingParticles(void)
 	} while (cnt >= 0);
 
 	WaitFrames(10);
-	Audio_PlayCue(115);
+	AudioCommand_PlayFar(115);
 	WaitFrames(50);
 
 	if (tgt != NULL && scene->enabled == 0)
 	{
-		Audio_PlayCue(212);
+		AudioCommand_PlayFar(212);
 
 		// 5 フレームごとに 1 フレーム光る
 		cnt = 15;
@@ -458,8 +457,8 @@ void BattleFx_RunOrbitingParticles(void)
 
 		if (scene->child_option == 0)
 		{
-			Audio_PlayCue(220);
-			Object_SetMode(tgt, 2);
+			AudioCommand_PlayFar(220);
+			ObjectDispatch_ApplyArgumentToChildrenFar(tgt, 2);
 		}
 
 		tgt->update = (void (*)(union FieldObject *))BattleFx_UpdateOrbitingParticleMain;

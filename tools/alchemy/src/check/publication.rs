@@ -632,12 +632,21 @@ fn part_palette_built(path: &str) -> bool {
         let Ok(text) = std::fs::read_to_string(&list) else {
             return false;
         };
-        let parts: Vec<&str> = text
+        let lines: Vec<Vec<&str>> = text
             .lines()
-            .filter_map(|line| line.split('\t').next())
-            .filter(|part| !part.is_empty())
+            .map(|line| line.split('\t').map(str::trim).collect::<Vec<_>>())
+            .filter(|fields| !fields[0].is_empty())
             .collect();
+        let parts: Vec<&str> = lines.iter().map(|fields| fields[0]).collect();
         match parts.split_first() {
+            // The list's first part is the palette itself: the list writes it.
+            Some((first, rest)) if lines[0].get(1) == Some(&"gbapal") => {
+                (*first == stem || rest.contains(&stem))
+                    && list
+                        .file_stem()
+                        .and_then(|list| list.to_str())
+                        .is_some_and(|list| incbinned(path, &format!("{list}.parts")))
+            }
             Some((first, rest)) if rest.contains(&stem) => {
                 own_palette_built(&directory.join(format!("{first}.PNG")).to_string_lossy())
             }
@@ -647,9 +656,15 @@ fn part_palette_built(path: &str) -> bool {
 }
 
 fn own_palette_built(path: &str) -> bool {
-    let file = Path::new(path);
-    let (Some(directory), Some(stem)) = (file.parent(), file.file_stem().and_then(|s| s.to_str()))
-    else {
+    Path::new(path)
+        .file_stem()
+        .and_then(|stem| stem.to_str())
+        .is_some_and(|stem| incbinned(path, &format!("{stem}.gbapal")))
+}
+
+/// Whether an .S beside `path` incbins the build product `name` from that folder.
+fn incbinned(path: &str, name: &str) -> bool {
+    let Some(directory) = Path::new(path).parent() else {
         return false;
     };
     let Some(source_root) = path.find("/SRC/").map(|at| &path[..at + 5]) else {
@@ -658,7 +673,7 @@ fn own_palette_built(path: &str) -> bool {
     let relative = directory
         .to_string_lossy()
         .strip_prefix(source_root)
-        .map(|rest| format!("{rest}/{stem}.gbapal"))
+        .map(|rest| format!("{rest}/{name}"))
         .unwrap_or_default();
     let Ok(entries) = std::fs::read_dir(directory) else {
         return false;
@@ -3717,6 +3732,24 @@ mod tests {
         std::fs::write(directory.join("W.S"), "\t.incbin \"GRAPHICS/W_1.gbapal\"\n").unwrap();
         assert!(palette_built(&second));
         assert!(palette_built(&directory.join("W_1.PNG").to_string_lossy()));
+    }
+
+    #[test]
+    fn a_part_list_that_starts_with_the_palette_writes_it() {
+        let temp = tempfile::tempdir().unwrap();
+        let directory = temp.path().join("games/X/SRC/GRAPHICS");
+        std::fs::create_dir_all(&directory).unwrap();
+        let sheet = directory.join("T.PNG").to_string_lossy().into_owned();
+        let other = directory.join("U.PNG").to_string_lossy().into_owned();
+        std::fs::write(directory.join("T.TSV"), "T\tgbapal\nT\t4bpp8x16\n").unwrap();
+        assert!(!palette_built(&sheet));
+        std::fs::write(directory.join("T.S"), "\t.incbin \"GRAPHICS/T.4bpp.lz\"\n").unwrap();
+        assert!(!palette_built(&sheet));
+        std::fs::write(directory.join("T.S"), "\t.incbin \"GRAPHICS/T.parts.lz\"\n").unwrap();
+        assert!(palette_built(&sheet));
+        assert!(!palette_built(&other));
+        std::fs::write(directory.join("T.TSV"), "T\t4bpp\nT\tgbapal\n").unwrap();
+        assert!(!palette_built(&sheet));
     }
 
     #[test]

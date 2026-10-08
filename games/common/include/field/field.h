@@ -980,7 +980,7 @@ extern s32 ImiruFuchin_TrackLeader;
 extern s16 ImiruMura_ExitCellPoints[][2];
 extern const u16 *ImiruMura_ExitCellSteps[];
 extern const s32 ImiruMura_SparkScript[];
-extern u8 ImiruMura_TurnScript[];
+extern s32 ImiruMura_TurnScript[];
 extern u8 KareiHeya_Exits[];
 extern u8 KareiKyuden_PartyActions[];
 extern const s32 KareiMachi_ActionScript01[];

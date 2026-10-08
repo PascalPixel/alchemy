@@ -663,8 +663,6 @@ s32 ImiruMura_ApplyEntryState(void)
 
 void FieldScene_RunPrimaryScriptChoreography(void)
 {
-    extern u8 ImiruMura_TurnScript[];
-
     struct FieldActor *leader;
     s32 tbl;
     struct EventWork *work;

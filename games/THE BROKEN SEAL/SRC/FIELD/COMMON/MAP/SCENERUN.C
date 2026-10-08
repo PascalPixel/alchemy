@@ -44,7 +44,7 @@ static __inline__ s32 Scene_RunTable(s32 entrance)
     Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
     result = Runtime_BlankDisplayAndRunFar(entrance);
     Dma_Set(saved, palette, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
-    Runtime_BumpFree(saved);
+    MemFree(saved);
     return result;
 }
 
@@ -57,7 +57,7 @@ static __inline__ s32 Scene_LoadTable(s32 entrance)
     Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
     result = Runtime_BlankDisplayLoadValueAndRunFar(entrance);
     Dma_Set(saved, palette, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
-    Runtime_BumpFree(saved);
+    MemFree(saved);
     return result;
 }
 

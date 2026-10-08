@@ -103,7 +103,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
                 menu->mode = 2;
             actions = MemAlloc(64);
             found = PsynergyMenu_CollectActions((struct BtlUnit *)owner, actions, 1);
-            Runtime_BumpFree(actions);
+            MemFree(actions);
             action_count = (s8)found;
             if (action_count == 0) {
                 menu->mode = action_count;

@@ -108,7 +108,7 @@ void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *so
         vram += 32 - window->width;
         mirror += 32 - window->width;
     }
-    Runtime_BumpFree(buffer);
+    MemFree(buffer);
 }
 
 void UiWindow_SetTileAttributeRect(const struct RenderInput *window,

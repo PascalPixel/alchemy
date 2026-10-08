@@ -71,7 +71,7 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
         *dst++ = palette->slot[index];
     }
     Dma_Set(remapped, (void *)(0x06004000 + tile * 64), 0x84000100, REG_DMA3);
-    Runtime_BumpFree(remapped);
+    MemFree(remapped);
     Runtime_ReleaseHeapBlock(17);
 }
 

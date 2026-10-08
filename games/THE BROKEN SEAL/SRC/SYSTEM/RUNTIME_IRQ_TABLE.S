@@ -3,45 +3,28 @@
 	.section .data,"aw",%progbits
 	.arm
 
-IwramIrqVBlank:
 	.global gIrqHandlers
 gIrqHandlers:
-	.4byte 0
-IwramIrqHBlank:
-	.4byte 0
-IwramIrqVCount:
-	.4byte 0
-IwramIrqTimer0:
-	.4byte 0
-IwramIrqTimer1:
-	.4byte 0
-IwramIrqTimer2:
-	.4byte 0
-IwramIrqTimer3:
-	.4byte 0
-IwramIrqSerial:
-	.4byte 0
-IwramIrqDma0:
-	.4byte 0
-IwramIrqDma1:
-	.4byte 0
+	.4byte 0	@ VBlank
+	.4byte 0	@ HBlank
+	.4byte 0	@ VCount
+	.4byte 0	@ Timer0
+	.4byte 0	@ Timer1
+	.4byte 0	@ Timer2
+	.4byte 0	@ Timer3
+	.4byte 0	@ Serial
+	.4byte 0	@ Dma0
+	.4byte 0	@ Dma1
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
 	.global IwramHalt
 IwramHalt:
-	.else
-IwramIrqDma2:
 	.endif
-	.else
-IwramIrqDma2:
 	.endif
-	.4byte 0
-IwramIrqDma3:
-	.4byte 0
-IwramIrqKeypad:
-	.4byte 0
-IwramIrqGamePak:
-	.4byte 0
+	.4byte 0	@ Dma2
+	.4byte 0	@ Dma3
+	.4byte 0	@ Keypad
+	.4byte 0	@ GamePak
 
 	.section .rodata.irq_head,"a",%progbits
 	.balign 4

@@ -568,8 +568,8 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     }
                 }
             }
-            Runtime_BumpFree(target_copy);
-            Runtime_BumpFree(source_copy);
+            MemFree(target_copy);
+            MemFree(source_copy);
             Event_ClearInvalidPackedValuesFar();
             state = ITEM_STEP_OWNER;
             break;

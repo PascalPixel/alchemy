@@ -159,5 +159,5 @@ void Debug_SelectAbilityPair(void)
         UiWork_Finalize(info, 1);
         WaitFrames(1);
     }
-    Runtime_BumpFree(list);
+    MemFree(list);
 }

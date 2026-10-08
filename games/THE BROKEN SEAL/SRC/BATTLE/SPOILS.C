@@ -234,7 +234,7 @@ void Battle_AwardSpoils(void)
             }
         }
     }
-    Runtime_BumpFree(backup);
+    MemFree(backup);
     if (spoils->coins != 0) {
         UiWork_PushValueSlotFar(spoils->coins, 5);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgCoinsGained);

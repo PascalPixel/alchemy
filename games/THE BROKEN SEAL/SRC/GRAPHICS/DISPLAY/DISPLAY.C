@@ -365,7 +365,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
     Scheduler_RemoveCallback(Graphics_SetBg1Priority3);
     Runtime_SetIrqHandler(2, 0, 0);
     IO_WRITE_QUEUE_PUSH(0x04000000, 0x1541, 0x20000);
-    Runtime_BumpFree(work);
+    MemFree(work);
     render->menu_busy = 0;
     WaitFrames(1);
     return result;

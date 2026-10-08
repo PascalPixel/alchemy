@@ -217,8 +217,8 @@ s32 BattlePres_BuildUnitEntries(
         } else {
             unit_count = entry_count + appended;
         }
-        Runtime_BumpFree(unit_ids);
-        Runtime_BumpFree(excluded_units);
+        MemFree(unit_ids);
+        MemFree(excluded_units);
         return unit_count;
     }
 }

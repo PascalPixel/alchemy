@@ -155,8 +155,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         count[1] = OwnerAction_DiffSlots(
             unit_copy->action_slots, unit->action_slots, diff_work, &out_b, &out_a);
         Iwram_CopyWords(unit, unit_copy, size);
-        Runtime_BumpFree(unit_copy);
-        Runtime_BumpFree(diff_work);
+        MemFree(unit_copy);
+        MemFree(diff_work);
     } else if (mode - 2 <= 1) {
         u16 *diff_work;
         struct BtlUnit *unit_copy;
@@ -187,8 +187,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         Iwram_CopyWords(unit, unit_copy, sizeof(*unit_copy));
         count[1] = count[0];
         page = 0;
-        Runtime_BumpFree(unit_copy);
-        Runtime_BumpFree(diff_work);
+        MemFree(unit_copy);
+        MemFree(diff_work);
     }
 
     count[0] = ((count[0] - 1) / 5) + 1;
@@ -342,7 +342,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
             default:
                 break;
             }
-            Runtime_BumpFree(saved);
+            MemFree(saved);
         }
 
         if (dirty != 0) {
@@ -597,8 +597,8 @@ s32 DjinnMenu_ShowOwnerStatus(void)
     owner = UnitGetFar(menu->shown_owner[0]);
     page[1] = page[0] = OwnerAction_DiffSlots(owner->action_slots, owner->action_slots,
         actions, &gained, &lost);
-    Runtime_BumpFree(saved);
-    Runtime_BumpFree(actions);
+    MemFree(saved);
+    MemFree(actions);
     page[0] = (page[0] - 1) / 6 + 1;
     if (page[0] == 0)
         page[0] = 1;

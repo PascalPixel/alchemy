@@ -84,13 +84,13 @@ s32 UpdateNameEntries(void)
         name_entry->name[14] = 0;
         index += 1;
     }
-    Party_Do(buffer);
+    MemFree(buffer);
     buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_OFFER_BYTES);
     if (SerialRuntime_BeginTransferB(Trade_GetOfferStateFar(1)) != -1) {
         SerialRuntime_WaitForTransferB();
         WaitFrames(2);
     }
-    Party_Do(buffer);
+    MemFree(buffer);
     return named_count;
 }
 
@@ -130,7 +130,7 @@ s32 LinkBattle_SendParty(void)
         WaitFrames(2);
     }
     size = LINK_PARTY_OFFER_BYTES;
-    Runtime_BumpFree(buffer);
+    MemFree(buffer);
     buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
     /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy is emitted before the count's address as in the reference */
     do {
@@ -144,5 +144,5 @@ s32 LinkBattle_SendParty(void)
         WaitFrames(1);
         WaitFrames(2);
     }
-    Runtime_BumpFree(buffer);
+    MemFree(buffer);
 }

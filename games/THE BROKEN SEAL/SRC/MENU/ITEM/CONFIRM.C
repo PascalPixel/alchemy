@@ -218,7 +218,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused)
         sel = 1;
     if (sel == 1)
         CopyWords((WordCopyFn)Iwram_CopyWords, state, saved, BATTLE_UNIT_SIZE);
-    Runtime_BumpFree(saved);
+    MemFree(saved);
     UnitCalcFar(menu->pane_owner[1]);
     Owner_RefreshClassActionsFar(menu->pane_owner[1]);
     return sel;

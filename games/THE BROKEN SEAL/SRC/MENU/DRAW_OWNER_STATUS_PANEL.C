@@ -140,7 +140,7 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         UnitCalcFar(owner);
         UiText_DrawStatComparison(unit, backup, window);
         Owner_Copy(unit, backup);
-        Runtime_BumpFree(backup);
+        MemFree(backup);
         break;
     }
     case 4: {

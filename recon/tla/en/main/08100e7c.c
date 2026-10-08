@@ -125,7 +125,7 @@ s32 ItemMenu_Run(void)
     WaitFrames(1);
     Scheduler_DisableOverlayCallbacksWithFlags();
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    Runtime_BumpFree(menu->saved);
+    MemFree(menu->saved);
     Runtime_ReleaseHeapBlock(55);
     Event_ClearInvalidPackedValuesFar();
     gGameState.mode = old_mode;

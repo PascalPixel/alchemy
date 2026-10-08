@@ -9,5 +9,3 @@
 	.global Render_DecodeFrameBuffer
 Render_DecodeFrameBuffer:
 	.space 224, 0
-	.global Render_DecodeFrameEnd
-Render_DecodeFrameEnd:

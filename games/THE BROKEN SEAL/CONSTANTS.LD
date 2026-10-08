@@ -1,10 +1,10 @@
-Resource_Decode2CodeSize = Resource_Decode2End - Resource_Decode2;
-Render_DecodeFrameCodeSize = Render_DecodeFrameEnd - Render_DecodeFrame;
-Tile_Decompress4bppCodeSize = Tile_Decompress4bppEnd - Tile_Decompress4bpp;
-Tile_ExpandMaskedCodeSize = Tile_ExpandMaskedEnd - Tile_ExpandMasked;
-Tile_ExpandOpaqueCodeSize = Tile_ExpandOpaqueEnd - Tile_ExpandOpaque;
-SentouKouka_TenkaiCodeSize = SentouKouka_TenkaiEnd - SentouKouka_Tenkai;
-Object_UpdateAllCodeSize = Object_UpdateAllEnd - Object_UpdateAll;
+Resource_Decode2CodeSize = Resource_ExecuteTransfer - Resource_Decode2;
+Render_DecodeFrameCodeSize = TileMap_DrawRows - Render_DecodeFrame;
+Tile_Decompress4bppCodeSize = Tile_ExpandMasked - Tile_Decompress4bpp;
+Tile_ExpandMaskedCodeSize = Tile_ExpandOpaque - Tile_ExpandMasked;
+Tile_ExpandOpaqueCodeSize = RenderOutput_AcquireFree - Tile_ExpandOpaque;
+SentouKouka_TenkaiCodeSize = Graphics_ClearCharacterBlockAndPalette - SentouKouka_Tenkai;
+Object_UpdateAllCodeSize = Resource_DecompressLz - Object_UpdateAll;
 Tile_BuildMetatilesCodeSize = Tile_Decompress4bpp - Tile_BuildMetatiles;
 Transform_UpdateVerticesSize = Tile_ConvertMap - Transform_UpdateVertices;
 UiText_DrawGlyphCodeSize = Tile_BuildMetatiles - UiText_DrawGlyphArm;

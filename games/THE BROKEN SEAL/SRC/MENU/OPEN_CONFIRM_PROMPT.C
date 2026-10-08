@@ -102,7 +102,7 @@ s32 Menu_OpenConfirmPrompt(void)
     UiWork_SetAltFlagAndClearTableFar(0);
     CopyWords(Iwram_CopyWords, PROMPT_TILES, saved, PROMPT_TILES_SIZE);
     ((struct UiRenderWork *)((void **)&gMenuCtrlWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL])->menu_busy = 0;
-    Runtime_BumpFree(saved);
+    MemFree(saved);
     WaitFrames(1);
     Scheduler_DisableOverlayCallbacksWithFlags();
 #endif

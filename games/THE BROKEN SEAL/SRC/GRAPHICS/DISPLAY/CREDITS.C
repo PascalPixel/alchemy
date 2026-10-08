@@ -1145,6 +1145,6 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
         *(u32 *)(0x06010018 + tile * 32) = words[0x180];
         *(u32 *)(0x0601001c + tile * 32) = words[0x1c0];
     }
-    Runtime_BumpFree(buf);
+    MemFree(buf);
     return 0;
 }

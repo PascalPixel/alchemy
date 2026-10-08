@@ -90,7 +90,7 @@ void Menu_LoadResourceSlot(s32 slot, s32 index)
 
     Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
     VramBlock_LoadCached(slot, size, buffer);
-    Runtime_BumpFree(buffer);
+    MemFree(buffer);
 }
 
 void Menu_AppendResourceEntry(s32 no)

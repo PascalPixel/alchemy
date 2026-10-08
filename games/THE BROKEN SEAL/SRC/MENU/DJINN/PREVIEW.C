@@ -329,9 +329,9 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     }
 
     Iwram_CopyWords(unit, snap, 332);
-    Runtime_BumpFree(list);
-    Runtime_BumpFree(snap);
-    Runtime_BumpFree(buf);
+    MemFree(list);
+    MemFree(snap);
+    MemFree(buf);
     return win;
 }
 
@@ -1500,7 +1500,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     UiWork_Finalize(list_win, 1);
     UiWindow_MarkVisibleTileAttributes();
     UiWork_SetAltFlagAndClearTable(0);
-    Runtime_BumpFree(tbl);
+    MemFree(tbl);
     WaitFrames(1);
     return (s32)code;
 }

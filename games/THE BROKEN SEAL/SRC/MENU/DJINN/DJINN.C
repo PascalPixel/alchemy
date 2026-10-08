@@ -951,6 +951,6 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
     if (page == 0)
         SideObject_CreateFar(owner, 0, side, window, 0, 0);
     Unit_Copy(state, saved);
-    Runtime_BumpFree(saved);
+    MemFree(saved);
     return 1;
 }

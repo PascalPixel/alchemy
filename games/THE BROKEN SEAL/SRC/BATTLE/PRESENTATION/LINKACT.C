@@ -176,13 +176,13 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
             action->target = action->target ^ 0x80;
         }
 
-        Runtime_BumpFree(state);
+        MemFree(state);
         return result;
     }
 
 fail:
     BattleLink_ResetTransferState();
     SerialRuntime_RemoveIrqHandlers();
-    Runtime_BumpFree(state);
+    MemFree(state);
     return -1;
 }

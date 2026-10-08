@@ -227,7 +227,7 @@ s32 Map_LoadLayeredScene(s32 index)
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[4] + (u32)&ResourceId_Map001), buf);
             Iwram_CopyWords(BG_CHAR_BLOCK(3), buf, 0x4000);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[5] + (u32)&ResourceId_Map001), gMapLayerData);
-            Runtime_BumpFree(buf);
+            MemFree(buf);
         }
     }
     cnt = 0;

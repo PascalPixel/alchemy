@@ -210,7 +210,7 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
         tiles++;
         mirror++;
     }
-    Runtime_BumpFree(canvas);
+    MemFree(canvas);
     return count;
 }
 

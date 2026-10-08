@@ -585,7 +585,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_DISPATCH.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BITTABLE.o"(.data)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_COMMANDS.o"(.text .rodata .data .padding)
-    BitDecoder_Size = ABSOLUTE(BitDecoder_End - BitDecoder_DecodeImage);
+    BitDecoder_Size = ABSOLUTE(DebugParty_LoadPreset - BitDecoder_DecodeImage);
     "*/games/THE BROKEN SEAL/SRC/DEBUG/LOAD_PARTY_PRESET.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/DEBUG/VIEW_MESSAGES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/DEBUG/BATTLE.o"(.text)

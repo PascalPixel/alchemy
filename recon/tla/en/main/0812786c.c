@@ -104,5 +104,5 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 
     state->level += levels;
     UnitCalcFar(owner);
-    Runtime_BumpFree(base);
+    MemFree(base);
 }

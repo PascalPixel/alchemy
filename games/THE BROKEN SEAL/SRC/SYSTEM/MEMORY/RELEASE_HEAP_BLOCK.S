@@ -21,12 +21,12 @@ AlchemyUncreditedEnd_08002dee:
 	.global MemFree
 	.thumb_func
 MemFree:
-	.global Party_Do
+	.global MemFree
 	.thumb_func
-Party_Do:
-	.global Runtime_BumpFree
+MemFree:
+	.global MemFree
 	.thumb_func
-Runtime_BumpFree:
+MemFree:
 	ldr	r4, [pc, #8]
 	movs	r1, #4
 	lsrs	r2, r0, #22

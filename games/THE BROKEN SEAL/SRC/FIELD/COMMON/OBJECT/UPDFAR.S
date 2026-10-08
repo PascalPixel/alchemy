@@ -18,5 +18,3 @@ IwramRatioMulQ14FarArm:
 	.4byte	IwramSqrt
 .L_IwramRatioMulQ14:
 	.4byte	IwramRatioMulQ14
-	.global Object_UpdateAllEnd
-Object_UpdateAllEnd:

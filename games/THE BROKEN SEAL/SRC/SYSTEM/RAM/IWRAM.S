@@ -29,8 +29,6 @@ gDebugTextEnabled:
 	.global gBgScroll
 gBgScroll:
 	.space 0x00000018
-	.global Data_03001ae8
-Data_03001ae8:
 	.global gKeysHeld
 gKeysHeld:
 	.space 0x00000004

@@ -138,7 +138,6 @@ extern u8 ImiruMura_ActorScriptC[];
 extern u8 ImiruMura_MiaScriptA[];
 extern u8 ImiruMura_MiaScriptB[];
 extern s16 ImiruMura_SwayHeadings[];
-extern u32 Data_03001ae8;
 s32 ArcTan2(s32, s32);
 void ObjectDispatch_ApplyValueToChildren(T *, s32);
 void Object_SetActionCallbackAndRefreshById();

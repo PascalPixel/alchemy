@@ -401,7 +401,7 @@ void StagedActor_RunHeadingProbeStep(void)
     subject = ObjectTable_Get(Data_02000240.selected_subject);
 
     for (;;) {
-        heading = ImiruMura_SwayHeadings[(Data_03001ae8 >> 4) & 15];
+        heading = ImiruMura_SwayHeadings[(*(u32 *)gKeysHeld >> 4) & 15];
         if ((heading << 16) == -0x10000) {
             return;
         }

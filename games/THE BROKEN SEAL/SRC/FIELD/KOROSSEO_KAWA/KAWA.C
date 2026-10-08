@@ -69,7 +69,8 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-extern volatile u32 Data_03001ae8;
+extern u32 gKeysHeld;
+#define KEYS_HELD (*(volatile u32 *)&gKeysHeld) // VBlank で書く
 extern u8 HexDigits[];
 void Map_UpdateCellRect();
 void Script_WaitForEventTimeout();
@@ -401,10 +402,10 @@ void SceneActor_ShiftActorEighteenByInputAndLeaderColumn(void)
 
     actor = Object_GetById(gGameState.selected_actor);
     column = actor->x.fixed >> 20;
-    if ((Data_03001ae8 & 32) != 0) {
+    if ((KEYS_HELD & 32) != 0) {
         direction = -1;
     }
-    if ((Data_03001ae8 & 16) != 0) {
+    if ((KEYS_HELD & 16) != 0) {
         direction = 1;
     }
     actor = Object_GetById(17);

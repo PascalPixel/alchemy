@@ -27,7 +27,9 @@
 #include "FIXED_MATH.H"
 #include "TRANSFORM.H"
 
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
+#endif
 
 static __inline__ void Io_Set16(s32 value, volatile u16 *reg)
 {

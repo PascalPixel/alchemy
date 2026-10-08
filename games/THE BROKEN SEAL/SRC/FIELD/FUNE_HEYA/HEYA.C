@@ -88,7 +88,9 @@ void FieldScene_RunPrimarySequence(s32 actor, s32 message, s32 flag);
 s32 SceneState_ApplyLevelFromFlags();
 
 s32 SceneActor_CheckBucketOffsetPoint();
+#ifndef MODERN // the prototype above holds; modern GCC refuses this one
 void FieldScene_CallPairWith10();
+#endif
 void ObjectMotion_SetActionVariant();
 
 struct Walker {

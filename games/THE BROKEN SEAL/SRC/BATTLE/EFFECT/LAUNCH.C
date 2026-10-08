@@ -67,7 +67,9 @@ struct Output
 };
 
 extern struct BattleFxScene *gEffectWork;
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32					 gFrameCount;
+#endif
 
 void Vector_AddPolarOffset(s32, s32, struct Output *);
 void Audio_PlayCue(s32);

@@ -384,7 +384,13 @@ void SceneActor_AdjustSlot12AndSetFlag204(void)
 
 void SceneState_SetDispcntBit9ByThreshold(void)
 {
+#ifdef MODERN
+    // modern GCC holds one type for a name in a file
+    extern u16 ArutinYama_RiseTimer_modern __asm__("ArutinYama_RiseTimer");
+#define ArutinYama_RiseTimer ArutinYama_RiseTimer_modern
+#else
     extern u16 ArutinYama_RiseTimer;
+#endif
 
     volatile u16 *reg = &REG_DISPCNT;
     s16 v = *reg & 0xfdff;
@@ -400,6 +406,9 @@ void SceneState_SetDispcntBit9ByThreshold(void)
         *reg = t;
     }
 }
+#ifdef MODERN
+#undef ArutinYama_RiseTimer
+#endif
 
 void FieldScene_RunEarlySequence(void)
 {

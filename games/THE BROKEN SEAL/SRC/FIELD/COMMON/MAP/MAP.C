@@ -72,6 +72,8 @@ struct SceneEntry {
     u16 resources[6];
 };
 
+extern struct SceneEntry Map_LayeredScenes[];
+
 struct SceneLayerSource {
     u8 x;
     u8 y;
@@ -107,9 +109,16 @@ static __inline__ s32 Scene_Call2(s32 left, s32 right, void *routine)
 
     /* FAKEMATCH: the inline call marks r3 as changed across layer multiplies. */
     __asm__ volatile(".align 2\n\tmov ip, pc\n\tbx %2\n\t"
+#ifdef MODERN
+                     // modern GCC refuses a clobber of factor's own r1
+                     : "+r"(result), "+r"(factor)
+                     : "r"(routine)
+                     : "r2", "r3", "ip", "cc");
+#else
                      : "+r"(result)
                      : "r"(factor), "r"(routine)
                      : "r1", "r2", "r3", "ip", "cc");
+#endif
     return result;
 }
 

@@ -209,7 +209,13 @@ void SceneState_SetMode66AndPassOpeningSequence(void)
 
 void KorosseoKawa_WaitForCountdown(void)
 {
+#ifdef MODERN
+    // modern GCC holds one type for a name in a file
+    extern u32 KorosseoKawa_Countdown_modern __asm__("KorosseoKawa_Countdown");
+#define KorosseoKawa_Countdown KorosseoKawa_Countdown_modern
+#else
     extern u32 KorosseoKawa_Countdown;
+#endif
 
     s32 i;
 
@@ -225,6 +231,9 @@ void KorosseoKawa_WaitForCountdown(void)
         } while (KorosseoKawa_Countdown != 22);
     }
 }
+#ifdef MODERN
+#undef KorosseoKawa_Countdown
+#endif
 
 void SceneState_ApplyRectsForActorsNineAndTen(void)
 {
@@ -286,7 +295,13 @@ void SceneState_ApplyRectAndSend303(void)
 
 void KorosseoKawa_RaisePlatformPair(void)
 {
+#ifdef MODERN
+    // modern GCC holds one type for a name in a file
+    extern u8 KorosseoKawa_Countdown_bytes[] __asm__("KorosseoKawa_Countdown");
+#define KorosseoKawa_Countdown KorosseoKawa_Countdown_bytes
+#else
     extern u8 KorosseoKawa_Countdown[];
+#endif
 
     u32 i;
     u8 *rec7;
@@ -315,6 +330,9 @@ void KorosseoKawa_RaisePlatformPair(void)
     Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
     Engine_EventEnd();
 }
+#ifdef MODERN
+#undef KorosseoKawa_Countdown
+#endif
 
 void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz)
 {

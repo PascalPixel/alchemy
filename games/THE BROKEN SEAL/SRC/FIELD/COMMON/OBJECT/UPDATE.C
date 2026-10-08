@@ -117,6 +117,11 @@ void Object_UpdateAll(void)
             if (obj->target_x != TARGET_UNSET) {
                 sq = IwramSqrt;
                 rm = IwramRatioMulQ14;
+#ifdef MODERN
+                // this code runs copied into RAM: modern GCC would call the
+                // routines directly, out of reach, so keep the addresses
+                __asm__("" : "+r"(sq), "+r"(rm));
+#endif
                 dx = (obj->target_x - x) / 65536;
                 dz = (obj->target_z - z) / 65536;
                 len = sq(dx * dx + dz * dz) << 16;

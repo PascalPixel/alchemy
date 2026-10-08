@@ -1333,18 +1333,12 @@ listened:
         count = (s32)MsgWorldMapAbilityVenusDjinni;
         Message_ShowCentered(count++, 3);
         Event_SetMessage(count);
-        {
-            s32 frames = 20;
-            s32 flags;
-
-            asm volatile("" : : "r"(frames)); /* FAKEMATCH: sets the jump's frames first */
-            Actor_Jump(DJINNI, 2, frames);
-            flags = 0;
-            asm volatile("" : : "r"(flags)); /* FAKEMATCH: sets the message flags first */
-            Event_ShowMessage(DJINNI, flags);
-        }
+        Actor_Jump(DJINNI, 2, 20);
+        Event_ShowMessage(DJINNI, 0);
         Audio_PlayCue(9);
-        goto finish;
+        WorldMap_ShowDjinnTutorial();
+        Battle_ClearObjectFlag5bWhenMode3();
+        return;
     }
     Event_Begin();
     leader = Object_GetById(0);
@@ -1384,15 +1378,7 @@ listened:
     if (Event_ChooseYesNo(0, 0) == 1)
         goto learn;
     Event_ShowMessage(DJINNI, 0);
-    {
-        s32 tile_x = x >> 16;
-        s32 tile_z = z >> 16;
-
-        asm("" : "=r"(tile_z) : "0"(tile_z) : "r3"); /* FAKEMATCH: clobbers r3, a dependent of the z copy and not of the x copy */
-        asm("" : "=r"(tile_z) : "0"(tile_z) : "r3"); /* FAKEMATCH: a second one outnumbers the x copy's, so sched2 copies z first */
-        Actor_WalkToAndWait(DJINNI, tile_x, tile_z);
-    }
-finish:
+    Actor_WalkToAndWait(DJINNI, x >> 16, z >> 16);
     WorldMap_ShowDjinnTutorial();
     Battle_ClearObjectFlag5bWhenMode3();
     return;

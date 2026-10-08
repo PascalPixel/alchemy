@@ -1,3 +1,8 @@
+//--------------------------------------------------------------------------
+// BATTLE.C
+// バトル：キャラの表示の優先度、状態アイコン、ポーズ
+//--------------------------------------------------------------------------
+
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -16,255 +21,320 @@
 #include "BTLDISP.H"
 #include "FIELD_EVENT.H"
 
-#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct MotionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+#define ObjectDispatch_ApplyValueToChildrenFar \
+	((void (*)(struct MotionObject *, s32))ObjectDispatch_ApplyValueToChildrenFar)
 
+#define UNIT_MAX 14 // 敵味方を合わせた人数
+
+//--------------------------------------------------------------------------
+// 状態アイコンを進め、カメラの向きで味方と敵の表示の優先度を決める
+//--------------------------------------------------------------------------
 void BattleActor_UpdateSpritePriorities(void)
 {
-    u16 ids[14];
-    s32 priority[2];
-    s32 i;
-    s32 j;
-    s32 count;
-    struct MotionObject *object;
-    struct AnimationObject *record;
-    struct AnimationObject **list;
+	u16						 ids[UNIT_MAX];
+	s32						 pri[2]; // 味方, 敵
+	s32						 i;
+	s32						 j;
+	s32						 count;
+	struct MotionObject		*obj;
+	struct AnimationObject	*rec;
+	struct AnimationObject **list;
 
-    BattleParty_ListActorIds(BATTLE_SIDE_BOTH, ids);
-    /* FAKEMATCH: the scan is rotated by hand with a goto, which keeps the loop pass off it; as a for loop it becomes a pointer walk. */
-    i = 0;
-    if (ids[i] != BATTLE_UNIT_LIST_END) {
-again:
-        {
-            struct BtlObj *slot = BtlObjGet(ids[i]);
+	// 全員の状態アイコン
+	BattleParty_ListActorIds(BATTLE_SIDE_BOTH, ids);
+	/* FAKEMATCH: the scan is rotated by hand with a goto, which keeps the loop pass off it; as a for loop it becomes a pointer walk. */
+	i = 0;
+	if (ids[i] != BATTLE_UNIT_LIST_END)
+	{
+	again:
+		{
+			struct BtlObj *slot = BtlObjGet(ids[i]);
 
-            if (slot != 0) {
-                object = slot->object;
+			if (slot != 0)
+			{
+				obj = slot->object;
 
-                BattleStatusIcon_Cycle(slot);
-                if (slot->effect_entry != 0) {
-                    record = GetMotionRecord(object, 0);
+				BattleStatusIcon_Cycle(slot);
+				if (slot->effect_entry != 0)
+				{
+					rec = GetMotionRecord(obj, 0);
 
-                    if (record != 0) {
-                        struct SpriteEntry *effect;
-                        s32 state = 0;
+					if (rec != 0)
+					{
+						struct SpriteEntry *efx;
+						s32					p = 0;
 
-                        if (object->y != 0)
-                            state = 9;
-                        effect = slot->effect_entry;
-                        if (effect->priority != state) {
-                            effect->priority = state;
-                            record->dirty = 1;
-                        }
-                    }
-                }
-            }
-        }
-        i++;
-        if (i <= 13 && ids[i] != BATTLE_UNIT_LIST_END)
-            goto again;
-    }
-    if ((s16)gCameraWork->yaw >= 0) {
-        priority[0] = 1;
-        priority[1] = 2;
-    } else {
-        priority[0] = 2;
-        priority[1] = 1;
-    }
-    {
-        count = BattleParty_ListActorIds(BATTLE_SIDE_PARTY, ids);
-        for (i = 0; i < count; i++) {
-            struct BtlObj *slot = BtlObjGet(ids[i]);
+						if (obj->y != 0) // 高さがあれば
+							p = 9;
+						efx = slot->effect_entry;
+						if (efx->priority != p)
+						{
+							efx->priority = p;
+							rec->dirty = 1;
+						}
+					}
+				}
+			}
+		}
+		i++;
+		if (i <= UNIT_MAX - 1 && ids[i] != BATTLE_UNIT_LIST_END)
+			goto again;
+	}
 
-            if (slot != 0) {
-                object = slot->object;
+	// カメラの向きで、味方と敵の優先度を入れ替える
+	if ((s16)gCameraWork->yaw >= 0)
+	{
+		pri[0] = 1;
+		pri[1] = 2;
+	}
+	else
+	{
+		pri[0] = 2;
+		pri[1] = 1;
+	}
 
-                switch (object->record_storage_kind & 15) {
-                case 1:
-                {
-                    record = object->records;
-                    record->part[0].priority = priority[0];
-                    break;
-                }
-                case 2:
-                {
-                    list = (struct AnimationObject **)object->records;
-                    for (j = 0; j < 4; j++) {
-                        record = *list++;
-                        if (record != 0)
-                            record->part[0].priority = priority[0];
-                    }
-                    break;
-                }
-                }
-            }
-        }
-    }
-    {
-        count = BattleParty_ListActorIds(BATTLE_SIDE_ENEMIES, ids);
-        for (i = 0; i < count; i++) {
-            struct BtlObj *slot = BtlObjGet(ids[i]);
+	// 味方
+	{
+		count = BattleParty_ListActorIds(BATTLE_SIDE_PARTY, ids);
+		for (i = 0; i < count; i++)
+		{
+			struct BtlObj *slot = BtlObjGet(ids[i]);
 
-            if (slot != 0) {
-                object = slot->object;
+			if (slot != 0)
+			{
+				obj = slot->object;
 
-                switch (object->record_storage_kind & 15) {
-                case 1:
-                {
-                    record = object->records;
-                    record->part[0].priority = priority[1];
-                    break;
-                }
-                case 2:
-                {
-                    list = (struct AnimationObject **)object->records;
-                    for (j = 0; j < 4; j++) {
-                        record = *list++;
-                        if (record != 0)
-                            record->part[0].priority = priority[1];
-                    }
-                    break;
-                }
-                }
-            }
-        }
-    }
+				switch (obj->record_storage_kind & 15)
+				{
+				case 1: // 一枚
+				{
+					rec = obj->records;
+					rec->part[0].priority = pri[0];
+					break;
+				}
+				case 2: // 四枚までの表
+				{
+					list = (struct AnimationObject **)obj->records;
+					for (j = 0; j < 4; j++)
+					{
+						rec = *list++;
+						if (rec != 0)
+							rec->part[0].priority = pri[0];
+					}
+					break;
+				}
+				}
+			}
+		}
+	}
+
+	// 敵
+	{
+		count = BattleParty_ListActorIds(BATTLE_SIDE_ENEMIES, ids);
+		for (i = 0; i < count; i++)
+		{
+			struct BtlObj *slot = BtlObjGet(ids[i]);
+
+			if (slot != 0)
+			{
+				obj = slot->object;
+
+				switch (obj->record_storage_kind & 15)
+				{
+				case 1:
+				{
+					rec = obj->records;
+					rec->part[0].priority = pri[1];
+					break;
+				}
+				case 2:
+				{
+					list = (struct AnimationObject **)obj->records;
+					for (j = 0; j < 4; j++)
+					{
+						rec = *list++;
+						if (rec != 0)
+							rec->part[0].priority = pri[1];
+					}
+					break;
+				}
+				}
+			}
+		}
+	}
 }
 
+//--------------------------------------------------------------------------
+// 状態アイコンのビット
+//--------------------------------------------------------------------------
+#define ICON_DOKU 0x01		// 毒
+#define ICON_MOUDOKU 0x02	// もう毒
+#define ICON_SHIBIRE 0x04	// しびれ
+#define ICON_FUUJI 0x08		// エナジーふうじ
+#define ICON_NEMURI 0x10	// ねむり
+#define ICON_MABOROSHI 0x20 // まぼろし
+#define ICON_AKURYO 0x40	// あくりょう
+#define ICON_SHIRYO 6		// しりょう：残りの数 1-7 が bit 7-13
 
+#define ICON_MAX 14 // アイコンの種類
 
-s32 BattleUnit_BuildStatusFlags(s32 id, struct BtlObj *output)
+//--------------------------------------------------------------------------
+// 状態異常から状態アイコンのビットを作る
+//--------------------------------------------------------------------------
+s32 BattleUnit_BuildStatusFlags(s32 id, struct BtlObj *slot)
 {
-    struct BtlUnit *state = UnitGetFar(id);
-    s8 mode = state->doku;
-    u32 flags = 0;
+	struct BtlUnit *unit = UnitGetFar(id);
+	s8				doku = unit->doku;
+	u32				flags = 0;
 
-    if (mode == 1)
-        flags = 1;
-    if (mode == 2)
-        flags |= mode;
-    if (state->maboroshi != 0)
-        flags |= 0x20;
-    if (state->shibire != 0) {
-        s32 kind;
-        flags |= 4;
-        kind = state->class_id;
-        if (kind == 0x79 || kind == 0x94)
-            flags &= ~4;
-    }
-    if (state->fuuji != 0)
-        flags |= 8;
-    if (state->akuryo != 0)
-        flags |= 0x40;
-    if (state->nemuri != 0)
-        flags |= 0x10;
-    if (state->shiryo != 0)
-        flags |= 1 << (state->shiryo + 6);
-    output->active_conditions = flags;
+	if (doku == 1)
+		flags = ICON_DOKU;
+	if (doku == 2)
+		flags |= doku; // もう毒 (ICON_MOUDOKU)
+	if (unit->maboroshi != 0)
+		flags |= ICON_MABOROSHI;
+	if (unit->shibire != 0)
+	{
+		s32 cls;
+		flags |= ICON_SHIBIRE;
+		cls = unit->class_id;
+		if (cls == 121 || cls == 148) // この二体には出さない
+			flags &= ~ICON_SHIBIRE;
+	}
+	if (unit->fuuji != 0)
+		flags |= ICON_FUUJI;
+	if (unit->akuryo != 0)
+		flags |= ICON_AKURYO;
+	if (unit->nemuri != 0)
+		flags |= ICON_NEMURI;
+	if (unit->shiryo != 0)
+		flags |= 1 << (unit->shiryo + ICON_SHIRYO);
+	slot->active_conditions = flags;
 }
 
-s32 BattleStatusIcon_Cycle(struct BtlObj *record)
+//--------------------------------------------------------------------------
+// 状態アイコンを 80 フレームごとに次の状態へ切り替える
+//--------------------------------------------------------------------------
+s32 BattleStatusIcon_Cycle(struct BtlObj *slot)
 {
-    struct AnimationEntry *old_effect;
-    struct AnimationEntry *effect;
-    struct AnimationObject *context;
-    struct MotionObject *owner;
-    s32 effect_id;
-    s32 entry_handle;
-    s32 prev;
-    s32 changed = 0;
+	struct AnimationEntry  *old;
+	struct AnimationEntry  *icon;
+	struct AnimationObject *rec;
+	struct MotionObject	   *owner;
+	s32						anim;
+	s32						handle;
+	s32						prev;
+	s32						changed = 0;
 
-    if (record->cycle_timer >= 0)
-        record->cycle_timer--;
+	if (slot->cycle_timer >= 0)
+		slot->cycle_timer--;
 
-    old_effect = (struct AnimationEntry *)record->animation_entry;
-    if (old_effect == 0) {
-        if ((s16)record->active_conditions == 0)
-            goto cooldown_expired;
-        goto update;
-    } else {
-        if ((((s16)record->active_conditions >> record->selected_condition) & 1) == 0)
-            goto update;
-    }
-cooldown_expired:
-    if (record->cycle_timer != 0)
-        goto done;
+	// 表示中の状態が消えたら、すぐに切り替える
+	old = (struct AnimationEntry *)slot->animation_entry;
+	if (old == 0)
+	{
+		if ((s16)slot->active_conditions == 0)
+			goto wait;
+		goto update;
+	}
+	if ((((s16)slot->active_conditions >> slot->selected_condition) & 1) == 0)
+		goto update;
+wait:
+	if (slot->cycle_timer != 0)
+		goto done;
 
 update:
-    effect_id = -1;
-    owner = record->object;
-    if ((s16)record->active_conditions != 0) {
-        prev = record->selected_condition;
-        for (effect_id = prev + 1;; effect_id++) {
-            if (effect_id > 13)
-                effect_id = 0;
-            if ((((s16)record->active_conditions >> effect_id) & 1) != 0)
-                break;
-        }
+	anim = -1;
+	owner = slot->object;
+	if ((s16)slot->active_conditions != 0)
+	{
+		prev = slot->selected_condition;
+		for (anim = prev + 1;; anim++)
+		{
+			if (anim > ICON_MAX - 1)
+				anim = 0;
+			if ((((s16)slot->active_conditions >> anim) & 1) != 0)
+				break;
+		}
 
-        if (prev != effect_id || old_effect == 0) {
-            record->selected_condition = effect_id;
-            changed = 1;
-        }
-        record->cycle_timer = 80;
-    } else {
-        changed = 1;
-    }
+		if (prev != anim || old == 0)
+		{
+			slot->selected_condition = anim;
+			changed = 1;
+		}
+		slot->cycle_timer = 80;
+	}
+	else
+	{
+		changed = 1;
+	}
 
-    context = GetMotionRecord(owner, 0);
-    if (context == 0)
-        goto done;
+	rec = GetMotionRecord(owner, 0);
+	if (rec == 0)
+		goto done;
 
-    if (effect_id >= 0) {
-        if (context->width == 32)
-            effect_id += 340;
-        else
-            effect_id += 355;
-    }
+	// アイコンのアニメ番号は、幅 32 のキャラと他とで別の並び
+	if (anim >= 0)
+	{
+		if (rec->width == 32)
+			anim += 340;
+		else
+			anim += 355;
+	}
 
-    if (record->animation_entry != 0 && changed != 0) {
-        ResourceMetadata_UnregisterFar(context, (s32)record->animation_entry);
-        record->animation_entry = 0;
-    }
+	if (slot->animation_entry != 0 && changed != 0)
+	{
+		ResourceMetadata_UnregisterFar(rec, (s32)slot->animation_entry);
+		slot->animation_entry = 0;
+	}
 
-    if (effect_id >= 0 && changed != 0) {
-        /* FAKEMATCH: storing the handle before testing failure avoids an extra unconditional branch. */
-        entry_handle = ResourceMetadata_RegisterFar(context, effect_id);
-        record->animation_entry = (struct SpriteEntry *)entry_handle;
-        if (entry_handle == -1)
-            record->animation_entry = 0;
-        effect = (struct AnimationEntry *)record->animation_entry;
-        if (effect != 0) {
-            effect->priority = 3;
-            Animation_SetWorkEntryFar(effect, 0);
-        }
-    }
+	if (anim >= 0 && changed != 0)
+	{
+		/* FAKEMATCH: storing the handle before testing failure avoids an extra unconditional branch. */
+		handle = ResourceMetadata_RegisterFar(rec, anim);
+		slot->animation_entry = (struct SpriteEntry *)handle;
+		if (handle == -1)
+			slot->animation_entry = 0;
+		icon = (struct AnimationEntry *)slot->animation_entry;
+		if (icon != 0)
+		{
+			icon->priority = 3;
+			Animation_SetWorkEntryFar(icon, 0);
+		}
+	}
 
-    context->dirty = 1;
-    if (effect_id >= 0)
-        record->animation = effect_id;
-    else
-        record->animation = 0;
+	rec->dirty = 1;
+	if (anim >= 0)
+		slot->animation = anim;
+	else
+		slot->animation = 0;
 
-done:
-;
+done:;
 }
 
+//--------------------------------------------------------------------------
+// 状態に合わせてキャラのポーズを決める
+// 動けなければ味方 4・敵 0、倒れていれば味方 4・敵 5、ほかは 1
+//--------------------------------------------------------------------------
 s32 BattlePres_SetActorModeAndAction(s32 id)
 {
-    struct BtlUnit *state;
-    s32 value;
+	struct BtlUnit *unit;
+	s32				mode;
 
-    state = UnitGetFar(id);
-    value = 1;
-    if (state->hp != 0) {
-        if (state->nemuri != 0 || state->shibire != 0 || state->miugoki != 0)
-            value = (state->side != BATTLE_UNIT_ENEMY) * 4;
-    } else {
-        s32 changed = state->side ^ value;
-        value = (u32)(-changed | changed) >> 31;
-        value = 5 - value;
-    }
+	unit = UnitGetFar(id);
+	mode = 1;
+	if (unit->hp != 0)
+	{
+		if (unit->nemuri != 0 || unit->shibire != 0 || unit->miugoki != 0)
+			mode = (unit->side != BATTLE_UNIT_ENEMY) * 4;
+	}
+	else
+	{
+		s32 mikata = unit->side ^ mode;
+		mode = (u32)(-mikata | mikata) >> 31;
+		mode = 5 - mode;
+	}
 
-    Object_SetMode(BtlObjGet(id)->object, value);
-    ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(id)->object, (id & 3) + 14);
+	Object_SetMode(BtlObjGet(id)->object, mode);
+	ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(id)->object, (id & 3) + 14);
 }

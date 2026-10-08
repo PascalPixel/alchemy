@@ -1,3 +1,8 @@
+//--------------------------------------------------------------------------
+// ACTSETUP.C
+// エナジー演出：ワークの準備、使う者と対象の記録、ふくらむ弧の物体
+//--------------------------------------------------------------------------
+
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -28,252 +33,294 @@
 #include "SYSTEM.H"
 #include "IO_REG.H"
 #include "HEAP_STATE.H"
+#include "MAP_SCROLL.H"
 
-struct ArcChild {
-    u8 pad00[22];
-    u8 frame;
+#define HEAP_SLOT_FX 56 // エナジー演出のワーク
+
+// スプライトの子
+struct ArcChild
+{
+	u8 pad00[22];
+	u8 frame;
 };
 
-struct ArcSprite {
-    u8 pad00[4];
-    u16 y:8;
-    u16 affine:1;
-    u16 double_size:1;
-    u16 mode:2;
-    u16 mosaic:1;
-    u16 color:1;
-    u16 shape:2;
-    u16 x:9;
-    u16 unused:3;
-    u16 hflip:1;
-    u16 vflip:1;
-    u16 size:2;
-    u16 tile:10;
-    u16 priority:2;
-    u16 palette:4;
-    u8 pad0a[18];
-    u8 slot;
-    u8 active:1;
-    u8 display_flags:7;
-    u8 pad1e[8];
-    u8 flags;
-    u8 pad27;
-    struct ArcChild *child;
+// スプライト：OAM の三つの属性と管理情報
+struct ArcSprite
+{
+	u8				 pad00[4];
+	u16				 y : 8;
+	u16				 affine : 1;
+	u16				 double_size : 1;
+	u16				 mode : 2;
+	u16				 mosaic : 1;
+	u16				 color : 1; // 1 = 256 色
+	u16				 shape : 2;
+	u16				 x : 9;
+	u16				 unused : 3;
+	u16				 hflip : 1;
+	u16				 vflip : 1;
+	u16				 size : 2;
+	u16				 tile : 10;
+	u16				 priority : 2;
+	u16				 palette : 4;
+	u8				 pad0a[18];
+	u8				 slot; // VRAM ブロック
+	u8				 active : 1;
+	u8				 display_flags : 7;
+	u8				 pad1e[8];
+	u8				 flags;
+	u8				 pad27;
+	struct ArcChild *child;
 };
 
-struct ArcObject {
-    u8 pad00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 terrain_height;
-    s32 scale_x;
-    s32 scale_y;
-    u8 pad20[0x23 - 0x20];
-    u8 priority_flags;
-    u8 pad24[0x50 - 0x24];
-    struct ArcSprite *sprite;
-    u8 pad54[1];
-    u8 motion_flags;
-    u8 pad56[0x64 - 0x56];
-    u16 counter;
-    u8 pad66[2];
-    struct ArcObject *linked_object;
-    void (*update)(struct FieldActor *);
+// 弧の物体
+struct ArcObject
+{
+	u8				  pad00[8];
+	s32				  x; // 16.16 固定小数点のドット
+	s32				  y;
+	s32				  z;
+	s32				  terrain_height;
+	s32				  scale_x; // 0x10000 = 等倍
+	s32				  scale_y;
+	u8				  pad20[0x23 - 0x20];
+	u8				  priority_flags;
+	u8				  pad24[0x50 - 0x24];
+	struct ArcSprite *sprite;
+	u8				  pad54[1];
+	u8				  motion_flags;
+	u8				  pad56[0x64 - 0x56];
+	u16				  counter; // 出てからのフレーム
+	u8				  pad66[2];
+	struct ArcObject *linked_object; // ついていく物体
+	void (*update)(struct FieldActor *);
 };
 
 extern struct BattleFxScene *gEffectWork;
-struct FieldActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
+struct FieldActor			*Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 
 extern volatile u32 gFrameCount;
-void Animation_ApplyChildValuesFar(struct DispatchObject *object, u32 value);
+void				Animation_ApplyChildValuesFar(struct DispatchObject *object, u32 value);
 
-struct EffectOrigin {
-    u8 padding00[4];
-    s32 x;
-    s32 y;
-    s32 z;
+// イベントワークのうち、ここで使う部分
+struct BattleSceneState
+{
+	u8	padding000[0xcc0];
+	u16 unknown_cc0;
+	u8	padding0cc2[4];
+	s8	running; // エナジーの演出中
 };
-
-struct BattleSceneState {
-    u8 padding000[0xcc0];
-    u16 unknown_cc0;
-    u8 padding0cc2[4];
-    s8 running;
-};
-
-
 
 void Vector_AddPolarOffset(s32, s32, void *);
 
 void BattleFx_SpawnScaledArcObjects(struct FieldActor *link);
 
+//--------------------------------------------------------------------------
+// 物体の位置に二つの弧を出す (B は上下を反転)
+// 弧は 32 フレームでふくらんでしぼみ、物体についていく
+//--------------------------------------------------------------------------
 void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked)
 {
-    /* FAKEMATCH: scalar coordinates and packed OAM preserve alias order and registers; shared views add four bytes. */
-    struct ArcObject *link = (struct ArcObject *)linked;
-    struct BattleFxScene *scene = gEffectWork;
-    struct ArcObject *source = (struct ArcObject *)scene->main_object;
-    struct ArcObject *objects[2];
-    struct ArcObject *object;
-    struct ArcSprite *sprite;
-    s32 i;
+	/* FAKEMATCH: scalar coordinates and packed OAM preserve alias order and registers; shared views add four bytes. */
+	struct ArcObject	 *link = (struct ArcObject *)linked;
+	struct BattleFxScene *scene = gEffectWork;
+	struct ArcObject	 *source = (struct ArcObject *)scene->main_object;
+	struct ArcObject	 *objs[2];
+	struct ArcObject	 *obj;
+	struct ArcSprite	 *spr;
+	s32					  i;
 
-    for (i = 0; i <= 1; i++) {
-        object = (struct ArcObject *)Object_CreateFar(26, link->x, link->y, link->z);
-        objects[i] = object;
-        if (object == 0)
-            continue;
-        object->terrain_height = link->terrain_height;
-        sprite = object->sprite;
-        object->motion_flags = 0;
-        object->counter = 0;
-        object->linked_object = link;
-        object->scale_x = object->scale_y = 0x1999;
-        if (sprite == 0)
-            continue;
-        AnimationObjects_SelectAnimationFar((struct AnimationObject *)sprite, 0);
-        sprite->flags = 0;
-        Resource_ResetEntry(sprite->slot);
-        sprite->slot = scene->tile_slot;
-        sprite->active = 1;
-        sprite->tile = (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
-        sprite->color = 0;
-        sprite->shape = 1;
-        sprite->size = 2;
-        sprite->child->frame = 0;
-    }
-    objects[0]->update = BattleFx_UpdateScaledArcObjectB;
-    objects[0]->sprite->priority = 0;
-    objects[1]->update = BattleFx_UpdateScaledArcObjectA;
-    objects[1]->sprite->priority = source->sprite->priority;
-    objects[1]->priority_flags = 2;
+	for (i = 0; i <= 1; i++)
+	{
+		obj = (struct ArcObject *)Object_CreateFar(26, link->x, link->y, link->z);
+		objs[i] = obj;
+		if (obj == 0)
+			continue;
+		obj->terrain_height = link->terrain_height;
+		spr = obj->sprite;
+		obj->motion_flags = 0;
+		obj->counter = 0;
+		obj->linked_object = link;
+		obj->scale_x = obj->scale_y = 0x1999; // 0.1 倍
+		if (spr == 0)
+			continue;
+		// 演出のタイルを使う 16 色の横長スプライト
+		AnimationObjects_SelectAnimationFar((struct AnimationObject *)spr, 0);
+		spr->flags = 0;
+		Resource_ResetEntry(spr->slot);
+		spr->slot = scene->tile_slot;
+		spr->active = 1;
+		spr->tile = (gVramBlockCache[spr->slot].offset >> 5) & 0x3ff;
+		spr->color = 0;
+		spr->shape = 1;
+		spr->size = 2;
+		spr->child->frame = 0;
+	}
+	// B の弧は最前面、A の弧は使う者と同じ優先度
+	objs[0]->update = BattleFx_UpdateScaledArcObjectB;
+	objs[0]->sprite->priority = 0;
+	objs[1]->update = BattleFx_UpdateScaledArcObjectA;
+	objs[1]->sprite->priority = source->sprite->priority;
+	objs[1]->priority_flags = 2;
 }
 
-void BattleFx_FlickerObjectAndTick(s32 arg0)
+//--------------------------------------------------------------------------
+// 2 フレームごとに色 7 と 0 を切り替え、16 フレームごとに弧を出す
+//--------------------------------------------------------------------------
+void BattleFx_FlickerObjectAndTick(s32 obj)
 {
-    if ((gFrameCount & 2) != 0) {
-        Animation_ApplyChildValuesFar((struct DispatchObject *)arg0, 7);
-    } else {
-        Animation_ApplyChildValuesFar((struct DispatchObject *)arg0, 0);
-    }
-    if ((gFrameCount & 15) == 0) {
-        BattleFx_SpawnScaledArcObjects(arg0);
-    }
+	if ((gFrameCount & 2) != 0)
+	{
+		Animation_ApplyChildValuesFar((struct DispatchObject *)obj, 7);
+	}
+	else
+	{
+		Animation_ApplyChildValuesFar((struct DispatchObject *)obj, 0);
+	}
+	if ((gFrameCount & 15) == 0)
+	{
+		BattleFx_SpawnScaledArcObjects(obj);
+	}
 }
 
-void BattleFx_CycleObjectValueByCounter(s32 arg0)
+//--------------------------------------------------------------------------
+// 2 フレームごとに色 0-5 を順に回し、16 フレームごとに弧を出す
+//--------------------------------------------------------------------------
+void BattleFx_CycleObjectValueByCounter(s32 obj)
 {
-    if ((gFrameCount & 1) != 0) {
-        s32 value = (gFrameCount >> 1) % 6;
+	if ((gFrameCount & 1) != 0)
+	{
+		s32 col = (gFrameCount >> 1) % 6;
 
-        Animation_ApplyChildValuesFar((struct DispatchObject *)arg0, value);
-    }
-    if ((gFrameCount & 15) == 0) {
-        BattleFx_SpawnScaledArcObjects(arg0);
-    }
+		Animation_ApplyChildValuesFar((struct DispatchObject *)obj, col);
+	}
+	if ((gFrameCount & 15) == 0)
+	{
+		BattleFx_SpawnScaledArcObjects(obj);
+	}
 }
 
+//--------------------------------------------------------------------------
+// 演出スロット 24 個を動かす
+//--------------------------------------------------------------------------
 void BattleFx_UpdateAllEffectSlots(void)
 {
-    s32 p;
-    s32 cnt;
+	s32 p;
+	s32 n;
 
-    p = (s32)gEffectWork->slots;
-    cnt = 0x17;
-    do {
-        cnt -= 1;
-        EffectSlot_Update((struct EffectSlot *)p);
-        p += sizeof(struct EffectSlot);
-    } while (cnt >= 0);
+	p = (s32)gEffectWork->slots;
+	n = 23;
+	do
+	{
+		n -= 1;
+		EffectSlot_Update((struct EffectSlot *)p);
+		p += sizeof(struct EffectSlot);
+	} while (n >= 0);
 }
 
-void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
+//--------------------------------------------------------------------------
+// エナジー演出のワークを用意し、わざの演出を準備する
+// 演出中にもう一度呼ばれたら、わざだけを入れ替える
+//--------------------------------------------------------------------------
+void BattleFx_LoadActionEffectResources(s32 act_no, s32 mode)
 {
-    struct BattleSceneState *scene = *(gWorkSlot + HEAP_SLOT_EVENT);
-    struct EffectOrigin *origin = *(gWorkSlot + 8);
-    struct BattleFxScene *work;
-    s32 running;
+	struct BattleSceneState *ev = *(gWorkSlot + HEAP_SLOT_EVENT);
+	struct MapScrollWork	*map = *(gWorkSlot + 8);
+	struct BattleFxScene	*work;
+	s32						 running;
 
-    running = scene->running;
-    if (running == 0) {
-        volatile u32 fill;
+	running = ev->running;
+	if (running == 0)
+	{
+		volatile u32 fill;
 
-        work = Runtime_AllocateHeapBlock(56, sizeof *work);
-        fill = running;
-        Dma_Set((const void *)&fill, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | (sizeof *work / 4), REG_DMA3);
-    } else {
-        work = *(gWorkSlot + 56);
-    }
-    work->action = action;
-    work->animation = BtlActGet(action)->type_0c;
-    running = scene->running;
-    if (running != 0)
-        return;
-    work->free_blocks = 0x200 - ResourceTable_CountFreeBlocks();
-    work->mode = mode;
-    work->visible = 1;
-    work->enabled = 1;
-    work->active = 1;
-    work->message_mode = 1;
-    work->saved_x = origin->x;
-    work->saved_y = origin->y;
-    work->saved_z = origin->z;
-    if (gGameState.map == (s32)&SceneId_MakyuriIriguchi)
-        work->lit = 1;
-    if (gGameState.map == (s32)&SceneId_MakyuriHeya2)
-        work->lit = 1;
-    BattleFx_SetupObjectPair(gGameState.selected_actor, -1);
-    if (work->animation != 8)
-        scene->unknown_cc0 = running;
-    work->tile_slot = Resource_FindFreeEntry();
-    VramBlock_LoadCached((s16)work->tile_slot, 256, Data_0809c410);
-    Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 0xc80);
+		work = Runtime_AllocateHeapBlock(HEAP_SLOT_FX, sizeof *work);
+		fill = running;
+		Dma_Set((const void *)&fill, work,
+			DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | (sizeof *work / 4), REG_DMA3);
+	}
+	else
+	{
+		work = *(gWorkSlot + HEAP_SLOT_FX);
+	}
+	work->action = act_no;
+	work->animation = BtlActGet(act_no)->type_0c;
+	running = ev->running;
+	if (running != 0)
+		return;
+	work->free_blocks = 512 - ResourceTable_CountFreeBlocks();
+	work->mode = mode;
+	work->visible = 1;
+	work->enabled = 1;
+	work->active = 1;
+	work->message_mode = 1;
+	// マップのゆれの大きさと減り方を取っておき、演出の後で戻す
+	work->saved_x = map->shake_x;
+	work->saved_y = map->shake_y;
+	work->saved_z = map->shake_decay;
+	if (gGameState.map == (s32)&SceneId_MakyuriIriguchi)
+		work->lit = 1;
+	if (gGameState.map == (s32)&SceneId_MakyuriHeya2)
+		work->lit = 1;
+	BattleFx_SetupObjectPair(gGameState.selected_actor, -1);
+	if (work->animation != 8)
+		ev->unknown_cc0 = running;
+	work->tile_slot = Resource_FindFreeEntry();
+	VramBlock_LoadCached((s16)work->tile_slot, 256, Data_0809c410);
+	Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 0xc80);
 }
 
-void BattleFx_SetupObjectPair(s32 first_object_id, s32 second_object_id)
+//--------------------------------------------------------------------------
+// 使う者と対象の物体を記録する
+// 対象がなければ、使う者の向きに 16 ドット先を演出の位置にする
+//--------------------------------------------------------------------------
+void BattleFx_SetupObjectPair(s32 user_id, s32 tgt_id)
 {
-    struct ScriptMotionObject *first_object;
-    struct ScriptMotionObject *second_object;
-    s32 facing_quadrant;
-    struct BattleFxScene *state;
+	struct ScriptMotionObject *user;
+	struct ScriptMotionObject *tgt;
+	s32						   dir;
+	struct BattleFxScene	  *work;
 
-    state = gEffectWork;
-    state->first_object_id = first_object_id;
-    first_object = ObjectTable_Get((s16)first_object_id);
-    state->second_object_id = second_object_id;
-    state->main_object = first_object;
-    second_object = ObjectTable_Get((s16)second_object_id);
-    facing_quadrant = (first_object->facing + 0x2000) & 0xc000;
-    state->child = second_object;
-    state->angle = facing_quadrant;
-    if (second_object != NULL) {
-        state->saved_callback = (void *)second_object->hook;
-        state->saved_script = (const s32 *)second_object->script;
-        {
-            struct AnimationObject *animation =
-                ((struct ObjectRuntime *)second_object)->animation;
-            u8 palette = animation->entries[0]->param;
+	work = gEffectWork;
+	work->first_object_id = user_id;
+	user = ObjectTable_Get((s16)user_id);
+	work->second_object_id = tgt_id;
+	work->main_object = user;
+	tgt = ObjectTable_Get((s16)tgt_id);
+	dir = (user->facing + 0x2000) & 0xc000; // 四方向にまるめる
+	work->child = tgt;
+	work->angle = dir;
+	if (tgt != NULL)
+	{
+		// 対象の動きと色を、あとで戻すために取っておく
+		work->saved_callback = (void *)tgt->hook;
+		work->saved_script = (const s32 *)tgt->script;
+		{
+			struct AnimationObject *anim = ((struct ObjectRuntime *)tgt)->animation;
+			u8						pal = anim->entries[0]->param;
 
-            state->saved_palette = palette;
-        }
-        state->x = second_object->x;
-        state->z = second_object->z;
-        state->y = second_object->y;
-        return;
-    }
-    state->x = first_object->x;
-    state->z = first_object->z;
-    state->y = first_object->y;
-    Vector_AddPolarOffset(0x100000, facing_quadrant, &state->x);
+			work->saved_palette = pal;
+		}
+		work->x = tgt->x;
+		work->z = tgt->z;
+		work->y = tgt->y;
+		return;
+	}
+	work->x = user->x;
+	work->z = user->z;
+	work->y = user->y;
+	Vector_AddPolarOffset(0x100000, dir, &work->x);
 }
 
+//--------------------------------------------------------------------------
+// 使う者の動きを止めて、色を戻す
+//--------------------------------------------------------------------------
 void EffectRuntime_StopCurrentObject(void)
 {
-    struct BattleFxScene *work = gEffectWork;
-    struct ScriptMotionObject *object = work->main_object;
+	struct BattleFxScene	  *work = gEffectWork;
+	struct ScriptMotionObject *user = work->main_object;
 
-    object->hook = NULL;
-    Animation_ApplyChildValuesFar((struct DispatchObject *)object, 0);
-    WaitFrames(1);
+	user->hook = NULL;
+	Animation_ApplyChildValuesFar((struct DispatchObject *)user, 0);
+	WaitFrames(1);
 }

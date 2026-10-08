@@ -253,8 +253,6 @@ u32 SaveState_BuildSummaryHeader(void)
         frames = *frame;
         word = GameFlagBytes;
         i = 0;
-        /* FAKEMATCH: empty asm barrier: the bound's shift, in C, waits on the loop setup and goes before the store as native; as the plain constant 968 its two halves sit together after the frame load (6 of 185 rows differ) */
-        asm("" : "+r"(n) : "r"(word), "r"(i), "r"(frames));
         n <<= 2;
         summary->frames = frames;
         goto test;

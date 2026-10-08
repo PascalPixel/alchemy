@@ -185,8 +185,6 @@ s32 Map_LoadLayeredScene(s32 index)
         {
             s32 v = Iwram_MulQ16(*scale_y, scroll_y);
 
-            /* FAKEMATCH: the same r3 clobber, measured above */
-            asm("" : "+r"(v) : : "r3");
             layer->y = v + base_y;
         }
         source++;

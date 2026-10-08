@@ -17,13 +17,20 @@
 #include "IWRAM_CALL.H"
 #include "FIELD_SERVICE.H"
 #include "FIELD_EFFECT.H"
+#include "GAME_STATE.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "MEM.H"
+#include "DMA.H"
+#include "IO_WRITE_QUEUE.H"
+#include "MENU_LIST.H"
+#include "RAM_BUFFER.H"
+#include "VRAM_BLOCK.H"
+#include "IO_REG.H"
 
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
 #endif
-void Engine_AudioPlayCue();
-s32 Engine_RandomNext();
-void Effect_Spawn();
 
 struct EffectParams {
     u8 pad00[8];
@@ -33,24 +40,12 @@ struct EffectParams {
     u16 angle;
     u8 pad24[4];
 };
-
-
-
-
-
-void Engine_GameFlagClear();
-void Engine_MapCopyCells();
-void Engine_MapCopyCellAttributes();
 void Engine_MapCopyCellsLayered();
-void Engine_ActorSetPosition();
 s32 Engine_DisplayScrollStartHBlankDma();
-
-s32 Engine_GameFlagIsSet();
 s32 BattleFx_EmitRandomParticle();
 s32 DisplayScroll_DisarmHBlankDma();
 
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
-void BattleFx_SetWeightedResult(s32 value, s32 weight);
 
 void FieldScene_ApplyActor13Values3And3(void) { BattleFx_RunPageEffectForSlot(13, 3, 3); }
 
@@ -305,6 +300,7 @@ s32 RamakanSabaku_ConfigureAreaLayout(void)
 
 void RamakanSabaku_ReturnToArea3(void)
 {
+	void BattleFx_SetWeightedResult(s32 value, s32 weight);
     Engine_ActorRunRepeatedMotion(8, 2);
     Party_SetFields1ceAnd1d0((s32)&SceneId_RamakanSabaku3, 5);
     /* FAKEMATCH: the do/while loads the game state's base before the 0x22b offset, which fixes their registers and literal-pool order. */
@@ -509,4 +505,515 @@ void RamakanSabaku_SweepBack(void)
     Event_Wait(10);
     *(u16 *)(work + 0xcba) = frames;
     RamakanSabaku_SetSandPhase(0);
+}
+
+#define RamakanSabaku_EmitSandEffect ((s32 (*)(u8*))RamakanSabaku_EmitSandEffect)
+
+struct DustParams {
+    u8 unknown_00[8];
+    s32 scale_x;
+    s32 scale_y;
+    u8 unknown_10[18];
+    u16 angle;
+    u8 unknown_24[4];
+};
+
+void Object_SetActionById();
+s32 Object_CheckMovementCollision(struct FieldActor *object, s32 *pos);
+
+extern struct EventWork *gEventWork;
+void BattleFx_SetQueuedSoundAndPlay();
+
+void RamakanSabaku_UpdateTravelDust(void)
+{
+    struct FieldActor *actor;
+    struct EventWork *event;
+    struct DustParams params;
+    s32 dx;
+    s32 z;
+    s32 phase;
+    actor = Object_GetById(gGameState.selected_actor);
+    event = gEventWork;
+    if (actor->target_x == (s32)0x80000000) {
+        return;
+    }
+    gGameState.hazard_steps++;
+    if (event->touched_trigger == 30) {
+        return;
+    }
+    if (actor->speed <= 0x10000) {
+        if ((gFrameCount & 15) != 0) {
+            return;
+        }
+        params.scale_x = 0x8000;
+        params.scale_y = 0x8000;
+        dx = 0;
+        params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+        if (actor->facing != 0 && actor->facing != 0x8000) {
+            z = actor->z.fixed;
+            dx = 0x20000 - ((((z >> 20) & 1) * 5) << 16);
+        } else {
+            z = actor->z.fixed;
+        }
+        Effect_Spawn(actor->x.fixed + dx, actor->y.fixed, z, 0, 0, 0, 0x880001, &params);
+    } else {
+        phase = gFrameCount & 7;
+        if (phase != 0) {
+            return;
+        }
+        /* FAKEMATCH: the reference reads the frame counter again and discards it */
+        gFrameCount;
+        params.scale_x = 0xcccc;
+        params.scale_y = 0xcccc;
+        params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+        Effect_Spawn(actor->x.fixed, actor->y.fixed + 0x20000, actor->z.fixed, 0,
+                     ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999, phase, 0x880001, &params);
+    }
+}
+
+void RamakanSabaku_FaceNearestActor(void)
+{
+	void BattleFx_SetWeightedResult();
+    struct FieldActor *target;
+    struct FieldActor *actor;
+    struct FieldActor *record;
+    s32 id;
+    s32 best;
+    s32 min;
+    s32 dx;
+    s32 dz;
+
+    target = Actor_Get(gGameState.selected_actor);
+    best = 9;
+    GameFlag_Set(0x200);
+    min = 0x100000;
+    for (id = 9; id <= 12; id++) {
+        u8 *other = Actor_Get(id);
+
+        if (other != 0) {
+            dx = (target->x.fixed - *(s32 *)(other + 8)) / 0x10000;
+            dz = (target->z.fixed - *(s32 *)(other + 16)) / 0x10000;
+            {
+                s32 ax = dx;
+
+                if (ax < 0) {
+                    ax = -ax;
+                }
+                if (dz < 0) {
+                    dz = -dz;
+                }
+                if (ax + dz < min) {
+                    best = id;
+                    min = ax + dz;
+                }
+            }
+        }
+    }
+    Engine_ActorSetAnimation(0, 1);
+    Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Engine_ActorFaceActor(0, best, 0);
+    Engine_EventWait(20);
+    Actor_SetAttachedEffect(0, 0x102);
+    Engine_ActorStartRepeatedMotion(0, 2);
+    Engine_EventWait(60);
+    Actor_SetAttachedEffect(0, 0x101);
+    actor = Actor_Get(0);
+    record = Object_GetById(0);
+    actor->facing = (record->facing + 0x8000) & -0x1000;
+    Engine_ActorSetAnimation(0, 5);
+    Object_SetActionById(0, 24);
+    Actor_SetSpeed(0, 0x1999, 0xccc);
+    record = Object_GetById(0);
+    *(s32 *)((u8 *)record + 108) = (s32)RamakanSabaku_EmitSandEffect;
+    record = Actor_Get(best);
+    if (record != 0) {
+        Engine_ActorSetDestination(0, record->x.part.pixel, record->z.part.pixel);
+    }
+    Engine_EventWait(60);
+    Actor_ShowEmote(best, 0x104, 0);
+    Engine_EventWait(60);
+    Actor_SetAttachedEffect(0, 0x100);
+    Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
+    record = Object_GetById(0);
+    *(s32 *)((u8 *)record + 108) = 0;
+    BattleFx_SetWeightedResult(53, 4);
+}
+
+void RamakanSabaku_UpdateDustAndProbe(void)
+{
+    struct FieldActor *center;
+    s32 id;
+    struct FieldActor *actor;
+    s32 pos[3];
+    struct DustParams params;
+    s32 hit;
+    s32 phase;
+    s32 x;
+
+    RamakanSabaku_UpdateTravelDust();
+    {
+        struct EventWork *event = gEventWork;
+
+        id = gGameState.selected_actor;
+        center = event->view_center;
+    }
+    actor = Object_GetById(id);
+    pos[0] = actor->x.fixed;
+    pos[1] = actor->y.fixed;
+    pos[2] = actor->z.fixed + 0x18000;
+    hit = Object_CheckMovementCollision(actor, pos);
+    phase = gFrameCount & 4;
+    if (phase == 0) {
+        params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+        x = actor->x.fixed + (((u32)(Engine_RandomNext() * 12) >> 16) << 16) - 0x60000;
+        Effect_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
+                     ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd, 0x800000, &params);
+    }
+    if (hit < 0) {
+        Actor_SetAttachedEffect(id, 0x102);
+        Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed, actor->z.fixed + 0x80000);
+        Object_SetMode(actor, 7);
+        Engine_ObjectCommitPosition(actor);
+        do {
+            Engine_TaskWait(1);
+        } while (actor->y.fixed != actor->terrain_height);
+        Object_SetMode(actor, 6);
+        Engine_TaskWait(3);
+        return;
+    }
+    pos[0] = actor->x.fixed;
+    pos[1] = actor->y.fixed;
+    pos[2] = actor->z.fixed + 0x80000;
+    hit = Object_CheckMovementCollision(actor, pos);
+    if (hit > 0) {
+        return;
+    }
+    pos[0] = actor->x.fixed + 0x5b333;
+    pos[1] = actor->y.fixed;
+    pos[2] = actor->z.fixed + 0x5b333;
+    hit = Object_CheckMovementCollision(actor, pos);
+    if (hit > 0) {
+        return;
+    }
+    pos[0] = actor->x.fixed - 0x5b333;
+    pos[1] = actor->y.fixed;
+    pos[2] = actor->z.fixed + 0x5b333;
+    hit = Object_CheckMovementCollision(actor, pos);
+    if (hit > 0) {
+        return;
+    }
+    center->z.fixed += 0x18000;
+    actor->z.fixed += 0x18000;
+}
+
+void RamakanSabaku_PlayStartledRetreat(void)
+{
+    s32 rec8;
+    struct FieldActor *record;
+    s32 rect[3];
+    s32 shown;
+    u16 *shown_addr;
+    u8 *p5;
+
+    p5 = (u8 *)gEventWork;
+    RamakanSabaku_UpdateTravelDust();
+    if (GameFlag_IsSet(0x90a) == 0) {
+        rec8 = GameFlag_IsSet(0x200);
+        if (rec8 == 0) {
+            GameFlag_Set(0x200);
+            RamakanSabaku_SetSandPhase(1);
+            shown_addr = (u16 *)(p5 + 0xcba);
+            shown = 0x258;
+            *shown_addr = shown;
+            record = Object_GetById(ACTOR_PARTY_LEADER);
+            record->velocity_x = rec8;
+            record = Object_GetById(ACTOR_PARTY_LEADER);
+            record->velocity_z = rec8;
+            record = Actor_Get(ACTOR_PARTY_LEADER);
+            record->target_x = -0x80000000;
+            record = Actor_Get(ACTOR_PARTY_LEADER);
+            record->target_z = -0x80000000;
+            Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+            Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
+            Engine_EventWait(40);
+            Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+            Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+            Engine_EventWait(40);
+            Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+            rect[0] = rec8;
+            rect[1] = rec8;
+            rect[2] = rec8;
+            record = Actor_Get(ACTOR_PARTY_LEADER);
+            FieldVector_AddPolarOffset(-0x100000, record->facing, (struct FieldPosition *)rect);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+            Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+            Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, rect[0] / 0x10000, rect[2] / 0x10000);
+            Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+            Engine_EventWait(2);
+            Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
+            Engine_EventWait(30);
+            Audio_PlayCue(148);
+            Engine_ActorRunRepeatedMotion(8, 2);
+            Engine_EventWait(20);
+            Actor_SetSpeed(8, 0x28000, 0x14000);
+            Actor_WalkToAndWait(8, 168, 104);
+            Actor_SetSpeed(8, 0x8000, 0x4000);
+            Actor_WalkToAndWait(8, 168, 92);
+            *shown_addr = shown;
+            RamakanSabaku_SetSandPhase(0);
+        }
+    }
+}
+
+s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
+{
+	void RamakanSabaku_ClaimSandEffectVram();
+    s32 v5;
+
+    gGameState.hazard_limit = 0x258;
+    gGameState.hazard_mode = 0;
+    gGameState.hazard_damage = 0x119;
+    if (gGameState.scene == (s32)&SceneId_RamakanSabaku4) {
+    } else {
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+        RamakanSabaku_ClaimSandEffectVram();
+        Engine_TaskAddCallback((s32)RamakanSabaku_RaiseQuarterTriggers, 0xc80);
+        if (gGameState.scene == (s32)&SceneId_RamakanSabaku1) {
+            Map_CopyCells(22, 7, 4, 2, 64, 126);
+            Engine_MapCopyCells(8, 10, 4, 2, 68, 126);
+            Engine_MapCopyCells(23, 21, 4, 2, 72, 126);
+            Engine_MapCopyCells(16, 42, 4, 2, 76, 126);
+            Engine_MapCopyCells(36, 44, 4, 2, 80, 126);
+            Engine_MapCopyCells(14, 55, 4, 2, 84, 126);
+        } else {
+            if (gGameState.scene != (s32)&SceneId_RamakanSabaku2) {
+                goto third_area;
+            }
+            Map_CopyCells(42, 5, 4, 2, 64, 126);
+            Engine_MapCopyCells(20, 11, 4, 2, 68, 126);
+            Engine_MapCopyCells(14, 12, 4, 2, 72, 126);
+            Engine_MapCopyCells(56, 18, 4, 2, 76, 126);
+            Engine_MapCopyCells(7, 22, 4, 2, 80, 126);
+            Engine_MapCopyCells(44, 23, 4, 2, 84, 126);
+            Engine_MapCopyCells(38, 24, 4, 2, 88, 126);
+            Engine_MapCopyCells(26, 28, 4, 2, 92, 126);
+            Engine_MapCopyCells(17, 35, 4, 2, 96, 126);
+            Engine_MapCopyCells(50, 36, 4, 2, 100, 126);
+            Engine_MapCopyCells(34, 43, 4, 2, 104, 126);
+            Engine_MapCopyCells(6, 46, 4, 2, 108, 126);
+            Engine_MapCopyCells(27, 55, 4, 2, 112, 126);
+            Engine_MapCopyCells(43, 56, 4, 2, 116, 126);
+        }
+        goto apply_entry_state;
+        third_area:;
+        if (gGameState.scene == (s32)&SceneId_RamakanSabaku3) {
+            v5 = 124;
+            BattleFx_SetQueuedSoundAndPlay(169);
+            Engine_MapCopyCells(8, 14, 4, 4, 64, v5);
+            Engine_MapCopyCells(6, 18, 4, 4, 68, v5);
+            Engine_MapCopyCells(10, 21, 4, 4, 72, v5);
+        }
+        apply_entry_state:;
+        RamakanSabaku_ApplyEntryState();
+    }
+    return 0;
+}
+
+void RamakanSabaku_ResetActorEightPosition(void)
+{
+    u32 i;
+    s32 record;
+
+    Actor_SetSpeed(8, 0x8000, 0x4000);
+    Engine_ActorSetAnimation(8, 1);
+    Actor_WalkToAndWait(8, 168, 96);
+    Engine_ActorSetAnimation(8, 2);
+}
+
+#define RamakanSabaku_SandVramSlot (*(s16 *)&RamakanSabaku_SandVramSlot)
+#define RamakanSabaku_SandCounter (*(s16 *)&RamakanSabaku_SandCounter)
+#define RamakanSabaku_SandPhase (*(s16 *)&RamakanSabaku_SandPhase)
+
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
+extern u32 gFrameCount;
+#endif
+
+void RamakanSabaku_RunSandstorm(void)
+{
+    u8 *buffer;
+    s32 tile;
+    s16 *colors;
+    s16 *color;
+    u8 *display;
+    u32 *column;
+    u32 *word;
+    u8 *source;
+    u8 *destination;
+    struct MenuSprite *sprite;
+    s32 counter;
+    u32 i;
+    u32 fill;
+    u32 *palette;
+    u32 red;
+    u32 green;
+    u32 blue;
+    s32 level;
+    u32 attributes;
+    s32 x;
+    u32 offset;
+
+    tile = gVramBlockCache[RamakanSabaku_SandVramSlot].offset >> 5;
+    if (RamakanSabaku_SandPhase != 0) {
+        RamakanSabaku_SandCounter = 2;
+    } else if (Engine_GameFlagIsSet(0x104) != 0) {
+        if (RamakanSabaku_SandCounter > 0) {
+            RamakanSabaku_SandCounter--;
+        }
+    } else if (RamakanSabaku_SandCounter <= 1) {
+        if (++RamakanSabaku_SandCounter == 1) {
+            Dma_Set(RamakanSabaku_SandPalette, (void *)0x050003c0, 0x80000010,
+                    REG_DMA3);
+        }
+    }
+    counter = RamakanSabaku_SandCounter;
+    if (counter == 0) {
+        Resource_ActivateEntry(RamakanSabaku_SandVramSlot);
+        return;
+    }
+    display = *Ram_DisplayWork;
+    if (display != NULL) {
+        s16 *line = (s16 *)(display + display[0x539] * 644);
+        s32 shift = (s16)(counter << 3);
+
+        line = (s16 *)((u8 *)line + 38);
+        for (i = 0; i < 144; i++) {
+            *line = shift;
+            line += 2;
+        }
+    }
+
+    buffer = MemAlloc(0x900);
+    Dma_Set(RamakanSabaku_SandPalette, buffer, 0x80000010, REG_DMA3);
+    colors = (s16 *)(buffer + 12);
+    color = colors;
+    for (i = 6; i < 12; i++) {
+        u16 value = *color;
+
+        red = value & 31;
+        green = (value >> 5) & 31;
+        blue = ((value >> 10) & 31) - 20;
+        level = RamakanSabaku_SandLevel;
+        red += level / 3;
+        blue = blue - level / 6 + 20;
+        if (level > 60 && (gFrameCount & 1)) {
+            green = green + (level << 6) / 120 - 32;
+        }
+        if (red > 31) {
+            red = 31;
+        }
+        if (green > 31) {
+            green = 31;
+        }
+        if (blue > 31) {
+            blue = 31;
+        }
+        *color++ = (blue << 10) | (green << 5) | red;
+    }
+    palette = (u32 *)0x050003cc;
+    word = (u32 *)(buffer + 12);
+    QueueIoWriteDelay3((u32)palette++, *word++);
+    QueueIoWriteDelay3((u32)palette++, *word++);
+    QueueIoWriteDelay3((u32)palette++, *word++);
+
+    RamakanSabaku_SandLevel = gGameState.hazard_steps * 120 / gGameState.hazard_limit;
+    if (RamakanSabaku_SandLevel > 118) {
+        RamakanSabaku_SandFlash = 119;
+    }
+    if (RamakanSabaku_SandFlash != 0) {
+        RamakanSabaku_SandLevel = RamakanSabaku_SandFlash;
+        RamakanSabaku_SandFlash -= 8;
+        if (RamakanSabaku_SandFlash <= 0) {
+            RamakanSabaku_SandFlash = 0;
+        }
+    }
+
+    Dma_Set(RamakanSabaku_SandTileBuffer, buffer, 0x84000240, REG_DMA3);
+    if (RamakanSabaku_SandFlash <= 118) {
+        column = (u32 *)(buffer + 80);
+        fill = 0xeeeeeeee;
+        for (i = 12; i < 128 - RamakanSabaku_SandLevel; i++) {
+            column[8] = fill;
+            *column++ = fill;
+            if ((i & 7) == 7) {
+                column += 8;
+            }
+        }
+        column[0] = ((u32 *)buffer)[0];
+        column[8] = ((u32 *)buffer)[8];
+    }
+    destination = buffer;
+    source = buffer + 0x480;
+    for (i = 0; i < 0x480; i++) {
+        u8 value = *source++;
+
+        if (value != 0) {
+            *destination = value;
+        }
+        destination++;
+    }
+    Engine_VramLoad(RamakanSabaku_SandVramSlot, 0x480, buffer);
+
+    attributes = 0x80008000;
+    sprite = RamakanSabaku_SandWork;
+    for (i = 0, offset = 0, x = 8; i < 5; i++) {
+        u32 y = (RamakanSabaku_SandCounter * 8 - 16) & 0x1ff;
+
+        if (i == 4) {
+            attributes = 0x40000000;
+        }
+        sprite->next = NULL;
+        sprite->oam.word.attr01 = (y << 16) | x | attributes;
+        sprite->oam.word.attr23 = 0xe400 | tile;
+        Runtime_PushSlotEntry((s32 *)((u8 *)RamakanSabaku_SandWork + offset), 255);
+        sprite++;
+        tile += 8;
+        offset += 12;
+        x += 32;
+    }
+    MemFree(buffer);
+}
+
+#undef RamakanSabaku_SandCounter
+#undef RamakanSabaku_SandPhase
+#undef RamakanSabaku_SandVramSlot
+
+struct Half {
+    u16 v;
+};
+
+void RamakanSabaku_ClaimSandEffectVram(void)
+{
+    s32 slot;
+    u16 *slotp;
+    struct Half zero;
+
+    Resource_DecodeType01(RamakanSabaku_SandEffectTiles, RamakanSabaku_SandTileBuffer);
+    slotp = &RamakanSabaku_SandVramSlot;
+    /* FAKEMATCH: the size temporary schedules the slot store after the call. */
+    slot = Resource_FindFreeEntry();
+    {
+        s32 size = 0x480;
+
+        *slotp = slot;
+        Engine_VramLoad((s16)slot, size, 0);
+    }
+    zero.v = 0;
+    RamakanSabaku_SandCounter = zero.v;
+    RamakanSabaku_SandPhase = zero.v;
+    Engine_TaskAddCallback(RamakanSabaku_RunSandstorm, 0xc76);
+}
+
+void RamakanSabaku_SetSandPhase(u16 value)
+{
+    RamakanSabaku_SandPhase = value;
 }

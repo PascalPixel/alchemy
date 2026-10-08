@@ -132,10 +132,7 @@ s32 Title_ShowAnimatedSplash(void)
 {
     s32 result;
     u32 i;
-    /* FAKEMATCH: needed to match: separate the post-decode buffer carrier from the resource-number carrier. */
-    register u8 *buffer __asm__("r6");
-    /* FAKEMATCH: needed to match: keep the decode destination carrier distinct until the buffer copy. */
-    register u8 *decode __asm__("r5");
+    u8 *buffer;
     s32 resource;
 
     gOamCopyEnabled = 1;
@@ -148,9 +145,10 @@ s32 Title_ShowAnimatedSplash(void)
     REG_BG2CNT = 0x685;
     REG_DISPCNT = 0x1440;
     gBgScroll[2].y = result;
-    decode = Ram_MapCellBuffer;
-    Resource_DecodeType01(Resource_GetTableEntry(resource), decode);
-    buffer = decode;
+    /* FAKEMATCH: needed to match: i carries the decode destination before it counts; a pointer of its own is coalesced with buffer (31 differ). */
+    i = (u32)Ram_MapCellBuffer;
+    Resource_DecodeType01(Resource_GetTableEntry(resource), (u8 *)i);
+    buffer = (u8 *)i;
     Dma_Set(buffer, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 0x1c0 / 4, REG_DMA3);
     buffer += 0x1c0;
     Dma_Set(buffer, BG_SCREEN_BLOCK(6), DMA_ENABLE32 | DMA_32BIT | 0x800 / 4, REG_DMA3);

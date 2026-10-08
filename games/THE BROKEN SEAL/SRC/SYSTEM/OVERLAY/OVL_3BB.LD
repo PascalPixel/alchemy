@@ -22,6 +22,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/PUSH_AHEAD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/IMPORT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/DATA.o"(.data)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/KOROSSEO/GAUGE.o"(.rodata)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/DATA2.o"(.data)
     }
     .bss : { "*/resource_3bb_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

@@ -28,15 +28,6 @@ void WorldMap_PromptBlackOrbUse(void);
 void WorldMap_RaiseActors(void);
 void WorldMap_UseBlackOrb(void);
 
-u32 gWorldMapPalettes[] = {
-	0x7c1f7c1f, 0x20a21861, 0x45643503, 0x6a2659c5, 0x7ecd7e87, 0x7f997f33, 0x7c1f7fff, 0x7c1f,
-	0x7c1f7c1f, 0x13300ce, 0x1b80176, 0x23b01fa, 0x2de027d, 0x337f033f, 0x613d7fff, 0x6dff,
-};
-
-s16 gWorldMapPackedFrames[] = { 0 };
-
-s16 gWorldMapPackedTiles[] = { 0 };
-
 s32 gTransferArrive10[] = {
 	SC_POS(PIXELS(5848), 0, PIXELS(1576)),
 	SC_SET(SW_SCALE_X, 0x18000),

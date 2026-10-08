@@ -24,6 +24,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/DATA.o"(.data)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/KOROSSEO/GAUGE.o"(.rodata)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/DATA2.o"(.data)
     }
     .bss : { "*/resource_3ba_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

@@ -5,7 +5,11 @@
 //! compile a few proposed units as one merged file to see whether the bytes
 //! hold. Read-only toward games/ and the linker scripts; reports for people.
 
+mod cmerge;
 mod dryrun;
+mod flatten;
+mod ldscript;
+pub use flatten::run as unit;
 mod load;
 mod model;
 

@@ -143,6 +143,7 @@ fn main() -> ExitCode {
         "show" => result(show::run(rest)),
         "sweep" => result(sweep::run(rest)),
         "units" => result(units::run(rest)),
+        "unit" => result(units::unit(rest)),
         "worktree" => result(worktree::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");

@@ -198,30 +198,37 @@ impl Layout {
     }
 }
 
-struct Outcome {
-    verdict: String,
-    detail: String,
+pub struct Outcome {
+    pub verdict: String,
+    pub detail: String,
 }
 
 fn compare(root: &Path, target: DecompTarget, loaded: &Loaded, main: &Loaded, unit: &Unit, id: &str) -> Outcome {
     let image = &loaded.image;
-    let fail = |verdict: &str, detail: String| Outcome { verdict: verdict.to_string(), detail };
     let objects = unit.objects(image);
     let mut sources = Vec::new();
     for object in &objects {
         let Some(path) = source_of(root, object) else {
-            return fail("no-source", format!("{object} has no C source"));
+            return Outcome { verdict: "no-source".into(), detail: format!("{object} has no C source") };
         };
         let text = fs::read(&path).map(|b| String::from_utf8_lossy(&b).into_owned()).unwrap_or_default();
         sources.push((path, text));
     }
+    compare_source(root, target, loaded, main, &objects, &merge(&sources), id)
+}
+
+/// A merged source compiled with the edition's own steps, its sections compared
+/// with `objects`' pieces as today's build placed them in `loaded`.
+pub fn compare_source(root: &Path, target: DecompTarget, loaded: &Loaded, main: &Loaded, objects: &[&str], text: &str, id: &str) -> Outcome {
+    let image = &loaded.image;
+    let fail = |verdict: &str, detail: String| Outcome { verdict: verdict.to_string(), detail };
     let directory = root.join(target.output_dir).join("obj/units");
     if let Err(e) = fs::create_dir_all(&directory) {
         return fail("error", e.to_string());
     }
     let source = directory.join(format!("{id}.C"));
     let object = directory.join(format!("{id}.o"));
-    if let Err(e) = fs::write(&source, merge(&sources)) {
+    if let Err(e) = fs::write(&source, text) {
         return fail("error", e.to_string());
     }
     let steps = match crate::build_rom::c_steps(target, &source, &object) {
@@ -294,6 +301,43 @@ fn compare(root: &Path, target: DecompTarget, loaded: &Loaded, main: &Loaded, un
             let RelocationFlags::Elf { r_type } = relocation.flags() else {
                 continue;
             };
+            // A section symbol (a static's place) carries its offset in the
+            // addend, which the merged layout moves with the piece it lands in.
+            let section_symbol = match relocation.target() {
+                RelocationTarget::Symbol(index) => file.symbol_by_index(index).ok().filter(|s| s.kind() == object::SymbolKind::Section).and_then(|s| s.section_index()).and_then(|i| file.section_by_index(i).ok()).and_then(|s| s.name().ok().map(str::to_string)),
+                _ => None,
+            };
+            if let (Some(target_section), Some(slot)) = (section_symbol, data.get(offset..offset + 4)) {
+                let resolved = match r_type {
+                    object::elf::R_ARM_ABS32 => {
+                        let addend = u32::from_le_bytes([slot[0], slot[1], slot[2], slot[3]]);
+                        layouts.get(&target_section).and_then(|l| l.address(addend)).map(|a| a.to_le_bytes().to_vec())
+                    }
+                    object::elf::R_ARM_THM_PC22 if target_section == name => {
+                        let (high, low) = (u16::from_le_bytes([slot[0], slot[1]]), u16::from_le_bytes([slot[2], slot[3]]));
+                        let field = (((u32::from(high & 0x7ff) << 12) | (u32::from(low & 0x7ff) << 1)) << 9) as i32 >> 9;
+                        let at = (4 + i64::from(field)) as u32;
+                        match (layout.address(at), layout.address(offset as u32)) {
+                            (Some(target), Some(place)) => {
+                                let delta = target.wrapping_sub(place + 4) as i32 >> 1;
+                                let high = 0xf000 | ((delta >> 11) & 0x7ff) as u16;
+                                let low = 0xf800 | (delta & 0x7ff) as u16;
+                                Some([high.to_le_bytes(), low.to_le_bytes()].concat())
+                            }
+                            _ => None,
+                        }
+                    }
+                    _ => None,
+                };
+                match resolved {
+                    Some(bytes) => data[offset..offset + 4].copy_from_slice(&bytes),
+                    None => {
+                        masked += 1;
+                        hidden.extend(offset as u32..offset as u32 + 4);
+                    }
+                }
+                continue;
+            }
             let target = match relocation.target() {
                 RelocationTarget::Symbol(index) => symbol_address(index),
                 _ => None,

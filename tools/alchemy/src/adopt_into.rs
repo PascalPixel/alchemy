@@ -5,9 +5,9 @@ use std::path::{Path, PathBuf};
 
 #[derive(Default)]
 pub(crate) struct Known {
-    defined: HashMap<(Space, String), String>,
-    declared: HashMap<(Space, String), String>,
-    texts: HashSet<String>,
+    pub(crate) defined: HashMap<(Space, String), String>,
+    pub(crate) declared: HashMap<(Space, String), String>,
+    pub(crate) texts: HashSet<String>,
 }
 
 impl Known {
@@ -195,7 +195,7 @@ fn read(path: &Path) -> Result<String, String> {
     std::fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))
 }
 
-fn header_names(root: &Path, target: DecompTarget, module: &Path, text: &str) -> Result<Known, String> {
+pub(crate) fn header_names(root: &Path, target: DecompTarget, module: &Path, text: &str) -> Result<Known, String> {
     let directory = tempfile::Builder::new()
         .prefix("alchemy-adopt-into-")
         .tempdir()

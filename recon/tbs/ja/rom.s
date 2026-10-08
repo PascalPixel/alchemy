@@ -1,30 +1,7 @@
-	.section .rom.000079b0, "ax"
-	.global Save_Signature
-Save_Signature:
-	.incbin "baserom.gba", 0x000079b0, 0x00000008
-	.global Save_HeaderTemplate
-Save_HeaderTemplate:
-	.incbin "baserom.gba", 0x000079b8, 0x00000054
-	.global Flash_Chips
-Flash_Chips:
-	.incbin "baserom.gba", 0x00007a0c, 0x00000014
 	.section .rom.00007a68, "ax"
 	.incbin "baserom.gba", 0x00007a68, 0x00000024
-	.section .rom.00007aa4, "ax"
-	.incbin "baserom.gba", 0x00007aa4, 0x00000018
-	.global Flash_ChipUnknown
-Flash_ChipUnknown:
-	.incbin "baserom.gba", 0x00007abc, 0x00000058
 	.section .rom.00007b38, "ax"
-	.incbin "baserom.gba", 0x00007b38, 0x0000008c
-	.section .rom.00007bcc, "ax"
-	.incbin "baserom.gba", 0x00007bcc, 0x00000018
-	.global Flash_ChipAtmel
-Flash_ChipAtmel:
-	.incbin "baserom.gba", 0x00007be4, 0x0000002c
-	.global Flash_ChipAtmelLayout
-Flash_ChipAtmelLayout:
-	.incbin "baserom.gba", 0x00007c10, 0x0000002c
+	.incbin "baserom.gba", 0x00007b38, 0x00000004
 	.section .rom.000092b8, "ax"
 	.global ResourceSlot_ConversionTables
 ResourceSlot_ConversionTables:

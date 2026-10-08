@@ -1,32 +1,7 @@
-	.section .unidentified.080079b0,"a"
-	.global Save_Signature
-Save_Signature:
-	.incbin "baserom.gba", 0x000079b0, 0x00000008
-	.global Save_HeaderTemplate
-Save_HeaderTemplate:
-	.incbin "baserom.gba", 0x000079b8, 0x00000008
-	.incbin "baserom.gba", 0x000079c0, 0x0000004c
-	.global Flash_Chips
-Flash_Chips:
-	.incbin "baserom.gba", 0x00007a0c, 0x00000014
 	.section .unidentified.08007a68,"a"
 	.incbin "baserom.gba", 0x00007a68, 0x00000024
-	.section .unidentified.08007aa4,"a"
-	.incbin "baserom.gba", 0x00007aa4, 0x00000010
-	.incbin "baserom.gba", 0x00007ab4, 0x00000008
-	.global Flash_ChipUnknown
-Flash_ChipUnknown:
-	.incbin "baserom.gba", 0x00007abc, 0x00000058
 	.section .unidentified.08007b38,"a"
-	.incbin "baserom.gba", 0x00007b38, 0x0000008c
-	.section .unidentified.08007bcc,"a"
-	.incbin "baserom.gba", 0x00007bcc, 0x00000018
-	.global Flash_ChipAtmel
-Flash_ChipAtmel:
-	.incbin "baserom.gba", 0x00007be4, 0x0000002c
-	.global Flash_ChipAtmelLayout
-Flash_ChipAtmelLayout:
-	.incbin "baserom.gba", 0x00007c10, 0x0000002c
+	.incbin "baserom.gba", 0x00007b38, 0x00000004
 	.section .unidentified.080092b8,"a"
 	.global ResourceSlot_ConversionTables
 ResourceSlot_ConversionTables:

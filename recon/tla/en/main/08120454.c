@@ -1,7 +1,6 @@
 /* BtlTgtExec, tla-en 0x08120454.
- * alchemy diff: listing 3450 instructions, draft 3450, common 3415,
- * differ 70 (2026-10-07, after taking ☀️'s camelotized names, numbers
- * and macros: no change).
+ * alchemy diff: listing 3450 instructions, draft 3450, common 3422,
+ * differ 56 (2026-10-08; 70 before this session's order devices, below).
  * This draft is The Broken Seal's source (0x080bbb0c, games/THE BROKEN
  * SEAL/SRC/BATTLE/TGTEXEC.C) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
@@ -290,7 +289,40 @@
  * first keep both loads (heal, old, maxv, maxu: 7 instructions differ;
  * maxv, heal, old, maxu: 5), but reload then gives old and max_hp's
  * offset r0 and r4 where the ROM has r4 and r0, the order of an
- * unsigned-first RTL. */
+ * unsigned-first RTL.
+ * 2026-10-08, against 70 (trial scores below from a plain instruction
+ * diff, which reads one above alchemy diff here). A search that put
+ * one asm("") after each statement in turn, kept the best and searched
+ * again found three:
+ * after hit = 0 before the unit scan (4), after the 7% branch's maxv
+ * read (2), after work->unknown_858 = tid (2). By hand: a barrier
+ * between cur = target->hp and round = 1 (2), and both enemy_id 369/373
+ * tests read into a block-local s32 e with an asm volatile "+r" tie (2
+ * each; with cur = 0 moved after the tie in case 5, otherwise movs r6,
+ * #0 lands before the ldrh), 56 (common 3422). The tie as u16 117, in
+ * tmp, value, size, cnt or kind 161 to 681; an asm input of
+ * target->enemy_id instead 65. No further single asm(""), memory
+ * barrier, block-start barrier or "+r" tie after any assignment helps.
+ * The rest are not reachable by a barrier: the ROM's loads (mostly
+ * reloads of work from [sp, #64], also action, the ldrh/ldrsh of enemy_id,
+ * max_hp and level, the pool load at 166 << 1 + 255) sit inside the
+ * statement whose constant chain ours issues first. At the summon's
+ * queue_count the ROM's ldr has priority 6 against the chain's 7 in
+ * ours (sched2 dump), so it is not a tie but a cost the admitted model
+ * does not give; at the 10000 clamp it is a tie (ldrsh and lsls both 3)
+ * the ROM breaks for the load. Tried there: a block-local copy of work
+ * tied with asm (157, the copy takes r3 and the next read reloads); a
+ * register variable in r4 for it with an asm("") barrier, 109 used for
+ * two reads, 65 for one (combine folds the copy back), 99 with a "+r"
+ * tie; a tied copy of action for ap 258. Drain: x as a register
+ * variable in r7 (x = dealt; x = dealt / 2 or x /= 2; kind = x) 83,
+ * the halving becomes a lone asrs. Studies, with a cc1 rebuilt from
+ * agscc in scratch and scored here only: the split constant kept as one
+ * insn through sched2 and printed as three (its define_split off, its
+ * length 4 or 6) 59 against 71 on the same scorer, but the ROM
+ * interleaves split pieces with other insns (movs r4, #160; ldr r0;
+ * lsls r4 ...), so the split does happen before sched2 and the idea is
+ * refuted; one or two cycles more for every sp-based load 131, 159. */
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -615,6 +647,8 @@ pow_end:
     if (hit != 0) {
         if (action->efx == 53 || action->efx == 83) {
             hit = 0;
+            /* FAKEMATCH: barrier; sched2 otherwise issues movs r3, #187 for the scan's first address before the store of hit and the reload of work, where the ROM stores and reloads first, 4 instructions. */
+            asm("");
             for (n = 0; n < 20; n++) {
                 if (work->actions[n].unit_id == tid) {
                     hit = 1;
@@ -740,9 +774,16 @@ pow_end:
             if (hp <= 0) {
                 hp = 0;
                 BtlEvPush(BEV_OBJ_RES, tid);
-                if (target->enemy_id != 369 && target->enemy_id != 373) {
-                    BtlEvPush(BEV_UNIT, tid);
-                    MES_SIDE(MsgGoesDown, MsgFelled);
+                {
+                    s32 e;
+
+                    e = target->enemy_id;
+                    /* FAKEMATCH: tie; sched2 otherwise issues movs #114 for 369 before the ldrh of enemy_id, where the ROM loads first, 2 instructions. */
+                    asm volatile ("" : "+r" (e));
+                    if (e != 369 && e != 373) {
+                        BtlEvPush(BEV_UNIT, tid);
+                        MES_SIDE(MsgGoesDown, MsgFelled);
+                    }
                 }
             } else
                 BtlEvPush(BEV_OBJ_END, tid);
@@ -868,6 +909,8 @@ pow_end:
             if (action->pow == 0)
                 break;
             cur = target->hp;
+            /* FAKEMATCH: barrier; sched2 otherwise issues movs r1, #1 for round before the ldrsh of hp, where the ROM loads first, 2 instructions. */
+            asm("");
             round = 1;
             do {
                 ELM_BONUS();
@@ -1050,11 +1093,18 @@ pow_end:
             if (cur <= 0 && BattleUnit_KeepsOneHp(tid) != 0)
                 cur = 1;
             if (cur <= 0) {
-                cur = 0;
                 BtlEvPush(BEV_OBJ_RES, tid);
-                if (target->enemy_id != 369 && target->enemy_id != 373) {
-                    BtlEvPush(BEV_UNIT, tid);
-                    MES_SIDE(MsgGoesDown, MsgFelled);
+                {
+                    s32 e;
+
+                    e = target->enemy_id;
+                    /* FAKEMATCH: tie; as in case 3, and cur = 0 after it so movs r6, #0 follows the 369 as in the ROM, 2 instructions. */
+                    asm volatile ("" : "+r" (e));
+                    cur = 0;
+                    if (e != 369 && e != 373) {
+                        BtlEvPush(BEV_UNIT, tid);
+                        MES_SIDE(MsgGoesDown, MsgFelled);
+                    }
                 }
             } else
                 BtlEvPush(BEV_OBJ_END, tid);
@@ -1167,7 +1217,7 @@ pow_end:
             s32 heal;
             u16 *pt;
 
-            /* FAKEMATCH: walking a pointer down from hp to max_hp reads each stat twice, unsigned and signed, as the ROM does; plain f reads share one load. */
+            /* FAKEMATCH: walking a pointer down from hp to max_hp reads each stat twice, unsigned and signed, as the ROM does; plain field reads share one load. */
             pt = (u16 *)&target->hp;
             old = *pt--;
             heal = *(s16 *)(pt + 1);
@@ -1175,7 +1225,7 @@ pow_end:
                 s32 m;
 
                 maxu = (u16)target->max_hp;
-                /* FAKEMATCH: barrier; with maxu read res it keeps cse from sharing one load between the two reads, so reload takes the base before the dist as the ROM does (96 to 90); sched2 then keeps the ldrh res, where the ROM moves it after the ldrsh. */
+                /* FAKEMATCH: barrier; with maxu read first it keeps cse from sharing one load between the two reads, so reload takes the base before the offset as the ROM does (96 to 90); sched2 then keeps the ldrh first, where the ROM moves it after the ldrsh. */
                 asm("" ::: "memory");
                 m = target->max_hp;
                 heal += m * 2 / 5;
@@ -1233,7 +1283,7 @@ pow_end:
             s32 maxu;
             u16 *pt;
 
-            /* FAKEMATCH: walking a pointer down from ep reads it twice, signed and unsigned, as the ROM does; plain f reads share one load. */
+            /* FAKEMATCH: walking a pointer down from ep reads it twice, signed and unsigned, as the ROM does; plain field reads share one load. */
             pt = (u16 *)&target->ep;
             old = *pt--;
             heal = *(s16 *)(pt + 1);
@@ -1252,6 +1302,8 @@ pow_end:
                 /* FAKEMATCH: barrier; the same for the 7% (76 to 72). */
                 asm("" ::: "memory");
                 maxv = target->max_ep;
+                /* FAKEMATCH: barrier; sched2 otherwise issues movs r1, #100 before the 7% product's shifts, where the ROM issues it last, as at 60 and 30, 2 instructions. */
+                asm("");
                 heal += maxv * 7 / 100;
             }
             if (heal > (s16)maxu)
@@ -1696,6 +1748,8 @@ done:
     if (plan->cmd != 9 && (s8)target->unknown_142[1] != 0
         && action->target_mode == 1 && target->hp != 0) {
         work->unknown_858 = tid;
+        /* FAKEMATCH: barrier; sched2 otherwise issues movs r1, #128 for unknown_85c's address before the store to unknown_858, where the ROM stores first, 2 instructions. */
+        asm("");
         work->unknown_85c = aid;
     }
 

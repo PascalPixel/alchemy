@@ -1,12 +1,23 @@
+//--------------------------------------------------------------------------
+// PARTICLE_STREAM_MODES.C
+// 戦闘エフェクト：粒子の流れのモード 0・1 の入口
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
-void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *effect)
+//--------------------------------------------------------------------------
+// 粒子の流れをモード 0 で走らせる
+//--------------------------------------------------------------------------
+void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *efx)
 {
-    BattleEffect_RunParticleStreams(effect, 0);
+	BattleEffect_RunParticleStreams(efx, 0);
 }
 
-void BattleFx_InitializeMode1(struct BattleEffectArgument *effect)
+//--------------------------------------------------------------------------
+// 粒子の流れをモード 1 で走らせる
+//--------------------------------------------------------------------------
+void BattleFx_InitializeMode1(struct BattleEffectArgument *efx)
 {
-    BattleEffect_RunParticleStreams(effect, 1);
+	BattleEffect_RunParticleStreams(efx, 1);
 }

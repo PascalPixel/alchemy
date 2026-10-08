@@ -1,19 +1,31 @@
+//--------------------------------------------------------------------------
+// PACK_ROWS.C
+// タイル：横 2 バイトを 1 バイトに詰める
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 #include "SCENE.H"
 
-void Graphics_PackTileRows(u8 *source, u8 *destination, s32 stride)
+//--------------------------------------------------------------------------
+// 1 行 40 バイトを 288 行、横に 2 バイトずつ 1 バイトに詰めて写す
+// （あとの奇数列のバイトが残る）
+// stride : src の 1 行のバイト数（dst はその半分）
+//--------------------------------------------------------------------------
+void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride)
 {
-    s32 row = 0;
-    s32 rowCount = 288;
-    s32 sourceOffset = 0;
+	s32 y = 0;
+	s32 h = 288;
+	s32 ofs = 0;
 
-    do {
-        s32 column;
+	do
+	{
+		s32 x;
 
-        for (column = 0; column != 40; column++) {
-            destination[sourceOffset / 2 + column / 2] = source[sourceOffset + column];
-        }
-        sourceOffset += stride;
-        row++;
-    } while (row != rowCount);
+		for (x = 0; x != 40; x++)
+		{
+			dst[ofs / 2 + x / 2] = src[ofs + x];
+		}
+		ofs += stride;
+		y++;
+	} while (y != h);
 }

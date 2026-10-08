@@ -1,35 +1,46 @@
+//--------------------------------------------------------------------------
+// TRANSPOSE_COPY.C
+// タイル：バイトの絵を右に 90 度回して写す
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 
-void Graphics_TransposeCopy(const u8 *source_base, u8 *destination_base,
-                            s32 row_size, s32 column_count)
+//--------------------------------------------------------------------------
+// 幅 w・高さ h の src を、幅 h・高さ w の dst に右へ 90 度回して写す
+// （src のいちばん上の行が dst のいちばん右の列になる）
+//--------------------------------------------------------------------------
+void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h)
 {
-    s32 column_index;
-    s32 row_index;
-    s32 destination_column;
-    s32 source_offset;
-    u8 *destination;
-    const u8 *source;
+	s32		  y;
+	s32		  x;
+	s32		  col;
+	s32		  ofs;
+	u8		 *d;
+	const u8 *s;
 
-    column_index = 0;
-    if (column_count != 0) {
-        source_offset = 0;
-        destination_column = column_count;
-        do {
-            row_index = 0;
-            if (row_size != 0) {
-                destination = (u8 *)(destination_column + (u32)destination_base - 1);
-                source = (const u8 *)(source_offset + (u32)source_base);
-                do {
-                    row_index++;
-                    *destination = *source;
-                    source++;
-                    destination += column_count;
-                } while (row_index != row_size);
-            }
-            column_index++;
-            source_offset += row_size;
-            destination_column--;
-        } while (column_index != column_count);
-    }
+	y = 0;
+	if (h != 0)
+	{
+		ofs = 0;
+		col = h;
+		do
+		{
+			x = 0;
+			if (w != 0)
+			{
+				d = (u8 *)(col + (u32)dst - 1);
+				s = (const u8 *)(ofs + (u32)src);
+				do
+				{
+					x++;
+					*d = *s;
+					s++;
+					d += h;
+				} while (x != w);
+			}
+			y++;
+			ofs += w;
+			col--;
+		} while (y != h);
+	}
 }
-

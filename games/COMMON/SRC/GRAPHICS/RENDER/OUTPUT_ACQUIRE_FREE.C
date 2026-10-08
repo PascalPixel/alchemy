@@ -1,77 +1,77 @@
+//--------------------------------------------------------------------------
+// OUTPUT_ACQUIRE_FREE.C
+// 表示：スプライト出力（RenderOutput）のあきリスト
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 #include "EDITION.H"
 #include "WINDOW.H"
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
 #include "RAM_BUFFER.H"
 #endif
 
+#if GAME_TLA
+#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)
+#else
+#define UI_WORK ((struct UiRenderWork *)gWindowWork[0])
+#endif
+
+//--------------------------------------------------------------------------
+// あきリストの先頭をとり出す（なければ NULL）
+//--------------------------------------------------------------------------
 struct RenderOutput *RenderOutput_AcquireFree(void)
 {
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    struct UiRenderWork *work =
-        (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
-#else
-    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
-#endif
-    struct RenderOutput *entry = work->free_outputs.head;
+	struct UiRenderWork *work = UI_WORK;
+	struct RenderOutput *out = work->free_outputs.head;
 
-    if (entry != NULL) {
-        if (entry->next == NULL)
-            work->free_outputs.tail_link = &work->free_outputs.head;
-        work->free_outputs.head = entry->next;
-        entry->next = NULL;
-    }
-    return entry;
+	if (out != NULL)
+	{
+		if (out->next == NULL)
+			work->free_outputs.tail_link = &work->free_outputs.head; // 空になった
+		work->free_outputs.head = out->next;
+		out->next = NULL;
+	}
+	return out;
 }
 
-void RenderOutput_ReleaseFree(struct RenderOutput *entry)
+//--------------------------------------------------------------------------
+// あきリストの最後に返す（outputs[] の外のものは返さない）
+//--------------------------------------------------------------------------
+void RenderOutput_ReleaseFree(struct RenderOutput *out)
 {
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    struct UiRenderWork *work =
-        (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
-#else
-    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
-#endif
+	struct UiRenderWork *work = UI_WORK;
 
-    if ((u32)entry >= (u32)work->outputs
-        && (u32)entry < (u32)&work->free_outputs.head) {
-        struct RenderOutput **tail = work->free_outputs.tail_link;
+	if ((u32)out >= (u32)work->outputs && (u32)out < (u32)&work->free_outputs.head)
+	{
+		struct RenderOutput **tail = work->free_outputs.tail_link;
 
-        work->free_outputs.tail_link = &entry->next;
-        *tail = entry;
-        entry->next = NULL;
-    }
+		work->free_outputs.tail_link = &out->next;
+		*tail = out;
+		out->next = NULL;
+	}
 }
 
+//--------------------------------------------------------------------------
+// outputs[] の 64 個をすべてつないで、あきリストにする
+//--------------------------------------------------------------------------
 void UiWork_InitFreeList(void)
 {
-    s32 count;
-    struct UiRenderWork *work;
-    struct RenderOutput *entry;
-    struct RenderOutput *next;
+	s32					 n;
+	struct UiRenderWork *work;
+	struct RenderOutput *out;
+	struct RenderOutput *next;
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
-#else
-    work = (struct UiRenderWork *)gWindowWork[0];
-#endif
-    entry = work->outputs;
-    work->free_outputs.head = entry;
-    count = UI_OUTPUT_COUNT - 2;
-    do {
-        next = entry + 1;
-        count--;
-        entry->next = next;
-        entry = next;
-    } while (count >= 0);
-    next->next = NULL;
-    work->free_outputs.tail_link = &next->next;
+	work = UI_WORK;
+	out = work->outputs;
+	work->free_outputs.head = out;
+	n = UI_OUTPUT_COUNT - 2;
+	do
+	{
+		next = out + 1;
+		n--;
+		out->next = next;
+		out = next;
+	} while (n >= 0);
+	next->next = NULL;
+	work->free_outputs.tail_link = &next->next;
 }

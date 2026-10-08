@@ -1,3 +1,8 @@
+//--------------------------------------------------------------------------
+// CALL_ICON_ROUTINE.C
+// メニュー：えらんだキャラクターのグラフィックを読みなおす
+//--------------------------------------------------------------------------
+
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -10,8 +15,12 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 
-
-void PsynergyMenu_CallIconRoutineWithValue(s32 arg0, s32 arg1)
+//--------------------------------------------------------------------------
+// キャラクターのグラフィックをスロット 0 に読む
+// menu : 呼び出し元のメニュー（使わない）
+// unit : キャラクター番号
+//--------------------------------------------------------------------------
+void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit)
 {
-    Ui_LoadCharacterEntryForSlotFar(0, arg1, 0);
+	Ui_LoadCharacterEntryForSlotFar(0, unit, 0);
 }

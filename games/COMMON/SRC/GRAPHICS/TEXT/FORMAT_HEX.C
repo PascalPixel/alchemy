@@ -1,21 +1,32 @@
+//--------------------------------------------------------------------------
+// FORMAT_HEX.C
+// 文字：数を 16 進の文字列にする
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 
-void Text_FormatHex(u32 value, u32 count, u8 *output) {
-    u8 digits[8];
-    u32 index;
+//--------------------------------------------------------------------------
+// value の下から count けた（5 けたまで）を、上のけたから大文字の
+// 16 進で out に書く（終わりの 0 は書かない）
+//--------------------------------------------------------------------------
+void Text_FormatHex(u32 value, u32 count, u8 *out)
+{
+	u8	buf[8];
+	u32 i;
 
-    if (count > 5)
-        count = 5;
+	if (count > 5)
+		count = 5;
 
-    for (index = 0; index != count; index++) {
-        u32 digit = value & 15;
-        if (digit <= 9)
-            digits[index] = digit + '0';
-        else
-            digits[index] = digit + 'A' - 10;
-        value >>= 4;
-    }
+	for (i = 0; i != count; i++)
+	{
+		u32 d = value & 15;
+		if (d <= 9)
+			buf[i] = d + '0';
+		else
+			buf[i] = d + 'A' - 10;
+		value >>= 4;
+	}
 
-    for (index = count - 1; (s32)index >= 0; index--)
-        *output++ = digits[index];
+	for (i = count - 1; (s32)i >= 0; i--)
+		*out++ = buf[i];
 }

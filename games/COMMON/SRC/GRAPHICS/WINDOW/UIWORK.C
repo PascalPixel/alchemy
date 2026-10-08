@@ -1,3 +1,8 @@
+//--------------------------------------------------------------------------
+// UIWORK.C
+// ウィンドウ：メッセージのチャンネルの後始末と、メッセージに埋める値の表
+//--------------------------------------------------------------------------
+
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -10,237 +15,276 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "WINDOW.H"
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#include "EDITION.H"
+#if GAME_TLA
 #include "RAM_BUFFER.H"
 #else
 #include "IO_REG.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
-#include "SYSTEM.H"
-
-extern u8 RomBytes_08029a10[];
 
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
 
-extern s32 gKeysHeld;
-extern s32 gKeyState;
-extern s32 gKeysPressedLatch;
-s32 AudioCommand_GetStateByteFar();
+extern s32 gKeysHeld;		  // 押しているキー
+extern s32 gKeyState;		  // 押したキー
+extern s32 gKeysPressedLatch; // 押したキー（ためておいたもの）
+s32		   AudioCommand_GetStateByteFar();
 
+//--------------------------------------------------------------------------
+// ウィンドウをすべて閉じる
+// 3 つのチャンネルのウィンドウを閉じ、開閉の動きが終わるまで待ってから、
+// 直接開いたウィンドウを閉じる
+//--------------------------------------------------------------------------
 void UiWork_DrainPending(void)
 {
-    struct UiRenderWork *state;
-    struct UiChannelSlot *slot;
-    struct UiWindow *direct;
-    u32 done;
-    struct UiWindow *work;
-    struct UiWindow *poll_work;
-    s32 index;
-    u16 flag;
+	struct UiRenderWork	 *uw;
+	struct UiChannelSlot *ch;
+	struct UiWindow		 *win;
+	u32					  done;
+	struct UiWindow		 *work;
+	struct UiWindow		 *poll_work;
+	s32					  i;
+	u16					  flag;
 
-    state = (struct UiRenderWork *)gWindowWork[0];
-    slot = state->channels;
-    direct = state->windows;
-    index = 0;
-    do {
-        work = slot->work;
-        if (work != 0 && work->flags != 0)
-            UiWork_Finalize(work, 0);
-        index++;
-        slot++;
-    } while (index != 3);
+	uw = (struct UiRenderWork *)gWindowWork[0];
+	ch = uw->channels;
+	win = uw->windows;
+	i = 0;
+	do
+	{
+		work = ch->work;
+		if (work != 0 && work->flags != 0)
+			UiWork_Finalize(work, 0);
+		i++;
+		ch++;
+	} while (i != 3);
 
+	// 閉じ終えたチャンネルを空ける。動いているものがあれば 1 フレーム待つ
 poll:
-    done = 1;
-    slot = state->channels;
-    index = 0;
-    do {
-        poll_work = slot->work;
-        if (poll_work != 0) {
-            if ((*(s32 *)&poll_work->frame) == 0) {
-                flag = poll_work->flags;
-                if (flag == 0)
-                    slot->work = (struct UiWindow *)(u32)flag;
-                else
-                    done = 0;
-            } else {
-                done = 0;
-            }
-        }
-        index++;
-        slot++;
-    } while (index != 3);
-    index = 0;
-    if (!done) {
-        WaitFrames(1);
-        goto poll;
-    }
-    goto directTest;
-directLoop:
-    if (direct->flags != 0)
-        UiWork_Finalize(direct, 0);
-    direct++;
-    index++;
-directTest:
-    if (index != WINDOW_COUNT)
-        goto directLoop;
+	done = 1;
+	ch = uw->channels;
+	i = 0;
+	do
+	{
+		poll_work = ch->work;
+		if (poll_work != 0)
+		{
+			if ((*(s32 *)&poll_work->frame) == 0) // frame と duration がともに 0
+			{
+				flag = poll_work->flags;
+				if (flag == 0)
+					ch->work = (struct UiWindow *)(u32)flag;
+				else
+					done = 0;
+			}
+			else
+			{
+				done = 0;
+			}
+		}
+		i++;
+		ch++;
+	} while (i != 3);
+	i = 0;
+	if (!done)
+	{
+		WaitFrames(1);
+		goto poll;
+	}
+
+	// 直接開いたウィンドウ
+	goto win_test;
+win_loop:
+	if (win->flags != 0)
+		UiWork_Finalize(win, 0);
+	win++;
+	i++;
+win_test:
+	if (i != WINDOW_COUNT)
+		goto win_loop;
 }
 
-void UiWork_AdvanceChannelTransition(struct UiChannelSlot *channel)
+//--------------------------------------------------------------------------
+// チャンネルのウィンドウの効果 4 を 1 フレーム進める
+// countdown のあいだ 1 タイル大きい枠を描き、終わったら元の枠に戻す
+//--------------------------------------------------------------------------
+void UiWork_AdvanceChannelTransition(struct UiChannelSlot *ch)
 {
-    struct UiWindow *work = channel->work;
-    s32 transition = work->effect;
-    s32 x = work->x;
-    s32 y = work->y;
-    s32 width = work->width;
-    s32 height = work->height;
+	struct UiWindow *work = ch->work;
+	s32				 effect = work->effect;
+	s32				 x = work->x;
+	s32				 y = work->y;
+	s32				 w = work->width;
+	s32				 h = work->height;
 
-    if (transition != 4)
-        return;
+	if (effect != 4)
+		return;
 
-    UiWindow_DrawFrame(x - 1, y - 1, width + 2, height + 2);
-    channel->countdown--;
-    if (channel->countdown != 0)
-        return;
+	UiWindow_DrawFrame(x - 1, y - 1, w + 2, h + 2);
+	ch->countdown--;
+	if (ch->countdown != 0)
+		return;
 
-    channel->work->effect = 0;
-    UiWindow_EraseBorderRect(x - 1, y - 1, width + 2, height + 2);
-    UiWindow_DrawFrame(x, y, width, height);
+	ch->work->effect = 0;
+	UiWindow_EraseBorderRect(x - 1, y - 1, w + 2, h + 2);
+	UiWindow_DrawFrame(x, y, w, h);
 }
 
 #endif
 
+//--------------------------------------------------------------------------
+// メッセージに埋める値の表（8 つ）を空にする
+//--------------------------------------------------------------------------
 void UiWork_ClearValueNameTables(void)
 {
-    s32 no;
-    struct UiRenderWork *work;
+	s32					 no;
+	struct UiRenderWork *work;
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
-    /* FAKEMATCH: the barrier keeps the work-pointer load before the table offsets. */
-    __asm__("");
+#if GAME_TLA
+	work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+	/* FAKEMATCH: the barrier keeps the work-pointer load before the table offsets. */
+	__asm__("");
 #else
-    work = (struct UiRenderWork *)gWindowWork[0];
+	work = (struct UiRenderWork *)gWindowWork[0];
 #endif
-    no = 0;
+	no = 0;
 
-    do {
-        work->values[no] = 0;
-        work->names[no] = 0;
-        no++;
-    } while (no != 8);
+	do
+	{
+		work->values[no] = 0;
+		work->names[no] = 0;
+		no++;
+	} while (no != 8);
 }
 
-void UiWork_PushValueSlot(u32 value, u32 flag)
+//--------------------------------------------------------------------------
+// 表のあいているところに、種類 kind の値 value を入れる
+// （いっぱいなら入れない）
+//--------------------------------------------------------------------------
+void UiWork_PushValueSlot(u32 value, u32 kind)
 {
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    struct UiRenderWork *work =
-        (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+#if GAME_TLA
+	struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
 #else
-    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+	struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
 #endif
-    u32 no = 0;
-    u32 limit = 8;
+	u32 no = 0;
+	u32 limit = 8;
 
-    do {
-        if (work->names[no] == 0) {
-            work->values[no] = value;
-            work->names[no] = flag;
-            break;
-        }
-        no++;
-    } while (no != limit);
+	do
+	{
+		if (work->names[no] == 0)
+		{
+			work->values[no] = value;
+			work->names[no] = kind;
+			break;
+		}
+		no++;
+	} while (no != limit);
 }
 
-#if !(defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT))
-u32 UiRender_LookupNamedValue(u32 name, u32 clear)
+#if !GAME_TLA
+
+//--------------------------------------------------------------------------
+// 表から種類 kind の値をさがす（なければ 0）
+// clear : 0 でなければ、見つけたものを表から消す
+//--------------------------------------------------------------------------
+u32 UiRender_LookupNamedValue(u32 kind, u32 clear)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
-    u32 index;
-    u32 value = 0;
+	struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+	u32					 i;
+	u32					 value = 0;
 
-    for (index = 0; index < 8; index++) {
-        if (work->names[index] == name) {
-            value = work->values[index];
-            if (clear != 0) {
-                work->values[index] = 0;
-                work->names[index] = 0;
-            }
-            break;
-        }
-    }
-    return value;
+	for (i = 0; i < 8; i++)
+	{
+		if (work->names[i] == kind)
+		{
+			value = work->values[i];
+			if (clear != 0)
+			{
+				work->values[i] = 0;
+				work->names[i] = 0;
+			}
+			break;
+		}
+	}
+	return value;
 }
 
-s32 UiWork_CheckCancelByInput(struct UiChannelSlot *channel)
+//--------------------------------------------------------------------------
+// メッセージの待ちを打ち切るか
+// busy で音の状態が 0 のとき、または A・B・L・R を押しているとき、
+// countdown を 0 にして 1 を返す
+//--------------------------------------------------------------------------
+s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
-    s32 cancel = 0;
-    s32 zero;
+	struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+	s32					 cancel = 0;
+	s32					 zero;
 
-    if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
-        cancel = 1;
-    zero = 0;
-    if (gKeysHeld & (KEY_A | KEY_B | KEYS_SHOULDERS))
-        cancel = 1;
-    if (cancel != zero) {
-        channel->countdown = zero;
-        return 1;
-    }
-    return zero;
+	if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
+		cancel = 1;
+	zero = 0;
+	if (gKeysHeld & (KEY_A | KEY_B | KEYS_SHOULDERS))
+		cancel = 1;
+	if (cancel != zero)
+	{
+		ch->countdown = zero;
+		return 1;
+	}
+	return zero;
 }
 
-s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *channel)
+//--------------------------------------------------------------------------
+// メッセージの待ちを打ち切るか（押したキーで見る）
+// mode が 0 でなければ、ためておいたキーで見る
+//--------------------------------------------------------------------------
+s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
-    s32 key;
-    s32 cancel = 0;
-    u8 zero;
+	struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+	s32					 key;
+	s32					 cancel = 0;
+	u8					 zero;
 
-    if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
-        cancel = 1;
-    key = gKeyState;
-    zero = 0;
-    if (work->mode != zero)
-        key = gKeysPressedLatch;
-    if (key & 0x303)
-        cancel = 1;
-    if (cancel != 0) {
-        channel->countdown = zero;
-        return 1;
-    }
-    return 0;
+	if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
+		cancel = 1;
+	key = gKeyState;
+	zero = 0;
+	if (work->mode != zero)
+		key = gKeysPressedLatch;
+	if (key & (KEY_A | KEY_B | KEYS_SHOULDERS))
+		cancel = 1;
+	if (cancel != 0)
+	{
+		ch->countdown = zero;
+		return 1;
+	}
+	return 0;
 }
 
+//--------------------------------------------------------------------------
+// 書き終えたチャンネルのウィンドウを閉じ、10 フレーム待つ
+//--------------------------------------------------------------------------
 void UiWork_FinalizePendingCore(void)
 {
-    s32 slot_index;
-    struct UiChannelSlot *slot;
-    struct UiWindow *work;
+	s32					  i;
+	struct UiChannelSlot *ch;
+	struct UiWindow		 *work;
 
-    slot = ((struct UiRenderWork *)gWindowWork[0])->channels;
-    slot_index = 0;
-    do {
-        work = slot->work;
-        if (work != NULL && (*(s32 *)&work->frame) == 0
-            && work->flags != 0
-            && work->state != 0) {
-            UiWork_Finalize(work,
-                2 & work->flags);
-        }
-        slot_index++;
-        slot++;
-    } while (slot_index != 3);
-    WaitFrames(10);
+	ch = ((struct UiRenderWork *)gWindowWork[0])->channels;
+	i = 0;
+	do
+	{
+		work = ch->work;
+		if (work != NULL && (*(s32 *)&work->frame) == 0 && work->flags != 0 && work->state != 0)
+		{
+			UiWork_Finalize(work, 2 & work->flags);
+		}
+		i++;
+		ch++;
+	} while (i != 3);
+	WaitFrames(10);
 }
 
 #endif

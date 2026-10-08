@@ -380,6 +380,7 @@ copied:
         s32 value;
         s32 ones;
         s32 tens;
+        const struct ElementLevelBonus *table;
 
         result = (u32)Element_PowerResistByLevel;
         value = values[i];
@@ -392,8 +393,9 @@ copied:
             tens = 0;
 
         destination[i][0] = Element_PowerResistByLevel[tens].pow + ones;
-        destination[i][1] =
-            ((volatile const struct ElementLevelBonus *)Element_PowerResistByLevel)[tens].res + ones;
+        /* FAKEMATCH: needed to match: the table reloaded through a temporary builds the res address after the pow store */
+        table = Element_PowerResistByLevel;
+        destination[i][1] = table[tens].res + ones;
         i++;
     } while (i < 4);
     return result;

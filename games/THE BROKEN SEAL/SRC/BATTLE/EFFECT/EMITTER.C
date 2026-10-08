@@ -388,7 +388,7 @@ void EffectRuntime_PrepareRisingObject(struct ObjectRuntime *object)
 	Object_SetPosition(object, actor->x, actor->y + (36 << 16), actor->z);
 	WaitFrames(3);
 	Object_SetMode(actor, 28);
-	ObjectDispatch_InitializeFar((struct DispatchObject *)object, RomBytes_0809e75c);
+	ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_RisingPulseScript);
 	actor->angle = 0x4000;
 }
 

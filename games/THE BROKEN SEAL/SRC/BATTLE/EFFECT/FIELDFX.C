@@ -243,7 +243,7 @@ void BattleFx_SteerPushedTarget(s32 target_id)
 		AudioCommand_PlayFar(175);
 		x = position.x;
 		z = position.z;
-		Object_SetMode(pusher, Data_0809f118[(u16)(angle - dir) >> 14]);
+		Object_SetMode(pusher, BattleFx_QuadrantModes[(u16)(angle - dir) >> 14]);
 		WaitFrames(15);
 		target->unknown_5b = 0;
 		target->speed = 0x3333;

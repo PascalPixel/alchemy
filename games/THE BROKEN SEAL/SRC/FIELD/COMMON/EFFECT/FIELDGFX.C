@@ -78,7 +78,7 @@ struct SparkleFrame {
     u16 tile;
 };
 
-extern const struct SparkleFrame Data_0809f024[];
+extern const struct SparkleFrame FieldFx_SparkleFrames[];
 
 extern struct SparkleWork *gParticleWork;
 #define SparkleMap (*(struct MapScrollWork **)((u8 *)&gParticleWork - 84))
@@ -262,7 +262,7 @@ void FieldEffect_UpdateSparkles(void)
             camera_z = camera[1];
             if (GameFlag_TestFar(0x166) != 0)
                 sparkle->timer++;
-            frame = (const u16 *)&Data_0809f024[sparkle->timer >> 1];
+            frame = (const u16 *)&FieldFx_SparkleFrames[sparkle->timer >> 1];
             a = Random16();
             b = Random16();
             x = ((sparkle->pos_x - camera_x) >> 16) + (((a & 1) + (b & 1)) >> 1);

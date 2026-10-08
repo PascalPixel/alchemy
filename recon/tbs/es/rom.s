@@ -33,25 +33,11 @@ UiText_IndefiniteArticles:
 	.global UiText_ItemPossessives
 UiText_ItemPossessives:
 	.incbin "baserom.gba", 0x00033120, 0x00000008
-	.section .rom.000a1568, "ax"
-	.global Data_0809c410
-Data_0809c410:
-	.incbin "baserom.gba", 0x000a1568, 0x00000100
-	.global BattleFx_ArcSparkTiles
-BattleFx_ArcSparkTiles:
-	.incbin "baserom.gba", 0x000a1668, 0x00000100
-	.global Encounter_EnemyGroupTable
-Encounter_EnemyGroupTable:
-	.incbin "baserom.gba", 0x000a1768, 0x00000b60
+	.section .rom.000a22c8, "ax"
 	.global Battle_LocationRules
 Battle_LocationRules:
 	.incbin "baserom.gba", 0x000a22c8, 0x00000638
-	.global BattleFx_ResultRules
-BattleFx_ResultRules:
-	.incbin "baserom.gba", 0x000a2900, 0x00000108
-	.global Encounter_AreaEntryTable
-Encounter_AreaEntryTable:
-	.incbin "baserom.gba", 0x000a2a08, 0x00000140
+	.section .rom.000a2b48, "ax"
 	.global Scene_InteractionRuleTable
 Scene_InteractionRuleTable:
 	.incbin "baserom.gba", 0x000a2b48, 0x000003e8
@@ -64,99 +50,10 @@ Party_PairResolveRules:
 	.global RomWords_0809e270
 RomWords_0809e270:
 	.incbin "baserom.gba", 0x000a33c8, 0x00000218
-	.global gBattleCueTable
-gBattleCueTable:
-	.incbin "baserom.gba", 0x000a35e0, 0x00000046
+	.section .rom.000a3626, "ax"
 	.global Debug_PaletteSwatchTiles
 Debug_PaletteSwatchTiles:
 	.incbin "baserom.gba", 0x000a3626, 0x000001b2
-	.global Field_TileMessageOffsets
-Field_TileMessageOffsets:
-	.incbin "baserom.gba", 0x000a37d8, 0x00000006
-	.global BattleFx_TargetRangeByMode
-BattleFx_TargetRangeByMode:
-	.incbin "baserom.gba", 0x000a37de, 0x00000032
-	.global Animation_ChildPaletteCycle
-Animation_ChildPaletteCycle:
-	.incbin "baserom.gba", 0x000a3810, 0x00000008
-	.global BattleFx_ParticleEmitterScript
-BattleFx_ParticleEmitterScript:
-	.incbin "baserom.gba", 0x000a3818, 0x0000009c
-	.global RomBytes_0809e75c
-RomBytes_0809e75c:
-	.incbin "baserom.gba", 0x000a38b4, 0x00000120
-	.global BattleFx_ParticleScript
-BattleFx_ParticleScript:
-	.incbin "baserom.gba", 0x000a39d4, 0x00000024
-	.global BattleFx_MarkerParticleScript
-BattleFx_MarkerParticleScript:
-	.incbin "baserom.gba", 0x000a39f8, 0x0000000c
-	.global DisplayTransition_NoiseWidths
-DisplayTransition_NoiseWidths:
-	.incbin "baserom.gba", 0x000a3a04, 0x00000022
-	.global DisplayTransition_EdgeOffsets
-DisplayTransition_EdgeOffsets:
-	.incbin "baserom.gba", 0x000a3a26, 0x00000020
-	.global DisplayTransition_DitherTable
-DisplayTransition_DitherTable:
-	.incbin "baserom.gba", 0x000a3a46, 0x00000040
-	.global BattlePalette_ChannelCurve
-BattlePalette_ChannelCurve:
-	.incbin "baserom.gba", 0x000a3a86, 0x00000040
-	.global BattlePalette_ChannelCurveLight
-BattlePalette_ChannelCurveLight:
-	.incbin "baserom.gba", 0x000a3ac6, 0x00000040
-	.global BattlePalette_ChannelCurveContrast
-BattlePalette_ChannelCurveContrast:
-	.incbin "baserom.gba", 0x000a3b06, 0x00000042
-	.global BattleFx_DefinitionTable
-BattleFx_DefinitionTable:
-	.incbin "baserom.gba", 0x000a3b48, 0x0000020c
-	.global ObjectMotion_VariantScripts
-ObjectMotion_VariantScripts:
-	.incbin "baserom.gba", 0x000a3d54, 0x00000184
-	.global ObjectGroup_BlinkChildValues
-ObjectGroup_BlinkChildValues:
-	.incbin "baserom.gba", 0x000a3ed8, 0x00000004
-	.global DisplayScroll_WaveSine
-DisplayScroll_WaveSine:
-	.incbin "baserom.gba", 0x000a3edc, 0x00000200
-	.global FieldFx_GroundParticleFrames
-FieldFx_GroundParticleFrames:
-	.incbin "baserom.gba", 0x000a40dc, 0x000000a0
-	.global Data_0809f024
-Data_0809f024:
-	.incbin "baserom.gba", 0x000a417c, 0x00000080
-	.global BattleFx_PulseScales
-BattleFx_PulseScales:
-	.incbin "baserom.gba", 0x000a41fc, 0x0000000c
-	.global BattleFx_CommonParticleScript
-BattleFx_CommonParticleScript:
-	.incbin "baserom.gba", 0x000a4208, 0x0000000c
-	.global BattleFx_SourceHoldScript
-BattleFx_SourceHoldScript:
-	.incbin "baserom.gba", 0x000a4214, 0x00000018
-	.global BattleFx_FragmentScript
-BattleFx_FragmentScript:
-	.incbin "baserom.gba", 0x000a422c, 0x00000024
-	.global BattleFx_CyclePatternWords
-BattleFx_CyclePatternWords:
-	.incbin "baserom.gba", 0x000a4250, 0x00000020
-	.global Data_0809f118
-Data_0809f118:
-	.incbin "baserom.gba", 0x000a4270, 0x00000004
-	.global BattleFx_BurstParticleObjectScript
-BattleFx_BurstParticleObjectScript:
-	.incbin "baserom.gba", 0x000a4274, 0x00000044
-	.global BattleFx_RandomChildValues
-BattleFx_RandomChildValues:
-	.incbin "baserom.gba", 0x000a42b8, 0x00000008
-	.global WorldMap_MarkerBlendCycle
-WorldMap_MarkerBlendCycle:
-	.incbin "baserom.gba", 0x000a42c0, 0x00000020
-	.global WorldMap_CursorDirectionAngles
-WorldMap_CursorDirectionAngles:
-	.incbin "baserom.gba", 0x000a42e0, 0x00000020
 	.section .rom.000a4948, "ax"
 	.incbin "baserom.gba", 0x000a4948, 0x00000020
 	.global Data_0809f810

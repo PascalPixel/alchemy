@@ -266,7 +266,7 @@ void BattleFx_LoadActionEffectResources(s32 act_no, s32 mode)
 	if (work->animation != 8)
 		ev->unknown_cc0 = running;
 	work->tile_slot = Resource_FindFreeEntry();
-	VramBlock_LoadCached((s16)work->tile_slot, 256, Data_0809c410);
+	VramBlock_LoadCached((s16)work->tile_slot, 256, BattleFx_SparkTiles);
 	Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 0xc80);
 }
 

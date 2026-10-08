@@ -4,7 +4,6 @@ SECTIONS
     {
         "*/games/tbs/src/field/imiru_mura/entry.o"(.text)
         "*/games/tbs/src/field/imiru_mura/mura.o"(.text)
-        "*/games/tbs/src/field/imiru_mura/choreography.o"(.text)
         "*/games/tbs/src/field/imiru_mura/import.o"(.text)
         "*/games/tbs/src/field/imiru_mura/data.o"(.data)
     }

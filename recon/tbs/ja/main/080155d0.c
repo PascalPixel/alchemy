@@ -32,7 +32,6 @@ struct UiTextWindow {
     u16 flags;
 };
 
-extern u8 UiSprite_CursorFrameTiles[];
 extern u8 UiText_Glyphs[];
 extern u8 UiText_KanjiGlyphs[];
 

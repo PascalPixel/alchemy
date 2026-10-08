@@ -7,7 +7,7 @@ struct UiTextWindow {
     u16 flags;
 };
 
-extern u8 UiSprite_CursorFrameTiles[];
+extern const u8 UiText_GlyphWidths[];
 extern u8 UiText_Glyphs[];
 
 /* FAKEMATCH: px & 7 through an asm: stock charges its anti dependence on the mla, which reads r3, the multiply's 16 cycles, tying it with the VRAM add; an asm's links cost 1, so the add and its orr follow the mask shift as native (8 to 0; European 8 to 0) */
@@ -72,7 +72,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x0, u32 y0, u8 *fo
 #endif
             u32 c1;
             u32 c3;
-            u8 *wp;
+            const u8 *wp;
 #if !defined(TBS_EDITION_EN)
             u32 idx;
 #endif
@@ -87,7 +87,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x0, u32 y0, u8 *fo
             c3 = 0x3333;
             /* FAKEMATCH: rewrites y and starts row: the cmp of y then follows this asm, and row = 0 no longer anti-depends on the c3 store (cost 2), so row = 0, the w load and the cmp take the native order (30 to 0) */
             asm("" : "=r"(y), "=r"(row) : "0"(y));
-            wp = UiSprite_CursorFrameTiles + 0x800;
+            wp = UiText_GlyphWidths;
             w = wp[bits];
             row = 0;
             /* FAKEMATCH: reads row and, through memory, w's store, so the store sits between the cmp and the branch and row = 0 waits for the w load (4 to 0) */
@@ -100,7 +100,7 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x0, u32 y0, u8 *fo
             /* FAKEMATCH: a barrier after the colour constants: native's row = 0, table load and index follow every colour store; without it stock moves the y compare up among them and sched1 swaps b and row + 1 between r5 and r4 (38 to 0) */
             asm volatile("");
             row = 0;
-            wp = UiSprite_CursorFrameTiles + 0x800;
+            wp = UiText_GlyphWidths;
             idx = bits - 32;
             w = wp[idx];
             /* FAKEMATCH: w's store sits between the cmp and the branch: this asm's memory clobber takes the store's dependence at cost 1, where stock charges the branch 2 (6 to 0) */

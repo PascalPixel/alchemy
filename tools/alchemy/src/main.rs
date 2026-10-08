@@ -24,6 +24,7 @@ mod editions;
 mod elf;
 mod fakematch;
 mod gate;
+mod gbafix;
 mod integrate;
 mod keep;
 mod label;
@@ -54,6 +55,8 @@ Set up and build
   verify        every gate of make verify, make land and the commit hooks
   check         one repository contract check
   worktree      prepare a new git worktree before its first build
+  gbafix        fix a ROM's cartridge header as pret's gbafix: Nintendo logo and
+                complement check
 
 Choose what to match
   deps          what not-yet-C code calls and blocks: what unblocks the most
@@ -97,6 +100,7 @@ fn main() -> ExitCode {
     match command {
         "bootstrap" => result(bootstrap::run(rest)),
         "build" => build::entry(rest),
+        "gbafix" => result(gbafix::run(rest)),
         "verify" => verify::entry(rest),
         "check" => check::entry(rest),
         "progress" => {

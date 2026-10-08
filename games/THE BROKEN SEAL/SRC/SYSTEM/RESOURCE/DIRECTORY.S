@@ -760,7 +760,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Palette32
 	resource , Field_Map134
 	resource , Field_Map135
-	resource , Field_KaragoruDou
+	resource , Field_GondowanaTsukojo
 	resource , Tileset_Palette33
 	resource , Field_Map136
 	resource , Tileset_Palette34
@@ -816,7 +816,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Palette48
 	resource , Field_Map161
 	resource , Field_Map162
-	resource , Field_VinasuHeya
+	resource , Field_VinasuIriguchi
 	resource , Tileset_Palette49
 	resource , Field_Map163
 	resource , Tileset_Palette50

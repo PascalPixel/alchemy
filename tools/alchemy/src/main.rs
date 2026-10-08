@@ -45,6 +45,7 @@ mod similar_command;
 mod sizes;
 mod targets;
 mod thumb;
+mod units;
 mod verify;
 mod worst;
 mod worst_command;
@@ -92,6 +93,7 @@ Camelotize
                 declarations, barriers
   keep          keep only the edits that leave all twelve editions identical
   sweep         drop FAKEMATCH pins, barriers and volatiles the bytes no longer need
+  units         propose Camelot's translation units from the linked images
 
 Work in parallel
   queues        split not-yet-C work into queues that cannot collide
@@ -140,6 +142,7 @@ fn main() -> ExitCode {
         "dead" => result(dead::run(rest)),
         "show" => result(show::run(rest)),
         "sweep" => result(sweep::run(rest)),
+        "units" => result(units::run(rest)),
         "worktree" => result(worktree::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");

@@ -693,8 +693,6 @@ SECTIONS
     "*/games/tbs/src/battle/effect/colorfx.o"(.rodata)
     . = ABSOLUTE(0x080f0000);
     "*/games/tbs/src/system/far_call/sound.o"(.text .rodata .data .padding)
-    "*/games/tbs/src/sound/command_play.o"(.text)
-    "*/games/tbs/src/sound/music_player_step_volume_and_pitch_toward_targets.o"(.text)
     "*/games/tbs/src/sound/sound.o"(.text)
     "*/games/tbs/src/sound/driver/umul_high.o"(.text .rodata .data .padding)
     "*/games/tbs/src/sound/driver/mixer_entry.o"(.text .rodata .data .padding)

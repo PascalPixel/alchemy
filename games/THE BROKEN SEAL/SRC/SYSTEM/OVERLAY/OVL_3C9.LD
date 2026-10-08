@@ -8,8 +8,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/CHOJO.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ORBIT.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/DATA.o"(.data)

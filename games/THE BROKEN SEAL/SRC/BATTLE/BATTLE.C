@@ -190,7 +190,7 @@ s32 BattleUnit_BuildStatusFlags(s32 id, struct BtlObj *slot)
 	if (doku == 1)
 		flags = ICON_DOKU;
 	if (doku == 2)
-		flags |= doku; // ICON_MOUDOKU
+		flags |= doku; // もう毒 (ICON_MOUDOKU)
 	if (unit->maboroshi != 0)
 		flags |= ICON_MABOROSHI;
 	if (unit->shibire != 0)

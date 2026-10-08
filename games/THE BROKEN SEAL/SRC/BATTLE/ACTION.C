@@ -269,7 +269,7 @@ struct MarkerSlot
 	struct ScriptObjectRuntime *object;
 	u8							id; // イベントのトリガー番号
 	u8							unknown_05;
-	u8							column; // 16ドットのマス
+	u8							column; // 16 ドットのマス
 	u8							row;
 };
 

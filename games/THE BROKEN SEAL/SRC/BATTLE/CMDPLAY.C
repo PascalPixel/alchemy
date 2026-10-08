@@ -89,7 +89,7 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *req, s32 retry)
 	u8							 efx;
 	u8							 tgt_mode;
 
-	// 重みの表 (合計 256) から行動表の番号を引く
+	// 0-255 の乱数で、重みの表から行動表の番号を引く
 	s32 WeightRnd(u8 *weights)
 	{
 		s32 rnd;
@@ -575,7 +575,7 @@ void BattleEvent_Playback(void)
 		else if (ev->phase == PLAY_OKURI)
 		{
 			// 矢印を出して送りのキーを待つ
-			// B を押し続けるか送りのキーを押すと進み、10 を過ぎれば押し続けていても進む
+			// B を押し続けるか送りのキーを押すと進み、10 ティックを過ぎれば押し続けていても進む
 			struct BattlePromptSprite  *spr = &ev->display_entry;
 			u8						   *arrow = BattlePres_AdvanceArrowTiles;
 			s32							pat = (s32)arrow + ((gFrameCount >> 2) & 7) * 128;

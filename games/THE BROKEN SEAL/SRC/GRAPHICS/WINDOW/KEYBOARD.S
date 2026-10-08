@@ -8,10 +8,20 @@ Menu_PartySpriteResourceIds:
 @ 名前入力の文字盤
 	.global NameEntry_KeyboardTilemap
 NameEntry_KeyboardTilemap:
+	.ifdef TBS_EDITION_JA
+	.incbin "GRAPHICS/WINDOW/KEYBD_JA.table.lz"
+	.global NameEntry_AlternateKeyboardTilemap
+NameEntry_AlternateKeyboardTilemap:
+	.incbin "GRAPHICS/WINDOW/KEYBD_J2.table.lz"
+	.global NameEntry_KeyboardTilemap3
+NameEntry_KeyboardTilemap3:
+	.incbin "GRAPHICS/WINDOW/KEYBD_J3.table.lz"
+	.else
 	.ifdef TBS_EDITION_ES
 	.incbin "GRAPHICS/WINDOW/KEYBD_ES.table.lz"
 	.else
 	.incbin "GRAPHICS/WINDOW/KEYBOARD.table.lz"
+	.endif
 	.endif
 	.balign 4, 0
 	.global Ui_FixedTileBlocks

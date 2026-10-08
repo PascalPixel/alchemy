@@ -353,7 +353,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/TEXT/MESSAGES.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/TEXTSPD.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/MENU/SLIDPAL.o"(.rodata)
-    "*/recon/tbs/ja/rom.o"(.rom.0006c1ea)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/KEYBOARD.o"(.rodata)
     . = ABSOLUTE(0x0806d000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/GAME.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/CHARACTER.o"(.text)

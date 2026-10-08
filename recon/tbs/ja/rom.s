@@ -20,20 +20,6 @@ UiIcon_PsynergyIconPointersEnd:
 	.global UiIcon_MiscIconPointers
 UiIcon_MiscIconPointers:
 	.incbin "baserom.gba", 0x000308ec, 0x00000800
-	.section .rom.0006c1ea, "ax"
-	.incbin "baserom.gba", 0x0006c1ea, 0x00000002
-	.global Menu_PartySpriteResourceIds
-Menu_PartySpriteResourceIds:
-	.incbin "baserom.gba", 0x0006c1ec, 0x00000010
-	.global NameEntry_KeyboardTilemap
-NameEntry_KeyboardTilemap:
-	.incbin "baserom.gba", 0x0006c1fc, 0x0000015a
-	.global NameEntry_AlternateKeyboardTilemap
-NameEntry_AlternateKeyboardTilemap:
-	.incbin "baserom.gba", 0x0006c356, 0x0000023e
-	.global Ui_FixedTileBlocks
-Ui_FixedTileBlocks:
-	.incbin "baserom.gba", 0x0006c594, 0x00000004
 	.section .rom.00094164, "ax"
 	.global Battle_LocationRules
 Battle_LocationRules:

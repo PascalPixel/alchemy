@@ -31,7 +31,7 @@
 	((void (*)(void *, s32))ObjectDispatch_ApplyValueToChildrenFar)
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
-#define gBattleFxWork ((void *(*)) & gBattleFxWork)
+#define gBattleFxWork ((void **)&gBattleFxWork)
 
 #define HI(v) (((s16 *)&(v))[1]) // 16.16 固定小数の整数部
 
@@ -91,7 +91,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 			struct EffectStep *flash = &work->particles[col * 16 + i];
 
 			s32 radius = i * 2;
-			s32 angle = Random16() & 0xFFFF;
+			s32 angle = Random16() & 0xffff;
 
 			flash->x = Trig_Sin(angle) * radius;
 			flash->y = -(Trig_Cos(angle) * radius);
@@ -108,8 +108,8 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 			s32 speed;
 			s32 angle;
 
-			speed = (Random16() & 0x1FF) + 32;
-			angle = Random16() & 0xFFFF;
+			speed = (Random16() & 0x1ff) + 32;
+			angle = Random16() & 0xffff;
 			spark->x = FlameBlade_StrikeColumns[col + work->effect->side * 3] << 16;
 			spark->y = 88 << 16;
 			spark->velocity_x = (Trig_Sin(angle) * speed) >> 6;

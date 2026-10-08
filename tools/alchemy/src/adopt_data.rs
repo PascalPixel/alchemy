@@ -10,8 +10,9 @@ that edition's linker script (games/<GAME>/MAIN.LD for Japanese,
 MAIN_<LANG>.LD beside it for ☀️, recon/tla/<lang>/MAIN.LD for ⚓️).
 
 OBJECT is the module's object or source, games/<GAME>/SRC/.../X.o (or .S
-or .C); --sections lists its input sections, .rodata by default. A PIECE
-names scaffold bytes by their labels:
+or .C); --sections lists its input sections, .rodata by default. It may
+already be linked for other sections (its .text): the block becomes its
+.rodata. A PIECE names scaffold bytes by their labels:
   LABEL         from LABEL to the next label or the end of its section
   FIRST..LAST   from FIRST through LAST's block
   LABEL+SIZE    SIZE bytes from LABEL (decimal or 0x hexadecimal)
@@ -373,8 +374,15 @@ fn render(section: &Section) -> Vec<String> {
         .collect()
 }
 
+/// Splits a script line `"*/path"(.a .b)` into its path and input sections.
+fn linked_sections(line: &str) -> (&str, Vec<&str>) {
+    let (path, rest) = line.split_once('(').unwrap_or((line, ""));
+    (path, rest.trim_end_matches(')').split_whitespace().collect())
+}
+
 /// Links `object` where the cut section was: the bytes before it, the
-/// object, then the bytes after it.
+/// object, then the bytes after it. An object already linked for other
+/// input sections (its .text elsewhere) may still take this block as its .rodata.
 pub(crate) fn relink(script: &str, scaffold: &str, prefix: &str, cut: &Cut, object: &str) -> Result<String, String> {
     let link = |name: &str| format!("\"*/{scaffold}\"({prefix}{name})");
     let old = link(&cut.section);
@@ -388,9 +396,12 @@ pub(crate) fn relink(script: &str, scaffold: &str, prefix: &str, cut: &Cut, obje
     let [at] = at[..] else {
         return Err(format!("{} lines link {old}", at.len()));
     };
-    let path = object.split('(').next().unwrap_or(object);
-    if lines.iter().any(|line| line.contains(path)) {
-        return Err(format!("{path} is already linked"));
+    let (path, wanted) = linked_sections(object);
+    for line in &lines {
+        let (other, sections) = linked_sections(line.trim());
+        if other == path && sections.iter().any(|section| wanted.contains(section)) {
+            return Err(format!("{path} already links {}", sections.join(" ")));
+        }
     }
     let indent = &lines[at][..lines[at].len() - lines[at].trim_start().len()];
     let mut out: Vec<String> = lines[..at].iter().map(|line| line.to_string()).collect();
@@ -638,6 +649,17 @@ mod tests {
             ".rom_main :\n{\n        \"*/games/G/X.o\"(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000100)\n        \"*/games/G/SRC/BATTLE/B.o\"(.rodata)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000120)\n        \"*/games/G/Y.o\"(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000200)\n}\n"
         );
         assert!(relink(&script, "recon/tbs/unidentified.o", ".unidentified.", &cut, OBJECT).is_err());
+    }
+
+    #[test]
+    fn an_object_linked_for_its_text_takes_the_block_as_its_rodata() {
+        let cut = cut(ENGLISH, &[piece("B")]).unwrap();
+        let text = "\"*/games/G/X.o\"(.rodata)";
+        let script = relink(SCRIPT, "recon/tbs/unidentified.o", ".unidentified.", &cut, text).unwrap();
+        assert!(script.contains("        \"*/games/G/X.o\"(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000100)\n        \"*/games/G/X.o\"(.rodata)\n"), "{script}");
+        let error = relink(SCRIPT, "recon/tbs/unidentified.o", ".unidentified.", &cut, "\"*/games/G/X.o\"(.rodata .text)").unwrap_err();
+        assert!(error.contains("already links .text"), "{error}");
+        assert!(relink(&script, "recon/tbs/unidentified.o", ".unidentified.", &cut, text).is_err());
     }
 
     #[test]

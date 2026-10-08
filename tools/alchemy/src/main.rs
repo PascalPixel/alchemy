@@ -39,6 +39,7 @@ mod permute;
 mod process;
 mod queues;
 mod show;
+mod sweep;
 mod similar;
 mod similar_command;
 mod sizes;
@@ -90,6 +91,7 @@ Camelotize
   camelotize    mechanical rewrites: actors, events, registers,
                 declarations, barriers
   keep          keep only the edits that leave all twelve editions identical
+  sweep         drop FAKEMATCH pins, barriers and volatiles the bytes no longer need
 
 Work in parallel
   queues        split not-yet-C work into queues that cannot collide
@@ -137,6 +139,7 @@ fn main() -> ExitCode {
         "objects" => result(objects::run(rest)),
         "dead" => result(dead::run(rest)),
         "show" => result(show::run(rest)),
+        "sweep" => result(sweep::run(rest)),
         "worktree" => result(worktree::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");

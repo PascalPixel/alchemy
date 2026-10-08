@@ -104,14 +104,15 @@ s16 Menu_RunSelection(void)
     }
 }
 
-s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode_arg)
+s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode)
 {
-    register s16 *mode asm("r0") = mode_arg; /* FAKEMATCH: keeps the mode pointer in r0 */
     if (gKeysRepeat & KEY_A)
         return -1;
     if (gKeysRepeat & KEY_B)
         return -2;
-    if ((gKeysRepeat & KEY_DOWN) || (gKeysRepeat & KEY_UP)) {
+    if (gKeysRepeat & KEY_DOWN) {
+        *mode ^= 1;
+    } else if (gKeysRepeat & KEY_UP) {
         *mode ^= 1;
     } else if (gKeysRepeat & KEY_RIGHT) {
         if (*mode == 0) {

@@ -168,13 +168,12 @@ Map_LayeredScenes:
 UiText_DrawGlyphArm:
 	.incbin "baserom.gba", 0x000145d0, 0x000002f4
 	.section .rom.00020e0e, "ax"
-	.incbin "baserom.gba", 0x00020e0e, 0x000008fe
-	.section .rom.000260b8, "ax"
-	.global Battle_CollectPartyCommands
-	.type Battle_CollectPartyCommands, %function
+	.incbin "baserom.gba", 0x00020e0e, 0x00000002
+	.global Ui_RunSelectionScreen
+	.type Ui_RunSelectionScreen, %function
 	.thumb_func
-Battle_CollectPartyCommands:
-	.incbin "baserom.gba", 0x000260b8, 0x00001080
+Ui_RunSelectionScreen:
+	.incbin "baserom.gba", 0x00020e10, 0x000008fc
 	.section .rom.000288c8, "ax"
 	.global WorkspaceOptions_SliderTiles
 WorkspaceOptions_SliderTiles:

@@ -12607,7 +12607,7 @@ msgctxt "MsgDjinnTutorialSetAgain"
 msgid "03149"
 msgstr "And after we recover, we{line_break}will set ourselves again{line_break}and be ready to attack.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnUnleashHint"
 msgid "03150"
 msgstr "That's all you have to do{line_break}to unleash a set Djinni!{end_wait}"
 

@@ -12715,7 +12715,7 @@ msgctxt "MsgDjinnTutorialSetAgain"
 msgid "03176"
 msgstr "Y después de recuperarnos,{line_break}nos autoasignamos para{line_break}estar listos para luchar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnUnleashHint"
 msgid "03177"
 msgstr "¡Esto es lo que tienes{line_break}que hacer para liberar{line_break}un Djinn asignado!{end_wait}"
 

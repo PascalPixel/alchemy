@@ -12715,7 +12715,7 @@ msgctxt "MsgDjinnTutorialSetAgain"
 msgid "03176"
 msgstr "Dopo la ricarica saremo{line_break}nuovamente piazzati e{line_break}pronti per attaccare.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnUnleashHint"
 msgid "03177"
 msgstr "È così che si scatena un{line_break}Djinn piazzato!{end_wait}"
 

@@ -12715,7 +12715,7 @@ msgctxt "MsgDjinnTutorialSetAgain"
 msgid "03176"
 msgstr "Sobald wir uns erholt{line_break}haben, verbünden wir uns{page_break}automatisch wieder mit dir{line_break}und sind bereit zum Angriff.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDjinnUnleashHint"
 msgid "03177"
 msgstr "Das ist alles, was du tun{line_break}musst, um einen verbündeten{line_break}Dschinn freizusetzen!{end_wait}"
 

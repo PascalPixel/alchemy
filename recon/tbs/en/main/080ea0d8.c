@@ -1,4 +1,4 @@
-/* 080ea0d8: differ 28 of 2455 (listing 2455, draft 2457, common 2442).
+/* 080ea0d8: differ 2 of 2455 (listing 2455, draft 2455, common 2454).
  * Frame: 184 as native, and every spill slot (sp+104 canvas down to sp+12,
  * the frame giv) holds what the native's holds, with r4's caller-save word
  * at sp+8.
@@ -87,16 +87,19 @@
  * - Palette fade: the three components masked first and incremented after
  *   (b++, g++, r++): each + 1 is then the 2-operand add on its own register
  *   and red's AND ties to the constant's register, as the native (44 -> 28).
- * Left (28):
- * - The ring's half-widths: the native divides half * sx by 8 once, in
- *   place (lsls r3, #3; cmp r3; bge; adds r3, #7). Two divisions in the
- *   source leave the second's dead branch on the product, so cse2 swaps
- *   the product into the copy's register and both the copy and the test
- *   remain (2 rows each half, 18 branch offsets). One division (a dx local)
- *   is the native's shape locally, but its shorter loop lets CSE share the
- *   20 constant across both store groups, cx is inherited instead of loaded
- *   twice, and half2 then outranks the counter i for r7 (1969 globally).
- *   The extra branch the native's CSE saw is still unexplained.
+ * - The ring's half-widths are one division, dx, divided in place as the
+ *   native (lsls r3, #3; cmp r3; bge; adds r3, #7), with a branch whose
+ *   body is dead between right and left. The bytes prove the branch: the
+ *   native's CSE path was cut there (each first-half store group loads its
+ *   own 20, the second half shares one) and reload saw a label there (cx is
+ *   loaded once for each edge), yet no code is left. Any test on a live value
+ *   (dx, cx) gives the same bytes; a store whose value is dead only by
+ *   flow (left, reassigned at once) keeps the branch to reload, a trivially
+ *   dead one does not (256). Two divisions (old form) leave the copy and
+ *   the dead test on the product: cse2 swaps the product into the copy
+ *   (28); one division without the branch lets CSE share 20 everywhere,
+ *   inherits cx and gives half2 r7 before i (1949) (28 -> 2).
+ * Left (2):
  * - Iwram_CopyWords after the ramp: the native schedules the call address
  *   load between the two halves of 0x05000000 (sched2 picks the r0 shift
  *   first here: equal priority, equal class, earlier LUID).
@@ -761,10 +764,15 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                         s32 right;
                         s32 top;
                         s32 bottom;
+                        s32 dx;
     
                         half = radius / 2;
-                        right = cx + (half * sx) / 8;
-                        left = cx - (half * sx) / 8;
+                        dx = (half * sx) / 8;
+                        right = cx + dx;
+                        if (dx > cx) {
+                            left = 0;
+                        }
+                        left = cx - dx;
                         bottom = cy + (slope * squash) / 8;
                         top = cy - (slope * sx) / 8;
                         if (top < 0) {
@@ -797,8 +805,12 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                         work->sheet[top * 120 + left] = 20;
     
                         half2 = slope / 2;
-                        right = cx + (half2 * sx) / 8;
-                        left = cx - (half2 * sx) / 8;
+                        dx = (half2 * sx) / 8;
+                        right = cx + dx;
+                        if (dx > cx) {
+                            left = 0;
+                        }
+                        left = cx - dx;
                         bottom = cy + (radius * squash) / 8;
                         top = cy - (radius * sx) / 8;
                         if (left < 0) {

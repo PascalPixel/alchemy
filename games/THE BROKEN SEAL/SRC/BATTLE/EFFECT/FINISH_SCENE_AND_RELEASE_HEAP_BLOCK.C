@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // FINISH_SCENE_AND_RELEASE_HEAP_BLOCK.C
-// フィールド効果：ラインごとの波と色の変化、対象から使用者へ流れる粒
+// フィールド効果：ラインごとの波と色の変化、対象から使い手へ流れる粒
 //--------------------------------------------------------------------------
 
 #include "BATTLE.H"
@@ -74,7 +74,7 @@ struct WaveFxWork
 	s8	green;
 	s8	red;
 	u16 hue;	   // 色相 (0〜359 度)
-	u16 source_id; // 使用者
+	u16 source_id; // 使い手
 	u16 target_id; // 対象
 	u8	delay;	   // 開始までの待ち
 	u8	counter;   // 粒を出す周期 (0〜60)
@@ -86,7 +86,7 @@ struct FxObject *Object_CreateFar(s32 sprite, s32 x, s32 y, s32 z);
 s32				 ArcTan2(s32 y, s32 x);
 
 //--------------------------------------------------------------------------
-// 効果を止めて使用者の色を戻し、作業領域を返す
+// 効果を止めて使い手の色を戻し、作業領域を返す
 //--------------------------------------------------------------------------
 void BattleFx_FinishSceneAndReleaseHeapBlock(void)
 {
@@ -137,7 +137,7 @@ void BattleFx_UpdateWaveScene(void)
 	}
 	Animation_ApplyChildPalette(Object_GetById(work->source_id), 0);
 
-	// 周期の 0, 8, 16 で、対象から使用者へ向かう粒を出す
+	// 周期の 0, 8, 16 で、対象から使い手へ向かう粒を出す
 	if (work->counter == 0 || work->counter == 8 || work->counter == 16)
 	{
 		src = Object_GetById(work->source_id);

@@ -40,7 +40,7 @@ void				 Vector_AddPolarOffset(s32, u32, s32 *);
 void				 ObjectDispatch_ReleaseFar(struct MotionObject *);
 
 //--------------------------------------------------------------------------
-// 使用者から効果の位置へオブジェクトを 10 フレームで飛ばし、16 個の粒にして散らす
+// 使い手から効果の位置へオブジェクトを 10 フレームで飛ばし、16 個の粒にして散らす
 //--------------------------------------------------------------------------
 void BattleEffect_RunFallbackObjectTransition(void)
 {
@@ -61,7 +61,7 @@ void BattleEffect_RunFallbackObjectTransition(void)
 	if (obj == 0)
 		return;
 
-	// 使用者の 16 ドット上から、効果の位置の 8 ドット上へ
+	// 使い手の 16 ドット上から、効果の位置の 8 ドット上へ
 	BattleEffect_InitializeSharedScene();
 	from.x = user->x;
 	from.y = user->y + (16 << 16);

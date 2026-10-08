@@ -14,7 +14,7 @@
 void BattlePres_SetOtherActorRecordModes(s32 except)
 {
 	s16 list[14];
-	s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)list);
+	s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
 	s32 i;
 
 	for (i = 0; i < cnt; i++)
@@ -30,7 +30,7 @@ void BattlePres_SetOtherActorRecordModes(s32 except)
 void BattlePres_ClearAllActorRecordModes(void)
 {
 	s16 list[14];
-	s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)list);
+	s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
 	s32 i;
 
 	for (i = 0; i < cnt; i++)

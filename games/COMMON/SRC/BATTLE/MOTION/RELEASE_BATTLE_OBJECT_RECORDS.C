@@ -29,7 +29,7 @@ void ReleaseBattleObjectRecords(s32 no)
 			i = 0;
 			while ((rec = GetMotionRecord(obj, i)) != NULL)
 			{
-				ResourceObject_ReleaseFar((struct ResourceObjectWork *)rec);
+				ResourceObject_ReleaseFar(rec);
 				i += 1;
 			}
 			obj->record_storage_kind = 0; // 絵なし

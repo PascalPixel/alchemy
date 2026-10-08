@@ -34,7 +34,7 @@ s32 Script_AdvancePastCursor(struct ScriptInterpreter *sc)
 s32 Script_ClearByte54(struct ScriptInterpreter *sc)
 {
 	sc->byte_54 = 0;
-	sc->cursor = sc->cursor + 1;
+	sc->cursor++;
 	return 1;
 }
 
@@ -44,6 +44,6 @@ s32 Script_ClearByte54(struct ScriptInterpreter *sc)
 s32 Script_SetByte54(struct ScriptInterpreter *sc)
 {
 	sc->byte_54 = 1;
-	sc->cursor = sc->cursor + 1;
+	sc->cursor++;
 	return 1;
 }

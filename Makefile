@@ -148,6 +148,7 @@ land:
 publication-check:
 	$(CHECK) publication --tree
 	$(CHECK) layout
+	$(CHECK) dead
 
 publication-staged-check:
 	$(CHECK) publication --staged

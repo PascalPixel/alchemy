@@ -90,7 +90,7 @@ pub(crate) fn script_objects(script: &str) -> Vec<String> {
         .collect()
 }
 
-fn source_for(root: &Path, object: &str) -> Result<PathBuf, String> {
+pub(crate) fn source_for(root: &Path, object: &str) -> Result<PathBuf, String> {
     ["C", "c", "S", "s", "MID"]
         .iter()
         .map(|extension| PathBuf::from(format!("{object}.{extension}")))

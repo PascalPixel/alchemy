@@ -16,6 +16,7 @@ mod camelotize;
 mod check;
 mod compiler;
 mod coverage;
+mod dead;
 mod decode;
 mod deps;
 mod deps_command;
@@ -78,6 +79,8 @@ Adopt data
 
 Check the whole build
   objects       what differs from the reference ROM, object or placement
+  dead          what no edition links, includes or selects: unlinked files,
+                never-selected #if arms, unused header declarations
   progress      DONE in every edition from the verified linker maps
 
 Camelotize
@@ -131,6 +134,7 @@ fn main() -> ExitCode {
         "figure" => result(coverage::figures::run(rest)),
         "camelotize" => result(camelotize::run(rest)),
         "objects" => result(objects::run(rest)),
+        "dead" => result(dead::run(rest)),
         "show" => result(show::run(rest)),
         "worktree" => result(worktree::run(rest)),
         "-h" | "--help" => {

@@ -554,6 +554,7 @@ alchemy label NAME ENGLISH_ADDR LEN    # name English-only scaffold data in othe
 alchemy adopt-data OBJECT PIECE...     # a data block's object into all six scripts, out of all scaffolds
 # Check the whole build
 alchemy objects EDITION...             # what differs from the ROM, object or placement
+alchemy dead [--apply PATH]            # what no edition links, includes or selects
 make progress                          # DONE code and data, one line per edition (alchemy progress)
 # Camelotize
 make worst                             # maintained C ranked by how mechanical it reads

@@ -5,9 +5,23 @@ use std::ops::Range;
 use std::path::{Path, PathBuf};
 
 pub(crate) fn script(root: &Path, target: DecompTarget, output: &Path) -> Result<PathBuf, String> {
+    let Some(text) = script_text(root, target)? else {
+        return Ok(target.script());
+    };
+    let path = root.join(output).join(format!("{}.ld", target.id));
+    fs::create_dir_all(root.join(output)).map_err(|error| error.to_string())?;
+    if fs::read_to_string(&path).ok().as_deref() != Some(text.as_str()) {
+        fs::write(&path, text).map_err(|error| format!("{}: {error}", path.display()))?;
+    }
+    Ok(path)
+}
+
+/// The edition's derived linker script, or None for the Japanese base
+/// edition, which links the game's MAIN.LD as it stands.
+pub(crate) fn script_text(root: &Path, target: DecompTarget) -> Result<Option<String>, String> {
     let game = target.script();
     let Some(edition) = target.edition_script() else {
-        return Ok(game);
+        return Ok(None);
     };
     let read = |path: &Path| {
         fs::read_to_string(root.join(path)).map_err(|error| format!("{}: {error}", path.display()))
@@ -23,12 +37,7 @@ pub(crate) fn script(root: &Path, target: DecompTarget, output: &Path) -> Result
         derive(&international, &read(&edition)?, &format!("\"*/{own}/"))
             .map_err(|error| format!("{}: {error}", edition.display()))?
     };
-    let path = root.join(output).join(format!("{}.ld", target.id));
-    fs::create_dir_all(root.join(output)).map_err(|error| error.to_string())?;
-    if fs::read_to_string(&path).ok().as_deref() != Some(text.as_str()) {
-        fs::write(&path, text).map_err(|error| format!("{}: {error}", path.display()))?;
-    }
-    Ok(path)
+    Ok(Some(text))
 }
 
 #[derive(Debug)]

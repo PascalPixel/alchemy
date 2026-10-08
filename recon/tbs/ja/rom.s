@@ -972,20 +972,6 @@ DisplayScroll_Font:
 	.global Title_PromptTiles
 Title_PromptTiles:
 	.incbin "baserom.gba", 0x000ea8bc, 0x000000ef
-	.section .rom.000ec3a4, "ax"
-	.incbin "baserom.gba", 0x000ec3a4, 0x00000020
-	.global Data_080f53fc
-Data_080f53fc:
-	.incbin "baserom.gba", 0x000ec3c4, 0x00000004
-	.global Data_080f5400
-Data_080f5400:
-	.incbin "baserom.gba", 0x000ec3c8, 0x00000004
-	.global Data_080f5408
-Data_080f5408:
-	.incbin "baserom.gba", 0x000ec3cc, 0x00000012
-	.global Data_080f541a
-Data_080f541a:
-	.incbin "baserom.gba", 0x000ec3de, 0x0000000c
 	.section .rom.000ef61c, "ax"
 	.global ReelGame_SparkCellOffsets
 ReelGame_SparkCellOffsets:

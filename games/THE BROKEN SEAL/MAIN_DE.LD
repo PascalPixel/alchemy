@@ -732,7 +732,7 @@
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/BLANK_RUN.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CAMERA/CAMERA.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/PALETTE/SCALE_RGB555_BUFFER.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000f69dc)
+    "*/games/COMMON/SRC/GRAPHICS/PALETTE/SCALE_RGB555_BUFFER.o"(.rodata)
     . = ABSOLUTE(0x080f7600);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/BLANK_LOAD.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/COLORFX.o"(.text)

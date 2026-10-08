@@ -117,9 +117,10 @@ or functions is exactly this cheating.
 
 - **O1** ROM bytes reach the build only through pret's
   `.incbin "baserom.gba", OFFSET, SIZE` scaffold in `recon/<game>`, which never
-  counts. Nothing else derived from the ROM or the expected output (bytes,
-  addresses, sizes, tokens, tables, hashes) may steer the build or the count,
-  `out/` included; reports under `out/` are for people only.
+  counts, and the cartridge logo the header fix-up writes (L1). Nothing else
+  derived from the ROM or the expected output (bytes, addresses, sizes,
+  tokens, tables, hashes) may steer the build or the count, `out/` included;
+  reports under `out/` are for people only.
   _Check: publication._
 - **O2** Every name is defined where its bytes are, as a C definition or a
   label, and layout is the linker scripts' object order. No equate, alias,

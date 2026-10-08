@@ -7,7 +7,7 @@ use std::path::Path;
 
 const USAGE: &str = r#"usage: alchemy objects EDITION... [--all]
 After a build of EDITION (tbs-ja ... tla-it), compares out/EDITION/
-EDITION.gba with the reference ROM out/EDITION/baserom.gba through
+EDITION.gba with the reference ROM roms/EDITION.gba through
 out/EDITION/EDITION.map. Prints the first differing ROM offset and what
 is there, with where it belongs when its scaffold or its bytes say; each
 run of scaffold sections (placed where the .incbin that opens them does
@@ -348,7 +348,8 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         let out = root.join(target.output_dir);
         let read = |name: String| std::fs::read(out.join(&name)).map_err(|e| format!("{}: {e}; build {edition} first", out.join(&name).display()));
         let map = Map::parse(&String::from_utf8_lossy(&read(format!("{edition}.map"))?));
-        let (reference, built) = (read("baserom.gba".to_string())?, read(format!("{edition}.gba"))?);
+        let reference = std::fs::read(root.join(target.rom)).map_err(|e| format!("{}: {e}", target.rom))?;
+        let built = read(format!("{edition}.gba"))?;
         let anchors = Anchors::read(root, &map, target.language() == "en");
         print!("{edition}: {}", report(&map, &anchors, &reference, &built, all));
     }

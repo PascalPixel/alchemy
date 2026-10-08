@@ -569,12 +569,14 @@ pub(crate) fn scaffold_reference(target: DecompTarget, wanted: &str, arm: bool) 
     } else {
         scaffold_extent(&map, &elf, wanted)?
     };
-    let reference = read("baserom.gba")?;
+    let reference_path = root().join(target.rom);
+    let reference = std::fs::read(&reference_path)
+        .map_err(|error| format!("{}: {error}", reference_path.display()))?;
     target.verify_reference(&reference)?;
     let tokens = if arm {
-        arm_reference(&output.join("baserom.gba"), &reference, base, start, end)?
+        arm_reference(&reference_path, &reference, base, start, end)?
     } else {
-        thumb_reference(&output.join("baserom.gba"), &reference, base, start, end)?
+        thumb_reference(&reference_path, &reference, base, start, end)?
     };
     let mode = if arm { "ARM" } else { "Thumb" };
     println!("{mode} scaffold analysis: {} {name}, {start:#010x}..{end:#010x}; full ROM comparison remains required.", target.id);

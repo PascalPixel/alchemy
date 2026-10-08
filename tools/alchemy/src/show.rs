@@ -11,7 +11,7 @@ use std::path::Path;
 const USAGE: &str = r#"usage: alchemy show EDITION FUNCTION [--arm]
 After a build of EDITION (tbs-ja ... tla-it), prints FUNCTION (a symbol,
 or its run-time address in hex) as out/EDITION/EDITION.gba holds it beside
-the reference ROM out/EDITION/baserom.gba at the same place, one
+the reference ROM roms/EDITION.gba at the same place, one
 instruction a line, and marks with * each line whose bytes differ. Literal
 pool words and jump tables print as .word, and calls, branches and pool
 words that hit a symbol carry its name. The function ends at the next
@@ -279,7 +279,8 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let read = |name: &str| std::fs::read(out.join(name)).map_err(|e| format!("{}: {e}; build {edition} first", out.join(name).display()));
     let map = Map::parse(&String::from_utf8_lossy(&read(&format!("{edition}.map"))?));
     let built = read(&format!("{edition}.gba"))?;
-    let reference = read("baserom.gba")?;
+    let reference_path = root().join(target.rom);
+    let reference = std::fs::read(&reference_path).map_err(|e| format!("{}: {e}", reference_path.display()))?;
     let elf = read(&format!("{edition}.elf")).ok().and_then(|data| Elf::parse(&data).ok());
     let functions: Vec<(u32, String)> = elf
         .iter()
@@ -305,7 +306,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     }
     let names = names(&map);
     let (ours, theirs) = if arm {
-        (arm_lines(&out.join(format!("{edition}.gba")), &built, base, start, end)?, arm_lines(&out.join("baserom.gba"), &reference, base, start, end)?)
+        (arm_lines(&out.join(format!("{edition}.gba")), &built, base, start, end)?, arm_lines(&reference_path, &reference, base, start, end)?)
     } else {
         (thumb_lines(&built, base, start, end, &names), thumb_lines(&reference, base, start, end, &names))
     };

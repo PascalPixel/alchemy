@@ -71,8 +71,8 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let length: usize = length.parse().map_err(|_| USAGE.to_string())?;
     let root = root();
     let read = |edition: &str| {
-        let path = root.join(format!("out/{game}-{edition}/baserom.gba"));
-        std::fs::read(&path).map_err(|e| format!("{}: {e} (build {game}-{edition} first)", path.display()))
+        let path = root.join(format!("roms/{game}-{edition}.gba"));
+        std::fs::read(&path).map_err(|e| format!("{}: {e}", path.display()))
     };
     let english = read("en")?;
     let needle = english.get(offset..offset + length).ok_or("address beyond the English ROM")?.to_vec();

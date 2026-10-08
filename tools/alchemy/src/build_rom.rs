@@ -158,7 +158,12 @@ fn link_indexed(
         return Err(format!("{} lists no objects", script.display()));
     }
     let target = build.target;
-    base_rom(root, target, output)?;
+    if sources.iter().any(|source| source.starts_with("recon")) {
+        base_rom(root, target, output)?;
+    } else {
+        // No scaffold is linked: nothing in this build reads the ROM (O1).
+        let _ = fs::remove_file(output.join("baserom.gba"));
+    }
     prepare_assets(root, target, &sources, output, index)?;
     crate::build_text::build(root, target, output)?;
     let mut streamed = Vec::new();
@@ -921,8 +926,9 @@ fn plan(
     } else {
         let base = object
             .ancestors()
-            .find(|path| path.join("baserom.gba").exists())
-            .ok_or("the base ROM link is missing")?;
+            .find(|path| path.ends_with("obj"))
+            .and_then(Path::parent)
+            .ok_or("an object lies outside its build's obj directory")?;
         assembly_inputs(&mut hasher, root, target, source, base, index)?;
         vec![target_assembly_command(
             target,

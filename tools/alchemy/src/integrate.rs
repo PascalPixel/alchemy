@@ -40,7 +40,7 @@ fn report_editions(root: &Path, output: &str) {
         let Some(edition) = line.strip_suffix(".gba: FAILED").and_then(|l| l.rsplit('/').next()) else { continue };
         let read = |p: String| std::fs::read(root.join(p)).unwrap_or_default();
         let map = std::fs::read_to_string(root.join(format!("out/{edition}/{edition}.map"))).unwrap_or_default();
-        match first_difference(&map, &read(format!("out/{edition}/baserom.gba")), &read(format!("out/{edition}/{edition}.gba"))) {
+        match first_difference(&map, &crate::targets::decomp_target(Some(edition)).map(|target| read(target.rom.to_string())).unwrap_or_default(), &read(format!("out/{edition}/{edition}.gba"))) {
             Some((address, offset, path)) => println!("{edition}: first difference at {address:#010x}+{offset:#x} in {}", path.rsplit("/obj/").next().unwrap_or(&path)),
             None => println!("{edition}: differs outside linked objects (size or padding)"),
         }

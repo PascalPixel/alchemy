@@ -615,7 +615,8 @@ fn object_at(map: &str, address: u32) -> Option<String> {
 fn first_difference(root: &Path, edition: &str) -> Option<String> {
     let read = |name: String| fs::read(root.join("out").join(edition).join(name)).ok();
     let map = String::from_utf8_lossy(&read(format!("{edition}.map"))?).into_owned();
-    let reference = read("baserom.gba".into())?;
+    let reference =
+        fs::read(root.join(crate::targets::decomp_target(Some(edition)).ok()?.rom)).ok()?;
     let built = read(format!("{edition}.gba"))?;
     let (address, offset, _) = crate::integrate::first_difference(&map, &reference, &built)?;
     let object = object_at(&map, address).unwrap_or_default();

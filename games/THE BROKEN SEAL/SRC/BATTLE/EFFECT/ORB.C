@@ -313,7 +313,7 @@ void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *obj)
 {
 	s32 r;
 
-	obj->y = obj->y - 0x4ccc;
+	obj->y -= 0x4ccc;
 	r = Random16();
 	obj->x += r - Random16();
 	if (obj->y <= obj->terrain_height)

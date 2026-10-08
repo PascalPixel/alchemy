@@ -31,6 +31,7 @@
 #include "FIELD_EVENT.H"
 #include "TRANSFORM.H"
 #include "HEAP_STATE.H"
+#include "IO_REG.H"
 
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 #define Object_SetMoveTargetFar \
@@ -407,7 +408,7 @@ void BattleFx_RunMemberOrbit(void *effect)
 	canvas = *cursor;
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0);
-	*(s16 *)0x04000020 = 0x100; // BG2PA
+	REG_BG2PA = 0x100;
 	palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
 	Iwram_CopyWords((void *)0x05000000, palette, 128);
 	Resource_DecodeType01((u8 *)palette + 128, work);
@@ -421,7 +422,7 @@ void BattleFx_RunMemberOrbit(void *effect)
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 	if (work->effect->side == 1)
 	{
-		*(s32 *)0x04000028 = -0x6800; // BG2X
+		REG_BG2X = -0x6800;
 		ofs_x = -112;
 	}
 	else

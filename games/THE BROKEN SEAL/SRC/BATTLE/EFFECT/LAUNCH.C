@@ -51,8 +51,8 @@ void BattleFx_UpdateDescendingObject(struct FieldActor *obj)
 
 	obj->scale_y -= 0x280;
 	scale = obj->scale_x - 0x280;
-	obj->facing = obj->facing + 0x2000;
-	obj->y.fixed = obj->y.fixed + (1 << 16);
+	obj->facing += 0x2000;
+	obj->y.fixed += 1 << 16;
 	obj->scale_x = scale;
 	if ((s32)scale < 0x3000)
 		obj->active = 0;

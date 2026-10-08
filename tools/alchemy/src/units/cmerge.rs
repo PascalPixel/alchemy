@@ -559,7 +559,14 @@ pub fn merge(sources: &[Source], headers: &Known, options: &Options) -> Result<M
         }
         if header.is_none() {
             if let Some((k, _, true)) = &usage.defined {
-                if let Some(head) = files[*k].body.iter().find_map(|(_, item)| match item.kind {
+                // The defining file's own declaration, when it has one, is what its
+                // calls before the definition saw: that one goes first.
+                if let (Some(own), Some((text, false))) = (usage.declared.get(k), declaration_text.get(&(*k, name.clone()))) {
+                    hoisted.push(text.clone());
+                    hoisted_names.insert(name.clone());
+                    governing = Some(own.clone());
+                    dropped.insert((*k, name.clone()), (text.clone(), false));
+                } else if let Some(head) = files[*k].body.iter().find_map(|(_, item)| match item.kind {
                     Kind::Function { body } if names(item).first().is_some_and(|n| n.name == *name) => Some(item.text[..body].split_whitespace().collect::<Vec<_>>().join(" ")),
                     _ => None,
                 }) {

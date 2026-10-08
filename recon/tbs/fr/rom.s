@@ -76,10 +76,6 @@ Resource_Data2EE:
 	.incbin "baserom.gba", 0x007193cc, 0x00001164
 	.section .rom.00747137, "ax"
 	.incbin "baserom.gba", 0x00747137, 0x00000001
-	.section .rom.007573b4, "ax"
-	.global Tileset_Palette47
-Tileset_Palette47:
-	.incbin "baserom.gba", 0x007573b4, 0x000000e4
 	.section .rom.0075d634, "ax"
 	.global Resource_Data326
 Resource_Data326:

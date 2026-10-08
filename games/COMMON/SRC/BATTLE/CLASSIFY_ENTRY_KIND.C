@@ -1,37 +1,40 @@
-#include "BTLSYS.H"
+//--------------------------------------------------------------------------
+// CLASSIFY_ENTRY_KIND.C
+// バトル：わざの対象選びの種類
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
+#include "BTLSYS.H"
 #include "SCENE.H"
 
-s32 Battle_ClassifyEntryKind(const struct BtlAct *entry)
+//--------------------------------------------------------------------------
+// わざの効果から、対象選びで使う種類を返す
+// 0 その他、1 HPかいふく、2 EPかいふく、3 毒がきえる、4 状態異常をなおす、
+// 5 ふっき、6 状態異常をすべてなおす
+// act : わざのデータ
+//--------------------------------------------------------------------------
+s32 Battle_ClassifyEntryKind(const struct BtlAct *act)
 {
-    s32 b3;
-    s32 kind;
-    s32 low;
-    s32 ret;
-    u8 k;
+	s32 val;
+	s32 type;
+	s32 kind;
+	u8	efx;
 
-    ret = 0;
-    low = entry->tgt_flg & 0xF;
-    if (low == 1) {
-        ret = 1;
-    }
-    if (low == 0xB) {
-        ret = 2;
-    }
-    b3 = (s8)entry->efx;
-    kind = b3;
-    k = kind;
-    if (k == 3) {
-        ret = 3;
-    }
-    if (k == 4) {
-        ret = 4;
-    }
-    if (k == 0x40) {
-        ret = 6;
-    }
-    if (BtlEfxRevChkFar(entry->efx) != 0) {
-        ret = 5;
-    }
-    return ret;
+	kind = 0;
+	type = act->tgt_flg & 15;
+	if (type == 1) // HPかいふく
+		kind = 1;
+	if (type == 11) // EPかいふく
+		kind = 2;
+	val = (s8)act->efx;
+	efx = val;
+	if (efx == 3) // 毒がきえる
+		kind = 3;
+	if (efx == 4) // 状態異常をなおす
+		kind = 4;
+	if (efx == 64) // 状態異常をすべてなおす
+		kind = 6;
+	if (BtlEfxRevChkFar(act->efx) != 0) // ふっき
+		kind = 5;
+	return kind;
 }

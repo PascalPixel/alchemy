@@ -1,25 +1,26 @@
-#include "BATTLE.H"
-#include "DEBUG.H"
-#include "FIELD.H"
-#include "GAME.H"
-#include "GRAPHICS.H"
-#include "LIB.H"
-#include "MENU.H"
-#include "MINIGAME.H"
-#include "SOUND.H"
-#include "SYSTEM.H"
+//--------------------------------------------------------------------------
+// RUN_NO_EFFECT_FRAMES.C
+// バトル演出：空の演出の繰り返し
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
+#include "BATTLE.H"
 
-
-void BattleFx_RunNoEffectFrames(s32 frame_count)
+//--------------------------------------------------------------------------
+// 何もしない BattleFx_RunNoEffect を cnt 回呼ぶ（フレーム待ちはしない）
+// cnt : 呼ぶ回数
+//--------------------------------------------------------------------------
+void BattleFx_RunNoEffectFrames(s32 cnt)
 {
-    s32 frame;
+	s32 n;
 
-    frame = 0;
-    if (frame_count != 0) {
-        do {
-            frame += 1;
-            BattleFx_RunNoEffect();
-        } while (frame != frame_count);
-    }
+	n = 0;
+	if (cnt != 0)
+	{
+		do
+		{
+			n += 1;
+			BattleFx_RunNoEffect();
+		} while (n != cnt);
+	}
 }

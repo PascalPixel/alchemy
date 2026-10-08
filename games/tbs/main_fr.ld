@@ -178,7 +178,7 @@
     "*/games/tbs/src/system/far_call/window.o"(.text .rodata .data .padding)
     "*/games/tbs/src/graphics/text/decode_symbol.o"(.text .rodata .data .padding)
     "*/games/tbs/src/graphics/text/lookup_symbol.o"(.text .rodata .data .padding)
-    "*/games/tbs/src/graphics/text/moji.o"(.text)
+    "*/recon/tbs/raw/moji.o"(.text)
     "*/games/common/src/graphics/tile/metatile.o"(.text)
     "*/games/tbs/src/graphics/tile/decompress_4bpp.o"(.text .rodata .data .padding)
     "*/games/tbs/src/graphics/tile/decompress_4bpp_nibbles.o"(.text .rodata .data .padding)

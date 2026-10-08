@@ -149,6 +149,7 @@ publication-check:
 	$(CHECK) publication --tree
 	$(CHECK) layout
 	$(CHECK) dead
+	$(CHECK) devices
 
 publication-staged-check:
 	$(CHECK) publication --staged

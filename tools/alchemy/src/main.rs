@@ -17,6 +17,7 @@ mod check;
 mod compiler;
 mod coverage;
 mod dead;
+mod devices;
 mod decode;
 mod deps;
 mod deps_command;

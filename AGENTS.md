@@ -556,6 +556,7 @@ alchemy adopt-data OBJECT PIECE...     # a data block's object into all six scri
 alchemy objects EDITION...             # what differs from the ROM, object or placement
 alchemy dead [--apply PATH]            # what no edition links, includes or selects
 make progress                          # DONE code and data, one line per edition (alchemy progress)
+alchemy check devices [--update]       # register pins, asm barriers, inline asm, volatile: may only fall
 # Camelotize
 make worst                             # maintained C ranked by how mechanical it reads
 alchemy camelotize REWRITE FILE...     # actors, events, registers, declarations, barriers

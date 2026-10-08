@@ -1217,6 +1217,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
         Runtime_ReleaseHeapBlock(47);
 
         if (frame > 63) {
+            /* FAKEMATCH: forced temporary: the shake value through an s32 keeps the AND constant an immediate and the instruction count native's; stored straight into gBgScroll[1].y, the constant comes from the pool and 17 rows differ (draft 2456 against 2455) */
             s32 shake = (Random16() & 3) + 30;
 
             gBgScroll[1].y = shake;

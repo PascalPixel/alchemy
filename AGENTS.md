@@ -40,7 +40,23 @@ A game is finished when all six hold (Pascal, 2026-10-08):
 3. `recon/<game>` removed: no scaffold, draft or edition scaffolding left.
 4. FAKEMATCH at 0%: no tagged device left (S2).
 5. A limited set of stock compilers builds all of it (K1–K3).
-6. The codebase camelotized (S3).
+6. The codebase camelotized (S3), which includes its structure:
+   - Files are Camelot's own translation units, recovered from the bytes as
+     pret recovers Game Freak's (object alignment, each object's trailing
+     data and strings, link order), so the file count follows the original,
+     not one file per adopted function.
+   - Every name rests on evidence: in-game text, the table or id that
+     reaches it, or the code that loads it. No codename folders, guessed
+     character names or invented asset names; an unknown keeps a neutral
+     placeholder.
+   - The global layers Camelot's code shows are source: one character
+     module that relates each character's portrait, field sprite, battle
+     sprite, name and dialogue through its id; likewise scenes, areas and
+     other units the code treats as one, with reusable modules, inline
+     helpers and macros where the code repeats.
+
+   Order (Pascal, 2026-10-08): first 100% by pret's standard (W3), then this
+   structure as the first order of camelotizing.
 
 ## Where things are
 

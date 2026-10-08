@@ -661,7 +661,9 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/FORMATION_SELECT_RANDOM_AVAILABLE_MEMBER.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/SUMMON.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/SPOILS.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.000c2a22)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/BTLDATA.o"(.rodata)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/ADVARROW.o"(.rodata)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/BTLVARS.o"(.rodata)
     . = ABSOLUTE(0x080c9000);
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/EFFECT.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/FALLING.o"(.text)

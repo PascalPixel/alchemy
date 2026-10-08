@@ -59,7 +59,7 @@ void Graphics_AdvancePaletteCycle(void)
     if (battle != NULL && battle->highlight_mode != 0) {
         REG_BLDCNT = 0x3f90;
         REG_BLDALPHA = 0x10;
-        table = Data_080c5c10;
+        table = BattleFx_HighlightBlendRamp;
         REG_BLDY = table[battle->highlight_step];
         step = battle->highlight_step;
         next = (step + 1) & 0xf;
@@ -206,8 +206,8 @@ s32 BattleFx_UpdateStarField(void)
                 frame = 0;
             else if (frame > 6)
                 frame = 6;
-            size = Data_080c3620[frame];
-            draw(dest, (u8 *)work + Data_080c3604[frame], x - (size >> 1), y - (size >> 1), size, size);
+            size = BattleFx_StarSizes[frame];
+            draw(dest, (u8 *)work + BattleFx_StarWorkOffsets[frame], x - (size >> 1), y - (size >> 1), size, size);
         }
     }
     draw = (DrawFunc)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -219,7 +219,7 @@ s32 BattleFx_UpdateStarField(void)
         phase = 3 - ring->age / 8;
         if (phase >= 0) {
             ring->age++;
-            draw(dest, (u8 *)work + Data_080c3628[phase], ring_x + 48, ring_y + 48, 32, 32);
+            draw(dest, (u8 *)work + BattleFx_RingFrameOffsets[phase], ring_x + 48, ring_y + 48, 32, 32);
         }
     }
     work->frames++;

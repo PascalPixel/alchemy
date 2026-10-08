@@ -82,8 +82,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
         pool[i].score = -1;
 
     for (i = 0; (u32)i <= 19; i++) {
-        Owner_GetRecordFar(RomBytes_080c73f8[i]);
-        GameFlag_ClearBitFar(RomBytes_080c73f8[i] + 1536);
+        Owner_GetRecordFar(BattleFormation_LevelMatchedEnemies[i]);
+        GameFlag_ClearBitFar(BattleFormation_LevelMatchedEnemies[i] + 1536);
     }
 
     for (i = 0; (u32)i <= 379; i++) {

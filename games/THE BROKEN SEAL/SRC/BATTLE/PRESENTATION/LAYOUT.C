@@ -152,7 +152,7 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 id)
         sel = Resource_FindFreeSlot(state->inventory[entry] & 0x1FF);
         switch (state->class_id) {
         case 0:
-            result = RomBytes_080c2a1c[sel];
+            result = BattleUnit_WeaponAnimsClass0[sel];
             break;
         case 1:
             result = BattleUnit_WeaponAnimsClass1[sel];

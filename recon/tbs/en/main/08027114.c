@@ -247,6 +247,7 @@ void UpdateLinkSessionCountdown(void);
 void Battle_DrawPartyPanelsWithEmptyList(void);
 s32 Battle_ClassifyEntryKind(const struct BtlAct *entry);
 s32 UiText_ShowLocalizedMessageAndWait(void);
+void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity);
 s32 UiText_DrawWaitingForOpponent(void);
 struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 id, s32 x, s32 y);
 struct UiWindow *UiWindow_Create(s32 a, s32 b, s32 c, s32 d, s32 e);
@@ -981,7 +982,11 @@ finish:
         s32 DrawLocalizedResource(void)
         {
             u16 data[64];
+#if EDITION_INTERNATIONAL
             UiText_CopyMessageString((s32)MsgWaitingForOpponent, data, 52);
+#else
+            UiText_DecodeMessage((s32)MsgWaitingForOpponent, data, 32);
+#endif
             UiText_RenderWideStringAtOffset(data, (struct UiWindow *)state->displayHandle, 0, 4);
         }
 

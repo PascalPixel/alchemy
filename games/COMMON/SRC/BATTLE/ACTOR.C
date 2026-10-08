@@ -1,15 +1,12 @@
-#include "BATTLE.H"
-#include "DEBUG.H"
-#include "FIELD.H"
-#include "GAME.H"
-#include "GRAPHICS.H"
-#include "LIB.H"
-#include "MENU.H"
-#include "MINIGAME.H"
-#include "SOUND.H"
-#include "SYSTEM.H"
+//--------------------------------------------------------------------------
+// ACTOR.C
+// バトル：倒れたユニットの絵と並びの後しまつ
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 #include "EDITION.H"
+#include "BATTLE.H"
+#include "SYSTEM.H"
 #include "BTLPTY.H"
 #include "BTLSYS.H"
 #include "BTLTYPE.H"
@@ -17,149 +14,173 @@
 #include "BTLSMN.H"
 #include "MOTOBJ.H"
 #include "ANIMSPR.H"
-#include "SYSTEM.H"
 
 struct BtlUnit *UnitGet(s32);
-void Animation_ApplyChildArgumentFar(void *, s32);
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 
+void Animation_ApplyChildArgumentFar(void *, s32);
+s32	 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
+
+//--------------------------------------------------------------------------
+// ユニットを味方か敵の並びから外し、行動の予定からも消す
+// GAME_TLA では、外せたら 0、どちらの並びにもいなければ -1 を返す
+// id : ユニット番号
+//--------------------------------------------------------------------------
 #if GAME_TLA
-s32 BattleActor_RemoveFromLists(s32 actor)
+s32 BattleActor_RemoveFromLists(s32 id)
 #else
-void BattleActor_RemoveFromLists(s32 actor)
+void BattleActor_RemoveFromLists(s32 id)
 #endif
 {
-    struct BtlWork *work;
-    s32 i;
+	struct BtlWork *work;
+	s32				i;
 #if GAME_TLA
-    /* FAKEMATCH: retain r2 and integer-load/pointer-store operands; natural loops split the removal exit. */
-    register s32 slot asm("r2");
+	/* FAKEMATCH: retain r2 and integer-load/pointer-store operands; natural loops split the removal exit. */
+	register s32 slot asm("r2");
 #endif
-    u32 j;
-    s32 unit;
+	u32 j;
+	s32 unit;
 
+	// 味方の並び
 #if GAME_TLA
-    work = Ram_HeapSlots->battle_work;
-    UnitGet(actor)->side = BATTLE_UNIT_ABSENT;
-    i = (u32)&((struct BtlWork *)0)->party_units;
-    slot = i;
-    unit = *(s16 *)(slot + (u32)work);
-    if (unit == actor)
-        goto party_removed;
-    if (unit != BATTLE_UNIT_LIST_END) {
-        do {
-            i += sizeof(s16);
-            slot = i;
-            unit = *(s16 *)(slot + (u32)work);
-            if (unit == actor)
-                goto party_removed;
-        } while (unit != BATTLE_UNIT_LIST_END);
-    }
+	work = Ram_HeapSlots->battle_work;
+	UnitGet(id)->side = BATTLE_UNIT_ABSENT;
+	i = (u32)(&((struct BtlWork *)0)->party_units);
+	slot = i;
+	unit = *(s16 *)(slot + (u32)work);
+	if (unit == id)
+		goto party_removed;
+	if (unit != BATTLE_UNIT_LIST_END)
+	{
+		do
+		{
+			i += sizeof(s16);
+			slot = i;
+			unit = *(s16 *)(slot + (u32)work);
+			if (unit == id)
+				goto party_removed;
+		} while (unit != BATTLE_UNIT_LIST_END);
+	}
 #else
-    work = BtlWk;
-    UnitGetFar(actor)->side = BATTLE_UNIT_ABSENT;
-    for (i = 0; ; i++) {
-        if (work->party_units[i] == actor) {
-            work->party_units[i] = BATTLE_UNIT_REMOVED;
-            goto removed;
-        }
-        if (work->party_units[i] == BATTLE_UNIT_LIST_END)
-            break;
-    }
+	work = BtlWk;
+	UnitGetFar(id)->side = BATTLE_UNIT_ABSENT;
+	for (i = 0;; i++)
+	{
+		if (work->party_units[i] == id)
+		{
+			work->party_units[i] = BATTLE_UNIT_REMOVED;
+			goto removed;
+		}
+		if (work->party_units[i] == BATTLE_UNIT_LIST_END)
+			break;
+	}
 #endif
-    /* FAKEMATCH: the goto loop avoids the pointer walk and saved 0xfe constant produced by a for loop. */
-    do {
-        j = 0;
-again:
-        unit = work->enm_no[j];
+
+	// 敵の並び
+	/* FAKEMATCH: the goto loop avoids the pointer walk and saved 0xfe constant produced by a for loop. */
+	do
+	{
+		j = 0;
+	again:
+		unit = work->enm_no[j];
 #if GAME_TLA
-        if (unit == actor)
-            goto enemy_removed;
+		if (unit == id)
+			goto enemy_removed;
 #else
-        if (unit == actor) {
-            work->enm_no[j] = BATTLE_UNIT_REMOVED;
-            goto removed;
-        }
+		if (unit == id)
+		{
+			work->enm_no[j] = BATTLE_UNIT_REMOVED;
+			goto removed;
+		}
 #endif
-        j++;
-        if (unit == BATTLE_UNIT_LIST_END)
+		j++;
+		if (unit == BATTLE_UNIT_LIST_END)
 #if GAME_TLA
-            break;
+			break;
 #else
-            return;
+			return;
 #endif
-        goto again;
-    } while (0);
+		goto again;
+	} while (0);
 #if GAME_TLA
-    return -1;
+	return -1;
 enemy_removed:
-    work->enm_no[j] = BATTLE_UNIT_REMOVED;
-    goto removed;
+	work->enm_no[j] = BATTLE_UNIT_REMOVED;
+	goto removed;
 party_removed:
-    *(s16 *)((u8 *)work + slot) = BATTLE_UNIT_REMOVED;
+	*(s16 *)((u8 *)work + slot) = BATTLE_UNIT_REMOVED;
 #endif
+
 removed:
-    EnmCntRel(actor);
-    for (j = 0; j < 20; j++) {
-        if (work->actions[j].unit_id == actor)
-            work->actions[j].unit_id = BATTLE_UNIT_LIST_END;
-    }
+	EnmCntRel(id);
+	for (j = 0; j < 20; j++)
+	{
+		if (work->actions[j].unit_id == id)
+			work->actions[j].unit_id = BATTLE_UNIT_LIST_END;
+	}
 #if GAME_TLA
-    return 0;
+	return 0;
 #endif
 }
 
+//--------------------------------------------------------------------------
+// 倒れたユニットの絵：味方はアニメ 4、敵はアニメ 5 にする
+// 敵はさらに 4 フレーム待って並びから外し、そのあと絵を 1 ドットずつ消す
+// id : ユニット番号
+//--------------------------------------------------------------------------
 void BattleMotion_InitializeActorRecords(s32 id)
 {
-    void *items[4];
-    struct BtlUnit *state;
-    struct AnimationObject *item;
+	void				   *recs[4];
+	struct BtlUnit		   *unit;
+	struct AnimationObject *rec;
 #if GAME_TLA
-    /* FAKEMATCH: ordering the child load swaps r2/r3 unless it stays in r2. */
-    register struct AnimationEntry *child asm("r2");
+	/* FAKEMATCH: ordering the child load swaps r2/r3 unless it stays in r2. */
+	register struct AnimationEntry *ent asm("r2");
 #else
-    struct AnimationEntry *child;
+	struct AnimationEntry *ent;
 #endif
-    s32 index;
+	s32 n;
 
 #if GAME_TLA
-    state = UnitGet(id);
+	unit = UnitGet(id);
 #else
-    state = UnitGetFar(id);
+	unit = UnitGetFar(id);
 #endif
-    index = 0;
-    while ((item = GetMotionRecord(BtlObjGet(id)->object, index)) != 0) {
-        if (state->side != BATTLE_UNIT_ENEMY)
+	n = 0;
+	while ((rec = GetMotionRecord(BtlObjGet(id)->object, n)) != 0)
+	{
+		if (unit->side != BATTLE_UNIT_ENEMY)
 #if GAME_TLA
-            Animation_ApplyChildArgumentFar(item, 4);
+			Animation_ApplyChildArgumentFar(rec, 4);
 #else
-            AnimationObjects_SelectAnimationFar(item, 4);
+			AnimationObjects_SelectAnimationFar(rec, 4);
 #endif
-        else
+		else
 #if GAME_TLA
-            Animation_ApplyChildArgumentFar(item, 5);
+			Animation_ApplyChildArgumentFar(rec, 5);
 #else
-            AnimationObjects_SelectAnimationFar(item, 5);
+			AnimationObjects_SelectAnimationFar(rec, 5);
 #endif
-        index++;
-    }
+		n++;
+	}
 
-    if (state->side == BATTLE_UNIT_ENEMY) {
-        index = 0;
-        while ((item = GetMotionRecord(BtlObjGet(id)->object, index)) != 0) {
-            child = item->entries[0];
+	if (unit->side == BATTLE_UNIT_ENEMY)
+	{
+		n = 0;
+		while ((rec = GetMotionRecord(BtlObjGet(id)->object, n)) != 0)
+		{
+			ent = rec->entries[0];
 #if GAME_TLA
-            /* FAKEMATCH: load the child before the index shift; ordinary loops reverse them. */
-            asm("" : "+r" (child), "+r" (index));
+			/* FAKEMATCH: load the child before the index shift; ordinary loops reverse them. */
+			asm("" : "+r"(ent), "+r"(n));
 #endif
-            items[index] = item;
-            child->param = 6;
-            child->frame = 0xff;
-            index++;
-        }
-        WaitFrames(4);
-        BattleActor_RemoveFromLists(id);
-        Map_RenderAllAnimatedTileFramesFar(items, index);
-        ActivateBattleObjectSlot(id);
-    }
+			recs[n] = rec;
+			ent->param = 6;
+			ent->frame = 0xff;
+			n++;
+		}
+		WaitFrames(4);
+		BattleActor_RemoveFromLists(id);
+		Map_RenderAllAnimatedTileFramesFar(recs, n); // 1 ドットずつ消す
+		ActivateBattleObjectSlot(id);
+	}
 }

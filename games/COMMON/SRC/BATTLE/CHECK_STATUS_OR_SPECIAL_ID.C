@@ -1,12 +1,20 @@
+//--------------------------------------------------------------------------
+// CHECK_STATUS_OR_SPECIAL_ID.C
+// バトル：EP を使うわざの判定
+//--------------------------------------------------------------------------
+
 #include "BTLSYS.H"
 
-u32 Ability_CheckStatusOrSpecialId(s32 action_id)
+//--------------------------------------------------------------------------
+// EP を使うわざなら 1 を返す。エナジードレインは EP に関係なく 1
+// act_no : わざ番号
+//--------------------------------------------------------------------------
+u32 Ability_CheckStatusOrSpecialId(s32 act_no)
 {
-    u8 cost;
+	u8 ep;
 
-    if (action_id == 0x7E) {
-        return 1U;
-    }
-    cost = BtlActGet(action_id)->pp_cost;
-    return (u32)((0 - cost) | cost) >> 0x1F;
+	if (act_no == 126) // エナジードレイン
+		return 1;
+	ep = BtlActGet(act_no)->pp_cost;
+	return (u32)((0 - ep) | ep) >> 31; // ep が 0 でなければ 1
 }

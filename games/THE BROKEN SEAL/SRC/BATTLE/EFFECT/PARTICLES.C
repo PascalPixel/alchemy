@@ -1,3 +1,8 @@
+//--------------------------------------------------------------------------
+// PARTICLES.C
+// バトル効果：持ち上げた物のまわりに落ちる粒
+//--------------------------------------------------------------------------
+
 #include "FIXED_MATH.H"
 #include "OBJDISP.H"
 #include "TYPES.H"
@@ -6,72 +11,76 @@
 #include "OBJECT_EFX.H"
 #include "SYSTEM.H"
 #include "FIELD_EVENT.H"
-u8 *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
-struct Vector_08099d18 {
-    s32 x;
-    s32 y;
-    s32 z;
+struct FallPos
+{
+	s32 x;
+	s32 y;
+	s32 z;
 };
 
-struct Source_08099d18 {
-    u8 padding[8];
-    s32 x;
-    s32 y;
-    s32 z;
+struct FallSource
+{
+	u8	reserved_00[8];
+	s32 x; // 16.16 ドット
+	s32 y;
+	s32 z;
 };
 
-struct State_08099d18 {
-    u8 padding[20];
-    struct Source_08099d18 *source;
+struct FallScene
+{
+	u8				   reserved_00[20];
+	struct FallSource *child; // 持ち上げている物
 };
 
-#define STATE_08099D18_OFFSET(type, field) \
-    ((u32)&(((type *)0)->field))
-typedef char Vector_08099d18_size[
-    sizeof(struct Vector_08099d18) == 0x0c ? 1 : -1
-];
-typedef char Source_08099d18_x_offset[
-    STATE_08099D18_OFFSET(struct Source_08099d18, x) == 8 ? 1 : -1
-];
-typedef char State_08099d18_source_offset[
-    STATE_08099D18_OFFSET(struct State_08099d18, source) == 0x14 ? 1 : -1
-];
+struct FallParticle
+{
+	u8	reserved_00[72];
+	s32 gravity; // FieldActor と同じ位置
+	u8	reserved_4c[9];
+	u8	motion_flags; // FieldActor と同じ位置
+	u8	reserved_56[8];
+	u16 unknown_5e;
+};
 
-extern struct State_08099d18 *gEffectWork;
+LAYOUT_SIZE_GUARD(FallPos_Size, struct FallPos, 0x0c);
+LAYOUT_OFFSET_GUARD(FallSource_X, struct FallSource, x, 0x08);
+LAYOUT_OFFSET_GUARD(FallScene_Child, struct FallScene, child, 0x14);
+LAYOUT_OFFSET_GUARD(FallParticle_Gravity, struct FallParticle, gravity, 0x48);
+LAYOUT_OFFSET_GUARD(FallParticle_MotionFlags, struct FallParticle, motion_flags, 0x55);
+LAYOUT_OFFSET_GUARD(FallParticle_Unknown5e, struct FallParticle, unknown_5e, 0x5e);
 
-void Vector_AddPolarOffset(s32, s32, struct Vector_08099d18 *);
+extern struct FallScene *gEffectWork;
 
+struct FallParticle *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void				 Vector_AddPolarOffset(s32, s32, struct FallPos *);
+
+//--------------------------------------------------------------------------
+// 毎フレームの処理：持ち上げている物のまわりに、落ちる粒をひとつ出す
+// 高さは物から 8〜24 ドット上、横はでたらめな向きに 0〜48 ドット
+//--------------------------------------------------------------------------
 void BattleFx_SpawnFallingParticles(void)
 {
-    struct Source_08099d18 *source;
-    struct Vector_08099d18 position;
-    u8 *object;
-    u32 angle;
-    u16 *timer;
-    s32 timer_value;
+	struct FallSource	*src;
+	struct FallPos		 pos;
+	struct FallParticle *obj;
+	u32					 dist;
 
-    source = gEffectWork->source;
-    position.x = source->x;
-    position.y = source->y -
-        Random16() * 16 + 0x180000;
-    position.z = source->z;
+	src = gEffectWork->child;
+	pos.x = src->x;
+	pos.y = src->y - Random16() * 16 + (24 << 16);
+	pos.z = src->z;
 
-    angle = Random16() * 3;
-    Vector_AddPolarOffset(angle * 16, Random16(), &position);
+	dist = Random16() * 3;
+	Vector_AddPolarOffset(dist * 16, Random16(), &pos);
 
-    object = Object_Spawn(
-        0x11d,
-        position.x,
-        position.y,
-        position.z);
-    if (object != 0) {
-        object[85] = 2;
-        *(s32 *)(object + 72) = 0x1999;
-        Object_SetMode(object, 0);
-        timer = (u16 *)(object + 94);
-        timer_value = 12;
-        *timer = timer_value;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_CommonParticleScript);
-    }
+	obj = Object_Spawn(0x11d, pos.x, pos.y, pos.z);
+	if (obj != 0)
+	{
+		obj->motion_flags = ACTOR_FALLS;
+		obj->gravity = 0x1999; // 重力 0.1 ドット
+		Object_SetMode((struct FieldActor *)obj, 0);
+		obj->unknown_5e = 12;
+		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+	}
 }

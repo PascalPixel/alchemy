@@ -1,15 +1,13 @@
-#include "BATTLE.H"
-#include "DEBUG.H"
-#include "FIELD.H"
-#include "GAME.H"
-#include "GRAPHICS.H"
-#include "LIB.H"
-#include "MENU.H"
-#include "MINIGAME.H"
-#include "SOUND.H"
-#include "SYSTEM.H"
+//--------------------------------------------------------------------------
+// ACTIONS.C
+// バトル：ターンの行動の組み立てと、並びの位置の変換
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 #include "EDITION.H"
+#include "BATTLE.H"
+#include "GAME.H"
+#include "SYSTEM.H"
 #include "BATTLE_ESCAPE.H"
 
 #include "BTLWORK.H"
@@ -20,211 +18,252 @@
 #include "OWNER_STATE.H"
 
 extern struct BattlePresentationTransition *gTransitionWork;
+
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 
-void Palette_CopyBanksWithBrightnessOffset(s32 offset)
+//--------------------------------------------------------------------------
+// BG パレットのバンク 15 を 14 へ、5 を 4 へ、明るさを変えて写す
+// ofs : RGB 各成分に足す値（0 から 31 におさめる）
+//--------------------------------------------------------------------------
+void Palette_CopyBanksWithBrightnessOffset(s32 ofs)
 {
-    s32 iter;
-    s32 bank;
-    s32 col;
-    s32 mask;
-    s32 idx;
+	s32 n;
+	s32 bank;
+	s32 col;
+	s32 mask;
+	s32 idx;
 
-    bank = 15;
-    iter = 0;
-    mask = 31;
-    do
-    {
-        for (col = 0; col <= 15; col++)
-        {
-            u32 color;
-            s32 blue;
-            s32 green;
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-            /* FAKEMATCH: the red-mask copy requires r1 before the channel shifts. */
-            register s32 red __asm__("r1");
+	bank = 15;
+	n = 0;
+	mask = 31;
+	do
+	{
+		for (col = 0; col <= 15; col++)
+		{
+			u32 color;
+			s32 b;
+			s32 g;
+#if GAME_TLA
+			/* FAKEMATCH: the red-mask copy requires r1 before the channel shifts. */
+			register s32 r __asm__("r1");
 #else
-            s32 red;
+			s32 r;
 #endif
-            s32 value;
+			s32 val;
 
-            idx = bank * 16 + col;
-            color = ((u16 *)0x05000000)[idx];
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-            /* FAKEMATCH: copy the red mask after the color load, before the channel shifts. */
-            __asm__("add %0, %1, #0" : "=r" (red) : "r" (mask), "r" (color));
+			idx = bank * 16 + col;
+			color = ((u16 *)0x05000000)[idx];
+#if GAME_TLA
+			/* FAKEMATCH: copy the red mask after the color load, before the channel shifts. */
+			__asm__("add %0, %1, #0" : "=r"(r) : "r"(mask), "r"(color));
 #endif
-            blue = (color >> 10) & mask;
-            green = (color >> 5) & mask;
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-            red &= color;
+			b = (color >> 10) & mask;
+			g = (color >> 5) & mask;
+#if GAME_TLA
+			r &= color;
 #else
-            red = color & mask;
+			r = color & mask;
 #endif
-            blue += offset;
-            green += offset;
-            red += offset;
-            if (blue > 31)
-                blue = 31;
-            if (green > 31)
-                green = 31;
-            if (red > 31)
-                red = 31;
-            if (blue < 0)
-                blue = 0;
-            if (green < 0)
-                green = 0;
-            if (red < 0)
-                red = 0;
-            value = blue << 10;
-            value |= green << 5;
-            value |= red;
-            ((s16 *)0x04FFFFE0)[idx] = value;
-        }
-        iter++;
-        bank = 5;
-    } while (iter <= 1);
+			b += ofs;
+			g += ofs;
+			r += ofs;
+			if (b > 31)
+				b = 31;
+			if (g > 31)
+				g = 31;
+			if (r > 31)
+				r = 31;
+			if (b < 0)
+				b = 0;
+			if (g < 0)
+				g = 0;
+			if (r < 0)
+				r = 0;
+			val = b << 10;
+			val |= g << 5;
+			val |= r;
+			((s16 *)0x04ffffe0)[idx] = val; // ひとつ前のバンクへ
+		}
+		n++;
+		bank = 5;
+	} while (n <= 1);
 }
 
-s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
+//--------------------------------------------------------------------------
+// このターンの行動を組み立て、優先度の高い順にならべる
+// 味方のコマンドと、通信対戦の相手または敵の行動を集める
+// 返り値は行動の数。負の値なら中止（通信の失敗など）
+// acts : 行動の並び（20 まで）
+//--------------------------------------------------------------------------
+s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts)
 {
-    struct BtlUnit *character;
-    struct BtlWork *battle;
-    u8 *mode;
-    s32 count;
-    s32 added;
-    s32 i;
+	struct BtlUnit *unit;
+	struct BtlWork *work;
+	u8			   *mode;
+	s32				cnt;
+	s32				add;
+	s32				i;
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    battle = Ram_HeapSlots->battle_work;
+#if GAME_TLA
+	work = Ram_HeapSlots->battle_work;
 #else
-    battle = BtlWk;
+	work = BtlWk;
 #endif
-    {
-        struct BattleActionRecord *queued = battle->actions;
-        u32 n;
+	{
+		struct BattleActionRecord *rec = work->actions;
+		u32						   n;
 
-        for (n = 0; n < 20; n++) {
-            queued[n].unit_id = BATTLE_UNIT_LIST_END;
-            queued[n].priority = 0x8000;
-        }
-    }
+		for (n = 0; n < 20; n++)
+		{
+			rec[n].unit_id = BATTLE_UNIT_LIST_END;
+			rec[n].priority = 0x8000; // いちばん低い優先度
+		}
+	}
 
-    BattleUnit_ResetGuardLevels();
-    Palette_CopyBanksWithBrightnessOffset(8);
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    GameFlag_SetBit(0x16b);
+	BattleUnit_ResetGuardLevels();
+	Palette_CopyBanksWithBrightnessOffset(8);
+	// コマンドを選ぶあいだ立てるフラグ
+#if GAME_TLA
+	GameFlag_SetBit(363);
 #else
-    GameFlag_SetBitFar(0x16b);
+	GameFlag_SetBitFar(363);
 #endif
-    mode = &battle->encounter_mode;
-    Camera_ConfigureScene(0);
-    UiWork_FinalizeSharedSlotFar();
+	mode = &work->encounter_mode;
+	Camera_ConfigureScene(0);
+	UiWork_FinalizeSharedSlotFar();
 
-    if (*mode != 2) {
-        count = BattlePres_BuildUnitEntries(actions);
-        if (count < 0)
-            goto finish;
-        if (count != 0 && actions[0].command == 99 && BattleEscape_CheckSuccess() == 0)
-            *mode = 2;
-    } else {
-        count = 0;
-    }
+	// 味方のコマンド（敵の先手なら選べない）
+	if (*mode != 2)
+	{
+		cnt = BattlePres_BuildUnitEntries(acts);
+		if (cnt < 0)
+			goto finish;
+		// にげるに失敗したら、このターンは敵の先手と同じあつかい
+		if (cnt != 0 && acts[0].command == 99 && BattleEscape_CheckSuccess() == 0)
+			*mode = 2;
+	}
+	else
+	{
+		cnt = 0;
+	}
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    if (Ram_HeapSlots->battle_work->two_sided != 0) {
+	// 通信対戦の相手か、敵の行動
+#if GAME_TLA
+	if (Ram_HeapSlots->battle_work->two_sided != 0)
+	{
 #else
-    if (BtlWk->two_sided != 0) {
+	if (BtlWk->two_sided != 0)
+	{
 #endif
-        added = BattlePresentation_AppendLinkedActions(actions, count);
-        if (BattlePres_WaitSync() < 0) {
-            count = -1;
-            goto finish;
-        }
-        count += added;
-        if (added < 0) {
-            count = -1;
-            goto finish;
-        }
-    } else {
-        count += BattlePres_BuildOpponentEntries(actions + count);
-    }
+		add = BattlePresentation_AppendLinkedActions(acts, cnt);
+		if (BattlePres_WaitSync() < 0)
+		{
+			cnt = -1;
+			goto finish;
+		}
+		cnt += add;
+		if (add < 0)
+		{
+			cnt = -1;
+			goto finish;
+		}
+	}
+	else
+	{
+		cnt += BattlePres_BuildOpponentEntries(acts + cnt);
+	}
 
-    BattleQueue_SortByPriority(actions, count);
-    if (count > 0) {
-        struct BattleActionRecord *action = actions;
+	// 優先度の順にならべ、ぼうぎょ（3 と 7）のガードを先に立てる
+	BattleQueue_SortByPriority(acts, cnt);
+	if (cnt > 0)
+	{
+		struct BattleActionRecord *act = acts;
 
-        i = count;
-        do {
-            if (action->command == 3 || action->command == 7) {
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-                character = UnitGet(action->unit_id);
-                character->guard_lv = action->command == 3 ? 1 : 3;
+		i = cnt;
+		do
+		{
+			if (act->command == 3 || act->command == 7)
+			{
+#if GAME_TLA
+				unit = UnitGet(act->unit_id);
+				unit->guard_lv = act->command == 3 ? 1 : 3;
 #else
-                character = UnitGetFar(action->unit_id);
-                character->guard_lv = action->command == 3 ? 1 : 2;
+				unit = UnitGetFar(act->unit_id);
+				unit->guard_lv = act->command == 3 ? 1 : 2;
 #endif
-            }
-            action++;
-            i--;
-        } while (i != 0);
-    }
+			}
+			act++;
+			i--;
+		} while (i != 0);
+	}
 
 finish:
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    GameFlag_ClearBit(0x16b);
+#if GAME_TLA
+	GameFlag_ClearBit(363);
 #else
-    GameFlag_ClearBitFar(0x16b);
+	GameFlag_ClearBitFar(363);
 #endif
-    Camera_InitDefaultTransform();
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    Ram_HeapSlots->transition_work->target_yaw = 0x2000;
+	Camera_InitDefaultTransform();
+#if GAME_TLA
+	Ram_HeapSlots->transition_work->target_yaw = 0x2000;
 #else
-    gTransitionWork->target_yaw = 0x2000;
+	gTransitionWork->target_yaw = 0x2000;
 #endif
-    return count;
+	return cnt;
 }
 
+//--------------------------------------------------------------------------
+// 並びの位置からユニット番号を返す
+// slot : 下位 4 ビットが位置、0x80 が立っていれば敵の並び
+//--------------------------------------------------------------------------
 s16 Battle_GetTaggedSlotValue(s32 slot)
 {
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    struct BtlWork *battle = Ram_HeapSlots->battle_work;
+#if GAME_TLA
+	struct BtlWork *work = Ram_HeapSlots->battle_work;
 #else
-    struct BtlWork *battle = BtlWk;
+	struct BtlWork *work = BtlWk;
 #endif
 
-    if ((slot & 0x80) != 0)
-        return battle->enm_no[slot & 0xf];
-    return battle->party_units[slot & 0xf];
+	if ((slot & 0x80) != 0)
+		return work->enm_no[slot & 0xf];
+	return work->party_units[slot & 0xf];
 }
 
-s32 Battle_FindTaggedSlotByValue(u32 value)
+//--------------------------------------------------------------------------
+// ユニット番号から並びの位置を返す（いなければ -1）
+// 味方は 0x100 | 位置、敵は 0x180 | 位置
+// id : ユニット番号（0-7 味方、それ以外は敵）
+//--------------------------------------------------------------------------
+s32 Battle_FindTaggedSlotByValue(u32 id)
 {
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    struct BtlWork *battle = Ram_HeapSlots->battle_work;
+#if GAME_TLA
+	struct BtlWork *work = Ram_HeapSlots->battle_work;
 #else
-    struct BtlWork *battle = BtlWk;
+	struct BtlWork *work = BtlWk;
 #endif
-    s32 i;
-    s16 item;
+	s32 i;
+	s16 unit;
 
-    if (value <= 7) {
-        for (i = 0; ; i++) {
-            item = battle->party_units[i];
-            if (item == BATTLE_UNIT_LIST_END)
-                return -1;
-            if (item != BATTLE_UNIT_REMOVED && item == value)
-                return i | 0x100;
-        }
-    }
-    for (i = 0; ; i++) {
-        item = battle->enm_no[i];
-        if (item == BATTLE_UNIT_LIST_END)
-            return -1;
-        if (item != BATTLE_UNIT_REMOVED && item == value)
-            return i | 0x180;
-    }
+	if (id <= 7)
+	{
+		for (i = 0;; i++)
+		{
+			unit = work->party_units[i];
+			if (unit == BATTLE_UNIT_LIST_END)
+				return -1;
+			if (unit != BATTLE_UNIT_REMOVED && unit == id)
+				return i | 0x100;
+		}
+	}
+	for (i = 0;; i++)
+	{
+		unit = work->enm_no[i];
+		if (unit == BATTLE_UNIT_LIST_END)
+			return -1;
+		if (unit != BATTLE_UNIT_REMOVED && unit == id)
+			return i | 0x180;
+	}
 }

@@ -1,24 +1,32 @@
+//--------------------------------------------------------------------------
+// IS_UNIT_LISTED.C
+// バトル：ユニットが戦闘中の並びにいるかの判定
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 #include "BTLPTY.H"
 
-u32 BattleParty_IsUnitListed(u32 arg0)
+//--------------------------------------------------------------------------
+// ユニットが自分の側の並びにいれば 1 を返す
+// id : ユニット番号（0-7 味方、それ以外は敵）
+//--------------------------------------------------------------------------
+u32 BattleParty_IsUnitListed(u32 id)
 {
-    u16 values[8];
-    s32 count;
-    s32 total;
-    s32 i;
+	u16 list[8];
+	s32 side;
+	s32 cnt;
+	s32 i;
 
-    count = 1;
-    if (arg0 > 7) {
-        count = 2;
-    }
-    total = BattleParty_ListActorIds(count, (u16 *)values);
+	side = BATTLE_SIDE_PARTY;
+	if (id > 7)
+		side = BATTLE_SIDE_ENEMIES;
+	cnt = BattleParty_ListActorIds(side, list);
 
-    for (i = 0; i < total; i++) {
-        if (values[i] == arg0) {
-            break;
-        }
-    }
+	for (i = 0; i < cnt; i++)
+	{
+		if (list[i] == id)
+			break;
+	}
 
-    return i != total;
+	return i != cnt;
 }

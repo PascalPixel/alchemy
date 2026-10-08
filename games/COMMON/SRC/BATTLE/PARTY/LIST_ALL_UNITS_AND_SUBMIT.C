@@ -1,22 +1,19 @@
-#include "BATTLE.H"
-#include "DEBUG.H"
-#include "FIELD.H"
-#include "GAME.H"
-#include "GRAPHICS.H"
-#include "LIB.H"
-#include "MENU.H"
-#include "MINIGAME.H"
-#include "SOUND.H"
-#include "SYSTEM.H"
+//--------------------------------------------------------------------------
+// LIST_ALL_UNITS_AND_SUBMIT.C
+// バトル：全ユニットのオブジェクト配置
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
+#include "BATTLE.H"
 #include "BTLPTY.H"
 
-#define BattleActor_SpawnObjectsForList ((s32 (*)(void*,s32))BattleActor_SpawnObjectsForList)
-
-
+//--------------------------------------------------------------------------
+// 戦闘中の全ユニットの絵を用意する（いなくなったユニットの絵は解放）
+//--------------------------------------------------------------------------
 void BattleParty_ListAllUnitsAndSubmit(void)
 {
-    u8 local[28];
-    BattleParty_ListActorIds(3, (u16 *)local);
-    BattleActor_SpawnObjectsForList(local, 0);
+	s16 list[14];
+
+	BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
+	BattleActor_SpawnObjectsForList(list, 0);
 }

@@ -1,27 +1,39 @@
+//--------------------------------------------------------------------------
+// RELEASE_BATTLE_OBJECT_RECORDS.C
+// バトル：オブジェクトの絵の解放
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 #include "MOTOBJ.H"
 #include "RESOURCE.H"
 
-void ReleaseBattleObjectRecords(s32 object_id)
+//--------------------------------------------------------------------------
+// オブジェクトが持つ絵をすべて解放し、絵なしにもどす
+// no : オブジェクト番号
+//--------------------------------------------------------------------------
+void ReleaseBattleObjectRecords(s32 no)
 {
-    struct BtlObj *slot;
-    struct MotionObject *object;
-    s32 record_index;
-    void *record;
+	struct BtlObj		*slot;
+	struct MotionObject *obj;
+	s32					 i;
+	void				*rec;
 
-    slot = BtlObjGet(object_id);
-    if (slot != NULL) {
-        object = slot->object;
-        if (object != NULL) {
-            slot->animation_entry = 0;
-            slot->effect_entry = 0;
-            record_index = 0;
-            while ((record = GetMotionRecord(object, record_index)) != NULL) {
-                ResourceObject_ReleaseFar((struct ResourceObjectWork *)record);
-                record_index += 1;
-            }
-            object->record_storage_kind = 0;
-            object->records = NULL;
-        }
-    }
+	slot = BtlObjGet(no);
+	if (slot != NULL)
+	{
+		obj = slot->object;
+		if (obj != NULL)
+		{
+			slot->animation_entry = 0;
+			slot->effect_entry = 0;
+			i = 0;
+			while ((rec = GetMotionRecord(obj, i)) != NULL)
+			{
+				ResourceObject_ReleaseFar(rec);
+				i += 1;
+			}
+			obj->record_storage_kind = 0; // 絵なし
+			obj->records = NULL;
+		}
+	}
 }

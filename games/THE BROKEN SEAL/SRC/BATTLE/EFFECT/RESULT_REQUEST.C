@@ -1,3 +1,8 @@
+//--------------------------------------------------------------------------
+// RESULT_REQUEST.C
+// バトル効果：イベントから決まった敵との戦闘を用意する
+//--------------------------------------------------------------------------
+
 #include "BATTLE.H"
 #include "DEBUG.H"
 #include "FIELD.H"
@@ -10,55 +15,61 @@
 #include "EVENT_RUNTIME.H"
 #include "OBJECT_LOOKUP.H"
 #include "RESOURCE_IDS.H"
+#include "GAME_STATE.H"
 
 #define BattleFx_GetPhaseResult ((s16 (*)(s32))BattleFx_GetPhaseResult)
 extern struct EventRuntime *gEventWork;
 
-struct ResultWork {
-    u8 unknown_000[0x1d6];
-    u16 special;
-    u8 unknown_1d8[0x1c];
-    u32 object_id;
-    u8 unknown_1f8[0x3c];
-    u16 request;
-};
+extern struct GameState gGameState;
 
-extern struct ResultWork gGameState;
+#define CHOJO 98	  // 頂上の嵐の背景で戦うエンカウント表
+#define TOBANAI 0x800 // ジンを跳ねさせない
+#define JIN_0 300	  // ジン 0 番の pending_djinn_event
 
-void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
+//--------------------------------------------------------------------------
+// エンカウント表 zone の slot 番目の敵グループとの戦闘を用意する
+// ワールドマップ（mode 3）では、選択中の者の足もとの地形も引く
+//--------------------------------------------------------------------------
+void BattleFx_SetWeightedResult(s32 zone_no, s32 slot_no)
 {
-    register s32 first = arg0;
-    register s32 second = arg1;
-    register struct EventRuntime *runtime = gEventWork;
+	register s32				  zone = zone_no;
+	register s32				  slot = slot_no;
+	register struct EventRuntime *ev = gEventWork;
 
-    runtime->value_17c = BattleFx_GetWeightedResult(first, second);
-    if (first == 98 && second == 0)
-        gGameState.special = (s32)&ResourceId_VinasuChojoStormBackdrop;
-    if (runtime->mode_19e == 3)
-        BattleFx_LookupResult((u8 *)ObjectTable_Get(gGameState.object_id) + 8);
-    BattleFx_SelectBattleCue(first, second);
+	ev->value_17c = BattleFx_GetWeightedResult(zone, slot); // 敵グループ
+	if (zone == CHOJO && slot == 0)
+		gGameState.special = (s32)&ResourceId_VinasuChojoStormBackdrop;
+	if (ev->mode_19e == 3)
+		BattleFx_LookupResult((u8 *)ObjectTable_Get(gGameState.selected_actor) + 8); // 位置
+	BattleFx_SelectBattleCue(zone, slot);
 }
 
-void BattleFx_SetPhaseRequest(s32 flags, s32 value)
+//--------------------------------------------------------------------------
+// ジン no 番との戦闘を用意する
+// flag の下 8 ビットはジンのオブジェクトで、TOBANAI がなければ跳ねさせる
+// no は属性ごとに 20 ずつ（Djinn_ResolvePendingEvent）
+//--------------------------------------------------------------------------
+void BattleFx_SetPhaseRequest(s32 flag, s32 no)
 {
-    struct EventRuntime *state;
-    struct ResultWork *shared;
-    s32 high;
+	struct EventRuntime *ev;
+	struct GameState	*gs;
+	s32					 skip;
 
-    state = gEventWork;
-    high = flags & 0x800;
-    flags &= 0xff;
+	ev = gEventWork;
+	skip = flag & TOBANAI;
+	flag &= 0xff;
 
-    if (high == 0)
-        EventActor_RunHopAndLeapSequence(flags);
+	if (skip == 0)
+		EventActor_RunHopAndLeapSequence(flag);
 
-    shared = &gGameState;
-    shared->request = (value + 0x12c) | high;
-    state->value_17c = BattleFx_GetPhaseResult(value);
-    if (state->mode_19e == 3) {
-        void *object = ObjectTable_Get(shared->object_id);
+	gs = &gGameState;
+	gs->pending_djinn_event = (no + JIN_0) | skip;
+	ev->value_17c = BattleFx_GetPhaseResult(no); // ジンの敵グループ
+	if (ev->mode_19e == 3)
+	{
+		void *obj = ObjectTable_Get(gs->selected_actor);
 
-        BattleFx_LookupResult((u8 *)object + 8);
-    }
-    BattleFx_SelectBattleCue(0, 0);
+		BattleFx_LookupResult((u8 *)obj + 8); // 位置
+	}
+	BattleFx_SelectBattleCue(0, 0);
 }

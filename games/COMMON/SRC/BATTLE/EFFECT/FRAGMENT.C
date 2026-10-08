@@ -1,36 +1,44 @@
+//--------------------------------------------------------------------------
+// FRAGMENT.C
+// 演出：アイテムがこわれる演出の本体の動き
+//--------------------------------------------------------------------------
+
+#include "TYPES.H"
 #include "EDITION.H"
 #include "OBJDISP.H"
-#include "TYPES.H"
 #include "FIXED_MATH.H"
 #include "OBJECT_EFX.H"
 #include "SYSTEM.H"
 #include "FIELD_EVENT.H"
 
-struct ItemBreakFragmentPosition {
-    s32 x;
-    s32 y;
-    s32 z;
+struct ItemBreakFragmentPosition
+{
+	s32 x;
+	s32 y;
+	s32 z;
 };
 
-struct ItemBreakFragmentSource {
-    u8 reserved_00[6];
-    u16 angle;
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 reserved_14[70];
-    u8 flag_5a;
-    u8 reserved_5b[13];
-    struct ItemBreakFragmentSource *target;
+struct ItemBreakFragmentSource
+{
+	u8								reserved_00[6];
+	u16								angle; // 向き（0x10000 で 1 周）
+	s32								x;
+	s32								y;
+	s32								z;
+	u8								reserved_14[70];
+	u8								flag_5a;
+	u8								reserved_5b[13];
+	struct ItemBreakFragmentSource *target; // 向く相手
 };
 
-struct ItemBreakFragmentObject {
-    u8 reserved_00[72];
-    s32 field_48;
-    u8 reserved_4c[9];
-    u8 mode_55;
-    u8 reserved_56[8];
-    u16 field_5e;
+struct ItemBreakFragmentObject
+{
+	u8	reserved_00[72];
+	s32 field_48; // 重力（gravity と同じ位置）
+	u8	reserved_4c[9];
+	u8	mode_55; // motion_flags と同じ位置
+	u8	reserved_56[8];
+	u16 field_5e;
 };
 
 extern s32 ArcTan2(s32, s32);
@@ -38,58 +46,68 @@ extern s32 ArcTan2(s32, s32);
 extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *);
 extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
 
-void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
+//--------------------------------------------------------------------------
+// こわれたアイテムの本体の update
+// 向く相手がいれば、そちらへ 1 回に 0x1000（22.5 度）まで曲がる
+// そして、まわりにかけらの粒をひとつ出す
+// src : 本体のオブジェクト
+//--------------------------------------------------------------------------
+void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src)
 {
-    struct ItemBreakFragmentSource *target;
-    struct ItemBreakFragmentPosition position;
-    struct ItemBreakFragmentObject *object;
-    s32 steering_delta;
-    s32 drift_magnitude;
+	struct ItemBreakFragmentSource	*tgt;
+	struct ItemBreakFragmentPosition pos;
+	struct ItemBreakFragmentObject	*obj;
+	s32								 turn;
+	s32								 dist;
 
-    target = source->target;
-    if (target != 0) {
-        s32 dx = target->x - source->x;
-        s32 dz = target->z - source->z;
+	tgt = src->target;
+	if (tgt != 0)
+	{
+		s32 dx = tgt->x - src->x;
+		s32 dz = tgt->z - src->z;
 
-        if (dx != 0 || dz != 0) {
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-            s32 angle = ArcTan2(dz, dx);
-            s32 current = source->angle;
-            s32 max_turn = 128;
+		if (dx != 0 || dz != 0)
+		{
+#if GAME_TLA
+			s32 dir = ArcTan2(dz, dx);
+			s32 cur = src->angle;
+			s32 lim = 128;
 
-            steering_delta = (s16)(angle - current);
-            max_turn <<= 5;
-            if (steering_delta > max_turn)
-                steering_delta = max_turn;
+			turn = (s16)(dir - cur);
+			lim <<= 5;
+			if (turn > lim)
+				turn = lim;
 #else
-            steering_delta = (s16)(ArcTan2(dz, dx) - source->angle);
-            if (steering_delta > 0x1000)
-                steering_delta = 0x1000;
+			turn = (s16)(ArcTan2(dz, dx) - src->angle);
+			if (turn > 0x1000)
+				turn = 0x1000;
 #endif
-            if (steering_delta < -0x1000)
-                steering_delta = -0x1000;
-            source->angle += steering_delta;
-        }
-        source->flag_5a = 0;
-    }
+			if (turn < -0x1000)
+				turn = -0x1000;
+			src->angle += turn;
+		}
+		src->flag_5a = 0;
+	}
 
-    position.x = source->x;
-    position.y = source->y - (Random16() << 4) - 0x80000;
-    position.z = source->z;
-    drift_magnitude = Random16() * 3;
-    drift_magnitude <<= 4;
-    Vector_AddPolarOffset(drift_magnitude, Random16(), &position);
+	// 粒は本体から y を 8〜24 ずらし、ランダムな向きに半径 0〜48 散らした位置に出す
+	pos.x = src->x;
+	pos.y = src->y - (Random16() << 4) - 0x80000;
+	pos.z = src->z;
+	dist = Random16() * 3;
+	dist <<= 4;
+	Vector_AddPolarOffset(dist, Random16(), &pos);
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    object = Object_Spawn(0x2a1, position.x, position.y, position.z);
+#if GAME_TLA
+	obj = Object_Spawn(0x2a1, pos.x, pos.y, pos.z);
 #else
-    object = Object_Spawn(0x11d, position.x, position.y, position.z);
+	obj = Object_Spawn(0x11d, pos.x, pos.y, pos.z);
 #endif
-    if (object != 0) {
-        object->mode_55 = 2;
-        object->field_48 = 0x1999;
-        Object_SetMode(object, 0);
-        object->field_5e = 12;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, BattleFx_CommonParticleScript);
-    }
+	if (obj != 0)
+	{
+		obj->mode_55 = 2;
+		obj->field_48 = 0x1999;
+		Object_SetMode(obj, 0);
+		obj->field_5e = 12;
+		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+	}
 }

@@ -1,17 +1,27 @@
+//--------------------------------------------------------------------------
+// SETUP_TRANSITION_AT_PAIR_MIDPOINT.C
+// バトル表示：ふたりの中間へのカメラ合わせ
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 #include "MOTOBJ.H"
 #include "BTLDISP.H"
 
-void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 mode)
+//--------------------------------------------------------------------------
+// ふたつのオブジェクトの中間（x, z）にカメラを合わせる
+// a, b : オブジェクト番号
+// zoom : 拡大率（%）
+//--------------------------------------------------------------------------
+void BattlePres_SetupTransitionAtPairMidpoint(s32 a, s32 b, s32 zoom)
 {
-    struct MotionObject *left = BtlObjGet(first)->object;
-    struct MotionObject *right = BtlObjGet(second)->object;
-    s32 left_x = left->x;
-    s32 right_x = right->x;
-    s32 left_z = left->z;
-    s32 right_z = right->z;
-    s32 x = (right_x + left_x) / 2;
-    s32 z = (right_z + left_z) / 2;
+	struct MotionObject *obj_a = BtlObjGet(a)->object;
+	struct MotionObject *obj_b = BtlObjGet(b)->object;
+	s32					 ax = obj_a->x;
+	s32					 bx = obj_b->x;
+	s32					 az = obj_a->z;
+	s32					 bz = obj_b->z;
+	s32					 x = (bx + ax) / 2;
+	s32					 z = (bz + az) / 2;
 
-    BattlePres_SetupTransitionScene(x, 0, z, mode);
+	BattlePres_SetupTransitionScene(x, 0, z, zoom);
 }

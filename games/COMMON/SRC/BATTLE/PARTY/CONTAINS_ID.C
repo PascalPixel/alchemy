@@ -1,21 +1,30 @@
+//--------------------------------------------------------------------------
+// CONTAINS_ID.C
+// バトル：ユニット番号リストの検索
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 
-s32 BattlePlacement_ContainsId(s16 *entries, s32 id)
+//--------------------------------------------------------------------------
+// 並び番号のユニットがリストにいれば 1 を返す
+// list : ユニット番号のリスト（0xff で終わる、最大 14）
+// no   : 並び番号（0-7 味方、8-13 敵）
+//--------------------------------------------------------------------------
+s32 BattlePlacement_ContainsId(s16 *list, s32 no)
 {
-    u32 i;
+	u32 i;
 
-    if (id > 7)
-        id += 0x78;
-    i = 0;
-    do {
-        u16 value = *entries++;
+	if (no > 7)
+		no += 120; // 敵のユニット番号は 128 から
+	i = 0;
+	do
+	{
+		u16 id = *list++;
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-#endif
-        if (value == 0xff)
-            break;
-        if (value == id)
-            return 1;
-    } while (++i < 14);
-    return 0;
+		if (id == 0xff)
+			break;
+		if (id == no)
+			return 1;
+	} while (++i < 14);
+	return 0;
 }

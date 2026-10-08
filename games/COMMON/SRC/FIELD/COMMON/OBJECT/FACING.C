@@ -1,30 +1,39 @@
+//--------------------------------------------------------------------------
+// FACING.C
+// オブジェクト：相手のほうへ向きを変える
+//--------------------------------------------------------------------------
+
 #include "TYPES.H"
 #include "FACING_OBJECT.H"
 
 s32 ArcTan2(s32, s32);
 
-s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
+//--------------------------------------------------------------------------
+// 向く相手がいれば、その方向へ 1 回に 0x1000（22.5 度）まで向きを変える
+// obj : 向きを変えるオブジェクト
+//--------------------------------------------------------------------------
+s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
-    s32 delta;
-    u16 old;
-    s32 tgt;
-    struct FacingObject *target;
+	s32					 turn;
+	u16					 old;
+	s32					 dir;
+	struct FacingObject *tgt;
 
-    target = object->facing_target;
-    if (target != NULL) {
-        object->facing_flags = 0xFE & object->facing_flags;
-        tgt = (u16)ArcTan2(target->position_z - object->position_z, target->position_x - object->position_x);
-        old = object->facing;
-        delta = (s16)(tgt - old);
-        if (delta != 0) {
-            if (delta > 0x1000) {
-                delta = 0x1000;
-            }
-            if (delta < -0x1000) {
-                delta = -0x1000;
-            }
-            object->facing = old + delta;
-        }
-    }
-    return 1;
+	tgt = obj->facing_target;
+	if (tgt != NULL)
+	{
+		obj->facing_flags = 0xfe & obj->facing_flags;
+		dir = (u16)ArcTan2(tgt->position_z - obj->position_z, tgt->position_x - obj->position_x);
+		old = obj->facing;
+		turn = (s16)(dir - old);
+		if (turn != 0)
+		{
+			if (turn > 0x1000)
+				turn = 0x1000;
+			if (turn < -0x1000)
+				turn = -0x1000;
+			obj->facing = old + turn;
+		}
+	}
+	return 1;
 }

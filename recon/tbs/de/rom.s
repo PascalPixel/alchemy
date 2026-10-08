@@ -22,23 +22,6 @@ UiIcon_MiscIconPointers:
 	.global UiText_ItemGenders
 UiText_ItemGenders:
 	.incbin "baserom.gba", 0x0007a770, 0x0000010d
-	.section .rom.000a08d8, "ax"
-	.global Battle_LocationRules
-Battle_LocationRules:
-	.incbin "baserom.gba", 0x000a08d8, 0x00000638
-	.section .rom.000a1158, "ax"
-	.global Scene_InteractionRuleTable
-Scene_InteractionRuleTable:
-	.incbin "baserom.gba", 0x000a1158, 0x000003e8
-	.global Scene_AreaNameRules
-Scene_AreaNameRules:
-	.incbin "baserom.gba", 0x000a1540, 0x00000400
-	.global Party_PairResolveRules
-Party_PairResolveRules:
-	.incbin "baserom.gba", 0x000a1940, 0x00000098
-	.global RomWords_0809e270
-RomWords_0809e270:
-	.incbin "baserom.gba", 0x000a19d8, 0x00000218
 	.section .rom.000e4772, "ax"
 	.incbin "baserom.gba", 0x000e4772, 0x00000002
 	.section .rom.000f20e0, "ax"

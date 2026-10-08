@@ -1,20 +1,3 @@
-	.section .unidentified.0809d170,"a"
-	.global Battle_LocationRules
-Battle_LocationRules:
-	.incbin "baserom.gba", 0x0009d170, 0x00000638
-	.section .unidentified.0809d9f0,"a"
-	.global Scene_InteractionRuleTable
-Scene_InteractionRuleTable:
-	.incbin "baserom.gba", 0x0009d9f0, 0x000003e8
-	.global Scene_AreaNameRules
-Scene_AreaNameRules:
-	.incbin "baserom.gba", 0x0009ddd8, 0x00000400
-	.global Party_PairResolveRules
-Party_PairResolveRules:
-	.incbin "baserom.gba", 0x0009e1d8, 0x00000098
-	.global RomWords_0809e270
-RomWords_0809e270:
-	.incbin "baserom.gba", 0x0009e270, 0x00000218
 	.section .unidentified.080f0ae0,"a"
 	.incbin "baserom.gba", 0x000f0ae0, 0x000006dc
 	.incbin "baserom.gba", 0x000f11bc, 0x00000001

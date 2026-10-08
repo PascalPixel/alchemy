@@ -42,7 +42,7 @@ s16 Event_GetSpecialValue(void)
 void BattleFx_SetSpecialFromTable(s32 arg0, s32 arg1)
 {
     s32 target = gGameState.scene;
-    s32 *table = RomWords_0809e270;
+    s32 *table = Battle_BackdropScenes;
     s32 entry = *table++;
     s32 result = arg1;
 

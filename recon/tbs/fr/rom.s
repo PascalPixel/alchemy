@@ -16,23 +16,6 @@ UiIcon_PsynergyIconPointersEnd:
 	.global UiIcon_MiscIconPointers
 UiIcon_MiscIconPointers:
 	.incbin "baserom.gba", 0x0002f858, 0x00000800
-	.section .rom.000a22c8, "ax"
-	.global Battle_LocationRules
-Battle_LocationRules:
-	.incbin "baserom.gba", 0x000a22c8, 0x00000638
-	.section .rom.000a2b48, "ax"
-	.global Scene_InteractionRuleTable
-Scene_InteractionRuleTable:
-	.incbin "baserom.gba", 0x000a2b48, 0x000003e8
-	.global Scene_AreaNameRules
-Scene_AreaNameRules:
-	.incbin "baserom.gba", 0x000a2f30, 0x00000400
-	.global Party_PairResolveRules
-Party_PairResolveRules:
-	.incbin "baserom.gba", 0x000a3330, 0x00000098
-	.global RomWords_0809e270
-RomWords_0809e270:
-	.incbin "baserom.gba", 0x000a33c8, 0x00000218
 	.section .rom.000e6172, "ax"
 	.incbin "baserom.gba", 0x000e6172, 0x00000002
 	.section .rom.000f3ae0, "ax"

@@ -1149,8 +1149,7 @@ s32 BabiIriguchi_SetupScene(void)
     struct FieldActor *actor;
     struct RowActor *row;
     s32 scene;
-    /* FAKEMATCH: the game compares the second and third scenes through a copy of the scene in r12, made after Retreat's stores; a plain second variable is folded back into the first. */
-    register s32 copy asm("r12");
+    s32 copy;
     struct GameState *state;
     s32 x;
     s32 z;
@@ -1163,7 +1162,7 @@ s32 BabiIriguchi_SetupScene(void)
     if (scene != (s32)&SceneId_BabiIriguchi4) {
         state->retreat_entrance = 1;
         state->retreat_scene = (s32)&SceneId_BabiIriguchi3;
-        copy = scene;
+        copy = state->scene;
     }
     if (scene == (s32)&SceneId_BabiIriguchi4) {
         row = (struct RowActor *)Object_GetById(12);

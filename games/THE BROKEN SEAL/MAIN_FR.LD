@@ -789,7 +789,7 @@
     "*/games/THE BROKEN SEAL/SOUND/VOICES.o"(.rodata)
     "*/recon/tbs/fr/rom.o"(.rom.000fed04)
     "*/games/THE BROKEN SEAL/SOUND/CGB_WAVES.o"(.rodata)
-    "*/recon/tbs/fr/rom.o"(.rom.000fee24)
+    "*/games/THE BROKEN SEAL/SOUND/PLAYERS.o"(.rodata)
     "*/games/THE BROKEN SEAL/SOUND/SONGS.o"(.rodata)
     "*/games/THE BROKEN SEAL/SOUND/SAMPLES.o"(.rodata)
     "*/games/THE BROKEN SEAL/SOUND/SEQUENCE/BGM_000.o"(.rodata)

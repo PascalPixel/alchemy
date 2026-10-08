@@ -989,10 +989,6 @@ Title_PromptTiles:
 	.incbin "baserom.gba", 0x000f68bc, 0x000000ad
 	.section .rom.000fed04, "ax"
 	.incbin "baserom.gba", 0x000fed04, 0x00000090
-	.section .rom.000fee24, "ax"
-	.global Sound_PlayerSlots
-Sound_PlayerSlots:
-	.incbin "baserom.gba", 0x000fee24, 0x00000060
 	.section .rom.0032c89b, "ax"
 	.incbin "baserom.gba", 0x0032c89b, 0x00000001
 	.global Title_IntroGraphicsC

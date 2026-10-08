@@ -955,10 +955,6 @@ Title_PromptTiles:
 	.incbin "baserom.gba", 0x000f39aa, 0x00000001
 	.section .unidentified.080fc504,"a"
 	.incbin "baserom.gba", 0x000fc504, 0x00000090
-	.section .unidentified.080fc624,"a"
-	.global Sound_PlayerSlots
-Sound_PlayerSlots:
-	.incbin "baserom.gba", 0x000fc624, 0x00000060
 	.section .unidentified.0832b0a6,"a"
 	.incbin "baserom.gba", 0x0032b0a6, 0x00000002
 	.global Title_IntroGraphicsC

@@ -226,18 +226,18 @@ Resource_DirectoryTable:
 	resource DefaultMapCells, Field_DefaultMapCells
 	resource DefaultMapAnimation, Field_DefaultMapAnimation
 	resource DefaultMetatileAttributes, Field_DefaultMetatileAttributes
-	resource , WorldMap_PaletteA
-	resource , WorldMap_TilesA
-	resource , WorldMap_TilesB
-	resource , WorldMap_TilesC
-	resource , WorldMap_TilesD
-	resource , WorldMap_TilesE
-	resource , WorldMap_PaletteB
-	resource , WorldMap_TilesF
-	resource , WorldMap_TilesG
-	resource , WorldMap_TilesH
-	resource , WorldMap_TilesI
-	resource , WorldMap_TilesJ
+	resource WorldMapPaletteA, WorldMap_PaletteA
+	resource WorldMapTilesA, WorldMap_TilesA
+	resource WorldMapTilesB, WorldMap_TilesB
+	resource WorldMapTilesC, WorldMap_TilesC
+	resource WorldMapTilesD, WorldMap_TilesD
+	resource WorldMapTilesE, WorldMap_TilesE
+	resource WorldMapPaletteB, WorldMap_PaletteB
+	resource WorldMapTilesF, WorldMap_TilesF
+	resource WorldMapTilesG, WorldMap_TilesG
+	resource WorldMapTilesH, WorldMap_TilesH
+	resource WorldMapTilesI, WorldMap_TilesI
+	resource WorldMapTilesJ, WorldMap_TilesJ
 	resource RivalPathA, Korosseo_RivalPathA
 	resource RivalPathB, Korosseo_RivalPathB
 	resource RivalPathC, Korosseo_RivalPathC
@@ -252,60 +252,60 @@ Resource_DirectoryTable:
 	resource , Shop_CursorFrameH
 	resource Icons, Ui_Icons
 	resource CommandIcons, Ui_CommandIcons
-	resource , Monster_AxeGoblinSprites
-	resource , Monster_GhoulSprites
-	resource , Monster_HarpySprites
-	resource , Monster_TrollSprites
-	resource , Monster_WitchSprites
-	resource , Monster_GriffinSprites
-	resource , Monster_ShieldKnightSprites
-	resource , Monster_OrcSprites
-	resource , Monster_ChimeraSprites
-	resource , Monster_LivingArmorSprites
-	resource , Monster_ManticoreSprites
-	resource , Monster_OrcLordSprites
-	resource , Monster_GargoyleSprites
-	resource , Monster_LizardManSprites
-	resource , Monster_OgreSprites
-	resource , Monster_TailedImpSprites
-	resource , Monster_WispGhostSprites
-	resource , Monster_SalamanderSprites
-	resource , Monster_AquaBeastSprites
-	resource , Monster_HoundSprites
-	resource , Monster_BearSprites
-	resource , Monster_SirenSprites
-	resource , Monster_BlueWispSprites
-	resource , Monster_MushroomSprites
-	resource , Monster_RedWormSprites
-	resource , Monster_FairySprites
-	resource , Monster_BatSprites
-	resource , Monster_SmallLizardSprites
-	resource , Monster_WalkingPlantSprites
-	resource , Monster_FlySprites
-	resource , Monster_CrabSprites
-	resource , Monster_SmallBirdSprites
-	resource , Monster_MothSprites
-	resource , Monster_FrogSprites
-	resource , Monster_ManedLionSprites
-	resource , Monster_SerpentSprites
-	resource , Monster_WingedDragonSprites
-	resource , Monster_BlueMageSprites
-	resource , Monster_SkeletonSprites
-	resource , Monster_FlameSkullSprites
-	resource , Monster_FireDragonSprites
-	resource , Monster_CrawlerSprites
-	resource , Monster_MimicSprites
-	resource , Monster_SeaBeastSprites
-	resource , Monster_SpiritHorseSprites
-	resource , Monster_KrakenSprites
-	resource , Monster_SlimeSprites
-	resource , Monster_SaturosSprites
-	resource , Monster_MenardiSprites
-	resource , Monster_GhostHeadSprites
-	resource , Monster_FusionDragonSprites
-	resource , Monster_PurpleBeastSprites
-	resource , Monster_RedWarriorSprites
-	resource , Monster_SwordGirlSprites
+	resource AxeGoblinSprites, Monster_AxeGoblinSprites
+	resource GhoulSprites, Monster_GhoulSprites
+	resource HarpySprites, Monster_HarpySprites
+	resource TrollSprites, Monster_TrollSprites
+	resource WitchSprites, Monster_WitchSprites
+	resource GriffinSprites, Monster_GriffinSprites
+	resource ShieldKnightSprites, Monster_ShieldKnightSprites
+	resource OrcSprites, Monster_OrcSprites
+	resource ChimeraSprites, Monster_ChimeraSprites
+	resource LivingArmorSprites, Monster_LivingArmorSprites
+	resource ManticoreSprites, Monster_ManticoreSprites
+	resource OrcLordSprites, Monster_OrcLordSprites
+	resource GargoyleSprites, Monster_GargoyleSprites
+	resource LizardManSprites, Monster_LizardManSprites
+	resource OgreSprites, Monster_OgreSprites
+	resource TailedImpSprites, Monster_TailedImpSprites
+	resource WispGhostSprites, Monster_WispGhostSprites
+	resource SalamanderSprites, Monster_SalamanderSprites
+	resource AquaBeastSprites, Monster_AquaBeastSprites
+	resource HoundSprites, Monster_HoundSprites
+	resource BearSprites, Monster_BearSprites
+	resource SirenSprites, Monster_SirenSprites
+	resource BlueWispSprites, Monster_BlueWispSprites
+	resource MushroomSprites, Monster_MushroomSprites
+	resource RedWormSprites, Monster_RedWormSprites
+	resource FairySprites, Monster_FairySprites
+	resource BatSprites, Monster_BatSprites
+	resource SmallLizardSprites, Monster_SmallLizardSprites
+	resource WalkingPlantSprites, Monster_WalkingPlantSprites
+	resource FlySprites, Monster_FlySprites
+	resource CrabSprites, Monster_CrabSprites
+	resource SmallBirdSprites, Monster_SmallBirdSprites
+	resource MothSprites, Monster_MothSprites
+	resource FrogSprites, Monster_FrogSprites
+	resource ManedLionSprites, Monster_ManedLionSprites
+	resource SerpentSprites, Monster_SerpentSprites
+	resource WingedDragonSprites, Monster_WingedDragonSprites
+	resource BlueMageSprites, Monster_BlueMageSprites
+	resource SkeletonSprites, Monster_SkeletonSprites
+	resource FlameSkullSprites, Monster_FlameSkullSprites
+	resource FireDragonSprites, Monster_FireDragonSprites
+	resource CrawlerSprites, Monster_CrawlerSprites
+	resource MimicSprites, Monster_MimicSprites
+	resource SeaBeastSprites, Monster_SeaBeastSprites
+	resource SpiritHorseSprites, Monster_SpiritHorseSprites
+	resource KrakenSprites, Monster_KrakenSprites
+	resource SlimeSprites, Monster_SlimeSprites
+	resource SaturosSprites, Monster_SaturosSprites
+	resource MenardiSprites, Monster_MenardiSprites
+	resource GhostHeadSprites, Monster_GhostHeadSprites
+	resource FusionDragonSprites, Monster_FusionDragonSprites
+	resource PurpleBeastSprites, Monster_PurpleBeastSprites
+	resource RedWarriorSprites, Monster_RedWarriorSprites
+	resource SwordGirlSprites, Monster_SwordGirlSprites
 	resource Map001, Field_Map001
 	resource , Resource_Data129
 	resource , Resource_Data12A

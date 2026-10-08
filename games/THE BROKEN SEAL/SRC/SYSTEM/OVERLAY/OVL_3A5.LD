@@ -14,6 +14,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/DATA.o"(.data)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RAMAKAN/SAND.o"(.rodata)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/DATA2.o"(.data)
     }
     .bss ALIGN(16) (NOLOAD) : { "*/resource_3a5_overlay.o"(.bss) }
     /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }

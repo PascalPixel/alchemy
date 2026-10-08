@@ -72,8 +72,10 @@ s32 UiText_DrawGlyphArm(struct UiTextWindow *win, u32 ch, u32 x0, u32 y0, u8 *fo
 #endif
             u32 c1;
             u32 c3;
+            /* FAKEMATCH: the width table through a local copy: indexed directly, the y-bound cmp swaps with the w store in en, de, es, fr and it (2 to 0) */
             const u8 *wp;
 #if !defined(TBS_EDITION_EN)
+            /* FAKEMATCH: the index kept apart from the table base, the uncombined form the bytes show (sub r3, ip, #32; ldrb r2, [r2, r3]); wp[bits - 32] folds the 32 into the load and 52 lines differ in de, es, fr and it */
             u32 idx;
 #endif
             s32 w;

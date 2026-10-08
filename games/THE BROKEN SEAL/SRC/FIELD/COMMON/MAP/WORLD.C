@@ -30,7 +30,7 @@ typedef void (*TransformFn)(const s32 *source, s32 *destination);
 
 static __inline__ void Transform(const s32 *source, s32 *destination, TransformFn routine)
 {
-    /* FAKEMATCH: a direct call holds the output vector in r9 instead of rematerializing sp+16. */
+    /* FAKEMATCH: needed to match: a direct call holds the output vector in r9 instead of rematerializing sp+16. */
     routine(source, destination);
 }
 
@@ -182,7 +182,7 @@ void Resource_RunCopiedDecoder(s32 a, s32 b)
     void *code;
 
     base = gDecodeBuffer;
-    /* FAKEMATCH: the do-whiles order the size load and the call. */
+    /* FAKEMATCH: needed to match: the do-whiles order the size load and the call. */
     do { size = (u32)TileMap_DrawRowsCodeSize; } while (0);
     code = Runtime_AllocateHeapBlock(49, size);
     Dma_Set((const void *)TileMap_DrawRows, code, DMA_ENABLE32 | DMA_32BIT | size >> 2, REG_DMA3);

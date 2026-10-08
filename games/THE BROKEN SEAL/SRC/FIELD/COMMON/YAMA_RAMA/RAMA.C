@@ -41,7 +41,7 @@ void BattleFx_SetQueuedSoundAndPlay(s32 value);
 s32 EventScript_PrepareActorRenderFlags(struct FieldActor *actor)
 {
     actor->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    /* FAKEMATCH: packed byte accesses avoid caching the sprite, preserving the 34-byte callback. */
+    /* FAKEMATCH: needed to match: packed byte accesses avoid caching the sprite, preserving the 34-byte callback. */
     ((u8 *)actor->sprite)[9] |= 0xc;
     ((u8 *)actor->sprite)[21] |= 0xc;
     return 0;

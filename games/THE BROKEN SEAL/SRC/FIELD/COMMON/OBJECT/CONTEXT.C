@@ -42,7 +42,7 @@ s32 Scene_FadeColorFromWhite(void)
         s32 color = 0x7fff;
 
         do {
-            /* FAKEMATCH: the one-pass loop keeps the store before the call's arguments. */
+            /* FAKEMATCH: needed to match: the one-pass loop keeps the store before the call's arguments. */
             *(u16 *)0x050001e6 = color;
         } while (0);
         DisplayTransition_Finish(0x401, 16);

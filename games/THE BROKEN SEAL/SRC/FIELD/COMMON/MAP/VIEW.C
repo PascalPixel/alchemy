@@ -38,8 +38,8 @@ void BattleFx_ScheduleRatioTransition(s32, s32);
 
 void Map_ShowWorldMap(s32 picture)
 {
-    /* FAKEMATCH: one-pass loops order display-control setup, the spilled layer load and the IME read; the count uses a halfword store. */
-    /* FAKEMATCH: the shared slot 8/6 word-cell reads preserve the saved-layer spill and avoid four extra bytes. */
+    /* FAKEMATCH: needed to match: one-pass loops order display-control setup, the spilled layer load and the IME read; the count uses a halfword store. */
+    /* FAKEMATCH: needed to match: the shared slot 8/6 word-cell reads preserve the saved-layer spill and avoid four extra bytes. */
     struct MapState *map = *(struct MapState **)((u8 *)gWorkSlot + 8 * sizeof(void *));
     struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
     struct ObjectSystemWork *menu = *(struct ObjectSystemWork **)((u8 *)gWorkSlot + 6 * sizeof(void *));
@@ -73,7 +73,7 @@ void Map_ShowWorldMap(s32 picture)
     Resource_DecodeType01(graphics + 448, gMapCellBuffer);
     Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | (240 * 160 / 4), REG_DMA3);
     {
-        /* FAKEMATCH: a word temporary keeps the halfword values as word constants; direct stores load them by halfword from the pool. */
+        /* FAKEMATCH: needed to match: a word temporary keeps the halfword values as word constants; direct stores load them by halfword from the pool. */
         s32 v = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2;
         REG_BG1CNT = v;
         v = DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
@@ -90,7 +90,7 @@ void Map_ShowWorldMap(s32 picture)
     BattleFx_CleanupResourcesAndWindow();
     {
         s32 v;
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+        /* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
         do {
             v = DISPCNT_OBJ_1D_MAP;
         } while (0);
@@ -104,7 +104,7 @@ void Map_ShowWorldMap(s32 picture)
         s32 count;
 
         q = &gIoWriteQueue;
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+        /* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
         do {
             ime = &REG_IME;
             saved = *ime;
@@ -120,7 +120,7 @@ void Map_ShowWorldMap(s32 picture)
         }
         *ime = saved;
     }
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+    /* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
     do {
         layer = map->anim;
     } while (0);
@@ -137,7 +137,7 @@ void Map_ShowWorldMap(s32 picture)
 
 void BattleFx_UpdateObjectVisibilityBounds(void)
 {
-    /* FAKEMATCH: the discarded object lookup remains before the runtime object address load. */
+    /* FAKEMATCH: needed to match: the discarded object lookup remains before the runtime object address load. */
     struct ObjectRuntime *object;
     s32 x;
     s32 y;

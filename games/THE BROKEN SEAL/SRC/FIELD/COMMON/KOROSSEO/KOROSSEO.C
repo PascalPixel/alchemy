@@ -44,7 +44,7 @@ extern s16 *Korosseo_ModeTaskScript;
 { \
     u32 saved; \
     s32 cnt; \
-    do { /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ saved = *ime; } while (0); \
+    do { /* FAKEMATCH: needed to match: removing this one-pass boundary changes measured instruction scheduling. */ saved = *ime; } while (0); \
     *ime = (u16)(u32)ime; \
     cnt = queue->count; \
     if (cnt < 32) { \
@@ -77,8 +77,8 @@ void Korosseo_LoadPortrait(s32 id)
 
 void Korosseo_UpdateModeTask(void)
 {
-    /* FAKEMATCH: the queue read boundary and count-store alias keep separate cursors for each write. */
-    /* FAKEMATCH: a halfword zero aggregate keeps the interior literal pools. */
+    /* FAKEMATCH: needed to match: the queue read boundary and count-store alias keep separate cursors for each write. */
+    /* FAKEMATCH: needed to match: a halfword zero aggregate keeps the interior literal pools. */
     u32 *write = Korosseo_ModeTaskSprites;
     struct Sprite *sprite = (struct Sprite *)write;
     s32 tile = gVramBlockCache[Korosseo_PortraitSlot].offset >> 5;

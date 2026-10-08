@@ -17,7 +17,7 @@ void Korosseo_FinishSoloRound(s32 id)
     s32 res;
 
     work = gEventWork;
-    /* FAKEMATCH: the speaker lookup is retained twice with both results unused. */
+    /* FAKEMATCH: needed to match: the speaker lookup is retained twice with both results unused. */
     Object_GetById(id);
     Object_GetById(id);
     slot = gGameState.selected_actor;
@@ -26,7 +26,7 @@ void Korosseo_FinishSoloRound(s32 id)
     msg = (s32)MsgKorosseoCheering;
     Engine_EventSetMessage(msg);
     Engine_EventOpenMessage(id, 0);
-    /* FAKEMATCH: one work pointer and word locals preserve the pool-load and halfword-store order. */
+    /* FAKEMATCH: needed to match: one work pointer and word locals preserve the pool-load and halfword-store order. */
     {
         u8 *w = *(u8 **)&gEventWork;
         s32 v = (s32)MsgKorosseoCheeringChoices;

@@ -152,13 +152,13 @@ s32 Map_InitializePerspectiveScene(void)
     Io_Set16(0xa80a, &REG_BG3CNT);
     Io_Set16(0xaa0e, &REG_BG2CNT);
     Io_Set16(0x0501, &REG_BG1CNT);
-    /* FAKEMATCH: loop note keeps BG2PA's constant after its address */
+    /* FAKEMATCH: needed to match: loop note keeps BG2PA's constant after its address */
     do {
         Io_Put16(&REG_BG2PA, 0x100);
         REG_BG2PB = 0;
         REG_BG2PC = 0;
     } while (0);
-    /* FAKEMATCH: loop notes keep BG2PD's constant late and r0 first below */
+    /* FAKEMATCH: needed to match: loop notes keep BG2PD's constant late and r0 first below */
     do {
         Io_Put16(&REG_BG2PD, 0x100);
         REG_BG2X = 0;
@@ -199,11 +199,11 @@ s32 Map_InitializePerspectiveScene(void)
     vector.x = 0;
     vector.y = 0;
     vector.z = far_plane;
-    /* FAKEMATCH: Iwram_TransformVector's void call loads camera into r1 after the routine; the value-returning cast keeps r1 first. */
+    /* FAKEMATCH: needed to match: Iwram_TransformVector's void call loads camera into r1 after the routine; the value-returning cast keeps r1 first. */
     ((s32 (*)(struct FixedPointPosition *, struct BattleCamera *))Iwram_TransformVector)(&vector, camera);
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(camera->eye, position);
-    /* FAKEMATCH: loop note orders the transform call's r1, routine, r0 */
+    /* FAKEMATCH: needed to match: loop note orders the transform call's r1, routine, r0 */
     do {
         size = (s32)&Transform_UpdateVerticesSize;
         Dma_Set((void *)Transform_UpdateVertices, Runtime_AllocateHeapBlock(46, size),
@@ -230,7 +230,7 @@ s32 Map_InitializePerspectiveScene(void)
     vector.z = *distance + 0x10000;
     Iwram_TransformVector((s32 *)&vector, camera->eye);
     REG_MOSAIC = 0;
-    /* FAKEMATCH: loop notes keep the display writes in source order */
+    /* FAKEMATCH: needed to match: loop notes keep the display writes in source order */
     do {
         Io_Put16(&REG_DISPCNT, 0x42);
     } while (0);
@@ -340,7 +340,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
 
 void MapAnimation_ApplyAffineFrame(void)
 {
-    /* FAKEMATCH: the adjacent slot-cell walk avoids the eight bytes added by separate gMapWork loads. */
+    /* FAKEMATCH: needed to match: the adjacent slot-cell walk avoids the eight bytes added by separate gMapWork loads. */
     u8 **pointers = &gMapAnimationPages;
     struct MapAffinePair (*lines)[160] = ((struct MapFrameWork *)*pointers++)->pages;
     s32 dispcnt = (s16)(REG_DISPCNT & 0xfff8);

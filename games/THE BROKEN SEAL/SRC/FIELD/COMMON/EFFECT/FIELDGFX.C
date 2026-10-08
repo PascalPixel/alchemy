@@ -121,7 +121,7 @@ static __inline__ void ClearDustWork(struct DustWork *work)
 
 void FieldMotes_Update(void)
 {
-    /* FAKEMATCH: relative work pointers share one pool address; an unsigned-long frame read keeps size and flip stores together. */
+    /* FAKEMATCH: needed to match: relative work pointers share one pool address; an unsigned-long frame read keeps size and flip stores together. */
     struct SparkleWork *work = gParticleWork;
     struct MapScrollWork *map = SparkleMap;
     u32 spawned = 0;
@@ -224,7 +224,7 @@ void FieldMotes_Start(void)
 
 void FieldEffect_UpdateSparkles(void)
 {
-    /* FAKEMATCH: relative work pointers share one pool address; an unsigned-long frame read keeps size and flip stores together. */
+    /* FAKEMATCH: needed to match: relative work pointers share one pool address; an unsigned-long frame read keeps size and flip stores together. */
     struct SparkleWork *work;
     u32 spawned;
     u32 i;
@@ -372,7 +372,7 @@ void BattleFx_StartTwelveFrameBlend(void)
     BattleFx_InterpolateBuffers(((struct FieldBlendWork *)work)->to, ((struct FieldBlendWork *)work)->from,
         ((struct FieldBlendWork *)work)->delta, 12);
     BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
-    /* FAKEMATCH: int constants avoid pool loads; advancing the block pointer keeps the final add/store in r5. */
+    /* FAKEMATCH: needed to match: int constants avoid pool loads; advancing the block pointer keeps the final add/store in r5. */
     frames = (u16 *)&((struct FieldBlendWork *)work)->timer;
     value = 600;
     *frames = value;
@@ -422,7 +422,7 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     BattleFx_InterpolateBuffers(target, work->from, work->delta, 12);
     BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
     frames = (u16 *)&work->timer;
-    /* FAKEMATCH: int temporaries build halfword constants with mov instead of pool loads. */
+    /* FAKEMATCH: needed to match: int temporaries build halfword constants with mov instead of pool loads. */
     value = 120;
     *frames = value;
     value = 0;

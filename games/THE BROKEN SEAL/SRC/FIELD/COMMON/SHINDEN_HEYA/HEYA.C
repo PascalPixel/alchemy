@@ -396,7 +396,7 @@ void ShindenHeya_RunAltarScene(void)
     work->colors[0] = 0x7c00;
     work->colors[1] = 0x7c00;
     work->colors[2] = 0x7c00;
-    /* FAKEMATCH: the u8 zero local preserves the lamp clear's literal-pool load. */
+    /* FAKEMATCH: needed to match: the u8 zero local preserves the lamp clear's literal-pool load. */
     zero = 0;
     work->lamps[0] = zero;
     work->lamps[1] = 1;
@@ -1471,7 +1471,7 @@ void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
             ((struct FieldActor *)rec8)->update =
                 (void (*)(union FieldObject *))SceneEffect_StepEllipseOrbit;
             { u16 v = 0; p5[38] = v; }
-            /* FAKEMATCH: byte-bitfield aliasing preserves the anchor-store order and mov13/neg sequence. */
+            /* FAKEMATCH: needed to match: byte-bitfield aliasing preserves the anchor-store order and mov13/neg sequence. */
             {
                 struct SpritePriorityByte {
                     u8 unknown_00[9];

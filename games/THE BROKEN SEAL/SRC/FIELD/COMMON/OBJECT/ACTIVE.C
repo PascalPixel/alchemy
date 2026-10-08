@@ -176,7 +176,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
         }
 #if EDITION_INTERNATIONAL
         ret = Localization_LookupEntryIdFar(speaker);
-        /* FAKEMATCH: the -1 local preserves its register across measurement and reloads it afterward. */
+        /* FAKEMATCH: needed to match: the -1 local preserves its register across measurement and reloads it afterward. */
         none = -1;
         if (ret != none) {
             UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width, (u32 *)&height);
@@ -187,7 +187,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
             if (tail < 0) {
                 tail = top + height;
             } else if (tail + 5 > 19) {
-                /* FAKEMATCH: repeating the subtraction avoids sharing the first top - 5 through a register. */
+                /* FAKEMATCH: needed to match: repeating the subtraction avoids sharing the first top - 5 through a register. */
                 tail = top;
                 tail -= 5;
             }

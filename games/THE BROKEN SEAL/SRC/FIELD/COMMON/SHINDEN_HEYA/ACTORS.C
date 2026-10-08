@@ -316,7 +316,7 @@ void ShindenHeya_RaiseItemIcon(s32 item)
         Ui_PrepareTransferForItem(item);
         VramBlock_LoadCached(spr->vram_block, 128, buf + 0x400);
         Runtime_ReleaseHeapBlock(17);
-        /* FAKEMATCH: this initializer order keeps the sprite zero in r5 instead of r3. */
+        /* FAKEMATCH: needed to match: this initializer order keeps the sprite zero in r5 instead of r3. */
         for (i = 0, flag = &obj->motion_flags, z = 0; i < 60; i++) {
             if ((u32)(obj->velocity_y + 255) <= 0x1fe)
                 *flag = z;

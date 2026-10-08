@@ -48,7 +48,7 @@ void Korosseo_UpdateMarker(void)
     steps = &Korosseo_MarkerSteps;
     total = *steps;
     if (total != 0) {
-        /* FAKEMATCH: the signed read of the raw halfword keeps the step out of the interpolation registers. */
+        /* FAKEMATCH: needed to match: the signed read of the raw halfword keeps the step out of the interpolation registers. */
         step = (u16)++Korosseo_MarkerStep;
         py = &Korosseo_MarkerX;
         sy = &Korosseo_MarkerStartX;
@@ -62,7 +62,7 @@ void Korosseo_UpdateMarker(void)
         Korosseo_MarkerBlink = 0;
     }
     if (++Korosseo_MarkerBlink <= 13) {
-        /* FAKEMATCH: the size bit in a local puts the priority after it. */
+        /* FAKEMATCH: needed to match: the size bit in a local puts the priority after it. */
         s32 size = 0x40000000;
 
         x = Korosseo_MarkerX;

@@ -45,7 +45,7 @@ s32 Object_Wander(struct ScriptObjectRuntime *object)
     base = *args++;
     range = *args++;
     limit = *args / 0x10000;
-    /* FAKEMATCH: the retry label and one-pass distance block preserve the 32-byte frame and division/load registers. */
+    /* FAKEMATCH: needed to match: the retry label and one-pass distance block preserve the 32-byte frame and division/load registers. */
     tries = 0;
     limit = limit * limit;
 retry:
@@ -774,7 +774,7 @@ u32 Field_StoreAssignedKeyValue(u32 value)
 s32 Field_CheckConfiguredKeys(void)
 {
     struct EventRuntime *work = gWork;
-    /* FAKEMATCH: local halfword addresses and signed values avoid two extra literal-1 loads and 24 extra bytes. */
+    /* FAKEMATCH: needed to match: local halfword addresses and signed values avoid two extra literal-1 loads and 24 extra bytes. */
     s32 result = 0;
 
     if (work == NULL)

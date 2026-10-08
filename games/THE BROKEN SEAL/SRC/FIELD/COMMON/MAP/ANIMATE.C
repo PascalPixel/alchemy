@@ -19,7 +19,7 @@
 
 void MapAnimation_Update(void)
 {
-    /* FAKEMATCH: indexed channel expressions preserve ip/lr allocation and the sentinel/VRAM pool order. */
+    /* FAKEMATCH: needed to match: indexed channel expressions preserve ip/lr allocation and the sentinel/VRAM pool order. */
     struct MapState *state = gMapWork[0];
     u32 i;
 

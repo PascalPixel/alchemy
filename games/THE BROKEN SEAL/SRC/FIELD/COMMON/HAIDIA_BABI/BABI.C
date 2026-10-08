@@ -222,7 +222,7 @@ void SceneState_ApplyValues123And11(void)
 
 s32 HaidiaBabi_RestoreEntryState(void)
 {
-    /* FAKEMATCH: the shared cached-cell base keeps the word read before the narrow store. */
+    /* FAKEMATCH: needed to match: the shared cached-cell base keeps the word read before the narrow store. */
     u32 i;
     s32 record;
     struct EventWork **control;
@@ -320,7 +320,7 @@ void BattleFx_SetBlock30Values128One();
 
 void FieldScene_RunComplexActorSequence(void)
 {
-    /* FAKEMATCH: a halfword record keeps the actor-flag zero loaded from the pool after the actor lookup. */
+    /* FAKEMATCH: needed to match: a halfword record keeps the actor-flag zero loaded from the pool after the actor lookup. */
     s32 base;
     struct FieldSprite *sprite;
     struct FieldActor *p12;
@@ -332,7 +332,7 @@ void FieldScene_RunComplexActorSequence(void)
     s32 ground;
 
     control = (struct EventWork **)Ram_EventWork;
-    /* FAKEMATCH: stage the root reads before consuming the event record. */
+    /* FAKEMATCH: needed to match: stage the root reads before consuming the event record. */
     {
         struct EventWork *event = *control;
 

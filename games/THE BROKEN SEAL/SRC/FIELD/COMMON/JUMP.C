@@ -49,7 +49,7 @@ s32 Field_TryJumpForward(void)
     struct FieldPosition position;
     struct FieldPosition *pos;
     struct ObjectRuntime *target;
-    /* FAKEMATCH: reusing the tile mask for descent and a separate lift local preserves register allocation. */
+    /* FAKEMATCH: needed to match: reusing the tile mask for descent and a separate lift local preserves register allocation. */
     s32 step;
     s32 lift;
 
@@ -131,7 +131,7 @@ s32 FieldEffect_UpdateGridPlacement(void)
         s32 index = grid_x / 16 + (grid_z / 16) * 128;
 
         if (TILE_CELLS[index].collision_code == TILE_CELLS_TARGET[index].collision_code) {
-            /* FAKEMATCH: the six-word probe preserves the 24-byte frame; a three-word position halves it. */
+            /* FAKEMATCH: needed to match: the six-word probe preserves the 24-byte frame; a three-word position halves it. */
             s32 vector[6];
             struct FieldPosition *position = (struct FieldPosition *)vector;
 
@@ -196,7 +196,7 @@ s32 battle_owner_69(void)
         s32 index = grid_x / 16 + (grid_z / 16) * 128;
 
         if (TILE_CELLS[index].collision_code == TILE_CELLS_ABOVE[index].collision_code) {
-            /* FAKEMATCH: the six-word probe preserves the 24-byte frame; a three-word position halves it. */
+            /* FAKEMATCH: needed to match: the six-word probe preserves the 24-byte frame; a three-word position halves it. */
             s32 vector[6];
             struct FieldPosition *position = (struct FieldPosition *)vector;
 

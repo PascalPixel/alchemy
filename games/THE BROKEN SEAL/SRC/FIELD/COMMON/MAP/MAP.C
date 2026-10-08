@@ -23,7 +23,7 @@
 
 static __inline__ void CopyCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
-    /* FAKEMATCH: helper scope gives each cell its own table-pointer lifetime. */
+    /* FAKEMATCH: needed to match: helper scope gives each cell its own table-pointer lifetime. */
     u32 *tiles;
     u8 *dest;
     u32 index = (*map << 20) >> 19;
@@ -60,7 +60,7 @@ static __inline__ void CopyCameraCell(u32 *map, u8 *base, u32 rowmod, u32 colmod
 
     tiles = (u32 *)Ram_MapBlocks;
     tiles += index;
-    /* FAKEMATCH: integer address addition preserves the add operand order. */
+    /* FAKEMATCH: needed to match: integer address addition preserves the add operand order. */
     dest = (u8 *)((rowmod + colmod) * 2 + (u32)base);
     *(u32 *)dest = *tiles;
     tiles = (u32 *)(Ram_MapBlocks + 4);
@@ -129,7 +129,7 @@ s32 Map_LoadLayeredScene(s32 index)
     src = (u8 *)header + header->tilemap;
     Resource_DecodeType01(src, Ram_MapCellBuffer);
     Tilemap_ConvertBuffer();
-    /* FAKEMATCH: passing optional offsets through the pointer keeps them in r0. */
+    /* FAKEMATCH: needed to match: passing optional offsets through the pointer keeps them in r0. */
     src = (u8 *)header->animation;
     if (src != 0) {
         Resource_DecodeType01((u8 *)header + (s32)src, Ram_MapCollision + 0x1000);
@@ -201,7 +201,7 @@ s32 Map_LoadLayeredScene(s32 index)
         work->flags |= DISPCNT_BG1_ON;
     cnt = work->enabled[0] | BGCNT_CHAR_BASE(header->char_base[0]) | BGCNT_SCREEN_BASE(5);
     REG_BG3CNT = cnt;
-    /* FAKEMATCH: one-pass loops keep the second and third background-control writes in source order. */
+    /* FAKEMATCH: needed to match: one-pass loops keep the second and third background-control writes in source order. */
     do {
         cnt = work->enabled[1] | BGCNT_CHAR_BASE(header->char_base[1]) | BGCNT_SCREEN_BASE(6);
         REG_BG2CNT = cnt;
@@ -455,7 +455,7 @@ struct TilePos { s32 x, y; };
 void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
     u32 dst_x, u32 dst_y, u32 width, u32 height)
 {
-    /* FAKEMATCH: temporary sharing preserves register allocation and scheduling without changing the frame or instructions. */
+    /* FAKEMATCH: needed to match: temporary sharing preserves register allocation and scheduling without changing the frame or instructions. */
     u32 *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
     u32 *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
     register struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;

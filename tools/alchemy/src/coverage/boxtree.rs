@@ -306,7 +306,7 @@ mod tests {
             ("games/X/SRC/GRAPHICS/FONT/GLYPHS.PNG", "png", "Images"),
             ("games/X/SRC/FIELD/AREA/AREA.PNG", "png", "Maps"),
             ("games/X/TEXT/STAFF_ROLL.PNG", "png", "Images"),
-            ("recon/tbs/metrics/history.tsv", "tsv", "Tables"),
+            ("history.tsv", "tsv", "Tables"),
             ("games/X/SRC/FIELD/AREA/FIELD_DATA.INC", "inc", "Headers"),
             ("games/X/SRC/FIELD/AREA/OVERLAY.LD", "ld", "Other files"),
         ] {

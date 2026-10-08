@@ -226,8 +226,8 @@ fn link_indexed(
     if links_game_code(&sources, &objects)? {
         checked_entries(root, target, &elf)?;
     }
-    for directory in ["GRAPHICS", "MAP", "SOUND", "COMMON"] {
-        let _ = fs::remove_dir_all(output.join(directory));
+    for directory in asset_directories(output) {
+        let _ = fs::remove_dir_all(directory);
     }
     Ok(Linked {
         steps: 0,
@@ -981,18 +981,58 @@ fn asset_files(root: &Path, source: &Path) -> Vec<String> {
     let Ok(text) = fs::read_to_string(root.join(source)) else {
         return Vec::new();
     };
-    let pattern = regex::Regex::new(
-        r#"(?m)^\s*\.(?:incbin\s+"((?:COMMON/)?SOUND/[A-Za-z0-9_./]+\.bin)"|(?:incbin|include)\s+"((?:COMMON/)?(?:GRAPHICS|MAP)/[A-Za-z0-9_./]+)")"#,
-    ).expect("static pattern");
-    let (mut sound, mut graphics) = (Vec::new(), Vec::new());
-    for capture in pattern.captures_iter(&text) {
+    asset_names(&text)
+}
+
+/// The directories of built assets in an edition's output: one per SRC
+/// module (GRAPHICS, MAP, BATTLE ...), SOUND and COMMON, named in upper case
+/// as the modules are, beside the build's own lower-case folders.
+fn asset_directories(output: &Path) -> Vec<PathBuf> {
+    let Ok(entries) = fs::read_dir(output) else {
+        return Vec::new();
+    };
+    entries
+        .filter_map(Result::ok)
+        .filter(|entry| entry.file_type().is_ok_and(|kind| kind.is_dir()))
+        .filter(|entry| asset_root(&entry.file_name().to_string_lossy()))
+        .map(|entry| entry.path())
+        .collect()
+}
+
+fn asset_root(name: &str) -> bool {
+    name.bytes().next().is_some_and(|byte| byte.is_ascii_uppercase())
+        && name
+            .bytes()
+            .all(|byte| byte.is_ascii_uppercase() || byte.is_ascii_digit() || byte == b'_')
+}
+
+/// The build products a source names: sound samples first, then every
+/// `.incbin` or `.include` under GRAPHICS/ or MAP/ and every recipe in any
+/// other module of SRC (BATTLE, GAME, MENU ...), optionally under COMMON/.
+/// Paths that start in lower case (games/..., text/..., baserom.gba) and
+/// other modules' names that are not a recipe (BATTLE/X.INC) are not assets.
+fn asset_names(text: &str) -> Vec<String> {
+    static PATTERN: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    let pattern = PATTERN.get_or_init(|| {
+        regex::Regex::new(
+            r#"(?m)^\s*\.(?:incbin\s+"((?:COMMON/)?SOUND/[A-Za-z0-9_./]+\.bin)"|(?:incbin|include)\s+"((?:COMMON/)?[A-Z][A-Z0-9_]*/[A-Za-z0-9_./]+)")"#,
+        )
+        .expect("static pattern")
+    });
+    let (mut sound, mut built) = (Vec::new(), Vec::new());
+    for capture in pattern.captures_iter(text) {
         if let Some(path) = capture.get(1) {
             sound.push(path.as_str().to_owned());
-        } else {
-            graphics.push(capture[2].to_owned());
+            continue;
+        }
+        let path = &capture[2];
+        let module = path.strip_prefix("COMMON/").unwrap_or(path);
+        let graphics = module.starts_with("GRAPHICS/") || module.starts_with("MAP/");
+        if graphics || (!module.starts_with("SOUND/") && ags::resource::is_recipe(path)) {
+            built.push(path.to_owned());
         }
     }
-    sound.extend(graphics);
+    sound.extend(built);
     sound
 }
 
@@ -1254,8 +1294,11 @@ fn stream_paths(
         .collect())
 }
 
-fn overlay_listings(target: DecompTarget) -> PathBuf {
-    Path::new(target.asm_dir).join("overlays")
+/// The overlay's own data source, when it has one: an overlay whose data
+/// all lives in its modules links nothing of its own.
+fn overlay_data(root: &Path, target: DecompTarget, id: &str) -> Option<PathBuf> {
+    let path = target.overlay_data(id);
+    root.join(&path).is_file().then_some(path)
 }
 
 fn target_assembly_command(
@@ -1287,13 +1330,12 @@ fn build_overlay_streams(
     index: &Index,
 ) -> Result<Vec<(PathBuf, PathBuf)>, String> {
     let ids = &stream_ids(root, target, source)?;
-    let listings = overlay_listings(target);
     let directory = output.join("overlays");
     fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
     let mut linked = Vec::with_capacity(ids.len());
     let mut sources = Vec::new();
     for id in ids {
-        let script = overlay_script(&listings, id);
+        let script = target.overlay_script(id);
         let text = fs::read_to_string(root.join(&script))
             .map_err(|error| format!("{}: {error}", script.display()))?;
         let own = format!("resource_{id}_overlay");
@@ -1311,10 +1353,7 @@ fn build_overlay_streams(
         linked.push((id, script, objects));
     }
     let mut asset_sources = sources.clone();
-    asset_sources.extend(
-        ids.iter()
-            .map(|id| listings.join(format!("resource_{id}_overlay.s"))),
-    );
+    asset_sources.extend(ids.iter().filter_map(|id| overlay_data(root, target, id)));
     prepare_assets(root, target, &asset_sources, output, index)?;
     compile_all(root, target, &sources, output, index)?;
     parallel(&linked, |(id, script, objects)| {
@@ -1322,7 +1361,6 @@ fn build_overlay_streams(
             root,
             target,
             output,
-            listings: &listings,
             id,
             script,
             objects,
@@ -1339,24 +1377,17 @@ fn build_overlay_streams(
             (source, object)
         })
         .collect();
-    objects.extend(ids.iter().map(|id| {
-        (
-            listings.join(format!("resource_{id}_overlay.s")),
-            directory.join(format!("resource_{id}_overlay.o")),
-        )
+    objects.extend(ids.iter().filter_map(|id| {
+        overlay_data(root, target, id)
+            .map(|data| (data, directory.join(format!("resource_{id}_overlay.o"))))
     }));
     Ok(objects)
-}
-
-fn overlay_script(listings: &Path, id: &str) -> PathBuf {
-    listings.join(format!("resource_{id}.ld"))
 }
 
 struct Overlay<'a> {
     root: &'a Path,
     target: DecompTarget,
     output: &'a Path,
-    listings: &'a Path,
     id: &'a str,
     script: &'a Path,
     objects: &'a [PathBuf],
@@ -1370,7 +1401,6 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
         root,
         target,
         output,
-        listings,
         id,
         script,
         objects,
@@ -1378,7 +1408,7 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
         table,
         directory,
     } = *overlay;
-    let listing = listings.join(format!("resource_{id}_overlay.s"));
+    let listing = overlay_data(root, target, id);
     let path = |name: String| directory.join(name).to_string_lossy().into_owned();
     let object = path(format!("resource_{id}_overlay.o"));
     let elf = path(format!("resource_{id}.elf"));
@@ -1410,9 +1440,15 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
             .map(|path| path.to_string_lossy().into_owned()),
     );
     link.push(library.to_string_lossy().into_owned());
-    let assemble = target_assembly_command(target, &listing.to_string_lossy(), &object, output);
+    let empty = Path::new("/dev/null");
+    let assemble = target_assembly_command(
+        target,
+        &listing.as_deref().unwrap_or(empty).to_string_lossy(),
+        &object,
+        output,
+    );
     let mut hasher = Sha256::new();
-    overlay_inputs(&mut hasher, root, output, &listing, script, objects, index)?;
+    overlay_inputs(&mut hasher, root, output, listing.as_deref(), script, objects, index)?;
     for step in [&assemble, &link] {
         hasher.update(portable(root, step.join("\0").as_bytes()));
     }
@@ -1428,8 +1464,10 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
         return overlay_gate(&elf, &map);
     }
     index.forget(&stream);
-    for asset in source_assets(root, target, &listing)? {
-        materialize(root, output, index, &asset)?;
+    if let Some(listing) = &listing {
+        for asset in source_assets(root, target, listing)? {
+            materialize(root, output, index, &asset)?;
+        }
     }
     command(&assemble, root)?;
     let mut own = BTreeSet::new();
@@ -1550,11 +1588,15 @@ fn overlay_inputs(
     hasher: &mut Sha256,
     root: &Path,
     output: &Path,
-    listing: &Path,
+    listing: Option<&Path>,
     script: &Path,
     objects: &[PathBuf],
     index: &Index,
 ) -> Result<(), String> {
+    let Some(listing) = listing else {
+        hasher.update(b"no overlay data");
+        return overlay_script_inputs(hasher, root, script, objects, index);
+    };
     hasher.update(with_includes(&[root, output], &root.join(listing))?);
     for built in asset_files(root, listing) {
         let row = index
@@ -1563,6 +1605,16 @@ fn overlay_inputs(
         hasher.update(built.as_bytes());
         hasher.update(row.key.as_bytes());
     }
+    overlay_script_inputs(hasher, root, script, objects, index)
+}
+
+fn overlay_script_inputs(
+    hasher: &mut Sha256,
+    root: &Path,
+    script: &Path,
+    objects: &[PathBuf],
+    index: &Index,
+) -> Result<(), String> {
     hasher.update(
         fs::read(root.join(script)).map_err(|error| format!("{}: {error}", script.display()))?,
     );
@@ -1655,4 +1707,43 @@ fn with_includes(directories: &[&Path], source: &Path) -> Result<Vec<u8>, String
         key.extend_from_slice(&with_includes(directories, &path)?);
     }
     Ok(key)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn built_asset_directories_are_the_upper_case_ones() {
+        for name in ["GRAPHICS", "MAP", "SOUND", "COMMON", "BATTLE", "MENU_2"] {
+            assert!(asset_root(name), "{name}");
+        }
+        for name in ["obj", "overlays", "text", "symbols", "tbs-en.gba", "Map", "_X", ""] {
+            assert!(!asset_root(name), "{name}");
+        }
+    }
+
+    #[test]
+    fn assets_live_in_any_module() {
+        let source = "\t.include \"games/COMMON/INCLUDE/GAME/ED_ASM.H\"\n\
+            \t.incbin \"BATTLE/ITEM/ITEMS.table\"\n\
+            \t.incbin \"GAME/CLASS/CLASSES.table.lz\"\n\
+            \t.include \"text/messages.inc\"\n\
+            \t.include \"BATTLE/ITEM/ITEM.INC\"\n\
+            \t.incbin \"baserom.gba\", 0x100, 0x10\n\
+            \t.incbin \"COMMON/MENU/ICONS/ARROW.4bpp\"\n\
+            \t.incbin \"MAP/MAP_095/SHAPES.table.lz\"\n\
+            \t.incbin \"SOUND/SAMPLE/DRUM.PCM8.bin\"\n\
+            \t.incbin \"SOUND/X.table\"\n";
+        assert_eq!(
+            asset_names(source),
+            [
+                "SOUND/SAMPLE/DRUM.PCM8.bin",
+                "BATTLE/ITEM/ITEMS.table",
+                "GAME/CLASS/CLASSES.table.lz",
+                "COMMON/MENU/ICONS/ARROW.4bpp",
+                "MAP/MAP_095/SHAPES.table.lz",
+            ]
+        );
+    }
 }

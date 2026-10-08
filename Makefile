@@ -51,6 +51,7 @@ help:
 	  'make worst           rank mechanical cleanup signals' \
 	  'alchemy diff DRAFT.c compare a C draft with the listing it would replace (tools/out/cargo-target/release/alchemy)' \
 	  'alchemy adopt ADDR LABEL [NAME]  take an adopted function out of the scaffolding of all six editions' \
+	  'alchemy adopt-data OBJECT LABEL...  link a data object in all six editions and take its bytes out of their scaffolds' \
 	  'alchemy queues --workers N --out-dir DIR  split not-yet-C work into queues by module run or overlay'
 
 fetch-dependencies:

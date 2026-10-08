@@ -47,9 +47,14 @@ A game is finished when all six hold (Pascal, 2026-10-08):
 - `games/<GAME>/SRC`, `INCLUDE`, `SOUND`, `TEXT` and `games/COMMON` hold the
   source. `games/<GAME>/MAIN.LD` is the Japanese object order.
 - `recon/<game>/raw` holds the English disassembly of code that is not C yet,
-  one listing per function or run. `recon/<game>/en/MAIN.LD` is the English
-  object order; German, Spanish, French and Italian follow it through their
-  own `recon/<game>/<lang>/MAIN.LD`.
+  one listing per function or run. ☀️'s `games/THE BROKEN SEAL/MAIN_EN.LD`
+  is the English object order; German, Spanish, French and Italian follow it
+  through their own `MAIN_DE.LD` ... beside it. ⚓️'s edition scripts are
+  still `recon/tla/<lang>/MAIN.LD`.
+- ☀️'s overlays link by `games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY/OVL_<ID>.LD`,
+  with the overlay's own data and bss not yet in its modules in
+  `OVL_<ID>.S` beside it; `recon/tbs/raw/overlays` keeps the original
+  listings as reference only. ⚓️'s are `recon/tla/raw/overlays`.
 - `games/<GAME>/SRC/SYSTEM/ROM_HEAD.S` is the cartridge header, linked
   first in every edition, as pret's `rom_header.s`: the logo is
   `.space 156` and the complement 0. Right after objcopy the build runs
@@ -67,7 +72,7 @@ A game is finished when all six hold (Pascal, 2026-10-08):
 - `.github/workflows/progress.yml` publishes progress after each push to main:
   the `progress` branch holds `history.tsv` and README's two figures, written
   only by CI. `make figure` draws the same two figures locally from
-  `recon/tbs/metrics/history.tsv`, a private copy of that history.
+  `history.tsv` beside them, a private copy of that history.
 
 ## Rules
 
@@ -499,6 +504,7 @@ alchemy sizes DRAFT.c [SIZE]           # struct sizes; the locals that fill a fr
 alchemy show EDITION FUNCTION          # a built function beside the ROM
 alchemy adopt ADDR LABEL NAME [--into MODULE.C]   # into its module, out of all scaffolding
 alchemy label NAME ENGLISH_ADDR LEN    # name English-only scaffold data in other editions
+alchemy adopt-data OBJECT PIECE...     # a data block's object into all six scripts, out of all scaffolds
 # Check the whole build
 alchemy objects EDITION...             # what differs from the ROM, object or placement
 make progress                          # DONE, one line per edition (alchemy progress)

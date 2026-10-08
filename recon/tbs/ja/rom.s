@@ -20,19 +20,8 @@ UiIcon_PsynergyIconPointersEnd:
 	.global UiIcon_MiscIconPointers
 UiIcon_MiscIconPointers:
 	.incbin "baserom.gba", 0x000308ec, 0x00000800
-	.section .rom.0006c1a0, "ax"
-	.global UiText_SpeedDelays
-UiText_SpeedDelays:
-	.incbin "baserom.gba", 0x0006c1a0, 0x00000003
-	.global UiText_SpeedSteps
-UiText_SpeedSteps:
-	.incbin "baserom.gba", 0x0006c1a3, 0x00000003
-	.global UiText_SpeedCueGaps
-UiText_SpeedCueGaps:
-	.incbin "baserom.gba", 0x0006c1a6, 0x00000004
-	.global WorkspaceOptions_SliderPalette
-WorkspaceOptions_SliderPalette:
-	.incbin "baserom.gba", 0x0006c1aa, 0x00000042
+	.section .rom.0006c1ea, "ax"
+	.incbin "baserom.gba", 0x0006c1ea, 0x00000002
 	.global Menu_PartySpriteResourceIds
 Menu_PartySpriteResourceIds:
 	.incbin "baserom.gba", 0x0006c1ec, 0x00000010

@@ -16,27 +16,6 @@ UiText_ItemPossessives:
 	.global UiText_ItemGenders
 UiText_ItemGenders:
 	.incbin "baserom.gba", 0x00072c78, 0x0000010d
-	.global UiText_SpeedDelays
-UiText_SpeedDelays:
-	.incbin "baserom.gba", 0x00072d85, 0x00000003
-	.global UiText_SpeedSteps
-UiText_SpeedSteps:
-	.incbin "baserom.gba", 0x00072d88, 0x00000003
-	.global UiText_SpeedCueGaps
-UiText_SpeedCueGaps:
-	.incbin "baserom.gba", 0x00072d8b, 0x00000003
-	.global WorkspaceOptions_SliderPalette
-WorkspaceOptions_SliderPalette:
-	.incbin "baserom.gba", 0x00072d8e, 0x00000042
-	.global Menu_PartySpriteResourceIds
-Menu_PartySpriteResourceIds:
-	.incbin "baserom.gba", 0x00072dd0, 0x00000010
-	.global NameEntry_KeyboardTilemap
-NameEntry_KeyboardTilemap:
-	.incbin "baserom.gba", 0x00072de0, 0x00000104
-	.global Ui_FixedTileBlocks
-Ui_FixedTileBlocks:
-	.incbin "baserom.gba", 0x00072ee4, 0x00000004
 	.section .rom.0007a828, "ax"
 	.global Character_ElementGroupTable
 Character_ElementGroupTable:

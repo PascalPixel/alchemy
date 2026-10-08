@@ -33,28 +33,6 @@ UiText_IndefiniteArticles:
 	.global UiText_ItemPossessives
 UiText_ItemPossessives:
 	.incbin "baserom.gba", 0x00033120, 0x00000008
-	.section .rom.00073368, "ax"
-	.global UiText_SpeedDelays
-UiText_SpeedDelays:
-	.incbin "baserom.gba", 0x00073368, 0x00000003
-	.global UiText_SpeedSteps
-UiText_SpeedSteps:
-	.incbin "baserom.gba", 0x0007336b, 0x00000003
-	.global UiText_SpeedCueGaps
-UiText_SpeedCueGaps:
-	.incbin "baserom.gba", 0x0007336e, 0x00000004
-	.global WorkspaceOptions_SliderPalette
-WorkspaceOptions_SliderPalette:
-	.incbin "baserom.gba", 0x00073372, 0x00000042
-	.global Menu_PartySpriteResourceIds
-Menu_PartySpriteResourceIds:
-	.incbin "baserom.gba", 0x000733b4, 0x00000010
-	.global NameEntry_KeyboardTilemap
-NameEntry_KeyboardTilemap:
-	.incbin "baserom.gba", 0x000733c4, 0x00000110
-	.global Ui_FixedTileBlocks
-Ui_FixedTileBlocks:
-	.incbin "baserom.gba", 0x000734d4, 0x00000004
 	.section .rom.0007f828, "ax"
 	.global Character_ElementGroupTable
 Character_ElementGroupTable:

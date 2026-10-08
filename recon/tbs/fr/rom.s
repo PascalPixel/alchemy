@@ -28,28 +28,6 @@ Data_08033e40:
 	.global UiText_ItemPronoun
 UiText_ItemPronoun:
 	.incbin "baserom.gba", 0x00032f18, 0x00000006
-	.section .rom.00073a6c, "ax"
-	.global UiText_SpeedDelays
-UiText_SpeedDelays:
-	.incbin "baserom.gba", 0x00073a6c, 0x00000003
-	.global UiText_SpeedSteps
-UiText_SpeedSteps:
-	.incbin "baserom.gba", 0x00073a6f, 0x00000003
-	.global UiText_SpeedCueGaps
-UiText_SpeedCueGaps:
-	.incbin "baserom.gba", 0x00073a72, 0x00000004
-	.global WorkspaceOptions_SliderPalette
-WorkspaceOptions_SliderPalette:
-	.incbin "baserom.gba", 0x00073a76, 0x00000042
-	.global Menu_PartySpriteResourceIds
-Menu_PartySpriteResourceIds:
-	.incbin "baserom.gba", 0x00073ab8, 0x00000010
-	.global NameEntry_KeyboardTilemap
-NameEntry_KeyboardTilemap:
-	.incbin "baserom.gba", 0x00073ac8, 0x00000104
-	.global Ui_FixedTileBlocks
-Ui_FixedTileBlocks:
-	.incbin "baserom.gba", 0x00073bcc, 0x00000004
 	.section .rom.0007f828, "ax"
 	.global Character_ElementGroupTable
 Character_ElementGroupTable:

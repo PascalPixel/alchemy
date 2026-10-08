@@ -431,9 +431,7 @@
     "*/games/tbs/src/field/common/object/scripts.o"(.rodata)
     . = ABSOLUTE(0x080a5800);
     "*/games/tbs/src/system/far_call/menu.o"(.text .rodata .data .padding)
-    "*/games/tbs/src/system/scheduler/disable_overlay_callbacks_with_flags.o"(.text)
-    "*/games/tbs/src/system/scheduler/enable_overlay_callbacks_with_flags.o"(.text)
-    "*/games/tbs/src/graphics/window/initialize_work.o"(.text)
+    "*/games/tbs/src/system/scheduler/sched2.o"(.text)
     "*/games/common/src/graphics/window/lifecycle.o"(.text)
     "*/games/tbs/src/menu/draw_owner_status_panel.o"(.text)
     "*/games/common/src/graphics/text/draw_number_right_aligned_far.o"(.text)

@@ -149,3 +149,4 @@ Field_Map133:
 	.endif
 	.endif
 	.endif
+	.balign 4, 0

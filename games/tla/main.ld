@@ -85,7 +85,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00013b30)
     "*/games/tla/src/system/io.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00013d84)
-    "*/games/common/src/graphics/display/blend.o"(.text)
+    "*/games/tla/src/graphics/display/blend.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00013ffc)
     "*/recon/tla/ja/rom.o"(.rom.0001401c)
     "*/recon/tla/ja/rom.o"(.rom.000140d8)

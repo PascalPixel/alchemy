@@ -74,7 +74,7 @@
     "*/recon/tla/es/rom.o"(.rom.00013b5c)
     "*/games/tla/src/system/io.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00013db0)
-    "*/games/common/src/graphics/display/blend.o"(.text)
+    "*/games/tla/src/graphics/display/blend.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00014028)
     "*/recon/tla/es/rom.o"(.rom.00014048)
     "*/recon/tla/es/rom.o"(.rom.00014104)

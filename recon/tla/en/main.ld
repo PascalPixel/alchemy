@@ -73,7 +73,7 @@
         "*/games/tla/src/system/io.o"(.text)
         "*/recon/tla/raw/08013d84.o"(.text)
         "*/recon/tla/raw/08013de4.o"(.text)
-        "*/games/common/src/graphics/display/blend.o"(.text)
+        "*/games/tla/src/graphics/display/blend.o"(.text)
         "*/recon/tla/raw/08013ffc.o"(.text)
         "*/recon/tla/raw/0801401c.o"(.text)
         "*/recon/tla/raw/080140d8.o"(.text)

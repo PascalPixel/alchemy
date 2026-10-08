@@ -73,7 +73,6 @@ SECTIONS
     "*/games/tbs/src/system/system.o"(.text)
     "*/games/tbs/src/system/io.o"(.text)
     "*/games/tbs/src/graphics/display/blend.o"(.text)
-    "*/games/common/src/graphics/display/blend.o"(.text)
     "*/games/tbs/src/system/scheduler/schedule.o"(.text)
     "*/games/common/src/system/resource/rescache.o"(.text)
     "*/games/tbs/src/system/scheduler/callback.o"(.text)

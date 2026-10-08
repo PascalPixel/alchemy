@@ -36,7 +36,7 @@ void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1);
 void Event_CallWithLastActiveObjectId();
 void AudioCommand_WaitForCompletion();
 
-extern struct BattleEffectBuffers *Data_03001ed0;
+extern struct BattleEffectBuffers *gPaletteBufferWork;
 
 struct ShrineWork {
     u8 unknown_0000[0xe5a];
@@ -389,7 +389,7 @@ void ShindenHeya_RunAltarScene(void)
     Engine_ColorBufferApplyTarget(0x10002, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_EventWait(180);
-    work = *(struct ShrineWork **)&Data_03001ed0;
+    work = *(struct ShrineWork **)&gPaletteBufferWork;
     work->colors[0] = 0x7c00;
     work->colors[1] = 0x7c00;
     work->colors[2] = 0x7c00;

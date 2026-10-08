@@ -351,7 +351,7 @@ void Runtime_ScheduleCallbackAndReleaseBlock32A(void)
 
 void Graphics_TransformLargePalette(s32 index, s32 transform)
 {
-    struct TitlePaletteWork *target = Data_03001ed0;
+    struct TitlePaletteWork *target = gPaletteBufferWork;
 
     if (target != NULL)
         Graphics_TransformPaletteBuffer(index, target->palette, target->target, transform);
@@ -359,7 +359,7 @@ void Graphics_TransformLargePalette(s32 index, s32 transform)
 
 void Graphics_TransformSmallPalette(s32 index, s32 transform)
 {
-    struct TitlePaletteWork *target = Data_03001ed0;
+    struct TitlePaletteWork *target = gPaletteBufferWork;
 
     if (target != NULL)
         Graphics_TransformPaletteBuffer(index, target, target->current, transform);
@@ -367,7 +367,7 @@ void Graphics_TransformSmallPalette(s32 index, s32 transform)
 
 void Graphics_SetPaletteTransformValue(s32 value)
 {
-    struct TitlePaletteWork *target = Data_03001ed0;
+    struct TitlePaletteWork *target = gPaletteBufferWork;
 
     if (target != NULL)
         target->palette[0] = value;
@@ -375,7 +375,7 @@ void Graphics_SetPaletteTransformValue(s32 value)
 
 void Graphics_UpdatePaletteInterpolation(s32 value)
 {
-    struct TitlePaletteWork *state = Data_03001ed0;
+    struct TitlePaletteWork *state = gPaletteBufferWork;
 
     if (state != NULL) {
         state->duration = value;

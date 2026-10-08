@@ -1,8 +1,8 @@
 .syntax unified
 .text
 	.arm
-	.global Entry_080003c0
-Entry_080003c0:
+	.global System_Entry
+System_Entry:
 	mov	r0, #18
 	msr	CPSR_fc, r0
 	ldr	sp, [pc, #40]
@@ -15,7 +15,7 @@ Entry_080003c0:
 	ldr	r1, [pc, #20]
 	mov	lr, pc
 	bx	r1
-	b Entry_080003c0
+	b System_Entry
 	.4byte 0x03007f00
 	.4byte 0x03007fa0
 	.4byte 0x03007ffc

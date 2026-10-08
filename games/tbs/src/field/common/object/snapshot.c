@@ -14,7 +14,7 @@
 #include "io_reg.h"
 void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
-extern struct ObjectRuntime Data_02001124[32];
+extern struct ObjectRuntime gObjectSnapshots[32];
 
 void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object, s32 value);
 void ObjectDispatch_InitFromTable6Far(struct ObjectRuntime *object);
@@ -46,11 +46,11 @@ void *ObjectTable_Get(u32 index)
 
 void ObjectTable_Snapshot(void)
 {
-    struct ObjectRuntime *copy = Data_02001124;
-    u8 *frames = (u8 *)&Data_02001124[32];
+    struct ObjectRuntime *copy = gObjectSnapshots;
+    u8 *frames = (u8 *)&gObjectSnapshots[32];
     u8 *next_frames = frames + 32;
     u8 *priorities = frames + 64;
-    u8 *indices = (u8 *)Data_02001124 - 32;
+    u8 *indices = (u8 *)gObjectSnapshots - 32;
     u32 count = 0;
     s32 limit = 66;
     struct ObjectRuntime *object;
@@ -90,9 +90,9 @@ void ObjectTable_Snapshot(void)
 
 void ObjectTable_Restore(void)
 {
-    struct ObjectRuntime *copy = Data_02001124;
-    u8 *indices = (u8 *)Data_02001124 - 32;
-    u8 *frames = (u8 *)&Data_02001124[32];
+    struct ObjectRuntime *copy = gObjectSnapshots;
+    u8 *indices = (u8 *)gObjectSnapshots - 32;
+    u8 *frames = (u8 *)&gObjectSnapshots[32];
     u8 *next_frames = frames + 32;
     u8 *priorities = frames + 64;
     s32 count;

@@ -83,7 +83,7 @@ void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 heigh
 
 void UiWindow_BuildLayoutBounds(s32 flags)
 {
-    void **slot = (void **)&Data_03001e90;
+    void **slot = (void **)&gPartyStatusWork;
     struct PartyStatusWindow *state = *slot;
     struct UiRenderWork *work = slot[-1];
     s32 height = 4;
@@ -243,7 +243,7 @@ s32 UiWindow_PutGlyph();
 
 void PtyStDraw(s32 flags)
 {
-    void **slot = (void **)Data_03001e90;
+    void **slot = (void **)gPartyStatusWork;
     struct PartyStatusWindow *layout = slot[0];
     struct BtlWork *party = slot[-7];
     struct RenderInput *window = (struct RenderInput *)layout->window;

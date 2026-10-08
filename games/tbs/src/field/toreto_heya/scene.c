@@ -30,7 +30,7 @@ void BattleFx_SetWeightedResult(s32 value, s32 mode);
 
 
 
-extern struct BattleEffectBuffers *Data_03001ed0;
+extern struct BattleEffectBuffers *gPaletteBufferWork;
 
 
 
@@ -583,7 +583,7 @@ s32 ToretoHeya_EnterRoom(void)
 
 void ToretoPalette_CaptureBank(void)
 {
-    Dma_Set((const void *)0x05000000, *(void **)&Data_03001ed0, 0x84000070,
+    Dma_Set((const void *)0x05000000, *(void **)&gPaletteBufferWork, 0x84000070,
             REG_DMA3);
 }
 

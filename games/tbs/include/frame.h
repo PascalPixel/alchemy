@@ -13,7 +13,7 @@ extern u32 gCpuLoadTimer;
 extern u32 gCpuLoadPeak;
 extern volatile u32 gFrameCount;
 extern s32 gFrameTick;
-extern void (*Data_03001cfc)(void);
+extern void (*gVBlankHook)(void);
 
 extern volatile u8 gSleepDisabled;
 extern volatile u8 gOptionMirror;

@@ -364,7 +364,7 @@ void BattleFx_StartTwelveFrameBlend(void)
     u16 *frames;
 
     work = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
-    buffers = Data_03001ed0;
+    buffers = gPaletteBufferWork;
     zero = 0;
     Dma_Set((const void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x7e2, REG_DMA3);
     BattleFx_BuildBuffer(0x10003, buffers, work, 1);
@@ -413,7 +413,7 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     u16 *frames;
 
     work = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
-    buffers = Data_03001ed0;
+    buffers = gPaletteBufferWork;
     zero = 0;
     Dma_Set((const void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x7e2, REG_DMA3);
     BattleFx_BuildBuffer(from, buffers, work, 1);

@@ -2,8 +2,8 @@
 	.section .rodata,"a",%progbits
 	.thumb
 	.align	2
-	.global Data_08002344
-Data_08002344:
+	.global Trig_SineTable
+Trig_SineTable:
 	.hword	0, 402, 804, 1206, 1608, 2010, 2412, 2814
 	.hword	3216, 3617, 4019, 4420, 4821, 5222, 5623, 6023
 	.hword	6424, 6824, 7224, 7623, 8022, 8421, 8820, 9218

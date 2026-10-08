@@ -31,7 +31,7 @@ s32 Sound_LoadPresetParameters(s32 preset)
     if ((u32)preset > SOUND_PRESET_COUNT - 1) {
         index = 0;
     }
-    Dma_Set(IwramCodeRecords + index * SOUND_PRESET_SIZE, Data_03000bd8, 0x84000026,
+    Dma_Set(IwramCodeRecords + index * SOUND_PRESET_SIZE, IwramSoundPresetCode, 0x84000026,
             REG_DMA3);
     return 0;
 }

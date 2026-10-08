@@ -1,5 +1,5 @@
 OUTPUT_ARCH(arm)
-ENTRY(Entry_080003c0)
+ENTRY(System_Entry)
 INCLUDE "games/tbs/constants.ld"
 
 MEMORY

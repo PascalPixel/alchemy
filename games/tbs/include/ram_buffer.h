@@ -41,6 +41,6 @@
 #define Ram_EffectWork FIXED_ADDRESS((void **), 0x03001f30, gEffectWork)
 #endif
 
-#define Ram_SceneMapStateOffset FIXED_OFFSET(0xc, Data_03001ec8, gEventWork)
+#define Ram_SceneMapStateOffset FIXED_OFFSET(0xc, gFieldBlendWork, gEventWork)
 
 #endif

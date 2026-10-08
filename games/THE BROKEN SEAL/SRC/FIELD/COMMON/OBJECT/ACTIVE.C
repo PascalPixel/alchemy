@@ -85,9 +85,6 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
     s32 ret;
     s32 column;
     s32 none;
-#if !EDITION_INTERNATIONAL
-    s32 base;
-#endif
 
     win = (struct UiRenderWork *)gWindowWork[0];
     work = ((struct WorkPointers *)gWindowWork)->event;
@@ -180,16 +177,14 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
         if (ret != none) {
             UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width, (u32 *)&height);
             message = none;
-            tail = top - 5;
-            if (top <= y)
+            if (top > y)
+                tail = top - 5;
+            else
                 tail = top + height;
-            if (tail < 0) {
+            if (tail < 0)
                 tail = top + height;
-            } else if (tail + 5 > 19) {
-                /* FAKEMATCH: needed to match: repeating the subtraction avoids sharing the first top - 5 through a register. */
-                tail = top;
-                tail -= 5;
-            }
+            else if (tail + 5 > 19)
+                tail = top - 5;
             if (top < tail) {
                 s32 lines = height;
 
@@ -209,20 +204,15 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
         ret = -1;
         if (none != ret) {
             UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width, (u32 *)&height);
-            tail = top - 5;
-            /* FAKEMATCH: subtract before copying -1; source order alone reverses them. */
-            asm ("" : "+r" (ret) : "r" (tail));
             message = ret;
-            base = top;
-            /* FAKEMATCH: keep both clamp copies; consuming base alone reverses their moves. */
-            asm ("" : "+r" (base), "+r" (message));
-            if (top <= y)
+            if (top > y)
+                tail = top - 5;
+            else
                 tail = top + height;
             if (tail < 0)
-                tail = base + height;
-            else if (tail + 5 > 19) {
-                tail = base - 5;
-            }
+                tail = top + height;
+            else if (tail + 5 > 19)
+                tail = top - 5;
         }
         if (top < y) {
             s32 lines = height;

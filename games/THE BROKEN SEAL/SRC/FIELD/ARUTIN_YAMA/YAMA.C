@@ -187,17 +187,12 @@ void ArutinYama_BeginRollingRide(s32 a0)
     Engine_AudioPlayCue(152);
     Engine_ActorSetSpeed(0, 0x33333, 0x19999);
     v3 = rec7->y.fixed - rec8->y.fixed;
-    if ((rec7->y.fixed - rec8->y.fixed) < 0) {
-        v3 = rec8->y.fixed - rec7->y.fixed;
-    }
-    {
-        s32 speed = 0x80;
-        s32 step = (v3 >> 14) << 14;
-
-        /* FAKEMATCH: empty asm barrier on speed and step: the speed shift becomes a compiled lsl that waits on the barrier, so it follows the step's lsl as native; compiled whole, the split constant's lsl has more dependents and goes first (1 of 76 rows differ without) */
-        asm("" : "+l"(speed), "+l"(step));
-        rec8->velocity_y = step + (speed << 11);
-    }
+    /* FAKEMATCH: needed to match: each branch finishes the speed, so its block ends before the next call and the step's shift is scheduled ahead of the constant's. */
+    if (v3 < 0)
+        v3 = (((rec8->y.fixed - rec7->y.fixed) >> 14) << 14) + 0x40000;
+    else
+        v3 = ((v3 >> 14) << 14) + 0x40000;
+    rec8->velocity_y = v3;
     Engine_ActorSetAnimation(0, 7);
     Engine_ObjectSetPosition(rec8, rec7->x.fixed, rec7->y.fixed, rec7->z.fixed);
     Engine_TaskWait(10);

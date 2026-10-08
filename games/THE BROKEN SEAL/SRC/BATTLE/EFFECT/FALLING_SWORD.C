@@ -1005,7 +1005,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
                         s32 top;
                         s32 bottom;
                         s32 dx;
-    
+
                         half = radius / 2;
                         dx = (half * sx) / 8;
                         right = cx + dx;
@@ -1044,7 +1044,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
                         work->sheet[top * 120 + right] = 20;
                         work->sheet[bottom * 120 + left] = 20;
                         work->sheet[top * 120 + left] = 20;
-    
+
                         half2 = slope / 2;
                         dx = (half2 * sx) / 8;
                         right = cx + dx;
@@ -1083,7 +1083,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
                         work->sheet[top * 120 + right] = 20;
                         work->sheet[bottom * 120 + left] = 20;
                         work->sheet[top * 120 + left] = 20;
-    
+
                         err = err - slope * 2 - 1;
                         if (err < 0) {
                             err = err + radius * 2 - 2;

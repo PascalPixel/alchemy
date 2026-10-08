@@ -150,6 +150,7 @@ publication-check:
 	$(CHECK) layout
 	$(CHECK) dead
 	$(CHECK) devices
+	$(CHECK) hygiene
 
 hygiene-check:
 	$(CHECK) hygiene

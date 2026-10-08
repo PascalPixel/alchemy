@@ -82,10 +82,25 @@ struct LuckyDiceSprites {
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
 extern u8 gOamCopyEnabled;
-extern u8 Data_080f53fc[];
-extern u8 Data_080f5400[];
-extern u8 Data_080f5408[];
-extern s16 Data_080f541a[];
+// どこからも参照されない符号の表
+const s32 LuckyDice_UnusedSigns[] = { -1, 1, -1, 1, -1, -1, 1, 1 };
+
+// 結果の文字のスプライト数（種類ごと）
+const u8 LuckyDice_LabelCounts[] = { 5, 4, 3, 3 };
+
+// 結果の文字の先頭タイル（種類ごと）
+const u8 LuckyDice_LabelTiles[] = {
+	28, 48, 64, 76,
+#if EDITION_INTERNATIONAL
+	28, 248, 64, 248,	// 読まれない
+#endif
+};
+
+// 回転の段階ごとのさいころの面のタイル
+const u8 LuckyDice_FaceTiles[] = { 0, 12, 16, 1, 14, 8, 2, 15, 10, 3, 9, 13, 4, 7, 6, 5, 17, 11 };
+
+// 面を決める高さの境目（z > 値 << 16）
+const s16 LuckyDice_FaceHeights[] = { 147, 80, 15, -42, -95, -32767 };
 extern char ResourceId_EffectFarCalls;
 extern char ResourceId_LuckyDiceBoard;
 extern char ResourceId_LuckyDiceSprites;
@@ -337,14 +352,14 @@ void LuckyDice_Run(void)
                 }
             }
             if (timer > 19 && kind >= 0) {
-                for (i = 0; i != Data_080f53fc[kind]; i++) {
+                for (i = 0; i != LuckyDice_LabelCounts[kind]; i++) {
                     s32 kx;
                     s32 ky;
 
-                    kx = DICE_KIND_X - Data_080f53fc[kind] * 16 + i * 32;
+                    kx = DICE_KIND_X - LuckyDice_LabelCounts[kind] * 16 + i * 32;
                     ky = 96;
                     sprites->obj[count].attr01 = (((kx & 0x1ff) << 16) | ky) | 0x80002000;
-                    sprites->obj[count].attr2 = Data_080f5400[kind] * 8 + 152 + i * 32;
+                    sprites->obj[count].attr2 = LuckyDice_LabelTiles[kind] * 8 + 152 + i * 32;
                     count++;
                 }
             }
@@ -506,7 +521,7 @@ void LuckyDice_Run(void)
             py = proj[1] - d;
             if (py + 96 > -16) {
                 sprites->obj[count].attr01 = ((order[i] << 25) | (((px + 0x278) & 0x1ff) << 16) | ((py + 0x160) & 255)) | 0x40002300;
-                sprites->obj[count].attr2 = (Data_080f5408[die->variant / 1024] << 3) | 0x400;
+                sprites->obj[count].attr2 = (LuckyDice_FaceTiles[die->variant / 1024] << 3) | 0x400;
                 count++;
             }
         }
@@ -640,7 +655,7 @@ void LuckyDice_Run(void)
                 if (die->velocity_x == 0 && die->velocity_y == 0 && die->velocity_z == 0 && die->y == 0) {
                     results[i] = die->variant / 0xc00;
                     for (j = 0; j != 6; j++) {
-                        if (die->z > Data_080f541a[j] << 16) {
+                        if (die->z > LuckyDice_FaceHeights[j] << 16) {
                             results[i + 2] = j;
                             break;
                         }

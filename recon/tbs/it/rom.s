@@ -1822,18 +1822,6 @@ Title_IntroTilesB:
 	.incbin "baserom.gba", 0x0033f6c6, 0x00000002
 	.section .rom.0034fe36, "ax"
 	.incbin "baserom.gba", 0x0034fe36, 0x00000002
-	.section .rom.003f20f8, "ax"
-	.global BattleFx_LavaOrbSheet
-BattleFx_LavaOrbSheet:
-	.incbin "baserom.gba", 0x003f20f8, 0x00000a6c
-	.section .rom.003fe5f0, "ax"
-	.global BattleFx_IceShardSheet
-BattleFx_IceShardSheet:
-	.incbin "baserom.gba", 0x003fe5f0, 0x00000a34
-	.section .rom.00402044, "ax"
-	.global BattleFx_IceBlockSheet
-BattleFx_IceBlockSheet:
-	.incbin "baserom.gba", 0x00402044, 0x00001588
 	.section .rom.005c4887, "ax"
 	.incbin "baserom.gba", 0x005c4887, 0x00000001
 	.section .rom.005c49e1, "ax"

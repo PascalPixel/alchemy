@@ -1,6 +1,7 @@
 	.ifndef GUARD_ED_ASM_H
 	.set GUARD_ED_ASM_H, 1
 	.set EDITION_INTERNATIONAL, 0
+	.set GAME_TLA, 0
 	.ifdef TBS_EDITION_JA
 	.ifdef EDITION_SELECTED
 	.error "multiple game editions selected"
@@ -48,6 +49,7 @@
 	.error "multiple game editions selected"
 	.endif
 	.set EDITION_SELECTED, 1
+	.set GAME_TLA, 1
 	.set EDITION_INTERNATIONAL, 0
 	.endif
 	.ifdef TLA_EDITION_EN
@@ -55,6 +57,7 @@
 	.error "multiple game editions selected"
 	.endif
 	.set EDITION_SELECTED, 1
+	.set GAME_TLA, 1
 	.set EDITION_INTERNATIONAL, 1
 	.endif
 	.ifdef TLA_EDITION_DE
@@ -62,6 +65,7 @@
 	.error "multiple game editions selected"
 	.endif
 	.set EDITION_SELECTED, 1
+	.set GAME_TLA, 1
 	.set EDITION_INTERNATIONAL, 1
 	.endif
 	.ifdef TLA_EDITION_ES
@@ -69,6 +73,7 @@
 	.error "multiple game editions selected"
 	.endif
 	.set EDITION_SELECTED, 1
+	.set GAME_TLA, 1
 	.set EDITION_INTERNATIONAL, 1
 	.endif
 	.ifdef TLA_EDITION_FR
@@ -76,6 +81,7 @@
 	.error "multiple game editions selected"
 	.endif
 	.set EDITION_SELECTED, 1
+	.set GAME_TLA, 1
 	.set EDITION_INTERNATIONAL, 1
 	.endif
 	.ifdef TLA_EDITION_IT
@@ -83,6 +89,7 @@
 	.error "multiple game editions selected"
 	.endif
 	.set EDITION_SELECTED, 1
+	.set GAME_TLA, 1
 	.set EDITION_INTERNATIONAL, 1
 	.endif
 	.endif

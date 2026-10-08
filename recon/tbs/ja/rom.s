@@ -1009,26 +1009,15 @@ Sound_ExtendedCommandTable:
 	.global Sound_PlayerSlots
 Sound_PlayerSlots:
 	.incbin "baserom.gba", 0x000f3624, 0x00000060
-	.section .rom.00317fa0, "ax"
-	.global Resource_BuildStamp
-Resource_BuildStamp:
-	.incbin "baserom.gba", 0x00317fa0, 0x00000010
-	.section .rom.0031b9e7, "ax"
-	.incbin "baserom.gba", 0x0031b9e7, 0x00000001
 	.section .rom.00322693, "ax"
 	.incbin "baserom.gba", 0x00322693, 0x00000001
 	.global Title_IntroGraphicsC
 Title_IntroGraphicsC:
 	.incbin "baserom.gba", 0x00322694, 0x000086f8
-	.section .rom.00332335, "ax"
-	.incbin "baserom.gba", 0x00332335, 0x00000003
+	.section .rom.00332338, "ax"
 	.global Title_IntroTilesB
 Title_IntroTilesB:
 	.incbin "baserom.gba", 0x00332338, 0x000002b4
-	.section .rom.00336a2e, "ax"
-	.incbin "baserom.gba", 0x00336a2e, 0x00000002
-	.section .rom.0034719e, "ax"
-	.incbin "baserom.gba", 0x0034719e, 0x00000002
 	.section .rom.0034a78e, "ax"
 	.incbin "baserom.gba", 0x0034a78e, 0x00000002
 	.section .rom.00356232, "ax"

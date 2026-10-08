@@ -990,30 +990,15 @@ Sound_ExtendedCommandTable:
 	.global Sound_PlayerSlots
 Sound_PlayerSlots:
 	.incbin "baserom.gba", 0x000fc624, 0x00000060
-	.section .unidentified.083203c8,"a"
-	.global Resource_BuildStamp
-Resource_BuildStamp:
-	.incbin "baserom.gba", 0x00320fa0, 0x00000010
-	.section .unidentified.083249e7,"a"
-	.incbin "baserom.gba", 0x003249e7, 0x00000001
 	.section .unidentified.0832b0a6,"a"
 	.incbin "baserom.gba", 0x0032b0a6, 0x00000002
 	.global Title_IntroGraphicsC
 Title_IntroGraphicsC:
 	.incbin "baserom.gba", 0x0032b0a8, 0x000086f8
-	.section .unidentified.083357f1,"a"
-	.incbin "baserom.gba", 0x003357f1, 0x00000003
-	.section .unidentified.08337101,"a"
-	.incbin "baserom.gba", 0x00337101, 0x00000003
-	.section .unidentified.0833ac05,"a"
-	.incbin "baserom.gba", 0x0033ac05, 0x00000003
+	.section .unidentified.0833ac08,"a"
 	.global Title_IntroTilesB
 Title_IntroTilesB:
 	.incbin "baserom.gba", 0x0033ac08, 0x000002b4
-	.section .unidentified.0833f2fe,"a"
-	.incbin "baserom.gba", 0x0033f2fe, 0x00000002
-	.section .unidentified.0834fa6e,"a"
-	.incbin "baserom.gba", 0x0034fa6e, 0x00000002
 	.section .unidentified.0835305e,"a"
 	.incbin "baserom.gba", 0x0035305e, 0x00000002
 	.section .unidentified.0835eb02,"a"

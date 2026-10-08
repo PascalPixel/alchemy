@@ -35,7 +35,6 @@
 #define BattleFx_RunBurstParticleMainObject ((void (*)(s32))BattleFx_RunBurstParticleMainObject)
 #define BattleFx_CallEffect03AndStop ((void (*)(s32))BattleFx_CallEffect03AndStop)
 #define BattleFx_RunEffect13Hook ((void (*)(s32))BattleFx_RunEffect13Hook)
-#define BattleFx_ResumeObject ((void (*)(s32))BattleFx_ResumeObject)
 
 #define FX_SLOT 56 // gWorkSlot[56] は gEffectWork
 

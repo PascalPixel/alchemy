@@ -599,9 +599,7 @@ void BattleFx_RenderAnimationMode0(s32 effect);
 #ifndef OWN_BattleFx_RenderMode5
 void BattleFx_RenderMode5(struct BattleEffectArgument *effect);
 #endif
-#ifndef OWN_BattleFx_ResumeObject
-void BattleFx_ResumeObject(void);
-#endif
+void BattleFx_ResumeObject(s32 id);
 void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor);
 #ifndef OWN_BattleFx_RunBurstParticleMainObject
 void BattleFx_RunBurstParticleMainObject(void);

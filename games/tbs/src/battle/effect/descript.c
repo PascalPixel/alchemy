@@ -27,7 +27,6 @@
 
 #define ObjectDispatch_ApplyValueToChildrenFar \
 	((void (*)(struct BattleActionObject *, s32))ObjectDispatch_ApplyValueToChildrenFar)
-#define BattleFx_ResumeObject ((void (*)(s32))BattleFx_ResumeObject)
 #define Field_TryJumpForward ((void (*)(void))Field_TryJumpForward)
 
 extern const s32 ObjectMotion_StepAngleScript[];

@@ -170,12 +170,6 @@ Map_LayeredScenes:
 	.global UiText_DrawGlyphArm
 UiText_DrawGlyphArm:
 	.incbin "baserom.gba", 0x000155d0, 0x000002f4
-	.section .rom.00021e12, "ax"
-	.incbin "baserom.gba", 0x00021e12, 0x00000002
-	.global Ui_RunSelectionScreen
-	.thumb_func
-Ui_RunSelectionScreen:
-	.incbin "baserom.gba", 0x00021e14, 0x000008fc
 	.section .rom.00027240, "ax"
 	.global Battle_CollectPartyCommands
 	.type Battle_CollectPartyCommands, %function
@@ -1741,12 +1735,20 @@ Palette_ChannelCurveLight:
 	.global Palette_ChannelCurveContrast
 Palette_ChannelCurveContrast:
 	.incbin "baserom.gba", 0x000f3a46, 0x000005ba
-	.section .rom.000f4168, "ax"
-	.global LuckyDice_Run
-	.type LuckyDice_Run, %function
-	.thumb_func
-LuckyDice_Run:
-	.incbin "baserom.gba", 0x000f4168, 0x00001e98
+	.section .rom.000f53dc, "ax"
+	.incbin "baserom.gba", 0x000f53dc, 0x00000020
+	.global Data_080f53fc
+Data_080f53fc:
+	.incbin "baserom.gba", 0x000f53fc, 0x00000004
+	.global Data_080f5400
+Data_080f5400:
+	.incbin "baserom.gba", 0x000f5400, 0x00000008
+	.global Data_080f5408
+Data_080f5408:
+	.incbin "baserom.gba", 0x000f5408, 0x00000012
+	.global Data_080f541a
+Data_080f541a:
+	.incbin "baserom.gba", 0x000f541a, 0x00000be6
 	.section .rom.000f8708, "ax"
 	.global ReelGame_SparkCellOffsets
 ReelGame_SparkCellOffsets:

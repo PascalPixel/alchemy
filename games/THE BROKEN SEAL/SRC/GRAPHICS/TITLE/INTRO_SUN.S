@@ -4,9 +4,8 @@
 Title_IntroGraphicsA:
 	.incbin "GRAPHICS/TITLE/INTRO_SUN_1.gbapal"
 	.incbin "GRAPHICS/TITLE/INTRO_SUN.parts.plz"
-	/* PACKER: left in the packer's buffer by Ui_WindowTiles at +0x1177 */
 	.ifeq EDITION_INTERNATIONAL
-	.byte 0x43
+	.byte 0x43	@ PACKER: left in the buffer by Ui_WindowTiles+0x1177
 	.else
-	.byte 0x44
+	.byte 0x44	@ PACKER: left in the buffer by Ui_WindowTiles+0x1177
 	.endif

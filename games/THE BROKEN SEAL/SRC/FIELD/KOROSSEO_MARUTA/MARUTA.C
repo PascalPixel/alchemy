@@ -174,7 +174,13 @@ void ColossoLogRollingStage_ConfigureGridRegion(void)
 
 void ColossoLogRollingStage_ConfigurePrimaryObjects(void)
 {
+#ifdef MODERN
+    // modern GCC holds one type for a name in a file
+    extern void Object_SetPosition_modern(PrimaryStageObject *, s32, s32, s32) __asm__("Object_SetPosition");
+#define Object_SetPosition Object_SetPosition_modern
+#else
     extern void Object_SetPosition(PrimaryStageObject *, s32, s32, s32);
+#endif
 
     PrimaryStageObject *object;
 
@@ -196,6 +202,9 @@ void ColossoLogRollingStage_ConfigurePrimaryObjects(void)
     Engine_MapCopyCellAttributes(15, 12, 1, 1, 13, 12);
     Engine_MapCopyCellAttributes(14, 12, 1, 1, 9, 12);
 }
+#ifdef MODERN
+#undef Object_SetPosition
+#endif
 
 void FieldScene_RunClosingAuxiliarySequence(void)
 {

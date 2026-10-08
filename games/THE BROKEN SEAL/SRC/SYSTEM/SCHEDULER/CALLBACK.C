@@ -578,3 +578,17 @@ void Graphics_FillWordStreamWithF000(u32 count)
         *dst++ = 0xf000;
     gDebugTextCursor = dst;
 }
+
+#ifdef MODERN
+// Camelot's compiler copied the task inline; a modern one calls memcpy,
+// and the game links no C library
+void *memcpy(void *destination, const void *source, unsigned long size)
+{
+    u8 *to = destination;
+    const u8 *from = source;
+
+    while (size-- != 0)
+        *to++ = *from++;
+    return destination;
+}
+#endif

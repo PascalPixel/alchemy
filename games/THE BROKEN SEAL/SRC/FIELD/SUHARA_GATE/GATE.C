@@ -138,8 +138,20 @@ s32 SuharaGate_EnterScene(void)
 
 void Scene_RunScene3c3SequenceC(void)
 {
+#ifdef MODERN
+    // modern GCC holds one type for a name in a file
+    extern u8 gCell_modern[] __asm__("gCell");
+#define gCell gCell_modern
+#else
     extern u8 gCell[];
+#endif
+#ifdef MODERN
+    // modern GCC holds one type for a name in a file
+    extern u8 gWork_modern[] __asm__("gWork");
+#define gWork gWork_modern
+#else
     extern u8 gWork[];
+#endif
 
     s32 arg;
     s32 v5;
@@ -155,6 +167,12 @@ void Scene_RunScene3c3SequenceC(void)
     Actor_CenterAndWalk(0, 3, -16);
     Engine_EventRequestExit(arg);
 }
+#ifdef MODERN
+#undef gCell
+#endif
+#ifdef MODERN
+#undef gWork
+#endif
 
 void Dialogue_ShowMessages8fbAnd8fc(void)
 {
@@ -190,7 +208,13 @@ void Scene_RunPrimarySequence(void)
 
 void Scene_RunScene3c3SequenceA(void)
 {
+#ifdef MODERN
+    // modern GCC holds one type for a name in a file
+    extern u8 gWork_modern[] __asm__("gWork");
+#define gWork gWork_modern
+#else
     extern u8 gWork[];
+#endif
 
     u32 i;
     struct FieldActor *record;
@@ -294,6 +318,9 @@ void Scene_RunScene3c3SequenceA(void)
     GameFlag_Set(0x89f);
     Engine_EventEnd();
 }
+#ifdef MODERN
+#undef gWork
+#endif
 
 void Scene_RunActorNinePromptDialogue(void)
 {

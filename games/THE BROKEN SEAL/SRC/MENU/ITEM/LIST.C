@@ -36,7 +36,9 @@ s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
 void Audio_PlayCue(s32 cue);
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
+#endif
 
 #define LIST_PAGE_SIZE 5
 

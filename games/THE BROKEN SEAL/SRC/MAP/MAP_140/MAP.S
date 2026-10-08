@@ -60,3 +60,4 @@ Field_Map140:
 .LField_Map140_MARKERS:
 	.incbin "MAP/MAP_000/MARKERS.table"
 	.endif
+	.balign 4, 0

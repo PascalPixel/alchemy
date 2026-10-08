@@ -29,3 +29,4 @@ Field_Map052:
 	.balign 4, 0
 .LField_Map052_MARKERS:
 	.incbin "MAP/MAP_052/MARKERS.table"
+	.balign 4, 0

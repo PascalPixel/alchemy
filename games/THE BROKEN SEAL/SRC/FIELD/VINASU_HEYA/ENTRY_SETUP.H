@@ -314,7 +314,9 @@ typedef struct {
 
 extern u32 StagedActor_DirectionSteps[];
 extern u8 gMapCellBuffer[];
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
+#endif
 extern u8 gVinasuHeyaPrimaryTable[];
 
 void Engine_ObjectCommitPosition();

@@ -307,11 +307,11 @@ Resource_DirectoryTable:
 	resource , Monster_RedWarriorSprites
 	resource , Monster_SwordGirlSprites
 	resource Map001, Field_Map001
-	resource , Resource_Data129
-	resource , Resource_Data12A
-	resource , Resource_Data12B
-	resource , Resource_Data12C
-	resource , Resource_Data12D
+	resource , Tileset_BlankPalette
+	resource , Tileset_BlankTilesA
+	resource , Tileset_BlankTilesB
+	resource , Tileset_BlankTilesC
+	resource , Tileset_BlankTilesD
 	resource , Field_Map000
 	resource , Tileset_Set00Palette
 	resource , Tileset_Set00TilesA
@@ -449,7 +449,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set21TilesA
 	resource , Tileset_Set21TilesB
 	resource , Tileset_Set21TilesC
-	resource , Resource_Data1B7
+	resource , Tileset_Set21TilesD
 	resource , Field_Map029
 	resource , Tileset_Set22Palette
 	resource , Tileset_Set22TilesA
@@ -484,7 +484,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set28Palette
 	resource , Tileset_Set28TilesA
 	resource , Tileset_Set28TilesB
-	resource , Resource_Data1DA
+	resource , Tileset_Set28TilesC
 	resource , Tileset_Set28TilesD
 	resource , Field_Map037
 	resource , Tileset_Set29Palette
@@ -842,53 +842,53 @@ Resource_DirectoryTable:
 	resource , Field_Map171
 	resource , Tileset_Palette53
 	resource , Field_Map172
-	resource , Resource_Data340
-	resource , Resource_Data341
-	resource , Resource_Data342
-	resource , Resource_Data343
-	resource , Resource_Data344
+	resource , Tileset_Set68Palette
+	resource , Tileset_Set68TilesA
+	resource , Tileset_Set68TilesB
+	resource , Tileset_Set68TilesC
+	resource , Tileset_Set68TilesD
 	resource , Field_Map173
-	resource , Resource_Data346
-	resource , Resource_Data347
-	resource , Resource_Data348
-	resource , Resource_Data349
-	resource , Resource_Data34A
+	resource , Tileset_Set69Palette
+	resource , Tileset_Set69TilesA
+	resource , Tileset_Set69TilesB
+	resource , Tileset_Set69TilesC
+	resource , Tileset_Set69TilesD
 	resource , Field_Map174
-	resource , Resource_Data34C
-	resource , Resource_Data34D
-	resource , Resource_Data34E
-	resource , Resource_Data34F
-	resource , Resource_Data350
+	resource , Tileset_Set70Palette
+	resource , Tileset_Set70TilesA
+	resource , Tileset_Set70TilesB
+	resource , Tileset_Set70TilesC
+	resource , Tileset_Set70TilesD
 	resource , Field_Map175
-	resource , Resource_Data352
-	resource , Resource_Data353
-	resource , Resource_Data354
-	resource , Resource_Data355
-	resource , Resource_Data356
+	resource , Tileset_Set71Palette
+	resource , Tileset_Set71TilesA
+	resource , Tileset_Set71TilesB
+	resource , Tileset_Set71TilesC
+	resource , Tileset_Set71TilesD
 	resource , Field_Map176
-	resource , Resource_Data358
-	resource , Resource_Data359
-	resource , Resource_Data35A
-	resource , Resource_Data35B
-	resource , Resource_Data35C
+	resource , Tileset_Set72Palette
+	resource , Tileset_Set72TilesA
+	resource , Tileset_Set72TilesB
+	resource , Tileset_Set72TilesC
+	resource , Tileset_Set72TilesD
 	resource , Field_Map177
-	resource , Resource_Data35E
-	resource , Resource_Data35F
-	resource , Resource_Data360
-	resource , Resource_Data361
-	resource , Resource_Data362
+	resource , Tileset_Set73Palette
+	resource , Tileset_Set73TilesA
+	resource , Tileset_Set73TilesB
+	resource , Tileset_Set73TilesC
+	resource , Tileset_Set73TilesD
 	resource , Field_Map178
-	resource , Resource_Data364
-	resource , Resource_Data365
-	resource , Resource_Data366
-	resource , Resource_Data367
-	resource , Resource_Data368
+	resource , Tileset_Set74Palette
+	resource , Tileset_Set74TilesA
+	resource , Tileset_Set74TilesB
+	resource , Tileset_Set74TilesC
+	resource , Tileset_Set74TilesD
 	resource , Field_Map179
-	resource , Resource_Data36A
-	resource , Resource_Data36B
-	resource , Resource_Data36C
-	resource , Resource_Data36D
-	resource , Resource_Data36E
+	resource , Tileset_Set75Palette
+	resource , Tileset_Set75TilesA
+	resource , Tileset_Set75TilesB
+	resource , Tileset_Set75TilesC
+	resource , Tileset_Set75TilesD
 	resource , Resource_Overlay36F
 	resource , Resource_Overlay370
 	resource , Resource_Overlay371

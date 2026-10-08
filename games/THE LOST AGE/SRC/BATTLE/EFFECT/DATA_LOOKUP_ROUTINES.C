@@ -100,6 +100,8 @@ struct SceneAreaNameRule {
     s32 area_name_index;
 };
 
+extern const struct SceneAreaNameRule Scene_AreaNameRules[];
+
 
 
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)

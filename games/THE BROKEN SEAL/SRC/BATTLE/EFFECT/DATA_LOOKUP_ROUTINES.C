@@ -80,6 +80,8 @@ struct SceneInteractionEntry
 	s16 result;			// 曲
 };
 
+extern const struct SceneInteractionEntry Scene_InteractionRuleTable[];
+
 //--------------------------------------------------------------------------
 // シーンと入口から、そのシーンの曲を決める
 //--------------------------------------------------------------------------
@@ -124,6 +126,8 @@ struct SceneAreaNameRule
 	u16 use_scene_id : 1; // 1: id はシーン番号、0: グループ番号
 	s32 area_name_index;  // 地名番号
 };
+
+extern const struct SceneAreaNameRule Scene_AreaNameRules[];
 
 //--------------------------------------------------------------------------
 // シーンと入口から地名の番号を返す（見つからなければ 0）

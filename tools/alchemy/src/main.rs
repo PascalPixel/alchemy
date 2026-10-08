@@ -31,6 +31,7 @@ mod keep;
 mod label;
 mod ld_map;
 mod merge;
+mod modern;
 mod objects;
 mod permute;
 mod process;

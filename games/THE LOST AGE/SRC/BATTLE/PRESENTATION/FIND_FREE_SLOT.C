@@ -21,8 +21,12 @@ s32 Resource_FindFreeSlot(s32 key)
         /* FAKEMATCH: the plain order builds the 0x1ff mask before the load. */
         __asm__("");
         if (key == (entry & 0x1ff)) {
+#ifdef MODERN
+            value = Resource_SlotAssignments[index];
+#else
             /* FAKEMATCH: rereads the entry as [table, index]; cse otherwise swaps the operands */
             asm("ldrh %0, [%1, %2]" : "=r"(value) : "r"(Resource_SlotAssignments), "r"(index * 2));
+#endif
             result = value >> 9;
             goto done;
         }

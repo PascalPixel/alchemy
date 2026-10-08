@@ -2,3 +2,4 @@
 	.global Tileset_Set04TilesC
 Tileset_Set04TilesC:
 	.incbin "GRAPHICS/TILESET/SET_04/TILES_C.4bpp.mtf"
+	.byte 0x86, 0xb4	@ PACKER: left in the buffer by Tileset_Set04TilesB+0x15fa

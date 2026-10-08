@@ -14,3 +14,4 @@ Tileset_Set09Palette:
 	.endif
 	.endif
 	.endif
+	.byte 0xd4	@ PACKER: left in the buffer by Field_Map010+0x133

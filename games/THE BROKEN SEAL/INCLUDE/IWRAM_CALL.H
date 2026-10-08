@@ -3,6 +3,24 @@
 
 #include "TYPES.H"
 
+#ifdef MODERN
+// modern GCC refuses a clobber of factor's own r1; the routine still
+// overwrites it, so here it is an output
+static inline s32 Iwram_Call2(s32 left, s32 right, void *routine)
+{
+    register s32 result __asm__("r0") = left;
+    register s32 factor __asm__("r1") = right;
+
+    __asm__ volatile(
+        ".align 2\n\t"
+        "mov ip, pc\n\t"
+        "bx %2\n\t"
+        : "+r"(result), "+r"(factor)
+        : "r"(routine)
+        : "r2", "ip", "cc");
+    return result;
+}
+#else
 static __inline__ s32 Iwram_Call2(s32 left, s32 right, void *routine)
 {
     register s32 result __asm__("r0") = left;
@@ -17,6 +35,7 @@ static __inline__ s32 Iwram_Call2(s32 left, s32 right, void *routine)
         : "r1", "r2", "ip", "cc");
     return result;
 }
+#endif
 
 extern u8 IwramMulQ16ReturnIp[];
 

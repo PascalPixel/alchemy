@@ -106,11 +106,26 @@ pub(crate) fn link(
     name: &str,
     keep_going: bool,
 ) -> Result<Linked, String> {
+    link_with(root, target, script, output, name, keep_going, None)
+}
+
+/// link, through the matching compilers or, given `modern`, through a modern
+/// GCC (`alchemy build modern`): the same objects, assets and scaffold.
+pub(crate) fn link_with(
+    root: &Path,
+    target: DecompTarget,
+    script: &Path,
+    output: &Path,
+    name: &str,
+    keep_going: bool,
+    modern: Option<&crate::modern::Modern>,
+) -> Result<Linked, String> {
     prefer_installed_binutils();
     let output = root.join(output);
     fs::create_dir_all(&output).map_err(|error| error.to_string())?;
     let index = Index::open(&output);
-    let mut linked = link_indexed(root, target, script, &output, name, keep_going, &index);
+    let build = Build { target, modern };
+    let mut linked = link_indexed(root, build, script, &output, name, keep_going, &index);
     if let Ok(linked) = &mut linked {
         linked.steps = index.made.load(Ordering::Relaxed);
     }
@@ -118,9 +133,15 @@ pub(crate) fn link(
     linked
 }
 
+#[derive(Clone, Copy)]
+struct Build<'a> {
+    target: DecompTarget,
+    modern: Option<&'a crate::modern::Modern>,
+}
+
 fn link_indexed(
     root: &Path,
-    target: DecompTarget,
+    build: Build,
     script: &Path,
     output: &Path,
     name: &str,
@@ -136,6 +157,7 @@ fn link_indexed(
     if sources.is_empty() {
         return Err(format!("{} lists no objects", script.display()));
     }
+    let target = build.target;
     base_rom(root, target, output)?;
     prepare_assets(root, target, &sources, output, index)?;
     crate::build_text::build(root, target, output)?;
@@ -148,7 +170,7 @@ fn link_indexed(
             streamed.push(source.clone());
         }
     }
-    compile_all(root, target, &direct, output, index)?;
+    compile_all(root, build, &direct, output, index)?;
     let objects: Vec<PathBuf> = sources
         .iter()
         .map(|source| output.join("obj").join(source).with_extension("o"))
@@ -161,25 +183,29 @@ fn link_indexed(
     let mut symbols = None;
     if !streamed.is_empty() {
         let pass = symbols_pass(
-            root, script, &text, output, name, &sources, &streamed, index,
+            root, build, script, &text, output, name, &sources, &streamed, index,
         )?;
         let table = command(&["arm-none-eabi-nm", &pass.to_string_lossy()], root)?;
         let table = format!("{:x}", Sha256::digest(table.as_bytes()));
         for source in &streamed {
             linked_objects.extend(build_overlay_streams(
-                root, target, source, output, &pass, &table, index,
+                root, build, source, output, &pass, &table, index,
             )?);
         }
-        compile_all(root, target, &streamed, output, index)?;
+        compile_all(root, build, &streamed, output, index)?;
         symbols = Some(pass);
     }
     linked_objects.sort();
     linked_objects.dedup();
-    crate::gate::ids::check(Path::new(target.game_dir()), &linked_objects)?;
+    // The modern compiler folds ids into neighbouring constants, which says
+    // nothing about the source: the id gate judges the matching build only.
+    if build.modern.is_none() {
+        crate::gate::ids::check(Path::new(target.game_dir()), &linked_objects)?;
+    }
     let elf = output.join(format!("{name}.elf"));
     let map = output.join(format!("{name}.map"));
     let image = output.join(format!("{name}.gba"));
-    let mut arguments = link_command(root, script, &text, &objects, &elf);
+    let mut arguments = link_command(root, build, script, &text, &objects, &elf);
     arguments.splice(
         1..1,
         ["-Map".to_owned(), map.to_string_lossy().into_owned()],
@@ -188,10 +214,10 @@ fn link_indexed(
         arguments.push("--noinhibit-exec".into());
     }
     let products = [image.clone(), elf.clone(), map.clone()];
-    let key = link_key(root, index, &arguments, &text, &objects)?;
+    let key = link_key(root, build, index, &arguments, &text, &objects)?;
     if !index.fresh(&products, &key) {
         index.forget(&image);
-        if let Err(error) = command(&arguments, root) {
+        if let Err(error) = run_link(build, &arguments, output, name) {
             if !keep_going || !elf.is_file() {
                 return Err(error);
             }
@@ -223,7 +249,7 @@ fn link_indexed(
     if let Some(pass) = &symbols {
         same_addresses(root, pass, &elf)?;
     }
-    if links_game_code(&sources, &objects)? {
+    if build.modern.is_none() && links_game_code(&sources, &objects)? {
         checked_entries(root, target, &elf)?;
     }
     for directory in asset_directories(output) {
@@ -241,6 +267,7 @@ const LIBGCC: &str = "tools/out/compiler-runtime/libgcc.a";
 
 fn link_key(
     root: &Path,
+    build: Build,
     index: &Index,
     arguments: &[String],
     text: &str,
@@ -256,6 +283,9 @@ fn link_key(
             .row(object)
             .ok_or_else(|| format!("{} was not built", object.display()))?;
         hasher.update(row.digest.as_bytes());
+    }
+    if let Some(modern) = build.modern {
+        hasher.update(modern.signature.as_bytes());
     }
     hasher.update(fs::read(root.join(LIBGCC)).unwrap_or_default());
     Ok(format!("{:x}", hasher.finalize()))
@@ -446,6 +476,7 @@ fn carries_code(source: &Path, object: &[u8]) -> Result<bool, String> {
 
 fn link_command(
     root: &Path,
+    build: Build,
     script: &Path,
     text: &str,
     objects: &[PathBuf],
@@ -464,7 +495,10 @@ fn link_command(
             .iter()
             .map(|path| path.to_string_lossy().into_owned()),
     );
-    if text.contains("libgcc.a:") {
+    if let Some(modern) = build.modern {
+        arguments.insert(1, "--orphan-handling=warn".into());
+        arguments.extend(modern.libraries.iter().map(|path| path.to_string_lossy().into_owned()));
+    } else if text.contains("libgcc.a:") {
         arguments.push(
             root.join("tools/out/compiler-runtime/libgcc.a")
                 .to_string_lossy()
@@ -474,9 +508,20 @@ fn link_command(
     arguments
 }
 
+fn run_link(build: Build, arguments: &[String], output: &Path, name: &str) -> Result<(), String> {
+    let root = crate::compiler::routing::root();
+    if build.modern.is_none() {
+        return command(arguments, root).map(drop);
+    }
+    let warnings = crate::process::run_keeping_stderr(arguments, root)?;
+    let path = output.join(format!("{name}.link-warnings"));
+    fs::write(&path, warnings).map_err(|error| format!("{}: {error}", path.display()))
+}
+
 #[allow(clippy::too_many_arguments)]
 fn symbols_pass(
     root: &Path,
+    build: Build,
     script: &Path,
     text: &str,
     output: &Path,
@@ -493,9 +538,9 @@ fn symbols_pass(
         .map(|source| output.join("obj").join(source).with_extension("o"))
         .collect();
     let elf = pass.join(format!("{name}.elf"));
-    let mut arguments = link_command(root, script, text, &objects, &elf);
+    let mut arguments = link_command(root, build, script, text, &objects, &elf);
     arguments.insert(1, "--unresolved-symbols=ignore-all".to_owned());
-    let key = link_key(root, index, &arguments, text, &objects)?;
+    let key = link_key(root, build, index, &arguments, text, &objects)?;
     if index.fresh(&[elf.clone()], &key) {
         return Ok(elf);
     }
@@ -782,18 +827,19 @@ fn base_rom(root: &Path, target: DecompTarget, output: &Path) -> Result<(), Stri
 
 fn compile_all(
     root: &Path,
-    target: DecompTarget,
+    build: Build,
     sources: &[PathBuf],
     output: &Path,
     index: &Index,
 ) -> Result<Vec<PathBuf>, String> {
+    let target = build.target;
     let objects: Vec<PathBuf> = sources
         .iter()
         .map(|source| output.join("obj").join(source).with_extension("o"))
         .collect();
     let pairs: Vec<(&PathBuf, &PathBuf)> = sources.iter().zip(&objects).collect();
     let plans = parallel(&pairs, |(source, object)| {
-        plan(root, target, source, object, index)
+        plan(root, build, source, object, index)
             .map_err(|error| format!("{}: {error}", source.display()))
     })?;
     let stale: Vec<Plan> = plans.into_iter().flatten().collect();
@@ -822,15 +868,17 @@ struct Plan {
     steps: Vec<Vec<String>>,
     assembly: Option<(PathBuf, String)>,
     scratch: Vec<PathBuf>,
+    warnings: Option<PathBuf>,
 }
 
 fn plan(
     root: &Path,
-    target: DecompTarget,
+    build: Build,
     source: &Path,
     object: &Path,
     index: &Index,
 ) -> Result<Option<Plan>, String> {
+    let target = build.target;
     fs::create_dir_all(object.parent().expect("object directory"))
         .map_err(|error| error.to_string())?;
     let source_text = source.to_string_lossy().into_owned();
@@ -840,6 +888,7 @@ fn plan(
     hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
     let mut assembly = None;
     let mut scratch = Vec::new();
+    let mut warnings = None;
     let steps = if extension == Some("MID") {
         let midi = fs::read(root.join(source)).map_err(|error| error.to_string())?;
         let text = ags::sound::sequence_assembly(&midi)?;
@@ -851,7 +900,16 @@ fn plan(
         vec![step]
     } else if matches!(extension, Some("C" | "c")) {
         let preprocessed = object.with_extension("i");
-        let steps = c_steps(target, source, object)?;
+        // Nintendo's library C keeps its own compiler in the modern build too.
+        let modern = build.modern.filter(|_| crate::modern::compiles(target, source));
+        let steps = match modern {
+            Some(modern) => {
+                hasher.update(modern.signature.as_bytes());
+                warnings = Some(object.with_extension("warnings"));
+                modern.c_steps(target, source, object)
+            }
+            None => c_steps(target, source, object)?,
+        };
         let preprocess = preprocessor_only(&steps, &source_text, &preprocessed)?;
         command(&preprocess, root)?;
         hasher.update(portable(
@@ -877,7 +935,9 @@ fn plan(
         hasher.update(portable(root, step.join("\0").as_bytes()));
     }
     let key = format!("{:x}", hasher.finalize());
-    if index.fresh(&[object.to_path_buf()], &key) {
+    let mut products = vec![object.to_path_buf()];
+    products.extend(warnings.clone());
+    if index.fresh(&products, &key) {
         remove_scratch(&scratch);
         return Ok(None);
     }
@@ -888,6 +948,7 @@ fn plan(
         steps,
         assembly,
         scratch,
+        warnings,
     }))
 }
 
@@ -896,13 +957,18 @@ fn run_plan(root: &Path, plan: &Plan, index: &Index) -> Result<(), String> {
     if let Some((path, text)) = &plan.assembly {
         fs::write(path, text).map_err(|error| error.to_string())?;
     }
-    let ran = plan
-        .steps
-        .iter()
-        .try_for_each(|step| command(step, root).map(drop));
+    let ran = plan.steps.iter().try_for_each(|step| match &plan.warnings {
+        // A modern compile keeps its warnings beside its object.
+        Some(path) => crate::process::run_keeping_stderr(step, root).and_then(|text| {
+            fs::write(path, text).map_err(|error| format!("{}: {error}", path.display()))
+        }),
+        None => command(step, root).map(drop),
+    });
     remove_scratch(&plan.scratch);
     ran?;
-    index.record(&[plan.object.clone()], &plan.key, Vec::new())
+    let mut products = vec![plan.object.clone()];
+    products.extend(plan.warnings.clone());
+    index.record(&products, &plan.key, Vec::new())
 }
 
 fn remove_scratch(paths: &[PathBuf]) {
@@ -1196,6 +1262,16 @@ pub(crate) fn stream_ids(
     target: DecompTarget,
     source: &Path,
 ) -> Result<Vec<String>, String> {
+    stream_ids_in(root, target, source, &root.join(target.output_dir))
+}
+
+/// stream_ids, reading generated includes from the build directory `output`.
+fn stream_ids_in(
+    root: &Path,
+    target: DecompTarget,
+    source: &Path,
+    output: &Path,
+) -> Result<Vec<String>, String> {
     if !matches!(
         source.extension().and_then(|ext| ext.to_str()),
         Some("S" | "s")
@@ -1207,11 +1283,10 @@ pub(crate) fn stream_ids(
     if !text.contains("overlays/resource_") {
         return Ok(Vec::new());
     }
-    let output = root.join(target.output_dir);
     let selected = crate::compiler::assembly_source::selected_includes(
         &text,
         target.edition_define,
-        &[root, &output],
+        &[root, output],
     )
     .map_err(|error| format!("{}: {error}", source.display()))?;
     let selected = crate::compiler::assembly_source::without_comments(&selected);
@@ -1288,7 +1363,7 @@ fn stream_paths(
     source: &Path,
     output: &Path,
 ) -> Result<Vec<PathBuf>, String> {
-    Ok(stream_ids(root, target, source)?
+    Ok(stream_ids_in(root, target, source, output)?
         .iter()
         .map(|id| output.join("overlays").join(format!("resource_{id}.lz")))
         .collect())
@@ -1322,14 +1397,15 @@ fn target_assembly_command(
 #[allow(clippy::too_many_arguments)]
 fn build_overlay_streams(
     root: &Path,
-    target: DecompTarget,
+    build: Build,
     source: &Path,
     output: &Path,
     symbols: &Path,
     table: &str,
     index: &Index,
 ) -> Result<Vec<(PathBuf, PathBuf)>, String> {
-    let ids = &stream_ids(root, target, source)?;
+    let target = build.target;
+    let ids = &stream_ids_in(root, target, source, output)?;
     let directory = output.join("overlays");
     fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
     let mut linked = Vec::with_capacity(ids.len());
@@ -1355,11 +1431,11 @@ fn build_overlay_streams(
     let mut asset_sources = sources.clone();
     asset_sources.extend(ids.iter().filter_map(|id| overlay_data(root, target, id)));
     prepare_assets(root, target, &asset_sources, output, index)?;
-    compile_all(root, target, &sources, output, index)?;
+    compile_all(root, build, &sources, output, index)?;
     parallel(&linked, |(id, script, objects)| {
         let overlay = Overlay {
             root,
-            target,
+            build,
             output,
             id,
             script,
@@ -1386,7 +1462,7 @@ fn build_overlay_streams(
 
 struct Overlay<'a> {
     root: &'a Path,
-    target: DecompTarget,
+    build: Build<'a>,
     output: &'a Path,
     id: &'a str,
     script: &'a Path,
@@ -1399,7 +1475,7 @@ struct Overlay<'a> {
 fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
     let Overlay {
         root,
-        target,
+        build,
         output,
         id,
         script,
@@ -1408,6 +1484,19 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
         table,
         directory,
     } = *overlay;
+    let target = build.target;
+    let modern_script;
+    let script = match build.modern {
+        Some(_) => {
+            modern_script = crate::modern::overlay_script(root, script, directory, id)?;
+            modern_script.as_path()
+        }
+        None => script,
+    };
+    let libraries = match build.modern {
+        Some(modern) => modern.libraries.clone(),
+        None => vec![PathBuf::from(LIBGCC)],
+    };
     let listing = overlay_data(root, target, id);
     let path = |name: String| directory.join(name).to_string_lossy().into_owned();
     let object = path(format!("resource_{id}_overlay.o"));
@@ -1417,7 +1506,6 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
     let stream = directory.join(format!("resource_{id}.lz"));
     let own_symbols = path(format!("resource_{id}.symbols.elf"));
     let names = path(format!("resource_{id}.own"));
-    let library = PathBuf::from(LIBGCC);
     let mut link: Vec<String> = [
         "arm-none-eabi-ld",
         "--no-warn-mismatch",
@@ -1439,7 +1527,7 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
             .iter()
             .map(|path| path.to_string_lossy().into_owned()),
     );
-    link.push(library.to_string_lossy().into_owned());
+    link.extend(libraries.iter().map(|path| path.to_string_lossy().into_owned()));
     let empty = Path::new("/dev/null");
     let assemble = target_assembly_command(
         target,
@@ -1452,7 +1540,15 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
     for step in [&assemble, &link] {
         hasher.update(portable(root, step.join("\0").as_bytes()));
     }
-    hasher.update(fs::read(root.join(&library)).map_err(|error| format!("{LIBGCC}: {error}"))?);
+    for library in &libraries {
+        hasher.update(
+            fs::read(root.join(library))
+                .map_err(|error| format!("{}: {error}", library.display()))?,
+        );
+    }
+    if let Some(modern) = build.modern {
+        hasher.update(modern.signature.as_bytes());
+    }
     hasher.update(table.as_bytes());
     hasher.update(format!("{OVERLAY_MACHINE:?}").as_bytes());
     hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
@@ -1461,7 +1557,7 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
     let key = format!("{:x}", hasher.finalize());
     let products = overlay_products(directory, id);
     if index.fresh(&products, &key) {
-        return overlay_gate(&elf, &map);
+        return overlay_gate(&elf, &map, build.modern.is_some());
     }
     index.forget(&stream);
     if let Some(listing) = &listing {
@@ -1473,7 +1569,7 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
     let mut own = BTreeSet::new();
     for path in std::iter::once(PathBuf::from(&object))
         .chain(objects.iter().cloned())
-        .chain(std::iter::once(library))
+        .chain(libraries.iter().cloned())
     {
         let table = command(
             &[
@@ -1524,7 +1620,7 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
     );
     let _ = fs::remove_file(&names);
     stripped?;
-    overlay_gate(&elf, &map)?;
+    overlay_gate(&elf, &map, build.modern.is_some())?;
     command(
         &["arm-none-eabi-objcopy", "-O", "binary", &elf, &image],
         root,
@@ -1627,8 +1723,11 @@ fn overlay_script_inputs(
     Ok(())
 }
 
-fn overlay_gate(elf: &str, map: &str) -> Result<(), String> {
+fn overlay_gate(elf: &str, map: &str, modern: bool) -> Result<(), String> {
     let image = fs::read(elf).map_err(|error| format!("{elf}: {error}"))?;
+    if modern {
+        return crate::gate::overlay::check_modern(&image);
+    }
     let map = fs::read_to_string(map).map_err(|error| format!("{map}: {error}"))?;
     crate::gate::overlay::check(&image, &map)
 }
@@ -1668,7 +1767,7 @@ pub(crate) fn preprocessor_only(
     let mut arguments = first.iter();
     while let Some(argument) = arguments.next() {
         match argument.as_str() {
-            "-S" => {}
+            "-S" | "-c" => {}
             "-o" => {
                 arguments.next();
             }

@@ -294,6 +294,14 @@ enum {
     FLAG_ARRIVAL_EVENT_PENDING = 0x12f
 };
 
+#ifdef MODERN
+// FIELD.H and GAME_FLAGS.H declare the engine's GameFlag_IsSet, _Set and
+// _Clear; modern GCC refuses these static ones under the same names, so the
+// scene layer's take their own
+#define GameFlag_IsSet FieldEvent_GameFlagIsSet
+#define GameFlag_Set FieldEvent_GameFlagSet
+#define GameFlag_Clear FieldEvent_GameFlagClear
+#endif
 static inline s32 GameFlag_IsSet(s32 flag)
 {
     return Engine_GameFlagIsSet(flag);

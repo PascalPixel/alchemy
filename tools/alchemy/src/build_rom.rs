@@ -226,8 +226,8 @@ fn link_indexed(
     if links_game_code(&sources, &objects)? {
         checked_entries(root, target, &elf)?;
     }
-    for directory in ["GRAPHICS", "MAP", "SOUND", "COMMON"] {
-        let _ = fs::remove_dir_all(output.join(directory));
+    for directory in asset_directories(output) {
+        let _ = fs::remove_dir_all(directory);
     }
     Ok(Linked {
         steps: 0,
@@ -981,18 +981,58 @@ fn asset_files(root: &Path, source: &Path) -> Vec<String> {
     let Ok(text) = fs::read_to_string(root.join(source)) else {
         return Vec::new();
     };
-    let pattern = regex::Regex::new(
-        r#"(?m)^\s*\.(?:incbin\s+"((?:COMMON/)?SOUND/[A-Za-z0-9_./]+\.bin)"|(?:incbin|include)\s+"((?:COMMON/)?(?:GRAPHICS|MAP)/[A-Za-z0-9_./]+)")"#,
-    ).expect("static pattern");
-    let (mut sound, mut graphics) = (Vec::new(), Vec::new());
-    for capture in pattern.captures_iter(&text) {
+    asset_names(&text)
+}
+
+/// The directories of built assets in an edition's output: one per SRC
+/// module (GRAPHICS, MAP, BATTLE ...), SOUND and COMMON, named in upper case
+/// as the modules are, beside the build's own lower-case folders.
+fn asset_directories(output: &Path) -> Vec<PathBuf> {
+    let Ok(entries) = fs::read_dir(output) else {
+        return Vec::new();
+    };
+    entries
+        .filter_map(Result::ok)
+        .filter(|entry| entry.file_type().is_ok_and(|kind| kind.is_dir()))
+        .filter(|entry| asset_root(&entry.file_name().to_string_lossy()))
+        .map(|entry| entry.path())
+        .collect()
+}
+
+fn asset_root(name: &str) -> bool {
+    name.bytes().next().is_some_and(|byte| byte.is_ascii_uppercase())
+        && name
+            .bytes()
+            .all(|byte| byte.is_ascii_uppercase() || byte.is_ascii_digit() || byte == b'_')
+}
+
+/// The build products a source names: sound samples first, then every
+/// `.incbin` or `.include` under GRAPHICS/ or MAP/ and every recipe in any
+/// other module of SRC (BATTLE, GAME, MENU ...), optionally under COMMON/.
+/// Paths that start in lower case (games/..., text/..., baserom.gba) and
+/// other modules' names that are not a recipe (BATTLE/X.INC) are not assets.
+fn asset_names(text: &str) -> Vec<String> {
+    static PATTERN: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    let pattern = PATTERN.get_or_init(|| {
+        regex::Regex::new(
+            r#"(?m)^\s*\.(?:incbin\s+"((?:COMMON/)?SOUND/[A-Za-z0-9_./]+\.bin)"|(?:incbin|include)\s+"((?:COMMON/)?[A-Z][A-Z0-9_]*/[A-Za-z0-9_./]+)")"#,
+        )
+        .expect("static pattern")
+    });
+    let (mut sound, mut built) = (Vec::new(), Vec::new());
+    for capture in pattern.captures_iter(text) {
         if let Some(path) = capture.get(1) {
             sound.push(path.as_str().to_owned());
-        } else {
-            graphics.push(capture[2].to_owned());
+            continue;
+        }
+        let path = &capture[2];
+        let module = path.strip_prefix("COMMON/").unwrap_or(path);
+        let graphics = module.starts_with("GRAPHICS/") || module.starts_with("MAP/");
+        if graphics || (!module.starts_with("SOUND/") && ags::resource::is_recipe(path)) {
+            built.push(path.to_owned());
         }
     }
-    sound.extend(graphics);
+    sound.extend(built);
     sound
 }
 
@@ -1667,4 +1707,43 @@ fn with_includes(directories: &[&Path], source: &Path) -> Result<Vec<u8>, String
         key.extend_from_slice(&with_includes(directories, &path)?);
     }
     Ok(key)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn built_asset_directories_are_the_upper_case_ones() {
+        for name in ["GRAPHICS", "MAP", "SOUND", "COMMON", "BATTLE", "MENU_2"] {
+            assert!(asset_root(name), "{name}");
+        }
+        for name in ["obj", "overlays", "text", "symbols", "tbs-en.gba", "Map", "_X", ""] {
+            assert!(!asset_root(name), "{name}");
+        }
+    }
+
+    #[test]
+    fn assets_live_in_any_module() {
+        let source = "\t.include \"games/COMMON/INCLUDE/GAME/ED_ASM.H\"\n\
+            \t.incbin \"BATTLE/ITEM/ITEMS.table\"\n\
+            \t.incbin \"GAME/CLASS/CLASSES.table.lz\"\n\
+            \t.include \"text/messages.inc\"\n\
+            \t.include \"BATTLE/ITEM/ITEM.INC\"\n\
+            \t.incbin \"baserom.gba\", 0x100, 0x10\n\
+            \t.incbin \"COMMON/MENU/ICONS/ARROW.4bpp\"\n\
+            \t.incbin \"MAP/MAP_095/SHAPES.table.lz\"\n\
+            \t.incbin \"SOUND/SAMPLE/DRUM.PCM8.bin\"\n\
+            \t.incbin \"SOUND/X.table\"\n";
+        assert_eq!(
+            asset_names(source),
+            [
+                "SOUND/SAMPLE/DRUM.PCM8.bin",
+                "BATTLE/ITEM/ITEMS.table",
+                "GAME/CLASS/CLASSES.table.lz",
+                "COMMON/MENU/ICONS/ARROW.4bpp",
+                "MAP/MAP_095/SHAPES.table.lz",
+            ]
+        );
+    }
 }

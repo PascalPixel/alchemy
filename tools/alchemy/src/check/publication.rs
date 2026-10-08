@@ -323,7 +323,7 @@ fn incbin(path: &str, data: &[u8]) -> bool {
     )
     .expect("built sound pattern");
     let built_graphics = regex::Regex::new(
-        r#"^\s*\.incbin\s+"((?:COMMON/)?(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.[a-z0-9.]+)"\s*$"#,
+        r#"^\s*\.incbin\s+"((?:COMMON/)?([A-Z][A-Z0-9_]*)(?:/[A-Z0-9_]+)+\.[a-z0-9.]+)"\s*$"#,
     )
     .expect("built graphics pattern");
     let built_font = regex::Regex::new(
@@ -332,7 +332,7 @@ fn incbin(path: &str, data: &[u8]) -> bool {
     let is_built_graphics = |line: &str| {
         built_graphics
             .captures(line)
-            .is_some_and(|capture| ags::resource::is_recipe(&capture[1]))
+            .is_some_and(|capture| &capture[2] != "SOUND" && ags::resource::is_recipe(&capture[1]))
             || built_font.captures(line).is_some_and(|capture| {
                 ags::resource::is_recipe(&capture[1])
                     && font_range(&capture[2])
@@ -3124,6 +3124,28 @@ mod tests {
             assert!(super::incbin(path, line), "{path}");
         }
         assert_eq!(super::publication_data_reason(star, sheet, None), None);
+    }
+
+    #[test]
+    fn any_module_may_incbin_the_tables_the_build_makes() {
+        let items = "games/THE BROKEN SEAL/SRC/BATTLE/ITEM/ITEMS.S";
+        for line in [
+            ".incbin \"BATTLE/ITEM/ITEMS.table\"\n",
+            ".incbin \"GAME/CLASS/CLASSES.table.lz\"\n",
+            ".incbin \"COMMON/MENU/ICONS/ARROW.4bpp\"\n",
+        ] {
+            assert!(!super::incbin(items, line.as_bytes()), "{line}");
+            assert!(super::incbin("games/THE BROKEN SEAL/SOUND/ITEMS.S", line.as_bytes()), "{line}");
+        }
+        for line in [
+            ".incbin \"BATTLE/X.bin\"\n",
+            ".incbin \"BATTLE/ITEM/ITEMS.TSV\"\n",
+            ".incbin \"battle/ITEM/ITEMS.table\"\n",
+            ".incbin \"SOUND/SAMPLE/X.table\"\n",
+            ".incbin \"BATTLE/../../roms/tbs-en.table\"\n",
+        ] {
+            assert!(super::incbin(items, line.as_bytes()), "{line}");
+        }
     }
 
     #[test]

@@ -176,6 +176,16 @@ void Clear_UpdateBlend(void)
         Engine_TaskRemoveCallback(Clear_UpdateBlend);
 }
 
+// 隠しコマンド: 押したキーの並び、0 で終わり
+u16 Clear_CodeSequence[] = {
+    KEY_SELECT, KEY_SELECT, KEY_SELECT, 0,
+};
+
+u16 Clear_ExtraCodeSequence[] = {
+    KEY_UP, KEY_DOWN, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFT, KEY_RIGHT,
+    KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_UP, KEY_SELECT, 0,
+};
+
 void Clear_CheckButtonCodes(void)
 {
     /* FAKEMATCH: volatile keys make each test read them again, as the game does. */

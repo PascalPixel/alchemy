@@ -1,12 +1,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-u32 Clear_CodeSequence[] = {
-	0x40004, 4,
-};
-
-u32 Clear_ExtraCodeSequence[] = { 0 };
-
 struct SceneEntrance Clear_ScriptTable[] = {
 	{ 0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },

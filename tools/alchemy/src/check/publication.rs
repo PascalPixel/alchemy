@@ -201,6 +201,9 @@ fn gba_header(data: &[u8]) -> bool {
 fn gba_image(data: &[u8]) -> bool {
     data.len().is_multiple_of(0x8000) && data.len() <= 0x0400_0000 && gba_header(data)
 }
+/// The logo as the user's own ROM carries it. L1 keeps it in exactly one
+/// committed file, LOGO_SOURCE, the build's header fix-up; the header
+/// sources reserve it as `.space 156`.
 fn nintendo_logo(root: &Path) -> Option<Vec<u8>> {
     let mut header = [0; 0xc0];
     std::fs::File::open(root.join("roms/tbs-en.gba"))

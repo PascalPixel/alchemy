@@ -4,9 +4,10 @@
 //! are given, the title, game code, maker code and version, with -p padding
 //! to a power of two. pret's header source reserves the logo as
 //! `.space 156` and leaves the complement 0, and its Makefiles run
-//! `gbafix ROM -p --silent` right after objcopy (L1). The build does the
-//! same to every ROM it links, both games and all twelve editions; its own
-//! zero fill pads the image to the cartridge size instead of -p.
+//! `gbafix ROM -p --silent` right after objcopy (L1). Each game's
+//! `SRC/SYSTEM/ROM_HEAD.S` does the same, and the build fixes every ROM it
+//! links, both games and all twelve editions; its own zero fill pads the
+//! image to the cartridge size instead of -p.
 
 use std::fs;
 use std::ops::Range;

@@ -126,8 +126,8 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
     s32 nibble;
     u32 value;
 
-    /* FAKEMATCH: the out input schedules its spill before the work-address load; the plain version reverses them. */
-    asm ("" : : "r" (out));
+    /* FAKEMATCH: needed to match: the empty loop ends a scheduling region, keeping the spill of out ahead of the work-address load. */
+    do { } while (0);
     work = (struct UiRenderWork *)gWindowWork[0];
     mark = 0;
     mark_code = UiText_MarkGlyphCodes[code >> 14];

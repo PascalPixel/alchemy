@@ -61,8 +61,8 @@ s32 BattleFx_InitializeStarField(s32 mode)
     gTransitionWork[2] = 1;
     work = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
     Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
-    /* FAKEMATCH: the empty statement keeps the multiply routine's address load ahead of the spark cursor. */
-    __asm__("");
+    /* FAKEMATCH: needed to match: the empty loop ends a scheduling region, keeping the multiply routine's address load ahead of the spark cursor. */
+    do { } while (0);
     for (i = 0; i < 16; i++) {
         s32 angle = Random16();
         u32 radius = Random16() + 0x10000;

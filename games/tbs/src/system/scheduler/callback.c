@@ -1,3 +1,302 @@
+//--------------------------------------------------------------------------
+// rescache.c
+// リソース：OBJ の VRAM をブロックに分けて貸し出すキャッシュ
+//--------------------------------------------------------------------------
+
+#include "resource.h"
+#include "vram_tab.h"
+
+// OBJ のキャラクター（0x06010000 から）を 64 バイトのブロック 512 個に分け、
+// ResourceBlockOwners にブロックごとの持ち主（キャッシュの番号）を置く。
+// キャッシュは 96 個で、offset（バイト）が 0xffff ならあき。
+// size が 16 以下のものは VRAM を持っていない
+
+#if !GAME_TLA
+#include "iwram_call.h"
+#include "dma.h"
+#include "io_reg.h"
+
+//--------------------------------------------------------------------------
+// size バイト分の続いたあきブロックを前からさがし、id のものにする
+// 戻り値 : VRAM の中の位置（バイト）、なければ -1
+//--------------------------------------------------------------------------
+s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
+{
+	u32 blocks;
+	s32 ret;
+	s32 pos;
+	u32 end;
+	u32 i;
+
+	blocks = size / VRAM_BLOCK_BYTES;
+	if (id >= VRAM_CACHE_ENTRY_COUNT)
+	{
+		return -1;
+	}
+	pos = 0;
+	for (;;)
+	{
+		ret = -1;
+		if (pos >= VRAM_BLOCK_COUNT)
+		{
+			goto done;
+		}
+		if (ResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE)
+		{
+			goto occupied;
+		}
+		ret = pos;
+		end = blocks + ret;
+		while (pos < end)
+		{
+			if (ResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE)
+			{
+				goto occupied;
+			}
+			pos++;
+		}
+		for (i = 0; i < blocks; i++)
+		{
+			ResourceBlockOwners[ret + i] = id;
+		}
+		goto found;
+	occupied:
+		// 使っているブロックは、持ち主の大きさの分だけとばす
+		pos += gVramBlockCache[ResourceBlockOwners[pos]].size / VRAM_BLOCK_BYTES;
+	}
+found:
+	ret *= VRAM_BLOCK_BYTES;
+done:
+	return ret;
+}
+
+//--------------------------------------------------------------------------
+// 続いたあきブロックのいちばん長い数を返す
+//--------------------------------------------------------------------------
+s32 ResourceTable_GetLongestFreeBlockRun(void)
+{
+	s32 run = 0;
+	u8 *p = ResourceBlockOwners;
+	s32 max = 0;
+	s32 n = VRAM_BLOCK_COUNT;
+
+	do
+	{
+		if (*p++ != VRAM_BLOCK_OWNER_FREE)
+		{
+			run = 0;
+		}
+		else
+		{
+			run++;
+			if (max < run)
+				max = run;
+		}
+		n--;
+	} while (n != 0);
+	return max;
+}
+
+//--------------------------------------------------------------------------
+// id の持っているブロックをすべてあきにする
+// 戻り値 : あけたブロックがあれば -1、なければ 0（id が範囲外なら -1）
+//--------------------------------------------------------------------------
+s32 Resource_ClearSlotReferences(s32 id)
+{
+	s32 cleared = 0;
+	s32 n;
+	u8 *p;
+	u8	empty;
+
+	if ((u32)id >= VRAM_CACHE_ENTRY_COUNT)
+		return -1;
+	p = ResourceBlockOwners;
+	empty = VRAM_BLOCK_OWNER_FREE;
+	n = VRAM_BLOCK_COUNT;
+	do
+	{
+		if (*p == id)
+		{
+			*p = empty;
+			cleared++;
+		}
+		n--;
+		p++;
+	} while (n != 0);
+	if (cleared != 0)
+		return -1;
+	return 0;
+}
+
+//--------------------------------------------------------------------------
+// キャッシュ no を空ける（ブロックを返し、あきのしるしを付ける）
+//--------------------------------------------------------------------------
+s32 Resource_ResetEntry(u32 no)
+{
+	struct VramBlockCacheEntry *entry = &gVramBlockCache[no];
+
+	if (no >= VRAM_CACHE_ENTRY_COUNT)
+		return -1;
+	if (entry->offset != VRAM_CACHE_OFFSET_FREE)
+	{
+		Resource_ClearSlotReferences(no);
+		entry->offset |= VRAM_CACHE_OFFSET_FREE;
+		entry->size = 0;
+	}
+	return 0;
+}
+
+//--------------------------------------------------------------------------
+// キャッシュ no のブロックだけを返し、size を 1 にして番号は持ったままにする
+//--------------------------------------------------------------------------
+s32 Resource_ActivateEntry(u32 no)
+{
+	struct VramBlockCacheEntry *entry = &gVramBlockCache[no];
+
+	if (no >= VRAM_CACHE_ENTRY_COUNT)
+		return -1;
+	if (entry->size > 16)
+	{
+		s32 one;
+
+		Resource_ClearSlotReferences(no);
+		one = 1;
+		entry->size = one;
+	}
+	return 0;
+}
+
+//--------------------------------------------------------------------------
+// キャッシュ no に size バイトの VRAM を用意し、src を写す
+// 同じ大きさの VRAM を持っていればそのまま使う
+// src : NULL なら写さない、-1 なら 0 で埋める
+// 戻り値 : OBJ のタイル番号（32 バイト単位）、用意できなければ 0
+//--------------------------------------------------------------------------
+s32 VramBlock_LoadCached(u32 no, u32 size, const void *src)
+{
+	struct VramBlockCacheEntry *entry;
+	s32							ofs;
+	void					   *dst;
+
+	entry = &gVramBlockCache[no];
+	if (no >= VRAM_CACHE_ENTRY_COUNT)
+		return 0;
+	if (size > 8192)
+		return 0;
+	if (entry->size > 16)
+	{
+		if (entry->size != size)
+		{
+			Resource_ResetEntry(no);
+			ofs = ResourceTable_AllocateBlocks(no, size);
+		}
+		else
+		{
+			ofs = entry->offset;
+		}
+	}
+	else
+	{
+		ofs = ResourceTable_AllocateBlocks(no, size);
+	}
+
+	if (ofs != -1)
+	{
+		dst = (void *)(0x06010000 + ofs);
+		entry->size = size;
+		entry->offset = ofs;
+		if (src != 0)
+		{
+			if (src == (const void *)-1)
+			{
+				Iwram_ClearWords(dst, size);
+			}
+			else
+			{
+				Dma_Set(src, dst, (size >> 2) | (DMA_ENABLE32 | DMA_32BIT), REG_DMA3);
+			}
+		}
+		return (u32)ofs >> 5;
+	}
+	return 0;
+}
+
+//--------------------------------------------------------------------------
+// ブロックとキャッシュをすべてあきにする
+//--------------------------------------------------------------------------
+void Resource_InitializeTable(void)
+{
+	u32 limit = VRAM_BLOCK_COUNT - 1;
+	u8 *p = ResourceBlockOwners;
+	u32 n = 0;
+	u32 empty = VRAM_BLOCK_OWNER_FREE;
+
+	do
+	{
+		*p++ = empty;
+		n++;
+	} while (n <= limit);
+
+	{
+		struct VramBlockCacheEntry *entry = gVramBlockCache;
+
+		n = 0;
+		do
+		{
+			entry->offset |= VRAM_CACHE_OFFSET_FREE;
+			entry->size = 0;
+			entry++;
+			n++;
+		} while (n < VRAM_CACHE_ENTRY_COUNT);
+	}
+}
+
+//--------------------------------------------------------------------------
+// あいているキャッシュの番号を返す（なければ VRAM_CACHE_ENTRY_COUNT）
+//--------------------------------------------------------------------------
+s32 Resource_FindFreeEntry(void)
+{
+	s32							ret = VRAM_CACHE_ENTRY_COUNT;
+	s32							no;
+	struct VramBlockCacheEntry *entry = gVramBlockCache;
+
+	for (no = 0; no < VRAM_CACHE_ENTRY_COUNT; no++, entry++)
+	{
+		if (entry->offset == VRAM_CACHE_OFFSET_FREE)
+		{
+			ret = no;
+			break;
+		}
+	}
+	return ret;
+}
+
+//--------------------------------------------------------------------------
+// あいているキャッシュに size バイトの VRAM を用意して、その番号を返す
+//--------------------------------------------------------------------------
+s32 Resource_LoadIntoFreeSlot(s32 size)
+{
+	s32 no;
+
+	no = Resource_FindFreeEntry();
+	VramBlock_LoadCached(no, size, 0);
+	return no;
+}
+
+#endif
+
+//--------------------------------------------------------------------------
+// キャッシュ no に、今の大きさのまま src を写しなおす
+// 戻り値 : OBJ のタイル番号
+//--------------------------------------------------------------------------
+s32 Resource_GetBuffer(s32 no, s32 src)
+{
+#if GAME_TLA
+	return VramBlock_LoadCached(no, ResourceTableEntries[no].size, (const void *)src);
+#else
+	return VramBlock_LoadCached(no, gVramBlockCache[no].size, (const void *)src);
+#endif
+}
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -612,4 +911,282 @@ void Runtime_WriteDebugTextTiles(const u8 *src)
         }
         *(u16 **)addr = dst;
     }
+}
+//--------------------------------------------------------------------------
+// debug_number.c
+// デバッグ：数を右そろえでデバッグ文字にする
+//--------------------------------------------------------------------------
+
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "minigame.h"
+#include "sound.h"
+#include "system.h"
+#include "types.h"
+
+// どちらも数を作業域に右づめで作り、その終わりから keta 文字を書く
+
+//--------------------------------------------------------------------------
+// 16 進で keta けた（1〜8、範囲外なら 8）
+//--------------------------------------------------------------------------
+void Text_DrawHexRightAligned(u32 value, s32 keta)
+{
+	s32 n;
+
+	n = keta;
+	if ((n - 1) > 7U)
+	{
+		n = 8;
+	}
+	Text_FormatHexToWork(value);
+	Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextHexEnd) - n));
+}
+
+//--------------------------------------------------------------------------
+// 符号つきの 10 進で keta けた（1〜10、範囲外なら 10）
+//--------------------------------------------------------------------------
+void Text_DrawSignedDecimalRightAligned(s32 value, s32 keta)
+{
+	s32 n;
+
+	n = keta;
+	if ((n - 1) > 9U)
+	{
+		n = 10;
+	}
+	Text_FormatSignedDecimalToWork(value);
+	Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
+}
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "menu.h"
+#include "minigame.h"
+#include "sound.h"
+#include "system.h"
+#include "low_runtime.h"
+#include "global_cells.h"
+#include "types.h"
+#include "layout_guard.h"
+#include "dma.h"
+#include "resource.h"
+#include "resource_ids.h"
+#include "mem.h"
+#include "heap_state.h"
+#include "ram_buffer.h"
+#include "io_reg.h"
+
+
+
+extern u8 gCartridgeResetMarker[];
+
+void Bg0_ClearTilemap(void)
+{
+    volatile u32 fill;
+
+    fill = 0xf000f000;
+    Dma_Set((const void *)&fill, BG_SCREEN_BLOCK(4), 0x85000140, REG_DMA3);
+    /* FAKEMATCH: the cursor store sits in a do-while(0) to hold the BG0CNT constant load order */
+    do {
+        gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
+    } while (0);
+    {
+        s32 control = 0x400;
+
+        REG_BG0CNT = control;
+    }
+}
+
+void Ui_LoadWindowGraphics(void)
+{
+    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), BG_CHAR_BLOCK(0), 0x84000800,
+            REG_DMA3);
+    Dma_Set((const void *)Ui_WindowPalette, (void *)&BG_PLTT_COLOR(15, 0), 0x80000010,
+            REG_DMA3);
+    /* FAKEMATCH: the two do-while blocks keep the value-before-address order of the palette stores */
+    do {
+        u16 black = 0;
+        PLTT_BACKDROP = black;
+    } while (0);
+    do {
+        volatile u16 *pal;
+        s32 color;
+
+        color = 0x4180;
+        pal = &BG_PLTT_COLOR(15, 4);
+        *pal = color;
+        color = 0x3960;
+        pal++;
+        *pal = color;
+        color = 0x3140;
+        pal++;
+        *pal = color;
+        color = 0x2920;
+        pal++;
+        *pal = color;
+        color = 0x49a0;
+        pal++;
+        *pal = color;
+        color = 0x51c0;
+        pal++;
+        *pal = color;
+        color = 0x59e0;
+        pal++;
+        *pal = color;
+    } while (0);
+    Dma_Set((const void *)System_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0,
+            REG_DMA3);
+}
+
+void PaletteDma_LoadBlock(void)
+{
+    Dma_Set((const void *)System_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0, REG_DMA3);
+}
+
+void Runtime_InitializeHeap(void)
+{
+    union HeapState *work = (union HeapState *)gWorkSlot;
+    volatile u32 zero = 0;
+    Dma_Set(&zero, work, 0x85000040, REG_DMA3);
+    work->heap.next_iwram = gIwramHeap;
+    work->heap.next_ewram = gEwramHeap;
+}
+
+s32 Runtime_GetRemainingIwram(void)
+{
+    union HeapState *work = (union HeapState *)gWorkSlot;
+
+    return (s32)gCartridgeResetMarker - (s32)work->heap.next_iwram;
+}
+
+s32 Runtime_GetRemainingEwram(void)
+{
+    union HeapState *work = (union HeapState *)gWorkSlot;
+
+    return 0x02040000 - (s32)work->heap.next_ewram;
+}
+
+void *Runtime_AllocateHeapBlock(s32 kind, s32 size)
+{
+    union HeapState *work;
+    s32 aligned_size;
+    u32 address;
+    u32 next_address;
+    u32 next;
+    u32 cached_address;
+
+    work = (union HeapState *)gWorkSlot;
+    cached_address = (u32)work->slots[kind];
+    if (cached_address == 0) {
+        cached_address = (u32)work->heap.next_iwram;
+        aligned_size = (((u32)size + 3) >> 2) * 4;
+        next = cached_address + aligned_size;
+        if (next >= (u32)Ram_IwramHeapEnd) {
+            address = (u32)work->heap.next_ewram;
+            next_address = address + aligned_size;
+            if (next_address >= 0x02040000U) {
+                return NULL;
+            }
+            work->heap.next_ewram = (void *)next_address;
+            work->slots[kind] = (void *)address;
+            return (void *)address;
+        }
+        work->heap.next_iwram = (void *)next;
+        work->slots[kind] = (void *)cached_address;
+        return (void *)cached_address;
+    }
+    return (void *)cached_address;
+}
+
+void *Runtime_AllocateBlock(s32 kind, s32 size)
+{
+    union HeapState *work;
+    u32 aligned_size;
+    u32 next;
+    u32 address;
+    u32 next_address;
+    u32 cached_address;
+
+    work = (union HeapState *)gWorkSlot;
+    cached_address = (u32)work->slots[kind];
+    if (cached_address == 0) {
+        address = (u32)work->heap.next_ewram;
+        aligned_size = (((u32)size + 3) >> 2) * 4;
+        next = address + aligned_size;
+        if (next >= 0x02040000U) {
+            address = (u32)work->heap.next_iwram;
+            next_address = address + aligned_size;
+            if (next_address >= (u32)Ram_IwramHeapEnd) {
+                return NULL;
+            }
+            work->heap.next_iwram = (void *)next_address;
+            work->slots[kind] = (void *)address;
+            return (void *)address;
+        }
+        work->heap.next_ewram = (void *)next;
+        work->slots[kind] = (void *)address;
+        return (void *)address;
+    }
+    return (void *)cached_address;
+}
+
+void *MemAlloc(s32 size)
+{
+    union HeapState *work = (union HeapState *)gWorkSlot;
+    u32 next_address;
+    u32 next;
+    u32 allocation_address;
+    u32 aligned_words = ((u32)size + 3) >> 2;
+
+    allocation_address = (u32)work->heap.next_iwram;
+    size = aligned_words << 2;
+    next = allocation_address + size;
+    if (next >= (u32)Ram_IwramHeapEnd) {
+        allocation_address = (u32)work->heap.next_ewram;
+        next_address = allocation_address + size;
+        if (next_address >= 0x02040000U) {
+            return NULL;
+        }
+        work->heap.next_ewram = (void *)next_address;
+        goto done;
+    }
+    work->heap.next_iwram = (void *)next;
+done:
+    return (void *)allocation_address;
+}
+
+void *Runtime_BumpAllocateAlternatePool(s32 size)
+{
+    union HeapState *work = (union HeapState *)gWorkSlot;
+    u32 alternate_next_address;
+    u32 primary_next_address;
+    u32 allocation_address;
+    u32 aligned_words = ((u32)size + 3) >> 2;
+
+    allocation_address = (u32)work->heap.next_ewram;
+    size = aligned_words << 2;
+    primary_next_address = allocation_address + size;
+    if (primary_next_address >= 0x02040000U) {
+        allocation_address = (u32)work->heap.next_iwram;
+        alternate_next_address = allocation_address + size;
+        if (alternate_next_address >= (u32)Ram_IwramHeapEnd) {
+            return NULL;
+        }
+        work->heap.next_iwram = (void *)alternate_next_address;
+        goto done;
+    }
+    work->heap.next_ewram = (void *)primary_next_address;
+done:
+    return (void *)allocation_address;
+}
+
+void RuntimeMemory_ReservedNoOp(void)
+{
 }

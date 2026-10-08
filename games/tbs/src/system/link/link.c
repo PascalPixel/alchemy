@@ -1,3 +1,341 @@
+#include "serial_runtime.h"
+#include "dma.h"
+#include "io_reg.h"
+
+void SerialRuntime_Initialize(void)
+{
+    u32 interrupt_enable;
+    /* FAKEMATCH: keep the fill word's address before its store. */
+    volatile u32 zero;
+    s32 index;
+    volatile u16 *ime_reg;
+    struct SerialRuntime *state;
+
+    interrupt_enable = REG_IME;
+    /* FAKEMATCH: retain the reference's IME pointer lifetime. */
+    do { ime_reg = &REG_IME; } while (0);
+    *ime_reg = (u32)ime_reg;
+    Runtime_SetIrqHandler(7, 0, SerialRuntime_HandleTransferInterrupt);
+    Runtime_SetIrqHandler(6, 0, SerialRuntime_HandleTransferInterrupt);
+    REG_IME = 0;
+    REG_IE &= 0xff3f;
+    if ((REG_IF & 0x80) != 0)
+        REG_IF = 0x80;
+    if ((REG_IF & 0x40) != 0)
+        REG_IF = 0x40;
+    REG_RCNT = 0x8000;
+    REG_RCNT = 0;
+    REG_SIOCNT = 0x1000;
+    REG_RCNT = 0;
+    REG_SIOCNT = 0x2000;
+    REG_SIOCNT16 = REG_SIOCNT16 | 0x4003;
+    state = &gSerialRuntime;
+    REG_IME = 1;
+    zero = 0;
+    Dma_Set(&zero, state, 0x85000058, REG_DMA3);
+    state->send_index = -1;
+    state->send_buffer[0] = (u16 *)(state->storage + 0);
+    state->send_buffer[1] = (u16 *)(state->storage + 32);
+    for (index = 0; index <= 1; index++) {
+        state->incoming_buffer[index] = (u16 *)(state->storage + 64 + index * 96);
+        state->ready_buffer[index] = (u16 *)(state->storage + 96 + index * 96);
+        state->pending_buffer[index] = (u16 *)(state->storage + 128 + index * 96);
+    }
+    REG_IME = 0;
+    REG_IE |= 0x80;
+    REG_IME = 1;
+    gSerialExchangeActive = 1;
+    gLinkExchangeState = 0;
+    gSerialSendSource = 0;
+    gSerialSendSize = 0;
+    gSerialReceiveDest = 0;
+    gSerialReceivedSize = 0;
+    BattleLink_ResetTransferState();
+    REG_IME = interrupt_enable;
+}
+
+void SerialRuntime_EnableTransferTimer(void)
+{
+    struct SerialRuntime *state = &gSerialRuntime;
+
+    if (state->mode != 0)
+        state->transfer_enabled = 1;
+}
+
+void SerialRuntime_DisableTransfer(void)
+{
+    struct SerialRuntime *state;
+
+    REG_IME = 0;
+    REG_IE = REG_IE & 0xff3f;
+    REG_IME = 1;
+    REG_SIOCNT16 = 0x2003;
+    REG_TM3CNT = 0x0000c963;
+    REG_IF = 0xc0;
+    state = &gSerialRuntime;
+    state->transfer_enabled = 0;
+}
+
+s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
+{
+    volatile u32 *siocnt;
+    u32 control;
+    s32 status;
+    s32 result;
+
+    siocnt = &REG_SIOCNT;
+    control = *siocnt;
+    switch (gSerialRuntime.phase) {
+    case 0: {
+        u8 mask30 = control & 0x30;
+        u8 mode;
+
+        if (mask30 == 0 && (mode = control & 0x88) == 8) {
+            u8 serial_error = control & 4;
+
+            if (serial_error == 0 && gSerialRuntime.send_index == -1) {
+                u32 ie;
+
+                /* FAKEMATCH: the do/while blocks and the separate enable variable are meaningless, as in SerialRuntime_PollStatus. */
+                do {
+                    REG_IME = serial_error;
+                } while (0);
+                ie = REG_IE;
+                do {
+                    ie &= ~0x80;
+                    ie |= 0x40;
+                    REG_IE = ie;
+                    {
+                        u8 enable = 1;
+                        REG_IME = enable;
+                    }
+                    *((volatile s8 *)siocnt + 1) &= ~0x40;
+                    REG_IF = 0xc0;
+                    REG_TM3CNT = 0xc963;
+                } while (0);
+                gSerialRuntime.mode = mode;
+            }
+        } else if (mask30 == 0) {
+            break;
+        }
+        gSerialRuntime.phase = 1;
+    }
+    case 1:
+        SerialRuntime_CollectReceivedPayloads(receive);
+        SerialRuntime_PrepareSendPacket(send);
+        break;
+    }
+
+    gSerialRuntime.sequence++;
+    status = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+    if (gSerialRuntime.mode == 8)
+        status |= 0x80;
+    result = SerialRuntime_AddParentFlag(status);
+    if (((control << 26) >> 30) > 1)
+        result |= 0x2000;
+    return result;
+}
+
+s32 SerialRuntime_PollStatus(void)
+{
+    volatile u32 *siocnt;
+    u32 control;
+    s32 status;
+    s32 result;
+
+    siocnt = &REG_SIOCNT;
+    control = *siocnt;
+    if (gSerialRuntime.phase == 0) {
+        u8 mode = control & 0x88;
+
+        if (mode == 8) {
+            u8 serial_error = control & 4;
+
+            if (serial_error == 0 && gSerialRuntime.send_index == -1) {
+                u32 ie;
+
+                /* FAKEMATCH: one-pass scopes place IE after the IME write and the mask after the IE read; fresh enable reuses r3 for ~0x40. */
+                do {
+                    REG_IME = serial_error;
+                } while (0);
+                ie = REG_IE;
+                do {
+                    ie &= ~0x80;
+                    ie |= 0x40;
+                    REG_IE = ie;
+                    {
+                        u8 enable = 1;
+                        REG_IME = enable;
+                    }
+                    *((volatile s8 *)siocnt + 1) &= ~0x40;
+                    REG_IF = 0xc0;
+                    REG_TM3CNT = 0xc963;
+                } while (0);
+                gSerialRuntime.mode = mode;
+            }
+            gSerialRuntime.phase = 1;
+        }
+        gSerialRuntime.sequence++;
+    }
+
+    status = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+    if (gSerialRuntime.mode == 8)
+        status |= 0x80;
+    result = SerialRuntime_AddParentFlag(status);
+    if (((control << 26) >> 30) > 1)
+        result |= 0x2000;
+    return result;
+}
+//--------------------------------------------------------------------------
+// sio_xchg.c
+// 通信：毎フレームのデータの受け渡しと、送るパケットの組み立て
+//--------------------------------------------------------------------------
+
+#include "serial_runtime.h"
+#include "dma.h"
+#include "io_reg.h"
+#include "edition.h"
+
+//--------------------------------------------------------------------------
+// phase 1 なら受けたデータを receive に集め、send から次のパケットを作る
+// 戻り値は通信の状態
+//   ビット 0〜7  : current_mask（mode 8 ならビット 7 も立てる）
+//   ビット 8〜15 : received_mask
+//   0x1000       : 親
+//   0x2000       : SIOCNT のマルチプレイ ID が 2 以上
+//--------------------------------------------------------------------------
+s32 SerialRuntime_ExchangePayloads(void *send, void *receive)
+{
+	volatile u32 *siocnt;
+	u32			  cnt;
+	s32			  st;
+	s32			  ret;
+
+	siocnt = &REG_SIOCNT;
+	cnt = *siocnt;
+	if (gSerialRuntime.phase == 1)
+	{
+		SerialRuntime_CollectReceivedPayloads(receive);
+		SerialRuntime_PrepareSendPacket(send);
+		gSerialRuntime.sequence++;
+	}
+	st = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+	if (gSerialRuntime.mode == 8)
+		st |= 0x80;
+	ret = SerialRuntime_AddParentFlag(st);
+	if (((cnt << 26) >> 30) > 1) // ビット 4・5
+		ret |= 0x2000;
+	return ret;
+}
+
+#if !GAME_TLA
+//--------------------------------------------------------------------------
+// 送るパケットを send_buffer[0] に組み立てる
+// [0] 番号、[1] まだ受けていない相手のマスク、[2] チェックサム、[4] データ 24 バイト
+// チェックサムは先頭 28 バイトを 16 ビットずつ足して反転したもの
+//--------------------------------------------------------------------------
+void SerialRuntime_PrepareSendPacket(void *payload)
+{
+	volatile struct SerialRuntime *sr;
+	u32							   i;
+	u32							   sum;
+
+	sr = SERIAL_RUNTIME;
+	{
+		u8 *pkt;
+		u8	cur;
+		u8	recv;
+
+		pkt = (u8 *)sr->send_buffer[0];
+		pkt[0] = sr->sequence;
+		cur = sr->current_mask;
+		recv = sr->received_mask;
+		sum = 0;
+		pkt[1] = recv ^ cur;
+		*(u16 *)(pkt + 2) = sum;
+		Dma_Set(payload, pkt + 4, DMA_ENABLE32 | DMA_32BIT | 6, REG_DMA3);
+	}
+	{
+		u16 *pkt;
+		u32	 v;
+
+		pkt = sr->send_buffer[0];
+		for (i = 0; i <= 13; i++)
+		{
+			v = *pkt;
+			pkt++;
+			sum += v;
+		}
+	}
+	{
+		u32					 inv;
+		struct SerialPacket *pkt;
+
+		inv = ~sum;
+		pkt = (struct SerialPacket *)sr->send_buffer[0];
+		pkt->checksum = inv;
+	}
+
+	// タイマー 3 を止め、送る位置を戻してから動かしなおす
+	if (sr->mode != 0)
+		REG_TM3CNT_H = 0;
+	sr->send_index = -1;
+	if (sr->mode != 0 && sr->transfer_enabled != 0)
+		REG_TM3CNT_H = 0xc0; // 開始・割り込み
+}
+#else
+//--------------------------------------------------------------------------
+// 送るパケットを send_buffer[0] に組み立てる（作りは上と同じ）
+//--------------------------------------------------------------------------
+void SerialRuntime_PrepareSendPacket(void *payload)
+{
+	volatile struct SerialRuntime *sr;
+	u32							   i;
+	u32							   sum;
+
+	sr = SERIAL_RUNTIME;
+	{
+		u8 *pkt;
+		u8	cur;
+		u8	recv;
+
+		pkt = (u8 *)sr->send_buffer[0];
+		pkt[0] = sr->sequence;
+		cur = sr->current_mask;
+		recv = sr->received_mask;
+		sum = 0;
+		/* FAKEMATCH: ⚓️ clears the checksum only after reading both masks */
+		*(volatile u16 *)(pkt + 2) = sum;
+		pkt[1] = recv ^ cur;
+		Dma_Set(payload, pkt + 4, DMA_ENABLE32 | DMA_32BIT | 6, REG_DMA3);
+	}
+	{
+		u16 *pkt;
+		u32	 v;
+
+		pkt = sr->send_buffer[0];
+		for (i = 0; i <= 13; i++)
+		{
+			v = *pkt;
+			pkt++;
+			sum += v;
+		}
+	}
+	{
+		u32					 inv;
+		struct SerialPacket *pkt;
+
+		inv = ~sum;
+		pkt = (struct SerialPacket *)sr->send_buffer[0];
+		pkt->checksum = inv;
+	}
+	if (sr->mode != 0)
+		REG_TM3CNT_H = 0;
+	sr->send_index = -1;
+	if (sr->mode != 0 && sr->transfer_enabled != 0)
+		REG_TM3CNT_H = 0xc0;
+}
+#endif
 #include "types.h"
 #include "io_reg.h"
 #include "serial_runtime.h"

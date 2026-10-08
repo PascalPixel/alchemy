@@ -355,12 +355,9 @@ pub fn view(declaration: &str, name: &str) -> Option<String> {
     } else {
         return None;
     };
-    let array = rest.starts_with('[');
     let cast = cast.split_whitespace().collect::<Vec<_>>().join(" ");
     Some(if function {
         format!("#define {name} (({cast}){name})")
-    } else if array {
-        format!("#define {name} (*({cast})&{name})")
     } else {
         format!("#define {name} (*({cast})&{name})")
     })

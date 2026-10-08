@@ -16,17 +16,14 @@
 #include "FIELD_SCENE.H"
 #include "CALL.H"
 #include "text/MSG_IDS.H"
+#include "FIELD_EFFECT.H"
+#include "FIELD_SERVICE.H"
+#include "IO_REG.H"
+#include "SCENE_IDS.H"
 
 #define FieldScene_PrepareActors ((void (*)(u8*))FieldScene_PrepareActors)
 
 extern u8 *gActorEffectWork;
-
-
-
-s32 SceneEffect_SpawnRandomEveryEightFramesB();
-
-
-void Engine_MapCopyCellAttributes();
 void Object_SetActionById();
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)
@@ -1246,4 +1243,1838 @@ void SceneActor_UpdateSlots11And12ByTile(void)
         OverlayObject_ResetObjectWhenFlatbs2Set(o);
     }
     Engine_EventEnd();
+}
+
+struct MapWork {
+    u8 unknown_00[0x164];
+    struct ScrollLayer layer;
+};
+void OverlayObject_WaitUntilIdle();
+void Object_RefreshSelectorById();
+
+void VinasuHeya_ShiftBridge(void)
+{
+    struct EffectOptions options;
+    struct ScrollLayer *layer;
+    struct FieldActor *leader;
+    s32 x;
+    s32 z;
+    s32 countdown;
+    u32 i;
+    s32 dust_x;
+
+    layer = &((struct MapWork *)gMapWork[0])->layer;
+    leader = Object_GetById(0);
+    x = leader->x.part.pixel;
+    z = leader->z.part.pixel;
+    leader->y.fixed = 0;
+    if (x >= 308 && x <= 315 && z >= 532 && z < 540) {
+        leader->y.fixed = -0x20000;
+        if (!GameFlag_IsSet(0x300)) {
+            Engine_EventBegin();
+            Engine_AudioPlayCue(161);
+            GameFlag_Set(0x300);
+            Engine_MapCopyCellsTo(26, 33, 19, 33, 1, 1);
+            Engine_EventWait(30);
+            Engine_AudioPlayCue(239);
+            Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+            Engine_EventWait(20);
+            dust_x = 0x1200000;
+            x = 29;
+            countdown = 40;
+            for (i = 0; i <= 479; i++, countdown--) {
+                layer->x += 0x3333;
+                dust_x += -0x3333;
+                options.priority = 2;
+                options.start_scale_x = ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
+                options.start_scale_y = ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
+                options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+                Effect_Spawn(dust_x, 0, 0x2100000, 0, -(((gFrameCount & 1) * 3) << 16), 0, 0x8a0000, &options);
+                if (i == 240) {
+                    dust_x += -0x300000;
+                }
+                if (countdown == 0) {
+                    countdown = 40;
+                    if (i <= 240) {
+                        x -= 4;
+                        Map_CopyCellsTo(x, 50, 15, 32, 3, 4);
+                    } else {
+                        x += 4;
+                        Map_CopyCellsTo(x, 45, 9, 32, 3, 4);
+                    }
+                }
+                Engine_TaskWait(1);
+            }
+            layer->x += 0x8000;
+            layer->x = layer->x / 0x10000 << 16;
+            Engine_MapCopyCellAttributes(15, 32, 3, 1, 9, 32);
+            Engine_MapCopyCellAttributes(12, 32, 3, 1, 15, 32);
+            Engine_AudioPlayCue(288);
+            Engine_AudioPlayCue(188);
+            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+            Engine_MapRenderWaitForValues();
+            gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+            Engine_EventRequestExit(11);
+            Engine_EventEnd();
+        }
+    }
+}
+
+void VinasuHeya_RunCellPushScene(void)
+{
+	s32 OverlayObject_PrepareObjectWithCommand15();
+    u8 *flags;
+    s32 z;
+    s32 x;
+    s32 set;
+    struct FieldActor *leader;
+    struct FieldActor *block;
+    struct FieldActor *actor;
+    s32 row;
+    s32 marker;
+
+    marker = 0;
+    block = Object_GetById(9);
+    leader = Object_GetById(0);
+    row = 45;
+    Engine_EventBegin();
+    Engine_MapCopyCellAttributes(109, 43, 7, 5, row, 43);
+    flags = &block->priority_flags;
+    if ((2 & block->priority_flags) != 0) {
+        Engine_MapCopyCellAttributes(45, 45, 1, 1, 46, row);
+    } else {
+        Map_CopyCellAttributes(48, 42, 1, 1, block->x.fixed >> 20, block->z.fixed >> 20);
+    }
+    x = block->x.fixed >> 20;
+    if (x != 46) {
+    } else {
+        z = block->z.fixed >> 20;
+        if (z != 45) {
+        } else {
+            set = Engine_GameFlagIsSet(0x301);
+            if (set != 0) {
+            } else {
+                if ((leader->z.fixed >> 20) <= 45) {
+                    marker = OverlayObject_PrepareObjectWithCommand15(0x2e80000, 0, 0x2c00000, 20);
+                    Engine_ActorSetSpritePriority(0, 3);
+                }
+                actor = Object_GetById(9);
+                Engine_ActorSetSpriteFlags(actor, 0);
+                block->terrain_id = set;
+                block->motion_flags = 3;
+                block->gravity = 0x1999;
+                block->bounce = set;
+                Engine_MapCopyCellAttributes(43, 45, 1, 1, x, z);
+                OverlayObject_WaitUntilIdle(block);
+                Engine_AudioPlayCue(188);
+                block->motion_flags = set;
+                block->y.fixed = -0x100000;
+                Engine_ActorSetSpritePriority(9, 3);
+                {
+                    u8 two = 2;
+
+                    *flags = two;
+                }
+                Engine_MapCopyCellAttributes(45, 45, 1, 1, x, z);
+                Object_GetById(0)->priority_flags |= 1;
+                Engine_ObjectDispatchRelease(marker);
+                block->collision_flags = set;
+                *flags |= 2;
+                Object_GetById(10)->collision_flags = set;
+                Object_GetById(10)->priority_flags |= 2;
+                Engine_ActorSetPosition(10, 0x3280000, 0x2d80000);
+                Engine_ActorEnableActionCallback(10, gVinasuPushScript);
+                Object_RefreshSelectorById(10);
+                Engine_EventWait(30);
+                Engine_AudioPlayCue(158);
+                Engine_MapAnimateCells(gVinasuPushCells, 110, 41);
+                Map_CopyCellAttributes(46, 41, 1, 1, x, 42);
+                Engine_GameFlagSet(0x301);
+            }
+        }
+    }
+    Engine_EventEnd();
+}
+
+#define SceneEffect_SpawnEffect284AtCell ((struct SwitchEffect * (*)(s32,s32,const void*))SceneEffect_SpawnEffect284AtCell)
+
+void FieldScene_RunGuardedRectStep(void)
+{
+    s32 x;
+    s32 y;
+
+    Engine_EventBegin();
+    if (SceneActor_TryMoveActorZeroTwoTilesAhead() == 0) {
+        x = 45;
+        y = 43;
+        Engine_MapCopyCellAttributes(109, 43, 7, 5, x, y);
+        RunStagedActorTransition();
+    }
+    Engine_EventEnd();
+    VinasuHeya_RunCellPushScene();
+}
+
+void VinasuHeya_SettlePushedBlocks(void)
+{
+	struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind);
+    struct FieldActor *marker = 0;
+    struct FieldActor *leader = Object_GetById(0);
+    struct FieldActor *block;
+    struct FieldActor *other;
+    struct SwitchEffect *first;
+    struct SwitchEffect *second;
+    u8 *flags;
+    u32 id;
+    u32 i;
+    u32 slot;
+    s32 priority;
+
+    Engine_EventBegin();
+    Map_CopyCellAttributes(108, 39, 13, 7, 44, 39);
+    for (id = 9; id <= 11; id++) {
+        block = Object_GetById(id);
+        flags = &block->priority_flags;
+        if (*flags != 2) {
+            Map_CopyCellAttributes(47, 39, 1, 1, block->x.fixed >> 20, block->z.fixed >> 20);
+        } else {
+            Map_CopyCellAttributes(46, 39, 1, 1, block->x.fixed >> 20, block->z.fixed >> 20);
+        }
+        slot = 5;
+        for (i = 0; i <= 3; i++) {
+            if (block->x.fixed >> 20 == gVinasuSwitchCells[i].x && block->z.fixed >> 20 == gVinasuSwitchCells[i].z
+                && block->y.fixed >= 0) {
+                slot = i;
+                break;
+            }
+        }
+        if (slot == 5) {
+            continue;
+        }
+        for (i = 9; i <= 11; i++) {
+            other = Object_GetById(i);
+            if (id != i && block->x.fixed >> 20 == other->x.fixed >> 20
+                && block->z.fixed >> 20 == other->z.fixed >> 20) {
+                slot = 5;
+                break;
+            }
+        }
+        if (slot == 5) {
+            continue;
+        }
+        priority = leader->sprite->priority;
+        if (leader->z.fixed >> 20 <= gVinasuSwitchCells[slot].z) {
+            marker = OverlayObject_PrepareObjectWithCommand15(block->x.fixed, block->y.fixed,
+                                                              block->z.fixed - 0x40000, 20);
+            Engine_ActorSetSpritePriority(0, 3);
+        }
+        Engine_ActorSetSpriteFlags(Object_GetById(id), 0);
+        block->terrain_id = 0;
+        block->motion_flags = 3;
+        block->bounce = 0;
+        block->gravity = 0x1999;
+        Map_CopyCellAttributes(42, 41, 1, 1, gVinasuSwitchCells[slot].x, gVinasuSwitchCells[slot].z);
+        OverlayObject_WaitUntilIdle(block);
+        Engine_AudioPlayCue(188);
+        block->collision_flags = 0;
+        block->motion_flags = 0;
+        block->y.fixed = -0x100000;
+        Engine_ActorSetSpritePriority(id, 3);
+        {
+            u8 two = 2;
+
+            *flags = two;
+        }
+        Map_CopyCellAttributes(46, 39, 1, 1, gVinasuSwitchCells[slot].x, gVinasuSwitchCells[slot].z);
+        Engine_ActorSetSpritePriority(0, priority);
+        Object_GetById(0)->priority_flags |= 1;
+        if (marker != 0) {
+            Engine_ObjectDispatchRelease(marker);
+        }
+        if (Engine_GameFlagIsSet(0x304)) {
+            Engine_EventEnd();
+            return;
+        }
+        if ((Object_GetById(9)->priority_flags & Object_GetById(10)->priority_flags
+             & Object_GetById(11)->priority_flags & 2) == 0) {
+            continue;
+        }
+        first = SceneEffect_SpawnEffect284AtCell(888, 680, gVinasuSettleScriptA);
+        second = SceneEffect_SpawnEffect284AtCell(888, 680, gVinasuSettleScriptB);
+        while (first->active != 0 || second->active != 0) {
+            if (first->finished != 0 || second->finished != 0) {
+                Engine_EventWait(30);
+                Engine_AudioPlayCue(158);
+                Engine_MapAnimateCells(gVinasuSettleCells, 109, 37);
+                Map_CopyCellAttributes(45, 37, 1, 1, 45, 38);
+                if (Object_GetById(9)->x.fixed >> 20 == gVinasuSwitchCells[0].x
+                    && Object_GetById(9)->z.fixed >> 20 == gVinasuSwitchCells[0].z) {
+                    Engine_GameFlagSet(0x302);
+                } else {
+                    Engine_GameFlagSet(0x303);
+                }
+                Engine_GameFlagSet(0x304);
+                break;
+            }
+            Engine_TaskWait(1);
+        }
+    }
+    Engine_EventEnd();
+}
+
+void SceneState_RunConditionalStep(void)
+{
+    Engine_EventBegin();
+    if (SceneActor_TryMoveActorZeroTwoTilesAhead() == 0) {
+        s32 k5 = 44, k6 = 39;
+        Engine_MapCopyCellAttributes(108, 39, 13, 7, k5, k6);
+        RunStagedActorTransition();
+    }
+    Engine_EventEnd();
+    VinasuHeya_SettlePushedBlocks();
+}
+
+s32 SceneActor_SetHeightAboveLinkedRecord(Struct_22a4 *obj)
+{
+    Struct_22a4b *rec;
+
+    rec = Object_GetById(((s16 *)obj)[50]);
+    ((s32 *)obj)[3] = rec->unkC + 0x100000;
+    return 0;
+}
+
+void VinasuHeya_LowerFloatingBlocks(s32 wait)
+{
+    struct FieldActor *a = Object_GetById(8);
+    struct FieldActor *b = Object_GetById(9);
+    u32 i;
+
+    Actor_SetSpeed(8, 0x8000, 0x4000);
+    Engine_ActorSetSpeed(9, 0x8000, 0x4000);
+    if (wait != 0) {
+        Engine_AudioPlayCue(180);
+    }
+    FieldObject_SetPosition((s32)a, a->x.fixed, gVinasuBlockHeights[(s16)a->timer], a->z.fixed);
+    FieldObject_SetPosition((s32)b, b->x.fixed, gVinasuBlockHeights[(s16)b->timer], b->z.fixed);
+    Engine_ActorWaitForMove(8);
+    Engine_ActorWaitForMove(9);
+    a->y.fixed = gVinasuBlockHeights[(s16)a->timer];
+    b->y.fixed = gVinasuBlockHeights[(s16)b->timer];
+    if (wait != 0) {
+        Engine_AudioPlayCue(0x121);
+    }
+    for (i = 0; i < 5; i++) {
+        struct FieldActor *actor = Object_GetById(i + 8);
+
+        if (actor->y.fixed / 0x10000 < 0 && actor->y.fixed / 0x10000 > -30) {
+            Map_CopyCellAttributes(4, 19, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+        }
+    }
+    Engine_EventWait(wait);
+}
+
+void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
+{
+
+    struct FieldActor *cand;
+    s32 highest = (s32)0xffb00000;
+    u8 *sel = 0;
+    u32 i;
+
+    for (i = 0; i <= 5; i++) {
+        s32 no = i + 8;
+        s32 cand_y;
+
+        if (no == selector) {
+            continue;
+        }
+
+        cand = Object_GetById(no);
+        sel = Object_GetById(selector);
+
+        if ((cand->x.fixed >> 20)
+                != (*(s32 *)(sel + 8) >> 20)
+            || (cand->z.fixed >> 20)
+                != (*(s32 *)(sel + 16) >> 20)) {
+            continue;
+        }
+
+        cand_y = cand->y.fixed + 0x100000;
+        if (highest <= cand_y) {
+            *(u16 *)(sel + 100) = (u16)no;
+            highest = cand_y;
+        }
+    }
+
+    Engine_ActorSetSpeed(selector, 0x40000, 0x20000);
+    Engine_ObjectSetPosition(sel,
+                  *(s32 *)(sel + 8),
+                  highest,
+                  *(s32 *)(sel + 16));
+    Engine_ActorWaitForMove(selector);
+    Engine_AudioPlayCue(188);
+    SceneEffect_SpawnNineRadialEffects(selector);
+    Engine_EventWait(30);
+}
+
+struct FieldActor *Battle_GetWorkObject1e0(void);
+
+struct FloatingBlock {
+    u8 unknown_00[0x64];
+    s16 height_index;
+};
+
+static __inline__ void FloatingBlock_Settle(struct FieldActor *block, s32 value)
+{
+    block->target_y = ACTOR_NO_TARGET;
+    block->terrain_height = value;
+    block->velocity_y = value;
+    block->motion_flags = value;
+    ((struct FloatingBlock *)block)->height_index = value;
+}
+
+static __inline__ void Actor_CopyPosition(struct FieldActor *to, struct FieldActor *from)
+{
+    to->x.fixed = from->x.fixed;
+    to->y.fixed = from->y.fixed;
+    to->z.fixed = from->z.fixed;
+}
+
+void VinasuHeya_ResolveFloatingBlock(void)
+{
+    struct FieldActor work;
+    struct FieldActor *first = NULL;
+    struct FieldActor *second = NULL;
+    struct FieldActor *block;
+    struct FieldActor *other;
+    s32 i;
+    s32 j;
+    s32 slot;
+    s32 x;
+    s32 z;
+
+    Engine_EventBegin();
+    for (i = 0; i < 4; i++) {
+        block = Object_GetById(i + 10);
+        x = block->x.fixed >> 20;
+        if (x == 13 && (z = block->z.fixed >> 20) == 7 && !GameFlag_IsSet(0x200 + i)) {
+            OverlayObject_WaitUntilIdle(block);
+            GameFlag_Set(0x200 + i);
+            block->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+            block->collision_flags = 0;
+            block->motion_flags = 0;
+            Engine_MapCopyCellAttributes(4, 19, 1, 1, x, z);
+            break;
+        }
+        if (block->sprite->priority == 3 && !GameFlag_IsSet(0x200 + i)) {
+            /* FAKEMATCH: the zero is taken before the priority call, in the search counter, so it is held in r5 across the call */
+            j = 0;
+            Engine_ActorSetSpritePriority(i + 10, 1);
+            block->bounce = j;
+            if (block->z.fixed >> 20 <= 12) {
+                first = OverlayObject_SpawnWithMode14(block->x.fixed, 0, 0xe00000, 253);
+                second = OverlayObject_SpawnWithMode14(block->x.fixed, 0, 0xf00000, 253);
+            }
+            OverlayObject_WaitUntilIdle(block);
+            Engine_ActorSetPosition(i + 10, 0, 0);
+            Engine_ObjectDispatchRelease(first);
+            Engine_ObjectDispatchRelease(second);
+            GameFlag_Set(0x200 + i);
+            break;
+        }
+        if (block->z.fixed >> 20 == 19 && !GameFlag_IsSet(0x200 + i)) {
+            FloatingBlock_Settle(block, 0);
+            slot = i;
+            for (j = 0; j < i; j++) {
+                if (!GameFlag_IsSet(0x200 + j)) {
+                    other = Object_GetById(j + 10);
+                    Actor_CopyPosition(&work, block);
+                    Actor_CopyPosition(block, other);
+                    Actor_CopyPosition(other, &work);
+                    slot = j;
+                    break;
+                }
+            }
+            other = Object_GetById(slot + 10);
+            FloatingBlock_Settle(other, 0);
+            Engine_CameraSetSpeed(0x30000, 0x6000);
+            Battle_GetWorkObject1e0()->motion_flags = 0;
+            Engine_CameraMoveTo(0x880000, 0x80000, 0x1580000, 1);
+            Engine_CameraWaitForMove();
+            SceneActor_PickHighestSlotAtSameTileAndRelease(slot + 10);
+            if (Object_GetById(slot + 10)->x.fixed >> 20 == 6) {
+                ((struct FloatingBlock *)Object_GetById(8))->height_index++;
+                ((struct FloatingBlock *)Object_GetById(9))->height_index--;
+            } else {
+                ((struct FloatingBlock *)Object_GetById(8))->height_index--;
+                ((struct FloatingBlock *)Object_GetById(9))->height_index++;
+            }
+            Object_GetById(slot + 10)->update =
+                (void (*)(union FieldObject *))SceneActor_SetHeightAboveLinkedRecord;
+            VinasuHeya_LowerFloatingBlocks(40);
+            Object_GetById(slot + 10)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+            GameFlag_Set(slot + 0x200);
+            break;
+        }
+    }
+    Engine_EventEnd();
+}
+
+void FieldScene_RunThreeCallSequence(void)
+{
+
+    Engine_EventBegin();
+    RunStagedActorTransition();
+    Engine_EventEnd();
+}
+
+void VinasuHeya_RetractBridge(void)
+{
+    struct EffectOptions options;
+    struct ScrollLayer *layer;
+    struct FieldActor *leader;
+    s32 x;
+    s32 z;
+    s32 countdown;
+    u32 i;
+    s32 dust_x;
+
+    layer = &((struct MapWork *)gMapWork[0])->layer;
+    leader = Object_GetById(0);
+    x = leader->x.part.pixel;
+    z = leader->z.part.pixel;
+    leader->y.fixed = 0;
+    if (x >= 532 && x <= 539 && z >= 324 && z < 332) {
+        leader->y.fixed = -0x20000;
+        if (!Engine_GameFlagIsSet(0x306)) {
+            Engine_EventBegin();
+            Engine_MapCopyCellsTo(63, 29, 33, 20, 1, 1);
+            Engine_AudioPlayCue(161);
+            Engine_MapCopyCellsTo(44, 83, 44, 80, 3, 3);
+            Engine_EventWait(30);
+            Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+            Engine_AudioPlayCue(239);
+            Engine_EventWait(20);
+            dust_x = 0x2680000;
+            x = 0;
+            countdown = 60;
+            for (i = 0; i <= 319; i++, countdown--) {
+                layer->x += 0x3333;
+                if (dust_x >= 0x2400000 && i > 40) {
+                    dust_x += -0x3333;
+                    options.priority = 2;
+                    options.start_scale_x = ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
+                    options.start_scale_y = ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
+                    options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+                    Effect_Spawn(dust_x, 0, 0x1200000, 0, -(((gFrameCount & 1) * 3) << 16), 0, 0x8a0000, &options);
+                    if (countdown == 0) {
+                        countdown = 40;
+                        x += 4;
+                        Map_CopyCellsTo(x, 56, 36, 17, 3, 4);
+                    }
+                }
+                Engine_TaskWait(1);
+            }
+            layer->x += 0x8000;
+            layer->x = layer->x / 0x10000 << 16;
+            Engine_AudioPlayCue(288);
+            Engine_AudioPlayCue(188);
+            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+            Engine_MapRenderWaitForValues();
+            gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+            Engine_EventRequestExit(18);
+            Engine_EventEnd();
+        }
+    }
+}
+
+void VinasuHeya_ExtendBridge(void)
+{
+    struct EffectOptions options;
+    struct ScrollLayer *layer;
+    struct FieldActor *leader;
+    s32 x;
+    s32 z;
+    s32 countdown;
+    u32 i;
+    s32 dust_x;
+
+    layer = &((struct MapWork *)gMapWork[0])->layer;
+    leader = Object_GetById(0);
+    x = leader->x.part.pixel;
+    z = leader->z.part.pixel;
+    leader->y.fixed = 0;
+    if (x >= 788 && x <= 795 && z >= 324 && z < 332) {
+        leader->y.fixed = -0x20000;
+        if (!Engine_GameFlagIsSet(0x307)) {
+            Engine_EventBegin();
+            Engine_MapCopyCellsTo(63, 29, 49, 20, 1, 1);
+            Engine_AudioPlayCue(161);
+            Engine_EventWait(30);
+            Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+            Engine_AudioPlayCue(239);
+            Engine_EventWait(20);
+            dust_x = 0x2c00000;
+            x = 61;
+            countdown = 60;
+            for (i = 0; i <= 319; i++, countdown--) {
+                layer->x += -0x3333;
+                dust_x += 0x3333;
+                if (dust_x >= 0x2c80000 && dust_x < 0x2f00000) {
+                    options.priority = 2;
+                    options.start_scale_x = ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
+                    options.start_scale_y = ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
+                    options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+                    Effect_Spawn(dust_x, 0, 0x1200000, 0, -(((gFrameCount & 1) * 3) << 16), 0, 0x8a0000, &options);
+                    if (countdown == 0) {
+                        countdown = 40;
+                        x -= 4;
+                        Map_CopyCellsTo(x, 56, 44, 17, 3, 4);
+                    }
+                }
+                Engine_TaskWait(1);
+            }
+            layer->x += 0x8000;
+            layer->x = layer->x / 0x10000 << 16;
+            Engine_AudioPlayCue(288);
+            Engine_AudioPlayCue(188);
+            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+            Engine_MapRenderWaitForValues();
+            gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+            Engine_EventRequestExit(19);
+            Engine_EventEnd();
+        }
+    }
+}
+void ObjectDispatch_WaitForValue16(struct SwitchEffect *effect);
+void Battle_ResetEffectCounter(void);
+
+void Scene_RunScene3c8SequenceA(void)
+{
+	struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind);
+	extern struct SwitchCell gVinasuPillarCells[8];
+    struct FieldActor *effect;
+    struct FieldActor *actor;
+    struct FieldActor *other;
+    struct FieldActor *leader;
+    struct FieldActor *a;
+    struct FieldActor *b;
+    struct FieldActor *c;
+    struct FieldActor *d;
+    u8 *flags;
+    u8 *motion;
+    u32 id;
+    u32 i;
+    u32 slot;
+    u32 priority;
+
+    effect = 0;
+    leader = Actor_Get(0);
+    Event_Begin();
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    Battle_ResetEffectCounter();
+#endif
+    Map_CopyCellAttributes(69, 48, 4, 2, 5, 48);
+    Map_CopyCellAttributes(73, 37, 9, 13, 9, 37);
+    for (id = 15; id <= 18; id++) {
+        actor = Object_GetById(id);
+        flags = &actor->priority_flags;
+        if (*flags != 2)
+            Map_CopyCellAttributes(72, 48, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+        else
+            Map_CopyCellAttributes(73, 48, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+
+        slot = 8;
+        for (i = 0; i < 8; i++) {
+            if ((actor->x.fixed >> 20) == gVinasuPillarCells[i].x
+                && (actor->z.fixed >> 20) == gVinasuPillarCells[i].z
+                && actor->y.fixed >= 0) {
+                slot = i;
+                break;
+            }
+        }
+        if (slot == 8)
+            continue;
+        for (i = 15; i <= 18; i++) {
+            other = Object_GetById(i);
+            if (id != i
+                && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
+                && (actor->z.fixed >> 20) == (other->z.fixed >> 20)) {
+                slot = 8;
+                break;
+            }
+        }
+        if (slot == 8)
+            continue;
+
+        priority = leader->sprite->priority;
+        if ((u32)(leader->z.fixed >> 20) <= gVinasuPillarCells[slot].z) {
+            effect = OverlayObject_PrepareObjectWithCommand15(actor->x.fixed, actor->y.fixed,
+                                   actor->z.fixed - 0x40000, 20);
+            Actor_SetSpritePriority(0, 3);
+        }
+        for (i = 15; i <= 18; i++) {
+            other = Object_GetById(i);
+            if (id != i
+                && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
+                && (actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20))
+                Actor_SetSpritePriority(i, 3);
+        }
+        Actor_SetSpriteFlags(Object_GetById(id), 0);
+        actor->terrain_id = 0;
+        motion = &actor->motion_flags;
+        *motion = 3;
+        ((union FieldObject *)actor)->effect.velocity_y = 0x1999;
+        ((union FieldObject *)actor)->effect.velocity_x = 0;
+        Map_CopyCellAttributes(6, 44, 1, 1, gVinasuPillarCells[slot].x, gVinasuPillarCells[slot].z);
+        OverlayObject_WaitUntilIdle(actor);
+        Audio_PlayCue(188);
+        actor->collision_flags = 0;
+        *motion = 0;
+        actor->y.fixed = -0x100000;
+        Actor_SetSpritePriority(id, 3);
+        *flags = 2;
+        Map_CopyCellAttributes(73, 48, 1, 1, gVinasuPillarCells[slot].x, gVinasuPillarCells[slot].z);
+        Actor_SetSpritePriority(0, priority);
+        Object_GetById(0)->priority_flags |= 1;
+        for (i = 15; i <= 18; i++) {
+            other = Object_GetById(i);
+            if (id != i
+                && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
+                && (actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20)) {
+                Actor_SetSpritePriority(i, 1);
+                Object_GetById(i)->priority_flags |= 1;
+            }
+        }
+        Engine_ObjectDispatchRelease(effect);
+        if (GameFlag_IsSet(0x308)) {
+            Event_End();
+            return;
+        }
+        a = Actor_Get(15);
+        b = Actor_Get(16);
+        c = Actor_Get(17);
+        d = Object_GetById(18);
+        if ((a->priority_flags & b->priority_flags & c->priority_flags & d->priority_flags) & 2) {
+            struct SwitchEffect *first;
+            struct SwitchEffect *second;
+
+            Camera_SetSpeed(0x10000, 0x2000);
+            Object_PlaceCurrentWithinCameraBounds(14, 1);
+            Camera_WaitForMove();
+            first = SceneEffect_SpawnEffect284AtCell(136, 0x308, gVinasuFirstGateScript);
+            Event_Wait(30);
+            Camera_SetSpeed(0x6666, 0xccc);
+            Camera_MoveTo(0xd80000, -1, 0x2780000, 1);
+            ObjectDispatch_WaitForValue16(first);
+            Object_SetScript((struct FieldActor *)first, gVinasuFirstGateOpenScript);
+            second = SceneEffect_SpawnEffect284AtCell(216, 0x2f8, gVinasuSecondGateScript);
+            while (first->active != 0 || second->active != 0) {
+                if (first->finished != 0 || second->finished != 0) {
+                    Event_Wait(30);
+                    Map_AnimateCells(gVinasuGateCells, 77, 35);
+                    Map_CopyCellAttributes(13, 35, 1, 1, 13, 36);
+                    GameFlag_Set(0x308);
+                    break;
+                }
+                Task_Wait(1);
+            }
+        }
+    }
+    Event_End();
+}
+
+#define SceneEffect_SpawnRandomizedParticleEveryFourFrames ((void (*)(union FieldObject*))SceneEffect_SpawnRandomizedParticleEveryFourFrames)
+
+void BattleFx_StartFadeOverlay(s32 mode);
+void BattleFx_SetQueuedSoundAndPlay(s32 cue);
+void DisplayBlend_EnableRunScript(void);
+void FieldScene_RunSupplementalSequenceOne(void);
+void FieldScene_RunOpeningAuxiliarySequence(void);
+
+struct DirXZ {
+    s32 x;
+    s32 unused;
+    s32 z;
+};
+
+struct DustParams {
+    u8 unknown_00[34];
+    u16 angle;
+    u8 unknown_24[4];
+};
+
+void FieldScene_DrawTilesWhenCheckClear(void)
+{
+
+    Engine_EventBegin();
+    if (SceneActor_TryMoveActorZeroTwoTilesAhead() == 0) {
+        { s32 k5 = 5, k6 = 48; Engine_MapCopyCellAttributes(69, 48, 4, 2, k5, k6); }
+        { s32 j5 = 9, j6 = 37; Engine_MapCopyCellAttributes(73, 37, 9, 13, j5, j6); }
+        RunStagedActorTransition();
+    }
+    Engine_EventEnd();
+    Scene_RunScene3c8SequenceA();
+}
+
+void FieldScene_RunApproachAndSpawnEffect(void)
+{
+    Engine_EventBegin();
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x208, 0x2c8);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
+    (void)OverlayObject_SpawnWithMode14(0x2080000, 0, 0x3100000, 223);
+    BattleFx_RunRisingObjectSequence(0, 6, 0);
+    Engine_EventWait(60);
+    Engine_EventRequestExit(20);
+    Engine_EventEnd();
+}
+
+const struct SceneEvent *Scene_GetEvents(void)
+{
+    s32 v = gGameState.scene;
+
+    if (v == (s32)&SceneId_VinasuHeya1) {
+        return (const struct SceneEvent *)gVinasuHeyaEvents1;
+    }
+    if (v == (s32)&SceneId_VinasuHeya2) {
+        return (const struct SceneEvent *)gVinasuHeyaEvents2;
+    }
+    if (v == (s32)&SceneId_VinasuHeya3) {
+        return (const struct SceneEvent *)gVinasuHeyaEvents3;
+    }
+    if (v == (s32)&SceneId_VinasuHeya4) {
+        return (const struct SceneEvent *)gVinasuHeyaEvents4;
+    }
+    if (v == (s32)&SceneId_VinasuHeya5) {
+        return (const struct SceneEvent *)gVinasuHeyaEvents5;
+    }
+    if (v == (s32)&SceneId_VinasuHeya6) {
+        return (const struct SceneEvent *)gVinasuHeyaEvents6;
+    }
+    return (const struct SceneEvent *)gVinasuHeyaEvents2;
+}
+
+void SceneActor_ClearActorModeAndSetState5(s32 no)
+{
+    struct FieldActor *p;
+    s32 mask;
+
+    p = Object_GetById(no);
+    p->motion_flags = 0;
+    mask = 252;
+    mask &= p->collision_flags;
+    p->collision_flags = mask;
+    Engine_ActorSetSpriteFlags(p, 0);
+    Object_SetMode(p, 5);
+    Engine_ActorSetSpritePriority(no, 3);
+    {
+        s32 v = 2;
+        v |= p->priority_flags;
+        p->priority_flags = v;
+    }
+}
+
+void SceneState_ApplyStepToSlots15To18(void)
+{
+    u32 i;
+
+    i = 15;
+    do {
+        Object_GetById(i);
+        i++;
+    } while (i <= 18);
+}
+
+s32 Scene_RunEntrySetup(void)
+{
+    struct FieldActor *actor;
+    s32 area;
+    u32 i;
+    s32 x;
+    s32 z;
+
+    Engine_EventWait(1);
+    if (Engine_GameFlagIsSet(0x109))
+        SceneActor_ApplySlotsMatchingKind212();
+    Engine_GameFlagSet(0x110);
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+    area = gGameState.scene;
+    if (area == (s32)&SceneId_VinasuHeya1) {
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+        if (!Engine_GameFlagIsSet(0x981))
+            SceneActor_ClearActorModeAndSetState5(8);
+        else
+            Map_CopyCellAttributes(7, 17, 2, 1, 7, 16);
+        SceneActor_ClearActorModeAndSetState5(9);
+        SceneActor_ClearActorModeAndSetState5(10);
+        SceneActor_ClearActorModeAndSetState5(11);
+        Engine_ActorSetSpritePriority(11, 2);
+        SceneActor_ClearActorModeAndSetState5(12);
+        Engine_ActorSetSpritePriority(12, 2);
+        SceneActor_ClearActorModeAndSetState5(13);
+        SceneActor_ClearActorModeAndSetState5(14);
+        goto end;
+    }
+    if (area == (s32)&SceneId_VinasuHeya2) {
+        switch (gGameState.entrance) {
+        case 1:
+        case 2:
+            SceneActor_ClearActorModeAndSetState5(8);
+            break;
+        case 5:
+            Engine_GameFlagClear(0x120);
+        case 3:
+        case 4:
+        case 6:
+            SceneActor_ClearActorModeAndSetState5(9);
+            break;
+        case 20:
+        case 21:
+            if (Engine_GameFlagIsSet(0x982)) {
+                Map_CopyCellsTo(103, 27, 89, 27, 7, 8);
+                Map_CopyCellsTo(41, 90, 27, 92, 3, 2);
+                Engine_MapCopyCellsTo(41, 90, 29, 93, 3, 2);
+                Engine_MapCopyCellsTo(41, 90, 27, 94, 3, 2);
+                Engine_MapCopyCellsTo(41, 90, 27, 96, 3, 2);
+                Engine_MapCopyCellsTo(41, 90, 29, 97, 3, 2);
+                Engine_MapCopyCellsTo(41, 96, 25, 91, 3, 2);
+                Engine_MapCopyCellsTo(41, 92, 25, 93, 3, 2);
+                Engine_MapCopyCellsTo(41, 96, 25, 95, 3, 2);
+                Engine_MapCopyCellsTo(41, 96, 25, 97, 3, 2);
+                Engine_MapCopyCellsTo(41, 96, 27, 96, 3, 2);
+                Engine_MapCopyCellsTo(41, 96, 29, 97, 3, 2);
+            } else {
+                if (!Engine_GameFlagIsSet(0x983))
+                    break;
+                Map_CopyCellsTo(111, 27, 89, 27, 7, 8);
+                Map_CopyCellsTo(41, 90, 25, 91, 3, 2);
+                Engine_MapCopyCellsTo(41, 90, 25, 93, 3, 2);
+                Engine_MapCopyCellsTo(41, 90, 25, 95, 3, 2);
+                Engine_MapCopyCellsTo(41, 90, 25, 97, 3, 2);
+                Engine_MapCopyCellsTo(41, 90, 27, 96, 3, 2);
+                Engine_MapCopyCellsTo(41, 90, 29, 97, 3, 2);
+                Engine_MapCopyCellsTo(41, 94, 27, 92, 3, 2);
+                Engine_MapCopyCellsTo(41, 96, 29, 93, 3, 2);
+                Engine_MapCopyCellsTo(41, 94, 27, 94, 3, 2);
+                Engine_MapCopyCellsTo(41, 96, 27, 96, 3, 2);
+                Engine_MapCopyCellsTo(41, 96, 29, 97, 3, 2);
+            }
+            break;
+        case 26:
+            Engine_GameFlagClear(0x121);
+        case 22:
+        case 23:
+            Engine_GameFlagClear(0x12f);
+            if (Engine_GameFlagIsSet(0x200))
+                Map_CopyCellsTo(44, 117, 41, 117, 3, 5);
+            break;
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+            if (Engine_GameFlagIsSet(0x987)) {
+                Actor_SetPosition(12, 218 << 18, 176 << 15);
+                actor = Object_GetById(12);
+                actor->y.fixed = -0x180000;
+                actor->target_y = ACTOR_NO_TARGET;
+            }
+            break;
+        }
+    } else if (area == (s32)&SceneId_VinasuHeya3) {
+        switch (gGameState.entrance) {
+        case 16:
+            Engine_GameFlagClear(0x12f);
+            break;
+        case 21:
+            Scene_RunPairedParticleWaveSequence();
+            break;
+        case 20:
+            BattleFx_SetQueuedSoundAndPlay(170);
+            if (!Engine_GameFlagIsSet(0x109))
+                FieldScene_RunSupplementalSequenceOne();
+            break;
+        case 9:
+        case 10:
+            actor = Object_GetById(11);
+            SceneActor_ApplyPositionsOfActors11And12();
+            if (actor->x.fixed >> 20 == 8)
+                SceneState_MarkActorAndApplyRectAtTile(actor);
+            actor = Object_GetById(12);
+            if (actor->x.fixed >> 20 == 7)
+                SceneState_MarkActorAndApplyRectAtTile(actor);
+            OverlayObject_SpawnWithMode14(206 << 16, 0, 0x1c10000, 223);
+            OverlayObject_SpawnWithMode14(210 << 16, 0, 0x1c10000, 223);
+            break;
+        case 7:
+        case 8:
+            BattleFx_StartFadeOverlay(0);
+            Engine_TaskWait(2);
+            actor = Object_GetById(8);
+            actor->motion_flags = 0;
+            actor->update = SceneActor_SetFlagBitByRelativeDepth;
+            actor = Object_GetById(9);
+            actor->motion_flags = 0;
+            actor->update = SceneActor_SetFlagBitByRelativeDepth;
+            actor = Object_GetById(10);
+            actor->motion_flags = 0;
+            actor->update = SceneActor_SetFlagBitByRelativeDepth;
+            FieldScene_PlaceAndPinSlots8To10();
+            break;
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+            BattleFx_SetQueuedSoundAndPlay(170);
+            BattleFx_StartFadeOverlay(0);
+            Engine_TaskWait(2);
+            if (Engine_GameFlagIsSet(0x300)) {
+                Map_CopyCellsTo(111, 5, 117, 5, 5, 2);
+                Engine_MapCopyCellsTo(111, 10, 117, 10, 5, 2);
+                Engine_MapCopyCellsTo(111, 7, 111, 5, 5, 2);
+                Engine_MapCopyCellsTo(111, 7, 111, 10, 5, 2);
+                Map_CopyCells(48, 3, 3, 10, 54, 3);
+                Engine_MapCopyCells(55, 26, 3, 10, 48, 3);
+            }
+            break;
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 19:
+            goto cue;
+        }
+    } else if (area == (s32)&SceneId_VinasuHeya4) {
+        switch (gGameState.entrance) {
+        case 2:
+            FieldScene_RunOpeningAuxiliarySequence();
+            goto cue;
+        case 4:
+        case 6:
+            BattleFx_StartFadeOverlay(0);
+            break;
+        case 9:
+        case 10:
+            actor = Object_GetById(8);
+            actor->motion_flags = 0;
+            actor->y.fixed = 0;
+            actor = Object_GetById(9);
+            actor->motion_flags = 0;
+            actor->collision_flags = 0;
+            if (Engine_GameFlagIsSet(0x301)) {
+                Engine_TaskWait(1);
+                Engine_MapCopyCellsTo(124, 41, 110, 41, 1, 2);
+                Engine_MapCopyCellAttributes(46, 41, 1, 1, 46, 42);
+                Actor_SetPosition(9, 186 << 18, 182 << 18);
+                actor->motion_flags = 0;
+                actor->y.fixed = -0x100000;
+                Engine_ActorSetSpritePriority(9, 3);
+                actor->priority_flags = 2;
+                Engine_MapCopyCellAttributes(45, 45, 1, 1, 46, 45);
+                Engine_ActorSetAnimation(10, 7);
+                Engine_ActorSetSpritePriority(10, 1);
+                actor = Object_GetById(10);
+                actor->collision_flags = 0;
+                actor->priority_flags = 2;
+                Actor_SetPosition(10, 0x2e70000, 174 << 18);
+                actor->update = SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+            }
+            VinasuHeya_RunCellPushScene();
+            break;
+        case 11:
+            gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+            Object_GetById(0)->y.fixed = -0x20000;
+        case 7:
+        case 8:
+            BattleFx_SetQueuedSoundAndPlay(170);
+            DisplayBlend_EnableRunScript();
+            {
+                s32 zero = 0;
+
+                /* FAKEMATCH: volatile empty asm barrier on the zero: movs r3, #0 stays before the register address load as native; as a plain empty asm the address load goes first (1 of 1689 rows differ); arm_reorg counts it as 4 bytes, so with no asm here the pools move (81 rows differ) */
+                asm volatile("" : "+l"(zero));
+                REG_BLDCNT = zero;
+                /* FAKEMATCH: keeps the store before the next call setup. */
+                asm volatile("");
+            }
+            if (Engine_GameFlagIsSet(0x300)) {
+                Engine_MapCopyCellsTo(15, 96, 9, 96, 3, 3);
+                Engine_MapCopyCellsTo(12, 96, 15, 96, 3, 3);
+                Engine_MapCopyCellsTo(5, 50, 15, 32, 3, 4);
+                Engine_MapCopyCellsTo(25, 45, 9, 32, 3, 4);
+                Map_CopyCellAttributes(15, 32, 3, 1, 9, 32);
+                Engine_MapCopyCellAttributes(12, 32, 3, 1, 15, 32);
+            }
+            if (gGameState.entrance != 11)
+                break;
+            Engine_EventOpenScreen();
+            Engine_EventWaitForScreen();
+            gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+            break;
+        case 1:
+            goto cue;
+        }
+    } else if (area == (s32)&SceneId_VinasuHeya5) {
+        switch (gGameState.entrance) {
+        case 19:
+            Scene_RunParticleWaveSequence();
+            break;
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 20:
+            BattleFx_SetQueuedSoundAndPlay(170);
+            if (Engine_GameFlagIsSet(0x306)) {
+                Map_CopyCells(53, 12, 3, 13, 26, 12);
+                Map_CopyCellsTo(81, 41, 89, 14, 9, 2);
+                Engine_TaskWait(1);
+                Engine_TaskAddCallback(SceneState_CallWith432And32, 0xc80);
+            }
+            if (Engine_GameFlagIsSet(0x307)) {
+                Map_CopyCells(58, 12, 3, 13, 34, 12);
+                Map_CopyCellsTo(81, 41, 97, 14, 5, 2);
+                Engine_TaskWait(1);
+                Engine_TaskAddCallback(FieldScene_CallWith560And44, 0xc80);
+            }
+            if (gGameState.entrance == 11)
+                FieldScene_RunOpeningAuxiliarySequence();
+            else if (gGameState.entrance == 20)
+                Scene_RunEastParticleWaveSequence();
+            break;
+        case 4:
+        case 5:
+            /* FAKEMATCH: value-returning cast prevents cross-jumping these blocks. */
+            ((s32 (*)(void))FieldScene_RunOpeningAuxiliarySequence)();
+            BattleFx_SetQueuedSoundAndPlay(170);
+            break;
+        case 15:
+        case 16:
+            actor = Object_GetById(8);
+            actor->motion_flags = 0;
+            actor->y.fixed = 0;
+            Object_GetById(9)->motion_flags = 0;
+            Object_GetById(10)->motion_flags = 0;
+            Object_GetById(11)->motion_flags = 0;
+            if (Engine_GameFlagIsSet(0x304)) {
+                Engine_TaskWait(1);
+                Map_CopyCellsTo(111, 59, 109, 37, 1, 2);
+                Map_CopyCellAttributes(45, 37, 1, 1, 45, 38);
+                if (Engine_GameFlagIsSet(0x302)) {
+                    Actor_SetPosition(9, 194 << 18, 166 << 18);
+                    Actor_SetPosition(10, 210 << 18, 166 << 18);
+                    Actor_SetPosition(11, 194 << 18, 174 << 18);
+                } else {
+                    Actor_SetPosition(9, 210 << 18, 166 << 18);
+                    Actor_SetPosition(10, 194 << 18, 174 << 18);
+                    Actor_SetPosition(11, 210 << 18, 174 << 18);
+                }
+                Engine_ActorSetSpritePriority(9, 3);
+                actor = Object_GetById(9);
+                actor->y.fixed = -0x100000;
+                actor->priority_flags = 2;
+                Engine_ActorSetSpritePriority(10, 3);
+                actor = Object_GetById(10);
+                actor->y.fixed = -0x100000;
+                actor->priority_flags = 2;
+                Engine_ActorSetSpritePriority(11, 3);
+                actor = Object_GetById(11);
+                actor->y.fixed = -0x100000;
+                actor->priority_flags = 2;
+                Engine_ActorSetAnimation(12, 7);
+                Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
+                Engine_ActorSetSpritePriority(12, 1);
+                actor = Object_GetById(12);
+                actor->collision_flags = 0;
+                actor->priority_flags = 2;
+                Actor_SetPosition(12, 0x2d70000, 158 << 18);
+                actor->update = SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+            }
+            VinasuHeya_SettlePushedBlocks();
+            break;
+        case 6:
+            goto cue;
+        }
+    } else if (area == (s32)&SceneId_VinasuHeya6) {
+        switch (gGameState.entrance) {
+        case 1:
+        case 2:
+            if (Engine_GameFlagIsSet(0x109)) {
+                VinasuHeya_LowerFloatingBlocks(0);
+                OverlayObject_WaitUntilIdle(Object_GetById(0));
+                for (i = 0; i <= 3; i++) {
+                    actor = Object_GetById(i + 10);
+                    x = actor->x.fixed >> 20;
+                    if (x == 13) {
+                        z = actor->z.fixed >> 20;
+                        if (z == 7 && Engine_GameFlagIsSet(i + 0x200))
+                            goto found;
+                    }
+                }
+            } else {
+                actor = Object_GetById(8);
+                actor->motion_flags = 0;
+                actor->y.fixed = -0x300000;
+                actor->priority_flags |= 2;
+                actor->collision_flags &= 0xfe;
+                actor->timer = 3;
+                Engine_ActorSetSpritePriority(8, 1);
+                actor = Object_GetById(9);
+                actor->motion_flags = 0;
+                actor->y.fixed = -0x300000;
+                actor->priority_flags |= 2;
+                actor->collision_flags &= 0xfe;
+                actor->timer = 3;
+                Engine_ActorSetSpritePriority(9, 1);
+                actor = Object_GetById(10);
+                actor->motion_flags = 0;
+                actor->timer = 0;
+                Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
+                actor = Object_GetById(11);
+                actor->motion_flags = 0;
+                actor->timer = 0;
+                Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
+                actor = Object_GetById(12);
+                actor->motion_flags = 0;
+                actor->timer = 0;
+                Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
+                actor = Object_GetById(13);
+                actor->motion_flags = 0;
+                actor->timer = 0;
+                Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
+            }
+            break;
+        case 13:
+        case 14:
+        cue:
+            BattleFx_SetQueuedSoundAndPlay(170);
+            break;
+        case 18:
+        case 19:
+            gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+            Object_GetById(0)->y.fixed = -0x20000;
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 20:
+            Object_GetById(20)->motion_flags = 4;
+            Object_GetById(20)->priority_flags |= 2;
+            Object_GetById(20)->y.fixed = -0x108000;
+            DisplayBlend_EnableRunScript();
+            /* FAKEMATCH: the do/while keeps the zero ahead of the register address. */
+            do {
+                REG_BLDCNT = 0;
+            } while (0);
+            if (Engine_GameFlagIsSet(0x306)) {
+                BattleFx_SetQueuedSoundAndPlay(170);
+                Engine_MapCopyCellsTo(36, 81, 32, 81, 3, 2);
+                Engine_MapCopyCellsTo(36, 83, 36, 81, 3, 2);
+                Engine_MapCopyCellAttributes(36, 17, 3, 1, 32, 17);
+                Engine_MapCopyCellAttributes(36, 18, 3, 1, 36, 17);
+                Engine_MapCopyCellsTo(63, 29, 33, 20, 1, 1);
+                Engine_MapCopyCellsTo(20, 56, 36, 17, 3, 4);
+            }
+            if (Engine_GameFlagIsSet(0x307)) {
+                Engine_MapCopyCellsTo(44, 81, 48, 81, 3, 2);
+                Engine_MapCopyCellsTo(44, 83, 44, 81, 3, 2);
+                Engine_MapCopyCellAttributes(44, 17, 3, 1, 48, 17);
+                Engine_MapCopyCellAttributes(44, 18, 3, 1, 44, 17);
+                Engine_MapCopyCellsTo(63, 29, 49, 20, 1, 1);
+                Engine_MapCopyCellsTo(41, 56, 44, 17, 3, 4);
+            }
+            if (gGameState.entrance == 18 || gGameState.entrance == 19) {
+                Engine_EventOpenScreen();
+                Engine_EventWaitForScreen();
+                gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+            }
+            if (gGameState.entrance == 20)
+                FieldScene_RunLeaderDropSequence();
+            break;
+        found:
+            actor->priority_flags |= 2;
+            actor->collision_flags = 0;
+            actor->motion_flags = 0;
+            Engine_MapCopyCellAttributes(4, 19, 1, 1, x, z);
+            break;
+        case 15:
+        case 16:
+            Engine_TaskWait(1);
+            Engine_TaskAddCallback(SceneState_ApplyStepToSlots15To18, 0xc80);
+            actor = Object_GetById(14);
+            actor->motion_flags = 0;
+            actor->y.fixed = 0;
+            Object_GetById(15)->motion_flags = 0;
+            Object_GetById(16)->motion_flags = 0;
+            Object_GetById(17)->motion_flags = 0;
+            Object_GetById(18)->motion_flags = 0;
+            if (Engine_GameFlagIsSet(0x308)) {
+                Engine_TaskWait(1);
+                Engine_MapCopyCellsTo(95, 56, 77, 35, 1, 2);
+                Map_CopyCellAttributes(13, 35, 1, 1, 13, 36);
+                Engine_ActorSetPosition(15, 132 << 17, 186 << 18);
+                actor = Object_GetById(15);
+                actor->y.fixed = -0x100000;
+                actor->priority_flags = 2;
+                Engine_ActorSetSpritePriority(15, 3);
+                Actor_SetPosition(16, 184 << 16, 158 << 18);
+                actor = Object_GetById(16);
+                actor->y.fixed = -0x100000;
+                actor->priority_flags = 2;
+                Engine_ActorSetSpritePriority(16, 3);
+                Engine_ActorSetPosition(17, 232 << 16, 174 << 18);
+                actor = Object_GetById(17);
+                actor->y.fixed = -0x100000;
+                actor->priority_flags = 2;
+                Engine_ActorSetSpritePriority(17, 3);
+                Engine_ActorSetPosition(18, 184 << 16, 166 << 18);
+                actor = Object_GetById(18);
+                actor->y.fixed = -0x100000;
+                actor->priority_flags = 2;
+                Engine_ActorSetSpritePriority(18, 3);
+                Engine_ActorSetAnimation(19, 7);
+                Engine_ActorSetSpriteFlags(Object_GetById(19), 0);
+                Engine_ActorSetSpritePriority(19, 1);
+                actor = Object_GetById(19);
+                actor->collision_flags = 0;
+                actor->priority_flags = 2;
+                Actor_SetPosition(19, 215 << 16, 150 << 18);
+                actor->update = SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+            }
+            Scene_RunScene3c8SequenceA();
+            break;
+        }
+    }
+end:
+    return 0;
+}
+
+void SceneState_PassZeroAndMinusOneRecord(void)
+{
+    struct Args_02003fe4 args;
+
+    args.first = 0;
+    args.last = -1;
+    VinasuHeya_StepActorWithDust(&args);
+}
+
+void SceneState_PassRange0To1(void)
+{
+    struct Args_02003ffc args;
+
+    args.first = 0;
+    args.last = 1;
+    VinasuHeya_StepActorWithDust(&args);
+}
+
+void SceneState_PassRangeNeg1To0(void)
+{
+    struct Args_02004014 args;
+
+    args.first = -1;
+    args.last = 0;
+    VinasuHeya_StepActorWithDust(&args);
+}
+
+void SceneState_CallHandlerWithFlagPair(void)
+{
+    struct Args_02004030 args;
+
+    args.first = 1;
+    args.last = 0;
+    VinasuHeya_StepActorWithDust(&args);
+}
+
+void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
+{
+    s32 id;
+    struct FieldActor *center;
+    struct FieldActor *actor;
+    s32 pos[3];
+    struct DustParams params;
+    s32 hit;
+    s32 phase;
+    s32 x;
+    s32 vz;
+
+    {
+        struct EventWork *event = gEventWork;
+
+        id = gGameState.selected_actor;
+        center = event->view_center;
+    }
+    actor = Object_GetById(id);
+    pos[0] = actor->x.fixed + ((dir->x * 3) << 15);
+    pos[1] = actor->y.fixed;
+    pos[2] = actor->z.fixed + ((dir->z * 3) << 15);
+    hit = Object_CheckMovementCollision(actor, pos);
+    phase = gFrameCount & 4;
+    if (phase == 0) {
+        params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+        x = actor->x.fixed + (((u32)(Engine_RandomNext() * 12) >> 16) << 16) - 0x60000;
+        /* FAKEMATCH: this scope preserves the velocity and parameter spill order. */
+        {
+            s32 vx;
+
+            vx = (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd) * dir->x;
+            vz = dir->z * (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd);
+            Effect_Spawn(x, actor->y.fixed, actor->z.fixed, vx, phase, vz, 0x800000, &params);
+        }
+    }
+    if (hit < 0) {
+        Engine_ActorSetAttachedEffect(id, 0x102);
+        Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed, actor->z.fixed + 0x80000);
+        Object_SetMode(actor, 7);
+        Engine_ObjectCommitPosition(actor);
+        do {
+            Engine_TaskWait(1);
+        } while (actor->y.fixed != actor->terrain_height);
+        Object_SetMode(actor, 6);
+        Engine_TaskWait(3);
+        return;
+    }
+    pos[0] = actor->x.fixed + (dir->x << 19);
+    pos[1] = actor->y.fixed;
+    pos[2] = actor->z.fixed + (dir->z << 19);
+    hit = Object_CheckMovementCollision(actor, pos);
+    if (hit > 0) {
+        return;
+    }
+    pos[0] = actor->x.fixed + dir->x * 0x5b333 - dir->z * 0x5b333;
+    pos[1] = actor->y.fixed;
+    pos[2] = actor->z.fixed + dir->z * 0x5b333 - dir->x * 0x5b333;
+    hit = Object_CheckMovementCollision(actor, pos);
+    if (hit > 0) {
+        actor->x.fixed += (dir->z * 3) << 15;
+        actor->z.fixed += (dir->x * 3) << 15;
+        return;
+    }
+    pos[0] = (dir->x + dir->z) * 0x5b333 + actor->x.fixed;
+    pos[1] = actor->y.fixed;
+    pos[2] = (dir->x + dir->z) * 0x5b333 + actor->z.fixed;
+    hit = Object_CheckMovementCollision(actor, pos);
+    if (hit > 0) {
+        actor->x.fixed -= (dir->z * 3) << 15;
+        actor->z.fixed -= (dir->x * 3) << 15;
+        return;
+    }
+    center->x.fixed += (dir->x * 3) << 15;
+    actor->x.fixed += (dir->x * 3) << 15;
+    center->z.fixed += (dir->z * 3) << 15;
+    actor->z.fixed += (dir->z * 3) << 15;
+}
+
+struct FieldActor;
+
+static __inline__ void Rubble_SetScaleAndSpin(struct EffectOptions *opts)
+{
+    opts->start_scale_x = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+    opts->start_scale_y = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+    opts->spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+}
+
+void Scene_RunPairedParticleWaveSequence(void)
+{
+    struct EffectOptions options;
+    u32 repeat;
+    u32 row;
+    u32 i;
+
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+    Engine_EventBegin();
+    Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
+    Engine_ActorSetChildValue(0, 15);
+    BattleFx_SetQueuedSoundAndPlay(170);
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventWait(40);
+    Engine_AudioPlayCue(162);
+    repeat = 0;
+    for (row = 0; row < 10; row++) {
+        options.start_scale_x = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+        options.start_scale_y = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+        options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+    again:
+        for (i = 0; i < 4 && row < 8; i++) {
+            Effect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x3600000, 0,
+                         0x300000 + row * 0x100000 + i * 0x40000, 0, 0, 0, 0x880000, &options);
+        }
+        Engine_TaskWait(3);
+        if (row == 3 && repeat < 3) {
+            repeat++;
+            goto again;
+        }
+        Map_CopyCellsTo(48, row + 3, 54, row + 3, 3, 1);
+    }
+    Map_CopyCellsTo(111, 5, 117, 5, 5, 2);
+    Map_CopyCellsTo(111, 10, 117, 10, 5, 2);
+    Map_CopyCellsTo(111, 7, 111, 5, 5, 2);
+    Map_CopyCellsTo(111, 7, 111, 10, 5, 2);
+    for (row = 0; row < 10; row++) {
+        Rubble_SetScaleAndSpin(&options);
+        for (i = 0; i < 4 && row < 8; i++) {
+            Effect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x3000000, 0,
+                         0x300000 + row * 0x100000 + i * 0x40000, 0, 0, 0, 0x880000, &options);
+        }
+        Engine_TaskWait(3);
+        Map_CopyCellsTo(55, row + 26, 48, row + 3, 3, 1);
+    }
+    Engine_AudioPlayCue(289);
+    Engine_EventWait(60);
+    Engine_EventRequestExit(21);
+    Engine_EventEnd();
+}
+
+void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
+{
+    struct EffectOptions options;
+    struct EffectOptions *p = &options;
+    register struct EffectOptions *opts asm("r8"); /* FAKEMATCH: the options pointer is held in r8 once both scales are stored through p. 2026-10-02: an ordinary pointer puts options in r7 and x in r8, changing spin storage and both spawn calls. */
+    s32 phase;
+    u32 coin;
+
+    p->start_scale_x = 0xb333;
+    p->start_scale_y = 0xb333;
+    opts = p;
+    {
+        s32 spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+        u32 *frame = &gFrameCount; /* FAKEMATCH: the counter's address is loaded before the spin is stored */
+
+        opts->spin = spin;
+        phase = *frame & 3;
+    }
+    if (phase == 0) {
+        coin = (u32)(Engine_RandomNext() << 1) >> 16;
+        if (coin != 0) {
+            s32 r = Engine_RandomNext();
+            s32 vz = __divsi3((((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x70000, 10);
+
+            Effect_Spawn((x + (((u32)(r << 1) >> 16) << 4)) << 16, 0, z << 19, 0, phase, vz, 0x880000, opts);
+        } else {
+            s32 r = Engine_RandomNext();
+
+            Effect_Spawn((x + ((u32)(r * 17) >> 16)) << 16, 0, (x << 19) - 0x40000, 0, coin, coin, 0x880000, opts);
+        }
+    }
+}
+
+void SceneState_CallWith432And32(void)
+{
+    VinasuHeya_SpawnRandomParticles(432, 32);
+}
+
+void FieldScene_CallWith560And44(void)
+{
+    VinasuHeya_SpawnRandomParticles(0x230, 44);
+}
+
+void Scene_RunParticleWaveSequence(void)
+{
+    struct EffectOptions options;
+    u32 repeat;
+        s32 zero;
+    u32 row;
+    s32 offset;
+    s32 z;
+    u32 i;
+    struct EffectOptions *opts;
+
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+    Engine_EventBegin();
+    Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
+    Engine_ActorSetChildValue(0, 15);
+    BattleFx_SetQueuedSoundAndPlay(170);
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventWait(40);
+    Engine_AudioPlayCue(162);
+    Engine_CameraSetSpeed(0x8000, 0x1000);
+    Engine_CameraMoveTo(0x1b80000, -1, 0x1680000, 1);
+    repeat = 0;
+    row = 0;
+    opts = &options;
+    offset = 0;
+    do {
+        options.start_scale_x = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+        options.start_scale_y = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+        options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+    again:
+        z = 0xc00000;
+        for (i = 0, zero = 0, z += offset; i <= 3; i++) {
+            Effect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x1a00000, 0, z, 0, zero, zero, 0x880000, opts);
+            z += 0x40000;
+        }
+        Engine_TaskWait(3);
+        if (row == 3) {
+            if (repeat <= 2) {
+                repeat++;
+                goto again;
+            }
+            if (repeat == 3)
+                Engine_TaskAddCallback(SceneState_CallWith432And32, 3200);
+        }
+        Map_CopyCellsTo(53, row + 12, 26, row + 12, 3, 1);
+        offset += 0x100000;
+        row++;
+    } while (row <= 12);
+    Map_CopyCellsTo(81, 41, 89, 14, 9, 2);
+    Engine_CameraWaitForMove();
+    Camera_MoveTo(-1, -1, -1, 0);
+    Engine_EventWait(60);
+    Engine_GameFlagSet(0x306);
+    Engine_EventRequestExit(19);
+    Engine_EventEnd();
+}
+
+void Scene_RunEastParticleWaveSequence(void)
+{
+    struct EffectOptions options;
+    u32 repeat;
+        s32 zero;
+    u32 row;
+    s32 offset;
+    s32 z;
+    u32 i;
+    struct EffectOptions *opts;
+
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+    Engine_EventBegin();
+    Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
+    Engine_ActorSetChildValue(0, 15);
+    BattleFx_SetQueuedSoundAndPlay(170);
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventWait(40);
+    Engine_AudioPlayCue(162);
+    Engine_CameraSetSpeed(0x8000, 0x1000);
+    Engine_CameraMoveTo(0x2380000, -1, 0x1680000, 1);
+    repeat = 0;
+    row = 0;
+    opts = &options;
+    offset = 0;
+    do {
+        options.start_scale_x = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+        options.start_scale_y = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+        options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+    again:
+        z = 0xc00000;
+        for (i = 0, zero = 0, z += offset; i <= 3; i++) {
+            Effect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x2200000, 0, z, 0, zero, zero, 0x880000, opts);
+            z += 0x40000;
+        }
+        Engine_TaskWait(3);
+        if (row == 3 && repeat <= 2) {
+            repeat++;
+            goto again;
+        }
+        Engine_TaskAddCallback(FieldScene_CallWith560And44, 3200);
+        Map_CopyCellsTo(58, row + 12, 34, row + 12, 3, 1);
+        offset += 0x100000;
+        row++;
+    } while (row <= 12);
+    Map_CopyCellsTo(86, 41, 97, 14, 5, 2);
+    Engine_CameraWaitForMove();
+    Camera_MoveTo(-1, -1, -1, 0);
+    Engine_EventWait(60);
+    Engine_GameFlagSet(0x307);
+    Engine_EventRequestExit(20);
+    Engine_EventEnd();
+}
+
+s32 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor)
+{
+    struct EffectOptions options;
+    struct EffectOptions *o = &options;
+    s32 phase;
+    s32 x, y, z, rise;
+
+    o->priority = 1;
+    o->palette = 5;
+    o->type = 286;
+    o->script = gVinasuSprayScript;
+    phase = gFrameCount & 3;
+    if (phase == 0) {
+        if ((gFrameCount & 7) == 0) {
+            Engine_AudioPlayCue(246);
+        }
+        x = actor->x.fixed + ((((u32)(Engine_RandomNext() * 49) >> 16) - 24) << 16);
+        y = actor->y.fixed + ((((u32)(Engine_RandomNext() * 49) >> 16) - 24) << 16);
+        z = actor->z.fixed + ((((u32)(Engine_RandomNext() * 49) >> 16) - 24) << 16);
+        rise = (((u32)(Engine_RandomNext() * 4) >> 16) << 15) + 0x8000;
+        Effect_Spawn(x, y, z, 0, rise, phase, 0x330000, o);
+    }
+    return 0;
+}
+
+void FieldScene_RunLeaderDropSequence(void)
+{
+    u32 i;
+    struct FieldActor *leader;
+    struct FieldActor *spray;
+
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    spray = Object_GetById(20);
+    Engine_EventBegin();
+    Camera_MoveTo(-1, -1, -1, 0);
+    Engine_MapRedraw();
+    Engine_TaskWait(1);
+    leader->y.fixed = 130 << 16;
+    leader->gravity = 0x8000;
+    leader->bounce = 0;
+    leader->motion_flags = 0;
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
+    Audio_PlayCue(204);
+    Engine_EventWait(30);
+    leader->motion_flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    Engine_EventWait(24);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
+    leader->motion_flags &= ~ACTOR_FOLLOWS_TERRAIN;
+    spray->y.fixed += -3 << 16;
+    leader->y.fixed += -3 << 16;
+    leader->terrain_height += -3 << 16;
+    Engine_TaskWait(2);
+    spray->y.fixed += -2 << 16;
+    leader->y.fixed += -2 << 16;
+    leader->terrain_height += -2 << 16;
+    Engine_TaskWait(10);
+    spray->y.fixed += 2 << 16;
+    leader->y.fixed += 2 << 16;
+    leader->terrain_height += 2 << 16;
+    Engine_TaskWait(4);
+    spray->y.fixed += 2 << 16;
+    leader->y.fixed += 2 << 16;
+    leader->terrain_height += 2 << 16;
+    Engine_TaskWait(4);
+    spray->y.fixed += 1 << 16;
+    leader->y.fixed += 1 << 16;
+    leader->terrain_height += 1 << 16;
+    leader->motion_flags = 0;
+    spray->motion_flags = 0;
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_EventWait(40);
+    leader->update = (void *)VinasuHeya_UpdateRisingSpray;
+    Engine_EventWait(60);
+    Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
+    Engine_ActorSetSpritePriority(20, 1);
+    Audio_PlayCue(17);
+    Audio_PlayCue(0x134);
+    GameFlag_Set(0x101);
+    for (i = 0; i < 128; i++) {
+        leader->y.fixed += 1 << 16;
+        leader->terrain_height += 1 << 16;
+        spray->y.fixed += 1 << 16;
+        Engine_TaskWait(1);
+    }
+    Engine_EventRequestExit(21);
+}
+
+struct TrackAnimation {
+    s16 id;
+};
+
+struct TrackSprite {
+    u8 unknown_00[0x24];
+    u8 shape;
+    u8 unknown_25[3];
+    struct TrackAnimation *animations[4];
+};
+
+s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
+{
+	extern struct SwitchCell gVinasuPillarCells[];
+    s32 pos[3];
+    struct FieldActor *piece;
+    struct TrackSprite *sprite;
+    const u8 *shapes;
+    u8 shape;
+    u32 cell;
+    s32 skip;
+    const u8 *cursor;
+
+    pos[0] = actor->x.fixed;
+    pos[1] = actor->y.fixed - 0x100000;
+    pos[2] = actor->z.fixed;
+    piece = (struct FieldActor *)SceneData_FindSlotAtPosition(pos, 0);
+    sprite = (struct TrackSprite *)piece->sprite;
+    if (sprite->animations[0]->id == 0x100) {
+        s32 vx = actor->velocity_x;
+        s32 ax = vx < 0 ? -vx : vx;
+        s32 vz = actor->velocity_z;
+        s32 az = vz < 0 ? -vz : vz;
+
+        if (ax > az) {
+            if (vx / 0x10000 < 0) {
+                shapes = gVinasuShapesPushedLeft;
+            } else {
+                shapes = gVinasuShapesPushedRight;
+            }
+        } else {
+            if (vz / 0x10000 < 0) {
+                shapes = gVinasuShapesPushedUp;
+            } else {
+                shapes = gVinasuShapesPushedDown;
+            }
+        }
+        for (; *shapes != 0; shapes++) {
+            if (sprite->shape == *shapes) {
+                break;
+            }
+        }
+        if (*shapes == 0) {
+            Engine_ObjectSetScript(actor, gVinasuRefusedPushScript);
+            return 0;
+        }
+        if (gGameState.scene == (s32)&SceneId_VinasuHeya5) {
+            for (cell = 0; cell <= 3 && !(actor->x.fixed >> 20 == gVinasuSwitchCells[cell].x
+                                          && actor->z.fixed >> 20 == gVinasuSwitchCells[cell].z);
+                 cell++) {
+            }
+            for (skip = 0;; skip++) {
+                cursor = gVinasuSwitchShapes[cell];
+                shape = *cursor;
+                if (shape == 0) {
+                    Engine_ObjectSetScript(actor, gVinasuRefusedPushScript);
+                    return 0;
+                }
+                if (shape == ((struct TrackSprite *)piece->sprite)->shape) {
+                    break;
+                }
+                gVinasuSwitchShapes[cell] = cursor + 1;
+            }
+            Engine_ObjectSetScript(actor, gVinasuSwitchPushScripts[cell][skip]);
+        } else {
+            for (cell = 0; cell <= 7 && !(actor->x.fixed >> 20 == gVinasuPillarCells[cell].x
+                                          && actor->z.fixed >> 20 == gVinasuPillarCells[cell].z);
+                 cell++) {
+            }
+            for (skip = 0;; skip++) {
+                cursor = gVinasuPillarShapes[cell];
+                shape = *cursor;
+                if (shape == 0) {
+                    Engine_ObjectSetScript(actor, gVinasuRefusedPushScript);
+                    return 0;
+                }
+                if (shape == ((struct TrackSprite *)piece->sprite)->shape) {
+                    break;
+                }
+                gVinasuPillarShapes[cell] = cursor + 1;
+            }
+            Engine_ObjectSetScript(actor, gVinasuPillarPushScripts[cell][skip]);
+        }
+    } else {
+        Engine_ObjectSetScript(actor, gVinasuRefusedPushScript);
+    }
+    return 0;
 }

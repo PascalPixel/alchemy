@@ -4,5 +4,5 @@
 Monster_PurpleBeastSprites:
 	.incbin "GRAPHICS/MONSTER/PURPLE_BEAST.frames.lz"
 	.ifeq GAME_TLA
-	.balign 4, 0
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
 	.endif

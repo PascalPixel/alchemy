@@ -5,6 +5,5 @@ BattleFx_FlashBurstSheet:
 	.incbin "GRAPHICS/BATTLE_FX/FLASH_BURST.gbapal"
 	.incbin "GRAPHICS/BATTLE_FX/FLASH_BURST.bitmap.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by BattleFx_FireBurstSheet at +0x144b */
-	.byte 0x60
+	.byte 0x60	@ PACKER: left in the buffer by BattleFx_FireBurstSheet+0x144b
 	.endif

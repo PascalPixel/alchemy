@@ -5,6 +5,5 @@ BattleFx_GlowOrbSheet:
 	.incbin "GRAPHICS/BATTLE_FX/GLOW_ORB.gbapal"
 	.incbin "GRAPHICS/BATTLE_FX/GLOW_ORB.bitmap.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by BattleFx_EmberStreakSheet at +0xb3b */
-	.byte 0xe0
+	.byte 0xe0	@ PACKER: left in the buffer by BattleFx_EmberStreakSheet+0xb3b
 	.endif

@@ -5,6 +5,5 @@ BattleFx_JupiterDjinnSheet:
 	.incbin "GRAPHICS/BATTLE_FX/JUPITER_DJINN.gbapal"
 	.incbin "GRAPHICS/BATTLE_FX/JUPITER_DJINN.bitmap.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by BattleFx_MarsDjinnSheet at +0x3a3 */
-	.byte 0x13
+	.byte 0x13	@ PACKER: left in the buffer by BattleFx_MarsDjinnSheet+0x3a3
 	.endif

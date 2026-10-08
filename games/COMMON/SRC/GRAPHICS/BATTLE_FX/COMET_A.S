@@ -5,6 +5,5 @@ BattleFx_CometSheetA:
 	.incbin "GRAPHICS/BATTLE_FX/COMET_A.gbapal"
 	.incbin "GRAPHICS/BATTLE_FX/COMET_A.bitmap.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by BattleFx_ThornSheet at +0x21b */
-	.byte 0x2a
+	.byte 0x2a	@ PACKER: left in the buffer by BattleFx_ThornSheet+0x21b
 	.endif

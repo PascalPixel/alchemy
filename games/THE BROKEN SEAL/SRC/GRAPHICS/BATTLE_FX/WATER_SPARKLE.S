@@ -3,5 +3,4 @@
 BattleFx_WaterSparkleSheet:
 	.incbin "GRAPHICS/BATTLE_FX/WATER_SPARKLE.gbapal"
 	.incbin "GRAPHICS/BATTLE_FX/WATER_SPARKLE.bitmap.lz"
-	/* PACKER: left in the packer's buffer by BattleFx_CrystalSheet at +0x6b3 */
-	.byte 0x11
+	.byte 0x11	@ PACKER: left in the buffer by BattleFx_CrystalSheet+0x6b3

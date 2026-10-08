@@ -5,6 +5,5 @@ BattleFx_CrescentMoonSheet:
 	.incbin "GRAPHICS/BATTLE_FX/CRESCENT_MOON.gbapal"
 	.incbin "GRAPHICS/BATTLE_FX/CRESCENT_MOON.bitmap.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by BattleFx_VioletStreakSheet at +0x4cf */
-	.byte 0x2b
+	.byte 0x2b	@ PACKER: left in the buffer by BattleFx_VioletStreakSheet+0x4cf
 	.endif

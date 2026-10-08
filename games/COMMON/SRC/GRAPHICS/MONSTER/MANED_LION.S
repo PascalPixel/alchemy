@@ -4,6 +4,5 @@
 Monster_ManedLionSprites:
 	.incbin "GRAPHICS/MONSTER/MANED_LION.frames.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by Monster_SirenSprites at +0x26b3 */
-	.byte 0x35
+	.byte 0x35	@ PACKER: left in the buffer by Monster_SirenSprites+0x26b3
 	.endif

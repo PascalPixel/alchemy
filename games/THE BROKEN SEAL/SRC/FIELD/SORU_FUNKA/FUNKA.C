@@ -1524,7 +1524,13 @@ void FieldScene_RunFourWayEffectSequence(u32 mode)
 
 void SceneEffect_AdvanceTenEntryTimers(void)
 {
+#ifdef MODERN
+    // modern GCC holds one type for a name in a file
+    extern Ent *gArcEffects_modern[] __asm__("gArcEffects");
+#define gArcEffects gArcEffects_modern
+#else
     extern Ent *gArcEffects[];
+#endif
 
     u32 i;
     s32 v;
@@ -1551,6 +1557,9 @@ void SceneEffect_AdvanceTenEntryTimers(void)
         }
     }
 }
+#ifdef MODERN
+#undef gArcEffects
+#endif
 
 void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
 {

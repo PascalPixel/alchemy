@@ -3,5 +3,4 @@
 BattleFx_IceTileSheet:
 	.incbin "GRAPHICS/BATTLE_FX/ICE_TILE_00.gbapal"
 	.incbin "GRAPHICS/BATTLE_FX/ICE_TILE.parts.lz"
-	/* PACKER: left in the packer's buffer by BattleFx_CyanSparkSheet at +0x106a */
-	.byte 0x00, 0x01
+	.byte 0x00, 0x01	@ PACKER: left in the buffer by BattleFx_CyanSparkSheet+0x106a

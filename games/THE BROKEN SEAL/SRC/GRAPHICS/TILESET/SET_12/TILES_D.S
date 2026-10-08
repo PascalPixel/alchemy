@@ -2,5 +2,4 @@
 	.global Tileset_Set12TilesD
 Tileset_Set12TilesD:
 	.incbin "GRAPHICS/TILESET/SET_12/TILES_D.4bpp.mtf"
-	/* PACKER: left in the packer's buffer by TILESET/SET_12/TILES_C.o at +0x13f */
-	.byte 0x01
+	.byte 0x01	@ PACKER: left in the buffer by Tileset_Set12TilesC+0x13f

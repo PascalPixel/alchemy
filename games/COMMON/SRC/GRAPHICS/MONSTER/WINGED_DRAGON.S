@@ -4,10 +4,9 @@
 Monster_WingedDragonSprites:
 	.incbin "GRAPHICS/MONSTER/WINGED_DRAGON.frames.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by earlier streams, which differ by edition */
 	.ifdef TBS_EDITION_JA
-	.byte 0xee
+	.byte 0xee	@ PACKER: left in the buffer by earlier streams, which differ by edition
 	.else
-	.byte 0x8c
+	.byte 0x8c	@ PACKER: left in the buffer by earlier streams, which differ by edition
 	.endif
 	.endif

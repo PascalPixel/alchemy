@@ -5,6 +5,5 @@ BattleFx_RuneSheet:
 	.incbin "GRAPHICS/BATTLE_FX/RUNE.gbapal"
 	.incbin "GRAPHICS/BATTLE_FX/RUNE.bitmap.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by BattleFx_SwordSlashSheet at +0x3d9 */
-	.byte 0x43, 0x21, 0xbe
+	.byte 0x43, 0x21, 0xbe	@ PACKER: left in the buffer by BattleFx_SwordSlashSheet+0x3d9
 	.endif

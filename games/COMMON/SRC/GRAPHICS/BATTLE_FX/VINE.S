@@ -5,6 +5,5 @@ BattleFx_VineSheet:
 	.incbin "GRAPHICS/BATTLE_FX/VINE_00.gbapal"
 	.incbin "GRAPHICS/BATTLE_FX/VINE.parts.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by BattleFx_WhirlwindSheet at +0xdcb */
-	.byte 0xbe
+	.byte 0xbe	@ PACKER: left in the buffer by BattleFx_WhirlwindSheet+0xdcb
 	.endif

@@ -2,8 +2,8 @@ use crate::compiler::routing::root;
 use std::path::{Path, PathBuf};
 
 const USAGE: &str = r#"usage: alchemy adopt-data OBJECT PIECE... [--sections ".rodata .data"]
+       alchemy adopt-data OBJECT --tail SIZE
                          [--game tbs|tla] [--only LANG,...] [--dry-run]
-       alchemy adopt-data OBJECT --tail SIZE [--game ...] [--only ...] [--dry-run]
 After a data block's source is in its module: takes the block out of every
 edition's scaffold (recon/<game>/unidentified.s for English,
 recon/<game>/<lang>/rom.s for the others) and links OBJECT in its place in
@@ -29,21 +29,14 @@ from English's, keeps its scaffold (S4) and is reported; German, Spanish,
 French and Italian adopt only with English, whose script theirs derive
 from. --only limits the editions (ja,en,de,es,fr,it), and an edition named
 there must adopt. Nothing is written unless every adopting edition can be
-With --tail, OBJECT is already linked and takes the first SIZE bytes of
-the scaffold section each script links right after it: the leftovers of
-Camelot's packer buffer after a compressed stream, which the stream's
-source keeps as tagged literal bytes (W3). No label may lie in them; the
-rest of the section keeps its labels under its first byte's name.
+cut and relinked; --dry-run writes nothing. Then build all twelve.
 
-cut and relinked; --dry-run writes nothing. Then build all twelve."#;
-
-fn parse_size(size: &str) -> Result<u32, String> {
-    match size.strip_prefix("0x") {
-        Some(hex) => u32::from_str_radix(hex, 16),
-        None => size.parse(),
-    }
-    .map_err(|_| format!("{size:?} is not a size"))
-}
+--tail SIZE: OBJECT, already linked, now builds the SIZE bytes that follow
+it (its alignment fill, or the packer's leftover bytes after a compressed
+stream). In each edition whose script links a scaffold section right after
+OBJECT, the first SIZE bytes of that section leave the scaffold; no label
+may lie inside them. An edition where none follows, or whose section is
+shorter or labelled inside the tail, keeps its scaffold and is reported."#;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) enum Piece {
@@ -65,7 +58,11 @@ impl Piece {
             return Ok(Piece::Through(named(first)?, named(last)?));
         }
         if let Some((label, size)) = text.split_once('+') {
-            let size = parse_size(size)?;
+            let size = match size.strip_prefix("0x") {
+                Some(hex) => u32::from_str_radix(hex, 16),
+                None => size.parse(),
+            }
+            .map_err(|_| format!("{size:?} is not a size"))?;
             if size == 0 {
                 return Err(format!("{text}: a block has bytes"));
             }
@@ -292,13 +289,13 @@ pub(crate) fn cut(text: &str, pieces: &[Piece]) -> Result<Cut, String> {
         }
     }
     let (start, end) = (ranges[0].0, ranges[ranges.len() - 1].1);
-    split(head, all, index, start, end)
+    cut_range(head, all, index, start, end)
 }
 
-/// Takes the first `size` bytes of section `name` out of one edition's
-/// scaffold: the packer's leftovers after a stream, which the stream's own
-/// object now carries. No label may lie in them.
-pub(crate) fn cut_tail(text: &str, name: &str, size: u32) -> Result<Cut, String> {
+/// Takes the first `size` bytes of the scaffold section `name`: the tail an
+/// object linked right before it now builds itself (its alignment fill or
+/// the packer's leftover bytes). No label may sit inside them.
+pub(crate) fn cut_head(text: &str, name: &str, size: u32) -> Result<Cut, String> {
     let (head, all) = sections(text)?;
     let index = all
         .iter()
@@ -306,16 +303,15 @@ pub(crate) fn cut_tail(text: &str, name: &str, size: u32) -> Result<Cut, String>
         .ok_or_else(|| format!("no section {name}"))?;
     let section = &all[index];
     if size == 0 || size > section.size {
-        return Err(format!("section {name} holds {:#x} bytes, not {size:#x} and more", section.size));
+        return Err(format!("section {name} holds {:#x} bytes, not a {size:#x}-byte tail", section.size));
     }
-    if let Some((_, label)) = section.labels().find(|&(offset, _)| offset < size) {
-        return Err(format!("{label} lies in the first {size:#x} bytes of section {name}"));
+    if let Some((_, label)) = section.labels().find(|(offset, _)| *offset < size) {
+        return Err(format!("{label} lies inside the tail"));
     }
-    split(head, all, index, 0, size)
+    cut_range(head, all, index, 0, size)
 }
 
-/// Cuts bytes `start..end` out of section `index`.
-fn split(head: Vec<String>, mut all: Vec<Section>, index: usize, start: u32, end: u32) -> Result<Cut, String> {
+fn cut_range(head: Vec<String>, mut all: Vec<Section>, index: usize, start: u32, end: u32) -> Result<Cut, String> {
     let section = all[index].clone();
     let owner = owned_by_next_label(&section.lines);
     let has_after = end < section.size;
@@ -440,30 +436,35 @@ pub(crate) fn relink(script: &str, scaffold: &str, prefix: &str, cut: &Cut, obje
     Ok(out.join("\n") + "\n")
 }
 
-/// The scaffold section a script links right after `object`, the object's
-/// path without its sections.
-fn section_after(script: &str, scaffold: &str, prefix: &str, object: &str) -> Result<String, String> {
-    let linked = format!("\"*/{object}\"(");
+/// The scaffold section a script links right after `object`.
+pub(crate) fn following_section(script: &str, scaffold: &str, prefix: &str, object: &str) -> Result<String, String> {
+    let path = object.split('(').next().unwrap_or(object);
     let lines: Vec<&str> = script.lines().collect();
     let at: Vec<usize> = lines
         .iter()
         .enumerate()
-        .filter(|(_, line)| line.trim_start().starts_with(&linked))
+        .filter(|(_, line)| line.trim().starts_with(path))
         .map(|(at, _)| at)
         .collect();
     let [at] = at[..] else {
-        return Err(format!("{} lines link {object}", at.len()));
+        return Err(match at.len() {
+            0 => "its script does not link the object".into(),
+            count => format!("{count} lines link the object"),
+        });
     };
-    let next = lines.get(at + 1).map(|line| line.trim()).unwrap_or("");
-    next.strip_prefix(&format!("\"*/{scaffold}\"({prefix}"))
+    let link = format!("\"*/{scaffold}\"({prefix}");
+    lines
+        .get(at + 1)
+        .and_then(|line| line.trim().strip_prefix(&link))
         .and_then(|rest| rest.strip_suffix(')'))
         .map(str::to_string)
-        .ok_or_else(|| format!("{object} is followed by {next:?}, not a scaffold section"))
+        .ok_or_else(|| "no scaffold section follows the object".to_string())
 }
 
-/// Links what is left of the section after the object's tail was cut.
-fn relink_tail(script: &str, scaffold: &str, prefix: &str, cut: &Cut) -> Result<String, String> {
-    let old = format!("\"*/{scaffold}\"({prefix}{})", cut.section);
+/// Links what is left of a section whose head the object before it took.
+pub(crate) fn relink_tail(script: &str, scaffold: &str, prefix: &str, cut: &Cut) -> Result<String, String> {
+    let link = |name: &str| format!("\"*/{scaffold}\"({prefix}{name})");
+    let old = link(&cut.section);
     let mut found = 0;
     let mut out = Vec::new();
     for line in script.lines() {
@@ -474,7 +475,7 @@ fn relink_tail(script: &str, scaffold: &str, prefix: &str, cut: &Cut) -> Result<
         found += 1;
         if let Some(name) = &cut.after {
             let indent = &line[..line.len() - line.trim_start().len()];
-            out.push(format!("{indent}\"*/{scaffold}\"({prefix}{name})"));
+            out.push(format!("{indent}{}", link(name)));
         }
     }
     if found != 1 {
@@ -483,8 +484,8 @@ fn relink_tail(script: &str, scaffold: &str, prefix: &str, cut: &Cut) -> Result<
     Ok(out.join("\n") + "\n")
 }
 
-/// Decides every edition for a tail: `size` bytes of the scaffold section
-/// each script links right after `object`, which must already be linked.
+/// Decides every edition for a tail: the first `size` bytes of the scaffold
+/// section each script links right after the object.
 pub(crate) fn plan_tail(
     editions: &[(&str, &str, &str, &str, &str)],
     object: &str,
@@ -493,14 +494,18 @@ pub(crate) fn plan_tail(
 ) -> Result<Vec<(String, Outcome)>, String> {
     let mut outcomes = Vec::new();
     for &(lang, scaffold_path, prefix, scaffold, script) in editions {
-        let outcome = section_after(script, scaffold_path, prefix, object)
-            .and_then(|name| cut_tail(scaffold, &name, size))
+        let outcome = following_section(script, scaffold_path, prefix, object)
+            .and_then(|name| cut_head(scaffold, &name, size))
             .and_then(|cut| relink_tail(script, scaffold_path, prefix, &cut).map(|text| (cut, text)));
         let outcome = match outcome {
             Ok((cut, text)) => Outcome::Adopted(cut, text),
-            Err(reason) if required.contains(&lang) => return Err(format!("{lang}: {reason}")),
             Err(reason) => Outcome::Kept(reason),
         };
+        if let Outcome::Kept(reason) = &outcome {
+            if required.contains(&lang) {
+                return Err(format!("{lang}: {reason}"));
+            }
+        }
         outcomes.push((lang.to_string(), outcome));
     }
     if !outcomes.iter().any(|(_, outcome)| matches!(outcome, Outcome::Adopted(..))) {
@@ -511,7 +516,7 @@ pub(crate) fn plan_tail(
                 Outcome::Adopted(..) => unreachable!(),
             })
             .collect();
-        return Err(format!("no edition can adopt the tail\n{}", reasons.join("\n")));
+        return Err(format!("no edition can take the tail\n{}", reasons.join("\n")));
     }
     outcomes.sort_by_key(|(lang, _)| LANGUAGES.iter().position(|l| l == lang));
     Ok(outcomes)
@@ -645,7 +650,15 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             "--tail" => {
                 i += 1;
                 let size = arguments.get(i).ok_or_else(|| USAGE.to_string())?;
-                tail = Some(parse_size(size)?);
+                tail = Some(
+                    match size.strip_prefix("0x") {
+                        Some(hex) => u32::from_str_radix(hex, 16),
+                        None => size.parse(),
+                    }
+                    .ok()
+                    .filter(|&size| size > 0)
+                    .ok_or_else(|| format!("{size:?} is not a size"))?,
+                );
             }
             "-h" | "--help" => return Err(USAGE.into()),
             value => positional.push(value.to_string()),
@@ -690,7 +703,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         .map_err(|e| format!("{}: {e}", english_script.display()))?
         .contains(linked);
     let outcomes = match tail {
-        Some(size) => plan_tail(&editions, linked.trim_start_matches("\"*/").trim_end_matches('"'), size, &required)?,
+        Some(size) => plan_tail(&editions, &line, size, &required)?,
         None => plan(&editions, &pieces, &line, &required, english_links)?,
     };
     let mut writes = Vec::new();
@@ -794,6 +807,38 @@ mod tests {
     }
 
     #[test]
+    fn an_object_takes_the_tail_that_follows_it() {
+        let object = "\"*/games/G/X.o\"(.text)";
+        let pad = "\t.section .unidentified.08000100,\"a\"\n\t.incbin \"baserom.gba\", 0x00000100, 0x00000002\n\t.section .unidentified.08000200,\"a\"\n\t.global D\nD:\n\t.incbin \"baserom.gba\", 0x00000200, 0x00000004\n";
+        let scaffold = "recon/tbs/unidentified.o";
+        let name = following_section(SCRIPT, scaffold, ".unidentified.", object).unwrap();
+        assert_eq!(name, "08000100");
+        let whole = cut_head(pad, &name, 2).unwrap();
+        assert!(!whole.text.contains("08000100") && whole.after.is_none());
+        let script = relink_tail(SCRIPT, scaffold, ".unidentified.", &whole).unwrap();
+        assert_eq!(script, SCRIPT.replace("        \"*/recon/tbs/unidentified.o\"(.unidentified.08000100)\n", ""));
+        // A German tail that heads a longer section: the rest keeps its labels.
+        let german = "\t.section .unidentified.08000100,\"a\"\n\t.incbin \"baserom.gba\", 0x00000100, 0x00000010\n\t.global B\nB:\n\t.incbin \"baserom.gba\", 0x00000110, 0x00000008\n";
+        let head = cut_head(german, "08000100", 4).unwrap();
+        assert_eq!(head.after.as_deref(), Some("08000104"));
+        assert_eq!(head.text, "\t.section .unidentified.08000104,\"a\"\n\t.incbin \"baserom.gba\", 0x00000104, 0x0000000c\n\t.global B\nB:\n\t.incbin \"baserom.gba\", 0x00000110, 0x00000008\n");
+        let relinked = relink_tail(SCRIPT, scaffold, ".unidentified.", &head).unwrap();
+        assert!(relinked.contains("(.text)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000104)\n        \"*/games/G/Y.o\""), "{relinked}");
+        assert!(cut_head(german, "08000100", 0x19).is_err());
+        assert!(cut_head(ENGLISH, "08000100", 2).unwrap_err().contains("A lies"));
+        let editions = [
+            ("en", scaffold, ".unidentified.", pad, SCRIPT),
+            ("ja", scaffold, ".unidentified.", pad, ".rom_main :\n{\n        \"*/games/G/X.o\"(.text)\n        \"*/games/G/Y.o\"(.text)\n}\n"),
+        ];
+        let outcomes = plan_tail(&editions, object, 2, &[]).unwrap();
+        assert_eq!(outcomes[0].0, "ja");
+        assert!(matches!(&outcomes[0].1, Outcome::Kept(reason) if reason.contains("no scaffold section")));
+        assert!(matches!(outcomes[1].1, Outcome::Adopted(..)));
+        assert!(plan_tail(&editions, object, 2, &["ja"]).is_err());
+        assert!(plan_tail(&editions, "\"*/games/G/Z.o\"(.text)", 2, &[]).is_err());
+    }
+
+    #[test]
     fn pieces_parse_by_form() {
         assert_eq!(piece("A"), Piece::Label("A".into()));
         assert_eq!(piece("A..B"), Piece::Through("A".into(), "B".into()));
@@ -832,26 +877,5 @@ mod tests {
         assert!(plan(&french_only, &[piece("B")], OBJECT, &[], false).is_err());
         let later = plan(&french_only, &[piece("B")], OBJECT, &["fr"], true).unwrap();
         assert!(matches!(later[0].1, Outcome::Adopted(..)));
-    }
-
-    #[test]
-    fn a_tail_leaves_the_section_after_its_object() {
-        let english = "\t.section .unidentified.08000100,\"a\"\n\t.incbin \"baserom.gba\", 0x00000100, 0x00000002\n\t.section .unidentified.08000102,\"a\"\n\t.incbin \"baserom.gba\", 0x00000102, 0x00000003\n\t.global E\nE:\n\t.incbin \"baserom.gba\", 0x00000105, 0x00000010\n";
-        let script = ".rom_main :\n{\n        \"*/games/G/X.o\"(.rodata)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000100)\n        \"*/games/G/Y.o\"(.rodata)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000102)\n}\n";
-        let editions = [("en", "recon/tbs/unidentified.o", ".unidentified.", english, script)];
-        let outcomes = plan_tail(&editions, "games/G/X.o", 2, &[]).unwrap();
-        let Outcome::Adopted(cut, text) = &outcomes[0].1 else { panic!("{outcomes:?}") };
-        assert!(cut.labels.is_empty() && cut.after.is_none());
-        assert!(!cut.text.contains("08000100"), "{}", cut.text);
-        assert_eq!(text, ".rom_main :\n{\n        \"*/games/G/X.o\"(.rodata)\n        \"*/games/G/Y.o\"(.rodata)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000102)\n}\n");
-        let outcomes = plan_tail(&editions, "games/G/Y.o", 3, &[]).unwrap();
-        let Outcome::Adopted(cut, text) = &outcomes[0].1 else { panic!("{outcomes:?}") };
-        assert_eq!(cut.after.as_deref(), Some("08000105"));
-        assert!(cut.text.ends_with("\t.section .unidentified.08000105,\"a\"\n\t.global E\nE:\n\t.incbin \"baserom.gba\", 0x00000105, 0x00000010\n"), "{}", cut.text);
-        assert!(text.contains("\"*/games/G/Y.o\"(.rodata)\n        \"*/recon/tbs/unidentified.o\"(.unidentified.08000105)\n}"), "{text}");
-        assert!(plan_tail(&editions, "games/G/Y.o", 4, &[]).unwrap_err().contains("E lies"));
-        assert!(plan_tail(&editions, "games/G/X.o", 3, &[]).is_err());
-        assert!(plan_tail(&editions, "games/G/Z.o", 1, &[]).is_err());
-        assert!(plan_tail(&editions, "games/G/Y.o", 4, &["en"]).is_err());
     }
 }

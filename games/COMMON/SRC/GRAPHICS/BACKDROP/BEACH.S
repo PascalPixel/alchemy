@@ -5,6 +5,5 @@ Battle_BeachBackdrop:
 	.incbin "GRAPHICS/BACKDROP/BEACH.gbapal"
 	.incbin "GRAPHICS/BACKDROP/BEACH.bitmap.d7"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by Battle_ToretoEdaBackdrop at +0x397e */
-	.byte 0x10, 0xb5
+	.byte 0x10, 0xb5	@ PACKER: left in the buffer by Battle_ToretoEdaBackdrop+0x397e
 	.endif

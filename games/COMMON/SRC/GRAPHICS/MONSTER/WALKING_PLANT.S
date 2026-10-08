@@ -4,6 +4,5 @@
 Monster_WalkingPlantSprites:
 	.incbin "GRAPHICS/MONSTER/WALKING_PLANT.frames.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by Monster_SmallLizardSprites at +0xc17 */
-	.byte 0xd5
+	.byte 0xd5	@ PACKER: left in the buffer by Monster_SmallLizardSprites+0xc17
 	.endif

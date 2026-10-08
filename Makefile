@@ -12,6 +12,7 @@ TARGET ?= tbs-ja
 SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
 
 LIBGCC := tools/out/compiler-runtime/libgcc.a
+MODERN_CC ?= /opt/homebrew/bin/arm-none-eabi-gcc
 
 .PHONY: compiler-runtime worktree
 compiler-runtime: toolchain-check compiler-source-check
@@ -32,7 +33,7 @@ $(LIBGCC):
 .PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
 .PHONY: publication-check publication-staged-check coverage-report
-.PHONY: progress figure deps similar worst clean
+.PHONY: progress figure deps similar worst clean modern
 
 help:
 	@printf '%s\n' \
@@ -40,6 +41,7 @@ help:
 	  'make fetch-dependencies  download only the locked Rust dependencies' \
 	  'make compare-all     compare linked source and both private ROM compositions' \
 	  'make compare-editions  compare all twelve editions, with Japanese as the base' \
+	  'make modern          build the six ☀️ editions with a modern GCC (MODERN_CC) into out/modern: no match, every warning in out/modern/warnings.txt' \
 	  'make test            the Rust tests' \
 	  'make verify          every check, the tests and all twelve editions compared' \
 	  'make land            on staging, before committing a landing: make verify, then the measurement the push uploads' \
@@ -186,3 +188,9 @@ worst:
 
 clean:
 	@rm -rf out
+
+# pret's `make modern`: the same source through a modern GCC, in out/modern
+# only and never in rom.sha1 (alchemy build modern --help).
+modern:
+	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
+	$(ALCHEMY_BIN) build modern --cc "$(MODERN_CC)" $(addprefix --target ,$(MODERN_TARGETS))

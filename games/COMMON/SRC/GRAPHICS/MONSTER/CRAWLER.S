@@ -4,6 +4,5 @@
 Monster_CrawlerSprites:
 	.incbin "GRAPHICS/MONSTER/CRAWLER.frames.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by Monster_FireDragonSprites at +0x2369 */
-	.byte 0xf0, 0x33, 0x17
+	.byte 0xf0, 0x33, 0x17	@ PACKER: left in the buffer by Monster_FireDragonSprites+0x2369
 	.endif

@@ -2,5 +2,4 @@
 	.global Tileset_Set02Palette
 Tileset_Set02Palette:
 	.incbin "GRAPHICS/TILESET/SET_02/PALETTE.gbapal.lz"
-	/* PACKER: left in the packer's buffer by MAP_003/MAP.o at +0x17f */
-	.byte 0xc7
+	.byte 0xc7	@ PACKER: left in the buffer by Field_Map003+0x17f

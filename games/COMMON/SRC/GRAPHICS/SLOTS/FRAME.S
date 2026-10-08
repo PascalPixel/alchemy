@@ -5,6 +5,5 @@ Slots_FramePicture:
 	.incbin "GRAPHICS/SLOTS/FRAME.gbapal"
 	.incbin "GRAPHICS/SLOTS/FRAME.4bpp.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by Battle_AerialViewBackdrop at +0x781 */
-	.byte 0x0f, 0x8b, 0xa4
+	.byte 0x0f, 0x8b, 0xa4	@ PACKER: left in the buffer by Battle_AerialViewBackdrop+0x781
 	.endif

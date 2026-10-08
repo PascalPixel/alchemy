@@ -3,5 +3,4 @@
 BattleFx_SmokeSheet:
 	.incbin "GRAPHICS/BATTLE_FX/SMOKE.gbapal"
 	.incbin "GRAPHICS/BATTLE_FX/SMOKE.bitmap.lz"
-	/* PACKER: left in the packer's buffer by BattleFx_DaggerSheet at +0x88b */
-	.byte 0xc1
+	.byte 0xc1	@ PACKER: left in the buffer by BattleFx_DaggerSheet+0x88b

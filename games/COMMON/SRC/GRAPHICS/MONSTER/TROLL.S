@@ -4,6 +4,5 @@
 Monster_TrollSprites:
 	.incbin "GRAPHICS/MONSTER/TROLL.frames.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by Ui_CommandIcons at +0x3222 */
-	.byte 0x2b, 0x00
+	.byte 0x2b, 0x00	@ PACKER: left in the buffer by Ui_CommandIcons+0x3222
 	.endif

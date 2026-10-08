@@ -29,7 +29,9 @@
 #define ENA_PURUFU 150 // プルーフ
 #define ITEM_HANE 236  // せいなるはね
 
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
+#endif
 
 void UiText_DrawQuantity(s32 arg0, s32 arg1);
 

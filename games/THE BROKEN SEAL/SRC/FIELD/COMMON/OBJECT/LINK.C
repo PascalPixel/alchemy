@@ -25,7 +25,9 @@ void Battle_WaitMode0(s32);
 
 extern u8 *gEventWork;
 void ObjectGroup_SetChildValue(struct DispatchObject *, s32);
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
+#endif
 
 void ObjectMotion_SetAngleToward(s32 first_id, s32 second_id, s32 wait)
 {

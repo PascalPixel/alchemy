@@ -5,6 +5,5 @@ Battle_ToretoEdaBackdrop:
 	.incbin "GRAPHICS/BACKDROP/TORETO_EDA.gbapal"
 	.incbin "GRAPHICS/BACKDROP/TORETO_EDA.bitmap.d7"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by Battle_HaidiaArashiBackdrop at +0x42b2 */
-	.byte 0xfa, 0x8e
+	.byte 0xfa, 0x8e	@ PACKER: left in the buffer by Battle_HaidiaArashiBackdrop+0x42b2
 	.endif

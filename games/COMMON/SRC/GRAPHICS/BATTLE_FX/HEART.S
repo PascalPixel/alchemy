@@ -5,6 +5,5 @@ BattleFx_HeartSheet:
 	.incbin "GRAPHICS/BATTLE_FX/HEART.gbapal"
 	.incbin "GRAPHICS/BATTLE_FX/HEART.bitmap.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by BattleFx_SkullSheet at +0x297 */
-	.byte 0x09
+	.byte 0x09	@ PACKER: left in the buffer by BattleFx_SkullSheet+0x297
 	.endif

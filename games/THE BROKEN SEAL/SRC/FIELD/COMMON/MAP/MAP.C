@@ -72,6 +72,8 @@ struct SceneEntry {
     u16 resources[6];
 };
 
+extern struct SceneEntry Map_LayeredScenes[];
+
 struct SceneLayerSource {
     u8 x;
     u8 y;

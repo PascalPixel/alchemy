@@ -3,5 +3,4 @@
 BattleFx_RainSheet:
 	.incbin "GRAPHICS/BATTLE_FX/RAIN.gbapal"
 	.incbin "GRAPHICS/BATTLE_FX/RAIN.bitmap.lz"
-	/* PACKER: left in the packer's buffer by BattleFx_CyanSparkSheet at +0x89f */
-	.byte 0x20
+	.byte 0x20	@ PACKER: left in the buffer by BattleFx_CyanSparkSheet+0x89f

@@ -57,15 +57,14 @@ LuckyDice_Sprites:
 	.endif
 	.endif
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by earlier streams, which differ by edition */
 	.ifdef TBS_EDITION_EN
-	.byte 0x0f, 0x72, 0xb1
+	.byte 0x0f, 0x72, 0xb1	@ PACKER: left in the buffer by earlier streams, which differ by edition
 	.else
 	.ifdef TBS_EDITION_ES
-	.byte 0x5a, 0x9b
+	.byte 0x5a, 0x9b	@ PACKER: left in the buffer by earlier streams, which differ by edition
 	.else
 	.ifdef TBS_EDITION_FR
-	.byte 0xac
+	.byte 0xac	@ PACKER: left in the buffer by earlier streams, which differ by edition
 	.endif
 	.endif
 	.endif

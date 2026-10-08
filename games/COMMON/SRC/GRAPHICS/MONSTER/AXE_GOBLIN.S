@@ -4,6 +4,5 @@
 Monster_AxeGoblinSprites:
 	.incbin "GRAPHICS/MONSTER/AXE_GOBLIN.frames.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by Ui_CommandIcons at +0x21b2 */
-	.byte 0xda, 0x01
+	.byte 0xda, 0x01	@ PACKER: left in the buffer by Ui_CommandIcons+0x21b2
 	.endif

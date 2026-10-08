@@ -4,6 +4,5 @@
 Monster_HarpySprites:
 	.incbin "GRAPHICS/MONSTER/HARPY.frames.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by Ui_CommandIcons at +0x2871 */
-	.byte 0xbb, 0x01, 0x75
+	.byte 0xbb, 0x01, 0x75	@ PACKER: left in the buffer by Ui_CommandIcons+0x2871
 	.endif

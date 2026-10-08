@@ -5,6 +5,5 @@ BattleFx_IceBlockSheet:
 	.incbin "GRAPHICS/BATTLE_FX/ICE_BLOCK_00.gbapal"
 	.incbin "GRAPHICS/BATTLE_FX/ICE_BLOCK.parts.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by BattleFx_BlueBeastSheet at +0x1586 */
-	.byte 0x30, 0xae
+	.byte 0x30, 0xae	@ PACKER: left in the buffer by BattleFx_BlueBeastSheet+0x1586
 	.endif

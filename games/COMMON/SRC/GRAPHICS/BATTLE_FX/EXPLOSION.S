@@ -5,6 +5,5 @@ BattleFx_ExplosionSheet:
 	.incbin "GRAPHICS/BATTLE_FX/EXPLOSION.gbapal"
 	.incbin "GRAPHICS/BATTLE_FX/EXPLOSION.bitmap.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by BattleFx_WaterSpraySheet at +0xdd5 */
-	.byte 0xec, 0x10, 0x3c
+	.byte 0xec, 0x10, 0x3c	@ PACKER: left in the buffer by BattleFx_WaterSpraySheet+0xdd5
 	.endif

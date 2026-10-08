@@ -4,6 +4,5 @@
 Monster_FlySprites:
 	.incbin "GRAPHICS/MONSTER/FLY.frames.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by Monster_WalkingPlantSprites at +0x773 */
-	.byte 0x13
+	.byte 0x13	@ PACKER: left in the buffer by Monster_WalkingPlantSprites+0x773
 	.endif

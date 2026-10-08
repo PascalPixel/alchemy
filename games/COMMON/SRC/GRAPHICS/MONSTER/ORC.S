@@ -4,6 +4,5 @@
 Monster_OrcSprites:
 	.incbin "GRAPHICS/MONSTER/ORC.frames.lz"
 	.ifeq GAME_TLA
-	/* PACKER: left in the packer's buffer by Monster_GriffinSprites at +0x260e */
-	.byte 0xfe, 0x7b
+	.byte 0xfe, 0x7b	@ PACKER: left in the buffer by Monster_GriffinSprites+0x260e
 	.endif

@@ -1854,12 +1854,7 @@ void Scene_RepairTheHouse(void)
     s32 turn_back;
     s32 turn_side;
     struct FieldActor *turned;
-#if EDITION_INTERNATIONAL
     s32 none;
-#else
-    /* FAKEMATCH: the plain Japanese repair keeps zero in r5 and the mask in r6; the original stores zero through r6. */
-    register s32 none asm("r6");
-#endif
     s32 flag;
     s32 callback_a;
     s32 callback_b;
@@ -2298,7 +2293,10 @@ void Scene_RepairTheHouse(void)
         rec->scale_y += 0x1999;
         Engine_EventWait(1);
     }
+#if EDITION_INTERNATIONAL
+    /* FAKEMATCH: needed to match: only the international repair sets none again here, which decides whether none or the 0xfe mask takes r5. */
     none = 0;
+#endif
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(GERALD, 2);
     Actor_FaceDirection(GERALD, 0x5000, 30);

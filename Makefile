@@ -46,7 +46,7 @@ help:
 	  'make verify          every check, the tests and all twelve editions compared' \
 	  'make land            on staging, before committing a landing: make verify, then the measurement the push uploads' \
 	  'make coverage-report measure both games for the push; CI draws the published figures' \
-	  'make progress        report DONE in all six editions from the linker maps of verified builds' \
+	  'make progress        report DONE code and data in all six editions from verified builds' \
 	  'make figure          redraw PROGRESS.png and PROGRESS_CHART.png from the verified count' \
 	  'make deps            map calls and blockers of not-yet-C code into out/reports/deps-*.tsv' \
 	  'make similar         the nearest C twins of every not-yet-C function in either game, into out/reports/similar.tsv' \

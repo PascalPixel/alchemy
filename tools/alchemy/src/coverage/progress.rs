@@ -2,7 +2,8 @@ use super::calcrom::Game;
 use super::{commas, floor_percent, measure_both};
 
 const USAGE: &str = "usage: alchemy check progress\n\
-Reports each game's DONE in all six of its editions together, in its parts, then each edition's share.";
+Reports each game's DONE, code and data, in all six of its editions together, with\n\
+code in its parts, then each edition's two shares. A game is 100% only when both are.";
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct GameDone {
@@ -12,6 +13,10 @@ pub struct GameDone {
     pub game_c: i64,
     pub executable: i64,
     pub veneers: i64,
+    /// DONE data: non-code bytes the images place from games/ or as fill,
+    /// out of every non-code byte they place.
+    pub data: i64,
+    pub data_total: i64,
 }
 impl GameDone {
     pub fn parts(&self) -> (f64, f64, f64) {
@@ -30,6 +35,13 @@ impl GameDone {
     pub fn percent(&self) -> f64 {
         floor_percent(self.bytes(), self.executable)
     }
+    pub fn data_percent(&self) -> f64 {
+        floor_percent(self.data, self.data_total)
+    }
+    /// A game is 100% only when both its code and its data are.
+    pub fn complete(&self) -> bool {
+        self.executable > 0 && self.bytes() == self.executable && self.data == self.data_total
+    }
 }
 impl std::ops::AddAssign for GameDone {
     fn add_assign(&mut self, other: GameDone) {
@@ -39,6 +51,8 @@ impl std::ops::AddAssign for GameDone {
         self.game_c += other.game_c;
         self.executable += other.executable;
         self.veneers += other.veneers;
+        self.data += other.data;
+        self.data_total += other.data_total;
     }
 }
 
@@ -49,7 +63,9 @@ fn done_line(mark: &str, game: &str, status: &Result<Game, String>) -> String {
             let (d, english) = (all.done, &measured.english);
             let (c, assembly, stubs) = d.parts();
             let mut line = format!(
-                "{mark} {game} DONE: {} / {} executable bytes in six editions ({:.2}%) = C {} ({c:.2} points) + assembly {} ({assembly:.2}, compiler library {} of it) + 8-byte stubs {} ({stubs:.2}); FAKEMATCH-steered C {} ({:.2} points, removed last); uncredited padding {} not counted; not yet C in the English build: disassembly {} + overlay listings {}",
+                "{mark} {game} DONE {}: code {:.2}% · data {:.2}% ({} / {} data bytes in six editions, {} of them placed from recon/ in the English build). Code: {} / {} executable bytes in six editions ({:.2}%) = C {} ({c:.2} points) + assembly {} ({assembly:.2}, compiler library {} of it) + 8-byte stubs {} ({stubs:.2}); FAKEMATCH-steered C {} ({:.2} points, removed last); uncredited padding {} not counted; not yet C in the English build: disassembly {} + overlay listings {}",
+                if d.complete() { "100%" } else { "not yet" }, d.percent(), d.data_percent(),
+                commas(d.data), commas(d.data_total), commas(english.data_pending.iter().map(|row| row.2).sum::<i64>()),
                 commas(d.bytes()), commas(d.executable), d.percent(),
                 commas(d.common_c + d.game_c), commas(d.common_asm + d.game_asm - d.veneers), commas(all.library), commas(d.veneers),
                 commas(all.steered), floor_percent(all.steered, d.executable), commas(all.uncredited),
@@ -125,10 +141,13 @@ fn edition_lines(mark: &str, status: &Result<Game, String>) -> Vec<String> {
         .map(|(language, edition)| {
             let d = edition.done;
             format!(
-                "{mark}   {language} {:.2}% ({} / {})",
+                "{mark}   {language} code {:.2}% ({} / {}) · data {:.2}% ({} / {})",
                 d.percent(),
                 commas(d.bytes()),
-                commas(d.executable)
+                commas(d.executable),
+                d.data_percent(),
+                commas(d.data),
+                commas(d.data_total)
             )
         })
         .collect()
@@ -151,6 +170,7 @@ fn run(argv: &[String]) -> Result<String, String> {
             write_steered(&root, id, &game.english)?;
             write_missing(&root, id, game)?;
             write_arm(&root, id, &game.english)?;
+            write_data(&root, id, &game.english)?;
         }
     }
     let mut lines = Vec::new();
@@ -162,6 +182,24 @@ fn run(argv: &[String]) -> Result<String, String> {
         lines.extend(edition_lines(mark, state));
     }
     Ok(lines.join("\n"))
+}
+
+/// out/reports/data-GAME.tsv: the English build's data bytes placed from
+/// recon/, largest first: what keeps DONE data short.
+fn write_data(
+    root: &std::path::Path,
+    id: &str,
+    english: &super::calcrom::Measurement,
+) -> Result<(), String> {
+    let mut rows = english.data_pending.clone();
+    rows.sort_by(|a, b| b.2.cmp(&a.2).then_with(|| a.cmp(b)));
+    let mut text = String::from("bytes\timage\tobject\n");
+    for (image, object, bytes) in rows {
+        text.push_str(&format!("{bytes}\t{image}\t{object}\n"));
+    }
+    let path = root.join(format!("out/reports/data-{id}.tsv"));
+    std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
+    std::fs::write(&path, text).map_err(|e| format!("{}: {e}", path.display()))
 }
 
 /// out/reports/steered-GAME.tsv: each FAKEMATCH-steered function of the
@@ -213,5 +251,30 @@ pub fn entry(arguments: &[String]) {
             eprintln!("error: {error}");
             std::process::exit(1);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::GameDone;
+
+    #[test]
+    fn a_game_is_complete_only_when_code_and_data_both_are() {
+        let code = GameDone {
+            game_c: 10,
+            executable: 10,
+            data: 9,
+            data_total: 10,
+            ..GameDone::default()
+        };
+        assert_eq!((code.percent(), code.data_percent()), (100.0, 90.0));
+        assert!(!code.complete());
+        assert!(GameDone { data: 10, ..code }.complete());
+        assert!(!GameDone {
+            game_c: 9,
+            data: 10,
+            ..code
+        }
+        .complete());
     }
 }

@@ -1,6 +1,7 @@
 pub(crate) mod arm;
 pub(crate) mod boxtree;
 pub(crate) mod calcrom;
+pub(crate) mod data;
 pub(crate) mod decomp;
 pub(crate) mod figure;
 pub(crate) mod figures;
@@ -78,19 +79,30 @@ fn done(games: &[Result<Game, String>; 2]) -> (Option<GameDone>, Option<GameDone
 }
 fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
     let show = |done: Option<GameDone>| {
-        done.map_or("pending".to_string(), |d| format!("{:.2}%", d.percent()))
+        done.map_or("pending".to_string(), |d| {
+            format!("code {:.2}% data {:.2}%", d.percent(), d.data_percent())
+        })
     };
     format!("☀️ {} · ⚓️ {}", show(sun), show(anchor))
 }
 const MEASUREMENT_HEADER: &str =
-    "game\tcommon_asm\tcommon_c\tgame_asm\tgame_c\texecutable\tveneers";
+    "game\tcommon_asm\tcommon_c\tgame_asm\tgame_c\texecutable\tveneers\tdata\tdata_total";
+/// A measurement from before DONE data (Pascal, 2026-10-08) carries code alone.
+const CODE_ONLY_HEADER: &str = "game\tcommon_asm\tcommon_c\tgame_asm\tgame_c\texecutable\tveneers";
 fn measurement_text(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
     let mut text = format!("{MEASUREMENT_HEADER}\n");
     for (game, done) in [("tbs", sun), ("tla", anchor)] {
         if let Some(d) = done {
             text.push_str(&format!(
-                "{game}\t{}\t{}\t{}\t{}\t{}\t{}\n",
-                d.common_asm, d.common_c, d.game_asm, d.game_c, d.executable, d.veneers
+                "{game}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n",
+                d.common_asm,
+                d.common_c,
+                d.game_asm,
+                d.game_c,
+                d.executable,
+                d.veneers,
+                d.data,
+                d.data_total
             ));
         }
     }
@@ -98,9 +110,11 @@ fn measurement_text(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
 }
 fn parse_measurement(text: &str) -> Result<[Option<GameDone>; 2], String> {
     let mut lines = text.lines();
-    if lines.next() != Some(MEASUREMENT_HEADER) {
-        return Err("measurement has an unexpected header".into());
-    }
+    let width = match lines.next() {
+        Some(MEASUREMENT_HEADER) => 8,
+        Some(CODE_ONLY_HEADER) => 6,
+        _ => return Err("measurement has an unexpected header".into()),
+    };
     let mut games = [None, None];
     for line in lines {
         let fields = line.split('\t').collect::<Vec<_>>();
@@ -114,19 +128,28 @@ fn parse_measurement(text: &str) -> Result<[Option<GameDone>; 2], String> {
             .map(|field| field.parse::<i64>())
             .collect::<Result<Vec<_>, _>>()
             .map_err(|_| format!("measurement row is not numeric: {line}"))?;
-        let [common_asm, common_c, game_asm, game_c, executable, veneers] = values[..] else {
+        if values.len() != width {
             return Err(format!("measurement row has the wrong width: {line}"));
-        };
+        }
+        let (data, data_total) = (
+            values.get(6).copied().unwrap_or_default(),
+            values.get(7).copied().unwrap_or_default(),
+        );
+        if data < 0 || data > data_total {
+            return Err(format!("measurement row has impossible data: {line}"));
+        }
         if games[at].is_some() {
             return Err(format!("measurement names {} twice", fields[0]));
         }
         games[at] = Some(GameDone {
-            common_asm,
-            common_c,
-            game_asm,
-            game_c,
-            executable,
-            veneers,
+            common_asm: values[0],
+            common_c: values[1],
+            game_asm: values[2],
+            game_c: values[3],
+            executable: values[4],
+            veneers: values[5],
+            data,
+            data_total,
         });
     }
     Ok(games)
@@ -142,9 +165,14 @@ mod tests {
             game_c: 250,
             game_asm: 340,
             executable: 1000,
+            data: 992,
+            data_total: 1000,
             ..GameDone::default()
         };
-        assert_eq!(status_line(Some(sun), None), "☀️ 59.00% · ⚓️ pending");
+        assert_eq!(
+            status_line(Some(sun), None),
+            "☀️ code 59.00% data 99.20% · ⚓️ pending"
+        );
         let anchor = GameDone {
             game_c: 10,
             game_asm: 50,
@@ -152,7 +180,10 @@ mod tests {
             executable: 1000,
             ..GameDone::default()
         };
-        assert_eq!(status_line(Some(sun), Some(anchor)), "☀️ 59.00% · ⚓️ 6.00%");
+        assert_eq!(
+            status_line(Some(sun), Some(anchor)),
+            "☀️ code 59.00% data 99.20% · ⚓️ code 6.00% data 0.00%"
+        );
     }
 
     #[test]
@@ -164,12 +195,22 @@ mod tests {
             game_c: 4,
             executable: 100,
             veneers: 1,
+            data: 7,
+            data_total: 9,
         };
         let text = measurement_text(Some(sun), None);
         assert_eq!(parse_measurement(&text).unwrap(), [Some(sun), None]);
         assert!(parse_measurement("game\n").is_err());
-        assert!(parse_measurement(&format!("{text}tbs\t1\t2\t3\t4\t100\t1\n")).is_err());
+        assert!(parse_measurement(&format!("{text}tbs\t1\t2\t3\t4\t100\t1\t0\t0\n")).is_err());
         assert!(parse_measurement(&format!("{text}tla\t1\t2\n")).is_err());
+        assert!(parse_measurement(&text.replace("\t7\t9", "\t9\t7")).is_err());
+        // A code-only measurement from before DONE data still reads.
+        let old = "game\tcommon_asm\tcommon_c\tgame_asm\tgame_c\texecutable\tveneers\n\
+                   tla\t1\t2\t3\t4\t100\t1\n";
+        let [None, Some(anchor)] = parse_measurement(old).unwrap() else {
+            panic!("a code-only measurement reads")
+        };
+        assert_eq!((anchor.bytes(), anchor.data_total), (10, 0));
     }
 }
 fn render_figures(

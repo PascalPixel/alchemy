@@ -72,6 +72,8 @@ fn absent(english: &Measurement, edition: &Measurement, unit: &Unit) -> bool {
 fn share_edition(english: &Measurement, edition: &Measurement) -> Counted {
     let linked = edition.credits.keys().cloned().collect();
     let mut counted = share(english, &linked);
+    counted.done.data = edition.done.data;
+    counted.done.data_total = edition.done.data_total;
     counted.done.executable -= english
         .credits
         .iter()
@@ -123,6 +125,9 @@ pub(crate) struct Measurement {
     /// Data words in not-yet-C listings that are likely ARM code: listed
     /// apart, never in `arm`'s tally, any total or any credit.
     pub arm_likely: Vec<super::arm::ArmRow>,
+    /// Data bytes placed from recon/, by image and object: what keeps
+    /// DONE data short (C2).
+    pub data_pending: Vec<(String, String, i64)>,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -425,14 +430,27 @@ pub(crate) struct Placed<'a> {
 }
 
 pub(crate) fn sections(map: &str) -> Vec<Placed<'_>> {
+    sections_in_outputs(map)
+        .into_iter()
+        .map(|(_, placed)| placed)
+        .collect()
+}
+
+/// Each placed input section with the output section that holds it: the
+/// name heading its block of the map, if any.
+pub(crate) fn sections_in_outputs(map: &str) -> Vec<(Option<&str>, Placed<'_>)> {
     let mut found = Vec::new();
     let mut discarded = false;
+    let mut output = None;
     let mut lines = map.lines().peekable();
     while let Some(line) = lines.next() {
         match line {
             "Discarded input sections" => discarded = true,
             "Memory Configuration" | "Linker script and memory map" => discarded = false,
             _ => {}
+        }
+        if !line.is_empty() && !line.starts_with(char::is_whitespace) {
+            output = line.split_whitespace().next();
         }
         let Some(rest) = line.strip_prefix(" .") else {
             continue;
@@ -454,12 +472,15 @@ pub(crate) fn sections(map: &str) -> Vec<Placed<'_>> {
             }
         };
         if !discarded {
-            found.push(Placed {
-                name,
-                address: placed.0,
-                size: placed.1,
-                object: placed.2,
-            });
+            found.push((
+                output,
+                Placed {
+                    name,
+                    address: placed.0,
+                    size: placed.1,
+                    object: placed.2,
+                },
+            ));
         }
     }
     found
@@ -540,13 +561,13 @@ fn origin(
     Ok(Origin::Other)
 }
 
-fn is_listing(name: &str) -> bool {
+pub(crate) fn is_listing(name: &str) -> bool {
     name.strip_prefix("resource_")
         .and_then(|rest| rest.strip_suffix("_overlay.o"))
         .is_some_and(|id| !id.is_empty() && id.bytes().all(|byte| byte.is_ascii_hexdigit()))
 }
 
-fn is_text(placed: &Placed) -> bool {
+pub(crate) fn is_text(placed: &Placed) -> bool {
     placed.size > 0 && !is_data(placed.name) && placed.name.contains("text")
 }
 
@@ -810,6 +831,18 @@ pub(crate) fn measure(
             .clone()
     };
     let mut measurement = Measurement::default();
+    let mut code = 0;
+    // Each overlay counts once, in its unpacked image: the ROM leaves its
+    // compressed stream out of DONE data (C2).
+    let mut streams = std::collections::BTreeMap::new();
+    for map in maps.iter().filter(|map| map.image != MAIN_IMAGE) {
+        let lz = map.path.with_extension("lz");
+        let bytes = std::fs::metadata(&lz)
+            .map_err(|error| format!("{}: {error}", lz.display()))?
+            .len();
+        streams.insert(map.image.to_ascii_lowercase(), bytes as i64);
+    }
+    let unpacked = std::collections::BTreeMap::new();
     for map in &maps {
         let placed = tally(
             &mut measurement,
@@ -864,6 +897,20 @@ pub(crate) fn measure(
         };
         let bytes =
             std::fs::read(&elf).map_err(|error| format!("{}: {error}", elf.display()))?;
+        let data = super::data::loaded(&bytes)
+            .and_then(|loaded| {
+                let streams = if overlay { &unpacked } else { &streams };
+                super::data::tally(&map.text, &loaded, output, overlay, streams)
+            })
+            .map_err(|error| format!("{}: {error}", map.path.display()))?;
+        measurement.done.data_total += data.total;
+        measurement.done.data += data.done;
+        code += data.code;
+        for (object, bytes) in data.pending {
+            measurement
+                .data_pending
+                .push((map.image.clone(), object, bytes));
+        }
         let image = super::arm::Image::parse(&bytes)
             .map_err(|error| format!("{}: {error}", elf.display()))?;
         // A label names code only in the object that defines it: read from
@@ -915,6 +962,17 @@ pub(crate) fn measure(
         )?;
         measurement.arm.extend(arm);
         measurement.arm_likely.extend(likely);
+    }
+    // Padding a source marks as carrying no credit leaves the code total;
+    // it is non-code bytes from games/, so it is done data, and code and
+    // data together are every byte the images place.
+    measurement.done.data += measurement.uncredited;
+    measurement.done.data_total += measurement.uncredited;
+    if measurement.done.executable + measurement.uncredited != code {
+        return Err(format!(
+            "{}: code and data do not partition its images",
+            target.id
+        ));
     }
     for (object, bytes) in &measurement.other {
         eprintln!(

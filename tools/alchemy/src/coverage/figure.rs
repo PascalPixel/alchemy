@@ -16,15 +16,35 @@ pub(crate) const MAP: &str = "PROGRESS.png";
 pub(crate) const LINK: &str = "github.com/PascalPixel/alchemy";
 
 fn latest_label(history: &History, game: &str) -> Option<String> {
+    latest(history, game, Measure::percent, "")
+}
+
+/// DONE data's label, once a row has recorded it.
+fn latest_data_label(history: &History, game: &str) -> Option<String> {
+    let found = history
+        .days
+        .iter()
+        .any(|row| row.game(game).and_then(Measure::data_percent).is_some());
+    found
+        .then(|| latest(history, game, Measure::data_percent, "data "))
+        .flatten()
+}
+
+fn latest(
+    history: &History,
+    game: &str,
+    value: fn(&Measure) -> Option<f64>,
+    prefix: &str,
+) -> Option<String> {
     if history.pending(game) {
-        return Some("?%".into());
+        return Some(format!("{prefix}?%"));
     }
     history
         .days
         .iter()
         .rev()
-        .find_map(|row| row.game(game).and_then(Measure::percent))
-        .map(|value| format!("{:.2}%", ((value * 100.0) + 1e-6).floor() / 100.0))
+        .find_map(|row| row.game(game).and_then(value))
+        .map(|value| format!("{prefix}{:.2}%", ((value * 100.0) + 1e-6).floor() / 100.0))
 }
 
 fn masthead(canvas: &mut Canvas, letters: &Letters, y: i32, heading: &str) -> i32 {
@@ -55,7 +75,15 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
         ("tla", "The Lost Age", BLUE),
     ];
     let pending = series.map(|(key, _, _)| history.pending(key));
-    let latest = series.map(|(key, _, _)| latest_label(history, key));
+    let latest_data = series.map(|(key, _, _)| latest_data_label(history, key));
+    // Beside a data label, the code label says which it is.
+    let latest = series.map(|(key, _, _)| {
+        let code = latest_label(history, key);
+        match latest_data_label(history, key) {
+            Some(_) => code.map(|label| format!("code {label}")),
+            None => code,
+        }
+    });
     let masthead_end = masthead(&mut canvas, letters, 6, "Alchemy: Golden Sun Decompilation");
     let mut key_x = WIDTH - 8;
     for (key, name, ink) in series.iter().rev() {
@@ -71,6 +99,7 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
     );
     let label_room = latest
         .iter()
+        .chain(&latest_data)
         .flatten()
         .map(|label| letters.width(label) as i32)
         .max()
@@ -146,8 +175,16 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
         &x_of,
     );
     let mut ends = Vec::new();
-    for ((key, _, ink), label) in series.iter().zip(&latest) {
-        let points = super::history::points(history, key)
+    // Code is the thick line and DONE data, from 2026-10-08, the thin one.
+    let lines = series
+        .iter()
+        .zip(&latest)
+        .map(|((key, _, ink), label)| (super::history::points(history, key), 2, ink, label))
+        .chain(series.iter().zip(&latest_data).map(|((key, _, ink), label)| {
+            (super::history::data_points(history, key), 1, ink, label)
+        }));
+    for (points, width, ink, label) in lines {
+        let points = points
             .into_iter()
             .map(|(hour, value)| (x_hour(hour), y_of(value)))
             .collect::<Vec<_>>();
@@ -155,7 +192,7 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
             canvas.line(
                 (pair[0].0, pair[0].1 - 1),
                 (pair[1].0, pair[1].1 - 1),
-                2,
+                width,
                 ink,
             );
         }
@@ -731,5 +768,32 @@ mod tests {
             assert!((32..399).any(|y| canvas.get(41, y) == Some(ink)));
         }
         assert_eq!(history.days, published);
+    }
+    #[test]
+    fn data_draws_its_own_line_and_label_once_recorded() {
+        let mut history = History {
+            began: "2026-10-01".into(),
+            days: vec![
+                row("2026-10-01", Some(90.0), None),
+                row("2026-10-05", Some(100.0), None),
+            ],
+            ..History::default()
+        };
+        assert_eq!(latest_data_label(&history, "tbs"), None);
+        let code_only = chart(&fixture(), &history);
+        let with_data = |date: &str, data| Day {
+            tbs: Some(Measure {
+                data: Some(data),
+                data_total: Some(100),
+                ..Measure::bytes(100, 100)
+            }),
+            ..Day::new(date)
+        };
+        history.days.push(with_data("2026-10-08", 40));
+        history.days.push(with_data("2026-10-09", 50));
+        assert_eq!(latest_label(&history, "tbs").as_deref(), Some("100.00%"));
+        assert_eq!(latest_data_label(&history, "tbs").as_deref(), Some("data 50.00%"));
+        let drawn = chart(&fixture(), &history);
+        assert_ne!(code_only.rgba(1), drawn.rgba(1));
     }
 }

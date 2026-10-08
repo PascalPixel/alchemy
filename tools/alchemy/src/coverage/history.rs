@@ -3,13 +3,21 @@ use super::sessions;
 use std::collections::BTreeMap;
 use std::path::Path;
 
-const HEADER: &str = "date\ttbs_done\ttbs_executable\ttbs_percent\ttla_done\ttla_executable\ttla_percent\tmodels\toverhaul";
+const HEADER: &str = "date\ttbs_done\ttbs_executable\ttbs_percent\ttbs_data\ttbs_data_total\ttla_done\ttla_executable\ttla_percent\ttla_data\ttla_data_total\tmodels\toverhaul";
+/// The columns before DONE data (Pascal, 2026-10-08), read and rewritten
+/// with the data columns left empty.
+const CODE_ONLY_HEADER: &str = "date\ttbs_done\ttbs_executable\ttbs_percent\ttla_done\ttla_executable\ttla_percent\tmodels\toverhaul";
+/// The note on the first day that records DONE data.
+pub(crate) const DATA_BEGINS: &str = "DONE is code and data from here (Pascal, 2026-10-08)";
 
 #[derive(Clone, Debug, Default, PartialEq)]
 pub(crate) struct Measure {
     pub done: Option<u64>,
     pub executable: Option<u64>,
     pub percent: Option<f64>,
+    /// DONE data bytes and the data total; empty before 2026-10-08.
+    pub data: Option<u64>,
+    pub data_total: Option<u64>,
 }
 impl Measure {
     pub(crate) fn bytes(done: u64, executable: u64) -> Self {
@@ -17,7 +25,13 @@ impl Measure {
             done: Some(done),
             executable: Some(executable),
             percent: None,
+            data: None,
+            data_total: None,
         }
+    }
+    pub(crate) fn data_percent(&self) -> Option<f64> {
+        let (data, total) = (self.data? as f64, self.data_total? as f64);
+        (total > 0.0).then(|| 100.0 * data / total)
     }
     pub(crate) fn published(percent: f64) -> Self {
         Measure {
@@ -143,6 +157,8 @@ pub(crate) fn text(history: &History) -> String {
                 show(measure.and_then(|m| m.done).map(|v| v.to_string())),
                 show(measure.and_then(|m| m.executable).map(|v| v.to_string())),
                 show(measure.and_then(|m| m.percent).map(|v| format!("{v:?}"))),
+                show(measure.and_then(|m| m.data).map(|v| v.to_string())),
+                show(measure.and_then(|m| m.data_total).map(|v| v.to_string())),
             ]
         };
         let models = day
@@ -173,7 +189,7 @@ pub(crate) fn text(history: &History) -> String {
 
 fn parse(text: &str) -> Result<History, String> {
     let mut began = None;
-    let mut header = false;
+    let mut header = None;
     let mut days: Vec<Day> = Vec::new();
     let mut hours = Vec::new();
     let mut current = None;
@@ -206,16 +222,21 @@ fn parse(text: &str) -> Result<History, String> {
         if line.starts_with('#') || line.is_empty() {
             continue;
         }
-        if !header {
-            if line != HEADER {
-                return Err(problem("unexpected progress columns"));
-            }
-            header = true;
+        let Some(with_data) = header else {
+            header = Some(match line {
+                HEADER => true,
+                CODE_ONLY_HEADER => false,
+                _ => return Err(problem("unexpected progress columns")),
+            });
             continue;
+        };
+        let mut fields = line.split('\t').collect::<Vec<_>>();
+        if !with_data && fields.len() == 9 {
+            fields.splice(7..7, ["-", "-"]);
+            fields.splice(4..4, ["-", "-"]);
         }
-        let fields = line.split('\t').collect::<Vec<_>>();
-        if fields.len() != 9 {
-            return Err(problem("expected nine progress columns"));
+        if fields.len() != 13 {
+            return Err(problem("expected thirteen progress columns"));
         }
         let date = fields[0];
         let valid_date = hour_number(date).is_some();
@@ -224,8 +245,22 @@ fn parse(text: &str) -> Result<History, String> {
         }
         previous = date.to_string();
         let mut row = Day::new(date);
-        for (game, start) in [("tbs", 1), ("tla", 4)] {
+        for (game, start) in [("tbs", 1), ("tla", 6)] {
             let (done, total, percent) = (fields[start], fields[start + 1], fields[start + 2]);
+            let (data, data_total) = (fields[start + 3], fields[start + 4]);
+            let data = match (data, data_total) {
+                ("-", "-") => None,
+                (data, total) => {
+                    let data = data.parse::<u64>().map_err(|_| problem("invalid data bytes"))?;
+                    let total = total
+                        .parse::<u64>()
+                        .map_err(|_| problem("invalid data total"))?;
+                    if total == 0 || data > total || done == "-" {
+                        return Err(problem("data needs its total and the code bytes beside it"));
+                    }
+                    Some((data, total))
+                }
+            };
             let measure = if done != "-" || total != "-" {
                 let done = done
                     .parse::<u64>()
@@ -238,7 +273,11 @@ fn parse(text: &str) -> Result<History, String> {
                         "record bytes or a published percentage, never both",
                     ));
                 }
-                Some(Measure::bytes(done, total))
+                Some(Measure {
+                    data: data.map(|(data, _)| data),
+                    data_total: data.map(|(_, total)| total),
+                    ..Measure::bytes(done, total)
+                })
             } else if percent != "-" {
                 let percent = percent
                     .parse::<f64>()
@@ -256,8 +295,8 @@ fn parse(text: &str) -> Result<History, String> {
                 row.tla = measure;
             }
         }
-        if fields[7] != "-" {
-            for field in fields[7].split(';') {
+        if fields[11] != "-" {
+            for field in fields[11].split(';') {
                 let (name, count) = field
                     .rsplit_once('=')
                     .ok_or_else(|| problem("model counts use name=count"))?;
@@ -270,8 +309,8 @@ fn parse(text: &str) -> Result<History, String> {
                 }
             }
         }
-        if fields[8] != "-" {
-            row.correction = Some(fields[8].to_string());
+        if fields[12] != "-" {
+            row.correction = Some(fields[12].to_string());
         }
         if date.len() == 13 {
             if !row.models.is_empty() || row.correction.is_some() {
@@ -284,7 +323,7 @@ fn parse(text: &str) -> Result<History, String> {
             days.push(row);
         }
     }
-    if !header {
+    if header.is_none() {
         return Err("missing progress columns".into());
     }
     let began = began
@@ -302,7 +341,11 @@ fn parse(text: &str) -> Result<History, String> {
 
 fn measured(done: Option<GameDone>) -> Option<Measure> {
     done.filter(|done| done.executable > 0)
-        .map(|done| Measure::bytes(done.bytes() as u64, done.executable as u64))
+        .map(|done| Measure {
+            data: (done.data_total > 0).then_some(done.data as u64),
+            data_total: (done.data_total > 0).then_some(done.data_total as u64),
+            ..Measure::bytes(done.bytes() as u64, done.executable as u64)
+        })
 }
 
 pub(crate) fn record_hour(
@@ -330,19 +373,31 @@ pub(crate) fn record_hour(
 }
 
 pub(crate) fn points(history: &History, game: &str) -> Vec<(i64, f64)> {
+    points_of(history, game, Measure::percent)
+}
+
+/// DONE data's line: only the rows that recorded it, from 2026-10-08.
+pub(crate) fn data_points(history: &History, game: &str) -> Vec<(i64, f64)> {
+    points_of(history, game, Measure::data_percent)
+}
+
+fn points_of(
+    history: &History,
+    game: &str,
+    pick: impl Fn(&Measure) -> Option<f64>,
+) -> Vec<(i64, f64)> {
     let mut points = history
         .hours
         .iter()
-        .filter_map(|row| Some((hour_number(&row.date)?, row.game(game)?.percent()?)))
+        .filter_map(|row| Some((hour_number(&row.date)?, pick(row.game(game)?)?)))
         .collect::<Vec<_>>();
     for row in &history.days {
-        let Some(value) = row.game(game).and_then(Measure::percent) else {
+        let Some(value) = row.game(game).and_then(&pick) else {
             continue;
         };
-        if !history
-            .hours
-            .iter()
-            .any(|hour| hour.date.starts_with(&row.date) && hour.game(game).is_some())
+        if !history.hours.iter().any(|hour| {
+            hour.date.starts_with(&row.date) && hour.game(game).and_then(&pick).is_some()
+        })
         {
             if let Some(hour) = hour_number(&row.date) {
                 points.push((hour, value));
@@ -390,12 +445,23 @@ pub(crate) fn record(
         tbs_pending: pending[0],
         tla_pending: pending[1],
     });
+    let had_data = history.days.iter().any(|row| {
+        [&row.tbs, &row.tla]
+            .iter()
+            .any(|game| game.as_ref().is_some_and(|m| m.data.is_some()))
+    });
     let row = history.day_mut(date);
     if let Some(value) = measured(sun) {
         row.tbs = Some(value);
     }
     if let Some(value) = measured(anchor) {
         row.tla = Some(value);
+    }
+    let has_data = [&row.tbs, &row.tla]
+        .iter()
+        .any(|game| game.as_ref().is_some_and(|m| m.data.is_some()));
+    if has_data && !had_data && row.correction.is_none() {
+        row.correction = Some(DATA_BEGINS.into());
     }
     if row.is_empty() {
         history.days.retain(|row| row.date != date);
@@ -697,5 +763,45 @@ mod tests {
         assert_eq!(previous("2026-03-01").as_deref(), Some("2026-02-28"));
         assert_eq!(previous("2026-09-01").as_deref(), Some("2026-08-31"));
         assert_eq!(today().len(), 10);
+    }
+
+    #[test]
+    fn code_only_history_reads_and_the_first_data_day_is_marked() {
+        let old = format!(
+            "# began\t2026-10-05\n{CODE_ONLY_HEADER}\n2026-10-05\t7808068\t8237808\t-\t731298\t11872824\t-\tOpus 5.5=3\t-\n2026-10-05T11\t7808068\t8237808\t-\t-\t-\t-\t-\t-\n"
+        );
+        let mut history = parse(&old).unwrap();
+        assert_eq!(history.days[0].tbs, Some(Measure::bytes(7808068, 8237808)));
+        let text_before = text(&history);
+        assert!(text_before.starts_with(&format!("# Published progress; '-' means no value was recorded.\n# began\t2026-10-05\n{HEADER}\n")));
+        assert!(text_before.contains(
+            "2026-10-05\t7808068\t8237808\t-\t-\t-\t731298\t11872824\t-\t-\t-\tOpus 5.5=3\t-\n"
+        ));
+        assert_eq!(parse(&text_before).unwrap().days, history.days);
+        let sun = GameDone {
+            data: 99,
+            data_total: 100,
+            ..done(1000)
+        };
+        record(&mut history, "2026-10-08", Some(sun), None);
+        record_hour(&mut history, "2026-10-08T09", Some(sun), None);
+        record(&mut history, "2026-10-09", Some(sun), None);
+        let day = |date: &str| history.days.iter().find(|row| row.date == date).unwrap();
+        assert_eq!(day("2026-10-08").correction.as_deref(), Some(DATA_BEGINS));
+        assert_eq!(day("2026-10-09").correction, None);
+        assert_eq!(
+            day("2026-10-08").tbs.as_ref().unwrap().data_percent(),
+            Some(99.0)
+        );
+        assert_eq!(day("2026-10-05").tbs.as_ref().unwrap().data_percent(), None);
+        assert_eq!(data_points(&history, "tbs").len(), 2);
+        assert_eq!(points(&history, "tbs").len(), 3);
+        let loaded = parse(&text(&history)).unwrap();
+        assert_eq!(
+            (loaded.days, loaded.hours),
+            (history.days.clone(), history.hours.clone())
+        );
+        let invalid = format!("{HEADER}\n2026-10-08\t-\t-\t1.0\t9\t10\t-\t-\t-\t-\t-\t-\t-\n");
+        assert!(parse(&invalid).is_err());
     }
 }

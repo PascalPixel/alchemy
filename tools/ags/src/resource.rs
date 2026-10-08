@@ -27,7 +27,7 @@ pub fn is_recipe(built: &str) -> bool {
         || data_form(form)
         || matches!(
             form,
-            "font" | "gbapal" | "bitmap" | "frames" | "icons" | "icon4" | "glyphs"
+            "font" | "gbapal" | "bitmap" | "frames" | "icons" | "icon4" | "glyphs" | "1bpp"
         );
     !stem.is_empty() && form && codec.is_none_or(|codec| CODECS.contains(&codec))
 }
@@ -613,6 +613,7 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
         "icon4" => {
             encode_icon4(&indices(&image)).map_err(|error| format!("{built}: {}", error.0))?
         }
+        "1bpp" => one_bpp(built, &indices(&image), width, height)?,
         "glyphs" if width == 8 => indices(&image)
             .chunks(8)
             .map(|row| {
@@ -624,4 +625,44 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
         "glyphs" => return Err(format!("{built}: glyphs are 8 pixels wide, stacked")),
         other => return Err(format!("{built}: unknown form .{other}")),
     })
+}
+
+/// 8x8 tiles in sheet order, one byte per tile row with the leftmost pixel
+/// in bit 7, as pret's gbagfx writes `.1bpp`; any non-zero index is set.
+fn one_bpp(built: &str, pixels: &[u8], width: usize, height: usize) -> Result<Vec<u8>, String> {
+    if width % 8 != 0 || height % 8 != 0 || pixels.len() != width * height {
+        return Err(format!("{built}: 1bpp sheets are whole 8x8 tiles"));
+    }
+    let mut out = Vec::with_capacity(pixels.len() / 8);
+    for tile_y in (0..height).step_by(8) {
+        for tile_x in (0..width).step_by(8) {
+            for y in tile_y..tile_y + 8 {
+                let row = &pixels[y * width + tile_x..y * width + tile_x + 8];
+                out.push(row.iter().fold(0u8, |byte, &pixel| byte << 1 | u8::from(pixel != 0)));
+            }
+        }
+    }
+    Ok(out)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn one_bpp_packs_tiles_in_sheet_order_leftmost_pixel_high() {
+        let mut pixels = vec![0u8; 16 * 8];
+        pixels[0] = 1; // tile 0, row 0, x 0
+        pixels[7] = 3; // tile 0, row 0, x 7
+        pixels[16 + 1] = 1; // tile 0, row 1, x 1
+        pixels[7 * 16 + 8] = 2; // tile 1, row 7, x 0
+        let bytes = one_bpp("T.1bpp", &pixels, 16, 8).unwrap();
+        assert_eq!(bytes.len(), 16);
+        assert_eq!(&bytes[..2], &[0x81, 0x40]);
+        assert_eq!(bytes[15], 0x80);
+        assert!(bytes[2..15].iter().all(|&byte| byte == 0));
+        assert!(one_bpp("T.1bpp", &pixels[..120], 15, 8).is_err());
+        assert!(is_recipe("GRAPHICS/DISPLAY/STAFF.1bpp"));
+        assert!(!is_recipe("GRAPHICS/DISPLAY/STAFF.2bpp"));
+    }
 }

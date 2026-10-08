@@ -21,7 +21,8 @@
 #include "uiwindow.h"
 #include "window.h"
 #include "game_state.h"
-extern struct DjinnMenuWork *gMenuWork;
+#include "resource.h"
+#include "inventory_menu.h"
 
 extern u8 MsgCurrentStatus[];
 void UiWindow_CloseIfOpen(struct UiWindow **window, s32 release);
@@ -777,4 +778,105 @@ void Djinn_CountTurns(u8 *counts)
         }
         counts[owner_index] = count;
     }
+}
+
+void Resource_LoadPairedBlocksIfAvailable(void)
+{
+    s32 first_slot;
+    s32 second_slot;
+    struct InventoryMenuState *active_state;
+
+    active_state = gMenuWork;
+    first_slot = Resource_FindFreeEntry();
+    active_state->resource_slots[0] = first_slot;
+    if (first_slot != -1) {
+        VramBlock_LoadCached(first_slot, 0x80, Menu_PairSpriteATiles);
+    }
+    second_slot = Resource_FindFreeEntry();
+    active_state->resource_slots[1] = second_slot;
+    if (second_slot != -1) {
+        VramBlock_LoadCached(second_slot, 0x80, Menu_PairSpriteBTiles);
+    }
+}
+
+void Menu_ResetTwoResourceEntries(void)
+{
+    struct InventoryMenuState *state;
+
+    state = gMenuWork;
+    Resource_ResetEntry((u16)state->resource_slots[0]);
+    Resource_ResetEntry((u16)state->resource_slots[1]);
+}
+
+s32 UiIcon_LoadResourceIntoSlot(s32 resource_id, s32 slot)
+{
+    s32 resource_info;
+    s32 selected_slot;
+    s32 buffer;
+    s32 allocation;
+
+    allocation = (s32)Runtime_AllocateBlock(0x11, 0x608);
+    selected_slot = slot;
+    Ability_LoadGlyphFar(resource_id, 0, &selected_slot, &resource_info, 1);
+    buffer = Resource_GetBuffer(slot, allocation + 0x400);
+    Runtime_ReleaseHeapBlock(0x11);
+    return buffer;
+}
+
+s32 UiIcon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y, s32 resource_id)
+{
+    s32 slot;
+
+    slot = Resource_FindFreeEntry();
+    if (slot != 0x60) {
+        UiIcon_LoadResourceIntoSlot(resource_id, slot);
+        RenderOutput_CreateFar(slot, 0x40000000, window, x, y);
+    }
+}
+
+s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 variant)
+{
+    struct RenderOutput *object;
+    u32 resource;
+    register s32 v asm("r5") = variant; /* FAKEMATCH: keeps the variant in r5 */
+    struct RenderInput *w = window;
+    s32 xx = x;
+    struct InventoryMenuState *data = gMenuWork;
+
+    if (v == 0)
+        resource = (u16)data->resource_slots[0];
+    else
+        resource = (u16)data->resource_slots[1];
+    object = RenderOutput_CreateFar(resource, 0x40000000, w, xx, y);
+    if (object == 0)
+        return -1;
+    object->kind = 0;
+    object->anim_step = 0;
+    object->active = 1;
+    return 1;
+}
+
+s32 UiIcon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s32 variant)
+{
+    struct RenderOutput *object;
+    u32 resource;
+    register s32 v asm("r5") = variant; /* FAKEMATCH: keeps the variant in r5 */
+    struct RenderInput *w = window;
+    s32 xx = x;
+    struct InventoryMenuState *data = gMenuWork;
+
+    if (v == 0) {
+        resource = (u16)data->resource_slots[0];
+        y -= 3;
+    } else {
+        resource = (u16)data->resource_slots[1];
+        y -= 4;
+    }
+    object = RenderOutput_CreateFar(resource, 0x40000000, w, xx, y);
+    if (object == 0)
+        return -1;
+    object->kind = 0;
+    object->anim_step = 0;
+    object->active = 1;
+    return 1;
 }

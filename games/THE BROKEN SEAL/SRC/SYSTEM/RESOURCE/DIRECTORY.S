@@ -816,7 +816,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Palette48
 	resource , Field_Map161
 	resource , Field_Map162
-	resource , Resource_Data326
+	resource , Field_VinasuHeya
 	resource , Tileset_Palette49
 	resource , Field_Map163
 	resource , Tileset_Palette50

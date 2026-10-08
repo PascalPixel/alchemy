@@ -1897,7 +1897,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/PALETTES/PAL_48.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/MAP/MAP_161/MAP.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/MAP/MAP_162/MAP.o"(.rodata)
-    "*/recon/tbs/de/rom.o"(.rom.0075c010)
+    "*/games/THE BROKEN SEAL/SRC/MAP/VINASU_HEYA/MAP.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/PALETTES/PAL_49.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/MAP/MAP_163/MAP.o"(.rodata)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/PALETTES/PAL_50.o"(.rodata)

@@ -3,7 +3,7 @@ use crate::targets::{decomp_target, DecompTarget};
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub(crate) struct Known {
     pub(crate) defined: HashMap<(Space, String), String>,
     pub(crate) declared: HashMap<(Space, String), String>,

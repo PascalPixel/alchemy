@@ -27,6 +27,9 @@ pub struct Source {
     /// Repository-relative path, for messages.
     pub path: String,
     pub text: String,
+    /// What the file's own headers declare, when known: calls to names
+    /// they leave undeclared were implicit `int f()` in the file alone.
+    pub own: Option<Known>,
 }
 
 #[derive(Debug)]
@@ -192,10 +195,182 @@ fn one_line(item: &Item) -> String {
     }
 }
 
-pub fn merge(sources: &[Source], headers: &Known) -> Result<Merged, Vec<String>> {
+/// Enumerators an earlier file already defined with the same explicit value
+/// leave a later file's enum: one constant, one definition. A clash of
+/// values, or an implicit value that would move, is left for the merge to
+/// report.
+fn shared_enumerators(sources: &[Source], notes: &mut Vec<String>) -> Vec<Source> {
+    let mut seen: BTreeMap<String, String> = BTreeMap::new();
+    let mut out = Vec::new();
+    for source in sources {
+        let mut text = source.text.clone();
+        let list = items(&source.text);
+        let mut edits: Vec<(usize, usize, String)> = Vec::new();
+        for item in &list {
+            if item.kind != Kind::Declaration {
+                continue;
+            }
+            let Some((open, close)) = enum_body(item.text) else {
+                continue;
+            };
+            let body = &item.text[open + 1..close];
+            let members: Vec<&str> = body.split(',').collect();
+            let parsed: Vec<Option<(String, String)>> = members
+                .iter()
+                .map(|m| {
+                    let code = strip_line_comments(m);
+                    let (name, value) = code.split_once('=')?;
+                    Some((name.trim().to_string(), value.split_whitespace().collect::<Vec<_>>().join(" ")))
+                })
+                .collect();
+            let explicit = members.iter().zip(&parsed).all(|(m, p)| p.is_some() || strip_line_comments(m).trim().is_empty());
+            if !explicit {
+                for (name, value) in parsed.into_iter().flatten() {
+                    seen.entry(name).or_insert(value);
+                }
+                continue;
+            }
+            let mut kept: Vec<&str> = Vec::new();
+            let mut gone = Vec::new();
+            for (m, p) in members.iter().zip(&parsed) {
+                match p {
+                    Some((name, value)) if seen.get(name) == Some(value) => gone.push(name.clone()),
+                    Some((name, value)) => {
+                        seen.insert(name.clone(), value.clone());
+                        kept.push(m);
+                    }
+                    None => kept.push(m),
+                }
+            }
+            if gone.is_empty() {
+                continue;
+            }
+            let tagged = !item.text[..open].trim().trim_start_matches("enum").trim().is_empty();
+            let left = kept.iter().any(|m| !strip_line_comments(m).trim().is_empty());
+            let replacement = if left {
+                let mut body = kept.join(",");
+                if !body.ends_with('\n') {
+                    body.push('\n');
+                }
+                format!("{}{{{}}}{}", &item.text[..open], body, &item.text[close + 1..])
+            } else if tagged && identifiers(&source.text.replacen(item.text, "", 1)).contains(item.text[..open].trim().trim_start_matches("enum").trim()) {
+                continue;
+            } else {
+                String::new()
+            };
+            notes.push(format!("{}: {} enumerator(s) an earlier file defines identically left its enum", source.path, gone.len()));
+            edits.push((item.start, item.end, replacement));
+        }
+        for (start, end, replacement) in edits.into_iter().rev() {
+            text.replace_range(start..end, &replacement);
+        }
+        out.push(Source { path: source.path.clone(), text, own: source.own.clone() });
+    }
+    out
+}
+
+fn strip_line_comments(text: &str) -> String {
+    let mut out = String::new();
+    for line in text.lines() {
+        let line = line.split("//").next().unwrap_or("");
+        let mut rest = line;
+        while let Some(at) = rest.find("/*") {
+            out.push_str(&rest[..at]);
+            rest = rest[at..].find("*/").map_or("", |e| &rest[at + e + 2..]);
+        }
+        out.push_str(rest);
+        out.push('\n');
+    }
+    out
+}
+
+/// The braces of `enum [Tag] { ... };` with no declarator.
+fn enum_body(text: &str) -> Option<(usize, usize)> {
+    let code = text.trim_start();
+    if !code.starts_with("enum") {
+        return None;
+    }
+    let open = text.find('{')?;
+    let close = text.rfind('}')?;
+    if text[close + 1..].split("/*").next().unwrap_or("").trim().trim_end_matches(';').trim().is_empty() && text[open + 1..close].find('{').is_none() {
+        Some((open, close))
+    } else {
+        None
+    }
+}
+
+#[derive(Clone, Copy, Debug, Default)]
+pub struct Options {
+    /// Keep each differing private declaration as a cast of the name over
+    /// its own file's region instead of giving way to the governing shape.
+    pub views: bool,
+    /// With views, also keep unprototyped `T f()` declarations as casts.
+    pub unprototyped: bool,
+}
+
+/// Single-line declarations inside an `#if` block, with their names.
+fn conditional_declarations(item: &Item) -> Vec<(String, Vec<crate::c_items::Name>)> {
+    let mut out = Vec::new();
+    for line in item.text.lines() {
+        let trimmed = line.trim();
+        if trimmed.starts_with('#') || !trimmed.ends_with(';') {
+            continue;
+        }
+        let list = items(trimmed);
+        if list.len() == 1 && list[0].kind == Kind::Declaration {
+            let found: Vec<_> = names(&list[0]).into_iter().filter(|n| n.space == Space::Ordinary && !n.defines).collect();
+            if !found.is_empty() {
+                out.push((trimmed.to_string(), found));
+            }
+        }
+    }
+    out
+}
+
+/// `#define NAME (cast of NAME)`: the file's own view of a name another
+/// shape governs. `extern u8 gX[4];` -> `((u8 (*))&gX)`, `s32 f(u8);` ->
+/// `((s32 (*)(u8))f)`, `extern struct W gW;` -> `(*(struct W (*))&gW)`.
+pub fn view(declaration: &str, name: &str) -> Option<String> {
+    let mut text = declaration.trim().trim_end_matches(';').trim().to_string();
+    for word in ["extern ", "static "] {
+        if let Some(rest) = text.strip_prefix(word) {
+            text = rest.trim().to_string();
+        }
+    }
+    let at = text.match_indices(name).find(|(at, _)| {
+        let before = text[..*at].chars().last().is_none_or(|c| !(c.is_ascii_alphanumeric() || c == '_'));
+        let after = text[at + name.len()..].chars().next().is_none_or(|c| !(c.is_ascii_alphanumeric() || c == '_'));
+        before && after
+    })?.0;
+    let rest = text[at + name.len()..].trim_start();
+    let head = &text[..at];
+    let (cast, function) = if rest.starts_with('[') {
+        let close = rest.find(']')?;
+        (format!("{head}(*){}", &rest[close + 1..]), false)
+    } else if rest.starts_with('(') {
+        (format!("{head}(*){rest}"), true)
+    } else if rest.is_empty() {
+        (format!("{head}(*)"), false)
+    } else {
+        return None;
+    };
+    let array = rest.starts_with('[');
+    let cast = cast.split_whitespace().collect::<Vec<_>>().join(" ");
+    Some(if function {
+        format!("#define {name} (({cast}){name})")
+    } else if array {
+        format!("#define {name} (({cast})&{name})")
+    } else {
+        format!("#define {name} (*({cast})&{name})")
+    })
+}
+
+pub fn merge(sources: &[Source], headers: &Known, options: &Options) -> Result<Merged, Vec<String>> {
+    let mut notes = Vec::new();
+    let owned = shared_enumerators(sources, &mut notes);
+    let sources = &owned[..];
     let lists: Vec<Vec<Item>> = sources.iter().map(|s| items(&s.text)).collect();
     let mut files: Vec<Parsed> = sources.iter().zip(&lists).map(|(s, l)| parse(s, l)).collect();
-    let mut notes = Vec::new();
     let mut errors = Vec::new();
 
     // Defines written before the includes.
@@ -315,10 +490,36 @@ pub fn merge(sources: &[Source], headers: &Known) -> Result<Merged, Vec<String>>
         }
     }
 
+    // Every private declaration's text, by file and name, top level or
+    // inside an edition's #if.
+    let mut declaration_text: BTreeMap<(usize, String), (String, bool)> = BTreeMap::new();
+    for (k, f) in files.iter().enumerate() {
+        for (_, item) in &f.body {
+            match item.kind {
+                Kind::Declaration => {
+                    for n in names(item).into_iter().filter(|n| n.space == Space::Ordinary && !n.defines) {
+                        declaration_text.entry((k, n.name)).or_insert((one_line(item), false));
+                    }
+                }
+                Kind::Conditional => {
+                    for (line, line_names) in conditional_declarations(item) {
+                        for n in line_names {
+                            ordinary.entry(n.name.clone()).or_default().declared.entry(k).or_insert(n.signature.clone());
+                            declaration_text.entry((k, n.name)).or_insert((line.clone(), true));
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+
     // Declarations kept at block scope: (file, name) -> declaration text.
     let mut block: BTreeMap<usize, BTreeMap<String, String>> = BTreeMap::new();
     let mut lifted: BTreeSet<(usize, String)> = BTreeSet::new();
-    let mut dropped: BTreeSet<(usize, String)> = BTreeSet::new();
+    let mut dropped: BTreeMap<(usize, String), (String, bool)> = BTreeMap::new();
+    let mut hoisted: Vec<String> = Vec::new();
+    let mut hoisted_names: BTreeSet<String> = BTreeSet::new();
     for (name, usage) in &ordinary {
         if usage.declared.is_empty() {
             continue;
@@ -332,31 +533,47 @@ pub fn merge(sources: &[Source], headers: &Known) -> Result<Merged, Vec<String>>
             continue;
         }
         // GCC 2.96 refuses a block-scope declaration that differs from a
-        // file-scope one already seen, and accepts it before one. So: with no
-        // header or definition every file keeps its own inside its functions;
-        // before the definition likewise; under a header or after the
-        // definition a differing private shape gives way to that one.
-        let first_file_scope = if header.is_some() { Some(0) } else { usage.defined.as_ref().map(|(k, _, _)| *k) };
+        // file-scope one already seen. So: with neither header nor definition
+        // every file keeps its own inside its functions; otherwise the
+        // header's shape, or the definition's declared once after the
+        // includes, governs, and a differing private shape gives way to it
+        // (with `views`, it stays as a cast of the name over its own region).
+        let governing = header.clone().or(definition.clone());
+        if governing.is_none() {
+            for &k in usage.declared.keys() {
+                if declaration_text.get(&(k, name.clone())).is_some_and(|(_, conditional)| *conditional) {
+                    errors.push(format!("{}: {name} is declared differently by several files, inside an #if", files[k].path));
+                    continue;
+                }
+                lifted.insert((k, name.clone()));
+                notes.push(format!("{}: {name} stays at block scope ({})", files[k].path, usage.declared[&k]));
+            }
+            continue;
+        }
+        if header.is_none() {
+            if let Some((k, _, true)) = &usage.defined {
+                if let Some(head) = files[*k].body.iter().find_map(|(_, item)| match item.kind {
+                    Kind::Function { body } if names(item).first().is_some_and(|n| n.name == *name) => Some(item.text[..body].split_whitespace().collect::<Vec<_>>().join(" ")),
+                    _ => None,
+                }) {
+                    hoisted.push(format!("{head};"));
+                    hoisted_names.insert(name.clone());
+                }
+            }
+        }
         for (&k, signature) in &usage.declared {
-            if renames[k].contains_key(name) {
+            if renames[k].contains_key(name) || Some(signature) == governing.as_ref() {
                 continue;
             }
-            match first_file_scope {
-                Some(at) if k >= at || header.is_some() => {
-                    let governing = header.as_ref().or(definition.as_ref());
-                    if Some(signature) == governing {
-                        continue;
-                    }
-                    dropped.insert((k, name.clone()));
-                    if !signature.ends_with("( )") {
-                        notes.push(format!("{}: {name} takes the {} shape ({signature} dropped)", files[k].path, if header.is_some() { "header's" } else { "definition's" }));
-                    }
-                }
-                _ => {
-                    lifted.insert((k, name.clone()));
-                    notes.push(format!("{}: {name} stays at block scope ({signature})", files[k].path));
-                }
+            let text = declaration_text.get(&(k, name.clone())).map(|(t, _)| t.clone()).unwrap_or_default();
+            let defining_here = usage.defined.as_ref().is_some_and(|(d, _, _)| *d == k);
+            let as_view = options.views && !defining_here && (options.unprototyped || !signature.ends_with("( )"));
+            if as_view {
+                notes.push(format!("{}: {name} keeps its own shape as a cast ({signature})", files[k].path));
+            } else if !signature.ends_with("( )") {
+                notes.push(format!("{}: {name} takes the {} shape ({signature} dropped)", files[k].path, if header.is_some() { "header's" } else { "definition's" }));
             }
+            dropped.insert((k, name.clone()), (text, as_view));
         }
     }
     // The declaring items to lift, and where they go.
@@ -367,7 +584,7 @@ pub fn merge(sources: &[Source], headers: &Known) -> Result<Merged, Vec<String>>
             }
             let item_names: Vec<String> = names(item).into_iter().filter(|n| n.space == Space::Ordinary && !n.defines).map(|n| n.name).collect();
             let moving: Vec<&String> = item_names.iter().filter(|n| lifted.contains(&(k, (*n).clone()))).collect();
-            let handled = item_names.iter().filter(|n| lifted.contains(&(k, (*n).clone())) || dropped.contains(&(k, (*n).clone()))).count();
+            let handled = item_names.iter().filter(|n| lifted.contains(&(k, (*n).clone())) || dropped.contains_key(&(k, (*n).clone()))).count();
             if handled == 0 {
                 continue;
             }
@@ -400,6 +617,13 @@ pub fn merge(sources: &[Source], headers: &Known) -> Result<Merged, Vec<String>>
     for i in &includes {
         out.push_str(i);
         out.push('\n');
+    }
+    if !hoisted.is_empty() {
+        out.push('\n');
+        for h in &hoisted {
+            out.push_str(h);
+            out.push('\n');
+        }
     }
     let mut emitted: BTreeSet<String> = BTreeSet::new();
     // Private macros live from their region on: name -> definition.
@@ -451,6 +675,29 @@ pub fn merge(sources: &[Source], headers: &Known) -> Result<Merged, Vec<String>>
         if !undefs.is_empty() {
             out.push('\n');
         }
+        let mut views: Vec<String> = Vec::new();
+        // Calls the file made with no declaration in sight were `int f()`;
+        // with views they stay so where the unit now shows a prototype.
+        if options.views {
+            if let Some(own) = &sources[k].own {
+                let mut lines = String::new();
+                for name in implicit_calls(f, own) {
+                    if headers.defined.contains_key(&(Space::Macro, name.clone())) {
+                        continue;
+                    }
+                    let earlier = ordinary.get(&name).is_some_and(|u| u.declared.keys().any(|&j| j < k) || u.defined.as_ref().is_some_and(|(j, _, _)| *j < k));
+                    if headers.declared.contains_key(&(Space::Ordinary, name.clone())) || earlier || hoisted_names.contains(&name) {
+                        lines.push_str(&format!("#define {name} ((int (*)()){name})\n"));
+                        notes.push(format!("{}: {name} keeps its implicit `int {name}()` as a cast", f.path));
+                        views.push(name);
+                    }
+                }
+                if !lines.is_empty() {
+                    out.push_str(&lines);
+                    out.push('\n');
+                }
+            }
+        }
         let mut first_in_region = true;
         for (comments, item) in &f.body {
             // An item already written identically appears once.
@@ -476,7 +723,16 @@ pub fn merge(sources: &[Source], headers: &Known) -> Result<Merged, Vec<String>>
                 continue;
             } else if item.kind == Kind::Declaration {
                 let declared: Vec<String> = names(item).into_iter().filter(|n| n.space == Space::Ordinary && !n.defines).map(|n| n.name).collect();
-                if !declared.is_empty() && declared.iter().all(|n| lifted.contains(&(k, n.clone())) || dropped.contains(&(k, n.clone()))) {
+                if !declared.is_empty() && declared.iter().all(|n| lifted.contains(&(k, n.clone())) || dropped.contains_key(&(k, n.clone()))) {
+                    let defines = view_lines(&declared, k, &dropped, options, &mut views, &mut errors, f.path);
+                    if defines.is_empty() {
+                        continue;
+                    }
+                    if !first_in_region {
+                        out.push('\n');
+                    }
+                    first_in_region = false;
+                    out.push_str(&defines);
                     continue;
                 }
             }
@@ -494,6 +750,7 @@ pub fn merge(sources: &[Source], headers: &Known) -> Result<Merged, Vec<String>>
                     let wanted: Vec<String> = block.get(&k).map(|m| m.iter().filter(|(n, _)| uses(item, n)).map(|(_, d)| d.clone()).collect()).unwrap_or_default();
                     with_block_declarations(item, body, &wanted)
                 }
+                Kind::Conditional => conditional_text(item, k, &dropped, options, &mut views, &mut errors, f.path),
                 _ => item.text.to_string(),
             };
             out.push_str(&rename_all(&text));
@@ -502,6 +759,13 @@ pub fn merge(sources: &[Source], headers: &Known) -> Result<Merged, Vec<String>>
         for c in &f.trailing {
             out.push_str("\n\n");
             out.push_str(c.text);
+        }
+        if !views.is_empty() {
+            out.push_str("\n\n");
+            for name in &views {
+                out.push_str(&format!("#undef {name}\n"));
+            }
+            out.pop();
         }
         out.push('\n');
     }
@@ -513,6 +777,92 @@ pub fn merge(sources: &[Source], headers: &Known) -> Result<Merged, Vec<String>>
     Ok(Merged { text: out, notes })
 }
 
+/// The `#define` lines that stand for a dropped declaration in views mode.
+fn view_lines(declared: &[String], k: usize, dropped: &BTreeMap<(usize, String), (String, bool)>, options: &Options, views: &mut Vec<String>, errors: &mut Vec<String>, path: &str) -> String {
+    if !options.views {
+        return String::new();
+    }
+    let mut out = String::new();
+    for name in declared {
+        let Some((text, true)) = dropped.get(&(k, name.clone())) else {
+            continue;
+        };
+        if views.contains(name) {
+            continue;
+        }
+        match view(text, name) {
+            Some(line) => {
+                out.push_str(&line);
+                out.push('\n');
+                views.push(name.clone());
+            }
+            None => errors.push(format!("{path}: no cast spells `{text}`")),
+        }
+    }
+    out.trim_end_matches('\n').to_string()
+}
+
+/// An `#if` block with its dropped declarations removed, or turned into views.
+fn conditional_text(item: &Item, k: usize, dropped: &BTreeMap<(usize, String), (String, bool)>, options: &Options, views: &mut Vec<String>, errors: &mut Vec<String>, path: &str) -> String {
+    let mut out = String::new();
+    for line in item.text.split_inclusive('\n') {
+        let trimmed = line.trim();
+        let list = if !trimmed.starts_with('#') && trimmed.ends_with(';') { items(trimmed) } else { Vec::new() };
+        let declared: Vec<String> = if list.len() == 1 && list[0].kind == Kind::Declaration {
+            names(&list[0]).into_iter().filter(|n| n.space == Space::Ordinary && !n.defines).map(|n| n.name).collect()
+        } else {
+            Vec::new()
+        };
+        if !declared.is_empty() && declared.iter().all(|n| dropped.contains_key(&(k, n.clone()))) {
+            let defines = view_lines(&declared, k, dropped, options, views, errors, path);
+            if !defines.is_empty() {
+                out.push_str(&defines);
+                out.push('\n');
+            }
+            continue;
+        }
+        out.push_str(line);
+    }
+    out
+}
+
+/// Names a file calls without declaring them itself or in its own headers.
+fn implicit_calls(f: &Parsed, own: &Known) -> BTreeSet<String> {
+    const KEYWORDS: &[&str] = &["if", "while", "for", "switch", "return", "sizeof", "do", "else", "case", "__asm__", "asm", "__attribute__", "__builtin_va_arg"];
+    let mut known: BTreeSet<String> = BTreeSet::new();
+    for (_, item) in &f.body {
+        for n in names(item) {
+            known.insert(n.name);
+        }
+    }
+    let mut out = BTreeSet::new();
+    for (_, item) in &f.body {
+        if !matches!(item.kind, Kind::Function { .. }) {
+            continue;
+        }
+        let Ok(tokens) = lex(item.text) else {
+            continue;
+        };
+        let code: Vec<&Tok> = tokens.iter().map(|t| &t.tok).filter(|t| !matches!(t, Tok::Comment(_))).collect();
+        for w in code.windows(3) {
+            let (Tok::Ident(name), Tok::Punct("(")) = (w[1], w[2]) else {
+                continue;
+            };
+            // A declaration or cast, `T (*name)(` or `(T)name(`, is not a call site we judge.
+            if matches!(w[0], Tok::Punct("." | "->")) || KEYWORDS.contains(&name.as_str()) || known.contains(name) {
+                continue;
+            }
+            if own.declared.contains_key(&(Space::Ordinary, name.clone())) || own.defined.contains_key(&(Space::Macro, name.clone())) || own.defined.contains_key(&(Space::Ordinary, name.clone())) {
+                continue;
+            }
+            out.insert(name.clone());
+        }
+    }
+    // Locals and parameters are identifiers too; only file-scope names matter,
+    // and those the caller checks against what the unit declares.
+    out
+}
+
 fn normalized_include(line: &str) -> String {
     line.split_whitespace().collect::<Vec<_>>().join(" ")
 }
@@ -522,14 +872,14 @@ mod tests {
     use super::*;
 
     fn source(path: &str, text: &str) -> Source {
-        Source { path: path.into(), text: text.into() }
+        Source { path: path.into(), text: text.into(), own: None }
     }
 
     #[test]
     fn identical_items_once_and_regions_in_order() {
         let a = source("A.C", "/* A. */\n#include \"TYPES.H\"\n\nstruct S { u8 a; };\nvoid g(void);\n\n// 最初\nvoid f(void)\n{\n\tg();\n}\n");
         let b = source("B.C", "#include \"TYPES.H\"\n#include \"B.H\"\n\nstruct S { u8 a; };\nvoid g(void);\n\nvoid g(void)\n{\n}\n");
-        let merged = merge(&[a, b], &Known::default()).unwrap();
+        let merged = merge(&[a, b], &Known::default(), &Options::default()).unwrap();
         assert_eq!(merged.text.matches("#include \"TYPES.H\"").count(), 1);
         assert!(merged.text.starts_with("/* A. */\n\n#include \"TYPES.H\"\n#include \"B.H\"\n"));
         assert_eq!(merged.text.matches("struct S").count(), 1);
@@ -542,17 +892,19 @@ mod tests {
     fn conflicting_declarations_stay_in_their_own_functions() {
         let a = source("A.C", "#include \"TYPES.H\"\nextern u8 gX[];\nvoid h(u32 a);\nvoid f(void)\n{\n\th(gX[0]);\n}\n");
         let b = source("B.C", "#include \"TYPES.H\"\nextern u16 gX[];\nvoid h(u32 a);\nvoid k(void)\n{\n\th(gX[1]);\n}\n");
-        let merged = merge(&[a, b], &Known::default()).unwrap();
+        let merged = merge(&[a, b], &Known::default(), &Options::default()).unwrap();
         // No header or definition: each file's shape goes inside its own functions.
         assert!(merged.text.contains("void f(void)\n{\n\textern u8 gX[];\n\th(gX[0]);"), "{}", merged.text);
         assert!(merged.text.contains("void k(void)\n{\n\textern u16 gX[];\n\th(gX[1]);"));
-        // Before a definition a differing shape stays inside; after it, it gives way.
-        let d = source("D.C", "void p(s32 a)\n{\n}\n");
-        let e = source("E.C", "void p(u8 a);\nvoid q(void)\n{\n\tp(1);\n}\n");
-        let before = merge(&[source("E.C", "void p(u8 a);\nvoid q(void)\n{\n\tp(1);\n}\n"), source("D.C", "void p(s32 a)\n{\n}\n")], &Known::default()).unwrap();
-        assert!(before.text.contains("void q(void)\n{\n\tvoid p(u8 a);"), "{}", before.text);
-        let after = merge(&[d, e], &Known::default()).unwrap();
-        assert!(!after.text.contains("u8 a"), "{}", after.text);
+        // A definition governs: its prototype comes first, and a differing
+        // shape gives way to it, or stays as a cast with views.
+        let e = || source("E.C", "void p(u8 a);\nvoid q(void)\n{\n\tp(1);\n}\n");
+        let d = || source("D.C", "void p(s32 a)\n{\n}\n");
+        let plain = merge(&[e(), d()], &Known::default(), &Options::default()).unwrap();
+        assert!(plain.text.contains("void p(s32 a);\n") && !plain.text.contains("u8 a"), "{}", plain.text);
+        let cast = merge(&[e(), d()], &Known::default(), &Options { views: true, unprototyped: false }).unwrap();
+        assert!(cast.text.contains("#define p ((void (*)(u8 a))p)\nvoid q(void)"), "{}", cast.text);
+        assert!(cast.text.contains("#undef p\n"), "{}", cast.text);
         assert_eq!(merged.text.matches("void h(u32 a);").count(), 1);
     }
 
@@ -562,7 +914,7 @@ mod tests {
         headers.declared.insert((Space::Ordinary, "h".into()), "void h ( u32 )".into());
         let a = source("A.C", "#include \"H.H\"\nvoid f(void)\n{\n\th(1);\n}\n");
         let b = source("B.C", "s32 h(void);\nvoid k(void)\n{\n\th();\n}\n");
-        let merged = merge(&[a, b], &headers).unwrap();
+        let merged = merge(&[a, b], &headers, &Options::default()).unwrap();
         assert!(!merged.text.contains("s32 h(void);"), "{}", merged.text);
         assert!(merged.notes.iter().any(|n| n.contains("takes the header's shape")));
     }
@@ -573,10 +925,10 @@ mod tests {
         let b = source("B.C", "void Go(void);\nvoid k(void)\n{\n\tGo();\n}\n");
         let c = source("C.C", "#define N 4\nvoid m(void)\n{\n}\n");
         let d = source("D.C", "#define N 4\n#define M 5\nvoid n(void)\n{\n}\n");
-        let merged = merge(&[a, b, c, d], &Known::default()).unwrap();
+        let merged = merge(&[a, b, c, d], &Known::default(), &Options::default()).unwrap();
         assert!(merged.text.contains("#undef Go\n\nvoid k(void)"), "{}", merged.text);
         assert_eq!(merged.text.matches("#define N 4").count(), 1);
-        let redefined = merge(&[source("A.C", "#define N 4\nint a = N;\n"), source("B.C", "#define N 5\nint b = N;\n")], &Known::default()).unwrap();
+        let redefined = merge(&[source("A.C", "#define N 4\nint a = N;\n"), source("B.C", "#define N 5\nint b = N;\n")], &Known::default(), &Options::default()).unwrap();
         assert!(redefined.text.contains("#undef N\n\n#define N 5"), "{}", redefined.text);
     }
 
@@ -584,9 +936,9 @@ mod tests {
     fn clashing_statics_and_tags_take_numbered_names() {
         let a = source("A.C", "struct T { u8 a; };\nstatic u8 sCount;\nvoid f(struct T *t)\n{\n\tsCount = t->a;\n}\n");
         let b = source("B.C", "struct T { u16 b; };\nstatic u16 sCount;\nvoid k(struct T *t)\n{\n\tsCount = t->b;\n}\n");
-        let merged = merge(&[a, b], &Known::default()).unwrap();
+        let merged = merge(&[a, b], &Known::default(), &Options::default()).unwrap();
         assert!(merged.text.contains("struct T_2 { u16 b; };\nstatic u16 sCount_2;\nvoid k(struct T_2 *t)\n{\n\tsCount_2 = t->b;"), "{}", merged.text);
-        let error = merge(&[source("A.C", "u8 gA = 1;\n"), source("B.C", "u8 gA = 2;\n")], &Known::default()).unwrap_err();
+        let error = merge(&[source("A.C", "u8 gA = 1;\n"), source("B.C", "u8 gA = 2;\n")], &Known::default(), &Options::default()).unwrap_err();
         assert!(error[0].contains("gA is defined differently"), "{error:?}");
     }
 
@@ -596,10 +948,43 @@ mod tests {
         let b = source("B.C", "#include \"STATE.H\"\nvoid k(void)\n{\n\tgState.a = 1;\n}\n");
         let mut headers = Known::default();
         headers.declared.insert((Space::Ordinary, "gState".into()), "struct State gState".into());
-        let merged = merge(&[a, b], &headers).unwrap();
+        let merged = merge(&[a, b], &headers, &Options::default()).unwrap();
         assert!(!merged.text.contains("OWN_gState"));
         // Under the header the file's own shape gives way; the bytes judge whether it may.
         assert!(!merged.text.contains("extern u8 gState[];"), "{}", merged.text);
+    }
+
+    #[test]
+    fn enumerators_defined_identically_appear_once() {
+        let a = source("A.C", "enum A {\n    MSG_X = 0x10,\n    MSG_Y = 0x11\n};\n");
+        let b = source("B.C", "enum {\n    MSG_Y = 0x11,\n    MSG_Z = 0x12\n};\n");
+        let c = source("C.C", "enum {\n    MSG_X = 0x10\n};\n");
+        let merged = merge(&[a, b, c], &Known::default(), &Options::default()).unwrap();
+        assert_eq!(merged.text.matches("MSG_Y").count(), 1, "{}", merged.text);
+        assert!(merged.text.contains("enum {\n    MSG_Z = 0x12\n};"), "{}", merged.text);
+        assert_eq!(merged.text.matches("MSG_X").count(), 1);
+        let clash = merge(&[source("A.C", "enum { M = 1 };\n"), source("B.C", "enum { M = 2 };\n")], &Known::default(), &Options::default());
+        assert!(clash.is_err());
+    }
+
+    #[test]
+    fn views_cast_the_name_to_the_files_own_shape() {
+        assert_eq!(view("extern u8 gX[4];", "gX").unwrap(), "#define gX ((u8 (*))&gX)");
+        assert_eq!(view("extern u8 gY[4][8];", "gY").unwrap(), "#define gY ((u8 (*)[8])&gY)");
+        assert_eq!(view("struct A *Get(s32 id);", "Get").unwrap(), "#define Get ((struct A *(*)(s32 id))Get)");
+        assert_eq!(view("extern struct W gW;", "gW").unwrap(), "#define gW (*(struct W (*))&gW)");
+        assert_eq!(view("void Run();", "Run").unwrap(), "#define Run ((void (*)())Run)");
+    }
+
+    #[test]
+    fn implicit_calls_keep_their_unprototyped_shape_under_views() {
+        let mut headers = Known::default();
+        headers.declared.insert((Space::Ordinary, "Run".into()), "void Run ( s32 )".into());
+        let a = Source { path: "A.C".into(), text: "void f(void)\n{\n\tRun(1);\n}\n".into(), own: Some(Known::default()) };
+        let views = merge(&[a], &headers, &Options { views: true, unprototyped: false }).unwrap();
+        assert!(views.text.contains("#define Run ((int (*)())Run)\n"), "{}", views.text);
+        let a = Source { path: "A.C".into(), text: "void f(void)\n{\n\tRun(1);\n}\n".into(), own: Some(Known::default()) };
+        assert!(!merge(&[a], &headers, &Options::default()).unwrap().text.contains("#define"));
     }
 
     #[test]

@@ -352,20 +352,23 @@ fn destination(root: &Path, objects: &[String], judged: &[super::Judged], name: 
     let folder = order.iter().max_by_key(|f| (count.get(*f).copied().unwrap_or(0), std::cmp::Reverse(order.iter().position(|x| x == *f)))).cloned().unwrap_or_default();
     let file = match name {
         Some(n) => n.trim_end_matches(".C").to_string(),
-        None => {
-            let module = objects
-                .iter()
-                .filter(|o| Path::new(stem(o)).parent().is_some_and(|p| p.to_string_lossy() == folder))
-                .filter(|o| is_eight_three(&Path::new(stem(o)).file_name().unwrap_or_default().to_string_lossy()))
-                .max_by_key(|o| (bytes.get(*o).copied().unwrap_or(0), std::cmp::Reverse(objects.iter().position(|x| x == *o))));
-            match module {
-                Some(o) => Path::new(stem(o)).file_name().unwrap_or_default().to_string_lossy().into_owned(),
-                None => {
-                    let leaf = Path::new(&folder).file_name().unwrap_or_default().to_string_lossy().into_owned();
-                    leaf.chars().take(8).collect::<String>().trim_end_matches('_').to_string()
+        None => match area_word(root, &folder, objects) {
+            Some(word) => word,
+            None => {
+                let module = objects
+                    .iter()
+                    .filter(|o| Path::new(stem(o)).parent().is_some_and(|p| p.to_string_lossy() == folder))
+                    .filter(|o| is_eight_three(&Path::new(stem(o)).file_name().unwrap_or_default().to_string_lossy()))
+                    .max_by_key(|o| (bytes.get(*o).copied().unwrap_or(0), std::cmp::Reverse(objects.iter().position(|x| x == *o))));
+                match module {
+                    Some(o) => Path::new(stem(o)).file_name().unwrap_or_default().to_string_lossy().into_owned(),
+                    None => {
+                        let leaf = Path::new(&folder).file_name().unwrap_or_default().to_string_lossy().into_owned();
+                        leaf.chars().take(8).collect::<String>().trim_end_matches('_').to_string()
+                    }
                 }
             }
-        }
+        },
     };
     if !is_eight_three(&file) {
         return Err(format!("{file}: not an uppercase 8.3 name; pass --name"));
@@ -381,6 +384,41 @@ fn destination(root: &Path, objects: &[String], judged: &[super::Judged], name: 
         }
     }
     Ok(path)
+}
+
+/// An area's main unit, the one defining what its ENTRY.S veneers name,
+/// takes the last word of its folder (HAIDIA_MURA/MURA.C), or the 8.3
+/// abbreviation of it the folder's files already use. None when the run is
+/// not the main unit or another file already has that name.
+fn area_word(root: &Path, folder: &str, objects: &[String]) -> Option<String> {
+    let entry = read(&root.join(folder).join("ENTRY.S")).ok()?;
+    let entries: Vec<&str> = entry.lines().filter_map(|l| l.trim().strip_prefix("overlay_veneer")).map(str::trim).filter(|n| !n.is_empty()).collect();
+    let main = objects.iter().any(|o| {
+        let text = read(&root.join(format!("{}.C", stem(o)))).unwrap_or_default();
+        text.lines().any(|line| {
+            !line.starts_with([' ', '\t', '#', '/', '*']) && !line.trim_end().ends_with(';') && entries.iter().any(|e| line.split(|c: char| !c.is_ascii_alphanumeric() && c != '_').any(|w| w == *e) && line.contains(&format!("{e}(")))
+        })
+    });
+    if !main {
+        return None;
+    }
+    let leaf = Path::new(folder).file_name()?.to_string_lossy().into_owned();
+    let word = leaf.rsplit('_').next()?.to_string();
+    let word = if word.len() <= 8 {
+        word
+    } else {
+        let mut known: Vec<String> = fs::read_dir(root.join(folder))
+            .ok()?
+            .filter_map(|e| e.ok())
+            .filter_map(|e| e.path().file_stem().map(|s| s.to_string_lossy().into_owned()))
+            .filter(|s| is_eight_three(s) && s.len() >= 4 && word.starts_with(s.as_str()))
+            .collect();
+        known.sort_by_key(|s| std::cmp::Reverse(s.len()));
+        known.into_iter().next().unwrap_or_else(|| word.chars().take(8).collect())
+    };
+    let path = format!("{folder}/{word}.C");
+    let ours = objects.iter().any(|o| format!("{}.C", stem(o)) == path);
+    (ours || !root.join(&path).exists()).then_some(word)
 }
 
 /// Headers beside the sources that only the merged files include, expanded in
@@ -449,7 +487,7 @@ struct Plan {
     headers: BTreeSet<String>,
 }
 
-fn plan(root: &Path, objects: &[String], judged: &[super::Judged], target: DecompTarget, name: Option<&str>) -> Result<Plan, String> {
+fn plan(root: &Path, objects: &[String], judged: &[super::Judged], target: DecompTarget, name: Option<&str>, views: u8) -> Result<Plan, String> {
     let sources: Vec<String> = objects.iter().map(|o| source_path(root, o).ok_or_else(|| format!("{o} has no C source"))).collect::<Result<_, _>>()?;
     let families: BTreeSet<String> = sources.iter().map(|s| format!("{:?}", family(root, target, s))).collect();
     if families.len() > 1 {
@@ -465,7 +503,13 @@ fn plan(root: &Path, objects: &[String], judged: &[super::Judged], target: Decom
     let mut inputs = Vec::new();
     for s in &sources {
         let text = expand_local(root, s, &read(&root.join(s))?, &group, &mut expanded, 0)?;
-        inputs.push(Source { path: s.clone(), text });
+        let own = if views > 0 {
+            let lines: String = crate::c_items::items(&text).into_iter().filter(|it| matches!(it.kind, crate::c_items::Kind::Include(_))).map(|it| format!("{}\n", it.text.trim())).collect();
+            Some(crate::adopt_into::header_names(root, target, &root.join(s), &lines)?)
+        } else {
+            None
+        };
+        inputs.push(Source { path: s.clone(), text, own });
     }
     // Local includes left as includes must still resolve from the new folder.
     let dest_dir = Path::new(&destination).parent().unwrap_or(Path::new("")).to_path_buf();
@@ -491,8 +535,12 @@ fn plan(root: &Path, objects: &[String], judged: &[super::Judged], target: Decom
         .collect::<Vec<_>>()
         .join("\n");
     let headers = crate::adopt_into::header_names(root, target, &root.join(&destination), &format!("{include_text}\n"))?;
-    let merged = cmerge::merge(&inputs, &headers).map_err(|e| format!("cannot merge:\n  {}", e.join("\n  ")))?;
+    let merged = cmerge::merge(&inputs, &headers, &cmerge::Options { views: views > 0, unprototyped: views > 1 }).map_err(|e| format!("cannot merge:\n  {}", e.join("\n  ")))?;
     Ok(Plan { objects: objects.to_vec(), sources, destination, text: merged.text, notes: merged.notes, headers: expanded })
+}
+
+fn plan_views(root: &Path, objects: &[String], judged: &[super::Judged], target: DecompTarget, name: Option<&str>, level: u8) -> Result<Plan, String> {
+    plan(root, objects, judged, target, name, level)
 }
 
 /// Compile the merged text for every edition that links the objects and
@@ -595,7 +643,7 @@ fn flatten(options: &Options) -> Result<(), String> {
     let groups = group(&root, options, &judged, target)?;
     let mut cache = BTreeMap::new();
     for objects in groups {
-        let plan = plan(&root, &objects, &judged, target, options.name.as_deref())?;
+        let mut plan = plan(&root, &objects, &judged, target, options.name.as_deref(), 0)?;
         println!("{} files -> {}", plan.sources.len(), plan.destination);
         for s in &plan.sources {
             println!("  {s}");
@@ -619,8 +667,34 @@ fn flatten(options: &Options) -> Result<(), String> {
                 Err(e) => return Err(format!("{}: {e}", script.strip_prefix(&root).unwrap_or(script).display())),
             }
         }
+        // Plainly first; failing that, each file keeps its own shapes as casts.
+        let lines = match verify(&root, &plan, &plan.text, &mut cache) {
+            Ok(lines) => lines,
+            Err(first) => {
+                let mut found = None;
+                let mut reasons = vec![first];
+                for level in [1, 2] {
+                    let second = plan_views(&root, &objects, &judged, target, options.name.as_deref(), level)?;
+                    match verify(&root, &second, &second.text, &mut cache) {
+                        Ok(lines) => {
+                            found = Some((second, lines));
+                            break;
+                        }
+                        Err(again) => reasons.push(again),
+                    }
+                }
+                let Some((second, lines)) = found else {
+                    return Err(format!("{}\nwith each file's own prototyped shapes as casts, {}\nwith all its own shapes as casts, {}", reasons[0], reasons[1], reasons[2]));
+                };
+                println!("  kept by casts:");
+                for n in second.notes.iter().filter(|n| n.contains("as a cast")) {
+                    println!("    {n}");
+                }
+                plan = second;
+                lines
+            }
+        };
         let mut text = plan.text.clone();
-        let lines = verify(&root, &plan, &text, &mut cache)?;
         for l in &lines {
             println!("  {l}");
         }
@@ -716,6 +790,21 @@ mod tests {
     fn statics_are_written_on_definitions_and_prototypes() {
         let text = "void f(void);\nvoid f(void)\n{\n}\nvoid g(void)\n{\n\tf();\n}\n";
         assert_eq!(with_static(text, &["f".into()]), "static void f(void);\nstatic void f(void)\n{\n}\nvoid g(void)\n{\n\tf();\n}\n");
+    }
+
+    #[test]
+    fn an_areas_main_unit_takes_its_folder_word() {
+        let root = tempfile::tempdir().unwrap();
+        let folder = "games/G/SRC/FIELD/HAIDIA_MURA";
+        fs::create_dir_all(root.path().join(folder)).unwrap();
+        fs::write(root.path().join(folder).join("ENTRY.S"), "\toverlay_veneer HaidiaMura_Setup\n").unwrap();
+        fs::write(root.path().join(folder).join("SETUP.C"), "s32 HaidiaMura_Setup(void)\n{\n}\n").unwrap();
+        fs::write(root.path().join(folder).join("OTHER.C"), "void Other(void)\n{\n}\n").unwrap();
+        let o = |n: &str| format!("{folder}/{n}.o");
+        assert_eq!(area_word(root.path(), folder, &[o("SETUP"), o("OTHER")]).as_deref(), Some("MURA"));
+        assert_eq!(area_word(root.path(), folder, &[o("OTHER")]), None);
+        fs::write(root.path().join(folder).join("MURA.C"), "").unwrap();
+        assert_eq!(area_word(root.path(), folder, &[o("SETUP")]), None);
     }
 
     #[test]

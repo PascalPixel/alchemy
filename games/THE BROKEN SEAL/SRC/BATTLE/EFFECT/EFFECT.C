@@ -125,7 +125,7 @@ void BattleFx_Run(void)
 			BattleEffect_RunFallbackObjectTransition();
 		}
 		return;
-	case 2: // 波と色の効果 (動いていたら止めてからかけ直す)
+	case 2: // 波と色の効果 (種類 8 の効果が動いていれば先に止める)
 		if (*(s16 *)&runtime->unknown_cb8[0] != 0)
 			ResetSceneTransitionEffect();
 		RunSceneTransitionEffect(scene->first_object_id, target_id);

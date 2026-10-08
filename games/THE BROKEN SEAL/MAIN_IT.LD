@@ -328,6 +328,13 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/LABELS.o"(.rodata)
     "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
     "*/recon/tbs/it/rom.o"(.rom.00033f6c)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SPRANIM.o"(.rodata)
+    "*/games/THE BROKEN SEAL/SRC/MENU/CURSOR.o"(.rodata)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SCALES.o"(.rodata)
+    "*/games/THE BROKEN SEAL/SRC/MENU/OPTDATA.o"(.rodata)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SIDEOBJT.o"(.rodata)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/CURFRAME.o"(.rodata)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDATA.o"(.rodata)
     "*/games/THE BROKEN SEAL/TEXT/MESSAGES.o"(.rodata)
     "*/recon/tbs/it/rom.o"(.rom.00072c78)
     . = ABSOLUTE(0x08077000);

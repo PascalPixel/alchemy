@@ -107,7 +107,7 @@ struct TileMask {
     u32 word0;
     u32 word1;
 };
-extern const struct TileMask Data_08037250[];
+extern const struct TileMask Menu_BarPatternRows[];
 extern const u8 Data_080f39ab[];
 extern const u8 DisplayScroll_Font[];
 extern const u8 DisplayScroll_GlyphWidths[];

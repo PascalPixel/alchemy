@@ -46,7 +46,7 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 
     window = NULL;
     zero = 0;
-    name = Data_080371fe[element & 3];
+    name = Djinn_ElementActorKinds[element & 3];
     entry = sprite;
     /* FAKEMATCH: the null window is also the style argument (ROM passes its register). */
     window = UiWindow_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, (s32)window);

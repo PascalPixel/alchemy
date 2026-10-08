@@ -32,7 +32,7 @@ extern struct BtlAct BattleAction_DefinitionTable[];
 extern const u8 Character_ElementGroupTable[];
 extern u32 Character_LevelExpTable[];
 extern s32 Character_StartingEquipOwnerIds[];
-extern s16 Data_080371fe[];
+extern s16 Djinn_ElementActorKinds[];
 extern s32 Data_08088db8[];
 extern const u16 Djinn_DefinitionTable[];
 extern const s16 Element_PowerResistCurve[5][2];

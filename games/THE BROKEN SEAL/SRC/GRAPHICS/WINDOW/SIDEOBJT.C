@@ -2,7 +2,7 @@
 #include "CHARA.H"
 
 // {キャラ番号, 顔番号} の組, -1 で終わり
-const s16 SideObject_CharacterIdMap[20] =
+const s16 Portrait_CharacterMap[20] =
 {
 	ROBIN, ROBIN,			/* ロビン */
 	18, 56,					/* ロビン(こ) */
@@ -16,7 +16,7 @@ const s16 SideObject_CharacterIdMap[20] =
 	-1, -1,
 };
 
-const s16 SideObject_ActorKindIdMap[100] =
+const s16 Portrait_SpriteMap[100] =
 {
 	93, 0,
 	90, 1,

@@ -58,9 +58,9 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     portrait = UiWindow_CreateWithSideObject(0, 0, 10, 5);
     window = UiWindow_Create(10, 10, 14, 3, 2);
     index = 0;
-    for (i = 0; SideObject_CharacterIdMap[i][0] != -1; i++) {}
+    for (i = 0; Portrait_CharacterMap[i][0] != -1; i++) {}
     count = i;
-    for (i = 0; SideObject_ActorKindIdMap[i][0] != -1; i++) {}
+    for (i = 0; Portrait_SpriteMap[i][0] != -1; i++) {}
     total = count + i;
 
     cancel = KEY_B;
@@ -90,9 +90,9 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
             index = (index + total) % total;
             RenderOutput_PrepareForRedraw(window);
             if (index < count)
-                glyph = SideObject_CharacterIdMap[index][1];
+                glyph = Portrait_CharacterMap[index][1];
             else
-                glyph = SideObject_ActorKindIdMap[index - count][1] + 128;
+                glyph = Portrait_SpriteMap[index - count][1] + 128;
             {
                 /* FAKEMATCH: forced temporary pinned to r1; reload otherwise adds the offset to fp in r3. */
                 register u32 off asm("r1") = RENDER_SLOT_VALUE_OFS + 2;

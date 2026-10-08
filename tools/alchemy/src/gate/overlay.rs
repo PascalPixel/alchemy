@@ -100,6 +100,26 @@ fn read(elf: &[u8]) -> Result<Image, String> {
     })
 }
 
+/// The modern build's gate (`alchemy build modern`): its compiler's runtime
+/// is ARM code, so the linker's interworking glue inside an overlay is
+/// expected, but no long-branch veneer and no branch may leave the image.
+pub(crate) fn check_modern(elf: &[u8]) -> Result<(), String> {
+    let image = read(elf)?;
+    let file = object::File::parse(elf).map_err(|error| error.to_string())?;
+    let mut problems: Vec<String> = file
+        .symbols()
+        .filter_map(|symbol| symbol.name().ok().map(str::to_owned))
+        .filter(|name| name.ends_with("_veneer"))
+        .map(|name| format!("the linker made the long-branch veneer {name}"))
+        .collect();
+    problems.extend(outside_branches(&image));
+    if problems.is_empty() {
+        Ok(())
+    } else {
+        Err(format!("overlay code leaves its image:\n  {}\n{REMEDY}", problems.join("\n  ")))
+    }
+}
+
 fn linker_stubs(map: &str) -> Vec<String> {
     let pattern =
         regex::Regex::new(r"(?m)^ (\S+)\s+0x([0-9a-f]+)\s+0x([0-9a-f]+) linker stubs\s*$")

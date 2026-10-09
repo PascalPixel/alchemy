@@ -165,7 +165,7 @@ Func_081c1014:
 .L_081c1144:
 	.4byte Data_081c3430
 .L_081c1148:
-	.4byte Data_03007804
+	.4byte IwramHi_Data1
 .L_081c114c:
 	.4byte Data_03001138
 .L_081c1150:

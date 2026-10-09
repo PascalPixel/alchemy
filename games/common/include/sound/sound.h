@@ -49,12 +49,12 @@ void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
 void Sound_Mixer(void);
 
 #if !GAME_TLA
-#ifndef OWN_Data_03007804
-extern s32 Data_03007804;
+#ifndef OWN_IwramHi_Data1
+extern s32 IwramHi_Data1;
 #endif
 extern u8 gMusicFadeRequested;
 extern s32 gSoundClipFlag;
-extern u8 RomBytes_02003004;
+extern u8 Ewram_Data1;
 void Audio_Initialize(void);
 void Audio_PlaySound(u16 id);
 void Sound_TickDmaRestartTimer(void);

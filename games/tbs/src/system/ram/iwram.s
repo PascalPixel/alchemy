@@ -89,8 +89,8 @@ gResetRequested:
 	.global gDebugTextCursor
 gDebugTextCursor:
 	.space 0x00000004
-	.global Data_03001cc0
-Data_03001cc0:
+	.global Iwram_Data1
+Iwram_Data1:
 	.space 0x00000004
 	.global gTransformStackDepth
 gTransformStackDepth:
@@ -138,8 +138,8 @@ gKeysHeldAtVBlank:
 	.global gOamCopyEnabled
 gOamCopyEnabled:
 	.space 0x00000004
-	.global Data_03001d1c
-Data_03001d1c:
+	.global Iwram_Data2
+Iwram_Data2:
 	.space 0x00000004
 	.global gDebugPaused
 gDebugPaused:

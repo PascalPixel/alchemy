@@ -41,8 +41,8 @@ Sound_TickDmaRestartTimer:
 	bx lr
 AlchemyUncredited_080f9c86:
 	.balign 4, 0
-	.global LiteralPool_080f9c88
-LiteralPool_080f9c88:
+	.global Update_Pool1
+Update_Pool1:
 AlchemyUncreditedEnd_080f9c86:
 	.4byte 0x040000bc
 	.4byte 0x84400004

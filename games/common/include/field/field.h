@@ -16,8 +16,8 @@ struct DispatchObject;
 struct EffectPosition;
 
 extern const s32 Camera_FixedViewMatrix[];
-extern s32 Data_03001cc0;
-extern s32 Data_03001d1c;
+extern s32 Iwram_Data1;
+extern s32 Iwram_Data2;
 extern u8 Map_TileDissolveOrder[];
 extern const u32 ObjectDispatch_DefaultScript[];
 extern u8 Render_DecodeFrameCodeSize[];

@@ -124,7 +124,7 @@ void AudioTest_RunParameterController(void)
     preset = 2;
     /* FAKEMATCH: the one-pass block keeps the state-address load after preset setup and the state store before timer setup. */
     do {
-        Data_03007804 = 0;
+        IwramHi_Data1 = 0;
     } while (0);
     timer = 20;
 
@@ -187,7 +187,7 @@ void Audio_InitializeRuntimeDefaults(void)
     gMusicFadeRequested = 0;
     Audio_CommandMask = 0;
     player_volume = (s16 *)gMusicPlayerVolumes;
-    RomBytes_02003004 = 0;
+    Ewram_Data1 = 0;
     remaining = 7;
     do {
         remaining--;

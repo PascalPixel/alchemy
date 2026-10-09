@@ -53,9 +53,10 @@ static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
 	*(u16 *)tile = pixel;
 }
 
-s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
+s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 	u32 x, u32 y, const u8 *font)
 {
+	struct UiWindow *window;
 	const u16 *rows;
 #if !defined(TBS_EDITION_JA) && !defined(TBS_EDITION_EN)
 	const u16 *header;
@@ -78,7 +79,10 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 	/* FAKEMATCH: these records reserve the native frame's 64-byte unused area. */
 	struct RenderInput frame[4];
 #endif
+	window = input_window;
 #if !defined(TBS_EDITION_JA) && !defined(TBS_EDITION_EN)
+	/* FAKEMATCH: this boundary delays the character copy until after the font load. */
+	do { } while (0);
 	use_font = character <= 255 || font != NULL;
 #endif
 #if defined(TBS_EDITION_EN)

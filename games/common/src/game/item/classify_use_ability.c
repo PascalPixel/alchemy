@@ -42,6 +42,7 @@ extern u8 MsgAbilityDescription;
 
 void UiWindow_PutGlyph(struct UiWindow *, u32, u32, u32, s32);
 s32	 Trade_ListFlaggedEntriesFar(u8 *ids);
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 //--------------------------------------------------------------------------
 // 召喚えらび
@@ -487,7 +488,11 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item)
 	{
 		return 1;
 	}
+#if GAME_TLA
 	def = Item_Get(item);
+#else
+	def = Item_GetDirectFar(item);
+#endif
 	ret = 1;
 	if (def->use_type == 3) // エナジーを授ける装備
 	{

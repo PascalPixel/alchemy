@@ -140,10 +140,6 @@ UiText_GetResourceDimensionsAltFar:
 	.thumb_func
 UiWork_ClearValueNameTablesFar:
 	overlay_veneer UiWork_ClearValueNameTables
-	@ O2 pending: shared code calls this stub UiText_DrawQuantity while overlay veneers of that name target the other label
-	.global UiText_DrawQuantity
-	.thumb_func
-UiText_DrawQuantity:
 	.global UiWork_PushValueSlotFar
 	.thumb_func
 UiWork_PushValueSlotFar:

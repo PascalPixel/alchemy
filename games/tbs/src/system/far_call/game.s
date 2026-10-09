@@ -16,10 +16,6 @@ UnitGetFar:
 	.thumb_func
 UnitCalcFar:
 	overlay_veneer UnitCalc
-	@ O2 pending: shared code calls this stub Item_Get while overlay veneers of that name target the other label
-	.global Item_Get
-	.thumb_func
-Item_Get:
 	.global Item_GetDirectFar
 	.thumb_func
 Item_GetDirectFar:

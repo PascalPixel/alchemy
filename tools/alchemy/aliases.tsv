@@ -1,5 +1,4 @@
 game	symbols	reason
-tbs	AudioCommand_PlayFar,Audio_PlayCue	O2 pending: far stub shared code calls by one name while overlay veneers of that name target the other
 tbs	AudioEngine_RunMixerFar,FarCall_SoundTable	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
 tbs	BattleEffect_LoadWorkFar,FarCall_EffectTable	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
 tbs	Battle_ApplyPresetItemsAndFlagsFar,FarCall_ShopTable	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
@@ -15,11 +14,7 @@ tbs	FarCall_PaletteTable,Title_ShowIntroFar	far-call bank table label at its fir
 tbs	FarCall_ResourceTable,Resource_GetMetadataRecordFar	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
 tbs	FarCall_RuntimeTable,WaitFramesFar	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
 tbs	FarCall_WindowTable,UiWork_InitializeWithResourceCountersFar	far-call bank table label at its first veneer: data address (even) against a Thumb entry (odd); merging the names changed the bytes
-tbs	Item_Get,Item_GetDirectFar	O2 pending: far stub shared code calls by one name while overlay veneers of that name target the other
 tbs	IwramCodeRecordsEnd,SoundDriver_EnterMixer	end of the IWRAM code records, which is where the mixer entry starts
-tbs	Map_CheckObjectStepFar,Object_CheckMovementCollision	far stub shared code calls by one name while overlay veneers of that name target the other, as the O2 pending stubs; not yet marked in source
-tbs	ObjectDispatch_ApplyArgumentToChildrenFar,Object_SetMode	O2 pending: far stub shared code calls by one name while overlay veneers of that name target the other
-tbs	UiText_DrawQuantity,UiWork_PushValueSlotFar	O2 pending: far stub shared code calls by one name while overlay veneers of that name target the other
 tla	AudioCommand_InvokeSlot35,Func_081c2328	⚓️ scaffold, pending
 tla	AudioEngine_RunMixerFar,Resource_FarCall010	⚓️ scaffold, pending
 tla	Audio_AreaCueTable,Scene_CueRuleTable	⚓️ scaffold, pending

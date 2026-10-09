@@ -1,6 +1,6 @@
-//! W3's packer exception is a claim about a reused output buffer, not a
-//! search for equal bytes. Read the edition-selected source's generated
-//! payloads, verify their placement, then follow resource-directory order.
+//! W3's packer exception distinguishes a proven reused-buffer donor from
+//! unused residue after a complete stream. Read the edition-selected source's
+//! generated payloads and verify placement before proving either claim.
 //! Neither the build nor this check reads the reference ROM for a proof.
 
 use crate::elf::{Elf, Section};
@@ -13,7 +13,7 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: alchemy check packer [--suggest]\n\
 Checks PACKER byte rows and explicit source fill against selected payloads\n\
 and the resource directory's reused output buffer, in all twelve builds.\n\
-Each row names its last writer: left in the buffer by SYMBOL+0xOFFSET.\n\
+Rows name their last writer or declare unused post-stream residue; REASON.\n\
 Unknown claims fail. --suggest prints TSV evidence for the last writer.\n\
 Run make compare-editions first. This check never builds or reads a ROM.";
 
@@ -35,7 +35,7 @@ pub fn entry(args: &[String]) -> ExitCode {
     }
     match run(crate::compiler::routing::root(), suggest) {
         Ok(count) => {
-            let summary = format!("packer: OK, {count} tagged claims proven over twelve editions");
+            let summary = format!("packer: OK, {count} over twelve editions");
             if suggest {
                 eprintln!("{summary}");
             } else {
@@ -51,12 +51,19 @@ pub fn entry(args: &[String]) -> ExitCode {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-struct Claim {
-    provider: String,
-    offset: usize,
+enum Claim {
+    Donor { provider: String, offset: usize },
+    UnusedResidue,
 }
 
 fn claim(comment: &str) -> Result<Claim, String> {
+    if let Some(reason) = comment.trim().strip_prefix("unused post-stream residue;") {
+        return if reason.trim().is_empty() {
+            Err("unused post-stream residue needs its measured reason".into())
+        } else {
+            Ok(Claim::UnusedResidue)
+        };
+    }
     let named = comment
         .trim()
         .strip_prefix("left in the buffer by ")
@@ -72,7 +79,7 @@ fn claim(comment: &str) -> Result<Claim, String> {
     {
         return Err(format!("{provider:?} is not a provider symbol"));
     }
-    Ok(Claim {
+    Ok(Claim::Donor {
         provider: provider.into(),
         offset: usize::from_str_radix(offset.trim(), 16)
             .map_err(|_| format!("{offset:?} is not a hexadecimal buffer offset"))?,
@@ -100,6 +107,8 @@ struct Payload {
     source: String,
     /// What this resource actually writes. Its tagged tail is never a write.
     bytes: Vec<u8>,
+    /// Exactly one generated stream, without an emitted header or siblings.
+    single_stream: bool,
     rows: Vec<Row>,
     fill: Option<Fill>,
     overlay: bool,
@@ -110,6 +119,7 @@ struct SourceBlock {
     label: Option<String>,
     bytes: Vec<u8>,
     generated: bool,
+    single_stream: bool,
     unsupported: bool,
     rows: Vec<Row>,
     fill: Option<Fill>,
@@ -122,6 +132,9 @@ struct SourceBlock {
 impl SourceBlock {
     fn align(&mut self) {
         if let Some((alignment, fill)) = self.alignment.take() {
+            if !self.bytes.len().is_multiple_of(alignment) {
+                self.single_stream = false;
+            }
             self.bytes
                 .resize(self.bytes.len().next_multiple_of(alignment), fill);
         }
@@ -148,6 +161,7 @@ impl SourceBlock {
                 Payload {
                     source: source.into(),
                     bytes: block.bytes,
+                    single_stream: block.single_stream,
                     rows: block.rows,
                     fill: block.fill,
                     overlay: block.overlay,
@@ -684,6 +698,8 @@ fn payloads_collect(
                     ));
                 }
                 block.align();
+                block.single_stream =
+                    !block.generated && block.bytes.is_empty() && name.ends_with(".lz");
                 block.bytes.extend(read(name)?);
                 block.generated = true;
                 block.overlay |= name.starts_with("overlays/");
@@ -700,6 +716,7 @@ fn payloads_collect(
                         || literals.len() == if directive == "map_header" { 12 } else { 8 } =>
                 {
                     block.align();
+                    block.single_stream = false;
                     block.bytes.extend(literals);
                 }
                 _ => block.unsupported = true,
@@ -710,6 +727,7 @@ fn payloads_collect(
                 block.unsupported = true;
             } else {
                 block.align();
+                block.single_stream = false;
                 if let Some(target) = fields.get(1) {
                     block.offsets.push((block.bytes.len(), (*target).into()));
                 }
@@ -833,6 +851,109 @@ fn last_writer<'a>(
     ))
 }
 
+/// Semantic input is confined to the generated prefix. Unlike the ARM
+/// reservoir's halfword prefetch, every bit obtained here affects a token.
+/// Once its zero seven-bit long length ends the stream, arbitrary later
+/// bytes cannot affect the output or its length (decode_01.s).
+struct PrefixBits<'a> {
+    bytes: &'a [u8],
+    at: usize,
+}
+
+impl PrefixBits<'_> {
+    fn get(&mut self, count: usize) -> Result<usize, String> {
+        let mut value = 0;
+        for bit in 0..count {
+            let byte = self
+                .bytes
+                .get(self.at / 8)
+                .ok_or("kind-zero stream needs suffix bits before its native terminator")?;
+            value |= usize::from((byte >> (self.at % 8)) & 1) << bit;
+            self.at += 1;
+        }
+        Ok(value)
+    }
+}
+
+fn terminated_general(prefix: &[u8]) -> Result<Vec<u8>, String> {
+    if prefix.first() != Some(&0) {
+        return Err("unused residue requires a generated kind-zero stream".into());
+    }
+    let mut bits = PrefixBits {
+        bytes: prefix,
+        at: 8,
+    };
+    let mut output = Vec::new();
+    loop {
+        if bits.get(1)? != 0 {
+            output.push(bits.get(8)? as u8);
+            continue;
+        }
+        let mut ones = 0;
+        while ones < 5 && bits.get(1)? != 0 {
+            ones += 1;
+        }
+        let length = match ones {
+            0..=3 => ones + 2,
+            4 => 6 + bits.get(1)?,
+            _ => match bits.get(2)? {
+                0 => match bits.get(7)? {
+                    0 => {
+                        if bits.at.div_ceil(8) != prefix.len() {
+                            return Err(
+                                "native terminator ends before the generated prefix boundary"
+                                    .into(),
+                            );
+                        }
+                        return Ok(output);
+                    }
+                    long => long + 10,
+                },
+                short => short + 7,
+            },
+        };
+        let distance = if bits.get(1)? != 0 {
+            bits.get(5)? + 1
+        } else {
+            let width = output
+                .len()
+                .checked_sub(33)
+                .filter(|window| *window < 2048)
+                .map_or(12, |window| (usize::BITS - window.leading_zeros()) as usize);
+            bits.get(width)? + 33
+        };
+        if distance > output.len() {
+            return Err("kind-zero stream has an invalid back-reference".into());
+        }
+        for _ in 0..length {
+            output.push(output[output.len() - distance]);
+        }
+    }
+}
+
+fn unused_residue(payload: &Payload) -> Result<(), String> {
+    if !payload.single_stream {
+        return Err("unused residue requires exactly one complete generated stream".into());
+    }
+    let decoded = terminated_general(&payload.bytes)?;
+    // The prefix-only token proof above covers every possible replacement,
+    // including mixed suffix bytes. These contrasting patterns independently
+    // cross-check its token semantics against AGS's reservoir decoder. Extra
+    // guard bytes allow a native halfword prefetch past the packing boundary;
+    // neither those bits nor the returned input cursor supply the proof.
+    for pattern in [0x00, 0xff, 0x55, 0xaa] {
+        let mut input = payload.bytes.clone();
+        input.resize(input.len().next_multiple_of(4) + 2, pattern);
+        let (actual, _) =
+            ags::assets::lz::decode_general(&input, 0, input.len(), decoded.len() as u64)
+                .map_err(|error| error.to_string())?;
+        if actual != decoded {
+            return Err("kind-zero decoded bytes or output length depend on the suffix".into());
+        }
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 fn prove(
     images: &Images,
@@ -860,19 +981,31 @@ fn prove_row(
             .block(label)?
             .ok_or("tagged resource is not linked")?,
     )?;
-    let claim = claim(&row.comment)?;
+    let Claim::Donor {
+        provider: name,
+        offset: claimed_offset,
+    } = claim(&row.comment)?
+    else {
+        let (_, address) = images
+            .place(label)?
+            .ok_or("tagged resource is not linked")?;
+        if !address.is_multiple_of(4) {
+            return Err("unused residue stream is not four-byte aligned".into());
+        }
+        return unused_residue(payload);
+    };
     let offset = row.offset;
-    if offset != claim.offset {
+    if offset != claimed_offset {
         return Err(format!(
             "row starts at +0x{offset:x}, not the claimed +0x{:x}",
-            claim.offset
+            claimed_offset
         ));
     }
     let (writer, names) = last_writer(images, order, payloads, label, offset)?;
-    if !names.contains(&claim.provider) {
+    if !names.contains(&name) {
         return Err(format!(
             "{writer} was the last writer at +0x{offset:x}, not {}",
-            claim.provider
+            name
         ));
     }
     let provider = &payloads[writer];
@@ -894,12 +1027,28 @@ fn prove_row(
     Ok(())
 }
 
-fn run(root: &Path, suggest: bool) -> Result<usize, String> {
+#[derive(Default)]
+struct Proven {
+    donors: usize,
+    residues: usize,
+    fills: usize,
+}
+
+impl std::fmt::Display for Proven {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            formatter,
+            "{} named byte rows proven, {} unused residue rows proven, {} source fills proven",
+            self.donors, self.residues, self.fills
+        )
+    }
+}
+
+fn run(root: &Path, suggest: bool) -> Result<Proven, String> {
     let linked = crate::dead::Linked::read(root)?;
     let mut failures = Vec::new();
     let mut source_failures = Vec::new();
-    let mut proven = 0;
-    let mut fills_proven = 0;
+    let mut proven = Proven::default();
     let encoded = std::cell::RefCell::new(BTreeMap::<(PathBuf, String), Vec<u8>>::new());
     for id in TARGET_IDS {
         let target = target_for(id);
@@ -1021,7 +1170,7 @@ fn run(root: &Path, suggest: bool) -> Result<usize, String> {
                         payload.source, fill.line
                     ));
                 } else {
-                    fills_proven += 1;
+                    proven.fills += 1;
                 }
             }
             for row in &payload.rows {
@@ -1067,16 +1216,19 @@ fn run(root: &Path, suggest: bool) -> Result<usize, String> {
                         }
                     }
                 } else {
-                    proven += 1;
+                    match claim(&row.comment)? {
+                        Claim::Donor { .. } => proven.donors += 1,
+                        Claim::UnusedResidue => proven.residues += 1,
+                    }
                 }
             }
         }
     }
     if failures.is_empty() && source_failures.is_empty() {
-        Ok(proven + fills_proven)
+        Ok(proven)
     } else {
         Err(format!(
-            "packer: {proven} byte rows proven, {fills_proven} source fills proven, {} byte rows rejected, {} source claims rejected over twelve editions\n{}",
+            "packer: {proven}, {} byte rows rejected, {} source claims rejected over twelve editions\n{}",
             failures.len(),
             source_failures.len(),
             failures
@@ -1147,6 +1299,7 @@ mod tests {
         Payload {
             source: "games/tbs/src/a.s".into(),
             bytes: bytes.into(),
+            single_stream: true,
             fill: None,
             overlay: false,
             rows: row
@@ -1308,6 +1461,114 @@ mod tests {
             prove(&images, &images.directory().unwrap(), &payloads, "Own"),
             Ok(())
         );
+    }
+
+    #[test]
+    fn unused_residue_proves_termination_without_a_donor_or_directory_entry() {
+        let decoded = b"ABCDE";
+        let prefix = ags::lz::compress_general(decoded, &ags::resource::PACKER).unwrap();
+        assert_eq!(prefix.len() % 4, 1);
+        let comment = "unused post-stream residue; native decoder returns only decoded RAM length";
+        let tail = vec![0x51, 0x05, 0x08];
+        let images = image(&[("Own", [prefix.clone(), tail.clone()].concat())]);
+        let text = format!(
+            "Own:\n.incbin \"graphics/a.4bpp.lz\"\n.byte 0x51,0x05,0x08 @ PACKER: {comment}\n.balign 4,0\n"
+        );
+        let found = payloads(&text, "games/tbs/src/a.s", &images, &|_| Ok(prefix.clone())).unwrap();
+        assert!(found["Own"].single_stream);
+        assert_eq!(prove(&images, &[], &found, "Own"), Ok(()));
+        assert_eq!(terminated_general(&prefix).unwrap(), decoded);
+
+        // Exercise mixed replacements, not only the uniform cross-checks.
+        // The universal proof is the prefix-only reader's bit boundary.
+        for at in 0..tail.len() {
+            for value in 0..=u8::MAX {
+                let mut input = [prefix.clone(), tail.clone(), vec![0xa5; 2]].concat();
+                input[prefix.len() + at] = value;
+                assert_eq!(
+                    ags::assets::lz::decode_general(&input, 0, input.len(), decoded.len() as u64)
+                        .unwrap()
+                        .0,
+                    decoded
+                );
+            }
+        }
+        assert!(claim("unused post-stream residue;").is_err());
+        assert!(claim("unused post-stream residue").is_err());
+        assert!(claim("left in the buffer by earlier streams, which differ by edition").is_err());
+    }
+
+    #[test]
+    fn residue_rejects_wrong_kind_missing_or_early_terminator_and_bad_copies() {
+        let prefix = ags::lz::compress_general(b"ABCDE", &ags::resource::PACKER).unwrap();
+        let mut wrong_kind = prefix.clone();
+        wrong_kind[0] = 1;
+        assert!(terminated_general(&wrong_kind)
+            .unwrap_err()
+            .contains("kind-zero"));
+        assert!(terminated_general(&prefix[..prefix.len() - 1])
+            .unwrap_err()
+            .contains("needs suffix bits"));
+        let mut extended = prefix.clone();
+        extended.push(0);
+        assert!(terminated_general(&extended)
+            .unwrap_err()
+            .contains("before"));
+        // Copy length two/distance one before any decoded byte exists.
+        assert!(terminated_general(&[0, 4, 0])
+            .unwrap_err()
+            .contains("invalid back-reference"));
+        let decoded: Vec<_> = (0..4096).map(|n| (n % 251) as u8).collect();
+        let copies = ags::lz::compress_general(&decoded, &ags::resource::PACKER).unwrap();
+        assert_eq!(terminated_general(&copies).unwrap(), decoded);
+        assert_eq!(unused_residue(&payload(&copies, None)), Ok(()));
+    }
+
+    #[test]
+    fn residue_requires_a_single_generated_stream_and_only_packing_suffix() {
+        let prefix = ags::lz::compress_general(b"ABCDE", &ags::resource::PACKER).unwrap();
+        let tag = "unused post-stream residue; decoded output only";
+        for (body, bytes) in [
+            (
+                ".byte 0\n.incbin \"graphics/a.4bpp.lz\"",
+                [vec![0], prefix.clone()].concat(),
+            ),
+            (
+                ".incbin \"graphics/a.4bpp.lz\"\n.byte 0",
+                [prefix.clone(), vec![0]].concat(),
+            ),
+            (
+                ".incbin \"graphics/a.4bpp.lz\"\n.incbin \"graphics/a.4bpp.lz\"",
+                [prefix.clone(), prefix.clone()].concat(),
+            ),
+        ] {
+            let mut placed_bytes = bytes;
+            placed_bytes.push(7);
+            placed_bytes.resize(placed_bytes.len().next_multiple_of(4), 0);
+            let images = image(&[("Own", placed_bytes)]);
+            let text = format!("Own:\n{body}\n.byte 7 @ PACKER: {tag}\n");
+            let found =
+                payloads(&text, "games/tbs/src/a.s", &images, &|_| Ok(prefix.clone())).unwrap();
+            assert!(!found["Own"].single_stream);
+            assert!(prove(&images, &[], &found, "Own")
+                .unwrap_err()
+                .contains("exactly one"));
+        }
+        let own = payload(&prefix, Some((&[1, 2, 3, 4], tag)));
+        let images = image(&[("Own", [prefix.clone(), vec![1, 2, 3, 4]].concat())]);
+        let found = BTreeMap::from([("Own".into(), own)]);
+        assert!(prove(&images, &[], &found, "Own")
+            .unwrap_err()
+            .contains("four-byte padding"));
+
+        // A raw table can coincidentally parse as kind zero. Its structural
+        // consumer is not the native compressed-stream decoder.
+        let images = image(&[("Own", [prefix.clone(), vec![1, 2, 3]].concat())]);
+        let text = format!("Own:\n.incbin \"graphics/a.table\"\n.byte 1,2,3 @ PACKER: {tag}\n");
+        let found = payloads(&text, "games/tbs/src/a.s", &images, &|_| Ok(prefix.clone())).unwrap();
+        assert!(prove(&images, &[], &found, "Own")
+            .unwrap_err()
+            .contains("exactly one"));
     }
 
     #[test]

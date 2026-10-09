@@ -1,3 +1,5 @@
+@ C2: Hook is bx r3; mixer-frame setup transfers into the middle of a shared
+@ live-stack IWRAM mixer rather than returning through an ordinary call frame.
 .syntax unified
 .text
 	.thumb

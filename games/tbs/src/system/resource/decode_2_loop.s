@@ -1,3 +1,5 @@
+@ C2: Computed add pc enters fixed-size decoder code slots; command execution
+@ also carries live reader register state across entry labels.
 .syntax unified
 	.arm
 .L_08002850:

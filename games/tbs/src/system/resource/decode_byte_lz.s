@@ -1,3 +1,4 @@
+@ C2: Saved lr is restored into ip and function returns via bx ip.
 .syntax unified
 	.arm
 	.global Resource_DecodeByteLzArm

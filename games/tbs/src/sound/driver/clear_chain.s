@@ -1,3 +1,6 @@
+@ C2: Nintendo MusicPlayer2000 RealClearChain and ply_fine routines, checked
+@ against pret's public m4a_1.s. These ordinary Thumb routines are library
+@ assembly, not claimed handwritten game code.
 .syntax unified
 	.thumb
 	.global SoundNote_Detach

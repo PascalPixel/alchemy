@@ -1,3 +1,5 @@
+@ C2: Computed add pc enters the unrolled copy body; r5-r9 are saved without
+@ lr.
 .syntax unified
 	.arm
 

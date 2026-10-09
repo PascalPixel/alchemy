@@ -1,3 +1,4 @@
+@ C2: push saves r5-r8 without lr.
 .syntax unified
 	.arm
 	.global Tile_ConvertMap

@@ -1,3 +1,5 @@
+@ C2: Thumb-to-ARM mode switch within the live mixer; fp holds volume/sample
+@ data and code is patched through PC-relative stores later in the file.
 .syntax unified
 	.thumb_func
 	.arm

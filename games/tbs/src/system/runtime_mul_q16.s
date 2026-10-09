@@ -1,3 +1,6 @@
+@ C2: Both smull halves are consumed from nonconsecutive r2/r0; compiler DI
+@ multiply patterns require consecutive halves, highpart patterns discard low
+@ half.
 .syntax unified
 	.arm
 

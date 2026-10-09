@@ -1,3 +1,5 @@
+@ C2: Nintendo MusicPlayer2000 clear_modM, checked against pret's public
+@ m4a_1.s. Ordinary Thumb code is credited on library provenance.
 .syntax unified
 	.thumb
 	.global MusicTrack_ClearModulationState

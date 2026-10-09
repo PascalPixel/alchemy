@@ -1,3 +1,5 @@
+@ C2: fp is a packed sample operand in arithmetic and rotates, not a frame
+@ pointer.
 .syntax unified
 	.arm
 	.global IwramCodeRecord2

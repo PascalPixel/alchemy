@@ -1,3 +1,5 @@
+@ C2: fp is a product high half rather than a frame pointer; stmia writes
+@ arithmetic-transformed vectors, not compiler block-copy data.
 .syntax unified
 	.arm
 

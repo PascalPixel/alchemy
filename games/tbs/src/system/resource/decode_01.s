@@ -1,3 +1,5 @@
+@ C2: Unshifted movs r2,r2 copies and tests; agscc's corresponding
+@ copy-and-test form is subs #0.
 .syntax unified
 	.arm
 	.global Resource_DecodeType01Arm

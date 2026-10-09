@@ -1,3 +1,4 @@
+@ C2: Conditional rrxs consumes the shift carry in the bit reader.
 .syntax unified
 	.arm
 .L_08015b38:

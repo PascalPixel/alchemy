@@ -1,3 +1,5 @@
+@ C2: push saves callee-saved r5/r6 without lr; body also edits branch
+@ instructions.
 .syntax unified
 	.arm
 	.global Resource_PatchThumbBranch

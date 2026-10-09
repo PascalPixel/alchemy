@@ -1,3 +1,5 @@
+@ C2: push saves r5-r9 without lr and computed add pc enters the unrolled store
+@ body.
 .syntax unified
 	.arm
 

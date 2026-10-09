@@ -329,6 +329,7 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 	u32 code[7];
 	s32 dx, dy, dz;
 	s32 ux;
+	s32 zero = 0;
 	s32 ex;
 	Dot3Fn		 dot;
 	s32			 ey;
@@ -385,10 +386,7 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 	ey = eye[1];
 	ez = eye[2];
 	{
-		/* FAKEMATCH: the used zero argument remains in r0 beside the first row stores. */
-		register s32 zero asm("r0");
 		out[0] = ux;
-		zero = 0;
 		out[3] = zero;
 		out[6] = uz;
 		out[9] = -dot(ex, ux, ez, uz, zero, zero);

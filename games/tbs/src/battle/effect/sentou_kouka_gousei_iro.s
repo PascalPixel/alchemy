@@ -1,3 +1,5 @@
+@ C2: fall-through entries modify unsaved r5/r8 and live r9/sl state
+@ without a procedure-call frame.
 .syntax unified
 .text
 	.arm

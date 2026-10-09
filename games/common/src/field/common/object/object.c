@@ -227,7 +227,7 @@ void ObjectSystem_Initialize(s32 mode)
 	else
 	{
 		Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
-		Data_03001d1c = 0;
+		Iwram_Data2 = 0;
 		Iwram_Data1 = 0;
 	}
 	sys->edge = 15;

@@ -223,6 +223,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
             UiWindow_SetTilemapEntry(
                 window, LIST_TILE_PAGES_RIGHT, window->width - 2, edge, 0);
             /* FAKEMATCH: reload render work before its dirty-field offset. */
+            /* FAKEMATCH: removing this remaining barrier gives EN differ 54. One extra dead ((u32 *)cur)[2] = 0 after the cursor clear restores every spill slot: reference/built 770, common 764, differ 12, ten displayed rows of page-call arguments and dirty-pointer load order remain. */
             __asm__ volatile ("" : : "r" (render));
             render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
         }

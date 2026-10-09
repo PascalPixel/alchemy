@@ -1,3 +1,5 @@
+@ C2: Every entry uses overlay_veneer, an aligned 8-byte Thumb ldr r4/bx
+@ r4/target-word stub.
 .syntax unified
 	.thumb
 	.include "games/tbs/src/system/overlay.inc"

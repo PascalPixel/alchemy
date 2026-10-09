@@ -1,3 +1,4 @@
+@ C2: mrs SPSR; IRQ dispatcher restores SPSR and CPU modes.
 .syntax unified
 	.arm
 	.align 2

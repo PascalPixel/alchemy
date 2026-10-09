@@ -1,3 +1,6 @@
+@ C2: Caller supplies the channel in r4 and track in r5; the routine reads them
+@ without an argument move or save. Equivalent Nintendo MusicPlayer2000
+@ ChnVolSetAsm is public in pret m4a_1.s.
 .syntax unified
 	.thumb
 	.global SoundDriver_CalculateStereoVolume

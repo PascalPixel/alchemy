@@ -1,3 +1,6 @@
+@ C2: Mixer blocks save r4/r9 without lr, use fp as a sample multiplier and
+@ switch instruction mode; normalize-channel code stores an instruction word
+@ through pc.
 .syntax unified
 	.thumb_func
 	.arm

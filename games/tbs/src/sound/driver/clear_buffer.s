@@ -1,3 +1,5 @@
+@ C2: Four stmia r0! of zero registers have no paired load/copy; r4 is saved
+@ through ip.
 .syntax unified
 	.thumb
 	.global SoundDriver_ClearBuffer

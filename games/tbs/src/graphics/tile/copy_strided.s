@@ -1,3 +1,4 @@
+@ C2: push saves r5-r9/sl/fp without lr; fp holds copied data.
 .syntax unified
 	.arm
 	.global Tile_CopyStrided

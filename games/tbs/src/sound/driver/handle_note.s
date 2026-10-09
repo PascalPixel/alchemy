@@ -1,3 +1,6 @@
+@ C2: Nintendo MusicPlayer2000 ply_note, checked against pret's public m4a_1.s.
+@ The frame and r8-r11 save/restore match the library; this is library
+@ provenance rather than a handwritten game-code assertion.
 .syntax unified
 	.thumb
 	.global MusicTrack_HandleNote

@@ -1,3 +1,4 @@
+@ C2: svc 11 and svc 25 are BIOS software interrupts.
 .syntax unified
 	.thumb
 	.global Bios_CpuSet

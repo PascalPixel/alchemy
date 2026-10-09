@@ -1,3 +1,6 @@
+@ C2: Nintendo MusicPlayer2000 TrackStop, checked against pret's public
+@ m4a_1.s. This ordinary Thumb routine is library assembly, not claimed
+@ handwritten game code.
 .syntax unified
 	.thumb
 	.global MusicTrack_Stop

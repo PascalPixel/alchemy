@@ -1,3 +1,6 @@
+@ Not yet C: these ARM tail entries have no C2 handwritten marker.
+@ Each entry has eight instruction bytes, but their target words form a
+@ shared trailing pool, so their complete extents are not eight-byte veneers.
 .syntax unified
 	.arm
 	.global ArcTan2FarArm

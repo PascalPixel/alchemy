@@ -1,3 +1,6 @@
+@ C2: MusicPlayer2000 command family returns decoded bytes in r3 and multiple
+@ nested-call setter entries return through ip. Source's full .global list
+@ supplies the individual setter names.
 .syntax unified
 	.thumb
 	.global Sound_LoadCommandTable
@@ -319,4 +322,3 @@ MusicTrack_WriteSoundRegisterFromCommand:
 	strb	r3, [r0, #0]
 	bx	ip
 	.4byte 0x04000060
-

@@ -1,3 +1,6 @@
+@ C2: Shared shader linkage reads live r9/sl and changes unsaved r5/r8/r9; the
+@ forward entry falls into the reverse entry rather than returning as an
+@ ordinary procedure.
 .syntax unified
 .text
 	.arm

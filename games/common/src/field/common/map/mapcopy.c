@@ -45,7 +45,6 @@ struct TilePos
 //--------------------------------------------------------------------------
 void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y)
 {
-	/* FAKEMATCH: the consumed r3 binding preserves register allocation and order without changing instruction count or the 36-byte frame. */
 	s32					   y = dst_y;
 	u32					  *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
 	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[y * 128 + dst_x];
@@ -114,11 +113,14 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
 						u32	 tmp10;
 						u32	 tmp14;
 						u32	 tmp16;
-						/* FAKEMATCH: the consumed r3 binding preserves register allocation and order without adding instructions or changing the frame. */
-						register u32 bytes __asm__("r3") = cell * 8;
+						/* FAKEMATCH: restoring the unscaled cell keeps loop.c's
+						 * shift inside the successful layer branch. The restoration
+						 * folds away, preserving the native 36-byte frame and registers. */
+						register u32 bytes = cell * 8;
 						u32			 tmp8;
 						register u32 tmp17;
 
+						cell = bytes / 8;
 						tmp = (u32 *)Ram_MapBlocks;
 						tmp8 = 0x06002800 + offset;
 						tiles = tmp;

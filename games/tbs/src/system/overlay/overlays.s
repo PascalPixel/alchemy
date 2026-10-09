@@ -642,10 +642,11 @@ Resource_Overlay393:
 	.byte 0x7c, 0x00	@ PACKER: left in the buffer by Resource_Overlay392+0xbfe
 	.endif
 	.ifdef TBS_EDITION_DE
-	.byte 0x3c	@ PACKER: left in the buffer by Resource_Overlay392+0xbff
+	.byte 0x3c	@ PACKER: left in the buffer by Resource_Overlay391+0xbff
 	.endif
 	.ifdef TBS_EDITION_IT
-	.byte 0x00, 0x3c	@ PACKER: left in the buffer by Resource_Overlay392+0xbfe
+	.byte 0x00	@ PACKER: left in the buffer by Resource_Overlay392+0xbfe
+	.byte 0x3c	@ PACKER: left in the buffer by Resource_Overlay391+0xbff
 	.endif
 	.balign 4, 0
 

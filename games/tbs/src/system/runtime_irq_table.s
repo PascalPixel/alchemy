@@ -1,4 +1,4 @@
-@ C2: the ARM halt loop uses svc 0x00030000 (BIOS Halt), a software
+@ C2: the ARM loop uses svc 0x00030000, a software
 @ interrupt, then branches back to the same svc instruction.
 	.include "games/common/include/game/ed_asm.h"
 .syntax unified

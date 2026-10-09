@@ -1,3 +1,5 @@
+@ C2: private decoder linkage: ldr pc dispatches live r0/r2/r3/fp state
+@ to commands returning their value in unsaved r5, which the caller reads.
 .syntax unified
 .text
 	.arm

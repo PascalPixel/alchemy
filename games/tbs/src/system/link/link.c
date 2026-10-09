@@ -363,6 +363,12 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload)
     s32 enable;
 
     *(u32 *)&flags[4] = 0;
+    /* Removing all three empty asm statements in this function together
+     * differs by 14 aligned instructions (104 native, 104 built, 97 common),
+     * with the same 0xe4-byte extent. First, ldr r2,=REG_IME rises before
+     * sub sp,#8; later, mov lr,sp sinks after the channel-flags snapshot,
+     * and the IME-address load rises before movs r2,#1. This combined
+     * candidate changes no other source statement. */
     /* FAKEMATCH: keeps the frame clear ahead of the interrupt disable; without it the IME address load rises above "sub sp" (score 6). */
     __asm__("");
     REG_IME = 0;

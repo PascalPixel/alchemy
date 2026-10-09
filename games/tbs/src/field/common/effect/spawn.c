@@ -5,6 +5,7 @@
 
 extern const s32 *gEffectScripts[];
 struct FieldActor *Object_CreateFar(s32 type, s32 x, s32 y, s32 z);
+void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 argument);
 
 enum {
     EFFECT_DEFAULT_TYPE = 222,
@@ -13,7 +14,7 @@ enum {
     EFFECT_SCRIPT_REPEAT_COUNT = 3
 };
 
-#define EFFECT_SPAWN(name, create, set_script, section_name) \
+#define EFFECT_SPAWN(name, create, set_mode, set_script, section_name) \
 void __attribute__((section(section_name))) name( \
     s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, \
     u32 flags, const struct EffectOptions *options) \
@@ -31,7 +32,7 @@ void __attribute__((section(section_name))) name( \
         return; \
  \
     sprite = effect->sprite; \
-    Object_SetMode((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK); \
+    set_mode((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK); \
     set_script((void *)effect, gEffectScripts[flags & EFFECT_SCRIPT_MASK]); \
     effect->motion_flags = 0; \
     sprite->flags = 0; \
@@ -67,7 +68,7 @@ void __attribute__((section(section_name))) name( \
         } \
     } \
     if ((flags & EFFECT_USE_SCRIPT) != 0) { \
-        Object_SetMode((struct FieldActor *)effect, 1); \
+        set_mode((struct FieldActor *)effect, 1); \
         set_script((void *)effect, options->script); \
     } \
     if ((flags & EFFECT_USE_ROTATION) != 0) \
@@ -78,5 +79,5 @@ void __attribute__((section(section_name))) name( \
         effect->update = options->update; \
 }
 
-EFFECT_SPAWN(Effect_Spawn, Object_Create, Object_SetScript, ".text.effect_spawn")
-EFFECT_SPAWN(Effect_SpawnResident, Object_CreateFar, ObjectDispatch_InitializeFar, ".text.effect_spawn_resident")
+EFFECT_SPAWN(Effect_Spawn, Object_Create, Object_SetMode, Object_SetScript, ".text.effect_spawn")
+EFFECT_SPAWN(Effect_SpawnResident, Object_CreateFar, ObjectDispatch_ApplyArgumentToChildrenFar, ObjectDispatch_InitializeFar, ".text.effect_spawn_resident")

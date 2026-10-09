@@ -50,10 +50,6 @@ Animation_SetWorkEntryFar:
 	.thumb_func
 ObjectSystem_InitializeFar:
 	overlay_veneer ObjectSystem_Initialize
-	@ O2 pending: shared code calls this stub Object_SetMode while overlay veneers of that name target the other label
-	.global Object_SetMode
-	.thumb_func
-Object_SetMode:
 	.global ObjectDispatch_ApplyArgumentToChildrenFar
 	.thumb_func
 ObjectDispatch_ApplyArgumentToChildrenFar:
@@ -205,10 +201,7 @@ Map_CopyCellIndexRectFar:
 	.thumb_func
 Map_SetWindowCellTileFar:
 	overlay_veneer Map_SetWindowCellTile
-	.global Object_CheckMovementCollision
 	.global Map_CheckObjectStepFar
-	.thumb_func
-Object_CheckMovementCollision:
 	.thumb_func
 Map_CheckObjectStepFar:
 	overlay_veneer Map_CheckObjectStep

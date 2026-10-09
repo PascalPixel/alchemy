@@ -477,12 +477,22 @@ void WaitFrames(s32 frames)
         }
     }
     if (gSavedStackSize) {
-        /* FAKEMATCH: base stays live in sl across the loop, and the memory barrier keeps the reload of the saved size. */
-        __asm__ volatile("" : "+r"(base) : : "memory");
-        base = sp;
+        /* FAKEMATCH: needed to match: XOR cancellation keeps the initial base
+         * live across the frame loop. A plain sp assignment shrinks the frame
+         * from eight bytes to four (65 aligned differences); the one-pass
+         * boundary retains the restore copy's order. */
+        u8 *restore = (u8 *)((u32)sp ^ (u32)base);
+
+        restore = (u8 *)((u32)restore ^ (u32)base);
+        do {
+            base = restore;
+        } while (0);
         /* FAKEMATCH: an operand-only barrier keeps the copy of sp in sl. */
         __asm__ volatile("" : "+r"(base));
-        base -= gSavedStackSize;
+        /* FAKEMATCH: needed to match: the volatile reread keeps this saved-size
+         * load separate from the conditional read (7 aligned differences
+         * without this qualification). */
+        base -= *(volatile u32 *)&gSavedStackSize;
         sp = base;
         /* FAKEMATCH: the operand-only asm flushes CSE, preserving the measured reload of the saved-stack-size address. */
         __asm__ volatile("" : : "r"(base));

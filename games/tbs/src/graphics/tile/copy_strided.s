@@ -1,3 +1,4 @@
+@ C2: fp (r11) holds tile words; push {r5-r11} saves registers without lr.
 .syntax unified
 	.arm
 	.global Tile_CopyStrided

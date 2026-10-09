@@ -674,7 +674,18 @@ s32 SaveState_ProcessSelectedSlot(void)
     s32 value;
     s32 result;
     s32 found;
-    /* FAKEMATCH: keeps the error code in r7 */
+    /* FAKEMATCH: keeps the error code in r7. Removing the pin gives
+     * 57 reference / 57 built / 54 common instructions (differ 6):
+     * movs r6, #9 and movs r6, #3 replace the r7 moves, and
+     * negs r7, r6 replaces negs r7, r7. Scoping error inside the slot
+     * branch, using u8 *buffer plus s16 *slot = &gSaveSlot and *slot
+     * for the three reads, or returning -error through an inline helper
+     * leaves these same three rows. Reusing result for error swaps it
+     * with the slot pointer (differ 22), including with explicit slot
+     * and earlier result initialization; s16 error adds truncation (28).
+     * Duplicating the first negate tail leaves differ 4: movs r7, #9
+     * before the call / shared negate become subs r7, #9 after the call
+     * and a branch beyond negate. All trials use the stock game flags. */
     register s32 error asm("r7");
 
     buffer = Runtime_BumpAllocateAlternatePool(0x1000);

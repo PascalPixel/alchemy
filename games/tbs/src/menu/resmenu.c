@@ -908,10 +908,10 @@ void AffineEffect_UpdateFrame(void)
             u32 value;
 
             attr = &sprite->link;
-
-            /* FAKEMATCH: instruction order, measured 2 instructions without. */
-            __asm__("" : : "r"(attr));
-            y = sprite->y;
+            /* FAKEMATCH: needed to match: reading the y halfword through attr
+             * keeps the attribute-pointer copy before its load; sprite->y
+             * moves the copy two instructions later. */
+            y = ((s16 *)attr)[7];
             *attr++ = 0;
             value = y | (px << 16) | 0x80002000;
             base = gVramBlockCache[sprite->slot].offset;

@@ -249,9 +249,10 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
         cell = gLinkCountdownWork;
         cell->page = page;
         cell->row = row;
+        /* FAKEMATCH: a one-pass block finishes these stores before input is read. The duplicate final store is removed by flow but preserves the native spill-slot order; with one store, 42 instructions differ only in their stack offsets. */
         cell->preferred_row = preferred_row;
-        /* FAKEMATCH: finish saving the selection before reading input. */
-        __asm__ volatile ("");
+        cell->preferred_row = preferred_row;
+        do { } while (0);
 
         if ((gKeyState & KEY_A) != 0) {
             if (count != 0) {

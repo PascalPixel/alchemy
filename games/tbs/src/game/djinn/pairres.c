@@ -584,6 +584,11 @@ s32 DjinnMenu_ShowOwnerStatus(void)
 
     menu = gMenuWork;
     phase = 0;
+    /* Deleting only the empty operand asm below gives 439 native / 438
+     * built / 379 common instructions, differ 119, within the same
+     * 0x420-byte extent. First movs r1,#1 becomes movs r0,#0; phase and
+     * frame share that zero, and the native str r2,[sp,#48] becomes
+     * str r0,[sp,#48], changing subsequent allocation and scheduling. */
     /* FAKEMATCH: keep this consumed zero separate from frame; initialization reshapes differ 27-274. */
     __asm__("" : "+r" (phase));
     pending = 1;

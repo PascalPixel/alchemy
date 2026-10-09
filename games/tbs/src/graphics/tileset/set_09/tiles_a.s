@@ -16,15 +16,15 @@ Tileset_Set09TilesA:
 	.endif
 	.endif
 	.ifdef TBS_EDITION_ES
-	.byte 0x89, 0x99	@ PACKER: left in the buffer by earlier streams, which differ by edition
+	.byte 0x89, 0x99	@ PACKER: left in the buffer by Tileset_Set08TilesA+0x2482
 	.else
 	.ifdef TBS_EDITION_FR
-	.byte 0x89, 0x99	@ PACKER: left in the buffer by earlier streams, which differ by edition
+	.byte 0x89, 0x99	@ PACKER: left in the buffer by Tileset_Set08TilesA+0x2482
 	.else
 	.ifdef TBS_EDITION_IT
-	.byte 0x89, 0x99	@ PACKER: left in the buffer by earlier streams, which differ by edition
+	.byte 0x89, 0x99	@ PACKER: left in the buffer by Tileset_Set08TilesA+0x2482
 	.else
-	.byte 0x06	@ PACKER: left in the buffer by earlier streams, which differ by edition
+	.byte 0x06	@ PACKER: left in the buffer by Tileset_Set08TilesA+0x247f
 	.endif
 	.endif
 	.endif

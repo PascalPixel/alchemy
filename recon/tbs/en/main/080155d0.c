@@ -166,6 +166,12 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 					row = rownext;
 					if (rownext > 9)
 						break;
+					/* FAKEMATCH: the early comparison orders CMP before LDRB (differ 12 -> 10). */
+					do
+					{
+						if (y + rownext > 31)
+							break;
+					} while (0);
 					bits = *source++;
 					if (y + rownext > 31)
 						break;

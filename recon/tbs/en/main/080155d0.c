@@ -141,6 +141,43 @@
  *   it does not isolate the remaining scheduling differences. Rejected.
  *   Scratch source out/glyph-clean.c and its six out/glyph-clean-*.diff
  *   reports are review material only; none enters the build or count.
+ * Further trials from 30/65/34, still rejected:
+ * - Share the width load after the two glyph branches: en/other 116/84.
+ *   A one-field result struct, result union, helper parameter reordering,
+ *   const helper locals and signed colors leave the output unchanged.
+ *   A two-field result struct gives other 139 and a 52-byte frame.
+ * - Macro pixel helper: 137/101/66. u16 result: 113/79/96. u16 colors:
+ *   en/other 102/49. Width reused as character: other 91; as row/column:
+ *   unchanged. Volatile result: other 52, again no improvement.
+ * - Shift bits after the clipping test: 61/92/65. Fetch the first row
+ *   in the while condition: 134/158/97. Two do-while row forms both give
+ *   67/98/71; switch-based outline gives 53/88/57.
+ * - Return width directly: other 39, with an extra width spill. Delayed
+ *   volatile width loads give other 85/93; volatile saved window and rows
+ *   with a plain glyph pointer gives 97. The latter gets the desired
+ *   store-before-load order but breaks allocation and duplicates a spill.
+ * - Five-minute European permute search: 90,672 distinct candidates, no
+ *   compile failures, none improves weighted 940 / residual 34.
+ *
+ * ARM translation-unit audit requested by Pascal, 2026-10-09:
+ * Tile_BuildMetatiles follows this function without padding in all six
+ * editions. Both fit stock ARM C. Text_DecodeSymbol/UiText_LookupMessageArm
+ * before it and Tile_Decompress4bpp after it have rrx or saves without lr;
+ * their assembly is independently proven. The palette kernels are in a
+ * separate ROM cluster, not beside this pair. The existing color_darken
+ * and color_darken_partial files have four-register write-back stores
+ * using r4-r7: the compiler's copy expander fixes r0-r3, while its general
+ * ldm/stm peepholes do not write back. No new demotion was justified.
+ * The compiler DOES emit pop into ip / bx ip in output_return; two C2
+ * comments relying on that return were corrected to independent evidence.
+ * alchemy units previously misread old agbcc objects without mapping
+ * symbols as Thumb. Its loader now falls back to the actual compiler route,
+ * and proposes this pair as a unit. Adjacency is compatible, not proof.
+ * Concatenating this draft then metatile.c into one C translation unit
+ * leaves the complete glyph draft bytes, including its pool, unchanged in
+ * all six: 780 bytes ja, 804 en, 756 others. Residuals remain 30/65/34.
+ * Thus a larger file is plausible but simple concatenation does not fix
+ * allocation or scheduling. The source remains one uncredited draft.
  *
  * Remaining differences, located by labels in recon/tbs/raw/moji.s.
  * The following is a pass-level diagnosis, not a claim to have found the

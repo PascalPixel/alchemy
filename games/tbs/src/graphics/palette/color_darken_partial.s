@@ -1,4 +1,7 @@
-@ C2: the saved lr is restored into ip, and bx ip returns through ip.
+@ C2: ldm r0!, {r4-r7} and stmia r2!, {r4-r7} write back through a
+@ four-register list starting at r4. Stock agbcc_arm's block-copy expander
+@ fixes that list at r0-r3; its general ldm/stm peepholes never write back.
+@ The pop into ip / bx ip return is stock compiler output, not C2 proof.
 .syntax unified
 	.arm
 	.global ColorBuffer_DarkenPartialKernel

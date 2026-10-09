@@ -1,4 +1,5 @@
-@ C2: Saved lr is restored into ip and function returns via bx ip.
+@ C2: bcs/bcc consume lsls lr's carry, and add pc dispatches into code.
+@ The pop into ip / bx ip return is stock compiler output, not C2 proof.
 .syntax unified
 	.arm
 	.global Resource_DecodeByteLzArm

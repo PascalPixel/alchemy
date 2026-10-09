@@ -569,15 +569,15 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                     -1,
                     0);
             }
-            edge = -1;
-            UiWindow_SetTilemapEntry(
-                window, 0xf334, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
-            UiWindow_SetTilemapEntry(
-                window, 0xf335, window->width - 2, edge, 0);
-
-            /* FAKEMATCH: reload render work before its dirty-field offset. */
-            /* FAKEMATCH: removing the barrier gives EN differ 52. A duplicate dead ((u32 *)spr)[2] = 0 after the cursor clear restores the native spill slots: reference/built 794, common 789, differ 10, all ten displayed rows concern page-call arguments or the dirty-pointer reload. A byte read or inline page helper still differs 52. */
-            __asm__ volatile ("" : : "r" (render));
+            /* FAKEMATCH: this one-pass block is needed to match the page-call
+             * arguments and render reload order (ten instructions). */
+            do {
+                edge = -1;
+                UiWindow_SetTilemapEntry(
+                    window, 0xf334, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
+                UiWindow_SetTilemapEntry(
+                    window, 0xf335, window->width - 2, edge, 0);
+            } while (0);
             render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
         }
 
@@ -588,6 +588,9 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
         pos.x = window->x * 8 - 4;
         pos.y = (row * 2 + window->y) * 8 + 20;
         ((u32 *)spr)[1] = 0x40000000;
+        ((u32 *)spr)[2] = 0;
+        /* FAKEMATCH: this dead duplicate is needed to match the native spill
+         * slots; removing it changes 42 aligned instructions. */
         ((u32 *)spr)[2] = 0;
         spr->oam.f.tile =
             Resource_GetBuffer(cursor_handle, (s32)Resource_FixedBlockBTiles);

@@ -18,30 +18,32 @@ void WaitFrames(s32);
 
 s32 Runtime_AdjustDebugValueWithButtons(s32 ret)
 {
-    struct BtlWork *battle;
-    volatile u32 *keys;
+	struct BtlWork *battle;
+	volatile u32   *keys;
 
-    if (gKeysHeld & KEY_START) {
-        keys = &gKeysRepeat;
-loop:
-        battle = BtlWk;
-        if (*keys & 0x20)
-            battle->debug_value -= 1;
-        if (*keys & 0x10)
-            battle->debug_value += 1;
-        if (*keys & 0x40)
-            battle->debug_value -= 100;
-        if (*keys & 0x80)
-            battle->debug_value += 100;
-        if (gKeyState & KEY_A) {
-            ret = battle->debug_value;
-            goto done;
-        }
-        WaitFrames(1);
-        goto loop;
-    }
+	if (gKeysHeld & KEY_START)
+	{
+		keys = &gKeysRepeat;
+	loop:
+		battle = BtlWk;
+		if (*keys & 0x20)
+			battle->debug_value -= 1;
+		if (*keys & 0x10)
+			battle->debug_value += 1;
+		if (*keys & 0x40)
+			battle->debug_value -= 100;
+		if (*keys & 0x80)
+			battle->debug_value += 100;
+		if (gKeyState & KEY_A)
+		{
+			ret = battle->debug_value;
+			goto done;
+		}
+		WaitFrames(1);
+		goto loop;
+	}
 done:
-    if (gKeysHeld & KEY_SELECT)
-        ret = DEBUG_SELECT_VALUE;
-    return ret;
+	if (gKeysHeld & KEY_SELECT)
+		ret = DEBUG_SELECT_VALUE;
+	return ret;
 }

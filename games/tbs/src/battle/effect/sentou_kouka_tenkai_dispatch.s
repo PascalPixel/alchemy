@@ -1,6 +1,6 @@
-@ C2: The dispatcher uses the decoder's live r0/r2/r3 and branches to shared
-@ command code with ldr pc, [pc, ip, lsl #2]. tenkai.s and tenkai_commands.s
-@ document that non-procedure linkage.
+@ C2: Shared decoder commands reuse live r0/r2/r3, change unsaved r5 and use
+@ fp as a mask. ldr pc jumps into those commands in sentou_kouka_tenkai.s
+@ and sentou_kouka_tenkai_commands.s.
 .syntax unified
 	.arm
 	.global SentouKouka_TenkaiYomi

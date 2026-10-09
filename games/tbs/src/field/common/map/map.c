@@ -573,15 +573,15 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
                     u32 tmp18;
                     u32 tmp21;
                     /* FAKEMATCH: consumed offset in r3 changes only registers/order, preserving all instructions. */
-                    register u32 bytes __asm__ ("r3") = cell * 8;
+                    register u32 bytes __asm__ ("r3");
                     u32 tmp16;
                     {
                         tmp2 = 0x06002800;
-                        /* FAKEMATCH: the consumed-base barrier preserves two register choices and one load's order. */
-                        __asm__ __volatile__ ("" : : "l" (tmp2));
                         tmp = (u32 *)Ram_MapBlocks;
                         tiles = tmp;
+                        /* FAKEMATCH: needed to match: prepare the destination before consuming cell, so the first base uses r2 while cell still occupies r5; differ 4 -> 0 without an asm barrier. */
                         tmp16 = offset + tmp2;
+                        bytes = cell * 8;
                     }
                     tmp21 = tmp16;
                     tmp18 = tmp21;

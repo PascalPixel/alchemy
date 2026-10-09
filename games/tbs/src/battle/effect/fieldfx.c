@@ -96,8 +96,8 @@ struct FxObject
 extern volatile u32 gKeysHeld;
 extern volatile u32 gFrameCount;
 
-void AudioCommand_PlayFar(s32 cue);
-s32	 Map_CheckObjectStepFar(struct FxObject *object, struct Output_08097f80 *position);
+void			 AudioCommand_PlayFar(s32 cue);
+s32				 Map_CheckObjectStepFar(struct FxObject *object, struct Output_08097f80 *position);
 struct FxObject *Object_GetById(s32 id);
 void			 Animation_ApplyChildValuesFar(struct FxObject *object, s32 value);
 
@@ -243,7 +243,8 @@ void BattleFx_SteerPushedTarget(s32 target_id)
 		AudioCommand_PlayFar(175);
 		x = position.x;
 		z = position.z;
-		ObjectDispatch_ApplyArgumentToChildrenFar(pusher, BattleFx_QuadrantModes[(u16)(angle - dir) >> 14]);
+		ObjectDispatch_ApplyArgumentToChildrenFar(
+			pusher, BattleFx_QuadrantModes[(u16)(angle - dir) >> 14]);
 		WaitFrames(15);
 		target->unknown_5b = 0;
 		target->speed = 0x3333;

@@ -237,8 +237,7 @@ void RunBattleEffect04(void)
 		pos.y = tgt->y.fixed;
 		pos.z = tgt->z.fixed;
 		Vector_AddPolarOffset(16 << 16, scene->angle, &pos);
-		if (Map_CheckObjectStepFar(tgt, &pos) == 0
-			&& ScriptObject_CheckOverlapFar(tgt, &pos) == 0)
+		if (Map_CheckObjectStepFar(tgt, &pos) == 0 && ScriptObject_CheckOverlapFar(tgt, &pos) == 0)
 		{
 			tgt->acceleration = 1 << 16;
 			tgt->speed = 1 << 16;

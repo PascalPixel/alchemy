@@ -82,15 +82,15 @@ struct HopActor
 	struct HopActor	 *linked;	// 追いかける相手
 	void			 *callback; // 毎フレームの更新処理
 };
-#define Object_GetById ((struct HopActor *(*)(s32 id))Object_GetById)
-void			 Battle_Reset(void);
-void			 WaitFrames(s32 frames);
-void			 AudioCommand_PlayFar(s32 cue);
-void			 ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void			 Script_WaitForEventTimeoutFar(struct HopActor *actor);
-void			 ObjectDispatch_ApplyArgumentToChildrenFar(struct HopActor *actor, s32 mode);
-void			 BattleFx_FinishAction(void);
-#define gEventWork (*(struct MenuState *(*))&gEventWork)
+#define Object_GetById ((struct HopActor * (*)(s32 id)) Object_GetById)
+void Battle_Reset(void);
+void WaitFrames(s32 frames);
+void AudioCommand_PlayFar(s32 cue);
+void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
+void Script_WaitForEventTimeoutFar(struct HopActor *actor);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct HopActor *actor, s32 mode);
+void BattleFx_FinishAction(void);
+#define gEventWork (*(struct MenuState * (*)) & gEventWork)
 
 struct MenuState
 {
@@ -121,8 +121,8 @@ struct ActorDescriptor
 //--------------------------------------------------------------------------
 void EventActor_RunHopAndLeapSequence(s32 id)
 {
-	void			 Animation_ApplyChildValuesFar(struct HopActor *actor, s32 value);
-	void			 ObjectDispatch_SetSingleChildFlagsFar(struct HopActor *actor, s32 value);
+	void			 Animation_ApplyChildValuesFar(struct HopActor * actor, s32 value);
+	void			 ObjectDispatch_SetSingleChildFlagsFar(struct HopActor * actor, s32 value);
 	void			 ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 	struct HopActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 	struct HopActor *actor;
@@ -321,163 +321,190 @@ void FieldObject_PlaceSceneActors(void)
 #undef Object_GetById
 #undef gEventWork
 
-#define Camera_WorldToScreen ((void (*)(struct Vec*))Camera_WorldToScreen)
+#define Camera_WorldToScreen ((void (*)(struct Vec *))Camera_WorldToScreen)
 
-struct MapActor {
-    s16 id;
-    s16 event;
+struct MapActor
+{
+	s16 id;
+	s16 event;
 };
-#define BattleFx_RunPageEffectForSlot ((void (*)(s32 actor, s32 element, s32 index))BattleFx_RunPageEffectForSlot)
+#define BattleFx_RunPageEffectForSlot \
+	((void (*)(s32 actor, s32 element, s32 index))BattleFx_RunPageEffectForSlot)
 
 extern struct BattleFxScene *gEffectWork;
-void BattleFx_ClearOwnedSlot(struct EffectSlot *);
+void						 BattleFx_ClearOwnedSlot(struct EffectSlot *);
 
-struct Vec {
-    s32 x;
-    s32 y;
-    s32 z;
+struct Vec
+{
+	s32 x;
+	s32 y;
+	s32 z;
 };
 
 void Vector_AddPolarOffset(s32, s32, struct Vec *);
 
 void Djinn_ResolvePendingEvent(s32 capture)
 {
-    struct GameState *st = &gGameState;
-    s16 *pending = &st->pending_djinn_event;
-    s32 kind = *pending & 0xf000;
-    s32 flag = *pending & 0xfff;
+	struct GameState *st = &gGameState;
+	s16				 *pending = &st->pending_djinn_event;
+	s32				  kind = *pending & 0xf000;
+	s32				  flag = *pending & 0xfff;
 
-    if (capture == 0) {
-        if (kind == 0) {
-            flag &= 0x7ff;
-            if (flag < 300 || flag > 380)
-                return;
-            if (st->scene_change_reason > 0 && st->scene_change_reason != 999)
-                return;
-            GameFlag_SetBitFar(flag - 172);
-            *pending = kind;
-        } else if (kind == 0x1000) {
-            if (st->scene_change_reason == 1)
-                GameFlag_SetBitFar(flag);
-            *pending = capture;
-        }
-        return;
-    }
-    if (kind == 0) {
-        flag &= 0x7ff;
-        if (flag >= 300 && flag <= 380) {
-            flag &= 0x7ff;
-            if (st->scene_change_reason > 0) {
-                s32 djinn = flag - 300;
-                s32 element = djinn / 20;
-                s32 index = djinn % 20;
-                s32 actor;
+	if (capture == 0)
+	{
+		if (kind == 0)
+		{
+			flag &= 0x7ff;
+			if (flag < 300 || flag > 380)
+				return;
+			if (st->scene_change_reason > 0 && st->scene_change_reason != 999)
+				return;
+			GameFlag_SetBitFar(flag - 172);
+			*pending = kind;
+		}
+		else if (kind == 0x1000)
+		{
+			if (st->scene_change_reason == 1)
+				GameFlag_SetBitFar(flag);
+			*pending = capture;
+		}
+		return;
+	}
+	if (kind == 0)
+	{
+		flag &= 0x7ff;
+		if (flag >= 300 && flag <= 380)
+		{
+			flag &= 0x7ff;
+			if (st->scene_change_reason > 0)
+			{
+				s32 djinn = flag - 300;
+				s32 element = djinn / 20;
+				s32 index = djinn % 20;
+				s32 actor;
 
-                for (actor = 8; actor <= 65; actor++) {
-                    struct MapActor *found = BattleAction_FindDescriptor(actor);
-                    if (found != 0 && found->event - 48 == flag - 300) {
-                        WaitFrames(40);
-                        BattleFx_RunPageEffectForSlot(actor, element, index);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    gGameState.pending_djinn_event = 0;
+				for (actor = 8; actor <= 65; actor++)
+				{
+					struct MapActor *found = BattleAction_FindDescriptor(actor);
+					if (found != 0 && found->event - 48 == flag - 300)
+					{
+						WaitFrames(40);
+						BattleFx_RunPageEffectForSlot(actor, element, index);
+						break;
+					}
+				}
+			}
+		}
+	}
+	gGameState.pending_djinn_event = 0;
 }
 
 void BattleFx_UpdateAllSlots(void)
 {
-    struct EffectSlot *slot;
-    s32 remaining_slots;
+	struct EffectSlot *slot;
+	s32				   remaining_slots;
 
-    slot = gEffectWork->slots;
-    remaining_slots = 0x17;
-    do {
-        remaining_slots -= 1;
-        EffectSlot_Update(slot);
-        slot++;
-    } while (remaining_slots >= 0);
+	slot = gEffectWork->slots;
+	remaining_slots = 0x17;
+	do
+	{
+		remaining_slots -= 1;
+		EffectSlot_Update(slot);
+		slot++;
+	} while (remaining_slots >= 0);
 }
 
 void BattleFx_InitializeSlots(void)
 {
-    void *work;
-    volatile u32 zero;
-    work = Runtime_AllocateHeapBlock(56, sizeof(struct BattleFxScene));
-    zero = 0;
-    Dma_Set(&zero, work, 0x85000000 | (sizeof(struct BattleFxScene) / 4), REG_DMA3);
-    Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllSlots, 3200);
+	void		*work;
+	volatile u32 zero;
+	work = Runtime_AllocateHeapBlock(56, sizeof(struct BattleFxScene));
+	zero = 0;
+	Dma_Set(&zero, work, 0x85000000 | (sizeof(struct BattleFxScene) / 4), REG_DMA3);
+	Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllSlots, 3200);
 }
 
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void)
 {
-    struct BattleFxScene *scene = gEffectWork;
-    struct EffectSlot *slot;
-    s32 i;
+	struct BattleFxScene *scene = gEffectWork;
+	struct EffectSlot	 *slot;
+	s32					  i;
 
-    Scheduler_RemoveCallback(BattleFx_UpdateAllSlots);
-    for (i = 0; i < 24; i++) {
-        slot = &scene->slots[i];
-        if (slot->active != 0)
-            BattleFx_ClearOwnedSlot(slot);
-    }
-    Runtime_ReleaseHeapBlock(56);
-    WaitFrames(1);
+	Scheduler_RemoveCallback(BattleFx_UpdateAllSlots);
+	for (i = 0; i < 24; i++)
+	{
+		slot = &scene->slots[i];
+		if (slot->active != 0)
+			BattleFx_ClearOwnedSlot(slot);
+	}
+	Runtime_ReleaseHeapBlock(56);
+	WaitFrames(1);
 }
 
 void BattleFx_AdvanceSpinAngle(struct MotionObject *object)
 {
-    object->angle += 0x2000;
+	object->angle += 0x2000;
 }
 
 void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor)
 {
-    struct MotionObject *target;
-    struct Vec pos;
+	struct MotionObject *target;
+	struct Vec			 pos;
 
-    target = Object_GetById(gGameState.selected_actor);
-    if (actor->state == 0) {
-        actor->orbit_radius += 1;
-        actor->orbit_angle += 1;
-        if ((s16)actor->age == 60) {
-            actor->age = 0;
-            actor->state += 1;
-        }
-    } else if (actor->state == 1) {
-        actor->orbit_angle += 1;
-        if ((s16)actor->age == 40) {
-            actor->age = 0;
-            actor->state += 1;
-        }
-    } else if (actor->state == 2) {
-        actor->orbit_angle += 1;
-        pos.x = target->x;
-        pos.y = target->y + 0x140000;
-        pos.z = target->z;
-        Camera_WorldToScreen(&pos);
-        actor->origin_x += (pos.x - actor->origin_x) / 8;
-        actor->origin_z += (pos.z - actor->origin_z) / 8;
-        if ((s16)actor->age == 40) {
-            actor->age = 0;
-            actor->state += 1;
-        }
-    } else if (actor->state == 3) {
-        actor->orbit_radius -= 1;
-        actor->orbit_angle += 1;
-        if ((s16)actor->age == 60) {
-            actor->age = 0;
-            actor->state += 1;
-        }
-    } else if (actor->state == 4) {
-        BattleFx_ClearOwnedSlot(actor);
-    }
-    pos.x = actor->origin_x;
-    pos.z = actor->origin_z;
-    Vector_AddPolarOffset(actor->orbit_radius << 16, actor->orbit_angle << 11, &pos);
-    actor->x = pos.x;
-    actor->z = pos.z;
+	target = Object_GetById(gGameState.selected_actor);
+	if (actor->state == 0)
+	{
+		actor->orbit_radius += 1;
+		actor->orbit_angle += 1;
+		if ((s16)actor->age == 60)
+		{
+			actor->age = 0;
+			actor->state += 1;
+		}
+	}
+	else if (actor->state == 1)
+	{
+		actor->orbit_angle += 1;
+		if ((s16)actor->age == 40)
+		{
+			actor->age = 0;
+			actor->state += 1;
+		}
+	}
+	else if (actor->state == 2)
+	{
+		actor->orbit_angle += 1;
+		pos.x = target->x;
+		pos.y = target->y + 0x140000;
+		pos.z = target->z;
+		Camera_WorldToScreen(&pos);
+		actor->origin_x += (pos.x - actor->origin_x) / 8;
+		actor->origin_z += (pos.z - actor->origin_z) / 8;
+		if ((s16)actor->age == 40)
+		{
+			actor->age = 0;
+			actor->state += 1;
+		}
+	}
+	else if (actor->state == 3)
+	{
+		actor->orbit_radius -= 1;
+		actor->orbit_angle += 1;
+		if ((s16)actor->age == 60)
+		{
+			actor->age = 0;
+			actor->state += 1;
+		}
+	}
+	else if (actor->state == 4)
+	{
+		BattleFx_ClearOwnedSlot(actor);
+	}
+	pos.x = actor->origin_x;
+	pos.z = actor->origin_z;
+	Vector_AddPolarOffset(actor->orbit_radius << 16, actor->orbit_angle << 11, &pos);
+	actor->x = pos.x;
+	actor->z = pos.z;
 }
 
 #undef BattleFx_RunPageEffectForSlot
@@ -492,8 +519,10 @@ void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor)
 
 #undef Camera_WorldToScreen
 
-#define ObjectDispatch_ApplyArgumentToChildrenFar ((void (*)(struct FieldActor *object, s32 animation))ObjectDispatch_ApplyArgumentToChildrenFar)
-#define Object_GetById ((struct MotionObject *(*)(s32 id))Object_GetById)
+#define ObjectDispatch_ApplyArgumentToChildrenFar          \
+	((void (*)(struct FieldActor * object, s32 animation)) \
+			ObjectDispatch_ApplyArgumentToChildrenFar)
+#define Object_GetById ((struct MotionObject * (*)(s32 id)) Object_GetById)
 
 //--------------------------------------------------------------------------
 // ジンが跳ねて光の粒になり、操作キャラへ集まる
@@ -603,10 +632,11 @@ struct EffectOwner
 	u8						unknown_14[0x3c];
 	struct AnimationObject *sprite;
 };
-#define Object_GetById ((struct ObjectRuntime *(*)(u32 actor))Object_GetById)
-void				  BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
-#define Vector_AddPolarOffset ((void (*)(s32 magnitude, s32 angle, struct EffectVector *position))Vector_AddPolarOffset)
-void						 Motion_SetVarCbAndRefresh(s32, s32);
+#define Object_GetById ((struct ObjectRuntime * (*)(u32 actor)) Object_GetById)
+void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
+#define Vector_AddPolarOffset \
+	((void (*)(s32 magnitude, s32 angle, struct EffectVector * position)) Vector_AddPolarOffset)
+void Motion_SetVarCbAndRefresh(s32, s32);
 
 struct PhasedRadialSequenceObject
 {
@@ -677,7 +707,8 @@ struct CaptureObject
 	u8	  unknown_68[4];
 	void *callback;
 };
-#define ObjectDispatch_ApplyArgumentToChildrenFar ((void (*)(struct ObjectRuntime *object, s32 mode))ObjectDispatch_ApplyArgumentToChildrenFar)
+#define ObjectDispatch_ApplyArgumentToChildrenFar \
+	((void (*)(struct ObjectRuntime * object, s32 mode)) ObjectDispatch_ApplyArgumentToChildrenFar)
 void				  ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void				  BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
@@ -1014,7 +1045,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
 
 void BattleFx_RunVenusDjinnCapture(s32 arg)
 {
-	void				  Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
+	void				  Animation_ApplyChildValuesFar(struct CaptureObject * object, s32 value);
 	void				  ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 	struct CaptureObject *leader;
 	struct CaptureObject *djinni;
@@ -1245,26 +1276,26 @@ struct CaptureSprite
 
 struct CaptureObject_2
 {
-	u8					  unknown_00[6];
-	u16					  facing;
-	s32					  x;
-	s32					  y;
-	s32					  z;
-	u8					  unknown_14[4];
-	s32					  scale_x;
-	s32					  scale_y;
-	u8					  unknown_20[3];
-	u8					  priority_flags;
-	u8					  unknown_24[44];
-	struct CaptureSprite *sprite;
-	u8					  unknown_54;
-	u8					  mode;
-	u8					  unknown_56[4];
-	u8					  collision_flags;
-	u8					  visible;
-	u8					  unknown_5c[12];
-	struct CaptureObject_2 *linked;	// 追いかける相手
-	void				 *callback; // 毎フレームの処理
+	u8						unknown_00[6];
+	u16						facing;
+	s32						x;
+	s32						y;
+	s32						z;
+	u8						unknown_14[4];
+	s32						scale_x;
+	s32						scale_y;
+	u8						unknown_20[3];
+	u8						priority_flags;
+	u8						unknown_24[44];
+	struct CaptureSprite   *sprite;
+	u8						unknown_54;
+	u8						mode;
+	u8						unknown_56[4];
+	u8						collision_flags;
+	u8						visible;
+	u8						unknown_5c[12];
+	struct CaptureObject_2 *linked;	  // 追いかける相手
+	void				   *callback; // 毎フレームの処理
 };
 
 struct CaptureResource
@@ -1272,9 +1303,11 @@ struct CaptureResource
 	u8 unknown_00[28];
 	u8 id;
 };
-#define Object_GetById ((struct CaptureObject *(*)(s32 id))Object_GetById)
-#define ObjectDispatch_ApplyArgumentToChildrenFar ((void (*)(struct CaptureObject *object, s32 mode))ObjectDispatch_ApplyArgumentToChildrenFar)
-#define ObjectDispatch_ReleaseFar ((void (*)(struct CaptureObject *object))ObjectDispatch_ReleaseFar)
+#define Object_GetById ((struct CaptureObject * (*)(s32 id)) Object_GetById)
+#define ObjectDispatch_ApplyArgumentToChildrenFar \
+	((void (*)(struct CaptureObject * object, s32 mode)) ObjectDispatch_ApplyArgumentToChildrenFar)
+#define ObjectDispatch_ReleaseFar \
+	((void (*)(struct CaptureObject * object)) ObjectDispatch_ReleaseFar)
 
 #define ZANZOU_MAX 8 // 残像の数
 #define TSUBU_MAX 24 // 降らせる粒の数 (scene->slots)
@@ -1287,23 +1320,23 @@ struct CaptureResource
 //--------------------------------------------------------------------------
 void BattleFx_RunMercuryDjinnCapture(s32 id)
 {
-	void				  Animation_ApplyChildValuesFar(struct CaptureObject_2 *object, s32 value);
-	void ObjectDispatch_SetSingleChildFlagsFar(struct CaptureObject_2 *object, s32 value);
-	void				  ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-	struct CaptureObject_2 *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-	struct CaptureObject_2   *jin;
-	struct CaptureObject_2   *copy;
-	struct CaptureObject_2   *previous;
-	struct CaptureResource *resource;
-	void				   *scene;
-	struct CaptureObject_2  **cursor;
-	struct CaptureObject_2  **list;
-	u8					   *slot;
-	s8					   *slot_state;
-	s32						kind;
-	s32						remaining;
-	s32						resource_id;
-	struct CaptureObject_2   *copies[ZANZOU_MAX];
+	void Animation_ApplyChildValuesFar(struct CaptureObject_2 * object, s32 value);
+	void ObjectDispatch_SetSingleChildFlagsFar(struct CaptureObject_2 * object, s32 value);
+	void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
+	struct CaptureObject_2	*Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
+	struct CaptureObject_2	*jin;
+	struct CaptureObject_2	*copy;
+	struct CaptureObject_2	*previous;
+	struct CaptureResource	*resource;
+	void					*scene;
+	struct CaptureObject_2 **cursor;
+	struct CaptureObject_2 **list;
+	u8						*slot;
+	s8						*slot_state;
+	s32						 kind;
+	s32						 remaining;
+	s32						 resource_id;
+	struct CaptureObject_2	*copies[ZANZOU_MAX];
 	struct
 	{
 		s32 x;

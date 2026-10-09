@@ -5,12 +5,12 @@
  *   alchemy diff recon/tbs/en/main/080155d0.c moji --game tbs
  *                --edition tbs-en --arm --rtl --show
  * Native / draft / common / residual:
- *   ja: 193 / 193 / 180 / 26
- *   en: 196 / 196 / 170 / 52
- *   de: 187 / 187 / 174 / 26
- *   es: 187 / 187 / 174 / 26
- *   fr: 187 / 187 / 174 / 26
- *   it: 187 / 187 / 174 / 26
+ *   ja: 193 / 193 / 185 / 16
+ *   en: 196 / 196 / 173 / 46
+ *   de: 187 / 187 / 176 / 22
+ *   es: 187 / 187 / 176 / 22
+ *   fr: 187 / 187 / 176 / 22
+ *   it: 187 / 187 / 176 / 22
  * Frames and spill offsets now agree: Japanese 100 bytes, all others 44.
  * Japanese's 64-byte unused area still needs the tagged source type below.
  * Multiply operands agree. Japanese and the four European editions differ
@@ -275,6 +275,53 @@
  *   pointer with a cached load and explicit post-shift update gives other
  *   68 (187 instructions); its changed allocation is not retained.
  *
+ * Dot-boundary follow-up: ja/en/other 26/52/26 -> 16/46/22.
+ * An empty loop between pixel shift and address construction restores the
+ * native order, but initially changes lreg: the main dot's x pseudo has
+ * live length 7 instead of 9, moving it ahead of the tile quantity. Tile
+ * gets ip locally, x spills globally, and other residual becomes 241.
+ * Reusing line for stride-2, and pixel first for the tile column then the
+ * complete output pixel, restores the native registers. The tile-column
+ * assignment must precede stride-2: reversing them gives 26 rather than
+ * 22 in Europe, with an early stride reload into r1. The final helper
+ * matches the complete main dot sequence in all six editions and both
+ * Japanese dots. Japanese improves to 18; English/other to 48/22.
+ * Packed-font clipping changes the helper's incoming x/index lifetimes,
+ * so that path retains its previous helper. Applying the new helper there
+ * gives en/other 88/52; moving clipping inside it leaves those figures,
+ * while testing the reused pixel temporary gives 90/54.
+ * Finally an empty block after the accent x/y changes keeps the result
+ * move/spill after y: Japanese 18 -> 16 and English 48 -> 46.
+ * All of these changes are permitted C; compiler and flags are unchanged.
+ * Other measured alternatives from this checkpoint's initial 26/52/26:
+ * - Delayed narrow width reads give ja/en 55/74. Precomputing the accent
+ *   offset in both glyph branches gives 43/94. Reusing that offset in
+ *   the earlier tests gives 37/93; comma assignment before the font test
+ *   gives 37/70. Japanese has one or three extra instructions respectively.
+ *   Two two-minute searches compile 17,657/17,658 candidates: weighted
+ *   890 -> 820 and 1380 -> 1310, both residual 37 -> 45. Not retained.
+ * - A boundary around a volatile next-pointer store gives other 72:
+ *   shift precedes store, but comparison follows it. Saved predicates
+ *   around load/shift give 30; a predicate-only block gives 50, a combined
+ *   predicate/load block 52. Cached-pointer store/shift boundaries give
+ *   159/155/159; a pointer alias gives 159. Their volatile forms give
+ *   74, except predicate-only and predicate/load blocks at 96.
+ * - A complete local work record for the eleven spilled values gives
+ *   other 214 plain or 187 volatile; no field layout is retained.
+ * - Empty dot boundary after mask construction gives 263/274/265.
+ *   Moving mask construction after the address gives 243/272/241.
+ *   Sixteen temporary-reuse combinations give other 112..259; extending
+ *   tile from x's column helps, but coalesces the MLA input with its result.
+ *   Applying that only to the main dot gives 42. Reusing line for stride
+ *   and tile for x's column gives 30; its two-minute helper search compiles
+ *   34,954 candidates, weighted 770 -> 640, residual 30 -> 28.
+ *   Reusing pixel for the final complete expression reaches 26, then
+ *   reversing the first two assignments gives the retained 22.
+ * - After the dot/accent improvements, putting Japanese rownext=row+1
+ *   in both successors of the empty-row test gives 28 and two extra
+ *   instructions. The compare precedes the increment, but jump2 does not
+ *   hoist the differing successor sequences into the native shared prefix.
+ *
  * ARM translation-unit audit requested by Pascal, 2026-10-09:
  * Tile_BuildMetatiles follows this function without padding in all six
  * editions. Both fit stock ARM C. Text_DecodeSymbol/UiText_LookupMessageArm
@@ -323,16 +370,16 @@
  *    Native order requires another lifetime/dependency or a scheduling
  *    boundary that survives optimization. The remaining dot and row-tail
  *    sites have not yet been repaired this way.
- *    In the European dot's sched2 block 9, UIDs 160 (pixel shift) and 166
- *    (address OR) tie at priority 17. At T-8 the former wins because it is
- *    independent of UID 161 (mask=15), while the latter has an anti
+ *    In the earlier European dot's sched2 graph, pixel shift and address
+ *    OR tie at priority 17. At T-8 the former wins because it is
+ *    independent of mask=15, while the latter has an anti
  *    dependence through r3. This is not merely an original-order tie:
  *    matching that site needs another RTL dependency or a late-removable
  *    instruction/block, rather than another ordering of those same SETs.
  * J: jump2 cross-jumping requires equal instruction tails after sched2;
  *    arm.c's literal-pool pass then computes distances from the final code.
  *
- * Japanese: 13 moved instructions, accounting for all 26 residual entries.
+ * Japanese: eight moved instructions, accounting for all 16 residual entries.
  * - Entry (S): cmp r1,#255 must precede str r0,[sp,#20]. The one-pass
  *   height read restores the argument copies and places the load before
  *   the compare, but reload's spill still precedes it. Delaying that spill
@@ -346,24 +393,19 @@
  *   below. No tested source predicate creates the required constraint.
  * - .L_font_row (S): cmp ip,r5 must precede add lr,r2,#1, not follow it.
  *   A different rownext lifetime must change their scheduling priority.
- * - Both dot bodies (S): add r0,vram,r0,lsl#5 and orr r0,r0,r3,lsl#1
- *   must follow and r1,r1,#3; lsl r1,r1,#2. Draft starts the address chain
- *   immediately after MLA. Four moves total. The shift and address chains
- *   need a different dependence/conflict; moving the C statements alone
- *   and splitting the multiply have not produced that graph.
  * - .L_glyph (S): ldrh r0,[r3,r1] must follow add rows,#2 and its spill
  *   to [sp,#28]; draft loads first. A later width-load dependence is needed;
  *   expressing rows++ followed by rows[-1] instead creates a postincrement.
- * - .L_shift (S): sub r7,r7,#2 must precede mov r3,#0 and the result
- *   spill; draft does it after. The y update needs a different ready rank.
  * - .L_row_next (S): lsl ip,ip,#16 must precede str next,[sp,#8]; draft
  *   reverses them. The free one-cycle shift wins the last slot before the
  *   branch over the two-cycle store in stock sched2. A surviving constraint
  *   or late transform is needed; jump2's register-set hoists cannot hoist
  *   this store. This observation does not prove that plain C cannot match.
+ * - Both dot bodies and .L_shift are resolved by the measured boundaries
+ *   below. They no longer contribute residual instructions.
  *
- * German/Spanish/French/Italian: all have the same 13 residual entries on
- * each side (26 total), solely order and consequent pool displacements.
+ * German/Spanish/French/Italian: all have the same 11 residual entries on
+ * each side (22 total), solely order and consequent pool displacements.
  * The following exhausts the --show differences.
  * - Entry (S): mov ip,r1; sub sp,sp,#44; ldr font,[sp,#72] are early.
  *   Native copies x and y before the frame adjustment and font/character
@@ -375,14 +417,18 @@
  *   must precede the glyph-width pool load, not follow the width spill.
  *   Requires different color/row initialization lifetimes. The pool-load
  *   displacement difference is consequent on that last instruction move.
- * - Both dots and .L_row_next: the same five moves as Japanese (S).
+ * - Packed-font dot (S): address ADD and OR must follow x's AND/LSL.
+ *   The main glyph dot now matches, but the packed-font clipping expression
+ *   changes x/index lifetimes, and sharing its new helper breaks allocation.
+ *   This path still needs a compatible lreg lifetime and sched2 boundary.
+ * - .L_row_next (S): the same shift/store reversal as Japanese.
  * - .L_glyph/.L_wide now match: the one-pass width read preserves the
  *   needed scheduling boundary, and returning width directly gives r3
  *   through reload. jump2 shares str r3,[sp,#32] before the row reload and
  *   pass initialization. The former short width's return-register preference
  *   no longer controls either load. This is resolved, not a remaining site.
  *
- * English: 26 native and 26 draft residual entries (52 total). Its
+ * English: 23 native and 23 draft residual entries (46 total). Its
  * long-lived drawing registers agree, and instruction counts are equal.
  * - Entry (A,S): character-32 still gets r0, native ip. The height block
  *   keeps window in incoming r0 until ldrh, removing the former reload.
@@ -410,9 +456,10 @@
  *   Conversely .L_wide reuses the named index and omits native sub r3,r1,#32.
  *   This CSE/lifetime difference offsets the extra ldrh in the instruction
  *   count. Recomputing character-32 there restores the subtraction but
- *   worsens total residual to 57; both sites must be solved together.
- * - Both dots, .L_shift and .L_row_next: the same six moves as Japanese
- *   (S), using English's y/color/row-line registers.
+ *   worsened the earlier 52-residual form to 57; both sites must be solved
+ *   together rather than judging this instruction count alone.
+ * - Packed-font dot and .L_row_next (S): the same three moves as Europe.
+ *   The main glyph dot and .L_shift now match.
  * - Remaining branch and literal-load displacement differences (J) follow
  *   from the different glyph-branch extents and moved width-table load. They
  *   are not separate constants to encode in source. Literal pools and the
@@ -426,7 +473,7 @@
 
 extern const u8 UiText_GlyphWidths[];
 
-static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
+static __inline__ void GlyphPackedDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
 	u8 *vram, u32 color)
 {
 	u32 tile;
@@ -444,6 +491,34 @@ static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
 	tile = (u32)vram + (tile << 5);
 	tile |= line << 1;
 	*(u16 *)tile = (*(u16 *)tile & ~mask) | (mask & color);
+}
+
+static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
+	u8 *vram, u32 color)
+{
+	u32 tile;
+	u32 line;
+	u32 shift;
+	u32 mask;
+	u32 pixel;
+
+	/* FAKEMATCH: reuse line for stride-2, pixel for the tile column, and
+	 * tile for the byte address.
+	 * Together with the empty loop's scheduling boundary, these lifetimes
+	 * restore the native dot sequence: both Japanese sites and the outline
+	 * site in the other editions. Residuals ja/en/other: 26/52/26 -> 18/48/22.
+	 * Without these lifetimes the same boundary spills x (other 241). */
+	pixel = x >> 3;
+	line = stride - 2;
+	tile = pixel * line + tile_y;
+	line = row_line | ((x & 7) >> 2);
+	shift = (x & 3) << 2;
+	do { } while (0);
+	tile = (u32)vram + (tile << 5);
+	tile |= line << 1;
+	mask = 15 << shift;
+	pixel = (*(u16 *)tile & ~mask) | (mask & color);
+	*(u16 *)tile = pixel;
 }
 
 s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
@@ -589,7 +664,7 @@ font_done:
 						if ((packed & 15) == 1)
 							color = color1;
 						if (((x + col) >> 3) <= 29)
-							GlyphDot(stride, x + col, tile_y, row_line, vram, color);
+							GlyphPackedDot(stride, x + col, tile_y, row_line, vram, color);
 					}
 					col++;
 					if (col > 7)
@@ -640,6 +715,9 @@ font_done:
 	{
 		x -= 3;
 		y -= 2;
+		/* FAKEMATCH: keep the zero result after both coordinate changes.
+		 * This restores the native order: ja 18 -> 16, en 48 -> 46. */
+		do { } while (0);
 		result = 0;
 	}
 	else

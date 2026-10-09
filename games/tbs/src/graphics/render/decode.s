@@ -1,3 +1,4 @@
+@ C2: add pc, pc, r2, lsl #2 enters unrolled instructions; the register save omits lr.
 .syntax unified
 	.arm
 	.global Render_DecodeFrame

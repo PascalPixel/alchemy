@@ -7,7 +7,7 @@ mod no_asm;
 mod publication;
 
 const USAGE: &str =
-    "usage: alchemy check <publication|coverage|layout|no-asm|dead|aliases|devices|hygiene|progress> [args]";
+    "usage: alchemy check <publication|coverage|layout|no-asm|dead|aliases|devices|hygiene|packer|progress> [args]";
 
 pub fn entry(arguments: &[String]) -> ExitCode {
     let Some(command) = arguments.first().map(String::as_str) else {
@@ -27,6 +27,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         "aliases" => aliases::entry(rest),
         "devices" => crate::devices::entry(rest),
         "hygiene" => hygiene::entry(rest),
+        "packer" => crate::packer::entry(rest),
         "progress" => {
             crate::coverage::progress::entry(rest);
             ExitCode::SUCCESS

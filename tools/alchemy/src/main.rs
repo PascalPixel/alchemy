@@ -35,6 +35,7 @@ mod ld_map;
 mod merge;
 mod modern;
 mod objects;
+mod packer;
 mod permute;
 mod process;
 mod queues;

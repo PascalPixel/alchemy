@@ -50,12 +50,18 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 	struct BtlWork *table = BtlWk;
 	struct BtlUnit *actor = UnitGetFar(unit);
 	s32				single_slot = Summon_IsEntryFlagged(actor->class_id);
-	s32				result = 0;
-	s32				sprite_value = Summon_GetEntryValue(actor->class_id);
+	/* FAKEMATCH: initializing the two halves preserves the word copy into pass, mov r4, r10; one s32 zero folds that copy into movs r4, #0 (one instruction differs). */
+	union
+	{
+		s32 value;
+		u16 halves[2];
+	} result;
+	s32 sprite_value;
 
-	pass = result;
-	/* FAKEMATCH: empty asm barrier on pass: cse no longer knows the copy of result is zero, so pass starts as mov r4, r10 as native, not movs r4, #0 (1 of 119 rows differ without) */
-	asm("" : "+r"(pass));
+	result.halves[0] = 0;
+	result.halves[1] = 0;
+	sprite_value = Summon_GetEntryValue(actor->class_id);
+	pass = result.value;
 	do
 	{
 		s32 slot;
@@ -87,7 +93,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 		}
 
 		if (pass == 0)
-			result = (slot << 12) | sprite_value;
+			result.value = (slot << 12) | sprite_value;
 
 		table->sprite_slots[slot] = unit;
 		if (!single_slot)
@@ -97,7 +103,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 			break;
 	} while (++pass <= 1);
 
-	return result;
+	return result.value;
 }
 
 s32 BattleMotion_ReleaseObjectSlotByValue(s32 value)

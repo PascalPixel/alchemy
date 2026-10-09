@@ -23,4 +23,4 @@ Func_080132d0:
 .L_080132f4:
 	.4byte 0x00000002
 .L_080132f8:
-	.4byte Data_03007804
+	.4byte IwramHi_Data1

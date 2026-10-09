@@ -49,8 +49,8 @@ void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
 void Sound_Mixer(void);
 
 #if !GAME_TLA
-#ifndef OWN_Data_03007804
-extern s32 Data_03007804;
+#ifndef OWN_IwramHi_Data1
+extern s32 IwramHi_Data1;
 #endif
 extern u8 gMusicFadeRequested;
 extern s32 gSoundClipFlag;

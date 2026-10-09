@@ -124,7 +124,7 @@ void AudioTest_RunParameterController(void)
     preset = 2;
     /* FAKEMATCH: the one-pass block keeps the state-address load after preset setup and the state store before timer setup. */
     do {
-        Data_03007804 = 0;
+        IwramHi_Data1 = 0;
     } while (0);
     timer = 20;
 

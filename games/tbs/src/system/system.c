@@ -150,7 +150,7 @@ void Resource_LoadWorkHeader(void)
     struct ResourceWork *work;
 
     header = (const void *)Resource_GetTableEntry((u32)&ResourceId_BuildStamp);
-    work = (struct ResourceWork *)&Data_03007804;
+    work = (struct ResourceWork *)&IwramHi_Data1;
     Dma_Set(header, work, 0x84000003, REG_DMA3);
     work->cursor = 0;
 }

@@ -4,7 +4,7 @@
 
 extern volatile u32 gKeysRepeat;
 extern s32 gSoundClipFlag;
-extern s32 Data_03007804;
+extern s32 IwramHi_Data1;
 
 s32 Sound_LoadPresetParameters(s32 preset);
 void AudioCommand_Play(s32 id);
@@ -19,7 +19,7 @@ void AudioTest_RunParameterController(void)
     row = 0;
     preset = 2;
     do {
-        Data_03007804 = 0;
+        IwramHi_Data1 = 0;
     } while (0);
     timer = 20;
 

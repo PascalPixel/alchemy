@@ -854,7 +854,13 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 v
 {
     struct RenderOutput *object;
     u32 resource;
-    register s32 v asm("r5") = variant; /* FAKEMATCH: keeps the variant in r5 */
+    /* FAKEMATCH: keeps the variant in r5. Ordinary s32 v = variant,
+     * with or without register qualification, differs by 16 aligned
+     * instructions (36 native, 36 built, 28 common), extent 0x54.
+     * First adds r5,r3,#0 becomes adds r4,r2,#0; variant remains in r3,
+     * y moves to r4, window moves from r4 to r5 and the stack argument
+     * store moves after the remaining argument copies. */
+    register s32 v asm("r5") = variant;
     struct RenderInput *w = window;
     s32 xx = x;
     struct InventoryMenuState *data = gMenuWork;

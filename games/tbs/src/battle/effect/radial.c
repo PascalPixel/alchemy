@@ -216,8 +216,8 @@ struct EffectParticle
 };
 
 extern struct BattleFxScene *gEffectWork;
-void  AudioCommand_PlayFar(s32);
-void  Vector_AddPolarOffset(s32, s32, struct EffectVector *);
+void						 AudioCommand_PlayFar(s32);
+void						 Vector_AddPolarOffset(s32, s32, struct EffectVector *);
 
 //--------------------------------------------------------------------------
 // エナジー 14 番 : 玉を使う者から scene の位置（4 ドット上）まで 10 フレームで運び、
@@ -226,9 +226,9 @@ void  Vector_AddPolarOffset(s32, s32, struct EffectVector *);
 //--------------------------------------------------------------------------
 void RunBattleEffect14(void)
 {
-	void  ObjectDispatch_ApplyArgumentToChildrenFar(void *, s32);
-	void  ObjectDispatch_ReleaseFar(void *);
-	void *Object_Spawn(s32, s32, s32, s32);
+	void				   ObjectDispatch_ApplyArgumentToChildrenFar(void *, s32);
+	void				   ObjectDispatch_ReleaseFar(void *);
+	void				  *Object_Spawn(s32, s32, s32, s32);
 	struct BattleFxScene  *scene = gEffectWork;
 	struct EffectParticle *src = scene->main_object;
 	struct EffectParticle *tgt = scene->child;
@@ -405,17 +405,17 @@ struct FallbackPosition
 	s32 y;
 	s32 z;
 };
-void				 WaitFrames(s32);
-u32					 Random16(void);
+void WaitFrames(s32);
+u32	 Random16(void);
 
 //--------------------------------------------------------------------------
 // 使い手から効果の位置へオブジェクトを 10 フレームで飛ばし、16 個の粒にして散らす
 //--------------------------------------------------------------------------
 void BattleEffect_RunFallbackObjectTransition(void)
 {
-	void				 ObjectDispatch_ApplyArgumentToChildrenFar(struct MotionObject *, s32);
-	void				 ObjectDispatch_ReleaseFar(struct MotionObject *);
-	struct MotionObject *Object_Spawn(s32, s32, s32, s32);
+	void					ObjectDispatch_ApplyArgumentToChildrenFar(struct MotionObject *, s32);
+	void					ObjectDispatch_ReleaseFar(struct MotionObject *);
+	struct MotionObject	   *Object_Spawn(s32, s32, s32, s32);
 	struct BattleFxScene   *scene = gEffectWork;
 	struct MotionObject	   *user = scene->main_object;
 	struct MotionObject	   *obj;

@@ -3,25 +3,21 @@
 
 #include "layout_guard.h"
 
-struct Resource386FirstView {
-    u8 unknown_00[8];
-    s32 sample_08;
+struct Resource386FirstView
+{
+	u8	unknown_00[8];
+	s32 sample_08;
 };
 
-struct Resource386SecondView {
-    u8 unknown_00[0x10];
-    s32 sample_10;
+struct Resource386SecondView
+{
+	u8	unknown_00[0x10];
+	s32 sample_10;
 };
 
 LAYOUT_OFFSET_GUARD(
-    Resource386FirstView_SampleOffset,
-    struct Resource386FirstView,
-    sample_08,
-    0x08);
+	Resource386FirstView_SampleOffset, struct Resource386FirstView, sample_08, 0x08);
 LAYOUT_OFFSET_GUARD(
-    Resource386SecondView_SampleOffset,
-    struct Resource386SecondView,
-    sample_10,
-    0x10);
+	Resource386SecondView_SampleOffset, struct Resource386SecondView, sample_10, 0x10);
 
 #endif

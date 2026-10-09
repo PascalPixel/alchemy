@@ -3,7 +3,6 @@
 
 #include "types.h"
 
-
 extern s32 gFallingEffectOffset;
 extern s32 gFallingEffectWidth;
 extern s32 gFallingEffectState;

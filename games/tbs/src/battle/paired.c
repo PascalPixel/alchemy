@@ -20,67 +20,66 @@
 #define gKeyState (*(volatile u32 *)&gKeyState)
 
 extern struct EventRuntime *gEventWork;
-s32 ObjectTable_ReadActiveValue(s32);
-void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
-void UiWork_FinalizePendingCoreFar(void);
+s32							ObjectTable_ReadActiveValue(s32);
+void						UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
+void						UiWork_FinalizePendingCoreFar(void);
 
 s32 ObjectTable_ReadActiveValue(s32 key);
 
-void Battle_ShowPairedUnitWorkAndWait(
-    s32 first, s32 first_x, s32 first_y, s32 first_arg,
-    s32 first_extra, s32 second, s32 second_x, s32 second_y,
-    s32 second_arg, s32 second_extra)
+void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 first_x, s32 first_y, s32 first_arg,
+	s32 first_extra, s32 second, s32 second_x, s32 second_y, s32 second_arg, s32 second_extra)
 {
-    struct EventRuntime *rt = gEventWork;
-    s32 id0 = ObjectTable_ReadActiveValue(first);
-    s32 id1 = ObjectTable_ReadActiveValue(second);
-    s32 h0;
-    s32 h1;
+	struct EventRuntime *rt = gEventWork;
+	s32					 id0 = ObjectTable_ReadActiveValue(first);
+	s32					 id1 = ObjectTable_ReadActiveValue(second);
+	s32					 h0;
+	s32					 h1;
 
-    h0 = UiText_OpenMessageWindowFar(
-        rt->message++, first_x, first_y,
-        BattleFx_GetResourceId(id0) << 16);
-    UiWindow_CreateWithSideObjectFar(id0, 0, first_arg, first_extra);
+	h0 = UiText_OpenMessageWindowFar(
+		rt->message++, first_x, first_y, BattleFx_GetResourceId(id0) << 16);
+	UiWindow_CreateWithSideObjectFar(id0, 0, first_arg, first_extra);
 
-    h1 = UiText_OpenMessageWindowFar(
-        rt->message++, second_x, second_y,
-        BattleFx_GetResourceId(id1) << 16);
-    UiWindow_CreateWithSideObjectFar(id1, 0, second_arg, second_extra);
+	h1 = UiText_OpenMessageWindowFar(
+		rt->message++, second_x, second_y, BattleFx_GetResourceId(id1) << 16);
+	UiWindow_CreateWithSideObjectFar(id1, 0, second_arg, second_extra);
 
-    while (UiWork_IsCompleteFar() == 0)
-        WaitFrames(1);
+	while (UiWork_IsCompleteFar() == 0)
+		WaitFrames(1);
 
-    WaitFrames(1);
-    while ((gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0)
-        WaitFrames(1);
+	WaitFrames(1);
+	while ((gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0)
+		WaitFrames(1);
 
-    WaitFrames(1);
-    UiWork_FinalizeEntityMatchingLocalizedIdFar(id0);
-    UiWork_FinalizeEntityMatchingLocalizedIdFar(id1);
-    UiWork_FinalizePendingCoreFar();
-    WaitFrames(1);
+	WaitFrames(1);
+	UiWork_FinalizeEntityMatchingLocalizedIdFar(id0);
+	UiWork_FinalizeEntityMatchingLocalizedIdFar(id1);
+	UiWork_FinalizePendingCoreFar();
+	WaitFrames(1);
 
-    while (UiWork_IsIdleFar(h0) == 0)
-        WaitFrames(1);
-    while (UiWork_IsIdleFar(h1) == 0)
-        WaitFrames(1);
+	while (UiWork_IsIdleFar(h0) == 0)
+		WaitFrames(1);
+	while (UiWork_IsIdleFar(h1) == 0)
+		WaitFrames(1);
 
-    WaitFrames(1);
+	WaitFrames(1);
 }
 
 void Ui_SetRenderResultFromObject(s32 arg0)
 {
-    struct UiRenderWork *state = (struct UiRenderWork *)gWindowWork[0];
-    u8 value;
-    s32 ret;
+	struct UiRenderWork *state = (struct UiRenderWork *)gWindowWork[0];
+	u8					 value;
+	s32					 ret;
 
-    if (arg0 == 0x80000000) {
-        *(s16 *)&state->result[0] = (value = 0);
-        *(s16 *)&state->result[1] = value;
-    } else {
-        ret = BattleFx_GetResourceId(ObjectTable_ReadActiveValue(arg0));
-        value = Ui_RenderResultValues[gGameState.unknown_207[5]];
-        *(s16 *)&state->result[0] = ret;
-        *(s16 *)&state->result[1] = value;
-    }
+	if (arg0 == 0x80000000)
+	{
+		*(s16 *)&state->result[0] = (value = 0);
+		*(s16 *)&state->result[1] = value;
+	}
+	else
+	{
+		ret = BattleFx_GetResourceId(ObjectTable_ReadActiveValue(arg0));
+		value = Ui_RenderResultValues[gGameState.unknown_207[5]];
+		*(s16 *)&state->result[0] = ret;
+		*(s16 *)&state->result[1] = value;
+	}
 }

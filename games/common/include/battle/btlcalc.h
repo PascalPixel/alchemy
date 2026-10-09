@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-extern u8 HitTbl[];
+extern u8  HitTbl[];
 extern s32 EpLossTbl[];
 extern s32 HpRcvTbl[];
 extern s32 EpDmgTbl[];

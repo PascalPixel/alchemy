@@ -4,10 +4,11 @@
 #include "types.h"
 #include "layout_guard.h"
 
-struct TextReader {
-    u32 previous_code;
-    const u32 *words;
-    u32 bits;
+struct TextReader
+{
+	u32		   previous_code;
+	const u32 *words;
+	u32		   bits;
 };
 
 LAYOUT_SIZE_GUARD(TextReader_Size, struct TextReader, 0x0c);

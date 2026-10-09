@@ -4,125 +4,115 @@
 #include "types.h"
 #include "animspr.h"
 
-union StagedActorCoordinate {
-    s32 value;
-    struct {
-        s16 fraction;
-        s16 cell;
-    } parts;
+union StagedActorCoordinate
+{
+	s32 value;
+	struct
+	{
+		s16 fraction;
+		s16 cell;
+	} parts;
 };
 
-struct StagedActor {
-    u8 unknown_00[6];
-    u16 direction_and_kind;
-    union StagedActorCoordinate x;
-    s32 y;
-    union StagedActorCoordinate z;
-    u8 unknown_14[0x0e];
-    u8 transition_mode;
-    u8 unknown_23;
-    s32 velocity_x;
-    s32 velocity_y;
-    s32 velocity_z;
-    s32 move_rate_x;
-    s32 move_rate_z;
-    s32 target_x;
-    s32 target_y;
-    s32 target_z;
-    u8 unknown_44[0x0c];
-    struct AnimationObject *animation;
-    u8 unknown_54[5];
-    u8 collision_flags;
-    u8 unknown_5a[8];
-    u8 transition_busy;
-    u8 unknown_63[3];
-    s16 vertical_motion_direction;
-    u8 unknown_68[4];
-    u32 movement_callback;
+struct StagedActor
+{
+	u8							unknown_00[6];
+	u16							direction_and_kind;
+	union StagedActorCoordinate x;
+	s32							y;
+	union StagedActorCoordinate z;
+	u8							unknown_14[0x0e];
+	u8							transition_mode;
+	u8							unknown_23;
+	s32							velocity_x;
+	s32							velocity_y;
+	s32							velocity_z;
+	s32							move_rate_x;
+	s32							move_rate_z;
+	s32							target_x;
+	s32							target_y;
+	s32							target_z;
+	u8							unknown_44[0x0c];
+	struct AnimationObject	   *animation;
+	u8							unknown_54[5];
+	u8							collision_flags;
+	u8							unknown_5a[8];
+	u8							transition_busy;
+	u8							unknown_63[3];
+	s16							vertical_motion_direction;
+	u8							unknown_68[4];
+	u32							movement_callback;
 };
 
-#define STAGED_ACTOR_OFFSET(field) ((u32)&(((struct StagedActor *)0)->field))
+#define STAGED_ACTOR_OFFSET(field) ((u32) & (((struct StagedActor *)0)->field))
 typedef char StagedActor_size[sizeof(struct StagedActor) == 0x70 ? 1 : -1];
-typedef char StagedActor_x_offset[
-    STAGED_ACTOR_OFFSET(x) == 0x08 ? 1 : -1
-];
-typedef char StagedActor_transition_mode_offset[
-    STAGED_ACTOR_OFFSET(transition_mode) == 0x22 ? 1 : -1
-];
-typedef char StagedActor_animation_offset[
-    STAGED_ACTOR_OFFSET(animation) == 0x50 ? 1 : -1
-];
-typedef char StagedActor_collision_flags_offset[
-    STAGED_ACTOR_OFFSET(collision_flags) == 0x59 ? 1 : -1
-];
-typedef char StagedActor_transition_busy_offset[
-    STAGED_ACTOR_OFFSET(transition_busy) == 0x62 ? 1 : -1
-];
-typedef char StagedActor_vertical_motion_direction_offset[
-    STAGED_ACTOR_OFFSET(vertical_motion_direction) == 0x66 ? 1 : -1
-];
-typedef char StagedActor_movement_callback_offset[
-    STAGED_ACTOR_OFFSET(movement_callback) == 0x6c ? 1 : -1
-];
+typedef char StagedActor_x_offset[STAGED_ACTOR_OFFSET(x) == 0x08 ? 1 : -1];
+typedef char
+	StagedActor_transition_mode_offset[STAGED_ACTOR_OFFSET(transition_mode) == 0x22 ? 1 : -1];
+typedef char StagedActor_animation_offset[STAGED_ACTOR_OFFSET(animation) == 0x50 ? 1 : -1];
+typedef char
+	StagedActor_collision_flags_offset[STAGED_ACTOR_OFFSET(collision_flags) == 0x59 ? 1 : -1];
+typedef char
+	StagedActor_transition_busy_offset[STAGED_ACTOR_OFFSET(transition_busy) == 0x62 ? 1 : -1];
+typedef char StagedActor_vertical_motion_direction_offset
+	[STAGED_ACTOR_OFFSET(vertical_motion_direction) == 0x66 ? 1 : -1];
+typedef char
+	StagedActor_movement_callback_offset[STAGED_ACTOR_OFFSET(movement_callback) == 0x6c ? 1 : -1];
 #undef STAGED_ACTOR_OFFSET
 
-struct StagedActorProbe {
-    s32 footprint_index;
-    s32 actor_slot;
-    s32 position_x;
-    s32 position_y;
-    s32 position_z;
-    void (*callback)(void);
+struct StagedActorProbe
+{
+	s32 footprint_index;
+	s32 actor_slot;
+	s32 position_x;
+	s32 position_y;
+	s32 position_z;
+	void (*callback)(void);
 };
 
-struct StagedActorProbePosition {
-    s32 x;
-    s32 y;
-    s32 z;
+struct StagedActorProbePosition
+{
+	s32 x;
+	s32 y;
+	s32 z;
 };
 
-struct StagedActorFootprint {
-    s32 x0;
-    s32 z0;
-    s32 x1;
-    s32 z1;
+struct StagedActorFootprint
+{
+	s32 x0;
+	s32 z0;
+	s32 x1;
+	s32 z1;
 };
 
-#define STAGED_ACTOR_PROBE_OFFSET(field) \
-    ((u32)&(((struct StagedActorProbe *)0)->field))
-typedef char StagedActorProbe_size[
-    sizeof(struct StagedActorProbe) == 0x18 ? 1 : -1
-];
-typedef char StagedActorProbe_position_x_offset[
-    STAGED_ACTOR_PROBE_OFFSET(position_x) == 0x08 ? 1 : -1
-];
-typedef char StagedActorProbe_position_z_offset[
-    STAGED_ACTOR_PROBE_OFFSET(position_z) == 0x10 ? 1 : -1
-];
+#define STAGED_ACTOR_PROBE_OFFSET(field) ((u32) & (((struct StagedActorProbe *)0)->field))
+typedef char StagedActorProbe_size[sizeof(struct StagedActorProbe) == 0x18 ? 1 : -1];
+typedef char
+	StagedActorProbe_position_x_offset[STAGED_ACTOR_PROBE_OFFSET(position_x) == 0x08 ? 1 : -1];
+typedef char
+	StagedActorProbe_position_z_offset[STAGED_ACTOR_PROBE_OFFSET(position_z) == 0x10 ? 1 : -1];
 #undef STAGED_ACTOR_PROBE_OFFSET
 
-typedef char StagedActorFootprint_size[
-    sizeof(struct StagedActorFootprint) == 0x10 ? 1 : -1
-];
+typedef char StagedActorFootprint_size[sizeof(struct StagedActorFootprint) == 0x10 ? 1 : -1];
 
-struct StagedActorProbePoint {
-    s32 x;
-    s32 y;
-    s32 z;
+struct StagedActorProbePoint
+{
+	s32 x;
+	s32 y;
+	s32 z;
 };
 
-typedef char StagedActorProbePoint_size[
-    sizeof(struct StagedActorProbePoint) == 0x0c ? 1 : -1
-];
+typedef char StagedActorProbePoint_size[sizeof(struct StagedActorProbePoint) == 0x0c ? 1 : -1];
 
-s32 FixedPoint_Distance(s32 *first_position, s32 *second_position);
+s32					FixedPoint_Distance(s32 *first_position, s32 *second_position);
 struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *self);
-void StagedActor_AdvancePair(void);
-s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
-s32 StagedActor_StopBlockedMotion(struct StagedActor *actor);
-u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint);
-s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
+void				StagedActor_AdvancePair(void);
+s32					StagedActor_FillGridAttributeRectangle(
+	u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
+s32	 StagedActor_StopBlockedMotion(struct StagedActor *actor);
+u8	*FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint);
+s32	 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
 void SceneActor_MoveAndRedraw(struct StagedActorProbe probe);
-s32 FieldScene_RedrawActorFootprint(s32 id);
+s32	 FieldScene_RedrawActorFootprint(s32 id);
 
 #endif

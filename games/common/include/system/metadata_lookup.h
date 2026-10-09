@@ -4,20 +4,21 @@
 #include "types.h"
 #include "layout_guard.h"
 
-struct AnimationMetadata {
-    u8 width;
-    u8 height;
-    u16 scale;
-    u8 draw_kind;
-    u8 animation_count;
-    s8 adjust_x;
-    s8 adjust_y;
-    u8 box_x;
-    u8 box_y;
-    u8 frame_codec;
-    u8 reserved_0b;
-    s32 frames;
-    s32 animation;
+struct AnimationMetadata
+{
+	u8	width;
+	u8	height;
+	u16 scale;
+	u8	draw_kind;
+	u8	animation_count;
+	s8	adjust_x;
+	s8	adjust_y;
+	u8	box_x;
+	u8	box_y;
+	u8	frame_codec;
+	u8	reserved_0b;
+	s32 frames;
+	s32 animation;
 };
 
 LAYOUT_SIZE_GUARD(AnimationMetadata_Size, struct AnimationMetadata, 0x14);

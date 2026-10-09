@@ -224,82 +224,89 @@ void WaitFrames(s32 frames);
 
 void BattleEffect_SetupBlendedDisplay(void)
 {
-	extern u16 gBgScroll[];
-    void **slots = &gWorkSlot[HEAP_SLOT_BATTLE];
-    u8 *buffer = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
-    struct BtlWork *battle = slots[0];
-    volatile u32 zero;
+	extern u16		gBgScroll[];
+	void		  **slots = &gWorkSlot[HEAP_SLOT_BATTLE];
+	u8			   *buffer = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
+	struct BtlWork *battle = slots[0];
+	volatile u32	zero;
 
-    REG_DISPCNT = 1;
-    gBgScroll[3] = 32;
-    BattleBackground_LoadFar(1, battle->background, 24);
-    zero = 0;
-    Dma_Set((const void *)&zero, buffer, 0x85001000, REG_DMA3);
-    zero = 0;
-    Dma_Set((const void *)&zero, (void *)0x06004000, 0x85001000, REG_DMA3);
-    WaitFrames(1);
-    REG_BLDALPHA = 0x100e;
-    REG_BLDCNT = 0x3f46;
-    REG_DISPCNT = 0x7741;
-    gProjection.center_y = 120;
+	REG_DISPCNT = 1;
+	gBgScroll[3] = 32;
+	BattleBackground_LoadFar(1, battle->background, 24);
+	zero = 0;
+	Dma_Set((const void *)&zero, buffer, 0x85001000, REG_DMA3);
+	zero = 0;
+	Dma_Set((const void *)&zero, (void *)0x06004000, 0x85001000, REG_DMA3);
+	WaitFrames(1);
+	REG_BLDALPHA = 0x100e;
+	REG_BLDCNT = 0x3f46;
+	REG_DISPCNT = 0x7741;
+	gProjection.center_y = 120;
 }
 
-#define GetMotionRecordFar ((void * (*)(void*,s32))GetMotionRecordFar)
+#define GetMotionRecordFar ((void *(*)(void *, s32))GetMotionRecordFar)
 
-#define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
+#define gBattleFxWork (*(struct BattleEffectWork **)&gBattleFxWork)
 
-void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
-                               s32 state_slot, s32 state_value)
+void ObjectGroup_UpdateMembers(
+	s32 set_id, s32 object_value, s32 group_value, s32 state_slot, s32 state_value)
 {
-    struct BtlObj *set;
-    struct AnimationObject *group;
-    struct BattleEffectWork *state;
-    s32 group_index;
+	struct BtlObj			*set;
+	struct AnimationObject	*group;
+	struct BattleEffectWork *state;
+	s32						 group_index;
 
-    set = GetBattleObjectSlotFar(set_id);
-    state = gBattleFxWork;
-    group_index = 0;
+	set = GetBattleObjectSlotFar(set_id);
+	state = gBattleFxWork;
+	group_index = 0;
 
-    while ((group = GetMotionRecordFar(set->object, group_index)) != NULL) {
-        if (state_slot != -1) {
-            state->actor_timers[state_slot] = ((u8 *)&state_value)[0];
-        }
-        if (set->fading == 0) {
-            if (object_value != -1) {
-                s32 object_index;
+	while ((group = GetMotionRecordFar(set->object, group_index)) != NULL)
+	{
+		if (state_slot != -1)
+		{
+			state->actor_timers[state_slot] = ((u8 *)&state_value)[0];
+		}
+		if (set->fading == 0)
+		{
+			if (object_value != -1)
+			{
+				s32 object_index;
 
-                object_index = 0;
-                if (group->count != 0) {
-                    struct AnimationEntry **objects;
+				object_index = 0;
+				if (group->count != 0)
+				{
+					struct AnimationEntry **objects;
 
-                    objects = group->entries;
-                    do {
-                        struct AnimationEntry *object;
+					objects = group->entries;
+					do
+					{
+						struct AnimationEntry *object;
 
-                        object = *objects++;
-                        if (object != NULL && object != (struct AnimationEntry *)set->effect_entry
-                            && object != (struct AnimationEntry *)set->animation_entry) {
-                            if (object_value == 0)
-                                object->param = BattleMotion_GetSlotPaletteFar(set_id);
-                            else
-                                object->param = object_value;
-                            object->frame = 0xff;
-                        }
-                        object_index++;
-                    } while (object_index != group->count);
-                }
-            }
-            if (group_value != -1)
-                AnimationObjects_SelectAnimationFar(group, group_value);
-        }
-        group_index++;
-    }
+						object = *objects++;
+						if (object != NULL && object != (struct AnimationEntry *)set->effect_entry
+							&& object != (struct AnimationEntry *)set->animation_entry)
+						{
+							if (object_value == 0)
+								object->param = BattleMotion_GetSlotPaletteFar(set_id);
+							else
+								object->param = object_value;
+							object->frame = 0xff;
+						}
+						object_index++;
+					} while (object_index != group->count);
+				}
+			}
+			if (group_value != -1)
+				AnimationObjects_SelectAnimationFar(group, group_value);
+		}
+		group_index++;
+	}
 }
 
 void BattleFx_InitTilemapAndFlushQueue(void)
 {
-    BattleFx_BeginTiledCanvas(1);
-    BattleFx_EndCanvasLayer();
+	BattleFx_BeginTiledCanvas(1);
+	BattleFx_EndCanvasLayer();
 }
 
 //--------------------------------------------------------------------------
@@ -459,7 +466,8 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 			s32 pose = (frame - 48) / 24 % 3;
 
 			AnimationObjects_SelectAnimationFar(work->objects[3], ThornVines_ObjectPoses[pose * 2]);
-			AnimationObjects_SelectAnimationFar(work->objects[4], ThornVines_ObjectPoses[pose * 2 + 1]);
+			AnimationObjects_SelectAnimationFar(
+				work->objects[4], ThornVines_ObjectPoses[pose * 2 + 1]);
 		}
 
 		// とげを 1 フレームに 1 本ずつ飛ばす
@@ -842,7 +850,8 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 //--------------------------------------------------------------------------
 #define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
-#define AnimationObjects_SelectAnimationFar ((s32 (*)(void *, s32))AnimationObjects_SelectAnimationFar)
+#define AnimationObjects_SelectAnimationFar \
+	((s32 (*)(void *, s32))AnimationObjects_SelectAnimationFar)
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
 void AudioCommand_PlayFar(s32);
@@ -882,27 +891,27 @@ struct Mode10Work
 void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 {
 	extern struct Cells03001ad0 gBgScroll;
-	s32				   pts[32][2];
-	s32				   pos[4];
-	void			  *canvas;
-	struct Mode10Work *work;
-	s32				   frame;
-	DrawRectangle	   draw;
-	DrawRectangle	   draw_alt;
-	u8				  *dots;
-	s32				   step;
-	s32				   row;
-	u32				  *heap;
-	s32				   count;
-	s32				   i;
-	s32				   j;
-	s32				   ox;
-	s32				   oy;
-	s32				   y;
-	s32				   t;
-	struct EffectStep *p;
-	struct EffectStep *q;
-	Scale			   scale;
+	s32							pts[32][2];
+	s32							pos[4];
+	void					   *canvas;
+	struct Mode10Work		   *work;
+	s32							frame;
+	DrawRectangle				draw;
+	DrawRectangle				draw_alt;
+	u8						   *dots;
+	s32							step;
+	s32							row;
+	u32						   *heap;
+	s32							count;
+	s32							i;
+	s32							j;
+	s32							ox;
+	s32							oy;
+	s32							y;
+	s32							t;
+	struct EffectStep		   *p;
+	struct EffectStep		   *q;
+	Scale						scale;
 
 	heap = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
 	canvas = (void *)heap[0];

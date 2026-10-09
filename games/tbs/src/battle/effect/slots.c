@@ -52,8 +52,8 @@
 	((void (*)(struct MotionObject *, s32, s32, s32))Object_SetPositionAndResetMotionFar)
 
 extern struct BattleFxScene *gEffectWork;
-struct MotionObject *Object_Spawn(s32, s32, s32, s32);
-void				 ObjectDispatch_ReleaseFar(struct MotionObject *);
+struct MotionObject			*Object_Spawn(s32, s32, s32, s32);
+void						 ObjectDispatch_ReleaseFar(struct MotionObject *);
 
 //--------------------------------------------------------------------------
 // 対象への演出 (BattleFx_DispatchRequestKind から)
@@ -72,9 +72,9 @@ void BattleFx_RunEffect13Hook(void)
 //--------------------------------------------------------------------------
 void RunBattleEffect13(void)
 {
-	void				 Animation_ApplyChildValuesFar(struct MotionObject *, u32);
-	void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
-	void				 Vector_AddPolarOffset(s32, s32, s32 *);
+	void Animation_ApplyChildValuesFar(struct MotionObject *, u32);
+	void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor * object, s32 animation);
+	void Vector_AddPolarOffset(s32, s32, s32 *);
 	struct BattleFxScene	 *scene = gEffectWork;
 	struct MotionObject		 *actor = scene->main_object;
 	struct MotionObject		 *child = scene->child;
@@ -238,7 +238,7 @@ void AudioCommand_PlayFar(s32);
 //--------------------------------------------------------------------------
 void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot)
 {
-	void Vector_AddPolarOffset(s32, s32, struct Output *);
+	void			   Vector_AddPolarOffset(s32, s32, struct Output *);
 	struct Output	   pos;
 	struct FieldActor *src;
 	s32				   state;
@@ -296,9 +296,9 @@ void ObjectMotion_ArmCallback(s32, s32, s32);
 //--------------------------------------------------------------------------
 void BattleFx_RunEffect15(void)
 {
-	void Animation_ApplyChildValuesFar(void *, s32);
-	void ObjectDispatch_ApplyArgumentToChildrenFar(void *, s32);
-	void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
+	void				  Animation_ApplyChildValuesFar(void *, s32);
+	void				  ObjectDispatch_ApplyArgumentToChildrenFar(void *, s32);
+	void				  ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 	struct BattleFxScene *scene = gEffectWork;
 	struct FieldActor	 *obj = scene->main_object;
 	struct Output		  pos;
@@ -366,172 +366,182 @@ void BattleFx_RunEffect15(void)
 	WaitFrames(10);
 }
 
-struct ArcParticle {
-    u8 unknown_00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 floor;
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[0x48];
-    struct ArcParticle *source;
+struct ArcParticle
+{
+	u8					unknown_00[8];
+	s32					x;
+	s32					y;
+	s32					z;
+	s32					floor;
+	s32					scale_x;
+	s32					scale_y;
+	u8					unknown_20[0x48];
+	struct ArcParticle *source;
 };
 
 void BattleFx_UpdateDescendingParticlePositiveArc(struct ArcParticle *particle)
 {
-    struct ArcParticle *source;
-    s32 y;
-    s32 limit;
-    s32 scale;
+	struct ArcParticle *source;
+	s32					y;
+	s32					limit;
+	s32					scale;
 
-    limit = particle->floor + 0xA0000;
-    source = particle->source;
-    if (gGameState.map == (s32)&SceneId_Clear)
-        limit = particle->floor + 0x40000;
+	limit = particle->floor + 0xA0000;
+	source = particle->source;
+	if (gGameState.map == (s32)&SceneId_Clear)
+		limit = particle->floor + 0x40000;
 
-    y = particle->y;
-    if (y <= limit) {
-        ObjectDispatch_ReleaseFar(particle);
-        return;
-    }
+	y = particle->y;
+	if (y <= limit)
+	{
+		ObjectDispatch_ReleaseFar(particle);
+		return;
+	}
 
-    scale = particle->scale_x + 0xC00;
-    if (scale > 0x10000)
-        scale = 0x10000;
-    particle->scale_x = scale;
-    particle->scale_y = scale;
-    particle->x = source->x;
-    particle->y = y - 0x20000;
-    particle->z = source->z + ((0x10000 - scale) * 5) + 0x90000;
+	scale = particle->scale_x + 0xC00;
+	if (scale > 0x10000)
+		scale = 0x10000;
+	particle->scale_x = scale;
+	particle->scale_y = scale;
+	particle->x = source->x;
+	particle->y = y - 0x20000;
+	particle->z = source->z + ((0x10000 - scale) * 5) + 0x90000;
 }
 
 void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle)
 {
-    struct ArcParticle *source;
-    s32 y;
-    s32 limit;
-    s32 scale;
+	struct ArcParticle *source;
+	s32					y;
+	s32					limit;
+	s32					scale;
 
-    limit = particle->floor + 0xA0000;
-    source = particle->source;
-    if (gGameState.map == (s32)&SceneId_Clear)
-        limit = particle->floor + 0x40000;
+	limit = particle->floor + 0xA0000;
+	source = particle->source;
+	if (gGameState.map == (s32)&SceneId_Clear)
+		limit = particle->floor + 0x40000;
 
-    y = particle->y;
-    if (y <= limit) {
-        ObjectDispatch_ReleaseFar(particle);
-        return;
-    }
+	y = particle->y;
+	if (y <= limit)
+	{
+		ObjectDispatch_ReleaseFar(particle);
+		return;
+	}
 
-    scale = particle->scale_x + 0xC00;
-    if (scale > 0x10000)
-        scale = 0x10000;
-    particle->scale_x = scale;
-    particle->scale_y = -scale;
-    particle->x = source->x;
-    particle->y = y - 0x20000;
-    particle->z = source->z - ((0x10000 - scale) * 5) + 0x100000;
+	scale = particle->scale_x + 0xC00;
+	if (scale > 0x10000)
+		scale = 0x10000;
+	particle->scale_x = scale;
+	particle->scale_y = -scale;
+	particle->x = source->x;
+	particle->y = y - 0x20000;
+	particle->z = source->z - ((0x10000 - scale) * 5) + 0x100000;
 }
 
 struct ArcParticle;
 
-struct ArcFrame {
-    u8 padding00[22];
-    u8 visible;
+struct ArcFrame
+{
+	u8 padding00[22];
+	u8 visible;
 };
 
-struct ArcSprite {
-    u8 padding00[5];
-    u8 flags05_0 : 5;
-    u8 flags05_5 : 1;
-    u8 layer : 2;
-    u8 padding06;
-    u8 flags07_0 : 6;
-    u8 size : 2;
-    union {
-        struct {
-            u16 tile : 10;
-            u16 flags08_10 : 6;
-        } half;
-        struct {
-            u8 tile_low;
-            u8 flags09_0 : 2;
-            u8 variant : 2;
-            u8 flags09_4 : 4;
-        } byte;
-    } attr;
-    u8 padding0c[16];
-    u8 resource;
-    u8 active : 1;
-    u8 flags1d_1 : 7;
-    u8 padding1e[8];
-    u8 animation;
-    u8 padding27;
-    struct ArcFrame *frame;
+struct ArcSprite
+{
+	u8 padding00[5];
+	u8 flags05_0 : 5;
+	u8 flags05_5 : 1;
+	u8 layer : 2;
+	u8 padding06;
+	u8 flags07_0 : 6;
+	u8 size : 2;
+	union
+	{
+		struct
+		{
+			u16 tile : 10;
+			u16 flags08_10 : 6;
+		} half;
+		struct
+		{
+			u8 tile_low;
+			u8 flags09_0 : 2;
+			u8 variant : 2;
+			u8 flags09_4 : 4;
+		} byte;
+	} attr;
+	u8				 padding0c[16];
+	u8				 resource;
+	u8				 active : 1;
+	u8				 flags1d_1 : 7;
+	u8				 padding1e[8];
+	u8				 animation;
+	u8				 padding27;
+	struct ArcFrame *frame;
 };
 
-struct ArcObject {
-    u8 padding00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 unknown_14;
-    s32 scale_x;
-    s32 scale_y;
-    u8 padding20[0x30];
-    struct ArcSprite *sprite;
-    u8 padding54;
-    u8 unknown_55;
-    u8 padding56[0x0e];
-    u16 unknown_64;
-    u8 padding66[2];
-    struct ArcObject *source;
-    void *callback;
+struct ArcObject
+{
+	u8				  padding00[8];
+	s32				  x;
+	s32				  y;
+	s32				  z;
+	s32				  unknown_14;
+	s32				  scale_x;
+	s32				  scale_y;
+	u8				  padding20[0x30];
+	struct ArcSprite *sprite;
+	u8				  padding54;
+	u8				  unknown_55;
+	u8				  padding56[0x0e];
+	u16				  unknown_64;
+	u8				  padding66[2];
+	struct ArcObject *source;
+	void			 *callback;
 };
 
 struct ArcObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 
 void BattleFx_SpawnDescendingArcParticles(struct ArcObject *source)
 {
-    struct BattleFxScene *scene = gEffectWork;
-    struct ArcObject *leader = scene->main_object;
-    struct ArcObject *objects[2];
-    struct ArcObject *object;
-    struct ArcSprite *sprite;
-    s32 i;
-    u8 zero;
+	struct BattleFxScene *scene = gEffectWork;
+	struct ArcObject	 *leader = scene->main_object;
+	struct ArcObject	 *objects[2];
+	struct ArcObject	 *object;
+	struct ArcSprite	 *sprite;
+	s32					  i;
+	u8					  zero;
 
-    for (i = 0; i <= 1; i++) {
-        object = Object_CreateFar(26, source->x, source->y + 0x400000, source->z);
-        objects[i] = object;
-        if (object == NULL)
-            continue;
-        object->unknown_14 = source->unknown_14;
-        sprite = object->sprite;
-        object->unknown_55 = 0;
-        object->unknown_64 = 0;
-        zero = 0;
-        object->source = source;
-        object->scale_y = 0x6666;
-        object->scale_x = 0x6666;
-        if (sprite == NULL)
-            continue;
-        AnimationObjects_SelectAnimationFar(sprite, 0);
-        sprite->animation = zero;
-        Resource_ResetEntry(sprite->resource);
-        sprite->resource = scene->arc_tile_slot;
-        sprite->active = 1;
-        sprite->attr.half.tile = gVramBlockCache[sprite->resource].offset >> 5;
-        sprite->flags05_5 = 0;
-        sprite->layer = 1;
-        sprite->size = 2;
-        sprite->frame->visible = zero;
-    }
-    objects[0]->callback = (void *)BattleFx_UpdateDescendingParticleNegativeArc;
-    objects[0]->sprite->attr.byte.variant = 0;
-    objects[1]->callback = (void *)BattleFx_UpdateDescendingParticlePositiveArc;
-    objects[1]->sprite->attr.byte.variant = leader->sprite->attr.byte.variant;
+	for (i = 0; i <= 1; i++)
+	{
+		object = Object_CreateFar(26, source->x, source->y + 0x400000, source->z);
+		objects[i] = object;
+		if (object == NULL)
+			continue;
+		object->unknown_14 = source->unknown_14;
+		sprite = object->sprite;
+		object->unknown_55 = 0;
+		object->unknown_64 = 0;
+		zero = 0;
+		object->source = source;
+		object->scale_y = 0x6666;
+		object->scale_x = 0x6666;
+		if (sprite == NULL)
+			continue;
+		AnimationObjects_SelectAnimationFar(sprite, 0);
+		sprite->animation = zero;
+		Resource_ResetEntry(sprite->resource);
+		sprite->resource = scene->arc_tile_slot;
+		sprite->active = 1;
+		sprite->attr.half.tile = gVramBlockCache[sprite->resource].offset >> 5;
+		sprite->flags05_5 = 0;
+		sprite->layer = 1;
+		sprite->size = 2;
+		sprite->frame->visible = zero;
+	}
+	objects[0]->callback = (void *)BattleFx_UpdateDescendingParticleNegativeArc;
+	objects[0]->sprite->attr.byte.variant = 0;
+	objects[1]->callback = (void *)BattleFx_UpdateDescendingParticlePositiveArc;
+	objects[1]->sprite->attr.byte.variant = leader->sprite->attr.byte.variant;
 }
 
 //--------------------------------------------------------------------------
@@ -546,7 +556,8 @@ void UiText_ShowPositionedMessageAndWaitFar(s32 no, s32 flags);
 
 #define BattleFx_SpawnDescendingArcParticles \
 	((void (*)(void *))BattleFx_SpawnDescendingArcParticles)
-#define UiText_ShowPositionedMessageAndWaitFar ((void (*)(void *, s32))UiText_ShowPositionedMessageAndWaitFar)
+#define UiText_ShowPositionedMessageAndWaitFar \
+	((void (*)(void *, s32))UiText_ShowPositionedMessageAndWaitFar)
 
 #define ENA_PURUFU 150 // プルーフ
 #define ITEM_HANE 236  // せいなるはね
@@ -631,318 +642,338 @@ void FieldEvent_ShowStatusMessage(void)
 #define BattleFx_UpdatePairedArcSpawner ((void (*)(void))BattleFx_UpdatePairedArcSpawner)
 void WaitFrames(s32);
 
-void Object_ApplyProjectedPlacementFar(struct AnimationObject *sprite, s32 *position, s32 *scale, s32 mode);
+void Object_ApplyProjectedPlacementFar(
+	struct AnimationObject *sprite, s32 *position, s32 *scale, s32 mode);
 s32 ArcTan2(s32 x, s32 y);
 
 u32 Random16(void);
 
 void RunBattleEffect16(void)
 {
-	void Animation_ApplyChildValuesFar(struct ArcEffectObject *, s32);
-	void ObjectDispatch_SetSingleChildFlagsFar(struct ArcEffectObject *, s32);
-    struct BattleFxScene *scene;
-    struct ArcEffectObject *object;
-    struct AnimationObject *group;
-    struct AnimationEntry *entry;
-    u32 angle;
-    s32 slot;
-    s32 count;
+	void					Animation_ApplyChildValuesFar(struct ArcEffectObject *, s32);
+	void					ObjectDispatch_SetSingleChildFlagsFar(struct ArcEffectObject *, s32);
+	struct BattleFxScene   *scene;
+	struct ArcEffectObject *object;
+	struct AnimationObject *group;
+	struct AnimationEntry  *entry;
+	u32						angle;
+	s32						slot;
+	s32						count;
 
-    scene = gEffectWork;
-    object = scene->main_object;
-    group = object->records;
-    entry = group->entries[0];
-    angle = object->angle;
-    slot = Resource_FindFreeEntry();
-    {
-        s16 *tile_slot = &scene->arc_tile_slot;
-        s32 zero = 0;
+	scene = gEffectWork;
+	object = scene->main_object;
+	group = object->records;
+	entry = group->entries[0];
+	angle = object->angle;
+	slot = Resource_FindFreeEntry();
+	{
+		s16 *tile_slot = &scene->arc_tile_slot;
+		s32	 zero = 0;
 
-        *tile_slot = slot;
-        VramBlock_LoadCached((s16)slot, 0x100, BattleFx_ArcSparkTiles);
-        gGameState.avoid_distance = 0x09600000;
-        gGameState.avoid_by_item = GameFlag_TestFar(0x145);
-        Animation_ApplyChildValuesFar(object, zero);
-        object->callback = BattleFx_UpdatePairedArcSpawner;
-        object->phase = zero;
-        object->step = zero;
-    }
-    AudioCommand_PlayFar(0x8c);
-    WaitFrames(15);
-    object->phase = 1;
-    WaitFrames(10);
-    for (count = 0; count < 20; count++) {
-        entry->param = 7;
-        group->dirty = 1;
-        WaitFrames(2);
-        group->dirty = 1;
-        entry->param = 0;
-        group->flags = 1;
-        WaitFrames(3);
-    }
-    object->callback = NULL;
-    object->angle = angle;
-    Scheduler_AddOrUpdateCallback(BattleFx_UpdateEffect16State, 0xc80);
-    WaitFrames(15);
-    AudioCommand_PlayFar(0xae);
-    WaitFrames(55);
-    Scheduler_RemoveCallback(BattleFx_UpdateEffect16State);
-    if (gGameState.cloaked != 0)
-        ObjectDispatch_SetSingleChildFlagsFar(object, 2);
-    else
-        ObjectDispatch_SetSingleChildFlagsFar(object, 1);
-    Animation_ApplyChildValuesFar(object, 0);
-    Resource_ResetEntry(scene->arc_tile_slot);
-    UiText_ShowPositionedMessageAndWaitFar((s32)MsgMonstersAttackLess, 1);
+		*tile_slot = slot;
+		VramBlock_LoadCached((s16)slot, 0x100, BattleFx_ArcSparkTiles);
+		gGameState.avoid_distance = 0x09600000;
+		gGameState.avoid_by_item = GameFlag_TestFar(0x145);
+		Animation_ApplyChildValuesFar(object, zero);
+		object->callback = BattleFx_UpdatePairedArcSpawner;
+		object->phase = zero;
+		object->step = zero;
+	}
+	AudioCommand_PlayFar(0x8c);
+	WaitFrames(15);
+	object->phase = 1;
+	WaitFrames(10);
+	for (count = 0; count < 20; count++)
+	{
+		entry->param = 7;
+		group->dirty = 1;
+		WaitFrames(2);
+		group->dirty = 1;
+		entry->param = 0;
+		group->flags = 1;
+		WaitFrames(3);
+	}
+	object->callback = NULL;
+	object->angle = angle;
+	Scheduler_AddOrUpdateCallback(BattleFx_UpdateEffect16State, 0xc80);
+	WaitFrames(15);
+	AudioCommand_PlayFar(0xae);
+	WaitFrames(55);
+	Scheduler_RemoveCallback(BattleFx_UpdateEffect16State);
+	if (gGameState.cloaked != 0)
+		ObjectDispatch_SetSingleChildFlagsFar(object, 2);
+	else
+		ObjectDispatch_SetSingleChildFlagsFar(object, 1);
+	Animation_ApplyChildValuesFar(object, 0);
+	Resource_ResetEntry(scene->arc_tile_slot);
+	UiText_ShowPositionedMessageAndWaitFar((s32)MsgMonstersAttackLess, 1);
 }
 
 void EffectSlot_Update(struct EffectSlot *effect)
 {
-    if (effect->active != 0) {
-        effect->age++;
-        if (effect->callback_delay != 0)
-            effect->callback_delay--;
-        else if (effect->callback != 0)
-            effect->callback(effect);
-        if (effect->active != 0) {
-            if (effect->update_motion != 0)
-                EffectSlot_UpdateMotion(effect);
-            if (effect->render != 0)
-                BattleFx_DrawScaledObject(effect);
-        }
-    }
+	if (effect->active != 0)
+	{
+		effect->age++;
+		if (effect->callback_delay != 0)
+			effect->callback_delay--;
+		else if (effect->callback != 0)
+			effect->callback(effect);
+		if (effect->active != 0)
+		{
+			if (effect->update_motion != 0)
+				EffectSlot_UpdateMotion(effect);
+			if (effect->render != 0)
+				BattleFx_DrawScaledObject(effect);
+		}
+	}
 }
 
 void BattleFx_DrawScaledObject(struct EffectSlot *object)
 {
-    struct AnimationObject *sprite;
-    s32 offset;
-    s32 scale[2];
-    s32 position[4];
+	struct AnimationObject *sprite;
+	s32						offset;
+	s32						scale[2];
+	s32						position[4];
 
-    sprite = object->object;
-    offset = 0;
-    if (object->flags & 4)
-        offset = 0x1fc0000 - object->z;
-    scale[0] = Iwram_MulQ16(object->scale_x, sprite->scale);
-    scale[1] = Iwram_MulQ16(object->scale_y, sprite->scale);
-    position[0] = object->x;
-    position[1] = offset;
-    position[2] = object->z + offset;
-    position[3] = 0;
-    if (object->x > -0x200000 && object->x < 0x1100000 && object->z > -0x200000 && object->z < 0xe00000)
-        Object_ApplyProjectedPlacementFar(sprite, position, scale, 0);
+	sprite = object->object;
+	offset = 0;
+	if (object->flags & 4)
+		offset = 0x1fc0000 - object->z;
+	scale[0] = Iwram_MulQ16(object->scale_x, sprite->scale);
+	scale[1] = Iwram_MulQ16(object->scale_y, sprite->scale);
+	position[0] = object->x;
+	position[1] = offset;
+	position[2] = object->z + offset;
+	position[3] = 0;
+	if (object->x > -0x200000 && object->x < 0x1100000 && object->z > -0x200000
+		&& object->z < 0xe00000)
+		Object_ApplyProjectedPlacementFar(sprite, position, scale, 0);
 }
 
 void EffectSlot_UpdateMotion(struct EffectSlot *effect)
 {
-    s32 dx;
-    s32 dz;
-    s32 distance;
-    s32 ix;
-    s32 iz;
-    s32 speed;
-    s16 angle;
-    s32 heading;
-    s32 facing;
-    s16 turn;
+	s32 dx;
+	s32 dz;
+	s32 distance;
+	s32 ix;
+	s32 iz;
+	s32 speed;
+	s16 angle;
+	s32 heading;
+	s32 facing;
+	s16 turn;
 
-    if (effect->target_x == EFFECT_NO_TARGET)
-        return;
-    dx = effect->target_x - effect->x;
-    dz = effect->target_z - effect->z;
-    if (effect->stop_at_target != 0) {
-        ix = dx / 0x10000;
-        iz = dz / 0x10000;
-        distance = Iwram_Sqrt(ix * ix + iz * iz) << 16;
-        if (distance < 0x800000)
-            distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
-        if (distance <= 0x80000) {
-            EffectSlot_SetPosition(effect, effect->target_x, effect->target_z);
-            return;
-        }
-    }
-    angle = ArcTan2(dz, dx);
-    if (effect->flag42 != 0) {
-        heading = effect->heading;
-        turn = angle - heading;
-        if ((turn >= 0 ? turn : -turn) >= effect->max_turn_step) {
-            if (turn < 0) {
-                if (-turn > effect->max_turn_step)
-                    turn = -effect->max_turn_step;
-            } else if (turn > effect->max_turn_step) {
-                turn = effect->max_turn_step;
-            }
-            angle = turn + heading;
-        }
-    }
-    facing = (u16)angle;
-    effect->heading = facing;
-    speed = effect->speed + effect->acceleration;
-    if (speed > effect->max_speed)
-        speed = effect->max_speed;
-    angle = facing;
-    effect->speed = speed;
-    effect->x += Iwram_MulQ16(Trig_Cos(angle), speed);
-    effect->z += Iwram_MulQ16(Trig_Sin(angle), speed);
+	if (effect->target_x == EFFECT_NO_TARGET)
+		return;
+	dx = effect->target_x - effect->x;
+	dz = effect->target_z - effect->z;
+	if (effect->stop_at_target != 0)
+	{
+		ix = dx / 0x10000;
+		iz = dz / 0x10000;
+		distance = Iwram_Sqrt(ix * ix + iz * iz) << 16;
+		if (distance < 0x800000)
+			distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+		if (distance <= 0x80000)
+		{
+			EffectSlot_SetPosition(effect, effect->target_x, effect->target_z);
+			return;
+		}
+	}
+	angle = ArcTan2(dz, dx);
+	if (effect->flag42 != 0)
+	{
+		heading = effect->heading;
+		turn = angle - heading;
+		if ((turn >= 0 ? turn : -turn) >= effect->max_turn_step)
+		{
+			if (turn < 0)
+			{
+				if (-turn > effect->max_turn_step)
+					turn = -effect->max_turn_step;
+			}
+			else if (turn > effect->max_turn_step)
+			{
+				turn = effect->max_turn_step;
+			}
+			angle = turn + heading;
+		}
+	}
+	facing = (u16)angle;
+	effect->heading = facing;
+	speed = effect->speed + effect->acceleration;
+	if (speed > effect->max_speed)
+		speed = effect->max_speed;
+	angle = facing;
+	effect->speed = speed;
+	effect->x += Iwram_MulQ16(Trig_Cos(angle), speed);
+	effect->z += Iwram_MulQ16(Trig_Sin(angle), speed);
 }
 
 u32 BattleFx_HasReachedTarget(struct EffectSlot *effect)
 {
-    u32 value;
+	u32 value;
 
-    if (effect->stop_at_target == 0) {
-        return 0;
-    }
-    value = effect->target_x ^ 0x80000000;
-    return ((0u - value) | value) >> 31;
+	if (effect->stop_at_target == 0)
+	{
+		return 0;
+	}
+	value = effect->target_x ^ 0x80000000;
+	return ((0u - value) | value) >> 31;
 }
 
 void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z)
 {
-    effect->target_x = EFFECT_NO_TARGET;
-    effect->target_z = EFFECT_NO_TARGET;
-    effect->x = x;
-    effect->z = z;
-    effect->speed = 0;
+	effect->target_x = EFFECT_NO_TARGET;
+	effect->target_z = EFFECT_NO_TARGET;
+	effect->x = x;
+	effect->z = z;
+	effect->speed = 0;
 }
 
 void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode)
 {
-    AnimationObjects_SelectAnimationFar(effect->object, mode);
+	AnimationObjects_SelectAnimationFar(effect->object, mode);
 }
 
 void EffectSlot_SetCallback(struct EffectSlot *effect, EffectCallback callback)
 {
-    effect->callback = callback;
-    effect->callback_delay = 0;
-    effect->age = 0;
-    effect->state = 0;
+	effect->callback = callback;
+	effect->callback_delay = 0;
+	effect->age = 0;
+	effect->state = 0;
 }
 
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
 {
-    s32 unit;
-    s8 *object;
-    volatile u32 zero;
+	s32			 unit;
+	s8			*object;
+	volatile u32 zero;
 
-    zero = 0;
-    Dma_Set((const void *)&zero, effect, 0x85000000 | (sizeof *effect / 4), REG_DMA3);
-    object = ResourceObject_CreateFar(kind);
-    effect->object = object;
-    if (object != NULL)
-        object[9] &= ~0x0c;
-    EffectSlot_SetPosition(effect, x, z);
-    /* FAKEMATCH: needed to match: 1.0 is held in a local, set before max_speed, so the object reload is scheduled ahead of the three unit stores */
-    unit = 0x10000;
-    effect->max_speed = 0x20000;
-    effect->acceleration = effect->scale_y = effect->scale_x = unit;
-    effect->origin_x = x;
-    effect->origin_z = z;
-    ((s8 *)effect->object)[38] = 0;
-    effect->stop_at_target = 1;
-    effect->flag42 = 1;
-    effect->update_motion = 1;
-    effect->render = 1;
-    effect->active = 1;
-    effect->random_value = Random16();
-    effect->flags = 4;
-    EffectSlot_SetObjectMode(effect, 1);
+	zero = 0;
+	Dma_Set((const void *)&zero, effect, 0x85000000 | (sizeof *effect / 4), REG_DMA3);
+	object = ResourceObject_CreateFar(kind);
+	effect->object = object;
+	if (object != NULL)
+		object[9] &= ~0x0c;
+	EffectSlot_SetPosition(effect, x, z);
+	/* FAKEMATCH: needed to match: 1.0 is held in a local, set before max_speed, so the object reload is scheduled ahead of the three unit stores */
+	unit = 0x10000;
+	effect->max_speed = 0x20000;
+	effect->acceleration = effect->scale_y = effect->scale_x = unit;
+	effect->origin_x = x;
+	effect->origin_z = z;
+	((s8 *)effect->object)[38] = 0;
+	effect->stop_at_target = 1;
+	effect->flag42 = 1;
+	effect->update_motion = 1;
+	effect->render = 1;
+	effect->active = 1;
+	effect->random_value = Random16();
+	effect->flags = 4;
+	EffectSlot_SetObjectMode(effect, 1);
 }
 
 void BattleFx_ClearOwnedSlot(struct EffectSlot *slot)
 {
-    volatile u32 zero;
-    if (slot->object)
-        ResourceObject_ReleaseFar((struct ResourceObjectWork *)slot->object);
-    zero = 0;
-    Dma_Set(&zero, slot, 0x85000000 | (sizeof *slot / 4), REG_DMA3);
+	volatile u32 zero;
+	if (slot->object)
+		ResourceObject_ReleaseFar((struct ResourceObjectWork *)slot->object);
+	zero = 0;
+	Dma_Set(&zero, slot, 0x85000000 | (sizeof *slot / 4), REG_DMA3);
 }
 
-struct FxWindowEntry {
-    u32 a;
-    u32 b;
-    u32 attr;
+struct FxWindowEntry
+{
+	u32 a;
+	u32 b;
+	u32 attr;
 };
 
-struct FxWindowWork {
-    u16 tiles;
-    u16 window_slot;
-    s32 x;
-    s32 y;
-    u8 padding0c[6];
-    u16 unknown_12;
-    u8 padding14[4];
-    s32 unknown_18;
-    s32 window;
-    struct FxWindowEntry entries[67];
+struct FxWindowWork
+{
+	u16					 tiles;
+	u16					 window_slot;
+	s32					 x;
+	s32					 y;
+	u8					 padding0c[6];
+	u16					 unknown_12;
+	u8					 padding14[4];
+	s32					 unknown_18;
+	s32					 window;
+	struct FxWindowEntry entries[67];
 };
 
-struct FxObject {
-    u8 padding00[8];
-    s32 x;
-    u8 padding0c[6];
-    s16 y;
+struct FxObject
+{
+	u8	padding00[8];
+	s32 x;
+	u8	padding0c[6];
+	s16 y;
 };
 
 void BattleFx_SetupResourcesAndWindow(void)
 {
 	extern struct FxWindowWork gMapCellBuffer;
-    u32 *oam;
-    volatile u32 fill;
-    u32 *pal;
-    struct FxWindowWork *work;
-    struct FxObject *object;
-    s32 attr;
-    u32 i;
-    u32 tile;
-    u32 attr2;
+	u32						  *oam;
+	volatile u32			   fill;
+	u32						  *pal;
+	struct FxWindowWork		  *work;
+	struct FxObject			  *object;
+	s32						   attr;
+	u32						   i;
+	u32						   tile;
+	u32						   attr2;
 
-    pal = (u32 *)Runtime_BumpAllocateAlternatePool(32);
-    work = &gMapCellBuffer;
-    oam = (u32 *)work->entries;
-    object = Object_GetById(gGameState.selected_actor);
-    work->tiles = Resource_FindFreeEntry();
-    fill = 0;
-    Dma_Set((const void *)&fill, pal, 0x85000020, REG_DMA3);
-    pal[0] = 255;
-    pal[1] = 0x1ff;
-    pal[2] = 272;
-    pal[8] = 68;
-    pal[9] = 324;
-    pal[10] = 272;
-    pal[16] = 119;
-    pal[17] = 0x177;
-    pal[18] = 272;
-    pal[24] = 0xff0;
-    pal[25] = 0xffff;
-    pal[26] = 0x1ffff;
-    pal[27] = 0x11ff0;
-    pal[28] = 0x1100;
-    attr = VramBlock_LoadCached(work->tiles, 128, pal) | 0x400;
-    for (i = 0; i < 66; i++) {
-        *oam++ = 0;
-        *oam++ = 0;
-        *oam++ = attr;
-    }
-    MemFree(pal);
-    if (GameFlag_TestFar(284)) {
-        work->x = 240 << 15;
-        work->y = 160 << 15;
-    } else {
-        work->x = (((object->x - 0x10000000) >> 16) * 240 / 4096) << 16;
-        work->y = ((object->y * 160) / 4096) << 16;
-    }
-    work->window_slot = Resource_LoadFixedBlockBIntoFreeSlotFar();
-    tile = gVramBlockCache[work->window_slot].offset;
-    work->window = UiWindow_CreateFar(0, 0, 0, 0, 2);
-    work->unknown_12 = 0xffff;
-    work->unknown_18 = 0x10000;
-    *oam++ = 0;
-    *oam++ = 0x40000000;
-    attr2 = 0x400;
-    attr2 |= tile >> 5;
-    *oam = attr2;
+	pal = (u32 *)Runtime_BumpAllocateAlternatePool(32);
+	work = &gMapCellBuffer;
+	oam = (u32 *)work->entries;
+	object = Object_GetById(gGameState.selected_actor);
+	work->tiles = Resource_FindFreeEntry();
+	fill = 0;
+	Dma_Set((const void *)&fill, pal, 0x85000020, REG_DMA3);
+	pal[0] = 255;
+	pal[1] = 0x1ff;
+	pal[2] = 272;
+	pal[8] = 68;
+	pal[9] = 324;
+	pal[10] = 272;
+	pal[16] = 119;
+	pal[17] = 0x177;
+	pal[18] = 272;
+	pal[24] = 0xff0;
+	pal[25] = 0xffff;
+	pal[26] = 0x1ffff;
+	pal[27] = 0x11ff0;
+	pal[28] = 0x1100;
+	attr = VramBlock_LoadCached(work->tiles, 128, pal) | 0x400;
+	for (i = 0; i < 66; i++)
+	{
+		*oam++ = 0;
+		*oam++ = 0;
+		*oam++ = attr;
+	}
+	MemFree(pal);
+	if (GameFlag_TestFar(284))
+	{
+		work->x = 240 << 15;
+		work->y = 160 << 15;
+	}
+	else
+	{
+		work->x = (((object->x - 0x10000000) >> 16) * 240 / 4096) << 16;
+		work->y = ((object->y * 160) / 4096) << 16;
+	}
+	work->window_slot = Resource_LoadFixedBlockBIntoFreeSlotFar();
+	tile = gVramBlockCache[work->window_slot].offset;
+	work->window = UiWindow_CreateFar(0, 0, 0, 0, 2);
+	work->unknown_12 = 0xffff;
+	work->unknown_18 = 0x10000;
+	*oam++ = 0;
+	*oam++ = 0x40000000;
+	attr2 = 0x400;
+	attr2 |= tile >> 5;
+	*oam = attr2;
 }
 
 //--------------------------------------------------------------------------
@@ -962,8 +993,8 @@ extern void UiWork_FinalizeFar(u32 arg0, u32 arg1);
 	|| defined(TBS_EDITION_IT)
 // キーを離すとカーソルが近くの地名へ寄る
 #define WORLD_MAP_CURSOR_SNAPS 1
-#define WORLD_MAP_NAME_RANGE 64	 // 地名を出す距離の 2 乗
-#define WORLD_MAP_NAME_LEFT 3	 // 地名ウインドウを印から左へずらす量
+#define WORLD_MAP_NAME_RANGE 64 // 地名を出す距離の 2 乗
+#define WORLD_MAP_NAME_LEFT 3	// 地名ウインドウを印から左へずらす量
 #else
 #define WORLD_MAP_CURSOR_SNAPS 0
 #define WORLD_MAP_NAME_RANGE 100
@@ -1030,7 +1061,7 @@ struct MapObject
 //--------------------------------------------------------------------------
 void BattleFx_CleanupResourcesAndWindow(void)
 {
-	extern u8 gMapCellBuffer[];
+	extern u8			 gMapCellBuffer[];
 	struct WorldMapWork *work = (struct WorldMapWork *)gMapCellBuffer;
 
 	Resource_ResetEntry(work->vram_block);
@@ -1039,8 +1070,8 @@ void BattleFx_CleanupResourcesAndWindow(void)
 }
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 #endif
-extern u32						gKeysHeld;
-s32	 ArcTan2(s32 dz, s32 dx);
+extern u32 gKeysHeld;
+s32		   ArcTan2(s32 dz, s32 dx);
 
 // IME を止めて I/O 書き込みキューに 1 件積む（QueueIoWriteDelay2 と同じ）
 #define QUEUE_IO_WRITE_DELAY2(address, value)                                                         \
@@ -1076,7 +1107,7 @@ s32	 ArcTan2(s32 dz, s32 dx);
 //--------------------------------------------------------------------------
 void Map_UpdateWorldMapMarkers(void)
 {
-	void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
+	void				 Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 * position);
 	s32					 leader;
 	const s32			*place;
 	s32					 tile_base;
@@ -1327,158 +1358,174 @@ void BattleFx_ScheduleRatioTransition(s32, s32);
 void Map_ShowWorldMap(s32 picture)
 {
 	extern u8 gMapCellBuffer[];
-    /* FAKEMATCH: needed to match: one-pass loops order display-control setup, the spilled layer load and the IME read; the count uses a halfword store. */
-    /* FAKEMATCH: needed to match: the shared slot 8/6 word-cell reads preserve the saved-layer spill and avoid four extra bytes. */
-    struct MapState *map = *(struct MapState **)((u8 *)gWorkSlot + 8 * sizeof(void *));
-    struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
-    struct ObjectSystemWork *menu = *(struct ObjectSystemWork **)((u8 *)gWorkSlot + 6 * sizeof(void *));
-    s32 resource = (s32)&ResourceId_WorldMapPicture;
-    struct MapAnimation *layer;
-    u8 saved_flags[16];
-    s32 i;
-    u8 *graphics;
-    s32 saved_status;
-    s16 blend;
+	/* FAKEMATCH: needed to match: one-pass loops order display-control setup, the spilled layer load and the IME read; the count uses a halfword store. */
+	/* FAKEMATCH: needed to match: the shared slot 8/6 word-cell reads preserve the saved-layer spill and avoid four extra bytes. */
+	struct MapState			*map = *(struct MapState **)((u8 *)gWorkSlot + 8 * sizeof(void *));
+	struct EventWork		*field = Runtime_AllocateBlock(27, 0xccc);
+	struct ObjectSystemWork *menu =
+		*(struct ObjectSystemWork **)((u8 *)gWorkSlot + 6 * sizeof(void *));
+	s32					 resource = (s32)&ResourceId_WorldMapPicture;
+	struct MapAnimation *layer;
+	u8					 saved_flags[16];
+	s32					 i;
+	u8					*graphics;
+	s32					 saved_status;
+	s16					 blend;
 
-    if (field->mode != 3)
-        return;
-    field->view_center->paused = 1;
-    saved_status = field->transition_frames;
-    field->transition_frames = 6;
-    Event_FinishScreenTransition();
-    Event_WaitTransitionFrames();
-    layer = map->anim;
-    for (i = 0; i < 16; i++) {
-        saved_flags[i] = layer->paused;
-        layer->paused = 1;
-        layer++;
-    }
-    menu->suspended = 1;
-    WaitFrames(1);
-    blend = REG_BLDALPHA;
-    graphics = Resource_GetTableEntry(resource);
-    Dma_Set(graphics, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | (448 / 4), REG_DMA3);
-    BG_PLTT[0] = 0;
-    Resource_DecodeType01(graphics + 448, gMapCellBuffer);
-    Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | (240 * 160 / 4), REG_DMA3);
-    {
-        /* FAKEMATCH: needed to match: a word temporary keeps the halfword values as word constants; direct stores load them by halfword from the pool. */
-        s32 v = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2;
-        REG_BG1CNT = v;
-        v = DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
-        REG_DISPCNT = v;
-    }
-    BattleFx_SetupResourcesAndWindow();
-    Scheduler_AddOrUpdateCallback(Map_UpdateWorldMapMarkers, 0xc80);
-    if (GameFlag_TestFar(284))
-        UiText_ShowPositionedMessageAndWaitFar((s32)MsgNotOnMap, 1);
-    do {
-        WaitFrames(1);
-    } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
-    Scheduler_RemoveCallback(Map_UpdateWorldMapMarkers);
-    BattleFx_CleanupResourcesAndWindow();
-    {
-        s32 v;
-        /* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
-        do {
-            v = DISPCNT_OBJ_1D_MAP;
-        } while (0);
-        REG_DISPCNT = v;
-    }
-    Map_LoadAreaGraphicsFar();
-    {
-        volatile u16 *ime;
-        struct IoWriteQueue *q;
-        u32 saved;
-        s32 count;
+	if (field->mode != 3)
+		return;
+	field->view_center->paused = 1;
+	saved_status = field->transition_frames;
+	field->transition_frames = 6;
+	Event_FinishScreenTransition();
+	Event_WaitTransitionFrames();
+	layer = map->anim;
+	for (i = 0; i < 16; i++)
+	{
+		saved_flags[i] = layer->paused;
+		layer->paused = 1;
+		layer++;
+	}
+	menu->suspended = 1;
+	WaitFrames(1);
+	blend = REG_BLDALPHA;
+	graphics = Resource_GetTableEntry(resource);
+	Dma_Set(graphics, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | (448 / 4), REG_DMA3);
+	BG_PLTT[0] = 0;
+	Resource_DecodeType01(graphics + 448, gMapCellBuffer);
+	Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | (240 * 160 / 4),
+		REG_DMA3);
+	{
+		/* FAKEMATCH: needed to match: a word temporary keeps the halfword values as word constants; direct stores load them by halfword from the pool. */
+		s32 v = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2;
+		REG_BG1CNT = v;
+		v = DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
+		REG_DISPCNT = v;
+	}
+	BattleFx_SetupResourcesAndWindow();
+	Scheduler_AddOrUpdateCallback(Map_UpdateWorldMapMarkers, 0xc80);
+	if (GameFlag_TestFar(284))
+		UiText_ShowPositionedMessageAndWaitFar((s32)MsgNotOnMap, 1);
+	do
+	{
+		WaitFrames(1);
+	} while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
+	Scheduler_RemoveCallback(Map_UpdateWorldMapMarkers);
+	BattleFx_CleanupResourcesAndWindow();
+	{
+		s32 v;
+		/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
+		do
+		{
+			v = DISPCNT_OBJ_1D_MAP;
+		} while (0);
+		REG_DISPCNT = v;
+	}
+	Map_LoadAreaGraphicsFar();
+	{
+		volatile u16		*ime;
+		struct IoWriteQueue *q;
+		u32					 saved;
+		s32					 count;
 
-        q = &gIoWriteQueue;
-        /* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
-        do {
-            ime = &REG_IME;
-            saved = *ime;
-        } while (0);
-        *ime = (u16)ime;
-        count = q->count;
-        if (count <= 31) {
-            u32 *destination = q->entries[count];
-            *(u16 *)&q->count = count + 1;
-            *destination++ = (u16)blend;
-            *destination++ = (u32)&REG_BLDALPHA;
-            *destination = 0x20000;
-        }
-        *ime = saved;
-    }
-    /* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
-    do {
-        layer = map->anim;
-    } while (0);
-    for (i = 0; i < 16; i++) {
-        layer->paused = saved_flags[i];
-        layer++;
-    }
-    menu->suspended = 0;
-    Event_StartScreenTransition();
-    Event_WaitTransitionFrames();
-    field->transition_frames = saved_status;
-    field->view_center->paused = 0;
+		q = &gIoWriteQueue;
+		/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
+		do
+		{
+			ime = &REG_IME;
+			saved = *ime;
+		} while (0);
+		*ime = (u16)ime;
+		count = q->count;
+		if (count <= 31)
+		{
+			u32 *destination = q->entries[count];
+			*(u16 *)&q->count = count + 1;
+			*destination++ = (u16)blend;
+			*destination++ = (u32)&REG_BLDALPHA;
+			*destination = 0x20000;
+		}
+		*ime = saved;
+	}
+	/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
+	do
+	{
+		layer = map->anim;
+	} while (0);
+	for (i = 0; i < 16; i++)
+	{
+		layer->paused = saved_flags[i];
+		layer++;
+	}
+	menu->suspended = 0;
+	Event_StartScreenTransition();
+	Event_WaitTransitionFrames();
+	field->transition_frames = saved_status;
+	field->view_center->paused = 0;
 }
 
 void BattleFx_UpdateObjectVisibilityBounds(void)
 {
-    /* FAKEMATCH: needed to match: the discarded object lookup remains before the runtime object address load. */
-    struct ObjectRuntime *object;
-    s32 x;
-    s32 y;
-    s32 left;
-    s32 right;
-    s32 top;
-    s32 bottom;
-    u32 id;
+	/* FAKEMATCH: needed to match: the discarded object lookup remains before the runtime object address load. */
+	struct ObjectRuntime *object;
+	s32					  x;
+	s32					  y;
+	s32					  left;
+	s32					  right;
+	s32					  top;
+	s32					  bottom;
+	u32					  id;
 
-    Object_GetById(gGameState.selected_actor);
-    object = (struct ObjectRuntime *)gEventWork->view_center;
-    x = object->x;
-    left = x - (320 << 16);
-    right = x + (320 << 16);
-    y = object->z;
-    top = y - (600 << 16);
-    bottom = y + (400 << 16);
+	Object_GetById(gGameState.selected_actor);
+	object = (struct ObjectRuntime *)gEventWork->view_center;
+	x = object->x;
+	left = x - (320 << 16);
+	right = x + (320 << 16);
+	y = object->z;
+	top = y - (600 << 16);
+	bottom = y + (400 << 16);
 
-    id = 8;
-    do {
-        object = ObjectTable_Get(id);
+	id = 8;
+	do
+	{
+		object = ObjectTable_Get(id);
 
-        if (object != 0) {
-            s32 ox = object->x;
-            s32 oy = object->z;
+		if (object != 0)
+		{
+			s32 ox = object->x;
+			s32 oy = object->z;
 
-            if (ox < left || ox > right ||
-                oy < top || oy > bottom) {
-                object->animation_kind = 0;
-            } else {
-                object->animation_kind = 1;
-            }
-        }
-        id++;
-    } while (id <= 65);
+			if (ox < left || ox > right || oy < top || oy > bottom)
+			{
+				object->animation_kind = 0;
+			}
+			else
+			{
+				object->animation_kind = 1;
+			}
+		}
+		id++;
+	} while (id <= 65);
 }
 
 void BattleFx_RunVisibilityTransition(void)
 {
-    struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
+	struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
 
-    if (field->mode == 3) {
-        Scheduler_EnableUnmaskedOverlayCallbacks();
-        BattleFx_UpdateObjectVisibilityBounds();
-        Battle_InitializeRenderObject();
-        BattleFx_ScheduleRatioTransition(0x9d89, 6);
-        if (gKeysHeld & KEY_L) {
-            do {
-                WaitFrames(1);
-            } while (gKeysHeld & KEY_L);
-        }
-        BattleFx_ScheduleRatioTransition(0x10000, 6);
-        Scheduler_DisableOverlayCallbacks();
-    }
+	if (field->mode == 3)
+	{
+		Scheduler_EnableUnmaskedOverlayCallbacks();
+		BattleFx_UpdateObjectVisibilityBounds();
+		Battle_InitializeRenderObject();
+		BattleFx_ScheduleRatioTransition(0x9d89, 6);
+		if (gKeysHeld & KEY_L)
+		{
+			do
+			{
+				WaitFrames(1);
+			} while (gKeysHeld & KEY_L);
+		}
+		BattleFx_ScheduleRatioTransition(0x10000, 6);
+		Scheduler_DisableOverlayCallbacks();
+	}
 }

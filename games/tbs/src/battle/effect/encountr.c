@@ -55,11 +55,11 @@ struct EncounterZone
 	u8	weights[8]; // 各グループの重み
 };
 
-extern struct EventWork		 *gEventWork;
-extern struct EncounterZone	  Encounter_EnemyGroupTable[];
-struct BtlUnit				 *UnitGetFar(s32 unit);
-u32							  Random16(void);
-void						  BattleFx_SelectBattleCue(s32 zone);
+extern struct EventWork	   *gEventWork;
+extern struct EncounterZone Encounter_EnemyGroupTable[];
+struct BtlUnit			   *UnitGetFar(s32 unit);
+u32							Random16(void);
+void						BattleFx_SelectBattleCue(s32 zone);
 
 //--------------------------------------------------------------------------
 // 今のマップと部屋に合う規則から、出現テーブル番号の並びを作る

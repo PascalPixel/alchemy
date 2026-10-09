@@ -8,7 +8,7 @@
 struct FieldActor;
 
 struct FieldActor *Engine_ObjectCreate(s32, s32, s32, s32);
-void Engine_ActorSetSpriteFlags(struct FieldActor *, s32);
-void ObjectGroup_SetChildValue(struct FieldActor *, s32);
+void			   Engine_ActorSetSpriteFlags(struct FieldActor *, s32);
+void			   ObjectGroup_SetChildValue(struct FieldActor *, s32);
 
 #endif

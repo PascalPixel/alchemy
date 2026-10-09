@@ -6,7 +6,7 @@
 struct DispatchObject;
 
 void *ObjectDispatch_FindFreeObject(void);
-void ObjectDispatch_Release(struct DispatchObject *object);
-void ObjectDispatch_InitializeFar(struct DispatchObject *object, const s32 *script);
+void  ObjectDispatch_Release(struct DispatchObject *object);
+void  ObjectDispatch_InitializeFar(struct DispatchObject *object, const s32 *script);
 
 #endif

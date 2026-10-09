@@ -35,8 +35,8 @@
 #include "menu_list.h"
 #include "btlpty.h"
 
-void UiWork_PushValueSlotFar(s32, s32);
-struct BtlAct * BtlActGet(s32 action_id);
+void				   UiWork_PushValueSlotFar(s32, s32);
+struct BtlAct		  *BtlActGet(s32 action_id);
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
 
@@ -95,7 +95,7 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *req, s32 retry)
 	u8							 tgt_mode;
 
 	// 0-255 の乱数で、重みの表から行動表の番号を引く
-	s32 WeightRnd(u8 *weights)
+	s32 WeightRnd(u8 * weights)
 	{
 		s32 rnd;
 		s32 total;
@@ -421,7 +421,7 @@ void BattleEvent_Playback(void)
 	struct BattleEventState *ev = &work->events;
 
 	// キャラのタイルを消す
-	void ClrRecTiles(struct AnimationObject *rec, s32 value)
+	void ClrRecTiles(struct AnimationObject * rec, s32 value)
 	{
 		Iwram_ClearWords(
 			(void *)(OBJ_VRAM + gVramBlockCache[rec->slot].offset), rec->width * rec->height);
@@ -509,7 +509,8 @@ void BattleEvent_Playback(void)
 						if (ev->pending_cue > 0)
 							AudioCommand_PlayFar(ev->pending_cue);
 						ev->actor_id = ev->queue.operands[i];
-						ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(ev->actor_id)->object, POSE_DAMAGE);
+						ObjectDispatch_ApplyArgumentToChildrenFar(
+							BtlObjGet(ev->actor_id)->object, POSE_DAMAGE);
 						ev->phase = PLAY_HIT;
 						ev->timer = 0;
 						break;
@@ -749,34 +750,37 @@ void BattleEvent_Playback(void)
 
 u32 BattleEventRuntime_Reset(void)
 {
-    struct BattleEventState *events;
+	struct BattleEventState *events;
 
-    events = &BtlWk->events;
-    events->phase = BATTLE_PLAYBACK_IDLE;
-    events->queue.count = 0;
-    events->event_index = 0;
-    events->timer = 0;
-    events->queue.target_index = 0;
-    events->pending_cue = 0x86;
-    events->flags = 0;
+	events = &BtlWk->events;
+	events->phase = BATTLE_PLAYBACK_IDLE;
+	events->queue.count = 0;
+	events->event_index = 0;
+	events->timer = 0;
+	events->queue.target_index = 0;
+	events->pending_cue = 0x86;
+	events->flags = 0;
 }
 
 s32 BattleEventRuntime_WaitForReady(void)
 {
-    s32 state;
-    struct BattleEventState *events;
+	s32						 state;
+	struct BattleEventState *events;
 
-    events = &BtlWk->events;
-    state = events->phase;
-    if (state == BATTLE_PLAYBACK_IDLE) {
-        events->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
-        state = BATTLE_PLAYBACK_RESOLVE_TARGET;
-    }
-    if (state != BATTLE_PLAYBACK_READY) {
-        do {
-            WaitFrames(1U);
-        } while (events->phase != BATTLE_PLAYBACK_READY);
-    }
-    Scheduler_RemoveCallback(BattleEvent_Playback);
-    return BattleEventRuntime_Reset();
+	events = &BtlWk->events;
+	state = events->phase;
+	if (state == BATTLE_PLAYBACK_IDLE)
+	{
+		events->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
+		state = BATTLE_PLAYBACK_RESOLVE_TARGET;
+	}
+	if (state != BATTLE_PLAYBACK_READY)
+	{
+		do
+		{
+			WaitFrames(1U);
+		} while (events->phase != BATTLE_PLAYBACK_READY);
+	}
+	Scheduler_RemoveCallback(BattleEvent_Playback);
+	return BattleEventRuntime_Reset();
 }

@@ -26,8 +26,8 @@
 #include "motobj.h"
 #include "item.h"
 #include "io_reg.h"
-s32 GameFlag_TestFar(s32 flag);
-struct BtlAct * BtlActGet(s32 action_id);
+s32					   GameFlag_TestFar(s32 flag);
+struct BtlAct		  *BtlActGet(s32 action_id);
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 #define Battle_GetTaggedSlotValue ((s32 (*)(s32))Battle_GetTaggedSlotValue)
@@ -55,13 +55,13 @@ struct ItemDefinition *Item_GetDirectFar(s32 item);
 #define MIKATA_MAX 7   // 仲間の番号の上限
 #define TGT_MAX 14
 
-void					   UiWork_PushValueSlotFar(s32 value, s32 slot);
-void					   UiText_ShowMessageAndWaitCoreFar(s32 message);
-void					   Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
-void					   Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
-s32						   BattleEventRuntime_SchedulePhase(s32 frames);
-void					   AudioCommand_PlayFar(s32 cue);
-void					   ObjectDispatch_ApplyArgumentToChildrenFar(struct MotionObject *object, s32 mode);
+void UiWork_PushValueSlotFar(s32 value, s32 slot);
+void UiText_ShowMessageAndWaitCoreFar(s32 message);
+void Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
+void Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
+s32	 BattleEventRuntime_SchedulePhase(s32 frames);
+void AudioCommand_PlayFar(s32 cue);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct MotionObject *object, s32 mode);
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 void					   BattlePresentation_WaitForAdvance(void);
 

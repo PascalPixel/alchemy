@@ -3,10 +3,10 @@
 
 #include "types.h"
 
-u8 *ColossoLogRollingStage_GetScriptData(void);
-s32 ColossoLogRollingStage_GetMessageData(void);
-u8 *ColossoLogRollingStage_GetActorData(void);
-u8 *ColossoLogRollingStage_GetEffectData(void);
+u8	*ColossoLogRollingStage_GetScriptData(void);
+s32	 ColossoLogRollingStage_GetMessageData(void);
+u8	*ColossoLogRollingStage_GetActorData(void);
+u8	*ColossoLogRollingStage_GetEffectData(void);
 void ColossoLogRollingStage_ResetAndRunSceneTask(void);
 void ColossoLogRollingStage_StartSceneTask(void);
 void ColossoLogRollingStage_WaitForSceneTask(void);
@@ -20,9 +20,9 @@ void ColossoLogRollingStage_NoopSetupHook(void);
 void ColossoLogRollingStage_RunSetupHook(void);
 void ColossoLogRollingStage_ActivateClearObstacleActors(void);
 void ColossoLogRollingStage_ShowActorPositionMessage(void);
-s32 ColossoLogRollingStage_CheckObstacleDestination(s32 x, s32 z);
-s32 ColossoLogRollingStage_CheckPathClearance(s32 x, s32 y);
-s32 ColossoLogRollingStage_SetSceneEventValues(void);
+s32	 ColossoLogRollingStage_CheckObstacleDestination(s32 x, s32 z);
+s32	 ColossoLogRollingStage_CheckPathClearance(s32 x, s32 y);
+s32	 ColossoLogRollingStage_SetSceneEventValues(void);
 void ColossoLogRollingStage_ConfigureSceneEventEffect(void);
 void ColossoLogRollingStage_WaitForSceneEventTask(void);
 void ColossoLogRollingStage_OffsetActiveActor(void);
@@ -30,8 +30,8 @@ void ColossoLogRollingStage_ClampAndOffsetActiveActor(void);
 void ColossoLogRollingStage_NoopSceneEventHook(void);
 void ColossoLogRollingStage_RunSceneEventIfReady(void);
 void ColossoLogRollingStage_FinishOrContinueSceneEvent(void);
-s32 ColossoLogRollingStage_GetSceneEventState(void);
-s32 ColossoLogRollingStage_AdvanceParticleMotion();
+s32	 ColossoLogRollingStage_GetSceneEventState(void);
+s32	 ColossoLogRollingStage_AdvanceParticleMotion();
 void ColossoLogRollingStage_SpawnPeriodicParticle(void);
 void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z);
 void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x, s32 z);
@@ -40,7 +40,7 @@ void ColossoLogRollingStage_RestoreActorPositions(void);
 void ColossoLogRollingStage_MarkSceneProgress(void);
 void ColossoLogRollingStage_SelectNearestObstacle(void);
 void ColossoLogRollingStage_ClearSavedActorPositions(void);
-s32 ColossoLogRollingStage_RunStateInteraction(s32 actor_handle, s32 interaction_base);
+s32	 ColossoLogRollingStage_RunStateInteraction(s32 actor_handle, s32 interaction_base);
 void ColossoLogRollingStage_InitializeStateInteraction(s32 actor_handle, s32 interaction_base);
 void ColossoLogRollingStage_ApplyItemToMatchingSlots(s32 handle, s32 item);
 void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter);
@@ -56,10 +56,10 @@ void ColossoLogRollingStage_NoopSceneHook(void);
 void ColossoLogRollingStage_SetBalanceStateReady(void);
 void ColossoLogRollingStage_WaitForBalanceState(void);
 void ColossoLogRollingStage_SpawnRandomSceneEffect();
-s32 ColossoLogRollingStage_RaiseLinkedSceneEffect();
-s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_handle);
-void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_actor, s32 mode, s32 centre,
-                   s32 extra, s32 third_actor, s32 fourth_actor);
+s32	 ColossoLogRollingStage_RaiseLinkedSceneEffect();
+s32	 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_handle);
+void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_actor, s32 mode,
+	s32 centre, s32 extra, s32 third_actor, s32 fourth_actor);
 void ColossoLogRollingStage_InitializeSceneControl(s32 resource);
 void ColossoLogRollingStage_PushStagedActor(void);
 s32 *ColossoLogRollingStage_FindActorAhead(void);

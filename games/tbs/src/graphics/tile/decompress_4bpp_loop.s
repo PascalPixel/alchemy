@@ -1,3 +1,4 @@
+@ C2: rrxs refills the bitstream; lsrs ip, ip, #1 feeds bcc/bcs directly.
 .syntax unified
 	.arm
 .L_08015b38:

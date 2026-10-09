@@ -2294,9 +2294,11 @@ s32 Scene_RunEntrySetup(void)
 
                 /* FAKEMATCH: volatile empty asm barrier on the zero: movs r3, #0 stays before the register address load as native; as a plain empty asm the address load goes first (1 of 1689 rows differ); arm_reorg counts it as 4 bytes, so with no asm here the pools move (81 rows differ) */
                 asm volatile("" : "+l"(zero));
-                REG_BLDCNT = zero;
-                /* FAKEMATCH: keeps the store before the next call setup. */
-                asm volatile("");
+                /* FAKEMATCH: needed to match: this CSE block keeps the blend
+                 * store before the next call setup, at the same size and frame. */
+                do {
+                    REG_BLDCNT = zero;
+                } while (0);
             }
             if (Engine_GameFlagIsSet(0x300)) {
                 Engine_MapCopyCellsTo(15, 96, 9, 96, 3, 3);

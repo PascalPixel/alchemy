@@ -487,8 +487,16 @@ void WaitFrames(s32 frames)
         do {
             base = restore;
         } while (0);
-        /* FAKEMATCH: an operand-only barrier keeps the copy of sp in sl. */
-        __asm__ volatile("" : "+r"(base));
+        /* FAKEMATCH: needed to match: the one-pass copy guard retains the
+         * current-SP copy in sl. A plain restore loses that copy and differs
+         * by five aligned instructions (403 native, 402 built, 400 common),
+         * shrinking 0x434 bytes to 0x430. The redundant guard ends CSE at the
+         * copy without emitting an extra comparison. */
+        do {
+            if (base == sp)
+                break;
+            base = sp;
+        } while (0);
         /* FAKEMATCH: needed to match: the volatile reread keeps this saved-size
          * load separate from the conditional read (7 aligned differences
          * without this qualification). */

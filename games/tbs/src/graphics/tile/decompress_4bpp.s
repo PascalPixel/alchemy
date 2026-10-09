@@ -1,3 +1,4 @@
+@ C2: rrx refills the bitstream; add r5, pc, #40 and ldm load adjacent data as a block.
 .syntax unified
 .text
 	.arm

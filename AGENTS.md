@@ -147,7 +147,11 @@ A game is finished when all six hold (Pascal, 2026-10-08):
   swi; computed pc into code; stores into code; unpaired multiply halves; a
   pc-relative block load of data; a mode switch inside a function; movs with
   no shift, where their copy-and-test is subs #0; ldm or stm writing back
-  off sp, other than a block copy's list from r0 or a doubleword pair) or a
+  off sp, other than a block copy's list from r0 or a doubleword pair; a
+  conditional branch on a data-processing instruction's flags with no
+  compare, where agscc's branch patterns always emit cmp or cmn; one literal
+  pool shared by two functions, where GCC flushes its pool at each function's
+  end) or a
   linkage no procedure-call standard produces; anything else is not-yet-C
   until it matches as C. Whole aligned 8-byte far-call stubs count as veneers.
   Padding a source marks as carrying no credit does not count as code. It

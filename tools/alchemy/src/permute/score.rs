@@ -37,6 +37,11 @@ fn parse_objdump(text: &str) -> Result<Vec<Line>, String> {
             continue;
         }
         if row.starts_with("R_ARM_") {
+            // AAELF32's V4BX relocation marks a BX instruction for optional
+            // ARMv4 linker rewriting. It does not relocate its register operand.
+            if row.split_whitespace().next() == Some("R_ARM_V4BX") {
+                continue;
+            }
             if !["R_ARM_THM_CALL", "R_ARM_CALL", "R_ARM_ABS32"].iter().any(|kind| row.starts_with(kind)) {
                 return Err(format!("unsupported ARM relocation: {row}"));
             }
@@ -488,6 +493,19 @@ mod tests {
         assert_eq!(score.weighted, 0);
         weighted(&candidate, &target, options, &mut score);
         assert_eq!(score.weighted, REGALLOC, "symbol wildcard is directional, like compatibility");
+    }
+
+    #[test]
+    fn objdump_v4bx_keeps_the_branch_register() {
+        let target = parse_objdump("  0:\tbx\tlr\n  0: R_ARM_V4BX\t*ABS*\n").unwrap();
+        assert_eq!(target.len(), 1);
+        assert_eq!(target[0].row, "bx\tlr");
+        assert!(!target[0].has_symbol);
+        let candidate = parse_objdump("  0:\tbx\tr3\n  0: R_ARM_V4BX\t*ABS*\n").unwrap();
+        let mut score = Score::default();
+        weighted(&target, &candidate, Options::default(), &mut score);
+        assert_eq!(score.weighted, REGALLOC);
+        assert!(parse_objdump("  0:\tbx\tlr\n  0: R_ARM_UNKNOWN\t*ABS*\n").is_err());
     }
 
     #[test]

@@ -83,11 +83,15 @@ void InventoryMenu_NoOp(void)
 
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
 {
+    /* FAKEMATCH: Reusing the expired owner value for the saved unit keeps
+       owner in r8 and style in r10; a separate saved pointer swaps those
+       registers (44 aligned instructions differ). The type-6 buffer alias
+       preserves the native shared draw tail; without it the body adds
+       three instructions and seven aligned instructions differ. */
     struct InventoryMenuState *menu = gMenuWork;
-    register s32 style asm("sl") = 0; /* FAKEMATCH: the ROM allocates owner (r8) before style (sl); style's 19 references over 246 insns outrank owner's 4 over 28 */
+    s32 style = 0;
     struct BtlUnit *state = UnitGetFar(owner);
     s32 item = state->inventory[slot];
-    struct BtlUnit *saved;
     s32 equipped;
 
     if (mode == 1)
@@ -112,8 +116,8 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
 
             state = UnitGetFar(target);
             size = BATTLE_UNIT_SIZE;
-            saved = MemAlloc(size);
-            Iwram_CopyWords(saved, state, size);
+            owner = (s32)MemAlloc(size);
+            Iwram_CopyWords((void *)owner, state, size);
             equipped = Inventory_RemoveFirstUnflagged(target);
             if (equipped != 0) {
                 item &= ~0x200;
@@ -127,8 +131,8 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
             } else {
                 Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);
             }
-            Iwram_CopyWords(state, saved, size);
-            MemFree(saved);
+            Iwram_CopyWords(state, (void *)owner, size);
+            MemFree((void *)owner);
         }
         break;
     case 6:
@@ -137,11 +141,13 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
             Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);
         } else {
             s32 size;
+            void *buffer;
 
             state = UnitGetFar(target);
             size = BATTLE_UNIT_SIZE;
-            saved = MemAlloc(size);
-            Iwram_CopyWords(saved, state, size);
+            owner = (s32)MemAlloc(size);
+            buffer = (void *)owner;
+            Iwram_CopyWords(buffer, state, size);
             equipped = Inventory_RemoveFirstUnflagged(target);
             if (equipped != 0) {
                 equipped = Inventory_AddItemFar(target, item);
@@ -154,8 +160,9 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
             } else {
                 Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);
             }
-            Iwram_CopyWords(state, saved, size);
-            MemFree(saved);
+            Iwram_CopyWords(state, (void *)owner, size);
+            buffer = (void *)owner;
+            MemFree(buffer);
         }
         break;
     }

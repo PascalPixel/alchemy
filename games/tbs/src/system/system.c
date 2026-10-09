@@ -354,12 +354,23 @@ void WaitFrames(s32 frames)
     } while (0);
     if (base < Ram_FrameWaitStackTop) {
         u8 *top = Ram_FrameWaitStackTop;
+        u8 *next;
 
         gSavedStackSize = top - base;
         Dma_Set(base, gSavedStack, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
-        /* FAKEMATCH: an operand-only barrier adds a use of top, which gives it r4 ahead of the DMA control constant. */
-        __asm__ volatile("" : : "r"(top));
-        sp = top;
+        /* FAKEMATCH: needed to match: XOR cancellation defers the top-copy
+         * guard until after allocation, retaining top in r4 across DMA.
+         * Without this lifetime boundary, top and the DMA control constant
+         * exchange r4/r5 (12 aligned differences, same 0x434-byte extent).
+         * The redundant guard emits no extra comparison or copy. */
+        next = (u8 *)((u32)top ^ (u32)base);
+        next = (u8 *)((u32)next ^ (u32)base);
+        sp = next;
+        do {
+            if (top == sp)
+                break;
+            top = sp;
+        } while (0);
     }
     for (i = 0; i < frames; i++) {
         gSchedulerStatus = 1;

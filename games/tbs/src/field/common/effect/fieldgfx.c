@@ -180,13 +180,16 @@ void FieldMotes_Start(void)
     struct Mote *mote;
     u8 *tiles;
     u32 i;
+    u32 size;
     volatile u32 zero;
     volatile u16 *reg;
 
-    work = Runtime_AllocateBlock(29, 0x410);
+    size = 0x410;
+    work = Runtime_AllocateBlock(29, size);
     mote = work->motes;
-    { register u32 z asm("r1") = 0; /* FAKEMATCH: the cleared word goes through r1 */
-    zero = z; }
+    /* FAKEMATCH: needed to match: reusing the allocation size for the cleared word keeps it in r1. */
+    size = 0;
+    zero = size;
     Dma_Set((void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x104, REG_DMA3);
     tiles = Runtime_AllocateBlock(14, 0x400);
     Resource_DecodeByteLz(FieldFx_MoteTiles, tiles);
@@ -195,16 +198,19 @@ void FieldMotes_Start(void)
     Runtime_ReleaseHeapBlock(14);
     for (i = 0; i < 32; i++) {
         s32 *pos = ((struct MapScrollWork *)gMapWork[0])->origin;
-        register s32 *p asm("r1") = &mote->state; /* FAKEMATCH: steps the fields through r1 */
-        s32 x, z;
-        *p++ = 0;
-        *p++ = 0x40000400;
-        *p = 0xd400;
-        x = pos[0];
+        /* FAKEMATCH: needed to match: reusing the integer field cursor for the height x argument keeps the stores in r1. */
+        u32 p = (u32)mote;
+        s32 z;
+        *(s32 *)p = 0;
+        p += sizeof(s32);
+        *(s32 *)p = 0x40000400;
+        p += sizeof(s32);
+        *(s32 *)p = 0xd400;
+        p = pos[0];
         z = pos[2];
-        mote->x = x;
+        mote->x = (s32)p;
         mote->z = z;
-        mote->y = Map_GetTerrainHeightFar(0, x >> 16, z >> 16) << 16;
+        mote->y = Map_GetTerrainHeightFar(0, (s32)p >> 16, z >> 16) << 16;
         mote->phase = (i & 15) + 1;
         mote++;
     }

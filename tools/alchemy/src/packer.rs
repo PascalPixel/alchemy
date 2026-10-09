@@ -11,7 +11,7 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 const USAGE: &str = "usage: alchemy check packer [--suggest]\n\
-Checks PACKER byte rows against the edition-selected generated payloads\n\
+Checks PACKER byte rows and explicit source fill against selected payloads\n\
 and the resource directory's reused output buffer, in all twelve builds.\n\
 Each row names its last writer: left in the buffer by SYMBOL+0xOFFSET.\n\
 Unknown claims fail. --suggest prints TSV evidence for the last writer.\n\
@@ -35,7 +35,7 @@ pub fn entry(args: &[String]) -> ExitCode {
     }
     match run(crate::compiler::routing::root(), suggest) {
         Ok(count) => {
-            let summary = format!("packer: OK, {count} leftover rows proven over twelve editions");
+            let summary = format!("packer: OK, {count} tagged claims proven over twelve editions");
             if suggest {
                 eprintln!("{summary}");
             } else {
@@ -88,11 +88,20 @@ struct Row {
 }
 
 #[derive(Debug)]
+struct Fill {
+    line: usize,
+    offset: usize,
+    end: usize,
+    byte: u8,
+}
+
+#[derive(Debug)]
 struct Payload {
     source: String,
     /// What this resource actually writes. Its tagged tail is never a write.
     bytes: Vec<u8>,
     rows: Vec<Row>,
+    fill: Option<Fill>,
 }
 
 #[derive(Default)]
@@ -102,6 +111,7 @@ struct SourceBlock {
     generated: bool,
     unsupported: bool,
     rows: Vec<Row>,
+    fill: Option<Fill>,
     locals: BTreeMap<String, usize>,
     offsets: Vec<(usize, String)>,
     alignment: Option<(usize, u8)>,
@@ -137,11 +147,12 @@ impl SourceBlock {
                     source: source.into(),
                     bytes: block.bytes,
                     rows: block.rows,
+                    fill: block.fill,
                 },
             );
-        } else if !block.rows.is_empty() {
+        } else if !block.rows.is_empty() || block.fill.is_some() {
             return Err(format!(
-                "{source}: {label}: PACKER row has no complete generated payload"
+                "{source}: {label}: PACKER claim has no complete generated payload"
             ));
         }
         Ok(())
@@ -316,17 +327,47 @@ fn editable(root: &Path, path: &Path) -> Result<Vec<u8>, String> {
             path.display()
         ));
     }
-    fs::read(root.join(path)).map_err(|error| format!("{}: {error}", path.display()))
+    let canonical_root = root
+        .canonicalize()
+        .map_err(|error| format!("{}: {error}", root.display()))?;
+    let expected = canonical_root.join(path);
+    let resolved = expected
+        .canonicalize()
+        .map_err(|error| format!("{}: {error}", path.display()))?;
+    // Reject file and directory aliases, even inside games/. An editable
+    // name must identify the input itself, not a symlink to private bytes.
+    if resolved != expected {
+        return Err(format!(
+            "{} is not an editable asset input: symlink paths under games/ are unsupported",
+            path.display()
+        ));
+    }
+    fs::read(resolved).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+fn source_fill(directive: &str, arguments: &str, tag: &str) -> Option<u8> {
+    let fill = match tag.trim() {
+        "zero fill, not an earlier stream's bytes" => 0,
+        "0xff fill, not an earlier stream's bytes" => 0xff,
+        _ => return None,
+    };
+    let fields: Vec<_> = arguments.split(',').map(str::trim).collect();
+    (directive == ".balign"
+        && fields.len() == 2
+        && fields[0].parse::<usize>().ok() == Some(4)
+        && byte_values(fields[1]).ok().as_deref() == Some(&[fill]))
+    .then_some(fill)
 }
 
 /// Collect the actual selected generated payload before each PACKER row.
 /// These file lengths establish the stream boundary, including any source
 /// prefix such as an inline palette. Literal leftovers are kept separate.
-fn payloads(
+fn payloads_collect(
     text: &str,
     source: &str,
     images: &Images,
     read: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+    failures: &mut Vec<String>,
 ) -> Result<BTreeMap<String, Payload>, String> {
     let mut found = BTreeMap::new();
     let mut block = SourceBlock::default();
@@ -337,11 +378,34 @@ fn payloads(
                 (code.trim(), comment.trim())
             });
         let (directive, arguments) = code.split_once(char::is_whitespace).unwrap_or((code, ""));
+        let mut tag = comment.strip_prefix("PACKER:");
+        let mut fill = tag.and_then(|tag| source_fill(directive, arguments, tag));
+        if line.contains("PACKER:")
+            && (tag.is_none() || (directive != ".byte" && fill.is_none()) || block.label.is_none())
+        {
+            failures.push(format!(
+                "{source}:{}: PACKER tag needs a .byte row or explicit source fill in a linked generated payload",
+                number + 1
+            ));
+            // The annotation fails even when its directive is ordinary
+            // alignment. Keep collecting other supported byte claims.
+            if directive == ".byte" {
+                block.unsupported = true;
+            }
+            tag = None;
+            fill = None;
+        }
         if let Some(name) = code
             .strip_suffix(':')
             .filter(|name| !name.is_empty() && !name.contains(char::is_whitespace))
         {
             if name.starts_with(".L") && block.label.is_some() {
+                if block.fill.is_some() {
+                    return Err(format!(
+                        "{source}:{}: data follows tagged source fill",
+                        number + 1
+                    ));
+                }
                 block.align();
                 block.locals.insert(name.into(), block.bytes.len());
                 continue;
@@ -359,8 +423,29 @@ fn payloads(
         if block.label.is_none() {
             continue;
         }
-        let tag = comment.strip_prefix("PACKER:");
-        if let (".byte", Some(tag)) = (directive, tag) {
+        if let Some(fill) = fill {
+            if block.fill.is_some() || block.alignment.is_some() {
+                block.unsupported = true;
+            }
+            let offset = block
+                .rows
+                .last()
+                .map_or(block.bytes.len(), |row| row.offset + row.bytes.len());
+            let (_, address) = images.place(block.label.as_deref().unwrap())?.unwrap();
+            let address = address as usize;
+            block.fill = Some(Fill {
+                line: number + 1,
+                offset,
+                end: (address + offset).next_multiple_of(4) - address,
+                byte: fill,
+            });
+        } else if let (".byte", Some(tag)) = (directive, tag) {
+            if block.fill.is_some() {
+                return Err(format!(
+                    "{source}:{}: data follows tagged source fill",
+                    number + 1
+                ));
+            }
             let offset = block
                 .rows
                 .last()
@@ -377,9 +462,9 @@ fn payloads(
                 .strip_prefix('"')
                 .and_then(|name| name.strip_suffix('"'));
             if let Some(name) = name.filter(|name| generated_name(name)) {
-                if !block.rows.is_empty() {
+                if !block.rows.is_empty() || block.fill.is_some() {
                     return Err(format!(
-                        "{source}:{}: generated data follows PACKER row",
+                        "{source}:{}: generated data follows tagged tail",
                         number + 1
                     ));
                 }
@@ -389,7 +474,9 @@ fn payloads(
             } else {
                 block.unsupported = true;
             }
-        } else if matches!(directive, ".byte" | "map_header" | "map_layer") && block.rows.is_empty()
+        } else if matches!(directive, ".byte" | "map_header" | "map_layer")
+            && block.rows.is_empty()
+            && block.fill.is_none()
         {
             match byte_values(arguments) {
                 Ok(literals)
@@ -401,7 +488,7 @@ fn payloads(
                 }
                 _ => block.unsupported = true,
             }
-        } else if directive == "map_block" && block.rows.is_empty() {
+        } else if directive == "map_block" && block.rows.is_empty() && block.fill.is_none() {
             let fields: Vec<&str> = arguments.split(',').map(str::trim).collect();
             if fields.first().copied() != block.label.as_deref() || fields.len() > 2 {
                 block.unsupported = true;
@@ -477,7 +564,19 @@ fn placed(payload: &Payload, block: &[u8]) -> Result<(), String> {
         }
         offset = end;
     }
-    if !payload.rows.is_empty()
+    if let Some(fill) = &payload.fill {
+        if fill.offset != offset
+            || block.len() != fill.end
+            || block
+                .get(fill.offset..fill.end)
+                .is_none_or(|bytes| bytes.iter().any(|byte| *byte != fill.byte))
+        {
+            return Err(format!(
+                "tagged source fill at +0x{:x} differs from its linked alignment boundary or bytes",
+                fill.offset
+            ));
+        }
+    } else if !payload.rows.is_empty()
         && (block.len() != payload.bytes.len().next_multiple_of(4)
             || block[offset..].iter().any(|byte| *byte != 0))
     {
@@ -590,7 +689,9 @@ fn prove_row(
 fn run(root: &Path, suggest: bool) -> Result<usize, String> {
     let linked = crate::dead::Linked::read(root)?;
     let mut failures = Vec::new();
+    let mut source_failures = Vec::new();
     let mut proven = 0;
+    let mut fills_proven = 0;
     let encoded = std::cell::RefCell::new(BTreeMap::<(PathBuf, String), Vec<u8>>::new());
     for id in TARGET_IDS {
         let target = target_for(id);
@@ -646,7 +747,21 @@ fn run(root: &Path, suggest: bool) -> Result<usize, String> {
                 encoded.borrow_mut().insert(key, bytes.clone());
                 Ok(bytes)
             };
-            for (name, payload) in payloads(&selected, source, &images, &read)? {
+            let mut diagnostics = Vec::new();
+            let payloads = payloads_collect(&selected, source, &images, &read, &mut diagnostics);
+            source_failures.extend(
+                diagnostics
+                    .into_iter()
+                    .map(|error| format!("{error} ({id})")),
+            );
+            let payloads = match payloads {
+                Ok(payloads) => payloads,
+                Err(error) => {
+                    source_failures.push(format!("{source} ({id}): {error}"));
+                    continue;
+                }
+            };
+            for (name, payload) in payloads {
                 if all.insert(name.clone(), payload).is_some() {
                     return Err(format!(
                         "{name} has several selected generated definitions ({id})"
@@ -654,11 +769,30 @@ fn run(root: &Path, suggest: bool) -> Result<usize, String> {
                 }
             }
         }
-        if !all.values().any(|payload| !payload.rows.is_empty()) {
+        if !all
+            .values()
+            .any(|payload| !payload.rows.is_empty() || payload.fill.is_some())
+        {
             continue;
         }
         let order = images.directory()?;
         for (label, payload) in &all {
+            if let Some(fill) = &payload.fill {
+                let result = placed(
+                    payload,
+                    images
+                        .block(label)?
+                        .ok_or("tagged resource is not linked")?,
+                );
+                if let Err(error) = result {
+                    source_failures.push(format!(
+                        "{}:{} ({id}, {label}): {error}",
+                        payload.source, fill.line
+                    ));
+                } else {
+                    fills_proven += 1;
+                }
+            }
             for row in &payload.rows {
                 if let Err(error) = prove_row(&images, &order, &all, label, row) {
                     let at = format!("{}:{} ({id}, {label})", payload.source, row.line);
@@ -707,13 +841,18 @@ fn run(root: &Path, suggest: bool) -> Result<usize, String> {
             }
         }
     }
-    if failures.is_empty() {
-        Ok(proven)
+    if failures.is_empty() && source_failures.is_empty() {
+        Ok(proven + fills_proven)
     } else {
         Err(format!(
-            "packer: {proven} proven, {} rejected over twelve editions\n{}",
+            "packer: {proven} byte rows proven, {fills_proven} source fills proven, {} byte rows rejected, {} source claims rejected over twelve editions\n{}",
             failures.len(),
-            failures.join("\n")
+            source_failures.len(),
+            failures
+                .into_iter()
+                .chain(source_failures)
+                .collect::<Vec<_>>()
+                .join("\n")
         ))
     }
 }
@@ -722,6 +861,21 @@ fn run(root: &Path, suggest: bool) -> Result<usize, String> {
 mod tests {
     use super::*;
     use crate::elf::Symbol;
+
+    fn payloads(
+        text: &str,
+        source: &str,
+        images: &Images,
+        read: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+    ) -> Result<BTreeMap<String, Payload>, String> {
+        let mut failures = Vec::new();
+        let found = payloads_collect(text, source, images, read, &mut failures)?;
+        if failures.is_empty() {
+            Ok(found)
+        } else {
+            Err(failures.join("\n"))
+        }
+    }
 
     fn image(blocks: &[(&str, Vec<u8>)]) -> Images {
         let base = 0x0800_0000;
@@ -762,6 +916,7 @@ mod tests {
         Payload {
             source: "games/tbs/src/a.s".into(),
             bytes: bytes.into(),
+            fill: None,
             rows: row
                 .into_iter()
                 .map(|(row_bytes, comment)| Row {
@@ -940,6 +1095,133 @@ mod tests {
             assert!(editable(root, Path::new(forbidden))
                 .unwrap_err()
                 .contains("not an editable"));
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn recipe_symlinks_cannot_supply_inputs() {
+        use std::os::unix::fs::symlink;
+
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        fs::create_dir_all(root.join("games/tbs/src")).unwrap();
+        fs::create_dir_all(root.join("private")).unwrap();
+        fs::write(root.join("private/answer.gba"), [1, 2, 3]).unwrap();
+        fs::write(root.join("private/table.tsv"), "value:u8\n7\n").unwrap();
+        fs::write(root.join("games/tbs/src/table.tsv"), "value:u8\n8\n").unwrap();
+        symlink(
+            root.join("private/answer.gba"),
+            root.join("games/tbs/src/file.tsv"),
+        )
+        .unwrap();
+        symlink(root.join("private"), root.join("games/tbs/src/directory")).unwrap();
+        symlink(
+            root.join("games/tbs/src/table.tsv"),
+            root.join("games/tbs/src/alias.tsv"),
+        )
+        .unwrap();
+        for alias in ["file.tsv", "directory/table.tsv", "alias.tsv"] {
+            let input = Path::new("games/tbs/src").join(alias);
+            assert!(editable(root, &input).unwrap_err().contains("symlink"));
+        }
+        assert_eq!(
+            editable(root, Path::new("games/tbs/src/table.tsv")).unwrap(),
+            b"value:u8\n8\n"
+        );
+    }
+
+    #[test]
+    fn unsupported_packer_tags_cannot_disappear() {
+        let images = image(&[("Own", vec![1, 2, 3, 4])]);
+        let read = |_: &str| Ok(vec![1, 2, 3]);
+        for row in [
+            ".word 4 @ PACKER: left in the buffer by First+0x3",
+            ".balign 4, 0 @ PACKER: zero fill",
+            ".balign 4, 0 @ PACKER: left in the buffer by First+0x3",
+            "@ PACKER: left in the buffer by First+0x3",
+            ".byte 4 @ prose PACKER: left in the buffer by First+0x3",
+            ".byte 4 /* PACKER: left in the buffer by First+0x3 */",
+            "/* PACKER: left in the buffer by First+0x3 */",
+            "Unknown:\n.byte 4 @ PACKER: left in the buffer by First+0x3",
+        ] {
+            let text = format!("Own:\n.incbin \"graphics/a.4bpp.lz\"\n{row}\n");
+            assert!(payloads(&text, "games/tbs/src/a.s", &images, &read)
+                .unwrap_err()
+                .contains("PACKER tag needs a .byte row"));
+        }
+        let unowned = ".byte 4 @ PACKER: left in the buffer by First+0x3\n";
+        assert!(payloads(unowned, "games/tbs/src/a.s", &images, &read).is_err());
+        let unsupported = "Own:\n.incbin \"graphics/a.4bpp.lz\"\n.word 0\n.byte 4 @ PACKER: left in the buffer by First+0x3\n";
+        assert!(payloads(unsupported, "games/tbs/src/a.s", &images, &read)
+            .unwrap_err()
+            .contains("no complete generated payload"));
+    }
+
+    #[test]
+    fn unsupported_alignment_is_reported_without_hiding_byte_claims() {
+        let images = image(&[("First", vec![1, 2, 3, 4]), ("Own", vec![7, 8, 9, 4])]);
+        let text = "First:\n.incbin \"graphics/first.4bpp.lz\"\n.balign 4, 0 @ PACKER: zero fill\nOwn:\n.incbin \"graphics/own.4bpp.lz\"\n.byte 4 @ PACKER: left in the buffer by First+0x3\n";
+        let read = |name: &str| match name {
+            "graphics/first.4bpp.lz" => Ok(vec![1, 2, 3, 4]),
+            "graphics/own.4bpp.lz" => Ok(vec![7, 8, 9]),
+            _ => panic!("unknown source asset"),
+        };
+        let mut failures = Vec::new();
+        let found =
+            payloads_collect(text, "games/tbs/src/a.s", &images, &read, &mut failures).unwrap();
+        assert_eq!(failures.len(), 1);
+        assert!(failures[0].contains("a.s:3: PACKER tag needs a .byte row"));
+        assert_eq!(
+            prove(&images, &images.directory().unwrap(), &found, "Own"),
+            Ok(())
+        );
+    }
+
+    #[test]
+    fn explicit_source_fill_is_placed_but_never_a_buffer_write() {
+        for (fill, comment) in [
+            (0, "zero fill, not an earlier stream's bytes"),
+            (0xff, "0xff fill, not an earlier stream's bytes"),
+        ] {
+            let images = image(&[
+                ("First", vec![1, 2, 3, 7]),
+                ("Filler", vec![4, 5, 6, fill]),
+                ("Own", vec![9, 9, 9, 7]),
+            ]);
+            let text = format!("First:\n.incbin \"graphics/first.4bpp.lz\"\nFiller:\n.incbin \"graphics/filler.4bpp.lz\"\n.balign 4, {fill} @ PACKER: {comment}\nOwn:\n.incbin \"graphics/own.4bpp.lz\"\n.byte 7 @ PACKER: left in the buffer by First+0x3\n");
+            let read = |name: &str| match name {
+                "graphics/first.4bpp.lz" => Ok(vec![1, 2, 3, 7]),
+                "graphics/filler.4bpp.lz" => Ok(vec![4, 5, 6]),
+                "graphics/own.4bpp.lz" => Ok(vec![9, 9, 9]),
+                _ => panic!("unknown source asset"),
+            };
+            let found = payloads(&text, "games/tbs/src/a.s", &images, &read).unwrap();
+            assert_eq!(found["Filler"].bytes, vec![4, 5, 6]);
+            assert!(found["Filler"].rows.is_empty());
+            assert_eq!(
+                placed(&found["Filler"], images.block("Filler").unwrap().unwrap()),
+                Ok(())
+            );
+            assert!(placed(&found["Filler"], &[4, 5, 6, fill ^ 0xff]).is_err());
+            assert!(placed(&found["Filler"], &[4, 5, 6, fill, 0]).is_err());
+            assert_eq!(
+                prove(&images, &images.directory().unwrap(), &found, "Own"),
+                Ok(())
+            );
+            for operands in [
+                format!("4, {}", fill ^ 0xff),
+                format!("8, {fill}"),
+                format!("4, {fill}, 1"),
+            ] {
+                let bad = text.replace(
+                    &format!(".balign 4, {fill}"),
+                    &format!(".balign {operands}"),
+                );
+                assert!(payloads(&bad, "games/tbs/src/a.s", &images, &read).is_err());
+            }
+            let following = text.replace("\nOwn:", "\n.byte 0\nOwn:");
+            assert!(payloads(&following, "games/tbs/src/a.s", &images, &read).is_err());
         }
     }
 

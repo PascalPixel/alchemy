@@ -69,6 +69,7 @@ SECTIONS
     "*/games/tbs/src/system/resource/decode_2_loop.o"(.text .rodata .data .padding)
     "*/games/tbs/src/system/resource/execute_transfer.o"(.text .rodata .data .padding)
     "*/games/tbs/src/system/resource/patch_thumb_branch.o"(.text .rodata .data .padding)
+    "*/games/tbs/src/system/heapfree.o"(.text .text.* .rodata .data .padding)
     "*/recon/tbs/raw/heapfree.o"(.text .text.* .rodata .data .padding)
     "*/games/tbs/src/system/system.o"(.text)
     "*/games/tbs/src/system/io.o"(.text)

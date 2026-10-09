@@ -1,4 +1,3 @@
-
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode, Stdio};
@@ -143,20 +142,7 @@ fn run(root: &Path, gates: &[&'static str], last: Option<&'static str>) -> Resul
     let logs = root.join("out/verify");
     std::fs::create_dir_all(&logs).map_err(|error| format!("{}: {error}", logs.display()))?;
     let started = Instant::now();
-    let outcomes = std::thread::scope(|scope| {
-        let handles = gates
-            .iter()
-            .map(|&gate| {
-                let executable = &executable;
-                let logs = &logs;
-                scope.spawn(move || run_gate(root, executable, gate, logs))
-            })
-            .collect::<Vec<_>>();
-        handles
-            .into_iter()
-            .map(|handle| handle.join().expect("gate thread"))
-            .collect::<Result<Vec<_>, String>>()
-    })?;
+    let outcomes = schedule(gates, &|gate| run_gate(root, &executable, gate, &logs))?;
     let mut passed = report(&outcomes, root);
     if passed {
         if let Some(gate) = last {
@@ -169,6 +155,35 @@ fn run(root: &Path, gates: &[&'static str], last: Option<&'static str>) -> Resul
         started.elapsed().as_secs_f64()
     );
     Ok(passed)
+}
+
+/// Publication includes alias checks that read every linked ELF. Comparison
+/// replaces those files and removes intermediate symbol images, so join its
+/// workers before inspecting output. A failed comparison still runs every
+/// gate; it remains a failure in the original reporting order.
+fn schedule<T: Send>(
+    gates: &[&'static str],
+    task: &(impl Fn(&'static str) -> Result<T, String> + Sync),
+) -> Result<Vec<T>, String> {
+    let comparing = gates.contains(&"compare-editions");
+    let mut outcomes = Vec::new();
+    for delayed in [false, true] {
+        std::thread::scope(|scope| {
+            let handles = gates
+                .iter()
+                .enumerate()
+                .filter(|(_, gate)| (comparing && **gate == "publication-check") == delayed)
+                .map(|(index, &gate)| (index, scope.spawn(move || task(gate))))
+                .collect::<Vec<_>>();
+            outcomes.extend(
+                handles
+                    .into_iter()
+                    .map(|(index, handle)| (index, handle.join().expect("gate thread"))),
+            );
+        });
+    }
+    outcomes.sort_unstable_by_key(|(index, _)| *index);
+    outcomes.into_iter().map(|(_, result)| result).collect()
 }
 
 struct Outcome {
@@ -252,6 +267,114 @@ fn run_gate(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn output_readers_wait_for_comparison_even_when_it_fails() {
+        use std::sync::atomic::{AtomicBool, Ordering};
+        use std::sync::{mpsc, Condvar, Mutex};
+        use std::time::Duration;
+
+        for comparison in [Ok(true), Ok(false), Err("comparison launch failed".into())] {
+            let (writer_started, writer_start) = mpsc::channel();
+            let (independent_started, independent_start) = mpsc::channel();
+            let (reader_started, reader_start) = mpsc::channel();
+            let state = (Mutex::new((false, false)), Condvar::new());
+            let finished = AtomicBool::new(false);
+            std::thread::scope(|scope| {
+                let worker = scope.spawn(|| {
+                    schedule(
+                        &["publication-check", "test", "compare-editions"],
+                        &|gate| match gate {
+                            "compare-editions" => {
+                                let mut state_lock = state.0.lock().unwrap();
+                                state_lock.0 = true;
+                                state.1.notify_all();
+                                writer_started.send(()).unwrap();
+                                while !state_lock.1 {
+                                    state_lock = state.1.wait(state_lock).unwrap();
+                                }
+                                finished.store(true, Ordering::Release);
+                                comparison.clone().map(|passed| (gate, passed))
+                            }
+                            "test" => {
+                                let (state_lock, _) = state
+                                    .1
+                                    .wait_timeout_while(
+                                        state.0.lock().unwrap(),
+                                        Duration::from_secs(2),
+                                        |state| !state.0,
+                                    )
+                                    .unwrap();
+                                if !state_lock.0 {
+                                    return Err("independent gate was serialized".into());
+                                }
+                                independent_started.send(()).unwrap();
+                                Ok((gate, true))
+                            }
+                            "publication-check" => {
+                                reader_started.send(()).unwrap();
+                                if !finished.load(Ordering::Acquire) {
+                                    return Err("reader saw comparison's unfinished output".into());
+                                }
+                                Ok((gate, true))
+                            }
+                            _ => unreachable!(),
+                        },
+                    )
+                });
+                let writer_ready = writer_start.recv_timeout(Duration::from_secs(2));
+                let independent_ready = independent_start.recv_timeout(Duration::from_secs(2));
+                // This bounded observation supplements the reader callback's
+                // completion check while comparison is explicitly blocked.
+                let premature = reader_start
+                    .recv_timeout(Duration::from_millis(100))
+                    .is_ok();
+                // Always release before any assertion can unwind the scope,
+                // including a startup timeout or serialization regression.
+                state.0.lock().unwrap().1 = true;
+                state.1.notify_all();
+                let result = worker.join().unwrap();
+                writer_ready.unwrap();
+                independent_ready.unwrap();
+                assert!(!premature, "publication began while comparison was writing");
+                reader_start.recv_timeout(Duration::from_secs(2)).unwrap();
+                match &comparison {
+                    Ok(passed) => assert_eq!(
+                        result.unwrap(),
+                        vec![
+                            ("publication-check", true),
+                            ("test", true),
+                            ("compare-editions", *passed)
+                        ]
+                    ),
+                    Err(error) => assert_eq!(result.unwrap_err(), *error),
+                }
+            });
+        }
+    }
+
+    #[test]
+    fn staged_gates_still_dispatch_together_without_comparison() {
+        use std::sync::{Condvar, Mutex};
+        use std::time::Duration;
+
+        let state = (Mutex::new(0), Condvar::new());
+        let outcomes = schedule(STAGED, &|gate| {
+            let mut count = state.0.lock().unwrap();
+            *count += 1;
+            state.1.notify_all();
+            let (count, _) = state
+                .1
+                .wait_timeout_while(count, Duration::from_secs(2), |count| *count < STAGED.len())
+                .unwrap();
+            if *count != STAGED.len() {
+                return Err("staged gates were deferred or another gate was added".into());
+            }
+            Ok(gate)
+        })
+        .unwrap();
+        assert_eq!(outcomes, STAGED);
+    }
 
     #[test]
     fn push_selection_uses_outgoing_destination_and_tip() {

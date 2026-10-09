@@ -159,6 +159,49 @@
  * - Five-minute European permute search: 90,672 distinct candidates, no
  *   compile failures, none improves weighted 940 / residual 34.
  *
+ * Structural regressions followed further at Pascal's request:
+ * - Return width directly (other 39) gets both native r3 width loads via
+ *   reload's scratch selection, but spills width inside each branch.
+ *   Advancing rows before loading width gives 86; volatile width reads in
+ *   that form give 80. Typed narrow/wide glyph records give 104. One-pass
+ *   blocks around both initializations give 166 (171 with separate result);
+ *   a block around the narrow branch alone leaves 39. A three-minute search
+ *   from 39 compiled 54,682 candidates without improving its weighted 990.
+ * - Keeping window/rows/result in a volatile record preserves the native
+ *   44-byte frame and their three high offsets, but gives other 90. Width
+ *   loads finally follow the rows store, but jump2 shares both glyph tails,
+ *   leaving 185 instructions instead of 187 and different scratch registers.
+ *   Making result plain leaves 90; making the whole record plain gives 189.
+ *   Thus delayed width loading alone does not restore the native graph.
+ * - A one-pass block around the row fetch gives 58 and swaps y/row-line
+ *   registers. Splitting that fetch at the clipping condition gives 74;
+ *   a two-minute search improves weighted 2600 -> 2310 but residual 74 -> 80.
+ *   Splitting identical load/shift statements in both arms gives 73: one
+ *   arm has native load/shift/store order, but different reload registers
+ *   and store order prevent jump2 from merging the arms. Both remain.
+ * - A signed-halfword cast in one conditional shift arm is removed by
+ *   optimization, but leaves two comparisons around the shift (other 47,
+ *   188 instructions). Moving next++ after that split gives 159; moving
+ *   the load into both arms gives 74. Reversing next++/shift order between
+ *   the arms gives 195. An empty one-pass clipping block gives 60. These
+ *   expose surviving boundaries, but none places the store last and removes
+ *   the extra control flow. They are starting points, not matches.
+ * - A one-pass block around tile/line/shift calculations gives 269; putting
+ *   the remaining dot operations in a second one-pass block gives 255.
+ *   The desired early pixel shift appears, but loop.c/flow now weight the
+ *   temporaries differently and allocation adds spills. A separate inline
+ *   tile-index helper leaves 34. A two-minute GlyphDot-only search from 34
+ *   compiled 36,157 candidates without improving weighted 940.
+ * - Sharing all five dot temporaries between paths gives 310. Exhaustively
+ *   choosing local versus shared scope for each temporary at each dot site
+ *   tests all 1,024 forms; none beats baseline weighted 940 (residual 34). Separate
+ *   locals reproduce the inline helper's output. A u16 mask gives 134;
+ *   u16 line/shift leave 34. An entry height-read block gives 36, retaining
+ *   the frame but moving height's load/store earlier than the native code.
+ * Canonical code and its six best residuals remain unchanged. Scratch
+ * sources, diffs and searches under out/ document these alternative paths;
+ * none is linked, credited, or used as input to a game build.
+ *
  * ARM translation-unit audit requested by Pascal, 2026-10-09:
  * Tile_BuildMetatiles follows this function without padding in all six
  * editions. Both fit stock ARM C. Text_DecodeSymbol/UiText_LookupMessageArm

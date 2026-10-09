@@ -5,7 +5,7 @@
  *   alchemy diff recon/tbs/en/main/080155d0.c moji --game tbs
  *                --edition tbs-en --arm --rtl --show
  * Native / draft / common / residual:
- *   ja: 193 / 193 / 186 / 14
+ *   ja: 193 / 193 / 187 / 12
  *   en: 196 / 197 / 188 / 17
  *   de: 187 / 187 / 180 / 14
  *   es: 187 / 187 / 180 / 14
@@ -486,6 +486,33 @@
  *   advance gives 32. None repairs the compare/load order. All rejected
  *   sources and reports remain ignored analysis under out/.
  *
+ * Empty-row follow-up, 2026-10-09: Japanese 14 -> 12, others unchanged.
+ * Put the empty-row arm first, with rownext=row+1 in both destinations.
+ * jump.c's single-SET hoist moves the first increment after the comparison;
+ * CSE deletes the duplicate. Native CMP/ADD/BEQ survives sched2, with no
+ * added instructions or changed registers. The opposite arm order gives
+ * 26 and two extra instructions. Of 32 label/arm/copy forms, the plain
+ * empty-first if/else is sufficient; neither labels nor loop notes are
+ * needed. Fresh RTL shows the hoisted ADD at jump insn 705, following
+ * compare 144, and the duplicate insn 155 gone by CSE.
+ * Further controlled trials, not retained:
+ * - 100 typed pending-width/copy/branch forms leave en/other at best 17/14.
+ *   The copies collapse before allocation; the spill remains early.
+ * - 240 whole-function wrapper/parameter-order forms give English at best
+ *   104. Another 84 wrappers pass index, height or accent as extra arguments;
+ *   best 106. Both disturb the allocation graph beyond the entry sequence.
+ * - 80 reused-comparison row blocks give other at best 36. They swap y and
+ *   row-line registers, yet still place the next-pointer spill before LSL.
+ * - 64 const-parameter/index-initializer forms leave English at best 17;
+ *   the height-first form stays 26 unless an early initializer worsens it
+ *   to 49. Const alone creates no required hard-r0 conflict.
+ * - 96 equivalent English range predicates/entry forms give at best 17.
+ *   Shifted or masked ranges retain another instruction (best 18); the
+ *   compiler does not reduce them to the native comparison against 111.
+ * - 80 Japanese color/width/source-local and setup-block forms give at best
+ *   12. Volatile locals change allocation and sometimes add instructions;
+ *   none repairs a remaining spill. Analysis stays in ignored out/.
+ *
  * Remaining differences, located by labels in recon/tbs/raw/moji.s.
  * The following is a pass-level diagnosis, not a claim to have found the
  * missing C. A stated dependency or lifetime change is a requirement for
@@ -524,7 +551,7 @@
  * J: jump2 cross-jumping requires equal instruction tails after sched2;
  *    arm.c's literal-pool pass then computes distances from the final code.
  *
- * Japanese: seven moved instructions, accounting for all 14 residual entries.
+ * Japanese: six moved instructions, accounting for all 12 residual entries.
  * - Entry (S): cmp r1,#255 must precede str r0,[sp,#20]. The one-pass
  *   height read restores the argument copies and places the load before
  *   the compare, but reload's spill still precedes it. Delaying that spill
@@ -536,8 +563,8 @@
  *   r3,#31; ldrb ip,[r9],#1, respectively; draft puts each load before
  *   its compare. The compare is free; see the memory-before-branch issue
  *   below. No tested source predicate creates the required constraint.
- * - .L_font_row (S): cmp ip,r5 must precede add lr,r2,#1, not follow it.
- *   A different rownext lifetime must change their scheduling priority.
+ * - .L_font_row now matches: empty-first branch assignments let jump hoist
+ *   ADD after CMP and CSE remove the duplicate, without changing allocation.
  * - .L_row_next (S): lsl ip,ip,#16 must precede str next,[sp,#8]; draft
  *   reverses them. The free one-cycle shift wins the last slot before the
  *   branch over the two-cycle store in stock sched2. A surviving constraint
@@ -761,9 +788,16 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 					u8 *vram;
 
 					col = 0;
-					rownext = row + 1;
-					if (bits != 0)
+					/* FAKEMATCH: put the empty-row increment first and
+					 * repeat it in the drawing arm. jump hoists the first
+					 * increment after CMP; CSE removes the second. This
+					 * restores CMP/ADD/BEQ: Japanese 14 -> 12. Reversing
+					 * the arms leaves two extra instructions and gives 26. */
+					if (bits == 0)
+						rownext = row + 1;
+					else
 					{
+						rownext = row + 1;
 						tile_y = (y + row) >> 3;
 						vram = (u8 *)0x06002500;
 						row_line = ((y + row) & 7) << 1;

@@ -24,16 +24,16 @@ Korosseo_Lettering:
 	.endif
 	.endif
 	.ifdef TBS_EDITION_DE
-	.byte 0x30, 0x58	@ PACKER: left in the buffer by earlier streams, which differ by edition
+	.byte 0x30, 0x58	@ PACKER: left in the buffer by Korosseo_RivalPathC+0xdfa
 	.else
 	.ifdef TBS_EDITION_FR
-	.byte 0x73	@ PACKER: left in the buffer by earlier streams, which differ by edition
+	.byte 0x73	@ PACKER: left in the buffer by Korosseo_RivalPathC+0xdb3
 	.else
 	.ifdef TBS_EDITION_JA
-	.byte 0xbd, 0x8e	@ PACKER: left in the buffer by earlier streams, which differ by edition
+	.byte 0xbd, 0x8e	@ PACKER: left in the buffer by Korosseo_RivalPathC+0xf02
 	.else
 	.ifdef TBS_EDITION_EN
-	.byte 0xc5	@ PACKER: left in the buffer by earlier streams, which differ by edition
+	.byte 0xc5	@ PACKER: left in the buffer by Korosseo_RivalPathC+0x124f
 	.endif
 	.endif
 	.endif

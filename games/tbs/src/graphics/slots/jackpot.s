@@ -10,7 +10,7 @@ Slots_Jackpot:
 	.incbin "graphics/slots/jackpot.parts.lz"
 	.endif
 	.ifdef TBS_EDITION_JA
-	.byte 0xa2	@ PACKER: left in the buffer by earlier streams, which differ by edition
+	.byte 0xa2	@ PACKER: left in the buffer by Slots_Icons+0x66b
 	.else
-	.byte 0x39	@ PACKER: left in the buffer by earlier streams, which differ by edition
+	.byte 0x39	@ PACKER: left in the buffer by Slots_Icons+0x64b
 	.endif

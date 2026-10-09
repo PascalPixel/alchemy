@@ -58,13 +58,13 @@ LuckyDice_Sprites:
 	.endif
 	.ifeq GAME_TLA
 	.ifdef TBS_EDITION_EN
-	.byte 0x0f, 0x72, 0xb1	@ PACKER: left in the buffer by earlier streams, which differ by edition
+	.byte 0x0f, 0x72, 0xb1	@ PACKER: left in the buffer by Battle_AerialViewBackdrop+0x3021
 	.else
 	.ifdef TBS_EDITION_ES
-	.byte 0x5a, 0x9b	@ PACKER: left in the buffer by earlier streams, which differ by edition
+	.byte 0x5a, 0x9b	@ PACKER: left in the buffer by Battle_AerialViewBackdrop+0x2f7a
 	.else
 	.ifdef TBS_EDITION_FR
-	.byte 0xac	@ PACKER: left in the buffer by earlier streams, which differ by edition
+	.byte 0xac	@ PACKER: left in the buffer by Battle_AerialViewBackdrop+0x31a7
 	.endif
 	.endif
 	.endif

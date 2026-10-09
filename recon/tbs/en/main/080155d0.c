@@ -3,19 +3,25 @@
  * Re-derived from the current listing and our ROMs on 2026-10-09.
  * Stock agbcc_arm with K1's ARM options, measured with:
  *   alchemy diff recon/tbs/en/main/080155d0.c moji --game tbs
- *                --edition tbs-en --arm
+ *                --edition tbs-en --arm --rtl --show
  * Native / draft / common / residual:
- *   ja: 193 / 198 /  94 / 203
- *   en: 196 / 197 / 109 / 175
- *   de, es, fr, it: 187 / 190 / 117 / 143
- * Japanese reserves its native 100-byte local frame with a tagged unused
- * source type. English reserves its native 44 bytes; the other four still
- * reserve 48 rather than 44 bytes.
- * Differences remain in allocation, spills, multiply operands and scheduling.
+ *   ja: 193 / 193 / 178 / 30
+ *   en: 196 / 198 / 159 / 76
+ *   de: 187 / 187 / 170 / 34
+ *   es: 187 / 187 / 170 / 34
+ *   fr: 187 / 187 / 170 / 34
+ *   it: 187 / 187 / 170 / 34
+ * Frames and spill offsets now agree: Japanese 100 bytes, all others 44.
+ * Japanese's 64-byte unused area still needs the tagged source type below.
+ * Multiply operands agree. Japanese differs only in scheduling; English
+ * and the other four also differ in short-lived register allocation.
+ * These are instruction-LCS residuals, not a complete-extent byte match.
+ * No edition matches or counts; the builds still link the original listing.
  * No register pins, barriers, instruction asm or alternative compiler options.
  * Japanese decodes ten 1bpp rows and kanji rows; the other editions decode
  * eight packed rows. English alone rejects character indices outside 32-143.
- * Trials: English direct geometry 325; hoisted row geometry 277; shorter
+ * Earlier trials (retained as history, not the current measurements):
+ * English direct geometry 325; hoisted row geometry 277; shorter
  * local scopes and do-while loops 248; separate next-pass lifetime 229;
  * integer destination reuse 225. The ten-minute permute search compiled
  * 9,786 distinct candidates: weighted 9,110 -> 6,330, residual 248 -> 215.
@@ -55,6 +61,150 @@
  * Exact nested-loop trial: duplicate a volatile next-pointer store in both
  * row-limit successors. It emits cmp; lsl; bhi; str; b, plus the exit str,
  * and worsens ja/en/other to 239/199/191. It does not resolve store-last.
+ *
+ * 2026-10-09 glyph branch: the checked-out staging draft measured
+ * 203/175/143; the brief's 165/132/90 draft was not in another current local
+ * branch or worktree. No deleted files or historical source were consulted.
+ * Sharing row, rownext and col between both drawing paths is the largest
+ * allocation improvement: ja/en/other 66/106/92 -> 34/76/67 at that step.
+ * Scalar destination reuse also works for Japanese with these lifetimes.
+ * Writing (x >> 3) * (stride - 2) fixes the MLA operand order and avoids
+ * loop.c hoisting stride-2 into another spill. Declaration order gives the
+ * native frame slots without volatile. Separate load and shift statements
+ * for both 16-bit rows make ip the row bits; with shared counters, other
+ * improves 67 -> 61. Ordering packed-font declarations and initialization
+ * gives 61 -> 39; separating width from result removes the duplicate width
+ * spill, 39 -> 34. Moving Japanese vram initialization between tile_y and
+ * row_line gives 34 -> 30. All English volatile devices have been removed.
+ *
+ * Rejected trials during this attempt (ja/en/other where all measured):
+ * - Direct pass++: 34/76/34 -> 81/123/77, five repeated pass reloads.
+ * - u16 width: 64/86/42; rows++ then rows[-1]: 89/116/67.
+ * - Three statements for tile multiplication/addition: 80/90/48.
+ * - Volatile VRAM halfwords: 94/150/134; explicit u32 pixel temporary:
+ *   other 92 -> 132; u16 pixel temporary or x &= 3: unchanged.
+ * - English volatile saved window: 83; adding saved rows/result: 94;
+ *   adding volatile stride: 106; volatile initial height read alone: 82.
+ * - English named character-index alias or split range predicate: 76;
+ *   duplicating the glyph-base expression for rows and width: 125.
+ * - Separate next-column temporary: Japanese 66 -> 79; rownext statement
+ *   moves did not improve the shared-counter draft.
+ * Five-minute permute runs measured residuals, not just weighted scores:
+ * other 96 -> 102 (88,749 candidates), helper-only other 92 -> 158
+ * (44,174), Japanese 76 -> 88 (44,156), shared-counter Japanese 34 -> 30
+ * (45,992; only the vram statement move retained). The latter's best
+ * weighted candidate had residual 36, so was rejected. English's u16-width
+ * trial (86; 45,849 candidates) found no improvement. Search output is in
+ * ignored out/permute; it never feeds a build or the count.
+ *
+ * Remaining differences, located by labels in recon/tbs/raw/moji.s.
+ * The following is a pass-level diagnosis, not a claim to have found the
+ * missing C. A stated dependency or lifetime change is a requirement for
+ * the next experiment; no tested permitted source form fixes these sites.
+ * Generate each edition's --rtl sequentially: the compiler first writes
+ * identically named dump files, then alchemy moves them to
+ * out/<edition>/obj/drafts/arm/rtl/080155d0.c.*. The --show reports for this
+ * attempt are in out/reports/glyph/tbs-<language>.diff (analysis only).
+ *
+ * Compiler decisions:
+ * A: lreg/greg. local-alloc.c QTY_CMP_PRI and global.c allocno_compare
+ *    rank refs * floor_log2(refs) * size / live_length, then quantity or
+ *    allocno; global.c set_preference also propagates operand preferences.
+ *    Shared source variables alter references, conflicts and lifetimes;
+ *    declarations alter pseudo order. reload1.c alter_reg assigns spills
+ *    in pseudo order. Native spill slots now agree; do not force them with
+ *    volatile again. Compare lreg to greg to distinguish allocation from
+ *    reload's short-lived address scratch registers.
+ * S: sched2. sched.c schedule_block schedules backwards; rank_for_schedule
+ *    compares priority, dependency class, then original LUID. Source order
+ *    alone cannot change an unequal priority or a data/anti dependency.
+ *    Native order requires another lifetime/dependency or a scheduling
+ *    boundary that survives optimization; the latter has not been found.
+ * J: jump2 cross-jumping requires equal instruction tails after sched2;
+ *    arm.c's literal-pool pass then computes distances from the final code.
+ *
+ * Japanese: 15 moved instructions, accounting for all 30 residual entries.
+ * - Entry (S): mov r8,r2 and mov r7,r3 must precede the height load; cmp
+ *   r1,#255 must follow it and precede str r0,[sp,#20]. The draft moves
+ *   that compare early and y's copy late. The source needs different
+ *   argument-copy/height lifetimes, while retaining the native allocation.
+ * - Font setup (S): str r3,[sp,#12] must follow x++; str r2,[sp,#16] must
+ *   follow cmp r3,#1. The draft stores both early. Delaying the width and
+ *   color spill stores needs a dependence surviving reload, not volatile.
+ * - First byte and font tail (S): cmp y,#31; ldrb ip,[lr,r3], and cmp
+ *   r3,#31; ldrb ip,[r9],#1, respectively; draft puts each load before
+ *   its compare. The compare is free; see the memory-before-branch issue
+ *   below. No tested source predicate creates the required constraint.
+ * - .L_font_row (S): cmp ip,r5 must precede add lr,r2,#1, not follow it.
+ *   A different rownext lifetime must change their scheduling priority.
+ * - Both dot bodies (S): add r0,vram,r0,lsl#5 and orr r0,r0,r3,lsl#1
+ *   must follow and r1,r1,#3; lsl r1,r1,#2. Draft starts the address chain
+ *   immediately after MLA. Four moves total. The shift and address chains
+ *   need a different dependence/conflict; moving the C statements alone
+ *   and splitting the multiply have not produced that graph.
+ * - .L_glyph (S): ldrh r0,[r3,r1] must follow add rows,#2 and its spill
+ *   to [sp,#28]; draft loads first. A later width-load dependence is needed;
+ *   expressing rows++ followed by rows[-1] instead creates a postincrement.
+ * - .L_shift (S): sub r7,r7,#2 must precede mov r3,#0 and the result
+ *   spill; draft does it after. The y update needs a different ready rank.
+ * - .L_row_next (S): lsl ip,ip,#16 must precede str next,[sp,#8]; draft
+ *   reverses them. The free one-cycle shift wins the last slot before the
+ *   branch over the two-cycle store in stock sched2. A surviving constraint
+ *   or late transform is needed; jump2's register-set hoists cannot hoist
+ *   this store. This observation does not prove that plain C cannot match.
+ *
+ * German/Spanish/French/Italian: all have the same 17-instruction residual
+ * on each side (34 total); the following exhausts the --show differences.
+ * - Entry (S): mov ip,r1; sub sp,sp,#44; ldr font,[sp,#72] are early.
+ *   Native copies x and y before the frame adjustment and font/character
+ *   setup. ldrh height must follow movls r3,#1, and the height spill must
+ *   follow cmp r3,#0. Argument/boolean lifetimes and the free-compare
+ *   constraint must change without disturbing x=r9,y=r8.
+ * - Font setup (S): source spill [sp,#24] must follow color1's final add;
+ *   color1 spill [sp,#20] must follow color3's initial mov. mov r1,#0
+ *   must precede the glyph-width pool load, not follow the width spill.
+ *   Requires different color/row initialization lifetimes. The pool-load
+ *   displacement difference is consequent on that last instruction move.
+ * - Both dots and .L_row_next: the same five moves as Japanese (S).
+ * - .L_glyph/.L_wide (A,S): both ldrh width results use r0, native r3.
+ *   Width pseudo 38 has 3 refs, live length 5, preferences 0/1/3 in greg.
+ *   It needs preference/conflicts favoring r3; a separate result variable
+ *   fixes its spill lifetime but not this preference. The first ldrh must
+ *   also follow the rows spill. The result str [sp,#32] must precede
+ *   ldr rows,[sp,#36]; mov r2,#0, rather than follow them. That needs the
+ *   width lifetime to end earlier in the join block (A,S).
+ *
+ * English: 37 native and 39 draft residual entries (76 total), including
+ * two extra instructions. Its long-lived drawing registers now agree.
+ * - Entry (A,S): character-32 pseudo 44 gets r0 (6 refs, live length 24,
+ *   preference 0), native ip. Window is spilled and reloaded to r2 before
+ *   ldrh height; native uses r0 directly, saving one instruction. The
+ *   character expression's operand preference/lifetime must leave r0 for
+ *   window/height and make ip available. The source aliases tested fold
+ *   back to the same pseudo. The frame, argument copies, height spill and
+ *   range compare also need the native order after that allocation change.
+ * - Character-222 uses ip instead of lr at entry, .L_glyph and .L_shift
+ *   (A): another overlapping lifetime/preference consequence of the above.
+ * - Font setup (A,S): color1's mov/add/store use r3 instead of r1, color3
+ *   uses r1 instead of r2. The source spill splits color1 initialization,
+ *   the glyph-width pool load splits color3 initialization, and the width
+ *   load/spill precede row initialization/compare instead of str following
+ *   cmp. Shorter color lifetimes plus different conflicts are needed.
+ * - .L_font_dot (reload): ldreq/ldrbeq/streq source uses r2 instead of r3.
+ *   The spill address scratch must find r3 free; inspect the preceding
+ *   allocation and reload, not the C source pointer's declared type.
+ * - .L_glyph (A,S,J): multiply-by-26 uses r0 instead of ip; its width ldrh
+ *   precedes rows += 2 and the rows spill. Native shares that ldrh with
+ *   .L_wide; the draft's two sched2 tails differ and jump2 keeps both loads
+ *   (second extra instruction). Delaying this load until after the spill
+ *   would expose equal tails to cross-jumping; duplicated base expressions
+ *   worsened English to 125. The required surviving C dependence is unknown.
+ * - Both dots, .L_shift and .L_row_next: the same six moves as Japanese
+ *   (S), using English's y/color/row-line registers.
+ * - Remaining branch and literal-load displacement differences (J) follow
+ *   from the two extra instructions and the moved width-table load. They
+ *   are not separate constants to encode in source. Literal pools and the
+ *   complete extent still require byte verification before any adoption.
  */
 
 #include "types.h"
@@ -71,66 +221,34 @@ static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
 	u32 line;
 	u32 shift;
 	u32 mask;
-#if defined(TBS_EDITION_JA)
-	/* FAKEMATCH: retaining the destination pointer separately keeps the
-	 * Japanese coordinate lifetimes; scalar address reuse increased the
-	 * earlier Japanese residual from 228 to 254. */
-	u16 *dst;
-#endif
 
-	tile = (stride - 2) * (x >> 3) + tile_y;
+	/* FAKEMATCH: reuse the tile index for the byte address. A separate
+	 * destination lifetime raised en/other to 277/271 in the earlier
+	 * volatile-spill trial; scalar reuse also removes the Japanese lifetime. */
+	tile = (x >> 3) * (stride - 2) + tile_y;
 	line = row_line | ((x & 7) >> 2);
-#if defined(TBS_EDITION_JA)
-	dst = (u16 *)((u32)(vram + (tile << 5)) | (line << 1));
 	shift = (x & 3) << 2;
 	mask = 15 << shift;
-	*dst = (*dst & ~mask) | (mask & color);
-#else
-	shift = (x & 3) << 2;
 	tile = (u32)vram + (tile << 5);
 	tile |= line << 1;
-	mask = 15 << shift;
 	*(u16 *)tile = (*(u16 *)tile & ~mask) | (mask & color);
-#endif
 }
 
 s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 	u32 x, u32 y, const u8 *font)
 {
-#if !defined(TBS_EDITION_EN)
-	u32 stride;
-#else
-	/* FAKEMATCH: keeping the native window, rows and result spills restores
-	 * their high frame slots (40, 36 and 32); the volatile stride below then
-	 * occupies the native slot 28. These English coordinate lifetimes use
-	 * the native registers.
-	 * Direct English result stores in the character branches retain their
-	 * native branch shape, improving that edition's residual 186 -> 175. */
-	struct UiWindow *volatile saved_window;
-	const u16 *volatile saved_rows;
-	volatile u32 saved_result;
-	/* FAKEMATCH: the native width spill is reloaded for each dot. Keeping
-	 * those loads with the explicit loop exits changes the earlier English
-	 * residual from 203 to 186, and restores the 44-byte local frame. */
-	volatile u32 stride;
-#endif
 	const u16 *rows;
 	u32 width;
-#if defined(TBS_EDITION_JA)
 	u32 result;
-#endif
+	const u32 stride = window->height;
+	u32 row;
+	u32 rownext;
+	u32 col;
 #if defined(TBS_EDITION_JA)
-	struct UiWindow *saved_window;
-	/* FAKEMATCH: two unused RenderOutput records reserve the measured
-	 * 56-byte gap: without them the native 100-byte local frame becomes 44. */
-	struct RenderOutput frame[2];
-
-	saved_window = window;
+	/* FAKEMATCH: four unused RenderInput records reserve the measured
+	 * 64-byte gap: without them the native 100-byte local frame becomes 36. */
+	struct RenderInput frame[4];
 #endif
-#if defined(TBS_EDITION_EN)
-	saved_window = window;
-#endif
-	stride = window->height;
 #if defined(TBS_EDITION_EN)
 	if (character - 32 > 111)
 		return 1;
@@ -146,11 +264,8 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 		{
 #if defined(TBS_EDITION_JA)
 			const u8 *source;
-			u32 font_width;
 			u32 color;
-			u32 row;
-			u32 rownext;
-			u32 col;
+			u32 font_width;
 			u32 bits;
 
 			color = 0x1111;
@@ -163,12 +278,14 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 				y--;
 				font_width = 2;
 			}
-			source = font + (character - 32) * 10;
+			character -= 32;
+			source = font + character * 10;
 			row = 0;
 			bits = *source++;
-			if (y <= 31)
+			if (y > 31)
+				goto font_done;
 			{
-				do
+				while (1)
 				{
 					u32 tile_y;
 					u32 row_line;
@@ -179,8 +296,8 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 					if (bits != 0)
 					{
 						tile_y = (y + row) >> 3;
-						row_line = ((y + row) & 7) << 1;
 						vram = (u8 *)0x06002500;
+						row_line = ((y + row) & 7) << 1;
 						do
 						{
 							if (bits & 1)
@@ -193,43 +310,28 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 					if (rownext > 9)
 						break;
 					bits = *source++;
-				} while (y + rownext <= 31);
+					if (y + rownext > 31)
+						break;
+				}
 			}
+font_done:
 			return font_width;
 #else
-#if defined(TBS_EDITION_EN)
 			const u8 *source;
 			u32 color1;
 			u32 color3;
 			u32 font_width;
-#else
-			u32 color1;
-			const u8 *source;
-			u32 font_width;
-			u32 color3;
-#endif
 			u32 packed;
-			u32 row;
-			u32 rownext;
-			u32 col;
 			u32 color;
 			u8 *vram;
 
-#if defined(TBS_EDITION_EN)
 			source = font + character * 32;
 			color1 = 0x1111;
 			color3 = 0x3333;
-			font_width = UiText_GlyphWidths[character - 32];
 			row = 0;
-#else
-			row = 0;
-			color1 = 0x1111;
 			font_width = UiText_GlyphWidths[character - 32];
-			source = font + character * 32;
-			color3 = 0x3333;
-#endif
 			if (y > 31)
-				return font_width;
+				goto font_done;
 			vram = (u8 *)0x06002500;
 			while (1)
 			{
@@ -264,6 +366,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 				if (y + rownext > 31)
 					break;
 			}
+font_done:
 			return font_width;
 #endif
 		}
@@ -281,61 +384,39 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 		rows += 4;
 #endif
 	}
-#if defined(TBS_EDITION_EN)
-	saved_rows = rows;
-#endif
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	if (character - 222 <= 1)
 	{
 		x -= 3;
 		y -= 2;
-#if defined(TBS_EDITION_JA)
 		result = 0;
-#else
-		saved_result = 0;
-#endif
 	}
 	else
 #endif
-#if defined(TBS_EDITION_JA)
 		result = width;
-#elif defined(TBS_EDITION_EN)
-		saved_result = width;
-#endif
 
 	{
 		register u32 pass;
+		const u16 *next;
 		const u16 *rows1;
 
-#if !defined(TBS_EDITION_EN)
 		rows1 = rows + 1;
-#else
-		rows1 = saved_rows + 1;
-#endif
 		pass = 0;
 		while (1)
 		{
 			u32 color;
-			const u16 *next;
 			u32 bits;
-			u32 row;
-			u32 rownext;
-			u32 col;
 			u8 *vram;
-			/* FAKEMATCH: a separate next-pass lifetime removes the repeated
-			 * outline-test spill reloads: the earlier English residual fell
-			 * from 234 to 229 before the address and loop-form rewrites. */
+			/* FAKEMATCH: a separate next-pass lifetime avoids five repeated
+			 * pass reloads. Direct pass++ raises ja/en/other residuals from
+			 * 34/76/34 to 81/123/77 with the shared row and column locals. */
 			u32 next_pass;
 
 			if (pass == 3)
 				color = 0x1111;
 			else
 				color = 0x5555;
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
-			if (!(saved_window->flags & 64))
-#else
 			if (!(window->flags & 64))
-#endif
 				goto draw;
 			if (pass <= 1)
 			{
@@ -353,18 +434,10 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 			}
 			y--;
 draw:
-#if defined(TBS_EDITION_EN)
-			next = rows1;
-#endif
 			row = 0;
-#if !defined(TBS_EDITION_EN)
-			bits = (u32)*rows << 16;
-#else
-			bits = (u32)*saved_rows << 16;
-#endif
-#if !defined(TBS_EDITION_EN)
+			bits = *rows;
+			bits <<= 16;
 			next = rows1;
-#endif
 			next_pass = pass + 1;
 			if (y > 31)
 				goto pass_next;
@@ -393,7 +466,8 @@ row_next:
 				row = rownext;
 				if (rownext > 11)
 					break;
-				bits = (u32)*next++ << 16;
+				bits = *next++;
+				bits <<= 16;
 				if (y + rownext > 31)
 					break;
 			}
@@ -403,11 +477,5 @@ pass_next:
 				break;
 		}
 	}
-#if defined(TBS_EDITION_JA)
 	return result;
-#elif defined(TBS_EDITION_EN)
-	return saved_result;
-#else
-	return width;
-#endif
 }

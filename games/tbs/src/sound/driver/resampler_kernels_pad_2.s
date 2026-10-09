@@ -1,5 +1,11 @@
+@ C2: this unused packed-sample arithmetic suffix uses fp (r11) as an
+@ arithmetic and rotate operand, not a frame pointer.
+@ The final 152-byte preset record begins in the preceding object with
+@ four zeroing moves and a branch over this 132-byte suffix. The DMA loader
+@ copies the whole record; its known entry skips to the mixer continuation
+@ immediately after the copied record.
 .syntax unified
-	.section .padding,"a",%progbits
+	.section .text,"ax",%progbits
 	.arm
 	adds	r7, r7, fp, asr #18
 	addmi	r7, r7, #64

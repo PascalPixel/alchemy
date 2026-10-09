@@ -86,16 +86,22 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 	use_font = character <= 255 || font != NULL;
 #endif
 #if defined(TBS_EDITION_EN)
-	/* FAKEMATCH: the early index test allocates index to ip and mark to lr. */
+	/* FAKEMATCH: the empty early test keeps index in ip and mark in lr;
+	   returning after the height read removes a reload (EN differ 17 -> 12). */
 	index = character - 32;
 	if (index > 111)
-		return 1;
+	{
+	}
 #endif
 	/* FAKEMATCH: the one-pass height read preserves the load's scheduling boundary. */
 	do
 	{
 		stride = window->height;
 	} while (0);
+#if defined(TBS_EDITION_EN)
+	if (index > 111)
+		return 1;
+#endif
 
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	/* FAKEMATCH: separate mark assignments preserve character and header-load lifetimes. */

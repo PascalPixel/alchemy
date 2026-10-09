@@ -1,3 +1,5 @@
+@ C2: MusicPlayer2000 SoundMain entry (pret's m4a_1.s);
+@ bx enters the mixer with live r9/ip state rather than ordinary arguments.
 .syntax unified
 .text
 	.thumb

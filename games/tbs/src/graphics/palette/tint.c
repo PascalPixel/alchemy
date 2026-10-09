@@ -127,17 +127,18 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 c = Iwram_SignedDivide(r + ((c >> 5) & 31) + ((c >> 10) & 31), 10);
                 r = c * 4 + 5;
                 b = c * 3 + 5;
-                /* FAKEMATCH: tied red selects native blue-first copy; 223 -> 213, unchanged instruction presence after ordinary forms fail. */
+                /* FAKEMATCH: needed to match: with the blue clamp identity below, removing both remaining barriers leaves 6 aligned differences in 3 rows of 803 instructions, with the same 0x704-byte extent. The blue/green add, copy and first lower comparison exchange r5/r6. */
                 asm("" : "+r"(r));
                 g = b;
-                /* FAKEMATCH: independent channel lower-clamp lifetime after ordinary forms merge tests. */
+                /* FAKEMATCH: needed to match: removing this barrier alone compares green r6 instead of blue r5 (2 aligned differences); independent channel lifetimes prevent CSE from substituting the copied channel. */
                 asm("" : "+r"(g));
                 if (r < 8)
                     r = 8;
                 if (b < 8) {
                     g = 8;
-                    /* FAKEMATCH: retain the second blue test on the clamped path; the other path threads past it. */
-                    asm("" : "+r"(b));
+                    /* FAKEMATCH: needed to match: g is 8, so this pair changes no bits. Its late fold retains the separate blue lower test; an ordinary copy threads past that test and loses two instructions. */
+                    b ^= g;
+                    b ^= 8;
                 }
                 if (b < 8)
                     b = 8;

@@ -513,6 +513,24 @@
  *   12. Volatile locals change allocation and sometimes add instructions;
  *   none repairs a remaining spill. Analysis stays in ignored out/.
  *
+ * Row-cursor and entry follow-up, 2026-10-09, no residual improvement:
+ * - 128 single-field struct/union cursor forms: best other 56. The volatile
+ *   cursor keeps the 44-byte frame and native registers but moves next to
+ *   sp+40 and shifts the other spill slots. A post-shift boundary gives 60:
+ *   LSL finally precedes STR, but ADD/CMP then follow both. Zero initializers
+ *   and intermediate record copies do not preserve a useful late clobber.
+ * - 192 font-predicate/type/boundary forms and 64 sequenced-boolean forms:
+ *   best other 14. Reversing the short-circuit OR moves the font load after
+ *   y's argument copy as required, but reverses predicate construction and
+ *   adds an instruction (19). Explicit booleans do not combine that repair
+ *   with the native predicate. The canonical form is retained.
+ * - arm.md's ordinary SI and soft-SF stores both use type store1; changing
+ *   a scalar copy's mode is not a different one-cycle STR route. Its late
+ *   raw-HI load/increment peephole emits word LDR, not the required LDRH.
+ *   reload_cse_regs deletes coalesced copies before sched2, and flow's second
+ *   pass also deletes ordinary no-op moves: a temporary alone cannot act as
+ *   a scheduling dependency that disappears only after sched2.
+ *
  * Remaining differences, located by labels in recon/tbs/raw/moji.s.
  * The following is a pass-level diagnosis, not a claim to have found the
  * missing C. A stated dependency or lifetime change is a requirement for

@@ -1,21 +1,31 @@
 /*
- * UiText_DrawGlyphArm: edition ARM C draft, not linked or credited.
+ * UiText_DrawGlyphArm: all-edition ARM C draft, not linked or credited.
  * Re-derived from the current listing and our ROMs on 2026-10-09.
  * Stock agbcc_arm with K1's ARM options, measured with:
  *   alchemy diff recon/tbs/en/main/080155d0.c moji --game tbs
  *                --edition tbs-en --arm
- * This checkpoint: Japanese residual 226 (193 native / 197 draft);
- * English residual 248 (196 / 206); continental residual 211 (187 / 194).
- * Japanese's native 100-byte local frame is reproduced with an unused
- * real-type local reserving the measured 56-byte frame difference. Remaining
- * differences include spill slots, multiply operands and loop scheduling.
+ * Native / draft / common / residual:
+ *   ja: 193 / 198 /  94 / 203
+ *   en: 196 / 201 /  97 / 203
+ *   de, es, fr, it: 187 / 189 / 110 / 156
+ * Japanese reserves its native 100-byte local frame with a tagged unused
+ * source type. International builds still reserve 48 rather than 44 bytes.
+ * Differences remain in allocation, spills, multiply operands and scheduling.
  * No register pins, barriers, instruction asm or alternative compiler options.
- * All six edition behaviors are reconstructed; all builds keep their listing.
- * Trials: Japanese initial 233; frame local 227; separate next_pass 226.
- * Volatile local width 316; width pointer 228; volatile width pointer 313;
- * helper do/while block 270. These unsuccessful forms were removed.
- * The newer worker checkpoint improves this source further; this commit
- * preserves the measured trial as required by S4 before combining that work.
+ * Japanese decodes ten 1bpp rows and kanji rows; the other editions decode
+ * eight packed rows. English alone rejects character indices outside 32-143.
+ * Trials: English direct geometry 325; hoisted row geometry 277; shorter
+ * local scopes and do-while loops 248; separate next-pass lifetime 229;
+ * integer destination reuse 225. The ten-minute permute search compiled
+ * 9,786 distinct candidates: weighted 9,110 -> 6,330, residual 248 -> 215.
+ * Its explicit-exit loop forms, applied to the shared edition branches,
+ * improve ja/en/other from 226/225/186 to 203/203/156.
+ * Rejected trials: direct goto loops (en 270); volatile local stride
+ * (en 268); volatile initial height read (ja/en/other 211/209/169);
+ * one-pass helper block (en 241). None changes a compiler or its options.
+ * packed = 0 added one instruction (en/other 206/157). Instead, the shift
+ * is confined to odd columns, avoiding its initial uninitialized read with
+ * the same residual counts (en/other 203/156).
  */
 
 #include "types.h"
@@ -32,14 +42,27 @@ static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
 	u32 line;
 	u32 shift;
 	u32 mask;
+#if defined(TBS_EDITION_JA)
+	/* FAKEMATCH: retaining the destination pointer separately keeps the
+	 * Japanese coordinate lifetimes; scalar address reuse increased the
+	 * earlier Japanese residual from 228 to 254. */
 	u16 *dst;
+#endif
 
 	tile = (stride - 2) * (x >> 3) + tile_y;
 	line = row_line | ((x & 7) >> 2);
+#if defined(TBS_EDITION_JA)
 	dst = (u16 *)((u32)(vram + (tile << 5)) | (line << 1));
 	shift = (x & 3) << 2;
 	mask = 15 << shift;
 	*dst = (*dst & ~mask) | (mask & color);
+#else
+	shift = (x & 3) << 2;
+	tile = (u32)vram + (tile << 5);
+	tile |= line << 1;
+	mask = 15 << shift;
+	*(u16 *)tile = (*(u16 *)tile & ~mask) | (mask & color);
+#endif
 }
 
 s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
@@ -49,14 +72,14 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 	const u16 *rows;
 	u32 width;
 	u32 result;
-	struct UiWindow *saved_window;
 #if defined(TBS_EDITION_JA)
-	/* FAKEMATCH: two unused RenderOutput records reserve the measured 56-byte
-	 * gap: without them the native 100-byte local frame becomes 44 bytes. */
+	struct UiWindow *saved_window;
+	/* FAKEMATCH: two unused RenderOutput records reserve the measured
+	 * 56-byte gap: without them the native 100-byte local frame becomes 44. */
 	struct RenderOutput frame[2];
-#endif
 
 	saved_window = window;
+#endif
 	stride = window->height;
 #if defined(TBS_EDITION_EN)
 	if (character - 32 > 111)
@@ -143,7 +166,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 			if (y > 31)
 				return font_width;
 			vram = (u8 *)0x06002500;
-			do
+			while (1)
 			{
 				u32 tile_y;
 				u32 row_line;
@@ -152,11 +175,12 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 				rownext = row + 1;
 				tile_y = (y + row) >> 3;
 				row_line = ((y + row) & 7) << 1;
-				do
+				while (1)
 				{
-					packed >>= 4;
 					if ((col & 1) == 0)
 						packed = *source++;
+					else
+						packed >>= 4;
 					if ((packed & 13) == 1)
 					{
 						color = color3;
@@ -166,11 +190,15 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 							GlyphDot(stride, x + col, tile_y, row_line, vram, color);
 					}
 					col++;
-				} while (col <= 7);
+					if (col > 7)
+						break;
+				}
 				row = rownext;
 				if (rownext > 7)
 					break;
-			} while (y + rownext <= 31);
+				if (y + rownext > 31)
+					break;
+			}
 			return font_width;
 #endif
 		}
@@ -205,7 +233,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 
 		rows1 = rows + 1;
 		pass = 0;
-		do
+		while (1)
 		{
 			u32 color;
 			const u16 *next;
@@ -214,15 +242,20 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 			u32 rownext;
 			u32 col;
 			u8 *vram;
-#if defined(TBS_EDITION_JA)
+			/* FAKEMATCH: a separate next-pass lifetime removes the repeated
+			 * outline-test spill reloads: the earlier English residual fell
+			 * from 234 to 229 before the address and loop-form rewrites. */
 			u32 next_pass;
-#endif
 
 			if (pass == 3)
 				color = 0x1111;
 			else
 				color = 0x5555;
+#if defined(TBS_EDITION_JA)
 			if (!(saved_window->flags & 64))
+#else
+			if (!(window->flags & 64))
+#endif
 				goto draw;
 			if (pass <= 1)
 			{
@@ -243,15 +276,11 @@ draw:
 			next = rows1;
 			row = 0;
 			bits = (u32)*rows << 16;
-#if defined(TBS_EDITION_JA)
 			next_pass = pass + 1;
-#else
-			pass++;
-#endif
 			if (y > 31)
 				goto pass_next;
 			vram = (u8 *)0x06002500;
-			do
+			while (1)
 			{
 				u32 tile_y;
 				u32 row_line;
@@ -260,7 +289,7 @@ draw:
 				rownext = row + 1;
 				tile_y = (y + row) >> 3;
 				row_line = ((y + row) & 7) << 1;
-				do
+				while (1)
 				{
 					if ((s32)bits < 0)
 						GlyphDot(stride, x + col, tile_y, row_line, vram, color);
@@ -268,20 +297,22 @@ draw:
 					if (bits == 0)
 						goto row_next;
 					col++;
-				} while (col <= 13);
+					if (col > 13)
+						break;
+				}
 row_next:
 				row = rownext;
 				if (rownext > 11)
 					break;
 				bits = (u32)*next++ << 16;
-			} while (y + rownext <= 31);
+				if (y + rownext > 31)
+					break;
+			}
 pass_next:
-#if defined(TBS_EDITION_JA)
 			pass = next_pass;
-#else
-			;
-#endif
-		} while (pass <= 3);
+			if (pass > 3)
+				break;
+		}
 	}
 	return result;
 }

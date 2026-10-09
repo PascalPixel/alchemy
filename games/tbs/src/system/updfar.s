@@ -1,6 +1,7 @@
-@ Not yet C: these ARM tail entries have no C2 handwritten marker.
-@ Each entry has eight instruction bytes, but their target words form a
-@ shared trailing pool, so their complete extents are not eight-byte veneers.
+@ C2: Three independent ARM functions share one trailing literal pool;
+@ its references cross their boundaries, which GCC's per-function pool
+@ flushing cannot emit. Complete handwritten extent: 36 bytes
+@ (24 instruction bytes and 12 literal bytes).
 .syntax unified
 	.arm
 	.global ArcTan2FarArm

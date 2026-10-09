@@ -3,40 +3,46 @@
 
 #include "layout_guard.h"
 
-enum BattleUnitPresence {
-    BATTLE_UNIT_ABSENT = 0,
-    BATTLE_UNIT_ENEMY = 1,
-    BATTLE_UNIT_PARTY = 2
+enum BattleUnitPresence
+{
+	BATTLE_UNIT_ABSENT = 0,
+	BATTLE_UNIT_ENEMY = 1,
+	BATTLE_UNIT_PARTY = 2
 };
 
-enum BattleUnitListMark {
-    BATTLE_UNIT_REMOVED = 0xfe,
-    BATTLE_UNIT_LIST_END = 0xff
+enum BattleUnitListMark
+{
+	BATTLE_UNIT_REMOVED = 0xfe,
+	BATTLE_UNIT_LIST_END = 0xff
 };
 
-enum BattleSideMask {
-    BATTLE_SIDE_PARTY = 1,
-    BATTLE_SIDE_ENEMIES = 2,
-    BATTLE_SIDE_BOTH = BATTLE_SIDE_PARTY | BATTLE_SIDE_ENEMIES
+enum BattleSideMask
+{
+	BATTLE_SIDE_PARTY = 1,
+	BATTLE_SIDE_ENEMIES = 2,
+	BATTLE_SIDE_BOTH = BATTLE_SIDE_PARTY | BATTLE_SIDE_ENEMIES
 };
 
-struct DjinnRecoveryEntry {
-    u8 element;
-    u8 index;
-    u8 unit_id;
-    s8 turns;
+struct DjinnRecoveryEntry
+{
+	u8 element;
+	u8 index;
+	u8 unit_id;
+	s8 turns;
 };
 
 LAYOUT_SIZE_GUARD(DjinnRecoveryEntry_Size, struct DjinnRecoveryEntry, 4);
 
-struct DjinnRecoveryList {
-    struct DjinnRecoveryEntry entries[64];
-    s32 count;
+struct DjinnRecoveryList
+{
+	struct DjinnRecoveryEntry entries[64];
+	s32						  count;
 };
 
-struct DjinnRecoveryTable {
-    u8 unknown_00[8];
-    struct DjinnRecoveryList list;
+struct DjinnRecoveryTable
+{
+	u8						 unknown_00[8];
+	struct DjinnRecoveryList list;
 };
 
 s32 BattleParty_PrepareActiveOwners(u16 *unit_ids);

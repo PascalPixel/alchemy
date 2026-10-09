@@ -7,41 +7,44 @@
 struct MotionObject;
 struct SpriteEntry;
 
-struct BtlObj {
-    struct MotionObject *object;
-    u16 resource;
-    u16 overlay;
-    u16 animation;
-    u16 effect;
-    s32 anchor_x;
-    s32 anchor_z;
-    s32 palette;
-    s32 scale;
-    u16 active_conditions;
-    u8 selected_condition;
-    s8 cycle_timer;
-    struct SpriteEntry *animation_entry;
-    struct SpriteEntry *effect_entry;
-    s16 active;
-    s16 fading;
+struct BtlObj
+{
+	struct MotionObject *object;
+	u16					 resource;
+	u16					 overlay;
+	u16					 animation;
+	u16					 effect;
+	s32					 anchor_x;
+	s32					 anchor_z;
+	s32					 palette;
+	s32					 scale;
+	u16					 active_conditions;
+	u8					 selected_condition;
+	s8					 cycle_timer;
+	struct SpriteEntry	*animation_entry;
+	struct SpriteEntry	*effect_entry;
+	s16					 active;
+	s16					 fading;
 };
 
-struct BattleActionRecord {
-    s16 unit_id;
-    u16 slot;
-    u16 priority;
-    s16 command;
-    s16 parameter;
-    s16 target;
-    s16 rng;
-    s16 unknown_0e;
+struct BattleActionRecord
+{
+	s16 unit_id;
+	u16 slot;
+	u16 priority;
+	s16 command;
+	s16 parameter;
+	s16 target;
+	s16 rng;
+	s16 unknown_0e;
 };
 
-struct BattleSpoils {
-    s32 coins;
-    s32 experience;
-    s32 defeated;
-    u16 items[4];
+struct BattleSpoils
+{
+	s32 coins;
+	s32 experience;
+	s32 defeated;
+	u16 items[4];
 };
 
 LAYOUT_SIZE_GUARD(BattleObjectSlot_Size, struct BtlObj, 0x2c);

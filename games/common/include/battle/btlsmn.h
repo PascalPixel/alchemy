@@ -5,36 +5,40 @@
 
 #include "types.h"
 
-struct BattleSpriteDefinition {
-    u16 animation;
-    u8 sprite_flags;
-    u8 layout_flags;
-    u8 unknown_04[4];
+struct BattleSpriteDefinition
+{
+	u16 animation;
+	u8	sprite_flags;
+	u8	layout_flags;
+	u8	unknown_04[4];
 };
 
 LAYOUT_SIZE_GUARD(BattleSpriteDefinition_Size, struct BattleSpriteDefinition, 8);
-LAYOUT_OFFSET_GUARD(BattleSpriteDefinition_LayoutFlags, struct BattleSpriteDefinition, layout_flags, 3);
+LAYOUT_OFFSET_GUARD(
+	BattleSpriteDefinition_LayoutFlags, struct BattleSpriteDefinition, layout_flags, 3);
 extern struct BattleSpriteDefinition Summon_EntryTable[];
 
-struct SummonDefinition {
-    u16 name_message_id;
-    u8 unknown_02[2];
-    u8 djinn_required[4];
+struct SummonDefinition
+{
+	u16 name_message_id;
+	u8	unknown_02[2];
+	u8	djinn_required[4];
 };
 
-struct BattleSummonState {
-    u32 available_mask;
+struct BattleSummonState
+{
+	u32 available_mask;
 };
 
 const struct SummonDefinition *SummonDefinition_Get(s32 summon_id);
-s32 EnmSlotGet(void);
-s32 EnmChk(s32 class_id);
+s32							   EnmSlotGet(void);
+s32							   EnmChk(s32 class_id);
 
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id);
-s32 BtlGrpRnd(s32 record_id);
-s32 EnmCntDec(s32 class_id, s32 n);
-s32 EnmCntRel(s32 actor_id);
-s32 EnmCntClr(s32 class_id);
-s32 EnmUpd(void);
+s32							   BtlGrpRnd(s32 record_id);
+s32							   EnmCntDec(s32 class_id, s32 n);
+s32							   EnmCntRel(s32 actor_id);
+s32							   EnmCntClr(s32 class_id);
+s32							   EnmUpd(void);
 
 #endif

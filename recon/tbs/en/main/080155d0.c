@@ -5,12 +5,12 @@
  *   alchemy diff recon/tbs/en/main/080155d0.c moji --game tbs
  *                --edition tbs-en --arm --rtl --show
  * Native / draft / common / residual:
- *   ja: 193 / 193 / 178 / 30
- *   en: 196 / 199 / 165 / 65
- *   de: 187 / 187 / 173 / 28
- *   es: 187 / 187 / 173 / 28
- *   fr: 187 / 187 / 173 / 28
- *   it: 187 / 187 / 173 / 28
+ *   ja: 193 / 193 / 180 / 26
+ *   en: 196 / 196 / 170 / 52
+ *   de: 187 / 187 / 174 / 26
+ *   es: 187 / 187 / 174 / 26
+ *   fr: 187 / 187 / 174 / 26
+ *   it: 187 / 187 / 174 / 26
  * Frames and spill offsets now agree: Japanese 100 bytes, all others 44.
  * Japanese's 64-byte unused area still needs the tagged source type below.
  * Multiply operands agree. Japanese and the four European editions differ
@@ -239,6 +239,42 @@
  *   A separate loaded pointer with next copied back in the one-pass block
  *   gives 161, retaining that pointer in r6 and disturbing the other spills.
  *
+ * Entry-boundary follow-up: ja/en/other 30/65/28 -> 26/52/26.
+ * A one-pass height read restores Japanese's argument copies and compare
+ * order; its height spill remains before the compare. In Europe, compute
+ * the font predicate first, then read height in the block: movls now
+ * precedes ldrh. In English, reading height in that block before the
+ * range check allows a direct error return while retaining the native
+ * long-lived drawing registers. The window reload and error spill vanish.
+ * Keeping a named index through the wide-glyph expression gives 52 rather
+ * than 57, but wrongly eliminates the native wide-branch subtraction.
+ * That omitted subtraction offsets the still-extra narrow width load:
+ * the 196-instruction count does not establish the native control flow.
+ * No compiler or option changes. New controlled trials:
+ * - All 21 contiguous groups of two or more GlyphDot statements inside
+ *   one-pass blocks give 62..267; none improves 28. Sharing line with the
+ *   stride subtraction gives 40 and moves the first address add later,
+ *   but changes second-dot registers. Sharing shift gives 231; mask 253;
+ *   the previous search's temporary aliases in the helper give 170.
+ *   Reusing line as mask gives 267; counted one-iteration loops give
+ *   321 (line/shift only) and 351 (whole helper).
+ * - European plain named predicate, bitwise OR, or predicate-only block
+ *   leaves 28. Height in the following block gives 26. Duplicating height
+ *   reads around the predicate gives 55. Equivalent height-copy joins,
+ *   redundant breaks and an empty predicate block leave 26. Explicit x/y
+ *   copies leave 26; one-pass x/y copies give 101, y alone 83.
+ * - English named index with a plain height read gives 64 (direct return
+ *   71); index/height blocks before its test give 62 (direct return 69).
+ *   Height in a block before index gives 73 with the shared result exit,
+ *   but 52 with direct return. Recomputing index at the width-table or
+ *   narrow-glyph use leaves 52; at the wide-glyph use gives 57.
+ * - A block around the packed-font width read leaves English at 52 with
+ *   different scheduling: row initialization is earlier, but its width
+ *   spill moves before the clip compare and source spill moves later.
+ *   The same block gives other 81, with 186 instructions. A volatile next
+ *   pointer with a cached load and explicit post-shift update gives other
+ *   68 (187 instructions); its changed allocation is not retained.
+ *
  * ARM translation-unit audit requested by Pascal, 2026-10-09:
  * Tile_BuildMetatiles follows this function without padding in all six
  * editions. Both fit stock ARM C. Text_DecodeSymbol/UiText_LookupMessageArm
@@ -285,7 +321,8 @@
  *    compares priority, dependency class, then original LUID. Source order
  *    alone cannot change an unequal priority or a data/anti dependency.
  *    Native order requires another lifetime/dependency or a scheduling
- *    boundary that survives optimization; the latter has not been found.
+ *    boundary that survives optimization. The remaining dot and row-tail
+ *    sites have not yet been repaired this way.
  *    In the European dot's sched2 block 9, UIDs 160 (pixel shift) and 166
  *    (address OR) tie at priority 17. At T-8 the former wins because it is
  *    independent of UID 161 (mask=15), while the latter has an anti
@@ -295,11 +332,11 @@
  * J: jump2 cross-jumping requires equal instruction tails after sched2;
  *    arm.c's literal-pool pass then computes distances from the final code.
  *
- * Japanese: 15 moved instructions, accounting for all 30 residual entries.
- * - Entry (S): mov r8,r2 and mov r7,r3 must precede the height load; cmp
- *   r1,#255 must follow it and precede str r0,[sp,#20]. The draft moves
- *   that compare early and y's copy late. The source needs different
- *   argument-copy/height lifetimes, while retaining the native allocation.
+ * Japanese: 13 moved instructions, accounting for all 26 residual entries.
+ * - Entry (S): cmp r1,#255 must precede str r0,[sp,#20]. The one-pass
+ *   height read restores the argument copies and places the load before
+ *   the compare, but reload's spill still precedes it. Delaying that spill
+ *   requires a surviving dependency or a later common-tail transform.
  * - Font setup (S): str r3,[sp,#12] must follow x++; str r2,[sp,#16] must
  *   follow cmp r3,#1. The draft stores both early. Delaying the width and
  *   color spill stores needs a dependence surviving reload, not volatile.
@@ -325,13 +362,13 @@
  *   or late transform is needed; jump2's register-set hoists cannot hoist
  *   this store. This observation does not prove that plain C cannot match.
  *
- * German/Spanish/French/Italian: all have the same 14 residual entries on
- * each side (28 total), solely order and consequent pool displacements.
+ * German/Spanish/French/Italian: all have the same 13 residual entries on
+ * each side (26 total), solely order and consequent pool displacements.
  * The following exhausts the --show differences.
  * - Entry (S): mov ip,r1; sub sp,sp,#44; ldr font,[sp,#72] are early.
  *   Native copies x and y before the frame adjustment and font/character
- *   setup. ldrh height must follow movls r3,#1, and the height spill must
- *   follow cmp r3,#0. Argument/boolean lifetimes and the free-compare
+ *   setup. The height spill must follow cmp r3,#0; the ldrh now follows
+ *   movls r3,#1 as required. Argument lifetimes and the free-compare
  *   constraint must change without disturbing x=r9,y=r8.
  * - Font setup (S): source spill [sp,#24] must follow color1's final add;
  *   color1 spill [sp,#20] must follow color3's initial mov. mov r1,#0
@@ -345,18 +382,16 @@
  *   pass initialization. The former short width's return-register preference
  *   no longer controls either load. This is resolved, not a remaining site.
  *
- * English: 31 native and 34 draft residual entries (65 total), including
- * three extra instructions. Its long-lived drawing registers now agree.
- * - Entry (A,S): character-32 pseudo 44 gets r0 (6 refs, live length 24,
- *   preference 0), native ip. Window is spilled and reloaded to r2 before
- *   ldrh height; native uses r0 directly, saving one instruction. The
- *   character expression's operand preference/lifetime must leave r0 for
- *   window/height and make ip available. The source aliases tested fold
- *   back to the same pseudo. The frame, argument copies, height spill and
- *   range compare also need the native order after that allocation change.
- *   The shared range exit adds strhi r3,[sp,#32] after movhi r3,#1;
- *   native uses movhi r0,#1 and branches straight to the epilogue. Removing
- *   the store via a short return alias restores the old allocation (76).
+ * English: 26 native and 26 draft residual entries (52 total). Its
+ * long-lived drawing registers agree, and instruction counts are equal.
+ * - Entry (A,S): character-32 still gets r0, native ip. The height block
+ *   keeps window in incoming r0 until ldrh, removing the former reload.
+ *   But index is now computed after the height spill rather than before
+ *   its load, and cmp follows that spill rather than preceding it. Index
+ *   needs a lifetime/preference overlapping height in r0, without forcing
+ *   window into another register. The frame adjustment and window spill
+ *   also need to move after the native argument copies. The direct range
+ *   return now emits native movhi r0,#1 / bhi with no result spill.
  * - Character-222 uses ip instead of lr at entry, .L_glyph and .L_shift
  *   (A): another overlapping lifetime/preference consequence of the above.
  * - Font setup (S): registers now agree, but all of color3's mov/add/store
@@ -369,13 +404,17 @@
  * - .L_glyph (A,S,J): multiply-by-26 uses r0 instead of ip; its width ldrh
  *   precedes rows += 2 and the rows spill. Native shares that ldrh with
  *   .L_wide; the draft's two sched2 tails differ and jump2 keeps both loads
- *   (second extra instruction). Delaying this load until after the spill
+ *   (one extra instruction). Delaying this load until after the spill
  *   would expose equal tails to cross-jumping; duplicated base expressions
  *   worsened English to 125. The required surviving C dependence is unknown.
+ *   Conversely .L_wide reuses the named index and omits native sub r3,r1,#32.
+ *   This CSE/lifetime difference offsets the extra ldrh in the instruction
+ *   count. Recomputing character-32 there restores the subtraction but
+ *   worsens total residual to 57; both sites must be solved together.
  * - Both dots, .L_shift and .L_row_next: the same six moves as Japanese
  *   (S), using English's y/color/row-line registers.
  * - Remaining branch and literal-load displacement differences (J) follow
- *   from the three extra instructions and the moved width-table load. They
+ *   from the different glyph-branch extents and moved width-table load. They
  *   are not separate constants to encode in source. Literal pools and the
  *   complete extent still require byte verification before any adoption.
  */
@@ -418,7 +457,12 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	u32 result;
 #endif
-	const u32 stride = window->height;
+	u32 stride;
+#if defined(TBS_EDITION_EN)
+	u32 index;
+#elif !defined(TBS_EDITION_JA)
+	u32 use_font;
+#endif
 	u32 row;
 	u32 rownext;
 	u32 col;
@@ -427,21 +471,28 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 	 * 64-byte gap: without them the native 100-byte local frame becomes 36. */
 	struct RenderInput frame[4];
 #endif
-#if defined(TBS_EDITION_EN)
-	/* FAKEMATCH: sharing this exit with the result return restores the
-	 * packed-font color and pointer-reload registers (76 -> 65 residual).
-	 * It still adds one range-error spill; a short return alias gives 76. */
-	if (character - 32 > 111)
+#if !defined(TBS_EDITION_JA) && !defined(TBS_EDITION_EN)
+	use_font = character <= 255 || font != NULL;
+#endif
+	/* FAKEMATCH: a one-pass height read preserves its scheduling boundary.
+	 * With the European predicate above and English's direct error return,
+	 * this lowers ja/en/other from 30/65/28 to 26/52/26. */
+	do
 	{
-		result = 1;
-		goto glyph_done;
-	}
+		stride = window->height;
+	} while (0);
+#if defined(TBS_EDITION_EN)
+	/* FAKEMATCH: retain the index through the wide-glyph expression.
+	 * Recomputing it there raises English's residual from 52 to 57. */
+	index = character - 32;
+	if (index > 111)
+		return 1;
 #endif
 
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	if (character <= 255 || (font != NULL && character - 222 <= 1))
 #else
-	if (character <= 255 || font != NULL)
+	if (use_font)
 #endif
 	{
 		if (font != NULL)
@@ -575,7 +626,11 @@ font_done:
 		width = 10;
 		rows = (const u16 *)(UiText_KanjiGlyphs + (character - 256) * 24);
 #else
+#if defined(TBS_EDITION_EN)
+		rows = (const u16 *)((const u8 *)UiText_Glyphs + index * 32);
+#else
 		rows = (const u16 *)((const u8 *)UiText_Glyphs + (character - 32) * 32);
+#endif
 		width = rows[0];
 		rows += 4;
 #endif
@@ -673,7 +728,6 @@ pass_next:
 				break;
 		}
 	}
-glyph_done:
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	return result;
 #else

@@ -2006,7 +2006,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 {
     u8 *work = gWindowWork[0];
     /* FAKEMATCH: needed to match: this XOR pair changes no pointer bits and folds without instructions, preserving work and base as independent lifetimes. A direct copy merges both into r8, omits the native r8/r12 copy, and differs 17 aligned instructions (0x144 versus 0x148 bytes). */
-    u8 *base = (u8 *)((u32)work ^ tile);
+    u8 *base = (u8 *)((unsigned long)work ^ tile);
     struct GlyphSpriteOutput *out;
     s32 idx;
     u16 *slot;
@@ -2014,7 +2014,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
     u32 pos;
     u16 row;
 
-    base = (u8 *)((u32)base ^ tile);
+    base = (u8 *)((unsigned long)base ^ tile);
 
     if (y > (win->height - 2))
         return;

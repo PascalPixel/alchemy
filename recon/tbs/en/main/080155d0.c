@@ -5,17 +5,17 @@
  *   alchemy diff recon/tbs/en/main/080155d0.c moji --game tbs
  *                --edition tbs-en --arm --rtl --show
  * Native / draft / common / residual:
- *   ja: 193 / 193 / 185 / 16
- *   en: 196 / 197 / 181 / 31
- *   de: 187 / 187 / 178 / 18
- *   es: 187 / 187 / 178 / 18
- *   fr: 187 / 187 / 178 / 18
- *   it: 187 / 187 / 178 / 18
+ *   ja: 193 / 193 / 186 / 14
+ *   en: 196 / 197 / 187 / 19
+ *   de: 187 / 187 / 180 / 14
+ *   es: 187 / 187 / 180 / 14
+ *   fr: 187 / 187 / 180 / 14
+ *   it: 187 / 187 / 180 / 14
  * Frames and spill offsets now agree: Japanese 100 bytes, all others 44.
  * Japanese's 64-byte unused area still needs the tagged source type below.
  * Multiply operands agree. Japanese and the four European editions differ
- * only in scheduling; English also has a window reload and a different
- * glyph-branch shape. Its character index and accent registers now agree.
+ * only in scheduling; English also has a window reload and an early range
+ * branch. All glyph-header branches and both pixel-write sequences agree.
  * These are instruction-LCS residuals, not a complete-extent byte match.
  * No edition matches or counts; the builds still link the original listing.
  * No register pins, asm barriers, instruction asm or alternative compiler options.
@@ -390,6 +390,64 @@
  * Thus a larger file is plausible but simple concatenation does not fix
  * allocation or scheduling. The source remains one uncredited draft.
  *
+ * Packed-dot and glyph-header follow-up, 2026-10-09:
+ * ja/en/other 16/31/18 -> 14/19/14, measured in all six editions.
+ * - Packed dot: the earlier 52-residual delayed-address form becomes useful
+ *   after wrapping line and shift in one-pass blocks. Loop notes increase
+ *   their weighted references without adding instructions. In the current
+ *   English lreg dump, tile pseudo 75 has refs 21/live 14, and shift 79 has
+ *   refs 7/live 6; local allocation gives tile r0 and shift r1. Before the
+ *   wrapped calculations they took r1/r0. Both address instructions now
+ *   follow AND/LSL. The 48 weight/depth trials reach other 14; combining
+ *   the two blocks and removing the empty block retains it. Wrapping only
+ *   shift gives 26. Using this helper at every dot gives 116/67/34, so the
+ *   main-dot helper keeps its different, measured boundary.
+ * - Japanese header: delaying width through the saved header pointer alone
+ *   worsens 16 -> 45, extending character beyond the glyph-base load.
+ *   Giving the accent offset its own mark variable in both glyph branches
+ *   gives 33; also assigning it in the font test gives 27. A comma in the
+ *   selection predicate gives 25, but adds three boolean instructions.
+ *   Staged tests remove those instructions (16). Duplicating mark's
+ *   assignment in both destinations of the null test gives 14. jump.c's
+ *   first pass hoists the null destination's assignment after the compare;
+ *   cse deletes the duplicate fallthrough assignment. Thus CMP/SUB/BEQ
+ *   survives with native registers, and the delayed header load also fits.
+ *   A one-pass null-destination block or plain alias leaves 14; split
+ *   subtract forms give 19, and the complement form gives 20.
+ * - English: the same staged mark assignment, delayed narrow width read,
+ *   and recomputed wide index give 19. Keeping the wide named index gives
+ *   28; keeping the early narrow width read gives 30. jump2 now shares the
+ *   identical width loads, and every glyph-header instruction agrees.
+ *   Defining mark before the null test instead gives 21. Of 36 combinations
+ *   of selection, width, wide index and entry, 19 is best. Height before
+ *   the range branch gives 51 with index r0/accent ip. Reading height before
+ *   defining index removes the extra reload (196 instructions) but gives
+ *   28. Its lreg/greg dumps show index pseudo 42 inheriting preference 0
+ *   from font_width at its REG_DEAD width-table load: global.c's
+ *   expand_preferences merges preferences of nonconflicting dying and
+ *   defined allocnos. Plain register hints do not change any of 19 tested
+ *   entry forms. Shared error-result exits give 40 or 56, not a repair.
+ *   On the 28-residual form, plain font-width records/arrays and u8 casts
+ *   leave 28; volatile storage gives 110, a wide integer gives 90, delayed
+ *   font source setup gives 62/77, and reusing index for font width gives
+ *   97. Window aliases give 28..51; an alias plus width boundary gives 90.
+ *   Signed/64-bit index types leave 28. None removes the return preference.
+ * Other controlled trials, all rejected:
+ * - 192 explicit row-record forms (field order, volatility and tail shape):
+ *   best other 72. Native frame size remains, but spill slots move. A delayed
+ *   cached-pointer store moves behind the shift and also behind the compare.
+ * - 64 packed-dot wide-integer/type forms: best other 46. 1,024 context
+ *   records with independently volatile fields and two row tails: best 166,
+ *   191 instructions; matching field offsets does not restore lifetimes.
+ * - A combined entry height/test block leaves ja/other unchanged but gives
+ *   English 41 before the mark fix. Pending source aliases give en/other
+ *   51/16; blocks around color1 give 77/66. Volatile height gives 28/37/55;
+ *   a u16 cast leaves output unchanged. None fixes a remaining store.
+ * - Ten Japanese width forms give 16..129: field syntax alone is unchanged,
+ *   a delayed plain header gives 45, volatile reads give 42 or 129, and a
+ *   whole postincrement in a block gives 79. Only the staged-mark follow-up
+ *   repairs the regression. Scratch trials under out/ never enter a build.
+ *
  * Remaining differences, located by labels in recon/tbs/raw/moji.s.
  * The following is a pass-level diagnosis, not a claim to have found the
  * missing C. A stated dependency or lifetime change is a requirement for
@@ -417,8 +475,8 @@
  *    compares priority, dependency class, then original LUID. Source order
  *    alone cannot change an unequal priority or a data/anti dependency.
  *    Native order requires another lifetime/dependency or a scheduling
- *    boundary that survives optimization. The packed-dot and row-tail
- *    sites have not yet been repaired this way; the main dot is resolved.
+ *    boundary that survives optimization. Both dots are now resolved;
+ *    row-tail spill placement remains.
  *    In the earlier European dot's sched2 graph, pixel shift and address
  *    OR tie at priority 17. At T-8 the former wins because it is
  *    independent of mask=15, while the latter has an anti
@@ -428,7 +486,7 @@
  * J: jump2 cross-jumping requires equal instruction tails after sched2;
  *    arm.c's literal-pool pass then computes distances from the final code.
  *
- * Japanese: eight moved instructions, accounting for all 16 residual entries.
+ * Japanese: seven moved instructions, accounting for all 14 residual entries.
  * - Entry (S): cmp r1,#255 must precede str r0,[sp,#20]. The one-pass
  *   height read restores the argument copies and places the load before
  *   the compare, but reload's spill still precedes it. Delaying that spill
@@ -442,19 +500,16 @@
  *   below. No tested source predicate creates the required constraint.
  * - .L_font_row (S): cmp ip,r5 must precede add lr,r2,#1, not follow it.
  *   A different rownext lifetime must change their scheduling priority.
- * - .L_glyph (S): ldrh r0,[r3,r1] must follow add rows,#2 and its spill
- *   to [sp,#28]; draft loads first. A later width-load dependence is needed;
- *   expressing rows++ followed by rows[-1] instead creates a postincrement.
  * - .L_row_next (S): lsl ip,ip,#16 must precede str next,[sp,#8]; draft
  *   reverses them. The free one-cycle shift wins the last slot before the
  *   branch over the two-cycle store in stock sched2. A surviving constraint
  *   or late transform is needed; jump2's register-set hoists cannot hoist
  *   this store. This observation does not prove that plain C cannot match.
- * - Both dot bodies and .L_shift are resolved by the measured boundaries
- *   below. They no longer contribute residual instructions.
+ * - Both dots, .L_glyph/.L_wide and .L_shift are resolved by the measured
+ *   boundaries and staged mark assignment below. Pool displacements agree.
  *
- * German/Spanish/French/Italian: all have the same nine moved instructions
- * on each side (18 total), solely order. Their pool displacements agree.
+ * German/Spanish/French/Italian: all have the same seven moved instructions
+ * on each side (14 total), solely order. Their pool displacements agree.
  * The following exhausts the --show differences.
  * - Entry (S): mov ip,r1; sub sp,sp,#44; ldr font,[sp,#72] are early.
  *   Native copies x and y before the frame adjustment and font/character
@@ -466,10 +521,8 @@
  *   r8,#31; it now precedes it. Delaying these reload-inserted spills
  *   needs dependencies surviving allocation. Color1's spill, row zero
  *   and the width-table load are resolved by the two boundaries below.
- * - Packed-font dot (S): address ADD and OR must follow x's AND/LSL.
- *   The main glyph dot now matches, but the packed-font clipping expression
- *   changes x/index lifetimes, and sharing its new helper breaks allocation.
- *   This path still needs a compatible lreg lifetime and sched2 boundary.
+ * - Both dot bodies now match. The packed dot's line/shift block restores
+ *   the required lreg priorities as well as the sched2 boundary.
  * - .L_row_next (S): the same shift/store reversal as Japanese.
  * - .L_glyph/.L_wide now match: the one-pass width read preserves the
  *   needed scheduling boundary, and returning width directly gives r3
@@ -477,7 +530,7 @@
  *   pass initialization. The former short width's return-register preference
  *   no longer controls either load. This is resolved, not a remaining site.
  *
- * English: 15 native and 16 draft residual entries (31 total). Its
+ * English: 9 native and 10 draft residual entries (19 total). Its
  * long-lived drawing registers, index ip and accent lr agree.
  * - Entry (A,S,J): sub ip,r1,#32 and sub sp,sp,#44 are too early; cmp
  *   ip,#111 and str window,[sp,#40] precede the x copy. mov r0,#1 / bhi
@@ -493,22 +546,15 @@
  *   str r3,[sp,#12] must follow cmp r7,#31, not precede it. The color
  *   constants and all three source/color stores now match. Row/table
  *   lifetimes and the free-compare/spill constraint remain to be fixed.
- * - .L_glyph (S,J): ldrh r0,[r3,r2] precedes rows += 2 and its spill.
- *   Native shares that ldrh with .L_wide; the draft's two sched2 tails
- *   differ and jump2 keeps both (one extra instruction). Delaying it
- *   until after the spill would expose equal tails to cross-jumping.
- *   The multiplier and accent now use the native registers. The tested
- *   header boundary delays the load but swaps index/accent, giving 75.
- * - .L_wide (A,J): named-index reuse omits sub r3,r1,#32 and makes the
- *   shift read ip instead of r3. Recomputing this subtraction gives 40
- *   before the setup boundaries, with 198 instructions: the duplicate
- *   narrow ldrh and entry window reload both remain. These three extra
- *   or omitted instructions explain the current draft's net extra one.
- * - Packed-font dot and .L_row_next (S): the same three moves as Europe.
- *   The main glyph dot and .L_shift now match.
- * - Remaining branch and literal-load displacement differences (J) follow
- *   from the different glyph-branch extents and moved width-table load. They
- *   are not separate constants to encode in source. Literal pools and the
+ * - .L_glyph/.L_wide now match: staged mark assignments and the header
+ *   boundary preserve native registers; jump2 shares their width load.
+ *   Recomputing the wide index restores sub r3,r1,#32 and its shift.
+ *   The entry window reload alone explains the draft's extra instruction.
+ * - .L_row_next (S): the same shift/store move as Europe. Both dots and
+ *   .L_shift now match.
+ * - Remaining range-branch and width-table-load displacements (J) follow
+ *   from the early branch and moved load. All later branch displacements
+ *   agree. These are not constants to encode in source. Literal pools and the
  *   complete extent still require byte verification before any adoption.
  */
 
@@ -526,17 +572,27 @@ static __inline__ void GlyphPackedDot(u32 stride, u32 x, u32 tile_y, u32 row_lin
 	u32 line;
 	u32 shift;
 	u32 mask;
+	u32 pixel;
 
-	/* FAKEMATCH: reuse the tile index for the byte address. A separate
-	 * destination lifetime raised en/other to 277/271 in the earlier
-	 * volatile-spill trial; scalar reuse also removes the Japanese lifetime. */
-	tile = (x >> 3) * (stride - 2) + tile_y;
-	line = row_line | ((x & 7) >> 2);
-	shift = (x & 3) << 2;
-	mask = 15 << shift;
+	/* FAKEMATCH: reuse line for stride-2, pixel for the tile column/output,
+	 * and tile for the address. The one-pass line/shift block both delays
+	 * address construction and raises these values' loop-weighted refs.
+	 * lreg then gives tile r0 and shift r1 instead of r1/r0. This matches
+	 * the packed dot in all five editions: en/other 31/18 -> 27/14.
+	 * An empty boundary alone gives other 48; wrapping shift alone gives 26. */
+	pixel = x >> 3;
+	line = stride - 2;
+	tile = pixel * line + tile_y;
+	do
+	{
+		line = row_line | ((x & 7) >> 2);
+		shift = (x & 3) << 2;
+	} while (0);
 	tile = (u32)vram + (tile << 5);
 	tile |= line << 1;
-	*(u16 *)tile = (*(u16 *)tile & ~mask) | (mask & color);
+	mask = 15 << shift;
+	pixel = (*(u16 *)tile & ~mask) | (mask & color);
+	*(u16 *)tile = pixel;
 }
 
 static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
@@ -576,6 +632,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 #endif
 	u32 width;
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+	u32 mark;
 	u32 result;
 #endif
 	u32 stride;
@@ -596,10 +653,10 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 	use_font = character <= 255 || font != NULL;
 #endif
 #if defined(TBS_EDITION_EN)
-	/* FAKEMATCH: test the named index before reading height, and retain it
-	 * through the wide-glyph expression. This restores index=ip and the
-	 * accent offset=lr, lowering English from 46 to 37 despite one extra
-	 * window reload. Recomputing the wide index gives 40 at this step. */
+	/* FAKEMATCH: test the named index before reading height. This restores
+	 * index=ip and the accent offset=lr, lowering English from 46 to 37
+	 * despite one extra window reload. With the mark/header form below,
+	 * recomputing the wide index now lowers English from 28 to 19. */
 	index = character - 32;
 	if (index > 111)
 		return 1;
@@ -613,7 +670,24 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 	} while (0);
 
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
-	if (character <= 255 || (font != NULL && character - 222 <= 1))
+	/* FAKEMATCH: define mark in both destinations of the font-null test.
+	 * Together with the delayed width read below, this keeps character in
+	 * r1 and mark in ip and places the narrow header load after its pointer
+	 * spill: ja 16 -> 14. Defining mark before the test instead gives 16;
+	 * a comma assignment inside the combined predicate gives 25. English
+	 * keeps mark in lr; with its wide index recomputed, en 27 -> 19 and
+	 * jump2 shares the now-identical width loads. */
+	if (character > 255)
+	{
+		if (font == NULL)
+		{
+			mark = character - 222;
+			goto glyph_wide;
+		}
+		mark = character - 222;
+		if (mark > 1)
+			goto glyph_wide;
+	}
 #else
 	if (use_font)
 #endif
@@ -733,9 +807,25 @@ font_done:
 			return font_width;
 #endif
 		}
+#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+		mark = character - 222;
+#endif
 		rows = (const u16 *)((const u8 *)UiText_Glyphs + (character - 32) * 26);
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
-		width = *rows++;
+		{
+			const u16 *header = rows;
+
+			rows++;
+			/* FAKEMATCH: preserve the header-read boundary. With mark
+			 * calculated before the address, ja's load/store order matches.
+			 * The same read alone gives 45 by extending character's life.
+			 * English also needs this boundary for jump2 to share the load;
+			 * with mark and the wide index above, en 30 -> 19. */
+			do
+			{
+				width = *header;
+			} while (0);
+		}
 #else
 		header = rows;
 		rows++;
@@ -748,23 +838,25 @@ font_done:
 		} while (0);
 #endif
 	}
+#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+	goto glyph_selected;
+glyph_wide:
+#else
 	else
+#endif
 	{
 #if defined(TBS_EDITION_JA)
 		width = 10;
 		rows = (const u16 *)(UiText_KanjiGlyphs + (character - 256) * 24);
 #else
-#if defined(TBS_EDITION_EN)
-		rows = (const u16 *)((const u8 *)UiText_Glyphs + index * 32);
-#else
 		rows = (const u16 *)((const u8 *)UiText_Glyphs + (character - 32) * 32);
-#endif
 		width = rows[0];
 		rows += 4;
 #endif
 	}
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
-	if (character - 222 <= 1)
+glyph_selected:
+	if (mark <= 1)
 	{
 		x -= 3;
 		y -= 2;

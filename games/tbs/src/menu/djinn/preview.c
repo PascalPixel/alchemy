@@ -1176,6 +1176,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
             redraw = 0;
             if (cnt != 0) {
                 /* FAKEMATCH: register choice: k in r1 as native; as a pseudo, k is a biv loop.c strength-reduces in the loop below (adds r2, #4), 37 rows */
+                /* FAKEMATCH: removing this pin and all three barriers together gives EN reference 1201, built 1199, common 1187, differ 26; k's sp+28 reload disappears, the search uses adds r2,#4, and row's reload moves before x subtraction; extent 0xac4 -> 0xac0. */
                 register s32 k asm("r1");
                 UiWork_ClearValueNameTables();
                 /* FAKEMATCH: restores a CSE1 block end the bytes prove (k = redraw survives as the native ldr r1, [sp, #28]): an empty one-pass block, without which CSE1 deletes the second redraw = 0 below as a no-op and folds k to 0 (29 rows) */

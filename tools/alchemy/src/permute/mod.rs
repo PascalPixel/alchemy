@@ -6,6 +6,7 @@
 //! its own source-line mapping. Output lives under out/permute.
 
 mod aim;
+mod c;
 pub(crate) mod ast;
 mod effects;
 pub(crate) mod lex;
@@ -484,7 +485,12 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
     // Preprocess before AST permutations: their temporary grouping blocks
     // intentionally do not have the final C declaration scopes.
     std::fs::write(&setup.candidate, &original.text).map_err(|e| e.to_string())?;
-    problem.unit = scan_unit(&setup.preprocess()?)?;
+    let preprocessed = setup.preprocess()?;
+    let mut full_unit = c::parse(&preprocessed)?;
+    if let Ok(target) = locate(&original.text, problem.function.as_deref(), &scan_unit(&preprocessed)?.typedef_names()) {
+        full_unit.extract_function(&target.function.name)?;
+    }
+    problem.unit = scan_unit(&full_unit.print())?;
     let base_state = problem.state(original);
     let base_text = problem.source(&base_state);
     setup.compile(&base_text)?;
@@ -1109,6 +1115,24 @@ mod tests {
         assert!(compiler(&arm));
         std::fs::write(&arm.candidate, "int F(int x) { return x + 1; }\n").unwrap();
         assert!(arm.preprocess().unwrap().contains("return x + 1"));
+    }
+
+    #[test]
+    fn compatibility_c_tree_compiles_through_both_game_routes() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let source = "#include \"types.h\"\ntypedef struct { u32 word; s16 pair[2]; } Item;\nstatic inline u32 Twice(u32 x) { return x + x; }\nu32 F(Item *p) { u32 n = p->word; if (n) return Twice(n); return (u16)p->pair[1]; }\n";
+        for arm in [false, true] {
+            let work = tempfile::tempdir().unwrap();
+            let mut problem = test_problem(Path::new("recon/tbs/en/main/08000000.c"), source, Vec::new(), Some("F"));
+            problem.arm = arm;
+            let job = Job::new(&problem, work.path()).unwrap();
+            job.compile(source).unwrap();
+            let expected = crate::diff::disassemble(&job.object, Some("F")).unwrap();
+            let mut unit = c::parse(&job.preprocess().unwrap()).unwrap();
+            unit.extract_function("F").unwrap();
+            job.compile(&unit.print()).unwrap();
+            assert_eq!(crate::diff::disassemble(&job.object, Some("F")).unwrap(), expected);
+        }
     }
 
     #[test]

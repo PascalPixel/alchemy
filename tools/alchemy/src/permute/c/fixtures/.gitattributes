@@ -1,0 +1,2 @@
+# Preserve the reference printer's significant trailing spaces and blank lines.
+*.expected whitespace=-blank-at-eol,-blank-at-eof

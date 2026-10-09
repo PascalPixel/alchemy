@@ -1,3 +1,4 @@
+@ C2: add sl, pc, #100 and ldm load adjacent data as a block; the save omits lr.
 .syntax unified
 .text
 	.arm

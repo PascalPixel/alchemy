@@ -309,12 +309,18 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 			for (; i != 135; i++)
 			{
 				s32 green = i - 16;
-				/* FAKEMATCH: the quotient in r3, as in the reference; local-alloc otherwise ties level to the quotient and swaps level and red (16 lines). */
-				register s32 quarter asm("r3") = green / 4;
-				/* FAKEMATCH: level in r2, see quarter. */
-				register s32 level asm("r2") = quarter + heat;
-				s32			 red = level - 32;
+				/* FAKEMATCH: reuse red for the biased signed quotient. A
+				 * separate quotient coalesces with level; the explicit bias
+				 * keeps the native r3 copy and shift (four register rows). */
+				s32 red = green;
+				/* FAKEMATCH: level in r2; unbinding it changes ten register/order rows. */
+				register s32 level asm("r2");
 
+				if (green < 0)
+					red += 3;
+				red >>= 2;
+				level = red + heat;
+				red = level - 32;
 				green = level - 80;
 
 				if (red < 0)

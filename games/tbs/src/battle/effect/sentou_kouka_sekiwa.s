@@ -1,3 +1,4 @@
+@ C2: smull/smlal ip, r0 use unpaired multiply halves.
 .syntax unified
 .text
 	.arm

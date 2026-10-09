@@ -83,8 +83,8 @@ gSavedStack:
 	.global gMusicRestoreDelay
 gMusicRestoreDelay:
 	.space 0x00000004
-	.global RomBytes_02003004
-RomBytes_02003004:
+	.global Ewram_Data1
+Ewram_Data1:
 	.space 0x00000004
 	.global gMusicVolume
 gMusicVolume:

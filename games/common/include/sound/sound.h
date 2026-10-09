@@ -54,7 +54,7 @@ extern s32 Data_03007804;
 #endif
 extern u8 gMusicFadeRequested;
 extern s32 gSoundClipFlag;
-extern u8 RomBytes_02003004;
+extern u8 Ewram_Data1;
 void Audio_Initialize(void);
 void Audio_PlaySound(u16 id);
 void Sound_TickDmaRestartTimer(void);

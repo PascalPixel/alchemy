@@ -187,7 +187,7 @@ void Audio_InitializeRuntimeDefaults(void)
     gMusicFadeRequested = 0;
     Audio_CommandMask = 0;
     player_volume = (s16 *)gMusicPlayerVolumes;
-    RomBytes_02003004 = 0;
+    Ewram_Data1 = 0;
     remaining = 7;
     do {
         remaining--;

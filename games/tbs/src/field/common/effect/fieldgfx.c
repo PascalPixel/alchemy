@@ -109,16 +109,6 @@ struct DustWork {
 
 void Resource_DecodeByteLz(const void *source, void *destination);
 
-static __inline__ void ClearDustWork(struct DustWork *work)
-{
-    volatile u32 zero;
-    /* FAKEMATCH: builds the fill zero in r1 */
-    register u32 value asm("r1") = 0;
-
-    zero = value;
-    Dma_Set(&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x104, REG_DMA3);
-}
-
 void FieldMotes_Update(void)
 {
     /* FAKEMATCH: needed to match: relative work pointers share one pool address; an unsigned-long frame read keeps size and flip stores together. */
@@ -190,13 +180,16 @@ void FieldMotes_Start(void)
     struct Mote *mote;
     u8 *tiles;
     u32 i;
+    u32 size;
     volatile u32 zero;
     volatile u16 *reg;
 
-    work = Runtime_AllocateBlock(29, 0x410);
+    size = 0x410;
+    work = Runtime_AllocateBlock(29, size);
     mote = work->motes;
-    { register u32 z asm("r1") = 0; /* FAKEMATCH: the cleared word goes through r1 */
-    zero = z; }
+    /* FAKEMATCH: needed to match: reusing the allocation size for the cleared word keeps it in r1. */
+    size = 0;
+    zero = size;
     Dma_Set((void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x104, REG_DMA3);
     tiles = Runtime_AllocateBlock(14, 0x400);
     Resource_DecodeByteLz(FieldFx_MoteTiles, tiles);
@@ -205,16 +198,19 @@ void FieldMotes_Start(void)
     Runtime_ReleaseHeapBlock(14);
     for (i = 0; i < 32; i++) {
         s32 *pos = ((struct MapScrollWork *)gMapWork[0])->origin;
-        register s32 *p asm("r1") = &mote->state; /* FAKEMATCH: steps the fields through r1 */
-        s32 x, z;
-        *p++ = 0;
-        *p++ = 0x40000400;
-        *p = 0xd400;
-        x = pos[0];
+        /* FAKEMATCH: needed to match: reusing the integer field cursor for the height x argument keeps the stores in r1. */
+        u32 p = (u32)mote;
+        s32 z;
+        *(s32 *)p = 0;
+        p += sizeof(s32);
+        *(s32 *)p = 0x40000400;
+        p += sizeof(s32);
+        *(s32 *)p = 0xd400;
+        p = pos[0];
         z = pos[2];
-        mote->x = x;
+        mote->x = (s32)p;
         mote->z = z;
-        mote->y = Map_GetTerrainHeightFar(0, x >> 16, z >> 16) << 16;
+        mote->y = Map_GetTerrainHeightFar(0, (s32)p >> 16, z >> 16) << 16;
         mote->phase = (i & 15) + 1;
         mote++;
     }
@@ -310,13 +306,18 @@ void FieldEffect_UpdateSparkles(void)
 
 void FieldEffect_InitSparkles(void)
 {
-    struct DustWork *work = Runtime_AllocateBlock(29, 0x410);
+    u32 size = 0x410;
+    struct DustWork *work = Runtime_AllocateBlock(29, size);
     struct DustParticle *p = work->particles;
     u8 *buf;
     u32 i;
     s32 clear;
+    volatile u32 zero;
 
-    ClearDustWork(work);
+    /* FAKEMATCH: needed to match: reusing the allocation size for the fill word keeps zero in r1; a separate helper value differs by four instructions. */
+    size = 0;
+    zero = size;
+    Dma_Set(&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x104, REG_DMA3);
     buf = Runtime_AllocateBlock(14, 0x400);
     Resource_DecodeByteLz(FieldFx_SparkleTiles, buf);
     work->vram_entry = Resource_FindFreeEntry();
@@ -327,24 +328,23 @@ void FieldEffect_InitSparkles(void)
 loop:
     {
         struct MapScrollWork *view = gMapWork[0];
-        /* FAKEMATCH: keeps the leader pointer in r2 */
-        register s32 *leader asm("r2");
-        union DustWord *attr;
-        s32 x;
+        s32 *leader;
+        /* FAKEMATCH: needed to match: an integer field cursor keeps the view load order; reusing it for the height x argument keeps the leader in r2. Separate temporaries differ by 14 instructions. */
+        u32 attr;
         s32 z;
 
-        /* FAKEMATCH: loads the view before the particle pointer copy */
-        asm volatile ("" : : "r"(view));
-        attr = &p->link;
-        (attr++)->link = (void *)clear;
+        attr = (u32)p;
+        *(u32 *)attr = clear;
+        attr += sizeof(union DustWord);
         leader = view->origin;
-        (attr++)->value = 0x40000400;
-        attr->value = 0xd400;
-        x = leader[0];
+        *(u32 *)attr = 0x40000400;
+        attr += sizeof(union DustWord);
+        *(u32 *)attr = 0xd400;
+        attr = leader[0];
         z = leader[2];
         p->pos_x = clear;
         p->pos_z = clear;
-        p->pos_y = Map_GetTerrainHeightFar(0, x >> 16, z >> 16) << 16;
+        p->pos_y = Map_GetTerrainHeightFar(0, (s32)attr >> 16, z >> 16) << 16;
         p->timer = (i & 15) + 1;
     }
     i++;

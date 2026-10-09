@@ -569,15 +569,15 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                     -1,
                     0);
             }
-            edge = -1;
-            UiWindow_SetTilemapEntry(
-                window, 0xf334, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
-            UiWindow_SetTilemapEntry(
-                window, 0xf335, window->width - 2, edge, 0);
-
-            /* FAKEMATCH: reload render work before its dirty-field offset. */
-            /* FAKEMATCH: removing the barrier gives EN differ 52. A duplicate dead ((u32 *)spr)[2] = 0 after the cursor clear restores the native spill slots: reference/built 794, common 789, differ 10, all ten displayed rows concern page-call arguments or the dirty-pointer reload. A byte read or inline page helper still differs 52. */
-            __asm__ volatile ("" : : "r" (render));
+            /* FAKEMATCH: this one-pass block is needed to match the page-call
+             * arguments and render reload order (ten instructions). */
+            do {
+                edge = -1;
+                UiWindow_SetTilemapEntry(
+                    window, 0xf334, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
+                UiWindow_SetTilemapEntry(
+                    window, 0xf335, window->width - 2, edge, 0);
+            } while (0);
             render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
         }
 
@@ -588,6 +588,9 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
         pos.x = window->x * 8 - 4;
         pos.y = (row * 2 + window->y) * 8 + 20;
         ((u32 *)spr)[1] = 0x40000000;
+        ((u32 *)spr)[2] = 0;
+        /* FAKEMATCH: this dead duplicate is needed to match the native spill
+         * slots; removing it changes 42 aligned instructions. */
         ((u32 *)spr)[2] = 0;
         spr->oam.f.tile =
             Resource_GetBuffer(cursor_handle, (s32)Resource_FixedBlockBTiles);
@@ -724,8 +727,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     struct UiWindow *window;
     /* FAKEMATCH: removing both edition pin declarations and the t barrier together gives EN 1585/1585, common 1343, differ 484: infoWin spills and the frame shrinks 324 -> 320. ES 1684/1684, common 1569, differ 230: infoWin/sel swap r10/r9 and spill slots permute. Both extents stay unchanged. */
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-    /* FAKEMATCH: register choice only: as an ordinary local the info window takes r9 and sel r10 (differ 98); the native has the window in r10 and sel in r9. */
-    register struct UiWindow *infoWin asm("r10");
+    struct UiWindow *infoWin;
 #else
     /* FAKEMATCH: register choice only: as an ordinary local the info window is spilled and the frame shrinks to 320 bytes (differ 492); the native keeps it in r9. */
     register struct UiWindow *infoWin asm("r9");
@@ -760,7 +762,13 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     cnt = 0;
     redraw = 0xFFFF;
     slotId = Resource_LoadIntoFreeSlot(256);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+    /* FAKEMATCH: this value-preserving null initializer is needed to match
+     * infoWin in r10; a direct zero swaps high registers and spill slots. */
+    infoWin = (struct UiWindow *)((u32)(u16)sel >> 16);
+#else
     infoWin = 0;
+#endif
     if (spread == 0)
         spread = 1;
     if (mode == 2 || mode == 4)
@@ -903,7 +911,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
            cursor * 2 take sp+36, 32, 28 and 24 before &efx (20) and
            selSlot (16) as in the native frame (1417 and 709 buckets
            without them: every remaining row is a spill slot's offset;
-           ES and IT, 107 insns longer, reach 779). */
+           ES and IT use two additional copies below to restore the slot
+           order after their value-preserving null initializer). */
         efx.angle = 0;
         efx.angle = 0;
         efx.angle = 0;
@@ -921,6 +930,12 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         efx.angle = 0;
         efx.angle = 0;
         efx.angle = 0;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+        /* FAKEMATCH: these two additional dead stores are needed to match
+         * the native spill slots; without them ES differs 136 instructions. */
+        efx.angle = 0;
+        efx.angle = 0;
+#endif
         matrix = AffineMatrix_BuildForEffect(&efx);
         if ((redraw & 1) == 0)
             goto frame_end;

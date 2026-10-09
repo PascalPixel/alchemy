@@ -127,11 +127,12 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 c = Iwram_SignedDivide(r + ((c >> 5) & 31) + ((c >> 10) & 31), 10);
                 r = c * 4 + 5;
                 b = c * 3 + 5;
-                /* FAKEMATCH: needed to match: with the blue clamp identity below, removing both remaining barriers leaves 6 aligned differences in 3 rows of 803 instructions, with the same 0x704-byte extent. The blue/green add, copy and first lower comparison exchange r5/r6. */
-                asm("" : "+r"(r));
-                g = b;
-                /* FAKEMATCH: needed to match: removing this barrier alone compares green r6 instead of blue r5 (2 aligned differences); independent channel lifetimes prevent CSE from substituting the copied channel. */
-                asm("" : "+r"(g));
+                /* FAKEMATCH: needed to match: this reversible XOR initialization
+                 * folds late, preserving the blue-first add/copy and independent
+                 * lower comparison. Copying g = b before two XOR assignments
+                 * exchanges the add/copy registers (four aligned differences). */
+                g = b ^ r;
+                g ^= r;
                 if (r < 8)
                     r = 8;
                 if (b < 8) {

@@ -568,7 +568,12 @@ begin_transfer:
     {
 
         volatile u8 *sequence = &gSerialBlockSequence;
-        register u16 zero asm("r0") = 0; /* FAKEMATCH: the zero in r0, see above */
+        /* FAKEMATCH: the zero in r0, see above. An ordinary u16 (also
+         * register-qualified) reuses busy's zero in r4, removes the literal
+         * zero load/pool word and leaves 5 aligned instructions different.
+         * An inline u16 zero-return helper differs by 24; an inline byte
+         * store with a u16 first parameter leaves the same 5. */
+        register u16 zero asm("r0") = 0;
         *sequence = zero;
     }
     *ime = saved_interrupt_master;

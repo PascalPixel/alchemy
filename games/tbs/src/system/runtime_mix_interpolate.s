@@ -1,3 +1,5 @@
+@ C2: fp is the sample multiplier in mla; addne pc,lr,#8 skips into the shared
+@ caller continuation.
 .syntax unified
 	.arm
 	asr	r9, r9, #22

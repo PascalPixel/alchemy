@@ -1,3 +1,4 @@
+@ C2: Computed add pc dispatch into code; a later block saves r5-r9 without lr.
 .syntax unified
 	.arm
 	.global Render_DecodeFrame

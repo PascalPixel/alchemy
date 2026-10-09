@@ -1,3 +1,4 @@
+@ C2: push saves r5-r9/sl without lr.
 .syntax unified
 .text
 	.arm

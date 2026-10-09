@@ -1,3 +1,6 @@
+@ C2: DMA timer branches on carry from lsls; MusicPlayer_Tick's library
+@ dispatcher and call-via-r3 entry share the complete MusicPlayer2000 assembly
+@ module.
 .syntax unified
 	.thumb
 	.global Sound_TickDmaRestartTimer

@@ -1,3 +1,5 @@
+@ C2: Sound synthesis uses fp as packed volume/sample arithmetic and writes
+@ computed mixed words with stmia r5! without a matching block-copy source.
 .syntax unified
 	.arm
 IwramSoundRenderFrame:

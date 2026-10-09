@@ -1,3 +1,4 @@
+@ C2: push saves r5/r6 without lr and rrx consumes reader carry.
 .syntax unified
 .text
 	.arm

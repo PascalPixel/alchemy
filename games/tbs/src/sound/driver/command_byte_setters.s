@@ -1,3 +1,5 @@
+@ C2: Both nested-call entries return through ip saved from lr rather than a
+@ procedure-standard return.
 .syntax unified
 	.thumb
 

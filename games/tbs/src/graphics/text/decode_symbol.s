@@ -1,3 +1,4 @@
+@ C2: rrx and conditional rrxs consume the bit reader's shift carry.
 .syntax unified
 .text
 	.arm

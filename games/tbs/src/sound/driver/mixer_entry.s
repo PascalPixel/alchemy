@@ -1,3 +1,6 @@
+@ C2: Nintendo MusicPlayer2000 SoundMain entry sets up one frame then bx
+@ transfers into SoundDriver_Mixer, which consumes its live stack and saved
+@ register state.
 .syntax unified
 	.thumb
 	.global AudioEngine_RunMixerTick

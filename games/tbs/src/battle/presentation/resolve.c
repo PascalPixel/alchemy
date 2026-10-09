@@ -202,18 +202,23 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
 {
 	struct BattlePresentationTransition *presentation = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
 	struct BtlWork						*scene = *(gWorkSlot + HEAP_SLOT_BATTLE);
-	s32									 completed = 0;
+	/* FAKEMATCH: the halfword initialization preserves the word copy into party_mode instead of folding it into an immediate zero (one instruction differs). */
+	union
+	{
+		s32 value;
+		u16 halves[2];
+	} completed;
 	s32									 party_mode;
 
+	completed.halves[0] = 0;
+	completed.halves[1] = 0;
 	presentation->target_yaw = 0x2000;
 	presentation->active = 1;
 	BattlePres_SetActorModes(0, 0);
 
 	if (plan->aid <= 7)
 	{
-		party_mode = completed;
-		/* FAKEMATCH: empty asm barrier on party_mode: cse no longer knows the copy of completed is zero, so it is adds r2, r7, #0 as native, not movs r2, #0 (1 of 108 rows differ without) */
-		asm("" : "+r"(party_mode));
+		party_mode = completed.value;
 
 		if (scene->encounter_mode != 2)
 		{
@@ -242,7 +247,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
 				index--;
 			}
 			WaitFrames(22);
-			completed = 1;
+			completed.value = 1;
 		}
 	}
 	else if (((Random16() * 10) >> 16) <= 6)
@@ -263,7 +268,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
 	}
 
 	presentation->active = 0;
-	return completed;
+	return completed.value;
 }
 
 void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);

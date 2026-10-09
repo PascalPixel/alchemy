@@ -1,3 +1,4 @@
+@ C2: stmfd sp! saves callee-saved r5 without lr.
 .syntax unified
 	.arm
 	.global Resource_ExecuteTransfer

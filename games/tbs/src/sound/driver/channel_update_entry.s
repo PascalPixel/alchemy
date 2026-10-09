@@ -1,3 +1,6 @@
+@ C2: MusicPlayer2000's shared call_r3 helper supplies the bx r3 hook entry.
+@ Mixer-frame setup transfers into a shared live-stack IWRAM mixer rather
+@ than returning through an ordinary call frame.
 .syntax unified
 .text
 	.thumb

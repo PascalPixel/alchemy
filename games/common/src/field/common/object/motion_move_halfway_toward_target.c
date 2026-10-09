@@ -14,10 +14,19 @@ void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj)
 	struct ObjectRuntime *tgt = obj->linked_object;
 
 	obj->x += (tgt->x - obj->x) / 2;
-	/* FAKEMATCH: ⚓️'s ARM9 scheduling would load the target's y before the object's own. */
-	__asm__("");
-	obj->y += (tgt->y - obj->y) / 2;
-	/* FAKEMATCH: and the target's z before the object's own. */
-	__asm__("");
-	obj->z += (tgt->z - obj->z) / 2;
+	/* FAKEMATCH: separate CSE blocks retain each axis's own-position load and
+	   destructive add. Direct updates reverse the y/z loads under TLA's flags;
+	   unscoped temporaries change four add/store registers in TBS. */
+	do {
+		s32 position = obj->y;
+
+		position += (tgt->y - position) / 2;
+		obj->y = position;
+	} while (0);
+	do {
+		s32 position = obj->z;
+
+		position += (tgt->z - position) / 2;
+		obj->z = position;
+	} while (0);
 }

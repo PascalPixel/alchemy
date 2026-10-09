@@ -1,3 +1,6 @@
+@ C2: Both multiply halves remain live in nonconsecutive ip/r0 through smull
+@ and smlal; compiler DI multiply patterns require consecutive halves, and
+@ highpart patterns discard the low half.
 .syntax unified
 .text
 	.arm

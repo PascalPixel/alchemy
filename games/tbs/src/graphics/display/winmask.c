@@ -66,8 +66,6 @@ void DisplayTransition_UpdateScanlineTable(void)
     s32 cx;
     s32 cy;
 
-    /* FAKEMATCH: pins ax to r5, as the native allocates it. */
-    register s32 ax asm("r5");
     s32 ay;
     s32 bx;
     s32 by;
@@ -233,6 +231,9 @@ void DisplayTransition_UpdateScanlineTable(void)
         break;
 
     case 7:
+    {
+        s32 ax;
+
         view7 = &map->view_x;
         ax = view7[0] & 0xffff0000;
         ay = view7[1] & 0xffff0000;
@@ -276,6 +277,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         }
         break;
 
+    }
     case 8:
         view8 = &map->view_x;
         bx = view8[0] & 0xffff0000;
@@ -326,6 +328,9 @@ void DisplayTransition_UpdateScanlineTable(void)
         break;
 
     case 9:
+    {
+        s32 ax;
+
         view9 = &map->view_x;
         ax = view9[0] & 0xffff0000;
         ay = view9[1] & 0xffff0000;
@@ -366,7 +371,11 @@ void DisplayTransition_UpdateScanlineTable(void)
         }
         break;
 
+    }
     case 77:
+    {
+        s32 ax;
+
         view77 = &map->view_x;
         ax = view77[0] & 0xffff0000;
         ay = view77[1] & 0xffff0000;
@@ -406,6 +415,7 @@ void DisplayTransition_UpdateScanlineTable(void)
             dst += 2;
         }
         break;
+    }
     }
 
     state->page ^= 1;

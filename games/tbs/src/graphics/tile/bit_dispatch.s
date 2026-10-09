@@ -1,3 +1,5 @@
+@ C2: Dispatcher enters Model_BitCommands' shared r0/r2/r3 decoder linkage;
+@ bit_commands.s documents its unsaved r5 and ordinary fp mask.
 .syntax unified
 .text
 	.arm

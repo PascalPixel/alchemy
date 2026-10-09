@@ -882,7 +882,13 @@ s32 UiIcon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s
 {
     struct RenderOutput *object;
     u32 resource;
-    register s32 v asm("r5") = variant; /* FAKEMATCH: keeps the variant in r5 */
+    /* FAKEMATCH: keeps the variant in r5. Ordinary s32 v = variant,
+     * with or without register qualification, differs by 22 aligned
+     * instructions (40 native, 40 built, 29 common), extent 0x5c.
+     * First adds r5,r3,#0 becomes adds r4,r2,#0; variant remains in r3,
+     * y moves to r4, window moves from r4 to r5, the y subtracts move
+     * to r4, and the stack argument store moves after the copies. */
+    register s32 v asm("r5") = variant;
     struct RenderInput *w = window;
     s32 xx = x;
     struct InventoryMenuState *data = gMenuWork;

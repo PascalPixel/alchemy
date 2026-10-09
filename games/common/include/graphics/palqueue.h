@@ -4,18 +4,20 @@
 #include "types.h"
 #include "layout_guard.h"
 
-struct PaletteSnapshot {
-    u16 *source;
-    u16 position;
-    u16 timer;
-    s16 delay;
-    u16 count;
-    u16 colors[16];
+struct PaletteSnapshot
+{
+	u16 *source;
+	u16	 position;
+	u16	 timer;
+	s16	 delay;
+	u16	 count;
+	u16	 colors[16];
 };
 
-struct PaletteSnapshotWork {
-    struct PaletteSnapshot entries[4];
-    u16 count;
+struct PaletteSnapshotWork
+{
+	struct PaletteSnapshot entries[4];
+	u16					   count;
 };
 
 LAYOUT_SIZE_GUARD(PaletteSnapshot_Size, struct PaletteSnapshot, 0x2c);
@@ -27,7 +29,7 @@ LAYOUT_SIZE_GUARD(PaletteSnapshotWork_Size, struct PaletteSnapshotWork, 0xb4);
 LAYOUT_OFFSET_GUARD(PaletteSnapshotWork_Count, struct PaletteSnapshotWork, count, 0xb0);
 
 void Runtime_AllocateAndClearQueue(void);
-s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count);
+s32	 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count);
 void Runtime_ScheduleCallbackAndReleaseBlock28(void);
 void PaletteQueue_StepCycles(void);
 

@@ -171,11 +171,41 @@ pub fn camelot_admitted(text: &str, line: usize) -> bool {
     static TAG: OnceLock<Regex> = OnceLock::new();
     let tag = regex(&TAG, r#"/\*\s*FAKEMATCH:\s*[^\s*]|\bCAMELOT_ASM\("[^"]+"\)"#);
     let lines: Vec<&str> = text.lines().collect();
-    [line.checked_sub(1), line.checked_sub(2)]
+    let adjacent = [line.checked_sub(1), line.checked_sub(2)]
         .into_iter()
         .flatten()
         .filter_map(|row| lines.get(row))
-        .any(|text| tag.is_match(text))
+        .any(|text| tag.is_match(text));
+    if adjacent {
+        return true;
+    }
+
+    // A formatter may wrap the comma-separated registers of one tagged
+    // declaration. Admit its continuation, never the following statement.
+    let Some(row) = line.checked_sub(1) else { return false };
+    let Some(current) = lines.get(row) else { return false };
+    let start = text.split_inclusive('\n').take(row).map(str::len).sum::<usize>();
+    let end = start + current.len();
+    if end > text.len() {
+        return false;
+    }
+    let boundary = source_tokens(&text[..start]).into_iter().rev()
+        .find(|token| matches!(token.as_str(), ";" | "{" | "}"))
+        .map_or(0, |token| token.end());
+    let declaration = &text[boundary..end];
+    let Some(register) = source_tokens(declaration).into_iter().find(|token| token.as_str() == "register") else { return false };
+    let Some(proof) = tag.find_iter(&declaration[..register.start()]).last() else { return false };
+    let proof_end = if proof.as_str().starts_with("/*") {
+        declaration[proof.start()..register.start()].find("*/").map(|at| proof.start() + at + 2)
+    } else {
+        Some(proof.end())
+    };
+    let Some(proof_end) = proof_end else { return false };
+    if !declaration[proof_end..register.start()].chars().all(|c| c.is_whitespace() || c == '\\') {
+        return false;
+    }
+    let body = code_only(&declaration[register.start()..]);
+    !body.contains(['{', '}']) && body.find(';').is_none_or(|at| body[at + 1..].chars().all(|c| c.is_whitespace() || c == '\\'))
 }
 
 fn admit_camelot(findings: Vec<Finding>, text: impl Fn(&str) -> Option<String>) -> Vec<Finding> {
@@ -437,6 +467,21 @@ mod tests {
         let bare_fake = "void f(void) {\n    /* FAKEMATCH: */\n    asm(\"\");\n}\n";
         assert_eq!(find_forbidden("fixture.c", bare_fake).len(), 1);
         assert_eq!(find_forbidden("fixture.c", empty).len(), 1);
+    }
+
+    #[test]
+    fn wrapped_proven_register_declarations_keep_their_tag() {
+        let wrapped = "void f(void) {\nCAMELOT_ASM(\"identity row registers\")\nregister int a __asm__(\"r1\"),\n    b __asm__(\"r2\"),\n    c __asm__(\"r3\");\n}\n";
+        assert!(find_forbidden("fixture.h", wrapped).is_empty());
+        let macro_body = wrapped.replace('\n', "\\\n");
+        assert!(find_forbidden("fixture.h", &macro_body).is_empty());
+        assert!(find_forbidden("fixture.h", &wrapped.replace("CAMELOT_ASM(\"identity row registers\")", "/* FAKEMATCH: native row registers */")).is_empty());
+        assert!(find_forbidden("fixture.h", &format!("// 行列\n{}", wrapped.replace('\n', "\r\n"))).is_empty());
+        for unmarked in ["\nregister int d __asm__(\"r4\");", " register int d __asm__(\"r4\");", " asm(\"swi 0x5\");"] {
+            let escaped = wrapped.replace("c __asm__(\"r3\");", &format!("c __asm__(\"r3\");{unmarked}"));
+            assert!(!find_forbidden("fixture.h", &escaped).is_empty(), "{escaped}");
+        }
+        assert!(!find_forbidden("fixture.h", &wrapped.replace("CAMELOT_ASM(\"identity row registers\")", "CAMELOT_ASM(\"\")")).is_empty());
     }
 
     #[test]

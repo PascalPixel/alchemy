@@ -327,11 +327,9 @@ void FieldEffect_InitSparkles(void)
 loop:
     {
         struct MapScrollWork *view = gMapWork[0];
-        /* FAKEMATCH: keeps the leader pointer in r2 */
-        register s32 *leader asm("r2");
-        /* FAKEMATCH: needed to match: an integer field cursor loads the view before the cursor copy; a pointer cursor swaps two instructions. */
+        s32 *leader;
+        /* FAKEMATCH: needed to match: an integer field cursor keeps the view load order; reusing it for the height x argument keeps the leader in r2. Separate temporaries differ by 14 instructions. */
         u32 attr;
-        s32 x;
         s32 z;
 
         attr = (u32)p;
@@ -341,11 +339,11 @@ loop:
         *(u32 *)attr = 0x40000400;
         attr += sizeof(union DustWord);
         *(u32 *)attr = 0xd400;
-        x = leader[0];
+        attr = leader[0];
         z = leader[2];
         p->pos_x = clear;
         p->pos_z = clear;
-        p->pos_y = Map_GetTerrainHeightFar(0, x >> 16, z >> 16) << 16;
+        p->pos_y = Map_GetTerrainHeightFar(0, (s32)attr >> 16, z >> 16) << 16;
         p->timer = (i & 15) + 1;
     }
     i++;

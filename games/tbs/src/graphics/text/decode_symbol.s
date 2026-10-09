@@ -1,3 +1,4 @@
+@ C2: rrx/rrxs refill the bitstream; push {r5, r6} saves registers without lr.
 .syntax unified
 .text
 	.arm

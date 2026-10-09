@@ -283,8 +283,8 @@ void *ObjectDispatch_FindFreeObject(void)
 //--------------------------------------------------------------------------
 void ObjectDispatch_Release(struct DispatchObject *obj)
 {
-	volatile u32  zero;
-	volatile u32 *src;
+	volatile u32				zero;
+	volatile u32			   *src;
 	s32							n;
 	struct ResourceObjectWork **child;
 

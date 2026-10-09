@@ -106,18 +106,16 @@ void *UnitGet(u32 owner)
     struct BtlUnit *unit;
 
     {
-        /* FAKEMATCH: register pin and empty asm use: the caller's return address, read in C, is copied to r3 at entry and never used, as native (mov r3, lr); unused, the copy is deleted (27 of 31 rows differ); used unpinned, the asm reads lr itself.
-         * 2026-10-09: removing both devices leaves only that mov missing
-         * (28 reference instructions, 27 built, aligned differ 1); the
-         * 0x44-byte extent keeps an alignment nop instead. An unused inline
-         * caller helper has the same difference. Replacing both with
-         * register void *volatile caller = __builtin_return_address(0)
-         * retains the mov but adds sub sp,#4, str r3,[sp,#0], add sp,#4
-         * (aligned differ 3, 0x4c bytes). All measured in tbs-en. */
-        register void *caller asm("r3") = __builtin_return_address(0);
+        void *caller = __builtin_return_address(0);
 
-        /* FAKEMATCH: empty asm use of the pinned copy, measured above */
-        asm("" : : "r"(caller));
+        /* Native copies the unused return
+         * address from lr into r3 at entry. This existing empty asm use
+         * requires a Thumb low register, so allocation chooses r3 without
+         * a pin (28/28 instructions, differ 0). With an unrestricted "r"
+         * operand or no use, only that copy is absent (28/27, differ 1,
+         * same 0x44-byte English extent with a final alignment nop). */
+        /* FAKEMATCH: needed to match: low-register use preserves mov r3,lr; without it, 28/27 instructions, differ 1. */
+        asm("" : : "l"(caller));
     }
     states = gGameState.owners;
     if (owner < 8) {

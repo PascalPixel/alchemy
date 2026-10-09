@@ -482,7 +482,10 @@ never a file or a function.
   tagged literal bytes beside their asset, as pret keeps garbage data (an
   S1 exception for proven packer garbage only); and each encoder takes one
   rule for all its streams, verified on every stream of its kind in both
-  games. A standard compressor may take its standard flags per file, as
+  games. Resource_DirectoryTable keeps its per-edition fixed bank pins:
+  three independent audits found no source extent for the zeros before it
+  (Pascal, 2026-10-09). A standard compressor may take its standard flags per
+  file, as
   pokecrystal's `gfx/lz.mk` does; a reconstructed packer takes no invented
   per-file flag without clear evidence Camelot ran its tool that way
   (Pascal, 2026-10-08). A stream Camelot edited after packing keeps its

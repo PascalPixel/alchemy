@@ -394,15 +394,23 @@ mod tests {
         assert!(find_forbidden(DMA_HEADER, DMA_SOURCE).is_empty());
         assert!(!find_forbidden("caller.c", DMA_SOURCE).is_empty());
         assert!(find_preprocessed("expanded", DMA_SOURCE).is_empty());
-        for changed in [
-            DMA_SOURCE.replace("stmia", "ldmia"),
-            DMA_SOURCE.replace("r0", "r4"),
-            DMA_SOURCE.replace("#12", "#8"),
-            DMA_SOURCE.replace("\"memory\", \"cc\"", "\"memory\""),
-            DMA_SOURCE.replace("register u32 src", "volatile register u32 src"),
+        for source in [
+            DMA_SOURCE.to_string(),
+            DMA_SOURCE.replacen("register u32", "register u32\t", 1),
         ] {
-            assert!(!find_forbidden(DMA_HEADER, &changed).is_empty());
-            assert!(!find_preprocessed("expanded", &changed).is_empty());
+            assert!(find_forbidden(DMA_HEADER, &source).is_empty());
+            assert!(find_preprocessed("expanded", &source).is_empty());
+            for changed in [
+                source.replace("stmia", "ldmia"),
+                source.replace("r0", "r4"),
+                source.replace("#12", "#8"),
+                source.replace("\"memory\", \"cc\"", "\"memory\""),
+                source.replacen("register u32", "volatile register u32", 1),
+            ] {
+                assert_ne!(changed, source, "DMA mutation must change its fixture");
+                assert!(!find_forbidden(DMA_HEADER, &changed).is_empty());
+                assert!(!find_preprocessed("expanded", &changed).is_empty());
+            }
         }
     }
 

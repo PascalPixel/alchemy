@@ -109,16 +109,6 @@ struct DustWork {
 
 void Resource_DecodeByteLz(const void *source, void *destination);
 
-static __inline__ void ClearDustWork(struct DustWork *work)
-{
-    volatile u32 zero;
-    /* FAKEMATCH: builds the fill zero in r1 */
-    register u32 value asm("r1") = 0;
-
-    zero = value;
-    Dma_Set(&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x104, REG_DMA3);
-}
-
 void FieldMotes_Update(void)
 {
     /* FAKEMATCH: needed to match: relative work pointers share one pool address; an unsigned-long frame read keeps size and flip stores together. */
@@ -310,13 +300,18 @@ void FieldEffect_UpdateSparkles(void)
 
 void FieldEffect_InitSparkles(void)
 {
-    struct DustWork *work = Runtime_AllocateBlock(29, 0x410);
+    u32 size = 0x410;
+    struct DustWork *work = Runtime_AllocateBlock(29, size);
     struct DustParticle *p = work->particles;
     u8 *buf;
     u32 i;
     s32 clear;
+    volatile u32 zero;
 
-    ClearDustWork(work);
+    /* FAKEMATCH: needed to match: reusing the allocation size for the fill word keeps zero in r1; a separate helper value differs by four instructions. */
+    size = 0;
+    zero = size;
+    Dma_Set(&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x104, REG_DMA3);
     buf = Runtime_AllocateBlock(14, 0x400);
     Resource_DecodeByteLz(FieldFx_SparkleTiles, buf);
     work->vram_entry = Resource_FindFreeEntry();

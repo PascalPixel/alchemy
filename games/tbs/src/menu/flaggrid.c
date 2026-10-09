@@ -276,8 +276,7 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     s32 glyph;
     s32 tile;
     s32 slot;
-    /* FAKEMATCH: the B mask's constant equivalence ranks it after work; the native mask is in r9 and work in fp. */
-    register s32 cancel asm("r9");
+    s32 cancel;
 
     work = gWindowWork;
     redraw = 1;
@@ -289,7 +288,9 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     for (i = 0; Portrait_SpriteMap[i * 2] != -1; i++) {}
     total = count + i;
 
-    cancel = KEY_B;
+    /* FAKEMATCH: the count-derived mask is needed to match the native mask
+     * in r9 and work in fp; a direct constant swaps them (four instructions). */
+    cancel = ((u32)(u16)count >> 16) | KEY_B;
     while (1) {
         if (gKeysRepeat & KEY_LEFT) {
             redraw = 1;

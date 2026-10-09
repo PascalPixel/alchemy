@@ -68,7 +68,18 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     s32 step;
     s32 row;
     s32 result;
-    /* FAKEMATCH: regmove copies a live pseudo operand of each help-line and into its result (adds r3, r1, #0); native copies the mask (mov r3, r8; movs r3, #224; movs r3, #31), which regmove leaves to reload only when the other operand is a hard register. attr in r2 as native. */
+    /* FAKEMATCH: regmove copies a live pseudo operand of each help-line and into its result (adds r3, r1, #0); native copies the mask (mov r3, r8; movs r3, #224; movs r3, #31), which regmove leaves to reload only when the other operand is a hard register. attr in r2 as native.
+     * An ordinary u32 attr, including separate help-block scopes, differs
+     * by 229 aligned instructions (1276 native, 1283 built, 1165 common).
+     * Removing attr and reusing the existing s32 entry for each of its
+     * assignments/uses improves this to 181 (1276/1289/1192); entry is
+     * assigned afresh before its later menu-action uses. The help masks
+     * still remain in ordinary registers instead of native r8 and gain
+     * copies of the entry operand. In the ordinary-u32 candidate, the
+     * native movs r0,#128 at 0x080adab0 becomes negs r3,r2, and its mask
+     * move through r8 becomes adds r3,r2,#0; ands r3,r0. The entry-reuse
+     * candidate loads the packed entry in r7 instead of native r2 and
+     * introduces an earlier literal-pool island. */
     register u32 attr asm("r2");
     s32 zero;
     s32 i;
@@ -573,6 +584,11 @@ s32 DjinnMenu_ShowOwnerStatus(void)
 
     menu = gMenuWork;
     phase = 0;
+    /* Deleting only the empty operand asm below gives 439 native / 438
+     * built / 379 common instructions, differ 119, within the same
+     * 0x420-byte extent. First movs r1,#1 becomes movs r0,#0; phase and
+     * frame share that zero, and the native str r2,[sp,#48] becomes
+     * str r0,[sp,#48], changing subsequent allocation and scheduling. */
     /* FAKEMATCH: keep this consumed zero separate from frame; initialization reshapes differ 27-274. */
     __asm__("" : "+r" (phase));
     pending = 1;
@@ -838,7 +854,13 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 v
 {
     struct RenderOutput *object;
     u32 resource;
-    register s32 v asm("r5") = variant; /* FAKEMATCH: keeps the variant in r5 */
+    /* FAKEMATCH: keeps the variant in r5. Ordinary s32 v = variant,
+     * with or without register qualification, differs by 16 aligned
+     * instructions (36 native, 36 built, 28 common), extent 0x54.
+     * First adds r5,r3,#0 becomes adds r4,r2,#0; variant remains in r3,
+     * y moves to r4, window moves from r4 to r5 and the stack argument
+     * store moves after the remaining argument copies. */
+    register s32 v asm("r5") = variant;
     struct RenderInput *w = window;
     s32 xx = x;
     struct InventoryMenuState *data = gMenuWork;
@@ -860,7 +882,13 @@ s32 UiIcon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s
 {
     struct RenderOutput *object;
     u32 resource;
-    register s32 v asm("r5") = variant; /* FAKEMATCH: keeps the variant in r5 */
+    /* FAKEMATCH: keeps the variant in r5. Ordinary s32 v = variant,
+     * with or without register qualification, differs by 22 aligned
+     * instructions (40 native, 40 built, 29 common), extent 0x5c.
+     * First adds r5,r3,#0 becomes adds r4,r2,#0; variant remains in r3,
+     * y moves to r4, window moves from r4 to r5, the y subtracts move
+     * to r4, and the stack argument store moves after the copies. */
+    register s32 v asm("r5") = variant;
     struct RenderInput *w = window;
     s32 xx = x;
     struct InventoryMenuState *data = gMenuWork;

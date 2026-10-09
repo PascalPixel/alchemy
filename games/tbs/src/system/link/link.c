@@ -363,6 +363,12 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload)
     s32 enable;
 
     *(u32 *)&flags[4] = 0;
+    /* Removing all three empty asm statements in this function together
+     * differs by 14 aligned instructions (104 native, 104 built, 97 common),
+     * with the same 0xe4-byte extent. First, ldr r2,=REG_IME rises before
+     * sub sp,#8; later, mov lr,sp sinks after the channel-flags snapshot,
+     * and the IME-address load rises before movs r2,#1. This combined
+     * candidate changes no other source statement. */
     /* FAKEMATCH: keeps the frame clear ahead of the interrupt disable; without it the IME address load rises above "sub sp" (score 6). */
     __asm__("");
     REG_IME = 0;
@@ -562,7 +568,12 @@ begin_transfer:
     {
 
         volatile u8 *sequence = &gSerialBlockSequence;
-        register u16 zero asm("r0") = 0; /* FAKEMATCH: the zero in r0, see above */
+        /* FAKEMATCH: the zero in r0, see above. An ordinary u16 (also
+         * register-qualified) reuses busy's zero in r4, removes the literal
+         * zero load/pool word and leaves 5 aligned instructions different.
+         * An inline u16 zero-return helper differs by 24; an inline byte
+         * store with a u16 first parameter leaves the same 5. */
+        register u16 zero asm("r0") = 0;
         *sequence = zero;
     }
     *ime = saved_interrupt_master;

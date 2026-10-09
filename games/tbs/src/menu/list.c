@@ -223,6 +223,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
             UiWindow_SetTilemapEntry(
                 window, LIST_TILE_PAGES_RIGHT, window->width - 2, edge, 0);
             /* FAKEMATCH: reload render work before its dirty-field offset. */
+            /* FAKEMATCH: removing this remaining barrier gives EN differ 54. One extra dead ((u32 *)cur)[2] = 0 after the cursor clear restores every spill slot: reference/built 770, common 764, differ 12, ten displayed rows of page-call arguments and dirty-pointer load order remain. */
             __asm__ volatile ("" : : "r" (render));
             render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
         }
@@ -575,6 +576,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 window, 0xf335, window->width - 2, edge, 0);
 
             /* FAKEMATCH: reload render work before its dirty-field offset. */
+            /* FAKEMATCH: removing the barrier gives EN differ 52. A duplicate dead ((u32 *)spr)[2] = 0 after the cursor clear restores the native spill slots: reference/built 794, common 789, differ 10, all ten displayed rows concern page-call arguments or the dirty-pointer reload. A byte read or inline page helper still differs 52. */
             __asm__ volatile ("" : : "r" (render));
             render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
         }
@@ -720,6 +722,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     struct BtlUnit *unit;
     struct BtlWork *runtime;
     struct UiWindow *window;
+    /* FAKEMATCH: removing both edition pin declarations and the t barrier together gives EN 1585/1585, common 1343, differ 484: infoWin spills and the frame shrinks 324 -> 320. ES 1684/1684, common 1569, differ 230: infoWin/sel swap r10/r9 and spill slots permute. Both extents stay unchanged. */
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
     /* FAKEMATCH: register choice only: as an ordinary local the info window takes r9 and sel r10 (differ 98); the native has the window in r10 and sel in r9. */
     register struct UiWindow *infoWin asm("r10");

@@ -974,8 +974,11 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	struct BattleEffectWork		*work;
 	void						*canvas;
 	s32							 frame;
-	DrawRectangle				 draw1;
-	DrawRectangle				 draw0;
+	struct
+	{
+		DrawRectangle nuri;
+		DrawRectangle hikaku;
+	} draw;
 	struct BtlWork				*battle;
 	struct BattleBackgroundView *view;
 	void					   **slots;
@@ -1057,10 +1060,10 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_NURI);
 	cache = gWorkSlot;
-	draw0 = cache[HEAP_SLOT_BLITTER];
+	draw.nuri = cache[HEAP_SLOT_BLITTER];
 	BattleEffect_LoadWork(
 		HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
-	draw1 = cache[HEAP_SLOT_BLITTER_ALTERNATE];
+	draw.hikaku = cache[HEAP_SLOT_BLITTER_ALTERNATE];
 
 	// 片：中心 (32, 60) から外へ、距離の 1/4 の速さで飛ぶ
 	/* FAKEMATCH: needed to match: the copy and fill operands set here, before the piece loop, so CSE does not share them and the pair reloads both as the native does */
@@ -1095,8 +1098,6 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	gBgScroll[1].x = 0;
 	IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f81, 0x20000);
 	Iwram_FillWords((void *)0x050000c0, 0x100, 0x7fff7fff);
-	/* FAKEMATCH: r5 clobber prunes draw1's r5 preference (its load address is in r5); without it the piece constants swap r5/r7 and the fill routine takes r6, 173/1052. */
-	asm volatile("" ::: "r5");
 	AudioCommand_PlayFar(212);
 	ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 3, 0, 30);
 
@@ -1110,11 +1111,11 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 			ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 3, -1, 0);
 		if (frame == 32)
 			AudioCommand_PlayFar(149);
+		/* FAKEMATCH: keep the frame-5 cue and background restore in separate CSE blocks; a combined block loads the saved-bg offset before reloading work. */
+		if (frame == 5)
+			AudioCommand_PlayFar(145);
 		if (frame == 5)
 		{
-			AudioCommand_PlayFar(145);
-			/* FAKEMATCH: barrier; sched2 otherwise loads 0x77a0 before reloading work, 2/1051. */
-			asm("");
 			gBgScroll[1].x = work->saved_bg1_x;
 			BattleBackground_LoadFar(1, battle->background, -1);
 		}
@@ -1245,7 +1246,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 			for (i = 0; i != 33; i++)
 			{
 				piece = &work->particles[i];
-				draw0(canvas, (u8 *)work + BattlePieceOffset[i], HI(piece->x), HI(piece->y),
+				draw.nuri(canvas, (u8 *)work + BattlePieceOffset[i], HI(piece->x), HI(piece->y),
 					BattlePieceWidth[i], BattlePieceHeight[i]);
 				if (frame > 3)
 					EffectStep_AdvanceWithGravity2D(piece, 64, 0x4000);
@@ -1303,7 +1304,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 					cell = piece->variant / 4;
 					if (cell > 5)
 						cell = 5;
-					draw1(canvas, (u8 *)work + (cell << 11), HI(piece->x) - 16, HI(piece->y) - 32,
+					draw.hikaku(canvas, (u8 *)work + (cell << 11), HI(piece->x) - 16, HI(piece->y) - 32,
 						32, 64);
 					EffectStep_AdvanceWithGravity2D(piece, 60, -0x1000);
 					piece->variant++;

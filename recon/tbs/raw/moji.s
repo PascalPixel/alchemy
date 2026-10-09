@@ -1,18 +1,22 @@
 @ Not yet C: scheduling differences are not a handwritten-assembly proof
 @ under C2. This compiler-shaped function stays uncredited until ARM C
 @ matches. The matching notes below describe the remaining differences.
-@ A load or store between a compare and its branch. Every edition
-@ puts an unconditional ldr, ldrb or str between a compare and the
-@ conditional branch that reads it, while the compare's operands are
-@ written by nothing after it: in all six, str rN, [sp, #8] after
-@ cmp r3, #31; lsl ip, ip, #16 and before bls (the row step of the four
-@ passes); in Japanese also cmp r1, #255; str r0, [sp, #20]; bls,
+@ Unresolved scheduling sites. All six editions put str rN, [sp, #8]
+@ immediately before bls in the four-pass row step, after cmp r3, #31
+@ and lsl ip, ip, #16. The compare's operands are unchanged after it.
+@ Japanese also has cmp r1, #255; str r0, [sp, #20]; bls,
 @ cmp r3, #1; str r2, [sp, #16]; bhi, cmp r7, #31; ldrb ip, [lr, r3]; bhi
 @ and cmp r3, #31; ldrb ip, [r9], #1; bls; in English cmp r7, #31;
 @ str r3, [sp, #12]; bhi; in German, Spanish, French and Italian
 @ cmp r3, #0; str r0, [sp, #28]; beq and cmp r8, #31; str r2, [sp, #12];
-@ bhi. agbcc_arm (K1) cannot emit any of them. sched2 (gcc_arm/sched.c,
-@ schedule_block) orders each block last, backwards from its branch, one
+@ bhi. A blanket claim that agbcc_arm cannot put any unconditional memory
+@ operation between a free compare and its branch is false: an independent
+@ stock-K1 pure-C microcase emits cmp; str; eor; bhi. That case still leaves
+@ a one-cycle eor immediately before the branch, unlike the native row step's
+@ store. Saved predicates and discarded label values reproduce no new sched2
+@ boundary and did not improve the all-edition glyph draft.
+@ sched2 (gcc_arm/sched.c, schedule_block) orders each block last,
+@ backwards from its branch, one
 @ insn a cycle, and links every insn nothing else in the block consumes
 @ to the branch at its result_ready_cost (insn_cost; arm_adjust_cost in
 @ arm.c changes only a load after a store). Tuned for the arm7tdmi
@@ -24,14 +28,16 @@
 @ "x = a" hoists) moves only a register set whose source has no side
 @ effect and cannot trap: a pool constant or sp-based load, never a
 @ store, an ldrb through two registers or a post-increment. At every site
-@ above the compare is free. Measured through the game ARM route (alchemy
+@ above the compare is free. This is a scheduling lead, not a C2 marker or
+@ a proof that no permitted C form can match. Measured through the game ARM route (alchemy
 @ diff --arm), 658 of the other 837 C files of The Broken Seal and COMMON
 @ compile and put a load or store before a conditional branch 44 times,
 @ each one of those two cases (38 with no one-cycle insn free, 6 pool
 @ constants hoisted by jump2); this function's 5, 2 and 3 sites are
-@ neither. The C with every device removed differs in 51 of the Japanese
-@ listing's 193 instructions, 146 of the English 196 and 112 of the
-@ other four's 187 (0 with the devices).
+@ neither. Earlier device-free drafts differed in 51 of the Japanese listing's
+@ 193 instructions, 146 of the English 196 and 112 of the other four's 187.
+@ The current all-edition pure-C draft differs in 203, 175 and 143 respectively;
+@ it is not linked or credited, and uses no pins, asm barriers or inline asm.
 @ No marker of C2's list is present: lr is saved, r11 is never used and
 @ the one multiply is mla.
 	.include "games/common/include/game/ed_asm.h"

@@ -594,7 +594,7 @@
     "*/recon/tla/fr/rom.o"(.rom.0004b9e8)
     "*/games/common/src/battle/classify_entry_kind.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0004bade)
-    "*/games/common/src/battle/draw_party_panels_with_empty_list.o"(.text)
+    "*/games/tla/src/battle/partypnl.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0004bdf8)
     "*/recon/tla/fr/rom.o"(.rom.0004be30)
     "*/recon/tla/fr/rom.o"(.rom.0004d304)

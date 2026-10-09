@@ -6,7 +6,7 @@
  *                --edition tbs-en --arm --rtl --show
  * Native / draft / common / residual:
  *   ja: 193 / 193 / 186 / 14
- *   en: 196 / 197 / 187 / 19
+ *   en: 196 / 197 / 188 / 17
  *   de: 187 / 187 / 180 / 14
  *   es: 187 / 187 / 180 / 14
  *   fr: 187 / 187 / 180 / 14
@@ -394,7 +394,7 @@
  * ja/en/other 16/31/18 -> 14/19/14, measured in all six editions.
  * - Packed dot: the earlier 52-residual delayed-address form becomes useful
  *   after wrapping line and shift in one-pass blocks. Loop notes increase
- *   their weighted references without adding instructions. In the current
+ *   their weighted references without adding instructions. At that step's
  *   English lreg dump, tile pseudo 75 has refs 21/live 14, and shift 79 has
  *   refs 7/live 6; local allocation gives tile r0 and shift r1. Before the
  *   wrapped calculations they took r1/r0. Both address instructions now
@@ -447,6 +447,44 @@
  *   a delayed plain header gives 45, volatile reads give 42 or 129, and a
  *   whole postincrement in a block gives 79. Only the staged-mark follow-up
  *   repairs the regression. Scratch trials under out/ never enter a build.
+ *
+ * Width-table follow-up, 2026-10-09: English 19 -> 17, other editions
+ * unchanged. Separate the table pointer from the byte read, retain the
+ * named character index, and put an empty one-pass boundary between table
+ * setup and row zero. The table/row/byte-load order and literal distance
+ * now match. Wrapping any one of the three assignments works too; the
+ * retained scoped pointer and empty boundary are sufficient. Using
+ * character-32 at the alias read instead folds (table+character)-32,
+ * destroys index reuse and gives 68. Forty-eight table/order/boundary
+ * trials were measured with each spelling; only named-index forms reach
+ * 17. The height-first alternative remains 26 and keeps index in r0.
+ * - Fresh three-minute searches compiled 27,366 Japanese and 27,250 English
+ *   candidates. Japanese weighted 420 -> 410, but residual 14 -> 20:
+ *   moving width before color swaps their registers. English weighted
+ *   800 -> 790 leaves residual 19: moving row zero after width fixes the
+ *   pool load but moves the byte load early. That is the starting point
+ *   of the successful table-pointer split, not itself an improvement.
+ * - Explicit low frame records (96 forms) give English 144 or worse;
+ *   high records (144 forms) give 190 or worse. They break the return
+ *   preference chain, but also change many other lifetimes; they do not
+ *   restore the scalar graph. No record is retained.
+ * - 44 index-last-use forms: dead reads/increments disappear, duplicate
+ *   bounds checks normally disappear, and reusing index for row zero
+ *   gives 26 on the height-first form. The latter moves the table load,
+ *   not index's r0 preference. Thirty-two inline entry helpers give
+ *   28..151; 32 direct/split range predicates give 19..147. None removes
+ *   the entry reload while retaining native registers.
+ * - 56 wide-arithmetic row-pointer forms: casts alone leave other 14;
+ *   extra boundaries give 18. A persistent wide address changes loop.c's
+ *   induction variable, keeps next in a register and spills x (147 or
+ *   worse). 120 negate/complement/increment forms similarly give at least
+ *   147. These do not isolate the row-tail store. The second life_analysis
+ *   after reload still calls find_auto_inc; a late fold remains possible
+ *   in principle, but no tested form preserves the required graph.
+ * - 25 Japanese font-read forms: plain aliases and single boundaries can
+ *   leave 14; volatile byte reads give 77..95, and one delayed pointer
+ *   advance gives 32. None repairs the compare/load order. All rejected
+ *   sources and reports remain ignored analysis under out/.
  *
  * Remaining differences, located by labels in recon/tbs/raw/moji.s.
  * The following is a pass-level diagnosis, not a claim to have found the
@@ -530,7 +568,7 @@
  *   pass initialization. The former short width's return-register preference
  *   no longer controls either load. This is resolved, not a remaining site.
  *
- * English: 9 native and 10 draft residual entries (19 total). Its
+ * English: 8 native and 9 draft residual entries (17 total). Its
  * long-lived drawing registers, index ip and accent lr agree.
  * - Entry (A,S,J): sub ip,r1,#32 and sub sp,sp,#44 are too early; cmp
  *   ip,#111 and str window,[sp,#40] precede the x copy. mov r0,#1 / bhi
@@ -541,20 +579,19 @@
  *   hard-register conflict while moving height into the entry block.
  *   reload can then reuse the incoming window, and jump2 can predicate
  *   the return move. No tested form satisfies both requirements yet.
- * - Font setup (S): mov r2,#0 must follow the width-table pool load,
- *   not precede it (the pool displacement differs by four as a result).
- *   str r3,[sp,#12] must follow cmp r7,#31, not precede it. The color
- *   constants and all three source/color stores now match. Row/table
- *   lifetimes and the free-compare/spill constraint remain to be fixed.
+ * - Font setup (S): str r3,[sp,#12] must follow cmp r7,#31, not precede
+ *   it. The color constants, source/color stores, row/table order and
+ *   width-table literal distance now match. The free-compare/spill
+ *   constraint remains to be fixed.
  * - .L_glyph/.L_wide now match: staged mark assignments and the header
  *   boundary preserve native registers; jump2 shares their width load.
  *   Recomputing the wide index restores sub r3,r1,#32 and its shift.
  *   The entry window reload alone explains the draft's extra instruction.
  * - .L_row_next (S): the same shift/store move as Europe. Both dots and
  *   .L_shift now match.
- * - Remaining range-branch and width-table-load displacements (J) follow
- *   from the early branch and moved load. All later branch displacements
- *   agree. These are not constants to encode in source. Literal pools and the
+ * - The remaining range-branch displacement (J) follows from its early
+ *   position. All later branch and pool displacements agree. This is not
+ *   a constant to encode in source. Literal pools and the
  *   complete extent still require byte verification before any adoption.
  */
 
@@ -765,8 +802,23 @@ font_done:
 			color1 = 0x1111;
 			color3 = 0x3333;
 			do { } while (0);
+#if defined(TBS_EDITION_EN)
+			{
+				const u8 *glyph_widths = UiText_GlyphWidths;
+
+				/* FAKEMATCH: separate the table pointer from the indexed
+				 * read across a scheduling boundary. This restores table
+				 * load, row zero, byte load: en 19 -> 17. Reordering row
+				 * and width alone leaves 19; spelling character-32 instead
+				 * of index here changes address folding and gives 68. */
+				do { } while (0);
+				row = 0;
+				font_width = glyph_widths[index];
+			}
+#else
 			row = 0;
 			font_width = UiText_GlyphWidths[character - 32];
+#endif
 			if (y > 31)
 				goto font_done;
 			vram = (u8 *)0x06002500;

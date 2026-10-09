@@ -336,22 +336,22 @@ void WaitFrames(s32 frames)
     CAMELOT_ASM("the stack switch, a write to sp no C can express")
     register u8 *sp __asm__("sp");
     u32 i;
-    /* FAKEMATCH: base stays in sl, where the native keeps it across the frame loop.
-     * Removing this binding and all five empty barriers together, while retaining
-     * the proven sp binding, differs by 87 aligned instructions (403 native,
-     * 396 built, 356 common). The first sub sp,#8 becomes a stack-limit load;
-     * the frame shrinks to four bytes, the initial mov r10,sp disappears, and
-     * the loop index moves from [sp,#0] to r11. Candidate: ordinary u8 *base
-     * with each of the five empty __asm__ statements below deleted. */
+    /* FAKEMATCH: base stays in sl across the frame loop. Removing only this
+     * binding substitutes sp for the initial comparison and DMA arguments,
+     * and differs by 19 aligned instructions (403 native, 404 built,
+     * 394 common), with the same 0x434-byte extent. */
     register u8 *base __asm__("sl");
     u32 line;
     s32 j;
     s16 dispcnt;
     s16 backdrop;
 
-    base = sp;
-    /* FAKEMATCH: an empty barrier keeps the stack-limit load after the copy of sp. */
-    __asm__ volatile("");
+    /* FAKEMATCH: needed to match: this one-pass boundary keeps the frame-count
+     * store ahead of the stack-limit load; without it those instructions swap
+     * (4 aligned differences). */
+    do {
+        base = sp;
+    } while (0);
     if (base < Ram_FrameWaitStackTop) {
         u8 *top = Ram_FrameWaitStackTop;
 

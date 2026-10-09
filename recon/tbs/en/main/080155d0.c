@@ -7,9 +7,10 @@
  * Native / draft / common / residual:
  *   ja: 193 / 198 /  94 / 203
  *   en: 196 / 197 / 109 / 175
- *   de, es, fr, it: 187 / 186 / 110 / 153
+ *   de, es, fr, it: 187 / 190 / 117 / 143
  * Japanese reserves its native 100-byte local frame with a tagged unused
- * source type. International builds now reserve their native 44 bytes.
+ * source type. English reserves its native 44 bytes; the other four still
+ * reserve 48 rather than 44 bytes.
  * Differences remain in allocation, spills, multiply operands and scheduling.
  * No register pins, barriers, instruction asm or alternative compiler options.
  * Japanese decodes ten 1bpp rows and kanji rows; the other editions decode
@@ -45,6 +46,15 @@
  * so they do not realize the native CMP; LSL; STR; BLS row step. No new
  * stock post-sched2 store-hoisting path was found. Synthetic source and RTL
  * are preserved for review under out/reports/glyph_sched, never linked.
+ * Continental permute: 15 minutes, 72,561 distinct candidates, none failed
+ * compilation; weighted 5,820 -> 4,620, residual 156 -> 143. Ten minimized
+ * rewrites: six independent-statement orders, two declaration orders, one
+ * removed result alias and one inverted odd/even-column test. Combining its
+ * orders with the volatile spills gives other 183; plain continental locals
+ * retain 143 while Japanese/English retain 203/175.
+ * Exact nested-loop trial: duplicate a volatile next-pointer store in both
+ * row-limit successors. It emits cmp; lsl; bhi; str; b, plus the exit str,
+ * and worsens ja/en/other to 239/199/191. It does not resolve store-last.
  */
 
 #include "types.h"
@@ -87,26 +97,28 @@ static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
 s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 	u32 x, u32 y, const u8 *font)
 {
-#if defined(TBS_EDITION_JA)
+#if !defined(TBS_EDITION_EN)
 	u32 stride;
 #else
 	/* FAKEMATCH: keeping the native window, rows and result spills restores
 	 * their high frame slots (40, 36 and 32); the volatile stride below then
-	 * occupies the native slot 28. The continental residual falls 154 -> 153
-	 * and both international coordinate lifetimes use the native registers.
+	 * occupies the native slot 28. These English coordinate lifetimes use
+	 * the native registers.
 	 * Direct English result stores in the character branches retain their
 	 * native branch shape, improving that edition's residual 186 -> 175. */
 	struct UiWindow *volatile saved_window;
 	const u16 *volatile saved_rows;
 	volatile u32 saved_result;
 	/* FAKEMATCH: the native width spill is reloaded for each dot. Keeping
-	 * those loads with the explicit loop exits changes en/other residuals
-	 * from 203/156 to 186/154, and restores the 44-byte local frame. */
+	 * those loads with the explicit loop exits changes the earlier English
+	 * residual from 203 to 186, and restores the 44-byte local frame. */
 	volatile u32 stride;
 #endif
 	const u16 *rows;
 	u32 width;
+#if defined(TBS_EDITION_JA)
 	u32 result;
+#endif
 #if defined(TBS_EDITION_JA)
 	struct UiWindow *saved_window;
 	/* FAKEMATCH: two unused RenderOutput records reserve the measured
@@ -115,7 +127,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 
 	saved_window = window;
 #endif
-#if !defined(TBS_EDITION_JA)
+#if defined(TBS_EDITION_EN)
 	saved_window = window;
 #endif
 	stride = window->height;
@@ -185,10 +197,17 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 			}
 			return font_width;
 #else
+#if defined(TBS_EDITION_EN)
 			const u8 *source;
 			u32 color1;
 			u32 color3;
 			u32 font_width;
+#else
+			u32 color1;
+			const u8 *source;
+			u32 font_width;
+			u32 color3;
+#endif
 			u32 packed;
 			u32 row;
 			u32 rownext;
@@ -196,11 +215,19 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 			u32 color;
 			u8 *vram;
 
+#if defined(TBS_EDITION_EN)
 			source = font + character * 32;
 			color1 = 0x1111;
 			color3 = 0x3333;
 			font_width = UiText_GlyphWidths[character - 32];
 			row = 0;
+#else
+			row = 0;
+			color1 = 0x1111;
+			font_width = UiText_GlyphWidths[character - 32];
+			source = font + character * 32;
+			color3 = 0x3333;
+#endif
 			if (y > 31)
 				return font_width;
 			vram = (u8 *)0x06002500;
@@ -215,10 +242,10 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 				row_line = ((y + row) & 7) << 1;
 				while (1)
 				{
-					if ((col & 1) == 0)
-						packed = *source++;
-					else
+					if ((col & 1) != 0)
 						packed >>= 4;
+					else
+						packed = *source++;
 					if ((packed & 13) == 1)
 					{
 						color = color3;
@@ -254,7 +281,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 		rows += 4;
 #endif
 	}
-#if !defined(TBS_EDITION_JA)
+#if defined(TBS_EDITION_EN)
 	saved_rows = rows;
 #endif
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
@@ -272,7 +299,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 #endif
 #if defined(TBS_EDITION_JA)
 		result = width;
-#else
+#elif defined(TBS_EDITION_EN)
 		saved_result = width;
 #endif
 
@@ -280,7 +307,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 		register u32 pass;
 		const u16 *rows1;
 
-#if defined(TBS_EDITION_JA)
+#if !defined(TBS_EDITION_EN)
 		rows1 = rows + 1;
 #else
 		rows1 = saved_rows + 1;
@@ -304,7 +331,11 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 				color = 0x1111;
 			else
 				color = 0x5555;
+#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 			if (!(saved_window->flags & 64))
+#else
+			if (!(window->flags & 64))
+#endif
 				goto draw;
 			if (pass <= 1)
 			{
@@ -322,12 +353,17 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 			}
 			y--;
 draw:
+#if defined(TBS_EDITION_EN)
 			next = rows1;
+#endif
 			row = 0;
-#if defined(TBS_EDITION_JA)
+#if !defined(TBS_EDITION_EN)
 			bits = (u32)*rows << 16;
 #else
 			bits = (u32)*saved_rows << 16;
+#endif
+#if !defined(TBS_EDITION_EN)
+			next = rows1;
 #endif
 			next_pass = pass + 1;
 			if (y > 31)
@@ -369,7 +405,9 @@ pass_next:
 	}
 #if defined(TBS_EDITION_JA)
 	return result;
-#else
+#elif defined(TBS_EDITION_EN)
 	return saved_result;
+#else
+	return width;
 #endif
 }

@@ -329,17 +329,18 @@ loop:
         struct MapScrollWork *view = gMapWork[0];
         /* FAKEMATCH: keeps the leader pointer in r2 */
         register s32 *leader asm("r2");
-        union DustWord *attr;
+        /* FAKEMATCH: needed to match: an integer field cursor loads the view before the cursor copy; a pointer cursor swaps two instructions. */
+        u32 attr;
         s32 x;
         s32 z;
 
-        /* FAKEMATCH: loads the view before the particle pointer copy */
-        asm volatile ("" : : "r"(view));
-        attr = &p->link;
-        (attr++)->link = (void *)clear;
+        attr = (u32)p;
+        *(u32 *)attr = clear;
+        attr += sizeof(union DustWord);
         leader = view->origin;
-        (attr++)->value = 0x40000400;
-        attr->value = 0xd400;
+        *(u32 *)attr = 0x40000400;
+        attr += sizeof(union DustWord);
+        *(u32 *)attr = 0xd400;
         x = leader[0];
         z = leader[2];
         p->pos_x = clear;

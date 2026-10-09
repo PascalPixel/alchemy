@@ -1,3 +1,4 @@
+@ C2: MusicPlayer2000 library (pret's m4a_1.s: ChnVolSetAsm), with live channel/track in r4/r5.
 .syntax unified
 	.thumb
 	.global SoundDriver_CalculateStereoVolume

@@ -132,12 +132,7 @@ void BattleMotion_InitializeActorRecords(s32 id)
 	void				   *recs[4];
 	struct BtlUnit		   *unit;
 	struct AnimationObject *rec;
-#if GAME_TLA
-	/* FAKEMATCH: ordering the child load swaps r2/r3 unless it stays in r2. */
-	register struct AnimationEntry *ent asm("r2");
-#else
 	struct AnimationEntry *ent;
-#endif
 	s32 n;
 
 #if GAME_TLA
@@ -168,10 +163,15 @@ void BattleMotion_InitializeActorRecords(s32 id)
 		n = 0;
 		while ((rec = GetMotionRecord(BtlObjGet(id)->object, n)) != 0)
 		{
-			ent = rec->entries[0];
 #if GAME_TLA
-			/* FAKEMATCH: load the child before the index shift; ordinary loops reverse them. */
-			asm("" : "+r"(ent), "+r"(n));
+			/* FAKEMATCH: the native CSE block ends after the child lookup; a one-pass block
+			   keeps its load before the index shift, which a straight assignment reverses. */
+			do
+			{
+				ent = rec->entries[0];
+			} while (0);
+#else
+			ent = rec->entries[0];
 #endif
 			recs[n] = rec;
 			ent->param = 6;

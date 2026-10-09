@@ -722,6 +722,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     struct BtlUnit *unit;
     struct BtlWork *runtime;
     struct UiWindow *window;
+    /* FAKEMATCH: removing both edition pin declarations and the t barrier together gives EN 1585/1585, common 1343, differ 484: infoWin spills and the frame shrinks 324 -> 320. ES 1684/1684, common 1569, differ 230: infoWin/sel swap r10/r9 and spill slots permute. Both extents stay unchanged. */
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
     /* FAKEMATCH: register choice only: as an ordinary local the info window takes r9 and sel r10 (differ 98); the native has the window in r10 and sel in r9. */
     register struct UiWindow *infoWin asm("r10");

@@ -140,10 +140,22 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 			}
 			character -= 32;
 			source = font + character * 10;
-			row = 0;
-			bits = *source++;
-			if (y > 31)
-				goto font_done;
+			{
+				const u8 *first = source;
+
+				/* FAKEMATCH: advance before the early clipping test to retain
+				   the native ADD/CMP/LDRB order (JA differ 10 -> 8). */
+				row = 0;
+				source++;
+				do
+				{
+					if (y > 31)
+						break;
+				} while (0);
+				bits = *first;
+				if (y > 31)
+					goto font_done;
+			}
 			{
 				while (1)
 				{

@@ -16,9 +16,7 @@
 #include "types.h"
 #include "window.h"
 #include "edition.h"
-#if GAME_TLA
-#include "ram_buffer.h"
-#else
+#if !GAME_TLA
 #include "io_reg.h"
 #include "scene.h"
 #include "global_cells.h"
@@ -133,8 +131,6 @@ void UiWork_AdvanceChannelTransition(struct UiChannelSlot *ch)
 	UiWindow_DrawFrame(x, y, w, h);
 }
 
-#endif
-
 //--------------------------------------------------------------------------
 // メッセージに埋める値の表（8 つ）を空にする
 //--------------------------------------------------------------------------
@@ -143,13 +139,7 @@ void UiWork_ClearValueNameTables(void)
 	s32					 no;
 	struct UiRenderWork *work;
 
-#if GAME_TLA
-	work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
-	/* FAKEMATCH: the barrier keeps the work-pointer load before the table offsets. */
-	__asm__("");
-#else
 	work = (struct UiRenderWork *)gWindowWork[0];
-#endif
 	no = 0;
 
 	do
@@ -166,11 +156,7 @@ void UiWork_ClearValueNameTables(void)
 //--------------------------------------------------------------------------
 void UiWork_PushValueSlot(u32 value, u32 kind)
 {
-#if GAME_TLA
-	struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
-#else
 	struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
-#endif
 	u32 no = 0;
 	u32 limit = 8;
 
@@ -185,8 +171,6 @@ void UiWork_PushValueSlot(u32 value, u32 kind)
 		no++;
 	} while (no != limit);
 }
-
-#if !GAME_TLA
 
 //--------------------------------------------------------------------------
 // 表から種類 kind の値をさがす（なければ 0）
@@ -288,5 +272,4 @@ void UiWork_FinalizePendingCore(void)
 	} while (i != 3);
 	WaitFrames(10);
 }
-
 #endif

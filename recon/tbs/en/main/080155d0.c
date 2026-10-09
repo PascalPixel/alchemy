@@ -7,17 +7,18 @@
  * Native / draft / common / residual:
  *   ja: 193 / 193 / 178 / 30
  *   en: 196 / 199 / 165 / 65
- *   de: 187 / 187 / 170 / 34
- *   es: 187 / 187 / 170 / 34
- *   fr: 187 / 187 / 170 / 34
- *   it: 187 / 187 / 170 / 34
+ *   de: 187 / 187 / 173 / 28
+ *   es: 187 / 187 / 173 / 28
+ *   fr: 187 / 187 / 173 / 28
+ *   it: 187 / 187 / 173 / 28
  * Frames and spill offsets now agree: Japanese 100 bytes, all others 44.
  * Japanese's 64-byte unused area still needs the tagged source type below.
- * Multiply operands agree. Japanese differs only in scheduling; English
- * and the other four also differ in short-lived register allocation.
+ * Multiply operands agree. Japanese and the four European editions differ
+ * only in scheduling and consequent pool displacements; English also
+ * differs in short-lived register allocation.
  * These are instruction-LCS residuals, not a complete-extent byte match.
  * No edition matches or counts; the builds still link the original listing.
- * No register pins, barriers, instruction asm or alternative compiler options.
+ * No register pins, asm barriers, instruction asm or alternative compiler options.
  * Japanese decodes ten 1bpp rows and kanji rows; the other editions decode
  * eight packed rows. English alone rejects character indices outside 32-143.
  * Earlier trials (retained as history, not the current measurements):
@@ -198,9 +199,45 @@
  *   locals reproduce the inline helper's output. A u16 mask gives 134;
  *   u16 line/shift leave 34. An entry height-read block gives 36, retaining
  *   the frame but moving height's load/store earlier than the native code.
- * Canonical code and its six best residuals remain unchanged. Scratch
+ * At that checkpoint the six best residuals remained unchanged. Scratch
  * sources, diffs and searches under out/ document these alternative paths;
  * none is linked, credited, or used as input to a game build.
+ *
+ * Width-boundary follow-up, 2026-10-09: other 34 -> 28 in all four editions.
+ * The 39-residual direct-width form was a useful intermediate: its reload
+ * scratch is native r3, but the narrow branch spills width before advancing
+ * rows. Saving the old header pointer, advancing rows, then reading width
+ * inside a one-pass block delays that load and lets jump2 merge the two
+ * width spills. An inline getter first exposed this form; removing the
+ * getter and the wide-branch block preserves 28. The retained device is
+ * only the narrow-branch block below. All glyph-header setup instructions,
+ * width registers and spill slots now match in de/es/fr/it. Japanese and
+ * English retain 30/65: applying the direct-width getter to them gives
+ * 88/116; retaining their result alias with it gives 59/85.
+ * sched.c:sched_analyze_insn explicitly adds dependencies on every prior
+ * register use/set and memory operation across LOOP_BEG/END notes, preserving
+ * loop-depth reference counts. The surviving narrow width-read notes are
+ * the measured cause; simple source reordering or a getter without the
+ * one-pass block leaves 39. No compiler code or flags changed.
+ * Further controlled trials:
+ * - Width accessed as a FontGlyph field sets MEM_IN_STRUCT in RTL but leaves
+ *   the earlier residual 34. A u64 result gives 61 and an extra word spill.
+ * - Reusing width as row leaves 34 but changes width r0 -> r1 and fixes the
+ *   join-store position. Reusing it for row y gives 46; moving rownext after
+ *   that calculation gives 131. Reusing width as pixel mask gives 259; as
+ *   pixel line, 229. The latter's two-minute search compiles 36,397 candidates
+ *   and reaches 32, recovering the desired second-dot address order but
+ *   keeping a different line register and two header scheduling differences.
+ *   Its alternatives remain in out/permute/glyph-width-line-search.
+ * - All 128 choices of one-pass wrapping around individual GlyphDot
+ *   statements fail to beat the earlier weighted 940 baseline. Splitting
+ *   tile <<= 5 from a one-pass tile += vram gives 247 on the new width form:
+ *   the desired dot order appears, but allocation spills x and retains color3.
+ *   Plain register parameter hints leave the new residual 28 unchanged.
+ * - A one-pass next++ after the row shift gives 32: flow combines the
+ *   increment with the load, so reload still puts its spill before the shift.
+ *   A separate loaded pointer with next copied back in the one-pass block
+ *   gives 161, retaining that pointer in r6 and disturbing the other spills.
  *
  * ARM translation-unit audit requested by Pascal, 2026-10-09:
  * Tile_BuildMetatiles follows this function without padding in all six
@@ -288,8 +325,9 @@
  *   or late transform is needed; jump2's register-set hoists cannot hoist
  *   this store. This observation does not prove that plain C cannot match.
  *
- * German/Spanish/French/Italian: all have the same 17-instruction residual
- * on each side (34 total); the following exhausts the --show differences.
+ * German/Spanish/French/Italian: all have the same 14 residual entries on
+ * each side (28 total), solely order and consequent pool displacements.
+ * The following exhausts the --show differences.
  * - Entry (S): mov ip,r1; sub sp,sp,#44; ldr font,[sp,#72] are early.
  *   Native copies x and y before the frame adjustment and font/character
  *   setup. ldrh height must follow movls r3,#1, and the height spill must
@@ -301,13 +339,11 @@
  *   Requires different color/row initialization lifetimes. The pool-load
  *   displacement difference is consequent on that last instruction move.
  * - Both dots and .L_row_next: the same five moves as Japanese (S).
- * - .L_glyph/.L_wide (A,S): both ldrh width results use r0, native r3.
- *   Width pseudo 38 has 3 refs, live length 5, preferences 0/1/3 in greg.
- *   It needs preference/conflicts favoring r3; a separate result variable
- *   fixes its spill lifetime but not this preference. The first ldrh must
- *   also follow the rows spill. The result str [sp,#32] must precede
- *   ldr rows,[sp,#36]; mov r2,#0, rather than follow them. That needs the
- *   width lifetime to end earlier in the join block (A,S).
+ * - .L_glyph/.L_wide now match: the one-pass width read preserves the
+ *   needed scheduling boundary, and returning width directly gives r3
+ *   through reload. jump2 shares str r3,[sp,#32] before the row reload and
+ *   pass initialization. The former short width's return-register preference
+ *   no longer controls either load. This is resolved, not a remaining site.
  *
  * English: 31 native and 34 draft residual entries (65 total), including
  * three extra instructions. Its long-lived drawing registers now agree.
@@ -375,8 +411,13 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 	u32 x, u32 y, const u8 *font)
 {
 	const u16 *rows;
+#if !defined(TBS_EDITION_JA) && !defined(TBS_EDITION_EN)
+	const u16 *header;
+#endif
 	u32 width;
+#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	u32 result;
+#endif
 	const u32 stride = window->height;
 	u32 row;
 	u32 rownext;
@@ -514,7 +555,19 @@ font_done:
 #endif
 		}
 		rows = (const u16 *)((const u8 *)UiText_Glyphs + (character - 32) * 26);
+#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 		width = *rows++;
+#else
+		header = rows;
+		rows++;
+		/* FAKEMATCH: keep the width read after the row-pointer update.
+		 * With width returned directly, this merges the duplicate width
+		 * spill and lowers de/es/fr/it from 39 to 28 residual instructions. */
+		do
+		{
+			width = *header;
+		} while (0);
+#endif
 	}
 	else
 	{
@@ -535,8 +588,8 @@ font_done:
 		result = 0;
 	}
 	else
-#endif
 		result = width;
+#endif
 
 	{
 		register u32 pass;
@@ -621,5 +674,9 @@ pass_next:
 		}
 	}
 glyph_done:
+#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	return result;
+#else
+	return width;
+#endif
 }

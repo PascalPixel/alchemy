@@ -323,10 +323,12 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
             {
                 /* FAKEMATCH: forced temporary pinned to r1; reload otherwise adds the offset to fp in r3. */
                 register u32 off asm("r1") = RENDER_SLOT_VALUE_OFS + 2;
-                /* FAKEMATCH: the palette stays in r2 across the slot store, as natively. */
-                register s32 pal asm("r2");
-                slot = *(u16 *)((u8 *)work + off);
+                /* FAKEMATCH: the word temporary is needed to match palette's
+                 * r2 through the slot store; direct assignment chooses r3. */
+                s32 pal;
+                s32 loaded = *(u16 *)((u8 *)work + off);
                 pal = 15;
+                slot = loaded;
                 UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, pal, 1);
             }
             UiText_DrawNumberInWindow(index, 2, window, 0, 0);

@@ -576,6 +576,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 window, 0xf335, window->width - 2, edge, 0);
 
             /* FAKEMATCH: reload render work before its dirty-field offset. */
+            /* FAKEMATCH: removing the barrier gives EN differ 52. A duplicate dead ((u32 *)spr)[2] = 0 after the cursor clear restores the native spill slots: reference/built 794, common 789, differ 10, all ten displayed rows concern page-call arguments or the dirty-pointer reload. A byte read or inline page helper still differs 52. */
             __asm__ volatile ("" : : "r" (render));
             render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
         }

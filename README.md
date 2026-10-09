@@ -59,3 +59,5 @@ Thank you to:
 - [pret](https://github.com/pret), whose decompilations set the standard Alchemy
   measures itself against, and whose [agbcc](https://github.com/pret/agbcc)
   Alchemy builds the games’ library code with.
+
+- [Simon Lindholm](https://github.com/simonlindholm/decomp-permuter), for the permuter whose behavior Alchemy reimplements in Rust.

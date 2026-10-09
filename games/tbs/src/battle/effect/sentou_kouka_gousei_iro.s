@@ -1,6 +1,6 @@
-@ C2: Shared shader linkage reads live r9/sl and changes unsaved r5/r8/r9; the
-@ forward entry falls into the reverse entry rather than returning as an
-@ ordinary procedure.
+@ C2: colburst.c copies these 14-word compositor fragments into generated
+@ ARM routines. r1/r5/r8/r9 are shared state and sl is the mask; r5/r8/r9
+@ change without callee saves, and neither fragment has a return.
 .syntax unified
 .text
 	.arm

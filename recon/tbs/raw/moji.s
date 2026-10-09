@@ -36,7 +36,7 @@
 @ constants hoisted by jump2); this function's 5, 2 and 3 sites are
 @ neither. Earlier device-free drafts differed in 51 of the Japanese listing's
 @ 193 instructions, 146 of the English 196 and 112 of the other four's 187.
-@ The current all-edition pure-C draft differs in 203, 186 and 153 respectively;
+@ The current all-edition pure-C draft differs in 203, 175 and 153 respectively;
 @ it is not linked or credited, and uses no pins, asm barriers or inline asm.
 @ No marker of C2's list is present: lr is saved, r11 is never used and
 @ the one multiply is mla.

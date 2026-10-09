@@ -6,7 +6,7 @@
  *                --edition tbs-en --arm
  * Native / draft / common / residual:
  *   ja: 193 / 198 /  94 / 203
- *   en: 196 / 194 / 102 / 186
+ *   en: 196 / 197 / 109 / 175
  *   de, es, fr, it: 187 / 186 / 110 / 153
  * Japanese reserves its native 100-byte local frame with a tagged unused
  * source type. International builds now reserve their native 44 bytes.
@@ -34,6 +34,10 @@
  * Volatile saved window/rows/result place the four high spills at the native
  * offsets and give en/other 186/153; direct pass++ then worsens them to
  * 199/176 and Japanese to 214, so the next-pass lifetime is retained.
+ * Writing the volatile result inside the English character branches restores
+ * their separate stores and changes en 186 -> 175, ja/other unchanged.
+ * Reintroducing a separate destination pointer internationally worsens
+ * en/other to 277/271 with the volatile spill layout; scalar reuse remains.
  */
 
 #include "types.h"
@@ -82,7 +86,9 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 	/* FAKEMATCH: keeping the native window, rows and result spills restores
 	 * their high frame slots (40, 36 and 32); the volatile stride below then
 	 * occupies the native slot 28. The continental residual falls 154 -> 153
-	 * and both international coordinate lifetimes use the native registers. */
+	 * and both international coordinate lifetimes use the native registers.
+	 * Direct English result stores in the character branches retain their
+	 * native branch shape, improving that edition's residual 186 -> 175. */
 	struct UiWindow *volatile saved_window;
 	const u16 *volatile saved_rows;
 	volatile u32 saved_result;
@@ -241,19 +247,26 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 		rows += 4;
 #endif
 	}
+#if !defined(TBS_EDITION_JA)
+	saved_rows = rows;
+#endif
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	if (character - 222 <= 1)
 	{
 		x -= 3;
 		y -= 2;
+#if defined(TBS_EDITION_JA)
 		result = 0;
+#else
+		saved_result = 0;
+#endif
 	}
 	else
 #endif
+#if defined(TBS_EDITION_JA)
 		result = width;
-#if !defined(TBS_EDITION_JA)
-	saved_rows = rows;
-	saved_result = result;
+#else
+		saved_result = width;
 #endif
 
 	{

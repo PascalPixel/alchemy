@@ -304,8 +304,7 @@ void SerialRuntime_PrepareSendPacket(void *payload)
 		cur = sr->current_mask;
 		recv = sr->received_mask;
 		sum = 0;
-		/* FAKEMATCH: ⚓️ clears the checksum only after reading both masks */
-		*(volatile u16 *)(pkt + 2) = sum;
+		*(u16 *)(pkt + 2) = sum;
 		pkt[1] = recv ^ cur;
 		Dma_Set(payload, pkt + 4, DMA_ENABLE32 | DMA_32BIT | 6, REG_DMA3);
 	}

@@ -1,3 +1,4 @@
+@ C2: push {r5-r8} saves callee-saved registers without lr.
 .syntax unified
 	.arm
 	.global Tile_ConvertMap

@@ -111,7 +111,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             /* FAKEMATCH: typed like the window pointer, the word store waits for the window load but not for the x and y stores, so sched2 places the entry copy before them */
             *(struct RenderInput **)&entry->attributes = (struct RenderInput *)0x40000400;
             zero = 0;
-            /* FAKEMATCH: a fresh zero keeps the window chain in r9 */
+            /* FAKEMATCH: a fresh zero keeps the window chain in r9. Without this barrier, the nested DjinnMenu_DrawStatArrow.0 has reference 80, built 82, common 71, differ 20: r8/r9 allocation changes and two explicit zero instructions remain; extent 0xc6 -> 0xca. */
             __asm__("" : "=r"(zero) : "0"(zero));
             /* FAKEMATCH: a pointer-typed clear does not wait for the x and y stores (sched2 order) */
             *(void **)&entry->tile = (void *)zero;

@@ -1,3 +1,5 @@
+@ C2: ldr pc, [pc, ip, lsl #2] dispatches directly into the following ARM
+@ command code, rather than returning or calling through a procedure entry.
 .syntax unified
 	.arm
 	.global SentouKouka_TenkaiYomi

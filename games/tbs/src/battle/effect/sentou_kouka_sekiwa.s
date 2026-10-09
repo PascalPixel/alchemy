@@ -1,3 +1,5 @@
+@ C2: smull and both smlal instructions retain the low/high product halves
+@ in ip/r0, a nonconsecutive pair the approved compiler cannot allocate.
 .syntax unified
 .text
 	.arm

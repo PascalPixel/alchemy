@@ -329,12 +329,11 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 	u32 code[7];
 	s32 dx, dy, dz;
 	s32 ux;
-	/* FAKEMATCH: the used eye x component remains in r11 through the row dot calls. */
-	register s32 ex asm("r11");
+	s32 zero = 0;
+	s32 ex;
 	Dot3Fn		 dot;
 	s32			 ey;
-	/* FAKEMATCH: the used perpendicular axis stays in r8 through the cross product. */
-	register s32 uz asm("r8");
+	s32 uz;
 	s32			 vx, vy, vz;
 	s32			 scale;
 	s32			 ez;
@@ -354,13 +353,16 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 	divide = Iwram_UnsignedDivide;
 	scale = divide(num, t) >> 15;
 	scale = -scale;
-	dx = Iwram_MulQ16(dx, scale);
-	dy = Iwram_MulQ16(dy, scale);
-	t = Iwram_MulQ16(dz, scale);
-	uz = -dx;
-	/* FAKEMATCH: keep the used negated axis before spilling the third product. */
-	asm("" : "+r"(t) : "r"(uz));
-	dz = t;
+	/* FAKEMATCH: the normalization keeps its CSE block; without it, the third
+	 * product spills before the negated axis (four reordered instructions). */
+	do
+	{
+		dx = Iwram_MulQ16(dx, scale);
+		dy = Iwram_MulQ16(dy, scale);
+		t = Iwram_MulQ16(dz, scale);
+		uz = -dx;
+		dz = t;
+	} while (0);
 
 	// 横の軸 u = (dz, 0, -dx) を長さ 1 に
 	t = Iwram_MulQ16(dy, dy);
@@ -384,10 +386,7 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 	ey = eye[1];
 	ez = eye[2];
 	{
-		/* FAKEMATCH: the used zero argument remains in r0 beside the first row stores. */
-		register s32 zero asm("r0");
 		out[0] = ux;
-		zero = 0;
 		out[3] = zero;
 		out[6] = uz;
 		out[9] = -dot(ex, ux, ez, uz, zero, zero);

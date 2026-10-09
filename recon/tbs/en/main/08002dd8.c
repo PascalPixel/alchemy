@@ -19,6 +19,8 @@
  * register hints: residual 31, 48 bytes; 64-bit value shifted before its
  * mask: 28 instructions/residual 41; table+4 with offset-4: 22/residual 33.
  * Named signed mask/pool (permutation search): 20/residual 29, retained.
+ * Widened mask/pool and final address casts (144 distinct PERM choices,
+ * seed 137, two jobs, one minute): no improvement over residual 29.
  */
 
 #include "types.h"

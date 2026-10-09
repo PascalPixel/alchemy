@@ -38,6 +38,13 @@
  * their separate stores and changes en 186 -> 175, ja/other unchanged.
  * Reintroducing a separate destination pointer internationally worsens
  * en/other to 277/271 with the volatile spill layout; scalar reuse remains.
+ * Compiler audit: duplicate successor stores become predicated stores;
+ * saved predicates, discarded label addresses and an unused label-address
+ * local emit CMP; STR; EOR; BHI, unchanged when reduced to a direct test.
+ * They put memory between compare and branch but leave a one-cycle EOR last,
+ * so they do not realize the native CMP; LSL; STR; BLS row step. No new
+ * stock post-sched2 store-hoisting path was found. Synthetic source and RTL
+ * are preserved for review under out/reports/glyph_sched, never linked.
  */
 
 #include "types.h"

@@ -6,32 +6,34 @@
 #include "layout_guard.h"
 #include "map.h"
 
-struct MapLayerScroll {
-    s32 x, y;
-    s32 offset_x, offset_y;
-    s32 scale_x, scale_y;
-    s32 speed_x, speed_y;
-    s32 phase_x, phase_y;
-    u16 mask_x, mask_y;
-    struct MapCell *cells;
+struct MapLayerScroll
+{
+	s32				x, y;
+	s32				offset_x, offset_y;
+	s32				scale_x, scale_y;
+	s32				speed_x, speed_y;
+	s32				phase_x, phase_y;
+	u16				mask_x, mask_y;
+	struct MapCell *cells;
 };
 
-struct MapScrollWork {
-    s32 *origin;
-    s32 shake_x, shake_y, shake_decay;
-    u8 *script;
-    u16 flags;
-    u8 wide_tiles;
-    u8 footprints;
-    struct MapAnimation anim[16];
-    struct BlendScriptState blend;
-    s32 view_x, view_y;
-    s32 min_x, min_y, max_x, max_y;
-    s8 animation_active;
-    u8 unknown_0fd[3];
-    u8 enabled[3];
-    u8 unknown_103;
-    struct MapLayerScroll layers[3];
+struct MapScrollWork
+{
+	s32					   *origin;
+	s32						shake_x, shake_y, shake_decay;
+	u8					   *script;
+	u16						flags;
+	u8						wide_tiles;
+	u8						footprints;
+	struct MapAnimation		anim[16];
+	struct BlendScriptState blend;
+	s32						view_x, view_y;
+	s32						min_x, min_y, max_x, max_y;
+	s8						animation_active;
+	u8						unknown_0fd[3];
+	u8						enabled[3];
+	u8						unknown_103;
+	struct MapLayerScroll	layers[3];
 };
 
 #include "perspect.h"
@@ -45,7 +47,10 @@ LAYOUT_OFFSET_GUARD(MapScrollWork_View, struct MapScrollWork, view_x, 0xe4);
 LAYOUT_OFFSET_GUARD(MapScrollWork_Active, struct MapScrollWork, animation_active, 0xfc);
 LAYOUT_OFFSET_GUARD(MapScrollWork_Layers, struct MapScrollWork, layers, 0x104);
 
-struct BgScroll { u16 x, y; };
+struct BgScroll
+{
+	u16 x, y;
+};
 
 extern struct BgScroll gBgScroll[];
 

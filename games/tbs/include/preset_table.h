@@ -3,10 +3,11 @@
 
 #include "types.h"
 
-struct PresetValues {
-    s32 first;
-    u8 digits[4];
-    s32 values[4];
+struct PresetValues
+{
+	s32 first;
+	u8	digits[4];
+	s32 values[4];
 };
 
 #endif

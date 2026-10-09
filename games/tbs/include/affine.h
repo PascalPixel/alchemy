@@ -4,16 +4,18 @@
 #include "types.h"
 #include "layout_guard.h"
 
-struct AffineTransform {
-    u16 scale_x;
-    u16 scale_y;
-    u16 angle;
-    u16 unknown_06;
+struct AffineTransform
+{
+	u16 scale_x;
+	u16 scale_y;
+	u16 angle;
+	u16 unknown_06;
 };
 
-union AffineMatrix {
-    s16 coefficients[4];
-    u32 rows[2];
+union AffineMatrix
+{
+	s16 coefficients[4];
+	u32 rows[2];
 };
 
 LAYOUT_SIZE_GUARD(AffineTransform_Size, struct AffineTransform, 8);
@@ -21,8 +23,8 @@ LAYOUT_OFFSET_GUARD(AffineTransform_ScaleY, struct AffineTransform, scale_y, 2);
 LAYOUT_OFFSET_GUARD(AffineTransform_Angle, struct AffineTransform, angle, 4);
 LAYOUT_SIZE_GUARD(AffineMatrix_Size, union AffineMatrix, 8);
 
-extern u8 gObjAffineCount;
+extern u8				  gObjAffineCount;
 extern union AffineMatrix gObjAffineMatrices[];
-s32 AffineMatrix_BuildForEffect(struct AffineTransform *transform);
+s32						  AffineMatrix_BuildForEffect(struct AffineTransform *transform);
 
 #endif

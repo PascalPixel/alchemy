@@ -4,14 +4,15 @@
 #include "types.h"
 #include "layout_guard.h"
 
-struct FieldBlendWork {
-    s16 from[0x540];
-    s16 to[0x540];
-    s16 delta[0x540];
-    s16 timer;
-    s16 enabled;
-    s16 loud;
-    u8 unknown_1f86[2];
+struct FieldBlendWork
+{
+	s16 from[0x540];
+	s16 to[0x540];
+	s16 delta[0x540];
+	s16 timer;
+	s16 enabled;
+	s16 loud;
+	u8	unknown_1f86[2];
 };
 
 LAYOUT_SIZE_GUARD(FieldBlendWork_Size, struct FieldBlendWork, 0x1f88);

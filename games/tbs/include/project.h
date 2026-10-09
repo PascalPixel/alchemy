@@ -4,12 +4,13 @@
 #include "types.h"
 #include "layout_guard.h"
 
-struct Projection {
-    s32 focal;
-    s32 near;
-    s32 far;
-    s32 center_x;
-    s32 center_y;
+struct Projection
+{
+	s32 focal;
+	s32 near;
+	s32 far;
+	s32 center_x;
+	s32 center_y;
 };
 
 LAYOUT_SIZE_GUARD(Projection_Size, struct Projection, 0x14);

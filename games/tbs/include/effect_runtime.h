@@ -4,17 +4,19 @@
 #include "types.h"
 #include "global_cells.h"
 
-struct EffectRuntimeSlot {
-    void *object;
-    u8 active;
-    u8 padding5;
-    u8 tileX;
-    u8 tileY;
+struct EffectRuntimeSlot
+{
+	void *object;
+	u8	  active;
+	u8	  padding5;
+	u8	  tileX;
+	u8	  tileY;
 };
 
-struct EffectRuntime {
-    u8 padding0[0x11C];
-    struct EffectRuntimeSlot slots[10];
+struct EffectRuntime
+{
+	u8						 padding0[0x11C];
+	struct EffectRuntimeSlot slots[10];
 };
 
 #endif

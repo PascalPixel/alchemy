@@ -4,25 +4,29 @@
 #include "types.h"
 #include "layout_guard.h"
 
-struct MapScanline {
-    s32 scale, depth;
-    s32 offset_x, offset_y;
-    s16 pa, pc;
+struct MapScanline
+{
+	s32 scale, depth;
+	s32 offset_x, offset_y;
+	s16 pa, pc;
 };
 
-struct MapAffineLine {
-    s16 pa, pb, pc, pd;
-    s32 x, y;
+struct MapAffineLine
+{
+	s16 pa, pb, pc, pd;
+	s32 x, y;
 };
 
-struct MapAffinePair {
-    struct MapAffineLine bg2, bg3;
+struct MapAffinePair
+{
+	struct MapAffineLine bg2, bg3;
 };
 
-struct MapFrameWork {
-    struct MapScanline scanlines[160];
-    struct MapAffinePair pages[2][160];
-    u8 unknown_3480[4];
+struct MapFrameWork
+{
+	struct MapScanline	 scanlines[160];
+	struct MapAffinePair pages[2][160];
+	u8					 unknown_3480[4];
 };
 
 LAYOUT_SIZE_GUARD(MapScanline_Size, struct MapScanline, 20);

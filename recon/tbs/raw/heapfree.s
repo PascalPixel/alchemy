@@ -1,37 +1,6 @@
-@ Not yet C: the two ordinary Thumb entries have no C2 handwritten marker.
-@ Their shared literal pool remains here; the linker aligns MemFree and
-@ places the two-byte gap as fill, so uncredited code does not hide padding.
+@ Not yet C: the German/Spanish cartridge-interrupt routine has no C2 proof.
+@ Runtime_ReleaseHeapBlock and MemFree are in games/tbs/src/system/heapfree.s.
 .syntax unified
-	.section .text.release, "ax", %progbits
-	.balign 2
-	.thumb
-	.global Runtime_ReleaseHeapBlock
-	.thumb_func
-Runtime_ReleaseHeapBlock:
-	ldr	r4, [pc, #32]
-	lsls	r0, r0, #2
-	ldr	r1, [r0, r4]
-	lsrs	r3, r1, #22
-	beq.n	.L_08002dec
-	movs	r2, #0
-	str	r2, [r0, r4]
-	movs	r0, #4
-	ands	r3, r0
-	str	r1, [r3, r4]
-.L_08002dec:
-	bx	lr
-	.section .text.free, "ax", %progbits
-	.balign 4
-	.global MemFree
-	.thumb_func
-MemFree:
-	ldr	r4, [pc, #8]
-	movs	r1, #4
-	lsrs	r2, r0, #22
-	ands	r2, r1
-	str	r0, [r2, r4]
-	bx	lr
-	.4byte	gWorkSlot
 	.ifdef TBS_EDITION_DE
 	.set GAMEPAK_STOP, 1
 	.endif

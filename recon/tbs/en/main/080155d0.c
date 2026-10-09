@@ -531,6 +531,26 @@
  *   pass also deletes ordinary no-op moves: a temporary alone cannot act as
  *   a scheduling dependency that disappears only after sched2.
  *
+ * Allocation follow-up, 2026-10-09, no residual improvement:
+ * - 48 English lookup-address/entry forms fold the pointer back into the
+ *   indexed byte load. Best early-range form 19; height-first 26. Separating
+ *   table+index therefore does not break expand_preferences' propagation
+ *   from font_width's return register to the dying index.
+ * - 144 grouped source/color initializations leave other at best 14.
+ * - 128 delayed-copy/reused-test/dot-depth forms give other at best 38.
+ *   Fresh greg dumps explain the plain delayed-copy regression: next's
+ *   pseudo 105 changes from refs 5/live 46 to refs 13/live 47; x remains
+ *   refs 20/live about 160. The pointer allocates ahead of x and y.
+ * - 384 outline-update weighting forms can recover native x=r9,y=r8
+ *   (best 55), but next keeps r7 and tile_y spills instead. Weighting the
+ *   geometry assignments (180 forms) or their helper uses (180 forms)
+ *   gives at best 144 and also changes the loop/allocation graph.
+ * - 56 geometry-sharing forms pair main tile_y/row_line/vram with packed
+ *   vram/tile_y/row_line, following their native register reuse. All seven
+ *   sharing subsets reproduce canonical other 14 without the delayed copy;
+ *   none repairs that copy's allocation regression (best 55). These larger
+ *   regressions were followed explicitly; no new device is retained.
+ *
  * Remaining differences, located by labels in recon/tbs/raw/moji.s.
  * The following is a pass-level diagnosis, not a claim to have found the
  * missing C. A stated dependency or lifetime change is a requirement for

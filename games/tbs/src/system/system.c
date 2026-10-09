@@ -336,30 +336,44 @@ void WaitFrames(s32 frames)
     CAMELOT_ASM("the stack switch, a write to sp no C can express")
     register u8 *sp __asm__("sp");
     u32 i;
-    /* FAKEMATCH: base stays in sl across the frame loop. Removing only this
-     * binding substitutes sp for the initial comparison and DMA arguments,
-     * and differs by 19 aligned instructions (403 native, 404 built,
-     * 394 common), with the same 0x434-byte extent. */
-    register u8 *base __asm__("sl");
+    u8 *base;
     u32 line;
     s32 j;
     s16 dispcnt;
     s16 backdrop;
 
-    /* FAKEMATCH: needed to match: this one-pass boundary keeps the frame-count
-     * store ahead of the stack-limit load; without it those instructions swap
-     * (4 aligned differences). */
+    /* FAKEMATCH: needed to match: the XOR identity and one-pass copy guard
+     * retain the entry-SP copy through allocation. A plain unbound pointer
+     * substitutes sp in the comparison and DMA arguments (19 aligned
+     * differences); this identity and guard leave only the final restore
+     * copy pair different (4), corrected at its assignment below. The block
+     * also keeps the frame-count store before the stack-limit load (4). */
     do {
+        base = (u8 *)((u32)sp ^ (u32)frames);
+        base = (u8 *)((u32)base ^ (u32)frames);
+        if (base == sp)
+            break;
         base = sp;
     } while (0);
     if (base < Ram_FrameWaitStackTop) {
         u8 *top = Ram_FrameWaitStackTop;
+        u8 *next;
 
         gSavedStackSize = top - base;
         Dma_Set(base, gSavedStack, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
-        /* FAKEMATCH: an operand-only barrier adds a use of top, which gives it r4 ahead of the DMA control constant. */
-        __asm__ volatile("" : : "r"(top));
-        sp = top;
+        /* FAKEMATCH: needed to match: XOR cancellation defers the top-copy
+         * guard until after allocation, retaining top in r4 across DMA.
+         * Without this lifetime boundary, top and the DMA control constant
+         * exchange r4/r5 (12 aligned differences, same 0x434-byte extent).
+         * The redundant guard emits no extra comparison or copy. */
+        next = (u8 *)((u32)top ^ (u32)base);
+        next = (u8 *)((u32)next ^ (u32)base);
+        sp = next;
+        do {
+            if (top == sp)
+                break;
+            top = sp;
+        } while (0);
     }
     for (i = 0; i < frames; i++) {
         gSchedulerStatus = 1;
@@ -487,13 +501,27 @@ void WaitFrames(s32 frames)
         do {
             base = restore;
         } while (0);
-        /* FAKEMATCH: an operand-only barrier keeps the copy of sp in sl. */
-        __asm__ volatile("" : "+r"(base));
+        /* FAKEMATCH: needed to match: the one-pass copy guard retains the
+         * current-SP copy in sl. A plain restore loses that copy and differs
+         * by five aligned instructions (403 native, 402 built, 400 common),
+         * shrinking 0x434 bytes to 0x430. The redundant guard ends CSE at the
+         * copy without emitting an extra comparison. */
+        do {
+            if (base == sp)
+                break;
+            base = sp;
+        } while (0);
         /* FAKEMATCH: needed to match: the volatile reread keeps this saved-size
          * load separate from the conditional read (7 aligned differences
          * without this qualification). */
         base -= *(volatile u32 *)&gSavedStackSize;
-        sp = base;
+        /* FAKEMATCH: needed to match: the cancelling restore identity keeps
+         * the result in base before installing sp. A direct assignment swaps
+         * the native high-register copy pair (4 aligned differences, same
+         * 0x434-byte extent); the identity restores both without a binding. */
+        restore = (u8 *)((u32)base ^ (u32)sp);
+        restore = (u8 *)((u32)restore ^ (u32)sp);
+        sp = restore;
         /* FAKEMATCH: the operand-only asm flushes CSE, preserving the measured reload of the saved-stack-size address. */
         __asm__ volatile("" : : "r"(base));
         Dma_Set(gSavedStack, base, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);

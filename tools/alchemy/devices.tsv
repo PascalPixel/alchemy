@@ -1,7 +1,7 @@
 game	device	count
-tbs	asm-barrier	48
+tbs	asm-barrier	46
 tbs	inline-asm	0
-tbs	register-pin	40
+tbs	register-pin	39
 tbs	volatile	303
 tla	asm-barrier	209
 tla	inline-asm	1

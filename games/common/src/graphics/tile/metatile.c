@@ -14,7 +14,7 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
 	s32 found;
 	s32 v;
 
-	for (row = 0; row < 20; row++)
+	for (row = 0; row < 20;)
 	{
 		d = 0;
 		a = d;
@@ -104,17 +104,28 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
 		*dst++ = v;
 		dst++;
 		src += 2;
-		*dst++ = v;
+		/* FAKEMATCH: this one-pass block and early row increment keep the
+		 * source advance and row copy between their native stores
+		 * (pure C differ 6 -> 2). */
+		do
+		{
+			*dst++ = v;
+			row++;
+		} while (0);
+		/* FAKEMATCH: the one-pass break lets CSE reuse row < 20 before
+		 * scheduling, keeping its comparison before the seventh store
+		 * (differ 2 -> 0). */
+		do
+		{
+			dst++;
+			*dst++ = v;
+			if (row < 20)
+				break;
+		} while (0);
 		dst++;
 		*dst++ = v;
-		dst++;
-		*dst++ = v;
-		/* FAKEMATCH: rewrites dst and v in place so f+d no longer waits two cycles on the stores of v; strh 7 then sits right above f+d (differ 4 -> 0) */
-		asm("" : "=r"(dst), "=r"(v) : "0"(dst), "1"(v));
 		v = f + (d << 8);
 		dst++;
 		*dst++ = v;
-		/* FAKEMATCH: rewrites dst in place so the loop jump no longer waits two cycles on the last store; add sl, mov r1 and cmp rise one store (differ 6 -> 4) */
-		asm("" : "=r"(dst) : "0"(dst));
 	}
 }

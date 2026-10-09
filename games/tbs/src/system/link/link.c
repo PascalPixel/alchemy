@@ -363,15 +363,13 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload)
     s32 enable;
 
     *(u32 *)&flags[4] = 0;
-    /* Removing all three empty asm statements in this function together
-     * differs by 14 aligned instructions (104 native, 104 built, 97 common),
-     * with the same 0xe4-byte extent. First, ldr r2,=REG_IME rises before
-     * sub sp,#8; later, mov lr,sp sinks after the channel-flags snapshot,
-     * and the IME-address load rises before movs r2,#1. This combined
-     * candidate changes no other source statement. */
-    /* FAKEMATCH: keeps the frame clear ahead of the interrupt disable; without it the IME address load rises above "sub sp" (score 6). */
-    __asm__("");
-    REG_IME = 0;
+    /* FAKEMATCH: needed to match: the one-pass store keeps the IME address
+     * load after the frame clear. Removing the original empty barrier
+     * without this block differs by 6; wrapping the clear instead differs
+     * by 2 (the zero and payload copies swap). */
+    do {
+        REG_IME = 0;
+    } while (0);
     for (i = 0; i <= 3; i++) {
         swap = gSerialRuntime.pending_buffer[i];
         gSerialRuntime.pending_buffer[i] = gSerialRuntime.ready_buffer[i];
@@ -380,10 +378,13 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload)
     *(u32 *)flags = *(u32 *)gSerialRuntime.channel_flags;
     /* FAKEMATCH: an unsigned long store does not alias the u32 snapshot, so sched2 puts lr = sp before the snapshot store as the native does (2 without). */
     *(unsigned long *)gSerialRuntime.channel_flags = 0;
-    /* FAKEMATCH: a separate enable value set before the barrier loads the 1 ahead of the IME address and lets -1 be derived from it (26 with a literal 1). */
-    enable = 1;
-    /* FAKEMATCH: holds the IME address load after the 1 (score 6 without). */
-    __asm__("");
+    /* FAKEMATCH: needed to match: the one-pass assignment loads 1 ahead of
+     * the IME address and lets -1 be derived from it. A direct assignment
+     * without the original barrier differs by 6; wrapping the following
+     * store instead differs by 2, and a literal store differs by 26. */
+    do {
+        enable = 1;
+    } while (0);
     REG_IME = enable;
     /* FAKEMATCH: keeps the IME store ahead of the mask clear and the loop setup (score 22 without). */
     __asm__("");

@@ -1,0 +1,665 @@
+use super::{Node, Optional};
+use lang_c::{ast as c, driver, span::Node as Spanned};
+use std::collections::HashMap;
+
+type Result<T> = std::result::Result<T, String>;
+
+/// lang-c discards directives. Preserve them as unique placeholder nodes, and
+/// control statement's body with the following statement into a compound.
+pub fn parse(source: &str) -> Result<Node> {
+    let tokens = crate::permute::lex::lex(source)?;
+    let mut prefix = "__alchemy_pragma_".to_string();
+    while source.contains(&prefix) { prefix.push('_'); }
+    let mut pragmas = HashMap::new();
+    let mut input = String::new();
+    let mut preceding = Vec::new();
+    let mut position = 0;
+    let mut tokens = tokens.iter().peekable();
+    for line in source.split_inclusive('\n') {
+        while tokens.peek().is_some_and(|t| t.start < position) {
+            let token = tokens.next().unwrap();
+            if !matches!(token.tok, crate::permute::lex::Tok::Comment(_)) { preceding.push(&token.tok); }
+        }
+        let directive = line.trim_start().strip_prefix('#').map(str::trim_start);
+        if let Some(pragma) = directive.and_then(|s| s.strip_prefix("pragma")).filter(|s| s.is_empty() || s.starts_with(char::is_whitespace)) {
+            let name = format!("{prefix}{}", pragmas.len());
+            pragmas.insert(name.clone(), pragma.trim().to_string());
+            input += &if decorates_statement(&preceding) { format!("{name}:\n") } else { format!("int {name};\n") };
+        } else if directive.is_some_and(|s| s.starts_with("ident")) {
+            input.push('\n');
+        } else {
+            // Comments have already served their purpose before preprocessing.
+            // Accept them in fixtures too, without changing source offsets.
+            input += line;
+        }
+        position += line.len();
+    }
+    let comments = crate::permute::lex::lex(&input)?;
+    for token in comments.iter().rev() {
+        if matches!(token.tok, crate::permute::lex::Tok::Comment(_)) {
+            let blank: String = input[token.start..token.end].chars().map(|c| if c == '\n' { '\n' } else { ' ' }).collect();
+            input.replace_range(token.start..token.end, &blank);
+        }
+    }
+    let global_asm = preserve_global_asm(&mut input, &prefix)?;
+    let mut parsed = parse_input(input)?;
+    while let Some((open, close)) = sizeof_cast_ambiguity(&parsed)? {
+        let mut input = parsed.source;
+        input.insert(close, ')');
+        input.insert(open, '(');
+        parsed = parse_input(input)?;
+    }
+    let mut adapter = Adapter { source: parsed.source, pragmas, global_asm, anonymous: 0 };
+    let mut ext = Vec::new();
+    for item in &parsed.unit.0 {
+        match &item.node {
+            c::ExternalDeclaration::Declaration(d) => ext.extend(adapter.declaration(&d.node)?),
+            c::ExternalDeclaration::StaticAssert(a) => ext.push(adapter.assertion(&a.node)?),
+            c::ExternalDeclaration::FunctionDefinition(f) => {
+                let f = &f.node;
+                let specs = adapter.specifiers(&f.specifiers)?;
+                let decl = adapter.decl(&specs, Some(&f.declarator), None, None)?.boxed();
+                let mut param_decls = Vec::new();
+                for d in &f.declarations { param_decls.extend(adapter.declaration(&d.node)?); }
+                ext.push(Node::FuncDef { decl, param_decls, body: adapter.statement(&f.statement.node)?.boxed() });
+            }
+        }
+    }
+    Ok(Node::FileAst { ext })
+}
+
+fn preserve_global_asm(input: &mut String, prefix: &str) -> Result<HashMap<String, Node>> {
+    use crate::permute::lex::{lex, Tok};
+    let tokens: Vec<_> = lex(input)?.into_iter().filter(|t| !matches!(t.tok, Tok::Comment(_))).collect();
+    let mut depth = 0;
+    let mut patches = Vec::new();
+    let mut statements = HashMap::new();
+    let mut index = 0;
+    while index < tokens.len() {
+        let token = &tokens[index];
+        if depth == 0 && matches!(&token.tok, Tok::Ident(s) if matches!(s.as_str(), "asm" | "__asm" | "__asm__")) && (index == 0 || matches!(tokens[index - 1].tok, Tok::Punct(";" | "}"))) {
+            let start = index;
+            index += 1;
+            if tokens.get(index).is_none_or(|t| t.tok != Tok::Punct("(")) { return Err("invalid global asm".into()); }
+            index += 1;
+            let mut strings = Vec::new();
+            while let Some(token) = tokens.get(index) {
+                let Tok::Str(s) = &token.tok else { break };
+                strings.push(s.clone());
+                index += 1;
+            }
+            if strings.is_empty() || tokens.get(index).is_none_or(|t| t.tok != Tok::Punct(")")) || tokens.get(index + 1).is_none_or(|t| t.tok != Tok::Punct(";")) { return Err("invalid global asm".into()); }
+            let name = format!("{prefix}asm{}", statements.len());
+            statements.insert(name.clone(), Node::Asm { quals: Vec::new(), asm: string_literal(&strings).boxed(), outputs: Vec::new(), inputs: Vec::new(), clobbers: Vec::new(), gotos: Vec::new() });
+            patches.push((tokens[start].start, tokens[index + 1].end, format!("int {name};")));
+            index += 2;
+            continue;
+        }
+        match token.tok { Tok::Punct("{") => depth += 1, Tok::Punct("}") => depth -= 1, _ => {} }
+        index += 1;
+    }
+    for (start, end, replacement) in patches.into_iter().rev() { input.replace_range(start..end, &replacement); }
+    Ok(statements)
+}
+
+fn string_literal(strings: &[String]) -> Node {
+    let mut value = String::new();
+    for s in strings {
+        if value.is_empty() { value = s.clone(); } else {
+            value.pop();
+            value += s.split_once('"').map_or(s.as_str(), |(_, tail)| tail);
+        }
+    }
+    Node::Constant { ty: "string".into(), value }
+}
+
+fn parse_input(input: String) -> Result<driver::Parse> {
+    driver::parse_preprocessed(&driver::Config::with_gcc(), input).map_err(|e| format!("C parse error at {}:{}: expected {}", e.line, e.column, {
+        let mut expected: Vec<_> = e.expected.iter().copied().collect();
+        expected.sort(); expected.join(", ")
+    }))
+}
+
+/// `sizeof((T) +x)` (likewise -, * and &). Preserve that observable behavior,
+/// including its precedence, instead of silently correcting the user's C.
+fn sizeof_cast_ambiguity(parsed: &driver::Parse) -> Result<Option<(usize, usize)>> {
+    use lang_c::{span::Span, visit::{self, Visit}};
+    use crate::permute::lex::Tok;
+    #[derive(Default)]
+    struct Expressions<'a> { nodes: Vec<(&'a c::Expression, Span)> }
+    impl<'a> Visit<'a> for Expressions<'a> {
+        fn visit_expression(&mut self, e: &'a c::Expression, span: &'a Span) {
+            self.nodes.push((e, *span));
+            visit::visit_expression(self, e, span);
+        }
+    }
+    let mut expressions = Expressions::default();
+    visit::visit_translation_unit(&mut expressions, &parsed.unit);
+    let tokens = crate::permute::lex::lex(&parsed.source)?;
+    let mut matches = Vec::new();
+    for (expr, span) in &expressions.nodes {
+        if !matches!(expr, c::Expression::SizeOfTy(_)) || !parsed.source[span.start..span.end].starts_with("sizeof") { continue; }
+        let next = tokens.partition_point(|t| t.start < span.end);
+        if !tokens.get(next).is_some_and(|t| matches!(t.tok, Tok::Punct("+" | "-" | "*" | "&"))) { continue; }
+        let Some(operand) = tokens.get(next + 1) else { continue };
+        let mut end = expressions.nodes.iter().filter(|(node, s)| {
+            if s.start != operand.start { return false; }
+            let is_binary = matches!(node, c::Expression::Comma(_) | c::Expression::Conditional(_)) || matches!(node, c::Expression::BinaryOperator(b) if b.node.operator.node != c::BinaryOperator::Index);
+            if !is_binary { return true; }
+            // Parenthesized expressions are unary operands regardless of the
+            // expression kind contained inside their parentheses.
+            let text = &parsed.source[s.start..s.end];
+            let mut depth = 0isize;
+            let mut fully_wrapped = text.starts_with('(');
+            for t in tokens.iter().filter(|t| t.start >= s.start && t.end <= s.end) {
+                match t.tok { Tok::Punct("(") => depth += 1, Tok::Punct(")") => depth -= 1, _ => {} }
+                if depth == 0 && t.end < s.end { fully_wrapped = false; }
+            }
+            fully_wrapped
+        }).map(|(_, s)| s.end).max();
+        if operand.tok == Tok::Punct("(") {
+            let mut depth = 0;
+            for t in &tokens[next + 1..] {
+                match t.tok { Tok::Punct("(") => depth += 1, Tok::Punct(")") => depth -= 1, _ => {} }
+                if depth == 0 { end = Some(end.unwrap_or(0).max(t.end)); break; }
+            }
+        }
+        if let Some(end) = end {
+            let open = span.start + parsed.source[span.start..span.end].find('(').expect("sizeof type has parentheses");
+            matches.push((open, end));
+        }
+    }
+    // Resolve inner/rightmost ambiguity first; a later parse then sees the
+    // complete unary operand when ambiguities are nested or chained.
+    Ok(matches.into_iter().max_by_key(|(start, _)| *start))
+}
+
+fn decorates_statement(tokens: &[&crate::permute::lex::Tok]) -> bool {
+    use crate::permute::lex::Tok;
+    match tokens.last() {
+        Some(Tok::Ident(s)) if s == "else" || s == "do" => true,
+        Some(Tok::Punct(":")) => true,
+        Some(Tok::Punct(")")) => {
+            let mut depth = 0;
+            for (index, token) in tokens.iter().enumerate().rev() {
+                match token {
+                    Tok::Punct(")") => depth += 1,
+                    Tok::Punct("(") => {
+                        depth -= 1;
+                        if depth == 0 { return index > 0 && matches!(tokens[index - 1], Tok::Ident(s) if matches!(s.as_str(), "if" | "for" | "while" | "switch")); }
+                    }
+                    _ => {}
+                }
+            }
+            false
+        }
+        _ => false,
+    }
+}
+
+#[derive(Clone)]
+struct Specs {
+    base: Node,
+    quals: Vec<String>,
+    storage: Vec<String>,
+    funcspec: Vec<String>,
+    align: Vec<Node>,
+    attributes: Vec<Node>,
+    asmlabel: Optional,
+}
+
+struct Adapter { source: String, pragmas: HashMap<String, String>, global_asm: HashMap<String, Node>, anonymous: usize }
+
+fn name(decl: &c::Declarator) -> Option<String> {
+    match &decl.kind.node {
+        c::DeclaratorKind::Abstract => None,
+        c::DeclaratorKind::Identifier(id) => Some(id.node.name.clone()),
+        c::DeclaratorKind::Declarator(d) => name(&d.node),
+    }
+}
+
+fn qualifier(q: &c::TypeQualifier) -> &'static str {
+    match q {
+        c::TypeQualifier::Const => "const", c::TypeQualifier::Restrict => "restrict",
+        c::TypeQualifier::Volatile => "volatile", c::TypeQualifier::Atomic => "_Atomic",
+        c::TypeQualifier::Nonnull => "_Nonnull", c::TypeQualifier::NullUnspecified => "_Null_unspecified", c::TypeQualifier::Nullable => "_Nullable",
+    }
+}
+
+impl Adapter {
+    fn text<T>(&self, n: &Spanned<T>) -> &str { &self.source[n.span.start..n.span.end] }
+
+    fn string(&self, s: &c::StringLiteral) -> Node {
+        // tree folds adjacent string tokens into one literal.
+        string_literal(s)
+    }
+
+    fn expression(&mut self, expression: &Spanned<c::Expression>) -> Result<Node> {
+        use c::Expression as E;
+        Ok(match &expression.node {
+            E::Identifier(n) => Node::id(&n.node.name),
+            E::Constant(n) => {
+                let ty = match &n.node {
+                    c::Constant::Integer(i) => {
+                        if i.suffix.imaginary { return Err("imaginary integer constants are not supported".into()); }
+                        let size = match i.suffix.size { c::IntegerSize::Int => "int", c::IntegerSize::Long => "long int", c::IntegerSize::LongLong => "long long int" };
+                        if i.suffix.unsigned { format!("unsigned {size}") } else { size.into() }
+                    }
+                    c::Constant::Float(f) => match f.suffix.format {
+                        c::FloatFormat::Float => "float".into(), c::FloatFormat::Double => "double".into(), c::FloatFormat::LongDouble => "long double".into(),
+                        _ => return Err("unsupported floating constant format".into()),
+                    },
+                    c::Constant::Character(_) => "char".into(),
+                };
+                Node::Constant { ty, value: self.text(n).into() }
+            }
+            E::StringLiteral(n) => self.string(&n.node),
+            E::Member(n) => Node::StructRef {
+                name: self.expression(&n.node.expression)?.boxed(),
+                op: if n.node.operator.node == c::MemberOperator::Direct { "." } else { "->" }.into(),
+                field: Node::id(&n.node.identifier.node.name).boxed(),
+            },
+            E::Call(n) => {
+                let args = n.node.arguments.iter().map(|n| self.expression(n)).collect::<Result<Vec<_>>>()?;
+                Node::FuncCall { name: self.expression(&n.node.callee)?.boxed(), args: (!args.is_empty()).then(|| Node::ExprList { exprs: args }.boxed()) }
+            }
+            E::CompoundLiteral(n) => Node::CompoundLiteral { ty: self.typename(&n.node.type_name.node)?.boxed(), init: self.initializer_list(&n.node.initializer_list)?.boxed() },
+            E::SizeOfTy(n) => Node::UnaryOp { op: "sizeof".into(), expr: self.typename(&n.node.0.node)?.boxed() },
+            E::SizeOfVal(n) => Node::UnaryOp { op: "sizeof".into(), expr: self.expression(&n.node.0)?.boxed() },
+            E::AlignOf(n) => Node::UnaryOp { op: "_Alignof".into(), expr: self.typename(&n.node.0.node)?.boxed() },
+            E::UnaryOperator(n) => {
+                use c::UnaryOperator as U;
+                let op = match n.node.operator.node { U::PostIncrement => "p++", U::PostDecrement => "p--", U::PreIncrement => "++", U::PreDecrement => "--", U::Address => "&", U::Indirection => "*", U::Plus => "+", U::Minus => "-", U::Complement => "~", U::Negate => "!" };
+                Node::UnaryOp { op: op.into(), expr: self.expression(&n.node.operand)?.boxed() }
+            }
+            E::Cast(n) => Node::Cast { to_type: self.typename(&n.node.type_name.node)?.boxed(), expr: self.expression(&n.node.expression)?.boxed() },
+            E::BinaryOperator(n) => {
+                use c::BinaryOperator as B;
+                let left = self.expression(&n.node.lhs)?.boxed();
+                let right = self.expression(&n.node.rhs)?.boxed();
+                let (op, assign) = match n.node.operator.node {
+                    B::Index => return Ok(Node::ArrayRef { name: left, subscript: right }),
+                    B::Multiply => ("*", false), B::Divide => ("/", false), B::Modulo => ("%", false), B::Plus => ("+", false), B::Minus => ("-", false),
+                    B::ShiftLeft => ("<<", false), B::ShiftRight => (">>", false), B::Less => ("<", false), B::Greater => (">", false), B::LessOrEqual => ("<=", false), B::GreaterOrEqual => (">=", false),
+                    B::Equals => ("==", false), B::NotEquals => ("!=", false), B::BitwiseAnd => ("&", false), B::BitwiseXor => ("^", false), B::BitwiseOr => ("|", false), B::LogicalAnd => ("&&", false), B::LogicalOr => ("||", false),
+                    B::Assign => ("=", true), B::AssignMultiply => ("*=", true), B::AssignDivide => ("/=", true), B::AssignModulo => ("%=", true), B::AssignPlus => ("+=", true), B::AssignMinus => ("-=", true),
+                    B::AssignShiftLeft => ("<<=", true), B::AssignShiftRight => (">>=", true), B::AssignBitwiseAnd => ("&=", true), B::AssignBitwiseXor => ("^=", true), B::AssignBitwiseOr => ("|=", true),
+                };
+                if assign { Node::Assignment { op: op.into(), lvalue: left, rvalue: right } } else { Node::BinaryOp { op: op.into(), left, right } }
+            }
+            E::Conditional(n) => Node::TernaryOp { cond: self.expression(&n.node.condition)?.boxed(), iftrue: self.expression(&n.node.then_expression)?.boxed(), iffalse: self.expression(&n.node.else_expression)?.boxed() },
+            E::Comma(nodes) => Node::ExprList { exprs: nodes.iter().map(|n| self.expression(n)).collect::<Result<_>>()? },
+            E::Statement(n) => self.statement(&n.node)?,
+            E::GenericSelection(_) | E::OffsetOf(_) | E::VaArg(_) => return Err("C expression is not supported by the C tree".into()),
+        })
+    }
+
+    fn extensions(&mut self, extensions: &[Spanned<c::Extension>]) -> Result<(Vec<Node>, Optional)> {
+        let mut attributes = Vec::new();
+        let mut label = None;
+        for extension in extensions {
+            match &extension.node {
+                c::Extension::Attribute(a) => {
+                    let args = if a.arguments.is_empty() && !self.text(extension).contains('(') { None } else { Some(a.arguments.iter().map(|n| self.expression(n)).collect::<Result<_>>()?) };
+                    attributes.push(Node::Attribute { name: a.name.node.clone(), args });
+                }
+                c::Extension::AsmLabel(s) => label = Some(self.string(&s.node).boxed()),
+                c::Extension::AvailabilityAttribute(_) => return Err("Clang availability attributes are not supported".into()),
+            }
+        }
+        Ok((attributes, label))
+    }
+
+    fn specifiers(&mut self, specifiers: &[Spanned<c::DeclarationSpecifier>]) -> Result<Specs> {
+        let mut result = Specs { base: Node::IdentifierType { names: Vec::new() }, quals: Vec::new(), storage: Vec::new(), funcspec: Vec::new(), align: Vec::new(), attributes: Vec::new(), asmlabel: None };
+        let mut record_attributes = false;
+        for spec in specifiers {
+            if !matches!(spec.node, c::DeclarationSpecifier::Extension(_)) {
+                record_attributes = matches!(&spec.node, c::DeclarationSpecifier::TypeSpecifier(t) if matches!(t.node, c::TypeSpecifier::Struct(_) | c::TypeSpecifier::Enum(_)));
+            }
+            match &spec.node {
+                c::DeclarationSpecifier::TypeSpecifier(t) => {
+                    let ty = self.type_specifier(t)?;
+                    match (&mut result.base, ty) {
+                        (Node::IdentifierType { names }, Node::IdentifierType { names: other }) => names.extend(other),
+                        (slot, ty) => *slot = ty,
+                    }
+                }
+                c::DeclarationSpecifier::TypeQualifier(q) => result.quals.push(qualifier(&q.node).into()),
+                c::DeclarationSpecifier::StorageClass(s) => result.storage.push(match s.node { c::StorageClassSpecifier::Typedef => "typedef", c::StorageClassSpecifier::Extern => "extern", c::StorageClassSpecifier::Static => "static", c::StorageClassSpecifier::ThreadLocal => "_Thread_local", c::StorageClassSpecifier::Auto => "auto", c::StorageClassSpecifier::Register => "register" }.into()),
+                c::DeclarationSpecifier::Function(f) => result.funcspec.push(match f.node { c::FunctionSpecifier::Inline => "inline", c::FunctionSpecifier::Noreturn => "_Noreturn" }.into()),
+                c::DeclarationSpecifier::Alignment(a) => result.align.push(Node::Alignas { alignment: match &a.node { c::AlignmentSpecifier::Type(t) => self.typename(&t.node)?.boxed(), c::AlignmentSpecifier::Constant(e) => self.expression(e)?.boxed() } }),
+                c::DeclarationSpecifier::Extension(e) => {
+                    let (attrs, label) = self.extensions(e)?;
+                    if record_attributes {
+                        match &mut result.base {
+                            Node::Struct { attributes, .. } | Node::Union { attributes, .. } | Node::Enum { attributes, .. } => attributes.extend(attrs),
+                            _ => unreachable!(),
+                        }
+                    } else { result.attributes.extend(attrs); }
+                    if label.is_some() { result.asmlabel = label; }
+                }
+            }
+        }
+        if let Node::IdentifierType { names } = &mut result.base { if names.is_empty() { names.push("int".into()); } }
+        Ok(result)
+    }
+
+    fn qualifiers(&mut self, qualifiers: &[Spanned<c::SpecifierQualifier>]) -> Result<Specs> {
+        let specs: Vec<_> = qualifiers.iter().map(|q| Spanned::new(match &q.node {
+            c::SpecifierQualifier::TypeSpecifier(t) => c::DeclarationSpecifier::TypeSpecifier(t.clone()),
+            c::SpecifierQualifier::TypeQualifier(t) => c::DeclarationSpecifier::TypeQualifier(t.clone()),
+            c::SpecifierQualifier::Extension(e) => c::DeclarationSpecifier::Extension(e.clone()),
+        }, q.span)).collect();
+        self.specifiers(&specs)
+    }
+
+    fn type_specifier(&mut self, t: &Spanned<c::TypeSpecifier>) -> Result<Node> {
+        use c::TypeSpecifier as T;
+        let keyword = match &t.node {
+            T::Void => "void", T::Char => "char", T::Short => "short", T::Int => "int", T::Long => "long", T::Float => "float", T::Double => "double", T::Signed => "signed", T::Unsigned => "unsigned", T::Bool => "_Bool", T::Complex => "_Complex",
+            T::TypedefName(n) => return Ok(Node::IdentifierType { names: vec![n.node.name.clone()] }),
+            T::Struct(s) => {
+                let mut decls = None;
+                if let Some(fields) = &s.node.declarations {
+                    let mut declarations = Vec::new();
+                    for f in fields {
+                        match &f.node {
+                            c::StructDeclaration::StaticAssert(a) => declarations.push(self.assertion(&a.node)?),
+                            c::StructDeclaration::Field(f) => {
+                                let mut specs = self.qualifiers(&f.node.specifiers)?;
+                                if f.node.declarators.is_empty() { declarations.push(self.decl(&specs, None, None, None)?); }
+                                self.name_shared_type(&mut specs.base, f.node.declarators.len());
+                                for (i, d) in f.node.declarators.iter().enumerate() {
+                                    if i > 0 { Self::forward_type(&mut specs.base); }
+                                    if let Some(pragma) = d.node.declarator.as_ref().and_then(|d| name(&d.node)).and_then(|n| self.pragmas.get(&n)) {
+                                        declarations.push(Node::Pragma { string: pragma.clone() });
+                                    } else {
+                                        declarations.push(self.decl(&specs, d.node.declarator.as_ref(), None, d.node.bit_width.as_deref())?);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    decls = Some(declarations);
+                }
+                let name = s.node.identifier.as_ref().map(|n| n.node.name.clone());
+                return Ok(if s.node.kind.node == c::StructKind::Struct { Node::Struct { name, attributes: Vec::new(), decls } } else { Node::Union { name, attributes: Vec::new(), decls } });
+            }
+            T::Enum(e) => {
+                let mut enumerators = Vec::new();
+                for en in &e.node.enumerators {
+                    let (attributes, _) = self.extensions(&en.node.extensions)?;
+                    enumerators.push(Node::Enumerator { name: en.node.identifier.node.name.clone(), attributes, value: self.optional_expression(en.node.expression.as_deref())? });
+                }
+                let values = self.text(t).contains('{').then(|| Node::EnumeratorList { enumerators }.boxed());
+                return Ok(Node::Enum { name: e.node.identifier.as_ref().map(|n| n.node.name.clone()), attributes: Vec::new(), values });
+            }
+            T::TypeOf(t) => return Ok(Node::Typeof { expr: match &t.node { c::TypeOf::Expression(e) => self.expression(e)?.boxed(), c::TypeOf::Type(t) => self.typename(&t.node)?.boxed() } }),
+            T::Atomic(t) => {
+                let Node::Typename { ty, .. } = self.typename(&t.node)? else { unreachable!() };
+                let mut ty = *ty;
+                match &mut ty {
+                    Node::TypeDecl { quals, .. } | Node::PtrDecl { quals, .. } => {
+                        if !quals.iter().any(|q| q == "_Atomic") { quals.push("_Atomic".into()); }
+                    }
+                    _ => return Err("_Atomic requires a qualified type".into()),
+                }
+                return Ok(ty);
+            }
+            T::TS18661Float(_) => return Err("unsupported C type specifier".into()),
+        };
+        Ok(Node::IdentifierType { names: vec![keyword.into()] })
+    }
+
+    fn name_shared_type(&mut self, ty: &mut Node, count: usize) {
+        if count < 2 { return; }
+        let name = match ty {
+            Node::Struct { name, decls: Some(_), .. } | Node::Union { name, decls: Some(_), .. } | Node::Enum { name, values: Some(_), .. } => name,
+            _ => return,
+        };
+        if name.is_none() { self.anonymous += 1; *name = Some(format!("_PermuterAnon{}", self.anonymous)); }
+    }
+
+    fn forward_type(ty: &mut Node) {
+        match ty {
+            Node::Struct { decls, .. } | Node::Union { decls, .. } => *decls = None,
+            Node::Enum { values, .. } => *values = None,
+            _ => {}
+        }
+    }
+
+    fn declaration(&mut self, declaration: &c::Declaration) -> Result<Vec<Node>> {
+        let mut specs = self.specifiers(&declaration.specifiers)?;
+        if declaration.declarators.is_empty() {
+            if !specs.attributes.is_empty() && declaration.specifiers.iter().all(|s| matches!(s.node, c::DeclarationSpecifier::Extension(_))) {
+                return Ok(vec![Node::AttributeStatement { attrs: specs.attributes }]);
+            }
+            return Ok(vec![self.decl(&specs, None, None, None)?]);
+        }
+        self.name_shared_type(&mut specs.base, declaration.declarators.len());
+        let mut result = Vec::new();
+        for (i, d) in declaration.declarators.iter().enumerate() {
+            if i > 0 { Self::forward_type(&mut specs.base); }
+            if let Some(pragma) = name(&d.node.declarator.node).and_then(|n| self.pragmas.get(&n)) {
+                result.push(Node::Pragma { string: pragma.clone() });
+            } else if let Some(asm) = name(&d.node.declarator.node).and_then(|n| self.global_asm.get(&n)) {
+                result.push(asm.clone());
+            } else {
+                result.push(self.decl(&specs, Some(&d.node.declarator), d.node.initializer.as_ref(), None)?);
+            }
+        }
+        Ok(result)
+    }
+
+    fn decl(&mut self, specs: &Specs, declarator: Option<&Spanned<c::Declarator>>, initializer: Option<&Spanned<c::Initializer>>, bitsize: Option<&Spanned<c::Expression>>) -> Result<Node> {
+        let name = declarator.and_then(|d| name(&d.node));
+        let mut ty = Self::base_type(specs, name.clone());
+        let mut attributes = specs.attributes.clone();
+        let mut asmlabel = specs.asmlabel.clone();
+        if let Some(d) = declarator {
+            ty = self.declarator(&d.node, ty)?;
+            let (attrs, label) = self.extensions(&d.node.extensions)?;
+            attributes.extend(attrs);
+            if label.is_some() { asmlabel = label; }
+        } else if matches!(specs.base, Node::Struct { .. } | Node::Union { .. } | Node::Enum { .. }) {
+            ty = specs.base.clone();
+        }
+        if specs.storage.iter().any(|s| s == "typedef") {
+            return Ok(Node::Typedef { name: name.ok_or("unnamed typedef")?, quals: specs.quals.clone(), storage: specs.storage.clone(), attributes, ty: ty.boxed() });
+        }
+        let mut quals = specs.quals.clone();
+        let mut inner = &ty;
+        while let Node::PtrDecl { ty, .. } | Node::ArrayDecl { ty, .. } | Node::FuncDecl { ty, .. } = inner { inner = ty; }
+        if matches!(inner, Node::TypeDecl { quals, .. } if quals.iter().any(|q| q == "_Atomic")) && !quals.iter().any(|q| q == "_Atomic") { quals.push("_Atomic".into()); }
+        Ok(Node::Decl { name, quals, align: specs.align.clone(), storage: specs.storage.clone(), funcspec: specs.funcspec.clone(), attributes, ty: ty.boxed(), init: initializer.map(|i| self.initializer(&i.node).map(Node::boxed)).transpose()?, bitsize: self.optional_expression(bitsize)?, asmlabel })
+    }
+
+    fn base_type(specs: &Specs, name: Option<String>) -> Node {
+        if matches!(specs.base, Node::TypeDecl { .. } | Node::PtrDecl { .. } | Node::ArrayDecl { .. } | Node::FuncDecl { .. }) {
+            let mut ty = specs.base.clone();
+            let mut inner = &mut ty;
+            while let Node::PtrDecl { ty, .. } | Node::ArrayDecl { ty, .. } | Node::FuncDecl { ty, .. } = inner { inner = ty; }
+            if let Node::TypeDecl { declname, .. } = inner { *declname = name; }
+            ty
+        } else {
+            Node::TypeDecl { declname: name, quals: specs.quals.clone(), align: specs.align.clone(), ty: specs.base.clone().boxed() }
+        }
+    }
+
+    fn declarator(&mut self, d: &c::Declarator, mut ty: Node) -> Result<Node> {
+        for derived in &d.derived {
+            if let c::DerivedDeclarator::Pointer(qs) = &derived.node {
+                let mut quals = Vec::new();
+                for q in qs { match &q.node {
+                    c::PointerQualifier::TypeQualifier(q) => quals.push(qualifier(&q.node).into()),
+                    c::PointerQualifier::Extension(_) => return Err("attributes on pointer qualifiers are not supported".into()),
+                } }
+                ty = Node::PtrDecl { quals, ty: ty.boxed() };
+            }
+        }
+        for derived in d.derived.iter().rev() {
+            match &derived.node {
+                c::DerivedDeclarator::Pointer(_) => {}
+                c::DerivedDeclarator::Array(a) => {
+                    let mut dim_quals: Vec<String> = a.node.qualifiers.iter().map(|q| qualifier(&q.node).into()).collect();
+                    let dim = match &a.node.size {
+                        c::ArraySize::Unknown => None,
+                        c::ArraySize::VariableUnknown => Some(Node::id("*").boxed()),
+                        c::ArraySize::VariableExpression(e) => Some(self.expression(e)?.boxed()),
+                        c::ArraySize::StaticExpression(e) => { dim_quals.insert(0, "static".into()); Some(self.expression(e)?.boxed()) }
+                    };
+                    ty = Node::ArrayDecl { ty: ty.boxed(), dim, dim_quals };
+                }
+                c::DerivedDeclarator::Function(f) => {
+                    let mut params = Vec::new();
+                    for p in &f.node.parameters {
+                        let specs = self.specifiers(&p.node.specifiers)?;
+                        let decl = self.decl(&specs, p.node.declarator.as_ref(), None, None)?;
+                        params.push(if let Node::Decl { name: None, quals, align, attributes, ty, .. } = decl { Node::Typename { name: None, quals, align, attributes, ty } } else { decl });
+                    }
+                    if f.node.ellipsis == c::Ellipsis::Some { params.push(Node::EllipsisParam {}); }
+                    let args = (!params.is_empty()).then(|| Node::ParamList { params }.boxed());
+                    ty = Node::FuncDecl { args, ty: ty.boxed() };
+                }
+                c::DerivedDeclarator::KRFunction(ids) => {
+                    let params = ids.iter().map(|i| Node::id(&i.node.name)).collect();
+                    ty = Node::FuncDecl { args: Some(Node::ParamList { params }.boxed()), ty: ty.boxed() };
+                }
+                c::DerivedDeclarator::Block(_) => return Err("Clang blocks are not supported".into()),
+            }
+        }
+        if let c::DeclaratorKind::Declarator(nested) = &d.kind.node { ty = self.declarator(&nested.node, ty)?; }
+        Ok(ty)
+    }
+
+    fn typename(&mut self, t: &c::TypeName) -> Result<Node> {
+        let specs = self.qualifiers(&t.specifiers)?;
+        let ty = Self::base_type(&specs, None);
+        let ty = if let Some(d) = &t.declarator { self.declarator(&d.node, ty)? } else { ty };
+        Ok(Node::Typename { name: None, quals: specs.quals, align: specs.align, attributes: specs.attributes, ty: ty.boxed() })
+    }
+
+    fn optional_expression(&mut self, e: Option<&Spanned<c::Expression>>) -> Result<Optional> { e.map(|e| self.expression(e).map(Node::boxed)).transpose() }
+
+    fn initializer(&mut self, i: &c::Initializer) -> Result<Node> {
+        match i { c::Initializer::Expression(e) => self.expression(e), c::Initializer::List(items) => self.initializer_list(items) }
+    }
+
+    fn initializer_list(&mut self, items: &[Spanned<c::InitializerListItem>]) -> Result<Node> {
+        let mut exprs = Vec::new();
+        for item in items {
+            let expr = self.initializer(&item.node.initializer.node)?;
+            if item.node.designation.is_empty() { exprs.push(expr); } else {
+                let mut name = Vec::new();
+                for d in &item.node.designation { name.push(match &d.node {
+                    c::Designator::Index(e) => self.expression(e)?,
+                    c::Designator::Member(id) => Node::id(&id.node.name),
+                    c::Designator::Range(r) => Node::Range { first: self.expression(&r.node.from)?.boxed(), last: self.expression(&r.node.to)?.boxed() },
+                }); }
+                exprs.push(Node::NamedInitializer { name, expr: expr.boxed() });
+            }
+        }
+        Ok(Node::InitList { exprs })
+    }
+
+    fn assertion(&mut self, a: &c::StaticAssert) -> Result<Node> {
+        Ok(Node::StaticAssert { cond: self.expression(&a.expression)?.boxed(), message: Some(self.string(&a.message.node).boxed()) })
+    }
+
+    fn statement(&mut self, s: &c::Statement) -> Result<Node> {
+        use c::Statement as S;
+        Ok(match s {
+            S::Compound(items) => {
+                let mut block_items = Vec::new();
+                for item in items { match &item.node {
+                    c::BlockItem::Declaration(d) => block_items.extend(self.declaration(&d.node)?),
+                    c::BlockItem::StaticAssert(a) => block_items.push(self.assertion(&a.node)?),
+                    c::BlockItem::Statement(s) => block_items.push(self.statement(&s.node)?),
+                } }
+                Node::Compound { block_items }
+            }
+            S::Expression(None) => Node::EmptyStatement {},
+            S::Expression(Some(e)) => {
+                let node = self.expression(e)?;
+                if let Node::FuncCall { name, args: None } = &node {
+                    if let Node::Id { name } = name.as_ref() {
+                        if let Some(string) = self.pragmas.get(name) { return Ok(Node::Pragma { string: string.clone() }); }
+                    }
+                }
+                node
+            }
+            S::If(i) => Node::If { cond: self.expression(&i.node.condition)?.boxed(), iftrue: self.statement(&i.node.then_statement.node)?.boxed(), iffalse: i.node.else_statement.as_ref().map(|s| self.statement(&s.node).map(Node::boxed)).transpose()? },
+            S::Switch(s) => {
+                let mut stmt = self.statement(&s.node.statement.node)?;
+                fix_switch_cases(&mut stmt);
+                Node::Switch { cond: self.expression(&s.node.expression)?.boxed(), stmt: stmt.boxed() }
+            }
+            S::While(s) => Node::While { cond: self.expression(&s.node.expression)?.boxed(), stmt: self.statement(&s.node.statement.node)?.boxed() },
+            S::DoWhile(s) => Node::DoWhile { cond: self.expression(&s.node.expression)?.boxed(), stmt: self.statement(&s.node.statement.node)?.boxed() },
+            S::For(f) => {
+                let init = match &f.node.initializer.node {
+                    c::ForInitializer::Empty => None,
+                    c::ForInitializer::Expression(e) => Some(self.expression(e)?.boxed()),
+                    c::ForInitializer::Declaration(d) => Some(Node::DeclList { decls: self.declaration(&d.node)? }.boxed()),
+                    c::ForInitializer::StaticAssert(a) => Some(self.assertion(&a.node)?.boxed()),
+                };
+                Node::For { init, cond: self.optional_expression(f.node.condition.as_deref())?, next: self.optional_expression(f.node.step.as_deref())?, stmt: self.statement(&f.node.statement.node)?.boxed() }
+            }
+            S::Labeled(l) => {
+                let stmt = self.statement(&l.node.statement.node)?;
+                match &l.node.label.node {
+                    c::Label::Identifier(i) => {
+                        if let Some(pragma) = self.pragmas.get(&i.node.name) {
+                            let mut block_items = vec![Node::Pragma { string: pragma.clone() }];
+                            let next_is_pragma = matches!(&l.node.statement.node, S::Labeled(next) if matches!(&next.node.label.node, c::Label::Identifier(id) if self.pragmas.contains_key(&id.node.name)));
+                            if next_is_pragma {
+                                let Node::Compound { block_items: rest } = stmt else { unreachable!() };
+                                block_items.extend(rest);
+                            } else { block_items.push(stmt); }
+                            Node::Compound { block_items }
+                        } else { Node::Label { name: i.node.name.clone(), stmt: stmt.boxed() } }
+                    }
+                    c::Label::Case(e) => Node::Case { expr: self.expression(e)?.boxed(), stmts: vec![stmt] },
+                    c::Label::CaseRange(r) => Node::Case { expr: Node::Range { first: self.expression(&r.node.low)?.boxed(), last: self.expression(&r.node.high)?.boxed() }.boxed(), stmts: vec![stmt] },
+                    c::Label::Default => Node::Default { stmts: vec![stmt] },
+                }
+            }
+            S::Goto(id) => Node::Goto { name: id.node.name.clone() },
+            S::Continue => Node::Continue {}, S::Break => Node::Break {},
+            S::Return(e) => Node::Return { expr: self.optional_expression(e.as_deref())? },
+            S::Asm(a) => match &a.node {
+                c::AsmStatement::GnuBasic(s) => Node::Asm { quals: Vec::new(), asm: self.string(&s.node).boxed(), outputs: Vec::new(), inputs: Vec::new(), clobbers: Vec::new(), gotos: Vec::new() },
+                c::AsmStatement::GnuExtended(a) => {
+                    let outputs = a.outputs.iter().map(|o| self.asm_operand(&o.node)).collect::<Result<_>>()?;
+                    let inputs = a.inputs.iter().map(|o| self.asm_operand(&o.node)).collect::<Result<_>>()?;
+                    Node::Asm { quals: a.qualifier.iter().map(|q| qualifier(&q.node).into()).collect(), asm: self.string(&a.template.node).boxed(), outputs, inputs, clobbers: a.clobbers.iter().map(|s| self.string(&s.node)).collect(), gotos: Vec::new() }
+                }
+            },
+        })
+    }
+
+    fn asm_operand(&mut self, a: &c::GnuAsmOperand) -> Result<Node> {
+        Ok(Node::AsmOperand { symbolic_name: a.symbolic_name.as_ref().map(|i| i.node.name.clone()), constraint: self.string(&a.constraints.node).boxed(), expr: self.expression(&a.variable_name)?.boxed() })
+    }
+}
+
+fn fix_switch_cases(stmt: &mut Node) {
+    let Node::Compound { block_items } = stmt else { return };
+    let mut result = Vec::new();
+    let mut last_case = None;
+    for mut child in std::mem::take(block_items) {
+        if matches!(child, Node::Case { .. } | Node::Default { .. }) {
+            loop {
+                let stmts = match &mut child { Node::Case { stmts, .. } | Node::Default { stmts } => stmts, _ => unreachable!() };
+                let nested = if stmts.first().is_some_and(|n| matches!(n, Node::Case { .. } | Node::Default { .. })) { stmts.pop() } else { None };
+                result.push(child);
+                if let Some(next) = nested { child = next; } else { break; }
+            }
+            last_case = Some(result.len() - 1);
+        } else if let Some(index) = last_case {
+            match &mut result[index] { Node::Case { stmts, .. } | Node::Default { stmts } => stmts.push(child), _ => unreachable!() }
+        } else { result.push(child); }
+    }
+    *block_items = result;
+}

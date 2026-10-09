@@ -9,31 +9,7 @@ use super::ast::*;
 use super::effects::{before_store, escapes, expr_effects, has_continue, stmt_effects, Effects};
 use super::types::{root_name, CType, Env};
 
-/// A deterministic generator (SplitMix64), so a seed names a search.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Rng(u64);
-
-impl Rng {
-    pub fn new(seed: u64) -> Rng {
-        Rng(seed)
-    }
-
-    pub fn next(&mut self) -> u64 {
-        self.0 = self.0.wrapping_add(0x9e37_79b9_7f4a_7c15);
-        let mut z = self.0;
-        z = (z ^ (z >> 30)).wrapping_mul(0xbf58_476d_1ce4_e5b9);
-        z = (z ^ (z >> 27)).wrapping_mul(0x94d0_49bb_1331_11eb);
-        z ^ (z >> 31)
-    }
-
-    pub fn below(&mut self, bound: usize) -> usize {
-        (self.next() % bound.max(1) as u64) as usize
-    }
-
-    pub fn chance(&mut self, numerator: u64, denominator: u64) -> bool {
-        self.next() % denominator < numerator
-    }
-}
+pub use super::rng::Rng;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Kind {
@@ -137,6 +113,33 @@ pub fn mutate_with(function: &mut Function, env: &mut Env, rng: &mut Rng, kinds:
 }
 
 pub fn apply(kind: Kind, function: &mut Function, env: &Env, rng: &mut Rng) -> bool {
+    let mut scoped = env.clone();
+    let mut regions = Vec::new();
+    let mut active = None;
+    let mut statements = Vec::new();
+    let mut index = 0;
+    for stmt in &function.body {
+        stmt.each(&mut |stmt| {
+            match stmt {
+                Stmt::Comment(text) if text == "/* _permuter randomizer start */" => {
+                    active = Some(index + 1);
+                },
+                Stmt::Comment(text) if text == "/* _permuter randomizer end */" => {
+                    if let Some(start) = active.take() { regions.push((start, index)); }
+                },
+                _ => {},
+            }
+            let mut size = 0;
+            stmt.each(&mut |_| size += 1);
+            statements.push((stmt as *const Stmt as usize, index, index + size));
+            index += 1;
+        });
+    }
+    if !regions.is_empty() {
+        let (start, end) = regions.swap_remove(rng.below(regions.len()));
+        scoped.region = Some(statements.into_iter().filter(|(_, a, b)| *a >= start && *b <= end).map(|(address, _, _)| address).collect());
+    }
+    let env = &scoped;
     match kind {
         Kind::SwapOperands => expr_mutation(function, env, rng, &swap_site, &swap_apply),
         Kind::AddCast => expr_mutation(function, env, rng, &add_cast_site, &add_cast_apply),
@@ -555,6 +558,9 @@ fn leading_declarations(stmts: &[Stmt]) -> usize {
 /// Whether `--focus` admits the statement: its own text (a loop's or an
 /// if's header, not its body) matches the pattern.
 fn focused(env: &Env, stmt: &Stmt) -> bool {
+    if env.region.as_ref().is_some_and(|region| !region.contains(&(stmt as *const Stmt as usize))) {
+        return false;
+    }
     let Some(focus) = &env.focus else {
         return true;
     };
@@ -572,7 +578,7 @@ fn focused(env: &Env, stmt: &Stmt) -> bool {
 
 /// Whether a focused statement mentions `name`.
 fn mentioned_in_focus(function: &Function, env: &Env, name: &str) -> bool {
-    if env.focus.is_none() {
+    if env.focus.is_none() && env.region.is_none() {
         return true;
     }
     let mut found = false;
@@ -1012,8 +1018,8 @@ fn reorder_sites(stmts: &[Stmt], env: &Env) -> Vec<(usize, usize)> {
                     from + 1..to + 1
                 };
                 let clear = crossed.clone().all(|index| match &effects[index] {
-                    Some(other) => !moved.conflicts(other),
-                    None => matches!(stmts[index], Stmt::Comment(_)),
+                    Some(other) => !moved.conflicts(other) && (env.region.is_none() || focused(env, &stmts[index])),
+                    None => matches!(&stmts[index], Stmt::Comment(text) if !text.starts_with("/* _permuter")),
                 });
                 let code = crossed
                     .clone()
@@ -1376,11 +1382,15 @@ fn share_temporary(function: &mut Function, env: &Env, rng: &mut Rng) -> bool {
         }
         let start = leading_declarations(stmts);
         let mut shared = stmts.clone();
+        let mut selected_env = env.clone();
+        // These two sites have already passed the region check. Cloning
+        // their statements changes identity, but not their eligibility.
+        selected_env.region = None;
         // The later statement first, so the earlier one keeps its index.
         for (index, ordinal) in [(second.1, second.2), (first.1, first.2)] {
             let mut skip = ordinal;
             let mut hoisted = None;
-            hoistable(&mut shared[index], env, &mut |expr| {
+            hoistable(&mut shared[index], &selected_env, &mut |expr| {
                 if skip > 0 {
                     skip -= 1;
                     return false;
@@ -2204,7 +2214,7 @@ fn condition_apply(stmts: &mut Vec<Stmt>, site: ConditionSite, env: &Env, _: &mu
     }
 }
 
-// register.
+// Register storage-class choices.
 
 fn register_sites(stmts: &[Stmt], env: &Env) -> Vec<usize> {
     (0..leading_declarations(stmts))

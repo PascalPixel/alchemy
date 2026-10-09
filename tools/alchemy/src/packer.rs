@@ -102,6 +102,7 @@ struct Payload {
     bytes: Vec<u8>,
     rows: Vec<Row>,
     fill: Option<Fill>,
+    overlay: bool,
 }
 
 #[derive(Default)]
@@ -112,6 +113,7 @@ struct SourceBlock {
     unsupported: bool,
     rows: Vec<Row>,
     fill: Option<Fill>,
+    overlay: bool,
     locals: BTreeMap<String, usize>,
     offsets: Vec<(usize, String)>,
     alignment: Option<(usize, u8)>,
@@ -148,6 +150,7 @@ impl SourceBlock {
                     bytes: block.bytes,
                     rows: block.rows,
                     fill: block.fill,
+                    overlay: block.overlay,
                 },
             );
         } else if !block.rows.is_empty() || block.fill.is_some() {
@@ -327,6 +330,19 @@ fn editable(root: &Path, path: &Path) -> Result<Vec<u8>, String> {
             path.display()
         ));
     }
+    declared_read(root, path)
+}
+
+fn declared_read(root: &Path, path: &Path) -> Result<Vec<u8>, String> {
+    if path
+        .components()
+        .any(|part| !matches!(part, std::path::Component::Normal(_)))
+    {
+        return Err(format!(
+            "{} is not a declared relative input",
+            path.display()
+        ));
+    }
     let canonical_root = root
         .canonicalize()
         .map_err(|error| format!("{}: {error}", root.display()))?;
@@ -338,11 +354,210 @@ fn editable(root: &Path, path: &Path) -> Result<Vec<u8>, String> {
     // name must identify the input itself, not a symlink to private bytes.
     if resolved != expected {
         return Err(format!(
-            "{} is not an editable asset input: symlink paths under games/ are unsupported",
+            "{}: symlink input paths are unsupported",
             path.display()
         ));
     }
     fs::read(resolved).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+/// Match build_overlay's objcopy, stored Thumb calls and one packer rule.
+/// Cached .lz bytes never participate in this reconstruction.
+fn overlay_stream(root: &Path, output: &Path, name: &str) -> Result<Vec<u8>, String> {
+    let elf = output.join(name).with_extension("elf");
+    let temporary = tempfile::tempdir().map_err(|error| error.to_string())?;
+    let image = temporary.path().join("overlay.bin");
+    crate::process::run(
+        &[
+            "arm-none-eabi-objcopy".into(),
+            "-O".into(),
+            "binary".into(),
+            elf.to_string_lossy().into_owned(),
+            image.to_string_lossy().into_owned(),
+        ],
+        root,
+    )?;
+    let mut block = fs::read(image).map_err(|error| error.to_string())?;
+    let half = |block: &[u8], at: usize| u32::from(u16::from_le_bytes([block[at], block[at + 1]]));
+    let mut at = 2;
+    while at + 2 <= block.len() {
+        let low = half(&block, at);
+        let high = half(&block, at - 2);
+        at += 2;
+        if low >> 11 != 31 || high >> 11 != 30 {
+            continue;
+        }
+        let call = ((high & 0x7ff) << 12) | ((low & 0x7ff) << 1);
+        let stored = call.wrapping_add((at - 2) as u32) & 0x7f_fffe;
+        let high = 0xf000 | (stored >> 12);
+        let low = 0xf800 | ((stored >> 1) & 0x7ff);
+        block[at - 4..at - 2].copy_from_slice(&(high as u16).to_le_bytes());
+        block[at - 2..at].copy_from_slice(&(low as u16).to_le_bytes());
+    }
+    ags::lz::compress_tagged(&block, &ags::resource::PACKER)
+}
+
+fn include_name(line: &str) -> Option<&str> {
+    let (directive, arguments) = line.trim().split_once(char::is_whitespace)?;
+    (directive == ".include")
+        .then(|| arguments.trim().strip_prefix('"')?.strip_suffix('"'))
+        .flatten()
+}
+
+fn cpp_directive(line: &str) -> bool {
+    let line = line.trim_start();
+    line.starts_with('#') || line.starts_with("%:") || line.starts_with("??=")
+}
+
+fn cpp_directives(text: &str) -> Vec<usize> {
+    let mut logical = String::new();
+    let mut starts = Vec::new();
+    let mut start = 0;
+    let mut continued = false;
+    for (number, row) in text.lines().enumerate() {
+        if let Some(row) = row.strip_suffix('\\') {
+            logical.push_str(row);
+            continued = true;
+        } else {
+            logical.push_str(row);
+            logical.push('\n');
+            starts.push(start);
+            start = number + 1;
+            continued = false;
+        }
+    }
+    if continued {
+        logical.push('\n');
+        starts.push(start);
+    }
+    crate::compiler::assembly_source::without_comments(&logical)
+        .lines()
+        .enumerate()
+        .filter_map(|(number, row)| cpp_directive(row).then_some(starts[number]))
+        .collect()
+}
+
+/// Give the existing selector only safe source and freshly generated
+/// includes. Missing or unsupported inputs fail if their include is active.
+fn prepare_includes(
+    text: &str,
+    root: &Path,
+    output: &Path,
+    private: &Path,
+    read: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+    seen: &mut std::collections::BTreeSet<String>,
+) -> Result<(), String> {
+    let visible = crate::compiler::assembly_source::without_comments(text);
+    for name in visible.lines().filter_map(include_name) {
+        let path = Path::new(name);
+        if path
+            .components()
+            .any(|part| !matches!(part, std::path::Component::Normal(_)))
+            || !seen.insert(name.into())
+        {
+            continue;
+        }
+        let bytes = if path.starts_with("games")
+            && path.extension().is_some_and(|extension| {
+                matches!(extension.to_str(), Some("s" | "S" | "inc" | "h"))
+            }) {
+            declared_read(root, path)
+        } else if ags::resource::is_recipe(name) {
+            read(name)
+        } else if name == "text/messages.inc" {
+            declared_read(output, path)
+        } else {
+            continue;
+        };
+        let Ok(bytes) = bytes else { continue };
+        let Ok(text) = std::str::from_utf8(&bytes) else {
+            continue;
+        };
+        let destination = private.join(path);
+        fs::create_dir_all(destination.parent().unwrap()).map_err(|error| error.to_string())?;
+        fs::write(destination, &bytes).map_err(|error| error.to_string())?;
+        prepare_includes(text, root, output, private, read, seen)?;
+    }
+    Ok(())
+}
+
+fn selected_source(
+    text: &str,
+    source: &str,
+    edition: &str,
+    root: &Path,
+    output: &Path,
+    read: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+) -> Result<String, String> {
+    let private = tempfile::tempdir().map_err(|error| error.to_string())?;
+    prepare_includes(
+        text,
+        root,
+        output,
+        private.path(),
+        read,
+        &mut std::collections::BTreeSet::new(),
+    )?;
+    let mut expanded = text.to_owned();
+    let mut origins: Vec<(String, usize, bool)> = text
+        .lines()
+        .enumerate()
+        .map(|(number, _)| (source.into(), number + 1, false))
+        .collect();
+    loop {
+        let selected = crate::compiler::assembly_source::selected_includes(
+            &expanded,
+            edition,
+            &[private.path()],
+        )?;
+        let rows: Vec<_> = selected.lines().collect();
+        if let Some(number) = cpp_directives(&selected).first() {
+            let (file, line, _) = &origins[*number];
+            return Err(format!("{file}:{line}: unsupported preprocessed directive"));
+        }
+        for (row, (file, line, included)) in rows.iter().zip(&origins) {
+            let visible = crate::compiler::assembly_source::without_comments(row);
+            if row.contains("PACKER:") && *included {
+                return Err(format!(
+                    "{file}:{line}: active included PACKER claim is unsupported ({source})"
+                ));
+            }
+            if row.contains("PACKER:") && include_name(visible.trim()).is_some() {
+                return Err(format!(
+                    "{file}:{line}: unsupported tagged or preprocessed include"
+                ));
+            }
+        }
+        let visible = crate::compiler::assembly_source::without_comments(&selected);
+        let Some((number, name)) = visible
+            .lines()
+            .enumerate()
+            .find_map(|(number, line)| include_name(line).map(|name| (number, name)))
+        else {
+            // The payload parser still reads the original selected source;
+            // only claim coverage needs the inline view and its origins.
+            return crate::compiler::assembly_source::selected_includes(
+                text,
+                edition,
+                &[private.path()],
+            );
+        };
+        let included = fs::read_to_string(private.path().join(name))
+            .map_err(|error| format!("{name}: {error}"))?;
+        let mut next = rows[..number]
+            .iter()
+            .map(|row| (*row).to_owned())
+            .collect::<Vec<_>>();
+        let count = included.lines().count();
+        next.extend(included.lines().map(str::to_owned));
+        next.extend(rows[number + 1..].iter().map(|row| (*row).to_owned()));
+        origins.splice(
+            number..number + 1,
+            (1..=count).map(|line| (name.into(), line, true)),
+        );
+        expanded = next.join("\n");
+        expanded.push('\n');
+    }
 }
 
 fn source_fill(directive: &str, arguments: &str, tag: &str) -> Option<u8> {
@@ -471,6 +686,7 @@ fn payloads_collect(
                 block.align();
                 block.bytes.extend(read(name)?);
                 block.generated = true;
+                block.overlay |= name.starts_with("overlays/");
             } else {
                 block.unsupported = true;
             }
@@ -521,15 +737,7 @@ fn payloads_collect(
         } else if !directive.is_empty()
             && !matches!(
                 directive,
-                ".global"
-                    | ".type"
-                    | ".size"
-                    | ".include"
-                    | ".balign"
-                    | ".align"
-                    | ".set"
-                    | ".equ"
-                    | ".equiv"
+                ".global" | ".type" | ".size" | ".balign" | ".align" | ".set" | ".equ" | ".equiv"
             )
         {
             block.unsupported = true;
@@ -707,22 +915,25 @@ fn run(root: &Path, suggest: bool) -> Result<usize, String> {
         for source in files.iter().filter(|source| {
             source.starts_with("games/") && (source.ends_with(".s") || source.ends_with(".S"))
         }) {
-            let text = fs::read_to_string(root.join(source))
+            let text = declared_read(root, Path::new(source))
+                .and_then(|bytes| String::from_utf8(bytes).map_err(|error| error.to_string()))
                 .map_err(|error| format!("{source}: {error}"))?;
-            if !text.contains(".incbin") && !text.contains("PACKER:") {
+            if !text.contains(".incbin")
+                && !text.contains("PACKER:")
+                && !text.contains(".include")
+                && cpp_directives(&text).is_empty()
+            {
                 continue;
             }
-            let selected = crate::compiler::assembly_source::selected_includes(
-                &text,
-                target.edition_define,
-                &[root, &output],
-            )
-            .map_err(|error| format!("{source} ({id}): {error}"))?;
             let read = |name: &str| {
                 if name.starts_with("overlays/") {
-                    return fs::read(output.join(name)).map_err(|error| {
-                        format!("{source}: {name} ({id}): {error}; rebuild this edition")
-                    });
+                    let key = (output.join(name).with_extension("elf"), "overlay".into());
+                    if let Some(bytes) = encoded.borrow().get(&key) {
+                        return Ok(bytes.clone());
+                    }
+                    let bytes = overlay_stream(root, &output, name)?;
+                    encoded.borrow_mut().insert(key, bytes.clone());
+                    return Ok(bytes);
                 }
                 // The build deletes temporary generated asset files after
                 // linking. Rebuild these bytes in memory from the same recipe,
@@ -747,6 +958,17 @@ fn run(root: &Path, suggest: bool) -> Result<usize, String> {
                 encoded.borrow_mut().insert(key, bytes.clone());
                 Ok(bytes)
             };
+            let selected =
+                match selected_source(&text, source, target.edition_define, root, &output, &read) {
+                    Ok(selected) => selected,
+                    Err(error) => {
+                        source_failures.push(format!("{source} ({id}): {error}"));
+                        continue;
+                    }
+                };
+            if !selected.contains(".incbin") && !selected.contains("PACKER:") {
+                continue;
+            }
             let mut diagnostics = Vec::new();
             let payloads = payloads_collect(&selected, source, &images, &read, &mut diagnostics);
             source_failures.extend(
@@ -762,6 +984,15 @@ fn run(root: &Path, suggest: bool) -> Result<usize, String> {
                 }
             };
             for (name, payload) in payloads {
+                if payload.overlay
+                    && images
+                        .block(&name)?
+                        .is_none_or(|block| !block.starts_with(&payload.bytes))
+                {
+                    source_failures.push(format!(
+                        "{source} ({id}, {name}): regenerated overlay stream differs from its linked resource prefix"
+                    ));
+                }
                 if all.insert(name.clone(), payload).is_some() {
                     return Err(format!(
                         "{name} has several selected generated definitions ({id})"
@@ -917,6 +1148,7 @@ mod tests {
             source: "games/tbs/src/a.s".into(),
             bytes: bytes.into(),
             fill: None,
+            overlay: false,
             rows: row
                 .into_iter()
                 .map(|(row_bytes, comment)| Row {
@@ -1128,6 +1360,215 @@ mod tests {
         assert_eq!(
             editable(root, Path::new("games/tbs/src/table.tsv")).unwrap(),
             b"value:u8\n8\n"
+        );
+    }
+
+    #[test]
+    fn included_claims_keep_parent_symbols_and_edition_selection() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        fs::create_dir_all(root.join("games/tbs/src")).unwrap();
+        fs::write(
+            root.join("games/tbs/src/parent.inc"),
+            ".include \"games/tbs/src/child.h\"\n",
+        )
+        .unwrap();
+        fs::write(
+            root.join("games/tbs/src/child.h"),
+            ".if ENABLE\n.ifdef TBS_EDITION_EN\n.byte 4 @ PACKER: left in the buffer by First+0x3\n.endif\n.endif\n",
+        )
+        .unwrap();
+        let text = ".set ENABLE, 1\n.include \"games/tbs/src/parent.inc\"\n";
+        assert!(!text.contains(".incbin") && !text.contains("PACKER:"));
+        let read = |_: &str| -> Result<Vec<u8>, String> { panic!("not a generated include") };
+        let select = |text: &str, edition| {
+            selected_source(text, "games/tbs/src/wrapper.s", edition, root, root, &read)
+        };
+        assert!(select(text, "TBS_EDITION_EN")
+            .unwrap_err()
+            .contains("games/tbs/src/child.h:3: active included PACKER"));
+        assert!(select(text, "TBS_EDITION_JA").is_ok());
+        assert!(select(&text.replace("ENABLE, 1", "ENABLE, 0"), "TBS_EDITION_EN").is_ok());
+        fs::write(
+            root.join("games/tbs/src/definitions.inc"),
+            ".set ENABLE, 1\n",
+        )
+        .unwrap();
+        let inherited = ".include \"games/tbs/src/definitions.inc\"\n.if ENABLE\n.include \"games/tbs/src/parent.inc\"\n.endif\n";
+        assert!(select(inherited, "TBS_EDITION_EN")
+            .unwrap_err()
+            .contains("child.h:3: active included PACKER"));
+        fs::write(
+            root.join("games/tbs/src/parent.inc"),
+            ".include \"games/tbs/src/parent.inc\"\n",
+        )
+        .unwrap();
+        assert!(select(text, "TBS_EDITION_EN")
+            .unwrap_err()
+            .contains("recursive GAS include"));
+    }
+
+    #[test]
+    fn generated_and_cpp_includes_cannot_hide_claims() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let read = |name: &str| {
+            assert_eq!(name, "graphics/foo.spriteblocks");
+            Ok(b".ifdef TBS_EDITION_EN\n.byte 1 @ PACKER: unknown\n.endif\n".to_vec())
+        };
+        let text = ".include \"graphics/foo.spriteblocks\"\n";
+        assert!(selected_source(
+            text,
+            "games/tbs/src/wrapper.s",
+            "TBS_EDITION_EN",
+            root,
+            root,
+            &read
+        )
+        .unwrap_err()
+        .contains("graphics/foo.spriteblocks:2: active included PACKER"));
+        assert!(selected_source(
+            text,
+            "games/tbs/src/wrapper.s",
+            "TBS_EDITION_JA",
+            root,
+            root,
+            &read
+        )
+        .is_ok());
+        for directive in [
+            "#include",
+            "# include",
+            "#include_next",
+            "#import",
+            "#/**/include",
+            "%:include",
+            "??=include",
+            "#\\\ninclude",
+            "#inc\\\nlude",
+            "#\\\r\ninclude",
+            "#inc\\\r\nlude",
+        ] {
+            let cpp = format!("{directive} \"games/tbs/src/hidden.h\"\n");
+            assert!(!cpp_directives(&cpp).is_empty());
+            assert!(selected_source(
+                &cpp,
+                "games/tbs/src/wrapper.S",
+                "TBS_EDITION_EN",
+                root,
+                root,
+                &read
+            )
+            .unwrap_err()
+            .contains("unsupported preprocessed directive"));
+        }
+        let unsafe_include = ".include \"../private.inc\"\n";
+        assert!(selected_source(
+            unsafe_include,
+            "games/tbs/src/wrapper.s",
+            "TBS_EDITION_EN",
+            root,
+            root,
+            &read
+        )
+        .unwrap_err()
+        .contains("missing GAS include"));
+    }
+
+    #[test]
+    fn an_emitting_include_cannot_shorten_an_intervening_writer() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        fs::create_dir_all(root.join("games/tbs/src")).unwrap();
+        fs::write(root.join("games/tbs/src/writer.inc"), ".byte 8\n").unwrap();
+        let images = image(&[
+            ("First", vec![1, 2, 3, 7]),
+            ("Second", vec![4, 5, 6, 8]),
+            ("Own", vec![9, 9, 9, 7]),
+        ]);
+        let text = "First:\n.incbin \"graphics/first.4bpp.lz\"\nSecond:\n.incbin \"graphics/second.4bpp.lz\"\n.include \"games/tbs/src/writer.inc\"\nOwn:\n.incbin \"graphics/own.4bpp.lz\"\n.byte 7 @ PACKER: left in the buffer by First+0x3\n";
+        let read = |name: &str| match name {
+            "graphics/first.4bpp.lz" => Ok(vec![1, 2, 3, 7]),
+            "graphics/second.4bpp.lz" => Ok(vec![4, 5, 6]),
+            "graphics/own.4bpp.lz" => Ok(vec![9, 9, 9]),
+            _ => panic!("unknown source asset"),
+        };
+        let selected = selected_source(
+            text,
+            "games/tbs/src/a.s",
+            "TBS_EDITION_EN",
+            root,
+            root,
+            &read,
+        )
+        .unwrap();
+        let found = payloads(&selected, "games/tbs/src/a.s", &images, &read).unwrap();
+        assert!(!found.contains_key("Second"));
+        assert!(prove(&images, &images.directory().unwrap(), &found, "Own")
+            .unwrap_err()
+            .contains("no source-generated buffer-write extent"));
+    }
+
+    #[test]
+    fn cached_overlay_bytes_cannot_prove_the_linked_prefix() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let output = root.join("out");
+        fs::create_dir_all(output.join("overlays")).unwrap();
+        let source = root.join("overlay.s");
+        let object = root.join("overlay.o");
+        let elf = output.join("overlays/resource_1.elf");
+        fs::write(
+            &source,
+            ".section .text\n.global Overlay\nOverlay:\n.hword 0xf000, 0xf802\n.byte 1,2,3,4,5\n",
+        )
+        .unwrap();
+        crate::process::run(
+            &[
+                "arm-none-eabi-as".into(),
+                "-o".into(),
+                object.to_string_lossy().into_owned(),
+                source.to_string_lossy().into_owned(),
+            ],
+            root,
+        )
+        .unwrap();
+        crate::process::run(
+            &[
+                "arm-none-eabi-ld".into(),
+                "-Ttext=0x02008000".into(),
+                "-e".into(),
+                "Overlay".into(),
+                "-o".into(),
+                elf.to_string_lossy().into_owned(),
+                object.to_string_lossy().into_owned(),
+            ],
+            root,
+        )
+        .unwrap();
+        let generated = overlay_stream(root, &output, "overlays/resource_1.lz").unwrap();
+        assert_eq!(
+            generated,
+            ags::lz::compress_tagged(&[0, 0xf0, 3, 0xf8, 1, 2, 3, 4, 5], &ags::resource::PACKER)
+                .unwrap()
+        );
+        let mut tampered = generated.clone();
+        tampered[0] ^= 1;
+        fs::write(output.join("overlays/resource_1.lz"), &tampered).unwrap();
+        let read = |name: &str| overlay_stream(root, &output, name);
+        let text = "Own:\n.incbin \"overlays/resource_1.lz\"\n";
+        let stale = image(&[("Own", tampered)]);
+        let found = payloads(text, "games/tbs/src/overlays.s", &stale, &read).unwrap();
+        assert!(found["Own"].overlay);
+        assert!(placed(&found["Own"], stale.block("Own").unwrap().unwrap())
+            .unwrap_err()
+            .contains("selected generated payload differs"));
+        fs::remove_file(output.join("overlays/resource_1.lz")).unwrap();
+        let current = image(&[("Own", generated)]);
+        let found = payloads(text, "games/tbs/src/overlays.s", &current, &read).unwrap();
+        assert_eq!(
+            placed(&found["Own"], current.block("Own").unwrap().unwrap()),
+            Ok(())
         );
     }
 

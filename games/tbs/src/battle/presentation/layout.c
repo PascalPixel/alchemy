@@ -123,6 +123,10 @@ s32 BattleMotion_ReleaseObjectSlotByValue(s32 value)
 
 s32 Resource_FindFreeSlot(s32 key)
 {
+	struct SlotAssignmentView
+	{
+		volatile u16 entries[52];
+	};
 	s32 index;
 	s32 entry;
 	u32 value;
@@ -133,9 +137,8 @@ s32 Resource_FindFreeSlot(s32 key)
 		entry = Resource_SlotAssignments[index];
 		if (key == (entry & 0x1ff))
 		{
-			/* FAKEMATCH: empty asm barrier with a memory clobber: it ends cse's memory equivalence, so the entry is reread, ldrh [table, index], as native; without it cse reuses the first load (23 of 25 rows differ) */
-			asm("" ::: "memory");
-			value = Resource_SlotAssignments[index];
+			/* FAKEMATCH: the volatile array member preserves the native second ldrh [table, index]. A scalar pointer needs an extra address add; a nonvolatile member reuses the first load. */
+			value = ((struct SlotAssignmentView *)Resource_SlotAssignments)->entries[index];
 			result = value >> 9;
 			goto done;
 		}

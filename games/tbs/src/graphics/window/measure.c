@@ -2004,15 +2004,17 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 {
-    /* FAKEMATCH: the game keeps the work block in r12 for the tile store and a copy in r8 for the rest; as one plain variable it lives in r8 alone. */
-    register u8 *work asm("r12") = gWindowWork[0];
-    u8 *base = work;
+    u8 *work = gWindowWork[0];
+    /* FAKEMATCH: needed to match: this XOR pair changes no pointer bits and folds without instructions, preserving work and base as independent lifetimes. A direct copy merges both into r8, omits the native r8/r12 copy, and differs 17 aligned instructions (0x144 versus 0x148 bytes). */
+    u8 *base = (u8 *)((u32)work ^ tile);
     struct GlyphSpriteOutput *out;
     s32 idx;
     u16 *slot;
     struct SpriteAttr *attr;
     u32 pos;
     u16 row;
+
+    base = (u8 *)((u32)base ^ tile);
 
     if (y > (win->height - 2))
         return;

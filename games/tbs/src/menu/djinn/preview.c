@@ -111,7 +111,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             /* FAKEMATCH: typed like the window pointer, the word store waits for the window load but not for the x and y stores, so sched2 places the entry copy before them */
             *(struct RenderInput **)&entry->attributes = (struct RenderInput *)0x40000400;
             zero = 0;
-            /* FAKEMATCH: a fresh zero keeps the window chain in r9 */
+            /* FAKEMATCH: a fresh zero keeps the window chain in r9. Without this barrier, the nested DjinnMenu_DrawStatArrow.0 has reference 80, built 82, common 71, differ 20: r8/r9 allocation changes and two explicit zero instructions remain; extent 0xc6 -> 0xca. */
             __asm__("" : "=r"(zero) : "0"(zero));
             /* FAKEMATCH: a pointer-typed clear does not wait for the x and y stores (sched2 order) */
             *(void **)&entry->tile = (void *)zero;
@@ -631,7 +631,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
         objCursor.oam.word.attr01 = 0x40000400;
         objCursor.oam.word.attr23 = 0;
-        /* FAKEMATCH: arm_reorg counts this empty asm as 4 bytes, so the gFrameCount literal falls past the face x literal's 64-byte ldrh range and opens the next pool, as native; the pool and its branch move two instructions earlier, 85 -> 63 */
+        /* FAKEMATCH: arm_reorg counts this empty asm as 4 bytes, so the gFrameCount literal falls past the face x literal's 64-byte ldrh range and opens the next pool, as native; the pool and its branch move two instructions earlier, 85 -> 63. */
+        /* FAKEMATCH: removing both barriers gives EN 1392/1392, common 1390, differ 4: gFrameCount joins the earlier pool and the branch follows two extra loads. ES 1458/1458, common 1455, differ 6: attr23/mov sl order and the 0x3ff load also move. */
         asm("");
         objCursor.oam.f.tile = Resource_GetBuffer(handleCursor, (s32)Resource_FixedBlockBTiles);
         objCursor.oam.f.x = (pix.x + winMain->x * 8
@@ -1175,6 +1176,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
             redraw = 0;
             if (cnt != 0) {
                 /* FAKEMATCH: register choice: k in r1 as native; as a pseudo, k is a biv loop.c strength-reduces in the loop below (adds r2, #4), 37 rows */
+                /* FAKEMATCH: removing this pin and all three barriers together gives EN reference 1201, built 1199, common 1187, differ 26; k's sp+28 reload disappears, the search uses adds r2,#4, and row's reload moves before x subtraction; extent 0xac4 -> 0xac0. */
                 register s32 k asm("r1");
                 UiWork_ClearValueNameTables();
                 /* FAKEMATCH: restores a CSE1 block end the bytes prove (k = redraw survives as the native ldr r1, [sp, #28]): an empty one-pass block, without which CSE1 deletes the second redraw = 0 below as a no-op and folds k to 0 (29 rows) */

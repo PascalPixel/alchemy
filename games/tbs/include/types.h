@@ -23,8 +23,7 @@ typedef unsigned long long u64;
 #define FIXED_LINKED(linked)                            \
 	({                                                  \
 		extern char modern_##linked[] __asm__(#linked); \
-		void	   *modern_address = modern_##linked;   \
-		__asm__("" : "+r"(modern_address));             \
+		void *volatile modern_address = modern_##linked; \
 		modern_address;                                 \
 	})
 #define FIXED_ADDRESS(type, address, linked) (type FIXED_LINKED(linked))

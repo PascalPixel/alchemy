@@ -757,7 +757,7 @@
         "*/recon/tla/raw/0804b8b6.o"(.text)
         "*/recon/tla/raw/0804b8b8.o"(.text)
         "*/recon/tla/raw/0804babc.o"(.text)
-        "*/games/common/src/battle/draw_party_panels_with_empty_list.o"(.text)
+        "*/games/tla/src/battle/partypnl.o"(.text)
         "*/recon/tla/raw/0804bbd0.o"(.text)
         "*/recon/tla/raw/0804bc08.o"(.text)
         "*/recon/tla/raw/0804cda8.o"(.text)

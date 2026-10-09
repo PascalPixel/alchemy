@@ -615,7 +615,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0004b9b0)
     "*/games/common/src/battle/classify_entry_kind.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0004baa6)
-    "*/games/common/src/battle/draw_party_panels_with_empty_list.o"(.text)
+    "*/games/tla/src/battle/partypnl.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0004bdbc)
     "*/recon/tla/ja/rom.o"(.rom.0004bdf4)
     "*/recon/tla/ja/rom.o"(.rom.0004d2d0)

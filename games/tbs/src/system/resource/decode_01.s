@@ -1,5 +1,5 @@
-@ C2: Unshifted movs r2,r2 copies and tests; agscc's corresponding
-@ copy-and-test form is subs #0.
+@ C2: The bit reader branches on carry immediately after shifting its live
+@ bit reservoir; it also uses unshifted movs r2,r2 for copy-and-test.
 .syntax unified
 	.arm
 	.global Resource_DecodeType01Arm

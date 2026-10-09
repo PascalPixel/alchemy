@@ -704,8 +704,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 	s32						 count;
 	s32						 i;
 	s32						 j;
-	/* FAKEMATCH: global allocation ranks n (60 refs over 195 insns) above j (95 over 534) and gives n r8; the native has j in r8 and n in sl. */
-	register s32	   n asm("sl");
+	s32						 n;
 	struct EffectStep *p;
 	DrawRectangle	  *cache;
 	s32				   rings = 0x2710;
@@ -880,8 +879,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 			}
 			for (i = 0; i != 3; i++)
 			{
-				n = count * 2 - i * 48;
-				n -= 256;
+				n = count * 2 - i * 48 - 256;
 				if (n > 48)
 				{
 					n = 48;
@@ -1051,7 +1049,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 					}
 					if (frame == start + 2)
 					{
-						n = 0;
+						s32 n = 0;
 						for (i = 0, p = PARTICLES; i != 910; i++, p++)
 						{
 							if (p->variant == 0)
@@ -1110,7 +1108,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 						}
 						if (frame == i * 2 + 80)
 						{
-							n = 0;
+							s32 n = 0;
 							for (j = 0, p = PARTICLES; j != 910; j++, p++)
 							{
 								if (p->variant == 0)

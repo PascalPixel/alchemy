@@ -89,7 +89,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 	struct MotionObject		*user;
 	s32						 k;
 	s32						 shift;
-	u8						 hit;
+	s32						 hit;
 	s32						 x;
 
 	// ワーク、キャンバス、カメラ
@@ -147,8 +147,6 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 			const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
 			{
 				s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
-				/* FAKEMATCH: keep the native copier load before the palette arguments; pointer locals and an inline helper left the adjacent loads reversed. */
-				__asm__("" : "+r"(copy));
 				copy((void *)BG_PLTT, pal, 128);
 			}
 		}
@@ -158,8 +156,6 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 			const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
 			{
 				s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
-				/* FAKEMATCH: keep the native copier load before the palette arguments; pointer locals and an inline helper left the adjacent loads reversed. */
-				__asm__("" : "+r"(copy));
 				copy((void *)BG_PLTT, pal, 128);
 			}
 		}

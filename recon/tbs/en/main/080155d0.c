@@ -6,16 +6,16 @@
  *                --edition tbs-en --arm --rtl --show
  * Native / draft / common / residual:
  *   ja: 193 / 193 / 185 / 16
- *   en: 196 / 196 / 173 / 46
- *   de: 187 / 187 / 176 / 22
- *   es: 187 / 187 / 176 / 22
- *   fr: 187 / 187 / 176 / 22
- *   it: 187 / 187 / 176 / 22
+ *   en: 196 / 197 / 181 / 31
+ *   de: 187 / 187 / 178 / 18
+ *   es: 187 / 187 / 178 / 18
+ *   fr: 187 / 187 / 178 / 18
+ *   it: 187 / 187 / 178 / 18
  * Frames and spill offsets now agree: Japanese 100 bytes, all others 44.
  * Japanese's 64-byte unused area still needs the tagged source type below.
  * Multiply operands agree. Japanese and the four European editions differ
- * only in scheduling and consequent pool displacements; English also
- * differs in short-lived register allocation.
+ * only in scheduling; English also has a window reload and a different
+ * glyph-branch shape. Its character index and accent registers now agree.
  * These are instruction-LCS residuals, not a complete-extent byte match.
  * No edition matches or counts; the builds still link the original listing.
  * No register pins, asm barriers, instruction asm or alternative compiler options.
@@ -322,6 +322,54 @@
  *   instructions. The compare precedes the increment, but jump2 does not
  *   hoist the differing successor sequences into the native shared prefix.
  *
+ * Font-setup follow-up: ja/en/other 16/46/22 -> 16/31/18.
+ * Moving English's range check before the height read changes sched1's
+ * entry order: index pseudo 41 is now live before the incoming r0 window
+ * is copied to pseudo 32. greg records a hard-r0 conflict for the index,
+ * so it takes native ip; accent pseudo 149 then takes native lr. This
+ * lowers English to 37, although reload adds a window-pointer load and
+ * the range branch now precedes height. The draft has 197 instructions.
+ * A boundary after source initialization gives English 33; another after
+ * color3 gives 31 and the four European editions 18. Color initialization
+ * now matches in English, and Europe's row initialization and width-table
+ * pool displacement match. The width spill is now before its comparison;
+ * this is a measured tradeoff, not a complete match.
+ * All 120 orders of the five independent font initializations, with all
+ * 32 boundary placements, were measured in both English and German from
+ * the earlier-range-check form. None improves 31/18. These 7,680 trials
+ * and their residuals are in out/glyph-font-setup-tbs-{en,de}.tsv.
+ * Other source forms measured during this continuation:
+ * - Packed dot: 48 combinations of initial math, pixel expression and
+ *   mask reuse, then 320 combinations of shift/mask/pixel lifetime reuse,
+ *   fail to beat 22. The latter range from 50 to 217. Separating the byte
+ *   address from tile in 24 forms gives 50..203. All 128 boundary choices
+ *   with two initial-math and two pixel forms (512 trials) give 22..134;
+ *   the forms retaining 22 do not fix either address instruction.
+ * - The boundary that delays both packed-dot address operations gives
+ *   50 with the old math or 52 with the new helper's reused temporaries.
+ *   lreg explains the regression: line's lifetime grows from 2 to 5 and
+ *   shift's from 4 to 6. Tile takes r1 instead of r0, and shift takes r0
+ *   instead of r1. Reusing line for stride makes it globally allocated,
+ *   but does not restore tile/shift. Sharing any subset of the six dot
+ *   temporaries between paths (128 forms) gives 50..312, not a repair.
+ * - Reusing caller row, character or width for x+col, or computing x and
+ *   column before color selection, also fails. A plain position alias
+ *   leaves 22/52 for the old/new helper. The remaining path needs the
+ *   native local-allocation priorities as well as a surviving boundary.
+ * - Japanese's six color/width/x initialization orders with eight boundary
+ *   choices give 16..22; no setup store moves into its native position.
+ * - English's eight entry forms, four narrow-header forms and both wide
+ *   index forms give 37 as their minimum. Delaying the narrow width load
+ *   on that form gives 75 and swaps index/accent to lr/ip. Recomputing the
+ *   wide index gives 40. Neither higher residual is an adopted repair.
+ * - u8/u16/s32/s8/s16 font-width forms leave 46/37 before the two setup
+ *   boundaries; signed forms return through u8. Volatile gives 118/111.
+ *   Seven index/address reuse forms for the width lookup give 46..73 or
+ *   37..64; none improves. Splitting index=character; index-=32 across
+ *   height/boundary placements gives 128. A split -64/+32 gives 63;
+ *   duplicating a plain height read in the error path leaves 37 (the dead
+ *   read vanishes), and explicit range-error labels give 65.
+ *
  * ARM translation-unit audit requested by Pascal, 2026-10-09:
  * Tile_BuildMetatiles follows this function without padding in all six
  * editions. Both fit stock ARM C. Text_DecodeSymbol/UiText_LookupMessageArm
@@ -360,16 +408,17 @@
  *    in pseudo order. Native spill slots now agree; do not force them with
  *    volatile again. Compare lreg to greg to distinguish allocation from
  *    reload's short-lived address scratch registers.
- *    In English, expand_preferences propagates font_width's return-register
- *    preference 0 into character-32, which dies in its table load. Simple
- *    aliases disappear before this pass. A surviving intermediate or a
- *    later last use of the index is a specific next allocation experiment.
+ *    English's earlier range check creates the hard-r0 conflict that
+ *    prevents character-32 from taking font_width's propagated return
+ *    preference 0. This fixes index=ip and accent=lr, but puts the height
+ *    load in the successor block and requires a window reload. The next
+ *    entry form must preserve that conflict with height before the branch.
  * S: sched2. sched.c schedule_block schedules backwards; rank_for_schedule
  *    compares priority, dependency class, then original LUID. Source order
  *    alone cannot change an unequal priority or a data/anti dependency.
  *    Native order requires another lifetime/dependency or a scheduling
- *    boundary that survives optimization. The remaining dot and row-tail
- *    sites have not yet been repaired this way.
+ *    boundary that survives optimization. The packed-dot and row-tail
+ *    sites have not yet been repaired this way; the main dot is resolved.
  *    In the earlier European dot's sched2 graph, pixel shift and address
  *    OR tie at priority 17. At T-8 the former wins because it is
  *    independent of mask=15, while the latter has an anti
@@ -404,19 +453,19 @@
  * - Both dot bodies and .L_shift are resolved by the measured boundaries
  *   below. They no longer contribute residual instructions.
  *
- * German/Spanish/French/Italian: all have the same 11 residual entries on
- * each side (22 total), solely order and consequent pool displacements.
+ * German/Spanish/French/Italian: all have the same nine moved instructions
+ * on each side (18 total), solely order. Their pool displacements agree.
  * The following exhausts the --show differences.
  * - Entry (S): mov ip,r1; sub sp,sp,#44; ldr font,[sp,#72] are early.
  *   Native copies x and y before the frame adjustment and font/character
  *   setup. The height spill must follow cmp r3,#0; the ldrh now follows
  *   movls r3,#1 as required. Argument lifetimes and the free-compare
  *   constraint must change without disturbing x=r9,y=r8.
- * - Font setup (S): source spill [sp,#24] must follow color1's final add;
- *   color1 spill [sp,#20] must follow color3's initial mov. mov r1,#0
- *   must precede the glyph-width pool load, not follow the width spill.
- *   Requires different color/row initialization lifetimes. The pool-load
- *   displacement difference is consequent on that last instruction move.
+ * - Font setup (S): str r2,[sp,#24] must follow color1's final add; it now
+ *   precedes both color1 instructions. str r2,[sp,#12] must follow cmp
+ *   r8,#31; it now precedes it. Delaying these reload-inserted spills
+ *   needs dependencies surviving allocation. Color1's spill, row zero
+ *   and the width-table load are resolved by the two boundaries below.
  * - Packed-font dot (S): address ADD and OR must follow x's AND/LSL.
  *   The main glyph dot now matches, but the packed-font clipping expression
  *   changes x/index lifetimes, and sharing its new helper breaks allocation.
@@ -428,36 +477,33 @@
  *   pass initialization. The former short width's return-register preference
  *   no longer controls either load. This is resolved, not a remaining site.
  *
- * English: 23 native and 23 draft residual entries (46 total). Its
- * long-lived drawing registers agree, and instruction counts are equal.
- * - Entry (A,S): character-32 still gets r0, native ip. The height block
- *   keeps window in incoming r0 until ldrh, removing the former reload.
- *   But index is now computed after the height spill rather than before
- *   its load, and cmp follows that spill rather than preceding it. Index
- *   needs a lifetime/preference overlapping height in r0, without forcing
- *   window into another register. The frame adjustment and window spill
- *   also need to move after the native argument copies. The direct range
- *   return now emits native movhi r0,#1 / bhi with no result spill.
- * - Character-222 uses ip instead of lr at entry, .L_glyph and .L_shift
- *   (A): another overlapping lifetime/preference consequence of the above.
- * - Font setup (S): registers now agree, but all of color3's mov/add/store
- *   precede color1's mov/add/store. The width-table pool load splits
- *   color3's initialization. Native interleaves the two color constants,
- *   spills them, then loads the table. mov r2,#0 is after the width spill,
- *   native before the width byte load. Different initialization lifetimes
- *   are still needed. The width spill now follows its compare, and the
- *   .L_font_dot source-pointer reload is the native r3.
- * - .L_glyph (A,S,J): multiply-by-26 uses r0 instead of ip; its width ldrh
- *   precedes rows += 2 and the rows spill. Native shares that ldrh with
- *   .L_wide; the draft's two sched2 tails differ and jump2 keeps both loads
- *   (one extra instruction). Delaying this load until after the spill
- *   would expose equal tails to cross-jumping; duplicated base expressions
- *   worsened English to 125. The required surviving C dependence is unknown.
- *   Conversely .L_wide reuses the named index and omits native sub r3,r1,#32.
- *   This CSE/lifetime difference offsets the extra ldrh in the instruction
- *   count. Recomputing character-32 there restores the subtraction but
- *   worsened the earlier 52-residual form to 57; both sites must be solved
- *   together rather than judging this instruction count alone.
+ * English: 15 native and 16 draft residual entries (31 total). Its
+ * long-lived drawing registers, index ip and accent lr agree.
+ * - Entry (A,S,J): sub ip,r1,#32 and sub sp,sp,#44 are too early; cmp
+ *   ip,#111 and str window,[sp,#40] precede the x copy. mov r0,#1 / bhi
+ *   precede height's load/store, followed by an extra ldr r0,[sp,#40].
+ *   Native has the index before ldrh r0, then cmp, height spill, movhi
+ *   r0,#1 and bhi. The earlier test fixes allocation by keeping incoming
+ *   r0 live across index's definition, but the next form must keep that
+ *   hard-register conflict while moving height into the entry block.
+ *   reload can then reuse the incoming window, and jump2 can predicate
+ *   the return move. No tested form satisfies both requirements yet.
+ * - Font setup (S): mov r2,#0 must follow the width-table pool load,
+ *   not precede it (the pool displacement differs by four as a result).
+ *   str r3,[sp,#12] must follow cmp r7,#31, not precede it. The color
+ *   constants and all three source/color stores now match. Row/table
+ *   lifetimes and the free-compare/spill constraint remain to be fixed.
+ * - .L_glyph (S,J): ldrh r0,[r3,r2] precedes rows += 2 and its spill.
+ *   Native shares that ldrh with .L_wide; the draft's two sched2 tails
+ *   differ and jump2 keeps both (one extra instruction). Delaying it
+ *   until after the spill would expose equal tails to cross-jumping.
+ *   The multiplier and accent now use the native registers. The tested
+ *   header boundary delays the load but swaps index/accent, giving 75.
+ * - .L_wide (A,J): named-index reuse omits sub r3,r1,#32 and makes the
+ *   shift read ip instead of r3. Recomputing this subtraction gives 40
+ *   before the setup boundaries, with 198 instructions: the duplicate
+ *   narrow ldrh and entry window reload both remain. These three extra
+ *   or omitted instructions explain the current draft's net extra one.
  * - Packed-font dot and .L_row_next (S): the same three moves as Europe.
  *   The main glyph dot and .L_shift now match.
  * - Remaining branch and literal-load displacement differences (J) follow
@@ -549,20 +595,22 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character,
 #if !defined(TBS_EDITION_JA) && !defined(TBS_EDITION_EN)
 	use_font = character <= 255 || font != NULL;
 #endif
-	/* FAKEMATCH: a one-pass height read preserves its scheduling boundary.
-	 * With the European predicate above and English's direct error return,
-	 * this lowers ja/en/other from 30/65/28 to 26/52/26. */
-	do
-	{
-		stride = window->height;
-	} while (0);
 #if defined(TBS_EDITION_EN)
-	/* FAKEMATCH: retain the index through the wide-glyph expression.
-	 * Recomputing it there raises English's residual from 52 to 57. */
+	/* FAKEMATCH: test the named index before reading height, and retain it
+	 * through the wide-glyph expression. This restores index=ip and the
+	 * accent offset=lr, lowering English from 46 to 37 despite one extra
+	 * window reload. Recomputing the wide index gives 40 at this step. */
 	index = character - 32;
 	if (index > 111)
 		return 1;
 #endif
+	/* FAKEMATCH: a one-pass height read preserves its scheduling boundary.
+	 * This originally lowered ja/en/other from 30/65/28 to 26/52/26.
+	 * English's range test now precedes it for the measured reason above. */
+	do
+	{
+		stride = window->height;
+	} while (0);
 
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	if (character <= 255 || (font != NULL && character - 222 <= 1))
@@ -636,8 +684,13 @@ font_done:
 			u8 *vram;
 
 			source = font + character * 32;
+			/* FAKEMATCH: separate source, colors and row setup. These two
+			 * boundaries restore the color initialization order, lowering
+			 * en/other from 37/22 to 31/18. Width's spill is now early. */
+			do { } while (0);
 			color1 = 0x1111;
 			color3 = 0x3333;
+			do { } while (0);
 			row = 0;
 			font_width = UiText_GlyphWidths[character - 32];
 			if (y > 31)

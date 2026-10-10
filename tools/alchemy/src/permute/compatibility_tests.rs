@@ -26,7 +26,7 @@ fn forced_randomizer_seed_search_reaches_compatibility_candidate() {
     let text = problem.source(&state);
     let base = Found { score: problem.evaluate(&reference, &text).unwrap(), unnatural: 0, text, steps: vec![], expanded: state.expanded.clone(), job: 0, iteration: 0 };
     assert!(base.score.weighted > 0);
-    let found = search(&problem, &state, &base, true, &options, None, &work.path().join("run"), Instant::now()).unwrap();
+    let found = search(&problem, &state, &base, true, &options, None, &work.path().join("run"), Instant::now(), None).unwrap();
     assert_eq!((found[0].score.weighted, found[0].score.differ), (0, 0));
     assert_eq!(found[0].text, first[5].replace("\\n", "\n"));
 }
@@ -92,6 +92,7 @@ fn compatibility_search_tests_compile_reach_the_target_and_keep_threaded_jobs_is
                     score_options: problem.score_options,
                     keep_prob: 0.6,
                     stop_on_zero: true,
+                    output: output::Options::default(),
                 };
                 let output = work.path().join("output");
                 let mut checker =
@@ -128,11 +129,11 @@ fn compatibility_search_tests_compile_reach_the_target_and_keep_threaded_jobs_is
                 }
                 if output.exists() {
                     assert!(
-                        std::fs::read_dir(&output).unwrap().all(|entry| entry
-                            .unwrap()
-                            .file_name()
-                            .to_string_lossy()
-                            .starts_with("best-")),
+                        std::fs::read_dir(&output).unwrap().all(|entry| {
+                            let name = entry.unwrap().file_name();
+                            let name = name.to_string_lossy();
+                            name.starts_with("best-") || name.starts_with("output-")
+                        }),
                         "{}: scratch survived",
                         c[0]
                     );

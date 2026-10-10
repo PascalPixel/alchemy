@@ -14,6 +14,7 @@ mod mutate;
 pub(crate) mod parse;
 pub(crate) mod perm;
 mod score;
+mod output;
 mod rng;
 mod randomize;
 pub(crate) mod types;
@@ -122,6 +123,7 @@ struct Options {
     score_options: score::Options,
     keep_prob: f64,
     stop_on_zero: bool,
+    output: output::Options,
 }
 
 fn parse_options(arguments: &[String]) -> Result<Options, String> {
@@ -140,10 +142,18 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut score_options = score::Options::default();
     let mut keep_prob = 0.6;
     let mut stop_on_zero = false;
+    let mut output = output::Options::default();
     let mut index = 0;
     let value = |index: usize| arguments.get(index).cloned().ok_or_else(|| USAGE.to_string());
     while index < arguments.len() {
         match arguments[index].as_str() {
+            "--better-only" => output.better_only = true,
+            "--best-only" => output.best_only = true,
+            "--no-context-output" => output.no_context = true,
+            "--only-if-below" => {
+                index += 1;
+                output.threshold = Some(value(index)?.parse().map_err(|_| "--only-if-below: an integer")?);
+            }
             "-h" | "--help" => return Err(USAGE.into()),
             "--edition" => {
                 index += 1;
@@ -235,7 +245,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         None => decomp_target(Some(&format!("{game}-en")))?,
     };
     if !minutes.is_finite() || minutes < 0.0 { return Err("--minutes must be finite and nonnegative".into()); }
-    Ok(Options { draft, addresses, game, target, minutes, jobs, seed, rng_seed, perm_seed, function, iterations, arm, heat, prefix, score_options, keep_prob, stop_on_zero })
+    Ok(Options { draft, addresses, game, target, minutes, jobs, seed, rng_seed, perm_seed, function, iterations, arm, heat, prefix, score_options, keep_prob, stop_on_zero, output })
 }
 
 /// One job's scratch: its candidate file and alchemy diff's steps for it.
@@ -365,14 +375,18 @@ impl Problem {
     }
 
     fn evaluate(&self, job: &Job, text: &str) -> Result<Score, String> {
+        self.evaluate_assembly(job, text).map(|(score, _)| score)
+    }
+
+    fn evaluate_assembly(&self, job: &Job, text: &str) -> Result<(Score, SourceHash), String> {
         job.compile(text)?;
         let compiled = crate::diff::disassemble(&job.object, self.symbol.as_deref())?;
         let mut score = score::score_with(&self.listing, &compiled, self.score_options);
+        let candidate = score::disassemble(&job.object, self.symbol.as_deref())?;
         if let Some(listing) = &self.listing_rows {
-            let candidate = score::disassemble(&job.object, self.symbol.as_deref())?;
             score::weighted(listing, &candidate, self.score_options, &mut score);
         }
-        Ok(score)
+        Ok((score, score::assembly_key(&candidate, self.score_options)))
     }
 
 }
@@ -602,7 +616,10 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
     }
     let started = Instant::now();
     let deadline = options.iterations.is_none().then(|| started + Duration::from_secs_f64(options.minutes * 60.0));
-    let found = search(&problem, &base_state, &base, random, options, deadline, &scratch, started)?;
+    let base_hash = score::assembly_key(&score::disassemble(&setup.object, problem.symbol.as_deref())?, problem.score_options);
+    let found = search(&problem, &base_state, &base, random, options, deadline, &scratch, started, Some((output, base_hash)))?;
+    let found: Vec<_> = found.into_iter().filter(|entry| (!options.output.better_only || entry.score.weighted < base.score.weighted)
+        && options.output.threshold.is_none_or(|limit| i128::from(entry.score.weighted) < limit)).collect();
     let best = minimize_best(&problem, &base, &found, &scratch.join("minimize"))?;
     write_best(&problem, &base, &best, output)
 }
@@ -641,7 +658,9 @@ fn search(
     deadline: Option<Instant>,
     output: &Path,
     started: Instant,
+    archive: Option<(&Path, SourceHash)>,
 ) -> Result<Vec<Found>, String> {
+    let archive_state = Mutex::new(archive.map(|(_, hash)| output::State::new(base.score.weighted, hash, options.output)));
     let stop = AtomicBool::new(false);
     let global = Mutex::new((base.score.key(problem.prefix), base.score.differ));
     let found = Mutex::new(Vec::new());
@@ -669,6 +688,7 @@ fn search(
             }
         });
         for job_index in 0..options.jobs {
+            let archive_state = &archive_state;
             let (stop, global, found, failures) = (&stop, &global, &found, &failures);
             let (compiled, running) = (&compiled, &running);
             let seeds = &seeds;
@@ -744,10 +764,13 @@ fn search(
                     }
                     let text = problem.source(&state);
                     let key = text_key(&text);
+                    let mut assembly_hash = None;
                     let result = match cache.get(&key) {
                         Some(result) => result.clone(),
                         None => {
-                            let result = problem.evaluate(&job, &text).ok();
+                            let evaluated = problem.evaluate_assembly(&job, &text).ok();
+                            assembly_hash = evaluated.as_ref().map(|(_, hash)| *hash);
+                            let result = evaluated.map(|(score, _)| score);
                             compiled.fetch_add(1, Ordering::Relaxed);
                             if cache.len() < 100_000 { cache.insert(key, result.clone()); }
                             result
@@ -757,6 +780,16 @@ fn search(
                     // compilation fails. Score storage only tracks successes.
                     if options.rng_seed.is_some() { current.0 = state.clone(); }
                     let Some(score) = result else { continue };
+                    if let Some((path, _)) = archive {
+                        let mut shared = archive_state.lock().unwrap();
+                        let policy = shared.as_mut().unwrap();
+                        if policy.accepts(score.weighted, assembly_hash, true) {
+                            if let Err(error) = output::write(path, score.weighted, &text, &base.text, problem.function.as_deref(), options.output) {
+                                failures.lock().unwrap().push(error);
+                                stop.store(true, Ordering::Relaxed);
+                            } else { policy.record(score.weighted, assembly_hash.unwrap()); }
+                        }
+                    }
                     let candidate = Found {
                         unnatural: problem.unnatural(&state),
                         score,
@@ -1622,6 +1655,7 @@ mod tests {
             score_options: score::Options::default(),
             keep_prob: 0.6,
             stop_on_zero: false,
+            output: output::Options::default(),
         };
         let draft = work.path().join("draft/08000000.c");
         std::fs::create_dir_all(draft.parent().unwrap()).unwrap();
@@ -1660,7 +1694,9 @@ mod tests {
         let problem = test_problem(&draft, text, listing, None);
         execute(problem, &options(&draft, None), None, &output).unwrap();
         let names: Vec<String> = std::fs::read_dir(&output).unwrap().flatten().map(|entry| entry.file_name().to_string_lossy().into_owned()).collect();
-        assert!(names.iter().all(|name| name.starts_with("best-")) && names.contains(&"best-1.diff".to_string()), "{names:?}");
+        assert!(names.iter().all(|name| name.starts_with("best-") || name.starts_with("output-")) && names.contains(&"best-1.diff".to_string()), "{names:?}");
+        assert_eq!(std::fs::read_to_string(output.join("output-0-1/score.txt")).unwrap(), "0\n");
+        assert!(std::fs::read_to_string(output.join("output-0-1/source.c")).unwrap().contains("return a - b;"));
         // PERM choices only: the diff resolves the macro in the draft's spelling.
         let diff = std::fs::read_to_string(output.join("best-1.diff")).unwrap();
         assert!(diff.contains("-    return PERM_ONEOF(b - a, a - b);\n+    return a - b;\n"), "{diff}");
@@ -1846,19 +1882,53 @@ mod tests {
             score_options: score::Options::default(),
             keep_prob: 0.6,
             stop_on_zero: false,
+            output: output::Options::default(),
         };
-        let found = search(&problem, &base_state, &base, false, &options, None, &work.path().join("run"), Instant::now()).unwrap();
+        let found = search(&problem, &base_state, &base, false, &options, None, &work.path().join("run"), Instant::now(), None).unwrap();
         assert_eq!((found[0].score.weighted, found[0].score.differ), (0, 0));
         assert!(found[0].text.contains("return a - b;") && !perm::has_macros(&found[0].text));
         // nonrandom sources are evaluated only once, despite the limit of 8.
         let args = [options.draft.to_str().unwrap(), "--seed", "1,-99999999999999999999", "--jobs", "1", "--iterations", "8"].map(str::to_string);
         let forced = parse_options(&args).unwrap();
-        let found = search(&problem, &base_state, &base, false, &forced, None, &work.path().join("forced"), Instant::now()).unwrap();
+        let found = search(&problem, &base_state, &base, false, &forced, None, &work.path().join("forced"), Instant::now(), None).unwrap();
         assert_eq!((found[0].score.weighted, found[0].iteration), (0, 1));
     }
 
     #[test]
     fn rewrites_count_kinds_and_name_perm_only_runs() {
         assert_eq!(rewrites(&[]), "PERM choices only");
+    }
+
+    #[test]
+    fn tied_score_candidates_are_archived_and_output_filters_apply() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let listing = listing_of(work.path(), "int F(void) { return 3; }\n");
+        let draft = work.path().join("08000000.c");
+        let source = "extern int unused;\nint F(void) { return PERM_ONEOF(1, 2); }\n";
+        std::fs::write(&draft, source).unwrap();
+        for (index, flags, expected) in [
+            (0, vec![], 1),
+            (1, vec!["--better-only"], 0),
+            (2, vec!["--best-only", "--no-context-output"], 1),
+            (3, vec!["--only-if-below", "5"], 0),
+            (4, vec!["--only-if-below", "6"], 1),
+        ] {
+            let mut args = vec![draft.to_str().unwrap(), "--jobs", "1", "--iterations", "2"];
+            args.extend(flags);
+            let options = parse_options(&args.into_iter().map(str::to_string).collect::<Vec<_>>()).unwrap();
+            let output = work.path().join(format!("output-{index}"));
+            execute(test_problem(&draft, source, listing.clone(), Some("F")), &options, None, &output).unwrap();
+            let archives: Vec<_> = if output.exists() {
+                std::fs::read_dir(&output).unwrap().flatten().filter(|entry| entry.file_name().to_string_lossy().starts_with("output-")).collect()
+            } else { vec![] };
+            assert_eq!(archives.len(), expected, "case {index}");
+            if expected != 0 {
+                assert_eq!(std::fs::read_to_string(archives[0].path().join("score.txt")).unwrap(), "5\n");
+                let source = std::fs::read_to_string(archives[0].path().join("source.c")).unwrap();
+                assert!(source.contains("return 2;"));
+                assert_eq!(source.contains("extern int unused;"), index != 2);
+            }
+        }
     }
 }

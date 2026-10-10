@@ -193,7 +193,7 @@ fn normalize(text: &str, options: Options) -> String {
         if let Some((prefix, _)) = row.rsplit_once(',') {
             row = format!("{prefix},<target>");
         } else {
-            row = format!("{} <target>", mnemonic(text));
+            row = format!("{}\t<target>", mnemonic(text));
         }
     }
     if !branch(mnemonic(text)) {
@@ -230,10 +230,15 @@ fn normalize(text: &str, options: Options) -> String {
 /// Prefer longest contiguous matches, earliest candidate index,
 /// then earliest target index: an LCS gives different answers on repeats.
 fn matching_blocks(a: &[&str], b: &[&str]) -> Vec<(usize, usize, usize)> {
+    matching_blocks_autojunk(a, b, false)
+}
+
+pub fn matching_blocks_autojunk(a: &[&str], b: &[&str], autojunk: bool) -> Vec<(usize, usize, usize)> {
     let mut positions: BTreeMap<&str, Vec<usize>> = BTreeMap::new();
     for (j, word) in b.iter().enumerate() {
         positions.entry(word).or_default().push(j);
     }
+    if autojunk && b.len() >= 200 { positions.retain(|_, locations| locations.len() <= b.len() / 100 + 1); }
     let mut queue = vec![(0, a.len(), 0, b.len())];
     let mut blocks = Vec::new();
     while let Some((alo, ahi, blo, bhi)) = queue.pop() {
@@ -256,6 +261,8 @@ fn matching_blocks(a: &[&str], b: &[&str]) -> Vec<(usize, usize, usize)> {
             }
             previous = current;
         }
+        while best_i > alo && best_j > blo && a[best_i - 1] == b[best_j - 1] { best_i -= 1; best_j -= 1; size += 1; }
+        while best_i + size < ahi && best_j + size < bhi && a[best_i + size] == b[best_j + size] { size += 1; }
         if size > 0 {
             blocks.push((best_i, best_j, size));
             if alo < best_i && blo < best_j {
@@ -343,6 +350,16 @@ pub fn score_with(listing: &[String], draft: &[String], options: Options) -> Sco
     result
 }
 
+pub fn prepared(rows: &[Line], options: Options) -> Vec<Line> {
+    let end = rows.iter().rposition(|s| mnemonic(&s.row) != "nop").map_or(0, |i| i + 1);
+    rows[..end].iter().map(|s| Line { row: normalize(&s.row, options), has_symbol: s.has_symbol }).collect()
+}
+
+pub fn assembly_key(rows: &[Line], options: Options) -> [u8; 32] {
+    use sha2::{Digest, Sha256};
+    Sha256::digest(prepared(rows, options).iter().map(|s| s.row.as_str()).collect::<Vec<_>>().join("\n").as_bytes()).into()
+}
+
 pub fn weighted(listing: &[Line], draft: &[Line], options: Options, result: &mut Score) {
     let (differ, prefix) = (result.differ, result.prefix);
     *result = Score {
@@ -350,17 +367,7 @@ pub fn weighted(listing: &[Line], draft: &[Line], options: Options, result: &mut
         prefix,
         ..Score::default()
     };
-    let prepare = |rows: &[Line]| {
-        let end = rows.iter().rposition(|s| mnemonic(&s.row) != "nop").map_or(0, |i| i + 1);
-        rows[..end]
-            .iter()
-            .map(|s| Line {
-                row: normalize(&s.row, options),
-                has_symbol: s.has_symbol,
-            })
-            .collect::<Vec<_>>()
-    };
-    let (old, new) = (prepare(listing), prepare(draft));
+    let (old, new) = (prepared(listing, options), prepared(draft, options));
     let (a, b) = (new.iter().map(|s| mnemonic(&s.row)).collect::<Vec<_>>(), old.iter().map(|s| mnemonic(&s.row)).collect::<Vec<_>>());
     let blocks = match options.algorithm {
         Algorithm::Difflib => matching_blocks(&a, &b),
@@ -396,6 +403,20 @@ pub fn weighted(listing: &[Line], draft: &[Line], options: Options, result: &mut
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn compatibility_assembly_identity_rows_and_hashes() {
+        use sha2::{Digest, Sha256};
+        for row in include_str!("c/fixtures/output-assembly.tsv").lines() {
+            let c: Vec<_> = row.split('\t').collect();
+            let options = super::Options { stack_differences: c[0] == "1", ignore_branch_targets: c[1] == "1", ..super::Options::default() };
+            let raw = c[2].replace("\\n", "\n").replace("\\t", "\t");
+            let expected = c[3].replace("\\n", "\n").replace("\\t", "\t");
+            let lines = super::parse_objdump(&raw).unwrap();
+            assert_eq!(super::prepared(&lines, options).iter().map(|line| line.row.as_str()).collect::<Vec<_>>().join("\n"), expected);
+            let expected_hash: [u8; 32] = Sha256::digest(expected.as_bytes()).into();
+            assert_eq!(super::assembly_key(&lines, options), expected_hash);
+        }
+    }
     use super::*;
 
     #[test]

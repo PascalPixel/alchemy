@@ -3,7 +3,13 @@
  * before the cue differs 32; initializing at declaration differs 76.
  * Unsigned frame with signed threshold comparisons retains 30. Setting
  * frame after step/size differs 44; setting size/frame/step differs 50.
- * Linked source retains its pin pending whole-image byte identity. */
+ * Using frame for the initial blend address differs 54; using it for the
+ * slot address or swapping size/step's address uses differs 40. Initial
+ * input/output/high-register boundaries differ 44. Value-preserving narrow
+ * shifts between frame, size and step retain 30. A two-minute seed-439
+ * search compiled 5455 candidates without beating this draft; its longer
+ * prefix candidate differs 115 and is not retained. Linked source retains
+ * its pin pending whole-image byte identity. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

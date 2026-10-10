@@ -322,6 +322,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 				 * separate quotient coalesces with level; the explicit bias
 				 * keeps the native r3 copy and shift (four register rows). */
 				s32 red = green;
+				/* Ordinary level differs 42 in EN (1532 native/built).
+				 * A generic output boundary after its sum reduces this to 26,
+				 * retaining the quotient/level r2/r3 exchange. A red input
+				 * retains 26; also unbinding count differs 36, with either an
+				 * input or output count operand on the existing base boundary.
+				 * Reversing the sum or deriving green as red - 48 retains 42. */
 				/* FAKEMATCH: level in r2; unbinding it changes ten register/order rows. */
 				register s32 level asm("r2");
 

@@ -27,10 +27,4 @@ void RunSceneTransitionEffect();
 void Object_SetTargetAndCallback();
 void AnimationObjects_SelectAnimation();
 
-static __inline__ u16 ReadU16Elem(u16 *base, s32 idx)
-{
-
-    return *(u16 *)(base + idx);
-}
-
 #endif

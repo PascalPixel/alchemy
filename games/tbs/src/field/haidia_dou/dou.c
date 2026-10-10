@@ -250,7 +250,7 @@ void FieldScene_RunScene3a6SequenceA(void)
         Actor_SetAttachedEffect(8, 0x102);
         Engine_ActorRunRepeatedMotion(8, 2);
         Engine_EventWait(20);
-        Actor_SetMotionSpeed(8, 0x10000, 0x8000);
+        Actor_SetSpeed(8, 0x10000, 0x8000);
         Actor_WalkToAndWait(8, 0x318, 248);
         Engine_AudioPlayCue(152);
         record = Actor_Get(8);
@@ -277,7 +277,7 @@ void FieldScene_RunScene3a6SequenceB(void)
             Actor_SetAttachedEffect(8, 0x102);
             Engine_ActorRunRepeatedMotion(8, 2);
             Engine_EventWait(20);
-            Actor_SetMotionSpeed(8, 0x20000, 0x10000);
+            Actor_SetSpeed(8, 0x20000, 0x10000);
             Actor_WalkToAndWait(8, 0x2f8, 0x118);
             Actor_WalkToAndWait(8, 0x2f8, 0x138);
             Actor_WalkToAndWait(8, 0x318, 0x138);

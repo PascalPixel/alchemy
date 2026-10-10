@@ -625,7 +625,6 @@ s32 KorimaKi_PrepareActors(void)
     struct FieldActor *first;
     struct FieldActor *third;
     struct FieldActor *second;
-    u8 zero;
 
     first = Object_GetById(10);
     third = Object_GetById(14);
@@ -635,8 +634,6 @@ s32 KorimaKi_PrepareActors(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     gGameState.retreat_scene = (s32)&SceneId_KorimaHashi;
     gGameState.retreat_entrance = 4;
-    /* FAKEMATCH: the heights are cleared through a u8 local zero, which the compiler loads from the pool. */
-    zero = 0;
     if (!Engine_GameFlagIsSet(0x845))
         PaletteScene_AdjustPaletteWindow(3);
     Object_GetById(8)->radius = 6;
@@ -651,11 +648,11 @@ s32 KorimaKi_PrepareActors(void)
     Engine_ActorSetSpritePriority(8, 2);
     Engine_ActorSetSpritePriority(14, 2);
     Engine_ActorSetSpritePriority(9, 2);
-    first->motion_flags = zero;
+    first->motion_flags = 0;
     first->y.fixed = 0x1c0000;
-    second->motion_flags = zero;
+    second->motion_flags = 0;
     second->y.fixed = 0x1c0000;
-    third->motion_flags = zero;
+    third->motion_flags = 0;
     third->y.fixed = 0x1c0000;
     Engine_ActorSetAnimation(9, 3);
     Engine_ActorSetAnimation(8, 3);

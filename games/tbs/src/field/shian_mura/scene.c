@@ -670,11 +670,8 @@ s32 ShianMura_SetupScene(void)
     for (n = 0; n <= 2; n++) {
         struct FieldActor *actor;
         actor = Object_GetById(n + 23);
-        /* FAKEMATCH: one value spans priority and motion setup so the motion zero stays inside the loop and feeds the later actors. */
-        x = 1;
-        actor->sprite->priority = x;
-        x = 0;
-        actor->motion_flags = x;
+        actor->sprite->priority = 1;
+        actor->motion_flags = 0;
         actor->collision_flags = 8;
         Engine_ActorSetSpriteFlags(actor, 0);
         ObjectGroup_SetChildValue(actor, 15);
@@ -696,20 +693,15 @@ s32 ShianMura_SetupScene(void)
     Engine_ActorSetChildValue(18, 2);
     Object_GetById(18)->update = ShianMura_WatchGateTrigger;
     actor = Object_GetById(19);
-    actor->motion_flags = x;
+    actor->motion_flags = 0;
     actor->y.fixed = 0x100000;
     actor->target_y = 0x100000;
     actor->scale_x = 0x8ccc;
     actor->scale_y = 0x6666;
     actor->sprite->rotation = 0x8000;
     Engine_ActorSetSpriteFlags(Object_GetById(21), 0);
-    {
-        /* FAKEMATCH: narrow local retains the short-range zero pool load. */
-        u8 shown = 0;
-
-        Object_GetById(21)->motion_flags = shown;
-    }
-    Object_GetById(21)->y.fixed = x;
+    Object_GetById(21)->motion_flags = 0;
+    Object_GetById(21)->y.fixed = 0;
     Object_GetById(21)->target_y = -0x80000000;
     return 0;
 }

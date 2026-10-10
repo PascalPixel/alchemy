@@ -68,26 +68,7 @@ void Engine_ActorSetAnimation(s32 actor, s32 mode);
 void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
 void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
 
-static __inline__ void Actor_SetMotionSpeed(s32 actor, s32 speed, s32 acceleration)
-{
-    /* FAKEMATCH: a direct call changes FieldScene_RunBranchingFormationPresentation from ldr r6, .L0 to ldr r7, .L0 (2674/2678 assembly lines). */
-    Engine_ActorSetSpeed(actor, speed, acceleration);
-}
-
-static __inline__ void Actor_OffsetDestination(s32 actor, s32 dx, s32 dz)
-{
-    /* FAKEMATCH: a direct call changes FieldScene_RunBranchingFormationPresentation from mov r0, #3 to neg r1, r1 (2674/2674 assembly lines). */
-    Engine_ActorSetDestinationOffset(actor, dx, dz);
-}
-
 s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
-
-static __inline__ void DrawPlacement(
-    s32 left, s32 top, s32 width, s32 height, s32 tile, s32 palette)
-{
-    /* FAKEMATCH: a direct call changes FieldScene_RunTile10x20Transition from mov r2, #17 to mov r3, #19 (79/79 assembly lines). */
-    Engine_MapCopyCellAttributes(left, top, width, height, tile, palette);
-}
 
 s32 Object_CheckMovementCollision(struct StagedActorEffect *actor, struct StagedActorEffectRequest *request);
 
@@ -131,13 +112,13 @@ void FieldScene_RunTile10x20Transition(void)
             s32 zero;
 
             Engine_ActorSetAnimation(10, 3);
-            Actor_OffsetDestination(10, -18, 6);
+            Actor_SetDestinationOffset(10, -18, 6);
             Engine_EventWait(30);
             Engine_AudioPlayCue(240);
             Engine_ActorSetAnimation(10, 8);
             Object_GetById(10)->priority_flags = 2;
             zero = 0;
-            DrawPlacement(0, 17, 2, 4, 19, 17);
+            Map_CopyCellAttributes(0, 17, 2, 4, 19, 17);
             StagedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, zero);
             Engine_GameFlagSet(0x200);
             actor = (void *)Object_GetById(10);
@@ -221,7 +202,7 @@ s32 Scene_Initialize(void)
     if (Engine_GameFlagIsSet(0x200) != 0) {
         zero = 0;
         Object_GetById(10)->priority_flags = 2;
-        DrawPlacement(0, 17, 2, 4, 19, 17);
+        Map_CopyCellAttributes(0, 17, 2, 4, 19, 17);
         record = StagedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, zero);
         record = (s32)Object_GetById(10);
         Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
@@ -297,10 +278,10 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Engine_TaskWait(1);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    Actor_SetMotionSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 254, 0x251);
-    Actor_SetMotionSpeed(GERALD, 0x9999, 0x4ccc);
-    Actor_SetMotionSpeed(IWAN, 0x9999, 0x4ccc);
+    Actor_SetSpeed(GERALD, 0x9999, 0x4ccc);
+    Actor_SetSpeed(IWAN, 0x9999, 0x4ccc);
     {
         struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -318,7 +299,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Engine_ActorEnableActionCallback(GERALD, KorimaHashi_GeraldAction);
     Engine_ActorEnableActionCallback(IWAN, KorimaHashi_IvanAction);
     if (*party != 0) {
-        Actor_SetMotionSpeed(MEARI, 0x9999, 0x4ccc);
+        Actor_SetSpeed(MEARI, 0x9999, 0x4ccc);
         {
             struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -396,8 +377,8 @@ void FieldScene_RunBranchingFormationPresentation(void)
         record = Object_GetById(3);
         record->velocity_y = 0x20000;
         Engine_EventWait(10);
-        Actor_SetMotionSpeed(MEARI, 0x20000, 0x20000);
-        Actor_OffsetDestination(MEARI, -2, 0);
+        Actor_SetSpeed(MEARI, 0x20000, 0x20000);
+        Actor_SetDestinationOffset(MEARI, -2, 0);
         Engine_ActorEnableActionCallback(MEARI, KorimaHashi_ResetAction);
         record = Object_GetById(3);
         Engine_ActorSetSpriteFlags(record, 0);
@@ -407,7 +388,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     record = Object_GetById(0);
     record->velocity_y = 0x20000;
     Engine_EventWait(10);
-    Actor_SetMotionSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
     reset_action = KorimaHashi_ResetAction;
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, reset_action);
     record = Object_GetById(0);
@@ -417,7 +398,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     record = Object_GetById(1);
     record->velocity_y = 0x20000;
     Engine_EventWait(10);
-    Actor_SetMotionSpeed(GERALD, 0x20000, 0x20000);
+    Actor_SetSpeed(GERALD, 0x20000, 0x20000);
     Engine_ActorEnableActionCallback(GERALD, reset_action);
     record = Object_GetById(1);
     Engine_ActorSetSpriteFlags(record, 0);
@@ -564,7 +545,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     record = Object_GetById(1);
     Engine_ActorSetSpriteFlags(record, 1);
     Engine_ActorJump(GERALD, 6, 0);
-    Actor_OffsetDestination(GERALD, -3, 0);
+    Actor_SetDestinationOffset(GERALD, -3, 0);
     Engine_ActorSetAnimation(GERALD, 1);
     SceneActor_SetPairZeroAndValue(1, 0x4000, 60);
     Event_SayThenWait(GERALD, 20);
@@ -595,7 +576,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         record = Object_GetById(3);
         Engine_ActorSetSpriteFlags(record, 1);
         Engine_ActorJump(MEARI, 4, 0);
-        Actor_OffsetDestination(MEARI, -2, 0);
+        Actor_SetDestinationOffset(MEARI, -2, 0);
         Engine_ActorSetAnimation(MEARI, 1);
         SceneActor_SetPairZeroAndValue(3, 0xe000, 60);
         Engine_ActorRunRepeatedMotion(MEARI, 2);
@@ -1025,9 +1006,9 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Event_SayThenWait(IWAN, 20);
     leave:;
     Event_PlayCue(17);
-    Actor_SetMotionSpeed(GERALD, 0x13333, 0x9999);
-    Actor_SetMotionSpeed(IWAN, 0x13333, 0x9999);
-    Actor_SetMotionSpeed(MEARI, 0x13333, 0x9999);
+    Actor_SetSpeed(GERALD, 0x13333, 0x9999);
+    Actor_SetSpeed(IWAN, 0x13333, 0x9999);
+    Actor_SetSpeed(MEARI, 0x13333, 0x9999);
     Engine_ActorSetAnimation(GERALD, 2);
     {
         struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);

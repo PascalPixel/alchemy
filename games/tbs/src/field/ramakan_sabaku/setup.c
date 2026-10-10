@@ -492,14 +492,11 @@ void RamakanSabaku_SweepBack(void)
     } while (frames != 0);
     {
         struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);
-        s32 scale;
 
         puff.type = 214;
-        /* FAKEMATCH: share one x-scale local across the start-y store. */
-        scale = 0x8000;
+        puff.start_scale_x = 0x8000;
         puff.start_scale_y = 0xcccc;
-        puff.start_scale_x = scale;
-        puff.target_scale_x = scale;
+        puff.target_scale_x = 0x8000;
         puff.target_scale_y = 0x13333;
         Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, frames, frames,
                      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, &puff);
@@ -1005,14 +1002,9 @@ void RamakanSabaku_ClaimSandEffectVram(void)
 
     Resource_DecodeType01(RamakanSabaku_SandEffectTiles, RamakanSabaku_SandTileBuffer);
     slotp = &RamakanSabaku_SandVramSlot;
-    /* FAKEMATCH: the size temporary schedules the slot store after the call. */
     slot = Resource_FindFreeEntry();
-    {
-        s32 size = 0x480;
-
-        *slotp = slot;
-        Engine_VramLoad((s16)slot, size, 0);
-    }
+    *slotp = slot;
+    Engine_VramLoad((s16)slot, 0x480, 0);
     zero.v = 0;
     RamakanSabaku_SandCounter = zero.v;
     RamakanSabaku_SandPhase = zero.v;

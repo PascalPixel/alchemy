@@ -720,15 +720,8 @@ s32 HaidiaSukureta_RestoreEntryState(void)
     struct FieldActor *record;
     s32 v5;
     s32 stranger_actions;
-    s16 *room;
 
-    {
-        /* FAKEMATCH: indexing through a variable keeps the game state base in a register and adds the entrance offset, as the reference does. */
-        s32 k = 225;
-
-        room = (s16 *)&gGameState + k;
-    }
-    if (*room == 5 || *room == 6) {
+    if (gGameState.entrance == 5 || gGameState.entrance == 6) {
         Engine_GameFlagClear(0x12f);
     }
     if (GameFlag_IsSet(0x109) != 0) {
@@ -778,7 +771,7 @@ s32 HaidiaSukureta_RestoreEntryState(void)
     Engine_ActorSetPosition(11, 0, 0);
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x109) == 0) {
-        if (*room == 10) {
+        if (gGameState.entrance == 10) {
             Scene_LeaveForMtAleph();
         }
     }

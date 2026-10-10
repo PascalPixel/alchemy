@@ -425,29 +425,21 @@ s32 Scene_Initialize(void)
 
 void FieldScene_RunScene3b2SequenceA(void)
 {
-    u32 i;
-    s32 rec7;
-    u8 *rec8;
-    s32 record;
+    struct FieldActor *actor;
+    s32 cleared;
 
-    rec8 = Actor_Get(8);
-    rec7 = GameFlag_IsSet((((union GameStateRows *)&gGameState)->halves[224][0] + (0x8d2 - (s32)&SceneId_TakaraShima6)));
-    if (rec7 != 0) {
+    actor = Actor_Get(8);
+    cleared = GameFlag_IsSet((((union GameStateRows *)&gGameState)->halves[224][0] + (0x8d2 - (s32)&SceneId_TakaraShima6)));
+    if (cleared != 0) {
         Actor_SetPosition(8, 0x28a0000, 0xa80000);
-        *(s32 *)(rec8 + 12) = -0x200000;
-        record = Actor_Get(8);
-        Engine_ActorSetSpriteFlags(record, 0);
+        actor->y.fixed = -0x200000;
+        Engine_ActorSetSpriteFlags(Actor_Get(8), 0);
         Engine_ActorSetSpritePriority(8, 3);
-        rec8[85] = 0;
-        {
-            /* FAKEMATCH: needed to match: the merged flags in a word temporary keep the byte load in r2. */
-            s32 value = rec8[35] | 2;
-
-            rec8[35] = value;
-        }
+        actor->motion_flags = 0;
+        actor->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
         Map_CopyCellAttributes(42, 10, 1, 1, 40, 10);
     } else {
-        ((struct FieldActor *)Object_GetById(8))->motion_flags = rec7;
+        Object_GetById(8)->motion_flags = cleared;
     }
 }
 

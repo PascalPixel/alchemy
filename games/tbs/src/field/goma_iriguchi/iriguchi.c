@@ -539,7 +539,6 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
     u32 i;
     s32 x;
     s32 z;
-    s32 zero;
 
     actor = (struct Actor *)Object_GetById(id);
     actor->layer = 0;
@@ -563,20 +562,18 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     for (i = 0; i <= 16; i++) {
         v = &dir;
-        /* FAKEMATCH: zero is set inside the loop (always entered) so it is materialized after the counter and the direction pointer. */
-        zero = 0;
         v->x = Engine_MathCos(i << 12);
-        v->y = zero;
+        v->y = 0;
         v->z = Engine_MathSin(i << 12);
         v->x -= v->x / 4;
         v->z -= v->z / 2;
-        Effect_Spawn(actor->x, actor->y, actor->z, v->x, v->y, v->z, zero, (void *)zero);
+        Effect_Spawn(actor->x, actor->y, actor->z, v->x, v->y, v->z, 0, NULL);
     }
     actor->speed = 0x50000;
     Engine_ActorSetDestination(id, 139, 196);
     Engine_ActorWaitForMove(id);
     OverlayObject_WaitForHeight((s32)actor, 0x200000);
-    actor->callback = zero;
+    actor->callback = 0;
     actor->sprite->angle = 0x1000;
     p = &params;
     p->tile = 214;
@@ -584,7 +581,7 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
     p->rise = 0xcccc;
     p->rise2 = 0x18000;
     p->spin = 0x13333;
-    Effect_Spawn(actor->x, actor->y, actor->z, 0, zero, zero, 0x1c0000, p);
+    Effect_Spawn(actor->x, actor->y, actor->z, 0, 0, 0, 0x1c0000, p);
     Engine_AudioPlayCue(154);
     Engine_ActorSetAnimation(id, 3);
     Engine_MapWaitWorkValuesBelow256();

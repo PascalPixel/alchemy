@@ -538,7 +538,7 @@ void UpdateStatueTrapActor(void)
     if (GameFlag_IsSet(0x810) != 0 || scene_actor->unk8 > 0x1540000) {
         Actor_WalkToAndWait(ACTOR_SUKURETA, 0x120, 0xe8);
     } else {
-        /* FAKEMATCH: the entered-flag test is retained even though its result is unused. */
+        // 結果は使わない
         GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED);
     }
     Actor_WalkToAndWait(ACTOR_SUKURETA, 0x120, 0xe8);

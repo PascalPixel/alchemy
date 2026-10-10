@@ -81,12 +81,6 @@ static inline void BabiFune_AddTask(void (*task)(void), s32 order)
 	Scheduler_AddOrUpdateCallback((s32)task, order);
 }
 
-static inline void BabiFune_Call3(void (*service)(s32, s32, s32), s32 first, s32 second, s32 third)
-{
-	/* FAKEMATCH: the inline's parameters load the three arguments in order; a direct call builds the costly one first. */
-	service(first, second, third);
-}
-
 void BabiFune_RunDeparture(void)
 {
 	struct MapWork *map;
@@ -101,8 +95,8 @@ void BabiFune_RunDeparture(void)
 
 	Event_Begin();
 	Battle_ResetEffectCounter();
-	BabiFune_Call3(Engine_ActorWalkToAndWait, 0, 312, 232);
-	BabiFune_Call3((void (*)(s32, s32, s32))Engine_ActorFaceDirection, 0, 0xc000, 0);
+	Actor_WalkToAndWait(0, 312, 232);
+	Actor_FaceDirection(0, 0xc000, 0);
 	Event_Wait(40);
 	Event_PlayCue(140);
 	for (i = 0; i <= 15; i++)

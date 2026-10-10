@@ -153,12 +153,6 @@ s32 GetMapCellCollision();
 s32 Map_GetTerrainHeight();
 void ObjectDispatch_ApplyValueToChildren();
 
-static __inline__ void ImiruMura_AdvanceProbe(s32 heading, s32 *probe)
-{
-    /* FAKEMATCH: a direct call reuses r5 after the shift; this boundary rebuilds sp+8 before completing 0x100000. */
-    Vector_AddPolarOffset((s32)0x100000, heading, probe);
-}
-
 s32 OverlayObject_UpdateWobbleByCounter(struct Object *obj);
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj);
 s32 SceneData_ReturnZero(void);
@@ -1438,7 +1432,7 @@ void StagedActor_RunHeadingProbeStep(void)
 {
 
     struct Subject_02001fa4 *subject;
-    s32 probe[3];
+    struct FieldPosition probe;
     s32 heading;
     s32 goal;
     s32 marker;
@@ -1456,26 +1450,26 @@ void StagedActor_RunHeadingProbeStep(void)
 
         Engine_EventBegin();
 
-        probe[0] = (subject->x & 0xfff00000) + 0x80000;
-        probe[1] = subject->y;
-        probe[2] = (subject->z & 0xfff00000) + 0x80000;
-        z = probe[2];
-        x = probe[0];
+        probe.x = (subject->x & 0xfff00000) + 0x80000;
+        probe.y = subject->y;
+        probe.z = (subject->z & 0xfff00000) + 0x80000;
+        z = probe.z;
+        x = probe.x;
         p = (u8 *)subject;
         p += 34;
         goal = GetMapCellCollision((s32)*p, x, z);
-        Vector_AddPolarOffset((s32)0x100000, heading, probe);
+        Vector_AddPolarOffset(0x100000, heading, &probe);
 
-        marker = GetMapCellCollision((s32)*p, probe[0], probe[2]);
+        marker = GetMapCellCollision((s32)*p, probe.x, probe.z);
         if (marker == 255
-                || Map_GetTerrainHeight((s32)*p, probe[0], probe[2])
+                || Map_GetTerrainHeight((s32)*p, probe.x, probe.z)
                     - subject->y > 0x80000) {
             subject->heading = (u16)heading;
             goto tail;
         }
 
-        probe[0] = x;
-        probe[2] = z;
+        probe.x = x;
+        probe.z = z;
         subject->state_048 = 0x20000;
         subject->state_052 = 0x1999;
         subject->state_100 = 0;
@@ -1487,23 +1481,23 @@ void StagedActor_RunHeadingProbeStep(void)
 
         goto advanceProbe;
 continueProbe:
-        if (Map_GetTerrainHeight((s32)*p, probe[0], probe[2])
+        if (Map_GetTerrainHeight((s32)*p, probe.x, probe.z)
                 - subject->y > 0x80000) {
             goto finishProbe;
         }
-        x = probe[0];
-        z = probe[2];
+        x = probe.x;
+        z = probe.z;
         subject->state_048 = 0x20000;
         subject->state_052 = 0x1999;
-        Engine_ObjectSetPosition(subject, probe[0], probe[1], probe[2]);
+        Engine_ObjectSetPosition(subject, probe.x, probe.y, probe.z);
         Engine_ObjectCommitPosition(subject);
         if (marker != goal) {
             goto blocked;
         }
 
 advanceProbe:
-        ImiruMura_AdvanceProbe(heading, probe);
-        marker = GetMapCellCollision((s32)*p, probe[0], probe[2]);
+        FieldVector_AddPolarOffset(0x100000, heading, &probe);
+        marker = GetMapCellCollision((s32)*p, probe.x, probe.z);
         if (marker != 255) {
             goto continueProbe;
         }

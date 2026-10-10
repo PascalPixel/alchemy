@@ -150,8 +150,6 @@ s32 KuupuappuMura_RestoreEntryState(void)
     *(s32 *)((u8 *)record + 108) = (s32)SceneActor_UpdateProximityToLeader;
     record = Object_GetById(15);
     record->timer = zero;
-    /* FAKEMATCH: the empty loop keeps the halfword store ahead of the script-pointer store, as in the reference schedule. */
-    do { } while (0);
     *(s32 *)((u8 *)record + 108) = (s32)SceneActor_UpdateProximityToLeader;
     if (Engine_GameFlagIsSet(0x858) != 0) {
         Actor_SetPosition(19, 0xd80000, 0x1880000);

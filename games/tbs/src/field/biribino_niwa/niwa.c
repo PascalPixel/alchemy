@@ -224,22 +224,13 @@ void BiribinoNiwa_LeaveThroughGate(void)
 s32 Scene_Initialize(void)
 {
     struct EventWork *work = gEventWork;
-    struct SceneEntity *ent;
-    struct SceneHandle *h;
-    u8 *fp;
-    s32 zero;
+    struct FieldActor *actor;
 
     work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
-    ent = (struct SceneEntity *)Object_GetById(8);
-    fp = (u8 *)ent + 35;
-    /* FAKEMATCH: one register carries the stored zero and then, decremented by 13, the ~0x0c handle mask, so the two are not folded into separate constants. */
-    zero = 0;
-    *fp = (u8)zero;
-
-    h = ent->h;
-    zero -= 13;
-    h->flags09 = (u8)((h->flags09 & zero) | 0x04);
+    actor = Object_GetById(8);
+    actor->priority_flags = 0;
+    actor->sprite->priority = 1;
 
     if (gGameState.scene == (s32)&SceneId_BiribinoNiwa) {
         BiribinoNiwa_ApplyEntryState();

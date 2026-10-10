@@ -425,8 +425,6 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 void MakyuriIriguchi_CrossDoorway(void)
 {
     s32 i;
-    s32 zero;
-    s32 mask;
     struct FieldActor *ivan;
     struct FieldActor *actor;
 
@@ -450,8 +448,6 @@ void MakyuriIriguchi_CrossDoorway(void)
     Engine_ActorRunRepeatedMotion(3, 1);
     Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_EventWait(20);
-    mask = 254;
-    zero = 0;
     for (i = 0; i < 2; i++) {
         Engine_ActorWalkTo(3, 152, 168);
         Engine_EventWait(10);
@@ -460,13 +456,12 @@ void MakyuriIriguchi_CrossDoorway(void)
         Actor_FaceDirection(3, 0xc000, 30);
         Engine_ActorRunRepeatedMotion(3, 1);
         ivan = Object_GetById(3);
-        /* FAKEMATCH: or-ing a zero kept from before the loop leaves the reference's unread zero in sl. */
-        ivan->steering_flags = (ivan->steering_flags & mask) | zero;
+        ivan->steering_flags &= ~ACTOR_FACES_MOTION;
         Engine_ActorWalkTo(3, 136, 184);
         Engine_EventWait(10);
         Engine_ActorEnableActionCallback(8, (s32)MakyuriIriguchi_Actor8Path1);
         Engine_ActorWaitForMove(3);
-        *(u8 *)((s32)Object_GetById(3) + 90) |= 1;
+        Object_GetById(3)->steering_flags |= ACTOR_FACES_MOTION;
         Engine_EventWait(30);
         Engine_ActorWalkTo(3, 120, 168);
         Engine_EventWait(5);
@@ -475,13 +470,13 @@ void MakyuriIriguchi_CrossDoorway(void)
         Engine_ActorFaceDirection(3, 0xc000, 30);
         Engine_ActorRunRepeatedMotion(3, 1);
         Engine_EventWait(15);
-        *(u8 *)((s32)Object_GetById(3) + 90) &= mask;
+        Object_GetById(3)->steering_flags &= ~ACTOR_FACES_MOTION;
         Engine_ActorWalkTo(3, 136, 184);
         Engine_EventWait(15);
         Engine_ActorEnableActionCallback(8, (s32)MakyuriIriguchi_Actor8Path1);
         Engine_ActorWaitForMove(3);
         Engine_ActorRunRepeatedMotion(3, 1);
-        *(u8 *)((s32)Object_GetById(3) + 90) |= 1;
+        Object_GetById(3)->steering_flags |= ACTOR_FACES_MOTION;
     }
     Engine_EventWait(20);
     Engine_ActorShowEmote(3, 0x102, 60);

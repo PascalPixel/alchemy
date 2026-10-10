@@ -1,8 +1,4 @@
-/* alchemy permute glyph-fake-height: weighted 360, differ 12 (6 reordered); draft weighted 460, differ 14 (4 register, 4 reordered, 1 inserted, 1 deleted).
-   Job 0, iteration 1; rewrites: PERM choices only (minimized from 0: PERM choices only). */
-/* alchemy permute glyph-fake-setup: weighted 460, differ 14 (4 register, 4 reordered, 1 inserted, 1 deleted); draft weighted 988, differ 18 (12 register, 8 stack, 2 reordered, 4 inserted, 4 deleted).
-   Job 0, iteration 25; rewrites: PERM choices only (minimized from 0: PERM choices only). */
-/* ARM draft, stock agbcc_arm: JA differs 0, EN 8, DE/ES/FR/IT 12.
+/* ARM draft, stock agbcc_arm: JA differs 0, EN 6, DE/ES/FR/IT 12.
    Target: matching C with tagged fakematches; no inline asm, register pins
    or asm barriers. Japanese already links the matching C in moji.c.
 
@@ -10,8 +6,9 @@
    source reshaping. With C fakematches allowed again, sharing the current
    Japanese drawing loop gives 0/74/52. A one-pass packed-font pixel call
    gives 0/14/18; scoped source and row setup gives 0/8/14. Normalizing the
-   continental height copy gives 0/8/12. Both international pixel loops
-   now match; entry copies, palette setup and clipping order remain.
+   continental height copy gives 0/8/12. Keeping a separate English width
+   through the clipping return gives 0/6/12. Both international pixel loops
+   now match; entry copies, palette setup and table-load order remain.
 
    Searches: seed 249 found the pixel-call scope in 24 seconds. Finite
    setup scopes (32 and 1,024 choices), source/width forms (30), argument
@@ -21,7 +18,14 @@
    the continental 12-difference form without finding an improvement.
    Earlier clean trials: row helper 219/263/202, passing VRAM explicitly
    181/218/190; whole-tree seeds 217/218 and 231/232/233 were also tried.
-   Results with uninitialized temporaries were rejected. */
+   Results with uninitialized temporaries were rejected.
+
+   Follow-up: prefix searches 257/259 compiled 21,960/21,181 candidates;
+   neither moved the first divergent entry instruction. Separate x copies,
+   early argument tests (81), width helpers (4), normalized width reads (8),
+   selector copies (12), width-table lifetimes (9) and equivalent row-zero
+   expressions (9) did not improve this result. The width-return search
+   (18) found the English clipping-copy form retained below. */
 
 #include "types.h"
 #include "uiwindow.h"
@@ -129,6 +133,9 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32
 #if defined(TBS_EDITION_JA)
 			u32 raw_color;
 #else
+#if defined(TBS_EDITION_EN)
+			u32 raw_font_width;
+#endif
 			u32 color1;
 			u32 color3;
 #endif
@@ -245,7 +252,26 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32
 			{
 				row = 0;
 			} while (0);
+#if defined(TBS_EDITION_EN)
+			/* FAKEMATCH: the separate normalized width and repeated read
+			   retain the clipping comparison before its spill. Both reads
+			   become one LDRB; the width is a byte on either return path
+			   (EN differ 8 -> 6). */
+			raw_font_width = UiText_GlyphWidths[character - 32];
+			do
+			{
+				if (y > 31)
+					raw_font_width = UiText_GlyphWidths[character - 32];
+			} while (0);
+			font_width = (raw_font_width << 24) >> 24;
+			if (y > 31)
+			{
+				font_width = raw_font_width;
+				goto packed_font_done;
+			}
+#else
 			font_width = UiText_GlyphWidths[character - 32];
+#endif
 			if (y <= 31)
 			{
 				u8 *vram;
@@ -289,6 +315,9 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32
 						break;
 				}
 			}
+#endif
+#if defined(TBS_EDITION_EN)
+		packed_font_done:
 #endif
 			return font_width;
 		}

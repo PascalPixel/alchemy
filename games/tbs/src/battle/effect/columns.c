@@ -2010,6 +2010,11 @@ void BattleFx_RunOrbitingSparks(void)
 			pos.x += x_offset;
 			if (window < 64)
 			{
+				/* Ordinary rec differs 118 in EN (265 native, 269 built).
+				 * A generic output barrier before filling differs 155 (272
+				 * built); after filling it differs 118 (267 built). Keeping
+				 * rec live after the call differs 179 (270 built). None keeps
+				 * the native loop layout. */
 				/* FAKEMATCH: record is filled through r0 so loop.c cannot hoist its address into fp */
 				register s32 *rec asm("r0");
 

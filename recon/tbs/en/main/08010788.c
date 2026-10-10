@@ -14,6 +14,27 @@
  * differences; making either an output changes most of the function.
  * Reversing the final assignment and also assigning cell retain four;
  * additive or XOR cancellation instead leaves 24 differences.
+ * Moving the second word load to the final store still leaves four.
+ * Replacing the consumed-offset reuse with a final word output leaves
+ * 72 differences, an input 66, a bytes output 40 and an offset output
+ * 173. Replacing the base barrier with the TBS-specific helper's scaled
+ * bytes output and cell input leaves 85 (143 built instructions).
+ * Keeping the base barrier and adding the scaled-bytes output leaves
+ * 58 differences with cell as input, or 40 without it. Reusing i or n
+ * for the final word leaves 38 or 16; adding tmp3 leaves 113, while val
+ * retains four. A base output, early-clobber output or memory clobber
+ * leaves 163; a nonvolatile base input retains four. A goto or while
+ * layer loop retains four; preparing the second destination earlier
+ * leaves 64. A two-minute prefix search (seed 457, two jobs, exact stack
+ * and branches) tried 2929 distinct candidates; 2905 failed evaluation
+ * and no candidate beat the draft.
+ * Further EN trials: 127 combinations of dead scalar assignments for the
+ * final word retain 4 at best. A final word output leaves 139 (143 built),
+ * while address input or destination/x output with a word input retains
+ * 4. Source/destination cursor outputs leave 40 (144 built), y output
+ * leaves 112 (138 built), and a tied register input for the final load
+ * leaves 40. Removing the base barrier while passing the final destination
+ * through leaves 163 (143 built).
  * The linked function retains its r3 binding until the whole ROM matches. */
 #include "edition.h"
 #include "mapcopy.h"

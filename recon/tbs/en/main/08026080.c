@@ -1,9 +1,13 @@
 /* Pin-free BattleTarget_RunSelection trial: EN/JA 1583 native instructions,
- * 1585 built, 1484 common, differ 200. The value-preserving null initializer
+ * 1585 built, 1535 common, differ 98. The value-preserving null initializer
  * already used by ES/IT keeps the native 324-byte frame in EN too; ordinary
  * zero spills infoWin, shrinks the frame to 320 and differs 492. Here sel
  * takes r9 instead of native r10 and infoWin takes r10 instead of r9, with
- * additional spill-slot changes. Using mode, spread or kind in the same
+ * no spill-slot changes after using head[i] directly in the frame-end loop.
+ * The 2-minute seed-367 search found this ordinary source reshape in 1308
+ * compiled candidates. Keeping a local entry pointer, even scoped to that
+ * loop, differs 200; moving its assignment after projection differs 475.
+ * Using mode, spread or kind in the same
  * null initializer still differs 200. Register qualification and an infoWin
  * input or output on the existing t barrier also leave 200. The linked
  * declaration retains its r9 binding until all six editions match. */
@@ -630,11 +634,10 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     frame_end:
         if (pending != 0) {
             for (i = 1; i < cnt; i++) {
-                entry = &head[i];
                 slot = &tbl[selSlot[i]];
                 BattleMotion_ProjectConditionalPositionFar(selIds[i], (s32 *)&targetPos);
                 targetPos.y = targetPos.y + Trig_Sin(gFrameCount << 12) / 32768;
-                *entry = *head;
+                head[i] = *head;
                 if (slot->flags & 1) {
                     s32 x = (targetPos.x + slot->x) / 2;
                     s32 y = (targetPos.y + slot->y) / 2;
@@ -644,8 +647,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                     targetPos.y = y;
                     slot->y = y;
                 } else {
-                    s32 x = entry->x;
-                    s32 y = entry->y + 8;
+                    s32 x = head[i].x;
+                    s32 y = head[i].y + 8;
 
                     slot->flags = 1;
                     targetPos.x = x;
@@ -653,15 +656,15 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
                     targetPos.y = y;
                     slot->y = y;
                 }
-                entry->mode = 1;
-                entry->x = targetPos.x - 8;
-                entry->y = targetPos.y - 12;
+                head[i].mode = 1;
+                head[i].x = targetPos.x - 8;
+                head[i].y = targetPos.y - 12;
                 if (spread == 0xFF)
-                    entry->affine = 0;
+                    head[i].affine = 0;
                 else
-                    entry->affine = 1;
-                entry->param = matrix;
-                Runtime_PushSlotEntry((s32 *)entry, 240);
+                    head[i].affine = 1;
+                head[i].param = matrix;
+                Runtime_PushSlotEntry((s32 *)&head[i], 240);
             }
         }
         pressed = gKeyState;

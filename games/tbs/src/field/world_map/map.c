@@ -1675,6 +1675,11 @@ void WorldMap_UseBlackOrb(void)
     orb = Object_Create(22, leader->x.fixed + 0x20000, 0x260000,
                         leader->z.fixed);
     if (orb != NULL) {
+        /* With both bindings removed, a generic motion output differs 20
+         * in EN (363 native/built). A zero/motion output differs 53
+         * (364 built); an opaque created-object copy differs 47 (364 built).
+         * A generic zero output with motion input, motion output with zero
+         * input, or two inputs each differs 47 (364 built). */
         /* FAKEMATCH: the game clears these bytes from r1 and reaches the first through the created object still in r0; unpinned, the zero takes r3 and the address a copy in r2. */
         register s32 zero asm("r1") = 0;
         register u8 *motion asm("r0") = &orb->motion_flags; /* FAKEMATCH: the first address stays in r0, see above. */

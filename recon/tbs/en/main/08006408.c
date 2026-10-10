@@ -3,7 +3,10 @@
  * reuses busy's zero in r4 for the sequence byte; native loads a zero literal
  * into r0. Assigning value = 0 while initializing zero and making busy a
  * pointer each retain differ 15. Reusing busy for value before the store
- * differs 26 (29 built). The linked implementation retains its binding. */
+ * differs 26 (29 built). A generic output barrier on zero also differs 26;
+ * adding the sequence pointer as input or output differs 37 (28 built).
+ * A busy output, alone or with value, differs 26. The linked implementation
+ * retains its binding. */
 #include "serial_runtime.h"
 #include "io_reg.h"
 

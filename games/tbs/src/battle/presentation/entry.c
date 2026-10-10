@@ -226,16 +226,18 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 	{
 		{
 
-			/* FAKEMATCH: the channel address is pinned to r3 so the display control can be addressed from it. */
-			register volatile u32 *dma __asm__("r3") = REG_DMA3;
+			volatile u32 *dma;
 
-			Dma_Set(BattlePres_CurtainTiles, (void *)0x06005020, 0x84000008, dma);
-			Dma_Set(BattlePres_CurtainTiles + 32, (void *)0x06005040, 0x84000008, dma);
-			Dma_Set(BattlePres_CurtainTiles + 64, (void *)0x06005060, 0x84000008, dma);
-			Dma_Set(BattlePres_CurtainTiles + 96, (void *)0x06005080, 0x84000008, dma);
-			Dma_Set(BattlePres_CurtainTiles + 128, (void *)0x060050a0, 0x84000008, dma);
-			Dma_Set(BattlePres_CurtainTiles + 160, (void *)0x060050c0, 0x84000008, dma);
-			Dma_Set(BattlePres_CurtainTiles + 192, (void *)0x060050e0, 0x84000008, dma);
+			Dma_Set(BattlePres_CurtainTiles, (void *)0x06005020, 0x84000008, REG_DMA3);
+			Dma_Set(BattlePres_CurtainTiles + 32, (void *)0x06005040, 0x84000008, REG_DMA3);
+			Dma_Set(BattlePres_CurtainTiles + 64, (void *)0x06005060, 0x84000008, REG_DMA3);
+			Dma_Set(BattlePres_CurtainTiles + 96, (void *)0x06005080, 0x84000008, REG_DMA3);
+			Dma_Set(BattlePres_CurtainTiles + 128, (void *)0x060050a0, 0x84000008, REG_DMA3);
+			Dma_Set(BattlePres_CurtainTiles + 160, (void *)0x060050c0, 0x84000008, REG_DMA3);
+			Dma_Set(BattlePres_CurtainTiles + 192, (void *)0x060050e0, 0x84000008, REG_DMA3);
+			dma = REG_DMA3;
+			/* FAKEMATCH: introducing the pointer after the transfers avoids a preserved-register copy; the volatile output orders its subtraction before the control value, differing by two instructions without volatile. */
+			asm volatile("" : "+l"(dma));
 			((struct DisplayRegisters *)((u8 *)dma - 212))->control = 1;
 		}
 		work->second_mode = 1;

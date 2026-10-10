@@ -113,6 +113,10 @@ void FourObjectMotion_UpdateBottomRow(void)
             u32 y = (241u << 17) - ((u32)(s32)work->vertical_origins[i] << 16);
             s32 phase;
             s32 limit;
+            /* Ordinary s32/s16 locals, a direct field test, an earlier limit
+             * initializer and an inline sign/limit helper all differ 81 in
+             * EN (119 native, 118 built), changing the outer high-register
+             * allocation as well as this read. */
             /* FAKEMATCH: the row's second read lives in r2, as the native allocates it. */
             register s32 py asm("r2");
 

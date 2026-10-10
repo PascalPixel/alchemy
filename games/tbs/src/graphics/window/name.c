@@ -419,12 +419,12 @@ remove_character:
                     UiText_DrawPaddedLabel((s32)label, saved);
                     WaitFrames(10);
                 } else {
-                    /* FAKEMATCH: needed to match: removing both copy pins leaves 14 aligned differences across 9 rows, with the same 0x494-byte English extent (506 instructions). Destination/source/index become r1/r0/r2 instead of r2/r1/r0; the first load is ldr r1,[sp,#20] instead of ldr r2,[sp,#20]. Declaring the index first, indexed copying and incrementing before the copy all leave 14 differences; removing only this destination pin leaves 12. */
-                    register u8 *dst asm("r2") = saved;
-                    /* FAKEMATCH: needed to match: the source lives in r1 in this international branch; the combined pin-free copy above first loads it into r0 rather than r1. */
-                    register u8 *src asm("r1") = input;
+                    u8 *dst = saved;
+                    u8 *src = input;
                     s32 i = 0;
 
+                    /* FAKEMATCH: keep both copy pointers live at the loop boundary; without it, destination/source/index use r1/r0/r2 instead of r2/r1/r0 (14 instructions differ). */
+                    asm("" : "+r"(dst), "+r"(src));
                     while (i < 15) {
                         *dst++ = *src++;
                         i++;
@@ -684,12 +684,12 @@ remove_character:
                     UiText_DrawString(saved, (s32)label, 0, 0);
                     WaitFrames(10);
                 } else {
-                    /* FAKEMATCH: needed to match: removing both copy pins leaves 14 aligned differences across 9 rows, with the same 0x5e0-byte Japanese extent (663 instructions). Destination/source/index become r2/r0/r1 instead of r1/r2/r0; the first load is ldr r2,[sp,#28] instead of ldr r1,[sp,#28]. Incrementing before the copy also leaves 14 differences; removing only this destination pin leaves 12. */
-                    register u8 *dst asm("r1") = saved;
-                    /* FAKEMATCH: needed to match: the source lives in r2 in this Japanese branch; the combined pin-free copy above first loads it into r0 rather than r2. */
-                    register u8 *src asm("r2") = input;
+                    u8 *src = input;
+                    u8 *dst = saved;
                     s32 i = 0;
 
+                    /* FAKEMATCH: keep both copy pointers live at the loop boundary; declaring destination first swaps destination/index from r1/r0 to r0/r1 (10 instructions differ). */
+                    asm("" : "+r"(dst), "+r"(src));
                     while (i < 15) {
                         *dst++ = *src++;
                         i++;

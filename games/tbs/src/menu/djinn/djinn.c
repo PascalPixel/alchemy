@@ -646,12 +646,13 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     }
     state->selected_column[mode] = x;
     if (sel != -1) {
-        /* FAKEMATCH: entry fixed in r2 keeps regmove from tying the owner mask's and to entry where it dies; the native ties it to the 0xf00 register r3 (differ 10 -> 0) */
-        register u32 entry asm("r2");
+        u32 entry;
         state->pair_entries[mode] = entry = lists->list.ids[x][sel];
         state->pair_index[mode] = entry % 32;
         state->pair_element[mode] = DJINN_ELEMENT(entry);
         state->pair_owner[mode] = DJINN_OWNER(entry);
+        /* FAKEMATCH: keep entry live through owner extraction and pass result through the boundary; an input alone exchanges the final index shift and table-base copy (2 instructions differ), while no boundary ties the owner mask to entry (8 differ). */
+        asm("" : "+r"(result) : "r"(entry));
     }
     state->selection[mode] = x + y * 10;
     return result;

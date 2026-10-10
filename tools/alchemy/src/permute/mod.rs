@@ -294,6 +294,11 @@ impl Job {
                 }
             }
         }
+        // Moving a draft must not move its quoted-header search root.
+        // GCC's -I- makes this prefix quote-only and disables the scratch
+        // source directory; the build's ordinary include paths follow it.
+        let source_directory = root().join(problem.draft.parent().unwrap_or_else(|| Path::new("")));
+        steps[0].splice(1..1, [format!("-I{}", source_directory.display()), "-I-".into()]);
         Ok(Job { candidate, object, steps })
     }
 
@@ -1364,6 +1369,38 @@ mod tests {
         assert!(compiler(&arm));
         std::fs::write(&arm.candidate, "int F(int x) { return x + 1; }\n").unwrap();
         assert!(arm.preprocess().unwrap().contains("return x + 1"));
+    }
+
+    #[test]
+    fn relocated_jobs_keep_the_drafts_quoted_header_search() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let directory = work.path().join("drafts");
+        std::fs::create_dir(&directory).unwrap();
+        std::fs::write(work.path().join("value.h"), "#define VALUE 37\n").unwrap();
+        std::fs::write(directory.join("local.h"), "#include \"../value.h\"\n").unwrap();
+        // An angle include still searches the build's paths, not the draft's.
+        std::fs::write(directory.join("types.h"), "#error wrong angle-header root\n").unwrap();
+        let draft = directory.join("sample.c");
+        let source = "#include \"local.h\"\n#include <types.h>\nu32 F(void) { return VALUE; }\n";
+        std::fs::write(&draft, source).unwrap();
+        for arm in [false, true] {
+            let mut problem = test_problem(&draft, source, Vec::new(), Some("F"));
+            problem.arm = arm;
+            let scratch = work.path().join(if arm { "arm" } else { "thumb" });
+            let job = Job::new(&problem, &scratch).unwrap();
+            std::fs::write(scratch.join("local.h"), "#error wrong scratch root\n").unwrap();
+            job.compile(source).unwrap();
+            assert!(job.preprocess().unwrap().contains("return 37;"));
+            let expected_object = job.object.with_file_name("original.o");
+            let steps = if arm {
+                crate::diff::arm_steps(problem.target, &draft, &expected_object).unwrap()
+            } else {
+                crate::diff::draft_steps(problem.target, &draft, &expected_object).unwrap()
+            };
+            for step in &steps { crate::process::run(step, root()).unwrap(); }
+            assert_eq!(crate::diff::disassemble(&job.object, Some("F")).unwrap(), crate::diff::disassemble(&expected_object, Some("F")).unwrap());
+        }
     }
 
     #[test]

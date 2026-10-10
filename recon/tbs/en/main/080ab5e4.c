@@ -8,7 +8,10 @@
  * state/lists inputs retain 2. Separate load/store assignments differ 33.
  * A one-pass block around the chained entry assignment reaches zero in
  * English, but adds a second steering device to replace one pin; it is
- * not adopted. Linked source keeps its binding pending byte identity. */
+ * not adopted. Explicit row pointers (initialized or assigned) and a
+ * separate selected index differ 39; reversed row subscripting and byte
+ * address forms differ 4. Linked source keeps its binding pending byte
+ * identity. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

@@ -1,7 +1,12 @@
-/* Pin-free Menu_ResolveSelectedAction trial: 316 native/built,
- * 310 common, differ 12. Five pane-row store instructions exchange
- * r2/r3 and the cancel result copies r0 instead of r3. An unsigned
- * cancelled and a one-pass result copy leave the same residual.
+/* Pin-free Menu_ResolveSelectedAction trial: international 316 native/built,
+ * 315 common; Japanese 320 native/built, 319 common; differ 2 in all six.
+ * A generic output barrier after cancelled = -1 restores the pane-row
+ * store registers. The cancel result still copies r0 instead of r3.
+ * Generic, early-clobber and chosen-input constraints retain 2, as does
+ * reversing the comparison. Moving the barrier inside the taken branch
+ * restores 12. Assigning literal -1 adds two instructions and differs 16.
+ * Earlier ordinary-variable trials differed 12. An unsigned
+ * cancelled and a one-pass result copy left that same residual.
  * A 3-minute search (seed 149, exact stack/branches) improved weighted
  * 45 to 35 by a message-id temporary, still differ 12. The trial also
  * differs 12 when cancelled uses a value-preserving narrow
@@ -59,7 +64,6 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
         switch (state) {
         case 0:
         {
-            /* FAKEMATCH: CSE copies the equal call result from r0; the reference keeps the cancellation constant in r3. */
             s32 cancelled;
             s32 chosen;
 
@@ -67,6 +71,8 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
             ItemMenu_DrawMsg(0, (s32)MsgPsynergyChooseOwner);
             chosen = PsynergyMenu_SelectPartySlot(0);
             cancelled = -1;
+            /* FAKEMATCH: keep the cancellation value's definition separate from the call result; without this boundary, pane-row stores exchange r2/r3 (12 instructions differ). */
+            asm("" : "+r"(cancelled));
             if (chosen == cancelled) {
                 done = 1;
                 result = cancelled;

@@ -3,12 +3,11 @@
 #include "glyph.h"
 #include "text_font.h"
 
-/* ARM draft: JA/EN differ 6; DE/ES/FR/IT differ 10. The tail matches.
+/* ARM draft: JA differs 6; EN differs 4; DE/ES/FR/IT differ 10. The tail matches.
    Remaining sched2 ordering, with registers and spill offsets already correct:
    JA: height spill after the character CMP; width spill after x++; color spill
        after the accent CMP.
-   EN: y copy before SUB sp; x copy immediately after the font load; font-width
-       spill after the y CMP.
+   EN: y copy before SUB sp; x copy immediately after the font load.
    DE/ES/FR/IT: coordinate copies before SUB sp and window spill; height spill
        after the font-selection CMP; source spill after color1's ADD;
        font-width spill after the y CMP. */
@@ -215,6 +214,9 @@ font_done:
 			u32 color1;
 			u32 color3;
 			u32 font_width;
+#if defined(TBS_EDITION_EN)
+			u32 raw_width;
+#endif
 			u32 packed;
 			u32 color;
 			u8 *vram;
@@ -232,7 +234,17 @@ font_done:
 				/* FAKEMATCH: the boundary orders the table load, row initialization and byte load. */
 				do { } while (0);
 				row = 0;
-				font_width = glyph_widths[index];
+				/* FAKEMATCH: keep the byte load separate from its spilled copy
+				   through combine. The early clipping test and byte normalization
+				   place CMP before STR in sched2 (EN differ 6 -> 4); the repeated
+				   assignment below is removed by reload CSE. */
+				raw_width = glyph_widths[index];
+				do
+				{
+					if (y > 31)
+						raw_width = glyph_widths[index];
+				} while (0);
+				font_width = (raw_width << 24) >> 24;
 			}
 #else
 			row = 0;
@@ -240,6 +252,9 @@ font_done:
 #endif
 			if (y > 31)
 				goto font_done;
+#if defined(TBS_EDITION_EN)
+			font_width = raw_width;
+#endif
 			vram = (u8 *)0x06002500;
 			while (1)
 			{

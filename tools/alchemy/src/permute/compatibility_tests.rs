@@ -18,7 +18,7 @@ fn forced_randomizer_seed_search_reaches_compatibility_candidate() {
     reference.compile(&first[5].replace("\\n", "\n")).unwrap();
     problem.listing = crate::diff::disassemble(&reference.object, Some("target")).unwrap();
     problem.listing_rows = Some(score::disassemble(&reference.object, Some("target")).unwrap());
-    let arguments = [draft.to_str().unwrap(), "--function", "target", "--jobs", "1", "--iterations", "1", "--seed", "987", "--rng-seed", first[1]].map(str::to_string);
+    let arguments = [draft.to_str().unwrap(), "--function", "target", "--jobs", "1", "--iterations", "1", "--search-seed", "987", "--seed", first[1]].map(str::to_string);
     let options = parse_options(&arguments).unwrap();
     let mut state = perm::expand(&problem.nodes, None).unwrap();
     prepare(&reference, &mut state, "target").unwrap();
@@ -83,6 +83,7 @@ fn compatibility_search_tests_compile_reach_the_target_and_keep_threaded_jobs_is
                     jobs: c[2].parse().unwrap(),
                     seed: 1,
                     rng_seed: None,
+                    perm_seed: None,
                     function: Some(c[1].into()),
                     arm: false,
                     iterations: Some(1000),

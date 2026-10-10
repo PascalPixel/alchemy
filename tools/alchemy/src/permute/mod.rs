@@ -113,6 +113,7 @@ struct Options {
     jobs: usize,
     seed: u64,
     rng_seed: Option<String>,
+    perm_seed: Option<u64>,
     function: Option<String>,
     iterations: Option<u64>,
     arm: bool,
@@ -131,6 +132,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut jobs = std::thread::available_parallelism().map_or(1, |n| n.get().saturating_sub(2).max(1));
     let mut seed = 1;
     let mut rng_seed = None;
+    let mut perm_seed = None;
     let mut function = None;
     let mut iterations = None;
     let mut arm = false;
@@ -157,13 +159,27 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
             }
             "--seed" => {
                 index += 1;
-                seed = value(index)?.parse().map_err(|_| format!("--seed: a number\n{USAGE}"))?;
+                let text = value(index)?;
+                let parts: Vec<_> = text.split(',').collect();
+                let (manual, random) = match parts.as_slice() {
+                    [random] => (0, *random),
+                    [manual, random] => (manual.trim().parse::<u64>().map_err(|_| "--seed: PERM must be a nonnegative integer")?, *random),
+                    _ => return Err("--seed: expected RNG or PERM,RNG".into()),
+                };
+                Rng::from_decimal(random).map_err(|e| format!("--seed: {e}"))?;
+                perm_seed = Some(manual);
+                rng_seed = (!random.trim().trim_start_matches(['-', '+']).bytes().all(|b| b == b'0')).then(|| random.to_string());
+            }
+            "--search-seed" => {
+                index += 1;
+                seed = value(index)?.parse().map_err(|_| format!("--search-seed: a number\n{USAGE}"))?;
             }
             "--rng-seed" => {
                 index += 1;
                 let text = value(index)?;
                 Rng::from_decimal(&text).map_err(|e| format!("--rng-seed: {e}\n{USAGE}"))?;
                 rng_seed = Some(text);
+                perm_seed = Some(0);
             }
             "--iterations" => {
                 index += 1;
@@ -219,7 +235,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         None => decomp_target(Some(&format!("{game}-en")))?,
     };
     if !minutes.is_finite() || minutes < 0.0 { return Err("--minutes must be finite and nonnegative".into()); }
-    Ok(Options { draft, addresses, game, target, minutes, jobs, seed, rng_seed, function, iterations, arm, heat, prefix, score_options, keep_prob, stop_on_zero })
+    Ok(Options { draft, addresses, game, target, minutes, jobs, seed, rng_seed, perm_seed, function, iterations, arm, heat, prefix, score_options, keep_prob, stop_on_zero })
 }
 
 /// One job's scratch: its candidate file and alchemy diff's steps for it.
@@ -565,7 +581,7 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
     let base_unnatural = problem.unnatural(&base_state);
     let base = Found { score: base_score, unnatural: base_unnatural, text: base_text, steps: Vec::new(), expanded: base_state.expanded.clone(), job: 0, iteration: 0 };
     println!(
-        "{}: listing {} instructions; draft {}; {} job(s), {}, seed {}; rewrites: {}",
+        "{}: listing {} instructions; draft {}; {} job(s), {}, search seed {}; rewrites: {}",
         problem.stem,
         problem.listing.len(),
         base.score.summary_with(problem.prefix),
@@ -581,6 +597,9 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
             _ => "PERM choices",
         }
     );
+    if let Some(seed) = options.perm_seed {
+        println!("forced PERM seed {seed}, RNG seed {}", options.rng_seed.as_deref().unwrap_or("0 (fresh seeds on restart)"));
+    }
     let started = Instant::now();
     let deadline = options.iterations.is_none().then(|| started + Duration::from_secs_f64(options.minutes * 60.0));
     let found = search(&problem, &base_state, &base, random, options, deadline, &scratch, started)?;
@@ -628,7 +647,11 @@ fn search(
     let found = Mutex::new(Vec::new());
     let failures = Mutex::new(Vec::new());
     let compiled = std::sync::atomic::AtomicU64::new(0);
-    let seeds = Mutex::new(perm::Seeds::new(perm::count(&problem.nodes)?, random, options.seed));
+    let count = perm::count(&problem.nodes)?;
+    if options.perm_seed.is_some_and(|seed| seed >= count) {
+        return Err(format!("--seed: PERM seed must be in 0..{count}"));
+    }
+    let seeds = Mutex::new(perm::Seeds::new(count, random, options.seed));
     let running = std::sync::atomic::AtomicUsize::new(options.jobs);
     std::thread::scope(|scope| {
         // Each minute, the trajectory notes where the search stands.
@@ -658,10 +681,8 @@ fn search(
                         return;
                     }
                 };
-                let mut rng = match &options.rng_seed {
-                    Some(seed) => Rng::from_decimal(seed).expect("validated randomizer seed"),
-                    None => Rng::new(options.seed.wrapping_mul(1_000_003).wrapping_add(job_index as u64)),
-                };
+                let forced_rng = options.rng_seed.as_ref().map(|seed| Rng::from_decimal(seed).expect("validated randomizer seed"));
+                let mut walk = rng::WalkRng::new(options.seed.wrapping_mul(1_000_003).wrapping_add(job_index as u64), forced_rng);
                 let mut env = base_state.parsed.as_ref().map(|(_, _, function)| Env::new(&problem.unit, function));
                 // Keyed by a hash of the text: a long run sees many thousands.
                 let mut cache: HashMap<SourceHash, Option<Score>> = HashMap::new();
@@ -675,9 +696,9 @@ fn search(
                     && options.iterations.is_none_or(|limit| iteration < limit)
                     && deadline.is_none_or(|deadline| Instant::now() < deadline)
                 {
-                    let seed = if options.rng_seed.is_some() {
+                    let seed = if let Some(seed) = options.perm_seed {
                         if !random && iteration != 0 { break; }
-                        0
+                        seed
                     } else {
                         let Some(seed) = seeds.lock().unwrap().next() else { break };
                         seed
@@ -685,12 +706,9 @@ fn search(
                     iteration += 1;
                     // 0.6 regardless of whether its score improved. A failed
                     // compile or a zero score starts a fresh candidate.
-                    let keep = if options.rng_seed.is_some() {
-                        iteration > 1
-                    } else {
-                        random && last_compiled && current.1.score.weighted != 0
-                            && rng.random() < options.keep_prob
-                    };
+                    let last_score = (iteration > 1).then_some(if last_compiled { current.1.score.weighted } else { u64::MAX });
+                    let keep = walk.keep(random, last_score, options.keep_prob);
+                    let rng = &mut walk.mutation;
                     let mut state = if !keep {
                         match perm::expand_seed(&problem.nodes, seed) {
                             Ok(mut expanded) => {
@@ -712,12 +730,12 @@ fn search(
                     };
                     if random {
                         if let Some(full) = &mut state.full {
-                            if let Some(step) = randomize::mutate(full, problem.function.as_deref().unwrap(), &mut rng) { state.steps.push(step); }
+                            if let Some(step) = randomize::mutate(full, problem.function.as_deref().unwrap(), rng) { state.steps.push(step); }
                         } else if let (Some((_, _, function)), Some(env)) = (state.parsed.as_mut(), env.as_mut()) {
                             env.refresh(function);
                             let step = match &problem.aim {
-                                Some(aim) => aim::aimed(function, env, &mut rng, &Kind::ALL, aim),
-                                None => mutate_with(function, env, &mut rng, &Kind::ALL),
+                                Some(aim) => aim::aimed(function, env, rng, &Kind::ALL, aim),
+                                None => mutate_with(function, env, rng, &Kind::ALL),
                             };
                             if let Some(step) = step {
                                 state.steps.push(step);
@@ -1236,8 +1254,16 @@ mod tests {
         assert_eq!(parse_options(&args(&["08000000.c", "--algorithm", "levenshtein"])).unwrap().score_options.algorithm, score::Algorithm::Levenshtein);
         assert!(parse_options(&args(&["08000000.c", "--algorithm", "lcs"])).is_err());
         assert_eq!(parsed.target.id.as_str(), "tbs-en");
-        let parsed = parse_options(&args(&["x.c", "08000000,08000010", "--edition", "tla-de", "--minutes", "0.5", "--jobs", "3", "--seed", "9"])).unwrap();
+        let parsed = parse_options(&args(&["x.c", "08000000,08000010", "--edition", "tla-de", "--minutes", "0.5", "--jobs", "3", "--search-seed", "9"])).unwrap();
         assert_eq!((parsed.addresses.len(), parsed.game, parsed.jobs, parsed.seed, parsed.minutes), (2, "tla", 3, 9, 0.5));
+        for (text, manual, forced) in [("9", 0, Some("9")), ("1,-99999999999999999999", 1, Some("-99999999999999999999")), ("2,-000", 2, None)] {
+            let parsed = parse_options(&args(&["08000000.c", "--seed", text])).unwrap();
+            assert_eq!(parsed.perm_seed, Some(manual));
+            assert_eq!(parsed.rng_seed.as_deref(), forced);
+        }
+        for text in ["1,2,3", "bad", "1,", "-1,2"] {
+            assert!(parse_options(&args(&["08000000.c", "--seed", text])).is_err());
+        }
         assert!(parse_options(&args(&["x.c"])).is_err());
         assert!(parse_options(&args(&["recon/tbs/en/overlays/resource_383_c_020048c8.c"])).is_err());
         assert!(parse_options(&args(&["08000000.c", "--bogus"])).is_err());
@@ -1587,6 +1613,7 @@ mod tests {
             jobs: 1,
             seed: 1,
             rng_seed: None,
+            perm_seed: None,
             function: function.map(str::to_string),
             arm: false,
             iterations: Some(2),
@@ -1810,6 +1837,7 @@ mod tests {
             jobs: 2,
             seed: 1,
             rng_seed: None,
+            perm_seed: None,
             function: None,
             arm: false,
             iterations: Some(8),
@@ -1822,6 +1850,11 @@ mod tests {
         let found = search(&problem, &base_state, &base, false, &options, None, &work.path().join("run"), Instant::now()).unwrap();
         assert_eq!((found[0].score.weighted, found[0].score.differ), (0, 0));
         assert!(found[0].text.contains("return a - b;") && !perm::has_macros(&found[0].text));
+        // nonrandom sources are evaluated only once, despite the limit of 8.
+        let args = [options.draft.to_str().unwrap(), "--seed", "1,-99999999999999999999", "--jobs", "1", "--iterations", "8"].map(str::to_string);
+        let forced = parse_options(&args).unwrap();
+        let found = search(&problem, &base_state, &base, false, &forced, None, &work.path().join("forced"), Instant::now()).unwrap();
+        assert_eq!((found[0].score.weighted, found[0].iteration), (0, 1));
     }
 
     #[test]

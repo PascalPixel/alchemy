@@ -13,6 +13,10 @@ with small C probes, backend source and native bytes. The recommendation remains
 July-era GCC for Thumb and stock 2.95.2 for the demonstrated ARM routines.
 No production source, compiler, option, route, rule or credit changed.
 
+The later [release and history study](vershist.md) finds that 2.95, 2.95.1 and
+2.95.2.1 also match those ARM cases. The positive ARM evidence identifies an early
+2.95 family, not uniquely 2.95.2; this frozen Thumb trial still tests 2.95.2.
+
 **Frozen trial.** The source state is glyph `7bad69deed` (only the broad study's
 report differs from its source baseline). The compiler is the untouched stock
 GCC 2.95.2 `thumb-coff` cc1 from the earlier pinned 32-bit build, SHA-256

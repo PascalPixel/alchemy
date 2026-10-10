@@ -4,7 +4,7 @@ Completed experiment matrix; recommendation, not a production toolchain change.
 
 The evidence narrows the search to the mid-2000 GCC 2.96 Thumb family, the
 older ARM/Thumb lineage represented by agbcc for third-party libraries, and
-stock GCC 2.95.2 for the two current compiler-shaped ARM routines. It does
+early stock GCC 2.95 releases for the two compiler-shaped ARM routines. It does
 not establish one unmodified GNU compiler that explains both games. A
 single Makefile can express these choices without function-specific routing.
 No production compiler, option, rule or game source has changed in this study.
@@ -13,6 +13,12 @@ The subsequent [2.95.2 Thumb source-rewrite trial](thumb295.md) changes the C
 in twelve modules and checks an independent short-leaf stack pattern. It finds
 no complete module match and a concrete backend reason to retain July-era GCC
 for Thumb; the positive 2.95.2 ARM result remains unchanged.
+
+The [expanded release and commit-history study](vershist.md) closes the missing
+point-release and Red Hat package tests. It finds the same ARM matches with
+2.95, 2.95.1 and 2.95.2.1, then identifies the January 2000 CSE change that breaks the
+glyph cases. A separate August 2000 alias-analysis change marks a local Thumb
+compatibility boundary. Fresh builds reproduce both transitions.
 
 This study reopens the previous compiler verdict. Compatibility with our C
 is measured separately from historical provenance: much of that C was shaped

@@ -250,7 +250,9 @@ fn permissive_input(input: &mut String, prefix: &str) -> Result<HashMap<String, 
             Tok::Ident(s) if matches!(s.as_str(), "struct" | "union") => record = true,
             Tok::Punct("{") => { braces.push(record); record = false; },
             Tok::Punct("}") => { braces.pop(); },
-            Tok::Punct(";") if (braces.is_empty() || braces.last() == Some(&true)) && (i == 0 || matches!(tokens[i - 1].tok, Tok::Punct(";" | "{"))) => patches.push((token.start, token.end, String::new())),
+            // Empty declarations never occur inside a for header. A struct
+            // cast in an enclosing condition can also set the record hint.
+            Tok::Punct(";") if parentheses == 0 && (braces.is_empty() || braces.last() == Some(&true)) && (i == 0 || matches!(tokens[i - 1].tok, Tok::Punct(";" | "{"))) => patches.push((token.start, token.end, String::new())),
             Tok::Punct(":") if tokens.get(i + 1).is_some_and(|t| t.tok == Tok::Punct("}")) => patches.push((token.end, token.end, ";".into())),
             Tok::Ident(s) if s == "__int128" => { patches.push((token.start, token.end, format!("{prefix}int128"))); int128 = true; },
             Tok::Ident(s) if s == "__builtin_offsetof" => return Err("__builtin_offsetof is not supported by the C parser".into()),
@@ -336,10 +338,10 @@ fn string_literal(strings: &[String]) -> Node {
 }
 
 fn parse_input(input: String) -> Result<driver::Parse> {
-    driver::parse_preprocessed(&driver::Config::with_gcc(), input).map_err(|e| format!("C parse error at {}:{}: expected {}", e.line, e.column, {
+    driver::parse_preprocessed(&driver::Config::with_gcc(), input).map_err(|e| format!("C parse error at {}:{}: expected {}\n    {}", e.line, e.column, {
         let mut expected: Vec<_> = e.expected.iter().copied().collect();
         expected.sort(); expected.join(", ")
-    }))
+    }, e.source.lines().nth(e.line.saturating_sub(1)).unwrap_or("<end of input>").trim()))
 }
 
 /// `sizeof((T) +x)` (likewise -, * and &). Preserve that observable behavior,

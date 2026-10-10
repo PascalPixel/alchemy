@@ -576,22 +576,23 @@ u32 SaveState_BuildSummaryHeader(void)
     }
     summary->has_flag_20 = GameFlag_TestFar(32) != 0;
     {
-        /* FAKEMATCH: keeps the bound in r1 (5 of 185 rows differ without).
-         * Removing this pin and the barrier below together leaves only the
-         * movs r1, #242 / frame ldr swapped (2 aligned instructions differ).
-         * A const frame pointer, early bound initializer and volatile frame
-         * read leave that swap, as does an unsigned-long field view;
-         * a literal loop bound differs by 11. A one-pass block around
-         * frames = *frame keeps the aligned difference at 2, but issues
-         * the GameFlagBytes load between the frame load and movs. Candidate:
-         * ordinary s32 n with the empty asm statement below deleted. */
-        register s32 n asm("r1");
+        s32 n;
         u32 *frame = &gGameState.build_stamp;
         u32 frames;
 
         n = 242;
-        /* FAKEMATCH: empty asm barrier: issues the bound's first half before the frame load (2 of 185 rows differ without) */
-        asm("" : "+r"(n) : "r"(frame));
+        /* FAKEMATCH: the one-pass null arm and duplicate frame read end
+         * CSE with the bound constant ahead of the frame load. Folding
+         * the arm reverses two rows; the conditional and duplicate read
+         * disappear, preserving all 174 instructions in every edition. */
+        if (!frame) {
+            do {
+                n = 242;
+            } while (0);
+        } else {
+            n = 242;
+            frames = *frame;
+        }
         frames = *frame;
         word = GameFlagBytes;
         i = 0;

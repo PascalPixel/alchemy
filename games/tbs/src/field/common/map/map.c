@@ -630,8 +630,14 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destinati
     u32 end = 0xffff;
     u32 test = source;
 
-    /* FAKEMATCH: compares an ip copy of the entry and keeps the entry itself in r0. */
-    __asm__("" : "+r"(test));
+    /* FAKEMATCH: the conditional cancelling updates end CSE before the
+     * comparison, preserving its ip copy while source stays in r0. Both
+     * updates disappear; removing them loses the copy (53 -> 52 English
+     * instructions, five rows differ). */
+    if (record) {
+        source ^= test;
+        source ^= test;
+    }
     if (test != end) {
         u32 stop = end;
         s16 *args = (s16 *)(command + 1);

@@ -67,12 +67,17 @@ Manual choices are enumerated without repeating seeds, subject to the time
 or iteration limit. With a single base
 source randomization is automatic; otherwise PERM_RANDOMIZE enables it.
 Random runs keep the preceding candidate with --keep-prob (default 0.6),
-regardless of improvement, restarting after failure or zero. --stop-on-zero
-ends on weighted zero. After the search, each best candidate is
+regardless of improvement, restarting after failure or an instruction match.
+--stop-on-zero requires both weighted zero and differ zero. Equal weighted
+scores are ranked by differ; output deduplication retains stack offsets and
+branch destinations and trailing nops even when scoring ignores them.
+An exact initial expansion is saved even with --better-only; the output
+threshold still applies. A forced seed's candidate is evaluated as requested.
+After the search, each best candidate is
 minimized: its rewrites are undone one at a time, last first, and each
-removal that leaves the weighted score no higher is kept. Writes
-out/permute/STEM/best-N.c (best first), its remaining rewrites in its
-header, and best-N.diff, a unified diff against the draft file that
+removal that leaves the weighted score, then differ, no higher is kept. Writes
+out/permute/STEM/best-N.c (best first), its remaining rewrites in
+best-N.txt, and best-N.diff, a unified diff against the draft file that
 `patch -p0` applies from the checkout: PERM macros become their chosen
 alternatives as the draft writes them, and the rewrites replace only the
 draft lines they change (or the whole function as printed, when they do not
@@ -99,8 +104,10 @@ instructions match from the start first, then by weighted score.
 --algorithm selects difflib (default) or Levenshtein alignment.
 Qualifying candidates are saved immediately in output-SCORE-N directories
 with source.c, score.txt and diff.txt, in addition to minimized best-N files.
---better-only excludes ties with the draft; --best-only excludes scores above
-the best already saved. --only-if-below N requires a score strictly below N.
+--better-only requires an improvement over the draft; --best-only excludes
+candidates ranked below the best already saved. Both follow --prefix when
+enabled, then weighted score and differ. --only-if-below N requires a weighted
+score strictly below N.
 --no-context-output trims source.c before the first target function occurrence.
 --overlay resource_XXX with --function NAME compares an overlay's linked
 function against the reference ROM's decoded stream, as alchemy diff does.
@@ -405,7 +412,7 @@ impl Problem {
         if let Some(listing) = &self.listing_rows {
             score::weighted(listing, &candidate, self.score_options, &mut score);
         }
-        Ok((score, score::assembly_key(&candidate, self.score_options)))
+        Ok((score, score::strict_assembly_key(&candidate)))
     }
 
 }
@@ -531,6 +538,27 @@ fn prepare(job: &Job, expanded: &mut Expanded, target: &str) -> Result<(), Strin
     Ok(())
 }
 
+/// The body engine also needs the selected edition's translation unit.
+/// Keep its source scopes and permutation markers; strip cpp line markers
+/// so heat and printed source use the same line numbers.
+fn heat_source(expanded: &Expanded, preprocessed: &str) -> String {
+    let mut text = String::new();
+    for line in expanded.comment_markers(preprocessed).lines() {
+        let directive = line.trim_start().strip_prefix('#').map(str::trim_start);
+        if !directive.is_some_and(|s| s.starts_with("ident") || s.starts_with("line") || s.starts_with(|c: char| c.is_ascii_digit())) {
+            text.push_str(line);
+        }
+        text.push('\n');
+    }
+    text
+}
+
+fn prepare_heat(job: &Job, expanded: &mut Expanded) -> Result<(), String> {
+    std::fs::write(&job.candidate, expanded.preprocess_text()).map_err(|e| e.to_string())?;
+    expanded.text = heat_source(expanded, &job.preprocess()?);
+    Ok(())
+}
+
 /// Set by the first SIGINT or SIGTERM: the search and the minimizer stop
 /// where they stand, the best so far is written and the scratch removed.
 /// A second signal ends the process at once; the next run sweeps its scratch.
@@ -592,6 +620,8 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
     if !options.heat {
         original.unit = Some(Arc::new(full_unit));
         problem.symbol = Some(target);
+    } else {
+        original.text = heat_source(&original, &preprocessed);
     }
     let base_state = problem.state(original);
     let base_text = problem.source(&base_state);
@@ -640,10 +670,23 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
     }
     let started = Instant::now();
     let deadline = options.iterations.is_none().then(|| started + Duration::from_secs_f64(options.minutes * 60.0));
-    let base_hash = score::assembly_key(&score::disassemble(&setup.object, problem.symbol.as_deref())?, problem.score_options);
-    let found = search(&problem, &base_state, &base, random, options, deadline, &scratch, started, Some((output, base_hash)))?;
-    let found: Vec<_> = found.into_iter().filter(|entry| (!options.output.better_only || entry.score.weighted < base.score.weighted)
+    let base_hash = score::strict_assembly_key(&score::disassemble(&setup.object, problem.symbol.as_deref())?);
+    // Seed zero is the expansion already compiled above. Retain it when
+    // it matches: no later candidate can strictly improve a zero score.
+    // An explicit nonzero choice or mutation seed still gets its own run.
+    let initial_match = base.score.is_zero() && options.perm_seed.is_none_or(|seed| seed == 0) && options.rng_seed.is_none();
+    let save_initial = initial_match && options.output.threshold.is_none_or(|limit| 0 < limit);
+    if initial_match {
+        println!("initial expansion is an exact instruction match");
+    }
+    if save_initial {
+        output::write(output, 0, &base.text, &base.text, problem.function.as_deref(), options.output)?;
+    }
+    let found = if initial_match && options.stop_on_zero { Vec::new() }
+        else { search(&problem, &base_state, &base, random, options, deadline, &scratch, started, Some((output, base_hash)))? };
+    let mut found: Vec<_> = found.into_iter().filter(|entry| (!options.output.better_only || entry.score.rank(problem.prefix) < base.score.rank(problem.prefix))
         && options.output.threshold.is_none_or(|limit| i128::from(entry.score.weighted) < limit)).collect();
+    if save_initial { found.insert(0, base.clone()); }
     let best = minimize_best(&problem, &base, &found, &scratch.join("minimize"))?;
     write_best(&problem, &base, &best, output)
 }
@@ -652,7 +695,7 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
 /// with -g, its rows charged to lines as `alchemy diff --heat` charges them.
 fn aim_at(problem: &Problem, setup: &Job, base_state: &State, base_text: &str) -> Result<Option<aim::Aim>, String> {
     let Some((_, _, function)) = &base_state.parsed else { return Ok(None) };
-    let printed = function.print();
+    let printed = base_state.expanded.restore(&function.print());
     let Some(at) = base_text.find(printed.trim_end()) else {
         println!("heat: the printed function is not in the compiled text; rewrites are not aimed");
         return Ok(None);
@@ -684,7 +727,7 @@ fn search(
     started: Instant,
     archive: Option<(&Path, SourceHash)>,
 ) -> Result<Vec<Found>, String> {
-    let archive_state = Mutex::new(archive.map(|(_, hash)| output::State::new(base.score.weighted, hash, options.output)));
+    let archive_state = Mutex::new(archive.map(|(_, hash)| output::State::new(&base.score, hash, options.output, problem.prefix)));
     let stop = AtomicBool::new(false);
     let global = Mutex::new((base.score.key(problem.prefix), base.score.differ));
     let found = Mutex::new(Vec::new());
@@ -729,7 +772,7 @@ fn search(
                 let mut walk = rng::WalkRng::new(options.seed.wrapping_mul(1_000_003).wrapping_add(job_index as u64), forced_rng);
                 let mut env = base_state.parsed.as_ref().map(|(_, _, function)| Env::new(&problem.unit, function));
                 // Keyed by a hash of the text: a long run sees many thousands.
-                let mut cache: HashMap<SourceHash, Option<Score>> = HashMap::new();
+                let mut cache: HashMap<SourceHash, Option<(Score, SourceHash)>> = HashMap::new();
                 let mut prepared = HashMap::new();
                 prepared.insert(base_state.expanded.key(), base_state.expanded.clone());
                 let (mut best, mut current) = ((base_state.clone(), base.clone()), (base_state.clone(), base.clone()));
@@ -749,18 +792,23 @@ fn search(
                     };
                     iteration += 1;
                     // 0.6 regardless of whether its score improved. A failed
-                    // compile or a zero score starts a fresh candidate.
-                    let last_score = (iteration > 1).then_some(if last_compiled { current.1.score.weighted } else { u64::MAX });
+                    // compile or an instruction match starts a fresh candidate.
+                    let last_score = (iteration > 1).then_some(if last_compiled { current.1.score.distance() } else { (u64::MAX, usize::MAX) });
                     let keep = walk.keep(random, last_score, options.keep_prob);
                     let rng = &mut walk.mutation;
                     let mut state = if !keep {
                         match perm::expand_seed(&problem.nodes, seed) {
                             Ok(mut expanded) => {
-                                if base_state.full.is_some() {
+                                if base_state.full.is_some() || options.heat {
                                     let key = expanded.key();
                                     if let Some(expanded) = prepared.get(&key) { problem.state_of(expanded.clone()) }
                                     else {
-                                        if prepare(&job, &mut expanded, problem.function.as_deref().unwrap()).is_err() { last_compiled = false; continue; }
+                                        let result = if options.heat {
+                                            prepare_heat(&job, &mut expanded)
+                                        } else {
+                                            prepare(&job, &mut expanded, problem.function.as_deref().unwrap())
+                                        };
+                                        if result.is_err() { last_compiled = false; continue; }
                                         let expanded = Arc::new(expanded);
                                         if prepared.len() < 128 { prepared.insert(key, expanded.clone()); }
                                         problem.state_of(expanded)
@@ -788,13 +836,10 @@ fn search(
                     }
                     let text = problem.source(&state);
                     let key = text_key(&text);
-                    let mut assembly_hash = None;
                     let result = match cache.get(&key) {
                         Some(result) => result.clone(),
                         None => {
-                            let evaluated = problem.evaluate_assembly(&job, &text).ok();
-                            assembly_hash = evaluated.as_ref().map(|(_, hash)| *hash);
-                            let result = evaluated.map(|(score, _)| score);
+                            let result = problem.evaluate_assembly(&job, &text).ok();
                             compiled.fetch_add(1, Ordering::Relaxed);
                             if cache.len() < 100_000 { cache.insert(key, result.clone()); }
                             result
@@ -803,15 +848,15 @@ fn search(
                     last_compiled = result.is_some();
                     // compilation fails. Score storage only tracks successes.
                     if options.rng_seed.is_some() { current.0 = state.clone(); }
-                    let Some(score) = result else { continue };
+                    let Some((score, assembly_hash)) = result else { continue };
                     if let Some((path, _)) = archive {
                         let mut shared = archive_state.lock().unwrap();
                         let policy = shared.as_mut().unwrap();
-                        if policy.accepts(score.weighted, assembly_hash, true) {
+                        if policy.accepts(&score, Some(assembly_hash), true) {
                             if let Err(error) = output::write(path, score.weighted, &text, &base.text, problem.function.as_deref(), options.output) {
                                 failures.lock().unwrap().push(error);
                                 stop.store(true, Ordering::Relaxed);
-                            } else { policy.record(score.weighted, assembly_hash.unwrap()); }
+                            } else { policy.record(&score, assembly_hash); }
                         }
                     }
                     let candidate = Found {
@@ -836,7 +881,7 @@ fn search(
                             );
                         }
                     }
-                    if candidate.score.weighted == 0 && options.stop_on_zero {
+                    if candidate.score.is_zero() && options.stop_on_zero {
                         stop.store(true, Ordering::Relaxed);
                     }
                     current = (state, candidate);
@@ -1121,20 +1166,17 @@ struct Best {
 
 /// The candidate in the draft's spelling: PERM macros at its choices as the
 /// draft writes them, and its rewrites carried into the draft's lines, kept
-/// only when that text scores exactly as the printed candidate does.
-fn respell(problem: &Problem, job: &Job, found: &Found, cache: &mut HashMap<SourceHash, Option<Score>>) -> (String, bool) {
+/// only when its score and compiled instructions match the printed candidate.
+fn respell(problem: &Problem, job: &Job, found: &Found) -> (String, bool) {
     let draft = found.expanded.restore(&found.expanded.text);
-    let expected = if found.expanded.unit.is_some() {
-        job.compile(&found.text).and_then(|()| score::disassemble(&job.object, problem.symbol.as_deref())).ok()
-    } else { None };
-    let verifies = |text: &str, cache: &mut HashMap<SourceHash, Option<Score>>| {
-        if found.expanded.unit.is_some() {
-            // Equal scalar scores do not imply equal instructions. Projection
-            // must preserve the candidate's actual disassembly, including
-            // relocations and literal data, before saving a smaller draft.
-            expected.is_some() && problem.evaluate(job, text).ok().as_ref() == Some(&found.score)
-                && score::disassemble(&job.object, problem.symbol.as_deref()).ok() == expected
-        } else { scored(problem, job, text, cache).as_ref() == Some(&found.score) }
+    let expected = job.compile(&found.text).and_then(|()| score::disassemble(&job.object, problem.symbol.as_deref())).ok();
+    let verifies = |text: &str| {
+        // Equal scalar scores do not imply equal instructions. Both body
+        // and whole-unit projection must retain the compiled candidate,
+        // including relocations and literal data. Compile even a cached
+        // score's text so the object being checked belongs to this spelling.
+        expected.is_some() && problem.evaluate(job, text).ok().as_ref() == Some(&found.score)
+            && score::disassemble(&job.object, problem.symbol.as_deref()).ok() == expected
     };
     // Body/signature changes and new inline helpers usually fit back into
     // the original includes and comments. A changed external declaration
@@ -1144,7 +1186,7 @@ fn respell(problem: &Problem, job: &Job, found: &Found, cache: &mut HashMap<Sour
         if let Some(after) = &state.full {
             if let Some((text, preserved)) = project_function(problem, &draft, before, after) {
                 let text = found.expanded.restore(&text);
-                if verifies(&text, cache) {
+                if verifies(&text) {
                     return (text, preserved);
                 }
             }
@@ -1157,7 +1199,7 @@ fn respell(problem: &Problem, job: &Job, found: &Found, cache: &mut HashMap<Sour
         Some(text) if text == found.text => (text, true),
         Some(text)
             if printed(&text).zip(printed(&found.text)).is_none_or(|(a, b)| a == b)
-                && verifies(&text, cache) =>
+                && verifies(&text) =>
         {
             (text, true)
         }
@@ -1216,7 +1258,7 @@ fn minimize_best(problem: &Problem, base: &Found, found: &[Found], directory: &P
             break;
         }
         let minimized = minimize(problem, &job, base, candidate, &mut cache);
-        let (text, respelled) = respell(problem, &job, &minimized, &mut cache);
+        let (text, respelled) = respell(problem, &job, &minimized);
         if best.iter().any(|seen| seen.text == text) {
             continue;
         }
@@ -1274,9 +1316,13 @@ fn write_best(problem: &Problem, base: &Found, found: &[Best], output: &Path) ->
             entry.searched.len(),
             rewrites(&entry.searched)
         );
-        std::fs::write(&path, format!("{header}{}", entry.text)).map_err(|e| format!("{}: {e}", path.display()))?;
+        // Reports must not change __LINE__ or any other source-sensitive
+        // expression in the compiler-verified spelling.
+        std::fs::write(&path, &entry.text).map_err(|e| format!("{}: {e}", path.display()))?;
+        let report = path.with_extension("txt");
+        std::fs::write(&report, header).map_err(|e| format!("{}: {e}", report.display()))?;
         // Against the draft file itself, so `patch -p0` from the checkout
-        // applies it; the header comment stays in best-N.c only.
+        // applies it; the report stays in best-N.txt only.
         let diff = unified(&problem.text, &entry.text, &name);
         std::fs::write(path.with_extension("diff"), &diff).map_err(|e| format!("{}: {e}", path.display()))?;
         println!(
@@ -1592,7 +1638,7 @@ mod tests {
             let replay = problem.replay(&minimized.expanded, &minimized.steps);
             assert_eq!(problem.source(&replay), minimized.text);
             assert_eq!(problem.evaluate(&job, &minimized.text).unwrap().differ, 0);
-            let (text, _) = respell(&problem, &job, &minimized, &mut HashMap::new());
+            let (text, _) = respell(&problem, &job, &minimized);
             assert_eq!(problem.evaluate(&job, &text).unwrap().differ, 0);
         }
     }
@@ -1625,6 +1671,36 @@ mod tests {
     }
 
     #[test]
+    fn heat_expansions_preprocess_edition_branches_and_keep_regions() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let source = "#include \"edition.h\"\n#if EDITION_INTERNATIONAL\nextern int selected;\n#endif\nint F(int x) {\n#if EDITION_INTERNATIONAL\nx += selected;\n#else\nx += unavailable;\n#endif\nPERM_RANDOMIZE(x += PERM_GENERAL(3, 7);)\nPERM_IGNORE(x *= 2;)\nreturn x;\n}\n";
+        let work = tempfile::tempdir().unwrap();
+        let mut problem = test_problem(&work.path().join("draft/08000000.c"), source, vec![], Some("F"));
+        problem.symbol = Some("F".into());
+        let job = Job::new(&problem, &work.path().join("job")).unwrap();
+        let mut compiled = Vec::new();
+        for seed in 0..2 {
+            let mut expanded = perm::expand_seed(&problem.nodes, seed).unwrap();
+            prepare_heat(&job, &mut expanded).unwrap();
+            assert!(expanded.text.contains("/* _permuter randomizer start */"));
+            assert!(!expanded.text.contains("unavailable"));
+            assert!(!expanded.text.lines().any(|line| line.trim_start().starts_with("# ")));
+            problem.unit = scan_unit(&expanded.text).unwrap();
+            let state = problem.state(expanded);
+            assert!(state.parsed.is_some() && state.full.is_none());
+            let text = problem.source(&state);
+            assert!(!text.contains("_permuter") && text.contains("x *= 2;"));
+            job.compile(&text).unwrap();
+            compiled.push(crate::diff::disassemble(&job.object, Some("F")).unwrap());
+            if seed == 1 {
+                problem.listing = compiled[0].clone();
+                assert!(aim_at(&problem, &job, &state, &text).unwrap().is_some());
+            }
+        }
+        assert_ne!(compiled[0], compiled[1]);
+    }
+
+    #[test]
     fn whole_tree_outputs_keep_includes_and_comments_when_only_the_function_changes() {
         crate::compiler::routing::prefer_installed_binutils();
         let source = "#include \"types.h\"\n/* Keep this explanation. */\nint F(int a, int b) { return a + b; }\n";
@@ -1640,9 +1716,33 @@ mod tests {
         state.steps.push(Step { kind: Kind::Full(kind), rng: Rng::new(0), region: None });
         let text = problem.source(&state);
         let found = Found { score: problem.evaluate(&job, &text).unwrap(), unnatural: 0, text, steps: state.steps, expanded: state.expanded, job: 0, iteration: 1 };
-        let (output, _) = respell(&problem, &job, &found, &mut HashMap::new());
+        let (output, _) = respell(&problem, &job, &found);
         assert!(output.contains("#include \"types.h\"") && output.contains("/* Keep this explanation. */") && output.contains("b + a"), "{output}");
         assert!(!output.contains("typedef"), "output should not inline all headers");
+    }
+
+    #[test]
+    fn body_respell_preserves_instructions_when_scores_tie() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let source = "int F(void) { return __LINE__; }\n";
+        let listing = listing_of(work.path(), "int F(void) { return 0; }\n");
+        let mut problem = test_problem(&work.path().join("draft/08000000.c"), source, listing, Some("F"));
+        problem.symbol = Some("F".into());
+        let job = Job::new(&problem, &work.path().join("job")).unwrap();
+        let state = problem.state(perm::expand(&problem.nodes, None).unwrap());
+        assert!(state.full.is_none());
+        let text = problem.source(&state);
+        let score = problem.evaluate(&job, &text).unwrap();
+        let expected = score::disassemble(&job.object, Some("F")).unwrap();
+        assert_eq!(problem.evaluate(&job, source).unwrap(), score);
+        assert_ne!(score::disassemble(&job.object, Some("F")).unwrap(), expected);
+        let found = Found { score, unnatural: 0, text: text.clone(), steps: Vec::new(), expanded: state.expanded, job: 0, iteration: 1 };
+        let (output, preserved) = respell(&problem, &job, &found);
+        assert!(!preserved);
+        assert_eq!(output, text);
+        job.compile(&output).unwrap();
+        assert_eq!(score::disassemble(&job.object, Some("F")).unwrap(), expected);
     }
 
     #[test]

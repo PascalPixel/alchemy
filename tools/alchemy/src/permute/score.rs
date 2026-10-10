@@ -106,10 +106,24 @@ pub struct Score {
 }
 
 impl Score {
+    /// Weighted search distance, with strict instruction differences breaking ties.
+    pub fn distance(&self) -> (u64, usize) {
+        (self.weighted, self.differ)
+    }
+
+    /// Ignored operands can leave a nonmatching candidate at weighted zero.
+    pub fn is_zero(&self) -> bool {
+        self.distance() == (0, 0)
+    }
+
     /// What the search lowers: with `prefix`, a longer matched prefix
     /// first, then the weighted score.
     pub fn key(&self, prefix: bool) -> (std::cmp::Reverse<usize>, u64) {
         (std::cmp::Reverse(if prefix { self.prefix } else { 0 }), self.weighted)
+    }
+
+    pub fn rank(&self, prefix: bool) -> ((std::cmp::Reverse<usize>, u64), usize) {
+        (self.key(prefix), self.differ)
     }
 
     /// The summary, with the matched prefix when the search ranks by it.
@@ -355,9 +369,16 @@ pub fn prepared(rows: &[Line], options: Options) -> Vec<Line> {
     rows[..end].iter().map(|s| Line { row: normalize(&s.row, options), has_symbol: s.has_symbol }).collect()
 }
 
+#[cfg(test)]
 pub fn assembly_key(rows: &[Line], options: Options) -> [u8; 32] {
     use sha2::{Digest, Sha256};
     Sha256::digest(prepared(rows, options).iter().map(|s| s.row.as_str()).collect::<Vec<_>>().join("\n").as_bytes()).into()
+}
+
+/// Deduplication must retain operands the weighted search deliberately ignores.
+pub fn strict_assembly_key(rows: &[Line]) -> [u8; 32] {
+    use sha2::{Digest, Sha256};
+    Sha256::digest(rows.iter().map(|s| s.row.as_str()).collect::<Vec<_>>().join("\n").as_bytes()).into()
 }
 
 pub fn weighted(listing: &[Line], draft: &[Line], options: Options, result: &mut Score) {
@@ -403,6 +424,23 @@ pub fn weighted(listing: &[Line], draft: &[Line], options: Options, result: &mut
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn archive_identity_retains_operands_ignored_by_weighting() {
+        let rows = |row: &str| vec![super::Line { row: row.into(), has_symbol: false }];
+        for (old, new) in [("ldr\tr0, [sp, #0]", "ldr\tr0, [sp, #4]"), ("b\t10", "b\t12")] {
+            let (old, new) = (rows(old), rows(new));
+            assert_eq!(super::assembly_key(&old, super::Options::default()), super::assembly_key(&new, super::Options::default()));
+            assert_ne!(super::strict_assembly_key(&old), super::strict_assembly_key(&new));
+        }
+        let old = rows("bx\tlr");
+        let mut new = old.clone();
+        new.extend(rows("nop"));
+        assert_eq!(super::assembly_key(&old, super::Options::default()), super::assembly_key(&new, super::Options::default()));
+        assert_ne!(super::strict_assembly_key(&old), super::strict_assembly_key(&new));
+        assert!(!super::Score { differ: 42, ..super::Score::default() }.is_zero());
+        assert!(super::Score::default().is_zero());
+    }
+
     #[test]
     fn assembly_identity_rows_and_hashes() {
         use sha2::{Digest, Sha256};

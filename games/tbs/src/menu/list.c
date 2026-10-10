@@ -222,10 +222,16 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
                 window, LIST_TILE_PAGES_LEFT, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
             UiWindow_SetTilemapEntry(
                 window, LIST_TILE_PAGES_RIGHT, window->width - 2, edge, 0);
-            /* FAKEMATCH: reload render work before its dirty-field offset. */
-            /* FAKEMATCH: removing this remaining barrier gives EN differ 54. One extra dead ((u32 *)cur)[2] = 0 after the cursor clear restores every spill slot: reference/built 770, common 764, differ 12, ten displayed rows of page-call arguments and dirty-pointer load order remain. */
-            __asm__ volatile ("" : : "r" (render));
-            render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+            /* FAKEMATCH: the one-pass update keeps the page-call arguments
+             * and dirty-pointer loads in native order (12 rows differ
+             * without the block). The cursor pointer pair preserves the
+             * native spill slots (42 rows differ without the pair); both
+             * forms keep all 770 instructions in every edition. */
+            do {
+                render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+            } while (0);
+            cur++;
+            cur--;
         }
 
         for (i = 0; i < icon_count; i++) {
@@ -725,7 +731,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
     struct BtlUnit *unit;
     struct BtlWork *runtime;
     struct UiWindow *window;
-    /* FAKEMATCH: removing both edition pin declarations and the t barrier together gives EN 1585/1585, common 1343, differ 484: infoWin spills and the frame shrinks 324 -> 320. ES 1684/1684, common 1569, differ 230: infoWin/sel swap r10/r9 and spill slots permute. Both extents stay unchanged. */
+    /* FAKEMATCH: the earlier combined pin/barrier removal gave EN 1585/1585, common 1343, differ 484: infoWin spills and the frame shrinks 324 -> 320. ES 1684/1684, common 1569, differ 230: infoWin/sel swap r10/r9 and spill slots permute. Both extents stayed unchanged. */
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
     struct UiWindow *infoWin;
 #else
@@ -861,8 +867,18 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
         {
             s32 t = cursor * 2;
 
-            /* FAKEMATCH: instruction order only: the empty asm takes cursor * 2 from its spill slot into r3 before the ids address is loaded, as the native does; through ids[cursor] both are reloads of the one load, base first (differ 2). */
-            __asm__ volatile ("" : "+r" (t));
+            /* FAKEMATCH: the separate switch arms end CSE before the
+             * projection call, keeping the scaled offset reload ahead of
+             * the ids load. Sharing their block reverses two rows; no
+             * switch branch remains in any edition. */
+            switch (t) {
+            case 0:
+                t = cursor * 2;
+                break;
+            default:
+                t = cursor * 2;
+                break;
+            }
             BattleMotion_ProjectConditionalPositionFar(*(u16 *)((u8 *)ids + t), (s32 *)&pos);
         }
         ((s32 *)head)[1] = 0x40002000;

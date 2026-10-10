@@ -226,6 +226,20 @@ mod tests {
     }
 
     #[test]
+    fn parse_error_shows_the_preprocessed_line_that_failed() {
+        let error = parse("int F(void) {\n    return +;\n}\n").unwrap_err();
+        assert!(error.contains("C parse error at 2:"), "{error}");
+        assert!(error.ends_with("\n    return +;"), "{error}");
+    }
+
+    #[test]
+    fn empty_for_clauses_survive_an_enclosing_struct_cast() {
+        let source = "struct S { int x; }; void F(void *p) { if (((struct S *)p)->x) { for (;;) { break; } } }";
+        assert!(parse(source).unwrap().print().contains("for (;;)"));
+        assert!(parse(&source.replace("for (;;)", "for (;)")).is_err());
+    }
+
+    #[test]
     fn adapter_and_printer_failures_do_not_become_valid_candidates() {
         for row in include_str!("c/fixtures/parser-unsupported.tsv").lines() {
             let c: Vec<_> = row.split('\t').map(decode).collect();

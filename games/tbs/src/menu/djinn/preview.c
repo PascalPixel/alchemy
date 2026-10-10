@@ -1179,16 +1179,24 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
             redraw = 0;
             if (cnt != 0) {
                 s32 k;
+                u32 selected;
                 UiWork_ClearValueNameTables();
                 /* FAKEMATCH: restores a CSE1 block end the bytes prove (k = redraw survives as the native ldr r1, [sp, #28]): an empty one-pass block, without which CSE1 deletes the second redraw = 0 below as a no-op and folds k to 0 (29 rows) */
                 do { } while (0);
                 is_used = 0;
                 /* FAKEMATCH: restores redraw set in the search block, which the surviving copy proves gcse saw: cprop leaves k = redraw alone only when its source is set earlier in its block, and cse2 deletes this store as a no-op (29 rows without) */
                 redraw = 0;
-                /* FAKEMATCH: restores a CSE block that ended where no code is left: this volatile asm flushes cse2, so k = redraw stays the native ldr r1, [sp, #28] instead of folding to 0 (29 rows without) */
-                asm("" :);
-                k = redraw;
-                if ((u32)MENU_STATE->selected[k] == cur) {
+                /* FAKEMATCH: this one-pass loop retains the native redraw
+                 * reload after the selected-entry load. A plain assignment
+                 * folds k to zero (1201 -> 1200 instructions, 27 rows differ);
+                 * reading selected in the comparison moves the reload early
+                 * (2 rows differ). No loop instructions survive. */
+                selected = MENU_STATE->selected[redraw];
+                for (k = redraw; k == redraw;) {
+                    k = redraw;
+                    break;
+                }
+                if (selected == cur) {
                     is_used = 1;
                 } else {
                     for (;;) {

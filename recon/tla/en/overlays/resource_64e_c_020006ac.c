@@ -140,4 +140,3 @@ void Func_020006ac(void)
     }
     Engine_EventEnd();
 }
-

@@ -660,25 +660,22 @@ next:
 
 s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step)
 {
-    /* FAKEMATCH: needed to match: the cancelling step initializer preserves the incoming argument moves; a plain initializer reverses them. */
-    s32 value = start;
-    s32 delta = step + value - value;
-
     for (;;) {
-        value += delta;
-        if (value < 0) {
-            value = 0x200;
+        start += step;
+        if (start < 0) {
+            start = 0x200;
             continue;
         }
         {
+            /* FAKEMATCH: needed to match: the upper bound in a local compares as cmp against 0x200 with blt; the literal compares against 0x1ff from the pool. */
             s32 limit = 0x200;
-            if (value >= limit) {
-                value = -1;
+            if (start >= limit) {
+                start = -1;
                 continue;
             }
         }
-        if (Resource_GetMetadataRecordFar(value)->width) {
-            return value;
+        if (Resource_GetMetadataRecordFar(start)->width) {
+            return start;
         }
     }
 }

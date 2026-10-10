@@ -58,7 +58,11 @@
    character copy before the continental selector then gives 0/2/10:
    the height load follows the complete selector calculation. Further height
    copies (560), branch copies/reads (64/16), early breaks (10), deferred
-   pointer copies (12) and conditional stride copies (12) did not beat 10. */
+   pointer copies (12) and conditional stride copies (12) did not beat 10.
+   Further selector-dependent height copies (24), paired normalizers (256)
+   and palette/source copy scopes (512) also stayed at 10 or worse. Applying
+   the English clipping-copy form (28 choices) regressed to 32: it swapped
+   y and the tile-row register and moved the comparison before the byte load. */
 
 #include "types.h"
 #include "uiwindow.h"

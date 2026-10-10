@@ -8,6 +8,11 @@ struct SourceInput {
     includes: Vec<String>,
 }
 
+struct HashNames<'a> {
+    base: Option<&'a Path>,
+    named_input: Option<(&'a Path, &'a str)>,
+}
+
 /// Share reads only within one audit of unchanged inputs. Include resolution,
 /// traversal state and hash order remain independent for every signature.
 #[derive(Default)]
@@ -32,7 +37,9 @@ impl SourceInputCache {
         Ok(input)
     }
 
-    pub fn signature(&self, root: &Path, source: &Path, commands: &[Vec<String>]) -> Result<Vec<u8>, String> {
+    /// A named input changes only the hashed name of that exact canonical path.
+    /// Reads, include resolution and traversal identity still use real paths.
+    pub fn signature(&self, root: &Path, source: &Path, commands: &[Vec<String>], named_input: Option<(&Path, &str)>) -> Result<Vec<u8>, String> {
         let source = if source.is_absolute() {
             source.into()
         } else {
@@ -40,11 +47,11 @@ impl SourceInputCache {
         };
         let dirs = include_dirs(root, commands);
         let base = std::fs::canonicalize(root).ok();
-        let base = base.as_deref();
+        let names = HashNames { base: base.as_deref(), named_input };
         let mut hash = Sha256::new();
         let mut seen = BTreeSet::new();
         let mut active = BTreeSet::new();
-        visit(self, base, &source, &dirs, &mut seen, &mut active, &mut hash)?;
+        visit(self, &names, &source, &dirs, &mut seen, &mut active, &mut hash)?;
         for command in commands {
             for pair in command.windows(2) {
                 if pair[0] == "-include" {
@@ -54,7 +61,7 @@ impl SourceInputCache {
                     } else {
                         root.join(path)
                     };
-                    visit(self, base, &path, &dirs, &mut seen, &mut active, &mut hash)?;
+                    visit(self, &names, &path, &dirs, &mut seen, &mut active, &mut hash)?;
                 }
             }
         }
@@ -107,7 +114,7 @@ pub fn portable_commands(root: &Path, commands: &[Vec<String>]) -> Vec<Vec<Strin
 
 fn visit(
     cache: &SourceInputCache,
-    base: Option<&Path>,
+    names: &HashNames<'_>,
     path: &Path,
     dirs: &[PathBuf],
     seen: &mut BTreeSet<PathBuf>,
@@ -123,10 +130,11 @@ fn visit(
     }
     active.insert(path.clone());
     let input = cache.read(&path)?;
-    let name = base
-        .and_then(|base| path.strip_prefix(base).ok())
-        .unwrap_or(&path);
-    for input in [name.to_string_lossy().as_bytes(), &input.bytes] {
+    let name = names.named_input
+        .filter(|(input, _)| *input == path)
+        .map(|(_, name)| std::borrow::Cow::Borrowed(name))
+        .unwrap_or_else(|| names.base.and_then(|base| path.strip_prefix(base).ok()).unwrap_or(&path).to_string_lossy());
+    for input in [name.as_bytes(), &input.bytes] {
         hash.update((input.len() as u64).to_be_bytes());
         hash.update(input);
     }
@@ -136,7 +144,7 @@ fn visit(
             .chain(dirs.iter().map(|dir| dir.join(name)))
             .find(|candidate| candidate.is_file());
         if let Some(found) = found {
-            visit(cache, base, &found, dirs, seen, active, hash)?;
+            visit(cache, names, &found, dirs, seen, active, hash)?;
         }
     }
     active.remove(&path);
@@ -149,7 +157,7 @@ fn compiler_source_tree_signature(
     source: &Path,
     commands: &[Vec<String>],
 ) -> Result<Vec<u8>, String> {
-    SourceInputCache::default().signature(root, source, commands)
+    SourceInputCache::default().signature(root, source, commands, None)
 }
 
 #[cfg(test)]
@@ -198,7 +206,7 @@ mod tests {
                 let (cache, commands, one, two) = (&cache, &commands, &one, &two);
                 scope.spawn(move || {
                     let (source, wanted) = if i % 2 == 0 { ("src/one.c", one) } else { ("src/two.c", two) };
-                    assert_eq!(cache.signature(root, Path::new(source), commands).unwrap(), *wanted);
+                    assert_eq!(cache.signature(root, Path::new(source), commands, None).unwrap(), *wanted);
                 })
             }).collect::<Vec<_>>();
             for handle in handles { handle.join().unwrap(); }
@@ -217,10 +225,10 @@ mod tests {
         let first = vec![vec!["cpp".into(), "-Ifirst".into(), "-I".into(), "second".into()]];
         let second = vec![vec!["cpp".into(), "-Isecond".into(), "-I".into(), "first".into()]];
         let cache = SourceInputCache::default();
-        assert_eq!(cache.signature(root, Path::new("unit.c"), &first).unwrap(), expected(root, &["unit.c", "first/shared.h"]));
-        assert_eq!(cache.signature(root, Path::new("unit.c"), &second).unwrap(), expected(root, &["unit.c", "second/shared.h"]));
+        assert_eq!(cache.signature(root, Path::new("unit.c"), &first, None).unwrap(), expected(root, &["unit.c", "first/shared.h"]));
+        assert_eq!(cache.signature(root, Path::new("unit.c"), &second, None).unwrap(), expected(root, &["unit.c", "second/shared.h"]));
         write(root, "shared.h", "now the local header shadows both search paths\n");
-        assert_eq!(cache.signature(root, Path::new("unit.c"), &first).unwrap(), expected(root, &["unit.c", "shared.h"]));
+        assert_eq!(cache.signature(root, Path::new("unit.c"), &first, None).unwrap(), expected(root, &["unit.c", "shared.h"]));
     }
 
     #[test]
@@ -257,16 +265,16 @@ mod tests {
         let cache = SourceInputCache::default();
         let wanted = format!("recursive C source include: {}", std::fs::canonicalize(root.join("one.c")).unwrap().display());
         for _ in 0..2 {
-            assert_eq!(cache.signature(root, Path::new("one.c"), &[]).unwrap_err(), wanted);
+            assert_eq!(cache.signature(root, Path::new("one.c"), &[], None).unwrap_err(), wanted);
         }
-        assert!(cache.signature(root, Path::new("missing.c"), &[]).is_err());
+        assert!(cache.signature(root, Path::new("missing.c"), &[], None).is_err());
         write(root, "unit.c", "unit\n");
         let forced = vec![vec!["cpp".into(), "-include".into(), "missing.h".into()]];
-        assert!(cache.signature(root, Path::new("unit.c"), &forced).is_err());
+        assert!(cache.signature(root, Path::new("unit.c"), &forced, None).is_err());
         let required_directory = vec![vec!["cpp".into(), "-include".into(), ".".into()]];
-        assert!(cache.signature(root, Path::new("unit.c"), &required_directory).is_err());
+        assert!(cache.signature(root, Path::new("unit.c"), &required_directory, None).is_err());
         write(root, "missing.h", "required input now present\n");
-        assert_eq!(cache.signature(root, Path::new("unit.c"), &forced).unwrap(), expected(root, &["unit.c", "missing.h"]));
+        assert_eq!(cache.signature(root, Path::new("unit.c"), &forced, None).unwrap(), expected(root, &["unit.c", "missing.h"]));
     }
 
     #[cfg(unix)]
@@ -278,7 +286,7 @@ mod tests {
         write(root, "header.h", "header\n");
         std::os::unix::fs::symlink("header.h", root.join("alias.h")).unwrap();
         let cache = SourceInputCache::default();
-        assert_eq!(cache.signature(root, Path::new("unit.c"), &[]).unwrap(), expected(root, &["unit.c", "header.h"]));
+        assert_eq!(cache.signature(root, Path::new("unit.c"), &[], None).unwrap(), expected(root, &["unit.c", "header.h"]));
         assert_eq!(cache.files.read().unwrap().len(), 2);
     }
 }

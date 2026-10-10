@@ -8,7 +8,7 @@ use crate::compiler::routing::root as compiler_root;
 use crate::targets::{target_for, DecompTarget, DecompTargetId, TARGET_IDS};
 use std::collections::BTreeMap;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
 use std::sync::Mutex;
 
@@ -19,6 +19,7 @@ type Group = ((String, Vec<String>), Vec<String>);
 
 struct MessageImports {
     _directory: tempfile::TempDir,
+    header_path: PathBuf,
     flag: String,
     signature: String,
 }
@@ -30,11 +31,14 @@ fn message_imports(
     let mut imports = BTreeMap::new();
     for &id in target_ids {
         if let Some(directory) = crate::build_text::fresh_c_imports(root, target_for(id))? {
-            let header = fs::read(directory.path().join(crate::build_text::C_INCLUDE))
+            let header_path = fs::canonicalize(directory.path().join(crate::build_text::C_INCLUDE))
+                .map_err(|error| error.to_string())?;
+            let header = fs::read(&header_path)
                 .map_err(|error| error.to_string())?;
             imports.insert(
                 id.as_str().into(),
                 MessageImports {
+                    header_path,
                     flag: format!("-I{}", directory.path().display()),
                     signature: crate::compiler::sha256::hex(&header),
                     _directory: directory,
@@ -127,6 +131,7 @@ fn clean_key(
         root,
         Path::new(source),
         &[prefix.to_vec()],
+        imports.map(|metadata| (metadata.header_path.as_path(), "<current-message-catalog>/text/msg_ids.h")),
     )
     .ok()?;
     let command = prefix
@@ -142,7 +147,7 @@ fn clean_key(
     let identity = format!(
         "{:?}",
         (
-            "no-asm-clean-v4-scanner-source",
+            "no-asm-clean-v5-scanner-source",
             scanner(),
             crate::compiler::bundle::compiler_bundle_signature(),
             label,
@@ -483,6 +488,7 @@ fn shared_inventories_preserve_target_commands_imports_and_new_files() {
     let mut imports = BTreeMap::new();
     let imported = tempfile::tempdir().unwrap();
     imports.insert("tbs-en".into(), MessageImports {
+        header_path: imported.path().join(crate::build_text::C_INCLUDE),
         flag: format!("-I{}", imported.path().display()),
         signature: "catalog".into(),
         _directory: imported,

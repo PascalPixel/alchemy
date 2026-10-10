@@ -1,3 +1,6 @@
+/* Pin-free trial (tla-en): listing 206 instructions, draft 206, common 186, differ 40.
+ * Earlier register-allocation notes describe the prior pinned form.
+ */
 #include "types.h"
 
 struct StepNode {
@@ -47,7 +50,7 @@ void Menu_StepLeft(struct StepMenu *state)
 {
     struct StepNode *node;
     u16 *ids;
-    register s32 y asm("r1"); /* FAKEMATCH: keeps the row offset in r1 */
+    s32 y; /* Earlier pinned trial: keeps the row offset in r1 */
     s32 i;
 
     Menu_ReloadNodeResource(state, state->cursor);
@@ -68,7 +71,7 @@ void Menu_StepLeft(struct StepMenu *state)
         } else {
             node = state->nodes;
             y = 64;
-            { register s32 z asm("r0") = 0; /* FAKEMATCH: the zero goes through r0 */
+            { s32 z = 0; /* Earlier pinned trial: the zero goes through r0 */
             state->more_below = i = z; }
             while (node->next != NULL) {
                 node->target_y = node->y + y;

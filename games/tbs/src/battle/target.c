@@ -651,7 +651,6 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y)
 }
 
 #undef BtlObjGet
-#undef gKeysHeld
 
 #define BattlePresentation_WaitForAdvance ((int (*)())BattlePresentation_WaitForAdvance)
 

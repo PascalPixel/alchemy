@@ -103,8 +103,6 @@ void Scene_AddToListedRecordCounts(s32 amount)
 void FieldScene_RunCountAdjustPanel(void)
 {
 	u8 *record;
-	/* FAKEMATCH: reading the held keys through a volatile pointer loads them once per test, where the reference does not merge the tests. */
-	volatile u32 *key;
 	s32			  win;
 	s32			  flag;
 	s32			  msg;
@@ -130,23 +128,21 @@ void FieldScene_RunCountAdjustPanel(void)
 			UiText_DrawNumberInWindow(record[15], 0, win, 72, 48);
 		}
 
-		key = &gKeyState;
-
-		if ((*key & 8) != 0 || (*key & 4) != 0)
+		if ((gKeyState & 8) != 0 || (gKeyState & 4) != 0)
 		{
 			Scene_AddToListedRecordCounts(5);
 			Engine_AudioPlayCue(93);
 			flag = 1;
 		}
 
-		if ((*key & 1) != 0)
+		if ((gKeyState & 1) != 0)
 		{
 			Scene_AddToListedRecordCounts(1);
 			Engine_AudioPlayCue(91);
 			flag = 1;
 		}
 
-		if ((*key & 2) != 0)
+		if ((gKeyState & 2) != 0)
 		{
 			Engine_AudioPlayCue(113);
 			RenderOutput_RedrawSavedRect(win);

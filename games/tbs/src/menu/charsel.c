@@ -183,16 +183,14 @@ s32 PsynergyMenu_SelectOwner(void)
             break;
         }
         {
-            volatile u32 *repeat = &gKeysRepeat;
-
-            if (*repeat & 32) {
+            if (gKeysRepeat & 32) {
                 AudioCommand_PlayFar(111);
                 if (count > 1) {
                     selection--;
                     pending = 1;
                 }
             }
-            if (*repeat & 16) {
+            if (gKeysRepeat & 16) {
                 AudioCommand_PlayFar(111);
                 if (count > 1) {
                     selection++;

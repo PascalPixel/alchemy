@@ -27,7 +27,6 @@
 #include "text/msg_ids.h"
 void AudioCommand_PlayFar(s32 cue);
 
-#define gKeyState (*(u32 *)&gKeyState)
 
 #define ShopCursor_SetPositionImmediateFar ((void (*)(union MenuCursor*,s32,s32))ShopCursor_SetPositionImmediateFar)
 #define Shop_SetCursorFar ((void (*)(union MenuCursor*,s32,s32,s32))Shop_SetCursorFar)
@@ -481,7 +480,6 @@ finish:
 }
 #else
 
-#undef gKeyState
 
 s32 NameEntry_EditOwnerName(s32 entry)
 {

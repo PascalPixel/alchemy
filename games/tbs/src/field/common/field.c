@@ -26,7 +26,6 @@
 #include "btlsys.h"
 #include "script_object_entry.h"
 
-#define gKeysRepeat (*(u32 *)&gKeysRepeat)
 
 struct KeyMoveEventWork {
     u8 unknown_000[0x19c];

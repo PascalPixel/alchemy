@@ -412,11 +412,10 @@ void WaitFrames(s32 frames)
         if (gDebugMode) {
             for (;;) {
                 if (gDebugPaused) {
-                    if ((*(u32 *)&gKeysRepeat) & (KEY_A | KEY_B | KEY_SELECT))
+                    if (gKeysRepeat & (KEY_A | KEY_B | KEY_SELECT))
                         break;
                     if (gKeysHeld & KEYS_DPAD)
                         break;
-                    /* FAKEMATCH: a volatile read keeps the measured reread of the repeated keys. */
                     if (gKeysRepeat & KEY_START) {
                         gDebugPaused = 0;
                         break;
@@ -558,13 +557,11 @@ void Runtime_SetMainState19(void)
 
 void Input_UpdateKeyRepeatAndDirection(void)
 {
-    /* FAKEMATCH: volatile reads and the repeat clear preserve separate input-cell rereads. */
     s32 delay = gKeyRepeatTimer;
     u32 keys;
     u32 axis = 0;
     u32 dirs;
     u32 mask;
-    volatile u32 *repeat;
 
     if (delay <= 0) {
         gKeysRepeat = gKeysHeld;
@@ -589,13 +586,12 @@ void Input_UpdateKeyRepeatAndDirection(void)
         if (keys & KEY_RIGHT)
             dirs++;
 
-        repeat = &gKeysRepeatDirected;
-        *repeat = keys;
+        gKeysRepeatDirected = keys;
         switch (dirs) {
         default:
             gKeysDirection = KEYS_HORIZONTAL;
             mask = 0xffff & ~KEYS_DPAD;
-            *repeat &= mask;
+            gKeysRepeatDirected &= mask;
             break;
         case 0:
             gKeysDirection = KEYS_HORIZONTAL;
@@ -604,9 +600,9 @@ void Input_UpdateKeyRepeatAndDirection(void)
             gKeysDirection = keys & KEYS_DPAD;
             break;
         case 2:
-            if ((gKeysDirection & *repeat) == 0)
+            if ((gKeysDirection & gKeysRepeatDirected) == 0)
                 gKeysDirection = KEYS_HORIZONTAL;
-            *repeat &= gKeysDirection ^ 0xffff;
+            gKeysRepeatDirected &= gKeysDirection ^ 0xffff;
             break;
         case 3:
             if (gKeysDirection & KEYS_HORIZONTAL)
@@ -615,7 +611,7 @@ void Input_UpdateKeyRepeatAndDirection(void)
                 axis = KEYS_VERTICAL;
             mask = 0xffff ^ axis;
             gKeysDirection = keys & mask;
-            *repeat &= mask;
+            gKeysRepeatDirected &= mask;
             break;
         }
     } else {
@@ -672,7 +668,6 @@ void System_VBlankHandler(void)
         gKeyState = pressed;
         gKeysPressedLatch |= pressed;
     }
-    /* FAKEMATCH: the volatile store keeps the held-key reload in the repeat test after the write; the shared cell's declared type is unchanged. */
     gKeysHeld = keys;
     if (keys == 0) {
         gKeyRepeatTimer = 19;

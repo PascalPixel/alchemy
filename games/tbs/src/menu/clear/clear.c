@@ -188,7 +188,6 @@ u16 Clear_ExtraCodeSequence[] = {
 
 void Clear_CheckButtonCodes(void)
 {
-    /* FAKEMATCH: volatile keys make each test read them again, as the game does. */
     if (Clear_CodeUnlocked == 0) {
         if (Clear_CodeHeld != 0) {
             if (gKeysHeld == 0)

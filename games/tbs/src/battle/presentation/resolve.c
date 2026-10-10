@@ -31,13 +31,12 @@ void BattlePres_AdjustCameraByShoulderKeysAlt(void)
 {
 	struct BattleCamera					*cam = *(gWorkSlot + HEAP_SLOT_CAMERA);
 	struct BattlePresentationTransition *trans = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
-	volatile u32						*keys = &gKeysHeld;
 
-	if ((*keys & KEY_L) != 0)
+	if ((gKeysHeld & KEY_L) != 0)
 	{
 		cam->yaw += 512;
 	}
-	if ((*keys & KEY_R) != 0)
+	if ((gKeysHeld & KEY_R) != 0)
 	{
 		cam->yaw -= 512;
 	}

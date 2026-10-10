@@ -25,7 +25,6 @@
 #include "ram_buffer.h"
 #include "call.h"
 
-#define gKeyState (*(u32 *)&gKeyState)
 
 #define RuntimeDispatch_NoOpHook ((void (*)(s32))RuntimeDispatch_NoOpHook)
 #define Title_ShowSplashScreen ((void (*)(s32))Title_ShowSplashScreen)

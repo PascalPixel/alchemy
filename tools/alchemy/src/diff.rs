@@ -319,6 +319,12 @@ pub(crate) fn compare(listing: &[String], draft: &[String]) -> (usize, Vec<Strin
 }
 
 pub(crate) fn disassemble(object: &Path, symbol: Option<&str>) -> Result<Vec<String>, String> {
+    Ok(normalize(&disassemble_text(object, symbol)?))
+}
+
+/// Keep the encoded instructions available to callers that need another
+/// view of the same disassembly. Zero suppression is unchanged.
+pub(crate) fn disassemble_text(object: &Path, symbol: Option<&str>) -> Result<String, String> {
     let object = object.to_string_lossy();
     let only = symbol.map(|s| format!("--disassemble={s}"));
     let mut arguments = vec!["arm-none-eabi-objdump", "-d", "-r"];
@@ -326,7 +332,7 @@ pub(crate) fn disassemble(object: &Path, symbol: Option<&str>) -> Result<Vec<Str
         arguments.push(only);
     }
     arguments.push(&object);
-    Ok(normalize(&command(&arguments, root())?))
+    command(&arguments, root())
 }
 
 /// Each compiled instruction, normalized as `normalize` does, with the

@@ -406,9 +406,8 @@ impl Problem {
 
     fn evaluate_assembly(&self, job: &Job, text: &str) -> Result<(Score, SourceHash), String> {
         job.compile(text)?;
-        let compiled = crate::diff::disassemble(&job.object, self.symbol.as_deref())?;
+        let (compiled, candidate) = score::disassemble_both(&job.object, self.symbol.as_deref())?;
         let mut score = score::score_with(&self.listing, &compiled, self.score_options);
-        let candidate = score::disassemble(&job.object, self.symbol.as_deref())?;
         if let Some(listing) = &self.listing_rows {
             score::weighted(listing, &candidate, self.score_options, &mut score);
         }
@@ -1324,7 +1323,7 @@ fn write_best(problem: &Problem, base: &Found, found: &[Best], output: &Path) ->
         // Against the draft file itself, so `patch -p0` from the checkout
         // applies it; the report stays in best-N.txt only.
         let diff = unified(&problem.text, &entry.text, &name);
-        std::fs::write(path.with_extension("diff"), &diff).map_err(|e| format!("{}: {e}", path.display()))?;
+        let shown = output::write_diff(&path.with_extension("diff"), &diff)?;
         println!(
             "best-{}: {}  {}\n        rewrites {} -> {}: {}",
             index + 1,
@@ -1335,7 +1334,7 @@ fn write_best(problem: &Problem, base: &Found, found: &[Best], output: &Path) ->
             rewrites(&kinds)
         );
         if index == 0 {
-            print!("{diff}");
+            print!("{shown}");
         }
     }
     Ok(())

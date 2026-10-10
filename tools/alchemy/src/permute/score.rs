@@ -35,6 +35,51 @@ pub fn disassemble(object: &Path, symbol: Option<&str>) -> Result<Vec<Line>, Str
     parse_objdump(&crate::process::run(&args, crate::compiler::routing::root())?)
 }
 
+/// Candidate scoring needs both diff's encoded branch view and all of the
+/// weighted scorer's data and relocation rows. Reuse the strict disassembly
+/// only when objdump did not omit any bytes and its raw column is recognized.
+pub fn disassemble_both(object: &Path, symbol: Option<&str>) -> Result<(Vec<String>, Vec<Line>), String> {
+    let text = crate::diff::disassemble_text(object, symbol)?;
+    let strict = crate::diff::normalize(&text);
+    let rows = match without_raw_instructions(&text) {
+        Some(text) => parse_objdump(&text)?,
+        None => disassemble(object, symbol)?,
+    };
+    Ok((strict, rows))
+}
+
+/// Strip only objdump's raw encoding column. Its `...` marker means -z
+/// would supply additional rows, so that case keeps the existing command.
+fn without_raw_instructions(text: &str) -> Option<String> {
+    let mut stripped = String::with_capacity(text.len());
+    for line in text.lines() {
+        if line.trim() == "..." {
+            return None;
+        }
+        if let Some((address, row)) = line.split_once(':') {
+            if u64::from_str_radix(address.trim(), 16).is_ok() {
+                let row = row.trim_start();
+                if !row.starts_with("R_ARM_") {
+                    let (raw, rest) = row.split_once('\t')?;
+                    if raw.trim().is_empty() || !raw.split_whitespace().all(|word| {
+                        matches!(word.len(), 2 | 4 | 8) && word.chars().all(|c| c.is_ascii_hexdigit())
+                    }) {
+                        return None;
+                    }
+                    stripped.push_str(address);
+                    stripped.push_str(":\t");
+                    stripped.push_str(rest);
+                    stripped.push('\n');
+                    continue;
+                }
+            }
+        }
+        stripped.push_str(line);
+        stripped.push('\n');
+    }
+    Some(stripped)
+}
+
 /// Normalize ARM32 disassembly, retaining relocations and data rows.
 fn parse_objdump(text: &str) -> Result<Vec<Line>, String> {
     static COMMENT: OnceLock<Regex> = OnceLock::new();
@@ -424,6 +469,47 @@ pub fn weighted(listing: &[Line], draft: &[Line], options: Options, result: &mut
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn raw_column_reuse_preserves_relocations_and_refuses_omissions() {
+        let raw = "header\n  0:\tf7ff fffe \tbl\t0 <Call>\n  0: R_ARM_THM_CALL Call\n  4:\t00000000 \t.word\t0x00000000\n  4: R_ARM_ABS32 Data\n  8:\t4770     \tbx\tlr\n  8: R_ARM_V4BX *ABS*\n";
+        let plain = "header\n  0:\tbl\t0 <Call>\n  0: R_ARM_THM_CALL Call\n  4:\t.word\t0x00000000\n  4: R_ARM_ABS32 Data\n  8:\tbx\tlr\n  8: R_ARM_V4BX *ABS*\n";
+        let reused = super::parse_objdump(&super::without_raw_instructions(raw).unwrap()).unwrap();
+        let expected = super::parse_objdump(plain).unwrap();
+        assert_eq!(reused, expected);
+        assert_eq!(super::strict_assembly_key(&reused), super::strict_assembly_key(&expected));
+        for ambiguous in ["\t...\n", "  0:\tunknown raw\tmovs\tr0, #1\n", "  0:\t123\tmovs\tr0, #1\n"] {
+            assert!(super::without_raw_instructions(ambiguous).is_none(), "{ambiguous}");
+        }
+    }
+
+    #[test]
+    fn shared_disassembly_matches_legacy_thumb_arm_pools_and_zeros() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        for (arm, zeros) in [(false, false), (false, true), (true, false), (true, true)] {
+            let source = work.path().join(format!("probe-{arm}-{zeros}.s"));
+            let object = source.with_extension("o");
+            let mode = if arm { ".arm\n.type Target, %function\n" } else { ".thumb\n.thumb_func\n" };
+            let body = if arm {
+                "push {lr}\nldr r0, .Lpool\ncmp r0, #0\nbeq .Lend\nbl Called\n.Lend:\npop {lr}\nbx lr\n"
+            } else {
+                "push {lr}\nldr r0, .Lpool\ncmp r0, #0\nbeq .Lend\nbl Called\n.Lend:\npop {r0}\nbx r0\n"
+            };
+            let padding = if zeros { ".space 16\n" } else { "" };
+            std::fs::write(&source, format!(".syntax unified\n.text\n.global Target\n{mode}Target:\n{body}{padding}.align 2\n.Lpool:\n.word Data\n.word 0x12345678\n.size Target, .-Target\n")).unwrap();
+            crate::process::run(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-o", &object.to_string_lossy(), &source.to_string_lossy()], crate::compiler::routing::root()).unwrap();
+            for symbol in [None, Some("Target")] {
+                let text = crate::diff::disassemble_text(&object, symbol).unwrap();
+                assert_eq!(super::without_raw_instructions(&text).is_none(), zeros, "arm={arm}, symbol={symbol:?}: {text}");
+                let legacy = (crate::diff::disassemble(&object, symbol).unwrap(), super::disassemble(&object, symbol).unwrap());
+                let reused = super::disassemble_both(&object, symbol).unwrap();
+                assert_eq!(reused, legacy, "arm={arm}, zeros={zeros}, symbol={symbol:?}");
+                assert_eq!(super::strict_assembly_key(&reused.1), super::strict_assembly_key(&legacy.1));
+                assert!(reused.1.iter().any(|line| line.has_symbol && line.row.ends_with("Data")));
+            }
+        }
+    }
+
     #[test]
     fn archive_identity_retains_operands_ignored_by_weighting() {
         let rows = |row: &str| vec![super::Line { row: row.into(), has_symbol: false }];

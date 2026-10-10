@@ -1,4 +1,5 @@
 //! Candidate filtering, deduplication and saved source diffs.
+use std::borrow::Cow;
 use std::collections::HashSet;
 use std::path::Path;
 use super::SourceHash;
@@ -43,6 +44,17 @@ impl State {
 
 pub fn trim<'a>(source: &'a str, function: Option<&str>) -> &'a str {
     function.and_then(|name| source.find(name)).and_then(|i| source[..i].rfind('\n')).map_or(source, |i| &source[i..])
+}
+
+/// Save the complete patch, showing large preprocessed contexts by path only.
+pub fn write_diff<'a>(path: &Path, diff: &'a str) -> Result<Cow<'a, str>, String> {
+    std::fs::write(path, diff).map_err(|error| format!("{}: {error}", path.display()))?;
+    let lines = diff.lines().count();
+    if lines <= 80 && diff.len() <= 8 * 1024 {
+        Ok(Cow::Borrowed(diff))
+    } else {
+        Ok(Cow::Owned(format!("diff: {} ({lines} lines, {} bytes; full patch saved)\n", path.display(), diff.len())))
+    }
 }
 
 pub fn write(root: &Path, score: u64, source: &str, base: &str, function: Option<&str>, options: Options) -> Result<(), String> {
@@ -176,6 +188,39 @@ mod tests {
         for row in include_str!("c/fixtures/output-diffs.tsv").lines() {
             let c: Vec<_> = row.split('\t').map(|s| s.replace("\\n", "\n")).collect();
             assert_eq!(diff(&c[0], &c[1]), c[2], "base {:?}, source {:?}", c[0], c[1]);
+        }
+    }
+
+    #[test]
+    fn giant_preprocessed_patch_keeps_console_bounded_and_artifact_complete() {
+        let base: String = (0..1546).map(|i| format!("extern int global_{i};\n")).collect();
+        let expanded: String = (0..9883).map(|i| format!("typedef unsigned int context_{i};\n")).collect();
+        let patch = super::super::unified(&base, &expanded, "recon/tbs/en/main/08000000.c");
+        assert!(patch.lines().count() > 10_000 && patch.len() > 8 * 1024);
+        let work = tempfile::tempdir().unwrap();
+        let path = work.path().join("best-1.diff");
+        let shown = write_diff(&path, &patch).unwrap();
+        assert_eq!(shown.lines().count(), 1);
+        assert!(shown.len() < 512);
+        assert!(shown.contains(&path.display().to_string()));
+        assert!(shown.contains(&format!("{} lines", patch.lines().count())));
+        assert!(!shown.contains("context_9882"));
+        assert_eq!(std::fs::read(&path).unwrap(), patch.as_bytes());
+    }
+
+    #[test]
+    fn console_patch_limits_preserve_small_diffs_and_bound_long_lines() {
+        let work = tempfile::tempdir().unwrap();
+        let path = work.path().join("best-1.diff");
+        for patch in ["+changed\n".repeat(80), "x".repeat(8 * 1024)] {
+            assert_eq!(write_diff(&path, &patch).unwrap(), patch);
+            assert_eq!(std::fs::read(&path).unwrap(), patch.as_bytes());
+        }
+        for patch in ["+changed\n".repeat(81), "x".repeat(8 * 1024 + 1)] {
+            let shown = write_diff(&path, &patch).unwrap();
+            assert_eq!(shown.lines().count(), 1);
+            assert!(shown.len() < 512);
+            assert_eq!(std::fs::read(&path).unwrap(), patch.as_bytes());
         }
     }
 

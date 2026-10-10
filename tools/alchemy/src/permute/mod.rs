@@ -169,6 +169,10 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
             "--heat" => heat = true,
             "--prefix" => prefix = true,
             "--stack-diffs" => score_options.stack_differences = true,
+            "--algorithm" => {
+                index += 1;
+                score_options.algorithm = score::Algorithm::parse(&value(index)?)?;
+            }
             "--ignore-branch-targets" => score_options.ignore_branch_targets = true,
             "--no-ignore-branch-targets" => score_options.ignore_branch_targets = false,
             "--stop-on-zero" => stop_on_zero = true,
@@ -1202,6 +1206,9 @@ mod tests {
         let parsed = parse_options(&args(&["recon/tbs/en/main/080cbc0c.c"])).unwrap();
         assert_eq!((parsed.addresses.as_slice(), parsed.minutes, parsed.seed), (["080cbc0c".to_string()].as_slice(), 10.0, 1));
         assert!(parsed.jobs >= 1);
+        assert_eq!(parsed.score_options.algorithm, score::Algorithm::Difflib);
+        assert_eq!(parse_options(&args(&["08000000.c", "--algorithm", "levenshtein"])).unwrap().score_options.algorithm, score::Algorithm::Levenshtein);
+        assert!(parse_options(&args(&["08000000.c", "--algorithm", "lcs"])).is_err());
         assert_eq!(parsed.target.id.as_str(), "tbs-en");
         let parsed = parse_options(&args(&["x.c", "08000000,08000010", "--edition", "tla-de", "--minutes", "0.5", "--jobs", "3", "--seed", "9"])).unwrap();
         assert_eq!((parsed.addresses.len(), parsed.game, parsed.jobs, parsed.seed, parsed.minutes), (2, "tla", 3, 9, 0.5));

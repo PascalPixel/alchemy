@@ -5,6 +5,20 @@ use regex::Regex;
 use std::collections::BTreeMap;
 use std::path::Path;
 use std::sync::OnceLock;
+mod levenshtein;
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum Algorithm { #[default] Difflib, Levenshtein }
+
+impl Algorithm {
+    pub fn parse(value: &str) -> Result<Self, String> {
+        match value {
+            "difflib" => Ok(Self::Difflib),
+            "levenshtein" => Ok(Self::Levenshtein),
+            _ => Err("--algorithm: expected difflib or levenshtein".into()),
+        }
+    }
+}
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Line {
@@ -130,6 +144,7 @@ impl Score {
 
 #[derive(Clone, Copy, Debug)]
 pub struct Options {
+    pub algorithm: Algorithm,
     pub stack_differences: bool,
     pub ignore_branch_targets: bool,
 }
@@ -137,7 +152,7 @@ pub struct Options {
 impl Default for Options {
     fn default() -> Self {
         // Branch destinations do not contribute to the default weighted score.
-        Self { stack_differences: false, ignore_branch_targets: true }
+        Self { algorithm: Algorithm::Difflib, stack_differences: false, ignore_branch_targets: true }
     }
 }
 
@@ -346,10 +361,11 @@ pub fn weighted(listing: &[Line], draft: &[Line], options: Options, result: &mut
             .collect::<Vec<_>>()
     };
     let (old, new) = (prepare(listing), prepare(draft));
-    let blocks = matching_blocks(
-        &new.iter().map(|s| mnemonic(&s.row)).collect::<Vec<_>>(),
-        &old.iter().map(|s| mnemonic(&s.row)).collect::<Vec<_>>(),
-    );
+    let (a, b) = (new.iter().map(|s| mnemonic(&s.row)).collect::<Vec<_>>(), old.iter().map(|s| mnemonic(&s.row)).collect::<Vec<_>>());
+    let blocks = match options.algorithm {
+        Algorithm::Difflib => matching_blocks(&a, &b),
+        Algorithm::Levenshtein => levenshtein::matching_blocks(&a, &b),
+    };
     let mut unmatched: BTreeMap<&str, (usize, usize)> = BTreeMap::new();
     let (mut a, mut b) = (0, 0);
     for (i, j, n) in blocks {
@@ -381,6 +397,19 @@ pub fn weighted(listing: &[Line], draft: &[Line], options: Options, result: &mut
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn both_algorithms_match_compatibility_scores_and_normalization_options() {
+        for row in include_str!("c/fixtures/scoring-algorithms.tsv").lines() {
+            let c: Vec<_> = row.split('\t').collect();
+            let options = Options { algorithm: Algorithm::parse(c[0]).unwrap(), stack_differences: c[1] == "1", ignore_branch_targets: c[2] == "1" };
+            let decode = |s: &str| s.replace("\\t", "\t").replace("\\n", "\n");
+            let (old, new) = (parse_objdump(&decode(c[5])).unwrap(), parse_objdump(&decode(c[6])).unwrap());
+            let mut actual = Score::default();
+            weighted(&old, &new, options, &mut actual);
+            assert_eq!(actual.weighted, c[4].parse::<u64>().unwrap(), "{} seed {} stack={} ignore={} {:?}", c[0], c[3], c[1], c[2], actual);
+        }
+    }
 
     fn rows(texts: &[&str]) -> Vec<String> {
         texts.iter().map(|text| text.to_string()).collect()
@@ -451,7 +480,7 @@ mod tests {
         let new = rows(&["ldr r0, [sp, #20]", "b.n +8"]);
         let result = score(&old, &new);
         assert_eq!((result.weighted, result.branch, result.stack), (0, 0, 0));
-        let result = score_with(&old, &new, Options { stack_differences: false, ignore_branch_targets: false });
+        let result = score_with(&old, &new, Options { stack_differences: false, ignore_branch_targets: false, ..Options::default() });
         assert_eq!((result.weighted, result.branch, result.stack), (1, 1, 0));
         let result = score_with(
             &old,
@@ -459,6 +488,7 @@ mod tests {
             Options {
                 stack_differences: true,
                 ignore_branch_targets: false,
+                ..Options::default()
             },
         );
         assert_eq!((result.weighted, result.branch, result.stack), (9, 1, 8));
@@ -468,6 +498,7 @@ mod tests {
             Options {
                 stack_differences: false,
                 ignore_branch_targets: true,
+                ..Options::default()
             },
         );
         assert_eq!(result.weighted, 0);
@@ -488,7 +519,7 @@ mod tests {
         assert!(target[0].has_symbol && target[1].has_symbol);
         let candidate = parse_objdump("header\n  0:\tbl\t4 <f>\n  0: R_ARM_THM_CALL .text+0x34\n  4:\t.word\t0x00000000\n  4: R_ARM_ABS32 Data\n").unwrap();
         let mut score = Score::default();
-        let options = Options { stack_differences: false, ignore_branch_targets: false };
+        let options = Options { stack_differences: false, ignore_branch_targets: false, ..Options::default() };
         weighted(&target, &candidate, options, &mut score);
         assert_eq!(score.weighted, 0);
         weighted(&candidate, &target, options, &mut score);

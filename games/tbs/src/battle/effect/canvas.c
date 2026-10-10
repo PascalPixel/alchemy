@@ -857,10 +857,12 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 		FLECKS[i].z = (Random16() & 0x1ff) + i * 2;
 		FLECKS[i].variant = -i;
 	}
-	/* FAKEMATCH: read-only work use exchanges r11/r9, fixing 16 register differences. */
-	__asm__("" : : "r"(work));
-	/* FAKEMATCH: a scheduling barrier the native order needs. */
-	__asm__("");
+	/* FAKEMATCH: the cancelling pointer updates retain work's allocation
+	 * priority without operand asm. Without them, work and the cell index
+	 * exchange r9/r11 and two spill slots swap (420 instructions, 50 rows).
+	 * The adjacent scheduling asm is unnecessary with these updates. */
+	work++;
+	work--;
 	work->transfer_mode = 2;
 	work->transfer_value = 75; // 転送のたびに 3/4 へ減らして残像にする
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -945,10 +947,12 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
-	/* FAKEMATCH: a scheduling barrier the native order needs. */
-	__asm__("");
-	/* FAKEMATCH: a scheduling barrier the native order needs. */
-	__asm__("");
+	/* FAKEMATCH: cancelling frame updates preserve the allocation lifetimes
+	 * without the two trailing asm statements. Deleting both swaps the
+	 * ground and camera-position pointers at sp+8/sp+12 (420 instructions,
+	 * 18 differing rows); one dead increment leaves the same swap. */
+	frame ^= 1;
+	frame ^= 1;
 }
 
 // 割れて飛ぶ 33 片：始まりの位置、大きさ、絵の位置

@@ -24,7 +24,7 @@ void Korosseo_FinishSoloRound(s32 id)
     s32 res;
 
     work = gEventWork;
-    /* FAKEMATCH: needed to match: the speaker lookup is retained twice with both results unused. */
+    // 話者を二度引き、どちらの結果も使わない (original behaviour: two real calls)
     Object_GetById(id);
     Object_GetById(id);
     slot = gGameState.selected_actor;

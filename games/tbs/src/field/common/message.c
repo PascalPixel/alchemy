@@ -10,7 +10,7 @@ s32 Event_ShowMessageAtPosition();
 
 void Event_ShowSpeakerMessage(s32 speaker)
 {
-    /* FAKEMATCH: needed to match: the position is never set; as one 8-byte local the native reads it from r6/r7 */
+    // 位置は未初期化のまま読まれる (original bug: the position is never set)
     struct { s32 x, y; } pos;
     struct EventRuntime *state = gEventWork;
 

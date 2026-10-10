@@ -3,59 +3,37 @@
 #include "glyph.h"
 #include "text_font.h"
 
-/* ARM draft: EN differs 2; DE/ES/FR/IT differ 10. The tail matches.
-   Registers and spill offsets match. Remaining differences:
-   JA: all 193 instructions match. A pair-first seed initially differed 18,
-       but placed ADD r8,r8,#1 before STR r3,[sp,#12]. Keeping that order
-       while changing the redundant height test closed the other differences.
-       Adopted into games/tbs/src/graphics/text/moji.c. The Japanese linker
-       uses that ARM C source; the other editions keep their listing.
-   EN: MOV r7,r3 must precede SUB sp,sp,#44. Prologue threading inserts SUB
-       first; sched2 gives both priority 5 through PUSH and keeps that order.
-       A redundant height normalization guarded by y*(y+1) moves MOV first,
-       but leaves MLA between MOV and SUB, plus CMP (best differ 10).
-       jump2 deliberately skips recursive dead-computation removal after
-       reload (jump.c's gcc/13233 guard), so that seed cannot rely on it to
-       erase the multiply. Two 100,000-run searches with the updated
-       permuter left this saved best at differ 2. A source form must
-       change the dependency or copy's RTL form without retained arithmetic.
-   DE/ES/FR/IT:
-       MOV r9,r2 and MOV r8,r3 belong before SUB sp,sp,#44. Prologue
-       threading and sched2 give the copies the same PUSH priority as EN;
-       y's incoming r3 also dies at the font-selection SUBS. Changing that
-       lifetime must retain x=r9, y=r8 and font=r2.
-       STR r0,[sp,#28] belongs after CMP r3,#0. Reload puts the height spill
-       inside the one-pass read, whose end note makes sched2 keep it before
-       CMP. Reading width first, repeating it in a one-pass block that
-       breaks on !use_font, and repeating stride=width in the use_font arm
-       restores CMP/STR, but spills width again at sp+32 (differ 11).
-       A separate copy must survive combine without that redundant spill.
-       STR r2,[sp,#24] belongs after ADD r1,r1,#17. Reload similarly spills
-       source before the color boundary; removing the boundary alone leaves
-       sched2's store-to-MOV-r2 anti-dependence and changes palette ordering.
-       STR r2,[sp,#12] belongs after CMP r8,#31. Sched2 delays the store
-       before the block-ending branch and fills the delay with CMP. An early
-       comparison and separate width copy can move it, but must preserve
-       LDRB before CMP and y=r8; the repeated-read trials change both.
-   2026-10-10 trials: 576 explicit English entry variants (signed/unsigned
-       argument, repeated coordinate assignment and height normalization)
-       retain best differ 2. A separate short-lived continental raw_stride
-       removes the extra width spill, but loses the compare/store order;
-       400 variants retain best differ 10. Keeping the original width with
-       a break-on-use_font boundary gives differ 9 with one redundant spill,
-       so it is not adopted. Palette/source lifetime variants reach weighted
-       255 but differ 14, changing source r2 to r3 and two spill positions;
-       40,257 distinct random refinements over three minutes did not improve
-       that seed. The saved draft remains the instruction-identical-sized
-       196/187-instruction form with only the listed ordering differences.
-       Continental clipping: 288 typed raw-width/repeated-read variants
-       reached weighted 250, differ 12. One-pass raw_width load, followed
-       by if (y > 31) raw_width = UiText_GlyphWidths[character - 32], then
-       font_width = raw_width, gives the native LDRB/CMP/STR order and keeps
-       y=r8. Only that load/store pair uses r0 instead of r2. Twenty-one
-       refinements with late-folded equivalent indices and byte-normalizing
-       copies did not improve it. The table address survives allocation for
-       the repeated read; reducing that lifetime is the next local lead. */
+/* ARM draft: EN matches; DE/ES/FR/IT differ 4 (two reordered stores).
+   Japanese C is adopted in graphics/text/moji.c. English has also passed
+   all twelve ROM comparisons when linked there, but its one emitting asm
+   exceeds the device baseline; adoption awaits Pascal's decision.
+
+   Remaining continental differences, with all registers and slots matching:
+     STR r0,[sp,#28] must follow CMP r3,#0.
+     STR r2,[sp,#24] must follow ADD r1,r1,#17.
+
+   2026-10-10: ordinary C remains EN differ 2 and continental differ 10.
+   Two 100,000-run English searches and 576 entry forms kept that result.
+   agbcc_arm gives PUSH -> ordinary MOV and PUSH -> SUB equal cost 5;
+   sched2 retains SUB first. Its unrecognized-asm dependency has cost 1.
+   A tagged MOV closes English, and two MOVs close the continental entry.
+   Keeping the boundary before the window copy restores its spill order.
+
+   The early clipping comparison and separate width copy restore CMP/STR.
+   Raw width otherwise prefers r0 (or r3), so an empty-asm constraint keeps
+   r2. The second table read is already removed before allocation: the
+   earlier note blaming table-address lifetime was wrong. The table/index
+   both die at LDRB; raw width's return-register preference is the issue.
+   Before that constraint, 288 typed variants reached differ 12; 35,541
+   random refinements, 432 normalization variants and 32 type/lifetime
+   forms did not improve it.
+
+   A repeated height read plus separate copy restores CMP/STR but moves
+   height to r2 and font to lr; retaining zero height bits through palette
+   setup recovers the tail, leaving differ 14. An empty source barrier can
+   move its spill after color1, but then color1 spills before color3's MOV.
+   Typed source copies and palette constraints did not close both orders.
+   A 38,998-candidate search around height/palette retains this differ 4. */
 
 extern const u8 UiText_GlyphWidths[];
 
@@ -108,8 +86,10 @@ static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
 }
 
 s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
-	u32 x, u32 y, const u8 *font)
+	u32 input_x, u32 input_y, const u8 *font)
 {
+	u32 x;
+	u32 y;
 	struct UiWindow *window;
 	const u16 *rows;
 #if !defined(TBS_EDITION_JA) && !defined(TBS_EDITION_EN)
@@ -130,11 +110,19 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 	u32 rownext;
 	u32 col;
 #if !defined(TBS_EDITION_EN)
+	/* FAKEMATCH: native x/y copies precede SUB sp,sp,#44 (differ 10 -> 6). */
+	asm("mov %0, %2\n\tmov %1, %3" : "=&r"(x), "=r"(y) : "r"(input_x), "r"(input_y));
+#else
+	x = input_x;
+	/* FAKEMATCH: native MOV r7,r3 precedes SUB sp,sp,#44 (EN differ 2 -> 0). */
+	asm("mov %0, %1" : "=r"(y) : "r"(input_y));
+#endif
+#if !defined(TBS_EDITION_EN)
+	/* FAKEMATCH: the boundary keeps the window spill after the character copy. */
+	do { } while (0);
 	window = input_window;
 #endif
 #if !defined(TBS_EDITION_JA) && !defined(TBS_EDITION_EN)
-	/* FAKEMATCH: this boundary delays the character copy until after the font load. */
-	do { } while (0);
 	use_font = character <= 255 || font != NULL;
 #endif
 #if defined(TBS_EDITION_EN)
@@ -188,9 +176,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 			u32 color1;
 			u32 color3;
 			u32 font_width;
-#if defined(TBS_EDITION_EN)
 			u32 raw_width;
-#endif
 			u32 packed;
 			u32 color;
 			u8 *vram;
@@ -232,7 +218,11 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 			}
 #else
 			row = 0;
-			font_width = UiText_GlyphWidths[character - 32];
+			/* FAKEMATCH: the early comparison keeps the width spill after CMP. */
+			do { raw_width = UiText_GlyphWidths[character - 32]; } while (0);
+			if (y > 31) raw_width = UiText_GlyphWidths[character - 32];
+			/* FAKEMATCH: exclude r0/r3 for the native r2 load/spill (differ 8 -> 4). */
+			asm("" : "=r"(font_width) : "0"(raw_width) : "r0", "r3");
 #endif
 			if (y > 31)
 				goto font_done;

@@ -20,7 +20,7 @@ the draft. "differ 0" means the code matches instruction for instruction.
 An overlay draft (a path under overlays/) compares with the function of
 the same name, or --symbol, in out/EDITION/overlays/OVERLAY_overlay.o;
 the overlay defaults from the path (resource_XXX). When no separate listing
-object exists, a main-image scaffold is resolved by ADDRESS or --symbol
+object exists, a main-image scaffold or adopted C function is resolved by ADDRESS or --symbol
 in the selected edition's map and ELF. Its reference ROM extent is read only
 for comparison; literal pools and jump tables are omitted. --arm explicitly
 selects ARM for scaffolds without instruction-set markers. Mixed-mode
@@ -477,9 +477,11 @@ fn scaffold_extent_mode(map: &Map, elf: &Elf, wanted: &str, arm: bool) -> Result
         .map(|symbol| (symbol.value & !1, symbol.name.clone()))
         .collect();
     let (section, start, name) = crate::show::resolve(map, Some(elf), &functions, wanted)?;
-    if !section.object().starts_with("recon/") || !section.object().ends_with("/rom.o")
-        || !section.name.starts_with(".rom.") || !section.loaded || section.load < ROM {
-        return Err(format!("{name}: no main-image scaffold extent; build the selected edition first"));
+    let scaffold = section.object().starts_with("recon/") && section.object().ends_with("/rom.o")
+        && section.name.starts_with(".rom.");
+    let adopted = section.object().starts_with("games/") && section.name.starts_with(".text");
+    if !(scaffold || adopted) || !section.loaded || section.load < ROM {
+        return Err(format!("{name}: no main-image code extent; build the selected edition first"));
     }
     let statics: Vec<u32> = functions.iter().map(|(address, _)| *address).collect();
     let size = elf.symbols.iter().find(|symbol| symbol.name == name && matches!(symbol.kind, 2 | 15)).map(|symbol| symbol.size);
@@ -503,7 +505,7 @@ fn require_thumb_scaffold(elf: &Elf, section: &Placed, start: u32, end: u32) -> 
     let arm = elf.symbols.iter().any(|symbol| symbol.value >= start && symbol.value < end
         && (symbol.name.starts_with("$a") || (symbol.kind == 2 && symbol.value & 1 == 0)));
     if !thumb || arm || start & 1 != 0 || end <= start || end > section.end() {
-        return Err("main-image scaffold comparison supports a bounded Thumb function only; ARM, mixed or unknown ISA is unsupported".into());
+        return Err("main-image comparison supports a bounded Thumb function only; ARM, mixed or unknown ISA is unsupported".into());
     }
     Ok(())
 }
@@ -579,7 +581,7 @@ pub(crate) fn scaffold_reference(target: DecompTarget, wanted: &str, arm: bool) 
         thumb_reference(&reference_path, &reference, base, start, end)?
     };
     let mode = if arm { "ARM" } else { "Thumb" };
-    println!("{mode} scaffold analysis: {} {name}, {start:#010x}..{end:#010x}; full ROM comparison remains required.", target.id);
+    println!("{mode} main-image analysis: {} {name}, {start:#010x}..{end:#010x}; full ROM comparison remains required.", target.id);
     Ok((tokens, name))
 }
 
@@ -785,7 +787,31 @@ mod tests {
         assert!(scaffold_extent_mode(&map, &elf, "First", true).is_err());
         let mut ordinary = section;
         ordinary.path = "games/tbs/src/test.o".into();
-        assert!(scaffold_extent(&Map { placed: vec![ordinary] }, &elf, "First").unwrap_err().contains("no main-image scaffold"));
+        assert!(scaffold_extent(&Map { placed: vec![ordinary] }, &elf, "First").unwrap_err().contains("no main-image code"));
+    }
+
+    #[test]
+    fn adopted_code_bounds_use_linked_symbols_and_refuse_data() {
+        let section = Placed {
+            name: ".text".into(), path: "out/tla-en/obj/games/tla/src/battle/summon/definition.o".into(),
+            address: ROM + 0x100, load: ROM + 0x100, size: 0x60, loaded: true,
+            symbols: vec![(ROM + 0x100, "First".into()), (ROM + 0x128, "Next".into())],
+        };
+        let symbol = |name: &str, value, size| crate::elf::Symbol {
+            name: name.into(), value, size, kind: 2, bind: 1, section: 1,
+        };
+        let elf = Elf { sections: vec![], symbols: vec![
+            symbol("First", ROM + 0x101, 0x24), symbol("Next", ROM + 0x129, 0x20),
+        ] };
+        let map = Map { placed: vec![section.clone()] };
+        assert_eq!(scaffold_extent(&map, &elf, "First").unwrap(), (ROM + 0x100, ROM + 0x124, ROM, "First".into()));
+        assert_eq!(scaffold_extent(&map, &elf, "08000100").unwrap().1, ROM + 0x124);
+        let mut data = section.clone();
+        data.name = ".rodata".into();
+        assert!(scaffold_extent(&Map { placed: vec![data] }, &elf, "First").is_err());
+        let mut unloaded = section;
+        unloaded.loaded = false;
+        assert!(scaffold_extent(&Map { placed: vec![unloaded] }, &elf, "First").is_err());
     }
 
     #[test]

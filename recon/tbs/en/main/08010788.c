@@ -28,6 +28,13 @@
  * leaves 64. A two-minute prefix search (seed 457, two jobs, exact stack
  * and branches) tried 2929 distinct candidates; 2905 failed evaluation
  * and no candidate beat the draft.
+ * Further EN trials: 127 combinations of dead scalar assignments for the
+ * final word retain 4 at best. A final word output leaves 139 (143 built),
+ * while address input or destination/x output with a word input retains
+ * 4. Source/destination cursor outputs leave 40 (144 built), y output
+ * leaves 112 (138 built), and a tied register input for the final load
+ * leaves 40. Removing the base barrier while passing the final destination
+ * through leaves 163 (143 built).
  * The linked function retains its r3 binding until the whole ROM matches. */
 #include "edition.h"
 #include "mapcopy.h"

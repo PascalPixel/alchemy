@@ -16,6 +16,12 @@
  * 44. Moving slot before the existing state barrier and adding it as a
  * low-register input leaves 10 in EN (280 built); a prize_state output
  * instead leaves 16, and a volatile state output leaves 66.
+ * Further EN trials: an index output with state input leaves 42 (278
+ * built), joint state/index outputs leave 24 (280 built). Replacing the
+ * state boundary with a slot output and pointer input before w++ leaves
+ * 31 (279 built); retaining the state boundary as well leaves 50. A
+ * pointer output with slot input and the state boundary leaves 42;
+ * input-only pointer/slot operands retain 14, and joint outputs leave 44.
  * Linked source keeps its bindings pending all-edition byte identity. */
 #include "battle.h"
 #include "debug.h"

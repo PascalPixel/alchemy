@@ -17,7 +17,13 @@
  * an early-clobber tied p retain six. Adding x or z outputs leaves 22 or
  * 24; adding p or the options memory as input leaves 16. A volatile
  * options target leaves 31 (89 built). A u16-cast negative offset,
- * unsigned RNG shift and reversed spin sum each retain six. */
+ * unsigned RNG shift and reversed spin sum each retain six.
+ * Further EN trials: a masked or combined shift, a narrowed shift and
+ * unsigned x retain six. A narrowed negative offset leaves 9 (85 built).
+ * Halfword-array and byte-pointer spin stores leave 14; ordinary register
+ * qualification retains six. Passing x or z through instead of options
+ * leaves 45 or 47, both leave 56. Plain options with register or unsigned
+ * x retain 37. A generic scale input retains six. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

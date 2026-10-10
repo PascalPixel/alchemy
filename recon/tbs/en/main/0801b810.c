@@ -14,7 +14,11 @@
  * retains four differences. A zero from cursor_index | top leaves 28;
  * OR-ing the known zero into node leaves 12. Replacing the known-zero
  * shift with a literal zero and generic output plus head-address input
- * leaves 46 (182 built); a kind-address input leaves 58 (184 built). */
+ * leaves 46 (182 built); a kind-address input leaves 58 (184 built).
+ * Further EN trials: a literal zero output before the head load with a
+ * head-address or memory input retains 46; storing it first leaves 34
+ * (182 built). Generic outputs on the known-zero shift with node or head
+ * address input retain 4. A literal zero output alone leaves 64. */
 #define OWN_AudioCommand_PlayFar
 #include "battle.h"
 #include "debug.h"

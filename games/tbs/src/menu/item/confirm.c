@@ -113,8 +113,13 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
         text = (s32)&gKeysRepeat;
         if (*(volatile s32 *)text & 64) {
             register s32 one asm("r2") = 1; /* FAKEMATCH: sets the flag through r2 */
-            /* FAKEMATCH: empty asm barrier on the r2 one, so cse does not set r8 from the constant, whose reload takes r3 (2 of 134 rows differ) */
-            asm("" : "+l"(one));
+            /* FAKEMATCH: the redundant conditional store ends CSE before
+             * the cursor update, keeping the one load ahead of sel's
+             * decrement. Without it, two rows swap; the conditional store
+             * disappears, preserving all 128 instructions in every edition. */
+            if (changed) {
+                changed = one;
+            }
             sel -= 1;
             changed = one;
             AudioCommand_PlayFar(111);

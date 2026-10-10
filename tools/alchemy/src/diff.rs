@@ -20,7 +20,7 @@ the draft. "differ 0" means the code matches instruction for instruction.
 An overlay draft (a path under overlays/) compares with the function of
 the same name, or --symbol, in out/EDITION/overlays/OVERLAY_overlay.o;
 the overlay defaults from the path (resource_XXX). When no separate listing
-object exists, a main-image scaffold is resolved by ADDRESS or --symbol
+object exists, a main-image function is resolved by ADDRESS or --symbol
 in the selected edition's map and ELF. Its reference ROM extent is read only
 for comparison; literal pools and jump tables are omitted. --arm explicitly
 selects ARM for scaffolds without instruction-set markers. Mixed-mode
@@ -477,9 +477,12 @@ fn scaffold_extent_mode(map: &Map, elf: &Elf, wanted: &str, arm: bool) -> Result
         .map(|symbol| (symbol.value & !1, symbol.name.clone()))
         .collect();
     let (section, start, name) = crate::show::resolve(map, Some(elf), &functions, wanted)?;
-    if !section.object().starts_with("recon/") || !section.object().ends_with("/rom.o")
-        || !section.name.starts_with(".rom.") || !section.loaded || section.load < ROM {
-        return Err(format!("{name}: no main-image scaffold extent; build the selected edition first"));
+    let scaffold = section.object().starts_with("recon/") && section.object().ends_with("/rom.o")
+        && section.name.starts_with(".rom.");
+    let source = section.object().starts_with("games/")
+        && (section.name == ".text" || section.name.starts_with(".text."));
+    if !(scaffold || source) || !section.loaded || section.load < ROM {
+        return Err(format!("{name}: no main-image code extent; build the selected edition first"));
     }
     let statics: Vec<u32> = functions.iter().map(|(address, _)| *address).collect();
     let size = elf.symbols.iter().find(|symbol| symbol.name == name && matches!(symbol.kind, 2 | 15)).map(|symbol| symbol.size);
@@ -579,7 +582,7 @@ pub(crate) fn scaffold_reference(target: DecompTarget, wanted: &str, arm: bool) 
         thumb_reference(&reference_path, &reference, base, start, end)?
     };
     let mode = if arm { "ARM" } else { "Thumb" };
-    println!("{mode} scaffold analysis: {} {name}, {start:#010x}..{end:#010x}; full ROM comparison remains required.", target.id);
+    println!("{mode} ROM analysis: {} {name}, {start:#010x}..{end:#010x}; full ROM comparison remains required.", target.id);
     Ok((tokens, name))
 }
 
@@ -785,7 +788,31 @@ mod tests {
         assert!(scaffold_extent_mode(&map, &elf, "First", true).is_err());
         let mut ordinary = section;
         ordinary.path = "games/tbs/src/test.o".into();
-        assert!(scaffold_extent(&Map { placed: vec![ordinary] }, &elf, "First").unwrap_err().contains("no main-image scaffold"));
+        assert!(scaffold_extent(&Map { placed: vec![ordinary] }, &elf, "First").unwrap_err().contains("no main-image code"));
+    }
+
+    #[test]
+    fn adopted_code_uses_its_linked_extent_and_still_refuses_data_and_unloaded_sections() {
+        let section = Placed {
+            name: ".text".into(), path: "out/tbs-en/obj/games/tbs/src/system/link/link.o".into(),
+            address: ROM + 0x100, load: ROM + 0x100, size: 0x30, loaded: true,
+            symbols: vec![(ROM + 0x100, "First".into()), (ROM + 0x118, "Next".into())],
+        };
+        let elf = Elf { sections: vec![], symbols: vec![
+            crate::elf::Symbol { name: "First".into(), value: ROM + 0x101, size: 0x10, kind: 2, bind: 1, section: 1 },
+            crate::elf::Symbol { name: "Next".into(), value: ROM + 0x119, size: 0x18, kind: 2, bind: 1, section: 1 },
+        ] };
+        let mut map = Map { placed: vec![section] };
+        assert_eq!(scaffold_extent(&map, &elf, "First").unwrap(), (ROM + 0x100, ROM + 0x110, ROM, "First".into()));
+        map.placed[0].name = ".data".into();
+        assert!(scaffold_extent(&map, &elf, "First").is_err());
+        map.placed[0].name = ".text.First".into();
+        assert!(scaffold_extent(&map, &elf, "First").is_ok());
+        map.placed[0].loaded = false;
+        assert!(scaffold_extent(&map, &elf, "First").is_err());
+        map.placed[0].loaded = true;
+        map.placed[0].load = 0x03000000;
+        assert!(scaffold_extent(&map, &elf, "First").is_err());
     }
 
     #[test]

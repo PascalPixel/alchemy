@@ -201,17 +201,9 @@ void MusicCommand_SetPitchAndUpdateFrequency(u16 value)
     MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, value);
 }
 
-void MusicCommand_SetPitch(s16 pitch)
+void MusicCommand_SetPitch(u16 pitch)
 {
-    /* FAKEMATCH: the player temporary and one-pass block keep pitch sign extension after the player-address load. */
-  int player_address;
-  player_address = (u32)&gMusicPlayerBgm;
-  /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
-  do
-  {
-    MusicPlayer_SetPitch((struct SoundPlayer *)player_address, 0xFF, pitch);
-  }
-  while (0);
+    MusicPlayer_SetPitch(&gMusicPlayerBgm, 0xFF, pitch);
 }
 
 void Audio_SetWorkPairB(u16 primary, u16 secondary)

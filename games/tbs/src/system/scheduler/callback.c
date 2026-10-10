@@ -319,7 +319,7 @@ s32 Resource_GetBuffer(s32 no, s32 src)
 
 #define gRandomSeed (*(u32 *)&gRandomSeed)
 
-typedef void (*KeyCallbackFn)(void);
+typedef s32 (*KeyCallbackFn)(void);
 
 void Scheduler_ResetTaskTable(void)
 {
@@ -660,8 +660,7 @@ next_task:
             if (TASK_STATE_HIGH(task) == key) {
                 KeyCallbackFn callback = *(KeyCallbackFn *)&task->callback;
 
-                /* FAKEMATCH: the ignored-result cast keeps r0/_call_via_r0; void-call forms select r3/_call_via_r3. */
-                ((s32 (*)(void))callback)();
+                callback();
             }
             goto next_task;
         }

@@ -35,7 +35,7 @@ s32	 Shop_PickUnitItem();
 s32	 NameEntry_EditOwnerName();
 void UiText_ShowPositionedMessageAndWait();
 void UnitCalc();
-void Party_AdvanceOwnerCountToTarget();
+void Party_AdvanceOwnerCountToTarget(s32 owner, s32 level);
 s32	 Inventory_AddItem();
 s32	 Djinn_AddToOwner();
 s32	 Djinn_Activate();

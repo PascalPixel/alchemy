@@ -734,18 +734,9 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 		// 絵は横の速さで選び、左へ進む剣は左右反転して描く
 		for (i = 15; i != -1; i--)
 		{
-			/* Ordinary drift differs 52 in EN (320 native/built). A generic
-			 * output, conditional magnitude, direct cell calculation and
-			 * one-pass load/magnitude/cell blocks retain 52. Keeping drift
-			 * live after drawing differs 291 (331 built); a separate early
-			 * direction differs 66 (318 built). A direction in each branch
-			 * retains 52; selecting its painter first differs 189 (325 built). */
-			/* FAKEMATCH: the drift is pinned to r6, as the reference keeps it. */
-			register s32 drift __asm__("r6");
+			s32			 drift;
 			s32			 speed;
 			s32			 cell;
-			u32			 wide;
-			u32			 high;
 
 			blade = &work->particles[i];
 			drift = blade->velocity_x;
@@ -755,6 +746,9 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 			cell = speed >> 17;
 			if (frame < i * 4 + 25)
 			{
+				u32 wide;
+				u32 high;
+
 				blit[(u32)drift >> 31](canvas, work->sheet + BladeRain_CellSourceOffsets[cell],
 					(blade->x >> 16) - ((wide = BladeRain_CellWidths[cell]) >> 1),
 					(blade->y >> 16) - ((high = BladeRain_CellHeights[cell]) >> 1), wide, high);
@@ -766,10 +760,13 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 			}
 			else
 			{
+				u32 wide;
+				u32 high;
+
 				blit[(u32)drift >> 31](canvas, work->sheet + BladeRain_CellSourceOffsets[cell],
 					(blade->x >> 16) - ((wide = BladeRain_CellWidths[cell]) >> 1),
 					(blade->y >> 16) - ((high = BladeRain_CellHeights[cell]) >> 1), wide,
-					high -= 4);
+					high - 4);
 			}
 		}
 

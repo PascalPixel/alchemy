@@ -1,5 +1,5 @@
 use crate::compiler::bundle::{
-    compiler_command_for_target, validate_agbcc_bundle, validate_bundle,
+    compiler_command_for_target, validate_agbcc_bundle, validate_bundle, validate_game_arm_bundle,
 };
 
 pub fn basename(path: &str) -> &str {
@@ -94,19 +94,22 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
         .unwrap_or_else(|| basename(&options.routing_source).to_string());
     let mut steps = Vec::new();
     if let Some(driver) = driver_for_family(family) {
-        validate_agbcc_bundle()?;
+        if family == CompilerFamily::GameArm {
+            validate_game_arm_bundle()?;
+        } else {
+            validate_agbcc_bundle()?;
+        }
         let compiler_input = options
             .preprocessed_output
             .clone()
             .unwrap_or_else(|| inferred_preprocessed_output(&options.output));
-        let gcc_minor = 9;
         let mut preprocessor_flags = family_include_flags(family);
         preprocessor_flags.extend(options.preprocessor_flags.iter().cloned());
-        steps.push(direct_preprocessor_command_for_target_with_minor_and_flags(
+        steps.push(direct_preprocessor_command_for_target_with_flags(
             options.target,
             &options.input,
             &compiler_input,
-            gcc_minor,
+            family,
             &preprocessor_flags,
         )?);
         let mut command = vec![
@@ -130,11 +133,11 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
     }
     Ok(steps)
 }
-fn direct_preprocessor_command_for_target_with_minor_and_flags(
+fn direct_preprocessor_command_for_target_with_flags(
     target: CompilerTarget,
     input: &str,
     output: &str,
-    gcc_minor: i64,
+    family: CompilerFamily,
     flags: &[String],
 ) -> Result<Vec<String>> {
     validate_bundle(target)?;
@@ -145,9 +148,6 @@ fn direct_preprocessor_command_for_target_with_minor_and_flags(
             .into_owned(),
         "-lang-c".into(),
         "-nostdinc".into(),
-        "-D__GNUC__=2".into(),
-        format!("-D__GNUC_MINOR__={gcc_minor}"),
-        "-D__GNUC_PATCHLEVEL__=0".into(),
         "-Acpu(arm)".into(),
         "-Amachine(arm)".into(),
         "-D__CHAR_UNSIGNED__".into(),
@@ -155,15 +155,49 @@ fn direct_preprocessor_command_for_target_with_minor_and_flags(
         "-D__ARM_ARCH_4T__".into(),
         "-D__APCS_32__".into(),
         "-D__ARMEL__".into(),
-        "-D__THUMBEL__".into(),
         "-Darm_elf".into(),
         "-D__ELF__".into(),
-        "-Dthumb".into(),
-        "-D__thumb__".into(),
         include_flag(target),
     ];
+    command.extend(direct_preprocessor_defines(family).iter().map(|flag| flag.to_string()));
     command.extend(flags.iter().cloned());
     command.push(input.to_string());
     command.push(output.to_string());
     Ok(command)
+}
+
+pub(crate) fn direct_preprocessor_defines(family: CompilerFamily) -> Vec<&'static str> {
+    let mut defines = vec!["-D__GNUC__=2"];
+    if family == CompilerFamily::GameArm {
+        defines.extend(["-D__GNUC_MINOR__=95", "-D__GNUC_PATCHLEVEL__=2"]);
+    } else {
+        defines.extend(["-D__GNUC_MINOR__=9", "-D__GNUC_PATCHLEVEL__=0"]);
+    }
+    if family.is_arm() {
+        defines.extend(["-Darm", "-D__arm__"]);
+    } else {
+        defines.extend(["-D__THUMBEL__", "-Dthumb", "-D__thumb__"]);
+    }
+    defines
+}
+
+#[cfg(test)]
+mod direct_preprocessor_tests {
+    use super::*;
+
+    #[test]
+    fn direct_compilers_receive_their_version_and_instruction_set() {
+        let arm = direct_preprocessor_defines(CompilerFamily::GameArm);
+        assert!(arm.contains(&"-D__GNUC_MINOR__=95"));
+        assert!(arm.contains(&"-D__GNUC_PATCHLEVEL__=2"));
+        assert!(arm.contains(&"-D__arm__"));
+        assert!(!arm.iter().any(|flag| flag.to_ascii_lowercase().contains("thumb")));
+        for family in [CompilerFamily::Agbcc, CompilerFamily::AgbccFlash] {
+            let thumb = direct_preprocessor_defines(family);
+            assert!(thumb.contains(&"-D__GNUC_MINOR__=9"));
+            assert!(thumb.contains(&"-D__GNUC_PATCHLEVEL__=0"));
+            assert!(thumb.contains(&"-D__thumb__"));
+            assert!(!thumb.contains(&"-D__arm__"));
+        }
+    }
 }

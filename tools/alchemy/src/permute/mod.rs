@@ -105,7 +105,7 @@ the best already saved. --only-if-below N requires a score strictly below N.
 --overlay resource_XXX with --function NAME compares an overlay's linked
 function against the reference ROM's decoded stream, as alchemy diff does.
 --arm compiles each candidate as alchemy diff --arm does:
-through the game ARM route (GAME_ARM_SOURCES, AGENTS.md K1): stock agbcc_arm."#;
+through the game ARM route (GAME_ARM_SOURCES): stock GCC 2.95.2."#;
 
 struct Options {
     draft: PathBuf,
@@ -1357,14 +1357,14 @@ mod tests {
     }
 
     #[test]
-    fn arm_jobs_compile_with_stock_agbcc_arm() {
+    fn arm_jobs_compile_with_stock_gcc2952() {
         let work = tempfile::tempdir().unwrap();
         let draft = PathBuf::from("recon/tbs/en/main/0800a0f8.c");
         let mut problem = test_problem(&draft, "void F(void)\n{\n}\n", Vec::new(), None);
         let thumb = Job::new(&problem, work.path()).unwrap();
         problem.arm = true;
         let arm = Job::new(&problem, work.path()).unwrap();
-        let compiler = |job: &Job| job.steps.iter().flatten().any(|argument| argument.ends_with("agbcc/agbcc_arm"));
+        let compiler = |job: &Job| job.steps.iter().flatten().any(|argument| argument.ends_with("gcc2952_arm"));
         assert!(!compiler(&thumb));
         assert!(compiler(&arm));
         std::fs::write(&arm.candidate, "int F(int x) { return x + 1; }\n").unwrap();

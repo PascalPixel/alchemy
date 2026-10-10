@@ -11,15 +11,18 @@ pub(crate) fn command(
     comments: bool,
 ) -> Result<Vec<String>, String> {
     let compiler = target.compiler;
+    let family = family_for_source(compiler, source);
     let mut flags = cflags_for_target_source(compiler, source);
     if uses_agbcc_compiler(compiler, source) {
         flags.extend([
             "-nostdinc".into(),
-            "-mthumb".into(),
             super::routing::include_flag(compiler),
-            "-D__GNUC_MINOR__=9".into(),
         ]);
-        flags.extend(family_include_flags(family_for_source(compiler, source)));
+        if !family.is_arm() {
+            flags.push("-mthumb".into());
+        }
+        flags.extend(super::plan::direct_preprocessor_defines(family).iter().map(|flag| flag.to_string()));
+        flags.extend(family_include_flags(family));
     }
     flags.push(format!("-D{}=1", target.edition_define));
     flags.extend(["-w".into(), "-E".into(), "-x".into(), "c".into()]);
@@ -86,6 +89,11 @@ mod tests {
             for source in GAME_ARM_SOURCES {
                 let command = command(target, source, false).unwrap();
                 assert!(command.contains(&shared), "{id}: {source}");
+                if family_for_source(target.compiler, source).is_arm() {
+                    assert!(!command.contains(&"-mthumb".to_string()));
+                    assert!(command.contains(&"-D__GNUC_MINOR__=95".to_string()));
+                    assert!(command.contains(&"-D__GNUC_PATCHLEVEL__=2".to_string()));
+                }
             }
         }
     }

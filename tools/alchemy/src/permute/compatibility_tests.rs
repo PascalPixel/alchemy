@@ -4,6 +4,36 @@ use super::tests::test_problem;
 use super::*;
 
 #[test]
+fn exact_stack_operand_candidate_survives_zero_weighted_baseline() {
+    crate::compiler::routing::prefer_installed_binutils();
+    let work = tempfile::tempdir().unwrap();
+    let draft = work.path().join("draft/08000000.c");
+    std::fs::create_dir_all(draft.parent().unwrap()).unwrap();
+    let source = "int target(int x) { volatile int values[PERM_GENERAL(2,3,4)]; values[0] = x; return values[0]; }";
+    let target = "int target(int x) { volatile int values[4]; values[0] = x; return values[0]; }";
+    std::fs::write(&draft, source).unwrap();
+    let mut problem = test_problem(&draft, source, vec![], Some("target"));
+    problem.symbol = Some("target".into());
+    let reference = Job::new(&problem, &work.path().join("reference")).unwrap();
+    reference.compile(target).unwrap();
+    problem.listing = crate::diff::disassemble(&reference.object, Some("target")).unwrap();
+    problem.listing_rows = Some(score::disassemble(&reference.object, Some("target")).unwrap());
+    let base = problem.source(&problem.state(perm::expand(&problem.nodes, None).unwrap()));
+    let score = problem.evaluate(&reference, &base).unwrap();
+    assert_eq!(score.weighted, 0, "reference: {:?}; candidate: {:?}", problem.listing_rows, score::disassemble(&reference.object, Some("target")).unwrap());
+    assert!(score.differ > 0);
+    let arguments = [draft.to_str().unwrap(), "--function", "target", "--jobs", "1", "--iterations", "3", "--better-only", "--best-only", "--stop-on-zero"].map(str::to_string);
+    let options = parse_options(&arguments).unwrap();
+    let checker = test_problem(&draft, source, problem.listing.clone(), Some("target"));
+    let output = work.path().join("output");
+    execute(problem, &options, None, &output).unwrap();
+    let best = std::fs::read_to_string(output.join("best-1.c")).unwrap();
+    assert!(checker.evaluate(&reference, &best).unwrap().is_zero());
+    let archived = std::fs::read_to_string(output.join("output-0-1/source.c")).unwrap();
+    assert!(checker.evaluate(&reference, &archived).unwrap().is_zero());
+}
+
+#[test]
 fn forced_randomizer_seed_search_reaches_candidate() {
     crate::compiler::routing::prefer_installed_binutils();
     let work = tempfile::tempdir().unwrap();

@@ -67,10 +67,13 @@ Manual choices are enumerated without repeating seeds, subject to the time
 or iteration limit. With a single base
 source randomization is automatic; otherwise PERM_RANDOMIZE enables it.
 Random runs keep the preceding candidate with --keep-prob (default 0.6),
-regardless of improvement, restarting after failure or zero. --stop-on-zero
-ends on weighted zero. After the search, each best candidate is
+regardless of improvement, restarting after failure or an instruction match.
+--stop-on-zero requires both weighted zero and differ zero. Equal weighted
+scores are ranked by differ; output deduplication retains stack offsets and
+branch destinations and trailing nops even when scoring ignores them.
+After the search, each best candidate is
 minimized: its rewrites are undone one at a time, last first, and each
-removal that leaves the weighted score no higher is kept. Writes
+removal that leaves the weighted score, then differ, no higher is kept. Writes
 out/permute/STEM/best-N.c (best first), its remaining rewrites in its
 header, and best-N.diff, a unified diff against the draft file that
 `patch -p0` applies from the checkout: PERM macros become their chosen
@@ -99,7 +102,8 @@ instructions match from the start first, then by weighted score.
 --algorithm selects difflib (default) or Levenshtein alignment.
 Qualifying candidates are saved immediately in output-SCORE-N directories
 with source.c, score.txt and diff.txt, in addition to minimized best-N files.
---better-only excludes ties with the draft; --best-only excludes scores above
+--better-only excludes ties with the draft's weighted score and differ;
+--best-only excludes scores above
 the best already saved. --only-if-below N requires a score strictly below N.
 --no-context-output trims source.c before the first target function occurrence.
 --overlay resource_XXX with --function NAME compares an overlay's linked
@@ -405,7 +409,7 @@ impl Problem {
         if let Some(listing) = &self.listing_rows {
             score::weighted(listing, &candidate, self.score_options, &mut score);
         }
-        Ok((score, score::assembly_key(&candidate, self.score_options)))
+        Ok((score, score::strict_assembly_key(&candidate)))
     }
 
 }
@@ -663,9 +667,9 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
     }
     let started = Instant::now();
     let deadline = options.iterations.is_none().then(|| started + Duration::from_secs_f64(options.minutes * 60.0));
-    let base_hash = score::assembly_key(&score::disassemble(&setup.object, problem.symbol.as_deref())?, problem.score_options);
+    let base_hash = score::strict_assembly_key(&score::disassemble(&setup.object, problem.symbol.as_deref())?);
     let found = search(&problem, &base_state, &base, random, options, deadline, &scratch, started, Some((output, base_hash)))?;
-    let found: Vec<_> = found.into_iter().filter(|entry| (!options.output.better_only || entry.score.weighted < base.score.weighted)
+    let found: Vec<_> = found.into_iter().filter(|entry| (!options.output.better_only || entry.score.distance() < base.score.distance())
         && options.output.threshold.is_none_or(|limit| i128::from(entry.score.weighted) < limit)).collect();
     let best = minimize_best(&problem, &base, &found, &scratch.join("minimize"))?;
     write_best(&problem, &base, &best, output)
@@ -707,7 +711,7 @@ fn search(
     started: Instant,
     archive: Option<(&Path, SourceHash)>,
 ) -> Result<Vec<Found>, String> {
-    let archive_state = Mutex::new(archive.map(|(_, hash)| output::State::new(base.score.weighted, hash, options.output)));
+    let archive_state = Mutex::new(archive.map(|(_, hash)| output::State::new(&base.score, hash, options.output)));
     let stop = AtomicBool::new(false);
     let global = Mutex::new((base.score.key(problem.prefix), base.score.differ));
     let found = Mutex::new(Vec::new());
@@ -752,7 +756,7 @@ fn search(
                 let mut walk = rng::WalkRng::new(options.seed.wrapping_mul(1_000_003).wrapping_add(job_index as u64), forced_rng);
                 let mut env = base_state.parsed.as_ref().map(|(_, _, function)| Env::new(&problem.unit, function));
                 // Keyed by a hash of the text: a long run sees many thousands.
-                let mut cache: HashMap<SourceHash, Option<Score>> = HashMap::new();
+                let mut cache: HashMap<SourceHash, Option<(Score, SourceHash)>> = HashMap::new();
                 let mut prepared = HashMap::new();
                 prepared.insert(base_state.expanded.key(), base_state.expanded.clone());
                 let (mut best, mut current) = ((base_state.clone(), base.clone()), (base_state.clone(), base.clone()));
@@ -772,8 +776,8 @@ fn search(
                     };
                     iteration += 1;
                     // 0.6 regardless of whether its score improved. A failed
-                    // compile or a zero score starts a fresh candidate.
-                    let last_score = (iteration > 1).then_some(if last_compiled { current.1.score.weighted } else { u64::MAX });
+                    // compile or an instruction match starts a fresh candidate.
+                    let last_score = (iteration > 1).then_some(if last_compiled { current.1.score.distance() } else { (u64::MAX, usize::MAX) });
                     let keep = walk.keep(random, last_score, options.keep_prob);
                     let rng = &mut walk.mutation;
                     let mut state = if !keep {
@@ -816,13 +820,10 @@ fn search(
                     }
                     let text = problem.source(&state);
                     let key = text_key(&text);
-                    let mut assembly_hash = None;
                     let result = match cache.get(&key) {
                         Some(result) => result.clone(),
                         None => {
-                            let evaluated = problem.evaluate_assembly(&job, &text).ok();
-                            assembly_hash = evaluated.as_ref().map(|(_, hash)| *hash);
-                            let result = evaluated.map(|(score, _)| score);
+                            let result = problem.evaluate_assembly(&job, &text).ok();
                             compiled.fetch_add(1, Ordering::Relaxed);
                             if cache.len() < 100_000 { cache.insert(key, result.clone()); }
                             result
@@ -831,15 +832,15 @@ fn search(
                     last_compiled = result.is_some();
                     // compilation fails. Score storage only tracks successes.
                     if options.rng_seed.is_some() { current.0 = state.clone(); }
-                    let Some(score) = result else { continue };
+                    let Some((score, assembly_hash)) = result else { continue };
                     if let Some((path, _)) = archive {
                         let mut shared = archive_state.lock().unwrap();
                         let policy = shared.as_mut().unwrap();
-                        if policy.accepts(score.weighted, assembly_hash, true) {
+                        if policy.accepts(&score, Some(assembly_hash), true) {
                             if let Err(error) = output::write(path, score.weighted, &text, &base.text, problem.function.as_deref(), options.output) {
                                 failures.lock().unwrap().push(error);
                                 stop.store(true, Ordering::Relaxed);
-                            } else { policy.record(score.weighted, assembly_hash.unwrap()); }
+                            } else { policy.record(&score, assembly_hash); }
                         }
                     }
                     let candidate = Found {
@@ -864,7 +865,7 @@ fn search(
                             );
                         }
                     }
-                    if candidate.score.weighted == 0 && options.stop_on_zero {
+                    if candidate.score.is_zero() && options.stop_on_zero {
                         stop.store(true, Ordering::Relaxed);
                     }
                     current = (state, candidate);

@@ -2,6 +2,7 @@
 use std::collections::HashSet;
 use std::path::Path;
 use super::SourceHash;
+use super::score::Score;
 
 #[derive(Clone, Copy, Default)]
 pub struct Options {
@@ -12,27 +13,31 @@ pub struct Options {
 }
 
 pub struct State {
-    base: u64,
-    best: u64,
+    base: (u64, usize),
+    best: (u64, usize),
     hashes: HashSet<SourceHash>,
     options: Options,
 }
 
 impl State {
-    pub fn new(base: u64, hash: SourceHash, options: Options) -> Self {
+    pub fn new(base: &Score, hash: SourceHash, options: Options) -> Self {
+        let base = base.distance();
         Self { base, best: base, hashes: HashSet::from([hash]), options }
     }
 
-    pub fn accepts(&self, score: u64, hash: Option<SourceHash>, has_source: bool) -> bool {
+    pub fn accepts(&self, score: &Score, hash: Option<SourceHash>, has_source: bool) -> bool {
+        let weighted = score.weighted;
+        let score = score.distance();
         score <= self.base && has_source && hash.is_some_and(|hash| !self.hashes.contains(&hash))
             && !(self.options.best_only && score > self.best)
             && (score < self.base || !self.options.better_only)
-            && self.options.threshold.is_none_or(|limit| i128::from(score) < limit)
+            && self.options.threshold.is_none_or(|limit| i128::from(weighted) < limit)
     }
 
-    pub fn record(&mut self, score: u64, hash: SourceHash) {
+    pub fn record(&mut self, score: &Score, hash: SourceHash) {
+        let score = score.distance();
         self.best = self.best.min(score);
-        if score != 0 { self.hashes.insert(hash); }
+        if score != (0, 0) { self.hashes.insert(hash); }
     }
 }
 
@@ -114,19 +119,38 @@ mod tests {
     #[test]
     fn output_policy_sequences() {
         let hash = |name: &str| super::super::text_key(name);
-        let mut policy = State::new(100, hash("base"), Options::default());
+        let base = Score { weighted: 100, ..Score::default() };
+        let mut policy = State::new(&base, hash("base"), Options::default());
         for row in include_str!("c/fixtures/output-policy.tsv").lines() {
             let c: Vec<_> = row.split('\t').collect();
             if c[3] == "0" {
-                policy = State::new(100, hash("base"), Options { better_only: c[0] == "1", best_only: c[1] == "1", threshold: (c[2] != "none").then(|| c[2].parse().unwrap()), no_context: false });
+                policy = State::new(&base, hash("base"), Options { better_only: c[0] == "1", best_only: c[1] == "1", threshold: (c[2] != "none").then(|| c[2].parse().unwrap()), no_context: false });
             }
-            let score = c[4].parse().unwrap();
+            let score = Score { weighted: c[4].parse().unwrap(), ..Score::default() };
             let hash = (c[5] != "none").then(|| hash(c[5]));
-            let accepted = policy.accepts(score, hash, c[6] == "1");
+            let accepted = policy.accepts(&score, hash, c[6] == "1");
             assert_eq!(accepted, c[7] == "1", "{row}");
-            if accepted { policy.record(score, hash.unwrap()); }
-            assert_eq!(policy.best, c[8].parse::<u64>().unwrap(), "{row}");
+            if accepted { policy.record(&score, hash.unwrap()); }
+            assert_eq!(policy.best.0, c[8].parse::<u64>().unwrap(), "{row}");
         }
+    }
+
+    #[test]
+    fn equal_weighted_scores_retain_strict_improvements() {
+        let hash = |name: &str| super::super::text_key(name);
+        let base = Score { differ: 42, ..Score::default() };
+        let options = Options { better_only: true, best_only: true, ..Options::default() };
+        let mut policy = State::new(&base, hash("base"), options);
+        assert!(!policy.accepts(&base, Some(hash("tie")), true));
+        let improved = Score { differ: 2, ..Score::default() };
+        assert!(policy.accepts(&improved, Some(hash("improved")), true));
+        policy.record(&improved, hash("improved"));
+        assert!(!policy.accepts(&improved, Some(hash("improved")), true));
+        assert!(!policy.accepts(&base, Some(hash("worse")), true));
+        let exact = Score::default();
+        assert!(policy.accepts(&exact, Some(hash("exact")), true));
+        policy.record(&exact, hash("exact"));
+        assert!(!policy.accepts(&improved, Some(hash("another")), true));
     }
 
     #[test]

@@ -154,11 +154,11 @@ impl WalkRng {
         Self { control: Rng::new(control_seed), forced, mutation: Rng::new(0), started: false }
     }
 
-    pub fn keep(&mut self, random: bool, last_score: Option<u64>, probability: f64) -> bool {
+    pub fn keep(&mut self, random: bool, last_score: Option<(u64, usize)>, probability: f64) -> bool {
         // Randomized inputs consume the keep draw before checking the score,
         // including the initial evaluation.
         let keep = (random && self.control.random() < probability
-            && last_score != Some(0) && last_score != Some(u64::MAX)) || self.forced.is_some();
+            && last_score != Some((0, 0)) && last_score != Some((u64::MAX, usize::MAX))) || self.forced.is_some();
         let keep = self.started && keep;
         if !keep {
             self.mutation = self.forced.clone().unwrap_or_else(|| {
@@ -184,12 +184,20 @@ mod tests {
                 let forced = (!matches!(c[1], "none" | "0")).then(|| Rng::from_decimal(c[1]).unwrap());
                 walk = WalkRng::new(c[0].parse().unwrap(), forced);
             }
-            let score = match c[4] { "none" => None, "1000000000" => Some(u64::MAX), n => Some(n.parse().unwrap()) };
+            let score = match c[4] { "none" => None, "1000000000" => Some((u64::MAX, usize::MAX)), n => Some((n.parse().unwrap(), 0)) };
             assert_eq!(walk.keep(c[2] == "1", score, 0.6), c[5] == "1", "{row}");
             for _ in 0..step % 4 { walk.mutation.random(); }
             assert_eq!(walk.mutation.clone().random(), c[6].parse::<f64>().unwrap(), "{row}");
             assert_eq!(walk.control.clone().random(), c[7].parse::<f64>().unwrap(), "{row}");
         }
+    }
+
+    #[test]
+    fn weighted_zero_with_instruction_differences_keeps_the_walk() {
+        let mut walk = WalkRng::new(0, None);
+        assert!(!walk.keep(true, None, 1.0));
+        assert!(walk.keep(true, Some((0, 42)), 1.0));
+        assert!(!walk.keep(true, Some((0, 0)), 1.0));
     }
 
     #[test]

@@ -321,7 +321,6 @@ void FieldScene_RunActor10WaypointSequence(void)
 void FieldScene_RunActorElevenPresentationBeat(void)
 {
     struct FieldActor *slot;
-    s32 offset;
 
     slot = Object_GetById(11);
 
@@ -351,9 +350,7 @@ void FieldScene_RunActorElevenPresentationBeat(void)
     Engine_GameFlagSet(0x301);
     Engine_ActorSetPosition(14, 0, 0);
 
-    /* FAKEMATCH: the byte offset held in a forced temporary keeps the game-state address and the offset apart. */
-    offset = 0x22b;
-    ((u8 *)&gGameState)[offset] = 3;
+    gGameState.battle_start = 3;
 
     BattleFx_SetWeightedResult(53, 0);
 
@@ -782,7 +779,6 @@ void FieldScene_RunScene39fSequenceA(void)
     struct FieldActor *first;
     s32 shown;
     struct FieldActor *second;
-    s32 base3_2000240;
 
     rec7 = Object_GetById(15);
     big = 0x80000;
@@ -805,9 +801,7 @@ void FieldScene_RunScene39fSequenceA(void)
     /* FAKEMATCH: called as returning a doubleword, the wait keeps the registers the game keeps across it. */
     ((s64 (*)())Engine_EventWait)(10);
     Engine_GameFlagSet(0x307);
-    /* FAKEMATCH: the game-state address held in a forced temporary keeps it apart from the byte offset. */
-    base3_2000240 = (s32)&gGameState;
-    *(u8 *)((base3_2000240 + 0x22b)) = 3;
+    gGameState.battle_start = 3;
     BattleFx_SetWeightedResult(53, 0);
     Engine_EventEnd();
 }

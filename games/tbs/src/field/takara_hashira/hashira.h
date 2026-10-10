@@ -22,9 +22,9 @@ struct PillarWork {
 struct MapCell {
     u32 tile : 12;
     u32 layer : 2;
-    u32 kind : 2;
-    u32 height : 8;
-    u32 event : 8;
+    u8 kind : 2;
+    u8 height;
+    u8 event;
 };
 
 struct MapLayer {

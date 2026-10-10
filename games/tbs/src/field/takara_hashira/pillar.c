@@ -221,8 +221,7 @@ void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *sr
         cell += x + (y << 7);
 
         cell->layer = src->layer;
-        /* FAKEMATCH: the kind is read as the top of the source byte, not through the bitfield, as the reference loads it. */
-        cell->kind = ((u8 *)src)[1] >> 6;
+        cell->kind = src->kind;
         cell->height = src->height;
         cell->event = src->event;
     }
@@ -1347,13 +1346,7 @@ s32 TakaraHashira_SetupArea(void)
         actor = Object_GetById(13);
         actor->update = 0;
         TakaraHashira_PrepLoweredActor(14);
-        {
-            u8 *flags = &Object_GetById(14)->collision_flags;
-            /* FAKEMATCH: needed to match: the merged flags in a word temporary keep the byte load in r2. */
-            s32 value = *flags | 8;
-
-            *flags = value;
-        }
+        Object_GetById(14)->collision_flags |= 8;
         if (Engine_GameFlagIsSet(0x202) == 0) {
             Object_GetById(13)->scale_x = 0x18000;
             Object_GetById(13)->scale_y = 0x18000;

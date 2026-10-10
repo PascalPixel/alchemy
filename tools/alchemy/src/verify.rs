@@ -530,7 +530,11 @@ mod tests {
                 .current_dir(root)
                 .output()
                 .unwrap();
-            assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
+            assert!(
+                output.status.success(),
+                "{}",
+                String::from_utf8_lossy(&output.stderr)
+            );
             String::from_utf8(output.stdout).unwrap()
         };
         let ordinary = dry_run(&["compare-tbs-en", "progress", "figure"]);
@@ -542,8 +546,72 @@ mod tests {
             "publication-check",
         ]);
         assert!(!verified.contains("cargo build") && !verified.contains("cargo run"));
-        assert_eq!(verified.matches("/private/tmp/verified-alchemy build rom --target ").count(), 12);
+        assert_eq!(
+            verified
+                .matches("/private/tmp/verified-alchemy build rom --target ")
+                .count(),
+            12
+        );
         assert!(verified.contains("/private/tmp/verified-alchemy check publication --tree"));
+    }
+
+    #[test]
+    fn publication_runs_every_check_and_propagates_a_child_failure() {
+        let root = crate::compiler::routing::root();
+        let makefile = std::fs::read_to_string(root.join("Makefile")).unwrap();
+        let directory = tempfile::tempdir().unwrap();
+        let run = |makefile: &str| {
+            std::fs::write(directory.path().join("Makefile"), makefile).unwrap();
+            Command::new("make")
+                .args([
+                    "--no-print-directory",
+                    "ALCHEMY=unused-verified-executable",
+                    "CHECK=echo",
+                    "publication-check",
+                ])
+                .env_remove("MAKEFLAGS")
+                .env_remove("MFLAGS")
+                .current_dir(directory.path())
+                .output()
+                .unwrap()
+        };
+        let expected = [
+            "publication --tree",
+            "layout",
+            "dead",
+            "aliases",
+            "devices",
+            "hygiene",
+        ];
+        let passed = run(&makefile);
+        assert!(
+            passed.status.success(),
+            "{}",
+            String::from_utf8_lossy(&passed.stderr)
+        );
+        let output = String::from_utf8(passed.stdout).unwrap();
+        for check in expected {
+            assert_eq!(
+                output.lines().filter(|line| *line == check).count(),
+                1,
+                "{output}"
+            );
+        }
+
+        // Fail the first child: keep-going must still execute the other five,
+        // and the parent must report failure rather than publish a count.
+        let failure = makefile.replace("\t$(CHECK) publication --tree\n", "\t@false\n");
+        assert_ne!(failure, makefile);
+        let failed = run(&failure);
+        assert!(!failed.status.success());
+        let output = String::from_utf8(failed.stdout).unwrap();
+        for check in &expected[1..] {
+            assert_eq!(
+                output.lines().filter(|line| line == check).count(),
+                1,
+                "{output}"
+            );
+        }
     }
 
     #[test]

@@ -60,14 +60,16 @@ fn groups(
     imports: &BTreeMap<String, MessageImports>,
 ) -> Result<Vec<Group>, String> {
     let mut groups = BTreeMap::<(String, Vec<String>), Vec<String>>::new();
+    let mut inventories = BTreeMap::new();
     for &id in target_ids {
         let target = target_for(id);
-        let mut sources =
-            source_files(&root.join(target.source_dir)).map_err(|error| error.to_string())?;
-        sources.extend(
-            source_files(&root.join("games/common/src")).map_err(|error| error.to_string())?,
-        );
-        for path in sources {
+        for directory in [target.source_dir, "games/common/src"] {
+            if !inventories.contains_key(directory) {
+                let sources = source_files(&root.join(directory)).map_err(|error| error.to_string())?;
+                inventories.insert(directory, sources);
+            }
+        }
+        for path in inventories[target.source_dir].iter().chain(&inventories["games/common/src"]) {
             if !path
                 .extension()
                 .and_then(|ext| ext.to_str())
@@ -77,7 +79,7 @@ fn groups(
             }
             let source = path
                 .strip_prefix(root)
-                .unwrap_or(&path)
+                .unwrap_or(path)
                 .to_string_lossy()
                 .into_owned();
             let mut command = prefix(target, &source)?;
@@ -114,13 +116,14 @@ fn scanner() -> &'static str {
 }
 
 fn clean_key(
+    inputs: &crate::compiler::source_inputs::SourceInputCache,
     root: &Path,
     label: &str,
     prefix: &[String],
     source: &str,
     imports: Option<&MessageImports>,
 ) -> Option<String> {
-    let tree = crate::compiler::source_inputs::compiler_source_tree_signature(
+    let tree = inputs.signature(
         root,
         Path::new(source),
         &[prefix.to_vec()],
@@ -159,6 +162,7 @@ fn jobs(
     imports: &BTreeMap<String, MessageImports>,
 ) -> (Vec<(Job, Vec<String>)>, usize) {
     let inputs = groups.iter().map(|(_, sources)| sources.len()).sum();
+    let source_inputs = crate::compiler::source_inputs::SourceInputCache::default();
     let mut jobs = Vec::new();
     for ((label, prefix), sources) in groups {
         let workers = std::thread::available_parallelism().map_or(1, |count| count.get().min(16));
@@ -168,10 +172,11 @@ fn jobs(
                 .chunks(chunk)
                 .map(|part| {
                     let (label, prefix) = (&label, &prefix);
+                    let source_inputs = &source_inputs;
                     let metadata = imports.get(label);
                     scope.spawn(move || {
                         part.iter()
-                            .map(|source| clean_key(root, label, prefix, source, metadata))
+                            .map(|source| clean_key(source_inputs, root, label, prefix, source, metadata))
                             .collect::<Vec<_>>()
                     })
                 })
@@ -462,6 +467,53 @@ fn expanded_typed_forwarders_cannot_be_suppressed_by_raw_definitions() {
 }
 
 #[test]
+fn shared_inventories_preserve_target_commands_imports_and_new_files() {
+    let directory = tempfile::tempdir().unwrap();
+    let root = directory.path();
+    let write = |name: &str| {
+        let path = root.join(name);
+        fs::create_dir_all(path.parent().unwrap()).unwrap();
+        fs::write(path, "source\n").unwrap();
+    };
+    write("games/tbs/src/one.c");
+    write("games/tla/src/two.c");
+    write("games/common/src/nested/shared.c");
+    write("games/common/src/header.h");
+    let ids = [DecompTargetId::TbsJa, DecompTargetId::TbsEn, DecompTargetId::TlaJa, DecompTargetId::TlaEn, DecompTargetId::TbsEn];
+    let mut imports = BTreeMap::new();
+    let imported = tempfile::tempdir().unwrap();
+    imports.insert("tbs-en".into(), MessageImports {
+        flag: format!("-I{}", imported.path().display()),
+        signature: "catalog".into(),
+        _directory: imported,
+    });
+    let check = |extra: bool| {
+        let grouped = groups(root, &ids, &imports).unwrap();
+        let actual = grouped.iter().flat_map(|((label, command), sources)| {
+            sources.iter().map(move |source| ((label.clone(), source.clone()), command.clone()))
+        }).collect::<BTreeMap<_, _>>();
+        let mut expected = BTreeMap::new();
+        for id in &ids[..4] {
+            let target = target_for(*id);
+            let game_source = if target.source_dir.contains("/tbs/") { "games/tbs/src/one.c" } else { "games/tla/src/two.c" };
+            let mut sources = vec![game_source, "games/common/src/nested/shared.c"];
+            if extra { sources.push("games/common/src/new.c"); }
+            for source in sources {
+                let mut command = prefix(target, source).unwrap();
+                if let Some(metadata) = imports.get(id.as_str()) {
+                    command.insert(1, metadata.flag.clone());
+                }
+                expected.insert((id.as_str().to_string(), source.to_string()), command);
+            }
+        }
+        assert_eq!(actual, expected);
+    };
+    check(false);
+    write("games/common/src/new.c");
+    check(true);
+}
+
+#[test]
 fn batched_audit_uses_current_catalog_and_invalidates_clean_keys() {
     let directory = tempfile::tempdir().unwrap();
     let root = directory.path();
@@ -504,6 +556,7 @@ fn batched_audit_uses_current_catalog_and_invalidates_clean_keys() {
     };
     let key = |imports: &BTreeMap<String, MessageImports>, path: &Path| {
         clean_key(
+            &crate::compiler::source_inputs::SourceInputCache::default(),
             root,
             id.as_str(),
             &command(imports),

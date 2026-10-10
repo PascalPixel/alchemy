@@ -32,6 +32,7 @@ $(LIBGCC):
 .PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
 .PHONY: publication-check publication-staged-check hygiene-check coverage-report
+.PHONY: publication-tree-check layout-check dead-check aliases-check devices-check
 .PHONY: progress figure deps similar worst clean modern
 
 help:
@@ -116,6 +117,7 @@ ifeq ($(origin ALCHEMY),file)
 compiler-runtime toolchain-check compare compare-tla compare-editions compare-other-editions \
 $(COMPARE_EDITIONS) build-rom precommit prepush verify land publication-check \
 hygiene-check publication-staged-check lint-staged coverage-report progress figure \
+publication-tree-check layout-check dead-check aliases-check devices-check \
 deps similar worst modern: | build-alchemy
 endif
 
@@ -146,13 +148,26 @@ verify:
 land:
 	@$(ALCHEMY) verify --land
 
+# Comparison has finished before verification invokes this group. Its checks
+# only read the source and linked images, so every check can run together.
 publication-check:
+	@$(MAKE) --no-print-directory -k -j6 ALCHEMY="$(ALCHEMY)" \
+	    publication-tree-check layout-check dead-check aliases-check devices-check hygiene-check
+
+publication-tree-check:
 	$(CHECK) publication --tree
+
+layout-check:
 	$(CHECK) layout
+
+dead-check:
 	$(CHECK) dead
+
+aliases-check:
 	$(CHECK) aliases
+
+devices-check:
 	$(CHECK) devices
-	$(CHECK) hygiene
 
 hygiene-check:
 	$(CHECK) hygiene

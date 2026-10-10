@@ -13,6 +13,7 @@ pub use super::rng::Rng;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Kind {
+    Full(super::randomize::Kind),
     SwapOperands,
     ReorderStatements,
     ReorderDeclarations,
@@ -51,6 +52,7 @@ impl Kind {
 
     pub fn name(self) -> &'static str {
         match self {
+            Kind::Full(kind) => kind.name(),
             Kind::SwapOperands => "swap commutative operands",
             Kind::ReorderStatements => "reorder independent statements",
             Kind::ReorderDeclarations => "reorder local declarations",
@@ -141,6 +143,7 @@ pub fn apply(kind: Kind, function: &mut Function, env: &Env, rng: &mut Rng) -> b
     }
     let env = &scoped;
     match kind {
+        Kind::Full(_) => false, // Replayed against the full translation unit.
         Kind::SwapOperands => expr_mutation(function, env, rng, &swap_site, &swap_apply),
         Kind::AddCast => expr_mutation(function, env, rng, &add_cast_site, &add_cast_apply),
         Kind::DropCast => expr_mutation(function, env, rng, &drop_cast_site, &drop_cast_apply),

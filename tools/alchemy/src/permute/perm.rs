@@ -41,12 +41,75 @@ pub struct Expanded {
     pub ignored: Vec<(String, String)>,
     pub randomize: Vec<String>,
     ast_swaps: Vec<Vec<usize>>,
+    /// Preprocessed and normalized once per manual expansion. Shared by the
+    /// search and replay; mutations always work on their own tree.
+    pub unit: Option<std::sync::Arc<super::c::Node>>,
 }
 
 impl Expanded {
+    /// Preserve the control markers through the real C preprocessor.
+    pub fn preprocess_text(&self) -> String {
+        let mut out = self.text.clone();
+        if let Ok(tokens) = super::lex::lex(&self.text) {
+            for token in tokens.iter().rev() {
+                if let super::lex::Tok::Comment(text) = &token.tok {
+                    if let Some(marker) = text.strip_prefix("/* ").and_then(|s| s.strip_suffix(" */")).filter(|s| s.starts_with("_permuter ")) {
+                        out.replace_range(token.start..token.end, &format!("\n#pragma {marker}\n"));
+                    }
+                }
+            }
+        }
+        out
+    }
+
+    pub fn key(&self) -> [u8; 32] {
+        // AST orders and ignored text can differ while placeholder C is the
+        // same. They must not share a prepared tree or a replay baseline.
+        super::text_key(&format!("{:?}{:?}{:?}", self.text, self.ignored, self.ast_swaps))
+    }
+
+    pub fn apply_c_ast(&self, unit: &mut super::c::Node) {
+        use super::c::Node as C;
+        fn visit(unit: &mut C, swaps: &[Vec<usize>]) -> bool {
+            if let C::Compound { block_items } = unit {
+                let order = match block_items.first() {
+                    Some(C::Pragma { string }) => string.strip_prefix("_permuter ast ").and_then(|n| n.parse::<usize>().ok()).and_then(|i| swaps.get(i)),
+                    _ => None,
+                };
+                if let Some(order) = order {
+                    for item in block_items.iter_mut().skip(1) { visit(item, swaps); }
+                    *block_items = order.iter().flat_map(|&i| match &block_items[i + 1] { C::Compound { block_items } => block_items.clone(), _ => unreachable!("line swap arguments are blocks") }).collect();
+                    return true;
+                }
+                let mut out = Vec::new();
+                for mut item in std::mem::take(block_items) {
+                    if visit(&mut item, swaps) {
+                        let C::Compound { block_items } = item else { unreachable!() };
+                        out.extend(block_items);
+                    } else { out.push(item); }
+                }
+                *block_items = out;
+            } else {
+                // An unbraced control body keeps its compound after swapping.
+                for child in unit.children_mut() { visit(child, swaps); }
+            }
+            false
+        }
+        visit(unit, &self.ast_swaps);
+    }
+
     /// The text with every placeholder replaced by its code.
     pub fn restore(&self, text: &str) -> String {
         let mut out = text.to_string();
+        // Both printers use the same markers; the full tree prints pragmas.
+        for (index, _) in self.ignored.iter().enumerate() {
+            out = out.replace(&format!("#pragma _permuter ignored {index}"), &format!("/* _permuter ignored {index} */"));
+        }
+        for kind in ["sameline", "pretend", "randomizer"] {
+            for edge in ["start", "end"] {
+                out = out.replace(&format!("#pragma _permuter {kind} {edge}"), &format!("/* _permuter {kind} {edge} */"));
+            }
+        }
         for (placeholder, code) in &self.ignored {
             out = out.replace(placeholder, code);
             let call = placeholder.trim_end_matches(';');

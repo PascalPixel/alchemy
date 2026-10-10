@@ -15,6 +15,7 @@ pub(crate) mod parse;
 pub(crate) mod perm;
 mod score;
 mod rng;
+mod randomize;
 pub(crate) mod types;
 
 use crate::compiler::routing::root;
@@ -246,22 +247,22 @@ impl Job {
     /// for -S (a library route already writes it before compiling).
     fn preprocess(&self) -> Result<String, String> {
         let preprocessed = self.object.with_extension("i");
-        if !preprocessed.exists() {
-            let assembly = self.object.with_extension("s").to_string_lossy().into_owned();
-            let mut step = self.steps[0].clone();
-            if !step.iter().any(|argument| argument == "-S")
-                && !step.iter().any(|argument| argument == &preprocessed.to_string_lossy()) {
-                return Err("no compile step to preprocess with".into());
-            }
-            for argument in step.iter_mut() {
-                if argument == "-S" {
-                    *argument = "-E".into();
-                } else if *argument == assembly {
-                    *argument = preprocessed.to_string_lossy().into_owned();
-                }
-            }
-            crate::process::run(&step, root())?;
+        let assembly = self.object.with_extension("s").to_string_lossy().into_owned();
+        let mut step = self.steps[0].clone();
+        if !step.iter().any(|argument| argument == "-S")
+            && !step.iter().any(|argument| argument == &preprocessed.to_string_lossy()) {
+            return Err("no compile step to preprocess with".into());
         }
+        for argument in step.iter_mut() {
+            if argument == "-S" {
+                *argument = "-E".into();
+            } else if *argument == assembly {
+                *argument = preprocessed.to_string_lossy().into_owned();
+            }
+        }
+        // ARM compilation also leaves an .i file. It belongs to the previous
+        // candidate, not necessarily to the expansion being prepared now.
+        crate::process::run(&step, root())?;
         std::fs::read_to_string(&preprocessed).map_err(|e| format!("{}: {e}", preprocessed.display()))
     }
 
@@ -282,6 +283,7 @@ struct State {
     expanded: Arc<Expanded>,
     parsed: Option<(usize, usize, Function)>,
     steps: Vec<Step>,
+    full: Option<c::Node>,
 }
 
 struct Problem {
@@ -316,10 +318,12 @@ impl Problem {
                 expanded.apply_ast(&mut located.function);
                 (located.start, located.end, located.function)
             });
-        State { expanded, parsed, steps: Vec::new() }
+        let full = expanded.unit.as_deref().cloned();
+        State { expanded, parsed, steps: Vec::new(), full }
     }
 
     fn source(&self, state: &State) -> String {
+        if let Some(full) = &state.full { return state.expanded.restore(&full.print()); }
         let text = &state.expanded.text;
         let spelled = match &state.parsed {
             Some((start, end, function)) => {
@@ -375,8 +379,11 @@ fn reference(options: &Options) -> Result<Reference, String> {
             .join(options.target.output_dir)
             .join(format!("obj/recon/{}/raw/{address}.o", options.game));
         if object.exists() {
-            listing.extend(crate::diff::disassemble(&object, None)?);
-            if let Some(rows) = &mut rows { rows.extend(score::disassemble(&object, None)?); }
+            // Listings can contain several functions (for example moji.o).
+            // A named target must not be scored against its neighbours.
+            let symbol = options.function.as_deref().filter(|name| crate::diff::text_symbols(&object).is_ok_and(|symbols| symbols.iter().any(|s| s == name)));
+            listing.extend(crate::diff::disassemble(&object, symbol)?);
+            if let Some(rows) = &mut rows { rows.extend(score::disassemble(&object, symbol)?); }
         } else {
             rows = None;
             let (tokens, name) = crate::diff::scaffold_reference(options.target, address, options.arm)?;
@@ -434,6 +441,28 @@ impl Drop for Scratch {
     }
 }
 
+fn select_function(unit: &c::Node, selected: Option<&str>) -> Result<String, String> {
+    if let Some(name) = selected {
+        return randomize::target_index(unit, name).map(|_| name.to_string()).ok_or_else(|| format!("the draft does not define {name}"));
+    }
+    let c::Node::FileAst { ext } = unit else { return Err("expected a translation unit".into()) };
+    let names: Vec<_> = ext.iter().filter_map(|n| match n {
+        c::Node::FuncDef { decl, .. } => match decl.as_ref() {
+            c::Node::Decl { name: Some(name), funcspec, .. } if !funcspec.iter().any(|s| s == "inline") => Some(name.clone()), _ => None,
+        }, _ => None,
+    }).collect();
+    if names.len() == 1 { Ok(names[0].clone()) } else { Err(format!("choose a definition with --function (found: {})", names.join(", "))) }
+}
+
+fn prepare(job: &Job, expanded: &mut Expanded, target: &str) -> Result<(), String> {
+    std::fs::write(&job.candidate, expanded.preprocess_text()).map_err(|e| e.to_string())?;
+    let mut unit = c::parse(&job.preprocess()?)?;
+    unit.extract_function(target)?;
+    expanded.apply_c_ast(&mut unit);
+    expanded.unit = Some(Arc::new(unit));
+    Ok(())
+}
+
 /// Set by the first SIGINT or SIGTERM: the search and the minimizer stop
 /// where they stand, the best so far is written and the scratch removed.
 /// A second signal ends the process at once; the next run sweeps its scratch.
@@ -481,16 +510,21 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
     let guard = Scratch(output.join(format!("run-{}", std::process::id())));
     let scratch = guard.0.clone();
     let setup = Job::new(&problem, &scratch.join("setup"))?;
-    let original = perm::expand(&problem.nodes, None)?;
+    let mut original = perm::expand(&problem.nodes, None)?;
     // Preprocess before AST permutations: their temporary grouping blocks
     // intentionally do not have the final C declaration scopes.
-    std::fs::write(&setup.candidate, &original.text).map_err(|e| e.to_string())?;
+    std::fs::write(&setup.candidate, original.preprocess_text()).map_err(|e| e.to_string())?;
     let preprocessed = setup.preprocess()?;
     let mut full_unit = c::parse(&preprocessed)?;
-    if let Ok(target) = locate(&original.text, problem.function.as_deref(), &scan_unit(&preprocessed)?.typedef_names()) {
-        full_unit.extract_function(&target.function.name)?;
-    }
+    let target = select_function(&full_unit, problem.function.as_deref())?;
+    problem.function = Some(target.clone());
+    full_unit.extract_function(&target)?;
+    original.apply_c_ast(&mut full_unit);
     problem.unit = scan_unit(&full_unit.print())?;
+    if !options.heat {
+        original.unit = Some(Arc::new(full_unit));
+        problem.symbol = Some(target);
+    }
     let base_state = problem.state(original);
     let base_text = problem.source(&base_state);
     setup.compile(&base_text)?;
@@ -499,7 +533,7 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
             problem.symbol = Some(name);
         }
     }
-    let random = base_state.parsed.is_some() && (!problem.choices || perm::randomizes(&problem.nodes));
+    let random = (base_state.full.is_some() || base_state.parsed.is_some()) && (!problem.choices || perm::randomizes(&problem.nodes));
     if !random && !problem.choices {
         return Err(match problem.function.as_deref() {
             Some(name) => format!("{name}: the function does not parse for rewriting and the draft has no PERM choices"),
@@ -514,10 +548,7 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
     if options.heat && random {
         problem.aim = aim_at(&problem, &setup, &base_state, &base_text)?;
     }
-    let base_unnatural = match &base_state.parsed {
-        Some((_, _, function)) => unnatural(function, &Env::new(&problem.unit, function)),
-        None => 0,
-    };
+    let base_unnatural = problem.unnatural(&base_state);
     let base = Found { score: base_score, unnatural: base_unnatural, text: base_text, steps: Vec::new(), expanded: base_state.expanded.clone(), job: 0, iteration: 0 };
     println!(
         "{}: listing {} instructions; draft {}; {} job(s), {}, seed {}; rewrites: {}",
@@ -617,6 +648,8 @@ fn search(
                 let mut env = base_state.parsed.as_ref().map(|(_, _, function)| Env::new(&problem.unit, function));
                 // Keyed by a hash of the text: a long run sees many thousands.
                 let mut cache: HashMap<SourceHash, Option<Score>> = HashMap::new();
+                let mut prepared = HashMap::new();
+                prepared.insert(base_state.expanded.key(), base_state.expanded.clone());
                 let (mut best, mut current) = ((base_state.clone(), base.clone()), (base_state.clone(), base.clone()));
                 let mut iteration = 0u64;
                 let mut last_compiled = false;
@@ -633,14 +666,27 @@ fn search(
                         && rng.random() < options.keep_prob;
                     let mut state = if !keep {
                         match perm::expand_seed(&problem.nodes, seed) {
-                            Ok(expanded) => problem.state(expanded),
+                            Ok(mut expanded) => {
+                                if base_state.full.is_some() {
+                                    let key = expanded.key();
+                                    if let Some(expanded) = prepared.get(&key) { problem.state_of(expanded.clone()) }
+                                    else {
+                                        if prepare(&job, &mut expanded, problem.function.as_deref().unwrap()).is_err() { last_compiled = false; continue; }
+                                        let expanded = Arc::new(expanded);
+                                        if prepared.len() < 128 { prepared.insert(key, expanded.clone()); }
+                                        problem.state_of(expanded)
+                                    }
+                                } else { problem.state(expanded) }
+                            },
                             Err(_) => { last_compiled = false; continue; },
                         }
                     } else {
                         current.0.clone()
                     };
                     if random {
-                        if let (Some((_, _, function)), Some(env)) = (state.parsed.as_mut(), env.as_mut()) {
+                        if let Some(full) = &mut state.full {
+                            if let Some(step) = randomize::mutate(full, problem.function.as_deref().unwrap(), &mut rng) { state.steps.push(step); }
+                        } else if let (Some((_, _, function)), Some(env)) = (state.parsed.as_mut(), env.as_mut()) {
                             env.refresh(function);
                             let step = match &problem.aim {
                                 Some(aim) => aim::aimed(function, env, &mut rng, &Kind::ALL, aim),
@@ -665,13 +711,7 @@ fn search(
                     last_compiled = result.is_some();
                     let Some(score) = result else { continue };
                     let candidate = Found {
-                        unnatural: match (&state.parsed, env.as_mut()) {
-                            (Some((_, _, function)), Some(env)) => {
-                                env.refresh(function);
-                                unnatural(function, env)
-                            }
-                            _ => 0,
-                        },
+                        unnatural: problem.unnatural(&state),
                         score,
                         text,
                         steps: state.steps.clone(),
@@ -751,7 +791,13 @@ impl Problem {
     /// site its generator chose; a step whose site is gone is dropped.
     fn replay(&self, expanded: &Arc<Expanded>, steps: &[Step]) -> State {
         let mut state = self.state_of(expanded.clone());
-        if let Some((_, _, function)) = state.parsed.as_mut() {
+        if let Some(full) = &mut state.full {
+            for step in steps {
+                if let Kind::Full(kind) = step.kind {
+                    if randomize::apply(full, self.function.as_deref().unwrap(), kind, &mut step.rng.clone()) { state.steps.push(step.clone()); }
+                }
+            }
+        } else if let Some((_, _, function)) = state.parsed.as_mut() {
             let mut env = Env::new(&self.unit, function);
             for step in steps {
                 env.refresh(function);
@@ -764,6 +810,7 @@ impl Problem {
     }
 
     fn unnatural(&self, state: &State) -> usize {
+        if state.full.is_some() { return 0; }
         match &state.parsed {
             Some((_, _, function)) => unnatural(function, &Env::new(&self.unit, function)),
             None => 0,
@@ -972,6 +1019,32 @@ struct Best {
 /// only when that text scores exactly as the printed candidate does.
 fn respell(problem: &Problem, job: &Job, found: &Found, cache: &mut HashMap<SourceHash, Option<Score>>) -> (String, bool) {
     let draft = found.expanded.restore(&found.expanded.text);
+    let expected = if found.expanded.unit.is_some() {
+        job.compile(&found.text).and_then(|()| score::disassemble(&job.object, problem.symbol.as_deref())).ok()
+    } else { None };
+    let verifies = |text: &str, cache: &mut HashMap<SourceHash, Option<Score>>| {
+        if found.expanded.unit.is_some() {
+            // Equal scalar scores do not imply equal instructions. Projection
+            // must preserve the candidate's actual disassembly, including
+            // relocations and literal data, before saving a smaller draft.
+            expected.is_some() && problem.evaluate(job, text).ok().as_ref() == Some(&found.score)
+                && score::disassemble(&job.object, problem.symbol.as_deref()).ok() == expected
+        } else { scored(problem, job, text, cache).as_ref() == Some(&found.score) }
+    };
+    // Body/signature changes and new inline helpers usually fit back into
+    // the original includes and comments. A changed external declaration
+    // may have come from a header: keep the self-contained candidate then.
+    if let Some(before) = found.expanded.unit.as_deref() {
+        let state = problem.replay(&found.expanded, &found.steps);
+        if let Some(after) = &state.full {
+            if let Some((text, preserved)) = project_function(problem, &draft, before, after) {
+                let text = found.expanded.restore(&text);
+                if verifies(&text, cache) {
+                    return (text, preserved);
+                }
+            }
+        }
+    }
     let plain = problem.source(&problem.state_of(found.expanded.clone()));
     let text = if found.text == plain { Some(draft) } else { transplant(&draft, &plain, &found.text) };
     let printed = |text: &str| locate(text, problem.function.as_deref(), &problem.unit.typedef_names()).ok().map(|located| located.function.print());
@@ -979,12 +1052,34 @@ fn respell(problem: &Problem, job: &Job, found: &Found, cache: &mut HashMap<Sour
         Some(text) if text == found.text => (text, true),
         Some(text)
             if printed(&text).zip(printed(&found.text)).is_none_or(|(a, b)| a == b)
-                && scored(problem, job, &text, cache).as_ref() == Some(&found.score) =>
+                && verifies(&text, cache) =>
         {
             (text, true)
         }
         _ => (found.text.clone(), false),
     }
+}
+
+fn project_function(problem: &Problem, draft: &str, before: &c::Node, after: &c::Node) -> Option<(String, bool)> {
+    let target = problem.function.as_deref()?;
+    let old_index = randomize::target_index(before, target)?;
+    let new_index = randomize::target_index(after, target)?;
+    let (c::Node::FileAst { ext: old }, c::Node::FileAst { ext: new }) = (before, after) else { return None };
+    let old_context: Vec<_> = old.iter().enumerate().filter(|(i, _)| *i != old_index).map(|(_, n)| n).collect();
+    let mut new_context = Vec::new();
+    let mut helpers = String::new();
+    for (i, item) in new.iter().enumerate() {
+        if i == new_index { continue; }
+        if !old_context.contains(&item) && matches!(item, c::Node::FuncDef { .. }) { helpers.push_str(&item.print()); }
+        else { new_context.push(item); }
+    }
+    if old_context != new_context { return None; }
+    let located = locate(draft, Some(target), &problem.unit.typedef_names()).ok()?;
+    let original = &draft[located.start..located.end];
+    let transplanted = transplant(original, &old[old_index].print(), &new[new_index].print());
+    let preserved = transplanted.is_some();
+    let function = transplanted.unwrap_or_else(|| new[new_index].print());
+    Some((format!("{}{helpers}{}{}", &draft[..located.start], function.trim_end(), &draft[located.end..]), preserved))
 }
 
 /// Minimize and respell the search's best, until three distinct remain.
@@ -995,6 +1090,7 @@ fn minimize_best(problem: &Problem, base: &Found, found: &[Found], directory: &P
     let job = Job::new(problem, directory)?;
     let mut cache = HashMap::new();
     let mut best: Vec<Best> = Vec::new();
+    let mut assemblies = std::collections::HashSet::new();
     for candidate in found {
         if best.len() == 3 {
             break;
@@ -1004,6 +1100,12 @@ fn minimize_best(problem: &Problem, base: &Found, found: &[Found], directory: &P
         if best.iter().any(|seen| seen.text == text) {
             continue;
         }
+        // Different spellings of the same compiled result should not fill
+        // all three output slots. Keep relocations and literal data in the
+        // key, including distinctions ignored by the weighted score.
+        job.compile(&text)?;
+        let assembly = score::disassemble(&job.object, problem.symbol.as_deref())?;
+        if !assemblies.insert(text_key(&format!("{assembly:?}"))) { continue; }
         let searched = candidate.steps.iter().map(|step| step.kind).collect();
         best.push(Best { found: minimized, searched, text, respelled });
     }
@@ -1039,9 +1141,10 @@ fn write_best(problem: &Problem, base: &Found, found: &[Best], output: &Path) ->
             ""
         };
         let kinds: Vec<Kind> = best.steps.iter().map(|step| step.kind).collect();
-        let spelling = if entry.respelled { "" } else { "\n   Its rewrites do not carry into the draft's lines: the function is as the permuter prints it." };
+        let spelling = if entry.respelled { "" } else { "\n   Its rewrites do not carry into the draft's lines: this is the permuter's printed source." };
+        let review = if kinds.iter().any(|k| matches!(k, Kind::Full(_))) { "\n   Source hypothesis: review type and behavior changes, and tag compiler-steering devices under S2 before adoption." } else { "" };
         let header = format!(
-            "/* alchemy permute {}: {}; draft {}.\n   Job {}, iteration {}; rewrites: {} (minimized from {}: {}).{spelling}{fakematch} */\n",
+            "/* alchemy permute {}: {}; draft {}.\n   Job {}, iteration {}; rewrites: {} (minimized from {}: {}).{spelling}{fakematch}{review} */\n",
             problem.stem,
             best.score.summary_with(problem.prefix),
             base.score.summary_with(problem.prefix),
@@ -1271,6 +1374,93 @@ mod tests {
         let score = problem.evaluate(&job, "int F(int x) { return x + 3; }\n").unwrap();
         assert_eq!((score.weighted, score.regalloc), (5, 1));
         assert!(score.differ > 0);
+    }
+
+    #[test]
+    fn whole_tree_type_search_and_minimizer_reach_a_byte_load_on_both_routes() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let source = "extern int input; int F(void) { return input; }\n";
+        for arm in [false, true] {
+            let work = tempfile::tempdir().unwrap();
+            let draft = work.path().join("draft/08000000.c");
+            let mut problem = test_problem(&draft, source, Vec::new(), Some("F"));
+            problem.arm = arm;
+            problem.symbol = Some("F".into());
+            let job = Job::new(&problem, &work.path().join("job")).unwrap();
+            job.compile("extern unsigned char input; int F(void) { return input; }\n").unwrap();
+            problem.listing = crate::diff::disassemble(&job.object, Some("F")).unwrap();
+            problem.listing_rows = Some(score::disassemble(&job.object, Some("F")).unwrap());
+            let mut expanded = perm::expand(&problem.nodes, None).unwrap();
+            prepare(&job, &mut expanded, "F").unwrap();
+            let base_state = problem.state(expanded);
+            let base_text = problem.source(&base_state);
+            let base = Found { score: problem.evaluate(&job, &base_text).unwrap(), unnatural: 0, text: base_text, steps: vec![], expanded: base_state.expanded.clone(), job: 0, iteration: 0 };
+            assert!(base.score.differ > 0 && base.score.weighted > 0, "arm={arm}: {}\nsource: {}\nreference: {:?}\ncandidate: {:?}", base.score.summary_with(false), base.text, problem.listing, crate::diff::disassemble(&job.object, Some("F")).unwrap());
+            let found = (0..80).find_map(|seed| {
+                let mut state = base_state.clone();
+                let kind = randomize::Kind::GlobalType;
+                if !randomize::apply(state.full.as_mut().unwrap(), "F", kind, &mut Rng::new(seed)) { return None; }
+                let text = problem.source(&state);
+                let score = problem.evaluate(&job, &text).ok()?;
+                if score.differ != 0 { return None; }
+                Some(Found { score, unnatural: 0, text, steps: vec![Step { kind: Kind::Full(kind), rng: Rng::new(seed) }], expanded: state.expanded, job: 0, iteration: seed })
+            }).expect("changing a global type reaches the byte load the old body engine cannot generate");
+            let minimized = minimize(&problem, &job, &base, &found, &mut HashMap::new());
+            assert_eq!(minimized.steps.len(), 1);
+            let replay = problem.replay(&minimized.expanded, &minimized.steps);
+            assert_eq!(problem.source(&replay), minimized.text);
+            assert_eq!(problem.evaluate(&job, &minimized.text).unwrap().differ, 0);
+            let (text, _) = respell(&problem, &job, &minimized, &mut HashMap::new());
+            assert_eq!(problem.evaluate(&job, &text).unwrap().differ, 0);
+        }
+    }
+
+    #[test]
+    fn whole_tree_manual_expansions_survive_preprocessing_and_keep_separate_orders() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let source = "int F(int x) { PERM_PRETEND(typedef int T;) PERM_LINESWAP(x += 1;\nx *= 2;) PERM_RANDOMIZE(x += 3;) PERM_IGNORE(asm(\"\");) return x; }\n";
+        let work = tempfile::tempdir().unwrap();
+        let problem = test_problem(&work.path().join("draft/08000000.c"), source, vec![], Some("F"));
+        let job = Job::new(&problem, &work.path().join("job")).unwrap();
+        let mut first = perm::expand_seed(&problem.nodes, 0).unwrap();
+        let mut second = perm::expand_seed(&problem.nodes, 1).unwrap();
+        assert_eq!(first.text, second.text);
+        assert_ne!(first.key(), second.key());
+        for expansion in [&mut first, &mut second] {
+            prepare(&job, expansion, "F").unwrap();
+            let tree = expansion.unit.as_deref().unwrap();
+            assert!(tree.print().contains("typedef int T;") && tree.print().contains("#pragma _permuter randomizer start"));
+            let source = expansion.restore(&tree.print());
+            assert!(!source.contains("typedef int T;") && !source.contains("_permuter"), "{source}");
+            assert!(source.contains("asm(\"\");"));
+            job.compile(&source).unwrap();
+            let c::Node::FileAst { ext } = tree else { panic!() };
+            let c::Node::FuncDef { body, .. } = &ext[0] else { panic!() };
+            let c::Node::Compound { block_items } = body.as_ref() else { panic!() };
+            assert!(!block_items.iter().any(|n| matches!(n, c::Node::Compound { .. })), "line swap must not introduce a declaration scope");
+        }
+        assert_ne!(first.unit, second.unit);
+    }
+
+    #[test]
+    fn whole_tree_outputs_keep_includes_and_comments_when_only_the_function_changes() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let source = "#include \"types.h\"\n/* Keep this explanation. */\nint F(int a, int b) { return a + b; }\n";
+        let work = tempfile::tempdir().unwrap();
+        let mut problem = test_problem(&work.path().join("draft/08000000.c"), source, vec![], Some("F"));
+        problem.symbol = Some("F".into());
+        let job = Job::new(&problem, &work.path().join("job")).unwrap();
+        let mut expanded = perm::expand(&problem.nodes, None).unwrap();
+        prepare(&job, &mut expanded, "F").unwrap();
+        let mut state = problem.state(expanded);
+        let kind = randomize::Kind::Commutative;
+        assert!(randomize::apply(state.full.as_mut().unwrap(), "F", kind, &mut Rng::new(0)));
+        state.steps.push(Step { kind: Kind::Full(kind), rng: Rng::new(0) });
+        let text = problem.source(&state);
+        let found = Found { score: problem.evaluate(&job, &text).unwrap(), unnatural: 0, text, steps: state.steps, expanded: state.expanded, job: 0, iteration: 1 };
+        let (output, _) = respell(&problem, &job, &found, &mut HashMap::new());
+        assert!(output.contains("#include \"types.h\"") && output.contains("/* Keep this explanation. */") && output.contains("b + a"), "{output}");
+        assert!(!output.contains("typedef"), "output should not inline all headers");
     }
 
     #[test]

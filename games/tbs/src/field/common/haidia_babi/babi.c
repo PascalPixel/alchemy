@@ -252,14 +252,18 @@ void SceneState_ApplyValues123And11(void)
     HaidiaBabi_CloseScreenAndExit(11);
 }
 
+struct EventSlots {
+    struct EventWork *event;
+    void *unknown_04[2];
+    struct FieldBlendWork *blend;
+};
+
 s32 HaidiaBabi_RestoreEntryState(void)
 {
 	void FieldScene_RunPaletteRampSequence();
 	void FieldScene_RunSupplementalSequenceOne();
-    /* FAKEMATCH: needed to match: the shared cached-cell base keeps the word read before the narrow store. */
     u32 i;
     s32 record;
-    struct EventWork **control;
 
     if (gGameState.entrance == 19) {
         Engine_GameFlagClear(0x12f);
@@ -305,17 +309,11 @@ s32 HaidiaBabi_RestoreEntryState(void)
                     if (gGameState.entrance == 22) {
                         FieldScene_RunSupplementalSequenceOne();
                     } else {
-                        control = &gEventWork;
-                        (*control)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+                        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
                         if (Engine_GameFlagIsSet(0x834) != 0) {
                             BattleFx_StartTwelveFrameBlend();
-                            {
-                                struct FieldBlendWork *blend = *(struct FieldBlendWork **)((u8 *)control + 12);
-                                u16 *target = (u16 *)&blend->loud;
-                                u16 shown = 1;
-
-                                *target = shown;
-                            }
+                            /* FAKEMATCH: needed to match: the blend work is read as the event slot's neighbour, sharing one pool address. */
+                            ((struct EventSlots *)&gEventWork)->blend->loud = 1;
                             BattleFx_SetBlock30Values12Zero();
                             Engine_TaskWait(30);
                             Engine_EventOpenScreen();
@@ -491,12 +489,6 @@ void FieldScene_RunComplexActorSequence(void)
 
 void DisplayBlend_EnableRunScript();
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *script);
-
-struct EventSlots {
-    struct EventWork *event;
-    void *unknown_04[2];
-    struct FieldBlendWork *blend;
-};
 
 static __inline__ void SetBlendTarget(u32 value)
 {

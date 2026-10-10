@@ -8,6 +8,13 @@
 
 void Korosseo_SelectSoloCompetitor(s32 id);
 
+// EventWork の選択肢欄 (共有ヘッダに未定義)
+struct EventChoiceWork {
+    u8 unknown_000[0xcc2];
+    u16 choice_message;
+    u16 unknown_cc4;
+};
+
 void Korosseo_FinishSoloRound(s32 id)
 {
     struct EventWork *work;
@@ -17,7 +24,7 @@ void Korosseo_FinishSoloRound(s32 id)
     s32 res;
 
     work = gEventWork;
-    /* FAKEMATCH: needed to match: the speaker lookup is retained twice with both results unused. */
+    // 話者を二度引き、どちらの結果も使わない (original behaviour: two real calls)
     Object_GetById(id);
     Object_GetById(id);
     slot = gGameState.selected_actor;
@@ -26,18 +33,11 @@ void Korosseo_FinishSoloRound(s32 id)
     msg = (s32)MsgKorosseoCheering;
     Engine_EventSetMessage(msg);
     Engine_EventOpenMessage(id, 0);
-    /* FAKEMATCH: needed to match: one work pointer and word locals preserve the pool-load and halfword-store order. */
     {
-        u8 *w = *(u8 **)&gEventWork;
-        s32 v = (s32)MsgKorosseoCheeringChoices;
+        struct EventChoiceWork *choice = (struct EventChoiceWork *)gEventWork;
 
-        *(u16 *)(w + 0xcc2) = v;
-        {
-            u16 *q = (u16 *)(w + 0xcc4);
-            s32 f = 4;
-
-            *q = f;
-        }
+        choice->choice_message = (s32)MsgKorosseoCheeringChoices;
+        choice->unknown_cc4 = 4;
     }
     res = Engine_EventChooseYesNo(slot, 0);
     if (res == 0) {

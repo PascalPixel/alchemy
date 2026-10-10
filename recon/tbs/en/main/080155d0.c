@@ -78,7 +78,26 @@
    The stock-release host build only replaces an obsolete cast-as-lvalue
    assignment with its underlying variable, arm_prgmode; no code-generation
    rule is changed. Integration and whole-ROM verification of that compiler
-   remain pending; this saved draft and the build still use approved agbcc_arm. */
+   remain pending; this saved draft and the build still use approved agbcc_arm.
+
+   Follow-up requested by Pascal, 2026-10-10: built the stock 2.95.2 Thumb
+   target (thumb-coff) and compared all 41 sound/flash library C sources in
+   their twelve-edition builds, keeping -O2 for sound and -O for flash,
+   both with -mthumb-interwork. Of 408 objects, 174 have identical allocated
+   sections and relocations; 234 differ. All 408 rebuilt agbcc controls match.
+   Sound's sound.c and engine.c change instructions; flash changes instructions
+   in program_atmel_flash_block.c and omits the unused address words emitted
+   into .rodata by agbcc in sixteen other files. All seven current libgcc C
+   members also differ under 2.95.2 Thumb; their agscc controls match.
+   Retested agbcc_arm on this draft and the simpler 2.95.2 glyph source:
+   both match JA, neither matches any international edition. This draft's
+   English output still transposes mov r7,r3 and sub sp,sp,#44; complete
+   text differs at 8 bytes. Stock 2.95.2 matches the simpler glyph in all six.
+   These are drop-in source comparisons, not proof that other C cannot match.
+   The isolated 2.95.2 ARM integration now passes all twelve complete ROMs,
+   including a fresh source-built toolchain. Its Darwin host build additionally
+   corrects sys_nerr's const declaration; target code generation is unchanged.
+   Compiler adoption remains unapproved; this branch keeps its existing route. */
 
 #include "types.h"
 #include "uiwindow.h"

@@ -7,6 +7,7 @@ use super::rng::Rng;
 use std::collections::{BTreeMap, BTreeSet};
 
 mod lifetime;
+mod remaining;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Kind {
@@ -231,30 +232,6 @@ fn expression_nodes(node: &Node, path: &[usize], value: bool) -> Vec<(Path, bool
     out
 }
 
-fn mentioned(node: &Node) -> BTreeSet<String> {
-    let mut paths = Vec::new();
-    // Includes IDs used as lvalues, excluding the field part of a member.
-    fn visit(node: &Node, out: &mut Vec<String>) {
-        if let Node::Id { name } = node { out.push(name.clone()); }
-        if let Node::StructRef { name, .. } = node { visit(name, out); }
-        else { for n in node.children() { visit(n, out); } }
-    }
-    visit(node, &mut paths);
-    paths.into_iter().collect()
-}
-fn fresh(unit: &Node, stem: &str) -> String {
-    fn collect(n: &Node, out: &mut BTreeSet<String>) {
-        match n {
-            Node::Id { name } | Node::Typedef { name, .. } | Node::Label { name, .. } | Node::Enumerator { name, .. } => { out.insert(name.clone()); }
-            Node::Decl { name: Some(name), .. } => { out.insert(name.clone()); }
-            _ => {}
-        }
-        for n in n.children() { collect(n, out); }
-    }
-    let mut names = BTreeSet::new(); collect(unit, &mut names);
-    if !names.contains(stem) { return stem.into(); }
-    (2..).map(|i| format!("{stem}{i}")).find(|n| !names.contains(n)).unwrap()
-}
 fn effectful(n: &Node) -> bool {
     match n {
         Node::FuncCall { .. } | Node::Assignment { .. } => true,
@@ -320,9 +297,11 @@ fn apply_sites(unit: &mut Node, target: &str, kind: Kind, rng: &mut Rng, sites: 
         Kind::LocalType | Kind::GlobalType | Kind::FunctionType => change_type(&mut trial, target, sites, kind, rng),
         Kind::ReorderStatements | Kind::ReorderDeclarations => reorder(&mut trial, sites, kind, rng),
         Kind::SplitAssignment | Kind::ChainAssignment | Kind::LongChainAssignment => assignments(&mut trial, sites, kind, rng),
-        Kind::Block | Kind::ConditionalBlock => wrap(&mut trial, sites, kind, rng),
-        Kind::Inline => inline(&mut trial, target, sites, rng),
-        Kind::AliasArray | Kind::RemoveVariable => variables(&mut trial, target, sites, kind, rng),
+        Kind::Block => wrap(&mut trial, sites, rng),
+        Kind::ConditionalBlock => remaining::conditional(&mut trial, target, sites, rng),
+        Kind::Inline => remaining::inline(&mut trial, target, sites, rng),
+        Kind::StructRef => remaining::struct_ref(&mut trial, sites, rng),
+        Kind::AliasArray | Kind::RemoveVariable => remaining::variables(&mut trial, target, sites, kind, rng),
         Kind::AddMask | Kind::XorZero | Kind::ReferVariable | Kind::FloatLiteral | Kind::SameLine | Kind::EmptyStatement | Kind::Condition | Kind::MultiplyZero | Kind::DummyComma | Kind::SelfAssignment | Kind::DuplicateAssignment | Kind::PadDeclaration => auxiliary(&mut trial, target, sites, kind, rng),
         _ => expression(&mut trial, target, sites, kind, rng),
     };
@@ -509,7 +488,6 @@ fn expression(unit: &mut Node, target: &str, sites: &Sites, kind: Kind, rng: &mu
         Kind::FactorMultiply => matches!(n, Node::BinaryOp { op, left, right } if op == "*" && (matches!(left.as_ref(), Node::Constant { .. }) || matches!(right.as_ref(), Node::Constant { .. }))),
         Kind::FactorShift => matches!(n, Node::BinaryOp { op, right, .. } if (op == "<<" || op == ">>") && matches!(right.as_ref(), Node::Constant { .. })),
         Kind::CompoundAssignment => matches!(n, Node::Assignment { op, lvalue, rvalue } if op != "=" || matches!(rvalue.as_ref(), Node::BinaryOp { op, left, .. } if left == lvalue && ["+", "-", "*", "/", "<<", ">>", "&", "|", "^"].contains(&op.as_str()))),
-        Kind::StructRef => matches!(n, Node::StructRef { .. } | Node::ArrayRef { .. }) || matches!(n, Node::UnaryOp { op, expr } if op == "*" && matches!(expr.as_ref(), Node::BinaryOp { op, .. } if op == "+")),
         Kind::ReverseCondition => matches!(n, Node::If { iffalse: Some(_), .. } | Node::TernaryOp { .. }),
         _ => false,
     }}).collect();
@@ -579,18 +557,6 @@ fn expression(unit: &mut Node, target: &str, sites: &Sites, kind: Kind, rng: &mu
                 let Node::BinaryOp { op, right, .. } = *rvalue else { return None };
                 Node::Assignment { op: format!("{op}="), lvalue, rvalue: right }
             } else { assign(*lvalue.clone(), binary(op.trim_end_matches('='), *lvalue, *rvalue)) }
-        }
-        (Kind::StructRef, Node::StructRef { name, op, field }) => {
-            if op == "->" { Node::StructRef { name: unary("*", *name).boxed(), op: ".".into(), field } }
-            else if let Node::UnaryOp { op, expr } = name.as_ref() {
-                if op == "*" { Node::StructRef { name: expr.clone(), op: "->".into(), field } }
-                else { Node::StructRef { name: unary("&", *name).boxed(), op: "->".into(), field } }
-            } else { Node::StructRef { name: unary("&", *name).boxed(), op: "->".into(), field } }
-        }
-        (Kind::StructRef, Node::ArrayRef { name, subscript }) => unary("*", binary("+", *name, *subscript)),
-        (Kind::StructRef, Node::UnaryOp { expr, .. }) => {
-            let Node::BinaryOp { left, right, .. } = *expr else { return None };
-            Node::ArrayRef { name: left, subscript: right }
         }
         (Kind::ReverseCondition, Node::If { cond, iftrue, iffalse: Some(iffalse) }) => Node::If { cond: negate(*cond).boxed(), iftrue: iffalse, iffalse: Some(iftrue) },
         (Kind::ReverseCondition, Node::TernaryOp { cond, iftrue, iffalse }) => Node::TernaryOp { cond: negate(*cond).boxed(), iftrue: iffalse, iffalse: iftrue },
@@ -846,8 +812,7 @@ fn assignments(unit: &mut Node, sites: &Sites, kind: Kind, rng: &mut Rng) -> Opt
     Some(())
 }
 
-fn wrap(unit: &mut Node, sites: &Sites, kind: Kind, rng: &mut Rng) -> Option<()> {
-    if kind == Kind::Block {
+fn wrap(unit: &mut Node, sites: &Sites, rng: &mut Rng) -> Option<()> {
         let blocks = sites.blocks(unit);
         let path = &blocks[choose(rng, &blocks)?];
         let block = at(unit, path);
@@ -863,112 +828,7 @@ fn wrap(unit: &mut Node, sites: &Sites, kind: Kind, rng: &mut Rng) -> Option<()>
             vec![Node::Pragma { string: "_permuter sameline start".into() }, Node::DoWhile { cond: integer(0).boxed(), stmt: body }, Node::Pragma { string: "_permuter sameline end".into() }]
         } else { vec![Node::If { cond: integer(1).boxed(), iftrue: body, iffalse: None }] };
         items.splice(lo..lo, replacement);
-        return Some(());
-    }
-    let mut candidates = Vec::new();
-    for path in sites.blocks(unit) {
-        let block = at(unit, &path);
-        for (i, stmt) in statements(block)?.iter().enumerate() {
-            if sites.allows(&statement_path(&path, block, i)) && !matches!(stmt, Node::Decl { .. } | Node::Pragma { .. } | Node::Case { .. } | Node::Default { .. }) { candidates.push((path.clone(), i)); }
-        }
-    }
-    let (path, start) = &candidates[choose(rng, &candidates)?];
-    let block = at(unit, path);
-    let stmts = statements(block)?;
-    let last = stmts.iter().enumerate().skip(*start).take_while(|(i, n)| sites.allows(&statement_path(path, block, *i)) && !matches!(n, Node::Decl { .. } | Node::Pragma { .. } | Node::Case { .. } | Node::Default { .. })).count();
-    let end = *start + 1 + rng.below(last);
-    let cond = if kind == Kind::ConditionalBlock {
-        let mut names = BTreeSet::new();
-        for stmt in &stmts[*start..end] { names.extend(mentioned(stmt)); }
-        let names: Vec<_> = names.into_iter().collect();
-        Node::id(&names[choose(rng, &names)?])
-    } else { integer(1) };
-    let stmts = statements_mut(at_mut(unit, path));
-    let body = compound(stmts.drain(*start..end).collect()).boxed();
-    let wrapper = if kind == Kind::Block && rng.random() < 0.5 { Node::DoWhile { cond: integer(0).boxed(), stmt: body } }
-        else { Node::If { cond: cond.boxed(), iftrue: body, iffalse: None } };
-    stmts.insert(*start, wrapper);
-    Some(())
-}
-
-fn inline(unit: &mut Node, target: &str, sites: &Sites, rng: &mut Rng) -> Option<()> {
-    let types = Types::new(unit, target);
-    let candidates = sites.expressions(unit);
-    if candidates.is_empty() { return None; }
-    let selected = weighted(rng, candidates.iter().map(|p| match at(unit, p) { Node::Id { .. } => 0.05, Node::Constant { .. } => 0.01, _ => 1.0 }));
-    let path = &candidates[selected];
-    let expr = at(unit, path).clone();
-    if effectful(&expr) { return None; }
-    let ret = types.decayed(&expr)?;
-    let helper = fresh(unit, "inline_fn");
-    let mut params = Vec::new();
-    let mut args = Vec::new();
-    let mut body = expr.clone();
-    let mut values = Vec::new(); expressions(&body, &[], true, &mut values);
-    // Cut pure subexpressions into parameters, including every local ID.
-    // A path prefix already cut must never be visited again.
-    let mut cuts: Vec<Path> = Vec::new();
-    for p in values {
-        if cuts.iter().any(|c| p.starts_with(c)) { continue; }
-        let n = at(&expr, &p);
-        let local = matches!(n, Node::Id { name } if types.locals.contains(name));
-        if !local && (p.is_empty() || rng.random() >= 0.25) { continue; }
-        let ty = types.decayed(n)?;
-        let arg = fresh(unit, &format!("arg{}", params.len()));
-        params.push(types::declaration(&arg, ty)); args.push(n.clone());
-        *at_mut(&mut body, &p) = Node::id(arg); cuts.push(p);
-    }
-    if params.is_empty() { return None; }
-    // Declared locals hidden inside an lvalue/address expression may not
-    // have been cut by the value visitor. Decline instead of emitting an
-    // out-of-scope name in the helper.
-    if !mentioned(&body).is_disjoint(&types.locals) { return None; }
-    let call = Node::FuncCall { name: Node::id(&helper).boxed(), args: Some(Node::ExprList { exprs: args }.boxed()) };
-    *at_mut(unit, path) = call;
-    let mut decl = types::declaration(&helper, Node::FuncDecl { args: Some(Node::ParamList { params }.boxed()), ty: ret.boxed() });
-    if let Node::Decl { storage, funcspec, .. } = &mut decl { storage.push("static".into()); funcspec.push("inline".into()); }
-    let helper = Node::FuncDef { decl: decl.boxed(), param_decls: vec![], body: compound(vec![Node::Return { expr: Some(body.boxed()) }]).boxed() };
-    let index = target_index(unit, target)?;
-    let Node::FileAst { ext } = unit else { return None };
-    ext.insert(index, helper);
-    Some(())
-}
-
-fn variables(unit: &mut Node, target: &str, sites: &Sites, kind: Kind, rng: &mut Rng) -> Option<()> {
-    let types = Types::new(unit, target);
-    let body = at(unit, &sites.body);
-    let stmts = statements(body)?;
-    let mut mentioned_names = BTreeSet::new();
-    for path in sites.select(unit, |n| matches!(n, Node::Id { .. })) { if let Node::Id { name } = at(unit, &path) { mentioned_names.insert(name.clone()); } }
-    let mut candidates = Vec::new();
-    for (i, decl) in stmts.iter().enumerate() {
-        let Node::Decl { name: Some(a), ty: ta, init: None, .. } = decl else { continue };
-        if !mentioned_names.contains(a) || matches!(types.resolve(ta)?, Node::ArrayDecl { .. }) { continue; }
-        for (j, decl) in stmts.iter().enumerate().skip(i + 1) {
-            let Node::Decl { name: Some(b), ty: tb, init: None, .. } = decl else { continue };
-            if mentioned_names.contains(b) && types.similar(ta, tb) { candidates.push((i, j, a.clone(), b.clone(), *ta.clone())); }
-        }
-    }
-    let (i, j, a, b, ty) = candidates.get(choose(rng, &candidates)?)?.clone();
-    let var = if kind == Kind::AliasArray { fresh(unit, "new_var") } else { b.clone() };
-    fn replace(node: &mut Node, a: &str, b: &str, var: &str, array: bool) {
-        if let Node::Id { name } = node {
-            if name == a || (array && name == b) {
-                *node = if array { Node::ArrayRef { name: Node::id(var).boxed(), subscript: integer(i64::from(name == b)).boxed() } } else { Node::id(var) };
-                return;
-            }
-        }
-        // The field of a member is a name, not a variable reference.
-        if let Node::StructRef { name, .. } = node { replace(name, a, b, var, array); }
-        else { for n in node.children_mut() { replace(n, a, b, var, array); } }
-    }
-    let body = at_mut(unit, &sites.body);
-    replace(body, &a, &b, &var, kind == Kind::AliasArray);
-    let stmts = statements_mut(body);
-    if kind == Kind::AliasArray {
-        stmts[i] = types::declaration(&var, Node::ArrayDecl { ty: ty.boxed(), dim: Some(integer(2).boxed()), dim_quals: vec![] }); stmts.remove(j);
-    } else { stmts.remove(i); }
-    Some(())
+        Some(())
 }
 
 #[cfg(test)]
@@ -1127,6 +987,9 @@ mod tests {
                 "assignments" => include_str!("c/fixtures/mutations-assignments.c"),
                 "shadow" => include_str!("c/fixtures/mutations-shadow.c"),
                 "lifetime" => include_str!("c/fixtures/mutations-lifetime.c"),
+                "structs" => include_str!("c/fixtures/mutations-structs.c"),
+                "manyvars" => include_str!("c/fixtures/mutations-manyvars.c"),
+                "inline" => include_str!("c/fixtures/mutations-inline.c"),
                 _ => panic!("unknown fixture input"),
         }
     }
@@ -1165,6 +1028,11 @@ mod tests {
                 "perm_remove_ast" => Kind::Remove,
                 "perm_temp_for_expr" => Kind::Temporary,
                 "perm_expand_expr" => Kind::Expand,
+                "perm_inline" => Kind::Inline,
+                "perm_var_cond_block" => Kind::ConditionalBlock,
+                "perm_struct_ref" => Kind::StructRef,
+                "perm_alias_array" => Kind::AliasArray,
+                "perm_remove_var" => Kind::RemoveVariable,
                 _ => panic!("unknown fixture pass"),
         }
     }
@@ -1172,7 +1040,7 @@ mod tests {
     #[test]
     fn passes_match_compatibility_in_nested_blocks_and_regions() {
         let mut failures = Vec::new();
-        for row in include_str!("c/fixtures/mutations-auxiliary.tsv").lines().chain(include_str!("c/fixtures/mutations-expression.tsv").lines()).chain(include_str!("c/fixtures/mutations-types-assignments.tsv").lines()).chain(include_str!("c/fixtures/mutations-lifetime.tsv").lines()) {
+        for row in include_str!("c/fixtures/mutations-auxiliary.tsv").lines().chain(include_str!("c/fixtures/mutations-expression.tsv").lines()).chain(include_str!("c/fixtures/mutations-types-assignments.tsv").lines()).chain(include_str!("c/fixtures/mutations-lifetime.tsv").lines()).chain(include_str!("c/fixtures/mutations-final.tsv").lines()) {
             let c: Vec<_> = row.split('\t').collect();
             let kind = fixture_kind(c[1]);
             let mut unit = parsed(fixture_source(c[0]));
@@ -1190,6 +1058,7 @@ mod tests {
 
     #[test]
     fn successive_compatibility_mutations_match_source_hashes_retries_and_rng() {
+        check_walks(include_str!("c/fixtures/mutations-final-walks.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv"), include_str!("c/fixtures/mutations-types-assignments.tsv"), include_str!("c/fixtures/mutations-lifetime.tsv"), include_str!("c/fixtures/mutations-final.tsv")], true);
         check_walks(include_str!("c/fixtures/mutations-walks.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv")], false);
         check_walks(include_str!("c/fixtures/mutations-types-walks.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv"), include_str!("c/fixtures/mutations-types-assignments.tsv")], true);
         check_walks(include_str!("c/fixtures/mutations-lifetime-walks.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv"), include_str!("c/fixtures/mutations-types-assignments.tsv"), include_str!("c/fixtures/mutations-lifetime.tsv")], true);
@@ -1204,6 +1073,7 @@ mod tests {
         for row in walks.lines() {
             let c: Vec<_> = row.split('\t').collect();
             if c[2] == "0" { unit = parsed(fixture_source(c[0])); rng = Rng::new(c[1].parse().unwrap()); }
+            let before = (methods.len() == Kind::GCC.len()).then(|| (unit.clone(), rng.clone()));
             let sites = Sites::new(&unit, "target", &mut rng).unwrap();
             let mut attempts = 0;
             let kind = loop {
@@ -1219,6 +1089,15 @@ mod tests {
             if full_text { assert_eq!(unit.print(), c[5].replace("\\n", "\n"), "{context}: source"); }
             else { assert_eq!(format!("{:x}", Sha256::digest(unit.print().as_bytes())), c[5], "{context}: source\n{}", unit.print()); }
             assert_eq!(rng.clone().random(), c[6].parse::<f64>().unwrap(), "{context}: random state");
+            if let Some((mut driven, mut driver_rng)) = before {
+                let mut restored = driven.clone();
+                let step = mutate(&mut driven, "target", &mut driver_rng).unwrap();
+                assert_eq!(driven, unit, "{context}: production mutation driver");
+                assert_eq!(driver_rng.random(), c[6].parse::<f64>().unwrap(), "{context}: driver random state");
+                let super::super::mutate::Kind::Full(kind) = step.kind else { panic!() };
+                assert!(replay(&mut restored, "target", kind, &mut step.rng.clone(), step.region));
+                assert_eq!(restored, unit, "{context}: replay");
+            }
         }
     }
 

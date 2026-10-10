@@ -95,11 +95,34 @@ impl Rng {
     pub fn chance(&mut self, numerator: u64, denominator: u64) -> bool {
         self.random() < numerator as f64 / denominator as f64
     }
+
+    /// rejection sampling. The order matters to variable aliasing/removal.
+    pub fn sample_pair(&mut self, length: usize) -> (usize, usize) {
+        assert!(length >= 2, "sample larger than population");
+        let first = self.below(length);
+        let second = if length <= 21 {
+            let selected = self.below(length - 1);
+            if selected == first { length - 1 } else { selected }
+        } else {
+            loop { let selected = self.below(length); if selected != first { break selected; } }
+        };
+        (first, second)
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn sampling_ordered_pair_sampling() {
+        for row in include_str!("c/fixtures/rng-sample.tsv").lines() {
+            let c: Vec<_> = row.split('\t').collect();
+            let mut rng = Rng::new(c[1].parse().unwrap());
+            assert_eq!(rng.sample_pair(c[0].parse().unwrap()), (c[2].parse().unwrap(), c[3].parse().unwrap()), "size {} seed {}", c[0], c[1]);
+            assert_eq!(rng.random(), c[4].parse::<f64>().unwrap());
+        }
+    }
 
     #[test]
     fn sampling_integer_seed_vectors() {

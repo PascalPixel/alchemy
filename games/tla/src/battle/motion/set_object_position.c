@@ -68,8 +68,6 @@ void Func_0811c01c(s32 object_id)
         s32 (*mul)(s32 a, s32 b);
         s32 anchor = slot->anchor_x;
 
-        /* FAKEMATCH: ⚓️ loads the multiplier only after the anchor */
-        asm("" : "+l"(anchor));
         mul = Iwram_MulQ16;
         Object_SetPosition(object, mul(anchor, 0x14ccc), 0, slot->anchor_z);
     }

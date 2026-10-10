@@ -5,5 +5,5 @@ tbs	register-pin	35
 tbs	volatile	303
 tla	asm-barrier	203
 tla	inline-asm	1
-tla	register-pin	19
+tla	register-pin	17
 tla	volatile	60

@@ -493,6 +493,11 @@ mod tests {
         assert_eq!(score.weighted, 0);
         weighted(&candidate, &target, options, &mut score);
         assert_eq!(score.weighted, REGALLOC, "symbol wildcard is directional, like compatibility");
+        let wrong_call = parse_objdump("  0:\tbl\t4 <f>\n  0: R_ARM_THM_CALL Other\n  4:\t.word\t0x00000000\n  4: R_ARM_ABS32 Data\n").unwrap();
+        weighted(&target, &wrong_call, options, &mut score);
+        assert_eq!(score.weighted, REGALLOC, "compatibility's test Options retain relocated callees");
+        weighted(&target, &wrong_call, Options::default(), &mut score);
+        assert_eq!(score.weighted, 0, "compatibility's CLI default ignores call targets as well as branch destinations");
     }
 
     #[test]

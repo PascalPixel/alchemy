@@ -216,14 +216,16 @@ impl Expanded {
 
 /// Byte index just past the parenthesis that closes the one at `open`,
 /// skipping strings, characters and comments.
+/// Braces and brackets do not nest macro arguments: IGNORE/PRETEND may
+/// carry fragments that open or close a C scope outside the macro call.
 fn closing(text: &str, open: usize) -> Option<usize> {
     let bytes = text.as_bytes();
     let mut depth = 0usize;
     let mut index = open;
     while index < bytes.len() {
         match bytes[index] {
-            b'(' | b'[' | b'{' => depth += 1,
-            b')' | b']' | b'}' => {
+            b'(' => depth += 1,
+            b')' => {
                 depth = depth.checked_sub(1)?;
                 if depth == 0 {
                     return Some(index + 1);
@@ -297,8 +299,8 @@ fn arguments(inner: &str) -> Vec<&str> {
     let mut index = 0;
     while index < bytes.len() {
         match bytes[index] {
-            b'(' | b'[' | b'{' => depth += 1,
-            b')' | b']' | b'}' => depth -= 1,
+            b'(' => depth += 1,
+            b')' => depth -= 1,
             b',' if depth == 0 => {
                 out.push(&inner[start..index]);
                 start = index + 1;

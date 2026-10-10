@@ -17,6 +17,8 @@ mod score;
 mod rng;
 mod randomize;
 pub(crate) mod types;
+#[cfg(test)]
+mod compatibility_tests;
 
 use crate::compiler::routing::root;
 use crate::targets::{decomp_target, DecompTarget};
@@ -1065,6 +1067,21 @@ fn project_function(problem: &Problem, draft: &str, before: &c::Node, after: &c:
     let old_index = randomize::target_index(before, target)?;
     let new_index = randomize::target_index(after, target)?;
     let (c::Node::FileAst { ext: old }, c::Node::FileAst { ext: new }) = (before, after) else { return None };
+    // A PRETEND/SAMELINE region may start outside the target and end inside
+    // it. The restored draft has already consumed the external marker;
+    // projecting the printed function would leave an unmatched end marker.
+    // Keep the complete candidate, whose markers still share their context.
+    for kind in ["pretend", "sameline"] {
+        let mut depth = 0usize;
+        for line in old[old_index].print().lines() {
+            match line.trim().strip_prefix(&format!("#pragma _permuter {kind} ")) {
+                Some("start") => depth += 1,
+                Some("end") => depth = depth.checked_sub(1)?,
+                _ => {}
+            }
+        }
+        if depth != 0 { return None; }
+    }
     let old_context: Vec<_> = old.iter().enumerate().filter(|(i, _)| *i != old_index).map(|(_, n)| n).collect();
     let mut new_context = Vec::new();
     let mut helpers = String::new();
@@ -1281,7 +1298,7 @@ mod tests {
         out
     }
 
-    fn test_problem(draft: &Path, text: &str, listing: Vec<String>, function: Option<&str>) -> Problem {
+    pub(super) fn test_problem(draft: &Path, text: &str, listing: Vec<String>, function: Option<&str>) -> Problem {
         let nodes = perm::parse(text).unwrap();
         Problem {
             draft: draft.to_path_buf(),

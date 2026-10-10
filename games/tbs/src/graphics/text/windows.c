@@ -109,43 +109,35 @@ void UiText_PrepareMessageWork(s32 argument)
 {
     s32 index;
     s32 result;
-    s32 one;
     struct UiWindow *existing;
     struct UiWindow *work;
     struct UiRenderWork *state;
     struct BattleDisplayWork *control;
 
-    /* FAKEMATCH: needed to match: retain the scalar result lifetime and the goto-joined window paths; an if/else with direct 0 and 1 drops the r8/r9 values. The heap-slot range reads need no volatile view. */
     state = ((struct BattleMessageSlotRange *)gWindowWork)->render;
     control = ((struct BattleMessageSlotRange *)gWindowWork)->display;
+    /* FAKEMATCH: needed to match: result is cleared before the entry lookup and later carries the channel pointer as a scalar; without the early 0 the function differs 47. */
     result = 0;
     state->menu_state = 2;
     index = UiText_BuildRenderEntries(argument, 1);
-    one = 1;
-    state->menu_state = one;
+    state->menu_state = 1;
 
     if (state->entries[index] != 0) {
         existing = control->window;
-        if (existing != NULL) {
-            goto use_existing;
-        }
-        {
+        if (existing == NULL) {
             work = UiWindow_Create(0, 15, 30, 6, 10);
-            existing = work;
-            control->window = existing;
-            UiWindow_MapTextCanvasTiles(0, 15, 30, 6, one);
-            control->marked = result;
-            goto have_work;
+            control->window = work;
+            UiWindow_MapTextCanvasTiles(0, 15, 30, 6, 1);
+            control->marked = 0;
+        } else {
+            work = existing;
         }
-use_existing:
-        work = existing;
-have_work:
         if (work != NULL) {
             result = (s32)UiWork_ActivateChannel(work, index, control->marked);
             control->offset = (struct BattleDisplayOffset *)result;
             control->marked = 0;
             if (result == 0) {
-                UiWork_Finalize(work, one);
+                UiWork_Finalize(work, 1);
             }
         }
     }
@@ -216,15 +208,15 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed)
 
     work = (struct UiRenderWork *)gWindowWork[0];
     work->result[0] = (packed << 4) >> 20;
-    /* FAKEMATCH: needed to match: retain the null window as the scroll and layout zero. */
+    /* FAKEMATCH: needed to match: the window starts as NULL, though it is assigned before it is read; that zero's register serves the plain zeros below. */
     window = NULL;
-    work->result[1] = (u32)window;
+    work->result[1] = 0;
     packed &= 0xffff;
     flags = 0;
     entry = UiText_BuildRenderEntries(message, 1);
     if (work->entries[entry] == 0)
         return NULL;
-    UiWindow_FitOnScreen(entry, &x, &y, &width, &height, (out = bounds), (u32)window);
+    UiWindow_FitOnScreen(entry, &x, &y, &width, &height, (out = bounds), 0);
     if (width == 0 && height == 0)
         return NULL;
     if (!(packed & 1))
@@ -345,7 +337,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
     s32 transparent;
     s32 first_index;
     s32 second_index;
-    s32 second_width;
+    u16 second_width;
     u8 *digits;
     s32 group;
     s32 row;
@@ -380,7 +372,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
     }
     if ((u16)second_index != 0) {
         input = (const u8 *)&UiText_Glyphs[-32] + ((u16)second_index << 5);
-        second_width = *(const s16 *)input;
+        second_width = *(const u16 *)input;
         input += 2;
         if (work->outline == 1) {
             u8 *dst = buf + length;
@@ -388,8 +380,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
             Iwram_ExpandBitRuns(input, dst + 50, transparent);
             Iwram_ExpandBitRuns(input, dst + 32, colour);
             Iwram_ExpandBitRuns(input, dst + 33, colour);
-            /* FAKEMATCH: needed to match: the signed halfword width grows through its shifted form. */
-            second_width = ((second_width << 16) + 0x10000) >> 16;
+            second_width += 1;
         } else {
             u8 *dst = buf + length;
             u8 *p;
@@ -398,7 +389,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
             p = dst + 32;
             Iwram_ExpandBitRuns(input, p, colour);
         }
-        length += (u16)second_width;
+        length += second_width;
     }
 
     digits = buf + 7;

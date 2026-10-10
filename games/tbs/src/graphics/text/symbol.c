@@ -34,7 +34,7 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset)
     work = (struct UiRenderWork *)gWindowWork[0];
     x = 8;
     y = 8;
-    /* FAKEMATCH: needed to match: the null window also supplies the zero style argument, retaining one register across the message and dimension lookups. */
+    /* FAKEMATCH: needed to match: the window starts as NULL before the lookups, though every path that reads it assigns it first; that zero's register serves the plain style argument below. */
     window = NULL;
     entry = UiText_BuildRenderEntries(message, 1);
     if (work->entries[entry] != 0) {
@@ -42,7 +42,7 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset)
         x = (30 - width) >> 1;
         y = ((15 - height) >> 1) + y_offset;
         if (mode != 0)
-            window = UiWindow_Create(x, y, width, height, (s32)window);
+            window = UiWindow_Create(x, y, width, height, 0);
         else {
             window = UiWindow_Create(x, y, 0, 0, 2);
             window->width = mode;

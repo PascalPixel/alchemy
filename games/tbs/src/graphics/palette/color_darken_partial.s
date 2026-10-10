@@ -1,7 +1,9 @@
 @ C2: ldm r0!, {r4-r7} and stmia r2!, {r4-r7} write back through a
 @ four-register list starting at r4. Stock agbcc_arm's block-copy expander
 @ fixes that list at r0-r3; its general ldm/stm peepholes never write back.
-@ The pop into ip / bx ip return is stock compiler output, not C2 proof.
+@ Further hand evidence: the return is pop {r5, r6, r7, r8, ip} / bx ip. The
+@ project's ARM C routines (Tile_BuildMetatiles, UiText_DrawGlyphArm) return
+@ with pop {..., lr} / bx lr; none returns through ip.
 .syntax unified
 	.arm
 	.global ColorBuffer_DarkenPartialKernel

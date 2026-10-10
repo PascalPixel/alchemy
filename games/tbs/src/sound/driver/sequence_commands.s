@@ -1,6 +1,13 @@
-@ C2: MusicPlayer2000 command family returns decoded bytes in r3 and multiple
-@ nested-call setter entries return through ip. Source's full .global list
-@ supplies the individual setter names.
+@ C2: MusicPlayer2000 library assembly (public pret m4a_1.s: ply_pend and the
+@ command family around it). MusicTrack_ReturnFromPattern (ply_pend) is
+@ ordinary Thumb, credited on library provenance, not on a
+@ handwritten-instruction claim.
+@ Its neighbours in this file do carry instruction-level tells:
+@ Sound_LoadCommandTable and the setter entries keep the return address with
+@ mov ip, lr across a bl and return with bx ip, never saving lr;
+@ Sound_ReadCheckedByte falls through into Sound_CheckReadAddress, which
+@ returns the decoded byte in r3 and preserves r0 with push {r0} / pop {r0}.
+@ Source's full .global list supplies the individual setter names.
 .syntax unified
 	.thumb
 	.global Sound_LoadCommandTable

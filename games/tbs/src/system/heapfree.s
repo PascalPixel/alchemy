@@ -2,6 +2,13 @@
 @ agscc's Thumb cbranchsi4 and negated_cbranchsi4 always emit a compare.
 @ C2: Runtime_ReleaseHeapBlock and MemFree share the one trailing literal
 @ pool; GCC's per-function arm_reorg emits and clears each function's pool.
+@ MemFree's own six instructions (ldr, movs, lsrs, ands, str, bx lr) are
+@ ordinary Thumb with no tell of their own. Its proof is that pool alone: the
+@ single word .L_heap_heads after MemFree's bx lr is loaded by MemFree's
+@ ldr r4, [pc, #8] and also by Runtime_ReleaseHeapBlock's ldr r4, [pc, #32],
+@ which reaches forward over its own bx lr and the whole of MemFree; and
+@ Runtime_ReleaseHeapBlock is the routine with the lsrs r3, r1, #22 / beq
+@ above.
 @ Admitted under Pascal's delegation, 2026-10-09. The two-byte alignment
 @ before MemFree remains linker fill, outside the credited code.
 @ Thumb LDR cannot relocate across these sections in the stock assembler;

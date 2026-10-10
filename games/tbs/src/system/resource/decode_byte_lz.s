@@ -1,6 +1,9 @@
 @ C2: bcs/bcc consume lsls lr's carry. The decoder dispatch also enters
 @ eight-byte code slots, unlike the compiler's four-byte switch entries.
-@ The pop into ip / bx ip return is stock compiler output, not C2 proof.
+@ Further hand evidence: the return is pop {r0, r5, r6, r7, ip} / bx ip, which
+@ also pops the r1 saved at entry into r0. The project's ARM C routines
+@ (Tile_BuildMetatiles, UiText_DrawGlyphArm) return with pop {..., lr} /
+@ bx lr; none returns through ip.
 .syntax unified
 	.arm
 	.global Resource_DecodeByteLzArm

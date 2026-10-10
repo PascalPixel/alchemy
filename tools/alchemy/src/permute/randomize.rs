@@ -158,7 +158,24 @@ impl Sites {
         self.nodes.iter().filter(|s| self.allows(&s.path) && predicate(at(unit, &s.path))).map(|s| s.path.clone()).collect()
     }
     fn blocks(&self, unit: &Node) -> Vec<Path> {
-        self.nodes.iter().filter(|s| statements(at(unit, &s.path)).is_some()).map(|s| s.path.clone()).collect()
+        fn block(unit: &Node, path: Path, out: &mut Vec<Path>) {
+            out.push(path.clone());
+            let node = at(unit, &path);
+            for (i, stmt) in statements(node).unwrap().iter().enumerate() { nested(unit, stmt, statement_path(&path, node, i), out); }
+        }
+        fn nested(unit: &Node, node: &Node, path: Path, out: &mut Vec<Path>) {
+            match node {
+                Node::Compound { .. } | Node::Case { .. } | Node::Default { .. } => block(unit, path, out),
+                Node::If { iffalse, .. } => { block(unit, child(&path, 1), out); if iffalse.is_some() { block(unit, child(&path, 2), out); } }
+                Node::While { .. } | Node::DoWhile { .. } | Node::Switch { .. } => block(unit, child(&path, 1), out),
+                Node::For { .. } => block(unit, child(&path, node.children().len() - 1), out),
+                Node::Label { stmt, .. } => nested(unit, stmt, child(&path, 0), out),
+                _ => {}
+            }
+        }
+        let mut out = Vec::new();
+        block(unit, self.body.clone(), &mut out);
+        out
     }
     fn expressions(&self, unit: &Node) -> Vec<Path> {
         let mut paths = Vec::new();
@@ -242,6 +259,18 @@ fn constant(n: &Node) -> Option<i64> {
     else if value.starts_with('0') && value.len() > 1 { i64::from_str_radix(&value[1..], 8).ok() }
     else { value.parse().ok() }
 }
+
+/// Unlike a C literal reader, it rejects long suffixes and old-style octal.
+fn factor_constant(n: &Node) -> Option<i64> {
+    let Node::Constant { value, .. } = n else { return None };
+    let value = value.trim_matches(['u', 'U']);
+    let (negative, value) = if let Some(v) = value.strip_prefix('-') { (true, v) } else { (false, value.strip_prefix('+').unwrap_or(value)) };
+    let value = if let Some(v) = value.strip_prefix("0x").or_else(|| value.strip_prefix("0X")) { i64::from_str_radix(v, 16).ok()? }
+    else if let Some(v) = value.strip_prefix("0o").or_else(|| value.strip_prefix("0O")) { i64::from_str_radix(v, 8).ok()? }
+    else if let Some(v) = value.strip_prefix("0b").or_else(|| value.strip_prefix("0B")) { i64::from_str_radix(v, 2).ok()? }
+    else { if value.starts_with('0') && !value.chars().all(|c| c == '0') { return None; } value.parse().ok()? };
+    if negative { value.checked_neg() } else { Some(value) }
+}
 fn random_type(rng: &mut Rng) -> Node {
     let sign = if rng.random() < 0.5 { "unsigned " } else { "" };
     let names = ["char", "short", "int", "long", "long long"];
@@ -251,18 +280,17 @@ fn random_type(rng: &mut Rng) -> Node {
     ty
 }
 
-/// Retry failed passes with the same weights. A bound prevents an empty or
-/// opaque function from trapping a worker forever.
+/// Retry failed passes with the same weights. Block insertion and padding
+/// declarations remain applicable even when the function has no expressions.
 pub fn mutate(unit: &mut Node, target: &str, rng: &mut Rng) -> Option<super::mutate::Step> {
     let sites = Sites::new(unit, target, rng)?;
-    for _ in 0..128 {
+    loop {
         let kind = Kind::GCC[weighted(rng, Kind::GCC.iter().map(|(_, w)| *w))].0;
         let before = rng.clone();
         if apply_sites(unit, target, kind, rng, &sites) {
             return Some(super::mutate::Step { kind: super::mutate::Kind::Full(kind), rng: before, region: sites.choice });
         }
     }
-    None
 }
 
 #[cfg(test)]
@@ -293,7 +321,7 @@ fn apply_sites(unit: &mut Node, target: &str, kind: Kind, rng: &mut Rng, sites: 
         Kind::AddMask | Kind::XorZero | Kind::ReferVariable | Kind::FloatLiteral | Kind::SameLine | Kind::EmptyStatement | Kind::Condition | Kind::MultiplyZero | Kind::DummyComma | Kind::SelfAssignment | Kind::DuplicateAssignment | Kind::PadDeclaration => auxiliary(&mut trial, target, sites, kind, rng),
         _ => expression(&mut trial, target, sites, kind, rng),
     };
-    if result.is_some() && trial != *unit { *unit = trial; true } else { false }
+    if result.is_some() { *unit = trial; true } else { false }
 }
 
 /// Statement boundaries in source order. Declarations are not valid following
@@ -461,26 +489,32 @@ fn auxiliary(unit: &mut Node, target: &str, sites: &Sites, kind: Kind, rng: &mut
 }
 
 fn expression(unit: &mut Node, target: &str, sites: &Sites, kind: Kind, rng: &mut Rng) -> Option<()> {
-    let candidates = if kind == Kind::Cast { sites.expressions(unit) } else { sites.select(unit, |n| match kind {
+    let value_only = matches!(kind, Kind::Cast | Kind::FactorMultiply | Kind::FactorShift);
+    let paths = if value_only { sites.expressions(unit) } else { sites.nodes.iter().filter(|s| s.path.starts_with(&sites.body) && (kind == Kind::ReverseCondition || sites.allows(&s.path))).map(|s| s.path.clone()).collect() };
+    let candidates: Vec<_> = paths.into_iter().filter(|path| { let n = at(unit, path); match kind {
+        Kind::Cast => true,
         Kind::Commutative => matches!(n, Node::BinaryOp { op, .. } if ["+", "*", "&", "|", "^", "<", ">", "<=", ">=", "==", "!="].contains(&op.as_str())),
         Kind::AddSub => matches!(n, Node::BinaryOp { op, .. } if op == "+" || op == "-"),
         Kind::Inequality => matches!(n, Node::BinaryOp { op, .. } if ["<", ">", "<=", ">="].contains(&op.as_str())),
-        Kind::FactorMultiply => matches!(n, Node::BinaryOp { op, left, right } if op == "*" && (constant(left).is_some() || constant(right).is_some())),
-        Kind::FactorShift => matches!(n, Node::BinaryOp { op, right, .. } if (op == "<<" || op == ">>") && constant(right).is_some()),
-        Kind::CompoundAssignment => matches!(n, Node::Assignment { op, lvalue, rvalue } if op != "=" || matches!(rvalue.as_ref(), Node::BinaryOp { op, left, .. } if left == lvalue && ["+", "-", "*", "/", "%", "<<", ">>", "&", "|", "^"].contains(&op.as_str()))),
+        Kind::FactorMultiply => matches!(n, Node::BinaryOp { op, left, right } if op == "*" && (matches!(left.as_ref(), Node::Constant { .. }) || matches!(right.as_ref(), Node::Constant { .. }))),
+        Kind::FactorShift => matches!(n, Node::BinaryOp { op, right, .. } if (op == "<<" || op == ">>") && matches!(right.as_ref(), Node::Constant { .. })),
+        Kind::CompoundAssignment => matches!(n, Node::Assignment { op, lvalue, rvalue } if op != "=" || matches!(rvalue.as_ref(), Node::BinaryOp { op, left, .. } if left == lvalue && ["+", "-", "*", "/", "<<", ">>", "&", "|", "^"].contains(&op.as_str()))),
         Kind::StructRef => matches!(n, Node::StructRef { .. } | Node::ArrayRef { .. }) || matches!(n, Node::UnaryOp { op, expr } if op == "*" && matches!(expr.as_ref(), Node::BinaryOp { op, .. } if op == "+")),
         Kind::ReverseCondition => matches!(n, Node::If { iffalse: Some(_), .. } | Node::TernaryOp { .. }),
         Kind::Remove => matches!(n, Node::Cast { .. } | Node::If { iffalse: None, .. } | Node::While { .. } | Node::DoWhile { .. }) || matches!(n, Node::BinaryOp { op, left, right } if op == "&" && (constant(left).is_some() || constant(right).is_some())),
         _ => false,
-    }) };
+    }}).collect();
     let path = &candidates[choose(rng, &candidates)?];
     let node = at(unit, path).clone();
     let replacement = match (kind, node) {
         (Kind::Cast, expr) => {
             let types = Types::new(unit, target);
             if !types.arithmetic(&types.decayed(&expr)?) { return None; }
-            let mut ty = random_type(rng);
-            if let Node::TypeDecl { quals, .. } = &mut ty { quals.clear(); }
+            let ty = if rng.random() < 0.5 {
+                let sign = ["", "unsigned "][rng.below(2)];
+                let name = ["int", "char", "long", "short", "long long"][rng.below(5)];
+                types::basic(&format!("{sign}{name}"))
+            } else { types::basic(["float", "double"][rng.below(2)]) };
             Node::Cast { to_type: types::typename(ty).boxed(), expr: expr.boxed() }
         }
         (Kind::Commutative, Node::BinaryOp { op, left, right }) => {
@@ -489,28 +523,47 @@ fn expression(unit: &mut Node, target: &str, sites: &Sites, kind: Kind, rng: &mu
         }
         (Kind::AddSub, Node::BinaryOp { op, left, right }) => {
             let types = Types::new(unit, target);
-            if !types.arithmetic(&types.decayed(&right)?) { return None; }
-            let right = if let Node::UnaryOp { op, expr } = right.as_ref() { if op == "-" { *expr.clone() } else { unary("-", *right) } } else { unary("-", *right) };
+            let right = match *right {
+                Node::Constant { ty, value } => Node::Constant { ty, value: if let Some(v) = value.strip_prefix('-') { v.into() } else { format!("-{value}") } },
+                Node::UnaryOp { op, expr } if op == "-" => *expr,
+                right => {
+                    let ty = types.decayed(&binary(&op, *left.clone(), right.clone()))?;
+                    if matches!(types.resolve(&ty)?, Node::TypeDecl { .. }) { return None; }
+                    unary("-", right)
+                }
+            };
             binary(if op == "+" { "-" } else { "+" }, *left, right)
         }
         (Kind::Inequality, Node::BinaryOp { op, left, right }) => {
-            let types = Types::new(unit, target);
-            if !types.integral(&types.decayed(&left)?) || !types.integral(&types.decayed(&right)?) { return None; }
-            let (op, delta) = match op.as_str() { "<" => ("<=", -1), ">=" => (">", -1), ">" => (">=", 1), "<=" => ("<", 1), _ => unreachable!() };
-            binary(op, *left, binary(if delta == 1 { "+" } else { "-" }, *right, integer(1)))
+            if rng.random() < 0.25 {
+                let change = ["+", "-"][rng.below(2)];
+                binary(&op, binary(change, *left, integer(1)), binary(change, *right, integer(1)))
+            } else {
+                let lower = op == "<" || op == ">=";
+                let op = match op.as_str() { "<" => "<=", ">=" => ">", ">" => ">=", "<=" => "<", _ => unreachable!() };
+                if rng.random() < 0.5 { binary(op, binary(if lower { "+" } else { "-" }, *left, integer(1)), *right) }
+                else { binary(op, *left, binary(if lower { "-" } else { "+" }, *right, integer(1))) }
+            }
         }
         (Kind::FactorShift, Node::BinaryOp { op, left, right }) => {
-            let n = constant(&right)?;
-            if !(2..64).contains(&n) { return None; }
+            let n = factor_constant(&right)?;
+            if n < 2 { return None; }
             let first = 1 + rng.below(n as usize - 1) as i64;
             binary(&op, binary(&op, *left, integer(first)), integer(n - first))
         }
         (Kind::FactorMultiply, Node::BinaryOp { left, right, .. }) => {
-            let (n, expr) = if let Some(n) = constant(&left) { (n, *right) } else { (constant(&right)?, *left) };
+            let (n, expr) = if matches!(left.as_ref(), Node::Constant { .. }) { (factor_constant(&left)?, *right) } else { (factor_constant(&right)?, *left) };
             let limit = n.checked_abs()?.min(21);
-            let factors: Vec<_> = (2..limit).filter(|f| n % f == 0).collect();
+            let mut factors = BTreeSet::new();
+            for i in 2..limit { if n % i == 0 { factors.insert(i); factors.insert(n / i); } }
+            let mut factors: Vec<_> = factors.into_iter().collect();
+            if n < 0 { factors.extend(factors.clone().into_iter().map(|f| -f)); }
             let a = factors[choose(rng, &factors)?];
-            binary("*", binary("*", expr, integer(a)), integer(n / a))
+            let mut inner = binary("*", expr, integer(a));
+            if rng.below(2) != 0 { if let Node::BinaryOp { left, right, .. } = &mut inner { std::mem::swap(left, right); } }
+            let mut outer = binary("*", inner, integer(n / a));
+            if rng.below(2) != 0 { if let Node::BinaryOp { left, right, .. } = &mut outer { std::mem::swap(left, right); } }
+            outer
         }
         (Kind::CompoundAssignment, Node::Assignment { op, lvalue, rvalue }) => {
             if op == "=" {
@@ -817,6 +870,24 @@ fn expand(unit: &mut Node, sites: &Sites, rng: &mut Rng) -> Option<()> {
 }
 
 fn wrap(unit: &mut Node, sites: &Sites, kind: Kind, rng: &mut Rng) -> Option<()> {
+    if kind == Kind::Block {
+        let blocks = sites.blocks(unit);
+        let path = &blocks[choose(rng, &blocks)?];
+        let block = at(unit, path);
+        let items = statements(block)?;
+        let leading = items.iter().take_while(|n| matches!(n, Node::Decl { .. } | Node::Pragma { .. })).count();
+        let mut lo = leading + rng.below(items.len() + 1 - leading);
+        let mut hi = leading + rng.below(items.len() + 1 - leading);
+        if hi < lo { std::mem::swap(&mut lo, &mut hi); }
+        let same_line = rng.random() < 0.5 && (lo..hi).all(|i| sites.allows(&statement_path(path, block, i)));
+        let items = statements_mut(at_mut(unit, path));
+        let body = compound(items.drain(lo..hi).collect()).boxed();
+        let replacement = if same_line {
+            vec![Node::Pragma { string: "_permuter sameline start".into() }, Node::DoWhile { cond: integer(0).boxed(), stmt: body }, Node::Pragma { string: "_permuter sameline end".into() }]
+        } else { vec![Node::If { cond: integer(1).boxed(), iftrue: body, iffalse: None }] };
+        items.splice(lo..lo, replacement);
+        return Some(());
+    }
     let mut candidates = Vec::new();
     for path in sites.blocks(unit) {
         let block = at(unit, &path);
@@ -942,7 +1013,7 @@ mod tests {
             for seed in 0..40 {
                 let mut unit = base.clone();
                 if !apply(&mut unit, "target", kind, &mut Rng::new(seed)) { assert_eq!(unit, base); continue; }
-                count += 1;
+                count += usize::from(unit != base);
                 let mut replay = base.clone();
                 assert!(apply(&mut replay, "target", kind, &mut Rng::new(seed)));
                 assert_eq!(unit, replay, "{kind:?}, seed {seed}");
@@ -950,7 +1021,7 @@ mod tests {
                 match kind {
                     Kind::Inline => assert!(unit.print().contains("inline_fn")),
                     Kind::AliasArray => assert!(unit.print().contains("new_var[2]")),
-                    Kind::GlobalType => assert_ne!(at(&unit, &[2]), at(&base, &[2])),
+                    Kind::GlobalType if unit != base => assert_ne!(at(&unit, &[2]), at(&base, &[2])),
                     _ => {}
                 }
             }
@@ -1012,7 +1083,7 @@ mod tests {
             assert_eq!(unit, replay);
         }
         let mut empty = parsed("void target(void) {}");
-        // The retry bound also covers trees with no applicable expression.
+        // Block insertion and declarations also cover empty functions.
         for _ in 0..5 { mutate(&mut empty, "target", &mut Rng::new(5)); }
     }
 
@@ -1067,5 +1138,95 @@ mod tests {
             assert_eq!(unit.print(), columns[4].replace("\\n", "\n"), "{kind:?}, seed {}", columns[1]);
             assert_eq!(rng.random(), columns[3].parse::<f64>().unwrap(), "{kind:?}, seed {}", columns[1]);
         }
+    }
+
+    fn fixture_source(case: &str) -> &'static str {
+        match case {
+                "flow" => include_str!("c/fixtures/mutations-flow.c"),
+                "nested" => include_str!("c/fixtures/mutations-nested.c"),
+                "regions" => include_str!("c/fixtures/mutations-regions.c"),
+                "arithmetic" => include_str!("c/fixtures/mutations-arithmetic.c"),
+                _ => panic!("unknown fixture input"),
+        }
+    }
+
+    fn fixture_kind(method: &str) -> Kind {
+        match method {
+                "perm_add_mask" => Kind::AddMask,
+                "perm_xor_zero" => Kind::XorZero,
+                "perm_dummy_comma_expr" => Kind::DummyComma,
+                "perm_float_literal" => Kind::FloatLiteral,
+                "perm_pad_var_decl" => Kind::PadDeclaration,
+                "perm_refer_to_var" => Kind::ReferVariable,
+                "perm_empty_stmt" => Kind::EmptyStatement,
+                "perm_sameline" => Kind::SameLine,
+                "perm_condition" => Kind::Condition,
+                "perm_mult_zero" => Kind::MultiplyZero,
+                "perm_add_self_assignment" => Kind::SelfAssignment,
+                "perm_duplicate_assignment" => Kind::DuplicateAssignment,
+                "perm_cast_simple" => Kind::Cast,
+                "perm_commutative" => Kind::Commutative,
+                "perm_add_sub" => Kind::AddSub,
+                "perm_inequalities" => Kind::Inequality,
+                "perm_factor_mult" => Kind::FactorMultiply,
+                "perm_factor_shift" => Kind::FactorShift,
+                "perm_compound_assignment" => Kind::CompoundAssignment,
+                "perm_reverse_cond" => Kind::ReverseCondition,
+                "perm_ins_block" => Kind::Block,
+                _ => panic!("unknown fixture pass"),
+        }
+    }
+
+    #[test]
+    fn passes_match_compatibility_in_nested_blocks_and_regions() {
+        let mut failures = Vec::new();
+        for row in include_str!("c/fixtures/mutations-auxiliary.tsv").lines().chain(include_str!("c/fixtures/mutations-expression.tsv").lines()) {
+            let c: Vec<_> = row.split('\t').collect();
+            let kind = fixture_kind(c[1]);
+            let mut unit = parsed(fixture_source(c[0]));
+            let mut rng = Rng::new(c[2].parse().unwrap());
+            let changed = apply(&mut unit, "target", kind, &mut rng);
+            let text = unit.print();
+            let expected = c[5].replace("\\n", "\n");
+            let next = rng.random();
+            if changed != (c[3] == "1") || text != expected || next != c[4].parse::<f64>().unwrap() {
+                failures.push(format!("{} {kind:?} seed {}: changed {changed} expected {}; rng {next} expected {}\nactual:\n{text}\nexpected:\n{expected}", c[0], c[2], c[3], c[4]));
+            }
+        }
+        assert!(failures.is_empty(), "{} mismatches\n{}", failures.len(), failures.into_iter().take(8).collect::<Vec<_>>().join("\n"));
+    }
+
+    #[test]
+    fn successive_compatibility_mutations_match_source_hashes_retries_and_rng() {
+        use sha2::{Digest, Sha256};
+        let methods: BTreeSet<_> = include_str!("c/fixtures/mutations-auxiliary.tsv").lines().chain(include_str!("c/fixtures/mutations-expression.tsv").lines()).map(|row| fixture_kind(row.split('\t').nth(1).unwrap())).collect();
+        let weights: Vec<_> = Kind::GCC.into_iter().filter(|(kind, _)| methods.contains(kind)).collect();
+        let mut unit = parsed(fixture_source("flow"));
+        let mut rng = Rng::new(0);
+        for row in include_str!("c/fixtures/mutations-walks.tsv").lines() {
+            let c: Vec<_> = row.split('\t').collect();
+            if c[2] == "0" { unit = parsed(fixture_source(c[0])); rng = Rng::new(c[1].parse().unwrap()); }
+            let sites = Sites::new(&unit, "target", &mut rng).unwrap();
+            let mut attempts = 0;
+            let kind = loop {
+                attempts += 1;
+                assert!(attempts < 1000, "no successful mutation");
+                let kind = weights[weighted(&mut rng, weights.iter().map(|(_, w)| *w))].0;
+                if apply_sites(&mut unit, "target", kind, &mut rng, &sites) { break kind; }
+            };
+            let context = format!("{} seed {} step {}", c[0], c[1], c[2]);
+            assert_eq!(kind, fixture_kind(c[4]), "{context}: selected pass");
+            assert_eq!(attempts, c[3].parse::<usize>().unwrap(), "{context}: retry count");
+            assert_eq!(format!("{:x}", Sha256::digest(unit.print().as_bytes())), c[5], "{context}: source\n{}", unit.print());
+            assert_eq!(rng.clone().random(), c[6].parse::<f64>().unwrap(), "{context}: random state");
+        }
+    }
+
+    #[test]
+    fn unchanged_success_does_not_retry_another_pass() {
+        let mut unit = parsed("int target(int a) { return a + a; }");
+        let base = unit.clone();
+        assert!(apply(&mut unit, "target", Kind::Commutative, &mut Rng::new(0)));
+        assert_eq!(unit, base);
     }
 }

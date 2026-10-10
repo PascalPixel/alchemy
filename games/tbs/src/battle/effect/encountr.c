@@ -67,7 +67,6 @@ void						BattleFx_SelectBattleCue(s32 zone);
 //--------------------------------------------------------------------------
 void BattleFx_SelectLocationRule(s32 use_rules)
 {
-	/* FAKEMATCH: needed to match: the shift temporaries order the zero between the two stores */
 	struct EventWork				*work;
 	s32								 map;
 	s32								 room;
@@ -111,12 +110,8 @@ void BattleFx_SelectLocationRule(s32 use_rules)
 	}
 	if (shift != 0)
 	{
-		u8	v = work->encounter_groups[1];
-		u8 *d = &work->encounter_groups[0];
-		u8	zero = 0;
-
-		*d = v;
-		work->encounter_groups[1] = zero;
+		work->encounter_groups[0] = work->encounter_groups[1];
+		work->encounter_groups[1] = 0;
 	}
 	work->encounter_bias = 0;
 	work->encounter_threshold = 0x100000;

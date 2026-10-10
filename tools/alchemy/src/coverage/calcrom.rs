@@ -194,7 +194,7 @@ fn source_mark(
     Ok(Mark {
         steered,
         veneer: builds_veneers(&text),
-        assembly_proof: assembly_proof(&text),
+        assembly_proof: crate::evidence::assembly_review(root, &path, &text),
         reasons,
     })
 }
@@ -231,20 +231,6 @@ fn builds_veneers(text: &str) -> bool {
         let word = line.split_whitespace().next().unwrap_or("");
         word == "overlay_veneer" || word == "IwramEntry"
     })
-}
-
-/// C2 evidence is a reviewed source assertion, not something inferred from
-/// a directory or a compiler-shape heuristic. Keep it in the leading assembly
-/// comments so an instruction or a string containing "C2:" cannot grant credit.
-/// This records the review; it does not mechanically prove its explanation.
-fn assembly_proof(text: &str) -> Option<String> {
-    text.lines()
-        .map(str::trim)
-        .take_while(|line| line.is_empty() || line.starts_with('@'))
-        .filter_map(|line| line.strip_prefix("@ C2:"))
-        .map(str::trim)
-        .find(|proof| !proof.is_empty())
-        .map(str::to_owned)
 }
 
 /// Check the placed object itself, not the spelling of a macro invocation.
@@ -582,7 +568,7 @@ fn origin(
     overlay: bool,
     source: &dyn Fn(&str) -> Option<Language>,
 ) -> Result<Origin, String> {
-    if object.contains("libgcc.a(") {
+    if crate::compiler::runtime::credited_member(crate::compiler::routing::root(), object)? {
         return Ok(Origin::Library);
     }
     let Some((relative, listing_directory)) = relative_object(object, output, overlay) else {
@@ -880,8 +866,19 @@ pub(crate) fn measure(
         Err(reason) => return Ok(Err(reason)),
     };
     let output = target.output_dir;
-    let source = |stem: &str| maintained_source(root, stem);
     let expansion = crate::compiler::preprocess::Expansion::new(root, target)?;
+    let build_index = crate::build_rom::Index::open(&root.join(output));
+    let source = |stem: &str| {
+        build_index.proven_object(root, &root.join(output).join("obj").join(format!("{stem}.o")))
+            .then(|| maintained_source(root, stem)).flatten()
+    };
+    let provenance = std::cell::RefCell::new(std::collections::HashMap::new());
+    let proven = |object: &str| -> Result<bool, String> {
+        provenance.borrow_mut().entry(object.to_owned()).or_insert_with(|| {
+            if crate::compiler::runtime::credited_member(root, object)? { return Ok(true); }
+            Ok(build_index.proven_object(root, Path::new(object)))
+        }).clone()
+    };
     let marks = std::cell::RefCell::new(std::collections::HashMap::new());
     let mark = |stem: &str| {
         marks
@@ -967,7 +964,7 @@ pub(crate) fn measure(
         let data = super::data::loaded(&bytes)
             .and_then(|loaded| {
                 let streams = if overlay { &unpacked } else { &streams };
-                super::data::tally(&map.text, &loaded, output, overlay, streams)
+                super::data::tally(&map.text, &loaded, output, overlay, streams, &proven)
             })
             .map_err(|error| format!("{}: {error}", map.path.display()))?;
         measurement.done.data_total += data.total;
@@ -1126,15 +1123,6 @@ mod assembly_tests {
             assert_eq!(reviewed.done.bytes(), 32);
             assert_eq!(reviewed.raw, 0);
             assert_eq!(share_edition(&reviewed, &pending).done.bytes(), 0);
-        }
-    }
-
-    #[test]
-    fn only_a_nonempty_leading_assembly_proof_is_recorded() {
-        assert_eq!(assembly_proof("\n@ C2: shift carry reaches bcs\n.arm\n"),
-            Some("shift carry reaches bcs".into()));
-        for text in ["@ C2: \n.arm\n", ".ascii \"C2: proof\"", ".arm\n@ C2: unrelated suffix"] {
-            assert!(assembly_proof(text).is_none());
         }
     }
 

@@ -126,7 +126,7 @@ pub(crate) fn count(root: &Path) -> Result<Counts, String> {
         let code = code_only(text);
         let proven = proven_macros(&code);
         for (name, body) in macro_bodies(&code) {
-            if !proven.contains(&name) && asm_statements(&body).iter().any(|t| instruction(t)) {
+            if !proven.contains(&name) && asm_statements(&without_proven(&body)).iter().any(|t| instruction(t)) {
                 emitting.insert(name);
             }
         }
@@ -183,99 +183,15 @@ fn code_only(text: &str) -> String {
     out
 }
 
-/// The end of the `CAMELOT_ASM(...)` marker starting at `start`, and where the
-/// code it marks begins.
-fn marker_end(code: &str, start: usize) -> usize {
-    let mut depth = 0;
-    for (offset, c) in code[start..].char_indices() {
-        match c {
-            '(' => depth += 1,
-            ')' => {
-                depth -= 1;
-                if depth == 0 {
-                    return start + offset + 1;
-                }
-            }
-            _ => {}
-        }
-    }
-    code.len()
-}
-
-/// Names of the macros a `CAMELOT_ASM` proof marks: proven handwritten asm
-/// helpers (S2), not devices.
+/// Only macros whose complete body has reviewed evidence are exempt.
 fn proven_macros(code: &str) -> BTreeSet<String> {
-    let mut found = BTreeSet::new();
-    for (start, _) in code.match_indices("CAMELOT_ASM(") {
-        let rest = code[marker_end(code, start)..].trim_start();
-        if let Some(define) = rest.strip_prefix('#').map(str::trim_start).and_then(|r| r.strip_prefix("define")) {
-            let define = define.trim_start();
-            let end = define.find(|c: char| !c.is_ascii_alphanumeric() && c != '_').unwrap_or(define.len());
-            found.insert(define[..end].to_string());
-        }
-    }
-    found
+    crate::evidence::approved_spans(code).into_iter()
+        .flat_map(|span| macro_bodies(&code[span]))
+        .map(|(name, _)| name).collect()
 }
 
-/// The code with what each `CAMELOT_ASM` proof marks blanked: a `static`
-/// helper's whole definition, or else the one statement that follows.
 fn without_proven(code: &str) -> String {
-    let mut out: Vec<char> = code.chars().collect();
-    let byte_to_char: Vec<usize> = {
-        let mut map = vec![0; code.len() + 1];
-        let mut n = 0;
-        for (i, c) in code.char_indices() {
-            for slot in map.iter_mut().skip(i).take(c.len_utf8()) {
-                *slot = n;
-            }
-            n += 1;
-        }
-        map[code.len()] = n;
-        map
-    };
-    for (start, _) in code.match_indices("CAMELOT_ASM(") {
-        let from = marker_end(code, start);
-        let rest = &code[from..];
-        let lead = rest.len() - rest.trim_start().len();
-        let body = from + lead;
-        if code[body..].starts_with('#') {
-            continue;
-        }
-        let end = if code[body..].starts_with("static") {
-            let mut depth = 0;
-            let mut seen = false;
-            let mut end = code.len();
-            for (offset, c) in code[body..].char_indices() {
-                match c {
-                    '{' => {
-                        depth += 1;
-                        seen = true;
-                    }
-                    '}' => {
-                        depth -= 1;
-                        if seen && depth == 0 {
-                            end = body + offset + 1;
-                            break;
-                        }
-                    }
-                    ';' if !seen => {
-                        end = body + offset + 1;
-                        break;
-                    }
-                    _ => {}
-                }
-            }
-            end
-        } else {
-            code[body..].find(';').map_or(code.len(), |e| body + e + 1)
-        };
-        for slot in &mut out[byte_to_char[body]..byte_to_char[end]] {
-            if *slot != '\n' {
-                *slot = ' ';
-            }
-        }
-    }
-    out.into_iter().collect()
+    crate::evidence::mask_inline(code)
 }
 
 /// Each #define's name and body, continuation lines joined.
@@ -325,8 +241,8 @@ fn instruction(template: &str) -> bool {
     let template = template.trim();
     !template.is_empty()
         && !register(template)
-        && !template.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'_' || b == b'.')
-        && !template.split(|c: char| !c.is_ascii_alphanumeric()).any(|word| word == "swi")
+        && (!template.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'_' || b == b'.')
+            || matches!(template, "nop" | "ret" | "eret" | "wfi" | "wfe" | "sev" | "yield"))
 }
 
 /// Counts in KINDS order over one file, outside #define bodies (a macro's
@@ -386,6 +302,14 @@ mod tests {
     use super::*;
 
     #[test]
+    fn a_software_interrupt_word_does_not_hide_other_instructions() {
+        assert!(instruction("swi 2; mov r0, r1"));
+        assert!(instruction("nop"));
+        assert!(!instruction("Resource_Table"));
+        assert_eq!(devices("asm(\"swi 2; mov r0, r1\"); asm(\"nop\");", &BTreeSet::new()), [0, 0, 2, 0]);
+    }
+
+    #[test]
     fn each_kind_is_told_apart() {
         let code = code_only(
             "register s32 a asm(\"r4\") = 0;\n\
@@ -398,7 +322,7 @@ mod tests {
              STEER(a);\n",
         );
         let emitting = BTreeSet::from(["STEER".to_string()]);
-        assert_eq!(devices(&code, &emitting), [1, 2, 2, 1]);
+        assert_eq!(devices(&code, &emitting), [1, 2, 3, 1]);
     }
 
     #[test]
@@ -411,15 +335,16 @@ mod tests {
     }
 
     #[test]
-    fn a_proven_helper_is_not_a_device() {
+    fn a_marker_alone_does_not_exempt_a_helper() {
         let code = code_only(
             "CAMELOT_ASM(\"stmia\")\n\
              static __inline__ void Set(u32 a)\n{\n    register u32 r __asm__(\"r0\") = a;\n    __asm__ volatile(\"stmia %0!, {%0}\" : \"+r\"(r));\n}\n\
              CAMELOT_ASM(\"identity\")\n#define IDENT() asm(\"stmia r0!, {r1}\")\n\
              void f(void)\n{\n    CAMELOT_ASM(\"stack switch\")\n    register u8 *sp __asm__(\"sp\");\n    IDENT();\n    asm(\"\");\n}\n",
         );
-        assert!(proven_macros(&code).contains("IDENT"));
-        assert_eq!(devices(&without_proven(&code), &BTreeSet::new()), [0, 1, 0, 0]);
+        assert!(!proven_macros(&code).contains("IDENT"));
+        assert_eq!(without_proven(&code), code);
+        assert_eq!(devices(&without_proven(&code), &BTreeSet::new()), [2, 1, 1, 0]);
     }
 
     #[test]

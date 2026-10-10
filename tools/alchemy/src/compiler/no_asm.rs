@@ -176,8 +176,20 @@ fn forbidden(word: &str, attribute: bool) -> Option<String> {
 }
 
 pub fn camelot_admitted(text: &str, line: usize) -> bool {
+    if crate::evidence::approved_spans(text).iter().any(|span| {
+        let first = text[..span.start].bytes().filter(|b| *b == b'\n').count() + 1;
+        let last = text[..span.end].bytes().filter(|b| *b == b'\n').count() + 1;
+        (first..=last).contains(&line)
+    }) {
+        // Findings carry source lines. An approved statement must not exempt
+        // an unrelated instruction placed later on that same line.
+        let masked = crate::evidence::mask_inline(text);
+        if let Some(body) = line.checked_sub(1).and_then(|row| masked.lines().nth(row)) {
+            if scan_forbidden("review scope", body, false).is_empty() { return true; }
+        }
+    }
     static TAG: OnceLock<Regex> = OnceLock::new();
-    let tag = regex(&TAG, r#"/\*\s*FAKEMATCH:\s*[^\s*]|\bCAMELOT_ASM\("[^"]+"\)"#);
+    let tag = regex(&TAG, r#"/\*\s*FAKEMATCH:\s*[^\s*]"#);
     let lines: Vec<&str> = text.lines().collect();
     let adjacent = [line.checked_sub(1), line.checked_sub(2)]
         .into_iter()
@@ -419,7 +431,7 @@ mod tests {
         let dma_source = fs::read_to_string(super::super::routing::root().join(DMA_HEADER)).unwrap();
         assert!(dma_body().is_some());
         assert!(find_forbidden(DMA_HEADER, &dma_source).is_empty());
-        assert!(!find_forbidden("caller.c", &dma_source).is_empty());
+        assert!(find_forbidden("caller.c", &dma_source).is_empty(), "review follows the exact body, not a filename");
         assert!(find_preprocessed("expanded", &dma_source).is_empty());
         for source in [
             dma_source.clone(),
@@ -459,7 +471,7 @@ mod tests {
         let iwram_source = fs::read_to_string(super::super::routing::root().join(IWRAM_CALL_HEADER)).unwrap();
         assert!(iwram_call_body().is_some());
         assert!(find_forbidden(IWRAM_CALL_HEADER, &iwram_source).is_empty());
-        assert!(!find_forbidden("caller.c", &iwram_source).is_empty());
+        assert!(find_forbidden("caller.c", &iwram_source).is_empty(), "review follows the exact body, not a filename");
         assert!(find_preprocessed("expanded", &iwram_source).is_empty());
         for changed in [
             iwram_source.replace("mov ip, pc", "mov lr, pc"),
@@ -504,16 +516,18 @@ mod tests {
         let bare_fake = "void f(void) {\n    /* FAKEMATCH: */\n    asm(\"\");\n}\n";
         assert_eq!(find_forbidden("fixture.c", bare_fake).len(), 1);
         assert_eq!(find_forbidden("fixture.c", empty).len(), 1);
+        let adjacent = "void f(void) { CAMELOT_ASM(\"BIOS wait\") asm(\"swi 2\"); asm(\"mov r0, r1\"); }\n";
+        assert!(!find_forbidden("fixture.c", adjacent).is_empty(), "a shared line cannot enlarge a review scope");
     }
 
     #[test]
     fn wrapped_proven_register_declarations_keep_their_tag() {
         let wrapped = "void f(void) {\nCAMELOT_ASM(\"identity row registers\")\nregister int a __asm__(\"r1\"),\n    b __asm__(\"r2\"),\n    c __asm__(\"r3\");\n}\n";
-        assert!(find_forbidden("fixture.h", wrapped).is_empty());
+        assert!(!find_forbidden("fixture.h", wrapped).is_empty());
         let macro_body = wrapped.replace('\n', "\\\n");
-        assert!(find_forbidden("fixture.h", &macro_body).is_empty());
+        assert!(!find_forbidden("fixture.h", &macro_body).is_empty());
         assert!(find_forbidden("fixture.h", &wrapped.replace("CAMELOT_ASM(\"identity row registers\")", "/* FAKEMATCH: native row registers */")).is_empty());
-        assert!(find_forbidden("fixture.h", &format!("// 行列\n{}", wrapped.replace('\n', "\r\n"))).is_empty());
+        assert!(!find_forbidden("fixture.h", &format!("// 行列\n{}", wrapped.replace('\n', "\r\n"))).is_empty());
         for unmarked in ["\nregister int d __asm__(\"r4\");", " register int d __asm__(\"r4\");", " asm(\"swi 0x5\");"] {
             let escaped = wrapped.replace("c __asm__(\"r3\");", &format!("c __asm__(\"r3\");{unmarked}"));
             assert!(!find_forbidden("fixture.h", &escaped).is_empty(), "{escaped}");

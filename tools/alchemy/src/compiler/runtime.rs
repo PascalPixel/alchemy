@@ -138,7 +138,7 @@ fn member_command(
     Ok(command)
 }
 
-const ARCHIVE_FORMAT: u32 = 1;
+const ARCHIVE_FORMAT: u32 = 2;
 const ARCHIVE_USAGE: &str = "usage: alchemy build runtime --output tools/out/compiler-runtime/.../libgcc.a MEMBER=SOURCE...\nBuild an ordinary archive from approved agscc sources using their existing library rules.";
 
 #[derive(Debug)]
@@ -160,6 +160,29 @@ struct MemberReceipt {
 }
 
 impl ArchiveReceipt {
+    fn parse(text: &str) -> Result<Self, String> {
+        let mut lines = text.lines();
+        let mut field = |name: &str| -> Result<String, String> {
+            lines.next().and_then(|line| line.strip_prefix(&format!("# {name}\t")))
+                .map(str::to_owned).ok_or_else(|| format!("runtime receipt missing {name}"))
+        };
+        let format = field("format")?.parse::<u32>().map_err(|e| e.to_string())?;
+        if format != ARCHIVE_FORMAT { return Err("unsupported runtime receipt".into()); }
+        let compiler_sha256 = field("compiler_sha256")?;
+        let ar_sha256 = field("ar_sha256")?;
+        let archive_sha256 = field("archive_sha256")?;
+        if lines.next() != Some("member\tsource\tsource_sha256\tplan_sha256\tobject_sha256") {
+            return Err("invalid runtime member header".into());
+        }
+        let members = lines.map(|line| {
+            let fields = line.split('\t').collect::<Vec<_>>();
+            let [member, source, source_sha256, plan_sha256, object_sha256] = fields.as_slice()
+                else { return Err("invalid runtime member receipt".to_owned()) };
+            Ok(MemberReceipt { member: member.to_string(), source: source.to_string(),
+                source_sha256: source_sha256.to_string(), plan_sha256: plan_sha256.to_string(), object_sha256: object_sha256.to_string() })
+        }).collect::<Result<Vec<_>, _>>()?;
+        Ok(Self { format, compiler_sha256, ar_sha256, archive_sha256, members })
+    }
     fn table(&self) -> Vec<u8> {
         let mut table = format!(
             "# format\t{}\n# compiler_sha256\t{}\n# ar_sha256\t{}\n# archive_sha256\t{}\nmember\tsource\tsource_sha256\tplan_sha256\tobject_sha256\n",
@@ -178,6 +201,46 @@ impl ArchiveReceipt {
         table.into_bytes()
     }
 }
+
+/// Ordinary archive names grant nothing. Check our source-built receipt and
+/// every actual archive member once per measurement process.
+pub(crate) fn credited_member(root: &Path, object: &str) -> Result<bool, String> {
+    let Some((archive, member)) = object.rsplit_once('(') else { return Ok(false) };
+    let Some(member) = member.strip_suffix(')') else { return Ok(false) };
+    if !archive.ends_with(".a") { return Ok(false); }
+    let Ok(archive) = archive_path(root, Path::new(archive), false) else { return Ok(false) };
+    type VerifiedArchives = std::collections::BTreeMap<PathBuf, Result<BTreeSet<String>, String>>;
+    static VERIFIED: std::sync::OnceLock<std::sync::Mutex<VerifiedArchives>> = std::sync::OnceLock::new();
+    let mut verified = VERIFIED.get_or_init(Default::default).lock().unwrap();
+    let members = verified.entry(archive.clone()).or_insert_with(|| verify_receipt(root, &archive));
+    members.as_ref().map(|members| members.contains(member)).map_err(Clone::clone)
+}
+
+fn verify_receipt(root: &Path, archive: &Path) -> Result<BTreeSet<String>, String> {
+    check_archive_outputs(root, archive)?;
+    let receipt = ArchiveReceipt::parse(&std::fs::read_to_string(archive.with_extension("a.provenance.tsv")).map_err(|e| e.to_string())?)?;
+    let ar = root.join("tools/out/binutils/bin/arm-none-eabi-ar");
+    if receipt.archive_sha256 != sha256::hex(&read(archive)?)
+        || receipt.ar_sha256 != sha256::hex(&read(&ar)?)
+        || receipt.compiler_sha256 != crate::compiler::bundle::runtime_bundle_signature_checked()? {
+        return Err("runtime archive or toolchain differs from source-built receipt; rebuild".into());
+    }
+    let members = receipt.members.iter().map(|m| (m.member.clone(), m.source.clone())).collect::<Vec<_>>();
+    validate_members(root, &members)?;
+    let work = archive.with_extension("objects");
+    let mut objects = Vec::new();
+    for member in &receipt.members {
+        let (_, source, plan) = member_plan(root, &work, &member.member, &member.source)?;
+        let object = work.join(format!("{}.o", member.member));
+        if source != member.source_sha256 || plan != member.plan_sha256 || sha256::hex(&read(&object)?) != member.object_sha256 {
+            return Err(format!("runtime member {} differs from source-built receipt; rebuild", member.member));
+        }
+        objects.push(object);
+    }
+    check_archive_members(&ar, archive, &objects)?;
+    Ok(receipt.members.iter().map(|m| format!("{}.o", m.member)).collect())
+}
+
 
 fn validate_members(root: &Path, members: &[(String, String)]) -> Result<(), String> {
     if members.is_empty() {
@@ -287,7 +350,7 @@ fn runtime_tools(root: &Path) -> Result<(String, PathBuf, String), String> {
     let ar = root.join("tools/out/binutils/bin/arm-none-eabi-ar");
     let ar_sha256 = sha256::hex(&read(&ar)?);
     Ok((
-        crate::compiler::bundle::compiler_bundle_signature_checked()?,
+        crate::compiler::bundle::runtime_bundle_signature_checked()?,
         ar,
         ar_sha256,
     ))
@@ -465,4 +528,31 @@ pub fn entry(args: &[String]) -> Result<(), String> {
     )?;
     println!("archive={} members={}", archive.display(), members.len());
     Ok(())
+}
+
+#[cfg(test)]
+mod evidence_tests {
+    use super::*;
+
+    #[test]
+    fn archive_names_without_build_provenance_grant_nothing() {
+        let root = tempfile::tempdir().unwrap();
+        assert!(!credited_member(root.path(), "/elsewhere/libgcc.a(_pretend.o)").unwrap());
+        std::fs::create_dir_all(root.path().join("tools/out/compiler-runtime")).unwrap();
+        let archive = std::fs::canonicalize(root.path()).unwrap().join("tools/out/compiler-runtime/renamed.a");
+        std::fs::write(&archive, "an unrelated archive").unwrap();
+        assert!(credited_member(root.path(), &format!("{}(_pretend.o)", archive.display())).is_err());
+    }
+
+    #[test]
+    fn archive_receipts_round_trip_and_reject_malformed_records() {
+        let receipt = ArchiveReceipt { format: ARCHIVE_FORMAT, compiler_sha256: "compiler".into(),
+            ar_sha256: "archiver".into(), archive_sha256: "archive".into(), members: vec![MemberReceipt {
+                member: "_example".into(), source: "gcc/example.c".into(), source_sha256: "source".into(),
+                plan_sha256: "plan".into(), object_sha256: "object".into() }] };
+        let text = String::from_utf8(receipt.table()).unwrap();
+        assert_eq!(ArchiveReceipt::parse(&text).unwrap().table(), receipt.table());
+        assert!(ArchiveReceipt::parse(&text.replace("\tobject\n", "\n")).is_err());
+        assert!(ArchiveReceipt::parse(&text.replace("# format\t2", "# format\t999")).is_err());
+    }
 }

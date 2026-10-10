@@ -400,9 +400,11 @@ pub fn toolchain_signature() -> String {
         })
         .clone()
 }
-pub fn compiler_bundle_signature_checked() -> Result<String> {
+pub fn runtime_bundle_signature_checked() -> Result<String> {
     ensure_compiler_bundle_access()?;
-    Ok(compiler_bundle_signature())
+    // Runtime library commands never include game headers. Their source and
+    // preprocessed inputs are recorded separately in each member's plan.
+    Ok(toolchain_signature())
 }
 
 fn path_bytes(path: &Path) -> Vec<u8> {

@@ -104,9 +104,11 @@ fn scanner() -> &'static str {
                 include_str!("../compiler/no_asm.rs"),
                 include_str!("../compiler/steering.rs"),
                 include_str!("../compiler/c_syntax.rs"),
+                include_str!("../evidence.rs"),
             ]
             .concat()
-            + &crate::compiler::no_asm::reviewed_helpers_signature()).as_bytes(),
+            + &crate::compiler::no_asm::reviewed_helpers_signature()
+            + &crate::evidence::signature()).as_bytes(),
         )
     })
 }

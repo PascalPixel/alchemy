@@ -627,7 +627,6 @@
     "*/games/common/src/sound/modulate.o"(.text)
     "*/games/tbs/src/sound/music_track_operate_work_byte.o"(.text)
     "*/games/common/src/sound/music_track_dispatch_stream_command.o"(.text)
-    "*/games/tbs/src/system/scheduler/call_work_entry_with_args.o"(.text)
     "*/games/tbs/src/sound/tail.o"(.text)
     "*/games/tbs/src/sound/empty_callback.o"(.text)
     "*/games/tbs/src/sound/sound.o"(.rodata)

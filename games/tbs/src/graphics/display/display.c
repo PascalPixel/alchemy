@@ -114,24 +114,18 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed)
 
 void Graphics_SetBg1Priority3(void)
 {
-    /* FAKEMATCH: needed to match: the runtime mask keeps Thumb's negation; direct ~3 adds halfword literal loads. */
-    u32 mask = 4;
     u32 value = REG_BG1CNT;
 
-    mask = -mask;
-    value &= mask;
+    value &= ~3;
     value |= 3;
     REG_BG1CNT = value;
 }
 
 void Graphics_ClearBg1ControlBit2(void)
 {
-    /* FAKEMATCH: needed to match: the runtime mask keeps Thumb's negation; direct ~3 adds halfword literal loads. */
-    u32 mask = 4;
     u32 value = REG_BG1CNT;
 
-    mask = -mask;
-    value &= mask;
+    value &= ~3;
     REG_BG1CNT = value;
 }
 

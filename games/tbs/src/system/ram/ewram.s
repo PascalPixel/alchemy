@@ -121,16 +121,7 @@ Sound_Work:
 	.space 0x00000fb0
 	.global Sound_CommandTable
 Sound_CommandTable:
-	.space 0x00000004
-	.global Sound_JumpCommand
-Sound_JumpCommand:
-	.space 0x00000084
-	.global Sound_Command34
-Sound_Command34:
-	.space 0x00000004
-	.global Sound_Command35
-Sound_Command35:
-	.space 0x00000004
+	.space 0x00000090
 	.global Sound_CgbNotes
 Sound_CgbNotes:
 	.space 0x00000100

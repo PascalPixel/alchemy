@@ -223,7 +223,6 @@
     "*/games/common/src/graphics/text/text.o"(.text)
     "*/games/tbs/src/system/save/save.o"(.text)
     "*/games/tbs/src/graphics/window/name.o"(.text)
-    "*/games/tbs/src/menu/party/talk_choice.o"(.text)
     "*/games/tbs/src/game/party/lookup_character_value_by_flag32.o"(.text)
     "*/games/tbs/src/graphics/render/load_pair.o"(.text)
     "*/games/tbs/src/graphics/window/resource.o"(.text)

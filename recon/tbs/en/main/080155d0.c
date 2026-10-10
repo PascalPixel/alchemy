@@ -3,13 +3,13 @@
 #include "glyph.h"
 #include "text_font.h"
 
-/* ARM draft: JA differs 0; EN differs 2; DE/ES/FR/IT differ 10. The tail matches.
+/* ARM draft: EN differs 2; DE/ES/FR/IT differ 10. The tail matches.
    Registers and spill offsets match. Remaining differences:
    JA: all 193 instructions match. A pair-first seed initially differed 18,
        but placed ADD r8,r8,#1 before STR r3,[sp,#12]. Keeping that order
        while changing the redundant height test closed the other differences.
-       Temporarily linked through GAME_ARM_SOURCES: compare-editions passed
-       all twelve ROMs, including the Japanese literal pool and full extent.
+       Adopted into games/tbs/src/graphics/text/moji.c. The Japanese linker
+       uses that ARM C source; the other editions keep their listing.
    EN: MOV r7,r3 must precede SUB sp,sp,#44. Prologue threading inserts SUB
        first; sched2 gives both priority 5 through PUSH and keeps that order.
        A redundant height normalization guarded by y*(y+1) moves MOV first,
@@ -36,7 +36,18 @@
        STR r2,[sp,#12] belongs after CMP r8,#31. Sched2 delays the store
        before the block-ending branch and fills the delay with CMP. An early
        comparison and separate width copy can move it, but must preserve
-       LDRB before CMP and y=r8; the repeated-read trials change both. */
+       LDRB before CMP and y=r8; the repeated-read trials change both.
+   2026-10-10 trials: 576 explicit English entry variants (signed/unsigned
+       argument, repeated coordinate assignment and height normalization)
+       retain best differ 2. A separate short-lived continental raw_stride
+       removes the extra width spill, but loses the compare/store order;
+       400 variants retain best differ 10. Keeping the original width with
+       a break-on-use_font boundary gives differ 9 with one redundant spill,
+       so it is not adopted. Palette/source lifetime variants reach weighted
+       255 but differ 14, changing source r2 to r3 and two spill positions;
+       40,257 distinct random refinements over three minutes did not improve
+       that seed. The saved draft remains the instruction-identical-sized
+       196/187-instruction form with only the listed ordering differences. */
 
 extern const u8 UiText_GlyphWidths[];
 
@@ -104,16 +115,12 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 	u32 stride;
 #if defined(TBS_EDITION_EN)
 	u32 index;
-#elif !defined(TBS_EDITION_JA)
+#else
 	u32 use_font;
 #endif
 	u32 row;
 	u32 rownext;
 	u32 col;
-#if defined(TBS_EDITION_JA)
-	/* FAKEMATCH: these records reserve the native frame's 64-byte unused area. */
-	struct RenderInput frame[4];
-#endif
 #if !defined(TBS_EDITION_EN)
 	window = input_window;
 #endif
@@ -138,18 +145,6 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 	if (index > 111)
 		width = input_window->height;
 	stride = width;
-#elif defined(TBS_EDITION_JA)
-	/* FAKEMATCH: the repeated read keeps the height copy after the character
-	   comparison through combine. CSE removes the second read; jump2 removes
-	   the empty branch. With the width setup below, JA differ 3 -> 2: the
-	   redundant height spill disappears and the remaining registers match. */
-	do
-	{
-		width = window->height;
-	} while (0);
-	if (character > 255)
-		width = window->height;
-	stride = (width << 16) >> 16;
 #else
 	/* FAKEMATCH: the one-pass height read preserves the load's scheduling boundary. */
 	do
@@ -181,111 +176,6 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 	{
 		if (font != NULL)
 		{
-#if defined(TBS_EDITION_JA)
-			const u8 *source;
-			u32 color;
-			u32 raw_color;
-			u32 font_width;
-			u32 bits;
-
-			/* FAKEMATCH: the height's zero high half keeps this constant and
-			   its normalized copy separate until combine. The early accent
-			   comparison places the color spill after CMP (JA differ 6 -> 4);
-			   reload CSE removes the repeated assignment in the accent path. */
-			raw_color = 0x1111 + (stride >> 16);
-			{
-				u32 raw_width;
-
-				/* FAKEMATCH: stride is a zero-extended height, so the test is
-				   false. The separate width copy and x boundary retain ADD
-				   before its spill in sched2 (JA differ 2 -> 0). Testing
-				   stride >> 16 instead leaves two instructions and differs 18. */
-				raw_width = 8;
-				do
-				{
-					if ((u16)stride != stride)
-						raw_width += width & 0xffff0000U;
-				} while (0);
-				do
-				{
-					x++;
-				} while (0);
-				font_width = raw_width;
-			}
-			do
-			{
-				if (character - 222 <= 1)
-					raw_color = 0x1111 + (stride >> 16);
-			} while (0);
-			color = (raw_color << 16) >> 16;
-			if (character - 222 <= 1)
-			{
-				color = raw_color;
-				character += 32;
-				x -= 2;
-				y--;
-				font_width = 2;
-			}
-			character -= 32;
-			source = font + character * 10;
-			{
-				const u8 *first = source;
-
-				/* FAKEMATCH: advance before the early clipping test to retain
-				   the native ADD/CMP/LDRB order (JA differ 10 -> 8). */
-				row = 0;
-				source++;
-				do
-				{
-					if (y > 31)
-						break;
-				} while (0);
-				bits = *first;
-				if (y > 31)
-					goto font_done;
-			}
-			{
-				while (1)
-				{
-					u32 tile_y;
-					u32 row_line;
-					u8 *vram;
-
-					col = 0;
-					/* FAKEMATCH: duplicated row increments produce the native CMP/ADD/BEQ order. */
-					if (bits == 0)
-						rownext = row + 1;
-					else
-					{
-						rownext = row + 1;
-						tile_y = (y + row) >> 3;
-						vram = (u8 *)0x06002500;
-						row_line = ((y + row) & 7) << 1;
-						do
-						{
-							if (bits & 1)
-								GlyphDot(stride, x + col, tile_y, row_line, vram, color);
-							col++;
-							bits >>= 1;
-						} while (bits != 0);
-					}
-					row = rownext;
-					if (rownext > 9)
-						break;
-					/* FAKEMATCH: the early comparison orders CMP before LDRB (differ 12 -> 10). */
-					do
-					{
-						if (y + rownext > 31)
-							break;
-					} while (0);
-					bits = *source++;
-					if (y + rownext > 31)
-						break;
-				}
-			}
-font_done:
-			return font_width;
-#else
 			const u8 *source;
 			u32 color1;
 			u32 color3;
@@ -377,13 +267,8 @@ font_done:
 			}
 font_done:
 			return font_width;
-#endif
 		}
-#if defined(TBS_EDITION_JA)
-		/* FAKEMATCH: fold this difference in combine, after GCSE has run;
-		   otherwise GCSE hoists the accent index (JA differ 2 -> 32). */
-		mark = 0U - (222U - character);
-#elif defined(TBS_EDITION_EN)
+#if   defined(TBS_EDITION_EN)
 		mark = character - 222;
 #endif
 		rows = (const u16 *)((const u8 *)UiText_Glyphs + (character - 32) * 26);
@@ -415,14 +300,9 @@ glyph_wide:
 	else
 #endif
 	{
-#if defined(TBS_EDITION_JA)
-		width = 10;
-		rows = (const u16 *)(UiText_KanjiGlyphs + (character - 256) * 24);
-#else
 		rows = (const u16 *)((const u8 *)UiText_Glyphs + (character - 32) * 32);
 		width = rows[0];
 		rows += 4;
-#endif
 	}
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 glyph_selected:

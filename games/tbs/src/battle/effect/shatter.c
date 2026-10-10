@@ -165,13 +165,10 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
 	DrawRectangle			*draw;
 	struct EffectStep		*step;
 	struct EffectStep		*mote;
-	s32						 burst_offset;
 	s32						 member;
 	s32						 frame;
 	s32						 i;
 	s32						 curtain_y;
-	s32						 angle_mask;
-	s32						 speed_mask;
 
 	heap_cache = (void **)gBattleFxWork;
 	cursor = heap_cache;
@@ -189,7 +186,6 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
 	work->transfer_value = 75;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-	burst_offset = 0;
 	member = 0;
 	step = work->particles;
 	do
@@ -203,25 +199,18 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
 		else
 			step->x += 32;
 		step->variant = -(member * 2);
-		i = 0;
-		/* FAKEMATCH: needed to match: the two random masks sit in locals set in this order, ahead of the mote pointer */
-		speed_mask = 127;	 /* FAKEMATCH: needed to match: mask local, see above */
-		angle_mask = 0xffff; /* FAKEMATCH: needed to match: mask local, see above */
-		mote = (struct EffectStep *)(Ram_MapCellBuffer + burst_offset);
-		do
+		for (i = 0; i != 16; i++)
 		{
+			mote = &((struct EffectStep *)Ram_MapCellBuffer)[member * 16 + i];
 			mote->x = (((Random16() & 15) + step->x) - 8) << 16;
 			mote->y = ((Random16() & 7) + 96) << 16;
-			mote->velocity_x = ((Random16() & speed_mask) - 64) << 11;
-			mote->velocity_y = ((Random16() & speed_mask) - 64) << 10;
-			mote->z = Random16() & angle_mask;
-			mote->velocity_z = Random16() & angle_mask;
-			i++;
-			mote++;
-		} while (i != 16);
+			mote->velocity_x = ((Random16() & 127) - 64) << 11;
+			mote->velocity_y = ((Random16() & 127) - 64) << 10;
+			mote->z = Random16() & 0xffff;
+			mote->velocity_z = Random16() & 0xffff;
+		}
 		step++;
 		member++;
-		burst_offset += 16 * sizeof(struct EffectStep);
 	} while (member != 9);
 
 	AudioCommand_PlayFar(0x88);
@@ -815,7 +804,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 		}
 		else
 		{
-			work->transfer_mode = size;
+			work->transfer_mode = 2;
 			work->transfer_value = 75;
 		}
 		Camera_StoreSceneParameters(0x1fe0000, DivQ16(0x1fe0000, 0xc000), 0x7fff0000);

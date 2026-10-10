@@ -29,7 +29,7 @@ selects ARM for scaffolds without instruction-set markers. Mixed-mode
 scaffolds are unsupported. This normalized comparison is analysis only;
 the full twelve-edition ROM comparison remains the matching authority.
 --arm compiles an ARM draft of either game as the build compiles game ARM C
-(GAME_ARM_SOURCES, AGENTS.md K1): stock agbcc_arm at the library ARM
+(GAME_ARM_SOURCES, AGENTS.md K1): stock GCC 2.95.2 at the common ARM
 setting, assembled as ARM. Credit comes only from source the build links.
 Output stays in obj/drafts/arm.
 --rtl keeps the compiler's dump after every pass (GCC's -da) in
@@ -43,7 +43,7 @@ own alignment (a listing row counts on the draft line it falls before), and
 marks the line where the comparison first diverges with >. Allocation and
 scheduling cascade from early differences, so start there."#;
 
-pub(crate) const GAME_ARM_NOTICE: &str = "game ARM route (K1): stock agbcc_arm at the library ARM setting.";
+pub(crate) const GAME_ARM_NOTICE: &str = "game ARM route: stock GCC 2.95.2 at the common ARM setting.";
 
 struct Options {
     draft: PathBuf,
@@ -165,7 +165,7 @@ pub(crate) fn arm_steps(target: DecompTarget, draft: &Path, object: &Path) -> Re
 
 /// Asks the compiler step for its per-pass dumps: the 2.96 driver is the
 /// first step and takes the scheduler's verbose dump too; on the ARM route
-/// the first step is cpp0, so agbcc_arm's cc1 (the second) takes -da alone,
+/// the first step is cpp0, so the ARM cc1 (the second) takes -da alone,
 /// as it knows no -fsched-verbose.
 fn rtl_flags(steps: &mut [Vec<String>], arm: bool) {
     if arm {
@@ -1097,7 +1097,7 @@ mod tests {
     }
 
     #[test]
-    fn arm_is_the_game_arm_route_through_stock_agbcc_arm() {
+    fn arm_is_the_game_arm_route_through_stock_gcc2952() {
         let args = |items: &[&str]| items.iter().map(|item| item.to_string()).collect::<Vec<_>>();
         assert!(!parse(&args(&["recon/tbs/en/main/0800a0f8.c"])).unwrap().arm);
         assert!(parse(&args(&["recon/tbs/en/main/080158e8.c", "--arm"])).unwrap().arm);
@@ -1114,8 +1114,8 @@ mod tests {
         let object = root().join(target.output_dir).join("obj/drafts/arm/test.o");
         let steps = arm_steps(target, &source, &object).unwrap();
         assert_eq!(steps.len(), 3);
-        assert!(steps[1][0].ends_with("agbcc/agbcc_arm"));
-        for flag in crate::compiler::routing::agbcc_arm_cflags() {
+        assert!(steps[1][0].ends_with("gcc2952_arm"));
+        for flag in crate::compiler::routing::arm_cflags() {
             assert!(steps[1].contains(&flag), "{flag}");
         }
         assert!(!steps[2].iter().any(|flag| flag == "-mthumb"));
@@ -1124,7 +1124,7 @@ mod tests {
         let tla = decomp_target(Some("tla-en")).unwrap();
         let tla_source = root().join("recon/tla/en/main/08000000.c");
         let tla_steps = arm_steps(tla, &tla_source, &object).unwrap();
-        assert!(tla_steps[1][0].ends_with("agbcc/agbcc_arm"));
+        assert!(tla_steps[1][0].ends_with("gcc2952_arm"));
         assert!(!tla_steps[2].iter().any(|flag| flag == "-mthumb"));
     }
 
@@ -1207,7 +1207,7 @@ mod tests {
     fn line_tables_reach_the_driver_and_direct_cc1_compile_steps() {
         let words = |text: &str| text.split(' ').map(String::from).collect::<Vec<_>>();
         let cpp = words("cpp0 -lang-c probe.c probe.i");
-        let cc1 = words("agbcc/agbcc_arm probe.i -dumpbase probe.c -O2 -o probe.s");
+        let cc1 = words("gcc2952_arm probe.i -dumpbase probe.c -O2 -o probe.s");
         let driver = words("xgcc -O2 -S -o probe.s probe.c");
         let assemble = words("arm-none-eabi-as -o probe.o probe.s");
         assert_eq!(with_line_table(&cpp), cpp);

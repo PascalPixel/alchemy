@@ -43,7 +43,7 @@ fn run_in(dir: &Path, program: &str, args: &[&str]) -> Result<(), String> {
 }
 
 fn prepare(here: &Path, main: &Path) -> Result<(), String> {
-    run_in(here, "git", &["submodule", "update", "--init", "--quiet"])?;
+    run_in(here, "git", &["submodule", "update", "--init", "--recursive", "--quiet"])?;
     for dir in ["tools/out", "out"] {
         std::fs::create_dir_all(here.join(dir)).map_err(|e| format!("{dir}: {e}"))?;
     }

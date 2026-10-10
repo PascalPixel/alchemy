@@ -145,7 +145,7 @@ pub(crate) fn count(root: &Path) -> Result<Counts, String> {
             if path.ends_with(".c")
                 && matches!(
                     family_for_source(*target, path),
-                    CompilerFamily::Agbcc | CompilerFamily::AgbccFlash | CompilerFamily::AgbccArm
+                    CompilerFamily::Agbcc | CompilerFamily::AgbccFlash
                 )
             {
                 continue;

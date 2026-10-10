@@ -404,15 +404,13 @@ void BiribinoMura_ReceiveJillsGift(void)
 
 s32 Scene_Initialize(void)
 {
-    /* FAKEMATCH: retained return/prototype call casts preserve the current call lowering. */
-
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (gGameState.scene == (s32)&SceneId_BiribinoMura1) {
         BiribinoMura_RestoreVillageActors();
     } else {
         if (gGameState.scene == (s32)&SceneId_BiribinoMura3) {
             FieldScene_RunScene38bSequenceA();
-            ((void (*)())Engine_TaskAddCallback)((s32)BiribinoMura_UpdateCornerSpawn, 0xc80);
+            Engine_TaskAddCallback(BiribinoMura_UpdateCornerSpawn, 0xc80);
         } else {
             if (gGameState.scene == (s32)&SceneId_BiribinoMura2) {
                 BiribinoMura_RestoreRaisedEntrance();
@@ -599,22 +597,16 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
 
 void BiribinoMura_RestoreRaisedEntrance(void)
 {
-    /* FAKEMATCH: the inline halfword cell view remains pending a native field review. */
-
-    s32 arg0;
-    struct FieldActor *rec7;
-    s32 record;
+    struct FieldActor *leader;
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     FieldScene_DrawTilesByActor8Row();
-    record = ReadU16Elem((u16 *)&gGameState, 225);
-    if ((u32)((record - 3) << 16) <= 0x10000) {
+    if (gGameState.entrance == 3 || gGameState.entrance == 4) {
         if (Engine_GameFlagIsSet(0x109) == 0) {
-            rec7 = Object_GetById(ACTOR_PARTY_LEADER);
+            leader = Object_GetById(ACTOR_PARTY_LEADER);
             Engine_EventBegin();
-            arg0 = rec7->x.fixed;
-            rec7->y.fixed = 0x100000;
-            Engine_CameraMoveTo(arg0, 0x100000, rec7->z.fixed, 0);
+            leader->y.fixed = 0x100000;
+            Engine_CameraMoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
             Engine_MapRedraw();
             Engine_EventEnd();
             Engine_TaskWait(1);
@@ -639,11 +631,8 @@ struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 
 void BiribinoMura_PushFacedBlock(void)
 {
-    /* FAKEMATCH: retained return/prototype call casts preserve the current call lowering. */
-
     struct FieldActor *leader;
     struct FieldActor *block;
-    s32 zero;
     s32 step;
     u32 dir;
     union FieldCoordinate pos[3];
@@ -655,14 +644,14 @@ void BiribinoMura_PushFacedBlock(void)
         (leader->x.part.pixel + (BiribinoMura_FacingCellSteps[dir] >> 16)) >> 4,
         (leader->z.part.pixel + (s16)BiribinoMura_FacingCellSteps[dir]) >> 4);
     if (block != NULL) {
-        zero = 0;
         block->terrain_id = 2;
+        /* FAKEMATCH: the probe is filled through a pointer to it; indexing pos directly drops a saved register and moves the step table address (measured). */
         p = pos;
         step = BiribinoMura_FacingCellSteps[dir];
         p[0].fixed = block->x.fixed + (step & -0x10000);
         p[1].fixed = block->y.fixed;
         p[2].fixed = block->z.fixed + (step << 16);
-        if (((s32 (*)())Object_CheckMovementCollision)((s32)block, (s32)p) <= 0) {
+        if (Object_CheckMovementCollision(block, p) <= 0) {
             Object_SetMode(leader, 8);
             Engine_TaskWait(15);
             Engine_AudioPlayCue(185);
@@ -675,8 +664,8 @@ void BiribinoMura_PushFacedBlock(void)
             Engine_ObjectCommitPosition(block);
             block->x.fixed = p[0].fixed;
             block->z.fixed = p[2].fixed;
-            block->velocity_x = zero;
-            block->velocity_z = zero;
+            block->velocity_x = 0;
+            block->velocity_z = 0;
             Object_SetMode(leader, 1);
             if (gGameState.scene == (s32)&SceneId_BiribinoMura3)
                 ActorPresentation_RepaintTenCellsAndActorEightCell();
@@ -690,8 +679,6 @@ void BiribinoMura_PushFacedBlock(void)
 
 void BiribinoMura_UpdateCornerSpawn(void)
 {
-    /* FAKEMATCH: halfword aggregates retain the short literal-pool reach. */
-
     struct FieldActor *actor;
 
     actor = Object_GetById(gGameState.selected_actor);
@@ -699,15 +686,10 @@ void BiribinoMura_UpdateCornerSpawn(void)
         if (actor->y.fixed < 0x80000) {
             if (gCornerSpawnCounter.frames == 0)
                 OverlayObject_SpawnKind24AtActor(actor);
-            if (++gCornerSpawnCounter.frames == 30) {
-                struct SpawnCounter zero = { 0 };
-                gCornerSpawnCounter = zero;
-            }
+            if (++gCornerSpawnCounter.frames == 30)
+                gCornerSpawnCounter.frames = 0;
         } else {
-            struct SpawnCounter *cnt = &gCornerSpawnCounter;
-            struct SpawnCounter zero;
-            zero.frames = 0;
-            *cnt = zero;
+            gCornerSpawnCounter.frames = 0;
         }
     }
 }

@@ -999,7 +999,6 @@ void MogoruMori_RunClosingChoreography(void)
     u32 i;
     s32 x;
     s32 z;
-    s32 zero;
 
     actor = Object_GetById(18);
     Engine_EventBegin();
@@ -1031,16 +1030,14 @@ void MogoruMori_RunClosingChoreography(void)
     Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     for (i = 0; i <= 16; i++) {
         v = &dir;
-        /* FAKEMATCH: zero is set inside the loop (always entered) so it is materialized with the counter. */
-        zero = 0;
         v->x = Engine_MathCos(i << 12);
-        v->y = zero;
+        v->y = 0;
         z = Engine_MathSin(i << 12);
         x = v->x;
         v->z = z;
         x += x / 2;
         v->x = x;
-        Effect_Spawn(actor->x.fixed, 0, actor->z.fixed, x, v->y, z, 1, (const struct EffectOptions *)zero);
+        Effect_Spawn(actor->x.fixed, 0, actor->z.fixed, x, v->y, z, 1, NULL);
     }
     Engine_EventWait(30);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);

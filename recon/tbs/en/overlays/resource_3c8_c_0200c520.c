@@ -12,7 +12,12 @@
  * output fails in reload_cse_simplify_operands. All six editions share
  * this residual. A two-minute exact-stack/branch search (seed 463, two
  * jobs) tried 1545 distinct candidates, with 1535 failed evaluations and
- * no improvement. Heat-guided mode cannot parse the function. */
+ * no improvement. Heat-guided mode cannot parse the function.
+ * Explicit tied constraints in either input order, tying p directly and
+ * an early-clobber tied p retain six. Adding x or z outputs leaves 22 or
+ * 24; adding p or the options memory as input leaves 16. A volatile
+ * options target leaves 31 (89 built). A u16-cast negative offset,
+ * unsigned RNG shift and reversed spin sum each retain six. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

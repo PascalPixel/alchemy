@@ -13,7 +13,10 @@
  * w afterwards orders the operations correctly but differs 14 in EN: w takes
  * r2 instead of r0, and the signed byte takes r0 instead of r2. Early-clobber
  * and generic constraints retain 14; passing both w and slot through differs
- * 44. Linked source keeps its bindings pending all-edition byte identity. */
+ * 44. Moving slot before the existing state barrier and adding it as a
+ * low-register input leaves 10 in EN (280 built); a prize_state output
+ * instead leaves 16, and a volatile state output leaves 66.
+ * Linked source keeps its bindings pending all-edition byte identity. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

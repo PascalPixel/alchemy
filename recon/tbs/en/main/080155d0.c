@@ -3,27 +3,34 @@
 #include "glyph.h"
 #include "text_font.h"
 
-/* ARM draft: EN/DE/ES/FR/IT match; JA is adopted in graphics/text/moji.c.
-   International adoption awaits approval of the device-baseline increase.
-   All twelve complete ROMs compare OK with this candidate linked from
-   graphics/text/moji.c; publication, aliases, hygiene and no-asm pass.
-   Proposed TBS devices: barriers 46 -> 50, inline asm 0 -> 2, pins 39 -> 40.
+/* ARM draft: EN differs 2; DE/ES/FR/IT differ 10, all instruction order.
+   JA is adopted in graphics/text/moji.c. International editions retain
+   their listings until this C matches without the newly proposed devices.
 
-   2026-10-10: ordinary C reached EN differ 2 and continental differ 10.
-   Two 100,000-run English searches and 576 entry forms retained that result.
-   agbcc_arm gives PUSH -> ordinary MOV and PUSH -> SUB equal cost 5;
-   sched2 retains SUB first. Its unrecognized-asm dependency has cost 1.
-   One tagged MOV closes English; two close the continental entry.
+   2026-10-10: removed both instruction-emitting asm sites, the color1
+   register pin and all four empty-asm barriers. The unused x/y copies,
+   raw-color copy and impossible height return went with them. Stock
+   agbcc_arm and its approved options are unchanged.
 
-   Continental clipping needs a separate width copy excluding r0/r3.
-   The repeated table read is removed before allocation; raw width's
-   return-register preference, not table lifetime, caused the difference.
-   Typed variants and random searches retained two reordered stores.
-   A dead high-half return gives the zero-extended height r0 preference;
-   palette constraints put both stores in their native positions. A spare
-   color3 barrier and source clobber were removed after the first match.
-   Removing the remaining color1 pin differs 17; folding color3's split
-   construction or removing its input from the copy barrier differs 2. */
+   EN needs MOV r7,r3 before SUB sp,sp,#44. The continental editions need
+   both coordinate copies before the frame adjustment, the height and
+   width spills after their comparisons, and the source spill after
+   color1's ADD. The instruction count, registers and stack slots agree.
+
+   Removal trials: 13 C palette-copy forms reached differ 2 with the other
+   constraints retained; 40 copy-order forms, 7 final-add forms and 7 scope
+   forms did not close that last store order. Removing the palette pin and
+   three barriers together reached differ 18 over 40 forms; 30 boolean
+   lifetime forms did not improve unpinning alone. Twelve source-copy and
+   eleven height-lifetime forms did not replace their barriers. Non-emitting
+   entry constraints reached EN differ 2 and continental differ 4 with the
+   other devices retained, so none replaced an instruction-emitting site.
+
+   With all seven devices removed, direct parameters and a single width
+   read give continental differ 12; the one-pass selection below restores
+   its character-copy order, giving differ 10. Seven height-copy forms did
+   not improve that result. Earlier English C searches (two 100,000-run
+   searches and 576 entry forms) also retained differ 2. */
 
 extern const u8 UiText_GlyphWidths[];
 
@@ -76,10 +83,8 @@ static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
 }
 
 s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
-	u32 input_x, u32 input_y, const u8 *font)
+	u32 x, u32 y, const u8 *font)
 {
-	u32 x;
-	u32 y;
 	struct UiWindow *window;
 	const u16 *rows;
 #if !defined(TBS_EDITION_JA) && !defined(TBS_EDITION_EN)
@@ -94,27 +99,22 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 #if defined(TBS_EDITION_EN)
 	u32 index;
 #else
-	u32 raw_stride;
 	u32 use_font;
 #endif
 	u32 row;
 	u32 rownext;
 	u32 col;
 #if !defined(TBS_EDITION_EN)
-	/* FAKEMATCH: native x/y copies precede SUB sp,sp,#44 (differ 10 -> 6). */
-	asm("mov %0, %2\n\tmov %1, %3" : "=&r"(x), "=r"(y) : "r"(input_x), "r"(input_y));
-#else
-	x = input_x;
-	/* FAKEMATCH: native MOV r7,r3 precedes SUB sp,sp,#44 (EN differ 2 -> 0). */
-	asm("mov %0, %1" : "=r"(y) : "r"(input_y));
-#endif
-#if !defined(TBS_EDITION_EN)
-	/* FAKEMATCH: the boundary keeps the window spill after the character copy. */
-	do { } while (0);
 	window = input_window;
 #endif
 #if !defined(TBS_EDITION_JA) && !defined(TBS_EDITION_EN)
-	use_font = character <= 255 || font != NULL;
+	/* FAKEMATCH: the one-pass selection keeps the character copy after the font load (12 -> 10). */
+	do
+	{
+		use_font = font != NULL;
+		if (character <= 255)
+			use_font = 1;
+	} while (0);
 #endif
 #if defined(TBS_EDITION_EN)
 	/* FAKEMATCH: the boundaries keep the parameter copies before the window
@@ -133,21 +133,11 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 		width = input_window->height;
 	stride = width;
 #else
-	/* FAKEMATCH: height is u16, so the return is unreachable. It gives the
-	   height r0 preference through allocation; jump2 removes it. The separate
-	   read/copy places CMP before STR without changing the load's register. */
+	/* FAKEMATCH: the one-pass height read preserves the load's scheduling boundary. */
 	do
 	{
-		raw_stride = window->height;
+		stride = window->height;
 	} while (0);
-	do
-	{
-		if (raw_stride & 0xffff0000U)
-			return raw_stride;
-	} while (0);
-	if (!use_font)
-		raw_stride = window->height;
-	stride = raw_stride;
 #endif
 #if defined(TBS_EDITION_EN)
 	if (index > 111)
@@ -175,10 +165,6 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 		{
 			const u8 *source;
 			u32 color1;
-#if !defined(TBS_EDITION_EN)
-			/* FAKEMATCH: native color1 is built in r1; unpinning differs 17. */
-			register u32 raw_color1 asm("r1");
-#endif
 			u32 color3;
 			u32 font_width;
 			u32 raw_width;
@@ -198,20 +184,9 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 			if (!(stride >> 16))
 				color1 += width & 0xffff0000U;
 #else
-			raw_color1 = 0x1111;
-			/* FAKEMATCH: the source spill follows color1's ADD; removing this differs 2. */
-			asm("" : "=r"(source) : "0"(source), "r"(raw_color1));
+			color1 = 0x1111;
 #endif
-#if defined(TBS_EDITION_EN)
 			color3 = 0x3333;
-#else
-			color3 = 0x3300;
-			/* FAKEMATCH: color1 spills between color3's MOV and ADD; folding color3 differs 2. */
-			asm("" : "=r"(color1) : "0"(raw_color1), "r"(color3));
-			color3 += 0x33;
-			/* FAKEMATCH: retain height in r0 through palette setup, leaving r1/r2 for its constants. */
-			asm("" : : "r"(raw_stride));
-#endif
 			do { } while (0);
 #if defined(TBS_EDITION_EN)
 			{
@@ -234,15 +209,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 			}
 #else
 			row = 0;
-			/* FAKEMATCH: the early comparison keeps the width spill after CMP. */
-			do
-			{
-				raw_width = UiText_GlyphWidths[character - 32];
-			} while (0);
-			if (y > 31)
-				raw_width = UiText_GlyphWidths[character - 32];
-			/* FAKEMATCH: exclude r0/r3 for the native r2 load/spill (differ 8 -> 4). */
-			asm("" : "=r"(font_width) : "0"(raw_width) : "r0", "r3");
+			font_width = UiText_GlyphWidths[character - 32];
 #endif
 			if (y > 31)
 				goto font_done;

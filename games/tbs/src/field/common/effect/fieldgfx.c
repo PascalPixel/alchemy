@@ -356,29 +356,20 @@ loop:
 
 void BattleFx_StartTwelveFrameBlend(void)
 {
-    u8 *work;
+    struct FieldBlendWork *work;
     struct BattleEffectBuffers *buffers;
     volatile u32 zero;
-    s32 value;
-    s32 one;
-    u16 *frames;
 
     work = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
     buffers = gPaletteBufferWork;
     zero = 0;
     Dma_Set((const void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x7e2, REG_DMA3);
     BattleFx_BuildBuffer(0x10003, buffers, work, 1);
-    BattleFx_BuildBuffer(0x10005, buffers, ((struct FieldBlendWork *)work)->to, 1);
-    BattleFx_InterpolateBuffers(((struct FieldBlendWork *)work)->to, ((struct FieldBlendWork *)work)->from,
-        ((struct FieldBlendWork *)work)->delta, 12);
+    BattleFx_BuildBuffer(0x10005, buffers, work->to, 1);
+    BattleFx_InterpolateBuffers(work->to, work->from, work->delta, 12);
     BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
-    /* FAKEMATCH: needed to match: int constants avoid pool loads; advancing the block pointer keeps the final add/store in r5. */
-    frames = (u16 *)&((struct FieldBlendWork *)work)->timer;
-    value = 600;
-    *frames = value;
-    work = (u8 *)&((struct FieldBlendWork *)work)->enabled;
-    one = 1;
-    *(u16 *)work = one;
+    work->timer = 600;
+    work->enabled = 1;
     Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
 }
 
@@ -408,9 +399,7 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     struct FieldBlendWork *work;
     struct BattleEffectBuffers *buffers;
     volatile u32 zero;
-    s32 value;
     s16 *target;
-    u16 *frames;
 
     work = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
     buffers = gPaletteBufferWork;
@@ -421,11 +410,7 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     BattleFx_BuildBuffer(to, buffers, target, 1);
     BattleFx_InterpolateBuffers(target, work->from, work->delta, 12);
     BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
-    frames = (u16 *)&work->timer;
-    /* FAKEMATCH: needed to match: int temporaries build halfword constants with mov instead of pool loads. */
-    value = 120;
-    *frames = value;
-    value = 0;
-    work->enabled = value;
+    work->timer = 120;
+    work->enabled = 0;
     Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
 }

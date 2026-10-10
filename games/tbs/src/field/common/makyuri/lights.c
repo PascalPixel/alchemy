@@ -89,15 +89,7 @@ upper:
         obj->speed = 0x40000;
         if (anim != 0) {
             AnimationObjects_SelectAnimation((struct AnimationObject *)anim, 6);
-            /* FAKEMATCH: needed to match: the halfword zero aggregate keeps the short-range literal pool before the tail. */
-            {
-                struct Half {
-                    u16 v;
-                } zero;
-
-                zero.v = 0;
-                anim->flags = zero.v;
-            }
+            anim->flags = 0;
         }
         st->upper = obj;
     } else {

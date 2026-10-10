@@ -30,8 +30,6 @@ static __inline__ void Dma_Wait(volatile u32 *dma)
 
 struct Sprite { u32 words[3]; };
 
-struct Half { u16 value; };
-
 extern s16 Korosseo_ModeTaskTimer;
 extern s16 Korosseo_ModeMoveTarget;
 extern s16 Korosseo_ModeMoveDuration;
@@ -78,7 +76,6 @@ void Korosseo_LoadPortrait(s32 id)
 void Korosseo_UpdateModeTask(void)
 {
     /* FAKEMATCH: needed to match: the queue read boundary and count-store alias keep separate cursors for each write. */
-    /* FAKEMATCH: needed to match: a halfword zero aggregate keeps the interior literal pools. */
     u32 *write = Korosseo_ModeTaskSprites;
     struct Sprite *sprite = (struct Sprite *)write;
     s32 tile = gVramBlockCache[Korosseo_PortraitSlot].offset >> 5;
@@ -132,7 +129,6 @@ render:
     if (Korosseo_ModeScaleDuration == 0) {
         scale = Korosseo_ModeScaleTarget;
     } else {
-        struct Half zero = { 0 };
         s32 duration, start, progress, target;
         duration = Korosseo_ModeScaleDuration;
         start = Korosseo_ModeScaleStart;
@@ -140,12 +136,11 @@ render:
         progress = ++Korosseo_ModeScaleStep;
         scale = start + (target - start) * progress / duration;
         if (progress >= duration)
-            Korosseo_ModeScaleDuration = zero.value;
+            Korosseo_ModeScaleDuration = 0;
     }
     if (Korosseo_ModeBlendDuration == 0) {
         blend = Korosseo_ModeBlendTarget;
     } else {
-        struct Half zero = { 0 };
         s32 duration, start, progress, target;
         duration = Korosseo_ModeBlendDuration;
         start = Korosseo_ModeBlendStart;
@@ -153,12 +148,11 @@ render:
         progress = ++Korosseo_ModeBlendStep;
         blend = start + (target - start) * progress / duration;
         if (progress >= duration)
-            Korosseo_ModeBlendDuration = zero.value;
+            Korosseo_ModeBlendDuration = 0;
     }
     if (Korosseo_ModeMoveDuration == 0) {
         pos = Korosseo_ModeMoveTarget;
     } else {
-        struct Half zero = { 0 };
         s32 duration, start, progress, target;
         duration = Korosseo_ModeMoveDuration;
         start = Korosseo_ModeMoveStart;
@@ -166,7 +160,7 @@ render:
         progress = ++Korosseo_ModeMoveStep;
         pos = start + (target - start) * progress / duration;
         if (progress >= duration)
-            Korosseo_ModeMoveDuration = zero.value;
+            Korosseo_ModeMoveDuration = 0;
     }
     work.angle = 0;
     work.scale_x = scale;

@@ -69,8 +69,7 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
         if (child == 0)
             return;
         ObjectDispatch_ReleaseFar(child);
-        /* FAKEMATCH: needed to match: reuse the null visual value for the child link. */
-        object->resource = (struct LinkedEffectObject *)visual;
+        object->resource = 0;
         return;
     }
 

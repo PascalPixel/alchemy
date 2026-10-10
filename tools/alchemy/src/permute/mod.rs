@@ -794,7 +794,7 @@ impl Problem {
         if let Some(full) = &mut state.full {
             for step in steps {
                 if let Kind::Full(kind) = step.kind {
-                    if randomize::apply(full, self.function.as_deref().unwrap(), kind, &mut step.rng.clone()) { state.steps.push(step.clone()); }
+                    if randomize::replay(full, self.function.as_deref().unwrap(), kind, &mut step.rng.clone(), step.region) { state.steps.push(step.clone()); }
                 }
             }
         } else if let Some((_, _, function)) = state.parsed.as_mut() {
@@ -1403,7 +1403,7 @@ mod tests {
                 let text = problem.source(&state);
                 let score = problem.evaluate(&job, &text).ok()?;
                 if score.differ != 0 { return None; }
-                Some(Found { score, unnatural: 0, text, steps: vec![Step { kind: Kind::Full(kind), rng: Rng::new(seed) }], expanded: state.expanded, job: 0, iteration: seed })
+                Some(Found { score, unnatural: 0, text, steps: vec![Step { kind: Kind::Full(kind), rng: Rng::new(seed), region: None }], expanded: state.expanded, job: 0, iteration: seed })
             }).expect("changing a global type reaches the byte load the old body engine cannot generate");
             let minimized = minimize(&problem, &job, &base, &found, &mut HashMap::new());
             assert_eq!(minimized.steps.len(), 1);
@@ -1455,7 +1455,7 @@ mod tests {
         let mut state = problem.state(expanded);
         let kind = randomize::Kind::Commutative;
         assert!(randomize::apply(state.full.as_mut().unwrap(), "F", kind, &mut Rng::new(0)));
-        state.steps.push(Step { kind: Kind::Full(kind), rng: Rng::new(0) });
+        state.steps.push(Step { kind: Kind::Full(kind), rng: Rng::new(0), region: None });
         let text = problem.source(&state);
         let found = Found { score: problem.evaluate(&job, &text).unwrap(), unnatural: 0, text, steps: state.steps, expanded: state.expanded, job: 0, iteration: 1 };
         let (output, _) = respell(&problem, &job, &found, &mut HashMap::new());

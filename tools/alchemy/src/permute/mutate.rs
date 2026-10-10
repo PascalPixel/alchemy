@@ -79,6 +79,9 @@ impl Kind {
 pub struct Step {
     pub kind: Kind,
     pub rng: Rng,
+    /// Full-tree passes choose a randomization region once before retries.
+    /// The ordinal survives node insertions and is resolved anew on replay.
+    pub region: Option<usize>,
 }
 
 /// Apply one random mutation; `None` when no kind has a site.
@@ -108,7 +111,7 @@ pub fn mutate_with(function: &mut Function, env: &mut Env, rng: &mut Rng, kinds:
         let before = rng.clone();
         if apply(kind, function, env, rng) {
             env.refresh(function);
-            return Some(Step { kind, rng: before });
+            return Some(Step { kind, rng: before, region: None });
         }
     }
     None

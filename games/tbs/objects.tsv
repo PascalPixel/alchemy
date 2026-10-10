@@ -1740,4 +1740,3 @@ main	rom_tail_02	games/tbs/src/graphics/tileset/set_75/tiles_b	.rodata
 main	rom_tail_02	games/tbs/src/graphics/tileset/set_75/tiles_c	.rodata
 main	rom_tail_02	games/tbs/src/graphics/tileset/set_75/tiles_d	.rodata
 main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
-main	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn

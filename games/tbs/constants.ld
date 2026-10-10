@@ -8,3 +8,4 @@ Object_UpdateAllCodeSize = Resource_DecompressLz - Object_UpdateAll;
 Tile_BuildMetatilesCodeSize = Tile_Decompress4bpp - Tile_BuildMetatiles;
 Transform_UpdateVerticesSize = Tile_ConvertMap - Transform_UpdateVertices;
 UiText_DrawGlyphCodeSize = Tile_BuildMetatiles - UiText_DrawGlyphArm;
+BitDecoder_Size = DebugParty_LoadPreset - BitDecoder_DecodeImage;

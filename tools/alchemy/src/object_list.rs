@@ -150,7 +150,8 @@ pub(crate) fn render(rows: &[Row], image: &str, language: &str) -> Vec<(String, 
 /// section is one place, named without its punctuation (`.rom_start` is
 /// rom_start, `/DISCARD/` is discard), and a section with fixed placements
 /// is one place per span, numbered from its start. A pattern for every
-/// object (`*(.comment)`) is the script's own and no row.
+/// object (`*(.comment)`) is the script's own and no row. A place holds
+/// nothing else: a symbol assignment inside one is refused.
 pub(crate) fn places(text: &str) -> Result<Vec<(String, Vec<Statement>)>, String> {
     let mut found = Vec::new();
     for (section, items) in crate::edition::items(text)? {
@@ -164,7 +165,12 @@ pub(crate) fn places(text: &str) -> Result<Vec<(String, Vec<Statement>)>, String
                 Item::Input(statement) if statement.object != "*" => {
                     spans.last_mut().expect("one span").push(statement)
                 }
-                Item::Input(_) | Item::Assignment(_) => {}
+                Item::Input(_) => {}
+                Item::Assignment(assignment) => {
+                    return Err(format!(
+                        "{section} assigns {assignment:?}: a place holds objects only, and a symbol of the whole image belongs in the script the game's main.ld includes"
+                    ))
+                }
                 Item::Placement(_) => spans.push(Vec::new()),
             }
         }
@@ -357,6 +363,8 @@ mod tests {
         let found = places(SCRIPT).unwrap();
         let shape: Vec<(&str, usize)> = found.iter().map(|(place, span)| (place.as_str(), span.len())).collect();
         assert_eq!(shape, [("ram", 1), ("rom_main_00", 2), ("rom_main_01", 2), ("discard", 1)]);
+        let assigned = SCRIPT.replace("    . = ABSOLUTE(0x08009000);\n", "    Size = ABSOLUTE(End - Start);\n");
+        assert!(places(&assigned).unwrap_err().contains(".rom_main assigns \"Size = ABSOLUTE(End - Start)\""));
     }
 
     #[test]

@@ -469,7 +469,6 @@
         "*/games/tbs/src/graphics/tile/bit_dispatch.o"(.text .rodata .data .padding)
         "*/games/tbs/src/graphics/tile/bittable.o"(.data)
         "*/games/tbs/src/graphics/tile/bit_commands.o"(.text .rodata .data .padding)
-        BitDecoder_Size = ABSOLUTE(DebugParty_LoadPreset - BitDecoder_DecodeImage);
         "*/games/tbs/src/debug/battle.o"(.text)
         "*/games/common/src/battle/presentation/tile_pattern.o"(.text)
         "*/games/tbs/src/battle/party/reset.o"(.text)

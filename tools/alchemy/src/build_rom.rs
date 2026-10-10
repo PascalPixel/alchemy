@@ -290,6 +290,10 @@ fn link_key(
     hasher.update(env!("ALCHEMY_HEADER_FIX").as_bytes());
     hasher.update(portable(root, arguments.join("\0").as_bytes()));
     hasher.update(text.as_bytes());
+    for (path, included) in script_includes(root, text)? {
+        hasher.update(path.as_bytes());
+        hasher.update(included.as_bytes());
+    }
     for object in objects {
         let row = index
             .row(object)
@@ -301,6 +305,28 @@ fn link_key(
     }
     hasher.update(fs::read(root.join(LIBGCC)).unwrap_or_default());
     Ok(format!("{:x}", hasher.finalize()))
+}
+
+/// Every file a linker script reads with INCLUDE, and the files those read,
+/// each once in reading order with its text: the linker finds them from the
+/// checkout, where it runs. A link is as old as these too.
+fn script_includes(root: &Path, text: &str) -> Result<Vec<(String, String)>, String> {
+    let pattern = regex::Regex::new(r#"(?m)^\s*INCLUDE\s+(?:"([^"]+)"|(\S+))"#).expect("static pattern");
+    let mut found: Vec<(String, String)> = Vec::new();
+    let mut unread = vec![text.to_owned()];
+    while let Some(text) = unread.pop() {
+        for capture in pattern.captures_iter(&text) {
+            let path = capture.get(1).or(capture.get(2)).expect("one name").as_str();
+            if found.iter().any(|(known, _)| known == path) {
+                continue;
+            }
+            let included = fs::read_to_string(root.join(path))
+                .map_err(|error| format!("INCLUDE {path}: {error}"))?;
+            found.push((path.to_owned(), included.clone()));
+            unread.push(included);
+        }
+    }
+    Ok(found)
 }
 
 fn portable(root: &Path, text: &[u8]) -> Vec<u8> {
@@ -1949,6 +1975,23 @@ mod tests {
         index.bind_source(root.path(), &source, &object).unwrap();
         fs::write(&object, "unrelated object fixture").unwrap();
         assert!(!index.proven_object(root.path(), &object));
+    }
+
+    #[test]
+    fn a_link_reads_the_files_its_script_includes() {
+        let root = tempfile::tempdir().unwrap();
+        fs::create_dir_all(root.path().join("games/g")).unwrap();
+        fs::write(root.path().join("games/g/constants.ld"), "Size = End - Start;\nINCLUDE games/g/more.ld\n").unwrap();
+        fs::write(root.path().join("games/g/more.ld"), "INCLUDE \"games/g/constants.ld\"\nOther = B - A;\n").unwrap();
+        let script = "ENTRY(Start)\nINCLUDE \"games/g/constants.ld\"\nSECTIONS { }\n";
+        let read = script_includes(root.path(), script).unwrap();
+        let paths: Vec<&str> = read.iter().map(|(path, _)| path.as_str()).collect();
+        assert_eq!(paths, ["games/g/constants.ld", "games/g/more.ld"]);
+        assert_eq!(read[1].1, "INCLUDE \"games/g/constants.ld\"\nOther = B - A;\n");
+        fs::write(root.path().join("games/g/more.ld"), "Other = C - A;\n").unwrap();
+        assert_ne!(script_includes(root.path(), script).unwrap(), read);
+        assert!(script_includes(root.path(), "INCLUDE games/g/missing.ld\n").is_err());
+        assert!(script_includes(root.path(), "SECTIONS { }\n").unwrap().is_empty());
     }
 
     #[test]

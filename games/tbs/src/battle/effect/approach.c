@@ -367,16 +367,30 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 							if (tgt->x < 0)
 							{
 								hit = x < 0;
-								/* FAKEMATCH: retain the native sign-result register and duplicated side test; reshaped conditionals speculated or merged this test. */
-								__asm__("" : "+r"(hit));
+								/* FAKEMATCH: conditional cancelling updates end CSE
+								 * before the hit test, preserving the native sign
+								 * result and duplicated side check. Both updates
+								 * disappear; removing both guards loses three
+								 * English instructions and changes 77 rows. */
+								if (tgt)
+								{
+									hit ^= x;
+									hit ^= x;
+								}
 								if (!hit)
 									goto draw_shot;
 							}
 							else
 							{
 								hit = x >= 0;
-								/* FAKEMATCH: retain the native sign-result register and duplicated side test; reshaped conditionals speculated or merged this test. */
-								__asm__("" : "+r"(hit));
+								/* FAKEMATCH: the same CSE block end keeps the
+								 * opposite sign result before its side check;
+								 * the cancelling updates emit no instructions. */
+								if (tgt)
+								{
+									hit ^= x;
+									hit ^= x;
+								}
 								if (!hit)
 									goto draw_shot;
 							}

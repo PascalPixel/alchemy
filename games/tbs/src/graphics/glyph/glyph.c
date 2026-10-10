@@ -511,49 +511,21 @@ void UiWork_ReservedNoOp(void)
 
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind)
 {
-    /* FAKEMATCH: the separate scalar scans retain their running addresses and 88 bytes; a shared typed loop produces 56. */
-    s32 state;
-    s32 off;
+    struct SelectionScreen *state = gResQueueWork;
     s32 i;
-    s32 j;
-    u32 ret;
-    u16 *q;
-    u16 *p;
-    u32 v;
 
-    state = (s32)gResQueueWork;
     if (kind != 0) {
-        i = 0;
-        p = &((struct SelectionScreen *)state)->records[9].kind;
-        off = 0;
-loop_2:
-        if (*p == 0) {
-            return (struct SelectionNode *)(state + off + 0x1d4);
+        for (i = 0; i != 5; i++) {
+            if (state->records[i + 9].kind == 0)
+                return &state->records[i + 9];
         }
-        i = i + 1;
-        p += 0x1A;
-        off = off + 0x34;
-        if (i == 5) {
-            goto block_10;
+    } else {
+        for (i = 0; i != 7; i++) {
+            if (state->records[i + 2].kind == 0)
+                return &state->records[i + 2];
         }
-        goto loop_2;
     }
-    j = 0;
-    ret = state + 0x68;
-    q = &((struct SelectionScreen *)state)->records[2].kind;
-loop_7:
-    v = *q;
-    q += 0x1A;
-    if (v == 0) {
-        return (struct SelectionNode *)ret;
-    }
-    ret += 0x34;
-    j += 1;
-    if (j == 7) {
-block_10:
-        return 0;
-    }
-    goto loop_7;
+    return NULL;
 }
 
 void Resource_ScheduleOwnerResetDelayed(void)

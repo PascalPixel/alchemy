@@ -531,8 +531,15 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 		u32	  offset = 0x100;
 		void *vram;
 
-		/* FAKEMATCH: the empty statement keeps the tile offset a load of its own, ahead of the VRAM address. */
-		__asm__("" : "+r"(offset));
+		/* FAKEMATCH: conditional cancelling updates end CSE before the
+		 * decoder arguments, keeping the VRAM load before the data add.
+		 * They disappear from all 103 instructions in every edition;
+		 * a reassignment or XOR pair instead differs by four rows. */
+		if (session)
+		{
+			offset++;
+			offset--;
+		}
 		vram = (void *)0x06008000;
 		((BitDecoder) * (gWorkSlot + 49))(data + offset, vram);
 	}

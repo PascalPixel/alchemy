@@ -912,17 +912,14 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         kind = UiText_ItemGenders[tmp];
                         word = possessives.text[kind & 3];
 #endif
-                        /* FAKEMATCH: needed to match: value counts the letters, compared unsigned; a counter of its own loses r1 (Italian differs throughout). */
-                        value = 0;
-                        for (;;) {
+                        /* FAKEMATCH: needed to match: value counts the letters, compared unsigned; a counter of its own loses r1 in Spanish and Italian. */
+                        for (value = 0; (u32)value < 16; value++) {
                             if ((c8 = *word++) == 0)
                                 break;
                             if (value == 0 && suffix == 2)
                                 c8 -= 0x20;
                             entry[pos] = c8;
                             pos = (pos + 1) & RENDER_ENTRY_MASK;
-                            if ((u32)++value >= 16)
-                                break;
                         }
                         break;
 #endif

@@ -208,6 +208,45 @@ mod tests {
     use super::*;
 
     #[test]
+    fn offsetof_bridge_does_not_accept_the_unsupported_builtin() {
+        assert!(parse("int f(void) { return __builtin_offsetof(struct S, p); }").is_err());
+        let source = "int f(void) { return offsetof(struct S, p); }";
+        assert!(parse(source).unwrap().print().contains("offsetof(struct S, p)"));
+    }
+
+    #[test]
+    fn compatibility_bundled_parser_inputs_and_printing() {
+        fn decode(text: &str) -> String {
+            let mut result = String::new();
+            let mut chars = text.chars();
+            while let Some(c) = chars.next() {
+                result.push(if c == '\\' { match chars.next().unwrap() { 'n' => '\n', 'r' => '\r', 't' => '\t', '\\' => '\\', other => panic!("unexpected escape {other}") } } else { c });
+            }
+            result
+        }
+        let mut failures = Vec::new();
+        fn topology(node: &Node, out: &mut String) {
+            out.push_str(match node.kind() { "FileAst" => "FileAST", "Id" => "ID", "Attribute" => "GccAttribute", "AttributeStatement" => "GccAttributeStatement", name => name });
+            if let Node::Constant { ty, .. } = node { out.push('\t'); out.push_str(ty); }
+            out.push('\n');
+            for child in node.children() { topology(child, out); }
+        }
+        for (index, row) in include_str!("c/fixtures/parser-cases.tsv").lines().enumerate() {
+            let c: Vec<_> = row.split('\t').map(decode).collect();
+            match parse(&c[1]) {
+                Ok(tree) if tree.print() == c[2] => {
+                    let mut nodes = String::new();
+                    topology(&tree, &mut nodes);
+                    if nodes != c[3] { failures.push(format!("row {index} {}\nsource {}\nactual topology {}\nexpected topology {}", c[0], c[1], nodes, c[3])); }
+                },
+                Ok(tree) => failures.push(format!("row {index} {}\nsource {}\nactual {}\nexpected {}", c[0], c[1], tree.print(), c[2])),
+                Err(error) => failures.push(format!("row {index} {}\nsource {}\nparse error {error}", c[0], c[1])),
+            }
+        }
+        assert!(failures.is_empty(), "{} discrepancies\n{}", failures.len(), failures.join("\n"));
+    }
+
+    #[test]
     fn compatibility_translation_unit_fixtures() {
         for (source, expected, nodes) in [
             (include_str!("c/fixtures/declarations.c"), include_str!("c/fixtures/declarations.expected"), include_str!("c/fixtures/declarations.nodes")),

@@ -1,6 +1,6 @@
 use super::{Node, Optional};
 use lang_c::{ast as c, driver, span::Node as Spanned};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 type Result<T> = std::result::Result<T, String>;
 
@@ -25,7 +25,7 @@ pub fn parse(source: &str) -> Result<Node> {
             let name = format!("{prefix}{}", pragmas.len());
             pragmas.insert(name.clone(), pragma.trim().to_string());
             input += &if decorates_statement(&preceding) { format!("{name}:\n") } else { format!("int {name};\n") };
-        } else if directive.is_some_and(|s| s.starts_with("ident")) {
+        } else if directive.is_some_and(|s| s.starts_with("ident") || s.starts_with("line") || s.starts_with(|c: char| c.is_ascii_digit())) {
             input.push('\n');
         } else {
             // Comments have already served their purpose before preprocessing.
@@ -42,6 +42,7 @@ pub fn parse(source: &str) -> Result<Node> {
         }
     }
     let global_asm = preserve_global_asm(&mut input, &prefix)?;
+    let aliases = permissive_input(&mut input, &prefix)?;
     let mut parsed = parse_input(input)?;
     while let Some((open, close)) = sizeof_cast_ambiguity(&parsed)? {
         let mut input = parsed.source;
@@ -49,11 +50,11 @@ pub fn parse(source: &str) -> Result<Node> {
         input.insert(open, '(');
         parsed = parse_input(input)?;
     }
-    let mut adapter = Adapter { source: parsed.source, pragmas, global_asm, anonymous: 0 };
+    let mut adapter = Adapter { source: parsed.source, pragmas, global_asm, anonymous: 0, prefix: prefix.clone(), typedefs: HashSet::new(), shadowed: HashSet::new() };
     let mut ext = Vec::new();
     for item in &parsed.unit.0 {
         match &item.node {
-            c::ExternalDeclaration::Declaration(d) => ext.extend(adapter.declaration(&d.node)?),
+            c::ExternalDeclaration::Declaration(d) => ext.extend(adapter.declaration(&d.node)?.into_iter().filter(|n| !matches!(n, Node::Typedef { name, .. } if name == &format!("{prefix}int128")))),
             c::ExternalDeclaration::StaticAssert(a) => ext.push(adapter.assertion(&a.node)?),
             c::ExternalDeclaration::FunctionDefinition(f) => {
                 let f = &f.node;
@@ -65,7 +66,121 @@ pub fn parse(source: &str) -> Result<Node> {
             }
         }
     }
-    Ok(Node::FileAst { ext })
+    fn restore(node: &mut Node, aliases: &HashMap<String, String>) {
+        let value = match node {
+            Node::Id { name } | Node::Label { name, .. } | Node::Goto { name } => Some(name),
+            Node::Decl { name, .. } | Node::TypeDecl { declname: name, .. } => name.as_mut(),
+            _ => None,
+        };
+        if let Some(value) = value { if let Some(original) = aliases.get(value) { *value = original.clone(); } }
+        for child in node.children_mut() { restore(child, aliases); }
+    }
+    let mut unit = Node::FileAst { ext };
+    restore(&mut unit, &aliases);
+    Ok(unit)
+}
+
+/// Bridge grammar differences while preserving the candidate tree and names.
+fn permissive_input(input: &mut String, prefix: &str) -> Result<HashMap<String, String>> {
+    use crate::permute::lex::{lex, Tok};
+    let tokens = lex(input)?;
+    let mut patches = Vec::new();
+    let mut aliases = HashMap::new();
+    // Keep a reused typedef name visible until the parameter list is complete.
+    let mut typedefs = HashSet::new();
+    for (i, token) in tokens.iter().enumerate() {
+        if matches!(&token.tok, Tok::Ident(s) if s == "typedef") {
+            if let Some(end) = tokens[i..].iter().position(|t| t.tok == Tok::Punct(";")) {
+                if let Some(Tok::Ident(name)) = i.checked_add(end).and_then(|end| end.checked_sub(1)).map(|end| &tokens[end].tok) { typedefs.insert(name.clone()); }
+            }
+        }
+    }
+    let mut brace_depth = 0usize;
+    let mut paren_depth = 0usize;
+    for (i, token) in tokens.iter().enumerate() {
+        if token.tok == Tok::Punct("(") && brace_depth == 0 && paren_depth == 0
+            && i > 0 && matches!(&tokens[i - 1].tok, Tok::Ident(s) if !matches!(s.as_str(), "_Atomic" | "_Alignas" | "_Static_assert" | "__attribute__" | "asm" | "__asm__" | "typeof" | "__typeof__")) {
+            let mut depth = 1;
+            let mut renamed = HashMap::new();
+            let mut end = i + 1;
+            while end < tokens.len() && depth > 0 {
+                let t = &tokens[end];
+                if depth == 1 {
+                    if let Tok::Ident(name) = &t.tok {
+                        if typedefs.contains(name) && matches!(&tokens[end - 1].tok, Tok::Ident(s) if typedefs.contains(s) || matches!(s.as_str(), "int" | "unsigned" | "signed" | "long" | "short" | "char" | "float" | "double" | "_Bool"))
+                            && tokens.get(end + 1).is_some_and(|t| matches!(t.tok, Tok::Punct("," | ")" | "["))) {
+                            let alias = format!("{prefix}parameter_{}", aliases.len());
+                            patches.push((t.start, t.end, alias.clone()));
+                            aliases.insert(alias.clone(), name.clone());
+                            renamed.insert(name.clone(), alias);
+                        }
+                    }
+                }
+                match t.tok { Tok::Punct("(") => depth += 1, Tok::Punct(")") => depth -= 1, _ => {} }
+                end += 1;
+            }
+            if !renamed.is_empty() && tokens.get(end).is_some_and(|t| t.tok == Tok::Punct("{")) {
+                let mut depth = 1;
+                end += 1;
+                while end < tokens.len() && depth > 0 {
+                    let t = &tokens[end];
+                    if let Tok::Ident(name) = &t.tok { if let Some(alias) = renamed.get(name) { patches.push((t.start, t.end, alias.clone())); } }
+                    match t.tok { Tok::Punct("{") => depth += 1, Tok::Punct("}") => depth -= 1, _ => {} }
+                    end += 1;
+                }
+            }
+        }
+        match token.tok { Tok::Punct("{") => brace_depth += 1, Tok::Punct("}") => brace_depth = brace_depth.saturating_sub(1), Tok::Punct("(") => paren_depth += 1, Tok::Punct(")") => paren_depth = paren_depth.saturating_sub(1), _ => {} }
+    }
+    let mut braces = Vec::new();
+    let mut record = false;
+    let mut int128 = false;
+    let mut parentheses = 0usize;
+    for (i, token) in tokens.iter().enumerate() {
+        match &token.tok {
+            Tok::Punct("(") => parentheses += 1,
+            Tok::Punct(")") => parentheses = parentheses.saturating_sub(1),
+            Tok::Ident(s) if matches!(s.as_str(), "struct" | "union") => record = true,
+            Tok::Punct("{") => { braces.push(record); record = false; },
+            Tok::Punct("}") => { braces.pop(); },
+            Tok::Punct(";") if (braces.is_empty() || braces.last() == Some(&true)) && (i == 0 || matches!(tokens[i - 1].tok, Tok::Punct(";" | "{"))) => patches.push((token.start, token.end, String::new())),
+            Tok::Punct(":") if tokens.get(i + 1).is_some_and(|t| t.tok == Tok::Punct("}")) => patches.push((token.end, token.end, ";".into())),
+            Tok::Ident(s) if s == "__int128" => { patches.push((token.start, token.end, format!("{prefix}int128"))); int128 = true; },
+            Tok::Ident(s) if s == "__builtin_offsetof" => return Err("__builtin_offsetof is not supported by the C parser".into()),
+            Tok::Ident(s) if s == "offsetof" && tokens.get(i + 1).is_some_and(|t| t.tok == Tok::Punct("(")) => patches.push((token.start, token.end, "__builtin_offsetof".into())),
+            Tok::Ident(s) if matches!(s.as_str(), "_Alignas" | "_Static_assert") => {
+                let mut depth = 0;
+                let mut comma = false;
+                for end in i + 1..tokens.len() {
+                    match tokens[end].tok {
+                        Tok::Punct("(") => depth += 1,
+                        Tok::Punct(")") => depth -= 1,
+                        Tok::Punct(",") if depth == 1 => comma = true,
+                        _ => {},
+                    }
+                    if depth == 0 {
+                        if s == "_Alignas" {
+                            if braces.last() != Some(&true) { break; }
+                            let args = &input[tokens[i + 1].end..tokens[end].start];
+                            patches.push((token.start, tokens[end].end, format!("__attribute__(({prefix}align(sizeof({args}))))")));
+                        } else if !comma { patches.push((tokens[end].start, tokens[end].start, format!(",\"{prefix}assert\""))); }
+                        break;
+                    }
+                }
+            },
+            Tok::Ident(s) if braces.is_empty() && parentheses == 0
+                && !typedefs.contains(s)
+                && tokens.get(i + 1).is_some_and(|t| t.tok == Tok::Punct("("))
+                && (i == 0 || match &tokens[i - 1].tok { Tok::Punct(";" | "}") => true, Tok::Ident(s) => matches!(s.as_str(), "extern" | "static" | "inline"), _ => false })
+                && !matches!(s.as_str(), "int" | "void" | "char" | "short" | "long" | "float" | "double" | "signed" | "unsigned" | "_Bool" | "asm" | "__asm" | "__asm__" | "_Atomic" | "typeof" | "__typeof__" | "__typeof" | "__attribute__" | "__extension__") => patches.push((token.start, token.start, "int ".into())),
+            _ => {},
+        }
+        if token.tok == Tok::Punct(";") { record = false; }
+    }
+    patches.sort_by_key(|p| (p.0, p.1));
+    for (start, end, text) in patches.into_iter().rev() { input.replace_range(start..end, &text); }
+    if int128 { input.insert_str(0, &format!("typedef int {prefix}int128;\n")); }
+    Ok(aliases)
 }
 
 fn preserve_global_asm(input: &mut String, prefix: &str) -> Result<HashMap<String, Node>> {
@@ -208,7 +323,7 @@ struct Specs {
     asmlabel: Optional,
 }
 
-struct Adapter { source: String, pragmas: HashMap<String, String>, global_asm: HashMap<String, Node>, anonymous: usize }
+struct Adapter { source: String, pragmas: HashMap<String, String>, global_asm: HashMap<String, Node>, anonymous: usize, prefix: String, typedefs: HashSet<String>, shadowed: HashSet<String> }
 
 fn name(decl: &c::Declarator) -> Option<String> {
     match &decl.kind.node {
@@ -265,7 +380,14 @@ impl Adapter {
             }
             E::CompoundLiteral(n) => Node::CompoundLiteral { ty: self.typename(&n.node.type_name.node)?.boxed(), init: self.initializer_list(&n.node.initializer_list)?.boxed() },
             E::SizeOfTy(n) => Node::UnaryOp { op: "sizeof".into(), expr: self.typename(&n.node.0.node)?.boxed() },
-            E::SizeOfVal(n) => Node::UnaryOp { op: "sizeof".into(), expr: self.expression(&n.node.0)?.boxed() },
+            E::SizeOfVal(n) => {
+                let expr = if let E::Identifier(id) = &n.node.0.node {
+                    if self.typedefs.contains(&id.node.name) && !self.shadowed.contains(&id.node.name) {
+                        Node::Typename { name: None, quals: Vec::new(), align: Vec::new(), attributes: Vec::new(), ty: Node::TypeDecl { declname: None, quals: Vec::new(), align: Vec::new(), ty: Node::IdentifierType { names: vec![id.node.name.clone()] }.boxed() }.boxed() }
+                    } else { self.expression(&n.node.0)? }
+                } else { self.expression(&n.node.0)? };
+                Node::UnaryOp { op: "sizeof".into(), expr: expr.boxed() }
+            },
             E::AlignOf(n) => Node::UnaryOp { op: "_Alignof".into(), expr: self.typename(&n.node.0.node)?.boxed() },
             E::UnaryOperator(n) => {
                 use c::UnaryOperator as U;
@@ -290,7 +412,16 @@ impl Adapter {
             E::Conditional(n) => Node::TernaryOp { cond: self.expression(&n.node.condition)?.boxed(), iftrue: self.expression(&n.node.then_expression)?.boxed(), iffalse: self.expression(&n.node.else_expression)?.boxed() },
             E::Comma(nodes) => Node::ExprList { exprs: nodes.iter().map(|n| self.expression(n)).collect::<Result<_>>()? },
             E::Statement(n) => self.statement(&n.node)?,
-            E::GenericSelection(_) | E::OffsetOf(_) | E::VaArg(_) => return Err("C expression is not supported by the C tree".into()),
+            E::OffsetOf(o) => {
+                let mut field = Node::id(&o.node.designator.node.base.node.name);
+                for member in &o.node.designator.node.members { field = match &member.node {
+                    c::OffsetMember::Member(id) => Node::StructRef { name: field.boxed(), op: ".".into(), field: Node::id(&id.node.name).boxed() },
+                    c::OffsetMember::IndirectMember(id) => Node::StructRef { name: field.boxed(), op: "->".into(), field: Node::id(&id.node.name).boxed() },
+                    c::OffsetMember::Index(index) => Node::ArrayRef { name: field.boxed(), subscript: self.expression(index)?.boxed() },
+                }; }
+                Node::FuncCall { name: Node::id("offsetof").boxed(), args: Some(Node::ExprList { exprs: vec![self.typename(&o.node.type_name.node)?, field] }.boxed()) }
+            },
+            E::GenericSelection(_) | E::VaArg(_) => return Err("C expression is not supported by the C tree".into()),
         })
     }
 
@@ -331,12 +462,26 @@ impl Adapter {
                 c::DeclarationSpecifier::Alignment(a) => result.align.push(Node::Alignas { alignment: match &a.node { c::AlignmentSpecifier::Type(t) => self.typename(&t.node)?.boxed(), c::AlignmentSpecifier::Constant(e) => self.expression(e)?.boxed() } }),
                 c::DeclarationSpecifier::Extension(e) => {
                     let (attrs, label) = self.extensions(e)?;
+                    let mut ordinary = Vec::new();
+                    for attr in attrs {
+                        if let Node::Attribute { name, args: Some(args) } = &attr {
+                            if name == &format!("{}align", self.prefix) {
+                                let Node::UnaryOp { op, expr } = &args[0] else { unreachable!() };
+                                assert_eq!(op, "sizeof");
+                                result.align.push(Node::Alignas { alignment: expr.clone() });
+                                continue;
+                            }
+                        }
+                        ordinary.push(attr);
+                    }
                     if record_attributes {
                         match &mut result.base {
-                            Node::Struct { attributes, .. } | Node::Union { attributes, .. } | Node::Enum { attributes, .. } => attributes.extend(attrs),
+                            Node::Struct { attributes, .. } | Node::Union { attributes, .. } | Node::Enum { attributes, .. } => attributes.extend(ordinary),
                             _ => unreachable!(),
                         }
-                    } else { result.attributes.extend(attrs); }
+                    } else {
+                        result.attributes.extend(ordinary);
+                    }
                     if label.is_some() { result.asmlabel = label; }
                 }
             }
@@ -358,7 +503,7 @@ impl Adapter {
         use c::TypeSpecifier as T;
         let keyword = match &t.node {
             T::Void => "void", T::Char => "char", T::Short => "short", T::Int => "int", T::Long => "long", T::Float => "float", T::Double => "double", T::Signed => "signed", T::Unsigned => "unsigned", T::Bool => "_Bool", T::Complex => "_Complex",
-            T::TypedefName(n) => return Ok(Node::IdentifierType { names: vec![n.node.name.clone()] }),
+            T::TypedefName(n) => return Ok(Node::IdentifierType { names: vec![if n.node.name == format!("{}int128", self.prefix) { "__int128".into() } else { n.node.name.clone() }] }),
             T::Struct(s) => {
                 let mut decls = None;
                 if let Some(fields) = &s.node.declarations {
@@ -438,6 +583,9 @@ impl Adapter {
             return Ok(vec![self.decl(&specs, None, None, None)?]);
         }
         self.name_shared_type(&mut specs.base, declaration.declarators.len());
+        let mut base = &mut specs.base;
+        while let Node::PtrDecl { ty, .. } | Node::ArrayDecl { ty, .. } | Node::FuncDecl { ty, .. } = base { base = ty; }
+        if let Node::TypeDecl { declname, .. } = base { *declname = name(&declaration.declarators[0].node.declarator.node); }
         let mut result = Vec::new();
         for (i, d) in declaration.declarators.iter().enumerate() {
             if i > 0 { Self::forward_type(&mut specs.base); }
@@ -449,6 +597,11 @@ impl Adapter {
                 result.push(self.decl(&specs, Some(&d.node.declarator), d.node.initializer.as_ref(), None)?);
             }
         }
+        for node in &result { match node {
+            Node::Typedef { name, .. } => { self.typedefs.insert(name.clone()); self.shadowed.remove(name); },
+            Node::Decl { name: Some(name), .. } => { self.shadowed.insert(name.clone()); },
+            _ => {},
+        } }
         Ok(result)
     }
 
@@ -480,7 +633,7 @@ impl Adapter {
             let mut ty = specs.base.clone();
             let mut inner = &mut ty;
             while let Node::PtrDecl { ty, .. } | Node::ArrayDecl { ty, .. } | Node::FuncDecl { ty, .. } = inner { inner = ty; }
-            if let Node::TypeDecl { declname, .. } = inner { *declname = name; }
+            if let Node::TypeDecl { declname, .. } = inner { if declname.is_none() { *declname = name; } }
             ty
         } else {
             Node::TypeDecl { declname: name, quals: specs.quals.clone(), align: specs.align.clone(), ty: specs.base.clone().boxed() }
@@ -507,7 +660,11 @@ impl Adapter {
                         c::ArraySize::Unknown => None,
                         c::ArraySize::VariableUnknown => Some(Node::id("*").boxed()),
                         c::ArraySize::VariableExpression(e) => Some(self.expression(e)?.boxed()),
-                        c::ArraySize::StaticExpression(e) => { dim_quals.insert(0, "static".into()); Some(self.expression(e)?.boxed()) }
+                        c::ArraySize::StaticExpression(e) => {
+                            let at = self.text(a).find("static").unwrap();
+                            let before = a.node.qualifiers.iter().filter(|q| q.span.start < a.span.start + at).count();
+                            dim_quals.insert(before, "static".into()); Some(self.expression(e)?.boxed())
+                        }
                     };
                     ty = Node::ArrayDecl { ty: ty.boxed(), dim, dim_quals };
                 }
@@ -515,7 +672,17 @@ impl Adapter {
                     let mut params = Vec::new();
                     for p in &f.node.parameters {
                         let specs = self.specifiers(&p.node.specifiers)?;
-                        let decl = self.decl(&specs, p.node.declarator.as_ref(), None, None)?;
+                        let mut decl = self.decl(&specs, p.node.declarator.as_ref(), None, None)?;
+                        if let Node::Decl { name: Some(name), ty, .. } = &decl {
+                            if self.typedefs.contains(name) && !self.shadowed.contains(name) && p.node.declarator.as_ref().is_some_and(|d| matches!(d.node.kind.node, c::DeclaratorKind::Declarator(_))) {
+                                let mut argument_type = *ty.clone();
+                                let mut core = &mut argument_type;
+                                while let Node::PtrDecl { ty, .. } | Node::ArrayDecl { ty, .. } | Node::FuncDecl { ty, .. } = core { core = ty; }
+                                if let Node::TypeDecl { declname, ty, .. } = core { *declname = None; **ty = Node::IdentifierType { names: vec![name.clone()] }; }
+                                let argument = Node::Typename { name: None, quals: Vec::new(), align: Vec::new(), attributes: Vec::new(), ty: argument_type.boxed() };
+                                decl = Node::Typename { name: None, quals: specs.quals.clone(), align: specs.align.clone(), attributes: specs.attributes.clone(), ty: Node::FuncDecl { args: Some(Node::ParamList { params: vec![argument] }.boxed()), ty: Self::base_type(&specs, None).boxed() }.boxed() };
+                            }
+                        }
                         params.push(if let Node::Decl { name: None, quals, align, attributes, ty, .. } = decl { Node::Typename { name: None, quals, align, attributes, ty } } else { decl });
                     }
                     if f.node.ellipsis == c::Ellipsis::Some { params.push(Node::EllipsisParam {}); }
@@ -523,8 +690,8 @@ impl Adapter {
                     ty = Node::FuncDecl { args, ty: ty.boxed() };
                 }
                 c::DerivedDeclarator::KRFunction(ids) => {
-                    let params = ids.iter().map(|i| Node::id(&i.node.name)).collect();
-                    ty = Node::FuncDecl { args: Some(Node::ParamList { params }.boxed()), ty: ty.boxed() };
+                    let params: Vec<_> = ids.iter().map(|i| Node::id(&i.node.name)).collect();
+                    ty = Node::FuncDecl { args: (!params.is_empty()).then(|| Node::ParamList { params }.boxed()), ty: ty.boxed() };
                 }
                 c::DerivedDeclarator::Block(_) => return Err("Clang blocks are not supported".into()),
             }
@@ -564,19 +731,25 @@ impl Adapter {
     }
 
     fn assertion(&mut self, a: &c::StaticAssert) -> Result<Node> {
-        Ok(Node::StaticAssert { cond: self.expression(&a.expression)?.boxed(), message: Some(self.string(&a.message.node).boxed()) })
+        let message = self.string(&a.message.node);
+        let message = if matches!(&message, Node::Constant { value, .. } if value == &format!("\"{}assert\"", self.prefix)) { None } else { Some(message.boxed()) };
+        Ok(Node::StaticAssert { cond: self.expression(&a.expression)?.boxed(), message })
     }
 
     fn statement(&mut self, s: &c::Statement) -> Result<Node> {
         use c::Statement as S;
         Ok(match s {
             S::Compound(items) => {
+                let typedefs = self.typedefs.clone();
+                let shadowed = self.shadowed.clone();
                 let mut block_items = Vec::new();
                 for item in items { match &item.node {
                     c::BlockItem::Declaration(d) => block_items.extend(self.declaration(&d.node)?),
-                    c::BlockItem::StaticAssert(a) => block_items.push(self.assertion(&a.node)?),
+                    c::BlockItem::StaticAssert(a) => { block_items.push(self.assertion(&a.node)?); block_items.push(Node::EmptyStatement {}); },
                     c::BlockItem::Statement(s) => block_items.push(self.statement(&s.node)?),
                 } }
+                self.typedefs = typedefs;
+                self.shadowed = shadowed;
                 Node::Compound { block_items }
             }
             S::Expression(None) => Node::EmptyStatement {},

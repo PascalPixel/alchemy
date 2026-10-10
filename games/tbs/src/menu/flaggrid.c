@@ -277,6 +277,7 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     s32 tile;
     s32 slot;
     s32 cancel;
+    u32 slot_offset;
 
     work = gWindowWork;
     redraw = 1;
@@ -291,6 +292,8 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     /* FAKEMATCH: the count-derived mask is needed to match the native mask
      * in r9 and work in fp; a direct constant swaps them (four instructions). */
     cancel = ((u32)(u16)count >> 16) | KEY_B;
+    /* FAKEMATCH: defining the offset before the loop keeps its load in r1; defining it inside redraw uses r3 (4 instructions differ in all six editions). */
+    slot_offset = RENDER_SLOT_VALUE_OFS + 2;
     while (1) {
         if (gKeysRepeat & KEY_LEFT) {
             redraw = 1;
@@ -321,12 +324,10 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
             else
                 glyph = Portrait_SpriteMap[(index - count) * 2 + 1] + 128;
             {
-                /* FAKEMATCH: forced temporary pinned to r1; reload otherwise adds the offset to fp in r3. */
-                register u32 off asm("r1") = RENDER_SLOT_VALUE_OFS + 2;
                 /* FAKEMATCH: the word temporary is needed to match palette's
                  * r2 through the slot store; direct assignment chooses r3. */
                 s32 pal;
-                s32 loaded = *(u16 *)((u8 *)work + off);
+                s32 loaded = *(u16 *)((u8 *)work + slot_offset);
                 pal = 15;
                 slot = loaded;
                 UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, pal, 1);

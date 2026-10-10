@@ -399,6 +399,9 @@ void RamakanSabaku_SweepBack(void)
     s32 count;
     const s32 *points;
     s32 left;
+    /* Ordinary offset with a generic input/output boundary after its
+     * increment, or an input after point calculation, differs 10 in EN
+     * (228 native/built, 223 common). Repeated input operands retain 10. */
     /* FAKEMATCH: the game keeps the byte offset in r6 and the countdown in r7; unpinned, the countdown outranks it and takes r6. */
     register s32 offset asm("r6");
     const s32 *point;

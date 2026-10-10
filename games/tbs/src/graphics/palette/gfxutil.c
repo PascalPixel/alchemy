@@ -573,7 +573,7 @@ s32 SaveState_LoadSummaryRecords(void)
 
 u32 SaveState_ReleaseWorkspace(void)
 {
-    /* FAKEMATCH: the ignored-result definition keeps the return-address pop in r1; void selects r0. */
+    // 値を返さない int 関数 (pop {r1}; bx r1)
     Runtime_SetIrqHandler(5, 0, NULL);
     Runtime_ReleaseHeapBlock(51);
 }

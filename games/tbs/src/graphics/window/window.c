@@ -400,7 +400,6 @@ void UiWindow_ClearInteriorTiles(const struct RenderInput *window,
     top = y + 1;
     width = right - x;
     height = bottom - y;
-    /* FAKEMATCH: needed to match: the ignored scalar call loads r0 after r1/r2; the void helper declaration loads r0 first. */
     UiWindow_ClearTileAttributesInRect(left, top, width, height);
     tiles = work->tilemap + top * 32 + left;
     for (row = 0; row < height; row++) {

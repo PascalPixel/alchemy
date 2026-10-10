@@ -3,37 +3,27 @@
 #include "glyph.h"
 #include "text_font.h"
 
-/* ARM draft: EN matches; DE/ES/FR/IT differ 4 (two reordered stores).
-   Japanese C is adopted in graphics/text/moji.c. English has also passed
-   all twelve ROM comparisons when linked there, but its one emitting asm
-   exceeds the device baseline; adoption awaits Pascal's decision.
+/* ARM draft: EN/DE/ES/FR/IT match; JA is adopted in graphics/text/moji.c.
+   International adoption awaits approval of the device-baseline increase.
+   All twelve complete ROMs compare OK with this candidate linked from
+   graphics/text/moji.c; publication, aliases, hygiene and no-asm pass.
+   Proposed TBS devices: barriers 46 -> 50, inline asm 0 -> 2, pins 39 -> 40.
 
-   Remaining continental differences, with all registers and slots matching:
-     STR r0,[sp,#28] must follow CMP r3,#0.
-     STR r2,[sp,#24] must follow ADD r1,r1,#17.
-
-   2026-10-10: ordinary C remains EN differ 2 and continental differ 10.
-   Two 100,000-run English searches and 576 entry forms kept that result.
+   2026-10-10: ordinary C reached EN differ 2 and continental differ 10.
+   Two 100,000-run English searches and 576 entry forms retained that result.
    agbcc_arm gives PUSH -> ordinary MOV and PUSH -> SUB equal cost 5;
    sched2 retains SUB first. Its unrecognized-asm dependency has cost 1.
-   A tagged MOV closes English, and two MOVs close the continental entry.
-   Keeping the boundary before the window copy restores its spill order.
+   One tagged MOV closes English; two close the continental entry.
 
-   The early clipping comparison and separate width copy restore CMP/STR.
-   Raw width otherwise prefers r0 (or r3), so an empty-asm constraint keeps
-   r2. The second table read is already removed before allocation: the
-   earlier note blaming table-address lifetime was wrong. The table/index
-   both die at LDRB; raw width's return-register preference is the issue.
-   Before that constraint, 288 typed variants reached differ 12; 35,541
-   random refinements, 432 normalization variants and 32 type/lifetime
-   forms did not improve it.
-
-   A repeated height read plus separate copy restores CMP/STR but moves
-   height to r2 and font to lr; retaining zero height bits through palette
-   setup recovers the tail, leaving differ 14. An empty source barrier can
-   move its spill after color1, but then color1 spills before color3's MOV.
-   Typed source copies and palette constraints did not close both orders.
-   A 38,998-candidate search around height/palette retains this differ 4. */
+   Continental clipping needs a separate width copy excluding r0/r3.
+   The repeated table read is removed before allocation; raw width's
+   return-register preference, not table lifetime, caused the difference.
+   Typed variants and random searches retained two reordered stores.
+   A dead high-half return gives the zero-extended height r0 preference;
+   palette constraints put both stores in their native positions. A spare
+   color3 barrier and source clobber were removed after the first match.
+   Removing the remaining color1 pin differs 17; folding color3's split
+   construction or removing its input from the copy barrier differs 2. */
 
 extern const u8 UiText_GlyphWidths[];
 
@@ -104,6 +94,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 #if defined(TBS_EDITION_EN)
 	u32 index;
 #else
+	u32 raw_stride;
 	u32 use_font;
 #endif
 	u32 row;
@@ -142,11 +133,21 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 		width = input_window->height;
 	stride = width;
 #else
-	/* FAKEMATCH: the one-pass height read preserves the load's scheduling boundary. */
+	/* FAKEMATCH: height is u16, so the return is unreachable. It gives the
+	   height r0 preference through allocation; jump2 removes it. The separate
+	   read/copy places CMP before STR without changing the load's register. */
 	do
 	{
-		stride = window->height;
+		raw_stride = window->height;
 	} while (0);
+	do
+	{
+		if (raw_stride & 0xffff0000U)
+			return raw_stride;
+	} while (0);
+	if (!use_font)
+		raw_stride = window->height;
+	stride = raw_stride;
 #endif
 #if defined(TBS_EDITION_EN)
 	if (index > 111)
@@ -174,6 +175,10 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 		{
 			const u8 *source;
 			u32 color1;
+#if !defined(TBS_EDITION_EN)
+			/* FAKEMATCH: native color1 is built in r1; unpinning differs 17. */
+			register u32 raw_color1 asm("r1");
+#endif
 			u32 color3;
 			u32 font_width;
 			u32 raw_width;
@@ -193,9 +198,20 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 			if (!(stride >> 16))
 				color1 += width & 0xffff0000U;
 #else
-			color1 = 0x1111;
+			raw_color1 = 0x1111;
+			/* FAKEMATCH: the source spill follows color1's ADD; removing this differs 2. */
+			asm("" : "=r"(source) : "0"(source), "r"(raw_color1));
 #endif
+#if defined(TBS_EDITION_EN)
 			color3 = 0x3333;
+#else
+			color3 = 0x3300;
+			/* FAKEMATCH: color1 spills between color3's MOV and ADD; folding color3 differs 2. */
+			asm("" : "=r"(color1) : "0"(raw_color1), "r"(color3));
+			color3 += 0x33;
+			/* FAKEMATCH: retain height in r0 through palette setup, leaving r1/r2 for its constants. */
+			asm("" : : "r"(raw_stride));
+#endif
 			do { } while (0);
 #if defined(TBS_EDITION_EN)
 			{
@@ -219,8 +235,12 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 #else
 			row = 0;
 			/* FAKEMATCH: the early comparison keeps the width spill after CMP. */
-			do { raw_width = UiText_GlyphWidths[character - 32]; } while (0);
-			if (y > 31) raw_width = UiText_GlyphWidths[character - 32];
+			do
+			{
+				raw_width = UiText_GlyphWidths[character - 32];
+			} while (0);
+			if (y > 31)
+				raw_width = UiText_GlyphWidths[character - 32];
 			/* FAKEMATCH: exclude r0/r3 for the native r2 load/spill (differ 8 -> 4). */
 			asm("" : "=r"(font_width) : "0"(raw_width) : "r0", "r3");
 #endif
@@ -266,7 +286,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 font_done:
 			return font_width;
 		}
-#if   defined(TBS_EDITION_EN)
+#if defined(TBS_EDITION_EN)
 		mark = character - 222;
 #endif
 		rows = (const u16 *)((const u8 *)UiText_Glyphs + (character - 32) * 26);

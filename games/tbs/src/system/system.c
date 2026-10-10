@@ -482,52 +482,69 @@ void WaitFrames(s32 frames)
             System_SoftReset();
         }
     }
-    if (gSavedStackSize) {
-        /* FAKEMATCH: needed to match: XOR cancellation keeps the initial base
-         * live across the frame loop. A plain sp assignment shrinks the frame
-         * from eight bytes to four (65 aligned differences); the one-pass
-         * boundary retains the restore copy's order. */
-        u8 *restore;
+    {
+        u32 *size = &gSavedStackSize;
 
-        /* FAKEMATCH: tying the old base to the hardware read keeps the eight-byte frame and removes an extra copy through ip. */
-        CAMELOT_ASM("read the hardware stack pointer for its restore copy")
-        __asm__ volatile("mov %0, sp" : "+r"(base));
-        sp = base;
-        restore = (u8 *)((u32)sp ^ (u32)base);
+        if (*size) {
+            /* FAKEMATCH: needed to match: XOR cancellation keeps the initial base
+             * live across the frame loop. A plain sp assignment shrinks the frame
+             * from eight bytes to four (65 aligned differences); the one-pass
+             * boundary retains the restore copy's order. */
+            u8 *restore;
 
-        restore = (u8 *)((u32)restore ^ (u32)base);
-        do {
-            base = restore;
-        } while (0);
-        /* FAKEMATCH: needed to match: the one-pass copy guard retains the
-         * current-SP copy in sl. A plain restore loses that copy and differs
-         * by five aligned instructions (403 native, 402 built, 400 common),
-         * shrinking 0x434 bytes to 0x430. The redundant guard ends CSE at the
-         * copy without emitting an extra comparison. */
-        do {
-            if (base == sp)
-                break;
-            base = sp;
-        } while (0);
-        /* FAKEMATCH: needed to match: the volatile reread keeps this saved-size
-         * load separate from the conditional read (7 aligned differences
-         * without this qualification). */
-        base -= *(volatile u32 *)&gSavedStackSize;
-        /* FAKEMATCH: needed to match: the cancelling restore identity keeps
-         * the result in base before installing sp. A direct assignment swaps
-         * the native high-register copy pair (4 aligned differences, same
-         * 0x434-byte extent); the identity restores both without a binding. */
-        restore = (u8 *)((u32)base ^ (u32)sp);
-        restore = (u8 *)((u32)restore ^ (u32)sp);
-        sp = restore;
-        CAMELOT_ASM("restore the hardware stack pointer after the proven stack copy")
-        __asm__ volatile("mov sp, %0" : : "r"(sp) : "sp", "memory");
-        /* FAKEMATCH: the operand-only asm flushes CSE, preserving the measured reload of the saved-stack-size address. */
-        __asm__ volatile("" : : "r"(base));
-        Dma_Set(gSavedStack, base, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
-        while (DMA3->control & DMA_ENABLE32)
-            ;
-        gSavedStackSize = 0;
+            /* FAKEMATCH: tying the old base to the hardware read keeps the eight-byte frame and removes an extra copy through ip. */
+            CAMELOT_ASM("read the hardware stack pointer for its restore copy")
+            __asm__ volatile("mov %0, sp" : "+r"(base));
+            sp = base;
+            restore = (u8 *)((u32)sp ^ (u32)base);
+
+            restore = (u8 *)((u32)restore ^ (u32)base);
+            do {
+                base = restore;
+            } while (0);
+            /* FAKEMATCH: needed to match: the one-pass copy guard retains the
+             * current-SP copy in sl. A plain restore loses that copy and differs
+             * by five aligned instructions (403 native, 402 built, 400 common),
+             * shrinking 0x434 bytes to 0x430. The redundant guard ends CSE at the
+             * copy without emitting an extra comparison. */
+            do {
+                if (base == sp)
+                    break;
+                base = sp;
+            } while (0);
+            /* FAKEMATCH: needed to match: the volatile reread keeps this saved-size
+             * load separate from the conditional read (7 aligned differences
+             * without this qualification). */
+            base -= *(volatile u32 *)size;
+            /* FAKEMATCH: needed to match: the cancelling restore identity keeps
+             * the result in base before installing sp. A direct assignment swaps
+             * the native high-register copy pair (4 aligned differences, same
+             * 0x434-byte extent); the identity restores both without a binding. */
+            restore = (u8 *)((u32)base ^ (u32)sp);
+            restore = (u8 *)((u32)restore ^ (u32)sp);
+            sp = restore;
+            CAMELOT_ASM("restore the hardware stack pointer after the proven stack copy")
+            __asm__ volatile("mov sp, %0" : : "r"(sp) : "sp", "memory");
+            /* FAKEMATCH: clearing the old address and restoring a separate
+             * pointer in complementary conditions ends the restore CSE block.
+             * The conditions vanish, retaining the size-address reload in r3
+             * and its load into r2. Reusing size instead of next_size changes
+             * that pair to r2/r2 (4 aligned differences, same 0x434 extent);
+             * deleting the empty barrier alone gives 24 differences. */
+            size = NULL;
+            {
+                u32 *next_size = NULL;
+
+                if (sp)
+                    next_size = &gSavedStackSize;
+                if (!sp)
+                    next_size = &gSavedStackSize;
+                Dma_Set(gSavedStack, base, (*next_size >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+            }
+            while (DMA3->control & DMA_ENABLE32)
+                ;
+            gSavedStackSize = 0;
+        }
     }
 }
 

@@ -4,6 +4,10 @@
  * separately leaves the same swap. One-pass initialization, call and whole
  * helper blocks, XOR cancellation, add/sub cancellation and a redundant
  * copy guard also leave two differences. Linked helper remains unchanged. */
+/* Reordering the inline helper's height, frame and actor parameters (and
+ * its caller arguments together) retains differ 2 in three orders. Branching
+ * on actor == height differs 10; actor == frames differs 8, with eight extra
+ * instructions. Neither conditional call form is adopted. */
 #ifndef TLA_DERI_HEYA_DERI_H
 #define TLA_DERI_HEYA_DERI_H
 
@@ -127,4 +131,3 @@ void Func_020000ac(s32 unused, s32 actor)
     }
     Deri_Wait(20);
 }
-

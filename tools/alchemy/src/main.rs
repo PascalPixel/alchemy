@@ -35,6 +35,7 @@ mod label;
 mod ld_map;
 mod merge;
 mod modern;
+mod object_list;
 mod objects;
 mod packer;
 mod permute;

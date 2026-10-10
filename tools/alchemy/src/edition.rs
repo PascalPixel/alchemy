@@ -40,6 +40,166 @@ pub(crate) fn script_text(root: &Path, target: DecompTarget) -> Result<Option<St
     Ok(Some(text))
 }
 
+/// One of an edition's linked images: the cartridge image, or an overlay by
+/// its resource id.
+#[derive(Clone, Copy, Debug)]
+pub(crate) enum Image<'a> {
+    Main,
+    Overlay(&'a str),
+}
+
+/// One input-section statement of a linker script, `"*/OBJECT.o"(SECTIONS)`,
+/// in the output section that holds it.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct Statement {
+    /// The output section's name: `.rom_main`, `ewram`, `/DISCARD/`.
+    pub section: String,
+    /// The object without `.o`: a path from the checkout, an archive member
+    /// (`libgcc.a:_call_via_rX`), an overlay's own `resource_<id>_overlay`,
+    /// or `*` for every object.
+    pub object: String,
+    /// The input sections, as the script spells them.
+    pub sections: String,
+}
+
+impl Statement {
+    /// The object the build makes from a source: not an archive member, and
+    /// not a pattern for every object.
+    pub(crate) fn built(&self) -> bool {
+        !self.object.contains([':', '*'])
+    }
+}
+
+/// What a statement in an output section's body is.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) enum Item {
+    Input(Statement),
+    /// A fixed placement, with its address expression: `ABSOLUTE(0x08009000)`.
+    Placement(String),
+    /// Any other assignment, as written.
+    Assignment(String),
+}
+
+/// The linker script text an image links by: the edition's derived main
+/// script, or its overlay's own.
+pub(crate) fn image_script(root: &Path, target: DecompTarget, image: Image) -> Result<String, String> {
+    let path = match image {
+        Image::Main => match script_text(root, target)? {
+            Some(text) => return Ok(text),
+            None => target.script(),
+        },
+        Image::Overlay(id) => target.overlay_script(id),
+    };
+    fs::read_to_string(root.join(&path)).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+/// The statements an edition's image links, in the linker's order: every
+/// object with the input sections it gives each output section. This is the
+/// one place that says what an image links.
+pub(crate) fn linked_statements(
+    root: &Path,
+    target: DecompTarget,
+    image: Image,
+) -> Result<Vec<Statement>, String> {
+    statements(&image_script(root, target, image)?)
+        .map_err(|error| format!("{} {image:?}: {error}", target.id))
+}
+
+/// The objects the build makes for these statements, each once, in order.
+pub(crate) fn built_objects(statements: &[Statement]) -> Vec<String> {
+    let mut seen = BTreeSet::new();
+    statements
+        .iter()
+        .filter(|statement| statement.built())
+        .map(|statement| statement.object.clone())
+        .filter(|object| seen.insert(object.clone()))
+        .collect()
+}
+
+/// Every input-section statement of a linker script's text.
+pub(crate) fn statements(text: &str) -> Result<Vec<Statement>, String> {
+    Ok(items(text)?
+        .into_iter()
+        .flat_map(|(_, items)| items)
+        .filter_map(|item| match item {
+            Item::Input(statement) => Some(statement),
+            _ => None,
+        })
+        .collect())
+}
+
+/// Each output section of a script, by name, with its body's statements.
+pub(crate) fn items(text: &str) -> Result<Vec<(String, Vec<Item>)>, String> {
+    output_sections(text)?
+        .iter()
+        .map(|group| {
+            let name = group.name().to_owned();
+            let items = body_items(&name, &text[group.body.clone()])
+                .map_err(|error| format!("{name}: {error}"))?;
+            Ok((name, items))
+        })
+        .collect()
+}
+
+fn body_items(section: &str, body: &str) -> Result<Vec<Item>, String> {
+    let body = statement(body);
+    let mut rest = body.as_str();
+    let mut found = Vec::new();
+    loop {
+        rest = rest.trim_start();
+        if rest.is_empty() {
+            return Ok(found);
+        }
+        let (pattern, after) = match rest.strip_prefix('"') {
+            Some(quoted) => {
+                let end = quoted.find('"').ok_or("unterminated quoted name")?;
+                (&quoted[..end], &quoted[end + 1..])
+            }
+            None => {
+                let end = rest
+                    .find(|c: char| c.is_whitespace() || matches!(c, '(' | '=' | ';'))
+                    .unwrap_or(rest.len());
+                (&rest[..end], &rest[end..])
+            }
+        };
+        match after.trim_start().strip_prefix('(') {
+            Some(list) => {
+                let end = list
+                    .find(')')
+                    .ok_or_else(|| format!("{pattern} has no closing ')'"))?;
+                let object = pattern
+                    .strip_prefix('*')
+                    .map(|path| path.strip_prefix('/').unwrap_or(path))
+                    .and_then(|path| match path {
+                        "" => Some("*"),
+                        _ => path.strip_suffix(".o"),
+                    })
+                    .ok_or_else(|| format!("{pattern:?} names no object"))?;
+                found.push(Item::Input(Statement {
+                    section: section.to_owned(),
+                    object: object.to_owned(),
+                    sections: list[..end].split_whitespace().collect::<Vec<_>>().join(" "),
+                }));
+                rest = &list[end + 1..];
+            }
+            None => {
+                let end = rest
+                    .find(';')
+                    .ok_or_else(|| format!("{pattern:?} starts no statement the linker reads"))?;
+                let assignment = &rest[..end];
+                found.push(match assignment.split_once('=') {
+                    Some((name, value)) if name.trim() == "." => {
+                        Item::Placement(value.trim().to_owned())
+                    }
+                    Some(_) => Item::Assignment(assignment.trim().to_owned()),
+                    None => return Err(format!("{assignment:?} is no assignment")),
+                });
+                rest = &rest[end + 1..];
+            }
+        }
+    }
+}
+
 #[derive(Debug)]
 struct Group {
     header: String,
@@ -257,6 +417,82 @@ mod tests {
         assert!(!text.contains("0x08009000"), "{text}");
         let reordered = ".rom_main :\n{\n    \"*/games/g/b.o\"(.text)\n    \"*/games/g/a.o\"(.text)\n}\n";
         assert!(derive(GAME, reordered, "\"*/recon/g/de/").is_err());
+    }
+
+    /// What the build read before linked_statements: every quoted object
+    /// path in a script's text, each once.
+    fn quoted_objects(script: &str) -> Vec<String> {
+        let pattern = regex::Regex::new(r#""\*/([^"*:]+)\.o""#).unwrap();
+        let mut seen = BTreeSet::new();
+        pattern
+            .captures_iter(script)
+            .map(|capture| capture[1].to_owned())
+            .filter(|path| seen.insert(path.clone()))
+            .collect()
+    }
+
+    #[test]
+    fn linked_statements_name_the_objects_every_script_names() {
+        let root = crate::compiler::routing::root();
+        let mut overlays = 0;
+        for id in crate::targets::TARGET_IDS {
+            let target = crate::targets::target_for(id);
+            let text = image_script(root, target, Image::Main).unwrap();
+            let linked = linked_statements(root, target, Image::Main).unwrap();
+            assert!(linked.len() > 1000, "{id}");
+            assert_eq!(built_objects(&linked), quoted_objects(&text), "{id}");
+            let mut scripts: Vec<_> = fs::read_dir(root.join(target.overlay_dir))
+                .unwrap()
+                .flatten()
+                .map(|entry| entry.file_name().to_string_lossy().into_owned())
+                .filter_map(|name| {
+                    let stem = name.strip_suffix(".ld")?;
+                    let id = stem.strip_prefix("ovl_").or(stem.strip_prefix("resource_"))?;
+                    Some(id.to_owned())
+                })
+                .collect();
+            scripts.sort();
+            for overlay in &scripts {
+                let image = Image::Overlay(overlay);
+                assert!(root.join(target.overlay_script(overlay)).is_file(), "{id} {overlay}");
+                let text = image_script(root, target, image).unwrap();
+                let linked = linked_statements(root, target, image).unwrap();
+                assert_eq!(built_objects(&linked), quoted_objects(&text), "{id} {overlay}");
+                overlays += 1;
+            }
+        }
+        assert!(overlays > 1000, "{overlays}");
+    }
+
+    #[test]
+    fn a_body_holds_inputs_placements_and_assignments() {
+        let text = "EXTERN(_call_via_r0)\nSECTIONS\n{\n    ram (NOLOAD) : { \"*/g/ram.o\"(.sym) } > RAM\n    .text 0x2008000 :\n    {\n        \"*/g/a.o\"(.text  .rodata) /* note */\n        *libgcc.a:_call_via_rX.o(.text)\n        \"*libgcc.a:_pack_df.o\"(.text)\n        . = ABSOLUTE(0x08009000);\n        Size = ABSOLUTE(B - A);\n        \"*/resource_36f_overlay.o\"(.bss)\n    } > ROM\n    Top = LOADADDR(.text);\n    /DISCARD/ : { \"*/g/a.o\"(.text.x) *(.comment) *(.note*) }\n}\n";
+        let found = items(text).unwrap();
+        let names: Vec<&str> = found.iter().map(|(name, _)| name.as_str()).collect();
+        assert_eq!(names, ["ram", ".text", "/DISCARD/"]);
+        let input = |object: &str, sections: &str| {
+            Item::Input(Statement {
+                section: ".text".into(),
+                object: object.into(),
+                sections: sections.into(),
+            })
+        };
+        assert_eq!(
+            found[1].1,
+            [
+                input("g/a", ".text .rodata"),
+                input("libgcc.a:_call_via_rX", ".text"),
+                input("libgcc.a:_pack_df", ".text"),
+                Item::Placement("ABSOLUTE(0x08009000)".into()),
+                Item::Assignment("Size = ABSOLUTE(B - A)".into()),
+                input("resource_36f_overlay", ".bss"),
+            ]
+        );
+        let linked = statements(text).unwrap();
+        assert_eq!(linked.len(), 8);
+        assert_eq!(built_objects(&linked), ["g/ram", "g/a", "resource_36f_overlay"]);
+        assert_eq!(linked[7].object, "*");
+        assert!(items("SECTIONS\n{\n    .text :\n    {\n        stray\n    }\n}\n").is_err());
     }
 
     #[test]

@@ -481,7 +481,6 @@ SECTIONS
     "*/games/tbs/src/graphics/tile/bit_dispatch.o"(.text .rodata .data .padding)
     "*/games/tbs/src/graphics/tile/bittable.o"(.data)
     "*/games/tbs/src/graphics/tile/bit_commands.o"(.text .rodata .data .padding)
-    BitDecoder_Size = ABSOLUTE(DebugParty_LoadPreset - BitDecoder_DecodeImage);
     "*/games/tbs/src/debug/battle.o"(.text)
     "*/games/common/src/battle/presentation/tile_pattern.o"(.text)
     "*/games/tbs/src/battle/party/reset.o"(.text)
@@ -1783,5 +1782,5 @@ SECTIONS
     IwramRuntime_Rom = LOADADDR(.iwram_runtime);
     Sound_Mixer = LOADADDR(.iwram_mixer) + 1;
     Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));
-    /DISCARD/ : { "*/games/tbs/src/field/common/effect/spawn.o"(.text.effect_spawn) *(.ARM.attributes) *(.comment) *(.note*) }
+    /DISCARD/ : { *(.text.effect_spawn) *(.ARM.attributes) *(.comment) *(.note*) }
 }

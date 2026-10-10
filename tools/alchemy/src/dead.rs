@@ -172,11 +172,8 @@ impl Linked {
         for id in TARGET_IDS {
             let target = target_for(id);
             let main = target.script();
-            let text = match crate::edition::script_text(root, target)? {
-                Some(text) => text,
-                None => fs::read_to_string(root.join(&main))
-                    .map_err(|error| format!("{}: {error}", main.display()))?,
-            };
+            let statements =
+                crate::edition::linked_statements(root, target, crate::edition::Image::Main)?;
             let mut reached = BTreeSet::new();
             let mut scripts = vec![normalize(&main.to_string_lossy())];
             if let Some(edition) = target.edition_script() {
@@ -191,7 +188,7 @@ impl Linked {
             }
             let mut queue = scripts;
             let mut compiled = Vec::new();
-            for object in crate::build_rom::script_objects(&text) {
+            for object in crate::edition::built_objects(&statements) {
                 let source = crate::build_rom::source_for(root, &object)?;
                 queue.push(normalize(&source.to_string_lossy()));
             }
@@ -234,12 +231,17 @@ impl Linked {
                 for capture in overlays.captures_iter(&text) {
                     let id = &capture[1];
                     let script = target.overlay_script(id);
-                    let Ok(script_text) = fs::read_to_string(root.join(&script)) else {
+                    if !root.join(&script).is_file() {
                         continue;
-                    };
+                    }
+                    let statements = crate::edition::linked_statements(
+                        root,
+                        target,
+                        crate::edition::Image::Overlay(id),
+                    )?;
                     queue.push(normalize(&script.to_string_lossy()));
                     let own = format!("resource_{id}_overlay");
-                    for object in crate::build_rom::script_objects(&script_text) {
+                    for object in crate::edition::built_objects(&statements) {
                         if object == own {
                             continue;
                         }

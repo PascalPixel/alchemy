@@ -19,6 +19,15 @@
  * 72 differences, an input 66, a bytes output 40 and an offset output
  * 173. Replacing the base barrier with the TBS-specific helper's scaled
  * bytes output and cell input leaves 85 (143 built instructions).
+ * Keeping the base barrier and adding the scaled-bytes output leaves
+ * 58 differences with cell as input, or 40 without it. Reusing i or n
+ * for the final word leaves 38 or 16; adding tmp3 leaves 113, while val
+ * retains four. A base output, early-clobber output or memory clobber
+ * leaves 163; a nonvolatile base input retains four. A goto or while
+ * layer loop retains four; preparing the second destination earlier
+ * leaves 64. A two-minute prefix search (seed 457, two jobs, exact stack
+ * and branches) tried 2929 distinct candidates; 2905 failed evaluation
+ * and no candidate beat the draft.
  * The linked function retains its r3 binding until the whole ROM matches. */
 #include "edition.h"
 #include "mapcopy.h"

@@ -10,6 +10,11 @@
  * search compiled 2752 candidates without a zero. Its lower weighted score
  * differs 19, so this faithful differ-4 trial is retained. The linked
  * binding remains until all six editions match. */
+/* Sharing the zero assignment with i and resetting i before the walk
+ * retains four differences. A zero from cursor_index | top leaves 28;
+ * OR-ing the known zero into node leaves 12. Replacing the known-zero
+ * shift with a literal zero and generic output plus head-address input
+ * leaves 46 (182 built); a kind-address input leaves 58 (184 built). */
 #define OWN_AudioCommand_PlayFar
 #include "battle.h"
 #include "debug.h"

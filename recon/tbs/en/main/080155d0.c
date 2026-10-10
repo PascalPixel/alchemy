@@ -62,7 +62,23 @@
    Further selector-dependent height copies (24), paired normalizers (256)
    and palette/source copy scopes (512) also stayed at 10 or worse. Applying
    the English clipping-copy form (28 choices) regressed to 32: it swapped
-   y and the tile-row register and moved the comparison before the byte load. */
+   y and the tile-row register and moved the comparison before the byte load.
+
+   Compiler study reopened by Pascal, 2026-10-10: agbcc_arm identifies as
+   2.9-arm-000512 and lacks the zero-cost anti/output-dependence rule already
+   in public GCC 2.95.2. Adding that general rule in an isolated experiment
+   fixes EN's last pair, leaves JA and all twelve metatile outputs unchanged,
+   and matches continental glyphs after removing the character-copy and
+   packed-source one-pass devices. Stock GCC 2.95.2 (19991024 release), with
+   the same -O2 -mthumb-interwork -fomit-frame-pointer -fcall-used-r4 options,
+   also matches complete glyph object text in all six editions: keep JA;
+   in EN remove the x-halves device and use width = window->height followed
+   by stride = width; in DE/ES/FR/IT remove the character-copy device and the
+   packed-source scope. Its metatile object text is unchanged in all twelve.
+   The stock-release host build only replaces an obsolete cast-as-lvalue
+   assignment with its underlying variable, arm_prgmode; no code-generation
+   rule is changed. Integration and whole-ROM verification of that compiler
+   remain pending; this saved draft and the build still use approved agbcc_arm. */
 
 #include "types.h"
 #include "uiwindow.h"

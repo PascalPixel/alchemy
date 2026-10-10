@@ -17,6 +17,9 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 
+// 戦闘開始の種類 (battle/party/party.c と同じ)
+#define Battle_SetStart(mode) do { gGameState.battle_start = (mode); } while (0)
+
 void FieldScene_CallPairWith10(s32 actor, s32 facing);
 void FuneKanpan_AnnouncePreparationsReady();
 void FuneKanpan_OpenFirstDoor();
@@ -35,8 +38,7 @@ union KanpanSlot {
 s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
 {
 	s32 Math_RemainderUnsigned(s32, s16);
-    /* FAKEMATCH: In-place signed accesses preserve the countdown's load and address scheduling. */
-    switch (*(s16 *)&actor->timer) {
+    switch ((s16)actor->timer) {
     case 6:
         actor->scale_x += -0x4000;
         actor->scale_y += 0x2000;
@@ -53,10 +55,10 @@ s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
     case 0:
         actor->scale_x = 0x10000;
         actor->scale_y = 0x10000;
-        (*(s16 *)&actor->timer) =
-            (s16)(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
+        actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
         break;
     }
+    /* FAKEMATCH: the countdown is decremented as a signed halfword (subs #1); FieldActor.timer is u16 in the shared header, where the decrement adds 0xffff from the pool. */
     (*(s16 *)&actor->timer)--;
     return 1;
 }
@@ -496,27 +498,21 @@ void OverlayObject_DecayFields24And28(struct FieldActor *actor)
     }
 }
 
-s32 FuneKanpan_IdleTurn(u8 *actor)
+s32 FuneKanpan_IdleTurn(struct FieldActor *actor)
 {
-    /* FAKEMATCH: word heading temporaries retain movs/lsls formation before the halfword stores. */
-
-    if (actor[98] != 0) {
-        actor[98]--;
+    if (actor->rise_counter != 0) {
+        actor->rise_counter--;
     } else {
         u32 roll = (u32)(Engine_RandomNext() * 300) >> 16;
 
         if (roll > 200) {
-            s32 dir = 0xd000;
-
-            *(u16 *)(actor + 6) = dir;
+            actor->facing = 0xd000;
         } else if (roll > 100) {
-            s32 dir = 0x5000;
-
-            *(u16 *)(actor + 6) = dir;
+            actor->facing = 0x5000;
         } else {
-            *(u16 *)(actor + 6) = 0;
+            actor->facing = 0;
         }
-        actor[98] = ((u32)(Engine_RandomNext() * 80) >> 16) + 80;
+        actor->rise_counter = ((u32)(Engine_RandomNext() * 80) >> 16) + 80;
     }
     return 1;
 }
@@ -696,7 +692,6 @@ void FuneKanpan_RunDeckStateEvent(void)
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 void FuneKanpan_RunDeckStateEventFromEntry(void)
 {
-    /* FAKEMATCH: the measured Call3 spelling sets actor and x before shifting z; a direct call changes six bytes of argument setup. */
     if ((u16)(Object_GetById(ACTOR_PARTY_LEADER)->facing - 0x6001) <= 0x3ffe) {
         Engine_EventBegin();
         Actor_WalkTo(ACTOR_PARTY_LEADER, 214, 664);
@@ -958,8 +953,6 @@ s32 FuneKanpan_ResetDeck(void)
 
 void FuneKanpan_ApplyEntryState(void)
 {
-    /* FAKEMATCH: retained return/prototype call casts preserve the current call lowering. */
-
     s32 flag;
 
     Engine_GameFlagSet(0x144);
@@ -977,7 +970,7 @@ void FuneKanpan_ApplyEntryState(void)
     } else if ((flag = Engine_GameFlagIsSet(0x927)) != 0) {
         SceneState_ApplyFiveRectsAtColumn78();
         SceneEffect_InitSlotsEightToNineteen();
-        Value2(Engine_TaskAddCallback, (s32)SceneState_ConfigureEntries8Through19, 0xc80);
+        Task_AddCallback(SceneState_ConfigureEntries8Through19, 0xc80);
         FuneKanpan_LayerScroll[1] = 0x200000;
         FuneKanpan_LayerSpeed[1] = 0x13333;
         Engine_TaskAddCallback(FuneKanpan_RockDeck, 0xc80);
@@ -1053,11 +1046,8 @@ void FuneKanpan_ApplyEntryState(void)
 void FuneKanpan_PlaceRandomDeckActors(void)
 {
 	s32 Math_RemainderUnsigned();
-    u32 i;
-    s32 rec7;
-    s32 record;
-    s32 base6_200c4d8;
-    s32 a;
+    struct FieldActor *actor;
+    s32 flag;
 
     Engine_ActorSetSpritePriority(27, 1);
     Engine_ActorSetSpritePriority(23, 1);
@@ -1066,46 +1056,26 @@ void FuneKanpan_PlaceRandomDeckActors(void)
     Engine_ActorSetSpritePriority(24, 1);
     if (Engine_GameFlagIsSet(0x920) != 0) {
         Engine_ActorSetPosition(22, 0xa20000, 0x29a0000);
-        record = (s32)Object_GetById(22);
-        {
-            s32 shown = 0x8000;
-
-            *(u16 *)(record + 6) = shown;
-        }
+        Object_GetById(22)->facing = 0x8000;
         Engine_ActorSetPosition(23, 0, 0);
         Engine_ActorSetPosition(20, 0, 0);
     }
-    rec7 = Engine_GameFlagIsSet(0x922);
-    if (rec7 != 0) {
+    flag = Engine_GameFlagIsSet(0x922);
+    if (flag != 0) {
         Engine_ActorSetPosition(21, 0x1080000, 0x2be0000);
-        record = (s32)Object_GetById(21);
-        {
-            u16 shown = 0x5000;
-
-            *(u16 *)(record + 6) = shown;
-        }
-        a = (s32)Object_GetById(21);
-        record = Engine_RandomNext();
-        {
-            /* FAKEMATCH: the temporary makes the +60 add come before the +100. */
-            s32 t = Math_RemainderUnsigned(record, 90) + 60;
-
-            a += 100;
-            *(u16 *)a = t;
-        }
+        Object_GetById(21)->facing = 0x5000;
+        actor = Object_GetById(21);
+        actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
         Engine_ActorEnableActionCallback(21, FuneKanpan_RandomActorActions);
         Engine_ActorSetPosition(24, 0xf80000, 0x2a80000);
-        a = Actor_Get(24);
-        record = Engine_RandomNext();
-        a += 100;
-        *(u16 *)a = (Math_RemainderUnsigned(record, 90) + 60);
+        actor = Actor_Get(24);
+        actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
         Engine_ActorEnableActionCallback(24, FuneKanpan_RandomActorActions);
         Engine_ActorSetPosition(22, 0, 0);
     } else {
         if (Engine_GameFlagIsSet(0x923) != 0) {
             Actor_SetPosition(20, 0xf60000, 0x2000000);
-            record = (s32)Object_GetById(20);
-            *(u16 *)(record + 6) = rec7;
+            Object_GetById(20)->facing = flag;
         }
     }
 }
@@ -1226,22 +1196,14 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
         record->facing = (v5 << 6);
         Actor_SetPosition(21, 0xa20000, 0x2a40000);
         record = Object_GetById(21);
-        {
-            s32 facing = 0xd000; /* FAKEMATCH: word temporary keeps the facing as movs+lsls */
-
-            record->facing = facing;
-        }
+        record->facing = 0xd000;
     } else {
         Engine_ActorSetPosition(22, 0xa00000, 0x28c0000);
         record = Object_GetById(22);
         record->facing = (v5 << 6);
         Actor_SetPosition(21, 0xa60000, 0x29c0000);
         record = Object_GetById(21);
-        {
-            s32 facing = 0xb000; /* FAKEMATCH: word temporary keeps the facing as movs+lsls */
-
-            record->facing = facing;
-        }
+        record->facing = 0xb000;
     }
     if (gGameState.entrance == 6) {
         FuneKanpan_RunRobinTalk();
@@ -1557,16 +1519,10 @@ void FieldScene_RunActorSequence(void)
     Actor_SetPosition(27, 0x1000000, 0x2ae0000);
     Actor_SetPosition(28, 0xac0000, 0x2780000);
     Engine_ActorSetPosition(29, 0x1000000, 0x26e0000);
-    {
-        /* FAKEMATCH: halfword zero retains the short literal-pool reach. */
-        struct { u16 v; } zero;
-
-        zero.v = 0;
-        Object_GetById(24)->rise_enabled = zero.v;
-        Object_GetById(25)->rise_enabled = 1;
-        Object_GetById(26)->rise_enabled = zero.v;
-        Object_GetById(27)->rise_enabled = 2;
-    }
+    Object_GetById(24)->rise_enabled = 0;
+    Object_GetById(25)->rise_enabled = 1;
+    Object_GetById(26)->rise_enabled = 0;
+    Object_GetById(27)->rise_enabled = 2;
     Engine_ActorSetPosition(20, 0, 0);
     Engine_ActorEnableActionCallback(24, FuneKanpan_DeckActionsA);
     Engine_ActorEnableActionCallback(25, FuneKanpan_DeckActionsA);
@@ -1615,13 +1571,7 @@ void FieldScene_RunActorSequence(void)
     Engine_ActorSetSpriteFlags(record, 1);
     Actor_SetSpeed(0, 0x19999, 0xcccc);
     rec8 = Object_GetById(0);
-    {
-        /* FAKEMATCH: halfword zero retains the short literal-pool reach. */
-        struct { u16 v; } zero;
-
-        zero.v = 0;
-        rec8->motion_flags = zero.v;
-    }
+    rec8->motion_flags = 0;
     Actor_SetDestination(0, 216, 0x264);
     Actor_SetSpeed(30, 0x19999, 0xcccc);
     FieldObject_MotionSetPositionAndCommit(30, 196, 0x258);
@@ -1756,11 +1706,8 @@ void FuneKanpan_RunJumpScene(void)
     Actor_WalkTo(MEARI, 248, 564);
     Engine_EventWait(20);
     gGameState.saved_scene = (s32)&SceneId_FuneHeya;
-    /* FAKEMATCH: the one-pass block keeps the entrance store ahead of the battle start's address; a plain store is scheduled after it. */
-    do {
-        gGameState.saved_entrance = 30;
-    } while (0);
-    gGameState.battle_start = 3;
+    gGameState.saved_entrance = 30;
+    Battle_SetStart(3);
     Party_SetFields1ceAnd1d0((s32)&SceneId_FuneKanpan, 16);
     BattleFx_SetWeightedResult(62, 3);
     Engine_EventEnd();
@@ -2105,8 +2052,6 @@ s32 SceneState_FindFirstSetFlagOfGroup(u32 sel)
 
 void FuneKanpan_RockDeck(void)
 {
-    /* FAKEMATCH: the second angle sum is held across the first angle mask to retain the current store order. */
-
     struct MapWork *map = ((struct MapWork *)gMapWork[0]);
     s32 *camera = map->camera;
     s32 dx = Engine_MathCos(FuneKanpan_WaveAngleX);
@@ -2116,12 +2061,9 @@ void FuneKanpan_RockDeck(void)
     *camera++ += dx >> 1;
     *camera += dy;
     FuneKanpan_WaveAngleX += (u32)(Engine_RandomNext() * 3 << 7) >> 16;
-    {
-        s32 turn = FuneKanpan_WaveAngleY + ((u32)(Engine_RandomNext() << 9) >> 16);
-
-        FuneKanpan_WaveAngleX &= 0xffff;
-        FuneKanpan_WaveAngleY = turn & 0xffff;
-    }
+    FuneKanpan_WaveAngleY += (u32)(Engine_RandomNext() << 9) >> 16;
+    FuneKanpan_WaveAngleX &= 0xffff;
+    FuneKanpan_WaveAngleY &= 0xffff;
     layer = &map->layers[5];
     layer->x = FuneKanpan_LayerScroll[0];
     FuneKanpan_LayerScroll[0] -= FuneKanpan_LayerSpeed[0];

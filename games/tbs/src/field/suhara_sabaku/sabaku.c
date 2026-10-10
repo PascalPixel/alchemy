@@ -20,6 +20,9 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 
+// 戦闘開始の種類 (battle/party/party.c と同じ)
+#define Battle_SetStart(mode) do { gGameState.battle_start = (mode); } while (0)
+
 
 
 
@@ -450,10 +453,7 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
     }
     GameFlag_SetByte(0x210, 0);
     BattleFx_SetWeightedResult(98, 5);
-    /* FAKEMATCH: needed to match: the one-pass block stores the battle start before the scene pointer is kept. */
-    do {
-        gGameState.battle_start = 3;
-    } while (0);
+    Battle_SetStart(3);
     state = &gGameState;
     if (state->scene == (s32)&SceneId_SuharaSabaku2) {
         if (actor == 11) {

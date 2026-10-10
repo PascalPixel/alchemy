@@ -19,6 +19,9 @@
 #include "resource_ids.h"
 #include "text/msg_ids.h"
 
+// 戦闘開始の種類 (battle/party/party.c と同じ)
+#define Battle_SetStart(mode) do { gGameState.battle_start = (mode); } while (0)
+
 
 #define ObjectDispatch_InitFromTable4WithArgument ((void (*)(s32,struct FieldActor*))ObjectDispatch_InitFromTable4WithArgument)
 #define FieldScene_BuildSceneDescriptorAndInstallTask ((s32 (*)(s32,s32,s32,s32,s32,s32,s32))FieldScene_BuildSceneDescriptorAndInstallTask)
@@ -529,7 +532,6 @@ void KorosseoKawa_RunStageStart(void)
     s32 approach;
     s32 n;
     s32 base;
-    u8 *state;
 
     base = 0;
     Resource3ba_NoOpCallback();
@@ -560,11 +562,7 @@ void KorosseoKawa_RunStageStart(void)
     Engine_EventWait(10);
     /* FAKEMATCH: base is 0 from the top of the function, so 0 - approach + 1 is not folded into 1 - approach. */
     BattleFx_SetWeightedResult(72, base - approach + 1);
-    state = (u8 *)&gGameState;
-    /* FAKEMATCH: the do-while keeps the stage flag store ahead of the scene's pool load. */
-    do {
-        state[0x22b] = 3;
-    } while (0);
+    Battle_SetStart(3);
     Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKawa, 4);
     Event_SetDefeatDestination((s32)&SceneId_KorosseoKawa, 5);
     GameFlag_Set(0x11a);

@@ -22,6 +22,9 @@
 #include "call.h"
 #include "event_runtime.h"
 
+// 戦闘開始の種類 (battle/party/party.c と同じ)
+#define Battle_SetStart(mode) do { gGameState.battle_start = (mode); } while (0)
+
 void FieldScene_ConfigurePairedActors(void);
 void FieldScene_RunLateSequence();
 void FieldScene_RunSplitTripleSteps();
@@ -142,17 +145,17 @@ u8 *SceneData_GetMessageTable(void)
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     const struct ScenePlacement *table;
-    /* FAKEMATCH: a temporary holding the first entrance keeps the compiler from rewriting the test as greater than 14. */
-    s32 first = 15;
 
-    if (gGameState.entrance <= 17) {
-        if (gGameState.entrance >= first) {
-            table = ((const struct ScenePlacement *)KuupuappuHeya_SceneTableB);
-            goto prepare;
-        }
+    switch (gGameState.entrance) {
+    case 15:
+    case 16:
+    case 17:
+        table = ((const struct ScenePlacement *)KuupuappuHeya_SceneTableB);
+        break;
+    default:
+        table = ((const struct ScenePlacement *)KuupuappuHeya_SceneTableA);
+        break;
     }
-    table = ((const struct ScenePlacement *)KuupuappuHeya_SceneTableA);
-prepare:
     FieldScene_PrepareActors(table);
     return table;
 }
@@ -346,13 +349,11 @@ void SceneDialogue_ShowEmptyChest(void)
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-    /* FAKEMATCH: a temporary holding the first entrance keeps the compiler from rewriting the test as greater than 14. */
-    s32 first = 15;
-
-    if (gGameState.entrance <= 17) {
-        if (gGameState.entrance >= first) {
-            return gKuupuappuHeyaEventsEntrances15To17;
-        }
+    switch (gGameState.entrance) {
+    case 15:
+    case 16:
+    case 17:
+        return gKuupuappuHeyaEventsEntrances15To17;
     }
     if (Engine_GameFlagIsSet(0x855) != 0) {
         return gKuupuappuHeyaEventsFlag855;
@@ -1073,7 +1074,6 @@ void Scene_JoinRodSearch(void)
 void FieldScene_RunVaultClosingSequence(void)
 {
     s32 base;
-    u8 *state;
 
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 52428, 26214);
@@ -1250,11 +1250,7 @@ void FieldScene_RunVaultClosingSequence(void)
     base = (s32)&SceneId_KuupuappuHeya;
     Party_SetFields1ceAnd1d0(base, 17);
     Event_SetDefeatDestination(base, 16);
-    state = (u8 *)&gGameState;
-    /* FAKEMATCH: the do-while puts the state's address in a block of its own, so it is loaded ahead of the byte's offset. */
-    do {
-        state[0x22b] = 3;
-    } while (0);
+    Battle_SetStart(3);
     BattleFx_SetWeightedResult(12, 5);
     Engine_EventEnd();
 }
@@ -1943,7 +1939,6 @@ void FieldScene_RunLateSequence(void)
 
 void KuupuappuHeya_RunVaultEvent(void)
 {
-    u8 *state;
 
     Actor_SetPosition(10, 0x3180000, 0x1a00000);
     Actor_SetPosition(11, 0x3200000, 0x1900000);
@@ -1988,12 +1983,8 @@ void KuupuappuHeya_RunVaultEvent(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_KuupuappuHeya, 17);
     Event_SetDefeatDestination((s32)&SceneId_KuupuappuHeya, 16);
-    state = (u8 *)&gGameState;
-    /* FAKEMATCH: the do-while puts the state's address in a block of its own, so it is loaded ahead of the byte's offset. */
-    do {
-        state[0x22b] = 3;
-        BattleFx_SetWeightedResult(12, 5);
-    } while (0);
+    Battle_SetStart(3);
+    BattleFx_SetWeightedResult(12, 5);
 }
 
 s32 KuupuappuHeya_GetIwanVenusDjinnCount(void)
@@ -2980,16 +2971,10 @@ move_second:
     }
 }
 
-struct Half {
-    u16 v;
-};
-
 void KuupuappuHeya_StartActorStops(void)
 {
     u32 i;
     s32 record;
-    /* FAKEMATCH: a one-halfword struct keeps the zero a halfword pool constant. */
-    struct Half zero;
 
     Engine_EventBegin();
     Camera_MoveTo(0xa80000, -1, 0x2900000, 1);
@@ -3013,12 +2998,7 @@ void KuupuappuHeya_StartActorStops(void)
     Actor_SetSpeed(2, 0xc000, 0x6000);
     Actor_SetSpeed(24, 0x10000, 0x13333);
     Actor_SetSpeed(25, 0x18000, 0x18000);
-    {
-        u16 *timer = &KuupuappuHeya_StopTimer;
-
-        zero.v = 0;
-        *timer = zero.v;
-    }
+    KuupuappuHeya_StopTimer = 0;
     FieldScheduler_AddOrUpdateCallback((s32)KuupuappuHeya_UpdateActorStops, 0xc94);
     GameFlag_Clear(0x1ff);
     Engine_EventEnd();

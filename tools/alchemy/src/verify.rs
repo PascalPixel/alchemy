@@ -141,6 +141,11 @@ fn run(root: &Path, gates: &[&'static str], last: Option<&'static str>) -> Resul
     let executable = std::env::current_exe().map_err(|error| error.to_string())?;
     let logs = root.join("out/verify");
     std::fs::create_dir_all(&logs).map_err(|error| format!("{}: {error}", logs.display()))?;
+    // Cargo tests and Clippy can replace/unlink the release executable while
+    // comparison launches twelve children. Keep this verified invocation's
+    // executable alive under a private path for the entire gate run.
+    let pinned = pin_executable(&executable, &logs)?;
+    let executable = pinned.path().join("alchemy");
     let started = Instant::now();
     let outcomes = schedule(gates, &|gate| run_gate(root, &executable, gate, &logs))?;
     let mut passed = report(&outcomes, root);
@@ -155,6 +160,14 @@ fn run(root: &Path, gates: &[&'static str], last: Option<&'static str>) -> Resul
         started.elapsed().as_secs_f64()
     );
     Ok(passed)
+}
+
+fn pin_executable(executable: &Path, logs: &Path) -> Result<tempfile::TempDir, String> {
+    let directory = tempfile::Builder::new().prefix("executable-").tempdir_in(logs)
+        .map_err(|error| format!("{}: {error}", logs.display()))?;
+    std::fs::copy(executable, directory.path().join("alchemy"))
+        .map_err(|error| format!("cannot pin {}: {error}", executable.display()))?;
+    Ok(directory)
 }
 
 /// Publication includes alias checks that read every linked ELF. Comparison
@@ -220,6 +233,7 @@ fn make_arguments(executable: &Path, gate: &str) -> Vec<String> {
     let mut arguments = vec![
         "--no-print-directory".to_string(),
         format!("ALCHEMY={}", executable.display()),
+        format!("ALCHEMY_BIN={}", executable.display()),
         "TARGET=tbs-ja".into(),
     ];
     if gate == "compare-editions" {
@@ -267,6 +281,24 @@ fn run_gate(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn gate_executable_survives_cargo_replacing_the_release_binary() {
+        let directory = tempfile::tempdir().unwrap();
+        let original = directory.path().join("release-alchemy");
+        std::fs::write(&original, "verified executable").unwrap();
+        let pinned = pin_executable(&original, directory.path()).unwrap();
+        let executable = pinned.path().join("alchemy");
+        std::fs::remove_file(&original).unwrap();
+        std::fs::write(&original, "replacement executable").unwrap();
+        assert_eq!(std::fs::read_to_string(&executable).unwrap(), "verified executable");
+        let arguments = make_arguments(&executable, "compare-editions");
+        assert!(arguments.contains(&format!("ALCHEMY={}", executable.display())));
+        assert!(arguments.contains(&format!("ALCHEMY_BIN={}", executable.display())));
+        assert!(arguments.contains(&"-j12".into()));
+        drop(pinned);
+        assert!(!executable.exists());
+    }
 
     #[test]
     fn output_readers_wait_for_comparison_even_when_it_fails() {

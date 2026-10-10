@@ -1,0 +1,13 @@
+called(a)	1
+-called(a)	0
+!called(a++)	1
+(int)called(a)	1
+sizeof(called(a))	0
+!(a=b)	0
+-(a++)	0
+-(a+called(b))	1
+(a=b)	1
+-!called(a)	1
+a+b	0
+a++	1
+&a	0

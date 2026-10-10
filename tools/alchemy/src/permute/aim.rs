@@ -116,34 +116,6 @@ pub fn aimed(function: &mut Function, env: &mut Env, rng: &mut Rng, kinds: &[(Ki
     None
 }
 
-/// Kind weights that follow success on this function: each kind's base
-/// weight times 2 plus its accepted improvements (at most 8 times its base).
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Bandit {
-    wins: Vec<u64>,
-}
-
-impl Default for Bandit {
-    fn default() -> Bandit {
-        Bandit { wins: vec![0; Kind::ALL.len()] }
-    }
-}
-
-impl Bandit {
-    pub fn kinds(&self) -> Vec<(Kind, u64)> {
-        Kind::ALL.iter().zip(&self.wins).map(|(&(kind, weight), wins)| (kind, weight * (2 + wins.min(&14)))).collect()
-    }
-
-    /// Credit the kinds of the rewrites that made an accepted improvement.
-    pub fn credit(&mut self, kinds: impl IntoIterator<Item = Kind>) {
-        for kind in kinds {
-            if let Some(index) = Kind::ALL.iter().position(|(seen, _)| *seen == kind) {
-                self.wins[index] += 1;
-            }
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -222,32 +194,4 @@ mod tests {
         }
     }
 
-    #[test]
-    fn the_bandit_favours_kinds_that_paid() {
-        let mut bandit = Bandit::default();
-        let base = bandit.kinds();
-        assert!(base.iter().zip(Kind::ALL).all(|((_, weight), (_, original))| *weight == 2 * original));
-        bandit.credit([Kind::Register, Kind::Register, Kind::InvertIf]);
-        let weight = |bandit: &Bandit, kind: Kind| bandit.kinds().iter().find(|(seen, _)| *seen == kind).unwrap().1;
-        assert_eq!(weight(&bandit, Kind::Register), 3 * 4);
-        assert_eq!(weight(&bandit, Kind::InvertIf), 4 * 3);
-        assert_eq!(weight(&bandit, Kind::SwapOperands), 10 * 2);
-        bandit.credit(std::iter::repeat_n(Kind::Register, 40));
-        assert_eq!(weight(&bandit, Kind::Register), 3 * 16);
-        // Kind choice under the bandit's weights is deterministic per seed.
-        let source = "int f(int a, int b)\n{\n    int c;\n    c = a + b;\n    return c * 2;\n}\n";
-        let unit = super::super::parse::scan_unit(source).unwrap();
-        let located = super::super::parse::locate(source, None, &unit.typedef_names()).unwrap();
-        let run = |seed| {
-            let mut rng = Rng::new(seed);
-            (0..20)
-                .filter_map(|_| {
-                    let mut function = located.function.clone();
-                    let mut env = Env::new(&unit, &function);
-                    mutate_with(&mut function, &mut env, &mut rng, &bandit.kinds()).map(|step| step.kind)
-                })
-                .collect::<Vec<_>>()
-        };
-        assert_eq!(run(3), run(3));
-    }
 }

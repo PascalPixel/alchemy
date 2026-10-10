@@ -1,0 +1,2 @@
+anonymous_scalar_member	struct Sample { unsigned count; double; unsigned flags; };	anonymous scalar member
+pragma_expression_argument	int marker; _Pragma("original synthetic directive")	pragma expression argument

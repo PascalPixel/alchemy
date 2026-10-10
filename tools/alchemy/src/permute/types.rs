@@ -85,6 +85,7 @@ impl CType {
 }
 
 /// Declarations visible to the function: the unit's and its own.
+#[derive(Clone)]
 pub struct Env {
     typedefs: BTreeMap<String, (Vec<String>, Declarator)>,
     records: BTreeMap<String, Vec<(Vec<String>, Declarator)>>,
@@ -97,6 +98,9 @@ pub struct Env {
     spellings: BTreeMap<(u8, bool), String>,
     /// Rewrites only touch statements whose own text matches.
     pub focus: Option<regex::Regex>,
+    /// Statement identities inside the selected PERM_RANDOMIZE region.
+    /// Recomputed before each mutation, never matched by source spelling.
+    pub region: Option<std::collections::HashSet<usize>>,
 }
 
 impl Env {
@@ -111,6 +115,7 @@ impl Env {
             return_type: None,
             spellings: BTreeMap::new(),
             focus: None,
+            region: None,
         };
         for (name, (specs, item)) in &unit.globals {
             let ty = env.declared(specs, item);

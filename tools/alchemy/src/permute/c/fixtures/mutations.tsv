@@ -1,0 +1,20 @@
+perm_add_mask	0	1	0.48592769656281265	int target(int a, int b)\n{\n  float f = 1.0f;\n  int x;\n  x = a + b;\n  return x + (((((((((a & 0xFFFFFFFFFFFFFFFFu) & 0xFFFFFFFFFFFFFFFFu) & 0xFFFFFFFFFFFFFFFFu) & 0xFFFFFFFFFFFFFFFFu) & 0xFFFFFFFFFFFFFFFFu) & 0xFFFFFFFFFFFFFFFFu) & 0xFFFFFFFFFFFFFFFFu) & 0xFFFFFFFFFFFFFFFFu) & 0xFFFFFFFFFFFFFFFFu);\n}\n\n
+perm_add_mask	1	1	0.47224524357611664	int target(int a, int b)\n{\n  float f = 1.0f;\n  int x;\n  x = ((((((((a + b) & 0xFFu) & 0xFFu) & 0xFFu) & 0xFFu) & 0xFFu) & 0xFFu) & 0xFFu) & 0xFFu;\n  return x + a;\n}\n\n
+perm_add_mask	7	1	0.07243628666754276	int target(int a, int b)\n{\n  float f = 1.0f;\n  int x;\n  x = (a & 0xFFFFu) + b;\n  return x + a;\n}\n\n
+perm_add_mask	19	1	0.39353466292596484	int target(int a, int b)\n{\n  float f = 1.0f;\n  int x;\n  x = a + b;\n  return (x & 0xFF) + a;\n}\n\n
+perm_xor_zero	0	1	0.3852453064766108	int target(int a, int b)\n{\n  float f = 1.0f;\n  int x;\n  x = a + b;\n  return x + (a ^ 0);\n}\n\n
+perm_xor_zero	1	1	0.5692038748222122	int target(int a, int b)\n{\n  float f = 1.0f;\n  int x;\n  x = (a + b) ^ 0;\n  return x + a;\n}\n\n
+perm_xor_zero	7	1	0.9478653606090632	int target(int a, int b)\n{\n  float f = 1.0f;\n  int x;\n  x = (a ^ 0) + b;\n  return x + a;\n}\n\n
+perm_xor_zero	19	1	0.04325380761110298	int target(int a, int b)\n{\n  float f = 1.0f;\n  int x;\n  x = a + b;\n  return (x ^ 0) + a;\n}\n\n
+perm_dummy_comma_expr	0	1	0.3852453064766108	int target(int a, int b)\n{\n  float f = 1.0f;\n  int x;\n  x = a + b;\n  return x + ((0, a));\n}\n\n
+perm_dummy_comma_expr	1	1	0.5692038748222122	int target(int a, int b)\n{\n  float f = 1.0f;\n  int x;\n  x = (0, a + b);\n  return x + a;\n}\n\n
+perm_dummy_comma_expr	7	1	0.9478653606090632	int target(int a, int b)\n{\n  float f = 1.0f;\n  int x;\n  x = ((0, a)) + b;\n  return x + a;\n}\n\n
+perm_dummy_comma_expr	19	1	0.04325380761110298	int target(int a, int b)\n{\n  float f = 1.0f;\n  int x;\n  x = a + b;\n  return ((0, x)) + a;\n}\n\n
+perm_float_literal	0	1	0.04048437818077755	int target(int a, int b)\n{\n  float f = 1;\n  int x;\n  x = a + b;\n  return x + a;\n}\n\n
+perm_float_literal	1	1	0.8474337369372327	int target(int a, int b)\n{\n  float f = 1.f;\n  int x;\n  x = a + b;\n  return x + a;\n}\n\n
+perm_float_literal	7	1	0.3948234964231735	int target(int a, int b)\n{\n  float f = 1.0;\n  int x;\n  x = a + b;\n  return x + a;\n}\n\n
+perm_float_literal	19	1	0.12068844222643749	int target(int a, int b)\n{\n  float f = 1.f;\n  int x;\n  x = a + b;\n  return x + a;\n}\n\n
+perm_pad_var_decl	0	1	0.9654648863619172	int target(int a, int b)\n{\n  float f = 1.0f;\n  volatile int pad;\n  int x;\n  x = a + b;\n  return x + a;\n}\n\n
+perm_pad_var_decl	1	1	0.11791870367106105	int target(int a, int b)\n{\n  float f = 1.0f;\n  unsigned long pad;\n  int x;\n  x = a + b;\n  return x + a;\n}\n\n
+perm_pad_var_decl	7	1	0.8212742919913083	int target(int a, int b)\n{\n  unsigned char pad;\n  float f = 1.0f;\n  int x;\n  x = a + b;\n  return x + a;\n}\n\n
+perm_pad_var_decl	19	1	0.1994973226900001	int target(int a, int b)\n{\n  float f = 1.0f;\n  int x;\n  int pad;\n  x = a + b;\n  return x + a;\n}\n\n

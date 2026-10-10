@@ -4,8 +4,8 @@
 #include "types.h"
 
 #include "menu_list.h"
-#define gKeyState (*(u32 *)&gKeyState)
-#define gKeysRepeat (*(u32 *)&gKeysRepeat)
+#define gKeyState (*(volatile u32 *)&gKeyState)
+#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 extern u32 gKeysHeld;
 extern u32 gKeysPressedLatch;

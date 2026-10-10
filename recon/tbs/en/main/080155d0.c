@@ -1,4 +1,4 @@
-/* ARM draft, stock agbcc_arm: JA differs 0, EN 2, DE/ES/FR/IT 12.
+/* ARM draft, stock agbcc_arm: JA differs 0, EN 2, DE/ES/FR/IT 10.
    Target: matching C with tagged fakematches; no inline asm, register pins
    or asm barriers. Japanese already links the matching C in moji.c.
 
@@ -53,8 +53,12 @@
    source scope and retaining an empty final input-window test traded one
    reordered pair for eleven register differences (differ 28), so it was
    rejected. Initialized terminal references (44) and palette-lifetime
-   placements (56) did not repair those registers. The saved draft remains
-   0/2/12 after staging's 3010b41dcd checkpoint. */
+   placements (56) did not repair those registers. The saved draft was
+   0/2/12 at staging's 3010b41dcd checkpoint. Separating the unchanged
+   character copy before the continental selector then gives 0/2/10:
+   the height load follows the complete selector calculation. Further height
+   copies (560), branch copies/reads (64/16), early breaks (10), deferred
+   pointer copies (12) and conditional stride copies (12) did not beat 10. */
 
 #include "types.h"
 #include "uiwindow.h"
@@ -100,6 +104,10 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32
 	u32 row;
 	u32 rownext;
 	u32 col;
+#if !defined(TBS_EDITION_JA) && !defined(TBS_EDITION_EN)
+	u32 copied_character;
+	u32 narrow;
+#endif
 #if defined(TBS_EDITION_JA)
 	/* FAKEMATCH: these records reserve the native frame's 64-byte unused area. */
 	struct RenderInput frame[4];
@@ -143,6 +151,15 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32
 		width = window->height;
 	stride = (width << 16) >> 16;
 #else
+	/* FAKEMATCH: the unchanged character copy and explicit selector keep
+	   the height load after the font/character tests. Combine cancels the
+	   unsigned increment and decrement (continental differ 12 -> 10). */
+	do
+	{
+		copied_character = character + 1;
+	} while (0);
+	character = copied_character - 1;
+	narrow = character <= 255 || font != NULL;
 	/* FAKEMATCH: normalize a separate height copy after its one-pass read.
 	   This retains the native argument lifetimes (continental differ 14 -> 12). */
 	do
@@ -170,7 +187,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32
 			goto glyph_wide;
 	}
 #else
-	if (character <= 255 || font != NULL)
+	if (narrow)
 #endif
 	{
 		if (font != NULL)

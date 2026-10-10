@@ -3,6 +3,16 @@
 #include "glyph.h"
 #include "text_font.h"
 
+/* ARM draft: JA/EN differ 6; DE/ES/FR/IT differ 10. The tail matches.
+   Remaining sched2 ordering, with registers and spill offsets already correct:
+   JA: height spill after the character CMP; width spill after x++; color spill
+       after the accent CMP.
+   EN: y copy before SUB sp; x copy immediately after the font load; font-width
+       spill after the y CMP.
+   DE/ES/FR/IT: coordinate copies before SUB sp and window spill; height spill
+       after the font-selection CMP; source spill after color1's ADD;
+       font-width spill after the y CMP. */
+
 extern const u8 UiText_GlyphWidths[];
 
 static __inline__ void GlyphPackedDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
@@ -325,12 +335,11 @@ glyph_selected:
 
 	{
 		register u32 pass;
-		const u16 *next;
-		const u16 *rows1;
+		const u16	*next;
+		const u16	*rows1;
 
 		rows1 = rows + 1;
 		pass = 0;
-		while (1)
 		{
 			u32 color;
 			u32 bits;
@@ -338,69 +347,104 @@ glyph_selected:
 			/* FAKEMATCH: a separate next-pass lifetime avoids five repeated pass reloads. */
 			u32 next_pass;
 
-			if (pass == 3)
-				color = 0x1111;
-			else
-				color = 0x5555;
-			if (!(window->flags & 64))
-				goto draw;
-			if (pass <= 1)
+			/* FAKEMATCH: explicit back edges and one-pass bodies retain the
+			   native allocation while the tail increment stays outside
+			   both loops. This lets flow2 form its post-increment after reload,
+			   retaining the store after the shift (JA/EN 8 -> 6, others 12 -> 10). */
+		pass_start:
+			do
 			{
-				if (pass == 1)
-					x += 2;
+				if (pass == 3)
+					color = 0x1111;
 				else
-					x--;
-				goto draw;
-			}
-			if (pass == 2)
-			{
-				x--;
-				y++;
-				goto draw;
-			}
-			y--;
-draw:
-			row = 0;
-			bits = *rows;
-			bits <<= 16;
-			next = rows1;
-			next_pass = pass + 1;
-			if (y > 31)
-				goto pass_next;
-			vram = (u8 *)0x06002500;
-			while (1)
-			{
-				u32 tile_y;
-				u32 row_line;
-
-				col = 0;
-				rownext = row + 1;
-				tile_y = (y + row) >> 3;
-				row_line = ((y + row) & 7) << 1;
-				while (1)
+					color = 0x5555;
+				if (!(window->flags & 64))
+					goto draw;
+				if (pass <= 1)
 				{
-					if ((s32)bits < 0)
-						GlyphDot(stride, x + col, tile_y, row_line, vram, color);
-					bits <<= 1;
-					if (bits == 0)
-						goto row_next;
-					col++;
-					if (col > 13)
-						break;
+					if (pass == 1)
+						x += 2;
+					else
+						x--;
+					goto draw;
 				}
-row_next:
+				if (pass == 2)
+				{
+					x--;
+					y++;
+					goto draw;
+				}
+				y--;
+			draw:
+				row = 0;
+				bits = *rows;
+				bits <<= 16;
+				next = rows1;
+				next_pass = pass + 1;
+				if (y > 31)
+					goto pass_next;
+				vram = (u8 *)0x06002500;
+			row_start:
+				do
+				{
+					u32 tile_y;
+					u32 row_line;
+
+					col = 0;
+					rownext = row + 1;
+					tile_y = (y + row) >> 3;
+					row_line = ((y + row) & 7) << 1;
+					while (1)
+					{
+						if ((s32)bits < 0)
+							GlyphDot(stride, x + col, tile_y, row_line, vram, color);
+						bits <<= 1;
+						if (bits == 0)
+							goto row_next;
+						col++;
+						if (col > 13)
+							break;
+					}
+				} while (0);
+			} while (0);
+		row_next:
+			do
+			{
 				row = rownext;
 				if (rownext > 11)
-					break;
-				bits = *next++;
+					goto pass_next;
+			} while (0);
+			/* FAKEMATCH: the repeated load preserves the early clipping
+			   comparison through CSE; both loads become one LDRH. The two
+			   boundaries retain y's native allocation priority in every edition. */
+			do
+			{
+				do
+				{
+					bits = *next;
+					if (y + rownext > 31)
+						bits = *next;
+				} while (0);
+			} while (0);
+			do
+			{
 				bits <<= 16;
-				if (y + rownext > 31)
-					break;
-			}
-pass_next:
-			pass = next_pass;
-			if (pass > 3)
-				break;
+			} while (0);
+			/* FAKEMATCH: the low half is zero. Combine reduces this to
+			   one after flow1, so the pointer spill remains after the shift. */
+			next += 1 + (bits & 0xffff);
+			if (y + rownext > 31)
+				goto pass_next;
+			goto row_start;
+		pass_next:
+			do
+			{
+				pass = next_pass;
+				if (pass > 3)
+					goto pass_end;
+			} while (0);
+			goto pass_start;
+		pass_end:;
 		}
 	}
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)

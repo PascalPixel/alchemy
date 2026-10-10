@@ -16,7 +16,17 @@
    (seed 408; 4834 iterations, 3944 distinct, 78 compile failures) reached
    weighted 115 / differ 22 but did not improve this ordering residual.
    Thirty widened-read/order forms and fifteen early dead-definition or
-   split-restoration forms also did not improve the four-row residual. */
+   split-restoration forms also did not improve the four-row residual.
+   Pass-directed review: py pseudo 54 spans five RTL insns with the early
+   read and gets r2 in local allocation; the native-position read spans
+   three and gets r3, forcing limit to r4 and changing outer allocation.
+   82 new local-quantity/preference checks did not improve 4. A double zero
+   store preserves py r2 and outer regs, but its live zero forces offset
+   scratch r0; late dead-store elimination leaves differ 22. Scoped copies,
+   statement expressions, one-pass/goto notes, unsigned/register/const
+   variants and inline pointer helpers collapse to plain unpin 81. Split
+   pointer/read conditions retain branches. An exact late read needs a
+   different py preference while leaving r3 free for its offset scratch. */
 #include "types.h"
 #include "four_object_motion.h"
 #include "field_sprite.h"

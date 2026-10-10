@@ -1,14 +1,19 @@
 /* Sole draft proposal for Map_PlayMetatileCopySequence, EN 08010560..080105d4.
- * Remaining difference: all six TBS editions emit 53 native-sized instructions,
- * differ 8. The post-wait copy is present in the opposite direction: ldrh r3
- * and mov r0,r3 / cmp r3,r9 instead of ldrh r0 and mov ip,r0 / cmp ip,r9;
- * the r8 argument move also schedules earlier. The earlier source/test
- * cancelling updates remain exact. No authoritative source change proposed.
- * Trials: 7 guarded sentinel copies, 9 source/control definitions, 8 reuse
- * forms of the existing test carrier, 8 const-carrier comparison forms;
- * none exact. Other map sites: 12 split restores and 10 equality/XOR guards
- * plus 4 inline multiply/position carriers for Map_LoadLayeredScene; 10
- * byte/cell controls plus a natural copy helper for the index rectangle.
+ * Improved residual: all six TBS editions emit 53 instructions, 50 common,
+ * differ 6. u16 next preserves the native post-wait load into r0 and copy
+ * direction. Remaining: adds r3,r0,#0 / cmp r3,r9 instead of mov ip,r0 /
+ * cmp ip,r9, and the r8 argument move schedules earlier. next can represent
+ * every record->source value and the 0xffff sentinel without loss.
+ * The earlier source/test cancelling updates remain exact.
+ * Previous best u32 next differed8, loading r3 and copying back into r0.
+ * Earlier trials: 7 guarded sentinel copies, 9 source/control definitions,
+ * 8 existing-test reuse forms, 8 const-carrier comparisons; none exact.
+ * Follow-up: 8 goto-loop carrier/args-position forms (late args changes the
+ * native signed loads); 4 zero/restore pairs under sentinel predicates;
+ * 4 narrow source/next/cast forms (only next improved); 4 promoted/const/
+ * ordinary-register comparison forms. None exact. Whole-TU context checked.
+ * Other map sites: 12 split restores, 10 equality/XOR guards, 4 inline
+ * multiply/position carriers; 10 byte/cell controls plus natural copy helper.
  */
 #include "battle.h"
 #include "debug.h"
@@ -70,7 +75,7 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destinati
             WaitFrames((u16)delay);
             source = record->source;
             {
-                u32 next = source;
+                u16 next = source;
 
                 if (source == stop) next = stop;
                 if (next == stop)

@@ -5,9 +5,21 @@
  * also reorders two movs r1, #5 instructions near division calls.
  * The linked source retains its barrier. Sixteen split-restoration,
  * widened row/x identity and known-zero dependency forms did not close
- * that scheduling residual. Future trials should inspect sched2's equal
- * priority choice for the row reload and x subtract rather than repeat
- * these identities. */
+ * that scheduling residual.
+ * Fresh full-TU baseline is exact; bare deletion still differs2. The
+ * actual scheduling dependency is the one-pass LOOP_END note: the first
+ * surviving insn after it is the subtract, and sched2 makes every later
+ * insn depend on it. With the asm, its row reload carries that boundary.
+ * GCC haifa-sched.c explicitly fences all registers at LOOP_BEG/END;
+ * changing arithmetic priority alone cannot cross that fence.
+ * Thirty-seven bounded literal whole-TU follow-ups did not improve2:
+ * eight row quantity types, six 64-bit identity/packed-axis forms, six
+ * temporary/CSE-copy boundaries, six loop/read boundary forms, six dead
+ * coordinate stores and five known-range zero copies. Ordinary copy and
+ * cancelled restore forms collapse too early; wide axes add instructions;
+ * dead coordinate stores survive. Future work needs a real low-register
+ * row use first after the loop note that disappears without a new device,
+ * or a different ordinary coordinate calculation/block structure. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

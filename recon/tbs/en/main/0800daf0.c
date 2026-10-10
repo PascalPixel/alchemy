@@ -17,7 +17,17 @@
  * branch differs 6: its load moves before the test. Initializing k first
  * differs 108. Moving only its declaration to the enclosing block or the
  * function, and retaining the conditional assignment, still differs 4.
- * The linked source keeps its binding. */
+ * The linked source keeps its binding.
+ * Current source-only trial removes the old empty asm use as well: the
+ * cancelling conditional k updates and cancelling y uses match the linked
+ * CSE boundaries. All six editions still give 224 native/built,222common,
+ * differ4, solely the first rounding literal/add in r3 instead of r2.
+ * The whole-TU baseline is exact. Local allocation gives k pseudo87 r3
+ * (two uses across six RTL insns, LO_REGS); this is not a scheduling error.
+ * Twelve directed forms did not improve4: split k zero/restores and stable
+ * t/x/z/leader predicates, u16/s16/ordinary-register k, reordered y/k
+ * CSE blocks, and dx/step reuse. Narrow k gives25, dx167, step197;
+ * x/z predicates and reordered blocks retain4. */
 #define OWN_AudioCommand_PlayFar
 #include "battle.h"
 #include "debug.h"
@@ -107,8 +117,17 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj)
                 if (t < 0) {
                     /* FAKEMATCH: the rounding constant in r2 outside reload keeps reload's rotation as the native has it. */
                     s32 k = 0xffff;
-                    /* FAKEMATCH: keeps k from folding into the add. */
-                    __asm__("" : "+r"(k));
+                    /* FAKEMATCH: cancelling conditional uses retain the
+                     * native rounding CSE boundary; the linked source also
+                     * binds this quantity to r2. */
+                    if (y) {
+                        k ^= 1;
+                        k ^= 1;
+                    }
+                    /* FAKEMATCH: cancelling y uses preserve its native
+                     * global allocation priority. */
+                    y ^= 1;
+                    y ^= 1;
                     t += k;
                 }
                 dx = t >> 16;

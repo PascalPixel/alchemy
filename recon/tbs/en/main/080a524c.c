@@ -6,6 +6,10 @@
  * removing changed alone differs 48. A 3-minute search of the first trial
  * (seed 131, exact stack/branches) found no improvement. All three
  * bindings are removed here; the linked source keeps them. */
+/* Further flag-copy-only trials: a low-register changed input retains
+ * differ 4; making the copy early-clobber differs 21. A sel output differs
+ * 38, and carrying the preceding flag-test result through text differs 43.
+ * All preserve behavior but none closes the r3/r2 residual. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

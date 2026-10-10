@@ -218,6 +218,11 @@ fn normalize_with_state(objdump: &str, relocated: &BTreeSet<(u32, String)>, lr_s
         .filter_map(|line| {
             let (address, rest) = line.trim_start().split_once(":\t")?;
             let at = u32::from_str_radix(address, 16).ok()?;
+            let (raw, rest) = match rest.split_once('\t') {
+                Some((raw, text)) if !raw.trim().is_empty() && raw.split_whitespace().all(|word|
+                    matches!(word.len(), 4 | 8) && word.chars().all(|c| c.is_ascii_hexdigit())) => (Some(raw.trim()), text),
+                _ => (None, rest),
+            };
             let text = rest.split(['@', ';']).next().unwrap_or("").trim();
             let mut words = text.split_whitespace();
             let mnemonic = words.next()?;
@@ -231,15 +236,26 @@ fn normalize_with_state(objdump: &str, relocated: &BTreeSet<(u32, String)>, lr_s
                 return Some(mnemonic.to_string());
             }
             let mut out = if is_branch(mnemonic) && !operands.is_empty() {
+                // In relocatable objects objdump can borrow a neighbouring
+                // relocation's symbol and misprint an ordinary local branch.
+                // Its encoded Thumb displacement remains unambiguous.
+                let encoded = raw.filter(|raw| raw.len() == 4)
+                    .and_then(|raw| u16::from_str_radix(raw, 16).ok())
+                    .and_then(|half| match half {
+                        h if h & 0xf800 == 0xe000 => Some(((h << 5) as i16 >> 4) as i32 + 4),
+                        h if h & 0xf000 == 0xd000 && h & 0x0f00 < 0x0e00 => Some((h as u8 as i8 as i32) * 2 + 4),
+                        _ => None,
+                    });
                 // A Thumb branch just before a relocated literal word: objdump
                 // reads the word's relocation as the branch's own and prints
                 // the offset itself against that symbol (`3d0 <Msg+0x3d0>`).
                 let symbol = operands.get(1).map(|w| w.trim_start_matches('<').split('+').next().unwrap_or(""));
                 let misread = symbol.is_some_and(|s| relocated.contains(&(at + 2, s.to_string())));
-                match u32::from_str_radix(operands[0].trim_start_matches("0x"), 16) {
-                    Ok(target) if misread => format!("{mnemonic} {:+}", i64::from(target)),
-                    Ok(target) => format!("{mnemonic} {:+}", i64::from(target) - i64::from(at)),
-                    Err(_) => text.to_string(),
+                match (encoded, u32::from_str_radix(operands[0].trim_start_matches("0x"), 16)) {
+                    (Some(delta), _) => format!("{mnemonic} {delta:+}"),
+                    (None, Ok(target)) if misread => format!("{mnemonic} {:+}", i64::from(target)),
+                    (None, Ok(target)) => format!("{mnemonic} {:+}", i64::from(target) - i64::from(at)),
+                    (None, Err(_)) => text.to_string(),
                 }
             } else {
                 operands.iter().fold(mnemonic.to_string(), |mut s, w| {
@@ -305,7 +321,7 @@ pub(crate) fn compare(listing: &[String], draft: &[String]) -> (usize, Vec<Strin
 pub(crate) fn disassemble(object: &Path, symbol: Option<&str>) -> Result<Vec<String>, String> {
     let object = object.to_string_lossy();
     let only = symbol.map(|s| format!("--disassemble={s}"));
-    let mut arguments = vec!["arm-none-eabi-objdump", "-d", "-r", "--no-show-raw-insn"];
+    let mut arguments = vec!["arm-none-eabi-objdump", "-d", "-r"];
     if let Some(only) = only.as_deref() {
         arguments.push(only);
     }
@@ -350,7 +366,7 @@ pub(crate) fn located(steps: &[Vec<String>], object: &Path, symbol: Option<&str>
     }
     let object = object.to_string_lossy();
     let only = symbol.map(|s| format!("--disassemble={s}"));
-    let mut arguments = vec!["arm-none-eabi-objdump", "-d", "-l", "-r", "--no-show-raw-insn"];
+    let mut arguments = vec!["arm-none-eabi-objdump", "-d", "-l", "-r"];
     if let Some(only) = only.as_deref() {
         arguments.push(only);
     }
@@ -361,7 +377,7 @@ pub(crate) fn located(steps: &[Vec<String>], object: &Path, symbol: Option<&str>
         // objdump -l rejects gcc_arm's table as mangled: its unit length is
         // one byte short of its last end_sequence. The DWARF dumper still
         // reads every row, so place the instructions by address instead.
-        let mut plain = vec!["arm-none-eabi-objdump", "-d", "-r", "--no-show-raw-insn"];
+        let mut plain = vec!["arm-none-eabi-objdump", "-d", "-r"];
         if let Some(only) = only.as_deref() {
             plain.push(only);
         }
@@ -525,14 +541,25 @@ fn require_thumb_scaffold(elf: &Elf, section: &Placed, start: u32, end: u32) -> 
     Ok(())
 }
 
-fn thumb_reference(file: &Path, image: &[u8], base: u32, start: u32, end: u32) -> Result<Vec<String>, String> {
-    if start < base || (end - base) as usize > image.len() {
+fn thumb_reference(image: &[u8], base: u32, start: u32, end: u32) -> Result<Vec<String>, String> {
+    if start < base || end <= start || (end - base) as usize > image.len() {
         return Err("scaffold function runs past the reference image".into());
     }
     let lines = crate::show::thumb_lines(image, base, start, end, &crate::show::Names::new());
     if lines.iter().any(|line| line.text.starts_with(".2byte")) {
         return Err("scaffold contains an unsupported Thumb instruction; no comparison produced".into());
     }
+    // Mask only the data in this temporary disassembly view. Otherwise
+    // objdump can read a pool's final halfword as a wide Thumb instruction
+    // and consume the first real instruction after it. Code is unchanged;
+    // pool values remain outside this instruction-only comparison.
+    let mut view = image[(start - base) as usize..(end - base) as usize].to_vec();
+    for line in lines.iter().filter(|line| line.wide) {
+        let at = (line.address - start) as usize;
+        view[at..at + line.bytes.len()].fill(0);
+    }
+    let file = tempfile::NamedTempFile::new().map_err(|error| format!("Thumb analysis file: {error}"))?;
+    std::fs::write(file.path(), view).map_err(|error| format!("Thumb analysis file: {error}"))?;
     let instructions: BTreeSet<u32> = lines.iter().filter(|line| !line.wide).map(|line| line.address).collect();
     // Binary objdump interprets a standalone BL suffix plus its successor as
     // Thumb-2 even with -marmv4t. Split at the call using our ARM7 decoder so
@@ -546,8 +573,8 @@ fn thumb_reference(file: &Path, image: &[u8], base: u32, start: u32, end: u32) -
             let output = command(&[
                 "arm-none-eabi-objdump", "-D", "-b", "binary", "-marm", "-Mforce-thumb",
                 "--no-show-raw-insn", "--disassemble-zeroes",
-                &format!("--adjust-vma={base:#x}"), &format!("--start-address={cursor:#x}"),
-                &format!("--stop-address={boundary:#x}"), &file.to_string_lossy(),
+                &format!("--adjust-vma={start:#x}"), &format!("--start-address={cursor:#x}"),
+                &format!("--stop-address={boundary:#x}"), &file.path().to_string_lossy(),
             ], root())?;
             for line in output.lines().filter(|line| {
                 line.trim_start().split_once(":\t")
@@ -611,7 +638,7 @@ pub(crate) fn scaffold_reference(target: DecompTarget, wanted: &str, arm: bool) 
     let tokens = if arm {
         arm_reference(&reference_path, &reference, base, start, end)?
     } else {
-        thumb_reference(&reference_path, &reference, base, start, end)?
+        thumb_reference(&reference, base, start, end)?
     };
     let mode = if arm { "ARM" } else { "Thumb" };
     println!("{mode} main-image analysis: {} {name}, {start:#010x}..{end:#010x}; full ROM comparison remains required.", target.id);
@@ -657,10 +684,7 @@ pub(crate) fn overlay_reference(target: DecompTarget, overlay: &str, wanted: &st
     if native.start != start || native.end != end || native.name != name {
         return Err(format!("{name}: overlay analysis bounds disagree"));
     }
-    // Private comparison input only: no build or accounting path reads it.
-    let file = tempfile::NamedTempFile::new().map_err(|error| error.to_string())?;
-    std::fs::write(file.path(), &native.bytes).map_err(|error| error.to_string())?;
-    let tokens = thumb_reference(file.path(), &native.bytes, start, start, end)?;
+    let tokens = thumb_reference(&native.bytes, start, start, end)?;
     println!("Thumb overlay ROM analysis: {} {overlay} {name}, {start:#010x}..{end:#010x}; full ROM comparison remains required.", target.id);
     Ok((tokens, name))
 }
@@ -831,6 +855,14 @@ mod tests {
     use super::*;
 
     #[test]
+    fn encoded_thumb_branches_ignore_misleading_objdump_symbols() {
+        assert_eq!(normalize("    361e:\te34a     \tb.n\tb80 <Wrong+0x6c>\n    3620:\td1fc     \tbne.n\t0 <Wrong>\n    3622:\te7fc     \tb.n\t0 <Wrong>\n"),
+            ["b.n +1688", "bne.n -4", "b.n -4"]);
+        assert_eq!(normalize("    12:\tf000 f801 \tbl\t18 <Callee>\n    16:\t2001     \tmovs\tr0, #1\n    18:\t12345678 \t.word\t0x12345678\n"),
+            ["bl", "movs r0, #1"]);
+    }
+
+    #[test]
     fn a_branch_before_a_relocated_literal_keeps_its_offset() {
         let objdump = "    1b94:\tbl\t0 <Owner>\n    1b96:\tb.n\t3d0 <MsgDefUp+0x3d0>\n\t...\n\t\t\t1b98: R_ARM_ABS32\tMsgDefUp\n    1f66:\tb.n\t1b96 <F+0x1b96>\n";
         assert_eq!(normalize(objdump), vec!["bl", "b.n +976", "b.n -976"]);
@@ -962,19 +994,24 @@ mod tests {
         command(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-o", &object.to_string_lossy(), &source.to_string_lossy()], root()).unwrap();
         command(&["arm-none-eabi-objcopy", "-O", "binary", "--only-section=.text", &object.to_string_lossy(), &binary.to_string_lossy()], root()).unwrap();
         let image = std::fs::read(&binary).unwrap();
-        let actual = thumb_reference(&binary, &image, ROM, ROM, ROM + 16).unwrap();
+        let actual = thumb_reference(&image, ROM, ROM, ROM + 16).unwrap();
         assert_eq!(actual, disassemble(&object, Some("First")).unwrap());
         assert_eq!(actual.len(), 6);
         assert!(!actual.iter().any(|line| line.contains("#99")));
-        assert!(thumb_reference(&binary, &image, ROM, ROM, ROM + 100).is_err());
+        assert!(thumb_reference(&image, ROM, ROM, ROM + 100).is_err());
+
+        // A pool word whose last halfword begins a Thumb-2 encoding must
+        // not swallow the first instruction after the pool.
+        let mut wide_pool = image.clone();
+        wide_pool[10..12].copy_from_slice(&0xf000u16.to_le_bytes());
+        assert_eq!(thumb_reference(&wide_pool, ROM, ROM, ROM + 16).unwrap(), actual);
 
         let mut image: Vec<u8> = [0x4a05u16, 0x00bb, 0x589b, 0x469f].into_iter().flat_map(u16::to_le_bytes).collect();
         image.extend((ROM + 0x10).to_le_bytes());
         image.extend((ROM + 0x14).to_le_bytes());
         image.extend([0x2001u16, 0x4770, 0x2002, 0x4770].into_iter().flat_map(u16::to_le_bytes));
         image.extend((ROM + 8).to_le_bytes());
-        std::fs::write(&binary, &image).unwrap();
-        let table = thumb_reference(&binary, &image, ROM, ROM, ROM + 28).unwrap();
+        let table = thumb_reference(&image, ROM, ROM, ROM + 28).unwrap();
         assert_eq!(table.len(), 8);
         assert_eq!(&table[4..], ["movs r0, #1", "bx lr", "movs r0, #2", "bx lr"]);
     }
@@ -987,7 +1024,7 @@ mod tests {
         let image: Vec<u8> = [0x469eu16, 0xf800, 0xb003, 0xbd60]
             .into_iter().flat_map(u16::to_le_bytes).collect();
         std::fs::write(&binary, &image).unwrap();
-        assert_eq!(thumb_reference(&binary, &image, ROM, ROM, ROM + 8).unwrap(),
+        assert_eq!(thumb_reference(&image, ROM, ROM, ROM + 8).unwrap(),
             ["mov lr, r3", "bl", "add sp, #12", "pop {r5, r6, pc}"]);
         assert_eq!(normalize("0:\tmov lr, r3\n2:\t.short 0xf800\n4:\tadd sp, #12\n6:\tpop {r5, r6, pc}\n"),
             ["mov lr, r3", "bl", "add sp, #12", "pop {r5, r6, pc}"]);
@@ -996,6 +1033,20 @@ mod tests {
         assert_eq!(located.iter().map(|(row, _)| row.as_str()).collect::<Vec<_>>(),
             ["mov lr, r3", "bl", "add sp, #12"]);
         assert_eq!(located[1].1, Some(("test.c".into(), 2)));
+    }
+
+    #[test]
+    fn sliced_thumb_reference_handles_pools_and_call_suffixes_together() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let body: Vec<u8> = [0x4802u16, 0xe005, 0x469e, 0xf800, 0xb003, 0xbd60,
+            0x1234, 0xf000, 0x2007, 0x4770].into_iter().flat_map(u16::to_le_bytes).collect();
+        let expected = thumb_reference(&body, ROM, ROM, ROM + 20).unwrap();
+        let mut image = vec![0; 8];
+        image.extend(body);
+        assert_eq!(thumb_reference(&image, ROM, ROM + 8, ROM + 28).unwrap(), expected);
+        assert_eq!(expected.len(), 8);
+        assert!(expected.iter().any(|instruction| instruction == "bl"));
+        assert!(expected.iter().any(|instruction| instruction == "movs r0, #7"));
     }
 
     #[test]

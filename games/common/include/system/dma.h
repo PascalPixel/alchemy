@@ -17,6 +17,14 @@ struct DmaRegisters {
                 0x85000000 | ((size) / 4), (volatile u32 *)0x040000d4);      \
     }
 
+/* Unpinning trials: an ordinary input-only channel stays in r4 across
+ * adjacent transfers. A read/write early-clobber channel instead reloads
+ * its address at each call. Returning that channel and chaining the first
+ * two window transfers matches all 66 instructions in TLA's window loader,
+ * but the twelve ROMs differ: other callers also derive nearby I/O addresses
+ * from the known DMA channel. Runtime_InstallIwramAndIrqs loses its final
+ * channel-to-DISPSTAT subtraction. Those uses must be preserved together;
+ * the partial return-and-chain change is not adopted. */
 CAMELOT_ASM("stmia of three registers with no paired ldmia, which no agscc pattern emits")
 static __inline__ void Dma_Set(const void *source, void *destination, u32 control, volatile u32 *channel)
 {

@@ -8,7 +8,11 @@
  * The pre-overhaul permuter cannot parse the complete function for random
  * rewriting. A 2-minute explicit 40-choice search (seed 227) found no zero;
  * its weighted-50 result differs 10, so this differ-2 source is retained.
- * Linked source keeps its bindings pending all-edition byte identity. */
+ * Moving the existing barrier onto w, taking slot as an input and incrementing
+ * w afterwards orders the operations correctly but differs 14 in EN: w takes
+ * r2 instead of r0, and the signed byte takes r0 instead of r2. Early-clobber
+ * and generic constraints retain 14; passing both w and slot through differs
+ * 44. Linked source keeps its bindings pending all-edition byte identity. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -278,4 +282,3 @@ end:
     Event_End();
     return 0;
 }
-

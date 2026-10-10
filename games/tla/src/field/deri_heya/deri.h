@@ -78,12 +78,12 @@ static inline void Deri_ObjPlace(s32 actor, s32 x, s32 z)
 
 static inline void Deri_Jump(s32 actor, s32 height, s32 frames)
 {
-    /* FAKEMATCH: the native loads the actor after the height and frames. */
-    register s32 h __asm__("r1") = height;
-    /* FAKEMATCH: the frames stay fixed in r2 for the same reason. */
-    register s32 f __asm__("r2") = frames;
+    s32 h = height;
+    s32 f = frames;
     s32 a = actor;
 
+    /* FAKEMATCH: plain arguments copy the actor two instructions early; finish height and frames first. */
+    __asm__("" : "+l"(h), "+l"(f), "+l"(a));
     Func_02000d94(a, h, f);
 }
 

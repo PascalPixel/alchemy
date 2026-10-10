@@ -8,6 +8,12 @@
  * and dropping register qualifiers do not close those two operands.
  * Reusing cell at the final store
  * instead scores weighted 195 but differs 50; neither is adopted.
+ * The staging permuter (two jobs, seed 313, exact stack and branches)
+ * compiled 12,467 distinct candidates in two minutes without improvement.
+ * Adding bytes or offset inputs to the existing base barrier retains four
+ * differences; making either an output changes most of the function.
+ * Reversing the final assignment and also assigning cell retain four;
+ * additive or XOR cancellation instead leaves 24 differences.
  * The linked function retains its r3 binding until the whole ROM matches. */
 #include "edition.h"
 #include "mapcopy.h"

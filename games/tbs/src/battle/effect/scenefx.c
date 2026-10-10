@@ -137,7 +137,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0x2000);
 	*(volatile u16 *)0x04000020 = 0x100;
-	if (mode == 1)
+	/* FAKEMATCH: test through direction so CSE retains the mode reload
+	 * in this arm. Testing mode directly replaces ldr r4,[sp,#76] with
+	 * movs r4,#1 (1532 instructions, two differing rows). */
+	direction = mode;
+	if (direction == 1)
 	{
 		struct MotionObject *object = GetBattleObjectSlotFar(work->effect->actor)->object;
 
@@ -145,8 +149,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 		object->vertical_motion_strength = 0x91eb;
 		ObjectGroup_UpdateMembers(work->effect->actor, -1, 2, -1, 0);
 		AudioCommand_PlayFar(145);
-		/* FAKEMATCH: cse forgets mode == 1 from the test; the arm reloads mode (ldr r4, [sp, #76]) for movs r4, #1 (2 -> 0). */
-		asm("" : "+rm"(mode));
 		direction = work->effect->side == 1 ? mode : -1;
 	}
 	else
@@ -271,6 +273,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 			s32 angle = frame << 8;
 			/* FAKEMATCH: count fixed in r2, as in the reference; as a hard register it leaves the division temp canonical in cse, so the compare and +3 use the temp as in the reference. */
 			register s32 count asm("r2") = work->frame;
+			/* An ordinary base alone leaves 8 aligned differences in 1532
+			 * instructions. Integer/word/halfword carriers, a typed inline
+			 * line helper and general or early-clobber barrier outputs keep
+			 * that residual. A two-minute exact-stack/branch search (seed
+			 * 353, nested helpers ignored) found no improvement in 1241
+			 * compiled candidates. Changing count alone differs 10, both
+			 * count and base differ 74, and level alone differs 42. */
 			/* FAKEMATCH: work's copy in r0; else it and the 0x778c reload swap r0/r1. */
 			register u8 *base asm("r0") = (u8 *)work;
 			s32			 heat = count / 4;

@@ -262,8 +262,7 @@ static inline void Kabe_ObjPlaceAt(s32 actor, s32 x, s32 z, s32 angle)
 
 static inline void Kabe_ObjPlaceTurn(s32 actor, s32 x, s32 z, s32 angle)
 {
-    /* FAKEMATCH: the native loads the angle before the position. */
-    register s32 g __asm__("r3") = angle;
+    s32 g = angle;
 
     Func_02003a38(actor, x, z, g);
 }

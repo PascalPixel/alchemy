@@ -11,7 +11,9 @@ void Func_020025fc(void)
         Func_02003ad0()->motion_flags = done;
         Kabe_CamMove(328 << 16, 48 << 16, 552 << 16, 1);
         Func_02003ac8();
-        Kabe_ObjPlaceTurn(14, 424 << 16, 520 << 16, 0x4000);
+        /* FAKEMATCH: reusing the old flag result for the angle retains the native early constant construction; the plain unbound angle differs 2. */
+        done = 0x4000;
+        Kabe_ObjPlaceTurn(14, 424 << 16, 520 << 16, done);
         WaitFrames(1);
         Object_LinkObjectAndSetCallback(gPartyState.current_owner, 14);
         ObjectMotion_SetActionVariant(14, 1);

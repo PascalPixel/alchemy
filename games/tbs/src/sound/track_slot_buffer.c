@@ -2,29 +2,16 @@
 
 void AudioTrack_ResetSlotBuckets(void)
 {
-    /* FAKEMATCH: retain the original signed word stores at the node back-link and slot lanes. Direct node fields change register allocation at the same 60-byte TBS extent and shorten the TLA body from 60 to 56. */
     s32 index;
-    s32 limit;
-    s32 zero;
-    u8 *record;
-    s32 *slot;
+    struct AudioSlotNode **bucket;
 
-    limit = 0x3FF;
-    index = 0;
-    zero = 0;
-    record = (u8 *)&Flash_Handler3->nodes[0].back;
-    do {
-        *(s32 *)(record + sizeof(struct AudioSlotNode *)) = index;
-        index++;
-        *(s32 *)record = zero;
-        record += sizeof(struct AudioSlotNode);
-    } while (index <= limit);
-    slot = (s32 *)Flash_Handler3->bucket;
-    {
-        s32 zero2 = 0;
-        for (index = 0xFF; index >= 0; index--) {
-            *slot++ = zero2;
-        }
+    for (index = 0; index < 0x400; index++) {
+        Flash_Handler3->nodes[index].slot = index;
+        Flash_Handler3->nodes[index].back = NULL;
+    }
+    bucket = Flash_Handler3->bucket;
+    for (index = 0xFF; index >= 0; index--) {
+        *bucket++ = NULL;
     }
 }
 
@@ -133,31 +120,12 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 
 void AudioTrack_CopyBufferedBytes(u8 *destination)
 {
-    /* FAKEMATCH: unsigned word views and the byte cursor preserve lane-base registers; direct accesses swap them and remove four bytes. */
-    u32 cnt_off = (u32)&((struct AudioTrackSlotWork *)0)->out_cnt;
-    u8 **base_p = (u8 **)&Flash_Handler3;
-    u8 *base = *base_p;
-    u32 index = 0;
-    u32 *cnt_p = (u32 *)(base + cnt_off);
-    u32 saved_off = cnt_off;
-    u32 count = *cnt_p;
+    struct AudioTrackSlotWork *work = Flash_Handler3;
+    s32 index;
 
-    if (count != 0) {
-        u32 displacement = (u32)&((struct AudioTrackSlotWork *)0)->out_total;
-        u32 *offset = (u32 *)(base + displacement);
-        u32 *cnt_p2;
-        u8 *source;
-        displacement -= (u32)&((struct AudioTrackSlotWork *)0)->out_total
-            - (u32)&((struct AudioTrackSlotWork *)0)->out_buf;
-        cnt_p = (u32 *)displacement;
-        cnt_p2 = (u32 *)(base + saved_off);
-        source = base + (u32)cnt_p;
-        do {
-            destination[*offset] = *source;
-            (*offset)++;
-            index = index + 1;
-            source = source + 1;
-        } while (index != *cnt_p2);
+    for (index = 0; index != work->out_cnt; index++) {
+        destination[work->out_total] = work->out_buf[index];
+        work->out_total++;
     }
 }
 

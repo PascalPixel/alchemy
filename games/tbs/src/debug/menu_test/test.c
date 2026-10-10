@@ -766,16 +766,15 @@ s32 CommandTable_ConfigureCommandList(void)
 	Item_AdjustCounter(130, 1);
 	Item_AdjustCounter(140, 1);
 	Item_AdjustCounter(151, 1);
-	/* FAKEMATCH: the typed void calls put the first three owner arguments before the target count; ordinary calls reverse their order. */
 #if EDITION_INTERNATIONAL
-	((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(ROBIN, 50);
-	((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(GERALD, 30);
-	((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(MEARI, 30);
+	Party_AdvanceOwnerCountToTarget(ROBIN, 50);
+	Party_AdvanceOwnerCountToTarget(GERALD, 30);
+	Party_AdvanceOwnerCountToTarget(MEARI, 30);
 #else
 	gGameState.coins = 777777;
-	((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(ROBIN, 30);
-	((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(GERALD, 30);
-	((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(MEARI, 30);
+	Party_AdvanceOwnerCountToTarget(ROBIN, 30);
+	Party_AdvanceOwnerCountToTarget(GERALD, 30);
+	Party_AdvanceOwnerCountToTarget(MEARI, 30);
 #endif
 	Party_AdvanceOwnerCountToTarget(IWAN, 30);
 	UnitCalc(ROBIN);

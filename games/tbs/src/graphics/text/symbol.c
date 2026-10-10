@@ -91,20 +91,14 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
 {
     u32 code;
     u32 hi;
-    /* FAKEMATCH: needed to match: removing both pins leaves 136 aligned differences in 134 instructions, with the same 0x110-byte English extent. Reusing the dead context index hi for all later bit and packed-leaf byte uses improves that pin-free candidate to 132 differences in 68 rows; the first load takes previous_code into r6 instead of r5, tree takes r5 instead of r1, and bit/depth take r1/r2 instead of r2/r3. */
-    register const u8 *tree asm("r1");
+    const u8 *base;
+    const u8 *tree;
     const u8 *leaves;
     const u8 *text;
     s32 text_bits;
     s32 tree_bits;
     s32 rank;
-    /* FAKEMATCH: needed to match: depth lives in r3. Scoping an ordinary depth = 0 immediately before the subtree do loop still differs 92 with tree pinned, or 136 with both pins removed. Separate bit scopes and final packed-byte reuse do not close the combined residual (up to 151 differences).
-     * A generic depth output at the subtree loop's condition with a bit
-     * input improves depth-only removal to 70 (134 native and built,
-     * 99 common). An output at depth initialization, alone or with bit
-     * or tree_bits as input, leaves 130 (128 built). Reusing the dead hi,
-     * code, index or half for depth leaves 138, 136, 104 or 135. */
-    register s32 depth asm("r3");
+    s32 depth;
     s32 bit;
     u32 index;
     u32 half;
@@ -115,9 +109,10 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
     tree_bits = 1;
     hi = code >> 8;
     code &= 0xff;
-    tree = Text_MessageContexts[hi][0];
-    tree = tree + ((const u16 *)Text_MessageContexts[hi][1])[code];
-    leaves = tree - 1;
+    base = Text_MessageContexts[hi][0];
+    base = base + ((const u16 *)Text_MessageContexts[hi][1])[code];
+    tree = base;
+    leaves = base - 1;
     rank = 0;
     for (;;) {
         bit = tree_bits & 1;
@@ -157,7 +152,8 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
     }
     index = rank * 3;
     if (((index * 4) & 7) == 0) {
-        code = leaves[-(index >> 1)] << 4;
+        bit = leaves[-(index >> 1)];
+        code = bit << 4;
         bit = leaves[-(index >> 1) - 1];
         code |= (u32)bit >> 4;
     } else {

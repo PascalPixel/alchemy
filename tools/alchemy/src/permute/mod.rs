@@ -74,8 +74,8 @@ branch destinations and trailing nops even when scoring ignores them.
 After the search, each best candidate is
 minimized: its rewrites are undone one at a time, last first, and each
 removal that leaves the weighted score, then differ, no higher is kept. Writes
-out/permute/STEM/best-N.c (best first), its remaining rewrites in its
-header, and best-N.diff, a unified diff against the draft file that
+out/permute/STEM/best-N.c (best first), its remaining rewrites in
+best-N.txt, and best-N.diff, a unified diff against the draft file that
 `patch -p0` applies from the checkout: PERM macros become their chosen
 alternatives as the draft writes them, and the rewrites replace only the
 draft lines they change (or the whole function as printed, when they do not
@@ -1301,9 +1301,13 @@ fn write_best(problem: &Problem, base: &Found, found: &[Best], output: &Path) ->
             entry.searched.len(),
             rewrites(&entry.searched)
         );
-        std::fs::write(&path, format!("{header}{}", entry.text)).map_err(|e| format!("{}: {e}", path.display()))?;
+        // Reports must not change __LINE__ or any other source-sensitive
+        // expression in the compiler-verified spelling.
+        std::fs::write(&path, &entry.text).map_err(|e| format!("{}: {e}", path.display()))?;
+        let report = path.with_extension("txt");
+        std::fs::write(&report, header).map_err(|e| format!("{}: {e}", report.display()))?;
         // Against the draft file itself, so `patch -p0` from the checkout
-        // applies it; the header comment stays in best-N.c only.
+        // applies it; the report stays in best-N.txt only.
         let diff = unified(&problem.text, &entry.text, &name);
         std::fs::write(path.with_extension("diff"), &diff).map_err(|e| format!("{}: {e}", path.display()))?;
         println!(

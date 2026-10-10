@@ -4,6 +4,40 @@ use super::tests::test_problem;
 use super::*;
 
 #[test]
+fn saved_best_preserves_line_sensitive_compiler_output() {
+    crate::compiler::routing::prefer_installed_binutils();
+    let work = tempfile::tempdir().unwrap();
+    let draft = work.path().join("08000000.c");
+    let source = "#define VALUE __LINE__\nint target(void)\n{\n    return VALUE;\n}\n";
+    let mut problem = test_problem(&draft, source, vec![], Some("target"));
+    problem.symbol = Some("target".into());
+    let reference = Job::new(&problem, &work.path().join("reference")).unwrap();
+    reference.compile(source).unwrap();
+    let expected = score::disassemble(&reference.object, Some("target")).unwrap();
+    problem.listing = crate::diff::disassemble(&reference.object, Some("target")).unwrap();
+    problem.listing_rows = Some(expected.clone());
+    let found = Found {
+        score: problem.evaluate(&reference, source).unwrap(),
+        unnatural: 0,
+        text: source.into(),
+        steps: vec![],
+        expanded: Arc::new(perm::expand(&problem.nodes, None).unwrap()),
+        job: 0,
+        iteration: 0,
+    };
+    assert!(found.score.is_zero());
+    let best = Best { found: found.clone(), searched: vec![], text: source.into(), respelled: true };
+    let output = work.path().join("output");
+    std::fs::create_dir_all(&output).unwrap();
+    write_best(&problem, &found, &[best], &output).unwrap();
+    let saved = std::fs::read_to_string(output.join("best-1.c")).unwrap();
+    reference.compile(&saved).unwrap();
+    assert_eq!(score::disassemble(&reference.object, Some("target")).unwrap(), expected);
+    assert_eq!(saved, source);
+    assert!(std::fs::read_to_string(output.join("best-1.txt")).unwrap().contains("Job 0, iteration 0"));
+}
+
+#[test]
 fn prefix_search_saves_improvement_above_baseline_weighted_score() {
     crate::compiler::routing::prefer_installed_binutils();
     let work = tempfile::tempdir().unwrap();

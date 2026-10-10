@@ -205,6 +205,12 @@ fn relocations(objdump: &str) -> BTreeSet<(u32, String)> {
 }
 
 fn normalize_with(objdump: &str, relocated: &BTreeSet<(u32, String)>) -> Vec<String> {
+    normalize_with_state(objdump, relocated, &mut false)
+}
+
+fn normalize_with_state(objdump: &str, relocated: &BTreeSet<(u32, String)>, lr_setup: &mut bool) -> Vec<String> {
+    // GCC emits the standalone Thumb BL suffix as .short, so the assembler
+    // marks it as data. Only recognize it immediately after the LR setup.
     objdump
         .lines()
         .filter_map(|line| {
@@ -214,6 +220,11 @@ fn normalize_with(objdump: &str, relocated: &BTreeSet<(u32, String)>) -> Vec<Str
             let mut words = text.split_whitespace();
             let mnemonic = words.next()?;
             let operands: Vec<&str> = words.collect();
+            let call_suffix = *lr_setup && mnemonic == ".short" && operands == ["0xf800"];
+            *lr_setup = mnemonic == "mov" && operands.first() == Some(&"lr,");
+            if call_suffix {
+                return Some("bl".into());
+            }
             if mnemonic == "bl" || mnemonic == "blx" {
                 return Some(mnemonic.to_string());
             }
@@ -306,12 +317,13 @@ pub(crate) fn normalize_located(objdump: &str) -> Vec<(String, Option<(String, u
     let mut at: Option<(String, u32)> = None;
     let mut out = Vec::new();
     let relocated = relocations(objdump);
+    let mut lr_setup = false;
     for line in objdump.lines() {
         if let Some(location) = source_location(line) {
             at = Some(location);
             continue;
         }
-        out.extend(normalize_with(line, &relocated).into_iter().map(|row| (row, at.clone())));
+        out.extend(normalize_with_state(line, &relocated, &mut lr_setup).into_iter().map(|row| (row, at.clone())));
     }
     out
 }
@@ -519,17 +531,35 @@ fn thumb_reference(file: &Path, image: &[u8], base: u32, start: u32, end: u32) -
         return Err("scaffold contains an unsupported Thumb instruction; no comparison produced".into());
     }
     let instructions: BTreeSet<u32> = lines.iter().filter(|line| !line.wide).map(|line| line.address).collect();
-    let output = command(&[
-        "arm-none-eabi-objdump", "-D", "-b", "binary", "-marm", "-Mforce-thumb",
-        "--no-show-raw-insn", "--disassemble-zeroes",
-        &format!("--adjust-vma={base:#x}"), &format!("--start-address={start:#x}"),
-        &format!("--stop-address={end:#x}"), &file.to_string_lossy(),
-    ], root())?;
-    let code: String = output.lines().filter(|line| {
-        line.trim_start().split_once(":\t")
-            .and_then(|(address, _)| u32::from_str_radix(address, 16).ok())
-            .is_some_and(|address| instructions.contains(&address))
-    }).map(|line| format!("{line}\n")).collect();
+    // Binary objdump interprets a standalone BL suffix plus its successor as
+    // Thumb-2 even with -marmv4t. Split at the call using our ARM7 decoder so
+    // disassembly resumes at the next real instruction, without changing bytes.
+    let calls: Vec<u32> = lines.iter().filter(|line| line.text.starts_with("bl lr"))
+        .map(|line| line.address).collect();
+    let mut cursor = start;
+    let mut code = String::new();
+    for boundary in calls.into_iter().chain(std::iter::once(end)) {
+        if cursor < boundary {
+            let output = command(&[
+                "arm-none-eabi-objdump", "-D", "-b", "binary", "-marm", "-Mforce-thumb",
+                "--no-show-raw-insn", "--disassemble-zeroes",
+                &format!("--adjust-vma={base:#x}"), &format!("--start-address={cursor:#x}"),
+                &format!("--stop-address={boundary:#x}"), &file.to_string_lossy(),
+            ], root())?;
+            for line in output.lines().filter(|line| {
+                line.trim_start().split_once(":\t")
+                    .and_then(|(address, _)| u32::from_str_radix(address, 16).ok())
+                    .is_some_and(|address| instructions.contains(&address))
+            }) {
+                code.push_str(line);
+                code.push('\n');
+            }
+        }
+        if boundary < end {
+            code.push_str(&format!("{boundary:x}:\tbl lr\n"));
+            cursor = boundary + 2;
+        }
+    }
     Ok(normalize(&code))
 }
 
@@ -840,6 +870,25 @@ mod tests {
         let table = thumb_reference(&binary, &image, ROM, ROM, ROM + 28).unwrap();
         assert_eq!(table.len(), 8);
         assert_eq!(&table[4..], ["movs r0, #1", "bx lr", "movs r0, #2", "bx lr"]);
+    }
+
+    #[test]
+    fn thumb_reference_keeps_a_standalone_call_via_lr_and_its_successor() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let binary = work.path().join("reference.bin");
+        let image: Vec<u8> = [0x469eu16, 0xf800, 0xb003, 0xbd60]
+            .into_iter().flat_map(u16::to_le_bytes).collect();
+        std::fs::write(&binary, &image).unwrap();
+        assert_eq!(thumb_reference(&binary, &image, ROM, ROM, ROM + 8).unwrap(),
+            ["mov lr, r3", "bl", "add sp, #12", "pop {r5, r6, pc}"]);
+        assert_eq!(normalize("0:\tmov lr, r3\n2:\t.short 0xf800\n4:\tadd sp, #12\n6:\tpop {r5, r6, pc}\n"),
+            ["mov lr, r3", "bl", "add sp, #12", "pop {r5, r6, pc}"]);
+        assert!(normalize("0:\t.short 0xf800\n").is_empty());
+        let located = normalize_located("test.c:1\n0:\tmov lr, r3\ntest.c:2\n2:\t.short 0xf800\n4:\tadd sp, #12\n");
+        assert_eq!(located.iter().map(|(row, _)| row.as_str()).collect::<Vec<_>>(),
+            ["mov lr, r3", "bl", "add sp, #12"]);
+        assert_eq!(located[1].1, Some(("test.c".into(), 2)));
     }
 
     #[test]

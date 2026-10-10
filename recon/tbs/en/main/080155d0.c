@@ -1,4 +1,4 @@
-/* ARM draft, stock agbcc_arm: JA differs 0, EN 6, DE/ES/FR/IT 12.
+/* ARM draft, stock agbcc_arm: JA differs 0, EN 4, DE/ES/FR/IT 12.
    Target: matching C with tagged fakematches; no inline asm, register pins
    or asm barriers. Japanese already links the matching C in moji.c.
 
@@ -7,8 +7,9 @@
    Japanese drawing loop gives 0/74/52. A one-pass packed-font pixel call
    gives 0/14/18; scoped source and row setup gives 0/8/14. Normalizing the
    continental height copy gives 0/8/12. Keeping a separate English width
-   through the clipping return gives 0/6/12. Both international pixel loops
-   now match; entry copies, palette setup and table-load order remain.
+   through the clipping return gives 0/6/12. Loading the English width-table
+   address before the row scope gives 0/4/12: only its two entry moves remain.
+   Both international pixel loops match; continental setup order remains.
 
    Searches: seed 249 found the pixel-call scope in 24 seconds. Finite
    setup scopes (32 and 1,024 choices), source/width forms (30), argument
@@ -25,7 +26,12 @@
    early argument tests (81), width helpers (4), normalized width reads (8),
    selector copies (12), width-table lifetimes (9) and equivalent row-zero
    expressions (9) did not improve this result. The width-return search
-   (18) found the English clipping-copy form retained below. */
+   (18) found the English clipping-copy form retained below. Further entry
+   ranges, argument copies, cancelling arithmetic, height views and types
+   did not improve the entry order. Reordering font initializers (3,840
+   choices) also stalled. RTL showed the row scope ordered the table-address
+   load after the row clear; separating the address and retaining the checked
+   index fixes their order. Const-qualifying the font pointer did not help. */
 
 #include "types.h"
 #include "uiwindow.h"
@@ -135,6 +141,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32
 #else
 #if defined(TBS_EDITION_EN)
 			u32 raw_font_width;
+			const u8 *widths;
 #endif
 			u32 color1;
 			u32 color3;
@@ -248,20 +255,33 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32
 			} while (0);
 			color1 = 0x1111;
 			color3 = 0x3333;
+#if !defined(TBS_EDITION_EN)
 			do
 			{
 				row = 0;
 			} while (0);
+#endif
 #if defined(TBS_EDITION_EN)
+			/* FAKEMATCH: finish the palette's CSE block, then load the table
+			   address before the row scope. Retaining the checked index keeps
+			   it live through the row clear (EN differ 6 -> 4). */
+			do
+			{
+			} while (0);
+			widths = UiText_GlyphWidths;
+			do
+			{
+				row = 0;
+			} while (0);
 			/* FAKEMATCH: the separate normalized width and repeated read
 			   retain the clipping comparison before its spill. Both reads
 			   become one LDRB; the width is a byte on either return path
 			   (EN differ 8 -> 6). */
-			raw_font_width = UiText_GlyphWidths[character - 32];
+			raw_font_width = widths[index];
 			do
 			{
 				if (y > 31)
-					raw_font_width = UiText_GlyphWidths[character - 32];
+					raw_font_width = widths[index];
 			} while (0);
 			font_width = (raw_font_width << 24) >> 24;
 			if (y > 31)

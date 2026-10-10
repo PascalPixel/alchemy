@@ -3,12 +3,12 @@
 #include "glyph.h"
 #include "text_font.h"
 
-/* ARM draft: JA differs 3; EN differs 4; DE/ES/FR/IT differ 10. The tail matches.
+/* ARM draft: JA differs 2; EN differs 4; DE/ES/FR/IT differ 10. The tail matches.
    Registers and spill offsets match. Remaining differences:
-   JA: one extra early height spill; width spill after x++.
-       Reload cannot delete the early spill across the synthetic branch;
-       its branch and label must disappear earlier without merging the load
-       and delayed copy. The width spill is a sched2 ordering difference.
+   JA: STR r3,[sp,#12] precedes ADD r8,r8,#1; native reverses that pair.
+       Sched2 delays the store across SUB r3,r1,#222's anti-dependence and
+       fills the gap with x++. A separate lifetime for the width constant
+       must preserve MOV r3,#8 while placing its spill after x++.
    EN: y copy before SUB sp; x copy immediately after the font load.
    DE/ES/FR/IT: coordinate copies before SUB sp and window spill; height spill
        after the font-selection CMP; source spill after color1's ADD;
@@ -106,17 +106,16 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 	window = input_window;
 	stride = input_window->height;
 #elif defined(TBS_EDITION_JA)
-	/* FAKEMATCH: keep the original height spill and a normalized copy after
-	   an early character comparison. The high half is zero, so combine
-	   removes the added arithmetic. JA differ 4 -> 3, with the first store
-	   still redundant; directly delaying the spill changes the width registers. */
+	/* FAKEMATCH: the repeated read keeps the height copy after the character
+	   comparison through combine. CSE removes the second read; jump2 removes
+	   the empty branch. With the width setup below, JA differ 3 -> 2: the
+	   redundant height spill disappears and the remaining registers match. */
 	do
 	{
-		stride = window->height;
+		width = window->height;
 	} while (0);
-	width = (stride << 16) >> 16;
 	if (character > 255)
-		width = (u16)(stride + (stride >> 16));
+		width = window->height;
 	stride = (width << 16) >> 16;
 #else
 	/* FAKEMATCH: the one-pass height read preserves the load's scheduling boundary. */
@@ -162,6 +161,16 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 			   reload CSE removes the repeated assignment in the accent path. */
 			raw_color = 0x1111 + (stride >> 16);
 			font_width = 8;
+			/* FAKEMATCH: both high halves are zero. Combine removes the width
+			   addition but retains an unused height test through reload; flow2
+			   then removes it. Its temporary reload preserves r3 for width 8
+			   and r0 for width 2 (JA differ 8 -> 2 after delaying the height spill). */
+			do
+			{
+				if (stride & 0xffff0000U)
+					break;
+				font_width += width & 0xffff0000U;
+			} while (0);
 			x++;
 			do
 			{
@@ -322,7 +331,7 @@ font_done:
 		}
 #if defined(TBS_EDITION_JA)
 		/* FAKEMATCH: fold this difference in combine, after GCSE has run;
-		   otherwise GCSE hoists the accent index (JA differ 3 -> 29). */
+		   otherwise GCSE hoists the accent index (JA differ 2 -> 32). */
 		mark = 0U - (222U - character);
 #elif defined(TBS_EDITION_EN)
 		mark = character - 222;

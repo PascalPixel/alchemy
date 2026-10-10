@@ -1451,10 +1451,14 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
         }
 
         {
-            s32 cx = list_win->x * 8;
+            s32 cx;
 
-            /* FAKEMATCH: instruction order: this barrier keeps the reload of row for row * 2 (mov r2, r10) after lsls; without it the reload is scheduled in the ldrh delay slot (2 rows) */
-            asm("");
+            /* FAKEMATCH: the one-pass calculation keeps row's reload after
+             * the x shift. Without the block, mov r2, r10 fills the ldrh
+             * delay slot before lsls (2 differing instruction rows). */
+            do {
+                cx = list_win->x * 8;
+            } while (0);
             /* FAKEMATCH: instruction order: row read in a low register here is reloaded before the subtract, and row * 2 inherits that reload, so mov r2, r10 precedes subs r3, #2 as native (2 rows without; equal priority, and the reload otherwise has the later luid) */
             asm("" : : "l"(row));
             cursor_pos.x = cx - 2;

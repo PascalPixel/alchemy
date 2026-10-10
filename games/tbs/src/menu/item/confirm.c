@@ -56,86 +56,115 @@ void ItemMenu_DrawItemHead(void)
 
 s32 ItemMenu_ConfirmDrop(s32 a0)
 {
-    s32 win;
-    s32 slot;
-    s32 text;
-    s32 label;
-    s32 rows = 2;
-    s32 sel;
-    register s32 changed asm("r8"); /* FAKEMATCH: pins the flag to r8, where the native keeps it; with the r2 copy below unpinned it moves to r7 (86 of 141 rows differ) */
+	s32 win;
+	s32 slot;
+	s32 text;
+	s32 label;
+	s32 rows = 2;
+	s32 sel;
+	/* FAKEMATCH: the native keeps the flag in r8. Removing this binding
+	 * alone exchanges the flag and window registers (48 instructions differ). */
+	register s32 changed asm("r8");
 
-    win = UiWindow_CreateFar(13, 3, 17, 10, 2);
-    slot = a0 & ITEM_ID_MASK;
-    Item_GetDirectFar(slot);
-    UiText_DrawCharacterAtOffsetFar(slot + (s32)((u8 *)MsgItemName), win, 24, 0);
-    text = (s32)MsgConfirmDrop;
+	win = UiWindow_CreateFar(13, 3, 17, 10, 2);
+	slot = a0 & ITEM_ID_MASK;
+	Item_GetDirectFar(slot);
+	UiText_DrawCharacterAtOffsetFar(slot + (s32)((u8 *)MsgItemName), win, 24, 0);
+	text = (s32)MsgConfirmDrop;
 #if EDITION_INTERNATIONAL
-    UiText_DrawCharacterAtOffsetFar(text, win, 0, 16);
+	UiText_DrawCharacterAtOffsetFar(text, win, 0, 16);
 #else
-    UiText_DrawCharacterAtOffsetFar(text, win, 8, 16);
+	UiText_DrawCharacterAtOffsetFar(text, win, 8, 16);
 #endif
-    text++;
+	text++;
 #if EDITION_INTERNATIONAL
-    UiText_DrawCharacterAtOffsetFar(text, win, 0, 24);
+	UiText_DrawCharacterAtOffsetFar(text, win, 0, 24);
 #else
-    UiText_DrawCharacterAtOffsetFar(text, win, 8, 24);
+	UiText_DrawCharacterAtOffsetFar(text, win, 8, 24);
 #endif
-    label = (s32)MsgYes;
-    UiText_DrawCharacterAtOffsetFar(label, win, 24, 40);
-    label++;
-    UiText_DrawCharacterAtOffsetFar(label, win, 24, 56);
-    sel = 1;
-    changed = 1;
-    UiMenu_SlideCursor(104, 86);
-    for (;;) {
-        if (GameFlag_TestFar(0x150) != 0) {
-            break;
-        }
-        {
-        register s32 c asm("r2") = changed; /* FAKEMATCH: tests the flag through r2 */
-        /* FAKEMATCH: empty asm barrier on the r2 copy, so cse does not test r8 directly, whose reload takes r3 (2 of 134 rows differ) */
-        asm("" : "+l"(c));
-        if (c) {
-            changed = 0;
-            sel = (sel + rows) % rows;
-        }}
-        if (gKeyState & KEY_A) {
-            AudioCommand_PlayFar(112);
-            break;
-        }
-        if (gKeyState & KEY_B) {
-            AudioCommand_PlayFar(113);
-            sel = 1;
-            break;
-        }
-        UiMenu_PositionCursor(104, (sel << 4) + 70);
-        /* FAKEMATCH: needed to match: the key-repeat pointer shares text's variable; as a pointer of its own it ranks below sel and the two swap r5 and r6 (13 of 134 rows differ) */
-        text = (s32)&gKeysRepeat;
-        if (*(volatile s32 *)text & 64) {
-            register s32 one asm("r2") = 1; /* FAKEMATCH: sets the flag through r2 */
-            /* FAKEMATCH: the redundant conditional store ends CSE before
-             * the cursor update, keeping the one load ahead of sel's
-             * decrement. Without it, two rows swap; the conditional store
-             * disappears, preserving all 128 instructions in every edition. */
-            if (changed) {
-                changed = one;
-            }
-            sel -= 1;
-            changed = one;
-            AudioCommand_PlayFar(111);
-        }
-        if (*(volatile s32 *)text & 128) {
-            sel += 1;
-            changed = 1;
-            AudioCommand_PlayFar(111);
-        }
-        WaitFrames(1);
-    }
-    if (GameFlag_TestFar(0x150) != 0) {
-        sel = 1;
-    }
-    UiWork_FinalizeFar(win, 1);
-    return sel;
+	label = (s32)MsgYes;
+	UiText_DrawCharacterAtOffsetFar(label, win, 24, 40);
+	label++;
+	UiText_DrawCharacterAtOffsetFar(label, win, 24, 56);
+	sel = 1;
+	changed = 1;
+	UiMenu_SlideCursor(104, 86);
+	/* FAKEMATCH: explicit check/update flow keeps the native loop
+	 * rotation. A for, while or do loop with the cancelling flag copy
+	 * below moves the cancel-key block (28 instructions differ). */
+	goto check_input;
+
+update_cursor:
+	UiMenu_PositionCursor(104, (sel << 4) + 70);
+	/* FAKEMATCH: needed to match: the key-repeat pointer shares text's variable; as a pointer of its own it ranks below sel and the two swap r5 and r6 (13 of 134 rows differ) */
+	text = (s32)&gKeysRepeat;
+	if (*(volatile s32 *)text & 64)
+	{
+		/* FAKEMATCH: the native sets the flag through r2. Removing this
+		 * binding chooses r3 instead (two instruction rows differ). */
+		register s32 one asm("r2") = 1;
+		/* FAKEMATCH: the redundant conditional store ends CSE before
+		 * the cursor update, keeping the one load ahead of sel's
+		 * decrement. Without it, two rows swap; the conditional store
+		 * disappears, preserving all 128 instructions in every edition. */
+		if (changed)
+		{
+			changed = one;
+		}
+		sel -= 1;
+		changed = one;
+		AudioCommand_PlayFar(111);
+	}
+	if (*(volatile s32 *)text & 128)
+	{
+		sel += 1;
+		changed = 1;
+		AudioCommand_PlayFar(111);
+	}
+	WaitFrames(1);
+check_input:
+	if (GameFlag_TestFar(0x150) != 0)
+	{
+		goto finish;
+	}
+	{
+		/* FAKEMATCH: the native tests this flag copy through r2. Removing
+		 * its binding adds an ip copy and changes the test (19 instructions differ). */
+		register s32 c asm("r2") = changed;
+		/* FAKEMATCH: the cancelling assignments end the native CSE
+		 * block before the flag test. Both arms disappear, retaining
+		 * the r2 copy; a bare removal tests r8 through r3 instead
+		 * (two instruction rows differ). sel is stable here. */
+		if (sel)
+			c = 0;
+		if (sel)
+			c = changed;
+		if (c)
+		{
+			changed = 0;
+			sel = (sel + rows) % rows;
+		}
+	}
+	if (gKeyState & KEY_A)
+	{
+		AudioCommand_PlayFar(112);
+		goto finish;
+	}
+	if (gKeyState & KEY_B)
+	{
+		AudioCommand_PlayFar(113);
+		sel = 1;
+		goto finish;
+	}
+	goto update_cursor;
+
+finish:
+	if (GameFlag_TestFar(0x150) != 0)
+	{
+		sel = 1;
+	}
+	UiWork_FinalizeFar(win, 1);
+	return sel;
 }
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);

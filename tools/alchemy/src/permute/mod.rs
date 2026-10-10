@@ -1151,20 +1151,17 @@ struct Best {
 
 /// The candidate in the draft's spelling: PERM macros at its choices as the
 /// draft writes them, and its rewrites carried into the draft's lines, kept
-/// only when that text scores exactly as the printed candidate does.
-fn respell(problem: &Problem, job: &Job, found: &Found, cache: &mut HashMap<SourceHash, Option<Score>>) -> (String, bool) {
+/// only when its score and compiled instructions match the printed candidate.
+fn respell(problem: &Problem, job: &Job, found: &Found) -> (String, bool) {
     let draft = found.expanded.restore(&found.expanded.text);
-    let expected = if found.expanded.unit.is_some() {
-        job.compile(&found.text).and_then(|()| score::disassemble(&job.object, problem.symbol.as_deref())).ok()
-    } else { None };
-    let verifies = |text: &str, cache: &mut HashMap<SourceHash, Option<Score>>| {
-        if found.expanded.unit.is_some() {
-            // Equal scalar scores do not imply equal instructions. Projection
-            // must preserve the candidate's actual disassembly, including
-            // relocations and literal data, before saving a smaller draft.
-            expected.is_some() && problem.evaluate(job, text).ok().as_ref() == Some(&found.score)
-                && score::disassemble(&job.object, problem.symbol.as_deref()).ok() == expected
-        } else { scored(problem, job, text, cache).as_ref() == Some(&found.score) }
+    let expected = job.compile(&found.text).and_then(|()| score::disassemble(&job.object, problem.symbol.as_deref())).ok();
+    let verifies = |text: &str| {
+        // Equal scalar scores do not imply equal instructions. Both body
+        // and whole-unit projection must retain the compiled candidate,
+        // including relocations and literal data. Compile even a cached
+        // score's text so the object being checked belongs to this spelling.
+        expected.is_some() && problem.evaluate(job, text).ok().as_ref() == Some(&found.score)
+            && score::disassemble(&job.object, problem.symbol.as_deref()).ok() == expected
     };
     // Body/signature changes and new inline helpers usually fit back into
     // the original includes and comments. A changed external declaration
@@ -1174,7 +1171,7 @@ fn respell(problem: &Problem, job: &Job, found: &Found, cache: &mut HashMap<Sour
         if let Some(after) = &state.full {
             if let Some((text, preserved)) = project_function(problem, &draft, before, after) {
                 let text = found.expanded.restore(&text);
-                if verifies(&text, cache) {
+                if verifies(&text) {
                     return (text, preserved);
                 }
             }
@@ -1187,7 +1184,7 @@ fn respell(problem: &Problem, job: &Job, found: &Found, cache: &mut HashMap<Sour
         Some(text) if text == found.text => (text, true),
         Some(text)
             if printed(&text).zip(printed(&found.text)).is_none_or(|(a, b)| a == b)
-                && verifies(&text, cache) =>
+                && verifies(&text) =>
         {
             (text, true)
         }
@@ -1246,7 +1243,7 @@ fn minimize_best(problem: &Problem, base: &Found, found: &[Found], directory: &P
             break;
         }
         let minimized = minimize(problem, &job, base, candidate, &mut cache);
-        let (text, respelled) = respell(problem, &job, &minimized, &mut cache);
+        let (text, respelled) = respell(problem, &job, &minimized);
         if best.iter().any(|seen| seen.text == text) {
             continue;
         }
@@ -1622,7 +1619,7 @@ mod tests {
             let replay = problem.replay(&minimized.expanded, &minimized.steps);
             assert_eq!(problem.source(&replay), minimized.text);
             assert_eq!(problem.evaluate(&job, &minimized.text).unwrap().differ, 0);
-            let (text, _) = respell(&problem, &job, &minimized, &mut HashMap::new());
+            let (text, _) = respell(&problem, &job, &minimized);
             assert_eq!(problem.evaluate(&job, &text).unwrap().differ, 0);
         }
     }
@@ -1700,9 +1697,33 @@ mod tests {
         state.steps.push(Step { kind: Kind::Full(kind), rng: Rng::new(0), region: None });
         let text = problem.source(&state);
         let found = Found { score: problem.evaluate(&job, &text).unwrap(), unnatural: 0, text, steps: state.steps, expanded: state.expanded, job: 0, iteration: 1 };
-        let (output, _) = respell(&problem, &job, &found, &mut HashMap::new());
+        let (output, _) = respell(&problem, &job, &found);
         assert!(output.contains("#include \"types.h\"") && output.contains("/* Keep this explanation. */") && output.contains("b + a"), "{output}");
         assert!(!output.contains("typedef"), "output should not inline all headers");
+    }
+
+    #[test]
+    fn body_respell_preserves_instructions_when_scores_tie() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let source = "int F(void) { return __LINE__; }\n";
+        let listing = listing_of(work.path(), "int F(void) { return 0; }\n");
+        let mut problem = test_problem(&work.path().join("draft/08000000.c"), source, listing, Some("F"));
+        problem.symbol = Some("F".into());
+        let job = Job::new(&problem, &work.path().join("job")).unwrap();
+        let state = problem.state(perm::expand(&problem.nodes, None).unwrap());
+        assert!(state.full.is_none());
+        let text = problem.source(&state);
+        let score = problem.evaluate(&job, &text).unwrap();
+        let expected = score::disassemble(&job.object, Some("F")).unwrap();
+        assert_eq!(problem.evaluate(&job, source).unwrap(), score);
+        assert_ne!(score::disassemble(&job.object, Some("F")).unwrap(), expected);
+        let found = Found { score, unnatural: 0, text: text.clone(), steps: Vec::new(), expanded: state.expanded, job: 0, iteration: 1 };
+        let (output, preserved) = respell(&problem, &job, &found);
+        assert!(!preserved);
+        assert_eq!(output, text);
+        job.compile(&output).unwrap();
+        assert_eq!(score::disassemble(&job.object, Some("F")).unwrap(), expected);
     }
 
     #[test]

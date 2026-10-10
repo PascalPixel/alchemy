@@ -145,8 +145,12 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
             ItemMenu_DrawMsg(0, (s32)MsgPsynergyChooseOwner);
             chosen = PsynergyMenu_SelectPartySlot(0);
             cancelled = -1;
-            /* FAKEMATCH: separate the cancellation definition from the call result; without this boundary, pane-row stores exchange r2/r3 (12 instructions differ). XOR equality preserves the cancellation copy; direct equality copies r0 instead of r3 (2 instructions differ). */
-            asm("" : "+r"(cancelled));
+            /* FAKEMATCH: the redundant cancellation copy ends the CSE block,
+             * preserving the native cancellation/done register choices.
+             * Without it, r2/r3 exchange and 12 instructions differ.
+             * XOR equality keeps the cancellation copy into the result. */
+            if (chosen == -1)
+                cancelled = chosen;
             if (((u32)chosen ^ (u32)cancelled) == 0) {
                 done = 1;
                 result = cancelled;
@@ -161,8 +165,18 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
             UnitGetFar(work->owner_ids[0]);
             state = 0;
             if (work->psynergy_count != 0) {
-                /* FAKEMATCH: clobbering r2 hides the 0x218 it holds from reload_cse_move2add, so the 0x268 mode offset is built from its own constant (movs/lsls) instead of adds r2, #80. */
-                asm("" : : : "r2");
+                {
+                    struct PsynergyMenuState *saved_work = work;
+
+                    /* FAKEMATCH: the discarded conditional restoration
+                     * ends the CSE block, so the mode offset is built from
+                     * its own constant instead of adding 80 to the earlier
+                     * pane offset. Both conditional arms disappear. */
+                    if (done)
+                        work = NULL;
+                    if (done)
+                        work = saved_work;
+                }
                 switch (work->mode) {
                 case 0:
                     ItemMenu_DrawMsg(0, (s32)MsgPsynergyChooseAbility);

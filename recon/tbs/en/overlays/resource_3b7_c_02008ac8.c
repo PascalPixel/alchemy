@@ -5,9 +5,10 @@
  * Shared pointer-first declarations reduce both editions to this one swap.
  * Tied pointer/slot operands, moving the slot across the existing barrier,
  * one-pass pointer/index/halving blocks and zero-cancellation did not match.
- * The pre-overhaul permuter cannot parse the complete function for random
- * rewriting. A 2-minute explicit 40-choice search (seed 227) found no zero;
- * its weighted-50 result differs 10, so this differ-2 source is retained.
+ * The updated overlay permuter compiled 4231 candidates in 2 minutes (seed
+ * 379), finding the same pointer-first order but no zero. This draft now
+ * retains staging's prize_state copy and removal of the international
+ * prompt barrier; the copy is used only in the international final block.
  * Moving the existing barrier onto w, taking slot as an input and incrementing
  * w afterwards orders the operations correctly but differs 14 in EN: w takes
  * r2 instead of r0, and the signed byte takes r0 instead of r2. Early-clobber
@@ -79,14 +80,13 @@ s32 TorebiIzumi_RunSpringGame(void)
     s32 roll;
     s32 message;
     struct GameState *state;
+    struct GameState *prize_state;
 
     Event_Begin();
     Battle_ResetEffectCounter();
     message = (s32)MsgTorebiThrow;
 #if EDITION_INTERNATIONAL
     state = &gGameState;
-    /* FAKEMATCH: keeps message in r9 and state in fp, as the native does. */
-    __asm__("" : "+r"(message));
 prompt:
     coins = state->coins;
     tickets = PartyInventory_CountItem(229);
@@ -267,11 +267,17 @@ play:
             i = 14;
         }
         TorebiIzumi_RevealPrize(Data_02001fd0[i]);
+        /* FAKEMATCH: preserving the pre-device pointer copy keeps message in r9 and state in fp without the international prompt barrier. */
+        prize_state = state;
 
         /* FAKEMATCH: post-call state recomputation retained; one scheduling swap remains. */
         __asm__("" : "+r"(state));
         {
+#if EDITION_INTERNATIONAL
+            s8 *w = (s8 *)prize_state + 1;
+#else
             s8 *w = (s8 *)state + 1;
+#endif
             s32 slot = i + 284;
             if (w[slot] > 1) {
                 w[slot] /= 2;

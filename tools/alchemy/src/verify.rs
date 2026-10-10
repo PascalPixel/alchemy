@@ -163,7 +163,9 @@ fn run(root: &Path, gates: &[&'static str], last: Option<&'static str>) -> Resul
 }
 
 fn pin_executable(executable: &Path, logs: &Path) -> Result<tempfile::TempDir, String> {
-    let directory = tempfile::Builder::new().prefix("executable-").tempdir_in(logs)
+    let directory = tempfile::Builder::new()
+        .prefix("executable-")
+        .tempdir_in(logs)
         .map_err(|error| format!("{}: {error}", logs.display()))?;
     std::fs::copy(executable, directory.path().join("alchemy"))
         .map_err(|error| format!("cannot pin {}: {error}", executable.display()))?;
@@ -178,23 +180,34 @@ fn schedule<T: Send>(
     gates: &[&'static str],
     task: &(impl Fn(&'static str) -> Result<T, String> + Sync),
 ) -> Result<Vec<T>, String> {
-    let comparing = gates.contains(&"compare-editions");
-    let mut outcomes = Vec::new();
-    for delayed in [false, true] {
-        std::thread::scope(|scope| {
-            let handles = gates
-                .iter()
-                .enumerate()
-                .filter(|(_, gate)| (comparing && **gate == "publication-check") == delayed)
-                .map(|(index, &gate)| (index, scope.spawn(move || task(gate))))
-                .collect::<Vec<_>>();
-            outcomes.extend(
-                handles
-                    .into_iter()
-                    .map(|(index, handle)| (index, handle.join().expect("gate thread"))),
-            );
-        });
-    }
+    let publication = gates
+        .contains(&"compare-editions")
+        .then(|| gates.iter().position(|gate| *gate == "publication-check"))
+        .flatten();
+    let mut outcomes = std::thread::scope(|scope| {
+        let handles = gates
+            .iter()
+            .enumerate()
+            .filter(|(index, _)| Some(*index) != publication)
+            .map(|(index, &gate)| {
+                scope.spawn(move || {
+                    let mut results = vec![(index, task(gate))];
+                    // Only comparison writes the files publication reads. Tests
+                    // and lint can continue while publication inspects them.
+                    if gate == "compare-editions" {
+                        if let Some(index) = publication {
+                            results.push((index, task("publication-check")));
+                        }
+                    }
+                    results
+                })
+            })
+            .collect::<Vec<_>>();
+        handles
+            .into_iter()
+            .flat_map(|handle| handle.join().expect("gate thread"))
+            .collect::<Vec<_>>()
+    });
     outcomes.sort_unstable_by_key(|(index, _)| *index);
     outcomes.into_iter().map(|(_, result)| result).collect()
 }
@@ -291,7 +304,10 @@ mod tests {
         let executable = pinned.path().join("alchemy");
         std::fs::remove_file(&original).unwrap();
         std::fs::write(&original, "replacement executable").unwrap();
-        assert_eq!(std::fs::read_to_string(&executable).unwrap(), "verified executable");
+        assert_eq!(
+            std::fs::read_to_string(&executable).unwrap(),
+            "verified executable"
+        );
         let arguments = make_arguments(&executable, "compare-editions");
         assert!(arguments.contains(&format!("ALCHEMY={}", executable.display())));
         assert!(arguments.contains(&format!("ALCHEMY_BIN={}", executable.display())));
@@ -383,6 +399,40 @@ mod tests {
                 }
             });
         }
+    }
+
+    #[test]
+    fn publication_does_not_wait_for_independent_gates() {
+        use std::sync::{mpsc, Condvar, Mutex};
+        use std::time::Duration;
+
+        let (reader_finished, reader) = mpsc::channel();
+        let release = (Mutex::new(false), Condvar::new());
+        std::thread::scope(|scope| {
+            let worker = scope.spawn(|| {
+                schedule(
+                    &["test", "publication-check", "compare-editions"],
+                    &|gate| {
+                        if gate == "test" {
+                            let mut released = release.0.lock().unwrap();
+                            while !*released {
+                                released = release.1.wait(released).unwrap();
+                            }
+                        } else if gate == "publication-check" {
+                            reader_finished.send(()).unwrap();
+                        }
+                        Ok(gate)
+                    },
+                )
+            });
+            let publication = reader.recv_timeout(Duration::from_secs(2));
+            // Release the worker even if a scheduling regression timed out.
+            *release.0.lock().unwrap() = true;
+            release.1.notify_all();
+            let outcomes = worker.join().unwrap().unwrap();
+            publication.expect("publication waited for the blocked test gate");
+            assert_eq!(outcomes, ["test", "publication-check", "compare-editions"]);
+        });
     }
 
     #[test]

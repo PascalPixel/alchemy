@@ -11,7 +11,10 @@
  * 38, and carrying the preceding flag-test result through text differs 43.
  * A sel input retains 4; a rows output differs 34 (130 built). Removing
  * only one's binding and adding sel as its barrier input differs 76
- * (130 built). All preserve behavior but none closes the r3/r2 residual. */
+ * (130 built). An unsigned copy or generic register output retains 4;
+ * sharing the zero assignment with the copy leaves 32, and keeping text
+ * and label live at the copy leaves 68 (130 built). None closes the
+ * r3/r2 residual. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

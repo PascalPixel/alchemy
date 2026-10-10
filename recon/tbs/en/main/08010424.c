@@ -6,6 +6,11 @@
  * or output before the destination load leaves 88 differences, with
  * 143 built instructions. Reusing bytes for the final tile word retains
  * 28 differences with cell pinned; reusing offset leaves 164.
+ * A generic cell output before the layer tests or destination store
+ * leaves 88 differences; inputs at those points leave 92 and 96.
+ * Keeping cell live on the next-layer path leaves 88, or 163 with an
+ * output. Signed cell or x, separate cell masking and removal of the
+ * ordinary register qualifiers all retain 67.
  */
 #include "battle.h"
 #include "debug.h"
@@ -138,4 +143,3 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
         dst += 128 - width;
     }
 }
-

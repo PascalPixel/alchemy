@@ -98,7 +98,12 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
     s32 text_bits;
     s32 tree_bits;
     s32 rank;
-    /* FAKEMATCH: needed to match: depth lives in r3. Scoping an ordinary depth = 0 immediately before the subtree do loop still differs 92 with tree pinned, or 136 with both pins removed. Separate bit scopes and final packed-byte reuse do not close the combined residual (up to 151 differences). */
+    /* FAKEMATCH: needed to match: depth lives in r3. Scoping an ordinary depth = 0 immediately before the subtree do loop still differs 92 with tree pinned, or 136 with both pins removed. Separate bit scopes and final packed-byte reuse do not close the combined residual (up to 151 differences).
+     * A generic depth output at the subtree loop's condition with a bit
+     * input improves depth-only removal to 70 (134 native and built,
+     * 99 common). An output at depth initialization, alone or with bit
+     * or tree_bits as input, leaves 130 (128 built). Reusing the dead hi,
+     * code, index or half for depth leaves 138, 136, 104 or 135. */
     register s32 depth asm("r3");
     s32 bit;
     u32 index;

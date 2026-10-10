@@ -7,16 +7,8 @@ use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 
 const DMA_HEADER: &str = "games/common/include/system/dma.h";
-const DMA_SOURCE: &str = include_str!(concat!(
-    env!("CARGO_MANIFEST_DIR"),
-    "/../../games/common/include/system/dma.h"
-));
 const DMA_BODY_SHA256: &str = "85462569a1fe487dd3033778e787524ca91ddc9bff061d3a85cb78fdbaca736e";
 const IWRAM_CALL_HEADER: &str = "games/tbs/include/iwram_call.h";
-const IWRAM_CALL_SOURCE: &str = include_str!(concat!(
-    env!("CARGO_MANIFEST_DIR"),
-    "/../../games/tbs/include/iwram_call.h"
-));
 const IWRAM_CALL_BODY_SHA256: &str =
     "110abd5ad8313dcfe0dce7ed49bb246d04883fe6b9ad61f29bd290c7abc80882";
 
@@ -63,14 +55,30 @@ fn mask_body(text: &str, body: Option<&[String]>) -> String {
 
 fn dma_body() -> Option<&'static [String]> {
     static BODY: OnceLock<Option<Vec<String>>> = OnceLock::new();
-    BODY.get_or_init(|| reviewed_body(DMA_SOURCE, DMA_BODY_SHA256))
+    BODY.get_or_init(|| reviewed_file_body(super::routing::root(), DMA_HEADER, DMA_BODY_SHA256))
         .as_deref()
 }
 
 fn iwram_call_body() -> Option<&'static [String]> {
     static BODY: OnceLock<Option<Vec<String>>> = OnceLock::new();
-    BODY.get_or_init(|| reviewed_body(IWRAM_CALL_SOURCE, IWRAM_CALL_BODY_SHA256))
+    BODY.get_or_init(|| reviewed_file_body(super::routing::root(), IWRAM_CALL_HEADER, IWRAM_CALL_BODY_SHA256))
         .as_deref()
+}
+
+fn reviewed_file_body(root: &Path, header: &str, digest: &str) -> Option<Vec<String>> {
+    let source = fs::read_to_string(root.join(header)).ok()?;
+    reviewed_body(&source, digest)
+}
+
+/// Cache identity follows which reviewed bodies this invocation can admit.
+/// Missing or edited headers disable their exemptions without rebuilding the
+/// checker, and must invalidate earlier clean results for copied helper bodies.
+pub(crate) fn reviewed_helpers_signature() -> String {
+    helpers_signature(dma_body(), iwram_call_body())
+}
+
+fn helpers_signature(dma: Option<&[String]>, iwram: Option<&[String]>) -> String {
+    format!("{:x}", Sha256::digest(format!("{dma:?}{iwram:?}").as_bytes()))
 }
 
 fn mask_dma_body(text: &str) -> String {
@@ -168,8 +176,20 @@ fn forbidden(word: &str, attribute: bool) -> Option<String> {
 }
 
 pub fn camelot_admitted(text: &str, line: usize) -> bool {
+    if crate::evidence::approved_spans(text).iter().any(|span| {
+        let first = text[..span.start].bytes().filter(|b| *b == b'\n').count() + 1;
+        let last = text[..span.end].bytes().filter(|b| *b == b'\n').count() + 1;
+        (first..=last).contains(&line)
+    }) {
+        // Findings carry source lines. An approved statement must not exempt
+        // an unrelated instruction placed later on that same line.
+        let masked = crate::evidence::mask_inline(text);
+        if let Some(body) = line.checked_sub(1).and_then(|row| masked.lines().nth(row)) {
+            if scan_forbidden("review scope", body, false).is_empty() { return true; }
+        }
+    }
     static TAG: OnceLock<Regex> = OnceLock::new();
-    let tag = regex(&TAG, r#"/\*\s*FAKEMATCH:\s*[^\s*]|\bCAMELOT_ASM\("[^"]+"\)"#);
+    let tag = regex(&TAG, r#"/\*\s*FAKEMATCH:\s*[^\s*]"#);
     let lines: Vec<&str> = text.lines().collect();
     let adjacent = [line.checked_sub(1), line.checked_sub(2)]
         .into_iter()
@@ -389,14 +409,33 @@ mod tests {
     use super::*;
 
     #[test]
+    fn runtime_helper_edits_and_missing_files_revoke_admission_and_cache_identity() {
+        let work = tempfile::tempdir().unwrap();
+        let source = fs::read_to_string(super::super::routing::root().join(DMA_HEADER)).unwrap();
+        let header = "helper.h";
+        assert!(reviewed_file_body(work.path(), header, DMA_BODY_SHA256).is_none());
+        fs::write(work.path().join(header), &source).unwrap();
+        let admitted = reviewed_file_body(work.path(), header, DMA_BODY_SHA256).unwrap();
+        let clean = helpers_signature(Some(&admitted), None);
+        fs::write(work.path().join(header), source.replace("stmia", "ldmia")).unwrap();
+        let edited = reviewed_file_body(work.path(), header, DMA_BODY_SHA256);
+        assert!(edited.is_none());
+        assert_ne!(clean, helpers_signature(edited.as_deref(), None));
+        fs::remove_file(work.path().join(header)).unwrap();
+        assert!(reviewed_file_body(work.path(), header, DMA_BODY_SHA256).is_none());
+        assert_eq!(mask_body(&source, None), source);
+    }
+
+    #[test]
     fn reviewed_dma_is_admitted_only_as_the_complete_shared_body() {
+        let dma_source = fs::read_to_string(super::super::routing::root().join(DMA_HEADER)).unwrap();
         assert!(dma_body().is_some());
-        assert!(find_forbidden(DMA_HEADER, DMA_SOURCE).is_empty());
-        assert!(!find_forbidden("caller.c", DMA_SOURCE).is_empty());
-        assert!(find_preprocessed("expanded", DMA_SOURCE).is_empty());
+        assert!(find_forbidden(DMA_HEADER, &dma_source).is_empty());
+        assert!(find_forbidden("caller.c", &dma_source).is_empty(), "review follows the exact body, not a filename");
+        assert!(find_preprocessed("expanded", &dma_source).is_empty());
         for source in [
-            DMA_SOURCE.to_string(),
-            DMA_SOURCE.replacen("register u32", "register u32\t", 1),
+            dma_source.clone(),
+            dma_source.replacen("register u32", "register u32\t", 1),
         ] {
             assert!(find_forbidden(DMA_HEADER, &source).is_empty());
             assert!(find_preprocessed("expanded", &source).is_empty());
@@ -416,9 +455,10 @@ mod tests {
 
     #[test]
     fn dma_admission_does_not_hide_extra_assembly_or_abi_attributes() {
+        let dma_source = fs::read_to_string(super::super::routing::root().join(DMA_HEADER)).unwrap();
         let extra = format!(
             "{}\nvoid f(void) {{ __asm__(\"nop\"); }}\nvoid g(void) __attribute__((naked));",
-            DMA_SOURCE
+            dma_source
         );
         assert_eq!(find_forbidden(DMA_HEADER, &extra).len(), 2);
         assert_eq!(find_preprocessed("expanded", &extra).len(), 2);
@@ -428,14 +468,15 @@ mod tests {
 
     #[test]
     fn reviewed_iwram_call_is_admitted_only_as_the_complete_shared_body() {
+        let iwram_source = fs::read_to_string(super::super::routing::root().join(IWRAM_CALL_HEADER)).unwrap();
         assert!(iwram_call_body().is_some());
-        assert!(find_forbidden(IWRAM_CALL_HEADER, IWRAM_CALL_SOURCE).is_empty());
-        assert!(!find_forbidden("caller.c", IWRAM_CALL_SOURCE).is_empty());
-        assert!(find_preprocessed("expanded", IWRAM_CALL_SOURCE).is_empty());
+        assert!(find_forbidden(IWRAM_CALL_HEADER, &iwram_source).is_empty());
+        assert!(find_forbidden("caller.c", &iwram_source).is_empty(), "review follows the exact body, not a filename");
+        assert!(find_preprocessed("expanded", &iwram_source).is_empty());
         for changed in [
-            IWRAM_CALL_SOURCE.replace("mov ip, pc", "mov lr, pc"),
-            IWRAM_CALL_SOURCE.replace("bx %2", "bx %1"),
-            IWRAM_CALL_SOURCE.replace("\"r2\", \"ip\", \"cc\"", "\"r2\", \"ip\""),
+            iwram_source.replace("mov ip, pc", "mov lr, pc"),
+            iwram_source.replace("bx %2", "bx %1"),
+            iwram_source.replace("\"r2\", \"ip\", \"cc\"", "\"r2\", \"ip\""),
         ] {
             assert!(!find_forbidden(IWRAM_CALL_HEADER, &changed).is_empty());
             assert!(!find_preprocessed("expanded", &changed).is_empty());
@@ -475,16 +516,18 @@ mod tests {
         let bare_fake = "void f(void) {\n    /* FAKEMATCH: */\n    asm(\"\");\n}\n";
         assert_eq!(find_forbidden("fixture.c", bare_fake).len(), 1);
         assert_eq!(find_forbidden("fixture.c", empty).len(), 1);
+        let adjacent = "void f(void) { CAMELOT_ASM(\"BIOS wait\") asm(\"swi 2\"); asm(\"mov r0, r1\"); }\n";
+        assert!(!find_forbidden("fixture.c", adjacent).is_empty(), "a shared line cannot enlarge a review scope");
     }
 
     #[test]
     fn wrapped_proven_register_declarations_keep_their_tag() {
         let wrapped = "void f(void) {\nCAMELOT_ASM(\"identity row registers\")\nregister int a __asm__(\"r1\"),\n    b __asm__(\"r2\"),\n    c __asm__(\"r3\");\n}\n";
-        assert!(find_forbidden("fixture.h", wrapped).is_empty());
+        assert!(!find_forbidden("fixture.h", wrapped).is_empty());
         let macro_body = wrapped.replace('\n', "\\\n");
-        assert!(find_forbidden("fixture.h", &macro_body).is_empty());
+        assert!(!find_forbidden("fixture.h", &macro_body).is_empty());
         assert!(find_forbidden("fixture.h", &wrapped.replace("CAMELOT_ASM(\"identity row registers\")", "/* FAKEMATCH: native row registers */")).is_empty());
-        assert!(find_forbidden("fixture.h", &format!("// 行列\n{}", wrapped.replace('\n', "\r\n"))).is_empty());
+        assert!(!find_forbidden("fixture.h", &format!("// 行列\n{}", wrapped.replace('\n', "\r\n"))).is_empty());
         for unmarked in ["\nregister int d __asm__(\"r4\");", " register int d __asm__(\"r4\");", " asm(\"swi 0x5\");"] {
             let escaped = wrapped.replace("c __asm__(\"r3\");", &format!("c __asm__(\"r3\");{unmarked}"));
             assert!(!find_forbidden("fixture.h", &escaped).is_empty(), "{escaped}");

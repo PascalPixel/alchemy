@@ -796,7 +796,10 @@ mod tests {
     use super::*;
 
     fn scene() -> Vec<String> {
-        commands(include_str!("../../../../games/tbs/include/event.h"))
+        let source = std::fs::read_to_string(
+            crate::compiler::routing::root().join("games/tbs/include/event.h")
+        ).expect("scene command header");
+        commands(&source)
     }
 
     /// The names these tests declare addresses: pointers into state and

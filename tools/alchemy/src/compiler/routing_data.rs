@@ -53,4 +53,5 @@ pub static AGBCC_ARM_SOURCES: &[&str] = &[];
 /// library ARM code, one option set for the whole class (AGENTS.md K1).
 pub static GAME_ARM_SOURCES: &[&str] = &[
     "games/common/src/graphics/tile/metatile.c",
+    "games/tbs/src/graphics/text/moji.c",
 ];

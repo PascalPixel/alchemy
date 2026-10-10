@@ -544,6 +544,7 @@ s32 TorebiIzumi_RunSpringGame(void)
     s32 coins;
     s32 tickets;
     struct UiWindow *window;
+    struct GameState *prize_state;
     s32 result;
     s32 sum;
     s32 i;
@@ -556,8 +557,6 @@ s32 TorebiIzumi_RunSpringGame(void)
     message = (s32)MsgTorebiThrow;
 #if EDITION_INTERNATIONAL
     state = &gGameState;
-    /* FAKEMATCH: keeps message in r9 and state in fp, as the native does. */
-    __asm__("" : "+r"(message));
 prompt:
     coins = state->coins;
     tickets = PartyInventory_CountItem(229);
@@ -738,6 +737,11 @@ play:
             i = 14;
         }
         TorebiIzumi_RevealPrize(Data_02001fd0[i]);
+        /* FAKEMATCH: preserving this pointer copy before the state device
+         * retains message in r9 and state in fp without the prompt's asm.
+         * Without the copy, those registers swap (280 instructions,
+         * 22 differing rows in the international editions). */
+        prize_state = state;
 
 #if EDITION_INTERNATIONAL
         /* FAKEMATCH: the native recomputes state + 1 into r0 after the call. */
@@ -746,7 +750,7 @@ play:
 
             /* FAKEMATCH: keeps the slot in r1 and state + 1 in r0. */
             register s32 slot asm("r1") = i + 284;
-            s8 *w = (s8 *)state + 1;
+            s8 *w = (s8 *)prize_state + 1;
 
             if (w[slot] > 1) {
                 w[slot] /= 2;

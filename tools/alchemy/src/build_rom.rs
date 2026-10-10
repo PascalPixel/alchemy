@@ -386,6 +386,28 @@ impl Index {
         })
     }
 
+    /// Credit requires the build's receipt for this object and its maintained
+    /// source, not merely a path which happens to be under games/.
+    pub(crate) fn proven_object(&self, root: &Path, object: &Path) -> bool {
+        let Some(row) = self.row(object) else { return false };
+        let [source, hash] = row.inputs.as_slice() else { return false };
+        let Some(source) = source.strip_prefix("source=") else { return false };
+        let Some(hash) = hash.strip_prefix("source_sha256=") else { return false };
+        let Ok(path) = fs::canonicalize(root.join(source)) else { return false };
+        let Ok(games) = fs::canonicalize(root.join("games")) else { return false };
+        let Ok(product) = fs::canonicalize(object) else { return false };
+        let Ok(output) = fs::canonicalize(&self.output) else { return false };
+        path.starts_with(games) && product.starts_with(output)
+            && fs::read(path).is_ok_and(|bytes| format!("{:x}", Sha256::digest(bytes)) == hash)
+            && self.fresh(&[object.to_path_buf()], &row.key)
+    }
+
+    fn bind_source(&self, root: &Path, source: &Path, object: &Path) -> Result<(), String> {
+        let inputs = source_receipt(root, source)?;
+        if let Some(row) = self.rows.lock().unwrap().get_mut(&self.name(object)) { row.inputs = inputs; }
+        Ok(())
+    }
+
     fn record(&self, products: &[PathBuf], key: &str, inputs: Vec<String>) -> Result<(), String> {
         let row = Row {
             key: key.to_owned(),
@@ -979,6 +1001,7 @@ fn plan(
     let mut products = vec![object.to_path_buf()];
     products.extend(warnings.clone());
     if index.fresh(&products, &key) {
+        index.bind_source(root, source, object)?;
         remove_scratch(&scratch);
         return Ok(None);
     }
@@ -1009,7 +1032,13 @@ fn run_plan(root: &Path, plan: &Plan, index: &Index) -> Result<(), String> {
     ran?;
     let mut products = vec![plan.object.clone()];
     products.extend(plan.warnings.clone());
-    index.record(&products, &plan.key, Vec::new())
+    index.record(&products, &plan.key, source_receipt(root, &plan.source)?)
+}
+
+fn source_receipt(root: &Path, source: &Path) -> Result<Vec<String>, String> {
+    let path = source.strip_prefix(root).unwrap_or(source);
+    let bytes = fs::read(root.join(path)).map_err(|error| error.to_string())?;
+    Ok(vec![format!("source={}", path.display()), format!("source_sha256={:x}", Sha256::digest(bytes))])
 }
 
 fn remove_scratch(paths: &[PathBuf]) {
@@ -1907,6 +1936,26 @@ fn included(directories: &[&Path], source: &Path, preprocessed: bool) -> Result<
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn object_credit_requires_a_current_source_build_receipt() {
+        let root = tempfile::tempdir().unwrap();
+        fs::create_dir_all(root.path().join("games")).unwrap();
+        fs::create_dir_all(root.path().join("out/obj")).unwrap();
+        let source = root.path().join("games/example.c");
+        let object = root.path().join("out/obj/example.o");
+        fs::write(&source, "int Value(void) { return 7; }\n").unwrap();
+        fs::write(&object, "compiled object fixture").unwrap();
+        let index = Index::open(&root.path().join("out"));
+        assert!(!index.proven_object(root.path(), &object));
+        index.record(std::slice::from_ref(&object), "plan", source_receipt(root.path(), &source).unwrap()).unwrap();
+        assert!(index.proven_object(root.path(), &object));
+        fs::write(&source, "int Value(void) { return 8; }\n").unwrap();
+        assert!(!index.proven_object(root.path(), &object));
+        index.bind_source(root.path(), &source, &object).unwrap();
+        fs::write(&object, "unrelated object fixture").unwrap();
+        assert!(!index.proven_object(root.path(), &object));
+    }
 
     #[test]
     fn a_raw_listing_needs_no_base_rom() {

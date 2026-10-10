@@ -565,7 +565,7 @@ fn overlay_bytes(elf: &Elf) -> Result<(u32, Vec<u8>), String> {
     Ok((base, image))
 }
 
-fn reference_overlay(rom: &[u8], main_map: &Map, id: &str) -> Result<Vec<u8>, String> {
+pub(crate) fn reference_overlay(rom: &[u8], main_map: &Map, id: &str) -> Result<Vec<u8>, String> {
     let index = usize::from_str_radix(
         id.strip_prefix("resource_").ok_or("invalid overlay id")?,
         16,

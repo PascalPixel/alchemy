@@ -37,7 +37,7 @@ use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 use types::Env;
 
-const USAGE: &str = r#"usage: alchemy permute DRAFT.c [ADDRESS[,ADDRESS...]] [--edition EDITION] [--minutes N] [--jobs J] [--seed S] [--function NAME] [--iterations N] [--heat] [--prefix] [--arm] [--stack-diffs] [--ignore-branch-targets] [--keep-prob P] [--stop-on-zero]
+const USAGE: &str = r#"usage: alchemy permute DRAFT.c [ADDRESS[,ADDRESS...]] [--edition EDITION] [--minutes N] [--jobs J] [--seed S] [--function NAME] [--overlay resource_XXX] [--iterations N] [--heat] [--prefix] [--arm] [--stack-diffs] [--ignore-branch-targets] [--keep-prob P] [--stop-on-zero]
 Searches source variations of DRAFT.c until its code matches the
 listing alchemy diff compares it with (ADDRESS defaults to the file name;
 build the edition first). Each candidate compiles with alchemy diff's steps
@@ -102,6 +102,8 @@ with source.c, score.txt and diff.txt, in addition to minimized best-N files.
 --better-only excludes ties with the draft; --best-only excludes scores above
 the best already saved. --only-if-below N requires a score strictly below N.
 --no-context-output trims source.c before the first target function occurrence.
+--overlay resource_XXX with --function NAME compares an overlay's linked
+function against the reference ROM's decoded stream, as alchemy diff does.
 --arm compiles each candidate as alchemy diff --arm does:
 through the game ARM route (GAME_ARM_SOURCES, AGENTS.md K1): stock agbcc_arm."#;
 
@@ -116,6 +118,7 @@ struct Options {
     rng_seed: Option<String>,
     perm_seed: Option<u64>,
     function: Option<String>,
+    overlay: Option<String>,
     iterations: Option<u64>,
     arm: bool,
     heat: bool,
@@ -136,6 +139,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut rng_seed = None;
     let mut perm_seed = None;
     let mut function = None;
+    let mut overlay = None;
     let mut iterations = None;
     let mut arm = false;
     let (mut heat, mut prefix) = (false, false);
@@ -199,6 +203,13 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
                 index += 1;
                 function = Some(value(index)?);
             }
+            "--overlay" => {
+                index += 1;
+                let name = value(index)?;
+                let id = name.strip_prefix("resource_").filter(|id| id.len() == 3 && id.bytes().all(|c| c.is_ascii_hexdigit()))
+                    .ok_or("--overlay must be resource_XXX")?;
+                overlay = Some(format!("resource_{}", id.to_ascii_lowercase()));
+            }
             "--arm" => arm = true,
             "--heat" => heat = true,
             "--prefix" => prefix = true,
@@ -224,10 +235,13 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     }
     let draft = draft.ok_or_else(|| USAGE.to_string())?;
     let text = draft.to_string_lossy().into_owned();
-    if text.contains("/overlays/") {
-        return Err("permute compares main-image listings; overlay drafts are not supported".into());
+    if overlay.is_some() && (arm || function.is_none() || !addresses.is_empty()) {
+        return Err("--overlay requires --function and cannot be combined with --arm or main-image addresses".into());
     }
-    if addresses.is_empty() {
+    if text.contains("/overlays/") && overlay.is_none() {
+        return Err("name an overlay draft's resource with --overlay and its function with --function".into());
+    }
+    if addresses.is_empty() && overlay.is_none() {
         let stem = draft.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
         if stem.len() != 8 || !stem.chars().all(|c| c.is_ascii_hexdigit()) {
             return Err(format!("{}: name the listing address\n{USAGE}", draft.display()));
@@ -245,7 +259,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         None => decomp_target(Some(&format!("{game}-en")))?,
     };
     if !minutes.is_finite() || minutes < 0.0 { return Err("--minutes must be finite and nonnegative".into()); }
-    Ok(Options { draft, addresses, game, target, minutes, jobs, seed, rng_seed, perm_seed, function, iterations, arm, heat, prefix, score_options, keep_prob, stop_on_zero, output })
+    Ok(Options { draft, addresses, game, target, minutes, jobs, seed, rng_seed, perm_seed, function, overlay, iterations, arm, heat, prefix, score_options, keep_prob, stop_on_zero, output })
 }
 
 /// One job's scratch: its candidate file and alchemy diff's steps for it.
@@ -280,6 +294,11 @@ impl Job {
                 }
             }
         }
+        // Moving a draft must not move its quoted-header search root.
+        // GCC's -I- makes this prefix quote-only and disables the scratch
+        // source directory; the build's ordinary include paths follow it.
+        let source_directory = root().join(problem.draft.parent().unwrap_or_else(|| Path::new("")));
+        steps[0].splice(1..1, [format!("-I{}", source_directory.display()), "-I-".into()]);
         Ok(Job { candidate, object, steps })
     }
 
@@ -415,6 +434,11 @@ struct Reference {
 }
 
 fn reference(options: &Options) -> Result<Reference, String> {
+    if let Some(overlay) = &options.overlay {
+        let wanted = options.function.as_deref().ok_or("--overlay requires --function")?;
+        let (listing, name) = crate::diff::overlay_reference(options.target, overlay, wanted)?;
+        return Ok(Reference { listing, scaffold: Some(name), rows: None });
+    }
     let mut listing = Vec::new();
     let mut rows = Some(Vec::new());
     let mut scaffold = None;
@@ -1276,6 +1300,23 @@ mod tests {
     use super::*;
 
     #[test]
+    fn overlay_options_require_an_explicit_resource_and_function() {
+        let parse = |args: &[&str]| parse_options(&args.iter().map(|arg| arg.to_string()).collect::<Vec<_>>());
+        let options = parse(&["scene.c", "--overlay", "resource_3B7", "--function", "Event"]).unwrap();
+        assert_eq!(options.overlay.as_deref(), Some("resource_3b7"));
+        assert_eq!(options.function.as_deref(), Some("Event"));
+        assert!(options.addresses.is_empty());
+        for args in [
+            vec!["scene.c", "--overlay", "resource_3b7"],
+            vec!["scene.c", "--overlay", "resource_../x", "--function", "Event"],
+            vec!["scene.c", "--overlay", "resource_3b7", "--function", "Event", "--arm"],
+            vec!["scene.c", "08000000", "--overlay", "resource_3b7", "--function", "Event"],
+        ] {
+            assert!(parse(&args).is_err(), "{args:?}");
+        }
+    }
+
+    #[test]
     fn options_default_and_parse() {
         let args = |items: &[&str]| items.iter().map(|item| item.to_string()).collect::<Vec<_>>();
         let parsed = parse_options(&args(&["recon/tbs/en/main/080cbc0c.c"])).unwrap();
@@ -1328,6 +1369,38 @@ mod tests {
         assert!(compiler(&arm));
         std::fs::write(&arm.candidate, "int F(int x) { return x + 1; }\n").unwrap();
         assert!(arm.preprocess().unwrap().contains("return x + 1"));
+    }
+
+    #[test]
+    fn relocated_jobs_keep_the_drafts_quoted_header_search() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let directory = work.path().join("drafts");
+        std::fs::create_dir(&directory).unwrap();
+        std::fs::write(work.path().join("value.h"), "#define VALUE 37\n").unwrap();
+        std::fs::write(directory.join("local.h"), "#include \"../value.h\"\n").unwrap();
+        // An angle include still searches the build's paths, not the draft's.
+        std::fs::write(directory.join("types.h"), "#error wrong angle-header root\n").unwrap();
+        let draft = directory.join("sample.c");
+        let source = "#include \"local.h\"\n#include <types.h>\nu32 F(void) { return VALUE; }\n";
+        std::fs::write(&draft, source).unwrap();
+        for arm in [false, true] {
+            let mut problem = test_problem(&draft, source, Vec::new(), Some("F"));
+            problem.arm = arm;
+            let scratch = work.path().join(if arm { "arm" } else { "thumb" });
+            let job = Job::new(&problem, &scratch).unwrap();
+            std::fs::write(scratch.join("local.h"), "#error wrong scratch root\n").unwrap();
+            job.compile(source).unwrap();
+            assert!(job.preprocess().unwrap().contains("return 37;"));
+            let expected_object = job.object.with_file_name("original.o");
+            let steps = if arm {
+                crate::diff::arm_steps(problem.target, &draft, &expected_object).unwrap()
+            } else {
+                crate::diff::draft_steps(problem.target, &draft, &expected_object).unwrap()
+            };
+            for step in &steps { crate::process::run(step, root()).unwrap(); }
+            assert_eq!(crate::diff::disassemble(&job.object, Some("F")).unwrap(), crate::diff::disassemble(&expected_object, Some("F")).unwrap());
+        }
     }
 
     #[test]
@@ -1648,6 +1721,7 @@ mod tests {
             rng_seed: None,
             perm_seed: None,
             function: function.map(str::to_string),
+            overlay: None,
             arm: false,
             iterations: Some(2),
             heat: false,
@@ -1875,6 +1949,7 @@ mod tests {
             rng_seed: None,
             perm_seed: None,
             function: None,
+            overlay: None,
             arm: false,
             iterations: Some(8),
             heat: false,

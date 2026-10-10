@@ -19,7 +19,9 @@ how many differ; --show prints the comparison, - for the listing and + for
 the draft. "differ 0" means the code matches instruction for instruction.
 An overlay draft (a path under overlays/) compares with the function of
 the same name, or --symbol, in out/EDITION/overlays/OVERLAY_overlay.o;
-the overlay defaults from the path (resource_XXX). When no separate listing
+an adopted function absent from that object uses the linked overlay's bounds
+and code decoded from our reference ROM, as alchemy show does.
+The overlay defaults from the path (resource_XXX). When no separate listing
 object exists, a main-image scaffold or adopted C function is resolved by ADDRESS or --symbol
 in the selected edition's map and ELF. Its reference ROM extent is read only
 for comparison; literal pools and jump tables are omitted. --arm explicitly
@@ -630,7 +632,7 @@ pub(crate) fn text_symbols(object: &Path) -> Result<Vec<String>, String> {
             let (_, kind, name) = (words.next()?, words.next()?, words.next()?);
             matches!(kind, "T" | "t").then(|| name.to_string())
         })
-        .filter(|n| !n.starts_with('$') && !n.starts_with(".L"))
+        .filter(|n| !n.starts_with('$') && !n.starts_with(".L") && n != ".gcc2_compiled.")
         .collect())
 }
 
@@ -699,13 +701,16 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let mut draft_symbol = None;
     if let Some(overlay) = &options.overlay {
         let reference = root.join(target.output_dir).join(format!("overlays/{overlay}_overlay.o"));
-        if !reference.exists() {
-            return Err(format!("{}: no overlay listing object; build {} first", reference.display(), target.id));
-        }
         let symbol = match &options.symbol {
             Some(s) => s.clone(),
             None => {
-                let ours = text_symbols(&reference)?;
+                let mut ours = if reference.exists() { text_symbols(&reference)? } else { Vec::new() };
+                let linked = root.join(target.output_dir).join(format!("overlays/{overlay}.elf"));
+                if linked.exists() {
+                    ours.extend(text_symbols(&linked)?);
+                    ours.sort();
+                    ours.dedup();
+                }
                 let shared: Vec<String> = text_symbols(&object)?.into_iter().filter(|s| ours.contains(s)).collect();
                 let stem = options.draft.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
                 let address = stem.rsplit('_').next().unwrap_or("").to_ascii_lowercase();
@@ -716,7 +721,16 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
                 }
             }
         };
-        listing.extend(disassemble(&reference, Some(&symbol))?);
+        let raw = if reference.exists() { disassemble(&reference, Some(&symbol))? } else { Vec::new() };
+        if raw.is_empty() {
+            let native = crate::show::overlay_function_reference(target, overlay, &symbol)?;
+            let file = tempfile::NamedTempFile::new().map_err(|error| error.to_string())?;
+            std::fs::write(file.path(), &native.bytes).map_err(|error| error.to_string())?;
+            listing.extend(thumb_reference(file.path(), &native.bytes, native.start, native.start, native.end)?);
+            println!("Thumb overlay analysis: {} {overlay} {}, {:#010x}..{:#010x}; full ROM comparison remains required.", target.id, native.name, native.start, native.end);
+        } else {
+            listing.extend(raw);
+        }
         if text_symbols(&object)?.contains(&symbol) {
             draft_symbol = Some(symbol);
         }
@@ -1093,6 +1107,17 @@ mod tests {
         assert_eq!(resource_name("recon/tbs/en/overlays/resource_383_c_020048c8.c").as_deref(), Some("resource_383"));
         assert_eq!(resource_name("recon/tbs/en/overlays/resource_3cd/02008768.c").as_deref(), Some("resource_3cd"));
         assert_eq!(resource_name("recon/tbs/en/main/08011bf4.c"), None);
+    }
+
+    #[test]
+    fn text_symbols_do_not_offer_the_compiler_marker_as_a_function() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let source = work.path().join("marker.s");
+        let object = work.path().join("marker.o");
+        std::fs::write(&source, ".text\n.local .gcc2_compiled.\n.gcc2_compiled.:\n.global RealFunction\n.type RealFunction, %function\n.thumb_func\nRealFunction:\n bx lr\n.size RealFunction, .-RealFunction\n").unwrap();
+        command(&["arm-none-eabi-as", "-mthumb", "-o", &object.to_string_lossy(), &source.to_string_lossy()], root()).unwrap();
+        assert_eq!(text_symbols(&object).unwrap(), vec!["RealFunction"]);
     }
 
     #[test]

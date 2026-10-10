@@ -27,7 +27,9 @@ struct FieldSprite
 	u8	unknown_16[2];
 	s32 scale;
 	u8	vram_block;
-	u8	unknown_1d;
+	u8	unknown_1d_0 : 1;
+	u8	unknown_1d_1 : 1;
+	u8	unknown_1d_2 : 6;
 	u16 rotation;
 	u8	unknown_20[6];
 	u8	flags;

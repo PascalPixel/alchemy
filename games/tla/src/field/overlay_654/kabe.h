@@ -235,8 +235,7 @@ static inline void Kabe_TaskAdd(void (*callback)(void), s32 priority)
 
 #define KABE_TASK_ADD_LATE(callback, priority) \
     do { \
-        /* FAKEMATCH: the native builds the priority before it loads the callback. */ \
-        register s32 priority_ __asm__("r1"); \
+        s32 priority_; \
         priority_ = (priority); \
         /* FAKEMATCH: a barrier keeps the callback load after the priority. */ \
         __asm__ volatile("" : : "r"(priority_)); \

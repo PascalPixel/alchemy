@@ -99,14 +99,14 @@ fn scanner() -> &'static str {
     static DIGEST: std::sync::OnceLock<String> = std::sync::OnceLock::new();
     DIGEST.get_or_init(|| {
         crate::compiler::sha256::hex(
-            [
+            ([
                 include_str!("no_asm.rs"),
                 include_str!("../compiler/no_asm.rs"),
                 include_str!("../compiler/steering.rs"),
                 include_str!("../compiler/c_syntax.rs"),
             ]
             .concat()
-            .as_bytes(),
+            + &crate::compiler::no_asm::reviewed_helpers_signature()).as_bytes(),
         )
     })
 }

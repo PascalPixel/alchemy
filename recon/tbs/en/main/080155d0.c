@@ -56,7 +56,14 @@ static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
 s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 	u32 x, u32 y, const u8 *font)
 {
+#if defined(TBS_EDITION_EN)
+	/* FAKEMATCH: an explicit window slot keeps its store between the height
+	   load and stride copy through combine, restoring the native load/CMP
+	   order and reducing EN differ 12 -> 8. */
+	struct UiWindow *window[1];
+#else
 	struct UiWindow *window;
+#endif
 	const u16 *rows;
 #if !defined(TBS_EDITION_JA) && !defined(TBS_EDITION_EN)
 	const u16 *header;
@@ -79,7 +86,9 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 	/* FAKEMATCH: these records reserve the native frame's 64-byte unused area. */
 	struct RenderInput frame[4];
 #endif
+#if !defined(TBS_EDITION_EN)
 	window = input_window;
+#endif
 #if !defined(TBS_EDITION_JA) && !defined(TBS_EDITION_EN)
 	/* FAKEMATCH: this boundary delays the character copy until after the font load. */
 	do { } while (0);
@@ -93,11 +102,20 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 	{
 	}
 #endif
+#if defined(TBS_EDITION_EN)
+	{
+		u32 height = input_window->height;
+
+		window[0] = input_window;
+		stride = height;
+	}
+#else
 	/* FAKEMATCH: the one-pass height read preserves the load's scheduling boundary. */
 	do
 	{
 		stride = window->height;
 	} while (0);
+#endif
 #if defined(TBS_EDITION_EN)
 	if (index > 111)
 		return 1;
@@ -339,7 +357,11 @@ glyph_selected:
 				color = 0x1111;
 			else
 				color = 0x5555;
+#if defined(TBS_EDITION_EN)
+			if (!(window[0]->flags & 64))
+#else
 			if (!(window->flags & 64))
+#endif
 				goto draw;
 			if (pass <= 1)
 			{

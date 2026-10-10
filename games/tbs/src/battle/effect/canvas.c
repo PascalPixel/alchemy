@@ -734,6 +734,12 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 		// 絵は横の速さで選び、左へ進む剣は左右反転して描く
 		for (i = 15; i != -1; i--)
 		{
+			/* Ordinary drift differs 52 in EN (320 native/built). A generic
+			 * output, conditional magnitude, direct cell calculation and
+			 * one-pass load/magnitude/cell blocks retain 52. Keeping drift
+			 * live after drawing differs 291 (331 built); a separate early
+			 * direction differs 66 (318 built). A direction in each branch
+			 * retains 52; selecting its painter first differs 189 (325 built). */
 			/* FAKEMATCH: the drift is pinned to r6, as the reference keeps it. */
 			register s32 drift __asm__("r6");
 			s32			 speed;

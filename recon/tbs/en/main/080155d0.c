@@ -1,4 +1,4 @@
-/* ARM draft, stock agbcc_arm: JA differs 0, EN 4, DE/ES/FR/IT 12.
+/* ARM draft, stock agbcc_arm: JA differs 0, EN 2, DE/ES/FR/IT 12.
    Target: matching C with tagged fakematches; no inline asm, register pins
    or asm barriers. Japanese already links the matching C in moji.c.
 
@@ -8,8 +8,10 @@
    gives 0/14/18; scoped source and row setup gives 0/8/14. Normalizing the
    continental height copy gives 0/8/12. Keeping a separate English width
    through the clipping return gives 0/6/12. Loading the English width-table
-   address before the row scope gives 0/4/12: only its two entry moves remain.
-   Both international pixel loops match; continental setup order remains.
+   address before the row scope gives 0/4/12. Separating the x copy, height
+   copy and clipping return gives 0/2/12: only the English stack adjustment
+   and y copy remain transposed. Both international pixel loops match;
+   continental setup order remains.
 
    Searches: seed 249 found the pixel-call scope in 24 seconds. Finite
    setup scopes (32 and 1,024 choices), source/width forms (30), argument
@@ -31,7 +33,15 @@
    did not improve the entry order. Reordering font initializers (3,840
    choices) also stalled. RTL showed the row scope ordered the table-address
    load after the row clear; separating the address and retaining the checked
-   index fixes their order. Const-qualifying the font pointer did not help. */
+   index fixes their order. Const-qualifying the font pointer did not help.
+   Follow-up entry trials (equal-value branches, wide copies, aggregates,
+   masked copies, cancelling operations, font copies and C89 parameter
+   declarations) did not move y ahead of the stack adjustment. Recombining
+   x's halves does retain its earlier copy; a repeated height read restores
+   the load/spill order. Seed 263 compiled 21,961 candidates and found a
+   clipping-return scope using an uninitialized mark; that condition was
+   rejected. Testing initialized conditions (16) found the height condition
+   below, which retains all native palette registers and gives EN differ 2. */
 
 #include "types.h"
 #include "uiwindow.h"
@@ -83,7 +93,17 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32
 #endif
 #if defined(TBS_EDITION_EN)
 	u32 index;
+	u32 low;
+	u32 high;
 
+	/* FAKEMATCH: reconstruct the unchanged x value after a one-pass scope.
+	   Combine removes the shifts; the copy stays before the window spill. */
+	do
+	{
+		low = x << 16 >> 16;
+		high = x >> 16 << 16;
+	} while (0);
+	x = low | high;
 	index = character - 32;
 #endif
 	window = input_window;
@@ -100,7 +120,15 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32
 		width = window->height;
 	stride = (width << 16) >> 16;
 #elif defined(TBS_EDITION_EN)
-	stride = window->height;
+	/* FAKEMATCH: as in JA, keep the height copy through the range test.
+	   With the x scope and clipping-return scope this gives EN differ 4 -> 2. */
+	do
+	{
+		width = window->height;
+	} while (0);
+	if (index > 111)
+		width = window->height;
+	stride = (width << 16) >> 16;
 #else
 	/* FAKEMATCH: normalize a separate height copy after its one-pass read.
 	   This retains the native argument lifetimes (continental differ 14 -> 12). */
@@ -286,8 +314,19 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32
 			font_width = (raw_font_width << 24) >> 24;
 			if (y > 31)
 			{
-				font_width = raw_font_width;
-				goto packed_font_done;
+				/* FAKEMATCH: both returns agree. Keeping the initialized
+				   height live through this empty branch preserves the native
+				   palette registers; jump2 removes the branch (EN 20 -> 2). */
+				if (width)
+				{
+					font_width = raw_font_width;
+					goto packed_font_done;
+				}
+				else
+				{
+					font_width = raw_font_width;
+					goto packed_font_done;
+				}
 			}
 #else
 			font_width = UiText_GlyphWidths[character - 32];

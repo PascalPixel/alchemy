@@ -92,7 +92,8 @@ void Korosseo_FinishSoloRound();
 s32 FieldScene_RunMiddleSequence();
 void Object_CommitPosition();
 
-void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
+// 別ファイルの関数: 呼び出し側は宣言なし (暗黙の int) で呼んでいる
+s32 Korosseo_FadeInCompetitor();
 void Korosseo_RestoreCompetitor();
 
 void ColossoLogRollingStage_ResetAndRunSceneTask(void)
@@ -1354,8 +1355,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
         Engine_CameraWaitForMove();
         Engine_EventWait(30);
         Event_ShowMessage(scene, 0);
-        /* FAKEMATCH: native sets r0 after the other arguments; direct and Call3 calls set it first. */
-        Value3(Korosseo_FadeInCompetitor, 0, x, 200);
+        Korosseo_FadeInCompetitor(0, x, 200);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
         /* FAKEMATCH: native sets r0 after the other arguments; direct and Call3 calls set it first. */
         Value3(ColossoLogRollingStage_SpawnPositionedObject, 0, x, 152);
@@ -1414,12 +1414,10 @@ void KorosseoMaruta_RunStageIntro(s32 scene)
             ColossoLogRollingStage_StartSceneTask();
             Engine_EventWait(60);
             Engine_EventShowMessage(scene, 0);
-            /* FAKEMATCH: native sets r0 after the other arguments; direct and Call3 calls set it first. */
-            Value3(Korosseo_FadeInCompetitor, 0, 504, 200);
+            Korosseo_FadeInCompetitor(0, 504, 200);
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(Engine_ActorFaceDirection, 0, 0, 0);
             ColossoLogRollingStage_WaitForSceneTask();
-            /* FAKEMATCH: native sets r0 before the constants; a direct call sets it after. */
             Actor_SetSpeed(0, 0x18000, 0xc000);
             ColossoLogRollingStage_PositionScaledObject(0, 680, 200);
             if (work->raised_trigger != 5) {
@@ -1431,9 +1429,7 @@ void KorosseoMaruta_RunStageIntro(s32 scene)
                 } while (work->raised_trigger != 5);
             }
             ColossoLogRollingStage_ClampAndOffsetActiveActor();
-            /* FAKEMATCH: native sets r0 before the constants; a direct call sets it after. */
             Actor_FaceDirection(0, 0xc000, 20);
-            /* FAKEMATCH: native sets r0 before the constants; a direct call sets it after. */
             Actor_ShowEmote(0, 0x103, 60);
             Engine_EventShowMessage(scene, 0);
             Korosseo_RestoreCompetitor(0);
@@ -1453,7 +1449,6 @@ void FieldScene_RunFourStepActorMotion(s32 event)
 {
     extern void Korosseo_FinishSoloRound();
     extern s32 FieldScene_RunMiddleSequence();
-    extern void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
     extern void Korosseo_RestoreCompetitor();
     extern void Engine_ObjectSetPosition();
     extern void Object_CommitPosition();
@@ -1479,8 +1474,7 @@ void FieldScene_RunFourStepActorMotion(s32 event)
             Engine_EventWait(30);
             Event_ShowMessage(event, 0);
             Event_ShowMessage(event, 0);
-            /* FAKEMATCH: through Value3 the coordinates load before r0; a direct call sets r0 first. */
-            Value3((s32 (*)())Korosseo_FadeInCompetitor, 0, 0x330, 200);
+            Korosseo_FadeInCompetitor(0, 0x330, 200);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x348, 200);
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
@@ -1557,7 +1551,6 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 event)
 {
     extern void Korosseo_FinishSoloRound();
     extern s32 FieldScene_RunMiddleSequence();
-    extern void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
     extern void Korosseo_RestoreCompetitor();
 
     s32 i;
@@ -1577,8 +1570,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 event)
             Engine_EventWait(30);
             Event_ShowMessage(event, 0);
             Event_ShowMessage(event, 0);
-            /* FAKEMATCH: through Value3 the coordinates load before r0; a direct call sets r0 first. */
-            Value3((s32 (*)())Korosseo_FadeInCompetitor, 0, 0x3d8, 184);
+            Korosseo_FadeInCompetitor(0, 0x3d8, 184);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             ColossoLogRollingStage_PositionAndActivateActor(0, 0x3e0, 184);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);

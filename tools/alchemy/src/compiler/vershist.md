@@ -1,5 +1,9 @@
 **Expanded compiler releases and GCC history — 10 October 2026**
 
+Pascal adopted the bounded three-generator set on 2026-10-10; AGENTS.md
+K1–K3 records the current contract. This report preserves the study's evidence
+and its limits before adoption.
+
 This extends the broad compiler matrix and the 2.95.2 Thumb source-rewrite
 trial. The first matrix did not test every period point release or Red Hat
 package. This follow-up closes those named gaps and searches actual upstream

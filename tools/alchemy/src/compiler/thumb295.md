@@ -11,7 +11,9 @@ shaped for 2.96 with an older compiler is not sufficient to reject that compiler
 Here the source was changed, and the recurring obstacle was checked separately
 with small C probes, backend source and native bytes. The recommendation remains
 July-era GCC for Thumb and stock 2.95.2 for the demonstrated ARM routines.
-No production source, compiler, option, route, rule or credit changed.
+This trial changed no production source, compiler, option, route, rule or
+credit. Pascal's later 2026-10-10 compiler decision is recorded in AGENTS.md
+K1–K3; it retains the July-era Thumb route and adopts 2.95.2 for ARM C.
 
 The later [release and history study](vershist.md) finds that 2.95, 2.95.1 and
 2.95.2.1 also match those ARM cases. The positive ARM evidence identifies an early

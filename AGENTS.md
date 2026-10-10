@@ -370,87 +370,86 @@ or functions is exactly this cheating.
 
 ### Compilers
 
-Camelot built each game with one compiler and one set of options, as one
-Makefile would. Alchemy rebuilds that compiler: GCC 2.96 as Camelot's
-engineers used it and, where the whole game shows it, as they modified it.
-The line between that and bending a compiler to fit is K3: a compiler, an
-option or a change counts only when it explains a game's code as a whole,
-never a file or a function.
+Alchemy uses a limited set of pinned compiler families and fixed profiles:
+the July 2000 GCC Thumb family for game code, early GCC 2.95 for ARM C, and
+pret's agbcc lineage for the separately compiled sound and flash libraries.
+This is a reconstruction choice supported by the compiler study, not a claim
+to have recovered Camelot's exact compiler executable or original Makefile.
+An instruction set or a proven library class selects a route; a particular
+function or mismatch never selects a compiler, option or patch. K3 governs
+changes to these choices.
 
-- **K1** Game code compiles with agscc (GCC 2.96, the 2000-07-31 snapshot) and
-  one option set per game, the same for every game C file:
-  `-O2 -mthumb -mcpu=arm7tdmi -nostdinc -fcall-used-r4`, plus
-  `-mthumb-interwork` for ☀️ and K2's options for ⚓️. `-fcall-used-r4` is a
-  stock GCC option: 265 of 266 ☀️ and 1,648 of 2,302 ⚓️ functions that save lr
-  start saving at r5. Nintendo's library code is not Camelot's and keeps
-  the compiler and flags its own bytes show, one setting per whole library
-  file, as pret names its library files: pret's agbcc for MusicPlayer2000
-  (`-O2`) and the flash library (`-O`; its last two files moved from `-O2`
-  once the address words their `-O` output emits were found, 2026-10-08), and agbcc_arm for RAM-executed ARM code
-  (`-O2 -mthumb-interwork -fomit-frame-pointer -fcall-used-r4`, as
-  `routing.rs` passes it). Game ARM C of either game, the files listed
-  in `GAME_ARM_SOURCES`, compiles with that same stock agbcc_arm at that
-  same library ARM setting (`alchemy diff --arm`): Camelot's few IWRAM ARM
-  routines came from the SDK's 2.95-line ARM compiler, as Nintendo's do,
-  while their Thumb code came from 2.96. One unmodified compiler and one
-  option set for all ARM code; only the instruction set is chosen per file,
-  as a Makefile does, and no compiler source is changed or carried in this
-  repository. Measured over all seven compiler-shaped ARM functions (no APCS
-  frame, saves from r5, r11 never allocated, interworking returns), differ
-  per draft as IwramSqrt, ColorBuffer_DarkenKernel,
-  ColorBuffer_DarkenPartialKernel, Transform_UpdateVertices,
-  Object_UpdateAll, UiText_DrawGlyphArm, Tile_BuildMetatiles: stock
-  agbcc_arm 38, 66, 90, 76, 107, 177, 6 (560); agscc `-marm` with the game
-  options 28, 64, 100, 183, 468, 377, 19 (1,239), and its nearest stock
-  setting, `-mno-apcs-frame -ffixed-fp`, 1,215: agscc builds an APCS frame
-  by default and differs in loop and stack-slot habits throughout. Copying
-  2.96's `arm_adjust_cost` into agbcc_arm closed Tile_BuildMetatiles' six
-  scheduling instructions but was a compiler change fitted to one function
-  (K3) and carried GCC code here; it is not a route. Measured again over
-  all game ARM C on 2026-10-08 (2.96's anti/output-dependence rule alone and
-  2.96's whole function): Tile_BuildMetatiles matched without its two order
-  devices, but Transform_UpdateVertices matched under neither even with 8 of
-  its 19 devices removed, and the hybrid is no stock compiler, so the
-  question is closed (Pascal, 2026-10-08: a limited set of stock compilers).
-  What scheduling
-  remains is a difference of instruction order, which S2 handles in the
-  source. The lead's decision under Pascal's delegation (Pascal, 2026-10-07:
-  an ARM mode in agscc, or agbcc for its provenance, never anyone else's
-  compiler). No other routing: never a per-file or per-function compiler,
-  option or flag for game code.
+Pascal approved this bounded set on 2026-10-10: three C generators and six
+profiles (the two game Thumb profiles, shared libgcc C, game ARM C, sound
+and flash). The `agscc` GPL submodule owns all three, with pret/agbcc as an
+unmodified nested submodule and GCC 2.95.2's archive pinned under `arm/`.
+Alchemy pins one toolchain revision and builds it through `make -C agscc`;
+compiler source and host patches stay outside this repository. No fourth
+generator is built or installed.
+
+- **K1** Game Thumb code compiles with agscc, based on GCC upstream revision
+  `04179d4a511b13cef92eacdb10a51bcd124fea7a` (2000-07-31), and one option set
+  per game: `-O2 -mthumb -mcpu=arm7tdmi -nostdinc -fcall-used-r4`, plus
+  `-mthumb-interwork` for TBS and K2's options for TLA. Agscc is a documented
+  host port, not an untouched GNU release. Its source and host changes remain
+  in the GPL submodule. Shared libgcc C uses the same generator with its
+  runtime recipe: `-O2 -mthumb -mcpu=arm7tdmi -fno-inline`, ordinary ABI and
+  no interworking.
+
+  Both games' ARM C uses GCC 2.95.2 with the stock optimizer and ARM backend:
+  `-O2 -mthumb-interwork -fomit-frame-pointer -fcall-used-r4`. Its GNU archive
+  is pinned by SHA-256 in agscc/arm. The native build has only the documented
+  cast-as-lvalue and Darwin declaration host fixes. The same route serves the
+  build, `alchemy diff --arm` and the ARM permuter. It replaces agbcc_arm;
+  there is one ARM C generator and no alternate ARM library route.
+
+  Nintendo's sound and flash library source uses pret's `old_agbcc` at its
+  pinned source revision, with `-O2 -mthumb-interwork` for MusicPlayer2000 and
+  `-O -mthumb-interwork` for flash. This is the `2.9-arm-000512` lineage, not
+  a compiler renamed as stock GCC 2.95.2. Includes and edition definitions
+  serve preprocessing; they do not select code-generation variants.
+
+  The compiler study records the rationale and limits in
+  `tools/alchemy/src/compiler/study.md`, `thumb295.md` and `vershist.md`.
+  Early 2.95 releases match the two current ARM C routines in all 18 edition
+  cases; these are two routines, not 18 independent benchmarks. The five
+  other routines in the earlier ARM comparison are classified as handwritten
+  under C2 and provide no additional compiler wins. The Thumb and library
+  comparisons cover their full reconstructed object inventories where stated.
+  Matching establishes practical compatibility, not exact historical identity.
+  No other routing or function-specific compiler flag is allowed.
   _Check: routing tests._
-- **K2** ⚓️'s compiler is agscc with two changes a Camelot engineer made to
-  GCC's Thumb backend between the games, rebuilt as options in GCC's own
-  style, and one stock scheduling option, all turned on for all of ⚓️'s game
-  code:
-  - `-mthumb-split-constants` builds a constant that no single Thumb
-    immediate holds inline, from a shifted byte and an add, instead of loading
-    it from the literal pool. 13,907 of the 14,101 constant-building sequences
-    in ⚓️'s code follow the rule exactly; ☀️ has 18.
-  - `-mthumb-call-via-lr` calls through a register by moving the target into
-    lr and branching with the second half of a BL, instead of calling a
-    `_call_via_rX` stub. ⚓️ makes 2,549 such calls and 3 stub calls, all in the
-    separately compiled sound library; ☀️ makes 596 stub calls.
-  - `-mtune=arm9tdmi` (stock GCC; Pascal, 2026-10-05) schedules loads for the
-    ARM9TDMI pipeline. About 30 ⚓️ near misses that differed only by load
-    order matched under it; 14 objects that matched before changed, 12 were
-    repaired and `Menu_CenterResourceEntries` and
-    `Menu_LayoutResourceEntries` went back to listings with their C kept as
-    drafts. It is not yet the whole answer: some native sequences fit a load
-    latency of 3 cycles and others leave a load's delay slot unfilled, and
-    many remaining ⚓️ drafts differ by one swapped load. A load model that
-    explains both is an open K3 study for Pascal.
 
-  Why a person at Camelot made the two changes: each habit runs through the whole game,
-  so it belongs to the compiler, not to some functions; neither is in ☀️,
-  built a year earlier with the same compiler family; no public GCC from
-  2000-2002 has either (the study in agscc's README read all 417 ARM backend
-  changes and 28 snapshots and releases); and each is a small, local change a
-  toolchain engineer makes for speed: the first skips a slow cartridge-ROM
-  load for the constant, the second skips a stub on every indirect call. The
-  second only works because ⚓️'s game code no longer interworks with ARM code,
-  one coherent change to one compiler. Without them, 37 credited ⚓️ functions
-  no longer match. _Check: compiler-source-check, bundle validation._
+- **K2** TLA uses the same agscc Thumb executable with two existing
+  reconstruction options and one stock scheduling option enabled for every
+  game Thumb file:
+  - `-mthumb-split-constants` builds suitable constants with a shifted byte
+    and an add instead of a literal-pool load.
+  - `-mthumb-call-via-lr` calls a Thumb target through lr with a lone BL suffix
+    instead of a call-via-register stub.
+  - `-mtune=arm9tdmi` uses GCC's stock ARM9TDMI scheduling model; the target CPU
+    and permitted instructions remain ARM7TDMI.
+
+  These reconstruct habits measured across TLA's code. The 2026-10-10 bounded
+  English-image scan observed 8,064 adjacent mov/shift/add constant sequences
+  and 2,495 lr/suffix calls in game-labelled code; TBS had none of either in
+  the same scan. TLA also has explicit ARM-kernel loaders and separate library
+  stub calls, so the game is not described as wholly free of ARM interworking.
+  The scanner excludes decoded literal pools and jump tables; these counts
+  are bounded observations, not every executable byte in the game.
+
+  No tested stock compiler supplies both general forms. Disabling the two
+  reconstruction options reduces matching existing TLA Thumb objects from
+  1,255/1,255 to 875/1,255 in the study's expanded inventory. These fractions
+  describe objects, not whole-game completion or independent functions.
+  The data does not establish who implemented the original behavior or prove
+  that its original implementation was a particular GCC patch. The options
+  remain explicit reconstruction features with their evidence in agscc's README.
+
+  This decision admits no additional scheduler or allocator patch. Further
+  changes require K3's whole-game evidence and Pascal's approval; a remaining
+  instruction-order mismatch alone is not grounds to change compilers.
+  _Check: compiler-source-check, bundle validation._
 - **K3** A compiler, option or change is admitted only when one option set
   explains the great majority of a game's C and assembly, counted across the
   whole game rather than listed by function; no public compiler of the time
@@ -561,7 +560,7 @@ with Cargo. Put your own ROMs under `roms/` as `tbs-en.gba`,
 committed (L1).
 
 ```sh
-git submodule update --init && git config core.hooksPath .hooks
+git submodule update --init --recursive && git config core.hooksPath .hooks
 make bootstrap         # pinned compilers; BUNDLE=/path imports an approved bundle
 make worktree          # in a new worktree, before its first build
 make compare           # the Japanese base of ☀️; compare-tla for ⚓️

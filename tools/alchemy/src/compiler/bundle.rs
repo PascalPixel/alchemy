@@ -1,6 +1,6 @@
 use crate::compiler::bundle_data::{source_record, SOURCE_RECORD};
 use crate::compiler::routing::{
-    agbcc_arm_driver, agbcc_driver, bundle, bundle_for, root, CompilerTarget,
+    agbcc_driver, bundle, bundle_for, game_arm_driver, root, CompilerTarget,
 };
 use crate::compiler::sha256;
 use fs2::FileExt;
@@ -208,15 +208,24 @@ pub fn validate_agbcc_bundle() -> Result<()> {
     }
     validate_source_record(&bundle())?;
     validate_agbcc_driver(&agbcc_driver())?;
-    validate_agbcc_arm_driver(&agbcc_arm_driver())?;
     cache_validation("agbcc");
+    Ok(())
+}
+pub fn validate_game_arm_bundle() -> Result<()> {
+    ensure_compiler_bundle_access()?;
+    if validation_cached("game-arm") {
+        return Ok(());
+    }
+    validate_source_record(&bundle())?;
+    validate_game_arm_driver(&game_arm_driver())?;
+    cache_validation("game-arm");
     Ok(())
 }
 fn validate_source_record(directory: &Path) -> Result<()> {
     let record = fs::read_to_string(directory.join(SOURCE_RECORD)).unwrap_or_default();
     if record != source_record() {
         return Err(format!(
-            "compiler toolchain at {} was not built from the pinned agbcc and agscc sources; run alchemy bootstrap --build",
+            "compiler toolchain at {} was not built from the pinned agscc sources; run alchemy bootstrap --build",
             directory.display()
         ));
     }
@@ -225,8 +234,8 @@ fn validate_source_record(directory: &Path) -> Result<()> {
 fn validate_agbcc_driver(driver: &Path) -> Result<()> {
     validate_driver(driver, "agbcc/old_agbcc", &["-mthumb-interwork", "-O2"])
 }
-fn validate_agbcc_arm_driver(driver: &Path) -> Result<()> {
-    validate_driver(driver, "agbcc/agbcc_arm", &["-mthumb-interwork", "-O2"])
+fn validate_game_arm_driver(driver: &Path) -> Result<()> {
+    validate_driver(driver, "gcc2952_arm", &["-O2", "-mthumb-interwork", "-fomit-frame-pointer", "-fcall-used-r4"])
 }
 fn validate_driver(driver: &Path, name: &str, flags: &[&str]) -> Result<()> {
     if executable_mode(driver) != Some(true) {
@@ -244,7 +253,7 @@ pub fn validate_installation(directory: &Path) -> Result<()> {
     validate_game_directory(directory, CompilerTarget::Tbs)?;
     validate_game_directory(directory, CompilerTarget::Tla)?;
     validate_agbcc_driver(&directory.join("agbcc/old_agbcc"))?;
-    validate_agbcc_arm_driver(&directory.join("agbcc/agbcc_arm"))
+    validate_game_arm_driver(&directory.join("gcc2952_arm"))
 }
 pub fn signature_paths() -> Vec<PathBuf> {
     let bundle_dir = bundle();
@@ -255,7 +264,7 @@ pub fn signature_paths() -> Vec<PathBuf> {
         bundle_dir.join("cc1"),
         bundle_dir.join("as"),
         agbcc_driver(),
-        agbcc_arm_driver(),
+        game_arm_driver(),
     ]
 }
 fn append_compiler_input_tree(stream: &mut Vec<u8>, directory: &Path, base: &Path) {

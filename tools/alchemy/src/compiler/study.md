@@ -1,6 +1,8 @@
 **Alchemy compiler study — 10 October 2026**
 
-Completed experiment matrix; recommendation, not a production toolchain change.
+Completed experiment matrix. Pascal adopted the bounded three-generator set
+on 2026-10-10; AGENTS.md K1–K3 records the current contract. The report below
+describes the experiments before adoption.
 
 The evidence narrows the search to the mid-2000 GCC 2.96 Thumb family, the
 older ARM/Thumb lineage represented by agbcc for third-party libraries, and

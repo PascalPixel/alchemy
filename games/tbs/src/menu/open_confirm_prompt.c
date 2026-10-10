@@ -138,15 +138,16 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
         switch (state) {
         case 0:
         {
-            /* FAKEMATCH: CSE copies the equal call result from r0; the reference keeps the cancellation constant in r3. */
-            register s32 cancelled asm("r3");
+            s32 cancelled;
             s32 chosen;
 
             work->pane_row[0] = 0;
             ItemMenu_DrawMsg(0, (s32)MsgPsynergyChooseOwner);
             chosen = PsynergyMenu_SelectPartySlot(0);
             cancelled = -1;
-            if (chosen == cancelled) {
+            /* FAKEMATCH: separate the cancellation definition from the call result; without this boundary, pane-row stores exchange r2/r3 (12 instructions differ). XOR equality preserves the cancellation copy; direct equality copies r0 instead of r3 (2 instructions differ). */
+            asm("" : "+r"(cancelled));
+            if (((u32)chosen ^ (u32)cancelled) == 0) {
                 done = 1;
                 result = cancelled;
             }

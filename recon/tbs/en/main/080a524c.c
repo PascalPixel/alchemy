@@ -9,7 +9,9 @@
 /* Further flag-copy-only trials: a low-register changed input retains
  * differ 4; making the copy early-clobber differs 21. A sel output differs
  * 38, and carrying the preceding flag-test result through text differs 43.
- * All preserve behavior but none closes the r3/r2 residual. */
+ * A sel input retains 4; a rows output differs 34 (130 built). Removing
+ * only one's binding and adding sel as its barrier input differs 76
+ * (130 built). All preserve behavior but none closes the r3/r2 residual. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

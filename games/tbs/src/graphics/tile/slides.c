@@ -1139,7 +1139,6 @@ const u8 DisplayScroll_GlyphWidths[96] = {
 
 void DisplayScroll_UpdateObjects(void)
 {
-    /* FAKEMATCH: needed to match: the two-word OAM walk preserves stores and registers reversed by named fields. */
     u32 frame = Flash_Handler3;
     u32 fine = frame & 7;
     s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
@@ -1150,12 +1149,9 @@ void DisplayScroll_UpdateObjects(void)
         s32 col;
 
         for (col = 0; col < 6; col++) {
-            u32 *q = entry;
-
-            *q++ = (row * 8 + 16 - fine) | ((col * 32 + 24) << 16) | 0x40004000;
-            *q = tile;
+            *entry++ = (row * 8 + 16 - fine) | ((col * 32 + 24) << 16) | 0x40004000;
+            *entry++ = tile;
             tile += 4;
-            entry += 2;
             if (tile == 0x300)
                 tile = 0;
         }
@@ -1182,56 +1178,40 @@ void DisplayScroll_RenderEnteringLine(void)
 
 void DisplayScroll_InitObjectTable(void)
 {
-    /* FAKEMATCH: needed to match: pointer-cell and postincrement stores retain 376 bytes; direct typed stores produce 368. */
     volatile u32 fill;
     u32 *entry;
     u32 i;
     u32 j;
 
-    *(void **)((u8 *)&gFlashNumRemainingBytes) = Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
+    gFlashNumRemainingBytes = Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
     fill = 0;
     Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800, REG_DMA3);
     fill = 0x11111111;
     Dma_Set((void *)&fill, (void *)0x06016000, 0x85000040, REG_DMA3);
 
-    entry = *(u32 **)((u8 *)&gFlashNumRemainingBytes);
+    entry = (u32 *)gFlashNumRemainingBytes;
     for (i = 0; i < 8; i++) {
-        u32 *q = entry;
-
-        *q++ = (i << 21) | 0x80004000;
-        *q = 0x300;
-        entry += 2;
+        *entry++ = (i << 21) | 0x80004000;
+        *entry++ = 0x300;
     }
     for (i = 0; i < 8; i++) {
-        u32 *q = entry;
-
-        *q++ = (i << 21) | 0x80004088;
-        *q = 0x300;
-        entry += 2;
+        *entry++ = (i << 21) | 0x80004088;
+        *entry++ = 0x300;
     }
     for (i = 0; i < 8; i++) {
-        u32 *q = entry;
-
-        *q++ = (i << 21) | 0x40004098;
-        *q = 0x300;
-        entry += 2;
+        *entry++ = (i << 21) | 0x40004098;
+        *entry++ = 0x300;
     }
     for (i = 0; i < 16; i++) {
         for (j = 0; j < 6; j++) {
-            u32 *q = entry;
             u32 tile = (i * 3) * 8 + j * 4;
-
-            *q++ = (i * 8 + 16) | ((j * 32 + 24) << 16) | 0x40004000;
-            *q = tile;
-            entry += 2;
+            *entry++ = (i * 8 + 16) | ((j * 32 + 24) << 16) | 0x40004000;
+            *entry++ = tile;
         }
     }
     for (i = 0; i < 8; i++) {
-        u32 *q = entry;
-
-        *q++ = 0x00c000c0;
-        *q = 0x300;
-        entry += 2;
+        *entry++ = 0x00c000c0;
+        *entry++ = 0x300;
     }
     Flash_Handler3 = 0;
     *(s16 *)&gFlash = 0;

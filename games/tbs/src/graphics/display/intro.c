@@ -149,7 +149,7 @@ void Title_LoadIntroBackgrounds(void)
     u16 *map;
     s32 x;
     s32 y;
-    s32 tile;
+    u16 tile;
     s32 blank;
 
     work = Ram_WorkSlot[43];
@@ -168,78 +168,37 @@ void Title_LoadIntroBackgrounds(void)
     Dma_Set(Ram_MapCellBuffer + 0x2940, BG_CHAR_BLOCK(0), 0x80002760, REG_DMA3);
     Dma_Set(Ram_MapCellBuffer + 0xa140, (void *)0x06004ec0, 0x80004ec0, REG_DMA3);
 
-    /* FAKEMATCH: needed to match: goto loops and a tile counted in its high half keep the increment's constant inside each strip, where the loop pass would hoist it. */
     blank = 0x1ff;
     map = (u16 *)BG_SCREEN_BLOCK(30);
     tile = 0x267;
-    y = 0;
-front_top:
-    x = 29;
-front_top_cell:
-    {
-        s32 old = tile;
-
-        tile = ((old << 16) + 0x10000) >> 16;
-        *map++ = old;
+    for (y = 0; y <= 10; y++) {
+        for (x = 0; x < 30; x++)
+            *map++ = tile++;
+        *map++ = blank;
+        *map++ = blank;
     }
-    if (--x >= 0)
-        goto front_top_cell;
-    *map++ = blank;
-    *map++ = blank;
-    if (++y <= 10)
-        goto front_top;
     tile = 0x13b;
-    y = 11;
-front_rest:
-    x = 29;
-front_rest_cell:
-    {
-        s32 old = tile;
-
-        tile = ((old << 16) + 0x10000) >> 16;
-        *map++ = old;
+    for (y = 11; y <= 31; y++) {
+        for (x = 0; x < 30; x++)
+            *map++ = tile++;
+        *map++ = blank;
+        *map++ = blank;
     }
-    if (--x >= 0)
-        goto front_rest_cell;
-    *map++ = blank;
-    *map++ = blank;
-    if (++y <= 31)
-        goto front_rest;
     map = (u16 *)BG_SCREEN_BLOCK(31);
     tile = 300;
-    y = 0;
-back_top:
-    x = 29;
-back_top_cell:
-    {
-        s32 old = tile;
-
-        tile = ((old << 16) + 0x10000) >> 16;
-        *map++ = old;
+    for (y = 0; y <= 10; y++) {
+        for (x = 0; x < 30; x++)
+            *map++ = tile++;
+        *map++ = blank;
+        *map++ = blank;
     }
-    if (--x >= 0)
-        goto back_top_cell;
-    *map++ = blank;
-    *map++ = blank;
-    if (++y <= 10)
-        goto back_top;
     tile = 0;
-    y = 11;
-back_rest:
-    x = 29;
-back_rest_cell:
-    {
-        s32 old = tile;
-
-        tile = ((old << 16) + 0x10000) >> 16;
-        *map++ = old;
+    for (y = 11; y <= 31; y++) {
+        for (x = 0; x < 30; x++)
+            *map++ = tile++;
+        *map++ = blank;
+        *map++ = blank;
     }
-    if (--x >= 0)
-        goto back_rest_cell;
-    *map++ = blank;
-    *map++ = blank;
-    if (++y <= 31)
-        goto back_rest;
 
     REG_BG1CNT = 0x1f43;
     REG_BG2CNT = 0x1e81;
@@ -302,7 +261,7 @@ s32 Title_ShowIntro(s32 prompt)
     u8 *data;
     u16 *map;
     u32 i;
-    s32 tile;
+    u16 tile;
     u32 j;
     u32 limit;
     s32 blank;
@@ -425,18 +384,9 @@ s32 Title_ShowIntro(s32 prompt)
         }
         WaitFrames(1);
     }
-    /* FAKEMATCH: needed to match: the row is a goto loop, as in the background set-up; a for loop frees a register and moves the parameter off the stack. */
     for (; i < 20; i++) {
-        j = 0;
-    cell:
-        {
-            s32 old = tile;
-
-            tile = ((old << 16) + 0x10000) >> 16;
-            *map++ = old;
-        }
-        if (++j <= 29)
-            goto cell;
+        for (j = 0; j < 30; j++)
+            *map++ = tile++;
         *map++ = blank;
         *map++ = blank;
     }
@@ -525,7 +475,7 @@ s32 Title_ShowSplashScreen(s32 mode)
     u16 *map;
     u32 x;
     u32 y;
-    s32 tile;
+    u16 tile;
     s32 blank;
     s32 resource;
 
@@ -547,25 +497,12 @@ s32 Title_ShowSplashScreen(s32 mode)
     Dma_Set(Ram_MapCellBuffer, BG_CHAR_BLOCK(1), 0x84002580, REG_DMA3);
     tile = 256;
     map = (u16 *)BG_SCREEN_BLOCK(6);
-    y = 0;
-col:
-    {
-        x = 0;
-row:
-        {
-            s32 old = tile;
-
-            /* FAKEMATCH: needed to match: keep the signed tile wrap in the high half. */
-            tile = ((old << 16) + 0x10000) >> 16;
-            *map++ = old;
-        }
-        if (++x <= 29)
-            goto row;
+    for (y = 0; y < 20; y++) {
+        for (x = 0; x < 30; x++)
+            *map++ = tile++;
         *map++ = blank;
         *map++ = blank;
     }
-    if (++y <= 19)
-        goto col;
     for (y = 0; y < 4; y++) {
         gBgScroll[y].y = 0;
         gBgScroll[y].x = 0;

@@ -524,7 +524,7 @@ s32 BattleLayout_HighlightPartyPanels(u16 *ids)
 
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
 {
-    /* FAKEMATCH: no caller uses a result. The original scalar boundary keeps pop {r1}; the ordinary void definition changes it to pop {r0}. */
+    // 値を返さない int 関数 (pop {r1}; bx r1)
     s16 *dst;
     s32 n;
     u8 *src;

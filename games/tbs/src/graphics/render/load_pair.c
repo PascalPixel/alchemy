@@ -44,10 +44,10 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
     u32 zero;
     s32 *p;
 
+    /* FAKEMATCH: needed to match: the window starts as NULL, though it is assigned before it is read; that zero's register serves the plain style argument below. */
     window = NULL;
     entry1 = sprite1;
-    /* FAKEMATCH: needed to match: the null window is also the style argument (ROM passes its register). */
-    window = UiWindow_Create(1, 1, 28, 5, (s32)window);
+    window = UiWindow_Create(1, 1, 28, 5, 0);
     zero = 0;
 
     if (window != NULL) {

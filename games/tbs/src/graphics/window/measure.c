@@ -912,17 +912,14 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         kind = UiText_ItemGenders[tmp];
                         word = possessives.text[kind & 3];
 #endif
-                        /* FAKEMATCH: needed to match: value counts the letters, compared unsigned; a counter of its own loses r1 (Italian differs throughout). */
-                        value = 0;
-                        for (;;) {
+                        /* FAKEMATCH: needed to match: value counts the letters, compared unsigned; a counter of its own loses r1 in Spanish and Italian. */
+                        for (value = 0; (u32)value < 16; value++) {
                             if ((c8 = *word++) == 0)
                                 break;
                             if (value == 0 && suffix == 2)
                                 c8 -= 0x20;
                             entry[pos] = c8;
                             pos = (pos + 1) & RENDER_ENTRY_MASK;
-                            if ((u32)++value >= 16)
-                                break;
                         }
                         break;
 #endif
@@ -2085,7 +2082,7 @@ enum {
 void UiWindow_SetTilemapEntry(
     struct UiWindow *window, s32 value, s32 x, s32 y, u32 mode)
 {
-    u16 *map = ((struct UiRenderWork *)gWindowWork[0])->tilemap;
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
     s32 palette;
     s32 index;
 
@@ -2111,7 +2108,6 @@ void UiWindow_SetTilemapEntry(
         break;
     }
 
-    /* FAKEMATCH: needed to match: byte-offset stores preserve the strh base and offset register order; map[index] reverses them in both stores. */
     switch (mode) {
     case TILEMAP_ENTRY_NONE:
         return;
@@ -2121,14 +2117,14 @@ void UiWindow_SetTilemapEntry(
         index = (window->y + y) * TILEMAP_WIDTH + (window->x + x);
         if ((u32)index >= TILEMAP_ENTRIES)
             return;
-        *(u16 *)((u8 *)map + (index << 1)) = palette | value;
+        work->tilemap[index] = palette | value;
         return;
     case TILEMAP_ENTRY_PLAIN:
     default:
         index = (window->y + y) * TILEMAP_WIDTH + (window->x + x);
         if ((u32)index >= TILEMAP_ENTRIES)
             return;
-        *(u16 *)((u8 *)map + (index << 1)) = value;
+        work->tilemap[index] = value;
         return;
     }
 }

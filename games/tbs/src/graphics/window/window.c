@@ -72,8 +72,6 @@ void UiWork_Initialize(s32 kind)
     volatile u32 fill;
 #endif
     s32 i;
-    s32 value;
-    u16 *half;
     s32 UiWork_CopyTileTail(u32 src, u32 dst)
     {
         src &= 0x3ff;
@@ -92,10 +90,7 @@ void UiWork_Initialize(s32 kind)
     Iwram_ClearWords(work, RENDER_WORK_SIZE);
 #endif
     work->dirty = 1;
-    /* FAKEMATCH: needed to match: the 99 goes through an s32 local and a u16 pointer so it is a movs, not a halfword pool constant */
-    half = &work->glyph_resource;
-    value = 99;
-    *half = value;
+    work->glyph_resource = 99;
     work->menu_state = 1;
     work->level = 15;
 #if EDITION_INTERNATIONAL
@@ -405,7 +400,6 @@ void UiWindow_ClearInteriorTiles(const struct RenderInput *window,
     top = y + 1;
     width = right - x;
     height = bottom - y;
-    /* FAKEMATCH: needed to match: the ignored scalar call loads r0 after r1/r2; the void helper declaration loads r0 first. */
     UiWindow_ClearTileAttributesInRect(left, top, width, height);
     tiles = work->tilemap + top * 32 + left;
     for (row = 0; row < height; row++) {

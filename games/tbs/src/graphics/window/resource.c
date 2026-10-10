@@ -158,7 +158,7 @@ s32 Menu_BuildLocalizedPatternTiles(void)
 
 int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    /* FAKEMATCH: needed to match: the ignored integer result keeps the return-address pop in r1; void selects r0. */
+    // 値を返さない int 関数 (pop {r1}; bx r1)
     s32 tile_offset = arg3 * 2;
     s32 tile = tile_offset + 0xF315;
 

@@ -582,6 +582,7 @@ mod tests {
             "aliases",
             "devices",
             "hygiene",
+            "object-list",
         ];
         let passed = run(&makefile);
         assert!(

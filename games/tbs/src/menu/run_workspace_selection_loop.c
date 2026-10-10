@@ -24,8 +24,6 @@
 #include "uiflow.h"
 void AudioCommand_PlayFar(s32 cue);
 
-#define gKeyState ((u8 *)&gKeyState)
-#define gKeysRepeat ((u8 *)&gKeysRepeat)
 #define gWindowWork (*(struct UiTileSlotWork * *)&gWindowWork)
 
 #define Shop_SetCursorFar ((void (*)(void*,s32,s32,s32))Shop_SetCursorFar)
@@ -117,18 +115,18 @@ redraw_menu:
     }
     Ui_ApplyTableOffsetToPair(pair);
     WaitFrames(1);
-    if (*(volatile s32 *)gKeyState & KEY_A) {
+    if (gKeyState & KEY_A) {
         result = page;
         AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
-    } else if (*(volatile s32 *)gKeyState & (KEY_B | KEY_START)) {
+    } else if (gKeyState & (KEY_B | KEY_START)) {
         result = -1;
         AudioCommand_PlayFar(SOUND_MENU_CANCEL);
     } else {
-        if (*(volatile s32 *)gKeysRepeat & KEY_UP) {
+        if (gKeysRepeat & KEY_UP) {
             AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
             page -= 1;
             redraw = 1;
-        } else if (*(volatile s32 *)gKeysRepeat & KEY_DOWN) {
+        } else if (gKeysRepeat & KEY_DOWN) {
             AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
             page += 1;
             redraw = 1;

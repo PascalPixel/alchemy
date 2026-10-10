@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -19,11 +20,9 @@
 #include "text/msg_ids.h"
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
 
 #define UiText_DrawStringInWindowFar ((void (*)(u8*,s32,s32,s32))UiText_DrawStringInWindowFar)
 
-extern volatile s32 gKeysRepeat;
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void UiWork_FinalizeFar(s32, s32);
 

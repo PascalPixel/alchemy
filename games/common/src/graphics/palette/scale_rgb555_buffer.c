@@ -81,8 +81,7 @@ struct LuckyDiceSprites
 	s32					help_window;
 };
 
-extern volatile u32 gKeysHeld;
-extern volatile u32 gKeysRepeat;
+#include "keystate.h"
 extern u8			gOamCopyEnabled;
 // どこからも参照されない符号の表
 const s32 LuckyDice_UnusedSigns[] = {-1, 1, -1, 1, -1, -1, 1, 1};

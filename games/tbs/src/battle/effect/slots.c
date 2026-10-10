@@ -4,6 +4,7 @@
 //--------------------------------------------------------------------------
 
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -1070,7 +1071,6 @@ void BattleFx_CleanupResourcesAndWindow(void)
 }
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 #endif
-extern u32 gKeysHeld;
 s32		   ArcTan2(s32 dz, s32 dx);
 
 // IME を止めて I/O 書き込みキューに 1 件積む（QueueIoWriteDelay2 と同じ）

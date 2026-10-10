@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -2166,7 +2167,6 @@ void BattleFx_RunTargetBursts(void *object)
 	BattleFx_EndCanvasLayer();
 }
 
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 #define gTransitionWork (*(struct BattleBackgroundView **)&gTransitionWork)
 

@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -26,7 +27,6 @@
 #include "text/msg_ids.h"
 void AudioCommand_PlayFar(s32 cue);
 
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 #define gKeyState (*(u32 *)&gKeyState)
 
 #define ShopCursor_SetPositionImmediateFar ((void (*)(union MenuCursor*,s32,s32))ShopCursor_SetPositionImmediateFar)
@@ -482,7 +482,6 @@ finish:
 #else
 
 #undef gKeyState
-#define gKeyState (*(volatile u32 *)&gKeyState)
 
 s32 NameEntry_EditOwnerName(s32 entry)
 {

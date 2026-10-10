@@ -1,4 +1,5 @@
 #include "dma.h"
+#include "keystate.h"
 #include "io_reg.h"
 #include "battle.h"
 #include "debug.h"
@@ -1600,7 +1601,7 @@ active:
         UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
         do {
             WaitFrames(1);
-        } while ((*(volatile u32 *)&gKeyState & (KEY_A | KEY_B)) == 0 &&
+        } while ((gKeyState & (KEY_A | KEY_B)) == 0 &&
                  gLinkCountdownWork->timer != 0);
         UiWork_Finalize(work, 1);
     }

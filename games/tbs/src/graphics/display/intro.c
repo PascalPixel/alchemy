@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -20,7 +21,6 @@
 #include "resource_ids.h"
 #include "palbuf.h"
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
 
 #define Graphics_TransformSmallPalette ((s32 (*)(s32,s32))Graphics_TransformSmallPalette)
 

@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -18,8 +19,6 @@
 #include "text/msg_ids.h"
 struct BtlAct * BtlActGet(s32 action_id);
 
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
-#define gKeyState (*(volatile u32 *)&gKeyState)
 #define Resource_FixedBlockBTiles ((const u8 *)&Resource_FixedBlockBTiles)
 #define UiWindow_Create ((struct RenderInput * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
 #define UiText_DrawCharacterAtOffset ((void (*)(s32, struct RenderInput *, s32, s32))UiText_DrawCharacterAtOffset)

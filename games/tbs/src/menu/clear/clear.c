@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -71,7 +72,6 @@ static __inline__ void RestoreInterrupts(u32 saved)
         RestoreInterrupts(saved);                                          \
     } while (0)
 
-extern volatile u32 gKeysHeld;
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -315,7 +315,6 @@ extern u8 MsgClearSendingData[];
 extern u8 MsgClearPasswordLabel[];
 extern u8 MsgClearSaveLabel[];
 
-extern volatile s32 gKeyState;
 extern volatile u16 gLinkStatus;
 void RenderOutput_PrepareForRedraw(s32 window);
 

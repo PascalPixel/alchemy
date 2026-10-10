@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -18,8 +19,6 @@
 #include "text/msg_ids.h"
 #include "tbs_edition.h"
 
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
-#define gKeyState (*(volatile u32 *)&gKeyState)
 
 #define Text_FormatHex ((void (*)(s32,s32,s32))Text_FormatHex)
 

@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -15,12 +16,9 @@
 #include "system.h"
 #include "text/msg_ids.h"
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 #define UiText_DrawStringInWindowFar ((void (*)(const u8*,s32,s32,s32))UiText_DrawStringInWindowFar)
 
-extern volatile u32 gKeysHeld;
 
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 #if !EDITION_INTERNATIONAL

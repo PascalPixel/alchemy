@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -30,7 +31,6 @@ struct EventPromptWork {
     s16 width;
 };
 
-extern volatile s32 gKeyState;
 struct ActionDescriptor;
 void UiWork_FinalizePendingCoreFar(void);
 

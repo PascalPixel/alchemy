@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -1871,7 +1872,6 @@ void BattleFx_RenderAnimationMode0(s32 effect)
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
 
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 #define AnimationObjects_SelectAnimationFar \

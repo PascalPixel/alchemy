@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -20,8 +21,6 @@
 #include "tbs_edition.h"
 #include "text/msg_ids.h"
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 void Engine_EventSetMessage(s16 message);
 

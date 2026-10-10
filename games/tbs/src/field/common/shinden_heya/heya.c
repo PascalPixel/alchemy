@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -1482,8 +1483,6 @@ void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
     }
 }
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 struct TextCursor {
     u8 storage[12];

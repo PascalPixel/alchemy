@@ -1,5 +1,6 @@
 #define OWN_AudioCommand_PlayFar
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -40,8 +41,6 @@ extern u8 gOptionMirror;
 extern s16 gPostLoadCounter;
 
 #if EDITION_INTERNATIONAL
-extern volatile s32 gKeyState;
-extern volatile s32 gKeysRepeat;
 
 void AudioCommand_PlayFar(s32 cue);
 void PaletteGlow_Update(s32 icon, s32 icon_sub);
@@ -240,8 +239,6 @@ done:
 #define Shop_SetCursorFar ((void (*)(void*,s32,s32,s32))Shop_SetCursorFar)
 
 extern u8 Resource_FixedBlockBTiles[];
-extern volatile s32 gKeyState;
-extern volatile s32 gKeysRepeat;
 
 void AudioCommand_PlayFar(s32 cue);
 void PaletteGlow_Update(s32 icon, s32 icon_sub);

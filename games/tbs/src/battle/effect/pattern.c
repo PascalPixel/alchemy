@@ -4,6 +4,7 @@
 //--------------------------------------------------------------------------
 
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -14,7 +15,6 @@
 #include "system.h"
 #include "types.h"
 
-extern u32 gKeysHeld;
 
 //--------------------------------------------------------------------------
 // 押している十字キーの向き（0x10000 で 1 周）を返す

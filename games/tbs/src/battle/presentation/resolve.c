@@ -26,13 +26,12 @@
 #include "callback_scheduler.h"
 #include "transform.h"
 
-extern u8 gKeysHeld[];
 
 void BattlePres_AdjustCameraByShoulderKeysAlt(void)
 {
 	struct BattleCamera					*cam = *(gWorkSlot + HEAP_SLOT_CAMERA);
 	struct BattlePresentationTransition *trans = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
-	volatile u32						*keys = (volatile u32 *)gKeysHeld;
+	volatile u32						*keys = &gKeysHeld;
 
 	if ((*keys & KEY_L) != 0)
 	{

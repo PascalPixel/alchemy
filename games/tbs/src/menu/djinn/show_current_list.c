@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -18,7 +19,6 @@
 #include "text/msg_ids.h"
 
 #define gWindowWork (*(struct UiWork * *)&gWindowWork)
-#define gKeyState (*(volatile u32 *)&gKeyState)
 #define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 

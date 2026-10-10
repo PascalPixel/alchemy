@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -20,7 +21,6 @@
 #include "text/msg_ids.h"
 s32 AudioCommand_GetStateByteFar(void);
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
 
 #define Party_LookupCharacterValueByFlag32 ((s32 (*)(s32))Party_LookupCharacterValueByFlag32)
 #define UiGlyph_LoadEntryWithPalette ((void (*)(s32,s32,s32*,s32*,s32,s32))UiGlyph_LoadEntryWithPalette)

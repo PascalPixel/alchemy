@@ -1,5 +1,6 @@
 #define OWN_AudioCommand_PlayFar
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -20,7 +21,6 @@
 #include "text/msg_ids.h"
 
 #define gKeyState (*(u32 *)&gKeyState)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 #define Menu_OpenSelectionWindow ((void (*)(u16,u32))Menu_OpenSelectionWindow)
 

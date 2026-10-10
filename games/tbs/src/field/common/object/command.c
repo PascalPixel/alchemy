@@ -605,8 +605,6 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj)
     if (leader != NULL && leader->script != NULL) {
         x = leader->x;
         y = leader->y;
-        /* FAKEMATCH: an extra use of y ranks it above the bounds in global allocation, giving it r5. */
-        __asm__("" : : "r"(y));
         z = leader->z;
         obj->target_x = TARGET_UNSET;
         obj->target_y = TARGET_UNSET;
@@ -632,6 +630,12 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj)
                     register s32 k asm("r2") = 0xffff;
                     /* FAKEMATCH: keeps k from folding into the add. */
                     __asm__("" : "+r"(k));
+                    /* FAKEMATCH: cancelling uses in the rounding branch
+                     * rank y above bounds in global allocation, preserving
+                     * native r5. They disappear from all 224 instructions;
+                     * without them, 130 rows differ in the English build. */
+                    y ^= 1;
+                    y ^= 1;
                     t += k;
                 }
                 dx = t >> 16;

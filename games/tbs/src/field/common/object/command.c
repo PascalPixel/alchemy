@@ -628,8 +628,14 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj)
                 if (t < 0) {
                     /* FAKEMATCH: the rounding constant in r2 outside reload keeps reload's rotation as the native has it. */
                     register s32 k asm("r2") = 0xffff;
-                    /* FAKEMATCH: keeps k from folding into the add. */
-                    __asm__("" : "+r"(k));
+                    /* FAKEMATCH: conditional cancelling updates end CSE
+                     * before the add, keeping the literal in native r2.
+                     * The block disappears from all 224 instructions;
+                     * without it, 66 rows differ in the English build. */
+                    if (y) {
+                        k ^= 1;
+                        k ^= 1;
+                    }
                     /* FAKEMATCH: cancelling uses in the rounding branch
                      * rank y above bounds in global allocation, preserving
                      * native r5. They disappear from all 224 instructions;

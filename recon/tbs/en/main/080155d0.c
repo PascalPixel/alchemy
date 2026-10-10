@@ -45,7 +45,16 @@
    Prefix seed 269 compiled 22,473 candidates without moving the last pair.
    Const font/y inputs and a variadic entry stayed at 2; an inline C wrapper
    regressed to 85. Continental clipping forms, width/index normalization,
-   palette scopes and 5,040 local declaration orders did not beat 12. */
+   palette scopes and 5,040 local declaration orders did not beat 12.
+   Further continental trials: argument halves, selector forms and 2,240
+   selector/height-copy combinations stayed at 12 or worse. Palette records,
+   shared width ownership, repeated source copies and zero pointer terms
+   did not help. Setup search 277 compiled 27,569 candidates: removing the
+   source scope and retaining an empty final input-window test traded one
+   reordered pair for eleven register differences (differ 28), so it was
+   rejected. Initialized terminal references (44) and palette-lifetime
+   placements (56) did not repair those registers. The saved draft remains
+   0/2/12 after staging's 3010b41dcd checkpoint. */
 
 #include "types.h"
 #include "uiwindow.h"

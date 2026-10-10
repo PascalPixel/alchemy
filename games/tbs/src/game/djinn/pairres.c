@@ -854,13 +854,7 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 v
 {
     struct RenderOutput *object;
     u32 resource;
-    /* FAKEMATCH: keeps the variant in r5. Ordinary s32 v = variant,
-     * with or without register qualification, differs by 16 aligned
-     * instructions (36 native, 36 built, 28 common), extent 0x54.
-     * First adds r5,r3,#0 becomes adds r4,r2,#0; variant remains in r3,
-     * y moves to r4, window moves from r4 to r5 and the stack argument
-     * store moves after the remaining argument copies. */
-    register s32 v asm("r5") = variant;
+    s32 v = variant;
     struct RenderInput *w = window;
     s32 xx = x;
     struct InventoryMenuState *data = gMenuWork;
@@ -870,8 +864,14 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 v
     else
         resource = (u16)data->resource_slots[1];
     object = RenderOutput_CreateFar(resource, 0x40000000, w, xx, y);
-    if (object == 0)
-        return -1;
+    if (object == 0) {
+        /* FAKEMATCH: the redundant failure branch retains the argument
+         * lifetimes through CSE; plain return -1 changes 16 aligned rows. */
+        if (variant || xx)
+            return -1;
+        else
+            return -1;
+    }
     object->kind = 0;
     object->anim_step = 0;
     object->active = 1;
@@ -882,13 +882,7 @@ s32 UiIcon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s
 {
     struct RenderOutput *object;
     u32 resource;
-    /* FAKEMATCH: keeps the variant in r5. Ordinary s32 v = variant,
-     * with or without register qualification, differs by 22 aligned
-     * instructions (40 native, 40 built, 29 common), extent 0x5c.
-     * First adds r5,r3,#0 becomes adds r4,r2,#0; variant remains in r3,
-     * y moves to r4, window moves from r4 to r5, the y subtracts move
-     * to r4, and the stack argument store moves after the copies. */
-    register s32 v asm("r5") = variant;
+    s32 v = variant;
     struct RenderInput *w = window;
     s32 xx = x;
     struct InventoryMenuState *data = gMenuWork;
@@ -901,8 +895,14 @@ s32 UiIcon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s
         y -= 4;
     }
     object = RenderOutput_CreateFar(resource, 0x40000000, w, xx, y);
-    if (object == 0)
-        return -1;
+    if (object == 0) {
+        /* FAKEMATCH: the redundant failure branch retains the argument
+         * lifetimes through CSE; plain return -1 changes 22 aligned rows. */
+        if (v || x)
+            return -1;
+        else
+            return -1;
+    }
     object->kind = 0;
     object->anim_step = 0;
     object->active = 1;

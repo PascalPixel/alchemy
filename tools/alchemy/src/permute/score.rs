@@ -390,8 +390,7 @@ pub fn score(listing: &[String], draft: &[String]) -> Score {
 }
 
 pub fn score_with(listing: &[String], draft: &[String], options: Options) -> Score {
-    let (common, script) = crate::diff::compare(listing, draft);
-    let prefix = script.iter().take_while(|line| line.starts_with("  ")).count();
+    let (common, prefix) = crate::diff::compare_counts(listing, draft);
     let mut result = Score {
         differ: listing.len() + draft.len() - 2 * common,
         prefix,
@@ -558,6 +557,36 @@ mod tests {
 
     fn rows(texts: &[&str]) -> Vec<String> {
         texts.iter().map(|text| text.to_string()).collect()
+    }
+
+    #[test]
+    fn count_only_strict_scoring_preserves_all_score_fields_and_options() {
+        let listing = rows(&["push {lr}", "ldr r0, [sp, #12]", "mov r0, r1", "mov r0, r1", "b.n +4", "bx lr", "nop"]);
+        let drafts = [
+            Vec::new(),
+            listing.clone(),
+            rows(&["push {lr}", "ldr r0, [sp, #20]", "mov r0, r1", "mov r0, r1", "b.n +8", "bx lr"]),
+            rows(&["mov r0, r1", "push {lr}", "ldr r0, [sp, #12]", "mov r0, r1", "b.n +4", "bx lr", "nop"]),
+            rows(&["push {lr}", "ldr r0, [sp, #12]", "mov r0, r1", "bl", "b.n +4", "bx lr", "nop"]),
+            rows(&["mov r0, r1", "mov r0, r1"]),
+        ];
+        let lines = |rows: &[String]| rows.iter().map(|row| Line { row: row.clone(), has_symbol: false }).collect::<Vec<_>>();
+        for draft in &drafts {
+            for (listing, draft) in [(&listing, draft), (draft, &listing)] {
+                let (common, script) = crate::diff::compare(listing, draft);
+                let prefix = script.iter().take_while(|line| line.starts_with("  ")).count();
+                for algorithm in [Algorithm::Difflib, Algorithm::Levenshtein] {
+                    for stack_differences in [false, true] {
+                        for ignore_branch_targets in [false, true] {
+                            let options = Options { algorithm, stack_differences, ignore_branch_targets };
+                            let mut expected = Score { differ: listing.len() + draft.len() - 2 * common, prefix, ..Score::default() };
+                            weighted(&lines(listing), &lines(draft), options, &mut expected);
+                            assert_eq!(score_with(listing, draft, options), expected, "{options:?} {listing:?} / {draft:?}");
+                        }
+                    }
+                }
+            }
+        }
     }
 
     #[test]

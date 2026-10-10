@@ -318,6 +318,35 @@ pub(crate) fn compare(listing: &[String], draft: &[String]) -> (usize, Vec<Strin
     (table[0][0] as usize, script)
 }
 
+/// The scorer needs only the LCS length and the script's initial equal rows.
+/// Keep the full table and its tie-breaking in `compare` for printable diffs.
+pub(crate) fn compare_counts(listing: &[String], draft: &[String]) -> (usize, usize) {
+    let prefix = listing.iter().zip(draft).take_while(|(a, b)| a == b).count();
+    let (listing, draft) = (&listing[prefix..], &draft[prefix..]);
+    let suffix = listing.iter().rev().zip(draft.iter().rev()).take_while(|(a, b)| a == b).count();
+    let (listing, draft) = (&listing[..listing.len() - suffix], &draft[..draft.len() - suffix]);
+    if listing.is_empty() || draft.is_empty() {
+        return (prefix + suffix, prefix);
+    }
+
+    // Equal ends can belong to an LCS even when rows repeat. Only the middle
+    // needs dynamic programming, with the shorter slice as the row width.
+    let (rows, columns) = if listing.len() < draft.len() { (draft, listing) } else { (listing, draft) };
+    let mut previous = vec![0usize; columns.len() + 1];
+    let mut current = vec![0usize; columns.len() + 1];
+    for row in rows {
+        for (j, column) in columns.iter().enumerate() {
+            current[j + 1] = if row == column {
+                previous[j] + 1
+            } else {
+                previous[j + 1].max(current[j])
+            };
+        }
+        std::mem::swap(&mut previous, &mut current);
+    }
+    (prefix + suffix + previous[columns.len()], prefix)
+}
+
 pub(crate) fn disassemble(object: &Path, symbol: Option<&str>) -> Result<Vec<String>, String> {
     Ok(normalize(&disassemble_text(object, symbol)?))
 }
@@ -859,6 +888,74 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn assert_compare_counts(listing: &[String], draft: &[String]) {
+        let (common, script) = compare(listing, draft);
+        let prefix = script.iter().take_while(|line| line.starts_with("  ")).count();
+        assert_eq!(compare_counts(listing, draft), (common, prefix), "{listing:?} / {draft:?}");
+    }
+
+    #[test]
+    fn compare_counts_matches_empty_equal_ends_and_duplicate_ties() {
+        let rows = |text: &str| text.split_whitespace().map(String::from).collect::<Vec<_>>();
+        for (listing, draft) in [
+            ("", ""), ("", "a b"), ("a b", ""), ("a b", "a b"),
+            ("a b", "a b c"), ("a b c", "a b"),
+            ("a b c d", "a x c d"), ("a b c", "x b c"),
+            ("a b a b", "b a b a"), ("a a b a", "a b a a"),
+            ("a a a", "a a"), ("a b a c a", "a a b c a"),
+            ("a b", "a x x x x b"), ("a b c", "x y z"),
+        ] {
+            assert_compare_counts(&rows(listing), &rows(draft));
+        }
+    }
+
+    #[test]
+    fn compare_counts_matches_full_diff_exhaustively() {
+        let mut cases = vec![Vec::<String>::new()];
+        let mut level = cases.clone();
+        for _ in 0..4 {
+            let mut next = Vec::new();
+            for rows in &level {
+                for token in ["a", "b", "c"] {
+                    let mut extended = rows.clone();
+                    extended.push(token.to_string());
+                    next.push(extended);
+                }
+            }
+            cases.extend(next.iter().cloned());
+            level = next;
+        }
+        // All 14,641 pairs, including unequal lengths and both orientations.
+        for listing in &cases {
+            for draft in &cases {
+                assert_compare_counts(listing, draft);
+            }
+        }
+    }
+
+    #[test]
+    fn compare_counts_matches_large_near_identical_function_slices() {
+        // Synthetic instruction rows, including duplicates after row 2,048.
+        let listing: Vec<_> = (0..2105).map(|i| {
+            let i = i % 2048;
+            format!("ldr r{}, [r{}, #{}]", i % 8, (i / 8) % 8, (i / 64) * 4)
+        }).collect();
+        let mut replacement = listing.clone();
+        replacement[2055] = "bl".into();
+        let mut swap = listing.clone();
+        swap.swap(2055, 2056);
+        let mut insertion = listing.clone();
+        insertion.insert(2055, "bl".into());
+        let mut deletion = listing.clone();
+        deletion.remove(2055);
+        let mut two_changes = swap.clone();
+        two_changes[0] = "push {lr}".into();
+        for draft in [listing.clone(), replacement, swap, insertion, deletion, two_changes] {
+            assert_compare_counts(&listing, &draft);
+            assert_compare_counts(&draft, &listing);
+        }
+    }
 
     #[test]
     fn encoded_thumb_branches_ignore_misleading_objdump_symbols() {

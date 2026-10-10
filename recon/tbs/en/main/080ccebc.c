@@ -8,7 +8,10 @@
  * input/output/high-register boundaries differ 44. Value-preserving narrow
  * shifts between frame, size and step retain 30. A two-minute seed-439
  * search compiled 5455 candidates without beating this draft; its longer
- * prefix candidate differs 115 and is not retained. Linked source retains
+ * prefix candidate differs 115 and is not retained. New source-only batches
+ * of 14 cancelling/control-block alternatives, all 24 local declaration
+ * orders and 10 early dead frame definitions did not beat the 30-row
+ * English residual. Linked source retains
  * its pin pending whole-image byte identity. */
 #include "battle.h"
 #include "debug.h"

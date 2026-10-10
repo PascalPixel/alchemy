@@ -6,7 +6,11 @@
  * differs 26 (29 built). A generic output barrier on zero also differs 26;
  * adding the sequence pointer as input or output differs 37 (28 built).
  * A busy output, alone or with value, differs 26. The linked implementation
- * retains its binding. */
+ * retains its binding. Further source-only batches tried 240 zero-value,
+ * type and one-pass forms, 60 equivalent busy guards, 288 relational
+ * guards with busy as the received-size carrier, 70 split conditional
+ * restorations and 90 wide known-zero expressions. None improved this
+ * 15-row residual; split restorations retained at least 26 differences. */
 #include "serial_runtime.h"
 #include "io_reg.h"
 

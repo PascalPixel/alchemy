@@ -1,10 +1,22 @@
 /* Pin-free FourObjectMotion_UpdateBottomRow attempt: 119 native instructions,
-   120 built, 112 common, differ 15. The extra volatile store grows the stack
-   frame from 36 to 40 bytes and changes pool/branch/stack distances; it is
-   not adopted. Plain unbound py differs 81; a volatile signed-halfword read
-   differs 144; an ordinary limit temporary with an empty output barrier
-   differs 81. Reading a signed-halfword temporary earlier differs 26.
-   The linked source retains its pin until this residual is closed. */
+   119 built, 117 common, differ 4 in all six TBS editions. Reading py before
+   request[3] = 0 restores every native register choice and the 36-byte frame,
+   but movs #8 / ldrsh r2 precede the zero-store instead of following it.
+   The linked source retains
+   its pin until this ordering residual is closed.
+   Earlier volatile s32 limit_work differed 15 with an extra store and a
+   40-byte frame; plain unbound py differed 81, a volatile signed-halfword
+   read 144, an ordinary limit temporary with an empty output barrier 81,
+   and an earlier signed-halfword read 26.
+   2026-10-10: targeted y/phase reuse, required-store volatile carriers,
+   typed/scoped zero stores, split conditional restores, known-zero early
+   reads and call dependencies did not beat 4. Twenty limit-type/byte-scale
+   variants and a final twelve CSE-boundary restores before the late py read
+   did not beat 4. A one-minute tail-only search
+   (seed 408; 4834 iterations, 3944 distinct, 78 compile failures) reached
+   weighted 115 / differ 22 but did not improve this ordering residual.
+   Thirty widened-read/order forms and fifteen early dead-definition or
+   split-restoration forms also did not improve the four-row residual. */
 #include "types.h"
 #include "four_object_motion.h"
 #include "field_sprite.h"
@@ -18,9 +30,6 @@ void FourObjectMotion_UpdateBottomRow(void)
     s32 i;
     u32 motion[2];
     u32 request[4];
-    /* FAKEMATCH: the volatile limit temporary changes register allocation
-       from the plain candidate's 81 differences to 15, but adds a store. */
-    volatile s32 limit_work;
 
     Link_DrawShiftedTilePairFar((void *)0x06002500);
     i = 0;
@@ -46,10 +55,9 @@ void FourObjectMotion_UpdateBottomRow(void)
             request[0] = (u32)(s32)work->positions_x[i] << 16;
             request[1] = y;
             request[2] = ((u32)(s32)work->positions_y[i] << 16) + y;
-            request[3] = 0;
             py = work->positions_y[i];
-            limit_work = 0x8000;
-            limit = limit_work;
+            request[3] = 0;
+            limit = 0x8000;
             if (py >= 0)
                 limit = 0x4000;
             Object_ApplyProjectedPlacementFar(obj, request, motion, limit);

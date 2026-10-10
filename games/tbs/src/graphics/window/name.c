@@ -422,9 +422,21 @@ remove_character:
                     u8 *dst = saved;
                     u8 *src = input;
                     s32 i = 0;
+                    u8 *dst_save = dst;
+                    u8 *src_save = src;
 
-                    /* FAKEMATCH: keep both copy pointers live at the loop boundary; without it, destination/source/index use r1/r0/r2 instead of r2/r1/r0 (14 instructions differ). */
-                    asm("" : "+r"(dst), "+r"(src));
+                    /* FAKEMATCH: the split restores end the pointer setup's
+                     * CSE blocks. They disappear, preserving destination/
+                     * source/index in r2/r1/r0; removing the barrier alone
+                     * changes them to r1/r0/r2 (14 instructions differ). */
+                    if (saved)
+                        src = NULL;
+                    if (saved)
+                        src = src_save;
+                    if (saved)
+                        dst = NULL;
+                    if (saved)
+                        dst = dst_save;
                     while (i < 15) {
                         *dst++ = *src++;
                         i++;
@@ -684,12 +696,29 @@ remove_character:
                     UiText_DrawString(saved, (s32)label, 0, 0);
                     WaitFrames(10);
                 } else {
-                    u8 *src = input;
-                    u8 *dst = saved;
-                    s32 i = 0;
+                    u8 *dst;
+                    u8 *src;
+                    s32 i;
+                    u8 *dst_save;
+                    u8 *src_save;
 
-                    /* FAKEMATCH: keep both copy pointers live at the loop boundary; declaring destination first swaps destination/index from r1/r0 to r0/r1 (10 instructions differ). */
-                    asm("" : "+r"(dst), "+r"(src));
+                    dst = saved;
+                    src = input;
+                    i = 0;
+                    /* FAKEMATCH: the split restores end the pointer setup's
+                     * CSE blocks. They disappear, preserving destination/
+                     * source/index in r1/r2/r0; removing the barrier alone
+                     * changes them to r2/r0/r1 (14 instructions differ). */
+                    dst_save = dst;
+                    src_save = src;
+                    if (window->height)
+                        dst = NULL;
+                    if (window->height)
+                        dst = dst_save;
+                    if (window->height)
+                        src = NULL;
+                    if (window->height)
+                        src = src_save;
                     while (i < 15) {
                         *dst++ = *src++;
                         i++;

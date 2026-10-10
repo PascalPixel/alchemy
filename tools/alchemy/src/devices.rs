@@ -283,7 +283,8 @@ fn devices(code: &str, emitting: &BTreeSet<String>) -> [usize; 4] {
             volatile += line.matches("volatile").count()
                 - line.matches("asm volatile").count()
                 - line.matches("__asm__ volatile").count()
-                - line.matches("asm __volatile__").count();
+                - line.matches("asm __volatile__").count()
+                - line.matches("__asm__ __volatile__").count();
         }
     }
     [pins, barriers, inline, volatile]
@@ -332,6 +333,15 @@ mod tests {
         assert_eq!(bodies[0].0, "STEER");
         assert!(asm_statements(&bodies[0].1).iter().any(|t| instruction(t)));
         assert_eq!(devices(&code, &BTreeSet::new()), [0, 0, 0, 0]);
+    }
+
+    #[test]
+    fn gnu_asm_qualifiers_are_not_volatile_objects() {
+        let code = code_only(
+            "__asm__ __volatile__(\"\" : : \"r\"(value));\n\
+             volatile s32 counter; __asm__ __volatile__(\"\" : : \"r\"(counter));\n",
+        );
+        assert_eq!(devices(&code, &BTreeSet::new()), [0, 2, 0, 1]);
     }
 
     #[test]

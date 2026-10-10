@@ -853,10 +853,7 @@ void FieldScene_RunGroupChoreography(void)
     Engine_ActorEnableActionCallback(0, (s32)HaidiaIe_LeaderActions);
     Engine_EventWait(6);
     Object_SetActionCallbackAndRefreshById(25, (s32)HaidiaIe_Actor25Actions);
-    /* FAKEMATCH: the do/while loads the linked scene after the store. */
-    do {
-        gGameState.battle_start = 2;
-    } while (0);
+    Battle_SetStart(2);
     {
         const void *message = &SceneId_HaidiaIe;
 

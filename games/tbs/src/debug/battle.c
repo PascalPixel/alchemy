@@ -301,11 +301,7 @@ restart:
 				if ((gKeysRepeat & KEY_B) || locked)
 				{
 					locked = 1;
-					/* FAKEMATCH: a one-pass loop is a sched2 barrier, so the 5 is loaded before the byte's address as in the reference */
-					do
-					{
-						gGameState.battle_start = 5;
-					} while (0);
+					Battle_SetStart(5);
 				}
 				if (preset != loaded)
 				{

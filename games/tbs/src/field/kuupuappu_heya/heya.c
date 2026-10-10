@@ -23,7 +23,6 @@
 #include "event_runtime.h"
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
-#define Battle_SetStart(mode) do { gGameState.battle_start = (mode); } while (0)
 
 void FieldScene_ConfigurePairedActors(void);
 void FieldScene_RunLateSequence();

@@ -732,7 +732,7 @@ s32 LinkLobby_RunConnectionSequence(void)
             Party_SetFields1ceAnd1d0((s32)&SceneId_LinkLobby, 10);
             Event_SetDefeatDestination((s32)&SceneId_LinkLobby, 11);
         }
-        gGameState.battle_start = 4;
+        Battle_SetStart(4);
         BattleFx_SetWeightedResult(1, 1);
         tbl = (u16 *)gSerialTransfer.payload;
         value.value = 0x45;

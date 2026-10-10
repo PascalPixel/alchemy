@@ -21,7 +21,6 @@
 #include "text/msg_ids.h"
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
-#define Battle_SetStart(mode) do { gGameState.battle_start = (mode); } while (0)
 
 // 別ファイルの関数: 呼び出し側は宣言なし (暗黙の int) で呼んでいる
 s32 Korosseo_FadeInCompetitor();

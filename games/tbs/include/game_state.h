@@ -123,4 +123,11 @@ LAYOUT_OFFSET_GUARD(GameState_StartStamp, struct GameState, start_stamp, 0x2b8);
 extern struct GameState gGameState;
 #endif
 
+// 戦闘開始の種類を設定
+#define Battle_SetStart(mode)             \
+	do                                    \
+	{                                     \
+		gGameState.battle_start = (mode); \
+	} while (0)
+
 #endif

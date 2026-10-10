@@ -20,7 +20,6 @@
 #include "text/msg_ids.h"
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
-#define Battle_SetStart(mode) do { gGameState.battle_start = (mode); } while (0)
 
 
 #define ObjectDispatch_InitFromTable4WithArgument ((void (*)(s32,struct FieldActor*))ObjectDispatch_InitFromTable4WithArgument)

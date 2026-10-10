@@ -349,21 +349,21 @@ void ArutinYama_BeginRollingRide(s32 a0)
 
 void ArutinYama_StartAreaOneEncounter(void)
 {
-	gGameState.battle_start = 3;
+	Battle_SetStart(3);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama1, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
 void ArutinYama_StartAreaThreeEncounter(void)
 {
-	gGameState.battle_start = 3;
+	Battle_SetStart(3);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama3, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
 void ArutinYama_StartAreaFiveEncounter(void)
 {
-	gGameState.battle_start = 3;
+	Battle_SetStart(3);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama5, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
@@ -2214,7 +2214,7 @@ void FieldScene_RunLateAuxiliarySequence(void)
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 0);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorWaitForMove(8);
-	gGameState.battle_start = 3;
+	Battle_SetStart(3);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama10, 99);
 	BattleFx_SetWeightedResult(53, 3);
 }

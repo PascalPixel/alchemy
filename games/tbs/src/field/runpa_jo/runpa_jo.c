@@ -1001,7 +1001,7 @@ void EV33_SHIRABE(void)
     Engine_ActorShowEmote(15, 256, 60);
     TurnActorToSceneDirection(15);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    gGameState.battle_start = 3;
+    Battle_SetStart(3);
     Engine_BattleFxSetWeightedResult(98, 2);
     Engine_ActorSetPosition(15, 0, 0);
     EV_END();
@@ -1016,7 +1016,7 @@ void EV30_TAKARABAKO(void)
     Engine_ActorShowEmote(11, 256, 60);
     TurnActorToSceneDirection(11);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    gGameState.battle_start = 3;
+    Battle_SetStart(3);
     Engine_BattleFxSetWeightedResult(98, 2);
     Engine_ActorSetPosition(11, 0, 0);
     EV_END();
@@ -1075,7 +1075,7 @@ void EV31_BANPEI(void)
     MES_PUT(12, 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo2, 31);
-    gGameState.battle_start = 3;
+    Battle_SetStart(3);
     Engine_BattleFxSetWeightedResult(98, 3);
     OBJ_POS_SET(12, 0, 0);
     OBJ_POS_SET(13, 0, 0);
@@ -1106,7 +1106,7 @@ void EV32_KARA(void)
     Engine_ActorShowEmote(16, 256, 60);
     TurnActorToSceneDirection(16);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    gGameState.battle_start = 3;
+    Battle_SetStart(3);
     Engine_BattleFxSetWeightedResult(98, 2);
     Engine_ActorSetPosition(16, 0, 0);
     EV_END();
@@ -1410,10 +1410,7 @@ void EV20_DEMO(void)
         RunpaJo_RevealMonster();
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         WAIT(1);
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
-        do {
-            gGameState.battle_start = 3;
-        } while (0);
+        Battle_SetStart(3);
         Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
         Engine_BattleFxSetWeightedResult(98, 4);
     } else {
@@ -1610,10 +1607,7 @@ void EV20_DEMO(void)
         FLAG_SET(2370);
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         WAIT(1);
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
-        do {
-            gGameState.battle_start = 3;
-        } while (0);
+        Battle_SetStart(3);
         Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
         Engine_BattleFxSetWeightedResult(98, 4);
     }

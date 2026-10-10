@@ -279,7 +279,7 @@ void ToretoHeya_RunTableScene(void)
     Engine_EventShowMessage(0x8008, 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     gEventWork->transition_frames = 64;
-    gGameState.battle_start = 3;
+    Battle_SetStart(3);
     Party_SetFields1ceAnd1d0((s32)&SceneId_ToretoHeya, 19);
     BattleFx_SetWeightedResult(36, 0);
     Engine_EventEnd();

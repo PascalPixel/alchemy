@@ -28,7 +28,6 @@
 #include "event_runtime.h"
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
-#define Battle_SetStart(mode) do { gGameState.battle_start = (mode); } while (0)
 
 #define SCENE_PHASE (gEventWork->start_transition)
 #define ACTOR 8

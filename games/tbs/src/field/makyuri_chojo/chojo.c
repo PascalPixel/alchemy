@@ -787,10 +787,7 @@ void RunScene58Sequence(void)
     Event_ShowMessageAndWait(0x16, 0, 20);
     Actor_WalkToAndWait(0x16, 0x150, 0xD8);
     Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriChojo1, 2);
-    /* FAKEMATCH: the do/while loads the game state's base before the 0x22b offset, which fixes their registers and literal-pool order. */
-    do {
-        gGameState.battle_start = 3;
-    } while (0);
+    Battle_SetStart(3);
     BattleFx_SetWeightedResult(0x24, 2);
     Engine_EventEnd();
 }

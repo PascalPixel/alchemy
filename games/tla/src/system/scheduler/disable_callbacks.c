@@ -99,19 +99,21 @@ next_task:
 s32 Scheduler_CountCallbacksByKey(s32 key)
 {
     /* FAKEMATCH: plain typed scans use bottom-tested loops. The native preincrement countdown uses an unsigned cursor so no before-array C pointer is formed. */
-    u32 cursor = (u32)gSchedulerTaskTable;
+    u32 cursor;
     struct SchedulerTask *task;
     s32 count;
-    /* FAKEMATCH: an unconstrained zero capture changes the loop registers and grows this owner to 56 bytes; native keeps the count in r4. */
-    register s32 held asm("r4");
     s32 i;
     u8 *status = &gSchedulerTaskCount;
+    u32 observed;
 
-    /* FAKEMATCH: plain source zeros the count after status/table loads; native zeroes it between the status address and byte load. */
-    asm("" : "=r"(held), "+r"(status) : "0"(0));
-    count = held;
+    /* FAKEMATCH: the one-pass read keeps zero between the status address and byte load, and the table address after them; plain assignments reorder these loads (4 aligned differences). */
+    do {
+        count = 0;
+        observed = *status;
+    } while (0);
+    cursor = (u32)gSchedulerTaskTable;
     key >>= 8;
-    if (*status == 1) {
+    if (observed == 1) {
         i = 25;
         cursor -= sizeof(*task);
 next_task:

@@ -56,14 +56,7 @@ static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line,
 s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 	u32 x, u32 y, const u8 *font)
 {
-#if defined(TBS_EDITION_EN)
-	/* FAKEMATCH: an explicit window slot keeps its store between the height
-	   load and stride copy through combine, restoring the native load/CMP
-	   order and reducing EN differ 12 -> 8. */
-	struct UiWindow *window[1];
-#else
 	struct UiWindow *window;
-#endif
 	const u16 *rows;
 #if !defined(TBS_EDITION_JA) && !defined(TBS_EDITION_EN)
 	const u16 *header;
@@ -95,20 +88,12 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 	use_font = character <= 255 || font != NULL;
 #endif
 #if defined(TBS_EDITION_EN)
-	/* FAKEMATCH: the empty early test keeps index in ip and mark in lr;
-	   returning after the height read removes a reload (EN differ 17 -> 12). */
 	index = character - 32;
-	if (index > 111)
-	{
-	}
-#endif
-#if defined(TBS_EDITION_EN)
-	{
-		u32 height = input_window->height;
-
-		window[0] = input_window;
-		stride = height;
-	}
+	/* FAKEMATCH: save window after forming index and leave the height read
+	   outside a one-pass block; sched2 then orders LDRH/CMP/STR as native
+	   (EN differ 12 -> 8). */
+	window = input_window;
+	stride = input_window->height;
 #else
 	/* FAKEMATCH: the one-pass height read preserves the load's scheduling boundary. */
 	do
@@ -357,11 +342,7 @@ glyph_selected:
 				color = 0x1111;
 			else
 				color = 0x5555;
-#if defined(TBS_EDITION_EN)
-			if (!(window[0]->flags & 64))
-#else
 			if (!(window->flags & 64))
-#endif
 				goto draw;
 			if (pass <= 1)
 			{

@@ -47,7 +47,15 @@
        255 but differ 14, changing source r2 to r3 and two spill positions;
        40,257 distinct random refinements over three minutes did not improve
        that seed. The saved draft remains the instruction-identical-sized
-       196/187-instruction form with only the listed ordering differences. */
+       196/187-instruction form with only the listed ordering differences.
+       Continental clipping: 288 typed raw-width/repeated-read variants
+       reached weighted 250, differ 12. One-pass raw_width load, followed
+       by if (y > 31) raw_width = UiText_GlyphWidths[character - 32], then
+       font_width = raw_width, gives the native LDRB/CMP/STR order and keeps
+       y=r8. Only that load/store pair uses r0 instead of r2. Twenty-one
+       refinements with late-folded equivalent indices and byte-normalizing
+       copies did not improve it. The table address survives allocation for
+       the repeated read; reducing that lifetime is the next local lead. */
 
 extern const u8 UiText_GlyphWidths[];
 

@@ -46,11 +46,7 @@ pub static AGBCC_FLASH_SOURCES: &[&str] = &[
     "games/common/src/system/save/flash_verify_callback.c",
 ];
 
-pub static AGBCC_ARM_SOURCES: &[&str] = &[];
-
-/// Both games' ARM C: every game C file compiled as ARM goes through stock
-/// agbcc_arm at the library ARM setting, the same compiler as Nintendo's
-/// library ARM code, one option set for the whole class (AGENTS.md K1).
+/// Both games' ARM C uses stock GCC 2.95.2 with one option set for the class.
 pub static GAME_ARM_SOURCES: &[&str] = &[
     "games/common/src/graphics/tile/metatile.c",
     "games/tbs/src/graphics/text/moji.c",

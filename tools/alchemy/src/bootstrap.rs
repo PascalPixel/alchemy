@@ -13,7 +13,7 @@ const FILES: [&str; 8] = [
     "cc1",
     "as",
     "agbcc/old_agbcc",
-    "agbcc/agbcc_arm",
+    "gcc2952_arm",
 ];
 const BINUTILS_SHA256: &str = "fd7d227c0dd15cf5448385e56b8ad8313cd491839834b57c0c086ac7b7819a15";
 const MODERN_BINUTILS_VERSION: &str = "2.33.1";
@@ -51,6 +51,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
                 crate::compiler::routing::CompilerTarget::Tla,
             )?;
             crate::compiler::bundle::validate_agbcc_bundle()?;
+            crate::compiler::bundle::validate_game_arm_bundle()?;
         }
         [help] if help == "--help" || help == "-h" => {
             println!("{USAGE}");
@@ -213,13 +214,13 @@ fn build_from_sources() -> Result<(), String> {
         }
         fs::copy(gas.join("gas/as-new"), stage.path().join("as")).map_err(|e| e.to_string())?;
         fs::copy(
-            root().join("agbcc/gcc/old_agbcc"),
+            root().join("agscc/agbcc/gcc/old_agbcc"),
             stage.path().join("agbcc/old_agbcc"),
         )
         .map_err(|e| e.to_string())?;
         fs::copy(
-            root().join("agbcc/agbcc_arm"),
-            stage.path().join("agbcc/agbcc_arm"),
+            root().join("agscc/arm/build/gcc/cc1"),
+            stage.path().join("gcc2952_arm"),
         )
         .map_err(|e| e.to_string())?;
         fs::write(

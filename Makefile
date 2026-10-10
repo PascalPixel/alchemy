@@ -80,22 +80,16 @@ toolchain-check:
 compilers: compiler-sources
 
 compiler-sources: compiler-source-check
-	sh agscc/build.sh
-	$(MAKE) -C agbcc/gcc old -j1
-	cd agbcc/gcc_arm && ./configure --target=arm-elf --host=i386-linux-gnu && $(MAKE) cc1 && mv cc1 ../agbcc_arm && rm -f config.bak
+	$(MAKE) -C agscc -j8
 
 compiler-source-check:
-	@set -e; for repo in agbcc agscc; do \
-	  case "$$repo" in \
-	    agbcc) approved=da598c1d918402c42c0c0d7128ba14567f3175e9;; \
-	    agscc) approved=629474adaee19177f64f9f04a3e56ee606c9b235;; \
-	  esac; \
+	@set -e; repo=agscc; approved=a5b70c21a48df6b5e14514d756036073d5bf1725; \
 	  test "$$(git rev-parse :$$repo)" = "$$approved" || { printf '%s gitlink is not approved\n' "$$repo"; exit 1; }; \
 	  test "$$(env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C "$$repo" rev-parse HEAD)" = "$$approved" || { printf '%s checkout is not approved\n' "$$repo"; exit 1; }; \
 	  state=$$(env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C "$$repo" status --porcelain --untracked-files=all -- . ':(exclude,glob)**/.DS_Store'); \
-	  test -z "$$state" || { printf '%s compiler source is dirty\n' "$$repo"; exit 1; }; \
-	done
-	@printf 'compiler sources match approved submodules\n'
+	  test -z "$$state" || { printf '%s compiler source is dirty\n' "$$repo"; exit 1; }
+	@env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE $(MAKE) -C agscc source-check
+	@printf 'compiler sources match the approved agscc toolchain\n'
 
 build-tools:
 	$(CARGO) build --offline --release --workspace --manifest-path $(TOOLS)/Cargo.toml

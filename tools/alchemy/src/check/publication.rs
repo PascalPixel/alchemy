@@ -20,7 +20,7 @@ const NATIVE_INPUT_EXTENSIONS: &[&str] = &[
 ];
 const METADATA_DIRECTORIES: &[&str] = &["metrics", "preview", "recon", "semantic"];
 const DATA_TABLE_EXTENSIONS: &[&str] = &["tsv"];
-const APPROVED_GITLINKS: &[&str] = &["agbcc", "agscc"];
+const APPROVED_GITLINKS: &[&str] = &["agscc"];
 const FONT_TABLES: &[&[u8]] = &[
     b"BASE", b"CFF ", b"COLR", b"CPAL", b"DSIG", b"EBDT", b"EBLC", b"FFTM", b"GDEF", b"GPOS",
     b"GSUB", b"LTSH", b"OS/2", b"STAT", b"SVG ", b"VDMX", b"cmap", b"cvt ", b"fpgm", b"gasp",
@@ -1965,7 +1965,7 @@ fn inspected(scope: &str, path: String, object: String, gitlink: bool) -> Option
         if APPROVED_GITLINKS.contains(&path.as_str()) {
             return None;
         }
-        Some("unapproved gitlink: only the agbcc and agscc submodules are approved")
+        Some("unapproved gitlink: only the agscc toolchain submodule is approved")
     } else {
         native_path_reason(&path)
     };
@@ -3569,7 +3569,9 @@ mod tests {
                 ("vendor".to_string(), true)
             ]
         );
-        assert!(inspected("staged", "agbcc".into(), ":agbcc".into(), true).is_none());
+        assert!(inspected("staged", "agscc".into(), ":agscc".into(), true).is_none());
+        assert!(inspected("staged", "agbcc".into(), ":agbcc".into(), true)
+            .unwrap().listing_reason.unwrap().contains("unapproved gitlink"));
         let foreign = inspected("staged", "vendor".into(), ":vendor".into(), true).unwrap();
         assert!(foreign
             .listing_reason

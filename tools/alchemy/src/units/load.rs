@@ -199,7 +199,7 @@ fn origin(root: &Path, compiler: CompilerTarget, path: &str) -> Origin {
             let relative_source = format!("{stem}.{ext}");
             let family = family_for_source(compiler, &relative_source);
             let lang = match family {
-                CompilerFamily::Agbcc | CompilerFamily::AgbccFlash | CompilerFamily::AgbccArm => Lang::Library,
+                CompilerFamily::Agbcc | CompilerFamily::AgbccFlash => Lang::Library,
                 _ if ext.eq_ignore_ascii_case("s") => Lang::Assembly,
                 _ => Lang::C,
             };

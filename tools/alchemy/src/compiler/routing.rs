@@ -45,14 +45,14 @@ pub fn bundle_for(_target: CompilerTarget) -> PathBuf {
 pub fn agbcc_driver() -> PathBuf {
     bundle().join("agbcc").join("old_agbcc")
 }
-pub fn agbcc_arm_driver() -> PathBuf {
-    bundle().join("agbcc").join("agbcc_arm")
+pub fn game_arm_driver() -> PathBuf {
+    bundle().join("gcc2952_arm")
 }
 pub fn driver_for_family(family: CompilerFamily) -> Option<PathBuf> {
     match family {
         CompilerFamily::Game => None,
         CompilerFamily::Agbcc | CompilerFamily::AgbccFlash => Some(agbcc_driver()),
-        CompilerFamily::AgbccArm | CompilerFamily::GameArm => Some(agbcc_arm_driver()),
+        CompilerFamily::GameArm => Some(game_arm_driver()),
     }
 }
 pub fn assembly_command(source: &str, object: &str) -> Vec<String> {
@@ -105,14 +105,12 @@ pub enum CompilerFamily {
     Game,
     Agbcc,
     AgbccFlash,
-    AgbccArm,
-    /// Game ARM C in either game (GAME_ARM_SOURCES): stock agbcc_arm at the
-    /// library ARM setting, with the game's include paths (AGENTS.md K1).
+    /// Game ARM C in either game: stock GCC 2.95.2 with one ARM setting.
     GameArm,
 }
 impl CompilerFamily {
     pub fn is_arm(self) -> bool {
-        matches!(self, CompilerFamily::AgbccArm | CompilerFamily::GameArm)
+        self == CompilerFamily::GameArm
     }
     pub fn uses_agbcc_driver(self) -> bool {
         self != CompilerFamily::Game
@@ -183,7 +181,7 @@ pub fn agbcc_cflags() -> Vec<String> {
         .map(|s| (*s).to_string())
         .collect()
 }
-pub fn agbcc_arm_cflags() -> Vec<String> {
+pub fn arm_cflags() -> Vec<String> {
     [
         "-O2",
         "-mthumb-interwork",
@@ -247,9 +245,6 @@ pub fn family_for_source(target: CompilerTarget, source: &str) -> CompilerFamily
     if has(AGBCC_FLASH_SOURCES, &source) {
         return CompilerFamily::AgbccFlash;
     }
-    if has(AGBCC_ARM_SOURCES, &source) {
-        return CompilerFamily::AgbccArm;
-    }
     if has(GAME_ARM_SOURCES, &source) {
         return CompilerFamily::GameArm;
     }
@@ -268,7 +263,7 @@ pub fn cflags_for_family(target: CompilerTarget, family: CompilerFamily) -> Vec<
     match (family, target) {
         (CompilerFamily::Agbcc, _) => agbcc_cflags(),
         (CompilerFamily::AgbccFlash, _) => agbcc_flash_cflags(),
-        (CompilerFamily::AgbccArm | CompilerFamily::GameArm, _) => agbcc_arm_cflags(),
+        (CompilerFamily::GameArm, _) => arm_cflags(),
         (CompilerFamily::Game, CompilerTarget::Tbs) => cflags(),
         (CompilerFamily::Game, CompilerTarget::Tla) => base_cflags(CompilerTarget::Tla),
     }
@@ -384,7 +379,6 @@ mod target_tests {
         for source in AGBCC_SOURCES
             .iter()
             .chain(AGBCC_FLASH_SOURCES)
-            .chain(AGBCC_ARM_SOURCES)
         {
             assert!(
                 source.contains("/src/sound/") || source.contains("/src/system/save/"),
@@ -589,9 +583,9 @@ mod target_tests {
         }
     }
     #[test]
-    fn arm_routines_use_agbcc_arm_and_assemble_as_arm() {
+    fn arm_routines_share_stock_flags_and_assemble_as_arm() {
         assert_eq!(
-            agbcc_arm_cflags(),
+            arm_cflags(),
             [
                 "-O2",
                 "-mthumb-interwork",
@@ -599,27 +593,22 @@ mod target_tests {
                 "-fcall-used-r4"
             ]
         );
-        assert!(agbcc_arm_driver().ends_with("agbcc/agbcc_arm"));
+        assert!(game_arm_driver().ends_with("gcc2952_arm"));
         let arm = compiler_assembly_command("a.s", "a.o", true);
         let thumb = compiler_assembly_command("a.s", "a.o", false);
         assert!(!arm.contains(&"-mthumb".to_string()));
         assert!(thumb.contains(&"-mthumb".to_string()));
-        for source in AGBCC_ARM_SOURCES {
-            assert_eq!(
-                family_for_source(CompilerTarget::Tbs, source),
-                CompilerFamily::AgbccArm
-            );
-        }
     }
     #[test]
-    fn game_arm_compiles_game_arm_files_of_either_game_with_stock_agbcc_arm() {
+    fn game_arm_compiles_both_games_with_one_stock_arm_compiler() {
         assert_eq!(
             driver_for_family(CompilerFamily::GameArm),
-            Some(agbcc_arm_driver())
+            Some(game_arm_driver())
         );
+        assert!(game_arm_driver().ends_with("gcc2952_arm"));
         let games = [CompilerTarget::Tbs, CompilerTarget::Tla];
         for target in games {
-            assert_eq!(cflags_for_family(target, CompilerFamily::GameArm), agbcc_arm_cflags());
+            assert_eq!(cflags_for_family(target, CompilerFamily::GameArm), arm_cflags());
         }
         assert!(CompilerFamily::GameArm.is_arm());
         let mut files = std::collections::BTreeSet::new();
@@ -637,7 +626,7 @@ mod target_tests {
             assert!(!entry.contains("/src/sound/") && !entry.contains("/src/system/save/"));
             assert!(root().join(entry).is_file(), "missing routed source {entry}");
             assert!(files.insert(*entry), "duplicate route for {entry}");
-            for table in [AGBCC_SOURCES, AGBCC_FLASH_SOURCES, AGBCC_ARM_SOURCES] {
+            for table in [AGBCC_SOURCES, AGBCC_FLASH_SOURCES] {
                 assert!(!table.contains(entry), "{entry} has two routes");
             }
             for target in games {
@@ -646,7 +635,7 @@ mod target_tests {
                 assert_eq!(family_for_source(target, entry), family, "{entry} in {target:?}");
                 assert_eq!(is_arm(target, entry), routed);
                 if routed {
-                    assert_eq!(cflags_for_target_source(target, entry), agbcc_arm_cflags());
+                    assert_eq!(cflags_for_target_source(target, entry), arm_cflags());
                 }
             }
         }

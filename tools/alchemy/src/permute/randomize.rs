@@ -4,7 +4,9 @@
 
 use super::c::{Node, types::{self, Types}};
 use super::rng::Rng;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
+
+mod lifetime;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Kind {
@@ -188,8 +190,12 @@ impl Sites {
 /// Visit evaluated values, keeping assignment targets, field names, type
 /// dimensions, sizeof operands and asm output constraints intact.
 fn expressions(node: &Node, path: &[usize], value: bool, out: &mut Vec<Path>) {
-    fn visit(node: &Node, path: &[usize], top: bool, lvalue: bool, out: &mut Vec<Path>) {
-        if !top && !lvalue { out.push(path.to_vec()); }
+    out.extend(expression_nodes(node, path, value).into_iter().filter_map(|(path, expr)| expr.then_some(path)));
+}
+
+fn expression_nodes(node: &Node, path: &[usize], value: bool) -> Vec<(Path, bool)> {
+    fn visit(node: &Node, path: &[usize], top: bool, lvalue: bool, out: &mut Vec<(Path, bool)>) {
+        out.push((path.to_vec(), !top && !lvalue));
         let children = node.children();
         match node {
             Node::Assignment { .. } => { visit(children[0], &child(path, 0), false, true, out); visit(children[1], &child(path, 1), false, false, out); }
@@ -220,7 +226,9 @@ fn expressions(node: &Node, path: &[usize], value: bool, out: &mut Vec<Path>) {
             _ => {}
         }
     }
-    visit(node, path, !value, false, out);
+    let mut out = Vec::new();
+    visit(node, path, !value, false, &mut out);
+    out
 }
 
 fn mentioned(node: &Node) -> BTreeSet<String> {
@@ -248,9 +256,14 @@ fn fresh(unit: &Node, stem: &str) -> String {
     (2..).map(|i| format!("{stem}{i}")).find(|n| !names.contains(n)).unwrap()
 }
 fn effectful(n: &Node) -> bool {
-    matches!(n, Node::FuncCall { .. } | Node::Assignment { .. })
-        || matches!(n, Node::UnaryOp { op, .. } if matches!(op.as_str(), "++" | "--" | "p++" | "p--"))
-        || n.children().into_iter().any(effectful)
+    match n {
+        Node::FuncCall { .. } | Node::Assignment { .. } => true,
+        Node::UnaryOp { op, expr } => {
+            matches!(op.as_str(), "++" | "--" | "p++" | "p--")
+                || expr.children().into_iter().any(effectful)
+        }
+        _ => n.children().into_iter().any(effectful),
+    }
 }
 /// Unlike a C literal reader, it rejects long suffixes and old-style octal.
 fn factor_constant(n: &Node) -> Option<i64> {
@@ -302,8 +315,8 @@ fn apply_sites(unit: &mut Node, target: &str, kind: Kind, rng: &mut Rng, sites: 
     // attempts and minimizer replays cannot leak half a transformation.
     let mut trial = unit.clone();
     let result = match kind {
-        Kind::Temporary => temporary(&mut trial, target, sites, rng),
-        Kind::Expand => expand(&mut trial, sites, rng),
+        Kind::Temporary => lifetime::temporary(&mut trial, target, sites, rng),
+        Kind::Expand => lifetime::expand(&mut trial, sites, rng),
         Kind::LocalType | Kind::GlobalType | Kind::FunctionType => change_type(&mut trial, target, sites, kind, rng),
         Kind::ReorderStatements | Kind::ReorderDeclarations => reorder(&mut trial, sites, kind, rng),
         Kind::SplitAssignment | Kind::ChainAssignment | Kind::LongChainAssignment => assignments(&mut trial, sites, kind, rng),
@@ -833,143 +846,6 @@ fn assignments(unit: &mut Node, sites: &Sites, kind: Kind, rng: &mut Rng) -> Opt
     Some(())
 }
 
-/// Closest statement list containing an expression. Expression paths are
-/// consumed before changing the list, so insertion cannot invalidate them.
-fn place(unit: &Node, path: &[usize]) -> Option<(Path, usize)> {
-    for len in (0..path.len()).rev() {
-        let block = at(unit, &path[..len]);
-        if statements(block).is_some() {
-            let i = path[len].checked_sub(usize::from(matches!(block, Node::Case { .. })))?;
-            return Some((path[..len].to_vec(), i));
-        }
-    }
-    None
-}
-
-fn writes(node: &Node) -> BTreeSet<String> {
-    let mut out = BTreeSet::new();
-    fn visit(n: &Node, out: &mut BTreeSet<String>) {
-        match n {
-            Node::Assignment { lvalue, .. } => out.extend(mentioned(lvalue)),
-            Node::UnaryOp { op, expr } if ["++", "--", "p++", "p--", "&"].contains(&op.as_str()) => out.extend(mentioned(expr)),
-            Node::Decl { name: Some(name), .. } => { out.insert(name.clone()); }
-            _ => {}
-        }
-        for n in n.children() { visit(n, out); }
-    }
-    visit(node, &mut out); out
-}
-
-fn temporary(unit: &mut Node, target: &str, sites: &Sites, rng: &mut Rng) -> Option<()> {
-    let types = Types::new(unit, target);
-    let candidates = sites.expressions(unit);
-    if candidates.is_empty() { return None; }
-    let index = weighted(rng, candidates.iter().map(|p| if matches!(at(unit, p), Node::Id { .. } | Node::Constant { .. }) { 0.5 } else { 1.0 }));
-    let path = &candidates[index];
-    let original = at(unit, path).clone();
-    let (block_path, stmt_index) = place(unit, path)?;
-    let block = at(unit, &block_path);
-    let stmts = statements(block)?;
-    // Declarations belong at the front of a compound, never directly after
-    // a case label. Skip initialized declarations here; expand handles them.
-    if !matches!(block, Node::Compound { .. }) || matches!(stmts[stmt_index], Node::Decl { .. }) { return None; }
-    let mut ty = types.decayed(&original)?;
-    if matches!(types.resolve(&ty)?, Node::TypeDecl { ty, .. } if matches!(ty.as_ref(), Node::IdentifierType { names } if names == &["void"])) { return None; }
-    let lvalue = matches!(&original, Node::Id { .. } | Node::StructRef { .. } | Node::ArrayRef { .. }) || matches!(&original, Node::UnaryOp { op, .. } if op == "*");
-    let pointer = lvalue && (rng.random() < 0.05 || matches!(types.resolve(&ty)?, Node::TypeDecl { ty, .. } if matches!(ty.as_ref(), Node::Struct { .. } | Node::Union { .. })));
-    let expr = if pointer { ty = types::pointer(types.expr(&original)?); unary("&", original.clone()) } else { original.clone() };
-    let at_use = effectful(&original) || rng.random() < 0.1;
-    let dependencies = mentioned(&expr);
-    let mut insertions = vec![stmt_index];
-    if !at_use {
-        for i in (0..stmt_index).rev() {
-            if matches!(stmts[i], Node::Decl { .. } | Node::Pragma { .. }) || !sites.allows(&statement_path(&block_path, block, i)) { break; }
-            if !writes(&stmts[i]).is_disjoint(&dependencies) || effectful(&stmts[i]) { break; }
-            insertions.push(i);
-        }
-    }
-    let insert = insertions[weighted(rng, insertions.iter().enumerate().map(|(i, _)| 1.0 / (i + 1) as f64))];
-    let mut reuse = Vec::new();
-    for n in &stmts[..insert] {
-        let Node::Decl { name: Some(name), ty: var_type, .. } = n else { continue };
-        if dependencies.contains(name) || !types.similar(var_type, &ty) || !types.locals.contains(name) { continue; }
-        // The previous value must be dead until the next plain write.
-        let mut dead = true;
-        for stmt in &stmts[insert..] {
-            if let Node::Assignment { op, lvalue, rvalue } = stmt {
-                if op == "=" && matches!(lvalue.as_ref(), Node::Id { name: n } if n == name) && !mentioned(rvalue).contains(name) { break; }
-            }
-            if mentioned(stmt).contains(name) { dead = false; break; }
-        }
-        if dead { reuse.push(name.clone()); }
-    }
-    let reused = rng.random() < 0.5 && !reuse.is_empty();
-    let var = if reused { reuse[rng.below(reuse.len())].clone() } else { fresh(unit, "new_var") };
-    let replacement = if at_use { assign(Node::id(&var), expr.clone()) } else { Node::id(&var) };
-    let replacement = if pointer { unary("*", replacement) } else { replacement };
-    let mut replacements = vec![path.clone()];
-    if !at_use && !effectful(&original) && rng.random() < 0.4 {
-        // Share a value inside this statement; no cross-statement lifetime
-        // guesses are needed to make repeated expressions reachable.
-        for p in sites.expressions(unit) {
-            if p != *path && place(unit, &p) == Some((block_path.clone(), stmt_index)) && at(unit, &p) == &original { replacements.push(p); }
-        }
-    }
-    for p in replacements { *at_mut(unit, &p) = replacement.clone(); }
-    let stmts = statements_mut(at_mut(unit, &block_path));
-    if !at_use { stmts.insert(insert, assign(Node::id(&var), expr)); }
-    if !reused {
-        if types.integral(&ty) && rng.random() < 0.3 { ty = random_type(rng); }
-        let end = stmts.iter().take_while(|n| matches!(n, Node::Decl { .. } | Node::Pragma { .. })).count();
-        // Insert after any existing local typedefs/type definitions. This
-        // matters when the expression's type is declared in this block.
-        stmts.insert(end, types::declaration(&var, ty));
-    }
-    Some(())
-}
-
-fn expand(unit: &mut Node, sites: &Sites, rng: &mut Rng) -> Option<()> {
-    let mut candidates = Vec::new();
-    for path in sites.blocks(unit) {
-        let block = at(unit, &path);
-        let stmts = statements(block)?;
-        for (i, stmt) in stmts.iter().enumerate() {
-            let (name, expr) = match stmt {
-                Node::Decl { name: Some(name), init: Some(expr), .. } if !matches!(expr.as_ref(), Node::InitList { .. }) => (name, expr.as_ref()),
-                Node::Assignment { op, lvalue, rvalue } if op == "=" => { let Node::Id { name } = lvalue.as_ref() else { continue }; (name, rvalue.as_ref()) }
-                _ => continue,
-            };
-            if !sites.allows(&statement_path(&path, block, i)) || effectful(expr) { continue; }
-            let mut dependencies = mentioned(expr); dependencies.insert(name.clone());
-            let mut reads = Vec::new();
-            for (j, stmt) in stmts.iter().enumerate().skip(i + 1) {
-                if !writes(stmt).is_disjoint(&dependencies) || matches!(stmt, Node::Pragma { .. }) { break; }
-                let mut paths = Vec::new(); expressions(stmt, &statement_path(&path, block, j), false, &mut paths);
-                reads.extend(paths.into_iter().filter(|p| sites.allows(p) && matches!(at(unit, p), Node::Id { name: n } if n == name)));
-                if effectful(stmt) { break; }
-            }
-            if !reads.is_empty() { candidates.push((path.clone(), i, expr.clone(), reads)); }
-        }
-    }
-    let (path, i, expr, reads) = &candidates[choose(rng, &candidates)?];
-    let all = rng.random() < 0.3;
-    let chosen = rng.below(reads.len());
-    for (index, p) in reads.iter().enumerate() { if all || index == chosen { *at_mut(unit, p) = expr.clone(); } }
-    // Keep assignments unless every use in the rest of the function was
-    // replaced. The remove-variable pass explores broader reuse separately.
-    if all && rng.random() < 0.8 {
-        let block = at(unit, path);
-        let stmt = &statements(block)?[*i];
-        let var = match stmt { Node::Decl { name: Some(name), .. } => name.clone(), Node::Assignment { lvalue, .. } => if let Node::Id { name } = lvalue.as_ref() { name.clone() } else { return Some(()) }, _ => return Some(()) };
-        let later = &statements(block)?[*i + 1..];
-        if !later.iter().any(|n| mentioned(n).contains(&var)) {
-            let stmts = statements_mut(at_mut(unit, path));
-            if let Node::Decl { init, .. } = &mut stmts[*i] { *init = None; } else { stmts.remove(*i); }
-        }
-    }
-    Some(())
-}
-
 fn wrap(unit: &mut Node, sites: &Sites, kind: Kind, rng: &mut Rng) -> Option<()> {
     if kind == Kind::Block {
         let blocks = sites.blocks(unit);
@@ -1250,6 +1126,7 @@ mod tests {
                 "types" => include_str!("c/fixtures/mutations-types.c"),
                 "assignments" => include_str!("c/fixtures/mutations-assignments.c"),
                 "shadow" => include_str!("c/fixtures/mutations-shadow.c"),
+                "lifetime" => include_str!("c/fixtures/mutations-lifetime.c"),
                 _ => panic!("unknown fixture input"),
         }
     }
@@ -1286,6 +1163,8 @@ mod tests {
                 "perm_chain_assignment" => Kind::ChainAssignment,
                 "perm_long_chain_assignment" => Kind::LongChainAssignment,
                 "perm_remove_ast" => Kind::Remove,
+                "perm_temp_for_expr" => Kind::Temporary,
+                "perm_expand_expr" => Kind::Expand,
                 _ => panic!("unknown fixture pass"),
         }
     }
@@ -1293,7 +1172,7 @@ mod tests {
     #[test]
     fn passes_match_compatibility_in_nested_blocks_and_regions() {
         let mut failures = Vec::new();
-        for row in include_str!("c/fixtures/mutations-auxiliary.tsv").lines().chain(include_str!("c/fixtures/mutations-expression.tsv").lines()).chain(include_str!("c/fixtures/mutations-types-assignments.tsv").lines()) {
+        for row in include_str!("c/fixtures/mutations-auxiliary.tsv").lines().chain(include_str!("c/fixtures/mutations-expression.tsv").lines()).chain(include_str!("c/fixtures/mutations-types-assignments.tsv").lines()).chain(include_str!("c/fixtures/mutations-lifetime.tsv").lines()) {
             let c: Vec<_> = row.split('\t').collect();
             let kind = fixture_kind(c[1]);
             let mut unit = parsed(fixture_source(c[0]));
@@ -1313,6 +1192,7 @@ mod tests {
     fn successive_compatibility_mutations_match_source_hashes_retries_and_rng() {
         check_walks(include_str!("c/fixtures/mutations-walks.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv")], false);
         check_walks(include_str!("c/fixtures/mutations-types-walks.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv"), include_str!("c/fixtures/mutations-types-assignments.tsv")], true);
+        check_walks(include_str!("c/fixtures/mutations-lifetime-walks.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv"), include_str!("c/fixtures/mutations-types-assignments.tsv"), include_str!("c/fixtures/mutations-lifetime.tsv")], true);
     }
 
     fn check_walks(walks: &str, fixtures: &[&str], full_text: bool) {
@@ -1348,5 +1228,16 @@ mod tests {
         let base = unit.clone();
         assert!(apply(&mut unit, "target", Kind::Commutative, &mut Rng::new(0)));
         assert_eq!(unit, base);
+    }
+
+    #[test]
+    fn side_effect_detection_matches_compatibility_unary_traversal() {
+        for row in include_str!("c/fixtures/mutations-effects.tsv").lines() {
+            let (expr, expected) = row.split_once('\t').unwrap();
+            let unit = parsed(&format!("int target(int a,int b) {{ return {expr}; }}"));
+            let body = [target_index(&unit, "target").unwrap(), 1];
+            let Node::Return { expr: Some(value) } = &statements(at(&unit, &body)).unwrap()[0] else { panic!() };
+            assert_eq!(effectful(value), expected == "1", "{expr}");
+        }
     }
 }

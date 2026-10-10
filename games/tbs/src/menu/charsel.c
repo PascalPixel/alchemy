@@ -324,8 +324,9 @@ s32 CharacterMenu_SelectCommand(void)
     result = 0;
     selected = 0;
     total = Party_SumDjinnCountsFar(-1);
-    /* FAKEMATCH: retain the family's neg/orr/lsr boolean conversion. */
-    has_djinn = (u32)(-total | total) >> 31;
+    has_djinn = 0;
+    if (total != 0)
+        has_djinn = 1;
     UiWindow_UpdateOrCreate((s32 *)&menu->help_window, 0, 0, 30, 5, 2);
     Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
     for (i = 3; i >= 0; i--)

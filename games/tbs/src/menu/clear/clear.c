@@ -1155,7 +1155,6 @@ s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 
 s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out)
 {
-    u8 *src;
     s32 key;
     s32 count;
     s32 i;
@@ -1177,13 +1176,11 @@ s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out)
     group = 0;
     do {
         value = 0;
-        /* FAKEMATCH: the source address is added as integers, index first, for the reference operand order. */
-        for (j = 0, src = (u8 *)(index + (s32)data); j != 6; j++) {
-            b = (*src >> (7 - bit)) & 1;
+        for (j = 0; j != 6; j++) {
+            b = (data[index] >> (7 - bit)) & 1;
             bit++;
             if (bit == 8) {
                 bit = 0;
-                src++;
                 index++;
             }
             value |= b << (5 - j);

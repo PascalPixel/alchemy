@@ -1189,11 +1189,7 @@ s32 LinkLobby_RunRoundResult(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Sound_LoadPresetParameters(2);
     LinkLobby_DrawThreeDigitValue(gGameState.link_tallies[6]);
-    {
-        /* FAKEMATCH: the two stacked arguments are made before either is stored. */
-        s32 a = 13, b = 10;
-        Engine_MapCopyCellAttributes(11, 11, 1, 1, a, b);
-    }
+    Map_CopyCellAttributes(11, 11, 1, 1, 13, 10);
     LinkLobby_WriteSlotValue(4);
     Engine_TaskWait(1);
     Map_SetLayerEntryFlag(5);

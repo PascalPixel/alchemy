@@ -154,8 +154,6 @@ s32 Menu_RunWorkspaceOptions(void)
     s32 x;
     s32 y;
     s32 result;
-    u16 *preset;
-    s32 n;
     struct RenderOutput *frame;
 
     redraw = 1;
@@ -242,16 +240,12 @@ s32 Menu_RunWorkspaceOptions(void)
 
         if (gKeyState & KEY_SELECT) {
             AudioCommand_PlayFar(112);
-            preset = &work->preset;
-            n = *preset + 1;
-            *preset = n;
-            /* FAKEMATCH: the preset wraps to the zero held in dim. */
-            dim = 0;
+            work->preset++;
             redraw = 1;
-            if ((u32)(n << 16) > 0x50000)
-                work->preset = dim;
-            *pA = OptionMenu_FirstColorPresets[*preset];
-            *pB = OptionMenu_SecondColorPresets[*preset];
+            if (work->preset > 5)
+                work->preset = 0;
+            *pA = OptionMenu_FirstColorPresets[work->preset];
+            *pB = OptionMenu_SecondColorPresets[work->preset];
             continue;
         }
         if (gKeyState & (KEY_A | KEY_START)) {

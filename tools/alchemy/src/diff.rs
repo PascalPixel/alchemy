@@ -22,7 +22,7 @@ the same name, or --symbol, in out/EDITION/overlays/OVERLAY_overlay.o;
 an adopted function absent from that object uses the linked overlay's bounds
 and code decoded from our reference ROM, as alchemy show does.
 The overlay defaults from the path (resource_XXX). When no separate listing
-object exists, a main-image scaffold or adopted C function is resolved by ADDRESS or --symbol
+object exists, a main-image function is resolved by ADDRESS or --symbol
 in the selected edition's map and ELF. Its reference ROM extent is read only
 for comparison; literal pools and jump tables are omitted. --arm explicitly
 selects ARM for scaffolds without instruction-set markers. Mixed-mode
@@ -493,8 +493,9 @@ fn scaffold_extent_mode(map: &Map, elf: &Elf, wanted: &str, arm: bool) -> Result
     let (section, start, name) = crate::show::resolve(map, Some(elf), &functions, wanted)?;
     let scaffold = section.object().starts_with("recon/") && section.object().ends_with("/rom.o")
         && section.name.starts_with(".rom.");
-    let adopted = section.object().starts_with("games/") && section.name.starts_with(".text");
-    if !(scaffold || adopted) || !section.loaded || section.load < ROM {
+    let source = section.object().starts_with("games/")
+        && (section.name == ".text" || section.name.starts_with(".text."));
+    if !(scaffold || source) || !section.loaded || section.load < ROM {
         return Err(format!("{name}: no main-image code extent; build the selected edition first"));
     }
     let statics: Vec<u32> = functions.iter().map(|(address, _)| *address).collect();
@@ -856,6 +857,30 @@ mod tests {
         let mut unloaded = section;
         unloaded.loaded = false;
         assert!(scaffold_extent(&Map { placed: vec![unloaded] }, &elf, "First").is_err());
+    }
+
+    #[test]
+    fn adopted_code_uses_its_linked_extent_and_still_refuses_data_and_unloaded_sections() {
+        let section = Placed {
+            name: ".text".into(), path: "out/tbs-en/obj/games/tbs/src/system/link/link.o".into(),
+            address: ROM + 0x100, load: ROM + 0x100, size: 0x30, loaded: true,
+            symbols: vec![(ROM + 0x100, "First".into()), (ROM + 0x118, "Next".into())],
+        };
+        let elf = Elf { sections: vec![], symbols: vec![
+            crate::elf::Symbol { name: "First".into(), value: ROM + 0x101, size: 0x10, kind: 2, bind: 1, section: 1 },
+            crate::elf::Symbol { name: "Next".into(), value: ROM + 0x119, size: 0x18, kind: 2, bind: 1, section: 1 },
+        ] };
+        let mut map = Map { placed: vec![section] };
+        assert_eq!(scaffold_extent(&map, &elf, "First").unwrap(), (ROM + 0x100, ROM + 0x110, ROM, "First".into()));
+        map.placed[0].name = ".data".into();
+        assert!(scaffold_extent(&map, &elf, "First").is_err());
+        map.placed[0].name = ".text.First".into();
+        assert!(scaffold_extent(&map, &elf, "First").is_ok());
+        map.placed[0].loaded = false;
+        assert!(scaffold_extent(&map, &elf, "First").is_err());
+        map.placed[0].loaded = true;
+        map.placed[0].load = 0x03000000;
+        assert!(scaffold_extent(&map, &elf, "First").is_err());
     }
 
     #[test]

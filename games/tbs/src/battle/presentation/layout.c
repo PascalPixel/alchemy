@@ -47,6 +47,10 @@ s32 EnmChk(s32 summon)
 s32 SummonSlot_RegisterActorSprites(s32 unit)
 {
 	s32				pass;
+	/* FAKEMATCH: the loop's actor copy and the cancelling updates below keep
+	 * sprite_value in r7 and pass in r4 without operand asm; deleting both
+	 * exchanges those registers (114 instructions, 18 differing rows). */
+	struct BtlUnit *sprite_actor;
 	struct BtlWork *table = BtlWk;
 	struct BtlUnit *actor = UnitGetFar(unit);
 	s32				single_slot = Summon_IsEntryFlagged(actor->class_id);
@@ -62,11 +66,12 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 	result.halves[1] = 0;
 	sprite_value = Summon_GetEntryValue(actor->class_id);
 	pass = result.value;
+	sprite_actor = actor;
 	do
 	{
 		s32 slot;
 
-		if (actor->class_index != 0)
+		if (sprite_actor->class_index != 0)
 			continue;
 
 		for (slot = 0; slot <= 5; slot++)
@@ -83,15 +88,17 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 			break;
 
 		{
-			s32 flag = Summon_GetEntryFlag1Field(actor->class_id);
+			s32 flag = Summon_GetEntryFlag1Field(sprite_actor->class_id);
 			s32 buffer_addr = (slot << 14) + (s32)Ram_ActorSpriteSlots;
 
-			/* FAKEMATCH: an empty use of sprite_value steers it into r7 as the ROM allocates it */
-			asm("" : "+r"(sprite_value));
 			if (ResourceSlot_LoadFar(slot, (u32 *)buffer_addr, sprite_value + pass, flag) == 0)
 				return 0;
 		}
 
+		/* FAKEMATCH: cancelling updates retain sprite_value's allocation
+		 * priority; a self-assignment instead differs in 18 rows. */
+		sprite_value ^= 1;
+		sprite_value ^= 1;
 		if (pass == 0)
 			result.value = (slot << 12) | sprite_value;
 

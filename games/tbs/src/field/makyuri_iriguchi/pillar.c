@@ -91,7 +91,7 @@ s32 Makyuri_FollowLeader(struct FieldActor *actor)
     s32 step;
 
     actor->speed = 0x20000;
-    leader = *(struct FieldActor **)actor->unknown_68;
+    leader = actor->linked_object;
     actor->acceleration = 0x10000;
     tx = leader->x.fixed;
     tz = leader->z.fixed;
@@ -140,7 +140,7 @@ void MakyuriHeya_SpawnSparkPair(void)
         Engine_ObjectSetScript(spark, MakyuriHeya_SparkScript);
         spark->motion_flags = 0;
         spark->timer = 0;
-        *(struct SpawnPoint **)&spark->unknown_68 = point;
+        spark->linked_object = (struct FieldActor *)point;
         if (sprite != NULL) {
             AnimationObjects_SelectAnimation(sprite, 2);
             sprite->flags = 0;
@@ -154,7 +154,7 @@ void MakyuriHeya_SpawnSparkPair(void)
         Engine_ObjectSetScript(spark, MakyuriHeya_SparkScript);
         spark->motion_flags = 0;
         spark->timer = 0;
-        *(struct SpawnPoint **)&spark->unknown_68 = point;
+        spark->linked_object = (struct FieldActor *)point;
         spark->priority_flags = 2;
         if (sprite != NULL) {
             AnimationObjects_SelectAnimation(sprite, 1);

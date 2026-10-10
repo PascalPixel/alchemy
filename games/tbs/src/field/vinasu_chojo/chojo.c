@@ -3108,7 +3108,7 @@ void SceneEffect_SpawnParticlesBesideActor(void)
     angle = Random_Next() & 0xffff000;
     effect->timer = angle;
     effect->work = phase;
-    *(struct FieldActor **)effect->unknown_68 = center;
+    effect->linked_object = center;
     effect->update = VinasuChojo_UpdateOrbitingEffect;
     effect->speed = Engine_MathSin((drift & 0xfffff) >> 4) * 24 >> 16;
     /* FAKEMATCH: the byte store outside the sprite record keeps the game's order. */

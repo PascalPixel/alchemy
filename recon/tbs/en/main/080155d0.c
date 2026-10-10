@@ -41,7 +41,11 @@
    the load/spill order. Seed 263 compiled 21,961 candidates and found a
    clipping-return scope using an uninitialized mark; that condition was
    rejected. Testing initialized conditions (16) found the height condition
-   below, which retains all native palette registers and gives EN differ 2. */
+   below, which retains all native palette registers and gives EN differ 2.
+   Prefix seed 269 compiled 22,473 candidates without moving the last pair.
+   Const font/y inputs and a variadic entry stayed at 2; an inline C wrapper
+   regressed to 85. Continental clipping forms, width/index normalization,
+   palette scopes and 5,040 local declaration orders did not beat 12. */
 
 #include "types.h"
 #include "uiwindow.h"

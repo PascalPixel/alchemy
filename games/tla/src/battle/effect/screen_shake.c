@@ -10,15 +10,11 @@ void Func_08158d68(s32 range)
     u8 *fx = Ram_HeapSlots->battle_fx_work[0];
     s32 *timer;
 
-    {
-        /* FAKEMATCH: ⚓️ keeps the range in r0 until it has loaded the effect work */
-        register s32 incoming asm("r0") = range;
-
-        /* FAKEMATCH: and copies it only then */
-        asm("" : "+l"(incoming) : "l"(fx));
-        range = incoming;
-    }
-    timer = (s32 *)(fx + 0x77a8);
+    /* FAKEMATCH: keep the timer address in its own block; the ordinary
+     * assignment reorders two instruction pairs when range is unpinned. */
+    do {
+        timer = (s32 *)(fx + 0x77a8);
+    } while (0);
     if (*timer > 0) {
         s32 shake = ((range - 1) & Random16()) - range / 2;
 

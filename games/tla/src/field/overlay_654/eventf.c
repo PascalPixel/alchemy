@@ -143,18 +143,13 @@ void Func_02003094(void)
 {
     struct KabeMapWork *map = (struct KabeMapWork *)Ram_HeapSlots->map_work;
 
-    /* FAKEMATCH: loads the map work before it passes the first actor. */
-    __asm__("");
     Func_02003854(8);
     Func_02003854(9);
     {
-        /* FAKEMATCH: the native builds the priority before it loads the callback. */
-        register s32 priority __asm__("r1");
+        s32 priority;
 
         map->mode_17 = 1;
         priority = 0x480;
-        /* FAKEMATCH: a barrier keeps the callback load after the priority. */
-        __asm__ volatile("" : : "r"(priority));
         Scheduler_AddOrUpdateCallback(Func_020010e8, priority);
     }
     Func_02003b18();
@@ -248,13 +243,10 @@ void Func_02003354(void)
     if (GameFlag_Test(0x876) == 0)
         Func_02003024();
     {
-        /* FAKEMATCH: the native builds the priority before it loads the callback. */
-        register s32 priority __asm__("r1");
+        s32 priority;
 
         map->mode_17 = 1;
         priority = 0x480;
-        /* FAKEMATCH: a barrier keeps the callback load after the priority. */
-        __asm__ volatile("" : : "r"(priority));
         Scheduler_AddOrUpdateCallback(Func_020010e8, priority);
     }
 }

@@ -9,14 +9,14 @@ void HaidiaDou_ToppleActorNine(void)
 
     Engine_EventBegin();
     Engine_EventWait(10);
-    Actor_SetMotionSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x1999);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x1999);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
     Engine_EventWait(15);
     Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
     Engine_EventWait(4);
     Event_PlayCue(0x120);
     Event_PlayCue(239);
-    Actor_SetMotionSpeed(9, 0x8000, 0x1999);
+    Actor_SetSpeed(9, 0x8000, 0x1999);
     Engine_ActorSetAnimation(9, 2);
     zero = 0;
     Object_GetById(9)->motion_flags = zero;

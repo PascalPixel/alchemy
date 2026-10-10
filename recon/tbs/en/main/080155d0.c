@@ -12,7 +12,13 @@
        all twelve ROMs, including the Japanese literal pool and full extent.
    EN: MOV r7,r3 must precede SUB sp,sp,#44. Prologue threading inserts SUB
        first; sched2 gives both priority 5 through PUSH and keeps that order.
-       A source form must change this dependency or the copy's RTL form.
+       A redundant height normalization guarded by y*(y+1) moves MOV first,
+       but leaves MLA between MOV and SUB, plus CMP (best differ 10).
+       jump2 deliberately skips recursive dead-computation removal after
+       reload (jump.c's gcc/13233 guard), so that seed cannot rely on it to
+       erase the multiply. Two 100,000-run searches with the updated
+       permuter left this saved best at differ 2. A source form must
+       change the dependency or copy's RTL form without retained arithmetic.
    DE/ES/FR/IT:
        MOV r9,r2 and MOV r8,r3 belong before SUB sp,sp,#44. Prologue
        threading and sched2 give the copies the same PUSH priority as EN;
@@ -20,7 +26,10 @@
        lifetime must retain x=r9, y=r8 and font=r2.
        STR r0,[sp,#28] belongs after CMP r3,#0. Reload puts the height spill
        inside the one-pass read, whose end note makes sched2 keep it before
-       CMP. A separate copy must survive combine outside that boundary.
+       CMP. Reading width first, repeating it in a one-pass block that
+       breaks on !use_font, and repeating stride=width in the use_font arm
+       restores CMP/STR, but spills width again at sp+32 (differ 11).
+       A separate copy must survive combine without that redundant spill.
        STR r2,[sp,#24] belongs after ADD r1,r1,#17. Reload similarly spills
        source before the color boundary; removing the boundary alone leaves
        sched2's store-to-MOV-r2 anti-dependence and changes palette ordering.

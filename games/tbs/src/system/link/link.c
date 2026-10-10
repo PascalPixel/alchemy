@@ -386,8 +386,6 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload)
         enable = 1;
     } while (0);
     REG_IME = enable;
-    /* FAKEMATCH: keeps the IME store ahead of the mask clear and the loop setup (score 22 without). */
-    __asm__("");
     gSerialRuntime.current_mask = 0;
     for (i = 0; i <= 1; i++) {
         packet = gSerialRuntime.pending_buffer[i];

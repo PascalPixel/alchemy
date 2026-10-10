@@ -572,16 +572,16 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
                     u32 tmp14;
                     u32 tmp18;
                     u32 tmp21;
-                    /* FAKEMATCH: consumed offset in r3 changes only registers/order, preserving all instructions. */
-                    register u32 bytes __asm__ ("r3");
+                    u32 bytes;
                     u32 tmp16;
                     {
+                        bytes = cell * 8;
                         tmp2 = 0x06002800;
                         tmp = (u32 *)Ram_MapBlocks;
                         tiles = tmp;
-                        /* FAKEMATCH: needed to match: prepare the destination before consuming cell, so the first base uses r2 while cell still occupies r5; differ 4 -> 0 without an asm barrier. */
                         tmp16 = offset + tmp2;
-                        bytes = cell * 8;
+                        /* FAKEMATCH: scaling before the destination and keeping cell live here removes the offset pin; without the cell input 28 instructions differ, and scaling after the destination swaps the scale and base load. */
+                        __asm__("" : "+l"(bytes) : "l"(cell));
                     }
                     tmp21 = tmp16;
                     tmp18 = tmp21;

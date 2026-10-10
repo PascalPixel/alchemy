@@ -9,6 +9,11 @@ not establish one unmodified GNU compiler that explains both games. A
 single Makefile can express these choices without function-specific routing.
 No production compiler, option, rule or game source has changed in this study.
 
+The subsequent [2.95.2 Thumb source-rewrite trial](thumb295.md) changes the C
+in twelve modules and checks an independent short-leaf stack pattern. It finds
+no complete module match and a concrete backend reason to retain July-era GCC
+for Thumb; the positive 2.95.2 ARM result remains unchanged.
+
 This study reopens the previous compiler verdict. Compatibility with our C
 is measured separately from historical provenance: much of that C was shaped
 under the existing compilers. A high score identifies a useful reconstruction

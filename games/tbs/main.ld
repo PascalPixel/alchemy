@@ -463,7 +463,6 @@ SECTIONS
     "*/games/tbs/src/menu/backdrop.o"(.text)
     "*/games/tbs/src/graphics/window/djinnhlp.o"(.text)
     "*/games/tbs/src/menu/djinn/djinn.o"(.text)
-    "*/games/tbs/src/field/common/object/motion_four_object_initialize_top_row.o"(.text)
     "*/games/tbs/src/field/common/object/slots.o"(.text)
     "*/games/tbs/src/game/djinn/pairres.o"(.text)
     "*/games/tbs/src/graphics/ui/menuspr.o"(.rodata)

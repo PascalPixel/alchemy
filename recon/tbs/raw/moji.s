@@ -1,5 +1,4 @@
-@ Japanese is linked from graphics/text/moji.c; its listing remains reference.
-@ International editions still link this not-yet-C listing.
+@ All editions link graphics/text/moji.c; this listing remains reference only.
 	.include "games/common/include/game/ed_asm.h"
 	.syntax unified
 	.arm

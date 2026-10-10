@@ -14,6 +14,11 @@
  * differences; making either an output changes most of the function.
  * Reversing the final assignment and also assigning cell retain four;
  * additive or XOR cancellation instead leaves 24 differences.
+ * Moving the second word load to the final store still leaves four.
+ * Replacing the consumed-offset reuse with a final word output leaves
+ * 72 differences, an input 66, a bytes output 40 and an offset output
+ * 173. Replacing the base barrier with the TBS-specific helper's scaled
+ * bytes output and cell input leaves 85 (143 built instructions).
  * The linked function retains its r3 binding until the whole ROM matches. */
 #include "edition.h"
 #include "mapcopy.h"

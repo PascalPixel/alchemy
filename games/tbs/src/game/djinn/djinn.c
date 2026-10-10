@@ -426,18 +426,14 @@ u32 *Trade_AddOffer(u32 kind, u32 first, u32 second)
 
 s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target)
 {
-    /* FAKEMATCH: the scalar available-Djinn cursor preserves operand order changed by direct array access. */
     struct BtlUnit *state = UnitGet(source);
-    s32 avail_off = index * sizeof(state->djinn_available[0])
-        + ((u8 *)state->djinn_available - (u8 *)state);
-    u32 mask = 1U << bit;
     u32 present;
 
-    if ((*(u32 *)((u8 *)state + avail_off) & mask) != 0) {
+    if ((state->djinn_available[index] & (1 << bit)) != 0) {
         present = Djinn_IsActive(source, index, bit);
         if (Djinn_AddToOwner(target, index, bit) == 0) {
             Djinn_Deactivate(source, index, bit);
-            *(u32 *)((u8 *)state + avail_off) &= ~mask;
+            state->djinn_available[index] &= ~(1 << bit);
             state->djinn_owned_counts[index]--;
 
             if (present != 0) {

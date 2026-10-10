@@ -1,0 +1,114 @@
+FileAST
+Pragma
+Asm
+Constant	string
+Decl
+FuncDecl
+ParamList
+Typename
+TypeDecl
+IdentifierType
+TypeDecl
+IdentifierType
+FuncDef
+Decl
+FuncDecl
+ParamList
+Decl
+TypeDecl
+IdentifierType
+Decl
+PtrDecl
+TypeDecl
+IdentifierType
+TypeDecl
+IdentifierType
+Compound
+Pragma
+If
+ID
+Compound
+Pragma
+UnaryOp
+ID
+Switch
+ID
+Compound
+Assignment
+ID
+Constant	int
+Case
+Constant	int
+Case
+Constant	int
+UnaryOp
+ID
+Assignment
+UnaryOp
+ID
+ID
+Break
+Case
+Range
+Constant	int
+Constant	int
+Compound
+UnaryOp
+ID
+Break
+Default
+Assignment
+ID
+Constant	int
+While
+ID
+Compound
+UnaryOp
+ID
+DoWhile
+BinaryOp
+ID
+Constant	int
+Compound
+UnaryOp
+ID
+For
+Compound
+If
+ID
+Compound
+Break
+Compound
+Continue
+Label
+If
+UnaryOp
+ID
+Compound
+Goto
+Asm
+Constant	string
+AsmOperand
+Constant	string
+ID
+AsmOperand
+Constant	string
+UnaryOp
+ID
+Constant	string
+Return
+BinaryOp
+TernaryOp
+ID
+BinaryOp
+ID
+Constant	int
+FuncCall
+ID
+ExprList
+ArrayRef
+ID
+Constant	int
+ArrayRef
+ID
+Constant	int

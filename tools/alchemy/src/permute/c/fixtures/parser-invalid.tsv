@@ -1,0 +1,12 @@
+conflicting_tag_specifiers	unsigned struct Message { int count; } value;	conflicting tag specifiers
+function_typedef_body	typedef short calculate(short value) { return value + 8; }	function typedef body
+unknown_type_declaration	MissingHandle pending[4];	unknown type declaration
+unterminated_initializer	int counters[3] = { 5, 8;	unterminated initializer
+missing_condition_parenthesis	int walk(int n) { while (n > 4 { --n; } return n; }	missing condition parenthesis
+typedef_enum_collision	typedef unsigned Ticket; enum Reservation { Ticket = 17, RESERVED = 19 };	typedef enum collision
+enum_typedef_collision	enum Reservation { TICKET = 17 }; typedef short TICKET;	enum typedef collision
+body_parameter_collision	int select_slot(int Token) { typedef unsigned Token; return 6; }	body parameter collision
+local_kind_collision	int select_slot(void) { unsigned Token; typedef short Token; return 6; }	local kind collision
+for_type_scope_leak	typedef int Cursor; int advance(void) { for (int Cursor = 2; Cursor < 8; Cursor++) {} Cursor remaining; return 3; }	for type scope leak
+nested_for_type_scope_leak	typedef short Cursor; int advance(void) { for (int Cursor = 2; Cursor < 8; Cursor++) {} { Cursor remaining; } return 3; }	nested for type scope leak
+typedef_bound_ordinary	typedef int Slot; int table(void) { int Slot = 5; Slot another; return 4; }	typedef bound ordinary

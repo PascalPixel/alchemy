@@ -608,7 +608,7 @@ fn refuse_perm_macros(draft: &Path) -> Result<(), String> {
     let text = std::fs::read_to_string(draft).map_err(|e| format!("{}: {e}", draft.display()))?;
     if crate::permute::perm::has_macros(&text) {
         return Err(format!(
-            "{}: the draft uses PERM macros (PERM_GENERAL, PERM_ONEOF, PERM_LINESWAP, PERM_RANDOMIZE or PERM_IGNORE), which only alchemy permute expands; diff a best-N.c it wrote, or remove the macros",
+            "{}: the draft uses PERM macros, which only alchemy permute expands; diff a best-N.c it wrote, or remove the macros",
             draft.display()
         ));
     }

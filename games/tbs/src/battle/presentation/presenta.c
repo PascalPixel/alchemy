@@ -59,9 +59,19 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
 	s32									 index;
 	s32									 phase;
 
-	/* FAKEMATCH: r0 forgets the plan, so the first read reloads it */
-	asm volatile("" : : : "r0");
 	transition = gTransitionWork;
+	{
+		struct BtlPlan *saved_plan = plan;
+
+		/* FAKEMATCH: the temporary null assignment and restoration end the
+		 * native first CSE block, so the first plan read reloads its stack
+		 * carrier. Both conditional arms disappear from the generated code.
+		 * Without them, 288 of 289 instructions remain and 17 rows differ. */
+		if (transition)
+			plan = NULL;
+		if (transition)
+			plan = saved_plan;
+	}
 	object = BtlObjGet(plan->aid)->object;
 	z = object->z;
 	x = object->x;

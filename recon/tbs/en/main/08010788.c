@@ -1,8 +1,12 @@
 /* Pin-free Map_CopyCellIndexRect trial: 142 native and 142 built
- * instructions, 130 common, differ 24. Reusing bytes for the second
+ * instructions, 140 common, differ 4. Reusing bytes for the second
  * tile word reduces the plain unbound trial from differ 72 (weighted
  * 595) to differ 24 (weighted 300). Moving the initial scale into the
- * base-address block still differs 72. Reusing cell at the final store
+ * base-address block still differs 72. Reusing the dead offset for the
+ * second word then reduces it to differ 4 (weighted 10): its last load
+ * and store use r4 instead of r3. Other dead temporaries, signed types
+ * and dropping register qualifiers do not close those two operands.
+ * Reusing cell at the final store
  * instead scores weighted 195 but differs 50; neither is adopted.
  * The linked function retains its r3 binding until the whole ROM matches. */
 #include "edition.h"
@@ -118,9 +122,9 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 						tmp16 = 0x06002840 + offset;
 						tmp18 = tmp16;
 						tmp14 = tmp18;
-						/* FAKEMATCH: reusing the consumed byte offset for the
-						 * second word changes allocation, leaving differ 24. */
-						bytes = *tiles;
+						/* FAKEMATCH: reusing both consumed offsets for the
+						 * second word changes allocation, leaving differ 4. */
+						bytes = (offset = *tiles);
 						tmp21 = bytes;
 						tmp10 = tmp21;
 						tmp4 = tmp10;

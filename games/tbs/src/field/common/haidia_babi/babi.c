@@ -334,9 +334,6 @@ s32 HaidiaBabi_RestoreEntryState(void)
     return 0;
 }
 
-struct SceneHalf {
-    u16 value;
-};
 void Map_SetLayerEntryFlag();
 void Graphics_EnableObjLayerAndCallbacks();
 void ObjectDispatch_StopCallbacksAndHideLayers();
@@ -347,7 +344,6 @@ void FieldScene_RunComplexActorSequence(void)
 {
 	void FieldScene_RunSixStepSequence17e4();
 	void Object_RefreshSelectorById();
-    /* FAKEMATCH: needed to match: a halfword record keeps the actor-flag zero loaded from the pool after the actor lookup. */
     s32 base;
     struct FieldSprite *sprite;
     struct FieldActor *p12;
@@ -355,7 +351,6 @@ void FieldScene_RunComplexActorSequence(void)
     struct MapScrollWork *work;
     struct FieldActor *scene_actor;
     struct EventWork **control;
-    struct SceneHalf stopped;
     s32 ground;
 
     control = (struct EventWork **)Ram_EventWork;
@@ -377,10 +372,9 @@ void FieldScene_RunComplexActorSequence(void)
     Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
     Engine_ActorSetAnimation(0, 18);
     ground = 0;
-    stopped.value = 0;
     sprite->rotation = 1365;
     p12 = Object_GetById(17);
-    p12->motion_flags = stopped.value;
+    p12->motion_flags = 0;
     Engine_ActorSetSpriteFlags(Object_GetById(17), 0);
     Engine_ActorSetPosition(17, 37748736, 42598400);
     Map_ClearLayerEntryFlag(7);

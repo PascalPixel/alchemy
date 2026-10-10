@@ -393,9 +393,7 @@ void ShindenHeya_RunAltarScene(void)
     work->colors[0] = 0x7c00;
     work->colors[1] = 0x7c00;
     work->colors[2] = 0x7c00;
-    /* FAKEMATCH: needed to match: the u8 zero local preserves the lamp clear's literal-pool load. */
-    zero = 0;
-    work->lamps[0] = zero;
+    work->lamps[0] = 0;
     work->lamps[1] = 1;
     work->lamps[2] = 1;
     work->lamps[3] = 1;
@@ -1823,10 +1821,9 @@ void ShindenHeya_RaiseItemIcon(s32 item)
         Ui_PrepareTransferForItem(item);
         Engine_VramLoad(spr->vram_block, 128, buf + 0x400);
         Runtime_ReleaseHeapBlock(17);
-        /* FAKEMATCH: needed to match: this initializer order keeps the sprite zero in r5 instead of r3. */
-        for (i = 0, flag = &obj->motion_flags, z = 0; i < 60; i++) {
+        for (i = 0; i < 60; i++) {
             if ((u32)(obj->velocity_y + 255) <= 0x1fe)
-                *flag = z;
+                obj->motion_flags = 0;
             Engine_TaskWait(1);
         }
         Engine_ObjectSetScript((s32)obj, (s32)ShindenHeya_ItemIconEndScript);

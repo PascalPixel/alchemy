@@ -89,10 +89,8 @@ void Map_LoadAreaGraphics(void)
     state->window_bottom = 159;
     WaitFrames(1);
     Resource_DecodeType01(Resource_GetTableEntry((u32)&ResourceId_DefaultMapCells), buffer);
-    /* FAKEMATCH: needed to match: the halfword local keeps zero in r5 and the short-range pool before the epilogue. */
-    value = 0;
     Map_UpdateCurrentTileBlock();
-    state->animation_active = value;
+    state->animation_active = 0;
     Scheduler_DisableCallbacks(MapAnimation_Update);
     WaitFrames(1);
 }

@@ -103,8 +103,6 @@ void Korosseo_RestoreCompetitor(s32 id)
     struct FieldActor *actor;
     s32 zero;
     u8 *control;
-    /* FAKEMATCH: needed to match: the halfword zero preserves the earlier stage and later word registers. */
-    struct { u16 value; } layer;
 
     state = (struct CompetitorState *)gMenuCtrlWork;
     actor = Object_GetById(id);
@@ -128,9 +126,8 @@ void Korosseo_RestoreCompetitor(s32 id)
     actor->target_z = ACTOR_NO_TARGET;
     actor->velocity_x = zero;
     actor->velocity_z = zero;
-    layer.value = 0;
     actor->motion_flags = 3;
-    actor->terrain_id = layer.value;
+    actor->terrain_id = 0;
     actor->y.fixed = zero;
     ((struct ObjectRuntime *)actor)->terrain_height = zero;
     Engine_ActorSetSpriteFlags(actor, 1);

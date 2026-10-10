@@ -181,30 +181,40 @@ fn relative(path: &str) -> String {
 struct Origin {
     lang: Lang,
     source: Option<PathBuf>,
+    arm: bool,
 }
 
 fn origin(root: &Path, compiler: CompilerTarget, path: &str) -> Origin {
     if path.contains(".a(") {
-        return Origin { lang: Lang::Library, source: None };
+        return Origin { lang: Lang::Library, source: None, arm: false };
     }
     let rel = relative(path);
     if !rel.starts_with("games/") {
-        return Origin { lang: Lang::Listing, source: None };
+        return Origin { lang: Lang::Listing, source: None, arm: false };
     }
     let stem = rel.trim_end_matches(".o");
     for ext in crate::build_rom::source_extensions(stem) {
         let source = root.join(format!("{stem}.{ext}"));
         if source.exists() {
             let relative_source = format!("{stem}.{ext}");
-            let lang = match family_for_source(compiler, &relative_source) {
+            let family = family_for_source(compiler, &relative_source);
+            let lang = match family {
                 CompilerFamily::Agbcc | CompilerFamily::AgbccFlash | CompilerFamily::AgbccArm => Lang::Library,
                 _ if ext.eq_ignore_ascii_case("s") => Lang::Assembly,
                 _ => Lang::C,
             };
-            return Origin { lang, source: Some(source) };
+            return Origin { lang, source: Some(source), arm: family.is_arm() };
         }
     }
-    Origin { lang: Lang::Listing, source: None }
+    Origin { lang: Lang::Listing, source: None, arm: false }
+}
+
+/// Old agbcc objects have no $a/$t mapping symbols. Their compiler route
+/// supplies the fallback; explicit mappings still describe mixed-mode code.
+fn mode_arm(section: Option<&Section>, offset: u32, fallback: bool) -> bool {
+    section
+        .and_then(|s| s.mapping.iter().rev().find(|(o, c)| *o <= offset && matches!(c, 'a' | 't')))
+        .map_or(fallback, |(_, c)| *c == 'a')
 }
 
 /// Names of `static inline` functions a C file defines itself.
@@ -341,7 +351,7 @@ fn load_image(
         section: Option<Section>,
     }
     let mut located = Vec::new();
-    let mut origins: HashMap<String, (Lang, Option<PathBuf>)> = HashMap::new();
+    let mut origins: HashMap<String, (Lang, Option<PathBuf>, bool)> = HashMap::new();
     for (k, piece) in pieces.iter().enumerate() {
         let sections = objects.entry(piece.path.clone()).or_insert_with(|| read_object(Path::new(&piece.path)));
         let section = sections.as_ref().and_then(|s| {
@@ -349,11 +359,11 @@ fn load_image(
             let first = candidates.clone().find(|x| x.size == piece.size);
             first.or_else(|| candidates.next()).cloned()
         });
-        let (lang, source) = origins
+        let (lang, source, source_arm) = origins
             .entry(piece.object.clone())
             .or_insert_with(|| {
                 let o = origin(&build.root, build.compiler, &piece.path);
-                (o.lang, o.source)
+                (o.lang, o.source, o.arm)
             })
             .clone();
         if lang == Lang::C {
@@ -419,7 +429,7 @@ fn load_image(
             if *is_function {
                 let size = sym.as_ref().map_or(0, |s| s.size);
                 let end = if size > 0 && offset + size <= next { start + size } else { piece.address + next };
-                let mode_arm = section.as_ref().and_then(|s| s.mapping.iter().rev().find(|(o, c)| *o <= *offset && *c != 'd')).is_some_and(|(_, c)| *c == 'a');
+                let mode_arm = mode_arm(section.as_ref(), *offset, source_arm);
                 let code = bytes(elf, start, end);
                 let lang = if is_veneer_run(&code) { Lang::Veneer } else { lang };
                 let name = sym.as_ref().map_or_else(|| format!("sub_{start:08x}"), |s| s.name.clone());
@@ -650,6 +660,23 @@ fn copies(loaded: &mut [Loaded]) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn arm_c_without_mapping_symbols_uses_its_compiler_route() {
+        let root = tempfile::tempdir().unwrap();
+        let source = root.path().join("games/common/src/graphics/tile/metatile.c");
+        fs::create_dir_all(source.parent().unwrap()).unwrap();
+        fs::write(&source, "void Tile_BuildMetatiles(void) {}\n").unwrap();
+        let o = origin(root.path(), CompilerTarget::Tbs, "/build/obj/games/common/src/graphics/tile/metatile.o");
+        assert_eq!(o.lang, Lang::C);
+        assert!(mode_arm(Some(&Section::default()), 0, o.arm));
+        assert!(!mode_arm(None, 0, false));
+
+        let mixed = Section { mapping: vec![(0, 't'), (8, 'a'), (16, 'd')], ..Section::default() };
+        assert!(!mode_arm(Some(&mixed), 0, o.arm));
+        assert!(mode_arm(Some(&mixed), 8, false));
+        assert!(mode_arm(Some(&mixed), 16, false));
+    }
 
     #[test]
     fn branches_and_calls_decode_to_their_targets() {

@@ -3,10 +3,9 @@
 #include "glyph.h"
 #include "text_font.h"
 
-/* ARM draft: JA differs 6; EN differs 4; DE/ES/FR/IT differ 10. The tail matches.
+/* ARM draft: JA/EN differ 4; DE/ES/FR/IT differ 10. The tail matches.
    Remaining sched2 ordering, with registers and spill offsets already correct:
-   JA: height spill after the character CMP; width spill after x++; color spill
-       after the accent CMP.
+   JA: height spill after the character CMP; width spill after x++.
    EN: y copy before SUB sp; x copy immediately after the font load.
    DE/ES/FR/IT: coordinate copies before SUB sp and window spill; height spill
        after the font-selection CMP; source spill after color1's ADD;
@@ -137,14 +136,26 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 #if defined(TBS_EDITION_JA)
 			const u8 *source;
 			u32 color;
+			u32 raw_color;
 			u32 font_width;
 			u32 bits;
 
-			color = 0x1111;
+			/* FAKEMATCH: the height's zero high half keeps this constant and
+			   its normalized copy separate until combine. The early accent
+			   comparison places the color spill after CMP (JA differ 6 -> 4);
+			   reload CSE removes the repeated assignment in the accent path. */
+			raw_color = 0x1111 + (stride >> 16);
 			font_width = 8;
 			x++;
+			do
+			{
+				if (character - 222 <= 1)
+					raw_color = 0x1111 + (stride >> 16);
+			} while (0);
+			color = (raw_color << 16) >> 16;
 			if (character - 222 <= 1)
 			{
+				color = raw_color;
 				character += 32;
 				x -= 2;
 				y--;

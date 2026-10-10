@@ -496,7 +496,6 @@
     "*/games/tbs/src/battle/presentation/presenta.o"(.text)
     "*/games/common/src/battle/actor.o"(.text)
     "*/games/tbs/src/battle/target.o"(.text)
-    "*/games/common/src/battle/effect/can_affect_defeated_unit.o"(.text)
     "*/games/tbs/src/battle/tgtexec.o"(.text)
     "*/games/common/src/battle/check_status_or_special_id.o"(.text)
     "*/games/tbs/src/battle/cmdplay.o"(.text)

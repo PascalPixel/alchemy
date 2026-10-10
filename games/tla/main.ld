@@ -1271,7 +1271,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0012005c)
     "*/games/tla/src/battle/event_queue_set_flag_bit0.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001201c0)
-    "*/games/common/src/battle/effect/can_affect_defeated_unit.o"(.text)
+    "*/games/tla/src/battle/effect/deadchk.o"(.text)
     "*/games/tla/src/battle/party/insert_unit.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00120450)
     "*/games/common/src/battle/check_status_or_special_id.o"(.text)

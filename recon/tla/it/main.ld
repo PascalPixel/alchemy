@@ -1297,7 +1297,7 @@
     "*/recon/tla/it/rom.o"(.rom.00120078)
     "*/games/tla/src/battle/event_queue_set_flag_bit0.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.001201dc)
-    "*/games/common/src/battle/effect/can_affect_defeated_unit.o"(.text)
+    "*/games/tla/src/battle/effect/deadchk.o"(.text)
     "*/games/tla/src/battle/party/insert_unit.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0012046c)
     "*/games/common/src/battle/check_status_or_special_id.o"(.text)

@@ -8,7 +8,12 @@
  * Keeping obj->x as an extra input moves its load to r2 and differs 10;
  * adding t as an output keeps differ 4. A zero-initialized rounding value
  * joined after the branch differs 13; using 0x10000 minus one differs 20.
- * The linked source keeps its binding. */
+ * Tying the literal directly as an asm input, memory clobbers, unsigned
+ * k and one-pass initialization/addition/whole-rounding blocks also retain
+ * 4. Moving the barrier after addition with k as input or t as output
+ * retains 4; a t-only output after ordinary addition retains the 66
+ * differences of deleting the k barrier. An early-clobber k output with
+ * obj->x as input retains 10. The linked source keeps its binding. */
 #define OWN_AudioCommand_PlayFar
 #include "battle.h"
 #include "debug.h"

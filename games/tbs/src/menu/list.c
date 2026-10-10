@@ -222,10 +222,16 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
                 window, LIST_TILE_PAGES_LEFT, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
             UiWindow_SetTilemapEntry(
                 window, LIST_TILE_PAGES_RIGHT, window->width - 2, edge, 0);
-            /* FAKEMATCH: reload render work before its dirty-field offset. */
-            /* FAKEMATCH: removing this remaining barrier gives EN differ 54. One extra dead ((u32 *)cur)[2] = 0 after the cursor clear restores every spill slot: reference/built 770, common 764, differ 12, ten displayed rows of page-call arguments and dirty-pointer load order remain. */
-            __asm__ volatile ("" : : "r" (render));
-            render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+            /* FAKEMATCH: the one-pass update keeps the page-call arguments
+             * and dirty-pointer loads in native order (12 rows differ
+             * without the block). The cursor pointer pair preserves the
+             * native spill slots (42 rows differ without the pair); both
+             * forms keep all 770 instructions in every edition. */
+            do {
+                render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+            } while (0);
+            cur++;
+            cur--;
         }
 
         for (i = 0; i < icon_count; i++) {

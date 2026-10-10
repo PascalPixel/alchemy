@@ -71,6 +71,8 @@ regardless of improvement, restarting after failure or an instruction match.
 --stop-on-zero requires both weighted zero and differ zero. Equal weighted
 scores are ranked by differ; output deduplication retains stack offsets and
 branch destinations and trailing nops even when scoring ignores them.
+An exact initial expansion is saved even with --better-only; the output
+threshold still applies. A forced seed's candidate is evaluated as requested.
 After the search, each best candidate is
 minimized: its rewrites are undone one at a time, last first, and each
 removal that leaves the weighted score, then differ, no higher is kept. Writes
@@ -669,9 +671,22 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
     let started = Instant::now();
     let deadline = options.iterations.is_none().then(|| started + Duration::from_secs_f64(options.minutes * 60.0));
     let base_hash = score::strict_assembly_key(&score::disassemble(&setup.object, problem.symbol.as_deref())?);
-    let found = search(&problem, &base_state, &base, random, options, deadline, &scratch, started, Some((output, base_hash)))?;
-    let found: Vec<_> = found.into_iter().filter(|entry| (!options.output.better_only || entry.score.rank(problem.prefix) < base.score.rank(problem.prefix))
+    // Seed zero is the expansion already compiled above. Retain it when
+    // it matches: no later candidate can strictly improve a zero score.
+    // An explicit nonzero choice or mutation seed still gets its own run.
+    let initial_match = base.score.is_zero() && options.perm_seed.is_none_or(|seed| seed == 0) && options.rng_seed.is_none();
+    let save_initial = initial_match && options.output.threshold.is_none_or(|limit| 0 < limit);
+    if initial_match {
+        println!("initial expansion is an exact instruction match");
+    }
+    if save_initial {
+        output::write(output, 0, &base.text, &base.text, problem.function.as_deref(), options.output)?;
+    }
+    let found = if initial_match && options.stop_on_zero { Vec::new() }
+        else { search(&problem, &base_state, &base, random, options, deadline, &scratch, started, Some((output, base_hash)))? };
+    let mut found: Vec<_> = found.into_iter().filter(|entry| (!options.output.better_only || entry.score.rank(problem.prefix) < base.score.rank(problem.prefix))
         && options.output.threshold.is_none_or(|limit| i128::from(entry.score.weighted) < limit)).collect();
+    if save_initial { found.insert(0, base.clone()); }
     let best = minimize_best(&problem, &base, &found, &scratch.join("minimize"))?;
     write_best(&problem, &base, &best, output)
 }

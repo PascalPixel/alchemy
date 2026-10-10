@@ -4,6 +4,51 @@ use super::tests::test_problem;
 use super::*;
 
 #[test]
+fn initial_exact_expansion_is_saved_without_losing_output_limits_or_forced_seeds() {
+    crate::compiler::routing::prefer_installed_binutils();
+    let work = tempfile::tempdir().unwrap();
+    let draft = work.path().join("08000000.c");
+    let source = "int target(void) { return PERM_GENERAL(3, 4); }\n";
+    std::fs::write(&draft, source).unwrap();
+    let mut reference_problem = test_problem(&draft, source, vec![], Some("target"));
+    reference_problem.symbol = Some("target".into());
+    let reference = Job::new(&reference_problem, &work.path().join("reference")).unwrap();
+    reference.compile("int target(void) { return 3; }\n").unwrap();
+    let listing = crate::diff::disassemble(&reference.object, Some("target")).unwrap();
+    let rows = score::disassemble(&reference.object, Some("target")).unwrap();
+    for (index, (flags, saves_match)) in [
+        (vec![], true),
+        (vec!["--better-only", "--best-only", "--stop-on-zero"], true),
+        (vec!["--seed", "0,0", "--stop-on-zero"], true),
+        (vec!["--only-if-below", "0", "--stop-on-zero"], false),
+        (vec!["--seed", "1,0", "--stop-on-zero"], false),
+    ].into_iter().enumerate() {
+        let mut problem = test_problem(&draft, source, listing.clone(), Some("target"));
+        problem.symbol = Some("target".into());
+        problem.listing_rows = Some(rows.clone());
+        let mut checker = test_problem(&draft, source, listing.clone(), Some("target"));
+        checker.symbol = Some("target".into());
+        checker.listing_rows = Some(rows.clone());
+        let mut arguments = vec![draft.to_str().unwrap(), "--function", "target", "--jobs", "1", "--iterations", "2"];
+        arguments.extend(flags);
+        let options = parse_options(&arguments.into_iter().map(str::to_string).collect::<Vec<_>>()).unwrap();
+        let output = work.path().join(format!("output-{index}"));
+        execute(problem, &options, None, &output).unwrap();
+        let archive = output.join("output-0-1/source.c");
+        let best = output.join("best-1.c");
+        assert_eq!(archive.is_file(), saves_match, "case {index}: an exact initial expansion must be retained");
+        assert_eq!(best.is_file(), saves_match, "case {index}");
+        if saves_match {
+            for path in [archive, best] {
+                let text = std::fs::read_to_string(path).unwrap();
+                assert!(!perm::has_macros(&text));
+                assert!(checker.evaluate(&reference, &text).unwrap().is_zero());
+            }
+        }
+    }
+}
+
+#[test]
 fn saved_best_preserves_line_sensitive_compiler_output() {
     crate::compiler::routing::prefer_installed_binutils();
     let work = tempfile::tempdir().unwrap();

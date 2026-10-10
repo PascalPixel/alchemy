@@ -6,6 +6,9 @@
  * also differs 10. u16/u32 bounds and a value-preserving narrow shift added
  * to 242 retain 2; frame[n - 242] differs 4. A two-minute prefix search
  * (seed 401) compiled 4603 candidates without an improvement. The linked
+ * barrier still differs 10 with const, byte or void checksum cursors.
+ * Extracting the final frame/checksum work into an inline helper differs
+ * 37: sum loses its native r8 lifetime, with five fewer instructions.
  * source retains its pin and barrier pending all-edition byte identity. */
 #include "types.h"
 #include "render_input.h"

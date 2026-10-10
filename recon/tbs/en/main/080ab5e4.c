@@ -11,7 +11,10 @@
  * not adopted. Explicit row pointers (initialized or assigned) and a
  * separate selected index differ 39; reversed row subscripting and byte
  * address forms differ 4. Linked source keeps its binding pending byte
- * identity. */
+ * identity. Unsigned table indices retain 2; reversing the assignment
+ * chain differs 12. An explicit decoded-owner local and a barrier before
+ * its store differ 36. The two-minute seed-431 search compiled 1452
+ * candidates without improving the residual. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

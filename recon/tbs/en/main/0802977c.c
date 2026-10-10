@@ -1,12 +1,16 @@
 /* Pin-free DebugMenu_BrowseEntryGlyphs attempt: 179 native instructions,
-   179 built, 176 common, differ 6. The slot-offset literal loads into r3
-   instead of r1, and the following number draw copies index three rows late.
+   179 built, 177 common, differ 4. The slot-offset literal loads into r3
+   instead of r1. The linked number-drawing prototype removes the previous
+   extra draw-order difference, improving the draft from 6 to 4.
    An offset input barrier differs 14. Ordinary/signed/register/volatile offset
    types, a volatile halfword read, slot-member access and five barrier forms
    did not improve the baseline. A one-pass slot-store/load-call block differs
    10; a repeated offset assignment, redundant equal-store branch, cancelled
    glyph-derived offset and typed inline slot reader each still differ 6.
-   The linked source retains its pin until this residual is closed. */
+   Generic offset output constraints retain 4. Offset input constraints
+   before/after the slot store differ 12; low-register work inputs and
+   early-clobber outputs also differ 12. The linked source retains its pin
+   until this residual is closed. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -48,6 +52,8 @@ struct GlyphWork {
 #endif
 
 struct RenderInput *UiWindow_CreateWithSideObject(s32, s32, s32, s32);
+
+void UiText_DrawNumberInWindow(s32, s32, struct RenderInput *, s32, s32);
 
 s32 DebugMenu_BrowseEntryGlyphs(void)
 {

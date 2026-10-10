@@ -4,6 +4,12 @@
 /* Trial: the search reached differ 4 by reusing address for the bound;
  * that overwrites the heap head and changes the returned pointer, so it is
  * rejected. This trial keeps the original allocation behavior (differ 22).
+ * Staging permuter seed 257, two jobs, two minutes: 17,574 distinct
+ * candidates. Its differ-18 candidate returns held (the limit) on the
+ * successful IWRAM path and is rejected. A return-copy guard differs 34;
+ * direct or const state pointers differ 36. A low-register held constraint
+ * and an input-only bound operand retain differ 22. RTL allocates the
+ * short-lived bound locally before the cross-branch state pointer.
  */
 #include "types.h"
 #include "ram_buffer.h"

@@ -4,6 +4,7 @@
 /* Trial: an s32 callback return type gives differ 0 but conflicts with the
  * SchedulerCallback void return contract, so it is rejected. A register hint,
  * an unconstrained target barrier and a typed inline helper all leave differ 4.
+ * An unprototyped void callback also leaves differ 4.
  */
 #include "types.h"
 #include "callback_scheduler.h"

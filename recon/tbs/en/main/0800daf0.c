@@ -5,6 +5,9 @@
  * 66. A 3-minute search (seed 167, exact stack/branches) did not improve
  * the remaining pair. The staging permuter (seed 239, two jobs, two
  * minutes) also found no improvement across 2,129 distinct candidates.
+ * Keeping obj->x as an extra input moves its load to r2 and differs 10;
+ * adding t as an output keeps differ 4. A zero-initialized rounding value
+ * joined after the branch differs 13; using 0x10000 minus one differs 20.
  * The linked source keeps its binding. */
 #define OWN_AudioCommand_PlayFar
 #include "battle.h"

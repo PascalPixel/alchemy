@@ -148,7 +148,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
 
 s32 BattleFx_UpdateStarField(void)
 {
-	/* FAKEMATCH: needed to match: the ignored non-void result keeps the return-address pop in r1 */
+	// 戻り値の型は s32 だが return 文は無い（pop {r1}; bx r1）
 	s32				  j;
 	s32				  frame;
 	u32				  size;

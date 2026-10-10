@@ -182,7 +182,7 @@ void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags)
 
 s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 value)
 {
-    /* FAKEMATCH: needed to match: the ignored integer result keeps the return-address pop in r1; void selects r0. */
+    // 戻り値の型は s32 だが return 文は無い（pop {r1}; bx r1）
     s32 i;
     struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];
     s32 filled = value;

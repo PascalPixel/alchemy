@@ -131,6 +131,7 @@ fn check_search_scenarios(game: &'static str, edition: &str, algorithm: score::A
             rng_seed: None,
             perm_seed: None,
             function: Some(c[1].into()),
+            overlay: None,
             arm: false,
             iterations: Some(1000),
             heat: false,

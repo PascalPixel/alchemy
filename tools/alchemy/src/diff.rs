@@ -624,6 +624,47 @@ fn resource_name(path: &str) -> Option<String> {
     id.chars().all(|c| c.is_ascii_hexdigit()).then(|| format!("resource_{id}"))
 }
 
+fn overlay_extent(map: &Map, elf: &Elf, wanted: &str) -> Result<(u32, u32, u32, String), String> {
+    let functions: Vec<(u32, String)> = elf.symbols.iter()
+        .filter(|symbol| matches!(symbol.kind, 2 | 15) && !matches!(symbol.section, 0 | 0xfff1)
+            && !symbol.name.starts_with('$'))
+        .map(|symbol| (symbol.value & !1, symbol.name.clone()))
+        .collect();
+    let (section, start, name) = crate::show::resolve(map, Some(elf), &functions, wanted)?;
+    if !(section.name == ".text" || section.name.starts_with(".text.")) {
+        return Err(format!("{name}: no overlay code extent"));
+    }
+    let symbol = elf.symbols.iter().find(|symbol| symbol.name == name
+        && matches!(symbol.kind, 2 | 15) && !matches!(symbol.section, 0 | 0xfff1))
+        .ok_or_else(|| format!("{name}: no defined overlay function"))?;
+    let statics = functions.iter().map(|(address, _)| *address).collect::<Vec<_>>();
+    let end = crate::show::function_end(section, start, &statics, Some(symbol.size));
+    require_thumb_scaffold(elf, section, start, end)?;
+    let base = elf.sections.iter().filter(|section| !section.bytes.is_empty())
+        .map(|section| section.address).min().ok_or("overlay ELF has no placed bytes")?;
+    Ok((start, end, base, name))
+}
+
+pub(crate) fn overlay_reference(target: DecompTarget, overlay: &str, wanted: &str) -> Result<(Vec<String>, String), String> {
+    let id = overlay.strip_prefix("resource_").filter(|id| id.len() == 3 && id.bytes().all(|c| c.is_ascii_hexdigit()))
+        .ok_or("overlay must be resource_XXX")?;
+    let output = root().join(target.output_dir);
+    let read = |name: &str| std::fs::read(output.join(name)).map_err(|error| format!("{name}: {error}; build {} first", target.id));
+    let map = Map::parse(&String::from_utf8_lossy(&read(&format!("overlays/resource_{id}.map"))?));
+    let elf = Elf::parse(&read(&format!("overlays/resource_{id}.elf"))?)?;
+    let (start, end, _, name) = overlay_extent(&map, &elf, wanted)?;
+    let native = crate::show::overlay_function_reference(target, overlay, &name)?;
+    if native.start != start || native.end != end || native.name != name {
+        return Err(format!("{name}: overlay analysis bounds disagree"));
+    }
+    // Private comparison input only: no build or accounting path reads it.
+    let file = tempfile::NamedTempFile::new().map_err(|error| error.to_string())?;
+    std::fs::write(file.path(), &native.bytes).map_err(|error| error.to_string())?;
+    let tokens = thumb_reference(file.path(), &native.bytes, start, start, end)?;
+    println!("Thumb overlay ROM analysis: {} {overlay} {name}, {start:#010x}..{end:#010x}; full ROM comparison remains required.", target.id);
+    Ok((tokens, name))
+}
+
 pub(crate) fn text_symbols(object: &Path) -> Result<Vec<String>, String> {
     let listing = command(&["arm-none-eabi-nm", "--defined-only", &object.to_string_lossy()], root())?;
     Ok(listing
@@ -724,11 +765,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         };
         let raw = if reference.exists() { disassemble(&reference, Some(&symbol))? } else { Vec::new() };
         if raw.is_empty() {
-            let native = crate::show::overlay_function_reference(target, overlay, &symbol)?;
-            let file = tempfile::NamedTempFile::new().map_err(|error| error.to_string())?;
-            std::fs::write(file.path(), &native.bytes).map_err(|error| error.to_string())?;
-            listing.extend(thumb_reference(file.path(), &native.bytes, native.start, native.start, native.end)?);
-            println!("Thumb overlay analysis: {} {overlay} {}, {:#010x}..{:#010x}; full ROM comparison remains required.", target.id, native.name, native.start, native.end);
+            listing.extend(overlay_reference(target, overlay, &symbol)?.0);
         } else {
             listing.extend(raw);
         }
@@ -750,6 +787,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         } else {
             listing.extend(disassemble(&reference, None)?);
         }
+    }
+    if listing.is_empty() {
+        return Err("the selected reference function contains no instructions".into());
     }
     let compiled = disassemble(&object, draft_symbol.as_deref())?;
     let (common, script) = compare(&listing, &compiled);
@@ -881,6 +921,34 @@ mod tests {
         map.placed[0].loaded = true;
         map.placed[0].load = 0x03000000;
         assert!(scaffold_extent(&map, &elf, "First").is_err());
+    }
+
+    #[test]
+    fn overlay_bounds_exclude_imported_functions_data_and_mixed_code() {
+        let base = 0x02008000;
+        let mut map = Map { placed: vec![Placed {
+            name: ".text".into(), path: "out/tbs-en/obj/games/tbs/src/field/scene.o".into(),
+            address: base, load: base, size: 0x30, loaded: true,
+            symbols: vec![(base, "First".into()), (base + 0x18, "Next".into())],
+        }] };
+        let mut elf = Elf {
+            sections: vec![crate::elf::Section { address: base, bytes: vec![0; 0x30] }],
+            symbols: vec![
+                crate::elf::Symbol { name: "First".into(), value: base + 1, size: 0x10, kind: 2, bind: 1, section: 1 },
+                crate::elf::Symbol { name: "Next".into(), value: base + 0x19, size: 0x18, kind: 2, bind: 1, section: 1 },
+                crate::elf::Symbol { name: "Import".into(), value: base + 9, size: 0, kind: 2, bind: 1, section: 0xfff1 },
+            ],
+        };
+        assert_eq!(overlay_extent(&map, &elf, "First").unwrap(), (base, base + 0x10, base, "First".into()));
+        assert!(overlay_extent(&map, &elf, "Import").is_err());
+        map.placed[0].name = ".rodata".into();
+        assert!(overlay_extent(&map, &elf, "First").is_err());
+        map.placed[0].name = ".text.First".into();
+        elf.symbols[0].section = 0;
+        assert!(overlay_extent(&map, &elf, "First").is_err());
+        elf.symbols[0].section = 1;
+        elf.symbols.push(crate::elf::Symbol { name: "$a".into(), value: base + 4, size: 0, kind: 0, bind: 0, section: 1 });
+        assert!(overlay_extent(&map, &elf, "First").is_err());
     }
 
     #[test]

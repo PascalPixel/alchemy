@@ -122,6 +122,10 @@ impl Score {
         (std::cmp::Reverse(if prefix { self.prefix } else { 0 }), self.weighted)
     }
 
+    pub fn rank(&self, prefix: bool) -> ((std::cmp::Reverse<usize>, u64), usize) {
+        (self.key(prefix), self.differ)
+    }
+
     /// The summary, with the matched prefix when the search ranks by it.
     pub fn summary_with(&self, prefix: bool) -> String {
         if prefix {

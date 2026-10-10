@@ -4,6 +4,41 @@ use super::tests::test_problem;
 use super::*;
 
 #[test]
+fn prefix_search_saves_improvement_above_baseline_weighted_score() {
+    crate::compiler::routing::prefer_installed_binutils();
+    let work = tempfile::tempdir().unwrap();
+    let draft = work.path().join("draft/08000000.c");
+    std::fs::create_dir_all(draft.parent().unwrap()).unwrap();
+    let source = "int target(int x) { return PERM_GENERAL((x * 5) + 9, (x * 3) ^ 9); }";
+    let target = "int target(int x) { return (x * 3) + 9; }";
+    let improved = "int target(int x) { return (x * 3) ^ 9; }";
+    std::fs::write(&draft, source).unwrap();
+    let mut problem = test_problem(&draft, source, vec![], Some("target"));
+    problem.symbol = Some("target".into());
+    problem.prefix = true;
+    let reference = Job::new(&problem, &work.path().join("reference")).unwrap();
+    reference.compile(target).unwrap();
+    problem.listing = crate::diff::disassemble(&reference.object, Some("target")).unwrap();
+    problem.listing_rows = Some(score::disassemble(&reference.object, Some("target")).unwrap());
+    let base = problem.source(&problem.state(perm::expand(&problem.nodes, None).unwrap()));
+    let base_score = problem.evaluate(&reference, &base).unwrap();
+    let improved_score = problem.evaluate(&reference, improved).unwrap();
+    assert!(improved_score.prefix > base_score.prefix, "base {base_score:?}, improved {improved_score:?}");
+    assert!(improved_score.weighted > base_score.weighted, "base {base_score:?}, improved {improved_score:?}");
+    let arguments = [draft.to_str().unwrap(), "--function", "target", "--jobs", "1", "--iterations", "2", "--prefix", "--better-only", "--best-only"].map(str::to_string);
+    let options = parse_options(&arguments).unwrap();
+    let mut checker = test_problem(&draft, source, problem.listing.clone(), Some("target"));
+    checker.symbol = problem.symbol.clone();
+    checker.listing_rows = problem.listing_rows.clone();
+    let output = work.path().join("output");
+    execute(problem, &options, None, &output).unwrap();
+    let best = std::fs::read_to_string(output.join("best-1.c")).unwrap();
+    assert_eq!(checker.evaluate(&reference, &best).unwrap(), improved_score);
+    let archived = std::fs::read_to_string(output.join(format!("output-{}-1/source.c", improved_score.weighted))).unwrap();
+    assert_eq!(checker.evaluate(&reference, &archived).unwrap(), improved_score);
+}
+
+#[test]
 fn exact_stack_operand_candidate_survives_zero_weighted_baseline() {
     crate::compiler::routing::prefer_installed_binutils();
     let work = tempfile::tempdir().unwrap();

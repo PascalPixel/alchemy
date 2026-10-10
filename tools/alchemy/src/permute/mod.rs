@@ -102,9 +102,10 @@ instructions match from the start first, then by weighted score.
 --algorithm selects difflib (default) or Levenshtein alignment.
 Qualifying candidates are saved immediately in output-SCORE-N directories
 with source.c, score.txt and diff.txt, in addition to minimized best-N files.
---better-only excludes ties with the draft's weighted score and differ;
---best-only excludes scores above
-the best already saved. --only-if-below N requires a score strictly below N.
+--better-only requires an improvement over the draft; --best-only excludes
+candidates ranked below the best already saved. Both follow --prefix when
+enabled, then weighted score and differ. --only-if-below N requires a weighted
+score strictly below N.
 --no-context-output trims source.c before the first target function occurrence.
 --overlay resource_XXX with --function NAME compares an overlay's linked
 function against the reference ROM's decoded stream, as alchemy diff does.
@@ -669,7 +670,7 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
     let deadline = options.iterations.is_none().then(|| started + Duration::from_secs_f64(options.minutes * 60.0));
     let base_hash = score::strict_assembly_key(&score::disassemble(&setup.object, problem.symbol.as_deref())?);
     let found = search(&problem, &base_state, &base, random, options, deadline, &scratch, started, Some((output, base_hash)))?;
-    let found: Vec<_> = found.into_iter().filter(|entry| (!options.output.better_only || entry.score.distance() < base.score.distance())
+    let found: Vec<_> = found.into_iter().filter(|entry| (!options.output.better_only || entry.score.rank(problem.prefix) < base.score.rank(problem.prefix))
         && options.output.threshold.is_none_or(|limit| i128::from(entry.score.weighted) < limit)).collect();
     let best = minimize_best(&problem, &base, &found, &scratch.join("minimize"))?;
     write_best(&problem, &base, &best, output)
@@ -711,7 +712,7 @@ fn search(
     started: Instant,
     archive: Option<(&Path, SourceHash)>,
 ) -> Result<Vec<Found>, String> {
-    let archive_state = Mutex::new(archive.map(|(_, hash)| output::State::new(&base.score, hash, options.output)));
+    let archive_state = Mutex::new(archive.map(|(_, hash)| output::State::new(&base.score, hash, options.output, problem.prefix)));
     let stop = AtomicBool::new(false);
     let global = Mutex::new((base.score.key(problem.prefix), base.score.differ));
     let found = Mutex::new(Vec::new());

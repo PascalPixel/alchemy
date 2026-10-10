@@ -3,7 +3,9 @@
  * instead of r2. An input-only barrier, an extra t input, and an inline
  * rounding layer leave differ 4. Removing the barrier as well differs
  * 66. A 3-minute search (seed 167, exact stack/branches) did not improve
- * the remaining pair. The linked source keeps its binding. */
+ * the remaining pair. The staging permuter (seed 239, two jobs, two
+ * minutes) also found no improvement across 2,129 distinct candidates.
+ * The linked source keeps its binding. */
 #define OWN_AudioCommand_PlayFar
 #include "battle.h"
 #include "debug.h"

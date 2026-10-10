@@ -3,7 +3,9 @@
  * its empty barrier moves the build-stamp load before movs r1, #242.
  * Keeping the barrier with an ordinary bound differs 10. A 3-minute
  * whole-function search (seed 103, exact stack and branch comparisons)
- * found no improvement. The linked source keeps its binding/barrier. */
+ * found no improvement. The staging permuter (seed 241, two jobs, two
+ * minutes) likewise found none across 1,612 distinct candidates.
+ * The linked source keeps its binding/barrier. */
 #include "types.h"
 #include "render_input.h"
 #include "battle.h"

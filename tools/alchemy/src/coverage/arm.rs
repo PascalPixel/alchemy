@@ -949,6 +949,10 @@ impl ArmTally {
                 continue;
             }
             match row.origin {
+                "unproven-assembly" => {
+                    t.disassembly += earned;
+                    t.padding += row.padding;
+                }
                 "disassembly" => t.disassembly += row.bytes,
                 "listing" => t.listings += row.bytes,
                 "outside" => t.outside += row.bytes,
@@ -970,6 +974,21 @@ type Own<'f> = dyn Fn(&Placed<'_>) -> Result<Option<Vec<(u32, Mode)>>, String> +
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn unproven_source_padding_is_data_while_listing_padding_remains_code() {
+        let mut row = ArmRow {
+            image: "main".into(), object: "routine.o".into(), function: "Routine".into(),
+            run: 0x100, load: 0x100, bytes: 16, padding: 4,
+            origin: "unproven-assembly", shape: "compiled", evidence: Evidence::default(),
+        };
+        let tally = ArmTally::of(std::slice::from_ref(&row));
+        assert_eq!(tally.credited(), 0);
+        assert_eq!((tally.disassembly, tally.padding), (12, 4));
+        row.origin = "disassembly";
+        let tally = ArmTally::of(&[row]);
+        assert_eq!((tally.disassembly, tally.padding), (16, 0));
+    }
 
     const PUSH_R4_LR: u32 = 0xE92D_4010; // push {r4, lr}
     const POP_R4_PC: u32 = 0xE8BD_8010; // pop {r4, pc}

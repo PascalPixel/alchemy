@@ -76,6 +76,11 @@ fn share_edition(english: &Measurement, edition: &Measurement) -> Counted {
         .filter(|(_, credit)| credit.done.bytes() > 0)
         .map(|(unit, _)| unit.clone()).collect();
     let mut counted = share(english, &linked);
+    // Padding is source data even when the surrounding assembly has no
+    // code credit. Keep its English-sized diagnostic separate from DONE.
+    counted.uncredited = english.credits.iter()
+        .filter(|(unit, _)| edition.credits.contains_key(*unit))
+        .map(|(_, credit)| credit.uncredited).sum();
     counted.done.data = edition.done.data;
     counted.done.data_total = edition.done.data_total;
     counted.done.executable -= english
@@ -945,7 +950,7 @@ pub(crate) fn measure(
                 Origin::CommonAsm | Origin::GameAsm => {
                     let key = (map.image.clone(), object.clone(), None);
                     if measurement.credits.get(&key).is_some_and(|credit| credit.unproven_asm > 0) {
-                        "disassembly"
+                        "unproven-assembly"
                     } else {
                         "assembly"
                     }
@@ -1160,6 +1165,7 @@ mod assembly_tests {
         assert_eq!(measurement.done.executable, 28);
         assert_eq!(measurement.raw, 28);
         assert_eq!(measurement.uncredited, 4);
+        assert_eq!(share_edition(&measurement, &measurement).uncredited, 4);
     }
 }
 

@@ -1005,14 +1005,9 @@ void RamakanSabaku_ClaimSandEffectVram(void)
 
     Resource_DecodeType01(RamakanSabaku_SandEffectTiles, RamakanSabaku_SandTileBuffer);
     slotp = &RamakanSabaku_SandVramSlot;
-    /* FAKEMATCH: the size temporary schedules the slot store after the call. */
     slot = Resource_FindFreeEntry();
-    {
-        s32 size = 0x480;
-
-        *slotp = slot;
-        Engine_VramLoad((s16)slot, size, 0);
-    }
+    *slotp = slot;
+    Engine_VramLoad((s16)slot, 0x480, 0);
     zero.v = 0;
     RamakanSabaku_SandCounter = zero.v;
     RamakanSabaku_SandPhase = zero.v;

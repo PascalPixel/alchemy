@@ -58,76 +58,64 @@ void KorimaPalette_Capture(void);
 void State_ApplyRectByLayoutSelector(void)
 {
     if (**(s16 **)0x020092c4 == 1) {
-        s32 fifth = 4;
-        s32 sixth = 9;
-        Engine_MapCopyCellAttributes(0, 0, 1, 4, fifth, sixth);
+        Map_CopyCellAttributes(0, 0, 1, 4, 4, 9);
     } else {
-        s32 fifth = 6;
-        s32 sixth = 9;
-        Engine_MapCopyCellAttributes(0, 0, 1, 4, fifth, sixth);
+        Map_CopyCellAttributes(0, 0, 1, 4, 6, 9);
     }
 }
 
 void Scene_RepaintBoardRecords(void)
 {
-    /* FAKEMATCH: forced temporaries; each copy's destination is set in a block of its own so it is built after the other arguments, and the zero the pieces take is held from before the loop. */
-    s32 zero;
+    struct FieldActor *piece;
     s16 *record = gKorimaMagariRecords;
 
     if (*gKorimaMagariLayout != 0) {
-        { s32 f1 = 79; s32 g1 = 29; Engine_MapCopyCells(65, 53, 2, 1, f1, g1); }
-        { s32 f2 = 15; s32 g2 = 28; Engine_MapCopyCells(65, 40, 2, 4, f2, g2); }
+        Map_CopyCells(65, 53, 2, 1, 79, 29);
+        Map_CopyCells(65, 40, 2, 4, 15, 28);
     } else {
-        { s32 f3 = 79; s32 g3 = 25; Engine_MapCopyCells(65, 50, 2, 5, f3, g3); }
+        Map_CopyCells(65, 50, 2, 5, 79, 25);
     }
 
     if (*gKorimaMagariLayout != 0) {
-        { s32 f4 = 32; s32 g4 = 0; Engine_MapCopyCells(0, 32, 32, 32, f4, g4); }
-        { s32 f5 = 64; s32 g5 = 0; Engine_MapCopyCells(32, 32, 32, 32, f5, g5); }
-        { s32 f6 = 0; s32 g6 = 0; Engine_MapCopyCellAttributes(0, 32, 32, 32, f6, g6); }
+        Map_CopyCells(0, 32, 32, 32, 32, 0);
+        Map_CopyCells(32, 32, 32, 32, 64, 0);
+        Map_CopyCellAttributes(0, 32, 32, 32, 0, 0);
     } else {
-        { s32 f7 = 32; s32 g7 = 0; Engine_MapCopyCells(0, 64, 32, 32, f7, g7); }
-        { s32 f8 = 64; s32 g8 = 0; Engine_MapCopyCells(32, 64, 32, 32, f8, g8); }
-        { s32 f9 = 0; s32 g9 = 0; Engine_MapCopyCellAttributes(0, 64, 32, 32, f9, g9); }
+        Map_CopyCells(0, 64, 32, 32, 32, 0);
+        Map_CopyCells(32, 64, 32, 32, 64, 0);
+        Map_CopyCellAttributes(0, 64, 32, 32, 0, 0);
     }
 
-    if (record[0] != -1) {
-        zero = 0;
-        do {
-            u8 *piece = *(u8 **)(record + 4);
+    while (record[0] != -1) {
+        piece = *(struct FieldActor **)(record + 4);
 
-            if (*gKorimaMagariLayout == 1) {
-                Object_SetMode((struct FieldActor *)piece, 4);
-                piece[35] = 3;
-                piece[85] = zero;
-                *(s32 *)(piece + 12) = 0x1a0000;
+        if (*gKorimaMagariLayout == 1) {
+            Object_SetMode(piece, 4);
+            piece->priority_flags = 3;
+            piece->motion_flags = 0;
+            piece->y.fixed = 0x1a0000;
 
-                if (record[3] != 0) {
-                    s32 col = record[1];
-                    s32 row = record[2];
-                    Engine_MapCopyCells(68, 40, 1, 4, col + 32, row);
-                } else {
-                    s32 col = record[1];
-                    s32 row = record[2];
-                    Engine_MapCopyCells(70, 40, 4, 1, col + 32, row);
-                }
+            if (record[3] != 0) {
+                Map_CopyCells(68, 40, 1, 4, record[1] + 32, record[2]);
             } else {
-                Object_SetMode((struct FieldActor *)piece, 1);
-                piece[35] = 1;
-                piece[85] = 2;
-                *(s32 *)(piece + 12) = zero;
+                Map_CopyCells(70, 40, 4, 1, record[1] + 32, record[2]);
             }
-            record += 6;
-        } while (record[0] != -1);
+        } else {
+            Object_SetMode(piece, 1);
+            piece->priority_flags = 1;
+            piece->motion_flags = 2;
+            piece->y.fixed = 0;
+        }
+        record += 6;
     }
 
-    { s32 f10 = 10; s32 g10 = 50; Engine_MapCopyCells(70, 42, 1, 1, f10, g10); }
+    Map_CopyCells(70, 42, 1, 1, 10, 50);
 
     if (*gKorimaMagariLayout == 1) {
-        { s32 f11 = 0; s32 g11 = 0; Engine_MapCopyCellAttributes(0, 32, 32, 32, f11, g11); }
+        Map_CopyCellAttributes(0, 32, 32, 32, 0, 0);
         State_StampRecordCells(gKorimaMagariRecords, 254);
     } else {
-        { s32 f12 = 0; s32 g12 = 0; Engine_MapCopyCellAttributes(0, 64, 32, 32, f12, g12); }
+        Map_CopyCellAttributes(0, 64, 32, 32, 0, 0);
         State_StampRecordCells(gKorimaMagariRecords, 255);
     }
 

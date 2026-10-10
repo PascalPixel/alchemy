@@ -27,7 +27,6 @@ static __inline__ void SkipMessage(s32 amount)
     gEventWork->message += amount;
 }
 
-/* FAKEMATCH: the flag byte's or-assign goes through this helper, which keeps the reference's register for the byte. */
 s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
 {
     struct OverlayObject *linked_object = object->linked_object;
@@ -827,12 +826,7 @@ void Scene_UnmaskGarcia(void)
             UiText_ShowCenteredMessage((mes_b + 1), 1, 0);
             Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 30);
-            {
-                /* FAKEMATCH: a result temporary, not a compound or-assign: the reference merges the byte into the mask's register, which the two-address ORR does only when the result is its own object. */
-                u8 flags = obj->steering_flags | 1;
-
-                obj->steering_flags = flags;
-            }
+            obj->steering_flags |= ACTOR_FACES_MOTION;
         } else {
             Engine_EventSetMessage((s32)MsgSoruWontLetGo);
             Engine_ActorRunRepeatedMotion(GERALD, 3);
@@ -851,12 +845,7 @@ void Scene_UnmaskGarcia(void)
     obj = Object_GetById(GERALD);
     obj->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(GERALD, 0x108, 0x1e2);
-    {
-        /* FAKEMATCH: a result temporary, not a compound or-assign: the reference merges the byte into the mask's register, which the two-address ORR does only when the result is its own object. */
-        u8 flags = obj->steering_flags | 1;
-
-        obj->steering_flags = flags;
-    }
+    obj->steering_flags |= ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(GERALD, 0x116, 0x1e0);
     obj->speed = 0x30000;
     obj->acceleration = 0x20000;
@@ -2043,7 +2032,6 @@ s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z)
     GlyphTransfer *glyph;
     struct FieldActor *actor;
     struct FieldSprite *sprite;
-    u8 *flags;
     s32 owner;
     s32 slot;
 
@@ -2055,10 +2043,8 @@ s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z)
         return owner;
     Engine_ObjectSetScript(actor, SoruStar_PresentItemScript);
     sprite = actor->sprite;
-    /* FAKEMATCH: stepping one pointer over the two bytes keeps their address in r3. */
-    flags = &sprite->flags;
-    *flags++ = (u32)glyph;
-    *flags = (u32)glyph;
+    sprite->flags = 0;
+    sprite->part_count = 0;
     sprite->full_color = 0;
     sprite->palette = 0;
     actor->velocity_y = 0x28000;

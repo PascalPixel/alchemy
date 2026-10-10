@@ -1706,7 +1706,7 @@ void FieldScene_RunLargeStagingSequence(void)
     Engine_EventWait(40);
     Actor_SetSpeed(9, 0x2666, 0x1333);
     Actor_SetSpeed(14, 0x2666, 0x1333);
-    /* FAKEMATCH: the reference looks actor 9 up here and drops the result. */
+    // 戻り値は使わない
     Object_GetById(9);
     Engine_ObjectSetPosition((s32)rec8, 0x1880000, 0xd00000, 0x2480000);
     Actor_MoveToAndWait(9, 0x17a, 0x248);
@@ -2566,20 +2566,19 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
         angle &= 0xf000;
         dir = obj->facing & 0xf000;
         if (angle == dir || right == dir || left == dir || force != 0) {
-            /* FAKEMATCH: plain-byte publication avoids synthetic QI masks. */
-            *(u8 *)&obj->paused = 1;
+            obj->paused = 1;
             Object_SetMode(obj, 1);
             result = 1;
-            *(u8 *)&obj->rise_counter = result;
+            obj->rise_counter = result;
         } else {
-            *(u8 *)&obj->paused = 0;
+            obj->paused = 0;
             Object_SetMode(obj, 2);
-            *(u8 *)&obj->rise_counter = 0;
+            obj->rise_counter = 0;
         }
     } else {
-        *(u8 *)&obj->paused = 0;
+        obj->paused = 0;
         Object_SetMode(obj, 2);
-        *(u8 *)&obj->rise_counter = 0;
+        obj->rise_counter = 0;
     }
     return result;
 }
@@ -2691,7 +2690,7 @@ void SceneState_ApplyRectAndRunTwo(void)
     s32 e;
     s32 f;
 #if !EDITION_INTERNATIONAL
-    /* FAKEMATCH: the Japanese scene looks up its current villager before copying the lane cells and drops the returned record. */
+    // 日本版のみ: 村人を引くが戻り値は使わない
     if (Engine_GameFlagIsSet(0x87a))
         Object_GetById(ACTOR_DORA);
     else

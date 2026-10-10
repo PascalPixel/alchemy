@@ -807,14 +807,11 @@ void ToretoHeya_SpawnSwirlSparks(void)
 void ToretoHeya_ApplyFlaggedMapPatches(void)
 {
     s32 i;
-    /* FAKEMATCH: halfword storage delays the size producer until after the sentinel and offset, matching the loop preheader. */
-    struct Half { u16 v; } size;
 
     for (i = 0; ToretoHeya_MapPatches[i] != -1; i += 6) {
-        size.v = 1;
         if (Engine_GameFlagIsSet(ToretoHeya_MapPatches[i]) && ToretoHeya_MapPatches[i + 1] != 0)
             Map_CopyCellsTo(ToretoHeya_MapPatches[i + 2], ToretoHeya_MapPatches[i + 3],
-                ToretoHeya_MapPatches[i + 4], ToretoHeya_MapPatches[i + 5], size.v, size.v);
+                ToretoHeya_MapPatches[i + 4], ToretoHeya_MapPatches[i + 5], 1, 1);
     }
 }
 

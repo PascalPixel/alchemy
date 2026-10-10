@@ -76,14 +76,9 @@ void BabiFune_CyclePalette(void)
 	v = Math_DivideUnsigned(*frame, 6);
 	Dma_Set((const void *)(((u32)(v << 16) >> 15) + (u32)BabiFune_PaletteFrames),
 		(void *)0x050000e8, DMA_ENABLE32 | 6, REG_DMA3);
-	{
-		/* FAKEMATCH: n is a fresh scope so the store precedes the test. */
-		s32 n = *frame + 1;
-
-		*frame = n;
-		if ((u32)(n << 16) > 0x230000)
-			*frame = 0;
-	}
+	(*frame)++;
+	if (*frame > 35)
+		*frame = 0;
 }
 
 void BabiFune_UpdateDriftingObject(u8 *obj)

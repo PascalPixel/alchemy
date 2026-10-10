@@ -50,10 +50,14 @@ void Camera_InitDefaultTransform(void)
     transfer.x = 0;
     transfer.y = 0;
     {
-        /* FAKEMATCH: ⚓️ passes the camera before it loads the distance */
-        register struct BattleCamera *result asm("r1") = state;
-        asm volatile("" : "+l"(result)); /* FAKEMATCH: as above */
+        struct BattleCamera *result = state;
+        /* FAKEMATCH: pass the camera before loading the distance; removing the constraint swaps two rows. */
+        asm volatile("" : "+l"(result));
         transfer.z = state->distance;
         Iwram_TransformVector((s32 *)&transfer, (s32 *)result);
+        /* FAKEMATCH: canceling XORs keep the state pointer live across the call;
+         * without them the unpinned result changes two instruction rows. */
+        state->distance ^= 1;
+        state->distance ^= 1;
     }
 }

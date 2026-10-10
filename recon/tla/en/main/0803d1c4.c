@@ -1,3 +1,6 @@
+/* Pin-free trial (tla-en): listing 132 instructions, draft 132, common 61, differ 142.
+ * Earlier register-allocation notes describe the prior pinned form.
+ */
 /* differ 6: ☀️ UiText_DecodeSymbol; the native loads the bit count before addressing the leaves, and the second leaf byte before masking the first; only ARM9TDMI load scheduling differs */
 #include "graphics.h"
 #include "text_reader.h"
@@ -9,14 +12,14 @@ s32 Func_0803d1c4(struct TextReader *reader)
     u32 code;
     u32 hi;
     /* FAKEMATCH: tree pinned to r1, as the native allocates it (62 instructions differ without it). */
-    register const u8 *tree asm("r1");
+    const u8 *tree;
     const u8 *leaves;
     const u8 *text;
     s32 text_bits;
     s32 tree_bits;
     s32 rank;
     /* FAKEMATCH: depth pinned to r3, as the native allocates it (92 differ without it). */
-    register s32 depth asm("r3");
+    s32 depth;
     s32 bit;
     u32 index;
     u32 half;

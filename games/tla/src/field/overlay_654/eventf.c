@@ -143,18 +143,13 @@ void Func_02003094(void)
 {
     struct KabeMapWork *map = (struct KabeMapWork *)Ram_HeapSlots->map_work;
 
-    /* FAKEMATCH: loads the map work before it passes the first actor. */
-    __asm__("");
     Func_02003854(8);
     Func_02003854(9);
     {
-        /* FAKEMATCH: the native builds the priority before it loads the callback. */
-        register s32 priority __asm__("r1");
+        s32 priority;
 
         map->mode_17 = 1;
         priority = 0x480;
-        /* FAKEMATCH: a barrier keeps the callback load after the priority. */
-        __asm__ volatile("" : : "r"(priority));
         Scheduler_AddOrUpdateCallback(Func_020010e8, priority);
     }
     Func_02003b18();
@@ -181,6 +176,8 @@ void Func_020030fc(void)
 
 void Func_02003134(void)
 {
+    s32 angle;
+
     Func_02002f88(10)->y = -0x100000;
     ObjectMotion_SetActionVariant(10, 3);
     Func_02003b30(Data_02003cbc);
@@ -193,7 +190,9 @@ void Func_02003134(void)
     if (GameFlag_Test(0x873)) {
         Func_02003a30(11, 0, 0);
     } else if (GameFlag_Test(0x872)) {
-        Kabe_ObjPlaceTurn(11, 328 << 16, 200 << 16, 0x8000);
+        /* FAKEMATCH: the function-scope angle temporary preserves its early constant construction; a direct argument through the unbound helper differs 2. */
+        angle = 0x8000;
+        Kabe_ObjPlaceTurn(11, 328 << 16, 200 << 16, angle);
         WaitFrames(1);
         ObjectMotion_EnableActionAndSetCallback(11, Data_02003c10);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(11), 1);
@@ -206,6 +205,7 @@ void Func_02003134(void)
 void Func_0200320c(void)
 {
     struct KabeObject *block;
+    s32 angle;
 
     Func_02002f88(9);
     Func_02002f88(10);
@@ -235,8 +235,11 @@ void Func_0200320c(void)
     Func_02003b30(Data_02003cbc);
     if (GameFlag_Test(0x875))
         Func_02003a30(15, 0, 0);
-    else if (GameFlag_Test(0x874))
-        Kabe_ObjPlaceTurn(15, 580 << 16, 344 << 16, 0x4000);
+    else if (GameFlag_Test(0x874)) {
+        /* FAKEMATCH: the function-scope angle temporary preserves its early constant construction; a direct argument through the unbound helper differs 4. */
+        angle = 0x4000;
+        Kabe_ObjPlaceTurn(15, 580 << 16, 344 << 16, angle);
+    }
     Func_02003b00(0);
     WaitFrames(1);
 }
@@ -248,19 +251,17 @@ void Func_02003354(void)
     if (GameFlag_Test(0x876) == 0)
         Func_02003024();
     {
-        /* FAKEMATCH: the native builds the priority before it loads the callback. */
-        register s32 priority __asm__("r1");
+        s32 priority;
 
         map->mode_17 = 1;
         priority = 0x480;
-        /* FAKEMATCH: a barrier keeps the callback load after the priority. */
-        __asm__ volatile("" : : "r"(priority));
         Scheduler_AddOrUpdateCallback(Func_020010e8, priority);
     }
 }
 
 void Func_0200338c(void)
 {
+    s32 angle;
     struct KabeObject *object = Func_02002f88(13);
     u8 *flags = &object->priority_flags;
 
@@ -297,7 +298,9 @@ void Func_0200338c(void)
         }
         Object_LinkObjectAndSetCallback(14, gPartyState.current_owner);
     } else if (GameFlag_Test(0x877)) {
-        Kabe_ObjPlaceTurn(14, 280 << 16, 328 << 16, 0x4000);
+        /* FAKEMATCH: the function-scope angle temporary preserves its early constant construction; a direct argument through the unbound helper differs 4. */
+        angle = 0x4000;
+        Kabe_ObjPlaceTurn(14, 280 << 16, 328 << 16, angle);
     }
 }
 

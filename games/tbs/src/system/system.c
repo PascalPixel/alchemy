@@ -333,8 +333,7 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
 
 void WaitFrames(s32 frames)
 {
-    CAMELOT_ASM("the stack switch, a write to sp no C can express")
-    register u8 *sp __asm__("sp");
+    u8 *sp;
     u32 i;
     u8 *base;
     u32 line;
@@ -342,19 +341,10 @@ void WaitFrames(s32 frames)
     s16 dispcnt;
     s16 backdrop;
 
-    /* FAKEMATCH: needed to match: the XOR identity and one-pass copy guard
-     * retain the entry-SP copy through allocation. A plain unbound pointer
-     * substitutes sp in the comparison and DMA arguments (19 aligned
-     * differences); this identity and guard leave only the final restore
-     * copy pair different (4), corrected at its assignment below. The block
-     * also keeps the frame-count store before the stack-limit load (4). */
-    do {
-        base = (u8 *)((u32)sp ^ (u32)frames);
-        base = (u8 *)((u32)base ^ (u32)frames);
-        if (base == sp)
-            break;
-        base = sp;
-    } while (0);
+    CAMELOT_ASM("read the hardware stack pointer for the proven stack switch")
+    __asm__ volatile("mov %0, sp" : "=r"(sp));
+
+    base = sp;
     if (base < Ram_FrameWaitStackTop) {
         u8 *top = Ram_FrameWaitStackTop;
         u8 *next;
@@ -368,11 +358,13 @@ void WaitFrames(s32 frames)
          * The redundant guard emits no extra comparison or copy. */
         next = (u8 *)((u32)top ^ (u32)base);
         next = (u8 *)((u32)next ^ (u32)base);
-        sp = next;
+        /* FAKEMATCH: the tied top operand retains its DMA lifetime; an input-only operand adds a copy through ip. */
+        CAMELOT_ASM("the stack switch, a write to sp no C can express")
+        __asm__ volatile("mov sp, %0" : "+r"(top) : : "sp", "memory");
         do {
-            if (top == sp)
+            if (top == next)
                 break;
-            top = sp;
+            top = next;
         } while (0);
     }
     for (i = 0; i < frames; i++) {
@@ -495,7 +487,13 @@ void WaitFrames(s32 frames)
          * live across the frame loop. A plain sp assignment shrinks the frame
          * from eight bytes to four (65 aligned differences); the one-pass
          * boundary retains the restore copy's order. */
-        u8 *restore = (u8 *)((u32)sp ^ (u32)base);
+        u8 *restore;
+
+        /* FAKEMATCH: tying the old base to the hardware read keeps the eight-byte frame and removes an extra copy through ip. */
+        CAMELOT_ASM("read the hardware stack pointer for its restore copy")
+        __asm__ volatile("mov %0, sp" : "+r"(base));
+        sp = base;
+        restore = (u8 *)((u32)sp ^ (u32)base);
 
         restore = (u8 *)((u32)restore ^ (u32)base);
         do {
@@ -522,6 +520,8 @@ void WaitFrames(s32 frames)
         restore = (u8 *)((u32)base ^ (u32)sp);
         restore = (u8 *)((u32)restore ^ (u32)sp);
         sp = restore;
+        CAMELOT_ASM("restore the hardware stack pointer after the proven stack copy")
+        __asm__ volatile("mov sp, %0" : : "r"(sp) : "sp", "memory");
         /* FAKEMATCH: the operand-only asm flushes CSE, preserving the measured reload of the saved-stack-size address. */
         __asm__ volatile("" : : "r"(base));
         Dma_Set(gSavedStack, base, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);

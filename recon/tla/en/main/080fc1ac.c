@@ -1,3 +1,6 @@
+/* Pin-free trial (tla-en): listing 127 instructions, draft 130, common 93, differ 71.
+ * Earlier register-allocation notes describe the prior pinned form.
+ */
 #include "types.h"
 #include "io_reg.h"
 
@@ -25,7 +28,7 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
     s32 slot;
     s32 text;
     s32 label;
-    register s32 sel asm("r6"); /* FAKEMATCH: keeps the row in r6 */
+    s32 sel; /* Earlier pinned trial: keeps the row in r6 */
     s32 changed;
 
     win = UiWindow_CreateFar(13, 3, 17, 10, 2);
@@ -48,7 +51,7 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
             break;
         }
         {
-        register s32 c asm("r2"); /* FAKEMATCH: tests the flag through r2 */
+        s32 c; /* Earlier pinned trial: tests the flag through r2 */
         asm("mov %0, %1" : "=l"(c) : "h"(changed)); /* FAKEMATCH: tests the flag through r2 */
         if (c) {
             changed = 0;
@@ -67,8 +70,8 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
         pad = &gKeysRepeat;
         if (*pad & 64) {
             {
-            register s32 one asm("r2") = 1; /* FAKEMATCH: sets the flag through r2 */
-            register s32 cue asm("r0") = 111; /* FAKEMATCH: loads the cue before the step */
+            s32 one = 1; /* Earlier pinned trial: sets the flag through r2 */
+            s32 cue = 111; /* Earlier pinned trial: loads the cue before the step */
             sel -= 1;
             asm volatile("mov %0, %1" : "=h"(changed) : "l"(one)); /* FAKEMATCH: sets the flag through r2 */
             Audio_PlayCue(cue);

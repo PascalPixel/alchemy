@@ -1,3 +1,6 @@
+/* Pin-free trial (tla-en): listing 141 instructions, draft 142, common 119, differ 45.
+ * Earlier register-allocation notes describe the prior pinned form.
+ */
 #include "audio_engine.h"
 
 struct AudioFrameState {
@@ -42,7 +45,7 @@ void AudioCommand_Play(s32 cue)
     flags = cue & 0xf000;
     {
         /* FAKEMATCH: eight ordinary type/lifetime forms load the busy byte directly into r7; the native sequence first captures r3, then hands it to a normal local before any call. */
-        register u32 read __asm__("r3");
+        u32 read;
         read = Data_03001138.busy;
         /* FAKEMATCH: this empty boundary preserves the measured r3 capture and handoff; it changes no value and ends before the branch's calls. */
         __asm__ volatile("" : "=r"(busy) : "0"(read));

@@ -1,3 +1,6 @@
+/* Pin-free trial (tla-en): listing 73 instructions, draft 72, common 51, differ 43.
+ * Earlier register-allocation notes describe the prior pinned form.
+ */
 #include "types.h"
 #include "system.h"
 
@@ -18,9 +21,9 @@ s32 UiWork_IsIdleFar(s32 window);
 
 void Event_ShowSpeakerMessage(s32 speaker)
 {
-    register s32 x asm("r6"); /* FAKEMATCH: the unset x lives in r6 */
-    register s32 y asm("r7"); /* FAKEMATCH: the unset y lives in r7 */
-    register struct EventWork *state asm("r8") = gEventWork; /* FAKEMATCH: keeps the work in r8 */
+    s32 x; /* Earlier pinned trial: the unset x lives in r6 */
+    s32 y; /* Earlier pinned trial: the unset y lives in r7 */
+    struct EventWork *state = gEventWork; /* Earlier pinned trial: keeps the work in r8 */
 
     speaker &= 0xfff;
     ObjectTable_Get(speaker);

@@ -1,3 +1,6 @@
+/* Pin-free trial (tla-en): listing 1701 instructions, draft 1699, common 1645, differ 110.
+ * Earlier register-allocation notes describe the prior pinned form.
+ */
 /* Near miss (28 of 1,701 instructions differ, all from two yes/no
  * prompts): after the prompt the native reloads the leader into r5 and
  * copies it to r0 in each branch, keeping the answer in r0; the draft moves
@@ -160,11 +163,11 @@ static inline void Ov694_ObjEmote(s32 actor, s32 emote)
 static inline void Ov694_Jump(s32 actor, s32 height, s32 frames)
 {
     /* FAKEMATCH: the native loads the actor after the height and frames. */
-    register s32 h __asm__("r1") = height;
+    s32 h = height;
     /* FAKEMATCH: the frames stay fixed in r2 for the same reason. */
-    register s32 f __asm__("r2") = frames;
+    s32 f = frames;
     /* FAKEMATCH: and the actor last, in r0. */
-    register s32 a __asm__("r0") = actor;
+    s32 a = actor;
 
     Func_02004174(a, h, f);
 }

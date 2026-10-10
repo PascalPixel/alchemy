@@ -9,12 +9,17 @@ extern u32 Data_080f0bfc[];
 void BattleFx_SetObjectAlternatingWords(u8 *object)
 {
     u32 *tick = &gFrameTick;
-    register u32 *table asm("r1") = Data_080f0bfc; /* FAKEMATCH: ⚓️ keeps the table in r1 */
+    u32 *table;
     u32 index;
     u32 value;
 
-    asm volatile("" : "+l"(table), "+l"(tick)); /* FAKEMATCH: ⚓️ loads both addresses before the tick */
-    index = (*tick >> 2) & 1;
+    asm volatile("" : "+l"(tick)); /* FAKEMATCH: load the tick address before the table. */
+    table = Data_080f0bfc;
+    /* FAKEMATCH: keep the tick extraction in its own block; without this
+     * boundary the table address loads after the tick (two reordered rows). */
+    do {
+        index = (*tick >> 2) & 1;
+    } while (0);
     value = index[table];
     ((struct MotionObject *)object)->scale_x = value;
     ((struct MotionObject *)object)->scale_y = value;

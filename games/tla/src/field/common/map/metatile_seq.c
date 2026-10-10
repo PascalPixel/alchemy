@@ -12,8 +12,7 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destinati
 {
     struct MapCopyCommand *record = (struct MapCopyCommand *)command;
     u32 source = record->source;
-    /* FAKEMATCH: the fixed r3 sentinel preserves the r3/ip comparison registers. */
-    register u32 end __asm__("r3") = 0xff00;
+    u32 end = 0xff00;
     /* FAKEMATCH: compare an ip snapshot and retain the entry in r0. */
     register u32 test __asm__("ip") = source;
 

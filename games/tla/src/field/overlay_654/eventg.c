@@ -90,6 +90,8 @@ void Func_02003854(s32 id)
 
 s32 Func_02003894(void)
 {
+    s32 angle;
+
     if (GameFlag_Test(0x340)) {
         struct KabePartyExtra *party = (struct KabePartyExtra *)&gPartyState;
 
@@ -98,8 +100,11 @@ s32 Func_02003894(void)
         if (party->value == 1) {
             if (GameFlag_Test(0x341))
                 Kabe_ObjPlaceAt(14, 360 << 16, 216 << 16, 0);
-            else if (GameFlag_Test(0x342))
-                Kabe_ObjPlaceTurn(14, 328 << 16, 216 << 16, 0x8000);
+            else if (GameFlag_Test(0x342)) {
+                /* FAKEMATCH: the function-scope angle temporary preserves its early constant construction; a direct argument through the unbound helper differs 4. */
+                angle = 0x8000;
+                Kabe_ObjPlaceTurn(14, 328 << 16, 216 << 16, angle);
+            }
         }
         GameFlag_ClearBit(0x340);
         GameFlag_ClearBit(0x341);

@@ -82,8 +82,7 @@ static inline void Deri_Jump(s32 actor, s32 height, s32 frames)
     register s32 h __asm__("r1") = height;
     /* FAKEMATCH: the frames stay fixed in r2 for the same reason. */
     register s32 f __asm__("r2") = frames;
-    /* FAKEMATCH: and the actor last, in r0. */
-    register s32 a __asm__("r0") = actor;
+    s32 a = actor;
 
     Func_02000d94(a, h, f);
 }

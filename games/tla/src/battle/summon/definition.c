@@ -27,14 +27,13 @@ s32 Summon_GetEntryFlag1Field(s32 index)
 s32 Summon_IsEntryFlagged(s32 index)
 {
 
-    /* FAKEMATCH: the result lives in r1, as the native allocates it. */
-    register s32 result asm("r1");
+    s32 result;
     u32 flags;
 
     if ((u32)index > 386)
         return 0;
-    flags = Summon_EntryTable[index].sprite_flags;
     result = 0;
+    flags = Summon_EntryTable[index].sprite_flags;
     if (flags << 31)
         result = 1;
     return result;

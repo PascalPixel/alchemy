@@ -737,15 +737,19 @@ play:
             i = 14;
         }
         TorebiIzumi_RevealPrize(Data_02001fd0[i]);
-        /* FAKEMATCH: preserving this pointer copy before the state device
-         * retains message in r9 and state in fp without the prompt's asm.
+        /* FAKEMATCH: preserving this pointer copy retains message in r9
+         * and state in fp without the prompt's asm.
          * Without the copy, those registers swap (280 instructions,
          * 22 differing rows in the international editions). */
         prize_state = state;
 
 #if EDITION_INTERNATIONAL
-        /* FAKEMATCH: the native recomputes state + 1 into r0 after the call. */
-        __asm__("" : "+r"(state));
+        /* FAKEMATCH: the pointer pair keeps the native prize-weight base
+         * recomputation in r0 after the call. Without it, the earlier
+         * roulette base survives in r5 (280 -> 278 instructions, 42 rows
+         * differ in the international editions). */
+        prize_state++;
+        prize_state--;
         {
 
             /* FAKEMATCH: keeps the slot in r1 and state + 1 in r0. */

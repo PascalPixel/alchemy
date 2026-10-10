@@ -18,6 +18,9 @@
 #include "scene_ids.h"
 #include "inventory.h"
 
+// 戦闘開始の種類 (battle/party/party.c と同じ)
+#define Battle_SetStart(mode) do { gGameState.battle_start = (mode); } while (0)
+
 void ConfigureSceneMotionFlags();
 void FieldScene_RunPositionTransferPresentation();
 void FieldScene_RunStepThen10();
@@ -1251,11 +1254,8 @@ void FuneHeya_RunFlagBranchSequence(void)
 
     Engine_EventBegin();
     Battle_ResetEffectCounter();
-    gGameState.battle_start = 3;
-    /* FAKEMATCH: the do/while orders the flag store before this call. */
-    do {
-        Engine_GameFlagClear(0x8f0);
-    } while (0);
+    Battle_SetStart(3);
+    GameFlag_Clear(0x8f0);
     if (Engine_GameFlagIsSet(0x928) == 0) {
         Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 16);
         BattleFx_SetWeightedResult(62, 0);

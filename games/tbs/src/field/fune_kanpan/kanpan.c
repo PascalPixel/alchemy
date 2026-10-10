@@ -17,6 +17,9 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 
+// 戦闘開始の種類 (battle/party/party.c と同じ)
+#define Battle_SetStart(mode) do { gGameState.battle_start = (mode); } while (0)
+
 void FieldScene_CallPairWith10(s32 actor, s32 facing);
 void FuneKanpan_AnnouncePreparationsReady();
 void FuneKanpan_OpenFirstDoor();
@@ -1756,11 +1759,8 @@ void FuneKanpan_RunJumpScene(void)
     Actor_WalkTo(MEARI, 248, 564);
     Engine_EventWait(20);
     gGameState.saved_scene = (s32)&SceneId_FuneHeya;
-    /* FAKEMATCH: the one-pass block keeps the entrance store ahead of the battle start's address; a plain store is scheduled after it. */
-    do {
-        gGameState.saved_entrance = 30;
-    } while (0);
-    gGameState.battle_start = 3;
+    gGameState.saved_entrance = 30;
+    Battle_SetStart(3);
     Party_SetFields1ceAnd1d0((s32)&SceneId_FuneKanpan, 16);
     BattleFx_SetWeightedResult(62, 3);
     Engine_EventEnd();

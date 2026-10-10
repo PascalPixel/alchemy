@@ -20,6 +20,9 @@
 #include "field_service.h"
 #include "text/msg_ids.h"
 
+// 戦闘開始の種類 (battle/party/party.c と同じ)
+#define Battle_SetStart(mode) do { gGameState.battle_start = (mode); } while (0)
+
 #define ObjectDispatch_InitFromTable4WithArgument ((void (*)(s32,struct FieldActor*))ObjectDispatch_InitFromTable4WithArgument)
 
 void Engine_MapCopyCellAttributes();
@@ -574,10 +577,7 @@ void KorosseoKabe_RunStageStart(void)
     Engine_EventWait(10);
     /* FAKEMATCH: base is set at the top of the function, so 2 - rec8 + 1 is not folded into 3 - rec8. */
     BattleFx_SetWeightedResult(72, base - rec8 + 1);
-    /* FAKEMATCH: the do/while keeps the stage flag store ahead of the pool load that follows it. */
-    do {
-        gGameState.battle_start = 3;
-    } while (0);
+    Battle_SetStart(3);
     Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKabe, 4);
     Event_SetDefeatDestination((s32)&SceneId_KorosseoKabe, 5);
     Engine_GameFlagSet(0x11a);

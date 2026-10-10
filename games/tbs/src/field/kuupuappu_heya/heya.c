@@ -22,6 +22,9 @@
 #include "call.h"
 #include "event_runtime.h"
 
+// 戦闘開始の種類 (battle/party/party.c と同じ)
+#define Battle_SetStart(mode) do { gGameState.battle_start = (mode); } while (0)
+
 void FieldScene_ConfigurePairedActors(void);
 void FieldScene_RunLateSequence();
 void FieldScene_RunSplitTripleSteps();
@@ -1073,7 +1076,6 @@ void Scene_JoinRodSearch(void)
 void FieldScene_RunVaultClosingSequence(void)
 {
     s32 base;
-    u8 *state;
 
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 52428, 26214);
@@ -1250,11 +1252,7 @@ void FieldScene_RunVaultClosingSequence(void)
     base = (s32)&SceneId_KuupuappuHeya;
     Party_SetFields1ceAnd1d0(base, 17);
     Event_SetDefeatDestination(base, 16);
-    state = (u8 *)&gGameState;
-    /* FAKEMATCH: the do-while puts the state's address in a block of its own, so it is loaded ahead of the byte's offset. */
-    do {
-        state[0x22b] = 3;
-    } while (0);
+    Battle_SetStart(3);
     BattleFx_SetWeightedResult(12, 5);
     Engine_EventEnd();
 }
@@ -1943,7 +1941,6 @@ void FieldScene_RunLateSequence(void)
 
 void KuupuappuHeya_RunVaultEvent(void)
 {
-    u8 *state;
 
     Actor_SetPosition(10, 0x3180000, 0x1a00000);
     Actor_SetPosition(11, 0x3200000, 0x1900000);
@@ -1988,12 +1985,8 @@ void KuupuappuHeya_RunVaultEvent(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_KuupuappuHeya, 17);
     Event_SetDefeatDestination((s32)&SceneId_KuupuappuHeya, 16);
-    state = (u8 *)&gGameState;
-    /* FAKEMATCH: the do-while puts the state's address in a block of its own, so it is loaded ahead of the byte's offset. */
-    do {
-        state[0x22b] = 3;
-        BattleFx_SetWeightedResult(12, 5);
-    } while (0);
+    Battle_SetStart(3);
+    BattleFx_SetWeightedResult(12, 5);
 }
 
 s32 KuupuappuHeya_GetIwanVenusDjinnCount(void)

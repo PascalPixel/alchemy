@@ -17,6 +17,9 @@
 #include "flag_ids.h"
 #include "text/msg_ids.h"
 
+// 戦闘開始の種類 (battle/party/party.c と同じ)
+#define Battle_SetStart(mode) do { gGameState.battle_start = (mode); } while (0)
+
 u8 *ColossoLogRollingStage_GetScriptData(void)
 {
     return (u8 *)gKorosseoMarutaEntrances;
@@ -679,10 +682,7 @@ void KorosseoMaruta_RunStageStart(void)
     Engine_ActorSetAnimation(8, 9);
     Engine_EventWait(10);
     BattleFx_SetWeightedResult(72, last - place + 1);
-    /* FAKEMATCH: the do/while keeps the stage flag store ahead of the scene load that follows it. */
-    do {
-        gGameState.battle_start = 3;
-    } while (0);
+    Battle_SetStart(3);
     Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoMaruta, 4);
     Event_SetDefeatDestination((s32)&SceneId_KorosseoMaruta, 5);
     Engine_GameFlagSet(0x11a);

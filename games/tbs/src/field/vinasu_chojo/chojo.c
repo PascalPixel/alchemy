@@ -29,6 +29,9 @@
 #include "io_reg.h"
 #include "window.h"
 
+// 戦闘開始の種類 (battle/party/party.c と同じ)
+#define Battle_SetStart(mode) do { gGameState.battle_start = (mode); } while (0)
+
 void VinasuChojo_CleanupSceneObjects();
 void VinasuChojo_RunTransitionStep();
 void VinasuChojo_ShowPartyMember();
@@ -1099,10 +1102,7 @@ void Scene_RunActorEntrySequence(void)
     Engine_ActorEnableActionCallback(ACTOR_FIRST_OF_PAIR, SceneAction_EntryPair);
     Engine_ActorEnableActionCallback(21, SceneAction_EntryGroup);
     Object_SetActionCallbackAndRefreshById(6, SceneAction_EntryGroup);
-    /* FAKEMATCH: a plain store is scheduled into the last action call's argument setup; the one-pass block keeps it after the call. Measured 2026-10-04. */
-    do {
-        gGameState.battle_start = 3;
-    } while (0);
+    Battle_SetStart(3);
     {
         s32 actor = (s32)&SceneId_VinasuChojo;
 
@@ -1787,10 +1787,7 @@ void Scene_RunPairedActorEffectSequence(void)
     Event_Wait(20);
     VinasuChojo_FlashScreen();
     Event_Wait(20);
-    /* FAKEMATCH: the one-pass block keeps the scene id's load after this store, where the reference has it. */
-    do {
-        gGameState.battle_start = 3;
-    } while (0);
+    Battle_SetStart(3);
     Party_SetFields1ceAnd1d0((s32)&SceneId_VinasuChojo, 3);
     Event_SetDefeatDestination((s32)&SceneId_VinasuChojo, 9);
     BattleFx_SetWeightedResult(98, 0);

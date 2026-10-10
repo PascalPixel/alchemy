@@ -3,13 +3,13 @@
 #include "glyph.h"
 #include "text_font.h"
 
-/* ARM draft: JA differs 2; EN differs 2; DE/ES/FR/IT differ 10. The tail matches.
+/* ARM draft: JA differs 0; EN differs 2; DE/ES/FR/IT differ 10. The tail matches.
    Registers and spill offsets match. Remaining differences:
-   JA: STR r3,[sp,#12] precedes ADD r8,r8,#1; native reverses that pair.
-       Sched2's loop boundary forces that order. Replacing the one-pass
-       block with an if removes the boundary, but the store's anti-dependence
-       on SUB r3,r1,#222 then produces the same swap. The width constant
-       needs a separate lifetime from its spill while retaining r3.
+   JA: all 193 instructions match. A pair-first seed initially differed 18,
+       but placed ADD r8,r8,#1 before STR r3,[sp,#12]. Keeping that order
+       while changing the redundant height test closed the other differences.
+       Temporarily linked through GAME_ARM_SOURCES: compare-editions passed
+       all twelve ROMs, including the Japanese literal pool and full extent.
    EN: MOV r7,r3 must precede SUB sp,sp,#44. Prologue threading inserts SUB
        first; sched2 gives both priority 5 through PUSH and keeps that order.
        A source form must change this dependency or the copy's RTL form.
@@ -184,18 +184,25 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 			   comparison places the color spill after CMP (JA differ 6 -> 4);
 			   reload CSE removes the repeated assignment in the accent path. */
 			raw_color = 0x1111 + (stride >> 16);
-			font_width = 8;
-			/* FAKEMATCH: both high halves are zero. Combine removes the width
-			   addition but retains an unused height test through reload; flow2
-			   then removes it. Its temporary reload preserves r3 for width 8
-			   and r0 for width 2 (JA differ 8 -> 2 after delaying the height spill). */
-			do
 			{
-				if (stride & 0xffff0000U)
-					break;
-				font_width += width & 0xffff0000U;
-			} while (0);
-			x++;
+				u32 raw_width;
+
+				/* FAKEMATCH: stride is a zero-extended height, so the test is
+				   false. The separate width copy and x boundary retain ADD
+				   before its spill in sched2 (JA differ 2 -> 0). Testing
+				   stride >> 16 instead leaves two instructions and differs 18. */
+				raw_width = 8;
+				do
+				{
+					if ((u16)stride != stride)
+						raw_width += width & 0xffff0000U;
+				} while (0);
+				do
+				{
+					x++;
+				} while (0);
+				font_width = raw_width;
+			}
 			do
 			{
 				if (character - 222 <= 1)

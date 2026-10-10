@@ -137,7 +137,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0x2000);
 	*(volatile u16 *)0x04000020 = 0x100;
-	if (mode == 1)
+	/* FAKEMATCH: test through direction so CSE retains the mode reload
+	 * in this arm. Testing mode directly replaces ldr r4,[sp,#76] with
+	 * movs r4,#1 (1532 instructions, two differing rows). */
+	direction = mode;
+	if (direction == 1)
 	{
 		struct MotionObject *object = GetBattleObjectSlotFar(work->effect->actor)->object;
 
@@ -145,8 +149,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 		object->vertical_motion_strength = 0x91eb;
 		ObjectGroup_UpdateMembers(work->effect->actor, -1, 2, -1, 0);
 		AudioCommand_PlayFar(145);
-		/* FAKEMATCH: cse forgets mode == 1 from the test; the arm reloads mode (ldr r4, [sp, #76]) for movs r4, #1 (2 -> 0). */
-		asm("" : "+rm"(mode));
 		direction = work->effect->side == 1 ? mode : -1;
 	}
 	else

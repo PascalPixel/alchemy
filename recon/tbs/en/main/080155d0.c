@@ -3,9 +3,12 @@
 #include "glyph.h"
 #include "text_font.h"
 
-/* ARM draft: JA/EN differ 4; DE/ES/FR/IT differ 10. The tail matches.
-   Remaining sched2 ordering, with registers and spill offsets already correct:
-   JA: height spill after the character CMP; width spill after x++.
+/* ARM draft: JA differs 3; EN differs 4; DE/ES/FR/IT differ 10. The tail matches.
+   Registers and spill offsets match. Remaining differences:
+   JA: one extra early height spill; width spill after x++.
+       Reload cannot delete the early spill across the synthetic branch;
+       its branch and label must disappear earlier without merging the load
+       and delayed copy. The width spill is a sched2 ordering difference.
    EN: y copy before SUB sp; x copy immediately after the font load.
    DE/ES/FR/IT: coordinate copies before SUB sp and window spill; height spill
        after the font-selection CMP; source spill after color1's ADD;
@@ -102,6 +105,19 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 	   (EN differ 12 -> 8). */
 	window = input_window;
 	stride = input_window->height;
+#elif defined(TBS_EDITION_JA)
+	/* FAKEMATCH: keep the original height spill and a normalized copy after
+	   an early character comparison. The high half is zero, so combine
+	   removes the added arithmetic. JA differ 4 -> 3, with the first store
+	   still redundant; directly delaying the spill changes the width registers. */
+	do
+	{
+		stride = window->height;
+	} while (0);
+	width = (stride << 16) >> 16;
+	if (character > 255)
+		width = (u16)(stride + (stride >> 16));
+	stride = (width << 16) >> 16;
 #else
 	/* FAKEMATCH: the one-pass height read preserves the load's scheduling boundary. */
 	do
@@ -304,7 +320,11 @@ font_done:
 			return font_width;
 #endif
 		}
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+#if defined(TBS_EDITION_JA)
+		/* FAKEMATCH: fold this difference in combine, after GCSE has run;
+		   otherwise GCSE hoists the accent index (JA differ 3 -> 29). */
+		mark = 0U - (222U - character);
+#elif defined(TBS_EDITION_EN)
 		mark = character - 222;
 #endif
 		rows = (const u16 *)((const u8 *)UiText_Glyphs + (character - 32) * 26);

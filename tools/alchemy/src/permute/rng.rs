@@ -8,6 +8,31 @@ pub struct Rng {
 
 impl Rng {
     pub fn new(seed: u64) -> Self {
+        let key = [seed as u32, (seed >> 32) as u32];
+        Self::from_words(&key[..if key[1] == 0 { 1 } else { 2 }])
+    }
+
+    /// Seed from the integer's absolute value, in little-endian
+    /// 32-bit limbs. Decimal parsing avoids imposing a machine integer limit.
+    pub fn from_decimal(seed: &str) -> Result<Self, String> {
+        let digits = seed.trim().strip_prefix(['-', '+']).unwrap_or(seed.trim());
+        if digits.is_empty() || !digits.bytes().all(|b| b.is_ascii_digit()) {
+            return Err("expected a signed decimal integer".into());
+        }
+        let mut key = vec![0u32];
+        for digit in digits.bytes() {
+            let mut carry = u64::from(digit - b'0');
+            for word in &mut key {
+                carry += u64::from(*word) * 10;
+                *word = carry as u32;
+                carry >>= 32;
+            }
+            if carry != 0 { key.push(carry as u32); }
+        }
+        Ok(Self::from_words(&key))
+    }
+
+    fn from_words(key: &[u32]) -> Self {
         let mut rng = Self { words: [0; 624], index: 624 };
         rng.words[0] = 19_650_218;
         for i in 1..624 {
@@ -15,10 +40,8 @@ impl Rng {
                 .wrapping_mul(rng.words[i - 1] ^ (rng.words[i - 1] >> 30))
                 .wrapping_add(i as u32);
         }
-        let key = [seed as u32, (seed >> 32) as u32];
-        let length = if key[1] == 0 { 1 } else { 2 };
         let (mut i, mut j) = (1, 0);
-        for _ in 0..624 {
+        for _ in 0..624.max(key.len()) {
             rng.words[i] = (rng.words[i] ^ (rng.words[i - 1] ^ (rng.words[i - 1] >> 30)).wrapping_mul(1_664_525))
                 .wrapping_add(key[j])
                 .wrapping_add(j as u32);
@@ -28,7 +51,7 @@ impl Rng {
                 rng.words[0] = rng.words[623];
                 i = 1;
             }
-            if j == length {
+            if j == key.len() {
                 j = 0;
             }
         }
@@ -113,6 +136,21 @@ impl Rng {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn arbitrary_signed_integer_seeds_match_sampling() {
+        for row in include_str!("c/fixtures/rng-integers.tsv").lines() {
+            let mut columns = row.split('\t');
+            let seed = columns.next().unwrap();
+            let mut rng = Rng::from_decimal(seed).unwrap();
+            for value in columns { assert_eq!(rng.random(), value.parse::<f64>().unwrap()); }
+        }
+        for invalid in ["", "-", "+", "1.0", "0x10", "--1", "1 2"] {
+            assert!(Rng::from_decimal(invalid).is_err(), "{invalid}");
+        }
+        assert_eq!(Rng::from_decimal(" +0001 ").unwrap(), Rng::new(1));
+        assert_eq!(Rng::from_decimal("-0").unwrap(), Rng::new(0));
+    }
 
     #[test]
     fn sampling_ordered_pair_sampling() {

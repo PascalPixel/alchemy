@@ -1058,6 +1058,7 @@ mod tests {
 
     #[test]
     fn successive_compatibility_mutations_match_source_hashes_retries_and_rng() {
+        check_walks(include_str!("c/fixtures/mutations-integer-seeds.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv"), include_str!("c/fixtures/mutations-types-assignments.tsv"), include_str!("c/fixtures/mutations-lifetime.tsv"), include_str!("c/fixtures/mutations-final.tsv")], true);
         check_walks(include_str!("c/fixtures/mutations-final-walks.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv"), include_str!("c/fixtures/mutations-types-assignments.tsv"), include_str!("c/fixtures/mutations-lifetime.tsv"), include_str!("c/fixtures/mutations-final.tsv")], true);
         check_walks(include_str!("c/fixtures/mutations-walks.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv")], false);
         check_walks(include_str!("c/fixtures/mutations-types-walks.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv"), include_str!("c/fixtures/mutations-types-assignments.tsv")], true);
@@ -1072,7 +1073,7 @@ mod tests {
         let mut rng = Rng::new(0);
         for row in walks.lines() {
             let c: Vec<_> = row.split('\t').collect();
-            if c[2] == "0" { unit = parsed(fixture_source(c[0])); rng = Rng::new(c[1].parse().unwrap()); }
+            if c[2] == "0" { unit = parsed(fixture_source(c[0])); rng = Rng::from_decimal(c[1]).unwrap(); }
             let before = (methods.len() == Kind::GCC.len()).then(|| (unit.clone(), rng.clone()));
             let sites = Sites::new(&unit, "target", &mut rng).unwrap();
             let mut attempts = 0;

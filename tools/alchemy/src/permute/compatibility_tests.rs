@@ -4,6 +4,34 @@ use super::tests::test_problem;
 use super::*;
 
 #[test]
+fn forced_randomizer_seed_search_reaches_compatibility_candidate() {
+    crate::compiler::routing::prefer_installed_binutils();
+    let work = tempfile::tempdir().unwrap();
+    let draft = work.path().join("draft/08000000.c");
+    std::fs::create_dir_all(draft.parent().unwrap()).unwrap();
+    let source = include_str!("c/fixtures/mutations-flow.c");
+    std::fs::write(&draft, source).unwrap();
+    let first: Vec<_> = include_str!("c/fixtures/mutations-integer-seeds.tsv").lines().next().unwrap().split('\t').collect();
+    let mut problem = test_problem(&draft, source, vec![], Some("target"));
+    problem.symbol = Some("target".into());
+    let reference = Job::new(&problem, &work.path().join("reference")).unwrap();
+    reference.compile(&first[5].replace("\\n", "\n")).unwrap();
+    problem.listing = crate::diff::disassemble(&reference.object, Some("target")).unwrap();
+    problem.listing_rows = Some(score::disassemble(&reference.object, Some("target")).unwrap());
+    let arguments = [draft.to_str().unwrap(), "--function", "target", "--jobs", "1", "--iterations", "1", "--seed", "987", "--rng-seed", first[1]].map(str::to_string);
+    let options = parse_options(&arguments).unwrap();
+    let mut state = perm::expand(&problem.nodes, None).unwrap();
+    prepare(&reference, &mut state, "target").unwrap();
+    let state = problem.state(state);
+    let text = problem.source(&state);
+    let base = Found { score: problem.evaluate(&reference, &text).unwrap(), unnatural: 0, text, steps: vec![], expanded: state.expanded.clone(), job: 0, iteration: 0 };
+    assert!(base.score.weighted > 0);
+    let found = search(&problem, &state, &base, true, &options, None, &work.path().join("run"), Instant::now()).unwrap();
+    assert_eq!((found[0].score.weighted, found[0].score.differ), (0, 0));
+    assert_eq!(found[0].text, first[5].replace("\\n", "\n"));
+}
+
+#[test]
 fn compatibility_shared_declaration_tests() {
     for row in include_str!("c/fixtures/shared-declarations.tsv").lines() {
         let c: Vec<_> = row.split('\t').collect();
@@ -54,6 +82,7 @@ fn compatibility_search_tests_compile_reach_the_target_and_keep_threaded_jobs_is
                     minutes: 0.0,
                     jobs: c[2].parse().unwrap(),
                     seed: 1,
+                    rng_seed: None,
                     function: Some(c[1].into()),
                     arm: false,
                     iterations: Some(1000),

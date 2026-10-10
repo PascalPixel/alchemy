@@ -112,6 +112,7 @@ struct Options {
     minutes: f64,
     jobs: usize,
     seed: u64,
+    rng_seed: Option<String>,
     function: Option<String>,
     iterations: Option<u64>,
     arm: bool,
@@ -129,6 +130,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut minutes = 10.0_f64;
     let mut jobs = std::thread::available_parallelism().map_or(1, |n| n.get().saturating_sub(2).max(1));
     let mut seed = 1;
+    let mut rng_seed = None;
     let mut function = None;
     let mut iterations = None;
     let mut arm = false;
@@ -156,6 +158,12 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
             "--seed" => {
                 index += 1;
                 seed = value(index)?.parse().map_err(|_| format!("--seed: a number\n{USAGE}"))?;
+            }
+            "--rng-seed" => {
+                index += 1;
+                let text = value(index)?;
+                Rng::from_decimal(&text).map_err(|e| format!("--rng-seed: {e}\n{USAGE}"))?;
+                rng_seed = Some(text);
             }
             "--iterations" => {
                 index += 1;
@@ -211,7 +219,7 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         None => decomp_target(Some(&format!("{game}-en")))?,
     };
     if !minutes.is_finite() || minutes < 0.0 { return Err("--minutes must be finite and nonnegative".into()); }
-    Ok(Options { draft, addresses, game, target, minutes, jobs, seed, function, iterations, arm, heat, prefix, score_options, keep_prob, stop_on_zero })
+    Ok(Options { draft, addresses, game, target, minutes, jobs, seed, rng_seed, function, iterations, arm, heat, prefix, score_options, keep_prob, stop_on_zero })
 }
 
 /// One job's scratch: its candidate file and alchemy diff's steps for it.
@@ -650,7 +658,10 @@ fn search(
                         return;
                     }
                 };
-                let mut rng = Rng::new(options.seed.wrapping_mul(1_000_003).wrapping_add(job_index as u64));
+                let mut rng = match &options.rng_seed {
+                    Some(seed) => Rng::from_decimal(seed).expect("validated randomizer seed"),
+                    None => Rng::new(options.seed.wrapping_mul(1_000_003).wrapping_add(job_index as u64)),
+                };
                 let mut env = base_state.parsed.as_ref().map(|(_, _, function)| Env::new(&problem.unit, function));
                 // Keyed by a hash of the text: a long run sees many thousands.
                 let mut cache: HashMap<SourceHash, Option<Score>> = HashMap::new();
@@ -664,12 +675,22 @@ fn search(
                     && options.iterations.is_none_or(|limit| iteration < limit)
                     && deadline.is_none_or(|deadline| Instant::now() < deadline)
                 {
-                    let Some(seed) = seeds.lock().unwrap().next() else { break };
+                    let seed = if options.rng_seed.is_some() {
+                        if !random && iteration != 0 { break; }
+                        0
+                    } else {
+                        let Some(seed) = seeds.lock().unwrap().next() else { break };
+                        seed
+                    };
                     iteration += 1;
                     // 0.6 regardless of whether its score improved. A failed
                     // compile or a zero score starts a fresh candidate.
-                    let keep = random && last_compiled && current.1.score.weighted != 0
-                        && rng.random() < options.keep_prob;
+                    let keep = if options.rng_seed.is_some() {
+                        iteration > 1
+                    } else {
+                        random && last_compiled && current.1.score.weighted != 0
+                            && rng.random() < options.keep_prob
+                    };
                     let mut state = if !keep {
                         match perm::expand_seed(&problem.nodes, seed) {
                             Ok(mut expanded) => {
@@ -715,6 +736,8 @@ fn search(
                         }
                     };
                     last_compiled = result.is_some();
+                    // compilation fails. Score storage only tracks successes.
+                    if options.rng_seed.is_some() { current.0 = state.clone(); }
                     let Some(score) = result else { continue };
                     let candidate = Found {
                         unnatural: problem.unnatural(&state),
@@ -1206,6 +1229,9 @@ mod tests {
         let parsed = parse_options(&args(&["recon/tbs/en/main/080cbc0c.c"])).unwrap();
         assert_eq!((parsed.addresses.as_slice(), parsed.minutes, parsed.seed), (["080cbc0c".to_string()].as_slice(), 10.0, 1));
         assert!(parsed.jobs >= 1);
+        assert!(parsed.rng_seed.is_none());
+        assert_eq!(parse_options(&args(&["08000000.c", "--rng-seed", "-99999999999999999999"])).unwrap().rng_seed.as_deref(), Some("-99999999999999999999"));
+        assert!(parse_options(&args(&["08000000.c", "--rng-seed", "1,2"])).is_err());
         assert_eq!(parsed.score_options.algorithm, score::Algorithm::Difflib);
         assert_eq!(parse_options(&args(&["08000000.c", "--algorithm", "levenshtein"])).unwrap().score_options.algorithm, score::Algorithm::Levenshtein);
         assert!(parse_options(&args(&["08000000.c", "--algorithm", "lcs"])).is_err());
@@ -1560,6 +1586,7 @@ mod tests {
             minutes: 0.0,
             jobs: 1,
             seed: 1,
+            rng_seed: None,
             function: function.map(str::to_string),
             arm: false,
             iterations: Some(2),
@@ -1782,6 +1809,7 @@ mod tests {
             minutes: 0.0,
             jobs: 2,
             seed: 1,
+            rng_seed: None,
             function: None,
             arm: false,
             iterations: Some(8),

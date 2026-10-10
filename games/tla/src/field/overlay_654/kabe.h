@@ -227,8 +227,8 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 
 static inline void Kabe_TaskAdd(void (*callback)(void), s32 priority)
 {
-    /* FAKEMATCH: the native builds the priority before it loads the callback. */
-    register s32 p __asm__("r1") = priority;
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    s32 p = priority;
 
     Scheduler_AddOrUpdateCallback(callback, p);
 }

@@ -145,17 +145,17 @@ u8 *SceneData_GetMessageTable(void)
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     const struct ScenePlacement *table;
-    /* FAKEMATCH: a temporary holding the first entrance keeps the compiler from rewriting the test as greater than 14. */
-    s32 first = 15;
 
-    if (gGameState.entrance <= 17) {
-        if (gGameState.entrance >= first) {
-            table = ((const struct ScenePlacement *)KuupuappuHeya_SceneTableB);
-            goto prepare;
-        }
+    switch (gGameState.entrance) {
+    case 15:
+    case 16:
+    case 17:
+        table = ((const struct ScenePlacement *)KuupuappuHeya_SceneTableB);
+        break;
+    default:
+        table = ((const struct ScenePlacement *)KuupuappuHeya_SceneTableA);
+        break;
     }
-    table = ((const struct ScenePlacement *)KuupuappuHeya_SceneTableA);
-prepare:
     FieldScene_PrepareActors(table);
     return table;
 }
@@ -349,13 +349,11 @@ void SceneDialogue_ShowEmptyChest(void)
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-    /* FAKEMATCH: a temporary holding the first entrance keeps the compiler from rewriting the test as greater than 14. */
-    s32 first = 15;
-
-    if (gGameState.entrance <= 17) {
-        if (gGameState.entrance >= first) {
-            return gKuupuappuHeyaEventsEntrances15To17;
-        }
+    switch (gGameState.entrance) {
+    case 15:
+    case 16:
+    case 17:
+        return gKuupuappuHeyaEventsEntrances15To17;
     }
     if (Engine_GameFlagIsSet(0x855) != 0) {
         return gKuupuappuHeyaEventsFlag855;
@@ -2973,16 +2971,10 @@ move_second:
     }
 }
 
-struct Half {
-    u16 v;
-};
-
 void KuupuappuHeya_StartActorStops(void)
 {
     u32 i;
     s32 record;
-    /* FAKEMATCH: a one-halfword struct keeps the zero a halfword pool constant. */
-    struct Half zero;
 
     Engine_EventBegin();
     Camera_MoveTo(0xa80000, -1, 0x2900000, 1);
@@ -3006,12 +2998,7 @@ void KuupuappuHeya_StartActorStops(void)
     Actor_SetSpeed(2, 0xc000, 0x6000);
     Actor_SetSpeed(24, 0x10000, 0x13333);
     Actor_SetSpeed(25, 0x18000, 0x18000);
-    {
-        u16 *timer = &KuupuappuHeya_StopTimer;
-
-        zero.v = 0;
-        *timer = zero.v;
-    }
+    KuupuappuHeya_StopTimer = 0;
     FieldScheduler_AddOrUpdateCallback((s32)KuupuappuHeya_UpdateActorStops, 0xc94);
     GameFlag_Clear(0x1ff);
     Engine_EventEnd();

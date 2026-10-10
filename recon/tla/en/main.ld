@@ -256,7 +256,7 @@
         "*/recon/tla/raw/08021824.o"(.text)
         "*/recon/tla/raw/08021826.o"(.text)
         "*/recon/tla/raw/08021918.o"(.text)
-        "*/games/common/src/system/resource/decompress_lz.o"(.text)
+        "*/games/tla/src/system/resource/lz.o"(.text)
         "*/recon/tla/raw/080219cc.o"(.text)
         "*/recon/tla/raw/08021a84.o"(.text)
         "*/recon/tla/raw/08022010.o"(.text)

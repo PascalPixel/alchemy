@@ -232,7 +232,7 @@
     "*/games/tla/src/graphics/tile/copy_strided.o"(.text .rodata .data .padding)
     "*/recon/tla/fr/rom.o"(.rom.00021824)
     "*/recon/tla/fr/rom.o"(.rom.00021918)
-    "*/games/common/src/system/resource/decompress_lz.o"(.text)
+    "*/games/tla/src/system/resource/lz.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000219cc)
     "*/recon/tla/fr/rom.o"(.rom.00022010)
     "*/games/tla/src/field/common/object/child_values.o"(.text)

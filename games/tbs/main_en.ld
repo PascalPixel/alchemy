@@ -133,7 +133,6 @@
         "*/games/tbs/src/graphics/tile/copy_strided.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/common/object/update.o"(.text)
         "*/games/tbs/src/system/updfar.o"(.text)
-        "*/games/common/src/system/resource/decompress_lz.o"(.text)
         "*/games/tbs/src/system/resource/animate.o"(.text)
         "*/games/common/src/system/resource/object.o"(.text)
         "*/games/common/src/system/resource/resobj.o"(.text)

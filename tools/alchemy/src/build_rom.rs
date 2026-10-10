@@ -80,16 +80,6 @@ pub(crate) struct Linked {
     pub image: PathBuf,
 }
 
-pub(crate) fn script_objects(script: &str) -> Vec<String> {
-    let pattern = regex::Regex::new(r#""\*/([^"*:]+)\.o""#).expect("static pattern");
-    let mut seen = BTreeSet::new();
-    pattern
-        .captures_iter(script)
-        .map(|capture| capture[1].to_owned())
-        .filter(|path| seen.insert(path.clone()))
-        .collect()
-}
-
 /// The extensions an object's source may take, by the case rule (S3): an
 /// object named in capitals comes from a preprocessed assembly file (NAME.S),
 /// any other from C, plain assembly or MIDI. The name decides, not the file
@@ -163,7 +153,11 @@ fn link_indexed(
 ) -> Result<Linked, String> {
     let text = fs::read_to_string(root.join(script))
         .map_err(|error| format!("{}: {error}", script.display()))?;
-    let sources = script_objects(&text)
+    // The script is the caller's: an edition's own, a modern build's or one
+    // given with --script, so its text says what this link takes.
+    let statements = crate::edition::statements(&text)
+        .map_err(|error| format!("{}: {error}", script.display()))?;
+    let sources = crate::edition::built_objects(&statements)
         .iter()
         .map(|object| source_for(root, object))
         .collect::<Result<Vec<_>, _>>()?;
@@ -1521,11 +1515,11 @@ fn build_overlay_streams(
     let mut sources = Vec::new();
     for id in ids {
         let script = target.overlay_script(id);
-        let text = fs::read_to_string(root.join(&script))
-            .map_err(|error| format!("{}: {error}", script.display()))?;
+        let statements =
+            crate::edition::linked_statements(root, target, crate::edition::Image::Overlay(id))?;
         let own = format!("resource_{id}_overlay");
         let mut objects = Vec::new();
-        for object in script_objects(&text)
+        for object in crate::edition::built_objects(&statements)
             .into_iter()
             .filter(|object| *object != own)
         {

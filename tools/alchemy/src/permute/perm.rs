@@ -98,8 +98,8 @@ impl Expanded {
         visit(unit, &self.ast_swaps);
     }
 
-    /// The text with every placeholder replaced by its code.
-    pub fn restore(&self, text: &str) -> String {
+    /// Return preprocessor-preserved markers to the body parser's comments.
+    pub fn comment_markers(&self, text: &str) -> String {
         let mut out = text.to_string();
         // Both printers use the same markers; the full tree prints pragmas.
         for (index, _) in self.ignored.iter().enumerate() {
@@ -110,6 +110,12 @@ impl Expanded {
                 out = out.replace(&format!("#pragma _permuter {kind} {edge}"), &format!("/* _permuter {kind} {edge} */"));
             }
         }
+        out
+    }
+
+    /// The text with every placeholder replaced by its code.
+    pub fn restore(&self, text: &str) -> String {
+        let mut out = self.comment_markers(text);
         for (placeholder, code) in &self.ignored {
             out = out.replace(placeholder, code);
             let call = placeholder.trim_end_matches(';');

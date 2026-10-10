@@ -531,6 +531,27 @@ fn prepare(job: &Job, expanded: &mut Expanded, target: &str) -> Result<(), Strin
     Ok(())
 }
 
+/// The body engine also needs the selected edition's translation unit.
+/// Keep its source scopes and permutation markers; strip cpp line markers
+/// so heat and printed source use the same line numbers.
+fn heat_source(expanded: &Expanded, preprocessed: &str) -> String {
+    let mut text = String::new();
+    for line in expanded.comment_markers(preprocessed).lines() {
+        let directive = line.trim_start().strip_prefix('#').map(str::trim_start);
+        if !directive.is_some_and(|s| s.starts_with("ident") || s.starts_with("line") || s.starts_with(|c: char| c.is_ascii_digit())) {
+            text.push_str(line);
+        }
+        text.push('\n');
+    }
+    text
+}
+
+fn prepare_heat(job: &Job, expanded: &mut Expanded) -> Result<(), String> {
+    std::fs::write(&job.candidate, expanded.preprocess_text()).map_err(|e| e.to_string())?;
+    expanded.text = heat_source(expanded, &job.preprocess()?);
+    Ok(())
+}
+
 /// Set by the first SIGINT or SIGTERM: the search and the minimizer stop
 /// where they stand, the best so far is written and the scratch removed.
 /// A second signal ends the process at once; the next run sweeps its scratch.
@@ -592,6 +613,8 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
     if !options.heat {
         original.unit = Some(Arc::new(full_unit));
         problem.symbol = Some(target);
+    } else {
+        original.text = heat_source(&original, &preprocessed);
     }
     let base_state = problem.state(original);
     let base_text = problem.source(&base_state);
@@ -652,7 +675,7 @@ fn execute(mut problem: Problem, options: &Options, scaffold: Option<String>, ou
 /// with -g, its rows charged to lines as `alchemy diff --heat` charges them.
 fn aim_at(problem: &Problem, setup: &Job, base_state: &State, base_text: &str) -> Result<Option<aim::Aim>, String> {
     let Some((_, _, function)) = &base_state.parsed else { return Ok(None) };
-    let printed = function.print();
+    let printed = base_state.expanded.restore(&function.print());
     let Some(at) = base_text.find(printed.trim_end()) else {
         println!("heat: the printed function is not in the compiled text; rewrites are not aimed");
         return Ok(None);
@@ -756,11 +779,16 @@ fn search(
                     let mut state = if !keep {
                         match perm::expand_seed(&problem.nodes, seed) {
                             Ok(mut expanded) => {
-                                if base_state.full.is_some() {
+                                if base_state.full.is_some() || options.heat {
                                     let key = expanded.key();
                                     if let Some(expanded) = prepared.get(&key) { problem.state_of(expanded.clone()) }
                                     else {
-                                        if prepare(&job, &mut expanded, problem.function.as_deref().unwrap()).is_err() { last_compiled = false; continue; }
+                                        let result = if options.heat {
+                                            prepare_heat(&job, &mut expanded)
+                                        } else {
+                                            prepare(&job, &mut expanded, problem.function.as_deref().unwrap())
+                                        };
+                                        if result.is_err() { last_compiled = false; continue; }
                                         let expanded = Arc::new(expanded);
                                         if prepared.len() < 128 { prepared.insert(key, expanded.clone()); }
                                         problem.state_of(expanded)
@@ -1622,6 +1650,36 @@ mod tests {
             assert!(!block_items.iter().any(|n| matches!(n, c::Node::Compound { .. })), "line swap must not introduce a declaration scope");
         }
         assert_ne!(first.unit, second.unit);
+    }
+
+    #[test]
+    fn heat_expansions_preprocess_edition_branches_and_keep_regions() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let source = "#include \"edition.h\"\n#if EDITION_INTERNATIONAL\nextern int selected;\n#endif\nint F(int x) {\n#if EDITION_INTERNATIONAL\nx += selected;\n#else\nx += unavailable;\n#endif\nPERM_RANDOMIZE(x += PERM_GENERAL(3, 7);)\nPERM_IGNORE(x *= 2;)\nreturn x;\n}\n";
+        let work = tempfile::tempdir().unwrap();
+        let mut problem = test_problem(&work.path().join("draft/08000000.c"), source, vec![], Some("F"));
+        problem.symbol = Some("F".into());
+        let job = Job::new(&problem, &work.path().join("job")).unwrap();
+        let mut compiled = Vec::new();
+        for seed in 0..2 {
+            let mut expanded = perm::expand_seed(&problem.nodes, seed).unwrap();
+            prepare_heat(&job, &mut expanded).unwrap();
+            assert!(expanded.text.contains("/* _permuter randomizer start */"));
+            assert!(!expanded.text.contains("unavailable"));
+            assert!(!expanded.text.lines().any(|line| line.trim_start().starts_with("# ")));
+            problem.unit = scan_unit(&expanded.text).unwrap();
+            let state = problem.state(expanded);
+            assert!(state.parsed.is_some() && state.full.is_none());
+            let text = problem.source(&state);
+            assert!(!text.contains("_permuter") && text.contains("x *= 2;"));
+            job.compile(&text).unwrap();
+            compiled.push(crate::diff::disassemble(&job.object, Some("F")).unwrap());
+            if seed == 1 {
+                problem.listing = compiled[0].clone();
+                assert!(aim_at(&problem, &job, &state, &text).unwrap().is_some());
+            }
+        }
+        assert_ne!(compiled[0], compiled[1]);
     }
 
     #[test]

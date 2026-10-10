@@ -138,8 +138,7 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen)
 {
     u32 cursor;
 
-    /* FAKEMATCH: top and cursor are tested together as one word. */
-    if (*(u32 *)&screen->top == 0) {
+    if (screen->top == 0 && screen->cursor_index == 0) {
         return;
     }
     Menu_ReloadNodeResource(screen, screen->cursor_index);
@@ -166,7 +165,6 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen)
 
 void Menu_StepRight(struct SelectionScreen *state)
 {
-    /* FAKEMATCH: the row targets are read as plain halfwords, not struct members, so GCC reloads them after every node store as the reference does. */
     struct SelectionNode *node;
     u16 *ids;
     s32 y;
@@ -184,12 +182,12 @@ void Menu_StepRight(struct SelectionScreen *state)
             while (node->next != NULL) {
                 node->target_x = state->base_x;
                 node->target_y = state->base_y;
-                node->dx = 0xfff4;
+                node->dx = -12;
                 node = node->next;
             }
             node->target_x = state->base_x;
             node->target_y = state->base_y;
-            node->dx = 0xfff4;
+            node->dx = -12;
             while (node->target_x != node->x)
                 WaitFrames(1);
             node = state->head;
@@ -235,7 +233,6 @@ void Menu_StepRight(struct SelectionScreen *state)
 void Menu_StepLeft(struct SelectionScreen *state)
 {
     struct SelectionNode *node;
-    u16 *ids;
     s32 i;
 
     Menu_ReloadNodeResource(state, state->cursor_index);
@@ -273,20 +270,16 @@ void Menu_StepLeft(struct SelectionScreen *state)
             node = state->head;
             state->top = i;
             state->cursor_index = 4;
-            if (node != NULL) {
-                /* FAKEMATCH: the index is scaled and added to the base before the field offset */
-                ids = (u16 *)((i * 2 + (s32)state) + (s32)((struct SelectionScreen *)0)->kinds);
-                do {
-                    MenuSelection_SetupEntry(ids[0], ids[16], node, 1);
-                    node = node->next;
-                    ids++;
-                } while (node != NULL);
+            while (node != NULL) {
+                MenuSelection_SetupEntry(state->kinds[i], state->bases[i], node, 1);
+                node = node->next;
+                i++;
             }
             node = state->head;
             i = state->base_x;
             while (node->next != NULL) {
                 node->target_x = i;
-                node->dx = 0xfff4;
+                node->dx = -12;
                 node = node->next;
                 i += 16;
             }

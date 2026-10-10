@@ -142,8 +142,7 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
     def = Item_GetDirectFar(item & ITEM_ID_MASK);
     if (def->type != 0) {
         found = 0;
-        /* FAKEMATCH: the two bonus fields are tested as one masked word. */
-        if ((*(u32 *)&def->primary_bonus & 0xffffff) == 0) {
+        if (def->primary_bonus == 0 && def->secondary_bonus == 0) {
             for (i = 0; i < 4; i++) {
                 if (def->effects[i].kind != 0 || def->use_type == 3) {
                     found = 1;

@@ -331,6 +331,34 @@ fn arguments(inner: &str) -> Vec<&str> {
     out
 }
 
+/// AST swap arguments are lines, but a comment or quoted token may span
+/// several lines. Splitting inside it can swallow generated block braces.
+fn ast_lines(inner: &str) -> Result<Vec<&str>, String> {
+    let tokens = super::lex::lex(inner)?;
+    let (mut start, mut token, mut lines) = (0, 0, Vec::new());
+    let (mut has_code, mut last_start) = (false, 0);
+    for (at, c) in inner.char_indices() {
+        if c != '\n' { continue; }
+        while token < tokens.len() && tokens[token].end <= at {
+            has_code |= !matches!(tokens[token].tok, super::lex::Tok::Comment(_));
+            token += 1;
+        }
+        if tokens.get(token).is_some_and(|t| t.start <= at && at < t.end) { continue; }
+        // Comment-only lines belong to the next argument, rather than
+        // multiplying the search by permutations of empty blocks.
+        if has_code {
+            lines.push(&inner[start..at]);
+            last_start = start;
+            start = at + 1;
+            has_code = false;
+        }
+    }
+    has_code |= tokens[token..].iter().any(|t| !matches!(t.tok, super::lex::Tok::Comment(_)));
+    if has_code { lines.push(&inner[start..]); }
+    else if let Some(last) = lines.last_mut() { *last = &inner[last_start..]; }
+    Ok(lines)
+}
+
 pub fn parse(text: &str) -> Result<Vec<Node>, String> {
     let nodes = parse_inner(text)?;
     count(&nodes)?;
@@ -355,9 +383,8 @@ fn parse_inner(text: &str) -> Result<Vec<Node>, String> {
             // Alchemy's older alias trimmed its alternatives.
             "PERM_ONEOF" => Node::OneOf(arguments(inner).into_iter().map(|arg| parse_inner(arg.trim())).collect::<Result<_, _>>()?),
             "PERM_LINESWAP" | "PERM_LINESWAP_TEXT" => {
-                let lines = inner
-                    .lines()
-                    .filter(|line| !line.trim().is_empty())
+                let lines = if name == "PERM_LINESWAP" { ast_lines(inner)? } else { inner.lines().filter(|line| !line.trim().is_empty()).collect() };
+                let lines = lines.into_iter()
                     .map(parse_inner)
                     .collect::<Result<_, _>>()?;
                 if name == "PERM_LINESWAP" {
@@ -558,7 +585,7 @@ fn eval_node(node: &Node, mut seed: u64, once: &[&Node], vars: &mut BTreeMap<Str
                 out.ast_swaps.push(order);
                 format!(
                     "{{\n/* _permuter ast {id} */\n{}\n}}",
-                    texts.iter().map(|s| format!("{{{s}}}")).collect::<Vec<_>>().join("\n")
+                    texts.iter().map(|s| format!("{{{s}\n}}")).collect::<Vec<_>>().join("\n")
                 )
             } else {
                 order.iter().map(|&i| texts[i].as_str()).collect::<Vec<_>>().join("\n")
@@ -780,6 +807,30 @@ mod tests {
         let mut f = super::super::parse::locate(&expanded.text, None, &Default::default()).unwrap().function;
         expanded.apply_ast(&mut f);
         assert!(matches!(f.body[0], Stmt::Decl(_)) && matches!(f.body[1], Stmt::Decl(_)));
+    }
+
+    #[test]
+    fn ast_lineswap_keeps_multiline_and_trailing_comments_whole() {
+        let source = "void target(int *a, int *b) { PERM_LINESWAP(\n/* first\n * second */\n*a = PERM_GENERAL(1,2); // trailing\n*b = 3;\n) }";
+        let nodes = parse(source).unwrap();
+        assert_eq!(count(&nodes).unwrap(), 4);
+        let mut results = std::collections::BTreeSet::new();
+        for seed in 0..4 {
+            let expanded = expand_seed(&nodes, seed).unwrap();
+            for text in [expanded.text.clone(), expanded.preprocess_text()] {
+                let mut unit = super::super::c::parse(&text).unwrap();
+                expanded.apply_c_ast(&mut unit);
+                let printed = unit.print();
+                assert!(!printed.contains("_permuter ast"));
+                assert!(printed.contains("*b = 3;"));
+                assert!(printed.contains("*a = 1;") || printed.contains("*a = 2;"));
+                assert_eq!(printed.matches("*a =").count(), 1);
+                assert_eq!(printed.matches("*b =").count(), 1);
+                super::super::c::parse(&printed).unwrap();
+                results.insert((printed.contains("*a = 1;"), printed.find("*a =").unwrap() < printed.find("*b =").unwrap()));
+            }
+        }
+        assert_eq!(results.len(), 4);
     }
 
     #[test]

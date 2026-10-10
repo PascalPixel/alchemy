@@ -1,11 +1,12 @@
-/* Pin-free SaveState_BuildSummaryHeader trial: 174 native and built
- * instructions, 173 common, differ 2. Removing the bound binding and
- * its empty barrier moves the build-stamp load before movs r1, #242.
- * Keeping the barrier with an ordinary bound differs 10. A 3-minute
- * whole-function search (seed 103, exact stack and branch comparisons)
- * found no improvement. The staging permuter (seed 241, two jobs, two
- * minutes) likewise found none across 1,612 distinct candidates.
- * The linked source keeps its binding/barrier. */
+/* Pin- and barrier-free SaveState_BuildSummaryHeader trial: all six TBS editions 174
+ * native/built, 173 common, differ 2: the frame load precedes movs r1, #242.
+ * General, low, early-clobber, memory and explicitly tied operands on the
+ * retained barrier differ 10, exchanging the bound and word-pointer r1/r2.
+ * Moving that barrier after the frame load, with frames as input or output,
+ * also differs 10. u16/u32 bounds and a value-preserving narrow shift added
+ * to 242 retain 2; frame[n - 242] differs 4. A two-minute prefix search
+ * (seed 401) compiled 4603 candidates without an improvement. The linked
+ * source retains its pin and barrier pending all-edition byte identity. */
 #include "types.h"
 #include "render_input.h"
 #include "battle.h"
@@ -40,16 +41,11 @@
 #include "irq.h"
 #define Runtime_GetBuildStampTimeFar ((u32 (*)(s32))Runtime_GetBuildStampTimeFar)
 
-#define gTitleExtraOptionEnabled (*(s16 *)&gTitleExtraOptionEnabled)
-
-extern volatile u32 gKeysHeld;
-
 extern u8 gSceneState[];
 extern u32 gLoadedStateWord;
 extern u8 gOptionMirror;
 extern u32 GameFlagBytes[];
 
-void UiText_ShowPositionedMessageAndWait(s32, s32);
 u32 SaveState_BuildSummaryHeader(void)
 {
     u16 owners[14];
@@ -97,9 +93,6 @@ u32 SaveState_BuildSummaryHeader(void)
     }
     summary->has_flag_20 = GameFlag_TestFar(32) != 0;
     {
-        /* The plain bound still exchanges the stamp load and first move.
-         * Earlier const, early-initializer, volatile-load and unsigned-long
-         * field trials left that swap; a literal bound differed 11. */
         s32 n;
         u32 *frame = &gGameState.build_stamp;
         u32 frames;

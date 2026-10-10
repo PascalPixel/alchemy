@@ -3,8 +3,10 @@
  * r2/r3 and the cancel result copies r0 instead of r3. An unsigned
  * cancelled and a one-pass result copy leave the same residual.
  * A 3-minute search (seed 149, exact stack/branches) improved weighted
- * 45 to 35 by a message-id temporary, still differ 12. The linked
- * source retains its binding. */
+ * 45 to 35 by a message-id temporary, still differ 12. The trial also
+ * differs 12 when cancelled uses a value-preserving narrow
+ * shift minus one (chosen or state), or the complement of that known zero.
+ * Linked source retains its binding. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

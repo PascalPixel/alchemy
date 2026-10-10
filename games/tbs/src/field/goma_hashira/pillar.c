@@ -17,7 +17,9 @@
 #include "game_state.h"
 #if !EDITION_INTERNATIONAL
 #define FIELD_STAGED_ACTOR_IMPORTS
+#endif
 #include "field_event.h"
+#if !EDITION_INTERNATIONAL
 #include "fixed_point_position.h"
 
 #define Field_TryJumpForward ((void (*)(void))Field_TryJumpForward)
@@ -47,27 +49,8 @@ void Engine_AudioPlayCue(s32 cue);
 struct FieldActor *Object_GetById();
 #endif
 void Engine_ActorSetChildValue();
-#if EDITION_INTERNATIONAL
-void Engine_TaskAddCallback();
-void Engine_TaskRemoveCallback();
-#endif
 void GomaHashira_SpawnPillarEffect();
 void FieldScene_RunPrimarySequence(void);
-
-#if EDITION_INTERNATIONAL
-static __inline__ void Work_SetValuesIfNonNegative(s32 first, s32 second, s32 third)
-{
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
-    Engine_WorkSetValuesIfNonNegative(first, second, third);
-}
-
-static __inline__ void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
-                                              s32 dest_x, s32 dest_y)
-{
-    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers. */
-    Engine_MapCopyCellAttributes(src_x, src_y, width, height, dest_x, dest_y);
-}
-#endif
 
 void Engine_ActorFaceDirection();
 void Engine_ActorShowEmote();

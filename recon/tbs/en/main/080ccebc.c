@@ -11,7 +11,13 @@
  * prefix candidate differs 115 and is not retained. New source-only batches
  * of 14 cancelling/control-block alternatives, all 24 local declaration
  * orders and 10 early dead frame definitions did not beat the 30-row
- * English residual. Linked source retains
+ * English residual. Four new pass-directed forms did not beat30:
+ * frame += step and frame += size >> 5 retain30; a narrow step cast
+ * gives50; a per-iteration current-frame carrier retains30. Global
+ * allocation places size35 in r8, frame37 in r10 and step36 in r9:
+ * the backend order prefers r8,r10,r9, while native frame needs r9.
+ * The whole-TU current baseline is exact; unpin remains233 native/built,
+ * common218,differ30 in all six. Linked source retains
  * its pin pending whole-image byte identity. */
 #include "battle.h"
 #include "debug.h"

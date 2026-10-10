@@ -58,17 +58,8 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
         0x100,
         Resource_GetTableEntry(src1));
 
-    if (sel > 1) {
-        /* FAKEMATCH: the scalar table address preserves r1/r2 choices changed by the shared frame array. */
-        s32 idx = sel * 3;
-        s32 adj = 0x594 + sel;
-        s32 off;
-
-        adj = ((s8 *)work)[adj];
-        idx += adj;
-        off = 0x5d4 + idx * 4;
-        Ui_ApplyTableScaleToObject(*(void **)((u8 *)work + off));
-    }
+    if (sel > 1)
+        Ui_ApplyTableScaleToObject(work->frame[sel - 2][work->option[sel]]);
     work->cursor_frame++;
 }
 

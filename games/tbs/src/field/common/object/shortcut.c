@@ -22,64 +22,30 @@ struct AbilityListEntry {
     u16 ability;
 };
 
-struct ShortcutState {
-    u32 unknown_000[0x220 / 4];
-    volatile u16 first;
-    u16 second;
-};
-
 s32 Object_CollectResources(struct AbilityListEntry *output)
 {
-    /* FAKEMATCH: needed to match: retain the initial byte-offset resource read and integer output-cursor address. */
     u16 object_ids[14];
     s32 output_count = 0;
     s32 object_count = Party_ListActiveOwnersFar(object_ids);
+    s32 i;
 
-    if (output_count < object_count) {
-        u16 *object_id = object_ids;
-        s32 remaining = object_count;
+    for (i = 0; i < object_count; i++) {
+        struct BtlUnit *object;
+        u32 id;
+        s32 index;
+        u32 resource_id;
 
-        do {
-            struct BtlUnit *object;
-            struct OwnerActionSlot *resource;
-            u32 id;
-            s32 index;
-            u32 resource_id;
-            s32 resource_offset;
-
-            id = *object_id;
-            object_id++;
-            object = UnitGetFar(id);
-            index = 0;
-            resource_offset = (u8 *)object->action_slots - (u8 *)object;
-            resource_id =
-                *(u16 *)((u8 *)object + resource_offset)
-                & ACTION_ID_MASK;
-
-            if (resource_id != 0) {
-                struct AbilityListEntry *pair;
-
-                resource = object->action_slots;
-                pair = (struct AbilityListEntry *)
-                    (output_count *sizeof(*pair) + (s32)output);
-                do {
-                    BtlActGet(resource_id);
-                    pair->owner = id;
-                    pair->ability = resource_id;
-                    output_count++;
-                    pair++;
-
-                    if (++index >= (s32)(sizeof(object->action_slots)
-                                      / sizeof(object->action_slots[0]))) {
-                        break;
-                    }
-
-                    resource++;
-                    resource_id =
-                        resource->encoded_action & ACTION_ID_MASK;
-                } while (resource_id != 0);
-            }
-        } while (--remaining != 0);
+        id = object_ids[i];
+        object = UnitGetFar(id);
+        for (index = 0; index < (s32)(sizeof(object->action_slots) / sizeof(object->action_slots[0])); index++) {
+            resource_id = object->action_slots[index].encoded_action & ACTION_ID_MASK;
+            if (resource_id == 0)
+                break;
+            BtlActGet(resource_id);
+            output[output_count].owner = id;
+            output[output_count].ability = resource_id;
+            output_count++;
+        }
     }
 
     return output_count;
@@ -88,17 +54,14 @@ s32 Object_CollectResources(struct AbilityListEntry *output)
 void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
                               const struct AbilityListEntry *entries)
 {
-    /* FAKEMATCH: the volatile shortcut view preserves the 132-byte function; direct member addresses shorten it by eight bytes. */
     s32 i;
-    u16 first;
 
     *first_index = 0;
     *second_index = 0;
 
-    first = ((struct ShortcutState *)&gGameState)->first;
     for (i = 0; i <= 447; i++) {
-        if (entries[i].ability == (first & 0x3ff) &&
-            entries[i].owner == (first >> 10)) {
+        if (entries[i].ability == (gGameState.first_shortcut & 0x3ff) &&
+            entries[i].owner == (gGameState.first_shortcut >> 10)) {
             *first_index = i;
             break;
         }

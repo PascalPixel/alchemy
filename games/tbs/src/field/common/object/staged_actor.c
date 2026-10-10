@@ -340,24 +340,19 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
     actor = (struct StagedActor *)Object_GetById(probe.actor_slot);
     footprint_table = (u8 *)StagedActor_FootprintBounds;
     {
-        s32 footprint_offset = probe.footprint_index << 4;
-        s32 table_offset = footprint_offset + 4;
-        s32 extent_a = *(s32 *)(footprint_table + table_offset);
+        s32 extent_a = StagedActor_FootprintBounds[probe.footprint_index * 4 + 1];
         s32 extent_b;
+
         if (extent_a < 0)
             extent_a = -extent_a;
-        table_offset = footprint_offset;
-        table_offset += 12;
-        extent_b = *(s32 *)(footprint_table + table_offset);
+        extent_b = StagedActor_FootprintBounds[probe.footprint_index * 4 + 3];
         if (extent_b < 0)
             extent_b = -extent_b;
         vertical_extent = (extent_a + extent_b) >> 4;
-        extent_a = *(s32 *)(footprint_table + footprint_offset);
+        extent_a = StagedActor_FootprintBounds[probe.footprint_index * 4 + 0];
         if (extent_a < 0)
             extent_a = -extent_a;
-        table_offset = footprint_offset;
-        table_offset += 8;
-        extent_b = *(s32 *)(footprint_table + table_offset);
+        extent_b = StagedActor_FootprintBounds[probe.footprint_index * 4 + 2];
         if (extent_b < 0)
             extent_b = -extent_b;
         horizontal_extent = (extent_a + extent_b) >> 4;

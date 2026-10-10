@@ -127,6 +127,7 @@ pub(crate) fn tally(
     output: &str,
     overlay: bool,
     streams: &BTreeMap<String, i64>,
+    proven: &dyn Fn(&str) -> Result<bool, String>,
 ) -> Result<Data, String> {
     let owners = stream_owners(map);
     let mut packed = BTreeMap::<&str, i64>::new();
@@ -172,7 +173,7 @@ pub(crate) fn tally(
             return Err(format!("{}: streams exceed its section", placed.object));
         }
         data.streams += stream;
-        if held && from_recon(placed.object, output, overlay) {
+        if held && (from_recon(placed.object, output, overlay) || !proven(placed.object)?) {
             let object = relative_object(placed.object, output, overlay)
                 .map_or(placed.object, |(path, _)| path);
             *data.pending.entry(object.to_owned()).or_default() += placed.size - stream;
@@ -197,6 +198,17 @@ pub(crate) fn tally(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn tally(map: &str, loaded: &[Loaded], output: &str, overlay: bool, streams: &BTreeMap<String, i64>) -> Result<Data, String> {
+        super::tally(map, loaded, output, overlay, streams, &|object| Ok(object.contains("/obj/games/")))
+    }
+
+    #[test]
+    fn unfamiliar_objects_do_not_earn_data_but_linker_fill_does() {
+        let pending = super::tally(&map(), &sections(), OUT, false, &BTreeMap::new(), &|_| Ok(false)).unwrap();
+        assert_eq!(pending.done, 4);
+        assert!(pending.pending.contains_key("games/x/head.o"));
+    }
 
     const OUT: &str = "/b/out/tbs-en";
 

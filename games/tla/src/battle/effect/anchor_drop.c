@@ -18,6 +18,7 @@ void WaitFrames(s32 frames);
 void Func_080e70f8(s32 id)
 {
     struct ModeEvent *event = Ram_HeapSlots->event_work;
+    s32 incoming = id;
     struct ObjectRuntime **slot;
     struct ObjectRuntime *anchor;
     struct ObjectRuntime *object;
@@ -25,14 +26,9 @@ void Func_080e70f8(s32 id)
     /* FAKEMATCH: ⚓️ loads the event work before it builds the anchor offset */
     asm volatile("");
     slot = &((struct AnchorWork *)Ram_HeapSlots->battle_fx_work[0])->anchor;
-    {
-        /* FAKEMATCH: ⚓️ keeps the id in r0 until it has the anchor's address */
-        register s32 incoming asm("r0") = id;
-
-        /* FAKEMATCH: and copies it only then */
-        asm("" : "+l"(incoming) : "l"(slot));
-        id = incoming;
-    }
+    // Passing the cue snapshot to Object_GetById adds a copy and changes two registers.
+    /* FAKEMATCH: keep the cue's entry-id copy after the anchor address; removing the constraint swaps two rows. */
+    asm("" : "+l"(incoming) : "l"(slot));
     anchor = *slot;
     object = Object_GetById(id);
 
@@ -49,5 +45,5 @@ void Func_080e70f8(s32 id)
     }
     object->gravity = 0x170a;
     WaitFrames(50);
-    event->cue = id | 0x1000;
+    event->cue = incoming | 0x1000;
 }

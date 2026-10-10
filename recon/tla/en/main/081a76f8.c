@@ -1,3 +1,6 @@
+/* Pin-free trial (tla-en): listing 141 instructions, draft 138, common 106, differ 67.
+ * Earlier register-allocation notes describe the prior pinned form.
+ */
 #include "resource.h"
 #include "types.h"
 #include "io_reg.h"
@@ -23,9 +26,9 @@ s32 Title_ShowAnimatedSplash(void)
 {
     u32 i;
     /* FAKEMATCH: separate the post-decode buffer carrier from the resource-number carrier. */
-    register u8 *buffer __asm__("r6");
+    u8 *buffer;
     /* FAKEMATCH: keep the decode destination carrier distinct until the buffer copy. */
-    register u8 *decode __asm__("r5");
+    u8 *decode;
     s32 resource;
 
     gRenderOamEnabled = 1;

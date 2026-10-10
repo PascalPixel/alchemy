@@ -1235,10 +1235,14 @@ s32 HaidiaMura_ApplyEntryState(void)
                 }
             }
             {
-                /* FAKEMATCH: direct and forwarded ES/IT calls load r0 first. */
-                register s32 priority asm("r1") = 2;
-                s32 actor = ACTOR_DORA;
+                s32 priority;
+                s32 actor;
 
+                /* FAKEMATCH: the cancelled byte keeps priority's constant before the actor's; a plain 2, even in a one-pass block, copies actor first (2 aligned differences). */
+                do {
+                    priority = ((u32)(u8)set >> 8) + 2;
+                } while (0);
+                actor = ACTOR_DORA;
                 Engine_ActorSetSpritePriority(actor, priority);
             }
 #endif

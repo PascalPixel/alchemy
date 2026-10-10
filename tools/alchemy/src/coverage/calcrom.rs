@@ -15,6 +15,7 @@ pub(crate) struct Counted {
     pub library: i64,
     pub steered: i64,
     pub uncredited: i64,
+    pub unproven_asm: i64,
 }
 impl std::ops::AddAssign for Counted {
     fn add_assign(&mut self, other: Counted) {
@@ -22,6 +23,7 @@ impl std::ops::AddAssign for Counted {
         self.library += other.library;
         self.steered += other.steered;
         self.uncredited += other.uncredited;
+        self.unproven_asm += other.unproven_asm;
     }
 }
 
@@ -70,8 +72,15 @@ fn absent(english: &Measurement, edition: &Measurement, unit: &Unit) -> bool {
 }
 
 fn share_edition(english: &Measurement, edition: &Measurement) -> Counted {
-    let linked = edition.credits.keys().cloned().collect();
+    let linked = edition.credits.iter()
+        .filter(|(_, credit)| credit.done.bytes() > 0)
+        .map(|(unit, _)| unit.clone()).collect();
     let mut counted = share(english, &linked);
+    // Padding is source data even when the surrounding assembly has no
+    // code credit. Keep its English-sized diagnostic separate from DONE.
+    counted.uncredited = english.credits.iter()
+        .filter(|(unit, _)| edition.credits.contains_key(*unit))
+        .map(|(_, credit)| credit.uncredited).sum();
     counted.done.data = edition.done.data;
     counted.done.data_total = edition.done.data_total;
     counted.done.executable -= english
@@ -134,6 +143,7 @@ pub(crate) struct Measurement {
 pub(crate) struct Mark {
     pub steered: Steered,
     pub veneer: bool,
+    pub assembly_proof: Option<String>,
     pub reasons: BTreeMap<String, BTreeSet<String>>,
 }
 
@@ -184,6 +194,7 @@ fn source_mark(
     Ok(Mark {
         steered,
         veneer: builds_veneers(&text),
+        assembly_proof: crate::evidence::assembly_review(root, &path, &text),
         reasons,
     })
 }
@@ -220,6 +231,32 @@ fn builds_veneers(text: &str) -> bool {
         let word = line.split_whitespace().next().unwrap_or("");
         word == "overlay_veneer" || word == "IwramEntry"
     })
+}
+
+/// Check the placed object itself, not the spelling of a macro invocation.
+/// Every entry must be an aligned Thumb literal load, bx of that register,
+/// and its target word. A mixed object cannot grant veneer credit to its
+/// ordinary code merely by invoking a veneer macro somewhere in the file.
+fn veneer_bytes(bytes: &[u8], address: i64) -> bool {
+    address & 3 == 0 && !bytes.is_empty() && bytes.len().is_multiple_of(8)
+        && bytes.as_chunks::<8>().0.iter().all(|entry| {
+            let load = u16::from_le_bytes([entry[0], entry[1]]);
+            let branch = u16::from_le_bytes([entry[2], entry[3]]);
+            load & 0xF8FF == 0x4800 && branch == (0x4700 | (((load >> 8) & 7) << 3))
+        })
+}
+
+fn placed_veneers(placed: &Placed<'_>) -> Result<bool, String> {
+    let bytes = std::fs::read(placed.object)
+        .map_err(|error| format!("{}: veneer metadata: {error}", placed.object))?;
+    let file = object::File::parse(bytes.as_slice()).map_err(|error| error.to_string())?;
+    let section = file.section_by_name(placed.name)
+        .ok_or_else(|| format!("{}: missing placed section {}", placed.object, placed.name))?;
+    let data = section.data().map_err(|error| error.to_string())?;
+    if data.len() as i64 != placed.size {
+        return Err(format!("{}: map/object veneer extent differs", placed.object));
+    }
+    Ok(veneer_bytes(data, placed.address))
 }
 
 #[derive(Debug)]
@@ -376,6 +413,9 @@ fn discredit(measurement: &mut Measurement, placed: &[(i64, i64, Unit)], spans: 
             measurement.uncredited += overlap;
             measurement.done.executable -= overlap;
             credit.uncredited += overlap;
+            let unproven = overlap.min(credit.unproven_asm);
+            credit.unproven_asm -= unproven;
+            measurement.raw -= unproven;
             let mut left = overlap;
             let done = &mut measurement.done;
             for (part, total) in [
@@ -528,7 +568,7 @@ fn origin(
     overlay: bool,
     source: &dyn Fn(&str) -> Option<Language>,
 ) -> Result<Origin, String> {
-    if object.contains("libgcc.a(") {
+    if crate::compiler::runtime::credited_member(crate::compiler::routing::root(), object)? {
         return Ok(Origin::Library);
     }
     let Some((relative, listing_directory)) = relative_object(object, output, overlay) else {
@@ -639,12 +679,18 @@ fn tally(
                 continue;
             }
             origin @ (Origin::CommonAsm | Origin::GameAsm) => {
-                if origin == Origin::CommonAsm {
+                let mark = marked()?;
+                let veneer = mark.veneer && placed_veneers(&placed)?;
+                let proven = if mark.veneer { veneer } else { mark.assembly_proof.is_some() };
+                if !proven {
+                    measurement.raw += size;
+                    credit.unproven_asm = size;
+                } else if origin == Origin::CommonAsm {
                     credit.done.common_asm = size;
                 } else {
                     credit.done.game_asm = size;
                 }
-                if marked()?.veneer {
+                if veneer {
                     credit.done.veneers = size;
                 }
             }
@@ -820,8 +866,19 @@ pub(crate) fn measure(
         Err(reason) => return Ok(Err(reason)),
     };
     let output = target.output_dir;
-    let source = |stem: &str| maintained_source(root, stem);
     let expansion = crate::compiler::preprocess::Expansion::new(root, target)?;
+    let build_index = crate::build_rom::Index::open(&root.join(output));
+    let source = |stem: &str| {
+        build_index.proven_object(root, &root.join(output).join("obj").join(format!("{stem}.o")))
+            .then(|| maintained_source(root, stem)).flatten()
+    };
+    let provenance = std::cell::RefCell::new(std::collections::HashMap::new());
+    let proven = |object: &str| -> Result<bool, String> {
+        provenance.borrow_mut().entry(object.to_owned()).or_insert_with(|| {
+            if crate::compiler::runtime::credited_member(root, object)? { return Ok(true); }
+            Ok(build_index.proven_object(root, Path::new(object)))
+        }).clone()
+    };
     let marks = std::cell::RefCell::new(std::collections::HashMap::new());
     let mark = |stem: &str| {
         marks
@@ -887,7 +944,14 @@ pub(crate) fn measure(
             }
             let origin = match origin(placed.object, output, overlay, &source)? {
                 Origin::CommonC | Origin::GameC => "C",
-                Origin::CommonAsm | Origin::GameAsm => "assembly",
+                Origin::CommonAsm | Origin::GameAsm => {
+                    let key = (map.image.clone(), object.clone(), None);
+                    if measurement.credits.get(&key).is_some_and(|credit| credit.unproven_asm > 0) {
+                        "unproven-assembly"
+                    } else {
+                        "assembly"
+                    }
+                }
                 Origin::Library => "library",
                 Origin::Raw => "disassembly",
                 Origin::Listing => "listing",
@@ -900,7 +964,7 @@ pub(crate) fn measure(
         let data = super::data::loaded(&bytes)
             .and_then(|loaded| {
                 let streams = if overlay { &unpacked } else { &streams };
-                super::data::tally(&map.text, &loaded, output, overlay, streams)
+                super::data::tally(&map.text, &loaded, output, overlay, streams, &proven)
             })
             .map_err(|error| format!("{}: {error}", map.path.display()))?;
         measurement.done.data_total += data.total;
@@ -1030,6 +1094,67 @@ pub(crate) fn measure_game(
         editions,
         missing,
     }))
+}
+
+#[cfg(test)]
+mod assembly_tests {
+    use super::*;
+
+    fn assembly(mark: Mark, common: bool) -> Measurement {
+        let path = if common { "common" } else { "tbs" };
+        let map = format!(" .text 0x08001000 0x20 out/tbs-en/obj/games/{path}/src/routine.o\n");
+        let mut measurement = Measurement::default();
+        tally(&mut measurement, &map, "out/tbs-en", MAIN_IMAGE,
+            &|_| Some(Language::Assembly), &|_| Ok(mark.clone())).unwrap();
+        measurement
+    }
+
+    #[test]
+    fn assembly_location_never_supplies_a_proof() {
+        for common in [false, true] {
+            let pending = assembly(Mark::default(), common);
+            assert_eq!(pending.done.executable, 32);
+            assert_eq!(pending.done.bytes(), 0);
+            assert_eq!(pending.raw, 32);
+            let reviewed = assembly(Mark {
+                assembly_proof: Some("r11 is an ordinary data register".into()),
+                ..Mark::default()
+            }, common);
+            assert_eq!(reviewed.done.bytes(), 32);
+            assert_eq!(reviewed.raw, 0);
+            assert_eq!(share_edition(&reviewed, &pending).done.bytes(), 0);
+        }
+    }
+
+    #[test]
+    fn veneers_require_every_complete_aligned_entry() {
+        let entry = [0x03, 0x4b, 0x18, 0x47, 0, 0, 0, 0];
+        // The literal must be the target word immediately after bx.
+        assert!(!veneer_bytes(&entry, 0x100));
+        let entry = [0x00, 0x4b, 0x18, 0x47, 0, 0, 0, 0];
+        assert!(veneer_bytes(&entry, 0x100));
+        assert!(!veneer_bytes(&entry, 0x102));
+        assert!(!veneer_bytes(&entry[..6], 0x100));
+        assert!(!veneer_bytes(&[], 0x100));
+        let mut mixed = entry.to_vec();
+        mixed.extend_from_slice(&[0xc0, 0x46, 0x70, 0x47, 0, 0, 0, 0]);
+        assert!(!veneer_bytes(&mixed, 0x100));
+        let mut wrong_register = entry;
+        wrong_register[2] = 0x20;
+        assert!(!veneer_bytes(&wrong_register, 0x100));
+    }
+
+    #[test]
+    fn padding_in_unproven_source_stays_data_without_granting_code_credit() {
+        let mut measurement = assembly(Mark::default(), false);
+        let unit = measurement.credits.keys().next().unwrap().clone();
+        discredit(&mut measurement, &[(0x08001000, 32, unit)], &[(0x08001008, 4)]);
+        assert_eq!(measurement.done.bytes(), 0);
+        assert_eq!(measurement.done.executable, 28);
+        assert_eq!(measurement.raw, 28);
+        assert_eq!(measurement.uncredited, 4);
+        assert_eq!(share_edition(&measurement, &measurement).uncredited, 4);
+    }
 }
 
 #[cfg(test)]

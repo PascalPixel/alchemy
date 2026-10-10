@@ -185,6 +185,8 @@ pub(crate) fn analyze(
     let mut link = false;
     let mut opened_with_ip = false;
     let mut all_written: u16 = 0;
+    let mut shift_carry = false;
+    let mut ordinary_fp = false;
     for (index, &(at, w)) in words.iter().enumerate() {
         let after_link = std::mem::take(&mut link);
         if w >> 28 == 0xF {
@@ -197,6 +199,19 @@ pub(crate) fn analyze(
         let mut written: u16 = 0;
         let mut now_code: u16 = 0;
         let mut now_adr: u16 = 0;
+        let data_processing = w & 0x0C00_0000 == 0
+            && w & 0x0F00_00F0 != 0x0000_0090
+            && w & 0x0E00_0090 != 0x0000_0090;
+        let opcode = (w >> 21) & 15;
+        let rrx = data_processing && !bit(25) && w & 0xFF0 == 0x060;
+        if rrx {
+            bump(&mut e.markers, "rrx");
+        }
+        let branch = w & 0x0E00_0000 == 0x0A00_0000;
+        if shift_carry && ((branch && matches!(w >> 28, 2 | 3))
+            || (data_processing && matches!(opcode, 5..=7))) {
+            bump(&mut e.markers, "shift-carry");
+        }
         if w & 0x0F00_0000 == 0x0F00_0000 {
             bump(&mut e.markers, "swi");
         } else if w & 0x0FFF_FFF0 == 0x012F_FF10 {
@@ -208,7 +223,9 @@ pub(crate) fn analyze(
                 }
                 // mov lr, pc; bx ip: a compiled call through ip.
                 _ if after_link => {}
-                12 => bump(&mut e.markers, "ip-return"),
+                // An isolated bx ip may be a normal indirect tail branch.
+                // Proving a custom return needs the caller/linkage as well.
+                12 => bump(&mut e.exits, "bx-reg"),
                 rm if holds(adr, rm) => bump(&mut e.markers, "pc-interwork"),
                 _ => bump(&mut e.exits, "bx-reg"),
             }
@@ -258,7 +275,8 @@ pub(crate) fn analyze(
                 } else if w & 0x0FFF_FFF0 == 0x079F_F100 {
                     bump(&mut e.exits, "switch");
                 } else {
-                    bump(&mut e.markers, "pc-computed");
+                    // GCC's load_indirect_jump accepts a memory operand.
+                    bump(&mut e.exits, "indirect-jump");
                 }
             }
             if !load && (rn == 15 || holds(code, rn)) {
@@ -312,11 +330,17 @@ pub(crate) fn analyze(
                 } else if rd == 15 {
                     if bit(20) {
                         bump(&mut e.markers, "psr");
+                    } else if w & 0xFFFF_FFF0 == 0x908F_F100 {
+                        // GCC's PIC casesi emits addls pc, pc, index, lsl #2.
+                        // A computed pc alone is not evidence against that
+                        // stock switch pattern, even though K1 disables PIC.
+                        bump(&mut e.exits, "switch");
                     } else if w & 0x0FFF_FFFF == 0x01A0_F00E {
                         bump(&mut e.exits, "mov-pc-lr");
-                    } else if w & 0x0FFF_FFF0 == 0x01A0_F000 && w & 15 == 12 {
-                        bump(&mut e.markers, "ip-return");
                     } else if w & 0x0FFF_FFF0 == 0x01A0_F000 && after_link {
+                    } else if w & 0x0FFF_FFF0 == 0x01A0_F000 {
+                        // GCC's indirect_jump emits mov pc, register.
+                        bump(&mut e.exits, "indirect-jump");
                     } else {
                         bump(&mut e.markers, "pc-computed");
                     }
@@ -350,6 +374,22 @@ pub(crate) fn analyze(
         code = (code & !written) | now_code;
         adr = (adr & !written) | now_adr;
         all_written |= written;
+        // Stack restoration may write fp in ordinary compiled code. A data
+        // operation or load using it outside an APCS frame is different.
+        if written & FP != 0 && !(w & 0x0E00_0000 == 0x0800_0000 && rn == 13) {
+            ordinary_fp = true;
+        }
+        if data_processing && bit(20) {
+            // A shift's carry is distinct from the normal adds/adc and
+            // subs/sbc sequences used for compiler doubleword arithmetic.
+            shift_carry = matches!(opcode, 0 | 1 | 12 | 13 | 14 | 15)
+                && !bit(25) && (w & 0xF80 != 0 || w & 0x70 != 0);
+        } else if branch || w & 0x0FFF_FFF0 == 0x012F_FF10 {
+            shift_carry = false;
+        }
+    }
+    if ordinary_fp && !e.frame {
+        bump(&mut e.markers, "ordinary-fp");
     }
     e.unsaved = all_written & CALLEE_SAVED & !e.save.unwrap_or(0);
     if e.unsaved & CALLEE_SAVED & !(1 << 4) != 0 {
@@ -909,6 +949,10 @@ impl ArmTally {
                 continue;
             }
             match row.origin {
+                "unproven-assembly" => {
+                    t.disassembly += earned;
+                    t.padding += row.padding;
+                }
                 "disassembly" => t.disassembly += row.bytes,
                 "listing" => t.listings += row.bytes,
                 "outside" => t.outside += row.bytes,
@@ -931,6 +975,21 @@ type Own<'f> = dyn Fn(&Placed<'_>) -> Result<Option<Vec<(u32, Mode)>>, String> +
 mod tests {
     use super::*;
 
+    #[test]
+    fn unproven_source_padding_is_data_while_listing_padding_remains_code() {
+        let mut row = ArmRow {
+            image: "main".into(), object: "routine.o".into(), function: "Routine".into(),
+            run: 0x100, load: 0x100, bytes: 16, padding: 4,
+            origin: "unproven-assembly", shape: "compiled", evidence: Evidence::default(),
+        };
+        let tally = ArmTally::of(std::slice::from_ref(&row));
+        assert_eq!(tally.credited(), 0);
+        assert_eq!((tally.disassembly, tally.padding), (12, 4));
+        row.origin = "disassembly";
+        let tally = ArmTally::of(&[row]);
+        assert_eq!((tally.disassembly, tally.padding), (16, 0));
+    }
+
     const PUSH_R4_LR: u32 = 0xE92D_4010; // push {r4, lr}
     const POP_R4_PC: u32 = 0xE8BD_8010; // pop {r4, pc}
     const BX_LR: u32 = 0xE12F_FF1E;
@@ -941,6 +1000,34 @@ mod tests {
     }
     fn plain(list: &[u32]) -> Evidence {
         analyze(&words(list), &|_| None, &|_| false)
+    }
+
+    #[test]
+    fn distinguishes_shift_carry_from_compiler_doubleword_carry() {
+        let shifted = plain(&[0xE1B0_0080, 0xE591_2000, 0x2AFF_FFFC, BX_LR]);
+        assert_eq!(shifted.markers.get("shift-carry"), Some(&1));
+        let arithmetic = plain(&[0xE090_0002, 0xE0A1_1003, BX_LR]);
+        assert!(!arithmetic.markers.contains_key("shift-carry"));
+        let compared = plain(&[0xE1B0_0080, 0xE350_0000, 0x2AFF_FFFC, BX_LR]);
+        assert!(!compared.markers.contains_key("shift-carry"));
+        assert!(plain(&[0xE1A0_0061, BX_LR]).markers.contains_key("rrx"));
+        assert!(!plain(&[0xE1A0_00E1, BX_LR]).markers.contains_key("rrx"));
+    }
+
+    #[test]
+    fn ordinary_fp_and_stock_computed_switch_are_distinct_evidence() {
+        let row_address = plain(&[0xE92D_4800, 0xE083_BD27, 0xE8BD_4800, BX_LR]);
+        assert!(row_address.markers.contains_key("ordinary-fp"));
+        let restored = plain(&[0xE92D_4800, MOV_R0_R1, 0xE8BD_4800, BX_LR]);
+        assert!(!restored.markers.contains_key("ordinary-fp"));
+        let switch = plain(&[0xE350_0005, 0x908F_F100, 0xEA00_0000, BX_LR]);
+        assert!(switch.markers.is_empty());
+        assert_eq!(switch.exits.get("switch"), Some(&1));
+        let decoder = plain(&[0xE08F_F180, BX_LR]);
+        assert!(decoder.markers.contains_key("pc-computed"));
+        for instruction in [0xE1A0_F003, 0xE590_F004, 0xE12F_FF1C] {
+            assert!(plain(&[instruction]).markers.is_empty());
+        }
     }
 
     #[test]
@@ -992,7 +1079,7 @@ mod tests {
         let markers = |list: &[u32]| plain(list).markers.keys().copied().collect::<Vec<_>>();
         assert_eq!(markers(&[0xE10F_0000, 0xE129_F000, BX_LR]), ["psr"]); // mrs r0, cpsr; msr cpsr_fc, r0
         assert_eq!(markers(&[0xEF03_0000]), ["swi"]);
-        assert_eq!(markers(&[0xE12F_FF1C]), ["ip-return"]); // bx ip
+        assert!(markers(&[0xE12F_FF1C]).is_empty()); // bx ip needs linkage evidence
         assert_eq!(markers(&[0xE08F_F100]), ["pc-computed"]); // add pc, pc, r0, lsl #2
         assert_eq!(markers(&[0xE28F_0001, 0xE12F_FF10]), ["pc-interwork"]); // add r0, pc, #1; bx r0
         assert_eq!(markers(&[0xE25E_F004]), ["psr"]); // subs pc, lr, #4

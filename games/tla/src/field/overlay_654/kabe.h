@@ -227,16 +227,15 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 
 static inline void Kabe_TaskAdd(void (*callback)(void), s32 priority)
 {
-    /* FAKEMATCH: the native builds the priority before it loads the callback. */
-    register s32 p __asm__("r1") = priority;
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    s32 p = priority;
 
     Scheduler_AddOrUpdateCallback(callback, p);
 }
 
 #define KABE_TASK_ADD_LATE(callback, priority) \
     do { \
-        /* FAKEMATCH: the native builds the priority before it loads the callback. */ \
-        register s32 priority_ __asm__("r1"); \
+        s32 priority_; \
         priority_ = (priority); \
         /* FAKEMATCH: a barrier keeps the callback load after the priority. */ \
         __asm__ volatile("" : : "r"(priority_)); \
@@ -263,8 +262,7 @@ static inline void Kabe_ObjPlaceAt(s32 actor, s32 x, s32 z, s32 angle)
 
 static inline void Kabe_ObjPlaceTurn(s32 actor, s32 x, s32 z, s32 angle)
 {
-    /* FAKEMATCH: the native loads the angle before the position. */
-    register s32 g __asm__("r3") = angle;
+    s32 g = angle;
 
     Func_02003a38(actor, x, z, g);
 }

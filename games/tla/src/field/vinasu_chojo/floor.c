@@ -119,8 +119,15 @@ void Func_020006ac(void)
     Object_SetPartAttribute(Engine_ActorGet(leader), 0);
     Motion_SetModeAndWaitAnimation(leader, 4);
     {
-        /* FAKEMATCH: the native builds the zero after the wait, not in a saved register. */
-        register void *none __asm__("r3") = 0;
+        void *none;
+
+        /* FAKEMATCH: the one-pass block builds the null callback after
+         * the wait. A plain unbound initializer hoists it into r5,
+         * saves another register and differs 46 of 85 instructions.
+         * Reusing z here still changes the store register (differ 4). */
+        do {
+            none = 0;
+        } while (0);
 
         actor->update = none;
     }

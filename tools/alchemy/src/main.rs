@@ -24,6 +24,7 @@ mod deps_command;
 mod diff;
 mod edition;
 mod editions;
+mod evidence;
 mod elf;
 mod fakematch;
 mod gate;

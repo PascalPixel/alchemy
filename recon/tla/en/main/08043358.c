@@ -1,3 +1,6 @@
+/* Pin-free trial (tla-en): listing 179 instructions, draft 181, common 156, differ 48.
+ * Earlier register-allocation notes describe the prior pinned form.
+ */
 #include "types.h"
 
 struct SaveSummary {
@@ -108,7 +111,7 @@ u32 SaveState_BuildSummaryHeader(void)
     summary->has_flag_20 = GameFlag_TestFar(32) != 0;
     {
         /* FAKEMATCH: keeps the bound in r1 */
-        register s32 n asm("r1");
+        s32 n;
         u32 *frame = &gGameState.unknown_000;
         u32 frames;
 

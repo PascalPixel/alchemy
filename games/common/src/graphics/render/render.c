@@ -45,18 +45,17 @@ void Render_ResetTransformState(void)
 	gTransformStackTop = Runtime_AllocateBlock(8, sizeof(gTransform));
 	gTransformStackDepth = 0;
 	{
-		CAMELOT_ASM("the identity row's four fixed registers")
-		register s32 z2 __asm__("r3"), one __asm__("r1"), z1 __asm__("r2"), z3 __asm__("r4");
+		s32 zero;
 
 		CAMELOT_ASM("transform.h's identity store, ⚓️ building the one before the zeros")
-		__asm__ volatile("mov r0, %4\n\tmov %1, #128\n\tlsl %1, %1, #9\n\tmov %2, #0\n\t"
-						 "mov %0, #0\n\tmov %3, #0\n\t"
-						 "stmia r0!, {%1, %2, %0, %3}\n\t"
-						 "stmia r0!, {%1, %2, %0, %3}\n\t"
-						 "stmia r0!, {%1, %2, %0, %3}"
-			: "=r"(z2), "=r"(one), "=r"(z1), "=r"(z3)
+		__asm__ volatile("mov r0, %1\n\tmov r1, #128\n\tlsl r1, r1, #9\n\tmov r2, #0\n\t"
+						 "mov %0, #0\n\tmov r4, #0\n\t"
+						 "stmia r0!, {r1, r2, %0, r4}\n\t"
+						 "stmia r0!, {r1, r2, %0, r4}\n\t"
+						 "stmia r0!, {r1, r2, %0, r4}"
+			: "=l"(zero)
 			: "r"(gTransform)
-			: "r0", "memory");
+			: "r0", "r1", "r2", "r4", "memory");
 	}
 }
 
@@ -83,7 +82,7 @@ void Render_ResetTransformState(void)
 	gTransformStackTop = Runtime_AllocateBlock(2, sizeof(gTransform));
 	gTransformStackDepth = 0;
 	CAMELOT_ASM("the fixed-register identity store of transform.h")
-	Transform_SetIdentity(gTransform);
+	Transform_ResetCurrent();
 }
 
 #endif
@@ -138,7 +137,7 @@ void Graphics_RestoreTransferWork(void)
 void SceneTransform_ResetMatrix(void)
 {
 	CAMELOT_ASM("the fixed-register identity store of transform.h")
-	Transform_SetIdentity(gTransform);
+	Transform_ResetCurrent();
 }
 
 //--------------------------------------------------------------------------

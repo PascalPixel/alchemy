@@ -5,8 +5,7 @@
 #define DEFINE_QUEUE_IO_WRITE(name, delay)                                  \
     void name(u32 address, u32 value)                                       \
     {                                                                       \
-        /* FAKEMATCH: ⚓️ keeps the IME pointer in r1 */                      \
-        register volatile u16 *ime asm("r1");                               \
+        volatile u16 *ime;                                                  \
         struct IoWriteQueue *q;                                             \
         u32 saved;                                                          \
         s32 count;                                                          \
@@ -18,6 +17,8 @@
             saved = *ime;                                                   \
         } while (0);                                                        \
         *ime = (u16)(u32)ime;                                               \
+        /* FAKEMATCH: the repeated IME address ends its first lifetime after the store; without it IME/queue exchange r1/r4 (14 aligned differences per function). CSE removes the assignment. */ \
+        ime = &REG_IME;                                                     \
         count = q->count;                                                   \
         if (count <= 31) {                                                  \
             u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
@@ -30,21 +31,21 @@
         *ime = saved;                                                       \
     }
 
-/* FAKEMATCH: the IME pointer is held in r1, as above. */
+/* FAKEMATCH: the one-pass read and repeated IME address preserve the native order, as above. */
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay1, 0x10000)
-/* FAKEMATCH: the IME pointer is held in r1, as above. */
+/* FAKEMATCH: the one-pass read and repeated IME address preserve the native order, as above. */
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay2, 0x20000)
-/* FAKEMATCH: the IME pointer is held in r1, as above. */
+/* FAKEMATCH: the one-pass read and repeated IME address preserve the native order, as above. */
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay3, 0x30000)
-/* FAKEMATCH: the IME pointer is held in r1, as above. */
+/* FAKEMATCH: the one-pass read and repeated IME address preserve the native order, as above. */
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay5, 0x50000)
-/* FAKEMATCH: the IME pointer is held in r1, as above. */
+/* FAKEMATCH: the one-pass read and repeated IME address preserve the native order, as above. */
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay6, 0x60000)
-/* FAKEMATCH: the IME pointer is held in r1, as above. */
+/* FAKEMATCH: the one-pass read and repeated IME address preserve the native order, as above. */
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay7, 0x70000)
-/* FAKEMATCH: the IME pointer is held in r1, as above. */
+/* FAKEMATCH: the one-pass read and repeated IME address preserve the native order, as above. */
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay9, 0x90000)
-/* FAKEMATCH: the IME pointer is held in r1, as above. */
+/* FAKEMATCH: the one-pass read and repeated IME address preserve the native order, as above. */
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay10, 0xa0000)
-/* FAKEMATCH: the IME pointer is held in r1, as above. */
+/* FAKEMATCH: the one-pass read and repeated IME address preserve the native order, as above. */
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay11, 0xb0000)

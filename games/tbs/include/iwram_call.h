@@ -4,20 +4,21 @@
 #include "types.h"
 
 #ifdef MODERN
-// modern GCC refuses a clobber of factor's own r1; the routine still
-// overwrites it, so here it is an output
+// r0/r1 are the routine's arguments; it returns through ip instead of lr.
 CAMELOT_ASM("a call that returns through ip, which no procedure-call standard produces")
 static inline s32 Iwram_Call2(s32 left, s32 right, void *routine)
 {
-	register s32 result __asm__("r0") = left;
-	register s32 factor __asm__("r1") = right;
+	s32 result;
 
-	__asm__ volatile(".align 2\n\t"
+	__asm__ volatile("mov r0, %1\n\t"
+					 "mov r1, %2\n\t"
+					 ".align 2\n\t"
 					 "mov ip, pc\n\t"
-					 "bx %2\n\t"
-		: "+r"(result), "+r"(factor)
-		: "r"(routine)
-		: "r2", "ip", "cc");
+					 "bx %3\n\t"
+					 "mov %0, r0"
+		: "=r"(result)
+		: "r"(left), "r"(right), "r"(routine)
+		: "r0", "r1", "r2", "ip", "cc");
 	return result;
 }
 #else

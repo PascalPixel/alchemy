@@ -1,3 +1,6 @@
+/* Pin-free trial (tla-en): listing 28 instructions, draft 28, common 7, differ 42.
+ * Earlier register-allocation notes describe the prior pinned form.
+ */
 #include "owner_state.h"
 #include "types.h"
 
@@ -16,13 +19,13 @@ extern struct OwnerState *gBattleOwnerStates;
 void *UnitGet(s32 owner)
 {
     struct OwnerState *states;
-    register u32 offset asm("r3"); /* FAKEMATCH: the scaled index in r3 */
+    u32 offset; /* Earlier pinned trial: the scaled index in r3 */
 
     asm volatile("mov r3, lr" ::: "r3"); /* FAKEMATCH: the entry copy of lr */
     states = gGameState.owners;
     if ((u32)owner < 8)
         {
-        register u8 *r asm("r0"); /* FAKEMATCH: the result in r0 */
+        u8 *r; /* Earlier pinned trial: the result in r0 */
         offset = 332;
         offset *= owner;
         r = (u8 *)states + offset;
@@ -30,7 +33,7 @@ void *UnitGet(s32 owner)
         }
     if ((u32)owner - 0x80 < 6 && gBattleOwnerStates != NULL)
         {
-        register u8 *r asm("r0"); /* FAKEMATCH: the result in r0 */
+        u8 *r; /* Earlier pinned trial: the result in r0 */
         u8 *t;
         offset = 332;
         offset *= owner;

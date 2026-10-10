@@ -1,3 +1,6 @@
+/* Pin-free trial (tla-en): listing 95 instructions, draft 97, common 81, differ 30.
+ * Earlier register-allocation notes describe the prior pinned form.
+ */
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -27,7 +30,7 @@ void UpdateRisingParticleBurst(void *source)
     u32 vel;
     void *child;
     /* FAKEMATCH: holds 0x10000 in sl across the burst loop as the ROM does */
-    register s32 unit asm("sl");
+    s32 unit;
 
     Audio_PlayCue(154);
     for (count = 30; count >= 0; count--) {

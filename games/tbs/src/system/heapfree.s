@@ -38,3 +38,36 @@ MemFree:
 	bx	lr
 .L_heap_heads:
 	.4byte	gWorkSlot
+
+@ C2: Runtime_StopOnGamePakIrq has a reachable exit with no return or
+@ interworking branch: when (IE & IF & 0x2000) is zero, its final bne falls
+@ straight into Thumb System_Initialize while the CPU is still in ARM mode.
+@ Neither a procedure return nor a tail call can have this linkage.
+@ Both DE and ES contain exactly these eight ARM instructions, no pool.
+@ agbcc's gcc_arm/config/arm/arm.c output_func_epilogue emits bx lr for
+@ this frameless interworking exit; output_return_instruction does likewise
+@ for an early return. The proof is the missing exit, not ands/bne (which
+@ the ARM backend can emit). Preserve the fragment's fallthrough as shipped.
+	.ifdef TBS_EDITION_DE
+	.set GAMEPAK_STOP, 1
+	.endif
+	.ifdef TBS_EDITION_ES
+	.set GAMEPAK_STOP, 1
+	.endif
+	.ifdef GAMEPAK_STOP
+@ カートリッジ割り込みなら音を止めて止まる
+	.section .text.gamepak, "ax", %progbits
+	.balign 4
+	.arm
+	.global Runtime_StopOnGamePakIrq
+Runtime_StopOnGamePakIrq:
+	mov	ip, #0x04000000
+	add	r3, ip, #0x200
+	ldr	r2, [r3]
+	and	r1, r2, r2, lsr #16
+	mov	r2, #0
+	ands	r0, r1, #0x2000
+	strbne	r0, [r3, #-0x17c]
+.L_gamepak_stop:
+	bne	.L_gamepak_stop
+	.endif

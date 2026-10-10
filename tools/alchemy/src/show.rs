@@ -3,7 +3,7 @@ use crate::decode::{decode_one, half_at, word_at, Kind};
 use crate::elf::Elf;
 use crate::ld_map::{preferred, Map, Placed, ROM};
 use crate::process::run as command;
-use crate::targets::decomp_target;
+use crate::targets::{decomp_target, DecompTarget};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
 use std::path::Path;
@@ -503,6 +503,36 @@ impl LinkedImage {
     }
 }
 
+pub(crate) struct OverlayReference {
+    pub bytes: Vec<u8>,
+    pub start: u32,
+    pub end: u32,
+    pub name: String,
+}
+
+fn overlay_reference_code(built: &LinkedImage, reference: &[u8], wanted: &str) -> Result<OverlayReference, String> {
+    let (section, start, end, base, name) = built.span(wanted)?;
+    if !section.name.starts_with(".text") || end <= start {
+        return Err(format!("{name}: no overlay code extent"));
+    }
+    let range = image_range(reference.len(), base, start, end)?;
+    Ok(OverlayReference { bytes: reference[range].to_vec(), start, end, name })
+}
+
+/// Analysis only: the linked image supplies bounds, the ROM supplies code.
+pub(crate) fn overlay_function_reference(target: DecompTarget, overlay: &str, wanted: &str) -> Result<OverlayReference, String> {
+    let out = root().join(target.output_dir);
+    let built = LinkedImage::read(&out, target.id.as_str(), Some(overlay))?;
+    let map_path = out.join(format!("{}.map", target.id));
+    let main_map = Map::parse(&std::fs::read_to_string(&map_path)
+        .map_err(|error| format!("{}: {error}", map_path.display()))?);
+    let rom_path = root().join(target.rom);
+    let rom = std::fs::read(&rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
+    target.verify_reference(&rom)?;
+    let reference = reference_overlay(&rom, &main_map, overlay)?;
+    overlay_reference_code(&built, &reference, wanted)
+}
+
 fn overlay_bytes(elf: &Elf) -> Result<(u32, Vec<u8>), String> {
     let base = elf
         .sections
@@ -902,6 +932,29 @@ mod tests {
             }),
         };
         assert_eq!(image.functions(), vec![(0x2000, "Defined".into())]);
+    }
+
+    #[test]
+    fn adopted_overlay_comparison_reads_native_code_and_checks_its_extent() {
+        let base = 0x02008000;
+        let image = LinkedImage {
+            map: Map { placed: vec![Placed {
+                name: ".text".into(), path: "games/tla/src/field/scene.o".into(),
+                address: base, size: 8, load: base, loaded: true,
+                symbols: vec![(base + 2, "Adopted".into())],
+            }] },
+            elf: Some(Elf { sections: vec![], symbols: vec![crate::elf::Symbol {
+                name: "Adopted".into(), value: base + 3, size: 4,
+                kind: STT_FUNC, bind: 1, section: 1,
+            }] }),
+            bytes: vec![0; 8], overlay_base: Some(base),
+        };
+        let reference = halves(&[0x2000, 0x2007, 0x4770, 0xffff]);
+        let code = overlay_reference_code(&image, &reference, "Adopted").unwrap();
+        assert_eq!((code.start, code.end, code.name.as_str()), (base + 2, base + 6, "Adopted"));
+        assert_eq!(code.bytes, halves(&[0x2007, 0x4770]));
+        assert!(overlay_reference_code(&image, &reference[..4], "Adopted").is_err());
+        assert!(overlay_reference_code(&image, &reference, "Missing").is_err());
     }
 
     #[test]

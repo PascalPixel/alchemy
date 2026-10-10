@@ -46,10 +46,9 @@ void Func_02004270(s32 x, s32 z, s32 kind, s32 state)
     s32 i;
 
     {
-        /* FAKEMATCH: ⚓️ keeps x in r0 until it has loaded the cell table */
-        register s32 column asm("r0") = x;
+        s32 column = x;
 
-        /* FAKEMATCH: and adds it only then */
+        /* FAKEMATCH: load the cell table before adding x. */
         asm("" : "+l"(column) : "l"(gSceneState.cells));
         i = z * 11 + column;
     }

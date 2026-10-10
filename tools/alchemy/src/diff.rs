@@ -19,9 +19,9 @@ how many differ; --show prints the comparison, - for the listing and + for
 the draft. "differ 0" means the code matches instruction for instruction.
 An overlay draft (a path under overlays/) compares with the function of
 the same name, or --symbol, in out/EDITION/overlays/OVERLAY_overlay.o;
-the overlay defaults from the path (resource_XXX). Adopted overlay functions
-are compared with the reference ROM's decoded stream using their linked bounds.
-When no separate listing
+an adopted function absent from that object uses the linked overlay's bounds
+and code decoded from our reference ROM, as alchemy show does.
+The overlay defaults from the path (resource_XXX). When no separate listing
 object exists, a main-image function is resolved by ADDRESS or --symbol
 in the selected edition's map and ELF. Its reference ROM extent is read only
 for comparison; literal pools and jump tables are omitted. --arm explicitly
@@ -207,6 +207,12 @@ fn relocations(objdump: &str) -> BTreeSet<(u32, String)> {
 }
 
 fn normalize_with(objdump: &str, relocated: &BTreeSet<(u32, String)>) -> Vec<String> {
+    normalize_with_state(objdump, relocated, &mut false)
+}
+
+fn normalize_with_state(objdump: &str, relocated: &BTreeSet<(u32, String)>, lr_setup: &mut bool) -> Vec<String> {
+    // GCC emits the standalone Thumb BL suffix as .short, so the assembler
+    // marks it as data. Only recognize it immediately after the LR setup.
     objdump
         .lines()
         .filter_map(|line| {
@@ -221,6 +227,11 @@ fn normalize_with(objdump: &str, relocated: &BTreeSet<(u32, String)>) -> Vec<Str
             let mut words = text.split_whitespace();
             let mnemonic = words.next()?;
             let operands: Vec<&str> = words.collect();
+            let call_suffix = *lr_setup && mnemonic == ".short" && operands == ["0xf800"];
+            *lr_setup = mnemonic == "mov" && operands.first() == Some(&"lr,");
+            if call_suffix {
+                return Some("bl".into());
+            }
             if mnemonic == "bl" || mnemonic == "blx" {
                 return Some(mnemonic.to_string());
             }
@@ -324,12 +335,13 @@ pub(crate) fn normalize_located(objdump: &str) -> Vec<(String, Option<(String, u
     let mut at: Option<(String, u32)> = None;
     let mut out = Vec::new();
     let relocated = relocations(objdump);
+    let mut lr_setup = false;
     for line in objdump.lines() {
         if let Some(location) = source_location(line) {
             at = Some(location);
             continue;
         }
-        out.extend(normalize_with(line, &relocated).into_iter().map(|row| (row, at.clone())));
+        out.extend(normalize_with_state(line, &relocated, &mut lr_setup).into_iter().map(|row| (row, at.clone())));
     }
     out
 }
@@ -524,7 +536,7 @@ fn require_thumb_scaffold(elf: &Elf, section: &Placed, start: u32, end: u32) -> 
     let arm = elf.symbols.iter().any(|symbol| symbol.value >= start && symbol.value < end
         && (symbol.name.starts_with("$a") || (symbol.kind == 2 && symbol.value & 1 == 0)));
     if !thumb || arm || start & 1 != 0 || end <= start || end > section.end() {
-        return Err("main-image scaffold comparison supports a bounded Thumb function only; ARM, mixed or unknown ISA is unsupported".into());
+        return Err("main-image comparison supports a bounded Thumb function only; ARM, mixed or unknown ISA is unsupported".into());
     }
     Ok(())
 }
@@ -549,16 +561,35 @@ fn thumb_reference(image: &[u8], base: u32, start: u32, end: u32) -> Result<Vec<
     let file = tempfile::NamedTempFile::new().map_err(|error| format!("Thumb analysis file: {error}"))?;
     std::fs::write(file.path(), view).map_err(|error| format!("Thumb analysis file: {error}"))?;
     let instructions: BTreeSet<u32> = lines.iter().filter(|line| !line.wide).map(|line| line.address).collect();
-    let output = command(&[
-        "arm-none-eabi-objdump", "-D", "-b", "binary", "-marm", "-Mforce-thumb",
-        "--no-show-raw-insn", "--disassemble-zeroes",
-        &format!("--adjust-vma={start:#x}"), &file.path().to_string_lossy(),
-    ], root())?;
-    let code: String = output.lines().filter(|line| {
-        line.trim_start().split_once(":\t")
-            .and_then(|(address, _)| u32::from_str_radix(address, 16).ok())
-            .is_some_and(|address| instructions.contains(&address))
-    }).map(|line| format!("{line}\n")).collect();
+    // Binary objdump interprets a standalone BL suffix plus its successor as
+    // Thumb-2 even with -marmv4t. Split at the call using our ARM7 decoder so
+    // disassembly resumes at the next real instruction, without changing bytes.
+    let calls: Vec<u32> = lines.iter().filter(|line| line.text.starts_with("bl lr"))
+        .map(|line| line.address).collect();
+    let mut cursor = start;
+    let mut code = String::new();
+    for boundary in calls.into_iter().chain(std::iter::once(end)) {
+        if cursor < boundary {
+            let output = command(&[
+                "arm-none-eabi-objdump", "-D", "-b", "binary", "-marm", "-Mforce-thumb",
+                "--no-show-raw-insn", "--disassemble-zeroes",
+                &format!("--adjust-vma={start:#x}"), &format!("--start-address={cursor:#x}"),
+                &format!("--stop-address={boundary:#x}"), &file.path().to_string_lossy(),
+            ], root())?;
+            for line in output.lines().filter(|line| {
+                line.trim_start().split_once(":\t")
+                    .and_then(|(address, _)| u32::from_str_radix(address, 16).ok())
+                    .is_some_and(|address| instructions.contains(&address))
+            }) {
+                code.push_str(line);
+                code.push('\n');
+            }
+        }
+        if boundary < end {
+            code.push_str(&format!("{boundary:x}:\tbl lr\n"));
+            cursor = boundary + 2;
+        }
+    }
     Ok(normalize(&code))
 }
 
@@ -610,7 +641,7 @@ pub(crate) fn scaffold_reference(target: DecompTarget, wanted: &str, arm: bool) 
         thumb_reference(&reference, base, start, end)?
     };
     let mode = if arm { "ARM" } else { "Thumb" };
-    println!("{mode} ROM analysis: {} {name}, {start:#010x}..{end:#010x}; full ROM comparison remains required.", target.id);
+    println!("{mode} main-image analysis: {} {name}, {start:#010x}..{end:#010x}; full ROM comparison remains required.", target.id);
     Ok((tokens, name))
 }
 
@@ -648,12 +679,12 @@ pub(crate) fn overlay_reference(target: DecompTarget, overlay: &str, wanted: &st
     let read = |name: &str| std::fs::read(output.join(name)).map_err(|error| format!("{name}: {error}; build {} first", target.id));
     let map = Map::parse(&String::from_utf8_lossy(&read(&format!("overlays/resource_{id}.map"))?));
     let elf = Elf::parse(&read(&format!("overlays/resource_{id}.elf"))?)?;
-    let (start, end, base, name) = overlay_extent(&map, &elf, wanted)?;
-    let main_map = Map::parse(&String::from_utf8_lossy(&read(&format!("{}.map", target.id))?));
-    let rom = std::fs::read(root().join(target.rom)).map_err(|error| format!("{}: {error}", target.rom))?;
-    target.verify_reference(&rom)?;
-    let bytes = crate::show::reference_overlay(&rom, &main_map, overlay)?;
-    let tokens = thumb_reference(&bytes, base, start, end)?;
+    let (start, end, _, name) = overlay_extent(&map, &elf, wanted)?;
+    let native = crate::show::overlay_function_reference(target, overlay, &name)?;
+    if native.start != start || native.end != end || native.name != name {
+        return Err(format!("{name}: overlay analysis bounds disagree"));
+    }
+    let tokens = thumb_reference(&native.bytes, start, start, end)?;
     println!("Thumb overlay ROM analysis: {} {overlay} {name}, {start:#010x}..{end:#010x}; full ROM comparison remains required.", target.id);
     Ok((tokens, name))
 }
@@ -667,7 +698,7 @@ pub(crate) fn text_symbols(object: &Path) -> Result<Vec<String>, String> {
             let (_, kind, name) = (words.next()?, words.next()?, words.next()?);
             matches!(kind, "T" | "t").then(|| name.to_string())
         })
-        .filter(|n| !n.starts_with('$') && !n.starts_with(".L"))
+        .filter(|n| !n.starts_with('$') && !n.starts_with(".L") && n != ".gcc2_compiled.")
         .collect())
 }
 
@@ -736,10 +767,16 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let mut draft_symbol = None;
     if let Some(overlay) = &options.overlay {
         let reference = root.join(target.output_dir).join(format!("overlays/{overlay}_overlay.o"));
-        let ours = if reference.exists() { text_symbols(&reference)? } else { Vec::new() };
         let symbol = match &options.symbol {
             Some(s) => s.clone(),
             None => {
+                let mut ours = if reference.exists() { text_symbols(&reference)? } else { Vec::new() };
+                let linked = root.join(target.output_dir).join(format!("overlays/{overlay}.elf"));
+                if linked.exists() {
+                    ours.extend(text_symbols(&linked)?);
+                    ours.sort();
+                    ours.dedup();
+                }
                 let shared: Vec<String> = text_symbols(&object)?.into_iter().filter(|s| ours.contains(s)).collect();
                 let stem = options.draft.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
                 let address = stem.rsplit('_').next().unwrap_or("").to_ascii_lowercase();
@@ -750,10 +787,11 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
                 }
             }
         };
-        if ours.contains(&symbol) {
-            listing.extend(disassemble(&reference, Some(&symbol))?);
-        } else {
+        let raw = if reference.exists() { disassemble(&reference, Some(&symbol))? } else { Vec::new() };
+        if raw.is_empty() {
             listing.extend(overlay_reference(target, overlay, &symbol)?.0);
+        } else {
+            listing.extend(raw);
         }
         if text_symbols(&object)?.contains(&symbol) {
             draft_symbol = Some(symbol);
@@ -870,6 +908,30 @@ mod tests {
     }
 
     #[test]
+    fn adopted_code_bounds_use_linked_symbols_and_refuse_data() {
+        let section = Placed {
+            name: ".text".into(), path: "out/tla-en/obj/games/tla/src/battle/summon/definition.o".into(),
+            address: ROM + 0x100, load: ROM + 0x100, size: 0x60, loaded: true,
+            symbols: vec![(ROM + 0x100, "First".into()), (ROM + 0x128, "Next".into())],
+        };
+        let symbol = |name: &str, value, size| crate::elf::Symbol {
+            name: name.into(), value, size, kind: 2, bind: 1, section: 1,
+        };
+        let elf = Elf { sections: vec![], symbols: vec![
+            symbol("First", ROM + 0x101, 0x24), symbol("Next", ROM + 0x129, 0x20),
+        ] };
+        let map = Map { placed: vec![section.clone()] };
+        assert_eq!(scaffold_extent(&map, &elf, "First").unwrap(), (ROM + 0x100, ROM + 0x124, ROM, "First".into()));
+        assert_eq!(scaffold_extent(&map, &elf, "08000100").unwrap().1, ROM + 0x124);
+        let mut data = section.clone();
+        data.name = ".rodata".into();
+        assert!(scaffold_extent(&Map { placed: vec![data] }, &elf, "First").is_err());
+        let mut unloaded = section;
+        unloaded.loaded = false;
+        assert!(scaffold_extent(&Map { placed: vec![unloaded] }, &elf, "First").is_err());
+    }
+
+    #[test]
     fn adopted_code_uses_its_linked_extent_and_still_refuses_data_and_unloaded_sections() {
         let section = Placed {
             name: ".text".into(), path: "out/tbs-en/obj/games/tbs/src/system/link/link.o".into(),
@@ -952,6 +1014,39 @@ mod tests {
         let table = thumb_reference(&image, ROM, ROM, ROM + 28).unwrap();
         assert_eq!(table.len(), 8);
         assert_eq!(&table[4..], ["movs r0, #1", "bx lr", "movs r0, #2", "bx lr"]);
+    }
+
+    #[test]
+    fn thumb_reference_keeps_a_standalone_call_via_lr_and_its_successor() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let binary = work.path().join("reference.bin");
+        let image: Vec<u8> = [0x469eu16, 0xf800, 0xb003, 0xbd60]
+            .into_iter().flat_map(u16::to_le_bytes).collect();
+        std::fs::write(&binary, &image).unwrap();
+        assert_eq!(thumb_reference(&image, ROM, ROM, ROM + 8).unwrap(),
+            ["mov lr, r3", "bl", "add sp, #12", "pop {r5, r6, pc}"]);
+        assert_eq!(normalize("0:\tmov lr, r3\n2:\t.short 0xf800\n4:\tadd sp, #12\n6:\tpop {r5, r6, pc}\n"),
+            ["mov lr, r3", "bl", "add sp, #12", "pop {r5, r6, pc}"]);
+        assert!(normalize("0:\t.short 0xf800\n").is_empty());
+        let located = normalize_located("test.c:1\n0:\tmov lr, r3\ntest.c:2\n2:\t.short 0xf800\n4:\tadd sp, #12\n");
+        assert_eq!(located.iter().map(|(row, _)| row.as_str()).collect::<Vec<_>>(),
+            ["mov lr, r3", "bl", "add sp, #12"]);
+        assert_eq!(located[1].1, Some(("test.c".into(), 2)));
+    }
+
+    #[test]
+    fn sliced_thumb_reference_handles_pools_and_call_suffixes_together() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let body: Vec<u8> = [0x4802u16, 0xe005, 0x469e, 0xf800, 0xb003, 0xbd60,
+            0x1234, 0xf000, 0x2007, 0x4770].into_iter().flat_map(u16::to_le_bytes).collect();
+        let expected = thumb_reference(&body, ROM, ROM, ROM + 20).unwrap();
+        let mut image = vec![0; 8];
+        image.extend(body);
+        assert_eq!(thumb_reference(&image, ROM, ROM + 8, ROM + 28).unwrap(), expected);
+        assert_eq!(expected.len(), 8);
+        assert!(expected.iter().any(|instruction| instruction == "bl"));
+        assert!(expected.iter().any(|instruction| instruction == "movs r0, #7"));
     }
 
     #[test]
@@ -1156,6 +1251,17 @@ mod tests {
         assert_eq!(resource_name("recon/tbs/en/overlays/resource_383_c_020048c8.c").as_deref(), Some("resource_383"));
         assert_eq!(resource_name("recon/tbs/en/overlays/resource_3cd/02008768.c").as_deref(), Some("resource_3cd"));
         assert_eq!(resource_name("recon/tbs/en/main/08011bf4.c"), None);
+    }
+
+    #[test]
+    fn text_symbols_do_not_offer_the_compiler_marker_as_a_function() {
+        crate::compiler::routing::prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let source = work.path().join("marker.s");
+        let object = work.path().join("marker.o");
+        std::fs::write(&source, ".text\n.local .gcc2_compiled.\n.gcc2_compiled.:\n.global RealFunction\n.type RealFunction, %function\n.thumb_func\nRealFunction:\n bx lr\n.size RealFunction, .-RealFunction\n").unwrap();
+        command(&["arm-none-eabi-as", "-mthumb", "-o", &object.to_string_lossy(), &source.to_string_lossy()], root()).unwrap();
+        assert_eq!(text_symbols(&object).unwrap(), vec!["RealFunction"]);
     }
 
     #[test]

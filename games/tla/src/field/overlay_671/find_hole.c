@@ -15,13 +15,13 @@ extern struct SceneState gSceneState;
 
 void Func_02004f40(u32 *x_out, u32 *z_out)
 {
-    /* FAKEMATCH: ⚓️ keeps the z output in its argument register */
-    register u32 *row_out asm("r1") = z_out;
-    /* FAKEMATCH: and the x output in its own */
-    register u32 *column_out asm("r0") = x_out;
+    u32 *row_out = z_out;
+    u32 *column_out = x_out;
     u32 z;
     u32 x;
 
+    /* FAKEMATCH: the operand boundary preserves the incoming output-pointer registers; plain unbound pointers add an entry copy and swap z_out/scene between r5/r1 (7 aligned differences). */
+    __asm__("" : "+r"(row_out), "+r"(column_out));
     z = 0;
 row:
     x = 0;

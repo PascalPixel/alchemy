@@ -1,3 +1,6 @@
+/* Pin-free trial (tla-en): listing 165 instructions, draft 155, common 116, differ 88.
+ * Earlier register-allocation notes describe the prior pinned form.
+ */
 #include "types.h"
 #include "io_reg.h"
 
@@ -6,7 +9,7 @@ void Menu_DrawSelectionRow(s32 arg, s32 value, s16 *sub);
 
 s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode_arg)
 {
-    register s16 *mode asm("r0") = mode_arg; /* FAKEMATCH: keeps the mode pointer in r0 */
+    s16 *mode = mode_arg; /* Earlier pinned trial: keeps the mode pointer in r0 */
     if (gKeysRepeat & KEY_A)
         return -1;
     if (gKeysRepeat & KEY_B)

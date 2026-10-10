@@ -574,10 +574,6 @@ void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 value, s32 weight);
 
-struct PacketHalf {
-    u16 value;
-};
-
 s32 LinkLobby_ExchangePartyRecords(void)
 {
     s32 result;
@@ -620,8 +616,6 @@ fail:
 
 s32 LinkLobby_RunConnectionSequence(void)
 {
-    /* FAKEMATCH: the aggregate keeps the shared packet value in halfword mode. */
-
     struct EventWork *work;
     s32 failed;
     s32 window;
@@ -631,7 +625,6 @@ s32 LinkLobby_RunConnectionSequence(void)
     u8 *src;
     u8 *dst;
     u16 *tbl;
-    struct PacketHalf value;
     u32 i;
 
     failed = 0;
@@ -735,10 +728,9 @@ s32 LinkLobby_RunConnectionSequence(void)
         gGameState.battle_start = 4;
         BattleFx_SetWeightedResult(1, 1);
         tbl = (u16 *)gSerialTransfer.payload;
-        value.value = 0x45;
+        tbl[0] = 0x45;
         tbl[1] = 0x58;
-        tbl[0] = value.value;
-        tbl[2] = value.value;
+        tbl[2] = 0x45;
         tbl[3] = 0x43;
         i = 0;
         src = buf;
@@ -750,8 +742,7 @@ s32 LinkLobby_RunConnectionSequence(void)
         Runtime_ReleaseHeapBlock(54);
     }
 done:
-    /* FAKEMATCH: the scene returns whatever the event end leaves in r0. */
-    return ((s32 (*)(void))Engine_EventEnd)();
+    Engine_EventEnd();
 }
 
 s32 LinkLobby_RunBattleApplication(void)

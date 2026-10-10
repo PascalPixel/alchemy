@@ -108,7 +108,6 @@ void Clear_LoadBackground(void)
     s32 tile;
     struct ScrollPair *scroll;
     s32 blank;
-    u16 zero;
 
     id = (s32)&ResourceId_GoldenSunLogo;
     Engine_BlendSetDarkenTarget16(0);
@@ -153,9 +152,7 @@ col:
         struct FieldActor *leader;
 
         leader = Object_GetById(gGameState.selected_actor);
-        /* FAKEMATCH: a halfword zero keeps the reference's short-reach pool. */
-        zero = 0;
-        leader->motion_flags = zero;
+        leader->motion_flags = 0;
     }
 }
 
@@ -388,7 +385,6 @@ s32 SaveMenu_Run(void)
     s32 v6;
     s32 link_message;
     s32 v1;
-    s32 v3;
     s32 v4;
     s32 n;
     s32 page_message;
@@ -408,7 +404,7 @@ s32 SaveMenu_Run(void)
     started = 0;
     Clear_LoadBackground();
     Engine_TaskAddCallback((s32)Clear_CheckButtonCodes, 0xc80);
-    *(s32 *)((*(u8 **)&gEventWork + 0x1c0)) = started;
+    gEventWork->start_transition = started;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     if (gGameState.entrance == 2) {
@@ -862,9 +858,7 @@ s32 SaveMenu_Run(void)
     Engine_TaskWait(0x12c);
     goto L_020004a8;
     L_02000c96:;
-    /* FAKEMATCH: stored as a plain constant, 0x3e7 is a halfword pool load that forces a pool before the epilogue (differ 25); through an s32 local it joins the one pool after the function. */
-    v3 = 0x3e7;
-    *(u16 *)((*(u8 **)&gEventWork + 0x170)) = v3;
+    gEventWork->requested_exit = 0x3e7;
     ((s32 (*)(s32))Engine_EventWait)(30);
     Engine_AudioPlayCue(17);
     Engine_EventCloseScreen();

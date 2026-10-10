@@ -175,7 +175,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn compatibility_candidate_scheduling_and_independent_streams() {
+    fn candidate_scheduling_and_independent_streams() {
         let mut walk = WalkRng::new(0, None);
         for row in include_str!("c/fixtures/rng-scheduling.tsv").lines() {
             let c: Vec<_> = row.split('\t').collect();
@@ -193,7 +193,7 @@ mod tests {
     }
 
     #[test]
-    fn arbitrary_signed_integer_seeds_match_sampling() {
+    fn arbitrary_signed_integer_seeds_match_sampling_vectors() {
         for row in include_str!("c/fixtures/rng-integers.tsv").lines() {
             let mut columns = row.split('\t');
             let seed = columns.next().unwrap();
@@ -208,7 +208,7 @@ mod tests {
     }
 
     #[test]
-    fn sampling_ordered_pair_sampling() {
+    fn ordered_pair_sampling_vectors() {
         for row in include_str!("c/fixtures/rng-sample.tsv").lines() {
             let c: Vec<_> = row.split('\t').collect();
             let mut rng = Rng::new(c[1].parse().unwrap());
@@ -218,7 +218,7 @@ mod tests {
     }
 
     #[test]
-    fn sampling_integer_seed_vectors() {
+    fn integer_seed_vectors() {
         let mut rng = Rng::new(0);
         assert_eq!((rng.word(), rng.word(), rng.word()), (3_626_764_237, 1_654_615_998, 3_255_389_356));
         let mut rng = Rng::new(1);

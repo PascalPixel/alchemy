@@ -60,6 +60,7 @@ pub fn write(root: &Path, score: u64, source: &str, base: &str, function: Option
     Ok(())
 }
 
+/// Compare stripped lines while preserving whitespace in the saved diff.
 pub fn diff(base: &str, source: &str) -> String {
     let a: Vec<_> = base.split('\n').collect();
     let b: Vec<_> = source.split('\n').collect();
@@ -111,7 +112,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn compatibility_output_policy_sequences() {
+    fn output_policy_sequences() {
         let hash = |name: &str| super::super::text_key(name);
         let mut policy = State::new(100, hash("base"), Options::default());
         for row in include_str!("c/fixtures/output-policy.tsv").lines() {
@@ -129,7 +130,7 @@ mod tests {
     }
 
     #[test]
-    fn compatibility_whitespace_ignoring_source_diffs() {
+    fn whitespace_ignoring_source_diffs() {
         for row in include_str!("c/fixtures/output-diffs.tsv").lines() {
             let c: Vec<_> = row.split('\t').map(|s| s.replace("\\n", "\n")).collect();
             assert_eq!(diff(&c[0], &c[1]), c[2], "base {:?}, source {:?}", c[0], c[1]);
@@ -137,7 +138,7 @@ mod tests {
     }
 
     #[test]
-    fn candidate_files_keep_existing_outputs_and_trim_like_compatibility() {
+    fn candidate_files_keep_existing_outputs_and_trim_source_context() {
         let root = tempfile::tempdir().unwrap();
         let source = "extern int global;\n\nint target(void)\n{\n  return 2;\n}\n";
         let options = Options { no_context: true, ..Options::default() };

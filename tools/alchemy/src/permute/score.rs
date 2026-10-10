@@ -404,7 +404,7 @@ pub fn weighted(listing: &[Line], draft: &[Line], options: Options, result: &mut
 #[cfg(test)]
 mod tests {
     #[test]
-    fn compatibility_assembly_identity_rows_and_hashes() {
+    fn assembly_identity_rows_and_hashes() {
         use sha2::{Digest, Sha256};
         for row in include_str!("c/fixtures/output-assembly.tsv").lines() {
             let c: Vec<_> = row.split('\t').collect();
@@ -420,7 +420,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn both_algorithms_match_compatibility_scores_and_normalization_options() {
+    fn both_algorithms_match_scores_and_normalization_options() {
         for row in include_str!("c/fixtures/scoring-algorithms.tsv").lines() {
             let c: Vec<_> = row.split('\t').collect();
             let options = Options { algorithm: Algorithm::parse(c[0]).unwrap(), stack_differences: c[1] == "1", ignore_branch_targets: c[2] == "1" };
@@ -488,7 +488,7 @@ mod tests {
     }
 
     #[test]
-    fn compatibility_penalties_count_operands_and_immediates_separately() {
+    fn penalties_count_operands_and_immediates_separately() {
         let result = score(&rows(&["adds r0, r1, #3"]), &rows(&["adds r2, r3, #4"]));
         assert_eq!((result.regalloc, result.weighted), (3, 15));
         let result = score(&rows(&["mov r0, r1", "add r2, r3"]), &rows(&["add r2, r3", "mov r4, r1"]));
@@ -496,7 +496,7 @@ mod tests {
     }
 
     #[test]
-    fn compatibility_ignores_stack_by_default_and_charges_branch_targets_one() {
+    fn ignores_stack_by_default_and_charges_branch_targets_one() {
         let old = rows(&["ldr r0, [sp, #12]", "b.n +4"]);
         let new = rows(&["ldr r0, [sp, #20]", "b.n +8"]);
         let result = score(&old, &new);
@@ -527,7 +527,7 @@ mod tests {
     }
 
     #[test]
-    fn compatibility_only_discards_trailing_nops() {
+    fn only_discards_trailing_nops() {
         assert_eq!(score(&rows(&["mov r0, r1", "nop"]), &rows(&["mov r0, r1"])).weighted, 0);
         assert_eq!(score(&rows(&["nop", "mov r0, r1"]), &rows(&["mov r0, r1"])).weighted, DELETE);
     }
@@ -544,12 +544,12 @@ mod tests {
         weighted(&target, &candidate, options, &mut score);
         assert_eq!(score.weighted, 0);
         weighted(&candidate, &target, options, &mut score);
-        assert_eq!(score.weighted, REGALLOC, "symbol wildcard is directional, like compatibility");
+        assert_eq!(score.weighted, REGALLOC, "symbol wildcard is directional, in this scoring direction");
         let wrong_call = parse_objdump("  0:\tbl\t4 <f>\n  0: R_ARM_THM_CALL Other\n  4:\t.word\t0x00000000\n  4: R_ARM_ABS32 Data\n").unwrap();
         weighted(&target, &wrong_call, options, &mut score);
-        assert_eq!(score.weighted, REGALLOC, "compatibility's test Options retain relocated callees");
+        assert_eq!(score.weighted, REGALLOC, "test options retain relocated callees");
         weighted(&target, &wrong_call, Options::default(), &mut score);
-        assert_eq!(score.weighted, 0, "compatibility's CLI default ignores call targets as well as branch destinations");
+        assert_eq!(score.weighted, 0, "the CLI default ignores call targets as well as branch destinations");
     }
 
     #[test]

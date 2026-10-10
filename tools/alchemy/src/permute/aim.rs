@@ -33,6 +33,7 @@ pub struct Aim {
 }
 
 impl Aim {
+    /// `printed` is the base function as the permuter prints it, and
     /// `first_line` the source line it starts on in the compiled text that
     /// `heat` was measured from.
     pub fn new(printed: &str, first_line: u32, heat: &Heat) -> Aim {

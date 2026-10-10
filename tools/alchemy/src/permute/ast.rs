@@ -1,3 +1,4 @@
+//! The function body the permuter edits, and its printer.
 //!
 //! Types stay spelled as their tokens; `types` resolves them when a mutation
 //! needs to know a width or a signedness.

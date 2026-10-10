@@ -1,3 +1,5 @@
+//! C tokens for the permuter. Comments are kept as tokens so statements can
+//! carry them; preprocessor lines are skipped, because the permuter edits the
 //! function body as written and the compiler preprocesses every candidate.
 
 #[derive(Clone, Debug, PartialEq, Eq)]

@@ -239,7 +239,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn indexed_reads_and_writes_match_compatibility_visitors() {
+    fn indexed_reads_and_writes_match_visitors() {
         let mut unit = super::super::super::c::parse(include_str!("../c/fixtures/mutations-lifetime.c")).unwrap();
         unit.extract_function("target").unwrap();
         let sites = Sites::build(&unit, "target").unwrap();

@@ -116,7 +116,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn alignments_match_native_compatibility_opcodes() {
+    fn alignments_match_native_opcodes() {
         for row in include_str!("../c/fixtures/levenshtein-alignments.tsv").lines() {
             let c: Vec<_> = row.split('\t').collect();
             let chars = |s: &str| {

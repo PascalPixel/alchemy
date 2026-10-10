@@ -956,7 +956,7 @@ mod tests {
     }
 
     #[test]
-    fn auxiliary_passes_match_seeded_compatibility_text_and_rng() {
+    fn auxiliary_passes_match_seeded_text_and_rng() {
         let base = parsed("int target(int a, int b) { float f = 1.0f; int x; x = a + b; return x + a; }");
         for row in include_str!("c/fixtures/mutations.tsv").lines() {
             let columns: Vec<_> = row.split('\t').collect();
@@ -1038,7 +1038,7 @@ mod tests {
     }
 
     #[test]
-    fn passes_match_compatibility_in_nested_blocks_and_regions() {
+    fn passes_match_in_nested_blocks_and_regions() {
         let mut failures = Vec::new();
         for row in include_str!("c/fixtures/mutations-auxiliary.tsv").lines().chain(include_str!("c/fixtures/mutations-expression.tsv").lines()).chain(include_str!("c/fixtures/mutations-types-assignments.tsv").lines()).chain(include_str!("c/fixtures/mutations-lifetime.tsv").lines()).chain(include_str!("c/fixtures/mutations-final.tsv").lines()) {
             let c: Vec<_> = row.split('\t').collect();
@@ -1057,7 +1057,7 @@ mod tests {
     }
 
     #[test]
-    fn successive_compatibility_mutations_match_source_hashes_retries_and_rng() {
+    fn successive_mutations_match_source_hashes_retries_and_rng() {
         check_walks(include_str!("c/fixtures/mutations-integer-seeds.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv"), include_str!("c/fixtures/mutations-types-assignments.tsv"), include_str!("c/fixtures/mutations-lifetime.tsv"), include_str!("c/fixtures/mutations-final.tsv")], true);
         check_walks(include_str!("c/fixtures/mutations-final-walks.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv"), include_str!("c/fixtures/mutations-types-assignments.tsv"), include_str!("c/fixtures/mutations-lifetime.tsv"), include_str!("c/fixtures/mutations-final.tsv")], true);
         check_walks(include_str!("c/fixtures/mutations-walks.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv")], false);
@@ -1111,7 +1111,7 @@ mod tests {
     }
 
     #[test]
-    fn side_effect_detection_matches_compatibility_unary_traversal() {
+    fn side_effect_detection_matches_unary_traversal() {
         for row in include_str!("c/fixtures/mutations-effects.tsv").lines() {
             let (expr, expected) = row.split_once('\t').unwrap();
             let unit = parsed(&format!("int target(int a,int b) {{ return {expr}; }}"));

@@ -4,7 +4,7 @@ use super::tests::test_problem;
 use super::*;
 
 #[test]
-fn forced_randomizer_seed_search_reaches_compatibility_candidate() {
+fn forced_randomizer_seed_search_reaches_candidate() {
     crate::compiler::routing::prefer_installed_binutils();
     let work = tempfile::tempdir().unwrap();
     let draft = work.path().join("draft/08000000.c");
@@ -32,7 +32,7 @@ fn forced_randomizer_seed_search_reaches_compatibility_candidate() {
 }
 
 #[test]
-fn compatibility_shared_declaration_tests() {
+fn independent_shared_declarations_match_printing() {
     for row in include_str!("c/fixtures/shared-declarations.tsv").lines() {
         let c: Vec<_> = row.split('\t').collect();
         let source = c[1].replace("\\n", "\n");
@@ -49,7 +49,7 @@ fn compatibility_shared_declaration_tests() {
 }
 
 #[test]
-fn compatibility_search_tests_compile_reach_the_target_and_keep_threaded_jobs_isolated() {
+fn independent_search_scenarios_reach_targets_and_isolate_workers() {
     crate::compiler::routing::prefer_installed_binutils();
     for algorithm in [score::Algorithm::Difflib, score::Algorithm::Levenshtein] {
         for (game, edition) in [("tbs", "tbs-en"), ("tla", "tla-en")] {
@@ -138,7 +138,7 @@ fn compatibility_search_tests_compile_reach_the_target_and_keep_threaded_jobs_is
                         c[0]
                     );
                 }
-                println!("compatibility case {} ({edition}, {algorithm:?}) passed", c[0]);
+                println!("independent case {} ({edition}, {algorithm:?}) passed", c[0]);
             }
         }
     }

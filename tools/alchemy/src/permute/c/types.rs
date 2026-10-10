@@ -227,7 +227,7 @@ mod tests {
     }
 
     #[test]
-    fn compatibility_type_comparison_ignores_qualifiers_but_keeps_signatures_strict() {
+    fn type_comparison_ignores_qualifiers_but_keeps_signatures_strict() {
         let unit = super::super::parse("int first(int x); int second(volatile int y); unsigned int third(int x); int fourth(short x); int target(void) { return 0; }").unwrap();
         let types = Types::new(&unit, "target");
         assert!(types.similar(&basic("float"), &basic("int")));

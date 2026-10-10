@@ -719,7 +719,7 @@ mod tests {
     }
 
     #[test]
-    fn compatibility_seed_order_uses_sum_for_choices_and_product_for_siblings() {
+    fn seed_order_uses_sum_for_choices_and_product_for_siblings() {
         assert_eq!(
             expansions("PERM_GENERAL(a,PERM_GENERAL(b,c)) PERM_INT(-1,1)"),
             ["a -1", "b -1", "c -1", "a 0", "b 0", "c 0", "a 1", "b 1", "c 1",]

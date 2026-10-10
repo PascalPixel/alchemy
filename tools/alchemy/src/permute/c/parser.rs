@@ -50,7 +50,7 @@ pub fn parse(source: &str) -> Result<Node> {
         input.insert(open, '(');
         parsed = parse_input(input)?;
     }
-    let mut adapter = Adapter { source: parsed.source, pragmas, global_asm, anonymous: 0, prefix: prefix.clone(), typedefs: HashSet::new(), shadowed: HashSet::new() };
+    let mut adapter = Adapter { source: parsed.source, pragmas, global_asm, anonymous: 0, prefix: prefix.clone(), typedefs: HashSet::new(), shadowed: HashSet::new(), aliases: aliases.clone() };
     let mut ext = Vec::new();
     for item in &parsed.unit.0 {
         match &item.node {
@@ -68,16 +68,98 @@ pub fn parse(source: &str) -> Result<Node> {
     }
     fn restore(node: &mut Node, aliases: &HashMap<String, String>) {
         let value = match node {
-            Node::Id { name } | Node::Label { name, .. } | Node::Goto { name } => Some(name),
-            Node::Decl { name, .. } | Node::TypeDecl { declname: name, .. } => name.as_mut(),
+            Node::Id { name } | Node::Label { name, .. } | Node::Goto { name } | Node::Typedef { name, .. } | Node::Enumerator { name, .. } | Node::Attribute { name, .. } => Some(name),
+            Node::Decl { name, .. } | Node::TypeDecl { declname: name, .. } | Node::Struct { name, .. } | Node::Union { name, .. } | Node::Enum { name, .. } | Node::Typename { name, .. } => name.as_mut(),
             _ => None,
         };
         if let Some(value) = value { if let Some(original) = aliases.get(value) { *value = original.clone(); } }
+        if let Node::IdentifierType { names } = node { for name in names { if let Some(original) = aliases.get(name) { *name = original.clone(); } } }
+        // Restore metadata explicitly: it is outside mutation traversal.
+        match node {
+            Node::Decl { align, .. } | Node::TypeDecl { align, .. } | Node::Typename { align, .. } => for child in align { restore(child, aliases); },
+            Node::Enumerator { attributes, .. } => for child in attributes { restore(child, aliases); },
+            _ => {}
+        }
         for child in node.children_mut() { restore(child, aliases); }
     }
     let mut unit = Node::FileAst { ext };
     restore(&mut unit, &aliases);
+    validate_names(&unit, &mut Names::default())?;
     Ok(unit)
+}
+
+/// permitting either kind to shadow a name in an enclosing scope.
+#[derive(Default)]
+struct Names { visible: HashMap<String, bool>, local: HashSet<String> }
+
+impl Names {
+    fn child(&self) -> Self { Self { visible: self.visible.clone(), local: HashSet::new() } }
+}
+
+fn validate_names(node: &Node, scope: &mut Names) -> Result<()> {
+    fn bind(scope: &mut Names, name: &str, typedef: bool) -> Result<()> {
+        if scope.local.contains(name) && scope.visible.get(name).is_some_and(|old| *old != typedef) {
+            return Err(format!("{name} redeclared as a different kind of symbol"));
+        }
+        scope.visible.insert(name.to_string(), typedef);
+        scope.local.insert(name.to_string());
+        Ok(())
+    }
+    fn enum_names(node: &Node, scope: &mut Names) -> Result<()> {
+        match node {
+            Node::Enumerator { name, .. } => bind(scope, name, false)?,
+            Node::FuncDecl { ty, .. } => enum_names(ty, scope)?,
+            _ => { for child in node.children() { enum_names(child, scope)?; } },
+        }
+        Ok(())
+    }
+    fn check_types(node: &Node, scope: &Names) -> Result<()> {
+        if let Node::IdentifierType { names } = node {
+            if names.len() == 1 && scope.visible.get(&names[0]) == Some(&false) { return Err(format!("{} is no longer a typedef in this scope", names[0])); }
+        }
+        for child in node.children() { check_types(child, scope)?; }
+        Ok(())
+    }
+    match node {
+        Node::FileAst { ext } => { for item in ext { validate_names(item, scope)?; } },
+        Node::Typedef { name, ty, .. } => { check_types(ty, scope)?; enum_names(ty, scope)?; bind(scope, name, true)?; },
+        Node::Decl { name, init, ty, .. } => {
+            check_types(ty, scope)?;
+            enum_names(ty, scope)?;
+            if let Some(init) = init { validate_names(init, scope)?; }
+            if let Some(name) = name { bind(scope, name, false)?; }
+        },
+        Node::FuncDef { decl, param_decls, body } => {
+            validate_names(decl, scope)?;
+            let mut local = scope.child();
+            if let Node::Decl { ty, .. } = decl.as_ref() {
+                let mut ty = ty.as_ref();
+                while let Node::PtrDecl { ty: inner, .. } = ty { ty = inner; }
+                if let Node::FuncDecl { args: Some(args), .. } = ty {
+                    if let Node::ParamList { params } = args.as_ref() {
+                        for param in params { match param {
+                            Node::Decl { name: Some(name), .. } | Node::Id { name } => bind(&mut local, name, false)?,
+                            _ => {},
+                        } }
+                    }
+                }
+            }
+            for decl in param_decls { validate_names(decl, &mut local)?; }
+            if let Node::Compound { block_items } = body.as_ref() {
+                for item in block_items { validate_names(item, &mut local)?; }
+            } else { validate_names(body, &mut local)?; }
+        },
+        Node::Compound { block_items } => {
+            let mut local = scope.child();
+            for item in block_items { validate_names(item, &mut local)?; }
+        },
+        Node::For { init, cond, next, stmt } => {
+            for child in [init.as_deref(), cond.as_deref(), next.as_deref(), Some(stmt.as_ref())].into_iter().flatten() { validate_names(child, scope)?; }
+        },
+        Node::Typename { .. } | Node::TypeDecl { .. } | Node::PtrDecl { .. } | Node::ArrayDecl { .. } | Node::FuncDecl { .. } | Node::ParamList { .. } => {},
+        _ => { for child in node.children() { validate_names(child, scope)?; } },
+    }
+    Ok(())
 }
 
 /// Bridge grammar differences while preserving the candidate tree and names.
@@ -98,6 +180,31 @@ fn permissive_input(input: &mut String, prefix: &str) -> Result<HashMap<String, 
     let mut brace_depth = 0usize;
     let mut paren_depth = 0usize;
     for (i, token) in tokens.iter().enumerate() {
+        if let Tok::Ident(name) = &token.tok {
+            if brace_depth > 0 && typedefs.contains(name) && i > 0
+                && matches!(&tokens[i - 1].tok, Tok::Ident(s) if typedefs.contains(s) || matches!(s.as_str(), "int" | "char" | "unsigned" | "signed" | "long" | "short" | "float" | "double"))
+                && tokens.get(i + 1).is_some_and(|t| t.tok == Tok::Punct("="))
+                && tokens.get(i + 2).is_some_and(|t| t.tok == Tok::Punct("("))
+                && tokens.get(i + 3).is_some_and(|t| t.tok == Tok::Punct("{")) {
+                let alias = format!("{prefix}deferred_value_{}", aliases.len());
+                aliases.insert(alias.clone(), name.clone());
+                patches.push((token.start, token.end, alias));
+                let (mut parentheses, mut braces) = (0usize, 0usize);
+                for end in tokens.iter().skip(i + 2) {
+                    match end.tok {
+                        Tok::Punct("(") => parentheses += 1,
+                        Tok::Punct(")") => parentheses = parentheses.saturating_sub(1),
+                        Tok::Punct("{") => braces += 1,
+                        Tok::Punct("}") => braces = braces.saturating_sub(1),
+                        Tok::Punct(";") if parentheses == 0 && braces == 0 => {
+                            patches.push((end.start, end.start, format!(", {name} = {prefix}deferred_binding()")));
+                            break;
+                        },
+                        _ => {},
+                    }
+                }
+            }
+        }
         if token.tok == Tok::Punct("(") && brace_depth == 0 && paren_depth == 0
             && i > 0 && matches!(&tokens[i - 1].tok, Tok::Ident(s) if !matches!(s.as_str(), "_Atomic" | "_Alignas" | "_Static_assert" | "__attribute__" | "asm" | "__asm__" | "typeof" | "__typeof__")) {
             let mut depth = 1;
@@ -241,10 +348,35 @@ fn sizeof_cast_ambiguity(parsed: &driver::Parse) -> Result<Option<(usize, usize)
     use lang_c::{span::Span, visit::{self, Visit}};
     use crate::permute::lex::Tok;
     #[derive(Default)]
-    struct Expressions<'a> { nodes: Vec<(&'a c::Expression, Span)> }
+    struct Expressions<'a> { nodes: Vec<(&'a c::Expression, Span)>, for_names: HashSet<String> }
     impl<'a> Visit<'a> for Expressions<'a> {
+        fn visit_statement(&mut self, s: &'a c::Statement, span: &'a Span) {
+            let enclosing = matches!(s, c::Statement::Compound(_)).then(|| self.for_names.clone());
+            if let c::Statement::For(f) = s {
+                if let c::ForInitializer::Declaration(d) = &f.node.initializer.node {
+                    fn name(d: &c::Declarator) -> Option<&str> {
+                        match &d.kind.node {
+                            c::DeclaratorKind::Identifier(id) => Some(&id.node.name),
+                            c::DeclaratorKind::Declarator(d) => name(&d.node),
+                            _ => None,
+                        }
+                    }
+                    for d in &d.node.declarators {
+                        if let Some(name) = name(&d.node.declarator.node) { self.for_names.insert(name.into()); }
+                    }
+                }
+            }
+            visit::visit_statement(self, s, span);
+            if let Some(enclosing) = enclosing { self.for_names = enclosing; }
+        }
         fn visit_expression(&mut self, e: &'a c::Expression, span: &'a Span) {
-            self.nodes.push((e, *span));
+            let shadowed = match e {
+                c::Expression::SizeOfTy(t) => t.node.0.node.specifiers.iter().any(|s| matches!(&s.node,
+                    c::SpecifierQualifier::TypeSpecifier(t) if matches!(&t.node,
+                        c::TypeSpecifier::TypedefName(id) if self.for_names.contains(&id.node.name)))),
+                _ => false,
+            };
+            if !shadowed { self.nodes.push((e, *span)); }
             visit::visit_expression(self, e, span);
         }
     }
@@ -323,7 +455,7 @@ struct Specs {
     asmlabel: Optional,
 }
 
-struct Adapter { source: String, pragmas: HashMap<String, String>, global_asm: HashMap<String, Node>, anonymous: usize, prefix: String, typedefs: HashSet<String>, shadowed: HashSet<String> }
+struct Adapter { source: String, pragmas: HashMap<String, String>, global_asm: HashMap<String, Node>, anonymous: usize, prefix: String, typedefs: HashSet<String>, shadowed: HashSet<String>, aliases: HashMap<String, String> }
 
 fn name(decl: &c::Declarator) -> Option<String> {
     match &decl.kind.node {
@@ -345,7 +477,6 @@ impl Adapter {
     fn text<T>(&self, n: &Spanned<T>) -> &str { &self.source[n.span.start..n.span.end] }
 
     fn string(&self, s: &c::StringLiteral) -> Node {
-        // tree folds adjacent string tokens into one literal.
         string_literal(s)
     }
 
@@ -379,7 +510,17 @@ impl Adapter {
                 Node::FuncCall { name: self.expression(&n.node.callee)?.boxed(), args: (!args.is_empty()).then(|| Node::ExprList { exprs: args }.boxed()) }
             }
             E::CompoundLiteral(n) => Node::CompoundLiteral { ty: self.typename(&n.node.type_name.node)?.boxed(), init: self.initializer_list(&n.node.initializer_list)?.boxed() },
-            E::SizeOfTy(n) => Node::UnaryOp { op: "sizeof".into(), expr: self.typename(&n.node.0.node)?.boxed() },
+            E::SizeOfTy(n) => {
+                let mut expr = self.typename(&n.node.0.node)?;
+                if n.node.0.node.declarator.is_none() && n.node.0.node.specifiers.len() == 1 {
+                    if let c::SpecifierQualifier::TypeSpecifier(t) = &n.node.0.node.specifiers[0].node {
+                        if let c::TypeSpecifier::TypedefName(id) = &t.node {
+                            if self.shadowed.contains(&id.node.name) { expr = Node::id(&id.node.name); }
+                        }
+                    }
+                }
+                Node::UnaryOp { op: "sizeof".into(), expr: expr.boxed() }
+            },
             E::SizeOfVal(n) => {
                 let expr = if let E::Identifier(id) = &n.node.0.node {
                     if self.typedefs.contains(&id.node.name) && !self.shadowed.contains(&id.node.name) {
@@ -513,7 +654,12 @@ impl Adapter {
                             c::StructDeclaration::StaticAssert(a) => declarations.push(self.assertion(&a.node)?),
                             c::StructDeclaration::Field(f) => {
                                 let mut specs = self.qualifiers(&f.node.specifiers)?;
-                                if f.node.declarators.is_empty() { declarations.push(self.decl(&specs, None, None, None)?); }
+                                if f.node.declarators.is_empty() {
+                                    if matches!(specs.base, Node::IdentifierType { .. }) {
+                                        return Err("unnamed scalar structure members are unsupported".into());
+                                    }
+                                    declarations.push(self.decl(&specs, None, None, None)?);
+                                }
                                 self.name_shared_type(&mut specs.base, f.node.declarators.len());
                                 for (i, d) in f.node.declarators.iter().enumerate() {
                                     if i > 0 { Self::forward_type(&mut specs.base); }
@@ -588,6 +734,13 @@ impl Adapter {
         if let Node::TypeDecl { declname, .. } = base { *declname = name(&declaration.declarators[0].node.declarator.node); }
         let mut result = Vec::new();
         for (i, d) in declaration.declarators.iter().enumerate() {
+            if let Some(initializer) = &d.node.initializer {
+                if let c::Initializer::Expression(expr) = &initializer.node {
+                    if let c::Expression::Call(call) = &expr.node {
+                        if matches!(&call.node.callee.node, c::Expression::Identifier(id) if id.node.name == format!("{}deferred_binding", self.prefix)) { continue; }
+                    }
+                }
+            }
             if i > 0 { Self::forward_type(&mut specs.base); }
             if let Some(pragma) = name(&d.node.declarator.node).and_then(|n| self.pragmas.get(&n)) {
                 result.push(Node::Pragma { string: pragma.clone() });
@@ -599,7 +752,7 @@ impl Adapter {
         }
         for node in &result { match node {
             Node::Typedef { name, .. } => { self.typedefs.insert(name.clone()); self.shadowed.remove(name); },
-            Node::Decl { name: Some(name), .. } => { self.shadowed.insert(name.clone()); },
+            Node::Decl { name: Some(name), .. } => { self.shadowed.insert(self.aliases.get(name).unwrap_or(name).clone()); },
             _ => {},
         } }
         Ok(result)

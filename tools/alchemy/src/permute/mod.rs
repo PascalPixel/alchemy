@@ -1089,6 +1089,7 @@ struct Best {
     found: Found,
     /// The rewrites the search applied, before minimizing.
     searched: Vec<Kind>,
+    /// The candidate in the draft's own lines, or as the permuter prints
     /// its function when the rewrites do not carry into them.
     text: String,
     respelled: bool,
@@ -1330,7 +1331,7 @@ mod tests {
     }
 
     #[test]
-    fn compatibility_c_tree_compiles_through_both_game_routes() {
+    fn c_tree_compiles_through_both_game_routes() {
         crate::compiler::routing::prefer_installed_binutils();
         let source = "#include \"types.h\"\ntypedef struct { u32 word; s16 pair[2]; } Item;\nstatic inline u32 Twice(u32 x) { return x + x; }\nu32 F(Item *p) { u32 n = p->word; if (n) return Twice(n); return (u16)p->pair[1]; }\n";
         for arm in [false, true] {
@@ -1456,7 +1457,6 @@ mod tests {
         assert_eq!(transplant("int a; x = 1;\n", "int a;\nx = 1;\n", "int a;\nx = 2;\n"), None);
     }
 
-    /// A compiled reference for `listing`, as alchemy diff compiles drafts.
     fn listing_of(work: &Path, source: &str) -> Vec<String> {
         let target = decomp_target(Some("tbs-en")).unwrap();
         let reference = work.join("reference/08000000.c");
@@ -1470,7 +1470,7 @@ mod tests {
     }
 
     #[test]
-    fn compatibility_scoring_reads_real_compiler_objects() {
+    fn scoring_reads_real_compiler_objects() {
         crate::compiler::routing::prefer_installed_binutils();
         let work = tempfile::tempdir().unwrap();
         let text = "int F(int x) { return x + 2; }\n";

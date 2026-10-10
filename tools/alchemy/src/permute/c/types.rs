@@ -33,7 +33,6 @@ pub struct Types {
     pub vars: BTreeMap<String, Node>,
     pub locals: BTreeSet<String>,
     records: BTreeMap<(bool, String), Node>,
-    ambiguous: BTreeSet<String>,
 }
 
 impl Types {
@@ -61,7 +60,6 @@ impl Types {
             }
             Node::Decl { name, ty, .. } => {
                 if let Some(name) = name {
-                    if local && (self.locals.contains(name) || self.vars.contains_key(name)) { self.ambiguous.insert(name.clone()); }
                     self.vars.insert(name.clone(), *ty.clone());
                     if local { self.locals.insert(name.clone()); }
                 }
@@ -98,11 +96,15 @@ impl Types {
     }
 
     pub fn arithmetic(&self, ty: &Node) -> bool {
-        matches!(self.resolve(ty), Some(Node::TypeDecl { ty, .. }) if matches!(ty.as_ref(), Node::IdentifierType { names } if names.iter().any(|n| matches!(n.as_str(), "int" | "short" | "long" | "char" | "signed" | "unsigned" | "float" | "double"))))
+        self.allowed_basic(ty, &["int", "short", "long", "char", "signed", "unsigned", "float", "double"])
     }
 
     pub fn integral(&self, ty: &Node) -> bool {
-        self.arithmetic(ty) && !self.float(ty)
+        self.allowed_basic(ty, &["int", "short", "long", "char", "signed", "unsigned"])
+    }
+
+    pub fn allowed_basic(&self, ty: &Node, allowed: &[&str]) -> bool {
+        matches!(self.resolve(ty), Some(Node::TypeDecl { ty, .. }) if matches!(ty.as_ref(), Node::IdentifierType { names } if names.iter().any(|n| allowed.contains(&n.as_str()))))
     }
 
     fn float(&self, ty: &Node) -> bool {
@@ -110,14 +112,28 @@ impl Types {
     }
 
     pub fn similar(&self, a: &Node, b: &Node) -> bool {
-        if self.integral(a) && self.integral(b) { return true; }
+        self.same(a, b, true)
+    }
+
+    pub fn same(&self, a: &Node, b: &Node, similar: bool) -> bool {
         match (self.resolve(a), self.resolve(b)) {
-            (Some(Node::PtrDecl { ty: a, .. }), Some(Node::PtrDecl { ty: b, .. })) => self.similar(a, b),
-            (Some(a), Some(b)) => {
-                let (mut a, mut b) = (a.clone(), b.clone());
-                set_name(&mut a, None);
-                set_name(&mut b, None);
-                a == b
+            (Some(Node::PtrDecl { ty: a, .. }), Some(Node::PtrDecl { ty: b, .. })) | (Some(Node::ArrayDecl { ty: a, .. }), Some(Node::ArrayDecl { ty: b, .. })) => self.same(a, b, similar),
+            (Some(Node::TypeDecl { ty: a, .. }), Some(Node::TypeDecl { ty: b, .. })) => match (a.as_ref(), b.as_ref()) {
+                (Node::Struct { name: a, .. }, Node::Struct { name: b, .. }) | (Node::Union { name: a, .. }, Node::Union { name: b, .. }) => a == b,
+                (Node::IdentifierType { .. } | Node::Enum { .. }, Node::IdentifierType { .. } | Node::Enum { .. }) if similar => true,
+                (Node::Enum { name: a, .. }, Node::Enum { name: b, .. }) => a == b,
+                (Node::IdentifierType { names: a }, Node::IdentifierType { names: b }) => { let (mut a, mut b) = (a.clone(), b.clone()); a.sort(); b.sort(); a == b }
+                _ => false,
+            },
+            (Some(Node::FuncDecl { args: a, ty: ar }), Some(Node::FuncDecl { args: b, ty: br })) => {
+                let params = |n: &Option<Box<Node>>| if let Some(Node::ParamList { params }) = n.as_deref() { params.clone() } else { vec![] };
+                let (a, b) = (params(a), params(b));
+                a.len() == b.len() && a.iter().zip(&b).all(|(a, b)| match (a, b) {
+                    (Node::EllipsisParam {}, Node::EllipsisParam {}) => true,
+                    (Node::Id { name: a }, Node::Id { name: b }) => a == b,
+                    (Node::Decl { ty: a, .. } | Node::Typename { ty: a, .. }, Node::Decl { ty: b, .. } | Node::Typename { ty: b, .. }) => self.same(a, b, false),
+                    _ => false,
+                }) && self.same(ar, br, false)
             }
             _ => false
         }
@@ -145,7 +161,7 @@ impl Types {
 
     pub fn expr(&self, expr: &Node) -> Option<Node> {
         let ty = match expr {
-            Node::Id { name } => { if self.ambiguous.contains(name) { return None; } self.vars.get(name)?.clone() }
+            Node::Id { name } => self.vars.get(name)?.clone(),
             Node::Constant { ty, .. } => match ty.as_str() { "string" => pointer(basic("char")), "char" => basic("int"), _ => basic(ty) },
             Node::Cast { to_type, .. } | Node::CompoundLiteral { ty: to_type, .. } => match to_type.as_ref() { Node::Typename { ty, .. } => *ty.clone(), _ => return None },
             Node::Assignment { lvalue, .. } => self.expr(lvalue)?,
@@ -153,7 +169,7 @@ impl Types {
                 "&" => pointer(self.expr(expr)?),
                 "*" => self.deref(&self.expr(expr)?)?,
                 "p++" | "p--" | "++" | "--" => self.expr(expr)?,
-                "-" | "+" if self.float(&self.expr(expr)?) => self.expr(expr)?,
+                "-" | "+" if self.float(&self.expr(expr)?) => if self.allowed_basic(&self.expr(expr)?, &["double"]) { basic("double") } else { basic("float") },
                 "sizeof" | "-" | "+" | "~" | "!" => basic("int"),
                 _ => return None,
             },
@@ -207,6 +223,20 @@ mod tests {
         assert!(types.integral(&types.expr(&call).unwrap()));
         assert!(types.expr(&Node::id("unknown")).is_none());
         let unit = super::super::parse("int target(int n) { { short n; n = 1; } return n; }").unwrap();
-        assert!(Types::new(&unit, "target").expr(&Node::id("n")).is_none());
+        assert_eq!(Types::new(&unit, "target").expr(&Node::id("n")).unwrap().print(), "short");
+    }
+
+    #[test]
+    fn compatibility_type_comparison_ignores_qualifiers_but_keeps_signatures_strict() {
+        let unit = super::super::parse("int first(int x); int second(volatile int y); unsigned int third(int x); int fourth(short x); int target(void) { return 0; }").unwrap();
+        let types = Types::new(&unit, "target");
+        assert!(types.similar(&basic("float"), &basic("int")));
+        assert!(!types.same(&basic("float"), &basic("int"), false));
+        assert!(types.similar(&basic("void"), &basic("int")));
+        assert!(types.same(&types.vars["first"], &types.vars["second"], true));
+        assert!(!types.same(&types.vars["first"], &types.vars["third"], true));
+        assert!(!types.same(&types.vars["first"], &types.vars["fourth"], true));
+        let array = |n| Node::ArrayDecl { ty: basic("int").boxed(), dim: Some(Node::Constant { ty: "int".into(), value: n }.boxed()), dim_quals: vec![] };
+        assert!(types.same(&array("2".into()), &array("7".into()), false));
     }
 }

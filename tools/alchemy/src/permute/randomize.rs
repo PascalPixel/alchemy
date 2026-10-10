@@ -252,14 +252,6 @@ fn effectful(n: &Node) -> bool {
         || matches!(n, Node::UnaryOp { op, .. } if matches!(op.as_str(), "++" | "--" | "p++" | "p--"))
         || n.children().into_iter().any(effectful)
 }
-fn constant(n: &Node) -> Option<i64> {
-    let Node::Constant { value, .. } = n else { return None };
-    let value = value.trim_end_matches(['u', 'U', 'l', 'L']);
-    if let Some(hex) = value.strip_prefix("0x").or_else(|| value.strip_prefix("0X")) { i64::from_str_radix(hex, 16).ok() }
-    else if value.starts_with('0') && value.len() > 1 { i64::from_str_radix(&value[1..], 8).ok() }
-    else { value.parse().ok() }
-}
-
 /// Unlike a C literal reader, it rejects long suffixes and old-style octal.
 fn factor_constant(n: &Node) -> Option<i64> {
     let Node::Constant { value, .. } = n else { return None };
@@ -327,13 +319,17 @@ fn apply_sites(unit: &mut Node, target: &str, kind: Kind, rng: &mut Rng, sites: 
 /// Statement boundaries in source order. Declarations are not valid following
 /// statements for inserted executable code in the target's C89 dialect.
 fn insertion_points(unit: &Node, sites: &Sites, bounded: bool) -> Vec<(Path, usize)> {
+    insertion_points_with_decls(unit, sites, bounded, false)
+}
+
+fn insertion_points_with_decls(unit: &Node, sites: &Sites, bounded: bool, allow_decls: bool) -> Vec<(Path, usize)> {
     let mut points = Vec::new();
     for path in sites.blocks(unit) {
         let block = at(unit, &path);
         let items = statements(block).unwrap();
         for (i, item) in items.iter().enumerate() {
             let p = statement_path(&path, block, i);
-            if !matches!(item, Node::Decl { .. }) && (!bounded || sites.allows_pre(&p)) {
+            if (allow_decls || !matches!(item, Node::Decl { .. })) && (!bounded || sites.allows_pre(&p)) {
                 points.push((path.clone(), i));
             }
         }
@@ -489,6 +485,7 @@ fn auxiliary(unit: &mut Node, target: &str, sites: &Sites, kind: Kind, rng: &mut
 }
 
 fn expression(unit: &mut Node, target: &str, sites: &Sites, kind: Kind, rng: &mut Rng) -> Option<()> {
+    if kind == Kind::Remove { return remove_ast(unit, sites, rng); }
     let value_only = matches!(kind, Kind::Cast | Kind::FactorMultiply | Kind::FactorShift);
     let paths = if value_only { sites.expressions(unit) } else { sites.nodes.iter().filter(|s| s.path.starts_with(&sites.body) && (kind == Kind::ReverseCondition || sites.allows(&s.path))).map(|s| s.path.clone()).collect() };
     let candidates: Vec<_> = paths.into_iter().filter(|path| { let n = at(unit, path); match kind {
@@ -501,7 +498,6 @@ fn expression(unit: &mut Node, target: &str, sites: &Sites, kind: Kind, rng: &mu
         Kind::CompoundAssignment => matches!(n, Node::Assignment { op, lvalue, rvalue } if op != "=" || matches!(rvalue.as_ref(), Node::BinaryOp { op, left, .. } if left == lvalue && ["+", "-", "*", "/", "<<", ">>", "&", "|", "^"].contains(&op.as_str()))),
         Kind::StructRef => matches!(n, Node::StructRef { .. } | Node::ArrayRef { .. }) || matches!(n, Node::UnaryOp { op, expr } if op == "*" && matches!(expr.as_ref(), Node::BinaryOp { op, .. } if op == "+")),
         Kind::ReverseCondition => matches!(n, Node::If { iffalse: Some(_), .. } | Node::TernaryOp { .. }),
-        Kind::Remove => matches!(n, Node::Cast { .. } | Node::If { iffalse: None, .. } | Node::While { .. } | Node::DoWhile { .. }) || matches!(n, Node::BinaryOp { op, left, right } if op == "&" && (constant(left).is_some() || constant(right).is_some())),
         _ => false,
     }}).collect();
     let path = &candidates[choose(rng, &candidates)?];
@@ -585,10 +581,6 @@ fn expression(unit: &mut Node, target: &str, sites: &Sites, kind: Kind, rng: &mu
         }
         (Kind::ReverseCondition, Node::If { cond, iftrue, iffalse: Some(iffalse) }) => Node::If { cond: negate(*cond).boxed(), iftrue: iffalse, iffalse: Some(iftrue) },
         (Kind::ReverseCondition, Node::TernaryOp { cond, iftrue, iffalse }) => Node::TernaryOp { cond: negate(*cond).boxed(), iftrue: iffalse, iffalse: iftrue },
-        (Kind::Remove, Node::Cast { expr, .. }) => *expr,
-        (Kind::Remove, Node::BinaryOp { left, right, .. }) => if constant(&left).is_some() { *right } else { *left },
-        (Kind::Remove, Node::If { iftrue, .. }) => *iftrue,
-        (Kind::Remove, Node::While { stmt, .. } | Node::DoWhile { stmt, .. }) => *stmt,
         _ => return None,
     };
     *at_mut(unit, path) = replacement;
@@ -596,15 +588,74 @@ fn expression(unit: &mut Node, target: &str, sites: &Sites, kind: Kind, rng: &mu
 }
 fn negate(n: Node) -> Node { if let Node::UnaryOp { op, expr } = &n { if op == "!" { return *expr.clone(); } } unary("!", n) }
 
+/// into type dimensions, sizeof operands or initializer-list elements.
+fn replacement_reachable(unit: &Node, body: &[usize], path: &[usize]) -> bool {
+    for depth in body.len()..path.len() {
+        let node = at(unit, &path[..depth]);
+        let i = path[depth];
+        let visits = match node {
+            Node::StructRef { .. } => i == 0,
+            Node::Cast { .. } => i == 1,
+            Node::UnaryOp { op, .. } => op != "sizeof",
+            Node::FuncCall { name, .. } => i != 0 || !matches!(name.as_ref(), Node::Id { .. }),
+            Node::ExprList { exprs } => !matches!(exprs[i], Node::Typename { .. }),
+            Node::Decl { .. } => i == 1,
+            Node::Case { .. } => i != 0,
+            Node::Assignment { .. } | Node::BinaryOp { .. } | Node::ArrayRef { .. } | Node::TernaryOp { .. } | Node::Return { .. } | Node::For { .. } | Node::Compound { .. } | Node::Default { .. } | Node::DoWhile { .. } | Node::While { .. } | Node::If { .. } | Node::Switch { .. } | Node::Label { .. } => true,
+            _ => false,
+        };
+        if !visits { return false; }
+    }
+    true
+}
+
+fn remove_ast(unit: &mut Node, sites: &Sites, rng: &mut Rng) -> Option<()> {
+    let mut candidates = Vec::new();
+    for site in &sites.nodes {
+        if !site.path.starts_with(&sites.body) || !sites.allows(&site.path) { continue; }
+        match at(unit, &site.path) {
+            Node::Cast { expr, .. } => candidates.push((site.path.clone(), *expr.clone())),
+            Node::BinaryOp { op, left, right } if op == "&" => {
+                if matches!(left.as_ref(), Node::Constant { .. }) { candidates.push((site.path.clone(), *right.clone())); }
+                if matches!(right.as_ref(), Node::Constant { .. }) { candidates.push((site.path.clone(), *left.clone())); }
+            }
+            Node::If { iftrue, iffalse: None, .. } => candidates.push((site.path.clone(), *iftrue.clone())),
+            Node::While { stmt, .. } | Node::DoWhile { stmt, .. } => candidates.push((site.path.clone(), *stmt.clone())),
+            _ => {}
+        }
+    }
+    let (path, replacement) = candidates.get(choose(rng, &candidates)?)?;
+    if replacement_reachable(unit, &sites.body, path) { *at_mut(unit, path) = replacement.clone(); }
+    Some(())
+}
+
+fn mentioned_in_region(unit: &Node, sites: &Sites) -> Vec<String> {
+    let mut seen = BTreeSet::new();
+    sites.nodes.iter().filter_map(|s| {
+        if !sites.allows(&s.path) { return None; }
+        let Node::Id { name } = at(unit, &s.path) else { return None };
+        if s.path.last() == Some(&1) && matches!(at(unit, &s.path[..s.path.len() - 1]), Node::StructRef { .. }) { return None; }
+        seen.insert(name.clone()).then(|| name.clone())
+    }).collect()
+}
+
+fn randomize_innermost(ty: &mut Node, types: &Types, rng: &mut Rng) -> Option<()> {
+    match ty {
+        Node::TypeDecl { .. } if types.integral(ty) => { *ty = random_type(rng); Some(()) }
+        Node::PtrDecl { ty, .. } | Node::ArrayDecl { ty, .. } | Node::FuncDecl { ty, .. } => randomize_innermost(ty, types, rng),
+        _ => None,
+    }
+}
+
 fn change_type(unit: &mut Node, target: &str, sites: &Sites, kind: Kind, rng: &mut Rng) -> Option<()> {
     let types = Types::new(unit, target);
-    let mut names = BTreeSet::new();
-    for site in &sites.nodes { if sites.allows(&site.path) { if let Node::Id { name } = at(unit, &site.path) { names.insert(name.clone()); } } }
+    let names = mentioned_in_region(unit, sites);
     if kind == Kind::LocalType {
-        let candidates = sites.nodes.iter().filter(|s| matches!(at(unit, &s.path), Node::Decl { name: Some(name), ty, .. } if names.contains(name) && types.integral(ty))).map(|s| s.path.clone()).collect::<Vec<_>>();
+        let candidates = sites.nodes.iter().filter(|s| matches!(at(unit, &s.path), Node::Decl { name: Some(name), ty, .. } if names.contains(name) && matches!(ty.as_ref(), Node::TypeDecl { .. }))).map(|s| s.path.clone()).collect::<Vec<_>>();
         let path = &candidates[choose(rng, &candidates)?];
-        let Node::Decl { name, ty, quals, .. } = at_mut(unit, path) else { return None };
-        **ty = random_type(rng); types::set_name(ty, name.as_deref()); quals.clear();
+        let Node::Decl { name, ty, .. } = at_mut(unit, path) else { return None };
+        if !types.integral(ty) { return None; }
+        **ty = random_type(rng); types::set_name(ty, name.as_deref());
         return Some(());
     }
     let mut called = vec![target.to_string()];
@@ -613,121 +664,171 @@ fn change_type(unit: &mut Node, target: &str, sites: &Sites, kind: Kind, rng: &m
     }
     let Node::FileAst { ext } = unit else { return None };
     if kind == Kind::GlobalType {
-        let candidates: Vec<_> = ext.iter().filter_map(|n| match n {
-            Node::Decl { name: Some(name), ty, .. } if names.contains(name) && !types.locals.contains(name) && !matches!(ty.as_ref(), Node::FuncDecl { .. }) => Some(name.clone()), _ => None
-        }).collect();
-        let selected = &candidates[choose(rng, &candidates)?];
-        fn inner(ty: &mut Node, types: &Types, rng: &mut Rng) -> Option<()> {
-            match ty {
-                Node::TypeDecl { .. } if types.integral(ty) => { *ty = random_type(rng); Some(()) }
-                Node::PtrDecl { ty, .. } | Node::ArrayDecl { ty, .. } => inner(ty, types, rng),
-                _ => None,
-            }
-        }
-        let Node::Decl { ty, .. } = ext.iter().find(|n| name(n) == Some(selected))? else { return None };
-        let mut new = *ty.clone(); inner(&mut new, &types, rng)?; types::set_name(&mut new, Some(selected));
-        for n in ext { if let Node::Decl { name: Some(name), ty, quals, .. } = n { if name == selected { **ty = new.clone(); quals.clear(); } } }
+        let selected = &names[choose(rng, &names)?];
+        let candidates: Vec<_> = ext.iter().enumerate().filter_map(|(i, n)| matches!(n, Node::Decl { name: Some(name), .. } if name == selected).then_some(i)).collect();
+        let Node::Decl { ty, .. } = &ext[candidates[choose(rng, &candidates)?]] else { return None };
+        let mut new = *ty.clone(); randomize_innermost(&mut new, &types, rng)?; types::set_name(&mut new, Some(selected));
+        for n in ext { if let Node::Decl { name: Some(name), ty, .. } = n { if name == selected { **ty = new.clone(); } } }
         return Some(());
     }
-    called.sort(); called.dedup();
+    let mut seen = BTreeSet::new(); called.retain(|n| seen.insert(n.clone()));
     let selected = &called[choose(rng, &called)?];
     let decl_type = |n: &Node| match n { Node::Decl { ty, .. } => Some(*ty.clone()), Node::FuncDef { decl, .. } => if let Node::Decl { ty, .. } = decl.as_ref() { Some(*ty.clone()) } else { None }, _ => None };
-    let original = ext.iter().find(|n| name(n) == Some(selected) && matches!(n, Node::FuncDef { .. })).or_else(|| ext.iter().find(|n| name(n) == Some(selected)))?;
-    let Node::FuncDecl { args, ty: ret } = decl_type(original)? else { return None };
-    let param = if rng.random() < 0.5 { None } else {
-        let Node::ParamList { params } = args.as_deref()? else { return None };
-        Some(choose(rng, params)?)
-    };
-    let old = if let Some(i) = param {
-        let Node::ParamList { params } = args.as_deref()? else { return None };
-        match &params[i] { Node::Decl { ty, .. } | Node::Typename { ty, .. } => ty.as_ref(), _ => return None }
-    } else { ret.as_ref() };
-    if !types.integral(old) && !(param.is_none() && matches!(types.resolve(old)?, Node::TypeDecl { ty, .. } if matches!(ty.as_ref(), Node::IdentifierType { names } if names == &["void"]))) { return None; }
-    let new = random_type(rng);
+    let candidates: Vec<_> = ext.iter().enumerate().filter_map(|(i, n)| (name(n) == Some(selected) && matches!(decl_type(n), Some(Node::FuncDecl { .. }))).then_some(i)).collect();
+    let main = candidates.iter().rev().copied().find(|&i| matches!(ext[i], Node::FuncDef { .. })).or_else(|| choose(rng, &candidates).map(|i| candidates[i]))?;
+    let mut new = decl_type(&ext[main])?;
+    let Node::FuncDecl { args, ty: ret } = &mut new else { return None };
+    if rng.random() < 0.5 {
+        let old = types.decay(ret)?;
+        let void = matches!(types.resolve(&old)?, Node::TypeDecl { ty, .. } if matches!(ty.as_ref(), Node::IdentifierType { names } if names.contains(&"void".into())));
+        **ret = if void { random_type(rng) } else if rng.random() < 0.2 { types::basic("void") } else { if !types.integral(&old) { return None; } random_type(rng) };
+        types::set_name(&mut new, Some(selected));
+    } else {
+        let Node::ParamList { params } = args.as_deref_mut()? else { return None };
+        let i = choose(rng, params)?;
+        match &mut params[i] {
+            Node::Decl { name, ty, .. } => { let old = types.decay(ty)?; if !types.integral(&old) { return None; } **ty = random_type(rng); types::set_name(ty, name.as_deref()); }
+            Node::Typename { ty, .. } => { let old = types.decay(ty)?; if !types.integral(&old) { return None; } **ty = random_type(rng); }
+            _ => return None,
+        }
+    }
     for item in ext {
         if name(item) != Some(selected) { continue; }
         let decl = if let Node::FuncDef { decl, .. } = item { decl.as_mut() } else { item };
-        let Node::Decl { ty, name, .. } = decl else { continue };
-        let Node::FuncDecl { args, ty: ret } = ty.as_mut() else { continue };
-        if let Some(i) = param {
-            let Node::ParamList { params } = args.as_deref_mut()? else { return None };
-            match params.get_mut(i)? {
-                Node::Decl { name, ty, quals, .. } => { **ty = new.clone(); types::set_name(ty, name.as_deref()); quals.clear(); }
-                Node::Typename { ty, .. } => **ty = new.clone(),
-                _ => return None,
-            }
-        } else { **ret = new.clone(); types::set_name(ret, name.as_deref()); }
+        let Node::Decl { ty, .. } = decl else { continue };
+        if matches!(ty.as_ref(), Node::FuncDecl { .. }) { **ty = new.clone(); }
     }
     Some(())
 }
 
 fn reorder(unit: &mut Node, sites: &Sites, kind: Kind, rng: &mut Rng) -> Option<()> {
-    let mut candidates = Vec::new();
-    for path in sites.blocks(unit) {
-        let block = at(unit, &path);
-        let stmts = statements(block)?;
-        for (i, stmt) in stmts.iter().enumerate() {
-            if !sites.allows(&statement_path(&path, block, i)) { continue; }
-            let decl = matches!(stmt, Node::Decl { .. });
-            if decl != (kind == Kind::ReorderDeclarations) || matches!(stmt, Node::Pragma { .. } | Node::Case { .. } | Node::Default { .. }) { continue; }
-            for j in 0..stmts.len() {
-                if i == j || !sites.allows(&statement_path(&path, block, j)) { continue; }
-                let range = &stmts[i.min(j)..=i.max(j)];
-                if range.iter().any(|n| matches!(n, Node::Pragma { .. })) { continue; }
-                if decl {
-                    if !range.iter().all(|n| matches!(n, Node::Decl { init: None, .. })) { continue; }
-                } else if range.iter().any(|n| matches!(n, Node::Decl { .. } | Node::Case { .. } | Node::Default { .. })) { continue; }
-                candidates.push((path.clone(), i, j));
-            }
-        }
+    let decl = kind == Kind::ReorderDeclarations;
+    let candidates: Vec<_> = insertion_points_with_decls(unit, sites, true, true).into_iter().filter(|(path, i)| {
+        let stmts = statements(at(unit, path)).unwrap();
+        let before = i.checked_sub(1).and_then(|j| stmts.get(j));
+        let after = stmts.get(*i);
+        if decl { *i == 0 || matches!(before, Some(Node::Decl { .. })) || matches!(after, Some(Node::Decl { .. })) }
+        else { !matches!(after, Some(Node::Decl { .. })) || matches!(after, Some(Node::Decl { name: Some(_), init: Some(init), .. }) if !matches!(init.as_ref(), Node::InitList { .. })) }
+    }).collect();
+    let sources: Vec<_> = candidates.iter().enumerate().filter_map(|(slot, (path, i))| {
+        let stmt = statements(at(unit, path)).unwrap().get(*i)?;
+        let movable = if decl { matches!(stmt, Node::Decl { .. }) }
+            else { !matches!(stmt, Node::Pragma { .. } | Node::Compound { .. } | Node::For { .. } | Node::While { .. } | Node::DoWhile { .. } | Node::If { .. } | Node::Switch { .. } | Node::Case { .. } | Node::Default { .. }) };
+        movable.then_some(slot)
+    }).collect();
+    let source = sources[choose(rng, &sources)?];
+    let (from_block, from_index) = &candidates[source];
+    let source_path = statement_path(from_block, at(unit, from_block), *from_index);
+    let stmt = at(unit, &source_path).clone();
+    let mut after = source + 1;
+    if !decl && (matches!(stmt, Node::Decl { .. }) || candidates.get(after).is_none_or(|(p, i)| p != from_block || *i != from_index + 1)) { after -= 1; }
+    let mut destinations = Vec::new();
+    for (i, (path, index)) in candidates.iter().enumerate() {
+        let distance = (source as isize - i as isize).max(i as isize - after as isize);
+        if distance == 0 || (!decl && matches!(statements(at(unit, path)).unwrap().get(*index), Some(Node::Decl { .. }))) { continue; }
+        let probability = (distance as f64 + 1.0).powf(-1.5) + if decl { 1.0 } else { 0.5 } / candidates.len() as f64;
+        destinations.push((i, probability));
     }
-    if candidates.is_empty() { return None; }
-    let index = weighted(rng, candidates.iter().map(|(_, a, b)| ((*a as f64 - *b as f64).abs() + 1.0).powf(-1.5)));
-    let (path, from, to) = &candidates[index];
-    let stmts = statements_mut(at_mut(unit, path));
-    let stmt = stmts.remove(*from); stmts.insert(*to, stmt);
+    if destinations.is_empty() { return None; }
+    let selected = destinations[weighted(rng, destinations.iter().map(|(_, w)| *w))].0;
+    let (mut to_block, mut to_index) = candidates[selected].clone();
+    if to_block == *from_block && (to_index == *from_index || to_index == from_index + 1) { return None; }
+    if decl {
+        let Node::Decl { name: Some(var), .. } = &stmt else { return None };
+        let to_stmt = statements(at(unit, &to_block))?.get(to_index);
+        let to_path = if to_stmt.is_some() { statement_path(&to_block, at(unit, &to_block), to_index) } else { from_block.clone() };
+        let site = sites.nodes.iter().find(|s| s.path == to_path)?;
+        let limit = if to_stmt.is_some() { site.start } else { site.end };
+        let uses = sites.nodes.iter().filter(|s| s.path.starts_with(&sites.body) && s.start < limit && match at(unit, &s.path) { Node::Id { name } => name == var, Node::TypeDecl { declname: Some(name), .. } => name == var, _ => false }).count();
+        if uses > 1 { return None; }
+    } else if let Node::Decl { name: Some(name), init: Some(init), .. } = stmt {
+        // Extract the initializer without removing its declaration. Changing
+        // the initializer before insertion keeps an enclosing path stable.
+        let Node::Decl { init: old, .. } = at_mut(unit, &source_path) else { return None };
+        *old = None;
+        statements_mut(at_mut(unit, &to_block)).insert(to_index, assign(Node::id(name), *init));
+        return Some(());
+    }
+    if to_block.starts_with(&source_path) { return None; }
+    if to_block == *from_block && *from_index < to_index { to_index -= 1; }
+    if to_block.starts_with(from_block) && to_block.len() > from_block.len() && to_block[from_block.len()] > source_path[from_block.len()] { to_block[from_block.len()] -= 1; }
+    let stmt = statements_mut(at_mut(unit, from_block)).remove(*from_index);
+    statements_mut(at_mut(unit, &to_block)).insert(to_index, stmt);
     Some(())
 }
 
 fn assignments(unit: &mut Node, sites: &Sites, kind: Kind, rng: &mut Rng) -> Option<()> {
+    if kind == Kind::SplitAssignment {
+        let candidates: Vec<_> = sites.select(unit, |n| matches!(n, Node::Assignment { op, rvalue, .. } if op == "=" && matches!(rvalue.as_ref(), Node::BinaryOp { .. }))).into_iter().filter(|p| p.starts_with(&sites.body)).collect();
+        let path = &candidates[choose(rng, &candidates)?];
+        let (block, index) = insertion_points(unit, sites, true).into_iter().find(|(block, i)| statement_path(block, at(unit, block), *i) == *path)?;
+        fn binops(unit: &Node, path: Path, out: &mut Vec<Path>) {
+            let Node::BinaryOp { left, right, .. } = at(unit, &path) else { return };
+            if matches!(left.as_ref(), Node::BinaryOp { .. }) { binops(unit, child(&path, 0), out); }
+            out.push(path.clone());
+            if matches!(right.as_ref(), Node::BinaryOp { .. }) { binops(unit, child(&path, 1), out); }
+        }
+        let mut splits = Vec::new(); binops(unit, child(path, 1), &mut splits);
+        let split = &splits[choose(rng, &splits)?];
+        let types = Types::new(unit, name(at(unit, &[sites.body[0]]))?);
+        let Node::Assignment { lvalue, .. } = at(unit, path) else { return None };
+        let var = *lvalue.clone();
+        let side_path = child(split, usize::from(rng.random() >= 0.5));
+        let side = at(unit, &side_path).clone();
+        if !types.similar(&types.decayed(&var)?, &types.decayed(&side)?) { return None; }
+        *at_mut(unit, &side_path) = var.clone();
+        statements_mut(at_mut(unit, &block)).insert(index, assign(var, side));
+        return Some(());
+    }
     let mut candidates = Vec::new();
     for path in sites.blocks(unit) {
         let block = at(unit, &path);
         let stmts = statements(block)?;
-        for (i, stmt) in stmts.iter().enumerate() {
-            if !sites.allows(&statement_path(&path, block, i)) { continue; }
-            let Node::Assignment { op, lvalue, rvalue } = stmt else { continue };
-            if op != "=" { continue; }
-            if kind == Kind::SplitAssignment {
-                if matches!(lvalue.as_ref(), Node::Id { .. }) && matches!(rvalue.as_ref(), Node::BinaryOp { .. }) { candidates.push((path.clone(), i, i)); }
+        let mut i = 0;
+        while i < stmts.len() {
+            let stmt = &stmts[i];
+            let mut next_i = i + 1;
+            if kind == Kind::LongChainAssignment {
+                if let Node::Assignment { rvalue, .. } = stmt {
+                    if sites.allows(&statement_path(&path, block, i)) && !effectful(rvalue) {
+                        while next_i < stmts.len() && sites.allows(&statement_path(&path, block, next_i)) && matches!(&stmts[next_i], Node::Assignment { rvalue: rhs, .. } if rhs == rvalue) { next_i += 1; }
+                        if next_i > i + 2 { candidates.push((path.clone(), i, next_i)); }
+                    }
+                }
+                i = next_i;
                 continue;
             }
-            if effectful(rvalue) { continue; }
-            for (j, next) in stmts.iter().enumerate().skip(i + 1).take(if kind == Kind::LongChainAssignment { stmts.len() } else { 4 }) {
-                if !sites.allows(&statement_path(&path, block, j)) || stmts[i + 1..=j].iter().any(|n| matches!(n, Node::Pragma { .. })) { break; }
-                if matches!(next, Node::Assignment { op, rvalue: rhs, .. } if op == "=" && (rhs == rvalue || (kind == Kind::ChainAssignment && rhs == lvalue))) {
-                    if kind != Kind::LongChainAssignment || j > i + 1 { candidates.push((path.clone(), i, j)); }
-                } else if kind == Kind::LongChainAssignment { break; }
+            let first_i = i;
+            i += 1;
+            let i = first_i;
+            if !sites.allows(&statement_path(&path, block, i)) { continue; }
+            let Node::Assignment { lvalue, rvalue, .. } = stmt else { continue };
+            for (j, next) in stmts.iter().enumerate().skip(i + 1).take(4) {
+                if sites.allows(&statement_path(&path, block, j)) && matches!(next, Node::Assignment { rvalue: rhs, .. } if (rhs == rvalue || rhs == lvalue) && !effectful(rhs)) { candidates.push((path.clone(), i, j)); }
             }
         }
     }
-    let (path, i, j) = &candidates[choose(rng, &candidates)?];
-    let stmts = statements_mut(at_mut(unit, path));
-    let Node::Assignment { lvalue, rvalue, .. } = stmts[*i].clone() else { return None };
-    if kind == Kind::SplitAssignment {
-        let Node::BinaryOp { op, left, right } = *rvalue else { return None };
-        let (first, rest) = if rng.random() < 0.5 { (*left, binary(&op, *lvalue.clone(), *right)) } else { (*right, binary(&op, *left, *lvalue.clone())) };
-        stmts[*i] = assign(*lvalue.clone(), rest);
-        stmts.insert(*i, assign(*lvalue, first));
+    let (path, mut i, mut j) = candidates[choose(rng, &candidates)?].clone();
+    if kind == Kind::LongChainAssignment {
+        let a = i + rng.below(j - i + 1);
+        let b = i + rng.below(j - i + 1);
+        if a + 3 <= b { i = a; j = b; }
+    }
+    let stmts = statements_mut(at_mut(unit, &path));
+    let Node::Assignment { lvalue, rvalue, .. } = stmts[i].clone() else { return None };
+    if kind == Kind::ChainAssignment {
+        let Node::Assignment { lvalue: next, .. } = stmts[j].clone() else { return None };
+        stmts[i] = if rng.random() < 0.5 { assign(*next, stmts[i].clone()) } else { assign(*lvalue, assign(*next, *rvalue)) };
+        stmts.remove(j);
     } else {
-        let mut new = stmts[*i].clone();
-        let indices = if kind == Kind::LongChainAssignment { ((*i + 1)..=*j).collect::<Vec<_>>() } else { vec![*j] };
-        for &index in &indices {
-            let Node::Assignment { lvalue, .. } = stmts[index].clone() else { return None };
-            new = assign(*lvalue, new);
+        let mut new = stmts[i].clone();
+        for stmt in stmts.iter().take(j).skip(i + 1) {
+            let Node::Assignment { lvalue, .. } = stmt.clone() else { return None };
+            let op = if let Node::Assignment { op, .. } = &new { op.clone() } else { return None };
+            new = Node::Assignment { op, lvalue, rvalue: new.boxed() };
         }
-        stmts[*i] = new;
-        for &index in indices.iter().rev() { stmts.remove(index); }
+        stmts[i] = new;
+        stmts.drain(i + 1..j);
     }
     Some(())
 }
@@ -1021,7 +1122,7 @@ mod tests {
                 match kind {
                     Kind::Inline => assert!(unit.print().contains("inline_fn")),
                     Kind::AliasArray => assert!(unit.print().contains("new_var[2]")),
-                    Kind::GlobalType if unit != base => assert_ne!(at(&unit, &[2]), at(&base, &[2])),
+                    Kind::GlobalType => assert_eq!(at(&unit, &[target_index(&unit, "target").unwrap()]), at(&base, &[target_index(&base, "target").unwrap()])),
                     _ => {}
                 }
             }
@@ -1146,6 +1247,9 @@ mod tests {
                 "nested" => include_str!("c/fixtures/mutations-nested.c"),
                 "regions" => include_str!("c/fixtures/mutations-regions.c"),
                 "arithmetic" => include_str!("c/fixtures/mutations-arithmetic.c"),
+                "types" => include_str!("c/fixtures/mutations-types.c"),
+                "assignments" => include_str!("c/fixtures/mutations-assignments.c"),
+                "shadow" => include_str!("c/fixtures/mutations-shadow.c"),
                 _ => panic!("unknown fixture input"),
         }
     }
@@ -1173,6 +1277,15 @@ mod tests {
                 "perm_compound_assignment" => Kind::CompoundAssignment,
                 "perm_reverse_cond" => Kind::ReverseCondition,
                 "perm_ins_block" => Kind::Block,
+                "perm_randomize_internal_type" => Kind::LocalType,
+                "perm_randomize_external_type" => Kind::GlobalType,
+                "perm_randomize_function_type" => Kind::FunctionType,
+                "perm_reorder_decls" => Kind::ReorderDeclarations,
+                "perm_reorder_stmts" => Kind::ReorderStatements,
+                "perm_split_assignment" => Kind::SplitAssignment,
+                "perm_chain_assignment" => Kind::ChainAssignment,
+                "perm_long_chain_assignment" => Kind::LongChainAssignment,
+                "perm_remove_ast" => Kind::Remove,
                 _ => panic!("unknown fixture pass"),
         }
     }
@@ -1180,7 +1293,7 @@ mod tests {
     #[test]
     fn passes_match_compatibility_in_nested_blocks_and_regions() {
         let mut failures = Vec::new();
-        for row in include_str!("c/fixtures/mutations-auxiliary.tsv").lines().chain(include_str!("c/fixtures/mutations-expression.tsv").lines()) {
+        for row in include_str!("c/fixtures/mutations-auxiliary.tsv").lines().chain(include_str!("c/fixtures/mutations-expression.tsv").lines()).chain(include_str!("c/fixtures/mutations-types-assignments.tsv").lines()) {
             let c: Vec<_> = row.split('\t').collect();
             let kind = fixture_kind(c[1]);
             let mut unit = parsed(fixture_source(c[0]));
@@ -1198,12 +1311,17 @@ mod tests {
 
     #[test]
     fn successive_compatibility_mutations_match_source_hashes_retries_and_rng() {
+        check_walks(include_str!("c/fixtures/mutations-walks.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv")], false);
+        check_walks(include_str!("c/fixtures/mutations-types-walks.tsv"), &[include_str!("c/fixtures/mutations-auxiliary.tsv"), include_str!("c/fixtures/mutations-expression.tsv"), include_str!("c/fixtures/mutations-types-assignments.tsv")], true);
+    }
+
+    fn check_walks(walks: &str, fixtures: &[&str], full_text: bool) {
         use sha2::{Digest, Sha256};
-        let methods: BTreeSet<_> = include_str!("c/fixtures/mutations-auxiliary.tsv").lines().chain(include_str!("c/fixtures/mutations-expression.tsv").lines()).map(|row| fixture_kind(row.split('\t').nth(1).unwrap())).collect();
+        let methods: BTreeSet<_> = fixtures.iter().flat_map(|f| f.lines()).map(|row| fixture_kind(row.split('\t').nth(1).unwrap())).collect();
         let weights: Vec<_> = Kind::GCC.into_iter().filter(|(kind, _)| methods.contains(kind)).collect();
         let mut unit = parsed(fixture_source("flow"));
         let mut rng = Rng::new(0);
-        for row in include_str!("c/fixtures/mutations-walks.tsv").lines() {
+        for row in walks.lines() {
             let c: Vec<_> = row.split('\t').collect();
             if c[2] == "0" { unit = parsed(fixture_source(c[0])); rng = Rng::new(c[1].parse().unwrap()); }
             let sites = Sites::new(&unit, "target", &mut rng).unwrap();
@@ -1212,12 +1330,14 @@ mod tests {
                 attempts += 1;
                 assert!(attempts < 1000, "no successful mutation");
                 let kind = weights[weighted(&mut rng, weights.iter().map(|(_, w)| *w))].0;
-                if apply_sites(&mut unit, "target", kind, &mut rng, &sites) { break kind; }
+                let success = apply_sites(&mut unit, "target", kind, &mut rng, &sites);
+                if success { break kind; }
             };
             let context = format!("{} seed {} step {}", c[0], c[1], c[2]);
             assert_eq!(kind, fixture_kind(c[4]), "{context}: selected pass");
             assert_eq!(attempts, c[3].parse::<usize>().unwrap(), "{context}: retry count");
-            assert_eq!(format!("{:x}", Sha256::digest(unit.print().as_bytes())), c[5], "{context}: source\n{}", unit.print());
+            if full_text { assert_eq!(unit.print(), c[5].replace("\\n", "\n"), "{context}: source"); }
+            else { assert_eq!(format!("{:x}", Sha256::digest(unit.print().as_bytes())), c[5], "{context}: source\n{}", unit.print()); }
             assert_eq!(rng.clone().random(), c[6].parse::<f64>().unwrap(), "{context}: random state");
         }
     }

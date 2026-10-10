@@ -66,8 +66,6 @@ void UiTimedNotice_Create(void)
     s32 x;
     s32 resource;
     struct UiWindow *window;
-    u16 *timer;
-    s32 frames;
 
     work = (struct TimedNoticeWork *)gEventWork;
     x = 8;
@@ -79,9 +77,7 @@ void UiTimedNotice_Create(void)
     window = UiWindow_Create(x, y, width, height, 2);
     work->window = window;
     UiText_DrawResource(resource, (s32)window, 0, 0);
-    timer = &work->countdown;
-    frames = 90; /* FAKEMATCH: needed to match: a word temporary keeps 90 out of the HImode pool. */
-    *timer = frames;
+    work->countdown = 90;
     Scheduler_AddOrUpdateCallback(UiTimedNotice_Tick, 0xc80);
 }
 

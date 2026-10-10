@@ -3,16 +3,31 @@
 #include "glyph.h"
 #include "text_font.h"
 
-/* ARM draft: JA differs 2; EN differs 4; DE/ES/FR/IT differ 10. The tail matches.
+/* ARM draft: JA differs 2; EN differs 2; DE/ES/FR/IT differ 10. The tail matches.
    Registers and spill offsets match. Remaining differences:
    JA: STR r3,[sp,#12] precedes ADD r8,r8,#1; native reverses that pair.
-       Sched2 delays the store across SUB r3,r1,#222's anti-dependence and
-       fills the gap with x++. A separate lifetime for the width constant
-       must preserve MOV r3,#8 while placing its spill after x++.
-   EN: y copy before SUB sp; x copy immediately after the font load.
-   DE/ES/FR/IT: coordinate copies before SUB sp and window spill; height spill
-       after the font-selection CMP; source spill after color1's ADD;
-       font-width spill after the y CMP. */
+       Sched2's loop boundary forces that order. Replacing the one-pass
+       block with an if removes the boundary, but the store's anti-dependence
+       on SUB r3,r1,#222 then produces the same swap. The width constant
+       needs a separate lifetime from its spill while retaining r3.
+   EN: MOV r7,r3 must precede SUB sp,sp,#44. Prologue threading inserts SUB
+       first; sched2 gives both priority 5 through PUSH and keeps that order.
+       A source form must change this dependency or the copy's RTL form.
+   DE/ES/FR/IT:
+       MOV r9,r2 and MOV r8,r3 belong before SUB sp,sp,#44. Prologue
+       threading and sched2 give the copies the same PUSH priority as EN;
+       y's incoming r3 also dies at the font-selection SUBS. Changing that
+       lifetime must retain x=r9, y=r8 and font=r2.
+       STR r0,[sp,#28] belongs after CMP r3,#0. Reload puts the height spill
+       inside the one-pass read, whose end note makes sched2 keep it before
+       CMP. A separate copy must survive combine outside that boundary.
+       STR r2,[sp,#24] belongs after ADD r1,r1,#17. Reload similarly spills
+       source before the color boundary; removing the boundary alone leaves
+       sched2's store-to-MOV-r2 anti-dependence and changes palette ordering.
+       STR r2,[sp,#12] belongs after CMP r8,#31. Sched2 delays the store
+       before the block-ending branch and fills the delay with CMP. An early
+       comparison and separate width copy can move it, but must preserve
+       LDRB before CMP and y=r8; the repeated-read trials change both. */
 
 extern const u8 UiText_GlyphWidths[];
 
@@ -99,12 +114,21 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character,
 	use_font = character <= 255 || font != NULL;
 #endif
 #if defined(TBS_EDITION_EN)
-	index = character - 32;
-	/* FAKEMATCH: save window after forming index and leave the height read
-	   outside a one-pass block; sched2 then orders LDRH/CMP/STR as native
-	   (EN differ 12 -> 8). */
+	/* FAKEMATCH: the boundaries keep the parameter copies before the window
+	   spill and the height load before the range comparison. The repeated
+	   read leaves the height copy after CMP through combine; CSE removes
+	   the read and jump2 the empty branch. With the palette setup below,
+	   x stays beside the font load (EN differ 4 -> 2). */
+	do { } while (0);
 	window = input_window;
-	stride = input_window->height;
+	index = character - 32;
+	do
+	{
+		width = input_window->height;
+	} while (0);
+	if (index > 111)
+		width = input_window->height;
+	stride = width;
 #elif defined(TBS_EDITION_JA)
 	/* FAKEMATCH: the repeated read keeps the height copy after the character
 	   comparison through combine. CSE removes the second read; jump2 removes
@@ -260,7 +284,17 @@ font_done:
 			source = font + character * 32;
 			/* FAKEMATCH: the empty loops preserve the native color initialization order. */
 			do { } while (0);
+#if defined(TBS_EDITION_EN)
+			/* FAKEMATCH: width and stride still hold the zero-extended height.
+			   These zero terms retain width's lifetime through combine and an
+			   unused stride test through reload. Flow2 removes the test; its
+			   temporary reload leaves r1/r2 for the palette (EN differ 20 -> 2). */
+			color1 = 0x1111 + (width & 0xffff0000U);
+			if (!(stride >> 16))
+				color1 += width & 0xffff0000U;
+#else
 			color1 = 0x1111;
+#endif
 			color3 = 0x3333;
 			do { } while (0);
 #if defined(TBS_EDITION_EN)

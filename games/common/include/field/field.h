@@ -1430,11 +1430,7 @@ void EffectRuntime_SetMode7AndLaunch(s32 id);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 void Engine_ActorFollow(s32 actor, s32 leader);
 void Engine_EventClearInvalidPackedValues(void);
-void Engine_ObjectAttachWorkTarget(s32 id, s32 target);
-void Engine_PartyRemoveActiveOwner(s32 id);
 s32	 Engine_PartyRemoveItem(s32 item);
-void Engine_SetTriggerFlag(s32 flag);
-s32	 Engine_TestTriggerFlag(s32 flag);
 void Event_ClearInvalidPackedValues(void);
 void Event_NoOpHook(void);
 #ifndef OWN_Event_RequestDestination
@@ -1565,7 +1561,6 @@ void			   FuneKanpan_SetupVisibleLeaderDeparture(void);
 #ifndef OWN_GameFlag_IsSet
 s32 GameFlag_IsSet(s32 flag);
 #endif
-struct FieldActor *GetActorState(s32 actor_id);
 #ifndef OWN_GetMotionRecordFar
 void *GetMotionRecordFar(struct MotionObject *object, s32 record_index);
 #endif
@@ -1700,7 +1695,6 @@ s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor);
 void				 RamakanSabaku_RaiseQuarterTriggers(void);
 void				 RamakanSabaku_RunSandstorm(void);
 u32					 Random16Far(void);
-struct FacingObject *ResolveFacingObject(s16);
 void				 Resource3ba_NoOpCallback(void);
 void				 ResourceMetadata_ClearRecordFar(void *record);
 s32					 ResourceTable_CountFreeBlocks(void);
@@ -1709,7 +1703,6 @@ void				 RunScene59Sequence(void);
 void				 RunSceneSelectionChain(void);
 void				*Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 s32					 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position);
-struct BtlUnit		*Runtime_GetObject(s32 object_id);
 #ifndef OWN_Scene_FadeColorFromWhite
 s32 Scene_FadeColorFromWhite(void);
 #endif

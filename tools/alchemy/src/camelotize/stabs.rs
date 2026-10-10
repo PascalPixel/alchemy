@@ -1,4 +1,4 @@
-use crate::compiler::bundle::compiler_command_for_target;
+use crate::compiler::bundle::compiler_command;
 use crate::compiler::routing::cflags_for_target_source;
 use crate::targets::DecompTarget;
 use std::collections::HashMap;
@@ -376,7 +376,7 @@ pub(crate) fn compile(target: DecompTarget, imports: Option<&Path>, file: &Path,
         }
         arguments.push(assembly.to_string_lossy().into_owned());
         arguments.extend(["-x".to_string(), "c".to_string(), source.to_string_lossy().into_owned()]);
-        let command = compiler_command_for_target(target.compiler, &arguments)?;
+        let command = compiler_command(&arguments)?;
         match crate::process::run(&command, crate::compiler::routing::root()) {
             Ok(_) => {
                 let output = std::fs::read_to_string(&assembly).map_err(|e| e.to_string())?;

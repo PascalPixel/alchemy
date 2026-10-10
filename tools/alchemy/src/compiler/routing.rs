@@ -39,9 +39,6 @@ fn path_with_first(first: &Path, current: &std::ffi::OsStr) -> Option<std::ffi::
     let rest = std::env::split_paths(current).filter(|entry| entry != first);
     std::env::join_paths(std::iter::once(first.to_path_buf()).chain(rest)).ok()
 }
-pub fn bundle_for(_target: CompilerTarget) -> PathBuf {
-    bundle()
-}
 pub fn agbcc_driver() -> PathBuf {
     bundle().join("agbcc").join("old_agbcc")
 }
@@ -90,9 +87,6 @@ pub enum CompilerTarget {
     Tla,
 }
 impl CompilerTarget {
-    pub fn directory(self) -> &'static str {
-        self.as_str()
-    }
     pub fn as_str(self) -> &'static str {
         match self {
             CompilerTarget::Tbs => "tbs",
@@ -112,16 +106,13 @@ impl CompilerFamily {
     pub fn is_arm(self) -> bool {
         self == CompilerFamily::GameArm
     }
-    pub fn uses_agbcc_driver(self) -> bool {
-        self != CompilerFamily::Game
-    }
 }
 pub(crate) fn include_flag(target: CompilerTarget) -> String {
     format!(
         "-I{}",
         root()
             .join("games")
-            .join(target.directory())
+            .join(target.as_str())
             .join("include")
             .display()
     )
@@ -137,7 +128,7 @@ fn common_include_flags() -> impl Iterator<Item = String> {
         )
     })
 }
-/// Include paths an agbcc-driver family searches after the game's own tree:
+/// Include paths a direct cc1 route searches after the game's own tree:
 /// game ARM C reads the same shared modules as the rest of its game's C.
 pub(crate) fn family_include_flags(family: CompilerFamily) -> Vec<String> {
     if family == CompilerFamily::GameArm {
@@ -225,7 +216,7 @@ fn natural_source(target: CompilerTarget, source: &str) -> Option<PathBuf> {
         .components()
         .filter(|part| !matches!(part, Component::CurDir))
         .collect::<PathBuf>();
-    let game = Path::new("games").join(target.directory()).join("src");
+    let game = Path::new("games").join(target.as_str()).join("src");
     if path.starts_with("games") {
         (path.starts_with(&game) || path.starts_with("games/common/src")).then_some(path)
     } else {
@@ -249,9 +240,6 @@ pub fn family_for_source(target: CompilerTarget, source: &str) -> CompilerFamily
         return CompilerFamily::GameArm;
     }
     CompilerFamily::Game
-}
-pub fn uses_agbcc_compiler(target: CompilerTarget, source: &str) -> bool {
-    family_for_source(target, source).uses_agbcc_driver()
 }
 pub fn is_arm(target: CompilerTarget, source: &str) -> bool {
     family_for_source(target, source).is_arm()
@@ -339,7 +327,7 @@ mod target_tests {
             let flags = cflags_for_target(target);
             let includes: Vec<&String> = flags.iter().filter(|f| f.starts_with("-I")).collect();
             assert_eq!(includes.len(), 1 + modules.len());
-            assert!(includes[0].ends_with(&format!("/games/{}/include", target.directory())));
+            assert!(includes[0].ends_with(&format!("/games/{}/include", target.as_str())));
             for (flag, module) in includes[1..].iter().zip(&modules) {
                 assert!(flag.ends_with(&format!("/games/common/include/{module}")));
             }
@@ -364,10 +352,6 @@ mod target_tests {
         let tla = cflags_for_target_source(CompilerTarget::Tla, "game/flags/get_byte.c");
         assert!(tbs.iter().any(|flag| flag == "-mthumb-interwork"));
         assert!(!tla.iter().any(|flag| flag == "-mthumb-interwork"));
-        assert_eq!(
-            bundle_for(CompilerTarget::Tbs),
-            bundle_for(CompilerTarget::Tla)
-        );
         for flags in [&tbs, &tla] {
             assert!(!flags.iter().any(|flag| flag.starts_with("-mgs")));
             assert!(flags.iter().any(|flag| flag == "-fcall-used-r4"));
@@ -425,11 +409,7 @@ mod target_tests {
                 arguments.push("-mthumb-call-via-lr".into());
             }
             arguments.push(source.to_string_lossy().into_owned());
-            let argv = crate::compiler::bundle::compiler_command_for_target(
-                CompilerTarget::Tla,
-                &arguments,
-            )
-            .unwrap();
+            let argv = crate::compiler::bundle::compiler_command(&arguments).unwrap();
             let status = std::process::Command::new(&argv[0])
                 .args(&argv[1..])
                 .status()
@@ -464,11 +444,7 @@ mod target_tests {
                 arguments.push("-mthumb-split-constants".into());
             }
             arguments.push(source.to_string_lossy().into_owned());
-            let argv = crate::compiler::bundle::compiler_command_for_target(
-                CompilerTarget::Tla,
-                &arguments,
-            )
-            .unwrap();
+            let argv = crate::compiler::bundle::compiler_command(&arguments).unwrap();
             let status = std::process::Command::new(&argv[0])
                 .args(&argv[1..])
                 .status()

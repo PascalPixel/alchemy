@@ -1,20 +1,13 @@
 use crate::compiler::{
-    bundle::validate_installation,
+    bundle::{validate_installation, EXECUTABLES},
     routing::{binutils_prefix, bundle, root},
 };
 use fs2::FileExt;
 use std::{fs, path::Path, process::Command};
 
-const FILES: [&str; 8] = [
-    crate::compiler::bundle_data::SOURCE_RECORD,
-    "xgcc",
-    "cpp0",
-    "tradcpp0",
-    "cc1",
-    "as",
-    "agbcc/old_agbcc",
-    "gcc2952_arm",
-];
+fn installation_files() -> impl Iterator<Item = &'static str> {
+    std::iter::once(crate::compiler::bundle_data::SOURCE_RECORD).chain(EXECUTABLES)
+}
 const BINUTILS_SHA256: &str = "fd7d227c0dd15cf5448385e56b8ad8313cd491839834b57c0c086ac7b7819a15";
 const MODERN_BINUTILS_VERSION: &str = "2.33.1";
 const MODERN_BINUTILS_SHA256: &str =
@@ -44,12 +37,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
                 ensure_binutils()?;
             }
             validate_binutils(&binutils_prefix())?;
-            crate::compiler::bundle::validate_bundle(
-                crate::compiler::routing::CompilerTarget::Tbs,
-            )?;
-            crate::compiler::bundle::validate_bundle(
-                crate::compiler::routing::CompilerTarget::Tla,
-            )?;
+            crate::compiler::bundle::validate_bundle()?;
             crate::compiler::bundle::validate_agbcc_bundle()?;
             crate::compiler::bundle::validate_game_arm_bundle()?;
         }
@@ -404,7 +392,7 @@ fn install(
         .tempdir_in(parent)
         .map_err(|e| e.to_string())?;
     fs::create_dir(stage.path().join("agbcc")).map_err(|e| e.to_string())?;
-    for name in FILES {
+    for name in installation_files() {
         let input = source.join(name);
         let output = stage.path().join(name);
         fs::copy(&input, &output).map_err(|e| format!("cannot stage {}: {e}", input.display()))?;
@@ -419,7 +407,7 @@ fn install(
     validate(stage.path())?;
     if destination.exists() {
         let mut missing = Vec::new();
-        for name in FILES {
+        for name in installation_files() {
             match fs::read(destination.join(name)) {
                 Ok(existing)
                     if existing

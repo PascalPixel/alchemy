@@ -148,7 +148,6 @@ void Engine_EventShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 
 void Engine_PartyAddMembers(s32 first, s32 second);
 void Engine_MapRenderWaitForValues(void);
 
-s32	 Engine_UiWorkWaitThenFinalizeCapacity(s32 first, s32 second);
 void Engine_ObjectMotionSetPositionAndCommit(s32 actor, s32 x, s32 z);
 void Engine_ObjectDispatchRelease(struct FieldActor *object);
 void Engine_MapWaitWorkValuesBelow256(void);

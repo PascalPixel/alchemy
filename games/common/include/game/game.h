@@ -66,7 +66,6 @@ void Inventory_AddAndEquip(s32 owner, s32 target);
 #ifndef OWN_Inventory_DiscardFar
 s32 Inventory_DiscardFar(s32 owner, s32 slot);
 #endif
-s32	 Inventory_RequestMode(s32, s32, s32, s32);
 s32	 Item_ClassifyUseAbility(s32 owner, s32 item);
 void Item_PlayUseAnimation(u32 item);
 s32	 Menu_GetModuloOfSum(s32 arg0, s32 arg1);
@@ -80,10 +79,8 @@ s32	 Owner_GetResistanceValue(s32 owner, s32 index);
 void Owner_InitRecords(void);
 s32	 Owner_LookupFourColumnTable(s32 row, s32 column);
 s32	 OwnerAction_RunCompareLoop(u32 mode);
-void Party_Apply(s32, u16 *);
 void Party_ApplyStatePreset(void);
 s32	 Party_CheckMemberValueTotal(s32 id);
-void Party_Do(void *);
 #ifndef OWN_Party_GetAverageLevel
 u32 Party_GetAverageLevel(void);
 #endif

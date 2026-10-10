@@ -1,5 +1,5 @@
 use super::routing::{
-    cflags_for_target_source, family_for_source, family_include_flags, uses_agbcc_compiler,
+    cflags_for_target_source, driver_for_family, family_for_source, family_include_flags,
 };
 use crate::targets::DecompTarget;
 use std::path::Path;
@@ -13,7 +13,7 @@ pub(crate) fn command(
     let compiler = target.compiler;
     let family = family_for_source(compiler, source);
     let mut flags = cflags_for_target_source(compiler, source);
-    if uses_agbcc_compiler(compiler, source) {
+    if driver_for_family(family).is_some() {
         flags.extend([
             "-nostdinc".into(),
             super::routing::include_flag(compiler),
@@ -29,7 +29,7 @@ pub(crate) fn command(
     if comments {
         flags.push("-C".into());
     }
-    super::bundle::compiler_command_for_target(compiler, &flags)
+    super::bundle::compiler_command(&flags)
 }
 
 pub(crate) struct Expansion<'a> {

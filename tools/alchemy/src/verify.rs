@@ -517,6 +517,36 @@ mod tests {
     }
 
     #[test]
+    fn make_builds_tools_once_and_keeps_the_verified_executable_in_children() {
+        let root = crate::compiler::routing::root();
+        let dry_run = |args: &[&str]| {
+            let output = Command::new("make")
+                .args(["--no-print-directory", "--dry-run"])
+                .args(args)
+                .env_remove("ALCHEMY")
+                .env_remove("ALCHEMY_BIN")
+                .env_remove("MAKEFLAGS")
+                .env_remove("MFLAGS")
+                .current_dir(root)
+                .output()
+                .unwrap();
+            assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
+            String::from_utf8(output.stdout).unwrap()
+        };
+        let ordinary = dry_run(&["compare-tbs-en", "progress", "figure"]);
+        assert_eq!(ordinary.matches("cargo build").count(), 1);
+        assert!(!ordinary.contains("cargo run"));
+        let verified = dry_run(&[
+            "ALCHEMY=/private/tmp/verified-alchemy",
+            "compare-editions",
+            "publication-check",
+        ]);
+        assert!(!verified.contains("cargo build") && !verified.contains("cargo run"));
+        assert_eq!(verified.matches("/private/tmp/verified-alchemy build rom --target ").count(), 12);
+        assert!(verified.contains("/private/tmp/verified-alchemy check publication --tree"));
+    }
+
+    #[test]
     fn a_failing_gate_stops_before_the_count() {
         let directory = tempfile::tempdir().unwrap();
         let root = directory.path();

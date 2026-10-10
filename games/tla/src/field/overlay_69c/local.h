@@ -111,28 +111,10 @@ static __inline__ void ObjectMotion_SetActionVariant_(u32 id, s32 variant)
     ObjectMotion_SetActionVariant(id, variant);
 }
 
-static __inline__ void Scene_SetArrivalFlags_(s32 a)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Scene_SetArrivalFlags(a);
-}
-
 static __inline__ s32 Map_GetTerrainHeight_(s32 layer, s32 x, s32 z)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     return Map_GetTerrainHeight(layer, x, z);
-}
-
-static __inline__ void Func_02002360_(struct ObjectRuntime *object, s32 a)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02002360(object, a);
-}
-
-static __inline__ void Func_02002368_(void)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02002368();
 }
 
 static __inline__ void Func_020023b0_(s32 id, s32 x, s32 z)
@@ -141,28 +123,10 @@ static __inline__ void Func_020023b0_(s32 id, s32 x, s32 z)
     Func_020023b0(id, x, z);
 }
 
-static __inline__ void Func_020023d0_(s32 id)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_020023d0(id);
-}
-
-static __inline__ void Func_020023f8_(s32 id)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_020023f8(id);
-}
-
 static __inline__ void Func_02002400_(void)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     Func_02002400();
-}
-
-static __inline__ void Func_02002440_(s32 id, s32 a)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02002440(id, a);
 }
 
 static __inline__ void Func_02002458_(s32 x, s32 z, s32 a, s32 b)
@@ -175,48 +139,6 @@ static __inline__ void Func_02002460_(s32 x, s32 z, s32 a, s32 b)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     Func_02002460(x, z, a, b);
-}
-
-static __inline__ void Func_02002468_(s32 id)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02002468(id);
-}
-
-static __inline__ void Func_02002470_(s32 cue)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02002470(cue);
-}
-
-static __inline__ void Func_02000054_(struct ObjectRuntime *object)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02000054(object);
-}
-
-static __inline__ void Func_02000404_(void)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02000404();
-}
-
-static __inline__ void Func_02000c78_(s32 id)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02000c78(id);
-}
-
-static __inline__ s32 Func_02000dcc_(struct PushedBlock *block)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    return Func_02000dcc(block);
-}
-
-static __inline__ void Func_02001050_(struct PushedBlock block)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02001050(block);
 }
 
 #endif

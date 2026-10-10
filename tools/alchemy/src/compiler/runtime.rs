@@ -1,5 +1,5 @@
 use crate::compiler::build_io::{read, text, write};
-use crate::compiler::routing::{bundle, runtime_library_cflags, CompilerTarget};
+use crate::compiler::routing::{bundle, runtime_library_cflags};
 use crate::compiler::sha256;
 use fs2::FileExt;
 use crate::process::run;
@@ -346,7 +346,7 @@ fn runtime_tools(root: &Path) -> Result<(String, PathBuf, String), String> {
         ],
         root,
     )?;
-    crate::compiler::bundle::validate_bundle(CompilerTarget::Tbs)?;
+    crate::compiler::bundle::validate_bundle()?;
     let ar = root.join("tools/out/binutils/bin/arm-none-eabi-ar");
     let ar_sha256 = sha256::hex(&read(&ar)?);
     Ok((

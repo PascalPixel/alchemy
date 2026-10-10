@@ -15,9 +15,6 @@ LAYOUT_OFFSET_GUARD(
 
 #define RESOURCE37C_RUNTIME ((struct Resource37cRuntime *)*(void **)&gEventWork)
 
-s32	 Resource37c_TestSetupGate(s32);
-void Resource37c_SetSetupFlag(s32);
-void Resource37c_SetViewScale(s32, s32, s32);
 void Resource37c_QueueSoundCue(s32);
 void Resource37c_FinalizeSetup(void);
 

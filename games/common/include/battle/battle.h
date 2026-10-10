@@ -961,9 +961,6 @@ u32 *Trade_AddOfferFar(u32 kind, u32 first, u32 second);
 s32	 Trade_CanOfferDjinnFar(s32 unit_id, s32 element, s32 index);
 void Ui_FillBank15PaletteGrey(void);
 s32	 Ui_GetTableWordZeroFar(s32 index);
-#ifndef OWN_UiText_DrawMessage
-void UiText_DrawMessage(s32 no, s32 flags);
-#endif
 void UiText_MeasureResourceEntriesFar(s32 message, s32 *width, s32 *height);
 void UiText_PrepareMessageWorkFar(s32 message);
 void UiTimedNotice_CloseIfActiveFar(void);

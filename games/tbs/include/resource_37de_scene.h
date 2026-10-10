@@ -18,8 +18,6 @@ typedef char Resource37deSceneRuntime_scene_setup_word_offset
 	[RESOURCE37DE_SCENE_OFFSET(scene_setup_word_1c8) == 0x1c8 ? 1 : -1];
 #undef RESOURCE37DE_SCENE_OFFSET
 
-s32	 TestSceneFlag(s32);
-void SetCameraZoom(s32, s32, s32);
 void QueueSceneSound(s32);
 void InitializeSceneRecordBuffer(void);
 

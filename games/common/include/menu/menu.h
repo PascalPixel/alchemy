@@ -134,7 +134,6 @@ extern u8		 Workspace_RangeDash[];
 extern u8		 Workspace_StatusTitle[];
 extern const u16 WorkspaceOptions_SliderPalette[];
 extern const u8	 WorkspaceOptions_SliderTiles[];
-s32				 Ability_GetAvailability(s32);
 #ifndef OWN_Ability_GetData
 struct BtlAct *Ability_GetData(s32 action_id);
 #endif
@@ -401,9 +400,6 @@ struct RenderOutput *SideObject_CreateFar(
 #ifndef OWN_StatusMenu_DrawCharacterSummary
 void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st);
 #endif
-#ifndef OWN_UiIcon_Draw
-struct RenderOutput *UiIcon_Draw(s32 code, s32 layers, struct RenderInput *input, s32 x, s32 y);
-#endif
 s32 UiIcon_LoadResourceIntoSlot(s32 resource_id, s32 slot);
 #ifndef OWN_UiIcon_PrepareObjectFar
 void UiIcon_PrepareObjectFar(struct RenderOutput *object);
@@ -417,9 +413,6 @@ s32	 UiMessage_ShowChoice(s32 arg0);
 s32	 UiMessage_ShowChoiceVariant(s32 arg0);
 void UiMessage_ShowResolvedAndRestoreState(s32 arg0);
 void UiMessage_ShowResolvedAndWait(s32 value);
-#ifndef OWN_UiNumber_DrawAt
-void UiNumber_DrawAt(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
-#endif
 void UiText_CopyMessageStringFar(s32 message_id, void *buffer, s32 length);
 void UiText_DrawAt(s32, s32, s32, s32);
 #ifndef OWN_UiText_DrawStringInWindowFar

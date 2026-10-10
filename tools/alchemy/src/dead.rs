@@ -918,7 +918,7 @@ fn declarations(
         let blanked = blank_conditionals(text);
         for item in items(&blanked) {
             let found = names(&item);
-            if found.is_empty() || guard_invocation(&item) || item.text.contains("? 1 : -1") {
+            if found.is_empty() || guard_invocation(&item) || constraint_typedef(&item) {
                 continue;
             }
             let first = text.line_of(item.start);
@@ -1117,6 +1117,27 @@ fn is_typedef(item: &Item) -> bool {
     identifiers(item.text).any(|word| word == "typedef")
 }
 
+/// Conditional array bounds in a typedef can reject a bad layout even when
+/// nothing uses the typedef's name. Keep that check independent of formatting.
+fn constraint_typedef(item: &Item) -> bool {
+    if !is_typedef(item) {
+        return false;
+    }
+    let Ok(tokens) = crate::compiler::c_syntax::lex(item.text) else {
+        return true;
+    };
+    let mut depth = 0;
+    for token in tokens {
+        match token.tok {
+            crate::compiler::c_syntax::Tok::Punct("[") => depth += 1,
+            crate::compiler::c_syntax::Tok::Punct("]") => depth -= 1,
+            crate::compiler::c_syntax::Tok::Punct("?") if depth > 0 => return true,
+            _ => {}
+        }
+    }
+    false
+}
+
 fn is_enumerator(item: &Item, name: &str) -> bool {
     identifiers(item.text).any(|word| word == "enum") && {
         // An enumerator is named inside the braces.
@@ -1259,6 +1280,26 @@ fn rewrite(text: &Text, edits: Vec<Edit>) -> Result<String, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn unused_layout_checks_survive_formatting_and_comments() {
+        for source in [
+            "typedef char Check[sizeof(struct Packet) == 12 ? 1 : -1];",
+            "typedef char Check[sizeof(struct Packet)==12?1:-1];",
+            "typedef char Check[\n  OFFSET(struct Packet, field) == 8\n  ? 1\n  : -1];",
+            "typedef char Check[(sizeof(struct Packet) != 12) ? -7 /* reject */ : 1];",
+        ] {
+            assert!(constraint_typedef(&items(source)[0]), "{source}");
+        }
+        for source in [
+            "typedef char Scratch[64];",
+            "extern int Removed(void);",
+            "typedef int (*Callback)(char text[8]);",
+            "typedef char Scratch[64]; /* ? 1 : -1 */",
+        ] {
+            assert!(!constraint_typedef(&items(source)[0]), "{source}");
+        }
+    }
 
     #[test]
     fn the_output_names_the_arms_and_headers_it_reached() {

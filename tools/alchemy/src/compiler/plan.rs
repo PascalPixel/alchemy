@@ -1,5 +1,5 @@
 use crate::compiler::bundle::{
-    compiler_command_for_target, validate_agbcc_bundle, validate_bundle, validate_game_arm_bundle,
+    compiler_command, validate_agbcc_bundle, validate_bundle, validate_game_arm_bundle,
 };
 
 pub fn basename(path: &str) -> &str {
@@ -15,7 +15,7 @@ pub fn extname(path: &str) -> &str {
 }
 
 use crate::compiler::routing::{
-    bundle_for, cflags_for_family, driver_for_family, family_for_source, family_include_flags,
+    bundle, cflags_for_family, driver_for_family, family_for_source, family_include_flags,
     include_flag,
     CompilerFamily, CompilerTarget,
 };
@@ -129,7 +129,7 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
         arguments.push("-o".to_string());
         arguments.push(options.output.clone());
         arguments.push(options.input.clone());
-        steps.push(compiler_command_for_target(options.target, &arguments)?);
+        steps.push(compiler_command(&arguments)?);
     }
     Ok(steps)
 }
@@ -140,9 +140,9 @@ fn direct_preprocessor_command_for_target_with_flags(
     family: CompilerFamily,
     flags: &[String],
 ) -> Result<Vec<String>> {
-    validate_bundle(target)?;
+    validate_bundle()?;
     let mut command = vec![
-        bundle_for(target)
+        bundle()
             .join("cpp0")
             .to_string_lossy()
             .into_owned(),

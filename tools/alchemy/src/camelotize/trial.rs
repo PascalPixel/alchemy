@@ -5,7 +5,7 @@
 //! that builds the file. Sets are tried together and bisected
 //! when one fails, so a file costs a handful of compiles, not one per edit.
 
-use crate::compiler::bundle::compiler_command_for_target;
+use crate::compiler::bundle::compiler_command;
 use crate::compiler::routing::{cflags_for_target_source, compiler_assembly_command, is_arm};
 use crate::targets::{target_for, DecompTarget, TARGET_IDS};
 use std::path::Path;
@@ -160,7 +160,7 @@ impl Build {
         }
         arguments.extend(["-S".into(), "-o".into(), assembly.to_string_lossy().into_owned()]);
         arguments.extend(["-x".into(), "c".into(), source.to_string_lossy().into_owned()]);
-        let command = compiler_command_for_target(self.target.compiler, &arguments).map_err(|e| e.to_string())?;
+        let command = compiler_command(&arguments)?;
         let output = Command::new(&command[0]).args(&command[1..]).current_dir(root).output().map_err(|e| e.to_string())?;
         let mut messages = String::from_utf8_lossy(&output.stderr).into_owned();
         if !output.status.success() {

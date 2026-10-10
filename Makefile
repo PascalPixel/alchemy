@@ -3,9 +3,8 @@ TOOLS := tools
 CARGO ?= cargo
 export CARGO_TARGET_DIR := $(CURDIR)/tools/out/cargo-target
 export PATH := $(CURDIR)/tools/out/binutils/bin:$(PATH)
-CARGO_RUN := $(CARGO) run --offline --quiet --release --manifest-path
-ALCHEMY ?= $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
 ALCHEMY_BIN := $(CARGO_TARGET_DIR)/release/alchemy
+ALCHEMY ?= $(ALCHEMY_BIN)
 BUILD := $(ALCHEMY) build
 CHECK := $(ALCHEMY) check
 TARGET ?= tbs-ja
@@ -29,7 +28,7 @@ compiler-runtime: toolchain-check compiler-source-check
 $(LIBGCC):
 	$(MAKE) compiler-runtime
 
-.PHONY: help bootstrap merge-drivers fetch-dependencies compilers compiler-sources compiler-source-check toolchain-check build-tools
+.PHONY: help bootstrap merge-drivers fetch-dependencies compilers compiler-sources compiler-source-check toolchain-check build-tools build-alchemy
 .PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
 .PHONY: publication-check publication-staged-check hygiene-check coverage-report
@@ -60,6 +59,7 @@ fetch-dependencies:
 	$(CARGO) fetch --locked --manifest-path $(TOOLS)/Cargo.toml
 
 bootstrap: fetch-dependencies
+	$(MAKE) build-alchemy
 	$(ALCHEMY) bootstrap $(if $(BUNDLE),--from "$(BUNDLE)")
 	$(MAKE) $(LIBGCC)
 	$(MAKE) merge-drivers
@@ -94,6 +94,9 @@ compiler-source-check:
 build-tools:
 	$(CARGO) build --offline --release --workspace --manifest-path $(TOOLS)/Cargo.toml
 
+build-alchemy:
+	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
+
 compare:
 	$(BUILD) rom --target tbs-ja
 	@grep -F ' out/tbs-ja/' rom.sha1 | $(SHA1) -
@@ -107,14 +110,21 @@ compare-all:
 
 EDITIONS := tbs-en tbs-de tbs-es tbs-fr tbs-it tla-en tla-de tla-es tla-fr tla-it
 COMPARE_EDITIONS := $(addprefix compare-,$(EDITIONS))
+# Build once per invocation. Verification passes its pinned executable through
+# ALCHEMY, so its child checks need no Cargo build and cannot replace that binary.
+ifeq ($(origin ALCHEMY),file)
+compiler-runtime toolchain-check compare compare-tla compare-editions compare-other-editions \
+$(COMPARE_EDITIONS) build-rom precommit prepush verify land publication-check \
+hygiene-check publication-staged-check lint-staged coverage-report progress figure \
+deps similar worst modern: | build-alchemy
+endif
+
 CPUS := $(shell sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null || echo 4)
 .PHONY: compare-editions compare-other-editions compare-tbs-ja compare-tla-ja $(COMPARE_EDITIONS)
 compare-editions:
-	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
-	@$(MAKE) --no-print-directory -j$(CPUS) ALCHEMY=$(ALCHEMY_BIN) compare compare-tla $(COMPARE_EDITIONS)
+	@$(MAKE) --no-print-directory -j$(CPUS) ALCHEMY="$(ALCHEMY)" compare compare-tla $(COMPARE_EDITIONS)
 compare-other-editions:
-	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
-	@$(MAKE) --no-print-directory -j$(CPUS) ALCHEMY=$(ALCHEMY_BIN) $(COMPARE_EDITIONS)
+	@$(MAKE) --no-print-directory -j$(CPUS) ALCHEMY="$(ALCHEMY)" $(COMPARE_EDITIONS)
 compare-tbs-ja: compare
 compare-tla-ja: compare-tla
 $(COMPARE_EDITIONS): compare-%:
@@ -125,19 +135,16 @@ build-rom:
 	$(BUILD) rom --target $(TARGET)
 
 precommit:
-	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
-	@$(ALCHEMY_BIN) verify --pre-commit
+	@$(ALCHEMY) verify --pre-commit
 
 prepush:
 	$(ALCHEMY) verify --pre-push
 
 verify:
-	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
-	@$(ALCHEMY_BIN) verify
+	@$(ALCHEMY) verify
 
 land:
-	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
-	@$(ALCHEMY_BIN) verify --land
+	@$(ALCHEMY) verify --land
 
 publication-check:
 	$(CHECK) publication --tree
@@ -175,18 +182,18 @@ progress:
 	$(CHECK) progress
 
 figure:
-	$(ALCHEMY_BIN) figure
+	$(ALCHEMY) figure
 
 deps:
-	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- deps --build out/tbs-en --build out/tla-en \
+	$(ALCHEMY) deps --build out/tbs-en --build out/tla-en \
 	    --out-dir out/reports $(DEPS_FLAGS)
 
 similar:
-	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- similar --build out/tbs-en --build out/tla-en \
+	$(ALCHEMY) similar --build out/tbs-en --build out/tla-en \
 	    --out out/reports/similar.tsv $(SIMILAR_FLAGS)
 
 worst:
-	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- worst --out out/reports/worst.tsv
+	$(ALCHEMY) worst --out out/reports/worst.tsv
 
 clean:
 	@rm -rf out
@@ -194,5 +201,4 @@ clean:
 # pret's `make modern`: the same source through a modern GCC, in out/modern
 # only and never in rom.sha1 (alchemy build modern --help).
 modern:
-	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
-	$(ALCHEMY_BIN) build modern --cc "$(MODERN_CC)" $(addprefix --target ,$(MODERN_TARGETS))
+	$(ALCHEMY) build modern --cc "$(MODERN_CC)" $(addprefix --target ,$(MODERN_TARGETS))

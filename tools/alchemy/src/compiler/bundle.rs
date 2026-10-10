@@ -1,7 +1,5 @@
 use crate::compiler::bundle_data::{source_record, SOURCE_RECORD};
-use crate::compiler::routing::{
-    agbcc_driver, bundle, bundle_for, game_arm_driver, root, CompilerTarget,
-};
+use crate::compiler::routing::{agbcc_driver, bundle, game_arm_driver, root};
 use crate::compiler::sha256;
 use fs2::FileExt;
 use std::fs::{self, File, OpenOptions};
@@ -9,6 +7,9 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::{Mutex, OnceLock};
 pub type Result<T> = std::result::Result<T, String>;
+pub const EXECUTABLES: [&str; 7] = [
+    "xgcc", "cpp0", "tradcpp0", "cc1", "as", "agbcc/old_agbcc", "gcc2952_arm",
+];
 struct SharedBundleLock {
     _file: File,
 }
@@ -76,10 +77,8 @@ const REFUSED_CODEGEN_ENV_VARS: [&str; 3] = [
 fn codegen_override_error(variable: &str, set: bool) -> Option<String> {
     if set {
         Some(format!(
-            "{variable} is set. It switched compiler behaviour in bundles built before \
-             alchemy-gcc a3b1837, which the approved-digest ledger still admits, so this \
-             build would not be reproducible and its result would be cached under a key \
-             that does not mention it. Unset it."
+            "{variable} is set; compiler behaviour must come only from the approved \
+             profiles (K1–K3). Unset it."
         ))
     } else {
         None
@@ -163,23 +162,21 @@ fn smoke(argv: &[String]) -> std::result::Result<(), String> {
     };
     Err(detail.trim().to_string())
 }
-pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
+pub fn validate_bundle() -> Result<()> {
     ensure_compiler_bundle_access()?;
-    if validation_cached(target.as_str()) {
+    if validation_cached("game-thumb") {
         return Ok(());
     }
-    let bundle_dir = bundle_for(target);
-    validate_game_directory(&bundle_dir, target)?;
-    cache_validation(target.as_str());
+    validate_game_directory(&bundle())?;
+    cache_validation("game-thumb");
     Ok(())
 }
-fn validate_game_directory(bundle_dir: &Path, target: CompilerTarget) -> Result<()> {
+fn validate_game_directory(bundle_dir: &Path) -> Result<()> {
     validate_source_record(bundle_dir)?;
     for name in ["xgcc", "cpp0", "tradcpp0", "cc1", "as"] {
         if executable_mode(&bundle_dir.join(name)) != Some(true) {
             return Err(format!(
-                "compiler {} bundle is missing executable {name}",
-                target.as_str()
+                "compiler bundle is missing executable {name}"
             ));
         }
     }
@@ -193,12 +190,7 @@ fn validate_game_directory(bundle_dir: &Path, target: CompilerTarget) -> Result<
         "/dev/null".into(),
         "/dev/null".into(),
     ])
-    .map_err(|detail| {
-        format!(
-            "compiler {} smoke compile failed: {detail}",
-            target.as_str()
-        )
-    })?;
+    .map_err(|detail| format!("compiler smoke compile failed: {detail}"))?;
     Ok(())
 }
 pub fn validate_agbcc_bundle() -> Result<()> {
@@ -250,22 +242,12 @@ fn validate_driver(driver: &Path, name: &str, flags: &[&str]) -> Result<()> {
 }
 pub fn validate_installation(directory: &Path) -> Result<()> {
     ensure_no_codegen_environment_overrides()?;
-    validate_game_directory(directory, CompilerTarget::Tbs)?;
-    validate_game_directory(directory, CompilerTarget::Tla)?;
+    validate_game_directory(directory)?;
     validate_agbcc_driver(&directory.join("agbcc/old_agbcc"))?;
     validate_game_arm_driver(&directory.join("gcc2952_arm"))
 }
 pub fn signature_paths() -> Vec<PathBuf> {
-    let bundle_dir = bundle();
-    vec![
-        bundle_dir.join("xgcc"),
-        bundle_dir.join("cpp0"),
-        bundle_dir.join("tradcpp0"),
-        bundle_dir.join("cc1"),
-        bundle_dir.join("as"),
-        agbcc_driver(),
-        game_arm_driver(),
-    ]
+    EXECUTABLES.iter().map(|name| bundle().join(name)).collect()
 }
 fn append_compiler_input_tree(stream: &mut Vec<u8>, directory: &Path, base: &Path) {
     let relative = directory.strip_prefix(base).unwrap_or(directory);
@@ -431,12 +413,9 @@ fn append_signature_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
     stream.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
     stream.extend_from_slice(bytes);
 }
-pub fn compiler_command_for_target(
-    target: CompilerTarget,
-    arguments: &[String],
-) -> Result<Vec<String>> {
-    validate_bundle(target)?;
-    let bundle_dir = bundle_for(target);
+pub fn compiler_command(arguments: &[String]) -> Result<Vec<String>> {
+    validate_bundle()?;
+    let bundle_dir = bundle();
     let mut argv = vec![
         bundle_dir.join("xgcc").to_string_lossy().into_owned(),
         format!("-B{}/", bundle_dir.display()),

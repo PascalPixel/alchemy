@@ -291,11 +291,7 @@ s32 Resource_LoadIntoFreeSlot(s32 size)
 //--------------------------------------------------------------------------
 s32 Resource_GetBuffer(s32 no, s32 src)
 {
-#if GAME_TLA
-	return VramBlock_LoadCached(no, ResourceTableEntries[no].size, (const void *)src);
-#else
 	return VramBlock_LoadCached(no, gVramBlockCache[no].size, (const void *)src);
-#endif
 }
 #include "battle.h"
 #include "debug.h"

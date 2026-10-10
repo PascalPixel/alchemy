@@ -228,7 +228,6 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive)
 	return ret;
 }
 
-#if !GAME_TLA
 //--------------------------------------------------------------------------
 // 送るパケットを send_buffer[0] に組み立てる
 // [0] 番号、[1] まだ受けていない相手のマスク、[2] チェックサム、[4] データ 24 バイト
@@ -283,58 +282,6 @@ void SerialRuntime_PrepareSendPacket(void *payload)
 	if (sr->mode != 0 && sr->transfer_enabled != 0)
 		REG_TM3CNT_H = 0xc0; // 開始・割り込み
 }
-#else
-//--------------------------------------------------------------------------
-// 送るパケットを send_buffer[0] に組み立てる（作りは上と同じ）
-//--------------------------------------------------------------------------
-void SerialRuntime_PrepareSendPacket(void *payload)
-{
-	volatile struct SerialRuntime *sr;
-	u32							   i;
-	u32							   sum;
-
-	sr = SERIAL_RUNTIME;
-	{
-		u8 *pkt;
-		u8	cur;
-		u8	recv;
-
-		pkt = (u8 *)sr->send_buffer[0];
-		pkt[0] = sr->sequence;
-		cur = sr->current_mask;
-		recv = sr->received_mask;
-		sum = 0;
-		*(u16 *)(pkt + 2) = sum;
-		pkt[1] = recv ^ cur;
-		Dma_Set(payload, pkt + 4, DMA_ENABLE32 | DMA_32BIT | 6, REG_DMA3);
-	}
-	{
-		u16 *pkt;
-		u32	 v;
-
-		pkt = sr->send_buffer[0];
-		for (i = 0; i <= 13; i++)
-		{
-			v = *pkt;
-			pkt++;
-			sum += v;
-		}
-	}
-	{
-		u32					 inv;
-		struct SerialPacket *pkt;
-
-		inv = ~sum;
-		pkt = (struct SerialPacket *)sr->send_buffer[0];
-		pkt->checksum = inv;
-	}
-	if (sr->mode != 0)
-		REG_TM3CNT_H = 0;
-	sr->send_index = -1;
-	if (sr->mode != 0 && sr->transfer_enabled != 0)
-		REG_TM3CNT_H = 0xc0;
-}
-#endif
 #include "types.h"
 #include "io_reg.h"
 #include "serial_runtime.h"

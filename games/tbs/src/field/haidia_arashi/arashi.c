@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/haidia_arashi/arashi.h"
 #include "unit/battle/effect/slots.h"
@@ -107,33 +108,6 @@ struct Actor
 	u8	reserved_00[80];
 	u8 *presentation;
 };
-
-extern u8 HaidiaArashi_FrameModes[];
-
-extern struct SceneEntrance HaidiaArashi_SceneTable0[];
-
-extern u32 HaidiaArashi_SceneTable1[];
-
-extern struct ScenePlacement HaidiaArashi_SceneTable2[];
-
-extern struct SceneEvent HaidiaArashi_SceneTable3[];
-
-extern u16 HaidiaArashi_CellSteps0[];
-
-extern u16 HaidiaArashi_CellSteps1[];
-
-extern s32 HaidiaArashi_ActorNineteenScript[];
-
-extern s32 HaidiaArashi_ActorEightScript[];
-
-extern s32					 HaidiaArashi_ShakeDone;
-extern s32					 HaidiaArashi_ShakeShift;
-extern u16					 HaidiaArashi_CellSteps2[];
-extern u16					 HaidiaArashi_CellSteps3[];
-extern struct ScenePlacement HaidiaArashi_LastObjectCall[];
-extern s32					 HaidiaArashi_LeaderScript[];
-extern s32					 HaidiaArashi_ActorTwentyScript[];
-extern s32					 HaidiaArashi_ActorTwentyTwoScript[];
 
 s32 Math_RemainderUnsigned(s32, s32);
 

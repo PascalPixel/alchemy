@@ -1,3 +1,6 @@
+#include "game_state.h"
+#include "keystate.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/common/imiru_fuchin/fuchin.h"
 #include "unit/battle/effect/slots.h"
@@ -31,8 +34,6 @@
 #include "objcmd.h"
 
 s32 ImiruFuchin_TrackLeader;
-
-extern s32 *gEffectScripts[];
 
 struct CaveEffectScripts
 {
@@ -1823,10 +1824,6 @@ tail:
 	Engine_TaskWait(10);
 	Engine_EventEnd();
 }
-
-extern s32 gEffectScript0[];
-extern s32 gEffectScript1[];
-extern s32 gEffectScript2[];
 
 s32 *gEffectScripts[] = {
 	gEffectScript0,

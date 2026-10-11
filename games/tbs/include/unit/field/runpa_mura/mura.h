@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_RUNPA_MURA_MURA_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FieldEffect;
 struct SceneEntrance;
@@ -13,6 +14,10 @@ union FieldObject;
 void Effect_SetPriority(struct FieldEffect *effect, s32 priority);
 struct FieldEffect *Effect_CreateTranslucent(s32 x, s32 y, s32 z, s32 type);
 struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type);
+extern s32 gShortEffectScript[];
+extern s32 gMediumEffectScript[];
+extern s32 gLongEffectScript[];
+extern const s32 *gEffectScripts[];
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);
@@ -57,5 +62,15 @@ void Leader_SneaksOut(void);
 s32 Scene_Initialize(void);
 s32 FloatingNut_Update(union FieldObject *object);
 void FloatingNut_Initialize(s32 actor);
+extern struct SceneEntrance gLunpaEntrances[];
+extern struct SceneEntrance gGateEntrances[];
+extern u32 gLunpaExits[];
+extern u32 gGateExits[];
+extern struct ScenePlacement gLunpaPlacements[];
+extern struct ScenePlacement gGatePlacements[];
+extern struct SceneEvent gLunpaSealedEvents[];
+extern struct SceneEvent gLunpaReopenedEvents[];
+extern struct SceneEvent gGateEvents[];
+extern u32 gLunpaUnusedWord;
 
 #endif

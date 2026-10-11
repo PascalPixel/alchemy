@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/babi_chika/chika.h"
 #include "unit/field/common/object/staged_actor.h"
@@ -68,8 +70,6 @@ typedef struct Actor_02000cd0
 	u8	flags;
 } Actor_02000cd0;
 
-extern s32 BabiChika_FlickerScript[];
-
 typedef struct Target_02000cd0
 {
 	union FieldCoordinate x;
@@ -131,15 +131,7 @@ struct MotionEffect
 	u32			   callback;
 };
 
-extern struct ScenePlacement Data_0200b8f4[];
-extern u32 Data_0200ba74[];
-extern struct SceneEvent Data_0200bc0c[];
-extern struct SceneEvent Data_0200bef4[];
 struct Record_02000ec8;
-
-extern u32 Data_0200b85c[];
-extern u16 Data_0200b3ec[];
-extern u16 Data_0200b40c[];
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"

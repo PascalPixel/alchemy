@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/field/soru_nichigetsu/nichigetsu.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"

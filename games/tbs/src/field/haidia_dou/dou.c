@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/haidia_dou/dou.h"
 #include "unit/field/common/effect/move.h"
@@ -52,9 +54,6 @@ struct Rec_3a6
 	u8	f34;
 	u8	f35;
 };
-
-extern u32 HaidiaDou_Exits[];
-extern s32 HaidiaDou_WalkTargets[];
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {

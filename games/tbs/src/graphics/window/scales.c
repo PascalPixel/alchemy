@@ -1,3 +1,4 @@
+#include "unit/graphics/window/scales.h"
 #include "types.h"
 
 // 拡大率 (256 = 1 倍)

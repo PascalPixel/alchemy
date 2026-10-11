@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_KOROSSEO_KABE_KABE_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct SceneEntrance;
 struct SceneEvent;
@@ -79,5 +80,26 @@ void SceneState_InitControlRecordAndStartTask(s32 resource);
 s32 *SceneData_FindSlotAtPosition(s32 *pos, void *self);
 void StagedActor_PushActorAhead(void);
 s32 *SceneActor_FindOccupantAheadOfSubject(void);
+extern const u8 KorosseoKabe_RollLogScript[];
+extern const u8 Korosseo_PortraitPaletteOffsets[];
+extern const s16 KorosseoKabe_ModeRecordTwo[];
+extern const s16 KorosseoKabe_ModeRecordThreeAlt[];
+extern char HexDigits[20];
+extern s32 KorosseoKabe_SparkScript[];
+extern s32 KorosseoKabe_RaiseScript[];
+extern u32 KorosseoKabe_DirectionSteps[];
+extern struct SceneEntrance gKorosseoKabeEntrances[];
+extern u32 gKorosseoKabeExits[];
+extern struct ScenePlacement gKorosseoKabePlacements[];
+extern s32 KorosseoKabe_SpectatorPhase;
+extern s32 KorosseoKabe_SpectatorTimer;
+extern struct SceneEvent gKorosseoKabeEvents[];
+extern s16 Korosseo_PortraitSlot;
+extern s16 KorosseoKabe_ModeRecordDefault[];
+extern s16 KorosseoKabe_ModeRecordFour[];
+extern s16 KorosseoKabe_ModeRecordThree[];
+extern s16 Korosseo_MarkerSlot;
+extern s32 Korosseo_RivalFinishScript[];
+extern s32 KorosseoKabe_ApproachScript[];
 
 #endif

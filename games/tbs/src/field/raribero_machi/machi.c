@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/field/raribero_machi/machi.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -20,11 +21,6 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-
-extern struct SceneEntrance	 Placement_Scripts[];
-extern u32					 Placement_Messages[];
-extern struct ScenePlacement Placement_Actors[];
-extern struct SceneEvent	 Placement_Effects[];
 
 #define NULL ((void *)0)
 

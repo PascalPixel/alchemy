@@ -1,3 +1,5 @@
+#include "battle_effect_runtime.h"
+#include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/korima_hiroba/hiroba.h"
 #include "unit/field/common/object/staged_actor.h"

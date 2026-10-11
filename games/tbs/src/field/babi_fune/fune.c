@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "vram_tab.h"
 #include "unit/field/babi_fune/fune.h"
 #include "unit/graphics/display/scroll_initialize_hblank_dma.h"
 #include "unit/battle/effect/slots.h"

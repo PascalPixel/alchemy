@@ -26,6 +26,4 @@
 #include "battle_effect_runtime.h"
 #include "window.h"
 
-extern u32 KareiTorebi_SceneTable[];
-
 #endif

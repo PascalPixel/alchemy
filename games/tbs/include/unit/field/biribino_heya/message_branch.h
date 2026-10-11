@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_BIRIBINO_HEYA_MESSAGE_BRANCH_H
 
 #include "types.h"
+#include "field_scene.h"
 
 u8 *SceneData_GetPrimaryTable(void);
 s32 SceneData_ReturnZero(void);
@@ -23,5 +24,9 @@ void FieldScene_ConfigureActor23Scene(void);
 void FieldScene_RunActor27Message(void);
 void FieldScene_RunActor10MessageBranch(void);
 s32 FieldScene_SetupActor27OnEntry(void);
+extern struct SceneEntrance BiribinoHeya_PrimaryTable[];
+extern u32 BiribinoHeya_SecondaryTable[];
+extern struct ScenePlacement gBiribinoHeyaPlacements[];
+extern struct SceneEvent BiribinoHeya_TertiaryTable[];
 
 #endif

@@ -1,3 +1,6 @@
+#include "game_state.h"
+#include "scene_ids.h"
+#include "vram_tab.h"
 #include "unit/field/haidia_ie/ie.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -25,8 +28,6 @@
 #include "ability_ids.h"
 #include "field_scene.h"
 #include "objcmd.h"
-
-extern s32 HaidiaIe_FaceTargetActions[];
 
 s32 Object_UpdateFacingTowardTarget(struct FacingObject *object)
 {

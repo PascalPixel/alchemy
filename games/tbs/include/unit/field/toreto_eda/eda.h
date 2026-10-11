@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_TORETO_EDA_EDA_H
 
 #include "types.h"
+#include "field_scene.h"
 
 void State_SetActorEightValue3d(void);
 u8 *ToretoEda_GetEntrances(void);
@@ -26,5 +27,10 @@ s32 ToretoEda_InitializeBackdropTransition(void);
 void Effect_UpdateBg3HofsByVcount(void);
 void Effect_SetBg3HofsSplit(void);
 void ToretoEda_StartBg3Split(void);
+extern struct SceneEntrance ToretoEda_SceneTable0[];
+extern u32 ToretoEda_SceneTable1[];
+extern struct ScenePlacement ToretoEda_SceneTable2[];
+extern struct SceneEvent ToretoEda_SceneTable3[];
+extern u16 ToretoEda_CellSteps[];
 
 #endif

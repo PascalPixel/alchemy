@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_FUNE_KANPAN_KANPAN_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FieldActor;
 
@@ -9,6 +10,14 @@ s32 SceneActor_UpdateScalePulse(struct FieldActor *actor);
 s32 SceneState_ApplyArgMode1AndReturnZero(s32 a);
 s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj);
 s32 FuneKanpan_UpdateHoverGullB(struct FieldActor *obj);
+extern u16 FuneKanpan_SlotPhase[4];
+extern s32 FuneKanpan_WaveAngleY;
+extern s32 FuneKanpan_SlotWork;
+extern u16 FuneKanpan_SlotValue[8];
+extern s32 FuneKanpan_LayerScroll[2];
+extern s32 FuneKanpan_WaveAngleX;
+extern s32 FuneKanpan_DeckSpare;
+extern s32 FuneKanpan_LayerSpeed[2];
 s32 SceneActor_OscillateHeightBetweenLimits(struct FieldActor *actor);
 s32 SceneActor_SetFacingFromSample(struct FieldActor *actor);
 s32 FuneKanpan_UpdateFlyByForActor21(struct FieldActor *obj);
@@ -52,8 +61,10 @@ void FieldScene_ConfigureThreeActors(void);
 void FieldScene_RunPartyRosterScene(void);
 s32 SceneState_FindFirstSetFlagOfGroup(u32 sel);
 void FuneKanpan_RockDeck(void);
+extern s32 FuneKanpan_SlotDepth[8];
 void SceneEffect_InitSlotsEightToNineteen(void);
 void OverlayObject_ActivateSlotWithMode3(s32 a);
+extern u32 FuneKanpan_SlotMode[8];
 void FuneKanpan_ChooseSlotModes(void);
 s32 SceneData_SelectTableEntryByFlagGroup(u32 sel);
 void SceneState_ConfigureEntries8Through19(void);
@@ -68,5 +79,42 @@ void FuneKanpan_ArriveAtTolbi(void);
 void FieldScene_RunThreeActorEncounter(void);
 void FuneKanpan_RunRobinTalk(void);
 void FuneKanpan_PlaceLeaderOnDeck(void);
+extern const s32 FuneKanpan_PresentationActionsA[];
+extern const s32 FuneKanpan_PresentationActionsB[];
+extern const s32 FuneKanpan_RandomActorActions[];
+extern const s32 FuneKanpan_DeckEventActions[];
+extern const s32 FuneKanpan_LeadActionsA[];
+extern const s32 FuneKanpan_LeadActionsB[];
+extern const s32 FuneKanpan_CrewActionsA[];
+extern const s32 FuneKanpan_CrewActionsB[];
+extern const s32 FuneKanpan_CrewActionsC[];
+extern const s32 FuneKanpan_CrewActionsD[];
+extern const s32 FuneKanpan_CrewActionsE[];
+extern const s32 FuneKanpan_SailorActions[];
+extern const s32 FuneKanpan_DeckActionsB[];
+extern const s32 FuneKanpan_DeckActionsA[];
+extern const s32 FuneKanpan_DeckActionsC[];
+extern const s32 FuneKanpan_RosterActions[];
+extern const s32 FuneKanpan_LeaveActions[];
+extern const s32 FuneKanpan_LeadActionsC[];
+extern const struct SceneEntrance FuneKanpan_SceneTableA[];
+extern const s16 FuneKanpan_SceneTableB[];
+extern const u32 FuneKanpan_SceneTableC[];
+extern const struct ScenePlacement gFuneKanpanPlacements[];
+extern const struct ScenePlacement gFuneKanpanPlacementsFlag911[];
+extern const struct ScenePlacement gFuneKanpanPlacementsFlag927[];
+extern const struct ScenePlacement gFuneKanpanPlacementsFlag928[];
+extern const struct ScenePlacement FuneKanpan_CrewScript[];
+extern const struct ScenePlacement FuneKanpan_ClosingCrewScript[];
+extern const struct ScenePlacement FuneKanpan_CrewScriptB[];
+extern const struct ScenePlacement FuneKanpan_CrewScriptC[];
+extern const struct ScenePlacement FuneKanpan_CrewScriptD[];
+extern const struct ScenePlacement FuneKanpan_CrewScriptE[];
+extern const struct ScenePlacement gFuneKanpanPlacementsFlag93e[];
+extern const struct SceneEvent gFuneKanpanEvents[];
+extern const struct SceneEvent gFuneKanpanEventsFlag928[];
+extern const struct SceneEvent gFuneKanpanEventsFlag93e[];
+extern const struct SceneEvent gFuneKanpanEventsFlag8a0[];
+extern const s32 FuneKanpan_FlagGroupEntries[];
 
 #endif

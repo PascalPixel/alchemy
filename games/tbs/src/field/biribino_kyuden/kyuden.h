@@ -13,9 +13,4 @@ enum
 	FLAG_REWARD_TAKEN = 0x84e
 };
 
-extern struct SceneEntrance Placement_Scripts[];
-extern u32					Placement_Messages[];
-extern s32					Kyuden_FacingActions[];
-extern s32					Kyuden_PacingActions[];
-
 #endif

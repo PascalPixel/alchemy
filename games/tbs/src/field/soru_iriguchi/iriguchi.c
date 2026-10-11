@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/soru_iriguchi/iriguchi.h"
 #include "unit/battle/effect/slots.h"

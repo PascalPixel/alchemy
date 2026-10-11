@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/field/goma_suiro/suiro.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"

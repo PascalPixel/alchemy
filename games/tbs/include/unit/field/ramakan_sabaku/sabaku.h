@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_RAMAKAN_SABAKU_SABAKU_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FieldActor;
 struct SceneEntrance;
@@ -37,5 +38,26 @@ void RamakanSabaku_ResetActorEightPosition(void);
 void RamakanSabaku_RunSandstorm(void);
 void RamakanSabaku_ClaimSandEffectVram(void);
 void RamakanSabaku_SetSandPhase(u16 value);
+extern const s32 gEffectScript0[];
+extern const s32 gEffectScript1[];
+extern const s32 gEffectScript2[];
+extern const s32 RamakanSabaku_SafePoints1[];
+extern const s32 RamakanSabaku_SafePoints2[];
+extern const s32 RamakanSabaku_SafePointsOther[];
+extern const s32 *gEffectScripts[];
+extern struct SceneEntrance gRamakanSabakuEntrancesOther[];
+extern struct SceneEntrance gRamakanSabakuEntrances1[];
+extern struct SceneEntrance gRamakanSabakuEntrances2[];
+extern struct SceneEntrance gRamakanSabakuEntrances3[];
+extern struct SceneEntrance gRamakanSabakuEntrances4[];
+extern u32 RamakanSabaku_Exits[];
+extern struct ScenePlacement gRamakanSabakuPlacementsOther[];
+extern struct ScenePlacement gRamakanSabakuPlacements1[];
+extern struct ScenePlacement gRamakanSabakuPlacements2[];
+extern struct ScenePlacement gRamakanSabakuPlacements3[];
+extern struct SceneEvent RamakanSabaku_Events[];
+extern s16 RamakanSabaku_SandLevel;
+extern s16 RamakanSabaku_SandCounter;
+extern s16 RamakanSabaku_SandFlash;
 
 #endif

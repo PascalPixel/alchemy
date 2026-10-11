@@ -17,7 +17,6 @@ union MarkerCoordinate
 	u16 value;
 };
 
-extern s16					  Korosseo_MarkerSlot;
 extern s16					  Korosseo_MarkerSteps;
 extern s16					  Korosseo_MarkerStep;
 extern s16					  Korosseo_MarkerX;

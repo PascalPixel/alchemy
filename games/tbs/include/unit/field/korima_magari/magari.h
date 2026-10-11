@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_KORIMA_MAGARI_MAGARI_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct IcePlacement;
 struct TileRun2;
@@ -29,5 +30,13 @@ s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode);
 void Scene_PushBlockAlongRun(struct TileRun2 *runs);
 void Effect_AdjustPaletteColors(s32 amount);
 u16 Effect_AdjustColorChannels(u16 color, s32 adj);
+extern u32 KorimaMagari_DefaultRecords[];
+extern u8 KorimaMagari_PushAnimations[];
+extern s8 KorimaMagari_PushStepX[];
+extern s8 KorimaMagari_PushStepZ[];
+extern struct SceneEntrance gKorimaMagariEntrances[];
+extern u32 gKorimaMagariExits[];
+extern struct ScenePlacement gKorimaMagariPlacements[];
+extern struct SceneEvent gKorimaMagariEvents[];
 
 #endif

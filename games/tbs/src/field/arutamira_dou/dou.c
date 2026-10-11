@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/arutamira_dou/dou.h"
 #include "unit/field/common/object/staged_actor.h"
@@ -41,10 +43,6 @@ typedef struct
 	s32 y;
 	s32 z;
 } Vec;
-
-extern struct SceneEntrance ArutamiraDou_SceneTableA[];
-extern u32 ArutamiraDou_SceneTableB[];
-extern u16 *ArutamiraDou_ClearTarget;
 
 struct ActorWheel
 {

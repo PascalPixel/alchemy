@@ -204,9 +204,6 @@ const u8 LuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10, 3, 9, 13, 4, 7
 
 // 面を決める高さの境目（z > 値 << 16）
 const s16	LuckyDice_FaceHeights[] = {147, 80, 15, -42, -95, -32767};
-extern char ResourceId_EffectFarCalls;
-extern char ResourceId_LuckyDiceBoard;
-extern char ResourceId_LuckyDiceSprites;
 
 #endif
 

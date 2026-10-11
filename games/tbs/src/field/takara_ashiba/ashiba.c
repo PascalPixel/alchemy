@@ -1,3 +1,6 @@
+#include "game_state.h"
+#include "global_cells.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/takara_ashiba/ashiba.h"
 #include "unit/field/common/object/staged_actor.h"

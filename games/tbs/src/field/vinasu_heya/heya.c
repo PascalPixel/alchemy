@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/vinasu_heya/heya.h"
 #include "unit/field/common/effect/move.h"
@@ -386,11 +387,9 @@ typedef struct
 	s32 unk10;
 } Struct_18f8;
 
-extern u32 StagedActor_DirectionSteps[];
 extern u8  gMapCellBuffer[];
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 #endif
-extern u32		   gVinasuHeyaPrimaryTable[];
 
 static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 {
@@ -2408,7 +2407,6 @@ void VinasuHeya_ExtendBridge(void)
 		}
 	}
 }
-extern struct SwitchCell gVinasuPillarCells[];
 
 void Scene_RunScene3c8SequenceA(void)
 {

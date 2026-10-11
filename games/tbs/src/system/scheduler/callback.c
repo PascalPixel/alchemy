@@ -1,3 +1,6 @@
+#include "unit/system/save/savedata.h"
+#include "unit/system/scheduler/mathtbl.h"
+#include "unit/system/scheduler/numtext.h"
 #include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
@@ -49,8 +52,6 @@
 #include "audio_engine_symbols.h"
 
 extern u8 gDebugMode;
-extern u8 gCpuLoadDisplayEnabled;
-extern u8 gOamCopyEnabled;
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
@@ -934,19 +935,14 @@ void Blend_WaitForTransition(void)
 }
 
 extern u8 IwramClearWords[];
-#define gObjAffineCount (*(u8(*)[]) & gObjAffineCount)
 
 s32 _call_via_r3(s32, s32, s32, s32);
 
 void Graphics_ResetFrameState(void)
 {
-	gObjAffineCount[0] = 0;
+	(*(u8 (*)[])&gObjAffineCount)[0] = 0;
 	_call_via_r3(((u32)&gRenderSlotHeads), 0x400, ((u32)&gObjAffineCount), (u32)IwramClearWords);
 }
-
-#undef gObjAffineCount
-
-#define gRenderSlotHeads ((void *(*)) & gRenderSlotHeads)
 
 typedef void (*OamBuildRoutine)(void *work);
 
@@ -1010,7 +1006,7 @@ void Runtime_PushSlotEntry(void *slot_entry, s32 slot)
 		slot = 0xFF;
 	if (slot < 0)
 		slot = 0;
-	head = &gRenderSlotHeads[slot];
+	head = &(*(void *(*)[])&gRenderSlotHeads)[slot];
 	previous_head = *head;
 	*head = slot_entry;
 	*(void **)slot_entry = previous_head;
@@ -1316,8 +1312,6 @@ s32 Resource_GetBuffer(s32 no, s32 src)
 {
 	return VramBlock_LoadCached(no, gVramBlockCache[no].size, (const void *)src);
 }
-
-#define gRandomSeed (*(u32 *)&gRandomSeed)
 
 typedef s32 (*KeyCallbackFn)(void);
 
@@ -1917,7 +1911,6 @@ void Text_DrawSignedDecimalRightAligned(s32 value, s32 keta)
 	Text_FormatSignedDecimalToWork(value);
 	Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
 }
-#define gCartridgeResetMarker (*(u8(*)[]) & gCartridgeResetMarker)
 
 void Bg0_ClearTilemap(void)
 {
@@ -1963,7 +1956,7 @@ s32 Runtime_GetRemainingIwram(void)
 {
 	union HeapState *work = (union HeapState *)gWorkSlot;
 
-	return (s32)gCartridgeResetMarker - (s32)work->heap.next_iwram;
+	return (s32)(*(u8 (*)[])&gCartridgeResetMarker) - (s32)work->heap.next_iwram;
 }
 
 s32 Runtime_GetRemainingEwram(void)
@@ -2100,8 +2093,6 @@ done:
 void RuntimeMemory_ReservedNoOp(void)
 {
 }
-
-#undef gCartridgeResetMarker
 
 //--------------------------------------------------------------------------
 
@@ -2742,8 +2733,6 @@ u32 SaveState_WriteWorkspaceSlot(s32 sector)
 	result = Flash_VerifySector(value, (s32)&work->slot);
 	return (u32)((0 - result) | result) >> 0x1F;
 }
-
-#define Flash_Handler0 (*(s32 *)&Flash_Handler0)
 
 s32 SaveState_ReadSlotAndCheckChecksum(s32 index)
 {

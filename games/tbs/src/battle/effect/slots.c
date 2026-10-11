@@ -1,3 +1,6 @@
+#include "unit/battle/effect/btlcue.h"
+#include "unit/battle/effect/zonedata.h"
+#include "vram_tab.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/graphics/display/scroll_initialize_hblank_dma.h"
 #include "unit/system/scheduler/callback.h"
@@ -477,8 +480,6 @@ typedef struct TerrainRule
 	s16 zone;	 // 出現テーブル番号
 } TerrainRule;
 
-extern TerrainRule BattleFx_ResultRules[];
-
 // 出現テーブル
 struct EncounterZone
 {
@@ -706,7 +707,7 @@ u8 BattleFx_GetPhaseResult(s32 no)
 {
 	u16 *ent;
 
-	ent = (u16 *)(Encounter_AreaEntryTable + no * 4);
+	ent = (u16 *)&Encounter_AreaEntryTable[no * 2];
 	BattleFx_GetWeightedResult(ent[0], ent[1]);
 }
 
@@ -8752,8 +8753,6 @@ void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target, s32 keep_current_
 // マップの表示範囲とズームの移り変わり、ほかのオブジェクトについて回るオブジェクト
 //--------------------------------------------------------------------------
 
-#define gScanlinePitch ((u8 *)&gScanlinePitch)
-
 // スプライトの OAM 属性2 の上位バイト (bit 2〜3 が表示優先度)
 #define ATTR2_HI(spr) (((u8 *)&((struct AnimationObject *)(spr))->part[0])[9])
 
@@ -8796,7 +8795,7 @@ s32 BattleFx_StepRatioTransition(void)
 	(*step)++;
 	zoom = *from + __divsi3(delta * *step, *frames);
 	work->distance = Iwram_MulQ16(work->far_plane, zoom);
-	*(u32 *)gScanlinePitch = work->pitch + 1;
+	gScanlinePitch = work->pitch + 1;
 	if (*step == *frames)
 	{
 		*frames = 0;
@@ -10943,8 +10942,6 @@ struct DescendingOrbitObject
 	s16 angle;
 };
 
-extern const s32 BattleFx_CommonParticleScript[];
-
 struct CaptureObject
 {
 	u8				   unknown_00[8];
@@ -12426,8 +12423,6 @@ void EffectRuntime_StopCurrentObject(void)
 	WaitFrames(1);
 }
 
-#define gObjectSlots ((u8(*)) & gObjectSlots)
-
 struct BattleEffectRuntime
 {
 	u8	reserved_000[0xcc0];
@@ -12445,7 +12440,7 @@ struct BattleEffectPosition
 	s32 z;
 };
 
-#define BATTLE_OBJECT_SLOTS (*(struct ScriptMotionObject **)gObjectSlots)
+#define BATTLE_OBJECT_SLOTS ((struct ScriptMotionObject *)gObjectSlots)
 #define CALLBACK_1 (u32) BattleFx_FlickerObjectAndTick
 #define CALLBACK_2 (u32) BattleFx_CycleObjectValueByCounter
 
@@ -13530,7 +13525,7 @@ void UpdateRisingParticleBurst(void *object)
 //--------------------------------------------------------------------------
 void ObjectDispatch_ApplyValueToKind200Children(s32 value)
 {
-	struct ObjectRuntime *object = *(struct ObjectRuntime **)gObjectSlots;
+	struct ObjectRuntime *object = gObjectSlots;
 	s32					  cnt = 63;
 
 	do
@@ -13992,8 +13987,6 @@ void BattleEffect_RunTargetedItemBreak(void)
 // anchor.c
 // エナジー演出 7：左右の二つの物体と、飛び散る破片
 //--------------------------------------------------------------------------
-
-extern const s32 BattleFx_FragmentScript[];
 
 #define HAHEN_MAX 24 // 破片の数
 

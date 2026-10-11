@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_SORU_NICHIGETSU_NICHIGETSU_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct SceneEntrance;
 struct SceneEvent;
@@ -41,5 +42,9 @@ s32 CheckAllStatueLights(void);
 void SetSolShindenActorStep(s32 actor_step, s32 wait_frames);
 void SoruNichigetsu_RunLightScene(void);
 void Sukureta_Talk(void);
+extern struct SceneEntrance gSoruNichigetsuEntrances[];
+extern u32 gSoruNichigetsuExits[];
+extern struct ScenePlacement gSoruNichigetsuPlacements[];
+extern struct SceneEvent gSoruNichigetsuEvents[];
 
 #endif

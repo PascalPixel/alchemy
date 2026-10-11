@@ -269,15 +269,6 @@ struct FloatingNut
 	s32 (*update)(union FieldObject *object);
 };
 
-extern struct SceneEntrance gLunpaEntrances[];
-extern struct SceneEntrance gGateEntrances[];
-extern u32 gLunpaExits[];
-extern u32 gGateExits[];
-extern struct ScenePlacement gLunpaPlacements[];
-extern struct ScenePlacement gGatePlacements[];
-extern struct SceneEvent gLunpaSealedEvents[];
-extern struct SceneEvent gLunpaReopenedEvents[];
-extern struct SceneEvent gGateEvents[];
 extern struct LunpaDoor gLunpaDoors[];
 
 #endif

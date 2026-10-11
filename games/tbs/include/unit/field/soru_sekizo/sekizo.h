@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_SORU_SEKIZO_SEKIZO_H
 
 #include "types.h"
+#include "field_scene.h"
 
 u8 *SceneEventRuntime_GetScriptData(void);
 s32 SceneEventRuntime_ReturnZero(void);
@@ -50,5 +51,11 @@ void SoruSekizo_OpenSeal(void);
 void Scene_ShineLeftBeam(void);
 void Scene_ShineRightBeam(void);
 void Event_SayThenWait(s32 speaker, s32 frames);
+extern s32 SoruSekizo_SpriteRowsGfx[];
+extern struct SceneEntrance SceneEventRuntime_ScriptData[];
+extern u32 SceneEventRuntime_MessageData[];
+extern struct ScenePlacement SceneEventRuntime_ActorData[];
+extern struct SceneEvent SceneEventRuntime_EffectData[];
+extern s32 SoruSekizo_ScrollPhase;
 
 #endif

@@ -1,3 +1,6 @@
+#include "battle_effect_runtime.h"
+#include "game_state.h"
+#include "scene_ids.h"
 #include "unit/field/toreto_heya/heya.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
@@ -32,8 +35,6 @@
 #include "heap_state.h"
 
 extern s16 *ToretoHeya_PaletteBuffer;
-extern s32	ToretoHeya_ActionTable2[];
-extern s32	ToretoHeya_ActionTable1[];
 extern u8	ToretoHeya_SparkOrigin[];
 extern u8	ToretoHeya_SparkCounter[];
 
@@ -80,8 +81,6 @@ void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 kind)
 	}
 	return NULL;
 }
-
-extern struct BattleEffectBuffers *gPaletteBufferWork;
 
 struct Vec
 {

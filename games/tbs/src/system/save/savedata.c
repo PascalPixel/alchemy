@@ -1,3 +1,4 @@
+#include "unit/system/save/savedata.h"
 #include "types.h"
 #include "save_state.h"
 

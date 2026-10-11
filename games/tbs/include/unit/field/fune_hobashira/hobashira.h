@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_FUNE_HOBASHIRA_HOBASHIRA_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FieldActor;
 struct SwayActor;
@@ -30,5 +31,25 @@ void FieldScene_RunSevenActorEnsemble(void);
 void FuneHobashira_UpdateSway(void);
 s32 SceneData_GetDifferenceOfPairSums(void);
 s32 SceneData_GetValueByFirstSetFlag(u32 a);
+extern s32 FuneHobashira_FollowCameraActions[];
+extern s32 FuneHobashira_LookoutActions[];
+extern s32 FuneHobashira_DriftActions[];
+extern s32 FuneHobashira_WaveActions[];
+extern s32 FuneHobashira_EnsembleWalk9[];
+extern s32 FuneHobashira_EnsembleWalk10[];
+extern s32 FuneHobashira_EnsembleWalk11[];
+extern s32 FuneHobashira_EnsembleWalk12[];
+extern s32 FuneHobashira_EnsembleWalk13[];
+extern s32 FuneHobashira_EnsembleWalk14[];
+extern u32 FuneHobashira_EnsembleWalk15[];
+extern struct SceneEntrance FuneHobashira_SceneTableA[];
+extern s16 FuneHobashira_SceneTableB[];
+extern u32 FuneHobashira_SceneTableC[];
+extern struct ScenePlacement FuneHobashira_SceneTableD[];
+extern struct ScenePlacement FuneHobashira_StagingObjects[];
+extern struct ScenePlacement FuneHobashira_EnsembleObjects[];
+extern struct ScenePlacement FuneHobashira_LandingObjects[];
+extern struct SceneEvent FuneHobashira_SceneTableE[];
+extern u32 FuneHobashira_FlagValues[];
 
 #endif

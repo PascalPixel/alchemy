@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/field/suhara_sabaku/sabaku.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
@@ -49,9 +50,6 @@ struct SceneWork_02000400
 	u8	reserved000[386];
 	u16 state_one_marker;
 };
-
-extern u32 gSuharaSabakuExits[];
-extern s32 gSuharaSabakuActor12Action[];
 
 extern u16 gSuharaSabakuShownLevel;
 

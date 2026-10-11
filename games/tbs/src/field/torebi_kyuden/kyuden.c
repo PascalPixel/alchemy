@@ -1,3 +1,6 @@
+#include "game_state.h"
+#include "keystate.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/torebi_kyuden/kyuden.h"
 #include "unit/battle/effect/slots.h"

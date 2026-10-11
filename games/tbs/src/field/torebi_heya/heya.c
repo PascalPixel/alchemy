@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/field/torebi_heya/heya.h"
 #include "unit/battle/effect/slots.h"
 #include "torebi.h"

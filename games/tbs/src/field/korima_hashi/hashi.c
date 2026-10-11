@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/korima_hashi/hashi.h"
 #include "unit/field/common/object/staged_actor.h"

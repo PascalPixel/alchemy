@@ -22,9 +22,4 @@ struct TrackingWork
 	struct FieldActor *actor;
 };
 
-extern s16 gImiruFuchinKeyHeadings[];
-extern s16 gImiruFuchinHeadings[];
-extern s32 gImiruFuchinDragonsEye;
-extern u32 gImiruFuchinExits[];
-
 #endif

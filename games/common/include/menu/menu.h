@@ -53,23 +53,6 @@ struct ScrollPair
 	u16 x;
 	u16 y;
 };
-extern struct ScenePlacement Clear_ActorTable[];
-extern s16 Clear_BlendFrame;
-extern s16		  Clear_CodeHeld;
-extern s16		  Clear_CodeProgress;
-extern const u16 Clear_CodeSequence[];
-extern s16		  Clear_CodeUnlocked;
-extern struct SceneEvent Clear_EffectTable[];
-extern s32 Clear_ExtraCodeHeld;
-extern s16		  Clear_ExtraCodeProgress;
-extern const u16 Clear_ExtraCodeSequence[];
-extern s16		  Clear_ExtraCodeUnlocked;
-extern u32 Clear_MessageTable[];
-extern u32 Clear_PasswordFlags[];
-extern u32 Clear_PasswordKeyItems[];
-extern u32 Clear_PasswordMembers[];
-extern u16 Clear_PasswordStackItems[];
-extern struct SceneEntrance Clear_ScriptTable[];
 extern u8		  Menu_SmallDownArrowTiles[];
 extern u8		  Menu_ArrowTiles[];
 extern u8		  Menu_PairSpriteATiles[];
@@ -79,30 +62,22 @@ extern s8		  Shop_PartyActionCues[];
 extern const char DjinnMenu_TextLevel[];
 extern const char DjinnMenu_TextSlash[];
 extern s16		  Shop_StockTable[][33];
-extern u32		  gLinkLobbyCallFrames;
 #ifndef OWN_gMenuCtrlWork
 extern struct ObjectSystemWork *gMenuCtrlWork;
 #endif
 extern u8					   gNumberTextBuffer[];
 extern struct SelectionScreen *gResQueueWork;
-extern struct SceneEntrance	   gTitleEntrances[];
-extern struct SceneEvent	   gTitleEvents[];
-extern u32					   gTitleExits[];
 #ifndef OWN_gTitleExtraOptionEnabled
 extern u8 gTitleExtraOptionEnabled[];
 #endif
-extern struct ScenePlacement gTitlePlacements[];
 extern s8					 Inn_PriceMultipliers[];
 extern u8					 ItemMenu_ArrangeKeysString[];
 extern s32					 ItemMenu_CommandColumnXTable[];
 extern u8					 ItemMenu_EquipmentKeyString[];
-extern u8					 LinkLobby_SlotColumns[];
-extern const s32			 LinkLobby_SlotValues[];
 extern const u8				 Menu_BackdropFrameTile[];
 #ifndef OWN_Menu_ColonString
 extern const u8 Menu_ColonString[];
 #endif
-extern s8		Menu_CursorBobOffsets[];
 extern u8		Menu_CursorLeftObjectTiles[];
 extern const u8 Menu_HexDigitsString[];
 extern const u8 Menu_HpString[];
@@ -121,10 +96,7 @@ extern const u8	 Menu_ShortcutRString[];
 extern const u8	 Menu_SlashString[];
 extern u8		 Menu_TimesString[];
 #ifndef OWN_Menu_WorkspaceIconFrames
-extern s8 Menu_WorkspaceIconFrames[];
 #endif
-extern u8		 OptionMenu_FirstColorPresets[];
-extern u8		 OptionMenu_SecondColorPresets[];
 extern s8		 OptionMenu_SleepFrames[];
 extern s8		 OptionMenu_SpeechFrames[];
 extern s8		 OptionMenu_SpeedFrames[];

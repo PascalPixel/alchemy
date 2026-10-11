@@ -34,12 +34,6 @@
 #include "irqlock.h"
 #include "field_scene.h"
 
-extern struct SceneEntrance	 gLinkLobbyEntrances[];
-extern u32					 gLinkLobbyExits[];
-extern struct ScenePlacement gLinkLobbyPlacements[];
-extern struct ScenePlacement gLinkLobbyBattlePlacements[];
-extern struct SceneEvent	 gLinkLobbyEvents[];
-
 extern u16 gLinkStatus;
 
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))

@@ -75,8 +75,4 @@ typedef struct OrbitingSceneObject
 	u32						   callback;
 } OrbitingSceneObject;
 
-extern struct SceneEntrance Placement_Scripts[];
-extern u32					Placement_Messages[];
-extern u16					Niwa_GateCells[];
-
 #endif

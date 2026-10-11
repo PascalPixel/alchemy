@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/karei_machi/machi.h"
 #include "unit/battle/effect/slots.h"
@@ -148,30 +150,6 @@ typedef struct OrbitingSceneObject
 	u8						   padding_62[10];
 	u32						   callback;
 } OrbitingSceneObject;
-
-extern struct SceneEntrance gKareiMachiEntrances1[];
-extern struct SceneEntrance gKareiMachiEntrances2[];
-extern struct SceneEntrance gKareiMachiEntrances3[];
-extern struct SceneEntrance gKareiMachiEntrances4[];
-extern struct SceneEntrance gKareiMachiEntrances5[];
-extern struct SceneEntrance gKareiMachiEntrances6[];
-extern struct SceneEntrance gKareiMachiEntrancesOther[];
-
-extern struct ScenePlacement gKareiMachiPlacements1[];
-extern struct ScenePlacement gKareiMachiPlacements2[];
-extern struct ScenePlacement gKareiMachiPlacements3[];
-extern struct ScenePlacement gKareiMachiPlacements6[];
-extern struct ScenePlacement gKareiMachiPlacementsOther[];
-
-extern struct SceneEvent gKareiMachiEvents1[];
-extern struct SceneEvent gKareiMachiEvents2[];
-extern struct SceneEvent gKareiMachiEvents3[];
-extern struct SceneEvent gKareiMachiEvents4[];
-extern struct SceneEvent gKareiMachiEvents5[];
-extern struct SceneEvent gKareiMachiEvents6[];
-extern struct SceneEvent gKareiMachiEventsOther[];
-
-extern struct MapCellAnim KareiMachi_DoorCells[];
 
 extern u8 *gActorEffectWork;
 

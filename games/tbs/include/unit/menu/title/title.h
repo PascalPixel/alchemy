@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_MENU_TITLE_TITLE_H
 
 #include "types.h"
+#include "field_scene.h"
 
 u8 *Title_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
@@ -13,5 +14,10 @@ void Title_LoadSprites(s32 unused);
 void Title_RevealSpriteRow(void);
 void Title_RevealScreen(s32 unused);
 void Title_LoadBackground(void);
+extern struct SceneEntrance gTitleEntrances[];
+extern u32 gTitleExits[];
+extern struct ScenePlacement gTitlePlacements[];
+extern struct SceneEvent gTitleEvents[];
+extern s16 gTitleVramBlock;
 
 #endif

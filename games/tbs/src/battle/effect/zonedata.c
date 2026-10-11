@@ -1,3 +1,4 @@
+#include "unit/battle/effect/zonedata.h"
 #include "types.h"
 
 // {種類, 地形 (-1 = 全て), フラグ, 結果}, -1 で終わり

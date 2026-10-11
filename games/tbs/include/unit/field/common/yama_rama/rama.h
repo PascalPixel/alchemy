@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_COMMON_YAMA_RAMA_RAMA_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FieldActor;
 struct SceneEntrance;
@@ -37,5 +38,18 @@ void ActorPresentation_PrepareActorFourteenWithCallback(void);
 void YamaRama_DisableActorCollision(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 YamaRama_ApplyEntryState(void);
+extern s32 YamaRama_TemplePlacement1[];
+extern s32 YamaRama_HsuAction[];
+extern s32 YamaRama_LeaderAction[];
+extern s32 YamaRama_ActorNineAction[];
+extern u16 YamaRama_BoulderCells[];
+extern u16 YamaRama_BoulderCellsBack[];
+extern struct SceneEntrance YamaRama_Entrances[];
+extern struct SceneEntrance YamaRama_TempleEntrances[];
+extern u32 YamaRama_Exits[];
+extern struct ScenePlacement YamaRama_Placements[];
+extern struct ScenePlacement YamaRama_TemplePlacements[];
+extern struct SceneEvent YamaRama_Events[];
+extern struct SceneEvent YamaRama_TempleEvents[];
 
 #endif

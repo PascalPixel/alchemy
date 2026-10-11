@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "scene_ids.h"
 #include "unit/field/biribino_kyuden/kyuden.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"

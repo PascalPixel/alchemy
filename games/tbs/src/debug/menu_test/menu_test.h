@@ -13,12 +13,6 @@
 #include "character.h"
 
 extern struct BattleFxScene *gEffectWork;
-extern struct SceneEvent	 MenuTest_Events[];
-extern struct SceneEntrance	 MenuTest_Entrances[];
-extern u32					 MenuTest_Exits[];
-extern struct ScenePlacement MenuTest_Placements[];
-extern s32					 MenuTest_SlotOffsets;
-extern s32					 MenuTest_BenchmarkCharacter;
 
 u8	 Engine_TaskWait();
 

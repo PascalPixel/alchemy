@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_BIRIBINO_DOU_DOU_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FieldActor;
 struct SceneEntrance;
@@ -34,5 +35,20 @@ void FieldScene_RunScene398SequenceC(void);
 struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z);
 void StagedActor_PushActorAhead(void);
 void Resource398_ImportBankNoOp(void);
+extern s32 gBiribinoDouPlacements1_Data[];
+extern struct SceneEntrance gBiribinoDouEntrancesOther[];
+extern struct SceneEntrance gBiribinoDouEntrances3[];
+extern struct SceneEntrance gBiribinoDouEntrances2[];
+extern struct SceneEntrance gBiribinoDouEntrances1[];
+extern u32 gBiribinoDouExits[];
+extern struct ScenePlacement gBiribinoDouPlacementsOther[];
+extern struct ScenePlacement gBiribinoDouPlacements3[];
+extern struct ScenePlacement gBiribinoDouPlacements2[];
+extern struct ScenePlacement gBiribinoDouPlacements1[];
+extern struct SceneEvent gBiribinoDouEventsOther[];
+extern struct SceneEvent gBiribinoDouEvents3[];
+extern struct SceneEvent gBiribinoDouEvents2[];
+extern struct SceneEvent gBiribinoDouEvents1[];
+extern s16 StagedActor_DirectionSteps[];
 
 #endif

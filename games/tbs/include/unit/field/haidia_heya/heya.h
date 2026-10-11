@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_HAIDIA_HEYA_HEYA_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FacingObject;
 
@@ -32,5 +33,16 @@ void HaidiaHeya_OpenArmorShop(void);
 void HaidiaHeya_OpenItemShop(void);
 void FieldScene_RunLongPresentationSequence(void);
 void Scene_UpdateTimedActor(void);
+extern s32 gValeFaceTargetScript[];
+extern s32 gValeActor10Script[];
+extern s32 gValePartyScript[];
+extern s32 gValeTimedActorScript[];
+extern struct SceneEntrance gValeHouseEntrances[];
+extern u32 gValeHouseExits[];
+extern u32 gValeHouseLateExits[];
+extern struct ScenePlacement gValeHousePlacements[];
+extern struct ScenePlacement gValeHousePlacementsAfterLeaving[];
+extern struct ScenePlacement gValeHouseReturnPlacements[];
+extern struct SceneEvent gValeHouseLateEvents[];
 
 #endif

@@ -1,3 +1,4 @@
+#include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/ramakan_sabaku/sabaku.h"
 #include "unit/field/common/effect/move.h"
@@ -969,10 +970,6 @@ void RamakanSabaku_ResetActorEightPosition(void)
 	Engine_ActorSetAnimation(8, 2);
 }
 
-#define RamakanSabaku_SandVramSlot (*(s16 *)&RamakanSabaku_SandVramSlot)
-#define RamakanSabaku_SandCounter (*(s16 *)&RamakanSabaku_SandCounter)
-#define RamakanSabaku_SandPhase (*(s16 *)&RamakanSabaku_SandPhase)
-
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 #endif
 
@@ -1000,8 +997,8 @@ void RamakanSabaku_RunSandstorm(void)
 	s32				   x;
 	u32				   offset;
 
-	tile = gVramBlockCache[RamakanSabaku_SandVramSlot].offset >> 5;
-	if (RamakanSabaku_SandPhase != 0)
+	tile = gVramBlockCache[(*(s16 *)&RamakanSabaku_SandVramSlot)].offset >> 5;
+	if ((*(s16 *)&RamakanSabaku_SandPhase) != 0)
 	{
 		RamakanSabaku_SandCounter = 2;
 	}
@@ -1022,7 +1019,7 @@ void RamakanSabaku_RunSandstorm(void)
 	counter = RamakanSabaku_SandCounter;
 	if (counter == 0)
 	{
-		Resource_ActivateEntry(RamakanSabaku_SandVramSlot);
+		Resource_ActivateEntry((*(s16 *)&RamakanSabaku_SandVramSlot));
 		return;
 	}
 	display = *Ram_DisplayWork;
@@ -1121,7 +1118,7 @@ void RamakanSabaku_RunSandstorm(void)
 		}
 		destination++;
 	}
-	Engine_VramLoad(RamakanSabaku_SandVramSlot, 0x480, buffer);
+	Engine_VramLoad((*(s16 *)&RamakanSabaku_SandVramSlot), 0x480, buffer);
 
 	attributes = 0x80008000;
 	sprite = RamakanSabaku_SandWork;
@@ -1144,10 +1141,6 @@ void RamakanSabaku_RunSandstorm(void)
 	}
 	MemFree(buffer);
 }
-
-#undef RamakanSabaku_SandCounter
-#undef RamakanSabaku_SandPhase
-#undef RamakanSabaku_SandVramSlot
 
 struct Half
 {

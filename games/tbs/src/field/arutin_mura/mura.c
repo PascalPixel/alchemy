@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "scene_ids.h"
 #include "unit/field/arutin_mura/mura.h"
 #include "unit/battle/effect/slots.h"
 #include "battle.h"
@@ -18,8 +20,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-extern u32 Placement_Messages[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

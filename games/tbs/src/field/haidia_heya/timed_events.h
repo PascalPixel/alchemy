@@ -44,17 +44,6 @@ union SceneField
 	u8	bytes[2];
 } __attribute__((packed, aligned(2)));
 
-extern s32					 gValeFaceTargetScript[];
-extern s32					 gValeActor10Script[];
-extern s32					 gValePartyScript[];
-extern s32					 gValeTimedActorScript[];
-extern struct SceneEntrance	 gValeHouseEntrances[];
-extern u32					 gValeHouseExits[];
-extern u32					 gValeHouseLateExits[];
-extern struct ScenePlacement gValeHousePlacements[];
-extern struct ScenePlacement gValeHousePlacementsAfterLeaving[];
-extern struct ScenePlacement gValeHouseReturnPlacements[];
-extern struct SceneEvent	 gValeHouseLateEvents[];
 extern struct SceneEvent	 gValeHouseEvents[];
 extern struct SceneEvent	 gValeHouseEventsAfterLeaving[];
 extern struct SceneEvent	 gValeHouseReturnEvents[];

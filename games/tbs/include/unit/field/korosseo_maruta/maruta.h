@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_KOROSSEO_MARUTA_MARUTA_H
 
 #include "types.h"
+#include "field_scene.h"
 
 u8 *ColossoLogRollingStage_GetScriptData(void);
 s32 ColossoLogRollingStage_GetMessageData(void);
@@ -78,5 +79,35 @@ void ColossoLogRollingStage_InitializeSceneControl(s32 resource);
 s32 *FindActorAtWholeTilePosition(s32 *position, void *mover);
 void ColossoLogRollingStage_PushStagedActor(void);
 s32 *ColossoLogRollingStage_FindActorAhead(void);
+extern const s32 KorosseoMaruta_Record30Script[];
+extern const s8 KorosseoMaruta_LogPattern[][6];
+extern const u16 gColossoEarlySequenceData[];
+extern const s32 gColossoSceneEventEffect[];
+extern const u8 Korosseo_PortraitPaletteOffsets[];
+extern const s16 gColossoModeScript2[];
+extern const s16 gColossoModeScript3B[];
+extern char gColossoHexChars[20];
+extern s32 gColossoRandomEffect[];
+extern s32 gColossoLinkedEffect[];
+extern u32 StagedActor_DirectionSteps[];
+extern struct SceneEntrance gKorosseoMarutaEntrances[];
+extern u32 gKorosseoMarutaExits[];
+extern struct ScenePlacement gKorosseoMarutaPlacements[];
+extern s32 gColossoSceneTaskStatus;
+extern s32 gColossoSceneTaskState;
+extern struct SceneEvent gKorosseoMarutaEvents[];
+extern s32 KorosseoMaruta_Actor8Action[];
+extern s32 KorosseoMaruta_LeaderActionA[];
+extern s32 KorosseoMaruta_LeaderActionB[];
+extern s32 KorosseoMaruta_LeaderActionC[];
+extern s32 gColossoMultiPhaseData[];
+extern s32 gColossoParticleKinds[];
+extern s16 Korosseo_PortraitSlot;
+extern s16 gColossoModeScriptDefault[];
+extern s16 gColossoModeScript4[];
+extern s16 gColossoModeScript3A[];
+extern s16 Korosseo_MarkerSlot;
+extern s32 Korosseo_RivalFinishScript[];
+extern s32 KorosseoMaruta_PlaceScript[];
 
 #endif

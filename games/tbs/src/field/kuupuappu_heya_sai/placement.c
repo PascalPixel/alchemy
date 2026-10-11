@@ -1,4 +1,5 @@
 
+#include "game_state.h"
 #include "unit/field/kuupuappu_heya_sai/placement.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/game/character/chara.h"
@@ -19,11 +20,6 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-
-extern struct SceneEntrance	 Placement_Scripts[];
-extern u32					 Placement_Messages[];
-extern struct ScenePlacement Placement_Actors[];
-extern struct SceneEvent	 Placement_Effects[];
 
 void SceneState_CheckPositionWindow(void)
 {

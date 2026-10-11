@@ -67,6 +67,9 @@ pub(crate) struct Plan {
     pub guarded: usize,
     /// The far-call entries typed anew from their functions.
     pub retyped: usize,
+    /// Each unit's objects that a macro uses otherwise than their header
+    /// declares them: no cast can be written there.
+    pub strays: BTreeMap<String, BTreeSet<String>>,
 }
 
 /// The identifiers a file's code names: comments, literals and include
@@ -329,7 +332,7 @@ impl<'a> Truths<'a> {
             }
             let text = &model.text[header];
             for entry in &model.entries[header] {
-                if matches!(entry.what, What::Prototype | What::Extern) && !(model.functions_only && entry.what == What::Extern) && plain_prototype(text, entry) && !theirs_only(&entry.conditions) {
+                if matches!(entry.what, What::Prototype | What::Extern) && !(entry.what == What::Extern && (model.functions_only || model.leave.contains(&entry.name))) && plain_prototype(text, entry) && !theirs_only(&entry.conditions) {
                     declaring.entry(entry.name.as_str()).or_default().insert(header.as_str());
                 }
             }
@@ -464,7 +467,7 @@ impl Plan {
             let Some(path) = unit_header(file) else {
                 continue;
             };
-            let own: Vec<Entry> = model.entries[file].iter().filter(|entry| !(model.functions_only && entry.what == What::Object)).cloned().collect();
+            let own: Vec<Entry> = model.entries[file].iter().filter(|entry| !(entry.what == What::Object && (model.functions_only || model.leave.contains(&entry.name)))).cloned().collect();
             if let Some((text, names)) = header(&path, &model.text[file], &own, &types, &mut plan.problems) {
                 generated.insert(file, path.clone());
                 emitted.insert(file, names);
@@ -564,7 +567,13 @@ impl Plan {
                 }
                 let mut told = BTreeSet::new();
                 for stray in &view.strays {
-                    if truths.shape(unit, edition, &stray.name).is_some_and(|truth| apart(&stray.old, truth, stray.call)) && told.insert((&stray.file, stray.line, &stray.name)) && edition == 1 {
+                    if !truths.shape(unit, edition, &stray.name).is_some_and(|truth| apart(&stray.old, truth, stray.call)) {
+                        continue;
+                    }
+                    if !is_function(&stray.old) {
+                        plan.strays.entry(unit.clone()).or_default().insert(stray.name.clone());
+                    }
+                    if told.insert((&stray.file, stray.line, &stray.name)) && edition == 1 {
                         plan.problems.push(format!("{unit}: {}:{}: a macro uses {} as {}, not as its header declares it", stray.file, stray.line, stray.name, stray.old));
                     }
                 }

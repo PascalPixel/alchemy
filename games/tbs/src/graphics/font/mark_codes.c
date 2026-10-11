@@ -1,3 +1,4 @@
+#include "unit/graphics/font/mark_codes.h"
 #include "edition.h"
 #include "text_font.h"
 

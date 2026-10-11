@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+extern const u8 Title_IntroSpriteColumns[];
+extern const u8 Title_PromptBlendLevels[60];
 void Title_PlaceIntroSprites(void);
 void Title_LoadIntroBackgrounds(void);
 s32 Title_ShowIntro(s32 prompt);

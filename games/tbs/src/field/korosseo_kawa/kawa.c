@@ -1,3 +1,7 @@
+#include "game_state.h"
+#include "io_write_queue.h"
+#include "scene_ids.h"
+#include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/korosseo_kawa/kawa.h"
 #include "unit/field/common/korosseo/solo_competitor.h"
@@ -61,10 +65,6 @@ typedef struct PartyInteractionRecord
 typedef void (*SceneTask)(void);
 
 #define KEYS_HELD gKeysHeld // VBlank で書く
-
-extern char HexDigits[20];
-extern s32	KorosseoKawa_Countdown;
-extern s16	Korosseo_MarkerSlot;
 
 // コロッセオ共通 (field/common/korosseo)
 

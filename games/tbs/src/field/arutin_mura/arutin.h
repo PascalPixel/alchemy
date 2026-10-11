@@ -50,6 +50,4 @@ struct Actor02000c0c
 	u8	state;
 };
 
-extern struct MapCellAnim ArutinMura_TriggerTable[];
-
 #endif

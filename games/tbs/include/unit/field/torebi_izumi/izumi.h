@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_TOREBI_IZUMI_IZUMI_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct SceneEvent;
 struct ScenePlacement;
@@ -26,8 +27,28 @@ s32 TorebiIzumi_RunSpringGame(void);
 s32 SceneDialogue_PickTopicVariantId(s32 topic);
 void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value);
 void TorebiIzumi_SetActorActive(s32 arg0, s32 arg1);
+extern s32 TorebiIzumi_RideSide;
+extern s32 TorebiIzumi_RideUnknown[3];
+extern s32 TorebiIzumi_RideFrame;
+extern s32 TorebiIzumi_RideEnded;
+extern s32 TorebiIzumi_RideResult;
 void FieldScene_RunSecondaryScript(void);
 void SceneState_InitFourActorRecordsAndInstallTask(void);
 s32 TorebiIzumi_RunSpringRide(s32 side);
+extern const struct SceneEntrance TorebiIzumi_SceneTableA[];
+extern const u32 TorebiIzumi_SceneTableB[];
+extern const struct ScenePlacement gTorebiIzumiPlacements2[];
+extern const struct ScenePlacement gTorebiIzumiPlacementsOther[];
+extern const struct SceneEvent gTorebiIzumiEventsOther[];
+extern const struct SceneEvent gTorebiIzumiEvents2[];
+extern const u32 TorebiIzumi_AlphaSteps[];
+extern const u32 Data_02001fd0[];
+extern const u32 Data_0200200c[];
+extern const u32 TorebiIzumi_TopicIds[];
+extern const u8 TorebiIzumi_SliderFrames[];
+extern const u8 TorebiIzumi_CircleFrames[];
+extern const u16 TorebiIzumi_ActorTileX[];
+extern const u16 TorebiIzumi_ActorTileZ[];
+extern const u16 TorebiIzumi_ActorHeadings[];
 
 #endif

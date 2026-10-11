@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_SORU_STAR_STAR_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct OverlayObject;
 
@@ -39,5 +40,20 @@ void Event_SayThenWait(s32 speaker, s32 frames);
 s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z);
 void Scene_GiveMythrilBags(void);
 void SoruStar_RiseActorFourteenSparks(void);
+extern s32 gEffectScript0[];
+extern s32 gEffectScript1[];
+extern s32 gEffectScript2[];
+extern const s32 *gEffectScripts[];
+extern s32 SoruStar_AngleScript[];
+extern s32 SoruStar_PresentItemScript[];
+extern struct SceneEntrance Placement_Scripts[];
+extern u32 Placement_Messages[];
+extern struct ScenePlacement Placement_Actors[];
+extern u16 SoruStar_StarCells[];
+extern u8 Soru_RingDrift[][3];
+extern u8 Soru_RingSwing[][3];
+extern s8 Soru_RingDirection[][3];
+extern s32 Soru_RingOffsetX[];
+extern s32 Soru_RingOffsetZ[];
 
 #endif

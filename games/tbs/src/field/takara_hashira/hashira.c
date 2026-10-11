@@ -1,3 +1,6 @@
+#include "game_state.h"
+#include "map_scroll.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/takara_hashira/hashira.h"
 #include "unit/field/common/effect/move.h"
@@ -70,13 +73,6 @@ struct MapState_2
 	u8				  pad000[0x130];
 	struct MapLayer_2 layers[1];
 };
-
-extern s32 TakaraHashira_ActionTable[];
-extern u16 TakaraHashira_ShiftSteps1[];
-extern u16 TakaraHashira_ShiftSteps2[];
-extern u16 TakaraHashira_ShiftSteps3[];
-extern u16 TakaraHashira_ShiftSteps4[];
-extern u16 TakaraHashira_ShiftSteps5[];
 
 extern u8  TakaraHashira_ShakenScroll[];
 extern u8 *gEffectWork;

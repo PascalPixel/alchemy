@@ -1,3 +1,5 @@
+#include "battle_effect_runtime.h"
+#include "game_state.h"
 #include "unit/field/korima_ki/ki.h"
 #include "unit/field/common/korima/palette.h"
 #include "unit/battle/effect/slots.h"

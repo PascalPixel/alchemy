@@ -37,7 +37,6 @@ struct PresetValues;
 extern struct BtlAct				BattleAction_DefinitionTable[];
 extern const u8						Character_ElementGroupTable[];
 extern u32							Character_LevelExpTable[];
-extern s32							Character_StartingEquipOwnerIds[];
 extern s16							Djinn_ElementSprites[];
 extern s32							Owner_FourColumnValues[];
 extern const u16					Djinn_DefinitionTable[];

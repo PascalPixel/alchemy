@@ -1,3 +1,4 @@
+#include "audio_engine_symbols.h"
 #include "unit/battle/effect/colorfx.h"
 #include "unit/system/scheduler/callback.h"
 #include "battle.h"
@@ -35,8 +36,6 @@
 // colorfx.c
 // スロット：パレットの色処理とキャンバスの転送・線描き
 //--------------------------------------------------------------------------
-
-#define gBattleFxWork ((u8 **)&gBattleFxWork)
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
@@ -111,7 +110,7 @@ void BattlePres_ProcessPendingTileTransfer(void)
 	work = *(void **)gBattleFxWork;
 	if (work->transfer_pending == 1)
 	{
-		buf = gBattleFxWork[1];
+		buf = (*(u8 *(*)[])&gBattleFxWork)[1];
 		switch (work->transfer_mode)
 		{
 		case 1: // 送ったあと transfer_value で塗りつぶす
@@ -233,7 +232,7 @@ void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 	s32 dx = x1 - x0;
 	s32 dy = y1 - y0;
 	s32 frac = 0x80; // 8bit 小数の 0.5
-	u8 *canvas = *(gBattleFxWork + 1);
+	u8 *canvas = *((*(u8 *(*)[])&gBattleFxWork) + 1);
 	s32 step;
 	s32 i;
 	s32 x;
@@ -308,8 +307,6 @@ void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 		}
 	}
 }
-
-#undef gBattleFxWork
 
 struct Reel
 {

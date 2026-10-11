@@ -3,6 +3,8 @@
 // オブジェクト：相手のほうへ向きを変える
 //--------------------------------------------------------------------------
 
+#include "game_state.h"
+#include "vram_tab.h"
 #include "unit/field/common/haidia_babi/babi.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -76,19 +78,7 @@ enum
 	ITEM_MYTHRIL_BAG = 224
 };
 
-extern struct SceneEntrance gHaidiaBabiEntrances[];
-extern u32 gHaidiaBabiExits2[];
-extern u32 gHaidiaBabiExits[];
-extern struct ScenePlacement gHaidiaBabiPlacements4[];
-extern struct ScenePlacement gHaidiaBabiPlacements3[];
-extern struct ScenePlacement gHaidiaBabiPlacements2[];
-extern struct ScenePlacement gHaidiaBabiPlacements[];
-extern struct SceneEvent gHaidiaBabiEvents6[];
-extern struct SceneEvent gHaidiaBabiEvents5[];
-extern struct SceneEvent gHaidiaBabiEvents4[];
-extern struct SceneEvent gHaidiaBabiEvents3[];
 extern struct SceneEvent gHaidiaBabiEvents2[];
-extern struct SceneEvent gHaidiaBabiEvents[];
 
 s32 *HaidiaBabi_GetEntrances(void)
 {

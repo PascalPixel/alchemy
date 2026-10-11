@@ -5896,8 +5896,6 @@ s32 CharacterMenu_SelectOwner(s32 slot)
 	return result;
 }
 
-#define gWindowWork (*(struct UiWork **)&gWindowWork)
-
 s32 DjinnMenu_ShowCurrentList(void)
 {
 	struct DjinnMenuWork *menu;
@@ -5941,7 +5939,7 @@ s32 DjinnMenu_ShowCurrentList(void)
 			}
 		}
 	}
-	gWindowWork->dirty = 1;
+	(*(struct UiWork **)&gWindowWork)->dirty = 1;
 	for (;;)
 	{
 		if (GameFlag_TestFar(0x150))
@@ -6997,8 +6995,6 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 	return 1;
 }
 
-#define Menu_LvString (*(u8 *)&Menu_LvString)
-
 #define ACT_ID_MASK 0x3fff
 
 s32 PsynergyMenu_DrawListPage(s32 window, s32 unused, const struct MenuResult *res)
@@ -7911,8 +7907,6 @@ void Item_UseNoOpCallback(void)
 {
 }
 
-#define gMenuCtrlWork (*(struct ItemMenuDisplayState **)&gMenuCtrlWork)
-
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 struct ItemMenuDisplayState
@@ -8406,7 +8400,7 @@ s32 ItemMenu_Run(void)
 	menu = Runtime_AllocateHeapBlock(55, 0xa70);
 	old_mode = gGameState.message_speed;
 	gGameState.message_speed = 2;
-	state = gMenuCtrlWork->busy = 1;
+	state = (*(struct ItemMenuDisplayState **)&gMenuCtrlWork)->busy = 1;
 	UiWindow_DrawFrameFar(0, 0, 30, 20);
 	WaitFrames(1);
 	UiWindow_InitializeWork(0);
@@ -8454,7 +8448,7 @@ s32 ItemMenu_Run(void)
 	WaitFrames(1);
 	ItemMenu_Close();
 	UiWindow_DrawFrameFar(0, 0, 30, 20);
-	gMenuCtrlWork->busy = 0;
+	(*(struct ItemMenuDisplayState **)&gMenuCtrlWork)->busy = 0;
 	UiWindow_MarkVisibleTileAttributesFar();
 	UiWork_SetAltFlagAndClearTableFar(0);
 	Iwram_CopyWords((void *)0x06004000, saved->tiles, 0x2000);
@@ -8972,8 +8966,6 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
 		->dirty = 1;
 	ui->menu_busy = 0;
 }
-
-#undef gWindowWork
 
 s32 Menu_DrawAtWindowOffset(void *win, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5)
 {
@@ -10502,8 +10494,6 @@ void Menu_EnableAllItemObjects(void)
 		AnimationObjects_SelectAnimationFar(state->owner_objects[index], 1);
 	}
 }
-
-#undef gWindowWork
 
 extern u8 MsgCurrentStatus[];
 

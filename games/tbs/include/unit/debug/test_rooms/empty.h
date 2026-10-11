@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_DEBUG_TEST_ROOMS_EMPTY_H
 
 #include "types.h"
+#include "field_scene.h"
 
 u8 *TestRooms_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
@@ -13,5 +14,10 @@ void State_ApplyValues10And2And0Then58(void);
 void State_ApplyValues11And3And0Then6c(void);
 u8 *TestRooms_GetEvents(void);
 s32 Scene_RunEmptyScene(void);
+extern u32 TestRooms_EntrancesHead[];
+extern struct SceneEntrance TestRooms_Entrances[];
+extern u32 TestRooms_Exits[];
+extern struct ScenePlacement TestRooms_Placements[];
+extern struct SceneEvent TestRooms_Events[];
 
 #endif

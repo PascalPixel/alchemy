@@ -91,11 +91,6 @@ struct Actor_02002e5c
 
 extern u8 *gParticleWork[];
 
-extern struct SceneEntrance Placement_Scripts[];
-extern u32 Placement_Messages[];
-extern struct ScenePlacement Placement_Actors[];
-extern struct SceneEvent Placement_Effects[];
-
 extern s32 gEmberState[16];
 extern s32 gEmberTimer;
 extern s32 gArcEffectTimers[10];

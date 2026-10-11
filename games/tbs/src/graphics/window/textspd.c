@@ -1,3 +1,4 @@
+#include "unit/graphics/window/textspd.h"
 #include "types.h"
 
 // 文字送りの速さ

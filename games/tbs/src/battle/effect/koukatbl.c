@@ -1,3 +1,4 @@
+#include "unit/battle/effect/koukatbl.h"
 #include "unit/battle/effect/scenefx.h"
 #include "types.h"
 

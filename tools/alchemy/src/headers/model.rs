@@ -39,6 +39,9 @@ pub(crate) struct Model {
     /// A run that leaves objects for a later one: only functions get a
     /// header's declaration.
     pub functions_only: bool,
+    /// Objects a run leaves declared as they are: their uses need a view
+    /// the bytes do not take, and each is reported.
+    pub leave: BTreeSet<String>,
 }
 
 /// One entry of a far-call bank's list: `FAR_CALL(name, target, type,

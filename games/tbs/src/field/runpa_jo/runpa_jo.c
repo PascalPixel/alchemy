@@ -1,6 +1,7 @@
 /*----------------------------------------------------------
     ルンパ城  イベント
 ----------------------------------------------------------*/
+#include "game_state.h"
 #include "field_event.h"
 #include "unit/import.h"
 #include "unit/field/runpa_jo/runpa_jo.h"

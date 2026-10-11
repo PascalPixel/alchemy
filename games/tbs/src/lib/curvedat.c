@@ -1,3 +1,4 @@
+#include "unit/lib/curvedat.h"
 #include "types.h"
 
 // 2 点補間の重み

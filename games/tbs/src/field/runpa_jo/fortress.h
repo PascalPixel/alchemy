@@ -28,10 +28,6 @@ typedef struct DirectionalSceneActor
 	s32 y;
 	s32 z;
 } DirectionalSceneActor;
-extern s32 gRunpaJoRandomPick;
-extern u32 gRunpaJoPairTableA[];
-extern u32 gRunpaJoPairTableB[];
-extern u32 gRunpaJoPairTableC[];
 
 static __inline__ void SetSceneValue(s16 *field, s32 value)
 {

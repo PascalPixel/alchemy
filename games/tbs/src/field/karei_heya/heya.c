@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "scene_ids.h"
 #include "unit/field/karei_heya/heya.h"
 #include "unit/battle/effect/slots.h"
 #include "battle.h"
@@ -16,8 +18,6 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-
-extern struct MapCellAnim KareiHeya_ArrivalPlacements[];
 
 enum ArrivalMessage
 {

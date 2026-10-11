@@ -1,3 +1,4 @@
+#include "unit/game/character/starteq.h"
 #include "unit/game/character/chara.h"
 #include "unit/system/scheduler/callback.h"
 #include "battle.h"

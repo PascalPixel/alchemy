@@ -2,7 +2,9 @@
 #define ALCHEMY_UNIT_MENU_LINK_LOBBY_LOBBY_H
 
 #include "types.h"
+#include "field_scene.h"
 
+extern const s32 LinkLobby_SlotValues[];
 u8 *LinkLobby_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 s32 LinkLobby_InitializeSerial(void);
@@ -11,6 +13,7 @@ s32 LinkLobby_SelectPlacements(void);
 s32 LinkLobby_PeerSlotMatches(s32 slot);
 void LinkLobby_WriteSlotValue(s32 slot);
 s32 LinkLobby_PollPeerReady(void);
+extern u32 gLinkLobbyCallFrames;
 s32 LinkLobby_CallIntoCircle(void);
 s32 Scene_ClearFlagsAndPlayCue2927(void);
 s32 LinkLobby_ReceivePartyRecords(void);
@@ -34,5 +37,11 @@ s32 LinkLobby_SaveBattleResults(void);
 s32 LinkLobby_SaveMonsterBattleResults(void);
 s32 LinkLobby_DrawThreeDigitValue(s32 value);
 s32 LinkLobby_RunRoundResult(void);
+extern u8 LinkLobby_SlotColumns[];
+extern struct SceneEntrance gLinkLobbyEntrances[];
+extern u32 gLinkLobbyExits[];
+extern struct ScenePlacement gLinkLobbyPlacements[];
+extern struct ScenePlacement gLinkLobbyBattlePlacements[];
+extern struct SceneEvent gLinkLobbyEvents[];
 
 #endif

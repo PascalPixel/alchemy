@@ -14,11 +14,6 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-extern struct SceneEntrance	 TestRooms_Entrances[];
-extern u32					 TestRooms_Exits[];
-extern struct ScenePlacement TestRooms_Placements[];
-extern struct SceneEvent	 TestRooms_Events[];
-
 u8 *TestRooms_GetEntrances(void)
 {
 	return (u8 *)TestRooms_Entrances;

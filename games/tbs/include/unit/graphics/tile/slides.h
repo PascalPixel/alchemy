@@ -4,10 +4,13 @@
 #include "types.h"
 
 void Graphics_ClearCharacterBlockAndPalette(s32 alt);
+extern const u32 DisplayScroll_SlideResources[];
 void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate);
 void DisplayScroll_BuildHblankWordTable(u32 *arg0);
 void DisplayScroll_StepPositionEveryFourFrames(void);
 s32 DisplayScroll_RunSlideshow(void);
+extern const void *DisplayScroll_LineTable[];
+extern const u8 DisplayScroll_GlyphWidths[96];
 void DisplayScroll_UpdateObjects(void);
 void DisplayScroll_RenderEnteringLine(void);
 void DisplayScroll_InitObjectTable(void);

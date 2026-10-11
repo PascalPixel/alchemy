@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_IMIRU_MURA_MURA_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FacingObject;
 struct FieldActor;
@@ -55,5 +56,35 @@ void RunEventScript02(void);
 void FieldScene_RunThreeActorChoreography(void);
 void SceneActor_TurnTowardTableAngle(s32 z);
 void StagedActor_RunHeadingProbeStep(void);
+extern u16 ImiruMura_KeyHeadings[];
+extern u16 ImiruMura_SwayHeadings[];
+extern s32 gImiruMuraPlacementData[];
+extern s32 ImiruMura_ActorScriptA[];
+extern s32 ImiruMura_ActorScriptB[];
+extern s32 ImiruMura_ActorScriptC[];
+extern s32 ImiruMura_TurnScript[];
+extern s32 ImiruMura_SparkScript[];
+extern s32 ImiruMura_MiaScriptA[];
+extern s32 ImiruMura_MiaScriptB[];
+extern s32 ImiruMura_PrimaryScript[];
+extern s32 ImiruMura_PrimaryScript2[];
+extern struct SceneEntrance gImiruMuraEntrancesOther[];
+extern struct SceneEntrance gImiruMuraEntrances2[];
+extern u32 ImiruMura_SceneTable[];
+extern struct ScenePlacement gImiruMuraPlacements[];
+extern struct ScenePlacement gImiruMuraPlacementsFlag881[];
+extern struct ScenePlacement gImiruMuraPlacements2[];
+extern struct SceneEvent gImiruMuraEventsOther[];
+extern struct SceneEvent gImiruMuraEvents2[];
+extern u16 ImiruMura_ExitCellStep5[];
+extern u16 ImiruMura_ExitCellStep4[];
+extern u16 ImiruMura_ExitCellStep1[];
+extern u16 ImiruMura_ExitCellStep0[];
+extern u16 ImiruMura_ExitCellStep2[];
+extern u16 ImiruMura_ExitCellStep3[];
+extern u16 *ImiruMura_ExitCellSteps[];
+extern u32 ImiruMura_ExitCellPoints[];
+extern u16 ImiruMura_CellStepsA[];
+extern u16 ImiruMura_CellStepsB[];
 
 #endif

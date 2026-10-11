@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_BIRIBINO_NIWA_NIWA_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FacingObject;
 struct SceneEntity_0200090c;
@@ -27,5 +28,13 @@ void BiribinoNiwa_RunGardenScene(void);
 void FieldScene_OpenGate(void);
 s32 SceneEffect_UpdateLobeOrbitEntity(struct SceneEntity_0200090c *entity);
 void InitializeOrbitingSceneEntity(s32 id);
+extern u16 Niwa_GateCells[];
+extern s32 BiribinoNiwa_GuardScript[];
+extern struct SceneEntrance Placement_Scripts[];
+extern u32 Placement_Messages[];
+extern struct ScenePlacement gBiribinoNiwaPlacementsOther[];
+extern struct ScenePlacement gBiribinoNiwaPlacements[];
+extern struct SceneEvent gBiribinoNiwaEventsOther[];
+extern struct SceneEvent gBiribinoNiwaEvents[];
 
 #endif

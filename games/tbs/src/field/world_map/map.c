@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/world_map/map.h"
 #include "unit/field/world_map/linked_effects.h"
@@ -77,41 +79,7 @@ struct StoryVerticalEffectActor
 	struct StoryVerticalEffectActor *anchor;
 };
 
-extern struct SceneEntrance gWorldMapEntrances[];
-extern u32 gWorldMapExits[];
-extern struct SceneEvent	 gWorldMapEvents[];
-extern struct ScenePlacement gWorldMapPlacements[];
-extern struct ScenePlacement gWorldMapPlacements49[];
-extern struct ScenePlacement gWorldMapPlacements64[];
-extern struct ScenePlacement gWorldMapPlacements65[];
-extern struct ScenePlacement gWorldMapPlacements66[];
-extern struct ScenePlacement gWorldMapPlacements71[];
-extern struct ScenePlacement gWorldMapPlacements72[];
-extern struct ScenePlacement gWorldMapPlacements73[];
-extern struct ScenePlacement gWorldMapPlacements80[];
-extern u32 gWorldMapRewards[];
-
-extern s32 gTransferArrive10[];
-extern s32 gTransferDepart10[];
-extern s32 gTransferReturn10[];
-extern s32 gTransferGather[];
-extern s32 gTransferArrive11[];
-extern s32 gTransferDepart11[];
-extern s32 gTransferReturn11[];
-extern s32 gTransferArrive12[];
-extern s32 gTransferDepart12[];
-extern s32 gTransferReturn12[];
-extern s32 gTransferArrive13[];
-extern s32 gTransferDepart13[];
-extern s32 gTransferReturn13[];
-extern s32 gTransferGuide14[];
-extern s32 gTransferLeaderIdle[];
-extern s32 gTransferLeaderTurn[];
-
-extern s32						gWorldMapTriggerActor;
 extern struct StorySharedState *gEffectWork;
-
-extern s32 gOpeningLeaderRise[];
 
 enum
 {
@@ -2326,7 +2294,6 @@ void WorldMap_RaiseActors(void)
 
 void SceneEffect_RestoreBlendRegisters(void)
 {
-	extern u16 gWorldMapBlend;
 
 	QueueIoWriteDelay2(0x04000050, 0x3f41);
 	if ((gFrameCount & 2) != 0)

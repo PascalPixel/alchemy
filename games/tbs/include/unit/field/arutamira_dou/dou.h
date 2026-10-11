@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_ARUTAMIRA_DOU_DOU_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FieldActor;
 struct Obj;
@@ -45,5 +46,26 @@ void ArutamiraDou_MatchLeaderPriority(struct FieldActor *actor);
 s32 ArutamiraDou_ApplyEntryState(void);
 void OverlayObject_UpdateThreeStateMotion(void *obj);
 void ArutamiraDou_ReleaseWallBurst(void);
+extern s16 StagedActor_DirectionSteps[];
+extern u32 StagedActor_FootprintKinds[];
+extern s32 StagedActor_FootprintBounds[];
+extern u16 *ArutamiraDou_ClearTarget;
+extern struct SceneEntrance ArutamiraDou_SceneTableA[];
+extern u32 ArutamiraDou_SceneTableB[];
+extern struct ScenePlacement gArutamiraDouPlacementsOther[];
+extern struct ScenePlacement gArutamiraDouPlacements2[];
+extern struct ScenePlacement gArutamiraDouPlacements4[];
+extern struct ScenePlacement gArutamiraDouPlacements6[];
+extern u32 ArutamiraDou_PulseScales[];
+extern s32 gAltmillerActionA[];
+extern s32 gAltmillerActionB[];
+extern s32 gAltmillerActionC[];
+extern s32 gAltmillerActionD[];
+extern struct SceneEvent gArutamiraDouEventsOther[];
+extern struct SceneEvent gArutamiraDouEvents2[];
+extern struct SceneEvent gArutamiraDouEvents3[];
+extern struct SceneEvent gArutamiraDouEvents4[];
+extern struct SceneEvent gArutamiraDouEvents5[];
+extern struct SceneEvent gArutamiraDouEvents6[];
 
 #endif

@@ -1,3 +1,6 @@
+#include "game_state.h"
+#include "global_cells.h"
+#include "scene_ids.h"
 #include "unit/field/korima_mura/mura.h"
 #include "unit/field/korima_hashi/falling_effect.h"
 #include "unit/battle/effect/slots.h"

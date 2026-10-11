@@ -32,12 +32,4 @@ union SceneActor
 	u8 bytes[90];
 };
 
-extern struct SceneEntrance	 gSuharaHeyaEntrances[];
-extern s16					 gSuharaHeyaRegions[];
-extern u32					 gSuharaHeyaExits[];
-extern struct ScenePlacement gSuharaHeyaPlacements[];
-extern struct ScenePlacement gSuharaHeyaPlacements96f[];
-extern struct SceneEvent	 gSuharaHeyaEvents[];
-extern struct SceneEvent	 gSuharaHeyaEvents96f[];
-
 #endif

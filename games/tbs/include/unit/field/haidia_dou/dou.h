@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_HAIDIA_DOU_DOU_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FieldActor;
 struct SceneEntrance;
@@ -42,5 +43,25 @@ void FieldScene_RunActor11Transition301(void);
 void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y);
 void HaidiaDou_ApplyEntryState(void);
 void ActorPresentation_AdvanceActorElevenStates(void);
+extern s32 gEffectScript0[];
+extern s32 gEffectScript1[];
+extern s32 gEffectScript2[];
+extern s16 StagedActor_DirectionSteps[];
+extern u32 StagedActor_FootprintKinds[];
+extern s32 StagedActor_FootprintBounds[];
+extern s32 HaidiaDou_WalkTargets[];
+extern const s32 *gEffectScripts[];
+extern struct SceneEntrance gHaidiaDouEntrancesOther[];
+extern struct SceneEntrance gHaidiaDouEntrances1[];
+extern struct SceneEntrance gHaidiaDouEntrances2[];
+extern struct SceneEntrance gHaidiaDouEntrances3[];
+extern u32 HaidiaDou_Exits[];
+extern struct ScenePlacement gHaidiaDouPlacements1[];
+extern struct ScenePlacement gHaidiaDouPlacements2[];
+extern struct ScenePlacement gHaidiaDouPlacements3[];
+extern struct SceneEvent gHaidiaDouEventsOther[];
+extern struct SceneEvent gHaidiaDouEvents1[];
+extern struct SceneEvent gHaidiaDouEvents2[];
+extern struct SceneEvent gHaidiaDouEvents3[];
 
 #endif

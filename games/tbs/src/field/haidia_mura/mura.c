@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/haidia_mura/mura.h"
 #include "unit/field/common/object/staged_actor.h"

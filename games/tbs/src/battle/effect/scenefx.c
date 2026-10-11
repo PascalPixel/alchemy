@@ -1,3 +1,6 @@
+#include "unit/battle/effect/fxscales.h"
+#include "unit/battle/effect/koukabit.h"
+#include "unit/battle/effect/koukatbl.h"
 #include "unit/battle/effect/scenefx.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/system/scheduler/callback.h"
@@ -1791,11 +1794,6 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 }
 
 // 割れて飛ぶ 33 片：始まりの位置、大きさ、絵の位置
-extern u8  BattlePieceStartX[];
-extern u8  BattlePieceStartY[];
-extern u8  BattlePieceWidth[];
-extern u8  BattlePieceHeight[];
-extern u16 BattlePieceOffset[];
 
 // 256×120 の 8bpp タイル並び (横 32 タイル) の点 (x, y) に色 2 を置く
 #define PLOT(x, y) \
@@ -11481,7 +11479,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 	work->transfer_mode = 1;				 // 転送のたびにキャンバスを 0 で消す
 	work->transfer_value = 0;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	heights = RockWall_Heights;
+	heights = (*(const struct RockWallHeights *)&RockWall_Heights);
 	work->shake_frames = 128;
 	AudioCommand_PlayFar(141);
 
@@ -19922,9 +19920,6 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 // 並べかた
 //--------------------------------------------------------------------------
 
-extern const struct Scale Formation_NormalScale; // 等倍
-extern const struct Scale Formation_SmallScale;	 // 1.25 倍
-
 //--------------------------------------------------------------------------
 // work->objects を formation の形に並べる
 // formation : 0 3×3 を 32 ドットおき、1 12 個（1・3・4・4 列）、
@@ -19934,8 +19929,8 @@ extern const struct Scale Formation_SmallScale;	 // 1.25 倍
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 {
 	struct BattleEffectWork *work = *(void **)gBattleFxWork;
-	struct Scale			 normal = Formation_NormalScale;
-	struct Scale			 big = Formation_SmallScale;
+	struct Scale			 normal = (*(const struct Scale *)&Formation_NormalScale);
+	struct Scale			 big = (*(const struct Scale *)&Formation_SmallScale);
 	struct Placement		 pos;
 	s32						 i;
 
@@ -22148,8 +22143,6 @@ struct ShockwaveWork
 };
 
 extern const struct Scale ShockwaveScene_UnitScale;
-extern const u8			  ShockwaveScene_BurstHeights[];
-extern const u16		  ShockwaveScene_BurstCells[];
 extern u16				  ShockwaveScene_ShardCells[];
 extern u8				  ShockwaveScene_ShardWidths[];
 extern u8				  ShockwaveScene_ShardHeights[];

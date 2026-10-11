@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "field_event.h"
 #include "unit/import.h"
 #include "unit/field/suhara_heya/heya.h"

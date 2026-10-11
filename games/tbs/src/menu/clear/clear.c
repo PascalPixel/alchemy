@@ -1,3 +1,4 @@
+#include "scene_ids.h"
 #include "unit/menu/clear/clear.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/game/character/chara.h"
@@ -304,13 +305,9 @@ extern u8 MsgClearSaveLabel[];
 
 extern volatile u16 gLinkStatus;
 
-extern u8  gSaveBuffer[];
 extern u8  gSleepDisabled;
 extern u8  gDebugMode;
 extern u8  gOptionMirror;
-extern s16 Clear_CodeUnlocked;
-extern s16 Clear_ExtraCodeUnlocked;
-extern u8 *gWindowWork[];
 struct SaveLinkGreeting
 {
 	u16 code[4];

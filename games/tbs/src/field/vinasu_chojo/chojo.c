@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/vinasu_chojo/chojo.h"
 #include "unit/field/common/effect/move.h"
@@ -97,12 +99,6 @@ struct StagedVerticalEffect
 	s16	 pad66;
 	s32 *f68;
 };
-
-extern struct SceneEntrance gVinasuChojoEntrances[];
-extern u32 gVinasuChojoExits[];
-extern struct ScenePlacement gVinasuChojoPlacements[];
-extern struct SceneEvent gVinasuChojoEvents[];
-extern s32						   VinasuChojo_NearestActor;
 
 s32	 Math_RemainderUnsigned(s32, s32);
 

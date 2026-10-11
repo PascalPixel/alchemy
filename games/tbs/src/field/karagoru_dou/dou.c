@@ -1,3 +1,6 @@
+#include "game_state.h"
+#include "global_cells.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/karagoru_dou/dou.h"
 #include "unit/field/common/effect/move.h"

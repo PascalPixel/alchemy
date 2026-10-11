@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/field/common/karei_torebi/torebi.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"

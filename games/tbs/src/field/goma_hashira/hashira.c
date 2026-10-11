@@ -1,3 +1,4 @@
+#include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/goma_hashira/hashira.h"
 #include "unit/field/common/object/staged_actor.h"
@@ -539,10 +540,6 @@ s32 FieldScene_SetupPillarsOnEntry(void)
 	}
 	return 0;
 }
-
-extern s32 GomaHashira_PillarScript0[];
-extern s32 GomaHashira_PillarScript1[];
-extern s32 GomaHashira_PillarScript2[];
 
 s16 StagedActor_DirectionSteps[] = {
 	0, 16,

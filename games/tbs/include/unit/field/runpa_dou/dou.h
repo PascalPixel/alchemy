@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_RUNPA_DOU_DOU_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct SceneEntrance;
 struct SceneEvent;
@@ -37,5 +38,11 @@ u8 Gerald_AsksAboutThingsToDo(void);
 void Party_StaysBehind(void);
 void Party_RidesWagon(void);
 s32 Scene_Initialize(void);
+extern const struct SceneEntrance gCaveEntrances[];
+extern const u32 gCaveExits[];
+extern const struct ScenePlacement gCaveNoPlacements[];
+extern const struct ScenePlacement gCavePlacements[];
+extern const struct SceneEvent gCaveNoEvents[];
+extern const struct SceneEvent gCaveEvents[];
 
 #endif

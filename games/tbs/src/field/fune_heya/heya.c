@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/fune_heya/heya.h"
 #include "unit/battle/effect/slots.h"

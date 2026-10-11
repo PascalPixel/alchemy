@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/arutin_yama/yama.h"
 #include "unit/battle/effect/slots.h"
@@ -54,19 +56,6 @@ struct Frame
 	s32 f0c;
 	s32 f10;
 };
-
-extern u32				 ArutinYama_StatueTable[];
-extern s32				 ArutinYama_EarlyActorScript[];
-extern s32				 ArutinYama_LogRideScript[];
-extern s32				 ArutinYama_LeaderRideScript[];
-extern s32				 ArutinYama_SparkScript[];
-extern s32				 ArutinYama_GeraldScript[];
-extern s32				 ArutinYama_IvanScript[];
-extern s32				 ArutinYama_MiaScript[];
-extern s32				 ArutinYama_CelebrateScript[];
-extern s32				 ArutinYama_PartyScript[];
-extern struct SceneEvent ArutinYama_OpenedAreaScript[];
-extern s32				 ArutinYama_CueTicks;
 
 extern s32 ArutinYama_LeafMode;
 extern s32 ArutinYama_LeafOrigin[3];
@@ -1429,8 +1418,6 @@ void ArutinYama_RunLeapSequence(void)
 	GameFlag_Set(0x905);
 	Engine_EventEnd();
 }
-
-#define gPaletteBufferWork (*(u16 **)&gPaletteBufferWork)
 
 struct Byte
 {

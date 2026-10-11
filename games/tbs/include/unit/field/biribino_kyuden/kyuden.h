@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_BIRIBINO_KYUDEN_KYUDEN_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FacingObject;
 struct SceneEvent;
@@ -38,5 +39,13 @@ void ConfigurePrimarySceneChannels(void);
 void ConfigureSecondarySceneChannels(void);
 void RunEventScript02(void);
 void BiribinoKyuden_RunActorRowScene(void);
+extern s32 Kyuden_FacingActions[];
+extern s32 Kyuden_PacingActions[];
+extern struct SceneEntrance Placement_Scripts[];
+extern u32 Placement_Messages[];
+extern struct ScenePlacement gBiribinoKyudenPlacementsOther[];
+extern struct ScenePlacement gBiribinoKyudenPlacements[];
+extern struct SceneEvent gBiribinoKyudenEventsOther[];
+extern struct SceneEvent gBiribinoKyudenEvents[];
 
 #endif

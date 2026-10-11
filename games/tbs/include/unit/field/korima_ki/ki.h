@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_KORIMA_KI_KI_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct OrbitingPaletteEffect;
 struct PaletteEffectFrame;
@@ -29,5 +30,15 @@ void KorimaKi_SpawnOrbitSparks(void);
 void PaletteScene_SetRecordValue(s32 key, s32 value);
 void PaletteScene_AdjustPaletteWindow(s32 adjustment);
 u16 PaletteScene_AdjustColor(u16 color, s32 adjustment);
+extern s32 SceneAction_ActorOneEntry[];
+extern s32 SceneAction_ActorTwoEntry[];
+extern s32 SceneAction_ActorThreeEntry[];
+extern s32 SceneAction_GroupFinish[];
+extern struct SceneEntrance gKorimaKiEntrances[];
+extern s16 gKorimaKiRegions[];
+extern u32 gKorimaKiExits[];
+extern struct ScenePlacement gKorimaKiPlacements[];
+extern struct SceneEvent gKorimaKiEvents[];
+extern s32 gKorimaKiEffectScript[];
 
 #endif

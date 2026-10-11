@@ -1,3 +1,6 @@
+#include "game_state.h"
+#include "global_cells.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/babi_iriguchi/iriguchi.h"
 #include "unit/field/common/object/staged_actor.h"
@@ -66,8 +69,6 @@ struct MotionEffect
 	u32			   callback;
 };
 
-extern u32 gBabiIriguchiExits[];
-
 static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 {
 	return dividend / divisor;
@@ -135,8 +136,6 @@ u8 *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind)
 	}
 	return result;
 }
-
-extern s16 StagedActor_DirectionSteps[];
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"

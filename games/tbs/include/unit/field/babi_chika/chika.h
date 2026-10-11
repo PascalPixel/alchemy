@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_BABI_CHIKA_CHIKA_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct Actor_02000ec8;
 struct FieldActor;
@@ -72,5 +73,27 @@ void FieldScene_PlaceAndPinSlots10And11(void);
 void BabiChika_RestorePlatformCells(void);
 void BabiChika_MarkActorCells(void);
 s32 FieldScene_InitializeActorGroups(void);
+extern s16 StagedActor_DirectionSteps[];
+extern u32 StagedActor_FootprintKinds[];
+extern s32 StagedActor_FootprintBounds[];
+extern s32 gEffectScript0[];
+extern s32 gEffectScript1[];
+extern s32 gEffectScript2[];
+extern u32 Data_0200b350[];
+extern const s32 *gEffectScripts[];
+extern s32 Data_0200b8f4_1[];
+extern s32 Data_0200b8f4_0[];
+extern s32 BabiChika_FlickerScript[];
+extern u16 Data_0200b3ec[];
+extern u16 Data_0200b40c[];
+extern struct SceneEntrance gBabiChikaEntrancesOther[];
+extern struct SceneEntrance gBabiChikaEntrances1[];
+extern struct SceneEntrance gBabiChikaEntrances2[];
+extern s16 gBabiChikaRegions2[];
+extern u32 Data_0200b85c[];
+extern struct ScenePlacement Data_0200b8f4[];
+extern u32 Data_0200ba74[];
+extern struct SceneEvent Data_0200bc0c[];
+extern struct SceneEvent Data_0200bef4[];
 
 #endif

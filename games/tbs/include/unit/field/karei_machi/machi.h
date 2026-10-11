@@ -2,6 +2,8 @@
 #define ALCHEMY_UNIT_FIELD_KAREI_MACHI_MACHI_H
 
 #include "types.h"
+#include "field_event.h"
+#include "field_scene.h"
 
 struct FieldActor;
 struct Obj_020036f8;
@@ -56,5 +58,42 @@ void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2);
 void SceneEffect_UpdateLobeOrbitEffect26(void);
 void FieldScene_DrawTilesAndRaiseActor11(void);
 void InitializeOrbitingRenderEffect(s32 id);
+extern s32 KareiMachi_Data01[];
+extern s32 SceneAction_GroupMotion[];
+extern s32 SceneAction_GroupOffsetMotion[];
+extern s32 KareiMachi_Script01[];
+extern s32 KareiMachi_DanceScriptA[];
+extern s32 KareiMachi_DanceScriptB[];
+extern s32 KareiMachi_DanceScriptC[];
+extern s32 KareiMachi_DanceScriptD[];
+extern s32 KareiMachi_DanceScriptE[];
+extern s32 KareiMachi_DanceScriptF[];
+extern s32 KareiMachi_Data02[];
+extern s32 KareiMachi_Data03[];
+extern s32 KareiMachi_ActionScript01[];
+extern struct SceneEntrance gKareiMachiEntrancesOther[];
+extern struct SceneEntrance gKareiMachiEntrances1[];
+extern struct SceneEntrance gKareiMachiEntrances2[];
+extern struct SceneEntrance gKareiMachiEntrances3[];
+extern struct SceneEntrance gKareiMachiEntrances4[];
+extern struct SceneEntrance gKareiMachiEntrances5[];
+extern struct SceneEntrance gKareiMachiEntrances6[];
+extern u32 KareiMachi_SceneTable01[];
+extern struct ScenePlacement gKareiMachiPlacementsOther[];
+extern struct ScenePlacement gKareiMachiPlacements1[];
+extern struct ScenePlacement KareiMachi_StagedGroupScript[];
+extern struct ScenePlacement gKareiMachiPlacements2[];
+extern struct ScenePlacement gKareiMachiPlacements3[];
+extern struct ScenePlacement gKareiMachiPlacements6[];
+extern struct SceneEvent gKareiMachiEventsOther[];
+extern struct SceneEvent gKareiMachiEvents1[];
+extern struct SceneEvent gKareiMachiEvents2[];
+extern struct SceneEvent gKareiMachiEvents3[];
+extern struct SceneEvent gKareiMachiEvents4[];
+extern struct SceneEvent gKareiMachiEvents5[];
+extern struct SceneEvent gKareiMachiEvents6[];
+extern u16 KareiMachi_DoorCellData[];
+extern struct MapCellAnim KareiMachi_DoorCells[];
+extern s32 KareiMachi_Script02[];
 
 #endif

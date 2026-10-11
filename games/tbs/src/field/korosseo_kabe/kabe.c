@@ -1,3 +1,7 @@
+#include "game_state.h"
+#include "io_write_queue.h"
+#include "scene_ids.h"
+#include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/korosseo_kabe/kabe.h"
 #include "unit/field/common/korosseo/solo_competitor.h"
@@ -136,20 +140,6 @@ typedef struct Position3
 	s32 y;
 	s32 z;
 } Position3;
-
-extern char HexDigits[];
-extern s32	KorosseoKabe_SparkScript[];
-extern s32	KorosseoKabe_RaiseScript[];
-extern u32	KorosseoKabe_DirectionSteps[];
-extern s32	KorosseoKabe_ApproachScript[];
-extern s32	KorosseoKabe_SpectatorPhase;
-extern s32	KorosseoKabe_SpectatorTimer;
-extern s16	Korosseo_MarkerSlot;
-extern s16	KorosseoKabe_ModeRecordDefault[];
-extern const s16 KorosseoKabe_ModeRecordTwo[];
-extern s16	KorosseoKabe_ModeRecordThree[];
-extern const s16 KorosseoKabe_ModeRecordThreeAlt[];
-extern s16	KorosseoKabe_ModeRecordFour[];
 
 struct StageControl
 {

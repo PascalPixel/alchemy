@@ -150,31 +150,8 @@ typedef struct OrbitingSceneObject
 	u32						   callback;
 } OrbitingSceneObject;
 
-extern struct SceneEntrance gHaidiaMuraEntrances[];
-extern u32 gHaidiaMuraExits[];
-extern struct ScenePlacement gHaidiaMuraPlacements4[];
-extern struct ScenePlacement gHaidiaMuraPlacements3[];
-extern struct ScenePlacement gHaidiaMuraPlacements2[];
-extern struct ScenePlacement gHaidiaMuraPlacements[];
 extern struct SceneEvent gHaidiaMuraEvents3[];
-extern struct SceneEvent gHaidiaMuraEvents2[];
-extern struct SceneEvent gHaidiaMuraEvents[];
-extern u16 gHaidiaMuraCellAnimA[];
-extern u16 gHaidiaMuraCellAnimB[];
-extern u16 gHaidiaMuraCellAnimC[];
-extern u16 gHaidiaMuraCellAnimD[];
-extern s32 gHaidiaMuraActor22Actions[];
-extern s32 gHaidiaMuraLeaderWalkActions[];
-extern s32 gHaidiaMuraActor22WalkActions[];
-extern s32 gVillagerAction[];
-extern s32 gLeaderHammerAction[];
-extern s32 gGeraldAction[];
 extern s32 gJasmineAction[];
-extern s32 gHaidiaMuraPairTableA[];
-extern s32 gHaidiaMuraPairTableB[];
-extern s32 gHaidiaMuraPairTableC[];
-extern s32 gHaidiaMuraPairTableD[];
-extern s32 gDustBurstScript[];
 
 extern void *gEffectWork;
 

@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/shian_mura/mura.h"
 #include "unit/field/common/effect/move.h"
@@ -38,19 +39,6 @@ struct PeriodicEffectConfig
 	u8 *data;
 	u8	pad_20[8];
 };
-
-extern s32 ShianMura_EffectConfig[];
-extern struct SceneEntrance gShianMuraEntrances[];
-extern u32 gShianMuraExits[];
-extern struct SceneEvent gShianMuraEvents[];
-extern s32 ShianMura_ActionTable[];
-
-extern struct ScenePlacement gShianMuraPlacements[];
-extern u16 ShianMura_GateSteps1[];
-extern u16 ShianMura_GateSteps2[];
-extern u16 ShianMura_GateSteps3[];
-extern u16 ShianMura_GateSteps4[];
-extern u16 ShianMura_GateSteps5[];
 
 void Effect_Spawn();
 

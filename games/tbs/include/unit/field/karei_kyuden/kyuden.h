@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_KAREI_KYUDEN_KYUDEN_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct SceneEntrance;
 struct SceneEvent;
@@ -22,5 +23,13 @@ void RunEventScript01(void);
 void ConfigureFourSceneChannelsAndHandoff(s32 handoff);
 void SceneChannel_ConfigureUniformAndHandoff(s32 handoff);
 void Scene_RunPartySequence(void);
+extern s32 KareiKyuden_PartyActions[];
+extern struct SceneEntrance gKareiKyudenEntrancesOther[];
+extern struct SceneEntrance gKareiKyudenEntrances[];
+extern u32 Placement_Messages[];
+extern struct ScenePlacement gKareiKyudenPlacementsOther[];
+extern struct ScenePlacement gKareiKyudenPlacements[];
+extern struct SceneEvent gKareiKyudenEventsOther[];
+extern struct SceneEvent gKareiKyudenEvents[];
 
 #endif

@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/makyuri_chojo/chojo.h"
 #include "unit/field/common/effect/move.h"
@@ -25,13 +27,6 @@
 #include "text/msg_ids.h"
 
 #define NULL ((void *)0)
-
-extern struct SceneEntrance	 gMakyuriChojoEntrances[];
-extern u32					 gMakyuriChojoExits[];
-extern struct ScenePlacement gMakyuriChojoPlacements[];
-extern struct SceneEvent	 gMakyuriChojoEvents[];
-
-extern s32 MakyuriChojo_NearestActor;
 
 void MakyuriChojo_SetSpritePriority(struct OverlayObject *object, s32 priority)
 {

@@ -21,12 +21,4 @@ enum CottageFlag
 
 #define NULL ((void *)0)
 
-extern struct SceneEntrance	 Placement_Scripts[];
-extern u32					 Placement_Messages[];
-extern struct ScenePlacement Placement_Actors[];
-extern struct SceneEvent	 Placement_Effects[];
-extern struct SceneEvent	 Placement_Effects834[];
-extern struct SceneEvent	 Placement_Effects87a[];
-extern u16					 Sukureta_GateCells[];
-
 #endif

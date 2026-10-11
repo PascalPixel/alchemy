@@ -1,3 +1,8 @@
+#include "game_state.h"
+#include "heap_state.h"
+#include "iwram_call.h"
+#include "keystate.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/makyuri_heya/heya.h"
 #include "unit/field/common/effect/move.h"
@@ -105,10 +110,6 @@ struct SceneLookupRecord
 	u8	pad00[216];
 	u16 tbl[1];
 };
-
-extern u16 MakyuriHeya_GateCells[];
-extern u16 MakyuriHeya_GateCloseCells[];
-extern u16 MakyuriHeya_FloorSwitchCells[];
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
@@ -2907,8 +2908,6 @@ s32 OverlayObject_StepScaleUpSixteenFrames(struct FieldActor *o)
 	o->scale_y = (n << 11) + 0x10000;
 	return 1;
 }
-
-extern s32 Makyuri_ScaleCounterScript[];
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../makyuri_iriguchi/pillar.c"

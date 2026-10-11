@@ -1,3 +1,8 @@
+#include "unit/field/common/fielddat.h"
+#include "unit/field/common/object/objdata.h"
+#include "unit/graphics/render/facing.h"
+#include "unit/graphics/tile/griddata.h"
+#include "unit/lib/curvedat.h"
 #include "unit/field/common/script/script.h"
 #include "unit/field/common/object/update.h"
 #include "unit/graphics/tile/vertices.h"
@@ -137,9 +142,6 @@ dispatch:
 	return start;
 }
 
-#define gMenuCtrlWork ((void *(*)) & gMenuCtrlWork)
-#define Render_DecodeFrame ((const u8(*)) & Render_DecodeFrame)
-
 typedef void (*DrawFn)(const void *src, void *dst, s32 param);
 typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
 
@@ -166,9 +168,9 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 	s32						 tile;
 
 	changed = 0;
-	ctx = gMenuCtrlWork[0];
+	ctx = (*(void *(*)[])&gMenuCtrlWork)[0];
 	held = 1;
-	draw = (DrawFn)gMenuCtrlWork[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
+	draw = (DrawFn)(*(void *(*)[])&gMenuCtrlWork)[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
 	if (draw == 0)
 	{
 		block = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER, (s32)Render_DecodeFrameCodeSize);
@@ -176,7 +178,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 			(((u32)Render_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2)
 				| (DMA_ENABLE32 | DMA_32BIT),
 			REG_DMA3);
-		draw = (DrawFn)gMenuCtrlWork[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
+		draw = (DrawFn)(*(void *(*)[])&gMenuCtrlWork)[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
 		held = 0;
 	}
 
@@ -476,12 +478,6 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screen_x, s3
 	shadow->y = y;
 }
 
-#undef gMenuCtrlWork
-
-#undef gMenuCtrlWork
-#undef gMenuCtrlWork
-#define gMenuCtrlWork ((u8(*)) & gMenuCtrlWork)
-
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
 {
 	s32 matrix;
@@ -588,7 +584,7 @@ void Render_PlaceProjectedSprite(
 	s32					   slot;
 
 	affine = 1;
-	if ((*(struct ObjectSystemWork **)gMenuCtrlWork)->suspended != 0)
+	if ((*(struct ObjectSystemWork **)(*(u8 (*)[])&gMenuCtrlWork))->suspended != 0)
 		goto hide;
 	z = Render_ProjectPoint(point, screen);
 	if (screen[2] == 0)
@@ -714,8 +710,6 @@ void ObjectGroup_SetChildValueUnlessFifteen(void *raw_parent, u32 value)
 		parent->dirty = 1;
 	}
 }
-
-#undef gMenuCtrlWork
 
 struct ResourceSlotNumber
 {
@@ -1206,8 +1200,6 @@ typedef char ResourceObjectWork_size[sizeof(struct ResourceObjectWork) == 56 ? 1
 #include "metadata_lookup.h"
 #include "vram_tab.h"
 
-extern struct AnimationObject *gSpriteObjects;
-
 //--------------------------------------------------------------------------
 // アニメ id のスプライトオブジェクトを作る
 // あいている 64 個のオブジェクトの 1 つと VRAM キャッシュを使う
@@ -1379,9 +1371,6 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt)
 // オブジェクト：フィールドのオブジェクトの作成・解放と、毎フレームの表示
 //--------------------------------------------------------------------------
 
-#undef Render_DecodeFrame
-#undef gMenuCtrlWork
-
 #include "types.h"
 #include "callback_scheduler.h"
 #include "scene.h"
@@ -1395,10 +1384,6 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt)
 #include "script_motion.h"
 #include "vram_block.h"
 #include "iwram_call.h"
-
-extern struct ObjectRuntime *gObjectSlots;
-
-extern struct ObjectSystemWork *gMenuCtrlWork;
 
 //--------------------------------------------------------------------------
 // 絵を 1 ドットずつ消す処理の 1 回分
@@ -2130,8 +2115,6 @@ struct FixedCamera
 	struct CameraPoint *target_override; // あればこちらの注視点を使う
 };
 
-extern u8 Render_DecodeFrame[];
-
 //--------------------------------------------------------------------------
 // 毎フレーム：オブジェクトの絵を画面に置く（ふつうのカメラ）
 // 画面のまわりにいるオブジェクトは、足もとのセルからレイヤーと優先度を決めて
@@ -2432,8 +2415,6 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object)
 		return 0;
 	return 1;
 }
-
-#define gObjectSlots (*(struct ScriptMotionObject **)&gObjectSlots)
 
 #define TARGET_UNSET ((s32)0x80000000)
 
@@ -4435,8 +4416,6 @@ s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b)
 	return -1;
 }
 
-#undef gObjectSlots
-
 struct KeyMoveEventWork
 {
 	u8	unknown_000[0x19c];
@@ -4450,7 +4429,6 @@ struct WorldMapSprite
 	u8				  *shadow;
 };
 #define gDebugMode (*(volatile u8(*)) & gDebugMode)
-extern u8 ResourceBlockOwners[];
 
 s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 {
@@ -5218,7 +5196,6 @@ void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
 
 //--------------------------------------------------------------------------
 
-extern u32 gMapBlocks[];
 extern u8  gMapCellBuffer[];
 
 //--------------------------------------------------------------------------
@@ -5401,8 +5378,6 @@ struct SceneHeader
 	s32						blend;
 	s32						script;
 };
-
-extern u8 gMapLayerData[];
 
 s32 Map_LoadLayeredScene(s32 index)
 {
@@ -8225,8 +8200,6 @@ s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step)
 	}
 }
 
-extern s32 gFrameTick;
-
 void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
 {
 	struct AnimationPosition *pair;
@@ -8432,7 +8405,7 @@ void Battle_PlaceActorsByFormationKind(void)
 	u32						  count;
 	u32						  i;
 
-	scale = Battle_FormationPlacementScale;
+	scale = (*(struct Vec2 *)&Battle_FormationPlacementScale);
 	table = WORK_SLOT(HEAP_SLOT_BATTLE);
 
 	switch (kind)

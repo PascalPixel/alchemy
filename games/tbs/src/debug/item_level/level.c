@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/debug/item_level/level.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/game/character/chara.h"

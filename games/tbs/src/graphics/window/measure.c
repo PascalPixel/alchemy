@@ -3,6 +3,12 @@
 // 表示：スプライト出力（RenderOutput）のあきリスト
 //--------------------------------------------------------------------------
 
+#include "unit/graphics/font/mark_codes.h"
+#include "unit/graphics/window/scales.h"
+#include "unit/graphics/window/sideobjt.h"
+#include "unit/graphics/window/spranim.h"
+#include "unit/graphics/window/textspd.h"
+#include "unit/menu/optdata.h"
 #include "unit/graphics/window/measure.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/graphics/text/moji.h"
@@ -549,8 +555,6 @@ void UiWindow_ClearInteriorTiles(
 	}
 	work->dirty = 1;
 }
-
-extern u8 *gWindowWork[];
 
 void UiWork_UpdateListTail(struct RenderOutputList *list)
 {
@@ -2507,9 +2511,6 @@ u32 UiText_AppendArticleName(
 
 #define TEXT_WORK_BLOCK 50
 
-extern const u8 Text_DecodeSymbol[];
-extern u8		Text_DecodeSymbolCodeSize[];
-
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
 #if defined(TBS_EDITION_FR)
@@ -3039,9 +3040,6 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 #include "game_state.h"
 #include "btlsys.h"
 #include "scene.h"
-
-extern const u8 Text_DecodeSymbol[];
-extern u8		Text_DecodeSymbolCodeSize[];
 
 extern __inline__ u32 UiText_AppendArticleName(
 	s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural, s32 *suffix)
@@ -5325,8 +5323,6 @@ void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reus
 	UiIcon_BuildAbilityIconTiles(BtlActGet(action)->unknown_04[0], with_base, slot, tile, reuse);
 }
 
-extern void *gWorkSlot[64];
-
 #define ROUTINE_BLOCK 49
 
 struct GlyphCursor
@@ -5334,8 +5330,6 @@ struct GlyphCursor
 	u16 unused;
 	u16 cursor;
 };
-
-extern const u8 Menu_AnimatedCursorTiles[];
 
 static __inline__ void ResetCursor(struct GlyphCursor *cursor)
 {
@@ -5603,10 +5597,6 @@ void Resource_ScheduleOwnerReset(void)
 {
 	Scheduler_RemoveCallback(MenuSelection_DrawFrame);
 }
-
-#define Menu_AnimatedCursorTiles ((u8 *)&Menu_AnimatedCursorTiles)
-
-#define Menu_CursorObjectTiles ((u8(*)) & Menu_CursorObjectTiles)
 
 struct Work;
 
@@ -6769,8 +6759,6 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen)
 	}
 	return index;
 }
-
-#undef Menu_CursorObjectTiles
 
 void UiTextResource_NoOpCallback(void)
 {
@@ -8025,8 +8013,6 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
 	return win;
 }
 
-#define gWindowWork (*(struct UiTileSlotWork **)&gWindowWork)
-
 s32 Menu_RunWorkspaceSelectionLoop(void)
 {
 	struct RenderInput	 *window;
@@ -8155,7 +8141,7 @@ struct UiTileSlotWork
 
 void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern, u8 *remap)
 {
-	struct UiTileSlotWork *work = gWindowWork;
+	struct UiTileSlotWork *work = (*(struct UiTileSlotWork **)&gWindowWork);
 	u8					   pixels[128];
 	u8					  *sheet = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
 	u32					   slot = *(u8 *)entry;
@@ -8221,8 +8207,6 @@ void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern, u8 *remap
 	}
 	Dma_Set(pixels, (void *)(0x06000000 + slot * 32), 0x84000008, REG_DMA3);
 }
-
-#undef gWindowWork
 
 s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
 {
@@ -9479,9 +9463,6 @@ void PtyStDraw(s32 flags)
 	work->menu_busy = 0;
 }
 
-#define gTitleExtraOptionEnabled (*(s16 *)&gTitleExtraOptionEnabled)
-
-extern u8  gSceneState[];
 extern u32 GameFlagBytes[];
 
 void UiWork_FinalizeAndReleaseBlock16(void)
@@ -9637,7 +9618,7 @@ s32 SaveState_ScanRecordFlags(void)
 		ret = SaveState_LoadSummaryRecords();
 		flags = (s8 *)&gSaveWorkspace->summary[0].party[4];
 		gTitleSendOptionEnabled = 0;
-		gTitleExtraOptionEnabled = 0;
+		(*(s16 *)&gTitleExtraOptionEnabled) = 0;
 		for (i = 0; i < 3; i++)
 		{
 			if (flags[i * sizeof(struct SaveSummary)
@@ -9653,7 +9634,7 @@ s32 SaveState_ScanRecordFlags(void)
 						  & ((struct SaveSummary *)0)->party[4])]
 				!= 0)
 			{
-				gTitleExtraOptionEnabled = 1;
+				(*(s16 *)&gTitleExtraOptionEnabled) = 1;
 			}
 		}
 
@@ -10033,7 +10014,6 @@ s32 SaveState_DeleteSelectedSlot(void)
 //--------------------------------------------------------------------------
 
 #undef Resource_FixedBlockBTiles
-#undef gWindowWork
 
 #if EDITION_INTERNATIONAL || defined(TLA_EDITION_JA)
 #include "types.h"
@@ -12097,8 +12077,6 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
 }
 
 #undef ACTION_ID_MASK
-#undef Menu_AnimatedCursorTiles
-#undef gTitleExtraOptionEnabled
 
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)
 {
@@ -16864,8 +16842,6 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 	return cursor;
 }
 
-#define gLinkCountdownWork (*(struct LinkCountdownState **)&gLinkCountdownWork)
-
 #define COUNTDOWN_START_FRAMES 900
 #define FRAMES_PER_SECOND 60
 
@@ -17058,7 +17034,7 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
 		do
 		{
 			WaitFrames(1);
-		} while ((gKeyState & (KEY_A | KEY_B)) == 0 && gLinkCountdownWork->timer != 0);
+		} while ((gKeyState & (KEY_A | KEY_B)) == 0 && (*(struct LinkCountdownState **)&gLinkCountdownWork)->timer != 0);
 		UiWork_Finalize(work, 1);
 	}
 	return result;
@@ -17099,8 +17075,6 @@ s32 Battle_ClassifyEntryKind(const struct BtlAct *act)
 		kind = 5;
 	return kind;
 }
-
-#undef gLinkCountdownWork
 
 struct WindowLine
 {
@@ -18891,8 +18865,6 @@ s32 Menu_SelectEntry20To21(s32 sel)
 	return ret;
 }
 
-#define Menu_ColonString ((u8(*)) & Menu_ColonString)
-
 struct TextObject
 {
 	u8 storage[12];
@@ -19114,8 +19086,6 @@ void Text_FormatHex(u32 value, u32 count, u8 *out)
 		*out++ = buf[i];
 }
 
-#undef Menu_ColonString
-
 void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
 {
 	s32	 row;
@@ -19228,8 +19198,6 @@ void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index)
 	Djinn_AddToOwnerFar(owner, element, index);
 }
 
-#define gMenuCtrlWork (*(struct DebugMenuState **)&gMenuCtrlWork)
-
 extern u8 gSleepRequested;
 
 s32 Menu_RunWorkspaceResultLoop(void)
@@ -19288,7 +19256,7 @@ s32 DebugMenu_BrowseIcons(void)
 	page = 0;
 	mode = 0;
 	redraw = 1;
-	gMenuCtrlWork->active = redraw;
+	(*(struct DebugMenuState **)&gMenuCtrlWork)->active = redraw;
 	WaitFrames(1);
 
 	do
@@ -19364,11 +19332,9 @@ s32 DebugMenu_BrowseIcons(void)
 	} while (1);
 close:
 	UiWork_Finalize(window, 2);
-	gMenuCtrlWork->active = 0;
+	(*(struct DebugMenuState **)&gMenuCtrlWork)->active = 0;
 	return 0;
 }
-
-#define gWindowWork (*(struct GlyphWork **)&gWindowWork)
 
 struct GlyphWork
 {
@@ -19400,7 +19366,7 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
 	s32					cancel;
 	u32					slot_offset;
 
-	work = gWindowWork;
+	work = (*(struct GlyphWork **)&gWindowWork);
 	redraw = 1;
 	portrait = UiWindow_CreateWithSideObject(0, 0, 10, 5);
 	window = UiWindow_Create(10, 10, 14, 3, 2);

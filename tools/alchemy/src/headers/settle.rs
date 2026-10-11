@@ -143,13 +143,42 @@ pub(crate) fn settle(root: &Path, bench: &Bench, file: &str, old: &str, before: 
         return report(render(old, draft, &trial.kept), draft.casts.len(), &full, trial.builds);
     }
     trial.bad = differing(before, &full);
+    // A function that differs with every cast in may be right with none:
+    // then the header's declaration is what it read all along. A function
+    // that does not compile without its casts keeps them for the rounds.
+    let mut theirs: BTreeSet<usize> = draft.casts.iter().enumerate().filter(|(_, cast)| trial.bad.contains(&cast.function)).map(|(index, _)| index).collect();
+    for _ in 0..2 {
+        if theirs.is_empty() {
+            break;
+        }
+        let none = trial.build(&theirs);
+        if let Some(Err(messages)) = none.iter().find(|built| built.is_err()) {
+            let failed = failed_functions(messages);
+            let fewer: BTreeSet<usize> = theirs.iter().copied().filter(|index| !failed.contains(&draft.casts[*index].function)).collect();
+            if fewer.len() == theirs.len() {
+                break;
+            }
+            theirs = fewer;
+            continue;
+        }
+        let still = differing(before, &none);
+        let healed: BTreeSet<usize> = theirs.iter().copied().filter(|index| !still.contains(&draft.casts[*index].function)).collect();
+        if !healed.is_empty() {
+            trial.kept.retain(|index, _| !healed.contains(index));
+            let now = trial.build(&BTreeSet::new());
+            if now.iter().all(|built| built.is_ok()) {
+                trial.bad = differing(before, &now);
+            }
+        }
+        break;
+    }
     // Each function's casts: first all of them; where the function needs
     // some, those of each name and shape together; then one at a time.
     let measurable = |name: &str| before.iter().flatten().any(|parts| parts.get(name).is_some_and(|part| part.code));
     let mut open: BTreeMap<String, VecDeque<Vec<usize>>> = BTreeMap::new();
     let mut alone: Vec<usize> = Vec::new();
     for (index, cast) in draft.casts.iter().enumerate() {
-        if trial.bad.contains(&cast.function) {
+        if trial.bad.contains(&cast.function) || !trial.kept.contains_key(&index) {
             continue;
         }
         if measurable(&cast.function) {

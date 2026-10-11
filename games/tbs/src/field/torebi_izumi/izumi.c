@@ -1,3 +1,4 @@
+#include "keystate.h"
 #include "unit/field/torebi_izumi/izumi.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -30,13 +31,6 @@
 #include "iwram_call.h"
 #include "ability_ids.h"
 
-extern const struct SceneEntrance TorebiIzumi_SceneTableA[];
-extern const u32 TorebiIzumi_SceneTableB[];
-extern const u32 TorebiIzumi_TopicIds[];
-extern const u16 TorebiIzumi_ActorTileX[];
-extern const u16 TorebiIzumi_ActorTileZ[];
-extern const u16 TorebiIzumi_ActorHeadings[];
-
 struct SpringPoint
 {
 	s32 x;
@@ -68,8 +62,6 @@ struct SpringActor
 };
 
 extern struct SpringRide TorebiIzumi_Ride;
-extern const u8			 TorebiIzumi_SliderFrames[];
-extern const u8			 TorebiIzumi_CircleFrames[];
 
 extern u8 gOamCopyEnabled;
 

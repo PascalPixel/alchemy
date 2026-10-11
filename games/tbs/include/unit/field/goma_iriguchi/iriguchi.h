@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_GOMA_IRIGUCHI_IRIGUCHI_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FieldActor;
 
@@ -29,5 +30,14 @@ void OverlayObject_WaitForHeight(u8 *obj, s32 height);
 void GomaIriguchi_RunSpinningLeap(s32 id);
 void SceneActor_ApplyValueAndMatchingSlots(s32 group, s32 value);
 void GomaIriguchi_GiveShamansRod(void);
+extern s32 gEffectScript0[];
+extern s32 gEffectScript1[];
+extern s32 gEffectScript2[];
+extern const s32 *gEffectScripts[];
+extern s32 GomaIriguchi_SceneTableCData[];
+extern struct SceneEntrance GomaIriguchi_SceneTableA[];
+extern u32 GomaIriguchi_SceneTableB[];
+extern struct ScenePlacement GomaIriguchi_SceneTableC[];
+extern struct SceneEvent GomaIriguchi_SceneTableD[];
 
 #endif

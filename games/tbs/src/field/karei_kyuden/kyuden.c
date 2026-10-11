@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "scene_ids.h"
 #include "unit/field/karei_kyuden/kyuden.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -32,8 +34,6 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
 
 	gEventWork->message += amount;
 }
-
-extern u32 Placement_Messages[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

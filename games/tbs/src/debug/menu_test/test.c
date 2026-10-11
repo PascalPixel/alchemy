@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/import.h"
 #include "unit/debug/menu_test/test.h"
 #include "unit/battle/effect/slots.h"

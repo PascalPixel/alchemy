@@ -19,7 +19,7 @@ use std::path::Path;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 
-const USAGE: &str = "usage: alchemy headers apply [--dry-run] [--functions] [--report FILE]\n\
+const USAGE: &str = "usage: alchemy headers apply [--dry-run] [--functions] [--leave FILE] [--report FILE]\n\
   apply  write games/tbs/include/unit/<unit>.h for every ☀️ C file: the\n\
          prototype of each function it defines for other code. Take those\n\
          functions' prototypes and their function-shape cast macros out of\n\
@@ -31,6 +31,9 @@ const USAGE: &str = "usage: alchemy headers apply [--dry-run] [--functions] [--r
          FAKEMATCH tag, and every cast the unit's bytes do not need is\n\
          taken out again. --report writes one row per unit: the casts\n\
          kept and dropped, and each function that differs from before.\n\
+         --functions leaves every object for a later run. --leave FILE\n\
+         names objects, one a line, to leave declared as they are: a run\n\
+         prints `leave: NAME` for each object a still differing unit views.\n\
        alchemy headers units save|same FILE\n\
   units  save writes every Thumb unit's objects in the six editions to\n\
          FILE, part by part; same builds them again and prints each part\n\
@@ -99,8 +102,8 @@ fn views(root: &Path, units: &[String], sources: &BTreeMap<String, expand::Sourc
     units.iter().zip(found).map(|(unit, views)| Ok((unit.clone(), views?))).collect()
 }
 
-fn apply(root: &Path, dry: bool, functions_only: bool, report: Option<&str>) -> Result<(), String> {
-    let model = Model { functions_only, ..Model::read(root)? };
+fn apply(root: &Path, dry: bool, functions_only: bool, leave: BTreeSet<String>, report: Option<&str>) -> Result<(), String> {
+    let model = Model { functions_only, leave, ..Model::read(root)? };
     // The names the pass follows: what the C files define for other code,
     // the far-call stubs, and whatever a file or header declares.
     let definitions = model.definitions();
@@ -208,6 +211,26 @@ fn apply(root: &Path, dry: bool, functions_only: bool, report: Option<&str>) -> 
         println!("{file}: {} of {} casts kept", kept.len(), draft.casts.len());
         write(root, file, &settle::render(&model.text[file], draft, &kept))?;
     }
+    // A unit that still differs: the objects its differing functions view,
+    // and the ones its macros name, are the candidates to leave as they are.
+    let mut blamed: BTreeSet<&str> = BTreeSet::new();
+    for ((unit, _), (outcome, _)) in jobs.iter().zip(&outcomes) {
+        if outcome.differing.is_empty() || model.arm.contains(*unit) {
+            continue;
+        }
+        let differing: BTreeSet<&str> = outcome.differing.iter().map(|(name, _)| name.as_str()).collect();
+        for part in model.parts(unit) {
+            for cast in plan.drafts.get(part).map(|draft| draft.casts.as_slice()).unwrap_or(&[]) {
+                if cast.form == plan::Form::View && differing.contains(cast.function.as_str()) {
+                    blamed.insert(&cast.name);
+                }
+            }
+        }
+        blamed.extend(plan.strays.get(*unit).into_iter().flatten().map(String::as_str));
+    }
+    for name in blamed {
+        println!("leave: {name}");
+    }
     let mut rows = String::from("unit\tstate\tcasts kept\tcasts dropped\tbuilds\tdiffers\n");
     let (mut same, mut kept, mut dropped) = (0, 0, 0);
     for ((unit, before), (outcome, written)) in jobs.iter().zip(outcomes) {
@@ -270,7 +293,11 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     match arguments.first().map(String::as_str) {
         Some("apply") => {
             let report = arguments.iter().position(|a| a == "--report").and_then(|at| arguments.get(at + 1)).map(String::as_str);
-            apply(root(), arguments.iter().any(|a| a == "--dry-run"), arguments.iter().any(|a| a == "--functions"), report)
+            let leave = match arguments.iter().position(|a| a == "--leave").and_then(|at| arguments.get(at + 1)) {
+                Some(path) => std::fs::read_to_string(path).map_err(|e| format!("{path}: {e}"))?.lines().map(|line| line.trim().to_string()).filter(|line| !line.is_empty()).collect(),
+                None => BTreeSet::new(),
+            };
+            apply(root(), arguments.iter().any(|a| a == "--dry-run"), arguments.iter().any(|a| a == "--functions"), leave, report)
         }
         Some("units") => units(root(), arguments.get(1).ok_or(USAGE)?, arguments.get(2).ok_or(USAGE)?),
         // What one unit's expansions say of one name: for looking into a

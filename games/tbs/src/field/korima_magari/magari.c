@@ -1,3 +1,4 @@
+#include "battle_effect_runtime.h"
 #include "unit/import.h"
 #include "unit/field/korima_magari/magari.h"
 #include "unit/field/common/map/panel.h"

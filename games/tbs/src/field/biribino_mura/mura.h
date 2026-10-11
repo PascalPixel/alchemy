@@ -15,11 +15,4 @@ enum
 	ITEM_HARD_NUT = 194
 };
 
-extern u32	Placement_Messages[];
-extern s32	Mura_VillagerActions[];
-extern u16 *Mura_DoorCellSteps[];
-extern u32	Mura_DoorCellOrigins[];
-extern u32	Mura_RepaintCells[];
-extern s32	Mura_SpawnScript[];
-
 #endif

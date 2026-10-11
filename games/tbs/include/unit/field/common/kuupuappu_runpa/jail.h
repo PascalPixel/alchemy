@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_COMMON_KUUPUAPPU_RUNPA_JAIL_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct SceneEntrance;
 struct SceneEvent;
@@ -21,5 +22,11 @@ void LeftThief_ReadMind(void);
 void RightThief_ReadMind(void);
 void VaultDoor_Leave(void);
 s32 Scene_Initialize(void);
+extern const struct SceneEntrance gJailEntrances[];
+extern const u32 gJailExits[];
+extern const struct ScenePlacement gJailThiefPlacements[];
+extern const struct ScenePlacement gJailPrisonerPlacements[];
+extern const struct SceneEvent gJailThiefEvents[];
+extern const struct SceneEvent gJailPrisonerEvents[];
 
 #endif

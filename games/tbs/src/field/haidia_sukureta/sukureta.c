@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/haidia_sukureta/sukureta.h"
 #include "unit/battle/effect/slots.h"

@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "scene_ids.h"
 #include "unit/field/common/shian_jiin/jiin.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
@@ -60,14 +62,6 @@ struct Descriptor_020041ec
 	u8	unused32[8];
 };
 
-extern u32 ShianJiin_XianMessages[];
-
-extern s32 ShianJiin_ActorTwelveScript[];
-extern u16 ShianJiin_CellStepsA[];
-extern u16 ShianJiin_CellStepsB[];
-extern u16 ShianJiin_CellStepsC[];
-extern s32 ShianJiin_ShotScript[];
-
 void SetEffectMode(struct FieldActor *work, u32 mode)
 {
 	work->sprite->priority = mode;
@@ -112,22 +106,11 @@ void *NewFlippedEffectObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 	return NULL;
 }
 
-extern struct SceneEntrance gShianJiinEntrances1[];
-extern struct SceneEntrance gShianJiinEntrancesOther[];
-
-extern struct ScenePlacement gShianJiinPlacements1[];
-extern struct ScenePlacement gShianJiinPlacementsEntrance3[];
-extern struct ScenePlacement	   gShianJiinPlacements[];
-
 union SceneWord
 {
 	s32 word;
 	u16 half[2];
 };
-
-extern struct SceneEvent gShianJiinEvents1[];
-extern struct SceneEvent gShianJiinEventsEntrance3[];
-extern struct SceneEvent gShianJiinEvents[];
 
 extern u8 gEffectWork[];
 

@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/field/soru_sekizo/sekizo.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -50,12 +51,6 @@ struct Cam
 	s32 y;
 };
 
-extern struct SceneEntrance	 SceneEventRuntime_ScriptData[];
-extern u32					 SceneEventRuntime_MessageData[];
-extern struct ScenePlacement SceneEventRuntime_ActorData[];
-extern struct SceneEvent	 SceneEventRuntime_EffectData[];
-extern s32					 SoruSekizo_ScrollPhase;
-
 struct CellCopy
 {
 	s32 src_x;
@@ -82,7 +77,6 @@ struct SealScene
 	s32				actor_z;
 	s32				unknown_c4[3];
 };
-extern s32 SoruSekizo_SpriteRowsGfx[];
 
 void InitializeSceneRecordBuffer();
 

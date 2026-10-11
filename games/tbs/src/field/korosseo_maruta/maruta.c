@@ -1,3 +1,8 @@
+#include "game_state.h"
+#include "io_write_queue.h"
+#include "resource_ids.h"
+#include "scene_ids.h"
+#include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/korosseo_maruta/maruta.h"
 #include "unit/field/common/korosseo/solo_competitor.h"
@@ -221,32 +226,7 @@ static inline void InitializeSelectedActor(s32 actorId)
 	Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
-extern char					 gColossoHexChars[20];
-extern struct SceneEntrance	 gKorosseoMarutaEntrances[];
-extern u32					 gKorosseoMarutaExits[];
-extern struct ScenePlacement gKorosseoMarutaPlacements[];
-extern struct SceneEvent	 gKorosseoMarutaEvents[];
-extern s32					 gColossoSceneTaskStatus;
-extern s32					 gColossoSceneTaskState;
-extern const u16 gColossoEarlySequenceData[];
-extern const s32 gColossoSceneEventEffect[];
-extern s32					 gColossoParticleKinds[];
 extern s32					 gColossoParticleCount;
-extern s32					 gColossoMultiPhaseData[];
-extern s32					 KorosseoMaruta_Actor8Action[];
-extern s32					 KorosseoMaruta_LeaderActionA[];
-extern s32					 KorosseoMaruta_LeaderActionB[];
-extern s32					 KorosseoMaruta_LeaderActionC[];
-extern char					 ResourceId_RivalPathC;
-extern s16					 gColossoModeScriptDefault[];
-extern const s16 gColossoModeScript2[];
-extern s16					 gColossoModeScript4[];
-extern const s16 gColossoModeScript3B[];
-extern s16					 gColossoModeScript3A[];
-extern s32					 gColossoRandomEffect[];
-extern s32					 gColossoLinkedEffect[];
-extern u32					 StagedActor_DirectionSteps[];
-extern s16					 Korosseo_MarkerSlot;
 
 // コロッセオ共通 (field/common/korosseo)
 

@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/takara_shima/shima.h"
 #include "unit/field/common/object/staged_actor.h"

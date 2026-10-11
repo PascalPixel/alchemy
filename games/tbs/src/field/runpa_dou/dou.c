@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "scene_ids.h"
 #include "field_event.h"
 #include "unit/field/runpa_dou/dou.h"
 #include "unit/battle/effect/slots.h"

@@ -1,3 +1,4 @@
+#include "unit/system/link/testdata.h"
 #include "types.h"
 
 const u32 Link_TestWord = 0;

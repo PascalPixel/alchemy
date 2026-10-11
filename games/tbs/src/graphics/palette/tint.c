@@ -1,3 +1,4 @@
+#include "battle_effect_runtime.h"
 #include "unit/graphics/palette/tint.h"
 #include "unit/system/scheduler/callback.h"
 #include "battle.h"

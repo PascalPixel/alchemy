@@ -1,3 +1,4 @@
+#include "unit/menu/optdata.h"
 #include "types.h"
 
 // 設定画面の絵番号

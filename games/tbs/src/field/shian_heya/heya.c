@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/field/shian_heya/heya.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"

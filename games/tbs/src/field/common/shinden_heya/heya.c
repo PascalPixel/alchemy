@@ -1,3 +1,5 @@
+#include "battle_effect_runtime.h"
+#include "game_state.h"
 #include "unit/field/common/shinden_heya/heya.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -33,8 +35,6 @@
 #include "object_dispatch.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-
-extern struct BattleEffectBuffers *gPaletteBufferWork;
 
 struct ShrineWork
 {

@@ -70,20 +70,9 @@ struct PaletteSceneRecord
 	u16 values[1];
 };
 
-extern struct SceneEntrance gKorimaKiEntrances[];
-extern s16 gKorimaKiRegions[];
-extern u32 gKorimaKiExits[];
-extern struct ScenePlacement gKorimaKiPlacements[];
-extern struct SceneEvent gKorimaKiEvents[];
-
 extern s32		 gKorimaKiSparkOrigin[3];
 extern s32		 gKorimaKiSparkCount;
 extern s32		 gKorimaKiSparkSound;
 extern s32		 gKorimaKiTransitionStep;
-extern s32 SceneAction_ActorOneEntry[];
-extern s32 SceneAction_ActorTwoEntry[];
-extern s32 SceneAction_ActorThreeEntry[];
-extern s32 SceneAction_GroupFinish[];
-extern s32 gKorimaKiEffectScript[];
 
 #endif

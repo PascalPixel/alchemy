@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "scene_ids.h"
 #include "unit/field/runpa_mura/mura.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"

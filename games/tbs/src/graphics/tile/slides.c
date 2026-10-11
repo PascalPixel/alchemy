@@ -229,9 +229,6 @@ s32 DisplayScroll_RunSlideshow(void)
 	return 0;
 }
 
-#define Flash_Handler0 (*(s16 *)&Flash_Handler0)
-#define gFlashNumRemainingBytes (*(struct DisplayScrollObject **)&gFlashNumRemainingBytes)
-
 struct DisplayScrollObject
 {
 	u32 attr01;
@@ -1155,7 +1152,7 @@ void DisplayScroll_UpdateObjects(void)
 	u32	 frame = Flash_Handler3;
 	u32	 fine = frame & 7;
 	s32	 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
-	u32 *entry = (u32 *)(gFlashNumRemainingBytes + 24);
+	u32 *entry = (u32 *)((*(struct DisplayScrollObject **)&gFlashNumRemainingBytes) + 24);
 	s32	 row;
 
 	for (row = 0; row <= 15; row++)
@@ -1171,8 +1168,8 @@ void DisplayScroll_UpdateObjects(void)
 				tile = 0;
 		}
 	}
-	Dma_Set(gFlashNumRemainingBytes, OAM, 0x84000100, REG_DMA3);
-	if (Flash_Handler0 == 0 && (gFrameTick & 3) == 0)
+	Dma_Set((*(struct DisplayScrollObject **)&gFlashNumRemainingBytes), OAM, 0x84000100, REG_DMA3);
+	if ((*(s16 *)&Flash_Handler0) == 0 && (gFrameTick & 3) == 0)
 		Flash_Handler3++;
 }
 
@@ -1181,14 +1178,14 @@ void DisplayScroll_RenderEnteringLine(void)
 	u32 current;
 	s32 line;
 
-	if (Flash_Handler0 == 0)
+	if ((*(s16 *)&Flash_Handler0) == 0)
 	{
 		current = Flash_Handler3;
 		if ((s16)Flash_Handler3 / 8 != *(s16 *)&gFlash / 8)
 		{
 			line = (s16)Flash_Handler3 / 8;
 			*(s16 *)&gFlash = current;
-			Flash_Handler0 =
+			(*(s16 *)&Flash_Handler0) =
 				DisplayScroll_DrawLine(DisplayScroll_LineTable[line], ((line + 16) & 31) * 24, 1);
 		}
 	}
@@ -1201,14 +1198,14 @@ void DisplayScroll_InitObjectTable(void)
 	u32			 i;
 	u32			 j;
 
-	gFlashNumRemainingBytes =
+	(*(struct DisplayScrollObject **)&gFlashNumRemainingBytes) =
 		Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
 	fill = 0;
 	Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800, REG_DMA3);
 	fill = 0x11111111;
 	Dma_Set((void *)&fill, (void *)0x06016000, 0x85000040, REG_DMA3);
 
-	entry = (u32 *)gFlashNumRemainingBytes;
+	entry = (u32 *)(*(struct DisplayScrollObject **)&gFlashNumRemainingBytes);
 	for (i = 0; i < 8; i++)
 	{
 		*entry++ = (i << 21) | 0x80004000;
@@ -1240,7 +1237,7 @@ void DisplayScroll_InitObjectTable(void)
 	}
 	Flash_Handler3 = 0;
 	*(s16 *)&gFlash = 0;
-	Flash_Handler0 = 0;
+	(*(s16 *)&Flash_Handler0) = 0;
 	Scheduler_AddOrUpdateCallback(DisplayScroll_UpdateObjects, 0x480);
 	Scheduler_AddOrUpdateCallback(DisplayScroll_RenderEnteringLine, 0xc80);
 	for (i = 0; i < 32; i++)

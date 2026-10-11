@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_TAKARA_ASHIBA_ASHIBA_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FieldActor;
 struct SceneEntrance;
@@ -85,5 +86,25 @@ void TakaraAshiba_UpdateItemIcons(void);
 void TakaraAshiba_InitializeScene1(void);
 void TakaraAshiba_InitializeScene2(void);
 void TakaraAshiba_InitializeScene3(void);
+extern s16 StagedActor_DirectionSteps[];
+extern u32 StagedActor_FootprintKinds[];
+extern s32 StagedActor_FootprintBounds[];
+extern s32 TakaraAshiba_ActorFifteenMotionScript[];
+extern s32 TakaraAshiba_ActorFifteenWalkTargets[];
+extern struct SceneEntrance gTakaraAshibaEntrancesOther[];
+extern struct SceneEntrance gTakaraAshibaEntrances1[];
+extern struct SceneEntrance gTakaraAshibaEntrances2[];
+extern struct SceneEntrance gTakaraAshibaEntrances3[];
+extern u32 TakaraAshiba_SceneTable[];
+extern struct ScenePlacement gTakaraAshibaPlacementsOther[];
+extern struct ScenePlacement gTakaraAshibaPlacements1[];
+extern struct ScenePlacement gTakaraAshibaPlacements2[];
+extern struct ScenePlacement gTakaraAshibaPlacements3[];
+extern struct SceneEvent gTakaraAshibaEventsOther[];
+extern struct SceneEvent gTakaraAshibaEvents1[];
+extern struct SceneEvent gTakaraAshibaEvents2[];
+extern struct SceneEvent gTakaraAshibaEvents3[];
+extern u32 TakaraAshiba_SlotColumns[];
+extern s32 TakaraAshiba_IconTimer;
 
 #endif

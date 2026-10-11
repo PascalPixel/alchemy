@@ -1,3 +1,5 @@
+#include "vram_tab.h"
+#include "window.h"
 #include "unit/battle/tgtexec.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/system/scheduler/callback.h"
@@ -169,8 +171,6 @@ s32 DebugParty_LoadPreset(s32 preset)
 	return done;
 }
 
-#define gWindowWork (*(u8 **)&gWindowWork)
-
 #if EDITION_INTERNATIONAL
 #define WINDOW_WORK_MESSAGE_BUSY 0x12f8
 #else
@@ -276,7 +276,7 @@ void DebugBattle_ViewMessages(void)
 			/* FAKEMATCH: UiWork_DrainPendingFar is called as void (*)(s32); as void (*)(void), its prototype, DebugBattle_ViewMessages does not compile */
 			((void (*)(s32))UiWork_DrainPendingFar)(1);
 			UiWork_FinalizeFar(window, 1);
-			gWindowWork[WINDOW_WORK_MESSAGE_BUSY] = 0;
+			(*(u8 **)&gWindowWork)[WINDOW_WORK_MESSAGE_BUSY] = 0;
 		}
 	}
 }
@@ -1107,8 +1107,6 @@ s32 Battle_ClearSerialTransferPayload(void)
 		(cell) = 0;                                                              \
 		Dma_Set((void *)&(cell), (dest), DMA_FILL32 | ((bytes) >> 2), REG_DMA3); \
 	}
-
-extern s32 gBattleRandomSeed;
 
 #define BattleRandom_ClearSeed() \
 	do                           \
@@ -2562,8 +2560,6 @@ void ReleaseBattleObjectRecords(s32 no)
 	}
 }
 
-#define gMenuCtrlWork (*(u8 **)&gMenuCtrlWork)
-
 struct PairedObjectList
 {
 	u8						padding0[8];
@@ -2575,8 +2571,6 @@ struct PairedObjectTable
 	u8	padding0[0x18];
 	s32 count;
 };
-
-extern volatile u8 gSchedulerStatus;
 
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 {
@@ -2618,7 +2612,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 			continue;
 		if ((slot->resource & 0xfff) == 476 || (slot->resource & 0xfff) == 483)
 		{
-			table = gMenuCtrlWork + ((struct PairedObjectTable *)gMenuCtrlWork)->count * 4;
+			table = (*(u8 **)&gMenuCtrlWork) + ((struct PairedObjectTable *)gMenuCtrlWork)->count * 4;
 			objects = ((struct PairedObjectList *)table)->objects;
 			resource = slot->resource;
 			object->record_storage_kind = 2;

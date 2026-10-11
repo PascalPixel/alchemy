@@ -1,6 +1,7 @@
 #ifndef GUARD_SAVE_STATE_H
 #define GUARD_SAVE_STATE_H
 
+#include "unit/system/save/savedata.h"
 #include "unit/graphics/window/measure.h"
 #include "unit/system/scheduler/callback.h"
 #include "types.h"
@@ -75,9 +76,6 @@ extern struct SaveWorkspace *gSaveWorkspace;
 
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 #define DMA3_BUSY 0x80000000
-
-extern const u8 Save_Signature[];
-extern const u8 Save_HeaderTemplate[];
 
 #define START_DMA(source_, destination_, control_) \
 	Dma_Set((const void *)(source_), (void *)(destination_), (control_), (volatile u32 *)0x040000d4)

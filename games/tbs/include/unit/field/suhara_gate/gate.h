@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_SUHARA_GATE_GATE_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct SceneEntrance;
 struct SceneEvent;
@@ -20,5 +21,20 @@ void Scene_RunPrimarySequence(void);
 void Scene_RunScene3c3SequenceA(void);
 void Scene_RunActorNinePromptDialogue(void);
 void Scene_RunActorTenRepeatedMotion(void);
+extern s32 SuharaGate_PatrolStartup[];
+extern s32 gSuharaGatePlacements1Flagged1[];
+extern s32 SuharaGate_FirstGuardStartup[];
+extern s32 gSuharaGatePlacements1Flagged0[];
+extern struct SceneEntrance gSuharaGateEntrancesOther[];
+extern struct SceneEntrance gSuharaGateEntrances2[];
+extern struct SceneEntrance gSuharaGateEntrances3[];
+extern u32 SuharaGate_SceneTable[];
+extern struct ScenePlacement gSuharaGatePlacementsOther[];
+extern struct ScenePlacement gSuharaGatePlacements2[];
+extern struct ScenePlacement gSuharaGatePlacements1[];
+extern struct ScenePlacement gSuharaGatePlacements1Flagged[];
+extern struct SceneEvent gSuharaGateEventsOther[];
+extern struct SceneEvent gSuharaGateEvents2[];
+extern struct SceneEvent gSuharaGateEvents3[];
 
 #endif

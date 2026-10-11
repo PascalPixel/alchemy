@@ -1,3 +1,4 @@
+#include "unit/battle/effect/koukabit.h"
 #include "types.h"
 
 //--------------------------------------------------------------------------

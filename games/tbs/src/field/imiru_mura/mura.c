@@ -1,3 +1,6 @@
+#include "game_state.h"
+#include "keystate.h"
+#include "scene_ids.h"
 #include "unit/field/imiru_mura/mura.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -153,19 +156,7 @@ struct ExitCellPointHalves
 	s16 point[6][2]; // (x, y)
 };
 
-extern u16 ImiruMura_KeyHeadings[];
-extern u16 ImiruMura_CellStepsB[];
-extern s32 ImiruMura_PrimaryScript[];
-extern s32 ImiruMura_PrimaryScript2[];
 extern s32 ImiruMura_ArcOrigin[];
-extern u32 ImiruMura_SceneTable[];
-extern u16 ImiruMura_CellStepsA[];
-extern s32 ImiruMura_ActorScriptA[];
-extern s32 ImiruMura_ActorScriptB[];
-extern s32 ImiruMura_ActorScriptC[];
-extern s32 ImiruMura_MiaScriptA[];
-extern s32 ImiruMura_MiaScriptB[];
-extern u16 ImiruMura_SwayHeadings[];
 
 void SceneActor_UpdateCountdownArcPosition(T_0200154c *o);
 

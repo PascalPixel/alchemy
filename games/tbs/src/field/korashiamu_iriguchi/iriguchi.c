@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/korashiamu_iriguchi/iriguchi.h"
 #include "unit/battle/effect/slots.h"
@@ -21,16 +23,6 @@
 #include "objcmd.h"
 
 #define RECORD_17 17
-
-extern s32 KorashiamuIriguchi_ActionTable1[];
-extern s32 KorashiamuIriguchi_ActionTable2[];
-extern s32 KorashiamuIriguchi_ActionTable3[];
-extern s32 KorashiamuIriguchi_ActionTable4[];
-extern s32 KorashiamuIriguchi_ActionTable5[];
-extern s32 KorashiamuIriguchi_ActionTable6[];
-extern s32 KorashiamuIriguchi_ActionTable7[];
-extern s32 KorashiamuIriguchi_ActionTable8[];
-extern s32 KorashiamuIriguchi_ActionTable9[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

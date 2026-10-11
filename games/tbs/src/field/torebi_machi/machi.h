@@ -38,15 +38,6 @@ struct Actor
 	u8 pad24[0x31];
 	u8 field55;
 };
-extern s32					 gTorebiMachiActor16Action[];
-extern s32					 gTorebiMachiActor17Action[];
-extern struct SceneEntrance	 gTorebiMachiEntrances[];
-extern u32					 gTorebiMachiExits[];
-extern struct ScenePlacement gTorebiMachiPlacements[];
-extern struct SceneEvent	 gTorebiMachiEvents3[];
-extern struct SceneEvent	 gTorebiMachiEvents2[];
-extern struct SceneEvent	 gTorebiMachiEvents[];
-extern struct MapCellAnim	 gTorebiMachiCellSteps[];
 
 #include "types.h"
 

@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/mogoru_mori/mori.h"
 #include "unit/field/common/object/staged_actor.h"
@@ -74,8 +76,6 @@ typedef struct OrbitingSceneObject
 	u8						   padding_62[10];
 	u32						   callback;
 } OrbitingSceneObject;
-
-extern u32 MogoruMori_SceneTable[];
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"

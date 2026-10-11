@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/biribino_mura/mura.h"
 #include "unit/battle/effect/slots.h"

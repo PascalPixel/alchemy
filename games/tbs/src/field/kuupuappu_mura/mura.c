@@ -1,3 +1,5 @@
+#include "game_state.h"
+#include "window.h"
 #include "unit/field/kuupuappu_mura/mura.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/kuupuappu_mura/scene_cells.h"

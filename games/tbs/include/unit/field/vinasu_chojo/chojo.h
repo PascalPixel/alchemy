@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_VINASU_CHOJO_CHOJO_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct FieldActor;
 struct SceneEntrance;
@@ -64,5 +65,32 @@ void VinasuChojo_RunTransitionStep(void);
 void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor);
 void SceneEffect_SpawnParticlesBesideActor(void);
 void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object);
+extern s32 gEffectScript0[];
+extern s32 gEffectScript1[];
+extern s32 gEffectScript2[];
+extern const s32 *gEffectScripts[];
+extern s32 VinasuChojo_PairActionScript[];
+extern s32 SceneAction_EntryGroup[];
+extern s32 SceneAction_EntryPair[];
+extern s32 VinasuChojo_ScaleStepAction[];
+extern s32 VinasuChojo_BeamOpenAction[];
+extern s32 Data_020060ac[];
+extern s32 VinasuChojo_BeamRiseAction[];
+extern s32 VinasuChojo_BeamCloseAction[];
+extern s32 VinasuChojo_BeamEndAction[];
+extern s32 VinasuChojo_OrbitParticleScript[];
+extern s32 VinasuChojo_RiseParticleScript[];
+extern s32 Data_0200622c[];
+extern s32 VinasuChojo_RiseActionScript[];
+extern s32 VinasuChojo_StepBackAction[];
+extern s32 VinasuChojo_LeapAction[];
+extern s32 VinasuChojo_PartyExitAction[];
+extern s32 VinasuChojo_PartyHeadingAction[];
+extern struct SceneEntrance gVinasuChojoEntrances[];
+extern u32 gVinasuChojoExits[];
+extern struct ScenePlacement gVinasuChojoPlacements[];
+extern s32 VinasuChojo_NearestActor;
+extern struct SceneEvent gVinasuChojoEvents[];
+extern s32 VinasuChojo_BesideParticleScript[];
 
 #endif

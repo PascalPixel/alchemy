@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_SORU_FUNKA_FUNKA_H
 
 #include "types.h"
+#include "field_scene.h"
 
 struct Actor_02002e0c;
 struct Actor_02002e5c;
@@ -40,5 +41,18 @@ void SoruFunka_SpawnEffectPair(union PairObject *parent);
 void SceneState_SetValue140Mode0(void);
 void SoruFunka_CleanupSceneObjects(void);
 void FieldScene_RunActor15TwoStep(void);
+extern s32 Funka_ArcOriginsHead[];
+extern s32 Funka_ArcOrigins[];
+extern struct SceneEntrance Placement_Scripts[];
+extern u32 Placement_Messages[];
+extern struct ScenePlacement Placement_Actors[];
+extern struct SceneEvent Placement_Effects[];
+extern u16 SoruFunka_StarCells[];
+extern s32 Funka_EmberScript[];
+extern u8 Soru_RingDrift[][3];
+extern u8 Soru_RingSwing[][3];
+extern s8 Soru_RingDirection[][3];
+extern s32 Soru_RingOffsetX[];
+extern s32 Soru_RingOffsetZ[];
 
 #endif

@@ -8,7 +8,6 @@ struct TitleSprite
 	u32 attr[3];
 };
 
-extern s16				  gTitleVramBlock;
 extern s16				  gTitleRevealFrame;
 extern struct TitleSprite gTitleSprites[];
 

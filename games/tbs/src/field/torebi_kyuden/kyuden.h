@@ -17,11 +17,6 @@ static __inline__ void SetHalf(u16 *at, s32 value)
 	((union WorkCell *)at)->h = value;
 }
 
-extern s16 TorebiKyuden_EmptyTable[];
-extern u32 TorebiKyuden_MessageTable[];
-
-extern s32 TorebiKyuden_MiddleActionScript[];
-
 enum
 {
 	ITEM_CLOAK_BALL = 205

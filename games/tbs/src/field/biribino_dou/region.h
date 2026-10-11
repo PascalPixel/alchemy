@@ -8,6 +8,4 @@
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-extern s16 StagedActor_DirectionSteps[];
-
 #endif

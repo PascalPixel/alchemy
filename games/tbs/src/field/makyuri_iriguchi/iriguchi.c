@@ -1,3 +1,7 @@
+#include "game_state.h"
+#include "global_cells.h"
+#include "heap_state.h"
+#include "keystate.h"
 #include "unit/import.h"
 #include "unit/field/makyuri_iriguchi/iriguchi.h"
 #include "unit/field/common/effect/move.h"
@@ -70,17 +74,6 @@ struct WorkPointers
 	u8 *unknown_04[7];
 	u8 *scene;
 };
-
-extern s32 MakyuriIriguchi_Actor8Path1[];
-extern s32 MakyuriIriguchi_Actor8Path2[];
-extern s32 MakyuriIriguchi_Actor8Path3[];
-extern s32 MakyuriIriguchi_RiseScript[];
-extern u32 MakyuriIriguchi_SparkBurstScript[];
-extern s32 Makyuri_ScaleCounterScript[];
-extern struct SceneEntrance MakyuriIriguchi_SceneTableA[];
-extern struct SceneEntrance MakyuriIriguchi_SceneTableB[];
-extern struct SceneEntrance MakyuriIriguchi_SceneTableC[];
-extern struct SceneEvent MakyuriIriguchi_SceneTableD[];
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {

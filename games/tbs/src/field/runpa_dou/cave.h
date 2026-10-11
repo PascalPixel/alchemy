@@ -187,10 +187,4 @@ enum DepartureLine
 	DEPARTURE_BUNZA_SETS_OFF
 };
 
-extern const struct SceneEntrance  gCaveEntrances[];
-extern const u32				   gCaveExits[];
-extern const struct ScenePlacement gCaveNoPlacements[];
-extern const struct ScenePlacement gCavePlacements[];
-extern const struct SceneEvent	   gCaveEvents[];
-
 #endif

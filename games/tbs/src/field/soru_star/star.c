@@ -1,3 +1,4 @@
+#include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/soru_star/star.h"
 #include "unit/field/common/effect/move.h"
@@ -78,10 +79,6 @@ union MotionWork
 
 struct ObjectRuntime;
 
-extern u16 SoruStar_StarCells[];
-extern struct SceneEntrance Placement_Scripts[];
-extern u32 Placement_Messages[];
-extern struct ScenePlacement Placement_Actors[];
 extern struct SceneEvent Placement_Effects[];
 
 void OverlayObject_SetHandleFlagBits2And3(s32 object, u32 value)

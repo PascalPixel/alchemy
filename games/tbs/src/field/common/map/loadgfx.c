@@ -9,6 +9,7 @@
 #include "system.h"
 #include "resource.h"
 #include "global_cells.h"
+#include "heap_state.h"
 #include "dma.h"
 #include "map.h"
 #include "types.h"
@@ -40,10 +41,8 @@ void MapAnimation_PresentFrame(void)
 
 void MapAnimation_Start(void)
 {
-    /* FAKEMATCH: needed to match: the adjacent slot-cell walk avoids the four bytes added by separate gMapWork loads. */
-    u8 **pointers = &gMapAnimationPages;
-    struct MapFrameWork *pages = (struct MapFrameWork *)*pointers++;
-    struct PerspectiveWork *work = *(struct PerspectiveWork **)pointers;
+    struct MapFrameWork *pages = WORK_SLOT(7);
+    struct PerspectiveWork *work = WORK_SLOT(8);
     s32 one = 1;
 
     work->animation_active = one;

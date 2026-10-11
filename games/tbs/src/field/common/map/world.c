@@ -866,7 +866,7 @@ void Ui_SetGridColumnNumber(s32 slot, s32 no)
 
 void Battle_PlaceActorsByFormationKind(void)
 {
-    struct AnimationObject *actor = gSpriteObjects;
+    struct AnimationObject *actor = WORK_SLOT(4);
     u32 kind = actor->entries[0]->kind;
     struct Vec2 scale;
     struct AnimationPosition *table;
@@ -877,8 +877,7 @@ void Battle_PlaceActorsByFormationKind(void)
     u32 i;
 
     scale = Battle_FormationPlacementScale;
-    /* FAKEMATCH: needed to match: loading heap slot 9 relative to slot 4 avoids a second RAM-base load and eight bytes. */
-    table = *(struct AnimationPosition **)((u8 *)&gSpriteObjects + (9 - 4) * sizeof(((union HeapState *)0)->slots[0]));
+    table = WORK_SLOT(HEAP_SLOT_BATTLE);
 
     switch (kind) {
     case 3:

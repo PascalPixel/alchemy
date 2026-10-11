@@ -6,6 +6,10 @@
 
 extern void *gWorkSlot[64];
 
+// スロットを自分のアドレスで読む: 隣のスロットは同じアドレスから差で届く
+// (gWorkSlot[n] は表の先頭 + オフセットになる)
+#define WORK_SLOT(n) (*(gWorkSlot + (n)))
+
 union HeapState
 {
 	struct

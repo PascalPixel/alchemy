@@ -20,7 +20,7 @@
 #include "fixed_math.h"
 #include "transform.h"
 
-extern void *gWorkSlot[];
+#include "heap_state.h"
 
 #define Camera_StoreSceneParameters ((void (*)(s32,s32,s32))Camera_StoreSceneParameters)
 #define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
@@ -83,11 +83,9 @@ void Map_RenderPaletteMappedColumn(u32 value)
 
 void WorldMap_UpdateView(void)
 {
-    /* FAKEMATCH: retain the existing slot 12-relative cell reads. Loading slots 7/8 independently in 1a5404f7 added eight bytes in all editions. */
-    void **slot = (void **)&gCameraWork;
-    struct BattleCamera *cam = slot[0];
-    struct MapFrameWork *map = slot[-5];
-    struct PerspectiveWork *view = slot[-4];
+    struct BattleCamera *cam = WORK_SLOT(HEAP_SLOT_CAMERA);
+    struct MapFrameWork *map = WORK_SLOT(7);
+    struct PerspectiveWork *view = WORK_SLOT(8);
     s32 *pos = cam->pos;
     s32 *target = view->origin;
     struct MapAffinePair (*buffer)[160] = map->pages;

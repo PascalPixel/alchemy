@@ -55,7 +55,6 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 
 s32 Menu_OpenConfirmPrompt(void)
 {
-    /* FAKEMATCH: the heap slice at slot 6 preserves renderer/event load order; a whole-bank base adds a literal word. */
 #if defined(PROMPT_SAVES_TILES)
     void *saved = Runtime_BumpAllocateAlternatePool(PROMPT_TILES_SIZE);
 #endif
@@ -65,7 +64,7 @@ s32 Menu_OpenConfirmPrompt(void)
     s32 low;
     s32 result;
 
-    gMenuCtrlWork->suspended = 1;
+    ((struct ObjectSystemWork *)WORK_SLOT(HEAP_SLOT_MENU_CONTROL))->suspended = 1;
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
@@ -85,30 +84,30 @@ s32 Menu_OpenConfirmPrompt(void)
         &high, &unused, &low);
     Menu_EnsureCancelSound();
     if (result == 1) {
-        struct EventWork *target = ((struct EventWork **)&gMenuCtrlWork)[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL];
+        struct EventWork *target = WORK_SLOT(HEAP_SLOT_EVENT);
         u16 flags;
         BtlActGet(0x3fff & state->pane_action[0]);
         flags = low | (high << 10);
         target->psynergy_request = flags;
     }
     RenderOutput_ClearListFar(state->status_window);
-    ((struct UiRenderWork *)((void **)&gMenuCtrlWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL])->menu_busy = 1;
+    ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menu_busy = 1;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Runtime_ReleaseHeapBlock(0x37);
-    gMenuCtrlWork->suspended = 0;
+    ((struct ObjectSystemWork *)WORK_SLOT(HEAP_SLOT_MENU_CONTROL))->suspended = 0;
 #if defined(PROMPT_SAVES_TILES)
     UiWindow_MarkVisibleTileAttributesFar();
     UiWork_SetAltFlagAndClearTableFar(0);
     CopyWords(Iwram_CopyWords, PROMPT_TILES, saved, PROMPT_TILES_SIZE);
-    ((struct UiRenderWork *)((void **)&gMenuCtrlWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL])->menu_busy = 0;
+    ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menu_busy = 0;
     MemFree(saved);
     WaitFrames(1);
     Scheduler_DisableOverlayCallbacksWithFlags();
 #endif
     WaitFrames(1);
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    ((struct UiRenderWork *)((void **)&gMenuCtrlWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL])->menu_busy = 0;
+    ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menu_busy = 0;
     Event_ClearInvalidPackedValuesFar();
     return result;
 }

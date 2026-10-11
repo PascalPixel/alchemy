@@ -1359,11 +1359,9 @@ void Map_ShowWorldMap(s32 picture)
 {
 	extern u8 gMapCellBuffer[];
 	/* FAKEMATCH: needed to match: one-pass loops order display-control setup, the spilled layer load and the IME read; the count uses a halfword store. */
-	/* FAKEMATCH: needed to match: the shared slot 8/6 word-cell reads preserve the saved-layer spill and avoid four extra bytes. */
-	struct MapState			*map = *(struct MapState **)((u8 *)gWorkSlot + 8 * sizeof(void *));
+	struct MapState			*map = WORK_SLOT(8);
 	struct EventWork		*field = Runtime_AllocateBlock(27, 0xccc);
-	struct ObjectSystemWork *menu =
-		*(struct ObjectSystemWork **)((u8 *)gWorkSlot + 6 * sizeof(void *));
+	struct ObjectSystemWork *menu = WORK_SLOT(HEAP_SLOT_MENU_CONTROL);
 	s32					 resource = (s32)&ResourceId_WorldMapPicture;
 	struct MapAnimation *layer;
 	u8					 saved_flags[16];

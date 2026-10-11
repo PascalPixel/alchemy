@@ -340,12 +340,10 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
 
 void MapAnimation_ApplyAffineFrame(void)
 {
-    /* FAKEMATCH: needed to match: the adjacent slot-cell walk avoids the eight bytes added by separate gMapWork loads. */
-    u8 **pointers = &gMapAnimationPages;
-    struct MapAffinePair (*lines)[160] = ((struct MapFrameWork *)*pointers++)->pages;
+    struct MapAffinePair (*lines)[160] = ((struct MapFrameWork *)WORK_SLOT(7))->pages;
     s32 dispcnt = (s16)(REG_DISPCNT & 0xfff8);
     u32 *dst = (u32 *)&REG_BG2PA;
-    struct PerspectiveWork *work = *(struct PerspectiveWork **)pointers++;
+    struct PerspectiveWork *work = WORK_SLOT(8);
     volatile u16 *channel = REG_DMA0;
     u32 *src;
     u32 mode;

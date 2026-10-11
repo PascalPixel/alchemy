@@ -1070,10 +1070,7 @@ main	rom_tail_02	games/common/src/graphics/battle_fx/staged_particle_path	.rodat
 main	rom_tail_02	games/common/src/graphics/battle_fx/dual_stream_path	.rodata
 main	rom_tail_02	games/tbs/src/map/map	.rodata
 main	rom_tail_02	games/tbs/src/graphics/world_map/worldmap	.rodata
-main	rom_tail_02	games/tbs/src/map/korosseo/rival_path_a	.rodata
-main	rom_tail_02	games/tbs/src/map/korosseo/rival_path_b	.rodata
-main	rom_tail_02	games/tbs/src/map/korosseo/rival_path_c	.rodata
-main	rom_tail_02	games/tbs/src/graphics/korosseo/lettering	.rodata
+main	rom_tail_02	games/tbs/src/map/korosseo/korosseo	.rodata
 main	rom_tail_02	games/common/src/graphics/shop/cursor	.rodata
 main	rom_tail_02	games/tbs/src/graphics/ui/icons	.rodata
 main	rom_tail_02	games/common/src/graphics/monster/axe_goblin	.rodata

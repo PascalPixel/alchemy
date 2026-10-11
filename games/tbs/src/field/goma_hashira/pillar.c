@@ -225,10 +225,10 @@ u8 *SceneData_GetExtraTable(void)
 
 void GomaHashira_DriveActor13Idle(void)
 {
-    u8 *work;
+    struct EventWork *work;
     s32 t;
 
-    work = (u8 *)gEventWork;
+    work = gEventWork;
     t = ++GomaHashira_Actor13Frames;
     switch (t) {
     case 60:
@@ -246,7 +246,6 @@ void GomaHashira_DriveActor13Idle(void)
         Engine_ActorSetAnimation(13, 4);
         break;
     }
-    /* FAKEMATCH: the 99 goes through the counter variable so it is built with movs instead of a halfword pool constant. */
     if (gGameState.pending_djinn_event == 0)
-        *(u16 *)(work + 0x182) = t = 99;
+        work->raised_trigger = 99;
 }

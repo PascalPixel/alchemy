@@ -52,6 +52,10 @@ struct Ov670EventWork {
     s16 field_166;
     u8 unknown_168[0x44];
     s32 screen_effect;
+    u8 unknown_1b0[4];
+    s32 field_1b4;
+    u8 unknown_1b8[0x0c];
+    u16 field_1c4;
 };
 
 extern s32 gFrameCount;
@@ -108,6 +112,13 @@ void Func_02005c34(void);
 void Func_02000524(s32 show);
 void Func_0200057c(void);
 void Func_02000590(s32 show, s32 first, u32 count);
+void Func_02000978(void);
+void Func_02000b2c(void);
+void Func_02000d74(void);
+void Func_02003a08(s32 x, s32 z);
+void Func_02005a54(struct Ov670Object *object, s32 x, s32 y, s32 z);
+void Func_02005a5c(struct Ov670Object *object);
+void Event_StartScreenTransition(void);
 void Func_020005e0(void);
 void Func_02000624(void);
 void Func_02000668(void);
@@ -127,6 +138,11 @@ void Func_02003898(void);
 void Func_020038ec(void);
 
 extern s16 Data_02007948[];
+extern const u8 Data_02005d18[];
+extern const u8 Data_02005d5c[];
+extern const u8 Data_02005da0[];
+extern const u8 Data_02005e54[];
+extern const u8 Data_02005cd0[];
 extern struct Ov670Object *Data_02007950;
 
 static inline void Ov670_ObjTurn(s32 actor, s32 angle)
@@ -163,6 +179,62 @@ static inline void Ov670_ObjSetPos(struct Ov670Object *object, s32 x, s32 y, s32
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Object_SetPositionAndResetMotion(object, x, y, z);
+}
+
+struct Ov670EventWorkB {
+    u8 unknown_000[0x1c4];
+    u16 field_1c4;
+};
+
+#define OV670_WORK ((struct Ov670EventWorkB *)Ram_HeapSlots->event_work)
+
+void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+struct Ov670Object *Func_02005bbc(void);
+void Func_02005ba4(s32 speed, s32 acceleration);
+void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Func_02005b1c(s32 actor, s32 target);
+void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
+void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
+s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
+s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
+void Func_02005b94(s32 actor, s32 emote, s32 frames);
+void Func_02005b9c(s32 actor, s32 emote);
+void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
+void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
+void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
+void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
+void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
+
+static inline void Ov670_CamMove(s32 x, s32 y, s32 z, s32 mode)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Motion_CamBounds(x, y, z, mode);
+}
+
+static inline void Ov670_ObjSpeed(s32 actor, s32 speed, s32 acceleration)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+}
+
+static inline void Ov670_ObjWalk(s32 actor, s32 x, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    ObjectMotion_SetPositionAndReset(actor, x, z);
+}
+
+static inline void Ov670_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02005a64(a, b, c, d, e, f);
+}
+
+
+static inline void Ov670_Wait(s32 frames)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Battle_WaitMode0(frames);
 }
 
 #endif

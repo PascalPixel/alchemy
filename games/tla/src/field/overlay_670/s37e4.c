@@ -67,3 +67,32 @@ void Func_02003930(void)
     work->screen_effect = 0x209;
     Func_020038ec();
 }
+
+void Func_02003948(void)
+{
+    struct Ov670EventWork *work = Ram_HeapSlots->event_work;
+    struct Ov670Object *leader;
+    s32 x;
+    s32 px;
+
+    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party state's address before it builds the owner's offset (2 differ without it). */
+    leader = Object_GetById(gPartyState.current_owner);
+    Func_02005a9c();
+    Func_02005c3c(0);
+    Ov670_CamMove(-1, -1, -1, 0);
+    Object_SetModeById(gPartyState.current_owner, 2);
+    Ov670_ObjSpeed(gPartyState.current_owner, 0x8000, 0x4000);
+    x = leader->x;
+    px = x >> 16;
+    Func_02005a54(leader, ((8 - px % 16) << 16) + x, leader->y, leader->z);
+    Func_02005a5c(leader);
+    leader->facing = 0xc000;
+    if (GameFlag_Test(0x202))
+        Func_02003898();
+    ObjectMotion_EnableActionAndSetCallback(gPartyState.current_owner, Data_02005cd0);
+    WaitFrames(12);
+    Func_02005c9c(123);
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    Func_02005bc4(work->exit);
+}

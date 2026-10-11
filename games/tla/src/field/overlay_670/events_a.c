@@ -343,3 +343,46 @@ void Func_02000734(void)
         Func_02005aa4();
     }
 }
+
+void Func_020007c8(void)
+{
+    Func_02005a9c();
+    Func_02005c3c(0);
+    Ov670_CamMove(-1, -1, -1, 0);
+    Func_02005bbc()->motion_flags = 0;
+    Func_02005ba4(0x9999, 0x1333);
+    Ov670_CamMove(0x580000, -1, 0x1880000, 1);
+    Ov670_ObjSpeed(gPartyState.current_owner, 0xcccc, 0x6666);
+    Ov670_ObjWalk(gPartyState.current_owner, 72, 392);
+    Ov670_ObjWalk(gPartyState.current_owner, 88, 392);
+    Ov670_ObjArm(7, 0x6000, 10);
+    Func_02005b4c((s32)MsgWhWhoAre);
+    Func_02005b64(7, 0);
+    Func_02005b1c(26, gPartyState.current_owner);
+    Func_02005b1c(5, gPartyState.current_owner);
+    Func_02005b1c(6, gPartyState.current_owner);
+    WaitFrames(1);
+    ObjectMotion_SetActionVariant(26, 2);
+    ObjectMotion_SetActionVariant(5, 2);
+    ObjectMotion_SetActionVariant(6, 2);
+    Ov670_ObjSpeed(26, 0xcccc, 0x6666);
+    Ov670_ObjSpeed(5, 0xcccc, 0x6666);
+    Ov670_ObjSpeed(6, 0xcccc, 0x6666);
+    ObjectMotion_EnableActionAndSetCallback(26, Data_02005d18);
+    ObjectMotion_EnableActionAndSetCallback(5, Data_02005d5c);
+    Object_SetActionCallbackAndRefreshById(6, Data_02005da0);
+    Func_02005b64(7, 0);
+    if (GameFlag_Test(0x911))
+        Func_02000978();
+    else
+        Func_02000b2c();
+    Func_02000d74();
+    Ov670_ObjSpeed(26, 0x19999, 0xcccc);
+    Ov670_ObjSpeed(5, 0x19999, 0xcccc);
+    Ov670_ObjSpeed(6, 0x19999, 0xcccc);
+    ObjectMotion_EnableActionAndSetCallback(5, Data_02005e54);
+    ObjectMotion_EnableActionAndSetCallback(6, Data_02005e54);
+    Object_SetActionCallbackAndRefreshById(26, Data_02005e54);
+    GameFlag_SetBit(0x8f3);
+    Func_02005aa4();
+}

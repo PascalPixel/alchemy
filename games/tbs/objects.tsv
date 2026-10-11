@@ -186,10 +186,6 @@ main	rom_main_02	games/common/src/graphics/window/runtime_close_and_release	.tex
 main	rom_main_02	games/tbs/src/graphics/window/notice	.text
 main	rom_main_02	games/tbs/src/graphics/window/select	.text
 main	rom_main_02	games/tbs/src/graphics/palette/palette	.text
-main	rom_main_02	games/tbs/src/menu/optwork	.text
-main	rom_main_02	games/tbs/src/menu/options	.text
-main	rom_main_02	games/tbs/src/menu/workspac	.text
-main	rom_main_02	games/tbs/src/menu/run_workspace_selection_loop	.text
 main	rom_main_02	games/tbs/src/graphics/window/clear_tile_attributes_in_rect	.text
 main	rom_main_02	games/tbs/src/graphics/window/attrmode	.text
 main	rom_main_02	games/tbs/src/graphics/window/divider	.text

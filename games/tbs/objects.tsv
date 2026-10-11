@@ -1068,10 +1068,7 @@ main	rom_tail_02	games/tbs/src/graphics/battle_fx/water_sparkle	.rodata
 main	rom_tail_02	games/common/src/graphics/battle_fx/lightning_pillar	.rodata
 main	rom_tail_02	games/common/src/graphics/battle_fx/staged_particle_path	.rodata
 main	rom_tail_02	games/common/src/graphics/battle_fx/dual_stream_path	.rodata
-main	rom_tail_02	games/tbs/src/map/world/blocks	.rodata
-main	rom_tail_02	games/tbs/src/map/default/cells	.rodata
-main	rom_tail_02	games/tbs/src/map/default/animation	.rodata
-main	rom_tail_02	games/tbs/src/map/default/attributes	.rodata
+main	rom_tail_02	games/tbs/src/map/map	.rodata
 main	rom_tail_02	games/tbs/src/graphics/world_map/palette_a	.rodata
 main	rom_tail_02	games/tbs/src/graphics/world_map/tiles_a	.rodata
 main	rom_tail_02	games/tbs/src/graphics/world_map/tiles_b	.rodata

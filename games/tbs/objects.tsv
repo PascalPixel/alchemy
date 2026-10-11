@@ -140,9 +140,6 @@ main	rom_main_01	games/tbs/src/field/common/map/map	.text
 main	rom_main_01	games/common/src/field/common/map/mapcopy	.text
 main	rom_main_01	games/tbs/src/field/common/map/perspect	.text
 main	rom_main_01	games/tbs/src/field/common/map/loadgfx	.text
-main	rom_main_01	games/tbs/src/field/common/map/animate	.text
-main	rom_main_01	games/tbs/src/graphics/display/script	.text
-main	rom_main_01	games/tbs/src/system/scheduler/schedule_callback_b_after_frames	.text
 main	rom_main_01	games/tbs/src/lib/curve	.text
 main	rom_main_01	games/tbs/src/field/common/map/world	.text
 main	rom_main_01	games/tbs/src/system/resource/animdata	.rodata

@@ -70,8 +70,9 @@ pub(super) fn module(wrappers: &[Wrapper]) -> Result<String, String> {
             return Err(format!("{}: alignment {} is no power of two", wrapper.path, wrapper.alignment));
         }
         // The module's own section takes the first wrapper's alignment.
-        if index > 0 && wrapper.alignment > 1 {
-            body += &format!("\t.balign {}, 0\n", wrapper.alignment);
+        let balign = format!("\t.balign {}, 0\n", wrapper.alignment);
+        if index > 0 && wrapper.alignment > 1 && !body.ends_with(&balign) {
+            body += &balign;
         }
         if wrapper.shared {
             body += &format!("\t.include \"{}\"\n", wrapper.path);
@@ -259,10 +260,10 @@ mod tests {
              \t.balign 4, 0\n\
              \t.global Field_Map\nField_Map:\n\tmap_block Field_Map, .LField_Map_GRID\n.LField_Map_GRID:\n\
              \t.incbin \"map/grid.parts.lz\"\n\t.balign 4, 0\n\
-             \t.balign 4, 0\n\
              \t.include \"games/common/src/graphics/ui/font.s\"\n"
         );
-        // The first wrapper's alignment is the module's own section's.
+        // An alignment the previous wrapper already ends with is not repeated,
+        // and the first wrapper's is the module's own section's.
         let first = module(&[wrapper("games/tbs/src/map/a/map.s", aligned, false, 4)]).unwrap();
         assert!(!first.contains("\t.section .rodata\n\t.balign"));
         // A body that changes section or includes a source is no wrapper's.

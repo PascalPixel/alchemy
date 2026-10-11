@@ -887,14 +887,7 @@ main	rom_tail_01	games/tbs/src/graphics/animref2
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata.b
 main	rom_tail_02	games/tbs/src/system/resource/directory	.rodata
 main	rom_tail_02	games/tbs/src/graphics/ui/ui	.rodata
-main	rom_tail_02	games/tbs/src/graphics/title/intro_sun	.rodata
-main	rom_tail_02	games/tbs/src/graphics/title/screen	.rodata
-main	rom_tail_02	games/tbs/src/graphics/title/intro_peak	.rodata
-main	rom_tail_02	games/tbs/src/graphics/title/nintendo_splash	.rodata
-main	rom_tail_02	games/tbs/src/graphics/title/camelot_logo	.rodata
-main	rom_tail_02	games/tbs/src/graphics/title/golden_sun	.rodata
-main	rom_tail_02	games/tbs/src/graphics/world_map/picture	.rodata
-main	rom_tail_02	games/tbs/src/graphics/title/tsuzuku	.rodata
+main	rom_tail_02	games/tbs/src/graphics/title/title	.rodata
 main	rom_tail_02	games/common/src/graphics/backdrop/suhara_gate	.rodata
 main	rom_tail_02	games/common/src/graphics/backdrop/takara_shima	.rodata
 main	rom_tail_02	games/common/src/graphics/backdrop/takara_shima_cave	.rodata

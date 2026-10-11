@@ -3,37 +3,51 @@ FAR_CALL(ObjectSystem_ConfigureFar, ObjectSystem_Configure, void, (s32 mode))
 FAR_ENTRY(Object_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement)
 FAR_SLOT(Render_PlaceProjectedSprite)
 FAR_SLOT(Animation_InitializeObjects)
-FAR_CALL(AnimationObjects_SelectAnimationFar, AnimationObjects_SelectAnimation, s32, (struct AnimationObject *state, s32 flags))
+FAR_CALL(AnimationObjects_SelectAnimationFar, AnimationObjects_SelectAnimation, s32,
+	(struct AnimationObject * state, s32 flags))
 FAR_SLOT(AnimationObjects_SetActiveFrameTimers)
 FAR_CALL(ResourceObject_CreateFar, ResourceObject_Create, struct ResourceObject *, (s32 resource))
-FAR_CALL(ResourceObject_ReleaseFar, ResourceObject_Release, void, (struct ResourceObjectWork *work))
+FAR_CALL(
+	ResourceObject_ReleaseFar, ResourceObject_Release, void, (struct ResourceObjectWork * work))
 FAR_SLOT(Render_PlaceSpritePartPair)
-FAR_CALL(ResourceMetadata_RegisterFar, ResourceMetadata_Register, s32, (struct AnimationObject *context, s32 effect_id))
-FAR_CALL(ResourceMetadata_UnregisterFar, ResourceMetadata_Unregister, void, (struct AnimationObject *context, s32 entry_handle))
+FAR_CALL(ResourceMetadata_RegisterFar, ResourceMetadata_Register, s32,
+	(struct AnimationObject * context, s32 effect_id))
+FAR_CALL(ResourceMetadata_UnregisterFar, ResourceMetadata_Unregister, void,
+	(struct AnimationObject * context, s32 entry_handle))
 FAR_SLOT(ResourceMetadata_ReleaseSlot)
 FAR_CALL(ResourceMetadata_ClearRecordFar, ResourceMetadata_ClearRecord, void, (void *record))
 FAR_SLOT(Animation_InitWorkFromMetadata)
-FAR_CALL(Animation_SetWorkEntryFar, Animation_SetWorkEntry, void, (struct AnimationEntry *effect, s32 entry_index))
+FAR_CALL(Animation_SetWorkEntryFar, Animation_SetWorkEntry, void,
+	(struct AnimationEntry * effect, s32 entry_index))
 FAR_CALL(ObjectSystem_InitializeFar, ObjectSystem_Initialize, void, (s32 mode))
 FAR_ENTRY(ObjectDispatch_ApplyArgumentToChildrenFar, ObjectDispatch_ApplyArgumentToChildren)
-FAR_CALL(ObjectDispatch_ApplyValueToChildrenFar, ObjectDispatch_ApplyValueToChildren, void, (struct DispatchObject *object, s32 value))
+FAR_CALL(ObjectDispatch_ApplyValueToChildrenFar, ObjectDispatch_ApplyValueToChildren, void,
+	(struct DispatchObject * object, s32 value))
 FAR_SLOT(ObjectDispatch_ApplyPairToChildren)
-FAR_CALL(ObjectDispatch_InitializeFar, ObjectDispatch_Initialize, void, (struct DispatchObject *object, const s32 *script))
-FAR_CALL(ObjectDispatch_InitFromTable2Far, ObjectDispatch_InitFromTable2, void, (struct FieldActor *actor))
-FAR_CALL(ObjectDispatch_InitFromTable3Far, ObjectDispatch_InitFromTable3, void, (struct FieldActor *actor))
-FAR_CALL(ObjectDispatch_InitFromTable1Far, ObjectDispatch_InitFromTable1, void, (struct FieldActor *actor))
-FAR_CALL(ObjectDispatch_InitFromTable0Far, ObjectDispatch_InitFromTable0, void, (struct FieldActor *actor))
+FAR_CALL(ObjectDispatch_InitializeFar, ObjectDispatch_Initialize, void,
+	(struct DispatchObject * object, const s32 *script))
+FAR_CALL(ObjectDispatch_InitFromTable2Far, ObjectDispatch_InitFromTable2, void,
+	(struct FieldActor * actor))
+FAR_CALL(ObjectDispatch_InitFromTable3Far, ObjectDispatch_InitFromTable3, void,
+	(struct FieldActor * actor))
+FAR_CALL(ObjectDispatch_InitFromTable1Far, ObjectDispatch_InitFromTable1, void,
+	(struct FieldActor * actor))
+FAR_CALL(ObjectDispatch_InitFromTable0Far, ObjectDispatch_InitFromTable0, void,
+	(struct FieldActor * actor))
 FAR_SLOT(ObjectDispatch_FindFreeObject)
 #ifndef OWN_Object_CreateFar
 FAR_CALL(Object_CreateFar, FieldObject_Create, struct FieldActor *, ())
 #endif
 FAR_ENTRY(ObjectDispatch_ReleaseFar, ObjectDispatch_Release)
 FAR_SLOT(ObjectDispatch_SetChildRotation)
-FAR_CALL(ObjectDispatch_InitFromTable4WithArgumentFar, ObjectDispatch_InitFromTable4WithArgument, void, (struct DispatchObject *obj, s32 arg))
+FAR_CALL(ObjectDispatch_InitFromTable4WithArgumentFar, ObjectDispatch_InitFromTable4WithArgument,
+	void, (struct DispatchObject * obj, s32 arg))
 FAR_SLOT(ObjectDispatch_InitFromTable5WithArgument)
-FAR_CALL(Object_SetPositionAndResetMotionFar, Object_SetPositionAndResetMotion, void, (struct ObjectRuntime *object, s32 x, s32 y, s32 z))
-FAR_CALL(render_animated_tile_frameFar, Map_RenderAnimatedTileFrame, void, (u8 *record, u32 frame))
-FAR_CALL(Map_RenderAnimatedTileFramesForObjectFar, Map_RenderAnimatedTileFramesForObject, s32, (void *))
+FAR_CALL(Object_SetPositionAndResetMotionFar, Object_SetPositionAndResetMotion, void,
+	(struct ObjectRuntime * object, s32 x, s32 y, s32 z))
+FAR_CALL(render_animated_tile_frameFar, Map_RenderAnimatedTileFrame, void, (u8 * record, u32 frame))
+FAR_CALL(
+	Map_RenderAnimatedTileFramesForObjectFar, Map_RenderAnimatedTileFramesForObject, s32, (void *))
 FAR_CALL(Map_RenderAllAnimatedTileFramesFar, Map_RenderAllAnimatedTileFrames, void, (void **, s32))
 FAR_CALL(Map_LoadLayeredSceneFar, Map_LoadLayeredScene, s32, (s32 index))
 FAR_CALL(Map_InitializePerspectiveSceneFar, Map_InitializePerspectiveScene, void, (void))
@@ -42,51 +56,70 @@ FAR_CALL(Map_ApplyWorkOriginAndSpanFar, Map_ApplyWorkOriginAndSpan, void, (void)
 FAR_CALL(Map_UpdateCurrentTileBlockFar, Map_UpdateCurrentTileBlock, void, (void))
 FAR_CALL(WorldMap_LoadGraphicsFar, WorldMap_LoadGraphics, void, (s32 x, s32 z))
 FAR_ENTRY(ObjectDispatch_InitFromTable6Far, ObjectDispatch_InitFromTable6)
-FAR_CALL(ObjectDispatch_WaitForValue16Far, ObjectDispatch_WaitForValue16, void, (struct ObjectRuntime *))
+FAR_CALL(
+	ObjectDispatch_WaitForValue16Far, ObjectDispatch_WaitForValue16, void, (struct ObjectRuntime *))
 #ifndef OWN_Object_SetMoveTargetFar
-FAR_CALL(Object_SetMoveTargetFar, Object_SetMoveTarget, void, (struct ObjectRuntime *object, s32 x, s32 y, s32 z))
+FAR_CALL(Object_SetMoveTargetFar, Object_SetMoveTarget, void,
+	(struct ObjectRuntime * object, s32 x, s32 y, s32 z))
 #endif
 FAR_ENTRY(Script_WaitForEventTimeoutFar, Script_WaitForEventTimeout)
 FAR_SLOT(Map_GetScreenRelativePosition)
 FAR_SLOT(WorldMap_UpdateView)
 FAR_CALL(Map_LoadDefaultCellsAndUpdateBlockFar, Map_LoadDefaultCellsAndUpdateBlock, void, (void))
-FAR_CALL(Map_PlayMetatileCopySequenceFar, Map_PlayMetatileCopySequence, void, (u16 *command, s32 destination_x, u32 destination_y))
-FAR_CALL(Map_CopyMetatileIndicesRectFar, Map_CopyMetatileIndicesRect, void, (s32 src_x, s32 src_y, u32 dst_x, u32 dst_y, u32 width, u32 height))
+FAR_CALL(Map_PlayMetatileCopySequenceFar, Map_PlayMetatileCopySequence, void,
+	(u16 * command, s32 destination_x, u32 destination_y))
+FAR_CALL(Map_CopyMetatileIndicesRectFar, Map_CopyMetatileIndicesRect, void,
+	(s32 src_x, s32 src_y, u32 dst_x, u32 dst_y, u32 width, u32 height))
 FAR_CALL(Map_ClearLayerEntryFlagFar, Map_ClearLayerEntryFlag, void, (u32 no))
 FAR_CALL(Map_SetLayerEntryFlagFar, Map_SetLayerEntryFlag, void, (u32 no))
 FAR_CALL(DisplayBlend_DisableRunScriptFar, DisplayBlend_DisableRunScript, void, (void))
 FAR_CALL(DisplayBlend_EnableRunScriptFar, DisplayBlend_EnableRunScript, void, (void))
 FAR_CALL(Map_GetTerrainHeightFar, Map_GetTerrainHeight, s32, (s32 layer, s32 x, s32 y))
 FAR_CALL(GetMapCellCollisionFar, GetMapCellCollision, s32, (s32 layer, s32 x, s32 z))
-FAR_CALL(Map_CopyMetatileCellsRectFar, Map_CopyMetatileCellsRect, void, (s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y))
-FAR_CALL(Map_CopyCellAttributeRectFar, Map_CopyCellAttributeRect, void, (s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y))
-FAR_CALL(Map_CopyCellIndexRectFar, Map_CopyCellIndexRect, void, (s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y))
+FAR_CALL(Map_CopyMetatileCellsRectFar, Map_CopyMetatileCellsRect, void,
+	(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y))
+FAR_CALL(Map_CopyCellAttributeRectFar, Map_CopyCellAttributeRect, void,
+	(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y))
+FAR_CALL(Map_CopyCellIndexRectFar, Map_CopyCellIndexRect, void,
+	(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y))
 FAR_CALL(Map_SetWindowCellTileFar, Map_SetWindowCellTile, void, (s32 x, s32 y, s32 px, s32 py))
 FAR_ENTRY(Map_CheckObjectStepFar, Map_CheckObjectStep)
 FAR_ENTRY(ObjectDispatch_SetSingleChildFlagsFar, ObjectDispatch_SetSingleChildFlags)
-FAR_CALL(ObjectDispatch_SetChildBlendModeFar, ObjectDispatch_SetChildBlendMode, void, (struct DispatchObject *obj, u32 mode))
-FAR_CALL(Runtime_SetWorkTripleIfNonNegativeFar, Runtime_SetWorkTripleIfNonNegative, void, (s32 x, s32 y, s32 z))
+FAR_CALL(ObjectDispatch_SetChildBlendModeFar, ObjectDispatch_SetChildBlendMode, void,
+	(struct DispatchObject * obj, u32 mode))
+FAR_CALL(Runtime_SetWorkTripleIfNonNegativeFar, Runtime_SetWorkTripleIfNonNegative, void,
+	(s32 x, s32 y, s32 z))
 FAR_CALL(Map_WaitWorkValuesBelow256Far, Map_WaitWorkValuesBelow256, void, (void))
 FAR_SLOT(Animation_SetIndexAndInitObjects)
 FAR_CALL(Graphics_EnableObjLayerAndCallbacksFar, Graphics_EnableObjLayerAndCallbacks, void, (void))
-FAR_CALL(ObjectDispatch_StopCallbacksAndHideLayersFar, ObjectDispatch_StopCallbacksAndHideLayers, void, (void))
+FAR_CALL(ObjectDispatch_StopCallbacksAndHideLayersFar, ObjectDispatch_StopCallbacksAndHideLayers,
+	void, (void))
 FAR_SLOT(ObjectDispatch_SetChildDisplayFlag1)
 FAR_CALL(CheckMapPositionCellOccupiedFar, CheckMapPositionCellOccupied, s32, (const s32 *position))
-FAR_CALL(ObjectDispatch_RegisterChildMetadataFar, ObjectDispatch_RegisterChildMetadata, void, (struct DispatchObject *object, s32 value))
+FAR_CALL(ObjectDispatch_RegisterChildMetadataFar, ObjectDispatch_RegisterChildMetadata, void,
+	(struct DispatchObject * object, s32 value))
 FAR_CALL(Map_ResumeAnimationFar, MapAnimation_Start, s32, (void))
 FAR_CALL(Map_LoadAreaGraphicsFar, Map_LoadAreaGraphics, void, (void))
 FAR_ENTRY(Animation_ApplyChildValuesFar, Animation_ApplyChildValues)
-FAR_CALL(ObjectGroup_SetChildValueUnlessFifteenFar, ObjectGroup_SetChildValueUnlessFifteen, void, (void *raw_parent, u32 value))
-FAR_CALL(ScriptObject_CheckOverlapFar, ScriptObject_CheckOverlap, s32, (struct ScriptObjectEntry *object, s32 *values))
+FAR_CALL(ObjectGroup_SetChildValueUnlessFifteenFar, ObjectGroup_SetChildValueUnlessFifteen, void,
+	(void *raw_parent, u32 value))
+FAR_CALL(ScriptObject_CheckOverlapFar, ScriptObject_CheckOverlap, s32,
+	(struct ScriptObjectEntry * object, s32 *values))
 FAR_CALL(Map_SetWorkFlagBits9To11Far, Map_SetWorkFlagBits9To11, void, (u32 v))
-FAR_CALL(ResourceMetadata_SumCommandLengthsFar, ResourceMetadata_SumCommandLengths, s32, (s32 battle_value, s32 second, s32 third))
+FAR_CALL(ResourceMetadata_SumCommandLengthsFar, ResourceMetadata_SumCommandLengths, s32,
+	(s32 battle_value, s32 second, s32 third))
 FAR_CALL(GetWorldMapTerrainBehaviorFar, GetWorldMapTerrainBehavior, s32, (void *, s32 *))
-FAR_CALL(ResourceSlot_LoadFar, ResourceSlot_Load, s32, (u32 slot, u32 *buffer, s32 value, u32 variant))
-FAR_CALL(SetMapCellCollisionFar, SetMapCellCollision, void, (u32 layer, s32 x, s32 y, u32 collision_code))
-FAR_CALL(AnimationObjects_SetActiveTimerStepsFar, AnimationObjects_SetActiveTimerSteps, void, (struct AnimationObject *object, s32 arg))
+FAR_CALL(
+	ResourceSlot_LoadFar, ResourceSlot_Load, s32, (u32 slot, u32 *buffer, s32 value, u32 variant))
+FAR_CALL(SetMapCellCollisionFar, SetMapCellCollision, void,
+	(u32 layer, s32 x, s32 y, u32 collision_code))
+FAR_CALL(AnimationObjects_SetActiveTimerStepsFar, AnimationObjects_SetActiveTimerSteps, void,
+	(struct AnimationObject * object, s32 arg))
 FAR_CALL(Runtime_RemapBytesByTableFar, Runtime_RemapBytesByTable, void, (void *, s32))
 FAR_CALL(Map_EnableUpdateCallbackFar, Map_EnableUpdateCallback, s32, (void))
 FAR_CALL(Map_DisableUpdateCallbackFar, Map_DisableUpdateCallback, s32, (void))
-FAR_CALL(ScriptObject_FindOverlappingEntryFar, ScriptObject_FindOverlappingEntry, struct FxObject *, (struct FxObject *object, struct Output_08097f80 *position))
-FAR_CALL(Map_GetCellAttributeLowNibbleFar, Map_GetCellAttributeLowNibble, s32, (s32 layer, s32 x, s32 z))
+FAR_CALL(ScriptObject_FindOverlappingEntryFar, ScriptObject_FindOverlappingEntry, struct FxObject *,
+	(struct FxObject * object, struct Output_08097f80 *position))
+FAR_CALL(
+	Map_GetCellAttributeLowNibbleFar, Map_GetCellAttributeLowNibble, s32, (s32 layer, s32 x, s32 z))
 FAR_SLOT(Ui_RunIconMonitor)

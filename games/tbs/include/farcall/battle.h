@@ -1,14 +1,19 @@
 /* FarCall_BattleTable: one entry per 8-byte stub, in table order. */
 FAR_CALL(DebugBattle_RunMenuFar, DebugBattle_RunMenu, void, (void))
 FAR_SLOT(BattlePres_RunMosaicFadeOut)
-FAR_CALL(BattleActor_SpawnObjectsForListFar, BattleActor_SpawnObjectsForList, void, (s16 *targets, s32 mode))
+FAR_CALL(BattleActor_SpawnObjectsForListFar, BattleActor_SpawnObjectsForList, void,
+	(s16 * targets, s32 mode))
 FAR_SLOT(Graphics_FadeAlphaOut)
 FAR_SLOT(Graphics_FadeAlphaIn)
-FAR_CALL(BattlePres_SetupTransitionSceneFar, BattlePres_SetupTransitionScene, void, (s32 x, s32 depth, s32 y, s32 mode))
-FAR_CALL(BattlePres_SetupTransitionAtPairMidpointFar, BattlePres_SetupTransitionAtPairMidpoint, void, (s32 actor, s32 target, s32 mode))
-FAR_CALL(BattlePresentation_ConfigurePaletteFadeFar, BattlePresentation_ConfigurePaletteFade, void, (s32 mode, u16 value, s32 fade))
+FAR_CALL(BattlePres_SetupTransitionSceneFar, BattlePres_SetupTransitionScene, void,
+	(s32 x, s32 depth, s32 y, s32 mode))
+FAR_CALL(BattlePres_SetupTransitionAtPairMidpointFar, BattlePres_SetupTransitionAtPairMidpoint,
+	void, (s32 actor, s32 target, s32 mode))
+FAR_CALL(BattlePresentation_ConfigurePaletteFadeFar, BattlePresentation_ConfigurePaletteFade, void,
+	(s32 mode, u16 value, s32 fade))
 FAR_CALL(BattleBackground_LoadFar, BattleBackground_Load, void, (s32, s32, s32))
-FAR_CALL(BattlePresentation_SetPaletteLevelFar, BattlePresentation_SetPaletteLevel, void, (s32 unused, s32 level))
+FAR_CALL(BattlePresentation_SetPaletteLevelFar, BattlePresentation_SetPaletteLevel, void,
+	(s32 unused, s32 level))
 FAR_SLOT(Summon_GetEntryByte4)
 FAR_CALL(Summon_IsEntrySecondaryFlaggedFar, Summon_IsEntrySecondaryFlagged, s32, (s32 index))
 FAR_SLOT(Battle_GetSpriteFlagHighBits)
@@ -16,25 +21,33 @@ FAR_SLOT(Summon_IsEntryFlagged)
 FAR_CALL(Battle_GetObjectTableValueFar, Battle_GetObjectTableValue, s32, (s32 actor_id))
 FAR_ENTRY(BattleMotion_ApproachTargetFar, BattleMotion_ApproachTarget)
 FAR_SLOT(BattleMotion_InitializeObject)
-FAR_CALL(BattleMotion_ApplyVariantMotionFar, BattleMotion_ApplyVariantMotion, void, (s32 id, s32 mode))
+FAR_CALL(
+	BattleMotion_ApplyVariantMotionFar, BattleMotion_ApplyVariantMotion, void, (s32 id, s32 mode))
 FAR_CALL(BattleParty_ListActorIdsFar, BattleParty_ListActorIds, s32, (s32 side, s32 group))
 FAR_CALL(GetBattleObjectSlotFar, BtlObjGet, struct BtlObj *, (s32 object_id))
 FAR_CALL(Battle_RunEncounterFar, Battle_RunEncounter, s32, (s32 entrance))
-FAR_CALL(BattleMotion_ProjectPositionFar, BattleMotion_ProjectPosition, void, (s32, struct EffectPosition *))
-FAR_CALL(BattleMotion_ProjectScaledPositionFar, BattleMotion_ProjectScaledPosition, s32, (s32 id, s32 *projected))
-FAR_CALL(BattleMotion_ProjectConditionalPositionFar, BattleMotion_ProjectConditionalPosition, s32, (s32 id, s32 *projected))
+FAR_CALL(BattleMotion_ProjectPositionFar, BattleMotion_ProjectPosition, void,
+	(s32, struct EffectPosition *))
+FAR_CALL(BattleMotion_ProjectScaledPositionFar, BattleMotion_ProjectScaledPosition, s32,
+	(s32 id, s32 *projected))
+FAR_CALL(BattleMotion_ProjectConditionalPositionFar, BattleMotion_ProjectConditionalPosition, s32,
+	(s32 id, s32 *projected))
 FAR_SLOT(BattleParty_ListLivingUnits)
 FAR_CALL(BattleParty_PrepareActiveOwnersFar, BattleParty_PrepareActiveOwners, s32, (s32))
 FAR_CALL(Camera_ConfigureSceneFar, Camera_ConfigureScene, void, (s32 offset))
-FAR_CALL(GetMotionRecordFar, GetMotionRecord, void *, (struct MotionObject *object, s32 record_index))
+FAR_CALL(
+	GetMotionRecordFar, GetMotionRecord, void *, (struct MotionObject * object, s32 record_index))
 FAR_CALL(BattlePres_SetActorModesFar, BattlePres_SetActorModes, void, (u16 *, s32))
 FAR_CALL(BattleEventRuntime_BeginPhaseFar, BattleEventRuntime_BeginPhase, void, (s32 phase))
-FAR_CALL(Graphics_ScaleRgb555ClampedFar, Graphics_ScaleRgb555Clamped, void, (void *, void *, s32, s32))
+FAR_CALL(
+	Graphics_ScaleRgb555ClampedFar, Graphics_ScaleRgb555Clamped, void, (void *, void *, s32, s32))
 FAR_CALL(BattlePlacement_UpdateTimedEntriesFar, BattlePlacement_UpdateTimedEntries, s32, (void))
 FAR_CALL(BattleMotion_GetSlotPaletteFar, BattleMotion_GetSlotPalette, s32, (s32))
-FAR_CALL(BattlePlacement_UpdateTimedEntriesTwentyTimesFar, BattlePlacement_UpdateTimedEntriesTwentyTimes, s32, (void))
+FAR_CALL(BattlePlacement_UpdateTimedEntriesTwentyTimesFar,
+	BattlePlacement_UpdateTimedEntriesTwentyTimes, s32, (void))
 FAR_CALL(DebugParty_LoadPresetFar, DebugParty_LoadPreset, s32, (s32 preset))
 FAR_CALL(BattleActor_CommitPlacementFar, BtlObjPut, void, (void))
 FAR_SLOT(ReleaseBattleObjectRecords)
-FAR_CALL(BattlePresentation_WaitForPromptAtFar, BattlePresentation_WaitForPromptAt, s32, (s32 x, s32 y))
+FAR_CALL(
+	BattlePresentation_WaitForPromptAtFar, BattlePresentation_WaitForPromptAt, s32, (s32 x, s32 y))
 FAR_CALL(BattlePlacement_CountValidEntriesFar, BattlePlacement_CountValidEntries, s32, (s32, u8 *))

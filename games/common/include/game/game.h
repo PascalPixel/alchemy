@@ -82,7 +82,7 @@ u32 Party_GetAverageLevel(void);
 #ifndef OWN_Party_LookupCharacterValueByFlag32
 s32 Party_LookupCharacterValueByFlag32(u32 index);
 #endif
-s32	 DjinnMenu_ShowOwnerStatus(void);
+s32 DjinnMenu_ShowOwnerStatus(void);
 #endif
 
 #if GAME_TLA

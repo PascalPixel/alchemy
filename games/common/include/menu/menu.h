@@ -27,7 +27,7 @@ void	  Menu_EndResourceSelection(void);
 void	  Resource_ResetPendingTransfer(void);
 s32		  Shop_CanServe(s32 entry_no, s32 kind);
 #if GAME_TLA
-void	  UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 #endif
 
 #if !GAME_TLA
@@ -83,20 +83,20 @@ extern struct ObjectSystemWork *gMenuCtrlWork;
 #endif
 extern u8					   gNumberTextBuffer[];
 extern struct SelectionScreen *gResQueueWork;
-extern struct SceneEntrance					   gTitleEntrances[];
-extern struct SceneEvent					   gTitleEvents[];
+extern struct SceneEntrance	   gTitleEntrances[];
+extern struct SceneEvent	   gTitleEvents[];
 extern u32					   gTitleExits[];
 #ifndef OWN_gTitleExtraOptionEnabled
 extern u8 gTitleExtraOptionEnabled[];
 #endif
-extern struct ScenePlacement		 gTitlePlacements[];
-extern s8		 Inn_PriceMultipliers[];
-extern u8		 ItemMenu_ArrangeKeysString[];
-extern s32		 ItemMenu_CommandColumnXTable[];
-extern u8		 ItemMenu_EquipmentKeyString[];
-extern u8	 LinkLobby_SlotColumns[];
-extern const s32 LinkLobby_SlotValues[];
-extern const u8	 Menu_BackdropFrameTile[];
+extern struct ScenePlacement gTitlePlacements[];
+extern s8					 Inn_PriceMultipliers[];
+extern u8					 ItemMenu_ArrangeKeysString[];
+extern s32					 ItemMenu_CommandColumnXTable[];
+extern u8					 ItemMenu_EquipmentKeyString[];
+extern u8					 LinkLobby_SlotColumns[];
+extern const s32			 LinkLobby_SlotValues[];
+extern const u8				 Menu_BackdropFrameTile[];
 #ifndef OWN_Menu_ColonString
 extern const u8 Menu_ColonString[];
 #endif
@@ -177,8 +177,8 @@ s32	 Inn_RoomPrice(s32 mode);
 #ifndef OWN_InventoryMenu_ShowModalMessage
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y);
 #endif
-s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode);
-s32 Item_FindSlot(s32 unit_id, s32 item_id);
+s32	 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode);
+s32	 Item_FindSlot(s32 unit_id, s32 item_id);
 void ItemMenu_ApplyFlags(const u8 *flags);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 s32	 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state);
@@ -186,9 +186,9 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items);
 s32	 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1, struct MenuResult *state);
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags);
 void ItemMenu_ResetCategory(void);
-s32 LinkLobby_ExchangePartyRecords(void);
-s32 LinkLobby_PartyContains(s32 id);
-s32 LinkLobby_PeerSlotMatches(s32 slot);
+s32	 LinkLobby_ExchangePartyRecords(void);
+s32	 LinkLobby_PartyContains(s32 id);
+s32	 LinkLobby_PeerSlotMatches(s32 slot);
 #ifndef OWN_LinkLobby_PollPeerReady
 s32 LinkLobby_PollPeerReady(void);
 #endif
@@ -328,7 +328,7 @@ void Shop_StepCursor(void);
 #ifndef OWN_StatusMenu_DrawCharacterSummary
 void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st);
 #endif
-s32 UiIcon_LoadResourceIntoSlot(s32 resource_id, s32 slot);
+s32	 UiIcon_LoadResourceIntoSlot(s32 resource_id, s32 slot);
 s32	 UiMenu_CreateCursor(void *source);
 void UiMenu_PositionCursor(s32 x_offset, s32 y_offset);
 void UiMenu_SlideCursor(s32 x, s32 y);

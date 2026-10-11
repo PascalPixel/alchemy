@@ -295,7 +295,7 @@ void SceneTransform_ApplyScale(const s32 *scale);
 void SceneTransform_ApplyYaw(s32 angle);
 void Scheduler_ScheduleCallbackA(void);
 void Scheduler_ScheduleCallbackAAfterFrames(void);
-s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir);
+s32	 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir);
 #ifndef OWN_Text_FormatHex
 void Text_FormatHex(u32 value, u32 count, u8 *output);
 #endif

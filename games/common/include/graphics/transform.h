@@ -24,7 +24,9 @@ static __inline__ void Transform_SetIdentity(void *matrix)
 					 "stmia r0!, {r1, r2, r3, r4}\n\t"
 					 "stmia r0!, {r1, r2, r3, r4}\n\t"
 					 "stmia r0!, {r1, r2, r3, r4}"
-		: : "r"(matrix) : "r0", "r1", "r2", "r3", "r4", "memory");
+		:
+		: "r"(matrix)
+		: "r0", "r1", "r2", "r3", "r4", "memory");
 }
 
 // 今の行列を単位行列に戻す。
@@ -38,7 +40,9 @@ static __inline__ void Transform_ResetCurrent(void)
 					 "stmia r0!, {r1, r2, %0, r4}\n\t"
 					 "stmia r0!, {r1, r2, %0, r4}\n\t"
 					 "stmia r0!, {r1, r2, %0, r4}"
-		: "=l"(zero) : "r"(gTransform) : "r0", "r1", "r2", "r4", "memory");
+		: "=l"(zero)
+		: "r"(gTransform)
+		: "r0", "r1", "r2", "r4", "memory");
 }
 
 #endif

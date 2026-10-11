@@ -101,7 +101,7 @@ s32					   Equipment_GetUnleashRateBonus(struct BtlUnit *owner);
 s32					   RollWeaponUnleash(struct BtlUnit *owner);
 
 #if GAME_TLA
-s32					   RollWeaponUnleashFar(struct BtlUnit *owner);
+s32 RollWeaponUnleashFar(struct BtlUnit *owner);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 #endif
 s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);

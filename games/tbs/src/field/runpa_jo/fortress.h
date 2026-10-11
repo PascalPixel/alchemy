@@ -12,19 +12,21 @@
 #include "staged_actor.h"
 #include "object_runtime.h"
 
-typedef struct SceneActor {
-    u8 pad0[8];
-    s32 x;
-    s32 y;
-    s32 z;
+typedef struct SceneActor
+{
+	u8	pad0[8];
+	s32 x;
+	s32 y;
+	s32 z;
 } SceneActor;
 
-typedef struct DirectionalSceneActor {
-    u8 pad0[6];
-    u16 dir;
-    s32 x;
-    s32 y;
-    s32 z;
+typedef struct DirectionalSceneActor
+{
+	u8	pad0[6];
+	u16 dir;
+	s32 x;
+	s32 y;
+	s32 z;
 } DirectionalSceneActor;
 extern u32 gRunpaJoRandomPick;
 extern s32 gRunpaJoPairTableA[];
@@ -38,7 +40,7 @@ s32 IsActorInteractionAvailable(s32 actor_id);
 static __inline__ void SetSceneValue(s16 *field, s32 value)
 {
 
-    *field = value;
+	*field = value;
 }
 
 s32 GetEmptySceneData(void);

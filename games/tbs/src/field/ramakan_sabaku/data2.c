@@ -6,17 +6,17 @@
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
 extern s32 gEffectScript2[];
-void FieldScene_ApplyActor13Values3And3(void);
-void FieldScene_RunFlags8B2And8B3Steps(void);
-void RamakanSabaku_ApplyEntryState(void);
-void RamakanSabaku_ConfigureAreaLayout(void);
-void RamakanSabaku_FaceNearestActor(void);
-void RamakanSabaku_PlayStartledRetreat(void);
-void RamakanSabaku_ReturnToArea3(void);
-void RamakanSabaku_ShowRandomPartyLine(void);
-void RamakanSabaku_SweepBack(void);
-void RamakanSabaku_UpdateDustAndProbe(void);
-void RamakanSabaku_UpdateTravelDust(void);
+void	   FieldScene_ApplyActor13Values3And3(void);
+void	   FieldScene_RunFlags8B2And8B3Steps(void);
+void	   RamakanSabaku_ApplyEntryState(void);
+void	   RamakanSabaku_ConfigureAreaLayout(void);
+void	   RamakanSabaku_FaceNearestActor(void);
+void	   RamakanSabaku_PlayStartledRetreat(void);
+void	   RamakanSabaku_ReturnToArea3(void);
+void	   RamakanSabaku_ShowRandomPartyLine(void);
+void	   RamakanSabaku_SweepBack(void);
+void	   RamakanSabaku_UpdateDustAndProbe(void);
+void	   RamakanSabaku_UpdateTravelDust(void);
 
 s32 *gEffectScripts[] = {
 	gEffectScript0,

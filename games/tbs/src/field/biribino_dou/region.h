@@ -6,7 +6,7 @@
 #include "field_scene.h"
 #include "map_render_work.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 extern s16 StagedActor_DirectionSteps[];
 

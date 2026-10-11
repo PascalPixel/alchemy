@@ -104,9 +104,9 @@ void Scene_AddToListedRecordCounts(s32 amount)
 void FieldScene_RunCountAdjustPanel(void)
 {
 	u8 *record;
-	s32			  win;
-	s32			  flag;
-	s32			  msg;
+	s32 win;
+	s32 flag;
+	s32 msg;
 
 	record = UnitGet(gGameState.selected_actor);
 	win = UiWindow_Create(0, 0, 30, 9, 2);

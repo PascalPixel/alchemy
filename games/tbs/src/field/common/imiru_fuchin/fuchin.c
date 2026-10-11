@@ -22,1525 +22,1817 @@
 #include "fx_scene.h"
 #include "text/msg_ids.h"
 
-
 s32 ImiruFuchin_TrackLeader;
 
 struct FieldActor *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 sprite);
-void BattleFx_StartFadeOverlay(s32 mode);
+void			   BattleFx_StartFadeOverlay(s32 mode);
 
 extern const s32 *const gEffectScripts[3];
 
-struct CaveEffectScripts {
-    const s32 *script[3];
+struct CaveEffectScripts
+{
+	const s32 *script[3];
 };
 
-struct CaveDustOptions {
-    s32 priority;
-    s32 palette;
-    s32 start_scale_x;
-    s32 start_scale_y;
-    s32 target_scale_x;
-    s32 target_scale_y;
+struct CaveDustOptions
+{
+	s32 priority;
+	s32 palette;
+	s32 start_scale_x;
+	s32 start_scale_y;
+	s32 target_scale_x;
+	s32 target_scale_y;
 };
 
 LAYOUT_OFFSET_GUARD(CaveDustOptions_Priority, struct CaveDustOptions, priority,
-    (u32)&((struct EffectOptions *)0)->priority);
+	(u32) & ((struct EffectOptions *)0)->priority);
 LAYOUT_OFFSET_GUARD(CaveDustOptions_Palette, struct CaveDustOptions, palette,
-    (u32)&((struct EffectOptions *)0)->palette);
+	(u32) & ((struct EffectOptions *)0)->palette);
 LAYOUT_OFFSET_GUARD(CaveDustOptions_StartX, struct CaveDustOptions, start_scale_x,
-    (u32)&((struct EffectOptions *)0)->start_scale_x);
+	(u32) & ((struct EffectOptions *)0)->start_scale_x);
 LAYOUT_OFFSET_GUARD(CaveDustOptions_StartY, struct CaveDustOptions, start_scale_y,
-    (u32)&((struct EffectOptions *)0)->start_scale_y);
+	(u32) & ((struct EffectOptions *)0)->start_scale_y);
 LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetX, struct CaveDustOptions, target_scale_x,
-    (u32)&((struct EffectOptions *)0)->target_scale_x);
+	(u32) & ((struct EffectOptions *)0)->target_scale_x);
 LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions, target_scale_y,
-    (u32)&((struct EffectOptions *)0)->target_scale_y);
+	(u32) & ((struct EffectOptions *)0)->target_scale_y);
 
 void Effect_Spawn();
 
 void SceneState_ApplyValues8And2And1(void)
 {
-    BattleFx_RunPageEffectForSlot(8, 2, 1);
+	BattleFx_RunPageEffectForSlot(8, 2, 1);
 }
 
 void SceneState_ApplyValues11And62(void)
 {
-    BattleFx_SetPhaseRequest(0xB, 0x3E);
+	BattleFx_SetPhaseRequest(0xB, 0x3E);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
-    s16 v = gGameState.scene;
+	s16 v = gGameState.scene;
 
-    if (v == (s32)&SceneId_ImiruFuchin1) {
-        return gImiruFuchinEntrances1;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin2) {
-        return gImiruFuchinEntrances2;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin3) {
-        return gImiruFuchinEntrances3;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin4) {
-        return gImiruFuchinEntrances4;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin5) {
-        return gImiruFuchinEntrances5;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin6) {
-        return gImiruFuchinEntrances6;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin7) {
-        return gImiruFuchinEntrances7;
-    }
-    return gImiruFuchinEntrancesOther;
+	if (v == (s32)&SceneId_ImiruFuchin1)
+	{
+		return gImiruFuchinEntrances1;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin2)
+	{
+		return gImiruFuchinEntrances2;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin3)
+	{
+		return gImiruFuchinEntrances3;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin4)
+	{
+		return gImiruFuchinEntrances4;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin5)
+	{
+		return gImiruFuchinEntrances5;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin6)
+	{
+		return gImiruFuchinEntrances6;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin7)
+	{
+		return gImiruFuchinEntrances7;
+	}
+	return gImiruFuchinEntrancesOther;
 }
 
 s32 SceneData_ReturnZero(void)
 {
-    return 0;
+	return 0;
 }
 
 s32 *ImiruFuchin_GetExits(void)
 {
-    return gImiruFuchinExits;
+	return gImiruFuchinExits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-    s16 v = gGameState.scene;
+	s16 v = gGameState.scene;
 
-    if (v == (s32)&SceneId_ImiruFuchin1) {
-        return gImiruFuchinPlacements1;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin2) {
-        return gImiruFuchinPlacements2;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin3) {
-        return gImiruFuchinPlacements3;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin4) {
-        return gImiruFuchinPlacements4;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin5) {
-        return gImiruFuchinPlacements5;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin7) {
-        return gImiruFuchinPlacements7;
-    }
-    return gImiruFuchinPlacementsOther;
+	if (v == (s32)&SceneId_ImiruFuchin1)
+	{
+		return gImiruFuchinPlacements1;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin2)
+	{
+		return gImiruFuchinPlacements2;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin3)
+	{
+		return gImiruFuchinPlacements3;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin4)
+	{
+		return gImiruFuchinPlacements4;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin5)
+	{
+		return gImiruFuchinPlacements5;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin7)
+	{
+		return gImiruFuchinPlacements7;
+	}
+	return gImiruFuchinPlacementsOther;
 }
 
 void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz)
 {
-    struct FieldActor *actor;
-    struct FieldActor *other;
-    s32 x;
-    s32 z;
+	struct FieldActor *actor;
+	struct FieldActor *other;
+	s32				   x;
+	s32				   z;
 
-    actor = Object_GetById(gGameState.selected_actor);
-    other = Object_GetById(id);
-    Engine_EventBegin();
-    {
-        x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
-        z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
+	actor = Object_GetById(gGameState.selected_actor);
+	other = Object_GetById(id);
+	Engine_EventBegin();
+	{
+		x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
+		z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
 
-        actor->speed = 0x10000;
-        actor->acceleration = 0x8000;
-        ((void (*)())Engine_ObjectSetPosition)(actor, x, actor->y.fixed, z);
-    }
-    Object_SetMode(actor, 27);
-    {
-        x = ((other->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
-        z = ((other->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
+		actor->speed = 0x10000;
+		actor->acceleration = 0x8000;
+		((void (*)())Engine_ObjectSetPosition)(actor, x, actor->y.fixed, z);
+	}
+	Object_SetMode(actor, 27);
+	{
+		x = ((other->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
+		z = ((other->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
 
-        other->speed = 0x10000;
-        other->acceleration = 0x8000;
-        ((void (*)())Engine_ObjectSetPosition)(other, x, other->y.fixed, z);
-    }
-    if (dx < 0 || dz < 0) {
-        Object_SetMode(other, 4);
-    } else {
-        Object_SetMode(other, 3);
-    }
-    Object_CommitPosition(actor);
-    Engine_EventEnd();
+		other->speed = 0x10000;
+		other->acceleration = 0x8000;
+		((void (*)())Engine_ObjectSetPosition)(other, x, other->y.fixed, z);
+	}
+	if (dx < 0 || dz < 0)
+	{
+		Object_SetMode(other, 4);
+	}
+	else
+	{
+		Object_SetMode(other, 3);
+	}
+	Object_CommitPosition(actor);
+	Engine_EventEnd();
 }
 
 void ActorPresentation_SetupActorEightForFlag301(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(8, 0x70, 0);
-    SceneActor_PlacePairAtOffset(8, 0x70, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x301);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupOne();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(8, 0x70, 0);
+	SceneActor_PlacePairAtOffset(8, 0x70, 0);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x301);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupOne();
 }
 
 void SceneState_RunSlot8OffsetStep(void)
 {
-    s32 offset = 112;
+	s32 offset = 112;
 
-    offset = -offset;
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(8, offset, 0);
-    SceneActor_PlacePairAtOffset(8, offset, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagClear(0x301);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupOne();
+	offset = -offset;
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(8, offset, 0);
+	SceneActor_PlacePairAtOffset(8, offset, 0);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagClear(0x301);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupOne();
 }
 
 void FieldScene_RunActor9Transition302(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(9, 0, 0x40);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagClear(0x302);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupOne();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(9, 0, 0x40);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagClear(0x302);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupOne();
 }
 
 void ActorPresentation_SetupActorNineForFlag302(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(9, 0, -64);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x302);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupOne();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(9, 0, -64);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x302);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupOne();
 }
 
 void ActorPresentation_SetupActorTenForFlag303(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(0xA, 0, 0x40);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagClear(0x303);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupOne();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(0xA, 0, 0x40);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagClear(0x303);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupOne();
 }
 
 void FieldScene_RunActor10Transition303(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(0xA, 0, -64);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x303);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupOne();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(0xA, 0, -64);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x303);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupOne();
 }
 
 void FieldScene_RunActor8Transition304(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(8, 0x90, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x304);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupTwo();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(8, 0x90, 0);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x304);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupTwo();
 }
 
 void FieldScene_RunActor8Transition304And305(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(8, -144, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagClear(0x304);
-    Engine_GameFlagSet(0x305);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupTwo();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(8, -144, 0);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagClear(0x304);
+	Engine_GameFlagSet(0x305);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupTwo();
 }
 
 void FieldScene_RunActor8Transition305(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(8, -14, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x305);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupTwo();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(8, -14, 0);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x305);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupTwo();
 }
 
 void FieldScene_RunActor8FlaggedSequence(void)
 {
-    Engine_AudioPlayCue(0xF1);
+	Engine_AudioPlayCue(0xF1);
 
-    if (Engine_GameFlagIsSet(0x306) != 0) {
-        SceneActor_PlacePairAtOffset(8, 16, 0);
-        Engine_GameFlagClear(0x305);
-    } else {
-        SceneActor_PlacePairAtOffset(8, 144, 0);
+	if (Engine_GameFlagIsSet(0x306) != 0)
+	{
+		SceneActor_PlacePairAtOffset(8, 16, 0);
+		Engine_GameFlagClear(0x305);
+	}
+	else
+	{
+		SceneActor_PlacePairAtOffset(8, 144, 0);
 
-        Engine_GameFlagSet(0x304);
-    }
+		Engine_GameFlagSet(0x304);
+	}
 
-    Engine_AudioPlayCue(0x121);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupTwo();
+	Engine_AudioPlayCue(0x121);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupTwo();
 }
 
 void ActorPresentation_SetupActorNineForFlag306(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(9, 0, 0x40);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x306);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupTwo();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(9, 0, 0x40);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x306);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupTwo();
 }
 
 void FieldScene_RunActor9Flag306Sequence(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(9, 0, -64);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagClear(0x306);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupTwo();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(9, 0, -64);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagClear(0x306);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupTwo();
 }
 
 void ActorPresentation_SetupActorTenForFlag307(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(10, 0, 144);
-    SceneActor_PlacePairAtOffset(10, 0, 128);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagClear(0x307);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupTwo();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(10, 0, 144);
+	SceneActor_PlacePairAtOffset(10, 0, 128);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagClear(0x307);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupTwo();
 }
 
 void FieldScene_RunActorTenDepthSequence(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    s32 depth = -96;
+	s32 depth = -96;
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(10, 0, depth);
-    SceneActor_PlacePairAtOffset(10, 0, depth);
-    SceneActor_PlacePairAtOffset(10, 0, -80);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x307);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupTwo();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(10, 0, depth);
+	SceneActor_PlacePairAtOffset(10, 0, depth);
+	SceneActor_PlacePairAtOffset(10, 0, -80);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x307);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupTwo();
 }
 
 void FieldScene_PlaceActorEightByFlags(void)
 {
-    Engine_AudioPlayCue(0xF1);
+	Engine_AudioPlayCue(0xF1);
 
-    if (Engine_GameFlagIsSet(0x310) != 0 || Engine_GameFlagIsSet(0x30D) != 0) {
-        SceneActor_PlacePairAtOffset(8, -48, 0);
-        Engine_GameFlagClear(0x308);
-        Engine_GameFlagSet(0x309);
-    } else {
-        SceneActor_PlacePairAtOffset(8, -96, 0);
-        Engine_GameFlagSet(0x308);
-        Engine_GameFlagClear(0x309);
-    }
+	if (Engine_GameFlagIsSet(0x310) != 0 || Engine_GameFlagIsSet(0x30D) != 0)
+	{
+		SceneActor_PlacePairAtOffset(8, -48, 0);
+		Engine_GameFlagClear(0x308);
+		Engine_GameFlagSet(0x309);
+	}
+	else
+	{
+		SceneActor_PlacePairAtOffset(8, -96, 0);
+		Engine_GameFlagSet(0x308);
+		Engine_GameFlagClear(0x309);
+	}
 
-    Engine_AudioPlayCue(0x121);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(0x121);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor8Transition308And309(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    Engine_GameFlagClear(0x308);
-    Engine_GameFlagClear(0x309);
-    SceneActor_PlacePairAtOffset(8, 0x30, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(0xF1);
+	Engine_GameFlagClear(0x308);
+	Engine_GameFlagClear(0x309);
+	SceneActor_PlacePairAtOffset(8, 0x30, 0);
+	Engine_AudioPlayCue(0x121);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorEightForFlags308And309Guarded(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    if (Engine_GameFlagIsSet(0x310) != 0) {
-        return;
-    }
-    if (Engine_GameFlagIsSet(0x30D) != 0) {
-        return;
-    }
+	if (Engine_GameFlagIsSet(0x310) != 0)
+	{
+		return;
+	}
+	if (Engine_GameFlagIsSet(0x30D) != 0)
+	{
+		return;
+	}
 
-    Engine_AudioPlayCue(0xF1);
+	Engine_AudioPlayCue(0xF1);
 
-    Engine_GameFlagSet(0x308);
-    Engine_GameFlagClear(0x309);
+	Engine_GameFlagSet(0x308);
+	Engine_GameFlagClear(0x309);
 
-    SceneActor_PlacePairAtOffset(8, -48, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	SceneActor_PlacePairAtOffset(8, -48, 0);
+	Engine_AudioPlayCue(0x121);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorEightForFlags308And309(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    Engine_GameFlagClear(0x308);
-    Engine_GameFlagClear(0x309);
-    SceneActor_PlacePairAtOffset(8, 0x60, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(0xF1);
+	Engine_GameFlagClear(0x308);
+	Engine_GameFlagClear(0x309);
+	SceneActor_PlacePairAtOffset(8, 0x60, 0);
+	Engine_AudioPlayCue(0x121);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorNineForFlag30a(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(9, -32, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x30A);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(9, -32, 0);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x30A);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor9Transition30A(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(9, 0x20, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagClear(0x30A);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(9, 0x20, 0);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagClear(0x30A);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_PlaceActorTenByFlags(void)
 {
-    Engine_AudioPlayCue(241);
-    if (Engine_GameFlagIsSet(0x308) != 0) {
-        SceneActor_PlacePairAtOffset(10, 0, -64);
-        Engine_GameFlagClear(0x30b);
-        Engine_GameFlagSet(0x30c);
-        Engine_GameFlagClear(0x30d);
-        Engine_GameFlagClear(0x30e);
-    } else {
-        SceneActor_PlacePairAtOffset(10, 0, -128);
-        Engine_GameFlagSet(0x30b);
-        Engine_GameFlagClear(0x30c);
-        Engine_GameFlagClear(0x30d);
-        Engine_GameFlagClear(0x30e);
-    }
-    Engine_AudioPlayCue(0x121);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(241);
+	if (Engine_GameFlagIsSet(0x308) != 0)
+	{
+		SceneActor_PlacePairAtOffset(10, 0, -64);
+		Engine_GameFlagClear(0x30b);
+		Engine_GameFlagSet(0x30c);
+		Engine_GameFlagClear(0x30d);
+		Engine_GameFlagClear(0x30e);
+	}
+	else
+	{
+		SceneActor_PlacePairAtOffset(10, 0, -128);
+		Engine_GameFlagSet(0x30b);
+		Engine_GameFlagClear(0x30c);
+		Engine_GameFlagClear(0x30d);
+		Engine_GameFlagClear(0x30e);
+	}
+	Engine_AudioPlayCue(0x121);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunFlag308DialogueBranch(void)
 {
-    Engine_AudioPlayCue(0xf1);
+	Engine_AudioPlayCue(0xf1);
 
-    if (Engine_GameFlagIsSet(0x308) != 0) {
-        SceneActor_PlacePairAtOffset(10, 0, 16);
-        Engine_GameFlagClear(0x30b);
-        Engine_GameFlagSet(0x30c);
-        Engine_GameFlagClear(0x30d);
-        Engine_GameFlagClear(0x30e);
-
-    } else if (Engine_GameFlagIsSet(0x310) != 0) {
-        SceneActor_PlacePairAtOffset(10, 0, 16);
-        Engine_GameFlagClear(0x30b);
-        Engine_GameFlagSet(0x30c);
-        Engine_GameFlagClear(0x30d);
-        Engine_GameFlagClear(0x30e);
-    } else if (Engine_GameFlagIsSet(0x311) != 0) {
-        SceneActor_PlacePairAtOffset(10, 0, 64);
-        Engine_GameFlagClear(0x30b);
-        Engine_GameFlagClear(0x30c);
-        Engine_GameFlagSet(0x30d);
-        Engine_GameFlagClear(0x30e);
-    } else {
-        SceneActor_PlacePairAtOffset(10, 0, 128);
-        Engine_GameFlagClear(0x30b);
-        Engine_GameFlagClear(0x30c);
-        Engine_GameFlagClear(0x30d);
-        Engine_GameFlagClear(0x30e);
-    }
-    Engine_AudioPlayCue(0x121);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	if (Engine_GameFlagIsSet(0x308) != 0)
+	{
+		SceneActor_PlacePairAtOffset(10, 0, 16);
+		Engine_GameFlagClear(0x30b);
+		Engine_GameFlagSet(0x30c);
+		Engine_GameFlagClear(0x30d);
+		Engine_GameFlagClear(0x30e);
+	}
+	else if (Engine_GameFlagIsSet(0x310) != 0)
+	{
+		SceneActor_PlacePairAtOffset(10, 0, 16);
+		Engine_GameFlagClear(0x30b);
+		Engine_GameFlagSet(0x30c);
+		Engine_GameFlagClear(0x30d);
+		Engine_GameFlagClear(0x30e);
+	}
+	else if (Engine_GameFlagIsSet(0x311) != 0)
+	{
+		SceneActor_PlacePairAtOffset(10, 0, 64);
+		Engine_GameFlagClear(0x30b);
+		Engine_GameFlagClear(0x30c);
+		Engine_GameFlagSet(0x30d);
+		Engine_GameFlagClear(0x30e);
+	}
+	else
+	{
+		SceneActor_PlacePairAtOffset(10, 0, 128);
+		Engine_GameFlagClear(0x30b);
+		Engine_GameFlagClear(0x30c);
+		Engine_GameFlagClear(0x30d);
+		Engine_GameFlagClear(0x30e);
+	}
+	Engine_AudioPlayCue(0x121);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor10Transition30BTo30E(void)
 {
-    Engine_AudioPlayCue(241);
-    SceneActor_PlacePairAtOffset(10, 0, -16);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x30b);
-    Engine_GameFlagClear(0x30c);
-    Engine_GameFlagClear(0x30d);
-    Engine_GameFlagClear(0x30e);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(241);
+	SceneActor_PlacePairAtOffset(10, 0, -16);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x30b);
+	Engine_GameFlagClear(0x30c);
+	Engine_GameFlagClear(0x30d);
+	Engine_GameFlagClear(0x30e);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunFlag311DialogueBranch(void)
 {
-    Engine_AudioPlayCue(0xf1);
-    if (Engine_GameFlagIsSet(0x311) != 0) {
-        SceneActor_PlacePairAtOffset(10, 0, 48);
-        Engine_GameFlagClear(0x30b);
+	Engine_AudioPlayCue(0xf1);
+	if (Engine_GameFlagIsSet(0x311) != 0)
+	{
+		SceneActor_PlacePairAtOffset(10, 0, 48);
+		Engine_GameFlagClear(0x30b);
 
-        Engine_GameFlagClear(0x30c);
-        Engine_GameFlagSet(0x30d);
-        Engine_GameFlagClear(0x30e);
-
-    } else if (Engine_GameFlagIsSet(0x310) != 0) {
-        SceneActor_PlacePairAtOffset(10, 0, 32);
-        Engine_GameFlagClear(0x30b);
-        Engine_GameFlagSet(0x30c);
-        Engine_GameFlagClear(0x30d);
-        Engine_GameFlagClear(0x30e);
-    } else {
-        SceneActor_PlacePairAtOffset(10, 0, 112);
-        Engine_GameFlagClear(0x30b);
-        Engine_GameFlagClear(0x30c);
-        Engine_GameFlagClear(0x30d);
-        Engine_GameFlagClear(0x30e);
-    }
-    Engine_AudioPlayCue(0x121);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+		Engine_GameFlagClear(0x30c);
+		Engine_GameFlagSet(0x30d);
+		Engine_GameFlagClear(0x30e);
+	}
+	else if (Engine_GameFlagIsSet(0x310) != 0)
+	{
+		SceneActor_PlacePairAtOffset(10, 0, 32);
+		Engine_GameFlagClear(0x30b);
+		Engine_GameFlagSet(0x30c);
+		Engine_GameFlagClear(0x30d);
+		Engine_GameFlagClear(0x30e);
+	}
+	else
+	{
+		SceneActor_PlacePairAtOffset(10, 0, 112);
+		Engine_GameFlagClear(0x30b);
+		Engine_GameFlagClear(0x30c);
+		Engine_GameFlagClear(0x30d);
+		Engine_GameFlagClear(0x30e);
+	}
+	Engine_AudioPlayCue(0x121);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorTenForFlags30bAnd30d(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(0xA, 0, -64);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x30B);
-    Engine_GameFlagClear(0x30D);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(0xA, 0, -64);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x30B);
+	Engine_GameFlagClear(0x30D);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor10Flags30bTo30eSequenceA(void)
 {
-    Engine_AudioPlayCue(241);
-    SceneActor_PlacePairAtOffset(10, 0, 64);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagClear(0x30b);
-    Engine_GameFlagClear(0x30c);
-    Engine_GameFlagClear(0x30d);
-    Engine_GameFlagClear(0x30e);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(241);
+	SceneActor_PlacePairAtOffset(10, 0, 64);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagClear(0x30b);
+	Engine_GameFlagClear(0x30c);
+	Engine_GameFlagClear(0x30d);
+	Engine_GameFlagClear(0x30e);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor10Flags30bTo30eSequenceB(void)
 {
-    Engine_AudioPlayCue(241);
-    SceneActor_PlacePairAtOffset(10, 0, -80);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x30b);
-    Engine_GameFlagClear(0x30c);
-    Engine_GameFlagClear(0x30d);
-    Engine_GameFlagClear(0x30e);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(241);
+	SceneActor_PlacePairAtOffset(10, 0, -80);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x30b);
+	Engine_GameFlagClear(0x30c);
+	Engine_GameFlagClear(0x30d);
+	Engine_GameFlagClear(0x30e);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor10Flags30bTo30eSequenceC(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(0xA, 0, 0x40);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagClear(0x30B);
-    Engine_GameFlagClear(0x30C);
-    Engine_GameFlagClear(0x30D);
-    Engine_GameFlagClear(0x30E);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(0xA, 0, 0x40);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagClear(0x30B);
+	Engine_GameFlagClear(0x30C);
+	Engine_GameFlagClear(0x30D);
+	Engine_GameFlagClear(0x30E);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActorElevenFlaggedSteps(void)
 {
-    Engine_AudioPlayCue(0xf1);
+	Engine_AudioPlayCue(0xf1);
 
-    if (Engine_GameFlagIsSet(0x308) != 0 || Engine_GameFlagIsSet(0x30d) != 0) {
-        SceneActor_PlacePairAtOffset(11, 0, -64);
-        Engine_GameFlagClear(0x30f);
-        Engine_GameFlagClear(0x310);
-        Engine_GameFlagSet(0x311);
-        Engine_GameFlagClear(0x312);
-
-    } else if (Engine_GameFlagIsSet(0x30c) != 0) {
-        SceneActor_PlacePairAtOffset(11, 0, -112);
-        Engine_GameFlagClear(0x30f);
-        Engine_GameFlagSet(0x310);
-        Engine_GameFlagClear(0x311);
-        Engine_GameFlagClear(0x312);
-    } else {
-        SceneActor_PlacePairAtOffset(11, 0, -128);
-        Engine_GameFlagSet(0x30f);
-        Engine_GameFlagClear(0x310);
-        Engine_GameFlagClear(0x311);
-        Engine_GameFlagClear(0x312);
-    }
-    Engine_AudioPlayCue(0x121);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	if (Engine_GameFlagIsSet(0x308) != 0 || Engine_GameFlagIsSet(0x30d) != 0)
+	{
+		SceneActor_PlacePairAtOffset(11, 0, -64);
+		Engine_GameFlagClear(0x30f);
+		Engine_GameFlagClear(0x310);
+		Engine_GameFlagSet(0x311);
+		Engine_GameFlagClear(0x312);
+	}
+	else if (Engine_GameFlagIsSet(0x30c) != 0)
+	{
+		SceneActor_PlacePairAtOffset(11, 0, -112);
+		Engine_GameFlagClear(0x30f);
+		Engine_GameFlagSet(0x310);
+		Engine_GameFlagClear(0x311);
+		Engine_GameFlagClear(0x312);
+	}
+	else
+	{
+		SceneActor_PlacePairAtOffset(11, 0, -128);
+		Engine_GameFlagSet(0x30f);
+		Engine_GameFlagClear(0x310);
+		Engine_GameFlagClear(0x311);
+		Engine_GameFlagClear(0x312);
+	}
+	Engine_AudioPlayCue(0x121);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunSteps30FTo312(void)
 {
-    Engine_GameFlagClear(0x30F);
-    Engine_GameFlagClear(0x310);
-    Engine_GameFlagClear(0x311);
-    Engine_GameFlagClear(0x312);
+	Engine_GameFlagClear(0x30F);
+	Engine_GameFlagClear(0x310);
+	Engine_GameFlagClear(0x311);
+	Engine_GameFlagClear(0x312);
 }
 
 void FieldScene_RunActor11Offset128Sequence(void)
 {
-    Engine_AudioPlayCue(241);
-    SceneActor_PlacePairAtOffset(11, 0, 128);
-    FieldScene_RunSteps30FTo312();
-    Engine_AudioPlayCue(0x121);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(241);
+	SceneActor_PlacePairAtOffset(11, 0, 128);
+	FieldScene_RunSteps30FTo312();
+	Engine_AudioPlayCue(0x121);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor11Flags30fTo312Sequence(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(0xB, 0, -16);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x30F);
-    Engine_GameFlagClear(0x310);
-    Engine_GameFlagClear(0x311);
-    Engine_GameFlagClear(0x312);
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(0xB, 0, -16);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x30F);
+	Engine_GameFlagClear(0x310);
+	Engine_GameFlagClear(0x311);
+	Engine_GameFlagClear(0x312);
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorElevenAt0_112(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(241);
-    SceneActor_PlacePairAtOffset(11, 0, 112);
-    Engine_AudioPlayCue(0x121);
-    FieldScene_RunSteps30FTo312();
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(241);
+	SceneActor_PlacePairAtOffset(11, 0, 112);
+	Engine_AudioPlayCue(0x121);
+	FieldScene_RunSteps30FTo312();
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorElevenAt0_64(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(0xB, 0, 0x40);
-    Engine_AudioPlayCue(0x121);
-    FieldScene_RunSteps30FTo312();
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(0xB, 0, 0x40);
+	Engine_AudioPlayCue(0x121);
+	FieldScene_RunSteps30FTo312();
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorElevenAt0_80(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(0xB, 0, 0x50);
-    Engine_AudioPlayCue(0x121);
-    FieldScene_RunSteps30FTo312();
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(0xB, 0, 0x50);
+	Engine_AudioPlayCue(0x121);
+	FieldScene_RunSteps30FTo312();
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor11Transition(void)
 {
-    Engine_AudioPlayCue(241);
-    SceneActor_PlacePairAtOffset(11, 0, 48);
-    Engine_AudioPlayCue(0x121);
-    FieldScene_RunSteps30FTo312();
-    Engine_TaskWait(2);
-    DialogueLayout_ConfigureGroupThree();
+	Engine_AudioPlayCue(241);
+	SceneActor_PlacePairAtOffset(11, 0, 48);
+	Engine_AudioPlayCue(0x121);
+	FieldScene_RunSteps30FTo312();
+	Engine_TaskWait(2);
+	DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorEightForFlag313(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(8, 0, 0x70);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x313);
-    Engine_TaskWait(2);
-    FieldScene_RunFlagBranchedLayoutSteps();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(8, 0, 0x70);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x313);
+	Engine_TaskWait(2);
+	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
 void FieldScene_RunActor8Transition313(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(8, 0, -112);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagClear(0x313);
-    Engine_TaskWait(2);
-    FieldScene_RunFlagBranchedLayoutSteps();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(8, 0, -112);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagClear(0x313);
+	Engine_TaskWait(2);
+	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
 void FieldScene_RunActor9Flag314Sequence(void)
 {
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(9, -128, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x314);
-    Engine_TaskWait(2);
-    FieldScene_RunFlagBranchedLayoutSteps();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(9, -128, 0);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x314);
+	Engine_TaskWait(2);
+	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
 void ActorPresentation_SetupActorNineForFlag314(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(0xF1);
-    SceneActor_PlacePairAtOffset(9, 0x80, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagClear(0x314);
-    Engine_TaskWait(2);
-    FieldScene_RunFlagBranchedLayoutSteps();
+	Engine_AudioPlayCue(0xF1);
+	SceneActor_PlacePairAtOffset(9, 0x80, 0);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagClear(0x314);
+	Engine_TaskWait(2);
+	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
 void ActorPresentation_SetupActorTenForFlag315(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_AudioPlayCue(241);
-    SceneActor_PlacePairAtOffset(10, 160, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagSet(0x315);
-    Engine_TaskWait(2);
-    FieldScene_RunFlagBranchedLayoutSteps();
+	Engine_AudioPlayCue(241);
+	SceneActor_PlacePairAtOffset(10, 160, 0);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagSet(0x315);
+	Engine_TaskWait(2);
+	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
 void FieldScene_RunActor10Flag315Sequence(void)
 {
-    Engine_AudioPlayCue(241);
-    SceneActor_PlacePairAtOffset(10, -160, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_GameFlagClear(0x315);
-    Engine_TaskWait(2);
-    FieldScene_RunFlagBranchedLayoutSteps();
+	Engine_AudioPlayCue(241);
+	SceneActor_PlacePairAtOffset(10, -160, 0);
+	Engine_AudioPlayCue(0x121);
+	Engine_GameFlagClear(0x315);
+	Engine_TaskWait(2);
+	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
 void ActorPresentation_AdvanceActorEightStates(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_ActorSetAnimation(8, 1);
-    Engine_ActorSetAnimation(8, 2);
+	Engine_ActorSetAnimation(8, 1);
+	Engine_ActorSetAnimation(8, 2);
 }
 
 void FieldScene_SetActor9Values1And2(void)
 {
-    Engine_ActorSetAnimation(9, 1);
-    Engine_ActorSetAnimation(9, 2);
+	Engine_ActorSetAnimation(9, 1);
+	Engine_ActorSetAnimation(9, 2);
 }
 
 void ActorPresentation_AdvanceActorTenStates(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_ActorSetAnimation(10, 1);
-    Engine_ActorSetAnimation(10, 2);
+	Engine_ActorSetAnimation(10, 1);
+	Engine_ActorSetAnimation(10, 2);
 }
 
 void SceneActor_SetActor11Values1And2(void)
 {
-    void SceneActor_PlacePairAtOffset(s32, s32, s32);
+	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    Engine_ActorSetAnimation(11, 1);
-    Engine_ActorSetAnimation(11, 2);
+	Engine_ActorSetAnimation(11, 1);
+	Engine_ActorSetAnimation(11, 2);
 }
 
 struct FieldActor *OverlayObject_CreateAndInitialize(s32 a, s32 b, s32 c, s32 d)
 {
-    struct FieldActor *actor = Engine_ObjectCreate(d, a, b, c);
+	struct FieldActor *actor = Engine_ObjectCreate(d, a, b, c);
 
-    if (actor != 0) {
-        actor->sprite->priority = 1;
-        actor->motion_flags = 0;
-        Engine_ActorSetSpriteFlags(actor, 0);
-        ObjectGroup_SetChildValue(actor, 15);
-        actor->priority_flags |= 2;
-        return actor;
-    }
-    return 0;
+	if (actor != 0)
+	{
+		actor->sprite->priority = 1;
+		actor->motion_flags = 0;
+		Engine_ActorSetSpriteFlags(actor, 0);
+		ObjectGroup_SetChildValue(actor, 15);
+		actor->priority_flags |= 2;
+		return actor;
+	}
+	return 0;
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-    s16 v = gGameState.scene;
+	s16 v = gGameState.scene;
 
-    if (v == (s32)&SceneId_ImiruFuchin1) {
-        return gImiruFuchinEvents1;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin2) {
-        return gImiruFuchinEvents2;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin3) {
-        return gImiruFuchinEvents3;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin4) {
-        return gImiruFuchinEvents4;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin5) {
-        return gImiruFuchinEvents5;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin6) {
-        return gImiruFuchinEvents6;
-    }
-    if (v == (s32)&SceneId_ImiruFuchin7) {
-        return gImiruFuchinEvents7;
-    }
-    return gImiruFuchinEventsOther;
+	if (v == (s32)&SceneId_ImiruFuchin1)
+	{
+		return gImiruFuchinEvents1;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin2)
+	{
+		return gImiruFuchinEvents2;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin3)
+	{
+		return gImiruFuchinEvents3;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin4)
+	{
+		return gImiruFuchinEvents4;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin5)
+	{
+		return gImiruFuchinEvents5;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin6)
+	{
+		return gImiruFuchinEvents6;
+	}
+	if (v == (s32)&SceneId_ImiruFuchin7)
+	{
+		return gImiruFuchinEvents7;
+	}
+	return gImiruFuchinEventsOther;
 }
 
 void ImiruFuchin_TurnLeaderAndExit(void)
 {
-    struct FieldActor *work;
+	struct FieldActor *work;
 
-    Engine_EventBegin();
-    work = Object_GetById(0);
-    work->facing = 0x4000;
-    Engine_AudioPlayCue(123);
-    Engine_EventCloseScreen();
-    Engine_EventWaitForScreen();
-    Engine_EventRequestExit(1);
+	Engine_EventBegin();
+	work = Object_GetById(0);
+	work->facing = 0x4000;
+	Engine_AudioPlayCue(123);
+	Engine_EventCloseScreen();
+	Engine_EventWaitForScreen();
+	Engine_EventRequestExit(1);
 }
 
 void FieldScene_RunSingleStep(void)
 {
-    SceneActor_StepSubjectAlongHeading();
+	SceneActor_StepSubjectAlongHeading();
 }
 
 void SceneActor_PlaceAtTileAndMark(s32 id, s32 tile_x, s32 tile_z)
 {
-    struct FieldActor *actor = Object_GetById(id);
+	struct FieldActor *actor = Object_GetById(id);
 
-    if (actor != NULL) {
-        Engine_ActorSetSpritePriority(id, 3);
-        actor->terrain_id = 2;
-        actor->priority_flags |= 2;
-        actor->x.fixed = (tile_x << 20) + 0x80000;
-        actor->z.fixed = (tile_z << 20) + 0x80000;
-    }
+	if (actor != NULL)
+	{
+		Engine_ActorSetSpritePriority(id, 3);
+		actor->terrain_id = 2;
+		actor->priority_flags |= 2;
+		actor->x.fixed = (tile_x << 20) + 0x80000;
+		actor->z.fixed = (tile_z << 20) + 0x80000;
+	}
 }
 
 void DialogueLayout_ConfigureGroupOne(void)
 {
-    { s32 x = 8; s32 y = 29; Engine_MapCopyCellAttributes(8, 42, 15, 5,  x, y); }
+	{
+		s32 x = 8;
+		s32 y = 29;
+		Engine_MapCopyCellAttributes(8, 42, 15, 5, x, y);
+	}
 
-    if (Engine_GameFlagIsSet(0x301) != 0) {
-        SceneActor_PlaceAtTileAndMark(8, 22, 31);
-        { s32 x = 8; s32 y = 30; Engine_MapCopyCellAttributes(9, 30, 1, 3,  x, y); }
-    } else {
-        SceneActor_PlaceAtTileAndMark(8, 8, 31);
-        { s32 x = 22; s32 y = 30; Engine_MapCopyCellAttributes(9, 30, 1, 3,  x, y); }
-    }
+	if (Engine_GameFlagIsSet(0x301) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(8, 22, 31);
+		{
+			s32 x = 8;
+			s32 y = 30;
+			Engine_MapCopyCellAttributes(9, 30, 1, 3, x, y);
+		}
+	}
+	else
+	{
+		SceneActor_PlaceAtTileAndMark(8, 8, 31);
+		{
+			s32 x = 22;
+			s32 y = 30;
+			Engine_MapCopyCellAttributes(9, 30, 1, 3, x, y);
+		}
+	}
 
-    if (Engine_GameFlagIsSet(0x302) != 0) {
-        SceneActor_PlaceAtTileAndMark(9, 12, 29);
-        { s32 x = 11; s32 y = 33; Engine_MapCopyCellAttributes(14, 33, 3, 1,  x, y); }
-    } else {
-        SceneActor_PlaceAtTileAndMark(9, 12, 33);
-        { s32 x = 11; s32 y = 29; Engine_MapCopyCellAttributes(14, 29, 3, 1,  x, y); }
-    }
+	if (Engine_GameFlagIsSet(0x302) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(9, 12, 29);
+		{
+			s32 x = 11;
+			s32 y = 33;
+			Engine_MapCopyCellAttributes(14, 33, 3, 1, x, y);
+		}
+	}
+	else
+	{
+		SceneActor_PlaceAtTileAndMark(9, 12, 33);
+		{
+			s32 x = 11;
+			s32 y = 29;
+			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, y);
+		}
+	}
 
-    if (Engine_GameFlagIsSet(0x303) != 0) {
-        SceneActor_PlaceAtTileAndMark(10, 18, 29);
-        { s32 x = 17; s32 y = 33; Engine_MapCopyCellAttributes(14, 33, 3, 1,  x, y); }
-    } else {
-        SceneActor_PlaceAtTileAndMark(10, 18, 33);
-        { s32 x = 17; s32 y = 29; Engine_MapCopyCellAttributes(14, 29, 3, 1,  x, y); }
-    }
+	if (Engine_GameFlagIsSet(0x303) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(10, 18, 29);
+		{
+			s32 x = 17;
+			s32 y = 33;
+			Engine_MapCopyCellAttributes(14, 33, 3, 1, x, y);
+		}
+	}
+	else
+	{
+		SceneActor_PlaceAtTileAndMark(10, 18, 33);
+		{
+			s32 x = 17;
+			s32 y = 29;
+			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, y);
+		}
+	}
 }
 
 void DialogueLayout_ConfigureGroupTwo(void)
 {
-    { s32 x = 12; s32 y = 8; Engine_MapCopyCellAttributes(0, 28, 10, 18,  x, y); }
+	{
+		s32 x = 12;
+		s32 y = 8;
+		Engine_MapCopyCellAttributes(0, 28, 10, 18, x, y);
+	}
 
-    if (Engine_GameFlagIsSet(0x304) != 0) {
-        SceneActor_PlaceAtTileAndMark(8, 21, 20);
-        { s32 x = 13; s32 y = 19; Engine_MapCopyCellAttributes(20, 19, 1, 3,  x, y); }
-    } else {
-        SceneActor_PlaceAtTileAndMark(8, 13, 20);
-        { s32 x = 21; s32 y = 19; Engine_MapCopyCellAttributes(20, 19, 1, 3,  x, y); }
-    }
+	if (Engine_GameFlagIsSet(0x304) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(8, 21, 20);
+		{
+			s32 x = 13;
+			s32 y = 19;
+			Engine_MapCopyCellAttributes(20, 19, 1, 3, x, y);
+		}
+	}
+	else
+	{
+		SceneActor_PlaceAtTileAndMark(8, 13, 20);
+		{
+			s32 x = 21;
+			s32 y = 19;
+			Engine_MapCopyCellAttributes(20, 19, 1, 3, x, y);
+		}
+	}
 
-    if (Engine_GameFlagIsSet(0x305) != 0) {
-        SceneActor_PlaceAtTileAndMark(8, 12, 20);
-        { s32 x = 12; s32 y = 19; Engine_MapCopyCellAttributes(5, 19, 1, 3,  x, y); }
-        { s32 x = 13; s32 y = 19; Engine_MapCopyCellAttributes(20, 19, 1, 3,  x, y); }
-        if (Engine_GameFlagIsSet(0x304) != 0) {
-            SceneActor_PlaceAtTileAndMark(8, 21, 20);
-            { s32 x = 13; s32 y = 19; Engine_MapCopyCellAttributes(20, 19, 1, 3,  x, y); }
-            { s32 x = 12; s32 y = 19; Engine_MapCopyCellAttributes(20, 19, 1, 3,  x, y); }
-        }
-    }
+	if (Engine_GameFlagIsSet(0x305) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(8, 12, 20);
+		{
+			s32 x = 12;
+			s32 y = 19;
+			Engine_MapCopyCellAttributes(5, 19, 1, 3, x, y);
+		}
+		{
+			s32 x = 13;
+			s32 y = 19;
+			Engine_MapCopyCellAttributes(20, 19, 1, 3, x, y);
+		}
+		if (Engine_GameFlagIsSet(0x304) != 0)
+		{
+			SceneActor_PlaceAtTileAndMark(8, 21, 20);
+			{
+				s32 x = 13;
+				s32 y = 19;
+				Engine_MapCopyCellAttributes(20, 19, 1, 3, x, y);
+			}
+			{
+				s32 x = 12;
+				s32 y = 19;
+				Engine_MapCopyCellAttributes(20, 19, 1, 3, x, y);
+			}
+		}
+	}
 
-    if (Engine_GameFlagIsSet(0x306) != 0) {
-        SceneActor_PlaceAtTileAndMark(9, 15, 21);
-        { s32 x = 14; s32 y = 17; Engine_MapCopyCellAttributes(14, 18, 3, 1,  x, y); }
-    } else {
-        SceneActor_PlaceAtTileAndMark(9, 15, 17);
-        { s32 x = 14; s32 y = 21; Engine_MapCopyCellAttributes(14, 18, 3, 1,  x, y); }
-    }
+	if (Engine_GameFlagIsSet(0x306) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(9, 15, 21);
+		{
+			s32 x = 14;
+			s32 y = 17;
+			Engine_MapCopyCellAttributes(14, 18, 3, 1, x, y);
+		}
+	}
+	else
+	{
+		SceneActor_PlaceAtTileAndMark(9, 15, 17);
+		{
+			s32 x = 14;
+			s32 y = 21;
+			Engine_MapCopyCellAttributes(14, 18, 3, 1, x, y);
+		}
+	}
 
-    if (Engine_GameFlagIsSet(0x307) != 0) {
-        SceneActor_PlaceAtTileAndMark(10, 19, 8);
-        { s32 x = 18; s32 y = 25; Engine_MapCopyCellAttributes(14, 18, 3, 1,  x, y); }
-    } else {
-        SceneActor_PlaceAtTileAndMark(10, 19, 25);
-        { s32 x = 18; s32 y = 8; Engine_MapCopyCellAttributes(14, 18, 3, 1,  x, y); }
-    }
+	if (Engine_GameFlagIsSet(0x307) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(10, 19, 8);
+		{
+			s32 x = 18;
+			s32 y = 25;
+			Engine_MapCopyCellAttributes(14, 18, 3, 1, x, y);
+		}
+	}
+	else
+	{
+		SceneActor_PlaceAtTileAndMark(10, 19, 25);
+		{
+			s32 x = 18;
+			s32 y = 8;
+			Engine_MapCopyCellAttributes(14, 18, 3, 1, x, y);
+		}
+	}
 }
 
 void DialogueLayout_ConfigureGroupThree(void)
 {
-    { s32 x = 12, y = 21; Engine_MapCopyCellAttributes(12, 3, 9, 16, x, y); }
+	{
+		s32 x = 12, y = 21;
+		Engine_MapCopyCellAttributes(12, 3, 9, 16, x, y);
+	}
 
-    if (Engine_GameFlagIsSet(0x308) != 0) {
-        SceneActor_PlaceAtTileAndMark(8, 14, 25);
-        { s32 x = 20, y = 24; Engine_MapCopyCellAttributes(16, 24, 1, 3, x, y); }
-    } else if (Engine_GameFlagIsSet(0x309) != 0) {
-        SceneActor_PlaceAtTileAndMark(8, 17, 25);
-        { s32 y = 24;
-          Engine_MapCopyCellAttributes(18, 24, 1, 3, 20, y);
-          Engine_MapCopyCellAttributes(18, 24, 1, 3, 14, y);
-          Engine_MapCopyCellAttributes(8, 41, 1, 3, 17, y);
-        }
-    } else {
-        SceneActor_PlaceAtTileAndMark(8, 20, 25);
-        { s32 x = 14, y = 24; Engine_MapCopyCellAttributes(16, 24, 1, 3, x, y); }
-    }
+	if (Engine_GameFlagIsSet(0x308) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(8, 14, 25);
+		{
+			s32 x = 20, y = 24;
+			Engine_MapCopyCellAttributes(16, 24, 1, 3, x, y);
+		}
+	}
+	else if (Engine_GameFlagIsSet(0x309) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(8, 17, 25);
+		{
+			s32 y = 24;
+			Engine_MapCopyCellAttributes(18, 24, 1, 3, 20, y);
+			Engine_MapCopyCellAttributes(18, 24, 1, 3, 14, y);
+			Engine_MapCopyCellAttributes(8, 41, 1, 3, 17, y);
+		}
+	}
+	else
+	{
+		SceneActor_PlaceAtTileAndMark(8, 20, 25);
+		{
+			s32 x = 14, y = 24;
+			Engine_MapCopyCellAttributes(16, 24, 1, 3, x, y);
+		}
+	}
 
-    if (Engine_GameFlagIsSet(0x30a) != 0) {
-        SceneActor_PlaceAtTileAndMark(9, 13, 35);
-        { s32 x = 15, y = 34; Engine_MapCopyCellAttributes(14, 34, 1, 3, x, y); }
-    } else {
-        SceneActor_PlaceAtTileAndMark(9, 15, 35);
-        { s32 x = 13, y = 34; Engine_MapCopyCellAttributes(14, 34, 1, 3, x, y); }
-    }
+	if (Engine_GameFlagIsSet(0x30a) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(9, 13, 35);
+		{
+			s32 x = 15, y = 34;
+			Engine_MapCopyCellAttributes(14, 34, 1, 3, x, y);
+		}
+	}
+	else
+	{
+		SceneActor_PlaceAtTileAndMark(9, 15, 35);
+		{
+			s32 x = 13, y = 34;
+			Engine_MapCopyCellAttributes(14, 34, 1, 3, x, y);
+		}
+	}
 
-    if (Engine_GameFlagIsSet(0x30b) != 0) {
-        SceneActor_PlaceAtTileAndMark(10, 15, 22);
-        { s32 x = 14;
-          Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
-          Engine_MapCopyCellAttributes(5, 41, 3, 1, x, 22);
-        }
-    } else if (Engine_GameFlagIsSet(0x30c) != 0) {
-        SceneActor_PlaceAtTileAndMark(10, 15, 23);
-        { s32 x = 14;
-          Engine_MapCopyCellAttributes(5, 42, 3, 1, x, 23);
-          Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
-          Engine_MapCopyCellAttributes(10, 44, 3, 1, x, 21);
-        }
-    } else if (Engine_GameFlagIsSet(0x30d) != 0) {
-        SceneActor_PlaceAtTileAndMark(10, 15, 26);
-        { s32 x = 14;
-          Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 22);
-          Engine_MapCopyCellAttributes(5, 43, 3, 1, x, 26);
-          Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
-        }
-    } else if (Engine_GameFlagIsSet(0x30e) != 0) {
-        SceneActor_PlaceAtTileAndMark(10, 15, 27);
-        { s32 x = 14;
-          Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 22);
-          Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
-          Engine_MapCopyCellAttributes(5, 44, 3, 1, x, 27);
-        }
-    } else {
-        SceneActor_PlaceAtTileAndMark(10, 15, 30);
-    }
+	if (Engine_GameFlagIsSet(0x30b) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(10, 15, 22);
+		{
+			s32 x = 14;
+			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
+			Engine_MapCopyCellAttributes(5, 41, 3, 1, x, 22);
+		}
+	}
+	else if (Engine_GameFlagIsSet(0x30c) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(10, 15, 23);
+		{
+			s32 x = 14;
+			Engine_MapCopyCellAttributes(5, 42, 3, 1, x, 23);
+			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
+			Engine_MapCopyCellAttributes(10, 44, 3, 1, x, 21);
+		}
+	}
+	else if (Engine_GameFlagIsSet(0x30d) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(10, 15, 26);
+		{
+			s32 x = 14;
+			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 22);
+			Engine_MapCopyCellAttributes(5, 43, 3, 1, x, 26);
+			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
+		}
+	}
+	else if (Engine_GameFlagIsSet(0x30e) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(10, 15, 27);
+		{
+			s32 x = 14;
+			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 22);
+			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
+			Engine_MapCopyCellAttributes(5, 44, 3, 1, x, 27);
+		}
+	}
+	else
+	{
+		SceneActor_PlaceAtTileAndMark(10, 15, 30);
+	}
 
-    if (Engine_GameFlagIsSet(0x30f) != 0) {
-        SceneActor_PlaceAtTileAndMark(11, 15, 23);
-        { s32 x = 14;
-          Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
-          Engine_MapCopyCellAttributes(10, 40, 3, 1, x, 23);
-        }
-    } else if (Engine_GameFlagIsSet(0x310) != 0) {
-        SceneActor_PlaceAtTileAndMark(11, 15, 24);
-        { s32 x = 14;
-          Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
-          Engine_MapCopyCellAttributes(10, 41, 3, 1, x, 24);
-        }
-    } else if (Engine_GameFlagIsSet(0x311) != 0) {
-        SceneActor_PlaceAtTileAndMark(11, 15, 27);
-        { s32 x = 14;
-          Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
-          Engine_MapCopyCellAttributes(10, 42, 3, 1, x, 27);
-        }
-    } else if (Engine_GameFlagIsSet(0x312) != 0) {
-        SceneActor_PlaceAtTileAndMark(11, 15, 28);
-        { s32 x = 14;
-          Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
-          Engine_MapCopyCellAttributes(10, 43, 3, 1, x, 28);
-        }
-    } else {
-        SceneActor_PlaceAtTileAndMark(11, 15, 31);
-    }
+	if (Engine_GameFlagIsSet(0x30f) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(11, 15, 23);
+		{
+			s32 x = 14;
+			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
+			Engine_MapCopyCellAttributes(10, 40, 3, 1, x, 23);
+		}
+	}
+	else if (Engine_GameFlagIsSet(0x310) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(11, 15, 24);
+		{
+			s32 x = 14;
+			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
+			Engine_MapCopyCellAttributes(10, 41, 3, 1, x, 24);
+		}
+	}
+	else if (Engine_GameFlagIsSet(0x311) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(11, 15, 27);
+		{
+			s32 x = 14;
+			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
+			Engine_MapCopyCellAttributes(10, 42, 3, 1, x, 27);
+		}
+	}
+	else if (Engine_GameFlagIsSet(0x312) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(11, 15, 28);
+		{
+			s32 x = 14;
+			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
+			Engine_MapCopyCellAttributes(10, 43, 3, 1, x, 28);
+		}
+	}
+	else
+	{
+		SceneActor_PlaceAtTileAndMark(11, 15, 31);
+	}
 }
 
 void FieldScene_RunFlagBranchedLayoutSteps(void)
 {
 
-    if ((((u16)gGameState.entrance - 1) << 16) <= (u32)0x10000) {
-        { s32 x = 14; s32 y = 10; Engine_MapCopyCellAttributes(22, 20, 9, 8,  x, y); }
-    } else {
-        { s32 x = 7; s32 y = 45; Engine_MapCopyCellAttributes(20, 45, 11, 4,  x, y); }
-    }
+	if ((((u16)gGameState.entrance - 1) << 16) <= (u32)0x10000)
+	{
+		{
+			s32 x = 14;
+			s32 y = 10;
+			Engine_MapCopyCellAttributes(22, 20, 9, 8, x, y);
+		}
+	}
+	else
+	{
+		{
+			s32 x = 7;
+			s32 y = 45;
+			Engine_MapCopyCellAttributes(20, 45, 11, 4, x, y);
+		}
+	}
 
-    if (Engine_GameFlagIsSet(0x313) != 0) {
-        SceneActor_PlaceAtTileAndMark(8, 20, 17);
-        { s32 x = 19; s32 y = 10; Engine_MapCopyCellAttributes(19, 11, 3, 1,  x, y); }
-    } else {
-        SceneActor_PlaceAtTileAndMark(8, 20, 10);
-        { s32 x = 19; s32 y = 17; Engine_MapCopyCellAttributes(19, 11, 3, 1,  x, y); }
-    }
+	if (Engine_GameFlagIsSet(0x313) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(8, 20, 17);
+		{
+			s32 x = 19;
+			s32 y = 10;
+			Engine_MapCopyCellAttributes(19, 11, 3, 1, x, y);
+		}
+	}
+	else
+	{
+		SceneActor_PlaceAtTileAndMark(8, 20, 10);
+		{
+			s32 x = 19;
+			s32 y = 17;
+			Engine_MapCopyCellAttributes(19, 11, 3, 1, x, y);
+		}
+	}
 
-    if (Engine_GameFlagIsSet(0x314) != 0) {
-        SceneActor_PlaceAtTileAndMark(9, 14, 16);
-        { s32 x = 22; s32 y = 15; Engine_MapCopyCellAttributes(16, 15, 1, 3,  x, y); }
-    } else {
-        SceneActor_PlaceAtTileAndMark(9, 22, 16);
-        { s32 x = 14; s32 y = 15; Engine_MapCopyCellAttributes(16, 15, 1, 3,  x, y); }
-    }
+	if (Engine_GameFlagIsSet(0x314) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(9, 14, 16);
+		{
+			s32 x = 22;
+			s32 y = 15;
+			Engine_MapCopyCellAttributes(16, 15, 1, 3, x, y);
+		}
+	}
+	else
+	{
+		SceneActor_PlaceAtTileAndMark(9, 22, 16);
+		{
+			s32 x = 14;
+			s32 y = 15;
+			Engine_MapCopyCellAttributes(16, 15, 1, 3, x, y);
+		}
+	}
 
-    if (Engine_GameFlagIsSet(0x315) != 0) {
-        SceneActor_PlaceAtTileAndMark(10, 17, 46);
-        { s32 x = 7; s32 y = 45; Engine_MapCopyCellAttributes(15, 15, 1, 3,  x, y); }
-    } else {
-        SceneActor_PlaceAtTileAndMark(10, 7, 46);
-        { s32 x = 17; s32 y = 45; Engine_MapCopyCellAttributes(15, 15, 1, 3,  x, y); }
-    }
+	if (Engine_GameFlagIsSet(0x315) != 0)
+	{
+		SceneActor_PlaceAtTileAndMark(10, 17, 46);
+		{
+			s32 x = 7;
+			s32 y = 45;
+			Engine_MapCopyCellAttributes(15, 15, 1, 3, x, y);
+		}
+	}
+	else
+	{
+		SceneActor_PlaceAtTileAndMark(10, 7, 46);
+		{
+			s32 x = 17;
+			s32 y = 45;
+			Engine_MapCopyCellAttributes(15, 15, 1, 3, x, y);
+		}
+	}
 }
 
 void ImiruFuchin_StartTrackingLeader(void)
 {
-    if (ImiruFuchin_TrackLeader != 0) {
-        struct TrackingWork *work = *(gWorkSlot + 36);
+	if (ImiruFuchin_TrackLeader != 0)
+	{
+		struct TrackingWork *work = *(gWorkSlot + 36);
 
-        work->actor = Object_GetById(ACTOR_PARTY_LEADER);
-    }
+		work->actor = Object_GetById(ACTOR_PARTY_LEADER);
+	}
 }
 
 void ImiruFuchin_StopTrackingLeader(void)
 {
-    if (ImiruFuchin_TrackLeader != 0) {
-        struct TrackingWork *work = *(gWorkSlot + 36);
+	if (ImiruFuchin_TrackLeader != 0)
+	{
+		struct TrackingWork *work = *(gWorkSlot + 36);
 
-        work->actor = NULL;
-    }
+		work->actor = NULL;
+	}
 }
 
 s32 ImiruFuchin_ApplyEntryHook(void)
 {
-    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-    if (Engine_GameFlagIsSet(0x109) == 0 && gGameState.scene == (s32)&SceneId_ImiruFuchin1) {
-        Engine_GameFlagSet(0x144);
-        FieldScene_RunScene39aSequenceA();
-    } else {
-        ImiruFuchin_ApplyEntrySetup();
-    }
-    return 0;
+	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+	if (Engine_GameFlagIsSet(0x109) == 0 && gGameState.scene == (s32)&SceneId_ImiruFuchin1)
+	{
+		Engine_GameFlagSet(0x144);
+		FieldScene_RunScene39aSequenceA();
+	}
+	else
+	{
+		ImiruFuchin_ApplyEntrySetup();
+	}
+	return 0;
 }
 
 void FieldScene_RunScene39aSequenceA(void)
 {
-    struct FieldActor *actor;
+	struct FieldActor *actor;
 
-    Engine_EventBegin();
-    actor = Object_GetById(8);
-    Engine_ActorSetSpriteFlags(actor, 0);
-    Engine_EventOpenScreen();
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x1999);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x108, 196);
-    Engine_EventEnd();
+	Engine_EventBegin();
+	actor = Object_GetById(8);
+	Engine_ActorSetSpriteFlags(actor, 0);
+	Engine_EventOpenScreen();
+	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x1999);
+	Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x108, 196);
+	Engine_EventEnd();
 }
 
 void ImiruFuchin_ApplyEntrySetup(void)
 {
-    struct FieldActor *actor;
-    /* FAKEMATCH: needed to match: the shared zero/address-word lifetime avoids swapping registers and adding a heap-cell add. */
-    s32 value;
+	struct FieldActor *actor;
+	/* FAKEMATCH: needed to match: the shared zero/address-word lifetime avoids swapping registers and adding a heap-cell add. */
+	s32 value;
 
-    ImiruFuchin_ApplyRoomLayout();
-    if (gGameState.scene == (s32)&SceneId_ImiruFuchin4) {
-        if (!GameFlag_IsSet(0xf13) && gGameState.entrance == 1) {
-            ImiruFuchin_PlaceDragonsEye();
-        }
-        if ((u16)(gGameState.entrance - 2) <= 3) {
-            OverlayObject_CreateAndInitialize(0x9c0000, 0, 0x1c40000, 223);
-            OverlayObject_CreateAndInitialize(0xbc0000, 0, 0x1c40000, 223);
-        }
-    } else if (gGameState.scene == (s32)&SceneId_ImiruFuchin7) {
-        value = 0;
-        actor = Actor_Get(8);
-        ImiruFuchin_TrackLeader = value;
-        actor->motion_flags = value;
-        actor->y.fixed = value;
-        Engine_ActorSetSpritePriority(8, 1);
-        Actor_SetChildValue(8, 15);
-        switch (gGameState.entrance) {
-        case 1:
-        case 2:
-            BattleFx_StartFadeOverlay(0);
-            ImiruFuchin_TrackLeader = 1;
-            break;
-        case 5:
-            BattleFx_StartFadeOverlay(0);
-            ImiruFuchin_TrackLeader = 1;
-            value = *(s32 *)(gWorkSlot + 36);
-            ((struct TrackingWork *)value)->actor = NULL;
-            break;
-        }
-        if (gGameState.entrance <= 6) {
-            if (GameFlag_IsSet(0x820)) {
-                Map_CopyCellsTo(30, 57, 19, 57, 1, 1);
-                Map_CopyCellsTo(30, 8, 12, 8, 8, 7);
-            } else {
-                gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-                ColorBuffer_ApplySource(0x203108, 1);
-                ColorBuffer_ApplyTarget(0x203108, 1);
-                Engine_ColorBufferInterpolate(1);
-                Engine_TaskWait(1);
-            }
-        }
-    }
+	ImiruFuchin_ApplyRoomLayout();
+	if (gGameState.scene == (s32)&SceneId_ImiruFuchin4)
+	{
+		if (!GameFlag_IsSet(0xf13) && gGameState.entrance == 1)
+		{
+			ImiruFuchin_PlaceDragonsEye();
+		}
+		if ((u16)(gGameState.entrance - 2) <= 3)
+		{
+			OverlayObject_CreateAndInitialize(0x9c0000, 0, 0x1c40000, 223);
+			OverlayObject_CreateAndInitialize(0xbc0000, 0, 0x1c40000, 223);
+		}
+	}
+	else if (gGameState.scene == (s32)&SceneId_ImiruFuchin7)
+	{
+		value = 0;
+		actor = Actor_Get(8);
+		ImiruFuchin_TrackLeader = value;
+		actor->motion_flags = value;
+		actor->y.fixed = value;
+		Engine_ActorSetSpritePriority(8, 1);
+		Actor_SetChildValue(8, 15);
+		switch (gGameState.entrance)
+		{
+		case 1:
+		case 2:
+			BattleFx_StartFadeOverlay(0);
+			ImiruFuchin_TrackLeader = 1;
+			break;
+		case 5:
+			BattleFx_StartFadeOverlay(0);
+			ImiruFuchin_TrackLeader = 1;
+			value = *(s32 *)(gWorkSlot + 36);
+			((struct TrackingWork *)value)->actor = NULL;
+			break;
+		}
+		if (gGameState.entrance <= 6)
+		{
+			if (GameFlag_IsSet(0x820))
+			{
+				Map_CopyCellsTo(30, 57, 19, 57, 1, 1);
+				Map_CopyCellsTo(30, 8, 12, 8, 8, 7);
+			}
+			else
+			{
+				gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+				ColorBuffer_ApplySource(0x203108, 1);
+				ColorBuffer_ApplyTarget(0x203108, 1);
+				Engine_ColorBufferInterpolate(1);
+				Engine_TaskWait(1);
+			}
+		}
+	}
 }
 
 void ImiruFuchin_ApplyRoomLayout(void)
 {
-    if (gGameState.scene == (s32)&SceneId_ImiruFuchin2) {
-        Map_CopyCellAttributes(8, 29, 15, 5, 8, 42);
-        DialogueLayout_ConfigureGroupOne();
-    } else if (gGameState.scene == (s32)&SceneId_ImiruFuchin3) {
-        Map_CopyCellAttributes(12, 8, 10, 18, 0, 28);
-        DialogueLayout_ConfigureGroupTwo();
-    } else if (gGameState.scene == (s32)&SceneId_ImiruFuchin4 && gGameState.entrance != 1) {
-        Map_CopyCellAttributes(12, 21, 9, 16, 12, 3);
-        DialogueLayout_ConfigureGroupThree();
-    } else if (gGameState.scene == (s32)&SceneId_ImiruFuchin5) {
-        if (gGameState.entrance == 1 || gGameState.entrance == 2) {
-            Map_CopyCellAttributes(14, 10, 9, 8, 22, 20);
-        } else {
-            Map_CopyCellAttributes(7, 45, 11, 4, 20, 45);
-        }
-        FieldScene_RunFlagBranchedLayoutSteps();
-    }
+	if (gGameState.scene == (s32)&SceneId_ImiruFuchin2)
+	{
+		Map_CopyCellAttributes(8, 29, 15, 5, 8, 42);
+		DialogueLayout_ConfigureGroupOne();
+	}
+	else if (gGameState.scene == (s32)&SceneId_ImiruFuchin3)
+	{
+		Map_CopyCellAttributes(12, 8, 10, 18, 0, 28);
+		DialogueLayout_ConfigureGroupTwo();
+	}
+	else if (gGameState.scene == (s32)&SceneId_ImiruFuchin4 && gGameState.entrance != 1)
+	{
+		Map_CopyCellAttributes(12, 21, 9, 16, 12, 3);
+		DialogueLayout_ConfigureGroupThree();
+	}
+	else if (gGameState.scene == (s32)&SceneId_ImiruFuchin5)
+	{
+		if (gGameState.entrance == 1 || gGameState.entrance == 2)
+		{
+			Map_CopyCellAttributes(14, 10, 9, 8, 22, 20);
+		}
+		else
+		{
+			Map_CopyCellAttributes(7, 45, 11, 4, 20, 45);
+		}
+		FieldScene_RunFlagBranchedLayoutSteps();
+	}
 }
 
 void ImiruFuchin_HopOnTrigger(void)
 {
-    s32 trigger = gEventWork->touched_trigger;
+	s32 trigger = gEventWork->touched_trigger;
 
-    if (gGameState.scene == (s32)&SceneId_ImiruFuchin3) {
-        if (trigger == 17) {
-            ImiruFuchin_HopBy(0, -32);
-        } else {
-            ImiruFuchin_HopBy(-32, 0);
-        }
-    }
-    if (gGameState.scene == (s32)&SceneId_ImiruFuchin4 && trigger == 25 && Engine_GameFlagIsSet(0x309)) {
-        ImiruFuchin_HopBy(0, 32);
-    }
+	if (gGameState.scene == (s32)&SceneId_ImiruFuchin3)
+	{
+		if (trigger == 17)
+		{
+			ImiruFuchin_HopBy(0, -32);
+		}
+		else
+		{
+			ImiruFuchin_HopBy(-32, 0);
+		}
+	}
+	if (gGameState.scene == (s32)&SceneId_ImiruFuchin4 && trigger == 25
+		&& Engine_GameFlagIsSet(0x309))
+	{
+		ImiruFuchin_HopBy(0, 32);
+	}
 }
 
 void FieldScene_ApplyOffset0Neg32(void)
 {
-    ImiruFuchin_HopBy(0, -32);
+	ImiruFuchin_HopBy(0, -32);
 }
 
 void SceneState_ApplyOffsetMinus32(void)
 {
-    ImiruFuchin_HopBy(-32, 0);
+	ImiruFuchin_HopBy(-32, 0);
 }
 
 void ImiruFuchin_HopBy(s32 dx, s32 dz)
 {
-    Engine_EventBegin();
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
-    Engine_ActorSetDestinationOffset(0, dx, dz);
-    Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 7);
-    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 6);
-    Engine_EventEnd();
+	Engine_EventBegin();
+	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
+	Engine_ActorSetDestinationOffset(0, dx, dz);
+	Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
+	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 7);
+	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 6);
+	Engine_EventEnd();
 }
 
 void ImiruFuchin_PlaceDragonsEye(void)
 {
-    struct FieldActor *actor;
-    struct FieldSprite *sprite;
-    GlyphTransfer *glyph;
-    u8 clear = 0;
+	struct FieldActor  *actor;
+	struct FieldSprite *sprite;
+	GlyphTransfer	   *glyph;
+	u8					clear = 0;
 
-    actor = Object_Create(22, 0xf80000, 0x80000, 0x980000);
-    if (actor != NULL) {
-        sprite = actor->sprite;
-        sprite->flags = clear;
-        sprite->part_count = clear;
-        sprite->full_color = 0;
-        sprite->palette = 0;
-        actor->motion_flags = clear;
-        actor->unknown_5c = 1;
-        glyph = Engine_HeapAllocate(17, sizeof(*glyph));
-        Engine_ItemLoadIcon(ITEM_DRAGONS_EYE);
-        Engine_VramLoad(sprite->vram_block, 128, glyph->tiles);
-        Engine_HeapRelease(17);
-        gImiruFuchinDragonsEye = actor;
-    }
+	actor = Object_Create(22, 0xf80000, 0x80000, 0x980000);
+	if (actor != NULL)
+	{
+		sprite = actor->sprite;
+		sprite->flags = clear;
+		sprite->part_count = clear;
+		sprite->full_color = 0;
+		sprite->palette = 0;
+		actor->motion_flags = clear;
+		actor->unknown_5c = 1;
+		glyph = Engine_HeapAllocate(17, sizeof(*glyph));
+		Engine_ItemLoadIcon(ITEM_DRAGONS_EYE);
+		Engine_VramLoad(sprite->vram_block, 128, glyph->tiles);
+		Engine_HeapRelease(17);
+		gImiruFuchinDragonsEye = actor;
+	}
 }
 
 void ImiruFuchin_TakeDragonsEye(void)
 {
 
-    Engine_EventBegin();
+	Engine_EventBegin();
 
-    if (gImiruFuchinDragonsEye != NULL) {
-        Engine_RunRisingObjectSequence(gImiruFuchinDragonsEye, 3);
-    }
+	if (gImiruFuchinDragonsEye != NULL)
+	{
+		Engine_RunRisingObjectSequence(gImiruFuchinDragonsEye, 3);
+	}
 
-    Engine_PartyGiveItem(0xE6, 0);
-    Engine_GameFlagSet(0xF13);
+	Engine_PartyGiveItem(0xE6, 0);
+	Engine_GameFlagSet(0xF13);
 
-    if (gImiruFuchinDragonsEye != NULL) {
-        Engine_ObjectDispatchRelease(gImiruFuchinDragonsEye);
-    }
+	if (gImiruFuchinDragonsEye != NULL)
+	{
+		Engine_ObjectDispatchRelease(gImiruFuchinDragonsEye);
+	}
 
-    Engine_EventEnd();
+	Engine_EventEnd();
 }
 
 void OverlayObject_AdvancePositionByDelta(union FieldObject *raw)
 {
-    struct FieldEffect *object = &raw->effect;
+	struct FieldEffect *object = &raw->effect;
 
-    object->x += object->velocity_x;
-    object->y += object->velocity_y;
-    object->z += object->velocity_z;
-    object->scale_x += object->scale_rate_x;
-    object->scale_y += object->scale_rate_y;
+	object->x += object->velocity_x;
+	object->y += object->velocity_y;
+	object->z += object->velocity_z;
+	object->scale_x += object->scale_rate_x;
+	object->scale_y += object->scale_rate_y;
 }
 
 s32 OverlayObject_ApplyValue15(s32 obj)
 {
-    ObjectGroup_SetChildValue((struct FieldActor *)obj, 15);
-    return 0;
+	ObjectGroup_SetChildValue((struct FieldActor *)obj, 15);
+	return 0;
 }
 
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, u32 flags,
-                  const struct EffectOptions *extra)
+	const struct EffectOptions *extra)
 {
-    struct FieldEffect *obj;
-    struct FieldSprite *spr;
-    const s32 *script;
-    /* FAKEMATCH: needed to match: copying three scripts keeps the 12-byte frame and prevents an early scale-script load. */
-    struct CaveEffectScripts scripts = *(const struct CaveEffectScripts *)gEffectScripts;
+	struct FieldEffect *obj;
+	struct FieldSprite *spr;
+	const s32		   *script;
+	/* FAKEMATCH: needed to match: copying three scripts keeps the 12-byte frame and prevents an early scale-script load. */
+	struct CaveEffectScripts scripts = *(const struct CaveEffectScripts *)gEffectScripts;
 
-    obj = (struct FieldEffect *)Engine_ObjectCreate(222, x, y, z);
-    if (obj == 0)
-        return;
-    spr = obj->sprite;
-    Object_SetMode((struct FieldActor *)obj, (flags + 1) & EFFECT_SCRIPT_MASK);
-    Engine_ObjectSetScript((struct FieldActor *)obj, scripts.script[flags & EFFECT_SCRIPT_MASK]);
-    obj->motion_flags = 0;
-    spr->flags = 0;
-    obj->update = OverlayObject_AdvancePositionByDelta;
-    obj->velocity_x = velocity_x;
-    obj->velocity_y = velocity_y;
-    obj->velocity_z = velocity_z;
-    obj->scale_rate_x = 0;
-    obj->scale_rate_y = 0;
-    spr->priority = 1;
-    if ((flags & 0xffff0000) == 0 || extra == 0)
-        return;
-    if (flags & EFFECT_USE_PALETTE)
-        ObjectGroup_SetChildValue((struct FieldActor *)obj, extra->palette);
-    if (flags & EFFECT_USE_PRIORITY) {
-        obj->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
-        spr->priority = extra->priority;
-    }
-    if (flags & EFFECT_USE_START_SCALE) {
-        obj->scale_x = extra->start_scale_x;
-        obj->scale_y = extra->start_scale_y;
-    }
-    if (flags & EFFECT_SCALE_TO_TARGET) {
-        script = scripts.script[flags & EFFECT_SCRIPT_MASK];
-        if (flags & EFFECT_USE_START_SCALE) {
-            obj->scale_rate_x = (extra->target_scale_x - obj->scale_x) / script[3];
-            obj->scale_rate_y = (extra->target_scale_y - obj->scale_y) / script[3];
-        } else {
-            obj->scale_rate_x = (extra->target_scale_x - 0x10000) / script[3];
-            obj->scale_rate_y = (extra->target_scale_y - 0x10000) / script[3];
-        }
-    }
+	obj = (struct FieldEffect *)Engine_ObjectCreate(222, x, y, z);
+	if (obj == 0)
+		return;
+	spr = obj->sprite;
+	Object_SetMode((struct FieldActor *)obj, (flags + 1) & EFFECT_SCRIPT_MASK);
+	Engine_ObjectSetScript((struct FieldActor *)obj, scripts.script[flags & EFFECT_SCRIPT_MASK]);
+	obj->motion_flags = 0;
+	spr->flags = 0;
+	obj->update = OverlayObject_AdvancePositionByDelta;
+	obj->velocity_x = velocity_x;
+	obj->velocity_y = velocity_y;
+	obj->velocity_z = velocity_z;
+	obj->scale_rate_x = 0;
+	obj->scale_rate_y = 0;
+	spr->priority = 1;
+	if ((flags & 0xffff0000) == 0 || extra == 0)
+		return;
+	if (flags & EFFECT_USE_PALETTE)
+		ObjectGroup_SetChildValue((struct FieldActor *)obj, extra->palette);
+	if (flags & EFFECT_USE_PRIORITY)
+	{
+		obj->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		spr->priority = extra->priority;
+	}
+	if (flags & EFFECT_USE_START_SCALE)
+	{
+		obj->scale_x = extra->start_scale_x;
+		obj->scale_y = extra->start_scale_y;
+	}
+	if (flags & EFFECT_SCALE_TO_TARGET)
+	{
+		script = scripts.script[flags & EFFECT_SCRIPT_MASK];
+		if (flags & EFFECT_USE_START_SCALE)
+		{
+			obj->scale_rate_x = (extra->target_scale_x - obj->scale_x) / script[3];
+			obj->scale_rate_y = (extra->target_scale_y - obj->scale_y) / script[3];
+		}
+		else
+		{
+			obj->scale_rate_x = (extra->target_scale_x - 0x10000) / script[3];
+			obj->scale_rate_y = (extra->target_scale_y - 0x10000) / script[3];
+		}
+	}
 }
 
 void ImiruFuchin_BlowCaveMouthDust(void)
 {
-    struct CaveDustOptions params;
-    s32 phase;
-    s32 dx;
-    s32 dy;
+	struct CaveDustOptions params;
+	s32					   phase;
+	s32					   dx;
+	s32					   dy;
 
-    phase = gFrameCount & 3;
-    if (phase != 0)
-        return;
-    params.palette = 10;
-    params.start_scale_x = 0x8000;
-    params.start_scale_y = 0x8000;
-    params.target_scale_x = 0x1cccc;
-    params.target_scale_y = 0x1cccc;
-    if ((gFrameCount & 7) == 0)
-        Engine_AudioPlayCue(136);
-    dx = -0x10000 - ((((u32)Engine_RandomNext() << 1) >> 16) << 16);
-    dy = -((((u32)Engine_RandomNext() * 3) >> 16) * 0x3333);
-    Effect_Spawn(0x1340000, 0x400000, 0xde0000, dx, dy, phase, 0xd0001,
-        (const struct EffectOptions *)&params);
+	phase = gFrameCount & 3;
+	if (phase != 0)
+		return;
+	params.palette = 10;
+	params.start_scale_x = 0x8000;
+	params.start_scale_y = 0x8000;
+	params.target_scale_x = 0x1cccc;
+	params.target_scale_y = 0x1cccc;
+	if ((gFrameCount & 7) == 0)
+		Engine_AudioPlayCue(136);
+	dx = -0x10000 - ((((u32)Engine_RandomNext() << 1) >> 16) << 16);
+	dy = -((((u32)Engine_RandomNext() * 3) >> 16) * 0x3333);
+	Effect_Spawn(0x1340000, 0x400000, 0xde0000, dx, dy, phase, 0xd0001,
+		(const struct EffectOptions *)&params);
 }
 
 void FieldScene_RunFourPassCallbackSequence(void)
 {
-    u32 pass;
+	u32 pass;
 
-    Engine_AudioPlayCue(19);
-    Engine_AudioPlayCue(182);
-    Engine_EventBegin();
-    Battle_ResetEffectCounter();
+	Engine_AudioPlayCue(19);
+	Engine_AudioPlayCue(182);
+	Engine_EventBegin();
+	Battle_ResetEffectCounter();
 
-    for (pass = 0; pass < 4; pass++) {
-        Engine_ColorBufferApplyTarget(0x204318, 1);
-        Engine_ColorBufferInterpolate(1);
-        Engine_TaskWait(2);
-        if (pass == 0) {
-            Map_CopyCellsTo(30, 8, 12, 8, 8, 7);
-            Map_CopyCellsTo(30, 57, 19, 57, 1, 1);
-        }
-        Engine_ColorBufferApplyTarget(0x203108, 1);
-        Engine_ColorBufferInterpolate(1);
-        Engine_TaskWait(2);
-    }
+	for (pass = 0; pass < 4; pass++)
+	{
+		Engine_ColorBufferApplyTarget(0x204318, 1);
+		Engine_ColorBufferInterpolate(1);
+		Engine_TaskWait(2);
+		if (pass == 0)
+		{
+			Map_CopyCellsTo(30, 8, 12, 8, 8, 7);
+			Map_CopyCellsTo(30, 57, 19, 57, 1, 1);
+		}
+		Engine_ColorBufferApplyTarget(0x203108, 1);
+		Engine_ColorBufferInterpolate(1);
+		Engine_TaskWait(2);
+	}
 
-    Engine_TaskWait(30);
+	Engine_TaskWait(30);
 
-    Engine_TaskAddCallback(ImiruFuchin_BlowCaveMouthDust, 0xc80);
-    Engine_TaskWait(40);
-    Engine_ColorBufferApplyTarget(0x201090, 1);
-    Engine_ColorBufferInterpolate(40);
-    Engine_TaskWait(80);
-    Engine_TaskRemoveCallback(ImiruFuchin_BlowCaveMouthDust);
-    Engine_TaskWait(20);
+	Engine_TaskAddCallback(ImiruFuchin_BlowCaveMouthDust, 0xc80);
+	Engine_TaskWait(40);
+	Engine_ColorBufferApplyTarget(0x201090, 1);
+	Engine_ColorBufferInterpolate(40);
+	Engine_TaskWait(80);
+	Engine_TaskRemoveCallback(ImiruFuchin_BlowCaveMouthDust);
+	Engine_TaskWait(20);
 
-    Engine_ColorBufferApplyTarget(0x10000, 1);
-    Engine_ColorBufferInterpolate(80);
+	Engine_ColorBufferApplyTarget(0x10000, 1);
+	Engine_ColorBufferInterpolate(80);
 
-    Engine_TaskWait(80);
+	Engine_TaskWait(80);
 
-    Engine_GameFlagSet(0x820);
-    PartyInventory_Discard(230);
-    Audio_PlayCueFromEventWork();
+	Engine_GameFlagSet(0x820);
+	PartyInventory_Discard(230);
+	Audio_PlayCueFromEventWork();
 
-    Engine_EventEnd();
+	Engine_EventEnd();
 }
 
 void SceneState_SetValue17e1(void)
 {
-    Engine_EventBegin();
-    Engine_MessageShowCentered((s32)MsgFuchinDragonFlameShowsPath, 1);
-    Engine_EventEnd();
+	Engine_EventBegin();
+	Engine_MessageShowCentered((s32)MsgFuchinDragonFlameShowsPath, 1);
+	Engine_EventEnd();
 }
 
 void SceneDialogue_RunLine17e2(void)
 {
-    Engine_EventBegin();
-    Engine_MessageShowCentered((s32)MsgFuchinSecretKiRevealed, 1);
-    Engine_EventEnd();
+	Engine_EventBegin();
+	Engine_MessageShowCentered((s32)MsgFuchinSecretKiRevealed, 1);
+	Engine_EventEnd();
 }
 
 void FieldScene_RunScriptedStep17E3(void)
 {
-    Engine_EventBegin();
-    Engine_MessageShowCentered((s32)MsgFuchinLightRevealsShadows, 1);
-    Engine_EventEnd();
+	Engine_EventBegin();
+	Engine_MessageShowCentered((s32)MsgFuchinLightRevealsShadows, 1);
+	Engine_EventEnd();
 }
 
 void SceneState_SetWorkspace370ByFlag820(void)
 {
 
-    Engine_EventBegin();
+	Engine_EventBegin();
 
-    if (Engine_GameFlagIsSet(0x820) != 0) {
-        Engine_MessageShowCentered((s32)MsgFuchinDragonRedEyes, 1);
-    } else {
-        Engine_MessageShowCentered((s32)MsgFuchinEyelessDragon, 1);
-        if (PartyInventory_FindOwner(0xe6) != -1) {
-            gEventWork->unknown_172 = 1;
-        }
-    }
-    Engine_EventEnd();
+	if (Engine_GameFlagIsSet(0x820) != 0)
+	{
+		Engine_MessageShowCentered((s32)MsgFuchinDragonRedEyes, 1);
+	}
+	else
+	{
+		Engine_MessageShowCentered((s32)MsgFuchinEyelessDragon, 1);
+		if (PartyInventory_FindOwner(0xe6) != -1)
+		{
+			gEventWork->unknown_172 = 1;
+		}
+	}
+	Engine_EventEnd();
 }
 
 void ImiruFuchin_StartFadeIn(void)
 {
-    struct BattleFxScene *scene;
-    struct DisplayTransitionState *transition;
+	struct BattleFxScene		  *scene;
+	struct DisplayTransitionState *transition;
 
-    if (gGameState.entrance <= 6) {
-        scene = *(gWorkSlot + 56);
-        transition = *(gWorkSlot + 31);
-        scene->child_option = 1;
-        transition->next_mode = 0;
-        transition->duration = 1;
-        transition->step = 1;
-        Engine_ColorBufferApplySource(0, 1);
-        Engine_ColorBufferApplyTarget(0x203108, 1);
-        Engine_ColorBufferInterpolate(16);
-        Engine_TaskWait(16);
-    }
+	if (gGameState.entrance <= 6)
+	{
+		scene = *(gWorkSlot + 56);
+		transition = *(gWorkSlot + 31);
+		scene->child_option = 1;
+		transition->next_mode = 0;
+		transition->duration = 1;
+		transition->step = 1;
+		Engine_ColorBufferApplySource(0, 1);
+		Engine_ColorBufferApplyTarget(0x203108, 1);
+		Engine_ColorBufferInterpolate(16);
+		Engine_TaskWait(16);
+	}
 }
 
 void SceneActor_TurnTowardTableAngle(union FieldObject *object)
 {
-    struct FieldActor *actor = &object->actor;
-    s32 timer;
-    s32 direction;
-    u16 facing;
+	struct FieldActor *actor = &object->actor;
+	s32				   timer;
+	s32				   direction;
+	u16				   facing;
 
-    timer = actor->timer;
-    if (timer != 0) {
-        actor->timer--;
-        return;
-    }
-    actor->steering_flags = 0;
-    direction = gImiruFuchinKeyHeadings[(gKeysHeld >> 4) & 15];
-    if (direction == -1) {
-        Object_SetMode(actor, 9);
-        return;
-    }
-    facing = actor->facing;
-    direction = (s16)(direction - facing);
-    if (direction > 0x1000)
-        direction = 0x1000;
-    if (direction < -0x1000)
-        direction = -0x1000;
-    actor->facing = facing + direction;
-    Object_SetMode(actor, 2);
-    ObjectDispatch_ApplyValueToChildren(actor, 0x30);
+	timer = actor->timer;
+	if (timer != 0)
+	{
+		actor->timer--;
+		return;
+	}
+	actor->steering_flags = 0;
+	direction = gImiruFuchinKeyHeadings[(gKeysHeld >> 4) & 15];
+	if (direction == -1)
+	{
+		Object_SetMode(actor, 9);
+		return;
+	}
+	facing = actor->facing;
+	direction = (s16)(direction - facing);
+	if (direction > 0x1000)
+		direction = 0x1000;
+	if (direction < -0x1000)
+		direction = -0x1000;
+	actor->facing = facing + direction;
+	Object_SetMode(actor, 2);
+	ObjectDispatch_ApplyValueToChildren(actor, 0x30);
 }
 
 void SceneActor_StepSubjectAlongHeading(void)
 {
 
-    struct FieldActor *subject;
-    struct FieldPosition probe;
-    s32 heading;
-    s32 goal;
-    s32 marker;
-    s32 z;
-    s32 x;
+	struct FieldActor	*subject;
+	struct FieldPosition probe;
+	s32					 heading;
+	s32					 goal;
+	s32					 marker;
+	s32					 z;
+	s32					 x;
 
-    subject = ((void * (*)())Engine_ActorLookup)(gGameState.selected_actor);
+	subject = ((void *(*)())Engine_ActorLookup)(gGameState.selected_actor);
 
-    for (;;) {
-        heading = gImiruFuchinHeadings[(gKeysHeld >> 4) & 15];
-        if ((heading << 16) == -0x10000) {
-            return;
-        }
+	for (;;)
+	{
+		heading = gImiruFuchinHeadings[(gKeysHeld >> 4) & 15];
+		if ((heading << 16) == -0x10000)
+		{
+			return;
+		}
 
-        Engine_EventBegin();
+		Engine_EventBegin();
 
-        probe.x = (subject->x.fixed & 0xfff00000) + 0x80000;
-        probe.y = subject->y.fixed;
-        probe.z = (subject->z.fixed & 0xfff00000) + 0x80000;
-        z = probe.z;
-        x = probe.x;
-        goal = GetMapCellCollision(subject->terrain_id, x, z);
-        FieldVector_AddPolarOffset(0x100000, heading, &probe);
+		probe.x = (subject->x.fixed & 0xfff00000) + 0x80000;
+		probe.y = subject->y.fixed;
+		probe.z = (subject->z.fixed & 0xfff00000) + 0x80000;
+		z = probe.z;
+		x = probe.x;
+		goal = GetMapCellCollision(subject->terrain_id, x, z);
+		FieldVector_AddPolarOffset(0x100000, heading, &probe);
 
-        marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
-        if (marker == 255
-                || Map_GetTerrainHeight(subject->terrain_id, probe.x, probe.z)
-                    - subject->y.fixed > 0x80000) {
-            subject->facing = heading;
-            goto tail;
-        }
+		marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
+		if (marker == 255
+			|| Map_GetTerrainHeight(subject->terrain_id, probe.x, probe.z) - subject->y.fixed
+				   > 0x80000)
+		{
+			subject->facing = heading;
+			goto tail;
+		}
 
-        probe.x = x;
-        probe.z = z;
-        subject->speed = 0x20000;
-        subject->acceleration = 0x1999;
-        subject->timer = 0;
-        ((void (*)())Engine_ObjectSetPosition)(subject, x, subject->y.fixed, z);
+		probe.x = x;
+		probe.z = z;
+		subject->speed = 0x20000;
+		subject->acceleration = 0x1999;
+		subject->timer = 0;
+		((void (*)())Engine_ObjectSetPosition)(subject, x, subject->y.fixed, z);
 
-        Object_SetMode(subject, 2);
-        ObjectDispatch_ApplyValueToChildren(subject, 48);
-        Object_CommitPosition(subject);
-        subject->update = SceneActor_TurnTowardTableAngle;
+		Object_SetMode(subject, 2);
+		ObjectDispatch_ApplyValueToChildren(subject, 48);
+		Object_CommitPosition(subject);
+		subject->update = SceneActor_TurnTowardTableAngle;
 
-        goto advance_probe;
-continue_probe:
-        if (Map_GetTerrainHeight(subject->terrain_id, probe.x, probe.z)
-                - subject->y.fixed > 0x80000) {
-            goto finish_probe;
-        }
-        x = probe.x;
-        z = probe.z;
-        subject->speed = 0x20000;
-        subject->acceleration = 0x1999;
-        ((void (*)())Engine_ObjectSetPosition)(subject, probe.x, probe.y, probe.z);
-        Object_CommitPosition(subject);
-        if (marker != goal) {
-            goto blocked;
-        }
+		goto advance_probe;
+	continue_probe:
+		if (Map_GetTerrainHeight(subject->terrain_id, probe.x, probe.z) - subject->y.fixed
+			> 0x80000)
+		{
+			goto finish_probe;
+		}
+		x = probe.x;
+		z = probe.z;
+		subject->speed = 0x20000;
+		subject->acceleration = 0x1999;
+		((void (*)())Engine_ObjectSetPosition)(subject, probe.x, probe.y, probe.z);
+		Object_CommitPosition(subject);
+		if (marker != goal)
+		{
+			goto blocked;
+		}
 
-advance_probe:
-        FieldVector_AddPolarOffset(0x100000, heading, &probe);
-        marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
-        if (marker != 255) {
-            goto continue_probe;
-        }
+	advance_probe:
+		FieldVector_AddPolarOffset(0x100000, heading, &probe);
+		marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
+		if (marker != 255)
+		{
+			goto continue_probe;
+		}
 
-finish_probe:
-        subject->speed = 0x20000;
-        subject->acceleration = 0x10000;
-        ((void (*)())Engine_ObjectSetPosition)(subject, x, subject->y.fixed, z);
-        Object_CommitPosition(subject);
-        Engine_TaskWait(2);
-    }
+	finish_probe:
+		subject->speed = 0x20000;
+		subject->acceleration = 0x10000;
+		((void (*)())Engine_ObjectSetPosition)(subject, x, subject->y.fixed, z);
+		Object_CommitPosition(subject);
+		Engine_TaskWait(2);
+	}
 
 blocked:
-    subject->update = NULL;
-    subject->steering_flags |= ACTOR_FACES_MOTION;
+	subject->update = NULL;
+	subject->steering_flags |= ACTOR_FACES_MOTION;
 
-    subject->acceleration = 0x4000;
+	subject->acceleration = 0x4000;
 
 tail:
-    Engine_TaskWait(10);
-    Engine_EventEnd();
+	Engine_TaskWait(10);
+	Engine_EventEnd();
 }

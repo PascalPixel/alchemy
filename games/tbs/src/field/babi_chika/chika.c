@@ -21,8 +21,8 @@
 #include "call.h"
 
 void Effect_AdvanceMotion();
-s32		   OverlayObject_SetYAboveLinkedActor();
-s32 SceneActor_SetFlagBitByRelativeDepth();
+s32	 OverlayObject_SetYAboveLinkedActor();
+s32	 SceneActor_SetFlagBitByRelativeDepth();
 
 struct Vec
 {
@@ -130,10 +130,10 @@ extern u8 Data_0200b8f4[];
 extern u8 Data_0200ba74[];
 extern u8 Data_0200bc0c[];
 extern u8 Data_0200bef4[];
-s32	 Object_CheckMovementCollision();
-s32	 Vector_AddPolarOffset();
-s32	 Battle_GetWorkObject1e0();
-void BattleFx_RunRisingObjectSequence(s32, s32, s32);
+s32		  Object_CheckMovementCollision();
+s32		  Vector_AddPolarOffset();
+s32		  Battle_GetWorkObject1e0();
+void	  BattleFx_RunRisingObjectSequence(s32, s32, s32);
 struct Record_02000ec8;
 
 s32 SceneActor_SetFlagBitByRelativeDepth();

@@ -9,52 +9,57 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-enum ValeHouseFlag {
-    FLAG_GOT_FAREWELL_HERB = 0x81b
+enum ValeHouseFlag
+{
+	FLAG_GOT_FAREWELL_HERB = 0x81b
 };
 
-enum {
-    ITEM_HERB = 180
+enum
+{
+	ITEM_HERB = 180
 };
 
-typedef struct {
-    u8 pad_to_position[8];
-    s32 x;
-    s32 y;
-    u8 pad_to_scale[8];
-    s32 scale_x;
-    s32 scale_y;
-    u8 pad_to_velocity[0x44];
-    s16 velocity_x;
-    s16 velocity_y;
+typedef struct
+{
+	u8	pad_to_position[8];
+	s32 x;
+	s32 y;
+	u8	pad_to_scale[8];
+	s32 scale_x;
+	s32 scale_y;
+	u8	pad_to_velocity[0x44];
+	s16 velocity_x;
+	s16 velocity_y;
 } ScaledMotion;
 
-union SceneActor {
-    s32 words[26];
-    u16 halfwords[52];
+union SceneActor
+{
+	s32 words[26];
+	u16 halfwords[52];
 };
 
-union SceneField {
-    u16 value;
-    u8 bytes[2];
+union SceneField
+{
+	u16 value;
+	u8	bytes[2];
 } __attribute__((packed, aligned(2)));
 
-extern s32 gValeFaceTargetScript[];
-extern s32 gValeActor10Script[];
-extern s32 gValePartyScript[];
-extern s32 gValeTimedActorScript[];
-extern struct SceneEntrance gValeHouseEntrances[];
-extern u32 gValeHouseExits[];
-extern u32 gValeHouseLateExits[];
+extern s32					 gValeFaceTargetScript[];
+extern s32					 gValeActor10Script[];
+extern s32					 gValePartyScript[];
+extern s32					 gValeTimedActorScript[];
+extern struct SceneEntrance	 gValeHouseEntrances[];
+extern u32					 gValeHouseExits[];
+extern u32					 gValeHouseLateExits[];
 extern struct ScenePlacement gValeHousePlacements[];
 extern struct ScenePlacement gValeHousePlacementsAfterLeaving[];
 extern struct ScenePlacement gValeHouseReturnPlacements[];
-extern struct SceneEvent gValeHouseLateEvents[];
-extern struct SceneEvent gValeHouseEvents[];
-extern struct SceneEvent gValeHouseEventsAfterLeaving[];
-extern struct SceneEvent gValeHouseReturnEvents[];
+extern struct SceneEvent	 gValeHouseLateEvents[];
+extern struct SceneEvent	 gValeHouseEvents[];
+extern struct SceneEvent	 gValeHouseEventsAfterLeaving[];
+extern struct SceneEvent	 gValeHouseReturnEvents[];
 
-s32 ArcTan2(s32, s32);
+s32	 ArcTan2(s32, s32);
 void SceneEvents_UpdateInView(void *);
 void Object_SetTargetAndCallback();
 void BattleFx_SetBlock30ValuesMaxZero(void);
@@ -62,8 +67,8 @@ void Map_ClearLayerEntryFlag();
 void BattleFx_StartTwelveFrameBlend();
 void BattleFx_SetBlock30Values12Zero();
 void BattleFx_SetBlock30Values128One();
-s32 Battle_GetWorkObject1e0();
-s32 Object_SetActionCallbackAndRefreshById();
+s32	 Battle_GetWorkObject1e0();
+s32	 Object_SetActionCallbackAndRefreshById();
 void Scene_UpdateTimedActor(void);
 void Scene_GiveFarewellHerb(void);
 

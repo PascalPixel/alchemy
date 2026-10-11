@@ -3,12 +3,13 @@
 
 #include "types.h"
 
-struct TitleSprite {
-    u32 attr[3];
+struct TitleSprite
+{
+	u32 attr[3];
 };
 
-extern s16 gTitleVramBlock;
-extern s16 gTitleRevealFrame;
+extern s16				  gTitleVramBlock;
+extern s16				  gTitleRevealFrame;
 extern struct TitleSprite gTitleSprites[];
 
 void Title_LoadSprites(s32 unused);

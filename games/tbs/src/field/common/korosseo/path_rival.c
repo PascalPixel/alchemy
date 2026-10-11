@@ -17,209 +17,245 @@
 #include "vram_block.h"
 #include "io_reg.h"
 
-struct PathWork {
-    u8 unknown_00[224];
-    u16 rival_actor;
-    u16 finish_item_actor_a;
-    u16 finish_item_actor_b;
-    u16 unknown_e6;
-    s32 finish_x;
-    s32 finish_z;
-    s16 path[0x3840];
+struct PathWork
+{
+	u8	unknown_00[224];
+	u16 rival_actor;
+	u16 finish_item_actor_a;
+	u16 finish_item_actor_b;
+	u16 unknown_e6;
+	s32 finish_x;
+	s32 finish_z;
+	s16 path[0x3840];
 };
 
 void Korosseo_UpdatePathRival(void)
 {
-    struct PathWork *work = (struct PathWork *)gKorosseoWork;
-    struct PathRecorder *rec = (struct PathRecorder *)gSceneState;
-    struct FieldActor *obj;
-    s32 x, z, d;
-    u16 *item_actor;
+	struct PathWork		*work = (struct PathWork *)gKorosseoWork;
+	struct PathRecorder *rec = (struct PathRecorder *)gSceneState;
+	struct FieldActor	*obj;
+	s32					 x, z, d;
+	u16					*item_actor;
 
-    obj = Object_GetById(rec->actor);
-    if (obj == NULL) {
-        return;
-    }
-    if (rec->mode == 1) {
-        x = work->path[(s16)rec->pos++];
-        z = work->path[(s16)rec->pos++];
-        if (x == 0 && z == 0) {
-            s32 fz;
-            rec->mode = 9;
-            Object_SetMode(obj, 1);
-            if (work->finish_x < obj->x.fixed) {
-                x = work->finish_x + 0xc0000;
-            } else {
-                x = work->finish_x - 0xc0000;
-            }
-            if (Engine_GameFlagIsSet(0x211)) {
-                fz = work->finish_z + 0x100000;
-                item_actor = &work->finish_item_actor_b;
-            } else {
-                fz = work->finish_z - 0x100000;
-                item_actor = &work->finish_item_actor_a;
-            }
-            obj->timer = *item_actor;
-            obj->acceleration = 0x4000;
-            obj->speed = 0x10000;
-            Engine_ObjectSetPosition(obj, x, 0, fz);
-            Engine_GameFlagSet(0x211);
-            Engine_ObjectSetScript(obj, Korosseo_RivalFinishScript);
-            return;
-        }
-        x <<= 16;
-        z <<= 16;
-        if (rec->mirror != 0) {
-            x = work->finish_x * 2 - x;
-        }
-        if (obj->x.fixed != x || obj->z.fixed != z) {
-            {
-            u16 angle = Math_Atan2(z - obj->z.fixed, x - obj->x.fixed);
-            d = (s16)(angle - obj->facing);
-            }
-            if (d > 0x1000) {
-                d = 0x1000;
-            }
-            if (d < -0x1000) {
-                d = -0x1000;
-            }
-            obj->facing += d;
-            obj->x.fixed = x;
-            obj->z.fixed = z;
-            rec->still = 0;
-        } else {
-            rec->still++;
-        }
-        if (rec->still > 2) {
-            Object_SetMode(obj, 1);
-        } else {
-            Object_SetMode(obj, 5);
-        }
-    } else if (rec->mode == 2) {
-        x = obj->x.part.pixel;
-        z = obj->z.part.pixel;
-        work->path[(s16)rec->pos++] = x;
-        work->path[(s16)rec->pos++] = z;
-        if ((s16)rec->pos == 0x383e) {
-            work->path[(s16)rec->pos++] = 0;
-            work->path[(s16)rec->pos] = 0;
-            rec->actor = work->rival_actor;
-            rec->pos = 0;
-            rec->mode = 1;
-        }
-    }
+	obj = Object_GetById(rec->actor);
+	if (obj == NULL)
+	{
+		return;
+	}
+	if (rec->mode == 1)
+	{
+		x = work->path[(s16)rec->pos++];
+		z = work->path[(s16)rec->pos++];
+		if (x == 0 && z == 0)
+		{
+			s32 fz;
+			rec->mode = 9;
+			Object_SetMode(obj, 1);
+			if (work->finish_x < obj->x.fixed)
+			{
+				x = work->finish_x + 0xc0000;
+			}
+			else
+			{
+				x = work->finish_x - 0xc0000;
+			}
+			if (Engine_GameFlagIsSet(0x211))
+			{
+				fz = work->finish_z + 0x100000;
+				item_actor = &work->finish_item_actor_b;
+			}
+			else
+			{
+				fz = work->finish_z - 0x100000;
+				item_actor = &work->finish_item_actor_a;
+			}
+			obj->timer = *item_actor;
+			obj->acceleration = 0x4000;
+			obj->speed = 0x10000;
+			Engine_ObjectSetPosition(obj, x, 0, fz);
+			Engine_GameFlagSet(0x211);
+			Engine_ObjectSetScript(obj, Korosseo_RivalFinishScript);
+			return;
+		}
+		x <<= 16;
+		z <<= 16;
+		if (rec->mirror != 0)
+		{
+			x = work->finish_x * 2 - x;
+		}
+		if (obj->x.fixed != x || obj->z.fixed != z)
+		{
+			{
+				u16 angle = Math_Atan2(z - obj->z.fixed, x - obj->x.fixed);
+				d = (s16)(angle - obj->facing);
+			}
+			if (d > 0x1000)
+			{
+				d = 0x1000;
+			}
+			if (d < -0x1000)
+			{
+				d = -0x1000;
+			}
+			obj->facing += d;
+			obj->x.fixed = x;
+			obj->z.fixed = z;
+			rec->still = 0;
+		}
+		else
+		{
+			rec->still++;
+		}
+		if (rec->still > 2)
+		{
+			Object_SetMode(obj, 1);
+		}
+		else
+		{
+			Object_SetMode(obj, 5);
+		}
+	}
+	else if (rec->mode == 2)
+	{
+		x = obj->x.part.pixel;
+		z = obj->z.part.pixel;
+		work->path[(s16)rec->pos++] = x;
+		work->path[(s16)rec->pos++] = z;
+		if ((s16)rec->pos == 0x383e)
+		{
+			work->path[(s16)rec->pos++] = 0;
+			work->path[(s16)rec->pos] = 0;
+			rec->actor = work->rival_actor;
+			rec->pos = 0;
+			rec->mode = 1;
+		}
+	}
 }
 
 extern u8 Korosseo_GaugeGraphics[];
 
 void Korosseo_DrawGauge(void)
 {
-    struct KorosseoGaugeWork *gauge = (struct KorosseoGaugeWork *)gKorosseoWork;
-    s32 *dst = (s32 *)gauge;
-    struct KorosseoGaugeSprite *entry = gauge->sprites;
-    s32 tile;
-    u32 segments;
-    u32 i;
-    s32 y;
-    s32 x;
-    s32 width;
-    u8 *buf;
-    struct FieldActor *actor;
-    u32 shape;
+	struct KorosseoGaugeWork   *gauge = (struct KorosseoGaugeWork *)gKorosseoWork;
+	s32						   *dst = (s32 *)gauge;
+	struct KorosseoGaugeSprite *entry = gauge->sprites;
+	s32							tile;
+	u32							segments;
+	u32							i;
+	s32							y;
+	s32							x;
+	s32							width;
+	u8						   *buf;
+	struct FieldActor		   *actor;
+	u32							shape;
 
-    tile = gVramBlockCache[gauge->vram_block].offset >> 5;
-    segments = gauge->segments;
-    if (gauge->hold != 0) {
-        gauge->level = 2;
-    } else if (Engine_GameFlagIsSet(0x106)) {
-        if (gauge->level > 0) {
-            gauge->level--;
-        }
-    } else if (gauge->level <= 1) {
-        if (++gauge->level == 1) {
-            Dma_Set(Korosseo_GaugePalette, (void *)&OBJ_PLTT_COLOR(14, 0), DMA_ENABLE32 | 0x10, REG_DMA3);
-            buf = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 512);
-            Resource_DecodeType01(Korosseo_GaugeGraphics, buf);
-            Engine_VramLoad(gauge->vram_block, 512, buf);
-            Runtime_BumpFree(buf);
-        }
-    }
-    if (gauge->level == 0) {
-        Resource_ActivateEntry(gauge->vram_block);
-        return;
-    }
+	tile = gVramBlockCache[gauge->vram_block].offset >> 5;
+	segments = gauge->segments;
+	if (gauge->hold != 0)
+	{
+		gauge->level = 2;
+	}
+	else if (Engine_GameFlagIsSet(0x106))
+	{
+		if (gauge->level > 0)
+		{
+			gauge->level--;
+		}
+	}
+	else if (gauge->level <= 1)
+	{
+		if (++gauge->level == 1)
+		{
+			Dma_Set(Korosseo_GaugePalette, (void *)&OBJ_PLTT_COLOR(14, 0), DMA_ENABLE32 | 0x10,
+				REG_DMA3);
+			buf = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 512);
+			Resource_DecodeType01(Korosseo_GaugeGraphics, buf);
+			Engine_VramLoad(gauge->vram_block, 512, buf);
+			Runtime_BumpFree(buf);
+		}
+	}
+	if (gauge->level == 0)
+	{
+		Resource_ActivateEntry(gauge->vram_block);
+		return;
+	}
 
-    y = gauge->level * 6 - 8;
-    y &= 255;
-    width = segments * 16;
-    x = 104 - width;
-    shape = 0x8000;
-    *dst++ = 0;
-    *dst++ = (x << 16) | y | shape;
-    *dst++ = tile | 0xe400;
-    Runtime_PushSlotEntry(entry++, 255);
-    for (i = 0; i < segments; i++) {
-        x = 96 - i * 16;
-        shape = 0x40000000;
-        *dst++ = 0;
-        *dst++ = (x << 16) | y | shape;
-        *dst++ = (tile + 2) | 0xe400;
-        Runtime_PushSlotEntry(entry++, 255);
-    }
-    x = 112;
-    shape = 0x8000;
-    *dst++ = 0;
-    *dst++ = (x << 16) | y | shape;
-    *dst++ = (tile + 6) | 0xe400;
-    Runtime_PushSlotEntry(entry++, 255);
-    x = 120;
-    *dst++ = 0;
-    *dst++ = (x << 16) | y | shape | 0x10000000;
-    *dst++ = (tile + 6) | 0xe400;
-    Runtime_PushSlotEntry(entry++, 255);
-    for (i = 0; i < segments; i++) {
-        x = 128 + i * 16;
-        shape = 0x40000000;
-        *dst++ = 0;
-        *dst++ = y | (x << 16) | shape | 0x10000000;
-        *dst++ = (tile + 2) | 0xe400;
-        Runtime_PushSlotEntry(entry++, 255);
-    }
-    x = width + 128;
-    shape = 0x8000;
-    *dst++ = 0;
-    y |= x << 16;
-    y |= shape;
-    y |= 0x10000000;
-    *dst++ = y;
-    *dst++ = tile | 0xe400;
-    Runtime_PushSlotEntry(entry++, 255);
+	y = gauge->level * 6 - 8;
+	y &= 255;
+	width = segments * 16;
+	x = 104 - width;
+	shape = 0x8000;
+	*dst++ = 0;
+	*dst++ = (x << 16) | y | shape;
+	*dst++ = tile | 0xe400;
+	Runtime_PushSlotEntry(entry++, 255);
+	for (i = 0; i < segments; i++)
+	{
+		x = 96 - i * 16;
+		shape = 0x40000000;
+		*dst++ = 0;
+		*dst++ = (x << 16) | y | shape;
+		*dst++ = (tile + 2) | 0xe400;
+		Runtime_PushSlotEntry(entry++, 255);
+	}
+	x = 112;
+	shape = 0x8000;
+	*dst++ = 0;
+	*dst++ = (x << 16) | y | shape;
+	*dst++ = (tile + 6) | 0xe400;
+	Runtime_PushSlotEntry(entry++, 255);
+	x = 120;
+	*dst++ = 0;
+	*dst++ = (x << 16) | y | shape | 0x10000000;
+	*dst++ = (tile + 6) | 0xe400;
+	Runtime_PushSlotEntry(entry++, 255);
+	for (i = 0; i < segments; i++)
+	{
+		x = 128 + i * 16;
+		shape = 0x40000000;
+		*dst++ = 0;
+		*dst++ = y | (x << 16) | shape | 0x10000000;
+		*dst++ = (tile + 2) | 0xe400;
+		Runtime_PushSlotEntry(entry++, 255);
+	}
+	x = width + 128;
+	shape = 0x8000;
+	*dst++ = 0;
+	y |= x << 16;
+	y |= shape;
+	y |= 0x10000000;
+	*dst++ = y;
+	*dst++ = tile | 0xe400;
+	Runtime_PushSlotEntry(entry++, 255);
 
-    if ((gFrameCount & 15) > 4) {
-        shape = 0x40000000;
-        actor = Engine_ActorLookup(gauge->rival_actor);
-        if (actor != 0) {
-            x = __divsi3(actor->x.fixed - gauge->finish_x, 0xe0000) + 112;
-            y = __divsi3(actor->z.fixed - gauge->finish_z, 0xe0000) + gauge->level * 6 - 4;
-            y &= 255;
-            *dst++ = 0;
-            y |= x << 16;
-            y |= shape;
-            *dst++ = y;
-            *dst++ = (tile + 12) | 0xe400;
-            Runtime_PushSlotEntry(entry++, 255);
-        }
-        actor = Engine_ActorLookup(gauge->player_actor);
-        if (actor != 0) {
-            x = __divsi3(actor->x.fixed - gauge->finish_x, 0xe0000) + 112;
-            y = __divsi3(actor->z.fixed - gauge->finish_z, 0xe0000) + gauge->level * 6 - 4;
-            y &= 255;
-            *dst++ = 0;
-            y |= x << 16;
-            y |= shape;
-            *dst++ = y;
-            *dst++ = (tile + 8) | 0xe400;
-            Runtime_PushSlotEntry(entry++, 255);
-        }
-    }
+	if ((gFrameCount & 15) > 4)
+	{
+		shape = 0x40000000;
+		actor = Engine_ActorLookup(gauge->rival_actor);
+		if (actor != 0)
+		{
+			x = __divsi3(actor->x.fixed - gauge->finish_x, 0xe0000) + 112;
+			y = __divsi3(actor->z.fixed - gauge->finish_z, 0xe0000) + gauge->level * 6 - 4;
+			y &= 255;
+			*dst++ = 0;
+			y |= x << 16;
+			y |= shape;
+			*dst++ = y;
+			*dst++ = (tile + 12) | 0xe400;
+			Runtime_PushSlotEntry(entry++, 255);
+		}
+		actor = Engine_ActorLookup(gauge->player_actor);
+		if (actor != 0)
+		{
+			x = __divsi3(actor->x.fixed - gauge->finish_x, 0xe0000) + 112;
+			y = __divsi3(actor->z.fixed - gauge->finish_z, 0xe0000) + gauge->level * 6 - 4;
+			y &= 255;
+			*dst++ = 0;
+			y |= x << 16;
+			y |= shape;
+			*dst++ = y;
+			*dst++ = (tile + 8) | 0xe400;
+			Runtime_PushSlotEntry(entry++, 255);
+		}
+	}
 }

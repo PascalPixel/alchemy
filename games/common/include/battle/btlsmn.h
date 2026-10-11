@@ -39,8 +39,8 @@ struct BattleSummonState
 #if GAME_TLA
 const struct SummonDefinition *SummonDefinition_Get(s32 summon_id);
 #endif
-s32							   EnmSlotGet(void);
-s32							   EnmChk(s32 class_id);
+s32 EnmSlotGet(void);
+s32 EnmChk(s32 class_id);
 
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id);
 s32							   BtlGrpRnd(s32 record_id);

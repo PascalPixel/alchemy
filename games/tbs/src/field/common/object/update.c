@@ -6,12 +6,12 @@
 
 #define OBJECT_SLOTS 8
 #define TARGET_UNSET ((s32)0x80000000)
-#define TURN_MAX	 0x1000			// 1 フレームに回れる角度
+#define TURN_MAX 0x1000 // 1 フレームに回れる角度
 
 // 常駐ルーチンを絶対番地で呼ぶ。RAM へ写したこのコードからも届く。
 #define IWRAM_ENTRY(type, offset) ((type)(IwramIrqMain + (offset)))
-#define IwramSqrt				  IWRAM_ENTRY(s32 (*)(s32 value), Iwram_SqrtOffset)
-#define IwramRatioMulQ14		  IWRAM_ENTRY(s32 (*)(s32 divisor, s32 value), Iwram_RatioMulQ14Offset)
+#define IwramSqrt IWRAM_ENTRY(s32 (*)(s32 value), Iwram_SqrtOffset)
+#define IwramRatioMulQ14 IWRAM_ENTRY(s32 (*)(s32 divisor, s32 value), Iwram_RatioMulQ14Offset)
 
 typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
 

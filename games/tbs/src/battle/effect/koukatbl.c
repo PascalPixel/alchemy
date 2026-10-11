@@ -244,8 +244,8 @@ const u8  MemberBeam_HeadWidths[] = {17, 19, 20};
 const u8  MemberBeam_HeadHeights[] = {49, 55, 64};
 
 // seven_mode_dispatch.c
-const s8 SevenMode_Records[] = {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0};
-const u8 SevenMode_ShardWidths[] = {9, 10, 9, 9, 9, 11, 11, 11, 12, 6, 7, 7, 7, 6, 6, 8, 8, 8};
+const s8  SevenMode_Records[] = {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0};
+const u8  SevenMode_ShardWidths[] = {9, 10, 9, 9, 9, 11, 11, 11, 12, 6, 7, 7, 7, 6, 6, 8, 8, 8};
 const u8 SevenMode_ShardHeights[] = {12, 12, 12, 12, 12, 12, 12, 12, 12, 8, 7, 6, 6, 8, 6, 4, 3, 3};
 const u16 SevenMode_ShardOffsets[] = {0, 108, 228, 336, 444, 552, 684, 816, 948, 1092, 1140, 1189,
 	1231, 1273, 1321, 1357, 1389, 1413};
@@ -530,7 +530,7 @@ const u16 ThornVines_EmberSizes[] = {16, 32, 48, 48, 48, 48, 48};
 const u8 BattleFx10_Points[][2] = {{57, 130}, {75, 128}, {71, 104}, {101, 130}, {86, 126}, {85, 98},
 	{64, 98}, {98, 96}, {77, 87}, {84, 88}, {68, 67}, {81, 49}, {94, 70}, {70, 51}, {93, 36},
 	{81, 50}};
-const s8 BattleFx10_ShakeOffsets[] = {-4, -3, -2, 0};
+const s8  BattleFx10_ShakeOffsets[] = {-4, -3, -2, 0};
 const u16 BattleFx10_RockCells[] = {0, 1152, 2064};
 const u8  BattleFx10_RockWidths[] = {24, 24, 20};
 const u8  BattleFx10_RockHeights[] = {48, 38, 26};

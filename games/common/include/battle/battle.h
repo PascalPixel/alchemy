@@ -846,11 +846,11 @@ void ObjectGroup_ApplyRandomChildValues(void *owner);
 void ObjectGroup_SetActionForOthers(
 	struct ObjectRuntime *excluded_object, s32 group_mode, s32 action);
 #endif
-s32						Owner_ApplyLevelGains(s32 owner, s32 levels);
-void					Palette_DarkenSceneStep(void);
-void					Palette_StepTowardResource(s32 resource_id);
-s32 Party_ComputeEligibleMemberAverage(s32 record_id);
-s32 Party_RemapCharacterIdByFlags(s32 arg0);
+s32	 Owner_ApplyLevelGains(s32 owner, s32 levels);
+void Palette_DarkenSceneStep(void);
+void Palette_StepTowardResource(s32 resource_id);
+s32	 Party_ComputeEligibleMemberAverage(s32 record_id);
+s32	 Party_RemapCharacterIdByFlags(s32 arg0);
 #ifndef OWN_Party_ReservedNoOp5B14
 void Party_ReservedNoOp5B14(void);
 #endif

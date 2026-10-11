@@ -50,18 +50,18 @@ struct Frame
 	s32 f10;
 };
 
-extern u32 ArutinYama_StatueTable[];
-extern s32 ArutinYama_EarlyActorScript[];
-extern s32 ArutinYama_LogRideScript[];
-extern s32 ArutinYama_LeaderRideScript[];
-extern s32 ArutinYama_SparkScript[];
-extern s32 ArutinYama_GeraldScript[];
-extern s32 ArutinYama_IvanScript[];
-extern s32 ArutinYama_MiaScript[];
-extern s32 ArutinYama_CelebrateScript[];
-extern s32 ArutinYama_PartyScript[];
+extern u32				 ArutinYama_StatueTable[];
+extern s32				 ArutinYama_EarlyActorScript[];
+extern s32				 ArutinYama_LogRideScript[];
+extern s32				 ArutinYama_LeaderRideScript[];
+extern s32				 ArutinYama_SparkScript[];
+extern s32				 ArutinYama_GeraldScript[];
+extern s32				 ArutinYama_IvanScript[];
+extern s32				 ArutinYama_MiaScript[];
+extern s32				 ArutinYama_CelebrateScript[];
+extern s32				 ArutinYama_PartyScript[];
 extern struct SceneEvent ArutinYama_OpenedAreaScript[];
-extern s32 ArutinYama_CueTicks;
+extern s32				 ArutinYama_CueTicks;
 
 extern s32 ArutinYama_LeafMode;
 extern s32 ArutinYama_LeafOrigin[3];
@@ -1962,12 +1962,12 @@ void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
 	switch (ArutinYama_LeafMode)
 	{
 	case 0:
-		leaf->x.fixed += (leaf->timer << 12)
-						 + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
+		leaf->x.fixed +=
+			(leaf->timer << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
 		break;
 	case 0x8000:
-		leaf->x.fixed -= (leaf->timer << 12)
-						 + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
+		leaf->x.fixed -=
+			(leaf->timer << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
 		break;
 	}
 	if (leaf->timer <= 3)
@@ -2532,7 +2532,7 @@ void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
 	timer = (s16 *)&object->work;
 	if (*timer != 0)
 	{
-		if (-- * timer == 20)
+		if (--*timer == 20)
 		{
 			Engine_AudioPlayCue(184);
 		}

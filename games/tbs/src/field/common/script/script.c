@@ -133,927 +133,1035 @@ dispatch:
 	return start;
 }
 
-#define Animation_SetWorkEntry ((void (*)(void*,s32))Animation_SetWorkEntry)
+#define Animation_SetWorkEntry ((void (*)(void *, s32))Animation_SetWorkEntry)
 
-#define gMenuCtrlWork ((void *(*))&gMenuCtrlWork)
-#define Render_DecodeFrame ((const u8 (*))&Render_DecodeFrame)
+#define gMenuCtrlWork ((void *(*)) & gMenuCtrlWork)
+#define Render_DecodeFrame ((const u8(*)) & Render_DecodeFrame)
 
 typedef void (*DrawFn)(const void *src, void *dst, s32 param);
 typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
 
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 {
-    s32 changed;
-    u32 size;
-    struct ObjectSystemWork *ctx;
-    DrawFn draw;
-    s32 held;
-    struct AnimationEntry *e;
-    void *block;
-    u8 *buf;
-    u8 *tmp;
-    void *decoded;
-    u16 order[4];
-    s32 i;
-    s32 k;
-    s32 n;
-    u32 key;
-    s32 arg;
-    s32 base;
-    u32 attr;
-    s32 tile;
+	s32						 changed;
+	u32						 size;
+	struct ObjectSystemWork *ctx;
+	DrawFn					 draw;
+	s32						 held;
+	struct AnimationEntry	*e;
+	void					*block;
+	u8						*buf;
+	u8						*tmp;
+	void					*decoded;
+	u16						 order[4];
+	s32						 i;
+	s32						 k;
+	s32						 n;
+	u32						 key;
+	s32						 arg;
+	s32						 base;
+	u32						 attr;
+	s32						 tile;
 
-    changed = 0;
-    ctx = gMenuCtrlWork[0];
-    held = 1;
-    draw = (DrawFn)gMenuCtrlWork[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
-    if (draw == 0) {
-        block = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER, (s32)Render_DecodeFrameCodeSize);
-        Dma_Set(Render_DecodeFrame, block,
-                (((u32)Render_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) | (DMA_ENABLE32 | DMA_32BIT),
-                REG_DMA3);
-        draw = (DrawFn)gMenuCtrlWork[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
-        held = 0;
-    }
+	changed = 0;
+	ctx = gMenuCtrlWork[0];
+	held = 1;
+	draw = (DrawFn)gMenuCtrlWork[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
+	if (draw == 0)
+	{
+		block = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER, (s32)Render_DecodeFrameCodeSize);
+		Dma_Set(Render_DecodeFrame, block,
+			(((u32)Render_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2)
+				| (DMA_ENABLE32 | DMA_32BIT),
+			REG_DMA3);
+		draw = (DrawFn)gMenuCtrlWork[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
+		held = 0;
+	}
 
-    for (i = 0; i < obj->count; i++) {
-        e = obj->entries[i];
-        if (e == 0) {
-            continue;
-        }
-        if (e->script == 0) {
-            continue;
-        }
-        /* FAKEMATCH: needed to match: explicit timer-test lifetime keeps command back-edges and the decoded frame value separate from the hold reload. */
-    read_command:
-        if ((s16)e->timer > 0)
-            goto advance_timer;
-        base = e->script[e->pos++];
-        arg = e->script[e->pos++];
-        switch (base) {
-        case 254:
-            Animation_SetWorkEntry(e, arg);
-            obj->last_no = arg;
-            break;
-        case 253:
-            e->pos = arg;
-            break;
-        case 245:
-            e->timer += arg << 4;
-            break;
-        case 241:
-            e->pos -= 2;
-            goto framed;
-        case 240:
-            e->kind = arg;
-            break;
-        case 255:
-            e->frame_base = 255;
-            base = 255;
-            e->timer += arg << 4;
-            goto select_direction;
-        case 239:
-            e->frame_base = 255;
-            e->script = 0;
-            base = 255;
-            obj->count--;
-            goto select_direction;
-        case 242:
-        case 243:
-        case 244:
-        case 246:
-        case 247:
-        case 248:
-        case 249:
-        case 250:
-        case 252:
-            break;
-        default:
-            e->frame_base = base;
-            e->timer += arg << 4;
-            goto select_direction;
-        }
-        goto read_command;
-    advance_timer:
-        e->timer = e->timer - e->step;
-    framed:
-        base = e->frame_base;
-    select_direction:
-        switch (e->kind) {
-        case 1:
-            attr = AnimationFacing_Kind1[dir >> 13];
-            break;
-        case 2:
-        case 20:
-            attr = AnimationFacing_Kind2[dir >> 13];
-            break;
-        case 22:
-            attr = AnimationFacing_Kind22[dir >> 13];
-            break;
-        case 3:
-            attr = AnimationFacing_Kind3[dir >> 12];
-            break;
-        case 4:
-            attr = AnimationFacing_Kind4[dir >> 10];
-            break;
-        case 5:
-            attr = AnimationFacing_Kind5[dir >> 12];
-            break;
-        case 6:
-            attr = AnimationFacing_Kind6[dir >> 10];
-            break;
-        case 8:
-            attr = AnimationFacing_Kind8[((u32)(dir << 16) + 0x10000000) >> 29];
-            break;
-        case 88:
-            attr = AnimationFacing_Kind88[((u32)(dir << 16) + 0x10000000) >> 29];
-            break;
-        default:
-            attr = 0;
-            break;
-        }
-        base += attr & 7;
-        if (i == 0 && (attr >> 7) != 0) {
-            changed = 1;
-        }
-        if (e->frame != base) {
-            e->frame = base;
-            obj->dirty = 1;
-        }
-    }
+	for (i = 0; i < obj->count; i++)
+	{
+		e = obj->entries[i];
+		if (e == 0)
+		{
+			continue;
+		}
+		if (e->script == 0)
+		{
+			continue;
+		}
+		/* FAKEMATCH: needed to match: explicit timer-test lifetime keeps command back-edges and the decoded frame value separate from the hold reload. */
+	read_command:
+		if ((s16)e->timer > 0)
+			goto advance_timer;
+		base = e->script[e->pos++];
+		arg = e->script[e->pos++];
+		switch (base)
+		{
+		case 254:
+			Animation_SetWorkEntry(e, arg);
+			obj->last_no = arg;
+			break;
+		case 253:
+			e->pos = arg;
+			break;
+		case 245:
+			e->timer += arg << 4;
+			break;
+		case 241:
+			e->pos -= 2;
+			goto framed;
+		case 240:
+			e->kind = arg;
+			break;
+		case 255:
+			e->frame_base = 255;
+			base = 255;
+			e->timer += arg << 4;
+			goto select_direction;
+		case 239:
+			e->frame_base = 255;
+			e->script = 0;
+			base = 255;
+			obj->count--;
+			goto select_direction;
+		case 242:
+		case 243:
+		case 244:
+		case 246:
+		case 247:
+		case 248:
+		case 249:
+		case 250:
+		case 252:
+			break;
+		default:
+			e->frame_base = base;
+			e->timer += arg << 4;
+			goto select_direction;
+		}
+		goto read_command;
+	advance_timer:
+		e->timer = e->timer - e->step;
+	framed:
+		base = e->frame_base;
+	select_direction:
+		switch (e->kind)
+		{
+		case 1:
+			attr = AnimationFacing_Kind1[dir >> 13];
+			break;
+		case 2:
+		case 20:
+			attr = AnimationFacing_Kind2[dir >> 13];
+			break;
+		case 22:
+			attr = AnimationFacing_Kind22[dir >> 13];
+			break;
+		case 3:
+			attr = AnimationFacing_Kind3[dir >> 12];
+			break;
+		case 4:
+			attr = AnimationFacing_Kind4[dir >> 10];
+			break;
+		case 5:
+			attr = AnimationFacing_Kind5[dir >> 12];
+			break;
+		case 6:
+			attr = AnimationFacing_Kind6[dir >> 10];
+			break;
+		case 8:
+			attr = AnimationFacing_Kind8[((u32)(dir << 16) + 0x10000000) >> 29];
+			break;
+		case 88:
+			attr = AnimationFacing_Kind88[((u32)(dir << 16) + 0x10000000) >> 29];
+			break;
+		default:
+			attr = 0;
+			break;
+		}
+		base += attr & 7;
+		if (i == 0 && (attr >> 7) != 0)
+		{
+			changed = 1;
+		}
+		if (e->frame != base)
+		{
+			e->frame = base;
+			obj->dirty = 1;
+		}
+	}
 
-    if (obj->dirty != 0) {
-        size = obj->width * obj->height;
-        buf = MemAlloc(size);
-        Iwram_ClearWords(buf, size);
+	if (obj->dirty != 0)
+	{
+		size = obj->width * obj->height;
+		buf = MemAlloc(size);
+		Iwram_ClearWords(buf, size);
 
-        n = -1;
-        for (i = obj->count - 1; i >= 0; i--) {
-            e = obj->entries[i];
-            if (e == 0) {
-                continue;
-            }
-            if (e->frames == 0) {
-                continue;
-            }
-            if (e->frame == 255) {
-                continue;
-            }
-            key = e->priority;
-            if (key > 3) {
-                continue;
-            }
-            key = (key << 8) | i;
-            /* FAKEMATCH: needed to match: the first shift written apart and the scan left by goto keep the scan unrotated, with its step at the top. */
-            k = n;
-            if (k >= 0 && order[k] > key) {
-                order[k + 1] = order[k];
-                for (;;) {
-                    k--;
-                    if (k < 0)
-                        goto insert;
-                    if (order[k] <= key)
-                        goto insert;
-                    order[k + 1] = order[k];
-                }
-            }
-        insert:
-            order[k + 1] = key;
-            n++;
-        }
-        n++;
+		n = -1;
+		for (i = obj->count - 1; i >= 0; i--)
+		{
+			e = obj->entries[i];
+			if (e == 0)
+			{
+				continue;
+			}
+			if (e->frames == 0)
+			{
+				continue;
+			}
+			if (e->frame == 255)
+			{
+				continue;
+			}
+			key = e->priority;
+			if (key > 3)
+			{
+				continue;
+			}
+			key = (key << 8) | i;
+			/* FAKEMATCH: needed to match: the first shift written apart and the scan left by goto keep the scan unrotated, with its step at the top. */
+			k = n;
+			if (k >= 0 && order[k] > key)
+			{
+				order[k + 1] = order[k];
+				for (;;)
+				{
+					k--;
+					if (k < 0)
+						goto insert;
+					if (order[k] <= key)
+						goto insert;
+					order[k + 1] = order[k];
+				}
+			}
+		insert:
+			order[k + 1] = key;
+			n++;
+		}
+		n++;
 
-        for (i = 0; i < n; i++) {
-            e = obj->entries[*(u8 *)&order[i]];
-            if (e->mode == 1) {
-                Resource_DecodeType01(e->frames[e->frame], buf);
-            } else if (e->mode == 3) {
-                if (e->param != 0) {
-                    tmp = MemAlloc(0x400);
-                    draw(Resource_DecompressLz(e->frames[e->frame], tmp),
-                         buf, e->param);
-                    MemFree(tmp);
-                } else {
-                    decoded = Iwram_Decompress(e->frames[e->frame], buf);
-                    if (decoded != 0) {
-                        draw(decoded, buf, 0);
-                    }
-                }
-            } else {
-                draw(e->frames[e->frame], buf, e->param);
-            }
-        }
+		for (i = 0; i < n; i++)
+		{
+			e = obj->entries[*(u8 *)&order[i]];
+			if (e->mode == 1)
+			{
+				Resource_DecodeType01(e->frames[e->frame], buf);
+			}
+			else if (e->mode == 3)
+			{
+				if (e->param != 0)
+				{
+					tmp = MemAlloc(0x400);
+					draw(Resource_DecompressLz(e->frames[e->frame], tmp), buf, e->param);
+					MemFree(tmp);
+				}
+				else
+				{
+					decoded = Iwram_Decompress(e->frames[e->frame], buf);
+					if (decoded != 0)
+					{
+						draw(decoded, buf, 0);
+					}
+				}
+			}
+			else
+			{
+				draw(e->frames[e->frame], buf, e->param);
+			}
+		}
 
-        if ((obj->flags & 2) != 0) {
-            u8 *mask;
-            u8 edge;
-            u8 fill;
-            u32 w;
-            u32 h;
-            u8 *src;
-            u8 *dst;
+		if ((obj->flags & 2) != 0)
+		{
+			u8 *mask;
+			u8	edge;
+			u8	fill;
+			u32 w;
+			u32 h;
+			u8 *src;
+			u8 *dst;
 
-            mask = MemAlloc(size);
-            w = obj->width;
-            h = obj->height;
-            edge = ctx->edge;
-            fill = ctx->fill;
-            Iwram_ClearWords(mask, size);
-            src = buf + w + 1;
-            dst = mask + w + 1;
-            for (i = 1; i < h - 1; i++) {
-                for (k = 1; k < w - 1; k++) {
-                    if (src[-1] != 0 && src[1] != 0 &&
-                        *(src - w) != 0 && src[w] != 0) {
-                        *dst = 1;
-                    }
-                    dst++;
-                    src++;
-                }
-                dst += 2;
-                src += 2;
-            }
-            src = buf;
-            dst = mask;
-            for (i = 0; i < size; i++) {
-                if (*dst != 0) {
-                    *src = fill;
-                } else if (*src != 0) {
-                    *src = edge;
-                }
-                dst++;
-                src++;
-            }
-            MemFree(mask);
-        }
+			mask = MemAlloc(size);
+			w = obj->width;
+			h = obj->height;
+			edge = ctx->edge;
+			fill = ctx->fill;
+			Iwram_ClearWords(mask, size);
+			src = buf + w + 1;
+			dst = mask + w + 1;
+			for (i = 1; i < h - 1; i++)
+			{
+				for (k = 1; k < w - 1; k++)
+				{
+					if (src[-1] != 0 && src[1] != 0 && *(src - w) != 0 && src[w] != 0)
+					{
+						*dst = 1;
+					}
+					dst++;
+					src++;
+				}
+				dst += 2;
+				src += 2;
+			}
+			src = buf;
+			dst = mask;
+			for (i = 0; i < size; i++)
+			{
+				if (*dst != 0)
+				{
+					*src = fill;
+				}
+				else if (*src != 0)
+				{
+					*src = edge;
+				}
+				dst++;
+				src++;
+			}
+			MemFree(mask);
+		}
 
-        tile = VramBlock_LoadCached(obj->slot, size, 0);
-        {
-            void *vram = (void *)(0x06010000 + (tile << 5));
-            ((UploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(buf, obj->width, obj->height, vram);
-        }
-        obj->part[0].tile = tile;
-        obj->dirty = 0;
-        ctx->used += size;
-        MemFree(buf);
-    }
+		tile = VramBlock_LoadCached(obj->slot, size, 0);
+		{
+			void *vram = (void *)(0x06010000 + (tile << 5));
+			((UploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(buf, obj->width, obj->height, vram);
+		}
+		obj->part[0].tile = tile;
+		obj->dirty = 0;
+		ctx->used += size;
+		MemFree(buf);
+	}
 
-    if (held == 0) {
-        Runtime_ReleaseHeapBlock(52);
-    }
-    return changed;
+	if (held == 0)
+	{
+		Runtime_ReleaseHeapBlock(52);
+	}
+	return changed;
 }
 
-void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screen_x,
-    s32 height, s32 screen_y, s32 ground_height, s32 *scale)
+void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screen_x, s32 height,
+	s32 screen_y, s32 ground_height, s32 *scale)
 {
-    u32 half_width = sprite->width >> 1;
-    u32 half_height = sprite->height >> 1;
-    s32 margin_x = 8;
-    s32 margin_y = 4;
-    s32 affine = 1;
-    s32 scale_x = *scale++;
-    s32 scale_y = *scale;
-    s32 x;
-    s32 y;
-    struct AnimationSpritePart *shadow;
+	u32							half_width = sprite->width >> 1;
+	u32							half_height = sprite->height >> 1;
+	s32							margin_x = 8;
+	s32							margin_y = 4;
+	s32							affine = 1;
+	s32							scale_x = *scale++;
+	s32							scale_y = *scale;
+	s32							x;
+	s32							y;
+	struct AnimationSpritePart *shadow;
 
-    if (scale_x > 0x10000 || scale_y > 0x10000) {
-        affine = 3;
-        margin_x = 16;
-        margin_y = 8;
-        half_width <<= 1;
-        half_height <<= 1;
-    }
-    x = (screen_x >> 16) - half_width;
-    y = ((screen_y - height) >> 16) - half_height
-        - ((((sprite->height >> 1) - sprite->offset_y) * scale_y
-            + 0xffff) >> 16);
-    sprite->part[0].affine = affine;
-    sprite->part[0].x = x;
-    sprite->part[0].y = y;
-    x = (screen_x >> 16) - margin_x;
-    y = ((screen_y - ground_height) >> 16) - margin_y;
-    shadow = &sprite->part[1];
-    shadow->affine = affine;
-    shadow->x = x;
-    shadow->y = y;
+	if (scale_x > 0x10000 || scale_y > 0x10000)
+	{
+		affine = 3;
+		margin_x = 16;
+		margin_y = 8;
+		half_width <<= 1;
+		half_height <<= 1;
+	}
+	x = (screen_x >> 16) - half_width;
+	y = ((screen_y - height) >> 16) - half_height
+		- ((((sprite->height >> 1) - sprite->offset_y) * scale_y + 0xffff) >> 16);
+	sprite->part[0].affine = affine;
+	sprite->part[0].x = x;
+	sprite->part[0].y = y;
+	x = (screen_x >> 16) - margin_x;
+	y = ((screen_y - ground_height) >> 16) - margin_y;
+	shadow = &sprite->part[1];
+	shadow->affine = affine;
+	shadow->x = x;
+	shadow->y = y;
 }
 
 #undef gMenuCtrlWork
 
 #undef gMenuCtrlWork
 #undef gMenuCtrlWork
-#define gMenuCtrlWork ((u8 (*))&gMenuCtrlWork)
+#define gMenuCtrlWork ((u8(*)) & gMenuCtrlWork)
 
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
 {
-    s32 matrix;
-    u32 half_width = sprite->width >> 1;
-    u32 half_height = sprite->height >> 1;
-    s32 size = 8;
-    s32 size_half = 4;
-    s32 affine;
-    s32 scale_x = *scale++;
-    s32 px = *pos++;
-    s32 scale_y = *scale;
-    s32 py = *pos++;
-    s32 pz = *pos++;
-    s32 pw = *pos;
-    s32 slot;
-    /* FAKEMATCH: needed to match: the two unused arrays supply 24 bytes of the 68-byte frame; removing them leaves 44 bytes. */
-    s32 ground[3];
-    s32 screen[3];
-    struct AffineTransform effect;
-    s32 flip;
-    s32 x;
-    s32 y;
-    s32 depth;
-    struct AnimationSpritePart *part;
+	s32 matrix;
+	u32 half_width = sprite->width >> 1;
+	u32 half_height = sprite->height >> 1;
+	s32 size = 8;
+	s32 size_half = 4;
+	s32 affine;
+	s32 scale_x = *scale++;
+	s32 px = *pos++;
+	s32 scale_y = *scale;
+	s32 py = *pos++;
+	s32 pz = *pos++;
+	s32 pw = *pos;
+	s32 slot;
+	/* FAKEMATCH: needed to match: the two unused arrays supply 24 bytes of the 68-byte frame; removing them leaves 44 bytes. */
+	s32							ground[3];
+	s32							screen[3];
+	struct AffineTransform		effect;
+	s32							flip;
+	s32							x;
+	s32							y;
+	s32							depth;
+	struct AnimationSpritePart *part;
 
-    flip = Sprite_ComposeAnimationFrame(sprite, mode);
-    if (flip == 0 && scale_x == 0x10000 && scale_y == scale_x && sprite->rotation == 0) {
-        affine = 0;
-        matrix = 0;
-    } else {
-        affine = 1;
-        effect.angle = sprite->rotation;
-        effect.scale_x = scale_x >> 8;
-        effect.scale_y = scale_y >> 8;
-        if (flip != 0)
-            effect.scale_x = -effect.scale_x;
-        matrix = AffineMatrix_BuildForEffect(&effect);
-    }
-    if (scale_x > 0x10000 || scale_y > 0x10000) {
-        affine = 3;
-        half_width <<= 1;
-        half_height <<= 1;
-        size = 16;
-        size_half = 8;
-    }
-    if (py <= -0x640000) {
-        slot = 1;
-        depth = 0;
-    } else {
-        slot = (pz >> 17) + 10;
-        depth = 2;
-    }
-    y = ((pz - pw) >> 16) - size_half;
-    if (sprite->flags & 1) {
-        if (y < 160) {
-            part = &sprite->part[1];
-            part->affine = affine;
-            part->affine_index = matrix;
-            part->x = (px >> 16) - size;
-            part->y = y;
-            Runtime_PushSlotEntry(part, depth);
-        }
-    }
-    x = (px >> 16) - half_width + ((sprite->offset_x * scale_x + 0xffff) >> 16);
-    y = ((pz - py) >> 16) - half_height
-        - ((scale_y * ((sprite->height >> 1) - sprite->offset_y) + 0xffff) >> 16);
-    if (x < 240 && y < 160) {
-        part = &sprite->part[0];
-        part->x = x;
-        part->y = y;
-        part->affine = affine;
-        part->affine_index = matrix;
-        Runtime_PushSlotEntry(part, slot);
-    }
+	flip = Sprite_ComposeAnimationFrame(sprite, mode);
+	if (flip == 0 && scale_x == 0x10000 && scale_y == scale_x && sprite->rotation == 0)
+	{
+		affine = 0;
+		matrix = 0;
+	}
+	else
+	{
+		affine = 1;
+		effect.angle = sprite->rotation;
+		effect.scale_x = scale_x >> 8;
+		effect.scale_y = scale_y >> 8;
+		if (flip != 0)
+			effect.scale_x = -effect.scale_x;
+		matrix = AffineMatrix_BuildForEffect(&effect);
+	}
+	if (scale_x > 0x10000 || scale_y > 0x10000)
+	{
+		affine = 3;
+		half_width <<= 1;
+		half_height <<= 1;
+		size = 16;
+		size_half = 8;
+	}
+	if (py <= -0x640000)
+	{
+		slot = 1;
+		depth = 0;
+	}
+	else
+	{
+		slot = (pz >> 17) + 10;
+		depth = 2;
+	}
+	y = ((pz - pw) >> 16) - size_half;
+	if (sprite->flags & 1)
+	{
+		if (y < 160)
+		{
+			part = &sprite->part[1];
+			part->affine = affine;
+			part->affine_index = matrix;
+			part->x = (px >> 16) - size;
+			part->y = y;
+			Runtime_PushSlotEntry(part, depth);
+		}
+	}
+	x = (px >> 16) - half_width + ((sprite->offset_x * scale_x + 0xffff) >> 16);
+	y = ((pz - py) >> 16) - half_height
+		- ((scale_y * ((sprite->height >> 1) - sprite->offset_y) + 0xffff) >> 16);
+	if (x < 240 && y < 160)
+	{
+		part = &sprite->part[0];
+		part->x = x;
+		part->y = y;
+		part->affine = affine;
+		part->affine_index = matrix;
+		Runtime_PushSlotEntry(part, slot);
+	}
 }
 
-void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point, s32 *scale, s32 mode, s32 depth)
+void Render_PlaceProjectedSprite(
+	struct AnimationObject *sprite, s32 *point, s32 *scale, s32 mode, s32 depth)
 {
-    s32 flip;
-    u32 half_height;
-    u32 size;
-    s32 affine;
-    s32 half_width;
-    s32 ground[3];
-    s32 screen[3];
-    struct AffineTransform effect;
-    s32 z;
-    s32 base;
-    s32 scale_x;
-    s32 scale_y;
-    s32 offset_x;
-    s32 offset_y;
-    s32 slot;
+	s32					   flip;
+	u32					   half_height;
+	u32					   size;
+	s32					   affine;
+	s32					   half_width;
+	s32					   ground[3];
+	s32					   screen[3];
+	struct AffineTransform effect;
+	s32					   z;
+	s32					   base;
+	s32					   scale_x;
+	s32					   scale_y;
+	s32					   offset_x;
+	s32					   offset_y;
+	s32					   slot;
 
-    affine = 1;
-    if ((*(struct ObjectSystemWork **)gMenuCtrlWork)->suspended != 0)
-        goto hide;
-    z = Render_ProjectPoint(point, screen);
-    if (screen[2] == 0)
-        goto hide;
-    if (screen[0] < -32)
-        goto hide;
-    if (screen[0] > 272)
-        goto hide;
-    if (screen[1] < -32)
-        goto hide;
-    if (screen[1] > 208)
-        goto hide;
-    if (sprite->display_flags & 2)
-        z = sprite->scale;
-    else
-        z = Iwram_MulQ16(z, sprite->scale);
-    half_width = sprite->width >> 1;
-    half_height = sprite->height >> 1;
-    size = 8;
-    flip = Sprite_ComposeAnimationFrame(sprite, mode);
-    base = (z + 0x400) & -0x800;
-    scale_x = Iwram_MulQ16(base, *scale++);
-    scale_y = Iwram_MulQ16(base, *scale);
-    if (scale_x > 0x1f7ff)
-        scale_x = 0x1f800;
-    if (scale_y > 0x1f7ff)
-        scale_y = 0x1f800;
-    offset_x = Iwram_MulQ16(sprite->offset_x, scale_x);
-    offset_y = -Iwram_MulQ16((sprite->height >> 1) - sprite->offset_y, scale_y);
-    if (scale_x > 0x10000 || scale_y > 0x10000) {
-        affine = 3;
-        half_width <<= 1;
-        half_height <<= 1;
-        size = 16;
-    } else if (scale_x == 0x10000 && sprite->rotation == 0 && scale_y == scale_x) {
-        affine = 0;
-    }
-    if (affine != 0) {
-        effect.angle = sprite->rotation;
-        effect.scale_x = scale_x >> 8;
-        if (flip != 0) {
-            effect.scale_x = -effect.scale_x;
-            offset_x = -offset_x;
-        }
-        effect.scale_y = scale_y >> 8;
-        z = AffineMatrix_BuildForEffect(&effect);
-    } else if (flip != 0) {
-        z = 8;
-        offset_x = -offset_x;
-    } else {
-        z = 0;
-    }
-    sprite->part[0].x = screen[0] - half_width + offset_x;
-    sprite->part->y = screen[1] - half_height + offset_y;
-    sprite->part[0].affine = affine;
-    sprite->part[0].affine_index = z;
-    if (depth == 0) {
-        slot = (0x200 - screen[2]) / 2 + 128;
-        if (slot <= 0)
-            slot = 1;
-        Runtime_PushSlotEntry(sprite, slot);
-    } else {
-        Runtime_PushSlotEntry(sprite, depth);
-    }
-    if (sprite->flags & 1) {
-        struct AnimationSpritePart *shadow;
+	affine = 1;
+	if ((*(struct ObjectSystemWork **)gMenuCtrlWork)->suspended != 0)
+		goto hide;
+	z = Render_ProjectPoint(point, screen);
+	if (screen[2] == 0)
+		goto hide;
+	if (screen[0] < -32)
+		goto hide;
+	if (screen[0] > 272)
+		goto hide;
+	if (screen[1] < -32)
+		goto hide;
+	if (screen[1] > 208)
+		goto hide;
+	if (sprite->display_flags & 2)
+		z = sprite->scale;
+	else
+		z = Iwram_MulQ16(z, sprite->scale);
+	half_width = sprite->width >> 1;
+	half_height = sprite->height >> 1;
+	size = 8;
+	flip = Sprite_ComposeAnimationFrame(sprite, mode);
+	base = (z + 0x400) & -0x800;
+	scale_x = Iwram_MulQ16(base, *scale++);
+	scale_y = Iwram_MulQ16(base, *scale);
+	if (scale_x > 0x1f7ff)
+		scale_x = 0x1f800;
+	if (scale_y > 0x1f7ff)
+		scale_y = 0x1f800;
+	offset_x = Iwram_MulQ16(sprite->offset_x, scale_x);
+	offset_y = -Iwram_MulQ16((sprite->height >> 1) - sprite->offset_y, scale_y);
+	if (scale_x > 0x10000 || scale_y > 0x10000)
+	{
+		affine = 3;
+		half_width <<= 1;
+		half_height <<= 1;
+		size = 16;
+	}
+	else if (scale_x == 0x10000 && sprite->rotation == 0 && scale_y == scale_x)
+	{
+		affine = 0;
+	}
+	if (affine != 0)
+	{
+		effect.angle = sprite->rotation;
+		effect.scale_x = scale_x >> 8;
+		if (flip != 0)
+		{
+			effect.scale_x = -effect.scale_x;
+			offset_x = -offset_x;
+		}
+		effect.scale_y = scale_y >> 8;
+		z = AffineMatrix_BuildForEffect(&effect);
+	}
+	else if (flip != 0)
+	{
+		z = 8;
+		offset_x = -offset_x;
+	}
+	else
+	{
+		z = 0;
+	}
+	sprite->part[0].x = screen[0] - half_width + offset_x;
+	sprite->part->y = screen[1] - half_height + offset_y;
+	sprite->part[0].affine = affine;
+	sprite->part[0].affine_index = z;
+	if (depth == 0)
+	{
+		slot = (0x200 - screen[2]) / 2 + 128;
+		if (slot <= 0)
+			slot = 1;
+		Runtime_PushSlotEntry(sprite, slot);
+	}
+	else
+	{
+		Runtime_PushSlotEntry(sprite, depth);
+	}
+	if (sprite->flags & 1)
+	{
+		struct AnimationSpritePart *shadow;
 
-        ground[0] = point[0];
-        ground[1] = 0;
-        ground[2] = point[2];
-        Render_ProjectPoint(ground, screen);
-        shadow = &sprite->part[1];
-        shadow->x = screen[0] - size;
-        shadow->y = screen[1] - (size >> 1) + 2;
-        shadow->affine = affine;
-        shadow->affine_index = z;
-        if (depth == 0)
-            Runtime_PushSlotEntry(shadow, 0);
-        else
-            Runtime_PushSlotEntry(shadow, depth);
-    }
-    return;
+		ground[0] = point[0];
+		ground[1] = 0;
+		ground[2] = point[2];
+		Render_ProjectPoint(ground, screen);
+		shadow = &sprite->part[1];
+		shadow->x = screen[0] - size;
+		shadow->y = screen[1] - (size >> 1) + 2;
+		shadow->affine = affine;
+		shadow->affine_index = z;
+		if (depth == 0)
+			Runtime_PushSlotEntry(shadow, 0);
+		else
+			Runtime_PushSlotEntry(shadow, depth);
+	}
+	return;
 hide:
-    if (!(sprite->display_flags & 1)) {
-        Resource_ActivateEntry(sprite->slot);
-        sprite->dirty = 1;
-    }
+	if (!(sprite->display_flags & 1))
+	{
+		Resource_ActivateEntry(sprite->slot);
+		sprite->dirty = 1;
+	}
 }
 
 void ObjectGroup_SetChildValueUnlessFifteen(void *raw_parent, u32 value)
 {
-    struct AnimationObject *parent = raw_parent;
-    if (parent != 0) {
-        u32 n = parent->count;
+	struct AnimationObject *parent = raw_parent;
+	if (parent != 0)
+	{
+		u32 n = parent->count;
 
-        if (n != 0) {
-            struct AnimationEntry **p = parent->entries;
-            u32 cnt = n;
-            do {
-                struct AnimationEntry *child = *p++;
-                if (child->param != 15)
-                    child->param = value;
-                cnt--;
-            } while (cnt != 0);
-        }
-        parent->dirty = 1;
-    }
+		if (n != 0)
+		{
+			struct AnimationEntry **p = parent->entries;
+			u32						cnt = n;
+			do
+			{
+				struct AnimationEntry *child = *p++;
+				if (child->param != 15)
+					child->param = value;
+				cnt--;
+			} while (cnt != 0);
+		}
+		parent->dirty = 1;
+	}
 }
 
 #undef Animation_SetWorkEntry
 #undef gMenuCtrlWork
 
-struct ResourceSlotNumber {
-    u16 resource;
-    s16 number;
+struct ResourceSlotNumber
+{
+	u16 resource;
+	s16 number;
 };
 
-enum { RESOURCE_SLOT_COUNT = 8, ANIMATION_OBJECT_COUNT = 64 };
+enum
+{
+	RESOURCE_SLOT_COUNT = 8,
+	ANIMATION_OBJECT_COUNT = 64
+};
 
 extern struct ResourceSlotNumber ResourceSlot_NumberTable[];
 
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 {
-    struct AnimationMetadata *metadata;
-    struct ObjectSystemWork *work;
-    struct ResourceSlot *record;
-    struct ResourceSlotNumber *entry;
-    u32 *offset;
-    u8 *text;
-    u8 *end;
-    u8 *table;
-    u32 size;
-    u32 count;
-    u32 index;
-    u16 entry_number;
-    s32 resource;
+	struct AnimationMetadata  *metadata;
+	struct ObjectSystemWork	  *work;
+	struct ResourceSlot		  *record;
+	struct ResourceSlotNumber *entry;
+	u32						  *offset;
+	u8						  *text;
+	u8						  *end;
+	u8						  *table;
+	u32						   size;
+	u32						   count;
+	u32						   index;
+	u16						   entry_number;
+	s32						   resource;
 
-    if (slot >= RESOURCE_SLOT_COUNT)
-        return 0;
-    work = gMenuCtrlWork;
-    record = &work->slots[slot];
-    metadata = Resource_GetMetadataRecordFar(number);
-    record->tag = (slot << 12) | number;
-    record->buffer = buffer;
+	if (slot >= RESOURCE_SLOT_COUNT)
+		return 0;
+	work = gMenuCtrlWork;
+	record = &work->slots[slot];
+	metadata = Resource_GetMetadataRecordFar(number);
+	record->tag = (slot << 12) | number;
+	record->buffer = buffer;
 
-    entry = ResourceSlot_NumberTable;
-    for (count = 0; count < 256; count++) {
-        s16 *numbers = &entry->number;
+	entry = ResourceSlot_NumberTable;
+	for (count = 0; count < 256; count++)
+	{
+		s16 *numbers = &entry->number;
 
-        resource = entry->resource;
-        entry_number = *numbers;
-        entry++;
-        if (entry_number == 0)
-            return 0;
-        if (entry_number == number)
-            break;
-    }
-    size = Resource_DecodeType01(Resource_GetTableEntry(resource), buffer);
+		resource = entry->resource;
+		entry_number = *numbers;
+		entry++;
+		if (entry_number == 0)
+			return 0;
+		if (entry_number == number)
+			break;
+	}
+	size = Resource_DecodeType01(Resource_GetTableEntry(resource), buffer);
 
-    offset = buffer;
-    for (count = 0; count < 256; count++) {
-        if (*offset == 0)
-            break;
-        *offset += (u32)buffer;
-        offset++;
-    }
-    if (variant != 0) {
-        index = variant - 1;
-        text = (u8 *)(offset + 1);
-        end = (u8 *)buffer + size;
-        if (index > 4)
-            index = 0;
-        table = ResourceSlot_ConversionTables[index];
-        for (; text < end; text++) {
-            u32 c = *text;
+	offset = buffer;
+	for (count = 0; count < 256; count++)
+	{
+		if (*offset == 0)
+			break;
+		*offset += (u32)buffer;
+		offset++;
+	}
+	if (variant != 0)
+	{
+		index = variant - 1;
+		text = (u8 *)(offset + 1);
+		end = (u8 *)buffer + size;
+		if (index > 4)
+			index = 0;
+		table = ResourceSlot_ConversionTables[index];
+		for (; text < end; text++)
+		{
+			u32 c = *text;
 
-            if (c <= 0xdf) {
-                c = table[c];
-                *text = c;
-            }
-        }
-    }
-    return metadata->width * metadata->height;
+			if (c <= 0xdf)
+			{
+				c = table[c];
+				*text = c;
+			}
+		}
+	}
+	return metadata->width * metadata->height;
 }
 
 s32 Animation_LookupValueByKey(s32 key)
 {
-    u32 no;
-    struct ResourceSlot *p = gMenuCtrlWork->slots;
+	u32					 no;
+	struct ResourceSlot *p = gMenuCtrlWork->slots;
 
-    for (no = 0; no < RESOURCE_SLOT_COUNT; no++, p++) {
-        if (p->tag == key)
-            return (s32)p->buffer;
-    }
-    return 0;
+	for (no = 0; no < RESOURCE_SLOT_COUNT; no++, p++)
+	{
+		if (p->tag == key)
+			return (s32)p->buffer;
+	}
+	return 0;
 }
 
 s32 Animation_InitializeObjects(struct AnimationObject *state)
 {
-    s32 index;
+	s32 index;
 
-    for (index = 0; index < state->count; index++) {
-        struct AnimationEntry *object = state->entries[index];
-        struct AnimationMetadata *metadata = Resource_GetMetadataRecordFar(object->anim_id);
-        void **frames;
+	for (index = 0; index < state->count; index++)
+	{
+		struct AnimationEntry	 *object = state->entries[index];
+		struct AnimationMetadata *metadata = Resource_GetMetadataRecordFar(object->anim_id);
+		void					**frames;
 
-        if (metadata->width == 0)
-            continue;
+		if (metadata->width == 0)
+			continue;
 
-        if (index == 0) {
-            state->width = metadata->width;
-            state->height = metadata->height;
-            state->scale = metadata->scale << 8;
-            state->offset_y = metadata->adjust_y;
-            state->offset_x = metadata->adjust_x;
-        }
+		if (index == 0)
+		{
+			state->width = metadata->width;
+			state->height = metadata->height;
+			state->scale = metadata->scale << 8;
+			state->offset_y = metadata->adjust_y;
+			state->offset_x = metadata->adjust_x;
+		}
 
-        frames = metadata->frames;
-        if (frames == 0)
-            frames = (void **)Animation_LookupValueByKey(object->anim_id);
+		frames = metadata->frames;
+		if (frames == 0)
+			frames = (void **)Animation_LookupValueByKey(object->anim_id);
 
-        object->kind = metadata->draw_kind;
-        object->frames = frames;
-        object->scripts = metadata->animation;
-        object->mode = metadata->frame_codec;
-        object->frame = 0xff;
-        object->script = 0;
-        object->pos = 0;
-    }
+		object->kind = metadata->draw_kind;
+		object->frames = frames;
+		object->scripts = metadata->animation;
+		object->mode = metadata->frame_codec;
+		object->frame = 0xff;
+		object->script = 0;
+		object->pos = 0;
+	}
 
-    return 0;
+	return 0;
 }
 
 void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
 {
-    void **value;
-    s32 z;
-    struct AnimationMetadata *info;
+	void					**value;
+	s32						  z;
+	struct AnimationMetadata *info;
 
-    if (work != NULL) {
-        info = Resource_GetMetadataRecordFar(work->anim_id);
-        if (info->width != 0) {
-            value = info->frames;
-            if (value == 0)
-                value = (void **)Animation_LookupValueByKey(work->anim_id);
-            work->kind = info->draw_kind;
-            work->scripts = info->animation;
-            work->frames = value;
-            work->mode = info->frame_codec;
-            z = 0;
-            work->frame = 0xff;
-            work->script = (u8 *)z;
-            work->pos = z;
-        }
-    }
+	if (work != NULL)
+	{
+		info = Resource_GetMetadataRecordFar(work->anim_id);
+		if (info->width != 0)
+		{
+			value = info->frames;
+			if (value == 0)
+				value = (void **)Animation_LookupValueByKey(work->anim_id);
+			work->kind = info->draw_kind;
+			work->scripts = info->animation;
+			work->frames = value;
+			work->mode = info->frame_codec;
+			z = 0;
+			work->frame = 0xff;
+			work->script = (u8 *)z;
+			work->pos = z;
+		}
+	}
 }
 
 s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id)
 {
-    s32 value = (s32)state->entries[0];
-    s32 index = 0;
-    struct AnimationEntry **slot;
-    struct AnimationMetadata *metadata;
+	s32						  value = (s32)state->entries[0];
+	s32						  index = 0;
+	struct AnimationEntry	**slot;
+	struct AnimationMetadata *metadata;
 
-    if (value != 0) {
-        slot = &state->entries[0];
-        do {
-            index++;
-            if (index > 3)
-                break;
-            slot++;
-            value = (s32)*slot;
-        } while (value != 0);
-    }
-    if (index == 4)
-        return -1;
-    value = (s32)AnimationObject_Allocate(id);
-    if (value == 0)
-        return 0;
-    state->entries[index] = (struct AnimationEntry *)value;
-    metadata = Resource_GetMetadataRecordFar(id);
-    if (state->count == 0) {
-        state->width = metadata->width;
-        state->height = metadata->height;
-        state->scale = metadata->scale << 8;
-        state->offset_y = metadata->adjust_y;
-        state->offset_x = metadata->adjust_x;
-    }
-    if (index == state->count)
-        state->count = index + 1;
-    return value;
+	if (value != 0)
+	{
+		slot = &state->entries[0];
+		do
+		{
+			index++;
+			if (index > 3)
+				break;
+			slot++;
+			value = (s32)*slot;
+		} while (value != 0);
+	}
+	if (index == 4)
+		return -1;
+	value = (s32)AnimationObject_Allocate(id);
+	if (value == 0)
+		return 0;
+	state->entries[index] = (struct AnimationEntry *)value;
+	metadata = Resource_GetMetadataRecordFar(id);
+	if (state->count == 0)
+	{
+		state->width = metadata->width;
+		state->height = metadata->height;
+		state->scale = metadata->scale << 8;
+		state->offset_y = metadata->adjust_y;
+		state->offset_x = metadata->adjust_x;
+	}
+	if (index == state->count)
+		state->count = index + 1;
+	return value;
 }
 
 void ResourceMetadata_Unregister(struct AnimationObject *state, s32 handle)
 {
-    s32 count;
-    u32 slot;
-    u32 i;
+	s32 count;
+	u32 slot;
+	u32 i;
 
-    if (state != NULL && handle != 0) {
-        ResourceMetadata_ClearRecord(handle);
-        for (slot = 0; slot <= 3; slot++) {
-            if (handle == (s32)state->entries[slot])
-                break;
-        }
-        if (slot != 4) {
-            state->entries[slot] = 0;
-            count = 0;
-            for (i = slot + 1; i <= 3; i++) {
-                if (state->entries[i] != 0)
-                    count++;
-            }
-            if (count == 0)
-                state->count = slot;
-        }
-    }
+	if (state != NULL && handle != 0)
+	{
+		ResourceMetadata_ClearRecord(handle);
+		for (slot = 0; slot <= 3; slot++)
+		{
+			if (handle == (s32)state->entries[slot])
+				break;
+		}
+		if (slot != 4)
+		{
+			state->entries[slot] = 0;
+			count = 0;
+			for (i = slot + 1; i <= 3; i++)
+			{
+				if (state->entries[i] != 0)
+					count++;
+			}
+			if (count == 0)
+				state->count = slot;
+		}
+	}
 }
 
 void ResourceMetadata_ReleaseSlot(struct AnimationObject *group, u32 no)
 {
-    struct AnimationEntry *v;
-    s32 cnt;
-    u32 i;
+	struct AnimationEntry *v;
+	s32					   cnt;
+	u32					   i;
 
-    if (group != NULL && no <= 3) {
-        v = group->entries[no];
-        if (v != NULL) {
-            ResourceMetadata_ClearRecord(v);
-            group->entries[no] = NULL;
-            cnt = 0;
-            for (i = no + 1; i <= 3; i++) {
-                if (group->entries[i] != NULL)
-                    cnt++;
-            }
-            if (cnt == 0)
-                group->count = no;
-        }
-    }
+	if (group != NULL && no <= 3)
+	{
+		v = group->entries[no];
+		if (v != NULL)
+		{
+			ResourceMetadata_ClearRecord(v);
+			group->entries[no] = NULL;
+			cnt = 0;
+			for (i = no + 1; i <= 3; i++)
+			{
+				if (group->entries[i] != NULL)
+					cnt++;
+			}
+			if (cnt == 0)
+				group->count = no;
+		}
+	}
 }
 
 void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
 {
-    s32 hi;
-    struct AnimationMetadata *info;
-    s32 value;
+	s32						  hi;
+	struct AnimationMetadata *info;
+	s32						  value;
 
-    hi = 0x80 & no;
-    if (work->scripts != 0) {
-        info = Resource_GetMetadataRecordFar(work->anim_id);
-        if (no < info->animation_count) {
-            value = (s32)work->scripts[no];
-            work->kind = info->draw_kind;
-            work->script = (u8 *)value;
-            work->step = 0x10;
-            if (hi == 0) {
-                work->pos = hi;
-                work->timer = hi;
-            }
-        }
-    }
+	hi = 0x80 & no;
+	if (work->scripts != 0)
+	{
+		info = Resource_GetMetadataRecordFar(work->anim_id);
+		if (no < info->animation_count)
+		{
+			value = (s32)work->scripts[no];
+			work->kind = info->draw_kind;
+			work->script = (u8 *)value;
+			work->step = 0x10;
+			if (hi == 0)
+			{
+				work->pos = hi;
+				work->timer = hi;
+			}
+		}
+	}
 }
 
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags)
 {
-    s32 high_bit;
-    s32 index;
+	s32 high_bit;
+	s32 index;
 
-    high_bit = flags & 0x80;
-    flags &= 0x7f;
+	high_bit = flags & 0x80;
+	flags &= 0x7f;
 
-    /* FAKEMATCH: the index/test loop keeps an 8-byte frame; a for loop spills an entry cursor and uses 12 bytes. */
-    if (state->last_no != flags) {
-        index = 0;
-        goto test_entry;
-entry_loop:
-        {
-            struct AnimationEntry *entry = state->entries[index];
-            struct AnimationMetadata *metadata;
-            s32 selected_animation;
+	/* FAKEMATCH: the index/test loop keeps an 8-byte frame; a for loop spills an entry cursor and uses 12 bytes. */
+	if (state->last_no != flags)
+	{
+		index = 0;
+		goto test_entry;
+	entry_loop:
+		{
+			struct AnimationEntry	 *entry = state->entries[index];
+			struct AnimationMetadata *metadata;
+			s32						  selected_animation;
 
-            if (entry == 0)
-                goto next_entry;
-            if (entry->scripts == 0)
-                goto next_entry;
+			if (entry == 0)
+				goto next_entry;
+			if (entry->scripts == 0)
+				goto next_entry;
 
-            metadata = Resource_GetMetadataRecordFar(entry->anim_id);
-            if (flags >= metadata->animation_count)
-                goto next_entry;
+			metadata = Resource_GetMetadataRecordFar(entry->anim_id);
+			if (flags >= metadata->animation_count)
+				goto next_entry;
 
-            selected_animation = (s32)entry->scripts[flags];
-            entry->kind = metadata->draw_kind;
-            entry->script = (u8 *)selected_animation;
-            entry->step = 0x10;
-            if (high_bit == 0) {
-                entry->pos = 0;
-                entry->timer = 0;
-            }
-            if (index == 0) {
-                state->offset_y = metadata->adjust_y;
-                state->offset_x = metadata->adjust_x;
-            }
-            goto next_entry;
-        }
-next_entry:
-        index++;
-test_entry:
-        if (index < state->count)
-            goto entry_loop;
-        state->last_no = flags;
-    }
-    return 0;
+			selected_animation = (s32)entry->scripts[flags];
+			entry->kind = metadata->draw_kind;
+			entry->script = (u8 *)selected_animation;
+			entry->step = 0x10;
+			if (high_bit == 0)
+			{
+				entry->pos = 0;
+				entry->timer = 0;
+			}
+			if (index == 0)
+			{
+				state->offset_y = metadata->adjust_y;
+				state->offset_x = metadata->adjust_x;
+			}
+			goto next_entry;
+		}
+	next_entry:
+		index++;
+	test_entry:
+		if (index < state->count)
+			goto entry_loop;
+		state->last_no = flags;
+	}
+	return 0;
 }
 
 s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *group, s32 val)
 {
-    u8 n = group->count;
-    struct AnimationEntry **p;
-    s32 cnt;
+	u8						n = group->count;
+	struct AnimationEntry **p;
+	s32						cnt;
 
-    if (n != 0) {
-        val <<= 4;
-        p = group->entries;
-        cnt = n;
-        do {
-            struct AnimationEntry *entry = *p++;
-            if (entry != 0 && entry->scripts != 0)
-                entry->timer = val;
-            cnt--;
-        } while (cnt != 0);
-    }
-    return 0;
+	if (n != 0)
+	{
+		val <<= 4;
+		p = group->entries;
+		cnt = n;
+		do
+		{
+			struct AnimationEntry *entry = *p++;
+			if (entry != 0 && entry->scripts != 0)
+				entry->timer = val;
+			cnt--;
+		} while (cnt != 0);
+	}
+	return 0;
 }
 
 void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *group, s32 val)
 {
-    u8 n = group->count;
-    if (n != 0) {
-        struct AnimationEntry **p = group->entries;
-        s32 cnt = n;
-        do {
-            struct AnimationEntry *entry = *p++;
-            if (entry != 0 && entry->scripts != 0)
-                entry->step = val;
-            cnt--;
-        } while (cnt != 0);
-    }
+	u8 n = group->count;
+	if (n != 0)
+	{
+		struct AnimationEntry **p = group->entries;
+		s32						cnt = n;
+		do
+		{
+			struct AnimationEntry *entry = *p++;
+			if (entry != 0 && entry->scripts != 0)
+				entry->step = val;
+			cnt--;
+		} while (cnt != 0);
+	}
 }
 
 void ObjectSystem_Configure(s32 mode)
 {
-    void *objects;
-    void *states;
-    volatile u32 zero;
+	void		*objects;
+	void		*states;
+	volatile u32 zero;
 
-    if (mode == 3) {
-        objects = Runtime_AllocateBlock(4, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
-        states = Runtime_AllocateBlock(3, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
-    } else {
-        objects = Runtime_AllocateHeapBlock(4, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
-        states = Runtime_AllocateHeapBlock(3, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
-    }
-    PaletteDma_LoadBlock();
-    zero = 0;
-    Dma_Set((const void *)&zero, objects, 0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject) / 4), REG_DMA3);
-    zero = 0;
-    Dma_Set((const void *)&zero, states, 0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry) / 4), REG_DMA3);
-    VramBlock_LoadCached(93, 128, Object_ShadowTiles);
-    RamCode_LoadSlot(53, Tile_CopyStrided, Tile_CopyStridedCodeSize);
+	if (mode == 3)
+	{
+		objects = Runtime_AllocateBlock(4, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
+		states = Runtime_AllocateBlock(3, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
+	}
+	else
+	{
+		objects =
+			Runtime_AllocateHeapBlock(4, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
+		states =
+			Runtime_AllocateHeapBlock(3, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
+	}
+	PaletteDma_LoadBlock();
+	zero = 0;
+	Dma_Set((const void *)&zero, objects,
+		0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject) / 4), REG_DMA3);
+	zero = 0;
+	Dma_Set((const void *)&zero, states,
+		0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry) / 4), REG_DMA3);
+	VramBlock_LoadCached(93, 128, Object_ShadowTiles);
+	RamCode_LoadSlot(53, Tile_CopyStrided, Tile_CopyStridedCodeSize);
 }
 
 struct AnimationEntry *AnimationObject_Allocate(s32 id)
 {
-    struct AnimationMetadata *metadata;
-    struct AnimationEntry *entry;
-    struct AnimationEntry *found;
-    struct AnimationEntry *object;
-    s32 i;
-    void **frames;
-    u8 **animation;
+	struct AnimationMetadata *metadata;
+	struct AnimationEntry	 *entry;
+	struct AnimationEntry	 *found;
+	struct AnimationEntry	 *object;
+	s32						  i;
+	void					**frames;
+	u8						**animation;
 
-    found = NULL;
-    metadata = Resource_GetMetadataRecordFar(id);
-    entry = gAnimationObjects[0];
-    object = NULL;
+	found = NULL;
+	metadata = Resource_GetMetadataRecordFar(id);
+	entry = gAnimationObjects[0];
+	object = NULL;
 
-    if (metadata->width != 0) {
-        for (i = 0; i < ANIMATION_OBJECT_COUNT; i++, entry++) {
-            if (entry->kind == 0) {
-                found = entry;
-                break;
-            }
-        }
-        if (found != NULL) {
-            /* FAKEMATCH: instruction order only: read as a word, the frames load does not wait on the anim_id store, so the zero for pos and param loads first as native; the typed read swaps the two (differ 2). */
-            frames = (void **)*(s32 *)&metadata->frames;
-            object = found;
-            object->anim_id = id;
-            if (frames == 0)
-                frames = (void **)Animation_LookupValueByKey(id);
+	if (metadata->width != 0)
+	{
+		for (i = 0; i < ANIMATION_OBJECT_COUNT; i++, entry++)
+		{
+			if (entry->kind == 0)
+			{
+				found = entry;
+				break;
+			}
+		}
+		if (found != NULL)
+		{
+			/* FAKEMATCH: instruction order only: read as a word, the frames load does not wait on the anim_id store, so the zero for pos and param loads first as native; the typed read swaps the two (differ 2). */
+			frames = (void **)*(s32 *)&metadata->frames;
+			object = found;
+			object->anim_id = id;
+			if (frames == 0)
+				frames = (void **)Animation_LookupValueByKey(id);
 
-            animation = metadata->animation;
-            object->scripts = animation;
-            object->frames = frames;
-            object->mode = metadata->frame_codec;
-            object->frame = 0xff;
-            object->script = animation[0];
-            object->pos = 0;
-            object->kind = metadata->draw_kind;
-            object->param = 0;
-        }
-    }
-    return object;
+			animation = metadata->animation;
+			object->scripts = animation;
+			object->frames = frames;
+			object->mode = metadata->frame_codec;
+			object->frame = 0xff;
+			object->script = animation[0];
+			object->pos = 0;
+			object->kind = metadata->draw_kind;
+			object->param = 0;
+		}
+	}
+	return object;
 }
 
 //--------------------------------------------------------------------------
@@ -1083,10 +1191,10 @@ void ResourceMetadata_ClearRecord(void *dst)
 
 struct ResourceObjectWork
 {
-	u8 unknown_00[28];
-	u8 resource; // VRAM キャッシュの番号
-	u8 flags;	 // ビット 0：VRAM キャッシュを返さない
-	u8 unknown_1e[10];
+	u8	  unknown_00[28];
+	u8	  resource; // VRAM キャッシュの番号
+	u8	  flags;	// ビット 0：VRAM キャッシュを返さない
+	u8	  unknown_1e[10];
 	void *children[4];
 };
 
@@ -1496,8 +1604,8 @@ void ResourceTable_ReservedNoOp2(void)
 void *ObjectDispatch_FindFreeObject(void)
 {
 	struct ObjectRuntime *obj = gObjectSlots;
-	void *ret = 0;
-	s32	  n = 0;
+	void				 *ret = 0;
+	s32					  n = 0;
 
 	while (n <= 63)
 	{
@@ -2029,7 +2137,7 @@ struct FixedCamera
 
 extern u8 Render_DecodeFrame[];
 
-s32	 ArcTan2(s32 x, s32 y);
+s32 ArcTan2(s32 x, s32 y);
 
 //--------------------------------------------------------------------------
 // 毎フレーム：オブジェクトの絵を画面に置く（ふつうのカメラ）
@@ -2300,332 +2408,384 @@ s32 Script_SetByte54(struct ScriptInterpreter *sc)
 
 void Script_WaitForEventTimeout(s32 arg0)
 {
-    s32 cnt;
+	s32 cnt;
 
-    cnt = 0;
-    while (cnt <= 0x257 && Object_IsTargetUnset((struct ObjectRuntime *)arg0) == 0) {
-        WaitFrames(1);
-        cnt++;
-    }
+	cnt = 0;
+	while (cnt <= 0x257 && Object_IsTargetUnset((struct ObjectRuntime *)arg0) == 0)
+	{
+		WaitFrames(1);
+		cnt++;
+	}
 }
 
 s32 Object_IsTargetUnset(struct ObjectRuntime *object)
 {
-    s32 first;
-    s32 second;
+	s32 first;
+	s32 second;
 
-    if (object->flags == 0) {
-        second = object->target_x;
-        if (second != 0x80000000)
-            return 0;
-        first = object->target_y;
-    } else {
-        first = object->target_x;
-        second = 0x80000000;
-    }
-    if (first != second || object->target_z != first)
-        return 0;
-    return 1;
+	if (object->flags == 0)
+	{
+		second = object->target_x;
+		if (second != 0x80000000)
+			return 0;
+		first = object->target_y;
+	}
+	else
+	{
+		first = object->target_x;
+		second = 0x80000000;
+	}
+	if (first != second || object->target_z != first)
+		return 0;
+	return 1;
 }
 
-#define gObjectSlots (*(struct ScriptMotionObject * *)&gObjectSlots)
+#define gObjectSlots (*(struct ScriptMotionObject **)&gObjectSlots)
 
 #define TARGET_UNSET ((s32)0x80000000)
 
 typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
 
 extern ScriptCommandFn ScriptObject_CommandTable[];
-s32 ArcTan2(s32, s32);
+s32					   ArcTan2(s32, s32);
 
 static __inline__ s32 Square(s32 value)
 {
-    return value * value;
+	return value * value;
 }
 
 void Object_UpdateAllThumb(void)
 {
-	s32 Map_GetTerrainHeight(s32, s32, s32);
-    struct ScriptMotionObject *obj;
-    const struct ScriptMotionWords *script;
-    s32 cnt;
-    s32 px;
-    s32 py;
-    s32 pz;
-    s32 ground;
-    s32 reached;
-    s32 pos[3];
-    s32 dx;
-    s32 dy;
-    s32 dz;
-    s32 vx;
-    s32 vy;
-    s32 vz;
-    s32 dist;
-    s32 len;
-    s32 ratio;
-    s32 rem;
-    s32 half;
-    s32 work;
-    u32 cmd;
-    u32 phase;
+	s32								Map_GetTerrainHeight(s32, s32, s32);
+	struct ScriptMotionObject	   *obj;
+	const struct ScriptMotionWords *script;
+	s32								cnt;
+	s32								px;
+	s32								py;
+	s32								pz;
+	s32								ground;
+	s32								reached;
+	s32								pos[3];
+	s32								dx;
+	s32								dy;
+	s32								dz;
+	s32								vx;
+	s32								vy;
+	s32								vz;
+	s32								dist;
+	s32								len;
+	s32								ratio;
+	s32								rem;
+	s32								half;
+	s32								work;
+	u32								cmd;
+	u32								phase;
 
-    obj = gObjectSlots;
-    for (cnt = 63; cnt >= 0; cnt--, obj++) {
-        reached = 0;
+	obj = gObjectSlots;
+	for (cnt = 63; cnt >= 0; cnt--, obj++)
+	{
+		reached = 0;
 
-        script = obj->script;
-        if (script == NULL)
-            continue;
+		script = obj->script;
+		if (script == NULL)
+			continue;
 
-        if (obj->hook != NULL) {
-            obj->hook(obj);
-            script = obj->script;
-        }
-        if (script == NULL)
-            continue;
-        if (obj->paused != 0)
-            continue;
+		if (obj->hook != NULL)
+		{
+			obj->hook(obj);
+			script = obj->script;
+		}
+		if (script == NULL)
+			continue;
+		if (obj->paused != 0)
+			continue;
 
-        if (obj->wait != 0) {
-            obj->wait--;
-        } else {
-            for (;;) {
-                cmd = script->word[(s16)obj->script_cursor];
-                if (cmd <= 63) {
-                    if (ScriptObject_CommandTable[cmd](obj) == 0)
-                        break;
-                } else {
-                    obj->script_cursor++;
-                }
-                script = obj->script;
-            }
-            if (obj->script == NULL)
-                continue;
-        }
+		if (obj->wait != 0)
+		{
+			obj->wait--;
+		}
+		else
+		{
+			for (;;)
+			{
+				cmd = script->word[(s16)obj->script_cursor];
+				if (cmd <= 63)
+				{
+					if (ScriptObject_CommandTable[cmd](obj) == 0)
+						break;
+				}
+				else
+				{
+					obj->script_cursor++;
+				}
+				script = obj->script;
+			}
+			if (obj->script == NULL)
+				continue;
+		}
 
-        px = obj->x;
-        py = obj->y;
-        pz = obj->z;
+		px = obj->x;
+		py = obj->y;
+		pz = obj->z;
 
-        if (obj->frozen == 0) {
-            if (obj->motion_flags == 0) {
-                if (obj->target_x != TARGET_UNSET) {
-                    dx = (obj->target_x - px) / 65536;
-                    dy = (obj->target_y - py) / 65536;
-                    dz = (obj->target_z - pz) / 65536;
-                    dist = Iwram_Sqrt(Square(dx) + Square(dy) + Square(dz));
-                    if (dist == 0) {
-                        px = obj->target_x;
-                        py = obj->target_y;
-                        pz = obj->target_z;
-                    } else {
-                        ratio = Iwram_RatioMulQ14(dist << 16, obj->acceleration);
-                        obj->velocity_x += dx * ratio;
-                        obj->velocity_y += dy * ratio;
-                        obj->velocity_z += dz * ratio;
-                        vx = obj->velocity_x;
-                        vy = obj->velocity_y;
-                        vz = obj->velocity_z;
-                        len = FixedSqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(vy, vy) +
-                                        Iwram_MulQ16(vz, vz));
-                        if (len > obj->speed_limit) {
-                            ratio = Iwram_RatioMulQ14(len, obj->speed_limit);
-                            obj->velocity_x = Iwram_MulQ16(vx, ratio);
-                            obj->velocity_y = Iwram_MulQ16(vy, ratio);
-                            obj->velocity_z = Iwram_MulQ16(vz, ratio);
-                        }
-                    }
-                } else {
-                    dx = obj->velocity_x;
-                    dy = obj->velocity_y;
-                    dz = obj->velocity_z;
-                    len = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
-                                    Iwram_MulQ16(dz, dz));
-                    if (len != 0) {
-                        rem = len - obj->acceleration;
-                        if (rem < 0)
-                            rem = 0;
-                        ratio = Iwram_RatioMulQ14(len, rem);
-                        obj->velocity_x = Iwram_MulQ16(dx, ratio);
-                        obj->velocity_y = Iwram_MulQ16(dy, ratio);
-                        obj->velocity_z = Iwram_MulQ16(dz, ratio);
-                    } else {
-                        obj->velocity_x = 0;
-                        obj->velocity_y = 0;
-                        obj->velocity_z = 0;
-                    }
-                }
-            } else {
-                if (obj->target_x != TARGET_UNSET) {
-                    dx = (obj->target_x - px) / 65536;
-                    dz = (obj->target_z - pz) / 65536;
-                    dist = Iwram_Sqrt(Square(dx) + Square(dz)) << 16;
-                    if (dist <= 0x00ffffff) {
-                        dx = obj->target_x - px;
-                        dz = obj->target_z - pz;
-                        dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
-                    }
-                    if (dist == 0) {
-                        px = obj->target_x;
-                        pz = obj->target_z;
-                    } else {
-                        ratio = Iwram_RatioMulQ14(dist, obj->acceleration);
-                        obj->velocity_x += Iwram_MulQ16(dx, ratio);
-                        obj->velocity_z += Iwram_MulQ16(dz, ratio);
-                        vx = obj->velocity_x;
-                        vz = obj->velocity_z;
-                        len = FixedSqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(vz, vz));
-                        if (len > obj->speed_limit) {
-                            ratio = Iwram_RatioMulQ14(len, obj->speed_limit);
-                            obj->velocity_x = Iwram_MulQ16(vx, ratio);
-                            obj->velocity_z = Iwram_MulQ16(vz, ratio);
-                        }
-                    }
-                } else {
-                    dx = obj->velocity_x;
-                    dz = obj->velocity_z;
-                    len = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
-                    if (len != 0) {
-                        rem = len - obj->acceleration;
-                        if (rem < 0)
-                            rem = 0;
-                        ratio = Iwram_RatioMulQ14(len, rem);
-                        obj->velocity_x = Iwram_MulQ16(dx, ratio);
-                        obj->velocity_z = Iwram_MulQ16(dz, ratio);
-                    } else {
-                        obj->velocity_x = 0;
-                        obj->velocity_z = 0;
-                    }
-                }
+		if (obj->frozen == 0)
+		{
+			if (obj->motion_flags == 0)
+			{
+				if (obj->target_x != TARGET_UNSET)
+				{
+					dx = (obj->target_x - px) / 65536;
+					dy = (obj->target_y - py) / 65536;
+					dz = (obj->target_z - pz) / 65536;
+					dist = Iwram_Sqrt(Square(dx) + Square(dy) + Square(dz));
+					if (dist == 0)
+					{
+						px = obj->target_x;
+						py = obj->target_y;
+						pz = obj->target_z;
+					}
+					else
+					{
+						ratio = Iwram_RatioMulQ14(dist << 16, obj->acceleration);
+						obj->velocity_x += dx * ratio;
+						obj->velocity_y += dy * ratio;
+						obj->velocity_z += dz * ratio;
+						vx = obj->velocity_x;
+						vy = obj->velocity_y;
+						vz = obj->velocity_z;
+						len = FixedSqrt(
+							Iwram_MulQ16(vx, vx) + Iwram_MulQ16(vy, vy) + Iwram_MulQ16(vz, vz));
+						if (len > obj->speed_limit)
+						{
+							ratio = Iwram_RatioMulQ14(len, obj->speed_limit);
+							obj->velocity_x = Iwram_MulQ16(vx, ratio);
+							obj->velocity_y = Iwram_MulQ16(vy, ratio);
+							obj->velocity_z = Iwram_MulQ16(vz, ratio);
+						}
+					}
+				}
+				else
+				{
+					dx = obj->velocity_x;
+					dy = obj->velocity_y;
+					dz = obj->velocity_z;
+					len = FixedSqrt(
+						Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) + Iwram_MulQ16(dz, dz));
+					if (len != 0)
+					{
+						rem = len - obj->acceleration;
+						if (rem < 0)
+							rem = 0;
+						ratio = Iwram_RatioMulQ14(len, rem);
+						obj->velocity_x = Iwram_MulQ16(dx, ratio);
+						obj->velocity_y = Iwram_MulQ16(dy, ratio);
+						obj->velocity_z = Iwram_MulQ16(dz, ratio);
+					}
+					else
+					{
+						obj->velocity_x = 0;
+						obj->velocity_y = 0;
+						obj->velocity_z = 0;
+					}
+				}
+			}
+			else
+			{
+				if (obj->target_x != TARGET_UNSET)
+				{
+					dx = (obj->target_x - px) / 65536;
+					dz = (obj->target_z - pz) / 65536;
+					dist = Iwram_Sqrt(Square(dx) + Square(dz)) << 16;
+					if (dist <= 0x00ffffff)
+					{
+						dx = obj->target_x - px;
+						dz = obj->target_z - pz;
+						dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+					}
+					if (dist == 0)
+					{
+						px = obj->target_x;
+						pz = obj->target_z;
+					}
+					else
+					{
+						ratio = Iwram_RatioMulQ14(dist, obj->acceleration);
+						obj->velocity_x += Iwram_MulQ16(dx, ratio);
+						obj->velocity_z += Iwram_MulQ16(dz, ratio);
+						vx = obj->velocity_x;
+						vz = obj->velocity_z;
+						len = FixedSqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(vz, vz));
+						if (len > obj->speed_limit)
+						{
+							ratio = Iwram_RatioMulQ14(len, obj->speed_limit);
+							obj->velocity_x = Iwram_MulQ16(vx, ratio);
+							obj->velocity_z = Iwram_MulQ16(vz, ratio);
+						}
+					}
+				}
+				else
+				{
+					dx = obj->velocity_x;
+					dz = obj->velocity_z;
+					len = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+					if (len != 0)
+					{
+						rem = len - obj->acceleration;
+						if (rem < 0)
+							rem = 0;
+						ratio = Iwram_RatioMulQ14(len, rem);
+						obj->velocity_x = Iwram_MulQ16(dx, ratio);
+						obj->velocity_z = Iwram_MulQ16(dz, ratio);
+					}
+					else
+					{
+						obj->velocity_x = 0;
+						obj->velocity_z = 0;
+					}
+				}
 
-                if ((obj->motion_flags & 1) != 0) {
-                    vx = px + obj->velocity_x;
-                    vz = pz + obj->velocity_z;
-                    ground = Map_GetTerrainHeight(obj->terrain_id, vx, vz);
-                    vy = ground - obj->terrain_height;
-                    if (ground - py > -0x40000)
-                        py += vy;
-                    if (vy < 0)
-                        vy = -vy;
-                    half = obj->acceleration / 2;
-                    if (vy > half)
-                        vy = half;
-                    vy *= 3;
-                    if (vy != 0 && (obj->motion_flags & 0x10) == 0) {
-                        dx = obj->velocity_x;
-                        dy = obj->velocity_y;
-                        dz = obj->velocity_z;
-                        len = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
-                                        Iwram_MulQ16(dz, dz));
-                        if (len != 0) {
-                            rem = len - vy;
-                            if (rem < 0)
-                                rem = 0;
-                            ratio = Iwram_RatioMulQ14(len, rem);
-                            obj->velocity_x = Iwram_MulQ16(dx, ratio);
-                            obj->velocity_y = Iwram_MulQ16(dy, ratio);
-                            obj->velocity_z = Iwram_MulQ16(dz, ratio);
-                        }
-                    }
-                    obj->terrain_height = ground;
-                }
+				if ((obj->motion_flags & 1) != 0)
+				{
+					vx = px + obj->velocity_x;
+					vz = pz + obj->velocity_z;
+					ground = Map_GetTerrainHeight(obj->terrain_id, vx, vz);
+					vy = ground - obj->terrain_height;
+					if (ground - py > -0x40000)
+						py += vy;
+					if (vy < 0)
+						vy = -vy;
+					half = obj->acceleration / 2;
+					if (vy > half)
+						vy = half;
+					vy *= 3;
+					if (vy != 0 && (obj->motion_flags & 0x10) == 0)
+					{
+						dx = obj->velocity_x;
+						dy = obj->velocity_y;
+						dz = obj->velocity_z;
+						len = FixedSqrt(
+							Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) + Iwram_MulQ16(dz, dz));
+						if (len != 0)
+						{
+							rem = len - vy;
+							if (rem < 0)
+								rem = 0;
+							ratio = Iwram_RatioMulQ14(len, rem);
+							obj->velocity_x = Iwram_MulQ16(dx, ratio);
+							obj->velocity_y = Iwram_MulQ16(dy, ratio);
+							obj->velocity_z = Iwram_MulQ16(dz, ratio);
+						}
+					}
+					obj->terrain_height = ground;
+				}
 
-                if ((obj->motion_flags & 2) != 0) {
-                    ground = obj->terrain_height;
-                    if (py > ground) {
-                        obj->velocity_y -= obj->gravity;
-                    } else if (obj->velocity_y < 0) {
-                        py = ground;
-                        obj->velocity_y = -Iwram_MulQ16(obj->velocity_y, obj->vertical.bounce);
-                        if ((obj->velocity_y < 0 ? -obj->velocity_y : obj->velocity_y) <= obj->gravity)
-                            obj->velocity_y = 0;
-                    }
-                }
+				if ((obj->motion_flags & 2) != 0)
+				{
+					ground = obj->terrain_height;
+					if (py > ground)
+					{
+						obj->velocity_y -= obj->gravity;
+					}
+					else if (obj->velocity_y < 0)
+					{
+						py = ground;
+						obj->velocity_y = -Iwram_MulQ16(obj->velocity_y, obj->vertical.bounce);
+						if ((obj->velocity_y < 0 ? -obj->velocity_y : obj->velocity_y)
+							<= obj->gravity)
+							obj->velocity_y = 0;
+					}
+				}
 
-                if ((obj->motion_flags & 4) != 0) {
-                    phase = (obj->vertical.phase & 0x3f);
-                    if ((obj->motion_flags & 8) != 0)
-                        obj->velocity_y = ScriptObject_CycleTable[phase >> 1] * obj->gravity / 16;
-                    else
-                        obj->velocity_y = ScriptObject_CycleTable[phase >> 1] * obj->gravity / 64;
-                    obj->vertical.phase++;
-                }
-            }
-        }
+				if ((obj->motion_flags & 4) != 0)
+				{
+					phase = (obj->vertical.phase & 0x3f);
+					if ((obj->motion_flags & 8) != 0)
+						obj->velocity_y = ScriptObject_CycleTable[phase >> 1] * obj->gravity / 16;
+					else
+						obj->velocity_y = ScriptObject_CycleTable[phase >> 1] * obj->gravity / 64;
+					obj->vertical.phase++;
+				}
+			}
+		}
 
-        px += obj->velocity_x;
-        py += obj->velocity_y;
-        pz += obj->velocity_z;
+		px += obj->velocity_x;
+		py += obj->velocity_y;
+		pz += obj->velocity_z;
 
-        if ((obj->collision_flags & 0x80) != 0) {
-            pos[0] = px;
-            pos[1] = py;
-            pos[2] = pz;
-            if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)obj, pos) != 0) {
-                obj->refused++;
-                continue;
-            }
-            obj->refused = 0;
-        }
+		if ((obj->collision_flags & 0x80) != 0)
+		{
+			pos[0] = px;
+			pos[1] = py;
+			pos[2] = pz;
+			if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)obj, pos) != 0)
+			{
+				obj->refused++;
+				continue;
+			}
+			obj->refused = 0;
+		}
 
-        switch (obj->arrival_axis) {
-        case 16:
-            if (px == obj->target_x ||
-                ((obj->x - obj->target_x) ^ (px - obj->target_x)) < 0)
-                reached = 1;
-            break;
-        case 17:
-            if (py == obj->target_y ||
-                ((obj->y - obj->target_y) ^ (py - obj->target_y)) < 0)
-                reached = 1;
-            break;
-        case 18:
-            if (pz == obj->target_z ||
-                ((obj->z - obj->target_z) ^ (pz - obj->target_z)) < 0)
-                reached = 1;
-            break;
-        default:
-            break;
-        }
+		switch (obj->arrival_axis)
+		{
+		case 16:
+			if (px == obj->target_x || ((obj->x - obj->target_x) ^ (px - obj->target_x)) < 0)
+				reached = 1;
+			break;
+		case 17:
+			if (py == obj->target_y || ((obj->y - obj->target_y) ^ (py - obj->target_y)) < 0)
+				reached = 1;
+			break;
+		case 18:
+			if (pz == obj->target_z || ((obj->z - obj->target_z) ^ (pz - obj->target_z)) < 0)
+				reached = 1;
+			break;
+		default:
+			break;
+		}
 
-        if (reached != 0) {
-            if (obj->snap_to_target != 0) {
-                px = obj->target_x;
-                obj->velocity_x = 0;
-                pz = obj->target_z;
-                obj->velocity_z = 0;
-                if (obj->motion_flags == 0) {
-                    py = obj->target_y;
-                    obj->velocity_y = 0;
-                }
-            }
-            obj->target_x = TARGET_UNSET;
-            obj->target_y = TARGET_UNSET;
-            obj->target_z = TARGET_UNSET;
-            obj->arrival_axis = 0;
-        }
+		if (reached != 0)
+		{
+			if (obj->snap_to_target != 0)
+			{
+				px = obj->target_x;
+				obj->velocity_x = 0;
+				pz = obj->target_z;
+				obj->velocity_z = 0;
+				if (obj->motion_flags == 0)
+				{
+					py = obj->target_y;
+					obj->velocity_y = 0;
+				}
+			}
+			obj->target_x = TARGET_UNSET;
+			obj->target_y = TARGET_UNSET;
+			obj->target_z = TARGET_UNSET;
+			obj->arrival_axis = 0;
+		}
 
-        obj->x = px;
-        obj->y = py;
-        obj->z = pz;
+		obj->x = px;
+		obj->y = py;
+		obj->z = pz;
 
-        if ((obj->steering_flags & 1) != 0) {
-            px = obj->velocity_x;
-            pz = obj->velocity_z;
-            if (px != 0 || pz != 0) {
-                s32 limit;
+		if ((obj->steering_flags & 1) != 0)
+		{
+			px = obj->velocity_x;
+			pz = obj->velocity_z;
+			if (px != 0 || pz != 0)
+			{
+				s32 limit;
 
-                work = (s16)(ArcTan2(pz, px) - obj->facing);
-                limit = 0x1000;
-                if (work > limit)
-                    work = limit;
-                limit = -0x1000;
-                if (work < limit)
-                    work = limit;
-                obj->facing += work;
-            }
-        }
-    }
+				work = (s16)(ArcTan2(pz, px) - obj->facing);
+				limit = 0x1000;
+				if (work > limit)
+					work = limit;
+				limit = -0x1000;
+				if (work < limit)
+					work = limit;
+				obj->facing += work;
+			}
+		}
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -2655,851 +2815,910 @@ void Object_SetPositionAndResetMotion(struct ObjectRuntime *, s32, s32, s32);
 
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
 {
-    s32 dx;
-    s32 dist;
-    s32 dz;
-    s32 total;
-    u8 *axis;
+	s32 dx;
+	s32 dist;
+	s32 dz;
+	s32 total;
+	u8 *axis;
 
-    dx = (x - object->x) / 0x10000;
-    dist = (y - object->y) / 0x10000;
-    dz = (z - object->z) / 0x10000;
-    total = dz * dz;
-    dist = Iwram_Sqrt(dx * dx + dist * dist + total) << 16;
-    if (dist < 0x100000) {
-        dx = x - object->x;
-        dist = y - object->y;
-        dz = z - object->z;
-        dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dist, dist) + Iwram_MulQ16(dz, dz));
-    }
-    if (dist < 0x10000) {
-        object->x = x;
-        object->y = y;
-        object->z = z;
-        object->target_x = 0x80000000;
-        object->target_y = 0x80000000;
-        object->target_z = 0x80000000;
-        return;
-    }
-    if (object->snap_to_target == 0) {
-        s32 brake;
+	dx = (x - object->x) / 0x10000;
+	dist = (y - object->y) / 0x10000;
+	dz = (z - object->z) / 0x10000;
+	total = dz * dz;
+	dist = Iwram_Sqrt(dx * dx + dist * dist + total) << 16;
+	if (dist < 0x100000)
+	{
+		dx = x - object->x;
+		dist = y - object->y;
+		dz = z - object->z;
+		dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dist, dist) + Iwram_MulQ16(dz, dz));
+	}
+	if (dist < 0x10000)
+	{
+		object->x = x;
+		object->y = y;
+		object->z = z;
+		object->target_x = 0x80000000;
+		object->target_y = 0x80000000;
+		object->target_z = 0x80000000;
+		return;
+	}
+	if (object->snap_to_target == 0)
+	{
+		s32 brake;
 
-        brake = Iwram_RatioMulQ14(object->acceleration,
-                             Iwram_MulQ16(object->speed_limit, object->speed_limit));
-        if (dist > brake)
-            brake = dist - brake / 2;
-        else
-            brake = dist / 2;
-        dist = Iwram_RatioMulQ14(dist, brake);
-        x = object->x + Iwram_MulQ16(x - object->x, dist);
-        y = object->y + Iwram_MulQ16(y - object->y, dist);
-        z = object->z + Iwram_MulQ16(z - object->z, dist);
-    }
-    object->target_x = x;
-    object->target_y = y;
-    object->target_z = z;
-    dx = x - object->x;
-    dist = y - object->y;
-    dz = z - object->z;
-    axis = &object->arrival_axis;
-    *axis = 16;
-    if ((dx < 0 ? -dx : dx) < (dz < 0 ? -dz : dz)) {
-        *axis = 18;
-        dx = dz;
-    }
-    if (object->flags == 0) {
-        if (dx < 0)
-            dx = -dx;
-        if (dx < (dist < 0 ? -dist : dist))
-            *axis = 17;
-    }
+		brake = Iwram_RatioMulQ14(
+			object->acceleration, Iwram_MulQ16(object->speed_limit, object->speed_limit));
+		if (dist > brake)
+			brake = dist - brake / 2;
+		else
+			brake = dist / 2;
+		dist = Iwram_RatioMulQ14(dist, brake);
+		x = object->x + Iwram_MulQ16(x - object->x, dist);
+		y = object->y + Iwram_MulQ16(y - object->y, dist);
+		z = object->z + Iwram_MulQ16(z - object->z, dist);
+	}
+	object->target_x = x;
+	object->target_y = y;
+	object->target_z = z;
+	dx = x - object->x;
+	dist = y - object->y;
+	dz = z - object->z;
+	axis = &object->arrival_axis;
+	*axis = 16;
+	if ((dx < 0 ? -dx : dx) < (dz < 0 ? -dz : dz))
+	{
+		*axis = 18;
+		dx = dz;
+	}
+	if (object->flags == 0)
+	{
+		if (dx < 0)
+			dx = -dx;
+		if (dx < (dist < 0 ? -dist : dist))
+			*axis = 17;
+	}
 }
 
 void Object_RunUpdateAllFromHeap(void)
 {
-    void (*routine)(void);
+	void (*routine)(void);
 
-    RamCode_Load(routine, Object_UpdateAll, Object_UpdateAllCodeSize);
-    routine();
-    MemFree(routine);
+	RamCode_Load(routine, Object_UpdateAll, Object_UpdateAllCodeSize);
+	routine();
+	MemFree(routine);
 }
 
 void Object_UpdateAllMotion(void)
 {
-    struct ScriptMotionObject *obj;
-    s32 cnt;
-    s32 y;
-    s32 arrived;
-    s32 x;
-    s32 z;
-    s32 dx;
-    s32 dz;
-    s32 vx;
-    s32 dist;
-    s32 ratio;
-    s32 vy;
-    s32 turn;
+	struct ScriptMotionObject *obj;
+	s32						   cnt;
+	s32						   y;
+	s32						   arrived;
+	s32						   x;
+	s32						   z;
+	s32						   dx;
+	s32						   dz;
+	s32						   vx;
+	s32						   dist;
+	s32						   ratio;
+	s32						   vy;
+	s32						   turn;
 
-    obj = gObjectSlots;
-    for (cnt = 13; cnt >= 0; cnt--, obj++) {
-        if (obj->script == 0)
-            continue;
-        x = obj->x;
-        y = obj->y;
-        z = obj->z;
-        if (obj->frozen == 0) {
-            arrived = 0;
-            if (obj->target_x != TARGET_UNSET) {
-                dx = (obj->target_x - x) / 65536;
-                dz = (obj->target_z - z) / 65536;
-                dist = Iwram_Sqrt(dx * dx + dz * dz) << 16;
-                if (dist <= 0xffffff) {
-                    dx = obj->target_x - x;
-                    dz = obj->target_z - z;
-                    dist = Iwram_Sqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz)) << 8;
-                }
-                if (dist == 0) {
-                    x = obj->target_x;
-                    z = obj->target_z;
-                } else {
-                    ratio = Iwram_RatioMulQ14(dist, obj->acceleration);
-                    vx = obj->velocity_x + Iwram_MulQ16(dx, ratio);
-                    obj->velocity_x = vx;
-                    dx = obj->velocity_z + Iwram_MulQ16(dz, ratio);
-                    obj->velocity_z = dx;
-                    dist = Iwram_Sqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(dx, dx)) << 8;
-                    if (dist > obj->speed_limit) {
-                        ratio = Iwram_RatioMulQ14(dist, obj->speed_limit);
-                        obj->velocity_x = Iwram_MulQ16(vx, ratio);
-                        obj->velocity_z = Iwram_MulQ16(dx, ratio);
-                    }
-                }
-            } else {
-                dx = obj->velocity_x;
-                dz = obj->velocity_z;
-                if ((dx | dz) != 0) {
-                    dist = Iwram_Sqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz)) << 8;
-                    if (dist != 0) {
-                        if (dist - obj->acceleration < 0) {
-                            obj->velocity_x = 0;
-                            obj->velocity_z = 0;
-                        } else {
-                            ratio = Iwram_RatioMulQ14(dist, dist - obj->acceleration);
-                            obj->velocity_x = Iwram_MulQ16(dx, ratio);
-                            obj->velocity_z = Iwram_MulQ16(dz, ratio);
-                        }
-                    } else {
-                        obj->velocity_x = 0;
-                        obj->velocity_z = 0;
-                    }
-                }
-            }
-            if (obj->motion_flags & 2) {
-                if (y > obj->terrain_height) {
-                    obj->velocity_y -= obj->gravity;
-                } else if (obj->velocity_y < 0) {
-                    y = obj->terrain_height;
-                    obj->velocity_y = -Iwram_MulQ16(obj->velocity_y, obj->vertical.bounce);
-                    if ((obj->velocity_y < 0 ? -obj->velocity_y : obj->velocity_y) <= obj->gravity)
-                        obj->velocity_y = 0;
-                }
-            }
-        }
-        x += obj->velocity_x;
-        y += obj->velocity_y;
-        z += obj->velocity_z;
-        if (obj->arrival_axis != 0) switch (obj->arrival_axis) {
-        case 16:
-            if (x == obj->target_x || ((obj->x - obj->target_x) ^ (x - obj->target_x)) < 0)
-                arrived = 1;
-            break;
-        case 17:
-            if (y == obj->target_y || ((obj->y - obj->target_y) ^ (y - obj->target_y)) < 0)
-                arrived = 1;
-            break;
-        case 18:
-            if (z == obj->target_z || ((obj->z - obj->target_z) ^ (z - obj->target_z)) < 0)
-                arrived = 1;
-            break;
-        }
-        if (arrived) {
-            if (obj->snap_to_target) {
-                obj->velocity_x = 0;
-                obj->velocity_z = 0;
-                x = obj->target_x;
-                z = obj->target_z;
-                if (obj->motion_flags == 0) {
-                    y = obj->target_y;
-                    obj->velocity_y = 0;
-                }
-            }
-            obj->target_x = TARGET_UNSET;
-            obj->target_y = TARGET_UNSET;
-            obj->target_z = TARGET_UNSET;
-            obj->arrival_axis = 0;
-        }
-        obj->x = x;
-        obj->y = y;
-        obj->z = z;
-        if (obj->steering_flags & 1) {
-            x = obj->velocity_x;
-            z = obj->velocity_z;
-            if (x != 0 || z != 0) {
-                turn = (s16)(ArcTan2(z, x) - obj->facing);
-                if (turn > 0x1000)
-                    turn = 0x1000;
-                if (turn < -0x1000)
-                    turn = -0x1000;
-                obj->facing += turn;
-            }
-        }
-    }
+	obj = gObjectSlots;
+	for (cnt = 13; cnt >= 0; cnt--, obj++)
+	{
+		if (obj->script == 0)
+			continue;
+		x = obj->x;
+		y = obj->y;
+		z = obj->z;
+		if (obj->frozen == 0)
+		{
+			arrived = 0;
+			if (obj->target_x != TARGET_UNSET)
+			{
+				dx = (obj->target_x - x) / 65536;
+				dz = (obj->target_z - z) / 65536;
+				dist = Iwram_Sqrt(dx * dx + dz * dz) << 16;
+				if (dist <= 0xffffff)
+				{
+					dx = obj->target_x - x;
+					dz = obj->target_z - z;
+					dist = Iwram_Sqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz)) << 8;
+				}
+				if (dist == 0)
+				{
+					x = obj->target_x;
+					z = obj->target_z;
+				}
+				else
+				{
+					ratio = Iwram_RatioMulQ14(dist, obj->acceleration);
+					vx = obj->velocity_x + Iwram_MulQ16(dx, ratio);
+					obj->velocity_x = vx;
+					dx = obj->velocity_z + Iwram_MulQ16(dz, ratio);
+					obj->velocity_z = dx;
+					dist = Iwram_Sqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(dx, dx)) << 8;
+					if (dist > obj->speed_limit)
+					{
+						ratio = Iwram_RatioMulQ14(dist, obj->speed_limit);
+						obj->velocity_x = Iwram_MulQ16(vx, ratio);
+						obj->velocity_z = Iwram_MulQ16(dx, ratio);
+					}
+				}
+			}
+			else
+			{
+				dx = obj->velocity_x;
+				dz = obj->velocity_z;
+				if ((dx | dz) != 0)
+				{
+					dist = Iwram_Sqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz)) << 8;
+					if (dist != 0)
+					{
+						if (dist - obj->acceleration < 0)
+						{
+							obj->velocity_x = 0;
+							obj->velocity_z = 0;
+						}
+						else
+						{
+							ratio = Iwram_RatioMulQ14(dist, dist - obj->acceleration);
+							obj->velocity_x = Iwram_MulQ16(dx, ratio);
+							obj->velocity_z = Iwram_MulQ16(dz, ratio);
+						}
+					}
+					else
+					{
+						obj->velocity_x = 0;
+						obj->velocity_z = 0;
+					}
+				}
+			}
+			if (obj->motion_flags & 2)
+			{
+				if (y > obj->terrain_height)
+				{
+					obj->velocity_y -= obj->gravity;
+				}
+				else if (obj->velocity_y < 0)
+				{
+					y = obj->terrain_height;
+					obj->velocity_y = -Iwram_MulQ16(obj->velocity_y, obj->vertical.bounce);
+					if ((obj->velocity_y < 0 ? -obj->velocity_y : obj->velocity_y) <= obj->gravity)
+						obj->velocity_y = 0;
+				}
+			}
+		}
+		x += obj->velocity_x;
+		y += obj->velocity_y;
+		z += obj->velocity_z;
+		if (obj->arrival_axis != 0)
+			switch (obj->arrival_axis)
+			{
+			case 16:
+				if (x == obj->target_x || ((obj->x - obj->target_x) ^ (x - obj->target_x)) < 0)
+					arrived = 1;
+				break;
+			case 17:
+				if (y == obj->target_y || ((obj->y - obj->target_y) ^ (y - obj->target_y)) < 0)
+					arrived = 1;
+				break;
+			case 18:
+				if (z == obj->target_z || ((obj->z - obj->target_z) ^ (z - obj->target_z)) < 0)
+					arrived = 1;
+				break;
+			}
+		if (arrived)
+		{
+			if (obj->snap_to_target)
+			{
+				obj->velocity_x = 0;
+				obj->velocity_z = 0;
+				x = obj->target_x;
+				z = obj->target_z;
+				if (obj->motion_flags == 0)
+				{
+					y = obj->target_y;
+					obj->velocity_y = 0;
+				}
+			}
+			obj->target_x = TARGET_UNSET;
+			obj->target_y = TARGET_UNSET;
+			obj->target_z = TARGET_UNSET;
+			obj->arrival_axis = 0;
+		}
+		obj->x = x;
+		obj->y = y;
+		obj->z = z;
+		if (obj->steering_flags & 1)
+		{
+			x = obj->velocity_x;
+			z = obj->velocity_z;
+			if (x != 0 || z != 0)
+			{
+				turn = (s16)(ArcTan2(z, x) - obj->facing);
+				if (turn > 0x1000)
+					turn = 0x1000;
+				if (turn < -0x1000)
+					turn = -0x1000;
+				obj->facing += turn;
+			}
+		}
+	}
 }
 
 s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter)
 {
-    s16 cursor = interpreter->cursor;
+	s16 cursor = interpreter->cursor;
 
-    interpreter->lookup_result = interpreter->script[cursor + 1] - 1;
-    interpreter->cursor += 2;
-    return 0;
+	interpreter->lookup_result = interpreter->script[cursor + 1] - 1;
+	interpreter->cursor += 2;
+	return 0;
 }
 
 s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter)
 {
-    if (interpreter->delay > 0x3B) {
-        interpreter->delay = 0;
-        interpreter->cursor++;
-        return 1;
-    }
-    if (Object_IsTargetUnset((struct ObjectRuntime *)interpreter) != 0) {
-        interpreter->cursor++;
-        return 1;
-    }
-    return 0;
+	if (interpreter->delay > 0x3B)
+	{
+		interpreter->delay = 0;
+		interpreter->cursor++;
+		return 1;
+	}
+	if (Object_IsTargetUnset((struct ObjectRuntime *)interpreter) != 0)
+	{
+		interpreter->cursor++;
+		return 1;
+	}
+	return 0;
 }
 
 s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter)
 {
-    s16 initial = interpreter->cursor;
-    ScriptCommand callback =
-        (ScriptCommand)interpreter->script[initial + 1];
+	s16			  initial = interpreter->cursor;
+	ScriptCommand callback = (ScriptCommand)interpreter->script[initial + 1];
 
-    if (callback(interpreter) != 0)
-        return 0;
-    if (interpreter->cursor == initial)
-        interpreter->cursor = interpreter->cursor + 2;
-    return 1;
+	if (callback(interpreter) != 0)
+		return 0;
+	if (interpreter->cursor == initial)
+		interpreter->cursor = interpreter->cursor + 2;
+	return 1;
 }
 
 s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key)
 {
-    u32 *entries;
-    s32 index;
-    s16 *field = &interpreter->lookup_result;
-    s32 zero = 0;
+	u32 *entries;
+	s32	 index;
+	s16 *field = &interpreter->lookup_result;
+	s32	 zero = 0;
 
-    *field = zero;
-    if (key == 0) {
-        return 0;
-    }
+	*field = zero;
+	if (key == 0)
+	{
+		return 0;
+	}
 
-    key &= 0xBFFFFFFF;
-    entries = (u32 *)interpreter->script;
-    index = 0;
-    do {
-        if (*entries++ == key) {
-            return index + 1;
-        }
-        index++;
-    } while (index <= 0x3FF);
-    return 0;
+	key &= 0xBFFFFFFF;
+	entries = (u32 *)interpreter->script;
+	index = 0;
+	do
+	{
+		if (*entries++ == key)
+		{
+			return index + 1;
+		}
+		index++;
+	} while (index <= 0x3FF);
+	return 0;
 }
 
 s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter)
 {
-    const s32 *arguments;
-    s32 repeat_limit;
-    s32 jump_key;
-    u8 *repeat_count;
-    s32 next_count;
+	const s32 *arguments;
+	s32		   repeat_limit;
+	s32		   jump_key;
+	u8		  *repeat_count;
+	s32		   next_count;
 
-    arguments = &interpreter->script[interpreter->cursor + 1];
-    repeat_limit = *arguments++;
-    jump_key = *arguments;
-    if (repeat_limit == 0xFFFF) {
-        interpreter->cursor = Script_FindLabel(interpreter, jump_key);
-    } else {
-        repeat_count = &interpreter->repeat_count;
-        next_count = *repeat_count + 1;
-        *repeat_count = next_count;
-        if ((u8)next_count < (s16)repeat_limit) {
-            interpreter->cursor = Script_FindLabel(interpreter, jump_key);
-        } else {
-            *repeat_count = 0;
-            interpreter->cursor += 3;
-        }
-    }
-    return 1;
+	arguments = &interpreter->script[interpreter->cursor + 1];
+	repeat_limit = *arguments++;
+	jump_key = *arguments;
+	if (repeat_limit == 0xFFFF)
+	{
+		interpreter->cursor = Script_FindLabel(interpreter, jump_key);
+	}
+	else
+	{
+		repeat_count = &interpreter->repeat_count;
+		next_count = *repeat_count + 1;
+		*repeat_count = next_count;
+		if ((u8)next_count < (s16)repeat_limit)
+		{
+			interpreter->cursor = Script_FindLabel(interpreter, jump_key);
+		}
+		else
+		{
+			*repeat_count = 0;
+			interpreter->cursor += 3;
+		}
+	}
+	return 1;
 }
 
 s32 Script_JumpToLabel(struct ScriptInterpreter *interpreter)
 {
-    interpreter->cursor =
-        Script_FindLabel(interpreter, interpreter->script[interpreter->cursor + 1]);
-    return 1;
+	interpreter->cursor =
+		Script_FindLabel(interpreter, interpreter->script[interpreter->cursor + 1]);
+	return 1;
 }
 
 u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter)
 {
-    s32 index = interpreter->cursor;
-    const s32 *table = interpreter->script;
-    u32 value = table[index + 1];
+	s32		   index = interpreter->cursor;
+	const s32 *table = interpreter->script;
+	u32		   value = table[index + 1];
 
-    if (interpreter->condition_result != 0) {
-        interpreter->cursor = Script_FindLabel(interpreter, value);
-    } else {
-        interpreter->cursor += 2;
-    }
-    return 1;
+	if (interpreter->condition_result != 0)
+	{
+		interpreter->cursor = Script_FindLabel(interpreter, value);
+	}
+	else
+	{
+		interpreter->cursor += 2;
+	}
+	return 1;
 }
 
 u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter)
 {
-    s32 index = interpreter->cursor;
-    const s32 *table = interpreter->script;
-    u32 value = table[index + 1];
+	s32		   index = interpreter->cursor;
+	const s32 *table = interpreter->script;
+	u32		   value = table[index + 1];
 
-    if (interpreter->condition_result == 0) {
-        interpreter->cursor = Script_FindLabel(interpreter, value);
-    } else {
-        interpreter->cursor += 2;
-    }
-    return 1;
+	if (interpreter->condition_result == 0)
+	{
+		interpreter->cursor = Script_FindLabel(interpreter, value);
+	}
+	else
+	{
+		interpreter->cursor += 2;
+	}
+	return 1;
 }
 
 s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter)
 {
-    s32 result;
+	s32 result;
 
-    interpreter->script = Script_MainScript;
-    interpreter->cursor = (result = 0);
-    return result;
+	interpreter->script = Script_MainScript;
+	interpreter->cursor = (result = 0);
+	return result;
 }
 
 s32 Script_TestFlag(struct ScriptInterpreter *interpreter)
 {
-    interpreter->condition_result =
-        GameFlag_TestFar(interpreter->script[interpreter->cursor + 1]);
-    interpreter->cursor += 2;
-    return 1;
+	interpreter->condition_result = GameFlag_TestFar(interpreter->script[interpreter->cursor + 1]);
+	interpreter->cursor += 2;
+	return 1;
 }
 
 s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter)
 {
-    s32 value;
+	s32 value;
 
-    value = interpreter->script[interpreter->cursor + 1];
-    interpreter->condition_result = GameFlag_TestFar(value);
-    GameFlag_SetBitFar(value);
-    interpreter->cursor += 2;
-    return 1;
+	value = interpreter->script[interpreter->cursor + 1];
+	interpreter->condition_result = GameFlag_TestFar(value);
+	GameFlag_SetBitFar(value);
+	interpreter->cursor += 2;
+	return 1;
 }
 
 s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter)
 {
-    s32 value;
+	s32 value;
 
-    value = interpreter->script[interpreter->cursor + 1];
-    interpreter->condition_result = GameFlag_TestFar(value);
-    GameFlag_ClearBitFar(value);
-    interpreter->cursor += 2;
-    return 1;
+	value = interpreter->script[interpreter->cursor + 1];
+	interpreter->condition_result = GameFlag_TestFar(value);
+	GameFlag_ClearBitFar(value);
+	interpreter->cursor += 2;
+	return 1;
 }
 
 s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter)
 {
-    s32 value;
-    s32 result;
+	s32 value;
+	s32 result;
 
-    value = interpreter->script[interpreter->cursor + 1];
-    result = GameFlag_TestFar(value);
-    interpreter->condition_result = result;
-    if ((result << 0x18) == 0x01000000) {
-        GameFlag_ClearBitFar(value);
-    } else {
-        GameFlag_SetBitFar(value);
-    }
-    interpreter->cursor += 2;
-    return 1;
+	value = interpreter->script[interpreter->cursor + 1];
+	result = GameFlag_TestFar(value);
+	interpreter->condition_result = result;
+	if ((result << 0x18) == 0x01000000)
+	{
+		GameFlag_ClearBitFar(value);
+	}
+	else
+	{
+		GameFlag_SetBitFar(value);
+	}
+	interpreter->cursor += 2;
+	return 1;
 }
 
 s32 Script_ApplyObjectArgument(struct ScriptInterpreter *interpreter)
 {
-    ObjectDispatch_ApplyArgumentToChildren(interpreter,
-        interpreter->script[interpreter->cursor + 1]);
-    interpreter->cursor += 2;
-    return 1;
+	ObjectDispatch_ApplyArgumentToChildren(
+		interpreter, interpreter->script[interpreter->cursor + 1]);
+	interpreter->cursor += 2;
+	return 1;
 }
 
 s32 ObjectDispatch_RunHookAndReturnZero(struct ScriptInterpreter *interpreter)
 {
-    ObjectDispatch_Release((struct DispatchObject *)interpreter);
-    return 0;
+	ObjectDispatch_Release((struct DispatchObject *)interpreter);
+	return 0;
 }
 
 s32 Script_SkipCommand(struct ScriptInterpreter *interpreter)
 {
-    interpreter->cursor += 2;
-    return 1;
+	interpreter->cursor += 2;
+	return 1;
 }
 
 s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter)
 {
-    AudioCommand_PlayFar(interpreter->script[interpreter->cursor + 1]);
-    interpreter->cursor += 2;
-    return 1;
+	AudioCommand_PlayFar(interpreter->script[interpreter->cursor + 1]);
+	interpreter->cursor += 2;
+	return 1;
 }
 
 s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values)
 {
-    s32 index;
-    u8 *flags;
-    struct ObjectRuntime *entry = (struct ObjectRuntime *)gObjectSlots;
+	s32					  index;
+	u8					 *flags;
+	struct ObjectRuntime *entry = (struct ObjectRuntime *)gObjectSlots;
 
-    flags = &entry->unknown_59;
-    for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
-        if (entry->script != NULL && (1 & *flags)
-            && entry != (struct ObjectRuntime *)object) {
-            if (Runtime_CheckRadiusOverlap(&entry->x,
-                    ((struct FieldActor *)entry)->radius - 2,
-                    values, ((struct FieldActor *)object)->radius - 2) >= 0)
-                return -1;
-        }
-    }
-    return 0;
+	flags = &entry->unknown_59;
+	for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry))
+	{
+		if (entry->script != NULL && (1 & *flags) && entry != (struct ObjectRuntime *)object)
+		{
+			if (Runtime_CheckRadiusOverlap(&entry->x, ((struct FieldActor *)entry)->radius - 2,
+					values, ((struct FieldActor *)object)->radius - 2)
+				>= 0)
+				return -1;
+		}
+	}
+	return 0;
 }
 
 struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
-    struct ScriptObjectEntry *object, s32 *values)
+	struct ScriptObjectEntry *object, s32 *values)
 {
-    s32 index;
-    u8 *flags;
-    struct ObjectRuntime *entry = (struct ObjectRuntime *)gObjectSlots;
+	s32					  index;
+	u8					 *flags;
+	struct ObjectRuntime *entry = (struct ObjectRuntime *)gObjectSlots;
 
-    flags = &entry->unknown_59;
-    for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
-        if (entry->script != NULL && (1 & *flags)
-            && entry != (struct ObjectRuntime *)object) {
-            if (Runtime_CheckRadiusOverlap(&entry->x,
-                    ((struct FieldActor *)entry)->radius - 2,
-                    values, ((struct FieldActor *)object)->radius - 2) >= 0)
-                return (struct ScriptObjectEntry *)entry;
-        }
-    }
-    return NULL;
+	flags = &entry->unknown_59;
+	for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry))
+	{
+		if (entry->script != NULL && (1 & *flags) && entry != (struct ObjectRuntime *)object)
+		{
+			if (Runtime_CheckRadiusOverlap(&entry->x, ((struct FieldActor *)entry)->radius - 2,
+					values, ((struct FieldActor *)object)->radius - 2)
+				>= 0)
+				return (struct ScriptObjectEntry *)entry;
+		}
+	}
+	return NULL;
 }
 
 s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)
 {
-    s32 first;
-    s32 second;
-    s32 third;
-    const s32 *argument;
+	s32		   first;
+	s32		   second;
+	s32		   third;
+	const s32 *argument;
 
-    argument = interpreter->script + interpreter->cursor;
-    argument++;
-    first = *argument;
-    argument++;
-    second = *argument;
-    argument++;
-    third = *argument;
-    Object_SetPositionAndResetMotion((struct ObjectRuntime *)interpreter, first, second, third);
-    interpreter->cursor += 4;
-    return 1;
+	argument = interpreter->script + interpreter->cursor;
+	argument++;
+	first = *argument;
+	argument++;
+	second = *argument;
+	argument++;
+	third = *argument;
+	Object_SetPositionAndResetMotion((struct ObjectRuntime *)interpreter, first, second, third);
+	interpreter->cursor += 4;
+	return 1;
 }
 
 s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter)
 {
-    s32 first;
-    s32 second;
-    s32 third;
-    const s32 *argument;
+	s32		   first;
+	s32		   second;
+	s32		   third;
+	const s32 *argument;
 
-    argument = interpreter->script + interpreter->cursor;
-    argument++;
-    first = *argument;
-    argument++;
-    second = *argument;
-    argument++;
-    third = *argument;
-    Object_SetMoveTarget((struct ObjectRuntime *)interpreter, first, second, third);
-    interpreter->cursor += 4;
-    return 1;
+	argument = interpreter->script + interpreter->cursor;
+	argument++;
+	first = *argument;
+	argument++;
+	second = *argument;
+	argument++;
+	third = *argument;
+	Object_SetMoveTarget((struct ObjectRuntime *)interpreter, first, second, third);
+	interpreter->cursor += 4;
+	return 1;
 }
 
 s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object)
 {
-    u8 *entry = (u8 *)(object->script + (s16)object->script_cursor);
-    s32 *cursor = (s32 *)(entry + 4);
-    s32 first = *cursor++;
-    s32 second = *cursor++;
-    s32 third = *cursor;
+	u8	*entry = (u8 *)(object->script + (s16)object->script_cursor);
+	s32 *cursor = (s32 *)(entry + 4);
+	s32	 first = *cursor++;
+	s32	 second = *cursor++;
+	s32	 third = *cursor;
 
-    Object_SetMoveTarget((struct ObjectRuntime *)object, object->x + first,
-        object->y + second, object->z + third);
-    object->script_cursor += 4;
-    return 1;
+	Object_SetMoveTarget(
+		(struct ObjectRuntime *)object, object->x + first, object->y + second, object->z + third);
+	object->script_cursor += 4;
+	return 1;
 }
 
 s32 Script_StoreAngleToLinkedObject(struct ScriptObjectRuntime *object)
 {
-    struct ScriptObjectRuntime *target;
+	struct ScriptObjectRuntime *target;
 
-    target = object->linked_object;
-    object->script_value = ArcTan2(
-        (target->z - object->z),
-        (target->x - object->x));
-    object->script_cursor++;
-    return 1;
+	target = object->linked_object;
+	object->script_value = ArcTan2((target->z - object->z), (target->x - object->x));
+	object->script_cursor++;
+	return 1;
 }
 
 s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object)
 {
-    struct ScriptObjectRuntime *target;
+	struct ScriptObjectRuntime *target;
 
-    target = object->linked_object;
-    Object_SetMoveTarget((struct ObjectRuntime *)object, target->x, target->y, target->z);
-    object->script_cursor++;
-    return 1;
+	target = object->linked_object;
+	Object_SetMoveTarget((struct ObjectRuntime *)object, target->x, target->y, target->z);
+	object->script_cursor++;
+	return 1;
 }
 
 s32 Script_ApplyLocalOffsetPosition(u8 *arg0)
 {
-    s32 offset[3];
+	s32 offset[3];
 
-    Object_SetMoveTarget(
-        (struct ObjectRuntime *)arg0,
-        *(s32 *)(arg0 + 8) + offset[0],
-        *(s32 *)(arg0 + 12) + offset[1],
-        *(s32 *)(arg0 + 16) + offset[2]
-    );
-    *(u16 *)(arg0 + 4) += 3;
-    return 1;
+	Object_SetMoveTarget((struct ObjectRuntime *)arg0, *(s32 *)(arg0 + 8) + offset[0],
+		*(s32 *)(arg0 + 12) + offset[1], *(s32 *)(arg0 + 16) + offset[2]);
+	*(u16 *)(arg0 + 4) += 3;
+	return 1;
 }
 
-struct MapScrollBounds {
-    u8 unknown_00[0xec];
-    s32 left;
-    s32 top;
-    s32 right;
-    s32 bottom;
+struct MapScrollBounds
+{
+	u8	unknown_00[0xec];
+	s32 left;
+	s32 top;
+	s32 right;
+	s32 bottom;
 };
 
 s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj)
 {
-    struct ObjectRuntime *leader;
-    struct MapScrollBounds *bounds;
-    s32 min_x;
-    s32 min_z;
-    s32 max_x;
-    s32 max_z;
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 dz;
-    s32 dy;
-    s32 dx;
-    s32 dist;
-    s32 step;
-    s32 (*div)(s32, s32);
+	struct ObjectRuntime   *leader;
+	struct MapScrollBounds *bounds;
+	s32						min_x;
+	s32						min_z;
+	s32						max_x;
+	s32						max_z;
+	s32						x;
+	s32						y;
+	s32						z;
+	s32						dz;
+	s32						dy;
+	s32						dx;
+	s32						dist;
+	s32						step;
+	s32 (*div)(s32, s32);
 
-    bounds = gMapWork[0];
-    leader = obj->linked_object;
-    min_x = bounds->left + 0x780000;
-    min_z = bounds->top + leader->y + 0x600000;
-    max_x = bounds->right - 0x780000;
-    max_z = bounds->bottom + leader->y - 0x400000;
-    obj->flags = 0;
-    if (leader != NULL && leader->script != NULL) {
-        x = leader->x;
-        y = leader->y;
-        z = leader->z;
-        obj->target_x = TARGET_UNSET;
-        obj->target_y = TARGET_UNSET;
-        obj->target_z = TARGET_UNSET;
-        if (x < min_x)
-            x = min_x;
-        if (z < min_z)
-            z = min_z;
-        if (x > max_x)
-            x = max_x;
-        if (z > max_z)
-            z = max_z;
-        if (obj->action != 0) {
-            obj->x = x;
-            obj->y = y;
-            obj->z = z;
-        } else {
-            // XZ 平面の距離: dy は Object_SetMoveTarget と同じ形で求めるが距離には使わない
-            dx = (x - obj->x) / 0x10000;
-            /* FAKEMATCH: dead code: this dy is overwritten below and the compiler drops it, but its references rank y above the bounds in global allocation, keeping y in r5 as native; without it 114 rows differ in the English build (y in r9). The form is the sibling Object_SetMoveTarget's three-axis delta. */
-            dy = (y - obj->y) / 0x10000;
-            dz = (z - obj->z) / 0x10000;
-            dist = Iwram_Sqrt(dx * dx + dz * dz) << 16;
-            dx = x - obj->x;
-            dy = y - obj->y;
-            dz = z - obj->z;
-            if (dist < 0x400000)
-                dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
-            if ((step = dist / 8) > obj->speed_limit)
-                step = obj->speed_limit;
-            if (dist < 0x4000) {
-                obj->x = x;
-                obj->z = z;
-            } else {
-                if (dist > step) {
-                    dx = Iwram_MulQ16(Iwram_RatioMulQ14(dist, dx), step);
-                    dz = Iwram_MulQ16(Iwram_RatioMulQ14(dist, dz), step);
-                }
-                obj->x += dx;
-                obj->z += dz;
-            }
-            if ((dy < 0 ? -dy : dy) > 0x8000)
-                dy /= 4;
-            obj->y += dy;
-        }
-    }
-    obj->step++;
-    return 1;
+	bounds = gMapWork[0];
+	leader = obj->linked_object;
+	min_x = bounds->left + 0x780000;
+	min_z = bounds->top + leader->y + 0x600000;
+	max_x = bounds->right - 0x780000;
+	max_z = bounds->bottom + leader->y - 0x400000;
+	obj->flags = 0;
+	if (leader != NULL && leader->script != NULL)
+	{
+		x = leader->x;
+		y = leader->y;
+		z = leader->z;
+		obj->target_x = TARGET_UNSET;
+		obj->target_y = TARGET_UNSET;
+		obj->target_z = TARGET_UNSET;
+		if (x < min_x)
+			x = min_x;
+		if (z < min_z)
+			z = min_z;
+		if (x > max_x)
+			x = max_x;
+		if (z > max_z)
+			z = max_z;
+		if (obj->action != 0)
+		{
+			obj->x = x;
+			obj->y = y;
+			obj->z = z;
+		}
+		else
+		{
+			// XZ 平面の距離: dy は Object_SetMoveTarget と同じ形で求めるが距離には使わない
+			dx = (x - obj->x) / 0x10000;
+			/* FAKEMATCH: dead code: this dy is overwritten below and the compiler drops it, but its references rank y above the bounds in global allocation, keeping y in r5 as native; without it 114 rows differ in the English build (y in r9). The form is the sibling Object_SetMoveTarget's three-axis delta. */
+			dy = (y - obj->y) / 0x10000;
+			dz = (z - obj->z) / 0x10000;
+			dist = Iwram_Sqrt(dx * dx + dz * dz) << 16;
+			dx = x - obj->x;
+			dy = y - obj->y;
+			dz = z - obj->z;
+			if (dist < 0x400000)
+				dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+			if ((step = dist / 8) > obj->speed_limit)
+				step = obj->speed_limit;
+			if (dist < 0x4000)
+			{
+				obj->x = x;
+				obj->z = z;
+			}
+			else
+			{
+				if (dist > step)
+				{
+					dx = Iwram_MulQ16(Iwram_RatioMulQ14(dist, dx), step);
+					dz = Iwram_MulQ16(Iwram_RatioMulQ14(dist, dz), step);
+				}
+				obj->x += dx;
+				obj->z += dz;
+			}
+			if ((dy < 0 ? -dy : dy) > 0x8000)
+				dy /= 4;
+			obj->y += dy;
+		}
+	}
+	obj->step++;
+	return 1;
 }
 
 extern u8 IwramSqrt[];
-s32 _call_via_r3(s32, s32, s32, s32);
-void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 argument);
+s32		  _call_via_r3(s32, s32, s32, s32);
+void	  ObjectDispatch_ApplyArgumentToChildren(void *object, s32 argument);
 
 s32 Object_ApproachLinkedObject(struct ObjectRuntime *object)
 {
-  s32 len;
-  s32 mz;
-  s32 dx;
-  s32 dz;
-  s32 dzh;
-  s32 dxh;
-  s32 n;
-  s32 mx;
-  s32 dx2;
-  struct ObjectRuntime *link;
+	s32					  len;
+	s32					  mz;
+	s32					  dx;
+	s32					  dz;
+	s32					  dzh;
+	s32					  dxh;
+	s32					  n;
+	s32					  mx;
+	s32					  dx2;
+	struct ObjectRuntime *link;
 
-  link = object->linked_object;
-  object->speed_limit = link->speed_limit;
-  object->acceleration = link->acceleration;
-  dx = link->x - object->x;
-  dz = link->z - object->z;
-  dxh = dx >> 0x10;
-  dzh = dz >> 0x10;
-  len = _call_via_r3((dxh *dxh) + (dzh *dzh), dx, dzh, (u32)IwramSqrt);
-  if (len > 0x10)
-  {
-    dx2 = dx;
-    n = len - 0x10;
-    mx = dx2 *n / len;
-    mz = dz *n / len;
-    Object_SetMoveTarget(object, object->x + mx, object->y, object->z + mz);
-    ObjectDispatch_ApplyArgumentToChildren(object, 2);
-    object->step = (object->step + 1);
-    return 1;
-  }
-  ObjectDispatch_ApplyArgumentToChildren(object, 1);
-  return 0;
+	link = object->linked_object;
+	object->speed_limit = link->speed_limit;
+	object->acceleration = link->acceleration;
+	dx = link->x - object->x;
+	dz = link->z - object->z;
+	dxh = dx >> 0x10;
+	dzh = dz >> 0x10;
+	len = _call_via_r3((dxh * dxh) + (dzh * dzh), dx, dzh, (u32)IwramSqrt);
+	if (len > 0x10)
+	{
+		dx2 = dx;
+		n = len - 0x10;
+		mx = dx2 * n / len;
+		mz = dz * n / len;
+		Object_SetMoveTarget(object, object->x + mx, object->y, object->z + mz);
+		ObjectDispatch_ApplyArgumentToChildren(object, 2);
+		object->step = (object->step + 1);
+		return 1;
+	}
+	ObjectDispatch_ApplyArgumentToChildren(object, 1);
+	return 0;
 }
 
-u32 Random16(void);
+u32	 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
-s32 ArcTan2(s32 y, s32 x);
+s32	 ArcTan2(s32 y, s32 x);
 
 s32 Object_Wander(struct ScriptObjectRuntime *object)
 {
-    struct FieldPosition pos;
-    struct FieldPosition probe;
-    s32 base;
-    const s32 *args;
-    s32 range;
-    s32 limit;
-    s32 radius;
-    s32 heading;
-    s32 tries;
-    s32 dx;
-    s32 dz;
+	struct FieldPosition pos;
+	struct FieldPosition probe;
+	s32					 base;
+	const s32			*args;
+	s32					 range;
+	s32					 limit;
+	s32					 radius;
+	s32					 heading;
+	s32					 tries;
+	s32					 dx;
+	s32					 dz;
 
-    args = &object->script[(s16)object->script_cursor + 1];
-    base = *args++;
-    range = *args++;
-    limit = *args / 0x10000;
-    /* FAKEMATCH: needed to match: the retry label and one-pass distance block preserve the 32-byte frame and division/load registers. */
-    tries = 0;
-    limit = limit * limit;
+	args = &object->script[(s16)object->script_cursor + 1];
+	base = *args++;
+	range = *args++;
+	limit = *args / 0x10000;
+	/* FAKEMATCH: needed to match: the retry label and one-pass distance block preserve the 32-byte frame and division/load registers. */
+	tries = 0;
+	limit = limit * limit;
 retry:
-    tries++;
-    if (tries <= 7) {
-        pos.x = object->x;
-        pos.y = object->y;
-        pos.z = object->z;
-        radius = base + Iwram_MulQ16(Random16(), range);
-        heading = object->script_value + (Random16() >> 2) - (Random16() >> 2);
-        Vector_AddPolarOffset(radius, heading, &pos);
-        if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
-            goto retry;
-        if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
-            goto retry;
-        radius += 0x80000;
-        probe.x = object->x;
-        probe.y = object->y;
-        probe.z = object->z;
-        Vector_AddPolarOffset(radius, heading, &probe);
-        probe.x = object->x;
-        probe.y = object->y;
-        probe.z = object->z;
-        Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
-        if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
-            goto retry;
-        probe.x = object->x;
-        probe.y = object->y;
-        probe.z = object->z;
-        Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
-        if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
-            goto retry;
-        do {
-            dx = pos.x / 0x10000 - object->home_x;
-            dz = pos.z / 0x10000 - object->home_z;
-        } while (0);
-        if (dx * dx + dz * dz > limit)
-            goto retry;
-        goto found;
-    }
-    object->script_value += 0x8000;
-    object->turned_back = 1;
-    return 0;
+	tries++;
+	if (tries <= 7)
+	{
+		pos.x = object->x;
+		pos.y = object->y;
+		pos.z = object->z;
+		radius = base + Iwram_MulQ16(Random16(), range);
+		heading = object->script_value + (Random16() >> 2) - (Random16() >> 2);
+		Vector_AddPolarOffset(radius, heading, &pos);
+		if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
+			goto retry;
+		if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
+			goto retry;
+		radius += 0x80000;
+		probe.x = object->x;
+		probe.y = object->y;
+		probe.z = object->z;
+		Vector_AddPolarOffset(radius, heading, &probe);
+		probe.x = object->x;
+		probe.y = object->y;
+		probe.z = object->z;
+		Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
+		if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
+			goto retry;
+		probe.x = object->x;
+		probe.y = object->y;
+		probe.z = object->z;
+		Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
+		if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
+			goto retry;
+		do
+		{
+			dx = pos.x / 0x10000 - object->home_x;
+			dz = pos.z / 0x10000 - object->home_z;
+		} while (0);
+		if (dx * dx + dz * dz > limit)
+			goto retry;
+		goto found;
+	}
+	object->script_value += 0x8000;
+	object->turned_back = 1;
+	return 0;
 found:
-    Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
-    object->script_cursor += 4;
-    return 1;
+	Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
+	object->script_cursor += 4;
+	return 1;
 }
 
 s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object)
 {
-    struct FieldPosition pos;
-    struct FieldPosition probe;
-    s32 base;
-    const s32 *args;
-    s32 range;
-    s32 limit;
-    s32 radius;
-    u16 heading;
-    u16 angle;
-    s32 tries;
-    s32 dx;
-    s32 dz;
+	struct FieldPosition pos;
+	struct FieldPosition probe;
+	s32					 base;
+	const s32			*args;
+	s32					 range;
+	s32					 limit;
+	s32					 radius;
+	u16					 heading;
+	u16					 angle;
+	s32					 tries;
+	s32					 dx;
+	s32					 dz;
 
-    args = &object->script[(s16)object->script_cursor + 1];
-    base = *args++;
-    range = *args++;
-    limit = *args / 0x10000;
-    angle = object->script_value;
-    limit *= limit;
-    tries = 0;
-    dx = object->x / 0x10000 - object->home_x;
-    dz = object->z / 0x10000 - object->home_z;
-    if (dx * dx + dz * dz > limit)
-        goto home;
+	args = &object->script[(s16)object->script_cursor + 1];
+	base = *args++;
+	range = *args++;
+	limit = *args / 0x10000;
+	angle = object->script_value;
+	limit *= limit;
+	tries = 0;
+	dx = object->x / 0x10000 - object->home_x;
+	dz = object->z / 0x10000 - object->home_z;
+	if (dx * dx + dz * dz > limit)
+		goto home;
 roam:
-    tries++;
-    if (tries > 7)
-        goto home;
-    radius = base + Iwram_MulQ16(Random16(), range);
-    heading = angle + (Random16() >> 2) - (Random16() >> 2);
-    pos.x = object->x;
-    pos.y = object->y;
-    pos.z = object->z;
-    Vector_AddPolarOffset(0x80000, heading, &pos);
-    if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
-        goto roam;
-    pos.x = object->x;
-    pos.y = object->y;
-    pos.z = object->z;
-    Vector_AddPolarOffset(radius, heading, &pos);
-    if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
-        goto roam;
-    probe.x = object->x;
-    probe.y = object->y;
-    radius += 0x80000;
-    probe.z = object->z;
-    Vector_AddPolarOffset(radius, heading, &probe);
-    if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
-        goto roam;
-    probe.x = object->x;
-    probe.y = object->y;
-    probe.z = object->z;
-    Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
-    if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
-        goto roam;
-    probe.x = object->x;
-    probe.y = object->y;
-    probe.z = object->z;
-    Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
-    if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
-        goto roam;
-    probe.x = object->x;
-    probe.y = object->y;
-    probe.z = object->z;
-    Vector_AddPolarOffset(radius, heading + 0x4000, &probe);
-    if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
-        goto roam;
-    probe.x = object->x;
-    probe.y = object->y;
-    probe.z = object->z;
-    Vector_AddPolarOffset(radius, heading - 0x4000, &probe);
-    if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
-        goto roam;
-    dx = pos.x / 0x10000 - object->home_x;
-    dz = pos.z / 0x10000 - object->home_z;
-    if (dx * dx + dz * dz > limit)
-        goto roam;
-    object->flags_59 |= 2;
-    Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
-    goto done;
+	tries++;
+	if (tries > 7)
+		goto home;
+	radius = base + Iwram_MulQ16(Random16(), range);
+	heading = angle + (Random16() >> 2) - (Random16() >> 2);
+	pos.x = object->x;
+	pos.y = object->y;
+	pos.z = object->z;
+	Vector_AddPolarOffset(0x80000, heading, &pos);
+	if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
+		goto roam;
+	pos.x = object->x;
+	pos.y = object->y;
+	pos.z = object->z;
+	Vector_AddPolarOffset(radius, heading, &pos);
+	if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
+		goto roam;
+	probe.x = object->x;
+	probe.y = object->y;
+	radius += 0x80000;
+	probe.z = object->z;
+	Vector_AddPolarOffset(radius, heading, &probe);
+	if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
+		goto roam;
+	probe.x = object->x;
+	probe.y = object->y;
+	probe.z = object->z;
+	Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
+	if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
+		goto roam;
+	probe.x = object->x;
+	probe.y = object->y;
+	probe.z = object->z;
+	Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
+	if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
+		goto roam;
+	probe.x = object->x;
+	probe.y = object->y;
+	probe.z = object->z;
+	Vector_AddPolarOffset(radius, heading + 0x4000, &probe);
+	if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
+		goto roam;
+	probe.x = object->x;
+	probe.y = object->y;
+	probe.z = object->z;
+	Vector_AddPolarOffset(radius, heading - 0x4000, &probe);
+	if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
+		goto roam;
+	dx = pos.x / 0x10000 - object->home_x;
+	dz = pos.z / 0x10000 - object->home_z;
+	if (dx * dx + dz * dz > limit)
+		goto roam;
+	object->flags_59 |= 2;
+	Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
+	goto done;
 home:
-    tries = 0;
-    angle = (u16)ArcTan2(dz, dx) + 0x8000;
+	tries = 0;
+	angle = (u16)ArcTan2(dz, dx) + 0x8000;
 back:
-    tries++;
-    if (tries > 7)
-        goto done;
-    radius = base + Iwram_MulQ16(Random16(), range);
-    heading = angle + (Random16() >> 2) - (Random16() >> 2);
-    pos.x = object->x;
-    pos.y = object->y;
-    pos.z = object->z;
-    Vector_AddPolarOffset(0x80000, heading, &pos);
-    if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
-        goto back;
-    pos.x = object->x;
-    pos.y = object->y;
-    pos.z = object->z;
-    Vector_AddPolarOffset(radius, heading, &pos);
-    if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
-        goto back;
-    object->flags_59 &= ~2;
-    Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
+	tries++;
+	if (tries > 7)
+		goto done;
+	radius = base + Iwram_MulQ16(Random16(), range);
+	heading = angle + (Random16() >> 2) - (Random16() >> 2);
+	pos.x = object->x;
+	pos.y = object->y;
+	pos.z = object->z;
+	Vector_AddPolarOffset(0x80000, heading, &pos);
+	if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
+		goto back;
+	pos.x = object->x;
+	pos.y = object->y;
+	pos.z = object->z;
+	Vector_AddPolarOffset(radius, heading, &pos);
+	if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
+		goto back;
+	object->flags_59 &= ~2;
+	Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
 done:
-    object->script_cursor += 4;
-    return 1;
+	object->script_cursor += 4;
+	return 1;
 }
 
-enum ScriptOperandOperation {
-    SCRIPT_OPERAND_SET,
-    SCRIPT_OPERAND_ADD,
-    SCRIPT_OPERAND_COMPARE
+enum ScriptOperandOperation
+{
+	SCRIPT_OPERAND_SET,
+	SCRIPT_OPERAND_ADD,
+	SCRIPT_OPERAND_COMPARE
 };
 
 typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
@@ -3507,518 +3726,636 @@ extern OperandFunc Script_OperandHandlerTable[];
 
 static __inline__ void StoreHalfword(s16 *address, s32 value)
 {
-    *address = value;
+	*address = value;
 }
 
 void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->script_address = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->script_address += value * 4;
-        return;
-    }
-    state->comparison_result = state->script_address == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->script_address = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->script_address += value * 4;
+		return;
+	}
+	state->comparison_result = state->script_address == value;
 }
 
 void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->cursor = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->cursor =
-            ((s32)(s16)state->cursor + value);
-    } else {
-        state->comparison_result = (s16)state->cursor == (s16)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->cursor = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->cursor = ((s32)(s16)state->cursor + value);
+	}
+	else
+	{
+		state->comparison_result = (s16)state->cursor == (s16)value;
+	}
 }
 
 void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->unsigned_halfword = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->unsigned_halfword =
-            (state->unsigned_halfword + value);
-    } else {
-        state->comparison_result = state->unsigned_halfword == (u16)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->unsigned_halfword = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->unsigned_halfword = (state->unsigned_halfword + value);
+	}
+	else
+	{
+		state->comparison_result = state->unsigned_halfword == (u16)value;
+	}
 }
 
 void Script_SetOrCompareX(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_08 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_08 += value;
-        return;
-    }
-    state->comparison_result = state->word_08 == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_08 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_08 += value;
+		return;
+	}
+	state->comparison_result = state->word_08 == value;
 }
 
 void Script_SetOrCompareY(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_0c = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_0c += value;
-        return;
-    }
-    state->comparison_result = state->word_0c == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_0c = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_0c += value;
+		return;
+	}
+	state->comparison_result = state->word_0c == value;
 }
 
 void Script_SetOrCompareZ(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_10 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_10 += value;
-        return;
-    }
-    state->comparison_result = state->word_10 == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_10 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_10 += value;
+		return;
+	}
+	state->comparison_result = state->word_10 == value;
 }
 
 void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->halfword_20 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->halfword_20 = (state->halfword_20 + value);
-        return;
-    }
-    state->comparison_result = state->halfword_20 == (s16)value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->halfword_20 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->halfword_20 = (state->halfword_20 + value);
+		return;
+	}
+	state->comparison_result = state->halfword_20 == (s16)value;
 }
 
 void Script_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_18 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_18 += value;
-        return;
-    }
-    state->comparison_result = state->word_18 == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_18 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_18 += value;
+		return;
+	}
+	state->comparison_result = state->word_18 == value;
 }
 
 void Script_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_1c = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_1c += value;
-        return;
-    }
-    state->comparison_result = state->word_1c == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_1c = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_1c += value;
+		return;
+	}
+	state->comparison_result = state->word_1c == value;
 }
 
 void Script_SetOrCompareVelocityX(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_24 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_24 += value;
-        return;
-    }
-    state->comparison_result = state->word_24 == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_24 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_24 += value;
+		return;
+	}
+	state->comparison_result = state->word_24 == value;
 }
 
 void Script_SetOrCompareVelocityY(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_28 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_28 += value;
-        return;
-    }
-    state->comparison_result = state->word_28 == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_28 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_28 += value;
+		return;
+	}
+	state->comparison_result = state->word_28 == value;
 }
 
 void Script_SetOrCompareVelocityZ(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_2c = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_2c += value;
-        return;
-    }
-    state->comparison_result = state->word_2c == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_2c = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_2c += value;
+		return;
+	}
+	state->comparison_result = state->word_2c == value;
 }
 
 void Script_SetOrCompareSpeedLimit(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_30 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_30 += value;
-        return;
-    }
-    state->comparison_result = state->word_30 == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_30 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_30 += value;
+		return;
+	}
+	state->comparison_result = state->word_30 == value;
 }
 
 void Script_SetOrCompareAcceleration(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_34 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_34 += value;
-        return;
-    }
-    state->comparison_result = state->word_34 == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_34 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_34 += value;
+		return;
+	}
+	state->comparison_result = state->word_34 == value;
 }
 
 void Script_SetOrCompareTargetX(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_38 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_38 += value;
-        return;
-    }
-    state->comparison_result = state->word_38 == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_38 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_38 += value;
+		return;
+	}
+	state->comparison_result = state->word_38 == value;
 }
 
 void Script_SetOrCompareTargetY(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_3c = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_3c += value;
-        return;
-    }
-    state->comparison_result = state->word_3c == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_3c = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_3c += value;
+		return;
+	}
+	state->comparison_result = state->word_3c == value;
 }
 
 void Script_SetOrCompareTargetZ(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_40 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_40 += value;
-        return;
-    }
-    state->comparison_result = state->word_40 == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_40 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_40 += value;
+		return;
+	}
+	state->comparison_result = state->word_40 == value;
 }
 
 void Script_SetOrCompareVerticalMotion(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_44 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_44 += value;
-        return;
-    }
-    state->comparison_result = state->word_44 == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_44 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_44 += value;
+		return;
+	}
+	state->comparison_result = state->word_44 == value;
 }
 
 void Script_SetOrCompareGravity(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_48 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_48 += value;
-        return;
-    }
-    state->comparison_result = state->word_48 == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_48 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_48 += value;
+		return;
+	}
+	state->comparison_result = state->word_48 == value;
 }
 
 void Script_SetOrCompareTerrainHeight(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_14 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_14 += value;
-        return;
-    }
-    state->comparison_result = state->word_14 == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_14 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_14 += value;
+		return;
+	}
+	state->comparison_result = state->word_14 == value;
 }
 
 void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->word_4c = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->word_4c += value;
-        return;
-    }
-    state->comparison_result = state->word_4c == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->word_4c = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->word_4c += value;
+		return;
+	}
+	state->comparison_result = state->word_4c == value;
 }
 
 void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->address_50 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        state->address_50 += value * 4;
-        return;
-    }
-    state->comparison_result = state->address_50 == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->address_50 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->address_50 += value * 4;
+		return;
+	}
+	state->comparison_result = state->address_50 == value;
 }
 
 void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->byte_54 = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->byte_54 = (state->byte_54 + value);
-    } else {
-        state->comparison_result = state->byte_54 == (u8)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->byte_54 = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->byte_54 = (state->byte_54 + value);
+	}
+	else
+	{
+		state->comparison_result = state->byte_54 == (u8)value;
+	}
 }
 
 void Script_SetOrCompareMotionFlags(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->byte_55 = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->byte_55 = (state->byte_55 + value);
-    } else {
-        state->comparison_result = state->byte_55 == (u8)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->byte_55 = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->byte_55 = (state->byte_55 + value);
+	}
+	else
+	{
+		state->comparison_result = state->byte_55 == (u8)value;
+	}
 }
 
 void Script_SetOrCompareArrivalAxis(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->byte_56 = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->byte_56 = (state->byte_56 + value);
-    } else {
-        state->comparison_result = state->byte_56 == (u8)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->byte_56 = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->byte_56 = (state->byte_56 + value);
+	}
+	else
+	{
+		state->comparison_result = state->byte_56 == (u8)value;
+	}
 }
 
 void Script_SetOrCompareComparisonResult(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->comparison_result = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->comparison_result =
-            (state->comparison_result + value);
-    } else {
-        state->comparison_result = state->comparison_result == (u8)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->comparison_result = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->comparison_result = (state->comparison_result + value);
+	}
+	else
+	{
+		state->comparison_result = state->comparison_result == (u8)value;
+	}
 }
 
 void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->byte_58 = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->byte_58 = (state->byte_58 + value);
-    } else {
-        state->comparison_result = state->byte_58 == (u8)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->byte_58 = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->byte_58 = (state->byte_58 + value);
+	}
+	else
+	{
+		state->comparison_result = state->byte_58 == (u8)value;
+	}
 }
 
 void Script_SetOrCompareCollisionFlags(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->byte_59 = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->byte_59 = (state->byte_59 + value);
-    } else {
-        state->comparison_result = state->byte_59 == (u8)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->byte_59 = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->byte_59 = (state->byte_59 + value);
+	}
+	else
+	{
+		state->comparison_result = state->byte_59 == (u8)value;
+	}
 }
 
 void Script_SetOrCompareSteeringFlags(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->byte_5a = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->byte_5a = (state->byte_5a + value);
-    } else {
-        state->comparison_result = state->byte_5a == (u8)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->byte_5a = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->byte_5a = (state->byte_5a + value);
+	}
+	else
+	{
+		state->comparison_result = state->byte_5a == (u8)value;
+	}
 }
 
 void Script_SetOrComparePaused(struct ScriptOperands *state, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        state->byte_5b = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        state->byte_5b = (state->byte_5b + value);
-    } else {
-        state->comparison_result = state->byte_5b == (u8)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		state->byte_5b = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		state->byte_5b = (state->byte_5b + value);
+	}
+	else
+	{
+		state->comparison_result = state->byte_5b == (u8)value;
+	}
 }
 
 void Script_SetOrCompareRepeatCount(struct ScriptOperands *work, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        work->byte_5d = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        work->byte_5d += value;
-    } else {
-        work->comparison_result = work->byte_5d == (u8)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		work->byte_5d = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		work->byte_5d += value;
+	}
+	else
+	{
+		work->comparison_result = work->byte_5d == (u8)value;
+	}
 }
 
 void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        work->halfword_5e = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        work->halfword_5e += value;
-        return;
-    }
-    work->comparison_result = (s16)work->halfword_5e == (s16)value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		work->halfword_5e = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		work->halfword_5e += value;
+		return;
+	}
+	work->comparison_result = (s16)work->halfword_5e == (s16)value;
 }
 
 void Script_SetOrCompareSignedHalfword64(struct ScriptOperands *work, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        work->signed_halfword_64 = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        work->signed_halfword_64 += value;
-    } else {
-        work->comparison_result = work->signed_halfword_64 == (s16)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		work->signed_halfword_64 = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		work->signed_halfword_64 += value;
+	}
+	else
+	{
+		work->comparison_result = work->signed_halfword_64 == (s16)value;
+	}
 }
 
 void Script_SetOrCompareSignedHalfword66(struct ScriptOperands *work, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        work->signed_halfword_66 = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        work->signed_halfword_66 += value;
-    } else {
-        work->comparison_result = work->signed_halfword_66 == (s16)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		work->signed_halfword_66 = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		work->signed_halfword_66 += value;
+	}
+	else
+	{
+		work->comparison_result = work->signed_halfword_66 == (s16)value;
+	}
 }
 
 void Script_SetOrCompareWord68(struct ScriptOperands *work, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        work->word_68 = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        work->word_68 += value;
-        return;
-    }
-    work->comparison_result = work->word_68 == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		work->word_68 = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		work->word_68 += value;
+		return;
+	}
+	work->comparison_result = work->word_68 == value;
 }
 
 void Script_SetOrCompareUpdateAddress(struct ScriptOperands *work, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        work->word_6c = value;
-        return;
-    }
-    if (operation == SCRIPT_OPERAND_ADD) {
-        work->word_6c += value;
-        return;
-    }
-    work->comparison_result = work->word_6c == value;
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		work->word_6c = value;
+		return;
+	}
+	if (operation == SCRIPT_OPERAND_ADD)
+	{
+		work->word_6c += value;
+		return;
+	}
+	work->comparison_result = work->word_6c == value;
 }
 
 void Script_SetOrCompareByte62(struct ScriptOperands *work, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        work->byte_62 = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        work->byte_62 += value;
-    } else {
-        work->comparison_result = work->byte_62 == (u8)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		work->byte_62 = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		work->byte_62 += value;
+	}
+	else
+	{
+		work->comparison_result = work->byte_62 == (u8)value;
+	}
 }
 
 void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation, s32 value)
 {
-    if (operation == SCRIPT_OPERAND_SET) {
-        work->byte_63 = value;
-    } else if (operation == SCRIPT_OPERAND_ADD) {
-        work->byte_63 += value;
-    } else {
-        work->comparison_result = work->byte_63 == (u8)value;
-    }
+	if (operation == SCRIPT_OPERAND_SET)
+	{
+		work->byte_63 = value;
+	}
+	else if (operation == SCRIPT_OPERAND_ADD)
+	{
+		work->byte_63 += value;
+	}
+	else
+	{
+		work->comparison_result = work->byte_63 == (u8)value;
+	}
 }
 
 s32 Script_ApplyOperandSet(struct ScriptOperands *work)
 {
-    s16 index = work->cursor;
-    const s32 *command = (const s32 *)work->script_address + index + 1;
-    OperandFunc handler = Script_OperandHandlerTable[command[0]];
+	s16			index = work->cursor;
+	const s32  *command = (const s32 *)work->script_address + index + 1;
+	OperandFunc handler = Script_OperandHandlerTable[command[0]];
 
-    if (handler != 0)
-        handler(work, SCRIPT_OPERAND_SET, command[1]);
-    work->cursor += 3;
-    return 1;
+	if (handler != 0)
+		handler(work, SCRIPT_OPERAND_SET, command[1]);
+	work->cursor += 3;
+	return 1;
 }
 
 s32 Script_ApplyOperandAdd(struct ScriptOperands *work)
 {
-    s16 index = work->cursor;
-    const s32 *command = (const s32 *)work->script_address + index + 1;
-    OperandFunc handler = Script_OperandHandlerTable[command[0]];
+	s16			index = work->cursor;
+	const s32  *command = (const s32 *)work->script_address + index + 1;
+	OperandFunc handler = Script_OperandHandlerTable[command[0]];
 
-    if (handler != 0)
-        handler(work, SCRIPT_OPERAND_ADD, command[1]);
-    work->cursor += 3;
-    return 1;
+	if (handler != 0)
+		handler(work, SCRIPT_OPERAND_ADD, command[1]);
+	work->cursor += 3;
+	return 1;
 }
 
 s32 Script_ApplyOperandCompare(struct ScriptOperands *work)
 {
-    s16 index = work->cursor;
-    const s32 *command = (const s32 *)work->script_address + index + 1;
-    OperandFunc handler = Script_OperandHandlerTable[command[0]];
+	s16			index = work->cursor;
+	const s32  *command = (const s32 *)work->script_address + index + 1;
+	OperandFunc handler = Script_OperandHandlerTable[command[0]];
 
-    if (handler != 0)
-        handler(work, SCRIPT_OPERAND_COMPARE, command[1]);
-    work->cursor += 3;
-    return 1;
+	if (handler != 0)
+		handler(work, SCRIPT_OPERAND_COMPARE, command[1]);
+	work->cursor += 3;
+	return 1;
 }
 
 void ObjectDispatch_SetUpdateValue(void *raw, s32 value)
 {
-    struct ObjectRuntime *object = raw;
+	struct ObjectRuntime *object = raw;
 
-    if (object != NULL)
-        *(s32 *)object->unknown_6c = value;
+	if (object != NULL)
+		*(s32 *)object->unknown_6c = value;
 }
 
 #if EDITION_INTERNATIONAL
@@ -4031,407 +4368,454 @@ void ObjectDispatch_SetUpdateValue(void *raw, s32 value)
 
 u32 Field_StoreAssignedKeyValue(u32 value)
 {
-    u32 selector = value >> 14;
-    u32 request = 0x3FFF & value;
-    struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
+	u32					  selector = value >> 14;
+	u32					  request = 0x3FFF & value;
+	struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
 
-    if (GameFlag_TestFar(0x107) != 0) {
-        StoreHalfword((s16 *)&work->raised_trigger, 0xFA);
-    } else if (work->mode == 3) {
-        if (ASSIGNED_KEYS & 0x100) {
-            StoreHalfword((s16 *)&work->raised_trigger, 0xFC88);
-        } else if (ASSIGNED_KEYS & 0x200) {
-            StoreHalfword((s16 *)&work->raised_trigger, 0xFC87);
-        }
-    } else {
-        switch (selector) {
-        case 0:
-            StoreHalfword(&work->psynergy_request, request);
-            break;
-        case 1:
-            StoreHalfword((s16 *)work->unknown_180, request);
-            break;
-        }
-    }
+	if (GameFlag_TestFar(0x107) != 0)
+	{
+		StoreHalfword((s16 *)&work->raised_trigger, 0xFA);
+	}
+	else if (work->mode == 3)
+	{
+		if (ASSIGNED_KEYS & 0x100)
+		{
+			StoreHalfword((s16 *)&work->raised_trigger, 0xFC88);
+		}
+		else if (ASSIGNED_KEYS & 0x200)
+		{
+			StoreHalfword((s16 *)&work->raised_trigger, 0xFC87);
+		}
+	}
+	else
+	{
+		switch (selector)
+		{
+		case 0:
+			StoreHalfword(&work->psynergy_request, request);
+			break;
+		case 1:
+			StoreHalfword((s16 *)work->unknown_180, request);
+			break;
+		}
+	}
 
-    return request;
+	return request;
 }
 
 s32 Field_CheckConfiguredKeys(void)
 {
-    struct EventRuntime *work = gEventWork;
-    s32 result = 0;
+	struct EventRuntime *work = gEventWork;
+	s32					 result = 0;
 
-    if (work == NULL)
-        return 0;
-    if (gKeyState & gGameState.select_keys) {
-        work->unknown_172[0] = 1;
-        result = 1;
-    } else if (gKeyState & gGameState.a_keys) {
-        work->unknown_172[1] = 1;
-        result = 1;
-    } else if (gKeyState & gGameState.start_keys) {
-        work->unknown_172[2] = 1;
-        result = 1;
-    } else if (gKeyState & gGameState.first_shortcut_keys) {
-        result = Field_StoreAssignedKeyValue(gGameState.first_shortcut);
-    } else if (gKeyState & gGameState.second_shortcut_keys) {
-        result = Field_StoreAssignedKeyValue(gGameState.second_shortcut);
-    }
-    return result;
+	if (work == NULL)
+		return 0;
+	if (gKeyState & gGameState.select_keys)
+	{
+		work->unknown_172[0] = 1;
+		result = 1;
+	}
+	else if (gKeyState & gGameState.a_keys)
+	{
+		work->unknown_172[1] = 1;
+		result = 1;
+	}
+	else if (gKeyState & gGameState.start_keys)
+	{
+		work->unknown_172[2] = 1;
+		result = 1;
+	}
+	else if (gKeyState & gGameState.first_shortcut_keys)
+	{
+		result = Field_StoreAssignedKeyValue(gGameState.first_shortcut);
+	}
+	else if (gKeyState & gGameState.second_shortcut_keys)
+	{
+		result = Field_StoreAssignedKeyValue(gGameState.second_shortcut);
+	}
+	return result;
 }
 
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b)
 {
-    const struct FieldPosition *first = (const struct FieldPosition *)a;
-    const struct FieldPosition *second = (const struct FieldPosition *)b;
-    const s32 *first_word = &first->x;
-    const s32 *second_word = &second->x;
-    s32 dx = (*first_word++ - *second_word++) >> 16;
-    s32 dy = (*first_word++ - *second_word++) >> 16;
-    s32 dz = (*first_word - *second_word) >> 16;
-    s32 radius = radius_a + radius_b;
+	const struct FieldPosition *first = (const struct FieldPosition *)a;
+	const struct FieldPosition *second = (const struct FieldPosition *)b;
+	const s32				   *first_word = &first->x;
+	const s32				   *second_word = &second->x;
+	s32							dx = (*first_word++ - *second_word++) >> 16;
+	s32							dy = (*first_word++ - *second_word++) >> 16;
+	s32							dz = (*first_word - *second_word) >> 16;
+	s32							radius = radius_a + radius_b;
 
-    if (!(dx > 0x400000) && !(dz > 0x400000) &&
-        dx * dx + dy * dy + dz * dz < radius * radius)
-        return 0;
-    return -1;
+	if (!(dx > 0x400000) && !(dz > 0x400000) && dx * dx + dy * dy + dz * dz < radius * radius)
+		return 0;
+	return -1;
 }
 
 #undef gObjectSlots
 
-struct KeyMoveEventWork {
-    u8 unknown_000[0x19c];
-    u16 blocked_steps;
+struct KeyMoveEventWork
+{
+	u8	unknown_000[0x19c];
+	u16 blocked_steps;
 };
 
-struct WorldMapSprite {
-    struct FieldSprite sprite;
-    u8 unknown_28[4];
-    u8 *shadow;
+struct WorldMapSprite
+{
+	struct FieldSprite sprite;
+	u8				   unknown_28[4];
+	u8				  *shadow;
 };
-#define gDebugMode (*(volatile u8 (*))&gDebugMode)
-void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 value);
-s32 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
-void AudioCommand_PlayFar(s32 cue);
+#define gDebugMode (*(volatile u8(*)) & gDebugMode)
+void	  ObjectDispatch_ApplyArgumentToChildren(void *object, s32 value);
+s32		  AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
+void	  AudioCommand_PlayFar(s32 cue);
 extern u8 ResourceBlockOwners[];
 
 s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 {
-    struct FieldPosition position;
-    struct FieldPosition test_position;
-    struct FieldPosition contact;
-    s16 angle_offsets[22];
-    s32 collision;
-    s32 pushed;
-    s16 heading;
-    s32 angle;
-    s32 mode;
-    u16 direction;
-    s32 rotation;
-    s32 angle_index;
-    s32 count;
-    struct ObjectRuntime *other;
+	struct FieldPosition  position;
+	struct FieldPosition  test_position;
+	struct FieldPosition  contact;
+	s16					  angle_offsets[22];
+	s32					  collision;
+	s32					  pushed;
+	s16					  heading;
+	s32					  angle;
+	s32					  mode;
+	u16					  direction;
+	s32					  rotation;
+	s32					  angle_index;
+	s32					  count;
+	struct ObjectRuntime *other;
 
-    collision = 0;
-    pushed = 0;
-    if (gDebugMode != 0 && GameFlag_TestFar(350) != 0) {
-        s32 free;
-        s32 block;
+	collision = 0;
+	pushed = 0;
+	if (gDebugMode != 0 && GameFlag_TestFar(350) != 0)
+	{
+		s32 free;
+		s32 block;
 
-        free = 0;
-        for (block = 0; block < 512; block++) {
-            if (ResourceBlockOwners[block] == 0xff)
-                free++;
-        }
-        if (free - 136 < 0)
-            AudioCommand_PlayFar(135);
-    }
-    if (gDebugMode != 0) {
-        s32 mask;
+		free = 0;
+		for (block = 0; block < 512; block++)
+		{
+			if (ResourceBlockOwners[block] == 0xff)
+				free++;
+		}
+		if (free - 136 < 0)
+			AudioCommand_PlayFar(135);
+	}
+	if (gDebugMode != 0)
+	{
+		s32 mask;
 
-        mask = KEY_L;
-        if (gKeysHeld & mask) {
-            s32 wait;
+		mask = KEY_L;
+		if (gKeysHeld & mask)
+		{
+			s32 wait;
 
-            wait = mask;
-        wait_a:
-            --wait;
-            if (wait != 0)
-                goto wait_a;
-            wait = 95;
-        wait_b:
-            wait--;
-            if (wait >= 0)
-                goto wait_b;
-            wait = 63;
-        wait_c:
-            wait--;
-            if (wait >= 0)
-                goto wait_c;
-            wait = 63;
-        wait_d:
-            wait--;
-            if (wait >= 0)
-                goto wait_d;
-        }
-    }
-    if (gKeysHeld & gGameState.dash_keys) {
-        object->speed_limit = 0x18000;
-        object->acceleration = 0x4000;
-        mode = 5;
-    } else {
-        object->speed_limit = 0x10000;
-        object->acceleration = 0x4000;
-        mode = 2;
-    }
-    if (GameFlag_TestFar(0x17f) != 0 && (gKeysHeld & KEY_B)) {
-        object->speed_limit = 0x40000;
-        object->acceleration = 0x10000;
-        mode = 5;
-    }
+			wait = mask;
+		wait_a:
+			--wait;
+			if (wait != 0)
+				goto wait_a;
+			wait = 95;
+		wait_b:
+			wait--;
+			if (wait >= 0)
+				goto wait_b;
+			wait = 63;
+		wait_c:
+			wait--;
+			if (wait >= 0)
+				goto wait_c;
+			wait = 63;
+		wait_d:
+			wait--;
+			if (wait >= 0)
+				goto wait_d;
+		}
+	}
+	if (gKeysHeld & gGameState.dash_keys)
+	{
+		object->speed_limit = 0x18000;
+		object->acceleration = 0x4000;
+		mode = 5;
+	}
+	else
+	{
+		object->speed_limit = 0x10000;
+		object->acceleration = 0x4000;
+		mode = 2;
+	}
+	if (GameFlag_TestFar(0x17f) != 0 && (gKeysHeld & KEY_B))
+	{
+		object->speed_limit = 0x40000;
+		object->acceleration = 0x10000;
+		mode = 5;
+	}
 
-    angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
-    if ((u16)angle == 0xffff) {
-        collision |= 4;
-        goto update_object;
-    }
+	angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+	if ((u16)angle == 0xffff)
+	{
+		collision |= 4;
+		goto update_object;
+	}
 
-    collision = 0;
-    position.x = object->x;
-    position.y = object->y;
-    position.z = object->z;
-    Vector_AddPolarOffset(0x80000, (u16)angle, &position);
-    if (gDebugMode != 0 && (gKeysHeld & KEY_L)) {
-        heading = angle;
-        goto update_object;
-    }
-    if (Map_CheckObjectStep(object, &position) != 0)
-        goto choose_direction;
-    test_position.x = object->x;
-    test_position.y = object->y;
-    test_position.z = object->z;
-    Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &test_position);
-    if (Map_CheckObjectStep(object, &test_position) != 0)
-        goto choose_direction;
-    test_position.x = object->x;
-    test_position.y = object->y;
-    test_position.z = object->z;
-    Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &test_position);
-    if (Map_CheckObjectStep(object, &test_position) != 0)
-        goto choose_direction;
-    test_position.x = object->x;
-    test_position.y = object->y;
-    test_position.z = object->z;
-    Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &test_position);
-    if (Map_CheckObjectStep(object, &test_position) != 0)
-        goto choose_direction;
-    test_position.x = object->x;
-    test_position.y = object->y;
-    test_position.z = object->z;
-    Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &test_position);
-    if (Map_CheckObjectStep(object, &test_position) != 0)
-        goto choose_direction;
-    heading = angle;
-    goto push_objects;
+	collision = 0;
+	position.x = object->x;
+	position.y = object->y;
+	position.z = object->z;
+	Vector_AddPolarOffset(0x80000, (u16)angle, &position);
+	if (gDebugMode != 0 && (gKeysHeld & KEY_L))
+	{
+		heading = angle;
+		goto update_object;
+	}
+	if (Map_CheckObjectStep(object, &position) != 0)
+		goto choose_direction;
+	test_position.x = object->x;
+	test_position.y = object->y;
+	test_position.z = object->z;
+	Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &test_position);
+	if (Map_CheckObjectStep(object, &test_position) != 0)
+		goto choose_direction;
+	test_position.x = object->x;
+	test_position.y = object->y;
+	test_position.z = object->z;
+	Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &test_position);
+	if (Map_CheckObjectStep(object, &test_position) != 0)
+		goto choose_direction;
+	test_position.x = object->x;
+	test_position.y = object->y;
+	test_position.z = object->z;
+	Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &test_position);
+	if (Map_CheckObjectStep(object, &test_position) != 0)
+		goto choose_direction;
+	test_position.x = object->x;
+	test_position.y = object->y;
+	test_position.z = object->z;
+	Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &test_position);
+	if (Map_CheckObjectStep(object, &test_position) != 0)
+		goto choose_direction;
+	heading = angle;
+	goto push_objects;
 
 choose_direction:
-    direction = angle;
-    count = 0;
-    angle_offsets[count++] = direction + 0x1000;
-    angle_offsets[count++] = direction - 0x1000;
-    angle_offsets[count++] = direction + 0x2000;
-    angle_offsets[count++] = direction - 0x2000;
-    angle_offsets[count++] = direction + 0x3000;
-    angle_offsets[count++] = direction - 0x3000;
-    for (angle_index = 0; angle_index < count; angle_index++) {
-        heading = angle_offsets[angle_index];
-        position.x = object->x;
-        position.y = object->y;
-        position.z = object->z;
-        Vector_AddPolarOffset(0x80000, (u16)heading, &position);
-        if (Map_CheckObjectStep(object, &position) != 0)
-            continue;
-        test_position.x = object->x;
-        test_position.y = object->y;
-        test_position.z = object->z;
-        Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &test_position);
-        if (Map_CheckObjectStep(object, &test_position) != 0)
-            continue;
-        test_position.x = object->x;
-        test_position.y = object->y;
-        test_position.z = object->z;
-        Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &test_position);
-        if (Map_CheckObjectStep(object, &test_position) != 0)
-            continue;
-        test_position.x = object->x;
-        test_position.y = object->y;
-        test_position.z = object->z;
-        Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &test_position);
-        if (Map_CheckObjectStep(object, &test_position) != 0)
-            continue;
-        test_position.x = object->x;
-        test_position.y = object->y;
-        test_position.z = object->z;
-        Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &test_position);
-        if (Map_CheckObjectStep(object, &test_position) == 0)
-            goto push_objects;
-    }
-    position.x = object->x;
-    position.y = object->y;
-    position.z = object->z;
-    collision |= 1;
+	direction = angle;
+	count = 0;
+	angle_offsets[count++] = direction + 0x1000;
+	angle_offsets[count++] = direction - 0x1000;
+	angle_offsets[count++] = direction + 0x2000;
+	angle_offsets[count++] = direction - 0x2000;
+	angle_offsets[count++] = direction + 0x3000;
+	angle_offsets[count++] = direction - 0x3000;
+	for (angle_index = 0; angle_index < count; angle_index++)
+	{
+		heading = angle_offsets[angle_index];
+		position.x = object->x;
+		position.y = object->y;
+		position.z = object->z;
+		Vector_AddPolarOffset(0x80000, (u16)heading, &position);
+		if (Map_CheckObjectStep(object, &position) != 0)
+			continue;
+		test_position.x = object->x;
+		test_position.y = object->y;
+		test_position.z = object->z;
+		Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &test_position);
+		if (Map_CheckObjectStep(object, &test_position) != 0)
+			continue;
+		test_position.x = object->x;
+		test_position.y = object->y;
+		test_position.z = object->z;
+		Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &test_position);
+		if (Map_CheckObjectStep(object, &test_position) != 0)
+			continue;
+		test_position.x = object->x;
+		test_position.y = object->y;
+		test_position.z = object->z;
+		Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &test_position);
+		if (Map_CheckObjectStep(object, &test_position) != 0)
+			continue;
+		test_position.x = object->x;
+		test_position.y = object->y;
+		test_position.z = object->z;
+		Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &test_position);
+		if (Map_CheckObjectStep(object, &test_position) == 0)
+			goto push_objects;
+	}
+	position.x = object->x;
+	position.y = object->y;
+	position.z = object->z;
+	collision |= 1;
 
 push_objects:
-    contact.x = object->x;
-    contact.y = object->y;
-    contact.z = object->z;
-    Vector_AddPolarOffset(0x40000, (u16)heading, &contact);
-    other = gObjectSlots;
-    for (angle_index = 63; angle_index >= 0; angle_index -= 1, other++) {
-        s32 radius;
+	contact.x = object->x;
+	contact.y = object->y;
+	contact.z = object->z;
+	Vector_AddPolarOffset(0x40000, (u16)heading, &contact);
+	other = gObjectSlots;
+	for (angle_index = 63; angle_index >= 0; angle_index -= 1, other++)
+	{
+		s32 radius;
 
-        radius = object->radius - 2;
-        if (other->script == 0)
-            continue;
-        if ((other->unknown_59 & 1) == 0)
-            continue;
-        if (other == object)
-            continue;
-        if (Runtime_CheckRadiusOverlap(&other->x, radius, &contact.x, other->radius - 2) < 0)
-            continue;
-        if ((other->unknown_59 & 2) == 0 || other->movement_state != 0)
-            goto blocked;
-        direction = ArcTan2(other->z - object->z, other->x - object->x);
-        test_position.x = other->x;
-        test_position.y = other->y;
-        test_position.z = other->z;
-        heading = direction;
-        Vector_AddPolarOffset(0x4000, direction, &test_position);
-        if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)other, (s32 *)&test_position))
-            goto blocked;
-        test_position.x = other->x;
-        test_position.y = other->y;
-        test_position.z = other->z;
-        Vector_AddPolarOffset(0xa0000, direction, &test_position);
-        if (Map_CheckObjectStep(other, &test_position) != 0)
-            goto blocked;
-        test_position.x = other->x;
-        test_position.y = other->y;
-        test_position.z = other->z;
-        Vector_AddPolarOffset(0xa0000, direction + 0x1000, &test_position);
-        if (Map_CheckObjectStep(other, &test_position) != 0)
-            goto blocked;
-        if (Map_CheckObjectStep(other, &test_position) != 0)
-            goto blocked;
-        test_position.x = other->x;
-        test_position.y = other->y;
-        test_position.z = other->z;
-        Vector_AddPolarOffset(0xa0000, direction - 0x1000, &test_position);
-        if (Map_CheckObjectStep(other, &test_position) != 0)
-            goto blocked;
-        Vector_AddPolarOffset(0x4000, direction, (struct FieldPosition *)&other->x);
-        other->target_x = -0x80000000;
-        other->target_y = -0x80000000;
-        other->target_z = -0x80000000;
-        pushed |= 1;
-        continue;
-    blocked:
-        collision |= 2;
-    }
-    if (collision == 0 && pushed != 0) {
-        object->speed_limit = 0x4000;
-        object->acceleration = 0x2000;
-    }
+		radius = object->radius - 2;
+		if (other->script == 0)
+			continue;
+		if ((other->unknown_59 & 1) == 0)
+			continue;
+		if (other == object)
+			continue;
+		if (Runtime_CheckRadiusOverlap(&other->x, radius, &contact.x, other->radius - 2) < 0)
+			continue;
+		if ((other->unknown_59 & 2) == 0 || other->movement_state != 0)
+			goto blocked;
+		direction = ArcTan2(other->z - object->z, other->x - object->x);
+		test_position.x = other->x;
+		test_position.y = other->y;
+		test_position.z = other->z;
+		heading = direction;
+		Vector_AddPolarOffset(0x4000, direction, &test_position);
+		if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)other, (s32 *)&test_position))
+			goto blocked;
+		test_position.x = other->x;
+		test_position.y = other->y;
+		test_position.z = other->z;
+		Vector_AddPolarOffset(0xa0000, direction, &test_position);
+		if (Map_CheckObjectStep(other, &test_position) != 0)
+			goto blocked;
+		test_position.x = other->x;
+		test_position.y = other->y;
+		test_position.z = other->z;
+		Vector_AddPolarOffset(0xa0000, direction + 0x1000, &test_position);
+		if (Map_CheckObjectStep(other, &test_position) != 0)
+			goto blocked;
+		if (Map_CheckObjectStep(other, &test_position) != 0)
+			goto blocked;
+		test_position.x = other->x;
+		test_position.y = other->y;
+		test_position.z = other->z;
+		Vector_AddPolarOffset(0xa0000, direction - 0x1000, &test_position);
+		if (Map_CheckObjectStep(other, &test_position) != 0)
+			goto blocked;
+		Vector_AddPolarOffset(0x4000, direction, (struct FieldPosition *)&other->x);
+		other->target_x = -0x80000000;
+		other->target_y = -0x80000000;
+		other->target_z = -0x80000000;
+		pushed |= 1;
+		continue;
+	blocked:
+		collision |= 2;
+	}
+	if (collision == 0 && pushed != 0)
+	{
+		object->speed_limit = 0x4000;
+		object->acceleration = 0x2000;
+	}
 
 update_object:
-    if (gEventWork != NULL) {
-        if (collision & 3)
-            gEventWork->blocked_steps++;
-        else
-            gEventWork->blocked_steps = 0;
-    }
-    if (pushed != 0) {
-        ObjectDispatch_ApplyArgumentToChildren(object, 8);
-    } else if (collision != 0) {
-        s32 action;
+	if (gEventWork != NULL)
+	{
+		if (collision & 3)
+			gEventWork->blocked_steps++;
+		else
+			gEventWork->blocked_steps = 0;
+	}
+	if (pushed != 0)
+	{
+		ObjectDispatch_ApplyArgumentToChildren(object, 8);
+	}
+	else if (collision != 0)
+	{
+		s32 action;
 
-        action = 9;
-        if (UnitGetFar(gGameState.selected_actor)->hp == 0)
-            action = 22;
-        ObjectDispatch_ApplyArgumentToChildren(object, action);
-    } else {
-        ObjectDispatch_ApplyArgumentToChildren(object, mode);
-    }
+		action = 9;
+		if (UnitGetFar(gGameState.selected_actor)->hp == 0)
+			action = 22;
+		ObjectDispatch_ApplyArgumentToChildren(object, action);
+	}
+	else
+	{
+		ObjectDispatch_ApplyArgumentToChildren(object, mode);
+	}
 
-    if (collision != 0) {
-        object->target_x = -0x80000000;
-        object->target_y = -0x80000000;
-        object->target_z = -0x80000000;
-        object->velocity_x = 0;
-        object->velocity_z = 0;
-        if (collision & 3) {
-            s32 difference;
+	if (collision != 0)
+	{
+		object->target_x = -0x80000000;
+		object->target_y = -0x80000000;
+		object->target_z = -0x80000000;
+		object->velocity_x = 0;
+		object->velocity_z = 0;
+		if (collision & 3)
+		{
+			s32 difference;
 
-            difference = (u16)angle - object->angle;
-            difference = (s16)difference;
-            if (difference > 0x1000)
-                difference = 0x1000;
-            if (difference < -0x1000)
-                difference = -0x1000;
-            object->angle += difference;
-        }
-        object->action = 0;
-        object->unknown_66 = 2;
-    } else {
-        s32 square;
+			difference = (u16)angle - object->angle;
+			difference = (s16)difference;
+			if (difference > 0x1000)
+				difference = 0x1000;
+			if (difference < -0x1000)
+				difference = -0x1000;
+			object->angle += difference;
+		}
+		object->action = 0;
+		object->unknown_66 = 2;
+	}
+	else
+	{
+		s32 square;
 
-        Object_SetMoveTarget(object, position.x, position.y, position.z);
-        square = FixedSqrt(Iwram_MulQ16(object->velocity_x, object->velocity_x)
-                           + Iwram_MulQ16(object->velocity_z, object->velocity_z));
-        object->velocity_x = 0;
-        object->velocity_z = 0;
-        Vector_AddPolarOffset(square, (u16)heading, (struct FieldPosition *)&object->velocity_x);
-        if (object->action != 0)
-            object->action--;
-    }
+		Object_SetMoveTarget(object, position.x, position.y, position.z);
+		square = FixedSqrt(Iwram_MulQ16(object->velocity_x, object->velocity_x)
+						   + Iwram_MulQ16(object->velocity_z, object->velocity_z));
+		object->velocity_x = 0;
+		object->velocity_z = 0;
+		Vector_AddPolarOffset(square, (u16)heading, (struct FieldPosition *)&object->velocity_x);
+		if (object->action != 0)
+			object->action--;
+	}
 
-    rotation = (u16)angle;
-    if (((struct MapScrollWork *)gMapWork[0])->footprints != 0
-        && object->action == 0 && collision == 0) {
-        struct ObjectRuntime *effect;
+	rotation = (u16)angle;
+	if (((struct MapScrollWork *)gMapWork[0])->footprints != 0 && object->action == 0
+		&& collision == 0)
+	{
+		struct ObjectRuntime *effect;
 
-        effect = FieldObject_Create(25, object->x, object->y, object->z);
-        if (effect != 0) {
-            struct FieldSprite *animation;
+		effect = FieldObject_Create(25, object->x, object->y, object->z);
+		if (effect != 0)
+		{
+			struct FieldSprite *animation;
 
-            effect->terrain_height = object->terrain_height;
-            animation = effect->animation;
-            ObjectDispatch_Initialize((struct DispatchObject *)effect, (u32)WorldMap_FootprintActions);
-            effect->unknown_23 = 2;
-            effect->flags = collision;
-            if (animation != 0) {
-                AnimationObjects_SelectAnimation((struct AnimationObject *)animation, 1);
-                animation->flags = collision;
-                animation->rotation = rotation + 0x4000;
-                animation->priority = 3;
-            }
-            if (object->unknown_66 == 2) {
-                AnimationObjects_SelectAnimation((struct AnimationObject *)animation, 2);
-                object->unknown_66 = collision;
-            }
-            if (object->unknown_66 != 0)
-                effect->angle = 0x8000;
-            if (mode == 5)
-                object->action = 12;
-            else
-                object->action = 18;
-            object->unknown_66 ^= 1;
-        }
-    }
-    Field_CheckConfiguredKeys();
-    object->step++;
-    return 1;
+			effect->terrain_height = object->terrain_height;
+			animation = effect->animation;
+			ObjectDispatch_Initialize(
+				(struct DispatchObject *)effect, (u32)WorldMap_FootprintActions);
+			effect->unknown_23 = 2;
+			effect->flags = collision;
+			if (animation != 0)
+			{
+				AnimationObjects_SelectAnimation((struct AnimationObject *)animation, 1);
+				animation->flags = collision;
+				animation->rotation = rotation + 0x4000;
+				animation->priority = 3;
+			}
+			if (object->unknown_66 == 2)
+			{
+				AnimationObjects_SelectAnimation((struct AnimationObject *)animation, 2);
+				object->unknown_66 = collision;
+			}
+			if (object->unknown_66 != 0)
+				effect->angle = 0x8000;
+			if (mode == 5)
+				object->action = 12;
+			else
+				object->action = 18;
+			object->unknown_66 ^= 1;
+		}
+	}
+	Field_CheckConfiguredKeys();
+	object->step++;
+	return 1;
 }
 
 #if EDITION_INTERNATIONAL
@@ -4442,373 +4826,407 @@ update_object:
 
 s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 {
-    struct FieldPosition position;
+	struct FieldPosition position;
 #if EDITION_INTERNATIONAL
-    struct FieldPosition test_position;
-    s16 angle_offsets[28];
+	struct FieldPosition test_position;
+	s16					 angle_offsets[28];
 #else
-    struct FieldPosition left_position;
-    struct FieldPosition right_position;
-    s16 angle_offsets[22];
+	struct FieldPosition left_position;
+	struct FieldPosition right_position;
+	s16					 angle_offsets[22];
 #endif
-    s32 collision;
-    s32 angle;
-    u16 direction;
-    s32 angle_index;
-    s32 mode;
-    s32 count;
-    s32 difference;
-    s32 collision_kind;
-    s32 square;
-    s32 rate;
-    struct PerspectiveWork *work;
-    s32 step;
-    struct FieldSprite *sprite;
-    struct ObjectRuntime *effect;
-    struct FieldSprite *animation;
+	s32						collision;
+	s32						angle;
+	u16						direction;
+	s32						angle_index;
+	s32						mode;
+	s32						count;
+	s32						difference;
+	s32						collision_kind;
+	s32						square;
+	s32						rate;
+	struct PerspectiveWork *work;
+	s32						step;
+	struct FieldSprite	   *sprite;
+	struct ObjectRuntime   *effect;
+	struct FieldSprite	   *animation;
 
-    mode = 2;
-    collision = 0;
+	mode = 2;
+	collision = 0;
 #if !EDITION_INTERNATIONAL
-    count = 0;
+	count = 0;
 #endif
-    if (gKeysHeld & gGameState.dash_keys) {
-        object->speed_limit = 0x10000;
-        object->acceleration = 0x14000;
-        mode = 5;
-    } else {
-        object->speed_limit = 0x8000;
-        object->acceleration = 0x4000;
-    }
-    if ((gKeysRepeat & KEY_L) != 0)
-        object->speed_limit = 0x40000;
+	if (gKeysHeld & gGameState.dash_keys)
+	{
+		object->speed_limit = 0x10000;
+		object->acceleration = 0x14000;
+		mode = 5;
+	}
+	else
+	{
+		object->speed_limit = 0x8000;
+		object->acceleration = 0x4000;
+	}
+	if ((gKeysRepeat & KEY_L) != 0)
+		object->speed_limit = 0x40000;
 
-    angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
-    direction = angle;
-    if (direction == 0xffff) {
-        collision |= 4;
-        goto update_object;
-    }
+	angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+	direction = angle;
+	if (direction == 0xffff)
+	{
+		collision |= 4;
+		goto update_object;
+	}
 
-    collision = 0;
-    position.x = object->x;
-    position.y = object->y;
-    position.z = object->z;
-    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
-    if (gDebugMode != 0 && (gKeysHeld & KEY_L) != 0)
-        goto update_object;
+	collision = 0;
+	position.x = object->x;
+	position.y = object->y;
+	position.z = object->z;
+	Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
+	if (gDebugMode != 0 && (gKeysHeld & KEY_L) != 0)
+		goto update_object;
 #if EDITION_INTERNATIONAL
-    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) != 0)
-        goto choose_direction;
+	if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) != 0)
+		goto choose_direction;
 
-    test_position.x = object->x;
-    test_position.y = object->y;
-    test_position.z = object->z;
-    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &test_position);
-    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
-        goto choose_direction;
-    test_position.x = object->x;
-    test_position.y = object->y;
-    test_position.z = object->z;
-    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &test_position);
-    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
-        goto choose_direction;
-    test_position.x = object->x;
-    test_position.y = object->y;
-    test_position.z = object->z;
-    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000, &test_position);
-    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
-        goto choose_direction;
-    test_position.x = object->x;
-    test_position.y = object->y;
-    test_position.z = object->z;
-    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000, &test_position);
-    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
-        goto choose_direction;
-    goto update_object;
+	test_position.x = object->x;
+	test_position.y = object->y;
+	test_position.z = object->z;
+	Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &test_position);
+	if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+		goto choose_direction;
+	test_position.x = object->x;
+	test_position.y = object->y;
+	test_position.z = object->z;
+	Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &test_position);
+	if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+		goto choose_direction;
+	test_position.x = object->x;
+	test_position.y = object->y;
+	test_position.z = object->z;
+	Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000, &test_position);
+	if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+		goto choose_direction;
+	test_position.x = object->x;
+	test_position.y = object->y;
+	test_position.z = object->z;
+	Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000, &test_position);
+	if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+		goto choose_direction;
+	goto update_object;
 
 choose_direction:
-    count = 0;
-    angle_offsets[count++] = direction + 0x1000;
-    angle_offsets[count++] = direction - 0x1000;
-    angle_offsets[count++] = direction + 0x2000;
-    angle_offsets[count++] = direction - 0x2000;
-    angle_offsets[count++] = direction + 0x3000;
-    angle_offsets[count++] = direction - 0x3000;
-    angle_offsets[count++] = direction + 0x4000;
-    angle_offsets[count++] = direction - 0x4000;
-    for (angle_index = 0; angle_index < count; angle_index++) {
-        direction = angle_offsets[angle_index];
-        position.x = object->x;
-        position.y = object->y;
-        position.z = object->z;
-        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
-        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) != 0)
-            continue;
-        test_position.x = object->x;
-        test_position.y = object->y;
-        test_position.z = object->z;
-        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &test_position);
-        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
-            continue;
-        test_position.x = object->x;
-        test_position.y = object->y;
-        test_position.z = object->z;
-        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &test_position);
-        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
-            continue;
-        test_position.x = object->x;
-        test_position.y = object->y;
-        test_position.z = object->z;
-        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000, &test_position);
-        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
-            continue;
-        test_position.x = object->x;
-        test_position.y = object->y;
-        test_position.z = object->z;
-        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000, &test_position);
-        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
-            continue;
-        angle = (s16)direction;
-        goto update_object;
-    }
-    collision |= 1;
+	count = 0;
+	angle_offsets[count++] = direction + 0x1000;
+	angle_offsets[count++] = direction - 0x1000;
+	angle_offsets[count++] = direction + 0x2000;
+	angle_offsets[count++] = direction - 0x2000;
+	angle_offsets[count++] = direction + 0x3000;
+	angle_offsets[count++] = direction - 0x3000;
+	angle_offsets[count++] = direction + 0x4000;
+	angle_offsets[count++] = direction - 0x4000;
+	for (angle_index = 0; angle_index < count; angle_index++)
+	{
+		direction = angle_offsets[angle_index];
+		position.x = object->x;
+		position.y = object->y;
+		position.z = object->z;
+		Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
+		if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) != 0)
+			continue;
+		test_position.x = object->x;
+		test_position.y = object->y;
+		test_position.z = object->z;
+		Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &test_position);
+		if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+			continue;
+		test_position.x = object->x;
+		test_position.y = object->y;
+		test_position.z = object->z;
+		Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &test_position);
+		if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+			continue;
+		test_position.x = object->x;
+		test_position.y = object->y;
+		test_position.z = object->z;
+		Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000, &test_position);
+		if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+			continue;
+		test_position.x = object->x;
+		test_position.y = object->y;
+		test_position.z = object->z;
+		Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000, &test_position);
+		if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+			continue;
+		angle = (s16)direction;
+		goto update_object;
+	}
+	collision |= 1;
 
 #else
-    left_position.x = object->x;
-    left_position.y = object->y;
-    left_position.z = object->z;
-    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &left_position);
-    right_position.x = object->x;
-    right_position.y = object->y;
-    right_position.z = object->z;
-    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &right_position);
-    if ((CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position)
-         | CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&left_position)
-         | CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&right_position)) == 0)
-        goto update_object;
+	left_position.x = object->x;
+	left_position.y = object->y;
+	left_position.z = object->z;
+	Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &left_position);
+	right_position.x = object->x;
+	right_position.y = object->y;
+	right_position.z = object->z;
+	Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &right_position);
+	if ((CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position)
+			| CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&left_position)
+			| CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&right_position))
+		== 0)
+		goto update_object;
 
-    angle_offsets[count++] = direction + 0x1000;
-    angle_offsets[count++] = direction - 0x1000;
-    angle_offsets[count++] = direction + 0x2000;
-    angle_offsets[count++] = direction - 0x2000;
-    angle_offsets[count++] = direction + 0x3000;
-    angle_offsets[count++] = direction - 0x3000;
-    for (angle_index = 0; angle_index < count; angle_index++) {
-        direction = angle_offsets[angle_index];
-        position.x = object->x;
-        position.y = object->y;
-        position.z = object->z;
-        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
-        left_position.x = object->x;
-        left_position.y = object->y;
-        left_position.z = object->z;
-        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &left_position);
-        right_position.x = object->x;
-        right_position.y = object->y;
-        right_position.z = object->z;
-        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &right_position);
-        if ((CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position)
-             | CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&left_position)
-             | CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&right_position)) != 0)
-            continue;
-        angle = (s16)direction;
-        goto update_object;
-    }
-    collision |= 1;
+	angle_offsets[count++] = direction + 0x1000;
+	angle_offsets[count++] = direction - 0x1000;
+	angle_offsets[count++] = direction + 0x2000;
+	angle_offsets[count++] = direction - 0x2000;
+	angle_offsets[count++] = direction + 0x3000;
+	angle_offsets[count++] = direction - 0x3000;
+	for (angle_index = 0; angle_index < count; angle_index++)
+	{
+		direction = angle_offsets[angle_index];
+		position.x = object->x;
+		position.y = object->y;
+		position.z = object->z;
+		Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
+		left_position.x = object->x;
+		left_position.y = object->y;
+		left_position.z = object->z;
+		Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &left_position);
+		right_position.x = object->x;
+		right_position.y = object->y;
+		right_position.z = object->z;
+		Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &right_position);
+		if ((CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position)
+				| CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&left_position)
+				| CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&right_position))
+			!= 0)
+			continue;
+		angle = (s16)direction;
+		goto update_object;
+	}
+	collision |= 1;
 #endif
 
 update_object:
-    if (gEventWork != NULL) {
-        if ((collision & 3) != 0)
-            gEventWork->blocked_steps++;
-        else
-            gEventWork->blocked_steps = 0;
-    }
-    if (collision != 0)
-        ObjectDispatch_ApplyArgumentToChildren(object, 9);
-    else
-        ObjectDispatch_ApplyArgumentToChildren(object, mode);
+	if (gEventWork != NULL)
+	{
+		if ((collision & 3) != 0)
+			gEventWork->blocked_steps++;
+		else
+			gEventWork->blocked_steps = 0;
+	}
+	if (collision != 0)
+		ObjectDispatch_ApplyArgumentToChildren(object, 9);
+	else
+		ObjectDispatch_ApplyArgumentToChildren(object, mode);
 
-    if (collision != 0) {
-        object->target_x = -0x80000000;
-        object->target_y = -0x80000000;
-        object->target_z = -0x80000000;
-        object->velocity_x = 0;
-        object->velocity_z = 0;
-        if ((collision & 3) != 0) {
-            direction = angle;
-            difference = (s16)(direction - object->angle);
-            if (difference > 0x1000)
-                difference = 0x1000;
-            if (difference < -0x1000)
-                difference = -0x1000;
-            object->angle += difference;
-        }
-        object->action = 0;
-        object->unknown_66 = 2;
-        goto movement_done;
-    }
+	if (collision != 0)
+	{
+		object->target_x = -0x80000000;
+		object->target_y = -0x80000000;
+		object->target_z = -0x80000000;
+		object->velocity_x = 0;
+		object->velocity_z = 0;
+		if ((collision & 3) != 0)
+		{
+			direction = angle;
+			difference = (s16)(direction - object->angle);
+			if (difference > 0x1000)
+				difference = 0x1000;
+			if (difference < -0x1000)
+				difference = -0x1000;
+			object->angle += difference;
+		}
+		object->action = 0;
+		object->unknown_66 = 2;
+		goto movement_done;
+	}
 
-    Object_SetMoveTarget(object, position.x, position.y, position.z);
-    square = FixedSqrt(Iwram_MulQ16(object->velocity_x, object->velocity_x)
-                       + Iwram_MulQ16(object->velocity_z, object->velocity_z));
-    object->velocity_x = collision;
-    object->velocity_z = collision;
-    Vector_AddPolarOffset(square, (u16)angle, (struct FieldPosition *)&object->velocity_x);
-    if (object->action != 0)
-        object->action--;
+	Object_SetMoveTarget(object, position.x, position.y, position.z);
+	square = FixedSqrt(Iwram_MulQ16(object->velocity_x, object->velocity_x)
+					   + Iwram_MulQ16(object->velocity_z, object->velocity_z));
+	object->velocity_x = collision;
+	object->velocity_z = collision;
+	Vector_AddPolarOffset(square, (u16)angle, (struct FieldPosition *)&object->velocity_x);
+	if (object->action != 0)
+		object->action--;
 
 movement_done:
-    work = gMapWork[0];
-    rate = WorldMap_KeyYaws[(gKeysHeld >> 4) & 15];
-    step = (s16)(rate - work->yaw) / 8;
-    if (step > 0x200)
-        step = 0x200;
-    if (step < -0x200)
-        step = -0x200;
-    if (step > -16 && step < 16)
-        step = rate - work->yaw;
-    work->yaw += step;
+	work = gMapWork[0];
+	rate = WorldMap_KeyYaws[(gKeysHeld >> 4) & 15];
+	step = (s16)(rate - work->yaw) / 8;
+	if (step > 0x200)
+		step = 0x200;
+	if (step < -0x200)
+		step = -0x200;
+	if (step > -16 && step < 16)
+		step = rate - work->yaw;
+	work->yaw += step;
 
-    if (object->animation_kind == 1) {
-        sprite = object->animation;
-        collision_kind = GetWorldMapCollision((struct WorldPosition *)&object->x);
-        if (collision_kind == 9) {
-            ((struct WorldMapSprite *)sprite)->shadow[6] = 1;
-            sprite->flags = 0;
-        } else {
-            ((struct WorldMapSprite *)sprite)->shadow[6] = 9;
-            sprite->flags = 1;
-        }
-        if (collision_kind == 6 && object->action == 0 && collision == 0) {
-            effect = FieldObject_Create(24, object->x, object->y, object->z);
-            if (effect != 0) {
-                animation = effect->animation;
-                ObjectDispatch_Initialize((struct DispatchObject *)effect, (u32)(WorldMap_FootprintActions + 12));
-                effect->flags = collision;
-                effect->terrain_id = 1;
-                if (animation != 0) {
-                    AnimationObjects_SelectAnimation((struct AnimationObject *)animation, 1);
-                    animation->flags = collision;
-                    animation->blend_mode = 1;
-                    animation->priority = 2;
-                }
-                object->action = 10;
-            }
-        }
-    }
-    Field_CheckConfiguredKeys();
-    object->step++;
-    return 1;
+	if (object->animation_kind == 1)
+	{
+		sprite = object->animation;
+		collision_kind = GetWorldMapCollision((struct WorldPosition *)&object->x);
+		if (collision_kind == 9)
+		{
+			((struct WorldMapSprite *)sprite)->shadow[6] = 1;
+			sprite->flags = 0;
+		}
+		else
+		{
+			((struct WorldMapSprite *)sprite)->shadow[6] = 9;
+			sprite->flags = 1;
+		}
+		if (collision_kind == 6 && object->action == 0 && collision == 0)
+		{
+			effect = FieldObject_Create(24, object->x, object->y, object->z);
+			if (effect != 0)
+			{
+				animation = effect->animation;
+				ObjectDispatch_Initialize(
+					(struct DispatchObject *)effect, (u32)(WorldMap_FootprintActions + 12));
+				effect->flags = collision;
+				effect->terrain_id = 1;
+				if (animation != 0)
+				{
+					AnimationObjects_SelectAnimation((struct AnimationObject *)animation, 1);
+					animation->flags = collision;
+					animation->blend_mode = 1;
+					animation->priority = 2;
+				}
+				object->action = 10;
+			}
+		}
+	}
+	Field_CheckConfiguredKeys();
+	object->step++;
+	return 1;
 }
 
 s32 Field_CheckConfiguredKeysAndCount(void *work)
 {
-    struct ObjectRuntime *object = work;
+	struct ObjectRuntime *object = work;
 
-    Field_CheckConfiguredKeys();
-    object->step++;
-    return 1;
+	Field_CheckConfiguredKeys();
+	object->step++;
+	return 1;
 }
 
 s32 Object_MoveByKeys(struct ObjectRuntime *object)
 {
-	s32 Map_GetTerrainHeight(u32 layer, s32 x, s32 z);
-    struct FieldPosition pos;
-    u8 unused[68];
-    struct MapCell *from;
-    struct MapCell *to;
-    u16 angle;
-    s32 motion;
-    s32 blocked;
-    s32 delta_z;
-    s32 height;
+	s32					 Map_GetTerrainHeight(u32 layer, s32 x, s32 z);
+	struct FieldPosition pos;
+	u8					 unused[68];
+	struct MapCell		*from;
+	struct MapCell		*to;
+	u16					 angle;
+	s32					 motion;
+	s32					 blocked;
+	s32					 delta_z;
+	s32					 height;
 
-    object->speed_limit = 0x8000;
-    object->acceleration = 0x4000;
-    motion = 12;
-    angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
-    if (angle == 0xffff) {
-        blocked = 4;
-    } else {
-        motion = 14;
-        if ((angle & 0xf000) != 0) {
-            motion = 15;
-            if ((angle & 0xf000) != 0x8000)
-                motion = 10;
-        }
-        blocked = 0;
-        pos.x = 0;
-        pos.y = 0;
-        pos.z = 0;
-        Vector_AddPolarOffset(0x80000, angle, &pos);
-        pos.x += object->x;
-        delta_z = pos.z;
-        if (delta_z < 0)
-            object->angle = 0xc000;
-        if (delta_z > 0)
-            object->angle = 0x4000;
-        pos.y = object->y - pos.z;
-        pos.z = object->z;
-        from = &((struct MapCell *)Ram_MapCellBuffer)
-            [object->x / 0x100000 + (pos.z / 0x100000) * 128];
-        to = &((struct MapCell *)Ram_MapCellBuffer)
-            [pos.x / 0x100000 + (pos.z / 0x100000) * 128];
-        if (CheckMapPositionCellOccupied((struct WorldPosition *)&pos) != 0
-            || from->collision_code != to->collision_code) {
-            blocked = 4;
-            motion = 12;
-        } else if (gKeysHeld & KEY_UP) {
-            height = Map_GetTerrainHeight(object->terrain_id, pos.x, pos.z - 0x100000);
-            if (height - object->y < 0x100000)
-                goto refused;
-        } else if (gKeysHeld & KEY_DOWN) {
-            height = Map_GetTerrainHeight(object->terrain_id, pos.x, pos.z);
-            if (height - object->y > -0x80000) {
-refused:
-                blocked = 1;
-                motion = 12;
-            }
-        }
-    }
-    if (gEventWork != NULL) {
-        if (blocked & 3)
-            gEventWork->blocked_steps++;
-        else
-            gEventWork->blocked_steps = 0;
-    }
-    ObjectDispatch_ApplyArgumentToChildren(object, motion);
-    if (blocked != 0) {
-        object->target_x = 0x80000000;
-        object->target_y = 0x80000000;
-        object->target_z = 0x80000000;
-        object->velocity_x = 0;
-        object->velocity_y = 0;
-        object->velocity_z = 0;
-    } else {
-        Object_SetMoveTarget(object, pos.x, pos.y, pos.z);
-    }
-    object->step++;
-    return 1;
+	object->speed_limit = 0x8000;
+	object->acceleration = 0x4000;
+	motion = 12;
+	angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+	if (angle == 0xffff)
+	{
+		blocked = 4;
+	}
+	else
+	{
+		motion = 14;
+		if ((angle & 0xf000) != 0)
+		{
+			motion = 15;
+			if ((angle & 0xf000) != 0x8000)
+				motion = 10;
+		}
+		blocked = 0;
+		pos.x = 0;
+		pos.y = 0;
+		pos.z = 0;
+		Vector_AddPolarOffset(0x80000, angle, &pos);
+		pos.x += object->x;
+		delta_z = pos.z;
+		if (delta_z < 0)
+			object->angle = 0xc000;
+		if (delta_z > 0)
+			object->angle = 0x4000;
+		pos.y = object->y - pos.z;
+		pos.z = object->z;
+		from =
+			&((struct MapCell *)Ram_MapCellBuffer)[object->x / 0x100000 + (pos.z / 0x100000) * 128];
+		to = &((struct MapCell *)Ram_MapCellBuffer)[pos.x / 0x100000 + (pos.z / 0x100000) * 128];
+		if (CheckMapPositionCellOccupied((struct WorldPosition *)&pos) != 0
+			|| from->collision_code != to->collision_code)
+		{
+			blocked = 4;
+			motion = 12;
+		}
+		else if (gKeysHeld & KEY_UP)
+		{
+			height = Map_GetTerrainHeight(object->terrain_id, pos.x, pos.z - 0x100000);
+			if (height - object->y < 0x100000)
+				goto refused;
+		}
+		else if (gKeysHeld & KEY_DOWN)
+		{
+			height = Map_GetTerrainHeight(object->terrain_id, pos.x, pos.z);
+			if (height - object->y > -0x80000)
+			{
+			refused:
+				blocked = 1;
+				motion = 12;
+			}
+		}
+	}
+	if (gEventWork != NULL)
+	{
+		if (blocked & 3)
+			gEventWork->blocked_steps++;
+		else
+			gEventWork->blocked_steps = 0;
+	}
+	ObjectDispatch_ApplyArgumentToChildren(object, motion);
+	if (blocked != 0)
+	{
+		object->target_x = 0x80000000;
+		object->target_y = 0x80000000;
+		object->target_z = 0x80000000;
+		object->velocity_x = 0;
+		object->velocity_y = 0;
+		object->velocity_z = 0;
+	}
+	else
+	{
+		Object_SetMoveTarget(object, pos.x, pos.y, pos.z);
+	}
+	object->step++;
+	return 1;
 }
 
 void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
 {
-    s32 n;
-    u8 *p;
-    u8 *tbl;
+	s32 n;
+	u8 *p;
+	u8 *tbl;
 
-    p = buf;
-    tbl = Runtime_ByteRemapTable;
-    n = cnt - 1;
-    if (n != -1) {
-        do {
-            n -= 1;
-            *p = tbl[*p];
-            p += 1;
-        } while (n != -1);
-    }
+	p = buf;
+	tbl = Runtime_ByteRemapTable;
+	n = cnt - 1;
+	if (n != -1)
+	{
+		do
+		{
+			n -= 1;
+			*p = tbl[*p];
+			p += 1;
+		} while (n != -1);
+	}
 }
 
 #undef gDebugMode
@@ -4822,7 +5240,7 @@ void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
 //--------------------------------------------------------------------------
 
 extern u32 gMapBlocks[];
-extern u8 gMapCellBuffer[];
+extern u8  gMapCellBuffer[];
 
 //--------------------------------------------------------------------------
 // 展開バッファの [1] が方式、[2] からが 16 ビットのデータ
@@ -4883,503 +5301,546 @@ typedef void (*ConvertFn)(void *dst, const void *src, const void *saved);
 
 void Graphics_RenumberFillerEntries(void)
 {
-    u32 *p = (u32 *)gMapCellBuffer;
-    u32 cnt = 128 << 7;
-    u32 mask = 0xfff;
-    s32 no = -1;
+	u32 *p = (u32 *)gMapCellBuffer;
+	u32	 cnt = 128 << 7;
+	u32	 mask = 0xfff;
+	s32	 no = -1;
 
-    do {
-        u32 value = *p++;
-        u32 idx = value & mask;
+	do
+	{
+		u32 value = *p++;
+		u32 idx = value & mask;
 
-        if (idx == mask) {
-            if (no != idx) {
-                no++;
-            }
-            value = value + no - idx;
-            p[-1] = value;
-        }
-        cnt--;
-    } while (cnt != 0);
+		if (idx == mask)
+		{
+			if (no != idx)
+			{
+				no++;
+			}
+			value = value + no - idx;
+			p[-1] = value;
+		}
+		cnt--;
+	} while (cnt != 0);
 }
 
 void Tilemap_ConvertBuffer(void)
 {
-    u8 *saved;
-    ConvertFn routine;
-    u32 size;
+	u8		 *saved;
+	ConvertFn routine;
+	u32		  size;
 
-    size = 0x8000;
-    /* FAKEMATCH: needed to match: the do-while block keeps the allocation next to the copy that uses it */
-    do {
-        saved = (u8 *)Runtime_BumpAllocateAlternatePool(size);
-        Iwram_CopyWords(saved, Ram_MapCellBuffer, size);
-    } while (0);
-    RamCode_Load(routine, Tile_ConvertMap, Tile_ConvertMapCodeSize);
-    routine((gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
-    MemFree(routine);
-    MemFree(saved);
+	size = 0x8000;
+	/* FAKEMATCH: needed to match: the do-while block keeps the allocation next to the copy that uses it */
+	do
+	{
+		saved = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+		Iwram_CopyWords(saved, Ram_MapCellBuffer, size);
+	} while (0);
+	RamCode_Load(routine, Tile_ConvertMap, Tile_ConvertMapCodeSize);
+	routine((gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
+	MemFree(routine);
+	MemFree(saved);
 }
 
 #define Scheduler_AddOrUpdateCallback ((void (*)(void (*)(void), s32))Scheduler_AddOrUpdateCallback)
 
 static __inline__ void CopyCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
-    /* FAKEMATCH: needed to match: helper scope gives each cell its own table-pointer lifetime. */
-    u32 *tiles;
-    u8 *dest;
-    u32 index = (*map << 20) >> 19;
+	/* FAKEMATCH: needed to match: helper scope gives each cell its own table-pointer lifetime. */
+	u32 *tiles;
+	u8	*dest;
+	u32	 index = (*map << 20) >> 19;
 
-    tiles = (u32 *)Ram_MapBlocks;
-    tiles += index;
-    dest = base + (rowmod + colmod) * 2;
-    *(u32 *)dest = *tiles;
-    tiles = (u32 *)(Ram_MapBlocks + 4);
-    tiles += index;
-    *(u32 *)(dest + 64) = *tiles;
+	tiles = (u32 *)Ram_MapBlocks;
+	tiles += index;
+	dest = base + (rowmod + colmod) * 2;
+	*(u32 *)dest = *tiles;
+	tiles = (u32 *)(Ram_MapBlocks + 4);
+	tiles += index;
+	*(u32 *)(dest + 64) = *tiles;
 }
 
 static __inline__ void CopyBlock(u32 *map, u8 *base, u32 rowmod, u32 colmod, u32 parity)
 {
-    u16 *colors;
-    u8 *destination;
-    u32 index = ((*map << 20) >> 18) + parity;
+	u16 *colors;
+	u8	*destination;
+	u32	 index = ((*map << 20) >> 18) + parity;
 
-    colors = (u16 *)Ram_MapBlocks;
-    colors += index;
-    destination = base + (rowmod + colmod + parity) * 2;
-    *(u16 *)destination = *colors;
-    colors = (u16 *)(Ram_MapBlocks + 4);
-    colors += index;
-    *(u16 *)(destination + 64) = *colors;
+	colors = (u16 *)Ram_MapBlocks;
+	colors += index;
+	destination = base + (rowmod + colmod + parity) * 2;
+	*(u16 *)destination = *colors;
+	colors = (u16 *)(Ram_MapBlocks + 4);
+	colors += index;
+	*(u16 *)(destination + 64) = *colors;
 }
 
 static __inline__ void CopyCameraCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
-    u32 *tiles;
-    u8 *dest;
-    u32 index = (*map << 20) >> 19;
+	u32 *tiles;
+	u8	*dest;
+	u32	 index = (*map << 20) >> 19;
 
-    tiles = (u32 *)Ram_MapBlocks;
-    tiles += index;
-    dest = base + rowmod * 2 + colmod * 2;
-    *(u32 *)dest = *tiles;
-    tiles = (u32 *)(Ram_MapBlocks + 4);
-    tiles += index;
-    *(u32 *)(dest + 64) = *tiles;
+	tiles = (u32 *)Ram_MapBlocks;
+	tiles += index;
+	dest = base + rowmod * 2 + colmod * 2;
+	*(u32 *)dest = *tiles;
+	tiles = (u32 *)(Ram_MapBlocks + 4);
+	tiles += index;
+	*(u32 *)(dest + 64) = *tiles;
 }
 
-struct SceneEntry {
-    u16 resources[6];
+struct SceneEntry
+{
+	u16 resources[6];
 };
 
 extern struct SceneEntry Map_LayeredScenes[];
 
-struct SceneLayerSource {
-    u8 x;
-    u8 y;
-    s8 scroll_x;
-    s8 scroll_y;
-    s8 speed_x;
-    s8 speed_y;
-    u8 period_x;
-    u8 period_y;
+struct SceneLayerSource
+{
+	u8 x;
+	u8 y;
+	s8 scroll_x;
+	s8 scroll_y;
+	s8 speed_x;
+	s8 speed_y;
+	u8 period_x;
+	u8 period_y;
 };
 
-struct SceneHeader {
-    u8 origin[4];
-    u8 priority[3];
-    u8 char_base[3];
-    u16 unknown_0a;
-    struct SceneLayerSource layers[3];
-    s32 tiles;
-    s32 collision;
-    s32 tilemap;
-    s32 animation;
-    s32 blend;
-    s32 script;
+struct SceneHeader
+{
+	u8						origin[4];
+	u8						priority[3];
+	u8						char_base[3];
+	u16						unknown_0a;
+	struct SceneLayerSource layers[3];
+	s32						tiles;
+	s32						collision;
+	s32						tilemap;
+	s32						animation;
+	s32						blend;
+	s32						script;
 };
 
 extern u8 gMapLayerData[];
 
 s32 Map_LoadLayeredScene(s32 index)
 {
-    struct SceneEntry *entry;
-    struct MapScrollWork *work;
-    struct SceneHeader *header;
-    struct MapLayerScroll *layer;
-    struct SceneLayerSource *source;
-    s32 *scale_x;
-    s32 *scale_y;
-    s32 i;
-    u8 *buf;
-    s32 backdrop;
-    u8 *src;
-    s32 cnt;
+	struct SceneEntry		*entry;
+	struct MapScrollWork	*work;
+	struct SceneHeader		*header;
+	struct MapLayerScroll	*layer;
+	struct SceneLayerSource *source;
+	s32						*scale_x;
+	s32						*scale_y;
+	s32						 i;
+	u8						*buf;
+	s32						 backdrop;
+	u8						*src;
+	s32						 cnt;
 
-    REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
-    Blend_SetDarkenTarget0(0);
-    entry = &Map_LayeredScenes[index];
-    work = Runtime_AllocateBlock(8, sizeof(struct MapScrollWork));
-    Iwram_ClearWords(work, sizeof(struct MapScrollWork));
-    header = (struct SceneHeader *)Resource_GetTableEntry(entry->resources[0] + (u32)&ResourceId_Map001);
-    src = (u8 *)header + header->tiles;
-    Tilemap_DecodeStagedBuffer(Resource_DecodeType01(src, Ram_MapCellBuffer + 1));
-    src = (u8 *)header + header->collision;
-    Resource_DecodeType01(src, Ram_MapCollision);
-    src = (u8 *)header + header->tilemap;
-    Resource_DecodeType01(src, Ram_MapCellBuffer);
-    Tilemap_ConvertBuffer();
-    if (header->animation != 0) {
-        src = (u8 *)header + header->animation;
-        Resource_DecodeType01(src, Ram_MapCollision + 0x1000);
-        MapAnimation_StartChannels((const u16 *)(Ram_MapCollision + 0x1000));
-    }
-    if (header->blend != 0) {
-        src = (u8 *)header + header->blend;
-        Resource_DecodeType01(src, Ram_MapCollision + 0x1e00);
-        DisplayBlend_StartScript((u16 *)(Ram_MapCollision + 0x1e00));
-    }
-    work->script = (u8 *)header + header->script;
-    work->min_x = header->origin[0] << 19;
-    work->min_y = header->origin[1] << 19;
-    work->max_x = header->origin[2] << 19;
-    work->max_y = header->origin[3] << 19;
-    scale_x = &work->view_x;
-    *scale_x = 0;
-    scale_y = &work->view_y;
-    *scale_y = 0;
-    work->enabled[0] = header->priority[0];
-    work->enabled[1] = header->priority[1];
-    work->enabled[2] = header->priority[2];
-    layer = work->layers;
-    source = header->layers;
-    for (i = 0; i < 3; i++) {
-        u32 x = source->x;
-        u32 y = source->y;
-        s32 scroll_x;
-        s32 scroll_y;
-        s32 base_x;
-        s32 base_y;
+	REG_DISPCNT &=
+		~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
+	Blend_SetDarkenTarget0(0);
+	entry = &Map_LayeredScenes[index];
+	work = Runtime_AllocateBlock(8, sizeof(struct MapScrollWork));
+	Iwram_ClearWords(work, sizeof(struct MapScrollWork));
+	header =
+		(struct SceneHeader *)Resource_GetTableEntry(entry->resources[0] + (u32)&ResourceId_Map001);
+	src = (u8 *)header + header->tiles;
+	Tilemap_DecodeStagedBuffer(Resource_DecodeType01(src, Ram_MapCellBuffer + 1));
+	src = (u8 *)header + header->collision;
+	Resource_DecodeType01(src, Ram_MapCollision);
+	src = (u8 *)header + header->tilemap;
+	Resource_DecodeType01(src, Ram_MapCellBuffer);
+	Tilemap_ConvertBuffer();
+	if (header->animation != 0)
+	{
+		src = (u8 *)header + header->animation;
+		Resource_DecodeType01(src, Ram_MapCollision + 0x1000);
+		MapAnimation_StartChannels((const u16 *)(Ram_MapCollision + 0x1000));
+	}
+	if (header->blend != 0)
+	{
+		src = (u8 *)header + header->blend;
+		Resource_DecodeType01(src, Ram_MapCollision + 0x1e00);
+		DisplayBlend_StartScript((u16 *)(Ram_MapCollision + 0x1e00));
+	}
+	work->script = (u8 *)header + header->script;
+	work->min_x = header->origin[0] << 19;
+	work->min_y = header->origin[1] << 19;
+	work->max_x = header->origin[2] << 19;
+	work->max_y = header->origin[3] << 19;
+	scale_x = &work->view_x;
+	*scale_x = 0;
+	scale_y = &work->view_y;
+	*scale_y = 0;
+	work->enabled[0] = header->priority[0];
+	work->enabled[1] = header->priority[1];
+	work->enabled[2] = header->priority[2];
+	layer = work->layers;
+	source = header->layers;
+	for (i = 0; i < 3; i++)
+	{
+		u32 x = source->x;
+		u32 y = source->y;
+		s32 scroll_x;
+		s32 scroll_y;
+		s32 base_x;
+		s32 base_y;
 
-        layer->offset_x = base_x = x << 19;
-        layer->offset_y = base_y = y << 19;
-        scroll_x = source->scroll_x << 12;
-        scroll_y = source->scroll_y << 12;
-        layer->scale_x = scroll_x;
-        layer->scale_y = scroll_y;
-        layer->speed_x = source->speed_x << 12;
-        layer->speed_y = source->speed_y << 12;
-        layer->mask_x = source->period_x;
-        layer->mask_y = source->period_y;
-        layer->phase_x = 0;
-        layer->phase_y = 0;
-        layer->cells = (struct MapCell *)Ram_MapCellBuffer + (y >> 1) * 128 + (x >> 1);
-        layer->x = Iwram_MulQ16(*scale_x, scroll_x) + base_x;
-        layer->y = Iwram_MulQ16(*scale_y, scroll_y) + base_y;
-        source++;
-        layer++;
-    }
-    work->flags = DISPCNT_OBJ_ON;
-    if (work->enabled[0] != 0)
-        work->flags = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
-    if (work->enabled[1] != 0)
-        work->flags |= DISPCNT_BG2_ON;
-    if (work->enabled[2] != 0)
-        work->flags |= DISPCNT_BG1_ON;
-    cnt = work->enabled[0] | BGCNT_CHAR_BASE(header->char_base[0]) | BGCNT_SCREEN_BASE(5);
-    REG_BG3CNT = cnt;
-    /* FAKEMATCH: needed to match: one-pass loops keep the second and third background-control writes in source order. */
-    do {
-        cnt = work->enabled[1] | BGCNT_CHAR_BASE(header->char_base[1]) | BGCNT_SCREEN_BASE(6);
-        REG_BG2CNT = cnt;
-    } while (0);
-    do {
-        cnt = work->enabled[2] | BGCNT_CHAR_BASE(header->char_base[2]) | BGCNT_SCREEN_BASE(7);
-        REG_BG1CNT = cnt;
-    } while (0);
-    if (GameFlag_TestFar(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
-        GameFlag_ClearBitFar(FLAG_KEEP_LAYER_GRAPHICS);
-    } else {
-        buf = MemAlloc(0x4000);
-        if (buf != NULL) {
-            backdrop = *(s16 *)BG_PLTT;
-            Resource_DecodeType01(Resource_GetTableEntry(entry->resources[1] + (u32)&ResourceId_Map001), buf);
-            *(s16 *)buf = backdrop;
-            /* FAKEMATCH: needed to match: these four copies call the fixed entry itself; through Iwram_CopyWords the scene header and the work move from r5 and r8 to r8 and sl (237 of 357 instructions differ), with or without the function's other devices. */
-            Iwram_CopyWordsEntry((void *)BG_PLTT, buf, 0x1c0);
-            Resource_DecodeType2(Resource_GetTableEntry(entry->resources[2] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWordsEntry(BG_CHAR_BLOCK(1), buf, 0x4000);
-            Resource_DecodeType2(Resource_GetTableEntry(entry->resources[3] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWordsEntry(BG_CHAR_BLOCK(2), buf, 0x4000);
-            Resource_DecodeType2(Resource_GetTableEntry(entry->resources[4] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), buf, 0x4000);
-            Resource_DecodeType2(Resource_GetTableEntry(entry->resources[5] + (u32)&ResourceId_Map001), gMapLayerData);
-            MemFree(buf);
-        }
-    }
-    cnt = 0;
-    REG_MOSAIC = cnt;
-    REG_BLDCNT = cnt;
-    cnt = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
-    REG_DISPCNT = cnt;
-    Scheduler_AddOrUpdateCallback(Map_UpdateLayerScroll, 0xc85);
-    return 2;
+		layer->offset_x = base_x = x << 19;
+		layer->offset_y = base_y = y << 19;
+		scroll_x = source->scroll_x << 12;
+		scroll_y = source->scroll_y << 12;
+		layer->scale_x = scroll_x;
+		layer->scale_y = scroll_y;
+		layer->speed_x = source->speed_x << 12;
+		layer->speed_y = source->speed_y << 12;
+		layer->mask_x = source->period_x;
+		layer->mask_y = source->period_y;
+		layer->phase_x = 0;
+		layer->phase_y = 0;
+		layer->cells = (struct MapCell *)Ram_MapCellBuffer + (y >> 1) * 128 + (x >> 1);
+		layer->x = Iwram_MulQ16(*scale_x, scroll_x) + base_x;
+		layer->y = Iwram_MulQ16(*scale_y, scroll_y) + base_y;
+		source++;
+		layer++;
+	}
+	work->flags = DISPCNT_OBJ_ON;
+	if (work->enabled[0] != 0)
+		work->flags = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
+	if (work->enabled[1] != 0)
+		work->flags |= DISPCNT_BG2_ON;
+	if (work->enabled[2] != 0)
+		work->flags |= DISPCNT_BG1_ON;
+	cnt = work->enabled[0] | BGCNT_CHAR_BASE(header->char_base[0]) | BGCNT_SCREEN_BASE(5);
+	REG_BG3CNT = cnt;
+	/* FAKEMATCH: needed to match: one-pass loops keep the second and third background-control writes in source order. */
+	do
+	{
+		cnt = work->enabled[1] | BGCNT_CHAR_BASE(header->char_base[1]) | BGCNT_SCREEN_BASE(6);
+		REG_BG2CNT = cnt;
+	} while (0);
+	do
+	{
+		cnt = work->enabled[2] | BGCNT_CHAR_BASE(header->char_base[2]) | BGCNT_SCREEN_BASE(7);
+		REG_BG1CNT = cnt;
+	} while (0);
+	if (GameFlag_TestFar(FLAG_KEEP_LAYER_GRAPHICS) != 0)
+	{
+		GameFlag_ClearBitFar(FLAG_KEEP_LAYER_GRAPHICS);
+	}
+	else
+	{
+		buf = MemAlloc(0x4000);
+		if (buf != NULL)
+		{
+			backdrop = *(s16 *)BG_PLTT;
+			Resource_DecodeType01(
+				Resource_GetTableEntry(entry->resources[1] + (u32)&ResourceId_Map001), buf);
+			*(s16 *)buf = backdrop;
+			/* FAKEMATCH: needed to match: these four copies call the fixed entry itself; through Iwram_CopyWords the scene header and the work move from r5 and r8 to r8 and sl (237 of 357 instructions differ), with or without the function's other devices. */
+			Iwram_CopyWordsEntry((void *)BG_PLTT, buf, 0x1c0);
+			Resource_DecodeType2(
+				Resource_GetTableEntry(entry->resources[2] + (u32)&ResourceId_Map001), buf);
+			Iwram_CopyWordsEntry(BG_CHAR_BLOCK(1), buf, 0x4000);
+			Resource_DecodeType2(
+				Resource_GetTableEntry(entry->resources[3] + (u32)&ResourceId_Map001), buf);
+			Iwram_CopyWordsEntry(BG_CHAR_BLOCK(2), buf, 0x4000);
+			Resource_DecodeType2(
+				Resource_GetTableEntry(entry->resources[4] + (u32)&ResourceId_Map001), buf);
+			Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), buf, 0x4000);
+			Resource_DecodeType2(
+				Resource_GetTableEntry(entry->resources[5] + (u32)&ResourceId_Map001),
+				gMapLayerData);
+			MemFree(buf);
+		}
+	}
+	cnt = 0;
+	REG_MOSAIC = cnt;
+	REG_BLDCNT = cnt;
+	cnt = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
+	REG_DISPCNT = cnt;
+	Scheduler_AddOrUpdateCallback(Map_UpdateLayerScroll, 0xc85);
+	return 2;
 }
 
 void Map_ApplyWorkOriginAndSpan(void)
 {
-    struct MapScrollWork *work = gMapWork[0];
-    s32 x;
-    s32 y;
-    s32 height;
-    s32 *p;
+	struct MapScrollWork *work = gMapWork[0];
+	s32					  x;
+	s32					  y;
+	s32					  height;
+	s32					 *p;
 
-    p = work->origin;
-    x = 0;
-    height = 0;
-    y = 0;
-    if (p != NULL) {
-        x = *p++;
-        height = *p++;
-        y = *p;
-    }
-    Map_SetCameraCenter(x, y - height);
-    Map_UpdateLayerScroll();
+	p = work->origin;
+	x = 0;
+	height = 0;
+	y = 0;
+	if (p != NULL)
+	{
+		x = *p++;
+		height = *p++;
+		y = *p;
+	}
+	Map_SetCameraCenter(x, y - height);
+	Map_UpdateLayerScroll();
 }
 
 void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2)
 {
-    u8 *dest = BG_SCREEN_BLOCK(5) + (a0 << 11);
-    u32 row = ((a2 / 2) & 0x7F) << 7;
-    u32 rowmod = (a2 & 30) << 5;
-    u32 col = (a1 / 2) & 0x7F;
-    u32 colmod = a1 & 30;
-    u32 counter;
+	u8 *dest = BG_SCREEN_BLOCK(5) + (a0 << 11);
+	u32 row = ((a2 / 2) & 0x7F) << 7;
+	u32 rowmod = (a2 & 30) << 5;
+	u32 col = (a1 / 2) & 0x7F;
+	u32 colmod = a1 & 30;
+	u32 counter;
 
-    for (counter = 0; counter <= 15; counter++) {
-        u32 *map = (u32 *)Ram_MapCellBuffer;
+	for (counter = 0; counter <= 15; counter++)
+	{
+		u32 *map = (u32 *)Ram_MapCellBuffer;
 
-        map += row + col;
-        CopyCell(map, dest, rowmod, colmod);
-        col = (col + 1) & 0x7F;
-        colmod = (colmod + 2) & 30;
-    }
+		map += row + col;
+		CopyCell(map, dest, rowmod, colmod);
+		col = (col + 1) & 0x7F;
+		colmod = (colmod + 2) & 30;
+	}
 }
 
 void Map_RenderPaletteMappedBlock(u32 a0, s32 a1, s32 a2)
 {
-    u8 *destination = BG_SCREEN_BLOCK(5) + (a0 << 11);
-    u32 row = ((a2 / 2) & 0x7F) << 7;
-    u32 rowmod = (a2 & 30) << 5;
-    u32 col = (a1 / 2) & 0x7F;
-    u32 colmod = a1 & 30;
-    u32 parity = a1 & 1;
-    u32 counter;
+	u8 *destination = BG_SCREEN_BLOCK(5) + (a0 << 11);
+	u32 row = ((a2 / 2) & 0x7F) << 7;
+	u32 rowmod = (a2 & 30) << 5;
+	u32 col = (a1 / 2) & 0x7F;
+	u32 colmod = a1 & 30;
+	u32 parity = a1 & 1;
+	u32 counter;
 
-    for (counter = 0; counter <= 10; counter++) {
-        u32 *map = (u32 *)Ram_MapCellBuffer;
+	for (counter = 0; counter <= 10; counter++)
+	{
+		u32 *map = (u32 *)Ram_MapCellBuffer;
 
-        map += row + col;
-        CopyBlock(map, destination, rowmod, colmod, parity);
+		map += row + col;
+		CopyBlock(map, destination, rowmod, colmod, parity);
 
-        row = (row + 128) & 0x3F80;
-        rowmod = (rowmod + 64) & 0x3C0;
-    }
+		row = (row + 128) & 0x3F80;
+		rowmod = (rowmod + 64) & 0x3C0;
+	}
 }
 
 void Map_UpdateLayerScroll(void)
 {
-    struct MapScrollWork *work;
-    struct MapLayerScroll *layer;
-    s32 *origin;
-    s32 x, y;
-    s32 min_x, min_y, max_x, max_y;
-    s32 base_x, base_y;
-    u32 i;
+	struct MapScrollWork  *work;
+	struct MapLayerScroll *layer;
+	s32					  *origin;
+	s32					   x, y;
+	s32					   min_x, min_y, max_x, max_y;
+	s32					   base_x, base_y;
+	u32					   i;
 
-    work = gMapWork[0];
-    origin = work->origin;
-    layer = work->layers;
-    if (origin == 0)
-        return;
+	work = gMapWork[0];
+	origin = work->origin;
+	layer = work->layers;
+	if (origin == 0)
+		return;
 
-    base_x = *origin++ - 0x780000;
-    {
-        s32 height = *origin++;
-        base_y = *origin - height - 0x600000;
-    }
-    min_x = work->min_x + work->shake_x;
-    max_x = work->max_x - work->shake_x - 0xf00000;
-    min_y = work->min_y + work->shake_y;
-    max_y = work->max_y - work->shake_y - 0xa00000;
-    if (min_x > max_x)
-        max_x = min_x;
-    if (min_y > max_y)
-        max_y = min_y;
-    if (base_x < min_x)
-        base_x = min_x;
-    if (base_x > max_x)
-        base_x = max_x;
-    if (base_y < min_y)
-        base_y = min_y;
-    if (base_y > max_y)
-        base_y = max_y;
+	base_x = *origin++ - 0x780000;
+	{
+		s32 height = *origin++;
+		base_y = *origin - height - 0x600000;
+	}
+	min_x = work->min_x + work->shake_x;
+	max_x = work->max_x - work->shake_x - 0xf00000;
+	min_y = work->min_y + work->shake_y;
+	max_y = work->max_y - work->shake_y - 0xa00000;
+	if (min_x > max_x)
+		max_x = min_x;
+	if (min_y > max_y)
+		max_y = min_y;
+	if (base_x < min_x)
+		base_x = min_x;
+	if (base_x > max_x)
+		base_x = max_x;
+	if (base_y < min_y)
+		base_y = min_y;
+	if (base_y > max_y)
+		base_y = max_y;
 
-    if (work->shake_x != 0) {
-        s32 first = Random16();
-        s32 second = Random16();
-        s32 amplitude = work->shake_x;
-        base_x += Iwram_MulQ16(amplitude, first - second);
-        work->shake_x = Iwram_MulQ16(amplitude, work->shake_decay);
-    }
-    if (work->shake_y != 0) {
-        s32 first = Random16();
-        s32 second = Random16();
-        s32 amplitude = work->shake_y;
-        base_y += Iwram_MulQ16(amplitude, first - second);
-        work->shake_y = Iwram_MulQ16(amplitude, work->shake_decay);
-    }
-    work->view_x = base_x;
-    work->view_y = base_y;
-    for (i = 0; i < 3; i++, layer++) {
-        base_x = Iwram_MulQ16(work->view_x, layer->scale_x);
-        base_y = Iwram_MulQ16(work->view_y, layer->scale_y);
-        if (layer->speed_x != 0) {
-            layer->phase_x += layer->speed_x;
-            base_x = (base_x + layer->phase_x) &
-                ((layer->mask_x << 19) | 0x7ffff);
-        }
-        if (layer->speed_y != 0) {
-            layer->phase_y += layer->speed_y;
-            base_y = (base_y + layer->phase_y) &
-                ((layer->mask_y << 19) | 0x7ffff);
-        }
-        base_x += layer->offset_x;
-        base_y += layer->offset_y;
-        x = base_x / 0x80000;
-        y = base_y / 0x80000;
-        if ((layer->x ^ base_x) & 0x80000) {
-            if (layer->x < base_x)
-                Map_RenderPaletteMappedBlock(i, x + 30, y);
-            else
-                Map_RenderPaletteMappedBlock(i, x, y);
-        }
-        if ((layer->y ^ base_y) & 0x100000) {
-            if (layer->y < base_y)
-                Map_RenderMetatileRow(i, x, y + 20);
-            else
-                Map_RenderMetatileRow(i, x, y);
-        }
-        gBgScroll[3 - i].x = base_x >> 16;
-        gBgScroll[3 - i].y = base_y >> 16;
-        layer->x = base_x;
-        layer->y = base_y;
-    }
+	if (work->shake_x != 0)
+	{
+		s32 first = Random16();
+		s32 second = Random16();
+		s32 amplitude = work->shake_x;
+		base_x += Iwram_MulQ16(amplitude, first - second);
+		work->shake_x = Iwram_MulQ16(amplitude, work->shake_decay);
+	}
+	if (work->shake_y != 0)
+	{
+		s32 first = Random16();
+		s32 second = Random16();
+		s32 amplitude = work->shake_y;
+		base_y += Iwram_MulQ16(amplitude, first - second);
+		work->shake_y = Iwram_MulQ16(amplitude, work->shake_decay);
+	}
+	work->view_x = base_x;
+	work->view_y = base_y;
+	for (i = 0; i < 3; i++, layer++)
+	{
+		base_x = Iwram_MulQ16(work->view_x, layer->scale_x);
+		base_y = Iwram_MulQ16(work->view_y, layer->scale_y);
+		if (layer->speed_x != 0)
+		{
+			layer->phase_x += layer->speed_x;
+			base_x = (base_x + layer->phase_x) & ((layer->mask_x << 19) | 0x7ffff);
+		}
+		if (layer->speed_y != 0)
+		{
+			layer->phase_y += layer->speed_y;
+			base_y = (base_y + layer->phase_y) & ((layer->mask_y << 19) | 0x7ffff);
+		}
+		base_x += layer->offset_x;
+		base_y += layer->offset_y;
+		x = base_x / 0x80000;
+		y = base_y / 0x80000;
+		if ((layer->x ^ base_x) & 0x80000)
+		{
+			if (layer->x < base_x)
+				Map_RenderPaletteMappedBlock(i, x + 30, y);
+			else
+				Map_RenderPaletteMappedBlock(i, x, y);
+		}
+		if ((layer->y ^ base_y) & 0x100000)
+		{
+			if (layer->y < base_y)
+				Map_RenderMetatileRow(i, x, y + 20);
+			else
+				Map_RenderMetatileRow(i, x, y);
+		}
+		gBgScroll[3 - i].x = base_x >> 16;
+		gBgScroll[3 - i].y = base_y >> 16;
+		layer->x = base_x;
+		layer->y = base_y;
+	}
 }
 
 void Map_SetCameraCenter(s32 x, s32 y)
 {
-    u32 no;
-    u8 *dest;
-    struct MapScrollWork *work = gMapWork[0];
-    struct MapLayerScroll *layer = work->layers;
+	u32					   no;
+	u8					  *dest;
+	struct MapScrollWork  *work = gMapWork[0];
+	struct MapLayerScroll *layer = work->layers;
 
-    x -= 0x780000;
-    y -= 0x600000;
-    if (x < work->min_x)
-        x = work->min_x;
-    if (x > work->max_x - 0xf00000)
-        x = work->max_x - 0xf00000;
-    if (y < work->min_y)
-        y = work->min_y;
-    if (y > work->max_y - 0xa00000)
-        y = work->max_y - 0xa00000;
-    work->view_x = x;
-    work->view_y = y;
+	x -= 0x780000;
+	y -= 0x600000;
+	if (x < work->min_x)
+		x = work->min_x;
+	if (x > work->max_x - 0xf00000)
+		x = work->max_x - 0xf00000;
+	if (y < work->min_y)
+		y = work->min_y;
+	if (y > work->max_y - 0xa00000)
+		y = work->max_y - 0xa00000;
+	work->view_x = x;
+	work->view_y = y;
 
-    for (no = 0; no < 3; no++) {
-        if (work->enabled[no]) {
-            u32 rows = 22;
-            u32 row, col, rowmod, colmod, i, j;
+	for (no = 0; no < 3; no++)
+	{
+		if (work->enabled[no])
+		{
+			u32 rows = 22;
+			u32 row, col, rowmod, colmod, i, j;
 
-            x = Iwram_MulQ16(work->view_x, layer->scale_x);
-            y = Iwram_MulQ16(work->view_y, layer->scale_y);
-            if (layer->speed_x) {
-                layer->phase_x += layer->speed_x;
-                x = (x + layer->phase_x) & ((layer->mask_x << 19) | 0x7ffff);
-            }
-            if (layer->speed_y) {
-                layer->phase_y += layer->speed_y;
-                y = (y + layer->phase_y) & ((layer->mask_y << 19) | 0x7ffff);
-                rows = 32;
-            }
-            x += layer->offset_x;
-            y += layer->offset_y;
-            layer++;
-            x /= 0x80000;
-            y /= 0x80000;
-            dest = BG_SCREEN_BLOCK(5) + (no << 11);
-            row = ((y / 2) & 127) << 7;
-            rowmod = (y & 30) << 5;
-            for (i = 0; i < rows / 2; i++) {
-                col = (x / 2) & 127;
-                colmod = x & 30;
-                for (j = 0; j <= 15; j++) {
-                    u32 *map = (u32 *)Ram_MapCellBuffer;
-                    map += row + col;
-                    CopyCameraCell(map, dest, rowmod, colmod);
-                    col = (col + 1) & 127;
-                    colmod = (colmod + 2) & 30;
-                }
-                row = (row + 128) & 0x3f80;
-                rowmod = (rowmod + 64) & 0x3c0;
-            }
-        }
-    }
+			x = Iwram_MulQ16(work->view_x, layer->scale_x);
+			y = Iwram_MulQ16(work->view_y, layer->scale_y);
+			if (layer->speed_x)
+			{
+				layer->phase_x += layer->speed_x;
+				x = (x + layer->phase_x) & ((layer->mask_x << 19) | 0x7ffff);
+			}
+			if (layer->speed_y)
+			{
+				layer->phase_y += layer->speed_y;
+				y = (y + layer->phase_y) & ((layer->mask_y << 19) | 0x7ffff);
+				rows = 32;
+			}
+			x += layer->offset_x;
+			y += layer->offset_y;
+			layer++;
+			x /= 0x80000;
+			y /= 0x80000;
+			dest = BG_SCREEN_BLOCK(5) + (no << 11);
+			row = ((y / 2) & 127) << 7;
+			rowmod = (y & 30) << 5;
+			for (i = 0; i < rows / 2; i++)
+			{
+				col = (x / 2) & 127;
+				colmod = x & 30;
+				for (j = 0; j <= 15; j++)
+				{
+					u32 *map = (u32 *)Ram_MapCellBuffer;
+					map += row + col;
+					CopyCameraCell(map, dest, rowmod, colmod);
+					col = (col + 1) & 127;
+					colmod = (colmod + 2) & 30;
+				}
+				row = (row + 128) & 0x3f80;
+				rowmod = (rowmod + 64) & 0x3c0;
+			}
+		}
+	}
 }
 
-struct TilePos { s32 x, y; };
-
-void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
-    u32 dst_x, u32 dst_y, u32 width, u32 height)
+struct TilePos
 {
-    /* FAKEMATCH: needed to match: temporary sharing preserves register allocation and scheduling without changing the frame or instructions. */
-    u32 *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
-    u32 *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
-    register struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
-    struct TilePos tile[3];
-    s32 i;
-    struct TilePos *pos = tile;
-    u32 y;
-    register u32 x;
+	s32 x, y;
+};
 
-    for (i = 2; i >= 0; i--) {
-        pos->x = layer->x >> 20;
-        pos->y = layer->y >> 20;
-        pos++;
-        layer++;
-    }
-    for (y = dst_y; y < dst_y + height; y++) {
-        for (x = dst_x; x < dst_x + width; x++) {
-            u32 val = *src++;
-            u32 cell = val & 0xfff;
-            u32 offset;
-            u32 tmp3;
-            u32 n;
-            u32 tmp6;
-            u32 tmp9;
-            u32 tmp12;
-            u32 tmp11;
-            u32 tmp13;
-            u32 tmp15;
-            tmp9 = *dst;
-            tmp3 = tmp9 & -0x1000;
-            tmp12 = x & 15;
-            dst[0] = cell | tmp3;
-            tmp6 = tmp12;
-            dst++;
-            /* FAKEMATCH: cell and i are ordinary locals; three measured forms
+void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y, u32 dst_x, u32 dst_y, u32 width, u32 height)
+{
+	/* FAKEMATCH: needed to match: temporary sharing preserves register allocation and scheduling without changing the frame or instructions. */
+	u32							   *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
+	u32							   *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
+	register struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
+	struct TilePos					tile[3];
+	s32								i;
+	struct TilePos				   *pos = tile;
+	u32								y;
+	register u32					x;
+
+	for (i = 2; i >= 0; i--)
+	{
+		pos->x = layer->x >> 20;
+		pos->y = layer->y >> 20;
+		pos++;
+		layer++;
+	}
+	for (y = dst_y; y < dst_y + height; y++)
+	{
+		for (x = dst_x; x < dst_x + width; x++)
+		{
+			u32 val = *src++;
+			u32 cell = val & 0xfff;
+			u32 offset;
+			u32 tmp3;
+			u32 n;
+			u32 tmp6;
+			u32 tmp9;
+			u32 tmp12;
+			u32 tmp11;
+			u32 tmp13;
+			u32 tmp15;
+			tmp9 = *dst;
+			tmp3 = tmp9 & -0x1000;
+			tmp12 = x & 15;
+			dst[0] = cell | tmp3;
+			tmp6 = tmp12;
+			dst++;
+			/* FAKEMATCH: cell and i are ordinary locals; three measured forms
              * replace the r5 pin on cell and the asm barrier on its scale.
              * 1. i = 0 here, not after the offset: i's live length (54 -> 60
              *    insns, 22 refs) drops its global-allocation priority below
@@ -5404,98 +5865,104 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
              *    buffer keeps its add apart from the load (a non-volatile load
              *    combines into ldr [r, r]); these four volatiles replaced two pins
              *    and two barriers and raised the volatile count (2026-10-11). */
-            i = 0;
-            tmp15 = y & 15;
-            tmp3 = tmp15;
-            pos = tile;
-            tmp13 = tmp3 << 5;
-            tmp12 = tmp13;
-            n = tmp12;
-            n += tmp6;
-            tmp13 = 4 * n;
-            tmp11 = tmp13;
-            tmp6 = tmp11;
-            offset = tmp6;
-            for (; i < 3; i++) {
-                if (pos->x <= (s32)x && 16 + pos->x > (s32)x && pos->y <= (s32)y && pos->y + 12 > (s32)y) {
-                    u32 scr, blk;
-                    u8 *dest, *tiles;
+			i = 0;
+			tmp15 = y & 15;
+			tmp3 = tmp15;
+			pos = tile;
+			tmp13 = tmp3 << 5;
+			tmp12 = tmp13;
+			n = tmp12;
+			n += tmp6;
+			tmp13 = 4 * n;
+			tmp11 = tmp13;
+			tmp6 = tmp11;
+			offset = tmp6;
+			for (; i < 3; i++)
+			{
+				if (pos->x <= (s32)x && 16 + pos->x > (s32)x && pos->y <= (s32)y
+					&& pos->y + 12 > (s32)y)
+				{
+					u32 scr, blk;
+					u8 *dest, *tiles;
 
-                    scr = 0x06002800;
-                    dest = (u8 *)scr;
-                    dest += offset;
-                    tmp11 = cell * 8;
-                    blk = (u32)Ram_MapBlocks;
-                    tiles = (u8 *)blk;
-                    tiles += tmp11;
-                    *(volatile u32 *)dest = *(volatile u32 *)tiles;
+					scr = 0x06002800;
+					dest = (u8 *)scr;
+					dest += offset;
+					tmp11 = cell * 8;
+					blk = (u32)Ram_MapBlocks;
+					tiles = (u8 *)blk;
+					tiles += tmp11;
+					*(volatile u32 *)dest = *(volatile u32 *)tiles;
 
-                    blk = (u32)Ram_MapBlocks + 4;
-                    tiles = (u8 *)blk;
-                    tiles += tmp11;
-                    scr = 0x06002840;
-                    dest = (u8 *)scr;
-                    dest += offset;
-                    *(volatile u32 *)dest = *(volatile u32 *)tiles;
-                    break;
-                }
-                offset += 0x800;
-                pos++;
-            }
-        }
-        src += 128 - width;
-        dst += 128 - width;
-    }
+					blk = (u32)Ram_MapBlocks + 4;
+					tiles = (u8 *)blk;
+					tiles += tmp11;
+					scr = 0x06002840;
+					dest = (u8 *)scr;
+					dest += offset;
+					*(volatile u32 *)dest = *(volatile u32 *)tiles;
+					break;
+				}
+				offset += 0x800;
+				pos++;
+			}
+		}
+		src += 128 - width;
+		dst += 128 - width;
+	}
 }
 
-struct MapCopyCommand {
-    u16 source;
-    s16 y, width, height, delay;
+struct MapCopyCommand
+{
+	u16 source;
+	s16 y, width, height, delay;
 } __attribute__((packed, aligned(2)));
 typedef char MapCopyCommandSize[(sizeof(struct MapCopyCommand) == 10) ? 1 : -1];
 
 void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destination_y)
 {
-    struct MapCopyCommand *record = (struct MapCopyCommand *)command;
-    u32 source = record->source;
-    u32 end = 0xffff;
-    u32 test = source;
+	struct MapCopyCommand *record = (struct MapCopyCommand *)command;
+	u32					   source = record->source;
+	u32					   end = 0xffff;
+	u32					   test = source;
 
-    /* FAKEMATCH: the conditional cancelling updates end CSE before the
+	/* FAKEMATCH: the conditional cancelling updates end CSE before the
      * comparison, preserving its ip copy while source stays in r0. Both
      * updates disappear; removing them loses the copy (53 -> 52 English
      * instructions, five rows differ). */
-    if (record) {
-        source ^= test;
-        source ^= test;
-    }
-    if (test != end) {
-        u32 stop = end;
-        s16 *args = (s16 *)(command + 1);
+	if (record)
+	{
+		source ^= test;
+		source ^= test;
+	}
+	if (test != end)
+	{
+		u32	 stop = end;
+		s16 *args = (s16 *)(command + 1);
 
-        while (1) {
-            s32 source_y = args[0];
-            s32 width = args[1];
-            s32 height = args[2];
-            s32 delay = args[3];
-            args += 5;
+		while (1)
+		{
+			s32 source_y = args[0];
+			s32 width = args[1];
+			s32 height = args[2];
+			s32 delay = args[3];
+			args += 5;
 
-            Map_CopyMetatileIndicesRect(source, (u16)source_y,
-                          destination_x, destination_y,
-                          (u16)width, (u16)height);
-            record++;
-            WaitFrames((u16)delay);
-            source = record->source;
-            {
-                u32 next = source;
+			Map_CopyMetatileIndicesRect(
+				source, (u16)source_y, destination_x, destination_y, (u16)width, (u16)height);
+			record++;
+			WaitFrames((u16)delay);
+			source = record->source;
+			{
+				u32 next = source;
 
-                /* FAKEMATCH: the same ip copy after the wait. 2026-10-11: the native compares a copy of source held in ip at both tests; the copy's pseudo must reach regclass with only the copy and the branch as its insns, which CSE's copy swap or combine's substitution removes in every plain form tried (best, a do-while on the field re-read with stop in a local: differ 12). */
-                __asm__("" : "+r"(next));
-                if (next == stop)
-                    break;
-            }
-        }
-    }
+				/* FAKEMATCH: the same ip copy after the wait. 2026-10-11: the native compares a copy of source held in ip at both tests; the copy's pseudo must reach regclass with only the copy and the branch as its insns, which CSE's copy swap or combine's substitution removes in every plain form tried (best, a do-while on the field re-read with stop in a local: differ 12). */
+				__asm__("" : "+r"(next));
+				if (next == stop)
+					break;
+			}
+		}
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -5532,9 +5999,9 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
 	u32					  *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
 	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[y * 128 + dst_x];
 	struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
-	struct TilePos_2		   view[3];
+	struct TilePos_2	   view[3];
 	s32					   i;
-	struct TilePos_2		  *pos = view;
+	struct TilePos_2	  *pos = view;
 	register s32		   x;
 
 	// 3 つのレイヤーの表示範囲（スクロール位置をセル単位に）
@@ -5687,9 +6154,9 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 	u32					  *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
 	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[dst_y * 128 + dst_x];
 	struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
-	struct TilePos_2		   view[3];
+	struct TilePos_2	   view[3];
 	s32					   i;
-	struct TilePos_2		  *pos = view;
+	struct TilePos_2	  *pos = view;
 	register s32		   x;
 
 	// 3 つのレイヤーの表示範囲（スクロール位置をセル単位に）
@@ -5713,14 +6180,14 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 		{
 			for (x = dst_x; x < dst_x + width; x++)
 			{
-				u32			  val = *src++;
-				u32			  cell;
-				register u32  offset;
-				u32			  tmp3;
-				u32			  n;
-				u32			  tmp6;
-				u32			  tmp12;
-				u32			  tmp13;
+				u32			 val = *src++;
+				u32			 cell;
+				register u32 offset;
+				u32			 tmp3;
+				u32			 n;
+				u32			 tmp6;
+				u32			 tmp12;
+				u32			 tmp13;
 
 				cell = val & MAP_CELL_TILE_MASK;
 				dst[0] = (dst[0] & MAP_CELL_ATTRIBUTE_MASK) | cell;
@@ -5804,12 +6271,12 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 
 void Map_SetWorkFlagBits9To11(u32 v)
 {
-    struct MapState *state = gMapWork[0];
-    u32 mask = v & 0xe00;
-    u32 flags = state->flags;
+	struct MapState *state = gMapWork[0];
+	u32				 mask = v & 0xe00;
+	u32				 flags = state->flags;
 
-    flags = (flags & 0xf1ff) | mask;
-    state->flags = flags;
+	flags = (flags & 0xf1ff) | mask;
+	state->flags = flags;
 }
 
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
@@ -5817,12 +6284,12 @@ void Map_SetWorkFlagBits9To11(u32 v)
 
 static __inline__ void Io_Set16(s32 value, volatile u16 *reg)
 {
-    *reg = value;
+	*reg = value;
 }
 
 static __inline__ void Io_Put16(volatile u16 *reg, s32 value)
 {
-    *reg = value;
+	*reg = value;
 }
 
 typedef s32 (*RatioFn)(s32, s32);
@@ -5832,10 +6299,11 @@ typedef s32 (*PlaneFn)(void *camera, s32 *position, void *lines, void *out);
 
 s32 Resource_DecodeByteLz(const void *source, void *destination);
 
-struct WorldCell {
-    u32 tile : 24;
-    u32 kind : 7;
-    u32 flag : 1;
+struct WorldCell
+{
+	u32 tile : 24;
+	u32 kind : 7;
+	u32 flag : 1;
 };
 
 #define BG_PALETTE ((s16 *)BG_PLTT)
@@ -5843,1142 +6311,1229 @@ struct WorldCell {
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
 {
-    struct PerspectiveWork *work = gMapWork[0];
-    u32 *graphics = work->tiles;
-    u16 *shown;
-    u16 *buffer;
-    u16 *source;
-    u8 *blocks;
-    u16 *screen;
-    u32 i;
-    u32 j;
-    u32 id;
+	struct PerspectiveWork *work = gMapWork[0];
+	u32					   *graphics = work->tiles;
+	u16					   *shown;
+	u16					   *buffer;
+	u16					   *source;
+	u8					   *blocks;
+	u16					   *screen;
+	u32						i;
+	u32						j;
+	u32						id;
 
-    x &= 1;
-    y &= 1;
-    shown = &work->quarter_tiles[(layer * 2 + y) * 2 + x];
-    if (update == 0 && tile == *shown)
-        return 0;
-    *shown = tile;
-    buffer = Runtime_AllocateHeapBlock(14, 0x400);
-    Resource_DecodeByteLz((u8 *)graphics + graphics[tile], buffer);
+	x &= 1;
+	y &= 1;
+	shown = &work->quarter_tiles[(layer * 2 + y) * 2 + x];
+	if (update == 0 && tile == *shown)
+		return 0;
+	*shown = tile;
+	buffer = Runtime_AllocateHeapBlock(14, 0x400);
+	Resource_DecodeByteLz((u8 *)graphics + graphics[tile], buffer);
 
-    source = buffer;
-    blocks = Ram_MapBlocks + (((layer * 2 + y) * 32 + x) << 6);
-    for (i = 0; i < 16; i++) {
-        Dma_Set(source, blocks, DMA_ENABLE32 | DMA_32BIT | 0x10, REG_DMA3);
-        source += 32;
-        blocks += 128;
-    }
+	source = buffer;
+	blocks = Ram_MapBlocks + (((layer * 2 + y) * 32 + x) << 6);
+	for (i = 0; i < 16; i++)
+	{
+		Dma_Set(source, blocks, DMA_ENABLE32 | DMA_32BIT | 0x10, REG_DMA3);
+		source += 32;
+		blocks += 128;
+	}
 
-    if (update != 0) {
-        screen = (u16 *)(BG_SCREEN_BLOCK(8) + ((((layer * 2 + y) << 6) + x) << 5));
-        source = buffer;
-        for (i = 0; i < 16; i++) {
-            for (j = 0; j < 16; j++) {
-                u16 *bottom;
+	if (update != 0)
+	{
+		screen = (u16 *)(BG_SCREEN_BLOCK(8) + ((((layer * 2 + y) << 6) + x) << 5));
+		source = buffer;
+		for (i = 0; i < 16; i++)
+		{
+			for (j = 0; j < 16; j++)
+			{
+				u16 *bottom;
 
-                id = *source;
-                screen[0] = *(u16 *)(Ram_MapCellBuffer + id * 4);
-                bottom = (u16 *)(Ram_MapCellBuffer + 2);
-                bottom = (u16 *)((u8 *)bottom + id * 4);
-                screen[32] = *bottom;
-                screen++;
-                source += 2;
-            }
-            screen += 48;
-        }
-    }
-    Runtime_ReleaseHeapBlock(14);
-    return 1;
+				id = *source;
+				screen[0] = *(u16 *)(Ram_MapCellBuffer + id * 4);
+				bottom = (u16 *)(Ram_MapCellBuffer + 2);
+				bottom = (u16 *)((u8 *)bottom + id * 4);
+				screen[32] = *bottom;
+				screen++;
+				source += 2;
+			}
+			screen += 48;
+		}
+	}
+	Runtime_ReleaseHeapBlock(14);
+	return 1;
 }
 
 s32 Map_InitializePerspectiveScene(void)
 {
-    struct PerspectiveWork *work;
-    struct BattleCamera *camera;
-    struct MapFrameWork *tiles;
-    struct MapAffinePair (*lines)[160];
-    s32 *position;
-    s32 *distance;
-    u16 *yaw;
-    u16 *pitch;
-    u16 *turn;
-    volatile u32 fill;
-    struct FixedPointPosition vector;
-    s32 far_plane;
-    s32 i;
+	struct PerspectiveWork *work;
+	struct BattleCamera	   *camera;
+	struct MapFrameWork	   *tiles;
+	struct MapAffinePair(*lines)[160];
+	s32						 *position;
+	s32						 *distance;
+	u16						 *yaw;
+	u16						 *pitch;
+	u16						 *turn;
+	volatile u32			  fill;
+	struct FixedPointPosition vector;
+	s32						  far_plane;
+	s32						  i;
 
-    REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
-    Blend_SetDarkenTarget0(0);
-    work = Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
-    fill = 0;
-    Dma_Set(&fill, work, DMA_ENABLE32 | DMA_SRC_FIXED32 | DMA_32BIT | (sizeof(struct PerspectiveWork) / 4), REG_DMA3);
-    work->view_x = 0;
-    work->view_y = 0;
-    work->scale_x = 0x200000;
-    work->scale_y = 0x400000;
-    work->limit_x = 0x1fe00000;
-    work->limit_y = 0x1fe00000;
-    work->script = NULL;
-    work->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapAnimation), Ram_MapCollision + 0x1000);
-    MapAnimation_StartChannels((const u16 *)(Ram_MapCollision + 0x1000));
-    Io_Set16(0x3f9e, &REG_BLDCNT);
-    Io_Set16(0x1010, &REG_BLDALPHA);
-    REG_BLDY = 0;
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), Ram_MapCellBuffer);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMetatileAttributes), Ram_MapCollision);
-    work->fade = 0x1f00;
-    work->fade_step = 0x80;
-    Io_Set16(0xa80a, &REG_BG3CNT);
-    Io_Set16(0xaa0e, &REG_BG2CNT);
-    Io_Set16(0x0501, &REG_BG1CNT);
-    /* FAKEMATCH: needed to match: loop note keeps BG2PA's constant after its address */
-    do {
-        Io_Put16(&REG_BG2PA, 0x100);
-        REG_BG2PB = 0;
-        REG_BG2PC = 0;
-    } while (0);
-    /* FAKEMATCH: needed to match: loop notes keep BG2PD's constant late and r0 first below */
-    do {
-        Io_Put16(&REG_BG2PD, 0x100);
-        REG_BG2X = 0;
-        REG_BG2Y = 0;
-        Io_Put16(&REG_BG3PA, 0x100);
-        REG_BG3PB = 0;
-        REG_BG3PC = 0;
-        Io_Put16(&REG_BG3PD, 0x100);
-        REG_BG3X = 0;
-        REG_BG3Y = 0;
-    } while (0);
+	REG_DISPCNT &=
+		~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
+	Blend_SetDarkenTarget0(0);
+	work = Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
+	fill = 0;
+	Dma_Set(&fill, work,
+		DMA_ENABLE32 | DMA_SRC_FIXED32 | DMA_32BIT | (sizeof(struct PerspectiveWork) / 4),
+		REG_DMA3);
+	work->view_x = 0;
+	work->view_y = 0;
+	work->scale_x = 0x200000;
+	work->scale_y = 0x400000;
+	work->limit_x = 0x1fe00000;
+	work->limit_y = 0x1fe00000;
+	work->script = NULL;
+	work->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
+	Resource_DecodeType01(
+		Resource_GetTableEntry((s32)&ResourceId_DefaultMapAnimation), Ram_MapCollision + 0x1000);
+	MapAnimation_StartChannels((const u16 *)(Ram_MapCollision + 0x1000));
+	Io_Set16(0x3f9e, &REG_BLDCNT);
+	Io_Set16(0x1010, &REG_BLDALPHA);
+	REG_BLDY = 0;
+	Resource_DecodeType01(
+		Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), Ram_MapCellBuffer);
+	Resource_DecodeType01(
+		Resource_GetTableEntry((s32)&ResourceId_DefaultMetatileAttributes), Ram_MapCollision);
+	work->fade = 0x1f00;
+	work->fade_step = 0x80;
+	Io_Set16(0xa80a, &REG_BG3CNT);
+	Io_Set16(0xaa0e, &REG_BG2CNT);
+	Io_Set16(0x0501, &REG_BG1CNT);
+	/* FAKEMATCH: needed to match: loop note keeps BG2PA's constant after its address */
+	do
+	{
+		Io_Put16(&REG_BG2PA, 0x100);
+		REG_BG2PB = 0;
+		REG_BG2PC = 0;
+	} while (0);
+	/* FAKEMATCH: needed to match: loop notes keep BG2PD's constant late and r0 first below */
+	do
+	{
+		Io_Put16(&REG_BG2PD, 0x100);
+		REG_BG2X = 0;
+		REG_BG2Y = 0;
+		Io_Put16(&REG_BG3PA, 0x100);
+		REG_BG3PB = 0;
+		REG_BG3PC = 0;
+		Io_Put16(&REG_BG3PD, 0x100);
+		REG_BG3X = 0;
+		REG_BG3Y = 0;
+	} while (0);
 
-    camera = Runtime_AllocateBlock(12, sizeof(struct BattleCamera));
-    tiles = Runtime_AllocateHeapBlock(7, sizeof(struct MapFrameWork));
-    position = camera->pos;
-    lines = tiles->pages;
-    far_plane = 0x1fe0000;
-    work->far_plane = far_plane;
-    distance = &work->distance;
-    *distance = far_plane;
-    work->zoom = 0x10000;
-    turn = &work->zoom_transition_frames;
-    camera->unknown_18 = 0;
-    camera->follow_pos = 0;
-    *turn = 0;
-    gProjection.center_x = 120;
-    gProjection.center_y = 96;
-    Camera_StoreSceneParameters(far_plane, far_plane >> 1, far_plane << 1);
-    position[0] = 0;
-    position[1] = 0;
-    position[2] = 0;
-    Render_ResetTransformState();
-    SceneTransform_ApplyPosition(position);
-    yaw = &work->yaw;
-    SceneTransform_ApplyYaw(*yaw);
-    pitch = &work->pitch;
-    SceneTransform_ApplyPitch(*pitch);
-    vector.x = 0;
-    vector.y = 0;
-    vector.z = far_plane;
-    Iwram_TransformVector((const s32 *)&vector, (s32 *)camera);
-    Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera->eye, position);
-    RamCode_LoadSlot(46, Transform_UpdateVertices, &Transform_UpdateVerticesSize);
-    WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)),
-                  position, tiles->scanlines);
-    gScanlineAngle = 0;
-    gScanlinePitch = work->pitch;
-    ((PlaneFn)gWorkSlot[46])(camera, position, tiles->scanlines,
-                                 lines[gFrameCount & 1]);
-    position[0] = 0;
-    position[1] = 0;
-    position[2] = 0;
-    Render_ResetTransformState();
-    Io_Put16(pitch, 0xe000);
-    *yaw = 0;
-    Render_ResetTransformState();
-    SceneTransform_ApplyPosition(position);
-    SceneTransform_ApplyYaw(*yaw);
-    SceneTransform_ApplyPitch(*pitch);
-    vector.x = 0;
-    vector.y = 0;
-    vector.z = *distance + 0x10000;
-    Iwram_TransformVector((s32 *)&vector, camera->eye);
-    REG_MOSAIC = 0;
-    /* FAKEMATCH: needed to match: loop notes keep the display writes in source order */
-    do {
-        Io_Put16(&REG_DISPCNT, 0x42);
-    } while (0);
-    gBgScroll[1].x = 0;
-    gBgScroll[1].y = 0;
-    gBgScroll[2].x = 0;
-    gBgScroll[2].y = 0;
-    gBgScroll[3].x = 0;
-    gBgScroll[3].y = 0;
-    work->window_top = 0;
-    work->window_bottom = 159;
-    Scheduler_AddOrUpdateCallback(WorldMap_UpdateView, 0xc85);
-    Scheduler_AddOrUpdateCallback(MapAnimation_ApplyAffineFrame, 0x480);
-    for (i = 255; i >= 0; i--)
-        work->tile_ids[i] = i;
+	camera = Runtime_AllocateBlock(12, sizeof(struct BattleCamera));
+	tiles = Runtime_AllocateHeapBlock(7, sizeof(struct MapFrameWork));
+	position = camera->pos;
+	lines = tiles->pages;
+	far_plane = 0x1fe0000;
+	work->far_plane = far_plane;
+	distance = &work->distance;
+	*distance = far_plane;
+	work->zoom = 0x10000;
+	turn = &work->zoom_transition_frames;
+	camera->unknown_18 = 0;
+	camera->follow_pos = 0;
+	*turn = 0;
+	gProjection.center_x = 120;
+	gProjection.center_y = 96;
+	Camera_StoreSceneParameters(far_plane, far_plane >> 1, far_plane << 1);
+	position[0] = 0;
+	position[1] = 0;
+	position[2] = 0;
+	Render_ResetTransformState();
+	SceneTransform_ApplyPosition(position);
+	yaw = &work->yaw;
+	SceneTransform_ApplyYaw(*yaw);
+	pitch = &work->pitch;
+	SceneTransform_ApplyPitch(*pitch);
+	vector.x = 0;
+	vector.y = 0;
+	vector.z = far_plane;
+	Iwram_TransformVector((const s32 *)&vector, (s32 *)camera);
+	Render_ResetTransformState();
+	Graphics_PrepareTransferInIwramWork(camera->eye, position);
+	RamCode_LoadSlot(46, Transform_UpdateVertices, &Transform_UpdateVerticesSize);
+	WorldMap_BuildScanlineTable(
+		Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)), position, tiles->scanlines);
+	gScanlineAngle = 0;
+	gScanlinePitch = work->pitch;
+	((PlaneFn)gWorkSlot[46])(camera, position, tiles->scanlines, lines[gFrameCount & 1]);
+	position[0] = 0;
+	position[1] = 0;
+	position[2] = 0;
+	Render_ResetTransformState();
+	Io_Put16(pitch, 0xe000);
+	*yaw = 0;
+	Render_ResetTransformState();
+	SceneTransform_ApplyPosition(position);
+	SceneTransform_ApplyYaw(*yaw);
+	SceneTransform_ApplyPitch(*pitch);
+	vector.x = 0;
+	vector.y = 0;
+	vector.z = *distance + 0x10000;
+	Iwram_TransformVector((s32 *)&vector, camera->eye);
+	REG_MOSAIC = 0;
+	/* FAKEMATCH: needed to match: loop notes keep the display writes in source order */
+	do
+	{
+		Io_Put16(&REG_DISPCNT, 0x42);
+	} while (0);
+	gBgScroll[1].x = 0;
+	gBgScroll[1].y = 0;
+	gBgScroll[2].x = 0;
+	gBgScroll[2].y = 0;
+	gBgScroll[3].x = 0;
+	gBgScroll[3].y = 0;
+	work->window_top = 0;
+	work->window_bottom = 159;
+	Scheduler_AddOrUpdateCallback(WorldMap_UpdateView, 0xc85);
+	Scheduler_AddOrUpdateCallback(MapAnimation_ApplyAffineFrame, 0x480);
+	for (i = 255; i >= 0; i--)
+		work->tile_ids[i] = i;
 }
 
 void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py)
 {
-    struct PerspectiveWork *window;
-    s32 *position;
-    s32 origin_x;
-    s32 origin_y;
-    s32 tile;
+	struct PerspectiveWork *window;
+	s32					   *position;
+	s32						origin_x;
+	s32						origin_y;
+	s32						tile;
 
-    window = gMapWork[0];
-    origin_x = 0;
-    origin_y = 0;
-    position = window->origin;
-    if (position != 0) {
-        origin_x = *position++;
-        origin_y = position[1];
-    }
+	window = gMapWork[0];
+	origin_x = 0;
+	origin_y = 0;
+	position = window->origin;
+	if (position != 0)
+	{
+		origin_x = *position++;
+		origin_y = position[1];
+	}
 
-    origin_x >>= 24;
-    origin_y >>= 24;
-    x >>= 4;
-    y >>= 4;
-    px >>= 3;
-    py >>= 3;
-    tile = (y << 4) + x;
-    window->tile_ids[(((py / 2) & 15) << 4) + ((px / 2) & 15)] = tile;
+	origin_x >>= 24;
+	origin_y >>= 24;
+	x >>= 4;
+	y >>= 4;
+	px >>= 3;
+	py >>= 3;
+	tile = (y << 4) + x;
+	window->tile_ids[(((py / 2) & 15) << 4) + ((px / 2) & 15)] = tile;
 
-    if (ABS(origin_x - px) <= 1 && ABS(origin_y - py) <= 1) {
-        Map_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
-        Map_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x140, 1);
-    }
+	if (ABS(origin_x - px) <= 1 && ABS(origin_y - py) <= 1)
+	{
+		Map_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
+		Map_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x140, 1);
+	}
 }
 
 void WorldMap_LoadGraphics(s32 x, s32 z)
 {
-    struct PerspectiveWork *state;
-    u32 *resources;
-    u8 *buffer;
-    u8 *tiles;
-    u32 *cursor;
-    u32 tile;
-    s32 variant;
-    s32 row;
-    s32 col;
-    s16 value;
-    volatile u32 fill;
+	struct PerspectiveWork *state;
+	u32					   *resources;
+	u8					   *buffer;
+	u8					   *tiles;
+	u32					   *cursor;
+	u32						tile;
+	s32						variant;
+	s32						row;
+	s32						col;
+	s16						value;
+	volatile u32			fill;
 
-    variant = 0;
-    buffer = MemAlloc(0x200);
-    state = gMapWork[0];
-    if (WORLD_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)].kind == 21)
-        variant = 1;
-    resources = WorldMap_GraphicsResources[variant];
-    state->resources = resources;
-    value = BG_PALETTE[0];
-    Resource_DecodeByteLz(Resource_GetTableEntry(resources[0]), buffer);
-    *(s16 *)buffer = value;
-    Dma_Set(buffer, BG_PALETTE, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
-    tiles = gBgTileBuffer;
-    Resource_DecodeType01(Resource_GetTableEntry(resources[1]), tiles);
-    Dma_Set(tiles, BG_CHAR_BLOCK(2), DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
-    Resource_DecodeType01(Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
-    Dma_Set(Ram_BgTileBuffer + 0x2000, BG_CHAR_BLOCK(2) + 0x2000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
-    Resource_DecodeType01(Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
-    Dma_Set(Ram_BgTileBuffer + 0x4000, BG_CHAR_BLOCK(3), DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
-    Resource_DecodeType01(Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
-    Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
-    Resource_DecodeType01(Resource_GetTableEntry(resources[5]), gMapLayerData);
-    fill = 0xf07ff07f;
-    Dma_Set((const void *)&fill, BG_SCREEN_BLOCK(5), DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x180, REG_DMA3);
-    cursor = (u32 *)BG_SCREEN_BLOCK(6);
-    tile = 0x01a901a8;
-    for (row = 0; row < 20; row++) {
-        for (col = 0; col < 15; col++) {
-            *cursor++ = tile;
-            tile += 0x00020002;
-        }
-        cursor++;
-    }
-    if (variant == 1) {
-        state->tile_ids[10] = 0x10a;
-        state->tile_ids[11] = 0x10b;
-        state->tile_ids[12] = 0x10c;
-        state->tile_ids[26] = 0x11a;
-        state->tile_ids[27] = 0x11b;
-        state->tile_ids[28] = 0x11c;
-        Map_UpdateCurrentTileBlock();
-    }
-    MemFree(buffer);
+	variant = 0;
+	buffer = MemAlloc(0x200);
+	state = gMapWork[0];
+	if (WORLD_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)].kind == 21)
+		variant = 1;
+	resources = WorldMap_GraphicsResources[variant];
+	state->resources = resources;
+	value = BG_PALETTE[0];
+	Resource_DecodeByteLz(Resource_GetTableEntry(resources[0]), buffer);
+	*(s16 *)buffer = value;
+	Dma_Set(buffer, BG_PALETTE, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
+	tiles = gBgTileBuffer;
+	Resource_DecodeType01(Resource_GetTableEntry(resources[1]), tiles);
+	Dma_Set(tiles, BG_CHAR_BLOCK(2), DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+	Resource_DecodeType01(Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
+	Dma_Set(Ram_BgTileBuffer + 0x2000, BG_CHAR_BLOCK(2) + 0x2000, DMA_ENABLE32 | DMA_32BIT | 0x800,
+		REG_DMA3);
+	Resource_DecodeType01(Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
+	Dma_Set(
+		Ram_BgTileBuffer + 0x4000, BG_CHAR_BLOCK(3), DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+	Resource_DecodeType01(Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
+	Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000, DMA_ENABLE32 | DMA_32BIT | 0x800,
+		REG_DMA3);
+	Resource_DecodeType01(Resource_GetTableEntry(resources[5]), gMapLayerData);
+	fill = 0xf07ff07f;
+	Dma_Set((const void *)&fill, BG_SCREEN_BLOCK(5),
+		DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x180, REG_DMA3);
+	cursor = (u32 *)BG_SCREEN_BLOCK(6);
+	tile = 0x01a901a8;
+	for (row = 0; row < 20; row++)
+	{
+		for (col = 0; col < 15; col++)
+		{
+			*cursor++ = tile;
+			tile += 0x00020002;
+		}
+		cursor++;
+	}
+	if (variant == 1)
+	{
+		state->tile_ids[10] = 0x10a;
+		state->tile_ids[11] = 0x10b;
+		state->tile_ids[12] = 0x10c;
+		state->tile_ids[26] = 0x11a;
+		state->tile_ids[27] = 0x11b;
+		state->tile_ids[28] = 0x11c;
+		Map_UpdateCurrentTileBlock();
+	}
+	MemFree(buffer);
 }
 
 void MapAnimation_ApplyAffineFrame(void)
 {
-    struct MapAffinePair (*lines)[160] = ((struct MapFrameWork *)WORK_SLOT(7))->pages;
-    s32 dispcnt = (s16)(REG_DISPCNT & 0xfff8);
-    u32 *dst = (u32 *)&REG_BG2PA;
-    struct PerspectiveWork *work = WORK_SLOT(8);
-    volatile u16 *channel = REG_DMA0;
-    u32 *src;
-    u32 mode;
-    u32 top;
-    u32 control;
+	struct MapAffinePair(*lines)[160] = ((struct MapFrameWork *)WORK_SLOT(7))->pages;
+	s32						dispcnt = (s16)(REG_DISPCNT & 0xfff8);
+	u32					   *dst = (u32 *)&REG_BG2PA;
+	struct PerspectiveWork *work = WORK_SLOT(8);
+	volatile u16		   *channel = REG_DMA0;
+	u32					   *src;
+	u32						mode;
+	u32						top;
+	u32						control;
 
-    channel[5] &= 0xc5ff;
-    channel[5] &= 0x7fff;
-    (void)channel[5];
-    if (lines != NULL) {
-        src = (u32 *)lines[gFrameCount & 1];
-        *dst++ = *src++;
-        *dst++ = *src++;
-        *dst++ = *src++;
-        *dst++ = *src++;
-        *dst++ = *src++;
-        *dst++ = *src++;
-        *dst++ = *src++;
-        *dst = *src++;
-        Dma_Set(src, (void *)&REG_BG2PA, 0xa6600008, (volatile u32 *)channel);
-    }
-    work->shown_top = work->window_top;
-    work->shown_bottom = work->window_bottom;
-    top = work->shown_top;
-    mode = 0;
-    if (top < 200) {
-        u16 bottom = work->shown_bottom;
+	channel[5] &= 0xc5ff;
+	channel[5] &= 0x7fff;
+	(void)channel[5];
+	if (lines != NULL)
+	{
+		src = (u32 *)lines[gFrameCount & 1];
+		*dst++ = *src++;
+		*dst++ = *src++;
+		*dst++ = *src++;
+		*dst++ = *src++;
+		*dst++ = *src++;
+		*dst++ = *src++;
+		*dst++ = *src++;
+		*dst = *src++;
+		Dma_Set(src, (void *)&REG_BG2PA, 0xa6600008, (volatile u32 *)channel);
+	}
+	work->shown_top = work->window_top;
+	work->shown_bottom = work->window_bottom;
+	top = work->shown_top;
+	mode = 0;
+	if (top < 200)
+	{
+		u16 bottom = work->shown_bottom;
 
-        mode = (bottom != 0) << 1;
-        if (top <= bottom) {
-            mode = 0;
-            if (top == 0)
-                mode = 2;
-        }
-    }
-    dispcnt |= mode;
-    control = (u16)dispcnt;
-    REG_DISPCNT = control;
-    work->window_pending = 0;
+		mode = (bottom != 0) << 1;
+		if (top <= bottom)
+		{
+			mode = 0;
+			if (top == 0)
+				mode = 2;
+		}
+	}
+	dispcnt |= mode;
+	control = (u16)dispcnt;
+	REG_DISPCNT = control;
+	work->window_pending = 0;
 }
 
-#define Camera_StoreSceneParameters ((void (*)(s32,s32,s32))Camera_StoreSceneParameters)
-#define SceneTransform_ApplyPosition ((void (*)(s32*))SceneTransform_ApplyPosition)
+#define Camera_StoreSceneParameters ((void (*)(s32, s32, s32))Camera_StoreSceneParameters)
+#define SceneTransform_ApplyPosition ((void (*)(s32 *))SceneTransform_ApplyPosition)
 
 static __inline__ void CopyEntry(u8 *map, u8 *destination)
 {
-    u32 palette = *(u16 *)map;
-    u16 *colors = (u16 *)Ram_MapCellBuffer;
+	u32	 palette = *(u16 *)map;
+	u16 *colors = (u16 *)Ram_MapCellBuffer;
 
-    colors += palette * 2;
-    *(u16 *)destination = *colors++;
-    *(u16 *)(destination + 64) = *colors;
+	colors += palette * 2;
+	*(u16 *)destination = *colors++;
+	*(u16 *)(destination + 64) = *colors;
 }
 
 void Map_RenderPaletteMappedRow(u32 value)
 {
-    u8 *map;
-    u8 *destination;
-    u32 counter;
+	u8 *map;
+	u8 *destination;
+	u32 counter;
 
-    map = Ram_MapBlocks + ((((s32)value / 2) & 31) << 7);
-    destination = (u8 *)(0x06004000 + ((value & 62) << 6));
-    counter = 0;
-    do {
-        CopyEntry(map, destination);
-        counter++;
-        destination += 2;
-        map += 4;
-    } while (counter <= 31);
+	map = Ram_MapBlocks + ((((s32)value / 2) & 31) << 7);
+	destination = (u8 *)(0x06004000 + ((value & 62) << 6));
+	counter = 0;
+	do
+	{
+		CopyEntry(map, destination);
+		counter++;
+		destination += 2;
+		map += 4;
+	} while (counter <= 31);
 
-    destination += 0xfc0;
-    map += 0xf80;
-    counter = 0;
-    do {
-        CopyEntry(map, destination);
-        counter++;
-        destination += 2;
-        map += 4;
-    } while (counter <= 31);
+	destination += 0xfc0;
+	map += 0xf80;
+	counter = 0;
+	do
+	{
+		CopyEntry(map, destination);
+		counter++;
+		destination += 2;
+		map += 4;
+	} while (counter <= 31);
 }
 
 void Map_RenderPaletteMappedColumn(u32 value)
 {
-    u8 *map;
-    u8 *destination;
-    u32 counter;
+	u8 *map;
+	u8 *destination;
+	u32 counter;
 
-    map = Ram_MapBlocks + ((((s32)value / 2) & 31) << 2);
-    destination = (u8 *)(0x06004000 + (value & 62));
-    counter = 0;
-    do {
-        CopyEntry(map, destination);
-        counter++;
-        destination += 128;
-        map += 128;
-    } while (counter <= 63);
+	map = Ram_MapBlocks + ((((s32)value / 2) & 31) << 2);
+	destination = (u8 *)(0x06004000 + (value & 62));
+	counter = 0;
+	do
+	{
+		CopyEntry(map, destination);
+		counter++;
+		destination += 128;
+		map += 128;
+	} while (counter <= 63);
 }
 
 void WorldMap_UpdateView(void)
 {
-    struct BattleCamera *cam = WORK_SLOT(HEAP_SLOT_CAMERA);
-    struct MapFrameWork *map = WORK_SLOT(7);
-    struct PerspectiveWork *view = WORK_SLOT(8);
-    s32 *pos = cam->pos;
-    s32 *target = view->origin;
-    struct MapAffinePair (*buffer)[160] = map->pages;
-    s32 distance = view->far_plane;
-    s32 height = view->distance;
-    struct FixedPointPosition local;
+	struct BattleCamera	   *cam = WORK_SLOT(HEAP_SLOT_CAMERA);
+	struct MapFrameWork	   *map = WORK_SLOT(7);
+	struct PerspectiveWork *view = WORK_SLOT(8);
+	s32					   *pos = cam->pos;
+	s32					   *target = view->origin;
+	struct MapAffinePair(*buffer)[160] = map->pages;
+	s32						  distance = view->far_plane;
+	s32						  height = view->distance;
+	struct FixedPointPosition local;
 
-    Map_UpdateCurrentTileBlockUntilBlocked();
-    if (target != NULL) {
-        s32 x;
-        s32 y;
-        s32 col;
-        s32 row;
+	Map_UpdateCurrentTileBlockUntilBlocked();
+	if (target != NULL)
+	{
+		s32 x;
+		s32 y;
+		s32 col;
+		s32 row;
 
-        y = target[2];
-        x = target[0];
-        if (view->shake_x != 0) {
-            s32 r = Random16();
-            s32 amp;
+		y = target[2];
+		x = target[0];
+		if (view->shake_x != 0)
+		{
+			s32 r = Random16();
+			s32 amp;
 
-            r -= Random16();
-            amp = view->shake_x;
-            x += Iwram_MulQ16(amp, r);
-            view->shake_x = Iwram_MulQ16(amp, view->shake_decay);
-        }
-        if (view->shake_y != 0) {
-            s32 r = Random16();
-            s32 amp;
+			r -= Random16();
+			amp = view->shake_x;
+			x += Iwram_MulQ16(amp, r);
+			view->shake_x = Iwram_MulQ16(amp, view->shake_decay);
+		}
+		if (view->shake_y != 0)
+		{
+			s32 r = Random16();
+			s32 amp;
 
-            r -= Random16();
-            amp = view->shake_y;
-            y += Iwram_MulQ16(amp, r);
-            view->shake_y = Iwram_MulQ16(amp, view->shake_decay);
-        }
-        col = x / 0x100000;
-        row = y / 0x100000;
-        if ((view->view_x ^ x) & 0x100000) {
-            if (view->view_x < x)
-                Map_RenderPaletteMappedColumn(col + 16);
-            else
-                Map_RenderPaletteMappedColumn(col - 16);
-        }
-        if ((view->view_y ^ y) & 0x100000) {
-            if (view->view_y < y)
-                Map_RenderPaletteMappedRow(row + 12);
-            else
-                Map_RenderPaletteMappedRow(row - 18);
-        }
-        view->view_x = x;
-        view->view_y = y;
-    }
-    gProjection.center_x = 120;
-    gProjection.center_y = 96;
-    Camera_StoreSceneParameters(distance, height / 2, height * 2);
-    pos[0] = *target++;
-    pos[1] = 0;
-    pos[2] = target[1];
-    Render_ResetTransformState();
-    SceneTransform_ApplyPosition(pos);
-    SceneTransform_ApplyYaw(view->yaw);
-    SceneTransform_ApplyPitch(view->pitch);
-    local.x = 0;
-    local.y = 0;
-    local.z = height + 0x10000;
-    Iwram_TransformVector((s32 *)&local, (s32 *)cam);
-    Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(cam, pos);
-    if (gScanlinePitch != view->pitch) {
-        s32 c = Trig_Cos(view->pitch);
-        s32 s = Trig_Sin(view->pitch);
+			r -= Random16();
+			amp = view->shake_y;
+			y += Iwram_MulQ16(amp, r);
+			view->shake_y = Iwram_MulQ16(amp, view->shake_decay);
+		}
+		col = x / 0x100000;
+		row = y / 0x100000;
+		if ((view->view_x ^ x) & 0x100000)
+		{
+			if (view->view_x < x)
+				Map_RenderPaletteMappedColumn(col + 16);
+			else
+				Map_RenderPaletteMappedColumn(col - 16);
+		}
+		if ((view->view_y ^ y) & 0x100000)
+		{
+			if (view->view_y < y)
+				Map_RenderPaletteMappedRow(row + 12);
+			else
+				Map_RenderPaletteMappedRow(row - 18);
+		}
+		view->view_x = x;
+		view->view_y = y;
+	}
+	gProjection.center_x = 120;
+	gProjection.center_y = 96;
+	Camera_StoreSceneParameters(distance, height / 2, height * 2);
+	pos[0] = *target++;
+	pos[1] = 0;
+	pos[2] = target[1];
+	Render_ResetTransformState();
+	SceneTransform_ApplyPosition(pos);
+	SceneTransform_ApplyYaw(view->yaw);
+	SceneTransform_ApplyPitch(view->pitch);
+	local.x = 0;
+	local.y = 0;
+	local.z = height + 0x10000;
+	Iwram_TransformVector((s32 *)&local, (s32 *)cam);
+	Render_ResetTransformState();
+	Graphics_PrepareTransferInIwramWork(cam, pos);
+	if (gScanlinePitch != view->pitch)
+	{
+		s32 c = Trig_Cos(view->pitch);
+		s32 s = Trig_Sin(view->pitch);
 
-        WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(c, s), pos, map->scanlines);
-        gScanlineAngle = 0;
-        gScanlinePitch = view->pitch;
-    }
-    ((s32 (*)(void *, s32 *, void *, void *))gWorkSlot[46])(cam, pos, map->scanlines, buffer[gFrameCount & 1]);
+		WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(c, s), pos, map->scanlines);
+		gScanlineAngle = 0;
+		gScanlinePitch = view->pitch;
+	}
+	((s32 (*)(void *, s32 *, void *, void *))gWorkSlot[46])(
+		cam, pos, map->scanlines, buffer[gFrameCount & 1]);
 }
 
 void Map_UpdateCurrentTileBlock(void)
 {
-    struct PerspectiveWork *window = gMapWork[0];
-    s32 x0 = 0;
-    s32 y0 = 0;
-    u32 layer;
-    u32 row;
-    u32 col;
-    s32 bias;
-    s32 tile;
+	struct PerspectiveWork *window = gMapWork[0];
+	s32						x0 = 0;
+	s32						y0 = 0;
+	u32						layer;
+	u32						row;
+	u32						col;
+	s32						bias;
+	s32						tile;
 
-    if (window->origin != NULL) {
-        s32 *p = window->origin;
+	if (window->origin != NULL)
+	{
+		s32 *p = window->origin;
 
-        x0 = *p++;
-        y0 = p[1];
-    }
-    x0 = (x0 - 0x1000000) >> 25;
-    y0 = (y0 - 0x1400000) >> 25;
-    layer = 0;
-    bias = 0;
-    for (; layer < 2; layer++) {
-        for (row = 0; row < 2; row++) {
-            for (col = 0; col < 2; col++) {
-                tile = (((y0 + row) & 15) << 4) + ((x0 + col) & 15);
-                tile = window->tile_ids[tile];
-                tile += bias;
-                Map_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 1);
-            }
-        }
-        bias += 320;
-    }
+		x0 = *p++;
+		y0 = p[1];
+	}
+	x0 = (x0 - 0x1000000) >> 25;
+	y0 = (y0 - 0x1400000) >> 25;
+	layer = 0;
+	bias = 0;
+	for (; layer < 2; layer++)
+	{
+		for (row = 0; row < 2; row++)
+		{
+			for (col = 0; col < 2; col++)
+			{
+				tile = (((y0 + row) & 15) << 4) + ((x0 + col) & 15);
+				tile = window->tile_ids[tile];
+				tile += bias;
+				Map_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 1);
+			}
+		}
+		bias += 320;
+	}
 }
 
 void Map_UpdateCurrentTileBlockUntilBlocked(void)
 {
-    struct PerspectiveWork *window = gMapWork[0];
-    s32 x0 = 0;
-    s32 y0 = 0;
-    u32 layer;
-    u32 row;
-    u32 col;
-    s32 tile;
+	struct PerspectiveWork *window = gMapWork[0];
+	s32						x0 = 0;
+	s32						y0 = 0;
+	u32						layer;
+	u32						row;
+	u32						col;
+	s32						tile;
 
-    if (window->origin != NULL) {
-        s32 *p = window->origin;
+	if (window->origin != NULL)
+	{
+		s32 *p = window->origin;
 
-        x0 = *p++;
-        y0 = p[1];
-    }
-    x0 = (x0 - 0x1000000) >> 25;
-    y0 = (y0 - 0x1400000) >> 25;
-    for (layer = 0; layer < 2; layer++) {
-        for (row = 0; row < 2; row++) {
-            for (col = 0; col < 2; col++) {
-                tile = (((y0 + row) & 15) << 4) + ((x0 + col) & 15);
-                tile = window->tile_ids[tile];
-                tile += layer * 320;
-                if (Map_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 0) != 0)
-                    return;
-            }
-        }
-    }
+		x0 = *p++;
+		y0 = p[1];
+	}
+	x0 = (x0 - 0x1000000) >> 25;
+	y0 = (y0 - 0x1400000) >> 25;
+	for (layer = 0; layer < 2; layer++)
+	{
+		for (row = 0; row < 2; row++)
+		{
+			for (col = 0; col < 2; col++)
+			{
+				tile = (((y0 + row) & 15) << 4) + ((x0 + col) & 15);
+				tile = window->tile_ids[tile];
+				tile += layer * 320;
+				if (Map_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 0) != 0)
+					return;
+			}
+		}
+	}
 }
 
 extern u8 gDecodeBuffer[];
 
 void MapAnimation_PresentFrame(void)
 {
-    s32 control = 0x682;
+	s32 control = 0x682;
 
-    /* FAKEMATCH: needed to match: the do-while keeps the BG1CNT store before the DMA source and destination loads. */
-    do {
-        REG_BG1CNT = control;
-    } while (0);
-    Dma_Set((const void *)gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
+	/* FAKEMATCH: needed to match: the do-while keeps the BG1CNT store before the DMA source and destination loads. */
+	do
+	{
+		REG_BG1CNT = control;
+	} while (0);
+	Dma_Set((const void *)gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
+		DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
 }
 
 void MapAnimation_Start(void)
 {
-    struct MapFrameWork *pages = WORK_SLOT(7);
-    struct PerspectiveWork *work = WORK_SLOT(8);
-    s32 one = 1;
+	struct MapFrameWork	   *pages = WORK_SLOT(7);
+	struct PerspectiveWork *work = WORK_SLOT(8);
+	s32						one = 1;
 
-    work->animation_active = one;
-    Scheduler_EnableCallbacks(MapAnimation_Update);
-    Dma_Set(BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
-    WaitFrames(1);
-    Resource_RunCopiedDecoder((s32)pages->pages[gFrameCount & one], (s32)gMapCellBuffer);
-    work->window_top = 200;
-    work->window_bottom = 255;
-    gVBlankHook = MapAnimation_PresentFrame;
+	work->animation_active = one;
+	Scheduler_EnableCallbacks(MapAnimation_Update);
+	Dma_Set(BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_ENABLE32 | DMA_32BIT | 0x800, REG_DMA3);
+	WaitFrames(1);
+	Resource_RunCopiedDecoder((s32)pages->pages[gFrameCount & one], (s32)gMapCellBuffer);
+	work->window_top = 200;
+	work->window_bottom = 255;
+	gVBlankHook = MapAnimation_PresentFrame;
 }
 
 void Map_ShowBg1FromBuffer(void)
 {
-    u32 mode = 0x501;
-    u16 *bg1cnt = (u16 *)&REG_BG1CNT;
+	u32	 mode = 0x501;
+	u16 *bg1cnt = (u16 *)&REG_BG1CNT;
 
-    do { *bg1cnt = mode; } while (0); /* FAKEMATCH: needed to match: the wrap orders the store before the DMA operands. */
-    Dma_Set((const void *)gBgTileBuffer, BG_CHAR_BLOCK(2), 0x84002000,
-            REG_DMA3);
+	do { *bg1cnt = mode; } while (0); /* FAKEMATCH: needed to match: the wrap orders the store before the DMA operands. */
+	Dma_Set((const void *)gBgTileBuffer, BG_CHAR_BLOCK(2), 0x84002000, REG_DMA3);
 }
 
 void Map_LoadAreaGraphics(void)
 {
-    struct PerspectiveWork *state;
-    u32 *resources;
-    u8 *buffer;
-    s16 value;
+	struct PerspectiveWork *state;
+	u32					   *resources;
+	u8					   *buffer;
+	s16						value;
 
-    state = gMapWork[0];
-    buffer = gMapCellBuffer;
-    resources = state->resources;
-    value = *(s16 *)BG_PLTT;
-    Resource_DecodeByteLz(Resource_GetTableEntry(resources[0]), buffer);
-    *(s16 *)buffer = value;
-    Dma_Set(buffer, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
-    Resource_DecodeType01(Resource_GetTableEntry(resources[1]), gBgTileBuffer);
-    Resource_DecodeType01(Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
-    Resource_DecodeType01(Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
-    Resource_DecodeType01(Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
-    gVBlankHook = Map_ShowBg1FromBuffer;
-    state->window_top = 0;
-    state->window_bottom = 159;
-    WaitFrames(1);
-    Resource_DecodeType01(Resource_GetTableEntry((u32)&ResourceId_DefaultMapCells), buffer);
-    Map_UpdateCurrentTileBlock();
-    state->animation_active = 0;
-    Scheduler_DisableCallbacks(MapAnimation_Update);
-    WaitFrames(1);
+	state = gMapWork[0];
+	buffer = gMapCellBuffer;
+	resources = state->resources;
+	value = *(s16 *)BG_PLTT;
+	Resource_DecodeByteLz(Resource_GetTableEntry(resources[0]), buffer);
+	*(s16 *)buffer = value;
+	Dma_Set(buffer, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 0x70, REG_DMA3);
+	Resource_DecodeType01(Resource_GetTableEntry(resources[1]), gBgTileBuffer);
+	Resource_DecodeType01(Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
+	Resource_DecodeType01(Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
+	Resource_DecodeType01(Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
+	gVBlankHook = Map_ShowBg1FromBuffer;
+	state->window_top = 0;
+	state->window_bottom = 159;
+	WaitFrames(1);
+	Resource_DecodeType01(Resource_GetTableEntry((u32)&ResourceId_DefaultMapCells), buffer);
+	Map_UpdateCurrentTileBlock();
+	state->animation_active = 0;
+	Scheduler_DisableCallbacks(MapAnimation_Update);
+	WaitFrames(1);
 }
 
 void Map_LoadDefaultCellsAndUpdateBlock(void)
 {
-    struct PerspectiveWork *work = gMapWork[0];
-    gVBlankHook = Map_ShowBg1FromBuffer;
-    work->window_top = 0;
-    work->window_bottom = 0x9f;
-    WaitFrames(1);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), gMapCellBuffer);
-    Map_UpdateCurrentTileBlock();
-    Scheduler_DisableCallbacks(MapAnimation_Update);
-    WaitFrames(1);
+	struct PerspectiveWork *work = gMapWork[0];
+	gVBlankHook = Map_ShowBg1FromBuffer;
+	work->window_top = 0;
+	work->window_bottom = 0x9f;
+	WaitFrames(1);
+	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), gMapCellBuffer);
+	Map_UpdateCurrentTileBlock();
+	Scheduler_DisableCallbacks(MapAnimation_Update);
+	WaitFrames(1);
 }
 
 void MapAnimation_Update(void)
 {
-    /* FAKEMATCH: needed to match: indexed channel expressions preserve ip/lr allocation and the sentinel/VRAM pool order. */
-    struct MapState *state = gMapWork[0];
-    u32 i;
+	/* FAKEMATCH: needed to match: indexed channel expressions preserve ip/lr allocation and the sentinel/VRAM pool order. */
+	struct MapState *state = gMapWork[0];
+	u32				 i;
 
-    for (i = 0; i <= 15; i++) {
-        const u16 *script;
-        u32 op;
-        u32 count;
-        u32 dst;
+	for (i = 0; i <= 15; i++)
+	{
+		const u16 *script;
+		u32		   op;
+		u32		   count;
+		u32		   dst;
 
-        if ((state->anim + i)->start == NULL || (state->anim + i)->paused != 0)
-            continue;
-    next:
-        if ((state->anim + i)->timer == 0) {
-            script = (state->anim + i)->cursor;
-            op = *script++;
-            if (op == 0xffff) {
-                (state->anim + i)->cursor = (state->anim + i)->start;
-                goto next;
-            }
-            if ((op & 0xff00) == 0xfe00) {
-                if ((op & 0xff) == 0xff)
-                    continue;
-                (state->anim + i)->cursor = (state->anim + i)->start + (op & 0xff) * 2;
-                goto next;
-            }
-            count = *script++;
-            dst = script[0];
-            (state->anim + i)->timer = script[1];
-            if (state->wide_tiles == 0) {
-                if (op >= 0x600)
-                    Dma_Set(Ram_DecodeBuffer + op * 32, BG_CHAR_BLOCK(1) + dst * 32, DMA_ENABLE32 | DMA_32BIT | count * 8, REG_DMA3);
-                else
-                    Dma_Set(BG_CHAR_BLOCK(1) + op * 32, BG_CHAR_BLOCK(1) + dst * 32, DMA_ENABLE32 | DMA_32BIT | count * 8, REG_DMA3);
-            } else {
-                if (op >= 0x200)
-                    Dma_Set(Ram_MapBlocks + op * 64, BG_CHAR_BLOCK(2) + dst * 64, DMA_ENABLE32 | DMA_32BIT | count * 16, REG_DMA3);
-                else
-                    Dma_Set(BG_CHAR_BLOCK(2) + op * 64, BG_CHAR_BLOCK(2) + dst * 64, DMA_ENABLE32 | DMA_32BIT | count * 16, REG_DMA3);
-            }
-            (state->anim + i)->cursor += 4;
-            goto next;
-        } else {
-            (state->anim + i)->timer--;
-        }
-    }
+		if ((state->anim + i)->start == NULL || (state->anim + i)->paused != 0)
+			continue;
+	next:
+		if ((state->anim + i)->timer == 0)
+		{
+			script = (state->anim + i)->cursor;
+			op = *script++;
+			if (op == 0xffff)
+			{
+				(state->anim + i)->cursor = (state->anim + i)->start;
+				goto next;
+			}
+			if ((op & 0xff00) == 0xfe00)
+			{
+				if ((op & 0xff) == 0xff)
+					continue;
+				(state->anim + i)->cursor = (state->anim + i)->start + (op & 0xff) * 2;
+				goto next;
+			}
+			count = *script++;
+			dst = script[0];
+			(state->anim + i)->timer = script[1];
+			if (state->wide_tiles == 0)
+			{
+				if (op >= 0x600)
+					Dma_Set(Ram_DecodeBuffer + op * 32, BG_CHAR_BLOCK(1) + dst * 32,
+						DMA_ENABLE32 | DMA_32BIT | count * 8, REG_DMA3);
+				else
+					Dma_Set(BG_CHAR_BLOCK(1) + op * 32, BG_CHAR_BLOCK(1) + dst * 32,
+						DMA_ENABLE32 | DMA_32BIT | count * 8, REG_DMA3);
+			}
+			else
+			{
+				if (op >= 0x200)
+					Dma_Set(Ram_MapBlocks + op * 64, BG_CHAR_BLOCK(2) + dst * 64,
+						DMA_ENABLE32 | DMA_32BIT | count * 16, REG_DMA3);
+				else
+					Dma_Set(BG_CHAR_BLOCK(2) + op * 64, BG_CHAR_BLOCK(2) + dst * 64,
+						DMA_ENABLE32 | DMA_32BIT | count * 16, REG_DMA3);
+			}
+			(state->anim + i)->cursor += 4;
+			goto next;
+		}
+		else
+		{
+			(state->anim + i)->timer--;
+		}
+	}
 }
 
 void Map_ClearLayerEntryFlag(u32 no)
 {
-    struct MapState *state = gMapWork[0];
-    struct MapAnimation *anim = &state->anim[no];
+	struct MapState		*state = gMapWork[0];
+	struct MapAnimation *anim = &state->anim[no];
 
-    anim->paused = 0;
+	anim->paused = 0;
 }
 
 void Map_SetLayerEntryFlag(u32 no)
 {
-    struct MapState *state = gMapWork[0];
-    struct MapAnimation *anim = &state->anim[no];
+	struct MapState		*state = gMapWork[0];
+	struct MapAnimation *anim = &state->anim[no];
 
-    anim->paused = 1;
+	anim->paused = 1;
 }
 
 void MapAnimation_StartChannels(const u16 *script)
 {
-    struct MapState *state;
-    s32 count;
-    u32 command;
-    volatile u32 zero;
+	struct MapState *state;
+	s32				 count;
+	u32				 command;
+	volatile u32	 zero;
 
-    state = gMapWork[0];
-    count = 0;
-    zero = 0;
-    Dma_Set((const void *)&zero, state->anim, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x30, REG_DMA3);
-    command = *script++;
-    while (command != 0xffff) {
-        if ((command & 0xff00) == 0xfd00) {
-            struct MapAnimation *anim;
-            u32 idx = command & 15;
-            u32 flag = 0;
-            if (command & 0x80)
-                flag = 1;
-            anim = &state->anim[idx];
-            anim->start = script;
-            anim->cursor = script;
-            anim->timer = 0;
-            anim->paused = flag;
-            count++;
-        }
-        command = *script++;
-    }
-    if (count != 0)
-        Scheduler_AddOrUpdateCallback(MapAnimation_Update, 0xc80);
+	state = gMapWork[0];
+	count = 0;
+	zero = 0;
+	Dma_Set((const void *)&zero, state->anim, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x30,
+		REG_DMA3);
+	command = *script++;
+	while (command != 0xffff)
+	{
+		if ((command & 0xff00) == 0xfd00)
+		{
+			struct MapAnimation *anim;
+			u32					 idx = command & 15;
+			u32					 flag = 0;
+			if (command & 0x80)
+				flag = 1;
+			anim = &state->anim[idx];
+			anim->start = script;
+			anim->cursor = script;
+			anim->timer = 0;
+			anim->paused = flag;
+			count++;
+		}
+		command = *script++;
+	}
+	if (count != 0)
+		Scheduler_AddOrUpdateCallback(MapAnimation_Update, 0xc80);
 }
 
 void Map_EnableUpdateCallback(void)
 {
-    if (((struct MapScrollWork *)gMapWork[0])->animation_active == 0)
-        Scheduler_EnableCallbacks(MapAnimation_Update);
+	if (((struct MapScrollWork *)gMapWork[0])->animation_active == 0)
+		Scheduler_EnableCallbacks(MapAnimation_Update);
 }
 
 void Map_DisableUpdateCallback(void)
 {
-    if (((struct MapScrollWork *)gMapWork[0])->animation_active == 0)
-        Scheduler_DisableCallbacks(MapAnimation_Update);
+	if (((struct MapScrollWork *)gMapWork[0])->animation_active == 0)
+		Scheduler_DisableCallbacks(MapAnimation_Update);
 }
 
 void DisplayBlend_RunScript(void)
 {
-    struct MapState *work = gMapWork[0];
-    struct BlendScriptState *state;
-    u16 *cursor;
-    u32 command;
-    u32 value;
-    u16 test;
+	struct MapState			*work = gMapWork[0];
+	struct BlendScriptState *state;
+	u16						*cursor;
+	u32						 command;
+	u32						 value;
+	u16						 test;
 
-    state = &work->blend;
-    if (state->script == 0)
-        return;
-    if (state->paused != 0)
-        return;
+	state = &work->blend;
+	if (state->script == 0)
+		return;
+	if (state->paused != 0)
+		return;
 
 again:
-    value = state->delay;
-    test = value;
-    if (test != 0)
-        goto tick;
+	value = state->delay;
+	test = value;
+	if (test != 0)
+		goto tick;
 
-    cursor = state->cursor;
-    command = *cursor;
-    cursor++;
-    if (command == 0xffff) {
-        state->cursor = state->script;
-        goto again;
-    }
+	cursor = state->cursor;
+	command = *cursor;
+	cursor++;
+	if (command == 0xffff)
+	{
+		state->cursor = state->script;
+		goto again;
+	}
 
-    if ((command & 0xff00) == 0xfe00) {
-        value = command & 0xff;
-        if (value == 0xff)
-            return;
-        state->cursor = state->script + value * 2;
-        goto again;
-    }
+	if ((command & 0xff00) == 0xfe00)
+	{
+		value = command & 0xff;
+		if (value == 0xff)
+			return;
+		state->cursor = state->script + value * 2;
+		goto again;
+	}
 
-    if ((command & 0xf000) == 0x3000) {
-        REG_BLDCNT = command;
-        work->blend_control = command;
-        state->cursor++;
-        goto again;
-    }
+	if ((command & 0xf000) == 0x3000)
+	{
+		REG_BLDCNT = command;
+		work->blend_control = command;
+		state->cursor++;
+		goto again;
+	}
 
-    if ((work->blend_control & 0xc0) == 0x40)
-        REG_BLDALPHA = command;
-    else
-        REG_BLDY = command;
-    state->delay = cursor[0];
-    state->cursor += 2;
-    goto again;
+	if ((work->blend_control & 0xc0) == 0x40)
+		REG_BLDALPHA = command;
+	else
+		REG_BLDY = command;
+	state->delay = cursor[0];
+	state->cursor += 2;
+	goto again;
 
 tick:
-    state->delay = value + 0xffff;
+	state->delay = value + 0xffff;
 }
 
 void DisplayBlend_StartScript(u16 *script)
 {
-    struct BlendScriptState *state;
-    s32 started;
-    volatile u32 zero;
+	struct BlendScriptState *state;
+	s32						 started;
+	volatile u32			 zero;
 
-    started = 0;
-    zero = 0;
-    state = &((struct MapState *)gMapWork[0])->blend;
-    Dma_Set((const void *)&zero, state, 0x85000003, REG_DMA3);
-    if (*script != 0xffff) {
-        state->script = script;
-        state->cursor = script;
-        state->delay = 0;
-        state->paused = 0;
-        started = 1;
-    }
-    if (started)
-        Scheduler_AddOrUpdateCallback(DisplayBlend_RunScript, 0xc80);
+	started = 0;
+	zero = 0;
+	state = &((struct MapState *)gMapWork[0])->blend;
+	Dma_Set((const void *)&zero, state, 0x85000003, REG_DMA3);
+	if (*script != 0xffff)
+	{
+		state->script = script;
+		state->cursor = script;
+		state->delay = 0;
+		state->paused = 0;
+		started = 1;
+	}
+	if (started)
+		Scheduler_AddOrUpdateCallback(DisplayBlend_RunScript, 0xc80);
 }
 
 void DisplayBlend_EnableRunScript(void)
 {
-    Scheduler_EnableCallbacks(DisplayBlend_RunScript);
+	Scheduler_EnableCallbacks(DisplayBlend_RunScript);
 }
 
 void DisplayBlend_DisableRunScript(void)
 {
-    Scheduler_DisableCallbacks(DisplayBlend_RunScript);
+	Scheduler_DisableCallbacks(DisplayBlend_RunScript);
 }
 
 void Runtime_AllocateAndClearQueue(void)
 {
-    struct PaletteSnapshotWork *queue;
-    struct PaletteSnapshot *entry;
-    u16 i;
-    u16 j;
+	struct PaletteSnapshotWork *queue;
+	struct PaletteSnapshot	   *entry;
+	u16							i;
+	u16							j;
 
-    queue = Runtime_AllocateBlock(28, sizeof(struct PaletteSnapshotWork));
-    entry = queue->entries;
-    for (i = 0; i != 4; i++) {
-        entry->source = 0;
-        entry->position = 0;
-        entry->timer = 0;
-        entry->delay = 0;
-        entry->count = 0;
-        for (j = 0; j != 16; j++) {
-            entry->colors[j] = 0;
-        }
-        entry++;
-    }
-    queue->count = 0;
+	queue = Runtime_AllocateBlock(28, sizeof(struct PaletteSnapshotWork));
+	entry = queue->entries;
+	for (i = 0; i != 4; i++)
+	{
+		entry->source = 0;
+		entry->position = 0;
+		entry->timer = 0;
+		entry->delay = 0;
+		entry->count = 0;
+		for (j = 0; j != 16; j++)
+		{
+			entry->colors[j] = 0;
+		}
+		entry++;
+	}
+	queue->count = 0;
 }
 
 s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count)
 {
-    struct PaletteSnapshotWork *work;
-    struct PaletteSnapshot *entry;
-    u16 *source;
-    u32 slot;
-    u16 size;
+	struct PaletteSnapshotWork *work;
+	struct PaletteSnapshot	   *entry;
+	u16						   *source;
+	u32							slot;
+	u16							size;
 
-    work = gPaletteWork;
-    slot = work->count;
-    if (slot > 3)
-        return -1;
-    entry = &work->entries[slot];
-    source = (u16 *)BG_PLTT + (((u16)bank << 4) + (u16)index);
-    size = count;
-    entry->position = 0;
-    entry->timer = 0;
-    entry->count = size;
-    entry->source = source;
-    entry->delay = delay;
-    Dma_Set(source, entry->colors, 0x80000000 | size, REG_DMA3);
-    work->count++;
-    return 0;
+	work = gPaletteWork;
+	slot = work->count;
+	if (slot > 3)
+		return -1;
+	entry = &work->entries[slot];
+	source = (u16 *)BG_PLTT + (((u16)bank << 4) + (u16)index);
+	size = count;
+	entry->position = 0;
+	entry->timer = 0;
+	entry->count = size;
+	entry->source = source;
+	entry->delay = delay;
+	Dma_Set(source, entry->colors, 0x80000000 | size, REG_DMA3);
+	work->count++;
+	return 0;
 }
 
 void Runtime_ScheduleCallbackAndReleaseBlock28(void)
 {
-    Scheduler_RemoveCallback(PaletteQueue_StepCycles);
-    Runtime_ReleaseHeapBlock(0x1C);
+	Scheduler_RemoveCallback(PaletteQueue_StepCycles);
+	Runtime_ReleaseHeapBlock(0x1C);
 }
 
 void Scheduler_ScheduleCallbackBAfterFrames(void)
 {
-    Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 0xc80);
+	Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 0xc80);
 }
 
 void PaletteQueue_StepCycles(void)
 {
-    struct PaletteSnapshotWork *work = gPaletteWork;
-    u8 i;
-    u16 count = work->count & 3;
-    u16 buf[16];
+	struct PaletteSnapshotWork *work = gPaletteWork;
+	u8							i;
+	u16							count = work->count & 3;
+	u16							buf[16];
 
-    for (i = 0; i < count; i++) {
-        struct PaletteSnapshot *cycle = &work->entries[i];
-        if (cycle->timer == 0) {
-            u16 start = cycle->position;
-            u16 len = cycle->count;
-            void *dest = cycle->source;
-            u16 *src = cycle->colors;
-            u8 j;
-            for (j = len - start; j < len; j++)
-                buf[j] = *src++;
-            for (j = 0; j < len - start; j++)
-                buf[j] = *src++;
-            Dma_Set(buf, dest, 0x80000000 | len, REG_DMA3);
-            start++;
-            if (start >= len)
-                start = 0;
-            cycle->position = start;
-            cycle->timer = cycle->delay;
-        } else {
-            cycle->timer--;
-        }
-    }
+	for (i = 0; i < count; i++)
+	{
+		struct PaletteSnapshot *cycle = &work->entries[i];
+		if (cycle->timer == 0)
+		{
+			u16	  start = cycle->position;
+			u16	  len = cycle->count;
+			void *dest = cycle->source;
+			u16	 *src = cycle->colors;
+			u8	  j;
+			for (j = len - start; j < len; j++)
+				buf[j] = *src++;
+			for (j = 0; j < len - start; j++)
+				buf[j] = *src++;
+			Dma_Set(buf, dest, 0x80000000 | len, REG_DMA3);
+			start++;
+			if (start >= len)
+				start = 0;
+			cycle->position = start;
+			cycle->timer = cycle->delay;
+		}
+		else
+		{
+			cycle->timer--;
+		}
+	}
 }
 
 s32 Curve_GetFirstSampleA(const s8 *samples)
 {
-    return samples[0] << CURVE_VALUE_SHIFT;
+	return samples[0] << CURVE_VALUE_SHIFT;
 }
 
 s32 Curve_LerpTwoSamples(const s8 *samples, s32 position)
 {
-    s32 start;
-    s32 delta;
+	s32 start;
+	s32 delta;
 
-    start = samples[0] << CURVE_VALUE_SHIFT;
-    delta = ((samples[1] << CURVE_VALUE_SHIFT) - start) * position;
-    if (delta < 0) {
-        delta += CURVE_FULL_STEPS - 1;
-    }
-    return start + (delta >> 4);
+	start = samples[0] << CURVE_VALUE_SHIFT;
+	delta = ((samples[1] << CURVE_VALUE_SHIFT) - start) * position;
+	if (delta < 0)
+	{
+		delta += CURVE_FULL_STEPS - 1;
+	}
+	return start + (delta >> 4);
 }
 
 s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 position)
 {
-    s32 base;
-    s32 offset;
+	s32 base;
+	s32 offset;
 
-    base = samples[0] << CURVE_VALUE_SHIFT;
-    offset = ((samples[1] << CURVE_VALUE_SHIFT) - base) * position;
-    if (offset < 0) {
-        offset += CURVE_FULL_STEPS - 1;
-    }
-    return base + (offset >> 4);
+	base = samples[0] << CURVE_VALUE_SHIFT;
+	offset = ((samples[1] << CURVE_VALUE_SHIFT) - base) * position;
+	if (offset < 0)
+	{
+		offset += CURVE_FULL_STEPS - 1;
+	}
+	return base + (offset >> 4);
 }
 
 s32 Curve_StepAtSummedPosition(const s8 *samples, s32 start, s32 end)
 {
-    s32 first;
-    s32 second;
-    s32 maximum;
-    u32 position;
+	s32 first;
+	s32 second;
+	s32 maximum;
+	u32 position;
 
-    first = samples[0] << CURVE_VALUE_SHIFT;
-    second = samples[1] << CURVE_VALUE_SHIFT;
-    maximum = first;
-    if (second > first) {
-        maximum = second;
-    }
-    position = start + end;
-    if (position == CURVE_FULL_STEPS - 1) {
-        return maximum;
-    }
-    if (position < CURVE_FULL_STEPS - 1) {
-        second = first;
-    }
-    return second;
+	first = samples[0] << CURVE_VALUE_SHIFT;
+	second = samples[1] << CURVE_VALUE_SHIFT;
+	maximum = first;
+	if (second > first)
+	{
+		maximum = second;
+	}
+	position = start + end;
+	if (position == CURVE_FULL_STEPS - 1)
+	{
+		return maximum;
+	}
+	if (position < CURVE_FULL_STEPS - 1)
+	{
+		second = first;
+	}
+	return second;
 }
 
 s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end)
 {
-    s32 first;
-    s32 second;
-    s32 maximum;
-    s32 difference;
-    u32 position = start;
+	s32 first;
+	s32 second;
+	s32 maximum;
+	s32 difference;
+	u32 position = start;
 
-    first = samples[0] << CURVE_VALUE_SHIFT;
-    second = samples[1] << CURVE_VALUE_SHIFT;
-    maximum = first;
-    if (second > first) {
-        maximum = second;
-    }
-    difference = end - position;
-    position = difference + CURVE_FULL_STEPS - 1;
-    if (position == CURVE_FULL_STEPS - 1) {
-        return maximum;
-    }
-    if (position < CURVE_FULL_STEPS - 1) {
-        second = first;
-    }
-    return second;
+	first = samples[0] << CURVE_VALUE_SHIFT;
+	second = samples[1] << CURVE_VALUE_SHIFT;
+	maximum = first;
+	if (second > first)
+	{
+		maximum = second;
+	}
+	difference = end - position;
+	position = difference + CURVE_FULL_STEPS - 1;
+	if (position == CURVE_FULL_STEPS - 1)
+	{
+		return maximum;
+	}
+	if (position < CURVE_FULL_STEPS - 1)
+	{
+		second = first;
+	}
+	return second;
 }
 
 s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end)
 {
-    s32 first;
-    s32 middle;
-    s32 last;
-    s32 result;
+	s32 first;
+	s32 middle;
+	s32 last;
+	s32 result;
 
-    first = *samples++ << CURVE_VALUE_SHIFT;
-    middle = *samples << CURVE_VALUE_SHIFT;
-    last = samples[1] << CURVE_VALUE_SHIFT;
-    start += end;
-    if (start == CURVE_FULL_STEPS - 1) {
-        result = middle;
-    } else if ((u32)start < CURVE_FULL_STEPS - 1) {
-        result = first + (middle - first) * start / (CURVE_FULL_STEPS - 1);
-    } else {
-        start -= (CURVE_FULL_STEPS - 1);
-        result = middle + (last - middle) * start / (CURVE_FULL_STEPS - 1);
-    }
-    return result;
+	first = *samples++ << CURVE_VALUE_SHIFT;
+	middle = *samples << CURVE_VALUE_SHIFT;
+	last = samples[1] << CURVE_VALUE_SHIFT;
+	start += end;
+	if (start == CURVE_FULL_STEPS - 1)
+	{
+		result = middle;
+	}
+	else if ((u32)start < CURVE_FULL_STEPS - 1)
+	{
+		result = first + (middle - first) * start / (CURVE_FULL_STEPS - 1);
+	}
+	else
+	{
+		start -= (CURVE_FULL_STEPS - 1);
+		result = middle + (last - middle) * start / (CURVE_FULL_STEPS - 1);
+	}
+	return result;
 }
 
 s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 start, s32 end)
 {
-    s32 first;
-    s32 second;
-    s32 third;
-    s32 difference;
-    s32 delta;
+	s32 first;
+	s32 second;
+	s32 third;
+	s32 difference;
+	s32 delta;
 
-    first = *samples++ << CURVE_VALUE_SHIFT;
-    second = samples[0] << CURVE_VALUE_SHIFT;
-    third = samples[1];
-    difference = end - start;
-    start = difference + CURVE_FULL_STEPS - 1;
-    third <<= CURVE_VALUE_SHIFT;
+	first = *samples++ << CURVE_VALUE_SHIFT;
+	second = samples[0] << CURVE_VALUE_SHIFT;
+	third = samples[1];
+	difference = end - start;
+	start = difference + CURVE_FULL_STEPS - 1;
+	third <<= CURVE_VALUE_SHIFT;
 
-    if (start == CURVE_FULL_STEPS - 1)
-        return second;
+	if (start == CURVE_FULL_STEPS - 1)
+		return second;
 
-    if ((u32)start < CURVE_FULL_STEPS - 1) {
-        delta = second - first;
-        difference = delta *start;
-        if (difference < 0)
-            difference += CURVE_FULL_STEPS - 1;
-        difference >>= 4;
-        return first + difference;
-    }
-    difference *= third - second;
-    if (difference < 0)
-        difference += CURVE_FULL_STEPS - 1;
-    difference >>= 4;
-    return second + difference;
+	if ((u32)start < CURVE_FULL_STEPS - 1)
+	{
+		delta = second - first;
+		difference = delta * start;
+		if (difference < 0)
+			difference += CURVE_FULL_STEPS - 1;
+		difference >>= 4;
+		return first + difference;
+	}
+	difference *= third - second;
+	if (difference < 0)
+		difference += CURVE_FULL_STEPS - 1;
+	difference >>= 4;
+	return second + difference;
 }
 
 s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 position, s32 row)
 {
-    s32 start;
+	s32 start;
 
-    start = samples[0] << CURVE_VALUE_SHIFT;
-    return start
-        + (((samples[1] << CURVE_VALUE_SHIFT) - start)
-           * Curve_LerpWeightTable[position + (row *CURVE_FULL_STEPS)]);
+	start = samples[0] << CURVE_VALUE_SHIFT;
+	return start
+		   + (((samples[1] << CURVE_VALUE_SHIFT) - start)
+			   * Curve_LerpWeightTable[position + (row * CURVE_FULL_STEPS)]);
 }
 
 s32 Curve_StepAtHalf(const s8 *samples, u32 position)
 {
-    s32 value;
-    if (position < CURVE_HALF_STEPS)
-        value = samples[0];
-    else
-        value = samples[1];
-    return value << CURVE_VALUE_SHIFT;
+	s32 value;
+	if (position < CURVE_HALF_STEPS)
+		value = samples[0];
+	else
+		value = samples[1];
+	return value << CURVE_VALUE_SHIFT;
 }
 
 s32 Curve_StepAtHalfB(const s8 *samples, u32 unused, u32 position)
 {
-    s32 value;
-    if (position < CURVE_HALF_STEPS)
-        value = samples[0];
-    else
-        value = samples[1];
-    return value << CURVE_VALUE_SHIFT;
+	s32 value;
+	if (position < CURVE_HALF_STEPS)
+		value = samples[0];
+	else
+		value = samples[1];
+	return value << CURVE_VALUE_SHIFT;
 }
 
 s32 Curve_LerpThreeSamplesAtHalf(s8 *samples, u32 position)
 {
-    s32 a;
-    s32 b;
-    s32 delta;
+	s32 a;
+	s32 b;
+	s32 delta;
 
-    a = *samples++ << CURVE_VALUE_SHIFT;
-    b = *samples++ << CURVE_VALUE_SHIFT;
-    if (position < CURVE_HALF_STEPS) {
-        delta = (b - a) * position;
-        if (delta < 0) {
-            delta += CURVE_HALF_STEPS - 1;
-        }
-        return a + (delta >> 3);
-    }
+	a = *samples++ << CURVE_VALUE_SHIFT;
+	b = *samples++ << CURVE_VALUE_SHIFT;
+	if (position < CURVE_HALF_STEPS)
+	{
+		delta = (b - a) * position;
+		if (delta < 0)
+		{
+			delta += CURVE_HALF_STEPS - 1;
+		}
+		return a + (delta >> 3);
+	}
 
-    {
-        s32 pos;
+	{
+		s32 pos;
 
-        a = *samples << CURVE_VALUE_SHIFT;
-        pos = position;
-        a -= b;
-        pos -= CURVE_HALF_STEPS;
-        delta = a *pos;
-        if (delta < 0) {
-            delta += CURVE_HALF_STEPS - 1;
-        }
-        return b + (delta >> 3);
-    }
+		a = *samples << CURVE_VALUE_SHIFT;
+		pos = position;
+		a -= b;
+		pos -= CURVE_HALF_STEPS;
+		delta = a * pos;
+		if (delta < 0)
+		{
+			delta += CURVE_HALF_STEPS - 1;
+		}
+		return b + (delta >> 3);
+	}
 }
 
 s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position)
 {
-    s32 a;
-    s32 b;
-    s32 pos;
-    s32 delta;
-    s32 tail;
+	s32 a;
+	s32 b;
+	s32 pos;
+	s32 delta;
+	s32 tail;
 
-    a = *samples++ << CURVE_VALUE_SHIFT;
-    b = *samples++ << CURVE_VALUE_SHIFT;
-    if (position < CURVE_HALF_STEPS) {
-        delta = (b - a) * position;
-        if (delta < 0) {
-            delta += CURVE_HALF_STEPS - 1;
-        }
-        return a + (delta >> 3);
-    }
+	a = *samples++ << CURVE_VALUE_SHIFT;
+	b = *samples++ << CURVE_VALUE_SHIFT;
+	if (position < CURVE_HALF_STEPS)
+	{
+		delta = (b - a) * position;
+		if (delta < 0)
+		{
+			delta += CURVE_HALF_STEPS - 1;
+		}
+		return a + (delta >> 3);
+	}
 
-    a = *samples << CURVE_VALUE_SHIFT;
-    pos = position;
-    a -= b;
-    pos -= CURVE_HALF_STEPS;
-    tail = a *pos;
-    if (tail < 0) {
-        tail += CURVE_HALF_STEPS - 1;
-    }
-    return b + (tail >> 3);
+	a = *samples << CURVE_VALUE_SHIFT;
+	pos = position;
+	a -= b;
+	pos -= CURVE_HALF_STEPS;
+	tail = a * pos;
+	if (tail < 0)
+	{
+		tail += CURVE_HALF_STEPS - 1;
+	}
+	return b + (tail >> 3);
 }
 
 s32 Curve_LookupSampleByTable(const s8 *samples, u32 position, u32 row)
 {
-    return samples[Curve_SampleIndexTable[position + (row << 4)]]
-        << CURVE_VALUE_SHIFT;
+	return samples[Curve_SampleIndexTable[position + (row << 4)]] << CURVE_VALUE_SHIFT;
 }
 
 s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 position, u32 row)
 {
-    return samples[
-        Curve_SampleIndexTable[((row << 4) - position) + CURVE_FULL_STEPS - 1]]
-        << CURVE_VALUE_SHIFT;
+	return samples[Curve_SampleIndexTable[((row << 4) - position) + CURVE_FULL_STEPS - 1]]
+		   << CURVE_VALUE_SHIFT;
 }
 
 s32 Curve_GetFirstSampleB(const s8 *samples)
 {
-    return samples[0] << CURVE_VALUE_SHIFT;
+	return samples[0] << CURVE_VALUE_SHIFT;
 }
 
 s32 Curve_GetFirstSampleC(const s8 *samples)
 {
-    return samples[0] << CURVE_VALUE_SHIFT;
+	return samples[0] << CURVE_VALUE_SHIFT;
 }
 
 #undef Scheduler_AddOrUpdateCallback
@@ -6991,325 +7546,346 @@ extern TerrainHeightFn Map_TerrainHeightFunctions[16];
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y)
 {
-    struct MapState *work = gMapWork[0];
-    struct MapCell *cells;
-    u8 *attributes;
+	struct MapState *work = gMapWork[0];
+	struct MapCell	*cells;
+	u8				*attributes;
 
-    x >>= 16;
-    y >>= 16;
-    cells = (struct MapCell *)Ram_MapCellBuffer;
-    if (work != NULL) {
-        cells = work->layers[layer & 3].cells;
-    }
-    cells += x / 16 + (y / 16 << 7);
-    attributes = Ram_MapCollision + cells->attribute_b * 4;
-    return Map_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, y & 15);
+	x >>= 16;
+	y >>= 16;
+	cells = (struct MapCell *)Ram_MapCellBuffer;
+	if (work != NULL)
+	{
+		cells = work->layers[layer & 3].cells;
+	}
+	cells += x / 16 + (y / 16 << 7);
+	attributes = Ram_MapCollision + cells->attribute_b * 4;
+	return Map_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, y & 15);
 }
 
 s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y)
 {
-    struct MapState *state = gMapWork[0];
-    struct MapCell *map;
-    s32 col;
-    s32 row;
-    u32 attr;
+	struct MapState *state = gMapWork[0];
+	struct MapCell	*map;
+	s32				 col;
+	s32				 row;
+	u32				 attr;
 
-    x >>= 16;
-    y >>= 16;
-    map = (struct MapCell *)gMapCellBuffer;
-    if (state != 0) {
-        map = state->layers[index & 3].cells;
-    }
-    col = x / 16;
-    row = y / 16;
-    map += col + (row << 7);
-    attr = map->attribute_b;
-    return *(Ram_MapCollision + attr * 4) & 15;
+	x >>= 16;
+	y >>= 16;
+	map = (struct MapCell *)gMapCellBuffer;
+	if (state != 0)
+	{
+		map = state->layers[index & 3].cells;
+	}
+	col = x / 16;
+	row = y / 16;
+	map += col + (row << 7);
+	attr = map->attribute_b;
+	return *(Ram_MapCollision + attr * 4) & 15;
 }
 
 u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
 {
-    struct MapState *state;
-    struct MapCell *cells;
+	struct MapState *state;
+	struct MapCell	*cells;
 
-    state = gMapWork[0];
-    x >>= 20;
-    y >>= 20;
-    cells = (struct MapCell *)gMapCellBuffer;
-    if (state != NULL) {
-        cells = state->layers[layer & 3].cells;
-    }
-    cells += x + (y << 7);
-    return cells->collision_code;
+	state = gMapWork[0];
+	x >>= 20;
+	y >>= 20;
+	cells = (struct MapCell *)gMapCellBuffer;
+	if (state != NULL)
+	{
+		cells = state->layers[layer & 3].cells;
+	}
+	cells += x + (y << 7);
+	return cells->collision_code;
 }
 
 void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code)
 {
-    struct MapState *state = gMapWork[0];
+	struct MapState *state = gMapWork[0];
 
-    x >>= 20;
-    y >>= 20;
-    if (state != NULL) {
-        struct MapCell *cells = state->layers[layer & 3].cells;
+	x >>= 20;
+	y >>= 20;
+	if (state != NULL)
+	{
+		struct MapCell *cells = state->layers[layer & 3].cells;
 
-        cells += x + (y << 7);
-        cells->collision_code = collision_code;
-    }
+		cells += x + (y << 7);
+		cells->collision_code = collision_code;
+	}
 }
 
 s32 Map_GetCellHighFlags(s32 x, s32 y)
 {
-    s32 tile_x = x / 16;
-    s32 tile_y = y / 16;
-    struct MapCell *cell = (struct MapCell *)gMapCellBuffer + (tile_x + tile_y * 128);
+	s32				tile_x = x / 16;
+	s32				tile_y = y / 16;
+	struct MapCell *cell = (struct MapCell *)gMapCellBuffer + (tile_x + tile_y * 128);
 
-    return ((u8 *)&cell->metatile_and_flags)[1] >> 6;
+	return ((u8 *)&cell->metatile_and_flags)[1] >> 6;
 }
 
 s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *position)
 {
-    struct MapState *state;
-    s32 x;
-    s32 z;
-    struct MapCell *cell;
-    u8 *attributes;
-    s32 height;
-    s32 delta;
+	struct MapState *state;
+	s32				 x;
+	s32				 z;
+	struct MapCell	*cell;
+	u8				*attributes;
+	s32				 height;
+	s32				 delta;
 
-    x = ((union FieldCoordinate *)&position->x)->part.pixel;
-    z = ((union FieldCoordinate *)&position->z)->part.pixel;
-    state = gMapWork[0];
-    if (state == NULL)
-        return 0;
-    if (object->terrain_id <= 2)
-        cell = state->layers[object->terrain_id].cells;
-    else
-        cell = (struct MapCell *)Ram_MapCellBuffer;
-    cell += x / 16 + (z / 16 << 7);
-    if (cell->collision_code == 0xff)
-        return 2;
-    attributes = Ram_MapCollision + cell->attribute_b * 4;
-    height = Map_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, z & 15);
-    delta = height - object->terrain_height;
-    if (delta > 0x80000)
-        return 1;
-    if (delta < -0xc0000)
-        return -1;
-    return 0;
+	x = ((union FieldCoordinate *)&position->x)->part.pixel;
+	z = ((union FieldCoordinate *)&position->z)->part.pixel;
+	state = gMapWork[0];
+	if (state == NULL)
+		return 0;
+	if (object->terrain_id <= 2)
+		cell = state->layers[object->terrain_id].cells;
+	else
+		cell = (struct MapCell *)Ram_MapCellBuffer;
+	cell += x / 16 + (z / 16 << 7);
+	if (cell->collision_code == 0xff)
+		return 2;
+	attributes = Ram_MapCollision + cell->attribute_b * 4;
+	height = Map_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, z & 15);
+	delta = height - object->terrain_height;
+	if (delta > 0x80000)
+		return 1;
+	if (delta < -0xc0000)
+		return -1;
+	return 0;
 }
 
 s32 CheckMapPositionCellOccupied(struct WorldPosition *position)
 {
-    s32 x;
-    s32 y;
-    s32 tile_x;
-    s32 tile_y;
-    struct MapState *work;
-    struct MapCell *cell;
+	s32				 x;
+	s32				 y;
+	s32				 tile_x;
+	s32				 tile_y;
+	struct MapState *work;
+	struct MapCell	*cell;
 
-    x = position->x / 65536;
-    y = (position->y - position->height) / 65536;
-    work = gMapWork[0];
-    if (work == NULL)
-        return 0;
-    cell = work->layers[2].cells;
-    tile_x = x / 16;
-    tile_y = y / 16;
-    cell += tile_x + tile_y * 128;
-    return (cell->collision_code != 0xff) - 1;
+	x = position->x / 65536;
+	y = (position->y - position->height) / 65536;
+	work = gMapWork[0];
+	if (work == NULL)
+		return 0;
+	cell = work->layers[2].cells;
+	tile_x = x / 16;
+	tile_y = y / 16;
+	cell += tile_x + tile_y * 128;
+	return (cell->collision_code != 0xff) - 1;
 }
 
 s32 GetWorldMapCollision(struct WorldPosition *position)
 {
-    s32 x_step = position->x >> 17;
-    s32 y = position->y;
-    s32 y_step = y >> 17;
-    u32 cell;
-    u32 pixel_offset;
-    u8 tile;
-    u8 packed_pixels;
-    u32 result;
+	s32 x_step = position->x >> 17;
+	s32 y = position->y;
+	s32 y_step = y >> 17;
+	u32 cell;
+	u32 pixel_offset;
+	u8	tile;
+	u8	packed_pixels;
+	u32 result;
 
-    cell = (((y_step / 8) & 63) << 6) +
-        ((x_step / 8) & 63);
-    pixel_offset = (((y_step / 2) & 3) << 1) +
-        ((x_step / 4) & 1);
+	cell = (((y_step / 8) & 63) << 6) + ((x_step / 8) & 63);
+	pixel_offset = (((y_step / 2) & 3) << 1) + ((x_step / 4) & 1);
 
-    tile = BG_SCREEN_BLOCK(10)[cell];
-    packed_pixels = *(Ram_MapCollision + 0x800 + (tile << 3) + pixel_offset);
-    if (packed_pixels != 0) {
-        if (x_step & 2)
-            result = packed_pixels >> 4;
-        else
-            result = packed_pixels & 15;
-        if (result != 0)
-            return result;
-    }
+	tile = BG_SCREEN_BLOCK(10)[cell];
+	packed_pixels = *(Ram_MapCollision + 0x800 + (tile << 3) + pixel_offset);
+	if (packed_pixels != 0)
+	{
+		if (x_step & 2)
+			result = packed_pixels >> 4;
+		else
+			result = packed_pixels & 15;
+		if (result != 0)
+			return result;
+	}
 
-    tile = BG_SCREEN_BLOCK(8)[cell];
-    packed_pixels = *(Ram_MapCollision + (tile << 3) + pixel_offset);
-    if (packed_pixels != 0) {
-        if (x_step & 2)
-            result = packed_pixels >> 4;
-        else
-            result = packed_pixels & 15;
-        if (result != 0)
-            return result;
-    }
+	tile = BG_SCREEN_BLOCK(8)[cell];
+	packed_pixels = *(Ram_MapCollision + (tile << 3) + pixel_offset);
+	if (packed_pixels != 0)
+	{
+		if (x_step & 2)
+			result = packed_pixels >> 4;
+		else
+			result = packed_pixels & 15;
+		if (result != 0)
+			return result;
+	}
 
-    return 7;
+	return 7;
 }
 
 s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position)
 {
-    if ((GetWorldMapCollision(position) - 5) <= 7U) {
-        return 0;
-    }
-    return -1;
+	if ((GetWorldMapCollision(position) - 5) <= 7U)
+	{
+		return 0;
+	}
+	return -1;
 }
 
 u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
 {
-    s32 selector = GetWorldMapCollision(position);
-    s32 x = position->x;
-    s32 y;
-    s32 flag = 0;
-    u32 tile_x;
-    u32 index;
-    u32 *tile;
+	s32	 selector = GetWorldMapCollision(position);
+	s32	 x = position->x;
+	s32	 y;
+	s32	 flag = 0;
+	u32	 tile_x;
+	u32	 index;
+	u32 *tile;
 
-    if (x < 0)
-        x += 0x1fffff;
-    tile_x = (x >> 21) & 31;
-    y = position->y;
-    if (y < 0)
-        y += 0x1fffff;
+	if (x < 0)
+		x += 0x1fffff;
+	tile_x = (x >> 21) & 31;
+	y = position->y;
+	if (y < 0)
+		y += 0x1fffff;
 
-    index = tile_x + (((y >> 21) & 31) << 5);
-    tile = gMapBlocks + index;
-    if (((u8 *)tile)[3] & 0x80)
-        flag = 0x10;
+	index = tile_x + (((y >> 21) & 31) << 5);
+	tile = gMapBlocks + index;
+	if (((u8 *)tile)[3] & 0x80)
+		flag = 0x10;
 
-    *terrain_kind = (*tile << 1) >> 25;
-    if (*terrain_kind == 21)
-        flag = 0x20;
+	*terrain_kind = (*tile << 1) >> 25;
+	if (*terrain_kind == 21)
+		flag = 0x20;
 
-    return WorldMap_TerrainBehaviorTable[flag + selector];
+	return WorldMap_TerrainBehaviorTable[flag + selector];
 }
 
 void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2)
 {
-    struct MapScrollWork *work;
+	struct MapScrollWork *work;
 
-    work = gMapWork[0];
-    if (value0 >= 0) {
-        work->shake_x = value0;
-    }
-    if (value1 >= 0) {
-        work->shake_y = value1;
-    }
-    if (value2 >= 0) {
-        work->shake_decay = value2;
-    }
+	work = gMapWork[0];
+	if (value0 >= 0)
+	{
+		work->shake_x = value0;
+	}
+	if (value1 >= 0)
+	{
+		work->shake_y = value1;
+	}
+	if (value2 >= 0)
+	{
+		work->shake_decay = value2;
+	}
 }
 
 void Map_WaitWorkValuesBelow256(void)
 {
-    struct MapScrollWork *work;
-    s32 cnt;
+	struct MapScrollWork *work;
+	s32					  cnt;
 
-    work = gMapWork[0];
-    cnt = 0;
-    if (work->shake_x > 255 || work->shake_y > 255) {
-        goto body;
-body:
-        WaitFrames(1);
-        ++cnt;
-        if (cnt >= 300) {
-            goto done;
-        }
-        if (work->shake_x > 255) {
-            goto body;
-        }
-        if (work->shake_y > 255) {
-            goto body;
-        }
-    }
+	work = gMapWork[0];
+	cnt = 0;
+	if (work->shake_x > 255 || work->shake_y > 255)
+	{
+		goto body;
+	body:
+		WaitFrames(1);
+		++cnt;
+		if (cnt >= 300)
+		{
+			goto done;
+		}
+		if (work->shake_x > 255)
+		{
+			goto body;
+		}
+		if (work->shake_y > 255)
+		{
+			goto body;
+		}
+	}
 done:
-    work->shake_decay = 0;
+	work->shake_decay = 0;
 }
 
 void Resource_RunCopiedDecoder(s32 a, s32 b)
 {
-    u8 *base;
+	u8 *base;
 
-    base = gDecodeBuffer;
-    RamCode_LoadSlot(49, TileMap_DrawRows, TileMap_DrawRowsCodeSize);
-    /* FAKEMATCH: needed to match: the do-while orders the call's argument loads. */
-    do { ((void (*)(s32, s32, void *, void *))gWorkSlot[49])(a, b, gBgTileBuffer + 0x4000, base + 0x1000); } while (0);
-    Runtime_ReleaseHeapBlock(49);
+	base = gDecodeBuffer;
+	RamCode_LoadSlot(49, TileMap_DrawRows, TileMap_DrawRowsCodeSize);
+	/* FAKEMATCH: needed to match: the do-while orders the call's argument loads. */
+	do
+	{
+		((void (*)(s32, s32, void *, void *))gWorkSlot[49])(
+			a, b, gBgTileBuffer + 0x4000, base + 0x1000);
+	} while (0);
+	Runtime_ReleaseHeapBlock(49);
 }
 
 void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct MapScanline *row)
 {
-    s32 ground[3];
-    s32 viewed[3];
-    s32 horizon;
-    s32 focus;
-    s32 *view;
-    register s32 line;
-    s32 distance;
-    s32 difference;
-    s32 scale;
-    s32 x;
-    s32 y;
-    s32 diagonal;
-    s32 vertical;
-    s32 zero;
-    s32 horizontal;
+	s32			 ground[3];
+	s32			 viewed[3];
+	s32			 horizon;
+	s32			 focus;
+	s32			*view;
+	register s32 line;
+	s32			 distance;
+	s32			 difference;
+	s32			 scale;
+	s32			 x;
+	s32			 y;
+	s32			 diagonal;
+	s32			 vertical;
+	s32			 zero;
+	s32			 horizontal;
 
-    zero = 0;
-    ground[0] = position[0];
-    ground[1] = zero;
-    ground[2] = position[2];
-    Iwram_TransformVector(ground, viewed);
-    view = viewed;
-    horizon = view[1] - Iwram_MulQ16(view[2], depth);
-    focus = -gProjection.focal;
-    for (line = 0; line < 160; line++) {
-        distance = Iwram_RatioMulQ14(focus, (gProjection.center_y - line) << 16);
-        difference = distance - depth;
-        if (difference == 0)
-            difference = 1;
-        scale = Iwram_RatioMulQ14(difference, horizon);
-        if (scale < 0) {
-            diagonal = Iwram_MulQ16(-scale, 0x8000);
-            row->scale = Iwram_RatioMulQ14(gProjection.focal, diagonal);
-            diagonal = Iwram_MulQ16(scale, distance);
-            horizontal = (view[2] - scale) >> 4;
-            vertical = (diagonal - view[1]) >> 4;
-            x = Iwram_MulQ16(horizontal, horizontal);
-            y = Iwram_MulQ16(vertical, vertical);
-            y = Iwram_Sqrt(x + y) << 12;
-            if (vertical < 0)
-                y = -y;
-            row->depth = Iwram_MulQ16(y, 0x8000);
-        } else {
-            row->scale = 0;
-            row->depth = 0;
-        }
-        row->offset_x = 0;
-        row->offset_y = 0;
-        row++;
-    }
+	zero = 0;
+	ground[0] = position[0];
+	ground[1] = zero;
+	ground[2] = position[2];
+	Iwram_TransformVector(ground, viewed);
+	view = viewed;
+	horizon = view[1] - Iwram_MulQ16(view[2], depth);
+	focus = -gProjection.focal;
+	for (line = 0; line < 160; line++)
+	{
+		distance = Iwram_RatioMulQ14(focus, (gProjection.center_y - line) << 16);
+		difference = distance - depth;
+		if (difference == 0)
+			difference = 1;
+		scale = Iwram_RatioMulQ14(difference, horizon);
+		if (scale < 0)
+		{
+			diagonal = Iwram_MulQ16(-scale, 0x8000);
+			row->scale = Iwram_RatioMulQ14(gProjection.focal, diagonal);
+			diagonal = Iwram_MulQ16(scale, distance);
+			horizontal = (view[2] - scale) >> 4;
+			vertical = (diagonal - view[1]) >> 4;
+			x = Iwram_MulQ16(horizontal, horizontal);
+			y = Iwram_MulQ16(vertical, vertical);
+			y = Iwram_Sqrt(x + y) << 12;
+			if (vertical < 0)
+				y = -y;
+			row->depth = Iwram_MulQ16(y, 0x8000);
+		}
+		else
+		{
+			row->scale = 0;
+			row->depth = 0;
+		}
+		row->offset_x = 0;
+		row->offset_y = 0;
+		row++;
+	}
 }
 
-struct IconColumn {
-    s16 no;
-    s16 animation;
-    u8 on;
-    s8 priority;
-    s8 param;
+struct IconColumn
+{
+	s16 no;
+	s16 animation;
+	u8	on;
+	s8	priority;
+	s8	param;
 };
 
 s32 RuntimeDispatch_ReturnZero();
@@ -7317,543 +7893,625 @@ s32 ResourceMetadata_Register(struct AnimationObject *, s32);
 
 void Ui_RunIconMonitor(void)
 {
-    struct IconColumn ent[4];
-    struct AnimationMetadata *metadata;
-    struct AnimationObject *tbl;
-    volatile s32 zero;
-    s32 no;
-    s32 x;
-    s32 y;
-    u32 mode;
-    s32 flag;
-    struct AnimationPosition *work;
-    s32 slot;
-    u32 cnt;
-    s32 alt;
-    s32 moved;
-    volatile u32 *held;
-    volatile u32 *repeat;
-    u32 i;
+	struct IconColumn		  ent[4];
+	struct AnimationMetadata *metadata;
+	struct AnimationObject	 *tbl;
+	volatile s32			  zero;
+	s32						  no;
+	s32						  x;
+	s32						  y;
+	u32						  mode;
+	s32						  flag;
+	struct AnimationPosition *work;
+	s32						  slot;
+	u32						  cnt;
+	s32						  alt;
+	s32						  moved;
+	volatile u32			 *held;
+	volatile u32			 *repeat;
+	u32						  i;
 
-    x = 144;
-    y = 96;
-    mode = 1;
-    flag = 1;
-    slot = 0;
-    work = Runtime_AllocateBlock(9, 10 * sizeof(*work));
-    gDecodeFillByte = 3;
+	x = 144;
+	y = 96;
+	mode = 1;
+	flag = 1;
+	slot = 0;
+	work = Runtime_AllocateBlock(9, 10 * sizeof(*work));
+	gDecodeFillByte = 3;
 
-    zero = 0;
-    Dma_Set(&zero, work, 0x85000001, REG_DMA3);
-    zero = 0;
-    Dma_Set(&zero, ent, 0x85000008, REG_DMA3);
+	zero = 0;
+	Dma_Set(&zero, work, 0x85000001, REG_DMA3);
+	zero = 0;
+	Dma_Set(&zero, ent, 0x85000008, REG_DMA3);
 
-    no = Ui_FindNextNumberWithMetadata(-1, 1);
-    for (i = 0; i <= 3; i++) {
-        ent[i].animation = 1;
-        ent[i].priority = 1;
-        ent[i].no = no;
-    }
-    ent[0].on = 1;
-    gDebugMode = 2;
-    REG_BLDCNT = 0x3F42;
-    PLTT_BACKDROP = 0x01E0;
-    REG_DISPCNT = 0x1140;
-    Blend_SetDarkenTarget0(1);
+	no = Ui_FindNextNumberWithMetadata(-1, 1);
+	for (i = 0; i <= 3; i++)
+	{
+		ent[i].animation = 1;
+		ent[i].priority = 1;
+		ent[i].no = no;
+	}
+	ent[0].on = 1;
+	gDebugMode = 2;
+	REG_BLDCNT = 0x3F42;
+	PLTT_BACKDROP = 0x01E0;
+	REG_DISPCNT = 0x1140;
+	Blend_SetDarkenTarget0(1);
 
 restart:
-    Runtime_InitializeHeap();
-    Scheduler_ResetTaskTable();
-    work = Runtime_AllocateBlock(9, 10 * sizeof(*work));
-    Resource_InitializeTable();
-    ObjectSystem_Initialize(2);
-    ResourceSlot_Load(0, (u32 *)Ram_MapCellBuffer, ent[0].no, 0);
-    metadata = Resource_GetMetadataRecordFar(ent[0].no);
-    if (metadata->draw_kind == 20) {
-        ResourceSlot_Load(1, (u32 *)Ram_ActorSpriteSlots, ent[0].no + 1, 0);
-    }
+	Runtime_InitializeHeap();
+	Scheduler_ResetTaskTable();
+	work = Runtime_AllocateBlock(9, 10 * sizeof(*work));
+	Resource_InitializeTable();
+	ObjectSystem_Initialize(2);
+	ResourceSlot_Load(0, (u32 *)Ram_MapCellBuffer, ent[0].no, 0);
+	metadata = Resource_GetMetadataRecordFar(ent[0].no);
+	if (metadata->draw_kind == 20)
+	{
+		ResourceSlot_Load(1, (u32 *)Ram_ActorSpriteSlots, ent[0].no + 1, 0);
+	}
 
-    for (i = 0; i <= 9; i++) {
-        metadata = Resource_GetMetadataRecordFar(ent[0].no);
-        alt = 0;
-        if (metadata->draw_kind == 20 && (i & 1) != 0) {
-            alt = 1;
-        }
-        alt = (s32)ResourceObject_Create(ent[0].no + alt + (alt << 12));
-        ResourceMetadata_Register((struct AnimationObject *)alt, ent[1].no);
-        ResourceMetadata_Register((struct AnimationObject *)alt, ent[2].no);
-        ResourceMetadata_Register((struct AnimationObject *)alt, ent[3].no);
-        /* FAKEMATCH: needed to match: the native adds the flags offset to the object's own register (r5) in place; a separate address takes a copy. */
-        alt = (s32)&((struct AnimationObject *)alt)->flags;
-        *(u8 *)alt = flag;
-    }
+	for (i = 0; i <= 9; i++)
+	{
+		metadata = Resource_GetMetadataRecordFar(ent[0].no);
+		alt = 0;
+		if (metadata->draw_kind == 20 && (i & 1) != 0)
+		{
+			alt = 1;
+		}
+		alt = (s32)ResourceObject_Create(ent[0].no + alt + (alt << 12));
+		ResourceMetadata_Register((struct AnimationObject *)alt, ent[1].no);
+		ResourceMetadata_Register((struct AnimationObject *)alt, ent[2].no);
+		ResourceMetadata_Register((struct AnimationObject *)alt, ent[3].no);
+		/* FAKEMATCH: needed to match: the native adds the flags offset to the object's own register (r5) in place; a separate address takes a copy. */
+		alt = (s32) & ((struct AnimationObject *)alt)->flags;
+		*(u8 *)alt = flag;
+	}
 
-    for (i = 0; i <= 3; i++) {
-        if (ent[i].on != 0) {
-            Ui_SetGridColumnPriority(i, ent[i].priority);
-        } else {
-            Ui_SetGridColumnPriority(i, 8);
-        }
-        Ui_SetGridColumnParameter(i, ent[i].param);
-        Ui_FillGridColumnFromMetadata(i, ent[i].animation);
-    }
+	for (i = 0; i <= 3; i++)
+	{
+		if (ent[i].on != 0)
+		{
+			Ui_SetGridColumnPriority(i, ent[i].priority);
+		}
+		else
+		{
+			Ui_SetGridColumnPriority(i, 8);
+		}
+		Ui_SetGridColumnParameter(i, ent[i].param);
+		Ui_FillGridColumnFromMetadata(i, ent[i].animation);
+	}
 
-    Map_BuildProbeRing(x, y, work);
-    Scheduler_AddOrUpdateCallback(Battle_PlaceActorsByFormationKind, 3200);
+	Map_BuildProbeRing(x, y, work);
+	Scheduler_AddOrUpdateCallback(Battle_PlaceActorsByFormationKind, 3200);
 
 next:
-    WaitFrames(1);
-    held = &gKeysHeld;
-    repeat = &gKeysRepeat;
-    for (;;) {
+	WaitFrames(1);
+	held = &gKeysHeld;
+	repeat = &gKeysRepeat;
+	for (;;)
+	{
 
-        if ((*held & KEY_START) != 0) {
-            if ((*held & KEY_LEFT) != 0) {
-                x--;
-            }
-            if ((*held & KEY_RIGHT) != 0) {
-                x++;
-            }
-            if ((*held & KEY_UP) != 0) {
-                y--;
-            }
-            if ((*held & KEY_DOWN) != 0) {
-                y++;
-            }
-            Map_BuildProbeRing(x, y, work);
-        } else {
-            (void)gKeysRepeat;
-            if ((*repeat & KEY_UP) != 0) {
-                slot = (slot - 1) & 3;
-            }
-            if ((gKeysRepeat & KEY_DOWN) != 0) {
-                slot = (slot + 1) & 3;
-            }
-            if ((gKeysRepeat & KEY_LEFT) != 0) {
-                mode = (mode - 1) & 3;
-            }
-            if ((gKeysRepeat & KEY_RIGHT) != 0) {
-                mode++;
-                mode &= 3;
-            }
-        }
+		if ((*held & KEY_START) != 0)
+		{
+			if ((*held & KEY_LEFT) != 0)
+			{
+				x--;
+			}
+			if ((*held & KEY_RIGHT) != 0)
+			{
+				x++;
+			}
+			if ((*held & KEY_UP) != 0)
+			{
+				y--;
+			}
+			if ((*held & KEY_DOWN) != 0)
+			{
+				y++;
+			}
+			Map_BuildProbeRing(x, y, work);
+		}
+		else
+		{
+			(void)gKeysRepeat;
+			if ((*repeat & KEY_UP) != 0)
+			{
+				slot = (slot - 1) & 3;
+			}
+			if ((gKeysRepeat & KEY_DOWN) != 0)
+			{
+				slot = (slot + 1) & 3;
+			}
+			if ((gKeysRepeat & KEY_LEFT) != 0)
+			{
+				mode = (mode - 1) & 3;
+			}
+			if ((gKeysRepeat & KEY_RIGHT) != 0)
+			{
+				mode++;
+				mode &= 3;
+			}
+		}
 
-        if ((gKeyState & KEY_START) != 0) {
-            tbl = gSpriteObjects;
-            flag ^= 1;
-            for (i = 0; i <= 9; i++) {
-                tbl->flags = flag;
-                tbl++;
-            }
-        }
+		if ((gKeyState & KEY_START) != 0)
+		{
+			tbl = gSpriteObjects;
+			flag ^= 1;
+			for (i = 0; i <= 9; i++)
+			{
+				tbl->flags = flag;
+				tbl++;
+			}
+		}
 
-        switch (mode) {
-        case 0:
-            if (slot == 1) {
-                break;
-            }
-            if ((gKeysRepeat & KEY_L) != 0) {
-                ent[slot].animation--;
-                if (ent[slot].animation < 0) {
-                    ent[slot].animation = 0;
-                }
-                if (slot == 0) {
-                    ent[1].animation = ent[0].animation;
-                }
-                goto next;
-            }
-            if ((gKeysRepeat & KEY_R) == 0) {
-                break;
-            }
-            ent[slot].animation++;
-            if (ent[slot].animation > 99) {
-                ent[slot].animation = 99;
-            }
-            if (slot == 0) {
-                ent[1].animation = ent[0].animation;
-            }
-            goto next;
+		switch (mode)
+		{
+		case 0:
+			if (slot == 1)
+			{
+				break;
+			}
+			if ((gKeysRepeat & KEY_L) != 0)
+			{
+				ent[slot].animation--;
+				if (ent[slot].animation < 0)
+				{
+					ent[slot].animation = 0;
+				}
+				if (slot == 0)
+				{
+					ent[1].animation = ent[0].animation;
+				}
+				goto next;
+			}
+			if ((gKeysRepeat & KEY_R) == 0)
+			{
+				break;
+			}
+			ent[slot].animation++;
+			if (ent[slot].animation > 99)
+			{
+				ent[slot].animation = 99;
+			}
+			if (slot == 0)
+			{
+				ent[1].animation = ent[0].animation;
+			}
+			goto next;
 
-        case 1:
-            moved = 0;
-            cnt = 1;
-            if ((*held & KEY_START) != 0) {
-                cnt = 10;
-            }
-            if ((*repeat & KEY_L) != 0) {
-                for (i = 0; i < cnt; i++) {
-                    ent[slot].no = Ui_FindNextNumberWithMetadata(ent[slot].no, -1);
-                }
-                moved = 1;
-            }
-            if ((*repeat & KEY_R) != 0) {
-                for (i = 0; i < cnt; i++) {
-                    ent[slot].no = Ui_FindNextNumberWithMetadata(ent[slot].no, 1);
-                }
-                moved = 1;
-            }
-            if (moved == 0) {
-                break;
-            }
-            if (slot == 0) {
-                goto restart;
-            }
-            if (ent[slot].on == 0) {
-                goto next;
-            }
-            Ui_SetGridColumnNumber(slot, ent[slot].no);
-            Ui_SetGridColumnPriority(slot, ent[slot].priority);
-            Ui_SetGridColumnParameter(slot, ent[slot].param);
-            Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
-            goto next;
+		case 1:
+			moved = 0;
+			cnt = 1;
+			if ((*held & KEY_START) != 0)
+			{
+				cnt = 10;
+			}
+			if ((*repeat & KEY_L) != 0)
+			{
+				for (i = 0; i < cnt; i++)
+				{
+					ent[slot].no = Ui_FindNextNumberWithMetadata(ent[slot].no, -1);
+				}
+				moved = 1;
+			}
+			if ((*repeat & KEY_R) != 0)
+			{
+				for (i = 0; i < cnt; i++)
+				{
+					ent[slot].no = Ui_FindNextNumberWithMetadata(ent[slot].no, 1);
+				}
+				moved = 1;
+			}
+			if (moved == 0)
+			{
+				break;
+			}
+			if (slot == 0)
+			{
+				goto restart;
+			}
+			if (ent[slot].on == 0)
+			{
+				goto next;
+			}
+			Ui_SetGridColumnNumber(slot, ent[slot].no);
+			Ui_SetGridColumnPriority(slot, ent[slot].priority);
+			Ui_SetGridColumnParameter(slot, ent[slot].param);
+			Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
+			goto next;
 
-        case 2:
-            moved = 0;
-            if ((*repeat & KEY_L) != 0) {
-                ent[slot].priority--;
-                if (ent[slot].priority < 0) {
-                    ent[slot].priority = 3;
-                }
-                moved = 1;
-            }
-            if ((*repeat & KEY_R) != 0) {
-                ent[slot].priority++;
-                if (ent[slot].priority > 3) {
-                    ent[slot].priority = 0;
-                }
-                moved = 1;
-            }
-            if (moved == 0) {
-                break;
-            }
-            if (ent[slot].on == 0) {
-                goto next;
-            }
-            Ui_SetGridColumnPriority(slot, ent[slot].priority);
-            goto next;
+		case 2:
+			moved = 0;
+			if ((*repeat & KEY_L) != 0)
+			{
+				ent[slot].priority--;
+				if (ent[slot].priority < 0)
+				{
+					ent[slot].priority = 3;
+				}
+				moved = 1;
+			}
+			if ((*repeat & KEY_R) != 0)
+			{
+				ent[slot].priority++;
+				if (ent[slot].priority > 3)
+				{
+					ent[slot].priority = 0;
+				}
+				moved = 1;
+			}
+			if (moved == 0)
+			{
+				break;
+			}
+			if (ent[slot].on == 0)
+			{
+				goto next;
+			}
+			Ui_SetGridColumnPriority(slot, ent[slot].priority);
+			goto next;
 
-        case 3:
-            moved = 0;
-            if ((*repeat & KEY_L) != 0) {
-                ent[slot].param--;
-                if (ent[slot].param < 0) {
-                    ent[slot].param = 15;
-                }
-                moved = 1;
-            }
-            if ((*repeat & KEY_R) != 0) {
-                ent[slot].param++;
-                if (ent[slot].param > 15) {
-                    ent[slot].param = 0;
-                }
-                moved = 1;
-            }
-            if (moved == 0) {
-                break;
-            }
-            if (ent[slot].on == 0) {
-                goto next;
-            }
-            Ui_SetGridColumnParameter(slot, ent[slot].param);
-            goto next;
+		case 3:
+			moved = 0;
+			if ((*repeat & KEY_L) != 0)
+			{
+				ent[slot].param--;
+				if (ent[slot].param < 0)
+				{
+					ent[slot].param = 15;
+				}
+				moved = 1;
+			}
+			if ((*repeat & KEY_R) != 0)
+			{
+				ent[slot].param++;
+				if (ent[slot].param > 15)
+				{
+					ent[slot].param = 0;
+				}
+				moved = 1;
+			}
+			if (moved == 0)
+			{
+				break;
+			}
+			if (ent[slot].on == 0)
+			{
+				goto next;
+			}
+			Ui_SetGridColumnParameter(slot, ent[slot].param);
+			goto next;
 
-        default:
-            break;
-        }
+		default:
+			break;
+		}
 
-        if ((*repeat & KEY_A) != 0) {
-            if (mode == 0) {
-                if (slot != 1) {
-                    if (ent[slot].on == 0) {
-                        goto next;
-                    }
-                    Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
-                    if (slot != 0) {
-                        goto next;
-                    }
-                    Ui_FillGridColumnFromMetadata(1, ent[1].animation);
-                    goto next;
-                }
-            } else if (slot != 0) {
-                ent[slot].on ^= 1;
-                Ui_SetGridColumnPriority(slot, ent[slot].on != 0 ? ent[slot].priority : 8);
-                goto next;
-            }
-        }
+		if ((*repeat & KEY_A) != 0)
+		{
+			if (mode == 0)
+			{
+				if (slot != 1)
+				{
+					if (ent[slot].on == 0)
+					{
+						goto next;
+					}
+					Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
+					if (slot != 0)
+					{
+						goto next;
+					}
+					Ui_FillGridColumnFromMetadata(1, ent[1].animation);
+					goto next;
+				}
+			}
+			else if (slot != 0)
+			{
+				ent[slot].on ^= 1;
+				Ui_SetGridColumnPriority(slot, ent[slot].on != 0 ? ent[slot].priority : 8);
+				goto next;
+			}
+		}
 
-        if ((*repeat & KEY_SELECT) != 0) {
-            Scheduler_ResetTaskTable();
-            if ((*held & KEY_B) != 0) {
-                RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCalls, FarCall_ResourceTable);
-            } else {
-                RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCallsAlternate, FarCall_ResourceTable);
-            }
-            goto restart;
-        }
-        WaitFrames(1);
-    }
+		if ((*repeat & KEY_SELECT) != 0)
+		{
+			Scheduler_ResetTaskTable();
+			if ((*held & KEY_B) != 0)
+			{
+				RuntimeDispatch_ReturnZero(
+					(s32)&ResourceId_ResourceFarCalls, FarCall_ResourceTable);
+			}
+			else
+			{
+				RuntimeDispatch_ReturnZero(
+					(s32)&ResourceId_ResourceFarCallsAlternate, FarCall_ResourceTable);
+			}
+			goto restart;
+		}
+		WaitFrames(1);
+	}
 }
 
 s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step)
 {
-    for (;;) {
-        start += step;
-        if (start < 0) {
-            start = 0x200;
-            continue;
-        }
-        {
-            /* FAKEMATCH: needed to match: the upper bound in a local compares as cmp against 0x200 with blt; the literal compares against 0x1ff from the pool. */
-            s32 limit = 0x200;
-            if (start >= limit) {
-                start = -1;
-                continue;
-            }
-        }
-        if (Resource_GetMetadataRecordFar(start)->width) {
-            return start;
-        }
-    }
+	for (;;)
+	{
+		start += step;
+		if (start < 0)
+		{
+			start = 0x200;
+			continue;
+		}
+		{
+			/* FAKEMATCH: needed to match: the upper bound in a local compares as cmp against 0x200 with blt; the literal compares against 0x1ff from the pool. */
+			s32 limit = 0x200;
+			if (start >= limit)
+			{
+				start = -1;
+				continue;
+			}
+		}
+		if (Resource_GetMetadataRecordFar(start)->width)
+		{
+			return start;
+		}
+	}
 }
 
 extern s32 gFrameTick;
-#define Vector_AddPolarOffset ((void (*)(s32 radius, s32 angle, s32 *point))Vector_AddPolarOffset)
+#define Vector_AddPolarOffset ((void (*)(s32 radius, s32 angle, s32 * point)) Vector_AddPolarOffset)
 
 void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
 {
-    struct AnimationPosition *pair;
-    s32 angle;
-    s32 i;
-    u16 turn;
-    u8 kind;
+	struct AnimationPosition *pair;
+	s32						  angle;
+	s32						  i;
+	u16						  turn;
+	u8						  kind;
 
-    angle = 0;
-    kind = gSpriteObjects->entries[0]->kind;
-    if ((gKeysHeld & KEY_B) != 0)
-        angle = (s16)(gFrameTick << 8);
-    switch ((u32)kind) {
-    case 3:
-        for (i = 0; i < 6; i++) {
-            angle <<= 16;
-            out->x = x << 16;
-            angle = (u32)angle >> 16;
-            out->y = 0;
-            out->z = z << 16;
-            Vector_AddPolarOffset(0x380000, (u16)angle, &out->x);
-            out++;
-            angle = (s16)(angle + 0x2aaa);
-        }
-        for (; i < 10; i++)
-            out++;
-        break;
-    case 5:
-    case 8:
-    case 44:
-    case 88:
-        for (i = 0; i < 8; i++) {
-            angle <<= 16;
-            out->x = x << 16;
-            angle = (u32)angle >> 16;
-            out->y = 0;
-            out->z = z << 16;
-            Vector_AddPolarOffset(0x380000, (u16)angle, &out->x);
-            out++;
-            angle = (s16)(angle + 0x2000);
-        }
-        for (; i < 10; i++)
-            out++;
-        break;
-    case 4:
-    case 6:
-        for (i = 0; i < 10; i++) {
-            angle <<= 16;
-            out->x = x << 16;
-            angle = (u32)angle >> 16;
-            out->y = 0;
-            out->z = z << 16;
-            Vector_AddPolarOffset(0x380000, (u16)angle, &out->x);
-            out++;
-            angle = (s16)(angle + 0x1999);
-        }
-        break;
-    case 20:
-        turn = angle;
-        angle = (s16)(turn + 0x4000);
-        i = 0;
-        pair = out;
-        while (i < 2) {
-            pair[i * 2].x = x << 16;
-            pair[i * 2].y = 0;
-            pair[i * 2].z = z << 16;
-            angle <<= 16;
-            angle = (u32)angle >> 16;
-            Vector_AddPolarOffset(0x280000, angle, &out[0].x);
-            pair[i * 2 + 1].x = x << 16;
-            {
-                s32 *point = &out[1].x;
-                pair[i * 2 + 1].y = 0;
-                pair[i * 2 + 1].z = z << 16;
-                Vector_AddPolarOffset(0x280000, (u16)angle, point);
-            }
-            angle = (angle + 0x8000) << 16;
-            i++;
-            out += 2;
-            angle >>= 16;
-        }
-        break;
-    default:
-        angle = ((angle << 16) + 0x20000000) >> 16;
-        for (i = 0; i < 4; i++) {
-            angle <<= 16;
-            angle = (u32)angle >> 16;
-            out->x = x << 16;
-            out->y = 0;
-            out->z = z << 16;
-            Vector_AddPolarOffset(0x380000, (u16)angle, &out->x);
-            out++;
-            angle = (s16)(angle + 0x4000);
-        }
-        for (i = 4; i < 10; i++)
-            out++;
-        break;
-    }
+	angle = 0;
+	kind = gSpriteObjects->entries[0]->kind;
+	if ((gKeysHeld & KEY_B) != 0)
+		angle = (s16)(gFrameTick << 8);
+	switch ((u32)kind)
+	{
+	case 3:
+		for (i = 0; i < 6; i++)
+		{
+			angle <<= 16;
+			out->x = x << 16;
+			angle = (u32)angle >> 16;
+			out->y = 0;
+			out->z = z << 16;
+			Vector_AddPolarOffset(0x380000, (u16)angle, &out->x);
+			out++;
+			angle = (s16)(angle + 0x2aaa);
+		}
+		for (; i < 10; i++)
+			out++;
+		break;
+	case 5:
+	case 8:
+	case 44:
+	case 88:
+		for (i = 0; i < 8; i++)
+		{
+			angle <<= 16;
+			out->x = x << 16;
+			angle = (u32)angle >> 16;
+			out->y = 0;
+			out->z = z << 16;
+			Vector_AddPolarOffset(0x380000, (u16)angle, &out->x);
+			out++;
+			angle = (s16)(angle + 0x2000);
+		}
+		for (; i < 10; i++)
+			out++;
+		break;
+	case 4:
+	case 6:
+		for (i = 0; i < 10; i++)
+		{
+			angle <<= 16;
+			out->x = x << 16;
+			angle = (u32)angle >> 16;
+			out->y = 0;
+			out->z = z << 16;
+			Vector_AddPolarOffset(0x380000, (u16)angle, &out->x);
+			out++;
+			angle = (s16)(angle + 0x1999);
+		}
+		break;
+	case 20:
+		turn = angle;
+		angle = (s16)(turn + 0x4000);
+		i = 0;
+		pair = out;
+		while (i < 2)
+		{
+			pair[i * 2].x = x << 16;
+			pair[i * 2].y = 0;
+			pair[i * 2].z = z << 16;
+			angle <<= 16;
+			angle = (u32)angle >> 16;
+			Vector_AddPolarOffset(0x280000, angle, &out[0].x);
+			pair[i * 2 + 1].x = x << 16;
+			{
+				s32 *point = &out[1].x;
+				pair[i * 2 + 1].y = 0;
+				pair[i * 2 + 1].z = z << 16;
+				Vector_AddPolarOffset(0x280000, (u16)angle, point);
+			}
+			angle = (angle + 0x8000) << 16;
+			i++;
+			out += 2;
+			angle >>= 16;
+		}
+		break;
+	default:
+		angle = ((angle << 16) + 0x20000000) >> 16;
+		for (i = 0; i < 4; i++)
+		{
+			angle <<= 16;
+			angle = (u32)angle >> 16;
+			out->x = x << 16;
+			out->y = 0;
+			out->z = z << 16;
+			Vector_AddPolarOffset(0x380000, (u16)angle, &out->x);
+			out++;
+			angle = (s16)(angle + 0x4000);
+		}
+		for (i = 4; i < 10; i++)
+			out++;
+		break;
+	}
 }
 
-struct Vec2 {
-    s32 x;
-    s32 y;
+struct Vec2
+{
+	s32 x;
+	s32 y;
 };
 
 void Ui_SetGridColumnParameter(s32 slot, s32 value)
 {
-    struct AnimationObject *object = gSpriteObjects;
-    s32 i;
+	struct AnimationObject *object = gSpriteObjects;
+	s32						i;
 
-    slot &= 3;
-    for (i = 0; i < 10; i++) {
-        object->entries[slot]->param = value;
-        object++;
-    }
+	slot &= 3;
+	for (i = 0; i < 10; i++)
+	{
+		object->entries[slot]->param = value;
+		object++;
+	}
 }
 
 void Ui_SetGridColumnPriority(s32 slot, s32 value)
 {
-    struct AnimationObject *object = gSpriteObjects;
-    s32 i;
+	struct AnimationObject *object = gSpriteObjects;
+	s32						i;
 
-    slot &= 3;
-    for (i = 0; i < 10; i++) {
-        object->entries[slot]->priority = value;
-        object++;
-    }
+	slot &= 3;
+	for (i = 0; i < 10; i++)
+	{
+		object->entries[slot]->priority = value;
+		object++;
+	}
 }
 
 void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
 {
-    s32 index;
-    s32 count;
-    s32 offset;
-    struct AnimationMetadata *metadata;
-    struct AnimationEntry *entry;
-    struct AnimationObject *object;
+	s32						  index;
+	s32						  count;
+	s32						  offset;
+	struct AnimationMetadata *metadata;
+	struct AnimationEntry	 *entry;
+	struct AnimationObject	 *object;
 
-    object = gSpriteObjects;
-    count = 0;
-    /* FAKEMATCH: needed to match: the precomputed slot lane keeps the offset addition outside the loop; typed indexing moves it inside. */
-    offset = (3 & slot) * sizeof(void *) + (u32)&((struct AnimationObject *)0)->entries;
-    index = 0;
-    do {
-        entry = *(struct AnimationEntry **)((u8 *)object + offset);
-        if (entry->scripts != 0) {
-            metadata = Resource_GetMetadataRecordFar(entry->anim_id);
-            if (value < metadata->animation_count) {
-                entry->kind = metadata->draw_kind;
-                entry->script = entry->scripts[value];
-                entry->timer = count * 0x10;
-                entry->step = 0x10;
-                entry->pos = index;
-                entry->frame_base = index;
-                entry->frame = 0xff;
-            }
-            object->offset_y = metadata->adjust_y;
-            object->rotation = index;
-        }
-        count++;
-        object++;
-    } while (count <= 9);
+	object = gSpriteObjects;
+	count = 0;
+	/* FAKEMATCH: needed to match: the precomputed slot lane keeps the offset addition outside the loop; typed indexing moves it inside. */
+	offset = (3 & slot) * sizeof(void *) + (u32) & ((struct AnimationObject *)0)->entries;
+	index = 0;
+	do
+	{
+		entry = *(struct AnimationEntry **)((u8 *)object + offset);
+		if (entry->scripts != 0)
+		{
+			metadata = Resource_GetMetadataRecordFar(entry->anim_id);
+			if (value < metadata->animation_count)
+			{
+				entry->kind = metadata->draw_kind;
+				entry->script = entry->scripts[value];
+				entry->timer = count * 0x10;
+				entry->step = 0x10;
+				entry->pos = index;
+				entry->frame_base = index;
+				entry->frame = 0xff;
+			}
+			object->offset_y = metadata->adjust_y;
+			object->rotation = index;
+		}
+		count++;
+		object++;
+	} while (count <= 9);
 }
 
 void Ui_SetGridColumnNumber(s32 slot, s32 no)
 {
-    struct AnimationObject *object = gSpriteObjects;
-    s32 i;
+	struct AnimationObject *object = gSpriteObjects;
+	s32						i;
 
-    Resource_GetMetadataRecordFar(no);
-    slot &= 3;
-    for (i = 0; i < 10; i++) {
-        struct AnimationEntry *entry = object->entries[slot];
+	Resource_GetMetadataRecordFar(no);
+	slot &= 3;
+	for (i = 0; i < 10; i++)
+	{
+		struct AnimationEntry *entry = object->entries[slot];
 
-        entry->anim_id = no;
-        Animation_InitWorkFromMetadata(entry);
-        object++;
-    }
+		entry->anim_id = no;
+		Animation_InitWorkFromMetadata(entry);
+		object++;
+	}
 }
 
 void Battle_PlaceActorsByFormationKind(void)
 {
-    struct AnimationObject *actor = WORK_SLOT(4);
-    u32 kind = actor->entries[0]->kind;
-    struct Vec2 scale;
-    struct AnimationPosition *table;
-    u16 angle;
-    u16 step;
-    u16 odd = 0;
-    u32 count;
-    u32 i;
+	struct AnimationObject	 *actor = WORK_SLOT(4);
+	u32						  kind = actor->entries[0]->kind;
+	struct Vec2				  scale;
+	struct AnimationPosition *table;
+	u16						  angle;
+	u16						  step;
+	u16						  odd = 0;
+	u32						  count;
+	u32						  i;
 
-    scale = Battle_FormationPlacementScale;
-    table = WORK_SLOT(HEAP_SLOT_BATTLE);
+	scale = Battle_FormationPlacementScale;
+	table = WORK_SLOT(HEAP_SLOT_BATTLE);
 
-    switch (kind) {
-    case 3:
-        angle = 0;
-        step = 0x2aaa;
-        count = 6;
-        break;
-    case 5:
-    case 8:
-    case 44:
-    case 88:
-        angle = 0;
-        step = 0x2000;
-        count = 8;
-        break;
-    case 4:
-    case 6:
-        angle = 0;
-        step = 0x1999;
-        count = 10;
-        break;
-    case 20:
-        angle = 0;
-        step = 0;
-        odd = 0x8000;
-        count = 4;
-        break;
-    default:
-        angle = 0x2000;
-        step = 0x4000;
-        count = 4;
-        break;
-    }
+	switch (kind)
+	{
+	case 3:
+		angle = 0;
+		step = 0x2aaa;
+		count = 6;
+		break;
+	case 5:
+	case 8:
+	case 44:
+	case 88:
+		angle = 0;
+		step = 0x2000;
+		count = 8;
+		break;
+	case 4:
+	case 6:
+		angle = 0;
+		step = 0x1999;
+		count = 10;
+		break;
+	case 20:
+		angle = 0;
+		step = 0;
+		odd = 0x8000;
+		count = 4;
+		break;
+	default:
+		angle = 0x2000;
+		step = 0x4000;
+		count = 4;
+		break;
+	}
 
-    for (i = 0; i < count; i++) {
-        Render_ApplyProjectedPlacement(actor, &table[i].x, (s32 *)&scale, angle);
-        actor++;
-        angle += step;
-        if (i & 1)
-            angle += odd;
-    }
+	for (i = 0; i < count; i++)
+	{
+		Render_ApplyProjectedPlacement(actor, &table[i].x, (s32 *)&scale, angle);
+		actor++;
+		angle += step;
+		if (i & 1)
+			angle += odd;
+	}
 }
 
 #undef Render_ApplyProjectedPlacement

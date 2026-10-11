@@ -22,75 +22,85 @@
 #include "b5_context.h"
 #include "objcmd.h"
 
-enum {
-    FLAG_BOULDER_FELL = 0x838
+enum
+{
+	FLAG_BOULDER_FELL = 0x838
 };
 
-enum StormNightActor {
-    ACTOR_DORA = ACTOR_FIRST_PLACED + 1,
-    ACTOR_KYLE
+enum StormNightActor
+{
+	ACTOR_DORA = ACTOR_FIRST_PLACED + 1,
+	ACTOR_KYLE
 };
 
 #define ACTOR_ID 22
 
-struct Object {
-    u8 filler00[6];
-    u16 x;
-    u8 filler08[92];
-    s16 counter;
+struct Object
+{
+	u8	filler00[6];
+	u16 x;
+	u8	filler08[92];
+	s16 counter;
 };
 
-typedef struct Obj {
-    u8 pad00[8];
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-    u8 pad14[4];
-    s32 f18;
-    s32 f1c;
-    u8 pad20[0x44];
-    u16 f64;
-    u8 pad66[2];
-    struct Obj *f68;
+typedef struct Obj
+{
+	u8			pad00[8];
+	s32			f08;
+	s32			f0c;
+	s32			f10;
+	u8			pad14[4];
+	s32			f18;
+	s32			f1c;
+	u8			pad20[0x44];
+	u16			f64;
+	u8			pad66[2];
+	struct Obj *f68;
 } Obj;
 
-typedef struct Ent {
-    u8 pad00[9];
-    u8 b01:2;
-    u8 f:2;
-    u8 b45:4;
+typedef struct Ent
+{
+	u8 pad00[9];
+	u8 b01 : 2;
+	u8 f : 2;
+	u8 b45 : 4;
 } Ent;
 
-typedef struct Rec {
-    u8 pad00[0x50];
-    Ent *f50;
+typedef struct Rec
+{
+	u8	 pad00[0x50];
+	Ent *f50;
 } Rec;
 
-struct FixedPointCountdown {
-    u8 pad_00[0x18];
-    s32 fixed_point_18;
-    s32 fixed_point_1c;
-    u8 pad_20[0x44];
-    s16 countdown;
+struct FixedPointCountdown
+{
+	u8	pad_00[0x18];
+	s32 fixed_point_18;
+	s32 fixed_point_1c;
+	u8	pad_20[0x44];
+	s16 countdown;
 };
 
-typedef struct {
-    u8 filler0[8];
-    s32 unk8;
-    u8 fillerC[4];
-    s32 unk10;
+typedef struct
+{
+	u8	filler0[8];
+	s32 unk8;
+	u8	fillerC[4];
+	s32 unk10;
 } Thing1;
 
-typedef struct {
-    u8 filler0[10];
-    s16 unkA;
-    u8 fillerC[6];
-    s16 unk12;
+typedef struct
+{
+	u8	filler0[10];
+	s16 unkA;
+	u8	fillerC[6];
+	s16 unk12;
 } Thing2;
 
-struct Actor {
-    u8 reserved_00[80];
-    u8 *presentation;
+struct Actor
+{
+	u8	reserved_00[80];
+	u8 *presentation;
 };
 
 extern u8 HaidiaArashi_FrameModes[];
@@ -113,14 +123,14 @@ extern s32 HaidiaArashi_ActorEightScript[];
 
 void Engine_ActorSetSpritePriority(s32 actor, s32 priority);
 
-extern s32 HaidiaArashi_ShakeDone;
-extern s32 HaidiaArashi_ShakeShift;
-extern u16 HaidiaArashi_CellSteps2[];
-extern u16 HaidiaArashi_CellSteps3[];
+extern s32					 HaidiaArashi_ShakeDone;
+extern s32					 HaidiaArashi_ShakeShift;
+extern u16					 HaidiaArashi_CellSteps2[];
+extern u16					 HaidiaArashi_CellSteps3[];
 extern struct ScenePlacement HaidiaArashi_LastObjectCall[];
-extern s32 HaidiaArashi_LeaderScript[];
-extern s32 HaidiaArashi_ActorTwentyScript[];
-extern s32 HaidiaArashi_ActorTwentyTwoScript[];
+extern s32					 HaidiaArashi_LeaderScript[];
+extern s32					 HaidiaArashi_ActorTwentyScript[];
+extern s32					 HaidiaArashi_ActorTwentyTwoScript[];
 
 s32 Math_RemainderUnsigned(s32, s32);
 
@@ -161,13 +171,13 @@ void BattleEffect_CleanupSceneObjects(void);
 
 void SceneActor_RunActor22PlacementSequence(s32 x, s32 y);
 
-s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object);
-s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state);
-u8 *HaidiaArashi_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
-u8 *HaidiaArashi_GetExits(void);
-u8 *HaidiaArashi_GetPlacements(void);
-u8 *HaidiaArashi_GetEvents(void);
+s32	 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object);
+s32	 UpdateFixedPointCountdown(struct FixedPointCountdown *state);
+u8	*HaidiaArashi_GetEntrances(void);
+s32	 SceneData_ReturnZero(void);
+u8	*HaidiaArashi_GetExits(void);
+u8	*HaidiaArashi_GetPlacements(void);
+u8	*HaidiaArashi_GetEvents(void);
 void SceneState_SetFlag210AndConfigureRegion40_84(void);
 void SceneState_SetFlag210AndConfigureRegion40_89(void);
 void HaidiaArashi_RequestBackdropExit(u8 *o);
@@ -184,7 +194,7 @@ void HaidiaArashi_OpenBackdropExit9(void);
 void HaidiaArashi_OpenRouteTen(void);
 void HaidiaArashi_OpenRouteTwelve(void);
 void HaidiaArashi_OpenRouteThirteen(void);
-s32 FieldScene_RunFlagGatedActorSetup(void);
+s32	 FieldScene_RunFlagGatedActorSetup(void);
 void Scene_DoraSendsRobinToThePlaza(void);
 void HaidiaArashi_SetStormCellAttributes(void);
 void ActorPresentation_SetEightSceneCells(void);
@@ -230,2659 +240,2831 @@ s32 HaidiaArashi_ShakeShift;
 
 s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object)
 {
-    s32 loaded = ((struct FieldActor *)object)->timer;
-    s32 counter = (s16)loaded;
+	s32 loaded = ((struct FieldActor *)object)->timer;
+	s32 counter = (s16)loaded;
 
-    if (loaded == 0) {
-        ((struct FieldActor *)object)->facing = Engine_RandomNext();
-        counter = Math_RemainderUnsigned(Engine_RandomNext(), 20) + 20;
-        ((struct FieldActor *)object)->timer = counter;
-    }
-    ((struct FieldActor *)object)->timer = counter - 1;
-    return 1;
+	if (loaded == 0)
+	{
+		((struct FieldActor *)object)->facing = Engine_RandomNext();
+		counter = Math_RemainderUnsigned(Engine_RandomNext(), 20) + 20;
+		((struct FieldActor *)object)->timer = counter;
+	}
+	((struct FieldActor *)object)->timer = counter - 1;
+	return 1;
 }
 
 s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
 {
-    switch (((struct FieldActor *)state)->timer) {
-    case 6:
-        ((struct FieldActor *)state)->scale_x -= 0x4000;
-        ((struct FieldActor *)state)->scale_y += 0x2000;
-        break;
-    case 4:
-        ((struct FieldActor *)state)->scale_x += 0x2000;
-        ((struct FieldActor *)state)->scale_y += -0x1000;
-        break;
-    case 2:
-        ((struct FieldActor *)state)->scale_x += 0x1000;
-        ((struct FieldActor *)state)->scale_y -= 0x800;
-        break;
-    case 0:
-        ((struct FieldActor *)state)->scale_x = 0x10000;
-        ((struct FieldActor *)state)->scale_y = 0x10000;
-        ((struct FieldActor *)state)->timer = (Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
-        break;
-    }
-    ((struct FieldActor *)state)->timer--;
-    return 1;
+	switch (((struct FieldActor *)state)->timer)
+	{
+	case 6:
+		((struct FieldActor *)state)->scale_x -= 0x4000;
+		((struct FieldActor *)state)->scale_y += 0x2000;
+		break;
+	case 4:
+		((struct FieldActor *)state)->scale_x += 0x2000;
+		((struct FieldActor *)state)->scale_y += -0x1000;
+		break;
+	case 2:
+		((struct FieldActor *)state)->scale_x += 0x1000;
+		((struct FieldActor *)state)->scale_y -= 0x800;
+		break;
+	case 0:
+		((struct FieldActor *)state)->scale_x = 0x10000;
+		((struct FieldActor *)state)->scale_y = 0x10000;
+		((struct FieldActor *)state)->timer =
+			(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
+		break;
+	}
+	((struct FieldActor *)state)->timer--;
+	return 1;
 }
 
 u8 *HaidiaArashi_GetEntrances(void)
 {
-    return HaidiaArashi_SceneTable0;
+	return HaidiaArashi_SceneTable0;
 }
 
 s32 SceneData_ReturnZero(void)
 {
-    return 0;
+	return 0;
 }
 
 u8 *HaidiaArashi_GetExits(void)
 {
-    return HaidiaArashi_SceneTable1;
+	return HaidiaArashi_SceneTable1;
 }
 
 u8 *HaidiaArashi_GetPlacements(void)
 {
-    return HaidiaArashi_SceneTable2;
+	return HaidiaArashi_SceneTable2;
 }
 
 u8 *HaidiaArashi_GetEvents(void)
 {
-    return HaidiaArashi_SceneTable3;
+	return HaidiaArashi_SceneTable3;
 }
 
 void SceneState_SetFlag210AndConfigureRegion40_84(void)
 {
-    s32 a;
-    s32 b;
+	s32 a;
+	s32 b;
 
-    Engine_GameFlagSet(0x210);
-    a = 10;
-    b = 84;
-    Engine_MapCopyCellAttributes(40, 84, 7, 4, a, b);
+	Engine_GameFlagSet(0x210);
+	a = 10;
+	b = 84;
+	Engine_MapCopyCellAttributes(40, 84, 7, 4, a, b);
 }
 
 void SceneState_SetFlag210AndConfigureRegion40_89(void)
 {
 
-    s32 a;
-    s32 b;
+	s32 a;
+	s32 b;
 
-    Engine_GameFlagClear(0x210);
-    a = 10;
-    b = 84;
-    Engine_MapCopyCellAttributes(40, 89, 7, 4, a, b);
+	Engine_GameFlagClear(0x210);
+	a = 10;
+	b = 84;
+	Engine_MapCopyCellAttributes(40, 89, 7, 4, a, b);
 }
 
 void HaidiaArashi_RequestBackdropExit(u8 *o)
 {
 
-    struct EventWork *state;
+	struct EventWork *state;
 
-    if (Engine_GameFlagIsSet(0x834) != 0) {
-        BattleFx_SetBlock30ValuesMaxZero();
-    }
-    state = gEventWork;
-    state->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    state->transition_frames = 16;
-    Engine_EventRequestExit(o);
+	if (Engine_GameFlagIsSet(0x834) != 0)
+	{
+		BattleFx_SetBlock30ValuesMaxZero();
+	}
+	state = gEventWork;
+	state->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	state->transition_frames = 16;
+	Engine_EventRequestExit(o);
 }
 
 void HaidiaArashi_OpenBackdropExit11(void)
 {
-    Engine_AudioPlayCue(0x9E);
-    Engine_MapAnimateCells(HaidiaArashi_CellSteps0, 45, 11);
-    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x101, 0x1A4);
-    Engine_EventWait(3);
-    HaidiaArashi_RequestBackdropExit(11);
+	Engine_AudioPlayCue(0x9E);
+	Engine_MapAnimateCells(HaidiaArashi_CellSteps0, 45, 11);
+	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x101, 0x1A4);
+	Engine_EventWait(3);
+	HaidiaArashi_RequestBackdropExit(11);
 }
 
 void SceneState_SetValue123Mode1(void)
 {
 
-    Engine_AudioPlayCue(0x7B);
-    HaidiaArashi_RequestBackdropExit(1);
+	Engine_AudioPlayCue(0x7B);
+	HaidiaArashi_RequestBackdropExit(1);
 }
 
 void SceneState_ApplyValues123And3(void)
 {
 
-    Engine_AudioPlayCue(0x7B);
-    HaidiaArashi_RequestBackdropExit(3);
+	Engine_AudioPlayCue(0x7B);
+	HaidiaArashi_RequestBackdropExit(3);
 }
 
 void SceneState_SetValue123Mode4(void)
 {
 
-    Engine_AudioPlayCue(0x7B);
-    HaidiaArashi_RequestBackdropExit(4);
+	Engine_AudioPlayCue(0x7B);
+	HaidiaArashi_RequestBackdropExit(4);
 }
 
 void FieldScene_RunStep7BAndCheckFlags841And842(void)
 {
-    Engine_AudioPlayCue(0x7B);
-    if (Engine_GameFlagIsSet(0x841) != 0
-        && Engine_GameFlagIsSet(0x842) == 0) {
-        FieldScene_ConfigureActorTwentyTwoScene();
-    }
-    HaidiaArashi_RequestBackdropExit(2);
+	Engine_AudioPlayCue(0x7B);
+	if (Engine_GameFlagIsSet(0x841) != 0 && Engine_GameFlagIsSet(0x842) == 0)
+	{
+		FieldScene_ConfigureActorTwentyTwoScene();
+	}
+	HaidiaArashi_RequestBackdropExit(2);
 }
 
 void HaidiaArashi_OpenBackdropExit5(void)
 {
-    Engine_AudioPlayCue(0x9E);
-    Engine_MapAnimateCells(HaidiaArashi_CellSteps1, 54, 32);
-    Engine_ActorWalkTo(0, 0x196, 0x2d7);
-    Engine_EventWait(3);
-    HaidiaArashi_RequestBackdropExit(5);
+	Engine_AudioPlayCue(0x9E);
+	Engine_MapAnimateCells(HaidiaArashi_CellSteps1, 54, 32);
+	Engine_ActorWalkTo(0, 0x196, 0x2d7);
+	Engine_EventWait(3);
+	HaidiaArashi_RequestBackdropExit(5);
 }
 
 void HaidiaArashi_OpenGateRoute(void)
 {
-    u32 i;
-    s32 record;
+	u32 i;
+	s32 record;
 
-    if (GameFlag_IsSet(0x206) == 0) {
-        Event_PlayCue(158);
-        Map_AnimateCells(HaidiaArashi_CellSteps2, 45, 39);
-    }
-    if (GameFlag_IsSet(0x835) == 0) {
-        record = GameFlag_IsSet(0x831);
-        if (record != 0) {
-            goto L_020002b4;
-        }
-        FieldScene_RunScene372SequenceA();
-        GameFlag_Set(0x206);
-    } else {
-        L_020002b4:;
-        Actor_WalkTo(ACTOR_PARTY_LEADER, 0x106, 0x325);
-        Engine_EventWait(3);
-        HaidiaArashi_RequestBackdropExit(6);
-    }
+	if (GameFlag_IsSet(0x206) == 0)
+	{
+		Event_PlayCue(158);
+		Map_AnimateCells(HaidiaArashi_CellSteps2, 45, 39);
+	}
+	if (GameFlag_IsSet(0x835) == 0)
+	{
+		record = GameFlag_IsSet(0x831);
+		if (record != 0)
+		{
+			goto L_020002b4;
+		}
+		FieldScene_RunScene372SequenceA();
+		GameFlag_Set(0x206);
+	}
+	else
+	{
+	L_020002b4:;
+		Actor_WalkTo(ACTOR_PARTY_LEADER, 0x106, 0x325);
+		Engine_EventWait(3);
+		HaidiaArashi_RequestBackdropExit(6);
+	}
 }
 
 void HaidiaArashi_OpenBackdropExit7(void)
 {
-    if (Engine_GameFlagIsSet(0x205) == 0) {
-        Engine_AudioPlayCue(0x9E);
-        Engine_MapAnimateCells(HaidiaArashi_CellSteps1, 50, 44);
-    }
-    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x154, 0x378);
-    Engine_EventWait(3);
-    HaidiaArashi_RequestBackdropExit(7);
+	if (Engine_GameFlagIsSet(0x205) == 0)
+	{
+		Engine_AudioPlayCue(0x9E);
+		Engine_MapAnimateCells(HaidiaArashi_CellSteps1, 50, 44);
+	}
+	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x154, 0x378);
+	Engine_EventWait(3);
+	HaidiaArashi_RequestBackdropExit(7);
 }
 
 void HaidiaArashi_OpenBackdropExit8(void)
 {
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells(HaidiaArashi_CellSteps2, 49, 69);
-    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x146, 0x466);
-    Engine_EventWait(3);
-    HaidiaArashi_RequestBackdropExit(8);
+	Engine_AudioPlayCue(158);
+	Engine_MapAnimateCells(HaidiaArashi_CellSteps2, 49, 69);
+	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x146, 0x466);
+	Engine_EventWait(3);
+	HaidiaArashi_RequestBackdropExit(8);
 }
 
 void HaidiaArashi_OpenBackdropExit9(void)
 {
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells(HaidiaArashi_CellSteps3, 52, 76);
-    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x176, 0x4d6);
-    Engine_EventWait(3);
-    HaidiaArashi_RequestBackdropExit(9);
+	Engine_AudioPlayCue(158);
+	Engine_MapAnimateCells(HaidiaArashi_CellSteps3, 52, 76);
+	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x176, 0x4d6);
+	Engine_EventWait(3);
+	HaidiaArashi_RequestBackdropExit(9);
 }
 
 void HaidiaArashi_OpenRouteTen(void)
 {
-    u32 i;
-    s32 record;
+	u32 i;
+	s32 record;
 
-    Event_PlayCue(158);
-    Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 74);
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
-    Engine_EventWait(3);
-    HaidiaArashi_RequestBackdropExit(10);
+	Event_PlayCue(158);
+	Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 74);
+	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
+	Engine_EventWait(3);
+	HaidiaArashi_RequestBackdropExit(10);
 }
 
 void HaidiaArashi_OpenRouteTwelve(void)
 {
-    u32 i;
-    s32 record;
+	u32 i;
+	s32 record;
 
-    Event_PlayCue(158);
-    Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 73);
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
-    Engine_EventWait(3);
-    HaidiaArashi_RequestBackdropExit(12);
+	Event_PlayCue(158);
+	Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 73);
+	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
+	Engine_EventWait(3);
+	HaidiaArashi_RequestBackdropExit(12);
 }
 
 void HaidiaArashi_OpenRouteThirteen(void)
 {
-    u32 i;
-    s32 record;
+	u32 i;
+	s32 record;
 
-    Event_PlayCue(158);
-    Map_AnimateCells(HaidiaArashi_CellSteps2, 38, 72);
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 146, 0x49e);
-    Engine_EventWait(3);
-    HaidiaArashi_RequestBackdropExit(13);
+	Event_PlayCue(158);
+	Map_AnimateCells(HaidiaArashi_CellSteps2, 38, 72);
+	Actor_WalkTo(ACTOR_PARTY_LEADER, 146, 0x49e);
+	Engine_EventWait(3);
+	HaidiaArashi_RequestBackdropExit(13);
 }
 
 s32 FieldScene_RunFlagGatedActorSetup(void)
 {
 
-    BattleFx_SetQueuedSoundAndPlay(0xAA);
-    Engine_ActorSetPosition(23, 0, 0);
-    if (Engine_GameFlagIsSet(0x109) != 0) {
-        Engine_GameFlagClear(0x205);
-        Engine_GameFlagClear(0x206);
-    }
-    if (Engine_GameFlagIsSet(0x830) != 0) {
-        Actor_SetPosition(11, 0x14E0000, 0x3A40000);
-        HaidiaArashi_SetStormCellAttributes();
-    }
-    if (Engine_GameFlagIsSet(0x831) != 0) {
-        Actor_SetPosition(12, 0xE00000, 0x3680000);
-        ActorPresentation_SetEightSceneCells();
-    }
-    if (Engine_GameFlagIsSet(0x832) != 0) {
-        Actor_SetPosition(13, 0x400000, 0x2BF0000);
-        SceneState_ApplyFourRects();
-    }
-    if (Engine_GameFlagIsSet(0x833) != 0) {
-        Actor_SetPosition(14, 0x1B00000, 0x47B0000);
-        FieldScene_DrawFiveTileBlocks();
-    }
-    Object_GetById(11)->collision_flags |= 4;
-    Object_GetById(12)->collision_flags |= 4;
-    Object_GetById(13)->collision_flags |= 4;
-    Object_GetById(14)->collision_flags |= 4;
-    Object_GetById(15)->collision_flags |= 4;
-    Object_GetById(16)->collision_flags |= 4;
-    Object_GetById(17)->collision_flags |= 4;
-    Object_GetById(18)->collision_flags |= 4;
-    if (Engine_GameFlagIsSet(0x837) != 0) {
-        Engine_ActorSetPosition(22, 0, 0);
-    }
-    {
-        struct FieldActor *actor;
+	BattleFx_SetQueuedSoundAndPlay(0xAA);
+	Engine_ActorSetPosition(23, 0, 0);
+	if (Engine_GameFlagIsSet(0x109) != 0)
+	{
+		Engine_GameFlagClear(0x205);
+		Engine_GameFlagClear(0x206);
+	}
+	if (Engine_GameFlagIsSet(0x830) != 0)
+	{
+		Actor_SetPosition(11, 0x14E0000, 0x3A40000);
+		HaidiaArashi_SetStormCellAttributes();
+	}
+	if (Engine_GameFlagIsSet(0x831) != 0)
+	{
+		Actor_SetPosition(12, 0xE00000, 0x3680000);
+		ActorPresentation_SetEightSceneCells();
+	}
+	if (Engine_GameFlagIsSet(0x832) != 0)
+	{
+		Actor_SetPosition(13, 0x400000, 0x2BF0000);
+		SceneState_ApplyFourRects();
+	}
+	if (Engine_GameFlagIsSet(0x833) != 0)
+	{
+		Actor_SetPosition(14, 0x1B00000, 0x47B0000);
+		FieldScene_DrawFiveTileBlocks();
+	}
+	Object_GetById(11)->collision_flags |= 4;
+	Object_GetById(12)->collision_flags |= 4;
+	Object_GetById(13)->collision_flags |= 4;
+	Object_GetById(14)->collision_flags |= 4;
+	Object_GetById(15)->collision_flags |= 4;
+	Object_GetById(16)->collision_flags |= 4;
+	Object_GetById(17)->collision_flags |= 4;
+	Object_GetById(18)->collision_flags |= 4;
+	if (Engine_GameFlagIsSet(0x837) != 0)
+	{
+		Engine_ActorSetPosition(22, 0, 0);
+	}
+	{
+		struct FieldActor *actor;
 
-        actor = Object_GetById(19);
-        actor->scale_x = 0x20000;
-        actor->scale_y = 0x20000;
-    }
-    if (Engine_GameFlagIsSet(FLAG_BOULDER_FELL) != 0) {
-        Actor_SetPosition(19, 0x720000, 0x14D0000);
-    } else {
-        Engine_ActorEnableActionCallback(19, HaidiaArashi_ActorNineteenScript);
-    }
-    if (Engine_GameFlagIsSet(0x841) != 0) {
-        s32 h2;
-        u8 *tbl;
-        FieldScene_BuildPlacementGrid();
-        Actor_SetPosition(9, 0xA50000, 0x4CD0000);
-        {
-            struct FieldActor *actor;
+		actor = Object_GetById(19);
+		actor->scale_x = 0x20000;
+		actor->scale_y = 0x20000;
+	}
+	if (Engine_GameFlagIsSet(FLAG_BOULDER_FELL) != 0)
+	{
+		Actor_SetPosition(19, 0x720000, 0x14D0000);
+	}
+	else
+	{
+		Engine_ActorEnableActionCallback(19, HaidiaArashi_ActorNineteenScript);
+	}
+	if (Engine_GameFlagIsSet(0x841) != 0)
+	{
+		s32 h2;
+		u8 *tbl;
+		FieldScene_BuildPlacementGrid();
+		Actor_SetPosition(9, 0xA50000, 0x4CD0000);
+		{
+			struct FieldActor *actor;
 
-            actor = Object_GetById(9);
-            h2 = 0xE000;
-            actor->facing = h2;
-            actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-            tbl = HaidiaArashi_ActorEightScript;
-            actor->work = 1;
-            Engine_ActorEnableActionCallback(9, tbl);
-        }
-        Engine_ActorSetPosition(26, 0xA50000, 0x4E60000);
-        {
-            struct FieldActor *actor;
+			actor = Object_GetById(9);
+			h2 = 0xE000;
+			actor->facing = h2;
+			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+			tbl = HaidiaArashi_ActorEightScript;
+			actor->work = 1;
+			Engine_ActorEnableActionCallback(9, tbl);
+		}
+		Engine_ActorSetPosition(26, 0xA50000, 0x4E60000);
+		{
+			struct FieldActor *actor;
 
-            actor = Object_GetById(26);
-            actor->facing = h2;
-            actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-            actor->work = 2;
-            Engine_ActorEnableActionCallback(26, tbl);
-        }
-        Engine_ActorSetPosition(22, 0x980000, 0x5050000);
-        {
-            struct FieldActor *actor;
+			actor = Object_GetById(26);
+			actor->facing = h2;
+			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+			actor->work = 2;
+			Engine_ActorEnableActionCallback(26, tbl);
+		}
+		Engine_ActorSetPosition(22, 0x980000, 0x5050000);
+		{
+			struct FieldActor *actor;
 
-            actor = Object_GetById(22);
-            actor->facing = h2;
-            actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-            actor->work = 3;
-            Engine_ActorEnableActionCallback(22, tbl);
-        }
-        Engine_ActorSetPosition(8, 0xB80000, 0x5180000);
-        {
-            struct FieldActor *actor;
+			actor = Object_GetById(22);
+			actor->facing = h2;
+			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+			actor->work = 3;
+			Engine_ActorEnableActionCallback(22, tbl);
+		}
+		Engine_ActorSetPosition(8, 0xB80000, 0x5180000);
+		{
+			struct FieldActor *actor;
 
-            actor = Object_GetById(8);
-            actor->facing = h2;
-            actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-            actor->work = 4;
-            Engine_ActorEnableActionCallback(8, tbl);
-        }
-        Engine_ActorSetAnimation(8, 6);
-        Object_GetById(22)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
-        Object_GetById(8)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
-        Engine_TaskAddCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xC80);
-        Engine_ActorSetPosition(24, 0, 0);
-        Engine_ActorSetPosition(25, 0, 0);
-        Engine_ActorSetPosition(23, 0, 0);
-        Engine_ActorSetPosition(19, 0, 0);
-        if (Engine_GameFlagIsSet(0x842) != 0) {
-            Engine_ActorSetPosition(22, 0, 0);
-        }
-    } else if (Engine_GameFlagIsSet(0x83a) != 0) {
-        u8 *tbl;
-        Actor_SetPosition(10, 0xC00000, 0x4BE0000);
-        Actor_FaceDirection(10, 0x2000, 0);
-        Engine_ActorSetAnimation(10, 5);
-        {
-            struct FieldActor *actor;
+			actor = Object_GetById(8);
+			actor->facing = h2;
+			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+			actor->work = 4;
+			Engine_ActorEnableActionCallback(8, tbl);
+		}
+		Engine_ActorSetAnimation(8, 6);
+		Object_GetById(22)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		Object_GetById(8)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		Engine_TaskAddCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xC80);
+		Engine_ActorSetPosition(24, 0, 0);
+		Engine_ActorSetPosition(25, 0, 0);
+		Engine_ActorSetPosition(23, 0, 0);
+		Engine_ActorSetPosition(19, 0, 0);
+		if (Engine_GameFlagIsSet(0x842) != 0)
+		{
+			Engine_ActorSetPosition(22, 0, 0);
+		}
+	}
+	else if (Engine_GameFlagIsSet(0x83a) != 0)
+	{
+		u8 *tbl;
+		Actor_SetPosition(10, 0xC00000, 0x4BE0000);
+		Actor_FaceDirection(10, 0x2000, 0);
+		Engine_ActorSetAnimation(10, 5);
+		{
+			struct FieldActor *actor;
 
-            actor = Object_GetById(10);
-            actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-        }
-        tbl = HaidiaArashi_ActorEightScript;
-        Engine_ActorEnableActionCallback(10, tbl);
-        Actor_SetPosition(24, 0xE30000, 0x4BE0000);
-        Actor_FaceDirection(24, 0x4000, 0);
-        Engine_ActorSetAnimation(24, 6);
-        {
-            struct FieldActor *actor;
+			actor = Object_GetById(10);
+			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+		}
+		tbl = HaidiaArashi_ActorEightScript;
+		Engine_ActorEnableActionCallback(10, tbl);
+		Actor_SetPosition(24, 0xE30000, 0x4BE0000);
+		Actor_FaceDirection(24, 0x4000, 0);
+		Engine_ActorSetAnimation(24, 6);
+		{
+			struct FieldActor *actor;
 
-            actor = Object_GetById(24);
-            actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-        }
-        Engine_ActorEnableActionCallback(24, tbl);
-        Actor_SetPosition(25, 0xF70000, 0x4BE0000);
-        Actor_FaceDirection(25, 0x4000, 0);
-        Engine_ActorSetAnimation(25, 6);
-        {
-            struct FieldActor *actor;
+			actor = Object_GetById(24);
+			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+		}
+		Engine_ActorEnableActionCallback(24, tbl);
+		Actor_SetPosition(25, 0xF70000, 0x4BE0000);
+		Actor_FaceDirection(25, 0x4000, 0);
+		Engine_ActorSetAnimation(25, 6);
+		{
+			struct FieldActor *actor;
 
-            actor = Object_GetById(25);
-            actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-        }
-        Engine_ActorEnableActionCallback(25, tbl);
-        Actor_SetPosition(23, 0xF30000, 0x4FD0000);
-        Engine_ActorFaceDirection(23, FACING_NORTH, 0);
-        Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
-        Engine_ActorSetPosition(17, 0, 0);
-        Engine_ActorSetPosition(18, 0, 0);
-    } else {
-        Engine_ActorSetPosition(17, 0, 0);
-        Engine_ActorSetPosition(18, 0, 0);
-    }
-    if (gGameState.entrance != 15 || Engine_GameFlagIsSet(0x87b) != 0) {
-        Effect_SoundAndFlash();
-        BattleFx_StartTwelveFrameBlend();
-    }
-    if (Engine_GameFlagIsSet(0x210) != 0) {
-        SceneState_SetFlag210AndConfigureRegion40_84();
-    }
-    Engine_GameFlagSet(0x834);
-    Engine_MapCopyCellAttributes(29, 24, 1, 2, 26, 46);
-    Engine_MapCopyCellAttributes(29, 25, 1, 1, 27, 46);
-    Engine_MapCopyCellAttributes(29, 25, 1, 1, 28, 46);
-    Engine_MapCopyCellAttributes(19, 0x5A, 1, 1, 20, 0x58);
-    Engine_MapCopyCellAttributes(19, 0x5A, 1, 1, 20, 0x59);
-    {
-        struct FieldActor *actor;
+			actor = Object_GetById(25);
+			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+		}
+		Engine_ActorEnableActionCallback(25, tbl);
+		Actor_SetPosition(23, 0xF30000, 0x4FD0000);
+		Engine_ActorFaceDirection(23, FACING_NORTH, 0);
+		Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
+		Engine_ActorSetPosition(17, 0, 0);
+		Engine_ActorSetPosition(18, 0, 0);
+	}
+	else
+	{
+		Engine_ActorSetPosition(17, 0, 0);
+		Engine_ActorSetPosition(18, 0, 0);
+	}
+	if (gGameState.entrance != 15 || Engine_GameFlagIsSet(0x87b) != 0)
+	{
+		Effect_SoundAndFlash();
+		BattleFx_StartTwelveFrameBlend();
+	}
+	if (Engine_GameFlagIsSet(0x210) != 0)
+	{
+		SceneState_SetFlag210AndConfigureRegion40_84();
+	}
+	Engine_GameFlagSet(0x834);
+	Engine_MapCopyCellAttributes(29, 24, 1, 2, 26, 46);
+	Engine_MapCopyCellAttributes(29, 25, 1, 1, 27, 46);
+	Engine_MapCopyCellAttributes(29, 25, 1, 1, 28, 46);
+	Engine_MapCopyCellAttributes(19, 0x5A, 1, 1, 20, 0x58);
+	Engine_MapCopyCellAttributes(19, 0x5A, 1, 1, 20, 0x59);
+	{
+		struct FieldActor *actor;
 
-        actor = Object_GetById(21);
-        actor->motion_flags = 0;
-        actor->y.fixed = 0xC00000;
-        actor->collision_flags = 8;
-        Engine_ActorSetSpriteFlags(actor, 0);
-    }
-    Engine_TaskWait(1);
-    if (Engine_GameFlagIsSet(0x87b) == 0 && gGameState.entrance == 15) {
-        Scene_DoraSendsRobinToThePlaza();
-        return 0;
-    }
-    Engine_ActorSetAnimation(23, 7);
-    if (Engine_GameFlagIsSet(0x837) == 0) {
-        Engine_EventBegin();
-        Actor_SetAttachedEffect(22, 0x101);
-        Actor_SetPosition(22, 0x1900000, 0x2630000);
-        Actor_SetPosition(21, 0x1A80000, 0x2730000);
-        Actor_WalkTo(22, 0x190, 0x26B);
-        Actor_WalkToAndWait(21, 0x1A8, 0x26B);
-        Engine_ActorSetAnimation(21, 2);
-        Engine_ActorSetAnimation(22, 5);
-        Engine_EventEnd();
-    } else {
-        Engine_EventBegin();
-        Actor_SetPosition(21, 0x1A80000, 0x2730000);
-        Actor_WalkToAndWait(21, 0x1A8, 0x26B);
-        Engine_ActorSetAnimation(21, 3);
-        Engine_EventEnd();
-    }
-    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    gEventWork->transition_frames = 24;
-    Engine_EventOpenScreen();
-    Engine_EventWaitForScreen();
-    BattleFx_SetBlock30Values128One();
-    return 0;
+		actor = Object_GetById(21);
+		actor->motion_flags = 0;
+		actor->y.fixed = 0xC00000;
+		actor->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(actor, 0);
+	}
+	Engine_TaskWait(1);
+	if (Engine_GameFlagIsSet(0x87b) == 0 && gGameState.entrance == 15)
+	{
+		Scene_DoraSendsRobinToThePlaza();
+		return 0;
+	}
+	Engine_ActorSetAnimation(23, 7);
+	if (Engine_GameFlagIsSet(0x837) == 0)
+	{
+		Engine_EventBegin();
+		Actor_SetAttachedEffect(22, 0x101);
+		Actor_SetPosition(22, 0x1900000, 0x2630000);
+		Actor_SetPosition(21, 0x1A80000, 0x2730000);
+		Actor_WalkTo(22, 0x190, 0x26B);
+		Actor_WalkToAndWait(21, 0x1A8, 0x26B);
+		Engine_ActorSetAnimation(21, 2);
+		Engine_ActorSetAnimation(22, 5);
+		Engine_EventEnd();
+	}
+	else
+	{
+		Engine_EventBegin();
+		Actor_SetPosition(21, 0x1A80000, 0x2730000);
+		Actor_WalkToAndWait(21, 0x1A8, 0x26B);
+		Engine_ActorSetAnimation(21, 3);
+		Engine_EventEnd();
+	}
+	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transition_frames = 24;
+	Engine_EventOpenScreen();
+	Engine_EventWaitForScreen();
+	BattleFx_SetBlock30Values128One();
+	return 0;
 }
 
 void Scene_DoraSendsRobinToThePlaza(void)
 {
-    s32 message;
+	s32 message;
 
-    Engine_EventBegin();
-    Effect_SoundAndFlash();
-    BattleFx_StartTwelveFrameBlend();
-    BattleFx_SetBlock30Values12Zero();
-    Engine_TaskWait(60);
-    Camera_SetSpeed(0x4000, 0x800);
-    Camera_MoveTo(0x13c0000, 0xa00000, 0x3700000, 1);
-    Actor_SetPosition(ACTOR_KYLE, 0x1260000, 0x3640000);
-    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    gEventWork->transition_frames = 16;
-    Engine_EventOpenScreen();
-    Engine_EventWaitForScreen();
-    BattleFx_SetBlock30Values128One();
-    Event_PlayCue(158);
-    Map_AnimateCells(HaidiaArashi_CellSteps1, 50, 44);
-    Actor_SetAttachedEffect(22, 0x101);
-    Actor_SetSpeed(ACTOR_DORA, 0xcccc, 0x6666);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-    Actor_SetSpeed(ACTOR_KYLE, 0xcccc, 0x6666);
-    Actor_SetPosition(ACTOR_DORA, 0x1560000, 0x37a0000);
-    Actor_WalkToAndWait(ACTOR_DORA, 0x156, 0x389);
-    BattleFx_PlayQueuedSound();
-    Actor_WalkTo(ACTOR_DORA, 0x128, 0x389);
-    Actor_SetPosition(ACTOR_PARTY_LEADER, 0x1560000, 0x37a0000);
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 0x156, 0x37a);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x156, 0x389);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x13e, 0x389);
-    Engine_ActorSetAnimation(ACTOR_DORA, 1);
-    Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
-    Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 60);
-    message = (s32)MsgHaidiaKyleAbleStop;
-    Engine_EventSetMessage(message);
-    Event_ShowMessage(ACTOR_DORA, 0);
-    Actor_WalkToAndWait(ACTOR_KYLE, 0x126, 0x346);
-    Engine_EventWait(40);
-    Engine_ActorSetAnimationAndWait(ACTOR_KYLE, 4);
-    Event_ShowMessage(ACTOR_KYLE, 0);
-    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
-    Engine_EventWait(40);
-    Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTH, 0);
-    Event_ShowMessageAndWait(ACTOR_KYLE, 0, 20);
-    Actor_ShowEmote(ACTOR_DORA, 0x101, 20);
-    Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 10);
-    Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_KYLE, 4);
-    Event_ShowMessage(ACTOR_KYLE, 0);
-    Actor_SetAttachedEffect(ACTOR_DORA, 0x102);
-    Engine_EventWait(30);
-    Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 50);
-    Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 10);
-    Actor_SetSpeed(ACTOR_DORA, 0x18000, 0xc000);
-    Actor_WalkToAndWait(ACTOR_DORA, 0x121, 0x373);
-    Actor_FaceDirection(ACTOR_DORA, FACING_NORTHEAST, 0);
-    Event_ShowMessage(ACTOR_DORA, 0);
-    Engine_ActorRunRepeatedMotion(ACTOR_KYLE, 2);
-    Event_ShowMessage(ACTOR_KYLE, 0);
-    Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
-    Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 10);
-    Engine_EventSetMessage((message + 8));
-    Event_OpenMessage(ACTOR_DORA, 0);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x12e, 0x389);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    while (Engine_EventChooseYesNo(0, 0) == 1) {
-        Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
-        Engine_EventSetMessage((s32)MsgHaidiaBigBoyWhy);
-        Event_OpenMessage(ACTOR_DORA, 0);
-    }
-    Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
-    Engine_EventSetMessage((s32)MsgHaidiaKnowWayGo);
-    Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    Actor_SetSpeed(ACTOR_KYLE, 0x18000, 0xc000);
-    Actor_WalkTo(ACTOR_KYLE, 0x129, 0x2ee);
-    Engine_EventWait(10);
-    Actor_WalkToAndWait(ACTOR_DORA, 0x129, 0x2ee);
-    Actor_SetPosition(ACTOR_DORA, 0, 0);
-    Actor_SetPosition(ACTOR_KYLE, 0, 0);
-    Engine_ActorSetAnimation(ACTOR_KYLE, 1);
-    Engine_ActorSetAnimation(21, 2);
-    Engine_ActorSetAnimation(22, 5);
-    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
-    GameFlag_Set(0x87b);
-    GameFlag_Set(0x205);
-    Engine_EventEnd();
+	Engine_EventBegin();
+	Effect_SoundAndFlash();
+	BattleFx_StartTwelveFrameBlend();
+	BattleFx_SetBlock30Values12Zero();
+	Engine_TaskWait(60);
+	Camera_SetSpeed(0x4000, 0x800);
+	Camera_MoveTo(0x13c0000, 0xa00000, 0x3700000, 1);
+	Actor_SetPosition(ACTOR_KYLE, 0x1260000, 0x3640000);
+	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
+	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+	gEventWork->transition_frames = 16;
+	Engine_EventOpenScreen();
+	Engine_EventWaitForScreen();
+	BattleFx_SetBlock30Values128One();
+	Event_PlayCue(158);
+	Map_AnimateCells(HaidiaArashi_CellSteps1, 50, 44);
+	Actor_SetAttachedEffect(22, 0x101);
+	Actor_SetSpeed(ACTOR_DORA, 0xcccc, 0x6666);
+	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+	Actor_SetSpeed(ACTOR_KYLE, 0xcccc, 0x6666);
+	Actor_SetPosition(ACTOR_DORA, 0x1560000, 0x37a0000);
+	Actor_WalkToAndWait(ACTOR_DORA, 0x156, 0x389);
+	BattleFx_PlayQueuedSound();
+	Actor_WalkTo(ACTOR_DORA, 0x128, 0x389);
+	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x1560000, 0x37a0000);
+	Actor_WalkTo(ACTOR_PARTY_LEADER, 0x156, 0x37a);
+	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x156, 0x389);
+	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x13e, 0x389);
+	Engine_ActorSetAnimation(ACTOR_DORA, 1);
+	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
+	Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 60);
+	message = (s32)MsgHaidiaKyleAbleStop;
+	Engine_EventSetMessage(message);
+	Event_ShowMessage(ACTOR_DORA, 0);
+	Actor_WalkToAndWait(ACTOR_KYLE, 0x126, 0x346);
+	Engine_EventWait(40);
+	Engine_ActorSetAnimationAndWait(ACTOR_KYLE, 4);
+	Event_ShowMessage(ACTOR_KYLE, 0);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
+	Engine_EventWait(40);
+	Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTH, 0);
+	Event_ShowMessageAndWait(ACTOR_KYLE, 0, 20);
+	Actor_ShowEmote(ACTOR_DORA, 0x101, 20);
+	Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 10);
+	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
+	Engine_ActorSetAnimationAndWait(ACTOR_KYLE, 4);
+	Event_ShowMessage(ACTOR_KYLE, 0);
+	Actor_SetAttachedEffect(ACTOR_DORA, 0x102);
+	Engine_EventWait(30);
+	Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 50);
+	Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 10);
+	Actor_SetSpeed(ACTOR_DORA, 0x18000, 0xc000);
+	Actor_WalkToAndWait(ACTOR_DORA, 0x121, 0x373);
+	Actor_FaceDirection(ACTOR_DORA, FACING_NORTHEAST, 0);
+	Event_ShowMessage(ACTOR_DORA, 0);
+	Engine_ActorRunRepeatedMotion(ACTOR_KYLE, 2);
+	Event_ShowMessage(ACTOR_KYLE, 0);
+	Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
+	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
+	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 10);
+	Engine_EventSetMessage((message + 8));
+	Event_OpenMessage(ACTOR_DORA, 0);
+	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x12e, 0x389);
+	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+	while (Engine_EventChooseYesNo(0, 0) == 1)
+	{
+		Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
+		Engine_EventSetMessage((s32)MsgHaidiaBigBoyWhy);
+		Event_OpenMessage(ACTOR_DORA, 0);
+	}
+	Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
+	Engine_EventSetMessage((s32)MsgHaidiaKnowWayGo);
+	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
+	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+	Actor_SetSpeed(ACTOR_KYLE, 0x18000, 0xc000);
+	Actor_WalkTo(ACTOR_KYLE, 0x129, 0x2ee);
+	Engine_EventWait(10);
+	Actor_WalkToAndWait(ACTOR_DORA, 0x129, 0x2ee);
+	Actor_SetPosition(ACTOR_DORA, 0, 0);
+	Actor_SetPosition(ACTOR_KYLE, 0, 0);
+	Engine_ActorSetAnimation(ACTOR_KYLE, 1);
+	Engine_ActorSetAnimation(21, 2);
+	Engine_ActorSetAnimation(22, 5);
+	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+	GameFlag_Set(0x87b);
+	GameFlag_Set(0x205);
+	Engine_EventEnd();
 }
 
 void HaidiaArashi_RunStormTriggerScene(void)
 {
-    u32 i;
-    struct FieldActor *rec7;
-    struct FieldActor *record;
-    s32 v3;
-    s32 base5_396;
-    u8 *p6;
+	u32				   i;
+	struct FieldActor *rec7;
+	struct FieldActor *record;
+	s32				   v3;
+	s32				   base5_396;
+	u8				  *p6;
 
-    if (GameFlag_IsSet(0x310) != 0) {
-    } else {
-        Engine_EventBegin();
-        if (GameFlag_IsSet(0x830) == 0) {
-            rec7 = Object_GetById(11);
-            p6 = (u8 *)rec7->sprite;
-            Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-            Engine_AudioPlayCue(141);
-            Engine_TaskWait(40);
-            Engine_AudioPlayCue(145);
-            rec7->priority_flags &= 254;
-            ((struct Flags9 *)p6)->mode = 1;
-            Actor_SetPosition(11, 0x1d90000, 0x3a40000);
-            rec7->speed = 0x18000;
-            rec7->acceleration = 0x18000;
-            v3 = (rec7->y.fixed + 0xf00000);
-            rec7->y.fixed += 0xf00000;
-            rec7->target_y = v3;
-            rec7->bounce = 0x6666;
-            Actor_WalkToAndWait(11, 0x158, 0x3a4);
-            ((struct Flags9 *)p6)->mode = 3;
-            rec7->priority_flags |= 1;
-            Engine_EventWait(40);
-            Engine_AudioPlayCue(0x121);
-            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-            Engine_MapWaitWorkValuesBelow256();
-            BattleFx_PlayQueuedSound();
-            Engine_GameFlagSet(0x830);
-        }
-        HaidiaArashi_SetStormCellAttributes();
-        Engine_GameFlagSet(0x310);
-        if (Engine_GameFlagIsSet(0x837) != 0) {
-            if (Engine_GameFlagIsSet(0x841) == 0) {
-                if (Engine_GameFlagIsSet(0x30c) == 0) {
-                    record = Object_GetById(0);
-                    if (record->y.fixed > 0x800000) {
-                        base5_396 = 0x396;
-                        SceneActor_RunActor22PlacementSequence(0x146, base5_396);
-                        Actor_WalkToAndWait(0, 0x123, base5_396);
-                    } else {
-                        SceneActor_RunActor22PlacementSequence(0x14f, 0x3bd);
-                    }
-                    Engine_GameFlagSet(0x30c);
-                }
-            }
-        }
-        Engine_EventEnd();
-    }
+	if (GameFlag_IsSet(0x310) != 0)
+	{
+	}
+	else
+	{
+		Engine_EventBegin();
+		if (GameFlag_IsSet(0x830) == 0)
+		{
+			rec7 = Object_GetById(11);
+			p6 = (u8 *)rec7->sprite;
+			Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+			Engine_AudioPlayCue(141);
+			Engine_TaskWait(40);
+			Engine_AudioPlayCue(145);
+			rec7->priority_flags &= 254;
+			((struct Flags9 *)p6)->mode = 1;
+			Actor_SetPosition(11, 0x1d90000, 0x3a40000);
+			rec7->speed = 0x18000;
+			rec7->acceleration = 0x18000;
+			v3 = (rec7->y.fixed + 0xf00000);
+			rec7->y.fixed += 0xf00000;
+			rec7->target_y = v3;
+			rec7->bounce = 0x6666;
+			Actor_WalkToAndWait(11, 0x158, 0x3a4);
+			((struct Flags9 *)p6)->mode = 3;
+			rec7->priority_flags |= 1;
+			Engine_EventWait(40);
+			Engine_AudioPlayCue(0x121);
+			Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+			Engine_MapWaitWorkValuesBelow256();
+			BattleFx_PlayQueuedSound();
+			Engine_GameFlagSet(0x830);
+		}
+		HaidiaArashi_SetStormCellAttributes();
+		Engine_GameFlagSet(0x310);
+		if (Engine_GameFlagIsSet(0x837) != 0)
+		{
+			if (Engine_GameFlagIsSet(0x841) == 0)
+			{
+				if (Engine_GameFlagIsSet(0x30c) == 0)
+				{
+					record = Object_GetById(0);
+					if (record->y.fixed > 0x800000)
+					{
+						base5_396 = 0x396;
+						SceneActor_RunActor22PlacementSequence(0x146, base5_396);
+						Actor_WalkToAndWait(0, 0x123, base5_396);
+					}
+					else
+					{
+						SceneActor_RunActor22PlacementSequence(0x14f, 0x3bd);
+					}
+					Engine_GameFlagSet(0x30c);
+				}
+			}
+		}
+		Engine_EventEnd();
+	}
 }
 
 void HaidiaArashi_SetStormCellAttributes(void)
 {
-    u32 i;
-    s32 record;
+	u32 i;
+	s32 record;
 
-    Map_CopyCellAttributes(29, 64, 1, 1, 21, 57);
-    Map_CopyCellAttributes(29, 64, 1, 1, 21, 58);
-    Map_CopyCellAttributes(29, 64, 1, 1, 22, 58);
-    Map_CopyCellAttributes(29, 64, 1, 1, 20, 58);
-    Map_CopyCellAttributes(28, 20, 1, 1, 20, 57);
+	Map_CopyCellAttributes(29, 64, 1, 1, 21, 57);
+	Map_CopyCellAttributes(29, 64, 1, 1, 21, 58);
+	Map_CopyCellAttributes(29, 64, 1, 1, 22, 58);
+	Map_CopyCellAttributes(29, 64, 1, 1, 20, 58);
+	Map_CopyCellAttributes(28, 20, 1, 1, 20, 57);
 }
 
 void HaidiaArashi_RunEventSequence(void)
 {
-    struct FieldActor *rec7;
-    struct FieldActor *record;
-    s32 v3;
+	struct FieldActor *rec7;
+	struct FieldActor *record;
+	s32				   v3;
 
-    if (GameFlag_IsSet(0x311) != 0) {
-    } else {
-        Engine_EventBegin();
-        if (GameFlag_IsSet(0x831) == 0) {
-            rec7 = Object_GetById(12);
-            Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-            Engine_AudioPlayCue(141);
-            Engine_TaskWait(40);
-            Engine_AudioPlayCue(145);
-            Actor_SetPosition(12, 0x17d0000, 0x3280000);
-            rec7->speed = 0x18000;
-            rec7->acceleration = 0x18000;
-            v3 = (rec7->y.fixed + 0x1000000);
-            rec7->y.fixed += 0x1000000;
-            rec7->target_y = v3;
-            rec7->bounce = 0x8000;
-            Actor_WalkToAndWait(12, 0x122, 0x341);
-            Engine_ActorSetSpritePriority(12, 1);
-            Actor_WalkToAndWait(12, 0x102, 0x354);
-            Engine_ActorSetSpritePriority(12, 2);
-            Actor_WalkToAndWait(12, 224, 0x368);
-            Engine_EventWait(40);
-            Engine_AudioPlayCue(0x121);
-            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-            Engine_MapWaitWorkValuesBelow256();
-            BattleFx_PlayQueuedSound();
-            Engine_GameFlagSet(0x831);
-        }
-        ActorPresentation_SetEightSceneCells();
-        Engine_GameFlagSet(0x311);
-        if (Engine_GameFlagIsSet(0x837) != 0) {
-            if (Engine_GameFlagIsSet(0x841) == 0) {
-                if (Engine_GameFlagIsSet(0x30c) == 0) {
-                    record = Object_GetById(0);
-                    if (record->y.fixed > 0x800000) {
-                        SceneActor_RunActor22PlacementSequence(219, 0x34b);
-                        Actor_WalkToAndWait(0, 179, 0x33d);
-                    } else {
-                        SceneActor_RunActor22PlacementSequence(214, 0x38c);
-                        Actor_WalkToAndWait(0, 219, 0x38f);
-                    }
-                    Engine_GameFlagSet(0x30c);
-                }
-            }
-        }
-        Engine_EventEnd();
-    }
+	if (GameFlag_IsSet(0x311) != 0)
+	{
+	}
+	else
+	{
+		Engine_EventBegin();
+		if (GameFlag_IsSet(0x831) == 0)
+		{
+			rec7 = Object_GetById(12);
+			Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+			Engine_AudioPlayCue(141);
+			Engine_TaskWait(40);
+			Engine_AudioPlayCue(145);
+			Actor_SetPosition(12, 0x17d0000, 0x3280000);
+			rec7->speed = 0x18000;
+			rec7->acceleration = 0x18000;
+			v3 = (rec7->y.fixed + 0x1000000);
+			rec7->y.fixed += 0x1000000;
+			rec7->target_y = v3;
+			rec7->bounce = 0x8000;
+			Actor_WalkToAndWait(12, 0x122, 0x341);
+			Engine_ActorSetSpritePriority(12, 1);
+			Actor_WalkToAndWait(12, 0x102, 0x354);
+			Engine_ActorSetSpritePriority(12, 2);
+			Actor_WalkToAndWait(12, 224, 0x368);
+			Engine_EventWait(40);
+			Engine_AudioPlayCue(0x121);
+			Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+			Engine_MapWaitWorkValuesBelow256();
+			BattleFx_PlayQueuedSound();
+			Engine_GameFlagSet(0x831);
+		}
+		ActorPresentation_SetEightSceneCells();
+		Engine_GameFlagSet(0x311);
+		if (Engine_GameFlagIsSet(0x837) != 0)
+		{
+			if (Engine_GameFlagIsSet(0x841) == 0)
+			{
+				if (Engine_GameFlagIsSet(0x30c) == 0)
+				{
+					record = Object_GetById(0);
+					if (record->y.fixed > 0x800000)
+					{
+						SceneActor_RunActor22PlacementSequence(219, 0x34b);
+						Actor_WalkToAndWait(0, 179, 0x33d);
+					}
+					else
+					{
+						SceneActor_RunActor22PlacementSequence(214, 0x38c);
+						Actor_WalkToAndWait(0, 219, 0x38f);
+					}
+					Engine_GameFlagSet(0x30c);
+				}
+			}
+		}
+		Engine_EventEnd();
+	}
 }
 
 void ActorPresentation_SetEightSceneCells(void)
 {
-    s32 a = 15;
-    s32 d = 0x35;
-    s32 e;
-    s32 b;
-    s32 c;
-    s32 f;
+	s32 a = 15;
+	s32 d = 0x35;
+	s32 e;
+	s32 b;
+	s32 c;
+	s32 f;
 
-    Engine_MapCopyCellAttributes(29, 23, 1, 1, a, d);
-    b = 14;
-    Engine_MapCopyCellAttributes(29, 23, 1, 1, b, d);
-    c = 13;
-    Engine_MapCopyCellAttributes(29, 23, 1, 1, c, d);
-    Engine_MapCopyCellAttributes(26, 20, 2, 1, b, 0x34);
-    e = 0x36;
-    Engine_MapCopyCellAttributes(25, 21, 1, 1, c, e);
-    Engine_MapCopyCellAttributes(25, 21, 1, 1, a, e);
-    Engine_MapCopyCellAttributes(14, 0x35, 1, 1, b, e);
-    f = 0x37;
-    Engine_MapCopyCellAttributes(13, 0x37, 1, 1, a, f);
+	Engine_MapCopyCellAttributes(29, 23, 1, 1, a, d);
+	b = 14;
+	Engine_MapCopyCellAttributes(29, 23, 1, 1, b, d);
+	c = 13;
+	Engine_MapCopyCellAttributes(29, 23, 1, 1, c, d);
+	Engine_MapCopyCellAttributes(26, 20, 2, 1, b, 0x34);
+	e = 0x36;
+	Engine_MapCopyCellAttributes(25, 21, 1, 1, c, e);
+	Engine_MapCopyCellAttributes(25, 21, 1, 1, a, e);
+	Engine_MapCopyCellAttributes(14, 0x35, 1, 1, b, e);
+	f = 0x37;
+	Engine_MapCopyCellAttributes(13, 0x37, 1, 1, a, f);
 }
 
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-    if (GameFlag_IsSet(0x312) == 0) {
-        Engine_EventBegin();
-        if (GameFlag_IsSet(0x832) == 0) {
-            struct FieldActor *actor = Actor_Get(13);
-            struct FieldActor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-            u16 priority = leader->sprite->priority;
-            u8 flags = leader->priority_flags;
+	if (GameFlag_IsSet(0x312) == 0)
+	{
+		Engine_EventBegin();
+		if (GameFlag_IsSet(0x832) == 0)
+		{
+			struct FieldActor *actor = Actor_Get(13);
+			struct FieldActor *leader = Actor_Get(ACTOR_PARTY_LEADER);
+			u16				   priority = leader->sprite->priority;
+			u8				   flags = leader->priority_flags;
 
-            Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-            Event_PlayCue(141);
-            Engine_TaskWait(40);
-            Event_PlayCue(145);
-            Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
-            Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
-            Actor_SetPosition(13, 0, 0x2bf0000);
-            actor->speed = 0x18000;
-            actor->acceleration = 0x18000;
-            actor->y.fixed += 0x500000;
-            actor->target_y = actor->y.fixed;
-            actor->bounce = 0x8000;
-            Actor_WalkToAndWait(13, 64, 0x2bf);
-            Engine_EventWait(40);
-            Event_PlayCue(0x121);
-            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-            Engine_MapWaitWorkValuesBelow256();
-            BattleFx_PlayQueuedSound();
-            GameFlag_Set(0x832);
-            Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, priority);
-            Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
-            leader->priority_flags = flags;
-        }
-        SceneState_ApplyFourRects();
-        GameFlag_Set(0x312);
-        if (GameFlag_IsSet(0x837) != 0) {
-            if (GameFlag_IsSet(0x841) == 0) {
-                if (GameFlag_IsSet(0x30c) == 0) {
-                    if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed <= 0x2b4ffff) {
-                        SceneActor_RunActor22PlacementSequence(62, 0x29d);
-                        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 27, 0x273);
-                    } else {
-                        SceneActor_RunActor22PlacementSequence(75, 0x2cb);
-                        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 67, 0x2f5);
-                    }
-                    GameFlag_Set(0x30c);
-                }
-            }
-        }
-        Engine_EventEnd();
-    }
+			Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+			Event_PlayCue(141);
+			Engine_TaskWait(40);
+			Event_PlayCue(145);
+			Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
+			Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+			Actor_SetPosition(13, 0, 0x2bf0000);
+			actor->speed = 0x18000;
+			actor->acceleration = 0x18000;
+			actor->y.fixed += 0x500000;
+			actor->target_y = actor->y.fixed;
+			actor->bounce = 0x8000;
+			Actor_WalkToAndWait(13, 64, 0x2bf);
+			Engine_EventWait(40);
+			Event_PlayCue(0x121);
+			Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+			Engine_MapWaitWorkValuesBelow256();
+			BattleFx_PlayQueuedSound();
+			GameFlag_Set(0x832);
+			Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, priority);
+			Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+			leader->priority_flags = flags;
+		}
+		SceneState_ApplyFourRects();
+		GameFlag_Set(0x312);
+		if (GameFlag_IsSet(0x837) != 0)
+		{
+			if (GameFlag_IsSet(0x841) == 0)
+			{
+				if (GameFlag_IsSet(0x30c) == 0)
+				{
+					if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed <= 0x2b4ffff)
+					{
+						SceneActor_RunActor22PlacementSequence(62, 0x29d);
+						Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 27, 0x273);
+					}
+					else
+					{
+						SceneActor_RunActor22PlacementSequence(75, 0x2cb);
+						Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 67, 0x2f5);
+					}
+					GameFlag_Set(0x30c);
+				}
+			}
+		}
+		Engine_EventEnd();
+	}
 }
 
 void SceneState_ApplyFourRects(void)
 {
 
-    s32 a = 0x2a;
-    s32 b;
+	s32 a = 0x2a;
+	s32 b;
 
-    Engine_MapCopyCellAttributes(29, 22, 1, 1, 3, a);
-    b = 2;
-    Engine_MapCopyCellAttributes(29, 21, 1, 1, b, a);
-    Engine_MapCopyCellAttributes(29, 21, 1, 1, 4, a);
-    Engine_MapCopyCellAttributes(23, 20, 3, 1, b, 0x2b);
+	Engine_MapCopyCellAttributes(29, 22, 1, 1, 3, a);
+	b = 2;
+	Engine_MapCopyCellAttributes(29, 21, 1, 1, b, a);
+	Engine_MapCopyCellAttributes(29, 21, 1, 1, 4, a);
+	Engine_MapCopyCellAttributes(23, 20, 3, 1, b, 0x2b);
 }
 
 void HaidiaArashi_RunSecondEventSequence(void)
 {
-    struct FieldActor *rec7;
-    struct FieldActor *record;
-    s32 v3;
+	struct FieldActor *rec7;
+	struct FieldActor *record;
+	s32				   v3;
 
-    if (GameFlag_IsSet(0x313) != 0) {
-    } else {
-        Engine_EventBegin();
-        if (GameFlag_IsSet(0x833) == 0) {
-            rec7 = Object_GetById(14);
-            Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-            Engine_AudioPlayCue(141);
-            Engine_TaskWait(40);
-            Engine_AudioPlayCue(145);
-            Actor_SetPosition(14, 0x1da0000, 0x47b0000);
-            rec7->speed = 0x10000;
-            rec7->acceleration = 0x10000;
-            v3 = (rec7->y.fixed + 0x480000);
-            rec7->y.fixed += 0x480000;
-            rec7->target_y = v3;
-            rec7->bounce = 0x8000;
-            Engine_ActorWalkToAndWait(14, 0x1b0, 0x47b);
-            Engine_EventWait(40);
-            Engine_AudioPlayCue(0x121);
-            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-            Engine_MapWaitWorkValuesBelow256();
-            BattleFx_PlayQueuedSound();
-            Engine_GameFlagSet(0x833);
-        }
-        FieldScene_DrawFiveTileBlocks();
-        Engine_GameFlagSet(0x313);
-        if (Engine_GameFlagIsSet(0x837) != 0) {
-            if (Engine_GameFlagIsSet(0x841) == 0) {
-                if (Engine_GameFlagIsSet(0x30c) == 0) {
-                    record = Object_GetById(0);
-                    if (record->z.fixed <= 0x479ffff) {
-                        SceneActor_RunActor22PlacementSequence(0x19c, 0x460);
-                        Actor_WalkToAndWait(0, 0x19e, 0x42c);
-                    } else {
-                        SceneActor_RunActor22PlacementSequence(0x1bd, 0x494);
-                        Actor_WalkToAndWait(0, 0x1bf, 0x4cb);
-                    }
-                    Engine_GameFlagSet(0x30c);
-                }
-            }
-        }
-        Engine_EventEnd();
-    }
+	if (GameFlag_IsSet(0x313) != 0)
+	{
+	}
+	else
+	{
+		Engine_EventBegin();
+		if (GameFlag_IsSet(0x833) == 0)
+		{
+			rec7 = Object_GetById(14);
+			Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+			Engine_AudioPlayCue(141);
+			Engine_TaskWait(40);
+			Engine_AudioPlayCue(145);
+			Actor_SetPosition(14, 0x1da0000, 0x47b0000);
+			rec7->speed = 0x10000;
+			rec7->acceleration = 0x10000;
+			v3 = (rec7->y.fixed + 0x480000);
+			rec7->y.fixed += 0x480000;
+			rec7->target_y = v3;
+			rec7->bounce = 0x8000;
+			Engine_ActorWalkToAndWait(14, 0x1b0, 0x47b);
+			Engine_EventWait(40);
+			Engine_AudioPlayCue(0x121);
+			Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+			Engine_MapWaitWorkValuesBelow256();
+			BattleFx_PlayQueuedSound();
+			Engine_GameFlagSet(0x833);
+		}
+		FieldScene_DrawFiveTileBlocks();
+		Engine_GameFlagSet(0x313);
+		if (Engine_GameFlagIsSet(0x837) != 0)
+		{
+			if (Engine_GameFlagIsSet(0x841) == 0)
+			{
+				if (Engine_GameFlagIsSet(0x30c) == 0)
+				{
+					record = Object_GetById(0);
+					if (record->z.fixed <= 0x479ffff)
+					{
+						SceneActor_RunActor22PlacementSequence(0x19c, 0x460);
+						Actor_WalkToAndWait(0, 0x19e, 0x42c);
+					}
+					else
+					{
+						SceneActor_RunActor22PlacementSequence(0x1bd, 0x494);
+						Actor_WalkToAndWait(0, 0x1bf, 0x4cb);
+					}
+					Engine_GameFlagSet(0x30c);
+				}
+			}
+		}
+		Engine_EventEnd();
+	}
 }
 
 void FieldScene_DrawFiveTileBlocks(void)
 {
-    s32 a = 26;
-    s32 h = 0x47;
-    s32 b;
-    s32 a2;
+	s32 a = 26;
+	s32 h = 0x47;
+	s32 b;
+	s32 a2;
 
-    Engine_MapCopyCellAttributes(29, 20, 1, 1, a, h);
-    b = 0x46;
-    Engine_MapCopyCellAttributes(29, 20, 1, 1, a, b);
-    a2 = 27;
-    Engine_MapCopyCellAttributes(29, 20, 1, 1, a2, b);
-    Engine_MapCopyCellAttributes(28, 21, 1, 1, 28, h);
-    Engine_MapCopyCellAttributes(28, 22, 1, 1, a2, 0x48);
+	Engine_MapCopyCellAttributes(29, 20, 1, 1, a, h);
+	b = 0x46;
+	Engine_MapCopyCellAttributes(29, 20, 1, 1, a, b);
+	a2 = 27;
+	Engine_MapCopyCellAttributes(29, 20, 1, 1, a2, b);
+	Engine_MapCopyCellAttributes(28, 21, 1, 1, 28, h);
+	Engine_MapCopyCellAttributes(28, 22, 1, 1, a2, 0x48);
 }
 
 void FieldScene_RunScene372SequenceA(void)
 {
-    s32 base;
+	s32 base;
 
-    Engine_EventBegin();
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x106, 0x32a);
-    Actor_SetPosition(20, 0x1060000, 0x3250000);
-    Actor_WalkTo(20, 0x106, 0x339);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
-    Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x11a, 0x357);
-    Engine_ActorSetAnimation(20, 1);
-    Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
-    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 20, 0);
-    BattleFx_PlayQueuedSound();
-    Engine_EventWait(30);
-    Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Actor_ShowEmote(20, 0x100, 20);
-    base = (s32)MsgHaidiaHuh;
-    Engine_EventSetMessage(base);
-    Event_ShowMessage(20, 0);
-    Engine_EventWait(20);
-    Event_AskYesNo(20, 0);
-    Engine_ActorRunRepeatedMotion(20, 2);
-    Engine_EventSetMessage((base + 4));
-    Event_ShowMessageAndWait(20, 0, 20);
-    Object_SetActionCallbackAndRefreshById(20, (s32)HaidiaArashi_ActorTwentyScript);
-    GameFlag_Set(0x835);
-    Engine_EventEnd();
+	Engine_EventBegin();
+	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x106, 0x32a);
+	Actor_SetPosition(20, 0x1060000, 0x3250000);
+	Actor_WalkTo(20, 0x106, 0x339);
+	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+	Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
+	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x11a, 0x357);
+	Engine_ActorSetAnimation(20, 1);
+	Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 20, 0);
+	BattleFx_PlayQueuedSound();
+	Engine_EventWait(30);
+	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+	Actor_ShowEmote(20, 0x100, 20);
+	base = (s32)MsgHaidiaHuh;
+	Engine_EventSetMessage(base);
+	Event_ShowMessage(20, 0);
+	Engine_EventWait(20);
+	Event_AskYesNo(20, 0);
+	Engine_ActorRunRepeatedMotion(20, 2);
+	Engine_EventSetMessage((base + 4));
+	Event_ShowMessageAndWait(20, 0, 20);
+	Object_SetActionCallbackAndRefreshById(20, (s32)HaidiaArashi_ActorTwentyScript);
+	GameFlag_Set(0x835);
+	Engine_EventEnd();
 }
 
 void FieldScene_RunScene372SequenceB(void)
 {
-    u32 i;
-    s32 record;
+	u32 i;
+	s32 record;
 
-    if (GameFlag_IsSet(0x836) == 0) {
-        if (GameFlag_IsSet(0x837) == 0) {
-            Engine_EventBegin();
-            Engine_EventSetMessage((s32)MsgHaidiaUghHrnghhh);
-            Event_ShowMessageAndWait(22, 0, 20);
-            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 40);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x17e, 0x26b);
-            Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
-            Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-            Engine_EventWait(30);
-            Event_ShowMessage(22, 0);
-            GameFlag_Set(0x836);
-            Engine_EventEnd();
-        }
-    }
+	if (GameFlag_IsSet(0x836) == 0)
+	{
+		if (GameFlag_IsSet(0x837) == 0)
+		{
+			Engine_EventBegin();
+			Engine_EventSetMessage((s32)MsgHaidiaUghHrnghhh);
+			Event_ShowMessageAndWait(22, 0, 20);
+			Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 40);
+			Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x17e, 0x26b);
+			Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
+			Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+			Engine_EventWait(30);
+			Event_ShowMessage(22, 0);
+			GameFlag_Set(0x836);
+			Engine_EventEnd();
+		}
+	}
 }
 
 void FieldScene_RunActor22SceneWhenFlag836Only(void)
 {
-    if (Engine_GameFlagIsSet(0x837) == 0 && Engine_GameFlagIsSet(0x836) != 0) {
-        Engine_EventBegin();
-        Engine_ActorRunRepeatedMotion(22, 2);
-        Engine_EventWait(20);
-        Engine_EventSetMessage((s32)MsgHaidiaDontLeaveMeHere);
-        HaidiaArashi_RunCallOutSequence();
-        Engine_EventEnd();
-    }
+	if (Engine_GameFlagIsSet(0x837) == 0 && Engine_GameFlagIsSet(0x836) != 0)
+	{
+		Engine_EventBegin();
+		Engine_ActorRunRepeatedMotion(22, 2);
+		Engine_EventWait(20);
+		Engine_EventSetMessage((s32)MsgHaidiaDontLeaveMeHere);
+		HaidiaArashi_RunCallOutSequence();
+		Engine_EventEnd();
+	}
 }
 
 void FieldScene_RunScene372SequenceC(void)
 {
-    if (GameFlag_IsSet(0x841) != 0) {
-        Engine_EventBegin();
-        Actor_FaceActor(22, ACTOR_PARTY_LEADER, 0);
-        Engine_EventWait(20);
-        Engine_EventSetMessage((s32)MsgHaidiaBoulderNeedGet);
-        Event_ShowMessage(22, 0);
-        Actor_FaceDirection(22, FACING_NORTHEAST, 10);
-        Engine_EventEnd();
-    } else {
-        if (GameFlag_IsSet(0x837) == 0) {
-            Engine_EventBegin();
-            Engine_EventSetMessage((s32)MsgHaidiaWantDumpStuff);
-            HaidiaArashi_RunCallOutSequence();
-            Engine_EventEnd();
-        }
-    }
+	if (GameFlag_IsSet(0x841) != 0)
+	{
+		Engine_EventBegin();
+		Actor_FaceActor(22, ACTOR_PARTY_LEADER, 0);
+		Engine_EventWait(20);
+		Engine_EventSetMessage((s32)MsgHaidiaBoulderNeedGet);
+		Event_ShowMessage(22, 0);
+		Actor_FaceDirection(22, FACING_NORTHEAST, 10);
+		Engine_EventEnd();
+	}
+	else
+	{
+		if (GameFlag_IsSet(0x837) == 0)
+		{
+			Engine_EventBegin();
+			Engine_EventSetMessage((s32)MsgHaidiaWantDumpStuff);
+			HaidiaArashi_RunCallOutSequence();
+			Engine_EventEnd();
+		}
+	}
 }
 
 void HaidiaArashi_RunCallOutSequence(void)
 {
-    struct FieldActor *record;
-    s32 v5;
+	struct FieldActor *record;
+	s32				   v5;
 
-    Engine_EventOpenMessage(22, 0);
-    Engine_ActorFaceEachOther(0, 22, 0);
-    v5 = 0;
-    if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Engine_EventSetMessage((s32)MsgHaidiaThinkForgetThings);
-        v5 = 1;
-    } else {
-        Engine_EventSetMessage((s32)MsgHaidiaRockHitsLose);
-    }
-    Engine_EventWait(20);
-    Engine_EventShowMessageAndWait(22, 0, 40);
-    Actor_SetAttachedEffect(22, 0x100);
-    Engine_ActorSetAnimation(21, 3);
-    Engine_ActorSetAnimation(22, 1);
-    Engine_EventWait(40);
-    Engine_ActorFaceActor(22, 0, 0);
-    Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(22, 3);
-    if (v5 != 0) {
+	Engine_EventOpenMessage(22, 0);
+	Engine_ActorFaceEachOther(0, 22, 0);
+	v5 = 0;
+	if (Engine_EventChooseYesNo(0, 0) == 0)
+	{
+		Engine_EventSetMessage((s32)MsgHaidiaThinkForgetThings);
+		v5 = 1;
+	}
+	else
+	{
+		Engine_EventSetMessage((s32)MsgHaidiaRockHitsLose);
+	}
+	Engine_EventWait(20);
+	Engine_EventShowMessageAndWait(22, 0, 40);
+	Actor_SetAttachedEffect(22, 0x100);
+	Engine_ActorSetAnimation(21, 3);
+	Engine_ActorSetAnimation(22, 1);
+	Engine_EventWait(40);
+	Engine_ActorFaceActor(22, 0, 0);
+	Engine_EventWait(20);
+	Engine_ActorSetAnimationAndWait(22, 3);
+	if (v5 != 0)
+	{
 
-        Engine_EventSetMessage((s32)MsgHaidiaKnowRightOk);
-    } else {
-        Engine_EventSetMessage((s32)MsgHaidiaRightDitchStuff);
-    }
-    Engine_EventShowMessage(22, 0);
-    Engine_ActorSetAnimation(22, 2);
-    record = Object_GetById(0);
-    if (record != 0) {
-        Engine_ActorSetDestination(22, record->x.part.pixel, record->z.part.pixel);
-    }
-    Engine_ActorWaitForMove(22);
-    Engine_ActorSetPosition(22, 0, 0);
-    Event_PrepareObjectAndApplyValue(1, 1);
-    Engine_GameFlagSet(0x837);
+		Engine_EventSetMessage((s32)MsgHaidiaKnowRightOk);
+	}
+	else
+	{
+		Engine_EventSetMessage((s32)MsgHaidiaRightDitchStuff);
+	}
+	Engine_EventShowMessage(22, 0);
+	Engine_ActorSetAnimation(22, 2);
+	record = Object_GetById(0);
+	if (record != 0)
+	{
+		Engine_ActorSetDestination(22, record->x.part.pixel, record->z.part.pixel);
+	}
+	Engine_ActorWaitForMove(22);
+	Engine_ActorSetPosition(22, 0, 0);
+	Event_PrepareObjectAndApplyValue(1, 1);
+	Engine_GameFlagSet(0x837);
 }
 
 void FieldScene_RunScene372SequenceE(void)
 {
-    struct FieldActor *record;
-    s32 base;
+	struct FieldActor *record;
+	s32				   base;
 
-    if (GameFlag_IsSet(0x837) == 0) {
-        Engine_EventBegin();
-        Actor_SetAttachedEffect(22, 0x100);
-        base = (s32)MsgHaidiaHey;
-        Engine_EventSetMessage(base);
-        Event_ShowMessage(22, 0);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-        Camera_SetSpeed(0x6666, 0xccc);
-        Camera_MoveTo(0x1000000, -1, 0x24c0000, 1);
-        Actor_SetSpeed(22, 0x20000, 0x10000);
-        Object_SetActionCallbackAndRefreshById(22, (s32)HaidiaArashi_ActorTwentyTwoScriptA);
-        Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
-        Engine_EventWait(30);
-        ((s32 (*)())Engine_ActorEnableActionCallback)(22, (s32)HaidiaArashi_ActorTwentyTwoScriptB);
-        Event_ShowMessage(22, 0);
-        record = Actor_Get(22);
-        record->scale_y = 0x10000;
-        Engine_ActorRunRepeatedMotion(22, 1);
-        Engine_EventWait(20);
-        Event_AskYesNo(22, 0);
-        Engine_EventWait(40);
-        Engine_ActorRunRepeatedMotion(22, 1);
-        Engine_EventSetMessage((base + 5));
-        Event_ShowMessageAndWait(22, 0, 20);
-        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-        Engine_ActorSetAnimationAndWait(22, 3);
-        Event_ShowMessage(22, 0);
-        Actor_SetSpeed(22, 0x10000, 0x8000);
-        Engine_ActorSetAnimation(22, 2);
-        record = Object_GetById(ACTOR_PARTY_LEADER);
-        if (record != 0) {
-            Actor_SetDestination(22, record->x.part.pixel, record->z.part.pixel);
-        }
-        Engine_ActorWaitForMove(22);
-        Actor_SetPosition(22, 0, 0);
-        Event_PrepareObjectAndApplyValue(1, 1);
-        Engine_ActorSetAnimation(21, 3);
-        GameFlag_Set(0x837);
-        Engine_EventEnd();
-    }
+	if (GameFlag_IsSet(0x837) == 0)
+	{
+		Engine_EventBegin();
+		Actor_SetAttachedEffect(22, 0x100);
+		base = (s32)MsgHaidiaHey;
+		Engine_EventSetMessage(base);
+		Event_ShowMessage(22, 0);
+		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
+		Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+		Camera_SetSpeed(0x6666, 0xccc);
+		Camera_MoveTo(0x1000000, -1, 0x24c0000, 1);
+		Actor_SetSpeed(22, 0x20000, 0x10000);
+		Object_SetActionCallbackAndRefreshById(22, (s32)HaidiaArashi_ActorTwentyTwoScriptA);
+		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
+		Engine_EventWait(30);
+		((s32 (*)())Engine_ActorEnableActionCallback)(22, (s32)HaidiaArashi_ActorTwentyTwoScriptB);
+		Event_ShowMessage(22, 0);
+		record = Actor_Get(22);
+		record->scale_y = 0x10000;
+		Engine_ActorRunRepeatedMotion(22, 1);
+		Engine_EventWait(20);
+		Event_AskYesNo(22, 0);
+		Engine_EventWait(40);
+		Engine_ActorRunRepeatedMotion(22, 1);
+		Engine_EventSetMessage((base + 5));
+		Event_ShowMessageAndWait(22, 0, 20);
+		Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+		Engine_ActorSetAnimationAndWait(22, 3);
+		Event_ShowMessage(22, 0);
+		Actor_SetSpeed(22, 0x10000, 0x8000);
+		Engine_ActorSetAnimation(22, 2);
+		record = Object_GetById(ACTOR_PARTY_LEADER);
+		if (record != 0)
+		{
+			Actor_SetDestination(22, record->x.part.pixel, record->z.part.pixel);
+		}
+		Engine_ActorWaitForMove(22);
+		Actor_SetPosition(22, 0, 0);
+		Event_PrepareObjectAndApplyValue(1, 1);
+		Engine_ActorSetAnimation(21, 3);
+		GameFlag_Set(0x837);
+		Engine_EventEnd();
+	}
 }
 
 void FieldScene_RunScene372SequenceD(void)
 {
-    u32 i;
-    struct FieldActor *record;
-    struct FieldActor *actor;
+	u32				   i;
+	struct FieldActor *record;
+	struct FieldActor *actor;
 
-    Engine_EventBegin();
-    actor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (actor != NULL) {
-        Actor_SetPosition(22, actor->x.fixed, actor->z.fixed);
-    }
-    Actor_SetSpeed(22, 0x10000, 0x8000);
-    Actor_WalkToAndWait(22, 0x119, 0x1fb);
-    Engine_ActorFaceEachOther(22, ACTOR_PARTY_LEADER, 0);
-    Engine_EventWait(30);
-    Engine_EventSetMessage((s32)MsgHaidiaNorthLeadsToMtAleph);
-    Event_ShowMessage(22, 0);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
-    Engine_EventWait(10);
-    Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-    Engine_EventWait(20);
-    Actor_FaceDirection(22, FACING_SOUTH, 0);
-    Event_ShowMessage(22, 0);
-    Engine_ActorSetAnimation(22, 2);
-    record = Object_GetById(ACTOR_PARTY_LEADER);
-    if (record != 0) {
-        Actor_SetDestination(22, record->x.part.pixel, record->z.part.pixel);
-    }
-    Engine_ActorWaitForMove(22);
-    Actor_SetPosition(22, 0, 0);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x100, 0x205);
-    Engine_EventEnd();
+	Engine_EventBegin();
+	actor = Actor_Get(ACTOR_PARTY_LEADER);
+	if (actor != NULL)
+	{
+		Actor_SetPosition(22, actor->x.fixed, actor->z.fixed);
+	}
+	Actor_SetSpeed(22, 0x10000, 0x8000);
+	Actor_WalkToAndWait(22, 0x119, 0x1fb);
+	Engine_ActorFaceEachOther(22, ACTOR_PARTY_LEADER, 0);
+	Engine_EventWait(30);
+	Engine_EventSetMessage((s32)MsgHaidiaNorthLeadsToMtAleph);
+	Event_ShowMessage(22, 0);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
+	Engine_EventWait(10);
+	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+	Engine_EventWait(20);
+	Actor_FaceDirection(22, FACING_SOUTH, 0);
+	Event_ShowMessage(22, 0);
+	Engine_ActorSetAnimation(22, 2);
+	record = Object_GetById(ACTOR_PARTY_LEADER);
+	if (record != 0)
+	{
+		Actor_SetDestination(22, record->x.part.pixel, record->z.part.pixel);
+	}
+	Engine_ActorWaitForMove(22);
+	Actor_SetPosition(22, 0, 0);
+	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x100, 0x205);
+	Engine_EventEnd();
 }
 
 void SceneActor_RunActor22PlacementSequence(s32 x, s32 y)
 {
-    Thing1 *a;
-    s32 w = 0x10000;
-    s32 h = 0x8000;
-    Thing2 *b;
+	Thing1 *a;
+	s32		w = 0x10000;
+	s32		h = 0x8000;
+	Thing2 *b;
 
-    a = Object_GetById(ACTOR_PARTY_LEADER);
-    if (a != 0) {
-        Engine_ActorSetPosition(22, a->unk8, a->unk10);
-    }
-    Engine_ActorSetSpeed(22, w, h);
-    Engine_ActorWalkToAndWait(22, x, y);
-    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
-    Engine_EventWait(20);
-    Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Engine_EventWait(40);
-    Engine_EventSetMessage((s32)MsgHaidiaCantGetAroundThisRock);
-    Engine_EventShowMessage(22, 0);
-    Engine_ActorRunRepeatedMotion(22, 2);
-    Engine_EventShowMessage(22, 0);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(22, 2);
-    b = Object_GetById(ACTOR_PARTY_LEADER);
-    if (b != 0) {
-        Engine_ActorSetDestination(22, b->unkA, b->unk12);
-    }
-    Engine_ActorWaitForMove(22);
-    Engine_ActorSetPosition(22, 0, 0);
+	a = Object_GetById(ACTOR_PARTY_LEADER);
+	if (a != 0)
+	{
+		Engine_ActorSetPosition(22, a->unk8, a->unk10);
+	}
+	Engine_ActorSetSpeed(22, w, h);
+	Engine_ActorWalkToAndWait(22, x, y);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
+	Engine_EventWait(20);
+	Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+	Engine_EventWait(40);
+	Engine_EventSetMessage((s32)MsgHaidiaCantGetAroundThisRock);
+	Engine_EventShowMessage(22, 0);
+	Engine_ActorRunRepeatedMotion(22, 2);
+	Engine_EventShowMessage(22, 0);
+	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+	Engine_ActorSetAnimation(22, 2);
+	b = Object_GetById(ACTOR_PARTY_LEADER);
+	if (b != 0)
+	{
+		Engine_ActorSetDestination(22, b->unkA, b->unk12);
+	}
+	Engine_ActorWaitForMove(22);
+	Engine_ActorSetPosition(22, 0, 0);
 }
 
 void Scene_BoulderFalls(void)
 {
-    u32 i;
-    struct FieldActor *record;
-    s32 *phase;
-    struct FieldActor *actor;
-    s32 steps;
-    s32 callback;
-    s32 shifted;
+	u32				   i;
+	struct FieldActor *record;
+	s32				  *phase;
+	struct FieldActor *actor;
+	s32				   steps;
+	s32				   callback;
+	s32				   shifted;
 
-    if (GameFlag_IsSet(FLAG_BOULDER_FELL) == 0) {
-        Engine_EventBegin();
-        Event_CallWithLastActiveObjectId((s32)HaidiaArashi_LastObjectCall);
-        SceneState_SetValue140Mode0();
-        Engine_TaskWait(1);
-        Event_PlayCue(141);
-        Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-        Engine_EventWait(30);
-        Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-        Event_PlayCue(145);
-        Engine_EventWait(30);
-        actor = Actor_Get(ACTOR_PARTY_LEADER);
-        if (actor != NULL) {
-            Actor_SetPosition(22, actor->x.fixed, actor->z.fixed);
-        }
-        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
-        Actor_SetSpeed(22, 0x20000, 0x10000);
-        Engine_ActorEnableActionCallback(0, HaidiaArashi_LeaderScript);
-        Object_SetActionCallbackAndRefreshById(22, (s32)HaidiaArashi_ActorTwentyTwoScript);
-        Object_RefreshSelectorById(0);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-        Actor_ShowEmote(22, 0x100, 30);
-        Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-        Event_PlayCue(145);
-        Engine_EventWait(40);
-        Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-        Event_PlayCue(145);
-        Engine_EventWait(20);
-        Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-        Actor_SetAttachedEffect(22, 0x102);
-        Engine_EventWait(40);
-        Engine_ActorSetAnimation(32, 5);
-        Engine_ActorSetAnimation(33, 5);
-        Engine_ActorSetAnimation(30, 8);
-        Engine_ActorSetAnimation(29, 8);
-        Actor_Get(30)->scale_x = -0x10000;
-        Engine_ActorSetSpritePriority(32, 2);
-        Engine_ActorSetSpritePriority(33, 2);
-        Engine_ActorSetSpritePriority(30, 3);
-        Engine_ActorSetSpritePriority(29, 3);
-        Engine_EventSetMessage((s32)MsgHaidiaTheBoulderIsFalling);
-        Event_ShowMessageAndWait(28, 0, 20);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-        Actor_FaceDirection(22, FACING_NORTH, 20);
-        Camera_SetSpeed(0x40000, 0x8000);
-        Camera_MoveTo(0x700000, -1, 0x14b0000, 1);
-        Engine_CameraWaitForMove();
-        for (i = 0; i < 40; i++) {
-            SceneActor_SetModeByFrameBit1(Actor_Get(32));
-            SceneActor_SetModeByFrameBit1(Actor_Get(33));
-            SceneActor_SetModeByFrameBit1(Actor_Get(30));
-            SceneActor_SetModeByFrameBit1(Actor_Get(29));
-            Engine_TaskWait(1);
-        }
-        phase = &HaidiaArashi_ShakeShift;
-        steps = (s32)FieldScene_RunFourPairedSteps;
-        HaidiaArashi_ShakeDone = 0;
-        *phase = 0;
-        FieldScheduler_AddOrUpdateCallback(steps, 0xc80);
-        callback = (s32)SceneState_SetValue19ThenCall;
-        Engine_TaskAddCallback(callback, 0xc80);
-        Engine_EventWait(40);
-        *phase = 1;
-        Engine_EventWait(30);
-        Actor_SetPosition(19, 0x720000, 0x1220000);
-        record = Actor_Get(19);
-        shifted = record->y.fixed + 0x400000;
-        record->y.fixed = shifted;
-        record->target_y = shifted;
-        Actor_SetSpeed(19, 0xcccc, 0x6666);
-        Event_PlayCue(145);
-        Actor_MoveToAndWait(19, 114, 0x14d);
-        Engine_ActorSetAnimation(19, 2);
-        Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-        Event_PlayCue(145);
-        *phase = 0;
-        Actor_SetSpeed(19, 0x6666, 0x3333);
-        Actor_MoveToAndWait(19, 114, 0x12c);
-        Engine_ActorSetAnimation(19, 2);
-        Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-        Event_PlayCue(145);
-        *phase = 2;
-        Actor_SetSpeed(19, 0xcccc, 0x6666);
-        Actor_MoveToAndWait(19, 114, 0x14d);
-        Engine_ActorSetAnimation(19, 2);
-        Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-        Event_PlayCue(145);
-        *phase = 0;
-        Actor_SetSpeed(19, 0x6666, 0x3333);
-        Actor_MoveToAndWait(19, 114, 0x12c);
-        Engine_ActorSetAnimation(19, 2);
-        Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-        Event_PlayCue(145);
-        *phase = 2;
-        Actor_SetSpeed(19, 0xcccc, 0x6666);
-        Actor_MoveToAndWait(19, 114, 0x14d);
-        Engine_ActorSetAnimation(19, 2);
-        Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-        Event_PlayCue(145);
-        *phase = 1;
-        Engine_EventWait(20);
-        Actor_SetAttachedEffect(32, 0x102);
-        Engine_ActorRunRepeatedMotion(32, 2);
-        Event_ShowMessage(31, 0);
-        Actor_ShowEmote(33, 0x100, 0);
-        Engine_ActorRunRepeatedMotion(33, 2);
-        Event_ShowMessageAndWait(28, 0, 40);
-        Actor_SetAttachedEffect(30, 0x102);
-        Engine_ActorRunRepeatedMotion(30, 2);
-        Event_ShowMessage(30, 0);
-        HaidiaArashi_ShakeDone = 1;
-        Engine_ActorSetAnimation(29, 1);
-        Engine_TaskWait(1);
-        Actor_SetChildValue(29, 0);
-        Actor_ShowEmote(29, 0x105, 20);
-        Actor_FaceDirection(29, FACING_WEST, 40);
-        Actor_FaceDirection(29, FACING_EAST, 20);
-        Actor_FaceDirection(29, FACING_WEST, 20);
-        Actor_FaceDirection(29, FACING_SOUTH, 40);
-        Actor_ShowEmote(29, 0x100, 0);
-        Engine_ActorRunRepeatedMotion(29, 2);
-        Engine_ActorJump(29, 4, 40);
-        Engine_ActorSetAnimation(29, 9);
-        Engine_EventWait(10);
-        Event_ShowMessageAndWait(29, 0, 20);
-        Event_PlayCue(0x121);
-        Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-        Camera_SetSpeed(0x60000, 0xc000);
-        Camera_MoveTo(0x540000, -1, 0x2340000, 1);
-        Engine_CameraWaitForMove();
-        BattleFx_PlayQueuedSound();
-        Actor_FaceActor(22, ACTOR_PARTY_LEADER, 0);
-        Engine_EventWait(20);
-        Actor_SetAttachedEffect(22, 0x102);
-        Engine_EventWait(30);
-        Scheduler_RemoveCallback(steps);
-        Scheduler_RemoveCallback(callback);
-        Event_ShowMessage(22, 0);
-        Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
-        Engine_EventWait(20);
-        FieldScene_RunSingleStep();
-        Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-        Engine_ActorSetAnimationAndWait(22, 3);
-        Engine_EventWait(20);
-        Engine_ActorSetAnimation(22, 2);
-        record = Object_GetById(ACTOR_PARTY_LEADER);
-        if (record != 0) {
-            Actor_SetDestination(22, record->x.part.pixel, record->z.part.pixel);
-        }
-        Engine_ActorWaitForMove(22);
-        Actor_SetPosition(22, 0, 0);
-        Engine_ActorDestroy(31);
-        Engine_ActorDestroy(28);
-        Engine_ActorDestroy(30);
-        Engine_ActorDestroy(29);
-        Engine_ActorDestroy(32);
-        Engine_ActorDestroy(33);
-        GameFlag_Set(FLAG_BOULDER_FELL);
-        Engine_EventEnd();
-    }
+	if (GameFlag_IsSet(FLAG_BOULDER_FELL) == 0)
+	{
+		Engine_EventBegin();
+		Event_CallWithLastActiveObjectId((s32)HaidiaArashi_LastObjectCall);
+		SceneState_SetValue140Mode0();
+		Engine_TaskWait(1);
+		Event_PlayCue(141);
+		Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+		Engine_EventWait(30);
+		Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+		Event_PlayCue(145);
+		Engine_EventWait(30);
+		actor = Actor_Get(ACTOR_PARTY_LEADER);
+		if (actor != NULL)
+		{
+			Actor_SetPosition(22, actor->x.fixed, actor->z.fixed);
+		}
+		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+		Actor_SetSpeed(22, 0x20000, 0x10000);
+		Engine_ActorEnableActionCallback(0, HaidiaArashi_LeaderScript);
+		Object_SetActionCallbackAndRefreshById(22, (s32)HaidiaArashi_ActorTwentyTwoScript);
+		Object_RefreshSelectorById(0);
+		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
+		Actor_ShowEmote(22, 0x100, 30);
+		Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+		Event_PlayCue(145);
+		Engine_EventWait(40);
+		Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
+		Event_PlayCue(145);
+		Engine_EventWait(20);
+		Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+		Actor_SetAttachedEffect(22, 0x102);
+		Engine_EventWait(40);
+		Engine_ActorSetAnimation(32, 5);
+		Engine_ActorSetAnimation(33, 5);
+		Engine_ActorSetAnimation(30, 8);
+		Engine_ActorSetAnimation(29, 8);
+		Actor_Get(30)->scale_x = -0x10000;
+		Engine_ActorSetSpritePriority(32, 2);
+		Engine_ActorSetSpritePriority(33, 2);
+		Engine_ActorSetSpritePriority(30, 3);
+		Engine_ActorSetSpritePriority(29, 3);
+		Engine_EventSetMessage((s32)MsgHaidiaTheBoulderIsFalling);
+		Event_ShowMessageAndWait(28, 0, 20);
+		Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+		Actor_FaceDirection(22, FACING_NORTH, 20);
+		Camera_SetSpeed(0x40000, 0x8000);
+		Camera_MoveTo(0x700000, -1, 0x14b0000, 1);
+		Engine_CameraWaitForMove();
+		for (i = 0; i < 40; i++)
+		{
+			SceneActor_SetModeByFrameBit1(Actor_Get(32));
+			SceneActor_SetModeByFrameBit1(Actor_Get(33));
+			SceneActor_SetModeByFrameBit1(Actor_Get(30));
+			SceneActor_SetModeByFrameBit1(Actor_Get(29));
+			Engine_TaskWait(1);
+		}
+		phase = &HaidiaArashi_ShakeShift;
+		steps = (s32)FieldScene_RunFourPairedSteps;
+		HaidiaArashi_ShakeDone = 0;
+		*phase = 0;
+		FieldScheduler_AddOrUpdateCallback(steps, 0xc80);
+		callback = (s32)SceneState_SetValue19ThenCall;
+		Engine_TaskAddCallback(callback, 0xc80);
+		Engine_EventWait(40);
+		*phase = 1;
+		Engine_EventWait(30);
+		Actor_SetPosition(19, 0x720000, 0x1220000);
+		record = Actor_Get(19);
+		shifted = record->y.fixed + 0x400000;
+		record->y.fixed = shifted;
+		record->target_y = shifted;
+		Actor_SetSpeed(19, 0xcccc, 0x6666);
+		Event_PlayCue(145);
+		Actor_MoveToAndWait(19, 114, 0x14d);
+		Engine_ActorSetAnimation(19, 2);
+		Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+		Event_PlayCue(145);
+		*phase = 0;
+		Actor_SetSpeed(19, 0x6666, 0x3333);
+		Actor_MoveToAndWait(19, 114, 0x12c);
+		Engine_ActorSetAnimation(19, 2);
+		Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
+		Event_PlayCue(145);
+		*phase = 2;
+		Actor_SetSpeed(19, 0xcccc, 0x6666);
+		Actor_MoveToAndWait(19, 114, 0x14d);
+		Engine_ActorSetAnimation(19, 2);
+		Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+		Event_PlayCue(145);
+		*phase = 0;
+		Actor_SetSpeed(19, 0x6666, 0x3333);
+		Actor_MoveToAndWait(19, 114, 0x12c);
+		Engine_ActorSetAnimation(19, 2);
+		Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+		Event_PlayCue(145);
+		*phase = 2;
+		Actor_SetSpeed(19, 0xcccc, 0x6666);
+		Actor_MoveToAndWait(19, 114, 0x14d);
+		Engine_ActorSetAnimation(19, 2);
+		Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+		Event_PlayCue(145);
+		*phase = 1;
+		Engine_EventWait(20);
+		Actor_SetAttachedEffect(32, 0x102);
+		Engine_ActorRunRepeatedMotion(32, 2);
+		Event_ShowMessage(31, 0);
+		Actor_ShowEmote(33, 0x100, 0);
+		Engine_ActorRunRepeatedMotion(33, 2);
+		Event_ShowMessageAndWait(28, 0, 40);
+		Actor_SetAttachedEffect(30, 0x102);
+		Engine_ActorRunRepeatedMotion(30, 2);
+		Event_ShowMessage(30, 0);
+		HaidiaArashi_ShakeDone = 1;
+		Engine_ActorSetAnimation(29, 1);
+		Engine_TaskWait(1);
+		Actor_SetChildValue(29, 0);
+		Actor_ShowEmote(29, 0x105, 20);
+		Actor_FaceDirection(29, FACING_WEST, 40);
+		Actor_FaceDirection(29, FACING_EAST, 20);
+		Actor_FaceDirection(29, FACING_WEST, 20);
+		Actor_FaceDirection(29, FACING_SOUTH, 40);
+		Actor_ShowEmote(29, 0x100, 0);
+		Engine_ActorRunRepeatedMotion(29, 2);
+		Engine_ActorJump(29, 4, 40);
+		Engine_ActorSetAnimation(29, 9);
+		Engine_EventWait(10);
+		Event_ShowMessageAndWait(29, 0, 20);
+		Event_PlayCue(0x121);
+		Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+		Camera_SetSpeed(0x60000, 0xc000);
+		Camera_MoveTo(0x540000, -1, 0x2340000, 1);
+		Engine_CameraWaitForMove();
+		BattleFx_PlayQueuedSound();
+		Actor_FaceActor(22, ACTOR_PARTY_LEADER, 0);
+		Engine_EventWait(20);
+		Actor_SetAttachedEffect(22, 0x102);
+		Engine_EventWait(30);
+		Scheduler_RemoveCallback(steps);
+		Scheduler_RemoveCallback(callback);
+		Event_ShowMessage(22, 0);
+		Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
+		Engine_EventWait(20);
+		FieldScene_RunSingleStep();
+		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+		Engine_ActorSetAnimationAndWait(22, 3);
+		Engine_EventWait(20);
+		Engine_ActorSetAnimation(22, 2);
+		record = Object_GetById(ACTOR_PARTY_LEADER);
+		if (record != 0)
+		{
+			Actor_SetDestination(22, record->x.part.pixel, record->z.part.pixel);
+		}
+		Engine_ActorWaitForMove(22);
+		Actor_SetPosition(22, 0, 0);
+		Engine_ActorDestroy(31);
+		Engine_ActorDestroy(28);
+		Engine_ActorDestroy(30);
+		Engine_ActorDestroy(29);
+		Engine_ActorDestroy(32);
+		Engine_ActorDestroy(33);
+		GameFlag_Set(FLAG_BOULDER_FELL);
+		Engine_EventEnd();
+	}
 }
 
 void Arashi_SetActorFrameMode(struct FieldActor *actor, s32 mode)
 {
-    if ((actor->active & 15) == 1) {
-        struct AnimationObject *animation = (struct AnimationObject *)actor->sprite;
-        s32 param = mode - 1;
-        u8 count;
-        if (mode == 0) {
-            param = HaidiaArashi_FrameModes[(gFrameCount >> 1) & (actor->active & 15)];
-        }
-        count = animation->count;
-        if (count != 0) {
-            struct AnimationEntry **entries = animation->entries;
-            s32 k = count;
-            do {
-                struct AnimationEntry *entry = *entries++;
-                if (entry != NULL && entry->script != NULL) {
-                    entry->param = param;
-                }
-                k--;
-            } while (k != 0);
-        }
-        animation->dirty = 1;
-    }
+	if ((actor->active & 15) == 1)
+	{
+		struct AnimationObject *animation = (struct AnimationObject *)actor->sprite;
+		s32						param = mode - 1;
+		u8						count;
+		if (mode == 0)
+		{
+			param = HaidiaArashi_FrameModes[(gFrameCount >> 1) & (actor->active & 15)];
+		}
+		count = animation->count;
+		if (count != 0)
+		{
+			struct AnimationEntry **entries = animation->entries;
+			s32						k = count;
+			do
+			{
+				struct AnimationEntry *entry = *entries++;
+				if (entry != NULL && entry->script != NULL)
+				{
+					entry->param = param;
+				}
+				k--;
+			} while (k != 0);
+		}
+		animation->dirty = 1;
+	}
 }
 
 void ActorPresentation_SetFourActorsModeByBit(void)
 {
-    if (((gFrameCount >> HaidiaArashi_ShakeShift) & 3) != 0) {
-        Arashi_SetActorFrameMode(Object_GetById(32), 1);
-        Arashi_SetActorFrameMode(Object_GetById(33), 1);
-        Arashi_SetActorFrameMode(Object_GetById(30), 1);
-        Arashi_SetActorFrameMode(Object_GetById(29), 1);
-    } else {
-        Arashi_SetActorFrameMode(Object_GetById(32), 8);
-        Arashi_SetActorFrameMode(Object_GetById(33), 8);
-        Arashi_SetActorFrameMode(Object_GetById(30), 8);
-        Arashi_SetActorFrameMode(Object_GetById(29), 8);
-    }
+	if (((gFrameCount >> HaidiaArashi_ShakeShift) & 3) != 0)
+	{
+		Arashi_SetActorFrameMode(Object_GetById(32), 1);
+		Arashi_SetActorFrameMode(Object_GetById(33), 1);
+		Arashi_SetActorFrameMode(Object_GetById(30), 1);
+		Arashi_SetActorFrameMode(Object_GetById(29), 1);
+	}
+	else
+	{
+		Arashi_SetActorFrameMode(Object_GetById(32), 8);
+		Arashi_SetActorFrameMode(Object_GetById(33), 8);
+		Arashi_SetActorFrameMode(Object_GetById(30), 8);
+		Arashi_SetActorFrameMode(Object_GetById(29), 8);
+	}
 }
 
 void FieldScene_RunFlagGatedActorSequence(void)
 {
-    u8 *tbl;
+	u8 *tbl;
 
-    if (GameFlag_IsSet(0x83a) != 0) {
-        return;
-    }
-    Engine_EventBegin();
-    Actor_SetPosition(10, 0xC00000, 0x4BE0000);
-    Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
-    Engine_ActorSetAnimation(10, 5);
-    {
-        u8 *o;
-        s32 v;
-        o = (u8 *)Object_GetById(10);
-        v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-        tbl = HaidiaArashi_ActorEightScript;
-        ((struct FieldActor *)o)->timer = v;
-        Engine_ActorEnableActionCallback(10, (s32)tbl);
-    }
-    Actor_SetPosition(9, 0xC00000, 0x4A50000);
-    Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
-    Actor_SetPosition(24, 0xE30000, 0x4BE0000);
-    Actor_FaceDirection(24, FACING_SOUTH, 0);
-    Engine_ActorSetAnimation(24, 6);
-    {
-        u8 *o;
-        s32 v;
-        o = (u8 *)Object_GetById(24);
-        v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-        ((struct FieldActor *)o)->timer = v;
-        Engine_ActorEnableActionCallback(24, (s32)tbl);
-    }
-    Actor_SetPosition(25, 0xFA0000, 0x4BE0000);
-    Actor_FaceDirection(25, FACING_SOUTH, 0);
-    Engine_ActorSetAnimation(25, 6);
-    {
-        u8 *o;
-        s32 v;
-        o = (u8 *)Object_GetById(25);
-        v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-        ((struct FieldActor *)o)->timer = v;
-        Engine_ActorEnableActionCallback(25, (s32)tbl);
-    }
-    Actor_SetPosition(26, 0xE30000, 0x4A50000);
-    Actor_FaceDirection(26, 0x3000, 0);
-    Actor_SetPosition(23, 0xF30000, 0x4FD0000);
-    Actor_FaceDirection(23, FACING_NORTH, 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
-    Engine_TaskWait(3);
-    Engine_EventSetMessage((s32)MsgHaidiaNoBrother);
-    Engine_EventShowMessage(0x201a, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 150, 0x446);
-    {
-        struct FieldActor *p;
-        p = Object_GetById(ACTOR_PARTY_LEADER);
-        if (p != 0) {
-            Engine_ActorSetPosition(22, p->x.fixed, p->z.fixed);
-        }
-    }
-    Actor_WalkToAndWait(22, 132, 0x446);
-    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
-    Engine_EventWait(40);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-    Actor_FaceDirection(22, FACING_SOUTH, 20);
-    Camera_SetSpeed(0x40000, 0x8000);
-    Camera_MoveTo(0xD80000, -1, 0x4D00000, 1);
-    Engine_CameraWaitForMove();
-    Engine_EventWait(40);
-    Engine_ActorRunRepeatedMotion(10, 2);
-    Engine_EventShowMessageAndWait(10, 0, 10);
-    Engine_ActorRunRepeatedMotion(23, 3);
-    Engine_ActorFaceDirection(9, FACING_EAST, 10);
-    Engine_ActorSetAnimationAndWait(9, 3);
-    Engine_EventShowMessageAndWait(9, 0, 10);
-    Actor_FaceDirection(9, 0x3000, 10);
-    Camera_SetSpeed(0x30000, 0x6000);
-    Camera_MoveTo(0xE80000, -1, 0x4E50000, 1);
-    Engine_CameraWaitForMove();
-    Engine_EventWait(20);
-    Engine_AudioPlayCue(134);
-    Engine_ActorJump(23, 4, 0);
-    Engine_ActorSetAnimation(23, 6);
-    Engine_EventWait(10);
-    Engine_ActorSetPosition(23, 0, 0);
-    Engine_EventWait(60);
-    BattleFx_PlayQueuedSound();
-    Engine_ActorSetAnimation(10, 1);
-    {
-        u8 *o;
-        o = (u8 *)Object_GetById(10);
-        ((struct FieldActor *)o)->scale_x = 0x10000;
-        ((struct FieldActor *)o)->scale_y = 0x10000;
-    }
-    Engine_ActorSetAnimation(24, 1);
-    {
-        u8 *o;
-        o = (u8 *)Object_GetById(24);
-        ((struct FieldActor *)o)->scale_x = 0x10000;
-        ((struct FieldActor *)o)->scale_y = 0x10000;
-    }
-    Engine_ActorSetAnimation(25, 1);
-    {
-        u8 *o;
-        o = (u8 *)Object_GetById(25);
-        ((struct FieldActor *)o)->scale_x = 0x10000;
-        ((struct FieldActor *)o)->scale_y = 0x10000;
-    }
-    Engine_ActorStartRepeatedMotion(10, 2);
-    Engine_ActorStartRepeatedMotion(9, 2);
-    Engine_ActorStartRepeatedMotion(24, 2);
-    Engine_ActorStartRepeatedMotion(25, 2);
-    Engine_ActorRunRepeatedMotion(26, 2);
-    Camera_SetSpeed(0x9999, 0x1333);
-    Camera_MoveTo(0xD80000, -1, 0x4D00000, 1);
-    Engine_CameraWaitForMove();
-    Actor_SetAttachedEffect(26, 0x102);
-    Engine_ActorSetAttachedEffect(9, 0x102);
-    Engine_EventWait(60);
-    Engine_ActorRunRepeatedMotion(26, 2);
-    Engine_ActorStartRepeatedMotion(26, 3);
-    Engine_EventShowMessage(26, 0);
-    Engine_ActorJump(25, 2, 0);
-    Actor_SetDestination(25, 234, 0x4B5);
-    Engine_ActorJump(26, 2, 0);
-    Actor_SetDestination(26, 227, 0x4B1);
-    Engine_EventWait(90);
-    Camera_MoveTo(0xE80000, -1, 0x4E50000, 1);
-    Engine_CameraWaitForMove();
-    Engine_ActorSetPosition(23, 0xF30000, 0x4FD0000);
-    Engine_TaskWait(1);
-    Engine_AudioPlayCue(106);
-    {
-        u8 *o;
-        o = (u8 *)Object_GetById(23);
-        ((struct FieldActor *)o)->velocity_y = 0x20000;
-    }
-    Engine_EventWait(6);
-    Engine_ActorSetAnimation(23, 7);
-    Engine_EventWait(20);
-    BattleFx_PlayQueuedSound();
-    Engine_EventWait(20);
-    Engine_CameraSetSpeed(0x19999, 0x3333);
-    Engine_CameraMoveTo(0xD80000, -1, 0x4D00000, 1);
-    Engine_CameraWaitForMove();
-    Engine_ActorRunRepeatedMotion(24, 2);
-    Engine_EventWait(20);
-    Actor_ShowEmote(24, 0x105, 40);
-    Engine_ActorFaceEachOther(24, 10, 0);
-    Engine_EventWait(10);
-    Engine_ActorRunRepeatedMotion(10, 2);
-    Event_ShowMessage(0x800A, 0);
-    {
-        u8 *o;
-        o = (u8 *)Object_GetById(25);
-        ((struct FieldActor *)o)->steering_flags &= 0xFE;
-    }
-    {
-        u8 *o;
-        o = (u8 *)Object_GetById(26);
-        ((struct FieldActor *)o)->steering_flags &= 0xFE;
-    }
-    Actor_SetSpeed(25, 0x9999, 0x4CCC);
-    Actor_SetSpeed(26, 0x9999, 0x4CCC);
-    Actor_SetDestination(25, 247, 0x4BA);
-    Actor_MoveToAndWait(26, 227, 0x4A5);
-    {
-        u8 *o;
-        o = (u8 *)Object_GetById(25);
-        ((struct FieldActor *)o)->steering_flags |= 1;
-    }
-    Object_GetById(26)->steering_flags |= 1;
-    Engine_ActorFaceDirection(26, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(25, FACING_WEST, 10);
-    Engine_ActorSetAnimation(24, 4);
-    Engine_EventShowMessageAndWait(0x8018, 0, 10);
-    Actor_FaceDirection(10, FACING_NORTH, 20);
-    Engine_ActorFaceDirection(10, FACING_EAST, 10);
-    Engine_ActorSetAnimation(10, 4);
-    Event_ShowMessageAndWait(0x800A, 0, 10);
-    Actor_ShowEmote(24, 0x105, 0);
-    Actor_ShowEmote(10, 0x105, 60);
-    Actor_ShowEmote(9, 0x106, 20);
-    Actor_FaceDirection(9, FACING_WEST, 40);
-    Actor_FaceDirection(9, FACING_NORTH, 20);
-    Engine_ActorFaceDirection(9, FACING_EAST, 30);
-    Actor_FaceDirection(9, FACING_SOUTH, 10);
-    Engine_EventShowMessageAndWait(9, 0, 10);
-    Actor_FaceDirection(10, FACING_NORTH, 0);
-    Actor_FaceDirection(25, 0x9000, 0);
-    Actor_FaceDirection(24, FACING_NORTHWEST, 0);
-    Actor_FaceDirection(26, FACING_WEST, 10);
-    Engine_ActorRunRepeatedMotion(10, 1);
-    Event_ShowMessageAndWait(0x800A, 0, 10);
-    Engine_ActorSetAnimation(9, 4);
-    Engine_EventShowMessageAndWait(9, 0, 10);
-    Actor_ShowEmote(10, 0x105, 0);
-    Actor_ShowEmote(24, 0x105, 0);
-    Actor_ShowEmote(25, 0x105, 0);
-    Actor_ShowEmote(26, 0x105, 40);
-    Engine_ActorFaceDirection(9, FACING_EAST, 10);
-    Engine_ActorFaceEachOther(24, 25, 0);
-    Engine_EventWait(20);
-    Engine_ActorFaceDirection(9, FACING_EAST, 0);
-    Engine_ActorFaceDirection(10, FACING_EAST, 10);
-    Actor_FaceDirection(24, FACING_WEST, 0);
-    Actor_FaceDirection(25, FACING_WEST, 10);
-    Engine_ActorSetAnimation(24, 3);
-    Engine_ActorSetAnimationAndWait(25, 3);
-    Engine_ActorFaceEachOther(10, 9, 0);
-    Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(10, 1);
-    Engine_EventShowMessageAndWait(0x800A, 0, 10);
-    Engine_ActorSetAnimationAndWait(9, 3);
-    Actor_FaceDirection(24, 0xD000, 10);
-    Engine_ActorStartRepeatedMotion(24, 1);
-    Engine_EventShowMessageAndWait(24, 0, 10);
-    Engine_ActorFaceDirection(10, FACING_EAST, 0);
-    Engine_ActorFaceDirection(9, FACING_EAST, 0);
-    Engine_ActorRunRepeatedMotion(26, 1);
-    Actor_FaceDirection(26, FACING_SOUTHEAST, 20);
-    Actor_FaceDirection(25, FACING_NORTHWEST, 20);
-    Engine_ActorSetAnimationAndWait(25, 3);
-    Engine_EventShowMessageAndWait(25, 0, 10);
-    Engine_ActorSetAnimationAndWait(26, 3);
-    Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(9, 2);
-    Engine_ActorSetAnimationAndWait(9, 3);
-    Engine_EventShowMessageAndWait(9, 0, 10);
-    Actor_FaceDirection(26, FACING_WEST, 10);
-    Engine_ActorSetAnimationAndWait(26, 3);
-    Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(9, 1);
-    Engine_EventShowMessageAndWait(9, 0, 10);
-    HaidiaArashi_RunRiverSearch();
-    Engine_GameFlagSet(0x83A);
-    Engine_EventEnd();
+	if (GameFlag_IsSet(0x83a) != 0)
+	{
+		return;
+	}
+	Engine_EventBegin();
+	Actor_SetPosition(10, 0xC00000, 0x4BE0000);
+	Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
+	Engine_ActorSetAnimation(10, 5);
+	{
+		u8 *o;
+		s32 v;
+		o = (u8 *)Object_GetById(10);
+		v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
+		tbl = HaidiaArashi_ActorEightScript;
+		((struct FieldActor *)o)->timer = v;
+		Engine_ActorEnableActionCallback(10, (s32)tbl);
+	}
+	Actor_SetPosition(9, 0xC00000, 0x4A50000);
+	Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
+	Actor_SetPosition(24, 0xE30000, 0x4BE0000);
+	Actor_FaceDirection(24, FACING_SOUTH, 0);
+	Engine_ActorSetAnimation(24, 6);
+	{
+		u8 *o;
+		s32 v;
+		o = (u8 *)Object_GetById(24);
+		v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
+		((struct FieldActor *)o)->timer = v;
+		Engine_ActorEnableActionCallback(24, (s32)tbl);
+	}
+	Actor_SetPosition(25, 0xFA0000, 0x4BE0000);
+	Actor_FaceDirection(25, FACING_SOUTH, 0);
+	Engine_ActorSetAnimation(25, 6);
+	{
+		u8 *o;
+		s32 v;
+		o = (u8 *)Object_GetById(25);
+		v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
+		((struct FieldActor *)o)->timer = v;
+		Engine_ActorEnableActionCallback(25, (s32)tbl);
+	}
+	Actor_SetPosition(26, 0xE30000, 0x4A50000);
+	Actor_FaceDirection(26, 0x3000, 0);
+	Actor_SetPosition(23, 0xF30000, 0x4FD0000);
+	Actor_FaceDirection(23, FACING_NORTH, 0);
+	Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
+	Engine_TaskWait(3);
+	Engine_EventSetMessage((s32)MsgHaidiaNoBrother);
+	Engine_EventShowMessage(0x201a, 0);
+	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
+	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 150, 0x446);
+	{
+		struct FieldActor *p;
+		p = Object_GetById(ACTOR_PARTY_LEADER);
+		if (p != 0)
+		{
+			Engine_ActorSetPosition(22, p->x.fixed, p->z.fixed);
+		}
+	}
+	Actor_WalkToAndWait(22, 132, 0x446);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
+	Engine_EventWait(40);
+	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+	Actor_FaceDirection(22, FACING_SOUTH, 20);
+	Camera_SetSpeed(0x40000, 0x8000);
+	Camera_MoveTo(0xD80000, -1, 0x4D00000, 1);
+	Engine_CameraWaitForMove();
+	Engine_EventWait(40);
+	Engine_ActorRunRepeatedMotion(10, 2);
+	Engine_EventShowMessageAndWait(10, 0, 10);
+	Engine_ActorRunRepeatedMotion(23, 3);
+	Engine_ActorFaceDirection(9, FACING_EAST, 10);
+	Engine_ActorSetAnimationAndWait(9, 3);
+	Engine_EventShowMessageAndWait(9, 0, 10);
+	Actor_FaceDirection(9, 0x3000, 10);
+	Camera_SetSpeed(0x30000, 0x6000);
+	Camera_MoveTo(0xE80000, -1, 0x4E50000, 1);
+	Engine_CameraWaitForMove();
+	Engine_EventWait(20);
+	Engine_AudioPlayCue(134);
+	Engine_ActorJump(23, 4, 0);
+	Engine_ActorSetAnimation(23, 6);
+	Engine_EventWait(10);
+	Engine_ActorSetPosition(23, 0, 0);
+	Engine_EventWait(60);
+	BattleFx_PlayQueuedSound();
+	Engine_ActorSetAnimation(10, 1);
+	{
+		u8 *o;
+		o = (u8 *)Object_GetById(10);
+		((struct FieldActor *)o)->scale_x = 0x10000;
+		((struct FieldActor *)o)->scale_y = 0x10000;
+	}
+	Engine_ActorSetAnimation(24, 1);
+	{
+		u8 *o;
+		o = (u8 *)Object_GetById(24);
+		((struct FieldActor *)o)->scale_x = 0x10000;
+		((struct FieldActor *)o)->scale_y = 0x10000;
+	}
+	Engine_ActorSetAnimation(25, 1);
+	{
+		u8 *o;
+		o = (u8 *)Object_GetById(25);
+		((struct FieldActor *)o)->scale_x = 0x10000;
+		((struct FieldActor *)o)->scale_y = 0x10000;
+	}
+	Engine_ActorStartRepeatedMotion(10, 2);
+	Engine_ActorStartRepeatedMotion(9, 2);
+	Engine_ActorStartRepeatedMotion(24, 2);
+	Engine_ActorStartRepeatedMotion(25, 2);
+	Engine_ActorRunRepeatedMotion(26, 2);
+	Camera_SetSpeed(0x9999, 0x1333);
+	Camera_MoveTo(0xD80000, -1, 0x4D00000, 1);
+	Engine_CameraWaitForMove();
+	Actor_SetAttachedEffect(26, 0x102);
+	Engine_ActorSetAttachedEffect(9, 0x102);
+	Engine_EventWait(60);
+	Engine_ActorRunRepeatedMotion(26, 2);
+	Engine_ActorStartRepeatedMotion(26, 3);
+	Engine_EventShowMessage(26, 0);
+	Engine_ActorJump(25, 2, 0);
+	Actor_SetDestination(25, 234, 0x4B5);
+	Engine_ActorJump(26, 2, 0);
+	Actor_SetDestination(26, 227, 0x4B1);
+	Engine_EventWait(90);
+	Camera_MoveTo(0xE80000, -1, 0x4E50000, 1);
+	Engine_CameraWaitForMove();
+	Engine_ActorSetPosition(23, 0xF30000, 0x4FD0000);
+	Engine_TaskWait(1);
+	Engine_AudioPlayCue(106);
+	{
+		u8 *o;
+		o = (u8 *)Object_GetById(23);
+		((struct FieldActor *)o)->velocity_y = 0x20000;
+	}
+	Engine_EventWait(6);
+	Engine_ActorSetAnimation(23, 7);
+	Engine_EventWait(20);
+	BattleFx_PlayQueuedSound();
+	Engine_EventWait(20);
+	Engine_CameraSetSpeed(0x19999, 0x3333);
+	Engine_CameraMoveTo(0xD80000, -1, 0x4D00000, 1);
+	Engine_CameraWaitForMove();
+	Engine_ActorRunRepeatedMotion(24, 2);
+	Engine_EventWait(20);
+	Actor_ShowEmote(24, 0x105, 40);
+	Engine_ActorFaceEachOther(24, 10, 0);
+	Engine_EventWait(10);
+	Engine_ActorRunRepeatedMotion(10, 2);
+	Event_ShowMessage(0x800A, 0);
+	{
+		u8 *o;
+		o = (u8 *)Object_GetById(25);
+		((struct FieldActor *)o)->steering_flags &= 0xFE;
+	}
+	{
+		u8 *o;
+		o = (u8 *)Object_GetById(26);
+		((struct FieldActor *)o)->steering_flags &= 0xFE;
+	}
+	Actor_SetSpeed(25, 0x9999, 0x4CCC);
+	Actor_SetSpeed(26, 0x9999, 0x4CCC);
+	Actor_SetDestination(25, 247, 0x4BA);
+	Actor_MoveToAndWait(26, 227, 0x4A5);
+	{
+		u8 *o;
+		o = (u8 *)Object_GetById(25);
+		((struct FieldActor *)o)->steering_flags |= 1;
+	}
+	Object_GetById(26)->steering_flags |= 1;
+	Engine_ActorFaceDirection(26, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(25, FACING_WEST, 10);
+	Engine_ActorSetAnimation(24, 4);
+	Engine_EventShowMessageAndWait(0x8018, 0, 10);
+	Actor_FaceDirection(10, FACING_NORTH, 20);
+	Engine_ActorFaceDirection(10, FACING_EAST, 10);
+	Engine_ActorSetAnimation(10, 4);
+	Event_ShowMessageAndWait(0x800A, 0, 10);
+	Actor_ShowEmote(24, 0x105, 0);
+	Actor_ShowEmote(10, 0x105, 60);
+	Actor_ShowEmote(9, 0x106, 20);
+	Actor_FaceDirection(9, FACING_WEST, 40);
+	Actor_FaceDirection(9, FACING_NORTH, 20);
+	Engine_ActorFaceDirection(9, FACING_EAST, 30);
+	Actor_FaceDirection(9, FACING_SOUTH, 10);
+	Engine_EventShowMessageAndWait(9, 0, 10);
+	Actor_FaceDirection(10, FACING_NORTH, 0);
+	Actor_FaceDirection(25, 0x9000, 0);
+	Actor_FaceDirection(24, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(26, FACING_WEST, 10);
+	Engine_ActorRunRepeatedMotion(10, 1);
+	Event_ShowMessageAndWait(0x800A, 0, 10);
+	Engine_ActorSetAnimation(9, 4);
+	Engine_EventShowMessageAndWait(9, 0, 10);
+	Actor_ShowEmote(10, 0x105, 0);
+	Actor_ShowEmote(24, 0x105, 0);
+	Actor_ShowEmote(25, 0x105, 0);
+	Actor_ShowEmote(26, 0x105, 40);
+	Engine_ActorFaceDirection(9, FACING_EAST, 10);
+	Engine_ActorFaceEachOther(24, 25, 0);
+	Engine_EventWait(20);
+	Engine_ActorFaceDirection(9, FACING_EAST, 0);
+	Engine_ActorFaceDirection(10, FACING_EAST, 10);
+	Actor_FaceDirection(24, FACING_WEST, 0);
+	Actor_FaceDirection(25, FACING_WEST, 10);
+	Engine_ActorSetAnimation(24, 3);
+	Engine_ActorSetAnimationAndWait(25, 3);
+	Engine_ActorFaceEachOther(10, 9, 0);
+	Engine_EventWait(20);
+	Engine_ActorRunRepeatedMotion(10, 1);
+	Engine_EventShowMessageAndWait(0x800A, 0, 10);
+	Engine_ActorSetAnimationAndWait(9, 3);
+	Actor_FaceDirection(24, 0xD000, 10);
+	Engine_ActorStartRepeatedMotion(24, 1);
+	Engine_EventShowMessageAndWait(24, 0, 10);
+	Engine_ActorFaceDirection(10, FACING_EAST, 0);
+	Engine_ActorFaceDirection(9, FACING_EAST, 0);
+	Engine_ActorRunRepeatedMotion(26, 1);
+	Actor_FaceDirection(26, FACING_SOUTHEAST, 20);
+	Actor_FaceDirection(25, FACING_NORTHWEST, 20);
+	Engine_ActorSetAnimationAndWait(25, 3);
+	Engine_EventShowMessageAndWait(25, 0, 10);
+	Engine_ActorSetAnimationAndWait(26, 3);
+	Engine_EventWait(20);
+	Engine_ActorRunRepeatedMotion(9, 2);
+	Engine_ActorSetAnimationAndWait(9, 3);
+	Engine_EventShowMessageAndWait(9, 0, 10);
+	Actor_FaceDirection(26, FACING_WEST, 10);
+	Engine_ActorSetAnimationAndWait(26, 3);
+	Engine_EventWait(20);
+	Engine_ActorRunRepeatedMotion(9, 1);
+	Engine_EventShowMessageAndWait(9, 0, 10);
+	HaidiaArashi_RunRiverSearch();
+	Engine_GameFlagSet(0x83A);
+	Engine_EventEnd();
 }
 
 void HaidiaArashi_RunRiverSearch(void)
 {
-    struct FieldActor *entry;
-    s32 record;
-    s32 script;
-    s32 north;
-    s32 suppose;
+	struct FieldActor *entry;
+	s32				   record;
+	s32				   script;
+	s32				   north;
+	s32				   suppose;
 
-    Actor_FaceDirection(26, 0x3000, 0);
-    Actor_FaceDirection(24, 0xd000, 0);
-    Actor_FaceDirection(25, 0xb000, 0);
-    Actor_FaceDirection(9, 0x3000, 0);
-    Actor_FaceDirection(10, 0xd000, 20);
-    Engine_ActorSetAnimation(26, 3);
-    Engine_ActorSetAnimation(24, 3);
-    Engine_ActorSetAnimation(25, 3);
-    Engine_ActorSetAnimation(9, 3);
-    Engine_ActorSetAnimationAndWait(25, 3);
-    Engine_EventWait(20);
-    Camera_SetSpeed(0x10000, 0x2000);
-    Camera_MoveTo(0x860000, -1, 0x4ab0000, 1);
-    Actor_SetSpeed(26, 0x19999, 0xcccc);
-    Actor_SetSpeed(9, 0x19999, 0xcccc);
-    Engine_ActorEnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptA);
-    Object_SetActionCallbackAndRefreshById(9, (s32)HaidiaArashi_ActorNineScriptA);
-    Event_PlayCue(158);
-    Map_AnimateCells(HaidiaArashi_CellSteps2, 38, 72);
-    Engine_EventWait(10);
-    Actor_WalkToAndWait(9, 149, 0x497);
-    Actor_SetPosition(9, 0, 0);
-    Actor_WalkToAndWait(25, 250, 0x4be);
-    BattleFx_PlayQueuedSound();
-    Actor_FaceDirection(10, 0x3000, 0);
-    Actor_FaceDirection(24, 0x3000, 0);
-    Actor_FaceDirection(25, 0x3000, 0);
-    Engine_ActorSetAnimation(10, 5);
-    Engine_ActorSetAnimation(24, 6);
-    Engine_ActorSetAnimation(25, 6);
-    entry = Actor_Get(10);
-    record = Engine_RandomNext();
-    entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
-    entry = Actor_Get(24);
-    record = Engine_RandomNext();
-    entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
-    entry = Actor_Get(25);
-    record = Engine_RandomNext();
-    entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
-    script = (s32)HaidiaArashi_ActorEightScript;
-    Engine_ActorEnableActionCallback(10, (const u8 *)script);
-    Engine_ActorEnableActionCallback(24, (const u8 *)script);
-    Engine_ActorEnableActionCallback(25, (const u8 *)script);
-    Object_RefreshSelectorById(26);
-    Engine_EventWait(10);
-    Event_PlayCue(159);
-    Map_AnimateCells(HaidiaArashi_CellSteps5, 38, 72);
-    Engine_EventWait(30);
-    BattleFx_PlayQueuedSound();
-    Camera_MoveTo(0x700000, -1, 0x4c90000, 1);
-    Event_PlayCue(158);
-    Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 73);
-    Engine_EventWait(20);
-    BattleFx_PlayQueuedSound();
-    Engine_ActorEnableActionCallback(9, HaidiaArashi_ActorNineScriptB);
-    Engine_EventWait(20);
-    Engine_ActorEnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptB);
-    Engine_EventWait(40);
-    Event_PlayCue(159);
-    Map_AnimateCells(HaidiaArashi_CellSteps4, 35, 73);
-    Object_RefreshSelectorById(26);
-    BattleFx_PlayQueuedSound();
-    Engine_EventWait(40);
-    north = (s32)MsgHaidiaGoLookNorth;
-    Engine_EventSetMessage(north);
-    Event_ShowMessageAndWait(9, 0, 20);
-    Engine_ActorSetAnimationAndWait(26, 3);
-    Event_ShowMessageAndWait(0x201a, 0, 40);
-    Engine_ActorSetAnimation(9, 3);
-    Engine_ActorSetAnimationAndWait(26, 3);
-    Engine_EventWait(30);
-    Engine_ActorEnableActionCallback(9, HaidiaArashi_ActorNineScriptC);
-    Engine_ActorEnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptC);
-    Engine_EventWait(40);
-    Camera_SetSpeed(0x20000, 0x4000);
-    Camera_MoveTo(0x690000, -1, 0x43e0000, 1);
-    Object_RefreshSelectorById(9);
-    Actor_FaceDirection(9, FACING_EAST, 0);
-    Actor_ShowEmote(9, 0x100, 40);
-    Event_ShowMessageAndWait(9, 0, 10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-    Actor_FaceDirection(22, FACING_WEST, 10);
-    Actor_WalkToAndWait(9, 105, 0x43e);
-    Engine_ActorRunRepeatedMotion(9, 2);
-    Event_OpenMessage(0x8009, 0);
-    Actor_FaceDirection(22, FACING_EAST, 0);
-    if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Engine_ActorSetAnimationAndWait(9, 3);
-        Engine_EventSetMessage((north + 4));
-    } else {
-        Engine_ActorRunRepeatedMotion(9, 2);
-        Engine_EventSetMessage((north + 5));
-    }
-    Event_ShowMessage(0x8009, 0);
-    Actor_FaceDirection(22, FACING_WEST, 40);
-    Actor_ShowEmote(9, 0x100, 30);
-    suppose = (s32)MsgHaidiaDontSupposeTwo;
-    Engine_EventSetMessage(suppose);
-    Event_OpenMessage(0x8009, 0);
-    if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Engine_ActorSetAnimationAndWait(9, 3);
-        Engine_EventSetMessage((suppose + 1));
-        Event_ShowMessageAndWait(0x8009, 0, 30);
-        Actor_FaceDirection(22, FACING_WEST, 20);
-        Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-        Engine_ActorSetAnimation(22, 3);
-        Engine_ActorSetAnimationAndWait(9, 3);
-        Engine_EventWait(40);
-    } else {
-        Actor_ShowEmote(9, 0x105, 90);
-        Actor_ShowEmote(9, 0x103, 40);
-        Engine_ActorSetAnimation(9, 4);
-        Engine_EventSetMessage((suppose + 2));
-        Event_ShowMessage(0x8009, 0);
-    }
-    Engine_ActorEnableActionCallback(9, HaidiaArashi_ActorNineScriptD);
-    Engine_EventWait(90);
-    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
-    Engine_EventWait(40);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimationAndWait(22, 3);
-    Engine_EventWait(20);
-    Engine_ActorSetAnimation(22, 2);
-    record = (s32)Actor_Get(0);
-    if (record != 0) {
-        Actor_SetDestination(22, ((struct FieldActor *)record)->x.part.pixel, ((struct FieldActor *)record)->z.part.pixel);
-    }
-    Engine_ActorWaitForMove(22);
-    Actor_SetPosition(22, 0, 0);
+	Actor_FaceDirection(26, 0x3000, 0);
+	Actor_FaceDirection(24, 0xd000, 0);
+	Actor_FaceDirection(25, 0xb000, 0);
+	Actor_FaceDirection(9, 0x3000, 0);
+	Actor_FaceDirection(10, 0xd000, 20);
+	Engine_ActorSetAnimation(26, 3);
+	Engine_ActorSetAnimation(24, 3);
+	Engine_ActorSetAnimation(25, 3);
+	Engine_ActorSetAnimation(9, 3);
+	Engine_ActorSetAnimationAndWait(25, 3);
+	Engine_EventWait(20);
+	Camera_SetSpeed(0x10000, 0x2000);
+	Camera_MoveTo(0x860000, -1, 0x4ab0000, 1);
+	Actor_SetSpeed(26, 0x19999, 0xcccc);
+	Actor_SetSpeed(9, 0x19999, 0xcccc);
+	Engine_ActorEnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptA);
+	Object_SetActionCallbackAndRefreshById(9, (s32)HaidiaArashi_ActorNineScriptA);
+	Event_PlayCue(158);
+	Map_AnimateCells(HaidiaArashi_CellSteps2, 38, 72);
+	Engine_EventWait(10);
+	Actor_WalkToAndWait(9, 149, 0x497);
+	Actor_SetPosition(9, 0, 0);
+	Actor_WalkToAndWait(25, 250, 0x4be);
+	BattleFx_PlayQueuedSound();
+	Actor_FaceDirection(10, 0x3000, 0);
+	Actor_FaceDirection(24, 0x3000, 0);
+	Actor_FaceDirection(25, 0x3000, 0);
+	Engine_ActorSetAnimation(10, 5);
+	Engine_ActorSetAnimation(24, 6);
+	Engine_ActorSetAnimation(25, 6);
+	entry = Actor_Get(10);
+	record = Engine_RandomNext();
+	entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
+	entry = Actor_Get(24);
+	record = Engine_RandomNext();
+	entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
+	entry = Actor_Get(25);
+	record = Engine_RandomNext();
+	entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
+	script = (s32)HaidiaArashi_ActorEightScript;
+	Engine_ActorEnableActionCallback(10, (const u8 *)script);
+	Engine_ActorEnableActionCallback(24, (const u8 *)script);
+	Engine_ActorEnableActionCallback(25, (const u8 *)script);
+	Object_RefreshSelectorById(26);
+	Engine_EventWait(10);
+	Event_PlayCue(159);
+	Map_AnimateCells(HaidiaArashi_CellSteps5, 38, 72);
+	Engine_EventWait(30);
+	BattleFx_PlayQueuedSound();
+	Camera_MoveTo(0x700000, -1, 0x4c90000, 1);
+	Event_PlayCue(158);
+	Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 73);
+	Engine_EventWait(20);
+	BattleFx_PlayQueuedSound();
+	Engine_ActorEnableActionCallback(9, HaidiaArashi_ActorNineScriptB);
+	Engine_EventWait(20);
+	Engine_ActorEnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptB);
+	Engine_EventWait(40);
+	Event_PlayCue(159);
+	Map_AnimateCells(HaidiaArashi_CellSteps4, 35, 73);
+	Object_RefreshSelectorById(26);
+	BattleFx_PlayQueuedSound();
+	Engine_EventWait(40);
+	north = (s32)MsgHaidiaGoLookNorth;
+	Engine_EventSetMessage(north);
+	Event_ShowMessageAndWait(9, 0, 20);
+	Engine_ActorSetAnimationAndWait(26, 3);
+	Event_ShowMessageAndWait(0x201a, 0, 40);
+	Engine_ActorSetAnimation(9, 3);
+	Engine_ActorSetAnimationAndWait(26, 3);
+	Engine_EventWait(30);
+	Engine_ActorEnableActionCallback(9, HaidiaArashi_ActorNineScriptC);
+	Engine_ActorEnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptC);
+	Engine_EventWait(40);
+	Camera_SetSpeed(0x20000, 0x4000);
+	Camera_MoveTo(0x690000, -1, 0x43e0000, 1);
+	Object_RefreshSelectorById(9);
+	Actor_FaceDirection(9, FACING_EAST, 0);
+	Actor_ShowEmote(9, 0x100, 40);
+	Event_ShowMessageAndWait(9, 0, 10);
+	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
+	Actor_FaceDirection(22, FACING_WEST, 10);
+	Actor_WalkToAndWait(9, 105, 0x43e);
+	Engine_ActorRunRepeatedMotion(9, 2);
+	Event_OpenMessage(0x8009, 0);
+	Actor_FaceDirection(22, FACING_EAST, 0);
+	if (Engine_EventChooseYesNo(0, 0) == 0)
+	{
+		Engine_ActorSetAnimationAndWait(9, 3);
+		Engine_EventSetMessage((north + 4));
+	}
+	else
+	{
+		Engine_ActorRunRepeatedMotion(9, 2);
+		Engine_EventSetMessage((north + 5));
+	}
+	Event_ShowMessage(0x8009, 0);
+	Actor_FaceDirection(22, FACING_WEST, 40);
+	Actor_ShowEmote(9, 0x100, 30);
+	suppose = (s32)MsgHaidiaDontSupposeTwo;
+	Engine_EventSetMessage(suppose);
+	Event_OpenMessage(0x8009, 0);
+	if (Engine_EventChooseYesNo(0, 0) == 0)
+	{
+		Engine_ActorSetAnimationAndWait(9, 3);
+		Engine_EventSetMessage((suppose + 1));
+		Event_ShowMessageAndWait(0x8009, 0, 30);
+		Actor_FaceDirection(22, FACING_WEST, 20);
+		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+		Engine_ActorSetAnimation(22, 3);
+		Engine_ActorSetAnimationAndWait(9, 3);
+		Engine_EventWait(40);
+	}
+	else
+	{
+		Actor_ShowEmote(9, 0x105, 90);
+		Actor_ShowEmote(9, 0x103, 40);
+		Engine_ActorSetAnimation(9, 4);
+		Engine_EventSetMessage((suppose + 2));
+		Event_ShowMessage(0x8009, 0);
+	}
+	Engine_ActorEnableActionCallback(9, HaidiaArashi_ActorNineScriptD);
+	Engine_EventWait(90);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
+	Engine_EventWait(40);
+	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+	Engine_ActorSetAnimationAndWait(22, 3);
+	Engine_EventWait(20);
+	Engine_ActorSetAnimation(22, 2);
+	record = (s32)Actor_Get(0);
+	if (record != 0)
+	{
+		Actor_SetDestination(22, ((struct FieldActor *)record)->x.part.pixel,
+			((struct FieldActor *)record)->z.part.pixel);
+	}
+	Engine_ActorWaitForMove(22);
+	Actor_SetPosition(22, 0, 0);
 }
 
 void SceneDialogue_RunActorTenFlag30dDialogue(void)
 {
-    s32 v2000 = 0x2000;
-    u8 *tbl;
+	s32 v2000 = 0x2000;
+	u8 *tbl;
 
-    Engine_EventBegin();
-    Engine_ActorSetAnimation(10, 1);
-    Engine_EventWait(10);
-    Engine_ActorFaceEachOther(10, ACTOR_PARTY_LEADER, 20);
-    if (Engine_GameFlagIsSet(0x30d) != 0) {
-        Engine_EventSetMessage((s32)MsgHaidiaTwoDontEnough);
-        Engine_EventShowMessageAndWait(10, 0, 10);
-    } else {
-        Engine_EventSetMessage((s32)MsgHaidiaOh);
-        Engine_ActorStartRepeatedMotion(10, 1);
-        Engine_EventShowMessageAndWait(10, 0, 10);
-        Engine_ActorStartRepeatedMotion(10, 2);
-        Engine_EventShowMessageAndWait(10, 0, 10);
-    }
-    Engine_ActorFaceDirection(10, v2000, 20);
-    Engine_ActorSetAnimation(10, 5);
-    Engine_EventWait(10);
-    {
-        struct FieldActor *rec;
-        s32 v;
-        rec = Object_GetById(10);
-        v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-        tbl = HaidiaArashi_ActorEightScript;
-        rec->timer = v;
-        Engine_ActorEnableActionCallback(10, tbl);
-    }
-    Engine_EventWait(20);
-    Engine_GameFlagSet(0x30d);
-    Engine_EventEnd();
+	Engine_EventBegin();
+	Engine_ActorSetAnimation(10, 1);
+	Engine_EventWait(10);
+	Engine_ActorFaceEachOther(10, ACTOR_PARTY_LEADER, 20);
+	if (Engine_GameFlagIsSet(0x30d) != 0)
+	{
+		Engine_EventSetMessage((s32)MsgHaidiaTwoDontEnough);
+		Engine_EventShowMessageAndWait(10, 0, 10);
+	}
+	else
+	{
+		Engine_EventSetMessage((s32)MsgHaidiaOh);
+		Engine_ActorStartRepeatedMotion(10, 1);
+		Engine_EventShowMessageAndWait(10, 0, 10);
+		Engine_ActorStartRepeatedMotion(10, 2);
+		Engine_EventShowMessageAndWait(10, 0, 10);
+	}
+	Engine_ActorFaceDirection(10, v2000, 20);
+	Engine_ActorSetAnimation(10, 5);
+	Engine_EventWait(10);
+	{
+		struct FieldActor *rec;
+		s32				   v;
+		rec = Object_GetById(10);
+		v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
+		tbl = HaidiaArashi_ActorEightScript;
+		rec->timer = v;
+		Engine_ActorEnableActionCallback(10, tbl);
+	}
+	Engine_EventWait(20);
+	Engine_GameFlagSet(0x30d);
+	Engine_EventEnd();
 }
 
 void HaidiaArashi_RunReunionAndDeparture(void)
 {
-    u32 i;
-    struct FieldActor *rec;
-    struct FieldActor *record;
-    s32 v5;
-    u8 *p4;
+	u32				   i;
+	struct FieldActor *rec;
+	struct FieldActor *record;
+	s32				   v5;
+	u8				  *p4;
 
-    if (Engine_GameFlagIsSet(0x840) == 0) {
-    } else {
-        if (GameFlag_IsSet(0x841) != 0) {
-        } else {
-            Engine_EventBegin();
-            Actor_SetSpeed(0, 0x10000, 0x8000);
-            Actor_SetSpeed(22, 0x10000, 0x8000);
-            Actor_SetSpeed(26, 0x10000, 0x8000);
-            Actor_SetSpeed(8, 0x10000, 0x8000);
-            Actor_WalkToAndWait(0, 217, 0x557);
-            record = Object_GetById(0);
-            if (record != 0) {
-                Engine_ActorSetPosition(22, record->x.fixed, record->z.fixed);
-            }
-            Actor_WalkToAndWait(22, 235, 0x557);
-            Actor_FaceDirection(22, 0xb000, 0);
-            record = Object_GetById(0);
-            if (record != 0) {
-                Engine_ActorSetPosition(26, record->x.fixed, record->z.fixed);
-            }
-            Actor_WalkToAndWait(26, 199, 0x557);
-            Actor_FaceDirection(26, 0xd000, 0);
-            Actor_SetPosition(25, 0xf70000, 0x4ba0000);
-            Engine_ActorFaceDirection(25, FACING_SOUTHWEST, 0);
-            record = Object_GetById(8);
-            p4 = (u8 *)record->sprite;
-            record->priority_flags &= 254;
-            ((struct Flags9 *)p4)->mode = 1;
-            rec = Object_GetById(0);
-            p4 = (u8 *)rec->sprite;
-            rec->priority_flags &= 254;
-            ((struct Flags9 *)p4)->mode = 2;
-            record = Object_GetById(0);
-            if (record != 0) {
-                Engine_ActorSetPosition(8, record->x.fixed, record->z.fixed);
-            }
-            Actor_WalkToAndWait(8, 221, 0x569);
-            Actor_FaceDirection(8, 0xb000, 60);
-            Engine_ActorRunRepeatedMotion(26, 2);
-            Engine_EventSetMessage((s32)MsgHaidiaMomDadBack);
-            Engine_EventShowMessageAndWait(26, 0, 40);
-            Actor_SetPosition(9, 0x650000, 0x4ad0000);
-            Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
-            Engine_EventShowMessageAndWait(0x1009, 0, 10);
-            Actor_FaceDirection(26, FACING_NORTHWEST, 0);
-            Engine_CameraSetSpeed(0x13333, 0x2666);
-            Camera_MoveTo(0x650000, -1, 0x4ad0000, 1);
-            Actor_SetSpeed(9, 0x16666, 0xb333);
-            Engine_ActorEnableActionCallback(9, HaidiaArashi_StormRunActions);
-            Engine_EventWait(60);
-            Engine_CameraSetSpeed(0x9999, 0x1333);
-            Camera_MoveTo(0xbb0000, -1, 0x5300000, 1);
-            Engine_CameraWaitForMove();
-            Engine_EventWait(40);
-            Engine_ActorRunRepeatedMotion(26, 2);
-            Engine_EventShowMessageAndWait(26, 0, 20);
-            Engine_ActorRunRepeatedMotion(9, 2);
-            Engine_EventShowMessageAndWait(0x4009, 0, 20);
-            Engine_CameraSetSpeed(0x20000, 0x4000);
-            Camera_MoveTo(0xdd0000, -1, 0x5690000, 1);
-            Engine_ActorFaceActor(0, 8, 0);
-            Engine_ActorFaceActor(22, 8, 0);
-            Actor_FaceDirection(26, 0x3000, 80);
-            Engine_CameraMoveTo(0xb60000, -1, 0x5500000, 1);
-            Actor_WalkToAndWait(8, 182, 0x568);
-            Engine_ActorFaceActor(8, 9, 0);
-            Engine_EventWait(30);
-            Engine_ActorSetAnimationAndWait(8, 3);
-            Engine_EventWait(10);
-            Engine_ActorFaceActor(0, 9, 0);
-            Engine_ActorFaceActor(22, 9, 0);
-            Engine_ActorFaceActor(26, 9, 0);
-            Engine_ActorSetAnimationAndWait(9, 3);
-            Engine_EventShowMessage(9, 0);
-            Engine_ActorRunRepeatedMotion(26, 2);
-            Engine_EventShowMessageAndWait(26, 0, 10);
-            Actor_FaceDirection(9, FACING_NORTHEAST, 40);
-            Actor_FaceDirection(9, 0x3000, 20);
-            Engine_ActorSetAnimationAndWait(9, 3);
-            Engine_EventShowMessage(9, 0);
-            Engine_ActorFaceEachOther(26, 8, 0);
-            Engine_ActorFaceEachOther(22, 0, 0);
-            Engine_EventWait(40);
-            Engine_ActorFaceActor(0, 9, 0);
-            Engine_ActorFaceActor(22, 9, 0);
-            Engine_ActorFaceActor(26, 9, 0);
-            Engine_ActorFaceActor(8, 9, 0);
-            Engine_ActorRunRepeatedMotion(9, 2);
-            Engine_EventWait(20);
-            Engine_EventShowMessageAndWait(9, 0, 10);
-            Engine_ActorSetAnimation(0, 3);
-            Engine_ActorSetAnimation(26, 3);
-            Engine_ActorSetAnimation(22, 3);
-            v5 = 1;
-            Engine_ActorSetAnimationAndWait(8, 3);
-            rec->priority_flags |= v5;
-            record = Object_GetById(8);
-            record->priority_flags |= v5;
-            Scene_RunActorGroupDepartureSequence();
-            Engine_GameFlagSet(0x841);
-            Engine_EventEnd();
-        }
-    }
+	if (Engine_GameFlagIsSet(0x840) == 0)
+	{
+	}
+	else
+	{
+		if (GameFlag_IsSet(0x841) != 0)
+		{
+		}
+		else
+		{
+			Engine_EventBegin();
+			Actor_SetSpeed(0, 0x10000, 0x8000);
+			Actor_SetSpeed(22, 0x10000, 0x8000);
+			Actor_SetSpeed(26, 0x10000, 0x8000);
+			Actor_SetSpeed(8, 0x10000, 0x8000);
+			Actor_WalkToAndWait(0, 217, 0x557);
+			record = Object_GetById(0);
+			if (record != 0)
+			{
+				Engine_ActorSetPosition(22, record->x.fixed, record->z.fixed);
+			}
+			Actor_WalkToAndWait(22, 235, 0x557);
+			Actor_FaceDirection(22, 0xb000, 0);
+			record = Object_GetById(0);
+			if (record != 0)
+			{
+				Engine_ActorSetPosition(26, record->x.fixed, record->z.fixed);
+			}
+			Actor_WalkToAndWait(26, 199, 0x557);
+			Actor_FaceDirection(26, 0xd000, 0);
+			Actor_SetPosition(25, 0xf70000, 0x4ba0000);
+			Engine_ActorFaceDirection(25, FACING_SOUTHWEST, 0);
+			record = Object_GetById(8);
+			p4 = (u8 *)record->sprite;
+			record->priority_flags &= 254;
+			((struct Flags9 *)p4)->mode = 1;
+			rec = Object_GetById(0);
+			p4 = (u8 *)rec->sprite;
+			rec->priority_flags &= 254;
+			((struct Flags9 *)p4)->mode = 2;
+			record = Object_GetById(0);
+			if (record != 0)
+			{
+				Engine_ActorSetPosition(8, record->x.fixed, record->z.fixed);
+			}
+			Actor_WalkToAndWait(8, 221, 0x569);
+			Actor_FaceDirection(8, 0xb000, 60);
+			Engine_ActorRunRepeatedMotion(26, 2);
+			Engine_EventSetMessage((s32)MsgHaidiaMomDadBack);
+			Engine_EventShowMessageAndWait(26, 0, 40);
+			Actor_SetPosition(9, 0x650000, 0x4ad0000);
+			Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
+			Engine_EventShowMessageAndWait(0x1009, 0, 10);
+			Actor_FaceDirection(26, FACING_NORTHWEST, 0);
+			Engine_CameraSetSpeed(0x13333, 0x2666);
+			Camera_MoveTo(0x650000, -1, 0x4ad0000, 1);
+			Actor_SetSpeed(9, 0x16666, 0xb333);
+			Engine_ActorEnableActionCallback(9, HaidiaArashi_StormRunActions);
+			Engine_EventWait(60);
+			Engine_CameraSetSpeed(0x9999, 0x1333);
+			Camera_MoveTo(0xbb0000, -1, 0x5300000, 1);
+			Engine_CameraWaitForMove();
+			Engine_EventWait(40);
+			Engine_ActorRunRepeatedMotion(26, 2);
+			Engine_EventShowMessageAndWait(26, 0, 20);
+			Engine_ActorRunRepeatedMotion(9, 2);
+			Engine_EventShowMessageAndWait(0x4009, 0, 20);
+			Engine_CameraSetSpeed(0x20000, 0x4000);
+			Camera_MoveTo(0xdd0000, -1, 0x5690000, 1);
+			Engine_ActorFaceActor(0, 8, 0);
+			Engine_ActorFaceActor(22, 8, 0);
+			Actor_FaceDirection(26, 0x3000, 80);
+			Engine_CameraMoveTo(0xb60000, -1, 0x5500000, 1);
+			Actor_WalkToAndWait(8, 182, 0x568);
+			Engine_ActorFaceActor(8, 9, 0);
+			Engine_EventWait(30);
+			Engine_ActorSetAnimationAndWait(8, 3);
+			Engine_EventWait(10);
+			Engine_ActorFaceActor(0, 9, 0);
+			Engine_ActorFaceActor(22, 9, 0);
+			Engine_ActorFaceActor(26, 9, 0);
+			Engine_ActorSetAnimationAndWait(9, 3);
+			Engine_EventShowMessage(9, 0);
+			Engine_ActorRunRepeatedMotion(26, 2);
+			Engine_EventShowMessageAndWait(26, 0, 10);
+			Actor_FaceDirection(9, FACING_NORTHEAST, 40);
+			Actor_FaceDirection(9, 0x3000, 20);
+			Engine_ActorSetAnimationAndWait(9, 3);
+			Engine_EventShowMessage(9, 0);
+			Engine_ActorFaceEachOther(26, 8, 0);
+			Engine_ActorFaceEachOther(22, 0, 0);
+			Engine_EventWait(40);
+			Engine_ActorFaceActor(0, 9, 0);
+			Engine_ActorFaceActor(22, 9, 0);
+			Engine_ActorFaceActor(26, 9, 0);
+			Engine_ActorFaceActor(8, 9, 0);
+			Engine_ActorRunRepeatedMotion(9, 2);
+			Engine_EventWait(20);
+			Engine_EventShowMessageAndWait(9, 0, 10);
+			Engine_ActorSetAnimation(0, 3);
+			Engine_ActorSetAnimation(26, 3);
+			Engine_ActorSetAnimation(22, 3);
+			v5 = 1;
+			Engine_ActorSetAnimationAndWait(8, 3);
+			rec->priority_flags |= v5;
+			record = Object_GetById(8);
+			record->priority_flags |= v5;
+			Scene_RunActorGroupDepartureSequence();
+			Engine_GameFlagSet(0x841);
+			Engine_EventEnd();
+		}
+	}
 }
 struct FieldActor *Battle_GetWorkObject1e0(void);
 
 static __inline__ void HaidiaArashi_PlaceActor(struct FieldActor *object, s32 pos, s32 depth)
 {
-    object->x.fixed = pos;
-    object->y.fixed = pos;
-    object->target_x = pos;
-    object->target_y = pos;
-    object->z.fixed = depth;
-    object->target_z = depth;
+	object->x.fixed = pos;
+	object->y.fixed = pos;
+	object->target_x = pos;
+	object->target_y = pos;
+	object->z.fixed = depth;
+	object->target_z = depth;
 }
 
 void Scene_RunActorGroupDepartureSequence(void)
 {
-    struct FieldSprite *actorVisual;
-    struct FieldSprite *groupVisual;
-    struct FieldActor *actor;
-    struct FieldActor *fieldActor;
-    struct FieldActor *groupActor;
-    struct FieldActor *work;
-    u32 random;
-    const u8 *entryActions;
-    s32 zero;
-    u8 still;
-    const u8 *moveActions;
-    s32 phase;
-    const u8 *departureActions;
+	struct FieldSprite *actorVisual;
+	struct FieldSprite *groupVisual;
+	struct FieldActor  *actor;
+	struct FieldActor  *fieldActor;
+	struct FieldActor  *groupActor;
+	struct FieldActor  *work;
+	u32					random;
+	const u8		   *entryActions;
+	s32					zero;
+	u8					still;
+	const u8		   *moveActions;
+	s32					phase;
+	const u8		   *departureActions;
 
-    actor = Actor_Get(19);
-    groupActor = Actor_Get(27);
-    actorVisual = actor->sprite;
-    groupVisual = groupActor->sprite;
-    Camera_SetSpeed(0x10000, 0x2000);
-    Camera_MoveTo(0x6e0000, -1, 0x58b0000, 1);
-    Actor_SetSpeed(8, 0x13333, 0x9999);
-    Actor_SetSpeed(26, 0x13333, 0x9999);
-    Actor_SetSpeed(0, 0x13333, 0x9999);
-    Actor_SetSpeed(22, 0x13333, 0x9999);
-    entryActions = HaidiaArashi_ArriveScript;
-    Actor_EnableActionCallback(8, entryActions);
-    Event_Wait(10);
-    Actor_EnableActionCallback(26, entryActions);
-    BattleFx_SetBlock30Values12Zero();
-    Event_Wait(10);
-    Actor_EnableActionCallback(0, entryActions);
-    Event_Wait(10);
-    BattleFx_SetBlock30ValuesMaxZero();
-    Actor_EnableActionCallback(22, entryActions);
-    Event_Wait(128);
-    SceneState_SetFlag210AndConfigureRegion40_89();
-    Camera_MoveTo(0xae0000, -1, 0x5940000, 1);
-    Event_Wait(104);
-    Camera_MoveTo(0x990000, -1, 0x52d0000, 1);
-    Actor_WalkToAndWait(9, 158, 0x4f8);
-    Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
-    Object_RefreshSelectorById(8);
-    Actor_EnableActionCallback(8, HaidiaArashi_GatherPath8);
-    Actor_EnableActionCallback(26, HaidiaArashi_GatherPath26);
-    Actor_EnableActionCallback(0, HaidiaArashi_GatherPath0);
-    Object_SetActionCallbackAndRefreshById(22, HaidiaArashi_GatherPath22);
-    Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-    Event_PlayCue(145);
-    Event_Wait(20);
-    Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
-    Event_Wait(60);
-    Actor_ShowEmote(0, 0x101, 0);
-    Actor_ShowEmote(26, 0x101, 0);
-    Actor_ShowEmote(22, 0x101, 0);
-    Actor_ShowEmote(8, 0x101, 0);
-    Actor_ShowEmote(9, 0x101, 60);
-    Actor_FaceEachOther(26, 8, 0);
-    Actor_FaceEachOther(22, 0, 0);
-    Event_Wait(20);
-    fieldActor = Actor_Get(0);
-    random = Random_Next();
-    random = Math_RemainderUnsigned(random, 20) + 20;
-    fieldActor->timer = random;
-    zero = 0;
-    still = 0;
-    fieldActor = Actor_Get(22);
-    random = Random_Next();
-    fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
-    fieldActor = Actor_Get(26);
-    random = Random_Next();
-    fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
-    fieldActor = Actor_Get(8);
-    random = Random_Next();
-    fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
-    fieldActor = Actor_Get(9);
-    random = Random_Next();
-    fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
-    moveActions = HaidiaArashi_LookAroundScript;
-    Actor_EnableActionCallback(9, moveActions);
-    Event_Wait(30);
-    Actor_EnableActionCallback(0, moveActions);
-    Actor_EnableActionCallback(26, moveActions);
-    Actor_EnableActionCallback(22, moveActions);
-    Actor_EnableActionCallback(8, moveActions);
-    Event_Wait(10);
-    Event_PlayCue(17);
-    Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-    Event_PlayCue(145);
-    Event_Wait(30);
-    Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
-    Event_Wait(120);
-    Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-    Event_PlayCue(145);
-    Event_Wait(40);
-    Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-    Event_Wait(60);
-    Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-    Event_PlayCue(145);
-    Event_Wait(20);
-    Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
-    Event_Wait(60);
-    Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-    Event_PlayCue(145);
-    Event_Wait(40);
-    Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
-    Event_Wait(60);
-    BattleFx_SetBlock30ValuesMaxZero();
-    Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
-    Event_Wait(1);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Camera_SetSpeed(0x80000, 0x80000);
-    Camera_MoveTo(0xd90000, -1, 0x43c0000, 1);
-    ColorBuffer_ApplyTarget(0, 0);
-    Engine_ColorBufferInterpolate(40);
-    Task_Wait(40);
-    Actor_SetChildValue(19, 0);
-    work = Actor_Get(19);
-    Actor_SetSpriteFlags(work, 0);
-    work = Actor_Get(27);
-    Actor_SetSpriteFlags(work, 0);
-    groupActor->scale_x = 0xcccc;
-    groupActor->scale_y = 0xcccc;
-    groupActor->priority_flags &= 254;
-    groupVisual->priority = 1;
-    HaidiaArashi_PlaceActor(actor, 0xc80000, 0x3820000);
-    actor->motion_flags = still;
-    actor->priority_flags &= 254;
-    actorVisual->priority = 0;
-    work = Battle_GetWorkObject1e0();
-    work->target_x = 0x80000000;
-    work = Battle_GetWorkObject1e0();
-    work->target_y = 0x80000000;
-    work = Battle_GetWorkObject1e0();
-    work->target_z = 0x80000000;
-    work = Battle_GetWorkObject1e0();
-    work->velocity_x = zero;
-    work = Battle_GetWorkObject1e0();
-    work->velocity_y = zero;
-    work = Battle_GetWorkObject1e0();
-    work->velocity_z = zero;
-    Task_Wait(1);
-    Camera_MoveTo(0xf70000, 0x800000, 0x3950000, 0);
-    Engine_MapRedraw();
-    Task_Wait(1);
-    ColorBuffer_ApplyTarget(0x10003, 1);
-    ColorBuffer_ApplyTarget(0x10000, 2);
-    Engine_ColorBufferInterpolate(30);
-    Task_Wait(30);
-    Engine_TaskAddCallback(HaidiaArashi_UpdatePulsingGlow, 0xc80);
-    Actor_EnableActionCallback(19, HaidiaArashi_ActorNineteenRiseScript);
-    Camera_SetSpeed(0x20000, 0x7ae);
-    Camera_MoveTo(0xaf0000, 0x600000, 0x43e0000, 1);
-    do {
-        Task_Wait(1);
-    } while ((s16)actor->work != 8);
-    ColorBuffer_ApplyTarget(0, 0);
-    Engine_ColorBufferInterpolate(60);
-    Task_Wait(60);
-    Engine_MapWaitWorkValuesBelow256();
-    work = Battle_GetWorkObject1e0();
-    work->target_x = 0x80000000;
-    work = Battle_GetWorkObject1e0();
-    work->target_y = 0x80000000;
-    work = Battle_GetWorkObject1e0();
-    work->target_z = 0x80000000;
-    phase = 0;
-    work = Battle_GetWorkObject1e0();
-    work->velocity_x = phase;
-    work = Battle_GetWorkObject1e0();
-    work->velocity_y = phase;
-    work = Battle_GetWorkObject1e0();
-    work->velocity_z = phase;
-    Scheduler_RemoveCallback(HaidiaArashi_UpdatePulsingGlow);
-    Actor_Stop(19);
-    Task_Wait(1);
-    Actor_SetAnimation(19, 0);
-    groupActor->scale_x = 0x14000;
-    groupActor->scale_y = 0x14000;
-    groupVisual->unknown_20[3] = 2;
-    groupVisual->scale = 0x14000;
-    actor->scale_x = 0x20000;
-    actor->scale_y = 0x20000;
-    actor->x.fixed = phase;
-    actor->z.fixed = phase;
-    actor->target_x = phase;
-    actor->target_z = phase;
-    Task_Wait(1);
-    Actor_SetAnimation(23, 8);
-    Actor_SetPosition(9, 0xa90000, 0x4f00000);
-    Actor_FaceDirection(9, FACING_NORTH, 0);
-    Actor_SetAnimation(9, 9);
-    Actor_SetPosition(26, 0x970000, 0x50c0000);
-    Actor_FaceDirection(26, FACING_WEST, 0);
-    Actor_SetAnimation(26, 5);
-    Actor_SetPosition(8, 0xaa0000, 0x5210000);
-    Actor_FaceDirection(8, FACING_SOUTHWEST, 0);
-    Actor_SetAnimation(8, 5);
-    Actor_SetPosition(0, 0xb90000, 0x5350000);
-    Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
-    Actor_SetAnimation(0, 17);
-    Actor_SetPosition(22, 0xa90000, 0x5680000);
-    Actor_FaceDirection(22, FACING_SOUTH, 0);
-    Actor_SetAnimation(22, 0);
-    Camera_MoveTo(0xa60000, 0, 0x5390000, 0);
-    Engine_MapRedraw();
-    actor->motion_flags = phase;
-    actor->target_x = 0x80000000;
-    actor->target_y = 0x80000000;
-    actor->target_z = 0x80000000;
-    HaidiaArashi_FlashLightning();
-    Actor_SetPosition(27, 0xda0000, 0x4980000);
-    Camera_MoveTo(0xd20000, 0, 0x4ac0000, 0);
-    Engine_MapRedraw();
-    groupActor->scale_x = 0x20000;
-    groupActor->scale_y = 0x20000;
-    Engine_TaskAddCallback(ActorPresentation_SelectActorTwentySevenState, 0xc80);
-    Actor_Stop(10);
-    Actor_Stop(24);
-    Actor_Stop(25);
-    Task_Wait(1);
-    groupActor = Actor_Get(10);
-    groupVisual = groupActor->sprite;
-    groupActor->priority_flags &= 254;
-    groupActor->scale_x = 0x10000;
-    groupActor->scale_y = 0x10000;
-    groupActor->facing = 0xd000;
-    groupVisual->priority = 0;
-    Actor_SetAnimation(10, 0);
-    groupActor = Actor_Get(24);
-    groupVisual = groupActor->sprite;
-    groupActor->priority_flags &= 254;
-    groupActor->scale_x = 0x10000;
-    groupActor->scale_y = 0x10000;
-    groupActor->facing = 0xb000;
-    groupVisual->priority = 0;
-    Actor_SetAnimation(24, 5);
-    groupActor = Actor_Get(25);
-    groupVisual = groupActor->sprite;
-    groupActor->priority_flags &= 254;
-    groupActor->scale_x = 0x10000;
-    groupActor->scale_y = 0x10000;
-    groupActor->facing = 0xb000;
-    groupVisual->priority = 0;
-    Actor_SetAnimation(25, 5);
-    groupActor = Actor_Get(27);
-    groupVisual = groupActor->sprite;
-    HaidiaArashi_FlashLightning();
-    actor->y.fixed = 0x300000;
-    actor->x.fixed = 0xd60000;
-    actor->z.fixed = 0x4c00000;
-    actor->target_x = 0x80000000;
-    actor->target_y = 0x80000000;
-    actor->target_z = 0x80000000;
-    groupVisual->priority = 1;
-    Actor_SetPosition(27, 0xd60000, 0x4c00000);
-    Actor_FaceDirection(24, FACING_NORTH, 0);
-    Actor_FaceDirection(25, FACING_NORTH, 20);
-    GameFlag_Set(0x166);
-    Map_SetLayerEntryFlag(0);
-    Map_SetLayerEntryFlag(1);
-    Map_SetLayerEntryFlag(2);
-    Map_SetLayerEntryFlag(3);
-    Map_SetLayerEntryFlag(4);
-    Map_SetLayerEntryFlag(5);
-    ColorBuffer_ApplyTarget(0x10003, 1);
-    ColorBuffer_ApplyTarget(0x10000, 2);
-    Engine_ColorBufferInterpolate(120);
-    Task_Wait(160);
-    ColorBuffer_ApplyTarget(0x7fff, 1);
-    ColorBuffer_ApplyTarget(0x7fff, 2);
-    Engine_ColorBufferInterpolate(80);
-    Event_Wait(80);
-    Event_Wait(100);
-    Scheduler_RemoveCallback(ActorPresentation_SelectActorTwentySevenState);
-    groupVisual->scale = groupActor->scale_x;
-    GameFlag_Clear(0x166);
-    Map_ClearLayerEntryFlag(0);
-    Map_ClearLayerEntryFlag(1);
-    Map_ClearLayerEntryFlag(2);
-    Map_ClearLayerEntryFlag(3);
-    Map_ClearLayerEntryFlag(4);
-    Map_ClearLayerEntryFlag(5);
-    FieldScene_BuildPlacementGrid();
-    Actor_SetPosition(9, 0xa50000, 0x4cd0000);
-    Actor_SetAnimation(9, 1);
-    actor = Actor_Get(9);
-    actor->facing = 0xe000;
-    random = Random_Next();
-    actor->timer = Math_RemainderUnsigned(random, 90) + 60;
-    departureActions = HaidiaArashi_ActorEightScript;
-    actor->work = 1;
-    Actor_EnableActionCallback(9, departureActions);
-    Actor_SetPosition(26, 0xa50000, 0x4e60000);
-    Actor_SetAnimation(26, 1);
-    actor = Actor_Get(26);
-    actor->facing = 0xe000;
-    random = Random_Next();
-    actor->timer = Math_RemainderUnsigned(random, 90) + 60;
-    actor->work = 2;
-    Actor_EnableActionCallback(26, departureActions);
-    Actor_SetPosition(22, 0x980000, 0x5050000);
-    Actor_SetAnimation(22, 1);
-    actor = Actor_Get(22);
-    actor->facing = 0xe000;
-    random = Random_Next();
-    actor->timer = Math_RemainderUnsigned(random, 90) + 60;
-    actor->work = 3;
-    Actor_EnableActionCallback(22, departureActions);
-    Actor_SetPosition(8, 0xb40000, 0x51f0000);
-    actor = Actor_Get(8);
-    actor->facing = 0xe000;
-    random = Random_Next();
-    actor->timer = Math_RemainderUnsigned(random, 90) + 60;
-    actor->work = 4;
-    Actor_EnableActionCallback(8, departureActions);
-    Actor_SetAnimation(8, 6);
-    Object_GetById(22)->priority_flags &= 254;
-    Object_GetById(8)->priority_flags &= 254;
-    Engine_TaskAddCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xc80);
-    Actor_SetPosition(0, 0xb50000, 0x4f90000);
-    work = Actor_Get(0);
-    work->facing = 0xe000;
-    Actor_SetAnimation(0, 1);
-    Camera_MoveTo(0xb50000, 0, 0x4f90000, 0);
-    Engine_MapRedraw();
-    Actor_SetPosition(10, 0, 0);
-    Actor_SetPosition(19, 0, 0);
-    Actor_SetPosition(24, 0, 0);
-    Actor_SetPosition(25, 0, 0);
-    Actor_SetPosition(23, 0, 0);
-    Actor_SetPosition(27, 0, 0);
-    Actor_SetPosition(17, 0x900000, 0x42e0000);
-    Actor_SetPosition(18, 0x1140000, 0x4f60000);
-    Task_Wait(60);
-    ColorBuffer_ApplyTarget(0x10003, 1);
-    ColorBuffer_ApplyTarget(0x10000, 2);
-    Engine_ColorBufferInterpolate(80);
-    Event_Wait(60);
-    BattleFx_PlayQueuedSound();
-    Event_Wait(60);
-    Party_RemoveOwnerRestored(1);
-    BattleFx_SetBlock30Values128One();
+	actor = Actor_Get(19);
+	groupActor = Actor_Get(27);
+	actorVisual = actor->sprite;
+	groupVisual = groupActor->sprite;
+	Camera_SetSpeed(0x10000, 0x2000);
+	Camera_MoveTo(0x6e0000, -1, 0x58b0000, 1);
+	Actor_SetSpeed(8, 0x13333, 0x9999);
+	Actor_SetSpeed(26, 0x13333, 0x9999);
+	Actor_SetSpeed(0, 0x13333, 0x9999);
+	Actor_SetSpeed(22, 0x13333, 0x9999);
+	entryActions = HaidiaArashi_ArriveScript;
+	Actor_EnableActionCallback(8, entryActions);
+	Event_Wait(10);
+	Actor_EnableActionCallback(26, entryActions);
+	BattleFx_SetBlock30Values12Zero();
+	Event_Wait(10);
+	Actor_EnableActionCallback(0, entryActions);
+	Event_Wait(10);
+	BattleFx_SetBlock30ValuesMaxZero();
+	Actor_EnableActionCallback(22, entryActions);
+	Event_Wait(128);
+	SceneState_SetFlag210AndConfigureRegion40_89();
+	Camera_MoveTo(0xae0000, -1, 0x5940000, 1);
+	Event_Wait(104);
+	Camera_MoveTo(0x990000, -1, 0x52d0000, 1);
+	Actor_WalkToAndWait(9, 158, 0x4f8);
+	Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
+	Object_RefreshSelectorById(8);
+	Actor_EnableActionCallback(8, HaidiaArashi_GatherPath8);
+	Actor_EnableActionCallback(26, HaidiaArashi_GatherPath26);
+	Actor_EnableActionCallback(0, HaidiaArashi_GatherPath0);
+	Object_SetActionCallbackAndRefreshById(22, HaidiaArashi_GatherPath22);
+	Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+	Event_PlayCue(145);
+	Event_Wait(20);
+	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+	Event_Wait(60);
+	Actor_ShowEmote(0, 0x101, 0);
+	Actor_ShowEmote(26, 0x101, 0);
+	Actor_ShowEmote(22, 0x101, 0);
+	Actor_ShowEmote(8, 0x101, 0);
+	Actor_ShowEmote(9, 0x101, 60);
+	Actor_FaceEachOther(26, 8, 0);
+	Actor_FaceEachOther(22, 0, 0);
+	Event_Wait(20);
+	fieldActor = Actor_Get(0);
+	random = Random_Next();
+	random = Math_RemainderUnsigned(random, 20) + 20;
+	fieldActor->timer = random;
+	zero = 0;
+	still = 0;
+	fieldActor = Actor_Get(22);
+	random = Random_Next();
+	fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
+	fieldActor = Actor_Get(26);
+	random = Random_Next();
+	fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
+	fieldActor = Actor_Get(8);
+	random = Random_Next();
+	fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
+	fieldActor = Actor_Get(9);
+	random = Random_Next();
+	fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
+	moveActions = HaidiaArashi_LookAroundScript;
+	Actor_EnableActionCallback(9, moveActions);
+	Event_Wait(30);
+	Actor_EnableActionCallback(0, moveActions);
+	Actor_EnableActionCallback(26, moveActions);
+	Actor_EnableActionCallback(22, moveActions);
+	Actor_EnableActionCallback(8, moveActions);
+	Event_Wait(10);
+	Event_PlayCue(17);
+	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+	Event_PlayCue(145);
+	Event_Wait(30);
+	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+	Event_Wait(120);
+	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+	Event_PlayCue(145);
+	Event_Wait(40);
+	Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+	Event_Wait(60);
+	Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+	Event_PlayCue(145);
+	Event_Wait(20);
+	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+	Event_Wait(60);
+	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+	Event_PlayCue(145);
+	Event_Wait(40);
+	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+	Event_Wait(60);
+	BattleFx_SetBlock30ValuesMaxZero();
+	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+	Event_Wait(1);
+	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+	Camera_SetSpeed(0x80000, 0x80000);
+	Camera_MoveTo(0xd90000, -1, 0x43c0000, 1);
+	ColorBuffer_ApplyTarget(0, 0);
+	Engine_ColorBufferInterpolate(40);
+	Task_Wait(40);
+	Actor_SetChildValue(19, 0);
+	work = Actor_Get(19);
+	Actor_SetSpriteFlags(work, 0);
+	work = Actor_Get(27);
+	Actor_SetSpriteFlags(work, 0);
+	groupActor->scale_x = 0xcccc;
+	groupActor->scale_y = 0xcccc;
+	groupActor->priority_flags &= 254;
+	groupVisual->priority = 1;
+	HaidiaArashi_PlaceActor(actor, 0xc80000, 0x3820000);
+	actor->motion_flags = still;
+	actor->priority_flags &= 254;
+	actorVisual->priority = 0;
+	work = Battle_GetWorkObject1e0();
+	work->target_x = 0x80000000;
+	work = Battle_GetWorkObject1e0();
+	work->target_y = 0x80000000;
+	work = Battle_GetWorkObject1e0();
+	work->target_z = 0x80000000;
+	work = Battle_GetWorkObject1e0();
+	work->velocity_x = zero;
+	work = Battle_GetWorkObject1e0();
+	work->velocity_y = zero;
+	work = Battle_GetWorkObject1e0();
+	work->velocity_z = zero;
+	Task_Wait(1);
+	Camera_MoveTo(0xf70000, 0x800000, 0x3950000, 0);
+	Engine_MapRedraw();
+	Task_Wait(1);
+	ColorBuffer_ApplyTarget(0x10003, 1);
+	ColorBuffer_ApplyTarget(0x10000, 2);
+	Engine_ColorBufferInterpolate(30);
+	Task_Wait(30);
+	Engine_TaskAddCallback(HaidiaArashi_UpdatePulsingGlow, 0xc80);
+	Actor_EnableActionCallback(19, HaidiaArashi_ActorNineteenRiseScript);
+	Camera_SetSpeed(0x20000, 0x7ae);
+	Camera_MoveTo(0xaf0000, 0x600000, 0x43e0000, 1);
+	do
+	{
+		Task_Wait(1);
+	} while ((s16)actor->work != 8);
+	ColorBuffer_ApplyTarget(0, 0);
+	Engine_ColorBufferInterpolate(60);
+	Task_Wait(60);
+	Engine_MapWaitWorkValuesBelow256();
+	work = Battle_GetWorkObject1e0();
+	work->target_x = 0x80000000;
+	work = Battle_GetWorkObject1e0();
+	work->target_y = 0x80000000;
+	work = Battle_GetWorkObject1e0();
+	work->target_z = 0x80000000;
+	phase = 0;
+	work = Battle_GetWorkObject1e0();
+	work->velocity_x = phase;
+	work = Battle_GetWorkObject1e0();
+	work->velocity_y = phase;
+	work = Battle_GetWorkObject1e0();
+	work->velocity_z = phase;
+	Scheduler_RemoveCallback(HaidiaArashi_UpdatePulsingGlow);
+	Actor_Stop(19);
+	Task_Wait(1);
+	Actor_SetAnimation(19, 0);
+	groupActor->scale_x = 0x14000;
+	groupActor->scale_y = 0x14000;
+	groupVisual->unknown_20[3] = 2;
+	groupVisual->scale = 0x14000;
+	actor->scale_x = 0x20000;
+	actor->scale_y = 0x20000;
+	actor->x.fixed = phase;
+	actor->z.fixed = phase;
+	actor->target_x = phase;
+	actor->target_z = phase;
+	Task_Wait(1);
+	Actor_SetAnimation(23, 8);
+	Actor_SetPosition(9, 0xa90000, 0x4f00000);
+	Actor_FaceDirection(9, FACING_NORTH, 0);
+	Actor_SetAnimation(9, 9);
+	Actor_SetPosition(26, 0x970000, 0x50c0000);
+	Actor_FaceDirection(26, FACING_WEST, 0);
+	Actor_SetAnimation(26, 5);
+	Actor_SetPosition(8, 0xaa0000, 0x5210000);
+	Actor_FaceDirection(8, FACING_SOUTHWEST, 0);
+	Actor_SetAnimation(8, 5);
+	Actor_SetPosition(0, 0xb90000, 0x5350000);
+	Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
+	Actor_SetAnimation(0, 17);
+	Actor_SetPosition(22, 0xa90000, 0x5680000);
+	Actor_FaceDirection(22, FACING_SOUTH, 0);
+	Actor_SetAnimation(22, 0);
+	Camera_MoveTo(0xa60000, 0, 0x5390000, 0);
+	Engine_MapRedraw();
+	actor->motion_flags = phase;
+	actor->target_x = 0x80000000;
+	actor->target_y = 0x80000000;
+	actor->target_z = 0x80000000;
+	HaidiaArashi_FlashLightning();
+	Actor_SetPosition(27, 0xda0000, 0x4980000);
+	Camera_MoveTo(0xd20000, 0, 0x4ac0000, 0);
+	Engine_MapRedraw();
+	groupActor->scale_x = 0x20000;
+	groupActor->scale_y = 0x20000;
+	Engine_TaskAddCallback(ActorPresentation_SelectActorTwentySevenState, 0xc80);
+	Actor_Stop(10);
+	Actor_Stop(24);
+	Actor_Stop(25);
+	Task_Wait(1);
+	groupActor = Actor_Get(10);
+	groupVisual = groupActor->sprite;
+	groupActor->priority_flags &= 254;
+	groupActor->scale_x = 0x10000;
+	groupActor->scale_y = 0x10000;
+	groupActor->facing = 0xd000;
+	groupVisual->priority = 0;
+	Actor_SetAnimation(10, 0);
+	groupActor = Actor_Get(24);
+	groupVisual = groupActor->sprite;
+	groupActor->priority_flags &= 254;
+	groupActor->scale_x = 0x10000;
+	groupActor->scale_y = 0x10000;
+	groupActor->facing = 0xb000;
+	groupVisual->priority = 0;
+	Actor_SetAnimation(24, 5);
+	groupActor = Actor_Get(25);
+	groupVisual = groupActor->sprite;
+	groupActor->priority_flags &= 254;
+	groupActor->scale_x = 0x10000;
+	groupActor->scale_y = 0x10000;
+	groupActor->facing = 0xb000;
+	groupVisual->priority = 0;
+	Actor_SetAnimation(25, 5);
+	groupActor = Actor_Get(27);
+	groupVisual = groupActor->sprite;
+	HaidiaArashi_FlashLightning();
+	actor->y.fixed = 0x300000;
+	actor->x.fixed = 0xd60000;
+	actor->z.fixed = 0x4c00000;
+	actor->target_x = 0x80000000;
+	actor->target_y = 0x80000000;
+	actor->target_z = 0x80000000;
+	groupVisual->priority = 1;
+	Actor_SetPosition(27, 0xd60000, 0x4c00000);
+	Actor_FaceDirection(24, FACING_NORTH, 0);
+	Actor_FaceDirection(25, FACING_NORTH, 20);
+	GameFlag_Set(0x166);
+	Map_SetLayerEntryFlag(0);
+	Map_SetLayerEntryFlag(1);
+	Map_SetLayerEntryFlag(2);
+	Map_SetLayerEntryFlag(3);
+	Map_SetLayerEntryFlag(4);
+	Map_SetLayerEntryFlag(5);
+	ColorBuffer_ApplyTarget(0x10003, 1);
+	ColorBuffer_ApplyTarget(0x10000, 2);
+	Engine_ColorBufferInterpolate(120);
+	Task_Wait(160);
+	ColorBuffer_ApplyTarget(0x7fff, 1);
+	ColorBuffer_ApplyTarget(0x7fff, 2);
+	Engine_ColorBufferInterpolate(80);
+	Event_Wait(80);
+	Event_Wait(100);
+	Scheduler_RemoveCallback(ActorPresentation_SelectActorTwentySevenState);
+	groupVisual->scale = groupActor->scale_x;
+	GameFlag_Clear(0x166);
+	Map_ClearLayerEntryFlag(0);
+	Map_ClearLayerEntryFlag(1);
+	Map_ClearLayerEntryFlag(2);
+	Map_ClearLayerEntryFlag(3);
+	Map_ClearLayerEntryFlag(4);
+	Map_ClearLayerEntryFlag(5);
+	FieldScene_BuildPlacementGrid();
+	Actor_SetPosition(9, 0xa50000, 0x4cd0000);
+	Actor_SetAnimation(9, 1);
+	actor = Actor_Get(9);
+	actor->facing = 0xe000;
+	random = Random_Next();
+	actor->timer = Math_RemainderUnsigned(random, 90) + 60;
+	departureActions = HaidiaArashi_ActorEightScript;
+	actor->work = 1;
+	Actor_EnableActionCallback(9, departureActions);
+	Actor_SetPosition(26, 0xa50000, 0x4e60000);
+	Actor_SetAnimation(26, 1);
+	actor = Actor_Get(26);
+	actor->facing = 0xe000;
+	random = Random_Next();
+	actor->timer = Math_RemainderUnsigned(random, 90) + 60;
+	actor->work = 2;
+	Actor_EnableActionCallback(26, departureActions);
+	Actor_SetPosition(22, 0x980000, 0x5050000);
+	Actor_SetAnimation(22, 1);
+	actor = Actor_Get(22);
+	actor->facing = 0xe000;
+	random = Random_Next();
+	actor->timer = Math_RemainderUnsigned(random, 90) + 60;
+	actor->work = 3;
+	Actor_EnableActionCallback(22, departureActions);
+	Actor_SetPosition(8, 0xb40000, 0x51f0000);
+	actor = Actor_Get(8);
+	actor->facing = 0xe000;
+	random = Random_Next();
+	actor->timer = Math_RemainderUnsigned(random, 90) + 60;
+	actor->work = 4;
+	Actor_EnableActionCallback(8, departureActions);
+	Actor_SetAnimation(8, 6);
+	Object_GetById(22)->priority_flags &= 254;
+	Object_GetById(8)->priority_flags &= 254;
+	Engine_TaskAddCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xc80);
+	Actor_SetPosition(0, 0xb50000, 0x4f90000);
+	work = Actor_Get(0);
+	work->facing = 0xe000;
+	Actor_SetAnimation(0, 1);
+	Camera_MoveTo(0xb50000, 0, 0x4f90000, 0);
+	Engine_MapRedraw();
+	Actor_SetPosition(10, 0, 0);
+	Actor_SetPosition(19, 0, 0);
+	Actor_SetPosition(24, 0, 0);
+	Actor_SetPosition(25, 0, 0);
+	Actor_SetPosition(23, 0, 0);
+	Actor_SetPosition(27, 0, 0);
+	Actor_SetPosition(17, 0x900000, 0x42e0000);
+	Actor_SetPosition(18, 0x1140000, 0x4f60000);
+	Task_Wait(60);
+	ColorBuffer_ApplyTarget(0x10003, 1);
+	ColorBuffer_ApplyTarget(0x10000, 2);
+	Engine_ColorBufferInterpolate(80);
+	Event_Wait(60);
+	BattleFx_PlayQueuedSound();
+	Event_Wait(60);
+	Party_RemoveOwnerRestored(1);
+	BattleFx_SetBlock30Values128One();
 }
 
-#define Object_InitializeMode ((s32 (*)(struct FieldSprite*,s32))Object_InitializeMode)
+#define Object_InitializeMode ((s32 (*)(struct FieldSprite *, s32))Object_InitializeMode)
 
-struct Pulse {
-    u8 unknown_00[0x64];
-    s16 timer;
-    s16 beat;
+struct Pulse
+{
+	u8	unknown_00[0x64];
+	s16 timer;
+	s16 beat;
 };
 
-struct PairDetail {
-    u8 unknown_00[22];
-    u8 field_16;
+struct PairDetail
+{
+	u8 unknown_00[22];
+	u8 field_16;
 };
 
-struct PairSprite {
-    struct FieldSprite sprite;
-    struct PairDetail *detail;
+struct PairSprite
+{
+	struct FieldSprite sprite;
+	struct PairDetail *detail;
 };
 
-union PairObject {
-    union FieldObject object;
-    s32 words[28];
-    struct {
-        u8 unknown_00[0x68];
-        union PairObject *parent;
-    } link;
+union PairObject
+{
+	union FieldObject object;
+	s32				  words[28];
+	struct
+	{
+		u8				  unknown_00[0x68];
+		union PairObject *parent;
+	} link;
 };
 
-struct PairWork {
-    u8 unknown_00[70];
-    u16 vram_block;
+struct PairWork
+{
+	u8	unknown_00[70];
+	u16 vram_block;
 };
 
 extern struct PairWork *gEffectWork;
 
 extern struct WorldMapVramBlock gVramBlockCache[];
 
-struct WorldMapOam {
-    u8 unknown_00[4];
-    u16 attr0;
-    u16 x : 9;
-    u16 affine_index : 5;
-    u16 size : 2;
+struct WorldMapOam
+{
+	u8	unknown_00[4];
+	u16 attr0;
+	u16 x : 9;
+	u16 affine_index : 5;
+	u16 size : 2;
 };
 
 void HaidiaArashi_FlashLightning(void)
 {
-    u32 i;
-    s32 record;
+	u32 i;
+	s32 record;
 
-    Engine_TaskWait(20);
-    GameFlag_Set(0x166);
-    Map_SetLayerEntryFlag(0);
-    Map_SetLayerEntryFlag(1);
-    Map_SetLayerEntryFlag(2);
-    Map_SetLayerEntryFlag(3);
-    Map_SetLayerEntryFlag(4);
-    Map_SetLayerEntryFlag(5);
-    ColorBuffer_ApplyTarget(0x10003, 1);
-    ColorBuffer_ApplyTarget(0x10000, 2);
-    Engine_ColorBufferInterpolate(1);
-    Engine_TaskWait(120);
-    ColorBuffer_ApplyTarget(0, 0);
-    Engine_ColorBufferInterpolate(60);
-    Engine_TaskWait(60);
-    GameFlag_Clear(0x166);
-    Map_ClearLayerEntryFlag(0);
-    Map_ClearLayerEntryFlag(1);
-    Map_ClearLayerEntryFlag(2);
-    Map_ClearLayerEntryFlag(3);
-    Map_ClearLayerEntryFlag(4);
-    Map_ClearLayerEntryFlag(5);
+	Engine_TaskWait(20);
+	GameFlag_Set(0x166);
+	Map_SetLayerEntryFlag(0);
+	Map_SetLayerEntryFlag(1);
+	Map_SetLayerEntryFlag(2);
+	Map_SetLayerEntryFlag(3);
+	Map_SetLayerEntryFlag(4);
+	Map_SetLayerEntryFlag(5);
+	ColorBuffer_ApplyTarget(0x10003, 1);
+	ColorBuffer_ApplyTarget(0x10000, 2);
+	Engine_ColorBufferInterpolate(1);
+	Engine_TaskWait(120);
+	ColorBuffer_ApplyTarget(0, 0);
+	Engine_ColorBufferInterpolate(60);
+	Engine_TaskWait(60);
+	GameFlag_Clear(0x166);
+	Map_ClearLayerEntryFlag(0);
+	Map_ClearLayerEntryFlag(1);
+	Map_ClearLayerEntryFlag(2);
+	Map_ClearLayerEntryFlag(3);
+	Map_ClearLayerEntryFlag(4);
+	Map_ClearLayerEntryFlag(5);
 }
 
 void HaidiaArashi_UpdatePulsingGlow(void)
 {
-    struct FieldActor *source;
-    struct FieldActor *glow;
-    struct FieldSprite *sprite;
-    s16 *timer;
+	struct FieldActor  *source;
+	struct FieldActor  *glow;
+	struct FieldSprite *sprite;
+	s16				   *timer;
 
-    source = Object_GetById(19);
-    glow = Object_GetById(27);
-    sprite = glow->sprite;
-    timer = &((struct Pulse *)source)->timer;
-    if (*timer != 0) {
-        if (*timer == 60) {
-            Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-        }
-        if (*timer == 40) {
-            Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-        }
-        if (*timer == 30) {
-            Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-        }
-        if (*timer == 20) {
-            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-        }
-        (*timer)--;
-    }
-    glow->x.fixed = source->x.fixed;
-    glow->z.fixed = source->z.fixed;
-    glow->target_x = glow->x.fixed;
-    ((u8 *)sprite)[35] = 10;
-    if (gFrameCount & 1) {
-        switch (((struct Pulse *)source)->beat) {
-        case 1:
-        case 5:
-            glow->scale_x += 0xa3d;
-            glow->scale_y += 0xa3d;
-            break;
-        case 4:
-            glow->scale_x += 0x51e;
-            glow->scale_y += 0x51e;
-            break;
-        case 2:
-        case 3:
-        case 6:
-        case 7:
-        case 8:
-        case 9:
-            glow->scale_x += -0x7ae;
-            glow->scale_y += -0x7ae;
-            break;
-        }
-        sprite->scale = glow->scale_x;
-    } else {
-        sprite->scale = 0;
-    }
+	source = Object_GetById(19);
+	glow = Object_GetById(27);
+	sprite = glow->sprite;
+	timer = &((struct Pulse *)source)->timer;
+	if (*timer != 0)
+	{
+		if (*timer == 60)
+		{
+			Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+		}
+		if (*timer == 40)
+		{
+			Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+		}
+		if (*timer == 30)
+		{
+			Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+		}
+		if (*timer == 20)
+		{
+			Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+		}
+		(*timer)--;
+	}
+	glow->x.fixed = source->x.fixed;
+	glow->z.fixed = source->z.fixed;
+	glow->target_x = glow->x.fixed;
+	((u8 *)sprite)[35] = 10;
+	if (gFrameCount & 1)
+	{
+		switch (((struct Pulse *)source)->beat)
+		{
+		case 1:
+		case 5:
+			glow->scale_x += 0xa3d;
+			glow->scale_y += 0xa3d;
+			break;
+		case 4:
+			glow->scale_x += 0x51e;
+			glow->scale_y += 0x51e;
+			break;
+		case 2:
+		case 3:
+		case 6:
+		case 7:
+		case 8:
+		case 9:
+			glow->scale_x += -0x7ae;
+			glow->scale_y += -0x7ae;
+			break;
+		}
+		sprite->scale = glow->scale_x;
+	}
+	else
+	{
+		sprite->scale = 0;
+	}
 }
 
 void ActorPresentation_SelectActorTwentySevenState(void)
 {
-    struct Actor *actor = Object_GetById(27);
-    u32 flags = gFrameCount;
-    u8 *presentation = actor->presentation;
+	struct Actor *actor = Object_GetById(27);
+	u32			  flags = gFrameCount;
+	u8			 *presentation = actor->presentation;
 
-    if (flags & 1) {
-        u8 *state = presentation + 35;
-        *state = 2;
-    } else {
-        u8 *state = presentation + 35;
-        *state = 64;
-    }
+	if (flags & 1)
+	{
+		u8 *state = presentation + 35;
+		*state = 2;
+	}
+	else
+	{
+		u8 *state = presentation + 35;
+		*state = 64;
+	}
 }
 
 void HaidiaArashi_TryToFreeActorEight(void)
 {
-    u32 i;
-    struct FieldActor *rec7;
-    struct FieldActor *rec8;
-    s32 record;
+	u32				   i;
+	struct FieldActor *rec7;
+	struct FieldActor *rec8;
+	s32				   record;
 
-    rec8 = Object_GetById(ACTOR_PARTY_LEADER);
-    rec7 = Object_GetById(8);
-    Engine_EventBegin();
-    if (GameFlag_IsSet(0x305) != 0) {
-        Engine_ActorStop(8);
-        Engine_EventWait(10);
-        Engine_ActorRunRepeatedMotion(8, 2);
-        Engine_EventWait(40);
-        if ((s16)rec8->facing >= 0) {
-            Engine_ActorSetAnimation(8, 7);
-        } else {
-            Engine_ActorSetAnimation(8, 8);
-        }
-        Engine_ActorRunRepeatedMotion(8, 2);
-        Engine_EventWait(20);
-        Engine_EventSetMessage((s32)MsgHaidiaICantMoveGetHelp);
-        Event_ShowMessage(8, 0);
-        Engine_ActorEnableActionCallback(8, HaidiaArashi_ActorEightScript);
-        Engine_ActorSetAnimation(8, 6);
-    } else {
-        Engine_ActorStop(8);
-        rec7->scale_x = 0x10000;
-        rec7->scale_y = 0x10000;
-        Actor_FaceDirection(8, 0x1000, 0);
-        if ((s16)rec8->facing >= 0) {
-            Engine_ActorSetAnimation(8, 7);
-        } else {
-            Engine_ActorSetAnimation(8, 8);
-        }
-        Engine_EventWait(20);
-        Engine_EventSetMessage((s32)MsgHaidiaIllGo);
-        Event_ShowMessageAndWait(8, 0, 20);
-        Engine_ActorSetAnimation(8, 1);
-        Engine_ActorJump(8, 4, 0);
-        Engine_EventWait(80);
-        Engine_ActorRunRepeatedMotion(8, 2);
-        Engine_EventWait(40);
-        if ((s16)rec8->facing >= 0) {
-            Engine_ActorSetAnimation(8, 7);
-        } else {
-            Engine_ActorSetAnimation(8, 8);
-        }
-        Engine_EventWait(2);
-        Engine_ActorJump(8, 2, 0);
-        Engine_EventWait(60);
-        Engine_ActorRunRepeatedMotion(8, 2);
-        Engine_EventWait(20);
-        Event_ShowMessage(8, 0);
-        Engine_ActorEnableActionCallback(8, HaidiaArashi_ActorEightScript);
-        Engine_ActorSetAnimation(8, 6);
-        GameFlag_Set(0x305);
-    }
-    Engine_EventEnd();
+	rec8 = Object_GetById(ACTOR_PARTY_LEADER);
+	rec7 = Object_GetById(8);
+	Engine_EventBegin();
+	if (GameFlag_IsSet(0x305) != 0)
+	{
+		Engine_ActorStop(8);
+		Engine_EventWait(10);
+		Engine_ActorRunRepeatedMotion(8, 2);
+		Engine_EventWait(40);
+		if ((s16)rec8->facing >= 0)
+		{
+			Engine_ActorSetAnimation(8, 7);
+		}
+		else
+		{
+			Engine_ActorSetAnimation(8, 8);
+		}
+		Engine_ActorRunRepeatedMotion(8, 2);
+		Engine_EventWait(20);
+		Engine_EventSetMessage((s32)MsgHaidiaICantMoveGetHelp);
+		Event_ShowMessage(8, 0);
+		Engine_ActorEnableActionCallback(8, HaidiaArashi_ActorEightScript);
+		Engine_ActorSetAnimation(8, 6);
+	}
+	else
+	{
+		Engine_ActorStop(8);
+		rec7->scale_x = 0x10000;
+		rec7->scale_y = 0x10000;
+		Actor_FaceDirection(8, 0x1000, 0);
+		if ((s16)rec8->facing >= 0)
+		{
+			Engine_ActorSetAnimation(8, 7);
+		}
+		else
+		{
+			Engine_ActorSetAnimation(8, 8);
+		}
+		Engine_EventWait(20);
+		Engine_EventSetMessage((s32)MsgHaidiaIllGo);
+		Event_ShowMessageAndWait(8, 0, 20);
+		Engine_ActorSetAnimation(8, 1);
+		Engine_ActorJump(8, 4, 0);
+		Engine_EventWait(80);
+		Engine_ActorRunRepeatedMotion(8, 2);
+		Engine_EventWait(40);
+		if ((s16)rec8->facing >= 0)
+		{
+			Engine_ActorSetAnimation(8, 7);
+		}
+		else
+		{
+			Engine_ActorSetAnimation(8, 8);
+		}
+		Engine_EventWait(2);
+		Engine_ActorJump(8, 2, 0);
+		Engine_EventWait(60);
+		Engine_ActorRunRepeatedMotion(8, 2);
+		Engine_EventWait(20);
+		Event_ShowMessage(8, 0);
+		Engine_ActorEnableActionCallback(8, HaidiaArashi_ActorEightScript);
+		Engine_ActorSetAnimation(8, 6);
+		GameFlag_Set(0x305);
+	}
+	Engine_EventEnd();
 }
 
 void FieldScene_ConfigureActorTwentyTwoScene(void)
 {
-    u32 i;
-    u8 *record;
+	u32 i;
+	u8 *record;
 
-    Engine_EventBegin();
-    Camera_MoveTo(-1, -1, -1, 0);
-    Engine_ActorStop(ACTOR_ID);
-    Scheduler_RemoveCallback((s32)HaidiaArashi_CopyLeaderSpritePriority);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e0, 0x570);
-    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    Actor_FaceDirection(ACTOR_ID, 0x3000, 20);
-    Actor_Get(ACTOR_ID)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
-    Actor_SetPosition(ACTOR_ID, 0xf90000, 0x4d80000);
-    Engine_TaskWait(1);
-    Engine_EventSetMessage((s32)MsgHaidiaRobin);
-    Event_ShowMessage(0x1016, 0);
-    Actor_SetPosition(ACTOR_ID, 0xac0000, 0x4fe0000);
-    Engine_TaskWait(1);
-    Camera_SetSpeed(0x40000, 0x8000);
-    Camera_MoveTo(0xa20000, 0, 0x5050000, 1);
-    Engine_CameraWaitForMove();
-    Engine_EventWait(40);
-    Engine_ActorSetAnimationAndWait(ACTOR_ID, 4);
-    Event_ShowMessageAndWait(0x1016, 0, 10);
-    Actor_FaceDirection(ACTOR_ID, FACING_NORTH, 20);
-    Engine_ActorRunRepeatedMotion(ACTOR_ID, 2);
-    Event_ShowMessageAndWait(0x1016, 0, 10);
-    Actor_FaceDirection(ACTOR_ID, 0x1000, 20);
-    Engine_ActorSetAnimationAndWait(ACTOR_ID, 3);
-    Actor_SetSpeed(ACTOR_ID, 0x20000, 0x10000);
-    Actor_WalkToAndWait(ACTOR_ID, 165, 0x514);
-    Actor_WalkToAndWait(ACTOR_ID, 195, 0x598);
-    GameFlag_Set(0x842);
+	Engine_EventBegin();
+	Camera_MoveTo(-1, -1, -1, 0);
+	Engine_ActorStop(ACTOR_ID);
+	Scheduler_RemoveCallback((s32)HaidiaArashi_CopyLeaderSpritePriority);
+	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e0, 0x570);
+	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
+	Actor_FaceDirection(ACTOR_ID, 0x3000, 20);
+	Actor_Get(ACTOR_ID)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+	Actor_SetPosition(ACTOR_ID, 0xf90000, 0x4d80000);
+	Engine_TaskWait(1);
+	Engine_EventSetMessage((s32)MsgHaidiaRobin);
+	Event_ShowMessage(0x1016, 0);
+	Actor_SetPosition(ACTOR_ID, 0xac0000, 0x4fe0000);
+	Engine_TaskWait(1);
+	Camera_SetSpeed(0x40000, 0x8000);
+	Camera_MoveTo(0xa20000, 0, 0x5050000, 1);
+	Engine_CameraWaitForMove();
+	Engine_EventWait(40);
+	Engine_ActorSetAnimationAndWait(ACTOR_ID, 4);
+	Event_ShowMessageAndWait(0x1016, 0, 10);
+	Actor_FaceDirection(ACTOR_ID, FACING_NORTH, 20);
+	Engine_ActorRunRepeatedMotion(ACTOR_ID, 2);
+	Event_ShowMessageAndWait(0x1016, 0, 10);
+	Actor_FaceDirection(ACTOR_ID, 0x1000, 20);
+	Engine_ActorSetAnimationAndWait(ACTOR_ID, 3);
+	Actor_SetSpeed(ACTOR_ID, 0x20000, 0x10000);
+	Actor_WalkToAndWait(ACTOR_ID, 165, 0x514);
+	Actor_WalkToAndWait(ACTOR_ID, 195, 0x598);
+	GameFlag_Set(0x842);
 }
 
 void FieldScene_BuildPlacementGrid(void)
 {
-    u32 i;
-    u8 *record;
+	u32 i;
+	u8 *record;
 
-    Map_CopyCellsTo(16, 96, 11, 73, 6, 3);
-    Map_CopyCellsTo(16, 96, 34, 68, 14, 10);
-    Map_CopyCellsTo(16, 96, 64, 68, 7, 7);
-    Map_CopyCellsTo(9, 95, 11, 73, 6, 3);
-    Map_CopyCellsTo(40, 94, 34, 68, 14, 10);
-    Map_CopyCellsTo(54, 94, 64, 68, 8, 7);
-    Map_CopyCellsTo(72, 75, 72, 76, 1, 1);
-    Map_CopyCellsTo(72, 75, 74, 76, 1, 1);
-    Map_CopyCellAttributes(7, 75, 1, 1, 6, 75);
-    Map_CopyCellAttributes(8, 70, 3, 1, 8, 71);
-    Map_CopyCellAttributes(8, 70, 2, 1, 9, 72);
-    Map_CopyCellAttributes(8, 70, 2, 1, 9, 73);
-    Map_CopyCellAttributes(11, 66, 1, 1, 8, 73);
-    Map_CopyCellAttributes(12, 66, 1, 4, 11, 73);
-    Map_CopyCellAttributes(25, 0, 1, 1, 6, 74);
-    Engine_MapRedraw();
+	Map_CopyCellsTo(16, 96, 11, 73, 6, 3);
+	Map_CopyCellsTo(16, 96, 34, 68, 14, 10);
+	Map_CopyCellsTo(16, 96, 64, 68, 7, 7);
+	Map_CopyCellsTo(9, 95, 11, 73, 6, 3);
+	Map_CopyCellsTo(40, 94, 34, 68, 14, 10);
+	Map_CopyCellsTo(54, 94, 64, 68, 8, 7);
+	Map_CopyCellsTo(72, 75, 72, 76, 1, 1);
+	Map_CopyCellsTo(72, 75, 74, 76, 1, 1);
+	Map_CopyCellAttributes(7, 75, 1, 1, 6, 75);
+	Map_CopyCellAttributes(8, 70, 3, 1, 8, 71);
+	Map_CopyCellAttributes(8, 70, 2, 1, 9, 72);
+	Map_CopyCellAttributes(8, 70, 2, 1, 9, 73);
+	Map_CopyCellAttributes(11, 66, 1, 1, 8, 73);
+	Map_CopyCellAttributes(12, 66, 1, 4, 11, 73);
+	Map_CopyCellAttributes(25, 0, 1, 1, 6, 74);
+	Engine_MapRedraw();
 }
 
 void SceneState_SetWords1c0And1c8AndRun(void)
 {
 
-    struct EventWork *state;
+	struct EventWork *state;
 
-    Engine_EventBegin();
-    state = gEventWork;
-    state->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    state->transition_frames = 64;
-    Engine_GameFlagSet(0x87c);
-    BattleFx_SetWeightedResult(12, 2);
-    Engine_GameFlagSet(0x900);
-    Engine_EventEnd();
+	Engine_EventBegin();
+	state = gEventWork;
+	state->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	state->transition_frames = 64;
+	Engine_GameFlagSet(0x87c);
+	BattleFx_SetWeightedResult(12, 2);
+	Engine_GameFlagSet(0x900);
+	Engine_EventEnd();
 }
 
 void SceneState_SetWorkWordsAndFlag87f(void)
 {
 
-    struct EventWork *state;
+	struct EventWork *state;
 
-    Engine_EventBegin();
-    state = gEventWork;
-    state->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    state->transition_frames = 64;
-    Engine_GameFlagSet(0x87f);
-    BattleFx_SetWeightedResult(12, 3);
-    Engine_GameFlagSet(0x900);
-    Engine_EventEnd();
+	Engine_EventBegin();
+	state = gEventWork;
+	state->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+	state->transition_frames = 64;
+	Engine_GameFlagSet(0x87f);
+	BattleFx_SetWeightedResult(12, 3);
+	Engine_GameFlagSet(0x900);
+	Engine_EventEnd();
 }
 
 void SceneActor_SetModeByFrameBit1(s32 o)
 {
-    s32 v;
+	s32 v;
 
-    if ((gFrameCount & 2) != 0) {
-        Engine_ObjectSetPartPalettes(o, 7);
-    } else {
-        Engine_ObjectSetPartPalettes(o, 0);
-    }
-    {
-        u32 *frame = &gFrameCount;
+	if ((gFrameCount & 2) != 0)
+	{
+		Engine_ObjectSetPartPalettes(o, 7);
+	}
+	else
+	{
+		Engine_ObjectSetPartPalettes(o, 0);
+	}
+	{
+		u32 *frame = &gFrameCount;
 
-        v = (HaidiaArashi_ShakeShift << 3) + 16;
-        if (Math_RemainderUnsigned(*frame, v) == 0) {
-            HaidiaArashi_SpawnEffectPair((union PairObject *)o);
-        }
-    }
+		v = (HaidiaArashi_ShakeShift << 3) + 16;
+		if (Math_RemainderUnsigned(*frame, v) == 0)
+		{
+			HaidiaArashi_SpawnEffectPair((union PairObject *)o);
+		}
+	}
 }
 
 void OverlayObject_UpdateRandomSlotByFrame(s32 obj)
 {
-    s32 t;
-    s32 n;
+	s32 t;
+	s32 n;
 
-    if ((gFrameCount & 1) != 0) {
-        t = (gFrameCount >> 1);
-        Engine_ObjectSetPartPalettes(obj, Math_RemainderUnsigned(t, 6));
-    }
-    n = (HaidiaArashi_ShakeShift << 3) + 16;
-    if (Math_RemainderUnsigned(gFrameCount, n) == 0) {
-        HaidiaArashi_SpawnEffectPair((union PairObject *)obj);
-    }
+	if ((gFrameCount & 1) != 0)
+	{
+		t = (gFrameCount >> 1);
+		Engine_ObjectSetPartPalettes(obj, Math_RemainderUnsigned(t, 6));
+	}
+	n = (HaidiaArashi_ShakeShift << 3) + 16;
+	if (Math_RemainderUnsigned(gFrameCount, n) == 0)
+	{
+		HaidiaArashi_SpawnEffectPair((union PairObject *)obj);
+	}
 }
 
 void HaidiaArashi_CycleObjectPalettes(s32 o)
 {
-    s32 t;
+	s32 t;
 
-    if ((gFrameCount & 1) != 0) {
-        t = (gFrameCount >> 1);
-        Engine_ObjectSetPartPalettes(o, Math_RemainderUnsigned(t, 6));
-    }
+	if ((gFrameCount & 1) != 0)
+	{
+		t = (gFrameCount >> 1);
+		Engine_ObjectSetPartPalettes(o, Math_RemainderUnsigned(t, 6));
+	}
 }
 
 void SceneEffect_UpdateArcOverAnchor(union FieldObject *object)
 {
-    Obj *o = (Obj *)object;
-    Obj *b;
-    s32 t;
-    s32 d;
-    s32 k;
+	Obj *o = (Obj *)object;
+	Obj *b;
+	s32	 t;
+	s32	 d;
+	s32	 k;
 
-    b = o->f68;
-    o->f64++;
-    t = (s16)o->f64;
-    t = (s16)o->f64;
-    if (t > 31) {
-        Engine_ObjectDispatchRelease(o);
-    } else {
-        d = Engine_MathSin(t << 10);
-        o->f18 = d;
-        o->f1c = d;
-        o->f08 = b->f08;
-        k = 0x10000;
-        o->f0c += k;
-        k -= d;
-        o->f10 = b->f10 + ((k << 2) + k) + 0x80000;
-    }
+	b = o->f68;
+	o->f64++;
+	t = (s16)o->f64;
+	t = (s16)o->f64;
+	if (t > 31)
+	{
+		Engine_ObjectDispatchRelease(o);
+	}
+	else
+	{
+		d = Engine_MathSin(t << 10);
+		o->f18 = d;
+		o->f1c = d;
+		o->f08 = b->f08;
+		k = 0x10000;
+		o->f0c += k;
+		k -= d;
+		o->f10 = b->f10 + ((k << 2) + k) + 0x80000;
+	}
 }
 
 void OverlayObject_UpdateArcFromParent(union FieldObject *object)
 {
-    Obj *o = (Obj *)object;
-    Obj *b;
-    s32 t;
-    s32 d;
-    s32 k;
+	Obj *o = (Obj *)object;
+	Obj *b;
+	s32	 t;
+	s32	 d;
+	s32	 k;
 
-    b = o->f68;
-    o->f64++;
-    t = (s16)o->f64;
-    t = (s16)o->f64;
-    if (t > 31) {
-        Engine_ObjectDispatchRelease(o);
-    } else {
-        d = Engine_MathSin(t << 10);
-        o->f18 = d;
-        o->f1c = -d;
-        o->f08 = b->f08;
-        k = 0x10000;
-        o->f0c += k;
-        k -= d;
-        o->f10 = b->f10 - ((k << 2) + k) + 0x100000;
-    }
+	b = o->f68;
+	o->f64++;
+	t = (s16)o->f64;
+	t = (s16)o->f64;
+	if (t > 31)
+	{
+		Engine_ObjectDispatchRelease(o);
+	}
+	else
+	{
+		d = Engine_MathSin(t << 10);
+		o->f18 = d;
+		o->f1c = -d;
+		o->f08 = b->f08;
+		k = 0x10000;
+		o->f0c += k;
+		k -= d;
+		o->f10 = b->f10 - ((k << 2) + k) + 0x100000;
+	}
 }
 
 void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 {
-    union PairObject *pair[2];
-    union PairObject *child;
-    struct PairSprite *part;
-    struct FieldSprite *sprite;
-    struct PairWork *work = gEffectWork;
-    s32 i;
+	union PairObject   *pair[2];
+	union PairObject   *child;
+	struct PairSprite  *part;
+	struct FieldSprite *sprite;
+	struct PairWork	   *work = gEffectWork;
+	s32					i;
 
-    Engine_AudioPlayCue(152);
-    for (i = 0; i < 2; ++i) {
-        child = (union PairObject *)Engine_ObjectCreate(26,
-            parent->object.actor.x.fixed, parent->object.actor.y.fixed,
-            parent->object.actor.z.fixed);
-        pair[i] = child;
-        if (child != NULL) {
-            child->words[5] = parent->words[5];
-            part = (struct PairSprite *)child->object.actor.sprite;
-            child->object.actor.motion_flags = 0;
-            child->object.effect.spin = 0;
-            child->link.parent = parent;
-            if (part != NULL) {
-                sprite = &part->sprite;
-                Object_InitializeMode(sprite, 0);
-                sprite->flags = 0;
-                Resource_ResetEntry(sprite->vram_block);
-                sprite->vram_block = work->vram_block;
-                sprite->unknown_1d_0 = 1;
-                sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
-                sprite->full_color = 0;
-                sprite->shape = 1;
-                ((struct WorldMapOam *)sprite)->size = 2;
-                part->detail->field_16 = 0;
-            }
-        }
-    }
-    {
-        union PairObject *p = pair[0];
-        struct FieldSprite *sp = p->object.actor.sprite;
+	Engine_AudioPlayCue(152);
+	for (i = 0; i < 2; ++i)
+	{
+		child = (union PairObject *)Engine_ObjectCreate(26, parent->object.actor.x.fixed,
+			parent->object.actor.y.fixed, parent->object.actor.z.fixed);
+		pair[i] = child;
+		if (child != NULL)
+		{
+			child->words[5] = parent->words[5];
+			part = (struct PairSprite *)child->object.actor.sprite;
+			child->object.actor.motion_flags = 0;
+			child->object.effect.spin = 0;
+			child->link.parent = parent;
+			if (part != NULL)
+			{
+				sprite = &part->sprite;
+				Object_InitializeMode(sprite, 0);
+				sprite->flags = 0;
+				Resource_ResetEntry(sprite->vram_block);
+				sprite->vram_block = work->vram_block;
+				sprite->unknown_1d_0 = 1;
+				sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
+				sprite->full_color = 0;
+				sprite->shape = 1;
+				((struct WorldMapOam *)sprite)->size = 2;
+				part->detail->field_16 = 0;
+			}
+		}
+	}
+	{
+		union PairObject   *p = pair[0];
+		struct FieldSprite *sp = p->object.actor.sprite;
 
-        p->object.actor.update = OverlayObject_UpdateArcFromParent;
-        sp->priority = parent->object.actor.sprite->priority;
-    }
-    {
-        struct FieldActor *p = &pair[1]->object.actor;
-        struct FieldSprite *sp = p->sprite;
+		p->object.actor.update = OverlayObject_UpdateArcFromParent;
+		sp->priority = parent->object.actor.sprite->priority;
+	}
+	{
+		struct FieldActor  *p = &pair[1]->object.actor;
+		struct FieldSprite *sp = p->sprite;
 
-        sp->priority = parent->object.actor.sprite->priority;
-        p->update = SceneEffect_UpdateArcOverAnchor;
-        p->priority_flags = 2;
-    }
+		sp->priority = parent->object.actor.sprite->priority;
+		p->update = SceneEffect_UpdateArcOverAnchor;
+		p->priority_flags = 2;
+	}
 }
 
 void SceneState_SetValue140Mode0(void)
 {
 
-    Engine_PsynergyBegin(140, 0);
+	Engine_PsynergyBegin(140, 0);
 }
 
 void FieldScene_RunSingleStep(void)
 {
-    BattleEffect_CleanupSceneObjects();
+	BattleEffect_CleanupSceneObjects();
 }
 
 void FieldScene_RunFourPairedSteps(void)
 {
-    OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(32));
-    OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(33));
-    OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(30));
-    if (HaidiaArashi_ShakeDone == 0) {
-        OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(29));
-    }
+	OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(32));
+	OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(33));
+	OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(30));
+	if (HaidiaArashi_ShakeDone == 0)
+	{
+		OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(29));
+	}
 }
 
 void SceneState_SetValue19ThenCall(void)
 {
 
-    HaidiaArashi_CycleObjectPalettes((s32)Object_GetById(19));
+	HaidiaArashi_CycleObjectPalettes((s32)Object_GetById(19));
 }
 
 void HaidiaArashi_CopyLeaderSpritePriority(void)
 {
-    Ent *src;
-    Ent *dst;
-    Ent *dst2;
+	Ent *src;
+	Ent *dst;
+	Ent *dst2;
 
-    src = (Ent *)Object_GetById(0)->sprite;
+	src = (Ent *)Object_GetById(0)->sprite;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    Engine_ActorSetSpritePriority(22, ((struct FieldSpritePriority *)src)->priority);
-    Engine_ActorSetSpritePriority(8, ((struct FieldSpritePriority *)src)->priority);
+	Engine_ActorSetSpritePriority(22, ((struct FieldSpritePriority *)src)->priority);
+	Engine_ActorSetSpritePriority(8, ((struct FieldSpritePriority *)src)->priority);
 #else
-    dst = (Ent *)Object_GetById(22)->sprite;
-    ((struct FieldSpritePriority *)dst)->priority = ((struct FieldSpritePriority *)src)->priority;
-    dst2 = (Ent *)Object_GetById(8)->sprite;
-    ((struct FieldSpritePriority *)dst2)->priority = ((struct FieldSpritePriority *)src)->priority;
+	dst = (Ent *)Object_GetById(22)->sprite;
+	((struct FieldSpritePriority *)dst)->priority = ((struct FieldSpritePriority *)src)->priority;
+	dst2 = (Ent *)Object_GetById(8)->sprite;
+	((struct FieldSpritePriority *)dst2)->priority = ((struct FieldSpritePriority *)src)->priority;
 #endif
 }
 
 void SceneState_SetValueEe4(void)
 {
 
-    Engine_EventBegin();
-    Engine_MessageShowCentered((s32)MsgHaidiaDoorWontOpen, 1);
-    Engine_EventEnd();
+	Engine_EventBegin();
+	Engine_MessageShowCentered((s32)MsgHaidiaDoorWontOpen, 1);
+	Engine_EventEnd();
 }
 
 void FieldScene_ShowChestValuables(void)
 {
-    Engine_EventBegin();
-    Engine_MessageShowCentered((s32)MsgHaidiaSChestValuables, 1);
-    Engine_EventEnd();
+	Engine_EventBegin();
+	Engine_MessageShowCentered((s32)MsgHaidiaSChestValuables, 1);
+	Engine_EventEnd();
 }
 
-u8 HaidiaArashi_FrameModes[] = { 7, 0, 0, 0 };
+u8 HaidiaArashi_FrameModes[] = {7, 0, 0, 0};
 
 s32 HaidiaArashi_ActorTwentyScript[] = {
 	SC_ARG(2),

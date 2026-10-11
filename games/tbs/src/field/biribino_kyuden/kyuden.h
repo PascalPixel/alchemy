@@ -8,21 +8,22 @@
 
 #define NULL ((void *)0)
 
-enum {
-    FLAG_REWARD_TAKEN = 0x84e
+enum
+{
+	FLAG_REWARD_TAKEN = 0x84e
 };
 
 extern struct SceneEntrance Placement_Scripts[];
-extern u32 Placement_Messages[];
-extern s32 Kyuden_FacingActions[];
-extern s32 Kyuden_PacingActions[];
+extern u32					Placement_Messages[];
+extern s32					Kyuden_FacingActions[];
+extern s32					Kyuden_PacingActions[];
 
-s32 ArcTan2(s32, s32);
+s32	 ArcTan2(s32, s32);
 void Map_ClearLayerEntryFlag();
 void Map_SetLayerEntryFlag();
 void Object_RefreshSelectorById();
 void Object_SetTargetAndCallback();
-s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32, s32, s32);
+s32	 BattleFx_PlayCueAndStartEmitterOnTarget(s32, s32, s32);
 
 void FieldScene_RunChestStep(s32 flag);
 void FieldScene_RunSlotSubjectBranch(s32 actor, s32 item, s32 flag);

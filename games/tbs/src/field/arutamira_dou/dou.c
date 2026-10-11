@@ -324,7 +324,7 @@ void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
 
 void ArutamiraDou_RespawnActorObject(void)
 {
-	extern u8 *gEffectWork;
+	extern u8		  *gEffectWork;
 	u8				  *work;
 	struct FieldActor *old;
 	struct FieldActor *copy;
@@ -368,7 +368,7 @@ void FieldScene_RunTwoCallSequence(void)
 
 void SceneState_MarkObjectWhenActorElevenAhead(void)
 {
-	extern u8 *gEffectWork;
+	extern u8		  *gEffectWork;
 	u8				  *obj = gEffectWork;
 	struct FieldActor *p = Object_GetById(11);
 	Vec				   v;
@@ -385,7 +385,7 @@ void SceneState_MarkObjectWhenActorElevenAhead(void)
 
 void FieldScene_RunActorElevenCellSetup(void)
 {
-	extern u8 *gEffectWork;
+	extern u8		  *gEffectWork;
 	u8				  *obj = gEffectWork;
 	struct FieldActor *p = Object_GetById(11);
 	s32				   t;

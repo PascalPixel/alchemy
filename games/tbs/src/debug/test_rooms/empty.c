@@ -14,10 +14,10 @@
 
 void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, s32 effect);
 
-extern struct SceneEntrance  TestRooms_Entrances[];
-extern u32                  TestRooms_Exits[];
+extern struct SceneEntrance	 TestRooms_Entrances[];
+extern u32					 TestRooms_Exits[];
 extern struct ScenePlacement TestRooms_Placements[];
-extern struct SceneEvent     TestRooms_Events[];
+extern struct SceneEvent	 TestRooms_Events[];
 
 u8 *TestRooms_GetEntrances(void)
 {

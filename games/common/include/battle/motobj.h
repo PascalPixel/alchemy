@@ -85,6 +85,6 @@ struct BtlObj *BtlObjGet(s32 object_id);
 #if GAME_TLA
 struct BtlObj *GetBattleObjectSlotFar(s32 object_id);
 #endif
-void		  *GetMotionRecord(struct MotionObject *object, s32 record_index);
+void *GetMotionRecord(struct MotionObject *object, s32 record_index);
 
 #endif

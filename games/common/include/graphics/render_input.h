@@ -63,17 +63,17 @@ struct RenderOam
 
 struct RenderOutput
 {
-	struct RenderOutput	  *next;
-	s8					   kind;
-	s8					   active;
-	u16					   x;
-	u16					   y;
-	u16					   unknown_0a;
-	u16					   anim_step;
-	s8					   index;
-	u8					   sentinel;
-	u8					   unknown_10[4];
-	struct RenderOam	   oam;
+	struct RenderOutput *next;
+	s8					 kind;
+	s8					 active;
+	u16					 x;
+	u16					 y;
+	u16					 unknown_0a;
+	u16					 anim_step;
+	s8					 index;
+	u8					 sentinel;
+	u8					 unknown_10[4];
+	struct RenderOam	 oam;
 };
 
 struct RenderOutputList

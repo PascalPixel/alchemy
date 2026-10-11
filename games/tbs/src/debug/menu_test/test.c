@@ -23,7 +23,6 @@
 #include "ability_ids.h"
 #include "field_scene.h"
 
-
 void Engine_EventSetMessage(s16 message);
 
 void				Engine_AudioPlayCue(s32 cue);

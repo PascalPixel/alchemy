@@ -9,9 +9,10 @@ extern const u8 UiText_GlyphWidths[];
 static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line, u8 *vram, u32 color)
 {
 	u16 *p;
-	u32  mask;
+	u32	 mask;
 
-	p = (u16 *)((u32)vram + (((x >> 3) * (stride - 2) + tile_y) << 5) | ((row_line | ((x & 7) >> 2)) << 1));
+	p = (u16 *)((u32)vram + (((x >> 3) * (stride - 2) + tile_y) << 5)
+				| ((row_line | ((x & 7) >> 2)) << 1));
 	mask = 15 << ((x & 3) << 2);
 	*p = (*p & ~mask) | (mask & color);
 }
@@ -24,10 +25,10 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, co
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	u32 result;
 #endif
-	u32		   stride;
-	u32		   row;
-	u32		   rownext;
-	u32		   col;
+	u32 stride;
+	u32 row;
+	u32 rownext;
+	u32 col;
 #if defined(TBS_EDITION_EN)
 	u32 index;
 #endif

@@ -76,7 +76,7 @@
 #include "b5_context.h"
 
 void *BattleMotion_DestroyAllSlotObjects(void);
-s32	 BattlePresentation_WaitForAdvance(void);
+s32	  BattlePresentation_WaitForAdvance(void);
 
 #define Inventory_EquipFar ((void (*)(s32, s32))Inventory_EquipFar)
 
@@ -752,11 +752,11 @@ void BattleSummon_ReservedNoOp(void)
 {
 }
 
-void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
+void			Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 struct BtlUnit *UnitGetFar(s32 object_id);
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
+	|| defined(TBS_EDITION_IT)
 #define NAME_LIMIT 7
 #define APPEND_NAME_SPACE 1
 #else
@@ -764,143 +764,158 @@ struct BtlUnit *UnitGetFar(s32 object_id);
 #define APPEND_NAME_SPACE 0
 #endif
 
-enum LinkPartyPacketSize {
-    LINK_PARTY_UNIT_BYTES = 340,
-    LINK_PARTY_OFFER_BYTES = 320
+enum LinkPartyPacketSize
+{
+	LINK_PARTY_UNIT_BYTES = 340,
+	LINK_PARTY_OFFER_BYTES = 320
 };
 
 s32 UpdateNameEntries(void)
 {
-    u16 name_text[24];
-    void *buffer;
-    struct BtlUnit *name_entry;
-    s32 named_count;
-    s32 index;
-    s32 len;
-    s32 i;
+	u16				name_text[24];
+	void		   *buffer;
+	struct BtlUnit *name_entry;
+	s32				named_count;
+	s32				index;
+	s32				len;
+	s32				i;
 
-    buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_UNIT_BYTES);
-    named_count = 0;
-    index = 0;
-    while (index <= 2) {
-        name_entry = UnitGetFar(index + 128);
-        if (SerialRuntime_BeginTransferB(name_entry) == -1) {
-            break;
-        }
-        SerialRuntime_WaitForTransferB();
-        if (name_entry->side != 0) {
-            named_count += 1;
-        }
-        WaitFrames(2);
-        Ui_AdjustValueWithoutLimitFar((s32)MsgEnemyLabel, name_text);
-        i = 0;
-        if (name_text[i] != 0) {
-            do {
-                i += 1;
-                if (i > NAME_LIMIT) {
-                    break;
-                }
-            } while (name_text[i] != 0);
-        }
+	buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_UNIT_BYTES);
+	named_count = 0;
+	index = 0;
+	while (index <= 2)
+	{
+		name_entry = UnitGetFar(index + 128);
+		if (SerialRuntime_BeginTransferB(name_entry) == -1)
+		{
+			break;
+		}
+		SerialRuntime_WaitForTransferB();
+		if (name_entry->side != 0)
+		{
+			named_count += 1;
+		}
+		WaitFrames(2);
+		Ui_AdjustValueWithoutLimitFar((s32)MsgEnemyLabel, name_text);
+		i = 0;
+		if (name_text[i] != 0)
+		{
+			do
+			{
+				i += 1;
+				if (i > NAME_LIMIT)
+				{
+					break;
+				}
+			} while (name_text[i] != 0);
+		}
 #if APPEND_NAME_SPACE
-        name_text[i] = ' ';
-        i += 1;
+		name_text[i] = ' ';
+		i += 1;
 #endif
-        len = i;
-        for (i = 14; i >= len; i--) {
-            name_entry->name[i] = name_entry->name[i - len];
-        }
-        for (i = 0; i < len; i++) {
-            name_entry->name[i] = name_text[i];
-        }
-        name_entry->name[14] = 0;
-        index += 1;
-    }
-    MemFree(buffer);
-    buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_OFFER_BYTES);
-    if (SerialRuntime_BeginTransferB(Trade_GetOfferStateFar(1)) != -1) {
-        SerialRuntime_WaitForTransferB();
-        WaitFrames(2);
-    }
-    MemFree(buffer);
-    return named_count;
+		len = i;
+		for (i = 14; i >= len; i--)
+		{
+			name_entry->name[i] = name_entry->name[i - len];
+		}
+		for (i = 0; i < len; i++)
+		{
+			name_entry->name[i] = name_text[i];
+		}
+		name_entry->name[14] = 0;
+		index += 1;
+	}
+	MemFree(buffer);
+	buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_OFFER_BYTES);
+	if (SerialRuntime_BeginTransferB(Trade_GetOfferStateFar(1)) != -1)
+	{
+		SerialRuntime_WaitForTransferB();
+		WaitFrames(2);
+	}
+	MemFree(buffer);
+	return named_count;
 }
 
 s32 LinkBattle_SendParty(void)
 {
-    u8 *buffer;
-    struct BtlWork *work;
-    s32 j;
-    struct DjinnRecoveryList *list;
-    s32 size;
-    s32 count;
-    s32 i;
-    s32 mark;
-    u16 owners[8];
+	u8						 *buffer;
+	struct BtlWork			 *work;
+	s32						  j;
+	struct DjinnRecoveryList *list;
+	s32						  size;
+	s32						  count;
+	s32						  i;
+	s32						  mark;
+	u16						  owners[8];
 
-    size = LINK_PARTY_UNIT_BYTES;
-    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
-    mark = 0xff;
-    work = BtlWk;
-    for (i = 7; i >= 0; i--)
-        work->owner_slots[i] = mark;
-    count = BattleParty_PrepareActiveOwners(owners);
-    for (i = 0; i < count; i++) {
-        Iwram_CopyWords(buffer, UnitGetFar(owners[i]), size);
-        ((struct BtlUnit *)buffer)->side = 2;
-        work->owner_slots[owners[i]] = i - 128;
-        if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
-            break;
-        SerialRuntime_WaitForTransferA();
-        WaitFrames(2);
-    }
-    for (; i <= 2; i++) {
-        ((struct BtlUnit *)buffer)->side = 0;
-        if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
-            break;
-        SerialRuntime_WaitForTransferA();
-        WaitFrames(2);
-    }
-    size = LINK_PARTY_OFFER_BYTES;
-    MemFree(buffer);
-    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
-    /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy is emitted before the count's address as in the reference */
-    do {
-        Iwram_CopyWords(buffer, Trade_GetOfferStateFar(0), size);
-    } while (0);
-    list = &((struct DjinnRecoveryTable *)buffer)->list;
-    for (j = 0; j < list->count; j++)
-        list->entries[j].unit_id = work->owner_slots[list->entries[j].unit_id];
-    if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
-        SerialRuntime_WaitForTransferA();
-        WaitFrames(1);
-        WaitFrames(2);
-    }
-    MemFree(buffer);
+	size = LINK_PARTY_UNIT_BYTES;
+	buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+	mark = 0xff;
+	work = BtlWk;
+	for (i = 7; i >= 0; i--)
+		work->owner_slots[i] = mark;
+	count = BattleParty_PrepareActiveOwners(owners);
+	for (i = 0; i < count; i++)
+	{
+		Iwram_CopyWords(buffer, UnitGetFar(owners[i]), size);
+		((struct BtlUnit *)buffer)->side = 2;
+		work->owner_slots[owners[i]] = i - 128;
+		if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+			break;
+		SerialRuntime_WaitForTransferA();
+		WaitFrames(2);
+	}
+	for (; i <= 2; i++)
+	{
+		((struct BtlUnit *)buffer)->side = 0;
+		if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+			break;
+		SerialRuntime_WaitForTransferA();
+		WaitFrames(2);
+	}
+	size = LINK_PARTY_OFFER_BYTES;
+	MemFree(buffer);
+	buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+	/* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy is emitted before the count's address as in the reference */
+	do
+	{
+		Iwram_CopyWords(buffer, Trade_GetOfferStateFar(0), size);
+	} while (0);
+	list = &((struct DjinnRecoveryTable *)buffer)->list;
+	for (j = 0; j < list->count; j++)
+		list->entries[j].unit_id = work->owner_slots[list->entries[j].unit_id];
+	if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_OFFER_BYTES) != -1)
+	{
+		SerialRuntime_WaitForTransferA();
+		WaitFrames(1);
+		WaitFrames(2);
+	}
+	MemFree(buffer);
 }
 
 u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source)
 {
-    u8 buffer[5];
-    u8 *base = buffer;
-    u32 fill = '_';
-    u8 *p = base;
-    u8 *dst = p;
-    s32 count = 3;
+	u8	buffer[5];
+	u8 *base = buffer;
+	u32 fill = '_';
+	u8 *p = base;
+	u8 *dst = p;
+	s32 count = 3;
 
-    do {
-        u32 value = *source;
+	do
+	{
+		u32 value = *source;
 
-        *dst = value;
-        source++;
-        dst++;
-        if ((u8)value == 0)
-            *p = fill;
-        p++;
-        count--;
-    } while (count >= 0);
-    base[4] = 0;
-    return dst;
+		*dst = value;
+		source++;
+		dst++;
+		if ((u8)value == 0)
+			*p = fill;
+		p++;
+		count--;
+	} while (count >= 0);
+	base[4] = 0;
+	return dst;
 }
 
 //--------------------------------------------------------------------------
@@ -908,7 +923,7 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source)
 // バトル：通信対戦の合図あわせ
 //--------------------------------------------------------------------------
 
-extern u16			gLinkPeerSignatures[][12];
+extern u16 gLinkPeerSignatures[][12];
 
 //--------------------------------------------------------------------------
 // 通信対戦なら、相手と "EXEC" の合図をそろえる
@@ -918,10 +933,10 @@ extern u16			gLinkPeerSignatures[][12];
 s32 BattlePres_WaitSync(void)
 {
 	struct BtlWork *work = BtlWk;
-	u16 *peer;
-	u16 *sig;
-	s32	 lost = 0;
-	s32	 i;
+	u16			   *peer;
+	u16			   *sig;
+	s32				lost = 0;
+	s32				i;
 
 	if (work->two_sided != 0)
 	{
@@ -967,9 +982,9 @@ s32 BattlePres_WaitSync(void)
 s32 BattlePres_SyncTurn(void)
 {
 	struct BtlWork *work = BtlWk;
-	u16 *peer;
-	u16 *sig;
-	s32	 lost = 0;
+	u16			   *peer;
+	u16			   *sig;
+	s32				lost = 0;
 	/* FAKEMATCH: needed to match: never used: the reference's frame keeps twenty bytes that no instruction touches */
 	u16 spare[10];
 
@@ -1142,11 +1157,11 @@ extern s32 gBattleRandomSeed;
 	{                            \
 		gBattleRandomSeed = 0;   \
 	} while (0)
-extern u8			gActorSpriteSlots[];
-extern u8			gCpuLoadDisplayEnabled;
+extern u8 gActorSpriteSlots[];
+extern u8 gCpuLoadDisplayEnabled;
 
 void GameFlag_SetBitFar(s32 id);
-#define Trade_GetOfferStateFar ((s32 *(*)(s32 index))Trade_GetOfferStateFar)
+#define Trade_GetOfferStateFar ((s32 * (*)(s32 index)) Trade_GetOfferStateFar)
 void PtyStDrawFar(s32 mode);
 #define BattleMotion_DestroyAllSlotObjects ((void (*)(void))BattleMotion_DestroyAllSlotObjects)
 s32	 UiText_OpenMessageWindowFar(s32 id, s32 a, s32 b, s32 c);
@@ -1669,8 +1684,9 @@ void BattleParty_ListAllUnitsAndSubmit(void)
 	BattleActor_SpawnObjectsForList(list, 0);
 }
 
-#define Object_CreateFar ((struct MotionObject *(*)(s32 kind, s32 x, s32 y, s32 z))Object_CreateFar)
-s32					 ArcTan2(s32, s32);
+#define Object_CreateFar \
+	((struct MotionObject * (*)(s32 kind, s32 x, s32 y, s32 z)) Object_CreateFar)
+s32 ArcTan2(s32, s32);
 
 s32 BattleMotion_GetSlotPalette(s32 id)
 {
@@ -1699,7 +1715,7 @@ s32 EnmChk(s32 summon)
 
 s32 SummonSlot_RegisterActorSprites(s32 unit)
 {
-	s32				pass;
+	s32 pass;
 	/* FAKEMATCH: the loop's actor copy and the cancelling updates below keep
 	 * sprite_value in r7 and pass in r4 without operand asm; deleting both
 	 * exchanges those registers (114 instructions, 18 differing rows). */
@@ -2740,7 +2756,8 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 		{
 			for (;;)
 			{
-				if (list[i] != 254 && (slot = BtlObjGet(resource)) != 0 && (object = slot->object) != 0)
+				if (list[i] != 254 && (slot = BtlObjGet(resource)) != 0
+					&& (object = slot->object) != 0)
 					BattlePres_SetActorModeAndAction(resource);
 				i++;
 				if (i >= 14 || (resource = list[i]) == 255)
@@ -2750,7 +2767,8 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 	}
 }
 #define Graphics_PrepareTransferAndRun ((s32 (*)(void *, void *))Graphics_PrepareTransferAndRun)
-#define Graphics_PrepareTransferInIwramWork ((s32 (*)(void *, void *))Graphics_PrepareTransferInIwramWork)
+#define Graphics_PrepareTransferInIwramWork \
+	((s32 (*)(void *, void *))Graphics_PrepareTransferInIwramWork)
 
 s32 Render_ProjectPoint(const s32 *, s32 *);
 
@@ -3860,17 +3878,18 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 extern volatile s32 gFrameTick;
 extern u8			gDisp[];
 
-s32	 ArcTan2(s32 first, s32 second);
+s32 ArcTan2(s32 first, s32 second);
 #define BattleMotion_DestroyAllSlotObjects ((void (*)(void))BattleMotion_DestroyAllSlotObjects)
 s32	 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
 void GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 s32	 Inventory_RemoveFar(s32 owner, s32 slot);
-#define ObjectDispatch_ApplyArgumentToChildrenFar ((void (*)(void *object, s32 mode))ObjectDispatch_ApplyArgumentToChildrenFar)
+#define ObjectDispatch_ApplyArgumentToChildrenFar \
+	((void (*)(void *object, s32 mode))ObjectDispatch_ApplyArgumentToChildrenFar)
 void Party_AdjustCoinsFar(s32 amount);
-#define Render_ProjectPoint ((s32 (*)(s32 *point, s32 *screen))Render_ProjectPoint)
-s32	 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
+#define Render_ProjectPoint ((s32 (*)(s32 * point, s32 * screen)) Render_ProjectPoint)
+s32 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 #define UiWork_PushValueSlotFar ((void (*)(u32, u32))UiWork_PushValueSlotFar)
 
 void Palette_UpdatePulseBrightness(void)
@@ -4170,8 +4189,8 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
 			struct BtlAct *action;
 
 			UnitGetFar(entry->unit_id);
-			action = BtlActGet(Djinn_GetDefinitionHeaderFar(
-				entry->parameter >> 8 & 15, entry->parameter & 0xff));
+			action = BtlActGet(
+				Djinn_GetDefinitionHeaderFar(entry->parameter >> 8 & 15, entry->parameter & 0xff));
 			if (action->efx == 46 || action->efx == 47 || action->efx == 53)
 			{
 				entry->priority += 10000;
@@ -4342,7 +4361,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
 	{
 		if (battle->link_side == 0)
 		{
-			u32			  saved;
+			u32 saved;
 
 			state->count = count;
 			state->check = BtlRndFar();
@@ -4562,8 +4581,8 @@ s16 Battle_GetTaggedSlotValue(s32 slot)
 s32 Battle_FindTaggedSlotByValue(u32 id)
 {
 	struct BtlWork *work = BtlWk;
-	s32 i;
-	s16 unit;
+	s32				i;
+	s16				unit;
 
 	if (id <= 7)
 	{
@@ -4755,7 +4774,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
 		s32 value;
 		u16 halves[2];
 	} completed;
-	s32									 party_mode;
+	s32 party_mode;
 
 	completed.halves[0] = 0;
 	completed.halves[1] = 0;
@@ -5072,7 +5091,8 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
 	divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->anim_id, 2, 1);
 	BattleMotion_ApproachTarget(
 		work.actor, work.actors[0], divisor, Battle_GetSpriteFlagHighBits(unit->class_id) << 16);
-	ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)BtlObjGet(work.actor)->object, 16);
+	ObjectDispatch_ApplyValueToChildrenFar(
+		(struct DispatchObject *)BtlObjGet(work.actor)->object, 16);
 	BtlObjGet(work.actors[0]);
 
 	if ((u16)work.actors[0] <= 7)
@@ -5206,7 +5226,8 @@ s32 BattlePres_RunSimple(struct BtlPlan *input, s32 flags)
 	animation = GetMotionRecord(BtlObjGet(saved_input->aid)->object, 0);
 	divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->anim_id, 2, 1);
 	BattleMotion_ApproachTarget(work.actor, saved_input->tgt_no[0], divisor, 0);
-	ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)BtlObjGet(work.actor)->object, 16);
+	ObjectDispatch_ApplyValueToChildrenFar(
+		(struct DispatchObject *)BtlObjGet(work.actor)->object, 16);
 	BtlObjGet(saved_input->tgt_no[0]);
 
 	if (saved_input->tgt_no[0] <= 7)
@@ -5533,8 +5554,8 @@ void BattleActor_RemoveFromLists(s32 id)
 {
 	struct BtlWork *work;
 	s32				i;
-	u32 j;
-	s32 unit;
+	u32				j;
+	s32				unit;
 
 	// 味方の並び
 	work = BtlWk;
@@ -5587,8 +5608,8 @@ void BattleMotion_InitializeActorRecords(s32 id)
 	void				   *recs[4];
 	struct BtlUnit		   *unit;
 	struct AnimationObject *rec;
-	struct AnimationEntry *ent;
-	s32 n;
+	struct AnimationEntry  *ent;
+	s32						n;
 
 	unit = UnitGetFar(id);
 	n = 0;
@@ -6235,7 +6256,7 @@ void BattleEv_MarkDisplay(void)
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
-	void ObjectDispatch_ReleaseFar(struct DispatchObject *object);
+	void ObjectDispatch_ReleaseFar(struct DispatchObject * object);
 	// 戻り値の型は s32 だが return 文は無い（pop {r1}; bx r1）
 	struct BtlUnit *creature;
 	struct BtlObj  *runtime;
@@ -8797,7 +8818,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 				BtlEvPush(BEV_OBJ_END, req->unit_id);
 				AudioCommand_PlayFar(212);
 				ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(req->unit_id)->object, 3);
-				ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)BtlObjGet(req->unit_id)->object, 32);
+				ObjectDispatch_ApplyValueToChildrenFar(
+					(struct DispatchObject *)BtlObjGet(req->unit_id)->object, 32);
 				BattleFx_PlayUnitElementEffect(req->unit_id, DJINN_ELEMENT(req->parameter), 3, 0);
 				BattleEventRuntime_WaitForReady();
 				return -2;
@@ -9428,13 +9450,15 @@ s32 Battle_ProcessRoundEnd(void)
 						BtlEvPush(BEV_OBJ_END, id);
 						AudioCommand_PlayFar(212);
 						ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(id)->object, 3);
-						ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)BtlObjGet(id)->object, 32);
+						ObjectDispatch_ApplyValueToChildrenFar(
+							(struct DispatchObject *)BtlObjGet(id)->object, 32);
 						element = expired_entry->element;
 						Djinn_ActivateFar(id, element, expired_entry->index);
 						Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);
 						UnitCalcFar(id);
 						/* FAKEMATCH: the void effect is called as returning s32; called as void, the move of its first argument is scheduled three instructions earlier (differ 2). */
-						((s32 (*)(s32, s32, s32, s32))BattleFx_PlayUnitElementEffect)(id, element, 3, 0);
+						((s32 (*)(s32, s32, s32, s32))BattleFx_PlayUnitElementEffect)(
+							id, element, 3, 0);
 						BattleEventRuntime_WaitForReady();
 					}
 				}
@@ -9721,7 +9745,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 				BtlEvPush(BEV_OBJ_END, id);
 				AudioCommand_PlayFar(212);
 				ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(id)->object, 3);
-				ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)BtlObjGet(id)->object, 32);
+				ObjectDispatch_ApplyValueToChildrenFar(
+					(struct DispatchObject *)BtlObjGet(id)->object, 32);
 				/* FAKEMATCH: the void effect is called as returning s32; called as void, the move of its first argument is scheduled three instructions earlier (differ 2). */
 				((s32 (*)(s32, s32, s32, s32))BattleFx_PlayUnitElementEffect)(id, i, 2, most - 1);
 				BattleEventRuntime_WaitForReady();
@@ -10567,25 +10592,26 @@ void BattlePres_SetupTransitionAtPairMidpoint(s32 a, s32 b, s32 zoom)
 
 void Graphics_FadeAlphaOut(void)
 {
-    s32 alpha_step;
+	s32 alpha_step;
 
-    REG_BLDCNT = 0x2044;
-    for (alpha_step = 1; alpha_step <= 16; alpha_step += 2)
-    {
-        REG_BLDALPHA = 0x1010 - alpha_step;
-        WaitFrames(1);
-    }
+	REG_BLDCNT = 0x2044;
+	for (alpha_step = 1; alpha_step <= 16; alpha_step += 2)
+	{
+		REG_BLDALPHA = 0x1010 - alpha_step;
+		WaitFrames(1);
+	}
 }
 
 void Graphics_FadeAlphaIn(void)
 {
-    s32 step;
+	s32 step;
 
-    REG_BLDCNT = 0x2044;
-    for (step = 1; step <= 16; step += 2) {
-        REG_BLDALPHA = step + 0x1000;
-        WaitFrames(1);
-    }
+	REG_BLDCNT = 0x2044;
+	for (step = 1; step <= 16; step += 2)
+	{
+		REG_BLDALPHA = step + 0x1000;
+		WaitFrames(1);
+	}
 }
 
 struct BattleTransitionEntry
@@ -10956,7 +10982,8 @@ u32 Graphics_UploadVramBlock(void)
 		{
 			*active = 0;
 			/* FAKEMATCH: the void routine is called as returning u32: this function returns whatever it leaves in r0. */
-			return ((u32 (*)(void *, void *, u32))ColorBuffer_BackupAndScaleThreeQuarters)(source, (void *)0x06004000, 0x4000);
+			return ((u32 (*)(void *, void *, u32))ColorBuffer_BackupAndScaleThreeQuarters)(
+				source, (void *)0x06004000, 0x4000);
 		}
 	}
 	return (u32)source;
@@ -11321,15 +11348,14 @@ struct BattleBaseStats
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 {
 	s32						   match_count = 0;
-	struct FormationCandidate *pool =
-		Runtime_BumpAllocateAlternatePool(128);
-	u16 party[8];
-	s32 level_total = 0;
-	s32 unit_count = BattleParty_PrepareActiveOwners(party);
-	s32 i;
-	s32 j;
-	s32 chance;
-	s32 result;
+	struct FormationCandidate *pool = Runtime_BumpAllocateAlternatePool(128);
+	u16						   party[8];
+	s32						   level_total = 0;
+	s32						   unit_count = BattleParty_PrepareActiveOwners(party);
+	s32						   i;
+	s32						   j;
+	s32						   chance;
+	s32						   result;
 
 	if (unit_count > 0)
 	{
@@ -11417,8 +11443,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 	s32						floor;
 	s32						i;
 
-	base =
-		Runtime_BumpAllocateAlternatePool(sizeof(struct BattleBaseStats));
+	base = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleBaseStats));
 	state = UnitGetFar(owner);
 	Iwram_CopyWords(base, &state->base_hp, sizeof(struct BattleBaseStats));
 

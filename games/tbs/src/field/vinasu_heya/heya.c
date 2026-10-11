@@ -2598,7 +2598,6 @@ void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
     s32 hit;
     s32 phase;
     s32 x;
-    s32 vz;
 
     {
         struct EventWork *event = gEventWork;
@@ -2615,14 +2614,9 @@ void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
     if (phase == 0) {
         params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
         x = actor->x.fixed + (((u32)(Engine_RandomNext() * 12) >> 16) << 16) - 0x60000;
-        /* FAKEMATCH: this scope preserves the velocity and parameter spill order. */
-        {
-            s32 vx;
-
-            vx = (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd) * dir->x;
-            vz = dir->z * (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd);
-            Effect_Spawn(x, actor->y.fixed, actor->z.fixed, vx, phase, vz, 0x800000, &params);
-        }
+        Effect_Spawn(x, actor->y.fixed, actor->z.fixed,
+                     (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd) * dir->x, phase,
+                     dir->z * (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd), 0x800000, &params);
     }
     if (hit < 0) {
         Engine_ActorSetAttachedEffect(id, 0x102);

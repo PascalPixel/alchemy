@@ -13,7 +13,7 @@
 #include "sound.h"
 #include "system.h"
 #include "mem.h"
-#include "heap_slot.h"
+#include "heap_state.h"
 #include "canvas.h"
 #include "types.h"
 #include "battle_efx.h"

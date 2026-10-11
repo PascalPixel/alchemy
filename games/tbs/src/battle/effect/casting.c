@@ -29,15 +29,13 @@
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "transform.h"
-#include "heap_slot.h"
+#include "heap_state.h"
 
 #define ObjectDispatch_ApplyValueToChildrenFar \
 	((void (*)(void *, s32))ObjectDispatch_ApplyValueToChildrenFar)
 #define BattleFx_RenderMode5 ((void (*)(void *))BattleFx_RenderMode5)
 
 typedef BattleEffectDrawRectangle RectangleBlit; // キャンバスへの合成描画
-
-extern DrawRectangle gWorkSlot[];
 
 void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
 void Graphics_PackTileRows();

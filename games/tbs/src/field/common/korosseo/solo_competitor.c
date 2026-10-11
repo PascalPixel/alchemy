@@ -11,8 +11,6 @@
 #include "game_state.h"
 #include "battle_unit.h"
 
-void Engine_CameraFollowActor(s32 id, s32 target);
-
 void Korosseo_SelectSoloCompetitor(s32 id)
 {
 	struct BtlUnit *unit;

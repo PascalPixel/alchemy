@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/korosseo_maruta/maruta.h"
 #include "unit/field/common/korosseo/solo_competitor.h"
 #include "unit/field/common/korosseo/solo_round.h"
@@ -246,11 +247,6 @@ extern s32					 gColossoRandomEffect[];
 extern s32					 gColossoLinkedEffect[];
 extern u32					 StagedActor_DirectionSteps[];
 extern s16					 Korosseo_MarkerSlot;
-
-s32	 GetPartyMemberCount(void);
-s32	 Object_CheckMovementCollision(void *object, Position3 *position);
-void Object_CommitPosition(void *object);
-void UiText_DrawQuantity(s32, s32);
 
 // コロッセオ共通 (field/common/korosseo)
 

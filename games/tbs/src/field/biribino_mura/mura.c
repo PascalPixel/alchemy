@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/biribino_mura/mura.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -20,8 +21,6 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-
-s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 
 struct SpawnCounter
 {

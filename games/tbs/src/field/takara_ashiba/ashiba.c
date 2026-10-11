@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/takara_ashiba/ashiba.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/korosseo/item_icon.h"
@@ -61,8 +62,6 @@ static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
 {
 	*field = step;
 }
-
-void Engine_MapCopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 
 static __inline__ void LiftBlock(s32 column, u8 lowered)
 {

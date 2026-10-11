@@ -202,7 +202,6 @@ void FieldScene_RunActorNineFlagDialogueA(void)
 
 void FieldScene_RunActorNineFlagDialogueB(void)
 {
-	void Engine_ActorStop(s32 id);
 
 	Engine_EventBegin();
 
@@ -292,7 +291,6 @@ void FieldScene_RunSupplementalSequenceOne(void)
 
 void FieldScene_RunScene378SequenceB(void)
 {
-	void Engine_ActorStop();
 
 	u32 i;
 	s32 record;

@@ -49,9 +49,11 @@ struct SpriteEntry
 	u8 priority;
 };
 
+#if GAME_TLA
 void ReleaseBattleObjectRecords(s32 object_id);
 void ResetMotionRecordGroup(void *record_group);
 void ResetBattleObjectRecordGroups(struct MotionObject *object);
+#endif
 
 #define MOTION_OBJECT_OFFSET(type, field) ((u32) & (((type *)0)->field))
 
@@ -80,11 +82,15 @@ LAYOUT_OFFSET_GUARD(SpriteEntry_Priority, struct SpriteEntry, priority, 0x06);
 
 #undef MOTION_OBJECT_OFFSET
 
+#if GAME_TLA
 s32			   ActivateBattleObjectSlot(s32 object_id);
 struct BtlObj *BtlObjGet(s32 object_id);
+#endif
 #if GAME_TLA
 struct BtlObj *GetBattleObjectSlotFar(s32 object_id);
 #endif
+#if GAME_TLA
 void *GetMotionRecord(struct MotionObject *object, s32 record_index);
+#endif
 
 #endif

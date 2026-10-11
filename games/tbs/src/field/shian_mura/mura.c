@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/shian_mura/mura.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
@@ -137,8 +138,6 @@ struct SpawnParams
 	u16 facing;
 	u8	unknown_22[6];
 };
-
-s32	 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 
 void SceneEffect_RequestFixedEffect(void)
 {

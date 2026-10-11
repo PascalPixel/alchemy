@@ -25,7 +25,9 @@ struct SummonDefinition;
 
 extern struct ItemDefinition		 Item_DefinitionTable[];
 extern const struct SummonDefinition Summon_DefinitionTable[];
+#if GAME_TLA
 s32									 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit);
+#endif
 
 #if !GAME_TLA
 struct BtlAct;

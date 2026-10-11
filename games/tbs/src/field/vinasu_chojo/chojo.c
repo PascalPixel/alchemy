@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/vinasu_chojo/chojo.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
@@ -104,8 +105,6 @@ extern struct SceneEvent gVinasuChojoEvents[];
 extern s32						   VinasuChojo_NearestActor;
 
 s32	 Math_RemainderUnsigned(s32, s32);
-void OverlayObject_SetValue1(void *, s32);
-s32	 Object_CheckMovementCollision();
 
 void VinasuChojo_SetSpritePriority(struct FieldActor *actor, u32 value)
 {

@@ -40,6 +40,4 @@ extern struct ScenePlacement gSuharaHeyaPlacements96f[];
 extern struct SceneEvent	 gSuharaHeyaEvents[];
 extern struct SceneEvent	 gSuharaHeyaEvents96f[];
 
-void Engine_InnCheckIn(s32 first, s32 second);
-void Engine_ShopConfirmAct(s32 first);
 #endif

@@ -18,21 +18,10 @@
 #include "map_scroll.h"
 #include "field_event.h"
 
-void Engine_MapCopyCellAttributes(
-	s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y);
 extern u8 gMapCellBuffer[];
 
 extern s16 StagedActor_DirectionSteps[];
 extern s32 StagedActor_FootprintBounds[];
-
-extern void Engine_TaskWait(s32);
-extern void Object_CommitPosition(void *);
-extern s32	Object_CheckMovementCollision(void *, void *);
-extern void Engine_EventWait(s32);
-extern void Engine_ActorSetDestinationOffset(s32, s32, s32);
-extern void Engine_ActorWaitForMove(s32);
-extern void Engine_ActorSetAnimation(s32, s32);
-extern void Engine_AudioPlayCue(s32);
 
 s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {

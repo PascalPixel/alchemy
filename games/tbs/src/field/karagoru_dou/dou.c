@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/karagoru_dou/dou.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/common/object/staged_actor.h"
@@ -91,12 +92,6 @@ void *StagedActorPairScene_SpawnSecondaryEffect(s32 x, s32 y, s32 z, s32 kind)
 	}
 	return NULL;
 }
-
-void Engine_EventWait(s32 frames);
-void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
-void Engine_ActorWaitForMove(s32 actor);
-void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
-void Engine_ActorSetAnimation(s32 actor, s32 animation);
 
 union SpinningActor
 {

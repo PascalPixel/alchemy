@@ -4575,8 +4575,6 @@ s32 *Runtime_ClearWordIfSet(s32 *p)
 #include "tbs_edition.h"
 #include "keystate.h"
 
-s32 AudioCommand_GetStateByteFar();
-
 //--------------------------------------------------------------------------
 // ウィンドウをすべて閉じる
 // 3 つのチャンネルのウィンドウを閉じ、開閉の動きが終わるまで待ってから、
@@ -4755,7 +4753,8 @@ s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch)
 	s32					 cancel = 0;
 	s32					 zero;
 
-	if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
+	/* FAKEMATCH: AudioCommand_GetStateByteFar is called as s32 (*)(); as u8 (*)(void), its prototype, UiWork_CheckCancelByInput is 4 bytes longer */
+	if (work->busy != 0 && ((s32 (*)())AudioCommand_GetStateByteFar)() == 0)
 		cancel = 1;
 	zero = 0;
 	if (gKeysHeld & (KEY_A | KEY_B | KEYS_SHOULDERS))
@@ -4779,7 +4778,8 @@ s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch)
 	s32					 cancel = 0;
 	u8					 zero;
 
-	if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
+	/* FAKEMATCH: AudioCommand_GetStateByteFar is called as s32 (*)(); as u8 (*)(void), its prototype, UiWork_CheckCancelByModeInput has 52 of 104 bytes different */
+	if (work->busy != 0 && ((s32 (*)())AudioCommand_GetStateByteFar)() == 0)
 		cancel = 1;
 	key = gKeyState;
 	zero = 0;
@@ -5135,8 +5135,6 @@ void Ability_RequestGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 r
 {
 	UiIcon_BuildItemIconTiles(BtlActGet(action)->unknown_04[0], with_base, slot, tile, reuse);
 }
-
-struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst, s32 reuse)
 {
@@ -6827,7 +6825,6 @@ void UiTextResource_Release(s32 value)
 	Resource_ResetEntry(value);
 }
 
-s32 ItemMenu_RunFar(void);
 #define gEventWork (*(u8 * (*)) & gEventWork)
 
 void Menu_LoadSelectedResource(void)
@@ -6964,8 +6961,6 @@ void UiWork_CloseAndRelease(void)
 	UiWork_FinalizeAndReleaseBlock16();
 }
 
-s32 PartyInventory_RemoveFar(s32);
-
 struct TimedNoticeWork
 {
 	u8				 unknown_000[0x230];
@@ -7069,8 +7064,6 @@ void Party_AdjustPaletteGlowPhase(s32 arg0)
 	gGameState.palette_glow[0] = value;
 }
 
-struct BtlAct *BtlActGet(s32 action_id);
-
 #define Resource_FixedBlockBTiles ((const u8 *)&Resource_FixedBlockBTiles)
 
 struct ShortcutListEntry
@@ -7078,8 +7071,6 @@ struct ShortcutListEntry
 	u16 owner;
 	u16 ability;
 };
-
-void AudioCommand_PlayFar(s32 cue);
 
 void Debug_SelectAbilityPair(void)
 {
@@ -7218,10 +7209,6 @@ void Debug_SelectAbilityPair(void)
 	}
 	MemFree(list);
 }
-
-struct BtlUnit *UnitGetFar(s32 object_id);
-
-#define BtlActGet ((void *(*)(s32))BtlActGet)
 
 #define ACTION_ID_MASK 0x3FFF
 
@@ -7575,9 +7562,6 @@ void GraphicsPalette_SelectionNoOp(void)
 {
 }
 
-#define ShopCursor_AdvanceFar ((void (*)(void *))ShopCursor_AdvanceFar)
-#define ShopCursor_MoveTowardTargetFar ((void (*)(void *))ShopCursor_MoveTowardTargetFar)
-
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 {
 	s32					  src0;
@@ -7643,16 +7627,11 @@ void Runtime_ScheduleCallbackAndReleaseBlock20B(void)
 	Runtime_ReleaseHeapBlock(0x14);
 }
 
-#define ShopCursor_SetPositionImmediateFar \
-	((void (*)(void *, s32, s32))ShopCursor_SetPositionImmediateFar)
-#define Shop_SetCursorFar ((void (*)(void *, s32, s32, s32))Shop_SetCursorFar)
-
 #define SLIDER_PALETTE 14
 #define RESOURCE_SLOTS 96
 
 extern u8 gSleepDisabled;
 extern u8 gOptionMirror;
-void AudioCommand_PlayFar(s32);
 
 struct RenderInput *Menu_OpenWorkspaceOptions(void)
 {
@@ -8047,7 +8026,6 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
 }
 
 #define gWindowWork (*(struct UiTileSlotWork **)&gWindowWork)
-#define UiIcon_PrepareObjectFar ((void (*)(void *))UiIcon_PrepareObjectFar)
 
 s32 Menu_RunWorkspaceSelectionLoop(void)
 {
@@ -9501,8 +9479,6 @@ void PtyStDraw(s32 flags)
 	work->menu_busy = 0;
 }
 
-#define Runtime_GetBuildStampTimeFar ((u32 (*)(s32))Runtime_GetBuildStampTimeFar)
-
 #define gTitleExtraOptionEnabled (*(s16 *)&gTitleExtraOptionEnabled)
 
 extern u8  gSceneState[];
@@ -9707,7 +9683,8 @@ u32 SaveState_BuildSummaryHeader(void)
 	u32					sum = 0;
 
 	summary = (struct SaveSummary *)(gSaveBuffer - 16);
-	gGameState.build_stamp = Runtime_GetBuildStampTimeFar(0);
+	/* FAKEMATCH: Runtime_GetBuildStampTimeFar is called as u32 (*)(s32); as u32 (*)(void), its prototype, SaveState_BuildSummaryHeader does not compile */
+	gGameState.build_stamp = ((u32 (*)(s32))Runtime_GetBuildStampTimeFar)(0);
 	gGameState.play_time = gLoadedStateWord;
 	{
 		u32 *copy = (u32 *)gSceneState;
@@ -10056,9 +10033,6 @@ s32 SaveState_DeleteSelectedSlot(void)
 //--------------------------------------------------------------------------
 
 #undef Resource_FixedBlockBTiles
-#undef Runtime_GetBuildStampTimeFar
-#undef ShopCursor_AdvanceFar
-#undef Shop_SetCursorFar
 #undef gWindowWork
 
 #if EDITION_INTERNATIONAL || defined(TLA_EDITION_JA)
@@ -10198,8 +10172,6 @@ struct PlacementState
 	u8						pad_14c[8];
 	s32						scale[4];
 };
-
-s32 Object_ApplyProjectedPlacementFar(s32, void *, void *, s32);
 
 void ObjectPlacement_CreateGroup(
 	struct RenderInput *origin, s32 x, s32 y, struct PlacementDescriptor *descriptor)
@@ -10445,8 +10417,6 @@ extern s16 gPostLoadCounter;
 
 #if EDITION_INTERNATIONAL
 
-void AudioCommand_PlayFar(s32 cue);
-
 s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 {
 	struct UiWindow		 *list;
@@ -10685,11 +10655,7 @@ done:
 #include "shop.h"
 #include "resource.h"
 
-#define Shop_SetCursorFar ((void (*)(void *, s32, s32, s32))Shop_SetCursorFar)
-
 extern u8 Resource_FixedBlockBTiles[];
-
-void AudioCommand_PlayFar(s32 cue);
 
 s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 {
@@ -10875,7 +10841,8 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 			}
 			x = list->x * 8 - 4;
 			y = (list->y << 3) + slot * 16 + 12;
-			Shop_SetCursorFar(&marker, x, y, kind);
+			/* FAKEMATCH: Shop_SetCursorFar is called as void (*)(void *, s32, s32, s32); as void (*)(struct ShopCursor *, s32, s32, s8), its prototype, SaveMenu_SelectSlot has 480 of 1528 bytes different */
+			((void (*)(void *, s32, s32, s32))Shop_SetCursorFar)(&marker, x, y, kind);
 			kind = 3;
 		}
 		ShopCursor_AdvanceFar(&marker);
@@ -11048,16 +11015,6 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
 	SaveState_ReleaseWorkspace();
 	return ret;
 }
-
-#undef ShopCursor_MoveTowardTargetFar
-#undef ShopCursor_SetPositionImmediateFar
-
-#define ShopCursor_SetPositionImmediateFar \
-	((void (*)(union MenuCursor *, s32, s32))ShopCursor_SetPositionImmediateFar)
-#define Shop_SetCursorFar ((void (*)(union MenuCursor *, s32, s32, s32))Shop_SetCursorFar)
-#define ShopCursor_AdvanceFar ((void (*)(union MenuCursor *))ShopCursor_AdvanceFar)
-#define ShopCursor_MoveTowardTargetFar \
-	((void (*)(union MenuCursor *))ShopCursor_MoveTowardTargetFar)
 
 extern u8 Resource_FixedBlockBTiles[];
 
@@ -12010,7 +11967,8 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 		{
 			Runtime_PushSlotEntry(entry, 250);
 			WaitFrames(1);
-		} while (AudioCommand_GetStateByteFar() != 0
+		/* FAKEMATCH: AudioCommand_GetStateByteFar is called as s32 (*)(); as u8 (*)(void), its prototype, Djinn_ShowJoinedMessage is 4 bytes longer */
+		} while (((s32 (*)())AudioCommand_GetStateByteFar)() != 0
 				 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
 		UiWork_Finalize(window, 2);
@@ -12062,7 +12020,8 @@ void Party_ShowJoinedMessage(s32 member)
 		{
 			Runtime_PushSlotEntry(entry, 250);
 			WaitFrames(1);
-		} while (AudioCommand_GetStateByteFar() != 0
+		/* FAKEMATCH: AudioCommand_GetStateByteFar is called as s32 (*)(); as u8 (*)(void), its prototype, Party_ShowJoinedMessage has 49 of 248 bytes different */
+		} while (((s32 (*)())AudioCommand_GetStateByteFar)() != 0
 				 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 		UiWork_Finalize(window, 2);
 		WaitFrames(1);
@@ -12126,7 +12085,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
 			Runtime_PushSlotEntry(entry1, 250);
 			Runtime_PushSlotEntry(entry2, 250);
 			WaitFrames(1);
-		} while (AudioCommand_GetStateByteFar() != 0
+		/* FAKEMATCH: AudioCommand_GetStateByteFar is called as s32 (*)(); as u8 (*)(void), its prototype, Party_ShowPairJoinedMessage is 4 bytes longer */
+		} while (((s32 (*)())AudioCommand_GetStateByteFar)() != 0
 				 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
 		UiWork_Finalize(window, 2);
@@ -12137,7 +12097,6 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
 }
 
 #undef ACTION_ID_MASK
-#undef BtlActGet
 #undef Menu_AnimatedCursorTiles
 #undef gTitleExtraOptionEnabled
 
@@ -12672,11 +12631,8 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y)
 #define MADO_X 23
 #endif
 
-s32 BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
-
 s32 Ui_RunSelectionScreen(s32 mode)
 {
-	s32					 *Trade_GetOfferStateFar(s32 index);
 	u8					  party[4];
 	struct UiRenderWork	 *render;
 	struct SelectionWork *work;
@@ -12715,7 +12671,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
 		num = 0;
 		work->kinds[num++] = 0;
 		work->kinds[num++] = 1;
-		if (*Trade_GetOfferStateFar(0) != 0)
+		if (*((s32 *)Trade_GetOfferStateFar(0)) != 0)
 		{
 			BattlePlacement_CountValidEntriesFar(0, party);
 			for (i = 0; i <= 3; i++)
@@ -13172,11 +13128,6 @@ s32 Ui_CreateOutputFromResourceSlot(struct RenderInput *input, s32 x, s32 y, s32
 	}
 }
 
-void UnitCalcFar(s32 unit_id);
-
-#define Djinn_DeactivateFar ((void (*)(s32, s32, s32))Djinn_DeactivateFar)
-#define BtlActGet ((struct AbilityData * (*)(s32)) BtlActGet)
-
 struct AbilityData
 {
 	u8 field_00[2];
@@ -13393,7 +13344,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 #else
 			UiWindow_SetTilemapEntry(win, 0xf01e, 12, n * 2, 0);
 #endif
-			UiText_DrawNumberInWindow(BtlActGet(list[i])->cost, 2, win, 104, n * 16);
+			UiText_DrawNumberInWindow(((struct AbilityData *)BtlActGet(list[i]))->cost, 2, win, 104, n * 16);
 		}
 
 		if (gained != 0)
@@ -14342,7 +14293,6 @@ extern const u8 DjinnMenu_ElementYOffsets[4];
 
 s32 Battle_SelectAbility(s32 owner, s32 unused)
 {
-	struct DjinnRecoveryTable  *Trade_GetOfferStateFar(s32 side);
 	struct CursorSprite			slot;
 	u16							buf[64];
 	struct UiRenderWork		   *ctx;
@@ -14416,7 +14366,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 			{
 				u32 v;
 				s32 k;
-				list = &Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0)->list;
+				list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0))->list;
 				for (k = 0; k < list->count; k++)
 				{
 					if (list->entries[k].unit_id == owner && list->entries[k].element == x
@@ -14924,8 +14874,6 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 // アイテム：召喚えらびのメニューと、戦闘でアイテムを使えるかの判定
 //--------------------------------------------------------------------------
 
-#undef BtlActGet
-
 #define SENTOU_OK 0x80 // tgt_flg：戦闘で使える
 
 #if !GAME_TLA
@@ -14952,9 +14900,6 @@ enum
 };
 
 #define SUMMON_END 32 // 召喚リストの終わり
-
-s32					   Trade_ListFlaggedEntriesFar(u8 *ids);
-struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 //--------------------------------------------------------------------------
 // 召喚えらび
@@ -16118,8 +16063,6 @@ struct CursorSlot
 	s8 index;
 };
 
-s32 BattleMotion_ProjectConditionalPositionFar(s32 id, s32 *out);
-
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
 #endif
 
@@ -16954,7 +16897,6 @@ struct LinkCountdownState
 	s32							 timer;
 	s32							 enabled;
 };
-void AudioCommand_PlayFar(s32 soundId);
 
 void UpdateLinkSessionCountdown(void)
 {
@@ -17783,7 +17725,8 @@ handshake_done:
 				index = param & 255;
 				if (Djinn_IsActiveFar(actorId, element, index) != 0)
 				{
-					ability = BtlActGet(Djinn_GetDefinitionHeaderFar(element, index));
+					/* FAKEMATCH: Djinn_GetDefinitionHeaderFar is called as s32 (*)(s32, s32); as u16 (*)(u32, u32), its prototype, Battle_CollectPartyCommands is 4 bytes longer */
+					ability = BtlActGet(((s32 (*)(s32, s32))Djinn_GetDefinitionHeaderFar)(element, index));
 					cost = ability->rng;
 					win = UiWindow_Create(11, 17, 10, 3, 6);
 					state->entries[0].oam.f.x = 64;
@@ -18293,8 +18236,6 @@ redraw:
 		}
 	}
 }
-
-void AudioCommand_PlayFar(s32 sound_id);
 
 static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs)
 {
@@ -18952,8 +18893,6 @@ s32 Menu_SelectEntry20To21(s32 sel)
 
 #define Menu_ColonString ((u8(*)) & Menu_ColonString)
 
-void Event_SetDestinationFar(s16 primary, s16 secondary);
-
 struct TextObject
 {
 	u8 storage[12];
@@ -19005,7 +18944,8 @@ s16 Menu_RunSelection(void)
 		{
 			UiTextResource_Release(resource);
 			UiWork_Finalize(work, 2);
-			Event_SetDestinationFar(primary, secondary);
+			/* FAKEMATCH: Event_SetDestinationFar is called as void (*)(s16, s16); as void (*)(u16, u16), its prototype, Menu_RunSelection has 18 of 252 bytes different */
+			((void (*)(s16, s16))Event_SetDestinationFar)(primary, secondary);
 			return result;
 		}
 		if (result == -2)

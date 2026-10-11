@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_PALBUF_H
 #define ALCHEMY_PALBUF_H
 
+#include "edition.h"
 #include "types.h"
 #include "layout_guard.h"
 
@@ -65,6 +66,7 @@ enum PaletteTransform
 	PALETTE_TRANSFORM_SPLIT = 0x800000
 };
 
+#if GAME_TLA
 void Graphics_TransformPaletteBuffer(u32 mode, u16 *source, u16 *destination, s32 half);
 
 void TitlePalette_InitializeBuffers(void);
@@ -74,5 +76,6 @@ void Graphics_SetPaletteTransformValue(s32 value);
 void Graphics_UpdatePaletteInterpolation(s32 frames);
 void Graphics_InterpolatePaletteBuffers(s16 *source, s16 *target, s16 *step, s32 frames);
 void Runtime_ScheduleCallbackAndReleaseBlock32A(void);
+#endif
 
 #endif

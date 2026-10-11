@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/kuupuappu_heya/heya.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/battle/tgtexec.h"
@@ -31,11 +32,6 @@
 #include "objcmd.h"
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
-
-#define FieldScene_PrepareActors ((void (*)(const struct ScenePlacement *))FieldScene_PrepareActors)
-
-s32	 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPosition *position);
-void Object_SetMode(struct FieldActor *object, s32 mode);
 
 enum PromptMessage
 {
@@ -614,9 +610,6 @@ void KuupuappuHeya_RunActor25Response(void)
 	Object_RefreshSelectorById(25);
 	Engine_EventEnd();
 }
-
-#define Engine_ObjectSetPosition ((void (*)(s32, s32, s32, s32))Engine_ObjectSetPosition)
-#define Engine_ActorLookup ((struct Rec_383b * (*)()) Engine_ActorLookup)
 
 #define RATIO_HI 52428
 #define RATIO_LO 26214
@@ -2949,8 +2942,6 @@ void SceneActor_ApplyScaledBytePairPosition(s32 a, u8 *p)
 {
 	Engine_ObjectSetPosition(a, (p[0] << 19) + 0x480000, 0, (p[1] << 19) + 0x2780000);
 }
-
-void Object_SetMode(struct FieldActor *actor, s32 argument);
 
 void KuupuappuHeya_UpdateActorStops(void)
 {

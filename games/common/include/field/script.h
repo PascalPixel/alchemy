@@ -87,9 +87,13 @@ typedef char ScriptOperands_size[sizeof(struct ScriptOperands) == 0x70 ? 1 : -1]
 	|| defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
 s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *interpreter);
 #else
+#if GAME_TLA
 s32 Script_AdvancePastCursor(struct ScriptInterpreter *interpreter);
 #endif
+#endif
+#if GAME_TLA
 s32 Script_ClearByte54(struct ScriptInterpreter *interpreter);
 s32 Script_SetByte54(struct ScriptInterpreter *interpreter);
+#endif
 
 #endif

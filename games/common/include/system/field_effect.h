@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_FIELD_EFFECT_H
 #define ALCHEMY_FIELD_EFFECT_H
 
+#include "edition.h"
 #include "field_event.h"
 
 struct FieldEffect
@@ -83,12 +84,14 @@ struct EffectOptions
 LAYOUT_OFFSET_GUARD(EffectOptions_Type, struct EffectOptions, type, 0x18);
 LAYOUT_OFFSET_GUARD(EffectOptions_Update, struct EffectOptions, update, 0x24);
 
+#if GAME_TLA
 void				Effect_SetPriority(struct FieldEffect *effect, s32 priority);
 struct FieldEffect *Effect_CreateTranslucent(s32 x, s32 y, s32 z, s32 type);
 struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type);
 void				BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, u32 flags,
 	const struct EffectOptions *options);
+#endif
 void Effect_SpawnResident(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z,
 	u32 flags, const struct EffectOptions *options);
 

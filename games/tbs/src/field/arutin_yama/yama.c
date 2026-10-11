@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/arutin_yama/yama.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -69,8 +70,6 @@ extern s32				 ArutinYama_CueTicks;
 
 extern s32 ArutinYama_LeafMode;
 extern s32 ArutinYama_LeafOrigin[3];
-
-void Event_LoadAreaScript();
 
 void SceneState_SetValue14Mode23(void)
 {
@@ -1431,7 +1430,6 @@ void ArutinYama_RunLeapSequence(void)
 	Engine_EventEnd();
 }
 
-#define Engine_ActorLookup ((struct FieldActor * (*)(s32)) Engine_ActorLookup)
 #define gPaletteBufferWork (*(u16 **)&gPaletteBufferWork)
 
 struct Byte

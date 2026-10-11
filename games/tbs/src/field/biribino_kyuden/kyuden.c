@@ -22,8 +22,6 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-#define FieldScene_PrepareActors ((void (*)(u8 *))FieldScene_PrepareActors)
-
 struct KyudenSceneRecord
 {
 	u8 unk_000[166];

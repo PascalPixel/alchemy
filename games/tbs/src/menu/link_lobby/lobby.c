@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/menu/link_lobby/lobby.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/battle/tgtexec.h"
@@ -947,10 +948,6 @@ struct LobbyActor
 	u8	unknown_00[6];
 	u16 facing;
 };
-void Engine_EventBegin(void);
-void Engine_ActorFaceActor(s32 actor, s32 target, s32 frames);
-void Engine_EventSetMessage(s32 message);
-#define Engine_EventShowMessage ((s32 (*)(s32 actor, s32 mode))Engine_EventShowMessage)
 
 s32 LinkLobby_TalkLinkedWins(s32 actor)
 {
@@ -967,7 +964,8 @@ s32 LinkLobby_TalkLinkedWins(s32 actor)
 		if (*count == 0)
 		{
 			Engine_EventSetMessage((s32)MsgLobbyTellTotalWins);
-			return Engine_EventShowMessage(actor, 0);
+			/* FAKEMATCH: Engine_EventShowMessage is called as s32 (*)(s32, s32); as void (*)(s32, s32), its prototype, LinkLobby_TalkLinkedWins does not compile */
+			return ((s32 (*)(s32, s32))Engine_EventShowMessage)(actor, 0);
 		}
 	}
 	else
@@ -980,20 +978,15 @@ s32 LinkLobby_TalkLinkedWins(s32 actor)
 	UiWork_ClearValueNameTables();
 	UiText_DrawQuantity(*count, 5);
 	Engine_EventSetMessage(base + 1);
-	return Engine_EventShowMessage(actor, 0);
+	/* FAKEMATCH: Engine_EventShowMessage is called as s32 (*)(s32, s32); as void (*)(s32, s32), its prototype, LinkLobby_TalkLinkedWins does not compile */
+	return ((s32 (*)(s32, s32))Engine_EventShowMessage)(actor, 0);
 none:
 	Engine_EventSetMessage((s32)MsgLobbyTellConsecutiveWins);
-	return Engine_EventShowMessage(actor, 0);
+	/* FAKEMATCH: Engine_EventShowMessage is called as s32 (*)(s32, s32); as void (*)(s32, s32), its prototype, LinkLobby_TalkLinkedWins does not compile */
+	return ((s32 (*)(s32, s32))Engine_EventShowMessage)(actor, 0);
 }
 
-#undef Engine_EventShowMessage
-
-s32	 Engine_DebugCreateWindow();
-
-void UiText_DrawQuantity();
-
 extern u8 gOptionMirror;
-void	  UiText_DrawQuantity(s32 value, s32 digits);
 
 s32 LinkLobby_RunChoicePrompt(s32 id)
 {

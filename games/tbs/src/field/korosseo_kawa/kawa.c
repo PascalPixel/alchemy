@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/korosseo_kawa/kawa.h"
 #include "unit/field/common/korosseo/solo_competitor.h"
 #include "unit/field/common/korosseo/solo_round.h"
@@ -64,9 +65,6 @@ typedef void (*SceneTask)(void);
 extern char HexDigits[20];
 extern s32	KorosseoKawa_Countdown;
 extern s16	Korosseo_MarkerSlot;
-
-s32	 GetPartyMemberCount(void);
-s32	 Object_CheckMovementCollision(struct FieldActor *, Position3 *);
 
 // コロッセオ共通 (field/common/korosseo)
 
@@ -1603,7 +1601,6 @@ void FieldScene_RunTwoArmSequence(s32 a)
 
 void FieldScene_RunLateSequence(s32 a0)
 {
-	void Engine_TaskWait();
 
 	s32 kind;
 

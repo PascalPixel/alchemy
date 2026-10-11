@@ -318,8 +318,6 @@ struct SaveLinkGreeting
 };
 
 extern struct SaveLinkGreeting gLinkPeerSignatures[4];
-void						   Engine_AudioPlayCue(s32);
-void						   Engine_EventOpenScreen(void);
 s32							   __divsi3(s32, s32);
 s32							   __modsi3();
 

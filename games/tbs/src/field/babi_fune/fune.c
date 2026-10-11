@@ -561,8 +561,6 @@ static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
 	return (u16)(Iwram_MulQ16(BabiFune_WaveSine[(angle >> 16) & 0xff], amplitude) / 256) + base;
 }
 
-void Engine_ActorWalkToAndWait(s32 actor, s32 x, s32 z);
-
 static inline void BabiFune_AddTask(void (*task)(void), s32 order)
 {
 	/* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */

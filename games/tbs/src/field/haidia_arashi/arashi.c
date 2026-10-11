@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/haidia_arashi/arashi.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -125,8 +126,6 @@ extern s32 HaidiaArashi_ActorNineteenScript[];
 
 extern s32 HaidiaArashi_ActorEightScript[];
 
-void Engine_ActorSetSpritePriority(s32 actor, s32 priority);
-
 extern s32					 HaidiaArashi_ShakeDone;
 extern s32					 HaidiaArashi_ShakeShift;
 extern u16					 HaidiaArashi_CellSteps2[];
@@ -139,10 +138,6 @@ extern s32					 HaidiaArashi_ActorTwentyTwoScript[];
 s32 Math_RemainderUnsigned(s32, s32);
 
 union PairObject;
-
-void Effect_SoundAndFlash(void);
-
-void Engine_ActorSetSpritePriority();
 
 s32 HaidiaArashi_ShakeDone;
 s32 HaidiaArashi_ShakeShift;
@@ -2419,8 +2414,6 @@ void Scene_RunActorGroupDepartureSequence(void)
 	Party_RemoveOwnerRestored(1);
 	BattleFx_SetBlock30Values128One();
 }
-
-#define Object_InitializeMode ((s32 (*)(struct FieldSprite *, s32))Object_InitializeMode)
 
 struct Pulse
 {

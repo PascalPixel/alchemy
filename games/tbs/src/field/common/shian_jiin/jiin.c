@@ -112,8 +112,6 @@ void *NewFlippedEffectObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 	return NULL;
 }
 
-#define FieldScene_PrepareActors ((void (*)(struct ScenePlacement *))FieldScene_PrepareActors)
-
 extern struct SceneEntrance gShianJiinEntrances1[];
 extern struct SceneEntrance gShianJiinEntrancesOther[];
 

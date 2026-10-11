@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/korashiamu_iriguchi/iriguchi.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/game/character/chara.h"
@@ -30,8 +31,6 @@ extern s32 KorashiamuIriguchi_ActionTable6[];
 extern s32 KorashiamuIriguchi_ActionTable7[];
 extern s32 KorashiamuIriguchi_ActionTable8[];
 extern s32 KorashiamuIriguchi_ActionTable9[];
-
-void InventorySnapshot_Take();
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

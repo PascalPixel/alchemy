@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/korima_magari/magari.h"
 #include "unit/field/common/map/panel.h"
 #include "unit/field/common/korima/palette.h"
@@ -87,9 +88,6 @@ struct TileRun2
 	s16				   vertical;
 	struct FieldActor *object;
 };
-
-void Engine_ObjectSetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
-void Object_CommitPosition(struct FieldActor *object);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/map/panel.c"

@@ -6,6 +6,8 @@
 
 use super::objects::{difference, differing, first_error, Bench, Built};
 use super::plan::{apply, cast_edits, Cast, Draft};
+#[cfg(test)]
+use super::plan::Form;
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::path::Path;
 
@@ -225,7 +227,7 @@ mod tests {
     #[test]
     fn kept_casts_are_written_with_their_reasons() {
         let old = "s32 Get();\nvoid Run(void)\n{\n\tGet(1);\n\tGet(2);\n}\n";
-        let cast = |needle: &str| Cast { at: old.find(needle).unwrap(), name: "Get".into(), old: "s32 (*)()".into(), truth: "u8 (*)(u8)".into(), function: "Run".into() };
+        let cast = |needle: &str| Cast { at: old.find(needle).unwrap(), name: "Get".into(), old: "s32 (*)()".into(), truth: "u8 (*)(u8)".into(), function: "Run".into(), form: Form::Shape };
         let draft = Draft { edits: vec![super::super::plan::removal(old, 0, 10)], casts: vec![cast("Get(1)"), cast("Get(2)")] };
         let kept = BTreeMap::from([(1, "Run is 4 bytes longer".to_string())]);
         assert_eq!(

@@ -168,8 +168,6 @@ void FieldScene_RunScene3b6SequenceA(void)
 
 void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
 {
-	void Engine_EventWait(s32);
-	void Engine_EventSetMessage(s32);
 
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiHeWontSailShipEven);
@@ -441,7 +439,6 @@ void SceneDialogue_RunExcitedLines(s32 a0)
 
 void SceneDialogue_RunActor25FlaggedLine(void)
 {
-	void Engine_EventBegin(void);
 
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x8BE) == 0)
@@ -493,7 +490,6 @@ void SceneDialogue_AskRememberWarrior(s32 subject)
 
 void SceneDialogue_RunFacingMessage(s32 no)
 {
-	s32 Engine_GameFlagIsSet(s32 flag);
 
 	struct FieldActor *actor = Object_GetById(0);
 	if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0xc000)

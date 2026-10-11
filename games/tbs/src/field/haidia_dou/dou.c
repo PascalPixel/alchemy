@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/haidia_dou/dou.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/common/object/staged_actor.h"
@@ -54,16 +55,6 @@ struct Rec_3a6
 
 extern u32 HaidiaDou_Exits[];
 extern s32 HaidiaDou_WalkTargets[];
-
-void Engine_TaskWait(s32 frames);
-void Engine_EventWait(s32 frames);
-void Engine_ActorWaitForMove(s32 actor);
-void Engine_ActorSetAnimation(s32 actor, s32 mode);
-void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
-void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
-
-void Object_CommitPosition(void *);
-s32	 Object_CheckMovementCollision();
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {

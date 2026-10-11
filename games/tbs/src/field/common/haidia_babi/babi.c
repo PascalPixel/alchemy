@@ -90,8 +90,6 @@ extern struct SceneEvent gHaidiaBabiEvents3[];
 extern struct SceneEvent gHaidiaBabiEvents2[];
 extern struct SceneEvent gHaidiaBabiEvents[];
 
-#define FieldScene_PrepareActors ((s32 (*)(s32))FieldScene_PrepareActors)
-
 s32 *HaidiaBabi_GetEntrances(void)
 {
 	return gHaidiaBabiEntrances;

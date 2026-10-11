@@ -1,19 +1,22 @@
-//! A C file's header: the prototype of each function it defines for other
-//! code, in the file's order, with the types those prototypes name.
+//! A C file's header: the prototype of each function and the `extern` of
+//! each object it defines for other code, in the file's order, with the
+//! types they name.
 
 use super::model::{spelling, Model, INCLUDE, UNIT};
 use super::scan::{Entry, What};
-use crate::c_items::{declared, flat, Kind};
+use crate::c_items::{declared, flat, Kind, Space};
 use std::collections::{BTreeMap, BTreeSet};
 
 /// The macros a condition may test in a header that any file includes.
 const EDITION_MACROS: &[&str] = &["EDITION_INTERNATIONAL", "GAME_TLA", "MODERN", "defined"];
 
-/// Where the headers define each typedef name and each enum tag.
+/// Where each typedef name, enum tag and struct or union is defined.
 #[derive(Default)]
 pub(crate) struct Types {
     pub typedefs: BTreeMap<String, String>,
     pub enums: BTreeMap<String, String>,
+    /// By `struct Tag` or `union Tag`.
+    pub tags: BTreeMap<String, String>,
 }
 
 impl Types {
@@ -45,6 +48,8 @@ impl Types {
             for name in crate::c_items::names(&piece.item) {
                 if name.defines && name.signature.starts_with("enum ") {
                     self.enums.entry(name.name).or_insert_with(|| header.to_string());
+                } else if name.defines && name.space == Space::Tag {
+                    self.tags.entry(name.signature).or_insert_with(|| header.to_string());
                 }
             }
         }
@@ -72,86 +77,136 @@ const KEYWORDS: &[&str] = &[
     "extern",
 ];
 
-/// What one function's signature needs before it: the tags it names,
-/// declared, and the headers of its typedef names and enums. An error is
-/// a name no header on the search path defines.
-fn needs(signature: &str, name: &str, types: &Types) -> Result<(Vec<String>, Vec<String>), String> {
-    let (mut tags, mut includes) = (Vec::new(), Vec::new());
-    let found = words(signature);
+/// What a declaration needs before it: the tags it names.
+#[derive(Default)]
+pub(crate) struct Needs {
+    pub tags: Vec<String>,
+    pub includes: Vec<String>,
+}
+
+/// What one signature needs before it: the tags it only points to,
+/// declared, and the headers of its typedef names, its enums and the
+/// structs it holds whole. An error is a name no header on the search
+/// path defines.
+pub(crate) fn needs(signature: &str, name: &str, types: &Types, own: &Types) -> Result<Needs, String> {
+    let mut out = Needs::default();
+    let found: Vec<&str> = signature.split(' ').filter(|t| !t.is_empty()).collect();
     let mut named = false;
+    let reached = |header: Option<&String>, what: &str| -> Result<String, String> {
+        match header {
+            Some(header) => spelling(header).ok_or_else(|| format!("names {what}, defined in {header}, off the search path")),
+            None => Err(format!("names {what}, which no header defines")),
+        }
+    };
+    // A type the file defines for itself is the one it means.
+    let find = |own: &BTreeMap<String, String>, all: &'_ BTreeMap<String, String>, key: &str| -> Option<String> { own.get(key).or_else(|| all.get(key)).cloned() };
     for (i, word) in found.iter().enumerate() {
+        if !word.starts_with(|c: char| c.is_ascii_alphabetic() || c == '_') {
+            continue;
+        }
         if *word == name && !named {
             named = true;
             continue;
         }
         match i.checked_sub(1).map(|before| found[before]) {
-            Some("struct") => tags.push(format!("struct {word};")),
-            Some("union") => tags.push(format!("union {word};")),
-            Some("enum") => match types.enums.get(*word).and_then(|h| spelling(h)) {
-                Some(include) => includes.push(include),
-                None => return Err(format!("names enum {word}, which no header on the search path defines")),
-            },
-            _ if KEYWORDS.contains(word) || word.starts_with(|c: char| c.is_ascii_digit()) => {}
-            _ => match types.typedefs.get(*word) {
-                Some(header) => match spelling(header) {
-                    Some(include) => includes.push(include),
-                    None => return Err(format!("names {word}, defined in {header}, off the search path")),
-                },
-                None => return Err(format!("names {word}, which no header defines as a type")),
-            },
+            Some(keyword @ ("struct" | "union")) => {
+                let tag = format!("{keyword} {word}");
+                // A pointer to the struct needs its tag; the struct held
+                // whole needs its definition.
+                if found.get(i + 1) == Some(&"*") {
+                    out.tags.push(format!("{tag};"));
+                } else {
+                    out.includes.push(reached(find(&own.tags, &types.tags, &tag).as_ref(), &tag)?);
+                }
+            }
+            Some("enum") => out.includes.push(reached(find(&own.enums, &types.enums, word).as_ref(), &format!("enum {word}"))?),
+            _ if KEYWORDS.contains(word) => {}
+            _ => out.includes.push(reached(find(&own.typedefs, &types.typedefs, word).as_ref(), word)?),
         }
     }
-    Ok((tags, includes))
+    Ok(out)
 }
 
-/// One wording of a definition: its prototype, the conditions it stands
+/// An object definition's text as its declaration: the initializer and
+/// comments out, `extern` before it.
+fn external(item: &str) -> Option<String> {
+    let mask = crate::camelotize::source::mask(item);
+    let code = String::from_utf8_lossy(&mask).into_owned();
+    if code.contains("__attribute__") || code.contains("asm") {
+        return None;
+    }
+    let (mut depth, mut end) = (0usize, code.len());
+    for (i, byte) in code.bytes().enumerate() {
+        match byte {
+            b'(' | b'[' | b'{' => depth += 1,
+            b')' | b']' | b'}' => depth = depth.saturating_sub(1),
+            b'=' | b';' if depth == 0 => {
+                end = i;
+                break;
+            }
+            _ => {}
+        }
+    }
+    let text: Vec<&str> = code[..end].split_whitespace().filter(|word| *word != "extern").collect();
+    Some(format!("extern {};", text.join(" ")))
+}
+
+/// One wording of a definition: its declaration, the conditions it stands
 /// under and its signature.
-type Wording<'a> = (&'a str, &'a [String], &'a str);
+type Wording<'a> = (String, &'a [String], &'a str);
 
 /// The header's text for the entries of one C file and the names it
 /// declares, or none when the file defines nothing for other code.
-/// `problems` takes what it could not say; such a function is left out.
-pub(crate) fn header(path: &str, entries: &[Entry], types: &Types, problems: &mut Vec<String>) -> Option<(String, BTreeSet<String>)> {
+/// `problems` takes what it could not say; such a name is left out.
+pub(crate) fn header(path: &str, text: &str, entries: &[Entry], types: &Types, problems: &mut Vec<String>) -> Option<(String, BTreeSet<String>)> {
     // Each name once, at its first definition, with every wording it has.
     let mut order: Vec<&str> = Vec::new();
     let mut wordings: BTreeMap<&str, Vec<Wording>> = BTreeMap::new();
     for entry in entries {
-        let What::Definition { prototype } = &entry.what else {
-            continue;
-        };
         if entry.local {
             continue;
         }
+        let declaration = match &entry.what {
+            What::Definition { prototype } => prototype.clone(),
+            What::Object if entry.declarators == 1 => match external(&text[entry.start..entry.end]) {
+                Some(declaration) => declaration,
+                None => continue,
+            },
+            _ => continue,
+        };
         let list = wordings.entry(&entry.name).or_default();
         if list.is_empty() {
             order.push(&entry.name);
         }
-        if !list.iter().any(|(text, _, _)| text == prototype) {
-            list.push((prototype, &entry.conditions, &entry.signature));
+        if !list.iter().any(|(text, _, _)| *text == declaration) {
+            list.push((declaration, &entry.conditions, &entry.signature));
         }
     }
     let (mut tags, mut includes, mut names) = (BTreeSet::new(), BTreeSet::new(), BTreeSet::new());
     let mut lines: Vec<(String, String)> = Vec::new();
+    let mut own_types = Types::default();
+    own_types.add(path, text);
+    own_types.typedefs.values_mut().chain(own_types.enums.values_mut()).chain(own_types.tags.values_mut()).for_each(|file| *file = "its own file".to_string());
     'names: for name in order {
         let list = &wordings[name];
         let mut own = (Vec::new(), Vec::new(), Vec::new());
-        for (prototype, conditions, signature) in list {
+        for (declaration, conditions, signature) in list {
             let condition = if list.len() == 1 { String::new() } else { conditions.join(" && ") };
             if !editions_only(&condition) {
                 problems.push(format!("{path}: {name} has several wordings under `{condition}`, which a header cannot test"));
                 continue 'names;
             }
-            match needs(signature, name, types) {
-                Ok((tags, includes)) => {
-                    own.0.extend(tags);
-                    own.1.extend(includes);
+            match needs(signature, name, types, &own_types) {
+                Ok(needs) => {
+                    own.0.extend(needs.tags);
+                    own.1.extend(needs.includes);
                 }
                 Err(problem) => {
                     problems.push(format!("{path}: {name} {problem}"));
                     continue 'names;
                 }
             }
-            own.2.push((condition, prototype.to_string()));
+            own.2.push((condition, declaration.clone()));
         }
         tags.extend(own.0);
         includes.extend(own.1);
@@ -161,6 +216,12 @@ pub(crate) fn header(path: &str, entries: &[Entry], types: &Types, problems: &mu
     if lines.is_empty() {
         return None;
     }
+    Some((render(path, tags, includes, &lines), names))
+}
+
+/// A header's text: its guard, what its declarations need, and each
+/// declaration under its condition.
+pub(crate) fn render(path: &str, tags: BTreeSet<String>, mut includes: BTreeSet<String>, lines: &[(String, String)]) -> String {
     includes.remove("types.h");
     if lines.iter().any(|(condition, _)| !condition.is_empty()) {
         includes.insert("edition.h".to_string());
@@ -178,7 +239,7 @@ pub(crate) fn header(path: &str, entries: &[Entry], types: &Types, problems: &mu
     }
     out.push('\n');
     let mut open = String::new();
-    for (condition, prototype) in &lines {
+    for (condition, declaration) in lines {
         if *condition != open {
             if !open.is_empty() {
                 out.push_str("#endif\n");
@@ -188,14 +249,14 @@ pub(crate) fn header(path: &str, entries: &[Entry], types: &Types, problems: &mu
             }
             open = condition.clone();
         }
-        out.push_str(prototype);
+        out.push_str(declaration);
         out.push('\n');
     }
     if !open.is_empty() {
         out.push_str("#endif\n");
     }
     out.push_str("\n#endif\n");
-    Some((out, names))
+    out
 }
 
 #[cfg(test)]
@@ -203,34 +264,49 @@ mod tests {
     use super::*;
     use crate::headers::scan::entries;
 
+    fn types() -> Types {
+        let mut types = Types::default();
+        types.add("games/tbs/include/types.h", "typedef signed int s32;\ntypedef unsigned char u8;\ntypedef signed short s16;\n");
+        types.add("games/common/include/field/objdisp.h", "typedef struct Q Handle;\nenum Facing { NORTH };\nstruct Cell { s32 x; };\n");
+        types.add("games/tbs/src/field/a/local.h", "typedef struct { s32 x; } Private;\nstruct Row { s32 x; };\n");
+        types
+    }
+
     #[test]
     fn a_header_holds_each_callable_function_once_with_its_types() {
-        let mut types = Types::default();
-        types.add("games/tbs/include/types.h", "typedef signed int s32;\n");
-        types.add("games/common/include/field/objdisp.h", "typedef struct Q Handle;\nenum Facing { NORTH };\n");
-        types.add("games/tbs/src/field/a/local.h", "typedef struct { s32 x; } Private;\n");
         let source = "static void Hidden(void)\n{\n}\nconst struct Actor *Get(s32 id, Handle h)\n{\n}\n#if EDITION_INTERNATIONAL\nvoid Draw(union Cell *cell, enum Facing f)\n{\n}\n#else\nvoid Draw(union Cell *cell)\n{\n}\n#endif\n#if defined(TBS_EDITION_DE)\nvoid Only(void)\n{\n}\n#endif\nvoid Apart(Private *p)\n{\n}\n";
         let mut problems = Vec::new();
-        let (text, names) = header("games/tbs/include/unit/field/a/mura.h", &entries(source), &types, &mut problems).unwrap();
+        let (text, names) = header("games/tbs/include/unit/field/a/mura.h", source, &entries(source), &types(), &mut problems).unwrap();
         assert_eq!(problems, ["games/tbs/include/unit/field/a/mura.h: Apart names Private, defined in games/tbs/src/field/a/local.h, off the search path"]);
         assert_eq!(names.iter().map(String::as_str).collect::<Vec<_>>(), ["Draw", "Get", "Only"]);
         assert_eq!(
             text,
             "#ifndef ALCHEMY_UNIT_FIELD_A_MURA_H\n#define ALCHEMY_UNIT_FIELD_A_MURA_H\n\n#include \"types.h\"\n#include \"edition.h\"\n#include \"objdisp.h\"\n\nstruct Actor;\nunion Cell;\n\nconst struct Actor *Get(s32 id, Handle h);\n#if EDITION_INTERNATIONAL\nvoid Draw(union Cell *cell, enum Facing f);\n#endif\n#if !(EDITION_INTERNATIONAL)\nvoid Draw(union Cell *cell);\n#endif\nvoid Only(void);\n\n#endif\n"
         );
-        assert!(header("x.h", &entries("static void Hidden(void)\n{\n}\n"), &types, &mut problems).is_none());
+        assert!(header("x.h", "", &entries("static void Hidden(void)\n{\n}\n"), &types(), &mut problems).is_none());
+    }
+
+    #[test]
+    fn a_header_declares_each_object_as_its_definition_types_it() {
+        let source = "const s16 gSteps[] = { 1, 2 }; // 歩幅\nstruct Cell gCells[4];\nstruct Actor *gActor = 0;\nstatic u8 gMine;\nstruct Row gRows[2];\nu8 gA, gB;\n";
+        let mut problems = Vec::new();
+        let (text, names) = header("games/tbs/include/unit/a.h", source, &entries(source), &types(), &mut problems).unwrap();
+        assert_eq!(names.iter().map(String::as_str).collect::<Vec<_>>(), ["gActor", "gCells", "gSteps"]);
+        assert_eq!(problems, ["games/tbs/include/unit/a.h: gRows names struct Row, defined in games/tbs/src/field/a/local.h, off the search path"]);
+        assert_eq!(
+            text,
+            "#ifndef ALCHEMY_UNIT_A_H\n#define ALCHEMY_UNIT_A_H\n\n#include \"types.h\"\n#include \"objdisp.h\"\n\nstruct Actor;\n\nextern const s16 gSteps[];\nextern struct Cell gCells[4];\nextern struct Actor *gActor;\n\n#endif\n"
+        );
     }
 
     #[test]
     fn wordings_under_a_files_own_macro_are_a_problem() {
         let source = "#if LOCAL_SWITCH\nvoid Draw(void)\n{\n}\n#else\nvoid Draw(s32 a)\n{\n}\n#endif\n";
         let mut problems = Vec::new();
-        let mut types = Types::default();
-        types.add("games/tbs/include/types.h", "typedef signed int s32;\n");
-        assert!(header("games/tbs/include/unit/a.h", &entries(source), &types, &mut problems).is_none());
+        assert!(header("games/tbs/include/unit/a.h", source, &entries(source), &types(), &mut problems).is_none());
         assert_eq!(problems.len(), 1);
         let unknown = "void Draw(Unknown *p)\n{\n}\n";
-        assert!(header("games/tbs/include/unit/a.h", &entries(unknown), &types, &mut problems).is_none());
-        assert_eq!(problems[1], "games/tbs/include/unit/a.h: Draw names Unknown, which no header defines as a type");
+        assert!(header("games/tbs/include/unit/a.h", unknown, &entries(unknown), &types(), &mut problems).is_none());
+        assert_eq!(problems[1], "games/tbs/include/unit/a.h: Draw names Unknown, which no header defines");
     }
 }

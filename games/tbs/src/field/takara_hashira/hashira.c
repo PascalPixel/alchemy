@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/takara_hashira/hashira.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/common/object/staged_actor.h"
@@ -77,15 +78,10 @@ extern u16 TakaraHashira_ShiftSteps3[];
 extern u16 TakaraHashira_ShiftSteps4[];
 extern u16 TakaraHashira_ShiftSteps5[];
 
-void Engine_TaskWait(s32 frames);
-void Object_SetMode(struct FieldActor *object, s32 mode);
-
 extern u8  TakaraHashira_ShakenScroll[];
 extern u8 *gEffectWork;
 
 extern s32 TakaraHashira_ShakeChance;
-
-s32	 Object_CheckMovementCollision();
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {

@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/makyuri_chojo/chojo.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
@@ -32,8 +33,6 @@ extern struct SceneEvent	 gMakyuriChojoEvents[];
 
 extern s32 MakyuriChojo_NearestActor;
 
-void RunOverlayObjectCommand1(void *object, s32 command);
-
 void MakyuriChojo_SetSpritePriority(struct OverlayObject *object, s32 priority)
 {
 	struct FieldSpritePriority *sprite;
@@ -64,8 +63,6 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
 {
 #include "create_configured_overlay_object_body.inc"
 }
-
-s32	 Object_CheckMovementCollision(struct FieldActor *actor, s32 *position);
 
 struct EffectParams
 {

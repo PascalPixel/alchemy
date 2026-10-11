@@ -20,10 +20,7 @@
 #include "io_reg.h"
 #include "text/msg_ids.h"
 
-void Engine_ActorSetChildValue();
-
 extern struct EventWork *gEventWork;
-void					 Engine_MapCopyCellAttributes();
 
 void InitializeSceneRecordBuffer(void);
 

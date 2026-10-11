@@ -32,31 +32,43 @@ extern u8		  *UiIcon_ItemIconPointersEnd[];
 extern u8		  *UiIcon_MiscIconPointers[];
 extern u8		  *UiIcon_PsynergyIconPointers[];
 extern u8		  *UiIcon_PsynergyIconPointersEnd[];
+#if GAME_TLA
 void			   Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse);
+#endif
 #ifndef OWN_BattleLayout_HighlightPartyPanels
+#if GAME_TLA
 s32 BattleLayout_HighlightPartyPanels(u16 *ids);
 #endif
+#endif
+#if GAME_TLA
 void PaletteGlow_UpdateSine(void);
 void Render_ResetTransformState(void);
 s32	 Ui_ClearVramBlock(void);
+#endif
 #if GAME_TLA
 s32	 BattleParty_ListActorIdsFar(s32 side, s32 group);
 void Ui_LoadCharacterEntryForSlotFar(s32 a, s32 b, s32 c);
 #endif
+#if GAME_TLA
 void Ui_PrepareTransferFromTableEntry(u32 index);
 s32	 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y);
 void UiTextResource_Release(s32 value);
 void PtyStDraw(s32 flags);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
+#endif
 #ifndef OWN_UiWindow_SetTilemapEntry
+#if GAME_TLA
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y, u32 mode);
 #endif
+#endif
+#if GAME_TLA
 void UiWork_InitCountersWithResourceAndScheduleRefresh(void);
 void UiWork_ProcessDirectWork(void);
 void UiWork_ProcessRenderChannels(void);
 void UiWork_SetTwoEntriesTo999(void);
 void UiWork_UploadDirtyBlocks(void);
+#endif
 
 #if !GAME_TLA
 struct AnimationObject;

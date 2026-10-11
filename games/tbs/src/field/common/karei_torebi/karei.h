@@ -17,11 +17,7 @@
 
 #include "types.h"
 
-void Engine_EventShowMessage();
-
 #include "types.h"
-
-void Engine_EventBegin(void);
 
 #include "types.h"
 

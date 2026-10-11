@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/goma_hashira/hashira.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/battle/effect/slots.h"
@@ -263,21 +264,8 @@ void FieldScene_RunPrimarySequence(void)
 
 #endif
 
-void Engine_EventBegin(void);
-void Engine_EventEnd(void);
-void Engine_EventWait(s32 frames);
-void Engine_ActorSetPosition(s32 actor, s32 fixed_x, s32 fixed_z);
-void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
-void Engine_ActorWaitForMove(s32 actor);
-void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
-void Engine_ActorSetDestination(s32 actor, s32 x, s32 z);
-s32	 Engine_RandomNext(void);
-void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
-void Engine_MapRenderWaitForValues(void);
 #if EDITION_INTERNATIONAL
-s32 Engine_GameFlagSet(s32 flag);
 #endif
-void Engine_AudioPlayCue(s32 cue);
 
 s32 GomaHashira_Actor13Frames;
 

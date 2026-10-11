@@ -27,20 +27,31 @@ extern const s8 BattlePlacement_StepPairs[];
 extern u8		Encounter_AreaEntryTable[];
 extern u8		gPlayerObjectId[];
 extern u16		Resource_SlotAssignments[];
+#if GAME_TLA
 s32				BtlTgtExec(struct BtlPlan *plan, s32 slot);
+#endif
 struct BtlObj;
 #ifndef OWN_BattlePresentation_SpawnActorObject
+#if GAME_TLA
 void BtlObjMake(struct BtlObj *actor, s32 unit, s32 x, s32 y);
 #endif
+#endif
 #ifndef OWN_BattleActor_SpawnObjectsForList
+#if GAME_TLA
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh);
 #endif
+#endif
+#if GAME_TLA
 void BattleEffect_InitializeSharedScene(void);
 void BattleEvent_Playback(void);
 void BattleFx_DrawScaledObject(struct EffectSlot *object);
+#endif
 #ifndef OWN_BattleFx_GetResourceGroup
+#if GAME_TLA
 s8 BattleFx_GetResourceGroup(s32 effect_index);
 #endif
+#endif
+#if GAME_TLA
 void  BattleFx_PrepareBufferInterpolation(void);
 void  BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode);
 void  BattleFx_RunNoEffect(void);
@@ -52,12 +63,18 @@ s32	  BattleMotion_GetSlotPalette(s32 id);
 void  BattleMotion_ResetObjectAtScaledAnchor(s32 object_id);
 void  BattleMotion_SetMode5AndActivateSlot(s32 unit_id);
 void  BattleMotion_SetupEscapeObject(s32 object_id);
+#endif
 #ifndef OWN_BattlePres_BuildOpponentEntries
+#if GAME_TLA
 s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries);
 #endif
+#endif
 #ifndef OWN_BattlePres_BuildUnitEntries
+#if GAME_TLA
 s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries);
 #endif
+#endif
+#if GAME_TLA
 s32	 BattlePres_WaitSync(void);
 s32	 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s32 count);
 void BattleUnit_ResetGuardLevels(void);
@@ -65,6 +82,7 @@ void Camera_InitDefaultTransform(void);
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
 void RunBattleEffect05(void);
 s32	 Summon_IsEntryFlagged(s32 index);
+#endif
 #if GAME_TLA
 void BattlePres_SetActorModesFar(u16 *, s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
@@ -74,7 +92,9 @@ void Owner_UpdateRatioPairFar(struct BtlUnit *, s32);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_FinalizeSharedSlotFar(void);
 #endif
+#if GAME_TLA
 void UpdateRisingParticleBurst(void *object);
+#endif
 
 #if !GAME_TLA
 struct AnimationEntry;

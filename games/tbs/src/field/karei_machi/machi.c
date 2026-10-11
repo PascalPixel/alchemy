@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/karei_machi/machi.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/graphics/window/measure.h"
@@ -22,8 +23,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-#define Object_Destroy ((void (*)(void))Object_Destroy)
 
 #define NULL ((void *)0)
 
@@ -199,10 +198,6 @@ static __inline__ void ClearStep(u8 *a)
 
 	*(u16 *)(a + 100) = z;
 }
-
-s32	 Object_CheckMovementCollision();
-void Engine_ObjectSetPosition();
-void Object_CommitPosition();
 
 void SceneState_ApplyValues12And2And3(void)
 {
@@ -2152,7 +2147,8 @@ void SceneEffect_UpdateMotionWithDamping(struct Obj_020036f8 *p)
 	v = *h;
 	if (v == 0)
 	{
-		Object_Destroy();
+		/* FAKEMATCH: Object_Destroy is called as void (*)(void); as void (*)(struct DispatchObject *), its prototype, SceneEffect_UpdateMotionWithDamping does not compile */
+		((void (*)(void))Object_Destroy)();
 	}
 	else if (v == 1)
 	{

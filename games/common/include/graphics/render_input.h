@@ -21,10 +21,12 @@ typedef char RenderInput_size[sizeof(struct RenderInput) == 0x10 ? 1 : -1];
 typedef char RenderInput_width_offset[(u32) & (((struct RenderInput *)0)->width) == 8 ? 1 : -1];
 typedef char RenderInput_x_offset[(u32) & (((struct RenderInput *)0)->x) == 12 ? 1 : -1];
 
+#if GAME_TLA
 void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *source);
 void UiWindow_SetTileAttributeRect(
 	const struct RenderInput *window, s32 x, s32 y, s32 width, s32 height, u32 field);
 s32 Ui_CreateOutputFromResourceSlot(struct RenderInput *window, s32 x, s32 y, s32 resource);
+#endif
 
 union RenderTableValue
 {
@@ -85,8 +87,10 @@ struct RenderOutputList
 LAYOUT_SIZE_GUARD(RenderOutputList_Size, struct RenderOutputList, 8);
 LAYOUT_OFFSET_GUARD(RenderOutputList_Tail, struct RenderOutputList, tail_link, 4);
 
+#if GAME_TLA
 struct RenderOutput *RenderOutput_Create(
 	s32 no, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
+#endif
 
 #if GAME_TLA
 struct RenderOutput *RenderOutput_CreateFar(

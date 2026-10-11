@@ -3,6 +3,7 @@
 
 mod expand;
 mod generate;
+pub(crate) mod lint;
 mod model;
 mod objects;
 mod plan;
@@ -18,7 +19,7 @@ use std::path::Path;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 
-const USAGE: &str = "usage: alchemy headers apply [--dry-run] [--report FILE]\n\
+const USAGE: &str = "usage: alchemy headers apply [--dry-run] [--functions] [--report FILE]\n\
   apply  write games/tbs/include/unit/<unit>.h for every ☀️ C file: the\n\
          prototype of each function it defines for other code. Take those\n\
          functions' prototypes and their function-shape cast macros out of\n\
@@ -29,7 +30,11 @@ const USAGE: &str = "usage: alchemy headers apply [--dry-run] [--report FILE]\n\
          declaration than the header's is cast to the one it saw, under a\n\
          FAKEMATCH tag, and every cast the unit's bytes do not need is\n\
          taken out again. --report writes one row per unit: the casts\n\
-         kept and dropped, and each function that differs from before.";
+         kept and dropped, and each function that differs from before.\n\
+       alchemy headers units save|same FILE\n\
+  units  save writes every Thumb unit's objects in the six editions to\n\
+         FILE, part by part; same builds them again and prints each part\n\
+         that differs from FILE: the trial of an edit by hand.";
 
 fn write(root: &Path, file: &str, text: &str) -> Result<(), String> {
     let path = root.join(file);
@@ -87,17 +92,26 @@ fn views(root: &Path, units: &[String], sources: &BTreeMap<String, expand::Sourc
                 let text = expansion.code(unit)?;
                 let expanded = expand::read(&prefix, &text, unit, &wanted);
                 let (seen, strays) = expand::pair(sources, &expanded);
-                Ok(View { defined: expanded.defined, named: expanded.named, seen, strays })
+                Ok(View { defined: expanded.defined, declared: expanded.declared, named: expanded.named, seen, strays })
             })
             .collect()
     })?;
     units.iter().zip(found).map(|(unit, views)| Ok((unit.clone(), views?))).collect()
 }
 
-fn apply(root: &Path, dry: bool, report: Option<&str>) -> Result<(), String> {
-    let model = Model::read(root)?;
+fn apply(root: &Path, dry: bool, functions_only: bool, report: Option<&str>) -> Result<(), String> {
+    let model = Model { functions_only, ..Model::read(root)? };
+    // The names the pass follows: what the C files define for other code,
+    // the far-call stubs, and whatever a file or header declares.
     let definitions = model.definitions();
-    let wanted: BTreeSet<&str> = definitions.keys().copied().collect();
+    let mut wanted: BTreeSet<&str> = definitions.keys().copied().collect();
+    wanted.extend(model.far.keys().map(String::as_str));
+    wanted.extend(model.imports.values().flat_map(|veneers| veneers.keys().map(String::as_str)));
+    for file in model.units.iter().chain(&model.fragments).chain(&model.headers) {
+        wanted.extend(model.entries[file].iter().filter(|e| matches!(e.what, scan::What::Prototype | scan::What::Extern | scan::What::ShapeMacro { .. } | scan::What::ViewMacro)).map(|e| e.name.as_str()));
+    }
+    let inner: Vec<String> = model.units.iter().chain(&model.fragments).flat_map(|file| scan::bodies(&model.text[file], &|_| false)).flat_map(|body| body.locals).map(|local| local.name).collect();
+    wanted.extend(inner.iter().map(String::as_str));
     let sources: BTreeMap<String, expand::Source> = model
         .units
         .iter()
@@ -116,12 +130,13 @@ fn apply(root: &Path, dry: bool, report: Option<&str>) -> Result<(), String> {
     }
     let casts: usize = plan.drafts.values().map(|draft| draft.casts.len()).sum();
     println!(
-        "{} headers and {} files {}: {} declarations and macros out, {} calls cast to the declaration they saw, {} shared prototypes left to the other game",
+        "{} headers and {} files {}: {} declarations and macros out, {} uses cast to the declaration they saw, {} far-call entries typed from their functions, {} shared declarations left to the other game",
         plan.headers.len(),
         plan.drafts.len(),
         if dry { "would change" } else { "change" },
         plan.removed,
         casts,
+        plan.retyped,
         plan.guarded
     );
     if dry {
@@ -156,8 +171,7 @@ fn apply(root: &Path, dry: bool, report: Option<&str>) -> Result<(), String> {
         (outcome, written)
     })?;
     // A shared file's casts answer for every unit that compiles it: all
-    // of them are tried out at once, then one at a time.
-    let bench = objects::Bench::new(root)?;
+    // of them are tried out at once, then by halves.
     let mut bad: BTreeMap<&str, BTreeSet<String>> = BTreeMap::new();
     let mut was: BTreeMap<&str, &objects::Built> = BTreeMap::new();
     for ((unit, before), (outcome, _)) in jobs.iter().zip(&outcomes) {
@@ -172,32 +186,24 @@ fn apply(root: &Path, dry: bool, report: Option<&str>) -> Result<(), String> {
         // The part of some unit that a text of the file changes, if any.
         let changed = |kept: &BTreeMap<usize, String>| -> Result<Option<String>, String> {
             write(root, file, &settle::render(&model.text[file], draft, kept))?;
-            for user in &users {
+            let found = parallel(&users, || objects::Bench::new(root), |bench, user| -> Result<Option<String>, String> {
                 let text = std::fs::read_to_string(root.join(user)).map_err(|e| format!("{user}: {e}"))?;
                 let now = bench.build(root, user, &text);
-                if let Some(part) = objects::differing(was[user], &now).difference(&bad[user]).next() {
-                    return Ok(Some(match objects::difference(was[user], &now, part) {
-                        Some(how) => format!("{part} {how}"),
-                        None => format!("{user} does not compile"),
-                    }));
-                }
-            }
-            Ok(None)
+                Ok(objects::differing(was[user], &now).difference(&bad[user]).next().map(|part| match objects::difference(was[user], &now, part) {
+                    Some(how) => format!("{part} {how}"),
+                    None => format!("{user} does not compile"),
+                }))
+            })?;
+            Ok(found.into_iter().collect::<Result<Vec<_>, _>>()?.into_iter().flatten().next())
         };
-        let mut kept: BTreeMap<usize, String> = all(draft);
-        if changed(&BTreeMap::new())?.is_none() {
-            kept.clear();
-        } else {
-            for index in 0..draft.casts.len() {
-                let mut without = kept.clone();
-                without.remove(&index);
-                match changed(&without)? {
-                    None => kept = without,
-                    Some(measured) => {
-                        kept.insert(index, measured);
-                    }
-                }
-            }
+        let every: Vec<usize> = (0..draft.casts.len()).collect();
+        let without = |gone: &[usize]| -> BTreeMap<usize, String> { all(draft).into_iter().filter(|(index, _)| !gone.contains(index)).collect() };
+        let (gone, needed) = crate::keep::bisect(&every, |gone: &[usize]| changed(&without(gone)).map(|found| found.is_none()))?;
+        let mut kept: BTreeMap<usize, String> = BTreeMap::new();
+        for index in needed {
+            let mut trial = gone.clone();
+            trial.push(index);
+            kept.insert(index, changed(&without(&trial))?.unwrap_or_else(|| "this is not measured yet".to_string()));
         }
         println!("{file}: {} of {} casts kept", kept.len(), draft.casts.len());
         write(root, file, &settle::render(&model.text[file], draft, &kept))?;
@@ -229,12 +235,44 @@ fn apply(root: &Path, dry: bool, report: Option<&str>) -> Result<(), String> {
     Ok(())
 }
 
+/// Every unit's objects as rows, built from the tree as it stands.
+fn unit_rows(root: &Path) -> Result<String, String> {
+    let model = Model::read(root)?;
+    let units: Vec<&String> = model.units.iter().filter(|unit| !model.arm.contains(*unit)).collect();
+    let built = parallel(&units, || objects::Bench::new(root), |bench, unit| objects::rows(unit, &bench.build(root, unit, &model.text[*unit])))?;
+    Ok(built.into_iter().flatten().map(|row| row + "\n").collect())
+}
+
+/// `save` writes every unit's objects to a file; `same` builds them again
+/// and prints each part that is no longer what the file says.
+fn units(root: &Path, what: &str, file: &str) -> Result<(), String> {
+    let now = unit_rows(root)?;
+    match what {
+        "save" => std::fs::write(file, now).map_err(|e| format!("{file}: {e}")),
+        "same" => {
+            let before = std::fs::read_to_string(file).map_err(|e| format!("{file}: {e}"))?;
+            let changed = objects::changed(&before, &now);
+            for row in &changed {
+                println!("{row}");
+            }
+            if changed.is_empty() {
+                println!("every unit gives the objects of {file}");
+                Ok(())
+            } else {
+                Err(format!("{} parts differ from {file}", changed.len()))
+            }
+        }
+        _ => Err(USAGE.into()),
+    }
+}
+
 pub fn run(arguments: &[String]) -> Result<(), String> {
     match arguments.first().map(String::as_str) {
         Some("apply") => {
             let report = arguments.iter().position(|a| a == "--report").and_then(|at| arguments.get(at + 1)).map(String::as_str);
-            apply(root(), arguments.iter().any(|a| a == "--dry-run"), report)
+            apply(root(), arguments.iter().any(|a| a == "--dry-run"), arguments.iter().any(|a| a == "--functions"), report)
         }
+        Some("units") => units(root(), arguments.get(1).ok_or(USAGE)?, arguments.get(2).ok_or(USAGE)?),
         // What one unit's expansions say of one name: for looking into a
         // call the pass judged otherwise than the compiler does.
         Some("sights") => {

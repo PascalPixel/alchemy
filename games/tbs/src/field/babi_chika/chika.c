@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/babi_chika/chika.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/effect/move.h"
@@ -134,7 +135,6 @@ extern struct ScenePlacement Data_0200b8f4[];
 extern u32 Data_0200ba74[];
 extern struct SceneEvent Data_0200bc0c[];
 extern struct SceneEvent Data_0200bef4[];
-s32		  Object_CheckMovementCollision();
 struct Record_02000ec8;
 
 extern u32 Data_0200b85c[];

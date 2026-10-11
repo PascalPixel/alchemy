@@ -4450,7 +4450,6 @@ struct WorldMapSprite
 	u8				  *shadow;
 };
 #define gDebugMode (*(volatile u8(*)) & gDebugMode)
-void	  AudioCommand_PlayFar(s32 cue);
 extern u8 ResourceBlockOwners[];
 
 s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)

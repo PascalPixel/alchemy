@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_TRANSFORM_H
 #define ALCHEMY_TRANSFORM_H
 
+#include "edition.h"
 #include "types.h"
 
 extern s32 gTransform[12];
@@ -9,12 +10,14 @@ extern s32 gTransformStackDepth;
 extern u8 *gTransformStackTop;
 
 void SceneTransform_RewindStack(void);
+#if GAME_TLA
 void Graphics_SaveTransferWorkOnce(void);
 void Graphics_SaveTransferWork(void *destination);
 void Graphics_LoadTransferWork(const void *source);
 void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out);
 void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
 void Graphics_PrepareTransferAndRun(s32 *eye, s32 *target);
+#endif
 
 static __inline__ void Transform_SetIdentity(void *matrix)
 {

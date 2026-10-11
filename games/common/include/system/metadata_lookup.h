@@ -34,7 +34,9 @@ LAYOUT_OFFSET_GUARD(AnimationMetadata_Codec, struct AnimationMetadata, frame_cod
 LAYOUT_OFFSET_GUARD(AnimationMetadata_Frames, struct AnimationMetadata, frames, 0x0c);
 LAYOUT_OFFSET_GUARD(AnimationMetadata_Animation, struct AnimationMetadata, animation, 0x10);
 
+#if GAME_TLA
 struct AnimationMetadata *Resource_GetMetadataRecord(u32 number);
+#endif
 #if GAME_TLA
 struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 number);
 #endif

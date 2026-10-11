@@ -1,9 +1,11 @@
 #ifndef ALCHEMY_BATTLE_EFX_H
 #define ALCHEMY_BATTLE_EFX_H
 
+#include "edition.h"
 #include "types.h"
 
 struct BattleEffectArgument;
+#if GAME_TLA
 void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *effect);
 void BattleFx_InitializeMode1(struct BattleEffectArgument *effect);
@@ -13,6 +15,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect);
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused);
 
 void Resource_LoadAndDecompress(s32 resource_id, void *target, s32 unpack, s32 wait);
+#endif
 
 enum
 {
@@ -29,7 +32,9 @@ enum
 	GOUSEI_HIKAKU,
 	GOUSEI_KASAN
 };
+#if GAME_TLA
 s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
+#endif
 
 typedef s32 (*BattleEffectDrawRectangle)(
 	void *destination, const void *source, s32 x, s32 y, s32 width, s32 height);

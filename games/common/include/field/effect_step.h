@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_EFFECT_STEP_H
 #define ALCHEMY_EFFECT_STEP_H
 
+#include "edition.h"
 #include "types.h"
 
 struct EffectStep
@@ -21,9 +22,11 @@ struct EffectPosition
 	s32 depth;
 };
 
+#if GAME_TLA
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity);
 s32	 EffectPosition_ApplyBaseAndYOffset(s32 *point, struct EffectPosition *position);
 void EffectPosition_ApplyStepAndYOffset(s32 id, struct EffectPosition *position);
+#endif
 
 #define EFFECT_STEP_OFFSET(field) ((u32) & (((struct EffectStep *)0)->field))
 

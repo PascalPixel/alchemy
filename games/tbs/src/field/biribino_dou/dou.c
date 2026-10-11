@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/biribino_dou/dou.h"
 #include "unit/battle/effect/slots.h"
 #include "battle.h"
@@ -17,10 +18,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-s32	 Object_CheckMovementCollision();
-void Engine_ObjectSetPosition();
-void Object_CommitPosition();
 
 s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 {
@@ -167,7 +164,6 @@ void FieldScene_RunScene398SequenceA(void)
 
 void FieldScene_RunActorFifteenScene(void)
 {
-	void Engine_AudioPlayCue(s32);
 
 	Engine_EventBegin();
 	Engine_ActorSetChildValue(0xF, 0);
@@ -179,8 +175,6 @@ void FieldScene_RunActorFifteenScene(void)
 
 void FieldScene_RunActorSixteenScene(void)
 {
-	void Engine_EventEnd(void);
-	void Engine_AudioPlayCue(s32);
 
 	Engine_EventBegin();
 	Engine_ActorSetChildValue(0x10, 0);
@@ -192,7 +186,6 @@ void FieldScene_RunActorSixteenScene(void)
 
 void FieldScene_RunActor17Steps28AndD2(void)
 {
-	void Engine_EventEnd(void);
 
 	Engine_EventBegin();
 	Engine_ActorSetChildValue(0x11, 0);

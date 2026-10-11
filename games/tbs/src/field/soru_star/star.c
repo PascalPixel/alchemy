@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/soru_star/star.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/soru_star/ring_setup.h"
@@ -74,8 +75,6 @@ union MotionWork
 	} fields;
 	u8 bytes[102];
 };
-
-s32	  CalculateAngleFromCoordinateDelta(s32, s32);
 
 struct ObjectRuntime;
 

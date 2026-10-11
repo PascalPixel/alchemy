@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/makyuri_heya/heya.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/common/object/staged_actor.h"

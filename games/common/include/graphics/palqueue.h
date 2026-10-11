@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_PALQUEUE_H
 #define ALCHEMY_PALQUEUE_H
 
+#include "edition.h"
 #include "types.h"
 #include "layout_guard.h"
 
@@ -28,9 +29,11 @@ LAYOUT_OFFSET_GUARD(PaletteSnapshot_Colors, struct PaletteSnapshot, colors, 0xc)
 LAYOUT_SIZE_GUARD(PaletteSnapshotWork_Size, struct PaletteSnapshotWork, 0xb4);
 LAYOUT_OFFSET_GUARD(PaletteSnapshotWork_Count, struct PaletteSnapshotWork, count, 0xb0);
 
+#if GAME_TLA
 void Runtime_AllocateAndClearQueue(void);
 s32	 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count);
 void Runtime_ScheduleCallbackAndReleaseBlock28(void);
 void PaletteQueue_StepCycles(void);
+#endif
 
 #endif

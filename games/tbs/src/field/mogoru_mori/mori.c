@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/mogoru_mori/mori.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/effect/move.h"
@@ -74,13 +75,6 @@ typedef struct OrbitingSceneObject
 	u32						   callback;
 } OrbitingSceneObject;
 
-void Engine_TaskWait(s32 frames);
-void Engine_EventWait(s32 frames);
-void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
-void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
-void Engine_ActorSetAnimation(s32 actor, s32 mode);
-u8	*AllocateEffectTransfer(s32, s32);
-
 extern u32 MogoruMori_SceneTable[];
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -151,7 +145,6 @@ struct Vec
 };
 
 extern struct EventWork *gEventWork;
-void					 Engine_TaskWait();
 
 void SceneState_SetValue18Mode2(void)
 {

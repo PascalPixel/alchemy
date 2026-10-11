@@ -25,6 +25,8 @@ s32 BtlRcvCalc(s32 value, s32 selector, s32 multiplier);
 s16 UnitEpAddFar(s32 unit, s32 amount);
 s32 BtlUnitSetFar(s32 slot, s32 unit, s32 mask);
 #endif
+#if GAME_TLA
 s32 BtlEfxDeadChk(s32 effect);
+#endif
 
 #endif

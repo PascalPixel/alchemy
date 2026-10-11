@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_FIELD_COMMON_OBJECT_STAGED_ACTOR_H
 
 #include "types.h"
+#include "staged_actor.h"
 
 struct StagedActor;
 struct StagedActorProbe;

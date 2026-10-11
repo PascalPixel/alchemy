@@ -151,7 +151,6 @@ void Scene_SaturosTakesHostages(void)
 {
 	void Actor_ShowEmote();
 	void ColorBuffer_ApplyTarget();
-	void Engine_ColorBufferInterpolate();
 	void Event_PlayCue();
 
 	u32 i;
@@ -1532,7 +1531,6 @@ void FieldScene_RunFourWayEffectSequence(u32 mode)
 	extern u8 *gArcEffects[];
 	void	   Actor_ShowEmote(s32, s32, s32);
 	void	   ColorBuffer_ApplyTarget(s32, s32);
-	void	   Engine_ColorBufferInterpolate(s32);
 	void	   Event_PlayCue(s32);
 
 	u32	 i, zero;

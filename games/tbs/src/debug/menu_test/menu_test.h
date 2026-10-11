@@ -21,6 +21,5 @@ extern s32					 MenuTest_SlotOffsets;
 extern s32					 MenuTest_BenchmarkCharacter;
 
 u8	 Engine_TaskWait();
-void Engine_DebugFinalizeWindow(s32, s32);
 
 #endif

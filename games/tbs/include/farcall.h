@@ -8,6 +8,9 @@
 // A translation unit that keeps its own declaration of a listed name
 // defines OWN_<name> before its includes, and the list leaves it out there.
 
+#include "callback_scheduler.h"
+#include "effect_slot.h"
+#include "irq.h"
 #include "types.h"
 #include "edition.h"
 
@@ -15,6 +18,7 @@ struct AffineTransform;
 struct AnimationEntry;
 struct AnimationMetadata;
 struct AnimationObject;
+struct BattleActionRecord;
 struct BattleEffectArgument;
 struct BtlAct;
 struct BtlObj;
@@ -26,8 +30,10 @@ struct EffectSlot;
 struct EffectVector;
 struct EnemyDefinition;
 struct FieldActor;
+struct FieldPosition;
 struct FxObject;
 struct ItemDefinition;
+struct LevelUpResult;
 struct MenuSprite;
 struct MotionObject;
 struct ObjectRuntime;
@@ -43,6 +49,7 @@ struct ShopCursor;
 struct SummonDefinition;
 struct TransitionActorList;
 struct UiWindow;
+struct WorldPosition;
 
 #define FAR_CALL(name, target, type, params) type name params;
 #define FAR_ENTRY(name, target)

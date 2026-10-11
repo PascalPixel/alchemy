@@ -208,10 +208,6 @@ extern char ResourceId_EffectFarCalls;
 extern char ResourceId_LuckyDiceBoard;
 extern char ResourceId_LuckyDiceSprites;
 
-void UiWork_InitializeWithResourceCountersFar(void);
-void UiWork_FinalizeFar(s32 window, s32 mode);
-s32	 Party_GetAverageLevelFar(void);
-void AudioCommand_PlayFar(s32 cue);
 #endif
 
 s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale, s32 count)

@@ -11,6 +11,8 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y, s32 dst_x, s32 dst_y, s32
 #endif
 void Map_CopyCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y);
 #endif
+#if GAME_TLA
 void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y);
+#endif
 
 #endif

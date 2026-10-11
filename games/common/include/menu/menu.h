@@ -20,12 +20,14 @@ extern s8 Menu_TopEntryCommandByPosition[];
 extern s8 Menu_TopEntryPositionByCommand[];
 extern u8 Shop_GlyphBytes[];
 extern u8 StatusMenu_LevelLetterString[];
+#if GAME_TLA
 void	 *AffineEffect_InitializeWork(void);
 void	  ItemMenu_PosCategory(void);
 void	  Menu_AppendResourceEntry(s32 no);
 void	  Menu_EndResourceSelection(void);
 void	  Resource_ResetPendingTransfer(void);
 s32		  Shop_CanServe(s32 entry_no, s32 kind);
+#endif
 #if GAME_TLA
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 #endif

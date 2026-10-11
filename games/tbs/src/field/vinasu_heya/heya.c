@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/vinasu_heya/heya.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
@@ -390,8 +391,6 @@ extern u8  gMapCellBuffer[];
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 #endif
 extern u32		   gVinasuHeyaPrimaryTable[];
-s32				   Object_CheckMovementCollision();
-void			   SceneEvents_UpdateInView(u8 *);
 
 static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 {

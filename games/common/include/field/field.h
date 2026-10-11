@@ -25,25 +25,33 @@ extern u8		 Map_TileDissolveOrder[];
 extern const u32 ObjectDispatch_DefaultScript[];
 extern u8		 Render_DecodeFrameCodeSize[];
 extern u8		 Runtime_ByteRemapTable[];
+#if GAME_TLA
 s32				 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 s32				 Event_ValidatePackedId(u32 packed_id);
 void			 Map_RenderAnimatedTileFrame(u8 *object, u32 position);
 void			 Object_AttachWorkTargetToObject(s32 id, s32 flag);
 void			 Object_UpdateAllMotion(void);
 void			 Object_UpdateAllThumb(void);
+#endif
 #ifndef OWN_ObjectDispatch_SetSingleChildFlags
+#if GAME_TLA
 void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object, u32 value);
 #endif
+#endif
+#if GAME_TLA
 void ObjectSystem_UpdateCamera(void);
 void ObjectSystem_UpdateCameraFixed(void);
 s32	 ObjectTable_FindLastActiveId(void);
+#endif
 #if GAME_TLA
 void BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
 s32	 Equipment_HasValueFar(s32 group, s32 entry);
 s32	 Party_ShowJoinedMessageFar(s32 event_id, s32 value);
 s32	 Party_ShowPairJoinedMessageFar(s32 first, s32 second);
 #endif
+#if GAME_TLA
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
+#endif
 
 #if !GAME_TLA
 struct AbilityListEntry;

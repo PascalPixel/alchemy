@@ -481,8 +481,6 @@ s32 Title_ShowIntro(s32 prompt)
 	return result;
 }
 
-void AudioCommand_PlayFar(s32 cue);
-
 void Title_NoOpPalette(void)
 {
 }

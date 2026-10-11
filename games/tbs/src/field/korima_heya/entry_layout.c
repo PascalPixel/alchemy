@@ -20,8 +20,6 @@
 #include "field_scene.h"
 #include "item_ids.h"
 
-#define FieldScene_PrepareActors ((void (*)(u8 *))FieldScene_PrepareActors)
-
 struct Approach390Subject
 {
 	u16 unknown_00[3];
@@ -145,8 +143,6 @@ void FieldScene_RunActor18MessageBranch(void)
 
 void FieldScene_RunActor19MessageBranch(void)
 {
-	void Engine_InnOpen(s32, s32);
-	void Engine_EventShowMessage(s32, s32);
 
 	u32 dir = ((struct Approach390Subject *)Object_GetById(0))->dir;
 
@@ -172,7 +168,6 @@ u8 *SceneData_GetFourthTable(void)
 
 s32 FieldScene_SetupEntryLayoutsBySelector(void)
 {
-	s32 Engine_GameFlagIsSet();
 
 	struct EventWork *work = gEventWork;
 	s32				  id;

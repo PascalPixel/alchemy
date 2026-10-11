@@ -169,8 +169,6 @@ extern u16 ImiruMura_SwayHeadings[];
 
 void SceneActor_UpdateCountdownArcPosition(T_0200154c *o);
 
-#define FieldScene_PrepareActors ((void (*)(u8 *))FieldScene_PrepareActors)
-
 s32 OverlayObject_UpdateWobbleByCounter(struct Object *obj)
 {
 	switch (obj->counter)

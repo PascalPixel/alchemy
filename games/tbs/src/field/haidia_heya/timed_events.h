@@ -59,6 +59,4 @@ extern struct SceneEvent	 gValeHouseEvents[];
 extern struct SceneEvent	 gValeHouseEventsAfterLeaving[];
 extern struct SceneEvent	 gValeHouseReturnEvents[];
 
-void SceneEvents_UpdateInView(void *);
-
 #endif

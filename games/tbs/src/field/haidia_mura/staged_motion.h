@@ -176,7 +176,6 @@ extern s32 gHaidiaMuraPairTableC[];
 extern s32 gHaidiaMuraPairTableD[];
 extern s32 gDustBurstScript[];
 
-void Engine_ObjectSetPosition();
 extern void *gEffectWork;
 
 #endif

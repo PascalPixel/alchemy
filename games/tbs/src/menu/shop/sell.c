@@ -38,13 +38,6 @@
 #include "event_runtime.h"
 #include "btlcalc.h"
 
-s32					  AudioCommand_GetStateByteFar(void);
-s32					  UiWork_FinalizePendingCoreFar(void);
-struct ObjectRuntime *Object_GetByIdFar(s32 id);
-void				  UiWork_FinalizeFar(s32 window, s32 style);
-void				  UiWork_PushValueSlotFar(s32 value, s32 slot);
-void PsynergyMenu_InitializeEntryObjectsFar(s32 window, s32 column, s32 row, s32 height, s32 flags);
-
 extern struct EventRuntime *gEventWork;
 
 s32 AbilityMenu_BuildAvailableList(void)
@@ -149,7 +142,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
 	if (row == 18)
 		shop->warrior_shop = 1;
 	shop->keeper_resource =
-		((struct AnimationObject *)Object_GetByIdFar(keeper_id)->animation)->entries[0]->anim_id;
+		((struct AnimationObject *)((struct ObjectRuntime *)Object_GetByIdFar(keeper_id))->animation)->entries[0]->anim_id;
 	window = UiWindow_CreateWithSideObjectFar(shop->keeper_resource, 0, 0, 0);
 	if (window == 0)
 		window = UiWindow_CreateFar(-5, 0, 5, 5, 2);
@@ -230,7 +223,8 @@ s32 Battle_ApplyPresetItemsAndFlags(void)
 
 void AudioCommand_WaitForStateByteClear(void)
 {
-	while (AudioCommand_GetStateByteFar() != 0)
+	/* FAKEMATCH: AudioCommand_GetStateByteFar is called as s32 (*)(void); as u8 (*)(void), its prototype, AudioCommand_WaitForStateByteClear is 2 bytes longer */
+	while (((s32 (*)(void))AudioCommand_GetStateByteFar)() != 0)
 	{
 		WaitFrames(1);
 	}
@@ -1018,7 +1012,6 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 	/* FAKEMATCH: this block-scope redeclaration of the header prototype keeps
        the divider call's width load after its window move; without it
        `movs r3, #13` is scheduled one instruction early (differ 2). */
-	void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 style);
 
 	if (window == 0)
 		return;
@@ -2250,7 +2243,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
 	shop->party_action = list_window;
 
 	{
-		s32 shown = (u16)((struct AnimationObject *)Object_GetByIdFar(unit_id)->animation)
+		s32 shown = (u16)((struct AnimationObject *)((struct ObjectRuntime *)Object_GetByIdFar(unit_id))->animation)
 						->entries[0]
 						->anim_id;
 		shop->keeper_resource = shown;
@@ -2583,8 +2576,6 @@ union PositionWord
 	s32 w;
 	s16 h[2];
 };
-
-void EffectSlot_SetCallbackFar(struct EffectSlot *effect, void (*callback)(struct EffectSlot *));
 
 enum InnMessageId
 {

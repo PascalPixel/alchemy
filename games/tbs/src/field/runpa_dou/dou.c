@@ -1,3 +1,4 @@
+#include "field_event.h"
 #include "unit/field/runpa_dou/dou.h"
 #include "unit/battle/effect/slots.h"
 #include "cave.h"

@@ -9,8 +9,6 @@
 #include "field_scene.h"
 
 extern const s32  *gEffectScripts[];
-struct FieldActor *Object_CreateFar(s32 type, s32 x, s32 y, s32 z);
-void			   ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 argument);
 
 enum
 {

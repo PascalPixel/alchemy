@@ -18,8 +18,6 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-#define FieldScene_PrepareActors ((void (*)(u8 *))FieldScene_PrepareActors)
-
 enum PartyEventsMessage
 {
 	MSG_WHEN_HEARD_WERE_BACK_IVAN = 0x1b21,
@@ -97,7 +95,6 @@ void SceneDialogue_RunActor16Message1b88(void)
 
 void FieldScene_RunActorEightTurnDialogue(void)
 {
-	void Engine_EventEnd(void);
 
 	Engine_EventBegin();
 	Engine_ActorShowEmote(8, 0x100, 0x3C);

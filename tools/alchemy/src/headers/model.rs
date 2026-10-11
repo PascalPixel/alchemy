@@ -29,8 +29,65 @@ pub(crate) struct Model {
     /// What Nintendo's library sources include: the pass leaves library
     /// source and what it reads as they are.
     pub frozen: BTreeSet<String>,
+    /// The far-call banks' entries, by the stub's name.
+    pub far: BTreeMap<String, Far>,
+    /// Each overlay unit's import veneers: the name its code calls and the
+    /// stub the veneer jumps to.
+    pub imports: BTreeMap<String, BTreeMap<String, String>>,
     /// Each unit's files after itself: the fragments and headers it reaches.
     pub reach: BTreeMap<String, Vec<String>>,
+    /// A run that leaves objects for a later one: only functions get a
+    /// header's declaration.
+    pub functions_only: bool,
+}
+
+/// One entry of a far-call bank's list: `FAR_CALL(name, target, type,
+/// params)`, which declares the stub, or `FAR_ENTRY(name, target)`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct Far {
+    pub target: String,
+    pub file: String,
+    pub start: usize,
+    pub end: usize,
+    pub declares: bool,
+}
+
+/// The entries of a far-call bank's list.
+pub(crate) fn far_entries(file: &str, text: &str) -> Vec<(String, Far)> {
+    let mut found = Vec::new();
+    let mut at = 0;
+    while let Some((start, word)) = ["FAR_CALL(", "FAR_ENTRY("].iter().filter_map(|word| text[at..].find(word).map(|i| (at + i, *word))).min() {
+        let open = start + word.len() - 1;
+        let Some(close) = crate::camelotize::source::closing(text.as_bytes(), open) else {
+            break;
+        };
+        at = close + 1;
+        let line = text[..start].rfind('\n').map_or(0, |n| n + 1);
+        if text[line..start].trim_start().starts_with('#') {
+            continue;
+        }
+        let parts = crate::camelotize::source::split_commas(text.as_bytes(), open + 1..close);
+        if let [name, target, ..] = &parts[..] {
+            let far = Far { target: text[target.clone()].trim().to_string(), file: file.to_string(), start, end: close + 1, declares: word == "FAR_CALL(" };
+            found.push((text[name.clone()].trim().to_string(), far));
+        }
+    }
+    found
+}
+
+/// The veneers of an overlay's import file: each label and the target of
+/// the `overlay_veneer` under it.
+pub(crate) fn import_veneers(text: &str) -> BTreeMap<String, String> {
+    let mut found = BTreeMap::new();
+    let mut label: Option<&str> = None;
+    for line in text.lines().map(str::trim) {
+        if let Some(name) = line.strip_suffix(':').filter(|name| !name.is_empty() && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')) {
+            label = Some(name);
+        } else if let (Some(target), Some(name)) = (line.strip_prefix("overlay_veneer").map(str::trim), label.take()) {
+            found.insert(name.to_string(), target.to_string());
+        }
+    }
+    found
 }
 
 pub(crate) fn normalize(path: &str) -> String {
@@ -155,6 +212,21 @@ impl Model {
         }
         model.fragments = fragments.into_iter().filter(|f| !model.units.contains(f)).collect();
         model.headers = headers.into_iter().collect();
+        for header in model.headers.iter().filter(|header| header.starts_with(&format!("{INCLUDE}farcall/"))) {
+            model.far.extend(far_entries(header, &model.text[header]));
+        }
+        // An overlay's import file stands in its image beside its unit.
+        for row in rows.iter().filter(|row| row.image != "main" && row.object.ends_with("/import")) {
+            let Ok(text) = std::fs::read_to_string(root.join(format!("{}.s", row.object))) else {
+                continue;
+            };
+            let veneers = import_veneers(&text);
+            for unit in rows.iter().filter(|other| other.image == row.image).map(|other| format!("{}.c", other.object)) {
+                if model.units.contains(&unit) {
+                    model.imports.entry(unit).or_default().extend(veneers.clone());
+                }
+            }
+        }
         Ok(model)
     }
 
@@ -168,12 +240,13 @@ impl Model {
         self.units.iter().map(String::as_str).filter(|unit| *unit == file || self.reach[*unit].iter().any(|f| f == file)).collect()
     }
 
-    /// The function definitions other files can call, by name: file and entry.
+    /// The functions and objects the C files define for other code, by
+    /// name: file and entry.
     pub(crate) fn definitions(&self) -> BTreeMap<&str, Vec<(&str, &Entry)>> {
         let mut found: BTreeMap<&str, Vec<(&str, &Entry)>> = BTreeMap::new();
         for file in self.units.iter().chain(&self.fragments) {
             for entry in &self.entries[file] {
-                if matches!(entry.what, What::Definition { .. }) && !entry.local {
+                if matches!(entry.what, What::Definition { .. } | What::Object) && !entry.local {
                     found.entry(&entry.name).or_default().push((file, entry));
                 }
             }
@@ -209,6 +282,22 @@ impl Model {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_banks_list_gives_each_stub_its_target() {
+        let text = "#define FAR_CALL(name, target, type, params) type name params;\nFAR_ENTRY(GetFar, Get)\n#ifndef OWN_RunFar\nFAR_CALL(\n\tRunFar, Run, struct P *, (s32 a, void (*hook)(s32)))\n#endif\nFAR_SLOT(Idle)\n";
+        let found = far_entries("farcall/a.h", text);
+        assert_eq!(found.iter().map(|(name, far)| (name.as_str(), far.target.as_str(), far.declares, &text[far.start..far.end])).collect::<Vec<_>>(), [
+            ("GetFar", "Get", false, "FAR_ENTRY(GetFar, Get)"),
+            ("RunFar", "Run", true, "FAR_CALL(\n\tRunFar, Run, struct P *, (s32 a, void (*hook)(s32)))"),
+        ]);
+    }
+
+    #[test]
+    fn an_import_file_gives_each_veneer_its_target() {
+        let text = "\t.thumb\n\t.global Engine_TaskWait\n\t.thumb_func\nEngine_TaskWait:\n\toverlay_veneer WaitFramesFar\n\t.global __divsi3\n__divsi3:\n\toverlay_veneer IwramSignedDivide\nData:\n\t.word 0\n";
+        assert_eq!(import_veneers(text).into_iter().collect::<Vec<_>>(), [("Engine_TaskWait".to_string(), "WaitFramesFar".to_string()), ("__divsi3".to_string(), "IwramSignedDivide".to_string())]);
+    }
 
     #[test]
     fn paths_and_spellings() {

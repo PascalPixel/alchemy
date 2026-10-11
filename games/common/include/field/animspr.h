@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_ANIMSPR_H
 #define ALCHEMY_ANIMSPR_H
 
+#include "edition.h"
 #include "types.h"
 #include "layout_guard.h"
 
@@ -55,7 +56,9 @@ struct AnimationPosition
 LAYOUT_SIZE_GUARD(AnimationPosition_Size, struct AnimationPosition, 0x10);
 LAYOUT_OFFSET_GUARD(AnimationPosition_Ground, struct AnimationPosition, ground, 0x0c);
 
+#if GAME_TLA
 void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *points);
+#endif
 
 struct AnimationSpritePart
 {

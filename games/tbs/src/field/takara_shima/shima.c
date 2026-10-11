@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/takara_shima/shima.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/effect/move.h"

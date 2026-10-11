@@ -86,20 +86,6 @@
 #include "fixed_point_position.h"
 
 // ほかのモジュールの関数 (共通ヘッダーにまだ宣言が無いもの)
-s32	 Runtime_BlankDisplayAndRunFar(s32 entrance);
-s32	 Runtime_BlankDisplayLoadValueAndRunFar(s32 entrance);
-void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
-void ObjectDispatch_ReleaseFar(void *object);
-void ObjectDispatch_SetSingleChildFlagsFar(void *object, s32 value);
-void ObjectDispatch_InitFromTable6Far(void *object);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
-void UiWork_PushValueSlotFar(s32 value, s32 mode);
-void UiWork_FinalizePendingCoreFar(void);
-void GameFlag_SetBitFar(s32 flag);
-void GameFlag_ClearBitFar(s32 flag);
-s32	 Party_CountActiveOwnersFar(void);
-void Party_AdjustCoinsFar(s32 coins);
-u8	 Inventory_RemoveFar(s32 actor, s32 slot);
 
 // このファイルの関数 (定義より前で使うもの)
 
@@ -288,7 +274,8 @@ static __inline__ s32 Scene_RunTable(s32 entrance)
 	s32	  result;
 
 	Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
-	result = Runtime_BlankDisplayAndRunFar(entrance);
+	/* FAKEMATCH: Runtime_BlankDisplayAndRunFar is called as s32 (*)(s32); as s32 (*)(void), its prototype, Scene_RunTable does not compile */
+	result = ((s32 (*)(s32))Runtime_BlankDisplayAndRunFar)(entrance);
 	Dma_Set(saved, palette, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
 	MemFree(saved);
 	return result;
@@ -301,7 +288,8 @@ static __inline__ s32 Scene_LoadTable(s32 entrance)
 	s32	  result;
 
 	Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
-	result = Runtime_BlankDisplayLoadValueAndRunFar(entrance);
+	/* FAKEMATCH: Runtime_BlankDisplayLoadValueAndRunFar is called as s32 (*)(s32); as s32 (*)(void), its prototype, Scene_LoadTable does not compile */
+	result = ((s32 (*)(s32))Runtime_BlankDisplayLoadValueAndRunFar)(entrance);
 	Dma_Set(saved, palette, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
 	MemFree(saved);
 	return result;
@@ -567,7 +555,8 @@ s32 BattleFx_LookupResult(void *pos)
 {
 	s32			 kind;
 	TerrainRule *rule = BattleFx_ResultRules;
-	s32			 terrain = GetWorldMapTerrainBehaviorFar(pos, &kind);
+	/* FAKEMATCH: GetWorldMapTerrainBehaviorFar is called as s32 (*)(void *, s32 *); as u8 (*)(struct WorldPosition *, s32 *), its prototype, BattleFx_LookupResult is 4 bytes longer */
+	s32			 terrain = ((s32 (*)(void *, s32 *))GetWorldMapTerrainBehaviorFar)(pos, &kind);
 	s32			 zone = 0;
 
 	while (rule->kind != -1)
@@ -2055,7 +2044,8 @@ s32 Field_RunScene(s32 entrance)
 		if (GameFlag_TestFar(0x12f) != 0)
 		{
 			GameFlag_ClearBitFar(0x12f);
-			UiTimedNotice_CreateFar(gGameState.scene);
+			/* FAKEMATCH: UiTimedNotice_CreateFar is called as void (*)(s32); as void (*)(void), its prototype, Field_RunScene does not compile */
+			((void (*)(s32))UiTimedNotice_CreateFar)(gGameState.scene);
 		}
 		if (gGameState.pending_djinn_event != 0)
 		{
@@ -2297,7 +2287,8 @@ s32 Field_RunScene(s32 entrance)
 				{
 					Battle_ResetEffectCounter();
 					UiTimedNotice_CloseIfActiveFar();
-					gGameState.return_cue = AudioCommand_GetSecondaryStateByteFar();
+					/* FAKEMATCH: AudioCommand_GetSecondaryStateByteFar is called as s32 (*)(void); as u8 (*)(void), its prototype, Field_RunScene is 4 bytes longer */
+					gGameState.return_cue = ((s32 (*)(void))AudioCommand_GetSecondaryStateByteFar)();
 					if (GameFlag_TestFar(0x17e) == 0)
 					{
 						struct MenuCtrl *ctrl = (struct MenuCtrl *)gMenuCtrlWork;
@@ -2315,7 +2306,8 @@ s32 Field_RunScene(s32 entrance)
 							ctrl->wait = 1;
 							WaitFrames(1);
 						}
-						Menu_RunWorkspaceResultLoopFar(0);
+						/* FAKEMATCH: Menu_RunWorkspaceResultLoopFar is called as void (*)(s32); as s32 (*)(void), its prototype, Field_RunScene does not compile */
+						((void (*)(s32))Menu_RunWorkspaceResultLoopFar)(0);
 						ctrl->wait = 0;
 					}
 					else
@@ -4255,8 +4247,6 @@ void Battle_PlaceMapMarkers(void)
 	}
 }
 
-void AudioCommand_PlayFar(s32);
-
 s32 EffectRuntime_FindSlotByObject(s32 id)
 {
 	s32						  index;
@@ -4427,8 +4417,6 @@ void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 y)
 // emitter.c
 // フィールド効果：手に入れたアイテムの表示ときらめき、近くの印、ウィンドウの HBlank DMA
 //--------------------------------------------------------------------------
-void Ui_PrepareTransferForItemFar(s32 item);
-void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
 
 typedef struct MapEventEntry *(*EventListFn)(s32);
 
@@ -4496,10 +4484,6 @@ struct EfxObj
 #define EfxPool (*(struct EfxObj **)((u8 *)&gEventWork - 88))
 #define BATTLE_ACTIVE_OFS 0xcb8 // gEventWork：効果が動いていれば 0 以外
 struct EffectObject_0808f1c0;
-
-void Object_SetMoveTargetFar(struct ObjectRuntime *, s32, s32, s32);
-
-void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 
 struct EffectVisual_0808f1c0
 {
@@ -4873,8 +4857,6 @@ struct ParticleSlot
 	s32 script;
 	u8	pad[0x6c];
 };
-
-void ObjectDispatch_ReleaseFar(void *object);
 
 #define ParticlePool (*(struct ParticleSlot **)((u8 *)&gEventWork - 88))
 
@@ -5957,8 +5939,6 @@ void DisplayTransition_UpdateFrame(void)
 	IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->palette_nibbles, 0x84000008);
 }
 
-s32 GameFlag_TestFar(s32 flag);
-
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 
 void DisplayTransition_FillTilemapAndSolidTile(s32 color)
@@ -6740,8 +6720,6 @@ void BattleFx_FinishAction(void)
 	GameFlag_RefreshLureCapFar();
 }
 
-s32 Party_AddActiveOwnerFar(s32 event_id);
-
 void Event_NoOpHookA(void)
 {
 }
@@ -6777,7 +6755,8 @@ void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value)
 	Party_AddActiveOwnerFar(event_id);
 	if (value != 0)
 	{
-		Party_ShowJoinedMessageFar(event_id, value);
+		/* FAKEMATCH: Party_ShowJoinedMessageFar is called as s32 (*)(s32, s32); as void (*)(s32), its prototype, Event_PrepareObjectAndApplyValue does not compile */
+		((s32 (*)(s32, s32))Party_ShowJoinedMessageFar)(event_id, value);
 	}
 }
 
@@ -6849,10 +6828,6 @@ void Party_RemoveOwnerRestored(s32 owner)
 	}
 }
 
-struct ItemDefinition *Item_GetDirectFar(s32 item);
-
-extern void UiWork_PushValueSlotFar(s32, s32);
-
 s32 Party_CheckMemberValueTotal(s32 id)
 {
 	s32 count;
@@ -6873,7 +6848,6 @@ s32 Party_CheckMemberValueTotal(s32 id)
 	}
 	return 0;
 }
-void AudioCommand_PlayFar(s32 cue);
 
 s32 PartyInventory_GiveItem(s32 item, s32 unused)
 {
@@ -7011,8 +6985,6 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused)
 // 持ち物：アイテムを持たせて、持ち主を返す
 //--------------------------------------------------------------------------
 
-s32 Inventory_AddItemFar(s32, s32);
-
 //--------------------------------------------------------------------------
 // アイテムを持たせる
 // 持てればキャラクター番号を、持ち物がいっぱいなら -1 を返す
@@ -7033,8 +7005,6 @@ s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 owner)
 void Inventory_NoOpCallback(void)
 {
 }
-
-s32 Menu_RunConfirmSelectionFar(s32, s32, s32, s32);
 
 struct EventPromptWork
 {
@@ -7133,8 +7103,6 @@ s32 Object_CallSpawnRoutineAtOrigin(s32 value)
 // メッセージ：わざを覚えさせて「覚えた」と出す
 //--------------------------------------------------------------------------
 
-void OwnerAction_AddFar(void);
-
 //--------------------------------------------------------------------------
 // わざを覚えさせ、効果音とメッセージを出して、送られるまで待つ
 // unit : キャラクター番号（メッセージの名前 1）
@@ -7143,7 +7111,8 @@ void OwnerAction_AddFar(void);
 void UiText_DrawQuantityPairWithCue(s32 unit, s32 abil)
 {
 	// 引数なしの宣言だが、r0・r1 の unit・abil がそのまま渡る
-	OwnerAction_AddFar();
+	/* FAKEMATCH: OwnerAction_AddFar is called as void (*)(void); as s32 (*)(s32, s32), its prototype, UiText_DrawQuantityPairWithCue does not compile */
+	((void (*)(void))OwnerAction_AddFar)();
 	AudioCommand_PlayFar(83);
 	UiWork_PushValueSlotFar(unit, 1);
 	UiWork_PushValueSlotFar(abil, 4);
@@ -7275,7 +7244,6 @@ struct FieldCueWork
 	u8	padding[0xcc8];
 	s16 queued_sound;
 };
-void Script_WaitForEventTimeoutFar(struct ObjectRuntime *);
 
 struct BurstParticle
 {
@@ -8661,8 +8629,6 @@ void ObjectTable_AllocateAndSetObjectSpeed(s32 first, s32 second)
 	((struct ObjectRuntime *)owner->view_center)->acceleration = second;
 }
 
-void ObjectDispatch_InitFromTable6Far(void *);
-
 void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter)
 {
 	s32					  should_use_setter;
@@ -8967,8 +8933,6 @@ void BattleFx_SpawnLinked(s32 id, s32 mode, s32 wait)
 	}
 }
 
-#define ObjectDispatch_ReleaseFar ((void (*)(void *))ObjectDispatch_ReleaseFar)
-
 struct LinkedEffectObject
 {
 	u8						   unknown_00[8];
@@ -9232,8 +9196,6 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
 	return found;
 }
 
-s32 Map_CheckObjectStepFar(struct ObjectRuntime *actor, struct FieldPosition *position);
-
 #define TILE_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 #define TILE_CELLS_TARGET ((struct MapCell *)(Ram_MapCellBuffer + 0x200))
 #define TILE_CELLS_ABOVE ((struct MapCell *)(Ram_MapCellBuffer - 0x200))
@@ -9306,7 +9268,8 @@ again:
 	BattleFx_FinishAction();
 	if (work != NULL)
 		work->encounter_steps += Iwram_MulQ16(work->encounter_rate, 0x200000);
-	if (GetMapCellCollisionFar(leader->terrain_id, pos->x, pos->z) == 0xf9)
+	/* FAKEMATCH: GetMapCellCollisionFar is called as s32 (*)(s32, s32, s32); as u8 (*)(s32, s32, s32), its prototype, Field_TryJumpForward is 4 bytes longer */
+	if (((s32 (*)(s32, s32, s32))GetMapCellCollisionFar)(leader->terrain_id, pos->x, pos->z) == 0xf9)
 	{
 		ObjectDispatch_ApplyArgumentToChildrenFar(leader, 1);
 		WaitFrames(6);
@@ -10392,10 +10355,7 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
 
 //--------------------------------------------------------------------------
 
-#undef ObjectDispatch_ReleaseFar
-
 // ほかのモジュールの関数 (共通ヘッダーにまだ宣言が無いもの)
-void				  Animation_ApplyChildValuesFar(void *object, s32 value);
 
 // このファイルの関数 (定義より前で使うもの)
 
@@ -11700,14 +11660,6 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 //--------------------------------------------------------------------------
 
 // 物体や座標は関数ごとの構造体で渡すので、引数は void * で受ける
-#define Object_SetMoveTargetFar ((void (*)(void *, s32, s32, s32))Object_SetMoveTargetFar)
-#define Object_SetPositionAndResetMotionFar \
-	((void (*)(void *, s32, s32, s32))Object_SetPositionAndResetMotionFar)
-#define ObjectDispatch_ApplyValueToChildrenFar \
-	((void (*)(void *, s32))ObjectDispatch_ApplyValueToChildrenFar)
-#define ObjectGroup_SetChildValueUnlessFifteenFar \
-	((void (*)(void *, s32))ObjectGroup_SetChildValueUnlessFifteenFar)
-#define ScriptObject_CheckOverlapFar ((s32 (*)(void *, void *))ScriptObject_CheckOverlapFar)
 
 //--------------------------------------------------------------------------
 // kind に応じた演出の処理を呼ぶ
@@ -12089,8 +12041,6 @@ void *Object_ReplaceResourceEntry(void *src, void *alt)
 // arcupdat.c
 // エナジー演出：演出用の物体、ほかの物体の一括設定、ふくらむ弧の動き
 //--------------------------------------------------------------------------
-void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 animation);
-void ObjectDispatch_SetSingleChildFlagsFar(void *object, s32 flags);
 
 //--------------------------------------------------------------------------
 // 演出用の物体を出す
@@ -12475,8 +12425,6 @@ void EffectRuntime_StopCurrentObject(void)
 	Animation_ApplyChildValuesFar(user, 0);
 	WaitFrames(1);
 }
-
-void AudioCommand_PlayFar(s32 sound);
 
 #define gObjectSlots ((u8(*)) & gObjectSlots)
 
@@ -14258,8 +14206,6 @@ void BattleFx_CallEffect04(void)
 // orbit.c
 // フィールドのエナジー演出：4 番（押し出す弾）、6 番（渦を巻いて集まる粒）
 //--------------------------------------------------------------------------
-
-void Audio_PlayCue(s32 cue);
 
 #define UE (16 << 16) // 16 ドット上
 
@@ -16746,8 +16692,6 @@ void BattleFx_SpawnDescendingArcParticles(struct ArcObject *arc)
 #define ENA_PURUFU 150 // プルーフ
 #define ITEM_HANE 236  // せいなるはね
 
-void UiWork_PushValueSlotFar(s32 arg0, s32 arg1);
-
 //--------------------------------------------------------------------------
 // 演出の終わり：使う者の表示の flags を 5 フレームの周期で 3 と 1 に切り替える
 //--------------------------------------------------------------------------
@@ -16816,9 +16760,6 @@ void FieldEvent_ShowStatusMessage(void)
 	UiWork_PushValueSlotFar(ITEM_HANE, 2);
 	UiText_ShowPositionedMessageAndWaitFar((s32)MsgItemWoreOff, 1);
 }
-
-void Object_ApplyProjectedPlacementFar(
-	struct AnimationObject *sprite, s32 *position, s32 *scale, s32 mode);
 
 void RunBattleEffect16(void)
 {
@@ -17149,10 +17090,6 @@ void BattleFx_SetupResourcesAndWindow(void)
 // cleanup_resources_and_window.c
 // ワールドマップ：地名の印・カーソル・地名ウインドウ
 //--------------------------------------------------------------------------
-
-void RenderOutput_PrepareForRedrawFar(s32 window);
-
-extern void UiWork_FinalizeFar(u32 arg0, u32 arg1);
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)

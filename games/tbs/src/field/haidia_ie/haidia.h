@@ -116,26 +116,7 @@ extern s32					 Data_0200adf0[];
 extern struct PairWork		*gEffectWork;
 
 s32				   Math_RemainderUnsigned();
-s32				   Engine_GameFlagIsSet();
-void			   Engine_EventRequestExit();
-void			   Engine_MapCopyCellsTo();
-void			   Engine_MapRedraw();
-void			   Engine_TaskWait();
 void			   Engine_ActorSetSpriteFlags();
-void			   Engine_ActorSetAnimation();
-void			   Engine_EventOpenScreen();
-void			   Engine_EventWaitForScreen();
-void			   Engine_AudioPlayCue();
-void			   Engine_EventBegin();
-void			   Engine_CameraMoveTo();
-void			   Engine_ActorFaceDirection();
-void			   Engine_EventWait();
-void			   Engine_ActorSetSpritePriority();
-void			   Engine_ActorSetSpeed();
-void			   Engine_ActorEnableActionCallback();
-void			   Engine_EventCloseScreen();
-void			   Engine_GameFlagClear();
-void			   Engine_EventEnd();
 
 LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
 

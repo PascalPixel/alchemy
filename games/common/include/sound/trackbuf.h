@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_TRACKBUF_H
 #define ALCHEMY_TRACKBUF_H
 
+#include "edition.h"
 #include "types.h"
 #include "audio_engine_symbols.h"
 
@@ -34,11 +35,13 @@ typedef char
 typedef char AudioTrackSlotWork_InputCursor
 	[(u32) & ((struct AudioTrackSlotWork *)0)->input_cursor == 0x4438 ? 1 : -1];
 
+#if GAME_TLA
 void AudioTrack_ResetSlotBuckets(void);
 void AudioTrack_InsertSlotNode(s32 slot);
 void AudioTrack_RemoveSlotNode(s32 slot);
 void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input);
 void AudioTrack_CopyBufferedBytes(u8 *destination);
 s32	 AudioTrack_PackStream(const u8 *input, u8 *destination, s32 size);
+#endif
 
 #endif

@@ -163,6 +163,57 @@ pub(crate) fn first_error(messages: &str) -> String {
     line.unwrap_or("").replace('\t', " ")
 }
 
+/// A build as text, one row per edition and part: the part's length and
+/// the digest of its bytes and relocations, or the compiler's first
+/// message. Two builds give the same rows when they give the same objects.
+pub(crate) fn rows(unit: &str, built: &Built) -> Vec<String> {
+    use sha2::{Digest, Sha256};
+    let mut out = Vec::new();
+    for (target, edition) in editions().iter().zip(built) {
+        match edition {
+            Ok(parts) => {
+                for (name, part) in parts {
+                    let mut hasher = Sha256::new();
+                    hasher.update(&part.bytes);
+                    hasher.update(part.relocations.as_bytes());
+                    out.push(format!("{unit}\t{}\t{name}\t{}\t{:x}", target.id, part.bytes.len(), hasher.finalize()));
+                }
+            }
+            Err(messages) => out.push(format!("{unit}\t{}\tcompile\t0\t{}", target.id, first_error(messages))),
+        }
+    }
+    out
+}
+
+/// What differs between two builds' rows: each unit, edition and part
+/// that one side has otherwise, with both lengths.
+pub(crate) fn changed(before: &str, now: &str) -> Vec<String> {
+    let read = |text: &str| -> BTreeMap<String, (String, String)> {
+        text.lines()
+            .filter_map(|row| {
+                let mut fields = row.splitn(5, '\t');
+                let key = format!("{}\t{}\t{}", fields.next()?, fields.next()?, fields.next()?);
+                Some((key, (fields.next()?.to_string(), fields.next()?.to_string())))
+            })
+            .collect()
+    };
+    let (before, now) = (read(before), read(now));
+    let keys: BTreeSet<&String> = before.keys().chain(now.keys()).collect();
+    let mut out = Vec::new();
+    for key in keys {
+        match (before.get(key), now.get(key)) {
+            (Some(old), Some(new)) if old == new => {}
+            (Some(old), Some(new)) if key.ends_with("\tcompile") => out.push(format!("{key}\t{} | {}", old.1, new.1)),
+            (Some(old), Some(new)) => out.push(format!("{key}\t{} bytes, now {}", old.0, new.0)),
+            (Some(_), None) => out.push(format!("{key}\tgone")),
+            (None, Some(new)) if key.ends_with("\tcompile") => out.push(format!("{key}\t{}", new.1)),
+            (None, Some(_)) => out.push(format!("{key}\tnew")),
+            (None, None) => {}
+        }
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -180,5 +231,16 @@ mod tests {
         assert_eq!(difference(&before, &now, "Draw").as_deref(), Some("is 2 bytes longer"));
         assert_eq!(differing(&before, &vec![Err("x.c:1: parse error".into())]).into_iter().collect::<Vec<_>>(), ["compile"]);
         assert_eq!(first_error("In file included from a.h:3,\n                 from b.c:1:\nx.c: In function `Run':\nx.c:3: warning: y\nx.c:4: too many arguments to function `Draw'\n"), "x.c:4: too many arguments to function `Draw'");
+    }
+
+    #[test]
+    fn two_builds_rows_tell_what_changed() {
+        let before = built(&[("Run", &[1, 2, 3, 4], "0x0 Draw"), ("Draw", &[5, 6], "")]);
+        let now = built(&[("Run", &[1, 2, 9, 4], "0x0 Draw"), ("Draw", &[5, 6], ""), ("New", &[1], "")]);
+        let text = |built: &Built| rows("a.c", built).join("\n");
+        assert_eq!(changed(&text(&before), &text(&before)), Vec::<String>::new());
+        assert_eq!(changed(&text(&before), &text(&now)), ["a.c\ttbs-ja\tNew\tnew", "a.c\ttbs-ja\tRun\t4 bytes, now 4"]);
+        let broken: Built = vec![Err("x.c:4: parse error".into())];
+        assert_eq!(changed(&text(&before), &text(&broken)), ["a.c\ttbs-ja\tDraw\tgone", "a.c\ttbs-ja\tRun\tgone", "a.c\ttbs-ja\tcompile\tx.c:4: parse error"]);
     }
 }

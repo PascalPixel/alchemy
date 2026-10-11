@@ -92,6 +92,7 @@ LAYOUT_OFFSET_GUARD(BattleAffineHdma_Affine, struct BattleAffineHdma, affine, 0x
 LAYOUT_OFFSET_GUARD(BattleAffineHdma_Lines, struct BattleAffineHdma, lines, 0x20);
 
 struct BtlPlan;
+#if GAME_TLA
 s32 BattlePres_RunActorEntries(struct BtlPlan *plan, s32 unused);
 
 s32 BattlePres_BuildTargetList(struct BtlPlan *plan, struct BattlePresentationWork *work);
@@ -103,12 +104,15 @@ s32	 BattleObject_IsValidId(u32 object_id);
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode);
 void BattlePres_SetActorRecordMode(s32 actor, s32 mode);
 void BtlObjPut(void);
+#endif
 #if GAME_TLA
 void BattleFx_InitializeModeFar(s32 *context);
 #endif
+#if GAME_TLA
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_ArmBg2AffineHBlankDma(void);
 void Palette_StepFadeTransfer(void);
+#endif
 struct BattleEffectArgument;
 void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect, s32 mode);
 

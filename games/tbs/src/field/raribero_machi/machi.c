@@ -32,14 +32,12 @@ extern struct SceneEvent	 Placement_Effects[];
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
-	void Engine_ActorSetSpeed(s32, s32, s32);
 
 	Engine_ActorSetSpeed(actor, x, y);
 }
 
 static __inline__ void SetOffset(s32 actor, s32 offset, s32 zero)
 {
-	void Engine_ActorFaceDirection(s32, s32, s32);
 
 	Engine_ActorWalkByAndWait(actor, offset, zero);
 }
@@ -138,7 +136,6 @@ void RariberoMachi_AskLeaving(s32 obj)
 
 void SceneActor_SetupActor18Event(void)
 {
-	void Engine_ActorFaceDirection(s32, s32, s32);
 
 	Engine_GameFlagSet(2491);
 	Engine_EventSetMessage((s32)MsgRariberoWasToldLetInIf);

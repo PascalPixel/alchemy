@@ -39,6 +39,7 @@ struct BattleSummonState
 #if GAME_TLA
 const struct SummonDefinition *SummonDefinition_Get(s32 summon_id);
 #endif
+#if GAME_TLA
 s32 EnmSlotGet(void);
 s32 EnmChk(s32 class_id);
 
@@ -48,5 +49,6 @@ s32							   EnmCntDec(s32 class_id, s32 n);
 s32							   EnmCntRel(s32 actor_id);
 s32							   EnmCntClr(s32 class_id);
 s32							   EnmUpd(void);
+#endif
 
 #endif

@@ -9,8 +9,10 @@
 
 struct DispatchObject;
 
+#if GAME_TLA
 void *ObjectDispatch_FindFreeObject(void);
 void  ObjectDispatch_Release(struct DispatchObject *object);
+#endif
 #if GAME_TLA
 void ObjectDispatch_InitializeFar(struct DispatchObject *object, const s32 *script);
 #endif

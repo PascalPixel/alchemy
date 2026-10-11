@@ -20,8 +20,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 
-#define FieldScene_PrepareActors ((void (*)(u8 *))FieldScene_PrepareActors)
-
 extern struct SceneEntrance	 Placement_Scripts[];
 extern u32					 Placement_Messages[];
 extern struct ScenePlacement Placement_Actors[];

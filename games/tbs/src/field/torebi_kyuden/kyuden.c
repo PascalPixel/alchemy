@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/torebi_kyuden/kyuden.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"

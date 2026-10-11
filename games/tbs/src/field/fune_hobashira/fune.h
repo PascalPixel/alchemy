@@ -40,6 +40,4 @@ enum
 	FLAG_MAST_924 = 0x924
 };
 
-void Object_CommitPosition();
-
 #endif

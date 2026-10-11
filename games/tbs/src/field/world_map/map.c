@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/world_map/map.h"
 #include "unit/field/world_map/linked_effects.h"
 #include "unit/battle/effect/slots.h"
@@ -109,9 +110,6 @@ extern s32 gTransferLeaderTurn[];
 
 extern s32						gWorldMapTriggerActor;
 extern struct StorySharedState *gEffectWork;
-
-void ItemMenu_Open();
-void QueueIoWriteDelay2(u32 address, u32 value);
 
 extern s32 gOpeningLeaderRise[];
 

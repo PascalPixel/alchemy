@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/kuupuappu_dou/dou.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/system/scheduler/callback.h"
@@ -30,11 +31,6 @@ struct Actor
 	s32 f08;
 	s32 f0c;
 };
-
-extern
-
-	s32
-	Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 
 struct MapShake
 {

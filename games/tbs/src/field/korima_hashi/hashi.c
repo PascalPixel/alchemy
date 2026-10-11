@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/korima_hashi/hashi.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/korima_hashi/falling_effect.h"
@@ -74,13 +75,6 @@ struct Struct288c
 extern s32 KorimaHashi_TriggerPending;
 extern s32 KorimaHashi_PartyFlag;
 extern s32 KorimaHashi_SparkleSound;
-
-void Engine_TaskWait(s32 frames);
-void Engine_EventWait(s32 frames);
-void Engine_ActorWaitForMove(s32 actor);
-void Engine_ActorSetAnimation(s32 actor, s32 mode);
-void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
-void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"

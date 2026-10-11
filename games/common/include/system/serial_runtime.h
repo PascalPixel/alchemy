@@ -1,6 +1,7 @@
 #ifndef GUARD_SERIAL_RUNTIME_H
 #define GUARD_SERIAL_RUNTIME_H
 
+#include "edition.h"
 #include "types.h"
 #include "layout_guard.h"
 #include "system.h"
@@ -85,6 +86,7 @@ LAYOUT_OFFSET_GUARD(SerialTransferState_Payload, struct SerialTransferState, pay
 		DMA3->control = (control_);                \
 	} while (0)
 
+#if GAME_TLA
 s32								  SerialRuntime_PollStatus(void);
 s32								  SerialRuntime_ExchangePayloads(void *send, void *receive);
 void							  SerialRuntime_PrepareSendPacket(void *payload);
@@ -102,6 +104,7 @@ void							  BattleLink_ResetTransferState(void);
 void							  SerialRuntime_HandleTransferInterrupt(void);
 void							  SerialRuntime_RemoveIrqHandlers(void);
 u32								  SerialRuntime_WaitForStatusMask(s32 mask);
+#endif
 extern struct SerialTransferState gSerialTransfer;
 extern struct SerialRuntime		  gSerialRuntime;
 extern u16						  gSerialExchangeActive;

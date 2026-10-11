@@ -17,6 +17,4 @@ extern struct SceneEvent	 gRariberoEvents9a7[];
 extern struct SceneEvent	 gRariberoHeyaEvents[];
 extern struct SceneEvent	 gRariberoHeyaEvents9a7[];
 
-void Engine_ResetSceneEffectCounter(void);
-
 #endif

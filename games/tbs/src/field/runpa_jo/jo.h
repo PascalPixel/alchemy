@@ -17,11 +17,4 @@
 extern u32 gFrameCount;
 #endif
 
-s32  Engine_PartyInventoryFindOwner(s32 item_id);
-s32  Engine_BattleFxPlayCueAndStartEmitterOnTarget(s32 value, s32 actor, s32 item);
-void Engine_BattleFxSetWeightedResult(s32 slot, s32 value);
-void Engine_BattleFxRunPageEffectForSlot(s32 slot, s32 first, s32 second);
-void Engine_PartySetFields1ceAnd1d0(s32 first, s32 second);
-void Engine_MapSetWorkFlagBits9To11(s32 first);
-
 #endif

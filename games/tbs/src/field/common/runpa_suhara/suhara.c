@@ -1,3 +1,4 @@
+#include "field_event.h"
 #include "unit/field/common/runpa_suhara/suhara.h"
 #include "unit/battle/effect/slots.h"
 #include "interiors.h"

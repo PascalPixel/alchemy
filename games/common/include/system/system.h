@@ -8,12 +8,18 @@
 #include "farcall.h"
 #endif
 
+#if GAME_TLA
 void	   WaitFrames(s32 frames);
+#endif
 void	   System_WaitForFrameInterrupt(void);
+#if GAME_TLA
 void	   Graphics_ResetFrameState(void);
+#endif
 void	   Bios_SoundBiasOff(void);
 void	   Bios_SoundBiasOn(void);
+#if GAME_TLA
 u32		   Random16(void);
+#endif
 extern u32 gRandomState;
 
 extern volatile u16 gSleepActive;
@@ -61,7 +67,9 @@ extern void		  *Resource_DirectoryTable[];
 extern u8		   Resource_PatchThumbBranchCodeSize[];
 extern u8		   ResourceSlot_ConversionTables[][256];
 extern const u16   Ui_WindowPalette[];
+#if GAME_TLA
 s32				   Animation_LookupValueByKey(s32 key);
+#endif
 #ifndef OWN_CountRemainingErasedFlashBytes
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
 #endif
@@ -70,11 +78,15 @@ s32 Map_DisableUpdateCallbackFar(void);
 s32 Map_EnableUpdateCallbackFar(void);
 #endif
 s32	 RunFlashEraseVerifier(u8 *, u8 *);
+#if GAME_TLA
 void Runtime_WriteDebugTextTiles(const u8 *src);
+#endif
 #ifndef OWN_StartFlashTimer
 void StartFlashTimer(u8 index);
 #endif
+#if GAME_TLA
 void UiWork_FinalizeAndReleaseBlock16(void);
+#endif
 
 #if !GAME_TLA
 struct AnimationEntry;

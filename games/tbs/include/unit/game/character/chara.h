@@ -14,7 +14,7 @@ struct SummonDefinition;
 void Owner_RefreshAndResetZero(void);
 void *Trade_GetOfferState(s32 arg0);
 u32 Party_GetAverageLevel(void);
-void *UnitGet(u32 owner);
+struct BtlUnit *UnitGet(u32 owner);
 const u8 *Owner_GetRecord(s32 selector);
 void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count, s32 direction);
 void UnitCalc(s32 owner);

@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/korosseo_kabe/kabe.h"
 #include "unit/field/common/korosseo/solo_competitor.h"
 #include "unit/field/common/korosseo/solo_round.h"
@@ -150,8 +151,6 @@ extern s16	KorosseoKabe_ModeRecordThree[];
 extern const s16 KorosseoKabe_ModeRecordThreeAlt[];
 extern s16	KorosseoKabe_ModeRecordFour[];
 
-s32	 Object_CheckMovementCollision();
-
 struct StageControl
 {
 	s16 status;
@@ -176,8 +175,6 @@ static inline void InitializeSelectedActor(s32 actorId)
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 // 別ファイルの関数: 呼び出し側は宣言なし (暗黙の int) で呼んでいる
-
-void Object_CommitPosition(struct FieldActor *object);
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -1897,7 +1894,6 @@ check_transition:
 
 void FieldScene_RunLateSequence(s32 a0)
 {
-	void Engine_EventOpenScreen();
 
 	s32 kind;
 

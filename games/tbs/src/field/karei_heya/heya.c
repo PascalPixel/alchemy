@@ -17,8 +17,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 
-#define FieldScene_PrepareActors ((void (*)(const struct ScenePlacement *))FieldScene_PrepareActors)
-
 extern struct MapCellAnim KareiHeya_ArrivalPlacements[];
 
 enum ArrivalMessage
@@ -167,7 +165,6 @@ void SceneDialogue_RunActor8FlaggedDialogue(void)
 
 void SceneDialogue_RunActor8FacingDialogue(void)
 {
-	void Engine_EventSetMessage(int);
 
 	struct FieldActor *p = Object_GetById(0);
 

@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/fune_heya/heya.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -1125,8 +1126,6 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
 
 #ifdef ALCHEMY_FIELD_EVENT_H
 #endif
-
-s32	 Object_CheckMovementCollision();
 
 union GameStateRows
 {

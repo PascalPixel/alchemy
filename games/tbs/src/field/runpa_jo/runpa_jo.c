@@ -1,6 +1,8 @@
 /*----------------------------------------------------------
     ルンパ城  イベント
 ----------------------------------------------------------*/
+#include "field_event.h"
+#include "unit/import.h"
 #include "unit/field/runpa_jo/runpa_jo.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/battle/effect/slots.h"
@@ -28,15 +30,6 @@
 #include "field_scene.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-void Engine_TaskWait(s32 frames);
-
-void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
-
-void Engine_ActorWaitForMove(s32 actor);
-
-void Engine_MapCopyCellAttributes(
-	s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
@@ -1182,7 +1175,8 @@ void EV31_BANPEI(void)
 	MES_SET((line + 6));
 	MES_PUT(12, 0);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo2, 31);
+	/* FAKEMATCH: Engine_PartySetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, EV31_BANPEI is 4 bytes longer */
+	((void (*)(s32, s32))Engine_PartySetFields1ceAnd1d0)((s32)&SceneId_RunpaJo2, 31);
 	Battle_SetStart(3);
 	Engine_BattleFxSetWeightedResult(98, 3);
 	OBJ_POS_SET(12, 0, 0);
@@ -1527,7 +1521,8 @@ void EV20_DEMO(void)
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		WAIT(1);
 		Battle_SetStart(3);
-		Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
+		/* FAKEMATCH: Engine_PartySetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, EV20_DEMO has 23 of 2212 bytes different */
+		((void (*)(s32, s32))Engine_PartySetFields1ceAnd1d0)((s32)&SceneId_RunpaJo4, 4);
 		Engine_BattleFxSetWeightedResult(98, 4);
 	}
 	else
@@ -1726,7 +1721,8 @@ void EV20_DEMO(void)
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		WAIT(1);
 		Battle_SetStart(3);
-		Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
+		/* FAKEMATCH: Engine_PartySetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, EV20_DEMO is 2 bytes longer */
+		((void (*)(s32, s32))Engine_PartySetFields1ceAnd1d0)((s32)&SceneId_RunpaJo4, 4);
 		Engine_BattleFxSetWeightedResult(98, 4);
 	}
 	EV_END();

@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/korima_kawa/staged_palette.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/korima/palette.h"
@@ -23,24 +24,10 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-void Engine_MapCopyCellAttributes(
-	s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y);
-
-void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
-
-void Engine_AudioPlayCue(s32 cue);
-
 #ifdef MODERN
 // called before its definition below, which modern GCC refuses for an
 // implicit int declaration of a u16 function
 #endif
-
-void Engine_EventBegin(void);
-void Engine_ActorSetAnimation(s32, s32);
-void Engine_ActorSetDestinationOffset(s32, s32, s32);
-void Engine_EventWait(s32);
-void Engine_EventEnd(void);
-void Engine_TaskWait(s32 actor_index);
 
 s32 Math_DivideSigned();
 

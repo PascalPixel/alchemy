@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/korima_hiroba/hiroba.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/korima/palette.h"

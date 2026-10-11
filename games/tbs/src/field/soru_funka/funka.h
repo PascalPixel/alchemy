@@ -91,8 +91,6 @@ struct Actor_02002e5c
 
 extern u8 *gParticleWork[];
 
-s32	 Engine_TaskAddCallback(void (*)(), s32);
-
 extern struct SceneEntrance Placement_Scripts[];
 extern u32 Placement_Messages[];
 extern struct ScenePlacement Placement_Actors[];

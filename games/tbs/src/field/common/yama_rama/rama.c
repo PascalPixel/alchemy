@@ -22,7 +22,6 @@
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
-	void Engine_ActorSetPosition(s32, s32, s32);
 
 	Engine_ActorSetPosition(actor, x, y);
 }
@@ -321,7 +320,6 @@ void FieldScene_RunScene3a2SequenceA(void)
 
 void SceneDialogue_RunLine1956(void)
 {
-	void Engine_EventBegin(void);
 
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -331,7 +329,6 @@ void SceneDialogue_RunLine1956(void)
 
 void ConfigureAndPlaceActorFourteen(void)
 {
-	void Engine_ActorSetPosition(s32, s32, s32);
 
 	s32 a = 21, b = 9;
 	Engine_MapCopyCellAttributes(85, 9, 1, 1, a, b);
@@ -485,7 +482,6 @@ void Scene_RunActorExchange(void)
 
 void Scene_RunActorSequence(void)
 {
-	void Engine_EventBegin();
 
 	s32 mask;
 

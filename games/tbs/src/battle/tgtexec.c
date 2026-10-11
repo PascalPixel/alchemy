@@ -78,8 +78,6 @@
 #include "battle_formation.h"
 #include "b5_context.h"
 
-#define Inventory_EquipFar ((void (*)(s32, s32))Inventory_EquipFar)
-
 struct DebugPartyEntry
 {
 	s8	owner;
@@ -171,8 +169,6 @@ s32 DebugParty_LoadPreset(s32 preset)
 	return done;
 }
 
-void UiWork_InitializeWithResourceCountersFar(void);
-
 #define gWindowWork (*(u8 **)&gWindowWork)
 
 #if EDITION_INTERNATIONAL
@@ -192,12 +188,6 @@ void UiWork_InitializeWithResourceCountersFar(void);
 #define DEBUG_VIEW_LIMIT                                                                         \
 	((s32)MsgRariberoHowDidSearchForSheba - (s32)MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely \
 		+ 5)
-
-void UiWork_PushValueSlotFar(s32, s32);
-s32	 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
-s32	 UiWork_IsCompleteFar(void);
-void UiWork_FinalizeFar(s32, s32);
-void AudioCommand_PlayFar(s32);
 
 void DebugBattle_ViewMessages(void)
 {
@@ -283,7 +273,8 @@ void DebugBattle_ViewMessages(void)
 					break;
 				WaitFrames(1);
 			}
-			UiWork_DrainPendingFar(1);
+			/* FAKEMATCH: UiWork_DrainPendingFar is called as void (*)(s32); as void (*)(void), its prototype, DebugBattle_ViewMessages does not compile */
+			((void (*)(s32))UiWork_DrainPendingFar)(1);
 			UiWork_FinalizeFar(window, 1);
 			gWindowWork[WINDOW_WORK_MESSAGE_BUSY] = 0;
 		}
@@ -542,15 +533,6 @@ void Party_ReservedNoOp5B14(void)
 {
 }
 
-void UnitCalcFar(s32 unit_id);
-
-#define Trade_AddOfferFar ((void (*)(s32, s32, s32))Trade_AddOfferFar)
-
-s32 Djinn_ActivateFar(s32 id, s32 element, s32 index);
-s32 Trade_RemoveOfferFar(s32 id, s32 element, s32 index);
-
-struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
-
 s32 BattleParty_ResetActiveRuntimeFields(void)
 {
 	u16 owners[10];
@@ -628,7 +610,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void)
 				if (Trade_CanOfferDjinnFar(owner, element, index) != 0)
 				{
 					struct DjinnRecoveryList *list =
-						&Trade_GetOfferStateFar((owner < 0 || owner > 7) ? 1 : 0)->list;
+						&((struct DjinnRecoveryTable *)Trade_GetOfferStateFar((owner < 0 || owner > 7) ? 1 : 0))->list;
 					s32 j;
 
 					for (j = 0; j < list->count; j++)
@@ -647,7 +629,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void)
 		return;
 
 	{
-		struct DjinnRecoveryList  *list = &Trade_GetOfferStateFar(0)->list;
+		struct DjinnRecoveryList  *list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(0))->list;
 		struct DjinnRecoveryEntry *entry;
 
 		i = 0;
@@ -743,9 +725,6 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
 void BattleSummon_ReservedNoOp(void)
 {
 }
-
-void			Ui_AdjustValueWithoutLimitFar(s32, u16 *);
-struct BtlUnit *UnitGetFar(s32 object_id);
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
@@ -1121,8 +1100,6 @@ s32 Battle_ClearSerialTransferPayload(void)
 	return Iwram_ClearWords(gSerialTransfer.payload, 16);
 }
 
-s32 GameFlag_TestFar(s32 flag);
-
 #define DMA_FILL32 0x85000000
 
 #define Dma3Fill(cell, dest, bytes)                                              \
@@ -1140,14 +1117,6 @@ extern s32 gBattleRandomSeed;
 	} while (0)
 extern u8 gActorSpriteSlots[];
 extern u8 gCpuLoadDisplayEnabled;
-
-void GameFlag_SetBitFar(s32 id);
-#define Trade_GetOfferStateFar ((s32 * (*)(s32 index)) Trade_GetOfferStateFar)
-void PtyStDrawFar(s32 mode);
-s32	 UiText_OpenMessageWindowFar(s32 id, s32 a, s32 b, s32 c);
-void UiWork_FinalizeFar(s32 handle, s32 mode);
-void UiWork_PushValueSlotFar(s32 a, s32 b);
-void UiText_ShowMessageAndWaitCoreFar(s32 id);
 
 s32 Battle_RunEncounter(s32 enemy_group)
 {
@@ -1240,7 +1209,8 @@ s32 Battle_RunEncounter(s32 enemy_group)
 		dest = gBattleOwnerStates;
 		for (pos = 0; pos <= 0x7c7; pos++)
 			*dest++ = gActorSpriteSlots[pos];
-		object = GameFlag_GetByteFar(0x3f0);
+		/* FAKEMATCH: GameFlag_GetByteFar is called as s32 (*)(s32); as u8 (*)(s32), its prototype, Battle_RunEncounter has 123 of 1688 bytes different */
+		object = ((s32 (*)(s32))GameFlag_GetByteFar)(0x3f0);
 		BattleParty_AssignMemberSlots();
 		battle->battle_type = 0;
 	}
@@ -1266,7 +1236,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 	BattleUnit_RefreshPlacement();
 	BattleParty_ReconcileDjinnRecovery();
 	BattleSummon_UpdateAvailability();
-	if (*Trade_GetOfferStateFar(0) != 0)
+	if (*((s32 *)Trade_GetOfferStateFar(0)) != 0)
 		battle->pty_st = 3;
 	else
 		battle->pty_st = 1;
@@ -1303,7 +1273,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 	{
 		Battle_ReservedNoOp9B2C();
 		BattleSummon_UpdateAvailability();
-		if (*Trade_GetOfferStateFar(0) != 0)
+		if (*((s32 *)Trade_GetOfferStateFar(0)) != 0)
 			battle->pty_st = 3;
 		else
 			battle->pty_st = 1;
@@ -1450,8 +1420,6 @@ finished:
 	Runtime_ReleaseHeapBlock10();
 	return result;
 }
-
-s32 Party_CountActiveOwnersFar(void);
 
 s32 BattleParty_PrepareActiveOwners(u16 *owners)
 {
@@ -1630,8 +1598,6 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
 	return count;
 }
 
-#undef Trade_GetOfferStateFar
-
 //--------------------------------------------------------------------------
 // actor_commit_placement.c
 // バトル：全ユニットのオブジェクト配置
@@ -1662,9 +1628,6 @@ void BattleParty_ListAllUnitsAndSubmit(void)
 	BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
 	BattleActor_SpawnObjectsForList(list, 0);
 }
-
-#define Object_CreateFar \
-	((struct MotionObject * (*)(s32 kind, s32 x, s32 y, s32 z)) Object_CreateFar)
 
 s32 BattleMotion_GetSlotPalette(s32 id)
 {
@@ -2217,8 +2180,6 @@ void BattleUnit_RefreshPlacement(void)
 	}
 }
 
-#undef Object_CreateFar
-
 //--------------------------------------------------------------------------
 // contains_id.c
 // バトル：ユニット番号リストの検索
@@ -2251,11 +2212,6 @@ s32 BattlePlacement_ContainsId(s16 *list, s32 no)
 // battle.c
 // バトル：キャラの表示の優先度、状態アイコン、ポーズ
 //--------------------------------------------------------------------------
-
-void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
-
-#define ObjectDispatch_ApplyValueToChildrenFar \
-	((void (*)(struct MotionObject *, s32))ObjectDispatch_ApplyValueToChildrenFar)
 
 #define UNIT_MAX 14 // 敵味方を合わせた人数
 
@@ -2814,7 +2770,6 @@ s32 ActivateBattleObjectSlot(s32 object_id)
 
 void *BattleMotion_DestroyAllSlotObjects(void)
 {
-	s32 ObjectDispatch_ReleaseFar(s32);
 	// 戻り値の型はポインタだが return 文は無い（pop {r1}; bx r1）
 	s32			   no;
 	s32			   i;
@@ -2898,8 +2853,6 @@ void *GetMotionRecord(struct MotionObject *object, s32 record_index)
 	}
 	return NULL;
 }
-
-void ObjectDispatch_InitFromTable6Far(struct MotionObject *);
 
 void Camera_InitDefaultTransform(void)
 {
@@ -3244,18 +3197,6 @@ u32 Battle_GetObjectTableValue(s32 id)
 	}
 	return value;
 }
-
-#undef ObjectDispatch_ApplyValueToChildrenFar
-
-#undef ObjectDispatch_ApplyValueToChildrenFar
-#define ObjectDispatch_ApplyValueToChildrenFar \
-	((void (*)(void *, s32))ObjectDispatch_ApplyValueToChildrenFar)
-#define BattleFx_DispatchByIdRangeFar \
-	((void (*)(struct BattlePresentationWork *))BattleFx_DispatchByIdRangeFar)
-#define BattleFx_RunIceFleckBurstFar \
-	((void (*)(struct BattlePresentationWork *))BattleFx_RunIceFleckBurstFar)
-#define BattleFx_DispatchModeFar \
-	((void (*)(struct BattlePresentationWork *))BattleFx_DispatchModeFar)
 
 s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionRecord *entries)
 {
@@ -3718,8 +3659,6 @@ s32 BattlePres_RunUnitAction(s16 *action)
 	return 0;
 }
 
-void UiWork_PushValueSlotFar(s32 value, s32 mode);
-
 void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_message, u8 *context)
 {
 	u8				local_context[4];
@@ -3828,25 +3767,8 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 	return (s16)living_units[(Random16() * living_count) >> 0x10];
 }
 
-#undef BattleFx_DispatchByIdRangeFar
-#undef BattleFx_DispatchModeFar
-#undef BattleFx_RunIceFleckBurstFar
-#undef ObjectDispatch_ApplyValueToChildrenFar
-#undef Trade_AddOfferFar
-#undef Trade_GetOfferStateFar
-
 extern volatile s32 gFrameTick;
 extern u8			gDisp[];
-
-s32	 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
-void GameFlag_ClearBitFar(s32 flag);
-void GameFlag_SetBitFar(s32 flag);
-s32	 Inventory_RemoveFar(s32 owner, s32 slot);
-#define ObjectDispatch_ApplyArgumentToChildrenFar \
-	((void (*)(void *object, s32 mode))ObjectDispatch_ApplyArgumentToChildrenFar)
-void Party_AdjustCoinsFar(s32 amount);
-s32 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
-#define UiWork_PushValueSlotFar ((void (*)(u32, u32))UiWork_PushValueSlotFar)
 
 void Palette_UpdatePulseBrightness(void)
 {
@@ -4146,7 +4068,8 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
 
 			UnitGetFar(entry->unit_id);
 			action = BtlActGet(
-				Djinn_GetDefinitionHeaderFar(entry->parameter >> 8 & 15, entry->parameter & 0xff));
+				/* FAKEMATCH: Djinn_GetDefinitionHeaderFar is called as s32 (*)(s32, s32); as u16 (*)(u32, u32), its prototype, BattleQueue_SortByPriority is 4 bytes longer */
+				((s32 (*)(s32, s32))Djinn_GetDefinitionHeaderFar)(entry->parameter >> 8 & 15, entry->parameter & 0xff));
 			if (action->efx == 46 || action->efx == 47 || action->efx == 53)
 			{
 				entry->priority += 10000;
@@ -5960,7 +5883,7 @@ scan_complete:
 		return -1;
 
 	if (action->target_mode == 1 && action->rng == 1
-		&& Owner_GetRecordFar(UnitGetFar(actor_id)->class_id)->target_strategy != 2
+		&& ((struct EnemyDefinition *)Owner_GetRecordFar(UnitGetFar(actor_id)->class_id))->target_strategy != 2
 		&& (u32)((action->tgt_flg & 0x0f) - 3) <= 2)
 	{
 		selected = -1;
@@ -5970,7 +5893,7 @@ scan_complete:
 			{
 				this_unit = UnitGetFar(unit_ids[inner_index]);
 				next_unit = UnitGetFar(unit_ids[inner_index + 1]);
-				if (Owner_GetRecordFar(UnitGetFar(actor_id)->class_id)->target_strategy == 0)
+				if (((struct EnemyDefinition *)Owner_GetRecordFar(UnitGetFar(actor_id)->class_id))->target_strategy == 0)
 				{
 					value = this_unit->hp;
 					next_value = next_unit->hp;
@@ -6212,7 +6135,6 @@ void BattleEv_MarkDisplay(void)
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
-	void ObjectDispatch_ReleaseFar(struct DispatchObject * object);
 	// 戻り値の型は s32 だが return 文は無い（pop {r1}; bx r1）
 	struct BtlUnit *creature;
 	struct BtlObj  *runtime;
@@ -6513,7 +6435,8 @@ pow_end:
 		chance = pow - target->elm[plan->elm].res;
 		chance += 30;
 		chance *= 65536 / 100;
-		if (chance > (BtlRndFar() & 0xffff))
+		/* FAKEMATCH: BtlRndFar is called as s32 (*)(void); as u32 (*)(void), its prototype, BtlTgtExec has 1 of 6332 bytes different */
+		if (chance > (((s32 (*)(void))BtlRndFar)() & 0xffff))
 			BtlEvPush(BEV_SCR, 5);
 	}
 
@@ -8314,7 +8237,7 @@ s32 BattlePlacement_CountValidEntries(u32 unit_id, u8 *counts)
 	side = 0;
 	if (unit_id > 7)
 		side = 1;
-	list = &Trade_GetOfferStateFar(side)->list;
+	list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(side))->list;
 	if (counts != 0)
 		for (j = 3; j >= 0; j--)
 			counts[j] = 0;
@@ -8748,7 +8671,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 
 	case CMD_DJINN:
 		// セットされていなければ、スタンバイのジンをセットし直す
-		act_no = Djinn_GetDefinitionHeaderFar(
+		/* FAKEMATCH: Djinn_GetDefinitionHeaderFar is called as s32 (*)(s32, s32); as u16 (*)(u32, u32), its prototype, BattleCommand_BuildPlan is 4 bytes longer */
+		act_no = ((s32 (*)(s32, s32))Djinn_GetDefinitionHeaderFar)(
 			DJINN_ELEMENT(req->parameter), DJINN_INDEX(req->parameter));
 		if (!Djinn_IsActiveFar(
 				req->unit_id, DJINN_ELEMENT(req->parameter), DJINN_INDEX(req->parameter)))
@@ -8820,7 +8744,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		side = 0;
 		if ((u16)req->unit_id > MIKATA_MAX)
 			side = 1;
-		list = &Trade_GetOfferStateFar(side)->list;
+		list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(side))->list;
 		for (i = 0; i < 4 && counts[i] >= summon->djinn_required[i]; i++)
 			counts[i] = summon->djinn_required[i];
 		act_no = summon->name_message_id;
@@ -8898,7 +8822,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			if (tgt->hp == 0 || tgt->nemuri != 0 || tgt->shibire != 0 || tgt->miugoki != 0
 				|| tgt->charm != 0)
 				break;
-			if (unit->maboroshi != 0 && (BtlRndFar() & 255) <= 152)
+			/* FAKEMATCH: BtlRndFar is called as s32 (*)(void); as u32 (*)(void), its prototype, BattleCommand_BuildPlan has 1 of 3728 bytes different */
+			if (unit->maboroshi != 0 && (((s32 (*)(void))BtlRndFar)() & 255) <= 152)
 				plan->tgt_adj[0] = 0;
 			if ((BtlRndFar() & 31) == 0)
 				plan->tgt_adj[0] = 0;
@@ -8910,7 +8835,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		{
 			if ((BtlRndFar() & 31) == 0)
 				plan->tgt_crit[0] = 1;
-			else if ((Equipment_GetUnleashRateBonusFar(unit) << 16) / 200 > (BtlRndFar() & 0xffff))
+			/* FAKEMATCH: BtlRndFar is called as s32 (*)(void); as u32 (*)(void), its prototype, BattleCommand_BuildPlan has 1 of 3728 bytes different */
+			else if ((Equipment_GetUnleashRateBonusFar(unit) << 16) / 200 > (((s32 (*)(void))BtlRndFar)() & 0xffff))
 				plan->tgt_crit[0] = 1;
 		}
 	}
@@ -8942,7 +8868,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 				amount = 1;
 			else
 				amount = 2;
-			if ((BtlRndFar() & 255) < chance)
+			/* FAKEMATCH: BtlRndFar is called as s32 (*)(void); as u32 (*)(void), its prototype, BattleCommand_BuildPlan has 1 of 3728 bytes different */
+			if ((((s32 (*)(void))BtlRndFar)() & 255) < chance)
 			{
 				s32 i;
 
@@ -9028,7 +8955,8 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias)
 	if (turns <= 5)
 	{
 		s32 threshold = ((state->luck * 3 - turns * 5) + bias) * 0x28f;
-		if (threshold >= (BtlRndFar() & 0xffff))
+		/* FAKEMATCH: BtlRndFar is called as s32 (*)(void); as u32 (*)(void), its prototype, BattleUnit_RollCounterEarlyEnd has 1 of 72 bytes different */
+		if (threshold >= (((s32 (*)(void))BtlRndFar)() & 0xffff))
 			return 1;
 	}
 	return 0;
@@ -9287,7 +9215,7 @@ s32 BattlePlacement_UpdateTimedEntries(void)
 	s32						   removed;
 	s32						   initial_count;
 
-	list = &Trade_GetOfferStateFar(0)->list;
+	list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(0))->list;
 	initial_count = list->count;
 	index = 0;
 	removed = 0;
@@ -9366,7 +9294,7 @@ s32 Battle_ProcessRoundEnd(void)
 	sides = (work->two_sided != 0) + 1;
 	for (side = 0; side < sides; side++)
 	{
-		list = &Trade_GetOfferStateFar(side)->list;
+		list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(side))->list;
 		i = 0;
 		if (i < list->count)
 		{
@@ -9603,7 +9531,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 	id = plan->aid;
 	both_sides = 0;
 	unit = UnitGetFar(id);
-	list = &Trade_GetOfferStateFar((id < 0 || id > 7))->list;
+	list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar((id < 0 || id > 7)))->list;
 	for (best = 0; best < list->count; best++)
 	{
 		if (list->entries[best].unit_id == id && list->entries[best].turns == -1)
@@ -9620,7 +9548,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 		s32						  i;
 		s32						  owner;
 		struct DjinnRecoveryList *pending;
-		pending = &Trade_GetOfferStateFar((id < 0 || id > 7))->list;
+		pending = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar((id < 0 || id > 7)))->list;
 		for (i = 0; i < 4; i++)
 		{
 			counts[i] = 0;
@@ -12014,7 +11942,8 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
 		chance -= 2;
 	if (chance < 0)
 		chance = 0;
-	if ((0x20000 >> chance) > (BtlRndFar() & 0xffff))
+	/* FAKEMATCH: BtlRndFar is called as s32 (*)(void); as u32 (*)(void), its prototype, BattleEnemy_RecordDefeat has 1 of 564 bytes different */
+	if ((0x20000 >> chance) > (((s32 (*)(void))BtlRndFar)() & 0xffff))
 	{
 		lowest_slot = -1;
 		lowest = 0x40000000;
@@ -12181,5 +12110,3 @@ void Battle_ReservedNoOp2A08(void)
 {
 }
 
-#undef ObjectDispatch_ApplyArgumentToChildrenFar
-#undef UiWork_PushValueSlotFar

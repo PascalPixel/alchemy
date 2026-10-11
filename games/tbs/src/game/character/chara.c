@@ -98,7 +98,7 @@ u32 Party_GetAverageLevel(void)
 	return total;
 }
 
-void *UnitGet(u32 owner)
+struct BtlUnit *UnitGet(u32 owner)
 {
 	struct BtlUnit *states;
 	struct BtlUnit *unit;
@@ -1521,7 +1521,8 @@ s32 Inventory_Discard(s32 owner, s32 slot)
 
 	if (removed_slot != -1)
 	{
-		Event_ClearInvalidPackedValuesFar(Item_AdjustCounter(item, 1));
+		/* FAKEMATCH: Event_ClearInvalidPackedValuesFar is called as s32 (*)(); as void (*)(void), its prototype, Inventory_Discard does not compile */
+		((s32 (*)())Event_ClearInvalidPackedValuesFar)(Item_AdjustCounter(item, 1));
 	}
 	return removed_slot;
 }

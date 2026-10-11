@@ -32,7 +32,7 @@ $(LIBGCC):
 .PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
 .PHONY: publication-check publication-staged-check hygiene-check coverage-report
-.PHONY: publication-tree-check layout-check dead-check aliases-check devices-check object-list-check packer-check modern-check
+.PHONY: publication-tree-check layout-check dead-check aliases-check devices-check headers-check object-list-check packer-check modern-check
 .PHONY: progress figure deps similar worst clean modern
 
 help:
@@ -117,7 +117,7 @@ ifeq ($(origin ALCHEMY),file)
 compiler-runtime toolchain-check compare compare-tla compare-editions compare-other-editions \
 $(COMPARE_EDITIONS) build-rom precommit prepush verify land publication-check \
 hygiene-check publication-staged-check lint-staged coverage-report progress figure \
-publication-tree-check layout-check dead-check aliases-check devices-check object-list-check \
+publication-tree-check layout-check dead-check aliases-check devices-check headers-check object-list-check \
 packer-check deps similar worst modern: | build-alchemy
 endif
 
@@ -155,7 +155,7 @@ land:
 # packs their streams again, about 25 seconds.
 publication-check:
 	@$(MAKE) --no-print-directory -k -j8 ALCHEMY="$(ALCHEMY)" \
-	    publication-tree-check layout-check dead-check aliases-check devices-check hygiene-check \
+	    publication-tree-check layout-check dead-check aliases-check devices-check headers-check hygiene-check \
 	    object-list-check packer-check
 
 publication-tree-check:
@@ -172,6 +172,9 @@ aliases-check:
 
 devices-check:
 	$(CHECK) devices
+
+headers-check:
+	$(CHECK) headers
 
 object-list-check:
 	$(CHECK) object-list

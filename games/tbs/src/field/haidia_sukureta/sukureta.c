@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/haidia_sukureta/sukureta.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -21,9 +22,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-s32	 Effect_SoundAndFlash();
-void Engine_MapCopyCellAttributes();
 
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
 {

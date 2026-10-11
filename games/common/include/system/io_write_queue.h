@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_IO_WRITE_QUEUE_H
 #define ALCHEMY_IO_WRITE_QUEUE_H
 
+#include "edition.h"
 #include "irqlock.h"
 #include "types.h"
 
@@ -22,7 +23,9 @@ void QueueIoWriteDelay7(u32 address, u32 value);
 void QueueIoWriteDelay9(u32 address, u32 value);
 void QueueIoWriteDelay10(u32 address, u32 value);
 void QueueIoWriteDelay11(u32 address, u32 value);
+#if GAME_TLA
 void IoWriteQueue_FlushPending(void);
+#endif
 
 // 割り込みを止めて I/O 書き込みキューに 1 件積む。満杯（32 件）なら何もしない
 // address : 書き込み先、value : 値、control : 遅延フレーム << 16、または DMA の制御語

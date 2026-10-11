@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/ramakan_sabaku/sabaku.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
@@ -97,7 +98,6 @@ struct EffectParams
 	u16 angle;
 	u8	pad24[4];
 };
-s32 Engine_DisplayScrollStartHBlankDma();
 
 void FieldScene_ApplyActor13Values3And3(void)
 {
@@ -630,8 +630,6 @@ struct DustParams
 	u16 angle;
 	u8	unknown_24[4];
 };
-
-s32	 Object_CheckMovementCollision(struct FieldActor *object, s32 *pos);
 
 extern struct EventWork *gEventWork;
 

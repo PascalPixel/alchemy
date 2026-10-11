@@ -36,8 +36,6 @@
 // スロット：パレットの色処理とキャンバスの転送・線描き
 //--------------------------------------------------------------------------
 
-void AudioCommand_PlayFar(s32 cue);
-
 #define gBattleFxWork ((u8 **)&gBattleFxWork)
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
@@ -313,12 +311,6 @@ void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 
 #undef gBattleFxWork
 
-void UiWork_InitializeWithResourceCountersFar(void);
-s32	 BattleEffect_LoadWorkFar(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
-
-#define UiText_DrawNumberInWindowFar \
-	((void (*)(s32, s32, struct UiWindow *, s32, s32))UiText_DrawNumberInWindowFar)
-
 struct Reel
 {
 	s32 position;
@@ -398,9 +390,6 @@ const u8 ReelGame_TitleLetterWidths[REEL_TITLE_LETTERS] = {
 	28, 28, 26, 26, 28, 28, 20, 24
 #endif
 };
-void UiWork_FinalizeFar(struct UiWindow *window, s32 style);
-s32	 PartyInventory_RemoveFar(s32 item);
-void AudioCommand_PlayFar(s32 command);
 
 void ReelGame_RunFrame(void)
 {

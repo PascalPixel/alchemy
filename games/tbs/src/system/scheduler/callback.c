@@ -3683,8 +3683,6 @@ void SerialRuntime_StepBlockTransfer(void)
 extern u8		gMapCellBuffer[];
 extern const u8 Rom_Start[];
 
-void AudioCommand_PlayFar(s32 cue);
-
 void RuntimeWait_BusyLoopTick(void)
 {
 }

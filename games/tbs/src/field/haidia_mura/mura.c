@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/haidia_mura/mura.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/world_map/linked_effects.h"
@@ -28,17 +29,6 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-s32	 Engine_GameFlagIsSet();
-void Engine_EventBegin();
-void Engine_EventWait();
-void Engine_MessageShowCentered();
-void Engine_MapRedraw();
-void Engine_ActorSetAnimation();
-void Engine_EventEnd();
-void Engine_EventSetMessage();
-void Engine_EventShowMessageAndWait();
-void Engine_ActorWalkToAndWait();
-
 enum HouseActor
 {
 	ACTOR_BOARD = 23,
@@ -49,12 +39,6 @@ enum
 {
 	ANIM_HAMMER = 11
 };
-
-void Engine_ActorSetSpeed();
-void Engine_ActorFaceDirection();
-void Engine_ActorSetAnimation();
-void Engine_ActorMoveToAndWait();
-void Engine_EventWait();
 
 struct Flags38
 {

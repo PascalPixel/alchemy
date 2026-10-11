@@ -1,7 +1,7 @@
 //! What each call saw: an edition's preprocessed text of a unit, read in
 //! order as the compiler reads it, and matched back to the source's text.
 
-use super::scan::{arms, body_of, bodies, cast_shape, is_function, prototyped, shape, Body, How};
+use super::scan::{arms, body_of, bodies, cast_shape, is_function, prototyped, shape, view_shape, Body, How};
 use crate::c_items::{declared, flat, Kind};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
@@ -24,8 +24,12 @@ pub(crate) struct Sight {
 
 #[derive(Default)]
 pub(crate) struct Expanded {
-    /// The functions this text defines for other code, as shapes.
+    /// The functions and objects this text defines for other code, as
+    /// shapes.
     pub defined: BTreeMap<String, String>,
+    /// What the headers on the search path declare of the wanted names:
+    /// each header and the shape it gives.
+    pub declared: BTreeMap<String, BTreeSet<(String, String)>>,
     /// The functions it defines `static`.
     pub hidden: BTreeSet<String>,
     pub sights: Vec<Sight>,
@@ -93,10 +97,19 @@ pub(crate) fn read(root: &str, text: &str, unit: &str, wanted: &dyn Fn(&str) -> 
         match piece.item.kind {
             Kind::Declaration => {
                 let all = declared(&piece.item);
+                let from = origin(piece.item.start).0;
                 for d in &all {
-                    if !d.typedef && wanted(&d.name) {
-                        declare(&mut global, &d.name, shape(&d.signature, &d.name));
+                    if d.typedef || !wanted(&d.name) {
+                        continue;
                     }
+                    let shape = shape(&d.signature, &d.name);
+                    let defines = !d.function && (!d.external || d.initialized);
+                    if defines && !d.local && from.ends_with(".c") {
+                        out.defined.insert(d.name.clone(), shape.clone());
+                    } else if !defines && super::model::spelling(&from).is_some() {
+                        out.declared.entry(d.name.clone()).or_default().insert((from.clone(), shape.clone()));
+                    }
+                    declare(&mut global, &d.name, shape);
                 }
                 if let Some(at) = piece.item.text.find('=') {
                     let code = &mask[piece.item.start + at..piece.item.end];
@@ -186,6 +199,7 @@ fn old(sight: &Sight) -> Option<String> {
     match &sight.how {
         How::Call => Some(sight.seen.clone().unwrap_or_else(|| IMPLICIT.to_string())),
         How::Cast(text) => cast_shape(text),
+        How::View { cast, deref } => view_shape(cast, *deref),
         How::Value => sight.seen.clone(),
     }
 }
@@ -243,10 +257,11 @@ pub(crate) fn pair(sources: &BTreeMap<String, Source>, expanded: &Expanded) -> (
                 }
             }
             for (sight, used) in matched {
-                // A cast the source writes itself stays as it is; a call
-                // may be a macro's cast, any other use is the same in both.
+                // A cast or view the source writes itself stays as it is;
+                // a macro's cast or view stands where the source writes a
+                // call or the bare name. A call pairs with no other use.
                 let call = used.how == How::Call;
-                if matches!(used.how, How::Cast(_)) || (call == (sight.how == How::Value)) {
+                if matches!(used.how, How::Cast(_) | How::View { .. }) || matches!((&used.how, &sight.how), (How::Call, How::Value) | (How::Value, How::Call | How::Cast(_))) {
                     continue;
                 }
                 if let Some(old) = old(sight) {

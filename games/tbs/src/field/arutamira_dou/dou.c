@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/arutamira_dou/dou.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/battle/effect/slots.h"

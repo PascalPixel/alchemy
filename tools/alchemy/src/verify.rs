@@ -585,6 +585,7 @@ mod tests {
             "dead",
             "aliases",
             "devices",
+            "headers",
             "hygiene",
             "object-list",
             "packer",

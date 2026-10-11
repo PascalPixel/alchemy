@@ -1,3 +1,5 @@
+#include "field_event.h"
+#include "unit/import.h"
 #include "unit/field/suhara_heya/heya.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"

@@ -19,8 +19,6 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-#define FieldScene_PrepareActors ((void (*)(void *))FieldScene_PrepareActors)
-
 extern u32 Placement_Messages[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
@@ -159,7 +157,6 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 
 void SceneDialogue_RunActor17Message1924(void)
 {
-	void Engine_EventEnd(void);
 
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgArutinTrueFoundAncientRuinsIn);
@@ -178,8 +175,6 @@ void SceneDialogue_RunActor9Message1932(void)
 
 void SceneDialogue_RunActor10Message18d9(void)
 {
-	void Engine_EventBegin(void);
-	void Engine_EventEnd(void);
 
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgArutinTryingFindYourWayWest);
@@ -218,8 +213,6 @@ s32 SceneActor_IsSlotZeroAngleInRange(void)
 
 void FieldScene_RunActorFifteenFlagBranch(void)
 {
-	void Engine_EventSetMessage();
-	void Engine_ShopOpen();
 
 	if (Engine_GameFlagIsSet(0x242) == 0)
 	{
@@ -249,9 +242,6 @@ void FieldScene_RunActorFifteenFlagBranch(void)
 
 void FieldScene_RunActorTwentyFlagBranch(void)
 {
-	void Engine_EventEnd(void);
-	void Engine_EventEnd(void);
-	void Engine_EventSetMessage(s32);
 
 	if (Engine_GameFlagIsSet(0x241) == 0)
 	{

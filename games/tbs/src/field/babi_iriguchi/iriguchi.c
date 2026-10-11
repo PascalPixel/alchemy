@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/babi_iriguchi/iriguchi.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/effect/move.h"
@@ -66,15 +67,6 @@ struct MotionEffect
 };
 
 extern u32 gBabiIriguchiExits[];
-
-void Engine_TaskWait(s32 frames);
-void Engine_EventWait(s32 frames);
-void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
-void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
-void Engine_ActorWaitForMove(s32 actor);
-void Engine_ActorSetAnimation(s32 actor, s32 mode);
-void Engine_MapCopyCellsLayered(
-	s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
 
 static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 {

@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/debug/menu_test/test.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/game/character/chara.h"
@@ -32,7 +33,6 @@
 void Engine_EventSetMessage(s16 message);
 
 void				Engine_AudioPlayCue(s32 cue);
-struct RenderInput *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 u8 *MenuTest_GetEntrances(void)
 {

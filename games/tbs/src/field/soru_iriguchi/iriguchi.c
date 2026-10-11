@@ -1,3 +1,4 @@
+#include "unit/import.h"
 #include "unit/field/soru_iriguchi/iriguchi.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -19,10 +20,6 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-
-#define FieldScene_PrepareActors ((void (*)(s32))FieldScene_PrepareActors)
-
-s32	 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 
 s32 SoruIriguchi_CueTimer __attribute__((section(".bss")));
 

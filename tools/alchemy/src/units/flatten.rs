@@ -120,7 +120,7 @@ fn source_path(root: &Path, object: &str) -> Option<String> {
     root.join(&path).is_file().then_some(path)
 }
 
-fn judged(root: &Path, edition: &str) -> Result<(DecompTarget, Vec<super::Judged>), String> {
+pub(super) fn judged(root: &Path, edition: &str) -> Result<(DecompTarget, Vec<super::Judged>), String> {
     let target = decomp_target(Some(edition))?;
     let build = Build { root: root.to_path_buf(), dir: root.join(target.output_dir), name: edition.to_string(), compiler: target.compiler };
     let judged = load::load(&build)?

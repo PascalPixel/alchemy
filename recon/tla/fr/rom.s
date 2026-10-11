@@ -1100,12 +1100,12 @@ Func_0803dd98:
 	.thumb_func
 Func_0803df00:
 	.incbin "baserom.gba", 0x0003df44, 0x00000014
-	.section .rom.0003df58, "ax"
-	.global Resource_ScheduleOwnerReset
-	.type Resource_ScheduleOwnerReset, %function
+	.section .rom.0003df68, "ax"
+	.global Func_0803df24
+	.type Func_0803df24, %function
 	.thumb_func
-Resource_ScheduleOwnerReset:
-	.incbin "baserom.gba", 0x0003df58, 0x00000694
+Func_0803df24:
+	.incbin "baserom.gba", 0x0003df68, 0x00000684
 	.section .rom.0003e7b8, "ax"
 	.global Func_0803e774
 	.type Func_0803e774, %function
@@ -3133,13 +3133,8 @@ BattleFx_SetupObjectPair:
 	.thumb_func
 Func_080dc6d8:
 	.incbin "baserom.gba", 0x000e16cc, 0x000000f4
-	.section .rom.000e17c0, "ax"
-	.global EffectRuntime_StopCurrentObject
-	.type EffectRuntime_StopCurrentObject, %function
-	.thumb_func
-EffectRuntime_StopCurrentObject:
-	.incbin "baserom.gba", 0x000e17c0, 0x0000001c
 	.section .rom.000e17dc, "ax"
+	.balign 4
 	.global BattleEffect_CleanupSceneObjects
 	.type BattleEffect_CleanupSceneObjects, %function
 	.thumb_func
@@ -4390,12 +4385,9 @@ SummonFx_RunCanvasEffect:
 	.thumb_func
 Func_08151ff0:
 	.incbin "baserom.gba", 0x00151ff0, 0x00000480
-	.section .rom.00152470, "ax"
-	.global BattleFx_RunNoEffect
-	.type BattleFx_RunNoEffect, %function
-	.thumb_func
-BattleFx_RunNoEffect:
-	.incbin "baserom.gba", 0x00152470, 0x00000084
+	.section .rom.00152474, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00152474, 0x00000080
 	.section .rom.0015265a, "ax"
 	.incbin "baserom.gba", 0x0015265a, 0x00000002
 	.section .rom.0015265c, "ax"

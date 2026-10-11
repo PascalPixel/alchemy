@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global BattleEffect_CleanupSceneObjects
 	.thumb_func
 BattleEffect_CleanupSceneObjects:

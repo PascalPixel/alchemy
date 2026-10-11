@@ -6529,46 +6529,8 @@ Func_02004cf4:
 	.4byte MsgRightWellI
 .L_0200d030:
 	.4byte 0x00019999
-	.section .text.x0200d114,"ax",%progbits
-	.balign 4
-	.global Func_02005114
-	.thumb_func
-Func_02005114:
-	push {lr}
-	movs r1, #176
-	movs r2, #157
-	lsls r2, r2, #17
-	lsls r1, r1, #15
-	movs r0, #11
-	bl Func_02005b0c
-	movs r0, #11
-	bl Object_GetById
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	movs r0, #11
-	bl Object_GetById
-	movs r3, #128
-	lsls r3, r3, #8
-	str r3, [r0, #28]
-	bl Func_020050ac
-	movs r0, #128
-	lsls r0, r0, #4
-	adds r0, #107
-	bl GameFlag_ClearBit
-	movs r0, #25
-	bl Func_02005b8c
-	movs r0, #25
-	movs r1, #2
-	bl Object_SetModeById
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_0200d168
-	bl Scheduler_AddOrUpdateCallback
-	bl Func_02003184
-	pop {pc}
-.L_0200d168:
-	.4byte Func_02003030
 	.section .text.x0200d16c,"ax",%progbits
+	.balign 4
 	.global Func_0200516c
 	.thumb_func
 Func_0200516c:

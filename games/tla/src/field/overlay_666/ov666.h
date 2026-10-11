@@ -103,11 +103,6 @@ static inline void Ov666_ObjTurn(s32 actor, s32 angle)
     Func_02000b4c(actor, angle);
 }
 
-static inline void Ov666_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
-{
-    /* FAKEMATCH: the blend start reaches the engine through one inline layer. */
-}
-
 static inline s32 Ov666_FlagChk(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
@@ -163,11 +158,6 @@ static inline void Ov666_ObjWalk(s32 actor, s32 x, s32 z)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     ObjectMotion_SetPositionAndReset(actor, x, z);
-}
-
-static inline void Ov666_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
-{
-    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
 }
 
 static inline void Ov666_Wait(s32 frames)

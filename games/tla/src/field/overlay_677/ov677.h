@@ -94,16 +94,6 @@ void Event_WaitTransitionFrames(void);
 void Func_02000a48(s32 a);
 void Event_StartScreenTransition(void);
 
-static inline void Ov677_ObjTurn(s32 actor, s32 angle)
-{
-    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-}
-
-static inline void Ov677_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
-{
-    /* FAKEMATCH: the blend start reaches the engine through one inline layer. */
-}
-
 static inline s32 Ov677_FlagChk(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
@@ -159,20 +149,10 @@ static inline void Ov677_ObjWalk(s32 actor, s32 x, s32 z)
     ObjectMotion_SetPositionAndReset(actor, x, z);
 }
 
-static inline void Ov677_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
-{
-    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-}
-
 static inline void Ov677_Wait(s32 frames)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Battle_WaitMode0(frames);
-}
-
-static inline void Ov677_SePlay(s32 cue)
-{
-    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
 }
 
 static inline void Ov677_WaitFrames(s32 frames)
@@ -187,11 +167,6 @@ static inline void Ov677_WaitFrames(s32 frames)
         s32 priority_ = (priority); \
         Scheduler_AddOrUpdateCallback((callback), priority_); \
     }
-
-static inline void Ov677_ObjEmoteWait(s32 actor, s32 emote)
-{
-    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-}
 
 static inline void Ov677_TaskAdd(void (*callback)(void), s32 priority)
 {

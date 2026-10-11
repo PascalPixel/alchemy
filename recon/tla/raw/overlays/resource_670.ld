@@ -55,7 +55,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_670/s5034.o"(.text)
         "*/games/tla/src/field/overlay_670/prepare.o"(.text)
         "*/games/tla/src/field/overlay_670/s50ac.o"(.text)
-        "*/resource_670_overlay.o"(.text.x0200d114)
         "*/resource_670_overlay.o"(.text.x0200d16c)
         "*/resource_670_overlay.o"(.text.x0200d38c)
         "*/resource_670_overlay.o"(.text.x0200d4e0)

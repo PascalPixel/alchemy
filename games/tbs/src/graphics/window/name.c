@@ -261,6 +261,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
     union MenuCursor cursor;
     union MenuCursor caret;
     s32 column, row, slot;
+    struct RenderOutput *output;
     u8 *end;
     u16 *pal;
 
@@ -296,17 +297,17 @@ s32 NameEntry_EditOwnerName(s32 entry)
     row = 5;
     if (slot <= 95) {
         VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
-        slot = (s32)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
-        cursor.output = (struct RenderOutput *)slot;
+        output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+        cursor.output = output;
         ShopCursor_SetPositionImmediateFar(&cursor, window->x * 8 + 140, window->y * 8 + 52);
     }
     slot = Resource_FindFreeEntry();
     if (slot <= 95) {
         VramBlock_LoadCached(slot, 128, Resource_FixedBlockATiles);
-        slot = (s32)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
-        caret.output = (struct RenderOutput *)slot;
-        ((struct RenderOutput *)slot)->sentinel = 255;
-        ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->priority = 0;
+        output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+        caret.output = output;
+        output->sentinel = 255;
+        ((struct FieldSprite *)output->unknown_10)->priority = 0;
         ShopCursor_SetPositionImmediateFar(&caret, UiText_SetRenderString(input) + 70, 22);
     }
     pal = (u16 *)0x050001c0;
@@ -338,10 +339,9 @@ s32 NameEntry_EditOwnerName(s32 entry)
         {
             u32 frame = (gFrameTick >> 1) & 7;
 
-            /* FAKEMATCH: needed to match: slot carries the caret sprite here too; a pointer of its own takes r4 instead of r5. */
-            slot = (s32)caret.output;
-            ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->x = ((struct RenderOutput *)slot)->x + NameEntry_CaretWave[frame];
-            ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->y = ((struct RenderOutput *)slot)->y + NameEntry_CaretWave[(frame + 5) & 7];
+            output = caret.output;
+            ((struct FieldSprite *)output->unknown_10)->x = output->x + NameEntry_CaretWave[frame];
+            ((struct FieldSprite *)output->unknown_10)->y = output->y + NameEntry_CaretWave[(frame + 5) & 7];
         }
         if (gKeysRepeat & KEY_UP) {
             AudioCommand_PlayFar(111);
@@ -501,6 +501,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
     union MenuCursor cursor;
     union MenuCursor caret;
     s32 column, row, slot, x;
+    struct RenderOutput *output;
     u32 character;
     u16 *pal;
 
@@ -534,17 +535,17 @@ s32 NameEntry_EditOwnerName(s32 entry)
     row = 10;
     if (slot <= 95) {
         VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
-        slot = (s32)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
-        cursor.output = (struct RenderOutput *)slot;
+        output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+        cursor.output = output;
         ShopCursor_SetPositionImmediateFar(&cursor, window->x * 8 + 140, window->y * 8 + 92);
     }
     slot = Resource_FindFreeEntry();
     if (slot <= 95) {
         VramBlock_LoadCached(slot, 128, Resource_FixedBlockATiles);
-        slot = (s32)RenderOutput_Create(slot, 0x40000000, window, 0, 0);
-        caret.output = (struct RenderOutput *)slot;
-        ((struct RenderOutput *)slot)->sentinel = 255;
-        ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->priority = 0;
+        output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+        caret.output = output;
+        output->sentinel = 255;
+        ((struct FieldSprite *)output->unknown_10)->priority = 0;
         x = 72 + NameEntry_CountLetters(input) * 10;
         ShopCursor_SetPositionImmediateFar(&caret, x, 22);
     }
@@ -579,10 +580,9 @@ s32 NameEntry_EditOwnerName(s32 entry)
         {
             u32 frame = (gFrameTick >> 1) & 7;
 
-            /* FAKEMATCH: needed to match: slot carries the caret sprite here too; a pointer of its own takes r4 instead of r5. */
-            slot = (s32)caret.output;
-            ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->x = ((struct RenderOutput *)slot)->x + NameEntry_CaretWave[frame];
-            ((struct FieldSprite *)((struct RenderOutput *)slot)->unknown_10)->y = ((struct RenderOutput *)slot)->y + NameEntry_CaretWave[(frame + 5) & 7];
+            output = caret.output;
+            ((struct FieldSprite *)output->unknown_10)->x = output->x + NameEntry_CaretWave[frame];
+            ((struct FieldSprite *)output->unknown_10)->y = output->y + NameEntry_CaretWave[(frame + 5) & 7];
         }
         if (gKeysRepeat & KEY_UP) {
             AudioCommand_PlayFar(111);

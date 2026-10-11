@@ -987,9 +987,6 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
     return 0;
 }
 
-#define WINDOW_HALF(window, type, field) \
-    (*(type *)((u8 *)(window) + (u32)&(((struct UiWindow *)0)->field)))
-
 struct UiWindowInterpolationScratch {
     s32 scaled_part;
     s32 scaled_duration;
@@ -1049,9 +1046,9 @@ loop:
         goto loop;
 }
 
-void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
+void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 save_position)
 {
-    /* FAKEMATCH: needed to match: the halfword window view keeps geometry reads before scratch stores; direct fields reorder them. */
+    struct UiWindow *window = arg;
     struct UiWindowInterpolationScratch scratch;
     s32 frame;
     s32 duration;
@@ -1061,44 +1058,32 @@ void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
     s32 width;
     s32 height;
 
-    frame = WINDOW_HALF(window, s16, frame);
-    duration = WINDOW_HALF(window, s16, duration);
+    frame = (s16)window->frame;
+    duration = window->duration;
     remaining = duration - frame;
-    scratch.scaled_part =
-        (frame *WINDOW_HALF(window, u16, width)) << 16;
+    scratch.scaled_part = (frame * window->width) << 16;
     scratch.scaled_duration = duration << 17;
-    scratch.result =
-        Iwram_RatioMulQ14(
-            scratch.scaled_duration, scratch.scaled_part);
-    x = (scratch.result >> 16) + WINDOW_HALF(window, u16, x);
+    scratch.result = Iwram_RatioMulQ14(scratch.scaled_duration, scratch.scaled_part);
+    x = (scratch.result >> 16) + window->x;
 
-    scratch.scaled_part =
-        (remaining *WINDOW_HALF(window, u16, width)) << 16;
-    scratch.result =
-        Iwram_RatioMulQ14(
-            scratch.scaled_duration, scratch.scaled_part);
+    scratch.scaled_part = (remaining * window->width) << 16;
+    scratch.result = Iwram_RatioMulQ14(scratch.scaled_duration, scratch.scaled_part);
     width = scratch.result >> 15;
 
-    scratch.scaled_part =
-        (frame *WINDOW_HALF(window, u16, height)) << 16;
-    scratch.scaled_duration = WINDOW_HALF(window, s16, duration) << 17;
-    scratch.result =
-        Iwram_RatioMulQ14(
-            scratch.scaled_duration, scratch.scaled_part);
-    y = (scratch.result >> 16) + WINDOW_HALF(window, u16, y);
+    scratch.scaled_part = (frame * window->height) << 16;
+    scratch.scaled_duration = window->duration << 17;
+    scratch.result = Iwram_RatioMulQ14(scratch.scaled_duration, scratch.scaled_part);
+    y = (scratch.result >> 16) + window->y;
 
-    scratch.scaled_part =
-        (remaining *WINDOW_HALF(window, u16, height)) << 16;
-    scratch.result =
-        Iwram_RatioMulQ14(
-            scratch.scaled_duration, scratch.scaled_part);
+    scratch.scaled_part = (remaining * window->height) << 16;
+    scratch.result = Iwram_RatioMulQ14(scratch.scaled_duration, scratch.scaled_part);
     height = scratch.result >> 15;
 
     UiWindow_DrawFrame(x, y, width, height);
     if (save_position != 0) {
-        WINDOW_HALF(window, u16, previous_x) = x;
-        WINDOW_HALF(window, u16, previous_y) = y;
-        WINDOW_HALF(window, u16, previous_width) = width;
-        WINDOW_HALF(window, u16, previous_height) = height;
+        window->previous_x = x;
+        window->previous_y = y;
+        window->previous_width = width;
+        window->previous_height = height;
     }
 }

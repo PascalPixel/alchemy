@@ -72,10 +72,10 @@ u8 *TorebiHeya_SelectEvents(void)
 
 void TorebiHeya_StartWindowTransition(void)
 {
-    u8 *state = (u8 *)gEventWork;
+    struct EventWork *state = gEventWork;
 
-    *(s32 *)(state + 0x1C0) = 0x201;
-    *(s32 *)(state + 0x1C8) = 24;
+    state->start_transition = 0x201;
+    state->transition_frames = 24;
     ((void (*)(void))Engine_EventRequestExit)();
 }
 

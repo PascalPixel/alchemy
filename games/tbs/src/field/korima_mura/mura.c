@@ -257,13 +257,13 @@ void FieldScene_ConfigureActor0ThenRun(s32 a0)
 
 void KorimaMura_AnimateSwitchOrExit(void)
 {
-    u8 *work = (u8 *)gEventWork;
+    struct EventWork *work = gEventWork;
     s32 x = 0;
     s32 y = 0;
 
     Engine_EventBegin();
     Engine_AudioPlayCue(158);
-    switch (*(s16 *)(work + 0x16c)) {
+    switch (work->touched_trigger) {
     case 5:
         x = 71;
         y = 9;
@@ -284,13 +284,13 @@ void KorimaMura_AnimateSwitchOrExit(void)
         Object_GetById(0)->motion_flags = 0;
         Actor_SetSpeed(0, 0x8000, 0x4000);
         Engine_ActorSetDestinationOffset(0, 0, 8);
-        *(s32 *)((u8 *)gEventWork + 0x1c8) = 16;
+        gEventWork->transition_frames = 16;
         Engine_EventRequestExit(9);
         Engine_EventEnd();
         return;
     }
     Engine_MapAnimateCells(KorimaMura_SwitchCells, x, y);
-    FieldScene_ConfigureActor0ThenRun(*(s16 *)(work + 0x16c));
+    FieldScene_ConfigureActor0ThenRun(work->touched_trigger);
     Engine_EventEnd();
 }
 
@@ -394,7 +394,7 @@ s32 Scene_Initialize(void)
     }
 
     if (scene == (s32)&SceneId_KorimaMura2) {
-        *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x204;
+        gEventWork->start_transition = 0x204;
         return 0;
     }
 

@@ -138,11 +138,11 @@ void Scene_ApplyOffset0Neg6(void)
 
 void ToretoEda_PlayCueAndSelectTouchedExit(void)
 {
-    u8 *state = (u8 *)gEventWork;
+    struct EventWork *state = gEventWork;
     s16 *cnt;
 
     Engine_AudioPlayCue(0x7B);
-    cnt = (s16 *)(state + 0x16C);
+    cnt = &state->touched_trigger;
     Engine_EventRequestExit(*cnt);
 }
 

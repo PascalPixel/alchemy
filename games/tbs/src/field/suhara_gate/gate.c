@@ -141,7 +141,7 @@ void Scene_RunScene3c3SequenceC(void)
     s32 arg;
     s32 v5;
 
-    arg = *(s16 *)(*(u8 **)&gEventWork + 0x16c);
+    arg = gEventWork->touched_trigger;
     Actor_Get(0)->motion_flags = 0;
     v5 = 2;
     Event_PlayCue(158);
@@ -155,7 +155,7 @@ void Scene_RunScene3c3SequenceC(void)
 
 void Dialogue_ShowMessages8fbAnd8fc(void)
 {
-    s16 token = *(s16 *)((u8 *)gEventWork + 364);
+    s16 token = gEventWork->touched_trigger;
 
     Engine_AudioPlayCue(123);
     Engine_GameFlagClear(0x8FB);

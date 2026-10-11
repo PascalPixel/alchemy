@@ -148,7 +148,7 @@ void SceneDialogue_RunFlag81aMessageBranch(void)
     } else {
         Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);
         if (Engine_GameFlagIsSet(0xf01) != 0) {
-            u16 *p = (u16 *)((u8 *)gEventWork + 370);
+            u16 *p = &gEventWork->unknown_172;
             u16 val = 1;
             *p = val;
         }
@@ -207,18 +207,18 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 void FieldScene_RunFlag821Dialogue(void)
 {
 
-    u8 *work;
+    struct EventWork *work;
 
     Engine_EventBegin();
 
     if (Engine_GameFlagIsSet(0x821) != 0) {
         Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefBothEyes, 1);
     } else if (Engine_GameFlagIsSet(0xf02) != 0) {
-        work = (u8 *)gEventWork;
+        work = gEventWork;
         Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);
         {
 
-            u16 *frame = (u16 *)(work + 370);
+            u16 *frame = &work->unknown_172;
             s32 one = 1;
             *frame = (u16)one;
         }
@@ -507,7 +507,7 @@ s32 Scene_Initialize(void)
 void SoruIriguchi_ApplyEntryState(void)
 {
     GameFlag_Set(0x144);
-    *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x100;
+    gEventWork->start_transition = 0x100;
     if (GameFlag_IsSet(0x814) != 0) {
         SoruIriguchi_CueTimer = 0;
         Task_AddCallback((void (*)(void))Scene_UpdateCueTimer, 0xc80);

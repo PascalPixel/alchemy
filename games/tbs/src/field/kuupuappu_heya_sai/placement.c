@@ -295,7 +295,7 @@ s32 FieldScene_InitSceneStateByStep(void)
     s32 scene;
     s32 zero;
 
-    *(s32 *)((u8 *)gEventWork + 448) = 521;
+    gEventWork->start_transition = 521;
     scene = gGameState.entrance;
 
     if (scene == 5) {

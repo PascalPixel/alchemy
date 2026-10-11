@@ -252,7 +252,7 @@ void SceneDialogue_RunActor9LineAndAdvance(void)
 
 void ActorPresentation_RunActorThirteenSceneSetup(void)
 {
-    u8 *workspace;
+    struct EventWork *workspace;
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKuupuappuThoseTravelersLeftInBig);
@@ -260,8 +260,8 @@ void ActorPresentation_RunActorThirteenSceneSetup(void)
     SceneActor_ApplyActorCueThenWait(13, 0, 2);
     Engine_EventOpenMessage(13, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        workspace = (u8 *)gEventWork;
-        ++*(u16 *)(workspace + 472);
+        workspace = gEventWork;
+        ++workspace->message;
     }
     Engine_EventShowMessage(13, 0);
     Engine_EventEnd();
@@ -269,15 +269,15 @@ void ActorPresentation_RunActorThirteenSceneSetup(void)
 
 void ActorPresentation_RunActorSeventeenSceneSetup(void)
 {
-    u8 *workspace;
+    struct EventWork *workspace;
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKuupuappuAccusingUsStealingHammetsTreasured);
     SceneActor_ApplyActorCueThenWait(17, 0, 2);
     Engine_EventOpenMessage(17, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        workspace = (u8 *)gEventWork;
-        ++*(u16 *)(workspace + 472);
+        workspace = gEventWork;
+        ++workspace->message;
     }
     Engine_EventShowMessage(17, 0);
     Engine_EventEnd();
@@ -285,15 +285,15 @@ void ActorPresentation_RunActorSeventeenSceneSetup(void)
 
 void ActorPresentation_RunActorEighteenSceneSetup(void)
 {
-    u8 *workspace;
+    struct EventWork *workspace;
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKuupuappuOffOnAdventure);
     SceneActor_ApplyActorCueThenWait(18, 0, 2);
     Engine_EventOpenMessage(18, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        workspace = (u8 *)gEventWork;
-        ++*(u16 *)(workspace + 472);
+        workspace = gEventWork;
+        ++workspace->message;
     }
     Engine_EventShowMessage(18, 0);
     Engine_EventEnd();
@@ -376,9 +376,9 @@ void SceneActor_RunActorCommandWithFlag91(s32 x)
 
 void ActorPresentation_RunActorEightSceneSetup(void)
 {
-    u8 *workspace;
+    struct EventWork *workspace;
     Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuYoureHittingRoadAgain); SceneActor_ApplyActorCueThenWait(8, 0, 2); Engine_EventOpenMessage(8, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0) { workspace = (u8 *)gEventWork; ++*(u16 *)(workspace + 472); }
+    if (Engine_EventChooseYesNo(0, 0) != 0) { workspace = gEventWork; ++workspace->message; }
     Engine_EventShowMessage(8, 0); Engine_EventEnd();
 }
 
@@ -386,9 +386,9 @@ void SceneDialogue_RunActor11SecondLine(void) { Engine_EventBegin(); Engine_Even
 
 void SceneDialogue_RunActor12LineAndAdvance(void)
 {
-    u8 *workspace;
+    struct EventWork *workspace;
     Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuTalkingAboutHammetsServantIvan);
-    if (Engine_GameFlagIsSet(2) != 0) { workspace = (u8 *)gEventWork; ++*(u16 *)(workspace + 472); }
+    if (Engine_GameFlagIsSet(2) != 0) { workspace = gEventWork; ++workspace->message; }
     SceneActor_RunActorStep(12); Engine_EventEnd();
 }
 
@@ -435,17 +435,17 @@ void ActorPresentation_RunActorFifteenFollowupDialogue(void)
 
 void ActorPresentation_RunActorSixteenSceneSetup(void)
 {
-    u8 *workspace;
+    struct EventWork *workspace;
     Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuThoseMenCapturedTheyreIn); Engine_ActorSetAnimation(16, 1); SceneActor_ApplyActorCueThenWait(16, 0, 2); Engine_EventOpenMessage(16, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0) { workspace = (u8 *)gEventWork; ++*(u16 *)(workspace + 472); }
+    if (Engine_EventChooseYesNo(0, 0) != 0) { workspace = gEventWork; ++workspace->message; }
     Engine_EventShowMessage(16, 0); Engine_EventEnd();
 }
 
 void ActorPresentation_RunActorEighteenFollowupSceneSetup(void)
 {
-    u8 *workspace;
+    struct EventWork *workspace;
     Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuOnesWhoCapturedThieves); SceneActor_ApplyActorCueThenWait(18, 0, 2); Engine_EventOpenMessage(18, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0) { workspace = (u8 *)gEventWork; ++*(u16 *)(workspace + 472); }
+    if (Engine_EventChooseYesNo(0, 0) != 0) { workspace = gEventWork; ++workspace->message; }
     Engine_EventShowMessage(18, 0); Engine_EventEnd();
 }
 
@@ -458,7 +458,7 @@ void ActorPresentation_RunActorNineteenDialogueAndSetSceneState(void)
     Engine_EventShowMessage(19, 0);
     Engine_ActorSetAnimation(19, 1);
     if (PartyInventory_FindOwner(231) != -1 && Engine_GameFlagIsSet(0x858) == 0) {
-        u16 *p = (u16 *)((u8 *)gEventWork + 370);
+        u16 *p = &gEventWork->unknown_172;
         u16 value = 1;
 
         *p = value;

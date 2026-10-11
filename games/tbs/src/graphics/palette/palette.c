@@ -190,69 +190,40 @@ void Menu_AdvanceWorkspaceIndexModulo3(struct WorkspaceWork *work)
         work->page = 0;
 }
 
-void GraphicsPalette_DecrementSelectedCounter(s32 work)
+void GraphicsPalette_DecrementSelectedCounter(struct WorkspaceWork *work)
 {
-    /* FAKEMATCH: needed to match: byte-lane arithmetic preserves address additions that direct fields fold into literal offsets. */
-    u8 *p;
-    u16 sel;
-    s32 off;
-
-    sel = ((struct WorkspaceWork *)work)->page;
-    switch (sel) {
+    switch (work->page) {
     case 0:
-        off = (u32)&((struct GameState *)0)->message_speed;
-        p = (u8 *)&gGameState + off;
+        if (gGameState.message_speed != 0)
+            gGameState.message_speed--;
         break;
     case 1:
-        off = (u32)&((struct GameState *)0)->palette_glow[0];
-        p = (u8 *)&gGameState + off;
+        if (gGameState.palette_glow[0] != 0)
+            gGameState.palette_glow[0]--;
         break;
     case 2:
-        off = (u32)&((struct GameState *)0)->palette_glow[1];
-        p = (u8 *)&gGameState + off;
+        if (gGameState.palette_glow[1] != 0)
+            gGameState.palette_glow[1]--;
         break;
-    default:
-        return;
-    }
-    if (*p) {
-        (*p)--;
     }
 }
 
-void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
+void GraphicsPalette_AdjustSelectionCounter(struct WorkspaceWork *work)
 {
-    /* FAKEMATCH: needed to match: byte-lane arithmetic preserves address additions that direct fields fold into literal offsets. */
-    u8 *sp;
-    u16 sel;
-    s32 off;
-
-    sel = ((struct WorkspaceWork *)arg0)->page;
-    switch (sel) {
+    switch (work->page) {
     case 0:
-        off = (u32)&((struct GameState *)0)->message_speed;
-        sp = (u8 *)&gGameState + off;
-        if (*sp <= 1) {
-            break;
-        }
-        return;
+        if (gGameState.message_speed <= 1)
+            gGameState.message_speed++;
+        break;
     case 1:
-        off = (u32)&((struct GameState *)0)->palette_glow[0];
-        sp = (u8 *)&gGameState + off;
-        if (*sp <= 23) {
-            break;
-        }
-        return;
+        if (gGameState.palette_glow[0] <= 23)
+            gGameState.palette_glow[0]++;
+        break;
     case 2:
-        off = (u32)&((struct GameState *)0)->palette_glow[1];
-        sp = (u8 *)&gGameState + off;
-        if (*sp <= 14) {
-            break;
-        }
-        return;
-    default:
-        return;
+        if (gGameState.palette_glow[1] <= 14)
+            gGameState.palette_glow[1]++;
+        break;
     }
-    (*sp)++;
 }
 
 void GraphicsPalette_SelectionNoOp(void)

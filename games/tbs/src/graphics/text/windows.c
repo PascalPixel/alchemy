@@ -108,7 +108,7 @@ typedef char BattleMessageSlotRange_InBank[
 void UiText_PrepareMessageWork(s32 argument)
 {
     s32 index;
-    s32 result;
+    struct UiChannelSlot *result;
     struct UiWindow *existing;
     struct UiWindow *work;
     struct UiRenderWork *state;
@@ -116,8 +116,8 @@ void UiText_PrepareMessageWork(s32 argument)
 
     state = ((struct BattleMessageSlotRange *)gWindowWork)->render;
     control = ((struct BattleMessageSlotRange *)gWindowWork)->display;
-    /* FAKEMATCH: needed to match: result is cleared before the entry lookup and later carries the channel pointer as a scalar; without the early 0 the function differs 47. */
-    result = 0;
+    /* FAKEMATCH: needed to match: result is cleared before the entry lookup, though it is assigned again before it is read; that zero's register clears marked below (47 differ without it). */
+    result = NULL;
     state->menu_state = 2;
     index = UiText_BuildRenderEntries(argument, 1);
     state->menu_state = 1;
@@ -133,10 +133,10 @@ void UiText_PrepareMessageWork(s32 argument)
             work = existing;
         }
         if (work != NULL) {
-            result = (s32)UiWork_ActivateChannel(work, index, control->marked);
+            result = UiWork_ActivateChannel(work, index, control->marked);
             control->offset = (struct BattleDisplayOffset *)result;
             control->marked = 0;
-            if (result == 0) {
+            if (result == NULL) {
                 UiWork_Finalize(work, 1);
             }
         }

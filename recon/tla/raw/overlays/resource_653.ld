@@ -103,7 +103,7 @@ SECTIONS
         "*/resource_653_overlay.o"(.text.x0200cfb4)
         "*/resource_653_overlay.o"(.text.x0200d028)
         "*/games/tla/src/field/overlay_653/import.o"(.text)
-        "*/resource_653_overlay.o"(.rodata.x0200d3e0)
+        "*/games/tla/src/field/overlay_653/data.o"(.data)
     }
     .bss : { "*/resource_653_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

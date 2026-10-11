@@ -38,7 +38,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6af/prepare.o"(.text)
         "*/games/tla/src/field/overlay_6af/s0f4c.o"(.text)
         "*/games/tla/src/field/overlay_6af/import.o"(.text)
-        "*/resource_6af_overlay.o"(.rodata.x02009074)
+        "*/games/tla/src/field/overlay_6af/data.o"(.data)
     }
     .bss : { "*/resource_6af_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

@@ -66,7 +66,7 @@ SECTIONS
         "*/resource_656_overlay.o"(.text.x0200a970)
         "*/resource_656_overlay.o"(.text.x0200ab98)
         "*/games/tla/src/field/overlay_656/import.o"(.text)
-        "*/resource_656_overlay.o"(.rodata.x0200ade8)
+        "*/games/tla/src/field/overlay_656/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

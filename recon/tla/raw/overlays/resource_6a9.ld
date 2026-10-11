@@ -39,7 +39,7 @@ SECTIONS
         "*/resource_6a9_overlay.o"(.text.x02008f98)
         "*/resource_6a9_overlay.o"(.text.x02008fe4)
         "*/games/tla/src/field/overlay_6a9/import.o"(.text)
-        "*/resource_6a9_overlay.o"(.rodata.x0200916c)
+        "*/games/tla/src/field/overlay_6a9/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

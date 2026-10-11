@@ -70,7 +70,7 @@ SECTIONS
         "*/resource_65f_overlay.o"(.text.x0200a694)
         "*/resource_65f_overlay.o"(.text.x0200b878)
         "*/games/tla/src/field/overlay_65f/import.o"(.text)
-        "*/resource_65f_overlay.o"(.rodata.x0200d39c)
+        "*/games/tla/src/field/overlay_65f/data.o"(.data)
     }
     .bss : { "*/resource_65f_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

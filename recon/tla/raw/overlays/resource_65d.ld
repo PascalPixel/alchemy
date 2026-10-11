@@ -15,7 +15,7 @@ SECTIONS
         "*/resource_65d_overlay.o"(.text.x02008438)
         "*/games/tla/src/field/overlay_65d/events_c.o"(.text)
         "*/games/tla/src/field/overlay_65d/import.o"(.text)
-        "*/resource_65d_overlay.o"(.rodata.x020086f8)
+        "*/games/tla/src/field/overlay_65d/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

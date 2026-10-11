@@ -117,7 +117,7 @@ SECTIONS
         "*/resource_670_overlay.o"(.text.x0200d898)
         "*/resource_670_overlay.o"(.text.x0200d994)
         "*/games/tla/src/field/overlay_670/import.o"(.text)
-        "*/resource_670_overlay.o"(.rodata.x0200dca4)
+        "*/games/tla/src/field/overlay_670/data.o"(.data)
     }
     .bss : { "*/resource_670_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

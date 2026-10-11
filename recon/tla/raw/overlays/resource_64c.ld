@@ -40,6 +40,9 @@ SECTIONS
         "*/resource_64c_overlay.o"(.text.x02009eb8)
         "*/games/tla/src/field/overlay_64c/import.o"(.text)
         "*/resource_64c_overlay.o"(.rodata.x0200a0bc)
+        "*/games/tla/src/field/overlay_64c/data.o"(.data)
+        "*/resource_64c_overlay.o"(.rodata.x0200aebc)
+        "*/games/tla/src/field/overlay_64c/data2.o"(.data)
     }
     .bss : { "*/resource_64c_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

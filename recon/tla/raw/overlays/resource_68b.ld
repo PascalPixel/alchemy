@@ -29,7 +29,7 @@ SECTIONS
         "*/resource_68b_overlay.o"(.text.x02009160)
         "*/resource_68b_overlay.o"(.text.x02009b3c)
         "*/games/tla/src/field/overlay_68b/import.o"(.text)
-        "*/resource_68b_overlay.o"(.rodata.x02009d84)
+        "*/games/tla/src/field/overlay_68b/data.o"(.data)
     }
     .bss : { "*/resource_68b_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

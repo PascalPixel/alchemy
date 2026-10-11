@@ -31,7 +31,7 @@ SECTIONS
         "*/resource_687_overlay.o"(.text.x02009cdc)
         "*/games/tla/src/field/overlay_687/fade.o"(.text)
         "*/games/tla/src/field/overlay_687/import.o"(.text)
-        "*/resource_687_overlay.o"(.rodata.x0200a05c)
+        "*/games/tla/src/field/overlay_687/data.o"(.data)
     }
     .bss : { "*/resource_687_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

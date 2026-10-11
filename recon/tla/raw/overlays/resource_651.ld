@@ -25,7 +25,7 @@ SECTIONS
         "*/resource_651_overlay.o"(.text.x02008b44)
         "*/resource_651_overlay.o"(.text.x02008c30)
         "*/games/tla/src/field/deri_mura/import.o"(.text)
-        "*/resource_651_overlay.o"(.rodata.x02008d80)
+        "*/games/tla/src/field/deri_mura/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

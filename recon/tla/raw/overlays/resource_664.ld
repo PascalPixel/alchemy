@@ -91,7 +91,7 @@ SECTIONS
         "*/resource_664_overlay.o"(.text.x0200d1f8)
         "*/resource_664_overlay.o"(.text.x0200dcb8)
         "*/games/tla/src/field/overlay_664/import.o"(.text)
-        "*/resource_664_overlay.o"(.rodata.x0200df9c)
+        "*/games/tla/src/field/overlay_664/data.o"(.data)
     }
     .bss : { "*/resource_664_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

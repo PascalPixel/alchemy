@@ -584,40 +584,6 @@ Func_02000490:
 	.4byte 0x06003000
 .L_02008570:
 	.4byte gBgScroll
-	.section .rodata.x0200864c,"a",%progbits
-	.global gSceneEntrances
-gSceneEntrances:
-	.4byte 0xffff0000
-	.4byte 0x00000000
-	.4byte 0x40000000
-	.4byte 0xffff0000
-	.4byte 0xffffffff
-	.4byte 0x0000ffff
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global gSceneExits
-gSceneExits:
-	.4byte 0x000001ff
-	.global gScenePlacements
-gScenePlacements:
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global gSceneEvents
-gSceneEvents:
-	.4byte 0xffffffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global gTitleVramBlock
-gTitleVramBlock:
-	.2byte 0xffff
 	.section .bss,"aw",%nobits
 	.space 0x00000036
 	.global Data_020006dc

@@ -23,7 +23,7 @@ SECTIONS
         "*/games/tla/src/field/vinasu_chojo/prepare.o"(.text)
         "*/games/tla/src/field/vinasu_chojo/leave.o"(.text)
         "*/games/tla/src/field/vinasu_chojo/import.o"(.text)
-        "*/resource_64e_overlay.o"(.rodata.x02009ce4)
+        "*/games/tla/src/field/vinasu_chojo/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

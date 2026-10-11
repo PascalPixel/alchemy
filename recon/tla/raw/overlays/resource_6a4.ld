@@ -50,6 +50,7 @@ SECTIONS
         "*/resource_6a4_overlay.o"(.text.x0200a888)
         "*/games/tla/src/field/overlay_6a4/import.o"(.text)
         "*/resource_6a4_overlay.o"(.rodata.x0200ab70)
+        "*/games/tla/src/field/overlay_6a4/data.o"(.data)
     }
     .bss : { "*/resource_6a4_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

@@ -287,7 +287,6 @@ main	rom_main_04	games/tbs/src/battle/effect/scene	.text
 main	rom_main_04	games/tbs/src/battle/effect/pattern	.text
 main	rom_main_04	games/common/src/battle/effect/fragment	.text
 main	rom_main_04	games/tbs/src/battle/effect/fieldfx	.text
-main	rom_main_04	games/tbs/src/battle/effect/markers	.text
 main	rom_main_04	games/tbs/src/battle/effect/burstobj	.text
 main	rom_main_04	games/tbs/src/battle/effect/anchor	.text
 main	rom_main_04	games/tbs/src/battle/effect/impact	.text

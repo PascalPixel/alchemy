@@ -242,7 +242,6 @@ main	rom_main_03	games/tbs/src/game/character/values	.text
 main	rom_main_03	games/common/src/game/item/definition	.text
 main	rom_main_03	games/tbs/src/game/item/get_equipment_group	.text
 main	rom_main_03	games/tbs/src/game/inventory/items	.text
-main	rom_main_03	games/tbs/src/game/character/level	.text
 main	rom_main_03	games/common/src/game/party/advance_owner_count_to_target	.text
 main	rom_main_03	games/tbs/src/game/flags/test	.text
 main	rom_main_03	games/tbs/src/game/character/owners	.text

@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 const USAGE: &str = r#"usage: alchemy adopt ADDRESS LABEL [NEW_NAME] [--game tbs|tla] [--padding]
-                    [--into MODULE.c [--head]] [--skip LANG,...]
+                    [--into MODULE.c [--head]] [--skip LANG,...] [--dry-run]
 After the function's C is in its module, and after make compare-editions
 (the maps of all six builds under out/ are read): removes
 recon/<game>/raw/ADDRESS.s, its line among the English edition's objects and
@@ -43,7 +43,8 @@ before its first function; the draft's audit header stays behind. A name
 the module or its headers already define otherwise refuses the merge.
 A MODULE.c that does not exist is made from the draft, and an edition
 whose object lines do not link the module yet links it where the function
-was. Nothing changes unless every step can be made."#;
+was. Nothing changes unless every step can be made; --dry-run only says
+where each edition's copy is and writes nothing."#;
 
 fn read(path: &Path) -> Result<String, String> {
     std::fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))
@@ -357,13 +358,14 @@ fn locate(reference: &Reference, scaffold: &str, rom: &[u8], expected: usize) ->
 
 pub fn run(arguments: &[String]) -> Result<(), String> {
     let mut positional = Vec::new();
-    let (mut game, mut padding) = ("tbs", false);
+    let (mut game, mut padding, mut dry) = ("tbs", false, false);
     let (mut into, mut head) = (None, false);
     let mut skip: Vec<String> = Vec::new();
     let mut i = 0;
     while i < arguments.len() {
         match arguments[i].as_str() {
             "--padding" => padding = true,
+            "--dry-run" => dry = true,
             "--skip" => {
                 i += 1;
                 let list = arguments.get(i).ok_or_else(|| USAGE.to_string())?;
@@ -475,6 +477,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         });
         let (text, script, follows) = match exact {
             Some((text, sections)) => {
+                println!("{game}-{lang}: {} copy at {:#x}, the whole of .rom.{}", copy.class, copy.at, sections[0]);
                 let follows = next_scaffold_section(&script, &rom_object, &sections);
                 let script = unlink_sections(&script, &sections, object.as_deref()).map_err(|e| format!("{}: {e}", crate::object_list::main_lines_path(game, lang).display()))?;
                 (text, script, follows)
@@ -510,6 +513,10 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         lines.push((lang, script));
     }
 
+    if dry {
+        println!("dry run: nothing written");
+        return Ok(());
+    }
     if let Some(module) = &into {
         // A module that does not exist yet starts as the draft alone.
         let path = if module.is_absolute() { module.clone() } else { root.join(module) };

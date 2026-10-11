@@ -16,6 +16,8 @@
 #include "call.h"
 #include "fixed_math.h"
 
+void SceneEffect_RunActorBurst(s32 no);
+
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     if (gGameState.scene == (s32)&SceneId_GomaSuiro2) {
@@ -55,8 +57,8 @@ void FieldScene_RunActor8AtCell24Sequence(void)
         Object_GetById(8)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
         Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
         target = Object_GetById(8);
-        Engine_ActorSetSpriteFlags((s32)target, 0);
-        ((void (*)())Engine_GameFlagSet)(0x864);
+        Engine_ActorSetSpriteFlags(target, 0);
+        Engine_GameFlagSet(0x864);
     }
 }
 
@@ -134,10 +136,7 @@ union SceneActor {
 };
 struct Vector { s32 x, y, z; };
 
-void Engine_ActorWaitForMove(s32);
-void Engine_AudioPlayCue(s32);
 void Effect_Spawn();
-void Engine_ActorSetAnimation(s32, s32);
 
 void SceneEffect_RunActorBurst(s32 no)
 {

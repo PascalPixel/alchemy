@@ -41,11 +41,8 @@
 #include "irq.h"
 #include "b5_context.h"
 
-#define GetMotionRecordFar ((void * (*)(void*,s32))GetMotionRecordFar)
-#define BattleFx_RunCastingImpact ((void * (*)(s32*))BattleFx_RunCastingImpact)
-#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct MotionObject*,s32))ObjectDispatch_ApplyValueToChildrenFar)
-
-#define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
+void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
+s32  BattleFx_RunSparkGroups(void *, s32);
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity)
 {
@@ -113,7 +110,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
 
 void BattleFx_ProbeKeysForExtendedActor(void)
 {
-    struct BattleEffectWork *work = gBattleFxWork;
+    struct BattleEffectWork *work = *(struct BattleEffectWork **)gBattleFxWork;
     struct BattleEffectArgument *effect = work->effect;
 
     if (effect->actors[0] > 0x7f)
@@ -133,7 +130,8 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
     kind = value;
     value = kind - 100;
     if ((u32)value <= 35) {
-        BattleFx_RunCastingImpact(arg0);
+        /* FAKEMATCH: needed to match: the native call passes the command alone and leaves the kind register unset */
+        ((void (*)(s32 *))BattleFx_RunCastingImpact)(arg0);
     } else if (kind > 199) {
         BattlePres_RunRingAndSparkScene((struct BattleEffectArgument *)arg0);
     } else {
@@ -143,8 +141,6 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
     Runtime_ReleaseHeapBlock(39);
     Runtime_ReleaseHeapBlock(41);
 }
-#define gWorkSlot (*(DrawRectangle (*)[])&gWorkSlot)
-
 void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 {
     struct EffectPosition pos;
@@ -160,13 +156,14 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
     s32 kind;
     struct BtlUnit *unit;
     DrawRectangle draw[2];
+    DrawRectangle *slots;
     struct MotionObject *target;
     void *colors = (void *)0x05000000;
     s32 half;
     s32 frame;
     s32 i;
 
-    heap_cache = (void **)&gBattleFxWork;
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -197,8 +194,9 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
         }
     }
-    draw[0] = gWorkSlot[46];
-    draw[1] = gWorkSlot[47];
+    slots = (DrawRectangle *)gWorkSlot;
+    draw[0] = slots[HEAP_SLOT_BLITTER];
+    draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
     WaitFrames(1);
     if (kind == 4) {
         Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work, 1, 1);
@@ -355,6 +353,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
     s32 acceleration;
     s32 strength;
     DrawRectangle draw[2];
+    DrawRectangle *slots;
     struct MotionObject *object;
     struct MotionObject *target;
     u16 *background;
@@ -365,7 +364,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
     s32 frame;
     s32 i;
 
-    heap_cache = (void **)&gBattleFxWork;
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -386,8 +385,9 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
         BattleEffect_LoadWork(46, 7, 7, 7, 3);
         BattleEffect_LoadWork(47, 7, 7, 7, 2);
     }
-    draw[0] = gWorkSlot[46];
-    draw[1] = gWorkSlot[47];
+    slots = (DrawRectangle *)gWorkSlot;
+    draw[0] = slots[HEAP_SLOT_BLITTER];
+    draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
     BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor, work->effect->unknown_000c, 130);
     WaitFrames(1);
     Resource_LoadAndDecompress((s32)&ResourceId_StarBurstSheet, work, 1, 0);
@@ -559,8 +559,6 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
     BattleFx_SetTransitionFlagAndDisplay();
 }
 
-#undef gWorkSlot
-
 void BattleFx_StepPaletteToResource(s32 resource_id)
 {
 	u16	 target[64];
@@ -603,17 +601,9 @@ void BattleFx_StepPaletteToResource(s32 resource_id)
 
 //--------------------------------------------------------------------------
 
-#undef BattleFx_RunCastingImpact
-#undef ObjectDispatch_ApplyValueToChildrenFar
-
-#define ObjectDispatch_ApplyValueToChildrenFar \
-	((void (*)(void *, s32))ObjectDispatch_ApplyValueToChildrenFar)
-#define BattleFx_RenderMode5 ((void (*)(void *))BattleFx_RenderMode5)
-
 typedef BattleEffectDrawRectangle RectangleBlit; // キャンバスへの合成描画
 void Graphics_PackTileRows();
 
-void AudioCommand_PlayFar(s32 cue);
 
 static __inline__ void LoadResource(const void *id, void *dest, s32 skip, s32 copy)
 {
@@ -1945,12 +1935,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	}
 }
 
-#undef gBattleFxWork
-
-#define Object_SetMoveTargetFar \
-	((void (*)(struct MotionObject *, s32, s32, s32))Object_SetMoveTargetFar)
-#define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
-
 void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 
 void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
@@ -2087,8 +2071,6 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-void BattleFx_PrepareCanvasEffect();
-
 void ObjectGroup_StoreObjectAndRunStep7(s32 a0, s32 a1, s32 a2)
 {
 	u8 *p5;
@@ -2103,7 +2085,7 @@ void ObjectGroup_StoreObjectAndRunStep7(s32 a0, s32 a1, s32 a2)
 	BattleFx_EndCanvasLayer();
 }
 
-extern u8 gMapCellBuffer[];
+extern struct EffectStep gMapCellBuffer[];
 
 void ObjectDispatch_InitFromTable6Far(struct MotionObject *object);
 
@@ -2280,8 +2262,7 @@ struct Placement
 extern const struct Scale Formation_NormalScale; // 等倍
 extern const struct Scale Formation_SmallScale;	 // 1.25 倍
 
-void Object_ApplyProjectedPlacementFar(
-	void *object, struct Placement *pos, struct Scale *scale, s32 flags);
+void Object_ApplyProjectedPlacementFar(void *object, void *pos, void *scale, s32 flags);
 
 //--------------------------------------------------------------------------
 // work->objects を formation の形に並べる
@@ -2335,8 +2316,6 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 		break;
 	}
 }
-#define gMapCellBuffer (*(struct EffectStep (*)[])&gMapCellBuffer)
-
 #define HI(v) (((s16 *)&(v))[1]) // 16.16 の整数部
 
 #define CLIP (GOUSEI_CLIP_X | GOUSEI_CLIP_Y)
@@ -2515,9 +2494,6 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 }
 
-#undef gMapCellBuffer
-
-#define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
 
 void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta)
 {
@@ -2544,7 +2520,7 @@ void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta)
 
 void BattleFx_ArmPaletteHBlankDma(void)
 {
-    struct BattleEffectWork *work = gBattleFxWork;
+    struct BattleEffectWork *work = *(struct BattleEffectWork **)gBattleFxWork;
     volatile u16 *channel = REG_DMA0;
     channel[5] &= 0xc5ff;
     channel[5] &= 0x7fff;
@@ -2576,14 +2552,7 @@ void BattleFx_InitializeMode1(struct BattleEffectArgument *efx)
 	BattleEffect_RunParticleStreams(efx, 1);
 }
 
-#undef gBattleFxWork
-
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
-
-#define gBattleFxWork ((void *(*)) & gBattleFxWork)
-
 extern const struct Scale CirclingScene_UnitScale;
-#define Object_ApplyProjectedPlacementFar ((void (*)(void *object, s32 *position, struct Scale *scale, s32 mode))Object_ApplyProjectedPlacementFar)
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
@@ -2594,7 +2563,6 @@ extern u16 ParticleStreams_FlashSizes[];
 void	   BattleFx_FlushPendingGraphicsTransfer(void);
 void	   BattleFx_ArmPaletteHBlankDma(void);
 void	   Camera_AdvanceBg2Reference(void);
-void	   BattleActor_CommitPlacementFar(void);
 
 #define FLASHES ((struct EffectStep *)Ram_MapCellBuffer)
 #define EMBERS (&FLASHES[128])
@@ -2656,7 +2624,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 	s32					   frame;
 	s32					   i;
 
-	cache = &gBattleFxWork[1];
+	cache = &((void **)gBattleFxWork)[1];
 	canvas = cache[0];
 	work = cache[-1];
 
@@ -3177,7 +3145,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
 	s32						 i;
 	s32						 k;
 
-	cache = &gBattleFxWork[1];
+	cache = &((void **)gBattleFxWork)[1];
 	canvas = cache[0];
 	work = cache[-1];
 	sheet = cache[1];
@@ -3852,13 +3820,6 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
 // バトル演出：剣を振り下ろし、2 か所で閃光と火花を散らす
 //--------------------------------------------------------------------------
 
-#undef Camera_ApplyShake
-#undef gBattleFxWork
-
-#undef gBattleFxWork
-#undef gBattleFxWork
-#define gBattleFxWork ((void **)&gBattleFxWork)
-
 #define SPARK ((struct EffectStep *)Ram_MapCellBuffer) // 火花 (列ごとに 340 個)
 
 #define FLASH_SHEET (64 * 128) // 剣の絵 (64×128) の後ろに閃光の絵を置く
@@ -4143,20 +4104,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-#undef Camera_ApplyShake
-#undef SPARK
-#undef SPARKS
-#undef gBattleFxWork
-
-#define AnimationObjects_SelectAnimationFar ((int (*)())AnimationObjects_SelectAnimationFar)
-#define Graphics_PrepareTransferInIwramWork ((int (*)())Graphics_PrepareTransferInIwramWork)
-
-#undef gBattleFxWork
-#undef gBattleFxWork
-#define gBattleFxWork ((void *(*)) & gBattleFxWork)
-
 #define DUST ((struct EffectStep *)Ram_MapCellBuffer)
-#undef SPARK
 #undef SPARK
 #define SPARK ((struct EffectStep *)(Ram_MapCellBuffer + 684 * sizeof(struct EffectStep)))
 
@@ -4545,8 +4493,6 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-#define BattlePresentation_ConfigurePaletteFadeFar \
-	((void (*)(s32, s32, s32))BattlePresentation_ConfigurePaletteFadeFar)
 
 struct ShockwaveWork
 {
@@ -4560,10 +4506,7 @@ extern const u16		  ShockwaveScene_BurstCells[];
 extern u16				  ShockwaveScene_ShardCells[];
 extern u8				  ShockwaveScene_ShardWidths[];
 extern u8				  ShockwaveScene_ShardHeights[];
-#define Object_ApplyProjectedPlacementFar \
-	((void (*)(void *, void *, void *, s32))Object_ApplyProjectedPlacementFar)
 
-#undef SPARKS
 #undef SPARKS
 #define SPARKS (&DUST[128])
 
@@ -4641,7 +4584,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 	volatile u16				  *ime;
 	void						  *colors;
 
-	cache = &gBattleFxWork[1];
+	cache = &((void **)gBattleFxWork)[1];
 	ime = (u16 *)0x04000208;
 	canvas = cache[0];
 	work = cache[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
@@ -5081,7 +5024,9 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 
 		if (frame == 70)
 		{
-			BattlePresentation_ConfigurePaletteFadeFar(1, (s32)&ResourceId_AerialViewBackdrop, 7);
+			/* FAKEMATCH: needed to match: the prototype's u16 value would truncate the resource symbol with a shift pair (2 instructions more); the native call passes it whole */
+			((void (*)(s32, s32, s32))BattlePresentation_ConfigurePaletteFadeFar)(
+				1, (s32)&ResourceId_AerialViewBackdrop, 7);
 		}
 
 		if (frame == 150)
@@ -5389,7 +5334,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 		}
 
 		BattleEffect_LoadWork(47, 7, 7, 3, 3);
-		draw[1] = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
+		draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 		if (frame > 85)
 		{
 			draw[1](canvas, work, 0, 0, 120, 120);
@@ -5518,9 +5463,6 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-#undef AnimationObjects_SelectAnimationFar
-#undef Graphics_PrepareTransferInIwramWork
-#undef Object_ApplyProjectedPlacementFar
 
 #define REG16(address) (*(volatile u16 *)(address))
 
@@ -5545,11 +5487,6 @@ struct FxControl
 	u8	unknown_00[16];
 	s32 active;
 };
-#undef Object_ApplyProjectedPlacementFar
-#undef Object_ApplyProjectedPlacementFar
-#define Object_ApplyProjectedPlacementFar                                       \
-	((void (*)(struct AnimationObject * object, struct FxPlacement * placement, \
-		struct FxPair * pair, s32 mode)) Object_ApplyProjectedPlacementFar)
 
 void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 {
@@ -5572,7 +5509,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 	s32						 frame;
 	s32						 i;
 
-	cursor = &gBattleFxWork[1];
+	cursor = &((void **)gBattleFxWork)[1];
 	canvas = cursor[0];
 	work = cursor[-1];
 	sheet = cursor[1];
@@ -6014,15 +5951,6 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-#undef Object_ApplyProjectedPlacementFar
-void	  WaitFrames(s32);
-u32		  Random16(void);
-void	  AudioCommand_PlayFar(s32);
-#undef Object_ApplyProjectedPlacementFar
-#undef Object_ApplyProjectedPlacementFar
-#define Object_ApplyProjectedPlacementFar \
-	((void (*)(void *, void *, void *, s32))Object_ApplyProjectedPlacementFar)
-#define gBgScroll (*(struct Cells03001ad0(*)) & gBgScroll)
 
 extern const struct Scale BattleFx6_UnitScale;
 
@@ -6102,7 +6030,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
 	py = 200 << 16;
 	vx = -0x40000;
 	vy = -0x80000;
-	scroll = gBgScroll.unk04;
+	scroll = ((struct Cells03001ad0 *)gBgScroll)->unk04;
 	spot = (s32 *)cache[44 - 40];
 	work->transfer_mode = 2;
 	work->transfer_value = 75;
@@ -6162,7 +6090,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
 			u16 *phase = (u16 *)Ram_MapCellBuffer;
 			if (frame == 1)
 			{
-				u8 *noise = gMapCellBuffer + 2;
+				u8 *noise = (u8 *)gMapCellBuffer + 2;
 				s32 k;
 				for (k = 0; k != 128; k++)
 				{
@@ -6455,7 +6383,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
 		WaitFrames(1);
 	} while (++frame != 244 && (frame <= 16 || !(gKeysRepeat & (KEY_A | KEY_B))));
 
-	gBgScroll.unk04 = scroll;
+	((struct Cells03001ad0 *)gBgScroll)->unk04 = scroll;
 	spot[4] = 0;
 	Runtime_SetIrqHandler(2, 0, 0);
 	BattleEffect_SetupBlendedDisplay();
@@ -6588,16 +6516,12 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
 	BattleFx_EndCanvasLayer();
 }
 
-#undef Object_ApplyProjectedPlacementFar
-#undef gBgScroll
 
 //--------------------------------------------------------------------------
 // wait_then_set_field.c
 // バトル演出：対象へ近づいてからのスパーク（型 4）
 //--------------------------------------------------------------------------
 
-void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
-s32	 BattleFx_RunSparkGroups(void *, s32);
 
 //--------------------------------------------------------------------------
 // 行動者を最初の対象へ跳んで近づかせ、29 フレーム後に型 4 のスパークを出す
@@ -6634,7 +6558,6 @@ void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect)
 // バトル演出：4 コマの一枚絵と、立ちのぼる柱と火花
 //--------------------------------------------------------------------------
 
-#undef gBattleFxWork
 
 void BattleFx_RunRevealColumnMode1(s32 arg)
 {
@@ -7605,10 +7528,8 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	PUT(*src++);
 	PUT(*src++);
 
-#define ParticleStreams_CellOffsets ((const u32(*)) & ParticleStreams_CellOffsets)
 
-	end = ParticleStreams_CellOffsets;
+	end = (const u32 *)ParticleStreams_CellOffsets;
 	return src == end;
 }
 
-#undef Object_ApplyProjectedPlacementFar

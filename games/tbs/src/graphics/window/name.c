@@ -268,6 +268,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
     Ui_LoadWindowGraphics();
     window = (struct RenderInput *)UiWindow_Create(3, 6, 24, 9, 2);
     label = (struct RenderInput *)UiWindow_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
+    UiWindow_CreateWithSideObject(Localization_LookupEntryId(entry), 0, 3, 1);
     UiWindow_CopyTilemapRegion(window, NameEntry_KeyboardTilemap);
 #if NAME_KEY_LABELS
     UiText_DrawStringInWindow(NameEntry_DeleteKeyLabel, window, 144, 32);
@@ -505,6 +506,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
     Ui_LoadWindowGraphics();
     window = (struct RenderInput *)UiWindow_Create(3, 6, 24, 13, 2);
     label = (struct RenderInput *)UiWindow_Create(8, 3, 8, 3, 2);
+    UiWindow_CreateWithSideObject(Localization_LookupEntryId(entry), 0, 3, 1);
     UiWindow_CopyTilemapRegion(window, NameEntry_KeyboardTilemap);
     UiWindow_DrawDividerLine(window, 18, 0, 18, 12);
     ((struct UiRenderWork *)work)->dirty = text_dirty;
@@ -853,8 +855,6 @@ close:
 s32 AudioCommand_GetStateByteFar(void);
 void UiWork_PushValueSlot(s32, s32);
 struct UiChannelSlot *UiText_QueueRenderEntries();
-void AudioCommand_PlayFar(s32);
-void WaitFrames(s32);
 
 void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 {

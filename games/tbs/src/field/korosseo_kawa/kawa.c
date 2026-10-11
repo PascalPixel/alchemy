@@ -22,62 +22,11 @@
 #include "resource.h"
 #include "object_runtime.h"
 
-s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b);
-void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
-void KorosseoKawa_ReleaseMarker(void);
-void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c);
-void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b);
-void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration);
-void SceneState_SendIdBySceneId(s32 speaker, s32 competitor);
-void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style);
-
-struct FieldActor;
-
-void *UnitGet(u32 owner);
-
 typedef struct Position3 {
     s32 x;
     s32 y;
     s32 z;
 } Position3;
-
-struct FieldActor *SceneActor_FindSlotAtTilePosition(
-    Position3 *pos, struct FieldActor *subject);
-struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void);
-void SceneActor_MarkObjectAtTiles94To95(s32 actor);
-
-// 戦闘開始の種類 (battle/party/party.c と同じ)
-
-#define ObjectDispatch_InitFromTable4WithArgument ((void (*)(s32,struct FieldActor*))ObjectDispatch_InitFromTable4WithArgument)
-#define FieldScene_BuildSceneDescriptorAndInstallTask ((s32 (*)(s32,s32,s32,s32,s32,s32,s32))FieldScene_BuildSceneDescriptorAndInstallTask)
-
-enum CoordinatorMessage {
-    MSG_ROBIN_GOT = 0x96a,
-    MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
-    MSG_IF_KNOW_WHO_WANT_CHEER = 0x207e,
-    MSG_ROBIN_WILL_CHEER_FOR_WAY = 0x207f,
-    MSG_DO_YOUR_BEST = 0x2083,
-    MSG_UNFORTUNATELY_WE_HAVE_FULL_HOUSE = 0x2084,
-    MSG_MATCH_ABOUT_BEGIN_PLEASE_TAKE = 0x2085,
-    MSG_OPERATOR_BRIDGE_WILL_ALSO_CHEER = 0x2094,
-    MSG_THEY_CALL_BROKEN_BRIDGE = 0x2095,
-    MSG_LOGS_KEY_CLEARING_STAGE = 0x2098,
-    MSG_PLACE_NORMALLY_CALLED_LUMBER_WATER = 0x2099,
-    MSG_SITE_FIRST_FINALS_BATTLE = 0x20cb,
-    MSG_ASK_ATTENDANTS_FOR_EXPLANATIONS_STAGES = 0x20d4,
-    MSG_WARRIORS_ENTER_FINALS_WITHOUT_ANY = 0x20d5,
-    MSG_ROBIN_YOURE_CONTESTANT_IN_FINALS = 0x20e1,
-    MSG_ROBIN_DID_GET_GOOD_LOOK = 0x20e5,
-    MSG_WAIT_SHOULDNT_DECIDE_WHERE_BEST = 0x20e8
-};
-
-typedef struct Ctl {
-    s16 f0;
-    s16 f2;
-    s16 f4;
-    s16 f6;
-    s16 f8;
-} Ctl;
 
 typedef struct PartyInteractionRecord {
     u8 padding_00[10];
@@ -91,40 +40,85 @@ struct ModeRecord {
     u16 span;
 };
 
-typedef struct ActiveSubjectSlot {
-    u8 pad[500];
-    void *handle;
-} ActiveSubjectSlot;
+typedef void (*SceneTask)(void);
 
 #define KEYS_HELD gKeysHeld // VBlank で書く
+
 extern u8 HexDigits[];
-void Script_WaitForEventTimeout();
-typedef void(*SceneTask)(void);
+extern s32 KorosseoKawa_Countdown;
+extern u16 Korosseo_ModeTaskMode;
+extern u16 Korosseo_ModeTaskParam;
+extern u16 Korosseo_ModeTaskTimer;
+extern s32 Korosseo_ModeTaskScript;
+extern u16 Korosseo_ModeMoveTarget;
+extern u16 Korosseo_ModeMoveDuration;
+extern s32 Korosseo_ModeTaskPosition;
+extern s16 Korosseo_MarkerSlot;
+extern u16 Korosseo_MarkerX;
+extern u16 Korosseo_MarkerY;
+extern u16 Korosseo_MarkerPriority;
+extern u16 Korosseo_MarkerBlink;
+extern u16 Korosseo_MarkerSteps;
+extern u16 Korosseo_MarkerEndX;
+extern u16 Korosseo_MarkerEndY;
+extern u16 Korosseo_MarkerStartX;
+extern u16 Korosseo_MarkerStartY;
+extern u16 Korosseo_MarkerStep;
+extern u8 Korosseo_GaugeGraphics[];
 
-s32 Map_GetTerrainHeight(s32, s32, s32);
-void GameFlag_SetByte(s32, s32);
+void *UnitGet(u32 owner);
 void Script_WaitForEventTimeout(struct FieldActor *);
-PartyInteractionRecord *GetPartyInteractionRecord(void);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+s32 GameFlag_GetByte();
+void GameFlag_SetByte(s32, s32);
 s32 GetPartyMemberCount(void);
-s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
-s32 Korosseo_FadeInCompetitor();
-
-void StagedActor_PushActorAhead(void);
 void Object_RefreshSelectorById(s32 actor);
 s32 BattleFx_SetWeightedResult();
 s32 Party_SetFields1ceAnd1d0();
 void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void Owner_RefreshActiveRatios();
-void FieldScene_RunLateSequence(s32 a0);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Battle_ResetEffectCounter(void);
+void UiWork_PushValueSlot(s32 value, s32 digits);
+void Party_RemoveActiveOwner();
+void Party_AddActiveOwner();
+s32 Menu_OpenCharacterSelector();
+void Inventory_AddItem(s32, s32);
+void Inventory_Equip();
+s32 AudioCommand_GetStateByte(void);
+void Audio_PlayCueFromEventWork(void);
+s16 Resource_LoadFixedBlockBIntoFreeSlot(void);
+void ObjectDispatch_InitFromTable6(struct FieldActor *);
+void ObjectDispatch_WaitForValue16();
+s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);
+
+// コロッセオ共通 (field/common/korosseo)
+s32 Korosseo_FadeInCompetitor();
+void Korosseo_RestoreCompetitor();
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
 void Korosseo_SelectSoloCompetitor(s32 index);
-void FieldScene_RunOpeningAuxiliarySequence(void);
-
 void Korosseo_FinishSoloRound();
-s32 SceneDialogue_RunFlagGatedPromptInteraction();
-void StagedActor_PushActorAhead();
-void Korosseo_RestoreCompetitor();
+void Korosseo_LoadPortrait(s32);
+void Korosseo_UpdateModeTask(void);
+void Korosseo_UpdateMarker(void);
+void Korosseo_DrawGauge(void);
+void Korosseo_UpdatePathRival(void);
+
+void SceneActor_MarkObjectAtTiles94To95(s32 actor);
+s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor);
+void SceneState_SendIdBySceneId(s32 speaker, s32 competitor);
+void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
+void FieldScene_RunLateSequence(s32 a0);
+void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b);
+void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style);
+void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration);
+void KorosseoKawa_ReleaseMarker(void);
+void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c);
+s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b);
+void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre,
+                   s32 extra, s32 third, s32 fourth);
+struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct FieldActor *subject);
+void StagedActor_PushActorAhead(void);
+struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void);
 
 u8 *KorosseoKawa_GetEntrances(void)
 {
@@ -151,8 +145,6 @@ u8 *KorosseoKawa_GetPlacements(void)
 
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-    extern s32 KorosseoKawa_Countdown;
-
     switch ((u32)KorosseoKawa_Countdown) {
     case 66:
         Engine_MapCopyCellsTo(92, 31, 2, 2, 50, 38);
@@ -183,8 +175,6 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 
 void SceneState_ResetCounterAndStartTask(void)
 {
-    extern s32 KorosseoKawa_Countdown;
-
     SceneTask task;
 
     KorosseoKawa_Countdown = 0;
@@ -195,8 +185,6 @@ void SceneState_ResetCounterAndStartTask(void)
 
 void SceneState_SetMode66AndPassOpeningSequence(void)
 {
-    extern s32 KorosseoKawa_Countdown;
-
     s32 value = 66;
     s32 *mode = (s32 *)&KorosseoKawa_Countdown;
 
@@ -206,14 +194,6 @@ void SceneState_SetMode66AndPassOpeningSequence(void)
 
 void KorosseoKawa_WaitForCountdown(void)
 {
-#ifdef MODERN
-    // modern GCC holds one type for a name in a file
-    extern u32 KorosseoKawa_Countdown_modern __asm__("KorosseoKawa_Countdown");
-#define KorosseoKawa_Countdown KorosseoKawa_Countdown_modern
-#else
-    extern u32 KorosseoKawa_Countdown;
-#endif
-
     s32 i;
 
     Engine_TaskWait(10);
@@ -228,9 +208,6 @@ void KorosseoKawa_WaitForCountdown(void)
         } while (KorosseoKawa_Countdown != 22);
     }
 }
-#ifdef MODERN
-#undef KorosseoKawa_Countdown
-#endif
 
 void SceneState_ApplyRectsForActorsNineAndTen(void)
 {
@@ -279,8 +256,6 @@ void FieldScene_RunTwoCallSequence(void)
 
 void SceneState_ApplyRectAndSend303(void)
 {
-    extern s32 KorosseoKawa_Countdown;
-
     {
         s32 x = 47;
         s32 y = 12;
@@ -292,14 +267,6 @@ void SceneState_ApplyRectAndSend303(void)
 
 void KorosseoKawa_RaisePlatformPair(void)
 {
-#ifdef MODERN
-    // modern GCC holds one type for a name in a file
-    extern u8 KorosseoKawa_Countdown_bytes[] __asm__("KorosseoKawa_Countdown");
-#define KorosseoKawa_Countdown KorosseoKawa_Countdown_bytes
-#else
-    extern u8 KorosseoKawa_Countdown[];
-#endif
-
     u32 i;
     u8 *rec7;
     s32 record;
@@ -321,15 +288,12 @@ void KorosseoKawa_RaisePlatformPair(void)
     ((struct FieldActor *)rec7)->motion_flags = none;
     ((struct FieldActor *)rec7)->acceleration = 0x6666;
     ((struct FieldActor *)rec7)->speed = 0xcccc;
-    ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)((s32)rec7, ((struct FieldActor *)rec7)->x.fixed, 0x200000, ((struct FieldActor *)rec7)->z.fixed);
+    Engine_ObjectSetPosition((s32)rec7, ((struct FieldActor *)rec7)->x.fixed, 0x200000, ((struct FieldActor *)rec7)->z.fixed);
     Script_WaitForEventTimeout((s32)rec7);
     Engine_EventWait(45);
     Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
     Engine_EventEnd();
 }
-#ifdef MODERN
-#undef KorosseoKawa_Countdown
-#endif
 
 void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz)
 {
@@ -347,7 +311,7 @@ void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz)
 
         leader->speed = 0x10000;
         leader->acceleration = 0x8000;
-        ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)(leader, x, leader->y.fixed, z);
+        Engine_ObjectSetPosition(leader, x, leader->y.fixed, z);
     }
     Object_SetMode(leader, 27);
     {
@@ -356,7 +320,7 @@ void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz)
 
         actor->speed = 0x10000;
         actor->acceleration = 0x8000;
-        ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)(actor, x, actor->y.fixed, z);
+        Engine_ObjectSetPosition(actor, x, actor->y.fixed, z);
     }
     if (dx < 0 || dz < 0) {
         Object_SetMode(actor, 4);
@@ -449,12 +413,12 @@ void KorosseoKawa_RaisePipes(void)
     actor->acceleration = 0x3333;
     Event_PlayCue(239);
     Object_SetMode(actor, 2);
-    ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)(actor, actor->x.fixed - 0x300000, 0, actor->z.fixed);
+    Engine_ObjectSetPosition(actor, actor->x.fixed - 0x300000, 0, actor->z.fixed);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(leader_id, 2);
-    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 480), actor);
+    ObjectDispatch_InitFromTable4WithArgument(*(struct DispatchObject **)(Runtime_AllocateBlock(27, 0xccc) + 480), (s32)actor);
     Actor_SetSpeed(leader_id, 0x4ccc, 0x3333);
-    ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)(leader, leader->x.fixed - 0x180000, 0, leader->z.fixed);
+    Engine_ObjectSetPosition(leader, leader->x.fixed - 0x180000, 0, leader->z.fixed);
     Engine_ActorWaitForMove(leader_id);
     Engine_ActorSetAnimation(leader_id, 1);
     Script_WaitForEventTimeout(actor);
@@ -493,7 +457,7 @@ void KorosseoKawa_RaisePipes(void)
     actor->motion_flags = none;
     actor->acceleration = 0x6666;
     actor->speed = 0xcccc;
-    ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)(actor, actor->x.fixed, 0x80000, actor->z.fixed);
+    Engine_ObjectSetPosition(actor, actor->x.fixed, 0x80000, actor->z.fixed);
     Object_SetMode(actor, 3);
     Map_CopyCells(96, 29, 1, 3, 34, 38);
     Engine_EventWait(3);
@@ -508,7 +472,7 @@ void KorosseoKawa_RaisePipes(void)
     actor->motion_flags = none;
     actor->acceleration = 0x6666;
     actor->speed = 0xcccc;
-    ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)(actor, actor->x.fixed, 0x200000, actor->z.fixed);
+    Engine_ObjectSetPosition(actor, actor->x.fixed, 0x200000, actor->z.fixed);
     Script_WaitForEventTimeout(actor);
     Engine_EventWait(15);
     Engine_EventEnd();
@@ -649,7 +613,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
     actor->motion_flags = 0;
     actor->priority_flags = 2;
     Map_CopyCellAttributes(14, 13, 1, 1, x, 12);
-    ((s32 (*)(void ( *)(void), s32))Engine_TaskAddCallback)(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
+    Engine_TaskAddCallback(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
     actor = Object_GetById(15);
     actor->terrain_id = 1;
     zero = 0;
@@ -691,7 +655,8 @@ s32 KorosseoKawa_ApplyEntryState(void)
     Korosseo_ShowItemIcon(25, 127);
     switch (gGameState.entrance) {
     case 1:
-        FieldScene_BuildSceneDescriptorAndInstallTask(0, 8, 4, 0x5180000, 0xc00000, 24, 25);
+        /* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+        ((s32 (*)(s32, s32, s32, s32, s32, s32, s32))FieldScene_BuildSceneDescriptorAndInstallTask)(0, 8, 4, 0x5180000, 0xc00000, 24, 25);
         Map_CopyCellsTo(127, 0, 1, 2, 19, 2);
         Engine_ActorDestroy(19);
         Engine_ActorDestroy(20);
@@ -713,7 +678,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
         SceneState_InitControlWhenFlag109Clear((s32)&ResourceId_RivalPathA);
         break;
     case 2:
-        ((s32 (*)(void ( *)(void), s32))Engine_TaskAddCallback)(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
+        Engine_TaskAddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
         Engine_ActorDestroy(24);
         Engine_ActorDestroy(25);
         if (!Engine_GameFlagIsSet(0x109)) {
@@ -895,9 +860,10 @@ void KorosseoKawa_RunStageIntro(s32 scene)
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 10);
             Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-            OverlayObject_PlaceWithScale14000(0, 296, 184);
-            OverlayObject_PlaceWithScale14000(0, 296, 152);
-            OverlayObject_PlaceWithScale14000(0, 312, 152);
+            /* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+            ((s32 (*)(s32, s32, s32))OverlayObject_PlaceWithScale14000)(0, 296, 184);
+            ((s32 (*)(s32, s32, s32))OverlayObject_PlaceWithScale14000)(0, 296, 152);
+            ((s32 (*)(s32, s32, s32))OverlayObject_PlaceWithScale14000)(0, 312, 152);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 15);
             StagedActor_PushActorAhead();
             OverlayObject_ResetMotionFields(0);
@@ -922,7 +888,7 @@ void KorosseoKawa_RunStageIntro(s32 scene)
             Engine_EventSetMessage((s32)MsgKorosseoObjectiveStageClear);
             Engine_EventShowMessage(scene, 0);
         }
-        FieldScene_RunMiddleSequence(path, scene, 1);
+        ((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(path, scene, 1);
         Engine_EventEnd();
     }
 }
@@ -995,7 +961,8 @@ void Korosseo_RunPipeworksIntro(s32 a0)
             Engine_EventSetMessage((s32)MsgKorosseoObjectiveMakeGood);
             Engine_EventShowMessage(a0, 0);
         }
-        FieldScene_RunMiddleSequence(rec4, a0, 2);
+        /* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+        ((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(rec4, a0, 2);
         Engine_EventEnd();
     }
 }
@@ -1035,7 +1002,8 @@ void Korosseo_RunBrokenBridgeIntro(s32 scene)
             Engine_EventSetMessage((s32)MsgKorosseoOperatorBridgeWillAlsoCheer);
             Event_ShowMessage(scene, 0);
         }
-        FieldScene_RunMiddleSequence(path, scene, 3);
+        /* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+        ((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(path, scene, 3);
         Engine_EventEnd();
     }
 }
@@ -1056,7 +1024,8 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
         Camera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
         Engine_CameraWaitForMove();
         Event_ShowMessage(scene, 0);
-        SceneState_StoreParamsAndInitTable(120, 72, 0);
+        /* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+        ((s32 (*)(s32, s32, s32))SceneState_StoreParamsAndInitTable)(120, 72, 0);
         Event_ShowMessage(scene, 0);
         KorosseoKawa_ReleaseMarker();
         Engine_EventWait(15);
@@ -1066,8 +1035,8 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-        OverlayObject_PlaceWithScale14000(0, 1000, 192);
-        OverlayObject_PlaceWithScale14000(0, 1000, 176);
+        ((s32 (*)(s32, s32, s32))OverlayObject_PlaceWithScale14000)(0, 1000, 192);
+        ((s32 (*)(s32, s32, s32))OverlayObject_PlaceWithScale14000)(0, 1000, 176);
         OverlayObject_PlaceWithScale14000(0, 1016, 168);
         Engine_EventWait(15);
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
@@ -1089,7 +1058,7 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
         Engine_EventSetMessage((s32)MsgKorosseoLogsKeyClearingStage);
         Event_ShowMessage(scene, 0);
     }
-    FieldScene_RunMiddleSequence(path, scene, 4);
+    ((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(path, scene, 4);
     Engine_EventEnd();
 }
 
@@ -1126,10 +1095,6 @@ void SceneActor_PlaceSlots1To3FromWork(void)
         Engine_ActorSetPosition(MEARI, x, y);
     }
 }
-
-void Korosseo_SelectSoloCompetitor(s32);
-
-void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 
 void SceneState_RaiseTriggerOnPsynergyTarget(void)
 {
@@ -1207,8 +1172,6 @@ void FieldScene_RunNearestActor165Scene(void)
     Engine_EventEnd();
 }
 
-#define PartyTalkMenu_Choose ((s32 (*)(s32))PartyTalkMenu_Choose)
-
 static inline void InitializeActorZero(void)
 {
     Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -1223,16 +1186,6 @@ static __inline__ void AdvanceMessage(s32 amount)
 {
     gEventWork->message += amount;
 }
-
-void Battle_ResetEffectCounter(void);
-void UiWork_PushValueSlot(s32 value, s32 digits);
-
-void Party_RemoveActiveOwner();
-void Party_AddActiveOwner();
-void UiWork_PushValueSlot();
-void GameFlag_SetByte();
-s32 Menu_OpenCharacterSelector();
-void Inventory_AddItem(s32, s32);
 
 void RunPartyCountInteraction(s32 actorId)
 {
@@ -1298,7 +1251,8 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
         return 2;
     }
     if (Engine_GameFlagIsSet(competitor + 520) != 0) {
-        choice = PartyTalkMenu_Choose(0);
+        /* FAKEMATCH: called with an argument the function does not take; r0 is set to 0 before the call. */
+        choice = ((s32 (*)(s32))PartyTalkMenu_Choose)(0);
         if (choice == 1) {
             return 2;
         }
@@ -1452,22 +1406,6 @@ void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b)
     }
 }
 
-struct ModeRecord;
-
-extern u16 Korosseo_ModeTaskMode;
-extern u16 Korosseo_ModeTaskParam;
-extern u16 Korosseo_ModeTaskTimer;
-extern s32 Korosseo_ModeTaskScript;
-extern u16 Korosseo_ModeMoveTarget;
-extern u16 Korosseo_ModeMoveDuration;
-extern s32 Korosseo_ModeTaskPosition;
-void Korosseo_UpdateModeTask(void);
-void Korosseo_LoadPortrait(s32);
-s32 AudioCommand_GetStateByte(void);
-void Audio_PlayCueFromEventWork(void);
-void Korosseo_LoadPortrait();
-s32 AudioCommand_GetStateByte();
-
 void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
 {
     s32 handler;
@@ -1585,10 +1523,6 @@ void FieldScene_RunLateSequence(s32 a0)
     Engine_EventWaitForScreen();
 }
 
-extern s16 Korosseo_MarkerSlot;
-s16 Resource_LoadFixedBlockBIntoFreeSlot(void);
-void ObjectDispatch_InitFromTable6(struct FieldActor *);
-
 void OverlayObject_ResetMotionFields(s32 actor)
 {
     struct FieldActor *o = Object_GetById(actor);
@@ -1607,18 +1541,6 @@ void KorosseoKawa_EnsureMarkerSlot(void)
         Korosseo_MarkerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
     }
 }
-
-extern u16 Korosseo_MarkerX;
-extern u16 Korosseo_MarkerY;
-extern u16 Korosseo_MarkerPriority;
-extern u16 Korosseo_MarkerBlink;
-extern u16 Korosseo_MarkerSteps;
-extern u16 Korosseo_MarkerEndX;
-extern u16 Korosseo_MarkerEndY;
-extern u16 Korosseo_MarkerStartX;
-extern u16 Korosseo_MarkerStartY;
-extern u16 Korosseo_MarkerStep;
-void Korosseo_UpdateMarker(void);
 
 void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
 {
@@ -1688,8 +1610,6 @@ void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c)
         Object_SetMode(o, 1);
     }
 }
-
-void ObjectDispatch_WaitForValue16();
 
 void Text_WriteU32AsHex(u8 *buf, u32 value)
 {
@@ -1820,10 +1740,11 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
     }
 
     if (flag == 0) {
-        SceneActor_ApplyValueAndMatchingSlots(0, handle_a);
+        /* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+        ((s32 (*)(s32, s32))SceneActor_ApplyValueAndMatchingSlots)(0, handle_a);
         UiWork_PushValueSlot(handle_a, 2);
     } else {
-        SceneActor_ApplyValueAndMatchingSlots(0, handle_b);
+        ((s32 (*)(s32, s32))SceneActor_ApplyValueAndMatchingSlots)(0, handle_b);
         UiWork_PushValueSlot(handle_b, 2);
     }
 
@@ -1834,15 +1755,6 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 
     return flag;
 }
-
-#undef FieldScene_BuildSceneDescriptorAndInstallTask
-
-extern u8 Korosseo_GaugeGraphics[];
-extern u8 Korosseo_UpdatePathRival[];
-void Korosseo_DrawGauge(void);
-void Vector_AddPolarOffset();
-
-s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);
 
 void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre,
                    s32 extra, s32 third, s32 fourth)
@@ -1901,15 +1813,8 @@ void SceneState_InitControlWhenFlag109Clear(s32 resource)
         recorder->still = 0;
         recorder->pos = 0;
     }
-    ((s32 (*)(void ( *)(void), s32))Engine_TaskAddCallback)(Korosseo_UpdatePathRival, 0xc85);
+    Engine_TaskAddCallback(Korosseo_UpdatePathRival, 0xc85);
 }
-
-#define Engine_ObjectSetPosition ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)
-
-typedef struct ActiveSubjectSlot_2 {
-    u8 pad[500];
-    s32 handle;
-} ActiveSubjectSlot;
 
 struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct FieldActor *subject)
 {
@@ -2021,7 +1926,7 @@ struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void)
     Position3 pos;
     struct FieldActor *hit;
 
-    rec = Object_GetById(((ActiveSubjectSlot *)&gGameState)->handle);
+    rec = Object_GetById(gGameState.selected_actor);
 
     facing = (rec->facing + 0x2000) & 0xc000;
 

@@ -70,12 +70,11 @@ s32 ObjectTable_ReadActiveValue(s32 key);
 // フィールド効果：手に入れたアイテムの表示ときらめき、近くの印、ウィンドウの HBlank DMA
 //--------------------------------------------------------------------------
 void Ui_PrepareTransferForItemFar(s32 item);
+void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
+void BattleFx_ApplyColorToSourceBuffer(s32 mode, s32 half);
+void Object_SetModeById(u32 object_id, s32 action);
 
-#define gOverlayArea (*(struct FieldMapState *)&gOverlayArea)
-
-#define EffectRuntime_GetCurrentObject ((s32 (*)(s32))EffectRuntime_GetCurrentObject)
 typedef struct MapEventEntry *(*EventListFn)(s32);
-#define _call_via_r0 ((EventListFn)_call_via_r0)
 
 struct ParticlePosition
 {
@@ -139,8 +138,6 @@ struct EfxObj
 	u8				  pad3[24];
 	void (*proc)(void); // 毎フレームの処理
 };
-#define gEventWork (*(u8 *(*))&gEventWork)
-#define Object_CreateFar ((struct EfxObj *(*)(s32 kind, s32 x, s32 y, s32 z))Object_CreateFar)
 void		   ObjectDispatch_ReleaseFar(void *object);
 
 // オブジェクト 64 個の表 (gEventWork の 88 バイト前)
@@ -232,7 +229,7 @@ s32 ArcTan2(s32, s32);
 void BattleFx_EmitRandomParticle(void)
 {
 	struct ObjectRuntime *actor = ObjectTable_Get(gGameState.selected_actor);
-	struct ParticleCell	 *cell = (struct ParticleCell *)(gEventWork + 0x11c);
+	struct ParticleCell	 *cell = (struct ParticleCell *)((u8 *)gEventWork + 0x11c);
 	s32					  i = 0;
 	s32					  x;
 	s32					  z;
@@ -330,7 +327,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 	pos.x = ((struct EfxSrc *)src_z)->x;
 	pos.y = ((struct EfxSrc *)src_z)->y;
 	pos.z = ((struct EfxSrc *)src_z)->z;
-	Vector_AddPolarOffset(16 << 16, ((struct EfxSrc *)src_z)->ang, &pos);
+	Vector_AddPolarOffset(16 << 16, ((struct EfxSrc *)src_z)->ang, (struct ParticlePosition *)&pos);
 	x = (pos.x & 0xfff00000) + (8 << 16);
 	src_z = (pos.z & 0xfff00000) + (8 << 16);
 
@@ -359,7 +356,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 	}
 
 	WaitFrames(3);
-	obj = Object_CreateFar(22, x, 16 << 16, src_z);
+	obj = (struct EfxObj *)Object_CreateFar(22, x, 16 << 16, src_z);
 	if (obj == 0)
 		return 0;
 
@@ -475,7 +472,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
 	struct EffectResource_0808f1c0 *actor = ObjectTable_Get(gGameState.selected_actor);
 	void						   *handle = Runtime_AllocateHeapBlock(17, 0x608);
 	struct EffectObject_0808f1c0   *object =
-		Object_CreateFar(22, actor->x, actor->y + (36 << 16), actor->z);
+		(struct EffectObject_0808f1c0 *)Object_CreateFar(22, actor->x, actor->y + (36 << 16), actor->z);
 
 	if (object != 0)
 	{
@@ -507,7 +504,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
 			EffectRuntime_PrepareRisingObject((struct ObjectRuntime *)object);
 
 		WaitFrames(80);
-		ObjectDispatch_ApplyArgumentToChildrenFar(actor, 1);
+		ObjectDispatch_ApplyArgumentToChildrenFar((struct ObjectRuntime *)actor, 1);
 		ObjectDispatch_ReleaseFar(object);
 	}
 }
@@ -539,7 +536,7 @@ void ObjectDispatch_ReleaseFar(void *object);
 //--------------------------------------------------------------------------
 void BattleFx_ClearRandomParticles(void)
 {
-	if (*(s16 *)(gEventWork + BATTLE_ACTIVE_OFS) != 0)
+	if (*(s16 *)((u8 *)gEventWork + BATTLE_ACTIVE_OFS) != 0)
 	{
 		struct ParticleSlot *ent = ParticlePool;
 		s32					 n = 63;
@@ -569,7 +566,7 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source
 	u32					   rnd;
 
 #if defined(PARTICLES_PAUSE_FOR_MENU)
-	if (*(s8 *)(gEventWork + MENU_OPEN_OFS) != 0)
+	if (*(s8 *)((u8 *)gEventWork + MENU_OPEN_OFS) != 0)
 		return;
 #endif
 	if ((100 * Random16() >> 16) > 9)
@@ -579,7 +576,7 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source
 	pos.second = source->values.second;
 	pos.third = source->values.third;
 	rnd = Random16();
-	Vector_AddPolarOffset(rnd << 4, Random16(), &pos);
+	Vector_AddPolarOffset(rnd << 4, Random16(), (struct ParticlePosition *)&pos);
 	obj = Object_Spawn(285, pos.first, pos.second, pos.third);
 	if (obj != 0)
 	{
@@ -604,7 +601,7 @@ u32 EffectRuntime_IsActive(void)
 {
 	s16					  count;
 	u32					  active = 0;
-	struct EffectRuntime *runtime = gEventWork;
+	struct EffectRuntime *runtime = (struct EffectRuntime *)gEventWork;
 
 	if (runtime != NULL)
 	{
@@ -641,7 +638,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
 		while (x = *list++, z = *list++, x != 0xff || z != 0xff)
 		{
 			id = *list++;
-			if (EffectRuntime_GetCurrentObject(id) != 0)
+			if (EffectRuntime_GetCurrentObject(id) != NULL)
 				continue;
 			if (id < 100 || id > 239)
 				continue;
@@ -659,7 +656,8 @@ void FieldEffect_SpawnNearbyMarkers(void)
 			}
 			else if (z - actor_z > 5)
 				continue;
-			entry = _call_via_r0(gOverlayArea.events);
+			/* FAKEMATCH: the map's event list function is called through _call_via_r0 as a typed function */
+			entry = ((EventListFn)_call_via_r0)(((struct FieldMapState *)&gOverlayArea)->events);
 			if (entry->flags == -1)
 				continue;
 			do
@@ -729,8 +727,6 @@ void BattleFx_StartWindowHBlankDma(void)
 	Dma_Set(src, (void *)&REG_WIN0H, 0xa6600001, (volatile u32 *)channel);
 }
 
-#undef gEventWork
-#undef Object_CreateFar
 
 struct TransitionSpan {
     u16 cnt;
@@ -791,8 +787,8 @@ void DisplayTransition_UpdateScanlineTable(void)
                 } else {
                     REG_DISPCNT &= 0x9fff;
                 }
-                Scheduler_RemoveCallback((u32)BattleFx_StartWindowHBlankDma);
-                Scheduler_RemoveCallback((u32)DisplayTransition_UpdateScanlineTable);
+                Scheduler_RemoveCallback((SchedulerCallback)BattleFx_StartWindowHBlankDma);
+                Scheduler_RemoveCallback((SchedulerCallback)DisplayTransition_UpdateScanlineTable);
                 {
                     volatile u16 *dma0 = REG_DMA0;
 
@@ -1156,7 +1152,7 @@ struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void)
 
     state = Runtime_AllocateBlock(31, sizeof(*state));
     clear_value = 0;
-    Dma_Set(&clear_value, state, 0x85000000 | (sizeof(*state) / 4), REG_DMA3);
+    Dma_Set((const void *)&clear_value, state, 0x85000000 | (sizeof(*state) / 4), REG_DMA3);
     return state;
 }
 
@@ -1513,7 +1509,7 @@ void DisplayTransition_FillTilemapAndSolidTile(s32 color)
 {
     struct DisplayTransitionState *work = gDisplayTransition;
     volatile u32 fill = 0xf000f000;
-    Dma_Set(&fill, BG_SCREEN_BLOCK(4), 0x85000140, REG_DMA3);
+    Dma_Set((const void *)&fill, BG_SCREEN_BLOCK(4), 0x85000140, REG_DMA3);
     if (color != -1) {
         u32 pattern = 0;
         s32 cnt;
@@ -1532,7 +1528,7 @@ void DisplayTransition_InitializeState(s32 value)
 
     state = Runtime_AllocateBlock(0x1f, sizeof(*state));
     zero = 0;
-    Dma_Set(&zero, state, 0x85000000 | (sizeof(*state) / 4), REG_DMA3);
+    Dma_Set((const void *)&zero, state, 0x85000000 | (sizeof(*state) / 4), REG_DMA3);
     DisplayTransition_FillTilemapAndSolidTile(0);
     state->mode = value;
     state->value = 0;
@@ -1916,7 +1912,7 @@ void BattleEffect_InitializeBuffers(void)
 
 	buf = Runtime_AllocateBlock(HEAP_SLOT_PALBUF, sizeof(*buf));
 	zero = 0;
-	Dma_Set(&zero, buf, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | (sizeof(*buf) >> 2), REG_DMA3);
+	Dma_Set((const void *)&zero, buf, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | (sizeof(*buf) >> 2), REG_DMA3);
 	Dma_Set(
 		(void *)BG_PLTT, &buf->palette[0], DMA_ENABLE32 | DMA_32BIT | (COLOR_HALF / 2), REG_DMA3);
 	Dma_Set((void *)OBJ_PLTT, &buf->palette[COLOR_HALF],
@@ -2010,7 +2006,6 @@ s32 BattleFx_ClampRgb555Component(s32 value)
 	return value;
 }
 
-#define ObjectTable_Get ((void *(*)(u32 object))ObjectTable_Get)
 
 struct FadeMark
 {
@@ -2147,9 +2142,6 @@ void BattleFx_StartFadeOverlay(void *object)
 	work[6] = (u32)object;
 }
 
-#undef ObjectTable_Get
-
-#define ObjectDispatch_ApplyArgumentToChildrenFar ((void (*)(struct FieldActor *object, s32 animation))ObjectDispatch_ApplyArgumentToChildrenFar)
 
 void Object_EnableEffectSpawnCallback(void)
 {
@@ -2205,13 +2197,12 @@ u8 BattleFx_GetFlags(void)
 {
 	return BattleFx_FindDefinition(BattleFx_GetAnimationValue())->flags;
 }
-#define gDebugMode (*(volatile u8 (*))&gDebugMode)
 
 void Battle_UpdateModeFromShoulderButtons(void)
 {
 	struct BattleRuntime *runtime = (struct BattleRuntime *)gEventWork;
 
-	if (gDebugMode != 0)
+	if (*(volatile u8 *)&gDebugMode != 0)
 	{
 		if (gKeyState & KEY_L)
 		{
@@ -2245,10 +2236,10 @@ void Battle_InitializeRenderObject(void)
 	object->unknown_2c = 0;
 	if (gGameState.movement_mode == 1)
 	{
-		ObjectDispatch_ApplyArgumentToChildrenFar((s32)object, 0xC);
+		ObjectDispatch_ApplyArgumentToChildrenFar((struct ObjectRuntime *)object, 0xC);
 		return;
 	}
-	ObjectDispatch_ApplyArgumentToChildrenFar((s32)object, 1);
+	ObjectDispatch_ApplyArgumentToChildrenFar((struct ObjectRuntime *)object, 1);
 }
 
 void Battle_ResetEffectCounter(void);
@@ -2286,15 +2277,7 @@ void BattleFx_FinishAction(void)
 	GameFlag_RefreshLureCapFar();
 }
 
-#undef ObjectDispatch_ApplyArgumentToChildrenFar
-#undef gDebugMode
-
-#undef ObjectTable_Get
-#undef gEventWork
-
-#define UnitGetFar ((s32 (*)(void))UnitGetFar)
 s32 Party_AddActiveOwnerFar(s32 event_id);
-s32 GameFlag_TestFar(s32 group);
 
 void Event_NoOpHookA(void)
 {
@@ -2326,7 +2309,8 @@ void Event_SetSceneEvents(s32 value)
 
 void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value)
 {
-    UnitGetFar();
+    /* FAKEMATCH: UnitGetFar is called with no argument set up; r0 still holds event_id */
+    ((s32 (*)(void))UnitGetFar)();
     Party_AddActiveOwnerFar(event_id);
     if (value != 0) {
         Party_ShowJoinedMessageFar(event_id, value);
@@ -2362,7 +2346,6 @@ void Event_ClearInvalidPackedValues(void)
         gGameState.second_shortcut = 0;
 }
 
-#undef UnitGetFar
 
 static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
 {
@@ -2439,8 +2422,6 @@ s32 Party_CheckMemberValueTotal(s32 id)
     return 0;
 }
 
-void UiWork_PushValueSlotFar(s32 value, s32 slot);
-void UiText_ShowPositionedMessageAndWaitFar(void *message, s32 position);
 void UiWork_FinalizePendingCoreFar(void);
 void AudioCommand_PlayFar(s32 cue);
 
@@ -2455,7 +2436,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused)
     s32 member;
     s32 slot;
 
-    work = gEventWork;
+    work = (struct EventRuntime *)gEventWork;
     saved = work->message;
     owner = PartyInventory_AddFar(item);
     if (owner == -1) {
@@ -2627,7 +2608,6 @@ void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value)
 
 s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 force_bottom)
 {
-	void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
     struct EventPromptWork *work = (struct EventPromptWork *)gEventWork;
     s32 sprite = ((struct ScenePlacement *)BattleAction_FindDescriptor(work->event.speaker))->sprite;
     struct UiWindow *window = (struct UiWindow *)work->event.message_window;
@@ -2690,10 +2670,7 @@ void OwnerAction_AddFar(void);
 void Audio_PlayCue(s32);
 void UiText_DrawQuantity(s32, s32);
 #else
-void AudioCommand_PlayFar(s32);
-void UiWork_PushValueSlotFar(s32, s32);
 #endif
-void UiText_ShowPositionedMessageAndWaitFar(void *, s32);
 
 //--------------------------------------------------------------------------
 // わざを覚えさせ、効果音とメッセージを出して、送られるまで待つ
@@ -2718,7 +2695,7 @@ void UiText_DrawQuantityPairWithCue(s32 unit, s32 abil)
 
 void Event_StartScreenTransition(void)
 {
-    struct EventRuntime *runtime = gEventWork;
+    struct EventRuntime *runtime = (struct EventRuntime *)gEventWork;
 
     DisplayTransition_Start(runtime->value_1c0, runtime->value_1c8);
     runtime->status_1c6 = 1;
@@ -2726,7 +2703,7 @@ void Event_StartScreenTransition(void)
 
 void Event_FinishScreenTransition(void)
 {
-    struct EventRuntime *runtime = gEventWork;
+    struct EventRuntime *runtime = (struct EventRuntime *)gEventWork;
 
     DisplayTransition_Finish(runtime->value_1c0, runtime->value_1c8);
     runtime->status_1c6 = 0;
@@ -2734,19 +2711,19 @@ void Event_FinishScreenTransition(void)
 
 void Event_WaitTransitionFrames(void)
 {
-    WaitFrames(gEventWork->value_1c8);
+    WaitFrames(((struct EventRuntime *)gEventWork)->value_1c8);
 }
 
 void Event_SetDestination(u16 first, u16 second)
 {
-    gEventWork->value_170 = 999;
+    ((struct EventRuntime *)gEventWork)->value_170 = 999;
     gGameState.scene = first;
     gGameState.entrance = second;
 }
 
 void Event_SetSavedDestination(u16 first, u16 second)
 {
-    struct EventRuntime *state = gEventWork;
+    struct EventRuntime *state = (struct EventRuntime *)gEventWork;
     state->value_170 = 999;
     gGameState.saved_scene = first;
     gGameState.saved_entrance = second;
@@ -2754,7 +2731,7 @@ void Event_SetSavedDestination(u16 first, u16 second)
 
 void Event_SetExitRequest(u16 value)
 {
-    struct EventRuntime *state = gEventWork;
+    struct EventRuntime *state = (struct EventRuntime *)gEventWork;
     state->value_170 = value;
 }
 
@@ -2763,7 +2740,6 @@ void Event_SetExitRequest(u16 value)
 // バトル効果：イベントから決まった敵との戦闘を用意する
 //--------------------------------------------------------------------------
 
-#define BattleFx_GetPhaseResult ((s16 (*)(s32))BattleFx_GetPhaseResult)
 
 #define CHOJO 98	  // 頂上の嵐の背景で戦うエンカウント表
 #define TOBANAI 0x800 // ジンを跳ねさせない
@@ -2777,7 +2753,7 @@ void BattleFx_SetWeightedResult(s32 zone_no, s32 slot_no)
 {
 	register s32				  zone = zone_no;
 	register s32				  slot = slot_no;
-	register struct EventRuntime *ev = gEventWork;
+	register struct EventRuntime *ev = (struct EventRuntime *)gEventWork;
 
 	ev->value_17c = BattleFx_GetWeightedResult(zone, slot); // 敵グループ
 	if (zone == CHOJO && slot == 0)
@@ -2798,7 +2774,7 @@ void BattleFx_SetPhaseRequest(s32 flag, s32 no)
 	struct GameState	*gs;
 	s32					 skip;
 
-	ev = gEventWork;
+	ev = (struct EventRuntime *)gEventWork;
 	skip = flag & TOBANAI;
 	flag &= 0xff;
 
@@ -2807,7 +2783,8 @@ void BattleFx_SetPhaseRequest(s32 flag, s32 no)
 
 	gs = &gGameState;
 	gs->pending_djinn_event = (no + JIN_0) | skip;
-	ev->value_17c = BattleFx_GetPhaseResult(no); // ジンの敵グループ
+	/* FAKEMATCH: the result is read as s16 here; the shared prototype returns unsigned char */
+	ev->value_17c = ((s16 (*)(s32))BattleFx_GetPhaseResult)(no); // ジンの敵グループ
 	if (ev->mode_19e == 3)
 	{
 		void *obj = ObjectTable_Get(gs->selected_actor);
@@ -2831,27 +2808,21 @@ void Event_SetDefeatDestination(u16 first, u16 second)
 
 void Event_RequestDestination(u16 first, u16 second)
 {
-    struct EventRuntime *work = gEventWork;
+    struct EventRuntime *work = (struct EventRuntime *)gEventWork;
     gGameState.scene = first;
     gGameState.entrance = second;
     work->value_170 = 999;
 }
 
-#undef ObjectDispatch_ApplyArgumentToChildrenFar
-#undef Object_CreateFar
-
-#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct ObjectRuntime*,s32))ObjectDispatch_ApplyValueToChildrenFar)
 
 struct FieldCueWork {
     u8 padding[0xcc8];
     s16 queued_sound;
 };
-void AudioCommand_PlayFar(s32);
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);
 void Battle_WaitMode0(s32);
 void ObjectDispatch_InitFromTable6Far(struct ObjectRuntime *);
 void Script_WaitForEventTimeoutFar(struct ObjectRuntime *);
-void ObjectDispatch_ApplyArgumentToChildrenFar(struct ObjectRuntime *, s32);
 
 struct BurstParticle {
     u8 pad_00[8];
@@ -2878,7 +2849,7 @@ void BattleFx_PlayQueuedSound(void);
 
 void BattleFx_SetQueuedSoundAndPlay(s32 sound_id)
 {
-    gEventWork->queued_sound = sound_id;
+    ((struct FieldCueWork *)gEventWork)->queued_sound = sound_id;
     if ((s16)sound_id == -1) {
         sound_id = 0x121;
     }
@@ -2888,15 +2859,15 @@ void BattleFx_SetQueuedSoundAndPlay(s32 sound_id)
 
 void BattleFx_PlayQueuedSound(void)
 {
-    s16 sound_id = gEventWork->queued_sound;
+    s16 sound_id = ((struct FieldCueWork *)gEventWork)->queued_sound;
 
     if (sound_id != -1)
         AudioCommand_PlayFar(sound_id);
 }
 
-struct ObjectRuntime *Object_GetById(u32 object_id)
+struct FieldActor *Object_GetById(s32 object_id)
 {
-    struct ObjectRuntime *object = ObjectTable_Get(object_id);
+    struct FieldActor *object = (struct FieldActor *)ObjectTable_Get(object_id);
 
     if (object == NULL)
         return NULL;
@@ -2942,7 +2913,7 @@ void Object_LinkObjectAndSetCallback(u32 object_id, u32 linked_object_id)
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
     if (object != NULL) {
-        object->linked_object = Object_GetById(linked_object_id);
+        object->linked_object = (struct ObjectRuntime *)Object_GetById(linked_object_id);
         ObjectMotion_SetActionCallback(object, (s32)ObjectMotion_LinkedActionScript);
     }
 }
@@ -3091,13 +3062,13 @@ void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
         struct ObjectRuntime *other;
 
         ObjectMotion_SetSpeedParameters(arg0, 0x9999, 0x4CCC);
-        other = Object_GetById(gGameState.selected_actor);
+        other = (struct ObjectRuntime *)Object_GetById(gGameState.selected_actor);
         if (other != NULL)
             ObjectMotion_SetHorizontalPositionWithTerrain(arg0, other->x, other->z);
         object->movement_state = 0;
         ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
         ObjectMotion_OffsetPositionAndResetMotion(arg0, arg1, arg2);
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)&ObjectMotion_LaunchScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (const s32 *)&ObjectMotion_LaunchScript);
         object->action = arg3;
     }
 }
@@ -3199,7 +3170,7 @@ void Object_SetActionById(u32 object_id, s32 action)
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
     if (object != NULL)
-        ObjectDispatch_ApplyValueToChildrenFar(object, action);
+        ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, action);
 }
 
 void ObjectMotion_WaitForAnimationChange(u32 object_id)
@@ -3265,7 +3236,7 @@ void ObjectMotion_SetVariantCallback(u32 object_id, s32 variant)
             variant = 3;
         }
         ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-            (u32)(ObjectMotion_VariantScripts + ((3 - variant) << 7)));
+            (const s32 *)(ObjectMotion_VariantScripts + ((3 - variant) << 7)));
     }
 }
 
@@ -3312,22 +3283,22 @@ void BattleFx_SpawnBurstParticle(struct BurstParticle *source, s32 optional)
     struct FieldSprite *child;
     s32 value;
 
-    object = Object_CreateFar(222, source->x, source->y, source->z);
+    object = (struct BurstParticle *)Object_CreateFar(222, source->x, source->y, source->z);
     if (object != 0) {
         child = object->child;
         switch (Random16() & 1) {
         case 1:
             ObjectDispatch_ApplyArgumentToChildrenFar((struct ObjectRuntime *)object, 2);
-            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_BurstParticleScriptA);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (const s32 *)BattleFx_BurstParticleScriptA);
             break;
         default:
             ObjectDispatch_ApplyArgumentToChildrenFar((struct ObjectRuntime *)object, 1);
-            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_BurstParticleScriptB);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (const s32 *)BattleFx_BurstParticleScriptB);
             break;
         }
 
         if (optional != 0)
-            ObjectGroup_SetChildValue((struct DispatchObject *)object, optional);
+            ObjectGroup_SetChildValue((struct FieldActor *)object, optional);
 
         object->flags = 0;
         value = Random16() % 10 + 5;
@@ -3349,7 +3320,7 @@ void BattleFx_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 o
     struct ObjectRuntime *object;
     u8 *object_flags;
 
-    object = Object_GetById(sequence_arg);
+    object = (struct ObjectRuntime *)Object_GetById(sequence_arg);
     base_z = object->z;
     if (object != 0) {
         AudioCommand_PlayFar(0x121);
@@ -3401,11 +3372,6 @@ wait_for_target_y:
     }
 }
 
-#define WaitFrames ((s32 (*)(s32))WaitFrames)
-
-#define ObjectDispatch_ReleaseFar ((void (*)(void*))ObjectDispatch_ReleaseFar)
-#ifndef MODERN // modern GCC keeps the headers' volatile declaration
-#endif
 
 void ObjectMotion_SetAngleToward(s32 first_id, s32 second_id, s32 wait)
 {
@@ -3504,7 +3470,7 @@ void ObjectGroup_ConfigureChildValue(s32 object_id, s32 value)
             return;
         }
         ((struct ScriptMotionObject *)object)->hook = NULL;
-        ObjectGroup_SetChildValue(object, value);
+        ObjectGroup_SetChildValue((struct FieldActor *)object, value);
     }
 }
 
@@ -3533,8 +3499,10 @@ void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object)
     }
 }
 
-void ObjectGroup_SetChildValue(struct DispatchObject *object, s32 value)
+void ObjectGroup_SetChildValue(struct FieldActor *actor, s32 value)
 {
+    struct DispatchObject *object = (struct DispatchObject *)actor;
+
     if ((object->kind & 0xf) == 1) {
         struct AnimationObject *container = object->target.child;
         u8 raw_count = container->count;
@@ -3554,7 +3522,6 @@ void ObjectGroup_SetChildValue(struct DispatchObject *object, s32 value)
     }
 }
 
-#undef WaitFrames
 
 struct UiWindow *UiText_OpenMessageAtObject(s32 arg);
 extern const u8 ObjectMotion_StepAngleScript[];
@@ -3572,7 +3539,7 @@ void Object_SetTargetAndCallback(u32 object_id, s32 target_id, const void *callb
             first->speed_limit = second->speed_limit;
             first->unknown_59 = 0;
         }
-        ObjectDispatch_InitializeFar((struct DispatchObject *)first, (u32)callback);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)first, (const s32 *)callback);
     }
 }
 
@@ -3614,7 +3581,7 @@ void ObjectMotion_ArmCallback(s32 object_id, s32 angle, s32 wait)
 
     if (object != NULL) {
         object->action = angle;
-        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)ObjectMotion_StepAngleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (const s32 *)ObjectMotion_StepAngleScript);
         Battle_WaitMode0(wait);
     }
 }
@@ -3653,8 +3620,6 @@ void ObjectVisual_ReservedNoOp(void)
 {
 }
 
-#define BattleFx_GetResourceId ((s32 (*)(s32))BattleFx_GetResourceId)
-#define gEventWork (*(struct FieldStepWork *(*))&gEventWork)
 
 void Event_SetMessageId(s16 value)
 {
@@ -3663,7 +3628,7 @@ void Event_SetMessageId(s16 value)
 
 s32 ObjectTable_ReadActiveValue(s32 key)
 {
-    struct FieldStepWork *state = gEventWork;
+    struct FieldStepWork *state = (struct FieldStepWork *)gEventWork;
     s32 result = -1;
     struct ObjectRuntime *entry = state->actors[key & 0x0fff];
 
@@ -3674,7 +3639,7 @@ s32 ObjectTable_ReadActiveValue(s32 key)
 
 s32 ObjectTable_FindActiveByValue(s32 value)
 {
-    struct FieldStepWork *state = gEventWork;
+    struct FieldStepWork *state = (struct FieldStepWork *)gEventWork;
     s32 result = -1;
     s32 index = 8;
     struct ObjectRuntime *object = state->actors[index];
@@ -3862,17 +3827,17 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
         if (win->mode != 0) {
             WaitFrames(8);
             if (extra != 0)
-                handle = UiText_OpenMessageWindowFar(message, left, top + extra - 1, 18);
+                handle = (struct UiWindow *)UiText_OpenMessageWindowFar(message, left, top + extra - 1, 18);
             else
-                handle = UiText_OpenMessageWindowFar(message, left, top, 2);
+                handle = (struct UiWindow *)UiText_OpenMessageWindowFar(message, left, top, 2);
         } else {
             s32 icon = BattleFx_GetResourceId(speaker);
 
             if (extra != 0)
-                handle = UiText_OpenMessageWindowFar(message, left, top + extra - 1,
+                handle = (struct UiWindow *)UiText_OpenMessageWindowFar(message, left, top + extra - 1,
                                                      (icon << 16) | 17);
             else
-                handle = UiText_OpenMessageWindowFar(message, left, top, (icon << 16) | 1);
+                handle = (struct UiWindow *)UiText_OpenMessageWindowFar(message, left, top, (icon << 16) | 1);
         }
         if (win->mode != 0)
             side = UiWindow_CreateWithSideObjectFar(speaker, 0, column, tail);
@@ -3887,23 +3852,16 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
     return handle;
 }
 
-#undef gEventWork
-
-#define ObjectTable_ReadActiveValue ((int (*)())ObjectTable_ReadActiveValue)
-
-struct UiWindow;
-#define UiText_OpenMessageAtObject ((struct UiWindow *(*)(s32 actor, s32 flags))UiText_OpenMessageAtObject)
 
 void						Battle_WaitMode0(s32 mode);
-#undef gEventWork
-#define gEventWork (*(struct EventRuntime *(*))&gEventWork)
 s32							Inventory_PromptAndSetObjectMode(s32 actor, s32 force);
 
 void BattleEv_RunWait(s32 action, s32 flag)
 {
 	s32					 masked_action;
-	struct EventRuntime *runtime = gEventWork;
-	struct UiWindow		*window = UiText_OpenMessageAtObject(action, flag);
+	struct EventRuntime *runtime = (struct EventRuntime *)gEventWork;
+	/* FAKEMATCH: called with a second argument the function does not take */
+	struct UiWindow		*window = ((struct UiWindow *(*)(s32, s32))UiText_OpenMessageAtObject)(action, flag);
 	s32					 message_id;
 	u32					 frames;
 
@@ -3951,18 +3909,19 @@ s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
 	struct EventRuntime *runtime;
 	struct GameState	*save;
 
-	UiText_OpenMessageAtObject(object_id, action_id);
+	/* FAKEMATCH: called with a second argument the function does not take */
+	((struct UiWindow *(*)(s32, s32))UiText_OpenMessageAtObject)(object_id, action_id);
 	save = &gGameState;
 	result = Inventory_PromptAndSetObjectMode(save->selected_actor, 0);
 	if (result == 0)
 	{
 		BattleEv_RunWait(object_id, action_id);
-		runtime = gEventWork;
+		runtime = (struct EventRuntime *)gEventWork;
 		runtime->message += 1;
 	}
 	else
 	{
-		runtime = gEventWork;
+		runtime = (struct EventRuntime *)gEventWork;
 		runtime->message += 1;
 		BattleEv_RunWait(object_id, action_id);
 	}
@@ -3973,21 +3932,13 @@ void BattleEventRuntime_EmptyCallback(void)
 {
 }
 
-#undef ObjectTable_ReadActiveValue
-#undef UiText_OpenMessageAtObject
-#undef gEventWork
-
-#undef gEventWork
-
 void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
-#define ObjectTable_Get ((void *(*)(s32 id))ObjectTable_Get)
-#define Event_ShowMessageAtPosition ((s32 (*)())Event_ShowMessageAtPosition)
 
 void Event_ShowSpeakerMessage(s32 speaker)
 {
     // 位置は未初期化のまま読まれる (original bug: the position is never set)
     struct { s32 x, y; } pos;
-    struct EventRuntime *state = gEventWork;
+    struct EventRuntime *state = (struct EventRuntime *)gEventWork;
 
     speaker &= 0xfff;
     ObjectTable_Get(speaker);
@@ -4009,7 +3960,7 @@ void Event_ShowSpeakerMessage(s32 speaker)
             py = 220;
         win = UiText_OpenMessageWindowFar(state->message, px, py, 1);
         state->message_window = win;
-        while (UiWork_IsIdleFar(win) == 0)
+        while (UiWork_IsIdleFar((struct UiWindow *)win) == 0)
             WaitFrames(1);
     }
     state->message++;
@@ -4017,15 +3968,13 @@ void Event_ShowSpeakerMessage(s32 speaker)
 
 void ObjectTable_CallRefreshHook(void)
 {
-    Event_ShowMessageAtPosition();
+    /* FAKEMATCH: called with no arguments set up */
+    ((void (*)(void))Event_ShowMessageAtPosition)();
 }
-
-#undef ObjectTable_Get
-#undef Event_ShowMessageAtPosition
 
 void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
 {
-    struct EventRuntime *state = gEventWork;
+    struct EventRuntime *state = (struct EventRuntime *)gEventWork;
     s32 py = y;
     s32 px = x;
     s32 min_x = 8;
@@ -4047,7 +3996,7 @@ void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
         py = 220;
 
     ret = UiText_OpenMessageWindowFar(state->message, px, py, 1);
-    while (UiWork_IsIdleFar(ret) == 0)
+    while (UiWork_IsIdleFar((struct UiWindow *)ret) == 0)
         WaitFrames(1);
     state->message++;
 }
@@ -4060,15 +4009,12 @@ void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
 
 //--------------------------------------------------------------------------
 
-#undef ObjectTable_ReadActiveValue
-
 //--------------------------------------------------------------------------
 // アクターに絵があれば、その絵番号を話し手としてウィンドウの表示を終える
 // id : アクター番号
 //--------------------------------------------------------------------------
 void ObjectTable_RunIfActive(s32 id)
 {
-	s32 UiWork_FinalizeEntityMatchingLocalizedIdFar();
 	s32 no;
 
 	no = ObjectTable_ReadActiveValue(id);
@@ -4076,17 +4022,10 @@ void ObjectTable_RunIfActive(s32 id)
 		UiWork_FinalizeEntityMatchingLocalizedIdFar(no);
 }
 
-#undef BattleFx_GetResourceId
-
-s32							ObjectTable_ReadActiveValue(s32);
-
-s32 ObjectTable_ReadActiveValue(s32 key);
-
 void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 first_x, s32 first_y, s32 first_arg,
 	s32 first_extra, s32 second, s32 second_x, s32 second_y, s32 second_arg, s32 second_extra)
 {
-	void						UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
-	struct EventRuntime *rt = gEventWork;
+	struct EventRuntime *rt = (struct EventRuntime *)gEventWork;
 	s32					 id0 = ObjectTable_ReadActiveValue(first);
 	s32					 id1 = ObjectTable_ReadActiveValue(second);
 	s32					 h0;
@@ -4113,9 +4052,9 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 first_x, s32 first_y, s32 f
 	UiWork_FinalizePendingCoreFar();
 	WaitFrames(1);
 
-	while (UiWork_IsIdleFar(h0) == 0)
+	while (UiWork_IsIdleFar((struct UiWindow *)h0) == 0)
 		WaitFrames(1);
-	while (UiWork_IsIdleFar(h1) == 0)
+	while (UiWork_IsIdleFar((struct UiWindow *)h1) == 0)
 		WaitFrames(1);
 
 	WaitFrames(1);

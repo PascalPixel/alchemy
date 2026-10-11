@@ -37,14 +37,14 @@
 #include "btlcalc.h"
 
 s32 AudioCommand_GetStateByteFar(void);
-
-#define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
-
-void Battle_ResetEffectCounterFar(void);
-s32 UiWork_FinalizePendingCoreFar();
-
+s32 UiWork_FinalizePendingCoreFar(void);
 struct ObjectRuntime *Object_GetByIdFar(s32 id);
 void UiWork_FinalizeFar(s32 window, s32 style);
+void UiWork_PushValueSlotFar(s32 value, s32 slot);
+void PsynergyMenu_InitializeEntryObjectsFar(s32 window, s32 column, s32 row, s32 height, s32 flags);
+void Vector_AddPolarOffset(s32, s32, s32 *);
+
+extern struct EventRuntime *gEventWork;
 
 s32 AbilityMenu_BuildAvailableList(void)
 {
@@ -219,21 +219,10 @@ void AudioCommand_WaitForStateByteClear(void)
     }
 }
 
-struct ItemDefinition *Item_GetDirectFar(s32 item);
-
-#define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
-
-#define BattleFx_GetResourceIdFar ((s32 (*)(s32))BattleFx_GetResourceIdFar)
-#define UiIcon_PrepareObjectFar ((void (*)(void*))UiIcon_PrepareObjectFar)
-#define Shop_BuySpecialItem ((void (*)(s32,s32))Shop_BuySpecialItem)
-#define Item_AdjustCounterFar ((void (*)(s32,s32))Item_AdjustCounterFar)
-
 struct Record_080b06c0 {
     u8 filler0[4];
     u8 values[21];
 };
-
-extern u8 gEventWork[];
 
 void UiMessage_ShowAndWait(s32 arg0)
 {
@@ -410,7 +399,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 
 void Shop_RestoreSceneTiles(s32 layer)
 {
-    u32 *scene = (u32 *)gEventWork;
+    u32 *scene = (u32 *)&gEventWork;
     u8 *work = (u8 *)scene[5];
     u8 *map = (u8 *)scene[0];
     u8 *saved = work + 0xe00;
@@ -423,7 +412,7 @@ void Shop_RestoreSceneTiles(s32 layer)
 
 void Shop_InitEffect(void)
 {
-    BattleFx_ApplyColorToTargetBufferFar(*(s32 *)gEventWork + 0x236, 1);
+    BattleFx_ApplyColorToTargetBufferFar((s32)gEventWork + 0x236, 1);
     BattleFx_StartBufferInterpolationFar(0x10);
 }
 
@@ -560,9 +549,6 @@ void Shop_PlaceCursor(void *window, s32 x, s32 y)
         cursor_y,
         shop->mode);
 }
-void UiWork_PushValueSlotFar(s32 value, s32 slot);
-void PsynergyMenu_InitializeEntryObjectsFar(s32 window, s32 column, s32 row, s32 height, s32 flags);
-void AudioCommand_PlayFar(s32 cue);
 
 s32 Shop_SelBuy(void)
 {
@@ -612,7 +598,7 @@ next_page:
             shop->mode = 4;
             Shop_DrawStock(stock_window, cursor);
             Shop_DrawMsg(message_window, item_id + (s32)MsgItemPlainName);
-            RenderOutput_RedrawSavedRectFar(price_window);
+            RenderOutput_RedrawSavedRectFar((struct UiWindow *)price_window);
             Shop_DrawItemPrice(price_window, item_id, stock_item->price, 0);
         }
         if ((gKeyState & KEY_A) != 0) {
@@ -732,7 +718,7 @@ stock_done:
             if (quantity == -1)
                 continue;
             Shop_BuyDone(member, shop->selected_item, quantity);
-            Shop_BuySpecialItem(party_window, item_window);
+            Shop_BuySpecialItem((void *)party_window, item_window);
             result = 0;
             goto party_done;
         }
@@ -776,11 +762,6 @@ close:
     WaitFrames(1);
     return 0;
 }
-
-void RenderOutput_PrepareForRedrawFar(s32 window);
-struct RenderOutput *RenderOutput_CreateLoadedFar(s32 code, s32 layers, struct RenderInput *input, s32 x, s32 y);
-
-#define RenderOutput_CreateLoadedFar ((struct RenderOutput * (*)(s32,s32,s32,s32,s32))RenderOutput_CreateLoadedFar)
 
 void Shop_DrawStock(s32 window, s32 selected)
 {
@@ -829,7 +810,7 @@ void Shop_DrawStock(s32 window, s32 selected)
                 stock_item = *item_id;
                 definition = Item_GetDirectFar(stock_item);
                 icon = RenderOutput_CreateLoadedFar(
-                    stock_item, 1, window, slot * 32, 0);
+                    stock_item, 1, (struct RenderInput *)window, slot * 32, 0);
                 icon->sentinel = 252;
                 if (first == selected) {
                     icon->active = 9;
@@ -865,10 +846,6 @@ void Shop_DrawMoney(void)
     }
 }
 
-#undef RenderOutput_RedrawSavedRectFar
-
-void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
-
 void Shop_DrawItemPrice(s32 window, s32 item, s32 price, s32 price_mode)
 {
     s32 message;
@@ -903,7 +880,7 @@ show_price:
 #endif
     goto done;
 draw:
-    RenderOutput_RedrawSavedRectFar(window);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
     UiText_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, 0, 0);
     if (price != 0)
         goto show_price;
@@ -924,12 +901,6 @@ done:
     return;
 }
 
-#undef RenderOutput_RedrawSavedRectFar
-
-#if !EDITION_INTERNATIONAL
-#define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
-#endif
-
 //--------------------------------------------------------------------------
 // win を描きなおし、メッセージ mes を左上から書く（win が 0 なら何もしない）
 // 日本版は描きなおしたあと 1 フレーム待つ
@@ -939,21 +910,15 @@ void Shop_DrawMsg(s32 win, s32 mes)
 	if (win != 0)
 	{
 #if EDITION_INTERNATIONAL
-		RenderOutput_RedrawSavedRectFar(win);
+		RenderOutput_RedrawSavedRectFar((struct UiWindow *)win);
 		UiText_DrawCharacterAtOffsetFar(mes, win, 0, 0);
 #else
-		RenderOutput_ClearListFar(win);
+		RenderOutput_ClearListFar((struct UiWindow *)win);
 		WaitFrames(1);
 		UiText_DrawResourceFar(mes, win, 0, 0);
 #endif
 	}
 }
-
-#undef BattleFx_GetResourceIdFar
-#undef RenderOutput_CreateLoadedFar
-#undef Shop_BuySpecialItem
-
-#define Item_IsCompatibleWithOwnerFar ((s32 (*)(s16,s32))Item_IsCompatibleWithOwnerFar)
 
 void Shop_DrawParty(s32 window, s32 selected, s32 requirement)
 {
@@ -973,11 +938,6 @@ void Shop_DrawParty(s32 window, s32 selected, s32 requirement)
     }
 }
 
-void UiText_DrawNumberInWindowFar(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
-s32 Item_CanOwnerEquip(s32 owner, s32 item);
-
-void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 style);
-
 void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 {
     struct ShopRuntime *shop = gMenuWork;
@@ -989,6 +949,10 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
     s32 i;
     s32 without[4];
     s32 with[4];
+    /* FAKEMATCH: this block-scope redeclaration of the header prototype keeps
+       the divider call's width load after its window move; without it
+       `movs r3, #13` is scheduled one instruction early (differ 2). */
+    void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 style);
 
     if (window == 0)
         return;
@@ -1042,12 +1006,6 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
     if (replaced != -1)
         UiText_DrawCharacterAtOffsetFar(replaced + (s32)MsgItemName, window, 0, 48);
 }
-s32 Inventory_FindFar(s32 unit_id, s32 item_id);
-
-#define RenderOutput_CreateLoadedFar ((struct RenderOutput * (*)(u16,s32,s32,s32,s32))RenderOutput_CreateLoadedFar)
-
-void UiWork_PushValueSlotFar(s32 kosuu, s32 style);
-
 void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 {
 
@@ -1081,7 +1039,7 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
             for (;;) {
                 item_offset = item_index * 2 + 216;
                 icon = (u8 *)RenderOutput_CreateLoadedFar(*(u16 *)(unit + item_offset), 27,
-                                     window, x, y);
+                                     (struct RenderInput *)window, x, y);
                 icon[15] = 252;
                 x += 16;
                 if (item_index == 4) {
@@ -1168,9 +1126,6 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 #define COINS_X    136
 #endif
 
-#define Shop_FillSelector ((void (*)(s32,s32,void*))Shop_FillSelector)
-void WaitFrames(s32 frames);
-void UiWork_FinalizeFar(s32 window, s32 mode);
 
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
 {
@@ -1251,12 +1206,6 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
     return result;
 }
 
-#define Inventory_FindEquippedFar ((s32 (*)(s32,u8))Inventory_FindEquippedFar)
-#define Party_AdjustSixDigitCounterBFar ((s32 (*)(s16))Party_AdjustSixDigitCounterBFar)
-#define Inventory_DiscardFar ((void (*)(s32,s32))Inventory_DiscardFar)
-void AudioCommand_PlayFar(s32);
-#define UiWork_PushValueSlotFar ((void (*)(u32 unit_id, u32 mode))UiWork_PushValueSlotFar)
-void UiWork_FinalizeFar(s32, s32);
 
 void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
 {
@@ -1578,7 +1527,7 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
                 if (unit->inventory[slot] != 0) {
                     icon = RenderOutput_CreateLoadedFar(
                         unit->inventory[slot],
-                        27, window, x, y);
+                        27, (struct RenderInput *)window, x, y);
                     icon->sentinel = 252;
                 }
                 x += 16;
@@ -1707,12 +1656,6 @@ s32 Shop_RepairPrice(s32 item_id)
     return result;
 }
 
-#undef UiWork_PushValueSlotFar
-
-#undef Party_AdjustSixDigitCounterBFar
-
-#undef Party_AdjustSixDigitCounterBFar
-#define Party_AdjustSixDigitCounterBFar ((void (*)(s32))Party_AdjustSixDigitCounterBFar)
 #define SPECIAL_ITEM 228
 
 s32 Shop_SelUnit(void)
@@ -2030,8 +1973,6 @@ s32 EventTable_GetRowType(s32 index)
     return Shop_StockTable[index][32];
 }
 
-#define SideObject_CreateFar ((void (*)(s32,s32,s32,s32,s32,s32))SideObject_CreateFar)
-struct ObjectRuntime *Object_GetByIdFar(s32 unit_id);
 
 s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 {
@@ -2331,10 +2272,6 @@ s32 Sanctum_RunPartyService(void)
     return 0;
 }
 
-void UiWork_PushValueSlotFar(s32 message, s32 style);
-
-void Vector_AddPolarOffset(s32, s32, s32 *);
-
 void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 {
     struct BtlUnit *unit;
@@ -2433,16 +2370,11 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect)
     }
 }
 
-#define UiWindow_CreateWithSideObjectFar ((s32 (*)(u16,s32,s32,s32))UiWindow_CreateWithSideObjectFar)
-
 union PositionWord { s32 w; s16 h[2]; };
 
-void AudioCommand_PlayFar(s32 sound_id);
 void EffectSlot_SetCallbackFar(
     struct EffectSlot *effect,
     void (*callback)(struct EffectSlot *));
-void Event_WaitTransitionFramesFar(void);
-void Event_StartScreenTransitionFar(void);
 
 enum InnMessageId {
     INN_MESSAGE_WELCOME = 0xd1c,
@@ -2451,8 +2383,6 @@ enum InnMessageId {
     INN_MESSAGE_GOODBYE,
     INN_MESSAGE_REST_COMPLETE,
 };
-void UiWork_PushValueSlotFar(s32, s32);
-struct ObjectRuntime *Object_GetByIdFar(s32);
 
 void Shop_ResetEffects(void)
 {
@@ -2753,10 +2683,6 @@ done:
     Inn_Cleanup();
     return result;
 }
-s32 Inventory_CountFar(s32);
-struct BtlUnit *UnitGetFar(s32 object_id);
-#define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
-
 s32 Shop_SelUse(s32 actor)
 {
     struct ShopRuntime *shop = gMenuWork;
@@ -2880,7 +2806,7 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
     if (window != 0) {
         s32 result;
 
-        RenderOutput_RedrawSavedRectFar(window);
+        RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
         UiText_DrawCharacterAtOffsetFar(masked + (s32)MsgItemName, window, 0, 0);
 
         result = Inventory_CheckDiscardFar(unit_id, item_id);

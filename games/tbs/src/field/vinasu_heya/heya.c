@@ -334,12 +334,9 @@ extern u8 gMapCellBuffer[];
 #endif
 extern u8 gVinasuHeyaPrimaryTable[];
 void VinasuHeya_SettlePushedBlocks(void);
-void VinasuHeya_StepActorWithDust();
-void VinasuHeya_SpawnRandomParticles();
 void Object_RefreshSelectorById();
 void BattleFx_RunRisingObjectSequence();
 void BattleFx_PlayQueuedSound();
-void OverlayObject_WaitUntilIdle();
 s32 Object_CheckMovementCollision();
 struct FieldActor *SceneData_FindSlotAtPosition(s32 *pos, struct FieldActor *self);
 void SceneEvents_UpdateInView(u8 *);
@@ -403,7 +400,6 @@ void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 type)
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 #endif
 
-#define FieldScene_PrepareActors ((void (*)(u8*))FieldScene_PrepareActors)
 
 extern u8 *gActorEffectWork;
 void Object_SetActionById();
@@ -1024,7 +1020,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     } else {
         goto no_match;
     }
-    FieldScene_PrepareActors(ret);
+    FieldScene_PrepareActors((void *)ret);
     return (const struct ScenePlacement *)ret;
 
 no_match:
@@ -1694,7 +1690,6 @@ void VinasuHeya_ShiftBridge(void)
 
 void VinasuHeya_RunCellPushScene(void)
 {
-	struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind);
     u8 *flags;
     s32 z;
     s32 x;
@@ -1768,7 +1763,6 @@ void VinasuHeya_RunCellPushScene(void)
     Engine_EventEnd();
 }
 
-#define SceneEffect_SpawnEffect284AtCell ((struct SwitchEffect * (*)(s32,s32,const void*))SceneEffect_SpawnEffect284AtCell)
 
 void FieldScene_RunGuardedRectStep(void)
 {
@@ -1788,7 +1782,6 @@ void FieldScene_RunGuardedRectStep(void)
 
 void VinasuHeya_SettlePushedBlocks(void)
 {
-	struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind);
     struct FieldActor *marker = 0;
     struct FieldActor *leader = Object_GetById(0);
     struct FieldActor *block;
@@ -1870,8 +1863,8 @@ void VinasuHeya_SettlePushedBlocks(void)
              & Object_GetById(11)->priority_flags & 2) == 0) {
             continue;
         }
-        first = SceneEffect_SpawnEffect284AtCell(888, 680, gVinasuSettleScriptA);
-        second = SceneEffect_SpawnEffect284AtCell(888, 680, gVinasuSettleScriptB);
+        first = (struct SwitchEffect *)SceneEffect_SpawnEffect284AtCell(888, 680, (s32)gVinasuSettleScriptA);
+        second = (struct SwitchEffect *)SceneEffect_SpawnEffect284AtCell(888, 680, (s32)gVinasuSettleScriptB);
         while (first->active != 0 || second->active != 0) {
             if (first->finished != 0 || second->finished != 0) {
                 Engine_EventWait(30);
@@ -2217,13 +2210,12 @@ void VinasuHeya_ExtendBridge(void)
         }
     }
 }
+extern struct SwitchCell gVinasuPillarCells[8];
 void ObjectDispatch_WaitForValue16(struct SwitchEffect *effect);
 void Battle_ResetEffectCounter(void);
 
 void Scene_RunScene3c8SequenceA(void)
 {
-	struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind);
-	extern struct SwitchCell gVinasuPillarCells[8];
     struct FieldActor *effect;
     struct FieldActor *actor;
     struct FieldActor *other;
@@ -2333,13 +2325,13 @@ void Scene_RunScene3c8SequenceA(void)
             Camera_SetSpeed(0x10000, 0x2000);
             Object_PlaceCurrentWithinCameraBounds(14, 1);
             Camera_WaitForMove();
-            first = SceneEffect_SpawnEffect284AtCell(136, 0x308, gVinasuFirstGateScript);
+            first = (struct SwitchEffect *)SceneEffect_SpawnEffect284AtCell(136, 0x308, (s32)gVinasuFirstGateScript);
             Event_Wait(30);
             Camera_SetSpeed(0x6666, 0xccc);
             Camera_MoveTo(0xd80000, -1, 0x2780000, 1);
             ObjectDispatch_WaitForValue16(first);
             Object_SetScript((struct FieldActor *)first, gVinasuFirstGateOpenScript);
-            second = SceneEffect_SpawnEffect284AtCell(216, 0x2f8, gVinasuSecondGateScript);
+            second = (struct SwitchEffect *)SceneEffect_SpawnEffect284AtCell(216, 0x2f8, (s32)gVinasuSecondGateScript);
             while (first->active != 0 || second->active != 0) {
                 if (first->finished != 0 || second->finished != 0) {
                     Event_Wait(30);
@@ -2355,7 +2347,6 @@ void Scene_RunScene3c8SequenceA(void)
     Event_End();
 }
 
-#define SceneEffect_SpawnRandomizedParticleEveryFourFrames ((void (*)(union FieldObject*))SceneEffect_SpawnRandomizedParticleEveryFourFrames)
 
 void BattleFx_StartFadeOverlay(s32 mode);
 void BattleFx_SetQueuedSoundAndPlay(s32 cue);
@@ -2650,7 +2641,7 @@ s32 Scene_RunEntrySetup(void)
                 actor->collision_flags = 0;
                 actor->priority_flags = 2;
                 Actor_SetPosition(10, 0x2e70000, 174 << 18);
-                actor->update = SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+                actor->update = (void (*)(union FieldObject *))SceneEffect_SpawnRandomizedParticleEveryFourFrames;
             }
             VinasuHeya_RunCellPushScene();
             break;
@@ -2765,7 +2756,7 @@ s32 Scene_RunEntrySetup(void)
                 actor->collision_flags = 0;
                 actor->priority_flags = 2;
                 Actor_SetPosition(12, 0x2d70000, 158 << 18);
-                actor->update = SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+                actor->update = (void (*)(union FieldObject *))SceneEffect_SpawnRandomizedParticleEveryFourFrames;
             }
             VinasuHeya_SettlePushedBlocks();
             break;
@@ -2922,7 +2913,7 @@ s32 Scene_RunEntrySetup(void)
                 actor->collision_flags = 0;
                 actor->priority_flags = 2;
                 Actor_SetPosition(19, 215 << 16, 150 << 18);
-                actor->update = SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+                actor->update = (void (*)(union FieldObject *))SceneEffect_SpawnRandomizedParticleEveryFourFrames;
             }
             Scene_RunScene3c8SequenceA();
             break;
@@ -3040,8 +3031,6 @@ void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
     center->z.fixed += (dir->z * 3) << 15;
     actor->z.fixed += (dir->z * 3) << 15;
 }
-
-struct FieldActor;
 
 static __inline__ void Rubble_SetScaleAndSpin(struct EffectOptions *opts)
 {
@@ -3346,7 +3335,6 @@ struct TrackSprite {
 
 s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
 {
-	extern struct SwitchCell gVinasuPillarCells[];
     s32 pos[3];
     struct FieldActor *piece;
     struct TrackSprite *sprite;

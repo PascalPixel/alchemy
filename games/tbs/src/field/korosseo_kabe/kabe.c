@@ -22,14 +22,6 @@
 #include "text/msg_ids.h"
 #include "battle_unit.h"
 
-void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third, s32 fourth);
-void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
-void KorosseoKabe_RollLogToCell();
-s32 KorosseoKabe_RunStateInteraction();
-void KorosseoKabe_ShowFollowUpPrompt();
-void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z);
-void SceneState_InitCursorWhenUnset();
-
 extern u8 gWorkSlot[];
 #define WORK_SLOT_STAGE 59
 extern u8 gEffectWork[];
@@ -155,11 +147,9 @@ extern u16 Korosseo_MarkerStep;
 
 s32 GameFlag_GetByte();
 void GameFlag_SetByte();
-void Vector_AddPolarOffset();
-void ObjectDispatch_InitFromTable6();
+void ObjectDispatch_InitFromTable6(struct FieldActor *object);
 void ObjectDispatch_WaitForValue16();
 s32 Object_CheckMovementCollision();
-void Object_CommitPosition();
 void UiWork_PushValueSlot();
 s32 Resource_LoadFixedBlockBIntoFreeSlot();
 u16 *UnitGet();
@@ -175,12 +165,7 @@ void BattleEffect_PauseObject();
 s32 Menu_OpenCharacterSelector();
 s32 AudioCommand_GetStateByte();
 void BattleFx_RunRisingObjectSequence();
-void Korosseo_SelectSoloCompetitor();
-void Korosseo_FinishSoloRound();
-s32 KorosseoKabe_RunStateInteraction();
-void KorosseoKabe_ShowFollowUpPrompt();
 void Korosseo_LoadPortrait();
-void Korosseo_RestoreCompetitor();
 void Korosseo_UpdatePathRival(void);
 void Korosseo_UpdateModeTask(void);
 void Korosseo_UpdateMarker(void);
@@ -198,6 +183,7 @@ void FieldScene_SetFlag333AndDrawTiles(void);
 void KorosseoKabe_RunSelectedActorRisingEffect(void);
 void KorosseoKabe_CheckLeaderAhead(void);
 void SceneActor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2);
+void KorosseoKabe_RollLogToCell(s32 id, s32 column, s32 row);
 void SceneState_ApplyRectsForActors15To17(void);
 void FieldScene_RunStep15At29By26(void);
 void FieldScene_RunStep15At33By26(void);
@@ -221,12 +207,14 @@ void FieldScene_RunSixSteps896To936(void);
 void OverlayObject_NotifyMatchingEntries(s32 no, s32 val);
 void KorosseoKabe_InitializeModeTask(u32 mode, u32 param);
 void KorosseoKabe_RunScriptedTransition(s32 mode);
+void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 void FieldScene_RunLateSequence(s32 a0);
 void StagedActor_ResetMotionAfterRefresh(s32 slot);
-void SceneState_InitCursorWhenUnset();
+void SceneState_InitCursorWhenUnset(void);
 void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style);
 void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration);
 void SceneEffect_RemoveMarkerTask(void);
+void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z);
 void SceneActor_PlaceWithScale20000(s32 selector, s32 x, s32 z);
 void Text_WriteU32AsHex(u8 *buf, u32 value);
 void SceneState_EmptyHook(void);
@@ -243,8 +231,9 @@ void SceneState_WaitUntilStatusNine(void);
 void KorosseoKabe_SpawnRandomSceneEffect(SparkSource *a);
 s32 KorosseoKabe_RaiseLinkedSceneEffect(RaisedEffect *a);
 s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB);
+void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third,
+                   s32 fourth);
 void SceneState_InitControlRecordAndStartTask(s32 resource);
-void Korosseo_SetGaugeHold(s16 v);
 s32 *SceneData_FindSlotAtPosition(s32 *pos, void *self);
 void StagedActor_PushActorAhead(void);
 s32 *SceneActor_FindOccupantAheadOfSubject(void);
@@ -263,8 +252,6 @@ static inline void InitializeSelectedActor(s32 actorId)
 // 別ファイルの関数: 呼び出し側は宣言なし (暗黙の int) で呼んでいる
 s32 Korosseo_FadeInCompetitor();
 
-#define ObjectDispatch_InitFromTable4WithArgument ((void (*)(s32,struct FieldActor*))ObjectDispatch_InitFromTable4WithArgument)
-
 void Object_CommitPosition(struct FieldActor *object);
 
 void Object_RefreshSelectorById(s32 actor);
@@ -276,6 +263,7 @@ void Korosseo_SelectSoloCompetitor(s32 index);
 void Korosseo_RunGreetScene(s32 actor);
 
 void battle_owner_69();
+void Battle_ResetEffectCounter(void);
 void Korosseo_FinishSoloRound(void);
 s32 KorosseoKabe_RunStateInteraction(s32 speaker, s32 base);
 void Korosseo_RestoreCompetitor(s32 actor);
@@ -563,7 +551,7 @@ void KorosseoKabe_RollLogToCell(s32 id, s32 column, s32 row)
     Engine_ObjectSetPosition(log, column, 0, row);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(pusher, 2);
-    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)((u8 *)Runtime_AllocateBlock(27, 0xccc) + 480), log);
+    ObjectDispatch_InitFromTable4WithArgument(*(struct DispatchObject **)((u8 *)Runtime_AllocateBlock(27, 0xccc) + 480), (s32)log);
     Engine_ActorSetSpeed(pusher, 0x8000, 0x3333);
     Object_SetMode(leader, 2);
     Engine_ObjectSetPosition(leader, leader->x.fixed + dx, 0, leader->z.fixed + dz);
@@ -974,7 +962,8 @@ s32 KorosseoKabe_ApplyEntryState(void)
     Engine_ActorSetChildValue(8, 1);
     switch (gGameState.entrance) {
     case 1:
-        FieldScene_BuildDescriptorAndInstallTask(0, 8, 5, 0x680000, 0x1000000, 40, 41);
+        /* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+        ((s32 (*)(s32, s32, s32, s32, s32, s32, s32))FieldScene_BuildDescriptorAndInstallTask)(0, 8, 5, 0x680000, 0x1000000, 40, 41);
         Map_CopyCellsTo(127, 0, 1, 2, 79, 6);
         Engine_ActorDestroy(34);
         Engine_ActorDestroy(35);
@@ -1103,11 +1092,12 @@ void KorosseoKabe_RunStageIntro(s32 speaker)
             Engine_EventShowMessage(speaker, 0);
             Korosseo_FadeInCompetitor(ACTOR_PARTY_LEADER, 0x4f8, 168);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-            SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x508, 184);
-            SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x508, 216);
-            SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x4c8, 216);
+            /* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+            ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 0x508, 184);
+            ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 0x508, 216);
+            ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 0x4c8, 216);
             Engine_EventShowMessage(speaker, 0);
-            SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x4c8, 248);
+            ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 0x4c8, 248);
             SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x4a8, 248);
             Engine_EventWait(3);
             actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -1123,7 +1113,7 @@ void KorosseoKabe_RunStageIntro(s32 speaker)
             Engine_EventSetMessage((s32)MsgKorosseoMainThingStage);
             Engine_EventShowMessage(speaker, 0);
         }
-        FieldScene_RunMiddleSequence(result, speaker, 1);
+        ((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(result, speaker, 1);
         Engine_EventEnd();
     }
 }
@@ -1152,7 +1142,8 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
             Korosseo_FadeInCompetitor(0, 0x438, 0x108);
             Engine_EventWait(15);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-            SceneActor_PlaceWithScale14000(0, 0x438, 216);
+            /* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+            ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(0, 0x438, 216);
             SceneActor_PlaceWithScale14000(0, 0x428, 216);
             SceneState_WaitForStatusWords();
             Engine_LeaderCheckAhead();
@@ -1167,7 +1158,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
                 Event_ShowMessage(a0, 0);
             }
         }
-        FieldScene_RunMiddleSequence(rec, a0, 2);
+        ((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(rec, a0, 2);
         Engine_EventEnd();
     }
 }
@@ -1197,8 +1188,9 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
             Korosseo_FadeInCompetitor(0, 0x358, 0x108);
             Engine_EventWait(10);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-            SceneActor_PlaceWithScale14000(0, 0x358, 0x108);
-            SceneActor_PlaceWithScale14000(0, 0x358, 232);
+            /* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+            ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(0, 0x358, 0x108);
+            ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(0, 0x358, 232);
             Event_ShowMessage(a0, 0);
             SceneActor_PlaceWithScale14000(0, 0x348, 232);
             Engine_EventWait(10);
@@ -1223,7 +1215,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
             Event_ShowMessage(a0, 0);
         }
         L_020016b0:;
-        FieldScene_RunMiddleSequence(rec2, a0, 3);
+        ((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(rec2, a0, 3);
         Engine_EventEnd();
     }
 }
@@ -1268,7 +1260,8 @@ void FieldScene_RunLiftedActorCoordinator(s32 speaker)
         Camera_MoveTo(-1, -1, -1, 0);
         Event_ShowMessage(speaker, 0);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-        SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 488, 248);
+        /* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+        ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 488, 248);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 20);
         BattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
         Engine_CameraMoveTo(0x2180000, -1, 0xa00000, 1);
@@ -1280,7 +1273,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 speaker)
         Engine_EventSetMessage((s32)MsgKorosseoScalingWallQuickly);
         Engine_EventShowMessage(speaker, 0);
     }
-    FieldScene_RunMiddleSequence(result, speaker, 4);
+    ((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(result, speaker, 4);
     Engine_EventEnd();
 }
 
@@ -1345,14 +1338,15 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
         Engine_EventShowMessage(speaker, 0);
         Korosseo_FadeInCompetitor(ACTOR_PARTY_LEADER, 408, 264);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-        SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 408, 216);
+        /* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+        ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 408, 216);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 10);
         Engine_EventShowMessage(speaker, 0);
         KorosseoKabe_PushBlockToCell(16, 360, 208);
         Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 264, 45);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-        SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 376, 216);
-        SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 376, 248);
+        ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 376, 216);
+        ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 376, 248);
         SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 312, 248);
         Engine_EventShowMessage(speaker, 0);
         Korosseo_RestoreCompetitor(ACTOR_PARTY_LEADER);
@@ -1363,7 +1357,7 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
         Engine_EventSetMessage((s32)MsgKorosseoFocusRollingLogs);
         Engine_EventShowMessage(speaker, 0);
     }
-    FieldScene_RunMiddleSequence(result, speaker, 5);
+    ((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(result, speaker, 5);
     Engine_EventEnd();
 }
 
@@ -1400,8 +1394,6 @@ void SceneActor_PlacePartyAtSavedTiles(void)
         Engine_ActorSetPosition(MEARI, x, y);
     }
 }
-
-void KorosseoKabe_RollLogToCell();
 
 void KorosseoKabe_MarkSceneProgress(void)
 {
@@ -1478,10 +1470,6 @@ void KorosseoKabe_SelectNearestActor(void)
     Engine_EventEnd();
 }
 
-#define PartyTalkMenu_Choose ((s32 (*)(s32))PartyTalkMenu_Choose)
-
-void Battle_ResetEffectCounter(void);
-
 void RunPartyCountInteractionCopyA(s32 actorId)
 {
     PartyInteractionRecord *record;
@@ -1546,7 +1534,8 @@ s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b)
         return 2;
     }
     if (Engine_GameFlagIsSet(b + 520) != 0) {
-        r = PartyTalkMenu_Choose(0);
+        /* FAKEMATCH: called with an argument the function does not take; r0 is set to 0 before the call. */
+        r = ((s32 (*)(s32))PartyTalkMenu_Choose)(0);
         if (r == 1) {
             return 2;
         }
@@ -1848,7 +1837,7 @@ void SceneState_InitCursorWhenUnset(void)
 
 void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style)
 {
-    SceneState_InitCursorWhenUnset(x, y, style);
+    SceneState_InitCursorWhenUnset();
 
     Korosseo_MarkerX = (u16)x;
     Korosseo_MarkerY = (u16)y;
@@ -1921,7 +1910,7 @@ void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z)
         *p = zero;
     }
 
-    ObjectDispatch_InitFromTable6();
+    ObjectDispatch_InitFromTable6((struct FieldActor *)obj);
     Object_SetMode(obj, 5);
     Engine_ObjectSetPosition(obj, x << 16, obj->y.fixed, z << 16);
     Object_CommitPosition(obj);
@@ -2053,6 +2042,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
     }
 
     if (flag == 0) {
+        /* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
         ((s32 (*)())OverlayObject_NotifyMatchingEntries)(0, handleA);
         UiWork_PushValueSlot(handleA, 2);
     } else {

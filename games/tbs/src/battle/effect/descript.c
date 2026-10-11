@@ -57,7 +57,57 @@
 #include "item.h"
 #include "motobj.h"
 
-u16 BattleFx_GetWeightedResult(s32 zone, s32 slot);
+// ほかのモジュールの関数 (共通ヘッダーにまだ宣言が無いもの)
+s32	  Runtime_BlankDisplayAndRunFar(s32 entrance);
+s32	  Runtime_BlankDisplayLoadValueAndRunFar(s32 entrance);
+void  ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
+void  ObjectDispatch_ReleaseFar(void *object);
+void  ObjectDispatch_SetSingleChildFlagsFar(void *object, s32 value);
+void  ObjectDispatch_InitFromTable6Far(void *object);
+void  Vector_AddPolarOffset(s32, s32, void *);
+u32	  __umodsi3(u32 numerator, u32 denominator);
+u16	  ArcTan2(s32 deltaZ, s32 deltaX);
+void  UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
+void  UiWork_PushValueSlotFar(s32 value, s32 mode);
+void  UiWork_FinalizePendingCoreFar(void);
+void  GameFlag_SetBitFar(s32 flag);
+void  GameFlag_ClearBitFar(s32 flag);
+s32	  Party_CountActiveOwnersFar(void);
+void  Party_AdjustCoinsFar(s32 coins);
+u8	  Inventory_RemoveFar(s32 actor, s32 slot);
+void  Djinn_ResolvePendingEvent();
+void  Battle_Reset(void);
+void  Battle_WaitMode0(s32 frames);
+void  Event_SetMessageId(s32 message);
+void  EventObject_Initialize(void);
+void  Object_LinkPair(s32, s32, s32);
+void  FieldEffect_UpdateGridPlacement(void);
+void  battle_owner_69(void);
+void  EffectRuntime_StopCurrentObject(void);
+void  BattleEffect_CleanupSceneObjects(void);
+void  BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
+void  BattleFx_DispatchRequestKind(void);
+void  BattleFx_FinishAction(void);
+s32	  BattleFx_GetFlags(s32);
+void  BattleFx_LoadActionEffectResources(s32 action_id, s32 mode);
+void  BattleFx_PlayQueuedSound(void);
+void  BattleFx_Run(void);
+void  BattleFx_RunRisingObjectSequence(s32, s32, s32);
+void  BattleFx_SetupObjectPair(s32, s32);
+void *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item);
+
+// Field_RunScene reads the debug switch afresh at each test, so it is volatile
+extern volatile u8 gDebugMode;
+
+// このファイルの関数 (定義より前で使うもの)
+void Audio_PlayCueFromEventWork(void);
+s32	 Encounter_SelectEnemyGroup(s32 zone, s32 steps);
+u16	 BattleFx_GetWeightedResult(s32 zone, s32 slot);
+void BattleFx_SelectBattleCue(s32 first, s32 second);
+void BattleParty_ApplyDrain(s32 amount);
+void ObjectTable_Snapshot(void);
+void Battle_ResetEffectCounter(void);
+s32	 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result);
 
 void MapGroupTable_SelectEntry(s32 kind)
 {
@@ -210,20 +260,12 @@ s8 BattleFx_GetResourceGroup(s32 scene)
 	return Field_SceneTable[scene].group;
 }
 
-s32 Runtime_BlankDisplayAndRunFar(s32 entrance);
-s32 Runtime_BlankDisplayLoadValueAndRunFar(s32 entrance);
-
-#define BattleFx_LoadResourceGroup ((void (*)(s32))BattleFx_LoadResourceGroup)
-
 enum {
     SCENE_BLANK = 0x1fb,
     SCENE_TABLE_LOAD = 0x1fc,
     SCENE_TABLE_RUN = 0x1fd,
     SCENE_BATTLE = 0x1fe
 };
-
-void Audio_PlayCueFromEventWork(void);
-void AudioCommand_PlayFar(s32 cue);
 
 static __inline__ s32 Scene_RunTable(s32 entrance)
 {
@@ -253,7 +295,6 @@ static __inline__ s32 Scene_LoadTable(s32 entrance)
 
 void Game_ResetForNewGame(s32 mode)
 {
-	extern u8 gDebugMode;
     const struct SceneRecord *table;
     const struct SceneRecord *record;
     s32 entrance;
@@ -330,7 +371,8 @@ start:
             Audio_PlayCueFromEventWork();
         }
         gGameState.map = record->map_index;
-        BattleFx_LoadResourceGroup(0);
+        /* FAKEMATCH: needed to match: the call passes a 0 the function does not take */
+        ((void (*)(s32))BattleFx_LoadResourceGroup)(0);
         MapGroupTable_SelectEntry(Field_RunScene(entrance));
     }
 }
@@ -339,8 +381,6 @@ start:
 // data_load_resource_group.c
 // シーン表：現在のシーンのコードを読み込む
 //--------------------------------------------------------------------------
-
-#undef BattleFx_LoadResourceGroup
 
 //--------------------------------------------------------------------------
 // 現在のシーンのコードをオーバーレイ領域へ読み込む
@@ -403,8 +443,6 @@ void Audio_PlayCueFromEventWork(void)
 // エンカウント：場所ごとの出現テーブルの選択と、敵グループの抽選
 //--------------------------------------------------------------------------
 
-#define BattleFx_SetSpecialFromTable ((void (*)(void))BattleFx_SetSpecialFromTable)
-
 // マップと部屋ごとの出現テーブル (Battle_LocationRules、map が -1 で終わり)
 struct BattleLocationRule
 {
@@ -416,8 +454,6 @@ struct BattleLocationRule
 };
 
 extern const struct BattleLocationRule Battle_LocationRules[];
-
-s32 GameFlag_TestFar(s32 flag);
 
 // ワールドマップの地形ごとの出現テーブル (BattleFx_ResultRules、-1 で終わり)
 typedef struct TerrainRule
@@ -439,10 +475,7 @@ struct EncounterZone
 	u8	weights[8]; // 各グループの重み
 };
 
-extern struct EventWork	   *gEventWork;
-struct BtlUnit			   *UnitGetFar(s32 unit);
-u32							Random16(void);
-void						BattleFx_SelectBattleCue(s32 zone, s32 slot);
+extern u16 Encounter_EnemyGroupTable[];
 
 //--------------------------------------------------------------------------
 // 今のマップと部屋に合う規則から、出現テーブル番号の並びを作る
@@ -498,7 +531,8 @@ void BattleFx_SelectLocationRule(s32 use_rules)
 	}
 	work->encounter_bias = 0;
 	work->encounter_threshold = 0x100000;
-	BattleFx_SetSpecialFromTable();
+	/* FAKEMATCH: needed to match: the call leaves out the function's two arguments */
+	((void (*)(void))BattleFx_SetSpecialFromTable)();
 }
 
 //--------------------------------------------------------------------------
@@ -531,7 +565,6 @@ s32 BattleFx_LookupResult(void *pos)
 //--------------------------------------------------------------------------
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
 {
-	extern u16 Encounter_EnemyGroupTable[];
 	struct EventWork	 *work;
 	struct EncounterZone *entry;
 	s32					  rate;
@@ -621,10 +654,6 @@ encounter:
 // フィールド：エンカウント・曲・地名の表引き
 //--------------------------------------------------------------------------
 
-#define BattleFx_GetResourceGroup ((s32 (*)(s32))BattleFx_GetResourceGroup)
-
-s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps);
-
 //--------------------------------------------------------------------------
 // 地形ごとのエンカウント
 // terrain : 地形番号（0 は通常の地面）
@@ -653,7 +682,6 @@ s32 BattleFx_ApplyLookupResult(s32 pos, s32 steps)
 //--------------------------------------------------------------------------
 u16 BattleFx_GetWeightedResult(s32 zone, s32 slot)
 {
-	extern u16 Encounter_EnemyGroupTable[];
 	return Encounter_EnemyGroupTable[zone * 14 + slot + 2];
 }
 
@@ -734,7 +762,8 @@ s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {
 	const struct SceneAreaNameRule *p = Scene_AreaNameRules;
 	s32								name = 0;
-	s32								grp = BattleFx_GetResourceGroup(scene);
+	/* FAKEMATCH: needed to match: the s8 group is read as a whole register, with no sign extension after the call */
+	s32								grp = ((s32 (*)(s32))BattleFx_GetResourceGroup)(scene);
 
 	while (p->id != -1)
 	{
@@ -764,8 +793,6 @@ s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 	}
 	return name;
 }
-
-#undef BattleFx_SetSpecialFromTable
 
 void Party_ResolveTablePair(void)
 {
@@ -913,18 +940,9 @@ s32 Party_RemapCharacterIdIfEnabled(s32 arg0, s32 arg1)
 	return result;
 }
 
-void BattleParty_ApplyDrain(s32 amount);
-
-void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
-void ObjectDispatch_ReleaseFar(struct DispatchObject *work);
-
-#define ObjectDispatch_ReleaseFar ((void (*)(void*))ObjectDispatch_ReleaseFar)
-
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
 extern const struct ScenePlacement Field_DefaultPlacements[2];
-#define Object_CreateFar ((struct ObjectRuntime *(*)(s32 character, s32 x, s32 y, s32 z))Object_CreateFar)
-u32 __umodsi3(u32 numerator, u32 denominator);
 
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 {
@@ -964,7 +982,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
         character = Party_RemapCharacterIdByFlags(entry->sprite);
         object = ObjectTable_Get(index);
         if (object == 0) {
-            object = Object_CreateFar(character, entry->x, entry->y, entry->z);
+            object = (struct ObjectRuntime *)Object_CreateFar(character, entry->x, entry->y, entry->z);
             if (entry->flags & 1) {
                 previous = ObjectTable_Get(index - 1);
                 if (previous->animation_kind == 1 && object->animation_kind == 1) {
@@ -1012,7 +1030,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 
 void ObjectTable_DestroyAtIndex(s32 index)
 {
-    struct FieldStepWork *state = gEventWork;
+    struct FieldStepWork *state = (struct FieldStepWork *)gEventWork;
     void *object = ObjectTable_Get(index);
 
     if (object != NULL) {
@@ -1023,7 +1041,6 @@ void ObjectTable_DestroyAtIndex(s32 index)
 
 void ObjectTable_ResetForObject(struct ScenePlacement *table)
 {
-	void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object, s32 value);
     struct FieldStepWork *work;
     struct ScenePlacement *entry;
     struct ObjectRuntime *object;
@@ -1068,7 +1085,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
         gGameState.movement_mode = 0;
     }
 
-    camera = Object_CreateFar(0x8000, object->x, object->y, object->z);
+    camera = (struct ObjectRuntime *)Object_CreateFar(0x8000, object->x, object->y, object->z);
     camera->terrain_height = object->terrain_height;
     ObjectDispatch_InitFromTable4WithArgumentFar((struct DispatchObject *)camera, (s32)object);
     if (work->mode == 3) {
@@ -1108,14 +1125,10 @@ void *ObjectTable_GetSlotAddress(u32 index)
     return (u8 *)gEventWork + 0x14 + index * sizeof(void *);
 }
 
-#undef Object_CreateFar
-
 //--------------------------------------------------------------------------
 // bounds.c
 // フィールド：画面の範囲による条件フラグと、置いた物体の片付け
 //--------------------------------------------------------------------------
-
-#undef ObjectDispatch_ReleaseFar
 
 #define FLG_IN 0x164  // 範囲の中 (下ろしたフラグ)
 #define FLG_OUT 0x165 // 範囲の外 (立てたフラグ)
@@ -1133,8 +1146,6 @@ struct SceneRegionEntry
 	s32 z;
 	u8	unknown_14[4];
 };
-#undef ObjectDispatch_ReleaseFar
-#define ObjectDispatch_ReleaseFar ((void (*)(struct FieldActor *object))ObjectDispatch_ReleaseFar)
 
 //--------------------------------------------------------------------------
 // フラグの決まっていない行に、マップの範囲の中か外かでフラグを割り当てる
@@ -1255,8 +1266,6 @@ void BattleEffect_ClearAllObjects(void)
 		Event_SpawnObjectTable(table, ObjectTable_FindLastActiveId());
 }
 
-#undef ObjectDispatch_ReleaseFar
-
 extern struct ObjectRuntime gObjectSnapshots[32];
 
 void ObjectTable_ClearBattleSlots(void)
@@ -1330,8 +1339,6 @@ void ObjectTable_Snapshot(void)
 
 void ObjectTable_Restore(void)
 {
-	void ObjectDispatch_InitFromTable6Far(void *object);
-	void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object, s32 value);
     struct ObjectRuntime *copy = gObjectSnapshots;
     u8 *indices = (u8 *)gObjectSnapshots - 32;
     u8 *frames = (u8 *)&gObjectSnapshots[32];
@@ -1386,10 +1393,6 @@ void ObjectTable_Restore(void)
     }
 }
 
-#define BattleFx_ApplyLookupResult ((s32 (*)(void*,s32))BattleFx_ApplyLookupResult)
-#define gEventWork (*(struct EventRuntime *(*))&gEventWork)
-
-void AudioCommand_PlayFar(s32 sound_id);
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 
 extern u8 gMapCellBuffer[];
@@ -1415,7 +1418,6 @@ enum StepTileEvent {
 #define STEP_NO_TARGET ((s32)0x80000000)
 #define STEP_FLAG_DOUBLE_SPEED 0x167
 #define STEP_CUE_EFFECT 139
-#define BattleParty_ApplyDrain ((void (*)(s32 steps, s32 unused))BattleParty_ApplyDrain)
 
 void BattleFx_ResetCounters(void)
 {
@@ -1450,7 +1452,6 @@ s32 BattleFx_SumCounters(void)
 
 s32 GetFocusedObjectCollision(void)
 {
-	void Vector_AddPolarOffset(s32, s32, void *);
     struct EventRuntime *runtime;
     struct ObjectRuntime *object;
     struct MapState *map;
@@ -1529,7 +1530,7 @@ void UpdateMapRegionAtPosition(s32 position_x, s32 position_y, s32 position_z)
     z = position_z;
     region = gOverlayArea.regions();
     if (region != 0 &&
-        (runtime = gEventWork, min_x = region->min_x, min_x != -1)) {
+        (runtime = (struct EventRuntime *)gEventWork, min_x = region->min_x, min_x != -1)) {
 loop:
         min_y = region->min_y;
         min_z = region->min_z;
@@ -1550,7 +1551,7 @@ loop:
             Battle_InitializeRenderObject();
             return;
         }
-        runtime = gEventWork;
+        runtime = (struct EventRuntime *)gEventWork;
         region++;
         min_x = region->min_x;
         if (min_x != -1)
@@ -1611,7 +1612,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
             speed <<= 1;
         if (work->mode == STEP_MODE_WORLD_MAP) {
             full = 1;
-            work->unknown_17c = BattleFx_ApplyLookupResult(&actor->x, speed);
+            work->unknown_17c = BattleFx_ApplyLookupResult((s32)&actor->x, speed);
         } else if (event == STEP_TERRAIN_FIRST || event == STEP_TERRAIN_LAST) {
             full = work->encounter_full[event - (STEP_TERRAIN_FIRST - 1)];
             work->unknown_17c = EffectRuntime_LookupByTableEntry(event - (STEP_TERRAIN_FIRST - 1), speed);
@@ -1627,7 +1628,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
         if (sum > 0xffff) {
             n = sum / 0x10000;
             work->encounter_steps = sum & 0xffff;
-            BattleParty_ApplyDrain(n, 0);
+            /* FAKEMATCH: needed to match: the call passes a second 0 the function does not take */
+            ((void (*)(s32, s32))BattleParty_ApplyDrain)(n, 0);
             if (BattlePlacement_UpdateTimedEntriesFar())
                 AudioCommand_PlayFar(STEP_CUE_EFFECT);
             Event_ClearInvalidPackedValues();
@@ -1680,29 +1682,6 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
         }
     }
 }
-
-#undef gEventWork
-#undef BattleParty_ApplyDrain
-
-void UiWork_InitializeWithResourceCountersFar(void);
-
-#define gOverlayArea (*(struct OverlayEntries *)&gOverlayArea)
-
-#define Map_LoadAreaGraphicsFar ((s32 (*)(void))Map_LoadAreaGraphicsFar)
-#define ObjectTable_ResetForObject ((void (*)(void))ObjectTable_ResetForObject)
-#define BattleFx_RunDescriptorAction ((void (*)(s32))BattleFx_RunDescriptorAction)
-#define BattleFx_RunKind6DescriptorAction ((void (*)(s32))BattleFx_RunKind6DescriptorAction)
-#define BattleAction_RunDescriptor ((void (*)(s32))BattleAction_RunDescriptor)
-#define Battle_DispatchInputEvent ((void (*)(s32))Battle_DispatchInputEvent)
-#define Field_RunTileAction ((void (*)(s32))Field_RunTileAction)
-#define BattleCommand_ExecuteSelectedItem ((void (*)(s32, s32))BattleCommand_ExecuteSelectedItem)
-#define BattleCommand_ExecuteSelectedAction ((void (*)(s32))BattleCommand_ExecuteSelectedAction)
-#define Scene_FadeColorFromWhite ((void (*)(s32))Scene_FadeColorFromWhite)
-
-#define gMenuCtrlWork (*(struct MenuCtrl **)&gMenuCtrlWork)
-
-s32	 Party_CountActiveOwnersFar(void);
-void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -1877,31 +1856,11 @@ struct FieldWork
 	u16				   unknown_cc8;
 };
 
-struct OverlayEntries
-{
-	void *unknown_00;
-	s32 (*start)(void);
-	void *unknown_08[5];
-	s32 (*place)(void);
-	void *unknown_20;
-	s32 (*view)(void);
-};
-
 struct MenuCtrl
 {
 	u8	unknown_00[4];
 	u16 wait;
 };
-
-void WaitFrames(s32 frames);
-void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *actor, s32 mode);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
-void UiWork_PushValueSlotFar(s32 quantity, s32 mode);
-void GameFlag_SetBitFar(s32 flag);
-void GameFlag_ClearBitFar(s32 flag);
-void ObjectTable_Snapshot(void);
-void Battle_ResetEffectCounter(void);
-void Djinn_ResolvePendingEvent();
 
 extern u8			ResourceBlockOwners[];
 
@@ -1920,8 +1879,6 @@ static __inline__ s32 Vitals_Clamp(s32 ratio)
 
 s32 Field_RunScene(s32 entrance)
 {
-	extern volatile u8	gDebugMode;
-	void ObjectDispatch_InitFromTable6Far(void *actor);
 	volatile s32	   zero;
 	struct FieldWork  *work;
 	struct FieldActor *actor;
@@ -1958,10 +1915,11 @@ s32 Field_RunScene(s32 entrance)
 	ObjectSystem_InitializeFar(mode);
 	UiWork_InitializeWithResourceCountersFar();
 	BattleFx_ResetCounters();
-	work->view = gOverlayArea.view();
+	work->view = (s32)gOverlayArea.events();
 	BattleMap_ApplyEntranceView();
-	gOverlayArea.place();
-	ObjectTable_ResetForObject();
+	gOverlayArea.placements();
+	/* FAKEMATCH: needed to match: the call leaves out the function's table argument */
+	((void (*)(void))ObjectTable_ResetForObject)();
 	if (GameFlag_TestFar(0x109) != 0)
 		ObjectTable_Restore();
 	if (gGameState.pending_djinn_event != 0)
@@ -2000,7 +1958,7 @@ s32 Field_RunScene(s32 entrance)
 	}
 	BattleFx_ScheduleCloakedMapCheck();
 	work->unknown_cc8 = 0xffff;
-	gOverlayArea.start();
+	gOverlayArea.initialize();
 	code = work->exit;
 	if (code != 0)
 	{
@@ -2137,7 +2095,8 @@ s32 Field_RunScene(s32 entrance)
 				gGameState.scene = 510;
 				gGameState.entrance = work->scene;
 				work->exit = 999;
-				Scene_FadeColorFromWhite(work->scene);
+				/* FAKEMATCH: needed to match: the call passes a scene the function does not take */
+				((void (*)(s32))Scene_FadeColorFromWhite)(work->scene);
 				work->unknown_1a8 = 0;
 				work->scene = 0;
 				gGameState.encounter_steps = 0;
@@ -2265,7 +2224,7 @@ s32 Field_RunScene(s32 entrance)
 					gGameState.return_cue = AudioCommand_GetSecondaryStateByteFar();
 					if (GameFlag_TestFar(0x17e) == 0)
 					{
-						struct MenuCtrl *ctrl = gMenuCtrlWork;
+						struct MenuCtrl *ctrl = (struct MenuCtrl *)gMenuCtrlWork;
 						u8				*owner = ResourceBlockOwners;
 						s32				 free = 0;
 						s32				 n = 512;
@@ -2328,14 +2287,6 @@ done:
 	return result;
 }
 
-#undef gOverlayArea
-
-#define ObjectTable_Get ((struct Object * (*)(s32)) ObjectTable_Get)
-#undef gOverlayArea
-#define gOverlayArea (*(struct ViewServices *)&gOverlayArea)
-
-#define BattleFx_FindDescriptor ((s32 (*)(s32, s32))BattleFx_FindDescriptor)
-
 struct Vec
 {
 	s32 x;
@@ -2368,12 +2319,6 @@ struct EntranceView
 	s16 unknown_16;
 };
 
-struct ViewServices
-{
-	u8 unknown_00[0x0c];
-	struct EntranceView *(*entrance_views)(void);
-};
-
 struct MapScrollWork_2
 {
 	u8	unknown_000[0xec];
@@ -2383,9 +2328,6 @@ struct MapScrollWork_2
 	s32 bottom;
 };
 
-extern volatile u32 gFrameCount;
-
-void WaitFrames(s32 count);
 #define PALETTE ((u16 *)0x05000000)
 #define EDITOR_MAP ((u16 *)0x0600205a)
 #define HEX_DIGIT 0xf0e0
@@ -2407,12 +2349,9 @@ struct ActionDescriptorTables
 {
 	struct ActionDescriptor *tables[4];
 };
-#undef gEventWork
-#define gEventWork (*(struct ActionDescriptorTables *(*))&gEventWork)
 
 s32 Object_GetTriggerTileAheadOfCurrent(void)
 {
-	void Vector_AddPolarOffset(s32, s32, void *);
 	u8			  *state;
 	u8			  *map;
 	struct Object *obj;
@@ -2464,7 +2403,7 @@ void BattleMap_ApplyEntranceView(void)
 {
 	struct MapScrollWork_2 *work = gMapWork[0];
 	s32					  entrance = gGameState.entrance;
-	struct EntranceView	 *view = gOverlayArea.entrance_views();
+	struct EntranceView	 *view = (struct EntranceView *)gOverlayArea.entrances();
 	s32					  found = 0;
 
 	while (view->entrance != -1)
@@ -2477,7 +2416,7 @@ void BattleMap_ApplyEntranceView(void)
 		view++;
 	}
 	if (!found)
-		view = gOverlayArea.entrance_views();
+		view = (struct EntranceView *)gOverlayArea.entrances();
 
 	if (!GameFlag_TestFar(0x109))
 	{
@@ -2658,7 +2597,7 @@ struct ActionDescriptor *BattleAction_FindDescriptor(s32 id)
 
 	for (i = 0; i < 4; i++)
 	{
-		entry = gEventWork->tables[i];
+		entry = ((struct ActionDescriptorTables *)gEventWork)->tables[i];
 		if (entry == NULL)
 			continue;
 		if (id <= 7)
@@ -2688,31 +2627,10 @@ found:
 	return entry;
 }
 
-#undef gEventWork
-
 //--------------------------------------------------------------------------
 // descript.c
 // フィールド：シーンのイベント表を引き、話す・触れる・出口のイベントを動かす
 //--------------------------------------------------------------------------
-
-#undef BattleAction_RunDescriptor
-#undef BattleFx_FindDescriptor
-#undef BattleFx_RunDescriptorAction
-#undef BattleFx_RunKind6DescriptorAction
-#undef Battle_DispatchInputEvent
-#undef ObjectTable_Get
-#undef gOverlayArea
-
-#define BattleAction_FindDescriptor ((int (*)())BattleAction_FindDescriptor)
-
-#undef gOverlayArea
-#define gOverlayArea ((u8 *)&gOverlayArea)
-#undef ObjectTable_Get
-#define ObjectTable_Get ((struct EffectObject * (*)(s32)) ObjectTable_Get)
-
-#define ObjectDispatch_ApplyValueToChildrenFar \
-	((void (*)(struct BattleActionObject *, s32))ObjectDispatch_ApplyValueToChildrenFar)
-#define Field_TryJumpForward ((void (*)(void))Field_TryJumpForward)
 
 extern const s32 ObjectMotion_StepAngleScript[];
 
@@ -2742,9 +2660,6 @@ struct EffectObject
 	u8	unused_00[6];
 	u16 reference; // 向き
 };
-#undef gEventWork
-#define gEventWork (*(void *(*))&gEventWork)
-typedef s32 (*WorkEntryFn)(void);
 
 // 配置表の 1 件（struct ScenePlacement）
 struct BattleEffectAction
@@ -2779,12 +2694,6 @@ struct BattleActionObject
 	u8	   unused_66[2];
 	void  *linked_object;
 };
-#define Object_GetById ((struct BattleActionObject *(*)(s32))Object_GetById)
-extern s32						  BattleFx_GetFlags(s32);
-extern void						  Battle_Reset(void);
-extern void						  Event_SetMessageId(s32);
-extern void						  BattleFx_FinishAction(void);
-extern void						  Object_LinkPair(s32, s32, s32);
 
 // イベント表の 1 件にも、イベントの作業領域にも重ねる（触れる・出口の処理で使う）
 typedef struct
@@ -2797,12 +2706,6 @@ typedef struct
 	u8	unk_172[0x19c - 0x172];
 	s16 limit;
 } EffectDescriptorWorkView;
-
-void AudioCommand_PlayFar(s32);
-
-void				BattleFx_RunRisingObjectSequence(s32, s32, s32);
-void				FieldEffect_UpdateGridPlacement(void);
-void				battle_owner_69(void);
 
 //--------------------------------------------------------------------------
 // イベントの条件を調べる
@@ -2857,10 +2760,10 @@ u32 BattleFx_CheckDescriptorKind3Result(s32 flags, s32 result)
 //--------------------------------------------------------------------------
 struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
 {
-	struct EffectDescriptorRuntime *work = gEventWork;
+	struct EffectDescriptorRuntime *work = (struct EffectDescriptorRuntime *)gEventWork;
 	struct EffectDescriptor		   *ev = work->descriptors;
 	s32								flags;
-	u32								facing = ObjectTable_Get(gGameState.selected_actor)->reference;
+	u32								facing = ((struct EffectObject *)ObjectTable_Get(gGameState.selected_actor))->reference;
 
 	flags = ev->flags;
 	while (flags != -1)
@@ -2918,9 +2821,7 @@ struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
 //--------------------------------------------------------------------------
 void Runtime_CallWorkBlockEntry(void)
 {
-	u8 *base = gOverlayArea;
-
-	(*(WorkEntryFn *)(base + 4))(); // +4 は SceneEntries の initialize
+	gOverlayArea.initialize();
 }
 
 //--------------------------------------------------------------------------
@@ -2953,7 +2854,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
 {
 	struct BattleEffectAction *place = (struct BattleEffectAction *)BattleAction_FindDescriptor(id);
 	s32						   ret = -1;
-	struct BattleActionObject *obj = Object_GetById(id);
+	struct BattleActionObject *obj = (struct BattleActionObject *)Object_GetById(id);
 	struct EffectDescriptor	  *ev;
 	s32						   paused = 0;
 	u32						   saved_value;
@@ -2998,12 +2899,12 @@ s32 BattleFx_RunDescriptorAction(s32 id)
 			u8 *busy = &obj->busy_5b;
 
 			*busy = 1;
-			ObjectDispatch_ApplyValueToChildrenFar(obj, 0);
+			ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)obj, 0);
 			saved_value = obj->value;
 			mode = (u8)place->mode << 24;
 			if (mode <= (1 << 24) || mode == (3 << 24))
 			{
-				struct BattleActionObject *leader = Object_GetById(gGameState.selected_actor);
+				struct BattleActionObject *leader = (struct BattleActionObject *)Object_GetById(gGameState.selected_actor);
 
 				leader->target_x = leader->x;
 				leader->target_y = leader->y;
@@ -3046,7 +2947,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
 				}
 			}
 			obj->busy_5b = 0;
-			ObjectDispatch_ApplyValueToChildrenFar(obj, 16);
+			ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)obj, 16);
 		}
 		ret = 0;
 	}
@@ -3109,7 +3010,7 @@ s32 BattleAction_RunDescriptor(s32 value)
 
 	touch = (EffectDescriptorWorkView *)BattleFx_FindDescriptor(2, value);
 	ret = -1;
-	work = *(EffectDescriptorWorkView **)&gEventWork;
+	work = (EffectDescriptorWorkView *)gEventWork;
 	if ((touch != 0) && (touch->result != 0))
 	{
 		if (touch->flags & 0x200)
@@ -3164,7 +3065,7 @@ s32 BattleAction_RunDescriptor(s32 value)
 //--------------------------------------------------------------------------
 s32 Battle_DispatchInputEvent(s32 event)
 {
-	struct EffectDescriptorRuntime *work = gEventWork;
+	struct EffectDescriptorRuntime *work = (struct EffectDescriptorRuntime *)gEventWork;
 	s32								leader = gGameState.selected_actor;
 
 	switch (event)
@@ -3201,32 +3102,6 @@ s32 Battle_DispatchInputEvent(s32 event)
 	}
 	return 0;
 }
-
-#undef BattleAction_FindDescriptor
-#undef gEventWork
-#undef Object_GetById
-
-#undef Field_RunTileAction
-
-#define EffectRuntime_GetCurrentObject ((void * (*)(s32))EffectRuntime_GetCurrentObject)
-#define EffectRuntime_PrepareRisingObject ((void (*)(void*))EffectRuntime_PrepareRisingObject)
-
-struct EffectDescriptor;
-#undef gEventWork
-#define gEventWork (*(struct EventRuntime *(*))&gEventWork)
-#define ObjectDispatch_ApplyArgumentToChildrenFar ((void (*)(void *object, s32 mode))ObjectDispatch_ApplyArgumentToChildrenFar)
-#undef ObjectDispatch_ReleaseFar
-#define ObjectDispatch_ReleaseFar ((void (*)(void *object))ObjectDispatch_ReleaseFar)
-void UiWork_PushValueSlotFar(s32 quantity, s32 slot);
-void Party_AdjustCoinsFar(s32 coins);
-void BattleFx_SelectBattleCue(s32 weight, s32 group);
-#undef BattleParty_ApplyDrain
-#define BattleParty_ApplyDrain ((void (*)(s32 amount, s32 mode))BattleParty_ApplyDrain)
-void *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item);
-void Battle_WaitMode0(s32 frames);
-void Battle_Reset(void);
-void BattleFx_FinishAction(void);
-void BattleFx_PlayQueuedSound(void);
 
 s32 Field_RunTileAction(s32 tile)
 {
@@ -3293,7 +3168,8 @@ s32 Field_RunTileAction(s32 tile)
                             AudioCommand_PlayFar(83);
                             UiWork_PushValueSlotFar((*(const u16 *)&descriptor->value), 5);
                             UiText_ShowPositionedMessageAndWaitFar((s32)MsgGotPsynergyStone, 3);
-                            BattleParty_ApplyDrain(999, 0);
+                            /* FAKEMATCH: needed to match: the call passes a second 0 the function does not take */
+                            ((void (*)(s32, s32))BattleParty_ApplyDrain)(999, 0);
                             UiWindow_CreateWithLayoutBoundsFar(1);
                             AudioCommand_PlayFar(126);
                             UiText_ShowPositionedMessageAndWaitFar((s32)MsgGotPsynergyStone + 1, 1);
@@ -3306,7 +3182,7 @@ s32 Field_RunTileAction(s32 tile)
                             if (condition != -1)
                                 GameFlag_SetBitFar(condition);
                         } else if (type == 0x500000) {
-                            struct EventRuntime *work = gEventWork;
+                            struct EventRuntime *work = (struct EventRuntime *)gEventWork;
 
                             if (((s32)descriptor->control & 0x1ff) == 19)
                                 EffectRuntime_SetMode7AndLaunch(tile);
@@ -3383,11 +3259,6 @@ s32 Field_RunTileAction(s32 tile)
     return 0;
 }
 
-#undef gEventWork
-#undef ObjectDispatch_ApplyArgumentToChildrenFar
-#undef ObjectDispatch_ReleaseFar
-#undef BattleParty_ApplyDrain
-
 //--------------------------------------------------------------------------
 
 // nearobj.c
@@ -3395,18 +3266,6 @@ s32 Field_RunTileAction(s32 tile)
 // 向いている方の近くにあるオブジェクトを選ぶ
 
 //--------------------------------------------------------------------------
-
-#undef BattleCommand_ExecuteSelectedAction
-#undef BattleCommand_ExecuteSelectedItem
-#undef ObjectDispatch_ApplyArgumentToChildrenFar
-#undef ObjectDispatch_ReleaseFar
-#undef ObjectTable_Get
-#undef Object_CreateFar
-#undef Object_GetById
-#undef gEventWork
-#undef gOverlayArea
-
-u16 ArcTan2(s32 deltaZ, s32 deltaX);
 
 #define OBJ_LAST 66 // 調べるオブジェクト番号の最後
 
@@ -3621,9 +3480,8 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode)
 //--------------------------------------------------------------------------
 s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode)
 {
-	extern void ObjectDispatch_ApplyArgumentToChildrenFar(void *, s32);
-	s32 obj;
-	s32 ret;
+	void *obj;
+	s32	  ret;
 
 	obj = Object_GetById(target);
 	ret = 0;
@@ -3632,19 +3490,14 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode)
 		AudioCommand_PlayFar(124);
 		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 4);
 		WaitFrames(12);
-		ret = BattleFx_StartRandomParticleEmitter(effect, mode);
+		ret = (s32)BattleFx_StartRandomParticleEmitter(effect, mode);
 	}
 	return ret;
 }
 
-struct BtlAct		  *BtlActGet(s32 action_id);
-struct ItemDefinition *Item_GetDirectFar(s32 item);
-
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 #define gFrameCount (*(u32 (*))&gFrameCount)
 #endif
-#define ObjectTable_Get ((void *(*)(u32))ObjectTable_Get)
-s32	  GetFocusedObjectCollision(void);
 
 struct ItemCommandRuntime
 {
@@ -3655,17 +3508,6 @@ struct ItemCommandRuntime
 };
 
 typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
-void UiWork_PushValueSlotFar(s32 value, s32 mode);
-void UiWork_FinalizePendingCoreFar(void);
-void Event_SetMessageId(s32 effect_id);
-
-s32	 BattleFx_LoadActionEffectResources(s32 action_id, s32 mode);
-void BattleFx_Run(void);
-void BattleEffect_CleanupSceneObjects(void);
-u8	 Inventory_RemoveFar(s32 actor, s32 slot);
-
-void BattleFx_SetupObjectPair(s32, s32);
-void EffectRuntime_StopCurrentObject(void);
 
 void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette)
 {
@@ -3702,7 +3544,7 @@ void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette)
 
 void Battle_ResetEffectCounter(void)
 {
-	struct BattleRuntime *runtime = gEventWork;
+	struct BattleRuntime *runtime = (struct BattleRuntime *)gEventWork;
 
 	runtime->unknown_cb6 = 0;
 	if (*(s16 *)runtime->unknown_cb8 != 0)
@@ -3867,7 +3709,8 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 			UiWork_PushValueSlotFar(actor, 1);
 			UiWork_PushValueSlotFar(item_id, 2);
 			UiText_ShowPositionedMessageAndWaitFar((s32)MsgActorUsesItem, 1);
-			BattleFx_LoadActionEffectResources(action_id, 0);
+			/* FAKEMATCH: needed to match: called as returning a value, the 0 is loaded after the action id (measured differ 2 as void) */
+			((s32 (*)(s32, s32))BattleFx_LoadActionEffectResources)(action_id, 0);
 			runtime->resolving_action = 1;
 			BattleFx_Run();
 			runtime->resolving_action = 0;
@@ -3954,7 +3797,6 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 }
 
 #undef gFrameCount
-#undef ObjectTable_Get
 
 //--------------------------------------------------------------------------
 // action.c
@@ -3970,20 +3812,6 @@ struct BattleCommandRuntime
 	u8	pad1a0[0xb26];
 	u8	resolving_action; // エナジーの演出中
 };
-#undef ObjectTable_Get
-#define ObjectTable_Get ((void *(*)(s32))ObjectTable_Get)
-void  GameFlag_ClearBitFar(s32);
-void  UiWork_PushValueSlotFar(s32, s32);
-void  UiText_ShowPositionedMessageAndWaitFar(s32, s32);
-
-s32	 BattleFx_FindMatchingEvent(s32, s32, void *);
-void GameFlag_SetBitFar(s32);
-#define BattleFx_LoadActionEffectResources ((void (*)(s32, s32))BattleFx_LoadActionEffectResources)
-void EventObject_Initialize(void);
-
-void BattleFx_DispatchRequestKind(void);
-
-s32 Map_GetTerrainHeightFar(s32, s32, s32);
 
 //--------------------------------------------------------------------------
 // エナジーの実行
@@ -4206,9 +4034,6 @@ struct MarkerWork
 	u8				  unknown_000[0x11c];
 	struct MarkerSlot slots[MARKER_MAX];
 };
-#define Object_CreateFar ((struct ScriptObjectRuntime *(*)(s32 kind, s32 x, s32 y, s32 z))Object_CreateFar)
-void ObjectDispatch_SetSingleChildFlagsFar(struct ScriptObjectRuntime *object, s32 value);
-void ObjectDispatch_InitFromTable6Far(struct ScriptObjectRuntime *object);
 
 //--------------------------------------------------------------------------
 // マーカーの位置に、対応するイベントの物体を置く
@@ -4216,7 +4041,6 @@ void ObjectDispatch_InitFromTable6Far(struct ScriptObjectRuntime *object);
 //--------------------------------------------------------------------------
 void Battle_PlaceMapMarkers(void)
 {
-	void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
 	u32							id;
 	struct MarkerMap		   *map = gMapWork[0];
 	struct MarkerWork		   *work = gMapWork[HEAP_SLOT_EVENT - 8];
@@ -4251,7 +4075,7 @@ void Battle_PlaceMapMarkers(void)
 			if ((event->control & 0x1ff) == 19)
 			{
 				// マスの中心に物体 20 を置く
-				obj = Object_CreateFar(20, (column << 20) + 0x80000, 0, (row << 20) + 0x80000);
+				obj = (struct ScriptObjectRuntime *)Object_CreateFar(20, (column << 20) + 0x80000, 0, (row << 20) + 0x80000);
 				if (obj == NULL)
 					continue;
 				ObjectMotion_SnapToTerrain(obj);
@@ -4286,7 +4110,7 @@ void Battle_PlaceMapMarkers(void)
 					continue;
 				if (GameFlag_TestFar(event->condition))
 					continue;
-				obj = Object_CreateFar(28, (column << 20) + 0x80000, 0, (row << 20) + 0x80000);
+				obj = (struct ScriptObjectRuntime *)Object_CreateFar(28, (column << 20) + 0x80000, 0, (row << 20) + 0x80000);
 				if (obj == NULL)
 					continue;
 				ObjectMotion_SnapToTerrain(obj);
@@ -4318,6 +4142,3 @@ void Battle_PlaceMapMarkers(void)
 	}
 }
 
-#undef ObjectTable_Get
-#undef BattleFx_LoadActionEffectResources
-#undef Object_CreateFar

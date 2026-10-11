@@ -43,10 +43,6 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index);
 s32 Owner_GetDefaultElement(struct BtlUnit *state);
 s32 Party_AddActiveOwner(s32 value);
 
-#define Game_ResetForNewGameFar ((s32 (*)(s32))Game_ResetForNewGameFar)
-
-#define gBattleOwnerStates (*(struct BtlUnit * *)&gBattleOwnerStates)
-
 struct StatWork {
     s32 hp;
     s32 ep;
@@ -69,8 +65,6 @@ struct StatWork {
 #define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
 s32 GameFlag_SetBit(s32 flag);
-
-extern u8 gDebugMode;
 
 void Owner_RefreshAndResetZero(void)
 {
@@ -128,7 +122,7 @@ void *UnitGet(u32 owner)
         return unit;
     }
     if (owner - 0x80 < 6 && gBattleOwnerStates != NULL) {
-        unit = &gBattleOwnerStates[owner - 0x80];
+        unit = &((struct BtlUnit *)gBattleOwnerStates)[owner - 0x80];
         return unit;
     }
     return NULL;
@@ -1700,8 +1694,6 @@ struct LevelUpWork {
     u8 unknown_0c[0x20];
 };
 
-u32 Random16(void);
-
 s32 OwnerAction_Add(s32 state_index, s32 value)
 {
     struct BtlUnit *state = (struct BtlUnit *)UnitGet(state_index);
@@ -1920,12 +1912,6 @@ struct LevelUpResult *Owner_GetValueIfLevelThresholdReached(s32 owner_no, struct
 // パーティ：キャラクターを指定のレベルまで上げる
 
 //--------------------------------------------------------------------------
-
-struct LevelUpResult;
-struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *result);
-void				  UnitCalc(s32);
-
-//--------------------------------------------------------------------------
 // 目標のレベルになるまで 1 つずつレベルアップさせ、能力を計算しなおす
 // unit : キャラクター番号
 // lv   : 目標のレベル
@@ -2060,8 +2046,6 @@ void GameFlag_SetNibble(s32 flag, s32 value)
     bytes[flag] = (bytes[flag] & ~mask) |
                        ((value & field_mask) << shift);
 }
-
-s32 GameFlag_SetBit(s32);
 
 struct TradeFlags {
     u32 flags;
@@ -2672,8 +2656,6 @@ s32 Equipment_GetUnleashRateBonus(struct BtlUnit *owner)
     return sum;
 }
 
-#define BattleRandomPercent ((s32 (*)(void))BattleRandomPercent)
-
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit);
 u32 *Trade_AddOffer(u32 owner, u32 index, u32 bit);
 s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit);
@@ -2872,7 +2854,7 @@ action4_done:
     }
 
     for (attempt = 0; attempt < attempts; attempt++) {
-        if (score *success_scale / 100 >= BattleRandomPercent()) {
+        if (score *success_scale / 100 >= (s32)BattleRandomPercent()) {
             return 1;
         }
     }
@@ -2893,7 +2875,6 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index)
 
 s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
 {
-	void GameFlag_SetBit(s32 flag);
     void *entry = state + index * 20 + 48;
     s32 best_no = 0;
     s32 best_val = 999;
@@ -3155,11 +3136,9 @@ void Inventory_AddAndEquip(s32 owner, s32 target)
 }
 
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
-void Owner_RefreshActiveRatios(s32 mode);
 
 void InventorySnapshot_Save(void)
 {
-	void GameFlag_SetBit(s32 flag);
     u16 *save;
     struct BtlUnit *unit;
     s16 *inventory;

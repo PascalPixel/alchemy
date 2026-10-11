@@ -69,15 +69,25 @@
 #include "tbs_edition.h"
 #include "b5_context.h"
 
-void BattleMotion_RunValueSequence(s32 id);
-s32 BattlePresentation_WaitForAdvance(void);
+extern volatile u16 gLinkStatus;
+extern volatile s32 gFrameTick;
+extern u8			gDisp[];
 
-#define gFrameCount (*(s32 *)&gFrameCount)
-
-#define SceneTransform_ApplyPosition ((void (*)(void *))SceneTransform_ApplyPosition)
-#define UnitCalcFar ((void (*)(u16))UnitCalcFar)
-
-u32 Random16(void);
+s32	 ArcTan2(s32 first, s32 second);
+void BattleMotion_DestroyAllSlotObjects(void);
+s32	 BattlePresentation_WaitForAdvance(void);
+s32	 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
+void GameFlag_ClearBitFar(s32 flag);
+void GameFlag_SetBit(s32 flag);
+void GameFlag_SetBitFar(s32 flag);
+s32	 Inventory_RemoveFar(s32 owner, s32 slot);
+void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
+void ObjectDispatch_ReleaseFar(struct DispatchObject *object);
+void Party_AdjustCoinsFar(s32 amount);
+s32	 Render_ProjectPoint(s32 *point, s32 *screen);
+struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
+s32	 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
+void UiWork_PushValueSlotFar(u32, u32);
 
 void Palette_UpdatePulseBrightness(void)
 {
@@ -403,10 +413,6 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
 	} while (swapped != 0);
 }
 
-#define gRandomSeed (*(s32 *)&gRandomSeed)
-
-extern volatile u16 gLinkStatus;
-
 struct BattleLinkedActionState
 {
 	s32 count;
@@ -602,13 +608,6 @@ fail:
 // バトル：ターンの行動の組み立てと、並びの位置の変換
 
 //--------------------------------------------------------------------------
-
-extern struct BattlePresentationTransition *gTransitionWork;
-
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void GameFlag_SetBitFar(s32 flag);
-void GameFlag_ClearBitFar(s32 flag);
 
 //--------------------------------------------------------------------------
 // BG パレットのバンク 15 を 14 へ、5 を 4 へ、明るさを変えて写す
@@ -864,10 +863,6 @@ void Battle_ReservedNoOp9B2C(void)
 {
 }
 
-#define Camera_StoreSceneParameters ((void (*)(s32, u32, s32))Camera_StoreSceneParameters)
-#define BattleUnit_ProcessTurnEnd ((void (*)(struct BtlPlan *))BattleUnit_ProcessTurnEnd)
-#define BattleFx_PlayUnitElementEffect ((s32 (*)(s32, s32, s32, s32))BattleFx_PlayUnitElementEffect)
-
 s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 delay)
 {
 	struct BattlePresentationTransition *view;
@@ -1077,9 +1072,6 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
 	return completed.value;
 }
 
-void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
-void AudioCommand_PlayFar(s32 cue);
-
 s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 {
 	u16							  units[14];
@@ -1138,7 +1130,8 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 		}
 	}
 	AudioCommand_PlayFar(0x9a);
-	BattleFx_PlayUnitElementEffect(work.actor, plan->elm, 0, 0);
+	/* FAKEMATCH: the void effect is called as returning s32; called as void, the load of plan->elm moves one instruction (differ 2). */
+	((s32 (*)(s32, s32, s32, s32))BattleFx_PlayUnitElementEffect)(work.actor, plan->elm, 0, 0);
 	if (mode & 1)
 		BattlePres_SetActorRecordMode(actor, 1);
 	for (i = 0; i != 16; i++)
@@ -1270,20 +1263,6 @@ s32 BattlePres_RunActorEntries(struct BtlPlan *plan, s32 unused)
 	WaitFrames(1);
 }
 
-#undef BattleFx_PlayUnitElementEffect
-
-struct ItemDefinition *Item_GetDirectFar(s32 item);
-
-#define ObjectDispatch_ApplyValueToChildrenFar \
-	((void (*)(struct MotionObject *, s32))ObjectDispatch_ApplyValueToChildrenFar)
-#define BattleFx_DispatchByIdRangeFar \
-	((void (*)(struct BattlePresentationWork *))BattleFx_DispatchByIdRangeFar)
-#define BattleFx_DispatchModeFar \
-	((void (*)(struct BattlePresentationWork *))BattleFx_DispatchModeFar)
-#define BattleActor_SpawnObjectsForList ((s32 (*)(void *, s32))BattleActor_SpawnObjectsForList)
-
-s32 ArcTan2(s32 first, s32 second);
-
 s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
 {
 	struct BattlePresentationWork		 work;
@@ -1351,7 +1330,7 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
 	divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->anim_id, 2, 1);
 	BattleMotion_ApproachTarget(
 		work.actor, work.actors[0], divisor, Battle_GetSpriteFlagHighBits(unit->class_id) << 16);
-	ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(work.actor)->object, 16);
+	ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)BtlObjGet(work.actor)->object, 16);
 	BtlObjGet(work.actors[0]);
 
 	if ((u16)work.actors[0] <= 7)
@@ -1421,9 +1400,9 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
 		if (work.kind != 0)
 		{
 			if (plan->presentation_flags & 0x4000)
-				BattleFx_DispatchByIdRangeFar(&work);
+				BattleFx_DispatchByIdRangeFar((s32 *)&work);
 			else
-				BattleFx_DispatchModeFar(&work);
+				BattleFx_DispatchModeFar((s32 *)&work);
 		}
 		BattleEventRuntime_WaitForReady();
 		if (scripted != 0)
@@ -1485,7 +1464,7 @@ s32 BattlePres_RunSimple(struct BtlPlan *input, s32 flags)
 	animation = GetMotionRecord(BtlObjGet(saved_input->aid)->object, 0);
 	divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->anim_id, 2, 1);
 	BattleMotion_ApproachTarget(work.actor, saved_input->tgt_no[0], divisor, 0);
-	ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(work.actor)->object, 16);
+	ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)BtlObjGet(work.actor)->object, 16);
 	BtlObjGet(saved_input->tgt_no[0]);
 
 	if (saved_input->tgt_no[0] <= 7)
@@ -1503,7 +1482,7 @@ s32 BattlePres_RunSimple(struct BtlPlan *input, s32 flags)
 	}
 	else
 	{
-		BattleFx_DispatchByIdRangeFar(&work);
+		BattleFx_DispatchByIdRangeFar((s32 *)&work);
 		BattleEv_DispatchQueued();
 		ObjMotRst(saved_input->tgt_no[0]);
 	}
@@ -1532,7 +1511,7 @@ s32 BattlePres_RunItem(struct BtlPlan *plan, s32 unused, struct BattleActionReco
 	BattlePres_SetActorModes(0, 0);
 	object = BtlObjGet(work.actor)->object;
 	ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
-	ObjectDispatch_ApplyValueToChildrenFar(object, 16);
+	ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
 	if (plan->tgt_no[0] <= 7)
 		work.side = 1;
 	else
@@ -1571,9 +1550,9 @@ s32 BattlePres_RunItem(struct BtlPlan *plan, s32 unused, struct BattleActionReco
 			fade += 0x444;
 		} while (i < 20);
 		if (plan->presentation_flags & 0x4000)
-			BattleFx_DispatchByIdRangeFar(&work);
+			BattleFx_DispatchByIdRangeFar((s32 *)&work);
 		else
-			BattleFx_DispatchModeFar(&work);
+			BattleFx_DispatchModeFar((s32 *)&work);
 	}
 	else
 	{
@@ -1628,10 +1607,6 @@ s32 BattlePres_RunItem(struct BtlPlan *plan, s32 unused, struct BattleActionReco
 	return 0;
 }
 
-#undef BattleFx_DispatchByIdRangeFar
-#undef BattleFx_DispatchModeFar
-#undef ObjectDispatch_ApplyValueToChildrenFar
-
 s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
 {
 	s32						index = 0;
@@ -1661,7 +1636,6 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
 		index++;
 	}
 }
-#define ArcTan2 ((u16 (*)(s32 x, s32 y))ArcTan2)
 
 s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
 {
@@ -1679,7 +1653,7 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
 	else
 	{
 		struct MotionObject *actor = BtlObjGet(plan->aid)->object;
-		s32					 angle = ArcTan2(actor->x, actor->z);
+		s32					 angle = (u16)ArcTan2(actor->x, actor->z);
 		s32					 current;
 
 		if (plan->aid <= 7)
@@ -1762,10 +1736,6 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
 	return 0;
 }
 
-#undef ArcTan2
-
-#define BattleMotion_SetRecordChildValues ((int (*)())BattleMotion_SetRecordChildValues)
-
 void BattleMotion_RunValueSequence(s32 id)
 {
 	u16	 selection[2];
@@ -1797,8 +1767,6 @@ void BattleMotion_RunValueSequence(s32 id)
 	PtyStDrawFar(BtlWk->pty_st);
 }
 
-#undef BattleMotion_SetRecordChildValues
-
 //--------------------------------------------------------------------------
 
 // actor.c
@@ -1817,8 +1785,6 @@ void BattleMotion_RunValueSequence(s32 id)
 #include "btlsmn.h"
 #include "motobj.h"
 #include "animspr.h"
-
-s32	 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 
 //--------------------------------------------------------------------------
 // ユニットを味方か敵の並びから外し、行動の予定からも消す
@@ -1914,9 +1880,6 @@ void BattleMotion_InitializeActorRecords(s32 id)
 	}
 }
 #endif
-
-#undef UnitCalcFar
-#undef gFrameCount
 
 struct SlotArray
 {
@@ -2357,8 +2320,6 @@ scan_complete:
 // バトル：状態変化の消去と、メッセージ送りの待ち
 //--------------------------------------------------------------------------
 
-#define BtlObjGet ((int (*)())BtlObjGet)
-
 //--------------------------------------------------------------------------
 // 状態異常と能力の変化をすべて消す
 // 戦闘不能になったときに呼ばれる
@@ -2423,8 +2384,6 @@ struct AdvanceSprite
 	u16					  attr2;
 	u16					  attr3;
 };
-
-extern volatile u32 gFrameCount;
 
 //--------------------------------------------------------------------------
 // ウィンドウの位置に矢印を出し、送りのキーを待つ
@@ -2531,18 +2490,10 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y)
 	WaitFrames(1);
 }
 
-#undef BtlObjGet
-
-#define BattlePresentation_WaitForAdvance ((int (*)())BattlePresentation_WaitForAdvance)
-
 void BattleEv_MarkDisplay(void)
 {
 	gBattleDisplayWork->marked = 1;
 }
-
-void		   ObjectDispatch_ReleaseFar(struct DispatchObject *object);
-struct BtlObj *BtlObjGet(s32 arg0);
-s32			   ActivateBattleObjectSlot(s32 arg0);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
@@ -2567,8 +2518,6 @@ void Battle_SetRuntimeFlagBit0(struct BattleEventState *runtime, u32 operand)
 {
 	runtime->flags |= 1;
 }
-
-void UiWork_PushValueSlotFar(u32, u32);
 
 u32 BattleEv_DispatchQueued(void)
 {
@@ -2620,7 +2569,10 @@ u32 BattleEv_DispatchQueued(void)
 			case BEV_OBJ_BGN:
 				if (runtime->pending_cue > 0)
 					AudioCommand_PlayFar(runtime->pending_cue);
-				BattleMotion_RunValueSequence(queue->operands[i], 0, 0);
+				/* FAKEMATCH: the call passes two extra zero arguments (r1, r2) the
+				   one-parameter function never reads; a one-argument call drops
+				   both moves. */
+				((void (*)())BattleMotion_RunValueSequence)(queue->operands[i], 0, 0);
 				break;
 			case BEV_OBJ_RES:
 				BattleEnemy_RecordDefeat(queue->operands[i], runtime->flags);
@@ -2650,14 +2602,10 @@ u32 BtlEvPush(u32 opcode, u32 operand)
 	return opcode;
 }
 
-#undef BattlePresentation_WaitForAdvance
-
 //--------------------------------------------------------------------------
 // tgtexec.c
 // バトル：対象ごとの効果処理
 //--------------------------------------------------------------------------
-
-#undef BtlObjGet
 
 //--------------------------------------------------------------------------
 // 対象が倒れていても追加効果を出す効果なら 1 を返す
@@ -3874,14 +3822,6 @@ u32 Ability_CheckStatusOrSpecialId(s32 act_no)
 
 //--------------------------------------------------------------------------
 
-#undef BattleMotion_SetRecordChildValues
-#undef BtlObjGet
-
-struct BtlAct		  *BtlActGet(s32 action_id);
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
-
-#define Battle_FindTaggedSlotByValue ((s32 (*)(s32))Battle_FindTaggedSlotByValue)
-
 //--------------------------------------------------------------------------
 // 行動の種類
 //--------------------------------------------------------------------------
@@ -4241,7 +4181,6 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames)
 #define TAORE_FLASH 0x400 // 色を変えている間のタイマーの基準
 
 #define OBJ_VRAM 0x06010000
-extern volatile s32 gFrameTick;
 
 //--------------------------------------------------------------------------
 // スケジューラから呼ばれ、BtlTgtExec が積んだイベントを順に実行する
@@ -4653,11 +4592,6 @@ u32 BattleParty_IsUnitListed(u32 id)
 	return i != cnt;
 }
 
-#undef BattlePresentation_WaitForAdvance
-#undef BattleUnit_ProcessTurnEnd
-
-struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
-
 s32 BattlePlacement_CountValidEntries(u32 unit_id, u8 *counts)
 {
 	u16						  unit_ids[8];
@@ -4709,11 +4643,6 @@ s32 BattlePlacement_CountValidEntries(u32 unit_id, u8 *counts)
 // バトル：行動の宣言と、対象・効果の計画
 //--------------------------------------------------------------------------
 
-s32					   GameFlag_TestFar(s32 flag);
-
-#define Battle_GetTaggedSlotValue ((s32 (*)(s32))Battle_GetTaggedSlotValue)
-#define Trade_AddOfferFar ((void (*)(s32, s32, s32))Trade_AddOfferFar)
-
 // ジンの指定：属性 (bit 8-11) と番号 (bit 0-7)
 #define DJINN_ELEMENT(v) (((v) >> 8) & 15)
 #define DJINN_INDEX(v) ((v) & 255)
@@ -4721,10 +4650,6 @@ s32					   GameFlag_TestFar(s32 flag);
 #define CMD_SHOUKAN 6 // しょうかん
 #define CMD_NONE 8	  // 何もしない
 #define TGT_MAX 14
-void UiText_ShowMessageAndWaitCoreFar(s32 message);
-s32	 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
-s32	 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
-s32	 BattleEventRuntime_SchedulePhase(s32 frames);
 
 //--------------------------------------------------------------------------
 // 行動を宣言し、対象と効果の計画を作る
@@ -4837,7 +4762,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		}
 	}
 
-	tid = Battle_GetTaggedSlotValue(req->target);
+	/* FAKEMATCH: the s16 getter is called as returning s32; with its own type the caller sign-extends the result again (lsl, asr) and stores it through a kept address. */
+	tid = ((s32 (*)(s32))Battle_GetTaggedSlotValue)(req->target);
 	BattleEventRuntime_Reset();
 	plan->akuryo_dmg = 0;
 	plan->aid = req->unit_id;
@@ -5146,7 +5072,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 				BtlEvPush(BEV_OBJ_END, req->unit_id);
 				AudioCommand_PlayFar(212);
 				ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(req->unit_id)->object, 3);
-				ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(req->unit_id)->object, 32);
+				ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)BtlObjGet(req->unit_id)->object, 32);
 				BattleFx_PlayUnitElementEffect(req->unit_id, DJINN_ELEMENT(req->parameter), 3, 0);
 				BattleEventRuntime_WaitForReady();
 				return -2;
@@ -5619,8 +5545,6 @@ s32 BattleUnit_TickRefrain(s32 unit_id)
 	return 0;
 }
 
-struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 owner);
-
 s32 BattleUnit_TickReflect(s32 id)
 {
 	u8 *value = (u8 *)&UnitGetFar(id)->reflect;
@@ -5719,17 +5643,10 @@ void Battle_ReservedNoOpF674(void)
 {
 }
 
-void UnitCalcFar(s32 unit_id);
-#define BattlePres_SetActorModeAndAction ((void (*)(s32))BattlePres_SetActorModeAndAction)
-#define BattlePresentation_ConfigurePaletteFade \
-	((void (*)(s32, s32, s32))BattlePresentation_ConfigurePaletteFade)
-#define BattleFx_PlayUnitElementEffect ((s32 (*)(s32, s32, s32, s32))BattleFx_PlayUnitElementEffect)
-
 struct BattleGroupOrder
 {
 	s32 group[2];
 };
-void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 
 s32 Battle_ProcessRoundEnd(void)
 {
@@ -5786,12 +5703,13 @@ s32 Battle_ProcessRoundEnd(void)
 						BtlEvPush(BEV_OBJ_END, id);
 						AudioCommand_PlayFar(212);
 						ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(id)->object, 3);
-						ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(id)->object, 32);
+						ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)BtlObjGet(id)->object, 32);
 						element = expired_entry->element;
 						Djinn_ActivateFar(id, element, expired_entry->index);
 						Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);
 						UnitCalcFar(id);
-						BattleFx_PlayUnitElementEffect(id, element, 3, 0);
+						/* FAKEMATCH: the void effect is called as returning s32; called as void, the move of its first argument is scheduled three instructions earlier (differ 2). */
+						((s32 (*)(s32, s32, s32, s32))BattleFx_PlayUnitElementEffect)(id, element, 3, 0);
 						BattleEventRuntime_WaitForReady();
 					}
 				}
@@ -6078,8 +5996,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 				BtlEvPush(BEV_OBJ_END, id);
 				AudioCommand_PlayFar(212);
 				ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(id)->object, 3);
-				ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(id)->object, 32);
-				BattleFx_PlayUnitElementEffect(id, i, 2, most - 1);
+				ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)BtlObjGet(id)->object, 32);
+				/* FAKEMATCH: the void effect is called as returning s32; called as void, the move of its first argument is scheduled three instructions earlier (differ 2). */
+				((s32 (*)(s32, s32, s32, s32))BattleFx_PlayUnitElementEffect)(id, i, 2, most - 1);
 				BattleEventRuntime_WaitForReady();
 			}
 		}
@@ -6264,14 +6183,6 @@ void Graphics_BuildSequentialTileTable(s32 *dst)
 	fill(dst, 544, -1);
 }
 
-#undef BattleActor_SpawnObjectsForList
-#undef BattlePresentation_ConfigurePaletteFade
-#undef SceneTransform_ApplyPosition
-
-extern void *gWorkSlot[64];
-
-extern u8 gDisp[];
-
 void BattlePresentation_BuildTilemap(s32 *destination)
 {
 	s32 entry;
@@ -6412,12 +6323,6 @@ void Graphics_ClearBg0Vofs(void)
 
 	REG_BG0VOFS = zero;
 }
-
-#define BattleActor_SpawnObjectsForList ((void (*)(u16 *, s32))BattleActor_SpawnObjectsForList)
-#define Graphics_BuildSequentialTileTable ((void (*)(void *))Graphics_BuildSequentialTileTable)
-#define BattlePresentation_BuildTilemap ((void (*)(void *))BattlePresentation_BuildTilemap)
-
-#define gTransitionWork ((u8(*)) & gTransitionWork)
 
 struct DisplayRegisters
 {
@@ -6633,7 +6538,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 {
 	/* FAKEMATCH: needed to match: a one-halfword struct mask held across the fade loop */
 
-	struct BattleBackgroundView *transition = *(struct BattleBackgroundView **)gTransitionWork;
+	struct BattleBackgroundView *transition = (struct BattleBackgroundView *)gTransitionWork;
 
 	if (transition->mode == 0)
 	{
@@ -6699,18 +6604,13 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 	BattlePresentation_BuildTilemap((void *)0x0600f800);
 }
 
-#undef gTransitionWork
-
-#undef gTransitionWork
-#define gTransitionWork (*(struct BattleBackgroundView **)&gTransitionWork)
-
 void BattlePresentation_InitializeWorkAndResetState(void)
 {
 	struct BattleAffineHdma		*work;
 	struct BattleBackgroundView *state;
 	volatile u32				 zero;
 	work = Runtime_AllocateBlock(10, sizeof *work);
-	state = gTransitionWork;
+	state = (struct BattleBackgroundView *)gTransitionWork;
 	zero = 0;
 	Dma_Set(&zero, work, 0x850000a8, REG_DMA3);
 	state->mode = 0;
@@ -6764,7 +6664,6 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 	if (mode == 1)
 		REG_BG1CNT = 0x1f83;
 }
-#define SceneTransform_ApplyPosition ((void (*)(s32 *))SceneTransform_ApplyPosition)
 
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
 {
@@ -6875,17 +6774,6 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 	Camera_StoreSceneParameters(width, result, half * 4);
 }
 
-#undef Camera_StoreSceneParameters
-#undef SceneTransform_ApplyPosition
-
-#undef Camera_StoreSceneParameters
-#define Camera_StoreSceneParameters ((int (*)())Camera_StoreSceneParameters)
-#define Render_ResetTransformState ((int (*)())Render_ResetTransformState)
-#define SceneTransform_ApplyPitch ((int (*)())SceneTransform_ApplyPitch)
-#undef SceneTransform_ApplyPosition
-#define SceneTransform_ApplyPosition ((int (*)())SceneTransform_ApplyPosition)
-#define SceneTransform_ApplyYaw ((int (*)())SceneTransform_ApplyYaw)
-
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 {
 	struct BattleCamera *scene = gCameraWork;
@@ -6932,12 +6820,6 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 	result = Iwram_RatioMulQ14(width, alpha);
 	Camera_StoreSceneParameters(width, result, half * 4);
 }
-
-#undef Camera_StoreSceneParameters
-#undef Render_ResetTransformState
-#undef SceneTransform_ApplyPitch
-#undef SceneTransform_ApplyPosition
-#undef SceneTransform_ApplyYaw
 
 //--------------------------------------------------------------------------
 
@@ -7015,8 +6897,6 @@ s32 BattlePres_DivideBy16(s32 value)
 {
 	return value / 16;
 }
-
-void WaitFrames(s32);
 
 #if EDITION_INTERNATIONAL
 #define DEBUG_SELECT_VALUE 0x18f
@@ -7134,11 +7014,6 @@ void BattlePres_ClearAllActorRecordModes(void)
 		BattlePres_SetActorRecordMode(list[i], 0);
 }
 
-#undef BattleFx_PlayUnitElementEffect
-#undef gTransitionWork
-
-void QueueIoWriteDelay2(u32, u32);
-
 struct Spark
 {
 	s32 pos[6];
@@ -7158,9 +7033,6 @@ struct SparkWork
 };
 
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width, s32 height);
-
-#define ColorBuffer_BackupAndScaleThreeQuarters \
-	((u32 (*)(void *, void *, u32))ColorBuffer_BackupAndScaleThreeQuarters)
 
 void Graphics_AdvancePaletteCycle(void)
 {
@@ -7370,18 +7242,12 @@ u32 Graphics_UploadVramBlock(void)
 		if (*active != 0)
 		{
 			*active = 0;
-			return ColorBuffer_BackupAndScaleThreeQuarters(source, (void *)0x06004000, 0x4000);
+			/* FAKEMATCH: the void routine is called as returning u32: this function returns whatever it leaves in r0. */
+			return ((u32 (*)(void *, void *, u32))ColorBuffer_BackupAndScaleThreeQuarters)(source, (void *)0x06004000, 0x4000);
 		}
 	}
 	return (u32)source;
 }
-
-s32 BattleEffect_LoadWorkFar(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
-
-#define BattleEffect_LoadWorkFar ((s32 (*)(s32, s32, s32, s32, s32))BattleEffect_LoadWorkFar)
-#define BattleFx_RunIceFleckBurstFar ((void (*)(struct EffectLaunch *))BattleFx_RunIceFleckBurstFar)
-
-#define gTransitionWork (*(s32 **)&gTransitionWork)
 
 s32 BattleFx_InitializeStarField(s32 mode)
 {
@@ -7395,7 +7261,7 @@ s32 BattleFx_InitializeStarField(s32 mode)
 	/* FAKEMATCH: needed to match: an unused Spark, the 28 bytes the native frame reserves. */
 	struct Spark unused;
 
-	gTransitionWork[2] = 1;
+	((s32 *)gTransitionWork)[2] = 1;
 	work = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
 	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
 	/* FAKEMATCH: needed to match: the empty loop ends a scheduling region, keeping the multiply routine's address load ahead of the spark cursor. */
@@ -7651,7 +7517,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 		launch.target = unit;
 		launch.count = 1;
 		launch.unknown_0010 = 1;
-		BattleFx_RunIceFleckBurstFar(&launch);
+		BattleFx_RunIceFleckBurstFar((struct BattleEffectArgument *)&launch);
 	}
 	else
 	{
@@ -7666,15 +7532,11 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 		BattleFx_RunGatheringBurstFar(&launch2);
 	}
 }
-void BattlePresentation_SetPaletteLevel(s32 unused, s32 level);
 
 void BattlePres_RunWithZeroArguments(void)
 {
 	BattlePresentation_SetPaletteLevel(0, 0);
 }
-
-typedef void (*InterruptHandler)(void);
-void Runtime_SetIrqHandler(u32, s32, InterruptHandler);
 
 void Runtime_RemoveIrqHandlerSlot2(void)
 {
@@ -8352,8 +8214,6 @@ void Summon_ClearWorkFields(void)
 		items[index] = 0;
 }
 
-#define Item_EncodeBankedId ((s32 (*)(s32))Item_EncodeBankedId)
-
 static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BtlUnit *unit, u16 *reward)
 {
 	s32 i;
@@ -8473,7 +8333,7 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
 				lowest_slot = i;
 			}
 		}
-		if (Item_EncodeBankedId(rec->item) > lowest)
+		if ((s32)Item_EncodeBankedId(rec->item) > lowest)
 			spoils->items[lowest_slot] = rec->item;
 	}
 	return 0;

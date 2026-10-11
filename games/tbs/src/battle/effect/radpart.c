@@ -32,7 +32,26 @@
 #include "resource.h"
 #include "palbuf.h"
 
-void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj);
+// ほかのモジュールの関数 (共通ヘッダーにまだ宣言が無いもの)
+void				  Animation_ApplyChildValuesFar(void *object, s32 value);
+void				  ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
+void				  ObjectDispatch_ReleaseFar(void *object);
+void				  ObjectDispatch_SetSingleChildFlagsFar(void *object, s32 value);
+void				  Script_WaitForEventTimeoutFar(void *object);
+struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void				  ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
+void				  ObjectMotion_Launch(s32 id, s32 height, s32 frames);
+void				  Motion_SetVarCbAndRefresh(s32, s32);
+void				  Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
+void				  Battle_Reset(void);
+void				  Battle_SetObjectFlag5bWhenMode3(void);
+void				  Battle_ClearObjectFlag5bWhenMode3(void);
+void				  BattleFx_FinishAction(void);
+void				  BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
+
+// このファイルの関数 (定義より前で使うもの)
+void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
+void BattleFx_RunPageEffectForSlot(s32 slot, s32 elm, void *djinn);
 
 //--------------------------------------------------------------------------
 // つながったオブジェクトとの距離を、x・y・z とも半分つめる
@@ -64,15 +83,6 @@ void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj)
 // hop.c
 // 跳ねて分身を引く演出、ジン加入の演出、シーンのオブジェクトの再配置
 //--------------------------------------------------------------------------
-
-void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
-void BattleFx_RunPageEffectForSlot(s32 slot, s32 elm, void *djinn);
-
-#define Motion_SetTargetPositionFromMagnitudeAngle \
-	((void (*)(struct HopActor *, s32, s32))Motion_SetTargetPositionFromMagnitudeAngle)
-
-#define Object_ReplaceResourceEntry \
-	((void *(*)(struct HopSprite *, void *))Object_ReplaceResourceEntry)
 
 struct HopSprite
 {
@@ -109,20 +119,11 @@ struct HopActor
 	u8				  mode;
 	u8				  unknown_56[4];
 	u8				  collision_flags;
-	u8				  unknown_5b[13];
+	u8				  visible;
+	u8				  unknown_5c[12];
 	struct HopActor	 *linked;	// 追いかける相手
 	void			 *callback; // 毎フレームの更新処理
 };
-#define Object_GetById ((struct HopActor * (*)(s32 id)) Object_GetById)
-void Battle_Reset(void);
-void WaitFrames(s32 frames);
-void AudioCommand_PlayFar(s32 cue);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void Script_WaitForEventTimeoutFar(struct HopActor *actor);
-void ObjectDispatch_ApplyArgumentToChildrenFar(struct HopActor *actor, s32 mode);
-void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-void BattleFx_FinishAction(void);
-#define gEventWork (*(struct MenuState * (*)) & gEventWork)
 
 struct MenuState
 {
@@ -131,9 +132,6 @@ struct MenuState
 	u8	padding_024[414 - 36];
 	s16 mode;
 };
-
-void Battle_SetObjectFlag5bWhenMode3(void);
-void Battle_ClearObjectFlag5bWhenMode3(void);
 
 struct ActorDescriptor
 {
@@ -153,10 +151,6 @@ struct ActorDescriptor
 //--------------------------------------------------------------------------
 void EventActor_RunHopAndLeapSequence(s32 id)
 {
-	void			 Animation_ApplyChildValuesFar(void *actor, s32 value);
-	void			 ObjectDispatch_SetSingleChildFlagsFar(void *actor, s32 value);
-	void			 ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-	void *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 	struct HopActor *actor;
 	struct HopActor *copy;
 	struct HopActor *prev;
@@ -170,8 +164,8 @@ void EventActor_RunHopAndLeapSequence(s32 id)
 	struct HopActor *copies[BUNSHIN_MAX];
 
 	// 選択中のオブジェクトの向きを 90 度単位に丸める
-	actor = Object_GetById(id);
-	dir = (Object_GetById(gGameState.selected_actor)->facing + 0x2000) & 0xc000;
+	actor = (struct HopActor *)Object_GetById(id);
+	dir = (((struct HopActor *)Object_GetById(gGameState.selected_actor))->facing + 0x2000) & 0xc000;
 	Battle_Reset();
 	WaitFrames(10);
 	AudioCommand_PlayFar(173);
@@ -184,20 +178,20 @@ void EventActor_RunHopAndLeapSequence(s32 id)
 	WaitFrames(10);
 	actor->sprite->priority = 0;
 	actor->facing = back;
-	Object_GetById(id)->collision_flags &= ~1;
+	((struct HopActor *)Object_GetById(id))->collision_flags &= ~1;
 	actor->mode = 2;
 
 	// 向いた方の逆へ 16 ドットずつ 3 回跳ねる
 	dist = 16 << 16;
-	Motion_SetTargetPositionFromMagnitudeAngle(actor, dist, dir);
+	Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)actor, dist, dir);
 	AudioCommand_PlayFar(152);
 	ObjectMotion_Launch(id, 4, 0);
 	Script_WaitForEventTimeoutFar(actor);
-	Motion_SetTargetPositionFromMagnitudeAngle(actor, dist, dir);
+	Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)actor, dist, dir);
 	AudioCommand_PlayFar(152);
 	ObjectMotion_Launch(id, 4, 0);
 	Script_WaitForEventTimeoutFar(actor);
-	Motion_SetTargetPositionFromMagnitudeAngle(actor, dist, dir);
+	Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)actor, dist, dir);
 	AudioCommand_PlayFar(152);
 	ObjectMotion_Launch(id, 4, 0);
 	Script_WaitForEventTimeoutFar(actor);
@@ -216,7 +210,7 @@ void EventActor_RunHopAndLeapSequence(s32 id)
 	prev = actor;
 	for (i = 0; i < BUNSHIN_MAX; i++)
 	{
-		copy = Object_CreateFar(kind, actor->x, actor->y, actor->z);
+		copy = (struct HopActor *)Object_CreateFar(kind, actor->x, actor->y, actor->z);
 		copies[i] = copy;
 		if (copy != NULL)
 		{
@@ -238,7 +232,7 @@ void EventActor_RunHopAndLeapSequence(s32 id)
 	}
 
 	// 向いた方へ 64 ドット跳び、動きを止める
-	Motion_SetTargetPositionFromMagnitudeAngle(actor, 64 << 16, dir + 0x8000);
+	Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)actor, 64 << 16, dir + 0x8000);
 	AudioCommand_PlayFar(136);
 	ObjectMotion_Launch(id, 12, 0);
 	WaitFrames(24);
@@ -266,7 +260,7 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 elm, void *djinn)
 	s32				  owner;
 
 	// 持ち主を決める (フラグ 366 のときは 0 番にし、入手フラグだけ立てる)
-	work = gEventWork;
+	work = (struct MenuState *)gEventWork;
 	if (GameFlag_TestFar(366) != 0)
 	{
 		owner = 0;
@@ -324,7 +318,7 @@ void FieldObject_PlaceSceneActors(void)
 		{
 			for (id = 8; id <= 65; id++)
 			{
-				struct ActorDescriptor *desc = BattleAction_FindDescriptor(id);
+				struct ActorDescriptor *desc = (struct ActorDescriptor *)BattleAction_FindDescriptor(id);
 				struct ObjectRuntime   *obj;
 
 				if (desc == NULL || desc->scene - 48 != scene - 300)
@@ -350,30 +344,13 @@ void FieldObject_PlaceSceneActors(void)
 	}
 }
 
-#undef Object_GetById
-#undef gEventWork
-
-#define Camera_WorldToScreen ((void (*)(struct Vec *))Camera_WorldToScreen)
-
 struct MapActor
 {
 	s16 id;
 	s16 event;
 };
-#define BattleFx_RunPageEffectForSlot \
-	((void (*)(s32 actor, s32 element, s32 index))BattleFx_RunPageEffectForSlot)
 
 extern struct BattleFxScene *gEffectWork;
-void						 BattleFx_ClearOwnedSlot(struct EffectSlot *);
-
-struct Vec
-{
-	s32 x;
-	s32 y;
-	s32 z;
-};
-
-void Vector_AddPolarOffset(s32, s32, struct Vec *);
 
 void Djinn_ResolvePendingEvent(s32 capture)
 {
@@ -417,11 +394,11 @@ void Djinn_ResolvePendingEvent(s32 capture)
 
 				for (actor = 8; actor <= 65; actor++)
 				{
-					struct MapActor *found = BattleAction_FindDescriptor(actor);
+					struct MapActor *found = (struct MapActor *)BattleAction_FindDescriptor(actor);
 					if (found != 0 && found->event - 48 == flag - 300)
 					{
 						WaitFrames(40);
-						BattleFx_RunPageEffectForSlot(actor, element, index);
+						BattleFx_RunPageEffectForSlot(actor, element, (void *)index);
 						break;
 					}
 				}
@@ -481,9 +458,9 @@ void BattleFx_AdvanceSpinAngle(struct MotionObject *object)
 void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor)
 {
 	struct MotionObject *target;
-	struct Vec			 pos;
+	struct EffectVector	 pos;
 
-	target = Object_GetById(gGameState.selected_actor);
+	target = (struct MotionObject *)Object_GetById(gGameState.selected_actor);
 	if (actor->state == 0)
 	{
 		actor->orbit_radius += 1;
@@ -539,20 +516,10 @@ void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor)
 	actor->z = pos.z;
 }
 
-#undef BattleFx_RunPageEffectForSlot
-
 //--------------------------------------------------------------------------
 // heavy_impact_finish.c
 // フィールド効果：ジンが仲間になる演出 (属性3)
 //--------------------------------------------------------------------------
-
-#undef Camera_WorldToScreen
-
-#define ObjectDispatch_ApplyArgumentToChildrenFar          \
-	((void (*)(struct FieldActor * object, s32 animation)) \
-			ObjectDispatch_ApplyArgumentToChildrenFar)
-#undef Object_GetById
-#define Object_GetById ((struct MotionObject * (*)(s32 id)) Object_GetById)
 
 //--------------------------------------------------------------------------
 // ジンが跳ねて光の粒になり、操作キャラへ集まる
@@ -560,19 +527,14 @@ void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor)
 //--------------------------------------------------------------------------
 void BattleFx_FinishHeavyImpact(s32 jin_id)
 {
-	struct
-	{
-		s32 x;
-		s32 y;
-		s32 z;
-	} pos;
+	struct EffectVector pos;
 	struct MotionObject	 *jin;
 	struct BattleFxScene *scene;
 	struct EffectSlot	 *slot;
 	s32					  scale;
 	s32					  cnt;
 
-	jin = Object_GetById(jin_id);
+	jin = (struct MotionObject *)Object_GetById(jin_id);
 	/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
 	do
 	{
@@ -637,23 +599,8 @@ void BattleFx_FinishHeavyImpact(s32 jin_id)
 	BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
-#undef ObjectDispatch_ApplyArgumentToChildrenFar
-#undef Object_GetById
-
-#undef Motion_SetTargetPositionFromMagnitudeAngle
-
-#undef Motion_SetTargetPositionFromMagnitudeAngle
-#define Motion_SetTargetPositionFromMagnitudeAngle \
-	((void (*)(struct CaptureObject *, s32, s32))Motion_SetTargetPositionFromMagnitudeAngle)
-
-#define ObjectGroup_SetChildValueUnlessFifteenFar \
-	((void (*)(s32, s32))ObjectGroup_SetChildValueUnlessFifteenFar)
-#define BattleFx_AdvanceSpinAngle ((void (*)(void))BattleFx_AdvanceSpinAngle)
-#define EffectSlot_Initialize ((void (*)(void *, s32, s32, s32))EffectSlot_Initialize)
-
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 extern u32 gFrameTick;
-void	   ObjectDispatch_ReleaseFar();
 
 struct EffectOwner
 {
@@ -662,12 +609,6 @@ struct EffectOwner
 	u8						unknown_14[0x3c];
 	struct AnimationObject *sprite;
 };
-#undef Object_GetById
-#define Object_GetById ((struct ObjectRuntime * (*)(u32 actor)) Object_GetById)
-void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
-#define Vector_AddPolarOffset \
-	((void (*)(s32 magnitude, s32 angle, struct EffectVector * position)) Vector_AddPolarOffset)
-void Motion_SetVarCbAndRefresh(s32, s32);
 
 struct PhasedRadialSequenceObject
 {
@@ -684,13 +625,6 @@ struct PhasedRadialSequenceObject
 	void *callback;
 };
 
-struct OrbitPosition
-{
-	s32 x;
-	s32 y;
-	s32 z;
-};
-
 struct DescendingOrbitObject
 {
 	u8	unknown_00[8];
@@ -701,15 +635,6 @@ struct DescendingOrbitObject
 	u16 timer;
 	s16 angle;
 };
-
-struct SpreadPosition
-{
-	s32 x;
-	s32 y;
-	s32 z;
-};
-
-void AudioCommand_PlayFar(s32);
 
 extern const s32 BattleFx_CommonParticleScript[];
 
@@ -738,11 +663,6 @@ struct CaptureObject
 	struct FieldActor *linked_object;
 	void *callback;
 };
-#undef ObjectDispatch_ApplyArgumentToChildrenFar
-#define ObjectDispatch_ApplyArgumentToChildrenFar \
-	((void (*)(struct ObjectRuntime * object, s32 mode)) ObjectDispatch_ApplyArgumentToChildrenFar)
-void				  ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 struct LinkedCaptureObject
 {
@@ -785,7 +705,7 @@ void BattleFx_ShrinkObjectAndDestroySlow(void *obj)
 	((struct MotionObject *)obj)->scale_x = scale;
 	if (scale < 0x3000)
 	{
-		ObjectDispatch_ReleaseFar();
+		ObjectDispatch_ReleaseFar(obj);
 	}
 }
 
@@ -874,12 +794,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
 void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
 {
 	s8 *object_pointer;
-	struct
-	{
-		s32 x;
-		s32 y;
-		s32 z;
-	} position;
+	struct EffectVector position;
 	s32								   value;
 	s32								   remaining;
 	struct PhasedRadialSequenceObject *source_object;
@@ -927,7 +842,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
 		EffectSlot_SetObjectMode(slot, 7);
 		object_pointer = slot;
 		value = *(s32 *)object_pointer;
-		ObjectGroup_SetChildValueUnlessFifteenFar(value, 10);
+		ObjectGroup_SetChildValueUnlessFifteenFar((void *)value, 10);
 		value = Random16() / 3 + 0x10000;
 		((struct EffectSlot *)slot)->scale_y = value;
 		((struct EffectSlot *)slot)->scale_x = value;
@@ -997,13 +912,13 @@ void BattleFx_ShrinkObjectAndDestroyFast(void *obj)
 	((struct MotionObject *)obj)->scale_x = scale;
 	if (scale < 0x3000)
 	{
-		ObjectDispatch_ReleaseFar();
+		ObjectDispatch_ReleaseFar(obj);
 	}
 }
 
 void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg)
 {
-	struct OrbitPosition		  local;
+	struct EffectVector		  local;
 	struct DescendingOrbitObject *other;
 	s32							  raw;
 	s16							  value;
@@ -1026,7 +941,7 @@ void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg)
 
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
 {
-	struct SpreadPosition position;
+	struct EffectVector  position;
 	struct ObjectRuntime *source;
 	s32					  state;
 	u32					  random;
@@ -1076,8 +991,6 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
 
 void BattleFx_RunVenusDjinnCapture(s32 arg)
 {
-	void				  Animation_ApplyChildValuesFar(void *object, s32 value);
-	void				  ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 	struct CaptureObject *leader;
 	struct CaptureObject *djinni;
 	void				 *effect_slots;
@@ -1119,16 +1032,16 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
 	position[0] = djinni->x;
 	position[1] = djinni->y;
 	position[2] = djinni->z;
-	Camera_WorldToScreen(position);
+	Camera_WorldToScreen((struct EffectVector *)position);
 
 	slot = (u8 *)effect_slots + 88;
 	remaining = 23;
 	do
 	{
-		EffectSlot_Initialize(slot, 284, position[0], position[2]);
-		EffectSlot_SetCallback(slot, (void *)BattleFx_UpdateRadialSpread);
-		EffectSlot_SetObjectMode(slot, 7);
-		ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
+		EffectSlot_Initialize((struct EffectSlot *)slot, 284, position[0], position[2]);
+		EffectSlot_SetCallback((struct EffectSlot *)slot, (void *)BattleFx_UpdateRadialSpread);
+		EffectSlot_SetObjectMode((struct EffectSlot *)slot, 7);
+		ObjectGroup_SetChildValueUnlessFifteenFar(*(void **)slot, 11);
 		((struct EffectSlot *)slot)->scale_x = 0x8000;
 		((struct EffectSlot *)slot)->scale_y = Random16() + 0x18000;
 		remaining--;
@@ -1195,7 +1108,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
 		djinni->gravity = 0x50000;
 		djinni->base_y = djinni->y;
 		djinni->speed = Random16() + 0x16666;
-		Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
+		Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni, 0x200000, Random16());
 		Animation_ApplyChildValuesFar(djinni, 11);
 		djinni->lifetime = 8;
 		ObjectDispatch_InitializeFar(
@@ -1214,7 +1127,7 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
 	s8					 *state_pointer;
 	s32					  state;
 
-	source = Object_GetById(gGameState.selected_actor);
+	source = (struct ObjectRuntime *)Object_GetById(gGameState.selected_actor);
 	state_pointer = &effect->state;
 	state = *state_pointer;
 
@@ -1277,69 +1190,16 @@ void BattleFx_HalveDistanceToTarget(struct LinkedCaptureObject *object)
 	object->z += (target->z - object->z) / 2;
 }
 
-#undef Object_GetById
-#undef Vector_AddPolarOffset
-#undef ObjectDispatch_ApplyArgumentToChildrenFar
-
 //--------------------------------------------------------------------------
 // run_mercury_djinn_capture.c
 // フィールド演出：水のジンが仲間になるとき、跳ねて残像を引いて昇り、粒を降らせる
 //--------------------------------------------------------------------------
-
-#undef Object_ReplaceResourceEntry
-
-#define Motion_SetVarCbAndRefresh ((int (*)())Motion_SetVarCbAndRefresh)
-
-#define BattleFx_HalveDistanceToTarget ((void (*)(void))BattleFx_HalveDistanceToTarget)
-#undef Object_ReplaceResourceEntry
-#define Object_ReplaceResourceEntry                                                   \
-	((struct CaptureResource * (*)(struct CaptureSprite *, struct CaptureResource *)) \
-			Object_ReplaceResourceEntry)
-#undef Camera_WorldToScreen
-#define Camera_WorldToScreen ((void (*)(s32 *))Camera_WorldToScreen)
-
-struct CaptureSprite
-{
-	u8	 unknown_00[40];
-	s16 *resource; // 先頭はオブジェクトの種類
-};
-
-struct CaptureObject_2
-{
-	u8						unknown_00[6];
-	u16						facing;
-	s32						x;
-	s32						y;
-	s32						z;
-	u8						unknown_14[4];
-	s32						scale_x;
-	s32						scale_y;
-	u8						unknown_20[3];
-	u8						priority_flags;
-	u8						unknown_24[44];
-	struct CaptureSprite   *sprite;
-	u8						unknown_54;
-	u8						mode;
-	u8						unknown_56[4];
-	u8						collision_flags;
-	u8						visible;
-	u8						unknown_5c[12];
-	struct CaptureObject_2 *linked;	  // 追いかける相手
-	void				   *callback; // 毎フレームの処理
-};
 
 struct CaptureResource
 {
 	u8 unknown_00[28];
 	u8 id;
 };
-#undef Object_GetById
-#define Object_GetById ((struct CaptureObject * (*)(s32 id)) Object_GetById)
-#undef ObjectDispatch_ApplyArgumentToChildrenFar
-#define ObjectDispatch_ApplyArgumentToChildrenFar \
-	((void (*)(struct CaptureObject * object, s32 mode)) ObjectDispatch_ApplyArgumentToChildrenFar)
-#define ObjectDispatch_ReleaseFar \
-	((void (*)(struct CaptureObject * object)) ObjectDispatch_ReleaseFar)
 
 #define ZANZOU_MAX 8 // 残像の数
 #define TSUBU_MAX 24 // 降らせる粒の数 (scene->slots)
@@ -1352,31 +1212,22 @@ struct CaptureResource
 //--------------------------------------------------------------------------
 void BattleFx_RunMercuryDjinnCapture(s32 id)
 {
-	void Animation_ApplyChildValuesFar(void *object, s32 value);
-	void ObjectDispatch_SetSingleChildFlagsFar(void *object, s32 value);
-	void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-	void *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-	struct CaptureObject_2	*jin;
-	struct CaptureObject_2	*copy;
-	struct CaptureObject_2	*previous;
+	struct HopActor	*jin;
+	struct HopActor	*copy;
+	struct HopActor	*previous;
 	struct CaptureResource	*resource;
 	void					*scene;
-	struct CaptureObject_2 **cursor;
-	struct CaptureObject_2 **list;
+	struct HopActor **cursor;
+	struct HopActor **list;
 	u8						*slot;
 	s8						*slot_state;
 	s32						 kind;
 	s32						 remaining;
 	s32						 resource_id;
-	struct CaptureObject_2	*copies[ZANZOU_MAX];
-	struct
-	{
-		s32 x;
-		s32 y;
-		s32 z;
-	} position;
+	struct HopActor	*copies[ZANZOU_MAX];
+	struct EffectVector position;
 
-	jin = Object_GetById(id);
+	jin = (struct HopActor *)Object_GetById(id);
 	if (jin == NULL)
 		return;
 
@@ -1408,7 +1259,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 	cursor = copies;
 	for (remaining = ZANZOU_MAX - 1; remaining >= 0; remaining--)
 	{
-		copy = Object_CreateFar(kind, jin->x, jin->y, jin->z);
+		copy = (struct HopActor *)Object_CreateFar(kind, jin->x, jin->y, jin->z);
 		*cursor++ = copy;
 		if (copy != NULL)
 		{
@@ -1453,16 +1304,16 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 	position.x = jin->x;
 	position.y = jin->y;
 	position.z = jin->z;
-	Camera_WorldToScreen(&position.x);
+	Camera_WorldToScreen(&position);
 
 	slot = (u8 *)scene + 88; // scene->slots[0]
 	remaining = TSUBU_MAX - 1;
 	do
 	{
-		EffectSlot_Initialize(slot, 240, position.x, position.z);
+		EffectSlot_Initialize((struct EffectSlot *)slot, 240, position.x, position.z);
 		EffectSlot_SetCallback((struct EffectSlot *)slot, BattleFx_UpdateRandomTargetParticle);
 		EffectSlot_SetObjectMode((struct EffectSlot *)slot, 7);
-		ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 9);
+		ObjectGroup_SetChildValueUnlessFifteenFar(*(void **)slot, 9);
 		remaining--;
 		WaitFrames(1);
 		slot += 72; // sizeof(struct EffectSlot)
@@ -1492,7 +1343,3 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 	BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
-#undef Motion_SetVarCbAndRefresh
-#undef Object_GetById
-#undef ObjectDispatch_ApplyArgumentToChildrenFar
-#undef ObjectDispatch_ReleaseFar

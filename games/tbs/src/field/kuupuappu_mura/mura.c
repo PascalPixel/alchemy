@@ -19,56 +19,28 @@
 #include "inventory.h"
 #include "b5_context.h"
 
-s32 ActorPresentation_UpdateEntityFromLeader(u8 *entity);
-s32 SceneActor_CheckFacingAndRange(struct SceneActor *actor, struct SceneActor *target, s32 range, s32 force);
-s32 SceneActor_UpdateProximityToLeader(u8 *self);
-
-#define UnitCalc ((s32 (*)(int))UnitCalc)
-
-struct EffectRecord {
-    u8 pad[9];
-    u8 flags_lo : 2;
-    u8 mode : 2;
-    u8 flags_hi : 4;
+union DriftingObject {
+    struct FieldActor actor;
+    struct OverlayEffectMotion motion;
 };
 
-struct SceneActor {
-    u8 reserved_00[6];
-    s16 temporary_state;
-    u8 reserved_08[92];
-    u16 presentation_flags;
-};
+void Djinn_Transfer(s32 owner, s32 element, s32 index, s32 target);
+void Party_RemoveOwnerRestored(s32 owner);
+void OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 kind);
+void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value);
+s32 ArcTan2(s32 x, s32 y);
 
-struct SceneActor_02000cfc {
-    u8 reserved_00[100];
-    u16 presentation_flags;
-};
+s32 SceneActor_CheckFacingAndRange(struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force);
+void SceneActor_RunActorStep(s32 actor);
+void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
+void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect);
 
-struct SceneActor_02000d78 { u8 reserved_00[100]; u16 presentation_flags; };
-
-struct SceneActor_02000fb4 {
-    u8 reserved_00[35];
-    u8 state_23;
-    u8 reserved_24[44];
-    struct Presentation *presentation;
-};
-
-struct SceneActor_02001010 {
-    u8 reserved_00[35];
-    u8 state_23;
-    u8 reserved_24[44];
-    struct Presentation *presentation;
-};
-void Djinn_Transfer(int, int, int, int);
-void Party_RemoveOwnerRestored();
-s32 PartyInventory_FindOwner(s32);
-
-s32 SceneActor_UpdateProximityToLeader(u8 *self)
+s32 SceneActor_UpdateProximityToLeader(struct FieldActor *self)
 {
     u8 **globals = gWindowWork;
     u8 *scene = globals[0];
     u8 *workspace = globals[12];
-    u16 *flags = (u16 *)(self + 100);
+    s16 *flags = &self->timer;
     s32 force = 0;
     s32 range = 18;
     struct FieldActor *partner;
@@ -96,7 +68,7 @@ s32 SceneActor_UpdateProximityToLeader(u8 *self)
     return 0;
 }
 
-s32 ActorPresentation_UpdateEntityFromLeader(u8 *entity)
+s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity)
 {
     u8 *base = gWindowWork[0];
     u8 *workspace = gWindowWork[12];
@@ -104,7 +76,7 @@ s32 ActorPresentation_UpdateEntityFromLeader(u8 *entity)
     s32 selector = 18;
     struct FieldActor *leader;
 
-    if (*(s32 *)(entity + 56) == (s32)0x80000000)
+    if (entity->target_x == (s32)0x80000000)
         return 0;
 
     leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -150,7 +122,10 @@ s32 OverlayObject_RunObject2WhenFlagged(void)
         Djinn_Transfer(2, 0, 0, 0);
         Engine_AudioPlayCue(126);
         UnitCalc(0);
-        return UnitCalc(2);
+        /* FAKEMATCH: the native returns through r1, so this function returns
+           the last call's value; character.h declares UnitCalc void, and a
+           void tail returns through r0 (differ 4). */
+        return ((s32 (*)(s32))UnitCalc)(2);
     }
 }
 
@@ -247,8 +222,6 @@ void ActorPresentation_RunActorThirteenSceneSetup(void)
 
 void ActorPresentation_RunActorSeventeenSceneSetup(void)
 {
-    int Engine_EventChooseYesNo(int, int);
-
     u8 *workspace;
 
     Engine_EventBegin();
@@ -285,46 +258,42 @@ void SceneDialogue_RunActor16Line(void) { Engine_EventBegin(); Engine_EventSetMe
 
 void SceneDialogue_RunActor19Line(void)
 {
-    void Engine_EventShowMessage(int, int);
-
     Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuRuffRrruff); Engine_ActorSetAnimation(19, 0);
     SceneActor_ApplyActorCueThenWait(19, 0, 2); Engine_EventShowMessage(19, 0); Engine_EventEnd();
 }
 
 void ActorPresentation_RunActorFourteenDialogue(void)
 {
-    void Engine_ActorSetAnimation(s32, s32);
+    struct FieldActor *actor = Object_GetById(14);
+    s16 saved = actor->facing;
 
-    struct SceneActor *actor = Object_GetById(14);
-    s16 saved = actor->temporary_state;
-
-    actor->presentation_flags |= 2;
+    actor->timer |= 2;
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKuupuappuPoorGuyLeft);
     Engine_ActorSetAnimation(14, 0);
     SceneActor_ApplyActorCueThenWait(14, 0, 2);
     SceneActor_ApplyActorZeroThenWait(14, 10);
-    actor->temporary_state = saved;
+    actor->facing = saved;
     Engine_TaskWait(1);
     Engine_EventEnd();
-    actor->presentation_flags &= 1;
+    actor->timer &= 1;
 }
 
 void ActorPresentation_RunActorFifteenDialogue(void)
 {
-    struct SceneActor *actor = Object_GetById(15);
-    s16 saved = actor->temporary_state;
+    struct FieldActor *actor = Object_GetById(15);
+    s16 saved = actor->facing;
 
-    actor->presentation_flags |= 2;
+    actor->timer |= 2;
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKuupuappuMasterHammetsCaravan);
     Engine_ActorSetAnimation(15, 0);
     SceneActor_ApplyActorCueThenWait(15, 0, 2);
     SceneActor_ApplyActorZeroThenWait(15, 10);
-    actor->temporary_state = saved;
+    actor->facing = saved;
     Engine_TaskWait(1);
     Engine_EventEnd();
-    actor->presentation_flags &= 1;
+    actor->timer &= 1;
 }
 
 void Villager_LookForRoofer(void)
@@ -338,19 +307,15 @@ void Villager_LookForRoofer(void)
     Engine_EventEnd();
 }
 
-void SceneActor_RunActorStep(int actor)
+void SceneActor_RunActorStep(s32 actor)
 {
-    void Engine_EventShowMessage(int, int);
-
     Engine_EventBegin(); Engine_ActorSetAnimation(actor, 1); SceneActor_ApplyActorCueThenWait(actor, 0, 2);
     Engine_EventShowMessage(actor, 0); Engine_EventEnd();
 }
 
 void SceneActor_RunActorCommandWithFlag91(s32 x)
 {
-    void Engine_EventShowMessage(s32, s32);
-
-    u8 *flag = (u8 *)Object_GetById(x) + 91;
+    u8 *flag = &Object_GetById(x)->paused;
     s32 zero = 0;
 
     *flag = 1;
@@ -384,11 +349,9 @@ void SceneDialogue_RunActor13Line(void) { Engine_EventBegin(); Engine_EventSetMe
 
 void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
 {
-    void Engine_TaskWait(s32);
-
-    struct SceneActor *actor = Object_GetById(14);
-    u16 *flags = &actor->presentation_flags;
-    s16 saved = actor->temporary_state;
+    struct FieldActor *actor = Object_GetById(14);
+    u16 *flags = (u16 *)&actor->timer;
+    s16 saved = actor->facing;
 
     s32 tmp;
 
@@ -400,7 +363,7 @@ void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
     Engine_ActorSetAnimation(14, 0);
     SceneActor_ApplyActorCueThenWait(14, 0, 2);
     SceneActor_ApplyActorZeroThenWait(14, 10);
-    actor->temporary_state = saved;
+    actor->facing = saved;
     Engine_TaskWait(1);
     Engine_EventEnd();
     *flags &= 1;
@@ -408,19 +371,19 @@ void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
 
 void ActorPresentation_RunActorFifteenFollowupDialogue(void)
 {
-    struct SceneActor *actor = Object_GetById(15);
-    s16 saved = actor->temporary_state;
+    struct FieldActor *actor = Object_GetById(15);
+    s16 saved = actor->facing;
 
-    actor->presentation_flags |= 2;
+    actor->timer |= 2;
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKuupuappuEveryoneGratefulCaptured);
     Engine_ActorSetAnimation(15, 0);
     SceneActor_ApplyActorCueThenWait(15, 0, 2);
     SceneActor_ApplyActorZeroThenWait(15, 10);
-    actor->temporary_state = saved;
+    actor->facing = saved;
     Engine_TaskWait(1);
     Engine_EventEnd();
-    actor->presentation_flags &= 1;
+    actor->timer &= 1;
 }
 
 void ActorPresentation_RunActorSixteenSceneSetup(void)
@@ -433,8 +396,6 @@ void ActorPresentation_RunActorSixteenSceneSetup(void)
 
 void ActorPresentation_RunActorEighteenFollowupSceneSetup(void)
 {
-    void Engine_EventShowMessage(int, int);
-
     u8 *workspace;
     Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuOnesWhoCapturedThieves); SceneActor_ApplyActorCueThenWait(18, 0, 2); Engine_EventOpenMessage(18, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) { workspace = (u8 *)gEventWork; ++*(u16 *)(workspace + 472); }
@@ -443,9 +404,6 @@ void ActorPresentation_RunActorEighteenFollowupSceneSetup(void)
 
 void ActorPresentation_RunActorNineteenDialogueAndSetSceneState(void)
 {
-    void Engine_ActorSetAnimation(s32, s32);
-    void Engine_ActorSetAnimation(s32, s32);
-
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKuupuappuRuffRrruff2);
     Engine_ActorSetAnimation(19, 0);
@@ -469,8 +427,6 @@ void SceneDialogue_RunActor20Line(void)
 
 void SceneDialogue_RunActor11FlaggedLine(void)
 {
-    int Engine_GameFlagIsSet(int);
-
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x855) == 0) Engine_EventSetMessage((s32)MsgKuupuappuManShouldStealFromAnother); else Engine_EventSetMessage((s32)MsgKuupuappuHowPunishPrisoners);
     SceneActor_RunActorCommandWithFlag91(11); Engine_EventEnd();
@@ -490,7 +446,7 @@ void SceneDialogue_RunActor13FlaggedLine(void)
 
 void ActorPresentation_RunActorFourteenFlaggedDialogue(void)
 {
-    ((struct SceneActor *)Object_GetById(14))->presentation_flags |= 2;
+    Object_GetById(14)->timer |= 2;
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x855) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuBetWasThoseThreeCreeps);
@@ -501,14 +457,12 @@ void ActorPresentation_RunActorFourteenFlaggedDialogue(void)
     }
     SceneActor_RunActorCommandWithFlag91(14);
     Engine_EventEnd();
-    ((struct SceneActor *)Object_GetById(14))->presentation_flags &= 1;
+    Object_GetById(14)->timer &= 1;
 }
 
 void ActorPresentation_RunActorFifteenScriptBranch(void)
 {
-    void Engine_EventSetMessage(s32);
-
-    ((struct SceneActor *)Object_GetById(15))->presentation_flags |= 2;
+    Object_GetById(15)->timer |= 2;
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x855) == 0)
         Engine_EventSetMessage((s32)MsgKuupuappuSupposeDoesntMatterHowRich);
@@ -516,13 +470,11 @@ void ActorPresentation_RunActorFifteenScriptBranch(void)
         Engine_EventSetMessage((s32)MsgKuupuappuMustStrongerThanLookHave);
     SceneActor_RunActorCommandWithFlag91(15);
     Engine_EventEnd();
-    ((struct SceneActor *)Object_GetById(15))->presentation_flags &= 1;
+    Object_GetById(15)->timer &= 1;
 }
 
 void ActorPresentation_RunActorSixteenScriptBranch(void)
 {
-    void Engine_EventSetMessage(int);
-
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x855) == 0) Engine_EventSetMessage((s32)MsgKuupuappuEveryoneKnowsThoseThreeAt); else Engine_EventSetMessage((s32)MsgKuupuappuFeelMuchBetter);
     SceneActor_RunActorCommandWithFlag91(16); Engine_EventEnd();
@@ -530,8 +482,6 @@ void ActorPresentation_RunActorSixteenScriptBranch(void)
 
 void ActorPresentation_RunActorNineteenScriptBranch(void)
 {
-    void Engine_EventWait(int);
-
     struct FieldActor *actor = Object_GetById(19); actor->paused = 1; Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x855) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuStealingInMidstVolcanicEruption); Engine_ActorSetAnimation(19, 0); Engine_EventWait(2);
@@ -586,9 +536,8 @@ void FieldScene_SetupScene7At216_288(void)
 
 void ActorPresentation_SetupActorZeroForSceneEightAt376_224(void)
 {
-    struct SceneActor_02000fb4 *actor = Object_GetById(ACTOR_PARTY_LEADER);
-    struct Presentation *presentation = actor->presentation;
-    u8 flags;
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)actor->sprite;
 
     Engine_AudioPlayCue(158);
     Engine_MapAnimateCells(KuupuappuMura_Scene8Cells, 54, 13);
@@ -598,19 +547,15 @@ void ActorPresentation_SetupActorZeroForSceneEightAt376_224(void)
 
         Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
     }
-    actor->state_23 &= ~1;
-    flags = presentation->flags;
-    flags |= 12;
-    presentation->flags = flags;
+    actor->priority_flags &= ~1;
+    sprite->priority = 3;
     SceneActor_PlaceAndSetSceneDelay(376, 224, 8);
 }
 
 void ActorPresentation_SetupActorZeroForSceneNineAt296_176(void)
 {
-
-    struct SceneActor_02001010 *actor = Object_GetById(ACTOR_PARTY_LEADER);
-    struct Presentation *presentation = actor->presentation;
-    u8 flags;
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)actor->sprite;
 
     Engine_AudioPlayCue(158);
     Engine_MapAnimateCells(KuupuappuMura_Scene9Cells, 49, 10);
@@ -620,42 +565,18 @@ void ActorPresentation_SetupActorZeroForSceneNineAt296_176(void)
 
         Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
     }
-    actor->state_23 &= ~1;
-    flags = presentation->flags;
-    flags |= 12;
-    presentation->flags = flags;
+    actor->priority_flags &= ~1;
+    sprite->priority = 3;
     SceneActor_PlaceAndSetSceneDelay(296, 176, 9);
 }
 
 void FieldScene_SetupScene10At120_144(void)
 { Engine_AudioPlayCue(158); Engine_MapAnimateCells(KuupuappuMura_Scene10Cells, 38, 6); SceneActor_PlaceAndSetSceneDelay(120, 144, 10); }
 
-void OverlayObject_CreateConfiguredObject();
-void Event_PrepareObjectAndApplyValue();
-
-struct SceneActor_2 {
-    u8 unk_00[6];
-    u16 facing;
-    s32 x, y, z;
-    u8 unk_14[0x47];
-    u8 active;
-};
-
-extern s32 ArcTan2(s32, s32);
-
-union DriftingObject {
-    struct FieldActor actor;
-    struct OverlayEffectMotion motion;
-};
-
-void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect);
-
 void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
 {
-
-    struct SceneActor_0200113c *actor = Object_GetById(ACTOR_PARTY_LEADER);
-    struct Presentation *presentation = actor->presentation;
-    u8 flags;
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)actor->sprite;
 
     Engine_AudioPlayCue(158);
     Engine_MapAnimateCells(KuupuappuMura_Scene12Cells, 35, 9);
@@ -665,10 +586,8 @@ void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
 
         Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
     }
-    actor->state_23 &= ~1;
-    flags = presentation->flags;
-    flags |= 12;
-    presentation->flags = flags;
+    actor->priority_flags &= ~1;
+    sprite->priority = 3;
     SceneActor_PlaceAndSetSceneDelay(72, 160, 12);
 }
 
@@ -676,21 +595,16 @@ void FieldScene_SetupScene13At152_264(void) { Engine_AudioPlayCue(123); SceneAct
 
 void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z, int field40)
 {
-    void Engine_TaskWait(int);
-    void Engine_ActorSetPosition(int, int, int);
-
-    u8 *record = Object_GetById(actor); int frames;
-    Engine_ActorSetSpeed(actor, 0x30000, 0x18000); *(s32 *)(record + 72) = 0x8000;
-    *(s32 *)(record + 68) = 0; *(s32 *)(record + 40) = field40; Engine_ActorSetSpriteFlags(record, 0);
+    struct FieldActor *record = Object_GetById(actor); int frames;
+    Engine_ActorSetSpeed(actor, 0x30000, 0x18000); record->gravity = 0x8000;
+    record->bounce = 0; record->velocity_y = field40; Engine_ActorSetSpriteFlags(record, 0);
     Engine_ActorMoveToAndWait(actor, x, z); Engine_ActorSetPosition(actor, x << 16, z << 16);
-    for (frames = 60; frames != 0; --frames) { Engine_TaskWait(1); if (*(s16 *)(record + 42) == 0) break; }
-    Engine_ActorSetSpriteFlags(record, 1); *(s32 *)(record + 72) = 0x10000;
+    for (frames = 60; frames != 0; --frames) { Engine_TaskWait(1); if (*(s16 *)((u8 *)record + 42) == 0) break; }
+    Engine_ActorSetSpriteFlags(record, 1); record->gravity = 0x10000;
 }
 
 void FieldScene_RunActor23SequenceOnceByFlag867(void)
 {
-    void Engine_EventWait();
-
     u32 i;
     s32 record;
 
@@ -757,10 +671,10 @@ s32 KuupuappuMura_RestoreEntryState(void)
     zero = 0;
     record = Object_GetById(14);
     record->timer = v7;
-    *(s32 *)((u8 *)record + 108) = (s32)SceneActor_UpdateProximityToLeader;
+    record->update = (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
     record = Object_GetById(15);
     record->timer = zero;
-    *(s32 *)((u8 *)record + 108) = (s32)SceneActor_UpdateProximityToLeader;
+    record->update = (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
     if (Engine_GameFlagIsSet(0x858) != 0) {
         Actor_SetPosition(19, 0xd80000, 0x1880000);
     }
@@ -768,7 +682,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
     if (Engine_GameFlagIsSet(0x855) == 0) {
         if ((v7 & rec7) != 0) {
             record = Object_GetById(21);
-            *(s32 *)((u8 *)record + 108) = (s32)ActorPresentation_UpdateEntityFromLeader;
+            record->update = (void (*)(union FieldObject *))ActorPresentation_UpdateEntityFromLeader;
         }
     }
     if (gGameState.entrance <= 2) {
@@ -861,26 +775,25 @@ s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
     return Iwram_Sqrt(dxsq + dysq + dzsq);
 }
 
-s32 SceneActor_CheckFacingAndRange(struct SceneActor_2 *actor, struct SceneActor_2 *target,
-                  s32 range, s32 force)
+s32 SceneActor_CheckFacingAndRange(struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force)
 {
     s32 result = 0;
-    s32 *target_pos = &target->x;
-    s32 *actor_pos = &actor->x;
+    s32 *target_pos = &target->x.fixed;
+    s32 *actor_pos = &actor->x.fixed;
     if (SceneActor_GetPositionDistance(target_pos, actor_pos) < range || force != 0) {
-        u32 angle = (u16)ArcTan2(target->z - actor->z,
+        u32 angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
                                        *target_pos - *actor_pos);
         u32 left = (angle - 0x1000) & 0xf000;
         u32 right = (angle + 0x1000) & 0xf000;
         u32 forward = angle & 0xf000;
         u32 facing = actor->facing & 0xf000;
         if (forward == facing || right == facing || left == facing || force != 0) {
-            actor->active = 1;
+            actor->paused = 1;
             Object_SetMode(actor, 1);
             result = 1;
         }
     } else {
-        actor->active = 0;
+        actor->paused = 0;
         Object_SetMode(actor, 2);
     }
     return result;

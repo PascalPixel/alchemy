@@ -18,7 +18,6 @@
 #include "btlsys.h"
 
 #define BattleFx_ApplyLookupResult ((s32 (*)(void*,s32))BattleFx_ApplyLookupResult)
-#define EffectRuntime_LookupByTableEntry ((s32 (*)(s32,s32))EffectRuntime_LookupByTableEntry)
 
 void Vector_AddPolarOffset(s32, u32, struct FieldPosition *);
 #include "heap_state.h"

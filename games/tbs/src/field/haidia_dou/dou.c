@@ -1,5 +1,4 @@
 #include "battle.h"
-#define FIELD_STAGED_ACTOR_IMPORTS
 #include "field_event.h"
 #include "debug.h"
 #include "field.h"

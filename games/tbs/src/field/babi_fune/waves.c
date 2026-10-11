@@ -15,6 +15,7 @@
 #include "dma.h"
 #include "iwram_call.h"
 #include "io_reg.h"
+#include "map_scroll.h"
 
 #define BabiFune_ShimmerActive (*(u32 *)&BabiFune_ShimmerActive)
 #define BabiFune_ShimmerPhase (*(u32 *)&BabiFune_ShimmerPhase)
@@ -33,17 +34,17 @@ union GameStateRows
 	s32 words[256];
 };
 
-struct MapLayer
+struct WaveMapLayer
 {
-	u8	unknown_00[12];
+	s32 unknown_00[3];
 	s32 y;
-	u8	unknown_10[32];
+	s32 unknown_10[8];
 };
 
-struct MapWork
+struct WaveMap
 {
-	u8				unknown_00[20];
-	struct MapLayer layers[8];
+	u8					unknown_00[20];
+	struct WaveMapLayer layers[8];
 };
 
 #define SPRITE_BYTES(actor) ((u8 *)(actor)->sprite)
@@ -65,8 +66,6 @@ struct ScrollWork
 
 extern struct ScrollWork *gHBlankScrollWork;
 
-extern s16 gBgScroll[];
-
 static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
 {
 	return (u16)(Iwram_MulQ16(BabiFune_WaveSine[(angle >> 16) & 0xff], amplitude) / 256) + base;
@@ -83,7 +82,7 @@ static inline void BabiFune_AddTask(void (*task)(void), s32 order)
 
 void BabiFune_RunDeparture(void)
 {
-	struct MapWork *map;
+	struct WaveMap *map;
 	s32				i;
 	s32				flash;
 	s32				white;
@@ -194,7 +193,7 @@ void BabiFune_RunDeparture(void)
 
 s32 BabiFune_SetupScene(void)
 {
-	struct MapWork *map;
+	struct WaveMap *map;
 	volatile u16	cnt;
 
 	map = gMapWork[0];
@@ -271,7 +270,7 @@ s32 BabiFune_SetupScene(void)
 		REG_BLDALPHA = v;
 	}
 	{
-		struct MapLayer *layer = map->layers + 6;
+		struct WaveMapLayer *layer = map->layers + 6;
 
 		layer->y += -0x5a0000;
 		layer = map->layers + 7;
@@ -314,12 +313,12 @@ void DisplayScroll_BuildAndSwapHBlankPage(void)
 	s32				   i;
 
 	work = gHBlankScrollWork;
-	y = gBgScroll[7];
+	y = gBgScroll[3].y;
 	line = work->pages[work->page ^ 1];
 	step = work->step[0];
 	angle = (work->phase + y) * work->frequency[0];
 	amplitude = work->amplitude[0];
-	base = gBgScroll[6];
+	base = gBgScroll[3].x;
 	for (i = 0; i != 160; i++)
 	{
 		*line = Wave_Offset(angle, amplitude, base);

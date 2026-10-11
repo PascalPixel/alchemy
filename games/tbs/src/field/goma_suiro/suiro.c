@@ -9,7 +9,6 @@
 #include "system.h"
 #include "mapcopy.h"
 #include "types.h"
-#define FIELD_STAGED_ACTOR_IMPORTS
 #include "field_event.h"
 #include "field_scene.h"
 #include "goma.h"

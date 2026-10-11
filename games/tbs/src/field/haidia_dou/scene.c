@@ -8,7 +8,6 @@
 #include "sound.h"
 #include "system.h"
 #include "mapcopy.h"
-#define FIELD_STAGED_ACTOR_IMPORTS
 #include "haidia.h"
 #include "types.h"
 #include "field_event.h"

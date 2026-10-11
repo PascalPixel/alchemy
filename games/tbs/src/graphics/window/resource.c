@@ -22,7 +22,6 @@
 #include "b5_context.h"
 #include "btlsys.h"
 
-#define UiGlyph_LoadEntryWithPalette ((s32 (*)(u32,s32,s32*,s32*,s32,s32))UiGlyph_LoadEntryWithPalette)
 
 struct UiBobPairOutput {
     struct UiBobPairOutput *next;

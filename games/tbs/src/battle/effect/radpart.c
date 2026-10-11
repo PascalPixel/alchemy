@@ -1,9 +1,9 @@
-#define OWN_Object_CreateFar
 //--------------------------------------------------------------------------
-// hop.c
-// 跳ねて分身を引く演出、ジン加入の演出、シーンのオブジェクトの再配置
+// motion_move_halfway_toward_target.c
+// オブジェクト：つながった相手への追従
 //--------------------------------------------------------------------------
 
+#include "object_runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -14,7 +14,6 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "object_runtime.h"
 #include "game_state.h"
 #include "global_cells.h"
 #include "btlsys.h"
@@ -33,6 +32,73 @@
 #include "resource.h"
 #include "palbuf.h"
 
+//--------------------------------------------------------------------------
+// つながったオブジェクトとの距離を、x・y・z とも半分つめる
+// obj : 動かすオブジェクト
+//--------------------------------------------------------------------------
+void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj)
+{
+	struct ObjectRuntime *tgt = obj->linked_object;
+
+	obj->x += (tgt->x - obj->x) / 2;
+	/* FAKEMATCH: separate CSE blocks retain each axis's own-position load and
+	   destructive add. Direct updates reverse the y/z loads under TLA's flags;
+	   unscoped temporaries change four add/store registers in TBS. */
+	do {
+		s32 position = obj->y;
+
+		position += (tgt->y - position) / 2;
+		obj->y = position;
+	} while (0);
+	do {
+		s32 position = obj->z;
+
+		position += (tgt->z - position) / 2;
+		obj->z = position;
+	} while (0);
+}
+
+//--------------------------------------------------------------------------
+
+// motion_move_halfway_toward_target.c
+
+// オブジェクト：つながった相手への追従
+
+//--------------------------------------------------------------------------
+
+void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj);
+
+//--------------------------------------------------------------------------
+// つながったオブジェクトとの距離を、x・y・z とも半分つめる
+// obj : 動かすオブジェクト
+//--------------------------------------------------------------------------
+void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj)
+{
+	struct ObjectRuntime *tgt = obj->linked_object;
+
+	obj->x += (tgt->x - obj->x) / 2;
+	/* FAKEMATCH: separate CSE blocks retain each axis's own-position load and
+	   destructive add. Direct updates reverse the y/z loads under TLA's flags;
+	   unscoped temporaries change four add/store registers in TBS. */
+	do {
+		s32 position = obj->y;
+
+		position += (tgt->y - position) / 2;
+		obj->y = position;
+	} while (0);
+	do {
+		s32 position = obj->z;
+
+		position += (tgt->z - position) / 2;
+		obj->z = position;
+	} while (0);
+}
+
+//--------------------------------------------------------------------------
+// hop.c
+// 跳ねて分身を引く演出、ジン加入の演出、シーンのオブジェクトの再配置
+//--------------------------------------------------------------------------
+
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 void BattleFx_RunPageEffectForSlot(s32 slot, s32 elm, void *djinn);
 
@@ -41,8 +107,6 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 elm, void *djinn);
 
 #define Object_ReplaceResourceEntry \
 	((void *(*)(struct HopSprite *, void *))Object_ReplaceResourceEntry)
-
-void ObjectMotion_MoveHalfwayTowardTarget(void);
 
 struct HopSprite
 {
@@ -512,11 +576,8 @@ void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor)
 #undef BattleFx_RunPageEffectForSlot
 
 //--------------------------------------------------------------------------
-
 // heavy_impact_finish.c
-
 // フィールド効果：ジンが仲間になる演出 (属性3)
-
 //--------------------------------------------------------------------------
 
 #undef Camera_WorldToScreen
@@ -524,6 +585,8 @@ void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor)
 #define ObjectDispatch_ApplyArgumentToChildrenFar          \
 	((void (*)(struct FieldActor * object, s32 animation)) \
 			ObjectDispatch_ApplyArgumentToChildrenFar)
+#undef Object_GetById
+#undef Object_GetById
 #define Object_GetById ((struct MotionObject * (*)(s32 id)) Object_GetById)
 
 //--------------------------------------------------------------------------
@@ -614,6 +677,8 @@ void BattleFx_FinishHeavyImpact(s32 jin_id)
 
 #undef Motion_SetTargetPositionFromMagnitudeAngle
 
+#undef Motion_SetTargetPositionFromMagnitudeAngle
+#undef Motion_SetTargetPositionFromMagnitudeAngle
 #define Motion_SetTargetPositionFromMagnitudeAngle \
 	((void (*)(struct CaptureObject *, s32, s32))Motion_SetTargetPositionFromMagnitudeAngle)
 
@@ -633,6 +698,8 @@ struct EffectOwner
 	u8						unknown_14[0x3c];
 	struct AnimationObject *sprite;
 };
+#undef Object_GetById
+#undef Object_GetById
 #define Object_GetById ((struct ObjectRuntime * (*)(u32 actor)) Object_GetById)
 void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
 #define Vector_AddPolarOffset \
@@ -708,11 +775,12 @@ struct CaptureObject
 	struct FieldActor *linked_object;
 	void *callback;
 };
+#undef ObjectDispatch_ApplyArgumentToChildrenFar
+#undef ObjectDispatch_ApplyArgumentToChildrenFar
 #define ObjectDispatch_ApplyArgumentToChildrenFar \
 	((void (*)(struct ObjectRuntime * object, s32 mode)) ObjectDispatch_ApplyArgumentToChildrenFar)
 void				  ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void				  BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 
 struct LinkedCaptureObject
 {
@@ -1252,11 +1320,8 @@ void BattleFx_HalveDistanceToTarget(struct LinkedCaptureObject *object)
 #undef ObjectDispatch_ApplyArgumentToChildrenFar
 
 //--------------------------------------------------------------------------
-
 // run_mercury_djinn_capture.c
-
 // フィールド演出：水のジンが仲間になるとき、跳ねて残像を引いて昇り、粒を降らせる
-
 //--------------------------------------------------------------------------
 
 #undef Object_ReplaceResourceEntry
@@ -1264,9 +1329,13 @@ void BattleFx_HalveDistanceToTarget(struct LinkedCaptureObject *object)
 #define Motion_SetVarCbAndRefresh ((int (*)())Motion_SetVarCbAndRefresh)
 
 #define BattleFx_HalveDistanceToTarget ((void (*)(void))BattleFx_HalveDistanceToTarget)
+#undef Object_ReplaceResourceEntry
+#undef Object_ReplaceResourceEntry
 #define Object_ReplaceResourceEntry                                                   \
 	((struct CaptureResource * (*)(struct CaptureSprite *, struct CaptureResource *)) \
 			Object_ReplaceResourceEntry)
+#undef Camera_WorldToScreen
+#undef Camera_WorldToScreen
 #define Camera_WorldToScreen ((void (*)(s32 *))Camera_WorldToScreen)
 
 struct CaptureSprite
@@ -1304,7 +1373,11 @@ struct CaptureResource
 	u8 unknown_00[28];
 	u8 id;
 };
+#undef Object_GetById
+#undef Object_GetById
 #define Object_GetById ((struct CaptureObject * (*)(s32 id)) Object_GetById)
+#undef ObjectDispatch_ApplyArgumentToChildrenFar
+#undef ObjectDispatch_ApplyArgumentToChildrenFar
 #define ObjectDispatch_ApplyArgumentToChildrenFar \
 	((void (*)(struct CaptureObject * object, s32 mode)) ObjectDispatch_ApplyArgumentToChildrenFar)
 #define ObjectDispatch_ReleaseFar \

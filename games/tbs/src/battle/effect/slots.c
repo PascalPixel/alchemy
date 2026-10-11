@@ -3464,8 +3464,7 @@ s32 BattleEffect_SelectNearbyObject(s32 id)
 		if (dist >= best_dist)
 			continue;
 
-		/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, BattleEffect_SelectNearbyObject is 4 bytes shorter */
-		angle = ((u16 (*)(s32, s32))ArcTan2)(obj->z - src->z, obj->x - src->x);
+		angle = (u16)ArcTan2(obj->z - src->z, obj->x - src->x);
 		if (dist > 11)
 		{
 			s32 diff = (s16)(angle - src->angle);
@@ -3561,8 +3560,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode)
 			continue;
 
 		// 向きの幅 : 19 ドットまでは ±0x1800、それより遠ければ ±0x1000、mode 2 は ±0x2000
-		/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, BattleEffect_SelectNearbyTargetObject is 4 bytes shorter */
-		angle = ((u16 (*)(s32, s32))ArcTan2)(obj->z - src->z, obj->x - src->x);
+		angle = (u16)ArcTan2(obj->z - src->z, obj->x - src->x);
 		width = 0x1800;
 		if (dist > 19)
 			width = 0x1000;
@@ -4601,8 +4599,7 @@ void BattleFx_EmitRandomParticle(void)
 				actor->x = cx + (8 << 16);
 				actor->z = cz + (8 << 16);
 				Vector_AddPolarOffset(
-					/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, BattleFx_EmitRandomParticle is 4 bytes shorter */
-					20 << 16, ((u16 (*)(s32, s32))ArcTan2)(dz, dx), (struct ParticlePosition *)&actor->x);
+					20 << 16, (u16)ArcTan2(dz, dx), (struct ParticlePosition *)&actor->x);
 				actor->target_x = 0x80000000; // 移動先なし
 				actor->target_y = 0x80000000;
 				actor->target_z = 0x80000000;
@@ -7171,7 +7168,7 @@ void Event_WaitTransitionFrames(void)
 	WaitFrames(((struct EventRuntime *)gEventWork)->value_1c8);
 }
 
-void Event_SetDestination(u16 first, u16 second)
+void Event_SetDestination(s32 first, s32 second)
 {
 	((struct EventRuntime *)gEventWork)->value_170 = 999;
 	gGameState.scene = first;
@@ -7250,13 +7247,13 @@ void BattleFx_SetPhaseRequest(s32 flag, s32 no)
 	((s32 (*)())BattleFx_SelectBattleCue)(0, 0); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
 }
 
-void Party_SetFields1ceAnd1d0(u16 first, u16 second)
+void Party_SetFields1ceAnd1d0(s32 first, s32 second)
 {
 	gGameState.next_scene = first;
 	gGameState.next_entrance = second;
 }
 
-void Event_SetDefeatDestination(u16 first, u16 second)
+void Event_SetDefeatDestination(s32 first, s32 second)
 {
 	gGameState.defeat_scene = first;
 	gGameState.defeat_entrance = second;
@@ -7901,8 +7898,7 @@ void FacingObject_TurnPairToFaceEachOther(
 
 	if (first == NULL || second == NULL)
 		return;
-	/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, FacingObject_TurnPairToFaceEachOther is 4 bytes shorter */
-	toward = ((u16 (*)(s32, s32))ArcTan2)(second->z - first->z, second->x - first->x);
+	toward = (u16)ArcTan2(second->z - first->z, second->x - first->x);
 	away = toward + 0x8000;
 	for (frame = 0; frame < 60; frame++)
 	{
@@ -9124,8 +9120,7 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object)
 	if (target != NULL)
 	{
 		object->action_flags &= 0xfe;
-		/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, ObjectMotion_TurnTowardLinkedTarget is 4 bytes shorter */
-		target_angle = ((u16 (*)(s32, s32))ArcTan2)(target->z - object->z, target->x - object->x);
+		target_angle = (u16)ArcTan2(target->z - object->z, target->x - object->x);
 		current_angle = object->angle;
 		turn_step = target_angle - current_angle;
 		if (turn_step != 0)
@@ -9212,8 +9207,7 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
 		dist = Iwram_Sqrt(dx * dx + dz * dz);
 		if (dist >= best)
 			continue;
-		/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, Object_FindNearestFacingTarget is 4 bytes shorter */
-		angle = ((u16 (*)(s32, s32))ArcTan2)(entry->z - self->z, entry->x - self->x);
+		angle = (u16)ArcTan2(entry->z - self->z, entry->x - self->x);
 		if (dist > 23)
 		{
 			turn = (s16)(angle - self->angle);

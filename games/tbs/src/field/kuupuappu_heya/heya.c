@@ -1293,10 +1293,8 @@ void FieldScene_RunVaultClosingSequence(void)
 	GameFlag_Set(2132);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	base = (s32)&SceneId_KuupuappuHeya;
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, FieldScene_RunVaultClosingSequence is 6 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)(base, 17);
-	/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, FieldScene_RunVaultClosingSequence is 4 bytes longer */
-	((void (*)(s32, s32))Event_SetDefeatDestination)(base, 16);
+	Party_SetFields1ceAnd1d0(base, 17);
+	Event_SetDefeatDestination(base, 16);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(12, 5);
 	Engine_EventEnd();
@@ -2065,10 +2063,8 @@ void KuupuappuHeya_RunVaultEvent(void)
 	SceneEffect_ApplyThreeValuesAndFinish(10, 4, 20);
 	Event_ShowMessage(10, 0);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, KuupuappuHeya_RunVaultEvent is 6 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_KuupuappuHeya, 17);
-	/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, KuupuappuHeya_RunVaultEvent is 4 bytes longer */
-	((void (*)(s32, s32))Event_SetDefeatDestination)((s32)&SceneId_KuupuappuHeya, 16);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_KuupuappuHeya, 17);
+	Event_SetDefeatDestination((s32)&SceneId_KuupuappuHeya, 16);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(12, 5);
 }

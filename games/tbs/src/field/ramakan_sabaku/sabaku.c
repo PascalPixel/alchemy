@@ -392,8 +392,7 @@ reset_objects:;
 void RamakanSabaku_ReturnToArea3(void)
 {
 	Engine_ActorRunRepeatedMotion(8, 2);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, RamakanSabaku_ReturnToArea3 is 4 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_RamakanSabaku3, 5);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_RamakanSabaku3, 5);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(53, 5);
 }

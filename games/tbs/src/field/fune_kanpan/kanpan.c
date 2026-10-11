@@ -1841,8 +1841,7 @@ void FuneKanpan_RunJumpScene(void)
 	gGameState.saved_scene = (s32)&SceneId_FuneHeya;
 	gGameState.saved_entrance = 30;
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, FuneKanpan_RunJumpScene is 2 bytes longer */
-	((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_FuneKanpan, 16);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_FuneKanpan, 16);
 	BattleFx_SetWeightedResult(62, 3);
 	Engine_EventEnd();
 }

@@ -528,8 +528,7 @@ void Scene_RunExtendedPresentationSequence(void)
 	Engine_EventWaitForScreen();
 	Engine_EventWait(30);
 	Engine_GameFlagSet(282);
-	/* FAKEMATCH: Event_SetDestination is called as void (*)(); as void (*)(u16, u16), its prototype, Scene_RunExtendedPresentationSequence has 40 of 1796 bytes different */
-	((void (*)())Event_SetDestination)((s32)&SceneId_Title, 9);
+	Event_SetDestination((s32)&SceneId_Title, 9);
 }
 
 union GameStateRows

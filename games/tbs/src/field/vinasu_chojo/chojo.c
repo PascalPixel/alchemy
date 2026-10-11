@@ -1962,10 +1962,8 @@ void Scene_RunPairedActorEffectSequence(void)
 	VinasuChojo_FlashScreen();
 	Event_Wait(20);
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, Scene_RunPairedActorEffectSequence is 4 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_VinasuChojo, 3);
-	/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, Scene_RunPairedActorEffectSequence is 4 bytes longer */
-	((void (*)(s32, s32))Event_SetDefeatDestination)((s32)&SceneId_VinasuChojo, 9);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_VinasuChojo, 3);
+	Event_SetDefeatDestination((s32)&SceneId_VinasuChojo, 9);
 	BattleFx_SetWeightedResult(98, 0);
 	Owner_RefreshRatiosOnFlag();
 	GameFlag_Set(0x351);
@@ -2682,8 +2680,7 @@ void VinasuChojo_RunActorTransition(void)
 	Engine_EventWait(30);
 	Engine_GameFlagSet(0x11a);
 	ObjectTable_Snapshot();
-	/* FAKEMATCH: Event_SetDestination is called as void (*)(); as void (*)(u16, u16), its prototype, VinasuChojo_RunActorTransition is 2 bytes longer */
-	((void (*)())Event_SetDestination)((s32)&SceneId_WorldMap, 91);
+	Event_SetDestination((s32)&SceneId_WorldMap, 91);
 	{
 		u16 white = 0x7fff;
 

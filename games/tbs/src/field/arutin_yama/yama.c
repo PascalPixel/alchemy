@@ -286,24 +286,21 @@ void ArutinYama_BeginRollingRide(s32 a0)
 void ArutinYama_StartAreaOneEncounter(void)
 {
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ArutinYama_StartAreaOneEncounter is 4 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_ArutinYama1, 99);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama1, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
 void ArutinYama_StartAreaThreeEncounter(void)
 {
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ArutinYama_StartAreaThreeEncounter is 4 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_ArutinYama3, 99);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama3, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
 void ArutinYama_StartAreaFiveEncounter(void)
 {
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ArutinYama_StartAreaFiveEncounter is 4 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_ArutinYama5, 99);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama5, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
@@ -2132,8 +2129,7 @@ void FieldScene_RunLateAuxiliarySequence(void)
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorWaitForMove(8);
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, FieldScene_RunLateAuxiliarySequence is 4 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_ArutinYama10, 99);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama10, 99);
 	BattleFx_SetWeightedResult(53, 3);
 }
 
@@ -2554,8 +2550,7 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading)
 	Engine_AudioPlayCue(233);
 	for (;;)
 	{
-		/* FAKEMATCH: GetMapCellCollision is called as s32 (*)(s32, s32, s32); as u8 (*)(s32, s32, s32), its prototype, ArutinYama_RunRollingObject is 4 bytes longer */
-		switch (((s32 (*)(s32, s32, s32))GetMapCellCollision)(2, object->x.fixed, object->z.fixed))
+		switch (GetMapCellCollision(2, object->x.fixed, object->z.fixed))
 		{
 		case 98:
 			ArutinYama_TurnRollingObjectA(object);

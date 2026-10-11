@@ -2155,7 +2155,7 @@ u32 GameFlag_Toggle(s32 flag)
 	return (u32)((0 - flag_value) | flag_value) >> 31;
 }
 
-u8 GameFlag_GetByte(s32 flag)
+s32 GameFlag_GetByte(s32 flag)
 {
 	u32 byte_index;
 
@@ -2164,12 +2164,11 @@ u8 GameFlag_GetByte(s32 flag)
 	return GameFlagBytes[flag];
 }
 
-u32 GameFlag_SetByte(u32 flag, u8 value)
+void GameFlag_SetByte(s32 flag, s32 value)
 {
 	u32 shifted = flag << 20;
 	flag = shifted >> 23;
 	GameFlagBytes[flag] = value;
-	return flag;
 }
 
 u8 GameFlag_IncrementByte(s32 flag)

@@ -1488,24 +1488,21 @@ void FuneHeya_RunFlagBranchSequence(void)
 	GameFlag_Clear(0x8f0);
 	if (Engine_GameFlagIsSet(0x928) == 0)
 	{
-		/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, FuneHeya_RunFlagBranchSequence is 8 bytes longer */
-		((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_FuneHeya, 16);
+		Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 16);
 		BattleFx_SetWeightedResult(62, 0);
 	}
 	else
 	{
 		if (Engine_GameFlagIsSet(0x929) == 0)
 		{
-			/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, FuneHeya_RunFlagBranchSequence is 8 bytes longer */
-			((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_FuneHeya, 18);
+			Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 18);
 			BattleFx_SetWeightedResult(62, 1);
 		}
 		else
 		{
 			if (Engine_GameFlagIsSet(0x92a) == 0)
 			{
-				/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, FuneHeya_RunFlagBranchSequence is 4 bytes longer */
-				((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_FuneHeya, 20);
+				Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 20);
 				BattleFx_SetWeightedResult(62, 2);
 			}
 		}

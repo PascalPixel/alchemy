@@ -377,8 +377,7 @@ void MakyuriIriguchi_OpenEntrance(void)
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, MakyuriIriguchi_OpenEntrance is 4 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_MakyuriIriguchi, 31);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriIriguchi, 31);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(36, 1);
 	Engine_EventEnd();

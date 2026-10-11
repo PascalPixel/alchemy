@@ -937,10 +937,8 @@ void FieldScene_RunGroupChoreography(void)
 	{
 		const void *message = &SceneId_HaidiaIe;
 
-		/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as s32 (*)(const void *, s32); as void (*)(u16, u16), its prototype, FieldScene_RunGroupChoreography is 6 bytes longer */
-		((s32 (*)(const void *, s32))Party_SetFields1ceAnd1d0)(message, 19);
-		/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(const void *, s32); as void (*)(u16, u16), its prototype, FieldScene_RunGroupChoreography is 4 bytes longer */
-		((void (*)(const void *, s32))Event_SetDefeatDestination)(message, 19);
+		Party_SetFields1ceAnd1d0((s32)message, 19);
+		Event_SetDefeatDestination((s32)message, 19);
 	}
 	BattleFx_SetWeightedResult(12, 4);
 	Engine_GameFlagSet(0x11a);

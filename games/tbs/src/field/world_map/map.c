@@ -530,14 +530,12 @@ s32 WorldMap_EnterScene(void)
 	if (*entrance == 90)
 	{
 		Scene_RunScene371SequenceA(0);
-		/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, WorldMap_EnterScene is 8 bytes longer */
-		((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_MakyuriChojo1, 1);
+		Event_SetDestination((s32)&SceneId_MakyuriChojo1, 1);
 	}
 	else if (*entrance == 91)
 	{
 		Scene_RunScene371SequenceA(1);
-		/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, WorldMap_EnterScene is 4 bytes longer */
-		((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_VinasuChojo, 93);
+		Event_SetDestination((s32)&SceneId_VinasuChojo, 93);
 	}
 	else if (*entrance == 78)
 	{
@@ -626,8 +624,7 @@ s32 WorldMap_EnterScene(void)
 		case 76:
 		case 77:
 			Engine_GameFlagSet(0x11c);
-			/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(s32); as u8 (*)(s32), its prototype, WorldMap_EnterScene is 4 bytes longer */
-			if (((s32 (*)(s32))GameFlag_GetByte)(0x2f8) != 0)
+			if (GameFlag_GetByte(0x2f8) != 0)
 			{
 				gGameState.movement_mode = 2;
 				Engine_TaskAddCallback(StoryScene_UpdateSelectedActorProgress, 0xc80);
@@ -1970,8 +1967,7 @@ void FieldScene_RunActorPresentationSequence(void)
 	ColorBuffer_ApplyTarget(0, 0);
 	Engine_ColorBufferInterpolate(120);
 	Engine_TaskWait(120);
-	/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, FieldScene_RunActorPresentationSequence has 112 of 1146 bytes different */
-	((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_Title, 10);
+	Event_SetDestination((s32)&SceneId_Title, 10);
 }
 
 void StoryScene_StartTransition(void)
@@ -2214,8 +2210,7 @@ void StoryScene_UpdateSelectedActorProgress(void)
 	scene = gEventWork;
 	actor->facing = (gFrameCount << 12);
 
-	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(s32); as u8 (*)(s32), its prototype, StoryScene_UpdateSelectedActorProgress is 4 bytes longer */
-	progress = ((s32 (*)(s32))GameFlag_GetByte)(0x2f8);
+	progress = GameFlag_GetByte(0x2f8);
 	if (progress != 0)
 	{
 		if (progress == 1)
@@ -2227,8 +2222,7 @@ void StoryScene_UpdateSelectedActorProgress(void)
 			progress -= 1;
 		}
 	}
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, StoryScene_UpdateSelectedActorProgress is 4 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)(0x2f8, progress);
+	GameFlag_SetByte(0x2f8, progress);
 }
 
 void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
@@ -2261,8 +2255,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 		actor->motion_flags = 4;
 		gGameState.movement_mode = 2;
 		GameFlag_Set(0x2f0);
-		/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunOpeningAuxiliarySequence has 4 of 224 bytes different */
-		((void (*)(s32, s32))GameFlag_SetByte)(0x2f8, 180);
+		GameFlag_SetByte(0x2f8, 180);
 		Engine_EventEnd();
 		((struct EventRuntime *)gEventWork)->value_17c = rec2;
 	}
@@ -2288,8 +2281,7 @@ void StoryScene_CompleteActor98(void)
 	}
 	Engine_GameFlagClear(0x2f0);
 	Engine_GameFlagSet(0x2f1);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, StoryScene_CompleteActor98 has 4 of 116 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(0x2f8, 0);
+	GameFlag_SetByte(0x2f8, 0);
 	BattleFx_SetWeightedResult(98, 5);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(98, 7);
@@ -2322,8 +2314,7 @@ void WorldMap_RaiseActors(void)
 	Engine_EventWaitForScreen();
 	Engine_EventEnd();
 	GameFlag_Set(0x122);
-	/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, WorldMap_RaiseActors has 7 of 176 bytes different */
-	((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_WorldMap, 27);
+	Event_SetDestination((s32)&SceneId_WorldMap, 27);
 }
 
 void SceneEffect_RestoreBlendRegisters(void)

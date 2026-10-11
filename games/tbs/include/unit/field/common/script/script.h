@@ -228,7 +228,7 @@ s32 Curve_GetFirstSampleB(const s8 *samples);
 s32 Curve_GetFirstSampleC(const s8 *samples);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y);
 s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y);
-u8 GetMapCellCollision(s32 layer, s32 x, s32 y);
+s32 GetMapCellCollision(s32 layer, s32 x, s32 y);
 void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code);
 s32 Map_GetCellHighFlags(s32 x, s32 y);
 s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *position);

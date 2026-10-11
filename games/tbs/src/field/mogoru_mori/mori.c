@@ -1173,8 +1173,7 @@ void MogoruMori_RunClosingChoreography(void)
 	}
 	Engine_EventWait(10);
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, MogoruMori_RunClosingChoreography is 4 bytes longer */
-	((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_MogoruMori3, 15);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_MogoruMori3, 15);
 	BattleFx_SetWeightedResult(53, 1);
 	Engine_EventEnd();
 }

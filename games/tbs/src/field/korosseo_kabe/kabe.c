@@ -249,20 +249,17 @@ void SceneState_StoreSlotTileXToWork832To848(void)
 
 	record = (s32 *)Object_GetById(12);
 	value = record[2] >> 20;
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, SceneState_StoreSlotTileXToWork832To848 is 2 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)(832, value);
+	GameFlag_SetByte(832, value);
 	Engine_MapCopyCellAttributes(71, 16, 1, 1, value, 16);
 
 	record = (s32 *)Object_GetById(13);
 	value = record[2] >> 20;
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, SceneState_StoreSlotTileXToWork832To848 is 2 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)(840, value);
+	GameFlag_SetByte(840, value);
 	Engine_MapCopyCellAttributes(71, 16, 1, 1, value, 16);
 
 	record = (s32 *)Object_GetById(14);
 	value = record[2] >> 20;
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, SceneState_StoreSlotTileXToWork832To848 is 2 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)(848, value);
+	GameFlag_SetByte(848, value);
 	Engine_MapCopyCellAttributes(71, 16, 1, 1, value, 16);
 }
 
@@ -762,10 +759,8 @@ void KorosseoKabe_RunStageStart(void)
 	/* FAKEMATCH: base is set at the top of the function, so 2 - rec8 + 1 is not folded into 3 - rec8. */
 	BattleFx_SetWeightedResult(72, base - rec8 + 1);
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, KorosseoKabe_RunStageStart is 6 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_KorosseoKabe, 4);
-	/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, KorosseoKabe_RunStageStart is 4 bytes longer */
-	((void (*)(s32, s32))Event_SetDefeatDestination)((s32)&SceneId_KorosseoKabe, 5);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKabe, 4);
+	Event_SetDefeatDestination((s32)&SceneId_KorosseoKabe, 5);
 	Engine_GameFlagSet(0x11a);
 }
 
@@ -879,8 +874,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	actor->priority_flags = 2;
 	Engine_MapCopyCellAttributes(52, 28, 1, 3, col, 13);
 
-	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, KorosseoKabe_ApplyEntryState has 410 of 1288 bytes different */
-	x = ((s32 (*)())GameFlag_GetByte)(0x340);
+	x = GameFlag_GetByte(0x340);
 	if (x == 0)
 	{
 		x = 73;
@@ -890,8 +884,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	actor->motion_flags = zero;
 	actor->priority_flags = 2;
 	Engine_MapCopyCellAttributes(71, 16, 1, 1, x, 16);
-	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, KorosseoKabe_ApplyEntryState has 340 of 1288 bytes different */
-	x = ((s32 (*)())GameFlag_GetByte)(0x348);
+	x = GameFlag_GetByte(0x348);
 	if (x == 0)
 	{
 		x = 76;
@@ -901,8 +894,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	actor->motion_flags = zero;
 	actor->priority_flags = 2;
 	Engine_MapCopyCellAttributes(71, 16, 1, 1, x, 16);
-	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, KorosseoKabe_ApplyEntryState has 278 of 1288 bytes different */
-	x = ((s32 (*)())GameFlag_GetByte)(0x350);
+	x = GameFlag_GetByte(0x350);
 	if (x == 0)
 	{
 		x = 79;
@@ -1402,10 +1394,8 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
 void SceneActor_PlacePartyAtSavedTiles(void)
 {
 	{
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlacePartyAtSavedTiles is 4 bytes longer */
-		s32 x = ((s32 (*)())GameFlag_GetByte)(896);
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlacePartyAtSavedTiles is 2 bytes longer */
-		s32 y = ((s32 (*)())GameFlag_GetByte)(904);
+		s32 x = GameFlag_GetByte(896);
+		s32 y = GameFlag_GetByte(904);
 
 		x <<= 20;
 		x += 0x80000;
@@ -1414,10 +1404,8 @@ void SceneActor_PlacePartyAtSavedTiles(void)
 		Engine_ActorSetPosition(GERALD, x, y);
 	}
 	{
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlacePartyAtSavedTiles is 4 bytes longer */
-		s32 x = ((s32 (*)())GameFlag_GetByte)(912);
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlacePartyAtSavedTiles is 2 bytes longer */
-		s32 y = ((s32 (*)())GameFlag_GetByte)(920);
+		s32 x = GameFlag_GetByte(912);
+		s32 y = GameFlag_GetByte(920);
 
 		x <<= 20;
 		x += 0x80000;
@@ -1426,10 +1414,8 @@ void SceneActor_PlacePartyAtSavedTiles(void)
 		Engine_ActorSetPosition(IWAN, x, y);
 	}
 	{
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlacePartyAtSavedTiles is 4 bytes longer */
-		s32 x = ((s32 (*)())GameFlag_GetByte)(928);
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlacePartyAtSavedTiles is 2 bytes longer */
-		s32 y = ((s32 (*)())GameFlag_GetByte)(936);
+		s32 x = GameFlag_GetByte(928);
+		s32 y = GameFlag_GetByte(936);
 
 		x <<= 20;
 		x += 0x80000;
@@ -1504,13 +1490,11 @@ void KorosseoKabe_SelectNearestActor(void)
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	base = n << 4;
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, KorosseoKabe_SelectNearestActor is 4 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)(base + 880, p->f08 >> 20);
+	GameFlag_SetByte(base + 880, p->f08 >> 20);
 	{
 		s32 v = p->f10 >> 20;
 
-		/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, KorosseoKabe_SelectNearestActor is 4 bytes longer */
-		((void (*)(s32, s32))GameFlag_SetByte)(base + 888, v);
+		GameFlag_SetByte(base + 888, v);
 	}
 	n++;
 	if (n > 3)
@@ -1569,18 +1553,12 @@ void RunPartyCountInteractionCopyA(s32 actorId)
 
 void FieldScene_RunSixSteps896To936(void)
 {
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps896To936 has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(896, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps896To936 has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(904, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps896To936 has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(912, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps896To936 has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(920, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps896To936 has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(928, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps896To936 has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(936, 0);
+	GameFlag_SetByte(896, 0);
+	GameFlag_SetByte(904, 0);
+	GameFlag_SetByte(912, 0);
+	GameFlag_SetByte(920, 0);
+	GameFlag_SetByte(928, 0);
+	GameFlag_SetByte(936, 0);
 }
 
 s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b)
@@ -1770,11 +1748,9 @@ L_main:
 	GameFlag_Set(base + 512);
 	rec = Object_GetById(obj);
 	sx = rec->x.fixed >> 20;
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunMiddleSequence is 4 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)((obj << 4) + 880, sx);
+	GameFlag_SetByte((obj << 4) + 880, sx);
 	sy = rec->z.fixed >> 20;
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunMiddleSequence is 4 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)((obj << 4) + 888, sy);
+	GameFlag_SetByte((obj << 4) + 888, sy);
 }
 
 void OverlayObject_NotifyMatchingEntries(s32 no, s32 val)
@@ -1871,8 +1847,7 @@ void KorosseoKabe_RunScriptedTransition(s32 mode)
 wait_transition:
 	Engine_TaskWait(1);
 check_transition:
-	/* FAKEMATCH: AudioCommand_GetStateByte is called as s32 (*)(); as u8 (*)(void), its prototype, KorosseoKabe_RunScriptedTransition has 122 of 268 bytes different */
-	if (((s32 (*)())AudioCommand_GetStateByte)() != 0)
+	if (AudioCommand_GetStateByte() != 0)
 		goto wait_transition;
 
 	Engine_AudioPlayCue(0x121);
@@ -1927,8 +1902,7 @@ void FieldScene_RunLateSequence(s32 a0)
 		kind = 8;
 	}
 	Engine_ActorShowEmote(kind, 0x105, 0);
-	/* FAKEMATCH: AudioCommand_GetStateByte is called as s32 (*)(); as u8 (*)(void), its prototype, FieldScene_RunLateSequence has 35 of 204 bytes different */
-	while (((s32 (*)())AudioCommand_GetStateByte)() != 0)
+	while (AudioCommand_GetStateByte() != 0)
 	{
 		Engine_TaskWait(1);
 	}

@@ -655,8 +655,7 @@ s32 LinkLobby_ExchangePartyRecords(void)
 		if (result < 0)
 			goto fail;
 	}
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, LinkLobby_ExchangePartyRecords has 60 of 176 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(0x3f0, first);
+	GameFlag_SetByte(0x3f0, first);
 	result = first;
 check:
 	if (first < 0)
@@ -786,17 +785,13 @@ s32 LinkLobby_RunConnectionSequence(void)
 		}
 		if (Engine_GameFlagIsSet(0x173))
 		{
-			/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, LinkLobby_RunConnectionSequence is 4 bytes longer */
-			((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_LinkLobby, 8);
-			/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, LinkLobby_RunConnectionSequence is 4 bytes longer */
-			((void (*)(s32, s32))Event_SetDefeatDestination)((s32)&SceneId_LinkLobby, 9);
+			Party_SetFields1ceAnd1d0((s32)&SceneId_LinkLobby, 8);
+			Event_SetDefeatDestination((s32)&SceneId_LinkLobby, 9);
 		}
 		else
 		{
-			/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, LinkLobby_RunConnectionSequence is 4 bytes longer */
-			((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_LinkLobby, 10);
-			/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, LinkLobby_RunConnectionSequence is 4 bytes longer */
-			((void (*)(s32, s32))Event_SetDefeatDestination)((s32)&SceneId_LinkLobby, 11);
+			Party_SetFields1ceAnd1d0((s32)&SceneId_LinkLobby, 10);
+			Event_SetDefeatDestination((s32)&SceneId_LinkLobby, 11);
 		}
 		Battle_SetStart(4);
 		BattleFx_SetWeightedResult(1, 1);
@@ -1158,12 +1153,7 @@ s32 LinkLobby_StartExchange(void)
 {
 	SerialRuntime_RemoveIrqHandlers();
 	Sound_LoadPresetParameters(2);
-	/* FAKEMATCH: the do/while loads the scene number before the 1. */
-	do
-	{
-		/* FAKEMATCH: Event_SetDestination is called as s32 (*)(s32, s32); as void (*)(u16, u16), its prototype, LinkLobby_StartExchange does not compile */
-		return ((s32 (*)(s32, s32))Event_SetDestination)((s32)&SceneId_Clear, 1);
-	} while (0);
+	Event_SetDestination((s32)&SceneId_Clear, 1);
 }
 
 /* The handlers below are s32 and return no value: r0 is whatever Engine_EventEnd left. */
@@ -1370,15 +1360,13 @@ s32 LinkLobby_RunRoundResult(void)
 				{
 					wins = 90;
 				}
-				/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, LinkLobby_RunRoundResult has 642 of 1060 bytes different */
-				((void (*)(s32, s32))GameFlag_SetByte)(0x3f8, wins);
+				GameFlag_SetByte(0x3f8, wins);
 			}
 			else
 			{
 
 				Engine_GameFlagClear(0x173);
-				/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, LinkLobby_RunRoundResult is 4 bytes shorter */
-				((void (*)(s32, s32))GameFlag_SetByte)(0x3f8, -1);
+				GameFlag_SetByte(0x3f8, -1);
 				/* FAKEMATCH: one scalar holds the row address, then its score. */
 				score = (u32)&state->link_tallies[3];
 				UiText_DrawQuantity(*(u16 *)score, 5);
@@ -1427,8 +1415,7 @@ s32 LinkLobby_RunRoundResult(void)
 		}
 		gGameState.link_tallies[3] = 0;
 		Engine_GameFlagClear(0x173);
-		/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, LinkLobby_RunRoundResult is 4 bytes shorter */
-		((void (*)(s32, s32))GameFlag_SetByte)(0x3f8, -1);
+		GameFlag_SetByte(0x3f8, -1);
 		LinkLobby_WriteSlotValue(0);
 		Engine_EventEnd();
 	}
@@ -1493,8 +1480,7 @@ s32 LinkLobby_RunRoundResult(void)
 	{
 		SerialRuntime_Initialize();
 		Engine_GameFlagClear(0x172);
-		/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, LinkLobby_RunRoundResult is 4 bytes shorter */
-		((void (*)(s32, s32))GameFlag_SetByte)(0x3f8, -1);
+		GameFlag_SetByte(0x3f8, -1);
 		if (gGameState.saved_options != 0)
 		{
 			Engine_EventBegin();

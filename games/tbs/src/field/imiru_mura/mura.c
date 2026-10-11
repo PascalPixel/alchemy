@@ -1582,12 +1582,10 @@ void StagedActor_RunHeadingProbeStep(void)
 		x = probe.x;
 		p = (u8 *)subject;
 		p += 34;
-		/* FAKEMATCH: GetMapCellCollision is called as s32 (*)(); as u8 (*)(s32, s32, s32), its prototype, StagedActor_RunHeadingProbeStep is 4 bytes longer */
-		goal = ((s32 (*)())GetMapCellCollision)((s32)*p, x, z);
+		goal = GetMapCellCollision((s32)*p, x, z);
 		Vector_AddPolarOffset(0x100000, heading, &probe);
 
-		/* FAKEMATCH: GetMapCellCollision is called as s32 (*)(); as u8 (*)(s32, s32, s32), its prototype, StagedActor_RunHeadingProbeStep has 206 of 452 bytes different */
-		marker = ((s32 (*)())GetMapCellCollision)((s32)*p, probe.x, probe.z);
+		marker = GetMapCellCollision((s32)*p, probe.x, probe.z);
 		if (marker == 255 || Map_GetTerrainHeight((s32)*p, probe.x, probe.z) - subject->y > 0x80000)
 		{
 			subject->heading = (u16)heading;
@@ -1624,8 +1622,7 @@ void StagedActor_RunHeadingProbeStep(void)
 
 	advanceProbe:
 		FieldVector_AddPolarOffset(0x100000, heading, &probe);
-		/* FAKEMATCH: GetMapCellCollision is called as s32 (*)(); as u8 (*)(s32, s32, s32), its prototype, StagedActor_RunHeadingProbeStep is 4 bytes longer */
-		marker = ((s32 (*)())GetMapCellCollision)((s32)*p, probe.x, probe.z);
+		marker = GetMapCellCollision((s32)*p, probe.x, probe.z);
 		if (marker != 255)
 		{
 			goto continueProbe;

@@ -7552,7 +7552,7 @@ s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y)
 	return *(Ram_MapCollision + attr * 4) & 15;
 }
 
-u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
+s32 GetMapCellCollision(s32 layer, s32 x, s32 y)
 {
 	struct MapState *state;
 	struct MapCell	*cells;

@@ -10,8 +10,10 @@ s32	 GameFlag_Test();
 s32	 GameFlag_Set();
 void GameFlag_Clear(s32 flag);
 u32	 GameFlag_Toggle(s32 flag);
+#if GAME_TLA
 u8	 GameFlag_GetByte(s32 flag);
 u32	 GameFlag_SetByte(u32 flag, u8 value);
+#endif
 u8	 GameFlag_IncrementByte(s32 flag);
 u8	 GameFlag_DecrementByte(s32 flag);
 s32	 GameFlag_GetNibble(u32 flag);

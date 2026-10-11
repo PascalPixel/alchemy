@@ -345,8 +345,7 @@ void InitializePrologueSceneState(void)
 
 	Engine_EventBegin();
 	base = (u8 *)&gGameState;
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, InitializePrologueSceneState is 4 bytes shorter */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)(*(s16 *)(base + 448), 5);
+	Party_SetFields1ceAnd1d0(*(s16 *)(base + 448), 5);
 	base[555] = 3;
 	BattleFx_SetWeightedResult(84, 5);
 	Engine_EventEnd();
@@ -619,8 +618,7 @@ void TakaraShima_RunAreaEntry(void)
 	if (Engine_GameFlagIsSet(gGameState.scene + (0x8c8 - (s32)&SceneId_TakaraShima6)) == 0)
 	{
 		Engine_EventBegin();
-		/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, TakaraShima_RunAreaEntry is 4 bytes shorter */
-		((void (*)(s32, s32))Party_SetFields1ceAnd1d0)(gGameState.scene, 5);
+		Party_SetFields1ceAnd1d0(gGameState.scene, 5);
 		((u8 *)((s16(*)[1]) & gGameState))[0x22b] = 3;
 		switch (gGameState.scene - (s32)&SceneId_TakaraShima6)
 		{

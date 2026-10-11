@@ -225,7 +225,7 @@ void Audio_SetMusicVolumeTargetAndStep(u16 primary, u16 secondary)
     gMusicVolumeStep = secondary;
 }
 
-u8 AudioCommand_GetStateByte(void)
+s32 AudioCommand_GetStateByte(void)
 {
     return gMusicRestoreDelay;
 }

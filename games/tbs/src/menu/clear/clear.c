@@ -381,8 +381,7 @@ s32 SaveMenu_Run(void)
 		Engine_EventCloseScreen();
 		Engine_AudioPlayCue(17);
 		((s32 (*)(s32))Engine_EventWait)(0x12c);
-		/* FAKEMATCH: Event_SetDestination is called as void (*)(); as void (*)(u16, u16), its prototype, SaveMenu_Run is 12 bytes shorter */
-		((void (*)())Event_SetDestination)((s32)&SceneId_WorldMap, 72);
+		Event_SetDestination((s32)&SceneId_WorldMap, 72);
 		return 0;
 	}
 	gSleepDisabled = started;
@@ -545,8 +544,7 @@ L_0200057a:;
 		GameFlag_ClearBit(0x106);
 		((void (*)(s32 flag))Engine_GameFlagSet)(0x17e);
 		gSleepDisabled = 1;
-		/* FAKEMATCH: Event_SetDestination is called as void (*)(); as void (*)(u16, u16), its prototype, SaveMenu_Run has 17 of 2336 bytes different */
-		((void (*)())Event_SetDestination)((s32)&SceneId_LinkLobby, 1);
+		Event_SetDestination((s32)&SceneId_LinkLobby, 1);
 		goto L_02000c96;
 	}
 	else

@@ -262,7 +262,12 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 				 *    first: differ 54).
 				 * The scr/blk variables and the dest = (u8 *)scr / tiles = (u8 *)blk
 				 * copies keep the layer loop above loop.c's threshold of 30 real
-				 * insns, so the four address constants stay in the loop. */
+				 * insns, so the four address constants stay in the loop.
+				 * 4. The two word copies read and write through volatile casts: the
+				 *    VRAM store is hardware, and the volatile load from the block
+				 *    buffer keeps its add apart from the load (a non-volatile load
+				 *    combines into ldr [r, r]); these four volatiles replaced two pins
+				 *    and two barriers and raised the volatile count (2026-10-11). */
 				i = 0;
 				tmp3 = y & 15;
 				tmp13 = tmp3 << 5;

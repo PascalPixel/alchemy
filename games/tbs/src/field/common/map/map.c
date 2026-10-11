@@ -543,7 +543,12 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
              * copies keep the layer loop at 31 real insns, above loop.c's
              * threshold of 30, so the four address constants and the 0x800
              * step stay in the loop (plain expressions: 29 insns, hoisted,
-             * differ 113-153). */
+             * differ 113-153).
+             * 4. The two word copies read and write through volatile casts: the
+             *    VRAM store is hardware, and the volatile load from the block
+             *    buffer keeps its add apart from the load (a non-volatile load
+             *    combines into ldr [r, r]); these four volatiles replaced two pins
+             *    and two barriers and raised the volatile count (2026-10-11). */
             i = 0;
             tmp15 = y & 15;
             tmp3 = tmp15;

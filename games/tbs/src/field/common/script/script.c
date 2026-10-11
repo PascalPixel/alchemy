@@ -1,5 +1,4 @@
 #include "battle.h"
-#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -8,22 +7,724 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "edition.h"
-#include "script.h"
-#include "types.h"
-#include "scene.h"
-#include "global_cells.h"
-#include "script_object_runtime.h"
 #include "object_runtime.h"
-#include "script_object_entry.h"
 #include "iwram_call.h"
+#include "dma.h"
+#include "ramcode.h"
+#include "mem.h"
+#include "types.h"
+#include "script.h"
+#include "script_object_entry.h"
+#include "global_cells.h"
+#include "objdisp.h"
+#include "script_object_runtime.h"
+#include "script_motion.h"
+#include "fieldobj.h"
+#include "io_reg.h"
+#include "btlsys.h"
+#include "fixed_math.h"
+#include "keystate.h"
+#include "edition.h"
+#include "scene.h"
 #include "fieldrun.h"
 #include "event_runtime.h"
 #include "game_state.h"
-#include "btlsys.h"
+#include "map.h"
+#include "map_scroll.h"
+#include "ram_buffer.h"
+#include "field_sprite.h"
+#include "object_dispatch.h"
+#include "animspr.h"
 
-extern struct EventRuntime *gEventWork;
+#define gObjectSlots (*(struct ScriptMotionObject * *)&gObjectSlots)
 
+#define TARGET_UNSET ((s32)0x80000000)
+
+s32 ArcTan2(s32, s32);
+
+void ObjectDispatch_ApplyArgumentToChildren(void *, s32);
+void Object_SetPositionAndResetMotion(struct ObjectRuntime *, s32, s32, s32);
+
+void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
+{
+    s32 dx;
+    s32 dist;
+    s32 dz;
+    s32 total;
+    u8 *axis;
+
+    dx = (x - object->x) / 0x10000;
+    dist = (y - object->y) / 0x10000;
+    dz = (z - object->z) / 0x10000;
+    total = dz * dz;
+    dist = Iwram_Sqrt(dx * dx + dist * dist + total) << 16;
+    if (dist < 0x100000) {
+        dx = x - object->x;
+        dist = y - object->y;
+        dz = z - object->z;
+        dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dist, dist) + Iwram_MulQ16(dz, dz));
+    }
+    if (dist < 0x10000) {
+        object->x = x;
+        object->y = y;
+        object->z = z;
+        object->target_x = 0x80000000;
+        object->target_y = 0x80000000;
+        object->target_z = 0x80000000;
+        return;
+    }
+    if (object->snap_to_target == 0) {
+        s32 brake;
+
+        brake = Iwram_RatioMulQ14(object->acceleration,
+                             Iwram_MulQ16(object->speed_limit, object->speed_limit));
+        if (dist > brake)
+            brake = dist - brake / 2;
+        else
+            brake = dist / 2;
+        dist = Iwram_RatioMulQ14(dist, brake);
+        x = object->x + Iwram_MulQ16(x - object->x, dist);
+        y = object->y + Iwram_MulQ16(y - object->y, dist);
+        z = object->z + Iwram_MulQ16(z - object->z, dist);
+    }
+    object->target_x = x;
+    object->target_y = y;
+    object->target_z = z;
+    dx = x - object->x;
+    dist = y - object->y;
+    dz = z - object->z;
+    axis = &object->arrival_axis;
+    *axis = 16;
+    if ((dx < 0 ? -dx : dx) < (dz < 0 ? -dz : dz)) {
+        *axis = 18;
+        dx = dz;
+    }
+    if (object->flags == 0) {
+        if (dx < 0)
+            dx = -dx;
+        if (dx < (dist < 0 ? -dist : dist))
+            *axis = 17;
+    }
+}
+
+void Object_RunUpdateAllFromHeap(void)
+{
+    void (*routine)(void);
+
+    RamCode_Load(routine, Object_UpdateAll, Object_UpdateAllCodeSize);
+    routine();
+    MemFree(routine);
+}
+
+void Object_UpdateAllMotion(void)
+{
+    struct ScriptMotionObject *obj;
+    s32 cnt;
+    s32 y;
+    s32 arrived;
+    s32 x;
+    s32 z;
+    s32 dx;
+    s32 dz;
+    s32 vx;
+    s32 dist;
+    s32 ratio;
+    s32 vy;
+    s32 turn;
+
+    obj = gObjectSlots;
+    for (cnt = 13; cnt >= 0; cnt--, obj++) {
+        if (obj->script == 0)
+            continue;
+        x = obj->x;
+        y = obj->y;
+        z = obj->z;
+        if (obj->frozen == 0) {
+            arrived = 0;
+            if (obj->target_x != TARGET_UNSET) {
+                dx = (obj->target_x - x) / 65536;
+                dz = (obj->target_z - z) / 65536;
+                dist = Iwram_Sqrt(dx * dx + dz * dz) << 16;
+                if (dist <= 0xffffff) {
+                    dx = obj->target_x - x;
+                    dz = obj->target_z - z;
+                    dist = Iwram_Sqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz)) << 8;
+                }
+                if (dist == 0) {
+                    x = obj->target_x;
+                    z = obj->target_z;
+                } else {
+                    ratio = Iwram_RatioMulQ14(dist, obj->acceleration);
+                    vx = obj->velocity_x + Iwram_MulQ16(dx, ratio);
+                    obj->velocity_x = vx;
+                    dx = obj->velocity_z + Iwram_MulQ16(dz, ratio);
+                    obj->velocity_z = dx;
+                    dist = Iwram_Sqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(dx, dx)) << 8;
+                    if (dist > obj->speed_limit) {
+                        ratio = Iwram_RatioMulQ14(dist, obj->speed_limit);
+                        obj->velocity_x = Iwram_MulQ16(vx, ratio);
+                        obj->velocity_z = Iwram_MulQ16(dx, ratio);
+                    }
+                }
+            } else {
+                dx = obj->velocity_x;
+                dz = obj->velocity_z;
+                if ((dx | dz) != 0) {
+                    dist = Iwram_Sqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz)) << 8;
+                    if (dist != 0) {
+                        if (dist - obj->acceleration < 0) {
+                            obj->velocity_x = 0;
+                            obj->velocity_z = 0;
+                        } else {
+                            ratio = Iwram_RatioMulQ14(dist, dist - obj->acceleration);
+                            obj->velocity_x = Iwram_MulQ16(dx, ratio);
+                            obj->velocity_z = Iwram_MulQ16(dz, ratio);
+                        }
+                    } else {
+                        obj->velocity_x = 0;
+                        obj->velocity_z = 0;
+                    }
+                }
+            }
+            if (obj->motion_flags & 2) {
+                if (y > obj->terrain_height) {
+                    obj->velocity_y -= obj->gravity;
+                } else if (obj->velocity_y < 0) {
+                    y = obj->terrain_height;
+                    obj->velocity_y = -Iwram_MulQ16(obj->velocity_y, obj->vertical.bounce);
+                    if ((obj->velocity_y < 0 ? -obj->velocity_y : obj->velocity_y) <= obj->gravity)
+                        obj->velocity_y = 0;
+                }
+            }
+        }
+        x += obj->velocity_x;
+        y += obj->velocity_y;
+        z += obj->velocity_z;
+        if (obj->arrival_axis != 0) switch (obj->arrival_axis) {
+        case 16:
+            if (x == obj->target_x || ((obj->x - obj->target_x) ^ (x - obj->target_x)) < 0)
+                arrived = 1;
+            break;
+        case 17:
+            if (y == obj->target_y || ((obj->y - obj->target_y) ^ (y - obj->target_y)) < 0)
+                arrived = 1;
+            break;
+        case 18:
+            if (z == obj->target_z || ((obj->z - obj->target_z) ^ (z - obj->target_z)) < 0)
+                arrived = 1;
+            break;
+        }
+        if (arrived) {
+            if (obj->snap_to_target) {
+                obj->velocity_x = 0;
+                obj->velocity_z = 0;
+                x = obj->target_x;
+                z = obj->target_z;
+                if (obj->motion_flags == 0) {
+                    y = obj->target_y;
+                    obj->velocity_y = 0;
+                }
+            }
+            obj->target_x = TARGET_UNSET;
+            obj->target_y = TARGET_UNSET;
+            obj->target_z = TARGET_UNSET;
+            obj->arrival_axis = 0;
+        }
+        obj->x = x;
+        obj->y = y;
+        obj->z = z;
+        if (obj->steering_flags & 1) {
+            x = obj->velocity_x;
+            z = obj->velocity_z;
+            if (x != 0 || z != 0) {
+                turn = (s16)(ArcTan2(z, x) - obj->facing);
+                if (turn > 0x1000)
+                    turn = 0x1000;
+                if (turn < -0x1000)
+                    turn = -0x1000;
+                obj->facing += turn;
+            }
+        }
+    }
+}
+
+s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter)
+{
+    s16 cursor = interpreter->cursor;
+
+    interpreter->lookup_result = interpreter->script[cursor + 1] - 1;
+    interpreter->cursor = (u16)interpreter->cursor + 2;
+    return 0;
+}
+
+s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter)
+{
+    if ((u32)interpreter->delay > 0x3B) {
+        interpreter->delay = 0;
+        interpreter->cursor = (u16)interpreter->cursor + 1;
+        return 1;
+    }
+    if (Object_IsTargetUnset((struct ObjectRuntime *)interpreter) != 0) {
+        interpreter->cursor = (u16)interpreter->cursor + 1;
+        return 1;
+    }
+    return 0;
+}
+
+s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter)
+{
+    s16 initial = interpreter->cursor;
+    ScriptCommand callback =
+        (ScriptCommand)interpreter->script[initial + 1];
+
+    if (callback(interpreter) != 0)
+        return 0;
+    if (interpreter->cursor == initial)
+        interpreter->cursor = (u16)interpreter->cursor + 2;
+    return 1;
+}
+
+s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key)
+{
+    u32 *entries;
+    s32 index;
+    s16 *field = &interpreter->lookup_result;
+    s32 zero = 0;
+
+    *field = zero;
+    if (key == 0) {
+        return 0;
+    }
+
+    key &= 0xBFFFFFFF;
+    entries = (u32 *)interpreter->script;
+    index = 0;
+    do {
+        if (*entries++ == key) {
+            return index + 1;
+        }
+        index++;
+    } while (index <= 0x3FF);
+    return 0;
+}
+
+s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter)
+{
+    const s32 *arguments;
+    s32 repeat_limit;
+    s32 jump_key;
+    u8 *repeat_count;
+    s32 next_count;
+
+    arguments = &interpreter->script[interpreter->cursor + 1];
+    repeat_limit = *arguments++;
+    jump_key = *arguments;
+    if (repeat_limit == 0xFFFF) {
+        interpreter->cursor = Script_FindLabel(interpreter, jump_key);
+    } else {
+        repeat_count = &interpreter->repeat_count;
+        next_count = *repeat_count + 1;
+        *repeat_count = next_count;
+        if ((s32)(u8)next_count < (s32)(s16)repeat_limit) {
+            interpreter->cursor = Script_FindLabel(interpreter, jump_key);
+        } else {
+            *repeat_count = 0;
+            interpreter->cursor = interpreter->cursor + 3;
+        }
+    }
+    return 1;
+}
+
+s32 Script_JumpToLabel(struct ScriptInterpreter *interpreter)
+{
+    interpreter->cursor =
+        Script_FindLabel(interpreter, interpreter->script[interpreter->cursor + 1]);
+    return 1;
+}
+
+u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter)
+{
+    s32 index = interpreter->cursor;
+    const s32 *table = interpreter->script;
+    u32 value = table[index + 1];
+
+    if (interpreter->condition_result != 0) {
+        interpreter->cursor = Script_FindLabel(interpreter, value);
+    } else {
+        interpreter->cursor = (u16)interpreter->cursor + 2;
+    }
+    return 1;
+}
+
+u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter)
+{
+    s32 index = interpreter->cursor;
+    const s32 *table = interpreter->script;
+    u32 value = table[index + 1];
+
+    if (interpreter->condition_result == 0) {
+        interpreter->cursor = Script_FindLabel(interpreter, value);
+    } else {
+        interpreter->cursor = (u16)interpreter->cursor + 2;
+    }
+    return 1;
+}
+
+s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter)
+{
+    s32 result;
+
+    interpreter->script = Script_MainScript;
+    interpreter->cursor = (result = 0);
+    return result;
+}
+
+s32 Script_TestFlag(struct ScriptInterpreter *interpreter)
+{
+    interpreter->condition_result =
+        GameFlag_TestFar(interpreter->script[interpreter->cursor + 1]);
+    interpreter->cursor = (u16)interpreter->cursor + 2;
+    return 1;
+}
+
+s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter)
+{
+    s32 value;
+
+    value = interpreter->script[interpreter->cursor + 1];
+    interpreter->condition_result = GameFlag_TestFar(value);
+    GameFlag_SetBitFar(value);
+    interpreter->cursor = (u16)interpreter->cursor + 2;
+    return 1;
+}
+
+s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter)
+{
+    s32 value;
+
+    value = interpreter->script[interpreter->cursor + 1];
+    interpreter->condition_result = GameFlag_TestFar(value);
+    GameFlag_ClearBitFar(value);
+    interpreter->cursor = (u16)interpreter->cursor + 2;
+    return 1;
+}
+
+s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter)
+{
+    s32 value;
+    s32 result;
+
+    value = interpreter->script[interpreter->cursor + 1];
+    result = GameFlag_TestFar(value);
+    interpreter->condition_result = result;
+    if (((u32)result << 0x18) == 0x01000000) {
+        GameFlag_ClearBitFar(value);
+    } else {
+        GameFlag_SetBitFar(value);
+    }
+    interpreter->cursor = (u16)interpreter->cursor + 2;
+    return 1;
+}
+
+s32 Script_ApplyObjectArgument(struct ScriptInterpreter *interpreter)
+{
+    ObjectDispatch_ApplyArgumentToChildren(interpreter,
+        interpreter->script[interpreter->cursor + 1]);
+    interpreter->cursor = (u16)interpreter->cursor + 2;
+    return 1;
+}
+
+s32 ObjectDispatch_RunHookAndReturnZero(struct ScriptInterpreter *interpreter)
+{
+    ObjectDispatch_Release((struct DispatchObject *)interpreter);
+    return 0;
+}
+
+s32 Script_SkipCommand(struct ScriptInterpreter *interpreter)
+{
+    interpreter->cursor = (u16)interpreter->cursor + 2;
+    return 1;
+}
+
+s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter)
+{
+    AudioCommand_PlayFar(interpreter->script[interpreter->cursor + 1]);
+    interpreter->cursor = (u16)interpreter->cursor + 2;
+    return 1;
+}
+
+s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values)
+{
+    s32 index;
+    u8 *flags;
+    struct ObjectRuntime *entry = (struct ObjectRuntime *)gObjectSlots;
+
+    flags = &entry->unknown_59;
+    for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
+        if (entry->script != NULL && (1 & *flags)
+            && entry != (struct ObjectRuntime *)object) {
+            if (Runtime_CheckRadiusOverlap(&entry->x,
+                    ((struct FieldActor *)entry)->radius - 2,
+                    values, ((struct FieldActor *)object)->radius - 2) >= 0)
+                return -1;
+        }
+    }
+    return 0;
+}
+
+struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
+    struct ScriptObjectEntry *object, s32 *values)
+{
+    s32 index;
+    u8 *flags;
+    struct ObjectRuntime *entry = (struct ObjectRuntime *)gObjectSlots;
+
+    flags = &entry->unknown_59;
+    for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
+        if (entry->script != NULL && (1 & *flags)
+            && entry != (struct ObjectRuntime *)object) {
+            if (Runtime_CheckRadiusOverlap(&entry->x,
+                    ((struct FieldActor *)entry)->radius - 2,
+                    values, ((struct FieldActor *)object)->radius - 2) >= 0)
+                return (struct ScriptObjectEntry *)entry;
+        }
+    }
+    return NULL;
+}
+
+s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)
+{
+    s32 first;
+    s32 second;
+    s32 third;
+    const s32 *argument;
+
+    argument = interpreter->script + interpreter->cursor;
+    argument++;
+    first = *argument;
+    argument++;
+    second = *argument;
+    argument++;
+    third = *argument;
+    Object_SetPositionAndResetMotion((struct ObjectRuntime *)interpreter, first, second, third);
+    interpreter->cursor = (u16)interpreter->cursor + 4;
+    return 1;
+}
+
+s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter)
+{
+    s32 first;
+    s32 second;
+    s32 third;
+    const s32 *argument;
+
+    argument = interpreter->script + interpreter->cursor;
+    argument++;
+    first = *argument;
+    argument++;
+    second = *argument;
+    argument++;
+    third = *argument;
+    Object_SetMoveTarget((struct ObjectRuntime *)interpreter, first, second, third);
+    interpreter->cursor = (u16)interpreter->cursor + 4;
+    return 1;
+}
+
+s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object)
+{
+    u8 *entry = (u8 *)(object->script + (s16)object->script_cursor);
+    s32 *cursor = (s32 *)(entry + 4);
+    s32 first = *cursor++;
+    s32 second = *cursor++;
+    s32 third = *cursor;
+
+    Object_SetMoveTarget((struct ObjectRuntime *)object, object->x + first,
+        object->y + second, object->z + third);
+    object->script_cursor += 4;
+    return 1;
+}
+
+s32 Script_StoreAngleToLinkedObject(struct ScriptObjectRuntime *object)
+{
+    struct ScriptObjectRuntime *target;
+
+    target = object->linked_object;
+    object->script_value = ArcTan2(
+        (s32)((u32)target->z - (u32)object->z),
+        (s32)((u32)target->x - (u32)object->x));
+    object->script_cursor++;
+    return 1;
+}
+
+s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object)
+{
+    struct ScriptObjectRuntime *target;
+
+    target = object->linked_object;
+    Object_SetMoveTarget((struct ObjectRuntime *)object, target->x, target->y, target->z);
+    object->script_cursor++;
+    return 1;
+}
+
+s32 Script_ApplyLocalOffsetPosition(u8 *arg0)
+{
+    s32 offset[3];
+
+    Object_SetMoveTarget(
+        (struct ObjectRuntime *)arg0,
+        *(s32 *)(arg0 + 8) + offset[0],
+        *(s32 *)(arg0 + 12) + offset[1],
+        *(s32 *)(arg0 + 16) + offset[2]
+    );
+    *(u16 *)(arg0 + 4) += 3;
+    return 1;
+}
+
+struct MapScrollBounds {
+    u8 unknown_00[0xec];
+    s32 left;
+    s32 top;
+    s32 right;
+    s32 bottom;
+};
+
+s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj)
+{
+    struct ObjectRuntime *leader;
+    struct MapScrollBounds *bounds;
+    s32 min_x;
+    s32 min_z;
+    s32 max_x;
+    s32 max_z;
+    s32 x;
+    s32 y;
+    s32 z;
+    s32 dz;
+    s32 dy;
+    s32 dx;
+    s32 dist;
+    s32 step;
+    s32 (*div)(s32, s32);
+
+    bounds = gMapWork[0];
+    leader = obj->linked_object;
+    min_x = bounds->left + 0x780000;
+    min_z = bounds->top + leader->y + 0x600000;
+    max_x = bounds->right - 0x780000;
+    max_z = bounds->bottom + leader->y - 0x400000;
+    obj->flags = 0;
+    if (leader != NULL && leader->script != NULL) {
+        x = leader->x;
+        y = leader->y;
+        z = leader->z;
+        obj->target_x = TARGET_UNSET;
+        obj->target_y = TARGET_UNSET;
+        obj->target_z = TARGET_UNSET;
+        if (x < min_x)
+            x = min_x;
+        if (z < min_z)
+            z = min_z;
+        if (x > max_x)
+            x = max_x;
+        if (z > max_z)
+            z = max_z;
+        if (obj->action != 0) {
+            obj->x = x;
+            obj->y = y;
+            obj->z = z;
+        } else {
+            {
+                s32 t = x - obj->x;
+
+                if (t < 0) {
+                    /* FAKEMATCH: the rounding constant in r2 outside reload keeps reload's rotation as the native has it. */
+                    register s32 k asm("r2") = 0xffff;
+                    /* FAKEMATCH: conditional cancelling updates end CSE
+                     * before the add, keeping the literal in native r2.
+                     * The block disappears from all 224 instructions;
+                     * without it, 66 rows differ in the English build. */
+                    if (y) {
+                        k ^= 1;
+                        k ^= 1;
+                    }
+                    /* FAKEMATCH: cancelling uses in the rounding branch
+                     * rank y above bounds in global allocation, preserving
+                     * native r5. They disappear from all 224 instructions;
+                     * without them, 130 rows differ in the English build. */
+                    y ^= 1;
+                    y ^= 1;
+                    t += k;
+                }
+                dx = t >> 16;
+            }
+            dz = (z - obj->z) / 0x10000;
+            dist = Iwram_Sqrt(dx * dx + dz * dz) << 16;
+            dx = x - obj->x;
+            dy = y - obj->y;
+            dz = z - obj->z;
+            if (dist < 0x400000)
+                dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+            if ((step = dist / 8) > obj->speed_limit)
+                step = obj->speed_limit;
+            if (dist < 0x4000) {
+                obj->x = x;
+                obj->z = z;
+            } else {
+                if (dist > step) {
+                    dx = Iwram_MulQ16(Iwram_RatioMulQ14(dist, dx), step);
+                    dz = Iwram_MulQ16(Iwram_RatioMulQ14(dist, dz), step);
+                }
+                obj->x += dx;
+                obj->z += dz;
+            }
+            if ((dy < 0 ? -dy : dy) > 0x8000)
+                dy /= 4;
+            obj->y += dy;
+        }
+    }
+    obj->step++;
+    return 1;
+}
+
+extern u8 IwramSqrt[];
+s32 _call_via_r3(s32, s32, s32, s32);
+void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 argument);
+
+s32 Object_ApproachLinkedObject(struct ObjectRuntime *object)
+{
+  s32 len;
+  s32 mz;
+  s32 dx;
+  s32 dz;
+  s32 dzh;
+  s32 dxh;
+  s32 n;
+  s32 mx;
+  s32 dx2;
+  struct ObjectRuntime *link;
+
+  link = object->linked_object;
+  object->speed_limit = (s32)(link->speed_limit);
+  object->acceleration = (s32)(link->acceleration);
+  dx = (link->x) - (object->x);
+  dz = (link->z) - (object->z);
+  dxh = dx >> 0x10;
+  dzh = dz >> 0x10;
+  len = _call_via_r3((dxh *dxh) + (dzh *dzh), dx, dzh, (u32)IwramSqrt);
+  if (len > 0x10)
+  {
+    dx2 = dx;
+    n = len - 0x10;
+    mx = dx2 *n / len;
+    mz = dz *n / len;
+    Object_SetMoveTarget(object, (object->x) + mx, object->y, (object->z) + mz);
+    ObjectDispatch_ApplyArgumentToChildren(object, 2);
+    object->step = (u16)((object->step) + 1);
+    return 1;
+  }
+  ObjectDispatch_ApplyArgumentToChildren(object, 1);
+  return 0;
+}
 
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
@@ -220,7 +921,6 @@ static __inline__ void StoreHalfword(s16 *address, s32 value)
 {
     *address = value;
 }
-
 
 void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation, s32 value)
 {
@@ -810,4 +1510,717 @@ s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b)
         dx * dx + dy * dy + dz * dz < radius * radius)
         return 0;
     return -1;
+}
+
+#undef gObjectSlots
+
+struct KeyMoveEventWork {
+    u8 unknown_000[0x19c];
+    u16 blocked_steps;
+};
+
+struct WorldMapSprite {
+    struct FieldSprite sprite;
+    u8 unknown_28[4];
+    u8 *shadow;
+};
+extern volatile u8 gDebugMode;
+s32 Map_GetTerrainHeight(u32 layer, s32 x, s32 z);
+void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 value);
+s32 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
+void AudioCommand_PlayFar(s32 cue);
+extern u8 ResourceBlockOwners[];
+
+s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
+{
+    struct FieldPosition position;
+    struct FieldPosition test_position;
+    struct FieldPosition contact;
+    s16 angle_offsets[22];
+    s32 collision;
+    s32 pushed;
+    s16 heading;
+    s32 angle;
+    s32 mode;
+    u16 direction;
+    s32 rotation;
+    s32 angle_index;
+    s32 count;
+    struct ObjectRuntime *other;
+
+    collision = 0;
+    pushed = 0;
+    if (gDebugMode != 0 && GameFlag_TestFar(350) != 0) {
+        s32 free;
+        s32 block;
+
+        free = 0;
+        for (block = 0; block < 512; block++) {
+            if (ResourceBlockOwners[block] == 0xff)
+                free++;
+        }
+        if (free - 136 < 0)
+            AudioCommand_PlayFar(135);
+    }
+    if (gDebugMode != 0) {
+        s32 mask;
+
+        mask = KEY_L;
+        if (gKeysHeld & mask) {
+            s32 wait;
+
+            wait = mask;
+        wait_a:
+            --wait;
+            if (wait != 0)
+                goto wait_a;
+            wait = 95;
+        wait_b:
+            wait--;
+            if (wait >= 0)
+                goto wait_b;
+            wait = 63;
+        wait_c:
+            wait--;
+            if (wait >= 0)
+                goto wait_c;
+            wait = 63;
+        wait_d:
+            wait--;
+            if (wait >= 0)
+                goto wait_d;
+        }
+    }
+    if (gKeysHeld & gGameState.dash_keys) {
+        object->speed_limit = 0x18000;
+        object->acceleration = 0x4000;
+        mode = 5;
+    } else {
+        object->speed_limit = 0x10000;
+        object->acceleration = 0x4000;
+        mode = 2;
+    }
+    if (GameFlag_TestFar(0x17f) != 0 && (gKeysHeld & KEY_B)) {
+        object->speed_limit = 0x40000;
+        object->acceleration = 0x10000;
+        mode = 5;
+    }
+
+    angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+    if ((u16)angle == 0xffff) {
+        collision |= 4;
+        goto update_object;
+    }
+
+    collision = 0;
+    position.x = object->x;
+    position.y = object->y;
+    position.z = object->z;
+    Vector_AddPolarOffset(0x80000, (u16)angle, &position);
+    if (gDebugMode != 0 && (gKeysHeld & KEY_L)) {
+        heading = angle;
+        goto update_object;
+    }
+    if (Map_CheckObjectStep(object, &position) != 0)
+        goto choose_direction;
+    test_position.x = object->x;
+    test_position.y = object->y;
+    test_position.z = object->z;
+    Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &test_position);
+    if (Map_CheckObjectStep(object, &test_position) != 0)
+        goto choose_direction;
+    test_position.x = object->x;
+    test_position.y = object->y;
+    test_position.z = object->z;
+    Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &test_position);
+    if (Map_CheckObjectStep(object, &test_position) != 0)
+        goto choose_direction;
+    test_position.x = object->x;
+    test_position.y = object->y;
+    test_position.z = object->z;
+    Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &test_position);
+    if (Map_CheckObjectStep(object, &test_position) != 0)
+        goto choose_direction;
+    test_position.x = object->x;
+    test_position.y = object->y;
+    test_position.z = object->z;
+    Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &test_position);
+    if (Map_CheckObjectStep(object, &test_position) != 0)
+        goto choose_direction;
+    heading = angle;
+    goto push_objects;
+
+choose_direction:
+    direction = angle;
+    count = 0;
+    angle_offsets[count++] = direction + 0x1000;
+    angle_offsets[count++] = direction - 0x1000;
+    angle_offsets[count++] = direction + 0x2000;
+    angle_offsets[count++] = direction - 0x2000;
+    angle_offsets[count++] = direction + 0x3000;
+    angle_offsets[count++] = direction - 0x3000;
+    for (angle_index = 0; angle_index < count; angle_index++) {
+        heading = angle_offsets[angle_index];
+        position.x = object->x;
+        position.y = object->y;
+        position.z = object->z;
+        Vector_AddPolarOffset(0x80000, (u16)heading, &position);
+        if (Map_CheckObjectStep(object, &position) != 0)
+            continue;
+        test_position.x = object->x;
+        test_position.y = object->y;
+        test_position.z = object->z;
+        Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &test_position);
+        if (Map_CheckObjectStep(object, &test_position) != 0)
+            continue;
+        test_position.x = object->x;
+        test_position.y = object->y;
+        test_position.z = object->z;
+        Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &test_position);
+        if (Map_CheckObjectStep(object, &test_position) != 0)
+            continue;
+        test_position.x = object->x;
+        test_position.y = object->y;
+        test_position.z = object->z;
+        Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &test_position);
+        if (Map_CheckObjectStep(object, &test_position) != 0)
+            continue;
+        test_position.x = object->x;
+        test_position.y = object->y;
+        test_position.z = object->z;
+        Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &test_position);
+        if (Map_CheckObjectStep(object, &test_position) == 0)
+            goto push_objects;
+    }
+    position.x = object->x;
+    position.y = object->y;
+    position.z = object->z;
+    collision |= 1;
+
+push_objects:
+    contact.x = object->x;
+    contact.y = object->y;
+    contact.z = object->z;
+    Vector_AddPolarOffset(0x40000, (u16)heading, &contact);
+    other = gObjectSlots;
+    for (angle_index = 63; angle_index >= 0; angle_index -= 1, other++) {
+        s32 radius;
+
+        radius = object->radius - 2;
+        if (other->script == 0)
+            continue;
+        if ((other->unknown_59 & 1) == 0)
+            continue;
+        if (other == object)
+            continue;
+        if (Runtime_CheckRadiusOverlap(&other->x, radius, &contact.x, other->radius - 2) < 0)
+            continue;
+        if ((other->unknown_59 & 2) == 0 || other->movement_state != 0)
+            goto blocked;
+        direction = ArcTan2(other->z - object->z, other->x - object->x);
+        test_position.x = other->x;
+        test_position.y = other->y;
+        test_position.z = other->z;
+        heading = direction;
+        Vector_AddPolarOffset(0x4000, direction, &test_position);
+        if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)other, (s32 *)&test_position))
+            goto blocked;
+        test_position.x = other->x;
+        test_position.y = other->y;
+        test_position.z = other->z;
+        Vector_AddPolarOffset(0xa0000, direction, &test_position);
+        if (Map_CheckObjectStep(other, &test_position) != 0)
+            goto blocked;
+        test_position.x = other->x;
+        test_position.y = other->y;
+        test_position.z = other->z;
+        Vector_AddPolarOffset(0xa0000, direction + 0x1000, &test_position);
+        if (Map_CheckObjectStep(other, &test_position) != 0)
+            goto blocked;
+        if (Map_CheckObjectStep(other, &test_position) != 0)
+            goto blocked;
+        test_position.x = other->x;
+        test_position.y = other->y;
+        test_position.z = other->z;
+        Vector_AddPolarOffset(0xa0000, direction - 0x1000, &test_position);
+        if (Map_CheckObjectStep(other, &test_position) != 0)
+            goto blocked;
+        Vector_AddPolarOffset(0x4000, direction, (struct FieldPosition *)&other->x);
+        other->target_x = -0x80000000;
+        other->target_y = -0x80000000;
+        other->target_z = -0x80000000;
+        pushed |= 1;
+        continue;
+    blocked:
+        collision |= 2;
+    }
+    if (collision == 0 && pushed != 0) {
+        object->speed_limit = 0x4000;
+        object->acceleration = 0x2000;
+    }
+
+update_object:
+    if (gEventWork != NULL) {
+        if (collision & 3)
+            gEventWork->blocked_steps++;
+        else
+            gEventWork->blocked_steps = 0;
+    }
+    if (pushed != 0) {
+        ObjectDispatch_ApplyArgumentToChildren(object, 8);
+    } else if (collision != 0) {
+        s32 action;
+
+        action = 9;
+        if (UnitGetFar(gGameState.selected_actor)->hp == 0)
+            action = 22;
+        ObjectDispatch_ApplyArgumentToChildren(object, action);
+    } else {
+        ObjectDispatch_ApplyArgumentToChildren(object, mode);
+    }
+
+    if (collision != 0) {
+        object->target_x = -0x80000000;
+        object->target_y = -0x80000000;
+        object->target_z = -0x80000000;
+        object->velocity_x = 0;
+        object->velocity_z = 0;
+        if (collision & 3) {
+            s32 difference;
+
+            difference = (u16)angle - object->angle;
+            difference = (s16)difference;
+            if (difference > 0x1000)
+                difference = 0x1000;
+            if (difference < -0x1000)
+                difference = -0x1000;
+            object->angle += difference;
+        }
+        object->action = 0;
+        object->unknown_66 = 2;
+    } else {
+        s32 square;
+
+        Object_SetMoveTarget(object, position.x, position.y, position.z);
+        square = FixedSqrt(Iwram_MulQ16(object->velocity_x, object->velocity_x)
+                           + Iwram_MulQ16(object->velocity_z, object->velocity_z));
+        object->velocity_x = 0;
+        object->velocity_z = 0;
+        Vector_AddPolarOffset(square, (u16)heading, (struct FieldPosition *)&object->velocity_x);
+        if (object->action != 0)
+            object->action--;
+    }
+
+    rotation = (u16)angle;
+    if (((struct MapScrollWork *)gMapWork[0])->footprints != 0
+        && object->action == 0 && collision == 0) {
+        struct ObjectRuntime *effect;
+
+        effect = FieldObject_Create(25, object->x, object->y, object->z);
+        if (effect != 0) {
+            struct FieldSprite *animation;
+
+            effect->terrain_height = object->terrain_height;
+            animation = effect->animation;
+            ObjectDispatch_Initialize((struct DispatchObject *)effect, (u32)WorldMap_FootprintActions);
+            effect->unknown_23 = 2;
+            effect->flags = collision;
+            if (animation != 0) {
+                AnimationObjects_SelectAnimation((struct AnimationObject *)animation, 1);
+                animation->flags = collision;
+                animation->rotation = rotation + 0x4000;
+                animation->priority = 3;
+            }
+            if (object->unknown_66 == 2) {
+                AnimationObjects_SelectAnimation((struct AnimationObject *)animation, 2);
+                object->unknown_66 = collision;
+            }
+            if (object->unknown_66 != 0)
+                effect->angle = 0x8000;
+            if (mode == 5)
+                object->action = 12;
+            else
+                object->action = 18;
+            object->unknown_66 ^= 1;
+        }
+    }
+    Field_CheckConfiguredKeys();
+    object->step++;
+    return 1;
+}
+
+#if EDITION_INTERNATIONAL
+#define WORLD_PROBE_RADIUS 0x70000
+#else
+#define WORLD_PROBE_RADIUS 0x80000
+#endif
+
+s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
+{
+    struct FieldPosition position;
+#if EDITION_INTERNATIONAL
+    struct FieldPosition test_position;
+    s16 angle_offsets[28];
+#else
+    struct FieldPosition left_position;
+    struct FieldPosition right_position;
+    s16 angle_offsets[22];
+#endif
+    s32 collision;
+    s32 angle;
+    u16 direction;
+    s32 angle_index;
+    s32 mode;
+    s32 count;
+    s32 difference;
+    s32 collision_kind;
+    s32 square;
+    s32 rate;
+    struct PerspectiveWork *work;
+    s32 step;
+    struct FieldSprite *sprite;
+    struct ObjectRuntime *effect;
+    struct FieldSprite *animation;
+
+    mode = 2;
+    collision = 0;
+#if !EDITION_INTERNATIONAL
+    count = 0;
+#endif
+    if (gKeysHeld & gGameState.dash_keys) {
+        object->speed_limit = 0x10000;
+        object->acceleration = 0x14000;
+        mode = 5;
+    } else {
+        object->speed_limit = 0x8000;
+        object->acceleration = 0x4000;
+    }
+    if ((gKeysRepeat & KEY_L) != 0)
+        object->speed_limit = 0x40000;
+
+    angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+    direction = angle;
+    if (direction == 0xffff) {
+        collision |= 4;
+        goto update_object;
+    }
+
+    collision = 0;
+    position.x = object->x;
+    position.y = object->y;
+    position.z = object->z;
+    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
+    if (gDebugMode != 0 && (gKeysHeld & KEY_L) != 0)
+        goto update_object;
+#if EDITION_INTERNATIONAL
+    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) != 0)
+        goto choose_direction;
+
+    test_position.x = object->x;
+    test_position.y = object->y;
+    test_position.z = object->z;
+    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &test_position);
+    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+        goto choose_direction;
+    test_position.x = object->x;
+    test_position.y = object->y;
+    test_position.z = object->z;
+    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &test_position);
+    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+        goto choose_direction;
+    test_position.x = object->x;
+    test_position.y = object->y;
+    test_position.z = object->z;
+    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000, &test_position);
+    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+        goto choose_direction;
+    test_position.x = object->x;
+    test_position.y = object->y;
+    test_position.z = object->z;
+    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000, &test_position);
+    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+        goto choose_direction;
+    goto update_object;
+
+choose_direction:
+    count = 0;
+    angle_offsets[count++] = direction + 0x1000;
+    angle_offsets[count++] = direction - 0x1000;
+    angle_offsets[count++] = direction + 0x2000;
+    angle_offsets[count++] = direction - 0x2000;
+    angle_offsets[count++] = direction + 0x3000;
+    angle_offsets[count++] = direction - 0x3000;
+    angle_offsets[count++] = direction + 0x4000;
+    angle_offsets[count++] = direction - 0x4000;
+    for (angle_index = 0; angle_index < count; angle_index++) {
+        direction = angle_offsets[angle_index];
+        position.x = object->x;
+        position.y = object->y;
+        position.z = object->z;
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
+        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) != 0)
+            continue;
+        test_position.x = object->x;
+        test_position.y = object->y;
+        test_position.z = object->z;
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &test_position);
+        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+            continue;
+        test_position.x = object->x;
+        test_position.y = object->y;
+        test_position.z = object->z;
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &test_position);
+        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+            continue;
+        test_position.x = object->x;
+        test_position.y = object->y;
+        test_position.z = object->z;
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000, &test_position);
+        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+            continue;
+        test_position.x = object->x;
+        test_position.y = object->y;
+        test_position.z = object->z;
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000, &test_position);
+        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
+            continue;
+        angle = (s16)direction;
+        goto update_object;
+    }
+    collision |= 1;
+
+#else
+    left_position.x = object->x;
+    left_position.y = object->y;
+    left_position.z = object->z;
+    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &left_position);
+    right_position.x = object->x;
+    right_position.y = object->y;
+    right_position.z = object->z;
+    Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &right_position);
+    if ((CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position)
+         | CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&left_position)
+         | CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&right_position)) == 0)
+        goto update_object;
+
+    angle_offsets[count++] = direction + 0x1000;
+    angle_offsets[count++] = direction - 0x1000;
+    angle_offsets[count++] = direction + 0x2000;
+    angle_offsets[count++] = direction - 0x2000;
+    angle_offsets[count++] = direction + 0x3000;
+    angle_offsets[count++] = direction - 0x3000;
+    for (angle_index = 0; angle_index < count; angle_index++) {
+        direction = angle_offsets[angle_index];
+        position.x = object->x;
+        position.y = object->y;
+        position.z = object->z;
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
+        left_position.x = object->x;
+        left_position.y = object->y;
+        left_position.z = object->z;
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &left_position);
+        right_position.x = object->x;
+        right_position.y = object->y;
+        right_position.z = object->z;
+        Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &right_position);
+        if ((CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position)
+             | CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&left_position)
+             | CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&right_position)) != 0)
+            continue;
+        angle = (s16)direction;
+        goto update_object;
+    }
+    collision |= 1;
+#endif
+
+update_object:
+    if (gEventWork != NULL) {
+        if ((collision & 3) != 0)
+            gEventWork->blocked_steps++;
+        else
+            gEventWork->blocked_steps = 0;
+    }
+    if (collision != 0)
+        ObjectDispatch_ApplyArgumentToChildren(object, 9);
+    else
+        ObjectDispatch_ApplyArgumentToChildren(object, mode);
+
+    if (collision != 0) {
+        object->target_x = -0x80000000;
+        object->target_y = -0x80000000;
+        object->target_z = -0x80000000;
+        object->velocity_x = 0;
+        object->velocity_z = 0;
+        if ((collision & 3) != 0) {
+            direction = angle;
+            difference = (s16)(direction - object->angle);
+            if (difference > 0x1000)
+                difference = 0x1000;
+            if (difference < -0x1000)
+                difference = -0x1000;
+            object->angle += difference;
+        }
+        object->action = 0;
+        object->unknown_66 = 2;
+        goto movement_done;
+    }
+
+    Object_SetMoveTarget(object, position.x, position.y, position.z);
+    square = FixedSqrt(Iwram_MulQ16(object->velocity_x, object->velocity_x)
+                       + Iwram_MulQ16(object->velocity_z, object->velocity_z));
+    object->velocity_x = collision;
+    object->velocity_z = collision;
+    Vector_AddPolarOffset(square, (u16)angle, (struct FieldPosition *)&object->velocity_x);
+    if (object->action != 0)
+        object->action--;
+
+movement_done:
+    work = gMapWork[0];
+    rate = WorldMap_KeyYaws[(gKeysHeld >> 4) & 15];
+    step = (s16)(rate - work->yaw) / 8;
+    if (step > 0x200)
+        step = 0x200;
+    if (step < -0x200)
+        step = -0x200;
+    if (step > -16 && step < 16)
+        step = rate - work->yaw;
+    work->yaw += step;
+
+    if (object->animation_kind == 1) {
+        sprite = object->animation;
+        collision_kind = GetWorldMapCollision((struct WorldPosition *)&object->x);
+        if (collision_kind == 9) {
+            ((struct WorldMapSprite *)sprite)->shadow[6] = 1;
+            sprite->flags = 0;
+        } else {
+            ((struct WorldMapSprite *)sprite)->shadow[6] = 9;
+            sprite->flags = 1;
+        }
+        if (collision_kind == 6 && object->action == 0 && collision == 0) {
+            effect = FieldObject_Create(24, object->x, object->y, object->z);
+            if (effect != 0) {
+                animation = effect->animation;
+                ObjectDispatch_Initialize((struct DispatchObject *)effect, (u32)(WorldMap_FootprintActions + 12));
+                effect->flags = collision;
+                effect->terrain_id = 1;
+                if (animation != 0) {
+                    AnimationObjects_SelectAnimation((struct AnimationObject *)animation, 1);
+                    animation->flags = collision;
+                    animation->blend_mode = 1;
+                    animation->priority = 2;
+                }
+                object->action = 10;
+            }
+        }
+    }
+    Field_CheckConfiguredKeys();
+    object->step++;
+    return 1;
+}
+
+s32 Field_CheckConfiguredKeysAndCount(void *work)
+{
+    struct ObjectRuntime *object = work;
+
+    Field_CheckConfiguredKeys();
+    object->step = (u16)object->step + 1;
+    return 1;
+}
+
+s32 Object_MoveByKeys(struct ObjectRuntime *object)
+{
+    struct FieldPosition pos;
+    u8 unused[68];
+    struct MapCell *from;
+    struct MapCell *to;
+    u16 angle;
+    s32 motion;
+    s32 blocked;
+    s32 delta_z;
+    s32 height;
+
+    object->speed_limit = 0x8000;
+    object->acceleration = 0x4000;
+    motion = 12;
+    angle = WorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
+    if (angle == 0xffff) {
+        blocked = 4;
+    } else {
+        motion = 14;
+        if ((angle & 0xf000) != 0) {
+            motion = 15;
+            if ((angle & 0xf000) != 0x8000)
+                motion = 10;
+        }
+        blocked = 0;
+        pos.x = 0;
+        pos.y = 0;
+        pos.z = 0;
+        Vector_AddPolarOffset(0x80000, angle, &pos);
+        pos.x += object->x;
+        delta_z = pos.z;
+        if (delta_z < 0)
+            object->angle = 0xc000;
+        if (delta_z > 0)
+            object->angle = 0x4000;
+        pos.y = object->y - pos.z;
+        pos.z = object->z;
+        from = &((struct MapCell *)Ram_MapCellBuffer)
+            [object->x / 0x100000 + (pos.z / 0x100000) * 128];
+        to = &((struct MapCell *)Ram_MapCellBuffer)
+            [pos.x / 0x100000 + (pos.z / 0x100000) * 128];
+        if (CheckMapPositionCellOccupied((struct WorldPosition *)&pos) != 0
+            || from->collision_code != to->collision_code) {
+            blocked = 4;
+            motion = 12;
+        } else if (gKeysHeld & KEY_UP) {
+            height = Map_GetTerrainHeight(object->terrain_id, pos.x, pos.z - 0x100000);
+            if (height - object->y < 0x100000)
+                goto refused;
+        } else if (gKeysHeld & KEY_DOWN) {
+            height = Map_GetTerrainHeight(object->terrain_id, pos.x, pos.z);
+            if (height - object->y > -0x80000) {
+refused:
+                blocked = 1;
+                motion = 12;
+            }
+        }
+    }
+    if (gEventWork != NULL) {
+        if (blocked & 3)
+            gEventWork->blocked_steps++;
+        else
+            gEventWork->blocked_steps = 0;
+    }
+    ObjectDispatch_ApplyArgumentToChildren(object, motion);
+    if (blocked != 0) {
+        object->target_x = 0x80000000;
+        object->target_y = 0x80000000;
+        object->target_z = 0x80000000;
+        object->velocity_x = 0;
+        object->velocity_y = 0;
+        object->velocity_z = 0;
+    } else {
+        Object_SetMoveTarget(object, pos.x, pos.y, pos.z);
+    }
+    object->step++;
+    return 1;
+}
+
+void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
+{
+    s32 n;
+    u8 *p;
+    u8 *tbl;
+
+    p = buf;
+    tbl = Runtime_ByteRemapTable;
+    n = cnt - 1;
+    if (n != -1) {
+        do {
+            n -= 1;
+            *p = tbl[*p];
+            p += 1;
+        } while (n != -1);
+    }
 }

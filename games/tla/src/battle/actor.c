@@ -28,51 +28,37 @@ s32 BattleActor_RemoveFromLists(s32 id)
 {
 	struct BtlWork *work;
 	s32				i;
-	/* FAKEMATCH: retain r2 and integer-load/pointer-store operands; natural loops split the removal exit. */
-	register s32 slot asm("r2");
-	u32 j;
-	s32 unit;
+	u32				j;
+	s32				unit;
 
 	// 味方の並び
 	work = Ram_HeapSlots->battle_work;
 	UnitGet(id)->side = BATTLE_UNIT_ABSENT;
-	i = (u32)(&((struct BtlWork *)0)->party_units);
-	slot = i;
-	unit = *(s16 *)(slot + (u32)work);
-	if (unit == id)
-		goto party_removed;
-	if (unit != BATTLE_UNIT_LIST_END)
+	for (i = 0;; i++)
 	{
-		do
+		unit = work->party_units[i];
+		if (unit == id)
 		{
-			i += sizeof(s16);
-			slot = i;
-			unit = *(s16 *)(slot + (u32)work);
-			if (unit == id)
-				goto party_removed;
-		} while (unit != BATTLE_UNIT_LIST_END);
+			work->party_units[i] = BATTLE_UNIT_REMOVED;
+			goto removed;
+		}
+		if (unit == BATTLE_UNIT_LIST_END)
+			break;
 	}
 
 	// 敵の並び
-	/* FAKEMATCH: needed to match: the goto loop avoids the pointer walk and saved 0xfe constant produced by a for loop */
-	do
+	for (j = 0;; j++)
 	{
-		j = 0;
-	again:
 		unit = work->enm_no[j];
 		if (unit == id)
-			goto enemy_removed;
-		j++;
+		{
+			work->enm_no[j] = BATTLE_UNIT_REMOVED;
+			goto removed;
+		}
 		if (unit == BATTLE_UNIT_LIST_END)
 			break;
-		goto again;
-	} while (0);
+	}
 	return -1;
-enemy_removed:
-	work->enm_no[j] = BATTLE_UNIT_REMOVED;
-	goto removed;
-party_removed:
-	*(s16 *)((u8 *)work + slot) = BATTLE_UNIT_REMOVED;
 
 removed:
 	EnmCntRel(id);

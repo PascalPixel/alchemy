@@ -27,5 +27,9 @@ extern char SceneId_Ov686Room7;
 extern char SceneId_Ov686Room8;
 extern char SceneId_Ov6b1Room1;
 extern char SceneId_Ov6b8Room1;
+extern char SceneId_Ov697Room1;
+extern char SceneId_Ov697Room2;
+extern char SceneId_Ov697Room3;
+extern char SceneId_Ov697Room4;
 
 #endif

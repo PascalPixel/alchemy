@@ -822,13 +822,13 @@ void BabiChika_SettleSteps(s32 wait)
 		Engine_AudioPlayCue(180);
 	}
 	Engine_ObjectSetPosition(Object_GetById(10), Object_GetById(10)->x.fixed,
-		Data_0200b350[(s16)Object_GetById(10)->timer], Object_GetById(10)->z.fixed);
+		Data_0200b350[Object_GetById(10)->timer], Object_GetById(10)->z.fixed);
 	Engine_ObjectSetPosition(Object_GetById(11), Object_GetById(11)->x.fixed,
-		Data_0200b350[(s16)Object_GetById(11)->timer], Object_GetById(11)->z.fixed);
+		Data_0200b350[Object_GetById(11)->timer], Object_GetById(11)->z.fixed);
 	Engine_ActorWaitForMove(10);
 	Engine_ActorWaitForMove(11);
-	Object_GetById(10)->y.fixed = Data_0200b350[(s16)Object_GetById(10)->timer];
-	Object_GetById(11)->y.fixed = Data_0200b350[(s16)Object_GetById(11)->timer];
+	Object_GetById(10)->y.fixed = Data_0200b350[Object_GetById(10)->timer];
+	Object_GetById(11)->y.fixed = Data_0200b350[Object_GetById(11)->timer];
 	if (wait != 0)
 	{
 		Engine_AudioPlayCue(0x121);
@@ -941,11 +941,11 @@ void FieldScene_RunMiddleSequence(void)
 			if ((Object_GetById(found + 12)->x.fixed >> 20) == 8)
 			{
 				Object_GetById(10)->timer++;
-				(*(s16 *)&Object_GetById(11)->timer)--;
+				(Object_GetById(11)->timer)--;
 			}
 			else
 			{
-				(*(s16 *)&Object_GetById(10)->timer)--;
+				(Object_GetById(10)->timer)--;
 				Object_GetById(11)->timer++;
 			}
 			Actor_Get(found + 12)->update =

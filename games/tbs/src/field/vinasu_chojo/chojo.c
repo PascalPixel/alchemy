@@ -110,7 +110,7 @@ s32 OverlayObject_StepScaleByCounter(struct FieldActor *actor)
         break;
     }
     {
-        s32 t = actor->timer;
+        s32 t = (u16)actor->timer;
         t = t - 1;
         actor->timer = t;
     }

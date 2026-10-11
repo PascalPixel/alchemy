@@ -200,7 +200,7 @@ void BattleFx_UpdateSpinAngle(struct FieldActor *obj)
 {
 	u32 step;
 
-	step = (s16)obj->timer * 0x50;
+	step = obj->timer * 0x50;
 	obj->facing = obj->facing + step + 0x1000;
 	if (step < 0x1000)
 		obj->timer = obj->timer + 1;

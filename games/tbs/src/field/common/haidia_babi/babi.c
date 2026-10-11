@@ -928,7 +928,7 @@ void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object)
 
     anchor = &((union PairObject *)object)->link.parent->object.actor;
     self->timer = (u16)(self->timer + 1);
-    frame = (s16)self->timer;
+    frame = self->timer;
 
     if (frame > 31) {
         Engine_ObjectDispatchRelease(self);
@@ -952,7 +952,7 @@ void OverlayObject_UpdateArcFromAnchor(union FieldObject *object)
 
     anchor = &((union PairObject *)object)->link.parent->object.actor;
     obj->timer = (u16)(obj->timer + 1);
-    frame = (s16)obj->timer;
+    frame = obj->timer;
 
     if (frame > 31) {
         Engine_ObjectDispatchRelease(obj);

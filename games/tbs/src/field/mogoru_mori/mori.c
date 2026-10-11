@@ -78,7 +78,7 @@ s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
 
 s32 MogoruMori_CopyTimerToChild(s32 a)
 {
-    ObjectGroup_SetChildValue(a, *(s16 *)&((struct FieldActor *)a)->timer);
+    ObjectGroup_SetChildValue(a, ((struct FieldActor *)a)->timer);
     return 0;
 }
 

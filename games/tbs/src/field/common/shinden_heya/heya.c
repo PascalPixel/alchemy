@@ -1825,7 +1825,7 @@ void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
     s32 scale;
     s32 timer;
 
-    spark->y.fixed += (s16)spark->timer << 12;
+    spark->y.fixed += spark->timer << 12;
     spark->target_y = spark->y.fixed;
     scale = 0;
     switch ((u16)((s16)spark->work >> 2) & 3) {

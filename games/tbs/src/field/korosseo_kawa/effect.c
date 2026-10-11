@@ -148,7 +148,7 @@ void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
 
 s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a)
 {
-    struct FieldActor *o = Object_GetById((s16)a->timer);
+    struct FieldActor *o = Object_GetById(a->timer);
 
     Engine_ObjectSetPosition(o, a->x.fixed, a->y.fixed + 0x240000, a->z.fixed);
     o->motion_flags = 0;

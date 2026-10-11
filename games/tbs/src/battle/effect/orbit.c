@@ -303,7 +303,7 @@ void BattleFx_UpdateOrbitingParticleLeft(struct FieldActor *particle)
 
 	if (particle != NULL)
 	{
-		cnt = particle->timer - 1;
+		cnt = (u16)particle->timer - 1;
 		particle->timer = cnt;
 		life = cnt;
 		if (life != 0)
@@ -334,7 +334,7 @@ void BattleFx_UpdateOrbitingParticleRight(struct FieldActor *particle)
 
 	if (particle != NULL)
 	{
-		cnt = particle->timer - 1;
+		cnt = (u16)particle->timer - 1;
 		particle->timer = cnt;
 		life = cnt;
 		if (life != 0)
@@ -498,7 +498,7 @@ void BattleFx_UpdateShrinkingOrbitObject(struct FieldActor *obj)
 
 	if (obj != NULL)
 	{
-		cnt = obj->timer - 1;
+		cnt = (u16)obj->timer - 1;
 		obj->timer = cnt;
 		life = cnt;
 		if (life != 0)

@@ -1022,9 +1022,9 @@ void ImiruMura_SwayAndSpark(struct FieldActor *actor)
     struct FieldActor *spark;
     s32 radius;
 
-    actor->x.fixed = ImiruMura_ArcOrigin[0] + Iwram_MulQ16(0x60000, Engine_MathSin((s16)actor->timer << 10));
+    actor->x.fixed = ImiruMura_ArcOrigin[0] + Iwram_MulQ16(0x60000, Engine_MathSin(actor->timer << 10));
     actor->timer++;
-    actor->timer = ((s16)actor->timer + 64) % 64;
+    actor->timer = (actor->timer + 64) % 64;
     if (gFrameCount % 3 == 0) {
         pos[0] = actor->x.fixed;
         pos[1] = actor->y.fixed + 0x20000;

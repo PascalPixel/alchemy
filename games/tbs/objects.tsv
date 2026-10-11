@@ -316,12 +316,7 @@ main	rom_main_07	games/tbs/src/battle/tgtexec	.text
 main	rom_main_07	games/common/src/battle/check_status_or_special_id	.text
 main	rom_main_07	games/tbs/src/battle/cmdplay	.text
 main	rom_main_07	games/common/src/battle/party/is_unit_listed	.text
-main	rom_main_07	games/tbs/src/battle/party/count_valid_entries	.text
-main	rom_main_07	games/tbs/src/battle/command	.text
-main	rom_main_07	games/tbs/src/battle/party/roll_counter_early_end	.text
-main	rom_main_07	games/tbs/src/battle/party/timed_entries	.text
-main	rom_main_07	games/tbs/src/battle/runtime_reserved_no_op_c	.text
-main	rom_main_07	games/tbs/src/battle/party/process_round_end	.text
+main	rom_main_07	games/tbs/src/battle/party/command	.text
 main	rom_main_07	games/tbs/src/battle/presentation/run_mosaic_fade_out	.text
 main	rom_main_07	games/common/src/graphics/tile/build_sequential_table	.text
 main	rom_main_07	games/tbs/src/battle/presentation/entry	.text

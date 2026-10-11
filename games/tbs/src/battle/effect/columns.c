@@ -2005,7 +2005,7 @@ void BattleFx_RunOrbitingSparks(void)
 				 * built); after filling it differs 118 (267 built). Keeping
 				 * rec live after the call differs 179 (270 built). None keeps
 				 * the native loop layout. */
-				/* FAKEMATCH: record is filled through r0 so loop.c cannot hoist its address into fp */
+				/* FAKEMATCH: record is filled through r0 so loop.c cannot hoist its address into fp 2026-10-11: loop.c's second pass moves the invariant &record when 15 x savings x life 8 reaches the loop's insn count (about 100 after giv reduction); plain forms differ 118 (hoisted into fp, frame 92), loads before stores differ 12, and two one-pass blocks around the fill and the apply differ 2 (add r5, sp, #64 after the last store). */
 				register s32 *rec asm("r0");
 
 				Render_ResetTransformState();

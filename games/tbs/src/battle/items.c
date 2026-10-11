@@ -150,8 +150,6 @@ s32 Event_FindFacingTrigger(s32 source)
 
 s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 {
-	/* FAKEMATCH: needed to match: retain the caller's r1=0: the callee's flag parameter is unused */
-
 	s32						   result;
 	s32						   item_id;
 	s32						   actor;
@@ -328,8 +326,6 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
 
 s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 {
-	/* FAKEMATCH: needed to match: the ROM caller treats this call as setting r0 (an implicit-int style declaration) */
-
 	s32	  output;
 	s32	  index;
 	s32	  mode;
@@ -340,6 +336,7 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 	index = packed & 0x3FF;
 	mode = ((u32)packed >> 10) & 0xF;
 	object = BtlActGet(index)->type_0c;
+	// The object is looked up and the result is not used.
 	ObjectTable_Get(gGameState.selected_actor);
 	first = (void *)BattleFx_FindMatchingEvent(0x30000005, object, &output);
 	second = (void *)BattleFx_FindMatchingEvent(0x20000005, object, &output);

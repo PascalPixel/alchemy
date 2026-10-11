@@ -291,7 +291,7 @@ update:
 
 	if (anim >= 0 && changed != 0)
 	{
-		/* FAKEMATCH: needed to match: storing the handle before testing failure avoids an extra unconditional branch */
+		// The handle is stored first and cleared again when registration fails.
 		handle = ResourceMetadata_RegisterFar(rec, anim);
 		slot->animation_entry = (struct SpriteEntry *)handle;
 		if (handle == -1)

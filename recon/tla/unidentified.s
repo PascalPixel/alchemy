@@ -467,9 +467,6 @@ Data_080b1284:
 	.global Data_080b1290
 Data_080b1290:
 	.incbin "baserom.gba", 0x000b1290, 0x00000038
-	.global Owner_ExperienceThresholds
-Owner_ExperienceThresholds:
-	.incbin "baserom.gba", 0x000b12c8, 0x00000c60
 	.section .unidentified.080b1f2c,"a"
 	.global Data_080b1f2c
 Data_080b1f2c:
@@ -480,27 +477,7 @@ Data_080b1f40:
 	.global Data_080b2340
 Data_080b2340:
 	.incbin "baserom.gba", 0x000b2340, 0x00000024
-	.global Item_DefinitionTable
-Item_DefinitionTable:
-	.incbin "baserom.gba", 0x000b2364, 0x000058b0
-	.global BattleAction_DefinitionTable
-BattleAction_DefinitionTable:
-	.incbin "baserom.gba", 0x000b7c14, 0x00002268
-	.global Enemy_DefinitionTable
-Enemy_DefinitionTable:
-	.incbin "baserom.gba", 0x000b9e7c, 0x000070d0
-	.global Owner_GrowthRecords
-Owner_GrowthRecords:
-	.incbin "baserom.gba", 0x000c0f4c, 0x000005a0
-	.global Summon_OrderList
-Summon_OrderList:
-	.incbin "baserom.gba", 0x000c14ec, 0x00000020
-	.global Summon_DefinitionTable
-Summon_DefinitionTable:
-	.incbin "baserom.gba", 0x000c150c, 0x000000e8
-	.global Class_DefinitionTable
-Class_DefinitionTable:
-	.incbin "baserom.gba", 0x000c15f4, 0x00005010
+	.section .unidentified.080c6604,"a"
 	.global Data_080c6604
 Data_080c6604:
 	.incbin "baserom.gba", 0x000c6604, 0x00000040
@@ -519,9 +496,6 @@ Battle_Effect90Classes:
 	.global Battle_Effect91Classes
 Battle_Effect91Classes:
 	.incbin "baserom.gba", 0x000c6b76, 0x0000003a
-	.global Djinn_Definitions
-Djinn_Definitions:
-	.incbin "baserom.gba", 0x000c6bb0, 0x000003b8
 	.section .unidentified.080c89cc,"a"
 	.incbin "baserom.gba", 0x000c89cc, 0x00000a00
 	.section .unidentified.080ed80c,"a"

@@ -1922,27 +1922,10 @@ Func_080b1088:
 	.thumb_func
 Func_080b11f8:
 	.incbin "baserom.gba", 0x000be1f8, 0x000000d0
-	.global Owner_ExperienceThresholds
-Owner_ExperienceThresholds:
-	.incbin "baserom.gba", 0x000be2c8, 0x0000109c
-	.global Item_DefinitionTable
-Item_DefinitionTable:
-	.incbin "baserom.gba", 0x000bf364, 0x000058b0
-	.global BattleAction_DefinitionTable
-BattleAction_DefinitionTable:
-	.incbin "baserom.gba", 0x000c4c14, 0x00002268
-	.global Enemy_DefinitionTable
-Enemy_DefinitionTable:
-	.incbin "baserom.gba", 0x000c6e7c, 0x000070d0
-	.global Owner_GrowthRecords
-Owner_GrowthRecords:
-	.incbin "baserom.gba", 0x000cdf4c, 0x000005c0
-	.global Summon_DefinitionTable
-Summon_DefinitionTable:
-	.incbin "baserom.gba", 0x000ce50c, 0x000000e8
-	.global Class_DefinitionTable
-Class_DefinitionTable:
-	.incbin "baserom.gba", 0x000ce5f4, 0x00005510
+	.section .rom.000bef28, "ax"
+	.incbin "baserom.gba", 0x000bef28, 0x0000043c
+	.section .rom.000d3604, "ax"
+	.incbin "baserom.gba", 0x000d3604, 0x00000500
 	.global Data_080c6b04
 Data_080c6b04:
 	.incbin "baserom.gba", 0x000d3b04, 0x00000014
@@ -1952,9 +1935,7 @@ Battle_Effect90Classes:
 	.global Battle_Effect91Classes
 Battle_Effect91Classes:
 	.incbin "baserom.gba", 0x000d3b76, 0x0000003a
-	.global Djinn_Definitions
-Djinn_Definitions:
-	.incbin "baserom.gba", 0x000d3bb0, 0x00001450
+	.section .rom.000d5000, "ax"
 	.global Resource_FarCall006
 Resource_FarCall006:
 	.incbin "baserom.gba", 0x000d5000, 0x00000008
@@ -4479,7 +4460,8 @@ Func_08196404:
 	.section .rom.00196a28, "ax"
 	.incbin "baserom.gba", 0x00196a28, 0x00000808
 	.section .rom.001973f0, "ax"
-	.incbin "baserom.gba", 0x001973f0, 0x00008c10
+	.incbin "baserom.gba", 0x001973f0, 0x00002db8
+	.section .rom.001a0000, "ax"
 	.global Resource_FarCall00A
 Resource_FarCall00A:
 	.incbin "baserom.gba", 0x001a0000, 0x00000008
@@ -4539,7 +4521,8 @@ DisplayScroll_DrawLine:
 	.incbin "baserom.gba", 0x001a1294, 0x00000ef8
 	.global DisplayScroll_LineTable
 DisplayScroll_LineTable:
-	.incbin "baserom.gba", 0x001a218c, 0x00003e74
+	.incbin "baserom.gba", 0x001a218c, 0x000006a4
+	.section .rom.001a6000, "ax"
 	.global Resource_FarCall00B
 Resource_FarCall00B:
 	.incbin "baserom.gba", 0x001a6000, 0x00000018

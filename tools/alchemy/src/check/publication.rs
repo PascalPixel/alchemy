@@ -1867,7 +1867,7 @@ fn native_path_reason(path: &str) -> Option<&'static str> {
             && !rest.is_empty()
             && listed(extension(path), NATIVE_INPUT_EXTENSIONS))
             || (rest.is_empty()
-                && (listed(extension(path), &["ld", "mk"]) || *area == "objects.tsv")));
+                && (listed(extension(path), &["ld", "mk"]) || matches!(*area, "objects.tsv" | "overlays.tsv"))));
     (!native).then_some("game material must be an editable native game input")
 }
 fn byte_dump(message: &str) -> bool {
@@ -3252,6 +3252,7 @@ mod tests {
     fn a_game_keeps_its_object_list_beside_its_linker_scripts() {
         assert_eq!(native_path_reason("games/tbs/objects.tsv"), None);
         assert_eq!(native_path_reason("games/tla/objects.tsv"), None);
+        assert_eq!(native_path_reason("games/tbs/overlays.tsv"), None);
         assert!(native_path_reason("games/tbs/notes.tsv").is_some());
         assert!(native_path_reason("games/tbs/data/objects.tsv").is_some());
     }

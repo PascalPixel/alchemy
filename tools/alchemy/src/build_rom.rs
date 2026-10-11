@@ -1570,9 +1570,25 @@ fn build_overlay_streams(
     let mut linked = Vec::with_capacity(ids.len());
     let mut sources = Vec::new();
     for id in ids {
-        let script = target.overlay_script(id);
-        let statements =
-            crate::edition::linked_statements(root, target, crate::edition::Image::Overlay(id))?;
+        // The overlay's own script, or for a game with an object list the
+        // game's one overlay script with this overlay's fragments.
+        let listed = crate::edition::listed(root, target, crate::edition::Image::Overlay(id))?;
+        let text = match &listed {
+            Some(listed) => listed.flat(root)?,
+            None => {
+                let script = target.overlay_script(id);
+                fs::read_to_string(root.join(&script))
+                    .map_err(|error| format!("{}: {error}", script.display()))?
+            }
+        };
+        let fragments = listed.map(|listed| listed.write(output)).transpose()?;
+        let script = OverlayScript {
+            path: target.overlay_script(id),
+            text,
+            fragments,
+        };
+        let statements = crate::edition::statements(&script.text)
+            .map_err(|error| format!("{} overlay {id}: {error}", target.id))?;
         let own = format!("resource_{id}_overlay");
         let mut objects = Vec::new();
         for object in crate::edition::built_objects(&statements)
@@ -1619,12 +1635,20 @@ fn build_overlay_streams(
     Ok(objects)
 }
 
+/// An overlay's linker script: its text as the linker reads it, and the
+/// directory of the object list's fragments when it includes them.
+struct OverlayScript {
+    path: PathBuf,
+    text: String,
+    fragments: Option<PathBuf>,
+}
+
 struct Overlay<'a> {
     root: &'a Path,
     build: Build<'a>,
     output: &'a Path,
     id: &'a str,
-    script: &'a Path,
+    script: &'a OverlayScript,
     objects: &'a [PathBuf],
     symbols: &'a Path,
     table: &'a str,
@@ -1644,13 +1668,14 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
         directory,
     } = *overlay;
     let target = build.target;
+    // The modern script is one file, the fragments already in place.
     let modern_script;
-    let script = match build.modern {
+    let (script_path, fragments) = match build.modern {
         Some(_) => {
-            modern_script = crate::modern::overlay_script(root, script, directory, id)?;
-            modern_script.as_path()
+            modern_script = crate::modern::overlay_script(&script.text, directory, id)?;
+            (modern_script.as_path(), None)
         }
-        None => script,
+        None => (script.path.as_path(), script.fragments.as_deref()),
     };
     let libraries = match build.modern {
         Some(modern) => modern.libraries.clone(),
@@ -1665,12 +1690,14 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
     let stream = directory.join(format!("resource_{id}.lz"));
     let own_symbols = path(format!("resource_{id}.symbols.elf"));
     let names = path(format!("resource_{id}.own"));
-    let mut link: Vec<String> = [
-        "arm-none-eabi-ld",
-        "--no-warn-mismatch",
-        "-n",
+    let mut link: Vec<String> = ["arm-none-eabi-ld", "--no-warn-mismatch", "-n"].map(String::from).to_vec();
+    // Before the script that includes them: the linker reads in order.
+    if let Some(fragments) = fragments {
+        link.extend(["-L".to_owned(), fragments.to_string_lossy().into_owned()]);
+    }
+    link.extend([
         "-T",
-        &script.to_string_lossy(),
+        &script_path.to_string_lossy(),
         "-Map",
         &map,
         "-R",
@@ -1679,8 +1706,7 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
         &elf,
         &object,
     ]
-    .map(String::from)
-    .to_vec();
+    .map(String::from));
     link.extend(
         objects
             .iter()
@@ -1695,7 +1721,13 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
         output,
     );
     let mut hasher = Sha256::new();
-    overlay_inputs(&mut hasher, root, output, listing.as_deref(), script, objects, index)?;
+    // The script as this link reads it: the modern build's file, or the
+    // overlay's script with any fragments in place.
+    let script_text = match build.modern {
+        Some(_) => fs::read(script_path).map_err(|error| format!("{}: {error}", script_path.display()))?,
+        None => script.text.clone().into_bytes(),
+    };
+    overlay_inputs(&mut hasher, root, output, listing.as_deref(), &script_text, objects, index)?;
     for step in assemble.iter().chain([&link]) {
         hasher.update(portable(root, step.join("\0").as_bytes()));
     }
@@ -1846,13 +1878,13 @@ fn overlay_inputs(
     root: &Path,
     output: &Path,
     listing: Option<&Path>,
-    script: &Path,
+    script: &[u8],
     objects: &[PathBuf],
     index: &Index,
 ) -> Result<(), String> {
     let Some(listing) = listing else {
         hasher.update(b"no overlay data");
-        return overlay_script_inputs(hasher, root, script, objects, index);
+        return overlay_script_inputs(hasher, script, objects, index);
     };
     hasher.update(with_includes(&[root, output], &root.join(listing))?);
     for built in asset_files(root, listing) {
@@ -1862,19 +1894,16 @@ fn overlay_inputs(
         hasher.update(built.as_bytes());
         hasher.update(row.key.as_bytes());
     }
-    overlay_script_inputs(hasher, root, script, objects, index)
+    overlay_script_inputs(hasher, script, objects, index)
 }
 
 fn overlay_script_inputs(
     hasher: &mut Sha256,
-    root: &Path,
-    script: &Path,
+    script: &[u8],
     objects: &[PathBuf],
     index: &Index,
 ) -> Result<(), String> {
-    hasher.update(
-        fs::read(root.join(script)).map_err(|error| format!("{}: {error}", script.display()))?,
-    );
+    hasher.update(script);
     for object in objects {
         let row = index
             .row(object)

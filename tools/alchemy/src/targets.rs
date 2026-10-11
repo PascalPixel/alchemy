@@ -99,12 +99,13 @@ impl DecompTarget {
         let (game, lang) = self.id.as_str().split_once('-').expect("an edition id names its game");
         ["recon", game, lang].iter().collect()
     }
-    /// An overlay's link script: games/<game>/src/system/overlay/ovl_<id>.ld,
+    /// An overlay's link script: games/<game>/src/system/overlay/overlay.ld,
+    /// the one script every overlay of a game with an object list links by,
     /// or recon/<game>/raw/overlays/resource_<id>.ld for a game whose
     /// overlays are still listings.
     pub fn overlay_script(&self, id: &str) -> std::path::PathBuf {
-        let name = if self.overlay_dir.starts_with("games/") {
-            format!("ovl_{}.ld", id.to_ascii_lowercase())
+        let name = if self.object_list().is_some() {
+            "overlay.ld".to_owned()
         } else {
             format!("resource_{id}.ld")
         };
@@ -241,7 +242,7 @@ mod tests {
         assert_eq!(target_for(DecompTargetId::TbsJa).edition_script(), None);
         assert_eq!(
             de.overlay_script("3ad").to_string_lossy(),
-            "games/tbs/src/system/overlay/ovl_3ad.ld"
+            "games/tbs/src/system/overlay/overlay.ld"
         );
         assert_eq!(
             de.overlay_data("3ad").to_string_lossy(),

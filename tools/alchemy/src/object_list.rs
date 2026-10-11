@@ -3,17 +3,27 @@
 //!
 //! Columns: `image` (`main`, or an overlay's resource id such as `3ad`),
 //! `place` (the output section, or its span between two fixed placements),
-//! `object` (a path from the checkout without `.o`, or an archive member
-//! such as `libgcc.a:_call_via_rX`), `sections` (blank means
+//! `object` (a path from the checkout without `.o`, an archive member such
+//! as `libgcc.a:_call_via_rX`, an overlay's own `resource_<id>_overlay`, or
+//! `*` for every object), `sections` (blank means
 //! `.text .rodata .data .padding`) and `editions` (blank means all six, else
 //! the languages that link the row, such as `ja en`). An object may take
 //! several rows: one for each place that takes some of its sections.
 //!
-//! The build links by the list. The game's one main.ld names no object: it
-//! has an `INCLUDE "<place>.ld"` for each place, and the build writes those
-//! fragments for each edition from the rows that edition links
-//! (out/<edition>/ld). `alchemy check object-list` holds the list to what
-//! the linker can read.
+//! An overlay's places are `text` (its code and data at 0x2008000), `bss`
+//! and `discard`. The table beside the list, games/<game>/overlays.tsv, has
+//! a row for each overlay with a `bss` place: columns `overlay` (its id)
+//! and `bss`, the header of its `.bss` output section as the linker reads
+//! it: `.bss`, `.bss (NOLOAD)`, `.bss ALIGN(16) (NOLOAD)` or
+//! `.bss ALIGN(8)`. An overlay asks libgcc for `_call_via_r0`
+//! (`EXTERN`) when a row links `libgcc.a:_call_via_rX`.
+//!
+//! The build links by the list. The game's one main.ld and its one
+//! overlay.ld name no object: each has an `INCLUDE "<name>.ld"` for each
+//! place, and the build writes those fragments for each edition from the
+//! rows that edition links (out/<edition>/ld for the main image,
+//! out/<edition>/ld/<id> for an overlay). `alchemy check object-list`
+//! holds the list to what the linker can read.
 
 use crate::edition::{Image, Item, Statement};
 use crate::targets::{target_for, DecompTarget, TARGET_IDS};
@@ -25,13 +35,24 @@ pub(crate) const HEADER: &str = "image\tplace\tobject\tsections\teditions";
 pub(crate) const DEFAULT_SECTIONS: &str = ".text .rodata .data .padding";
 pub(crate) const LANGUAGES: [&str; 6] = ["ja", "en", "de", "es", "fr", "it"];
 pub(crate) const MAIN: &str = "main";
+/// The object column of a row for every object: `*(.bss COMMON)`.
+const EVERY: &str = "*";
+/// The places of an overlay: its code and data at 0x2008000, its
+/// uninitialized data after them, and the sections it leaves out.
+const OVERLAY_PLACES: [&str; 3] = ["text", "bss", "discard"];
+/// The archive member an overlay links to call through a register, and the
+/// symbol that pulls it from the archive.
+const CALL_VIA: &str = "libgcc.a:_call_via_rX";
+pub(crate) const BSS_HEADER: &str = "overlay\tbss";
 
 const USAGE: &str = "usage: alchemy check object-list\n\
 Fails when a game's object list (games/<game>/objects.tsv) is not what its\n\
 build can link: a malformed row, an object with no C, assembly or MIDI\n\
 source, an input section of an object given twice to one edition, a place\n\
-the game's main.ld does not INCLUDE, or a fragment included outside the\n\
-place it is named for. A place is an output section (rom_start), or the\n\
+the game's main.ld or overlay.ld does not INCLUDE, a fragment included\n\
+outside the place it is named for, or an overlay whose bss rows and .bss\n\
+header in games/<game>/overlays.tsv do not go together. A place is an\n\
+output section (rom_start; text, bss and discard in an overlay), or the\n\
 span of one between two fixed placements, numbered from the section's start\n\
 (rom_main_00, rom_main_01 ...). A game without a list is not checked.";
 
@@ -64,6 +85,9 @@ impl Row {
 }
 
 fn statement(object: &str, sections: &str) -> String {
+    if object == EVERY {
+        return format!("*({sections})");
+    }
     let path = if object.contains(':') { "" } else { "/" };
     format!("\"*{path}{object}.o\"({sections})")
 }
@@ -106,8 +130,11 @@ fn row(line: &str) -> Result<Row, String> {
         return Err(format!("place {place:?} is not a lower-case name"));
     }
     let plain = |text: &str| !text.is_empty() && !text.contains(|c: char| c.is_whitespace() || "\"*(){};".contains(c));
-    if !plain(object) || object.ends_with(".o") {
+    if object != EVERY && (!plain(object) || object.ends_with(".o")) {
         return Err(format!("object {object:?} is not a path or archive member without .o"));
+    }
+    if image != MAIN && !OVERLAY_PLACES.contains(&place) {
+        return Err(format!("place {place:?} is not one of an overlay's: {}", OVERLAY_PLACES.join(" ")));
     }
     let sections = match fields.get(3).copied().unwrap_or("") {
         "" => DEFAULT_SECTIONS.to_owned(),
@@ -173,6 +200,86 @@ pub(crate) fn read(root: &Path, target: DecompTarget) -> Result<Option<Vec<Row>>
     };
     let text = fs::read_to_string(root.join(&path)).map_err(|error| format!("{}: {error}", path.display()))?;
     parse(&text).map(Some).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+/// The overlay table beside a game's list, games/<game>/overlays.tsv: for
+/// each overlay with uninitialized data, the header its `.bss` output
+/// section takes. A game whose overlays have none needs no table.
+pub(crate) fn read_bss(root: &Path, target: DecompTarget) -> Result<BTreeMap<String, String>, String> {
+    let Some(path) = target.object_list().map(|list| list.with_file_name("overlays.tsv")) else {
+        return Ok(BTreeMap::new());
+    };
+    match fs::read_to_string(root.join(&path)) {
+        Ok(text) => parse_bss(&text).map_err(|error| format!("{}: {error}", path.display())),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(BTreeMap::new()),
+        Err(error) => Err(format!("{}: {error}", path.display())),
+    }
+}
+
+pub(crate) fn parse_bss(text: &str) -> Result<BTreeMap<String, String>, String> {
+    let mut lines = text.lines().enumerate();
+    match lines.next() {
+        Some((_, BSS_HEADER)) => {}
+        _ => return Err(format!("line 1: the header is {BSS_HEADER:?}")),
+    }
+    let mut found = BTreeMap::new();
+    for (index, line) in lines {
+        let at = |error: String| format!("line {}: {error}", index + 1);
+        let Some((overlay, header)) = line.split_once('\t') else {
+            return Err(at("a row has an overlay and its .bss header".into()));
+        };
+        if !(overlay.len() == 3 && overlay.bytes().all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))) {
+            return Err(at(format!("{overlay:?} is no overlay id")));
+        }
+        // The forms Camelot's overlays show: an alignment, and whether the
+        // section is marked as never loaded.
+        let rest = header.strip_prefix(".bss").ok_or_else(|| at(format!("{header:?} is no .bss header")))?;
+        let rest = rest.strip_suffix(" (NOLOAD)").unwrap_or(rest);
+        if !matches!(rest, "" | " ALIGN(8)" | " ALIGN(16)") {
+            return Err(at(format!("{header:?} is not .bss, an optional ALIGN(8) or ALIGN(16), and an optional (NOLOAD)")));
+        }
+        if found.insert(overlay.to_owned(), header.to_owned()).is_some() {
+            return Err(at(format!("overlay {overlay} is given twice")));
+        }
+    }
+    Ok(found)
+}
+
+/// One edition's linker fragments for an overlay, which the shared
+/// overlay.ld includes: `extern` (the symbol that pulls the call-through-
+/// register member from libgcc, when a row links that member), `text` and
+/// `discard` (those places' statements) and `bss` (the whole `.bss` output
+/// section under the header the overlay table gives it, or nothing).
+pub(crate) fn overlay_fragments(
+    rows: &[Row],
+    bss: &BTreeMap<String, String>,
+    id: &str,
+    language: &str,
+) -> Result<Vec<(String, String)>, String> {
+    let mut places = render(rows, id, language);
+    if places.is_empty() {
+        return Err(format!("the object list has no row for overlay {id}"));
+    }
+    let mut take = |name: &str| {
+        places
+            .iter()
+            .position(|(place, _)| place == name)
+            .map_or(String::new(), |at| places.remove(at).1)
+    };
+    let (text, uninitialized, discard) = (take("text"), take("bss"), take("discard"));
+    let calls = rows.iter().any(|row| row.links(id, language) && row.object == CALL_VIA);
+    let section = match (bss.get(id), uninitialized.is_empty()) {
+        (Some(header), false) => format!("    {header} :\n    {{\n{uninitialized}    }}\n"),
+        (None, true) => String::new(),
+        (Some(_), true) => return Err(format!("overlay {id} has a .bss header in the overlay table and no bss row")),
+        (None, false) => return Err(format!("overlay {id} has bss rows and no .bss header in the overlay table")),
+    };
+    Ok(vec![
+        ("extern".to_owned(), if calls { "EXTERN(_call_via_r0)\n".to_owned() } else { String::new() }),
+        ("text".to_owned(), text),
+        ("bss".to_owned(), section),
+        ("discard".to_owned(), discard),
+    ])
 }
 
 /// One edition's linker fragments for an image: each place the list gives
@@ -266,7 +373,7 @@ pub(crate) fn apply(rows: &mut Vec<Row>, image: &str, language: &str, view: &str
         let mut new = Vec::new();
         for item in items {
             match item {
-                Item::Input(statement) if statement.object != "*" => new.push((statement.object, statement.sections)),
+                Item::Input(statement) => new.push((statement.object, statement.sections)),
                 other => return Err(format!("{place}: {other:?} is no object's line")),
             }
         }
@@ -427,22 +534,44 @@ fn run(root: &Path) -> Result<String, String> {
         let shown = list.display();
         failures.extend(repeats(&rows).into_iter().map(|found| format!("{shown}: {found}")));
         let mut sourced = BTreeSet::new();
-        for row in rows.iter().filter(|row| row.built() && sourced.insert(row.object.as_str())) {
+        for row in rows.iter().filter(|row| row.built() && sourced.insert((row.image.as_str(), row.object.as_str()))) {
+            // An overlay's own data and bss are resource_<id>_overlay.o, which
+            // the build assembles from ovl_<id>.s, or empty without one.
+            if row.image != MAIN && row.object == format!("resource_{}_overlay", row.image) {
+                continue;
+            }
             if let Err(error) = crate::build_rom::source_for(root, &row.object) {
                 failures.push(format!("{shown}: {error}"));
             }
         }
-        if let Some(row) = rows.iter().find(|row| row.image != MAIN) {
-            return Err(format!("{shown}: overlay {} has rows, and only the main image links by the list", row.image));
-        }
+        let images = images(&rows);
+        let bss = read_bss(root, first)?;
+        failures.extend(
+            bss.keys()
+                .filter(|overlay| !images.contains(overlay))
+                .map(|overlay| format!("{shown}: the overlay table has overlay {overlay}, and the list no row for it")),
+        );
         for id in game {
             let target = target_for(*id);
-            let script = crate::edition::image_script(root, target, Image::Main)?;
-            let found = disagreements(&rows, MAIN, target.language(), &script)
-                .map_err(|error| format!("{}: {error}", target.script().display()))?;
-            failures.extend(found.into_iter().map(|found| format!("{id} {found} in {}", target.script().display())));
+            for name in &images {
+                let image = if name == MAIN { Image::Main } else { Image::Overlay(name) };
+                let script = match crate::edition::image_script(root, target, image) {
+                    Ok(script) => script,
+                    Err(error) => {
+                        failures.push(format!("{id} {name}: {error}"));
+                        continue;
+                    }
+                };
+                let found = disagreements(&rows, name, target.language(), &script)
+                    .map_err(|error| format!("{id} {name}: {error}"))?;
+                failures.extend(found.into_iter().map(|found| format!("{id} {name} {found}")));
+            }
         }
-        summary.push(format!("{shown}: {} rows, each linked where {} includes its place", rows.len(), first.script().display()));
+        summary.push(format!(
+            "{shown}: {} rows of {} images, each linked where its script includes its place",
+            rows.len(),
+            images.len()
+        ));
     }
     if !failures.is_empty() {
         return Err(format!("the object list is not what the build can link:\n{}", failures.join("\n")));
@@ -485,7 +614,9 @@ fn disagreements(rows: &[Row], image: &str, language: &str, script: &str) -> Res
     for (place, fragment) in render(rows, image, language) {
         // Read the fragment back as the linker would, inside a section.
         let wrapped = format!("SECTIONS\n{{\n    fragment :\n    {{\n{fragment}    }}\n}}\n");
-        let statements = crate::edition::statements(&wrapped).map_err(|error| format!("{place}: {error}"))?;
+        let mut statements = crate::edition::statements(&wrapped).map_err(|error| format!("{place}: {error}"))?;
+        // `places` leaves out a pattern for every object.
+        statements.retain(|statement| statement.object != EVERY);
         listed.insert(place, statements);
     }
     let known: BTreeSet<&str> = scripted.iter().map(|(place, _)| place.as_str()).collect();
@@ -706,6 +837,72 @@ mod tests {
         // A line that is no object's is refused, and the rows stay.
         assert!(apply(&mut rows, MAIN, "en", "rom_start :\n{\n    . = ABSOLUTE(0x08009000);\n}\n").is_err());
         assert!(apply(&mut rows, MAIN, "pt", "").is_err());
+    }
+
+    #[test]
+    fn an_overlay_has_its_extern_text_bss_and_discard_fragments() {
+        let rows = parse(&list(
+            "3ad\ttext\tgames/g/a\t.text\n\
+             3ad\ttext\tlibgcc.a:_call_via_rX\t.text\n\
+             3ad\ttext\tgames/g/data\t.data\n\
+             3ad\tbss\tresource_3ad_overlay\t.bss\n\
+             3ad\tbss\t*\t.bss COMMON\n\
+             3ad\tdiscard\tgames/g/spawn\t.text.resident\n\
+             3ae\ttext\tgames/g/b\t.text\n",
+        ))
+        .unwrap();
+        assert_eq!(format(&rows).lines().nth(5), Some("3ad\tbss\t*\t.bss COMMON"));
+        let bss = parse_bss("overlay\tbss\n3ad\t.bss ALIGN(16) (NOLOAD)\n").unwrap();
+        let fragment = |name: &str, text: &str| (name.to_owned(), text.to_owned());
+        assert_eq!(
+            overlay_fragments(&rows, &bss, "3ad", "en").unwrap(),
+            [
+                fragment("extern", "EXTERN(_call_via_r0)\n"),
+                fragment(
+                    "text",
+                    "    \"*/games/g/a.o\"(.text)\n    \"*libgcc.a:_call_via_rX.o\"(.text)\n    \"*/games/g/data.o\"(.data)\n"
+                ),
+                fragment(
+                    "bss",
+                    "    .bss ALIGN(16) (NOLOAD) :\n    {\n    \"*/resource_3ad_overlay.o\"(.bss)\n    *(.bss COMMON)\n    }\n"
+                ),
+                fragment("discard", "    \"*/games/g/spawn.o\"(.text.resident)\n"),
+            ]
+        );
+        // An overlay with neither still has all four, for overlay.ld to include.
+        assert_eq!(
+            overlay_fragments(&rows, &bss, "3ae", "en").unwrap(),
+            [
+                fragment("extern", ""),
+                fragment("text", "    \"*/games/g/b.o\"(.text)\n"),
+                fragment("bss", ""),
+                fragment("discard", ""),
+            ]
+        );
+        assert!(overlay_fragments(&rows, &bss, "3af", "en").unwrap_err().contains("no row for overlay 3af"));
+        assert!(overlay_fragments(&rows, &BTreeMap::new(), "3ad", "en").unwrap_err().contains("no .bss header"));
+        let both = parse_bss("overlay\tbss\n3ad\t.bss\n3ae\t.bss (NOLOAD)\n").unwrap();
+        assert!(overlay_fragments(&rows, &both, "3ae", "en").unwrap_err().contains("no bss row"));
+        // The edited view of an overlay keeps its pattern for every object.
+        let mut edited = rows.clone();
+        apply(&mut edited, "3ad", "en", &view(&rows, "3ad", "en")).unwrap();
+        assert_eq!(edited, rows);
+    }
+
+    #[test]
+    fn the_overlay_table_takes_the_bss_headers_the_overlays_show() {
+        let table = parse_bss("overlay\tbss\n36f\t.bss (NOLOAD)\n3a7\t.bss\n3b0\t.bss ALIGN(8)\n3ce\t.bss ALIGN(16) (NOLOAD)\n").unwrap();
+        assert_eq!(table["3b0"], ".bss ALIGN(8)");
+        assert_eq!(table.len(), 4);
+        let refused = |rows: &str| parse_bss(&format!("{BSS_HEADER}\n{rows}")).unwrap_err();
+        assert!(refused("36f\t.data\n").contains("no .bss header"));
+        assert!(refused("36f\t.bss 0x2010000\n").contains("ALIGN(8)"));
+        assert!(refused("36f\t.bss ALIGN(4)\n").contains("ALIGN(8)"));
+        assert!(refused("36F\t.bss\n").contains("no overlay id"));
+        assert!(refused("36f\n").contains("its .bss header"));
+        assert!(refused("36f\t.bss\n36f\t.bss (NOLOAD)\n").contains("twice"));
+        assert!(parse_bss("36f\t.bss\n").unwrap_err().contains("header"));
+        assert!(parse(&list("3ad\trom_start\tgames/g/a\n")).unwrap_err().contains("not one of an overlay's"));
     }
 
     #[test]

@@ -172,6 +172,7 @@ impl Linked {
         for id in TARGET_IDS {
             let target = target_for(id);
             let main = target.script();
+            let overlay_ids = crate::edition::overlay_ids(root, target)?;
             let statements =
                 crate::edition::linked_statements(root, target, crate::edition::Image::Main)?;
             let mut reached = BTreeSet::new();
@@ -235,7 +236,7 @@ impl Linked {
                 for capture in overlays.captures_iter(&text) {
                     let id = &capture[1];
                     let script = target.overlay_script(id);
-                    if !root.join(&script).is_file() {
+                    if !root.join(&script).is_file() || !overlay_ids.iter().any(|known| known.eq_ignore_ascii_case(id)) {
                         continue;
                     }
                     let statements = crate::edition::linked_statements(

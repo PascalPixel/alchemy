@@ -227,16 +227,11 @@ pub(crate) fn overlay_text(text: &str) -> String {
     out
 }
 
-pub(crate) fn overlay_script(
-    root: &Path,
-    script: &Path,
-    directory: &Path,
-    id: &str,
-) -> Result<PathBuf, String> {
-    let text = fs::read_to_string(root.join(script))
-        .map_err(|error| format!("{}: {error}", script.display()))?;
+/// Write the modern script of an overlay from its script's text as the
+/// linker reads it, an object list's fragments in place.
+pub(crate) fn overlay_script(text: &str, directory: &Path, id: &str) -> Result<PathBuf, String> {
     let path = directory.join(format!("resource_{id}.modern.ld"));
-    write_if_changed(&path, &overlay_text(&text))?;
+    write_if_changed(&path, &overlay_text(text))?;
     Ok(path)
 }
 

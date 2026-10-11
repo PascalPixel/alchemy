@@ -176,14 +176,44 @@ pub(crate) fn listed(root: &Path, target: DecompTarget, image: Image) -> Result<
     let Some(list) = crate::object_list::read(root, target)? else {
         return Ok(None);
     };
-    Ok(match image {
-        Image::Main => Some(Listed {
+    Ok(Some(match image {
+        Image::Main => Listed {
             script: target.script(),
             fragments: crate::object_list::render(&list, crate::object_list::MAIN, target.language()),
             directory: PathBuf::from("ld"),
-        }),
-        Image::Overlay(_) => None,
-    })
+        },
+        Image::Overlay(id) => {
+            let id = id.to_ascii_lowercase();
+            let bss = crate::object_list::read_bss(root, target)?;
+            Listed {
+                script: target.overlay_script(&id),
+                fragments: crate::object_list::overlay_fragments(&list, &bss, &id, target.language())?,
+                directory: Path::new("ld").join(&id),
+            }
+        }
+    }))
+}
+
+/// The overlays an edition's game links, by resource id: those its object
+/// list has rows for, or those with a script among its overlay listings.
+pub(crate) fn overlay_ids(root: &Path, target: DecompTarget) -> Result<Vec<String>, String> {
+    if let Some(list) = crate::object_list::read(root, target)? {
+        return Ok(crate::object_list::images(&list)
+            .into_iter()
+            .filter(|image| image != crate::object_list::MAIN)
+            .collect());
+    }
+    let directory = root.join(target.overlay_dir);
+    let mut ids: Vec<String> = fs::read_dir(&directory)
+        .map_err(|error| format!("{}: {error}", directory.display()))?
+        .flatten()
+        .filter_map(|entry| {
+            let name = entry.file_name().to_string_lossy().into_owned();
+            Some(name.strip_suffix(".ld")?.strip_prefix("resource_")?.to_owned())
+        })
+        .collect();
+    ids.sort();
+    Ok(ids)
 }
 
 /// The linker script text an image links by, as the linker reads it: a
@@ -593,17 +623,7 @@ mod tests {
             let linked = linked_statements(root, target, Image::Main).unwrap();
             assert!(linked.len() > 1000, "{id}");
             assert_eq!(built_objects(&linked), quoted_objects(&text), "{id}");
-            let mut scripts: Vec<_> = fs::read_dir(root.join(target.overlay_dir))
-                .unwrap()
-                .flatten()
-                .map(|entry| entry.file_name().to_string_lossy().into_owned())
-                .filter_map(|name| {
-                    let stem = name.strip_suffix(".ld")?;
-                    let id = stem.strip_prefix("ovl_").or(stem.strip_prefix("resource_"))?;
-                    Some(id.to_owned())
-                })
-                .collect();
-            scripts.sort();
+            let scripts = overlay_ids(root, target).unwrap();
             for overlay in &scripts {
                 let image = Image::Overlay(overlay);
                 assert!(root.join(target.overlay_script(overlay)).is_file(), "{id} {overlay}");

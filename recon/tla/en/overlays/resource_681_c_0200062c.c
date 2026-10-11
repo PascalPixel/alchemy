@@ -1,23 +1,24 @@
+/* Near miss (7 instructions differ, order only): the native loads the
+ * 0xfffff800 literal before it shifts the first random value, and stores
+ * scale_y before it builds 0xfff. */
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#include "object_runtime.h"
+#include "field_sprite.h"
 
-#include "call.h"
-s32 Random16Far();
+extern const u8 Data_020050d0[];
 
-void Func_0200062c(s32 a0)
+u32 Random16Far(void);
+struct ObjectRuntime *Object_GetById(s32 id);
+struct ObjectRuntime *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void Func_02004dac(struct ObjectRuntime *object, const u8 *script);
+
+void Func_0200062c(struct ObjectRuntime *object)
 {
-    s32 t0;
-    s32 t1;
-
-    t0 = Random16Far();
-    FIELD_AT(a0, s32, 24) = ((FIELD_AT(a0, s32, 24) + ((u32)(t0 << 12) >> 16)) + -2048);
-    t1 = Random16Far();
-    FIELD_AT(a0, s32, 28) = ((FIELD_AT(a0, s32, 28) + ((u32)(t1 << 12) >> 16)) + -2048);
-    if (FIELD_AT(a0, s32, 24) <= 0xfff) {
-        FIELD_AT(a0, s32, 24) = 0x2000;
-    }
-    if (FIELD_AT(a0, s32, 28) <= 0xfff) {
-        FIELD_AT(a0, s32, 28) = 0x2000;
-    }
+    object->scale_x = object->scale_x + ((Random16Far() << 12) >> 16) - 0x800;
+    object->scale_y = object->scale_y + ((Random16Far() << 12) >> 16) - 0x800;
+    if (object->scale_x < 0x1000)
+        object->scale_x = 0x2000;
+    if (object->scale_y < 0x1000)
+        object->scale_y = 0x2000;
 }
-

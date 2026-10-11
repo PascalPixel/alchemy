@@ -1,19 +1,29 @@
+/* Near miss, differ 6: the listing loads object->y and object->scale_x before
+ * it builds 0x8000 and 0x51e; this draft builds each constant first. */
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
-#include "call.h"
-s32 Func_020043e4();
+struct RisingObject {
+    u8 unknown_00[8];
+    s32 x;
+    s32 y;
+    u8 unknown_10[8];
+    s32 scale_x;
+    s32 scale_y;
+    u8 unknown_20[0x44];
+    s16 drift;
+    u8 unknown_66[2];
+    s32 life;
+};
 
-void Func_0200181c(s32 a0)
+void Func_020043e4(struct RisingObject *object);
+
+void Func_0200181c(struct RisingObject *object)
 {
-    FIELD_AT(a0, s32, 8) = (FIELD_AT(a0, s32, 8) + (FIELD_AT((a0 + 0x64), s16, 0) << 8));
-    FIELD_AT(a0, s32, 12) = (FIELD_AT(a0, s32, 12) + 0x8000);
-    FIELD_AT(a0, s32, 24) = (FIELD_AT(a0, s32, 24) + 0x51e);
-    FIELD_AT(a0, s32, 28) = (FIELD_AT(a0, s32, 28) + 0x51e);
-    FIELD_AT((a0 + 0x64), u16, 0) = (FIELD_AT((a0 + 0x64), u16, 0) + 2);
-    FIELD_AT(a0, s32, 104) = (FIELD_AT(a0, s32, 104) - 1);
-    if ((FIELD_AT(a0, s32, 104) - 1) == 0) {
-        Func_020043e4();
-    }
+    object->x += object->drift << 8;
+    object->y += 0x8000;
+    object->scale_x += 0x51e;
+    object->scale_y += 0x51e;
+    object->drift += 2;
+    if (--object->life == 0)
+        Func_020043e4(object);
 }
-

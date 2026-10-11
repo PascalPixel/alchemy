@@ -5,9 +5,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_69f/entry.o"(.text)
         "*/games/tla/src/field/overlay_69f/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_69f/step_check.o"(.text)
-        "*/resource_69f_overlay.o"(.text.x020080b4)
-        "*/resource_69f_overlay.o"(.text.x02008108)
-        "*/resource_69f_overlay.o"(.text.x02008154)
+        "*/games/tla/src/field/overlay_69f/s00b4.o"(.text)
         "*/games/tla/src/field/overlay_69f/wait.o"(.text)
         "*/games/tla/src/field/overlay_69f/scene_events.o"(.text)
         "*/resource_69f_overlay.o"(.text.x020081e8)
@@ -16,7 +14,7 @@ SECTIONS
         "*/resource_69f_overlay.o"(.text.x020082da)
         "*/games/tla/src/field/overlay_69f/set_value.o"(.text)
         "*/resource_69f_overlay.o"(.text.x020082e8)
-        "*/resource_69f_overlay.o"(.text.x020083a4)
+        "*/games/tla/src/field/overlay_69f/lightset.o"(.text)
         "*/resource_69f_overlay.o"(.text.x02008428)
         "*/resource_69f_overlay.o"(.text.x0200847c)
         "*/games/tla/src/field/overlay_69f/distance.o"(.text)
@@ -25,9 +23,7 @@ SECTIONS
         "*/resource_69f_overlay.o"(.text.x0200892c)
         "*/resource_69f_overlay.o"(.text.x020089cc)
         "*/resource_69f_overlay.o"(.text.x02008b5c)
-        "*/resource_69f_overlay.o"(.text.x02008d18)
-        "*/resource_69f_overlay.o"(.text.x02008d98)
-        "*/resource_69f_overlay.o"(.text.x02008e18)
+        "*/games/tla/src/field/overlay_69f/light.o"(.text)
         "*/games/tla/src/field/overlay_69f/list.o"(.text)
         "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/resource_69f_overlay.o"(.text.x02008f22)
@@ -46,6 +42,7 @@ SECTIONS
         "*/resource_69f_overlay.o"(.text.x0200996c)
         "*/games/tla/src/field/overlay_69f/import.o"(.text)
         "*/resource_69f_overlay.o"(.rodata.x02009bf4)
+        "*/games/tla/src/field/overlay_69f/data.o"(.data)
     }
     .bss : { "*/resource_69f_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

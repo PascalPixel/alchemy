@@ -23,6 +23,7 @@ SECTIONS
         "*/games/tla/src/field/vinasu_iriguchi/sparks.o"(.text)
         "*/games/tla/src/field/vinasu_iriguchi/import.o"(.text)
         "*/resource_64d_overlay.o"(.rodata.x0200aa6c)
+        "*/games/tla/src/field/vinasu_iriguchi/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

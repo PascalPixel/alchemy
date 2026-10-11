@@ -1,105 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008054,"ax",%progbits
-	.global Func_02000054
-	.thumb_func
-Func_02000054:
-	push {lr}
-	movs r0, #8
-	movs r1, #0
-	movs r2, #0
-	bl Func_020005c8
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x02008064,"ax",%progbits
-	.global Func_02000064
-	.thumb_func
-Func_02000064:
-	push {lr}
-	cmp r0, #1
-	bne .L_02008074
-	movs r0, #8
-	movs r1, #0
-	movs r2, #0
-	bl Func_020005c8
-.L_02008074:
-	pop {pc}
-	.2byte 0x0000
-	.global Data_02000078
-Data_02000078:
-	.4byte 0x00004770
-	.section .text.x0200807c,"ax",%progbits
-	.global Func_0200007c
-	.thumb_func
-Func_0200007c:
-	push {lr}
-	movs r0, #9
-	movs r1, #3
-	bl Object_SetModeById
-	pop {pc}
-	.section .text.x02008088,"ax",%progbits
-	.global Func_02000088
-	.thumb_func
-Func_02000088:
-	push {r5, lr}
-	sub sp, #8
-	cmp r0, #1
-	bne .L_020080b4
-	movs r5, #34
-	str r0, [sp, #4]
-	movs r1, #1
-	movs r0, #49
-	movs r2, #1
-	movs r3, #2
-	str r5, [sp, #0]
-	bl Func_020005b0
-	movs r3, #3
-	str r3, [sp, #4]
-	movs r0, #49
-	movs r1, #1
-	movs r2, #1
-	movs r3, #2
-	str r5, [sp, #0]
-	bl Func_020005a8
-.L_020080b4:
-	add sp, #8
-	pop {r5, pc}
-	.section .text.x020080b8,"ax",%progbits
-	.global Func_020000b8
-	.thumb_func
-Func_020000b8:
-	push {lr}
-	movs r0, #136
-	lsls r0, r0, #2
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_020080d6
-	movs r0, #136
-	lsls r0, r0, #2
-	bl GameFlag_SetBit
-	movs r0, #14
-	movs r1, #0
-	bl Func_020005d8
-.L_020080d6:
-	pop {pc}
-	.section .text.x020080d8,"ax",%progbits
-	.global Func_020000d8
-	.thumb_func
-Func_020000d8:
-	push {r5, lr}
-	bl Object_GetById
-	adds r5, r0, #0
-	bl Func_0200029c
-	ldr r0, [r5, #8]
-	ldr r1, [r5, #12]
-	ldr r2, [r5, #16]
-	movs r3, #20
-	bl Func_020001e0
-	movs r0, #20
-	bl WaitFrames
-	bl Func_02000358
-	pop {r5, pc}
 	.section .text.x02008104,"ax",%progbits
+	.balign 4
 	.global Func_02000104
 	.thumb_func
 Func_02000104:
@@ -399,52 +301,8 @@ Func_0200029c:
 	.4byte 0x000001f0
 .L_02008354:
 	.4byte Func_0200015c
-	.section .text.x02008358,"ax",%progbits
-	.global Func_02000358
-	.thumb_func
-Func_02000358:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	adds r3, #220
-	ldr r0, .L_02008380
-	ldr r5, [r3]
-	bl Scheduler_RemoveCallbackFar
-	movs r3, #176
-	lsls r3, r3, #5
-	adds r3, #4
-	adds r5, r5, r3
-	movs r3, #0
-	ldrsh r0, [r5, r3]
-	bl Resource_ResetEntry
-	movs r0, #220
-	bl Runtime_ReleaseHeapBlock
-	pop {r5, pc}
-.L_02008380:
-	.4byte Func_0200015c
-	.section .text.x02008384,"ax",%progbits
-	.global Func_02000384
-	.thumb_func
-Func_02000384:
-	push {lr}
-	sub sp, #8
-	adds r4, r3, #0
-	cmp r0, #1
-	bne .L_020083a2
-	ldr r3, [sp, #16]
-	adds r0, r1, #0
-	str r3, [sp, #0]
-	ldr r3, [sp, #20]
-	adds r1, r2, #0
-	str r3, [sp, #4]
-	adds r2, r4, #0
-	ldr r3, [sp, #12]
-	bl Func_020005a0
-.L_020083a2:
-	add sp, #8
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x020083a8,"ax",%progbits
+	.balign 4
 	.global Func_020003a8
 	.thumb_func
 Func_020003a8:
@@ -505,49 +363,9 @@ Func_020003a8:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x02008418,"ax",%progbits
-	.global Func_02000418
-	.thumb_func
-Func_02000418:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r8
-	push {r6, r7}
-	adds r7, r1, #0
-	mov r10, r0
-	adds r0, r7, #0
-	mov r8, r3
-	adds r5, r2, #0
-	bl Object_GetById
-	mov r3, r10
-	adds r6, r0, #0
-	cmp r3, #2
-	bne .L_0200845e
-	mov r3, r8
-	lsls r2, r3, #16
-	adds r0, r7, #0
-	lsls r1, r5, #16
-	bl Func_020005c8
-	movs r3, #128
-	lsls r3, r3, #14
-	adds r2, r6, #0
-	str r3, [r6, #12]
-	adds r2, #85
-	movs r3, #3
-	strb r3, [r2]
-	movs r3, #184
-	lsls r3, r3, #5
-	adds r3, #10
-	str r3, [r6, #72]
-	movs r0, #50
-	bl WaitFrames
-.L_0200845e:
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
 	.section .text.x02008468,"ax",%progbits
+	.balign 4
+	.balign 4
 	.global Func_02000468
 	.thumb_func
 Func_02000468:
@@ -643,96 +461,3 @@ Func_02000468:
 	.2byte 0x0000
 .L_02008524:
 	.4byte gPartyState
-	.section .rodata.x02008608,"a",%progbits
-	.global gSceneEntrances
-gSceneEntrances:
-	.4byte 0xffff0000
-	.4byte 0x00000198
-	.4byte 0x40000058
-	.4byte 0x01180000
-	.4byte 0x030c0000
-	.4byte 0x000001d0
-	.4byte 0xffff0001
-	.4byte 0x00000198
-	.4byte 0xc0000198
-	.4byte 0x01180000
-	.4byte 0x030c0000
-	.4byte 0x000001d0
-	.4byte 0xffff0002
-	.4byte 0x000001f8
-	.4byte 0x400000e8
-	.4byte 0x01180000
-	.4byte 0x030c0000
-	.4byte 0x000001d0
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global gSceneExits
-gSceneExits:
-	.4byte 0x00000142
-	.4byte 0x01402142
-	.4byte 0x000001ff
-	.global gScenePlacements
-gScenePlacements:
-	.4byte 0xffff0132
-	.4byte 0x00000001
-	.4byte 0x01780000
-	.4byte 0x00000000
-	.4byte 0x00680000
-	.4byte 0x00024000
-	.4byte 0xffff0196
-	.4byte 0x00000001
-	.4byte 0x01f80000
-	.4byte 0x00000000
-	.4byte 0x00f80000
-	.4byte 0x00024000
-	.4byte 0xffff0197
-	.4byte 0x00000001
-	.4byte 0x01680000
-	.4byte 0x00000000
-	.4byte 0x00680000
-	.4byte 0x00024000
-	.4byte 0xffff0197
-	.4byte 0x00000001
-	.4byte 0x01e80000
-	.4byte 0x00000000
-	.4byte 0x00880000
-	.4byte 0x01024000
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global gSceneEvents
-gSceneEvents:
-	.4byte 0x00000000
-	.4byte 0xffff0009
-	.4byte Func_020000d8
-	.4byte 0x00000002
-	.4byte 0xffff001e
-	.4byte Func_020000b8
-	.4byte 0x00002115
-	.4byte 0xffff0008
-	.4byte Func_02000054
-	.4byte 0x50008615
-	.4byte 0xffff0008
-	.4byte Func_02000064
-	.4byte 0x00008715
-	.4byte 0xffff0009
-	.4byte Data_02000078 + 0x1
-	.4byte 0x00009815
-	.4byte 0xffff0009
-	.4byte Func_0200007c
-	.4byte 0x00008515
-	.4byte 0xffff000a
-	.4byte 0x00000000
-	.4byte 0x50009705
-	.4byte 0xffff0032
-	.4byte Func_02000088
-	.4byte 0xffffffff
-	.4byte 0x00000000
-	.4byte 0x00000000

@@ -1,0 +1,21 @@
+#include "types.h"
+#include "party_state.h"
+#include "scene_ids.h"
+
+extern const u8 Data_02002200[];
+extern const u8 Data_02002218[];
+extern const u8 Data_02002320[];
+extern const u8 Data_02002458[];
+
+const u8 *Func_02000360(void)
+{
+    s16 scene = gPartyState.scene;
+
+    if (scene == (s32)&SceneId_Ov679Room1)
+        return Data_02002218;
+    if (scene == (s32)&SceneId_Ov679Room3)
+        return Data_02002320;
+    if (scene == (s32)&SceneId_Ov679Room2)
+        return Data_02002458;
+    return Data_02002200;
+}

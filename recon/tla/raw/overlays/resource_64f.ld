@@ -16,7 +16,7 @@ SECTIONS
         "*/resource_64f_overlay.o"(.text.x020085e8)
         "*/games/tla/src/field/suhara_gate/events_c.o"(.text)
         "*/games/tla/src/field/suhara_gate/import.o"(.text)
-        "*/resource_64f_overlay.o"(.rodata.x02008aa8)
+        "*/games/tla/src/field/suhara_gate/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

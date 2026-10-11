@@ -12,8 +12,6 @@ SECTIONS
         "*/resource_663_overlay.o"(.text.x0200815a)
         "*/resource_663_overlay.o"(.text.x0200815c)
         "*/games/tla/src/field/overlay_663/s033c.o"(.text)
-        "*/resource_663_overlay.o"(.text.x02008348)
-        "*/resource_663_overlay.o"(.text.x02008384)
         "*/games/tla/src/field/common/object/wait_until_idle.o"(.text)
         "*/resource_663_overlay.o"(.text.x020083e8)
         "*/resource_663_overlay.o"(.text.x02008468)
@@ -38,7 +36,7 @@ SECTIONS
         "*/resource_663_overlay.o"(.text.x02008f9c)
         "*/resource_663_overlay.o"(.text.x02009010)
         "*/resource_663_overlay.o"(.text.x02009560)
-        "*/resource_663_overlay.o"(.text.x020098ac)
+        "*/games/tla/src/field/overlay_663/s18ac.o"(.text)
         "*/resource_663_overlay.o"(.text.x020098d8)
         "*/resource_663_overlay.o"(.text.x02009908)
         "*/resource_663_overlay.o"(.text.x02009b54)
@@ -55,7 +53,7 @@ SECTIONS
         "*/resource_663_overlay.o"(.text.x0200aca0)
         "*/games/tla/src/field/overlay_663/s3a7c.o"(.text)
         "*/games/tla/src/field/overlay_663/import.o"(.text)
-        "*/resource_663_overlay.o"(.rodata.x0200bce0)
+        "*/games/tla/src/field/overlay_663/data.o"(.data)
     }
     .bss : { "*/resource_663_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

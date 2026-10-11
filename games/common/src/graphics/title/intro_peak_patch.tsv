@@ -1,0 +1,5 @@
+position	pack	ship	proof
+85224	0x00	0x89	literal: 246 of 255 stand-ins reproduce the stream; this is the lowest
+85239	0x01	0xbc	literal: 254 of 255 stand-ins reproduce the stream; this is the lowest
+85240	0x00	0x94	literal: 249 of 255 stand-ins reproduce the stream; this is the lowest
+85264	0x00	0xbc	literal: 251 of 255 stand-ins reproduce the stream; this is the lowest

@@ -68,7 +68,7 @@ SECTIONS
         "*/resource_6ac_overlay.o"(.text.x0200afe0)
         "*/games/tla/src/field/overlay_6ac/reset.o"(.text)
         "*/games/tla/src/field/overlay_6ac/import.o"(.text)
-        "*/resource_6ac_overlay.o"(.rodata.x0200b2c8)
+        "*/games/tla/src/field/overlay_6ac/data.o"(.data)
     }
     .bss : { "*/resource_6ac_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

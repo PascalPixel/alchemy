@@ -3,18 +3,14 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/field/overlay_685/entry.o"(.text)
-        "*/resource_685_overlay.o"(.text.x02008038)
+        "*/games/tla/src/field/overlay_685/s0038.o"(.text)
         "*/games/tla/src/field/overlay_685/scene_tables.o"(.text)
         "*/resource_685_overlay.o"(.text.x02008070)
-        "*/resource_685_overlay.o"(.text.x0200816c)
-        "*/resource_685_overlay.o"(.text.x020081f4)
+        "*/games/tla/src/field/overlay_685/warp.o"(.text)
         "*/resource_685_overlay.o"(.text.x02008208)
-        "*/resource_685_overlay.o"(.text.x02008304)
-        "*/resource_685_overlay.o"(.text.x02008350)
-        "*/resource_685_overlay.o"(.text.x0200838c)
-        "*/resource_685_overlay.o"(.text.x020083bc)
+        "*/games/tla/src/field/overlay_685/events.o"(.text)
         "*/resource_685_overlay.o"(.text.x020083ec)
-        "*/resource_685_overlay.o"(.text.x02008464)
+        "*/games/tla/src/field/overlay_685/s0464.o"(.text)
         "*/resource_685_overlay.o"(.text.x02008478)
         "*/resource_685_overlay.o"(.text.x020084d4)
         "*/games/tla/src/field/overlay_685/prepare.o"(.text)
@@ -25,7 +21,7 @@ SECTIONS
         "*/resource_685_overlay.o"(.text.x02008978)
         "*/resource_685_overlay.o"(.text.x02008a34)
         "*/resource_685_overlay.o"(.text.x02008f48)
-        "*/resource_685_overlay.o"(.text.x02009138)
+        "*/games/tla/src/field/overlay_685/s1138.o"(.text)
         "*/resource_685_overlay.o"(.text.x0200915c)
         "*/resource_685_overlay.o"(.text.x02009774)
         "*/resource_685_overlay.o"(.text.x02009868)
@@ -39,7 +35,9 @@ SECTIONS
         "*/resource_685_overlay.o"(.text.x0200b20c)
         "*/resource_685_overlay.o"(.text.x0200b2a4)
         "*/games/tla/src/field/overlay_685/import.o"(.text)
-        "*/resource_685_overlay.o"(.rodata.x0200b634)
+        "*/games/tla/src/field/overlay_685/data.o"(.data)
+        "*/resource_685_overlay.o"(.rodata.x0200b640)
+        "*/games/tla/src/field/overlay_685/data2.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

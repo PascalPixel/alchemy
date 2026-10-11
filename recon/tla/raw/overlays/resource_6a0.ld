@@ -29,7 +29,7 @@ SECTIONS
         "*/resource_6a0_overlay.o"(.text.x0200915a)
         "*/games/tla/src/field/overlay_6a0/set_value.o"(.text)
         "*/resource_6a0_overlay.o"(.text.x02009168)
-        "*/resource_6a0_overlay.o"(.text.x02009224)
+        "*/games/tla/src/field/overlay_6a0/lightset.o"(.text)
         "*/resource_6a0_overlay.o"(.text.x020092a8)
         "*/resource_6a0_overlay.o"(.text.x020092fc)
         "*/games/tla/src/field/overlay_6a0/distance.o"(.text)
@@ -41,9 +41,7 @@ SECTIONS
         "*/resource_6a0_overlay.o"(.text.x02009a48)
         "*/resource_6a0_overlay.o"(.text.x02009acc)
         "*/resource_6a0_overlay.o"(.text.x02009b74)
-        "*/resource_6a0_overlay.o"(.text.x02009d30)
-        "*/resource_6a0_overlay.o"(.text.x02009db0)
-        "*/resource_6a0_overlay.o"(.text.x02009e30)
+        "*/games/tla/src/field/overlay_6a0/light.o"(.text)
         "*/games/tla/src/field/overlay_6a0/list.o"(.text)
         "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/resource_6a0_overlay.o"(.text.x02009f3a)
@@ -61,7 +59,9 @@ SECTIONS
         "*/resource_6a0_overlay.o"(.text.x0200a8d4)
         "*/resource_6a0_overlay.o"(.text.x0200a984)
         "*/games/tla/src/field/overlay_6a0/import.o"(.text)
-        "*/resource_6a0_overlay.o"(.rodata.x0200ac64)
+        "*/games/tla/src/field/overlay_6a0/data.o"(.data)
+        "*/resource_6a0_overlay.o"(.rodata.x0200ac9c)
+        "*/games/tla/src/field/overlay_6a0/data2.o"(.data)
     }
     .bss : { "*/resource_6a0_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

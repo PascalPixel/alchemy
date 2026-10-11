@@ -12,7 +12,7 @@ SECTIONS
         "*/resource_69d_overlay.o"(.text.x020084fc)
         "*/games/tla/src/field/common/scene_set_arrival_flags.o"(.text)
         "*/resource_69d_overlay.o"(.text.x020085d6)
-        "*/resource_69d_overlay.o"(.text.x020085d8)
+        "*/games/tla/src/field/overlay_69d/s05d8.o"(.text)
         "*/resource_69d_overlay.o"(.text.x020085e4)
         "*/games/tla/src/field/overlay_69d/lightset.o"(.text)
         "*/resource_69d_overlay.o"(.text.x02008778)
@@ -41,6 +41,7 @@ SECTIONS
         "*/resource_69d_overlay.o"(.text.x02009c68)
         "*/games/tla/src/field/overlay_69d/import.o"(.text)
         "*/resource_69d_overlay.o"(.rodata.x02009f10)
+        "*/games/tla/src/field/overlay_69d/data.o"(.data)
     }
     .bss : { "*/resource_69d_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

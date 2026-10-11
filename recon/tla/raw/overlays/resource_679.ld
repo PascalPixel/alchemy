@@ -11,7 +11,7 @@ SECTIONS
         "*/resource_679_overlay.o"(.text.x0200815a)
         "*/resource_679_overlay.o"(.text.x0200815c)
         "*/games/tla/src/field/overlay_679/scene_tables.o"(.text)
-        "*/resource_679_overlay.o"(.text.x02008360)
+        "*/games/tla/src/field/overlay_679/s0360.o"(.text)
         "*/games/tla/src/field/overlay_679/events_a.o"(.text)
         "*/resource_679_overlay.o"(.text.x020083e8)
         "*/resource_679_overlay.o"(.text.x02008540)
@@ -20,7 +20,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_679/events_c.o"(.text)
         "*/resource_679_overlay.o"(.text.x020087a4)
         "*/games/tla/src/field/overlay_679/events_d.o"(.text)
-        "*/resource_679_overlay.o"(.text.x02008d90)
+        "*/games/tla/src/field/overlay_679/s0d90.o"(.text)
         "*/games/tla/src/field/overlay_679/events_e.o"(.text)
         "*/resource_679_overlay.o"(.text.x02008ef8)
         "*/resource_679_overlay.o"(.text.x02008f58)
@@ -44,7 +44,8 @@ SECTIONS
         "*/resource_679_overlay.o"(.text.x02009ad8)
         "*/games/tla/src/field/overlay_679/events_j.o"(.text)
         "*/games/tla/src/field/overlay_679/import.o"(.text)
-        "*/resource_679_overlay.o"(.rodata.x02009e34)
+        "*/games/tla/src/field/overlay_679/data.o"(.data)
+        "*/resource_679_overlay.o"(.rodata.x0200a890)
     }
     .bss : { "*/resource_679_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

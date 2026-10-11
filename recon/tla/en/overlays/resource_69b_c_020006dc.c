@@ -1,14 +1,14 @@
+/* Draft of overlay 69b Func_020006dc. differ 2 of 17: the listing loads
+ * gPartyState's address before it builds the field offset 0x212; this draft
+ * builds the first half of the offset before the load. The twins in overlays
+ * 6a2 and 66f hold the load first with an asm barrier. */
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#include "party_state.h"
 
-#include "call.h"
-s32 Func_02002304();
-extern u8 gPartyState[];
+void Func_02002304(s32 x, s32 z, s32 a2, s32 a3);
 
 void Func_020006dc(void)
 {
-    if (FIELD_AT(gPartyState, u8, 530) == 0xa) {
-        Call4(Func_02002304, 0x1500000, 0x2500000, 0, 0xff);
-    }
+    if (gPartyState.render_mode == 10)
+        Func_02002304(0x1500000, 0x2500000, 0, 255);
 }
-

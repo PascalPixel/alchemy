@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/field/common/scene_set_arrival_flags.o"(.text)
         "*/games/tla/src/field/overlay_69c/events_a.o"(.text)
         "*/resource_69c_overlay.o"(.text.x02008404)
-        "*/resource_69c_overlay.o"(.text.x020084c0)
+        "*/games/tla/src/field/overlay_69c/lightset.o"(.text)
         "*/resource_69c_overlay.o"(.text.x02008544)
         "*/resource_69c_overlay.o"(.text.x02008598)
         "*/games/tla/src/field/overlay_69c/events_b.o"(.text)
@@ -24,11 +24,9 @@ SECTIONS
         "*/resource_69c_overlay.o"(.text.x02009050)
         "*/resource_69c_overlay.o"(.text.x02009300)
         "*/resource_69c_overlay.o"(.text.x02009388)
-        "*/resource_69c_overlay.o"(.text.x02009544)
-        "*/resource_69c_overlay.o"(.text.x020095c4)
-        "*/resource_69c_overlay.o"(.text.x02009644)
+        "*/games/tla/src/field/overlay_69c/light.o"(.text)
         "*/resource_69c_overlay.o"(.text.x020096cc)
-        "*/resource_69c_overlay.o"(.text.x020096fc)
+        "*/games/tla/src/field/overlay_69c/lightcue.o"(.text)
         "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/resource_69c_overlay.o"(.text.x0200974e)
         "*/games/tla/src/field/common/effect/move.o"(.text)
@@ -45,7 +43,9 @@ SECTIONS
         "*/resource_69c_overlay.o"(.text.x0200a0e8)
         "*/resource_69c_overlay.o"(.text.x0200a198)
         "*/games/tla/src/field/overlay_69c/import.o"(.text)
-        "*/resource_69c_overlay.o"(.rodata.x0200a478)
+        "*/games/tla/src/field/overlay_69c/data.o"(.data)
+        "*/resource_69c_overlay.o"(.rodata.x0200a4dc)
+        "*/games/tla/src/field/overlay_69c/data2.o"(.data)
     }
     .bss : { "*/resource_69c_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

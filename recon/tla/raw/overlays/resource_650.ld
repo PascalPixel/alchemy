@@ -4,12 +4,11 @@ SECTIONS
     {
         "*/games/tla/src/field/idejima/entry.o"(.text)
         "*/games/tla/src/field/idejima/scene_tables.o"(.text)
-        "*/resource_650_overlay.o"(.text.x02008098)
+        "*/games/tla/src/field/idejima/s0098.o"(.text)
         "*/resource_650_overlay.o"(.text.x020080f0)
         "*/resource_650_overlay.o"(.text.x020082b4)
         "*/resource_650_overlay.o"(.text.x0200849c)
-        "*/resource_650_overlay.o"(.text.x02008640)
-        "*/resource_650_overlay.o"(.text.x02008664)
+        "*/games/tla/src/field/idejima/s0640.o"(.text)
         "*/resource_650_overlay.o"(.text.x020086a8)
         "*/games/tla/src/field/idejima/depart.o"(.text)
         "*/resource_650_overlay.o"(.text.x02009558)
@@ -27,7 +26,7 @@ SECTIONS
         "*/resource_650_overlay.o"(.text.x0200af88)
         "*/resource_650_overlay.o"(.text.x0200afd4)
         "*/games/tla/src/field/idejima/import.o"(.text)
-        "*/resource_650_overlay.o"(.rodata.x0200b330)
+        "*/games/tla/src/field/idejima/data.o"(.data)
     }
     .bss : { "*/resource_650_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

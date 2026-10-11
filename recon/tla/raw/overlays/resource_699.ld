@@ -47,6 +47,7 @@ SECTIONS
         "*/resource_699_overlay.o"(.text.x02009aa4)
         "*/games/tla/src/field/overlay_699/import.o"(.text)
         "*/resource_699_overlay.o"(.rodata.x02009d54)
+        "*/games/tla/src/field/overlay_699/data.o"(.data)
     }
     .bss : { "*/resource_699_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

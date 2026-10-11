@@ -32,7 +32,6 @@ main	rom_main_00	games/tbs/src/system/scheduler/numtext	.rodata
 main	rom_main_00	games/tbs/src/lib/q16_dot_product
 main	rom_main_00	games/tbs/src/system/save/savedata	.rodata
 main	rom_main_00	games/tbs/src/system/link/testdata	.rodata
-main	rom_main_00	games/tbs/src/graphics/window/measure	.rodata
 main	rom_main_00	games/common/src/system/save/flashtab	.rodata
 main	rom_main_00	games/common/src/system/save/flash	.rodata
 main	rom_main_00	games/common/src/system/save/flashsst	.rodata
@@ -156,8 +155,6 @@ main	rom_main_12	games/tbs/src/battle/effect/colorfx
 main	rom_main_13	games/tbs/src/system/far_call/SOUND
 main	rom_main_13	games/tbs/src/sound/sound	.text
 main	rom_main_13	games/tbs/src/sound/driver/umul_high	.text .padding
-main	rom_main_13	games/tbs/src/sound/driver/umul_high	.rodata
-main	rom_main_13	games/tbs/src/sound/driver/umul_high	.data
 main	iwram_mixer	games/tbs/src/sound/driver/mixer
 main	iwram_high	games/tbs/src/system/ram/iwram_hi	.sym_iwram_high
 main	rom_tail_00	games/tbs/src/sound/driver/clear_buffer	.text .text.command_byte_reader .text.command_byte_setters
@@ -438,18 +435,12 @@ main	rom_tail_00	games/common/sound/sequence/se_310	.rodata
 main	rom_tail_00	games/common/sound/sequence/se_311	.rodata
 main	rom_tail_01	games/tbs/src/system/far_call/RESOURCE
 main	rom_tail_01	games/tbs/src/system/resource/metadata_get_record	.text
-main	rom_tail_01	games/tbs/src/graphics/animref0	.text .padding
-main	rom_tail_01	games/tbs/src/graphics/animref1	.text .padding
-main	rom_tail_01	games/tbs/src/graphics/animref2	.text .padding
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata
 main	rom_tail_01	games/tbs/src/graphics/animref0	.rodata
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata.a
 main	rom_tail_01	games/tbs/src/graphics/animref1	.rodata
 main	rom_tail_01	games/tbs/src/graphics/animref2	.rodata
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata.b
-main	rom_tail_01	games/tbs/src/graphics/animref0	.data
-main	rom_tail_01	games/tbs/src/graphics/animref1	.data
-main	rom_tail_01	games/tbs/src/graphics/animref2	.data
 main	rom_tail_02	games/tbs/src/system/resource/directory
 main	rom_tail_02	games/tbs/src/graphics/ui/ui
 main	rom_tail_02	games/tbs/src/graphics/title/title
@@ -886,7 +877,6 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3ae	text	games/tbs/src/field/common/karei_torebi/entry
 3ae	text	games/tbs/src/field/common/karei_torebi/torebi
 3ae	text	games/tbs/src/field/common/karei_torebi/import
-3ae	bss	resource_3ae_overlay	.bss
 3af	text	games/tbs/src/field/fune_kanpan/entry	.text
 3af	text	games/tbs/src/field/fune_kanpan/kanpan	.text
 3af	text	games/tbs/src/field/fune_kanpan/import	.text
@@ -1023,4 +1013,3 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3ce	text	games/tbs/src/debug/menu_test/entry
 3ce	text	games/tbs/src/debug/menu_test/test
 3ce	text	games/tbs/src/debug/menu_test/import
-3ce	bss	resource_3ce_overlay	.bss

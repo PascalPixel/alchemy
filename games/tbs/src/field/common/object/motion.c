@@ -1,4 +1,3 @@
-#define OWN_Object_CreateFar
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -11,13 +10,17 @@
 #include "types.h"
 #include "objdisp.h"
 #include "object_runtime.h"
-#include "system.h"
 #include "fixed_math.h"
 #include "game_state.h"
 #include "field_sprite.h"
 #include "animspr.h"
 #include "btlpty.h"
 #include "b5_context.h"
+#include "facing_object.h"
+#include "object_lookup.h"
+#include "fieldrun.h"
+#include "object_dispatch.h"
+#include "script_motion.h"
 
 #define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct ObjectRuntime*,s32))ObjectDispatch_ApplyValueToChildrenFar)
 
@@ -57,8 +60,6 @@ struct BurstParticle {
     u8 pad_66[6];
     void (*callback_6c)(struct BurstParticle *);
 };
-
-extern struct BurstParticle *Object_CreateFar(s32, s32, s32, s32);
 void ObjectGroup_SetChildValue(struct DispatchObject *object, s32 value);
 void ObjectMotion_ArmCallback(s32 arg0, s32 arg1, s32 arg2);
 void BattleFx_PlayQueuedSound(void);
@@ -587,5 +588,163 @@ wait_for_target_y:
         }
         WaitFrames(2);
         BattleFx_PlayQueuedSound();
+    }
+}
+
+void ObjectDispatch_ReleaseFar(struct DispatchObject *work);
+
+#define WaitFrames ((s32 (*)(s32))WaitFrames)
+
+#define ObjectDispatch_ReleaseFar ((void (*)(void*))ObjectDispatch_ReleaseFar)
+
+s32 ArcTan2(s32, s32);
+void ObjectGroup_SetChildValue(struct DispatchObject *, s32);
+#ifndef MODERN // modern GCC keeps the headers' volatile declaration
+#endif
+
+void ObjectMotion_SetAngleToward(s32 first_id, s32 second_id, s32 wait)
+{
+    struct ObjectRuntime *first;
+    struct ObjectRuntime *second;
+
+    first = ObjectTable_Get(first_id);
+    second = ObjectTable_Get(second_id);
+    if (first != 0 && second != 0) {
+        first->angle = ArcTan2(second->z - first->z,
+            second->x - first->x);
+        Battle_WaitMode0(wait);
+    }
+}
+
+void Object_LinkPair(s32 first_id, s32 second_id, s32 wait)
+{
+    void *first = ObjectTable_Get(first_id);
+    void *second = ObjectTable_Get(second_id);
+
+    if (first != NULL && second != NULL) {
+        FacingObject_TurnPairToFaceEachOther(first, second);
+        Battle_WaitMode0(wait);
+    }
+}
+
+void FacingObject_TurnPairToFaceEachOther(struct FacingObject *raw_first, struct FacingObject *raw_second)
+{
+    struct ObjectRuntime *first = (struct ObjectRuntime *)raw_first;
+    struct ObjectRuntime *second = (struct ObjectRuntime *)raw_second;
+    s32 toward;
+    s32 away;
+    s32 frame;
+    s32 turning;
+    s32 delta;
+
+    if (first == NULL || second == NULL)
+        return;
+    toward = (u16)ArcTan2(second->z - first->z,
+        second->x - first->x);
+    away = toward + 0x8000;
+    for (frame = 0; frame < 60; frame++) {
+        turning = 2;
+        delta = (s16)(toward - first->angle);
+        if (delta != 0) {
+            if (delta > 0x1000)
+                delta = 0x1000;
+            if (delta < -0x1000)
+                delta = -0x1000;
+            first->angle += delta;
+        } else {
+            turning = 1;
+        }
+        delta = (s16)(away - second->angle);
+        if (delta != 0) {
+            if (delta > 0x1000)
+                delta = 0x1000;
+            if (delta < -0x1000)
+                delta = -0x1000;
+            second->angle += delta;
+        } else {
+            turning--;
+        }
+        if (turning == 0)
+            break;
+        WaitFrames(1);
+    }
+}
+
+void ObjectTable_DestroyById(s32 index)
+{
+    void *object = ObjectTable_Get(index);
+    struct ObjectSlotTable *table = (struct ObjectSlotTable *)gEventWork;
+
+    if (object != 0) {
+        ObjectDispatch_ReleaseFar(object);
+        table->slots[index] = NULL;
+    }
+}
+
+void ObjectTable_DestroyNoOp(void)
+{
+}
+
+void ObjectGroup_ConfigureChildValue(s32 object_id, s32 value)
+{
+    s32 flags;
+    struct DispatchObject *object;
+
+    object = ObjectTable_Get(object_id);
+    if (object != NULL) {
+        flags = 0x100 & value;
+        if (flags != 0) {
+            ((struct ScriptMotionObject *)object)->hook =
+                (void (*)(struct ScriptMotionObject *))ObjectGroup_ApplyIndexedChildValue;
+            return;
+        }
+        ((struct ScriptMotionObject *)object)->hook = NULL;
+        ObjectGroup_SetChildValue(object, value);
+    }
+}
+
+void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object)
+{
+    if ((object->kind & 0xf) == 1) {
+        u8 child_value;
+        struct AnimationObject *container;
+        u8 child_count;
+
+        child_value = ObjectGroup_BlinkChildValues[(gFrameCount >> 1) & 3];
+        container = object->target.child;
+        child_count = container->count;
+        if (child_count != 0) {
+            struct AnimationEntry **entries = container->entries;
+            s32 remaining = child_count;
+            do {
+                struct AnimationEntry *entry = *entries++;
+                if (entry != 0 && entry->script != 0) {
+                    entry->param = child_value;
+                }
+                remaining--;
+            } while (remaining != 0);
+        }
+        container->dirty = 1;
+    }
+}
+
+void ObjectGroup_SetChildValue(struct DispatchObject *object, s32 value)
+{
+    if ((object->kind & 0xf) == 1) {
+        struct AnimationObject *container = object->target.child;
+        u8 raw_count = container->count;
+
+        if (raw_count != 0) {
+            struct AnimationEntry **entry = container->entries;
+            u32 count = raw_count;
+            do {
+                struct AnimationEntry *item = *entry++;
+                if (item != NULL && item->script != 0) {
+                    item->param = value;
+                }
+                count--;
+            } while (count != 0);
+        }
+        container->dirty = 1;
     }
 }

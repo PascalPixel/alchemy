@@ -7,17 +7,326 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "fixed_point_position.h"
 #include "types.h"
+#include "battle_status_icon.h"
 #include "iwram_call.h"
-#include "io_reg.h"
-#include "scene.h"
-#include "fixed_math.h"
 #include "motobj.h"
-#include "battle_motion.h"
+#include "animspr.h"
+#include "metadata_lookup.h"
+#include "fixed_point_position.h"
+#include "global_cells.h"
+#include "scene.h"
+#include "btlwork.h"
 #include "btldisp.h"
 #include "btlsys.h"
+#include "io_reg.h"
+#include "fixed_math.h"
+#include "battle_motion.h"
 #include "field_event.h"
+#include "effect_step.h"
+
+void BattleMotion_ReservedNoOp83B0();
+
+#define BattlePres_SetActorModeAndAction ((void (*)(s32))BattlePres_SetActorModeAndAction)
+
+#define gMenuCtrlWork (*(u8 **)&gMenuCtrlWork)
+
+struct PairedObjectList
+{
+	u8						padding0[8];
+	struct AnimationObject *objects[1];
+};
+
+struct PairedObjectTable
+{
+	u8	padding0[0x18];
+	s32 count;
+};
+
+extern volatile u8 gSchedulerStatus;
+
+void WaitFrames(s32 frames);
+
+void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
+{
+	s32						 i;
+	s32						 id;
+	struct BtlObj			*slot;
+	struct MotionObject		*object;
+	struct AnimationObject	*res;
+	struct SpriteEntry		*entry;
+	struct AnimationObject **objects;
+	u8						*table;
+	s32						 resource;
+	s32						 object_id;
+
+	for (i = 0; i <= 13; i++)
+	{
+		if (!BattlePlacement_ContainsId(list, i))
+		{
+			object_id = i + 120;
+			if (i <= 7)
+				object_id = i;
+			ReleaseBattleObjectRecords(object_id);
+		}
+	}
+	if (gSchedulerStatus == 0)
+		WaitFrames(1);
+	for (i = 0; i <= 13 && (id = list[i]) != 255; i++)
+	{
+		if (id == 254)
+			continue;
+		slot = BtlObjGet(id);
+		if (slot == 0)
+			continue;
+		BattleUnit_BuildStatusFlags(id, slot);
+		object = slot->object;
+		if (object == 0)
+			continue;
+		if (object->record_storage_kind != 0)
+			continue;
+		if ((slot->resource & 0xfff) == 476 || (slot->resource & 0xfff) == 483)
+		{
+			table = gMenuCtrlWork + ((struct PairedObjectTable *)gMenuCtrlWork)->count * 4;
+			objects = ((struct PairedObjectList *)table)->objects;
+			resource = slot->resource;
+			object->record_storage_kind = 2;
+			object->records = objects;
+			Iwram_ClearWords(objects, 16);
+			res = ResourceObject_CreateFar(resource);
+			if (res != 0)
+			{
+				res->scale = Iwram_MulQ16(res->scale, slot->scale);
+				object->height = Resource_GetMetadataRecordFar(resource)->box_y >> 1;
+				*objects = res;
+				objects = &((struct PairedObjectList *)table)->objects[1];
+			}
+			res->flags = 0;
+			res = ResourceObject_CreateFar(resource + 0x2001);
+			if (res != 0)
+			{
+				res->scale = Iwram_MulQ16(res->scale, slot->scale);
+				*objects = res;
+			}
+			res->flags = 0;
+		}
+		else
+		{
+			res = ResourceObject_CreateFar(slot->resource);
+			if (res != 0)
+			{
+				object->record_storage_kind = 1;
+				object->records = res;
+				res->scale = Iwram_MulQ16(res->scale, slot->scale);
+				entry = (struct SpriteEntry *)res->entries[0];
+				entry->priority = 1;
+				entry->palette = slot->palette;
+				if ((resource = slot->overlay) != 0)
+				{
+					entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(res, resource);
+					entry->priority = 1;
+				}
+				if ((resource = slot->animation) != 0)
+				{
+					entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(res, resource);
+					slot->animation_entry = entry;
+					Animation_SetWorkEntryFar((struct AnimationEntry *)entry, 0);
+					entry->priority = 3;
+				}
+				if ((resource = slot->effect) != 0)
+				{
+					if (res->width == 32)
+						resource = 0x1ff;
+					entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(res, resource);
+					slot->effect_entry = entry;
+					entry->priority = 0;
+					res->flags = 0;
+				}
+			}
+		}
+		BattlePres_SetActorModeAndAction(id);
+	}
+	if (refresh)
+	{
+		i = 0;
+		if ((resource = list[0]) != 255)
+		{
+			for (;;)
+			{
+				if (list[i] != 254 && (slot = BtlObjGet(resource)) != 0 && (object = slot->object) != 0)
+					BattlePres_SetActorModeAndAction(resource);
+				i++;
+				if (i >= 14 || (resource = list[i]) == 255)
+					break;
+			}
+		}
+	}
+}
+
+s32 ObjectDispatch_ReleaseFar(s32);
+
+s32 Graphics_PrepareTransferAndRun(void *, void *);
+s32 Graphics_PrepareTransferInIwramWork(void *, void *);
+
+s32 Render_ProjectPoint(const s32 *, s32 *);
+
+struct BtlObj *BtlObjGet(s32 object_id)
+{
+	struct BtlWork *work = BtlWk;
+	struct BtlObj  *slots = work->slots;
+	s32				index;
+	if (object_id > 7)
+	{
+		object_id -= 0x78;
+	}
+	index = object_id;
+	if (work->placement[index] == 0xFF)
+	{
+		return NULL;
+	}
+	return &slots[work->placement[index]];
+}
+
+void ResetMotionRecordGroup(void *owner)
+{
+	struct AnimationObject *object = owner;
+	s32						i;
+
+	if (object != NULL)
+	{
+		for (i = 0; i < 4; i++)
+		{
+			if (object->entries[i] != NULL)
+				object->entries[i]->script = NULL;
+		}
+	}
+}
+
+void ResetBattleObjectRecordGroups(struct MotionObject *object)
+{
+	s32	   storage_kind;
+	s32	   remaining;
+	void **record_groups;
+	void  *record_group;
+
+	if (object != NULL)
+	{
+		storage_kind = object->record_storage_kind & 0xF;
+		switch (storage_kind)
+		{
+		case 1:
+			ResetMotionRecordGroup(object->records);
+			return;
+		case 2:
+			record_groups = object->records;
+			remaining = 3;
+			do
+			{
+				record_group = *record_groups++;
+				if (record_group != NULL)
+				{
+					ResetMotionRecordGroup(record_group);
+				}
+				remaining -= 1;
+			} while (remaining >= 0);
+			break;
+		}
+	}
+}
+
+s32 ActivateBattleObjectSlot(s32 object_id)
+{
+	struct BtlObj *slot;
+	BattleMotion_ReleaseObjectSlotByValue(object_id);
+	slot = BtlObjGet(object_id);
+	slot->active = 1;
+	return 0;
+}
+
+void *BattleMotion_DestroyAllSlotObjects(void)
+{
+	// 戻り値の型はポインタだが return 文は無い（pop {r1}; bx r1）
+	s32			   no;
+	s32			   i;
+	struct BtlObj *slot;
+
+	i = 0;
+	do
+	{
+		no = i + 0x78;
+		if (i <= 7)
+		{
+			no = i;
+		}
+		slot = BtlObjGet(no);
+		if ((slot != NULL) && (slot->active != 0))
+		{
+			ObjectDispatch_ReleaseFar((s32)slot->object);
+			slot->object = NULL;
+			slot->active = 0;
+		}
+		i += 1;
+	} while (i <= 0xD);
+}
+
+s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out)
+{
+	struct BtlWork *state = BtlWk;
+
+	out->x = state->slots[no].anchor_x;
+	out->y = 0;
+	out->z = state->slots[no].anchor_z;
+	return 0;
+}
+
+s32 Camera_ApplyTransformByFlag(void)
+{
+	struct BattleCamera *state = gCameraWork;
+	Render_ResetTransformState();
+	if (GameFlag_TestFar(0x16B) != 0)
+	{
+		Iwram_TransformMatrix((s32 *)Camera_FlagTransformWork);
+		return Graphics_PrepareTransferAndRun(state, state->pos);
+	}
+	else
+	{
+		return Graphics_PrepareTransferInIwramWork(state, state->pos);
+	}
+}
+
+s32 BattleMotion_ProjectPosition(s32 id, s32 *projected)
+{
+	struct MotionObject	   *object = BtlObjGet(id)->object;
+	struct AnimationObject *record = GetMotionRecord(object, 0);
+	s32						position[3];
+	s32						scaled;
+
+	Camera_ApplyTransformByFlag();
+	position[0] = object->x;
+	position[1] = object->y;
+	position[2] = object->z;
+	scaled = Render_ProjectPoint(position, projected);
+	(void)Iwram_MulQ16(scaled, record->scale);
+	return 0;
+}
+
+void *GetMotionRecord(struct MotionObject *object, s32 record_index)
+{
+	s32 storage_kind = object->record_storage_kind & 0xF;
+	if (storage_kind == 1)
+	{
+		if (record_index == 0)
+		{
+			return object->records;
+		}
+	}
+	else if (storage_kind == 2)
+	{
+		return ((void **)object->records)[record_index];
+	}
+	return NULL;
+}
+
 void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 
 #define SceneTransform_ApplyPosition ((void (*)(void *))SceneTransform_ApplyPosition)
@@ -242,4 +551,129 @@ void BattleMotion_ResetSlotObjectMode2(s32 id)
 
 void BattleMotion_ReservedNoOp83B0()
 {
+}
+
+void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id)
+{
+	struct BtlObj		*second_slot;
+	struct MotionObject *first;
+	struct MotionObject *second;
+	s32					 x1;
+	s32					 x2;
+	s32					 z1;
+	s32					 z2;
+	struct
+	{
+		s32 x;
+		s32 y;
+		s32 z;
+	} pos;
+
+	first = BtlObjGet(first_id)->object;
+	second_slot = BtlObjGet(second_id);
+	second = second_slot->object;
+
+	x1 = first->target_x;
+	if (x1 == 0x80000000)
+	{
+		x1 = first->x;
+	}
+	z1 = first->target_z;
+	if (z1 == 0x80000000)
+	{
+		z1 = first->z;
+	}
+	x2 = second->target_x;
+	if (x2 == 0x80000000)
+	{
+		x2 = second->x;
+	}
+	z2 = second->target_z;
+	if (z2 == 0x80000000)
+	{
+		z2 = second->z;
+	}
+
+	pos.x = (x1 + x2) / 2;
+	pos.y = 0;
+	pos.z = (z1 + z2) / 2;
+
+	BattleMotion_ReservedNoOp83B0(&pos, 0x1000);
+}
+
+void BattleMotion_SpawnSlotEffectAndWait(s32 id)
+{
+	struct MotionObject	  *object;
+	struct AnimationEntry *effect;
+	s32					   entry;
+
+	object = BtlObjGet(id)->object;
+	if ((object != NULL) && ((0xF & object->record_storage_kind) == 1))
+	{
+		entry = ResourceMetadata_RegisterFar((struct AnimationObject *)object->records, 0x11b);
+		if (entry != 0)
+		{
+			effect = (struct AnimationEntry *)entry;
+			Animation_SetWorkEntryFar(effect, 1);
+			effect->priority = 3;
+		}
+		WaitFrames(0xA);
+	}
+}
+
+s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected)
+{
+	struct MotionObject	   *object = BtlObjGet(id)->object;
+	struct AnimationObject *record = GetMotionRecord(object, 0);
+	s32						scaled;
+	s32						factor;
+	/* FAKEMATCH: needed to match: the input position BattleMotion_ProjectPosition fills, unused here */
+	struct EffectPosition input;
+
+	Camera_ApplyTransformByFlag();
+	scaled = Render_ProjectPoint(&object->x, projected);
+	factor = Iwram_MulQ16(scaled, record->scale);
+	scaled = Iwram_MulQ16(factor, (s32)Battle_GetObjectTableValue(id) >> 16);
+	projected[1] -= scaled;
+	return 0;
+}
+
+s32 BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected)
+{
+	struct MotionObject	   *object = BtlObjGet(id)->object;
+	struct AnimationObject *record = GetMotionRecord(object, 0);
+	s32						scaled;
+	s32						factor;
+
+	Camera_ApplyTransformByFlag();
+	scaled = Render_ProjectPoint(&object->x, projected);
+	factor = Iwram_MulQ16(scaled, record->scale);
+	if (Summon_IsEntryFlagged(UnitGetFar(id)->class_id) != 0)
+		scaled = Iwram_MulQ16(factor, 24);
+	else
+		scaled = Iwram_MulQ16(factor, 48);
+	projected[1] -= scaled;
+	return 0;
+}
+
+u32 Battle_GetObjectTableValue(s32 id)
+{
+	u32 value;
+	u8	no;
+
+	no = UnitGetFar(id)->class_id;
+	value = (u8)Summon_GetEntryByte4(no) << 16;
+	if (value == 0)
+	{
+		no = UnitGetFar(id)->class_id;
+		if (Summon_IsEntryFlagged(no) != 0)
+		{
+			value = 0x180000;
+		}
+		else
+		{
+			value = 0x300000;
+		}
+	}
+	return value;
 }

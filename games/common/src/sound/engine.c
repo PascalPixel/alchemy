@@ -675,3 +675,162 @@ void Cgb_UpdateChannels(void)
         note->modified = 0;
     }
 }
+
+void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player, u16 scale)
+{
+    if (player->lock == SOUND_LOCK) {
+        player->lock++;
+        player->tempo_scale = scale;
+        player->tempo_step = (player->tempo * player->tempo_scale) >> 8;
+        player->lock = SOUND_LOCK;
+    }
+}
+
+void MusicPlayer_SetVolume(struct SoundPlayer *player, u16 mask, u16 volume)
+{
+    s32 i;
+    struct SoundTrack *track;
+    u32 bit;
+
+    if (player->lock != SOUND_LOCK)
+        return;
+    player->lock++;
+    i = player->track_count;
+    track = player->tracks;
+    bit = 1;
+    while (i > 0) {
+        if (mask & bit) {
+            if (track->flags & SOUND_TRACK_ACTIVE) {
+                track->volume_scale = volume >> 2;
+                track->flags |= SOUND_TRACK_UPDATE_VOLUME;
+            }
+        }
+        i--;
+        track++;
+        bit <<= 1;
+    }
+    player->lock = SOUND_LOCK;
+}
+
+void MusicPlayer_SetPitch(struct SoundPlayer *player, u16 mask, s16 pitch)
+{
+    s32 i;
+    struct SoundTrack *track;
+    u32 bit;
+
+    if (player->lock != SOUND_LOCK)
+        return;
+    player->lock++;
+    i = player->track_count;
+    track = player->tracks;
+    bit = 1;
+    while (i > 0) {
+        if (mask & bit) {
+            if (track->flags & SOUND_TRACK_ACTIVE) {
+                track->key_offset_b = pitch >> 8;
+                track->fine = pitch;
+                track->flags |= SOUND_TRACK_UPDATE_PITCH;
+            }
+        }
+        i--;
+        track++;
+        bit <<= 1;
+    }
+    player->lock = SOUND_LOCK;
+}
+
+void MusicPlayer_SetPan(struct SoundPlayer *player, u16 mask, s8 pan)
+{
+    s32 i;
+    struct SoundTrack *track;
+    u32 bit;
+
+    if (player->lock != SOUND_LOCK)
+        return;
+    player->lock++;
+    i = player->track_count;
+    track = player->tracks;
+    bit = 1;
+    while (i > 0) {
+        if (mask & bit) {
+            if (track->flags & SOUND_TRACK_ACTIVE) {
+                track->pan_offset = pan;
+                track->flags |= SOUND_TRACK_UPDATE_VOLUME;
+            }
+        }
+        i--;
+        track++;
+        bit <<= 1;
+    }
+    player->lock = SOUND_LOCK;
+}
+
+void MusicTrack_ClearModulation(struct SoundTrack *track)
+{
+    track->lfo_phase = 0;
+    track->mod_amount = 0;
+    if (track->mod_target == 0)
+        track->flags |= SOUND_TRACK_UPDATE_PITCH;
+    else
+        track->flags |= SOUND_TRACK_UPDATE_VOLUME;
+}
+
+void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 mask_arg, s32 value_arg)
+{
+    u16 mask = mask_arg;
+    u8 value = value_arg;
+    s32 count;
+    struct SoundTrack *track;
+    u32 bit;
+
+    if (player->lock != SOUND_LOCK)
+        return;
+
+    player->lock++;
+    count = player->track_count;
+    track = player->tracks;
+    bit = 1;
+    while (count > 0) {
+        if (mask & bit) {
+            if (track->flags & SOUND_TRACK_ACTIVE) {
+                track->mod_depth = value;
+                if (!track->mod_depth)
+                    MusicTrack_ClearModulation(track);
+            }
+        }
+        count--;
+        track++;
+        bit <<= 1;
+    }
+    player->lock = SOUND_LOCK;
+}
+
+void MusicPlayer_SetLfoSpeed(struct SoundPlayer *player, u32 selected, u32 value)
+{
+    u16 mask = selected;
+    u8 speed = value;
+    s32 count;
+    struct SoundTrack *track;
+    u32 bit;
+
+    if (player->lock != SOUND_LOCK)
+        return;
+
+    player->lock++;
+    count = player->track_count;
+    track = player->tracks;
+    bit = 1;
+    while (count > 0) {
+        if (mask & bit) {
+            if (track->flags & SOUND_TRACK_ACTIVE) {
+                track->lfo_speed = speed;
+                if (!track->lfo_speed)
+                    MusicTrack_ClearModulation(track);
+            }
+        }
+        count--;
+        track++;
+        bit <<= 1;
+    }
+    player->lock = SOUND_LOCK;
+}

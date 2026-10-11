@@ -795,7 +795,7 @@ void Camera_WorldToScreen(struct EffectVector *position);
 #endif
 void CheckObjectMapTile(void);
 #ifndef OWN_EffectRuntime_LookupByTableEntry
-s32 EffectRuntime_LookupByTableEntry(u32 index);
+s32 EffectRuntime_LookupByTableEntry(u32 index, s32 steps);
 #endif
 #ifndef OWN_EffectRuntime_PrepareRisingObject
 void EffectRuntime_PrepareRisingObject(struct ObjectRuntime *object);

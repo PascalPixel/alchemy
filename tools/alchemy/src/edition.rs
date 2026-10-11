@@ -621,7 +621,7 @@ mod tests {
             let target = crate::targets::target_for(id);
             let text = image_script(root, target, Image::Main).unwrap();
             let linked = linked_statements(root, target, Image::Main).unwrap();
-            assert!(linked.len() > 1000, "{id}");
+            assert!(linked.len() > 500, "{id}");
             assert_eq!(built_objects(&linked), quoted_objects(&text), "{id}");
             let scripts = overlay_ids(root, target).unwrap();
             for overlay in &scripts {

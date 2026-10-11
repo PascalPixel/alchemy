@@ -1,15 +1,7 @@
 #include "../../../include/system/flash.h"
+#include "../../../include/system/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
-struct FlashChipInfo {
-    u8 unknown_00[4];
-    s32 size;
-    u8 shift;
-    u8 unknown_09[7];
-    u16 control;
-};
-
-extern struct FlashChipInfo *gFlash;
 extern u16 gFlashNumRemainingBytes;
 
 u16 ProgramFlashSector(u16 sector, u8 *source)
@@ -28,11 +20,11 @@ u16 ProgramFlashSector(u16 sector, u8 *source)
     CopyFlashReadRoutineToRam(savedCode);
     REG_WAITCNT =
         (REG_WAITCNT & 0xFFFC) |
-        gFlash->control;
+        gFlash->wait[0];
     gFlashNumRemainingBytes =
-        gFlash->size;
+        gFlash->sector.size;
     destination = (u8 *)(
-        (sector << gFlash->shift) +
+        (sector << gFlash->sector.shift) +
         0x0E000000);
 
     while (gFlashNumRemainingBytes != 0) {

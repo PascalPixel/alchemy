@@ -55,11 +55,8 @@ union SceneActor {
 };
 struct Vector { s32 x, y, z; };
 
-void Engine_ActorSetSpeed();
-void Engine_ActorSetDestination();
 void Engine_ActorWaitForMove(s32);
 void Engine_AudioPlayCue(s32);
-void Engine_WorkSetValuesIfNonNegative();
 void Effect_Spawn();
 void Engine_ActorSetAnimation(s32, s32);
 

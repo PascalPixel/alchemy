@@ -8,6 +8,7 @@
 mod cmerge;
 mod dryrun;
 mod flatten;
+mod floor;
 mod ldscript;
 pub use flatten::run as unit;
 mod load;
@@ -22,6 +23,7 @@ use std::fs;
 use std::path::PathBuf;
 
 const USAGE: &str = "usage: alchemy units [--build EDITION] [--out-dir DIR] [--dry-run N|UNIT,UNIT...]
+       alchemy units evidence [--build EDITION] [--out FILE] [--devices FILE]
 Proposes Camelot's translation units for one built edition (default tbs-en;
 its sizes are the English build's, as DONE's are). Reads the edition's main
 and overlay ELFs, their linker maps and the objects they name; build the
@@ -39,7 +41,10 @@ functions into units with their data. Writes into DIR (default out/reports):
   units-EDITION-validation.tsv  agreement with overlays, merged files and modules with data
   units-EDITION-dryrun.tsv      with --dry-run: merged units compiled and compared
 --dry-run N picks N proposed units of whole C objects; UNIT names them by id
-(main:U0042). Merged sources and objects stay in out/EDITION/obj/units.";
+(main:U0042). Merged sources and objects stay in out/EDITION/obj/units.
+evidence writes recon/<game>/floor_evidence.tsv: what the source and the
+compile of each C file show at every gap between two of its functions
+(alchemy units evidence --help).";
 
 struct Options {
     build: String,
@@ -78,6 +83,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     if arguments.iter().any(|a| a == "-h" || a == "--help") {
         println!("{USAGE}");
         return Ok(());
+    }
+    if arguments.first().is_some_and(|a| a == "evidence") {
+        return floor::run(&arguments[1..]);
     }
     let options = parse(arguments)?;
     let target = decomp_target(Some(&options.build))?;

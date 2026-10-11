@@ -108,69 +108,8 @@ Func_02000054:
 	pop {r5, r6, r7, pc}
 .L_02008128:
 	.4byte gInput
-	.section .text.x0200812c,"ax",%progbits
-	.global Func_0200012c
-	.thumb_func
-Func_0200012c:
-	push {lr}
-	ldr r0, .L_0200813c
-	ldr r1, .L_02008140
-	subs r1, r1, r0
-	bl Func_02000054
-	pop {pc}
-	.2byte 0x0000
-.L_0200813c:
-	.4byte MsgWeaponShopWelcome
-.L_02008140:
-	.4byte MsgArmorShopWelcome
-	.section .text.x02008144,"ax",%progbits
-	.global Func_02000144
-	.thumb_func
-Func_02000144:
-	push {lr}
-	ldr r0, .L_02008154
-	ldr r1, .L_02008158
-	subs r1, r0, r1
-	bl Func_02000054
-	pop {pc}
-	.2byte 0x0000
-.L_02008154:
-	.4byte MsgArmorShopWelcome
-.L_02008158:
-	.4byte MsgWeaponShopWelcome
-	.section .text.x0200815c,"ax",%progbits
-	.global Func_0200015c
-	.thumb_func
-Func_0200015c:
-	push {lr}
-	ldr r3, .L_0200816c
-	ldr r1, .L_02008170
-	ldr r0, .L_02008174
-	subs r1, r1, r3
-	bl Func_02000054
-	pop {pc}
-.L_0200816c:
-	.4byte MsgWeaponShopWelcome
-.L_02008170:
-	.4byte MsgArmorShopWelcome
-.L_02008174:
-	.4byte MsgItemShopWelcome
-	.section .text.x02008178,"ax",%progbits
-	.global Func_02000178
-	.thumb_func
-Func_02000178:
-	push {lr}
-	ldr r0, .L_02008188
-	ldr r1, .L_0200818c
-	subs r1, r1, r0
-	bl Func_02000054
-	pop {pc}
-	.2byte 0x0000
-.L_02008188:
-	.4byte MsgWelcomeWearyWanderers
-.L_0200818c:
-	.4byte MsgRightWhenI
 	.section .text.x020081d4,"ax",%progbits
+	.balign 4
 	.global Func_020001d4
 	.thumb_func
 Func_020001d4:
@@ -373,18 +312,8 @@ Func_020002a8:
 	.4byte gPartyState
 .L_02008390:
 	.4byte MsgManSunshineWould
-	.section .text.x02008394,"ax",%progbits
-	.global Func_02000394
-	.thumb_func
-Func_02000394:
-	push {lr}
-	sub sp, #8
-	mov r1, sp
-	add r0, sp, #4
-	bl Func_02000e60
-	add sp, #8
-	pop {pc}
 	.section .text.x020083b8,"ax",%progbits
+	.balign 4
 	.balign 4
 	.global Func_020003b8
 	.thumb_func
@@ -635,67 +564,8 @@ Func_02000520:
 	pop {r5, r6, r7, pc}
 .L_020085f8:
 	.4byte MsgTheBodyIs
-	.section .text.x020085fc,"ax",%progbits
-	.global Func_020005fc
-	.thumb_func
-Func_020005fc:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r6, r1, #0
-	adds r5, r0, #0
-	lsls r0, r6, #2
-	adds r0, r0, r6
-	adds r7, r2, #0
-	lsls r0, r0, #2
-	adds r0, r0, r7
-	adds r0, #48
-	mov r8, r3
-	bl GameFlag_SetBit
-	adds r0, r5, #0
-	adds r1, r6, #0
-	adds r2, r7, #0
-	bl Djinn_AddToOwner
-	mov r3, r8
-	cmp r3, #1
-	bne .L_02008632
-	adds r0, r5, #0
-	adds r1, r6, #0
-	adds r2, r7, #0
-	bl Djinn_Activate
-.L_02008632:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.section .text.x02008638,"ax",%progbits
-	.global Func_02000638
-	.thumb_func
-Func_02000638:
-	push {r5, r6, lr}
-	ldr r0, .L_02008660
-	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
-	movs r6, #0
-.L_02008644:
-	movs r5, #0
-.L_02008646:
-	adds r1, r5, #0
-	adds r0, r6, #0
-	adds r5, #1
-	bl Djinn_AddToLeastLoadedOwner
-	cmp r5, #17
-	ble .L_02008646
-	adds r6, #1
-	cmp r6, #3
-	ble .L_02008644
-	bl Func_02000dc0
-	pop {r5, r6, pc}
-.L_02008660:
-	.4byte MsgYouGotA
-	.global Data_02000664
-Data_02000664:
-	.4byte 0x00004770
 	.section .text.x02008688,"ax",%progbits
+	.balign 4
 	.global Func_02000688
 	.thumb_func
 Func_02000688:
@@ -1269,49 +1139,8 @@ Func_02000ae0:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x02008b50,"ax",%progbits
-	.global Func_02000b50
-	.thumb_func
-Func_02000b50:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r8
-	push {r6, r7}
-	adds r7, r1, #0
-	mov r10, r0
-	adds r0, r7, #0
-	mov r8, r3
-	adds r5, r2, #0
-	bl Object_GetById
-	mov r3, r10
-	adds r6, r0, #0
-	cmp r3, #2
-	bne .L_02008b96
-	mov r3, r8
-	lsls r2, r3, #16
-	adds r0, r7, #0
-	lsls r1, r5, #16
-	bl Func_02000df8
-	movs r3, #128
-	lsls r3, r3, #14
-	adds r2, r6, #0
-	str r3, [r6, #12]
-	adds r2, #85
-	movs r3, #3
-	strb r3, [r2]
-	movs r3, #184
-	lsls r3, r3, #5
-	adds r3, #10
-	str r3, [r6, #72]
-	movs r0, #50
-	bl WaitFrames
-.L_02008b96:
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
 	.section .text.x02008ba0,"ax",%progbits
+	.balign 4
 	.global Func_02000ba0
 	.thumb_func
 Func_02000ba0:
@@ -1714,16 +1543,16 @@ gSceneEvents:
 	.4byte Func_02000638
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte Data_02000664 + 0x1
+	.4byte Func_02000664
 	.4byte 0x00000000
 	.4byte 0xffff001f
-	.4byte Data_02000664 + 0x1
+	.4byte Func_02000664
 	.4byte 0x00000000
 	.4byte 0xffff0020
-	.4byte Data_02000664 + 0x1
+	.4byte Func_02000664
 	.4byte 0x00000000
 	.4byte 0xffff0021
-	.4byte Data_02000664 + 0x1
+	.4byte Func_02000664
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

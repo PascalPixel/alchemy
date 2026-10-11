@@ -49,6 +49,8 @@ struct PartyState {
     s16 owner_override;
     u8 unknown_278[0x44];
     u16 forge_item;
+    u8 unknown_2be[4];
+    u8 unknown_2c2;
 };
 
 extern struct PartyState gPartyState;

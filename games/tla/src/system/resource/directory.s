@@ -506,7 +506,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data1ED
 	resource , Resource_Data1EE
 	resource , FieldFx_ColouredOrbs
-	resource , FieldFx_FallingRock
+	resource FallingRock, FieldFx_FallingRock
 	resource , FieldFx_WaterSplash
 	resource , FieldFx_IceShard
 	resource , FieldFx_WhiteSparkle

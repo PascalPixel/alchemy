@@ -1,55 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008054,"ax",%progbits
-	.global Func_02000054
-	.thumb_func
-Func_02000054:
-	push {r5, r6, lr}
-	adds r5, r0, #0
-	adds r6, r1, #0
-	bl Func_02001fcc
-	movs r0, #0
-	bl Func_020020cc
-	movs r0, #158
-	bl Func_02002124
-	ldrh r1, [r5, #4]
-	ldrh r2, [r5, #6]
-	ldr r0, [r5]
-	bl Func_02001fb4
-	ldr r5, .L_020080c4
-	movs r3, #133
-	lsls r3, r3, #2
-	adds r5, r5, r3
-	ldr r0, [r5]
-	bl Object_GetById
-	movs r3, #2
-	adds r0, #85
-	strb r3, [r0]
-	movs r1, #128
-	movs r2, #128
-	ldr r0, [r5]
-	lsls r2, r2, #7
-	lsls r1, r1, #8
-	bl ObjectMotion_SetSpeedParameters
-	ldr r0, [r5]
-	movs r1, #2
-	bl Object_SetModeById
-	movs r2, #8
-	movs r1, #2
-	negs r2, r2
-	ldr r0, [r5]
-	bl ObjectMotion_CenterOnColumn
-	movs r0, #10
-	bl Battle_WaitMode0
-	adds r0, r6, #0
-	bl Func_020020b4
-	bl Event_FinishScreenTransition
-	bl Event_WaitTransitionFrames
-	bl Func_02001fd4
-	pop {r5, r6, pc}
-.L_020080c4:
-	.4byte gPartyState
 	.section .text.x020080c8,"ax",%progbits
+	.balign 4
 	.global Func_020000c8
 	.thumb_func
 Func_020000c8:

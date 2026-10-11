@@ -8,7 +8,26 @@
 #include "system.h"
 #include "types.h"
 #include "field_scene.h"
+#include "party_state.h"
+#include "call.h"
 
+struct DoorStep {
+    s32 script;
+    u16 x;
+    u16 z;
+};
+
+struct ObjectRuntime *Object_GetById();
+void ObjectMotion_SetSpeedParameters();
+void Battle_WaitMode0();
+void Event_FinishScreenTransition();
+void Event_WaitTransitionFrames();
+void Func_02001fb4();
+void Func_02001fcc();
+void Func_02001fd4();
+void Func_020020b4();
+void Func_020020cc();
+void Func_02002124(s32);
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -28,4 +47,21 @@ const u32 *Scene_GetExits(void)
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     return gScenePlacements;
+}
+
+void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused)
+{
+    Func_02001fcc();
+    Func_020020cc(0);
+    Func_02002124(158);
+    Func_02001fb4(step->script, step->x, step->z);
+    Object_GetById(gPartyState.current_owner)->motion_flags = 2;
+    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
+    Object_SetModeById(gPartyState.current_owner, 2);
+    Call3((void (*)())ObjectMotion_CenterOnColumn, gPartyState.current_owner, 2, -8);
+    Battle_WaitMode0(10);
+    Func_020020b4(countdown);
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    Func_02001fd4();
 }

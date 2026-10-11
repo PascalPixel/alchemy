@@ -24,25 +24,17 @@ pub static AGBCC_SOURCES: &[&str] = &[
 
 pub static AGBCC_FLASH_SOURCES: &[&str] = &[
     "games/common/src/system/save/flash_erase_verify.c",
-    "games/common/src/system/save/flash_read_routines.c",
+    "games/common/src/system/save/flash.c",
     "games/common/src/system/save/erase_atmel_flash_block.c",
     "games/common/src/system/save/erase_atmel_flash_chip.c",
     "games/common/src/system/save/erase_atmel_flash_sector.c",
     "games/common/src/system/save/erase_flash_chip.c",
     "games/common/src/system/save/erase_flash_sector.c",
     "games/common/src/system/save/flash_program_byte.c",
-    "games/common/src/system/save/flash_timer_interrupt.c",
-    "games/common/src/system/save/flash_verify.c",
-    "games/common/src/system/save/identify_flash.c",
     "games/common/src/system/save/program_atmel_flash_block.c",
     "games/common/src/system/save/program_atmel_flash_sector.c",
     "games/common/src/system/save/program_flash_sector.c",
     "games/common/src/system/save/program_flash_sector_with_erase_retry.c",
-    "games/common/src/system/save/read_flash.c",
-    "games/common/src/system/save/read_flash_core.c",
-    "games/common/src/system/save/read_flash_id.c",
-    "games/common/src/system/save/start_flash_timer.c",
-    "games/common/src/system/save/verify_flash_sector.c",
     "games/common/src/system/save/flash_verify_callback.c",
 ];
 

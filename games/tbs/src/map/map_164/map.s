@@ -120,3 +120,7 @@ Field_Map164:
 	.endif
 	.endif
 	.balign 4, 0
+	.global Tileset_Palette51
+Tileset_Palette51:
+	.incbin "graphics/tileset/palettes/pal_51.gbapal.lz"
+	.byte 0xf0, 0x40, 0xef	@ PACKER: left in the buffer by Field_Map164+0x159

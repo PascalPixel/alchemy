@@ -30,3 +30,10 @@ Field_Map102:
 .LField_Map102_MARKERS:
 	.incbin "map/map_000/markers.table"
 	.balign 4, 0
+	.global Tileset_Set55Palette
+Tileset_Set55Palette:
+	.incbin "graphics/tileset/set_55/palette.gbapal.lz"
+	.byte 0x05	@ PACKER: left in the buffer by Field_Map102+0x1bf
+	.global Tileset_Set55TilesA
+Tileset_Set55TilesA:
+	.incbin "graphics/tileset/set_55/tiles_a.4bpp.mtf"

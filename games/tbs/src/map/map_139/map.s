@@ -30,3 +30,6 @@ Field_Map139:
 .LField_Map139_MARKERS:
 	.incbin "map/map_139/markers.table"
 	.balign 4, 0
+	.global Tileset_Palette36
+Tileset_Palette36:
+	.incbin "graphics/tileset/palettes/pal_36.gbapal.lz"

@@ -495,6 +495,54 @@ fn prepare_includes(
     Ok(())
 }
 
+/// An assembler source under games/ named by an `.include`: a module that
+/// gathers resources includes the sources it shares with the other game.
+/// Unlike a header, such a source is read whole in the including file's
+/// place, so its payloads and claims are checked as that file's own are.
+fn included_source(name: &str) -> bool {
+    let path = Path::new(name);
+    path.starts_with("games")
+        && path.extension().is_some_and(|extension| extension == "s")
+        && path
+            .components()
+            .all(|part| matches!(part, std::path::Component::Normal(_)))
+}
+
+/// The lines of a source with each included assembler source in place of
+/// its `.include`, and the file and line every line came from.
+fn with_sources(
+    text: &str,
+    source: &str,
+    root: &Path,
+    open: &mut Vec<String>,
+    lines: &mut Vec<String>,
+    origins: &mut Vec<(String, usize)>,
+) -> Result<(), String> {
+    open.push(source.into());
+    for (number, row) in text.lines().enumerate() {
+        let visible = crate::compiler::assembly_source::without_comments(row);
+        let Some(name) = include_name(visible.trim()).filter(|name| included_source(name)) else {
+            lines.push(row.into());
+            origins.push((source.into(), number + 1));
+            continue;
+        };
+        let at = |error: String| format!("{source}:{}: {error}", number + 1);
+        if row.contains("PACKER:") {
+            return Err(at("unsupported tagged or preprocessed include".into()));
+        }
+        if open.iter().any(|known| known == name) {
+            return Err(at(format!("recursive GAS include {name}")));
+        }
+        let included = declared_read(root, Path::new(name))
+            .and_then(|bytes| String::from_utf8(bytes).map_err(|error| error.to_string()))
+            .map_err(at)?;
+        with_sources(&included, name, root, open, lines, origins)?;
+    }
+    open.pop();
+    Ok(())
+}
+
+#[cfg(test)]
 fn selected_source(
     text: &str,
     source: &str,
@@ -503,6 +551,24 @@ fn selected_source(
     output: &Path,
     read: &dyn Fn(&str) -> Result<Vec<u8>, String>,
 ) -> Result<String, String> {
+    selected_module(text, source, edition, root, output, read).map(|(text, _)| text)
+}
+
+/// The edition's selection of a source with its included assembler sources
+/// in place, and the file and line each of its lines came from.
+fn selected_module(
+    text: &str,
+    source: &str,
+    edition: &str,
+    root: &Path,
+    output: &Path,
+    read: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+) -> Result<(String, Vec<(String, usize)>), String> {
+    let (mut lines, mut places) = (Vec::new(), Vec::new());
+    with_sources(text, source, root, &mut Vec::new(), &mut lines, &mut places)?;
+    let mut text = lines.join("\n");
+    text.push('\n');
+    let text = text.as_str();
     let private = tempfile::tempdir().map_err(|error| error.to_string())?;
     prepare_includes(
         text,
@@ -513,10 +579,9 @@ fn selected_source(
         &mut std::collections::BTreeSet::new(),
     )?;
     let mut expanded = text.to_owned();
-    let mut origins: Vec<(String, usize, bool)> = text
-        .lines()
-        .enumerate()
-        .map(|(number, _)| (source.into(), number + 1, false))
+    let mut origins: Vec<(String, usize, bool)> = places
+        .iter()
+        .map(|(file, line)| (file.clone(), *line, false))
         .collect();
     loop {
         let selected = crate::compiler::assembly_source::selected_includes(
@@ -554,7 +619,8 @@ fn selected_source(
                 text,
                 edition,
                 &[private.path()],
-            );
+            )
+            .map(|selected| (selected, places));
         };
         let included = fs::read_to_string(private.path().join(name))
             .map_err(|error| format!("{name}: {error}"))?;
@@ -591,16 +657,41 @@ fn source_fill(directive: &str, arguments: &str, tag: &str) -> Option<u8> {
 /// Collect the actual selected generated payload before each PACKER row.
 /// These file lengths establish the stream boundary, including any source
 /// prefix such as an inline palette. Literal leftovers are kept separate.
+/// `origins` gives the file and line of each line of a module whose included
+/// assembler sources stand in place (selected_module); without it every
+/// line is `source`'s own. A block ends where the file changes, as it does
+/// at a separate file's end, and an included source under games/common
+/// names its assets as a source there does.
 fn payloads_collect(
     text: &str,
     source: &str,
+    origins: &[(String, usize)],
     images: &Images,
     read: &dyn Fn(&str) -> Result<Vec<u8>, String>,
     failures: &mut Vec<String>,
 ) -> Result<BTreeMap<String, Payload>, String> {
     let mut found = BTreeMap::new();
     let mut block = SourceBlock::default();
+    let module = source;
+    let mut file = source;
     for (number, line) in text.lines().enumerate() {
+        let (source, number) = origins
+            .get(number)
+            .map_or((module, number), |(file, line)| (file.as_str(), line - 1));
+        if source != file {
+            block.finish(file, &mut found)?;
+            file = source;
+        }
+        let shared = source != module
+            && source.starts_with("games/common/")
+            && !module.starts_with("games/common/");
+        let read = |name: &str| {
+            if shared && !name.starts_with("common/") && !name.starts_with("overlays/") {
+                read(&format!("common/{name}"))
+            } else {
+                read(name)
+            }
+        };
         let (code, comment) = line
             .split_once('@')
             .map_or((line.trim(), ""), |(code, comment)| {
@@ -761,7 +852,7 @@ fn payloads_collect(
             block.unsupported = true;
         }
     }
-    block.finish(source, &mut found)?;
+    block.finish(file, &mut found)?;
     Ok(found)
 }
 
@@ -1061,9 +1152,26 @@ fn run(root: &Path, suggest: bool) -> Result<Proven, String> {
             .find(|(edition, _)| edition.id == id)
             .unwrap()
             .1;
-        for source in files.iter().filter(|source| {
+        let assembler = |source: &&String| {
             source.starts_with("games/") && (source.ends_with(".s") || source.ends_with(".S"))
-        }) {
+        };
+        // A source a module includes is read in the module's place, not
+        // again as a file of its own: this edition links it there.
+        let mut gathered = std::collections::BTreeSet::new();
+        for source in files.iter().filter(assembler) {
+            if let Ok(text) = fs::read_to_string(root.join(source)) {
+                gathered.extend(
+                    crate::build_rom::included_sources(&text)
+                        .into_iter()
+                        .filter(|name| included_source(name)),
+                );
+            }
+        }
+        for source in files
+            .iter()
+            .filter(assembler)
+            .filter(|source| !gathered.contains(*source))
+        {
             let text = declared_read(root, Path::new(source))
                 .and_then(|bytes| String::from_utf8(bytes).map_err(|error| error.to_string()))
                 .map_err(|error| format!("{source}: {error}"))?;
@@ -1107,8 +1215,8 @@ fn run(root: &Path, suggest: bool) -> Result<Proven, String> {
                 encoded.borrow_mut().insert(key, bytes.clone());
                 Ok(bytes)
             };
-            let selected =
-                match selected_source(&text, source, target.edition_define, root, &output, &read) {
+            let (selected, origins) =
+                match selected_module(&text, source, target.edition_define, root, &output, &read) {
                     Ok(selected) => selected,
                     Err(error) => {
                         source_failures.push(format!("{source} ({id}): {error}"));
@@ -1119,7 +1227,8 @@ fn run(root: &Path, suggest: bool) -> Result<Proven, String> {
                 continue;
             }
             let mut diagnostics = Vec::new();
-            let payloads = payloads_collect(&selected, source, &images, &read, &mut diagnostics);
+            let payloads =
+                payloads_collect(&selected, source, &origins, &images, &read, &mut diagnostics);
             source_failures.extend(
                 diagnostics
                     .into_iter()
@@ -1252,7 +1361,7 @@ mod tests {
         read: &dyn Fn(&str) -> Result<Vec<u8>, String>,
     ) -> Result<BTreeMap<String, Payload>, String> {
         let mut failures = Vec::new();
-        let found = payloads_collect(text, source, images, read, &mut failures)?;
+        let found = payloads_collect(text, source, &[], images, read, &mut failures)?;
         if failures.is_empty() {
             Ok(found)
         } else {
@@ -1737,6 +1846,80 @@ mod tests {
     }
 
     #[test]
+    fn a_module_proves_the_claims_of_the_sources_it_includes() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        fs::create_dir_all(root.join("games/common/include")).unwrap();
+        fs::create_dir_all(root.join("games/common/src/ui")).unwrap();
+        fs::write(
+            root.join("games/common/include/ed.h"),
+            ".ifndef GUARD\n.set GUARD, 1\n.set INTERNATIONAL, 0\n.ifdef TBS_EDITION_EN\n.set INTERNATIONAL, 1\n.endif\n.endif\n",
+        )
+        .unwrap();
+        // A shared source as the other game links it: its own header line,
+        // section, label, stream and an edition's leftover byte.
+        fs::write(
+            root.join("games/common/src/ui/second.s"),
+            ".include \"games/common/include/ed.h\"\n.section .rodata\n.global Second\nSecond:\n.incbin \"graphics/second.4bpp.lz\"\n.ifeq INTERNATIONAL\n.byte 9 @ PACKER: left in the buffer by First+0x3\n.else\n.byte 7 @ PACKER: left in the buffer by First+0x3\n.endif\n",
+        )
+        .unwrap();
+        let images = image(&[
+            ("First", vec![1, 2, 3, 7]),
+            ("Second", vec![4, 5, 6, 7]),
+            ("Third", vec![8, 8, 8, 7]),
+        ]);
+        let module = ".include \"games/common/include/ed.h\"\n.section .rodata\nFirst:\n.incbin \"graphics/first.4bpp.lz\"\n.include \"games/common/src/ui/second.s\"\nThird:\n.incbin \"graphics/third.4bpp.lz\"\n.byte 7 @ PACKER: left in the buffer by First+0x3\n";
+        let read = |name: &str| match name {
+            "graphics/first.4bpp.lz" => Ok(vec![1, 2, 3, 7]),
+            // The shared source's asset is games/common's.
+            "common/graphics/second.4bpp.lz" => Ok(vec![4, 5, 6]),
+            "graphics/third.4bpp.lz" => Ok(vec![8, 8, 8]),
+            _ => Err(format!("unknown source asset {name}")),
+        };
+        let source = "games/tbs/src/ui/ui.s";
+        let (selected, origins) =
+            selected_module(module, source, "TBS_EDITION_EN", root, root, &read).unwrap();
+        let mut failures = Vec::new();
+        let found =
+            payloads_collect(&selected, source, &origins, &images, &read, &mut failures).unwrap();
+        assert_eq!(failures, Vec::<String>::new());
+        let order = images.directory().unwrap();
+        for label in ["First", "Second", "Third"] {
+            prove(&images, &order, &found, label).unwrap();
+        }
+        // The claim is reported where it is written.
+        assert_eq!(found["Second"].source, "games/common/src/ui/second.s");
+        assert_eq!(found["Second"].rows[0].line, 9);
+        assert_eq!(found["Third"].source, source);
+        assert_eq!(found["Third"].rows[0].line, 8);
+        // The other edition's row is selected inside the included source.
+        let (selected, origins) =
+            selected_module(module, source, "TBS_EDITION_JA", root, root, &read).unwrap();
+        let found =
+            payloads_collect(&selected, source, &origins, &images, &read, &mut failures).unwrap();
+        assert_eq!(found["Second"].rows[0].line, 7);
+        assert!(prove(&images, &order, &found, "Second")
+            .unwrap_err()
+            .contains("PACKER row is absent"));
+        // Bytes a module writes after an included source belong to no
+        // resource of its own, so a claim there is refused.
+        let stray = module.replace("Third:\n.incbin \"graphics/third.4bpp.lz\"\n", "");
+        let (selected, origins) =
+            selected_module(&stray, source, "TBS_EDITION_EN", root, root, &read).unwrap();
+        payloads_collect(&selected, source, &origins, &images, &read, &mut failures).unwrap();
+        assert!(failures[0].starts_with("games/tbs/src/ui/ui.s:6: PACKER tag needs"));
+        // A header still cannot carry a claim, and a source cannot include itself.
+        fs::write(
+            root.join("games/common/src/ui/second.s"),
+            ".include \"games/common/src/ui/second.s\"\n",
+        )
+        .unwrap();
+        assert!(selected_module(module, source, "TBS_EDITION_EN", root, root, &read)
+            .unwrap_err()
+            .contains("recursive GAS include"));
+    }
+
+    #[test]
     fn an_emitting_include_cannot_shorten_an_intervening_writer() {
         let directory = tempfile::tempdir().unwrap();
         let root = directory.path();
@@ -1871,7 +2054,8 @@ mod tests {
         };
         let mut failures = Vec::new();
         let found =
-            payloads_collect(text, "games/tbs/src/a.s", &images, &read, &mut failures).unwrap();
+            payloads_collect(text, "games/tbs/src/a.s", &[], &images, &read, &mut failures)
+                .unwrap();
         assert_eq!(failures.len(), 1);
         assert!(failures[0].contains("a.s:3: PACKER tag needs a .byte row"));
         assert_eq!(

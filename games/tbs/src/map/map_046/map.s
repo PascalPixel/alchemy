@@ -29,3 +29,23 @@ Field_Map046:
 	.balign 4, 0
 .LField_Map046_MARKERS:
 	.incbin "map/map_046/markers.table"
+	.global Tileset_Set36Palette
+Tileset_Set36Palette:
+	.incbin "graphics/tileset/set_36/palette.gbapal.lz"
+	.byte 0x34	@ PACKER: left in the buffer by Field_Map046+0x18f
+	.global Tileset_Set36TilesA
+Tileset_Set36TilesA:
+	.incbin "graphics/tileset/set_36/tiles_a.4bpp.mtf"
+	.balign 4, 0
+	.global Tileset_Set36TilesB
+Tileset_Set36TilesB:
+	.incbin "graphics/tileset/set_36/tiles_b.4bpp.mtf"
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.global Tileset_Set36TilesC
+Tileset_Set36TilesC:
+	.incbin "graphics/tileset/set_36/tiles_c.4bpp.mtf"
+	.byte 0xe8, 0x95, 0x5a	@ PACKER: left in the buffer by Tileset_Set36TilesB+0xc81
+	.global Tileset_Set36TilesD
+Tileset_Set36TilesD:
+	.incbin "graphics/tileset/set_36/tiles_d.4bpp.mtf"
+	.byte 0xa4	@ PACKER: left in the buffer by Tileset_Set36TilesC+0x13f

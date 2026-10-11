@@ -24,3 +24,23 @@ Field_Map008:
 .LField_Map008_MARKERS:
 	.incbin "map/map_000/markers.table"
 	.balign 4, 0
+	.global Tileset_Set07Palette
+Tileset_Set07Palette:
+	.incbin "graphics/tileset/set_07/palette.gbapal.lz"
+	.byte 0x13, 0x3e	@ PACKER: left in the buffer by Field_Map008+0xe2
+	.global Tileset_Set07TilesA
+Tileset_Set07TilesA:
+	.incbin "common/graphics/tileset/set_07/tiles_a.4bpp.mtf"
+	.byte 0xf0, 0xa4, 0x22	@ PACKER: left in the buffer by Field_Map008+0x11e9
+	.global Tileset_Set07TilesB
+Tileset_Set07TilesB:
+	.incbin "common/graphics/tileset/set_07/tiles_b.4bpp.mtf"
+	.byte 0xce, 0x43, 0x48	@ PACKER: left in the buffer by Field_Map008+0x1c85
+	.global Tileset_Set07TilesC
+Tileset_Set07TilesC:
+	.incbin "common/graphics/tileset/set_07/tiles_c.4bpp.mtf"
+	.byte 0x3e	@ PACKER: left in the buffer by Tileset_Set07TilesB+0x50b
+	.global Tileset_Set07TilesD
+Tileset_Set07TilesD:
+	.incbin "common/graphics/tileset/set_07/tiles_d.4bpp.mtf"
+	.byte 0x4e	@ PACKER: left in the buffer by Tileset_Set07TilesC+0x13f

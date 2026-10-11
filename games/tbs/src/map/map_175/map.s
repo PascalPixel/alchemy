@@ -24,3 +24,23 @@ Field_Map175:
 .LField_Map175_MARKERS:
 	.incbin "map/map_000/markers.table"
 	.balign 4, 0
+	.global Tileset_Set71Palette
+Tileset_Set71Palette:
+	.incbin "graphics/tileset/set_68/palette.gbapal.lz"
+	.byte 0x00	@ PACKER: left in the buffer by Field_Map175+0xb
+	.global Tileset_Set71TilesA
+Tileset_Set71TilesA:
+	.incbin "graphics/tileset/set_68/tiles_a.4bpp.mtf"
+	.byte 0xff, 0x00	@ PACKER: left in the buffer by Field_Map175+0x14e
+	.global Tileset_Set71TilesB
+Tileset_Set71TilesB:
+	.incbin "graphics/tileset/set_68/tiles_b.4bpp.mtf"
+	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set71TilesA+0x13f
+	.global Tileset_Set71TilesC
+Tileset_Set71TilesC:
+	.incbin "graphics/tileset/set_68/tiles_b.4bpp.mtf"
+	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set71TilesA+0x13f
+	.global Tileset_Set71TilesD
+Tileset_Set71TilesD:
+	.incbin "graphics/tileset/set_68/tiles_b.4bpp.mtf"
+	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set71TilesA+0x13f

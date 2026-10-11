@@ -1,4 +1,5 @@
 	.include "games/tbs/src/map/map.inc"
+	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
 	.global Field_Map011
 Field_Map011:
@@ -30,3 +31,34 @@ Field_Map011:
 .LField_Map011_MARKERS:
 	.incbin "map/map_011/markers.table"
 	.balign 4, 0
+	.global Tileset_Set10Palette
+Tileset_Set10Palette:
+	.incbin "graphics/tileset/set_10/palette.gbapal.lz"
+	.global Tileset_Set10TilesA
+Tileset_Set10TilesA:
+	.incbin "graphics/tileset/set_10/tiles_a.4bpp.mtf"
+	.ifdef TBS_EDITION_JA
+	.byte 0xf0, 0x4b	@ PACKER: left in the buffer by Tileset_Set09TilesA+0x1f7e
+	.else
+	.ifdef TBS_EDITION_EN
+	.byte 0xf0, 0x4b	@ PACKER: left in the buffer by Tileset_Set09TilesA+0x1f7e
+	.else
+	.ifdef TBS_EDITION_DE
+	.byte 0xf0, 0x4b	@ PACKER: left in the buffer by Tileset_Set09TilesA+0x1f7e
+	.else
+	.byte 0xc9, 0x36	@ PACKER: left in the buffer by Tileset_Set09TilesA+0x1f7e
+	.endif
+	.endif
+	.endif
+	.global Tileset_Set10TilesB
+Tileset_Set10TilesB:
+	.incbin "graphics/tileset/set_10/tiles_b.4bpp.mtf"
+	.byte 0x7d, 0x04, 0xc1	@ PACKER: left in the buffer by Tileset_Set10TilesA+0x945
+	.global Tileset_Set10TilesC
+Tileset_Set10TilesC:
+	.incbin "graphics/tileset/set_10/tiles_c.4bpp.mtf"
+	.byte 0x12, 0xa2	@ PACKER: left in the buffer by Tileset_Set10TilesA+0xc4a
+	.global Tileset_Set10TilesD
+Tileset_Set10TilesD:
+	.incbin "graphics/tileset/set_10/tiles_d.4bpp.mtf"
+	.byte 0xe3, 0xb0, 0xd3	@ PACKER: left in the buffer by Tileset_Set10TilesC+0x225

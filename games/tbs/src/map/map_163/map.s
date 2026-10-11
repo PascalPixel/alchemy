@@ -61,3 +61,6 @@ Field_Map163:
 	.incbin "map/map_163/markers.table"
 	.endif
 	.balign 4, 0
+	.global Tileset_Palette50
+Tileset_Palette50:
+	.incbin "common/graphics/tileset/palettes/pal_50.gbapal.lz"

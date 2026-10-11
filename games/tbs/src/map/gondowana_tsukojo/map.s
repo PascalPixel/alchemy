@@ -30,3 +30,6 @@ Field_GondowanaTsukojo:
 .LField_GondowanaTsukojo_MARKERS:
 	.incbin "map/map_000/markers.table"
 	.balign 4, 0
+	.global Tileset_Palette33
+Tileset_Palette33:
+	.incbin "graphics/tileset/palettes/pal_33.gbapal.lz"

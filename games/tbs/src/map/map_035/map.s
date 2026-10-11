@@ -96,3 +96,22 @@ Field_Map035:
 	.endif
 	.endif
 	.balign 4, 0
+	.global Tileset_Set27Palette
+Tileset_Set27Palette:
+	.incbin "graphics/tileset/set_27/palette.gbapal.lz"
+	.byte 0x8c, 0xda, 0xd6	@ PACKER: left in the buffer by Field_Map035+0x1a9
+	.global Tileset_Set27TilesA
+Tileset_Set27TilesA:
+	.incbin "graphics/tileset/set_27/tiles_a.4bpp.mtf"
+	.byte 0x60, 0xcf, 0x83	@ PACKER: left in the buffer by Tileset_Set23TilesA+0x2d91
+	.global Tileset_Set27TilesB
+Tileset_Set27TilesB:
+	.incbin "graphics/tileset/set_27/tiles_b.4bpp.mtf"
+	.global Tileset_Set27TilesC
+Tileset_Set27TilesC:
+	.incbin "graphics/tileset/set_27/tiles_c.4bpp.mtf"
+	.byte 0xb0, 0x3e	@ PACKER: left in the buffer by Tileset_Set27TilesB+0x197a
+	.global Tileset_Set27TilesD
+Tileset_Set27TilesD:
+	.incbin "graphics/tileset/set_27/tiles_d.4bpp.mtf"
+	.byte 0xa9	@ PACKER: left in the buffer by Tileset_Set27TilesC+0x13f

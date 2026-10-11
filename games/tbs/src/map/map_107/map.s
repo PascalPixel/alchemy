@@ -26,3 +26,7 @@ Field_Map107:
 	.balign 4, 0
 .LField_Map107_MARKERS:
 	.incbin "map/map_107/markers.table"
+	.global Tileset_Palette13
+Tileset_Palette13:
+	.incbin "graphics/tileset/palettes/pal_13.gbapal.lz"
+	.byte 0x94, 0x4b, 0xc1	@ PACKER: left in the buffer by Field_Map107+0x191

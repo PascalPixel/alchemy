@@ -108,3 +108,21 @@ Field_Map002:
 	.endif
 	.endif
 	.balign 4, 0
+	.global Tileset_Set01Palette
+Tileset_Set01Palette:
+	.incbin "graphics/tileset/set_01/palette.gbapal.lz"
+	.byte 0xb3	@ PACKER: left in the buffer by Field_Map002+0x193
+	.global Tileset_Set01TilesA
+Tileset_Set01TilesA:
+	.incbin "graphics/tileset/set_01/tiles_a.4bpp.mtf"
+	.byte 0x97	@ PACKER: left in the buffer by Field_Map002+0x2c53
+	.global Tileset_Set01TilesB
+Tileset_Set01TilesB:
+	.incbin "graphics/tileset/set_01/tiles_b.4bpp.mtf"
+	.global Tileset_Set01TilesC
+Tileset_Set01TilesC:
+	.incbin "graphics/tileset/set_01/tiles_c.4bpp.mtf"
+	.global Tileset_Set01TilesD
+Tileset_Set01TilesD:
+	.incbin "graphics/tileset/set_01/tiles_d.4bpp.mtf"
+	.byte 0x8f	@ PACKER: left in the buffer by Tileset_Set01TilesC+0x1ecb

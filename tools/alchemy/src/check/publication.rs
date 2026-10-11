@@ -663,7 +663,10 @@ fn own_palette_built(path: &str) -> bool {
         .is_some_and(|stem| incbinned(path, &format!("{stem}.gbapal")))
 }
 
-/// Whether an assembly source beside `path` incbins the build product `name` from that folder.
+/// Whether an assembly source incbins the build product `name` from
+/// `path`'s folder: a source beside `path`, or, where a module gathers the
+/// assets of several folders, any source of the same game. An asset of
+/// games/common may also be named by another game's source, as `common/...`.
 fn incbinned(path: &str, name: &str) -> bool {
     let Some(directory) = Path::new(path).parent() else {
         return false;
@@ -676,13 +679,34 @@ fn incbinned(path: &str, name: &str) -> bool {
         .strip_prefix(source_root)
         .map(|rest| format!("{rest}/{name}"))
         .unwrap_or_default();
+    let own = format!("\"{relative}");
+    if sources_name(directory, &own, false) || sources_name(Path::new(source_root), &own, true) {
+        return true;
+    }
+    let games = Path::new(source_root).parent().and_then(Path::parent);
+    let shared = Path::new(source_root).parent().is_some_and(|game| game.ends_with("common"));
+    let Some(entries) = games.filter(|_| shared).and_then(|games| std::fs::read_dir(games).ok()) else {
+        return false;
+    };
+    let named = format!("\"common/{relative}");
+    entries
+        .flatten()
+        .any(|game| !game.path().ends_with("common") && sources_name(&game.path().join("src"), &named, true))
+}
+
+/// Whether an assembly source in a folder, or with `deep` anywhere under
+/// it, holds the text `needle`.
+fn sources_name(directory: &Path, needle: &str, deep: bool) -> bool {
     let Ok(entries) = std::fs::read_dir(directory) else {
         return false;
     };
     entries.flatten().any(|entry| {
-        entry.path().extension().is_some_and(|ext| ext == "s" || ext == "S")
-            && std::fs::read_to_string(entry.path())
-                .is_ok_and(|text| text.contains(&format!("\"{relative}")))
+        let path = entry.path();
+        if path.is_dir() {
+            return deep && sources_name(&path, needle, deep);
+        }
+        path.extension().is_some_and(|ext| ext == "s" || ext == "S")
+            && std::fs::read_to_string(&path).is_ok_and(|text| text.contains(needle))
     })
 }
 fn binary_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'static str> {
@@ -3792,6 +3816,35 @@ mod tests {
         )
         .unwrap();
         assert!(palette_built(&path));
+    }
+
+    #[test]
+    fn a_module_elsewhere_in_the_game_may_write_a_grey_palette() {
+        let temp = tempfile::tempdir().unwrap();
+        let write = |path: &str, text: &str| {
+            let path = temp.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, text).unwrap();
+        };
+        let at = |path: &str| temp.path().join(path).to_string_lossy().into_owned();
+        write("games/x/src/graphics/tileset/set_68/tiles.tsv", "");
+        let own = at("games/x/src/graphics/tileset/set_68/palette.png");
+        let shared = at("games/common/src/graphics/fx/orb.png");
+        write("games/common/src/graphics/fx/orb.tsv", "");
+        // Another game's module does not write this game's palette, and a
+        // plain name in another game is that game's own asset.
+        write(
+            "games/y/src/map/a/map.s",
+            "\t.incbin \"graphics/tileset/set_68/palette.gbapal.lz\"\n\t.incbin \"graphics/fx/orb.gbapal\"\n",
+        );
+        assert!(!palette_built(&own));
+        assert!(!palette_built(&shared));
+        // The area's module gathers its tile set's palette.
+        write("games/x/src/map/a/map.s", "Tileset_Palette:\n\t.incbin \"graphics/tileset/set_68/palette.gbapal.lz\"\n");
+        assert!(palette_built(&own));
+        // A game's module names an asset of games/common as common/...
+        write("games/x/src/graphics/fx/fx.s", "\t.incbin \"common/graphics/fx/orb.gbapal\"\n");
+        assert!(palette_built(&shared));
     }
     #[test]
     fn encoded_measures_whole_texts_and_spares_identifiers_and_digests() {

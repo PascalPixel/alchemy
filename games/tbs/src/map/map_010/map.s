@@ -1,4 +1,5 @@
 	.include "games/tbs/src/map/map.inc"
+	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
 	.global Field_Map010
 Field_Map010:
@@ -30,3 +31,67 @@ Field_Map010:
 .LField_Map010_MARKERS:
 	.incbin "map/map_000/markers.table"
 	.balign 4, 0
+	.global Tileset_Set09Palette
+Tileset_Set09Palette:
+	.ifdef TBS_EDITION_ES
+	.incbin "graphics/tileset/set_09/palette_es.gbapal.lz"
+	.else
+	.ifdef TBS_EDITION_FR
+	.incbin "graphics/tileset/set_09/palette_es.gbapal.lz"
+	.else
+	.ifdef TBS_EDITION_IT
+	.incbin "graphics/tileset/set_09/palette_es.gbapal.lz"
+	.else
+	.incbin "graphics/tileset/set_09/palette.gbapal.lz"
+	.endif
+	.endif
+	.endif
+	.byte 0xd4	@ PACKER: left in the buffer by Field_Map010+0x133
+	.global Tileset_Set09TilesA
+Tileset_Set09TilesA:
+	.ifdef TBS_EDITION_ES
+	.incbin "graphics/tileset/set_09/tiles_a_es.4bpp.mtf"
+	.else
+	.ifdef TBS_EDITION_FR
+	.incbin "graphics/tileset/set_09/tiles_a_es.4bpp.mtf"
+	.else
+	.ifdef TBS_EDITION_IT
+	.incbin "graphics/tileset/set_09/tiles_a_es.4bpp.mtf"
+	.else
+	.incbin "graphics/tileset/set_09/tiles_a.4bpp.mtf"
+	.endif
+	.endif
+	.endif
+	.ifdef TBS_EDITION_ES
+	.byte 0x89, 0x99	@ PACKER: left in the buffer by Tileset_Set08TilesA+0x2482
+	.else
+	.ifdef TBS_EDITION_FR
+	.byte 0x89, 0x99	@ PACKER: left in the buffer by Tileset_Set08TilesA+0x2482
+	.else
+	.ifdef TBS_EDITION_IT
+	.byte 0x89, 0x99	@ PACKER: left in the buffer by Tileset_Set08TilesA+0x2482
+	.else
+	.byte 0x06	@ PACKER: left in the buffer by Tileset_Set08TilesA+0x247f
+	.endif
+	.endif
+	.endif
+	.global Tileset_Set09TilesB
+Tileset_Set09TilesB:
+	.incbin "graphics/tileset/set_09/tiles_b.4bpp.mtf"
+	.ifdef TBS_EDITION_JA
+	.byte 0xee	@ PACKER: left in the buffer by Tileset_Set09TilesA+0xd7b
+	.else
+	.ifdef TBS_EDITION_EN
+	.byte 0xee	@ PACKER: left in the buffer by Tileset_Set09TilesA+0xd7b
+	.else
+	.ifdef TBS_EDITION_DE
+	.byte 0xee	@ PACKER: left in the buffer by Tileset_Set09TilesA+0xd7b
+	.else
+	.byte 0x86	@ PACKER: left in the buffer by Tileset_Set09TilesA+0xd7b
+	.endif
+	.endif
+	.endif
+	.global Tileset_Set09TilesC
+Tileset_Set09TilesC:
+	.incbin "graphics/tileset/set_09/tiles_c.4bpp.mtf"
+	.byte 0x1c, 0x40	@ PACKER: left in the buffer by Tileset_Set09TilesB+0xade

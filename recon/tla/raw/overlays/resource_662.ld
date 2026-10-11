@@ -11,7 +11,7 @@ SECTIONS
         "*/resource_662_overlay.o"(.text.x02008754)
         "*/resource_662_overlay.o"(.text.x020087dc)
         "*/resource_662_overlay.o"(.text.x02008898)
-        "*/resource_662_overlay.o"(.text.x020088fc)
+        "*/games/tla/src/field/overlay_662/stop.o"(.text)
         "*/resource_662_overlay.o"(.text.x0200891c)
         "*/resource_662_overlay.o"(.text.x02008978)
         "*/resource_662_overlay.o"(.text.x0200899c)

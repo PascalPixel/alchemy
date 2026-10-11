@@ -125,4 +125,7 @@ extern char SceneId_Ov697Room2;
 extern char SceneId_Ov697Room3;
 extern char SceneId_Ov697Room4;
 
+extern char SceneId_Ov690Room3;
+extern char SceneId_Ov690Room5;
+
 #endif

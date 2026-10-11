@@ -1,0 +1,31 @@
+#include "local.h"
+
+void Func_02000758(s32 x, s32 y, s32 z)
+{
+    struct ObjectRuntime *object = Func_02001ff8(0x11d, x, y, z);
+
+    if (object != NULL) {
+        s8 *animation;
+
+        object->unknown_5c[0] = 2;
+        object->motion_flags = 0;
+        object->action = 0;
+        object->priority_flags &= 0xfe;
+        Object_SetPartAttribute(object, 7);
+        animation = object->animation;
+        animation[9] = (animation[9] & -13) | 4;
+        ObjectDispatch_SetSingleChildFlags(object, 0);
+        object->scale_x = 0x8000;
+        object->scale_y = 0x8000;
+        *(s32 *)&object->linked_object = 60;
+        object->update = (void (*)(void))Func_02000714;
+        Func_02001fe0(object, 5);
+        Animation_SetStateFlags(object, 1);
+    }
+}
+
+void Func_020007d8(void)
+{
+    if ((gFrameCount & 63) == 0)
+        Func_02000758(0xf80000, 0x300000, 0x1000000);
+}

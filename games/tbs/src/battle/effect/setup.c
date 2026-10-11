@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -72,7 +73,6 @@ u8 BattleFx_GetFlags(void)
 }
 
 extern volatile u8	gDebugMode;
-extern volatile s32 gKeyState;
 
 void Battle_UpdateModeFromShoulderButtons(void)
 {

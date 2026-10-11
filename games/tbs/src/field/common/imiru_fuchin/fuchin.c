@@ -1481,7 +1481,7 @@ void SceneActor_StepSubjectAlongHeading(void)
         z = probe.z;
         x = probe.x;
         goal = GetMapCellCollision(subject->terrain_id, x, z);
-        Vector_AddPolarOffset(0x100000, heading, &probe);
+        FieldVector_AddPolarOffset(0x100000, heading, &probe);
 
         marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
         if (marker == 255
@@ -1520,7 +1520,6 @@ continue_probe:
         }
 
 advance_probe:
-        /* FAKEMATCH: needed to match: retain the measured second probe call's stack-address order. */
         FieldVector_AddPolarOffset(0x100000, heading, &probe);
         marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
         if (marker != 255) {

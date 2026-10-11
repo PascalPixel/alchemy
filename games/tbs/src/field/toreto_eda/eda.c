@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -37,9 +38,7 @@ union SceneCell {
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
 #endif
-extern s32 gKeysHeld;
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
-extern s32 gKeysRepeat;
 #endif
 
 static u16 sTransferHeader[16];

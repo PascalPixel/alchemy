@@ -142,7 +142,7 @@ s32 BattleFx_CopyLinkedObjectPosition(void *self)
 	struct FieldActor *obj = self;
 	struct FieldActor *link;
 
-	link = *(struct FieldActor **)obj->unknown_68;
+	link = obj->linked_object;
 	if (link != NULL)
 	{
 		obj->motion_flags = 0;
@@ -188,7 +188,7 @@ void BattleFx_SpawnLinked(s32 id, s32 mode, s32 wait)
 			obj->work = id;
 			obj->update = (void (*)(union FieldObject *))BattleFx_CopyLinkedObjectPosition;
 			obj->sprite->flags = 0;
-			*(struct FieldActor **)&obj->unknown_68[0] = target;
+			obj->linked_object = target;
 
 			if ((mode & 0x100) != 0)
 			{

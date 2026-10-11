@@ -2,9 +2,9 @@
 #define IMIRU_FUCHIN_H
 
 #include "types.h"
+#include "keystate.h"
 #include "field_event.h"
 #include "field_scene.h"
-extern u32 gKeysHeld;
 
 enum {
 

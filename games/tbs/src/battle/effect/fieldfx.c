@@ -4,6 +4,7 @@
 //--------------------------------------------------------------------------
 
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -28,7 +29,6 @@
 #include "iwram_call.h"
 #include "io_reg.h"
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
 
 #define Motion_SetTargetPositionFromMagnitudeAngle \
 	((void (*)(void *, s32, s32))Motion_SetTargetPositionFromMagnitudeAngle)
@@ -93,7 +93,6 @@ struct FxObject
 	void			*callback;
 };
 
-extern volatile u32 gKeysHeld;
 extern volatile u32 gFrameCount;
 
 void			 AudioCommand_PlayFar(s32 cue);

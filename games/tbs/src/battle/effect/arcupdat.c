@@ -34,22 +34,6 @@ struct ObjectRuntime		*Object_CreateFar(s32, s32, s32, s32);
 void						 ObjectDispatch_ReleaseFar(struct ObjectRuntime *);
 void						 ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *, s32);
 
-// 弧の物体 (actsetup.c と同じ並び)
-struct ArcObject
-{
-	u8				  pad00[8];
-	s32				  x;
-	s32				  y;
-	s32				  z;
-	u8				  pad14[4];
-	s32				  scale_x;
-	s32				  scale_y;
-	u8				  pad20[0x44];
-	u16				  counter;
-	u8				  pad66[2];
-	struct ArcObject *linked_object;
-};
-
 //--------------------------------------------------------------------------
 // 演出用の物体を出す
 // アニメのない物体は消して NULL。高さは使う者に合わせ、優先度は 0
@@ -106,13 +90,11 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state, s32
 //--------------------------------------------------------------------------
 void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj)
 {
-	/* FAKEMATCH: needed to match: the unsigned arc/link view keeps the link load before the counter store and sign extension */
-	struct ArcObject  *arc = (struct ArcObject *)obj;
 	struct FieldActor *link;
 	s32				   v;
 
-	link = (struct FieldActor *)arc->linked_object;
-	v = (s16)++arc->counter;
+	link = obj->linked_object;
+	v = (s16)++obj->timer;
 	if (v > 31)
 	{
 		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
@@ -131,13 +113,11 @@ void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj)
 //--------------------------------------------------------------------------
 void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj)
 {
-	/* FAKEMATCH: needed to match: the unsigned arc/link view keeps the link load before the counter store and sign extension */
-	struct ArcObject  *arc = (struct ArcObject *)obj;
 	struct FieldActor *link;
 	s32				   v;
 
-	link = (struct FieldActor *)arc->linked_object;
-	v = (s16)++arc->counter;
+	link = obj->linked_object;
+	v = (s16)++obj->timer;
 	if (v > 31)
 	{
 		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);

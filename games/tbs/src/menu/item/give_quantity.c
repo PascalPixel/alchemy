@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -21,8 +22,6 @@
 #include "text/msg_ids.h"
 void UiText_DrawNumberInWindowFar(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 s32 GameFlag_TestFar(s32 flag);
-extern volatile s32 gKeysRepeat;
-extern volatile s32 gKeyState;
 
 #if EDITION_INTERNATIONAL
 #define GIVE_CURSOR_X 128

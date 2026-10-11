@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -23,8 +24,6 @@ struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 extern void UiText_DrawCharacterAtOffsetFar(s32, void *, s32, s32);
 
-extern volatile s32 gKeysRepeat;
-extern volatile s32 gKeyState;
 s32 __modsi3(s32, s32);
 void WaitFrames(s32 frames);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
@@ -61,10 +60,8 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
 	s32 text;
 	s32 label;
 	s32 rows = 2;
-	s32 sel;
-	/* FAKEMATCH: the native keeps the flag in r8. Removing this binding
-	 * alone exchanges the flag and window registers (48 instructions differ). */
-	register s32 changed asm("r8");
+	s32 sel = 1;
+	s32 changed = 1;
 
 	win = UiWindow_CreateFar(13, 3, 17, 10, 2);
 	slot = a0 & ITEM_ID_MASK;
@@ -86,80 +83,43 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
 	UiText_DrawCharacterAtOffsetFar(label, win, 24, 40);
 	label++;
 	UiText_DrawCharacterAtOffsetFar(label, win, 24, 56);
-	sel = 1;
-	changed = 1;
 	UiMenu_SlideCursor(104, 86);
-	/* FAKEMATCH: explicit check/update flow keeps the native loop
-	 * rotation. A for, while or do loop with the cancelling flag copy
-	 * below moves the cancel-key block (28 instructions differ). */
-	goto check_input;
-
-update_cursor:
-	UiMenu_PositionCursor(104, (sel << 4) + 70);
-	/* FAKEMATCH: needed to match: the key-repeat pointer shares text's variable; as a pointer of its own it ranks below sel and the two swap r5 and r6 (13 of 134 rows differ) */
-	text = (s32)&gKeysRepeat;
-	if (*(volatile s32 *)text & 64)
+	for (;;)
 	{
-		/* FAKEMATCH: the native sets the flag through r2. Removing this
-		 * binding chooses r3 instead (two instruction rows differ). */
-		register s32 one asm("r2") = 1;
-		/* FAKEMATCH: the redundant conditional store ends CSE before
-		 * the cursor update, keeping the one load ahead of sel's
-		 * decrement. Without it, two rows swap; the conditional store
-		 * disappears, preserving all 128 instructions in every edition. */
+		if (GameFlag_TestFar(0x150))
+			break;
 		if (changed)
-		{
-			changed = one;
-		}
-		sel -= 1;
-		changed = one;
-		AudioCommand_PlayFar(111);
-	}
-	if (*(volatile s32 *)text & 128)
-	{
-		sel += 1;
-		changed = 1;
-		AudioCommand_PlayFar(111);
-	}
-	WaitFrames(1);
-check_input:
-	if (GameFlag_TestFar(0x150) != 0)
-	{
-		goto finish;
-	}
-	{
-		/* FAKEMATCH: the native tests this flag copy through r2. Removing
-		 * its binding adds an ip copy and changes the test (19 instructions differ). */
-		register s32 c asm("r2") = changed;
-		/* FAKEMATCH: the cancelling assignments end the native CSE
-		 * block before the flag test. Both arms disappear, retaining
-		 * the r2 copy; a bare removal tests r8 through r3 instead
-		 * (two instruction rows differ). sel is stable here. */
-		if (sel)
-			c = 0;
-		if (sel)
-			c = changed;
-		if (c)
 		{
 			changed = 0;
 			sel = (sel + rows) % rows;
 		}
+		if (gKeyState & KEY_A)
+		{
+			AudioCommand_PlayFar(112);
+			break;
+		}
+		if (gKeyState & KEY_B)
+		{
+			AudioCommand_PlayFar(113);
+			sel = 1;
+			break;
+		}
+		UiMenu_PositionCursor(104, (sel << 4) + 70);
+		if (gKeysRepeat & KEY_UP)
+		{
+			sel--;
+			changed = 1;
+			AudioCommand_PlayFar(111);
+		}
+		if (gKeysRepeat & KEY_DOWN)
+		{
+			sel++;
+			changed = 1;
+			AudioCommand_PlayFar(111);
+		}
+		WaitFrames(1);
 	}
-	if (gKeyState & KEY_A)
-	{
-		AudioCommand_PlayFar(112);
-		goto finish;
-	}
-	if (gKeyState & KEY_B)
-	{
-		AudioCommand_PlayFar(113);
-		sel = 1;
-		goto finish;
-	}
-	goto update_cursor;
-
-finish:
-	if (GameFlag_TestFar(0x150) != 0)
+	if (GameFlag_TestFar(0x150))
 	{
 		sel = 1;
 	}

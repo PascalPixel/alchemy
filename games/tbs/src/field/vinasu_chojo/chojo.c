@@ -29,6 +29,8 @@
 #include "io_reg.h"
 #include "window.h"
 
+// 戦闘開始の種類 (battle/party/party.c と同じ)
+
 void VinasuChojo_CleanupSceneObjects();
 void VinasuChojo_RunTransitionStep();
 void VinasuChojo_ShowPartyMember();
@@ -1099,10 +1101,7 @@ void Scene_RunActorEntrySequence(void)
     Engine_ActorEnableActionCallback(ACTOR_FIRST_OF_PAIR, SceneAction_EntryPair);
     Engine_ActorEnableActionCallback(21, SceneAction_EntryGroup);
     Object_SetActionCallbackAndRefreshById(6, SceneAction_EntryGroup);
-    /* FAKEMATCH: a plain store is scheduled into the last action call's argument setup; the one-pass block keeps it after the call. Measured 2026-10-04. */
-    do {
-        gGameState.battle_start = 3;
-    } while (0);
+    Battle_SetStart(3);
     {
         s32 actor = (s32)&SceneId_VinasuChojo;
 
@@ -1198,8 +1197,7 @@ void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                /* FAKEMATCH: a plain byte access; the struct field store leaves a dead QImode zero that takes r3 from the +85 address. */
-                *(u8 *)&sprite->unknown_1d |= 1;
+                sprite->unknown_1d_0 = 1;
                 sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
                 sprite->shape = 1;
@@ -1787,10 +1785,7 @@ void Scene_RunPairedActorEffectSequence(void)
     Event_Wait(20);
     VinasuChojo_FlashScreen();
     Event_Wait(20);
-    /* FAKEMATCH: the one-pass block keeps the scene id's load after this store, where the reference has it. */
-    do {
-        gGameState.battle_start = 3;
-    } while (0);
+    Battle_SetStart(3);
     Party_SetFields1ceAnd1d0((s32)&SceneId_VinasuChojo, 3);
     Event_SetDefeatDestination((s32)&SceneId_VinasuChojo, 9);
     BattleFx_SetWeightedResult(98, 0);
@@ -1928,6 +1923,15 @@ void UiText_ShowCenteredMessage();
 void Graphics_EnableObjLayerAndCallbacks();
 void Object_RefreshSelectorById();
 
+// 目標なし (停止中) か
+static __inline__ s32 Actor_IsParked(struct FieldActor *actor)
+{
+    if (actor->target_x == ACTOR_NO_TARGET && actor->target_y == actor->target_x && actor->target_z == actor->target_y) {
+        return 1;
+    }
+    return 0;
+}
+
 void VinasuChojo_UpdateBeamActors(void)
 {
     struct FieldActor *first;
@@ -1936,24 +1940,11 @@ void VinasuChojo_UpdateBeamActors(void)
 
     first = Object_GetById(ACTOR_FIRST_OF_PAIR);
     second = Object_GetById(ACTOR_SECOND_OF_PAIR);
-    /* FAKEMATCH: the dead first test and the word temporaries below reproduce the reference's leftover loads and stores. 2026-10-02: removing only the overwritten first test removes real loads and exchanges r5/r6 roles. */
-    stopped = first->target_x == ACTOR_NO_TARGET && first->target_y == first->target_x && first->target_z == first->target_y;
-    if (second->target_x == ACTOR_NO_TARGET && second->target_y == second->target_x && second->target_z == second->target_y) {
-        stopped = 1;
-    } else {
-        stopped = 0;
-    }
+    stopped = Actor_IsParked(first);    // 上書きされる: ROM に 1 体目の判定の読み込みだけが残っている
+    stopped = Actor_IsParked(second);
     if (stopped != 0) {
-        {
-            u16 shown = 0;
-
-            first->facing = shown;
-        }
-        {
-            u16 shown = 0;
-
-            second->facing = shown;
-        }
+        first->facing = 0;
+        second->facing = 0;
         if (Engine_GameFlagIsSet(FLAG_PAIR_GROWING) != 0) {
             Engine_ActorSetChildValue(ACTOR_FIRST_OF_PAIR, 7);
             Engine_ActorSetChildValue(ACTOR_SECOND_OF_PAIR, 7);
@@ -3109,11 +3100,11 @@ void SceneEffect_SpawnParticlesBesideActor(void)
     angle = Random_Next() & 0xffff000;
     effect->timer = angle;
     effect->work = phase;
-    *(struct FieldActor **)effect->unknown_68 = center;
+    effect->linked_object = center;
     effect->update = VinasuChojo_UpdateOrbitingEffect;
     effect->speed = Engine_MathSin((drift & 0xfffff) >> 4) * 24 >> 16;
-    /* FAKEMATCH: the byte store outside the sprite record keeps the game's order. */
-    *(u8 *)((u8 *)sprite + 38) = 0;
+    /* FAKEMATCH: the flag byte is stored through a byte pointer, which may alias the priority read after it; as a plain field store the read's address is set up one instruction earlier. */
+    (&sprite->flags)[0] = 0;
     sprite->priority = center->sprite->priority;
 }
 

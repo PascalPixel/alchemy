@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -17,7 +18,6 @@
 #include "game_state.h"
 #include "event_runtime.h"
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
 
 extern struct EventRuntime *gEventWork;
 s32							ObjectTable_ReadActiveValue(s32);

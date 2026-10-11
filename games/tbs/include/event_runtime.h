@@ -15,7 +15,7 @@ struct EventRuntime
 {
 	u8	unknown_000[0x170];
 	u16 value_170;
-	u8	unknown_172[0x0a];
+	s16 unknown_172[5];
 	u16 value_17c;
 	u8	unknown_17e[0x20];
 	s16 mode_19e;

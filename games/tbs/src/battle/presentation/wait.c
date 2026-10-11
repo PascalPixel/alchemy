@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -13,7 +14,6 @@
 #include "event_runtime.h"
 #include "game_state.h"
 
-extern volatile u32 gKeysHeld;
 
 struct UiWindow;
 struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 flags);

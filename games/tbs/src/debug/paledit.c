@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -17,7 +18,6 @@
 #include "object_lookup.h"
 #define ObjectTable_Get ((struct Object * (*)(s32)) ObjectTable_Get)
 #define gOverlayArea (*(struct ViewServices *)&gOverlayArea)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 #define BattleFx_FindDescriptor ((s32 (*)(s32, s32))BattleFx_FindDescriptor)
 
@@ -70,7 +70,6 @@ struct MapScrollWork
 	s32 bottom;
 };
 
-extern volatile u32 gKeysHeld;
 extern volatile u32 gFrameCount;
 
 void WaitFrames(s32 count);

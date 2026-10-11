@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -19,7 +20,6 @@
 #include "text/msg_ids.h"
 s32 AudioCommand_GetStateByteFar(void);
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
 
 #define UiGlyph_LoadEntryWithPalette ((void (*)(s32,s32,s32*,s32*,s32,s32))UiGlyph_LoadEntryWithPalette)
 
@@ -48,8 +48,7 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
     zero = 0;
     name = Djinn_ElementSprites[element & 3];
     entry = sprite;
-    /* FAKEMATCH: the null window is also the style argument (ROM passes its register). */
-    window = UiWindow_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, (s32)window);
+    window = UiWindow_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
 
     if (window != NULL) {
         UiWindow_DrawDividerLine(window, 4, 0, 4, 4);

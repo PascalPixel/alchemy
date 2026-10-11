@@ -33,18 +33,16 @@ void ColossoLogRollingStage_NoopSceneHook(void)
 
 void ColossoLogRollingStage_SetBalanceStateReady(void)
 {
-    u16 *state = (u16 *)gSceneState;
-    /* FAKEMATCH: the forced temporary builds 9 with movs; stored directly, the halfword constant is loaded from the pool. */
-    u16 ready = 9;
+    SceneControl *control = (SceneControl *)gSceneState;
 
-    *state = ready;
+    control->enabled = 9;
 }
 
 void ColossoLogRollingStage_WaitForBalanceState(void)
 {
-    s16 *state = (s16 *)gSceneState;
+    SceneControl *control = (SceneControl *)gSceneState;
 
-    while (*state != 9) {
+    while (control->enabled != 9) {
         Engine_TaskWait(1);
     }
 }

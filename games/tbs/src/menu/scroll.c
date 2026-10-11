@@ -1,5 +1,6 @@
 #define OWN_AudioCommand_PlayFar
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -19,8 +20,6 @@
 #include "layout_guard.h"
 #include "text/msg_ids.h"
 
-#define gKeyState (*(u32 *)&gKeyState)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 #define Menu_OpenSelectionWindow ((void (*)(u16,u32))Menu_OpenSelectionWindow)
 
@@ -40,7 +39,6 @@ void AudioCommand_PlayFar(u32);
 
 s32 Menu_SelectionLoop(s32 mode)
 {
-    /* FAKEMATCH: the volatile repeat-key cell preserves the separate RAM loads in the right and left tests. */
     struct SelectionScreen *screen = gResQueueWork;
 
     Menu_LoadSelectionNodeResource(screen, 0);
@@ -66,7 +64,6 @@ s32 Menu_SelectionLoop(s32 mode)
 
 u32 Menu_WaitForSelectionInput(u32 mode)
 {
-    /* FAKEMATCH: the volatile repeat-key cell preserves the separate RAM loads in the right and left tests. */
     struct SelectionScreen *screen = gResQueueWork;
     u32 result;
 

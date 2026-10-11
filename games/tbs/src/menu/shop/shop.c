@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -25,8 +26,6 @@
 #include "text/msg_ids.h"
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 #define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
 
 #define BattleFx_GetResourceIdFar ((s32 (*)(s32))BattleFx_GetResourceIdFar)

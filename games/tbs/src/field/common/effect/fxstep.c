@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -36,7 +37,6 @@
 
 #define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
 
-extern u8 gKeysHeld[];
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity)
 {
@@ -108,7 +108,7 @@ void BattleFx_ProbeKeysForExtendedActor(void)
     struct BattleEffectArgument *effect = work->effect;
 
     if (effect->actors[0] > 0x7f)
-        (void)*(volatile s32 *)&gKeysHeld;
+        (void)gKeysHeld;
 }
 
 void BattleFx_DispatchByIdRange(s32 *arg0)

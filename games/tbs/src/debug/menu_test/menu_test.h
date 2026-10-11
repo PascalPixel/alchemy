@@ -2,6 +2,7 @@
 #define MENU_TEST_H
 
 #include "types.h"
+#include "keystate.h"
 #include "owner_state.h"
 #include "ownerval.h"
 #include "game_state.h"
@@ -12,7 +13,6 @@
 #include "character.h"
 #define UnitEpAdd ((s32 (*)())UnitEpAdd)
 
-extern volatile s32			 gKeysHeld;
 extern struct BattleFxScene *gEffectWork;
 extern u8					 MenuTest_Events[];
 extern u8					 MenuTest_Entrances[];

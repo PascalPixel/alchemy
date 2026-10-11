@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -19,8 +20,6 @@
 #include "btlsys.h"
 #include "text/msg_ids.h"
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 #define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
 

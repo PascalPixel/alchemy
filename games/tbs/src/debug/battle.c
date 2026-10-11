@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -133,7 +134,6 @@ void UiWork_InitializeWithResourceCountersFar(void);
 #define WINDOW_WORK_MESSAGE_BUSY 0x1188
 #endif
 
-extern volatile s32 gKeysRepeat;
 
 #if defined(TBS_EDITION_EN)
 #define DEBUG_SECOND_FORM ((s32)MsgBecameCursed)
@@ -245,11 +245,9 @@ void DebugBattle_ViewMessages(void)
 	}
 }
 
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 #define Battle_RunEncounter ((void (*)(s32))Battle_RunEncounter)
 
-extern volatile u32 gKeysHeld;
 
 s32 DebugParty_LoadPreset(s32 preset);
 
@@ -301,11 +299,7 @@ restart:
 				if ((gKeysRepeat & KEY_B) || locked)
 				{
 					locked = 1;
-					/* FAKEMATCH: a one-pass loop is a sched2 barrier, so the 5 is loaded before the byte's address as in the reference */
-					do
-					{
-						gGameState.battle_start = 5;
-					} while (0);
+					Battle_SetStart(5);
 				}
 				if (preset != loaded)
 				{

@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -24,12 +25,10 @@
 #include "ram_buffer.h"
 #include "call.h"
 
-#define gKeyState (*(u32 *)&gKeyState)
 
 #define RuntimeDispatch_NoOpHook ((void (*)(s32))RuntimeDispatch_NoOpHook)
 #define Title_ShowSplashScreen ((void (*)(s32))Title_ShowSplashScreen)
 
-extern u32 gKeysHeld;
 void Event_SetDestination(s32 scene, s32 entrance);
 
 #define DMA3 (REG_DMA3)

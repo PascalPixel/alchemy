@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -109,7 +110,6 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
     Sound_TickDmaRestartTimer();
 }
 
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 void AudioCommand_Play(s32 id);
 

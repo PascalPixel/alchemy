@@ -14,20 +14,6 @@
 #include "field_service.h"
 #include "text/msg_ids.h"
 
-struct Other {
-    u8 filler00[30];
-    u16 x;
-};
-
-struct Object {
-    u8 filler00[8];
-    s32 x;
-    s32 z;
-    u8 filler10[64];
-    struct Other *other;
-};
-
-
 struct SwayActor {
     u8 unknown_00[8];
     s32 x;
@@ -58,7 +44,7 @@ s32 FuneHobashira_CameraCenter[2] __attribute__((section(".bss")));
 s32 FuneHobashira_CameraOrigin[2] __attribute__((section(".bss")));
 s32 FuneHobashira_SwayX __attribute__((section(".bss")));
 
-s32 Object_PlaceFromCameraOffset(struct Object *object)
+s32 Object_PlaceFromCameraOffset(struct FieldActor *object)
 {
     s32 *position = *((s32 **)gMapWork[0]);
     s32 *origin = FuneHobashira_CameraOrigin;
@@ -66,12 +52,9 @@ s32 Object_PlaceFromCameraOffset(struct Object *object)
     s32 q0 = *position++;
     s32 q1 = *position;
 
-    object->x = center[0] + (q0 - origin[0]);
-    /* FAKEMATCH: the do/while keeps the z store ahead of the other load. */
-    do {
-        object->z = center[1] + (q1 - origin[1]) / 2;
-    } while (0);
-    object->other->x += 0x600;
+    object->x.fixed = center[0] + (q0 - origin[0]);
+    object->y.fixed = center[1] + (q1 - origin[1]) / 2;
+    object->sprite->rotation += 0x600;
     return 0;
 }
 

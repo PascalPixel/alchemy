@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -19,7 +20,6 @@
 #include "global_cells.h"
 #include "tbs_edition.h"
 
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 void AudioCommand_PlayFar(s32 cue);
 void Runtime_SetMainState19(void);

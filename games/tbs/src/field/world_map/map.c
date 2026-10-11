@@ -27,6 +27,8 @@
 #include "io_write_queue.h"
 #include "event_runtime.h"
 
+// 戦闘開始の種類 (battle/party/party.c と同じ)
+
 #define SCENE_PHASE (gEventWork->start_transition)
 #define ACTOR 8
 
@@ -2217,7 +2219,7 @@ void StoryScene_CompleteActor98(void)
     Engine_GameFlagSet(0x2f1);
     GameFlag_SetByte(0x2f8, 0);
     BattleFx_SetWeightedResult(98, 5);
-    gGameState.battle_start = 3;
+    Battle_SetStart(3);
     BattleFx_SetWeightedResult(98, 7);
     selected_actor = (struct FieldActor *)Object_GetById(gGameState.selected_actor);
     selected_actor->motion_flags = 2;

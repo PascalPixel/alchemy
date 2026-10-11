@@ -72,11 +72,6 @@ s32 GameFlag_TestFar(s32 flag);
 
 extern s32 gBattleRandomSeed;
 
-#define Battle_SetStart(mode)             \
-	do                                    \
-	{                                     \
-		gGameState.battle_start = (mode); \
-	} while (0)
 #define BattleRandom_ClearSeed() \
 	do                           \
 	{                            \

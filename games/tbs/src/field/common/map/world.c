@@ -486,17 +486,17 @@ next:
             }
             Map_BuildProbeRing(x, y, work);
         } else {
-            (void)*(volatile u32 *)&gKeysRepeat;
+            (void)gKeysRepeat;
             if ((*repeat & KEY_UP) != 0) {
                 slot = (slot - 1) & 3;
             }
-            if ((*(volatile u32 *)&gKeysRepeat & KEY_DOWN) != 0) {
+            if ((gKeysRepeat & KEY_DOWN) != 0) {
                 slot = (slot + 1) & 3;
             }
-            if ((*(volatile u32 *)&gKeysRepeat & KEY_LEFT) != 0) {
+            if ((gKeysRepeat & KEY_LEFT) != 0) {
                 mode = (mode - 1) & 3;
             }
-            if ((*(volatile u32 *)&gKeysRepeat & KEY_RIGHT) != 0) {
+            if ((gKeysRepeat & KEY_RIGHT) != 0) {
                 mode++;
                 mode = mode & 3;
             }
@@ -516,7 +516,7 @@ next:
             if (slot == 1) {
                 break;
             }
-            if ((*(volatile u32 *)&gKeysRepeat & KEY_L) != 0) {
+            if ((gKeysRepeat & KEY_L) != 0) {
                 ent[slot].animation--;
                 if (ent[slot].animation < 0) {
                     ent[slot].animation = 0;
@@ -526,7 +526,7 @@ next:
                 }
                 goto next;
             }
-            if ((*(volatile u32 *)&gKeysRepeat & KEY_R) == 0) {
+            if ((gKeysRepeat & KEY_R) == 0) {
                 break;
             }
             ent[slot].animation++;

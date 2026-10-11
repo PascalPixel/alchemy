@@ -12,7 +12,7 @@ void AudioTrack_ResetSlotBuckets(void)
     index = 0;
     limit = 0x3FF;
     zero = 0;
-    record = (u8 *)&Flash_Handler3->nodes[0].back;
+    record = (u8 *)&Flash_Handler3->nodes[0].prev;
     do {
         *(s32 *)(record + sizeof(struct AudioSlotNode *)) = index;
         index++;

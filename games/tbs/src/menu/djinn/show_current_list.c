@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -18,7 +19,6 @@
 #include "text/msg_ids.h"
 
 #define gWindowWork (*(struct UiWork * *)&gWindowWork)
-#define gKeyState (*(volatile u32 *)&gKeyState)
 #define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 
@@ -88,5 +88,5 @@ s32 DjinnMenu_ShowCurrentList(void)
     menu->cursor->active = 1;
     menu->second_cursor->active = 1;
     AudioCommand_PlayFar(113);
-    /* FAKEMATCH: the caller ignores the result, but the reference retains a value-returning epilogue after this void audio call. */
+    /* Returns no value: the ROM has the s32 epilogue (pop {r1}; bx r1) after this void call. */
 }

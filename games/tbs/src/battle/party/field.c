@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -254,7 +255,6 @@ void Djinn_ResolvePendingEvent();
 void AudioCommand_PlayFar(s32 cue);
 
 extern u8			ResourceBlockOwners[];
-extern volatile u32 gKeysHeld;
 extern volatile u8	gDebugMode;
 
 static __inline__ s32 Vitals_Clamp(s32 ratio)

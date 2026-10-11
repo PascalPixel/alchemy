@@ -160,14 +160,11 @@ void SceneDialogue_RunMessage0e37(void)
 
 void FieldScene_RunSupplementalSequenceTwo(void)
 {
-
-    struct EventWork *work;
+    struct EventWork *work = gEventWork;
     struct SceneActor *actor;
     s16 facing;
     s32 msg;
 
-    /* FAKEMATCH: the event work is read into a local before the actor lookup, where the reference loads it. */
-    work = gEventWork;
     actor = Object_GetById(16);
     facing = actor->facing;
     Engine_EventBegin();
@@ -201,14 +198,11 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 
 void FieldScene_RunSiblingsTalk(void)
 {
-
-    struct EventWork *work;
+    struct EventWork *work = gEventWork;
     struct SceneActor *actor;
     s16 facing;
     s32 msg;
 
-    /* FAKEMATCH: the event work is read into a local before the actor lookup, where the reference loads it. */
-    work = gEventWork;
     actor = Object_GetById(17);
     facing = actor->facing;
     Engine_EventBegin();

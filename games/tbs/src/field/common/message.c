@@ -10,7 +10,7 @@ s32 Event_ShowMessageAtPosition();
 
 void Event_ShowSpeakerMessage(s32 speaker)
 {
-    /* FAKEMATCH: needed to match: the position is never set; as one 8-byte local the native reads it from r6/r7 */
+    // 位置は未初期化のまま読まれる (original bug: the position is never set)
     struct { s32 x, y; } pos;
     struct EventRuntime *state = gEventWork;
 
@@ -20,21 +20,16 @@ void Event_ShowSpeakerMessage(s32 speaker)
     if (state->message_busy == 0) {
         s32 px = pos.x;
         s32 py = pos.y;
-        /* FAKEMATCH: needed to match: the lower bounds in locals compare as cmp #8/bge and cmp #20/bge */
-        s32 min_x = 8;
-        s32 min_y = 20;
         s32 win;
 
         if (py > 119)
             py += 32;
         else
             py -= 32;
-        if (px < min_x)
-            px = min_x;
+        px = px < 8 ? 8 : px;
         if (px > 312)
             px = 312;
-        if (py < min_y)
-            py = min_y;
+        py = py < 20 ? 20 : py;
         if (py > 220)
             py = 220;
         win = UiText_OpenMessageWindowFar(state->message, px, py, 1);

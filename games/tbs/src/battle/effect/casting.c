@@ -378,11 +378,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 				Render_ResetTransformState();
 				Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
 				EffectPosition_ApplyBaseAndYOffset((s32 *)&djinn_pos, &spark_screen);
+				spark_screen.x /= 2;
 				djinn_x = spark_screen.x;
-				/* FAKEMATCH: needed to match: keep signed halving in the loaded coordinate register */
-				djinn_x += (u32)djinn_x >> 31;
-				djinn_x >>= 1;
-				spark_screen.x = djinn_x;
 				blitters[0](
 					canvas, Ram_MapCellBuffer + 0x3c56, djinn_x - 10, spark_screen.y - 4, 20, 40);
 			}
@@ -1311,11 +1308,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 			if (frame <= 5)
 			{
 				EffectPosition_ApplyBaseAndYOffset((s32 *)position, &projected);
+				projected.x /= 2;
 				djinn_x = projected.x;
-				/* FAKEMATCH: needed to match: keep signed halving in the loaded coordinate register */
-				djinn_x += (u32)djinn_x >> 31;
-				djinn_x >>= 1;
-				projected.x = djinn_x;
 				draw_pair[1](
 					canvas, Ram_MapCellBuffer + 0x3c56, djinn_x - 10, projected.y - 4, 20, 40);
 				position->x += motion->x;

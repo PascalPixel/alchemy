@@ -4,6 +4,7 @@
 //--------------------------------------------------------------------------
 
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -1070,7 +1071,6 @@ void BattleFx_CleanupResourcesAndWindow(void)
 }
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 #endif
-extern u32 gKeysHeld;
 s32		   ArcTan2(s32 dz, s32 dx);
 
 // IME を止めて I/O 書き込みキューに 1 件積む（QueueIoWriteDelay2 と同じ）
@@ -1466,7 +1466,6 @@ void Map_ShowWorldMap(s32 picture)
 
 void BattleFx_UpdateObjectVisibilityBounds(void)
 {
-	/* FAKEMATCH: needed to match: the discarded object lookup remains before the runtime object address load. */
 	struct ObjectRuntime *object;
 	s32					  x;
 	s32					  y;
@@ -1476,6 +1475,7 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
 	s32					  bottom;
 	u32					  id;
 
+	// the selected actor is looked up and the result discarded, as the ROM does
 	Object_GetById(gGameState.selected_actor);
 	object = (struct ObjectRuntime *)gEventWork->view_center;
 	x = object->x;

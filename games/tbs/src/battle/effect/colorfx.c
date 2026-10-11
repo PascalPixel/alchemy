@@ -4,6 +4,7 @@
 //--------------------------------------------------------------------------
 
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -369,7 +370,6 @@ struct ReelSave
 	s8 won_prizes[16];
 };
 
-extern volatile u32 gKeysHeld;
 extern u8			gDebugPaused;
 
 // 火花のセル（一辺 2..20 ピクセルの正方形）の位置

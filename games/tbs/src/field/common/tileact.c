@@ -125,10 +125,7 @@ s32 Field_RunTileAction(s32 tile)
                                 condition = gGameState.pending_djinn_event = condition | 0x1000;
                             }
                             work->value_17c = BattleFx_GetWeightedResult(99, (*(const u16 *)&descriptor->value));
-                            /* FAKEMATCH: needed to match: the one-pass loop keeps this store before the next call's value load. */
-                            do {
-                                gGameState.battle_start = 2;
-                            } while (0);
+                            Battle_SetStart(2);
                             BattleFx_SelectBattleCue(99, (*(const u16 *)&descriptor->value));
                             AudioCommand_PlayFar(gGameState.scene_cue);
                             UiText_ShowPositionedMessageAndWaitFar((s32)MsgChestWasMimic, 1);

@@ -21,14 +21,10 @@
 #include "scene.h"
 #include "global_cells.h"
 #include "tbs_edition.h"
+#include "keystate.h"
 
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
 
-extern s32 gKeysHeld; // 押しているキー
-#ifndef MODERN // modern GCC keeps the headers' volatile declaration
-extern s32 gKeyState; // 押したキー
-#endif
-extern s32 gKeysPressedLatch; // 押したキー（ためておいたもの）
 s32		   AudioCommand_GetStateByteFar();
 
 //--------------------------------------------------------------------------

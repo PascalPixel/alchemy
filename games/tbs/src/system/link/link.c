@@ -721,11 +721,11 @@ void SerialTest_Run(void)
 restart:
     SerialRuntime_BeginTransferB(gMapCellBuffer);
     for (;;) {
-        if ((*(volatile u32 *)&gKeysHeld) & 1)
+        if (gKeysHeld & 1)
             SerialRuntime_BeginTransferA((void *)Cart_Restart, 0x280);
-        if ((*(volatile u32 *)&gKeysHeld) & 2)
+        if (gKeysHeld & 2)
             SerialRuntime_BeginTransferA((void *)(Rom_Start + 0x1000), 0x280);
-        if ((*(volatile u32 *)&gKeysHeld) & 8) {
+        if (gKeysHeld & 8) {
             tick = 9999;
             do {
                 tick--;

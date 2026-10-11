@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -35,8 +36,6 @@ struct BtlAct * BtlActGet(s32 action_id);
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 struct BtlUnit *UnitGetFar(s32 object_id);
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 #define UiText_DrawCharacterAtOffset ((void (*)(s32, void *, s32, s32))UiText_DrawCharacterAtOffset)
 
 struct WindowLine {
@@ -82,7 +81,6 @@ struct LinkRoundState {
 
 extern volatile u16 gLinkStatus;
 extern u8 gDebugMode;
-extern volatile u32 gKeysHeld;
 void AudioCommand_PlayFar(s32 cue);
 void Graphics_ExpandVramTilesByColorTable(s32 destination);
 void Menu_BuildLocalizedPatternTiles(void);
@@ -1191,18 +1189,17 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
 {
     struct ResourceMenuWork *work;
     s32 i;
-    u8 *entries;
+    struct ResourceMenuEntry *entry;
 
     work = gMenuSelectWork;
     work->width = width + 2;
     work->resource_base = resource_base;
     work->row = y;
-    /* FAKEMATCH: the byte span keeps the sprite base at +0; struct coordinates hoist +12 into the loop and add four bytes. */
-    entries = (u8 *)work;
     for (i = 0; i < work->count; i++) {
-        *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 14) = y << 3;
-        *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 12) = x << 3;
-        x = x + 3;
+        entry = &work->entries[i];
+        entry->y = y << 3;
+        entry->x = x << 3;
+        x += 3;
     }
     work->window = UiWindow_Create(x, y, work->width, 3, 2);
 }

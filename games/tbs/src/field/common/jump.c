@@ -49,22 +49,18 @@ s32 Field_TryJumpForward(void)
     struct FieldPosition position;
     struct FieldPosition *pos;
     struct ObjectRuntime *target;
-    /* FAKEMATCH: needed to match: reusing the tile mask for descent and a separate lift local preserves register allocation. */
-    s32 step;
-    s32 lift;
 
     pos = &position;
 again:
-    step = 0xfff00000;
-    pos->x = (leader->x & step) + 0x80000;
+    pos->x = (leader->x & 0xfff00000) + 0x80000;
     pos->y = leader->y;
-    pos->z = (leader->z & step) + 0x80000;
+    pos->z = (leader->z & 0xfff00000) + 0x80000;
     Vector_AddPolarOffset(0x100000, angle, pos);
     if (Map_CheckObjectStepFar(leader, pos) == 1)
         return -1;
-    pos->x = (leader->x & step) + 0x80000;
+    pos->x = (leader->x & 0xfff00000) + 0x80000;
     pos->y = leader->y;
-    pos->z = (leader->z & step) + 0x80000;
+    pos->z = (leader->z & 0xfff00000) + 0x80000;
     Vector_AddPolarOffset(0x200000, angle, pos);
     if (Map_CheckObjectStepFar(leader, pos) != 0)
         goto done;
@@ -86,19 +82,17 @@ again:
     if ((target = Object_FindNearestFacingTarget(leader, 207)) != NULL
         || (target = Object_FindNearestFacingTarget(leader, 205)) != NULL) {
         ObjectDispatch_ApplyArgumentToChildrenFar(target, 7);
-        lift = 0xffff0000;
-        leader->y += lift;
-        leader->terrain_height += lift;
+        leader->y -= 0x10000;
+        leader->terrain_height -= 0x10000;
         WaitFrames(2);
-        leader->y += lift;
-        leader->terrain_height += lift;
+        leader->y -= 0x10000;
+        leader->terrain_height -= 0x10000;
         WaitFrames(10);
-        step = 0x10000;
-        leader->y += step;
-        leader->terrain_height += step;
+        leader->y += 0x10000;
+        leader->terrain_height += 0x10000;
         WaitFrames(4);
-        leader->y += step;
-        leader->terrain_height += step;
+        leader->y += 0x10000;
+        leader->terrain_height += 0x10000;
     } else {
         WaitFrames(6);
     }

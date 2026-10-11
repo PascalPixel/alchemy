@@ -18,6 +18,8 @@
 #include "scene_ids.h"
 #include "inventory.h"
 
+// 戦闘開始の種類 (battle/party/party.c と同じ)
+
 void ConfigureSceneMotionFlags();
 void FieldScene_RunPositionTransferPresentation();
 void FieldScene_RunStepThen10();
@@ -1251,11 +1253,8 @@ void FuneHeya_RunFlagBranchSequence(void)
 
     Engine_EventBegin();
     Battle_ResetEffectCounter();
-    gGameState.battle_start = 3;
-    /* FAKEMATCH: the do/while orders the flag store before this call. */
-    do {
-        Engine_GameFlagClear(0x8f0);
-    } while (0);
+    Battle_SetStart(3);
+    GameFlag_Clear(0x8f0);
     if (Engine_GameFlagIsSet(0x928) == 0) {
         Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 16);
         BattleFx_SetWeightedResult(62, 0);
@@ -2613,7 +2612,6 @@ void Scene_RunConditionalActorPresentation(s32 a0)
     struct FieldActor *record;
     s32 v6;
     s32 v7;
-    s32 base5_a01b;
     s32 x;
 
     Engine_EventBegin();
@@ -2702,18 +2700,16 @@ void Scene_RunConditionalActorPresentation(s32 a0)
     Engine_EventSetMessage((s32)MsgFuneBack);
     Event_ShowMessageAndWait(CabinSpeakerRequest, 0, 40);
     Engine_ActorShowEmote(27, 0x101, 60);
-    /* FAKEMATCH: start the saved speaker at repeated dialogue; the initial call must retain its independent load from the same literal word. */
-    base5_a01b = CabinSpeakerRequest;
-    FieldScene_RunStepThen10(base5_a01b);
+    FieldScene_RunStepThen10(CabinSpeakerRequest);
     Engine_ActorSetAttachedEffect(0, 0x102);
     Engine_EventWait(60);
     Actor_ShowEmote(27, 0x103, 40);
     Engine_ActorStartRepeatedMotion(27, 2);
-    FieldScene_RunStepThen10(base5_a01b);
+    FieldScene_RunStepThen10(CabinSpeakerRequest);
     Engine_ActorShowEmote(27, 0x105, 40);
-    FieldScene_RunStepThen10(base5_a01b);
+    FieldScene_RunStepThen10(CabinSpeakerRequest);
     Engine_ActorSetAnimationAndWait(27, 4);
-    FieldScene_RunStepThen10(base5_a01b);
+    FieldScene_RunStepThen10(CabinSpeakerRequest);
     Engine_ActorSetAnimationAndWait(0, 3);
     Engine_EventWait(20);
     Engine_EventRequestExit(4);

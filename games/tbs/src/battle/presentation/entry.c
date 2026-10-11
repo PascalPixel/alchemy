@@ -635,7 +635,7 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
 void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 {
 	s32 span = 0x01fe0000;
-	/* FAKEMATCH: needed to match: mode intentionally remains uninitialized to preserve the match */
+	// 元のバグ：mode は初期化されず、入口の r4 をそのまま読む（lsls r0, r4, #16）
 	s32					 mode;
 	struct BattleCamera *scene = gCameraWork;
 	s32					*pos = scene->pos;

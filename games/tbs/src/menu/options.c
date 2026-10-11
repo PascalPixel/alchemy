@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -22,8 +23,6 @@
 #define Resource_FixedBlockBTiles ((const u8 *)&Resource_FixedBlockBTiles)
 #define UiWindow_Create ((struct RenderInput * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
 #define UiText_DrawCharacterAtOffset ((void (*)(s32, struct RenderInput *, s32, s32))UiText_DrawCharacterAtOffset)
-#define gKeyState (*(volatile u32 *)&gKeyState)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 #define RenderResource_CreateFrame ((void * (*)(s32,s32,struct RenderInput*,s32,s32))RenderResource_CreateFrame)
 #define ShopCursor_SetPositionImmediateFar ((void (*)(void*,s32,s32))ShopCursor_SetPositionImmediateFar)

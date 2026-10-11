@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -542,7 +543,6 @@ struct AdvanceSprite
 };
 
 extern volatile u32 gFrameCount;
-#define gKeysHeld (*(volatile u32(*)) & gKeysHeld)
 void AudioCommand_PlayFar(s32 cue);
 
 //--------------------------------------------------------------------------
@@ -651,7 +651,6 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y)
 }
 
 #undef BtlObjGet
-#undef gKeysHeld
 
 #define BattlePresentation_WaitForAdvance ((int (*)())BattlePresentation_WaitForAdvance)
 
@@ -666,7 +665,7 @@ s32			   ActivateBattleObjectSlot(s32 arg0);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
-	/* FAKEMATCH: needed to match: the shared discard-only result type preserves TBS epilogue register choice */
+	// 戻り値の型は s32 だが return 文は無い（pop {r1}; bx r1）
 	struct BtlUnit *creature;
 	struct BtlObj  *runtime;
 

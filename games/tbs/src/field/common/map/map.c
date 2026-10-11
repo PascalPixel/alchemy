@@ -120,8 +120,7 @@ static __inline__ void CopyCameraCell(u32 *map, u8 *base, u32 rowmod, u32 colmod
 
     tiles = (u32 *)Ram_MapBlocks;
     tiles += index;
-    /* FAKEMATCH: needed to match: integer address addition preserves the add operand order. */
-    dest = (u8 *)((rowmod + colmod) * 2 + (u32)base);
+    dest = base + rowmod * 2 + colmod * 2;
     *(u32 *)dest = *tiles;
     tiles = (u32 *)(Ram_MapBlocks + 4);
     tiles += index;
@@ -189,15 +188,14 @@ s32 Map_LoadLayeredScene(s32 index)
     src = (u8 *)header + header->tilemap;
     Resource_DecodeType01(src, Ram_MapCellBuffer);
     Tilemap_ConvertBuffer();
-    /* FAKEMATCH: needed to match: passing optional offsets through the pointer keeps them in r0. */
-    src = (u8 *)header->animation;
-    if (src != 0) {
-        Resource_DecodeType01((u8 *)header + (s32)src, Ram_MapCollision + 0x1000);
+    if (header->animation != 0) {
+        src = (u8 *)header + header->animation;
+        Resource_DecodeType01(src, Ram_MapCollision + 0x1000);
         MapAnimation_StartChannels((const u16 *)(Ram_MapCollision + 0x1000));
     }
-    src = (u8 *)header->blend;
-    if (src != 0) {
-        Resource_DecodeType01((u8 *)header + (s32)src, Ram_MapCollision + 0x1e00);
+    if (header->blend != 0) {
+        src = (u8 *)header + header->blend;
+        Resource_DecodeType01(src, Ram_MapCollision + 0x1e00);
         DisplayBlend_StartScript((u16 *)(Ram_MapCollision + 0x1e00));
     }
     work->script = (u8 *)header + header->script;

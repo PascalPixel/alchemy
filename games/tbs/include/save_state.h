@@ -28,8 +28,8 @@ struct SaveSummary
 	u32 coins;
 	u8	djinn[4];
 	s8	party[5];
-	u8	send_flag;
-	u8	flag_count;
+	s8	send_flag;
+	s8	flag_count;
 	u8	has_flag_20;
 	u16 palette_glow : 8;
 	u16 palette_glow_sub : 8;

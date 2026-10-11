@@ -350,7 +350,7 @@ void FieldScene_RunActorElevenPresentationBeat(void)
     Engine_GameFlagSet(0x301);
     Engine_ActorSetPosition(14, 0, 0);
 
-    gGameState.battle_start = 3;
+    Battle_SetStart(3);
 
     BattleFx_SetWeightedResult(53, 0);
 
@@ -801,7 +801,7 @@ void FieldScene_RunScene39fSequenceA(void)
     /* FAKEMATCH: called as returning a doubleword, the wait keeps the registers the game keeps across it. */
     ((s64 (*)())Engine_EventWait)(10);
     Engine_GameFlagSet(0x307);
-    gGameState.battle_start = 3;
+    Battle_SetStart(3);
     BattleFx_SetWeightedResult(53, 0);
     Engine_EventEnd();
 }
@@ -1051,9 +1051,7 @@ void MogoruMori_RunClosingChoreography(void)
         MogoruMori_HopActorTo(18, px, Object_GetById(0)->z.part.pixel - 16, 0x80000);
     }
     Engine_EventWait(10);
-    /* FAKEMATCH: an empty do-while here moves px into r1 after the other arguments of the call above. */
-    do { } while (0);
-    gGameState.battle_start = 3;
+    Battle_SetStart(3);
     Party_SetFields1ceAnd1d0((s32)&SceneId_MogoruMori3, 15);
     BattleFx_SetWeightedResult(53, 1);
     Engine_EventEnd();

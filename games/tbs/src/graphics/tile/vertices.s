@@ -1,13 +1,11 @@
-@ C2: unpaired multiply halves. Five of its six smull keep both halves
-@ outside a register pair: smull r0, r3, r1, r3 (apart, RdHi over Rs),
-@ smull r1, r2, sl, r2 (RdHi over Rs), smull r3, r2, r1, r2 (reversed,
-@ RdHi over Rs), smull r1, r3, r5, r2 (apart) and smull r3, r1, r4, r9
-@ (reversed). agbcc_arm and agscc keep both halves only through mulsidi3
-@ (smull %Q0, %R0: RdHi = RdLo + 1, "=&r" apart from the inputs);
-@ smulsi3_highpart frees RdLo but discards it. Through the game ARM route
-@ (K1) the s64 form pairs every smull (r5, r6; r7, r8; r1, r2; r9, sl;
-@ r3, r4): differ 273 of the listing's 157 instructions (0 with the
-@ inline asm), 274 with every device removed.
+@ C2: compiled C around a hand-written smull, not handwritten assembly. Its
+@ six fixed-point multiplies are the helper MulQ16 (mulq16.h, CAMELOT_ASM);
+@ everything else is game ARM C (K1). Not yet matched as C without further
+@ devices: differ 8 of the listing's 157 instructions as plain C with the
+@ helper, differ 0 with two C devices (the centre read through its own
+@ address, and one scratch variable for the odd frame's out->x sum and
+@ vtx->u). The draft and both devices are in recon/tbs/en/main/0800a0f8.c.
+@ The earlier claim, unpaired multiply halves, proves the helper only.
 	.syntax unified
 	.arm
 

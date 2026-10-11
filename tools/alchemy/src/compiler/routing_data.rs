@@ -50,4 +50,5 @@ pub static AGBCC_FLASH_SOURCES: &[&str] = &[
 pub static GAME_ARM_SOURCES: &[&str] = &[
     "games/common/src/graphics/tile/metatile.c",
     "games/tbs/src/graphics/text/moji.c",
+    "games/tbs/src/field/common/object/update.c",
 ];

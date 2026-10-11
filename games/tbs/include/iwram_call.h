@@ -70,5 +70,7 @@ extern u8 IwramMulQ16ReturnIp[];
 	FIXED_ADDRESS((s32 (*)(s32 divisor, s32 value)), 0x0300013c, IwramRatioMulQ14)
 
 #define Iwram_CopyWordsOffset FIXED_OFFSET(0x1388, IwramCopyWords, IwramIrqMain)
+#define Iwram_RatioMulQ14Offset FIXED_OFFSET(0x13c, IwramRatioMulQ14, IwramIrqMain)
+#define Iwram_SqrtOffset FIXED_OFFSET(0x1d8, IwramSqrt, IwramIrqMain)
 
 #endif

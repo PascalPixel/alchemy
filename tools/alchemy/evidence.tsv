@@ -27,7 +27,6 @@ assembly	5a8a839110ee64e307e403bab89cc4c3b27dd100a76a5a1843fde150f15b7d3f	Caller
 assembly	618ba0fb7d06fd6e4524dd1cfa34d835a4e9692125d53f134bebced5366e15c7	rrx r3, r3 rotates through carry before the final bit shift.
 assembly	61aff8783588d900aa21093cd1b50c41545a28e5809da4075f6dc48225dcacef	svc 11 and svc 25 are BIOS software interrupts.
 assembly	63836b0dd5bd0d783c633ff9e49d50faa31096e8f44ccd6c71eae4971dcbd95e	both kernels save callee-saved r5/r6 without lr, and write modified words back with stmia r0!, {r3-r6}, beyond their initial block copy.
-assembly	66b4a7987927318791f37d13e664089915fad2848f5f7b87fe43691e7773ce79	unpaired multiply halves. Seven of its thirteen smull keep both halves outside a register pair: smull r1, r3 (three times), smull r2, r0 and smull r1, r0 (twice), reversed or apart, and smull r2, r3, r3, r2 over both its inputs. agbcc_arm and agscc keep both halves only through mulsidi3 (smull %Q0, %R0: RdHi = RdLo + 1, "=&r" apart from the inputs); smulsi3_highpart frees RdLo but discards it. Through the game ARM route (K1) the s64 form pairs every smull (r5, r6; r7, r8; r1, r2; r0, r1): differ 448 of the listing's 307 instructions with updfar.s's veneers (6 with the inline asm), 456 with every device removed.
 assembly	6833a638746c6322cc6f25e15db59f9f0b92c34a173da78fc55af3045af30b7c	Computed add pc enters the unrolled copy body; r5-r9 are saved without lr.
 assembly	6af3ff40148c3b572118aabd019864de8fbb3104b5fbd5066c3f02ef09f7894f	r11/fp holds a row counter (rsb fp, ip, #16; mov lr, fp), not a frame. The preceding entries also share unsaved r5/r9 state with the main body.
 assembly	75be680874635c4dd8f15d05f098afc346c228bebfc193d4b2f473044957701e	Shared decoder commands reuse live r0/r2/r3, change unsaved r5 and use fp as a mask. ldr pc jumps into those commands in sentou_kouka_tenkai.s and sentou_kouka_tenkai_commands.s.
@@ -83,6 +82,7 @@ inline-assembly	2b069b620e0e2b14ebe1faf3cfd8884e4e12a67810994a426d981cbecc9ef4b9
 inline-assembly	3afc4e466c9554b13e9de834d30d26d7db84c6a335b086d90e77ab64ffb1d311	BIOS Stop has no C instruction.
 inline-assembly	4de19d56ff20c3970d6190e16cec4976c085b7f9c3579ffea13beb965432e023	the fixed-register identity store of transform.h
 inline-assembly	5ac74d139125fd2d40c045ec4d286b0b5e0940a8dcba84d8bf23538f0ec5beec	the fixed-register identity store of transform.h
+inline-assembly	6a82a1b971218ea51347e45ab03d63be18b73feb2591a195e7d012f4abcd5f1c	smull with RdLo and RdHi in any two registers, even over its inputs, where mulsidi3 pairs them (RdHi = RdLo + 1) apart from the inputs and smulsi3_highpart discards RdLo; its orr takes a fresh output reload register beside two dying inputs and nothing is scheduled across it, as only asm statements do
 inline-assembly	7dbead9b7bd5b1c57a4f2a8cfb07dda070411927ac0ae251776abb3766c07261	Halt in VBlankIntrWait
 inline-assembly	85462569a1fe487dd3033778e787524ca91ddc9bff061d3a85cb78fdbaca736e	stmia of three registers with no paired ldmia, which no agscc pattern emits
 inline-assembly	a6ebc312e6169c1ea24cdc0c15618b0fa24b65242ce206c3dd970f16f985ca74	the stack switch, a write to sp no C can express

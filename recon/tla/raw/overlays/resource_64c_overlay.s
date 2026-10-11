@@ -1590,26 +1590,6 @@ Func_02000b64:
 	.4byte 0x00000137
 .L_02008c94:
 	.4byte 0x00000003
-	.section .text.x02008c9c,"ax",%progbits
-	.global Func_02000c9c
-	.thumb_func
-Func_02000c9c:
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #32]
-	movs r2, #143
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	ldr r1, [r0, #80]
-	ldrh r3, [r3]
-	ldr r2, .L_02008cb8
-	strh r3, [r1, #18]
-	strb r2, [r1, #26]
-	movs r0, #1
-	bx lr
-	.2byte 0x0000
-.L_02008cb8:
-	.4byte 0x00000000
 	.section .text.x02008cbc,"ax",%progbits
 	.global Func_02000cbc
 	.thumb_func
@@ -2092,28 +2072,6 @@ Func_0200101c:
 	.4byte Data_02003dc0
 .L_02009040:
 	.4byte Func_02000d64
-	.section .text.x02009044,"ax",%progbits
-	.global Func_02001044
-	.thumb_func
-Func_02001044:
-	push {lr}
-	cmp r0, #0
-	bge .L_0200904e
-	ldr r2, .L_02009060
-	adds r0, r0, r2
-.L_0200904e:
-	asrs r3, r0, #20
-	cmp r1, #0
-	bge .L_02009058
-	ldr r2, .L_02009060
-	adds r1, r1, r2
-.L_02009058:
-	asrs r0, r1, #20
-	lsls r0, r0, #7
-	adds r0, r3, r0
-	pop {pc}
-.L_02009060:
-	.4byte 0x000fffff
 	.section .text.x02009064,"ax",%progbits
 	.global Func_02001064
 	.thumb_func
@@ -2319,38 +2277,6 @@ Func_02001168:
 	.4byte IwramMulQ16
 .L_020091f0:
 	.4byte Data_02002e80
-	.section .text.x020091f4,"ax",%progbits
-	.global Func_020011f4
-	.thumb_func
-Func_020011f4:
-	push {r5, lr}
-	ldr r3, .L_02009228
-	movs r2, #2
-	ldr r3, [r3]
-	adds r5, r0, #0
-	ands r3, r2
-	cmp r3, #0
-	beq .L_0200920c
-	movs r1, #7
-	bl Animation_ApplyChildValues
-	b .L_02009214
-.L_0200920c:
-	adds r0, r5, #0
-	movs r1, #0
-	bl Animation_ApplyChildValues
-.L_02009214:
-	ldr r3, .L_02009228
-	movs r2, #15
-	ldr r3, [r3]
-	ands r3, r2
-	cmp r3, #0
-	bne .L_02009226
-	adds r0, r5, #0
-	bl Func_020010b0
-.L_02009226:
-	pop {r5, pc}
-.L_02009228:
-	.4byte gFrameCount
 	.section .text.x0200922c,"ax",%progbits
 	.global Func_0200122c
 	.thumb_func
@@ -3296,92 +3222,6 @@ Func_02001400:
 	mov r10, r6
 	mov r11, r7
 	pop {r5, r6, r7, pc}
-	.section .text.x0200999c,"ax",%progbits
-	.global Func_0200199c
-	.thumb_func
-Func_0200199c:
-	push {r5, lr}
-	ldr r3, .L_020099d0
-	movs r2, #2
-	ldr r3, [r3]
-	adds r5, r0, #0
-	ands r3, r2
-	cmp r3, #0
-	beq .L_020099b4
-	movs r1, #7
-	bl Animation_ApplyChildValues
-	b .L_020099bc
-.L_020099b4:
-	adds r0, r5, #0
-	movs r1, #0
-	bl Animation_ApplyChildValues
-.L_020099bc:
-	ldr r3, .L_020099d0
-	movs r2, #15
-	ldr r3, [r3]
-	ands r3, r2
-	cmp r3, #0
-	bne .L_020099ce
-	adds r0, r5, #0
-	bl Func_02001ad0
-.L_020099ce:
-	pop {r5, pc}
-.L_020099d0:
-	.4byte gFrameCount
-	.section .text.x020099d4,"ax",%progbits
-	.global Func_020019d4
-	.thumb_func
-Func_020019d4:
-	push {r5, r6, lr}
-	ldr r6, .L_02009a08
-	adds r5, r0, #0
-	ldr r0, [r6]
-	movs r3, #1
-	ands r3, r0
-	cmp r3, #0
-	beq .L_020099f4
-	movs r1, #6
-	lsrs r0, r0, #1
-	bl __umodsi3
-	adds r1, r0, #0
-	adds r0, r5, #0
-	bl Animation_ApplyChildValues
-.L_020099f4:
-	ldr r3, [r6]
-	movs r2, #15
-	ands r3, r2
-	cmp r3, #0
-	bne .L_02009a04
-	adds r0, r5, #0
-	bl Func_02001ad0
-.L_02009a04:
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_02009a08:
-	.4byte gFrameCount
-	.section .text.x02009a0c,"ax",%progbits
-	.global Func_02001a0c
-	.thumb_func
-Func_02001a0c:
-	push {r5, lr}
-	ldr r3, .L_02009a30
-	adds r5, r0, #0
-	ldr r0, [r3]
-	movs r3, #1
-	ands r3, r0
-	cmp r3, #0
-	beq .L_02009a2c
-	movs r1, #6
-	lsrs r0, r0, #1
-	bl __umodsi3
-	adds r1, r0, #0
-	adds r0, r5, #0
-	bl Animation_ApplyChildValues
-.L_02009a2c:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_02009a30:
-	.4byte gFrameCount
 	.section .text.x02009a34,"ax",%progbits
 	.global Func_02001a34
 	.thumb_func
@@ -3993,37 +3833,6 @@ Func_02001e58:
 .L_02009eb4:
 	pop {r5, pc}
 	.2byte 0x0000
-	.section .text.x02009eb8,"ax",%progbits
-	.global Func_02001eb8
-	.thumb_func
-Func_02001eb8:
-	push {lr}
-	ldr r1, .L_02009ee0
-	ldr r0, .L_02009ee4
-	bl Func_02001f54
-	ldr r3, .L_02009ee8
-	movs r2, #0
-	ldrsh r0, [r3, r2]
-	bl Resource_ResetEntry
-	ldr r2, .L_02009eec
-	ldr r3, .L_02009edc
-	ldr r0, .L_02009ef0
-	strh r3, [r2]
-	bl Scheduler_RemoveCallbackFar
-	pop {pc}
-	.2byte 0x0000
-.L_02009edc:
-	.4byte 0xffffffff
-.L_02009ee0:
-	.4byte Data_020040d8
-.L_02009ee4:
-	.4byte Data_02003432
-.L_02009ee8:
-	.4byte Data_02003fc6
-.L_02009eec:
-	.4byte Data_02003fc4
-.L_02009ef0:
-	.4byte Func_02001d90
 	.section .rodata.x0200a0bc,"a",%progbits
 	.global Data_020020bc
 Data_020020bc:

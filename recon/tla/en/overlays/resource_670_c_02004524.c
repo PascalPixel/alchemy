@@ -1,0 +1,52 @@
+// near miss: differ 8 (listing 65 instructions, draft 65); scheduling after Func_02005bbc: the native stores the flag before it builds the owner's offset; and the priority constant leads the callback load
+#include "../../../../games/tla/src/field/overlay_670/ov670.h"
+
+extern const u8 Data_0200613c[];
+extern const u8 Data_0200614c[];
+extern const u8 Data_02006324[];
+
+void Func_020000a0(struct Ov670Object *object);
+void Func_02002f34(void);
+void Func_02003030(void);
+void Func_02003184(void);
+void Func_02003640(s32 open, s32 hide);
+void Func_020036e0(s32 open, s32 mode);
+void Func_02004524(void);
+void Func_020045d0(void);
+void Func_020050ac(void);
+void Func_02005114(void);
+void Func_0200516c(void);
+void Func_020054e0(void);
+void Func_02005594(void);
+void Func_020057e0(void);
+void Func_02005898(void);
+void Func_02005bcc(void);
+void Func_02005c04(s32 a);
+void Func_02005c54(void);
+void Func_02005c5c(s32 a, s32 b, s32 c, s32 d);
+void Func_02005c64(const void *script);
+
+void Func_02004524(void)
+{
+    struct Ov670EventWork *work;
+
+    Func_02005a9c();
+    Func_02005c3c(0);
+    Ov670_CamMove(-1, -1, -1, 0);
+    Func_02005bbc()->motion_flags = 0;
+    Object_SetPartAttribute(Object_GetById(gPartyState.current_owner), 15);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
+    Scheduler_AddOrUpdateCallback(Func_02002ccc, 0x480);
+    Func_02003640(1, 1);
+    if (Data_02007950 != 0) {
+        Data_02007950->y += 0x200000;
+        WaitFrames(1);
+        Data_02007950->motion_flags = 4;
+    }
+    WaitFrames(1);
+    work = Ram_HeapSlots->event_work;
+    work->screen_effect = 0x201;
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
+    Battle_WaitMode0(40);
+}

@@ -4,50 +4,6 @@
 	.2byte 0x0000
 	.section .text.x020080ce,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x020080d0,"ax",%progbits
-	.global Func_020000d0
-	.thumb_func
-Func_020000d0:
-	push {r5, r6, lr}
-	adds r4, r0, #0
-	adds r5, r1, #0
-	adds r6, r2, #0
-	adds r0, r3, #0
-	adds r2, r5, #0
-	adds r1, r4, #0
-	adds r3, r6, #0
-	bl Engine_ObjectCreate
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_0200811e
-	movs r1, #1
-	bl Object_SetSpritePriority
-	adds r2, r5, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-	adds r2, #4
-	movs r3, #8
-	strb r3, [r2]
-	adds r0, r5, #0
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	adds r0, r5, #0
-	movs r1, #15
-	bl Object_SetPartAttribute
-	adds r1, r5, #0
-	adds r1, #35
-	ldrb r2, [r1]
-	movs r3, #34
-	orrs r3, r2
-	strb r3, [r1]
-	adds r0, r5, #0
-	b .L_02008120
-.L_0200811e:
-	movs r0, #0
-.L_02008120:
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x0200815a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200815c,"ax",%progbits

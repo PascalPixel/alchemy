@@ -7,7 +7,7 @@ SECTIONS
         "*/resource_67b_overlay.o"(.text.x0200807e)
         "*/games/tla/src/field/common/object/prepare_object.o"(.text)
         "*/resource_67b_overlay.o"(.text.x020080ce)
-        "*/resource_67b_overlay.o"(.text.x020080d0)
+        "*/games/tla/src/field/overlay_67b/s00d0.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_67b_overlay.o"(.text.x0200815a)
         "*/resource_67b_overlay.o"(.text.x0200815c)

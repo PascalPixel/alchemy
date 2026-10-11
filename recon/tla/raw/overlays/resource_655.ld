@@ -35,7 +35,7 @@ SECTIONS
         "*/resource_655_overlay.o"(.text.x02009444)
         "*/resource_655_overlay.o"(.text.x02009474)
         "*/games/tla/src/field/overlay_655/events_c.o"(.text)
-        "*/resource_655_overlay.o"(.text.x02009514)
+        "*/games/tla/src/field/overlay_655/s1514.o"(.text)
         "*/games/tla/src/field/overlay_655/events_d.o"(.text)
         "*/resource_655_overlay.o"(.text.x02009820)
         "*/resource_655_overlay.o"(.text.x020098a8)

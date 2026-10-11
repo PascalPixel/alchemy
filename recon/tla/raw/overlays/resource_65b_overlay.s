@@ -241,20 +241,6 @@ Func_02000224:
 	pop {pc}
 .L_0200827c:
 	.4byte MsgMadoraHeardAboutYou
-	.section .text.x02008280,"ax",%progbits
-	.global Func_02000280
-	.thumb_func
-Func_02000280:
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	subs r2, #172
-	str r2, [r3]
-	movs r0, #0
-	bx lr
 	.section .rodata.x02008348,"a",%progbits
 	.global gSceneEntrances
 gSceneEntrances:

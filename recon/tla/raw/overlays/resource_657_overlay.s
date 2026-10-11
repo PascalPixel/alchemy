@@ -90,22 +90,6 @@ Func_02000078:
 	.2byte 0x0000
 .L_02008138:
 	.4byte gPartyState
-	.section .text.x02008168,"ax",%progbits
-	.global Func_02000168
-	.thumb_func
-Func_02000168:
-	push {lr}
-	bl Func_02001f5c
-	movs r0, #0
-	bl Func_020020ac
-	ldr r0, .L_02008184
-	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
-	bl Func_02001f64
-	pop {pc}
-	.2byte 0x0000
-.L_02008184:
-	.4byte MsgTheDoorIsHeld
 	.section .text.x02008188,"ax",%progbits
 	.global Func_02000188
 	.thumb_func

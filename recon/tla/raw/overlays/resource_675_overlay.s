@@ -153,25 +153,6 @@ Func_020000f4:
 .L_02008154:
 	pop {r5, pc}
 	.2byte 0x0000
-	.section .text.x02008158,"ax",%progbits
-	.global Func_02000158
-	.thumb_func
-Func_02000158:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	subs r2, #172
-	str r2, [r3]
-	ldr r0, .L_02008174
-	bl Scheduler_RemoveCallbackFar
-	pop {pc}
-	.2byte 0x0000
-.L_02008174:
-	.4byte Func_020001f8
 	.section .text.x02008178,"ax",%progbits
 	.global Func_02000178
 	.thumb_func

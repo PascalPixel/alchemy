@@ -17,7 +17,7 @@
 //   Func_02003628: differ 4: the split constant 0x400 and the pool load of the callback sit one instruction off
 //   Func_02003994: differ 4: the listing loads the sprite and its attribute byte one instruction later, around movs r3, #3 and ands
 //   Func_02003a70: differ 5: the listing keeps the work pointer in r3 and copies it to r5 after loading the hook
-//   Func_02003ba4: differ 2: the listing loads the pool base before lsls of the index
+//   Func_02003ba4: differ 2: the listing loads the pool base before lsls of the index; the permuter matches all three only with base and row temporaries inside a one-pass block (not adopted)
 //   Func_02003bb8: differ 2: the listing loads the pool base before lsls of the index
 //   Func_02003c00: differ 2: the listing loads the pool base before lsls of the index
 #include "../../../../games/tla/src/field/overlay_67c/local.h"

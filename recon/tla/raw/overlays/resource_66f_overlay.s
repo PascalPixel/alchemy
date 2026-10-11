@@ -107,36 +107,6 @@ Func_02000124:
 	bl GameFlag_SetBit
 	add sp, #8
 	pop {r5, pc}
-	.section .text.x0200815c,"ax",%progbits
-	.global Func_0200015c
-	.thumb_func
-Func_0200015c:
-	push {r5, r6, r7, lr}
-	bl Object_GetById
-	adds r5, r0, #0
-	adds r7, r5, #0
-	adds r7, #85
-	movs r3, #3
-	movs r6, #60
-	strb r3, [r7]
-	b .L_02008172
-.L_02008170:
-	subs r6, #1
-.L_02008172:
-	cmp r6, #0
-	beq .L_02008182
-	movs r0, #1
-	bl WaitFrames
-	ldr r3, [r5, #40]
-	cmp r3, #0
-	bne .L_02008170
-.L_02008182:
-	movs r0, #10
-	bl WaitFrames
-	movs r3, #0
-	strb r3, [r7]
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
 	.section .text.x020081a0,"ax",%progbits
 	.global Func_020001a0
 	.thumb_func

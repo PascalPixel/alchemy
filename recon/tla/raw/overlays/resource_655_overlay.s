@@ -2160,46 +2160,6 @@ Func_02001474:
 	.4byte 0x00000025
 .L_020094e8:
 	.4byte 0x00000027
-	.section .text.x02009514,"ax",%progbits
-	.balign 4
-	.global Func_02001514
-	.thumb_func
-Func_02001514:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r6, r2, #0
-	movs r5, #0
-	mov r8, r0
-	adds r7, r1, #0
-	cmp r5, r6
-	bcs .L_0200954c
-.L_02009526:
-	adds r0, r7, r5
-	bl Object_GetById
-	mov r3, r8
-	adds r0, #35
-	adds r1, r5, #1
-	cmp r3, #0
-	beq .L_0200953e
-	ldrb r2, [r0]
-	movs r3, #239
-	ands r3, r2
-	b .L_02009544
-.L_0200953e:
-	ldrb r2, [r0]
-	movs r3, #16
-	orrs r3, r2
-.L_02009544:
-	strb r3, [r0]
-	adds r5, r1, #0
-	cmp r5, r6
-	bcc .L_02009526
-.L_0200954c:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
 	.section .text.x02009820,"ax",%progbits
 	.global Func_02001820
 	.thumb_func

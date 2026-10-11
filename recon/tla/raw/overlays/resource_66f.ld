@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_66f/s00ac.o"(.text)
         "*/resource_66f_overlay.o"(.text.x020080ec)
         "*/resource_66f_overlay.o"(.text.x02008124)
-        "*/resource_66f_overlay.o"(.text.x0200815c)
+        "*/games/tla/src/field/overlay_66f/s015c.o"(.text)
         "*/games/tla/src/field/overlay_66f/action.o"(.text)
         "*/resource_66f_overlay.o"(.text.x020081a0)
         "*/resource_66f_overlay.o"(.text.x0200836c)

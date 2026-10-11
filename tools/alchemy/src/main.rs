@@ -41,6 +41,7 @@ mod packer;
 mod permute;
 mod process;
 mod queues;
+mod reads;
 mod show;
 mod sweep;
 mod similar;

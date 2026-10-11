@@ -56,6 +56,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
     )?;
     println!("objects={}", linked.objects.len());
     println!("steps={}", linked.steps);
+    println!("preprocessed={}", crate::reads::PREPROCESSED.load(Ordering::Relaxed));
     println!("map={}", linked.map.display());
     println!("rom={}", linked.image.display());
     Ok(())
@@ -424,6 +425,7 @@ pub(crate) struct Index {
     output: PathBuf,
     rows: Mutex<BTreeMap<String, Row>>,
     made: AtomicUsize,
+    reads: crate::reads::Reads,
 }
 
 #[derive(Clone)]
@@ -458,6 +460,7 @@ impl Index {
             output: output.to_path_buf(),
             rows: Mutex::new(rows),
             made: AtomicUsize::new(0),
+            reads: crate::reads::Reads::open(output),
         }
     }
 
@@ -532,7 +535,8 @@ impl Index {
         let path = self.output.join(INDEX);
         let fresh = self.output.join(format!("{INDEX}.new"));
         fs::write(&fresh, text).map_err(|error| format!("{}: {error}", fresh.display()))?;
-        fs::rename(&fresh, &path).map_err(|error| format!("{}: {error}", path.display()))
+        fs::rename(&fresh, &path).map_err(|error| format!("{}: {error}", path.display()))?;
+        self.reads.save()
     }
 }
 
@@ -1052,6 +1056,9 @@ fn plan(
     let mut assembly = None;
     let mut scratch = Vec::new();
     let mut warnings = None;
+    // A C source whose key is already known, or the list to learn it from.
+    let mut known = None;
+    let mut learned = None;
     let steps = if extension == Some("mid") {
         let midi = fs::read(root.join(source)).map_err(|error| error.to_string())?;
         let text = ags::sound::sequence_assembly(&midi)?;
@@ -1074,12 +1081,32 @@ fn plan(
             None => c_steps(target, source, object)?,
         };
         let preprocess = preprocessor_only(&steps, &source_text, &preprocessed)?;
-        command(&preprocess, root)?;
-        hasher.update(portable(
-            root,
-            &fs::read(&preprocessed).map_err(|error| error.to_string())?,
-        ));
-        scratch.extend([preprocessed, object.with_extension("s")]);
+        // Everything but the files read that the key is made from: the
+        // toolchain, the compiler of the modern build, and both commands.
+        let mut guard = hasher.clone();
+        guard.update(portable(root, preprocess.join("\0").as_bytes()));
+        for step in &steps {
+            guard.update(portable(root, step.join("\0").as_bytes()));
+        }
+        // The two variables through which the preprocessor's environment
+        // adds folders to its search.
+        for variable in ["CPATH", "C_INCLUDE_PATH"] {
+            guard.update(std::env::var_os(variable).unwrap_or_default().as_encoded_bytes());
+            guard.update([0]);
+        }
+        let guard = format!("{:x}", guard.finalize());
+        let listed = object.with_extension("d");
+        known = index.reads.key(root, object, &guard, &preprocess);
+        if known.is_none() {
+            crate::reads::PREPROCESSED.fetch_add(1, Ordering::Relaxed);
+            command(&crate::reads::listing(&preprocess, &listed, modern.is_some()), root)?;
+            hasher.update(portable(
+                root,
+                &fs::read(&preprocessed).map_err(|error| error.to_string())?,
+            ));
+            learned = Some((guard, preprocess, listed.clone()));
+        }
+        scratch.extend([preprocessed, listed, object.with_extension("s")]);
         steps
     } else {
         let base = object
@@ -1097,7 +1124,10 @@ fn plan(
     for step in &steps {
         hasher.update(portable(root, step.join("\0").as_bytes()));
     }
-    let key = format!("{:x}", hasher.finalize());
+    let key = known.unwrap_or_else(|| format!("{:x}", hasher.finalize()));
+    if let Some((guard, preprocess, listed)) = &learned {
+        index.reads.record(root, object, guard, &key, preprocess, listed);
+    }
     let mut products = vec![object.to_path_buf()];
     products.extend(warnings.clone());
     if index.fresh(&products, &key) {

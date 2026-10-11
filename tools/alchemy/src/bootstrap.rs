@@ -288,7 +288,8 @@ fn build_binutils(prefix: &Path) -> Result<(), String> {
         let sources = toolchain.join("sources");
         fs::create_dir_all(&build).map_err(|e| e.to_string())?;
         fs::create_dir_all(&sources).map_err(|e| e.to_string())?;
-        let log = fs::File::create(build.join("bootstrap.log")).map_err(|e| e.to_string())?;
+        // Appended: the compiler build before it wrote its checks to this log.
+        let log = fs::File::options().create(true).append(true).open(build.join("bootstrap.log")).map_err(|e| e.to_string())?;
         println!(
             "building GNU binutils {MODERN_BINUTILS_VERSION}; log: {}",
             build.join("bootstrap.log").display()

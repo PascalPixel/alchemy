@@ -16,7 +16,6 @@
 #include "menu_list.h"
 #include "text/msg_ids.h"
 
-#define InventoryMenu_ShowModalMessage ((s32 (*)(s32,s32,s32))InventoryMenu_ShowModalMessage)
 
 s32 AudioCommand_PlayFar(s32);
 

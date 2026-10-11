@@ -184,8 +184,6 @@ main	rom_main_02	games/tbs/src/menu/scroll	.text
 main	rom_main_02	games/tbs/src/graphics/text/resource	.text
 main	rom_main_02	games/common/src/graphics/window/runtime_close_and_release	.text
 main	rom_main_02	games/tbs/src/graphics/window/notice	.text
-main	rom_main_02	games/tbs/src/menu/select_ability_pair	.text
-main	rom_main_02	games/tbs/src/field/common/object/shortcut	.text
 main	rom_main_02	games/tbs/src/graphics/window/select	.text
 main	rom_main_02	games/tbs/src/graphics/palette/palette	.text
 main	rom_main_02	games/tbs/src/menu/optwork	.text

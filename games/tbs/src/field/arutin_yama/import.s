@@ -223,9 +223,9 @@ Engine_ActorSetChildValue:
 	.thumb_func
 ObjectGroup_SetChildValue:
 	overlay_veneer ObjectGroup_SetChildValueFar
-	.global Engine_ObjectSetTargetAndCallback
+	.global Object_SetTargetAndCallback
 	.thumb_func
-Engine_ObjectSetTargetAndCallback:
+Object_SetTargetAndCallback:
 	overlay_veneer Object_SetTargetAndCallbackFar
 	.global Engine_EventSetMessage
 	.thumb_func

@@ -14,6 +14,7 @@
 #include "tbs_edition.h"
 #include "mem.h"
 #include "field_event.h"
+#include "field_service.h"
 #include "dma.h"
 #include "resource_ids.h"
 #include "call.h"
@@ -68,7 +69,7 @@ void Korosseo_LoadPortrait(s32 id)
         id = 4;
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Lettering), buf);
     Dma_Set(buf + off, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
-    Call3(Engine_VramLoad, Korosseo_PortraitSlot, 0x400, (id << 10) + (s32)buf + KOROSSEO_PALETTE_BYTES);
+    Vram_Load(Korosseo_PortraitSlot, 0x400, (u8 *)((id << 10) + (s32)buf + KOROSSEO_PALETTE_BYTES));
     Dma_Wait(REG_DMA3);
     Runtime_BumpFree(buf);
 }

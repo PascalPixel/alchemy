@@ -11,6 +11,7 @@
 
 #include "types.h"
 #include "field_event.h"
+#include "field_service.h"
 #include "field_scene.h"
 #include "staged_actor.h"
 
@@ -89,7 +90,7 @@ s32 FieldScene_SetupPillarsOnEntry(void)
     }
     if (gGameState.pending_djinn_event != 0) {
         GomaHashira_Actor13Frames = 0;
-        Call2(Engine_TaskAddCallback, (s32)GomaHashira_DriveActor13Idle, 0xc80);
+        Task_AddCallback(GomaHashira_DriveActor13Idle, 0xc80);
     }
     return 0;
 }

@@ -10,6 +10,7 @@
 #include "mura.h"
 #include "types.h"
 #include "field_event.h"
+#include "field_service.h"
 #include "field_scene.h"
 #include "call.h"
 #include "text/msg_ids.h"
@@ -313,7 +314,6 @@ void BiribinoMura_ReceiveJillsGift(void)
     u32 i;
     struct FieldActor *rec7;
     struct FieldActor *record;
-    s32 villager_actions;
 
     rec7 = Object_GetById(ACTOR_PARTY_LEADER);
     if (GameFlag_IsSet(0x845) == 0) {
@@ -392,10 +392,9 @@ void BiribinoMura_ReceiveJillsGift(void)
             Engine_ActorSetAnimation(12, 3);
             Engine_ActorSetAnimation(13, 3);
             Engine_ActorSetAnimationAndWait(14, 3);
-            villager_actions = (s32)Mura_VillagerActions;
-            Call3(Object_SetTargetAndCallback, 12, 0x10000, villager_actions);
-            Call3(Object_SetTargetAndCallback, 13, 0x10000, villager_actions);
-            Call3(Object_SetTargetAndCallback, 14, 0x10000, villager_actions);
+            FieldObject_SetTargetAndCallback(12, 0x10000, Mura_VillagerActions);
+            FieldObject_SetTargetAndCallback(13, 0x10000, Mura_VillagerActions);
+            FieldObject_SetTargetAndCallback(14, 0x10000, Mura_VillagerActions);
             GameFlag_Set(0x849);
             Engine_EventEnd();
         }

@@ -1340,15 +1340,15 @@ void FieldScene_RunShipDeckEventScript(void)
     Engine_TaskWait(1);
     Event_CallWithLastActiveObjectId((s32)FuneKanpan_CrewScriptB);
     Engine_TaskWait(1);
-    Call3(Engine_ActorSetPosition, 21, 16252928, 47710208);
+    Actor_SetPosition(21, 16252928, 47710208);
     Engine_ActorSetChildValue(0, 15);
     ((void (*)(void*,s32))Engine_ActorSetSpriteFlags)(Object_GetById(0), 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     ((void * (*)())Engine_EventOpenScreen)();
     Actor_SetSpeed(21, 104857, 52428);
-    Call3(Engine_ActorWalkToAndWait, 21, 242, 692);
-    Call3(Engine_ActorWalkToAndWait, 21, 196, 678);
-    Call3(Engine_ActorWalkToAndWait, 21, 182, 654);
+    Actor_WalkToAndWait(21, 242, 692);
+    Actor_WalkToAndWait(21, 196, 678);
+    Actor_WalkToAndWait(21, 182, 654);
     Engine_ActorRunRepeatedMotion(21, 2);
     Engine_EventSetMessage((s32)MsgFuneNoUseLate);
     FieldScene_RunStepThen10(40981);
@@ -1359,9 +1359,9 @@ void FieldScene_RunShipDeckEventScript(void)
     Object_GetById(24)->timer = v;
     Object_GetById(25)->timer = v;
     Object_GetById(26)->timer = v;
-    Call3(Engine_ActorSetPosition, 24, 2097152, 31719424);
-    Call3(Engine_ActorSetPosition, 25, 5505024, 32505856);
-    Call3(Engine_ActorSetPosition, 26, 1048576, 39059456);
+    Actor_SetPosition(24, 2097152, 31719424);
+    Actor_SetPosition(25, 5505024, 32505856);
+    Actor_SetPosition(26, 1048576, 39059456);
     Actor_SetSpeed(24, 157286, 78643);
     Actor_SetSpeed(25, 157286, 78643);
     Actor_SetSpeed(26, 157286, 78643);
@@ -1378,7 +1378,7 @@ void FieldScene_RunShipDeckEventScript(void)
     FuneKanpan_OpenFirstDoor();
     /* FAKEMATCH: the do/while sets r0 = 21 first, straight after the call. */
     do {
-        Call3(Engine_ActorWalkTo, 21, 196, 612);
+        Actor_WalkTo(21, 196, 612);
     } while (0);
     Object_RefreshSelectorById(24);
     Engine_EventWait(10);

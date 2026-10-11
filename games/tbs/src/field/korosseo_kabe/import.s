@@ -127,9 +127,9 @@ Object_CommitPosition:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Map_UpdateCellRect
+	.global Engine_MapCopyCellsTo
 	.thumb_func
-Map_UpdateCellRect:
+Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyCellIndexRectFar
 	.global Object_CheckMovementCollision
 	.thumb_func

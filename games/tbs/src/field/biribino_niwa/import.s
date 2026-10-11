@@ -131,9 +131,9 @@ Engine_ActorStartRepeatedMotion:
 	.thumb_func
 Engine_ActorRunRepeatedMotion:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Engine_ObjectSetTargetAndCallback
+	.global Object_SetTargetAndCallback
 	.thumb_func
-Engine_ObjectSetTargetAndCallback:
+Object_SetTargetAndCallback:
 	overlay_veneer Object_SetTargetAndCallbackFar
 	.global Engine_EventSetMessage
 	.thumb_func

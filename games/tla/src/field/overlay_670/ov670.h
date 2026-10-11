@@ -109,28 +109,6 @@ void Func_02005c24(void);
 void Func_02005c2c(void);
 void Func_02005c34(void);
 
-void Func_02000524(s32 show);
-void Func_0200057c(void);
-void Func_02000590(s32 show, s32 first, u32 count);
-void Func_02000978(void);
-void Func_02000b2c(void);
-void Func_02000d74(void);
-void Func_02003a08(s32 x, s32 z);
-void Func_020000a0(struct Ov670Object *object);
-void Func_02002f34(void);
-void Func_02003030(void);
-void Func_02003184(void);
-void Func_02003640(s32 open, s32 hide);
-void Func_020036e0(s32 open, s32 mode);
-void Func_02004524(void);
-void Func_020045d0(void);
-void Func_020050ac(void);
-void Func_02005114(void);
-void Func_0200516c(void);
-void Func_020054e0(void);
-void Func_02005594(void);
-void Func_020057e0(void);
-void Func_02005898(void);
 void Func_02005bcc(void);
 void Func_02005c04(s32 a);
 void Func_02005c54(void);
@@ -139,34 +117,6 @@ void Func_02005c64(const void *script);
 void Func_02005a54(struct Ov670Object *object, s32 x, s32 y, s32 z);
 void Func_02005a5c(struct Ov670Object *object);
 void Event_StartScreenTransition(void);
-void Func_020005e0(void);
-void Func_02000624(void);
-void Func_02000668(void);
-void Func_020006ac(void);
-void Func_020006f0(void);
-void Func_02001318(void);
-s32 Func_02002b08(s32 value);
-void Func_02002b18(s32 index, s32 entry, s32 delta);
-void Func_02002ba4(s32 index, s32 entry, s32 delta);
-void Func_02002c34(void);
-void Func_02002ccc(void);
-void Func_02002d64(void);
-void Func_020031f0(s32 id);
-void Func_02003220(void);
-void Func_02003504(void);
-void Func_02003898(void);
-void Func_020038ec(void);
-
-extern s16 Data_02007948[];
-extern const u8 Data_02005d18[];
-extern const u8 Data_02005d5c[];
-extern const u8 Data_02005da0[];
-extern const u8 Data_02005e54[];
-extern const u8 Data_02005cd0[];
-extern const u8 Data_0200613c[];
-extern const u8 Data_0200614c[];
-extern const u8 Data_02006324[];
-extern struct Ov670Object *Data_02007950;
 
 static inline void Ov670_ObjTurn(s32 actor, s32 angle)
 {
@@ -203,13 +153,6 @@ static inline void Ov670_ObjSetPos(struct Ov670Object *object, s32 x, s32 y, s32
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Object_SetPositionAndResetMotion(object, x, y, z);
 }
-
-struct Ov670EventWorkB {
-    u8 unknown_000[0x1c4];
-    u16 field_1c4;
-};
-
-#define OV670_WORK ((struct Ov670EventWorkB *)Ram_HeapSlots->event_work)
 
 void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
 struct Ov670Object *Func_02005bbc(void);
@@ -253,7 +196,6 @@ static inline void Ov670_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
     Func_02005a64(a, b, c, d, e, f);
 }
 
-
 static inline void Ov670_Wait(s32 frames)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
@@ -271,5 +213,89 @@ static inline void Ov670_WaitFrames(s32 frames)
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     WaitFrames(frames);
 }
+
+#define OV670_TASK_ADD(callback, priority) \
+    { \
+        /* FAKEMATCH: a temporary keeps the priority constant ahead of the callback load. */ \
+        s32 priority_ = (priority); \
+        Scheduler_AddOrUpdateCallback((callback), priority_); \
+    }
+
+static inline void Ov670_ObjEmoteWait(s32 actor, s32 emote)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02005b9c(actor, emote);
+}
+
+static inline void Ov670_TaskAdd(void (*callback)(void), s32 priority)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Scheduler_AddOrUpdateCallback(callback, priority);
+}
+
+static inline void Ov670_MesPut(s32 speaker, s32 flags)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02005b64(speaker, flags);
+}
+
+static inline void Ov670_MesOpen(s32 speaker, s32 flags)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    UiText_OpenMessageAtObject(speaker, flags);
+}
+
+// ---- this overlay
+
+void Func_020050ac(void);
+s32 Func_02002b08(s32 value);
+void Func_020000a0(struct Ov670Object *object);
+void Func_02000524(s32 show);
+void Func_0200057c(void);
+void Func_02000590(s32 show, s32 first, u32 count);
+void Func_020005e0(void);
+void Func_02000624(void);
+void Func_02000668(void);
+void Func_020006ac(void);
+void Func_020006f0(void);
+void Func_02000978(void);
+void Func_02000b2c(void);
+void Func_02000d74(void);
+void Func_02001318(void);
+void Func_02002b18(s32 index, s32 entry, s32 delta);
+void Func_02002ba4(s32 index, s32 entry, s32 delta);
+void Func_02002c34(void);
+void Func_02002ccc(void);
+void Func_02002d64(void);
+void Func_02002f34(void);
+void Func_02003030(void);
+void Func_02003184(void);
+void Func_020031f0(s32 id);
+void Func_02003220(void);
+void Func_02003504(void);
+void Func_02003640(s32 open, s32 hide);
+void Func_020036e0(s32 open, s32 mode);
+void Func_02003898(void);
+void Func_020038ec(void);
+void Func_02003a08(s32 x, s32 z);
+void Func_02004524(void);
+void Func_020045d0(void);
+void Func_02005114(void);
+void Func_0200516c(void);
+void Func_020054e0(void);
+void Func_02005594(void);
+void Func_020057e0(void);
+void Func_02005898(void);
+
+extern const u8 Data_02005cd0[];
+extern const u8 Data_02005d18[];
+extern const u8 Data_02005d5c[];
+extern const u8 Data_02005da0[];
+extern const u8 Data_02005e54[];
+extern const u8 Data_0200613c[];
+extern const u8 Data_0200614c[];
+extern const u8 Data_02006324[];
+extern s16 Data_02007948[];
+extern struct Ov670Object *Data_02007950;
 
 #endif

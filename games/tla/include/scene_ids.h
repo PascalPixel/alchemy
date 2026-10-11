@@ -23,5 +23,7 @@ extern char SceneId_Kibonbo3;
 extern char SceneId_Kibonbo4;
 extern char SceneId_Kibonbo5;
 extern char SceneId_Kibonbo6;
+extern char SceneId_Shaman5;
+extern char SceneId_Shaman6;
 
 #endif

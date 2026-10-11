@@ -622,12 +622,6 @@ void FieldScene_RunPairedEntranceWalk(s32 a0)
 
 s32 KorosseoKabe_ApplyEntryState(void)
 {
-    /* FAKEMATCH: the game state read as rows of halfwords and written as rows of bytes keeps the base-plus-index address form for both accesses, where its fields fold the offsets into the pool. */
-    union GameStateRows {
-        u8 bytes[512][2];
-        s16 halves[512][1];
-    };
-
     struct FieldActor *actor;
     s32 x;
     s32 i;
@@ -744,11 +738,11 @@ s32 KorosseoKabe_ApplyEntryState(void)
         Scheduler_SetCallbackMask((u32)(FieldScene_RunSupplementalSequenceOne), 1);
     }
     Engine_ActorSetAnimation(8, 9);
-    ((union GameStateRows *)&gGameState)->bytes[249][0] = 0;
+    gGameState.movement_mode = 0;
     Korosseo_ShowItemIcon(41, 89);
     Korosseo_ShowItemIcon(40, 77);
     Engine_ActorSetChildValue(8, 1);
-    switch (((union GameStateRows *)&gGameState)->halves[225][0]) {
+    switch (gGameState.entrance) {
     case 1:
         FieldScene_BuildDescriptorAndInstallTask(0, 8, 5, 0x680000, 0x1000000, 40, 41);
         Call6(Map_UpdateCellRect, 127, 0, 1, 2, 79, 6);

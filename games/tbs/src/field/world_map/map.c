@@ -1553,16 +1553,16 @@ void WorldMap_ActivateSite138(s32 actor)
 {
     s32 i;
 
-    for (i = 0;; i++) {
+    i = 0;
+    while (1) {
         if (gWorldMapEvents[i].control == EVENT_EXIT && gWorldMapEvents[i].trigger == 138) {
             gWorldMapEvents[i].control = EVENT_TOUCH;
             gWorldMapEvents[i].value = (u32)WorldMap_StopLeaderLeavingShip;
         }
-        /* FAKEMATCH: a goto past the loop, not a break, keeps the ROM's strength-reduced offsets. */
         if (gWorldMapEvents[i].control == SCENE_EVENTS_END)
-            goto marks;
+            break;
+        i++;
     }
-marks:
     for (i = 0;; i++) {
         if (gWorldMapPlacements[i].sprite == 57) {
             gWorldMapPlacements[i].x = 0x17940000;

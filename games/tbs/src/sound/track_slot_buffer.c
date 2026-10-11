@@ -7,7 +7,7 @@ void AudioTrack_ResetSlotBuckets(void)
 
     for (index = 0; index < 0x400; index++) {
         Flash_Handler3->nodes[index].slot = index;
-        Flash_Handler3->nodes[index].back = NULL;
+        Flash_Handler3->nodes[index].prev = NULL;
     }
     bucket = Flash_Handler3->bucket;
     for (index = 0xFF; index >= 0; index--) {
@@ -17,51 +17,21 @@ void AudioTrack_ResetSlotBuckets(void)
 
 void AudioTrack_InsertSlotNode(s32 index)
 {
-    /* FAKEMATCH: address-word link stores preserve back-link store order and 68 bytes; typed insertion yields 60. */
-    s32 base;
-    s32 node_off;
-    s32 tbl_off;
-    s32 bucket;
-    s32 bucket_off;
-    s32 link_off;
-    void **node;
-    void *next;
+    struct AudioTrackSlotWork *work = Flash_Handler3;
 
-    base = (s32)Flash_Handler3;
-    node_off = index * sizeof(struct AudioSlotNode);
-    tbl_off = index * sizeof(s32) + (u32)&((struct AudioTrackSlotWork *)0)->bucket_by_slot;
-    bucket = *(s32 *)(base + tbl_off) * 4;
-    link_off = node_off + (u32)&((struct AudioSlotNode *)0)->back;
-    *(s32 *)(base + link_off) = base + bucket + (u32)&((struct AudioTrackSlotWork *)0)->bucket;
-    bucket_off = bucket + (u32)&((struct AudioTrackSlotWork *)0)->bucket;
-    *(s32 *)(base + node_off) = *(s32 *)(base + bucket_off);
-    node = (void **)(base + node_off);
-    *(void **)(base + bucket_off) = node;
-    next = *node;
-    if (next != 0)
-        ((struct AudioSlotNode *)next)->back = (struct AudioSlotNode **)node;
+    work->nodes[index].prev = (struct AudioSlotNode *)&work->bucket[work->bucket_by_slot[index]];
+    work->nodes[index].next = work->bucket[work->bucket_by_slot[index]];
+    work->bucket[work->bucket_by_slot[index]] = &work->nodes[index];
+    if (work->nodes[index].next != NULL)
+        work->nodes[index].next->prev = &work->nodes[index];
 }
 
 void AudioTrack_RemoveSlotNode(s32 slot)
 {
-    /* FAKEMATCH: signed address-word reads retain the back-link reload; typed pointers remove four bytes in each game. */
-    s32 next_node;
-    s32 track_table;
-    s32 slot_offset;
-    s32 next_link_offset;
-    void *previous_node;
-
-    track_table = (s32)Flash_Handler3;
-    slot_offset = slot * sizeof(struct AudioSlotNode);
-    next_link_offset = slot_offset + (u32)&((struct AudioSlotNode *)0)->back;
-    next_node = *(s32 *)(track_table + next_link_offset);
-    if (next_node != 0) {
-        previous_node = *(void **)(track_table + slot_offset);
-        if (previous_node != 0) {
-            *(s32 *)&((struct AudioSlotNode *)previous_node)->back = next_node;
-        }
-        **(s32 **)(track_table + next_link_offset) =
-            *(s32 *)(track_table + slot_offset);
+    if (Flash_Handler3->nodes[slot].prev != NULL) {
+        if (Flash_Handler3->nodes[slot].next != NULL)
+            Flash_Handler3->nodes[slot].next->prev = Flash_Handler3->nodes[slot].prev;
+        Flash_Handler3->nodes[slot].prev->next = Flash_Handler3->nodes[slot].next;
     }
 }
 
@@ -165,7 +135,7 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
                     }
                 }
             }
-            node = node->prev;
+            node = node->next;
         }
     } else {
         while (node != NULL) {
@@ -186,7 +156,7 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
                     }
                 }
             }
-            node = node->prev;
+            node = node->next;
         }
     }
 }

@@ -8,6 +8,7 @@
 #include "text_render_runtime.h"
 #include "window.h"
 #include "layout_guard.h"
+#include "keystate.h"
 
 enum
 {
@@ -111,8 +112,6 @@ LAYOUT_OFFSET_GUARD(MenuCell_AutoDelay, struct MenuCell, auto_delay, 0xdc);
 LAYOUT_OFFSET_GUARD(MenuCell_AutoMode, struct MenuCell, auto_mode, 0xe0);
 
 extern struct MenuCell *gLinkCountdownWork;
-extern volatile s32		gKeyState;
-extern volatile s32		gKeysRepeat;
 extern volatile u32		gFrameCount;
 extern u8				Resource_FixedBlockBTiles[];
 extern const u8			Menu_AnimatedCursorTiles[];

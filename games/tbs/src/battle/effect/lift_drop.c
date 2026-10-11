@@ -4,6 +4,7 @@
 //--------------------------------------------------------------------------
 
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -19,7 +20,6 @@
 #include "callback_scheduler.h"
 #include "sound_ids.h"
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
 
 #define Random16 ((s32 (*)(void))Random16)
 
@@ -73,7 +73,6 @@ struct FxObject
 
 extern struct BattleFxScene *gEffectWork;
 extern const s32			 BattleFx_FragmentScript[];
-extern volatile u32			 gKeysHeld;
 extern volatile u32			 gFrameCount;
 
 void			 WaitFrames(s32 frames);

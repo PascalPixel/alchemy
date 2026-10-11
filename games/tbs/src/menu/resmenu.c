@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -35,8 +36,6 @@ struct BtlAct * BtlActGet(s32 action_id);
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 struct BtlUnit *UnitGetFar(s32 object_id);
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 #define UiText_DrawCharacterAtOffset ((void (*)(s32, void *, s32, s32))UiText_DrawCharacterAtOffset)
 
 struct WindowLine {
@@ -82,7 +81,6 @@ struct LinkRoundState {
 
 extern volatile u16 gLinkStatus;
 extern u8 gDebugMode;
-extern volatile u32 gKeysHeld;
 void AudioCommand_PlayFar(s32 cue);
 void Graphics_ExpandVramTilesByColorTable(s32 destination);
 void Menu_BuildLocalizedPatternTiles(void);

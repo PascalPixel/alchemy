@@ -6,9 +6,9 @@
 
 struct AudioSlotNode
 {
-	struct AudioSlotNode  *prev;
-	struct AudioSlotNode **back;
-	s32					   slot;
+	struct AudioSlotNode *next; // 同じ値の次のノード
+	struct AudioSlotNode *prev; // 前のノード（先頭ならバケツの欄）
+	s32					  slot;
 };
 
 struct AudioTrackSlotWork

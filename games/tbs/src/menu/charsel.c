@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -20,8 +21,6 @@
 #include "btlsys.h"
 #include "text/msg_ids.h"
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 #define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 
@@ -184,16 +183,14 @@ s32 PsynergyMenu_SelectOwner(void)
             break;
         }
         {
-            volatile u32 *repeat = &gKeysRepeat;
-
-            if (*repeat & 32) {
+            if (gKeysRepeat & 32) {
                 AudioCommand_PlayFar(111);
                 if (count > 1) {
                     selection--;
                     pending = 1;
                 }
             }
-            if (*repeat & 16) {
+            if (gKeysRepeat & 16) {
                 AudioCommand_PlayFar(111);
                 if (count > 1) {
                     selection++;

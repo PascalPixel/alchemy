@@ -3,7 +3,7 @@
 
 u32 Summon_GetLayoutKind(s32 index)
 {
-    u32 kind = Summon_EntryTable[index].layout_flags >> 5;
+    u32 kind = Summon_EntryTable[index].layout_kind;
 
     if ((s32)kind > 4)
         kind = -1U;
@@ -21,7 +21,7 @@ s32 Summon_GetEntryFlag1Field(s32 index)
 {
     if ((u32)index > 386)
         return Summon_EntryTable[0].animation;
-    return ((u32)Summon_EntryTable[index].layout_flags << 27) >> 28;
+    return Summon_EntryTable[index].layout_bits1;
 }
 
 s32 Summon_IsEntryFlagged(s32 index)
@@ -33,8 +33,8 @@ s32 Summon_IsEntryFlagged(s32 index)
     if ((u32)index > 386)
         return 0;
     result = 0;
-    flags = Summon_EntryTable[index].sprite_flags;
-    if (flags << 31)
+    flags = Summon_EntryTable[index].sprite_bit0;
+    if (flags)
         result = 1;
     return result;
 }
@@ -47,7 +47,7 @@ u32 Battle_GetSpriteFlagNibble(u32 index)
 
     if (index > 386)
         return 1;
-    value = ((u32)Summon_EntryTable[index].sprite_flags << 27) >> 28;
+    value = Summon_EntryTable[index].sprite_bits1;
     if (value != 0)
         result = value;
     else
@@ -63,7 +63,7 @@ u32 Battle_GetSpriteFlagHighBits(u32 index)
 
     if (index > 386)
         return 0;
-    value = Summon_EntryTable[index].sprite_flags >> 5;
+    value = Summon_EntryTable[index].sprite_bits5;
     if (value != 0)
         result = value;
     else
@@ -75,7 +75,7 @@ s32 Summon_IsEntrySecondaryFlagged(s32 index)
 {
     if ((u32)index > 386)
         return 0;
-    return ((u32)Summon_EntryTable[index].layout_flags << 31) >> 31;
+    return Summon_EntryTable[index].layout_bit0;
 }
 
 u32 Summon_GetEntryByte4(u32 index)

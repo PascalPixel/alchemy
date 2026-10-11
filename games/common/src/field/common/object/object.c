@@ -45,14 +45,6 @@ void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y
 s32	 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
 s32	 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
 
-struct ChildDisplayFlags
-{
-	u8 padding[29];
-	u8 unk_0 : 1;
-	u8 field_1 : 1;
-	u8 unk_2 : 6;
-};
-
 s32 BattleFx_ApplyColorToTargetBufferFar(s32, s32);
 s32 BattleFx_StartBufferInterpolationFar(s32);
 
@@ -650,9 +642,8 @@ void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj, u32 on)
 {
 	if (obj != 0 && obj->kind == 1)
 	{
-		/* FAKEMATCH: needed to match: the packed bit access preserves mask/register order; a byte mask changes it at the same 40-byte size. */
-		struct ChildDisplayFlags *state = obj->target.child;
-		state->field_1 = on;
+		struct FieldSprite *spr = obj->target.child;
+		spr->unknown_1d_1 = on;
 	}
 }
 

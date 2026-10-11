@@ -4,6 +4,7 @@
 //--------------------------------------------------------------------------
 
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -406,7 +407,6 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames)
 
 extern volatile u32 gFrameCount;
 extern volatile s32 gFrameTick;
-extern volatile s32 gKeysPressedLatch;
 
 void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
 

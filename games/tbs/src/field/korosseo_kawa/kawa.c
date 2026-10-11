@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -70,8 +71,7 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-extern u32 gKeysHeld;
-#define KEYS_HELD (*(volatile u32 *)&gKeysHeld) // VBlank で書く
+#define KEYS_HELD gKeysHeld // VBlank で書く
 extern u8 HexDigits[];
 void Map_UpdateCellRect();
 void Script_WaitForEventTimeout();

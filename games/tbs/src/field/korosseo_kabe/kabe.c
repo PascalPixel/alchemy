@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -32,7 +33,6 @@ s32 FieldScene_BuildDescriptorAndInstallTask();
 
 void Engine_MapCopyCellAttributes();
 
-extern u32 gKeysHeld;
 void Object_CommitPosition(struct FieldActor *object);
 
 void Object_RefreshSelectorById(s32 actor);

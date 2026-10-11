@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -23,7 +24,6 @@
 
 extern struct EventRuntime *gEventWork;
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
 
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
@@ -740,8 +740,6 @@ void ObjectDispatch_SetUpdateValue(void *raw, s32 value)
 #define ASSIGNED_KEYS gKeyState
 #else
 
-extern u8 gKeysHeld[];
-
 #define ASSIGNED_KEYS gKeysHeld
 #endif
 
@@ -754,9 +752,9 @@ u32 Field_StoreAssignedKeyValue(u32 value)
     if (GameFlag_TestFar(0x107) != 0) {
         StoreHalfword((s16 *)&work->raised_trigger, 0xFA);
     } else if (work->mode == 3) {
-        if (*(volatile u32 *)((u32)&ASSIGNED_KEYS) & 0x100) {
+        if (ASSIGNED_KEYS & 0x100) {
             StoreHalfword((s16 *)&work->raised_trigger, 0xFC88);
-        } else if (*(volatile u32 *)((u32)&ASSIGNED_KEYS) & 0x200) {
+        } else if (ASSIGNED_KEYS & 0x200) {
             StoreHalfword((s16 *)&work->raised_trigger, 0xFC87);
         }
     } else {
@@ -776,28 +774,18 @@ u32 Field_StoreAssignedKeyValue(u32 value)
 s32 Field_CheckConfiguredKeys(void)
 {
     struct EventRuntime *work = gEventWork;
-    /* FAKEMATCH: needed to match: local halfword addresses and signed values avoid two extra literal-1 loads and 24 extra bytes. */
     s32 result = 0;
 
     if (work == NULL)
         return 0;
     if (gKeyState & gGameState.select_keys) {
-        s16 *flag = (s16 *)work->unknown_172;
-        s32 value = 1;
-
-        *flag = value;
+        work->unknown_172[0] = 1;
         result = 1;
     } else if (gKeyState & gGameState.a_keys) {
-        s16 *flag = (s16 *)(work->unknown_172 + 2);
-        s32 value = 1;
-
-        *flag = value;
+        work->unknown_172[1] = 1;
         result = 1;
     } else if (gKeyState & gGameState.start_keys) {
-        s16 *flag = (s16 *)(work->unknown_172 + 4);
-        s32 value = 1;
-
-        *flag = value;
+        work->unknown_172[2] = 1;
         result = 1;
     } else if (gKeyState & gGameState.first_shortcut_keys) {
         result = Field_StoreAssignedKeyValue(gGameState.first_shortcut);

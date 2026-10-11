@@ -1,4 +1,5 @@
 #include "types.h"
+#include "keystate.h"
 #include "render_input.h"
 #include "battle.h"
 #include "debug.h"
@@ -359,7 +360,6 @@ void PtyStDraw(s32 flags)
 
 #define gTitleExtraOptionEnabled (*(s16 *)&gTitleExtraOptionEnabled)
 
-extern volatile u32 gKeysHeld;
 
 extern u8 gSceneState[];
 extern u32 gLoadedStateWord;

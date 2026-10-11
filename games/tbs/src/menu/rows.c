@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -18,7 +19,6 @@
 #include "game_state.h"
 
 #define UiWindow_Create ((struct Work * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 #define Menu_ColonString ((u8 (*))&Menu_ColonString)
 
@@ -36,7 +36,6 @@ struct TextObject {
 
 void UiTextResource_Initialize(struct TextObject *object, s32 *resource);
 void UiTextResource_SetPosition(struct TextObject *object, s32 x, s32 y);
-extern volatile u32 gKeysHeld;
 
 
 void Scheduler_ScheduleCallbackCAfterFrames(void)

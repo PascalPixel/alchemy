@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -1058,7 +1059,6 @@ LAYOUT_OFFSET_GUARD(BattleMenuSelection_Selected, struct BattleMenuSelection, se
 #define MENU_STATE ((struct BattleMenuSelection *)gLinkCountdownWork)
 #define CURSOR_OWNER (*(struct PartyStatusWindow **)gPartyStatusWork)
 
-extern volatile u32 gKeysHeld;
 extern const u8 DjinnMenu_BlinkTile[32];
 extern const u8 DjinnMenu_ElementXOffsets[4];
 extern const u8 DjinnMenu_ElementYOffsets[4];

@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -670,8 +671,6 @@ void UiWork_ProcessRenderChannels(void)
     } while (channel_no != 3);
 }
 
-extern volatile u32 gKeysHeld;
-extern u32 gKeysPressedLatch;
 extern volatile u16 gLagFramesShown;
 
 enum {

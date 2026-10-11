@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -23,8 +24,6 @@ struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 extern void UiText_DrawCharacterAtOffsetFar(s32, void *, s32, s32);
 
-extern volatile s32 gKeysRepeat;
-extern volatile s32 gKeyState;
 s32 __modsi3(s32, s32);
 void WaitFrames(s32 frames);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);

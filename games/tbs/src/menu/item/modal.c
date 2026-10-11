@@ -1,4 +1,5 @@
 #include "m7_interfaces.h"
+#include "keystate.h"
 #include "inventory_menu.h"
 #include "battle.h"
 #include "debug.h"
@@ -42,7 +43,6 @@ void ItemMenu_RefreshEntry(s32 layout)
     } while (index <= 0xE);
 }
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
 #define RenderOutput_ClearListFar ((void (*)(void *))RenderOutput_ClearListFar)
 
 #define UiText_GetResourceDimensionsFar ((void (*)(s32,s32*,s32*,s32*,s32*))UiText_GetResourceDimensionsFar)

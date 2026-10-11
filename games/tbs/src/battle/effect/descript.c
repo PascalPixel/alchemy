@@ -4,6 +4,7 @@
 //--------------------------------------------------------------------------
 
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -116,7 +117,6 @@ typedef struct
 
 void AudioCommand_PlayFar(s32);
 
-extern volatile u32 gKeysHeld;
 void				BattleFx_RunRisingObjectSequence(s32, s32, s32);
 void				FieldEffect_UpdateGridPlacement(void);
 void				battle_owner_69(void);

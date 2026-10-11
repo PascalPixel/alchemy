@@ -1,12 +1,10 @@
 #include "edition.h"
+#include "keystate.h"
 #include "types.h"
 #include "io_reg.h"
 #include "scene.h"
 #include "btlwork.h"
 
-extern volatile u32 gKeysHeld;
-extern volatile u32 gKeysRepeat;
-extern volatile u32 gKeyState;
 
 void WaitFrames(s32);
 

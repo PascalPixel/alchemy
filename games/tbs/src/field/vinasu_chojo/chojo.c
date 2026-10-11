@@ -1197,8 +1197,7 @@ void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                /* FAKEMATCH: a plain byte access; the struct field store leaves a dead QImode zero that takes r3 from the +85 address. */
-                *(u8 *)&sprite->unknown_1d |= 1;
+                sprite->unknown_1d_0 = 1;
                 sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
                 sprite->shape = 1;
@@ -3101,7 +3100,7 @@ void SceneEffect_SpawnParticlesBesideActor(void)
     angle = Random_Next() & 0xffff000;
     effect->timer = angle;
     effect->work = phase;
-    *(struct FieldActor **)effect->unknown_68 = center;
+    effect->linked_object = center;
     effect->update = VinasuChojo_UpdateOrbitingEffect;
     effect->speed = Engine_MathSin((drift & 0xfffff) >> 4) * 24 >> 16;
     /* FAKEMATCH: the flag byte is stored through a byte pointer, which may alias the priority read after it; as a plain field store the read's address is set up one instruction earlier. */

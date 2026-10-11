@@ -35,13 +35,6 @@ struct SceneRegionEntry
 	u8	unknown_14[4];
 };
 
-struct EffectSprite
-{
-	u8 unknown_00[29];
-	u8 enabled : 1;
-	u8 flags : 7;
-};
-
 void ObjectDispatch_ReleaseFar(struct FieldActor *object);
 
 //--------------------------------------------------------------------------
@@ -139,7 +132,6 @@ void BattleEffect_ClearOutOfBoundsObjects(void)
 //--------------------------------------------------------------------------
 void BattleEffect_ClearAllObjects(void)
 {
-	/* FAKEMATCH: needed to match: the original one-bit display flag clear keeps the signed mask and saved loop registers */
 	struct EventWork	  *work = gEventWork;
 	struct ScenePlacement *table;
 	s32					   i;
@@ -151,7 +143,7 @@ void BattleEffect_ClearAllObjects(void)
 		if (obj != 0)
 		{
 			obj->active = 1;
-			((struct EffectSprite *)obj->sprite)->enabled = 0;
+			obj->sprite->unknown_1d_0 = 0;
 			ObjectDispatch_ReleaseFar(obj);
 			work->placed_actors[i] = 0;
 		}

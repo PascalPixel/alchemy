@@ -63,6 +63,7 @@ void Makyuri_RunActorMove(void)
     u8 saved;
     u8 *flags;
     s32 angle;
+    u32 keys;
     s32 n;
     s32 i;
     u8 zero;
@@ -75,8 +76,9 @@ void Makyuri_RunActorMove(void)
     actor = (struct FieldActor *)work->actors[gGameState.selected_actor];
     flags = &actor->motion_flags;
     saved = *flags;
-    angle = (u16)Makyuri_MoveAngles[(gKeysHeld >> 4) & 15];
-    if (Makyuri_MoveAngles[(gKeysHeld >> 4) & 15] == -1)
+    keys = gKeysHeld;
+    angle = (u16)Makyuri_MoveAngles[(keys >> 4) & 15];
+    if (Makyuri_MoveAngles[(keys >> 4) & 15] == -1)
         return;
     pos[0].fixed = (actor->x.fixed & -0x100000) + 0x80000;
     pos[1].fixed = ((struct ObjectRuntime *)actor)->terrain_height;

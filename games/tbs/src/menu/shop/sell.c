@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -250,8 +251,6 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 #define COINS_X    136
 #endif
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 #define Shop_FillSelector ((void (*)(s32,s32,void*))Shop_FillSelector)
 

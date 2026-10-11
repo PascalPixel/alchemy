@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -33,7 +34,6 @@
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
 
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 #define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
@@ -1627,7 +1627,6 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 #undef SPARK
 #undef SPARKS
 #undef gBattleFxWork
-#undef gKeysRepeat
 
 #define AnimationObjects_SelectAnimationFar ((int (*)())AnimationObjects_SelectAnimationFar)
 #define Graphics_PrepareTransferInIwramWork ((int (*)())Graphics_PrepareTransferInIwramWork)
@@ -2999,7 +2998,6 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 #undef Graphics_PrepareTransferInIwramWork
 #undef Object_ApplyProjectedPlacementFar
 
-#define gKeysRepeat (*(u32 *)&gKeysRepeat)
 
 #define REG16(address) (*(volatile u16 *)(address))
 
@@ -3493,9 +3491,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 
 #undef Object_ApplyProjectedPlacementFar
 
-#undef gKeysRepeat
 
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 extern u8 gMapCellBuffer[];
 void	  WaitFrames(s32);

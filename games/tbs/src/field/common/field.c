@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -25,7 +26,6 @@
 #include "btlsys.h"
 #include "script_object_entry.h"
 
-#define gKeysRepeat (*(u32 *)&gKeysRepeat)
 
 struct KeyMoveEventWork {
     u8 unknown_000[0x19c];
@@ -39,7 +39,6 @@ struct WorldMapSprite {
 };
 
 extern struct KeyMoveEventWork *gEventWork;
-extern volatile u32 gKeysHeld;
 extern volatile u8 gDebugMode;
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
 s32 Map_GetTerrainHeight(u32 layer, s32 x, s32 z);

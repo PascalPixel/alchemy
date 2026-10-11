@@ -25,7 +25,6 @@ void SceneActor_TurnTowardTableAngle();
 
 #define ObjectTable_Get ((struct Subject_02001fa4 * (*)())ObjectTable_Get)
 extern u8 gEffectWork[];
-extern u8 gKeysHeld[];
 
 #define NULL ((void *)0)
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -1411,7 +1410,7 @@ void SceneActor_TurnTowardTableAngle(s32 z)
     }
     o->unk5A = t;
     z = 1;
-    d = ImiruMura_KeyHeadings[(*(u32 *)gKeysHeld >> 4) & 0xF];
+    d = ImiruMura_KeyHeadings[(gKeysHeld >> 4) & 0xF];
     z = -z;
     if (d == z) {
         Object_SetMode(o, 9);
@@ -1443,7 +1442,7 @@ void StagedActor_RunHeadingProbeStep(void)
     subject = Engine_ActorLookup(((struct SharedData_02000240 *)&gGameState)->selected_subject);
 
     for (;;) {
-        heading = ImiruMura_SwayHeadings[(*(u32 *)gKeysHeld >> 4) & 15];
+        heading = ImiruMura_SwayHeadings[(gKeysHeld >> 4) & 15];
         if ((heading << 16) == -0x10000) {
             return;
         }

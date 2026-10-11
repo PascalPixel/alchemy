@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -19,11 +20,9 @@
 #include "text/msg_ids.h"
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
 
 #define UiText_DrawStringInWindowFar ((void (*)(u8*,s32,s32,s32))UiText_DrawStringInWindowFar)
 
-extern volatile s32 gKeysRepeat;
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void UiWork_FinalizeFar(s32, s32);
 
@@ -63,13 +62,11 @@ s32 Menu_SelectQuantity(s32 value)
 
 adjust:
     {
-        volatile s32 *keys = &gKeysRepeat;
-
-        if (*keys & 0x40) {
+        if (gKeysRepeat & 0x40) {
             quantity -= 1;
             changed = 1;
         }
-        if (*keys & 0x80) {
+        if (gKeysRepeat & 0x80) {
             quantity += 1;
             changed = 1;
         }
@@ -87,11 +84,9 @@ check_exit:
     }
 
     {
-        volatile u32 *keys = &gKeyState;
-
-        if (*keys & 1)
+        if (gKeyState & 1)
             goto done;
-        if (*keys & 2) {
+        if (gKeyState & 2) {
             quantity = -1;
             goto done;
         }

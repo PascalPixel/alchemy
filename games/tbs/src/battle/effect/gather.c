@@ -4,6 +4,7 @@
 //--------------------------------------------------------------------------
 
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -848,7 +849,6 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 //--------------------------------------------------------------------------
 // 岩と氷塊
 //--------------------------------------------------------------------------
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 #define AnimationObjects_SelectAnimationFar \
 	((s32 (*)(void *, s32))AnimationObjects_SelectAnimationFar)

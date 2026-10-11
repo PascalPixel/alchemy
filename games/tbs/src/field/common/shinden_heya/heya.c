@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -1421,7 +1422,7 @@ void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor)
 
 void SceneEffect_StepEllipseOrbit(u8 *obj)
 {
-    u8 *anchor = *(u8 **)(obj + 104);
+    u8 *anchor = (u8 *)((struct FieldActor *)obj)->linked_object;
     u16 *angle = &((struct FieldActor *)obj)->timer;
     u16 theta = *angle;
     s32 x;
@@ -1466,24 +1467,12 @@ void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
             ((struct FieldActor *)rec8)->update =
                 (void (*)(union FieldObject *))SceneEffect_StepEllipseOrbit;
             { u16 v = 0; p5[38] = v; }
-            /* FAKEMATCH: needed to match: byte-bitfield aliasing preserves the anchor-store order and mov13/neg sequence. */
-            {
-                struct SpritePriorityByte {
-                    u8 unknown_00[9];
-                    u8 low : 2;
-                    u8 priority : 2;
-                };
-                u8 priority = ((struct SpritePriorityByte *)(*(s32 *)&rec->sprite))->priority;
-
-                *(s32 *)((s32)rec8 + 104) = (s32)rec;
-                ((struct SpritePriorityByte *)p5)->priority = priority;
-            }
+            ((struct FieldActor *)rec8)->linked_object = rec;
+            ((struct FieldSprite *)p5)->priority = rec->sprite->priority;
         }
     }
 }
 
-#define gKeyState (*(volatile u32 *)&gKeyState)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 struct TextCursor {
     u8 storage[12];

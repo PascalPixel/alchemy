@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -29,8 +30,6 @@ s32 GameFlag_TestFar(s32 flag);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
 
 #define RenderOutput_ClearListFar ((void (*)(void *))RenderOutput_ClearListFar)
-#define gKeyState (*(volatile u32 *)&gKeyState)
-#define gKeysRepeat (*(volatile u32 *)&gKeysRepeat)
 
 #define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
 

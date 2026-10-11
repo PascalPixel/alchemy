@@ -364,7 +364,7 @@ Party_CheckFar:
 	.global Func_08000390
 	.thumb_func
 Func_08000390:
-	overlay_veneer Func_080168a0
+	overlay_veneer SerialRuntime_WaitForTransferA
 	.global SerialRuntime_WaitForTransferBFar
 	.thumb_func
 SerialRuntime_WaitForTransferBFar:
@@ -376,7 +376,7 @@ SerialRuntime_WaitForTransfersFar:
 	.global SerialRuntime_GetActiveTransfersFar
 	.thumb_func
 SerialRuntime_GetActiveTransfersFar:
-	overlay_veneer Func_0801692c
+	overlay_veneer SerialRuntime_GetActiveTransfers
 	.global SerialRuntime_StepBlockTransferFar
 	.thumb_func
 SerialRuntime_StepBlockTransferFar:

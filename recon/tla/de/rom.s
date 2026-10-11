@@ -306,30 +306,12 @@ Func_0801680c:
 	.thumb_func
 SerialRuntime_BeginTransferB:
 	.incbin "baserom.gba", 0x00016880, 0x0000004c
-	.section .rom.000168cc, "ax"
-	.global Func_080168a0
-	.type Func_080168a0, %function
-	.thumb_func
-Func_080168a0:
-	.incbin "baserom.gba", 0x000168cc, 0x0000002c
-	.section .rom.000168f8, "ax"
-	.global SerialRuntime_WaitForTransferB
-	.type SerialRuntime_WaitForTransferB, %function
-	.thumb_func
-SerialRuntime_WaitForTransferB:
-	.incbin "baserom.gba", 0x000168f8, 0x0000002c
 	.section .rom.00016924, "ax"
 	.global Func_080168f8
 	.type Func_080168f8, %function
 	.thumb_func
 Func_080168f8:
 	.incbin "baserom.gba", 0x00016924, 0x00000034
-	.section .rom.00016958, "ax"
-	.global Func_0801692c
-	.type Func_0801692c, %function
-	.thumb_func
-Func_0801692c:
-	.incbin "baserom.gba", 0x00016958, 0x00000024
 	.section .rom.000169bc, "ax"
 	.global Func_08016990
 	.type Func_08016990, %function
@@ -2200,12 +2182,6 @@ BattleFx_BuildBuffer:
 	.thumb_func
 Func_080d1760:
 	.incbin "baserom.gba", 0x000de760, 0x0000004c
-	.section .rom.000de7ac, "ax"
-	.global BattleFx_StartBufferInterpolation
-	.type BattleFx_StartBufferInterpolation, %function
-	.thumb_func
-BattleFx_StartBufferInterpolation:
-	.incbin "baserom.gba", 0x000de7ac, 0x0000003c
 	.section .rom.000de7e8, "ax"
 	.global Func_080d17e8
 	.type Func_080d17e8, %function
@@ -3364,12 +3340,8 @@ Func_080fe274:
 	.thumb_func
 ItemMenu_DrawEquippedItemNames:
 	.incbin "baserom.gba", 0x0010a70c, 0x000000e4
-	.section .rom.0010a82c, "ax"
-	.global ItemMenu_ArrangeCategoryItemIcons
-	.type ItemMenu_ArrangeCategoryItemIcons, %function
-	.thumb_func
-ItemMenu_ArrangeCategoryItemIcons:
-	.incbin "baserom.gba", 0x0010a82c, 0x000000a0
+	.section .rom.0010a8cc, "ax"
+	.balign 4
 	.global ItemMenu_PosCategory
 	.type ItemMenu_PosCategory, %function
 	.thumb_func

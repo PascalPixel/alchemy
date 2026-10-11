@@ -37,6 +37,6 @@ void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
     if (mode == 0) {
         WaitFrames(1);
         ItemMenu_DrawIcons((u16 *)items, 1);
-        ItemMenu_ArrangeCategoryItemIcons(items);
+        ItemMenu_ArrangeCategoryItemIcons((u16 *)items);
     }
 }

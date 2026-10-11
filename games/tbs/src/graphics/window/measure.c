@@ -1566,11 +1566,11 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
 
     if (flags & 8)
     {
-        y = y + 4;
+        y += 4;
     }
     else if (flags & 0x40)
     {
-        y = y + 12;
+        y += 12;
     }
     else
     {

@@ -3519,7 +3519,7 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
 	win = UiWindow_CreateFar(13, 3, 17, 10, 2);
 	slot = a0 & ITEM_ID_MASK;
 	Item_GetDirectFar(slot);
-	UiText_DrawCharacterAtOffsetFar(slot + (s32)(MsgItemName), win, 24, 0);
+	UiText_DrawCharacterAtOffsetFar(slot + (s32)MsgItemName, win, 24, 0);
 	text = (s32)MsgConfirmDrop;
 #if EDITION_INTERNATIONAL
 	UiText_DrawCharacterAtOffsetFar(text, win, 0, 16);
@@ -4436,7 +4436,7 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
     s32 shown;
     struct RenderOutput *marker;
 
-    menu = (gMenuWork);
+    menu = gMenuWork;
     selection = menu->tab_index[1];
     count = menu->owner_count;
     pending = 1;
@@ -4964,7 +4964,7 @@ s32 PsynergyMenu_RunList(s32 pane)
     s32 work[5];
     struct MenuResult state;
 
-    menu = (gMenuWork);
+    menu = gMenuWork;
     result = 0;
     prev = 0;
     prompt = 0;
@@ -5110,9 +5110,9 @@ s32 PsynergyMenu_RunList(s32 pane)
                 tab = menu->tab_index[pane];
                 do {
                     if ((gKeysRepeat & KEY_R) != 0) {
-                        tab = tab + 1;
+                        tab++;
                     } else {
-                        tab = tab - 1;
+                        tab--;
                     }
                     tab = (tab + menu->owner_count) % menu->owner_count;
                     menu->selected_owner = menu->owner_table[tab];
@@ -6530,7 +6530,7 @@ s32 PsynergyMenu_SelectAction(void)
     s32 i;
     struct MenuResult state;
 
-    menu = (gMenuWork);
+    menu = gMenuWork;
     result = 0;
     done = 0;
     Menu_BuildPatternTiles();
@@ -9376,7 +9376,7 @@ void FourObjectMotion_InitializeTopRow(void)
         state->positions_x[index] = 0x10;
         state->positions_y[index] = 0x20;
     }
-    Scheduler_AddOrUpdateCallback((s32)(FourObjectMotion_UpdateAllPositions), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)FourObjectMotion_UpdateAllPositions, 0xc80);
 }
 
 void FourObjectMotion_ClearSlotsAndSchedule(void)
@@ -9498,7 +9498,7 @@ void FourObjectMotion_InitializeBottomRow(void)
         state->positions_x[index] = 0x10;
         state->positions_y[index] = 0xc8;
     }
-    Scheduler_AddOrUpdateCallback((s32)(FourObjectMotion_UpdateBottomRow), 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)FourObjectMotion_UpdateBottomRow, 0xc80);
 }
 
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative)
@@ -9550,7 +9550,7 @@ void FourObjectMotion_ClearSlotsAndScheduleAlt(void)
         }
         index++;
     } while (index < 4);
-    Scheduler_RemoveCallback((u32)(FourObjectMotion_UpdateBottomRow));
+    Scheduler_RemoveCallback((u32)FourObjectMotion_UpdateBottomRow);
 }
 
 void Menu_EnableAllItemObjects(void)

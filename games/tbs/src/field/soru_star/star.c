@@ -150,7 +150,7 @@ s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
     if (linked_object != NULL) {
         s32 angle_delta;
         u16 angle;
-        object->steering_flags = object->steering_flags & 0xFE;
+        object->steering_flags &= 0xFE;
         angle_delta = (u16)CalculateAngleFromCoordinateDelta(
             linked_object->coordinate_10 - object->coordinate_10,
             linked_object->coordinate_08 - object->coordinate_08);

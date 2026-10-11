@@ -914,5 +914,5 @@ void BabiFune_ScheduleFade(void)
 	Engine_VramLoad(BabiFune_FadeSlot, 0x100, (s32)buf);
 
 	BabiFune_FadeStep = 0x30;
-	Scheduler_AddOrUpdateCallback((s32)(BabiFune_StepFade), 0xc80);
+	Scheduler_AddOrUpdateCallback((s32)BabiFune_StepFade, 0xc80);
 }

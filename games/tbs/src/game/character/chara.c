@@ -733,7 +733,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
             obj->hp_gauge = one;
         }
 
-        t = (obj->ep << 14) / (obj->max_ep);
+        t = (obj->ep << 14) / obj->max_ep;
         v16 = 0x4000;
         if (t <= 0x4000) {
             v16 = 0;
@@ -1949,7 +1949,7 @@ s32 GameFlag_SetBit(s32 flag)
     flag_mask = 1 << (7 & flag);
     flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
-    flag_bytes[flag] = flag_bytes[flag] | flag_mask;
+    flag_bytes[flag] |= flag_mask;
     return flag;
 }
 
@@ -1961,7 +1961,7 @@ void GameFlag_ClearBit(s32 flag)
     flag_mask = ~(1 << (7 & flag));
     flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
-    flag_bytes[flag] = flag_bytes[flag] & flag_mask;
+    flag_bytes[flag] &= flag_mask;
 }
 
 u32 GameFlag_Toggle(s32 flag)
@@ -1973,7 +1973,7 @@ u32 GameFlag_Toggle(s32 flag)
     flag_mask = 1 << (7 & flag);
     flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
-    flag_bytes[flag] = flag_bytes[flag] ^ flag_mask;
+    flag_bytes[flag] ^= flag_mask;
     flag_value = flag_bytes[flag] & flag_mask;
     return (u32)((0 - flag_value) | flag_value) >> 31;
 }
@@ -2002,7 +2002,7 @@ u8 GameFlag_IncrementByte(s32 flag)
     flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
     if (flag_bytes[flag] <= 0xFE) {
-        flag_bytes[flag] = flag_bytes[flag] + 1;
+        flag_bytes[flag]++;
     }
     return flag_bytes[flag];
 }
@@ -2014,7 +2014,7 @@ u8 GameFlag_DecrementByte(s32 flag)
     flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
     if (flag_bytes[flag] != 0) {
-        flag_bytes[flag] = flag_bytes[flag] + 0xFF;
+        flag_bytes[flag] += 0xFF;
     }
     return flag_bytes[flag];
 }
@@ -2229,7 +2229,7 @@ s32 Party_AdjustCoins(s32 amount)
 
     work = &gGameState;
     value = work->coins;
-    value = value + amount;
+    value += amount;
     store = work;
     if (value > 0xF423F) {
         value = 0xF423F;
@@ -3204,7 +3204,7 @@ void InventorySnapshot_Restore(void)
 
         gGameState.first_shortcut = *source++;
         gGameState.second_shortcut = *source++;
-        *(u16 *)(gGameState.active_owners) = *source++;
+        *(u16 *)gGameState.active_owners = *source++;
         *(u16 *)((u8 *)gGameState.active_owners + 2) = *source;
         source = gInventorySnapshot;
         *source = 0;

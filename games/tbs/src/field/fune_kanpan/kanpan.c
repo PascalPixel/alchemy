@@ -2049,7 +2049,7 @@ s32 SceneState_FindFirstSetFlagOfGroup(u32 sel)
 
 void FuneKanpan_RockDeck(void)
 {
-    struct MapWork *map = (gMapWork[0]);
+    struct MapWork *map = gMapWork[0];
     s32 *camera = map->camera;
     s32 dx = Engine_MathCos(FuneKanpan_WaveAngleX);
     s32 dy = Engine_MathSin(FuneKanpan_WaveAngleY);

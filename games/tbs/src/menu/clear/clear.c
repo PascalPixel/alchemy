@@ -378,9 +378,8 @@ s32 SaveMenu_Run(void)
         ((s32 (*)(s32))Engine_EventWait)(0x12c);
         Event_SetDestination((s32)&SceneId_WorldMap, 72);
         return 0;
-    } else {
-        gSleepDisabled = started;
     }
+    gSleepDisabled = started;
     L_020004a8:;
     v6 = SaveState_ScanRecordFlags();
     if (v6 < 0) {
@@ -1160,7 +1159,7 @@ u16 SceneData_GetBufferCrc16(u32 count, u8 *p)
                 if ((crc & 0x8000) != 0) {
                     crc = (crc << 1) + 0xFFFFEFDF;
                 } else {
-                    crc = crc << 1;
+                    crc <<= 1;
                 }
                 j++;
             } while (j != 8);

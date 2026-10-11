@@ -962,7 +962,7 @@ s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *group, s32 val
     s32 cnt;
 
     if (n != 0) {
-        val = val << 4;
+        val <<= 4;
         p = group->entries;
         cnt = n;
         do {
@@ -2535,7 +2535,7 @@ void Object_UpdateAllThumb(void)
                     half = obj->acceleration / 2;
                     if (vy > half)
                         vy = half;
-                    vy = vy * 3;
+                    vy *= 3;
                     if (vy != 0 && (obj->motion_flags & 0x10) == 0) {
                         dx = obj->velocity_x;
                         dy = obj->velocity_y;
@@ -2647,7 +2647,7 @@ void Object_UpdateAllThumb(void)
                 limit = -0x1000;
                 if (work < limit)
                     work = limit;
-                obj->facing = obj->facing + work;
+                obj->facing += work;
             }
         }
     }
@@ -2886,7 +2886,7 @@ s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter)
     s16 cursor = interpreter->cursor;
 
     interpreter->lookup_result = interpreter->script[cursor + 1] - 1;
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 0;
 }
 
@@ -2894,11 +2894,11 @@ s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter)
 {
     if (interpreter->delay > 0x3B) {
         interpreter->delay = 0;
-        interpreter->cursor = interpreter->cursor + 1;
+        interpreter->cursor++;
         return 1;
     }
     if (Object_IsTargetUnset((struct ObjectRuntime *)interpreter) != 0) {
-        interpreter->cursor = interpreter->cursor + 1;
+        interpreter->cursor++;
         return 1;
     }
     return 0;
@@ -2962,7 +2962,7 @@ s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter)
             interpreter->cursor = Script_FindLabel(interpreter, jump_key);
         } else {
             *repeat_count = 0;
-            interpreter->cursor = interpreter->cursor + 3;
+            interpreter->cursor += 3;
         }
     }
     return 1;
@@ -2984,7 +2984,7 @@ u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter)
     if (interpreter->condition_result != 0) {
         interpreter->cursor = Script_FindLabel(interpreter, value);
     } else {
-        interpreter->cursor = interpreter->cursor + 2;
+        interpreter->cursor += 2;
     }
     return 1;
 }
@@ -2998,7 +2998,7 @@ u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter)
     if (interpreter->condition_result == 0) {
         interpreter->cursor = Script_FindLabel(interpreter, value);
     } else {
-        interpreter->cursor = interpreter->cursor + 2;
+        interpreter->cursor += 2;
     }
     return 1;
 }
@@ -3016,7 +3016,7 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter)
 {
     interpreter->condition_result =
         GameFlag_TestFar(interpreter->script[interpreter->cursor + 1]);
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 1;
 }
 
@@ -3027,7 +3027,7 @@ s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter)
     value = interpreter->script[interpreter->cursor + 1];
     interpreter->condition_result = GameFlag_TestFar(value);
     GameFlag_SetBitFar(value);
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 1;
 }
 
@@ -3038,7 +3038,7 @@ s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter)
     value = interpreter->script[interpreter->cursor + 1];
     interpreter->condition_result = GameFlag_TestFar(value);
     GameFlag_ClearBitFar(value);
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 1;
 }
 
@@ -3055,7 +3055,7 @@ s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter)
     } else {
         GameFlag_SetBitFar(value);
     }
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 1;
 }
 
@@ -3063,7 +3063,7 @@ s32 Script_ApplyObjectArgument(struct ScriptInterpreter *interpreter)
 {
     ObjectDispatch_ApplyArgumentToChildren(interpreter,
         interpreter->script[interpreter->cursor + 1]);
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 1;
 }
 
@@ -3075,14 +3075,14 @@ s32 ObjectDispatch_RunHookAndReturnZero(struct ScriptInterpreter *interpreter)
 
 s32 Script_SkipCommand(struct ScriptInterpreter *interpreter)
 {
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 1;
 }
 
 s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter)
 {
     AudioCommand_PlayFar(interpreter->script[interpreter->cursor + 1]);
-    interpreter->cursor = interpreter->cursor + 2;
+    interpreter->cursor += 2;
     return 1;
 }
 
@@ -3140,7 +3140,7 @@ s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)
     argument++;
     third = *argument;
     Object_SetPositionAndResetMotion((struct ObjectRuntime *)interpreter, first, second, third);
-    interpreter->cursor = interpreter->cursor + 4;
+    interpreter->cursor += 4;
     return 1;
 }
 
@@ -3159,7 +3159,7 @@ s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter)
     argument++;
     third = *argument;
     Object_SetMoveTarget((struct ObjectRuntime *)interpreter, first, second, third);
-    interpreter->cursor = interpreter->cursor + 4;
+    interpreter->cursor += 4;
     return 1;
 }
 
@@ -3317,10 +3317,10 @@ s32 Object_ApproachLinkedObject(struct ObjectRuntime *object)
   struct ObjectRuntime *link;
 
   link = object->linked_object;
-  object->speed_limit = (link->speed_limit);
-  object->acceleration = (link->acceleration);
-  dx = (link->x) - (object->x);
-  dz = (link->z) - (object->z);
+  object->speed_limit = link->speed_limit;
+  object->acceleration = link->acceleration;
+  dx = link->x - object->x;
+  dz = link->z - object->z;
   dxh = dx >> 0x10;
   dzh = dz >> 0x10;
   len = _call_via_r3((dxh *dxh) + (dzh *dzh), dx, dzh, (u32)IwramSqrt);
@@ -3330,9 +3330,9 @@ s32 Object_ApproachLinkedObject(struct ObjectRuntime *object)
     n = len - 0x10;
     mx = dx2 *n / len;
     mz = dz *n / len;
-    Object_SetMoveTarget(object, (object->x) + mx, object->y, (object->z) + mz);
+    Object_SetMoveTarget(object, object->x + mx, object->y, object->z + mz);
     ObjectDispatch_ApplyArgumentToChildren(object, 2);
-    object->step = ((object->step) + 1);
+    object->step = (object->step + 1);
     return 1;
   }
   ObjectDispatch_ApplyArgumentToChildren(object, 1);
@@ -3431,7 +3431,7 @@ s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object)
     range = *args++;
     limit = *args / 0x10000;
     angle = object->script_value;
-    limit = limit * limit;
+    limit *= limit;
     tries = 0;
     dx = object->x / 0x10000 - object->home_x;
     dz = object->z / 0x10000 - object->home_z;
@@ -3926,7 +3926,7 @@ void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation, s
         return;
     }
     if (operation == SCRIPT_OPERAND_ADD) {
-        work->halfword_5e = work->halfword_5e + value;
+        work->halfword_5e += value;
         return;
     }
     work->comparison_result = (s16)work->halfword_5e == (s16)value;
@@ -3937,8 +3937,7 @@ void Script_SetOrCompareSignedHalfword64(struct ScriptOperands *work, s32 operat
     if (operation == SCRIPT_OPERAND_SET) {
         work->signed_halfword_64 = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
-        work->signed_halfword_64 =
-            work->signed_halfword_64 + value;
+        work->signed_halfword_64 += value;
     } else {
         work->comparison_result = work->signed_halfword_64 == (s16)value;
     }
@@ -3949,8 +3948,7 @@ void Script_SetOrCompareSignedHalfword66(struct ScriptOperands *work, s32 operat
     if (operation == SCRIPT_OPERAND_SET) {
         work->signed_halfword_66 = value;
     } else if (operation == SCRIPT_OPERAND_ADD) {
-        work->signed_halfword_66 =
-            work->signed_halfword_66 + value;
+        work->signed_halfword_66 += value;
     } else {
         work->comparison_result = work->signed_halfword_66 == (s16)value;
     }
@@ -3963,7 +3961,7 @@ void Script_SetOrCompareWord68(struct ScriptOperands *work, s32 operation, s32 v
         return;
     }
     if (operation == SCRIPT_OPERAND_ADD) {
-        work->word_68 = work->word_68 + value;
+        work->word_68 += value;
         return;
     }
     work->comparison_result = work->word_68 == value;
@@ -3976,7 +3974,7 @@ void Script_SetOrCompareUpdateAddress(struct ScriptOperands *work, s32 operation
         return;
     }
     if (operation == SCRIPT_OPERAND_ADD) {
-        work->word_6c = work->word_6c + value;
+        work->word_6c += value;
         return;
     }
     work->comparison_result = work->word_6c == value;
@@ -4735,7 +4733,7 @@ s32 Field_CheckConfiguredKeysAndCount(void *work)
     struct ObjectRuntime *object = work;
 
     Field_CheckConfiguredKeys();
-    object->step = object->step + 1;
+    object->step++;
     return 1;
 }
 
@@ -5678,7 +5676,7 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
 					pos++;
 				}
 			}
-			src = src + (128 - width);
+			src += (128 - width);
 			dst = 128 - width + dst;
 			y++;
 		} while (y < dst_y + height);
@@ -6865,13 +6863,13 @@ s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end)
     first = *samples++ << CURVE_VALUE_SHIFT;
     middle = *samples << CURVE_VALUE_SHIFT;
     last = samples[1] << CURVE_VALUE_SHIFT;
-    start = start + end;
+    start += end;
     if (start == CURVE_FULL_STEPS - 1) {
         result = middle;
     } else if ((u32)start < CURVE_FULL_STEPS - 1) {
         result = first + (middle - first) * start / (CURVE_FULL_STEPS - 1);
     } else {
-        start = start - (CURVE_FULL_STEPS - 1);
+        start -= (CURVE_FULL_STEPS - 1);
         result = middle + (last - middle) * start / (CURVE_FULL_STEPS - 1);
     }
     return result;
@@ -6902,13 +6900,12 @@ s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 start, s32 end)
             difference += CURVE_FULL_STEPS - 1;
         difference >>= 4;
         return first + difference;
-    } else {
-        difference *= third - second;
-        if (difference < 0)
-            difference += CURVE_FULL_STEPS - 1;
-        difference >>= 4;
-        return second + difference;
     }
+    difference *= third - second;
+    if (difference < 0)
+        difference += CURVE_FULL_STEPS - 1;
+    difference >>= 4;
+    return second + difference;
 }
 
 s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 position, s32 row)
@@ -7477,13 +7474,13 @@ next:
             }
             if ((gKeysRepeat & KEY_RIGHT) != 0) {
                 mode++;
-                mode = mode & 3;
+                mode &= 3;
             }
         }
 
         if ((gKeyState & KEY_START) != 0) {
             tbl = gSpriteObjects;
-            flag = flag ^ 1;
+            flag ^= 1;
             for (i = 0; i <= 9; i++) {
                 tbl->flags = flag;
                 tbl++;
@@ -7618,7 +7615,7 @@ next:
                     goto next;
                 }
             } else if (slot != 0) {
-                ent[slot].on = ent[slot].on ^ 1;
+                ent[slot].on ^= 1;
                 Ui_SetGridColumnPriority(slot, ent[slot].on != 0 ? ent[slot].priority : 8);
                 goto next;
             }

@@ -142,10 +142,10 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     case 15:
     case 16:
     case 17:
-        table = (KuupuappuHeya_SceneTableB);
+        table = KuupuappuHeya_SceneTableB;
         break;
     default:
-        table = (KuupuappuHeya_SceneTableA);
+        table = KuupuappuHeya_SceneTableA;
         break;
     }
     FieldScene_PrepareActors(table);
@@ -1063,7 +1063,7 @@ void FieldScene_RunVaultClosingSequence(void)
     Engine_EventWait(20);
     base = (s32)MsgKuupuappuVaultCutFree;
     Engine_MessageShowCentered(base, 1);
-    base = base + 1;
+    base++;
     Engine_EventSetMessage(base);
     Engine_EventWait(30);
     Engine_ActorSetAnimation(8, 1);
@@ -1205,7 +1205,7 @@ void FieldScene_RunVaultClosingSequence(void)
         Engine_ActorRunRepeatedMotion(10, 2);
         Engine_EventWait(20);
         Engine_EventShowMessage(10, 0);
-        base = base - 3;
+        base -= 3;
         Engine_EventSetMessage(base);
     }
     Actor_ShowEmote(11, 259, 0);
@@ -1711,8 +1711,8 @@ void SceneState_SetFlagByActorPosition(void)
     struct FieldActor *p1 = Object_GetById(0);
     x = rx >> 20;
     z = p1->z.fixed;
-    x = x - 34;
-    z = z >> 20;
+    x -= 34;
+    z >>= 20;
 
     if ((u32)x <= 1 && z > 40 && z <= 42) {
         Engine_GameFlagSet(148 << 2);
@@ -1781,8 +1781,8 @@ s32 KuupuappuHeya_ApplyEntryState(void)
                 Engine_MapCopyCellAttributes(14, 50, 3, 1, 14, 44);
                 break;
             }
-            ((struct ActorMode *)(Object_GetById(24)))->mode = 5;
-            ((struct ActorMode *)(Object_GetById(25)))->mode = 4;
+            ((struct ActorMode *)Object_GetById(24))->mode = 5;
+            ((struct ActorMode *)Object_GetById(25))->mode = 4;
             ((void (*)())Engine_TaskAddCallback)((s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
         }
         break;
@@ -1794,7 +1794,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
         Engine_MapCopyCellsTo(54, 2, 35, 80, 2, 10);
         Map_CopyCellsTo(54, 2, 46, 21, 4, 8);
         Engine_MapCopyCellsTo(54, 2, 46, 81, 4, 8);
-        ((struct ActorFlags *)(Object_GetById(26)))->flags |= 4;
+        ((struct ActorFlags *)Object_GetById(26))->flags |= 4;
         Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
         if (Engine_GameFlagIsSet(0x859) != 0) {
             Actor_SetPosition(26, 0x2a40000, 0x19b0000);

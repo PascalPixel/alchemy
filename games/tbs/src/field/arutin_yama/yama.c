@@ -2172,7 +2172,7 @@ void FieldScene_RunScene3a4SequenceE(void)
 
 void SceneAudio_PlayCue183EverySixtyTicks(void)
 {
-	ArutinYama_CueTicks = ArutinYama_CueTicks + 1;
+	ArutinYama_CueTicks++;
 	if (ArutinYama_CueTicks == 60)
 	{
 		Engine_AudioPlayCue(183);

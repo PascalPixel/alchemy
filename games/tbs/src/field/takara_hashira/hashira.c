@@ -284,7 +284,7 @@ s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
 
     Object_SetMode(obj, 4);
     mask = 2;
-    obj->priority_flags = obj->priority_flags | mask;
+    obj->priority_flags |= mask;
 
     if (out20 > out16) {
         Engine_MapCopyCellsTo(70, 40, rec[2] + 32, rec[4] + 2, out20, out16);

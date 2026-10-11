@@ -85,9 +85,9 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
     if ((s16)gMusicVolumeTarget != (s16)gMusicVolume) {
         delta = (s16)gMusicVolumeTarget - (s16)gMusicVolume;
         if (delta > 0) {
-            gMusicVolume = gMusicVolume + gMusicVolumeStep;
+            gMusicVolume += gMusicVolumeStep;
         } else {
-            gMusicVolume = gMusicVolume - gMusicVolumeStep;
+            gMusicVolume -= gMusicVolumeStep;
         }
         if ((((s16)gMusicVolumeTarget - (s16)gMusicVolume) ^ delta) < 0) {
             gMusicVolume = gMusicVolumeTarget;
@@ -97,9 +97,9 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
     if ((s16)gMusicPitchTarget != (s16)gMusicPitch) {
         delta = (s16)gMusicPitchTarget - (s16)gMusicPitch;
         if (delta > 0) {
-            gMusicPitch = gMusicPitch + gMusicPitchStep;
+            gMusicPitch += gMusicPitchStep;
         } else {
-            gMusicPitch = gMusicPitch - gMusicPitchStep;
+            gMusicPitch -= gMusicPitchStep;
         }
         if ((((s16)gMusicPitchTarget - (s16)gMusicPitch) ^ delta) < 0) {
             gMusicPitch = gMusicPitchTarget;

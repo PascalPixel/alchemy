@@ -56,11 +56,11 @@ void Camera_ResetSceneDefaults(void)
     Iwram_TransformVector((s32 *)&local, (s32 *)state);
 
     param1 = 250;
-    param1 = param1 << 16;
+    param1 <<= 16;
     result = Iwram_RatioMulQ14(param1, 192 << 8);
 
     param1 = 250;
-    param1 = param1 << 16;
+    param1 <<= 16;
     Camera_StoreSceneParameters(param1, result, 0x7fff0000);
 }
 

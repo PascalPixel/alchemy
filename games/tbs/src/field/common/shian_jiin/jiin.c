@@ -233,11 +233,11 @@ void FieldScene_RunFlag88FBranch(void)
         Engine_EventOpenMessage(12, 0);
         if (Engine_EventChooseYesNo(0, 0) == 1) {
             u16 *q = &gEventWork->message;
-            q[0] = q[0] + 1;
+            q[0]++;
             Engine_EventOpenMessage(12, 0);
             if (Engine_EventChooseYesNo(0, 0) == 1) {
                 u16 *r = &gEventWork->message;
-                r[0] = r[0] + 1;
+                r[0]++;
             }
         }
         Engine_EventShowMessage(12, 0);
@@ -1378,7 +1378,7 @@ void FieldScene_DispatchByRange(void)
     biased = record->facing;
     Engine_EventBegin();
 
-    biased = biased + 0xffff5fff;
+    biased += 0xffff5fff;
     if (biased <= 0x3ffe) {
         Engine_SanctumOpen(13);
     } else {

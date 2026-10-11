@@ -5060,7 +5060,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         if (v & 32) {
             v = 32 - (v & 31);
         } else {
-            v = v & 31;
+            v &= 31;
         }
         v = DisplayTransition_NoiseWidths[v];
         for (i = 0; i < 160; i++) {
@@ -5134,7 +5134,7 @@ void DisplayTransition_UpdateScanlineTable(void)
             *dst++ = 0x7f7f;
             v = 64 - v;
         }
-        v = v * 5;
+        v *= 5;
         rr = (v * v) << 16;
         for (i = 0; i < 160; i++) {
             v = i - 80;
@@ -5194,12 +5194,12 @@ void DisplayTransition_UpdateScanlineTable(void)
         if ((v & 32) == 0) {
             v = 32 - (v & 31);
         } else {
-            v = v & 31;
+            v &= 31;
         }
         if (gFrameCount & 1) {
             v = 0;
         }
-        v = v * 5;
+        v *= 5;
         rr = (v * v) << 16;
         for (i = 0; i < 160; i++) {
             v = i - cy;
@@ -5237,9 +5237,9 @@ void DisplayTransition_UpdateScanlineTable(void)
         if (v & 32) {
             v = 32 - (v & 31);
         } else {
-            v = v & 31;
+            v &= 31;
         }
-        v = v * 5;
+        v *= 5;
         rr = (v * v) << 16;
         for (i = 0; i < 160; i++) {
             v = i - cy;
@@ -5291,9 +5291,9 @@ void DisplayTransition_UpdateScanlineTable(void)
         if (v & 32) {
             v = 32 - (v & 31);
         } else {
-            v = v & 31;
+            v &= 31;
         }
-        v = v * 5;
+        v *= 5;
         rr = (v * v) << 16;
         for (i = 0; i < 160; i++) {
             v = i - cy;
@@ -5336,9 +5336,9 @@ void DisplayTransition_UpdateScanlineTable(void)
         if (v & 32) {
             v = 32 - (v & 31);
         } else {
-            v = v & 31;
+            v &= 31;
         }
-        v = v * 5;
+        v *= 5;
         rr = (v * v) << 16;
         for (i = 0; i < 160; i++) {
             v = i - cy;
@@ -7319,12 +7319,12 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 object_id, s32 x, s32 z)
             if (tile_x < 0) {
                 tile_x += 0xFFFF;
             }
-            tile_x = tile_x >> 0x10;
+            tile_x >>= 0x10;
             tile_z = z;
             if (tile_z < 0) {
                 tile_z += 0xFFFF;
             }
-            tile_z = tile_z >> 0x10;
+            tile_z >>= 0x10;
             terrain_height = Map_GetTerrainHeightFar(terrain_id, tile_x, tile_z) << 0x10;
             object->y = (object->y - object->terrain_height) + terrain_height;
             object->terrain_height = terrain_height;
@@ -7467,14 +7467,14 @@ void BattleFx_UpdateParticleLinearMotion(struct BurstParticle *particle)
   s32 velocity_y;
   s32 vz;
   velocity_x = particle->velocity_x;
-  x = (particle->x) + velocity_x;
+  x = particle->x + velocity_x;
   particle->x = x;
   particle->target_x = x;
   velocity_z = particle->velocity_z;
-  z = (particle->z) + velocity_z;
+  z = particle->z + velocity_z;
   particle->z = z;
   particle->target_z = z;
-  velocity_y = (particle->y) + 0x400;
+  velocity_y = particle->y + 0x400;
   particle->y = velocity_y;
   particle->target_y = velocity_y;
   particle->velocity_x =
@@ -12148,12 +12148,12 @@ void EventObject_Initialize(void)
 	event_value = (s16)event_state->action;
 	event_index = event_value;
 	ObjectDispatch_ApplyArgumentToChildrenFar(event_object, 0x14);
-	FIELD_AT_OFFSET(event_object, u32 *, 0x38) = *(s32 *)((u8 *)(event_object) + 8);
+	FIELD_AT_OFFSET(event_object, u32 *, 0x38) = *(s32 *)((u8 *)event_object + 8);
 	FIELD_AT_OFFSET(event_object, s32 *, 0x3C) = FIELD_AT_OFFSET(event_object, s32 *, 0xC);
 	FIELD_AT_OFFSET(event_object, s32 *, 0x40) = FIELD_AT_OFFSET(event_object, s32 *, 0x10);
 	FIELD_AT_OFFSET(event_object, u32 *, 0x24) = 0;
 	FIELD_AT_OFFSET(event_object, u32 *, 0x28) = 0;
-	*(s32 *)((u8 *)(event_object) + 0x2C) = 0;
+	*(s32 *)((u8 *)event_object + 0x2C) = 0;
 	if (event_state->visible != 0)
 	{
 		AudioCommand_PlayFar(212);
@@ -15670,7 +15670,7 @@ top:
 		*st = *st + 1;
 		goto top;
 	}
-	else if (state == 2)
+	if (state == 2)
 	{
 		pos.x = scene->x;
 		pos.y = scene->y + (8 << 16);

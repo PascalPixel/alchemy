@@ -533,7 +533,7 @@ void SceneEffect_SpawnNineRadialEffects(s32 actor)
 		z = Engine_MathSin(v);
 		x = vec.x;
 		vec.z = z;
-		x = x + Math_Divide(x, 3);
+		x += Math_Divide(x, 3);
 		vec.x = x;
 		((void (*)())Effect_Spawn)(
 			object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01030001, &params);
@@ -1423,17 +1423,17 @@ void BabiChika_RestorePlatformCells(void)
 	record = Object_GetById(12);
 	p5 = record->x.fixed;
 	record = Object_GetById(12);
-	p5 = p5 >> 20;
+	p5 >>= 20;
 	Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
 	record = Object_GetById(13);
 	p5 = record->x.fixed;
 	record = Object_GetById(13);
-	p5 = p5 >> 20;
+	p5 >>= 20;
 	Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
 	record = Object_GetById(14);
 	p5 = record->x.fixed;
 	record = Object_GetById(14);
-	p5 = p5 >> 20;
+	p5 >>= 20;
 	Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
 }
 

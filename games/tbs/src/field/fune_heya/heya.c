@@ -384,14 +384,13 @@ s32 FuneHeya_GetStepScript(void)
                     FuneHeya_StepScriptC[1].talk_facing = 1;
                 }
                 if (Engine_GameFlagIsSet(0x925) != 0) {
-                    if (!(Engine_GameFlagIsSet(0x8a0) != 0)) {
+                    if (Engine_GameFlagIsSet(0x8a0) == 0) {
                         FuneHeya_StepScriptC[0].talk_facing = 0;
                     }
                 }
                 return (s32)FuneHeya_StepScriptC;
-            } else {
-                return (s32)FuneHeya_StepScriptA;
             }
+            return (s32)FuneHeya_StepScriptA;
         } else {
             return (s32)FuneHeya_StepScriptB;
         }
@@ -2583,7 +2582,7 @@ void FuneHeya_SetupFirstRowingPair(void)
     FieldScene_RunSceneStep(19, 11, 12);
     Engine_ActorSetAnimation(10, 6);
     Engine_ActorEnableActionCallback(12, FuneHeya_ActionScriptE);
-    base5_200e8e4 = (s32)(FuneHeya_EntryActionScript);
+    base5_200e8e4 = (s32)FuneHeya_EntryActionScript;
     Engine_ActorEnableActionCallback(36, base5_200e8e4);
     Engine_ActorEnableActionCallback(37, base5_200e8e4);
     Engine_ActorEnableActionCallback(38, base5_200e8e4);
@@ -3189,11 +3188,11 @@ void FuneHeya_SetupReplacementRower(void)
     SceneActor_SetFlagBit3ForActors28To35();
     FieldScene_RunSceneStep(19, rec8, 12);
     Engine_ActorSetAnimation(10, 6);
-    base5_200e840 = (s32)(FuneHeya_ActionScriptE);
+    base5_200e840 = (s32)FuneHeya_ActionScriptE;
     Engine_ActorEnableActionCallback(rec8, base5_200e840);
     Engine_ActorDestroy(11);
     Engine_ActorEnableActionCallback(12, base5_200e840);
-    base5_200e8e4 = (s32)(FuneHeya_EntryActionScript);
+    base5_200e8e4 = (s32)FuneHeya_EntryActionScript;
     Engine_ActorEnableActionCallback(36, base5_200e8e4);
     Engine_ActorEnableActionCallback(37, base5_200e8e4);
     FieldScene_RunPositionTransferPresentation();
@@ -3385,12 +3384,12 @@ void FuneHeya_SetupReplacementPair(void)
     SceneActor_SetFlagBit3ForActors28To35();
     FieldScene_RunSceneStep(19, rec8, rec2);
     Engine_ActorSetAnimation(10, 6);
-    base5_200e840 = (s32)(FuneHeya_ActionScriptE);
+    base5_200e840 = (s32)FuneHeya_ActionScriptE;
     Engine_ActorEnableActionCallback(rec8, base5_200e840);
     Engine_ActorDestroy(11);
     Engine_ActorEnableActionCallback(rec2, base5_200e840);
     Engine_ActorDestroy(12);
-    base5_200e8e4 = (s32)(FuneHeya_EntryActionScript);
+    base5_200e8e4 = (s32)FuneHeya_EntryActionScript;
     Engine_ActorEnableActionCallback(36, base5_200e8e4);
     Engine_ActorEnableActionCallback(37, base5_200e8e4);
     Engine_ActorSetChildValue(36, 3);

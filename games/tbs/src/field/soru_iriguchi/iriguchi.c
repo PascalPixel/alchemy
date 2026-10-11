@@ -76,10 +76,9 @@ const struct ScenePlacement *Scene_GetPlacements(void)
         table = (s32)gSoruIriguchiPlacements1;
         FieldScene_PrepareActors(table);
         return (const struct ScenePlacement *)table;
-    } else {
-        if (gGameState.scene == (s32)&SceneId_SoruIriguchi2) {
-            return gSoruIriguchiPlacements2;
-        }
+    }
+    if (gGameState.scene == (s32)&SceneId_SoruIriguchi2) {
+        return gSoruIriguchiPlacements2;
     }
     return gSoruIriguchiPlacementsOther;
 }
@@ -90,21 +89,20 @@ const struct SceneEvent *Scene_GetEvents(void)
 
     if (gGameState.scene == (s32)&SceneId_SoruIriguchi2) {
         return gSoruIriguchiEvents2;
-    } else {
-        if (gGameState.scene == (s32)&SceneId_SoruIriguchi1) {
-            if (gGameState.entrance >= lo) {
-                if (gGameState.entrance > 13) {
-                    if (gGameState.entrance > 16) {
-                        goto other_entrance;
-                    }
-                    return gSoruIriguchiEvents1Entrances14To16;
+    }
+    if (gGameState.scene == (s32)&SceneId_SoruIriguchi1) {
+        if (gGameState.entrance >= lo) {
+            if (gGameState.entrance > 13) {
+                if (gGameState.entrance > 16) {
+                    goto other_entrance;
                 }
-                return gSoruIriguchiEvents1Entrances11To13;
+                return gSoruIriguchiEvents1Entrances14To16;
             }
-        other_entrance:;
-            return gSoruIriguchiEvents1;
-        } else {
+            return gSoruIriguchiEvents1Entrances11To13;
         }
+    other_entrance:;
+        return gSoruIriguchiEvents1;
+    } else {
     }
     return gSoruIriguchiEventsOther;
 }

@@ -167,7 +167,7 @@ s32 SceneActor_TurnTowardTarget(struct Ent *p)
             if (t < -0x1000) {
                 t = -0x1000;
             }
-            p->f06 = p->f06 + t;
+            p->f06 += t;
         }
     }
     return 1;

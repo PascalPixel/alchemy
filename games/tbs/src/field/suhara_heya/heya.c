@@ -392,7 +392,7 @@ s32 Scene_InitActorRecords(void)
         struct SceneRecord *record = work->fields.record;
         s32 flags = ~12;
 
-        flags = flags & record->flags;
+        flags &= record->flags;
         record->flags = flags | 4;
     }
     work = (union SceneActor *)Object_GetById(21);

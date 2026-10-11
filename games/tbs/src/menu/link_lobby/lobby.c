@@ -326,7 +326,7 @@ test1:
         result++;
     }
     Engine_TaskWait(2);
-    Call2(Ui_AdjustValueWithoutLimit, (s32)MsgEnemyLabel, (s32)(buf));
+    Call2(Ui_AdjustValueWithoutLimit, (s32)MsgEnemyLabel, (s32)buf);
     i = 0;
     if (buf[i] != 0) {
         do {

@@ -629,7 +629,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1, s32 a2)
                 Work_SetValuesIfNonNegative(-1, -1, 0xe666);
                 Engine_EventWait(a0);
             }
-            i = i + 1;
+            i++;
         } while (i < a2);
     }
     Map_CopyCellAttributes(42, 52, 4, 5, 42, 33);
@@ -661,9 +661,9 @@ void MakyuriHeya_RunSequenceG(s32 a0)
             Work_SetValuesIfNonNegative(-1, -1, 0xe666);
             Engine_EventWait(a0);
         }
-        i = i + 1;
-        x = x + 2;
-        y = y + 2;
+        i++;
+        x += 2;
+        y += 2;
     } while (i <= 2);
     Engine_AudioPlayCue(0x120);
     Map_CopyCellAttributes(106, 33, 4, 5, 42, 33);
@@ -759,11 +759,11 @@ void MakyuriHeya_RunSequenceF(void)
                 Effect_Spawn(pos, 0, shown, -0x4000, 0, 0, 0x90000, (s32)rec);
                 Engine_EventWait(1);
             }
-            inner = inner + 1;
+            inner++;
             base = base + -0x20000;
         } while ((u32)inner <= 7);
         Engine_MapCopyCellsTo(111, 35, (109 - outer), 36, 1, 1);
-        outer = outer + 1;
+        outer++;
     } while ((u32)outer <= 2);
     Engine_TaskRemoveCallback((s32)MakyuriHeya_SprayAtFountain);
 }
@@ -881,7 +881,7 @@ void MakyuriHeya_TriggerFloorSwitch(void)
     Object_GetById(0)->target_y = Object_GetById(0)->y.fixed;
     Engine_MapCopyCellsTo(6, 29, 10, 23, 1, 1);
     Engine_AudioPlayCue(217);
-    Engine_MapAnimateCells((MakyuriHeya_FloorSwitchCells), 10, 18);
+    Engine_MapAnimateCells(MakyuriHeya_FloorSwitchCells, 10, 18);
     Engine_EventEnd();
 }
 
@@ -1112,7 +1112,8 @@ void MakyuriHeya_RunColumnProbeScene(void)
                 SceneEffect_SpawnParticleRowsByMode(1);
             MakyuriHeya_OpenStoneDoor(2);
             goto wait;
-        } else if (column == 48) {
+        }
+        if (column == 48) {
             Engine_GameFlagSet(0x31a);
             Engine_GameFlagClear(0x31b);
             Engine_GameFlagClear(0x319);

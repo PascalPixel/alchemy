@@ -602,8 +602,8 @@ s32 ColossoLogRollingStage_CheckObstacleDestination(s32 x, s32 z)
         return -2;
     }
     actor = Object_GetById(15);
-    x = x >> 20;
-    z = z >> 20;
+    x >>= 20;
+    z >>= 20;
     if (actor->x >> 20 == x && actor->z >> 20 == z) {
         return -1;
     }
@@ -1968,7 +1968,7 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     GameFlag_SetByte(base + 880, target->x >> 20);
     z = target->z >> 20;
     GameFlag_SetByte(base + 888, z);
-    active_slot = active_slot + 1;
+    active_slot++;
     if (active_slot > 3) {
         Engine_EventRequestExit(10);
         Engine_GameFlagSet(282);

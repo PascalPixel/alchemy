@@ -304,7 +304,7 @@ void SpawnRadialEffectBurst(void)
         z = Engine_MathSin(angle);
         x = vec.x;
         vec.z = z;
-        x = x + Math_Divide(x, 3);
+        x += Math_Divide(x, 3);
         vec.x = x;
         Effect_Spawn(object->x, object->y, object->z, x, vec.y, z, 0x01000001, &params);
     }
@@ -1253,7 +1253,8 @@ void UpdateActor13WestRoute(void)
     } else if (x == 35) {
         if (w == 34) {
             return;
-        } else if (z == 7) {
+        }
+        if (z == 7) {
             PositionSceneActorPair(13, -16, 0);
         } else if (w == 30) {
             PositionSceneActorPair(13, -64, 0);

@@ -93,7 +93,7 @@ void FieldScene_RunPrimarySequence(void)
             record->motion_flags = 0;
         }
     }
-    p6 = p6 + 0x16c;
+    p6 += 0x16c;
     n = *(s16 *)p6 - 14;
     Engine_AudioPlayCue(158);
     Map_AnimateCells(Data_02009dcc[n].steps, Data_02009dcc[n].x, Data_02009dcc[n].y);

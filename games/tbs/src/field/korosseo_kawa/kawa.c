@@ -144,7 +144,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         KorosseoKawa_Countdown = 120;
         break;
     }
-    KorosseoKawa_Countdown = KorosseoKawa_Countdown - 1;
+    KorosseoKawa_Countdown--;
 }
 
 void SceneState_ResetCounterAndStartTask(void)
@@ -1403,7 +1403,7 @@ void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
     Korosseo_ModeTaskMode = mode;
     Korosseo_ModeTaskParam = (param << 4);
 
-    Engine_TaskAddCallback((s32)(Korosseo_UpdateModeTask), 0xc80);
+    Engine_TaskAddCallback((s32)Korosseo_UpdateModeTask, 0xc80);
 
     handler = (s32)KorosseoKawa_RoundSpans;
     if (mode == 2) {
@@ -1548,7 +1548,7 @@ void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
     Korosseo_MarkerBlink = 0;
     Korosseo_MarkerSteps = 0;
 
-    Engine_TaskAddCallback((s32)(Korosseo_UpdateMarker), 0xc80);
+    Engine_TaskAddCallback((s32)Korosseo_UpdateMarker, 0xc80);
 }
 
 void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
@@ -1560,7 +1560,7 @@ void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
     Korosseo_MarkerSteps = duration;
     Korosseo_MarkerStep = 0;
 
-    Engine_TaskAddCallback((s32)(Korosseo_UpdateMarker), 0xc80);
+    Engine_TaskAddCallback((s32)Korosseo_UpdateMarker, 0xc80);
 }
 
 void KorosseoKawa_ReleaseMarker(void)

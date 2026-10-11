@@ -847,7 +847,7 @@ void SceneEffect_SpawnNineRadialEffects(s32 actor)
         z = Engine_MathSin(v);
         x = vec.x;
         vec.z = z;
-        x = x + Math_Divide(x, 3);
+        x += Math_Divide(x, 3);
         vec.x = x;
         Effect_Spawn(object->x, object->y, object->z, x, vec.y, z, 0x01030001, &params);
     }

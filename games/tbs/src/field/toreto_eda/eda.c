@@ -268,7 +268,7 @@ void Effect_SetBg3HofsSplit(void)
 void ToretoEda_StartBg3Split(void)
 {
     Runtime_SetIrqHandler(1, 0, Effect_UpdateBg3HofsByVcount);
-    Engine_TaskAddCallback((s32)(Effect_SetBg3HofsSplit), 0xc80);
+    Engine_TaskAddCallback((s32)Effect_SetBg3HofsSplit, 0xc80);
 }
 
 struct SceneEntrance ToretoEda_SceneTable0[] = {

@@ -138,7 +138,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
         row = 0;
     EventTable_ApplyRowAbilities(row);
     Shop_InitializeCursorWork();
-    shop = (gMenuWork);
+    shop = gMenuWork;
     shop->shop_type = EventTable_GetRowType(row);
     if (row == 16)
         shop->warrior_shop = 1;
@@ -1093,7 +1093,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 
         chance = 30;
         if (item->price != 0)
-            chance = (u32)(gGameState.coins) / item->price;
+            chance = (u32)gGameState.coins / item->price;
 
         if (shop->party_action == 2) {
             maximum = Item_AdjustCounterFar(item_id, 0);
@@ -1895,12 +1895,12 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
             AudioCommand_PlayFar(0x71);
             goto done;
         }
-        if (((gKeysRepeat) & KEY_LEFT) != 0) {
+        if ((gKeysRepeat & KEY_LEFT) != 0) {
             AudioCommand_PlayFar(0x6f);
             selected_index--;
             redraw = 1;
         }
-        if (((gKeysRepeat) & KEY_RIGHT) != 0) {
+        if ((gKeysRepeat & KEY_RIGHT) != 0) {
             AudioCommand_PlayFar(0x6f);
             selected_index++;
             redraw = 1;
@@ -2078,7 +2078,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
     struct RenderOutput *cursor_anchor;
 
     Shop_InitializeCursorWork();
-    shop = (gMenuWork);
+    shop = gMenuWork;
     shop->party_action = list_window;
 
     {
@@ -2147,7 +2147,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
 
 s32 Sanctum_RunPartyService(void)
 {
-    struct ShopRuntime *shop = (gMenuWork);
+    struct ShopRuntime *shop = gMenuWork;
     s32 price_window;
     s32 redraw;
     s32 kind;
@@ -2246,7 +2246,8 @@ s32 Sanctum_RunPartyService(void)
                 continue;
             }
             break;
-        } else if ((gKeyState & KEY_B) != 0) {
+        }
+        if ((gKeyState & KEY_B) != 0) {
             AudioCommand_PlayFar(SOUND_MENU_CANCEL);
             break;
         } else {
@@ -2739,7 +2740,8 @@ s32 Shop_SelUse(s32 actor)
                 AudioCommand_PlayFar(112);
                 result = selection;
                 goto exit_loop;
-            } else if (status == -4) {
+            }
+            if (status == -4) {
                 UiText_OpenMessageWindowFar((s32)MsgCannotDropIt, 8, 1, 2);
             } else if (result == -3) {
                 UiText_OpenMessageWindowFar((s32)MsgCannotRemoveIt, 8, 1, 2);

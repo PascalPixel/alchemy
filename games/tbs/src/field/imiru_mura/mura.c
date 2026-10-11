@@ -420,7 +420,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
             Engine_ActorStartRepeatedMotion(8, 2);
             Engine_EventShowMessage(8, 0);
             actor8_record = Object_GetById(8);
-            *(u8 *)((u8 *)(actor8_record) + ACTOR_FLAGS_OFFSET) ^= 0x2;
+            *(u8 *)((u8 *)actor8_record + ACTOR_FLAGS_OFFSET) ^= 0x2;
             GameFlag_Set(0x82c);
             Engine_EventEnd();
         }
@@ -973,17 +973,17 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_SetSpeed(GERALD, 0x40000, 0x20000);
     Actor_SetSpeed(IWAN, 0x40000, 0x20000);
     Event_PlayCue(152);
-    (Object_GetById(0))->steering_flags &= ~ACTOR_FACES_MOTION;
-    (Object_GetById(1))->steering_flags &= ~ACTOR_FACES_MOTION;
-    (Object_GetById(2))->steering_flags &= ~ACTOR_FACES_MOTION;
+    Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Object_GetById(1)->steering_flags &= ~ACTOR_FACES_MOTION;
+    Object_GetById(2)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_SetDestination(ACTOR_PARTY_LEADER, 132, 206);
     Actor_SetDestination(GERALD, 136, 221);
     Actor_SetDestination(IWAN, 122, 238);
     Object_RefreshSelectorById(3);
     Engine_EventWait(80);
-    (Object_GetById(0))->steering_flags |= ACTOR_FACES_MOTION;
-    (Object_GetById(1))->steering_flags |= ACTOR_FACES_MOTION;
-    (Object_GetById(2))->steering_flags |= ACTOR_FACES_MOTION;
+    Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
+    Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
+    Object_GetById(2)->steering_flags |= ACTOR_FACES_MOTION;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
     Actor_SetSpeed(IWAN, 0xcccc, 0x6666);
@@ -1170,7 +1170,7 @@ void SceneState_UpdateZoneFlagsFromActorZero(void)
     s32 h;
     State *st;
 
-    obj = (Object_GetById(0));
+    obj = Object_GetById(0);
     x = obj->unk8;
     cx = x >> 19;
     g = 0x200;

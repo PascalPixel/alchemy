@@ -88,7 +88,7 @@ void Scene_AddToListedRecordCounts(s32 amount)
 	u16 *p;
 	s32	 n;
 
-	n = Value1((s32 (*)(u16 *))Party_ListActiveOwners, (s32)(list));
+	n = Value1((s32 (*)(u16 *))Party_ListActiveOwners, (s32)list);
 	if (n > 0)
 	{
 		s32 count;

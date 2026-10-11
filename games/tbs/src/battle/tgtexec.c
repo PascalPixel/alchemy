@@ -4179,7 +4179,7 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
 
 			UnitGetFar(entry->unit_id);
 			action = BtlActGet(Djinn_GetDefinitionHeaderFar(
-				(entry->parameter) >> 8 & 15, entry->parameter & 0xff));
+				entry->parameter >> 8 & 15, entry->parameter & 0xff));
 			if (action->efx == 46 || action->efx == 47 || action->efx == 53)
 			{
 				entry->priority += 10000;
@@ -4379,7 +4379,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
 			struct BattleActionRecord *action = &actions[count + index];
 
 			action->unit_id = action->slot;
-			action->target = action->target ^ 0x80;
+			action->target ^= 0x80;
 		}
 
 		MemFree(state);
@@ -10059,11 +10059,11 @@ void BattlePres_DrawTransitionRows(void)
 			tiles++;
 		} while (i != 32);
 
-		tile = tile | 0x800;
+		tile |= 0x800;
 		aligned = frame;
 		if (frame < 0)
 		{
-			aligned = aligned + 7;
+			aligned += 7;
 		}
 		row = (aligned >> 3) + 13;
 		if (row <= 20)

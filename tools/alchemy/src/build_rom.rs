@@ -18,7 +18,10 @@ order, write the ROM image beside the linker map and fix its cartridge header\n\
 (Nintendo logo and complement check) as pret's gbafix does. Japanese TBS is\n\
 the default.\n\
 --keep-going writes the\n\
-image despite link errors, for locating differences; it never passes a compare.";
+image despite link errors, for locating differences; it never passes a compare.\n\
+A build prints settled=1 and stops at once when no file it reads and none it\n\
+made has changed on disk since it last finished; ALCHEMY_REVERIFY=1 makes it\n\
+check everything by content regardless, as `alchemy verify` always does.";
 
 pub fn run(args: &[String]) -> Result<(), String> {
     let mut target = decomp_target(None)?;
@@ -41,6 +44,18 @@ pub fn run(args: &[String]) -> Result<(), String> {
     }
     let root = crate::compiler::routing::root();
     let output = output.unwrap_or_else(|| PathBuf::from(target.output_dir));
+    // The ordinary build of an edition stops here when nothing it reads and
+    // nothing it made has changed since it last finished (see settled.rs).
+    let place = root.join(&output);
+    let name = target.id.as_str();
+    let before = (script.is_none() && !keep_going).then(|| crate::settled::inputs(root));
+    if let Some(before) = before.as_ref().filter(|_| std::env::var_os("ALCHEMY_REVERIFY").is_none()) {
+        if let Some(printed) = crate::settled::holds(&place, name, before) {
+            print!("settled=1\n{printed}");
+            return Ok(());
+        }
+    }
+    crate::settled::forget(&place);
     clear_unindexed(&root.join(&output), root);
     let script = match script {
         Some(script) => script,
@@ -54,10 +69,18 @@ pub fn run(args: &[String]) -> Result<(), String> {
         target.id.as_str(),
         keep_going,
     )?;
-    println!("objects={}", linked.objects.len());
-    println!("steps={}", linked.steps);
-    println!("map={}", linked.map.display());
-    println!("rom={}", linked.image.display());
+    let printed = |steps: usize, preprocessed: usize| {
+        format!(
+            "objects={}\nsteps={steps}\npreprocessed={preprocessed}\nmap={}\nrom={}\n",
+            linked.objects.len(),
+            linked.map.display(),
+            linked.image.display()
+        )
+    };
+    print!("settled=0\n{}", printed(linked.steps, crate::reads::PREPROCESSED.load(Ordering::Relaxed)));
+    if let Some(before) = &before {
+        crate::settled::record(root, &place, name, before, &printed(0, 0), crate::settled::SETTLING);
+    }
     Ok(())
 }
 
@@ -353,13 +376,16 @@ fn script_includes(root: &Path, text: &str) -> Result<Vec<(String, String)>, Str
 }
 
 fn portable(root: &Path, text: &[u8]) -> Vec<u8> {
-    let prefix = format!("{}/", root.display());
-    let prefix = prefix.as_bytes();
+    replaced(text, format!("{}/", root.display()).as_bytes(), b"")
+}
+
+fn replaced(text: &[u8], from: &[u8], to: &[u8]) -> Vec<u8> {
     let mut kept = Vec::with_capacity(text.len());
     let mut at = 0;
     while at < text.len() {
-        if text[at..].starts_with(prefix) {
-            at += prefix.len();
+        if text[at..].starts_with(from) {
+            kept.extend_from_slice(to);
+            at += from.len();
         } else {
             kept.push(text[at]);
             at += 1;
@@ -368,12 +394,60 @@ fn portable(root: &Path, text: &[u8]) -> Vec<u8> {
     kept
 }
 
+/// Moves a copied edition's linker maps to the checkout they now sit in.
+/// A map names every object it placed by absolute path, so a copy made by
+/// `alchemy worktree` names the checkout it came from, and the count would
+/// read that checkout's objects. A map whose link receipt still holds has
+/// that prefix rewritten and its receipt restated, so the first build here
+/// links nothing again; any other map is removed, and that build relinks it.
+pub(crate) fn rebase_maps(output: &Path, from: &Path, to: &Path) -> Result<(), String> {
+    let index = Index::open(output);
+    let from = format!("{}/", from.display());
+    let to = format!("{}/", to.display());
+    let overlays = output.join("overlays");
+    for directory in [output, overlays.as_path()] {
+        let Ok(entries) = fs::read_dir(directory) else {
+            continue;
+        };
+        for map in entries.flatten().map(|entry| entry.path()) {
+            if !map.is_file() || map.extension().is_none_or(|extension| extension != "map") {
+                continue;
+            }
+            let stem = map.file_stem().unwrap_or_default().to_string_lossy().into_owned();
+            let products = match stem.strip_prefix("resource_") {
+                Some(id) if directory == overlays => overlay_products(directory, id).to_vec(),
+                _ => ["gba", "elf", "map"]
+                    .map(|extension| directory.join(format!("{stem}.{extension}")))
+                    .to_vec(),
+            };
+            let shown = |error: std::io::Error| format!("{}: {error}", map.display());
+            let Some(row) = index.row(&products[0]).filter(|row| index.fresh(&products, &row.key))
+            else {
+                fs::remove_file(&map).map_err(shown)?;
+                continue;
+            };
+            let written = fs::metadata(&map).and_then(|metadata| metadata.modified()).map_err(shown)?;
+            let text = fs::read(&map).map_err(shown)?;
+            fs::write(&map, replaced(&text, from.as_bytes(), to.as_bytes())).map_err(shown)?;
+            // The count reads a map newer than its image as a stale build.
+            fs::File::options()
+                .write(true)
+                .open(&map)
+                .and_then(|file| file.set_modified(written))
+                .map_err(shown)?;
+            index.record(&products, &row.key, row.inputs)?;
+        }
+    }
+    index.save()
+}
+
 const INDEX: &str = "cache.tsv";
 
 pub(crate) struct Index {
     output: PathBuf,
     rows: Mutex<BTreeMap<String, Row>>,
     made: AtomicUsize,
+    reads: crate::reads::Reads,
 }
 
 #[derive(Clone)]
@@ -408,6 +482,7 @@ impl Index {
             output: output.to_path_buf(),
             rows: Mutex::new(rows),
             made: AtomicUsize::new(0),
+            reads: crate::reads::Reads::open(output),
         }
     }
 
@@ -482,7 +557,8 @@ impl Index {
         let path = self.output.join(INDEX);
         let fresh = self.output.join(format!("{INDEX}.new"));
         fs::write(&fresh, text).map_err(|error| format!("{}: {error}", fresh.display()))?;
-        fs::rename(&fresh, &path).map_err(|error| format!("{}: {error}", path.display()))
+        fs::rename(&fresh, &path).map_err(|error| format!("{}: {error}", path.display()))?;
+        self.reads.save()
     }
 }
 
@@ -1002,6 +1078,9 @@ fn plan(
     let mut assembly = None;
     let mut scratch = Vec::new();
     let mut warnings = None;
+    // A C source whose key is already known, or the list to learn it from.
+    let mut known = None;
+    let mut learned = None;
     let steps = if extension == Some("mid") {
         let midi = fs::read(root.join(source)).map_err(|error| error.to_string())?;
         let text = ags::sound::sequence_assembly(&midi)?;
@@ -1024,12 +1103,32 @@ fn plan(
             None => c_steps(target, source, object)?,
         };
         let preprocess = preprocessor_only(&steps, &source_text, &preprocessed)?;
-        command(&preprocess, root)?;
-        hasher.update(portable(
-            root,
-            &fs::read(&preprocessed).map_err(|error| error.to_string())?,
-        ));
-        scratch.extend([preprocessed, object.with_extension("s")]);
+        // Everything but the files read that the key is made from: the
+        // toolchain, the compiler of the modern build, and both commands.
+        let mut guard = hasher.clone();
+        guard.update(portable(root, preprocess.join("\0").as_bytes()));
+        for step in &steps {
+            guard.update(portable(root, step.join("\0").as_bytes()));
+        }
+        // The two variables through which the preprocessor's environment
+        // adds folders to its search.
+        for variable in ["CPATH", "C_INCLUDE_PATH"] {
+            guard.update(std::env::var_os(variable).unwrap_or_default().as_encoded_bytes());
+            guard.update([0]);
+        }
+        let guard = format!("{:x}", guard.finalize());
+        let listed = object.with_extension("d");
+        known = index.reads.key(root, object, &guard, &preprocess);
+        if known.is_none() {
+            crate::reads::PREPROCESSED.fetch_add(1, Ordering::Relaxed);
+            command(&crate::reads::listing(&preprocess, &listed, modern.is_some()), root)?;
+            hasher.update(portable(
+                root,
+                &fs::read(&preprocessed).map_err(|error| error.to_string())?,
+            ));
+            learned = Some((guard, preprocess, listed.clone()));
+        }
+        scratch.extend([preprocessed, listed, object.with_extension("s")]);
         steps
     } else {
         let base = object
@@ -1047,7 +1146,10 @@ fn plan(
     for step in &steps {
         hasher.update(portable(root, step.join("\0").as_bytes()));
     }
-    let key = format!("{:x}", hasher.finalize());
+    let key = known.unwrap_or_else(|| format!("{:x}", hasher.finalize()));
+    if let Some((guard, preprocess, listed)) = &learned {
+        index.reads.record(root, object, guard, &key, preprocess, listed);
+    }
     let mut products = vec![object.to_path_buf()];
     products.extend(warnings.clone());
     if index.fresh(&products, &key) {
@@ -2049,6 +2151,47 @@ fn included(directories: &[&Path], source: &Path, preprocessed: bool) -> Result<
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_copied_map_moves_to_its_new_checkout_and_its_link_stays_current() {
+        let dir = tempfile::tempdir().unwrap();
+        let (main, here) = (dir.path().join("main"), dir.path().join("here"));
+        let output = here.join("out/tbs-en");
+        fs::create_dir_all(output.join("overlays")).unwrap();
+        let map = |checkout: &Path| {
+            let object = checkout.join("out/tbs-en/obj/a.o");
+            format!("LOAD {}\n .text 0x08000000 0x10 {}\n", object.display(), object.display())
+        };
+        let image = ["gba", "elf", "map"].map(|extension| output.join(format!("tbs-en.{extension}")));
+        let overlay = overlay_products(&output.join("overlays"), "370");
+        let stale = overlay_products(&output.join("overlays"), "371");
+        for products in [image.as_slice(), &overlay, &stale] {
+            for product in products {
+                let is_map = product.extension().is_some_and(|extension| extension == "map");
+                fs::write(product, if is_map { map(&main) } else { "bytes".into() }).unwrap();
+            }
+        }
+        let index = Index::open(&output);
+        index.record(&image, "image-key", Vec::new()).unwrap();
+        index.record(&overlay, "overlay-key", Vec::new()).unwrap();
+        index.record(&stale, "stale-key", Vec::new()).unwrap();
+        index.save().unwrap();
+        // This overlay changed after its link was recorded: nothing vouches for its map.
+        fs::write(&stale[2], "other bytes").unwrap();
+        let old = std::time::SystemTime::UNIX_EPOCH + std::time::Duration::from_secs(1_000_000_000);
+        fs::File::options().write(true).open(&image[2]).unwrap().set_modified(old).unwrap();
+
+        rebase_maps(&output, &main, &here).unwrap();
+
+        assert_eq!(fs::read_to_string(&image[2]).unwrap(), map(&here));
+        assert_eq!(fs::metadata(&image[2]).unwrap().modified().unwrap(), old);
+        assert_eq!(fs::read_to_string(&overlay[3]).unwrap(), map(&here));
+        let index = Index::open(&output);
+        assert!(index.fresh(&image, "image-key"));
+        assert!(index.fresh(&overlay, "overlay-key"));
+        assert!(!stale[3].exists());
+        assert!(!index.fresh(&stale, "stale-key"));
+    }
 
     #[test]
     fn object_credit_requires_a_current_source_build_receipt() {

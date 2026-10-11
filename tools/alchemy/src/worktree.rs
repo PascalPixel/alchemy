@@ -7,9 +7,15 @@ const USAGE: &str = "usage: alchemy worktree MAIN_CHECKOUT\n\
 Prepares a new git worktree of this repository before its first build:\n\
 initialises the submodules, links roms/ and the installed toolchain\n\
 (tools/out/binutils, compiler-runtime, compilers) to MAIN_CHECKOUT's, and\n\
-clone-copies MAIN_CHECKOUT's built tools and every edition's build cache\n\
-so the first build only redoes what differs. make worktree runs it with\n\
-the main checkout's own alchemy.";
+copies MAIN_CHECKOUT's built tools and every edition's build cache, as\n\
+copy-on-write clones where the file system makes them, so the first build\n\
+only redoes what differs. The copied linker maps are moved to this\n\
+checkout's path; the RTL dumps of alchemy diff --rtl are left behind.\n\
+make worktree runs it with the main checkout's own alchemy.";
+
+/// What a draft's `alchemy diff --rtl` leaves in an edition's output: read
+/// once by whoever asked for it, and most of that output's size.
+const DUMPS: &str = "obj/drafts/rtl";
 
 const LINKED: [&str; 4] = ["roms", "tools/out/binutils", "tools/out/compiler-runtime", "tools/out/compilers"];
 
@@ -50,40 +56,66 @@ fn prepare(here: &Path, main: &Path) -> Result<(), String> {
     for path in LINKED {
         relink(&main.join(path), &here.join(path))?;
     }
-    for cache in caches() {
-        let source = main.join(&cache);
+    for (at, cache) in caches().iter().enumerate() {
+        let (source, copy) = (main.join(cache), here.join(cache));
         if !source.is_dir() {
             continue;
         }
-        let parent = here.join(&cache).parent().map(Path::to_path_buf).unwrap_or_else(|| here.to_path_buf());
-        std::fs::create_dir_all(&parent).map_err(|e| format!("{}: {e}", parent.display()))?;
-        // cp -c clones on APFS, so a copy costs no space until it changes.
-        let parent_arg = format!("{}/", parent.display());
-        run_in(here, "cp", &["-c", "-R", &source.to_string_lossy(), &parent_arg])?;
-        drop_maps(&here.join(&cache))?;
+        let dumps = source.join(DUMPS);
+        copy_tree(&source, &copy, &|path| path == dumps)?;
+        // Every cache after the built tools is an edition's output.
+        if at > 0 {
+            crate::build_rom::rebase_maps(&copy, main, here)?;
+        }
     }
     Ok(())
 }
 
-/// Removes the copied linker maps under `dir`: they name the main checkout's
-/// objects by absolute path, and the link cache would otherwise keep them, so
-/// the count would read the main checkout's objects. Without them the first
-/// build relinks here.
-fn drop_maps(dir: &Path) -> Result<(), String> {
-    let Ok(entries) = std::fs::read_dir(dir) else {
-        return Ok(());
-    };
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if path.is_dir() {
-            if path.file_name().is_some_and(|name| name == "overlays") {
-                drop_maps(&path)?;
+/// Copies the tree at `source` to `copy`, over whatever is there, leaving out
+/// each directory `skipped` names. A file keeps its permissions and the time
+/// it was written, which the caches compare; a link stays a link. The copy
+/// is the standard library's, which clones on APFS and asks Linux for a
+/// reflink where the file system has them, and copies the bytes otherwise.
+fn copy_tree(source: &Path, copy: &Path, skipped: &dyn Fn(&Path) -> bool) -> Result<(), String> {
+    std::fs::create_dir_all(copy).map_err(|e| format!("{}: {e}", copy.display()))?;
+    let entries = std::fs::read_dir(source).map_err(|e| format!("{}: {e}", source.display()))?;
+    for entry in entries {
+        let entry = entry.map_err(|e| format!("{}: {e}", source.display()))?;
+        let (from, to) = (entry.path(), copy.join(entry.file_name()));
+        let shown = |e: std::io::Error| format!("{}: {e}", from.display());
+        let kind = entry.file_type().map_err(shown)?;
+        if kind.is_dir() {
+            if !skipped(&from) {
+                copy_tree(&from, &to, skipped)?;
             }
-        } else if path.extension().is_some_and(|ext| ext == "map") {
-            std::fs::remove_file(&path).map_err(|e| format!("{}: {e}", path.display()))?;
+        } else if kind.is_symlink() {
+            relink(&std::fs::read_link(&from).map_err(shown)?, &to)?;
+        } else {
+            // A clone needs the name free; a copy would write through a link.
+            if to.symlink_metadata().is_ok() {
+                std::fs::remove_file(&to).map_err(|e| format!("{}: {e}", to.display()))?;
+            }
+            std::fs::copy(&from, &to).map_err(shown)?;
+            let written = entry.metadata().and_then(|metadata| metadata.modified()).map_err(shown)?;
+            let kept = std::fs::metadata(&to).and_then(|metadata| metadata.modified());
+            if kept.is_ok_and(|kept| kept != written) {
+                keep_time(&to, written).map_err(|e| format!("{}: {e}", to.display()))?;
+            }
         }
     }
     Ok(())
+}
+
+/// Sets when `path` was written, also on a file its owner may not write.
+fn keep_time(path: &Path, written: std::time::SystemTime) -> std::io::Result<()> {
+    let permissions = std::fs::metadata(path)?.permissions();
+    if permissions.readonly() {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(path, std::fs::Permissions::from_mode(permissions.mode() | 0o200))?;
+    }
+    let set = std::fs::File::options().write(true).open(path).and_then(|file| file.set_modified(written));
+    std::fs::set_permissions(path, permissions)?;
+    set
 }
 
 pub fn run(arguments: &[String]) -> Result<(), String> {
@@ -115,18 +147,49 @@ mod tests {
     }
 
     #[test]
-    fn copied_maps_are_dropped_so_the_first_build_relinks() {
+    fn a_copied_tree_keeps_times_and_links_and_leaves_the_dumps_behind() {
         let dir = tempfile::tempdir().unwrap();
-        let edition = dir.path().join("out/tbs-en");
-        std::fs::create_dir_all(edition.join("overlays")).unwrap();
-        for file in ["tbs-en.map", "tbs-en.gba", "overlays/resource_370.map", "overlays/resource_370.lz"] {
-            std::fs::write(edition.join(file), "x").unwrap();
-        }
-        drop_maps(&edition).unwrap();
-        assert!(!edition.join("tbs-en.map").exists());
-        assert!(!edition.join("overlays/resource_370.map").exists());
-        assert!(edition.join("tbs-en.gba").exists());
-        assert!(edition.join("overlays/resource_370.lz").exists());
+        let (main, here) = (dir.path().join("main/out/tbs-en"), dir.path().join("here/out/tbs-en"));
+        std::fs::create_dir_all(main.join("obj/drafts/rtl")).unwrap();
+        std::fs::create_dir_all(here.join("obj")).unwrap();
+        std::fs::write(main.join("cache.tsv"), "rows").unwrap();
+        std::fs::write(main.join("obj/a.o"), "object").unwrap();
+        std::fs::write(main.join("obj/drafts/draft.o"), "draft").unwrap();
+        std::fs::write(main.join("obj/drafts/rtl/draft.c.23.sched2"), "dump").unwrap();
+        std::os::unix::fs::symlink("/elsewhere/roms/tla-en.gba", main.join("baserom.gba")).unwrap();
+        let old = std::time::SystemTime::UNIX_EPOCH + std::time::Duration::from_secs(1_000_000_000);
+        keep_time(&main.join("obj/a.o"), old).unwrap();
+        // What an earlier run left: a stale object, and a link where a file goes.
+        std::fs::write(here.join("obj/a.o"), "a stale and longer object").unwrap();
+        std::os::unix::fs::symlink(main.join("cache.tsv"), here.join("cache.tsv")).unwrap();
+
+        let dumps = main.join(DUMPS);
+        copy_tree(&main, &here, &|path| path == dumps).unwrap();
+
+        assert_eq!(std::fs::read_to_string(here.join("obj/a.o")).unwrap(), "object");
+        assert_eq!(std::fs::metadata(here.join("obj/a.o")).unwrap().modified().unwrap(), old);
+        assert_eq!(std::fs::read_to_string(here.join("obj/drafts/draft.o")).unwrap(), "draft");
+        assert!(!here.join("obj/drafts/rtl").exists());
+        assert!(here.join("cache.tsv").symlink_metadata().unwrap().is_file());
+        assert_eq!(std::fs::read_to_string(main.join("cache.tsv")).unwrap(), "rows");
+        assert_eq!(
+            std::fs::read_link(here.join("baserom.gba")).unwrap(),
+            Path::new("/elsewhere/roms/tla-en.gba")
+        );
+    }
+
+    #[test]
+    fn a_read_only_file_keeps_its_time_and_stays_read_only() {
+        use std::os::unix::fs::PermissionsExt;
+        let dir = tempfile::tempdir().unwrap();
+        let file = dir.path().join("file");
+        std::fs::write(&file, "x").unwrap();
+        std::fs::set_permissions(&file, std::fs::Permissions::from_mode(0o444)).unwrap();
+        let old = std::time::SystemTime::UNIX_EPOCH + std::time::Duration::from_secs(1_000_000_000);
+        keep_time(&file, old).unwrap();
+        let metadata = std::fs::metadata(&file).unwrap();
+        assert_eq!(metadata.modified().unwrap(), old);
+        assert_eq!(metadata.permissions().mode() & 0o777, 0o444);
     }
 
     #[test]

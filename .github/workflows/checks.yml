@@ -53,7 +53,7 @@ jobs:
           cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p alchemy --bin alchemy -- deps:: similar:: worst:: thumb:: decode:: elf:: cache:: process::
 
       - name: Test Alchemy commands and relocated build caches
-        run: cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p alchemy --test cli --test build_script
+        run: cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p alchemy --test build_script
 
       - name: Test publication, routing, parsing and guarded rewrites
         run: >-

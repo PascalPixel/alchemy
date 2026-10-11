@@ -647,7 +647,6 @@
     "*/games/tla/src/game/inventory/count.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b44e4)
     "*/games/tla/src/game/character/add_action.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000b4792)
     "*/games/tla/src/game/character/growth.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b47ac)
     "*/recon/tla/fr/rom.o"(.rom.000b491c)

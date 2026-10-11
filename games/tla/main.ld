@@ -668,7 +668,6 @@ SECTIONS
     "*/games/tla/src/game/inventory/count.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000aa4e0)
     "*/games/tla/src/game/character/add_action.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000aa78e)
     "*/games/tla/src/game/character/growth.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000aa7a8)
     "*/recon/tla/ja/rom.o"(.rom.000aa918)

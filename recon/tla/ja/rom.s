@@ -2041,8 +2041,6 @@ Item_AdjustCounter:
 	.thumb_func
 Owner_UpdateClassActions:
 	.incbin "baserom.gba", 0x000aa4e0, 0x00000210
-	.section .rom.000aa78e, "ax"
-	.incbin "baserom.gba", 0x000aa78e, 0x0000000a
 	.section .rom.000aa7a8, "ax"
 	.incbin "baserom.gba", 0x000aa7a8, 0x00000124
 	.global Owner_GetLevelThreshold

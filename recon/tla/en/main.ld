@@ -824,8 +824,6 @@
         "*/games/tla/src/game/inventory/count.o"(.text)
         "*/recon/tla/raw/080af4e4.o"(.text)
         "*/games/tla/src/game/character/add_action.o"(.text)
-        "*/recon/tla/raw/080af792.o"(.text)
-        "*/recon/tla/raw/080af794.o"(.text)
         "*/games/tla/src/game/character/growth.o"(.text)
         "*/recon/tla/raw/080af7ac.o"(.text)
         "*/games/tla/src/game/character/level_hook.o"(.text)

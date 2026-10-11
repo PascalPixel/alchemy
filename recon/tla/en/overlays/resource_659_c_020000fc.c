@@ -9,9 +9,8 @@ void Func_020000fc(void)
 {
     u16 facing = Object_GetById(gPartyState.current_owner)->angle;
 
-    /* FAKEMATCH: keeps the quadrant offset after the facing load. */
-    __asm__("");
-
+    /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing load. */
+    do {
     if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
         Func_02001f08(1, 22);
     } else {
@@ -47,4 +46,5 @@ void Func_020000fc(void)
         }
 #endif
     }
+    } while (0);
 }

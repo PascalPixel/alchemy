@@ -14,8 +14,10 @@ void Func_02000df0(s32 id, s32 value)
     if (object != NULL) {
         s16 *count;
 
-        object->timer = value;
-        asm volatile(""); /* FAKEMATCH: ⚓️ loads the list and its count after the timer store */
+        /* FAKEMATCH: the one-pass block keeps the list and its count loads after the timer store. */
+        do {
+            object->timer = value;
+        } while (0);
         count = &Data_02002202;
         Data_02002204[*count] = object;
         (*count)++;

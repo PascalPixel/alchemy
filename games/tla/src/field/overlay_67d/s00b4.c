@@ -89,65 +89,65 @@ void Func_0200012c(s32 actor)
 {
     u16 facing = Object_GetById(gPartyState.current_owner)->angle;
 
-    /* FAKEMATCH: keeps the quadrant offset after the facing load. */
-    __asm__("");
-
-    if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-        Func_0200230c(actor);
-    } else {
-        Func_020021c4();
-        Func_020022bc(0);
-        if (FlagChk(0x927)) {
-            Func_02002244((s32)MsgNowThatPeace);
-            Func_02002254(12, 0);
+    /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2). */
+    do {
+        if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+            Func_0200230c(actor);
         } else {
-            Func_02002244((s32)MsgWhyWouldOur);
-            Func_02002254(22, 0);
+            Func_020021c4();
+            Func_020022bc(0);
+            if (FlagChk(0x927)) {
+                Func_02002244((s32)MsgNowThatPeace);
+                Func_02002254(12, 0);
+            } else {
+                Func_02002244((s32)MsgWhyWouldOur);
+                Func_02002254(22, 0);
+            }
+            Func_020021cc();
         }
-        Func_020021cc();
-    }
+    } while (0);
 }
 
 void Func_020001a8(s32 actor)
 {
     u16 facing = Object_GetById(gPartyState.current_owner)->angle;
 
-    /* FAKEMATCH: keeps the quadrant offset after the facing load. */
-    __asm__("");
-
-    if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-        Func_02002314(9, actor);
-    } else {
-        Func_020021c4();
-        Func_020022bc(0);
-        if (FlagChk(0x927))
-            Func_02002244((s32)MsgBriggsFromChampa);
-        else
-            Func_02002244((s32)MsgOfCourseI);
-        Func_02002254(actor, 0);
-        Func_020021cc();
-    }
+    /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2). */
+    do {
+        if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+            Func_02002314(9, actor);
+        } else {
+            Func_020021c4();
+            Func_020022bc(0);
+            if (FlagChk(0x927))
+                Func_02002244((s32)MsgBriggsFromChampa);
+            else
+                Func_02002244((s32)MsgOfCourseI);
+            Func_02002254(actor, 0);
+            Func_020021cc();
+        }
+    } while (0);
 }
 
 void Func_02000220(s32 actor)
 {
     u16 facing = Object_GetById(gPartyState.current_owner)->angle;
 
-    /* FAKEMATCH: keeps the quadrant offset after the facing load. */
-    __asm__("");
-
-    if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-        Func_02002304(24, actor);
-    } else {
-        Func_020021c4();
-        Func_020022bc(0);
-        if (FlagChk(0x927))
-            Func_02002244((s32)MsgYouMustSee);
-        else
-            Func_02002244((s32)MsgIzumoSLeaders);
-        Func_02002254(actor, 0);
-        Func_020021cc();
-    }
+    /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2). */
+    do {
+        if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+            Func_02002304(24, actor);
+        } else {
+            Func_020021c4();
+            Func_020022bc(0);
+            if (FlagChk(0x927))
+                Func_02002244((s32)MsgYouMustSee);
+            else
+                Func_02002244((s32)MsgIzumoSLeaders);
+            Func_02002254(actor, 0);
+            Func_020021cc();
+        }
+    } while (0);
 }
 
 void Func_02000298(void)

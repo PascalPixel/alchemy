@@ -44,12 +44,14 @@ void Func_02000378(s32 id)
     struct FieldActor *object;
     s32 height;
 
-    object = Object_GetById(id);
-    object->motion_flags = 4;
-    height = object->terrain_height;
-    asm volatile("" : "+l"(height)); /* FAKEMATCH: ⚓️ loads the ground height before it clears the word */
-    WORD_AT(object, 68) = 0;
-    object->y = height + 0x200000;
+    /* FAKEMATCH: the one-pass block loads the ground height before the word is cleared; as plain statements the ARM9TDMI schedule clears it first (differ 2). */
+    do {
+        object = Object_GetById(id);
+        object->motion_flags = 4;
+        height = object->terrain_height;
+        WORD_AT(object, 68) = 0;
+        object->y = height + 0x200000;
+    } while (0);
     {
         u8 *flags = &object->priority_flags;
         s32 bit = 128; /* FAKEMATCH: ⚓️ builds the bit in the register it ORs into */

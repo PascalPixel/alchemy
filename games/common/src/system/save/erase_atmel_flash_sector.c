@@ -12,13 +12,13 @@ u16 EraseAtmelFlashSector(u16 sector)
     s32 count;
     u16 result;
 
-    cursor = (u8 *)(0x0E000000 + (sector << info->sector.shift));
+    cursor = (u8 *)(0x0E000000 + (sector << info->type.sector.shift));
     saved = REG_IME;
     REG_IME = 0;
     *(volatile u8 *)0x0E005555 = 0xAA;
     *(volatile u8 *)0x0E002AAA = 0x55;
     *(volatile u8 *)0x0E005555 = 0xA0;
-    count = info->sector.size;
+    count = info->type.sector.size;
     while (count != 0) {
         *cursor = 0xFF;
         cursor++;

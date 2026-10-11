@@ -1,9 +1,9 @@
 #include "../../../include/system/flash.h"
+#include "../../../include/system/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
-extern u8 *gFlash;
 extern volatile u8 gFlashTimerNum;
-extern u8 gFlashTimeoutFlag;
+extern volatile u8 gFlashTimeoutFlag;
 extern u16 *volatile gFlashTimerReg;
 extern volatile u16 gFlashSavedIme;
 
@@ -45,7 +45,7 @@ void CopyFlashReadRoutineToRam(void *destination)
     }
 }
 
-void StartFlashTimer(s32 timing_index);
+void StartFlashTimer(u8 index);
 
 s32 WaitForFlashWrite(u8 timing_index, s32 address, u8 expected)
 {
@@ -56,7 +56,7 @@ s32 WaitForFlashWrite(u8 timing_index, s32 address, u8 expected)
         if (gFlashTimeoutFlag) {
             if ((u8)gFlashReadRoutine((u8 *)address) == expected)
                 break;
-            if (*(u16 *)(gFlash + 20) == 0x1cc2)
+            if (gFlash->id == 0x1cc2)
                 *(volatile u8 *)0x0e005555 = 0xf0;
             result = timing_index | 0xc000;
             break;

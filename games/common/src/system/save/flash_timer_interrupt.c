@@ -3,7 +3,7 @@
 extern volatile u16 gFlashTimerCount;
 extern volatile u8 gFlashTimeoutFlag;
 extern volatile u8 gFlashTimerNum;
-extern volatile u16 *gFlashTimerReg;
+extern u16 *volatile gFlashTimerReg;
 
 void FlashTimerIntr(void)
 {
@@ -23,7 +23,7 @@ s32 SetFlashTimerIntr(u8 timer_index, void (**callback)(void))
     if (timer_index > 3)
         return 1;
     gFlashTimerNum = timer_index;
-    gFlashTimerReg = (volatile u16 *)(0x04000100 + gFlashTimerNum * 4);
+    gFlashTimerReg = (u16 *)(0x04000100 + gFlashTimerNum * 4);
     *callback = FlashTimerIntr;
     return 0;
 }

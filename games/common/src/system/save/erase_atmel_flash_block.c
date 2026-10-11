@@ -16,7 +16,7 @@ u16 EraseAtmelFlashBlock(u16 sector)
     CopyFlashReadRoutineToRam(savedCode);
     REG_WAITCNT =
         (REG_WAITCNT & 0xfffc) |
-        Flash_ChipAtmelLayout.wait[0];
+        Flash_ChipAtmelLayout.type.wait[0];
 
     current = sector << 4;
     current = (u16)(current << 1);

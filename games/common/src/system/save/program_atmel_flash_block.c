@@ -17,10 +17,10 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source)
     CopyFlashReadRoutineToRam(savedCode);
     REG_WAITCNT =
         (REG_WAITCNT & 0xfffc) |
-        Flash_ChipAtmelLayout.wait[0];
+        Flash_ChipAtmelLayout.type.wait[0];
 
     current = sector << 5;
-    gFlashNumRemainingBytes = Flash_ChipAtmel.sector.size;
+    gFlashNumRemainingBytes = Flash_ChipAtmel.type.sector.size;
 
     while (gFlashNumRemainingBytes != 0) {
         retries = 2;
@@ -37,8 +37,8 @@ attempt:
         if (result != 0)
             break;
 
-        gFlashNumRemainingBytes -= Flash_ChipAtmelLayout.sector.size;
-        source += Flash_ChipAtmelLayout.sector.size;
+        gFlashNumRemainingBytes -= Flash_ChipAtmelLayout.type.sector.size;
+        source += Flash_ChipAtmelLayout.type.sector.size;
         current += 1;
     }
 

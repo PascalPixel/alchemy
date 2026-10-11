@@ -15,7 +15,7 @@ u16 EraseAtmelFlashChip(void)
 
     REG_WAITCNT =
         (REG_WAITCNT & 0xFFFC) |
-        Flash_ChipAtmelLayout.wait[0];
+        Flash_ChipAtmelLayout.type.wait[0];
 
     command = (volatile u8 *)0x0E005555;
     *command = 0xAA;

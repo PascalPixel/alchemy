@@ -117,7 +117,7 @@ s32 LinkLobby_InitializeSerial(void)
     volatile u16 *ime;
     u32 saved;
 
-    /* FAKEMATCH: the ignored s32 result keeps the return-address scratch in r1; void selects r0. */
+    /* Returns no value: the ROM has the s32 epilogue (pop {r1}; bx r1) and no result. */
 
     ime = &REG_IME;
     saved = *ime;
@@ -574,10 +574,6 @@ void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 value, s32 weight);
 
-struct PacketHalf {
-    u16 value;
-};
-
 s32 LinkLobby_ExchangePartyRecords(void)
 {
     s32 result;
@@ -620,8 +616,6 @@ fail:
 
 s32 LinkLobby_RunConnectionSequence(void)
 {
-    /* FAKEMATCH: the aggregate keeps the shared packet value in halfword mode. */
-
     struct EventWork *work;
     s32 failed;
     s32 window;
@@ -631,7 +625,6 @@ s32 LinkLobby_RunConnectionSequence(void)
     u8 *src;
     u8 *dst;
     u16 *tbl;
-    struct PacketHalf value;
     u32 i;
 
     failed = 0;
@@ -642,7 +635,7 @@ s32 LinkLobby_RunConnectionSequence(void)
     if (Engine_GameFlagIsSet(0x173)) {
         Engine_EventBegin();
     } else {
-        /* FAKEMATCH: these event callback exits have no defined result. */
+        /* These exits return no value from the s32 handler. */
         if (!Engine_GameFlagIsSet(0x200))
             return;
         if (Engine_GameFlagIsSet(0x205))
@@ -735,10 +728,9 @@ s32 LinkLobby_RunConnectionSequence(void)
         Battle_SetStart(4);
         BattleFx_SetWeightedResult(1, 1);
         tbl = (u16 *)gSerialTransfer.payload;
-        value.value = 0x45;
+        tbl[0] = 0x45;
         tbl[1] = 0x58;
-        tbl[0] = value.value;
-        tbl[2] = value.value;
+        tbl[2] = 0x45;
         tbl[3] = 0x43;
         i = 0;
         src = buf;
@@ -750,13 +742,12 @@ s32 LinkLobby_RunConnectionSequence(void)
         Runtime_ReleaseHeapBlock(54);
     }
 done:
-    /* FAKEMATCH: the scene returns whatever the event end leaves in r0. */
-    return ((s32 (*)(void))Engine_EventEnd)();
+    Engine_EventEnd();
 }
 
 s32 LinkLobby_RunBattleApplication(void)
 {
-    /* FAKEMATCH: The unused callback result keeps the last callee's r0 at return. */
+    /* Returns no value: r0 is whatever the last call left. */
 
     s32 answer;
     s32 msg;
@@ -1062,7 +1053,7 @@ s32 LinkLobby_StartExchange(void)
     } while (0);
 }
 
-/* FAKEMATCH: Engine_EventEnd is declared returning s32 so each handler returns the last callee's r0, as the battle application does, and the game state is read through a word view for the selected actor. */
+/* The handlers below are s32 and return no value: r0 is whatever Engine_EventEnd left. */
 
 s32 LinkLobby_TalkToAttendant(s32 actor)
 {

@@ -1191,18 +1191,17 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
 {
     struct ResourceMenuWork *work;
     s32 i;
-    u8 *entries;
+    struct ResourceMenuEntry *entry;
 
     work = gMenuSelectWork;
     work->width = width + 2;
     work->resource_base = resource_base;
     work->row = y;
-    /* FAKEMATCH: the byte span keeps the sprite base at +0; struct coordinates hoist +12 into the loop and add four bytes. */
-    entries = (u8 *)work;
     for (i = 0; i < work->count; i++) {
-        *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 14) = y << 3;
-        *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 12) = x << 3;
-        x = x + 3;
+        entry = &work->entries[i];
+        entry->y = y << 3;
+        entry->x = x << 3;
+        x += 3;
     }
     work->window = UiWindow_Create(x, y, work->width, 3, 2);
 }

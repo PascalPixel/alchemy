@@ -31,7 +31,7 @@ pub fn is_recipe(built: &str) -> bool {
         || data_form(form)
         || matches!(
             form,
-            "font" | "gbapal" | "bitmap" | "frames" | "icons" | "icon4" | "glyphs" | "1bpp"
+            "font" | "gbapal" | "bitmap" | "frames" | "icons" | "icon4" | "glyphs" | "1bpp" | "strips"
         );
     !stem.is_empty() && form && codec.is_none_or(|codec| CODECS.contains(&codec))
 }
@@ -607,6 +607,35 @@ fn sprite_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Resul
     Ok(output)
 }
 
+/// A picture kept as strips: one offset word for the palette and one for
+/// each 8-pixel row band, then the PNG's palette as BGR555 and each band's
+/// 8bpp tiles, left to right, as its own tagged stream.
+fn strip_picture(
+    built: &str,
+    image: &crate::assets::image::IndexedImage,
+) -> Result<Vec<u8>, String> {
+    let (width, height) = (image.width as usize, image.height as usize);
+    if !width.is_multiple_of(8) || !height.is_multiple_of(8) {
+        return Err(format!("{built}: a strip picture is whole 8x8 tiles"));
+    }
+    let pixels = indices(image);
+    let palette = bgr555_palette_of(image).map_err(|error| format!("{built}: {}", error.0))?;
+    let bands = height / 8;
+    let mut output = vec![0u8; 4 * (bands + 1)];
+    let place = |output: &mut Vec<u8>, index: usize| {
+        let at = output.len() as u32;
+        output[4 * index..4 * index + 4].copy_from_slice(&at.to_le_bytes());
+    };
+    place(&mut output, 0);
+    output.extend(palette);
+    for (band, rows) in pixels.chunks(8 * width).enumerate() {
+        place(&mut output, band + 1);
+        let tiles = metatiles(rows, width, 8, GbaBpp::Bpp8, 1, 1)?;
+        output.extend(compress_tagged_packed(&tiles, &tiles, &PACKER)?);
+    }
+    Ok(output)
+}
+
 fn obj_shape(name: &str) -> Option<(usize, usize)> {
     let (wide, high) = name.split_once('x')?;
     let shape = (
@@ -624,6 +653,7 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
     Ok(match form {
         "gbapal" => bgr555_palette_of(&image).map_err(|error| format!("{built}: {}", error.0))?,
         "bitmap" => indices(&image),
+        "strips" => strip_picture(built, &image)?,
         "4bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp4, 1, 1)?,
         "8bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp8, 1, 1)?,
         form if form.starts_with("4bpp") || form.starts_with("8bpp") => {
@@ -707,6 +737,33 @@ mod tests {
         assert!(is_recipe("graphics/display/staff.1bpp"));
         assert!(!is_recipe("graphics/display/staff.2bpp"));
     }
+    #[test]
+    fn a_strip_picture_packs_each_row_band_behind_its_offset() {
+        // 16x16, three colours: the top band is colour 1, the bottom band
+        // colour 2 with one pixel of colour 0 at the left of its last row.
+        let mut pixels = vec![1u8; 16 * 8];
+        pixels.extend(vec![2u8; 16 * 8]);
+        pixels[16 * 15] = 0;
+        let palette = [0u8, 0, 0x1f, 0, 0xe0, 0x03];
+        let png = crate::assets::image::png_from_bitmap(&pixels, &palette, 16).unwrap();
+        let built = build_file("P.strips", &png).unwrap();
+        let word = |at: usize| u32::from_le_bytes(built[at..at + 4].try_into().unwrap()) as usize;
+        assert_eq!(word(0), 12, "the palette follows three offsets");
+        assert_eq!(built[12..18], palette);
+        assert_eq!(word(4), 18);
+        let top = compress_tagged_packed(&[1u8; 128], &[1u8; 128], &PACKER).unwrap();
+        assert_eq!(built[18..18 + top.len()], top[..]);
+        assert_eq!(word(8), 18 + top.len());
+        // The bottom band's tiles are left to right: the odd pixel is byte 56.
+        let mut tiles = vec![2u8; 128];
+        tiles[56] = 0;
+        let bottom = compress_tagged_packed(&tiles, &tiles, &PACKER).unwrap();
+        assert_eq!(built[word(8)..], bottom[..]);
+        assert!(is_recipe("graphics/title/picture.strips"));
+        let odd = crate::assets::image::png_from_bitmap(&pixels[..16 * 12], &palette, 16).unwrap();
+        assert!(build_file("P.strips", &odd).unwrap_err().contains("whole 8x8 tiles"));
+    }
+
     #[test]
     fn a_block_map_leaves_out_the_blocks_written_as_dashes() {
         let row = |left: &str, right: &str| format!("{}\t{}\n", [left; 16].join("\t"), [right; 16].join("\t"));

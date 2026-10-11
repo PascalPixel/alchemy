@@ -32,7 +32,7 @@ struct ClassAbility
 
 struct ClassDefinition
 {
-	s32					series;
+	long				series;
 	u8					required[4];
 	u8					hp;
 	u8					ep;

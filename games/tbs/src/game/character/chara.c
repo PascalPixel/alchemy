@@ -30,16 +30,6 @@
 
 #define gBattleOwnerStates (*(struct BtlUnit * *)&gBattleOwnerStates)
 
-struct ClassRecord {
-    u8 unknown_00[8];
-    u8 hp;
-    u8 ep;
-    u8 atk;
-    u8 def;
-    u8 agi;
-    u8 luck;
-};
-
 struct StatWork {
     s32 hp;
     s32 ep;
@@ -309,8 +299,7 @@ void UnitCalc(s32 owner)
         }
 
         {
-            /* FAKEMATCH: the byte-only class prefix preserves five multiplier-load/stat-store orders changed by the full definition. */
-            struct ClassRecord *class = (struct ClassRecord *)Owner_GetRecordStride84(st->class_index);
+            struct ClassDefinition *class = Owner_GetRecordStride84(st->class_index);
 
             work->hp = work->hp * class->hp / 10;
             work->ep = work->ep * class->ep / 10;

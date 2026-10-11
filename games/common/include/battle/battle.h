@@ -38,8 +38,10 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh);
 void BattleEffect_InitializeSharedScene(void);
 void BattleEvent_Playback(void);
 void BattleFx_DrawScaledObject(struct EffectSlot *object);
+#if GAME_TLA
 #ifndef OWN_BattleFx_GetResourceGroup
 s8 BattleFx_GetResourceGroup(s32 effect_index);
+#endif
 #endif
 void  BattleFx_PrepareBufferInterpolation(void);
 void  BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode);

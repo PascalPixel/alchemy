@@ -10,7 +10,7 @@ FAR_CALL(BattlePres_SetupTransitionSceneFar, BattlePres_SetupTransitionScene, vo
 FAR_CALL(BattlePres_SetupTransitionAtPairMidpointFar, BattlePres_SetupTransitionAtPairMidpoint,
 	void, (s32 actor, s32 target, s32 mode))
 FAR_CALL(BattlePresentation_ConfigurePaletteFadeFar, BattlePresentation_ConfigurePaletteFade, void,
-	(s32 mode, u16 value, s32 fade))
+	(s32 mode, s32 value, s32 fade))
 FAR_CALL(BattleBackground_LoadFar, BattleBackground_Load, void, (s32, s32, s32))
 FAR_CALL(BattlePresentation_SetPaletteLevelFar, BattlePresentation_SetPaletteLevel, void,
 	(s32 unused, s32 level))

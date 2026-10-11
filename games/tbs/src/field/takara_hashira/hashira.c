@@ -1325,7 +1325,7 @@ void TakaraHashira_RunMapShiftScene(void)
 		{
 			Engine_EventWait(60);
 		}
-		((void (*)())Engine_TaskRemoveCallback)((s32)SceneEffect_SpawnRandomizedParticle);
+		Engine_TaskRemoveCallback(SceneEffect_SpawnRandomizedParticle);
 		Engine_EventWait(20);
 		Map_CopyCellsTo(72, 10, 60, 10, 1, 2);
 		Engine_EventWait(20);

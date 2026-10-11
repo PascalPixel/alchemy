@@ -2271,7 +2271,7 @@ void SoruStar_RiseActorFourteenSparks(void)
 
 	actor = (struct Actor *)Object_GetById(14);
 	Engine_AudioPlayCue(190);
-	((void (*)(struct Actor *, s32))Engine_ActorSetSpriteFlags)(
+	Engine_ActorSetSpriteFlags(
 		(struct Actor *)Object_GetById(14), 0);
 	p = &params;
 	p->count = 1;
@@ -2295,7 +2295,7 @@ void SoruStar_RiseActorFourteenSparks(void)
 			Engine_ActorSetChildValue(14, 0x100);
 	}
 	Engine_ActorSetChildValue(14, 0);
-	((void (*)(struct Actor *, s32))Engine_ActorSetSpriteFlags)(
+	Engine_ActorSetSpriteFlags(
 		(struct Actor *)Object_GetById(14), 1);
 }
 

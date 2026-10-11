@@ -1028,7 +1028,7 @@ void SceneState_LinkRecordZeroWhenFlag200Clear(void)
 	if (GameFlag_IsSet(0x200) == 0)
 	{
 		work = gActorEffectWork;
-		*(s32 *)(work + 24) = ((s32 (*)())Object_GetById)(ACTOR_PARTY_LEADER);
+		*(s32 *)(work + 24) = (s32)Object_GetById(ACTOR_PARTY_LEADER);
 		GameFlag_Set(0x200);
 	}
 }
@@ -1415,7 +1415,7 @@ void KareiMachi_SpeedUpActors(void)
 	}
 	Actor_SetSpeed(20, 0x19999, 0xcccc);
 	Actor_SetSpeed(21, 0x19999, 0xcccc);
-	((s32 (*)())Engine_TaskAddCallback)((s32)KareiMachi_AlternateDance, 0xc80);
+	Engine_TaskAddCallback(KareiMachi_AlternateDance, 0xc80);
 }
 
 void KareiMachi_AlternateDance(void)

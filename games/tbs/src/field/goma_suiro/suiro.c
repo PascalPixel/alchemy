@@ -133,7 +133,7 @@ void FieldScene_RunActor8AtCell24Sequence(void)
 		Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
 		target = Object_GetById(8);
 		Engine_ActorSetSpriteFlags((s32)target, 0);
-		((void (*)())Engine_GameFlagSet)(0x864);
+		Engine_GameFlagSet(0x864);
 	}
 }
 

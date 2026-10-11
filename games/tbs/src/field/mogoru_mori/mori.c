@@ -924,8 +924,7 @@ void FieldScene_RunScene39fSequenceA(void)
 	shown = first->x.part.pixel;
 	second = Object_GetById(ACTOR_PARTY_LEADER);
 	MogoruMori_HopActorTo(15, shown, second->z.part.pixel, 0x60000);
-	/* FAKEMATCH: called as returning a doubleword, the wait keeps the registers the game keeps across it. */
-	((s64 (*)())Engine_EventWait)(10);
+	Engine_EventWait(10);
 	Engine_GameFlagSet(0x307);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(53, 0);

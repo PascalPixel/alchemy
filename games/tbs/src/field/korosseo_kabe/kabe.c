@@ -1067,8 +1067,7 @@ void KorosseoKabe_RunStageIntro(s32 speaker)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(speaker);
 	}
 	else
 	{
@@ -1124,8 +1123,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(a0);
 	}
 	else
 	{
@@ -1177,8 +1175,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(a0);
 	}
 	else
 	{
@@ -1242,8 +1239,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 speaker)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(speaker);
 		return;
 	}
 	Engine_EventBegin();
@@ -1345,8 +1341,7 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(speaker);
 		return;
 	}
 	Engine_EventBegin();
@@ -1589,8 +1584,7 @@ s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b)
 	}
 	if (Engine_GameFlagIsSet(b + 520) != 0)
 	{
-		/* FAKEMATCH: called with an argument the function does not take; r0 is set to 0 before the call. */
-		r = ((s32 (*)(s32))PartyTalkMenu_Choose)(0);
+		r = PartyTalkMenu_Choose(0);
 		if (r == 1)
 		{
 			return 2;

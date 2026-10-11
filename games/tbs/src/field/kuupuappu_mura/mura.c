@@ -179,10 +179,7 @@ s32 OverlayObject_RunObject2WhenFlagged(void)
 		Djinn_Transfer(2, 0, 0, 0);
 		Engine_AudioPlayCue(126);
 		UnitCalc(0);
-		/* FAKEMATCH: the native returns through r1, so this function returns
-           the last call's value; character.h declares UnitCalc void, and a
-           void tail returns through r0 (differ 4). */
-		return ((s32 (*)(s32))UnitCalc)(2);
+		UnitCalc(2);
 	}
 }
 

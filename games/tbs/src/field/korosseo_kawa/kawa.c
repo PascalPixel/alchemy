@@ -842,8 +842,7 @@ void KorosseoKawa_RunStageIntro(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 	}
 	else
 	{
@@ -911,8 +910,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(a0);
 	}
 	else
 	{
@@ -990,8 +988,7 @@ void Korosseo_RunBrokenBridgeIntro(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 	}
 	else
 	{
@@ -1039,8 +1036,7 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 		return;
 	}
 	Engine_EventBegin();
@@ -1240,7 +1236,7 @@ void RunPartyCountInteraction(s32 actorId)
 	s32						x;
 	s32						y;
 
-	record = ((PartyInteractionRecord * (*)(void)) Object_GetById)();
+	record = (PartyInteractionRecord *)Object_GetById(actorId);
 	x = record->x;
 	y = record->y;
 	Engine_EventBegin();
@@ -1309,8 +1305,7 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
 	}
 	if (Engine_GameFlagIsSet(competitor + 520) != 0)
 	{
-		/* FAKEMATCH: called with an argument the function does not take; r0 is set to 0 before the call. */
-		choice = ((s32 (*)(s32))PartyTalkMenu_Choose)(0);
+		choice = PartyTalkMenu_Choose(0);
 		if (choice == 1)
 		{
 			return 2;

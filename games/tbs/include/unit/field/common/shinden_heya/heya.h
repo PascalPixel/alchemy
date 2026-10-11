@@ -31,7 +31,7 @@ void SceneEffect_StepEllipseOrbit(u8 *obj);
 void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1);
 s32 ShindenHeya_ChooseRestartOption(void);
 void FieldScene_RunPairedActorChoreography(void);
-void ShindenHeya_RaiseItemIcon(s32 item);
+void ShindenHeya_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 void ShindenHeya_UpdateRisingSpark(union FieldObject *object);
 void ShindenHeya_SpawnActorSpark(s32 id);
 void SceneState_ApplyTwoRects(void);

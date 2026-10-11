@@ -22,7 +22,7 @@ const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 void AdvanceEffectMotion(struct Effect *effect);
-void SpawnRadialEffectBurst(void);
+void SpawnRadialEffectBurst(s32 object_id);
 void InitializePrologueSceneState(void);
 const struct SceneEvent *Scene_GetEvents(void);
 void StartScriptedSceneMessage(s32 message_id);

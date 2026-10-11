@@ -1195,7 +1195,7 @@ void SceneEffect_SpawnObject26EveryEightFrames(void)
 	obj->f34 = 0x80000;
 	obj->f55 = phase;
 	Object_SetMode((struct FieldActor *)obj, 2);
-	((void (*)(struct Obj *object, s32 x, s32 y, s32 z))Engine_ObjectSetPosition)(obj, c3, 0, c4);
+	Engine_ObjectSetPosition((struct FieldActor *)obj, c3, 0, c4);
 	Engine_ObjectSetScript((struct FieldActor *)obj, (const s32 *)KorimaHashi_Object26Script);
 }
 

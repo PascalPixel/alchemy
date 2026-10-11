@@ -1190,7 +1190,7 @@ void FieldScene_RunScene372SequenceE(void)
 		Object_SetActionCallbackAndRefreshById(22, (s32)HaidiaArashi_ActorTwentyTwoScriptA);
 		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
 		Engine_EventWait(30);
-		((s32 (*)())Engine_ActorEnableActionCallback)(22, (s32)HaidiaArashi_ActorTwentyTwoScriptB);
+		Engine_ActorEnableActionCallback(22, (const u8 *)HaidiaArashi_ActorTwentyTwoScriptB);
 		Event_ShowMessage(22, 0);
 		record = Actor_Get(22);
 		record->scale_y = 0x10000;

@@ -10402,7 +10402,7 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec)
 
 	if (win != 0)
 	{
-		((void (*)(void))RenderOutput_PrepareForRedraw)(); /* FAKEMATCH: needed to match: called without the window argument. */
+		RenderOutput_PrepareForRedraw((struct UiWindow *)win);
 		UiWindow_DrawDividerLine(win, 0, 4, 13, 4);
 		UiText_DrawStringAtOffset(rec + 16, win, 0, 0);
 		y = 0;
@@ -11892,7 +11892,7 @@ finish:
 #define TALK_WINDOW_WIDTH 16
 #endif
 
-s32 PartyTalkMenu_Choose(void)
+s32 PartyTalkMenu_Choose(s32 unused)
 {
 	/* FAKEMATCH: the shared cursor union preserves pointer-store ordering; an equal-size struct changes stack-address construction in all six editions. */
 	struct RenderInput *window;
@@ -18961,7 +18961,7 @@ void Scheduler_ScheduleCallbackCAfterFrames(void)
 	Scheduler_AddOrUpdateCallback((SchedulerCallback)Menu_RunSelection, 0xC80);
 }
 
-void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second)
+void Menu_DrawSelectionRow(struct Work *work, s32 first, const s16 *second)
 {
 	s16 selected = first;
 	s32 label = Scene_GetAreaNameIndexFar(selected, *second) + (s32)MsgDebugEntryName;
@@ -19046,7 +19046,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode)
 		}
 		if (value > 200)
 			value = 0;
-		((void (*)(s32, s32, s16 *))Menu_DrawSelectionRow)(arg, value, sub);
+		Menu_DrawSelectionRow((struct Work *)arg, value, sub);
 	}
 	else if (gKeysRepeat & KEY_LEFT)
 	{
@@ -19062,7 +19062,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode)
 		}
 		if (value < 0)
 			value = 200;
-		((void (*)(s32, s32, s16 *))Menu_DrawSelectionRow)(arg, value, sub);
+		Menu_DrawSelectionRow((struct Work *)arg, value, sub);
 	}
 	else if (gKeysRepeat & KEY_R)
 	{
@@ -19079,7 +19079,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode)
 		}
 		if (value > 200)
 			value = 0;
-		((void (*)(s32, s32, s16 *))Menu_DrawSelectionRow)(arg, value, sub);
+		Menu_DrawSelectionRow((struct Work *)arg, value, sub);
 	}
 	else if (gKeysRepeat & KEY_L)
 	{
@@ -19096,7 +19096,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode)
 		}
 		if (value < 0)
 			value = 200;
-		((void (*)(s32, s32, s16 *))Menu_DrawSelectionRow)(arg, value, sub);
+		Menu_DrawSelectionRow((struct Work *)arg, value, sub);
 	}
 	return value;
 }
@@ -19181,7 +19181,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
 	char label[5];
 	char bits[17];
 
-	((void (*)(void))RenderOutput_PrepareForRedraw)(); /* FAKEMATCH: needed to match: called without the window argument. */
+	RenderOutput_PrepareForRedraw((struct UiWindow *)window);
 	UiText_DrawStringInWindow((u8 *)Menu_HexDigitsString, window, 48, 0);
 
 	flag = start_flag << 8;

@@ -205,7 +205,7 @@ void FourObjectMotion_UpdateAllPositions(void);
 void FourObjectMotion_UpdateBottomRow(void);
 void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1);
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative);
-void FourObjectMotion_SetSlotPhase(s32 index, s32 phase);
+s32 FourObjectMotion_SetSlotPhase(s32 index, s32 phase);
 s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value);
 void FourObjectMotion_ClearSlotsAndScheduleAlt(void);
 void Menu_EnableAllItemObjects(void);

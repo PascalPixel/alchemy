@@ -377,10 +377,10 @@ s32 SaveMenu_Run(void)
 				goto L_ask;
 			}
 		}
-		((s32 (*)(s32))Engine_EventWait)(60);
+		Engine_EventWait(60);
 		Engine_EventCloseScreen();
 		Engine_AudioPlayCue(17);
-		((s32 (*)(s32))Engine_EventWait)(0x12c);
+		Engine_EventWait(0x12c);
 		Event_SetDestination((s32)&SceneId_WorldMap, 72);
 		return 0;
 	}
@@ -483,7 +483,7 @@ L_0200057a:;
 			state->scene = state->saved_scene;
 			state->entrance = state->saved_entrance;
 			GameFlag_ClearBit(0x109);
-			((void (*)(s32 flag))Engine_GameFlagSet)(0x13e);
+			Engine_GameFlagSet(0x13e);
 		}
 		else if (state->play_time != ((struct SaveMenuSceneState *)gSceneState)->word_100)
 		{
@@ -504,7 +504,7 @@ L_0200057a:;
 			state->scene = state->saved_scene;
 			state->entrance = state->saved_entrance;
 			GameFlag_ClearBit(0x109);
-			((void (*)(s32 flag))Engine_GameFlagSet)(0x13f);
+			Engine_GameFlagSet(0x13f);
 		}
 		GameFlag_ClearBit(0x106);
 		goto L_02000c96;
@@ -542,7 +542,7 @@ L_0200057a:;
 		PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
 		GameFlag_ClearBit(0x109);
 		GameFlag_ClearBit(0x106);
-		((void (*)(s32 flag))Engine_GameFlagSet)(0x17e);
+		Engine_GameFlagSet(0x17e);
 		gSleepDisabled = 1;
 		Event_SetDestination((s32)&SceneId_LinkLobby, 1);
 		goto L_02000c96;
@@ -904,11 +904,11 @@ L_020009cc:;
 	goto L_020004a8;
 L_02000c96:;
 	gEventWork->requested_exit = 0x3e7;
-	((s32 (*)(s32))Engine_EventWait)(30);
+	Engine_EventWait(30);
 	Engine_AudioPlayCue(17);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
-	((s32 (*)(s32))Engine_EventWait)(60);
+	Engine_EventWait(60);
 L_Return:;
 	return 0;
 }

@@ -364,8 +364,8 @@ void ToretoHeya_RunTableScene(void)
 		}
 		Engine_ActorEnableActionCallback(3, ToretoHeya_TableActions3);
 	}
-	((s32 (*)())Engine_ActorEnableActionCallback)(0, (s32)ToretoHeya_TableActions0);
-	((s32 (*)())Engine_ActorEnableActionCallback)(1, (s32)ToretoHeya_TableActions1);
+	Engine_ActorEnableActionCallback(0, (const u8 *)ToretoHeya_TableActions0);
+	Engine_ActorEnableActionCallback(1, (const u8 *)ToretoHeya_TableActions1);
 	Object_SetActionCallbackAndRefreshById(2, (s32)ToretoHeya_TableActions2);
 	Engine_EventWait(10);
 	Actor_FaceDirection(0, 0xc000, 0);
@@ -658,7 +658,7 @@ s32 ToretoHeya_EnterRoom(void)
 	Engine_ActorSetChildValue(9, 15);
 	ToretoHeya_PlayGesture(0);
 	if (gGameState.entrance != 19)
-		((void (*)())Engine_TaskAddCallback)((s32)ToretoPalette_ApplyTint, 0xc80);
+		Engine_TaskAddCallback(ToretoPalette_ApplyTint, 0xc80);
 	if (Engine_GameFlagIsSet(0x844))
 	{
 		Engine_ActorSetPosition(9, 0, 0);

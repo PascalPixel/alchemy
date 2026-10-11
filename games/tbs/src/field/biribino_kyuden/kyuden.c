@@ -512,11 +512,11 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 							Object_GetById(24)->motion_flags = rec8;
 							record = (s32)Object_GetById(21);
 							*(s32 *)(record + 12) = -0x40000;
-							record = ((s32 (*)())Object_GetById)(22);
+							record = (s32)Object_GetById(22);
 							*(s32 *)(record + 12) = -0x40000;
-							record = ((s32 (*)())Object_GetById)(23);
+							record = (s32)Object_GetById(23);
 							*(s32 *)(record + 12) = -0x40000;
-							record = ((s32 (*)())Object_GetById)(24);
+							record = (s32)Object_GetById(24);
 							*(s32 *)(record + 12) = -0x40000;
 						}
 						else

@@ -10558,7 +10558,7 @@ s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative)
 	return index;
 }
 
-void FourObjectMotion_SetSlotPhase(s32 index, s32 phase)
+s32 FourObjectMotion_SetSlotPhase(s32 index, s32 phase)
 {
 	((struct FourObjectMotionState *)gMenuWork)->phases[index] = phase;
 }
@@ -11196,9 +11196,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 		WaitFrames(1);
 	}
 
-	/* FAKEMATCH: called without a prototype (C89 implicit int), which sets r1 before r0; with the prototype the two moves swap (differ 4) */
-	((s32 (*)())FourObjectMotion_SetSlotPhase)(0, 0);
-	((s32 (*)())FourObjectMotion_SetSlotPhase)(1, 0);
+	FourObjectMotion_SetSlotPhase(0, 0);
+	FourObjectMotion_SetSlotPhase(1, 0);
 	Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
 
 	((struct UiRenderWork *)gWindowWork[0])->menu_busy = 1;

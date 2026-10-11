@@ -152,7 +152,7 @@ void TorebiIzumi_WalkLeaderToSpring(void)
 	}
 	Engine_EventBegin();
 	Engine_ActorWalkToAndWait(leader, 120, 152);
-	((s32 (*)())Engine_ActorFaceDirection)(leader, 0x4000, 0);
+	Engine_ActorFaceDirection(leader, 0x4000, 0);
 	TorebiIzumi_RunSpringGame();
 	Engine_EventEnd();
 }

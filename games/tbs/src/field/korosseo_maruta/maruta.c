@@ -1536,8 +1536,7 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 		return;
 	}
 	Engine_EventBegin();
@@ -1611,8 +1610,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 		return;
 	}
 	Engine_EventBegin();
@@ -1672,8 +1670,7 @@ void KorosseoMaruta_RunStageIntro(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 	}
 	else
 	{
@@ -1742,8 +1739,7 @@ void FieldScene_RunFourStepActorMotion(s32 event)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(event);
 	}
 	else
 	{
@@ -1841,8 +1837,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 event)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(event);
 	}
 	else
 	{
@@ -1908,8 +1903,7 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(actor);
 		return;
 	}
 
@@ -2181,8 +2175,7 @@ s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags)
 	}
 	if (Engine_GameFlagIsSet(flags + 520) != 0)
 	{
-		/* FAKEMATCH: called with an argument the function does not take; r0 is set to 0 before the call. */
-		result = ((s32 (*)(s32))PartyTalkMenu_Choose)(0);
+		result = PartyTalkMenu_Choose(0);
 		if (result == 1)
 		{
 			return 2;

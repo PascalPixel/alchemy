@@ -312,7 +312,7 @@ void AdvanceEffectMotion(struct Effect *effect)
 	sprite->angle += effect->step64;
 }
 
-void SpawnRadialEffectBurst(void)
+void SpawnRadialEffectBurst(s32 object_id)
 {
 	struct SceneObject *object;
 	struct Vec			vec;
@@ -322,7 +322,7 @@ void SpawnRadialEffectBurst(void)
 	s32					x;
 	s32					z;
 
-	object = (struct SceneObject *)((u8 * (*)(void)) Object_GetById)();
+	object = (struct SceneObject *)Object_GetById(object_id);
 	params.callback = (s32)AdvanceEffectMotion;
 	for (angle_step = 0; angle_step <= 16; angle_step += 2)
 	{
@@ -563,7 +563,7 @@ void FieldScene_HandleEscapeColumn(void)
 #endif
 
 	Engine_EventWait(8);
-	((s32 (*)())SpawnRadialEffectBurst)(8);
+	SpawnRadialEffectBurst(8);
 	Engine_AudioPlayCue(136);
 	Engine_EventWait(40);
 
@@ -836,7 +836,7 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
 
 		p->f30 = 0x10000;
 		p->f34 = 0x8000;
-		((void (*)(Obj *, s32, s32, s32))Engine_ObjectSetPosition)(p, x, p->f0c, y);
+		Engine_ObjectSetPosition((struct FieldActor *)p, x, p->f0c, y);
 	}
 	Object_SetMode(p, 27);
 	{
@@ -845,7 +845,7 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
 
 		q->f30 = 0x10000;
 		q->f34 = 0x8000;
-		((void (*)(Obj *, s32, s32, s32))Engine_ObjectSetPosition)(q, x, q->f0c, y);
+		Engine_ObjectSetPosition((struct FieldActor *)q, x, q->f0c, y);
 	}
 	if (x_offset < 0 || z_offset < 0)
 	{

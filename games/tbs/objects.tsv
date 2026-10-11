@@ -287,11 +287,7 @@ main	rom_main_04	games/tbs/src/battle/effect/scene	.text
 main	rom_main_04	games/tbs/src/battle/effect/pattern	.text
 main	rom_main_04	games/common/src/battle/effect/fragment	.text
 main	rom_main_04	games/tbs/src/battle/effect/fieldfx	.text
-main	rom_main_04	games/tbs/src/battle/effect/burstobj	.text
-main	rom_main_04	games/tbs/src/battle/effect/anchor	.text
-main	rom_main_04	games/tbs/src/battle/effect/impact	.text
 main	rom_main_04	games/tbs/src/battle/effect/orbit	.text
-main	rom_main_04	games/tbs/src/battle/effect/call_effect_03_and_stop	.text
 main	rom_main_04	games/tbs/src/battle/effect/orb	.text
 main	rom_main_04	games/tbs/src/battle/effect/particles	.text
 main	rom_main_04	games/tbs/src/battle/effect/lift_drop	.text

@@ -11,9 +11,13 @@
 #include "types.h"
 #include "edition.h"
 
+struct AffineTransform;
 struct AnimationMetadata;
 struct BattleEffectArgument;
+struct BtlObj;
 struct EffectLaunch;
+struct EffectPosition;
+struct MotionObject;
 struct RenderOutput;
 struct ShopCursor;
 struct TransitionActorList;
@@ -22,8 +26,10 @@ struct TransitionActorList;
 #define FAR_ENTRY(name, target)
 #define FAR_SLOT(target)
 
+#include "farcall/runtime.h"
 #include "farcall/menu.h"
 #include "farcall/shop.h"
+#include "farcall/battle.h"
 #include "farcall/effect.h"
 #include "farcall/scroll.h"
 #include "farcall/palette.h"

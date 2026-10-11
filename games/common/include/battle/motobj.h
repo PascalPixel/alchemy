@@ -3,6 +3,10 @@
 
 #include "types.h"
 #include "battle_session.h"
+#include "edition.h"
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 struct MotionObject
 {
@@ -78,7 +82,9 @@ LAYOUT_OFFSET_GUARD(SpriteEntry_Priority, struct SpriteEntry, priority, 0x06);
 
 s32			   ActivateBattleObjectSlot(s32 object_id);
 struct BtlObj *BtlObjGet(s32 object_id);
+#if GAME_TLA
 struct BtlObj *GetBattleObjectSlotFar(s32 object_id);
+#endif
 void		  *GetMotionRecord(struct MotionObject *object, s32 record_index);
 
 #endif

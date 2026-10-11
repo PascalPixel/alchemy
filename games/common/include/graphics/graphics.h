@@ -36,7 +36,9 @@ void			   Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32
 #ifndef OWN_BattleLayout_HighlightPartyPanels
 s32 BattleLayout_HighlightPartyPanels(u16 *ids);
 #endif
+#if GAME_TLA
 s32	 BattleParty_ListActorIdsFar(s32 side, s32 group);
+#endif
 void PaletteGlow_UpdateSine(void);
 void Render_ResetTransformState(void);
 s32	 Ui_ClearVramBlock(void);
@@ -194,8 +196,6 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames
 void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant);
 #endif
 void BattlePalette_UpdateBlend(void);
-s32	 BattleParty_PrepareActiveOwnersFar(s32);
-s32	 BattlePlacement_CountValidEntriesFar(s32, u8 *);
 void Blend_SetBrightenTarget0(s32 duration);
 void Blend_SetBrightenTarget16(s32 duration);
 void Blend_SetDarkenTarget0(s32 duration);
@@ -245,7 +245,6 @@ void Graphics_ClearBg1ControlBit2(void);
 void Graphics_ClearCharacterBlockAndPalette(s32 alternate);
 void Graphics_RestoreTransferWork(void);
 s32	 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
-void Graphics_ScaleRgb555ClampedFar(void *, void *, s32, s32);
 #ifndef OWN_Graphics_TransformSmallPalette
 void Graphics_TransformSmallPalette(s32 index, s32 transform);
 #endif

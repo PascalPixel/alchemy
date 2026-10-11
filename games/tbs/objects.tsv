@@ -1,7 +1,7 @@
 image	place	object	sections	editions
 main	ewram	games/tbs/src/system/ram/ewram	.sym_ewram
 main	rom_start	games/tbs/src/system/rom_head
-main	rom_start	games/tbs/src/system/far_call/runtime
+main	rom_start	games/tbs/src/system/far_call/RUNTIME
 main	rom_start	games/tbs/src/system/entry
 main	rom_start	games/tbs/src/sound/driver/resampler_kernels
 main	rom_start	games/tbs/src/sound/driver/resampler_kernels_pad
@@ -451,7 +451,7 @@ main	rom_main_06	games/common/src/menu/shop/draw_message	.text
 main	rom_main_06	games/tbs/src/menu/shop/sell	.text
 main	rom_main_06	games/tbs/src/menu/shop/shopspr	.rodata
 main	rom_main_06	games/tbs/src/menu/shop/shopdata	.rodata
-main	rom_main_07	games/tbs/src/system/far_call/battle
+main	rom_main_07	games/tbs/src/system/far_call/BATTLE
 main	rom_main_07	games/tbs/src/graphics/tile/decode
 main	rom_main_07	games/tbs/src/graphics/tile/decpool	.rodata
 main	rom_main_07	games/tbs/src/graphics/tile/bit_dispatch

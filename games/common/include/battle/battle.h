@@ -58,7 +58,9 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries);
 #ifndef OWN_BattlePres_BuildUnitEntries
 s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries);
 #endif
+#if GAME_TLA
 void BattlePres_SetActorModesFar(u16 *, s32);
+#endif
 s32	 BattlePres_WaitSync(void);
 s32	 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s32 count);
 void BattleUnit_ResetGuardLevels(void);
@@ -454,9 +456,6 @@ s32 Battle_DispatchInputEvent(s32 event);
 s32 Battle_FindTaggedSlotByValue(u32 value);
 #endif
 u32 Battle_GetObjectTableValue(s32 id);
-#ifndef OWN_Battle_GetObjectTableValueFar
-s32 Battle_GetObjectTableValueFar(s32 actor_id);
-#endif
 u32 Battle_GetSpriteFlagHighBits(u32 index);
 u32 Battle_GetSpriteFlagNibble(u32 index);
 #ifndef OWN_Battle_GetTaggedSlotValue
@@ -479,10 +478,8 @@ s32 BattleAction_RunDescriptor(s32 arg0);
 #endif
 void BattleActor_RemoveFromLists(s32 unit_id);
 s32	 BattleActor_ResetRuntimeFields(s32 actor);
-void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleActor_UpdateSpritePriorities(void);
 void BattleBackground_Load(s32 mode, s32 resource, s32 level);
-void BattleBackground_LoadFar(s32, s32, s32);
 #ifndef OWN_BattleCommand_ExecuteSelectedAction
 s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction);
 #endif
@@ -521,7 +518,6 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value);
 s32	 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned);
 void BattleEv_MarkDisplay(void);
 void BattleEv_RunWait(s32 action, s32 flag);
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
 s32	 BattleFormation_BuildEnemyList(s32 record_id);
 s32	 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin);
 void BattleFx_AdvanceAngleWithRamp(void *obj);
@@ -723,7 +719,6 @@ s32	 BattleFx_UpdateStarField(void);
 void BattleFx_UpdateStormFlash(void);
 void BattleFx_UpdateWaveScene(void);
 void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect);
-void BattleMotion_ApplyVariantMotionFar(s32 id, s32 mode);
 void BattleMotion_InitializeActorRecords(s32 id);
 #ifndef OWN_BattleMotion_ProjectScaledPosition
 s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected);
@@ -760,7 +755,6 @@ s32 BattlePres_SetActorModeAndAction(s32 id);
 #endif
 void BattlePres_SetActorModes(u16 *actors, s32 mode);
 void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 mode);
-void BattlePres_SetupTransitionSceneFar(s32 x, s32 depth, s32 y, s32 mode);
 s32	 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action);
 s32	 BattlePres_SyncTurn(void);
 void BattlePres_UpdateHBlankScroll(void);
@@ -774,17 +768,11 @@ void BattlePresentation_BuildTilemap(s32 *destination);
 #ifndef OWN_BattlePresentation_ConfigurePaletteFade
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade);
 #endif
-#ifndef OWN_BattlePresentation_ConfigurePaletteFadeFar
-void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, u16 value, s32 fade);
-#endif
 s32	 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 delay);
 void BattlePresentation_DrawStreaks(void);
 void BattlePresentation_InitializeWorkAndResetState(void);
 s32	 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan);
 s32	 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode);
-#ifndef OWN_BattlePresentation_SetPaletteLevelFar
-void BattlePresentation_SetPaletteLevelFar(s32 unused, s32 level);
-#endif
 void BattlePresentation_UpdateCamera(void);
 #ifndef OWN_BattlePresentation_WaitForPromptAt
 s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y);

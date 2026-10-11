@@ -11,6 +11,9 @@
 #include "field_scene.h"
 #include "menu_list.h"
 #endif
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 struct DispatchObject;
 struct EffectPosition;
@@ -22,7 +25,9 @@ extern u8		 Map_TileDissolveOrder[];
 extern const u32 ObjectDispatch_DefaultScript[];
 extern u8		 Render_DecodeFrameCodeSize[];
 extern u8		 Runtime_ByteRemapTable[];
+#if GAME_TLA
 void			 BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
+#endif
 s32				 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 s32				 Equipment_HasValueFar(s32 group, s32 entry);
 s32				 Event_ValidatePackedId(u32 packed_id);
@@ -1382,17 +1387,13 @@ void							   BabiChika_UpdateTrackedActor(void);
 void							   BabiFune_CyclePalette(void);
 void							   BabiFune_UpdateDriftingObject(u8 *obj);
 void							   BabiFune_UpdateWaves(void);
-s32								   Battle_RunEncounterFar(s32 entrance);
 void							   BattleFx_ConfigureLinkedObject(s32 id, s32 flags);
 void							   BattleFx_ResetCounters(void);
 void							   BattleFx_RunVisibilityTransition(void);
 s32								   BattleFx_SumCounters(void);
 void BattleFx_UpdateParticleLinearMotion(struct BurstParticle *particle);
-s32	 BattleMotion_GetSlotPaletteFar(s32);
-s32	 BattlePlacement_UpdateTimedEntriesFar(void);
 void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect);
 void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect);
-void BattlePres_SetupTransitionAtPairMidpointFar(s32 actor, s32 target, s32 mode);
 void BiribinoMura_RestoreRaisedEntrance(void);
 void BiribinoMura_RestoreVillageActors(void);
 void BiribinoMura_UpdateCornerSpawn(void);
@@ -1561,9 +1562,6 @@ void			   FuneKanpan_SetupVisibleLeaderDeparture(void);
 #ifndef OWN_GameFlag_IsSet
 s32 GameFlag_IsSet(s32 flag);
 #endif
-#ifndef OWN_GetMotionRecordFar
-void *GetMotionRecordFar(struct MotionObject *object, s32 record_index);
-#endif
 void GomaHashira_DriveActor13Idle(void);
 void HaidiaArashi_RunRiverSearch(void);
 void HaidiaArashi_UpdatePulsingGlow(void);
@@ -1694,14 +1692,12 @@ s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor);
 #endif
 void				 RamakanSabaku_RaiseQuarterTriggers(void);
 void				 RamakanSabaku_RunSandstorm(void);
-u32					 Random16Far(void);
 void				 Resource3ba_NoOpCallback(void);
 void				 ResourceMetadata_ClearRecordFar(void *record);
 s32					 ResourceTable_CountFreeBlocks(void);
 void				 RunActorsEightAndNineMapEvent(void);
 void				 RunScene59Sequence(void);
 void				 RunSceneSelectionChain(void);
-void				*Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 s32					 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position);
 #ifndef OWN_Scene_FadeColorFromWhite
 s32 Scene_FadeColorFromWhite(void);
@@ -1849,7 +1845,6 @@ s32	 StoryActor_ApplyMapRotation(struct FieldActor *actor);
 void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor);
 #endif
 void StoryScene_StartTransition(void);
-s32	 Summon_IsEntrySecondaryFlaggedFar(s32 index);
 void TakaraAshiba_InitializeScene1(void);
 void TakaraAshiba_InitializeScene2(void);
 void TakaraAshiba_InitializeScene3(void);

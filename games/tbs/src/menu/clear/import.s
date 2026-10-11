@@ -1,229 +1,58 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
-.syntax unified
-	.thumb
 	.include "games/tbs/src/system/overlay.inc"
-	.balign 4
-	.global __divsi3
-	.thumb_func
-__divsi3:
-	overlay_veneer IwramSignedDivide
-	.global __modsi3
-	.thumb_func
-__modsi3:
-	overlay_veneer IwramSignedRemainder
-	.global Engine_TaskWait
-	.thumb_func
-Engine_TaskWait:
-	overlay_veneer WaitFramesFar
-	.global Engine_TaskAddCallback
-	.thumb_func
-Engine_TaskAddCallback:
-	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Engine_TaskRemoveCallback
-	.thumb_func
-Engine_TaskRemoveCallback:
-	overlay_veneer Scheduler_RemoveCallbackFar
-	.global Runtime_BumpAllocateAlternatePool
-	.thumb_func
-Runtime_BumpAllocateAlternatePool:
-	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global Runtime_BumpFree
-	.thumb_func
-Runtime_BumpFree:
-	overlay_veneer Sys_FreeFar
-	.global Resource_DecodeType01
-	.thumb_func
-Resource_DecodeType01:
-	overlay_veneer Resource_DecodeType01Far
-	.global Ui_LoadWindowGraphics
-	.thumb_func
-Ui_LoadWindowGraphics:
-	overlay_veneer Ui_LoadWindowGraphicsFar
-	.global Engine_ResourceGetTableEntry
-	.thumb_func
-Engine_ResourceGetTableEntry:
-	overlay_veneer Resource_GetTableEntryFar
-	.global Engine_BlendSetDarkenTarget16
-	.thumb_func
-Engine_BlendSetDarkenTarget16:
-	overlay_veneer Blend_SetDarkenTarget16Far
-	.global SerialRuntime_Initialize
-	.thumb_func
-SerialRuntime_Initialize:
-	overlay_veneer SerialRuntime_InitializeFar
-	.global SerialRuntime_RemoveIrqHandlers
-	.thumb_func
-SerialRuntime_RemoveIrqHandlers:
-	overlay_veneer SerialRuntime_RemoveIrqHandlersFar
-	.global SerialRuntime_BeginTransferA
-	.thumb_func
-SerialRuntime_BeginTransferA:
-	overlay_veneer SerialRuntime_BeginTransferAFar
-	.global UiWindow_Create
-	.thumb_func
-UiWindow_Create:
-	overlay_veneer UiWindow_CreateFar
-	.global UiWork_Finalize
-	.thumb_func
-UiWork_Finalize:
-	overlay_veneer UiWork_FinalizeFar
-	.global UiText_ShowPositionedMessageAndWait
-	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	.global RenderOutput_PrepareForRedraw
-	.thumb_func
-RenderOutput_PrepareForRedraw:
-	overlay_veneer RenderOutput_PrepareForRedrawFar
-	.global UiWindow_DrawDividerLine
-	.thumb_func
-UiWindow_DrawDividerLine:
-	overlay_veneer UiWindow_DrawDividerLineFar
-	.global UiText_DrawResource
-	.thumb_func
-UiText_DrawResource:
-	overlay_veneer UiText_DrawResourceFar
-	.global UiText_DrawCharacterAtOffset
-	.thumb_func
-UiText_DrawCharacterAtOffset:
-	overlay_veneer UiText_DrawCharacterAtOffsetFar
-	.global UiText_DrawString
-	.thumb_func
-UiText_DrawString:
-	overlay_veneer UiText_DrawStringFar
-	.global UiWork_FinalizePendingCore
-	.thumb_func
-UiWork_FinalizePendingCore:
-	overlay_veneer UiWork_FinalizePendingCoreFar
-	.global Menu_SelectSaveSlotAction
-	.thumb_func
-Menu_SelectSaveSlotAction:
-	overlay_veneer Menu_SelectSaveSlotActionFar
-	.global Menu_SelectResourceLayout
-	.thumb_func
-Menu_SelectResourceLayout:
-	overlay_veneer Menu_SelectResourceLayoutFar
-	.global UiText_ShowCenteredMessage
-	.thumb_func
-UiText_ShowCenteredMessage:
-	overlay_veneer UiText_ShowCenteredMessageFar
-	.global UiWindow_SetTilemapEntry
-	.thumb_func
-UiWindow_SetTilemapEntry:
-	overlay_veneer UiWindow_SetTilemapEntryFar
-	.global Save_WriteSelectedSlot
-	.thumb_func
-Save_WriteSelectedSlot:
-	overlay_veneer Save_WriteSelectedSlotFar
-	.global SaveState_LoadRecordIntoWork
-	.thumb_func
-SaveState_LoadRecordIntoWork:
-	overlay_veneer SaveState_LoadRecordIntoWorkFar
-	.global SaveState_CopySlotPair
-	.thumb_func
-SaveState_CopySlotPair:
-	overlay_veneer SaveState_CopySlotPairFar
-	.global SaveState_DeleteSelectedSlot
-	.thumb_func
-SaveState_DeleteSelectedSlot:
-	overlay_veneer SaveState_DeleteSelectedSlotFar
-	.global SaveState_ScanRecordFlags
-	.thumb_func
-SaveState_ScanRecordFlags:
-	overlay_veneer SaveState_ScanRecordFlagsFar
-	.global NameEntry_EditOwnerName
-	.thumb_func
-NameEntry_EditOwnerName:
-	overlay_veneer NameEntry_EditOwnerNameFar
-	.global PaletteGlow_Update
-	.thumb_func
-PaletteGlow_Update:
-	overlay_veneer PaletteGlow_UpdateFar
-	.global Menu_RunConfirmSelection
-	.thumb_func
-Menu_RunConfirmSelection:
-	overlay_veneer Menu_RunConfirmSelectionFar
-	.global Graphics_ExpandVramTilesByColorTable
-	.thumb_func
-Graphics_ExpandVramTilesByColorTable:
-	overlay_veneer Graphics_ExpandVramTilesByColorTableFar
-	.global Link_DrawShiftedTilePair
-	.thumb_func
-Link_DrawShiftedTilePair:
-	overlay_veneer Link_DrawShiftedTilePairFar
-	.global UnitGet
-	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
-	.global Item_Get
-	.thumb_func
-Item_Get:
-	overlay_veneer Item_GetDirectFar
-	.global GameState_InitDefaults
-	.thumb_func
-GameState_InitDefaults:
-	overlay_veneer GameState_InitDefaultsFar
-	.global Engine_GameFlagIsSet
-	.thumb_func
-Engine_GameFlagIsSet:
-	overlay_veneer GameFlag_TestFar
-	.global Engine_GameFlagSet
-	.thumb_func
-Engine_GameFlagSet:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
-	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
-	.global Party_AddActiveOwner
-	.thumb_func
-Party_AddActiveOwner:
-	overlay_veneer Party_AddActiveOwnerFar
-	.global Party_RemoveActiveOwner
-	.thumb_func
-Party_RemoveActiveOwner:
-	overlay_veneer Party_RemoveActiveOwnerFar
-	.global Party_SetFlag32AndRefreshMembers
-	.thumb_func
-Party_SetFlag32AndRefreshMembers:
-	overlay_veneer Party_SetFlag32AndRefreshMembersFar
-	.global Runtime_GetBuildStampTime
-	.thumb_func
-Runtime_GetBuildStampTime:
-	overlay_veneer Runtime_GetBuildStampTimeFar
-	.global InventorySnapshot_Restore
-	.thumb_func
-InventorySnapshot_Restore:
-	overlay_veneer InventorySnapshot_RestoreFar
-	.global Engine_EventWait
-	.thumb_func
-Engine_EventWait:
-	overlay_veneer Battle_WaitMode0Far
-	.global Object_GetById
-	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global Event_SetDestination
-	.thumb_func
-Event_SetDestination:
-	overlay_veneer Event_SetDestinationFar
-	.global Engine_EventOpenScreen
-	.thumb_func
-Engine_EventOpenScreen:
-	overlay_veneer Event_StartScreenTransitionFar
-	.global Engine_EventCloseScreen
-	.thumb_func
-Engine_EventCloseScreen:
-	overlay_veneer Event_FinishScreenTransitionFar
-	.global Engine_EventWaitForScreen
-	.thumb_func
-Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitTransitionFramesFar
-	.global Object_CallSpawnRoutineAtOrigin
-	.thumb_func
-Object_CallSpawnRoutineAtOrigin:
-	overlay_veneer Object_CallSpawnRoutineAtOriginFar
-	.global Engine_AudioPlayCue
-	.thumb_func
-Engine_AudioPlayCue:
-	overlay_veneer AudioCommand_PlayFar
+	import __divsi3, IwramSignedDivide
+	import __modsi3, IwramSignedRemainder
+	import Engine_TaskWait, WaitFramesFar
+	import Engine_TaskAddCallback, Scheduler_AddOrUpdateCallbackFar
+	import Engine_TaskRemoveCallback, Scheduler_RemoveCallbackFar
+	import Runtime_BumpAllocateAlternatePool, Runtime_BumpAllocateAlternatePoolFar
+	import Runtime_BumpFree, Sys_FreeFar
+	import Resource_DecodeType01, Resource_DecodeType01Far
+	import Ui_LoadWindowGraphics, Ui_LoadWindowGraphicsFar
+	import Engine_ResourceGetTableEntry, Resource_GetTableEntryFar
+	import Engine_BlendSetDarkenTarget16, Blend_SetDarkenTarget16Far
+	import SerialRuntime_Initialize, SerialRuntime_InitializeFar
+	import SerialRuntime_RemoveIrqHandlers, SerialRuntime_RemoveIrqHandlersFar
+	import SerialRuntime_BeginTransferA, SerialRuntime_BeginTransferAFar
+	import UiWindow_Create, UiWindow_CreateFar
+	import UiWork_Finalize, UiWork_FinalizeFar
+	import UiText_ShowPositionedMessageAndWait, UiText_ShowPositionedMessageAndWaitFar
+	import RenderOutput_PrepareForRedraw, RenderOutput_PrepareForRedrawFar
+	import UiWindow_DrawDividerLine, UiWindow_DrawDividerLineFar
+	import UiText_DrawResource, UiText_DrawResourceFar
+	import UiText_DrawCharacterAtOffset, UiText_DrawCharacterAtOffsetFar
+	import UiText_DrawString, UiText_DrawStringFar
+	import UiWork_FinalizePendingCore, UiWork_FinalizePendingCoreFar
+	import Menu_SelectSaveSlotAction, Menu_SelectSaveSlotActionFar
+	import Menu_SelectResourceLayout, Menu_SelectResourceLayoutFar
+	import UiText_ShowCenteredMessage, UiText_ShowCenteredMessageFar
+	import UiWindow_SetTilemapEntry, UiWindow_SetTilemapEntryFar
+	import Save_WriteSelectedSlot, Save_WriteSelectedSlotFar
+	import SaveState_LoadRecordIntoWork, SaveState_LoadRecordIntoWorkFar
+	import SaveState_CopySlotPair, SaveState_CopySlotPairFar
+	import SaveState_DeleteSelectedSlot, SaveState_DeleteSelectedSlotFar
+	import SaveState_ScanRecordFlags, SaveState_ScanRecordFlagsFar
+	import NameEntry_EditOwnerName, NameEntry_EditOwnerNameFar
+	import PaletteGlow_Update, PaletteGlow_UpdateFar
+	import Menu_RunConfirmSelection, Menu_RunConfirmSelectionFar
+	import Graphics_ExpandVramTilesByColorTable, Graphics_ExpandVramTilesByColorTableFar
+	import Link_DrawShiftedTilePair, Link_DrawShiftedTilePairFar
+	import UnitGet, UnitGetFar
+	import Item_Get, Item_GetDirectFar
+	import GameState_InitDefaults, GameState_InitDefaultsFar
+	import Engine_GameFlagIsSet, GameFlag_TestFar
+	import Engine_GameFlagSet, GameFlag_SetBitFar
+	import GameFlag_ClearBit, GameFlag_ClearBitFar
+	import Party_AddActiveOwner, Party_AddActiveOwnerFar
+	import Party_RemoveActiveOwner, Party_RemoveActiveOwnerFar
+	import Party_SetFlag32AndRefreshMembers, Party_SetFlag32AndRefreshMembersFar
+	import Runtime_GetBuildStampTime, Runtime_GetBuildStampTimeFar
+	import InventorySnapshot_Restore, InventorySnapshot_RestoreFar
+	import Engine_EventWait, Battle_WaitMode0Far
+	import Object_GetById, Object_GetByIdFar
+	import Event_SetDestination, Event_SetDestinationFar
+	import Engine_EventOpenScreen, Event_StartScreenTransitionFar
+	import Engine_EventCloseScreen, Event_FinishScreenTransitionFar
+	import Engine_EventWaitForScreen, Event_WaitTransitionFramesFar
+	import Object_CallSpawnRoutineAtOrigin, Object_CallSpawnRoutineAtOriginFar
+	import Engine_AudioPlayCue, AudioCommand_PlayFar

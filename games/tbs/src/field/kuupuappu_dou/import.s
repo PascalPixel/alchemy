@@ -1,129 +1,33 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
-.syntax unified
-	.thumb
 	.include "games/tbs/src/system/overlay.inc"
-	.balign 4
-	.global __modsi3
-	.thumb_func
-__modsi3:
-	overlay_veneer IwramSignedRemainder
-	.global Math_RemainderUnsigned
-	.thumb_func
-Math_RemainderUnsigned:
-	overlay_veneer IwramUnsignedRemainder
-	.global Engine_TaskWait
-	.thumb_func
-Engine_TaskWait:
-	overlay_veneer WaitFramesFar
-	.global Engine_TaskAddCallback
-	.thumb_func
-Engine_TaskAddCallback:
-	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Engine_RandomNext
-	.thumb_func
-Engine_RandomNext:
-	overlay_veneer Random16Far
-	.global Vector_AddPolarOffset
-	.thumb_func
-Vector_AddPolarOffset:
-	overlay_veneer Vector_AddPolarOffsetFar
-	.global QueueIoWriteDelay2
-	.thumb_func
-QueueIoWriteDelay2:
-	overlay_veneer QueueIoWriteDelay2Far
-	.global Object_SetMode
-	.thumb_func
-Object_SetMode:
-	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
-	.global Engine_ObjectSetScript
-	.thumb_func
-Engine_ObjectSetScript:
-	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
-	.thumb_func
-Engine_ObjectCreate:
-	overlay_veneer Object_CreateFar
-	.global Engine_MapRedraw
-	.thumb_func
-Engine_MapRedraw:
-	overlay_veneer Map_ApplyWorkOriginAndSpanFar
-	.global Engine_ObjectSetPosition
-	.thumb_func
-Engine_ObjectSetPosition:
-	overlay_veneer Object_SetMoveTargetFar
-	.global Engine_ObjectCommitPosition
-	.thumb_func
-Engine_ObjectCommitPosition:
-	overlay_veneer Script_WaitForEventTimeoutFar
-	.global Engine_MapCopyCells
-	.thumb_func
-Engine_MapCopyCells:
-	overlay_veneer Map_CopyMetatileCellsRectFar
-	.global Engine_MapCopyCellAttributes
-	.thumb_func
-Engine_MapCopyCellAttributes:
-	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Object_CheckMovementCollision
-	.thumb_func
-Object_CheckMovementCollision:
-	overlay_veneer Map_CheckObjectStepFar
-	.global Engine_ActorSetSpriteFlags
-	.thumb_func
-Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global Engine_WorkSetValuesIfNonNegative
-	.thumb_func
-Engine_WorkSetValuesIfNonNegative:
-	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
-	.global Engine_MapRenderWaitForValues
-	.thumb_func
-Engine_MapRenderWaitForValues:
-	overlay_veneer Map_WaitWorkValuesBelow256Far
-	.global Engine_MessageShowCentered
-	.thumb_func
-Engine_MessageShowCentered:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	.global Engine_GameFlagIsSet
-	.thumb_func
-Engine_GameFlagIsSet:
-	overlay_veneer GameFlag_TestFar
-	.global Engine_GameFlagSet
-	.thumb_func
-Engine_GameFlagSet:
-	overlay_veneer GameFlag_SetBitFar
-	.global Engine_GameFlagClear
-	.thumb_func
-Engine_GameFlagClear:
-	overlay_veneer GameFlag_ClearBitFar
-	.global Engine_EventWait
-	.thumb_func
-Engine_EventWait:
-	overlay_veneer Battle_WaitMode0Far
-	.global Engine_EventBegin
-	.thumb_func
-Engine_EventBegin:
-	overlay_veneer Battle_ResetFar
-	.global Engine_EventEnd
-	.thumb_func
-Engine_EventEnd:
-	overlay_veneer BattleFx_FinishActionFar
-	.global Object_GetById
-	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global Engine_ActorSetPosition
-	.thumb_func
-Engine_ActorSetPosition:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Engine_ActorSetAnimation
-	.thumb_func
-Engine_ActorSetAnimation:
-	overlay_veneer Object_SetModeByIdFar
-	.global Engine_ActorSetSpritePriority
-	.thumb_func
-Engine_ActorSetSpritePriority:
-	overlay_veneer ObjectMotion_SetActionVariantFar
-	.global Engine_AudioPlayCue
-	.thumb_func
-Engine_AudioPlayCue:
-	overlay_veneer AudioCommand_PlayFar
+	import __modsi3, IwramSignedRemainder
+	import Math_RemainderUnsigned, IwramUnsignedRemainder
+	import Engine_TaskWait, WaitFramesFar
+	import Engine_TaskAddCallback, Scheduler_AddOrUpdateCallbackFar
+	import Engine_RandomNext, Random16Far
+	import Vector_AddPolarOffset, Vector_AddPolarOffsetFar
+	import QueueIoWriteDelay2, QueueIoWriteDelay2Far
+	import Object_SetMode, ObjectDispatch_ApplyArgumentToChildrenFar
+	import Engine_ObjectSetScript, ObjectDispatch_InitializeFar
+	import Engine_ObjectCreate, Object_CreateFar
+	import Engine_MapRedraw, Map_ApplyWorkOriginAndSpanFar
+	import Engine_ObjectSetPosition, Object_SetMoveTargetFar
+	import Engine_ObjectCommitPosition, Script_WaitForEventTimeoutFar
+	import Engine_MapCopyCells, Map_CopyMetatileCellsRectFar
+	import Engine_MapCopyCellAttributes, Map_CopyCellAttributeRectFar
+	import Object_CheckMovementCollision, Map_CheckObjectStepFar
+	import Engine_ActorSetSpriteFlags, ObjectDispatch_SetSingleChildFlagsFar
+	import Engine_WorkSetValuesIfNonNegative, Runtime_SetWorkTripleIfNonNegativeFar
+	import Engine_MapRenderWaitForValues, Map_WaitWorkValuesBelow256Far
+	import Engine_MessageShowCentered, UiText_ShowPositionedMessageAndWaitFar
+	import Engine_GameFlagIsSet, GameFlag_TestFar
+	import Engine_GameFlagSet, GameFlag_SetBitFar
+	import Engine_GameFlagClear, GameFlag_ClearBitFar
+	import Engine_EventWait, Battle_WaitMode0Far
+	import Engine_EventBegin, Battle_ResetFar
+	import Engine_EventEnd, BattleFx_FinishActionFar
+	import Object_GetById, Object_GetByIdFar
+	import Engine_ActorSetPosition, ObjectMotion_SetHorizontalPositionWithTerrainFar
+	import Engine_ActorSetAnimation, Object_SetModeByIdFar
+	import Engine_ActorSetSpritePriority, ObjectMotion_SetActionVariantFar
+	import Engine_AudioPlayCue, AudioCommand_PlayFar

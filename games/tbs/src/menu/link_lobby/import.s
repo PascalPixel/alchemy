@@ -1,249 +1,63 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
-.syntax unified
-	.thumb
 	.include "games/tbs/src/system/overlay.inc"
-	.balign 4
-	.global __divsi3
-	.thumb_func
-__divsi3:
-	overlay_veneer IwramSignedDivide
-	.global __modsi3
-	.thumb_func
-__modsi3:
-	overlay_veneer IwramSignedRemainder
-	.global Engine_TaskWait
-	.thumb_func
-Engine_TaskWait:
-	overlay_veneer WaitFramesFar
-	.global Engine_TaskAddCallback
-	.thumb_func
-Engine_TaskAddCallback:
-	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Engine_TaskRemoveCallback
-	.thumb_func
-Engine_TaskRemoveCallback:
-	overlay_veneer Scheduler_RemoveCallbackFar
-	.global Runtime_AllocateBlock
-	.thumb_func
-Runtime_AllocateBlock:
-	overlay_veneer Runtime_AllocateBlockFar
-	.global Runtime_ReleaseHeapBlock
-	.thumb_func
-Runtime_ReleaseHeapBlock:
-	overlay_veneer Runtime_ReleaseHeapBlockFar
-	.global Runtime_BumpAllocateAlternatePool
-	.thumb_func
-Runtime_BumpAllocateAlternatePool:
-	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global Runtime_BumpFree
-	.thumb_func
-Runtime_BumpFree:
-	overlay_veneer Sys_FreeFar
-	.global SerialRuntime_Initialize
-	.thumb_func
-SerialRuntime_Initialize:
-	overlay_veneer SerialRuntime_InitializeFar
-	.global SerialRuntime_RemoveIrqHandlers
-	.thumb_func
-SerialRuntime_RemoveIrqHandlers:
-	overlay_veneer SerialRuntime_RemoveIrqHandlersFar
-	.global Sound_LoadPresetParameters
-	.thumb_func
-Sound_LoadPresetParameters:
-	overlay_veneer Sound_LoadPresetParametersFar
-	.global SerialRuntime_BeginTransferA
-	.thumb_func
-SerialRuntime_BeginTransferA:
-	overlay_veneer SerialRuntime_BeginTransferAFar
-	.global SerialRuntime_BeginTransferB
-	.thumb_func
-SerialRuntime_BeginTransferB:
-	overlay_veneer SerialRuntime_BeginTransferBFar
-	.global SerialRuntime_GetActiveTransfers
-	.thumb_func
-SerialRuntime_GetActiveTransfers:
-	overlay_veneer SerialRuntime_GetActiveTransfersFar
-	.global Scheduler_SetCallbackMask
-	.thumb_func
-Scheduler_SetCallbackMask:
-	overlay_veneer Scheduler_SetCallbackMaskFar
-	.global Engine_MapRedraw
-	.thumb_func
-Engine_MapRedraw:
-	overlay_veneer Map_ApplyWorkOriginAndSpanFar
-	.global Engine_MapCopyCellsTo
-	.thumb_func
-Engine_MapCopyCellsTo:
-	overlay_veneer Map_CopyMetatileIndicesRectFar
-	.global Map_ClearLayerEntryFlag
-	.thumb_func
-Map_ClearLayerEntryFlag:
-	overlay_veneer Map_ClearLayerEntryFlagFar
-	.global Map_SetLayerEntryFlag
-	.thumb_func
-Map_SetLayerEntryFlag:
-	overlay_veneer Map_SetLayerEntryFlagFar
-	.global Engine_MapCopyCellAttributes
-	.thumb_func
-Engine_MapCopyCellAttributes:
-	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Engine_DebugCreateWindow
-	.thumb_func
-Engine_DebugCreateWindow:
-	overlay_veneer UiWindow_CreateFar
-	.global UiWork_Finalize
-	.thumb_func
-UiWork_Finalize:
-	overlay_veneer UiWork_FinalizeFar
-	.global Ui_AdjustValueWithoutLimit
-	.thumb_func
-Ui_AdjustValueWithoutLimit:
-	overlay_veneer Ui_AdjustValueWithoutLimitFar
-	.global UiText_OpenMessageWindow
-	.thumb_func
-UiText_OpenMessageWindow:
-	overlay_veneer UiText_OpenMessageWindowFar
-	.global UiWork_IsComplete
-	.thumb_func
-UiWork_IsComplete:
-	overlay_veneer UiWork_IsCompleteFar
-	.global RenderOutput_PrepareForRedraw
-	.thumb_func
-RenderOutput_PrepareForRedraw:
-	overlay_veneer RenderOutput_PrepareForRedrawFar
-	.global UiText_DrawNumber
-	.thumb_func
-UiText_DrawNumber:
-	overlay_veneer UiText_DrawNumberFar
-	.global UiWork_ClearValueNameTables
-	.thumb_func
-UiWork_ClearValueNameTables:
-	overlay_veneer UiWork_ClearValueNameTablesFar
-	.global UiText_DrawQuantity
-	.thumb_func
-UiText_DrawQuantity:
-	overlay_veneer UiWork_PushValueSlotFar
-	.global SaveState_ProcessSelectedSlot
-	.thumb_func
-SaveState_ProcessSelectedSlot:
-	overlay_veneer SaveState_ProcessSelectedSlotFar
-	.global Trade_GetOfferState
-	.thumb_func
-Trade_GetOfferState:
-	overlay_veneer Trade_GetOfferStateFar
-	.global UnitGet
-	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
-	.global Engine_GameFlagIsSet
-	.thumb_func
-Engine_GameFlagIsSet:
-	overlay_veneer GameFlag_TestFar
-	.global Engine_GameFlagSet
-	.thumb_func
-Engine_GameFlagSet:
-	overlay_veneer GameFlag_SetBitFar
-	.global Engine_GameFlagClear
-	.thumb_func
-Engine_GameFlagClear:
-	overlay_veneer GameFlag_ClearBitFar
-	.global GameFlag_GetByte
-	.thumb_func
-GameFlag_GetByte:
-	overlay_veneer GameFlag_GetByteFar
-	.global GameFlag_SetByte
-	.thumb_func
-GameFlag_SetByte:
-	overlay_veneer GameFlag_SetByteFar
-	.global Party_CountActiveOwners
-	.thumb_func
-Party_CountActiveOwners:
-	overlay_veneer Party_CountActiveOwnersFar
-	.global Owner_RefreshActiveRatios
-	.thumb_func
-Owner_RefreshActiveRatios:
-	overlay_veneer Owner_RefreshActiveRatiosFar
-	.global Engine_EventBegin
-	.thumb_func
-Engine_EventBegin:
-	overlay_veneer Battle_ResetFar
-	.global Engine_EventEnd
-	.thumb_func
-Engine_EventEnd:
-	overlay_veneer BattleFx_FinishActionFar
-	.global Engine_EventChooseYesNo
-	.thumb_func
-Engine_EventChooseYesNo:
-	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global Object_GetById
-	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global Engine_ActorSetSpeed
-	.thumb_func
-Engine_ActorSetSpeed:
-	overlay_veneer ObjectMotion_SetSpeedParametersFar
-	.global Engine_ActorWalkTo
-	.thumb_func
-Engine_ActorWalkTo:
-	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
-	.global Engine_ActorWaitForMove
-	.thumb_func
-Engine_ActorWaitForMove:
-	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
-	.global Engine_ActorFaceActor
-	.thumb_func
-Engine_ActorFaceActor:
-	overlay_veneer ObjectMotion_SetAngleTowardFar
-	.global Engine_EventSetMessage
-	.thumb_func
-Engine_EventSetMessage:
-	overlay_veneer Event_SetMessageIdFar
-	.global Engine_EventOpenMessage
-	.thumb_func
-Engine_EventOpenMessage:
-	overlay_veneer UiText_OpenMessageAtObjectFar
-	.global Engine_EventShowMessage
-	.thumb_func
-Engine_EventShowMessage:
-	overlay_veneer BattleEv_RunWaitFar
-	.global Event_SetDestination
-	.thumb_func
-Event_SetDestination:
-	overlay_veneer Event_SetDestinationFar
-	.global BattleFx_SetWeightedResult
-	.thumb_func
-BattleFx_SetWeightedResult:
-	overlay_veneer BattleFx_SetWeightedResultFar
-	.global Party_SetFields1ceAnd1d0
-	.thumb_func
-Party_SetFields1ceAnd1d0:
-	overlay_veneer Party_SetFields1ceAnd1d0Far
-	.global Event_SetDefeatDestination
-	.thumb_func
-Event_SetDefeatDestination:
-	overlay_veneer Event_SetDefeatDestinationFar
-	.global Engine_EventOpenScreen
-	.thumb_func
-Engine_EventOpenScreen:
-	overlay_veneer Event_StartScreenTransitionFar
-	.global Engine_EventWaitForScreen
-	.thumb_func
-Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitTransitionFramesFar
-	.global Engine_SanctumOpen
-	.thumb_func
-Engine_SanctumOpen:
-	overlay_veneer Shop_ConfirmActFar
-	.global BattlePlacement_UpdateTimedEntriesTwentyTimes
-	.thumb_func
-BattlePlacement_UpdateTimedEntriesTwentyTimes:
-	overlay_veneer BattlePlacement_UpdateTimedEntriesTwentyTimesFar
-	.global DebugParty_LoadPreset
-	.thumb_func
-DebugParty_LoadPreset:
-	overlay_veneer DebugParty_LoadPresetFar
-	.global Engine_AudioPlayCue
-	.thumb_func
-Engine_AudioPlayCue:
-	overlay_veneer AudioCommand_PlayFar
+	import __divsi3, IwramSignedDivide
+	import __modsi3, IwramSignedRemainder
+	import Engine_TaskWait, WaitFramesFar
+	import Engine_TaskAddCallback, Scheduler_AddOrUpdateCallbackFar
+	import Engine_TaskRemoveCallback, Scheduler_RemoveCallbackFar
+	import Runtime_AllocateBlock, Runtime_AllocateBlockFar
+	import Runtime_ReleaseHeapBlock, Runtime_ReleaseHeapBlockFar
+	import Runtime_BumpAllocateAlternatePool, Runtime_BumpAllocateAlternatePoolFar
+	import Runtime_BumpFree, Sys_FreeFar
+	import SerialRuntime_Initialize, SerialRuntime_InitializeFar
+	import SerialRuntime_RemoveIrqHandlers, SerialRuntime_RemoveIrqHandlersFar
+	import Sound_LoadPresetParameters, Sound_LoadPresetParametersFar
+	import SerialRuntime_BeginTransferA, SerialRuntime_BeginTransferAFar
+	import SerialRuntime_BeginTransferB, SerialRuntime_BeginTransferBFar
+	import SerialRuntime_GetActiveTransfers, SerialRuntime_GetActiveTransfersFar
+	import Scheduler_SetCallbackMask, Scheduler_SetCallbackMaskFar
+	import Engine_MapRedraw, Map_ApplyWorkOriginAndSpanFar
+	import Engine_MapCopyCellsTo, Map_CopyMetatileIndicesRectFar
+	import Map_ClearLayerEntryFlag, Map_ClearLayerEntryFlagFar
+	import Map_SetLayerEntryFlag, Map_SetLayerEntryFlagFar
+	import Engine_MapCopyCellAttributes, Map_CopyCellAttributeRectFar
+	import Engine_DebugCreateWindow, UiWindow_CreateFar
+	import UiWork_Finalize, UiWork_FinalizeFar
+	import Ui_AdjustValueWithoutLimit, Ui_AdjustValueWithoutLimitFar
+	import UiText_OpenMessageWindow, UiText_OpenMessageWindowFar
+	import UiWork_IsComplete, UiWork_IsCompleteFar
+	import RenderOutput_PrepareForRedraw, RenderOutput_PrepareForRedrawFar
+	import UiText_DrawNumber, UiText_DrawNumberFar
+	import UiWork_ClearValueNameTables, UiWork_ClearValueNameTablesFar
+	import UiText_DrawQuantity, UiWork_PushValueSlotFar
+	import SaveState_ProcessSelectedSlot, SaveState_ProcessSelectedSlotFar
+	import Trade_GetOfferState, Trade_GetOfferStateFar
+	import UnitGet, UnitGetFar
+	import Engine_GameFlagIsSet, GameFlag_TestFar
+	import Engine_GameFlagSet, GameFlag_SetBitFar
+	import Engine_GameFlagClear, GameFlag_ClearBitFar
+	import GameFlag_GetByte, GameFlag_GetByteFar
+	import GameFlag_SetByte, GameFlag_SetByteFar
+	import Party_CountActiveOwners, Party_CountActiveOwnersFar
+	import Owner_RefreshActiveRatios, Owner_RefreshActiveRatiosFar
+	import Engine_EventBegin, Battle_ResetFar
+	import Engine_EventEnd, BattleFx_FinishActionFar
+	import Engine_EventChooseYesNo, Inventory_PromptAndSetObjectModeFar
+	import Object_GetById, Object_GetByIdFar
+	import Engine_ActorSetSpeed, ObjectMotion_SetSpeedParametersFar
+	import Engine_ActorWalkTo, ObjectMotion_ResetAndSetPositionInMode2Far
+	import Engine_ActorWaitForMove, ObjectMotion_CommitCurrentPositionAndActivateFar
+	import Engine_ActorFaceActor, ObjectMotion_SetAngleTowardFar
+	import Engine_EventSetMessage, Event_SetMessageIdFar
+	import Engine_EventOpenMessage, UiText_OpenMessageAtObjectFar
+	import Engine_EventShowMessage, BattleEv_RunWaitFar
+	import Event_SetDestination, Event_SetDestinationFar
+	import BattleFx_SetWeightedResult, BattleFx_SetWeightedResultFar
+	import Party_SetFields1ceAnd1d0, Party_SetFields1ceAnd1d0Far
+	import Event_SetDefeatDestination, Event_SetDefeatDestinationFar
+	import Engine_EventOpenScreen, Event_StartScreenTransitionFar
+	import Engine_EventWaitForScreen, Event_WaitTransitionFramesFar
+	import Engine_SanctumOpen, Shop_ConfirmActFar
+	import BattlePlacement_UpdateTimedEntriesTwentyTimes, BattlePlacement_UpdateTimedEntriesTwentyTimesFar
+	import DebugParty_LoadPreset, DebugParty_LoadPresetFar
+	import Engine_AudioPlayCue, AudioCommand_PlayFar

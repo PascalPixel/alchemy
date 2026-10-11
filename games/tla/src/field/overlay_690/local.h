@@ -39,7 +39,35 @@ void Func_020020f0(s32 id, s32 a);
 void Func_02002110(s32 a);
 s32 Func_020021a8(void);
 void Func_020021b0(s32 a);
+#include "frame.h"
+
+extern const u8 Data_0200226c[];
+extern u16 Data_02002ce8;
+
+void Func_02000758(s32 x, s32 y, s32 z);
+void Func_02000d14(void);
+void Func_02000ed0(void);
+void Func_02000f2c(void);
+void Func_02000fd0(void);
+void Func_0200122c(void);
+void Func_0200138c(void);
+void Func_02001770(void);
+void Func_02002118(void);
+void Func_02002148(void);
+void Func_02002168(s32 a);
+void Func_02002178(s32 a, s32 b, s32 c);
+void Func_02002190(const void *data);
+void Func_02002198(void);
 void Func_0200052c(void);
+void Func_02000714(struct ObjectRuntime *object);
+struct ObjectRuntime *Func_02001ff8(s32 kind, s32 x, s32 y, s32 z);
+void Func_02001fe0(struct ObjectRuntime *object, s32 a);
+void Func_02002000(struct ObjectRuntime *object);
+void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
+void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
+extern s32 Data_02002ce0;
+extern u16 Data_02002ce4;
+extern u16 Data_02002ce6;
 void Func_02000e30(void);
 void Func_02000e90(void);
 void Func_02001fa8(s32 a, s32 b, void (*callback)(void));
@@ -82,6 +110,30 @@ static __inline__ void SetPosCommit(s32 id, s32 x, s32 z)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     ObjectMotion_SetPositionAndCommit(id, x, z);
+}
+
+static __inline__ void Mark(s32 a, s32 b, s32 c)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02002178(a, b, c);
+}
+
+static __inline__ s32 Flag_Test(s32 flag)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    return GameFlag_Test(flag);
+}
+
+static __inline__ void Flag_Set(s32 flag)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    GameFlag_SetBit(flag);
+}
+
+static __inline__ void Flag_Clear(s32 flag)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    GameFlag_ClearBit(flag);
 }
 
 #endif

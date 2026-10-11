@@ -1209,34 +1209,22 @@ s32 Summon_IsEntryFlagged(s32 index)
 
 u32 Battle_GetSpriteFlagNibble(u32 index)
 {
-	/* FAKEMATCH: needed to match: separate result selection preserves extract/return move order */
-	u32 value;
-	u32 result;
+	u16 value;
 
 	if (index > 171)
 		return 1;
 	value = Summon_EntryTable[index].sprite_bits1;
-	if (value != 0)
-		result = value;
-	else
-		result = 1;
-	return result;
+	return value ? value : 1;
 }
 
 u32 Battle_GetSpriteFlagHighBits(u32 index)
 {
-	/* FAKEMATCH: needed to match: zero-result selection retains the compare and return move removed by a direct shift */
-	u32 value;
-	u32 result;
+	u16 value;
 
 	if (index > 171)
 		return 0;
 	value = Summon_EntryTable[index].sprite_bits5;
-	if (value != 0)
-		result = value;
-	else
-		result = 0;
-	return result;
+	return value ? value : 0;
 }
 
 s32 Summon_IsEntrySecondaryFlagged(s32 index)

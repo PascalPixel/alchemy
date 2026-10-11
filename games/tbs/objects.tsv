@@ -929,9 +929,7 @@ main	rom_tail_02	games/common/src/graphics/backdrop/violet_sky	.rodata
 main	rom_tail_02	games/common/src/graphics/backdrop/desert	.rodata
 main	rom_tail_02	games/common/src/graphics/backdrop/dusk_clouds	.rodata
 main	rom_tail_02	games/common/src/graphics/backdrop/aerial_view	.rodata
-main	rom_tail_02	games/common/src/graphics/slots/frame	.rodata
-main	rom_tail_02	games/common/src/graphics/slots/icons	.rodata
-main	rom_tail_02	games/tbs/src/graphics/slots/jackpot	.rodata
+main	rom_tail_02	games/tbs/src/graphics/slots/slots	.rodata
 main	rom_tail_02	games/common/src/graphics/lucky_dice/board	.rodata
 main	rom_tail_02	games/common/src/graphics/lucky_dice/sprites	.rodata
 main	rom_tail_02	games/common/src/graphics/battle_fx/tile_mask	.rodata

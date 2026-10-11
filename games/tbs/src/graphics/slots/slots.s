@@ -1,5 +1,7 @@
 	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
+	.include "games/common/src/graphics/slots/frame.s"
+	.include "games/common/src/graphics/slots/icons.s"
 	.global Slots_Jackpot
 Slots_Jackpot:
 	.ifeq EDITION_INTERNATIONAL

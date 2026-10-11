@@ -84,7 +84,7 @@ compiler-sources: compiler-source-check
 	$(MAKE) -C agscc -j$(JOBS) JOBS=$(JOBS)
 
 compiler-source-check:
-	@set -e; repo=agscc; approved=a5b70c21a48df6b5e14514d756036073d5bf1725; \
+	@set -e; repo=agscc; approved=1027438bfe99b14f28d0c5b18a34813a22ad9551; \
 	  test "$$(git rev-parse :$$repo)" = "$$approved" || { printf '%s gitlink is not approved\n' "$$repo"; exit 1; }; \
 	  test "$$(env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C "$$repo" rev-parse HEAD)" = "$$approved" || { printf '%s checkout is not approved\n' "$$repo"; exit 1; }; \
 	  state=$$(env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C "$$repo" status --porcelain --untracked-files=all -- . ':(exclude,glob)**/.DS_Store'); \

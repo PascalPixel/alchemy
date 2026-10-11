@@ -407,7 +407,16 @@ and flash). The `agscc` GPL submodule owns all three, with pret/agbcc as an
 unmodified nested submodule and GCC 2.95.2's archive pinned under `arm/`.
 Alchemy pins one toolchain revision and builds it through `make -C agscc`;
 compiler source and host patches stay outside this repository. No fourth
-generator is built or installed.
+generator is built or installed. agscc builds from that source on macOS and
+Linux, 32- and 64-bit, ARM and Intel, under one host configuration and one
+host model, with no Rosetta; its README lists the hosts tested and how.
+
+The set is frozen (Pascal, 2026-10-11: "This will be agscc with no changes
+for years"). No compiler research is started, and no compiler, option, route
+or agscc commit is added. The one exception is a host fix: a supported host
+on which the pinned source fails to build or gives different output, fixed
+in agscc and proven to leave every compile of the twelve editions
+byte-identical. A mismatch in game code is never a reason (K2, K3).
 
 - **K1** Game Thumb code compiles with agscc, based on GCC upstream revision
   `04179d4a511b13cef92eacdb10a51bcd124fea7a` (2000-07-31), and one option set
@@ -420,8 +429,12 @@ generator is built or installed.
 
   Both games' ARM C uses GCC 2.95.2 with the stock optimizer and ARM backend:
   `-O2 -mthumb-interwork -fomit-frame-pointer -fcall-used-r4`. Its GNU archive
-  is pinned by SHA-256 in agscc/arm. The native build has only the documented
-  cast-as-lvalue and Darwin declaration host fixes. The same route serves the
+  is pinned by SHA-256 in agscc/arm. It is built as a native program on every
+  host, with five documented host fixes in agscc/arm/host.patch (a
+  cast-as-lvalue, Darwin's `sys_nerr` declaration, the unprototyped generator
+  table, compile-time checks of the host model, and real constants copied one
+  operand slot at a time); none changes instruction selection, allocation or
+  scheduling. The same route serves the
   build, `alchemy diff --arm` and the ARM permuter. It replaces agbcc_arm;
   there is one ARM C generator and no alternate ARM library route.
 
@@ -576,8 +589,10 @@ Not rules; what earlier work measured.
 
 ## Commands
 
-Setup needs Apple Silicon macOS with Xcode's command-line tools, and Rust
-with Cargo. Put your own ROMs under `roms/` as `tbs-en.gba`,
+Setup needs macOS or Linux with a C compiler, make, git, curl, patch and xz,
+and Rust with Cargo; nothing needs Rosetta. The whole build is proven on
+Apple Silicon macOS and on 64-bit ARM Linux; agscc's README lists the other
+hosts its compilers were tested on. Put your own ROMs under `roms/` as `tbs-en.gba`,
 `tla-ja.gba` and so on; each is checked before use and none is ever
 committed (L1).
 

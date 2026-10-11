@@ -116,7 +116,7 @@ main	rom_main_00	games/common/src/system/save/erase_atmel_flash_sector	.rodata
 main	rom_main_00	games/common/src/system/save/erase_atmel_flash_block	.rodata
 main	rom_main_00	games/common/src/system/save/program_atmel_flash_sector	.rodata
 main	rom_main_00	games/common/src/system/save/program_atmel_flash_block	.rodata
-main	rom_main_01	games/tbs/src/system/far_call/field
+main	rom_main_01	games/tbs/src/system/far_call/FIELD
 main	rom_main_01	games/tbs/src/system/resource/colconv	.rodata
 main	rom_main_01	games/tbs/src/field/common/remap	.rodata
 main	rom_main_01	games/tbs/src/graphics/render/decode

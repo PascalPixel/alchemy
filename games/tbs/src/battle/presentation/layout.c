@@ -1,3 +1,4 @@
+#define OWN_Object_CreateFar
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

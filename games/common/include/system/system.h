@@ -65,8 +65,10 @@ s32				   Animation_LookupValueByKey(s32 key);
 #ifndef OWN_CountRemainingErasedFlashBytes
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
 #endif
+#if GAME_TLA
 s32	 Map_DisableUpdateCallbackFar(void);
 s32	 Map_EnableUpdateCallbackFar(void);
+#endif
 s32	 RunFlashEraseVerifier(u8 *, u8 *);
 void Runtime_WriteDebugTextTiles(const u8 *src);
 #ifndef OWN_StartFlashTimer

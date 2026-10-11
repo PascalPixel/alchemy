@@ -58,20 +58,18 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries);
 #ifndef OWN_BattlePres_BuildUnitEntries
 s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries);
 #endif
-#if GAME_TLA
-void BattlePres_SetActorModesFar(u16 *, s32);
-#endif
 s32	 BattlePres_WaitSync(void);
 s32	 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s32 count);
 void BattleUnit_ResetGuardLevels(void);
 void Camera_InitDefaultTransform(void);
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
-void Map_RenderAllAnimatedTileFramesFar(void **, s32);
-#ifndef OWN_Object_SetPositionAndResetMotionFar
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-#endif
 #ifndef OWN_ObjectDispatch_ApplyValueToChildrenFar
+#if GAME_TLA
+void BattlePres_SetActorModesFar(u16 *, s32);
+void Map_RenderAllAnimatedTileFramesFar(void **, s32);
+void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object, s32 value);
+#endif
 #endif
 void Owner_UpdateRatioPairFar(struct BtlUnit *, s32);
 void RunBattleEffect05(void);
@@ -445,7 +443,6 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 #ifndef OWN_Animation_ApplyChildPalette
 void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette);
 #endif
-void Animation_SetWorkEntryFar(struct AnimationEntry *effect, s32 entry_index);
 void Battle_AwardSpoils(void);
 s32	 Battle_ClearSerialTransferPayload(void);
 s32	 Battle_CollectPartyCommandsFar(void *entries, u16 *excluded_units, s32 excluded_count);
@@ -828,7 +825,6 @@ s32						GameFlag_GetByteFar(s32 id);
 s32						GameFlag_IsConditionActive(s32 condition);
 void					GameFlag_RefreshLureCapFar(void);
 struct AnimationObject *GetBattleEffectObject(s32 kind);
-s32						GetWorldMapTerrainBehaviorFar(void *, s32 *);
 void					Graphics_AdvancePaletteCycle(void);
 void					Graphics_ClearBg0Vofs(void);
 void					Graphics_ResetBg2Pa(void);
@@ -843,16 +839,6 @@ u32 Item_EncodeBankedId(u32 value);
 #endif
 s32	 Item_GetEquippedElementFar(s32 unit_id);
 void ItemIcon_LoadTilesFar(s32 item);
-void Map_ApplyWorkOriginAndSpanFar(void);
-s32	 Map_GetCellAttributeLowNibbleFar(s32 layer, s32 x, s32 z);
-void Map_InitializePerspectiveSceneFar(void);
-#ifndef OWN_Map_LoadAreaGraphicsFar
-void Map_LoadAreaGraphicsFar(void);
-#endif
-s32	 Map_LoadLayeredSceneFar(s32 index);
-s32	 Map_RenderAnimatedTileFramesForObjectFar(void *);
-s32	 Map_ResumeAnimationFar(void);
-void Map_UpdateCurrentTileBlockFar(void);
 void Map_UpdateWorldMapMarkers(void);
 void MapEvent_RunTileTriggerSequence(void);
 void Menu_RunSelectionFar(void);
@@ -868,14 +854,7 @@ void Object_EffectSpawnCallback(void);
 #ifndef OWN_Object_InitializeMode
 s32 Object_InitializeMode(struct AnimationObject *state, s32 flags);
 #endif
-#ifndef OWN_Object_SetMoveTargetFar
-void Object_SetMoveTargetFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-#endif
 void ObjectDispatch_ApplyValueToKind200Children(s32 value);
-void ObjectDispatch_InitFromTable0Far(struct FieldActor *actor);
-void ObjectDispatch_InitFromTable1Far(struct FieldActor *actor);
-void ObjectDispatch_InitFromTable2Far(struct FieldActor *actor);
-void ObjectDispatch_InitFromTable3Far(struct FieldActor *actor);
 #ifndef OWN_ObjectGroup_ApplyRandomChildValues
 void ObjectGroup_ApplyRandomChildValues(void *owner);
 #endif
@@ -883,10 +862,6 @@ void ObjectGroup_ApplyRandomChildValues(void *owner);
 void ObjectGroup_SetActionForOthers(
 	struct ObjectRuntime *excluded_object, s32 group_mode, s32 action);
 #endif
-#ifndef OWN_ObjectGroup_SetChildValueUnlessFifteenFar
-void ObjectGroup_SetChildValueUnlessFifteenFar(void *raw_parent, u32 value);
-#endif
-void					ObjectSystem_InitializeFar(s32 mode);
 s32						Owner_ApplyLevelGains(s32 owner, s32 levels);
 struct EnemyDefinition *Owner_GetRecordFar(s32 class_id);
 s32						Owner_GetValueIfLevelThresholdReachedFar(s32 unit_id, s16 *gains);
@@ -903,14 +878,9 @@ void Party_ReservedNoOp5B14(void);
 #endif
 void Party_ResolveTablePair(void);
 s32	 PartyInventory_AddFar(s32 item);
-void render_animated_tile_frameFar(u8 *record, u32 frame);
 void ResetSceneTransitionEffect(void);
 s32	 Resource_FindFreeSlot(s32 key);
 u16	 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
-s32	 ResourceMetadata_RegisterFar(struct AnimationObject *context, s32 effect_id);
-s32	 ResourceMetadata_SumCommandLengthsFar(s32 battle_value, s32 second, s32 third);
-void ResourceMetadata_UnregisterFar(struct AnimationObject *context, s32 entry_handle);
-s32	 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 value, u32 variant);
 void RunBattleEffect03(void);
 void RunBattleEffect07(void);
 void RunBattleEffect08(void);
@@ -919,13 +889,7 @@ void RunBattleEffect13(void);
 void RunBattleEffect16(void);
 s32	 RunBattlePresentation(struct BtlPlan *plan, s32 mode);
 void Runtime_ReleaseHeapBlock10(void);
-void Runtime_SetWorkTripleIfNonNegativeFar(s32 x, s32 y, s32 z);
 void Scene_ResolveInteractionResult(void);
-#ifndef OWN_ScriptObject_CheckOverlapFar
-s32 ScriptObject_CheckOverlapFar(struct ScriptObjectEntry *object, s32 *values);
-#endif
-struct FxObject *ScriptObject_FindOverlappingEntryFar(
-	struct FxObject *object, struct Output_08097f80 *position);
 void Summon_ClearWorkFields(void);
 s32	 Summon_GetEntryByte4(s32 index);
 s32	 Summon_GetEntryFlag1Field(s32 index);
@@ -947,7 +911,6 @@ void UiWindow_CreateWithLayoutBoundsFar(s32 value);
 void UiWork_InitializeFar(s32 mode);
 void UiWork_ResetFreeChannelFar(void);
 void UiWork_SetBusyFlagsFar(s32);
-void WorldMap_LoadGraphicsFar(s32 x, s32 z);
 #endif
 
 #if GAME_TLA

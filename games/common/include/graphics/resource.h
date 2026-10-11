@@ -2,13 +2,19 @@
 #define ALCHEMY_RESOURCE_H
 
 #include "types.h"
+#include "edition.h"
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 struct ResourceObject;
 struct ResourceObjectWork;
 struct ResourceObject *ResourceObject_Create(s32 resource);
 void				   ResourceObject_Release(struct ResourceObjectWork *work);
+#if GAME_TLA
 struct ResourceObject *ResourceObject_CreateFar(s32 resource);
 void				   ResourceObject_ReleaseFar(struct ResourceObjectWork *work);
+#endif
 
 void *Resource_GetTableEntry(s32 resource_id);
 

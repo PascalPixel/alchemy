@@ -1403,7 +1403,6 @@ void Camera_ApplyPhasedDelta(void);
 #ifndef OWN_Camera_ApplyShake
 void Camera_ApplyShake(s32 random_mask, u32 shake_range);
 #endif
-s32	 CheckMapPositionCellOccupiedFar(const s32 *position);
 void ConfigureAndPlaceActorFourteen(void);
 void DialogueLayout_ConfigureGroupOne(void);
 void DialogueLayout_ConfigureGroupThree(void);
@@ -1527,7 +1526,6 @@ void FourObjectMotion_InitializeBottomRow(void);
 s32				   FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative);
 void			   FourObjectMotion_UpdateAllPositions(void);
 void			   FourObjectMotion_UpdateBottomRow(void);
-s32				   GetMapCellCollisionFar(s32 layer, s32 x, s32 z);
 void			   FuneHeya_AdvanceWalkerAfterRise(u8 *o);
 void			   FuneHeya_AnnounceDeparture(void);
 void			   FuneHeya_AnnounceTurn(void);
@@ -1647,8 +1645,6 @@ void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *object, s3
 #ifndef OWN_ObjectDispatch_RegisterChildMetadata
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object, s32 value);
 #endif
-void ObjectDispatch_RegisterChildMetadataFar(struct DispatchObject *object, s32 value);
-void ObjectDispatch_WaitForValue16Far(struct ObjectRuntime *);
 void ObjectEffect_BeginContextEffect25(void);
 void ObjectEffect_BeginContextEffect26(void);
 void ObjectEffect_EndContextEffect(s32 arg0);
@@ -1693,7 +1689,6 @@ s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor);
 void				 RamakanSabaku_RaiseQuarterTriggers(void);
 void				 RamakanSabaku_RunSandstorm(void);
 void				 Resource3ba_NoOpCallback(void);
-void				 ResourceMetadata_ClearRecordFar(void *record);
 s32					 ResourceTable_CountFreeBlocks(void);
 void				 RunActorsEightAndNineMapEvent(void);
 void				 RunScene59Sequence(void);

@@ -285,7 +285,6 @@ void Resource_DecompressHalfwords(const void *source, void *destination);
 s32	 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
 s32	 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1);
 s32	 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index);
-void Runtime_RemapBytesByTableFar(void *, s32);
 void SceneTransform_ApplyPitch(s32 angle);
 #ifndef OWN_SceneTransform_ApplyPosition
 void SceneTransform_ApplyPosition(const s32 *position);

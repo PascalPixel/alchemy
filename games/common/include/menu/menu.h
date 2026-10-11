@@ -143,7 +143,6 @@ struct BtlAct *Ability_GetData(s32 action_id);
 s32	 Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
 s32	 AbilityMenu_BuildAvailableList(void);
 void AffineEffect_UpdateFrame(void);
-void AnimationObjects_SetActiveTimerStepsFar(struct AnimationObject *object, s32 arg);
 s32	 Audio_PlayCueReturnOne(s32 cue);
 void AudioCommand_WaitForStateByteClear(void);
 void BattleFx_ClearOwnedSlotFar(struct EffectSlot *effect);

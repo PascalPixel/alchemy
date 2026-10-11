@@ -12,13 +12,23 @@
 #include "edition.h"
 
 struct AffineTransform;
+struct AnimationEntry;
 struct AnimationMetadata;
+struct AnimationObject;
 struct BattleEffectArgument;
 struct BtlObj;
+struct DispatchObject;
 struct EffectLaunch;
 struct EffectPosition;
+struct FieldActor;
+struct FxObject;
 struct MotionObject;
+struct ObjectRuntime;
+struct Output_08097f80;
 struct RenderOutput;
+struct ResourceObject;
+struct ResourceObjectWork;
+struct ScriptObjectEntry;
 struct ShopCursor;
 struct TransitionActorList;
 
@@ -27,6 +37,7 @@ struct TransitionActorList;
 #define FAR_SLOT(target)
 
 #include "farcall/runtime.h"
+#include "farcall/field.h"
 #include "farcall/menu.h"
 #include "farcall/shop.h"
 #include "farcall/battle.h"

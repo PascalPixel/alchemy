@@ -93,9 +93,6 @@ main	rom_main_01	games/tbs/src/graphics/tile/convert_map
 main	rom_main_01	games/tbs/src/graphics/tile/copy_strided
 main	rom_main_01	games/tbs/src/field/common/object/update	.text
 main	rom_main_01	games/tbs/src/system/updfar	.text
-main	rom_main_01	games/tbs/src/system/resource/animate	.text
-main	rom_main_01	games/tbs/src/system/resource/object	.text
-main	rom_main_01	games/tbs/src/system/resource/resobj	.text
 main	rom_main_01	games/tbs/src/field/common/object/object	.text
 main	rom_main_01	games/common/src/field/common/script/script	.text
 main	rom_main_01	games/tbs/src/field/common/object/wait	.text

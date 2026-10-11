@@ -468,16 +468,6 @@ Func_020004fc:
 	.4byte gPartyState
 	.section .text.x020085d6,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x020085d8,"ax",%progbits
-	.global Func_020005d8
-	.thumb_func
-Func_020005d8:
-	ldr r3, .L_020085e0
-	str r0, [r3]
-	bx lr
-	.2byte 0x0000
-.L_020085e0:
-	.4byte Data_020026f4
 	.section .text.x020085e4,"ax",%progbits
 	.global Func_020005e4
 	.thumb_func

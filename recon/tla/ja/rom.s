@@ -1091,25 +1091,8 @@ Resource_LoadByMode:
 	.thumb_func
 Func_0803f234:
 	.incbin "baserom.gba", 0x0003f368, 0x000003dc
-	.section .rom.0003f744, "ax"
-	.global Func_0803f610
-	.type Func_0803f610, %function
-	.thumb_func
-Func_0803f610:
-	.incbin "baserom.gba", 0x0003f744, 0x00000004
-	.section .rom.0003f748, "ax"
-	.global Func_0803f614
-	.type Func_0803f614, %function
-	.thumb_func
-Func_0803f614:
-	.incbin "baserom.gba", 0x0003f748, 0x0000000c
-	.section .rom.0003f754, "ax"
-	.global Func_0803f620
-	.type Func_0803f620, %function
-	.thumb_func
-Func_0803f620:
-	.incbin "baserom.gba", 0x0003f754, 0x00000004
 	.section .rom.0003f758, "ax"
+	.balign 4
 	.global UiTextResource_Initialize
 	.type UiTextResource_Initialize, %function
 	.thumb_func

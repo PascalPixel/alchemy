@@ -18,4 +18,7 @@ extern char SceneId_Kabe9;
 extern char SceneId_Kabe10;
 extern char SceneId_Kabe11;
 
+extern char SceneId_Ov690Room3;
+extern char SceneId_Ov690Room5;
+
 #endif

@@ -88,7 +88,7 @@ main	rom_main_01	games/tbs/src/field/common/remap	.rodata
 main	rom_main_01	games/tbs/src/graphics/render/decode
 main	rom_main_01	games/tbs/src/graphics/render/decode_data
 main	rom_main_01	games/tbs/src/graphics/tile/draw_map
-main	rom_main_01	games/tbs/src/graphics/tile/vertices
+main	rom_main_01	games/tbs/src/graphics/tile/vertices	.text .padding
 main	rom_main_01	games/tbs/src/graphics/tile/convert_map
 main	rom_main_01	games/tbs/src/graphics/tile/copy_strided
 main	rom_main_01	games/tbs/src/field/common/object/update	.text
@@ -105,6 +105,7 @@ main	rom_main_01	games/tbs/src/field/common/map/perspect	.text
 main	rom_main_01	games/tbs/src/field/common/map/loadgfx	.text
 main	rom_main_01	games/tbs/src/lib/curve	.text
 main	rom_main_01	games/tbs/src/field/common/map/world	.text
+main	rom_main_01	games/tbs/src/graphics/tile/vertices	.rodata
 main	rom_main_01	games/tbs/src/system/resource/animdata	.rodata
 main	rom_main_01	games/tbs/src/graphics/render/facing	.rodata
 main	rom_main_01	games/tbs/src/field/common/object/objdata	.rodata
@@ -116,6 +117,7 @@ main	rom_main_01	games/tbs/src/graphics/tile/griddata	.rodata
 main	rom_main_01	games/tbs/src/field/common/object/objscrpt	.rodata
 main	rom_main_01	games/tbs/src/field/common/script/operand	.rodata
 main	rom_main_01	games/tbs/src/field/common/map/layered	.rodata
+main	rom_main_01	games/tbs/src/graphics/tile/vertices	.data
 main	rom_main_02	games/tbs/src/system/far_call/WINDOW
 main	rom_main_02	games/tbs/src/graphics/text/decode_symbol
 main	rom_main_02	games/tbs/src/graphics/text/lookup_symbol
@@ -396,8 +398,12 @@ main	rom_main_12	games/tbs/src/sound/track_slot_buffer	.text
 main	rom_main_12	games/tbs/src/battle/effect/colorfx	.rodata
 main	rom_main_13	games/tbs/src/system/far_call/SOUND
 main	rom_main_13	games/tbs/src/sound/sound	.text
-main	rom_main_13	games/tbs/src/sound/driver/umul_high
-main	rom_main_13	games/tbs/src/sound/driver/mixer_entry
+main	rom_main_13	games/tbs/src/sound/driver/umul_high	.text .padding
+main	rom_main_13	games/tbs/src/sound/driver/mixer_entry	.text .padding
+main	rom_main_13	games/tbs/src/sound/driver/umul_high	.rodata
+main	rom_main_13	games/tbs/src/sound/driver/mixer_entry	.rodata
+main	rom_main_13	games/tbs/src/sound/driver/umul_high	.data
+main	rom_main_13	games/tbs/src/sound/driver/mixer_entry	.data
 main	iwram_mixer	games/tbs/src/sound/driver/mixer
 main	iwram_high	games/tbs/src/system/ram/iwram_hi	.sym_iwram_high
 main	rom_tail_00	games/tbs/src/sound/driver/clear_buffer
@@ -692,12 +698,18 @@ main	rom_tail_00	games/common/sound/sequence/se_310	.rodata
 main	rom_tail_00	games/common/sound/sequence/se_311	.rodata
 main	rom_tail_01	games/tbs/src/system/far_call/RESOURCE
 main	rom_tail_01	games/tbs/src/system/resource/metadata_get_record	.text
+main	rom_tail_01	games/tbs/src/graphics/animref0	.text .padding
+main	rom_tail_01	games/tbs/src/graphics/animref1	.text .padding
+main	rom_tail_01	games/tbs/src/graphics/animref2	.text .padding
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata
-main	rom_tail_01	games/tbs/src/graphics/animref0
+main	rom_tail_01	games/tbs/src/graphics/animref0	.rodata
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata.a
-main	rom_tail_01	games/tbs/src/graphics/animref1
-main	rom_tail_01	games/tbs/src/graphics/animref2
+main	rom_tail_01	games/tbs/src/graphics/animref1	.rodata
+main	rom_tail_01	games/tbs/src/graphics/animref2	.rodata
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata.b
+main	rom_tail_01	games/tbs/src/graphics/animref0	.data
+main	rom_tail_01	games/tbs/src/graphics/animref1	.data
+main	rom_tail_01	games/tbs/src/graphics/animref2	.data
 main	rom_tail_02	games/tbs/src/system/resource/directory	.rodata
 main	rom_tail_02	games/tbs/src/graphics/ui/ui	.rodata
 main	rom_tail_02	games/tbs/src/graphics/title/title	.rodata

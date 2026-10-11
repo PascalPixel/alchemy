@@ -40,7 +40,7 @@ struct StagedActor
 	u8							transition_busy;
 	u8							unknown_63[3];
 	s16							vertical_motion_direction;
-	u8							unknown_68[4];
+	struct FieldActor		   *linked_object;
 	u32							movement_callback;
 };
 

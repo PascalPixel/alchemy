@@ -16,7 +16,7 @@ struct ArcEffectObject
 	u8						unknown_54[0x10];
 	s16						phase;
 	s16						step;
-	u8						unknown_68[4];
+	struct FieldActor	   *linked_object;
 	void				   *callback;
 };
 

@@ -91,7 +91,7 @@ struct FieldActor {
     u8 rise_enabled;
     u16 timer;
     u16 work;
-    u8 unknown_68[4];
+    struct FieldActor *linked_object;
     void (*update)(union FieldObject *object);
 };
 

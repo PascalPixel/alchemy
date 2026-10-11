@@ -1422,17 +1422,17 @@ void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor)
 
 void SceneEffect_StepEllipseOrbit(u8 *obj)
 {
-    u8 *anchor = (u8 *)((struct FieldActor *)obj)->linked_object;
+    struct FieldActor *anchor = ((struct FieldActor *)obj)->linked_object;
     u16 *angle = &((struct FieldActor *)obj)->timer;
     u16 theta = *angle;
     s32 x;
     s32 z;
     s32 tmp;
 
-    x = ((struct FieldActor *)anchor)->x.fixed + Engine_MathCos(theta)* 14;
+    x = anchor->x.fixed + Engine_MathCos(theta)* 14;
     ((struct FieldActor *)obj)->x.fixed = x;
 
-    z = ((struct FieldActor *)anchor)->z.fixed + Engine_MathSin(theta)* 10;
+    z = anchor->z.fixed + Engine_MathSin(theta)* 10;
     tmp = ((struct FieldActor *)obj)->x.fixed;
     ((struct FieldActor *)obj)->z.fixed = z;
     ((struct FieldActor *)obj)->target_z = z;

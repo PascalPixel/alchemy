@@ -316,6 +316,7 @@ s32 Resource_GetBuffer(s32 no, s32 src)
 #include "string.h"
 #include "io_reg.h"
 #include "low_runtime.h"
+#include "../irqlock.h"
 
 #define gRandomSeed (*(u32 *)&gRandomSeed)
 
@@ -389,24 +390,14 @@ s32 Scheduler_FindCallback(SchedulerCallback callback)
 
     result = -1;
     task = gSchedulerTaskTable;
-    /* FAKEMATCH: the two blocks that run once are meaningless. Without either, the interrupt-master register's address is loaded before the task table's. */
-    do {
-        saved_interrupt_master = REG_IME;
-        {
-            volatile u16 *ime = &REG_IME;
-
-            *ime = (u32)ime;
+    IRQ_LOCK(saved_interrupt_master);
+    for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
+        if (task->callback == (u32)callback) {
+            result = i;
+            break;
         }
-        do {
-            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
-                if (task->callback == (u32)callback) {
-                    result = i;
-                    break;
-                }
-            }
-        } while (0);
-        REG_IME = saved_interrupt_master;
-    } while (0);
+    }
+    IRQ_UNLOCK(saved_interrupt_master);
     return result;
 }
 
@@ -420,38 +411,28 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order)
     index = -1;
     task = gSchedulerTaskTable;
     (void)gSchedulerStatus;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
-    do {
-        saved_interrupt_state = REG_IME;
-        {
-            volatile u16 *ime = &REG_IME;
-
-            *ime = (u32)ime;
+    IRQ_LOCK(saved_interrupt_state);
+    for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
+        if (task->callback == (u32)callback) {
+            task->state = order;
+            index = i;
+            break;
         }
-        do {
-            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
-                if (task->callback == (u32)callback) {
-                    task->state = order;
-                    index = i;
-                    break;
-                }
+    }
+    task = gSchedulerTaskTable;
+    if (index == -1) {
+        for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
+            if (task->callback == 0) {
+                task->callback = (u32)callback;
+                task->state = order;
+                task->mask = 0;
+                index = i;
+                break;
             }
-            task = gSchedulerTaskTable;
-            if (index == -1) {
-                for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
-                    if (task->callback == 0) {
-                        task->callback = (u32)callback;
-                        task->state = order;
-                        task->mask = 0;
-                        index = i;
-                        break;
-                    }
-                }
-            }
-        } while (0);
-        Scheduler_SortTasks();
-        REG_IME = saved_interrupt_state;
-    } while (0);
+        }
+    }
+    Scheduler_SortTasks();
+    IRQ_UNLOCK(saved_interrupt_state);
     return index;
 }
 
@@ -468,26 +449,16 @@ s32 Scheduler_RemoveCallback(SchedulerCallback callback)
 
     result = -1;
     task = gSchedulerTaskTable;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
-    do {
-        saved_interrupt_master = REG_IME;
-        {
-            volatile u16 *ime = &REG_IME;
-
-            *ime = (u32)ime;
+    IRQ_LOCK(saved_interrupt_master);
+    for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
+        if (task->callback == (u32)callback) {
+            task->callback = 0;
+            task->state = 0x7fff;
+            result = i;
+            break;
         }
-        do {
-            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
-                if (task->callback == (u32)callback) {
-                    task->callback = 0;
-                    task->state = 0x7fff;
-                    result = i;
-                    break;
-                }
-            }
-        } while (0);
-        REG_IME = saved_interrupt_master;
-    } while (0);
+    }
+    IRQ_UNLOCK(saved_interrupt_master);
     return result;
 }
 
@@ -500,26 +471,16 @@ s32 Scheduler_EnableCallbacks(SchedulerCallback callback)
 
     result = -1;
     task = gSchedulerTaskTable;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
-    do {
-        saved_interrupt_master = REG_IME;
-        {
-            volatile u16 *ime = &REG_IME;
-
-            *ime = (u32)ime;
+    IRQ_LOCK(saved_interrupt_master);
+    for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
+        if (callback != 0) {
+            if (task->callback != (u32)callback)
+                continue;
         }
-        do {
-            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
-                if (callback != 0) {
-                    if (task->callback != (u32)callback)
-                        continue;
-                }
-                TASK_STATE_HIGH(task) |= 1;
-                result = i;
-            }
-        } while (0);
-        REG_IME = saved_interrupt_master;
-    } while (0);
+        TASK_STATE_HIGH(task) |= 1;
+        result = i;
+    }
+    IRQ_UNLOCK(saved_interrupt_master);
     return result;
 }
 
@@ -532,24 +493,14 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
 
     result = -1;
     task = gSchedulerTaskTable;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
-    do {
-        saved_interrupt_master = REG_IME;
-        {
-            volatile u16 *ime = &REG_IME;
-
-            *ime = (u32)ime;
+    IRQ_LOCK(saved_interrupt_master);
+    for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
+        if ((task->callback >> 24) == 2 && (task->mask & 1) == 0) {
+            TASK_STATE_HIGH(task) |= 1;
+            result = i;
         }
-        do {
-            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
-                if ((task->callback >> 24) == 2 && (task->mask & 1) == 0) {
-                    TASK_STATE_HIGH(task) |= 1;
-                    result = i;
-                }
-            }
-        } while (0);
-        REG_IME = saved_interrupt_master;
-    } while (0);
+    }
+    IRQ_UNLOCK(saved_interrupt_master);
     return result;
 }
 
@@ -562,25 +513,15 @@ s32 Scheduler_SetCallbackMask(SchedulerCallback callback, u32 mask)
 
     result = -1;
     task = gSchedulerTaskTable;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
-    do {
-        saved_interrupt_master = REG_IME;
-        {
-            volatile u16 *ime = &REG_IME;
-
-            *ime = (u32)ime;
+    IRQ_LOCK(saved_interrupt_master);
+    for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
+        if (task->callback == (u32)callback) {
+            task->mask = mask;
+            result = i;
+            break;
         }
-        do {
-            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
-                if (task->callback == (u32)callback) {
-                    task->mask = mask;
-                    result = i;
-                    break;
-                }
-            }
-        } while (0);
-        REG_IME = saved_interrupt_master;
-    } while (0);
+    }
+    IRQ_UNLOCK(saved_interrupt_master);
     return result;
 }
 
@@ -593,24 +534,14 @@ s32 Scheduler_DisableCallbacks(SchedulerCallback callback)
 
     result = -1;
     task = gSchedulerTaskTable;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
-    do {
-        saved_interrupt_master = REG_IME;
-        {
-            volatile u16 *ime = &REG_IME;
-
-            *ime = (u32)ime;
+    IRQ_LOCK(saved_interrupt_master);
+    for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
+        if (callback == 0 || task->callback == (u32)callback) {
+            TASK_STATE_HIGH(task)&= ~1;
+            result = i;
         }
-        do {
-            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
-                if (callback == 0 || task->callback == (u32)callback) {
-                    TASK_STATE_HIGH(task)&= ~1;
-                    result = i;
-                }
-            }
-        } while (0);
-        REG_IME = saved_interrupt_master;
-    } while (0);
+    }
+    IRQ_UNLOCK(saved_interrupt_master);
     return result;
 }
 
@@ -623,24 +554,14 @@ s32 Scheduler_DisableOverlayCallbacks(void)
 
     result = -1;
     task = gSchedulerTaskTable;
-    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
-    do {
-        saved_interrupt_master = REG_IME;
-        {
-            volatile u16 *ime = &REG_IME;
-
-            *ime = (u32)ime;
+    IRQ_LOCK(saved_interrupt_master);
+    for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
+        if ((task->callback >> 24) == 2) {
+            TASK_STATE_HIGH(task)&= ~1;
+            result = i;
         }
-        do {
-            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
-                if ((task->callback >> 24) == 2) {
-                    TASK_STATE_HIGH(task)&= ~1;
-                    result = i;
-                }
-            }
-        } while (0);
-        REG_IME = saved_interrupt_master;
-    } while (0);
+    }
+    IRQ_UNLOCK(saved_interrupt_master);
     return result;
 }
 

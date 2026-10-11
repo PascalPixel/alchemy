@@ -27,6 +27,7 @@
 #include "oam.h"
 #include "map_scroll.h"
 #include "heap_state.h"
+#include "irqlock.h"
 
 extern u8 gDebugMode;
 extern u8 gCpuLoadDisplayEnabled;
@@ -293,17 +294,11 @@ static __inline__ void System_SoftReset(void)
 void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
 {
     if (irq <= 13) {
-        volatile u16 *ime_reg = &REG_IME;
         u32 ime;
         u32 bit;
         u32 ie;
 
-        ime = *ime_reg;
-        /* FAKEMATCH: the address value leaves IME bit 0 clear and keeps the measured address-register store. A plain zero store adds a literal load and splits the pool (124 to 136 bytes). */
-        *ime_reg = (u32)ime_reg;
-        /* FAKEMATCH: an empty do-while keeps the IE address load after the IME write */
-        do {
-        } while (0);
+        IRQ_LOCK(ime);
         bit = 1 << irq;
         ie = REG_IE & ~bit;
         if (handler != 0)
@@ -327,7 +322,7 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
             gIrqHandlers[irq] = handler;
         else
             gIrqHandlers[irq] = Runtime_IgnoreInterrupt;
-        REG_IME = ime;
+        IRQ_UNLOCK(ime);
     }
 }
 

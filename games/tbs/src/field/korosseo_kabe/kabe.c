@@ -42,7 +42,6 @@ void Event_SetDefeatDestination(s32 scene, s32 entrance);
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
 void Korosseo_SelectSoloCompetitor(s32 index);
 void Korosseo_RunGreetScene(s32 actor);
-void Map_UpdateCellRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 
 
 void battle_owner_69();
@@ -745,7 +744,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
     switch (gGameState.entrance) {
     case 1:
         FieldScene_BuildDescriptorAndInstallTask(0, 8, 5, 0x680000, 0x1000000, 40, 41);
-        Call6(Map_UpdateCellRect, 127, 0, 1, 2, 79, 6);
+        Map_CopyCellsTo(127, 0, 1, 2, 79, 6);
         Engine_ActorDestroy(34);
         Engine_ActorDestroy(35);
         Engine_ActorDestroy(36);

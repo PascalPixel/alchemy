@@ -18,7 +18,10 @@ order, write the ROM image beside the linker map and fix its cartridge header\n\
 (Nintendo logo and complement check) as pret's gbafix does. Japanese TBS is\n\
 the default.\n\
 --keep-going writes the\n\
-image despite link errors, for locating differences; it never passes a compare.";
+image despite link errors, for locating differences; it never passes a compare.\n\
+A build prints settled=1 and stops at once when no file it reads and none it\n\
+made has changed on disk since it last finished; ALCHEMY_REVERIFY=1 makes it\n\
+check everything by content regardless, as `alchemy verify` always does.";
 
 pub fn run(args: &[String]) -> Result<(), String> {
     let mut target = decomp_target(None)?;
@@ -41,6 +44,18 @@ pub fn run(args: &[String]) -> Result<(), String> {
     }
     let root = crate::compiler::routing::root();
     let output = output.unwrap_or_else(|| PathBuf::from(target.output_dir));
+    // The ordinary build of an edition stops here when nothing it reads and
+    // nothing it made has changed since it last finished (see settled.rs).
+    let place = root.join(&output);
+    let name = target.id.as_str();
+    let before = (script.is_none() && !keep_going).then(|| crate::settled::inputs(root));
+    if let Some(before) = before.as_ref().filter(|_| std::env::var_os("ALCHEMY_REVERIFY").is_none()) {
+        if let Some(printed) = crate::settled::holds(&place, name, before) {
+            print!("settled=1\n{printed}");
+            return Ok(());
+        }
+    }
+    crate::settled::forget(&place);
     clear_unindexed(&root.join(&output), root);
     let script = match script {
         Some(script) => script,
@@ -54,11 +69,18 @@ pub fn run(args: &[String]) -> Result<(), String> {
         target.id.as_str(),
         keep_going,
     )?;
-    println!("objects={}", linked.objects.len());
-    println!("steps={}", linked.steps);
-    println!("preprocessed={}", crate::reads::PREPROCESSED.load(Ordering::Relaxed));
-    println!("map={}", linked.map.display());
-    println!("rom={}", linked.image.display());
+    let printed = |steps: usize, preprocessed: usize| {
+        format!(
+            "objects={}\nsteps={steps}\npreprocessed={preprocessed}\nmap={}\nrom={}\n",
+            linked.objects.len(),
+            linked.map.display(),
+            linked.image.display()
+        )
+    };
+    print!("settled=0\n{}", printed(linked.steps, crate::reads::PREPROCESSED.load(Ordering::Relaxed)));
+    if let Some(before) = &before {
+        crate::settled::record(root, &place, name, before, &printed(0, 0), crate::settled::SETTLING);
+    }
     Ok(())
 }
 

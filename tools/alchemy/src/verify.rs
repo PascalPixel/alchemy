@@ -276,6 +276,9 @@ fn run_gate(
             }
         }
     }
+    // A gate proves its builds by content: no build under it may stop early
+    // because its files merely look unchanged (settled.rs).
+    command.env("ALCHEMY_REVERIFY", "1");
     let status = command
         .current_dir(root)
         .args(make_arguments(executable, gate))

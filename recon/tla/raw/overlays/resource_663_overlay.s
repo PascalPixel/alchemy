@@ -250,88 +250,6 @@ Func_0200015c:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
 	.4byte 0xffff0000
-	.section .text.x02008348,"ax",%progbits
-	.global Func_02000348
-	.thumb_func
-Func_02000348:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r4, [r3, #32]
-	cmp r4, #0
-	bne .L_02008358
-	movs r0, #0
-	b .L_0200837e
-.L_02008358:
-	cmp r0, #2
-	bhi .L_0200836c
-	lsls r3, r0, #3
-	subs r3, r3, r0
-	movs r0, #156
-	lsls r3, r3, #3
-	lsls r0, r0, #1
-	adds r3, r3, r0
-	ldr r4, [r4, r3]
-	b .L_0200836e
-.L_0200836c:
-	ldr r4, .L_02008380
-.L_0200836e:
-	lsls r3, r2, #7
-	adds r3, r1, r3
-	lsls r3, r3, #2
-	adds r4, r4, r3
-	ldrb r0, [r4, #2]
-	ldrb r3, [r4, #3]
-	lsls r0, r0, #8
-	orrs r0, r3
-.L_0200837e:
-	pop {pc}
-.L_02008380:
-	.4byte gMapCellBuffer
-	.section .text.x02008384,"ax",%progbits
-	.global Func_02000384
-	.thumb_func
-Func_02000384:
-	push {r5, lr}
-	adds r5, r1, #0
-	adds r1, r3, #0
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r4, [r3, #32]
-	cmp r4, #0
-	bne .L_02008398
-	movs r0, #0
-	b .L_020083c4
-.L_02008398:
-	cmp r0, #2
-	bhi .L_020083ac
-	lsls r3, r0, #3
-	subs r3, r3, r0
-	movs r0, #156
-	lsls r3, r3, #3
-	lsls r0, r0, #1
-	adds r3, r3, r0
-	ldr r4, [r4, r3]
-	b .L_020083ae
-.L_020083ac:
-	ldr r4, .L_020083c8
-.L_020083ae:
-	lsls r3, r2, #7
-	adds r3, r5, r3
-	lsls r3, r3, #2
-	adds r4, r4, r3
-	ldrb r0, [r4, #2]
-	ldrb r3, [r4, #3]
-	lsls r0, r0, #8
-	orrs r0, r3
-	asrs r3, r1, #8
-	strb r3, [r4, #2]
-	strb r1, [r4, #3]
-.L_020083c4:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_020083c8:
-	.4byte gMapCellBuffer
 	.section .text.x020083e8,"ax",%progbits
 	.balign 4
 	.global Func_020003e8
@@ -2759,32 +2677,6 @@ Func_02001560:
 	.4byte gInput
 .L_020098a8:
 	.4byte 0xfff00000
-	.section .text.x020098ac,"ax",%progbits
-	.global Func_020018ac
-	.thumb_func
-Func_020018ac:
-	push {lr}
-	ldr r3, [r1]
-	ldr r4, [r0]
-	ldr r2, [r1, #8]
-	subs r4, r4, r3
-	ldr r3, [r0, #8]
-	asrs r4, r4, #16
-	subs r3, r3, r2
-	asrs r3, r3, #16
-	adds r2, r3, #0
-	muls r2, r3
-	adds r0, r4, #0
-	muls r0, r4
-	adds r3, r2, #0
-	adds r0, r0, r3
-	ldr r3, .L_020098d4
-	mov lr, r3
-	.2byte 0xf800
-	pop {pc}
-	.2byte 0x0000
-.L_020098d4:
-	.4byte IwramFillWords + 0x74
 	.section .text.x020098d8,"ax",%progbits
 	.global Func_020018d8
 	.thumb_func

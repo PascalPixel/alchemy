@@ -45,8 +45,6 @@ main	rom_main_01	games/tbs/src/system/far_call/FIELD
 main	rom_main_01	games/tbs/src/system/resource/colconv
 main	rom_main_01	games/tbs/src/field/common/remap
 main	rom_main_01	games/tbs/src/graphics/render/decode
-main	rom_main_01	games/tbs/src/graphics/render/decode_data
-main	rom_main_01	games/tbs/src/graphics/tile/draw_map
 main	rom_main_01	games/tbs/src/graphics/tile/vertices
 main	rom_main_01	games/tbs/src/graphics/tile/convert_map
 main	rom_main_01	games/tbs/src/field/common/object/update
@@ -67,8 +65,6 @@ main	rom_main_02	games/tbs/src/system/far_call/WINDOW
 main	rom_main_02	games/tbs/src/graphics/text/decode_symbol
 main	rom_main_02	games/tbs/src/graphics/text/moji	.text
 main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp
-main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp_nibbles	.text
-main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp_loop
 main	rom_main_02	games/tbs/src/graphics/tile/expand_masked_masks	.text
 main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque
 main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque_masks	.text
@@ -129,10 +125,6 @@ main	rom_main_06	games/tbs/src/menu/shop/shopspr
 main	rom_main_06	games/tbs/src/menu/shop/shopdata
 main	rom_main_07	games/tbs/src/system/far_call/BATTLE
 main	rom_main_07	games/tbs/src/graphics/tile/decode
-main	rom_main_07	games/tbs/src/graphics/tile/decpool
-main	rom_main_07	games/tbs/src/graphics/tile/bit_dispatch
-main	rom_main_07	games/tbs/src/graphics/tile/bittable
-main	rom_main_07	games/tbs/src/graphics/tile/bit_commands
 main	rom_main_07	games/tbs/src/battle/tgtexec
 main	rom_main_07	games/tbs/src/battle/btldata
 main	rom_main_07	games/tbs/src/battle/presentation/advarrow
@@ -146,10 +138,7 @@ main	rom_main_08	games/tbs/src/battle/effect/sentou_kouka_gousei_iro
 main	rom_main_08	games/tbs/src/battle/effect/koukabit
 main	rom_main_09	games/tbs/src/system/far_call/SCROLL
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_sekiwa
-main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_link
-main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_dispatch
-main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_tables
-main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_commands
+main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai
 main	rom_main_09	games/tbs/src/graphics/tile/slides
 main	rom_main_09	games/tbs/src/graphics/display/staffrol
 main	rom_main_10	games/tbs/src/system/far_call/PALETTE

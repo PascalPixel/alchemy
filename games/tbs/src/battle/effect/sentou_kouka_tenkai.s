@@ -1,3 +1,45 @@
+.syntax unified
+@ A table of the handwritten routine beside it: it lives in the routine's text.
+	.text
+	.arm
+.L_bias:
+	.4byte 0x80808080
+.L_dispatch_base:
+	.4byte SentouKouka_TenkaiCaseTable
+@ C2: Shared decoder commands reuse live r0/r2/r3, change unsaved r5 and use
+@ fp as a mask. ldr pc jumps into those commands in sentou_kouka_tenkai.s
+@ and sentou_kouka_tenkai_commands.s.
+@ In this file itself: it is a two-instruction fragment of that decoder, with
+@ no prologue and no return of its own, and its tell is the computed pc into
+@ code. and ip, r3, #7 / ldr pc, [pc, ip, lsl #2] is unconditional and has
+@ no bounds test, where the compiler's casesi always emits cmp, ldrls pc and a
+@ default branch; the table it indexes starts after the nop, in the next
+@ object.
+.syntax unified
+	.arm
+	.global SentouKouka_TenkaiYomi
+SentouKouka_TenkaiYomi:
+	and	ip, r3, #7
+	ldr	pc, [pc, ip, lsl #2]
+AlchemyUncredited_080f0100:
+	nop
+AlchemyUncreditedEnd_080f0100:
+.syntax unified
+@ A table of the handwritten routine beside it: it lives in the routine's text.
+	.text
+	.arm
+.L_dispatch_runtime:
+	.space 32, 0
+	.global SentouKouka_TenkaiCaseTable
+SentouKouka_TenkaiCaseTable:
+	.4byte SentouKouka_TenkaiCase2
+	.4byte SentouKouka_TenkaiCase4Plus
+	.4byte SentouKouka_TenkaiCase8
+	.4byte SentouKouka_TenkaiCase6Plus
+	.4byte SentouKouka_TenkaiCase2
+	.4byte SentouKouka_TenkaiCase4Minus
+	.4byte SentouKouka_TenkaiCase10
+	.4byte SentouKouka_TenkaiCase6Minus
 @ C2: entries share live r0/r2/r3 decoder state with their caller; delta
 @ entries update unsaved r5 and use r11/fp as a data mask.
 .syntax unified

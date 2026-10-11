@@ -39,6 +39,13 @@ void Scheduler_RemoveCallbackFar(void (*callback)(void));
 
 extern const u8 Data_02005534[];
 
+extern s32 Data_02006710;
+
+void Func_02001190(s32 a, s32 b);
+void Func_020024ac(void);
+void Func_02004e30(s32 a, s32 b);
+void Func_02004e90(s32 a);
+void Func_02004ea8(s32 a, s32 b, s32 c);
 void Func_02004934(s32 a, s32 b, s32 owner);
 void Func_02004c98(struct ObjectRuntime *object, s32 a);
 void Func_02004ca0(struct ObjectRuntime *object, const void *data);

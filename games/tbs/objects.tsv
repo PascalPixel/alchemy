@@ -287,7 +287,6 @@ main	rom_main_04	games/tbs/src/field/common/object/context	.text
 main	rom_main_04	games/tbs/src/graphics/display/scroll_build_hblank_page	.text
 main	rom_main_04	games/tbs/src/graphics/display/scroll_initialize_hblank_dma	.text
 main	rom_main_04	games/tbs/src/graphics/display/scroll_disarm_hblank_dma	.text
-main	rom_main_04	games/tbs/src/battle/effect/storm_flash	.text
 main	rom_main_04	games/tbs/src/field/common/effect/fieldgfx	.text
 main	rom_main_04	games/common/src/field/common/object/motion_move_halfway_toward_target	.text
 main	rom_main_04	games/tbs/src/battle/effect/radpart	.text

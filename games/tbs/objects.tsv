@@ -1228,8 +1228,6 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 389	text	games/tbs/src/field/goma_hashira/entry	.text
 389	text	games/tbs/src/field/common/object/staged_actor	.text
 389	text	games/tbs/src/field/goma_hashira/hashira	.text
-389	text	games/tbs/src/field/goma_hashira/pillar	.text
-389	text	games/tbs/src/field/goma_hashira/sequence	.text
 389	text	games/tbs/src/field/goma_hashira/import	.text
 389	text	libgcc.a:_call_via_rX	.text
 389	text	games/tbs/src/field/goma_hashira/data	.data

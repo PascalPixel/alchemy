@@ -313,7 +313,6 @@ void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 
 void UiWork_InitializeWithResourceCountersFar(void);
 s32	 BattleEffect_LoadWorkFar(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
-void UiText_DrawNumberInWindowFar(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 
 #define UiText_DrawNumberInWindowFar \
 	((void (*)(s32, s32, struct UiWindow *, s32, s32))UiText_DrawNumberInWindowFar)

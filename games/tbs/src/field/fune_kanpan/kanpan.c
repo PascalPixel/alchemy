@@ -256,7 +256,6 @@ struct FlyBy {
 
 extern struct EventWork *gEventWork;
 void ObjectMotion_SetSpeedParameters();
-void ObjectMotion_CenterOnColumn();
 
 void Battle_ResetEffectCounter();
 void FieldScene_RunStepThen10(s32 a);

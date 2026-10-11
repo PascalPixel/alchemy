@@ -76,15 +76,13 @@
 #include "resmenu.h"
 #include "btlsmn.h"
 #include "serial_runtime.h"
+#include "battle_effect_work.h"
 
 struct RenderOutput *CreateSideObject( s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5);
 void RenderOutput_PrepareForRedraw(struct UiWindow *window);
 void UiGlyph_ResetWorkState(void);
-void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot);
-void UiTextResource_SetPosition(struct MenuSprite *obj, s32 x, s32 y);
 void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3);
 void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
 struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed);
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *spacing, s32 flags);
@@ -5263,13 +5261,10 @@ void Resource_ScheduleOwnerReset(void)
     Scheduler_RemoveCallback(MenuSelection_DrawFrame);
 }
 
-s32 GameFlag_TestFar(s32 flag);
-
 #define UiText_DrawCharacterAtOffset ((void (*)(s32, struct UiWindow *, s32, s32))UiText_DrawCharacterAtOffset)
 #define Menu_AnimatedCursorTiles ((u8 *)&Menu_AnimatedCursorTiles)
 
 #define Menu_CursorObjectTiles ((u8 (*))&Menu_CursorObjectTiles)
-
 
 struct Work;
 void WaitFrames(s32);
@@ -8360,7 +8355,6 @@ void UiText_DrawPrefixedNumberAtOffset(
 
 #define Resource_LoadByMode ((int (*)())Resource_LoadByMode)
 
-struct RenderOutput *RenderOutput_AcquireFree(void);
 #define RenderOutput_AppendToList ((s32 (*)( ))RenderOutput_AppendToList)
 
 struct RenderOutput *RenderOutput_Create(
@@ -8786,7 +8780,6 @@ s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 va
 }
 
 void UiWindow_DrawFrame(s32, s32, u32, u32);
-void UiText_DrawStringAtOffset(u8 *, struct RenderInput *, s32, s32);
 s32 __divsi3(s32, s32);
 #define UiText_DrawPrefixedNumberAtOffset ((s32 (*)())UiText_DrawPrefixedNumberAtOffset)
 
@@ -9403,7 +9396,6 @@ s32 SaveState_DeleteSelectedSlot(void)
 #include "types.h"
 #include "fixed_math.h"
 
-
 //--------------------------------------------------------------------------
 // スケジューラから呼ばれ、4 色を位相をずらした sin で明滅させる
 // s = sin / 16384 として RGB555 で 赤 22 + 2s・緑 16 + s・青 20 + s
@@ -9455,7 +9447,6 @@ void PaletteGlow_UpdateSine(void)
 #include "callback_scheduler.h"
 #include "tbs_edition.h"
 #include "global_cells.h"
-
 
 void Scheduler_ScheduleCallbackAAfterFrames(void)
 {
@@ -9512,8 +9503,6 @@ void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width, 
 }
 
 #endif
-
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
 
 struct PlacementDescriptor {
     u8 pad_00[0x2c];
@@ -10727,7 +10716,6 @@ finish:
 }
 #else
 
-
 s32 NameEntry_EditOwnerName(s32 entry)
 {
     struct RenderInput *label;
@@ -11653,7 +11641,6 @@ void Ui_RunCopiedRoutine(GlyphTransfer *work)
 
 #define UiText_DrawStringAtOffset ((void (*)(u8 *, s32, s32, s32))UiText_DrawStringAtOffset)
 
-
 //--------------------------------------------------------------------------
 // 左上に 6x4 のウィンドウを開いて見出しを書き、そのハンドルを返す
 //--------------------------------------------------------------------------
@@ -12552,7 +12539,6 @@ struct StatusCursor {
     s32 row;
 };
 void UiWindow_MarkVisibleTileAttributes(void);
-s32 Party_SumDjinnCountsFar(s32 request);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
 s32 System_GetLanguage(void);
 #endif
@@ -13233,9 +13219,6 @@ struct BattleMenuSelection {
     u32 selected[8];
 };
 
-LAYOUT_SIZE_GUARD(BattleMenuSelection_Size, struct BattleMenuSelection, 0x104);
-LAYOUT_OFFSET_GUARD(BattleMenuSelection_Selected, struct BattleMenuSelection, selected, 0xe4);
-
 #define MENU_STATE ((struct BattleMenuSelection *)gLinkCountdownWork)
 #define CURSOR_OWNER (*(struct PartyStatusWindow **)gPartyStatusWork)
 
@@ -13243,7 +13226,6 @@ extern const u8 DjinnMenu_BlinkTile[32];
 extern const u8 DjinnMenu_ElementXOffsets[4];
 extern const u8 DjinnMenu_ElementYOffsets[4];
 
-void RenderOutput_ClearList(void *work);
 void UiWork_SetAltFlagAndClearTable(s32 flag);
 
 s32 Battle_SelectAbility(s32 owner, s32 unused)
@@ -13730,7 +13712,6 @@ enum
 };
 
 #define SUMMON_END 32 // 召喚リストの終わり
-
 
 s32	 Trade_ListFlaggedEntriesFar(u8 *ids);
 struct ItemDefinition *Item_GetDirectFar(s32 item);
@@ -15684,9 +15665,7 @@ done:
 
 #if EDITION_INTERNATIONAL
 
-
 #else
-
 
 #endif
 
@@ -15814,7 +15793,6 @@ struct LinkRoundState {
 
 extern volatile u16 gLinkStatus;
 void UpdateLinkSessionCountdown(void);
-s32 Battle_ClassifyEntryKind(const struct BtlAct *entry);
 s32 UiText_ShowLocalizedMessageAndWait(void);
 struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 id, s32 x, s32 y);
 s32 Ui_RunSelectionScreen(s32 mode);
@@ -17419,7 +17397,6 @@ s32 Menu_SelectEntry20To21(s32 sel)
 
 void Event_SetDestinationFar(s16 primary, s16 secondary);
 void UiText_DrawNumber(s32 n, s32 digits, s32 work, s32 x, s32 y);
-void UiText_DrawString(u8 *str, s32 work, s32 x, s32 y);
 
 struct TextObject {
     u8 storage[12];

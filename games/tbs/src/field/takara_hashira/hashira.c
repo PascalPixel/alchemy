@@ -23,6 +23,7 @@
 #include "text/msg_ids.h"
 #include "call.h"
 #include "field_service.h"
+#include "irq.h"
 
 s32 FieldScene_QueryActorFootprint();
 s32 FieldScene_RunScene3b3SequenceD();
@@ -93,7 +94,6 @@ s32 FieldScene_QueryActorFootprint();
 void Vector_AddPolarOffset();
 s32 Object_CheckMovementCollision();
 void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane, s32 destX, s32 destY);
-void Runtime_SetIrqHandler();
 s32 FieldScene_RunScene3b3SequenceD();
 void TakaraHashira_UpdatePillarActors();
 void FieldScene_RunScene3b3SequenceE();
@@ -162,7 +162,6 @@ struct MapCellFields {
 };
 
 s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no);
-
 
 void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 {
@@ -339,7 +338,6 @@ void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
 }
 
 #define OverlayObject_PrepareObject ((s32 (*)(s32,s32,s32,s32))OverlayObject_PrepareObject)
-
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 

@@ -22,6 +22,8 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "call.h"
+#include "disptran.h"
+#include "effect_slot.h"
 
 typedef struct
 {
@@ -59,11 +61,9 @@ void Battle_ResetEffectCounter();
 void Motion_LaunchFromFocusedObject();
 void Audio_PlayCueFromEventWork();
 void ArutamiraDou_SettleActorOnCell(void);
-void DisplayTransition_InitializeBattleEffectState(s32);
 void ArutamiraDou_ApplyFadeBlend(void);
 void ArutamiraDou_SetFadeLevel(s32 level);
 s32	 Object_CheckMovementCollision(struct FieldActor *actor, void *position);
-s32	 BattleFx_HasReachedTarget(void *object);
 void BattleFx_ClearOwnedSlot(void *object);
 
 s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
@@ -762,8 +762,6 @@ void	  Audio_PlayCueFromEventWork(void);
 extern u8 gFrameTick[];
 
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
-void EffectSlot_SetCallback(u8 *object, void (*update)());
-void EffectSlot_SetObjectMode(u8 *object, s32 mode);
 s32	 Math_DivideUnsigned(s32 value, s32 divisor);
 
 void FieldScene_RunExtendedActorPresentation(void)

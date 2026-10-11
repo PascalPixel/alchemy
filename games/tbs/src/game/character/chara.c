@@ -40,7 +40,6 @@
 #include "btlpty.h"
 
 const u16 *Djinn_GetDefinition(u32 group, u32 index);
-s32 Owner_GetDefaultElement(struct BtlUnit *state);
 s32 Party_AddActiveOwner(s32 value);
 
 struct StatWork {
@@ -2060,7 +2059,6 @@ extern struct ElementLevelBonus Element_PowerResistByLevel[16];
 #ifdef MODERN
 // called before its definition below, which modern GCC refuses for an
 // implicit int declaration of a u32 function
-u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2]);
 #endif
 
 #if EDITION_INTERNATIONAL

@@ -68,7 +68,6 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 
-
 union DriftingObject {
     struct FieldActor actor;
     struct OverlayEffectMotion motion;
@@ -81,7 +80,6 @@ s32 ArcTan2(s32 x, s32 y);
 
 s32 SceneActor_CheckFacingAndRange(struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force);
 void SceneActor_RunActorStep(s32 actor);
-void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
 void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect);
 
 s32 SceneActor_UpdateProximityToLeader(struct FieldActor *self)

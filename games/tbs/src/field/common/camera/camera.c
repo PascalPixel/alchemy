@@ -15,6 +15,7 @@
 #include "iwram_call.h"
 #include "scene.h"
 #include "edition.h"
+#include "callback_scheduler.h"
 
 #define SceneTransform_ApplyPosition ((void (*)(void*))SceneTransform_ApplyPosition)
 
@@ -205,13 +206,8 @@ extern char ResourceId_LuckyDiceBoard;
 extern char ResourceId_LuckyDiceSprites;
 
 void Camera_ResetSceneDefaults(void);
-void Scheduler_ResetTaskTable(void);
-void Render_ResetTransformState(void);
-s32	 Render_ProjectPoint(void *point, s32 *out);
 void UiWork_InitializeWithResourceCountersFar(void);
-void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiWork_FinalizeFar(s32 window, s32 mode);
-void Party_AdjustCoinsFar(s32 amount);
 s32	 Party_GetAverageLevelFar(void);
 void AudioCommand_PlayFar(s32 cue);
 #endif

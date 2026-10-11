@@ -4,6 +4,7 @@
 #include "field_scene.h"
 #include "objcmd.h"
 #include "text/msg_ids.h"
+#include "field.h"
 
 void FieldScene_RunActor181Scene(void);
 void FieldScene_RunFlag807BranchSequence(void);
@@ -36,7 +37,6 @@ void SceneState_RunTablePairByActor22State(void);
 void SceneState_RunTablePairWhenActor22State1(void);
 void SceneState_RunTablePairWhenActor22State2(void);
 void SceneState_Send210AndApplyRect(void);
-void SceneState_Send210AndApplyRectAt40x84(void);
 void SceneState_SetFlag204AndConfigureRegion49_46(void);
 void SceneState_SetValue123Mode3(void);
 void SceneState_SetValue123Mode4(void);

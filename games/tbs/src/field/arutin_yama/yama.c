@@ -32,6 +32,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "irq.h"
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -66,7 +67,6 @@ extern s32 ArutinYama_LeafMode;
 extern s32 ArutinYama_LeafOrigin[3];
 
 s32	 ArcTan2(s32, s32);
-void Runtime_SetIrqHandler();
 void SetMapCellCollision();
 s32	 Object_SetActionCallbackAndRefreshById();
 s32	 Battle_GetWorkObject1e0();

@@ -54,9 +54,6 @@
 #include "btlpty.h"
 #include "b5_context.h"
 
-void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode);
-void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point, s32 *scale, s32 mode, s32 depth);
-
 //--------------------------------------------------------------------------
 // source を destination に展開して destination を返す
 // source[0・1] : コマンドの列までのオフセット（0 なら圧縮なしで source + 2 を返す）
@@ -1102,8 +1099,6 @@ struct ResourceObjectWork
 
 typedef char ResourceObjectWork_size[sizeof(struct ResourceObjectWork) == 56 ? 1 : -1];
 
-void ResourceMetadata_ClearRecord(void *destination);
-
 #if !GAME_TLA
 // 失われし時代の版（0x08022d40）は、まだリストのまま
 #include "metadata_lookup.h"
@@ -1311,9 +1306,6 @@ extern struct ObjectSystemWork *gMenuCtrlWork;
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 s32	 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
 s32	 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
-
-s32 BattleFx_ApplyColorToTargetBufferFar(s32, s32);
-s32 BattleFx_StartBufferInterpolationFar(s32);
 
 //--------------------------------------------------------------------------
 // 絵を 1 ドットずつ消す処理の 1 回分
@@ -4955,8 +4947,6 @@ void Tilemap_ConvertBuffer(void)
     MemFree(routine);
     MemFree(saved);
 }
-
-s32 GameFlag_TestFar(s32 flag);
 
 #define Scheduler_AddOrUpdateCallback ((void (*)(void (*)(void), s32))Scheduler_AddOrUpdateCallback)
 

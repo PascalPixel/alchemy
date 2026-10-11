@@ -6,10 +6,10 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "text/msg_ids.h"
+#include "field.h"
 
 void FieldScene_RunBranchedStep(void);
 void FieldScene_RunNearestActor165Scene(void);
-void FieldScene_RunTwoCallSequence(void);
 void KorosseoKawa_RaisePipes(void);
 void KorosseoKawa_RaisePlatformPair(void);
 void KorosseoKawa_RunStageIntro(void);

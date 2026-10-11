@@ -2,6 +2,7 @@
 #include "ability_ids.h"
 #include "field_scene.h"
 #include "objcmd.h"
+#include "field.h"
 
 void FieldScene_RunFlag9a9GuardedScene(void);
 void FieldScene_RunGuardedStep9AA(void);
@@ -10,13 +11,7 @@ void FieldScene_RunScene3a7SequenceA(void);
 void FieldScene_RunScene3a7SequenceB(void);
 void KuupuappuDou_ShowLockedDoorMessage(void);
 void Resource3a7_NoOpCallback(void);
-void SceneActor_MarkSlot21AndSetFlag205(void);
-void SceneActor_SetupSlotTwenty(void);
 void SceneState_ApplyFlag300(void);
-void SceneState_ApplyRectAndMarkActor16(void);
-void SceneState_ApplyRectAndSetupActor19(void);
-void SceneState_ConfigureRegion26_30AndClearActor18Mode(void);
-void SceneState_ConfigureRegion26_30AndMarkActor17(void);
 
 struct SceneEntrance gKuupuappuDouEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },

@@ -181,8 +181,6 @@ main	rom_main_02	games/tbs/src/graphics/text/symbol	.text
 main	rom_main_02	games/tbs/src/graphics/glyph/glyph	.text
 main	rom_main_02	games/common/src/menu/get_node_at_count	.text
 main	rom_main_02	games/tbs/src/menu/scroll	.text
-main	rom_main_02	games/tbs/src/system/resource/load	.text
-main	rom_main_02	games/tbs/src/menu/push_selection	.text
 main	rom_main_02	games/tbs/src/graphics/text/resource	.text
 main	rom_main_02	games/common/src/graphics/window/runtime_close_and_release	.text
 main	rom_main_02	games/tbs/src/graphics/window/notice	.text

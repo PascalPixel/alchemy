@@ -930,8 +930,7 @@ main	rom_tail_02	games/common/src/graphics/backdrop/desert	.rodata
 main	rom_tail_02	games/common/src/graphics/backdrop/dusk_clouds	.rodata
 main	rom_tail_02	games/common/src/graphics/backdrop/aerial_view	.rodata
 main	rom_tail_02	games/tbs/src/graphics/slots/slots	.rodata
-main	rom_tail_02	games/common/src/graphics/lucky_dice/board	.rodata
-main	rom_tail_02	games/common/src/graphics/lucky_dice/sprites	.rodata
+main	rom_tail_02	games/tbs/src/graphics/lucky_dice/luckdice	.rodata
 main	rom_tail_02	games/common/src/graphics/battle_fx/tile_mask	.rodata
 main	rom_tail_02	games/tbs/src/graphics/battle_fx/cyan_spark	.rodata
 main	rom_tail_02	games/common/src/graphics/battle_fx/violet_palette_a	.rodata

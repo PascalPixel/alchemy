@@ -108,7 +108,7 @@ FAR_CALL(
 	BattleFx_CommitObjectPositionAndWaitFar, BattleFx_CommitObjectPositionAndWait, void, (void))
 FAR_CALL(Object_PlaceCurrentWithinCameraBoundsFar, Object_PlaceCurrentWithinCameraBounds, void,
 	(s32 arg0, s32 arg1))
-FAR_CALL(Battle_GetWorkObject1e0Far, Battle_GetWorkObject1e0, s32, (void))
+FAR_CALL(Battle_GetWorkObject1e0Far, Battle_GetWorkObject1e0, struct FieldActor *, (void))
 FAR_CALL(
 	Map_SetViewBoundsFar, Map_SetViewBounds, void, (s32 min_x, s32 min_y, s32 max_x, s32 max_y))
 FAR_CALL(Event_SetDestinationFar, Event_SetDestination, void, (u16 first, u16 second))

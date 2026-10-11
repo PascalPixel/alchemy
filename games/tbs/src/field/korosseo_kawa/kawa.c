@@ -582,8 +582,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
 		actor->motion_flags = hit;
 		Map_CopyCellAttributes(14, 13, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
 	}
-	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, KorosseoKawa_ApplyEntryState has 430 of 892 bytes different */
-	x = ((s32 (*)())GameFlag_GetByte)(0x310);
+	x = GameFlag_GetByte(0x310);
 	if (x == 0)
 	{
 		x = 25;
@@ -1090,10 +1089,8 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
 void SceneActor_PlaceSlots1To3FromWork(void)
 {
 	{
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlaceSlots1To3FromWork is 4 bytes longer */
-		s32 x = ((s32 (*)())GameFlag_GetByte)(896);
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlaceSlots1To3FromWork is 2 bytes longer */
-		s32 y = ((s32 (*)())GameFlag_GetByte)(904);
+		s32 x = GameFlag_GetByte(896);
+		s32 y = GameFlag_GetByte(904);
 
 		x <<= 20;
 		x += 0x80000;
@@ -1102,10 +1099,8 @@ void SceneActor_PlaceSlots1To3FromWork(void)
 		Engine_ActorSetPosition(GERALD, x, y);
 	}
 	{
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlaceSlots1To3FromWork is 4 bytes longer */
-		s32 x = ((s32 (*)())GameFlag_GetByte)(912);
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlaceSlots1To3FromWork is 2 bytes longer */
-		s32 y = ((s32 (*)())GameFlag_GetByte)(920);
+		s32 x = GameFlag_GetByte(912);
+		s32 y = GameFlag_GetByte(920);
 
 		x <<= 20;
 		x += 0x80000;
@@ -1114,10 +1109,8 @@ void SceneActor_PlaceSlots1To3FromWork(void)
 		Engine_ActorSetPosition(IWAN, x, y);
 	}
 	{
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlaceSlots1To3FromWork is 4 bytes longer */
-		s32 x = ((s32 (*)())GameFlag_GetByte)(928);
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlaceSlots1To3FromWork is 2 bytes longer */
-		s32 y = ((s32 (*)())GameFlag_GetByte)(936);
+		s32 x = GameFlag_GetByte(928);
+		s32 y = GameFlag_GetByte(936);
 
 		x <<= 20;
 		x += 0x80000;
@@ -1564,8 +1557,7 @@ void FieldScene_RunTwoArmSequence(s32 a)
 		Korosseo_LoadPortrait(a);
 		SceneData_SelectBlockAndResetCounters(1, 0);
 		Engine_EventWait(120);
-		/* FAKEMATCH: AudioCommand_GetStateByte is called as s32 (*)(void); as u8 (*)(void), its prototype, FieldScene_RunTwoArmSequence has 122 of 268 bytes different */
-		while (((s32 (*)(void))AudioCommand_GetStateByte)() != 0)
+		while (AudioCommand_GetStateByte() != 0)
 		{
 			Engine_TaskWait(1);
 		}
@@ -1621,8 +1613,7 @@ void FieldScene_RunLateSequence(s32 a0)
 		kind = 8;
 	}
 	Engine_ActorShowEmote(kind, 0x105, 0);
-	/* FAKEMATCH: AudioCommand_GetStateByte is called as s32 (*)(void); as u8 (*)(void), its prototype, FieldScene_RunLateSequence has 35 of 204 bytes different */
-	while (((s32 (*)(void))AudioCommand_GetStateByte)() != 0)
+	while (AudioCommand_GetStateByte() != 0)
 	{
 		Engine_TaskWait(1);
 	}

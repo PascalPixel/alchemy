@@ -2539,8 +2539,7 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading)
 	Engine_AudioPlayCue(233);
 	for (;;)
 	{
-		/* FAKEMATCH: GetMapCellCollision is called as s32 (*)(s32, s32, s32); as u8 (*)(s32, s32, s32), its prototype, ArutinYama_RunRollingObject is 4 bytes longer */
-		switch (((s32 (*)(s32, s32, s32))GetMapCellCollision)(2, object->x.fixed, object->z.fixed))
+		switch (GetMapCellCollision(2, object->x.fixed, object->z.fixed))
 		{
 		case 98:
 			ArutinYama_TurnRollingObjectA(object);

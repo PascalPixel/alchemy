@@ -84,7 +84,7 @@ void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id);
 void BattleMotion_SpawnSlotEffectAndWait(s32 id);
 s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected);
 s32 BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected);
-u32 Battle_GetObjectTableValue(s32 id);
+s32 Battle_GetObjectTableValue(s32 id);
 s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionRecord *entries);
 void BattlePres_AdjustCameraByShoulderKeys(void);
 s32 BattlePres_RunAction(struct BattleActionRecord *action);

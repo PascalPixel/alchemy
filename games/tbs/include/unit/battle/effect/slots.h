@@ -261,7 +261,7 @@ void ObjectTable_AllocateAndSetObjectSpeed(s32 first, s32 second);
 void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter);
 void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1);
 void BattleFx_CommitObjectPositionAndWait(void);
-s32 Battle_GetWorkObject1e0(void);
+struct FieldActor *Battle_GetWorkObject1e0(void);
 void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target, s32 keep_current_position);
 void Map_SetViewBounds(s32 min_x, s32 min_y, s32 max_x, s32 max_y);
 s32 BattleFx_StepRatioTransition(void);

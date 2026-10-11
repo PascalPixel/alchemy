@@ -3807,8 +3807,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
 		for (k = 0; k != work->effect->count; k++)
 		{
 			struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
-			/* FAKEMATCH: Battle_GetObjectTableValueFar is called as s32 (*)(s32); as u32 (*)(s32), its prototype, BattleFx_RunMemberBurst is 4 bytes shorter */
-			s32					 half = ((s32 (*)(s32))Battle_GetObjectTableValueFar)(work->effect->actors[k]) / 2;
+			s32					 half = Battle_GetObjectTableValueFar(work->effect->actors[k]) / 2;
 
 			if (frame == k * 20 + 71)
 			{
@@ -10000,8 +9999,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
 
 		offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
 		object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
-		/* FAKEMATCH: Battle_GetObjectTableValueFar is called as s32 (*)(s32); as u32 (*)(s32), its prototype, BattleFx_RunIceShardBursts is 4 bytes shorter */
-		height = ((s32 (*)(s32))Battle_GetObjectTableValueFar)(work->effect->actors[member]) / 2;
+		height = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
 		point[0] = object->x;
 		point[1] = height;
 		point[2] = object->z;
@@ -10134,8 +10132,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
 		s32					 half;
 
 		obj = GetBattleObjectSlotFar(work->effect->actors[member])->object;
-		/* FAKEMATCH: Battle_GetObjectTableValueFar is called as s32 (*)(s32); as u32 (*)(s32), its prototype, BattleFx_RunGatheringMotes is 4 bytes shorter */
-		half = ((s32 (*)(s32))Battle_GetObjectTableValueFar)(work->effect->actors[member]) / 2;
+		half = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
 		for (i = 0; i != MOTES_PER_MEMBER; i++)
 		{
 			struct EffectStep *mote = MOTE(member * MOTES_PER_MEMBER + i);
@@ -10164,8 +10161,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
 		s32					 half;
 
 		user = GetBattleObjectSlotFar(work->effect->actor)->object;
-		/* FAKEMATCH: Battle_GetObjectTableValueFar is called as s32 (*)(s32); as u32 (*)(s32), its prototype, BattleFx_RunGatheringMotes is 4 bytes shorter */
-		half = ((s32 (*)(s32))Battle_GetObjectTableValueFar)(work->effect->actor) / 2;
+		half = Battle_GetObjectTableValueFar(work->effect->actor) / 2;
 		if (frame == 64)
 			BattleEventRuntime_BeginPhaseFar(133);
 		Render_ResetTransformState();
@@ -10843,8 +10839,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 		{
 			struct MotionObject *object =
 				GetBattleObjectSlotFar(work->effect->actors[member])->object;
-			/* FAKEMATCH: Battle_GetObjectTableValueFar is called as s32 (*)(s32); as u32 (*)(s32), its prototype, BattleFx_RunSeriesB has other relocations */
-			s32 height = ((s32 (*)(s32))Battle_GetObjectTableValueFar)(work->effect->actors[member]) * 2 / 3;
+			s32 height = Battle_GetObjectTableValueFar(work->effect->actors[member]) * 2 / 3;
 
 			if (frame == member * 8 + 80)
 				AudioCommand_PlayFar(212);
@@ -17725,8 +17720,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
 	Render_ResetTransformState();
 	Graphics_PrepareTransferInIwramWork((u8 *)camera, (u8 *)camera->pos);
 	scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), info->scale);
-	/* FAKEMATCH: Battle_GetObjectTableValueFar is called as s32 (*)(s32); as u32 (*)(s32), its prototype, BattleUnit_ProjectToScreen has 1 of 128 bytes different */
-	screen[1] -= Iwram_MulQ16(scale, ((s32 (*)(s32))Battle_GetObjectTableValueFar)(unit) >> 17);
+	screen[1] -= Iwram_MulQ16(scale, Battle_GetObjectTableValueFar(unit) >> 17);
 	return 0;
 }
 
@@ -17881,8 +17875,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 	gBgScroll[1].y = 80;
 	WaitFrames(1);
 	target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
-	/* FAKEMATCH: Battle_GetObjectTableValueFar is called as s32 (*)(s32); as u32 (*)(s32), its prototype, BattlePres_RunBeamSequence is 4 bytes shorter */
-	half = ((s32 (*)(s32))Battle_GetObjectTableValueFar)(work->effect->actors[0]) / 2;
+	half = Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
 	for (i = 0; i != 64; i++)
 	{
 		struct EffectStep *spark = &work->particles[i];
@@ -18162,8 +18155,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
 	gBgScroll[1].y = 80;
 	gBgScroll[1].x = shake;
 	target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
-	/* FAKEMATCH: Battle_GetObjectTableValueFar is called as s32 (*)(s32); as u32 (*)(s32), its prototype, BattlePres_RunRingAndSparkScene is 4 bytes shorter */
-	half = ((s32 (*)(s32))Battle_GetObjectTableValueFar)(work->effect->actors[0]) / 2;
+	half = Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
 	for (i = 0; i != 64; i++)
 	{
 		struct EffectStep *spark = &work->particles[i];
@@ -18731,8 +18723,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	// 当たりの粒：対象の高さの半分から飛び散る（variant は寿命）
 	if (kind != 14)
 	{
-		/* FAKEMATCH: Battle_GetObjectTableValueFar is called as s32 (*)(s32); as u32 (*)(s32), its prototype, BattleFx_RunCastingImpact is 4 bytes shorter */
-		s32 height = ((s32 (*)(s32))Battle_GetObjectTableValueFar)(work->effect->actors[0]) / 2;
+		s32 height = Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
 		for (i = 0; i != 32; i++)
 		{
 			particle = &work->particles[i];
@@ -19003,8 +18994,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 				struct MotionObject *caster;
 				s32					 height;
 				caster = GetBattleObjectSlotFar(work->effect->actor)->object;
-				/* FAKEMATCH: Battle_GetObjectTableValueFar is called as s32 (*)(s32); as u32 (*)(s32), its prototype, BattleFx_RunCastingImpact is 4 bytes shorter */
-				height = ((s32 (*)(s32))Battle_GetObjectTableValueFar)(work->effect->actor) / 2;
+				height = Battle_GetObjectTableValueFar(work->effect->actor) / 2;
 				for (i = 0; i != 32; i++, step++)
 				{
 					if (step->variant >= 0)

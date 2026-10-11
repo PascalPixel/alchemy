@@ -2157,7 +2157,7 @@ u32 GameFlag_Toggle(s32 flag)
 	return (u32)((0 - flag_value) | flag_value) >> 31;
 }
 
-u8 GameFlag_GetByte(s32 flag)
+s32 GameFlag_GetByte(s32 flag)
 {
 	u32 byte_index;
 
@@ -2749,7 +2749,7 @@ s32 Curve_LookupScaledValue(s32 input, s32 halve)
 //--------------------------------------------------------------------------
 // バトル用の乱数（線形合同法）。種の 8-23 ビット目の 16 ビットを返す
 //--------------------------------------------------------------------------
-u32 BtlRnd(void)
+s32 BtlRnd(void)
 {
 	s32 seed;
 
@@ -2763,7 +2763,7 @@ u32 BtlRnd(void)
 //--------------------------------------------------------------------------
 u32 BattleRandomPercent(void)
 {
-	return (BtlRnd() * 100) >> 16;
+	return ((u32)BtlRnd() * 100) >> 16;
 }
 
 //--------------------------------------------------------------------------
@@ -3334,7 +3334,7 @@ s32 Trade_CountPendingOffers(u8 *counts)
 	return found;
 }
 
-u16 Djinn_GetDefinitionHeader(u32 group, u32 index)
+s32 Djinn_GetDefinitionHeader(u32 group, u32 index)
 {
 	return *Djinn_GetDefinition(group, index);
 }

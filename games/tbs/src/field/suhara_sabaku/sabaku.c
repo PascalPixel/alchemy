@@ -191,8 +191,7 @@ void SuharaSabaku_SyncSelectedActorProgress(void)
 	scene = *(struct SceneWork_02000400 **)((u8 *)&gEventWork);
 	actor->presentation = (gFrameCount << 12);
 
-	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SuharaSabaku_SyncSelectedActorProgress is 4 bytes longer */
-	progress = ((s32 (*)())GameFlag_GetByte)(0x210);
+	progress = GameFlag_GetByte(0x210);
 	if (progress != 0)
 	{
 		if (progress == 1)
@@ -596,8 +595,7 @@ void SuharaSabaku_DropAndLeave(void)
 	struct FieldActor *partner;
 	s32				   i;
 
-	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SuharaSabaku_DropAndLeave is 4 bytes longer */
-	other = ((s32 (*)())GameFlag_GetByte)(0x218);
+	other = GameFlag_GetByte(0x218);
 	leader = Object_GetById(gGameState.selected_actor);
 	partner = Object_GetById(other);
 	Engine_EventBegin();
@@ -619,8 +617,7 @@ void SuharaSabaku_DropAndLeave(void)
 	Engine_EventWaitForScreen();
 	Engine_EventEnd();
 	Engine_GameFlagSet(0x122);
-	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SuharaSabaku_DropAndLeave is 8 bytes longer */
-	if (gGameState.scene == (s32)&SceneId_SuharaSabaku2 && ((s32 (*)())GameFlag_GetByte)(0x218) == 11)
+	if (gGameState.scene == (s32)&SceneId_SuharaSabaku2 && GameFlag_GetByte(0x218) == 11)
 	{
 		/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, SuharaSabaku_DropAndLeave is 8 bytes longer */
 		((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_WorldMap, 77);
@@ -704,8 +701,7 @@ s32 SuharaSabaku_RunSceneScript(void)
 	map = (*(struct FieldGlobals *)gMapWork).map;
 	(*(struct FieldGlobals *)gMapWork).event->start_transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SuharaSabaku_RunSceneScript is 4 bytes longer */
-	if (((s32 (*)())GameFlag_GetByte)(0x210) != 0)
+	if (GameFlag_GetByte(0x210) != 0)
 	{
 		gGameState.movement_mode = 2;
 		Engine_TaskAddCallback(SuharaSabaku_SyncSelectedActorProgress, 0xc80);

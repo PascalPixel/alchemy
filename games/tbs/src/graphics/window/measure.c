@@ -4751,8 +4751,7 @@ s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch)
 	s32					 cancel = 0;
 	s32					 zero;
 
-	/* FAKEMATCH: AudioCommand_GetStateByteFar is called as s32 (*)(); as u8 (*)(void), its prototype, UiWork_CheckCancelByInput is 4 bytes longer */
-	if (work->busy != 0 && ((s32 (*)())AudioCommand_GetStateByteFar)() == 0)
+	if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
 		cancel = 1;
 	zero = 0;
 	if (gKeysHeld & (KEY_A | KEY_B | KEYS_SHOULDERS))
@@ -4776,8 +4775,7 @@ s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch)
 	s32					 cancel = 0;
 	u8					 zero;
 
-	/* FAKEMATCH: AudioCommand_GetStateByteFar is called as s32 (*)(); as u8 (*)(void), its prototype, UiWork_CheckCancelByModeInput has 52 of 104 bytes different */
-	if (work->busy != 0 && ((s32 (*)())AudioCommand_GetStateByteFar)() == 0)
+	if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
 		cancel = 1;
 	key = gKeyState;
 	zero = 0;
@@ -11947,8 +11945,7 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 		{
 			Runtime_PushSlotEntry(entry, 250);
 			WaitFrames(1);
-		/* FAKEMATCH: AudioCommand_GetStateByteFar is called as s32 (*)(); as u8 (*)(void), its prototype, Djinn_ShowJoinedMessage is 4 bytes longer */
-		} while (((s32 (*)())AudioCommand_GetStateByteFar)() != 0
+		} while (AudioCommand_GetStateByteFar() != 0
 				 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
 		UiWork_Finalize(window, 2);
@@ -12000,8 +11997,7 @@ void Party_ShowJoinedMessage(s32 member)
 		{
 			Runtime_PushSlotEntry(entry, 250);
 			WaitFrames(1);
-		/* FAKEMATCH: AudioCommand_GetStateByteFar is called as s32 (*)(); as u8 (*)(void), its prototype, Party_ShowJoinedMessage has 49 of 248 bytes different */
-		} while (((s32 (*)())AudioCommand_GetStateByteFar)() != 0
+		} while (AudioCommand_GetStateByteFar() != 0
 				 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 		UiWork_Finalize(window, 2);
 		WaitFrames(1);
@@ -12065,8 +12061,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
 			Runtime_PushSlotEntry(entry1, 250);
 			Runtime_PushSlotEntry(entry2, 250);
 			WaitFrames(1);
-		/* FAKEMATCH: AudioCommand_GetStateByteFar is called as s32 (*)(); as u8 (*)(void), its prototype, Party_ShowPairJoinedMessage is 4 bytes longer */
-		} while (((s32 (*)())AudioCommand_GetStateByteFar)() != 0
+		} while (AudioCommand_GetStateByteFar() != 0
 				 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
 		UiWork_Finalize(window, 2);
@@ -17699,8 +17694,7 @@ handshake_done:
 				index = param & 255;
 				if (Djinn_IsActiveFar(actorId, element, index) != 0)
 				{
-					/* FAKEMATCH: Djinn_GetDefinitionHeaderFar is called as s32 (*)(s32, s32); as u16 (*)(u32, u32), its prototype, Battle_CollectPartyCommands is 4 bytes longer */
-					ability = BtlActGet(((s32 (*)(s32, s32))Djinn_GetDefinitionHeaderFar)(element, index));
+					ability = BtlActGet(Djinn_GetDefinitionHeaderFar(element, index));
 					cost = ability->rng;
 					win = UiWindow_Create(11, 17, 10, 3, 6);
 					state->entries[0].oam.f.x = 64;

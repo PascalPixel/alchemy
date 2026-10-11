@@ -556,8 +556,7 @@ s32 BattleFx_LookupResult(void *pos)
 {
 	s32			 kind;
 	TerrainRule *rule = BattleFx_ResultRules;
-	/* FAKEMATCH: GetWorldMapTerrainBehaviorFar is called as s32 (*)(void *, s32 *); as u8 (*)(struct WorldPosition *, s32 *), its prototype, BattleFx_LookupResult is 4 bytes longer */
-	s32			 terrain = ((s32 (*)(void *, s32 *))GetWorldMapTerrainBehaviorFar)(pos, &kind);
+	s32			 terrain = GetWorldMapTerrainBehaviorFar(pos, &kind);
 	s32			 zone = 0;
 
 	while (rule->kind != -1)
@@ -2288,8 +2287,7 @@ s32 Field_RunScene(s32 entrance)
 				{
 					Battle_ResetEffectCounter();
 					UiTimedNotice_CloseIfActiveFar();
-					/* FAKEMATCH: AudioCommand_GetSecondaryStateByteFar is called as s32 (*)(void); as u8 (*)(void), its prototype, Field_RunScene is 4 bytes longer */
-					gGameState.return_cue = ((s32 (*)(void))AudioCommand_GetSecondaryStateByteFar)();
+					gGameState.return_cue = AudioCommand_GetSecondaryStateByteFar();
 					if (GameFlag_TestFar(0x17e) == 0)
 					{
 						struct MenuCtrl *ctrl = (struct MenuCtrl *)gMenuCtrlWork;
@@ -8724,7 +8722,7 @@ void BattleFx_CommitObjectPositionAndWait(void)
 	Battle_WaitMode0(2);
 }
 
-s32 Battle_GetWorkObject1e0(void)
+struct FieldActor *Battle_GetWorkObject1e0(void)
 {
 	return (s32)((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->view_center;
 }
@@ -9267,8 +9265,7 @@ again:
 	BattleFx_FinishAction();
 	if (work != NULL)
 		work->encounter_steps += Iwram_MulQ16(work->encounter_rate, 0x200000);
-	/* FAKEMATCH: GetMapCellCollisionFar is called as s32 (*)(s32, s32, s32); as u8 (*)(s32, s32, s32), its prototype, Field_TryJumpForward is 4 bytes longer */
-	if (((s32 (*)(s32, s32, s32))GetMapCellCollisionFar)(leader->terrain_id, pos->x, pos->z) == 0xf9)
+	if (GetMapCellCollisionFar(leader->terrain_id, pos->x, pos->z) == 0xf9)
 	{
 		ObjectDispatch_ApplyArgumentToChildrenFar(leader, 1);
 		WaitFrames(6);

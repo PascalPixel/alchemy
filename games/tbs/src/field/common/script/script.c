@@ -7526,7 +7526,7 @@ s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y)
 	return *(Ram_MapCollision + attr * 4) & 15;
 }
 
-u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
+s32 GetMapCellCollision(s32 layer, s32 x, s32 y)
 {
 	struct MapState *state;
 	struct MapCell	*cells;
@@ -7670,7 +7670,7 @@ s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position)
 	return -1;
 }
 
-u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
+s32 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
 {
 	s32	 selector = GetWorldMapCollision(position);
 	s32	 x = position->x;

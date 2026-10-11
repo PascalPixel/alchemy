@@ -225,7 +225,7 @@ void Audio_SetMusicVolumeTargetAndStep(u16 primary, u16 secondary)
     gMusicVolumeStep = secondary;
 }
 
-u8 AudioCommand_GetStateByte(void)
+s32 AudioCommand_GetStateByte(void)
 {
     return gMusicRestoreDelay;
 }
@@ -251,7 +251,7 @@ void AudioCommand_UpdateToggleMask(u32 command)
         Audio_CommandMask = command;
 }
 
-u8 AudioCommand_GetSecondaryStateByte(void)
+s32 AudioCommand_GetSecondaryStateByte(void)
 {
     return gAudioSecondaryState;
 }

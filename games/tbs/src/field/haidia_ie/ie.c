@@ -1183,8 +1183,7 @@ void Scene_RunExtendedActorSequence(void)
 	Engine_EventWait(10);
 	Camera_SetSpeed(0x26666, 0x4ccc);
 	v6 = 0;
-	/* FAKEMATCH: Battle_GetWorkObject1e0 is called as struct FieldActor *(*)(void); as s32 (*)(void), its prototype, Scene_RunExtendedActorSequence does not compile */
-	((struct FieldActor *(*)(void))Battle_GetWorkObject1e0)()->motion_flags = v6;
+	Battle_GetWorkObject1e0()->motion_flags = v6;
 	Camera_MoveTo(0xd70000, 0x100000, 0x3210000, 1);
 	Engine_EventWait(10);
 	Engine_ActorEnableActionCallback(12, (s32)Data_0200ad74);

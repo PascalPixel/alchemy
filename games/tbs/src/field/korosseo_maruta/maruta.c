@@ -541,8 +541,7 @@ s32 ColossoLogRollingStage_CheckObstacleDestination(s32 x, s32 z)
 
 	StageObstacleActor *actor;
 
-	/* FAKEMATCH: GetMapCellCollision is called as s32 (*)(s32, s32, s32); as u8 (*)(s32, s32, s32), its prototype, ColossoLogRollingStage_CheckObstacleDestination is 6 bytes longer */
-	if (((s32 (*)(s32, s32, s32))GetMapCellCollision)(0, x, z) == 255)
+	if (GetMapCellCollision(0, x, z) == 255)
 	{
 		return -2;
 	}
@@ -951,8 +950,7 @@ s32 StageSetup_BuildAndDispatch(void)
 		actor->y.fixed = 32 << 16;
 	}
 
-	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, StageSetup_BuildAndDispatch has 539 of 1496 bytes different */
-	column = ((s32 (*)())GameFlag_GetByte)(880);
+	column = GameFlag_GetByte(880);
 	if (column == 0)
 	{
 		column = 19;
@@ -1892,10 +1890,8 @@ void ColossoLogRollingStage_RestoreActorPositions(void)
 	s32 center;
 
 	{
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, ColossoLogRollingStage_RestoreActorPositions is 4 bytes longer */
-		s32 x = ((s32 (*)())GameFlag_GetByte)(896);
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, ColossoLogRollingStage_RestoreActorPositions is 2 bytes longer */
-		s32 z = ((s32 (*)())GameFlag_GetByte)(904);
+		s32 x = GameFlag_GetByte(896);
+		s32 z = GameFlag_GetByte(904);
 		center = 0x80000;
 		x <<= 20;
 		x += center;
@@ -1904,10 +1900,8 @@ void ColossoLogRollingStage_RestoreActorPositions(void)
 		Engine_ActorSetPosition(GERALD, x, z);
 	}
 	{
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, ColossoLogRollingStage_RestoreActorPositions is 4 bytes longer */
-		s32 x = ((s32 (*)())GameFlag_GetByte)(912);
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, ColossoLogRollingStage_RestoreActorPositions is 2 bytes longer */
-		s32 z = ((s32 (*)())GameFlag_GetByte)(920);
+		s32 x = GameFlag_GetByte(912);
+		s32 z = GameFlag_GetByte(920);
 		x <<= 20;
 		x += center;
 		z <<= 20;
@@ -1915,10 +1909,8 @@ void ColossoLogRollingStage_RestoreActorPositions(void)
 		Engine_ActorSetPosition(IWAN, x, z);
 	}
 	{
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, ColossoLogRollingStage_RestoreActorPositions is 4 bytes longer */
-		s32 x = ((s32 (*)())GameFlag_GetByte)(928);
-		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, ColossoLogRollingStage_RestoreActorPositions is 2 bytes longer */
-		s32 z = ((s32 (*)())GameFlag_GetByte)(936);
+		s32 x = GameFlag_GetByte(928);
+		s32 z = GameFlag_GetByte(936);
 		x <<= 20;
 		x += center;
 		z <<= 20;
@@ -2397,8 +2389,7 @@ void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
 wait_transition:
 	Engine_TaskWait(1);
 check_transition:
-	/* FAKEMATCH: AudioCommand_GetStateByte is called as s32 (*)(void); as u8 (*)(void), its prototype, ColossoLogRollingStage_RunScriptedTransition has 122 of 268 bytes different */
-	if (((s32 (*)(void))AudioCommand_GetStateByte)() != 0)
+	if (AudioCommand_GetStateByte() != 0)
 		goto wait_transition;
 
 	Engine_AudioPlayCue(0x121);
@@ -2452,8 +2443,7 @@ void FieldScene_RunScene3bcSequenceA(s32 a0)
 		kind = 8;
 	}
 	Engine_ActorShowEmote(kind, 0x105, 0);
-	/* FAKEMATCH: AudioCommand_GetStateByte is called as s32 (*)(void); as u8 (*)(void), its prototype, FieldScene_RunScene3bcSequenceA has 35 of 204 bytes different */
-	while (((s32 (*)(void))AudioCommand_GetStateByte)() != 0)
+	while (AudioCommand_GetStateByte() != 0)
 	{
 		Engine_TaskWait(1);
 	}

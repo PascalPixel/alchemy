@@ -79,7 +79,7 @@ FAR_CALL(Map_SetLayerEntryFlagFar, Map_SetLayerEntryFlag, void, (u32 no))
 FAR_CALL(DisplayBlend_DisableRunScriptFar, DisplayBlend_DisableRunScript, void, (void))
 FAR_CALL(DisplayBlend_EnableRunScriptFar, DisplayBlend_EnableRunScript, void, (void))
 FAR_CALL(Map_GetTerrainHeightFar, Map_GetTerrainHeight, s32, (s32 layer, s32 x, s32 y))
-FAR_CALL(GetMapCellCollisionFar, GetMapCellCollision, u8, (s32 layer, s32 x, s32 y))
+FAR_CALL(GetMapCellCollisionFar, GetMapCellCollision, s32, (s32 layer, s32 x, s32 y))
 FAR_CALL(Map_CopyMetatileCellsRectFar, Map_CopyMetatileCellsRect, void,
 	(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y))
 FAR_CALL(Map_CopyCellAttributeRectFar, Map_CopyCellAttributeRect, void,
@@ -116,7 +116,7 @@ FAR_CALL(ScriptObject_CheckOverlapFar, ScriptObject_CheckOverlap, s32,
 FAR_CALL(Map_SetWorkFlagBits9To11Far, Map_SetWorkFlagBits9To11, void, (u32 v))
 FAR_CALL(ResourceMetadata_SumCommandLengthsFar, ResourceMetadata_SumCommandLengths, s32,
 	(s32 id, u32 no, s32 cnt))
-FAR_CALL(GetWorldMapTerrainBehaviorFar, GetWorldMapTerrainBehavior, u8,
+FAR_CALL(GetWorldMapTerrainBehaviorFar, GetWorldMapTerrainBehavior, s32,
 	(struct WorldPosition *position, s32 *terrain_kind))
 FAR_CALL(ResourceSlot_LoadFar, ResourceSlot_Load, s32,
 	(u32 slot, u32 *buffer, s32 number, u32 variant))

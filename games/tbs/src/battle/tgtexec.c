@@ -1207,8 +1207,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 		dest = gBattleOwnerStates;
 		for (pos = 0; pos <= 0x7c7; pos++)
 			*dest++ = gActorSpriteSlots[pos];
-		/* FAKEMATCH: GameFlag_GetByteFar is called as s32 (*)(s32); as u8 (*)(s32), its prototype, Battle_RunEncounter has 123 of 1688 bytes different */
-		object = ((s32 (*)(s32))GameFlag_GetByteFar)(0x3f0);
+		object = GameFlag_GetByteFar(0x3f0);
 		BattleParty_AssignMemberSlots();
 		battle->battle_type = 0;
 	}
@@ -3170,7 +3169,7 @@ s32 BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected)
 	return 0;
 }
 
-u32 Battle_GetObjectTableValue(s32 id)
+s32 Battle_GetObjectTableValue(s32 id)
 {
 	u32 value;
 	u8	no;
@@ -4062,8 +4061,7 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
 
 			UnitGetFar(entry->unit_id);
 			action = BtlActGet(
-				/* FAKEMATCH: Djinn_GetDefinitionHeaderFar is called as s32 (*)(s32, s32); as u16 (*)(u32, u32), its prototype, BattleQueue_SortByPriority is 4 bytes longer */
-				((s32 (*)(s32, s32))Djinn_GetDefinitionHeaderFar)(entry->parameter >> 8 & 15, entry->parameter & 0xff));
+				Djinn_GetDefinitionHeaderFar(entry->parameter >> 8 & 15, entry->parameter & 0xff));
 			if (action->efx == 46 || action->efx == 47 || action->efx == 53)
 			{
 				entry->priority += 10000;
@@ -6429,8 +6427,7 @@ pow_end:
 		chance = pow - target->elm[plan->elm].res;
 		chance += 30;
 		chance *= 65536 / 100;
-		/* FAKEMATCH: BtlRndFar is called as s32 (*)(void); as u32 (*)(void), its prototype, BtlTgtExec has 1 of 6332 bytes different */
-		if (chance > (((s32 (*)(void))BtlRndFar)() & 0xffff))
+		if (chance > (BtlRndFar() & 0xffff))
 			BtlEvPush(BEV_SCR, 5);
 	}
 
@@ -8665,8 +8662,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 
 	case CMD_DJINN:
 		// セットされていなければ、スタンバイのジンをセットし直す
-		/* FAKEMATCH: Djinn_GetDefinitionHeaderFar is called as s32 (*)(s32, s32); as u16 (*)(u32, u32), its prototype, BattleCommand_BuildPlan is 4 bytes longer */
-		act_no = ((s32 (*)(s32, s32))Djinn_GetDefinitionHeaderFar)(
+		act_no = Djinn_GetDefinitionHeaderFar(
 			DJINN_ELEMENT(req->parameter), DJINN_INDEX(req->parameter));
 		if (!Djinn_IsActiveFar(
 				req->unit_id, DJINN_ELEMENT(req->parameter), DJINN_INDEX(req->parameter)))
@@ -8816,8 +8812,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			if (tgt->hp == 0 || tgt->nemuri != 0 || tgt->shibire != 0 || tgt->miugoki != 0
 				|| tgt->charm != 0)
 				break;
-			/* FAKEMATCH: BtlRndFar is called as s32 (*)(void); as u32 (*)(void), its prototype, BattleCommand_BuildPlan has 1 of 3728 bytes different */
-			if (unit->maboroshi != 0 && (((s32 (*)(void))BtlRndFar)() & 255) <= 152)
+			if (unit->maboroshi != 0 && (BtlRndFar() & 255) <= 152)
 				plan->tgt_adj[0] = 0;
 			if ((BtlRndFar() & 31) == 0)
 				plan->tgt_adj[0] = 0;
@@ -8829,8 +8824,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		{
 			if ((BtlRndFar() & 31) == 0)
 				plan->tgt_crit[0] = 1;
-			/* FAKEMATCH: BtlRndFar is called as s32 (*)(void); as u32 (*)(void), its prototype, BattleCommand_BuildPlan has 1 of 3728 bytes different */
-			else if ((Equipment_GetUnleashRateBonusFar(unit) << 16) / 200 > (((s32 (*)(void))BtlRndFar)() & 0xffff))
+			else if ((Equipment_GetUnleashRateBonusFar(unit) << 16) / 200 > (BtlRndFar() & 0xffff))
 				plan->tgt_crit[0] = 1;
 		}
 	}
@@ -8862,8 +8856,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 				amount = 1;
 			else
 				amount = 2;
-			/* FAKEMATCH: BtlRndFar is called as s32 (*)(void); as u32 (*)(void), its prototype, BattleCommand_BuildPlan has 1 of 3728 bytes different */
-			if ((((s32 (*)(void))BtlRndFar)() & 255) < chance)
+			if ((BtlRndFar() & 255) < chance)
 			{
 				s32 i;
 
@@ -8949,8 +8942,7 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias)
 	if (turns <= 5)
 	{
 		s32 threshold = ((state->luck * 3 - turns * 5) + bias) * 0x28f;
-		/* FAKEMATCH: BtlRndFar is called as s32 (*)(void); as u32 (*)(void), its prototype, BattleUnit_RollCounterEarlyEnd has 1 of 72 bytes different */
-		if (threshold >= (((s32 (*)(void))BtlRndFar)() & 0xffff))
+		if (threshold >= (BtlRndFar() & 0xffff))
 			return 1;
 	}
 	return 0;
@@ -11936,8 +11928,7 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
 		chance -= 2;
 	if (chance < 0)
 		chance = 0;
-	/* FAKEMATCH: BtlRndFar is called as s32 (*)(void); as u32 (*)(void), its prototype, BattleEnemy_RecordDefeat has 1 of 564 bytes different */
-	if ((0x20000 >> chance) > (((s32 (*)(void))BtlRndFar)() & 0xffff))
+	if ((0x20000 >> chance) > (BtlRndFar() & 0xffff))
 	{
 		lowest_slot = -1;
 		lowest = 0x40000000;

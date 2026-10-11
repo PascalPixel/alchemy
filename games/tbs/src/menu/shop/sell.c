@@ -223,8 +223,7 @@ s32 Battle_ApplyPresetItemsAndFlags(void)
 
 void AudioCommand_WaitForStateByteClear(void)
 {
-	/* FAKEMATCH: AudioCommand_GetStateByteFar is called as s32 (*)(void); as u8 (*)(void), its prototype, AudioCommand_WaitForStateByteClear is 2 bytes longer */
-	while (((s32 (*)(void))AudioCommand_GetStateByteFar)() != 0)
+	while (AudioCommand_GetStateByteFar() != 0)
 	{
 		WaitFrames(1);
 	}

@@ -592,8 +592,7 @@ s32 WorldMap_EnterScene(void)
 		case 76:
 		case 77:
 			Engine_GameFlagSet(0x11c);
-			/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(s32); as u8 (*)(s32), its prototype, WorldMap_EnterScene is 4 bytes longer */
-			if (((s32 (*)(s32))GameFlag_GetByte)(0x2f8) != 0)
+			if (GameFlag_GetByte(0x2f8) != 0)
 			{
 				gGameState.movement_mode = 2;
 				Engine_TaskAddCallback(StoryScene_UpdateSelectedActorProgress, 0xc80);
@@ -2180,8 +2179,7 @@ void StoryScene_UpdateSelectedActorProgress(void)
 	scene = gEventWork;
 	actor->facing = (gFrameCount << 12);
 
-	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(s32); as u8 (*)(s32), its prototype, StoryScene_UpdateSelectedActorProgress is 4 bytes longer */
-	progress = ((s32 (*)(s32))GameFlag_GetByte)(0x2f8);
+	progress = GameFlag_GetByte(0x2f8);
 	if (progress != 0)
 	{
 		if (progress == 1)

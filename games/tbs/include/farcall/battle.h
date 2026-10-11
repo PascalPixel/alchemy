@@ -18,7 +18,7 @@ FAR_SLOT(Summon_GetEntryByte4)
 FAR_CALL(Summon_IsEntrySecondaryFlaggedFar, Summon_IsEntrySecondaryFlagged, s32, (s32 index))
 FAR_SLOT(Battle_GetSpriteFlagHighBits)
 FAR_SLOT(Summon_IsEntryFlagged)
-FAR_CALL(Battle_GetObjectTableValueFar, Battle_GetObjectTableValue, u32, (s32 id))
+FAR_CALL(Battle_GetObjectTableValueFar, Battle_GetObjectTableValue, s32, (s32 id))
 FAR_CALL(BattleMotion_ApproachTargetFar, BattleMotion_ApproachTarget, void,
 	(s32 actor_id, s32 target_id, s32 travel_divisor, s32 initial_velocity_y))
 FAR_SLOT(BattleMotion_InitializeObject)

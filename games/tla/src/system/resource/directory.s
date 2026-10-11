@@ -417,7 +417,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_LightningPillarSheet
 	resource , BattleFx_StagedParticlePath
 	resource , BattleFx_DualStreamPath
-	resource , Resource_Data197
+	resource , Field_PerspectiveDataA
 	resource DefaultMapCells, Resource_Data198
 	resource , Resource_Data199
 	resource , WorldMap_PaletteA

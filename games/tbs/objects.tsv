@@ -886,8 +886,7 @@ main	rom_tail_01	games/tbs/src/graphics/animref1
 main	rom_tail_01	games/tbs/src/graphics/animref2
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata.b
 main	rom_tail_02	games/tbs/src/system/resource/directory	.rodata
-main	rom_tail_02	games/common/src/graphics/ui/window_tiles	.rodata
-main	rom_tail_02	games/common/src/graphics/ui/small_font	.rodata
+main	rom_tail_02	games/tbs/src/graphics/ui/ui	.rodata
 main	rom_tail_02	games/tbs/src/graphics/title/intro_sun	.rodata
 main	rom_tail_02	games/tbs/src/graphics/title/screen	.rodata
 main	rom_tail_02	games/tbs/src/graphics/title/intro_peak	.rodata

@@ -994,12 +994,12 @@ void FieldScene_RunSharedSetPiece(s32 a0)
 	do
 	{
 		Engine_TaskWait(1);
-	} while ((s16)actor0->timer == 0);
+	} while (actor0->timer == 0);
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0);
 	do
 	{
 		Engine_TaskWait(1);
-	} while ((s16)actor8->timer == 0);
+	} while (actor8->timer == 0);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
 	Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
 	Event_PlayCue(0x121);
@@ -1968,15 +1968,15 @@ void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
 	switch (ArutinYama_LeafMode)
 	{
 	case 0:
-		leaf->x.fixed += ((s16)leaf->timer << 12)
+		leaf->x.fixed += (leaf->timer << 12)
 						 + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
 		break;
 	case 0x8000:
-		leaf->x.fixed -= ((s16)leaf->timer << 12)
+		leaf->x.fixed -= (leaf->timer << 12)
 						 + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
 		break;
 	}
-	if ((s16)leaf->timer <= 3)
+	if (leaf->timer <= 3)
 	{
 		switch (ArutinYama_LeafMode)
 		{
@@ -1996,10 +1996,10 @@ void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
 		leaf->scale_x += 0x7ae;
 		leaf->scale_y += 0x7ae;
 	}
-	if ((u32)((s16)leaf->timer * Engine_RandomNext()) >> 16 == 0)
+	if ((u32)(leaf->timer * Engine_RandomNext()) >> 16 == 0)
 		ObjectGroup_SetChildValue(leaf, 7);
-	if ((s16)leaf->timer != 0)
-		*(s16 *)&leaf->timer -= 2;
+	if (leaf->timer != 0)
+		leaf->timer -= 2;
 	else
 		leaf->timer = ((u32)(Engine_RandomNext() * 5) >> 16) * 2 + 2;
 	if (--object->effect.countdown == 0)
@@ -2534,7 +2534,7 @@ void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
 
 	angle &= object->facing;
 	radius = object->y.fixed / 0x10000;
-	radius = ArutinYama_RollRadii[(s16)object->timer - radius + 16];
+	radius = ArutinYama_RollRadii[object->timer - radius + 16];
 	timer = (s16 *)&object->work;
 	if (*timer != 0)
 	{

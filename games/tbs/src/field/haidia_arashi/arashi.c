@@ -229,21 +229,21 @@ s32 HaidiaArashi_ShakeShift;
 
 s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object)
 {
-    s32 loaded = (*(s16 *)&((struct FieldActor *)object)->timer);
+    s32 loaded = ((struct FieldActor *)object)->timer;
     s32 counter = (s16)loaded;
 
     if (loaded == 0) {
         ((struct FieldActor *)object)->facing = Engine_RandomNext();
         counter = Math_RemainderUnsigned(Engine_RandomNext(), 20) + 20;
-        (*(s16 *)&((struct FieldActor *)object)->timer) = counter;
+        ((struct FieldActor *)object)->timer = counter;
     }
-    (*(s16 *)&((struct FieldActor *)object)->timer) = counter - 1;
+    ((struct FieldActor *)object)->timer = counter - 1;
     return 1;
 }
 
 s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
 {
-    switch ((*(s16 *)&((struct FieldActor *)state)->timer)) {
+    switch (((struct FieldActor *)state)->timer) {
     case 6:
         ((struct FieldActor *)state)->scale_x -= 0x4000;
         ((struct FieldActor *)state)->scale_y += 0x2000;
@@ -259,10 +259,10 @@ s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
     case 0:
         ((struct FieldActor *)state)->scale_x = 0x10000;
         ((struct FieldActor *)state)->scale_y = 0x10000;
-        (*(s16 *)&((struct FieldActor *)state)->timer) = (s16)(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
+        ((struct FieldActor *)state)->timer = (s16)(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
         break;
     }
-    (*(s16 *)&((struct FieldActor *)state)->timer)--;
+    ((struct FieldActor *)state)->timer--;
     return 1;
 }
 

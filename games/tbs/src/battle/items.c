@@ -108,7 +108,6 @@ void Battle_ResetEffectCounter(void)
 
 s32 Event_FindFacingTrigger(s32 source)
 {
-	/* FAKEMATCH: needed to match: the word-result call avoids the two narrowing shifts added by the u8 declaration */
 	struct FieldStepWork	*runtime = (struct FieldStepWork *)gEventWork;
 	const struct SceneEvent *trigger = runtime->events;
 	s32 facing = ((struct MotionObject *)ObjectTable_Get(gGameState.selected_actor))->angle;
@@ -283,7 +282,6 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
 s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
 {
-	/* FAKEMATCH: needed to match: the word-result call avoids the two narrowing shifts added by the u8 declaration */
 	struct FieldStepWork	*runtime = (struct FieldStepWork *)gEventWork;
 	const struct SceneEvent *event = runtime->events;
 	s32 reference = ((struct MotionObject *)ObjectTable_Get(gGameState.selected_actor))->angle;

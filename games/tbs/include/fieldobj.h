@@ -58,7 +58,7 @@ struct FieldActor
 	u8					  unknown_5d[5];
 	u8					  rise_counter;
 	u8					  rise_enabled;
-	u16					  timer;
+	s16					  timer;
 	u16					  work;
 	struct FieldActor	 *linked_object; // 関連する物体
 	void (*update)(union FieldObject *object);

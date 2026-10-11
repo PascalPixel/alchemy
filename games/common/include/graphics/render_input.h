@@ -43,20 +43,37 @@ union RenderTableValue
 	} half;
 };
 
+// OAM に写す属性 0-2 と未使用の 1 ワード
+struct RenderOam
+{
+	u16 y : 8;
+	u16 affine_mode : 2;
+	u16 object_mode : 2;
+	u16 mosaic : 1;
+	u16 palette_256 : 1;
+	u16 shape : 2;
+	u16 x : 9;
+	u16 matrix : 5;
+	u16 size : 2;
+	u16 index : 10;
+	u16 priority : 2;
+	u16 palette : 4;
+	u16 high;
+};
+
 struct RenderOutput
 {
 	struct RenderOutput	  *next;
 	s8					   kind;
 	s8					   active;
-	s16					   x;
-	s16					   y;
+	u16					   x;
+	u16					   y;
 	u16					   unknown_0a;
 	u16					   anim_step;
 	s8					   index;
 	u8					   sentinel;
 	u8					   unknown_10[4];
-	s32					   packed;
-	union RenderTableValue table;
+	struct RenderOam	   oam;
 };
 
 struct RenderOutputList
@@ -81,8 +98,7 @@ LAYOUT_OFFSET_GUARD(RenderOutput_AnimStep, struct RenderOutput, anim_step, 0x0c)
 #define RENDER_OUTPUT_OFFSET(field) ((u32) & (((struct RenderOutput *)0)->field))
 
 typedef char RenderOutput_sentinel_offset[RENDER_OUTPUT_OFFSET(sentinel) == 0x0f ? 1 : -1];
-typedef char RenderOutput_packed_offset[RENDER_OUTPUT_OFFSET(packed) == 0x14 ? 1 : -1];
-typedef char RenderOutput_table_offset[RENDER_OUTPUT_OFFSET(table) == 0x18 ? 1 : -1];
+typedef char RenderOutput_oam_offset[RENDER_OUTPUT_OFFSET(oam) == 0x14 ? 1 : -1];
 typedef char RenderOutput_size[sizeof(struct RenderOutput) == 0x1c ? 1 : -1];
 
 #undef RENDER_OUTPUT_OFFSET

@@ -1945,9 +1945,6 @@ void BattleFx_RunSwirlingStars(void *object)
 
 void BattleFx_RunOrbitingSparks(void)
 {
-	/* FAKEMATCH: needed to match: relative heap-cell loads preserve load and literal order */
-	void				   **heap_cache;
-	void				   **cursor;
 	struct BattleEffectWork *work;
 	void					*canvas;
 	s32						 record[3];
@@ -1962,11 +1959,9 @@ void BattleFx_RunOrbitingSparks(void)
 	s32					 x_offset;
 	s32					 i;
 
-	heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
-	cursor = heap_cache;
-	work = *cursor++;
-	canvas = *cursor;
-	camera = ((struct BattleCamera **)gWorkSlot)[HEAP_SLOT_CAMERA];
+	work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+	canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
+	camera = WORK_SLOT(HEAP_SLOT_CAMERA);
 	BattleFx_BeginCanvasLayer(1);
 	REG_BG2PA = 0x100;
 	REG_BLDALPHA = 0x1010;
@@ -1978,7 +1973,7 @@ void BattleFx_RunOrbitingSparks(void)
 	work->transfer_value = 0;
 	work->transfer_mode = 2;
 	work->transfer_value = 75;
-	draw[0] = (DrawRectangleFn)heap_cache[7];
+	draw[0] = (DrawRectangleFn)WORK_SLOT(HEAP_SLOT_BLITTER);
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 	if (work->effect->side == 0)
 		x_offset = 0;

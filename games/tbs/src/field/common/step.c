@@ -21,6 +21,7 @@
 #define EffectRuntime_LookupByTableEntry ((s32 (*)(s32,s32))EffectRuntime_LookupByTableEntry)
 
 void Vector_AddPolarOffset(s32, u32, struct FieldPosition *);
+#include "heap_state.h"
 extern struct EventRuntime *gEventWork;
 
 void AudioCommand_PlayFar(s32 sound_id);
@@ -83,9 +84,8 @@ s32 BattleFx_SumCounters(void)
          + state->counters[11];
 }
 
-u8 GetFocusedObjectCollision(void)
+s32 GetFocusedObjectCollision(void)
 {
-    u32 runtime_slot_address;
     struct EventRuntime *runtime;
     struct ObjectRuntime *object;
     struct MapState *map;
@@ -94,11 +94,10 @@ u8 GetFocusedObjectCollision(void)
     s32 x;
     s32 y;
 
-    runtime_slot_address = (u32)&gEventWork;
-    runtime = gEventWork;
+    runtime = WORK_SLOT(HEAP_SLOT_EVENT);
     object = ((struct FieldStepWork *)runtime)->actors[gGameState.selected_actor];
 
-    map = *(struct MapState **)(runtime_slot_address - 76);
+    map = WORK_SLOT(8);
 
     if (object == 0)
         return 0;
@@ -197,9 +196,8 @@ loop:
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 {
     /* FAKEMATCH: needed to match: the StepOwner read prefix preserves the party-load order and the 44-byte frame. */
-    struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
-    /* FAKEMATCH: needed to match: gEventWork[-19] shares one pool load for the event and map work pointers. */
-    struct MapState *map = ((struct MapState **)&gEventWork)[-19];
+    struct FieldStepWork *work = WORK_SLOT(HEAP_SLOT_EVENT);
+    struct MapState *map = WORK_SLOT(8);
     s32 selected = gGameState.selected_actor;
     struct ObjectRuntime *actor = work->actors[selected];
     s16 hp[8];

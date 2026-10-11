@@ -8,12 +8,6 @@
 
 void Korosseo_SelectSoloCompetitor(s32 id);
 
-// EventWork の選択肢欄 (共有ヘッダに未定義)
-struct EventChoiceWork {
-    u8 unknown_000[0xcc2];
-    u16 choice_message;
-    u16 unknown_cc4;
-};
 
 void Korosseo_FinishSoloRound(s32 id)
 {
@@ -33,12 +27,8 @@ void Korosseo_FinishSoloRound(s32 id)
     msg = (s32)MsgKorosseoCheering;
     Engine_EventSetMessage(msg);
     Engine_EventOpenMessage(id, 0);
-    {
-        struct EventChoiceWork *choice = (struct EventChoiceWork *)gEventWork;
-
-        choice->choice_message = (s32)MsgKorosseoCheeringChoices;
-        choice->unknown_cc4 = 4;
-    }
+    gEventWork->choice_message = (s32)MsgKorosseoCheeringChoices;
+    gEventWork->unknown_cc4 = 4;
     res = Engine_EventChooseYesNo(slot, 0);
     if (res == 0) {
         Engine_EventSetMessage(msg + 1);

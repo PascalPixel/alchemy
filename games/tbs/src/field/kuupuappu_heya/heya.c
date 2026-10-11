@@ -1327,12 +1327,12 @@ void FieldScene_RunScene383SequenceB(void)
     Engine_EventBegin();
     Scheduler_RemoveCallback((u32)((s32)SceneActor_FaceActors24And25TowardActorZero));
     GameFlag_Clear(0x300);
-    if ((s16)actor24->timer <= 3) {
+    if (actor24->timer <= 3) {
         Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptG);
     } else {
         Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptF);
     }
-    if ((s16)actor25->timer <= 2) {
+    if (actor25->timer <= 2) {
         Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptK);
     } else {
         Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptF);
@@ -1704,7 +1704,7 @@ void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, c
 {
     struct FieldActor *rec = Object_GetById(actor);
 
-    if ((s16)rec->timer == expected) {
+    if (rec->timer == expected) {
         Engine_ActorEnableActionCallback(actor, desc);
         rec->timer = (u16)next;
     }

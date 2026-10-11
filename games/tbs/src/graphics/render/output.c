@@ -28,8 +28,8 @@ struct RenderOutput *RenderOutput_Create(
     y = offset_y + (input->y * 8) + 8;
     x &= 0x1ff;
     y &= 0xff;
-    output->packed = (x << 16) | y | flags;
-    output->table.value =
+    *(u32 *)&output->oam = (x << 16) | y | flags;
+    ((u32 *)&output->oam)[1] =
         ((struct VramBlockCacheEntry *)Ram_VramBlockCache)[slot].offset >> 5;
     output->sentinel = 0xff;
     output->next = 0;

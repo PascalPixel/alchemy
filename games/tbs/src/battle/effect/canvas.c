@@ -2005,10 +2005,8 @@ void Display_ApplyBg2Reference(void)
 
 void Palette_StepFadeTransfer(void)
 {
-	/* FAKEMATCH: needed to match: relative heap cells 9 and 39 avoid address instructions added by named globals or full heap indexing. */
-	void				   **slots = (void **)((u8 *)gWorkSlot + 9 * sizeof(void *));
-	struct BattleEffectWork *work = slots[39 - 9];
-	struct BtlWork			*battle = slots[0];
+	struct BtlWork			*battle = WORK_SLOT(HEAP_SLOT_BATTLE);
+	struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
 
 	if (work->fade_frames > 0)
 	{

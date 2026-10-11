@@ -34,7 +34,6 @@
 
 #define SceneTransform_ApplyPosition ((void (*)(s32 *))SceneTransform_ApplyPosition)
 
-#define WORK_SLOT(kind) (*(void **)((u8 *)gWorkSlot + (kind) * 4))
 
 #define FLARES ((struct EffectStep *)Ram_MapCellBuffer) // 集まる光 (対象ごとに 64)
 
@@ -220,7 +219,6 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 
 	for (frame = 0; frame != work->effect->count * 8 + 108; frame++)
 	{
-		/* FAKEMATCH: needed to match: WORK_SLOT keeps the slot offset in the literal as native does */
 		struct BattleCamera *camera = WORK_SLOT(HEAP_SLOT_CAMERA);
 
 		if (frame == 80)

@@ -37,7 +37,7 @@ union KanpanSlot {
 s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
 {
 	s32 Math_RemainderUnsigned(s32, s16);
-    switch ((s16)actor->timer) {
+    switch (actor->timer) {
     case 6:
         actor->scale_x += -0x4000;
         actor->scale_y += 0x2000;
@@ -57,8 +57,7 @@ s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
         actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
         break;
     }
-    /* FAKEMATCH: the countdown is decremented as a signed halfword (subs #1); FieldActor.timer is u16 in the shared header, where the decrement adds 0xffff from the pool. */
-    (*(s16 *)&actor->timer)--;
+    actor->timer--;
     return 1;
 }
 
@@ -1375,7 +1374,7 @@ void FieldScene_RunShipDeckEventScript(void)
     Engine_ActorSetChildValue(26, 3);
     do {
         Engine_TaskWait(1);
-    } while (*(s16 *)&Object_GetById(24)->timer == 0);
+    } while (Object_GetById(24)->timer == 0);
     FuneKanpan_OpenFirstDoor();
     /* FAKEMATCH: the do/while sets r0 = 21 first, straight after the call. */
     do {

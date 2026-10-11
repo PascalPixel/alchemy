@@ -23,6 +23,7 @@
 #include "io_reg.h"
 #include "call.h"
 #include "field_effect.h"
+#include "heap_state.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -252,11 +253,6 @@ void SceneState_ApplyValues123And11(void)
     HaidiaBabi_CloseScreenAndExit(11);
 }
 
-struct EventSlots {
-    struct EventWork *event;
-    void *unknown_04[2];
-    struct FieldBlendWork *blend;
-};
 
 s32 HaidiaBabi_RestoreEntryState(void)
 {
@@ -267,7 +263,7 @@ s32 HaidiaBabi_RestoreEntryState(void)
 
     if (gGameState.entrance == 19) {
         Engine_GameFlagClear(0x12f);
-        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+        ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     } else {
         if (Engine_GameFlagIsSet(0x834) != 0) {
             Engine_ActorSetPosition(11, 0, 0);
@@ -309,11 +305,10 @@ s32 HaidiaBabi_RestoreEntryState(void)
                     if (gGameState.entrance == 22) {
                         FieldScene_RunSupplementalSequenceOne();
                     } else {
-                        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+                        ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
                         if (Engine_GameFlagIsSet(0x834) != 0) {
                             BattleFx_StartTwelveFrameBlend();
-                            /* FAKEMATCH: needed to match: the blend work is read as the event slot's neighbour, sharing one pool address. */
-                            ((struct EventSlots *)&gEventWork)->blend->loud = 1;
+                            ((struct FieldBlendWork *)WORK_SLOT(30))->loud = 1;
                             BattleFx_SetBlock30Values12Zero();
                             Engine_TaskWait(30);
                             Engine_EventOpenScreen();
@@ -549,7 +544,7 @@ void FieldScene_RunPaletteRampSequence(void)
     actor->motion_flags = 0;
     sprite->priority = 1;
     Engine_ActorEnableActionCallback(10, gHaidiaBabiRampActor10Action);
-    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+    ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Engine_MapCopyCellsTo(83, 15, 83, 19, 5, 4);
     Engine_MapCopyCellsTo(90, 16, 90, 20, 5, 4);
     Engine_MapCopyCellsTo(77, 23, 82, 23, 5, 7);
@@ -568,7 +563,7 @@ void FieldScene_RunPaletteRampSequence(void)
         SetBlendAlpha(value);
     } while (0);
     BattleFx_StartTwelveFrameBlend();
-    ((struct EventSlots *)&gEventWork)->blend->loud = 1;
+    ((struct FieldBlendWork *)WORK_SLOT(30))->loud = 1;
     BattleFx_SetBlock30Values12Zero();
     Engine_TaskWait(30);
     Engine_CameraFollowActor(8, 1);
@@ -638,8 +633,8 @@ ramp:
     Engine_CameraFollowActor(8, 1);
     Engine_ActorEnableActionCallback(8, gHaidiaBabiRampFinalAction);
     Object_SetActionCallbackAndRefreshById(ACTOR_PARTY_LEADER, gHaidiaBabiRampFinalAction);
-    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    gEventWork->transition_frames = 32;
+    ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transition_frames = 32;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(21);
@@ -933,7 +928,7 @@ void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object)
 
     anchor = &((union PairObject *)object)->link.parent->object.actor;
     self->timer = (u16)(self->timer + 1);
-    frame = (s16)self->timer;
+    frame = self->timer;
 
     if (frame > 31) {
         Engine_ObjectDispatchRelease(self);
@@ -957,7 +952,7 @@ void OverlayObject_UpdateArcFromAnchor(union FieldObject *object)
 
     anchor = &((union PairObject *)object)->link.parent->object.actor;
     obj->timer = (u16)(obj->timer + 1);
-    frame = (s16)obj->timer;
+    frame = obj->timer;
 
     if (frame > 31) {
         Engine_ObjectDispatchRelease(obj);

@@ -137,6 +137,8 @@ void			   Engine_ActorEnableActionCallback(s32 actor, const u8 *table);
 void			   Engine_ActorSetActionCallback(struct FieldActor *actor, s32 value);
 void			   Engine_ActorsRefresh(void);
 void Engine_MapCopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Engine_MapCopyCellsLayered(
+	s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
 void Engine_ColorBufferApplySource(s32 value, s32 mode);
 void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
 void Engine_ColorBufferInterpolate(s32 frames);
@@ -381,6 +383,12 @@ static inline void Map_CopyCellsTo(
 	s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height)
 {
 	Engine_MapCopyCellsTo(src_x, src_y, dest_x, dest_y, width, height);
+}
+
+static inline void Map_CopyCellsLayered(
+	s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height)
+{
+	Engine_MapCopyCellsLayered(src_x, src_y, dest_x, dest_y, width, height);
 }
 
 static inline void MapRender_SetValues(s32 value0, s32 value1, s32 value2)

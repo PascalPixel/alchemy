@@ -64,7 +64,7 @@ struct WorldPosition
 void MapAnimation_StartChannels(const u16 *script);
 void Resource_RunCopiedDecoder(s32 source, s32 destination);
 
-u8	 GetFocusedObjectCollision(void);
+s32	 GetFocusedObjectCollision(void);
 void UpdateMapRegionAtPosition(s32 x, s32 y, s32 z);
 u8	 GetMapCellCollision(s32 layer, s32 x, s32 y);
 void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code);

@@ -21,8 +21,8 @@ struct AnimationMetadata
 	u8	box_y;
 	u8	frame_codec;
 	u8	reserved_0b;
-	s32 frames;
-	s32 animation;
+	void **frames;
+	u8	 **animation;
 };
 
 LAYOUT_SIZE_GUARD(AnimationMetadata_Size, struct AnimationMetadata, 0x14);

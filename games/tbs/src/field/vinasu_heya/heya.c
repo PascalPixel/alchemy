@@ -162,7 +162,7 @@ void SceneActor_ApplySlotsMatchingKind212(void)
 
     for (i = 8; i <= 65; i++) {
         actor = actors[i - 8];
-        if ((s16)actor->timer >> 4 == 0x212)
+        if (actor->timer >> 4 == 0x212)
             ObjectGroup_SetChildValue(actor, actor->timer & 15);
     }
 }
@@ -1545,12 +1545,12 @@ void VinasuHeya_LowerFloatingBlocks(s32 wait)
     if (wait != 0) {
         Engine_AudioPlayCue(180);
     }
-    FieldObject_SetPosition((s32)a, a->x.fixed, gVinasuBlockHeights[(s16)a->timer], a->z.fixed);
-    FieldObject_SetPosition((s32)b, b->x.fixed, gVinasuBlockHeights[(s16)b->timer], b->z.fixed);
+    FieldObject_SetPosition((s32)a, a->x.fixed, gVinasuBlockHeights[a->timer], a->z.fixed);
+    FieldObject_SetPosition((s32)b, b->x.fixed, gVinasuBlockHeights[b->timer], b->z.fixed);
     Engine_ActorWaitForMove(8);
     Engine_ActorWaitForMove(9);
-    a->y.fixed = gVinasuBlockHeights[(s16)a->timer];
-    b->y.fixed = gVinasuBlockHeights[(s16)b->timer];
+    a->y.fixed = gVinasuBlockHeights[a->timer];
+    b->y.fixed = gVinasuBlockHeights[b->timer];
     if (wait != 0) {
         Engine_AudioPlayCue(0x121);
     }

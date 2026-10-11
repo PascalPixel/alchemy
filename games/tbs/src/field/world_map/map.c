@@ -176,7 +176,7 @@ void StoryProgress_TriggerEvent080A(void)
 
 void StoryActor_AdvanceTimer(struct FieldActor *actor)
 {
-    if ((s16)actor->timer <= 0) {
+    if (actor->timer <= 0) {
         actor->timer++;
     } else {
         Engine_ObjectDispatchRelease(actor);
@@ -819,7 +819,7 @@ void FieldScene_RunActorTransferSequence(void)
     Engine_TaskAddCallback(WorldMap_UpdateTransferredActorLanding, 0xc80);
     do {
         Engine_TaskWait(1);
-    } while ((s16)actor->timer == 0);
+    } while (actor->timer == 0);
     record = Actor_Get(15);
     Engine_ActorSetSpriteFlags(record, 0);
     record = Actor_Get(14);
@@ -1043,7 +1043,7 @@ void WorldMap_TransferToExit103(void)
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while ((s16)actor->timer == 0);
+    } while (actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1071,7 +1071,7 @@ void WorldMap_TransferToExit104(void)
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while ((s16)actor->timer == 0);
+    } while (actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1099,7 +1099,7 @@ void WorldMap_TransferToFuneHeya(void)
     Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
     do {
         Engine_TaskWait(1);
-    } while ((s16)actor->timer == 0);
+    } while (actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1131,7 +1131,7 @@ void WorldMap_TransferToExit106(void)
     }
     do {
         Engine_TaskWait(1);
-    } while ((s16)actor->timer == 0);
+    } while (actor->timer == 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     GameFlag_Set(0x927);
@@ -1514,7 +1514,7 @@ void WorldMap_RunBlackOrbScene(void)
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
     Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
-    while ((s16)Object_GetById(0)->timer == 0) {
+    while (Object_GetById(0)->timer == 0) {
         Engine_TaskWait(1);
     }
     Actor_FaceDirection(0, 0x4000, 20);
@@ -1888,7 +1888,7 @@ void FieldScene_RunActorPresentationSequence(void)
         Engine_ActorSetAnimation(10, 6);
         Engine_ActorSetAnimation(6, 8);
         Engine_TaskWait(1);
-    } while (*(s16 *)&((struct FieldActor *)Object_GetById(5))->timer == 0);
+    } while (((struct FieldActor *)Object_GetById(5))->timer == 0);
     Engine_EventWait(20);
     Actor_FaceDirection(9, 0x8000, 20);
     Actor_SetAttachedEffect(8, 0x102);

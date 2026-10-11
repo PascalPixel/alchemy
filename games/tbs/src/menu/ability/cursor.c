@@ -19,26 +19,6 @@
 
 void Object_ApplyProjectedPlacementFar(void *, s32 *, s32 *, s32);
 
-struct MenuCursorAttributes {
-    u16 y : 8;
-    u16 affine_mode : 2;
-    u16 object_mode : 2;
-    u16 mosaic : 1;
-    u16 palette_256 : 1;
-    u16 shape : 2;
-    u16 x : 9;
-    u16 matrix : 5;
-    u16 size : 2;
-};
-
-struct MenuCursorSprite {
-    u8 reserved_00[6];
-    u16 x;
-    u16 y;
-    u8 reserved_0a[10];
-    struct MenuCursorAttributes attributes;
-};
-
 void WaitFrames(s32 frames);
 
 extern volatile u32 gFrameCount;
@@ -177,24 +157,24 @@ void Menu_UpdateEntryObjectTransforms(void)
 
 void UiMenu_PositionCursor(s32 x_offset, s32 y_offset)
 {
-    /* FAKEMATCH: the unsigned position/OAM view and member lifetimes preserve load/register order changed by earlier caching. */
     struct PsynergyMenuState *work = gMenuWork;
+    struct RenderOutput *cursor = work->pane_icon[0];
 
-    ((struct MenuCursorSprite *)work->pane_icon[0])->attributes.x =
-        ((struct MenuCursorSprite *)work->pane_icon[0])->x =
+    cursor->oam.x =
+        cursor->x =
         UiMenu_CursorBobX[(gFrameCount >> 1) & 7] + x_offset
         + ((struct RenderInput *)work->auxiliary_window)->x * 8 + 8;
-    ((struct MenuCursorSprite *)work->pane_icon[0])->attributes.y =
-        ((struct MenuCursorSprite *)work->pane_icon[0])->y =
+    cursor->oam.y =
+        cursor->y =
         UiMenu_CursorBobY[(gFrameCount >> 1) & 7] + y_offset
         + ((struct RenderInput *)work->auxiliary_window)->y * 8 + 8;
 }
 
 void UiMenu_SlideCursor(s32 x, s32 y)
 {
-    /* FAKEMATCH: the unsigned cursor/OAM view preserves scheduling changed by signed coordinates and packed-word casts. */
+
     struct PsynergyMenuState *work = gMenuWork;
-    struct MenuCursorSprite *cursor;
+    struct RenderOutput *cursor;
     s32 steps;
     s32 start_x;
     s32 start_y;
@@ -208,10 +188,10 @@ void UiMenu_SlideCursor(s32 x, s32 y)
         work->skip_slide = 0;
         return;
     }
-    cursor = (struct MenuCursorSprite *)work->pane_icon[0];
+    cursor = work->pane_icon[0];
     {
-        s32 sprite_x = cursor->attributes.x + 64;
-        s32 sprite_y = cursor->attributes.y + 64;
+        s32 sprite_x = cursor->oam.x + 64;
+        s32 sprite_y = cursor->oam.y + 64;
 
         cursor->x = sprite_x;
         cursor->y = sprite_y;
@@ -233,10 +213,10 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     py = start_y;
     do {
         px += dx;
-        cursor->attributes.x = cursor->x =
+        cursor->oam.x = cursor->x =
             (px >> 4) + (((struct RenderInput *)work->auxiliary_window)->x << 3) - 56;
         py += dy;
-        cursor->attributes.y = cursor->y =
+        cursor->oam.y = cursor->y =
             (py >> 4) + (((struct RenderInput *)work->auxiliary_window)->y << 3) - 56;
         steps--;
         if (steps != 0)

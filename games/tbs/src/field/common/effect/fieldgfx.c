@@ -80,8 +80,7 @@ struct SparkleFrame {
 
 extern const struct SparkleFrame FieldFx_SparkleFrames[];
 
-extern struct SparkleWork *gParticleWork;
-#define SparkleMap (*(struct MapScrollWork **)((u8 *)&gParticleWork - 84))
+#include "heap_state.h"
 
 union DustWord {
     u32 value;
@@ -111,9 +110,9 @@ void Resource_DecodeByteLz(const void *source, void *destination);
 
 void FieldMotes_Update(void)
 {
-    /* FAKEMATCH: needed to match: relative work pointers share one pool address; an unsigned-long frame read keeps size and flip stores together. */
-    struct SparkleWork *work = gParticleWork;
-    struct MapScrollWork *map = SparkleMap;
+    /* FAKEMATCH: needed to match: an unsigned-long frame read keeps size and flip stores together. */
+    struct SparkleWork *work = WORK_SLOT(29);
+    struct MapScrollWork *map = WORK_SLOT(8);
     u32 spawned = 0;
     u32 i;
     struct Sparkle *mote = work->sparkles;
@@ -220,7 +219,7 @@ void FieldMotes_Start(void)
 
 void FieldEffect_UpdateSparkles(void)
 {
-    /* FAKEMATCH: needed to match: relative work pointers share one pool address; an unsigned-long frame read keeps size and flip stores together. */
+    /* FAKEMATCH: needed to match: an unsigned-long frame read keeps size and flip stores together. */
     struct SparkleWork *work;
     u32 spawned;
     u32 i;
@@ -241,9 +240,9 @@ void FieldEffect_UpdateSparkles(void)
     u32 b;
     u32 frames;
 
-    work = gParticleWork;
+    work = WORK_SLOT(29);
     spawned = 0;
-    map = SparkleMap;
+    map = WORK_SLOT(8);
     camera = &map->view_x;
     spawn_x = 0;
     spawn_z = 0;

@@ -58,7 +58,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
         VramBlock_LoadCached(slot, 256, 0);
         RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 48, 32);
         object = RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 80, 32);
-        object->table.bits.index += 4;
+        object->oam.index += 4;
         UiMenu_SlideCursor(GIVE_CURSOR_X, 40);
         while (!GameFlag_TestFar(0x150)) {
             if (changed) {

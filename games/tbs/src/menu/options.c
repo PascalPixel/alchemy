@@ -88,23 +88,23 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
         VramBlock_LoadCached(x, 256, WorkspaceOptions_SliderTiles);
         y = 0;
         out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X - 6, y);
-        out->table.bits.palette = SLIDER_PALETTE;
+        out->oam.palette = SLIDER_PALETTE;
         out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X + 26, y);
-        out->table.bits.index += 4;
-        out->table.bits.palette = SLIDER_PALETTE;
+        out->oam.index += 4;
+        out->oam.palette = SLIDER_PALETTE;
         y = 16;
         out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X - 6, y);
-        out->table.bits.palette = 15;
+        out->oam.palette = 15;
         out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X + 26, y);
-        out->table.bits.index += 4;
-        out->table.bits.palette = 15;
+        out->oam.index += 4;
+        out->oam.palette = 15;
     }
 
     x = Resource_FindFreeEntry();
     if (x < RESOURCE_SLOTS) {
         VramBlock_LoadCached(x, 256, 0);
         out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
-        ((u8 *)&out->packed)[1] |= 32;
+        out->oam.palette_256 = 1;
         work->marker[0].output = out;
         x = win->x * 8 + OPTION_SLIDER_X;
         x += work->option[0] * 60 / work->option_count[0];
@@ -116,7 +116,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
     if (x < RESOURCE_SLOTS) {
         VramBlock_LoadCached(x, 256, 0);
         out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
-        ((u8 *)&out->packed)[1] |= 32;
+        out->oam.palette_256 = 1;
         work->marker[1].output = out;
         x = win->x * 8 + OPTION_SLIDER_X;
         x += work->option[1] * 60 / work->option_count[1];

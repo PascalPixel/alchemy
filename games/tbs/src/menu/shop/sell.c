@@ -284,7 +284,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
             VramBlock_LoadCached(slot, 0x100, 0);
             RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 0, 0);
             sprite = RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 32, 0);
-            sprite->table.bits.index += 4;
+            sprite->oam.index += 4;
             for (;;) {
                 if (gKeyState & KEY_A) {
                     AudioCommand_PlayFar(112);

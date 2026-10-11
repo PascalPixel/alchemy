@@ -47,6 +47,6 @@ struct RenderOutput *RenderResource_CreatePair(
     first->sentinel = 0xFD;
     second = RenderOutput_Create(index, 0x80004000, input, x + 32, y);
     second->sentinel = 0xFD;
-    second->table.bits.index += 8;
+    second->oam.index += 8;
     return first;
 }

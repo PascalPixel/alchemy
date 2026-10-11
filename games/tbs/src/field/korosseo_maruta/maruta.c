@@ -17,6 +17,11 @@
 #include "flag_ids.h"
 #include "text/msg_ids.h"
 
+// 宣言なしで呼ばれる (暗黙の int)。定義は void で、値は使われない
+s32 ColossoLogRollingStage_StartPaletteTask();
+s32 ColossoLogRollingStage_SpawnPositionedObject();
+s32 ColossoLogRollingStage_SetupSceneDescriptor();
+
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 
 u8 *ColossoLogRollingStage_GetScriptData(void)
@@ -856,8 +861,7 @@ s32 StageSetup_BuildAndDispatch(void)
 
     switch (gGameState.entrance) {
     case 1:
-        /* FAKEMATCH: called as returning s32 it sets r0 before the constants, as native does; the void call sets it after them. */
-        ((s32 (*)())ColossoLogRollingStage_SetupSceneDescriptor)(0, 8, 6, 1512 << 16, 192 << 16, 39, 40);
+        ColossoLogRollingStage_SetupSceneDescriptor(0, 8, 6, 1512 << 16, 192 << 16, 39, 40);
         Map_CopyCellsTo(127, 0, 1, 2, 5, 2);
         Engine_ActorDestroy(32);
         Engine_ActorDestroy(33);
@@ -1339,8 +1343,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
         Event_ShowMessage(scene, 0);
         Korosseo_FadeInCompetitor(0, x, 200);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-        /* FAKEMATCH: native sets r0 after the other arguments; direct and Call3 calls set it first. */
-        Value3(ColossoLogRollingStage_SpawnPositionedObject, 0, x, 152);
+        ColossoLogRollingStage_SpawnPositionedObject(0, x, 152);
         ColossoLogRollingStage_SpawnPositionedObject(0, 296, 152);
         Engine_EventWait(10);
         Engine_LeaderCheckAhead();
@@ -1353,8 +1356,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
         Camera_MoveTo(-1, -1, -1, 0);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 15);
         Event_ShowMessage(scene, 0);
-        /* FAKEMATCH: native sets r0 after the other arguments; direct and Call3 calls set it first. */
-        Value3(ColossoLogRollingStage_StartPaletteTask, 96, 40, 0);
+        ColossoLogRollingStage_StartPaletteTask(96, 40, 0);
         ColossoLogRollingStage_StartPaletteTaskFromState(128, 40, 10);
         Engine_EventWait(30);
         ColossoLogRollingStage_StartPaletteTaskFromState(160, 40, 10);

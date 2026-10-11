@@ -24,17 +24,6 @@
 #define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 
-struct PsynergyMenuIcon {
-    u8 unknown_00[5];
-    u8 state;
-    u16 x;
-    u16 y;
-    u8 unknown_0a[2];
-    u16 unknown_0c;
-    u8 render_target;
-    u8 sentinel;
-};
-
 struct BtlUnit;
 void Menu_SpawnIconEntries(struct PsynergyMenuState *, s32);
 void AudioCommand_PlayFar(s32 cue);
@@ -42,7 +31,7 @@ void ItemMenu_HideAllIcons(void);
 
 s32 PsynergyMenu_SelectAction(void)
 {
-    /* FAKEMATCH: the unsigned icon-byte view keeps the page-coordinate read before the store; direct fields reverse them. */
+
     struct PsynergyMenuState *menu;
     s32 result;
     s32 done;
@@ -100,7 +89,7 @@ s32 PsynergyMenu_SelectAction(void)
             }
             WaitFrames(1);
             nav = Menu_HandlePageInput(0, state.entry_count, PAGE_ROWS, &state.row, &state.page);
-            ((struct PsynergyMenuIcon *)menu->pane_icon[0])->state = 1;
+            menu->pane_icon[0]->active = 1;
 #if EDITION_INTERNATIONAL
             UiMenu_PositionCursor(55, state.row * 16 + 60);
 #else

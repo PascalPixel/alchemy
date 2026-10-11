@@ -1432,9 +1432,9 @@ void SceneActor_TurnTowardTableAngle(union FieldObject *object)
     s32 direction;
     u16 facing;
 
-    timer = (s16)actor->timer;
+    timer = actor->timer;
     if (timer != 0) {
-        (*(s16 *)&actor->timer)--;
+        actor->timer--;
         return;
     }
     actor->steering_flags = 0;

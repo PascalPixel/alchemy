@@ -48,14 +48,13 @@ void FourObjectMotion_InitializeTopRow();
 
 s32 ActionMenu_Open(void)
 {
-    /* FAKEMATCH: addressing heap slot 15 relative to slot 6 preserves register and literal reuse on exit. */
     struct CharacterMenuState *state = (struct CharacterMenuState *)Runtime_AllocateHeapBlock(55, 0x0a70);
     void *palette = Runtime_BumpAllocateAlternatePool(64);
     void *tiles = Runtime_BumpAllocateAlternatePool(SAVED_TILE_BYTES);
     s32 result;
     s32 index;
 
-    gMenuCtrlWork->suspended = 1;
+    ((struct ObjectSystemWork *)WORK_SLOT(HEAP_SLOT_MENU_CONTROL))->suspended = 1;
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     Scheduler_EnableOverlayCallbacksWithFlags();
@@ -107,13 +106,13 @@ s32 ActionMenu_Open(void)
     CopyWords(Iwram_CopyWords, (void *)0x06004000, tiles, SAVED_TILE_BYTES);
     MemFree(tiles);
     MemFree(palette);
-    ((struct UiRenderWork *)((void **)&gMenuCtrlWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL])->menu_busy = 1;
+    ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menu_busy = 1;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Runtime_ReleaseHeapBlock(55);
-    gMenuCtrlWork->suspended = 0;
+    ((struct ObjectSystemWork *)WORK_SLOT(HEAP_SLOT_MENU_CONTROL))->suspended = 0;
     WaitFrames(1);
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    ((struct UiRenderWork *)((void **)&gMenuCtrlWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL])->menu_busy = 0;
+    ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menu_busy = 0;
     return result;
 }

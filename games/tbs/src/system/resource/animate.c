@@ -712,8 +712,7 @@ s32 Animation_InitializeObjects(struct AnimationObject *state)
     for (index = 0; index < state->count; index++) {
         struct AnimationEntry *object = state->entries[index];
         struct AnimationMetadata *metadata = Resource_GetMetadataRecordFar(object->anim_id);
-        s32 frames;
-        s32 animation;
+        void **frames;
 
         if (metadata->width == 0)
             continue;
@@ -728,13 +727,11 @@ s32 Animation_InitializeObjects(struct AnimationObject *state)
 
         frames = metadata->frames;
         if (frames == 0)
-            frames = Animation_LookupValueByKey(object->anim_id);
+            frames = (void **)Animation_LookupValueByKey(object->anim_id);
 
-        /* FAKEMATCH: metadata address-word stores keep frames before script/codec stores; typed pointers move frames later. */
         object->kind = metadata->draw_kind;
-        animation = metadata->animation;
-        *(s32 *)&object->frames = frames;
-        *(s32 *)&object->scripts = animation;
+        object->frames = frames;
+        object->scripts = metadata->animation;
         object->mode = metadata->frame_codec;
         object->frame = 0xff;
         object->script = 0;
@@ -746,7 +743,7 @@ s32 Animation_InitializeObjects(struct AnimationObject *state)
 
 void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
 {
-    s32 value;
+    void **value;
     s32 z;
     struct AnimationMetadata *info;
 
@@ -755,11 +752,10 @@ void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
         if (info->width != 0) {
             value = info->frames;
             if (value == 0)
-                value = Animation_LookupValueByKey(work->anim_id);
-            /* FAKEMATCH: address-word assignments keep the frames store before codec/zero setup; typed pointers move it after. */
+                value = (void **)Animation_LookupValueByKey(work->anim_id);
             work->kind = info->draw_kind;
-            *(s32 *)&work->scripts = info->animation;
-            *(s32 *)&work->frames = value;
+            work->scripts = info->animation;
+            work->frames = value;
             work->mode = info->frame_codec;
             z = 0;
             work->frame = 0xff;
@@ -994,8 +990,8 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id)
     struct AnimationEntry *found;
     struct AnimationEntry *object;
     s32 i;
-    s32 frames;
-    s32 animation;
+    void **frames;
+    u8 **animation;
 
     found = NULL;
     metadata = Resource_GetMetadataRecordFar(id);
@@ -1010,18 +1006,19 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id)
             }
         }
         if (found != NULL) {
-            frames = metadata->frames;
+            /* FAKEMATCH: instruction order only: read as a word, the frames load does not wait on the anim_id store, so the zero for pos and param loads first as native; the typed read swaps the two (differ 2). */
+            frames = (void **)*(s32 *)&metadata->frames;
             object = found;
             object->anim_id = id;
             if (frames == 0)
-                frames = Animation_LookupValueByKey(id);
-            /* FAKEMATCH: the original address-word boundary keeps the two list stores before codec/frame setup; pointer assignments reorder them in the complete 134-byte allocation path. */
+                frames = (void **)Animation_LookupValueByKey(id);
+
             animation = metadata->animation;
-            *(s32 *)&object->scripts = animation;
-            *(s32 *)&object->frames = frames;
+            object->scripts = animation;
+            object->frames = frames;
             object->mode = metadata->frame_codec;
             object->frame = 0xff;
-            *(u32 *)&object->script = *(u32 *)animation;
+            object->script = animation[0];
             object->pos = 0;
             object->kind = metadata->draw_kind;
             object->param = 0;

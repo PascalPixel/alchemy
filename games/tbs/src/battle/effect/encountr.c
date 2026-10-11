@@ -509,7 +509,7 @@ s32 BattleFx_LookupResult(void *pos)
 //--------------------------------------------------------------------------
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
 {
-	extern struct EncounterZone Encounter_EnemyGroupTable[];
+	extern u16 Encounter_EnemyGroupTable[];
 	struct EventWork	 *work;
 	struct EncounterZone *entry;
 	s32					  rate;
@@ -530,7 +530,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
 		return 0;
 	if (gGameState.cloaked != 0)
 		return 0;
-	entry = &Encounter_EnemyGroupTable[zone];
+	entry = (struct EncounterZone *)Encounter_EnemyGroupTable + zone;
 	rate = entry->rate;
 	if (rate == 0)
 		return 0;

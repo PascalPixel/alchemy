@@ -627,7 +627,7 @@ play:
     }
     UiWork_Finalize(window, 2);
 #else
-    /* FAKEMATCH: whole marker ids swap message/label registers; keep message in r10 and label in r9. */
+    /* FAKEMATCH: whole marker ids swap message/label registers; keep message in r10 and label in r9. 2026-10-11: writing the marker as text + 2 matches in tbs-ja (the pool word becomes MsgTorebiCoins+2) but the id gate refuses an id with an addend (O3), so both barriers stay. */
     asm("" : "+r"(message));
     for (;;) {
         text = (s32)MsgTorebiCoins;

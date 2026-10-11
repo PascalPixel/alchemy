@@ -27,13 +27,36 @@ parts (C, assembly and 8-byte stubs) and shows the bytes of FAKEMATCH-steered
 code as their own number. ☀️ has the priority; the target is ☀️ 100% and ⚓️ 100%,
 sharing as much code between the games as possible.
 
+**100% is announced by pret's standard** (Pascal, 2026-10-11), the bar the
+decompilation scene holds a claim to, and nothing stricter (W3). A game is
+100% when all of these hold:
+
+1. All six editions build byte-identical from source, and anyone with their
+   own cartridge dumps can verify it from the published hashes.
+2. DONE code and DONE data are both 100% in all six editions (C2), the way
+   decomp.dev counts them.
+3. No function is matched by an assembly body or by instruction-emitting
+   inline asm other than the proven `CAMELOT_ASM` helpers (S2); the raw
+   listings under `recon/<game>` are reference only, none linked.
+4. Nothing in the build reads a ROM (O1), confirmed by the independent
+   audit O4 requires before the announcement.
+5. The source compiles as C with a current GCC (`make modern`): no match
+   expected, no errors.
+6. Every compiler-steering device is tagged (S2) and counted
+   (`alchemy check devices`, `alchemy fakematch`), and the announcement
+   states the counts. pokeemerald announced 100% with its fakematches and
+   removed them over the years after; pokeruby is 100% with empty asm
+   barriers in six files today. A register pin or an empty asm barrier is
+   a tagged device like a volatile or a one-pass block, not a bar to 100%.
+
 Matching is not the finish. The project is finished when the source also
 forms a readable, coherent reconstruction suited to the games' hardware and
 approved toolchains: The Broken Seal in 2001 and The Lost Age in 2002 (S3).
 Names, comments and formatting are Alchemy's reconstruction choices. Work
-need not reach that form at once, but every change moves toward it (W8), and
-the last pass before both games are declared finished, alongside removing
-FAKEMATCH (S2), camelotizes what remains.
+need not reach that form at once, but every change moves toward it (W8).
+Removing the tagged devices (S2) is camelotizing work that continues after
+100% is announced, and the last pass before both games are declared
+finished camelotizes what remains.
 
 A game is finished when all six hold (Pascal, 2026-10-08):
 
@@ -64,8 +87,8 @@ A game is finished when all six hold (Pascal, 2026-10-08):
      names from in-game text or the code that loads them, and anything
      unproven keeps its number.
 
-   Order (Pascal, 2026-10-08): first 100% by pret's standard (W3), then this
-   structure as the first order of camelotizing.
+   Order (Pascal, 2026-10-08): first 100% by pret's standard (above), then
+   this structure as the first order of camelotizing.
 
    Camelotizing runs in stages, each byte-identical in all twelve editions
    (`alchemy keep`) (Pascal, 2026-10-08):
@@ -94,8 +117,9 @@ A game is finished when all six hold (Pascal, 2026-10-08):
   `out/<edition>/ld`.
 - ⚓️'s `games/tla/main.ld` is the Japanese object order; its other edition
   scripts are still `recon/tla/<lang>/main.ld`.
-- `recon/<game>/raw` holds the English disassembly of code that is not C yet,
-  one listing per function or run.
+- `recon/<game>/raw` holds the English disassembly, one listing per function
+  or run: ⚓️'s code that is not C yet, and ☀️'s listings kept as reference
+  only, none of them linked (☀️ is 100% code and data).
 - ☀️'s overlays link by the one `games/tbs/src/system/overlay/overlay.ld`
   and their rows of the object list; `games/tbs/overlays.tsv` gives each
   overlay's `.bss` section its header. The overlay's own data and bss not
@@ -110,8 +134,10 @@ A game is finished when all six hold (Pascal, 2026-10-08):
 - `games/tbs/include/event.h` is the scene command vocabulary
   (S3); `field_event.h` and `field_service.h` hold the script layer the
   commands expand to.
-- `recon/<game>/<lang>` holds that edition's ROM scaffold (`rom.s`,
-  `overlays.s`) and its drafts (`main/`, `overlays/`).
+- `recon/tla/<lang>` holds that ⚓️ edition's scaffold (`main.ld`, `main/`,
+  `overlays/`, `units/`) beside `recon/tla/overlays.s` and its symbol files;
+  ☀️ has no scaffold left, and `recon/tbs/en` keeps only near-miss drafts
+  (`main/`, `overlays/`, S4), each named by the address it would replace.
 - `tools/` holds alchemy (one `alchemy` command for both games: build,
   checks, the count, matching, camelotizing and reports; see Commands) and
   ags (asset encoders and decoders). `out/` and `tools/out/` are build
@@ -225,11 +251,16 @@ or functions is exactly this cheating.
 - **S1** `games/` holds only real source: C from an approved compiler, or
   proven assembly written as instructions, never copied bytes. Drafts and
   scaffolding live under `recon/` and shrink toward zero. _Check: publication._
-- **S2** Tagged `/* FAKEMATCH: reason */` code counts until both games reach
-  100%, and is then removed as the final step, as pret's was. Until then
-  compiler-steering C (wrappers, volatile, forced temporaries, dead code),
-  inline assembly and fixed-register variables are allowed when each carries a
-  `FAKEMATCH` tag with its measured reason inside the function. A device is
+- **S2** Tagged `/* FAKEMATCH: reason */` code counts, at 100% as it did in
+  pret's games (Goal); removing it is camelotizing (S3, W8), and a finished
+  game has none. Compiler-steering C (wrappers, volatile, forced
+  temporaries, dead code, one-pass blocks), empty asm barriers and
+  fixed-register variables are allowed when each carries a `FAKEMATCH` tag
+  with its measured reason inside the function. All of them are devices of
+  one standing: `alchemy check devices` counts pins, barriers, inline asm and
+  volatiles, and a count may only fall; trading one device for another is
+  not progress unless the new form is the source's, and a device that stays
+  records in its tag the plain forms measured against it (S4). A device is
   for a difference of instruction order or register choice, an unused
   local of a real type whose size exactly explains the native stack frame,
   or a form the bytes prove the source had (a CSE block that ended where
@@ -529,12 +560,9 @@ byte-identical. A mismatch in game code is never a reason (K2, K3).
   tagged with its measured proof: the stream matches only with that one
   literal changed, and nearly any stand-in value works. Patch bytes count
   as data and are reported apart, like FAKEMATCH (Pascal, 2026-10-08).
-  "100%" is announced only as a pret reviewer would accept it: no game
-  function matching through instruction-emitting inline asm other than
-  the proven `CAMELOT_ASM` helpers (S2), no register pin or empty asm
-  barrier left, nothing in the
-  build read from the ROM, and `recon/<game>` gone except its raw listings
-  kept for reference.
+  What 100% means is settled the same way, in Goal (Pascal, 2026-10-11):
+  the earlier wording here, which refused the announcement while any
+  register pin or empty asm barrier remained, was stricter than pret.
 - **W4** Choose what to match from `make deps`: first the functions other
   unfinished functions call, with the structures they share, then the ones
   with nothing left to name, largest first.
@@ -586,6 +614,53 @@ Not rules; what earlier work measured.
 - C89 and GCC 2.96 take only ASCII identifiers; Shift-JIS in comments and
   strings was normal, minus the ダメ文字 (表, ソ, 能 ...) whose second byte is
   `0x5C`, the backslash that escapes a quote or continues a line.
+- Measured in the pin and barrier pass (2026-10-11), read from agscc's own
+  source and its RTL dumps (`alchemy diff --rtl`):
+  - Register choice is arithmetic. `REG_ALLOC_ORDER` is r3, r2, r1, r0, ip,
+    lr, r4 to r7, r8, r10, r9, r11. local-alloc gives a block-local pseudo
+    the first register in that order free over its lifetime; global.c ranks
+    pseudos by floor_log2(refs) * refs / live_length, refs weighted by
+    natural loop depth, and hands out registers in that order. A pseudo
+    whose first set carries a constant `REG_EQUAL` note has its live length
+    doubled (update_equiv_regs). A fresh `movs r0, #0` where r3 was free
+    means the zero's pseudo conflicted with r1 to r3 for longer than its
+    statement shows.
+  - Thumb `movhi` lists its memory-or-immediate alternative before its
+    immediate one, so a halfword constant that survives to a register
+    loads from the literal pool (`ldr r0, =0x0`). HImode registers come
+    only from halfword stores of a constant, volatile halfword loads and
+    subreg copies for halfword stores; a `u16` local is promoted to SImode.
+  - CSE follows a conditional branch into its target only when the label
+    has one use and is preceded, past notes and unused labels, by a
+    barrier; a loop-end note before the label stops it. On the path it
+    records the branch condition, and a later constant equal to a known
+    register becomes that register, narrower modes included. A one-pass
+    block's loop-end note also ends CSE's block and is a scheduling
+    barrier for the first insn after it; sched2 breaks ties by RTL order.
+  - regmove's backward pass copies operand 1 of a two-address and/or/add
+    into the result unless that operand is a hard register or not a REG:
+    a `u16` field read directly is a subreg operand and is skipped, so the
+    mask is copied instead.
+  - expand_call precomputes an argument that itself contains a call before
+    the later arguments, shortening the live range of values used only
+    earlier. A void call through a function pointer loads it into r3; a
+    value-returning call loads it into r0.
+  - loop.c moves an invariant when threshold * savings * life reaches the
+    loop's insn count, threshold = 1 + the non-fixed registers (15 with a
+    call) less 3 per earlier move; -O2 runs it twice. reload_cse_move2add
+    turns a constant load into `add rN, delta` when rN still holds a nearby
+    constant; reload_cse deletes a store cselib proves redundant.
+  - arm_reorg places literal pools before shorten_branches, from default
+    lengths: an empty asm counts 4 estimated bytes and emits none, a
+    conditional branch 8, a halfword pool load 4. No C statement and no
+    single pattern length supplies that 4; the five pool barriers all
+    follow a sprite attribute pair, and one "pair, then empty asm" idiom
+    is byte-identical at twelve of thirteen such pairs across editions
+    (a layer candidate for Pascal under S2).
+  - A function that saves r9 to its first frame slot and never uses it is
+    a nested function storing its static chain; it goes when its parent
+    is adopted with it.
+  - `alchemy permute` cannot parse a file with nested function definitions.
 
 ## Commands
 
@@ -605,8 +680,9 @@ make compare-tbs-en    # one edition: tbs or tla, then ja, en, de, es, fr or it
 make compare-editions  # all twelve editions (W5)
 make build-rom TARGET=tbs-en  # build a changed game without comparing
 make test
-make verify
+make verify            # every gate, the modern build included: it needs Homebrew's arm-none-eabi-gcc (MODERN_CC)
 make land              # on staging, before committing a landing
+make modern            # the six ☀️ editions with a current GCC (MODERN_CC): no match, no errors
 ```
 
 The `alchemy` binary is `tools/out/cargo-target/release/alchemy`; it acts on
@@ -631,8 +707,10 @@ alchemy objects EDITION...             # what differs from the ROM, object or pl
 alchemy dead [--apply PATH]            # what no edition links, includes or selects
 make progress                          # DONE code and data, one line per edition (alchemy progress)
 alchemy check devices [--update]       # register pins, asm barriers, inline asm, volatile: may only fall
+alchemy fakematch [--show N]           # every FAKEMATCH tag by device and family, weighed by the bytes it steers
 # Camelotize
 make worst                             # maintained C ranked by how mechanical it reads
+alchemy units [--dry-run N]            # Camelot's translation units proposed from the linked images
 alchemy camelotize REWRITE FILE...     # actors, events, registers, declarations, barriers
 alchemy camelotize numbers|casts|idioms FILE...  # decimal quantities, needless casts, C idioms
 alchemy keep [PATH...]                 # keep only edits that leave all twelve identical

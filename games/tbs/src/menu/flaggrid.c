@@ -246,8 +246,7 @@ void Text_FormatHex(u32 value, u32 count, u8 *out)
 
 void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
 {
-	void RenderOutput_PrepareForRedraw(void);
-	void UiText_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);
+	void UiText_DrawStringInWindow(const void *text, void *window, s32 x, s32 y);
     s32 row;
     s32 y;
     s32 flag;
@@ -380,7 +379,7 @@ void UiText_DrawNumberInWindow(s32, s32, struct RenderInput *, s32, s32);
 
 s32 DebugMenu_BrowseIcons(void)
 {
-	void UiText_DrawStringInWindow(const u8 *, struct RenderInput *, s32, s32);
+	void UiText_DrawStringInWindow(const void *, void *, s32, s32);
     s32 redraw;
     s32 tile;
     s32 page;
@@ -485,7 +484,6 @@ struct RenderInput *UiWindow_CreateWithSideObject(s32, s32, s32, s32);
 
 s32 DebugMenu_BrowseEntryGlyphs(void)
 {
-	void RenderOutput_PrepareForRedraw(struct RenderInput *);
     struct GlyphWork *work;
     struct RenderInput *portrait;
     s32 redraw;

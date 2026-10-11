@@ -823,7 +823,7 @@ void StatusMenu_ShowOwnerProgressMessage(
     s32 message_variant,
     s32 preserve_variant)
 {
-	void UiWork_PushValueSlotFar(u32 quantity, s32 style);
+	void UiWork_PushValueSlotFar(s32 quantity, s32 style);
     struct CharacterMenuState *menu = gMenuWork;
     void *buffer;
 
@@ -991,7 +991,7 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 
 
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 {
-	void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
+	void UiText_DrawStringAtOffsetFar(const void *text, void *window, s32 x, s32 y);
     struct InventoryMenuState *menu;
     struct BtlUnit *unit;
 
@@ -1282,7 +1282,7 @@ void UiText_DrawNumberAtOffsetFar(s32, s32, s32, s32, s32);
 s32 PsynergyMenu_DrawListPage(
     s32 window, s32 unused, const struct MenuResult *res)
 {
-	void UiText_DrawStringAtOffsetFar(u8 *, void *, s32, s32);
+	void UiText_DrawStringAtOffsetFar(const void *, void *, s32, s32);
     struct PsynergyMenuState *menu = gMenuWork;
     struct BtlUnit *owner;
     u32 first;
@@ -1598,7 +1598,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
 
 s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state)
 {
-	void UiText_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
+	void UiText_DrawStringAtOffsetFar(const void *text, void *window, s32 x, s32 y);
     struct InventoryMenuState *menu = gMenuWork;
     struct BtlUnit *unit;
     u16 *item;

@@ -480,20 +480,10 @@ s32 SerialRuntime_BeginTransferB(void *destination)
 begin_transfer:
     IRQ_LOCK(saved_interrupt_master);
         state->status = 0x81;
+        gSerialReceiveDest = value;
         gSerialReceivedSize = 0;
         state->active = 1;
-        *active = value;
-    {
-
-        volatile u8 *sequence = &gSerialBlockSequence;
-        /* FAKEMATCH: the zero in r0, see above. An ordinary u16 (also
-         * register-qualified) reuses busy's zero in r4, removes the literal
-         * zero load/pool word and leaves 5 aligned instructions different.
-         * An inline u16 zero-return helper differs by 24; an inline byte
-         * store with a u16 first parameter leaves the same 5. */
-        register u16 zero asm("r0") = 0;
-        *sequence = zero;
-    }
+        gSerialBlockSequence = 0;
     IRQ_UNLOCK(saved_interrupt_master);
     value = 0;
 

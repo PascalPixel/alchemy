@@ -234,9 +234,7 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 				u32			  cell;
 				register u32  offset;
 				u32			  tmp3;
-				volatile u32 *dest;
 				u32			  n;
-				register u32 *tiles;
 				u32			  tmp6;
 				u32			  tmp12;
 				u32			  tmp13;
@@ -246,10 +244,34 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 				tmp12 = x & 15;
 				tmp6 = tmp12;
 				dst += 1;
+				/* FAKEMATCH: the r3 pin on the scaled cell and the consumed-base
+				 * barrier are replaced by three measured forms.
+				 * 1. i = 0 here, before the offset: i's live length (58 -> 60
+				 *    insns, 22 refs) drops its global-allocation priority below
+				 *    cell's (15 refs over 30), so cell keeps r5 and i r6 (i = 0
+				 *    after pos = view: differ 38, cell in r6).
+				 * 2. The scale goes into the x-loop scratch tmp13 inside the layer
+				 *    loop: its first reference is outside that loop, so loop.c
+				 *    (reg_in_basic_block_p under maybe_never) leaves the shift in
+				 *    the conditional block instead of hoisting the invariant
+				 *    before the window tests; being block-local and untied, it
+				 *    takes r3 like the pinned form (scale into n: differ 52).
+				 * 3. The scale comes after the first destination: cell's r5 is
+				 *    still live when reload materializes 0x6002800 for the folded
+				 *    add, so reload picks r2 instead of its round-robin r5 (scale
+				 *    first: differ 54).
+				 * The scr/blk variables and the dest = (u8 *)scr / tiles = (u8 *)blk
+				 * copies keep the layer loop above loop.c's threshold of 30 real
+				 * insns, so the four address constants stay in the loop.
+				 * 4. The two word copies read and write through volatile casts: the
+				 *    VRAM store is hardware, and the volatile load from the block
+				 *    buffer keeps its add apart from the load (a non-volatile load
+				 *    combines into ldr [r, r]); these four volatiles replaced two pins
+				 *    and two barriers and raised the volatile count (2026-10-11). */
+				i = 0;
 				tmp3 = y & 15;
 				tmp13 = tmp3 << 5;
 				pos = view;
-				i = 0;
 				tmp12 = tmp13;
 				n = tmp12;
 				n += tmp6;
@@ -262,49 +284,25 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 					if (pos->x <= x && 16 + (*pos).x > x && pos->y <= y && pos->y + 12 > y)
 					{
 						// ブロック（8 バイト）の上の段の 2 キャラと、下の段（0x40 先）の 2 キャラ
-						u32 *tmp;
-						u32	 tmp2;
-						u32	 tmp4;
-						u32 *tmp7;
-						u32	 tmp10;
-						u32	 tmp14;
-						u32	 tmp18;
-						u32	 tmp21;
-						/* FAKEMATCH: the scaled cell stays in r3 for both tile words; registers and order only. */
-						register u32 bytes __asm__("r3") = cell * 8;
-						u32			 tmp16;
+						u32 scr, blk;
+						u8 *dest, *tiles;
 
-						{
-							tmp2 = 0x06002800;
-							/* FAKEMATCH: the consumed-base barrier preserves two register choices and one load order without changing instruction count or frame. 2026-10-11: without the second use combine folds the constant into the plus and reload materializes it round-robin into r5 (differ 6); a single-set base pointer with two uses is hoisted out of the loop instead (differ 113-149, frame +4/+8). */
-							__asm__ __volatile__("" : : "l"(tmp2));
-							tmp = (u32 *)Ram_MapBlocks;
-							tiles = tmp;
-							tmp16 = offset + tmp2;
-						}
-						tmp21 = tmp16;
-						tmp18 = tmp21;
-						tmp2 = tmp18;
-						tmp = (u32 *)tmp2;
-						dest = tmp;
-						tiles = (u32 *)((u8 *)tiles + bytes);
-						tmp14 = *tiles;
-						tmp10 = tmp14;
-						*dest = tmp10;
-						tmp7 = (u32 *)(Ram_MapBlocks + 4);
-						tiles = tmp7;
-						tiles = (u32 *)((u8 *)tiles + bytes);
-						tmp16 = 0x06002840 + offset;
-						tmp18 = tmp16;
-						tmp14 = tmp18;
-						tmp21 = *tiles;
-						tmp10 = tmp21;
-						tmp4 = tmp10;
-						tmp2 = tmp4;
-						tmp4 = tmp14;
-						tmp7 = (u32 *)tmp4;
-						dest = tmp7;
-						*dest = tmp2;
+						scr = 0x06002800;
+						dest = (u8 *)scr;
+						dest += offset;
+						tmp13 = cell * 8;
+						blk = (u32)Ram_MapBlocks;
+						tiles = (u8 *)blk;
+						tiles += tmp13;
+						*(volatile u32 *)dest = *(volatile u32 *)tiles;
+
+						blk = (u32)Ram_MapBlocks + 4;
+						tiles = (u8 *)blk;
+						tiles += tmp13;
+						scr = 0x06002840;
+						dest = (u8 *)scr;
+						dest += offset;
+						*(volatile u32 *)dest = *(volatile u32 *)tiles;
 						break;
 					}
 					n = 0x800; // つぎのレイヤーの BG マップ

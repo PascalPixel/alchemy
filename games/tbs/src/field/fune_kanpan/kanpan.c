@@ -1043,7 +1043,7 @@ void FuneKanpan_ApplyEntryState(void)
 
 void FuneKanpan_PlaceRandomDeckActors(void)
 {
-	s32 Math_RemainderUnsigned();
+	s32 Math_RemainderUnsigned(s32, s16);
     struct FieldActor *actor;
     s32 flag;
 

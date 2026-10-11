@@ -31,6 +31,8 @@
 #include "save_state.h"
 #include "tbs_edition.h"
 
+void RenderOutput_PrepareForRedraw(void *);
+
 s32 GameFlag_TestFar(s32 flag);
 struct BtlAct * BtlActGet(s32 action_id);
 struct ItemDefinition *Item_GetDirectFar(s32 item);
@@ -1023,7 +1025,6 @@ void AudioCommand_PlayFar(s32);
 
 s32 Menu_RunResourceSelectionLoop(s32 initial)
 {
-	void RenderOutput_PrepareForRedraw(void *);
     struct ResourceMenuWork *work = gMenuSelectWork;
     s32 resource;
 
@@ -1079,7 +1080,6 @@ u32 Resource_DecodeByteLz(const void *, void *);
 
 s32 Menu_SelectResource(s32 start, s32 goal)
 {
-	void RenderOutput_PrepareForRedraw(void *work);
     s16 resource_base;
     s16 cur;
     s32 diff;
@@ -1453,7 +1453,6 @@ void WaitFrames(s32);
 
 s32 Menu_SelectResourceLayout(s32 mode)
 {
-	void RenderOutput_PrepareForRedraw(struct UiWindow *);
 	void UiText_DrawResource(s32, struct UiWindow *, s32, s32);
     struct ResourceMenuWork *work;
     struct UiWindow *window;

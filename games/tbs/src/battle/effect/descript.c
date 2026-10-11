@@ -159,7 +159,7 @@ void ObjectTable_DestroyAtIndex(s32 index)
 
 void ObjectTable_ResetForObject(struct ScenePlacement *table)
 {
-	void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object, u32 value);
+	void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object, s32 value);
     struct FieldStepWork *work;
     struct ScenePlacement *entry;
     struct ObjectRuntime *object;
@@ -468,7 +468,7 @@ void ObjectTable_Snapshot(void)
 
 void ObjectTable_Restore(void)
 {
-	void ObjectDispatch_InitFromTable6Far(struct ObjectRuntime *object);
+	void ObjectDispatch_InitFromTable6Far(void *object);
 	void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object, s32 value);
     struct ObjectRuntime *copy = gObjectSnapshots;
     u8 *indices = (u8 *)gObjectSnapshots - 32;
@@ -589,7 +589,7 @@ s32 BattleFx_SumCounters(void)
 
 s32 GetFocusedObjectCollision(void)
 {
-	void Vector_AddPolarOffset(s32, u32, struct FieldPosition *);
+	void Vector_AddPolarOffset(s32, s32, void *);
     struct EventRuntime *runtime;
     struct ObjectRuntime *object;
     struct MapState *map;
@@ -1061,7 +1061,7 @@ static __inline__ s32 Vitals_Clamp(s32 ratio)
 
 s32 Field_RunScene(s32 entrance)
 {
-	void ObjectDispatch_InitFromTable6Far(struct FieldActor *actor);
+	void ObjectDispatch_InitFromTable6Far(void *actor);
 	volatile s32	   zero;
 	struct FieldWork  *work;
 	struct FieldActor *actor;
@@ -1550,7 +1550,7 @@ struct ActionDescriptorTables
 
 s32 Object_GetTriggerTileAheadOfCurrent(void)
 {
-	void Vector_AddPolarOffset(s32, s32, struct Vec *);
+	void Vector_AddPolarOffset(s32, s32, void *);
 	u8			  *state;
 	u8			  *map;
 	struct Object *obj;

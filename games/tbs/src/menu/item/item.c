@@ -2975,7 +2975,7 @@ typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
 s32 Menu_OpenConfirmPrompt(void)
 {
-	s32 Party_ListActiveOwnersFar(u16 *ids);
+	s32 Party_ListActiveOwnersFar(void *ids);
 #if defined(PROMPT_SAVES_TILES)
     void *saved = Runtime_BumpAllocateAlternatePool(PROMPT_TILES_SIZE);
 #endif
@@ -3729,7 +3729,7 @@ void PsynergyMenu_CreateEntryGrid(void)
 
 void PsynergyMenu_CloseWindows(void)
 {
-	s32 UiWork_FinalizeFar(s32 window, s32 mode);
+	void UiWork_FinalizeFar(s32 window, s32 mode);
     struct PsynergyMenuState *menu;
 
     menu = gMenuWork;

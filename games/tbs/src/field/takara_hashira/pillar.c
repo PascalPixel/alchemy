@@ -556,12 +556,12 @@ static __inline__ void Dma_Wait(volatile u32 *dma)
 
 void CopyAndOffsetCoordinatePreset(void)
 {
-	extern u16 gBgScroll[];
+	extern u32 gBgScroll[];
     u32 *destination;
     const u32 *source;
     u16 *coordinates;
 
-    source = (const u32 *)&gBgScroll[2];
+    source = (const u32 *)&gBgScroll[1];
     destination = (u32 *)TakaraHashira_ShakenScroll;
     *destination++ = *source++;
     *destination++ = *source++;

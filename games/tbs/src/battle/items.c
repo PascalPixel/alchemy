@@ -254,7 +254,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode)
 //--------------------------------------------------------------------------
 s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode)
 {
-	extern void ObjectDispatch_ApplyArgumentToChildrenFar(struct ParticleEffectObject *, s32);
+	extern void ObjectDispatch_ApplyArgumentToChildrenFar(void *, s32);
 	s32 obj;
 	s32 ret;
 
@@ -859,7 +859,7 @@ void ObjectDispatch_InitFromTable6Far(struct ScriptObjectRuntime *object);
 //--------------------------------------------------------------------------
 void Battle_PlaceMapMarkers(void)
 {
-	void ObjectDispatch_ApplyArgumentToChildrenFar(struct ScriptObjectRuntime *object, s32 mode);
+	void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
 	u32							id;
 	struct MarkerMap		   *map = gMapWork[0];
 	struct MarkerWork		   *work = gMapWork[HEAP_SLOT_EVENT - 8];

@@ -29,6 +29,8 @@
 #include "game_state.h"
 #include "uiwindow.h"
 
+u16 SceneData_GetBufferCrc16(u32 count, u8 *p);
+
 extern u16 gBgScroll[];
 
 static __inline__ void DecodeBackground(const u8 *res)

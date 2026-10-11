@@ -90,6 +90,7 @@ void AudioCommand_PlayFar(s32 cue);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void Script_WaitForEventTimeoutFar(struct HopActor *actor);
 void ObjectDispatch_ApplyArgumentToChildrenFar(struct HopActor *actor, s32 mode);
+void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 void BattleFx_FinishAction(void);
 #define gEventWork (*(struct MenuState * (*)) & gEventWork)
 
@@ -122,10 +123,10 @@ struct ActorDescriptor
 //--------------------------------------------------------------------------
 void EventActor_RunHopAndLeapSequence(s32 id)
 {
-	void			 Animation_ApplyChildValuesFar(struct HopActor * actor, s32 value);
-	void			 ObjectDispatch_SetSingleChildFlagsFar(struct HopActor * actor, s32 value);
+	void			 Animation_ApplyChildValuesFar(void *actor, s32 value);
+	void			 ObjectDispatch_SetSingleChildFlagsFar(void *actor, s32 value);
 	void			 ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-	struct HopActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
+	void *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 	struct HopActor *actor;
 	struct HopActor *copy;
 	struct HopActor *prev;
@@ -531,7 +532,6 @@ void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor)
 //--------------------------------------------------------------------------
 void BattleFx_FinishHeavyImpact(s32 jin_id)
 {
-	int ObjectMotion_Launch();
 	struct
 	{
 		s32 x;
@@ -1046,7 +1046,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
 
 void BattleFx_RunVenusDjinnCapture(s32 arg)
 {
-	void				  Animation_ApplyChildValuesFar(struct CaptureObject * object, s32 value);
+	void				  Animation_ApplyChildValuesFar(void *object, s32 value);
 	void				  ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 	struct CaptureObject *leader;
 	struct CaptureObject *djinni;
@@ -1321,10 +1321,10 @@ struct CaptureResource
 //--------------------------------------------------------------------------
 void BattleFx_RunMercuryDjinnCapture(s32 id)
 {
-	void Animation_ApplyChildValuesFar(struct CaptureObject_2 * object, s32 value);
-	void ObjectDispatch_SetSingleChildFlagsFar(struct CaptureObject_2 * object, s32 value);
+	void Animation_ApplyChildValuesFar(void *object, s32 value);
+	void ObjectDispatch_SetSingleChildFlagsFar(void *object, s32 value);
 	void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-	struct CaptureObject_2	*Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
+	void *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 	struct CaptureObject_2	*jin;
 	struct CaptureObject_2	*copy;
 	struct CaptureObject_2	*previous;

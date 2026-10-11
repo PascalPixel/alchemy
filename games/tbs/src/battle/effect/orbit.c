@@ -1215,8 +1215,8 @@ void						 AudioCommand_PlayFar(s32);
 //--------------------------------------------------------------------------
 void RunBattleEffect03(void)
 {
-	void						 ObjectDispatch_ReleaseFar(struct BattleEffect03Object *);
-	void						 Script_WaitForEventTimeoutFar(struct BattleEffect03Object *);
+	void						 ObjectDispatch_ReleaseFar(void *);
+	void						 Script_WaitForEventTimeoutFar(void *);
 	struct BattleFxScene		*scn = gEffectWork;
 	struct BattleEffect03Object *target = scn->main_object;
 	struct BattleEffect03Object *object;

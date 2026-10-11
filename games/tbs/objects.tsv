@@ -521,8 +521,8 @@ main	rom_main_08	games/tbs/src/battle/effect/place_formation_objects	.text
 main	rom_main_08	games/tbs/src/graphics/palette/hblank	.text
 main	rom_main_08	games/common/src/graphics/palette/particle_stream_modes	.text
 main	rom_main_08	games/tbs/src/battle/effect/scenefx	.text
-main	rom_main_08	games/common/src/battle/effect/wait_then_set_field	.text
-main	rom_main_08	games/common/src/battle/effect/wait_twelve_frames_then_set_field	.text
+main	rom_main_08	games/tbs/src/battle/effect/wait_then_set_field	.text
+main	rom_main_08	games/tbs/src/battle/effect/wait_twelve_frames_then_set_field	.text
 main	rom_main_08	games/tbs/src/battle/effect/colburst	.text
 main	rom_main_08	games/tbs/src/battle/effect/fxscales	.rodata
 main	rom_main_08	games/tbs/src/battle/effect/sentou_kouka_gousei

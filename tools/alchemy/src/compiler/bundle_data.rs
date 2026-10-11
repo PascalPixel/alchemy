@@ -1,5 +1,5 @@
 pub const SOURCES: &[(&str, &str)] = &[
-    ("agscc", "a5b70c21a48df6b5e14514d756036073d5bf1725"),
+    ("agscc", "1027438bfe99b14f28d0c5b18a34813a22ad9551"),
 ];
 
 pub const SOURCE_RECORD: &str = "SOURCE.tsv";

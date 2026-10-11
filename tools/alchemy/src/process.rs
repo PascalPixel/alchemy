@@ -50,6 +50,8 @@ pub fn run_keeping_stderr<S: AsRef<str>>(
 
 #[cfg(not(target_os = "macos"))]
 fn spawn(program: &str, args: &[&str], cwd: &Path) -> Result<Output, String> {
+    #[cfg(target_os = "linux")]
+    fixed_addresses::for_this_thread();
     let output = std::process::Command::new(program)
         .args(args)
         .current_dir(cwd)
@@ -60,6 +62,66 @@ fn spawn(program: &str, args: &[&str], cwd: &Path) -> Result<Output, String> {
         stdout: output.stdout,
         stderr: output.stderr,
     })
+}
+
+/// Linux's counterpart of the macOS spawner below: the tools a build runs are
+/// loaded at the same addresses every time. A thread's personality passes to
+/// the programs it starts, so each thread that runs a tool asks once for
+/// ADDR_NO_RANDOMIZE, as `setarch -R` does. Where the kernel refuses (a
+/// container's default seccomp profile does), the tools run as the system
+/// loads them and the build says so once.
+#[cfg(target_os = "linux")]
+mod fixed_addresses {
+    use std::cell::Cell;
+    use std::sync::Once;
+
+    const ADDR_NO_RANDOMIZE: libc::c_ulong = 0x0004_0000;
+    /// The persona that changes nothing and returns the current one.
+    const QUERY: libc::c_ulong = 0xffff_ffff;
+
+    thread_local! {
+        static ASKED: Cell<Option<bool>> = const { Cell::new(None) };
+    }
+    static REFUSED: Once = Once::new();
+
+    /// The persona to ask for, given the current one: none when it already
+    /// keeps addresses fixed.
+    pub(super) fn wanted(current: libc::c_ulong) -> Option<libc::c_ulong> {
+        (current & ADDR_NO_RANDOMIZE == 0).then_some(current | ADDR_NO_RANDOMIZE)
+    }
+
+    fn ask() -> Result<(), std::io::Error> {
+        let current = unsafe { libc::personality(QUERY) };
+        if current == -1 {
+            return Err(std::io::Error::last_os_error());
+        }
+        match wanted(current as libc::c_ulong) {
+            Some(persona) if unsafe { libc::personality(persona) } == -1 => {
+                Err(std::io::Error::last_os_error())
+            }
+            _ => Ok(()),
+        }
+    }
+
+    /// Whether the programs this thread starts are loaded at fixed addresses.
+    pub(super) fn for_this_thread() -> bool {
+        ASKED.with(|asked| {
+            if let Some(fixed) = asked.get() {
+                return fixed;
+            }
+            let result = ask();
+            if let Err(error) = &result {
+                REFUSED.call_once(|| {
+                    eprintln!(
+                        "alchemy: the kernel refuses to load the build's tools at fixed addresses \
+                         ({error}); they run with address randomisation"
+                    );
+                });
+            }
+            asked.set(Some(result.is_ok()));
+            result.is_ok()
+        })
+    }
 }
 
 #[cfg(target_os = "macos")]
@@ -218,6 +280,18 @@ mod tests {
             run(&["/bin/pwd", "-P"], &cwd).unwrap().trim(),
             expected.to_str().unwrap()
         );
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn a_tool_runs_at_fixed_addresses_wherever_the_kernel_allows_it() {
+        assert_eq!(fixed_addresses::wanted(0), Some(0x4_0000));
+        assert_eq!(fixed_addresses::wanted(8), Some(0x4_0008));
+        assert_eq!(fixed_addresses::wanted(0x4_0008), None);
+        let fixed = fixed_addresses::for_this_thread();
+        let persona = run(&["cat", "/proc/self/personality"], "/").unwrap();
+        let persona = u64::from_str_radix(persona.trim(), 16).unwrap();
+        assert_eq!(persona & 0x4_0000 != 0, fixed);
     }
 
     #[test]

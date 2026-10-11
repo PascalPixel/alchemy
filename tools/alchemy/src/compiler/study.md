@@ -327,7 +327,9 @@ in the public report or source bundle. Private corpus objects and detailed
 addresses remain local study artifacts.
 
 The study used Alchemy glyph `7c99ea6759197b436dd3339b1e8fab3b391375b4`,
-agscc `629474adaee19177f64f9f04a3e56ee606c9b235`, and agbcc
+agscc `629474adaee19177f64f9f04a3e56ee606c9b235` (today's `4d71920`: the
+same files, renamed when the history's dates were corrected on 2026-10-11),
+and agbcc
 `da598c1d918402c42c0c0d7128ba14567f3175e9`. The protocol, authored harness,
 source pins, frozen selections and summary TSVs are retained locally under
 `out/compiler-study/`, including `study-sources.tar.gz`; the complete private

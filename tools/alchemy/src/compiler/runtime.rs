@@ -104,11 +104,19 @@ fn member_command(
     ];
     match source_of(&container, source) {
         Source::Assembly(path) => {
+            // The assembler names its input in the object's symbol table, as
+            // the preprocessor named it: a copy in the work directory, named
+            // by its file name alone, keeps the checkout's own path out of
+            // libgcc.a, so every checkout and host archives the same bytes.
+            let name = path
+                .file_name()
+                .ok_or("runtime assembly source has no file name")?;
+            write(work.join(name), read(&path)?)?;
             command.extend(includes.iter().map(|path| format!("-I{}", path.display())));
             command.extend([
                 format!("-DL{member}"),
                 "-xassembler-with-cpp".into(),
-                text(path),
+                text(name),
             ]);
         }
         Source::Generated(name) => {
@@ -407,12 +415,13 @@ fn member_plan(
     source: &str,
 ) -> Result<(Vec<String>, String, String), String> {
     let command = member_command(root, source, member, work)?;
-    let input = Path::new(
+    // The command runs in `work`: a source named without a directory is there.
+    let input = work.join(
         command
             .last()
             .ok_or("runtime compile command has no source")?,
     );
-    let source_sha256 = sha256::hex(&read(input)?);
+    let source_sha256 = sha256::hex(&read(&input)?);
     let mut preprocess = command.clone();
     preprocess.extend(["-E".into(), "-P".into()]);
     let expanded =
@@ -549,6 +558,20 @@ pub fn entry(args: &[String]) -> Result<(), String> {
 #[cfg(test)]
 mod evidence_tests {
     use super::*;
+
+    #[test]
+    fn an_assembly_member_is_compiled_from_a_copy_named_without_its_checkout() {
+        let directory = tempfile::tempdir().unwrap();
+        let (root, work) = (directory.path().join("checkout"), directory.path().join("work"));
+        let source = root.join(CONTAINER).join("gcc/config/arm/lib1funcs.asm");
+        std::fs::create_dir_all(source.parent().unwrap()).unwrap();
+        std::fs::create_dir_all(&work).unwrap();
+        std::fs::write(root.join(CONTAINER).join(TARGET_RULES), "TARGET_LIBGCC2_CFLAGS = -Dinhibit_libc\n").unwrap();
+        std::fs::write(&source, "@ assembly\n").unwrap();
+        let command = member_command(&root, "gcc/config/arm/lib1funcs.asm", "_call_via_rX", &work).unwrap();
+        assert_eq!(command[command.len() - 3..], ["-DL_call_via_rX", "-xassembler-with-cpp", "lib1funcs.asm"]);
+        assert_eq!(std::fs::read_to_string(work.join("lib1funcs.asm")).unwrap(), "@ assembly\n");
+    }
 
     #[test]
     fn archive_names_without_build_provenance_grant_nothing() {

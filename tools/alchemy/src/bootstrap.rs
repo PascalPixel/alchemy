@@ -12,8 +12,18 @@ const BINUTILS_SHA256: &str = "fd7d227c0dd15cf5448385e56b8ad8313cd491839834b57c0
 const MODERN_BINUTILS_VERSION: &str = "2.33.1";
 const MODERN_BINUTILS_SHA256: &str =
     "ab66fc2d1c3ec0359b8e08843c9f33b63e8707efdff5e4cc5c200eae24722cbf";
+/// The checks agscc's recipes make of a build from source: directory, make
+/// target, and the name a failure is reported under.
+const SOURCE_CHECKS: [(&str, &str, &str); 2] = [
+    ("agscc", "generated-check", "generated table check"),
+    ("agscc/arm", "probe", "ARM compiler probe"),
+];
 const MODERN_BINUTILS_TOOLS: [&str; 5] = ["as", "ld", "nm", "objcopy", "objdump"];
-const MODERN_BINUTILS_CFLAGS: &str = "-O2 -Wno-implicit-function-declaration -Wno-int-conversion -Wno-incompatible-function-pointer-types -Wno-deprecated-non-prototype";
+/// `-Dfdopen=fdopen` keeps the bundled zlib from defining `fdopen` away on
+/// macOS (its zutil.h does under TARGET_OS_MAC unless the name is already a
+/// macro), which Apple's <stdio.h> then cannot declare; it changes nothing
+/// elsewhere. With it no host needs zlib's headers installed.
+const MODERN_BINUTILS_CFLAGS: &str = "-O2 -std=gnu99 -Dfdopen=fdopen -Wno-implicit-function-declaration -Wno-int-conversion -Wno-incompatible-function-pointer-types -Wno-deprecated-non-prototype";
 const GAS_CFLAGS: &str = "-O2 -std=gnu89 -D_POSIX_C_SOURCE=200809L -DNSIG=32 -Wno-implicit-int -Wno-implicit-function-declaration -Wno-int-conversion -Wno-incompatible-pointer-types -fcommon";
 const USAGE: &str = "usage: alchemy bootstrap [--check | --build | --binutils | --from BUNDLE]\nBuild and install missing compiler dependencies from pinned sources.\n--check validates without building; --build rebuilds source dependencies.\n--binutils installs only the pinned native assembler and linker tools.\n--from installs an already admitted distribution.\nInstalled executables live in tools/out/compilers; temporary build work lives in tools/out/compiler-build/.";
 
@@ -95,6 +105,24 @@ fn execute(command: &mut Command, log: &fs::File, label: &str) -> Result<(), Str
     }
 }
 
+/// The host compiler of every recipe: `CC` (default `cc`) with the host model
+/// agscc's own recipes compile with, read from its one definition.
+fn host_cc() -> Result<String, String> {
+    let path = root().join("agscc/config/host.mk");
+    let text = fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
+    let cc = std::env::var("CC").ok().filter(|cc| !cc.trim().is_empty());
+    Ok(format!("{} {}", cc.as_deref().unwrap_or("cc"), host_model(&text)?))
+}
+
+fn host_model(makefile: &str) -> Result<&str, String> {
+    makefile
+        .lines()
+        .find_map(|line| line.strip_prefix("HOST_MODEL := "))
+        .map(str::trim)
+        .filter(|model| !model.is_empty())
+        .ok_or_else(|| "agscc/config/host.mk does not assign HOST_MODEL".to_string())
+}
+
 fn verify_archive(path: &Path) -> Result<(), String> {
     verify_digest(path, BINUTILS_SHA256, "binutils-2.10")
 }
@@ -128,6 +156,19 @@ fn build_from_sources() -> Result<(), String> {
             &log,
             "compiler source build",
         )?;
+        // What vouches for compilers built here is their pinned source and
+        // these two checks of what this host made of it, never a hash of the
+        // host's own executables: the tables the generators wrote, and the
+        // ARM compiler's probes against a 32-bit host's recorded output.
+        for (directory, target, label) in SOURCE_CHECKS {
+            execute(
+                Command::new("make")
+                    .args(["--no-print-directory", "-C", directory, target])
+                    .current_dir(root()),
+                &log,
+                label,
+            )?;
+        }
         let archive = sources.join("binutils-2.10.tar.gz");
         if !archive.exists() {
             let download = sources.join("binutils-2.10.download");
@@ -175,7 +216,11 @@ fn build_from_sources() -> Result<(), String> {
                     "--disable-nls",
                     "--disable-shared",
                 ])
-                .env("CC", "clang")
+                // The arm-elf assembler builds no lexer, but its configure stops
+                // unless running lex leaves a lex.yy.c: this stand-in is the one
+                // its own Makefile falls back to, so no host needs flex.
+                .env("LEX", "touch lex.yy.c")
+                .env("CC", host_cc()?)
                 .env("CFLAGS", GAS_CFLAGS)
                 .current_dir(&gas),
             &log,
@@ -243,7 +288,8 @@ fn build_binutils(prefix: &Path) -> Result<(), String> {
         let sources = toolchain.join("sources");
         fs::create_dir_all(&build).map_err(|e| e.to_string())?;
         fs::create_dir_all(&sources).map_err(|e| e.to_string())?;
-        let log = fs::File::create(build.join("bootstrap.log")).map_err(|e| e.to_string())?;
+        // Appended: the compiler build before it wrote its checks to this log.
+        let log = fs::File::options().create(true).append(true).open(build.join("bootstrap.log")).map_err(|e| e.to_string())?;
         println!(
             "building GNU binutils {MODERN_BINUTILS_VERSION}; log: {}",
             build.join("bootstrap.log").display()
@@ -293,9 +339,11 @@ fn build_binutils(prefix: &Path) -> Result<(), String> {
                     "--disable-gold",
                     "--disable-gprof",
                     "--disable-plugins",
-                    "--with-system-zlib",
+                    // One address width and one map format on 32- and 64-bit hosts.
+                    "--enable-64-bit-bfd",
                 ])
                 .arg(format!("--prefix={}", prefix.display()))
+                .env("CC", host_cc()?)
                 .env("CFLAGS", MODERN_BINUTILS_CFLAGS)
                 .current_dir(&objects),
             &log,
@@ -442,4 +490,17 @@ fn install(
     }
     fs::rename(stage.path(), destination).map_err(|e| e.to_string())?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_host_model_comes_from_its_one_definition() {
+        let makefile = "# comment\nCC ?= cc\nHOST_MODEL := -fsigned-char -fwrapv\n";
+        assert_eq!(host_model(makefile).unwrap(), "-fsigned-char -fwrapv");
+        assert!(host_model("CC ?= cc\n").is_err());
+        assert!(host_model("HOST_MODEL := \n").is_err());
+    }
 }

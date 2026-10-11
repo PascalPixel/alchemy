@@ -353,19 +353,69 @@ fn script_includes(root: &Path, text: &str) -> Result<Vec<(String, String)>, Str
 }
 
 fn portable(root: &Path, text: &[u8]) -> Vec<u8> {
-    let prefix = format!("{}/", root.display());
-    let prefix = prefix.as_bytes();
+    replaced(text, format!("{}/", root.display()).as_bytes(), b"")
+}
+
+fn replaced(text: &[u8], from: &[u8], to: &[u8]) -> Vec<u8> {
     let mut kept = Vec::with_capacity(text.len());
     let mut at = 0;
     while at < text.len() {
-        if text[at..].starts_with(prefix) {
-            at += prefix.len();
+        if text[at..].starts_with(from) {
+            kept.extend_from_slice(to);
+            at += from.len();
         } else {
             kept.push(text[at]);
             at += 1;
         }
     }
     kept
+}
+
+/// Moves a copied edition's linker maps to the checkout they now sit in.
+/// A map names every object it placed by absolute path, so a copy made by
+/// `alchemy worktree` names the checkout it came from, and the count would
+/// read that checkout's objects. A map whose link receipt still holds has
+/// that prefix rewritten and its receipt restated, so the first build here
+/// links nothing again; any other map is removed, and that build relinks it.
+pub(crate) fn rebase_maps(output: &Path, from: &Path, to: &Path) -> Result<(), String> {
+    let index = Index::open(output);
+    let from = format!("{}/", from.display());
+    let to = format!("{}/", to.display());
+    let overlays = output.join("overlays");
+    for directory in [output, overlays.as_path()] {
+        let Ok(entries) = fs::read_dir(directory) else {
+            continue;
+        };
+        for map in entries.flatten().map(|entry| entry.path()) {
+            if !map.is_file() || map.extension().is_none_or(|extension| extension != "map") {
+                continue;
+            }
+            let stem = map.file_stem().unwrap_or_default().to_string_lossy().into_owned();
+            let products = match stem.strip_prefix("resource_") {
+                Some(id) if directory == overlays => overlay_products(directory, id).to_vec(),
+                _ => ["gba", "elf", "map"]
+                    .map(|extension| directory.join(format!("{stem}.{extension}")))
+                    .to_vec(),
+            };
+            let shown = |error: std::io::Error| format!("{}: {error}", map.display());
+            let Some(row) = index.row(&products[0]).filter(|row| index.fresh(&products, &row.key))
+            else {
+                fs::remove_file(&map).map_err(shown)?;
+                continue;
+            };
+            let written = fs::metadata(&map).and_then(|metadata| metadata.modified()).map_err(shown)?;
+            let text = fs::read(&map).map_err(shown)?;
+            fs::write(&map, replaced(&text, from.as_bytes(), to.as_bytes())).map_err(shown)?;
+            // The count reads a map newer than its image as a stale build.
+            fs::File::options()
+                .write(true)
+                .open(&map)
+                .and_then(|file| file.set_modified(written))
+                .map_err(shown)?;
+            index.record(&products, &row.key, row.inputs)?;
+        }
+    }
+    index.save()
 }
 
 const INDEX: &str = "cache.tsv";
@@ -2049,6 +2099,47 @@ fn included(directories: &[&Path], source: &Path, preprocessed: bool) -> Result<
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_copied_map_moves_to_its_new_checkout_and_its_link_stays_current() {
+        let dir = tempfile::tempdir().unwrap();
+        let (main, here) = (dir.path().join("main"), dir.path().join("here"));
+        let output = here.join("out/tbs-en");
+        fs::create_dir_all(output.join("overlays")).unwrap();
+        let map = |checkout: &Path| {
+            let object = checkout.join("out/tbs-en/obj/a.o");
+            format!("LOAD {}\n .text 0x08000000 0x10 {}\n", object.display(), object.display())
+        };
+        let image = ["gba", "elf", "map"].map(|extension| output.join(format!("tbs-en.{extension}")));
+        let overlay = overlay_products(&output.join("overlays"), "370");
+        let stale = overlay_products(&output.join("overlays"), "371");
+        for products in [image.as_slice(), &overlay, &stale] {
+            for product in products {
+                let is_map = product.extension().is_some_and(|extension| extension == "map");
+                fs::write(product, if is_map { map(&main) } else { "bytes".into() }).unwrap();
+            }
+        }
+        let index = Index::open(&output);
+        index.record(&image, "image-key", Vec::new()).unwrap();
+        index.record(&overlay, "overlay-key", Vec::new()).unwrap();
+        index.record(&stale, "stale-key", Vec::new()).unwrap();
+        index.save().unwrap();
+        // This overlay changed after its link was recorded: nothing vouches for its map.
+        fs::write(&stale[2], "other bytes").unwrap();
+        let old = std::time::SystemTime::UNIX_EPOCH + std::time::Duration::from_secs(1_000_000_000);
+        fs::File::options().write(true).open(&image[2]).unwrap().set_modified(old).unwrap();
+
+        rebase_maps(&output, &main, &here).unwrap();
+
+        assert_eq!(fs::read_to_string(&image[2]).unwrap(), map(&here));
+        assert_eq!(fs::metadata(&image[2]).unwrap().modified().unwrap(), old);
+        assert_eq!(fs::read_to_string(&overlay[3]).unwrap(), map(&here));
+        let index = Index::open(&output);
+        assert!(index.fresh(&image, "image-key"));
+        assert!(index.fresh(&overlay, "overlay-key"));
+        assert!(!stale[3].exists());
+        assert!(!index.fresh(&stale, "stale-key"));
+    }
 
     #[test]
     fn object_credit_requires_a_current_source_build_receipt() {

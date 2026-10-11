@@ -883,6 +883,27 @@ pub fn sequence_assembly(midi: &[u8]) -> Result<String, String> {
         build_midi_sequence(midi)?.source()?
     ))
 }
+/// How near a half the scaled pitch may come before it is refused. The pitch
+/// goes through the host's `pow`, which C libraries round differently in the
+/// last place: about 1e-9 at these magnitudes, far inside this margin.
+const PITCH_MARGIN: f64 = 1e-6;
+
+/// The native record's pitch: the playback rate in 1/1024 Hz, rounded. A
+/// value within PITCH_MARGIN of a half is refused, so that no host can round
+/// a sample's pitch the other way and build a different ROM.
+fn native_pitch(scaled: f64) -> Result<u32, String> {
+    let pitch = scaled.round();
+    if !pitch.is_finite() || !(1.0..=f64::from(u32::MAX)).contains(&pitch) {
+        return Err("WAV playback pitch exceeds the native wave format".into());
+    }
+    if ((scaled - scaled.floor()) - 0.5).abs() < PITCH_MARGIN {
+        return Err(format!(
+            "WAV playback pitch {scaled} lies within {PITCH_MARGIN} of a half, where hosts round it differently; change the sample's pitch fraction"
+        ));
+    }
+    Ok(pitch as u32)
+}
+
 pub(crate) fn build_pcm_record(wav: &[u8]) -> Result<Vec<u8>, String> {
     let wave = crate::assets::wav::read_pcm8(wav).map_err(|e| e.to_string())?;
     let last_sample = u32::try_from(
@@ -892,11 +913,7 @@ pub(crate) fn build_pcm_record(wav: &[u8]) -> Result<Vec<u8>, String> {
             .ok_or("WAV has no samples")?,
     )
     .map_err(|_| "wave sample count exceeds u32")?;
-    let pitch = (wave.playback_rate(60) * 1024.0).round();
-    if !pitch.is_finite() || !(1.0..=f64::from(u32::MAX)).contains(&pitch) {
-        return Err("WAV playback pitch exceeds the native wave format".into());
-    }
-    let frequency = pitch as u32;
+    let frequency = native_pitch(wave.playback_rate(60) * 1024.0)?;
     let (control, loop_start) = if let Some((start, end)) = wave.loop_range {
         if end != last_sample {
             return Err("native PCM requires its forward loop to end at the last sample".into());
@@ -934,3 +951,21 @@ pub fn build_sound_file(name: &str, input: &[u8]) -> Result<Vec<u8>, String> {
     }
 }
 
+#[cfg(test)]
+mod pitch_tests {
+    use super::native_pitch;
+
+    #[test]
+    fn a_pitch_is_rounded_unless_a_host_could_round_it_the_other_way() {
+        assert_eq!(native_pitch(13_379.0 * 1024.0), Ok(13_700_096));
+        assert_eq!(native_pitch(22_050.25), Ok(22_050));
+        assert_eq!(native_pitch(22_050.75), Ok(22_051));
+        assert_eq!(native_pitch(22_050.499_99), Ok(22_050));
+        assert!(native_pitch(22_050.5).unwrap_err().contains("half"));
+        assert!(native_pitch(22_050.500_000_1).unwrap_err().contains("half"));
+        assert!(native_pitch(22_050.499_999_9).is_err());
+        assert!(native_pitch(0.2).unwrap_err().contains("exceeds"));
+        assert!(native_pitch(f64::NAN).is_err());
+        assert!(native_pitch(5e9).is_err());
+    }
+}

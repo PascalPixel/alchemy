@@ -89,6 +89,8 @@ main	rom_main_00	games/tbs/src/system/scheduler/numtext	.rodata
 main	rom_main_00	games/tbs/src/lib/q16_dot_product
 main	rom_main_00	games/tbs/src/system/save/savedata	.rodata
 main	rom_main_00	games/tbs/src/system/link/testdata	.rodata
+main	rom_main_00	games/tbs/src/system/save/summary	.rodata
+main	rom_main_00	games/tbs/src/system/save/save	.rodata
 main	rom_main_00	games/common/src/system/save/flashtab	.rodata
 main	rom_main_00	games/common/src/system/save/read_flash_id	.rodata
 main	rom_main_00	games/common/src/system/save/identify_flash	.rodata
@@ -96,11 +98,8 @@ main	rom_main_00	games/common/src/system/save/flash_timer_interrupt	.rodata
 main	rom_main_00	games/common/src/system/save/start_flash_timer	.rodata
 main	rom_main_00	games/common/src/system/save/flash_read_routines	.rodata
 main	rom_main_00	games/common/src/system/save/read_flash_core	.rodata
-main	rom_main_00	games/common/src/system/save/flash_verify	.rodata
-main	rom_main_00	games/common/src/system/save/flash_verify_callback	.rodata
-main	rom_main_00	games/tbs/src/system/save/summary	.rodata
-main	rom_main_00	games/tbs/src/system/save/save	.rodata
 main	rom_main_00	games/common/src/system/save/read_flash	.rodata
+main	rom_main_00	games/common/src/system/save/flash_verify	.rodata
 main	rom_main_00	games/common/src/system/save/verify_flash_sector	.rodata
 main	rom_main_00	games/common/src/system/save/flashsst	.rodata
 main	rom_main_00	games/common/src/system/save/erase_flash_chip	.rodata
@@ -108,6 +107,7 @@ main	rom_main_00	games/common/src/system/save/erase_flash_sector	.rodata
 main	rom_main_00	games/common/src/system/save/flash_program_byte	.rodata
 main	rom_main_00	games/common/src/system/save/program_flash_sector_with_erase_retry	.rodata
 main	rom_main_00	games/common/src/system/save/flash_erase_verify	.rodata
+main	rom_main_00	games/common/src/system/save/flash_verify_callback	.rodata
 main	rom_main_00	games/common/src/system/save/flashmx	.rodata
 main	rom_main_00	games/common/src/system/save/program_flash_sector	.rodata
 main	rom_main_00	games/common/src/system/save/flashat	.rodata

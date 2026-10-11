@@ -31,6 +31,7 @@
 #include "tbs_edition.h"
 #include "game_state.h"
 #include "uiflow.h"
+#include "uiwindow.h"
 
 void Vram_CopyTile(u32 source_tile, u32 destination_tile)
 {
@@ -223,14 +224,10 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
                 window, LIST_TILE_PAGES_LEFT, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
             UiWindow_SetTilemapEntry(
                 window, LIST_TILE_PAGES_RIGHT, window->width - 2, edge, 0);
-            /* FAKEMATCH: the one-pass update keeps the page-call arguments
-             * and dirty-pointer loads in native order (12 rows differ
-             * without the block). The cursor pointer pair preserves the
-             * native spill slots (42 rows differ without the pair); both
-             * forms keep all 770 instructions in every edition. */
-            do {
-                render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
-            } while (0);
+            UiRender_MarkRow(render, window->y - 1);
+            /* FAKEMATCH: the cursor pointer pair preserves the native
+             * spill slots (42 rows differ without the pair); it keeps
+             * all 770 instructions in every edition. */
             cur++;
             cur--;
         }
@@ -576,16 +573,12 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                     -1,
                     0);
             }
-            /* FAKEMATCH: this one-pass block is needed to match the page-call
-             * arguments and render reload order (ten instructions). */
-            do {
-                edge = -1;
-                UiWindow_SetTilemapEntry(
-                    window, 0xf334, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
-                UiWindow_SetTilemapEntry(
-                    window, 0xf335, window->width - 2, edge, 0);
-            } while (0);
-            render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+            edge = -1;
+            UiWindow_SetTilemapEntry(
+                window, 0xf334, window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
+            UiWindow_SetTilemapEntry(
+                window, 0xf335, window->width - 2, edge, 0);
+            UiRender_MarkRow(render, window->y - 1);
         }
 
         for (i = 0; i < icon_count; i++) {

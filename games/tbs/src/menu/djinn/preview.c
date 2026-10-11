@@ -28,6 +28,7 @@
 #include "heap_state.h"
 #include "types.h"
 #include "btlpty.h"
+#include "uiwindow.h"
 struct BtlAct * BtlActGet(s32 action_id);
 void UnitCalcFar(s32 unit_id);
 
@@ -1301,7 +1302,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                 UiWindow_SetTilemapEntry((struct RenderInput *)list_win, 0xf011, list_win->width - (cnt + 4) / 5 - 3, -1, 0);
                 UiWindow_SetTilemapEntry((struct RenderInput *)list_win, 0xf012, list_win->width - 2, -1, 0);
             }
-            ctx->dirty |= (u8)(2 << ((u32)(list_win->y - 1) >> 2));
+            UiRender_MarkRow(ctx, list_win->y - 1);
         }
 
         trig = gKeyState;
@@ -1386,9 +1387,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
                     UiWindow_SetTilemapEntry((struct RenderInput *)detail_win, 0xf334, detail_win->width - sub_cnt - 3, -1,
                                   0);
                     UiWindow_SetTilemapEntry((struct RenderInput *)detail_win, 0xf335, detail_win->width - 2, -1, 0);
-                    /* FAKEMATCH: restores a block end the bytes prove (the 0xf335 arguments are scheduled as if the dirty update were not in their block): an empty one-pass block whose loop notes make the dirty update a sched2 barrier, so the post-call writes of r1, r2 and r3 stop counting as dependants and subs r2, #2 follows the r0 copy as native (4 rows without) */
-                    do { } while (0);
-                    ctx->dirty |= (u8)(2 << (detail_win->y >> 2));
+                    UiRender_MarkRow(ctx, detail_win->y);
                 }
                 if (sub_sel == 0 && sub_cnt != 0) {
                     if (detail_win != 0) {

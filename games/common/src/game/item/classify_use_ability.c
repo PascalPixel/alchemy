@@ -9,6 +9,7 @@
 #include "scene.h"
 #include "edition.h"
 #include "graphics.h"
+#include "uiwindow.h"
 
 #define SENTOU_OK 0x80 // tgt_flg：戦闘で使える
 
@@ -338,13 +339,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 			UiWindow_SetTilemapEntry(
 				window, SUMMON_LEFT_ARROW_TILE, window->width - (count + 3) / 4 - 3, -1, 0);
 			UiWindow_SetTilemapEntry(window, SUMMON_RIGHT_ARROW_TILE, window->width - 2, -1, 0);
-			/* FAKEMATCH: instruction order only: the one-pass block's
-			   barrier orders both arrow calls' arguments and the dirty
-			   flag's loads as in the native (differ 10). */
-			do
-			{
-				render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
-			} while (0);
+			UiRender_MarkRow(render, window->y - 1);
 		}
 
 		//------------------------------------------------------------------

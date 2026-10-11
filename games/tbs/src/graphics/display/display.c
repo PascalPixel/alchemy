@@ -32,6 +32,7 @@
 #include "character_menu.h"
 #include "battle_unit.h"
 #include "btlsys.h"
+#include "uiwindow.h"
 
 u32 Resource_DecodeByteLz(const void *, void *);
 
@@ -466,10 +467,7 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
                 } while (col != 0);
             }
 
-            /* FAKEMATCH: needed to match: the do-while (0) keeps the row counter update after the dirty-byte store instead of filling the load delay. */
-            do {
-                render->dirty |= 2 << ((u32)y >> 2);
-            } while (0);
+            UiRender_MarkRow(render, y);
             height--;
             y++;
         } while (height != 0);

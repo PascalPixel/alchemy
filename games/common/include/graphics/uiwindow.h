@@ -53,4 +53,11 @@ LAYOUT_OFFSET_GUARD(UiChannelSlot_Countdown, struct UiChannelSlot, countdown, 0x
 LAYOUT_OFFSET_GUARD(UiChannelSlot_Transition, struct UiChannelSlot, transition, 0x1c);
 LAYOUT_OFFSET_GUARD(UiChannelSlot_Flags, struct UiChannelSlot, flags, 0x24);
 
+// 窓の行 y のあるタイルマップの帯 (4 行) を転送させる
+#define UiRender_MarkRow(render, y)                    \
+	do                                                 \
+	{                                                  \
+		(render)->dirty |= 2 << ((u32)(y) >> 2);        \
+	} while (0)
+
 #endif

@@ -440,10 +440,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                     list->width - count[page] - 3, top, 0);
                 UiWindow_SetTilemapEntryFar(list, 0xf129,
                     list->width - 2, top, 0);
-                /* FAKEMATCH: a one-pass block. Its loop notes are a sched2 barrier carried by the block's first insn (the 0xea3 pool load): every set before it gains a dependent, so the bracket calls' arguments take native order (the dirty update's movs r3, #2 otherwise gave the second call's r3 copy one more dependent than its r0 copy), and the pool load is scheduled before ldrh as native. An asm barrier here fixed the arguments but put ldrh first (a true dependence on the asm's r7 makes it class 3). */
-                do {
-                    render->dirty |= 2 << (list->y >> 2);
-                } while (0);
+                UiRender_MarkRow(render, list->y);
             }
         }
 
@@ -649,10 +646,7 @@ s32 DjinnMenu_ShowOwnerStatus(void)
             }
             UiWindow_SetTilemapEntryFar(window, 0xf128, window->width - page[side] - 3, -1, 0);
             UiWindow_SetTilemapEntryFar(window, 0xf129, window->width - 2, -1, 0);
-            /* FAKEMATCH: needed to match: a one-pass block keeps the page-cap arguments before the dirty update */
-            do {
-                render->dirty |= 2 << (window->y >> 2);
-            } while (0);
+            UiRender_MarkRow(render, window->y);
         }
         frame++;
         blink = frame % 60 - 5;

@@ -19,6 +19,7 @@
 #include "djinn_menu.h"
 #include "heap_state.h"
 #include "text/msg_ids.h"
+#include "uiwindow.h"
 void RenderOutput_PrepareForRedrawFar(s32 window);
 
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
@@ -66,11 +67,8 @@ void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette)
                 }
                 p++;
             }
-            ((struct UiRenderWork *)base)->dirty |= 2 << ((u32)y >> 2);
-            /* FAKEMATCH: needed to match: a do-while(0) around the row count decrement keeps the reference register order */
-            do {
-                height--;
-            } while (0);
+            UiRender_MarkRow((struct UiRenderWork *)base, y);
+            height--;
             y++;
         } while (height != 0);
     }

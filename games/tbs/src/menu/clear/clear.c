@@ -27,6 +27,7 @@
 #include "window.h"
 #include "item.h"
 #include "game_state.h"
+#include "uiwindow.h"
 
 extern u16 gBgScroll[];
 
@@ -822,7 +823,7 @@ s32 SaveMenu_Run(void)
                 v5 = 0;
                 UiWindow_SetTilemapEntry(page_window, 0xf128, (17 - (s32)page_count), -1, 0);
                 UiWindow_SetTilemapEntry(page_window, 0xf129, 18, -1, 0);
-                gWindowWork[0][RENDER_DIRTY_OFS] |= (2 << ((u32)*(u16 *)(page_window + 14) >> 2));
+                UiRender_MarkRow((struct UiRenderWork *)gWindowWork[0], *(u16 *)(page_window + 14));
             }
             v6 = page * 50 + 50;
             if (v6 > encoded_size) {

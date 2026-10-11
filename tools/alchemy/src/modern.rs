@@ -612,7 +612,7 @@ mod tests {
         assert!(compiles(target, Path::new("games/tbs/src/battle/tgtexec.c")));
         assert!(compiles(target, Path::new("games/tbs/src/graphics/text/moji.c")));
         assert!(!compiles(target, Path::new("games/common/src/sound/engine.c")));
-        assert!(!compiles(target, Path::new("games/common/src/system/save/read_flash.c")));
+        assert!(!compiles(target, Path::new("games/common/src/system/save/flash.c")));
     }
 
     #[test]

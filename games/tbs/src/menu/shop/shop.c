@@ -1,5 +1,4 @@
 #include "battle.h"
-#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -9,21 +8,212 @@
 #include "sound.h"
 #include "system.h"
 #include "mem.h"
+#include "edition.h"
 #include "types.h"
 #include "scene.h"
 #include "global_cells.h"
-#include "system.h"
-#include "ui.h"
-#include "node_chain.h"
+#include "party_state.h"
+#include "btlsys.h"
+#include "object_runtime.h"
 #include "dma.h"
+#include "callback_scheduler.h"
 #include "resource.h"
 #include "shop.h"
+#include "ui.h"
+#include "tbs_edition.h"
 #include "io_reg.h"
+#include "text/msg_ids.h"
+#include "keystate.h"
+#include "node_chain.h"
 #include "game_state.h"
 #include "sound_ids.h"
-#include "tbs_edition.h"
 #include "item.h"
-#include "text/msg_ids.h"
+#include "fixed_math.h"
+#include "far_runtime.h"
+
+s32 AudioCommand_GetStateByteFar(void);
+
+#define Inventory_EquipFar ((void (*)(s32,s32))Inventory_EquipFar)
+
+void Battle_ResetEffectCounterFar(void);
+s32 UiWork_FinalizePendingCoreFar();
+
+struct ObjectRuntime *Object_GetByIdFar(s32 id);
+void UiWork_FinalizeFar(s32 window, s32 style);
+
+s32 AbilityMenu_BuildAvailableList(void)
+{
+    struct ShopRuntime *state;
+    s16 *output;
+    s32 index;
+    s32 count;
+    s8 mode;
+
+    state = gMenuWork;
+    count = 0;
+    index = 0;
+    output = state->stock_item_ids;
+    do {
+        mode = state->shop_type;
+        if (mode == Item_GetEquipmentGroupFar(index) &&
+            Item_AdjustCounterFar(index, 0) != 0) {
+            *output = index;
+            count++;
+            output++;
+        }
+        index++;
+    } while (index <= 0x1ff);
+    state->stock_item_ids[count] = 0;
+    state->stock_count = count;
+    return count;
+}
+
+void Shop_StepCursor(void)
+{
+    ShopCursor_Advance(&((struct ShopRuntime *)gMenuWork)->cursor);
+}
+
+void Shop_InitializeCursorWork(void)
+{
+    struct ShopRuntime *work;
+    volatile s32 zero;
+    s32 slot;
+
+    work = Runtime_AllocateHeapBlock(55, 0xa70);
+    Battle_ResetEffectCounterFar();
+    zero = 0;
+    Dma_Set((const void *)&zero, work, 0x8500029c, REG_DMA3);
+    work->mode = 12;
+    work->party_member_count = Party_ListActiveOwnersFar(work->party_member_ids);
+    slot = Resource_FindFreeEntry();
+    work->cursor_icon = slot;
+    VramBlock_LoadCached(slot, 128, Shop_HandTiles);
+    slot = Resource_FindFreeEntry();
+    work->previous_page_icon = slot;
+    VramBlock_LoadCached(slot, 128, Shop_UpArrowTiles);
+    slot = Resource_FindFreeEntry();
+    work->next_page_icon = slot;
+    VramBlock_LoadCached(slot, 128, Shop_DownArrowTiles);
+    slot = Resource_FindFreeEntry();
+    work->gem_icon = slot;
+    VramBlock_LoadCached(slot, 128, Shop_GemTiles);
+    slot = Resource_FindFreeEntry();
+    work->stat_down_icon = slot;
+    VramBlock_LoadCached(slot, 128, Shop_SmallDownArrowTiles);
+    slot = Resource_FindFreeEntry();
+    work->stat_up_icon = slot;
+    VramBlock_LoadCached(slot, 128, Shop_SmallUpArrowTiles);
+    Scheduler_AddOrUpdateCallback(Shop_StepCursor, 0xc80);
+}
+
+void Inn_Cleanup(void)
+{
+    struct ShopRuntime *state;
+
+    state = gMenuWork;
+    Scheduler_RemoveCallback(Shop_StepCursor);
+    UiWork_FinalizePendingCoreFar();
+    Resource_ResetEntry(state->cursor_icon);
+    Resource_ResetEntry(state->previous_page_icon);
+    Resource_ResetEntry(state->next_page_icon);
+    Resource_ResetEntry(state->gem_icon);
+    Resource_ResetEntry(state->stat_up_icon);
+    Resource_ResetEntry(state->stat_down_icon);
+    Runtime_ReleaseHeapBlock(0x37);
+}
+
+s32 Shop_Run(s32 row, s32 keeper_id)
+{
+    struct ShopRuntime *shop;
+    struct RenderOutput *anchor;
+    s32 window;
+    s32 choice = 0;
+
+    if (row >= EventTable_GetRowLimit() || row < 0)
+        row = 0;
+    EventTable_ApplyRowAbilities(row);
+    Shop_InitializeCursorWork();
+    shop = ((struct ShopRuntime *)gMenuWork);
+    shop->shop_type = EventTable_GetRowType(row);
+    if (row == 16)
+        shop->warrior_shop = 1;
+    if (row == 17)
+        shop->warrior_shop = 1;
+    if (row == 18)
+        shop->warrior_shop = 1;
+    shop->keeper_resource = ((struct AnimationObject *)Object_GetByIdFar(keeper_id)->animation)->entries[0]->anim_id;
+    window = UiWindow_CreateWithSideObjectFar(shop->keeper_resource, 0, 0, 0);
+    if (window == 0)
+        window = UiWindow_CreateFar(-5, 0, 5, 5, 2);
+    anchor = RenderOutput_CreateFar(shop->cursor_icon, 0x40000000, (struct RenderInput *)window, 0, 0);
+    anchor->active = 1;
+    anchor->kind = 0;
+    ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
+    shop->cursor.anchor = anchor;
+    UiMessage_ShowAndWait((s32)MsgWeaponShopWelcome);
+loop:
+    {
+        choice = Menu_SelectEntry11To14Far(choice);
+        shop->party_action = choice;
+        if (choice == 0) {
+            shop->stock_count = EventTable_CopyRowHeader(row, shop->stock_item_ids);
+            UiMessage_ShowAndWait((s32)MsgWhatWouldYouLike);
+            Shop_SelBuy();
+        } else if (choice == 1) {
+            UiMessage_ShowAndWait((s32)MsgWhatToSell);
+            Shop_PickUnit();
+        } else if (choice == 2) {
+            if (AbilityMenu_BuildAvailableList() != 0) {
+                UiMessage_ShowAndWait((s32)MsgConnoisseur);
+                Shop_SelBuy();
+            } else {
+                UiMessage_ShowAndWait((s32)MsgOutOfStock);
+                WaitFrames(1);
+            }
+        } else if (choice == 3) {
+            UiMessage_ShowAndWait((s32)MsgFixDamaged);
+            Shop_SelUnit();
+        } else {
+            goto done;
+        }
+        ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
+        UiMessage_ShowAndWait((s32)MsgAnythingElse);
+        goto loop;
+    }
+done:
+    UiMessage_ShowAndWait((s32)MsgShopFarewell);
+    UiWork_FinalizeFar(window, 2);
+    Inn_Cleanup();
+    return 0;
+}
+
+#if EDITION_INTERNATIONAL
+#define FINAL_ARG 1
+#else
+#define FINAL_ARG 2
+#endif
+
+s32 Battle_ApplyPresetItemsAndFlags(void)
+{
+    gGameState.coins = 0x30d40;
+    gGameState.shop_gifts = 0x1c;
+    Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
+    Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
+    Inventory_AddItemFar(2, 0xe7);
+    UnitGetFar(3)->doku = 1;
+    UnitGetFar(5)->doku = 1;
+    UnitGetFar(2)->akuryo = 1;
+    Shop_Run(FINAL_ARG, 0x1e);
+    return 0;
+}
+
+void AudioCommand_WaitForStateByteClear(void)
+{
+    while (AudioCommand_GetStateByteFar() != 0) {
+        WaitFrames(1);
+    }
+}
+
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 #define RenderOutput_RedrawSavedRectFar ((void (*)(s32))RenderOutput_RedrawSavedRectFar)
@@ -33,15 +223,12 @@ struct ItemDefinition *Item_GetDirectFar(s32 item);
 #define Shop_BuySpecialItem ((void (*)(s32,s32))Shop_BuySpecialItem)
 #define Item_AdjustCounterFar ((void (*)(s32,s32))Item_AdjustCounterFar)
 
-void UiWork_FinalizePendingCoreFar(void);
-
 struct Record_080b06c0 {
     u8 filler0[4];
     u8 values[21];
 };
 
 extern u8 gEventWork[];
-
 
 void UiMessage_ShowAndWait(s32 arg0)
 {
@@ -368,8 +555,6 @@ void Shop_PlaceCursor(void *window, s32 x, s32 y)
         cursor_y,
         shop->mode);
 }
-
-void UiWork_FinalizeFar(s32 window, s32 style);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void PsynergyMenu_InitializeEntryObjectsFar(s32 window, s32 column, s32 row, s32 height, s32 flags);
 void AudioCommand_PlayFar(s32 cue);
@@ -585,4 +770,151 @@ close:
     UiWork_FinalizeFar(shop->money_window, 2);
     WaitFrames(1);
     return 0;
+}
+
+void RenderOutput_PrepareForRedrawFar(s32 window);
+struct RenderOutput *RenderOutput_CreateLoadedFar(s32 code, s32 layers, struct RenderInput *input, s32 x, s32 y);
+
+#define RenderOutput_CreateLoadedFar ((struct RenderOutput * (*)(s32,s32,s32,s32,s32))RenderOutput_CreateLoadedFar)
+
+void Shop_DrawStock(s32 window, s32 selected)
+{
+
+    struct ShopRuntime *shop;
+    s16 *item_ids;
+    s16 *item_id;
+    s32 item_count;
+    s32 first;
+    s32 slot;
+    s32 x;
+    s32 clear;
+    s32 highlight;
+    s16 stock_item;
+    struct ItemDefinition *definition;
+    struct RenderOutput *icon;
+
+    shop = gMenuWork;
+    item_ids = shop->stock_item_ids;
+    item_count = shop->stock_count;
+    first = selected - selected % 7;
+    if (window != 0) {
+        RenderOutput_PrepareForRedrawFar(window);
+        if (first != 0) {
+            icon = RenderOutput_CreateFar(shop->previous_page_icon, 0x40000000,
+                                 (struct RenderInput *)window, 216, -16);
+            clear = 0;
+            icon->kind = clear;
+            icon->active = 17;
+            icon->anim_step = clear;
+        }
+        if (first + 7 < item_count) {
+            icon = RenderOutput_CreateFar(shop->next_page_icon, 0x40000000,
+                                 (struct RenderInput *)window, 216, 24);
+            clear = 0;
+            icon->kind = clear;
+            icon->active = 15;
+            icon->anim_step = clear;
+        }
+        slot = 0;
+        if (first < (u32)item_count) {
+            item_id = (s16 *)((first * 2) + (u32)item_ids);
+            x = 16;
+            for (; (u32)slot <= 6 && first < (u32)item_count;
+                 x += 32, slot++, item_id++, first++) {
+                stock_item = *item_id;
+                definition = Item_GetDirectFar(stock_item);
+                icon = RenderOutput_CreateLoadedFar(
+                    stock_item, 1, window, slot * 32, 0);
+                icon->sentinel = 252;
+                if (first == selected) {
+                    icon->active = 9;
+                    highlight = 10;
+                    icon->anim_step = highlight;
+                    icon->sentinel = 253;
+                }
+                icon = Shop_CreatePriceSprite(definition->price, window, x, 0);
+                icon->sentinel = 251;
+            }
+        }
+    }
+}
+
+void Shop_DrawMoney(void)
+{
+    struct ShopRuntime *shop;
+    s32 window;
+
+    shop = gMenuWork;
+    window = shop->money_window;
+    if (window != 0) {
+#if EDITION_INTERNATIONAL
+        UiText_DrawCharacterAtOffsetFar((s32)MsgYourCoins, window, 0, 0);
+        UiText_DrawNumberInWindowFar(gGameState.coins, 6, window, 0x20, 8);
+#else
+        s32 msg = (s32)MsgYourCoins;
+
+        UiText_DrawCharacterAtOffsetFar(msg, window, 0, 0);
+        UiText_DrawNumberInWindowFar(gGameState.coins, 6, window, 0, 8);
+        UiText_DrawCharacterAtOffsetFar(msg - 2, window, 48, 8);
+#endif
+    }
+}
+
+#undef RenderOutput_RedrawSavedRectFar
+
+void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
+
+void Shop_DrawItemPrice(s32 window, s32 item, s32 price, s32 price_mode)
+{
+    s32 message;
+
+    if (window == 0)
+        goto done;
+    goto draw;
+cannot_buy:
+#if EDITION_INTERNATIONAL
+    UiText_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window, 0, 8);
+#else
+    UiText_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window, 8, 8);
+#endif
+    goto done;
+show_price:
+    message = (s32)MsgPrice;
+#if EDITION_INTERNATIONAL
+    UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
+#else
+    UiText_DrawCharacterAtOffsetFar(message, window, 8, 8);
+#endif
+    message -= 3;
+#if defined(TBS_EDITION_FR)
+    UiText_DrawNumberInWindowFar(price, 5, window, 0x18, 8);
+    UiText_DrawCharacterAtOffsetFar(message, window, 0x40, 8);
+#elif defined(TBS_EDITION_ES)
+    UiText_DrawNumberInWindowFar(price, 5, window, 0x20, 8);
+    UiText_DrawCharacterAtOffsetFar(message, window, 0x50, 8);
+#else
+    UiText_DrawNumberInWindowFar(price, 5, window, 0x20, 8);
+    UiText_DrawCharacterAtOffsetFar(message, window, 0x48, 8);
+#endif
+    goto done;
+draw:
+    RenderOutput_RedrawSavedRectFar(window);
+    UiText_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, 0, 0);
+    if (price != 0)
+        goto show_price;
+    switch (price_mode) {
+    case 1:
+        goto cannot_buy;
+    case 2:
+#if EDITION_INTERNATIONAL
+        UiText_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, 0, 8);
+#else
+        UiText_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, 8, 8);
+#endif
+        break;
+    default:
+        goto show_price;
+    }
+done:
+    return;
 }

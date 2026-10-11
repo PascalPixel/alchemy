@@ -13,13 +13,13 @@
 
 #define BattleFx_GetResourceGroup ((s32 (*)(s32))BattleFx_GetResourceGroup)
 
-extern s32 Encounter_SelectEnemyGroup();
+s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps);
 
-s32 EffectRuntime_LookupByTableEntry(u32 index)
+s32 EffectRuntime_LookupByTableEntry(u32 index, s32 steps)
 {
     u8 *table = (u8 *)Ram_HeapSlots->event_work + 0x18c;
 
-    return Encounter_SelectEnemyGroup(table[index]);
+    return Encounter_SelectEnemyGroup(table[index], steps);
 }
 
 s32 BattleFx_ApplyLookupResult(s32 arg0, s32 arg1)

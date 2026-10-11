@@ -26,13 +26,19 @@
 #include "callback_scheduler.h"
 #include "fixed_math.h"
 #include "object_efx.h"
+#include "object_effect.h"
+#include "field_event.h"
+#include "keystate.h"
+#include "io_reg.h"
+#include "fx_scene.h"
+#include "sound_ids.h"
+#include "motobj.h"
+#include "field_effect.h"
 
 extern u8 gMapCellBuffer[];
 
 void AudioCommand_PlayFar(s32);
 void ObjectDispatch_ApplyArgumentToChildrenFar(struct ObjectRuntime *, s32);
-
-void *ObjectTable_Get(u32);
 
 void *Object_Spawn(s32, s32, s32, s32);
 
@@ -259,12 +265,6 @@ struct Effect05State
 	u8					   alternate;
 };
 
-extern struct Effect05State *gEffectWork;
-void						 Vector_AddPolarOffset(s32, s32, struct Effect05Point *);
-void						 ObjectDispatch_ReleaseFar(struct Effect05Object *);
-void						 Animation_ApplyChildValuesFar(struct Effect05Object *, s32);
-void						 AudioCommand_PlayFar(s32);
-
 //--------------------------------------------------------------------------
 // 毎フレームの処理 : 落ちる粒が altitude に着いたら、小さな粒を 3 つ散らす
 //--------------------------------------------------------------------------
@@ -342,6 +342,10 @@ static __inline__ s32 Lerp10(s32 start, s32 end, s32 step)
 //--------------------------------------------------------------------------
 void RunBattleEffect05(void)
 {
+	void						 Animation_ApplyChildValuesFar(struct Effect05Object *, s32);
+	void						 ObjectDispatch_ReleaseFar(struct Effect05Object *);
+	void						 Vector_AddPolarOffset(s32, s32, struct Effect05Point *);
+	extern struct Effect05State *gEffectWork;
 	struct Effect05Point   pos;
 	struct Effect05Point   start;
 	struct Effect05Point   end;
@@ -500,4 +504,501 @@ void RunBattleEffect05(void)
 	} while (i < steps);
 	ObjectDispatch_ReleaseFar(orb);
 	BattleFx_PrepareBufferInterpolation();
+}
+
+//--------------------------------------------------------------------------
+
+// particles.c
+
+// バトル効果：持ち上げた物のまわりに落ちる粒
+
+//--------------------------------------------------------------------------
+
+struct FallPos
+{
+	s32 x;
+	s32 y;
+	s32 z;
+};
+
+struct FallSource
+{
+	u8	reserved_00[8];
+	s32 x; // 16.16 ドット
+	s32 y;
+	s32 z;
+};
+
+struct FallScene
+{
+	u8				   reserved_00[20];
+	struct FallSource *child; // 持ち上げている物
+};
+
+struct FallParticle
+{
+	u8	reserved_00[72];
+	s32 gravity; // FieldActor と同じ位置
+	u8	reserved_4c[9];
+	u8	motion_flags; // FieldActor と同じ位置
+	u8	reserved_56[8];
+	u16 unknown_5e;
+};
+
+LAYOUT_SIZE_GUARD(FallPos_Size, struct FallPos, 0x0c);
+LAYOUT_OFFSET_GUARD(FallSource_X, struct FallSource, x, 0x08);
+LAYOUT_OFFSET_GUARD(FallScene_Child, struct FallScene, child, 0x14);
+LAYOUT_OFFSET_GUARD(FallParticle_Gravity, struct FallParticle, gravity, 0x48);
+LAYOUT_OFFSET_GUARD(FallParticle_MotionFlags, struct FallParticle, motion_flags, 0x55);
+LAYOUT_OFFSET_GUARD(FallParticle_Unknown5e, struct FallParticle, unknown_5e, 0x5e);
+
+//--------------------------------------------------------------------------
+// 毎フレームの処理：持ち上げている物のまわりに、落ちる粒をひとつ出す
+// 高さは物から 8〜24 ドット上、横はでたらめな向きに 0〜48 ドット
+//--------------------------------------------------------------------------
+void BattleFx_SpawnFallingParticles(void)
+{
+	void				 Vector_AddPolarOffset(s32, s32, struct FallPos *);
+	extern struct FallScene *gEffectWork;
+	struct FallSource	*src;
+	struct FallPos		 pos;
+	struct FallParticle *obj;
+	u32					 dist;
+
+	src = gEffectWork->child;
+	pos.x = src->x;
+	pos.y = src->y - Random16() * 16 + (24 << 16);
+	pos.z = src->z;
+
+	dist = Random16() * 3;
+	Vector_AddPolarOffset(dist * 16, Random16(), &pos);
+
+	obj = Object_Spawn(0x11d, pos.x, pos.y, pos.z);
+	if (obj != 0)
+	{
+		obj->motion_flags = ACTOR_FALLS;
+		obj->gravity = 0x1999; // 重力 0.1 ドット
+		ObjectDispatch_ApplyArgumentToChildrenFar((struct FieldActor *)obj, 0);
+		obj->unknown_5e = 12;
+		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
+	}
+}
+
+//--------------------------------------------------------------------------
+
+// lift_drop.c
+
+// 対象を 2 つの持ち手で持ち上げ、方向キーで動かして落とす
+
+//--------------------------------------------------------------------------
+
+#define Random16 ((s32 (*)(void))Random16)
+
+#define Motion_SetTargetPositionFromMagnitudeAngle \
+	((void (*)(struct FxObject *, s32, s32))Motion_SetTargetPositionFromMagnitudeAngle)
+
+#define BattleFx_SpawnItemBreakMode1 \
+	((struct FxObject * (*)(s32, s32, s32, s32)) BattleFx_SpawnItemBreakMode1)
+#define Object_SetMoveTargetFar \
+	((void (*)(struct FxObject *, s32, s32, s32))Object_SetMoveTargetFar)
+#define ObjectGroup_ApplyRandomChildValues ((void (*)(void))ObjectGroup_ApplyRandomChildValues)
+#define BattleFx_GetCycledTableWord ((s32 (*)(u32))BattleFx_GetCycledTableWord)
+#define ScriptObject_CheckOverlapFar \
+	((s32 (*)(struct FxObject *, struct FxPosition *))ScriptObject_CheckOverlapFar)
+#define BattleFx_SpawnRadialParticleRing \
+	((void (*)(struct FxObject *))BattleFx_SpawnRadialParticleRing)
+
+struct FxPosition
+{
+	s32 x; // 16.16 固定小数
+	s32 y;
+	s32 z;
+};
+
+struct FxObject
+{
+	u8				 unknown_00[8];
+	s32				 x; // 座標 (16.16 固定小数、y が高さ)
+	s32				 y;
+	s32				 z;
+	s32				 ground; // 足もとの地面の高さ
+	u8				 unknown_18[10];
+	u8				 mode;
+	u8				 unknown_23;
+	s32				 velocity_x;
+	s32				 velocity_y;
+	s32				 velocity_z;
+	s32				 speed;
+	s32				 lift;
+	u8				 unknown_38[12];
+	s32				 gravity;
+	u8				 unknown_48[13];
+	u8				 flag;
+	u8				 unknown_56[4];
+	u8				 unknown_5a;
+	u8				 unknown_5b;
+	u8				 unknown_5c[12];
+	struct FxObject *linked;
+	void			*callback;
+};
+extern const s32			 BattleFx_FragmentScript[];
+extern volatile u32			 gFrameCount;
+
+void			 WaitFrames(s32 frames);
+void			 AudioCommand_PlayFar(s32 cue);
+void			 ObjectDispatch_SetSingleChildFlagsFar(struct FxObject *object, s32 value);
+s32				 Map_CheckObjectStepFar(struct FxObject *object, struct FxPosition *position);
+
+#define SHARD_MAX 20 // 破片の数
+
+//--------------------------------------------------------------------------
+// 足もとを 16 ドット上げて、pos へ動いたときにぶつかるかを調べる
+//--------------------------------------------------------------------------
+static __inline__ s32 ObjProbeUp(struct FxObject *obj, struct FxPosition *pos)
+{
+	s32 hit;
+
+	obj->ground += 16 << 16;
+	hit = Map_CheckObjectStepFar(obj, pos);
+	obj->ground -= 16 << 16;
+	return hit;
+}
+
+//--------------------------------------------------------------------------
+// 対象を左右の持ち手で 24 ドットの高さまで持ち上げ、方向キーの向きへ
+// 16 ドット動かして落とす (A・B・L・R ならその場で落とす)
+// 行き先がふさがっていれば、ブザーを鳴らして待つ
+//--------------------------------------------------------------------------
+void BattleFx_SteerLiftedTarget(s32 id)
+{
+	void			 Animation_ApplyChildValuesFar(struct FxObject *object, s32 value);
+	void			 ObjectDispatch_ReleaseFar(struct FxObject *object);
+	void			 Script_WaitForEventTimeoutFar(struct FxObject *object);
+	void			 Vector_AddPolarOffset(s32 magnitude, s32 angle, struct FxPosition *position);
+	extern struct BattleFxScene *gEffectWork;
+	struct BattleFxScene *work;
+	struct FxObject		 *src;
+	struct FxObject		 *target;
+	struct FxObject		 *shards[SHARD_MAX];
+	struct FxPosition	  pos;
+	struct FxObject		 *hands[2];
+	struct FxObject		 *obj;
+	struct FxObject		 *right;
+	s32					  i;
+	s32					  angle;
+	s32					  dist;
+	struct FxPosition	 *p;
+
+	work = gEffectWork;
+	src = work->main_object;
+	target = work->child;
+	if (target == NULL)
+		return;
+	BattleEffect_InitializeSharedScene();
+	src->linked = target;
+	ObjectDispatch_InitializeFar((struct DispatchObject *)src, BattleFx_SourceHoldScript);
+
+	// 持ち手を左右 32 ドットに出し、対象の左右 16 ドットへ動かす
+	/* FAKEMATCH: needed to match: the position is reached through this pointer everywhere but in the steering loop's first part, which names the position itself */
+	p = &pos;
+	p->x = work->x;
+	p->y = work->y + (16 << 16);
+	p->z = work->z;
+	obj = BattleFx_SpawnItemBreakMode1(p->x + (32 << 16), p->y, p->z, 0x8000);
+	hands[0] = obj;
+	right = BattleFx_SpawnItemBreakMode1(p->x - (32 << 16), p->y, p->z, 0);
+	hands[1] = right;
+	if (hands[0] == NULL || right == NULL)
+	{
+		BattleFx_PrepareBufferInterpolation();
+		return;
+	}
+	WaitFrames(15);
+	p->x = target->x;
+	p->y = target->y + (16 << 16);
+	p->z = target->z;
+	Object_SetMoveTargetFar(obj, p->x + (16 << 16), p->y, p->z);
+	Object_SetMoveTargetFar(right, p->x - (16 << 16), p->y, p->z);
+	Script_WaitForEventTimeoutFar(obj);
+	Script_WaitForEventTimeoutFar(right);
+	obj->x = p->x + (16 << 16);
+	obj->velocity_x = 0;
+	right->x = p->x - (16 << 16);
+	right->velocity_x = 0;
+
+	// 地面から 24 ドットの高さまで持ち上げる
+	target->callback = ObjectGroup_ApplyRandomChildValues;
+	Scheduler_AddOrUpdateCallback(BattleFx_SpawnFallingParticles, 0xc80);
+	AudioCommand_PlayFar(130);
+	target->flag = 4;
+	ObjectDispatch_SetSingleChildFlagsFar(target, 0);
+	if (hands[0] != NULL && hands[1] != NULL)
+	{
+		while (target->y - target->ground <= 24 << 16)
+		{
+			obj->y += 0x6000;
+			right->y += 0x6000;
+			target->y += 0x6000;
+			WaitFrames(1);
+		}
+	}
+	hands[0]->speed = 4 << 16;
+	hands[0]->lift = 0x8000;
+	hands[1]->speed = 4 << 16;
+	hands[1]->lift = 0x8000;
+	target->speed = 0x6666;
+	target->lift = 0x3333;
+	target->unknown_5a = 0;
+	target->mode = 2;
+
+	//------------------------------------------------------------------
+	// 方向キーで動かす
+	//------------------------------------------------------------------
+	for (;;)
+	{
+		WaitFrames(1);
+		if ((gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) != 0)
+			break;
+
+		// 方向キーなし : 持ち手を対象の左右に戻す
+		angle = (u16)BattleFx_GetCycledTableWord(gKeysHeld);
+		if (angle == 0xffff)
+		{
+			pos.x = target->x;
+			pos.y = target->y + (16 << 16);
+			pos.z = target->z;
+			Object_SetMoveTargetFar(hands[0], pos.x + (16 << 16), pos.y, pos.z);
+			Object_SetMoveTargetFar(hands[1], pos.x - (16 << 16), pos.y, pos.z);
+			ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 1);
+			ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 1);
+			continue;
+		}
+
+		// 持ち手をその向きへ 2 ドット寄せ、16 ドット先の地面を調べる
+		pos.x = target->x;
+		pos.y = target->y + (16 << 16);
+		pos.z = target->z;
+		Vector_AddPolarOffset(2 << 16, angle, &pos);
+		Object_SetMoveTargetFar(hands[0], pos.x + (16 << 16), pos.y, pos.z);
+		Object_SetMoveTargetFar(hands[1], pos.x - (16 << 16), pos.y, pos.z);
+		Script_WaitForEventTimeoutFar(hands[0]);
+		Script_WaitForEventTimeoutFar(hands[1]);
+		pos.x = target->x;
+		pos.y = target->ground;
+		pos.z = target->z;
+		Vector_AddPolarOffset(16 << 16, angle, &pos);
+		i = ScriptObject_CheckOverlapFar(target, &pos);
+		/* FAKEMATCH: needed to match: entering the blocked path from both tests keeps it ahead of the drop path, as the ROM lays them out */
+		if (i != 0)
+			goto blocked;
+		if (ObjProbeUp(target, p) > 0)
+		{
+		blocked: // ふさがっている : 16 フレームごとにブザー
+			ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
+			ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
+			if ((gFrameCount & 15) == 0)
+				AudioCommand_PlayFar(SOUND_MENU_ERROR);
+			continue;
+		}
+		// 空いている : 対象をそこへ動かす
+		{
+			struct FxObject *second;
+			s32				 x;
+			s32				 z;
+
+			AudioCommand_PlayFar(175);
+			x = p->x;
+			z = p->z;
+			ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
+			ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
+			WaitFrames(15);
+			target->unknown_5b = i;
+			target->speed = 0x3333;
+			target->lift = 0x3333;
+			Object_SetMoveTargetFar(target, p->x, p->y, p->z);
+			hands[0]->speed = 0x3333;
+			hands[0]->lift = 0x3333;
+			second = hands[1];
+			second->speed = 0x3333;
+			second->lift = 0x3333;
+			Object_SetMoveTargetFar(hands[0], p->x + (16 << 16), p->y, p->z);
+			Object_SetMoveTargetFar(second, p->x - (16 << 16), p->y, p->z);
+			Script_WaitForEventTimeoutFar(target);
+			target->x = x;
+			target->z = z;
+			target->velocity_x = i;
+			target->velocity_z = i;
+			WaitFrames(10);
+			break;
+		}
+	}
+
+	//------------------------------------------------------------------
+	// 対象の位置から破片を飛ばして持ち手を消し、対象を跳ねさせて落とす
+	//------------------------------------------------------------------
+	ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
+	ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
+	Scheduler_RemoveCallback(BattleFx_SpawnFallingParticles);
+	AudioCommand_PlayFar(135);
+	WaitFrames(15);
+	AudioCommand_PlayFar(135);
+	WaitFrames(15);
+	p->x = target->x;
+	p->y = target->y + (16 << 16);
+	p->z = target->z;
+	{
+		struct FxObject **walk = shards;
+
+		// 破片 : 速さ 2〜3 ドット、8〜32 ドット先のでたらめな方向へ
+		for (i = 0; i < SHARD_MAX; i++)
+		{
+			obj = Object_Spawn(0x11d, p->x, p->y, p->z);
+			*walk++ = obj;
+			if (obj != NULL)
+			{
+				ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_FragmentScript);
+				obj->speed = Random16() + (2 << 16);
+				obj->lift = 2 << 16;
+				obj->flag = 0;
+				dist = Random16() * 24 + (8 << 16);
+				Motion_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
+			}
+		}
+	}
+	AudioCommand_PlayFar(131);
+	ObjectDispatch_ReleaseFar(hands[0]);
+	ObjectDispatch_ReleaseFar(hands[1]);
+
+	// 対象の見た目と動きを戻し、上へ 10 ドットの速さで跳ねさせる
+	Animation_ApplyChildValuesFar(target, work->saved_palette);
+	ObjectDispatch_InitializeFar((struct DispatchObject *)target, work->saved_script);
+	target->callback = work->saved_callback;
+	target->flag = 3;
+	target->velocity_y = 10 << 16;
+	target->gravity = 0x3333;
+	target->mode = 0;
+	src->callback = 0;
+	Animation_ApplyChildValuesFar(src, 0);
+	if (work->child_option != 0)
+	{
+		// 上がりきって落ちきるまで (それぞれ最長 90 フレーム) 待ち、輪を出す
+		for (i = 0; i < 90 && target->velocity_y >= 0; i++)
+			WaitFrames(1);
+		WaitFrames(1);
+		for (i = 0; i < 90 && target->velocity_y < 0; i++)
+			WaitFrames(1);
+		BattleFx_SpawnRadialParticleRing(target);
+		BattleFx_PrepareBufferInterpolation();
+		WaitFrames(30);
+	}
+	else
+	{
+		BattleFx_PrepareBufferInterpolation();
+	}
+}
+
+#undef BattleFx_SpawnItemBreakMode1
+#undef Motion_SetTargetPositionFromMagnitudeAngle
+#undef Random16
+
+#define Motion_SetTargetPositionFromMagnitudeAngle \
+	((void (*)(void *, s32, s32))Motion_SetTargetPositionFromMagnitudeAngle)
+void						 AudioCommand_PlayFar(s32 sound);
+
+void RunBattleEffect11(void)
+{
+	void						 ObjectDispatch_ReleaseFar(void *object);
+	void						 Script_WaitForEventTimeoutFar(void *object);
+	extern struct BattleFxScene *gEffectWork;
+	struct BattleFxScene  *scene;
+	struct MotionObject	  *obj;
+	struct MotionObject	  *anchors[2];
+	struct ScatterPosition position;
+	struct MotionObject	 **walk;
+	s32					   index;
+	s32					   magnitude;
+
+	scene = gEffectWork;
+	BattleEffect_InitializeSharedScene();
+	position.x = scene->x;
+	position.y = scene->y + 0x100000;
+	position.z = scene->z;
+	anchors[0] =
+		BattleFx_SpawnItemBreakMode1(position.x + 0x200000, position.y, position.z, 0x8000);
+	anchors[1] = BattleFx_SpawnItemBreakMode1(position.x - 0x200000, position.y, position.z, 0);
+
+	WaitFrames(15);
+	walk = anchors;
+	for (index = 0; index < 2; index++)
+	{
+		obj = *walk++;
+		if (obj != 0)
+			Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->angle);
+	}
+
+	Script_WaitForEventTimeoutFar(anchors[0]);
+	AudioCommand_PlayFar(134);
+	for (index = 0; index < 24; index++)
+	{
+		position.x = scene->x;
+		position.y = scene->y + 0x100000;
+		position.z = scene->z;
+		obj = Object_Spawn(0x11d, position.x, position.y, position.z);
+		if (obj != 0)
+		{
+			ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_FragmentScript);
+			obj->speed_limit = Random16() + 0x20000;
+			obj->acceleration = 0x20000;
+			obj->motion_flags = 0;
+			magnitude = Random16() * 24 + 0x80000;
+			Motion_SetTargetPositionFromMagnitudeAngle(obj, magnitude, Random16());
+		}
+	}
+
+	ObjectDispatch_ReleaseFar(anchors[0]);
+	ObjectDispatch_ReleaseFar(anchors[1]);
+	BattleFx_PrepareBufferInterpolation();
+}
+
+struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle)
+{
+	struct MotionObject *obj;
+	s32					 scale;
+
+	AudioCommand_PlayFar(SOUND_ITEM_BREAK);
+	obj = Object_Spawn(215, x, y, z);
+	if (obj != NULL)
+	{
+		obj->scale_y = 0x4000;
+		obj->scale_x = 0x4000;
+		obj->speed_limit = 0x30000;
+		obj->acceleration = 0x30000;
+		obj->auto_face_motion = 0;
+		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
+		scale = obj->scale_x;
+		if (scale < 0x10000)
+		{
+			do
+			{
+				scale += 0x800;
+				obj->scale_y = scale;
+				obj->scale_x = scale;
+				obj->angle += 0x2000;
+				WaitFrames(1);
+				scale = obj->scale_x;
+			} while (scale <= 0xffff);
+		}
+		obj->angle = angle;
+	}
+	return obj;
+}
+
+void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object)
+{
+	object->effect.x += object->effect.velocity_x;
+	object->effect.y += object->effect.velocity_y;
+	object->effect.z += object->effect.velocity_z;
+	object->effect.scale_x += object->effect.scale_rate_x;
+	object->effect.scale_y += object->effect.scale_rate_y;
+	object->effect.sprite->rotation += object->effect.spin;
 }

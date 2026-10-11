@@ -515,7 +515,7 @@ mod target_tests {
     }
     #[test]
     fn natural_paths_route_the_same_whole_file_and_respect_game_boundaries() {
-        let source = "games/common/src/system/save/identify_flash.c";
+        let source = "games/common/src/system/save/flash.c";
         for target in [CompilerTarget::Tbs, CompilerTarget::Tla] {
             for path in [
                 source.to_string(),
@@ -529,13 +529,13 @@ mod target_tests {
             assert_eq!(
                 family_for_source(
                     target,
-                    "games/common/src/system/save/flash_verify_callback.c"
+                    "games/common/src/system/save/sst.c"
                 ),
                 CompilerFamily::AgbccFlash
             );
             for source in [
-                "games/tbs/src/system/save/flash_verify_callback.c",
-                "games/tla/src/system/save/flash_verify_callback.c",
+                "games/tbs/src/system/save/sst.c",
+                "games/tla/src/system/save/sst.c",
             ] {
                 assert_eq!(family_for_source(target, source), CompilerFamily::Game);
             }
@@ -622,9 +622,9 @@ mod target_tests {
     #[test]
     fn agbcc_families_keep_their_flag_sets() {
         for source in [
-            "games/common/src/system/save/identify_flash.c",
-            "games/common/src/system/save/flash_erase_verify.c",
-            "games/common/src/system/save/flash_read_routines.c",
+            "games/common/src/system/save/flash.c",
+            "games/common/src/system/save/sst.c",
+            "games/common/src/system/save/atmel.c",
         ] {
             assert_eq!(
                 cflags_for_target_source(CompilerTarget::Tbs, source),

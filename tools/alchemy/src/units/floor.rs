@@ -26,7 +26,7 @@ use std::sync::Mutex;
 pub const USAGE: &str = "usage: alchemy units evidence [--build EDITION] [--out FILE] [--devices FILE]
 Writes one row for every gap between two adjacent functions of each C file
 of one built edition (default tbs-en) to FILE (default
-recon/<game>/floor_evidence.tsv). Build the edition first. Columns:
+out/reports/floor-evidence-<game>.tsv). Build the edition first. Columns:
   file, image, gap, left, right   the file, and the gap as `alchemy units` numbers it
   left_at, right_at               where each function is defined: line, or fragment:line
   verdict, p                      the image analysis's verdict and boundary probability
@@ -1035,7 +1035,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             count("a function the source does not show", s.at_gap == "?");
         }
     }
-    let path = options.out.unwrap_or_else(|| Path::new("recon").join(Path::new(target.game_dir()).file_name().unwrap_or_default()).join("floor_evidence.tsv"));
+    let path = options.out.unwrap_or_else(|| Path::new("out/reports").join(format!("floor-evidence-{}.tsv", Path::new(target.game_dir()).file_name().unwrap_or_default().to_string_lossy())));
     let full = root.join(&path);
     if let Some(parent) = full.parent() {
         fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;

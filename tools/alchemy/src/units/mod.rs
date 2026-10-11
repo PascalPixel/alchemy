@@ -42,7 +42,7 @@ functions into units with their data. Writes into DIR (default out/reports):
   units-EDITION-dryrun.tsv      with --dry-run: merged units compiled and compared
 --dry-run N picks N proposed units of whole C objects; UNIT names them by id
 (main:U0042). Merged sources and objects stay in out/EDITION/obj/units.
-evidence writes recon/<game>/floor_evidence.tsv: what the source and the
+evidence writes out/reports/floor-evidence-<game>.tsv: what the source and the
 compile of each C file show at every gap between two of its functions
 (alchemy units evidence --help).";
 

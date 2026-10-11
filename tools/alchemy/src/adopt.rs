@@ -22,13 +22,14 @@ edition's scaffold bytes in roms/<game>-<lang>.gba, as the same bytes or
 with only its call targets and literal-pool words moved, nearest where the
 two builds' maps say it lies (as far from the nearest object both link as
 in English). Where a section holds exactly those bytes under LABEL, the
-section and its line go; --padding also removes a two-byte section directly
-before or after it. Anywhere else, unnamed or sharing its section, the
+section and its line go. Anywhere else, unnamed or sharing its section, the
 bytes leave their section, which is split around them, and the edition's
 object lines link what is left in the same place; a label that named LABEL
 on other bytes is dropped. --padding takes English's two-byte padding
-listing linked directly before or after the function, and in a split
-section the two zero bytes on the same sides. A listing that itself ends in
+listing linked directly before or after the function, and on the same sides
+in each other edition the two-byte section its lines link directly beside
+the function, or the two zero bytes of a longer section. A listing that
+itself ends in
 two bytes of padding leaves them to alignment: the listing or scaffold
 section linked right after the function starts with ".balign 4" in every
 edition, as C ends at its last instruction. An edition with no such copy
@@ -124,6 +125,46 @@ fn unlink_sections(script: &str, sections: &[String], object: Option<&str>) -> R
         return Err(format!("expected {} section lines, removed {removed}", sections.len()));
     }
     Ok(out.join("\n") + "\n")
+}
+
+/// The two-byte padding sections an edition's object lines link directly
+/// before and after the function's section, on the sides where English's
+/// padding listing left (`pads`: before, after); None when a side has none,
+/// its padding lying inside a longer section.
+fn padding_beside(script: &str, scaffold: &str, rom_object: &str, section: &str, pads: (bool, bool)) -> Option<Vec<String>> {
+    let name = |line: &str| Some(line.trim().strip_prefix(&format!("\"*/{rom_object}\"(.rom."))?.strip_suffix(')')?.to_string());
+    let lines: Vec<&str> = script.lines().collect();
+    let at = lines.iter().position(|line| name(line).as_deref() == Some(section))?;
+    let scaffold: Vec<&str> = scaffold.lines().collect();
+    let padding = |line: Option<&&str>| {
+        let name = line.and_then(|line| name(line))?;
+        let start = scaffold.iter().position(|line| section_name(line) == Some(name.as_str()))?;
+        let end = (start + 1..scaffold.len()).find(|&i| section_name(scaffold[i]).is_some()).unwrap_or(scaffold.len());
+        padding_section(&scaffold, start, end).then_some(name)
+    };
+    let mut beside = Vec::new();
+    if pads.0 {
+        beside.push(padding(at.checked_sub(1).and_then(|before| lines.get(before)))?);
+    }
+    if pads.1 {
+        beside.push(padding(lines.get(at + 1))?);
+    }
+    Some(beside)
+}
+
+/// The scaffold without the named sections.
+fn remove_sections(scaffold: &str, names: &[String]) -> String {
+    let mut out = Vec::new();
+    let mut keep = true;
+    for line in scaffold.lines() {
+        if let Some(name) = section_name(line) {
+            keep = !names.iter().any(|gone| gone == name);
+        }
+        if keep {
+            out.push(line);
+        }
+    }
+    out.join("\n") + "\n"
 }
 
 /// The scaffold section an edition's object lines link right after the
@@ -426,7 +467,13 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         let copy = locate(&reference, &scaffold_text, &rom, expected).map_err(&stays)?;
         let named = crate::adopt_data::label_offsets(&scaffold_text)?.iter().any(|(name, file)| *name == label && *file as usize == copy.at);
         let whole = named && labelled_size(&scaffold_text, &label) == Some(reference.bytes.len() as u32);
-        let (text, script, follows) = match remove_section(&scaffold_text, &label, padding).ok().filter(|_| whole) {
+        let exact = remove_section(&scaffold_text, &label, false).ok().filter(|_| whole).and_then(|(text, mut sections)| {
+            let beside = padding_beside(&script, &scaffold_text, &rom_object, &sections[0], pads)?;
+            let text = remove_sections(&text, &beside);
+            sections.extend(beside);
+            Some((text, sections))
+        });
+        let (text, script, follows) = match exact {
             Some((text, sections)) => {
                 let follows = next_scaffold_section(&script, &rom_object, &sections);
                 let script = unlink_sections(&script, &sections, object.as_deref()).map_err(|e| format!("{}: {e}", crate::object_list::main_lines_path(game, lang).display()))?;
@@ -435,12 +482,24 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             // The scaffold does not hold the function as one section of its
             // own: cut its copy out.
             None => {
-                let carved = carve(&reference, &scaffold_text, &rom, &label, pads, &copy, expected).map_err(&stays)?;
+                // Padding inside the copy's own run of bytes is cut with
+                // it; padding in a two-byte section of its own goes whole.
+                let (start, end) = (copy.at, copy.at + reference.bytes.len());
+                let run = crate::adopt_data::extents(&scaffold_text)?.into_iter().map(|(file, size)| (file as usize, (file + size) as usize));
+                let (low, high) = run.into_iter().find(|(low, high)| *low <= start && end <= *high).unwrap_or((start, end));
+                let inside = (pads.0 && low + 2 <= start, pads.1 && end + 2 <= high);
+                let carved = carve(&reference, &scaffold_text, &rom, &label, inside, &copy, expected).map_err(&stays)?;
                 println!("{game}-{lang}: {}", carved.note);
-                let follows = carved.cut.after.clone().or_else(|| next_scaffold_section(&script, &rom_object, std::slice::from_ref(&carved.cut.section)));
-                let script = crate::adopt_data::relink_parts(&script, &rom_object, ".rom.", &carved.cut, object.as_deref())
-                    .map_err(|e| format!("{}: {e}", crate::object_list::main_lines_path(game, lang).display()))?;
-                (carved.cut.text, script, follows)
+                let own = (pads.0 && !inside.0, pads.1 && !inside.1);
+                let beside = padding_beside(&script, &scaffold_text, &rom_object, &carved.cut.section, own)
+                    .ok_or_else(|| stays(format!("no two-byte section beside the copy at {start:#x} holds the padding English's listing held")))?;
+                let mut gone = vec![carved.cut.section.clone()];
+                gone.extend(beside.iter().cloned());
+                let follows = carved.cut.after.clone().or_else(|| next_scaffold_section(&script, &rom_object, &gone));
+                let in_lines = |e: String| format!("{}: {e}", crate::object_list::main_lines_path(game, lang).display());
+                let script = crate::adopt_data::relink_parts(&script, &rom_object, ".rom.", &carved.cut, object.as_deref()).map_err(in_lines)?;
+                let script = unlink_sections(&script, &beside, None).map_err(in_lines)?;
+                (remove_sections(&carved.cut.text, &beside), script, follows)
             }
         };
         let text = match follows.filter(|_| tail) {
@@ -538,6 +597,13 @@ mod tests {
             "    \"*/games/g/a.o\"(.text)\n    \"*/games/g/b.o\"(.text)\n    \"*/recon/g/de/rom.o\"(.rom.00000200)\n"
         );
         assert!(unlink_sections(script, &["00000300".to_string()], None).is_err());
+        // Padding goes only where the lines link it directly beside the function.
+        let beside = |pads| padding_beside(script, SCAFFOLD, "recon/g/de/rom.o", "00000112", pads);
+        assert_eq!(beside((true, false)), Some(vec!["00000110".to_string()]));
+        assert_eq!(beside((false, false)), Some(Vec::new()));
+        assert_eq!(beside((true, true)), None);
+        assert_eq!(padding_beside(script, SCAFFOLD, "recon/g/de/rom.o", "00000110", (true, false)), None);
+        assert_eq!(remove_sections(SCAFFOLD, &["00000110".to_string(), "00000112".to_string()]), "@ h\n\t.section .rom.00000100, \"ax\"\n\t.global A\nA:\n\t.incbin \"baserom.gba\", 0x00000100, 0x00000010\n");
         // What follows a function whose listing ended in padding is aligned.
         let rest = ["00000112".to_string()];
         assert_eq!(next_scaffold_section(script, "recon/g/de/rom.o", &sections).as_deref(), Some("00000200"));

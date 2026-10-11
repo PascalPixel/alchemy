@@ -26,7 +26,6 @@ extern const u32 ObjectDispatch_DefaultScript[];
 extern u8		 Render_DecodeFrameCodeSize[];
 extern u8		 Runtime_ByteRemapTable[];
 s32				 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
-s32				 Equipment_HasValueFar(s32 group, s32 entry);
 s32				 Event_ValidatePackedId(u32 packed_id);
 void			 Map_RenderAnimatedTileFrame(u8 *object, u32 position);
 void			 Object_AttachWorkTargetToObject(s32 id, s32 flag);
@@ -40,6 +39,7 @@ void ObjectSystem_UpdateCameraFixed(void);
 s32	 ObjectTable_FindLastActiveId(void);
 #if GAME_TLA
 void			 BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
+s32				 Equipment_HasValueFar(s32 group, s32 entry);
 s32	 Party_ShowJoinedMessageFar(s32 event_id, s32 value);
 s32	 Party_ShowPairJoinedMessageFar(s32 first, s32 second);
 #endif

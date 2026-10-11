@@ -163,9 +163,6 @@ void				  Resource_LoadWorkHeader(void);
 void				  Resource_ScheduleOwnerReset(void);
 void				  Resource_ScheduleOwnerResetDelayed(void);
 s32					  ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
-#ifndef OWN_Runtime_GetBuildStampTimeFar
-u32 Runtime_GetBuildStampTimeFar(void);
-#endif
 #ifndef OWN_Runtime_GetLowTableAddress
 s32 Runtime_GetLowTableAddress(void);
 #endif

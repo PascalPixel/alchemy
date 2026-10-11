@@ -254,7 +254,7 @@ main	rom_main_02	games/tbs/src/graphics/window/textspd	.rodata
 main	rom_main_02	games/tbs/src/graphics/text/numwords	.rodata	en de
 main	rom_main_02	games/tbs/src/menu/slidpal	.rodata
 main	rom_main_02	games/tbs/src/graphics/window/keyboard	.rodata
-main	rom_main_03	games/tbs/src/system/far_call/game
+main	rom_main_03	games/tbs/src/system/far_call/GAME
 main	rom_main_03	games/tbs/src/game/character/chara	.text
 main	rom_main_03	games/common/src/game/character/ratios_second_input	.text
 main	rom_main_03	games/tbs/src/game/character/values	.text

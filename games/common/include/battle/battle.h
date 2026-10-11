@@ -63,7 +63,6 @@ s32	 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, 
 void BattleUnit_ResetGuardLevels(void);
 void Camera_InitDefaultTransform(void);
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
-void Owner_UpdateRatioPairFar(struct BtlUnit *, s32);
 void RunBattleEffect05(void);
 s32	 Summon_IsEntryFlagged(s32 index);
 #if GAME_TLA
@@ -71,6 +70,7 @@ void BattlePres_SetActorModesFar(u16 *, s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object, s32 value);
+void Owner_UpdateRatioPairFar(struct BtlUnit *, s32);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_FinalizeSharedSlotFar(void);
 #endif
@@ -794,8 +794,6 @@ void Camera_ConfigureScene(s32 pos);
 void Camera_WorldToScreen(struct EffectVector *position);
 #endif
 void CheckObjectMapTile(void);
-s32	 Djinn_AddToLeastLoadedOwnerFar(s32, void *);
-s32	 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
 #ifndef OWN_EffectRuntime_LookupByTableEntry
 s32 EffectRuntime_LookupByTableEntry(u32 index);
 #endif
@@ -805,7 +803,6 @@ void EffectRuntime_PrepareRisingObject(struct ObjectRuntime *object);
 #ifndef OWN_EffectSlot_Initialize
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z);
 #endif
-s32						Equipment_GetUnleashRateBonusFar(struct BtlUnit *unit);
 s32						Event_FindFacingTrigger(s32 source);
 s32						Event_GetSpecialValueFar(void);
 void					EventActor_RunHopAndLeapSequence(s32 arg);
@@ -817,9 +814,7 @@ void					FieldEvent_RunTypeHandler(void);
 void					FieldEvent_ShowStatusMessage(void);
 void					FieldObject_PlaceSceneActors(void);
 s32						Fixed_Remainder(s32 value, s32 divisor);
-s32						GameFlag_GetByteFar(s32 id);
 s32						GameFlag_IsConditionActive(s32 condition);
-void					GameFlag_RefreshLureCapFar(void);
 struct AnimationObject *GetBattleEffectObject(s32 kind);
 void					Graphics_AdvancePaletteCycle(void);
 void					Graphics_ClearBg0Vofs(void);
@@ -829,11 +824,9 @@ s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 scale, s32 count);
 #endif
 void Graphics_SetBg2AffineScaleHalf(void);
 u32	 Graphics_UploadVramBlock(void);
-s32	 Inventory_GetEquippedItemFar(struct BtlUnit *unit, s32 slot);
 #ifndef OWN_Item_EncodeBankedId
 u32 Item_EncodeBankedId(u32 value);
 #endif
-s32	 Item_GetEquippedElementFar(s32 unit_id);
 void ItemIcon_LoadTilesFar(s32 item);
 void Map_UpdateWorldMapMarkers(void);
 void MapEvent_RunTileTriggerSequence(void);
@@ -855,18 +848,14 @@ void ObjectGroup_SetActionForOthers(
 	struct ObjectRuntime *excluded_object, s32 group_mode, s32 action);
 #endif
 s32						Owner_ApplyLevelGains(s32 owner, s32 levels);
-struct EnemyDefinition *Owner_GetRecordFar(s32 class_id);
-s32						Owner_GetValueIfLevelThresholdReachedFar(s32 unit_id, s16 *gains);
 void					Palette_DarkenSceneStep(void);
 void					Palette_StepTowardResource(s32 resource_id);
 s32 Party_ComputeEligibleMemberAverage(s32 record_id);
-s32 Party_GetAverageLevelFar(void);
 s32 Party_RemapCharacterIdByFlags(s32 arg0);
 #ifndef OWN_Party_ReservedNoOp5B14
 void Party_ReservedNoOp5B14(void);
 #endif
 void Party_ResolveTablePair(void);
-s32	 PartyInventory_AddFar(s32 item);
 void ResetSceneTransitionEffect(void);
 s32	 Resource_FindFreeSlot(s32 key);
 void RunBattleEffect03(void);
@@ -885,10 +874,6 @@ s32	 Summon_GetEntryValue(s32 index);
 u32	 Summon_GetLayoutKind(s32 index);
 void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_positions);
 s32	 SummonSlot_RegisterActorSprites(s32 unit);
-#ifndef OWN_Trade_AddOfferFar
-u32 *Trade_AddOfferFar(u32 kind, u32 first, u32 second);
-#endif
-s32	 Trade_CanOfferDjinnFar(s32 unit_id, s32 element, s32 index);
 void Ui_FillBank15PaletteGrey(void);
 #endif
 

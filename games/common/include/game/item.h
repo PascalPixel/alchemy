@@ -2,6 +2,10 @@
 #define ALCHEMY_ITEM_H
 
 #include "layout_guard.h"
+#include "edition.h"
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 struct BtlUnit;
 
@@ -95,9 +99,11 @@ struct ItemDefinition *Item_Get(s32 item);
 struct ItemDefinition *Item_GetDirect(s32 item);
 s32					   Equipment_GetUnleashRateBonus(struct BtlUnit *owner);
 s32					   RollWeaponUnleash(struct BtlUnit *owner);
-s32					   RollWeaponUnleashFar(struct BtlUnit *owner);
 
+#if GAME_TLA
+s32					   RollWeaponUnleashFar(struct BtlUnit *owner);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
+#endif
 s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);
 s32 Item_IsCompatibleWithOwner(s32 owner, s32 item);
 s32 Item_GetEquipmentGroup(s32 item);

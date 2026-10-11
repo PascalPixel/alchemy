@@ -16,12 +16,16 @@ struct AnimationEntry;
 struct AnimationMetadata;
 struct AnimationObject;
 struct BattleEffectArgument;
+struct BtlAct;
 struct BtlObj;
+struct BtlUnit;
 struct DispatchObject;
 struct EffectLaunch;
 struct EffectPosition;
+struct EnemyDefinition;
 struct FieldActor;
 struct FxObject;
+struct ItemDefinition;
 struct MenuSprite;
 struct MotionObject;
 struct ObjectRuntime;
@@ -32,6 +36,7 @@ struct ResourceObject;
 struct ResourceObjectWork;
 struct ScriptObjectEntry;
 struct ShopCursor;
+struct SummonDefinition;
 struct TransitionActorList;
 struct UiWindow;
 
@@ -42,6 +47,7 @@ struct UiWindow;
 #include "farcall/runtime.h"
 #include "farcall/field.h"
 #include "farcall/window.h"
+#include "farcall/game.h"
 #include "farcall/menu.h"
 #include "farcall/shop.h"
 #include "farcall/battle.h"

@@ -159,10 +159,6 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode);
 s32	 CharacterMenu_UpdateSelectionIcons(const u8 *enabled);
 void Clear_UpdateBlend(void);
 void Debug_SelectAbilityPair(void);
-#ifndef OWN_Djinn_DeactivateFar
-u32 Djinn_DeactivateFar(s32 owner, s32 index, s32 bit);
-#endif
-s32 Djinn_IsActiveFar(s32 unit_id, s32 element, s32 index);
 #ifndef OWN_Djinn_ListOwnerEntries
 s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element);
 #endif
@@ -190,27 +186,11 @@ s32 Inn_CheckIn(s32 mode, s32 object_id);
 void Inn_Cleanup(void);
 void Inn_PlaySleep(s32 room_price);
 s32	 Inn_RoomPrice(s32 mode);
-s32	 Inventory_CheckDiscardFar(s32, s32);
-s32	 Inventory_CountFar(s32 unit_id);
-#ifndef OWN_Inventory_EquipFar
-s32 Inventory_EquipFar(s32 owner, s32 slot);
-#endif
-#ifndef OWN_Inventory_FindEquippedFar
-s32 Inventory_FindEquippedFar(s32 owner, s32 type);
-#endif
-void Inventory_RepairFar(s32 unit_id, s32 slot);
 #ifndef OWN_InventoryMenu_ShowModalMessage
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y);
 #endif
 s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode);
-#ifndef OWN_Item_AdjustCounterFar
-s32 Item_AdjustCounterFar(s32 item_id, s32 delta);
-#endif
 s32 Item_FindSlot(s32 unit_id, s32 item_id);
-s32 Item_GetEquipmentGroupFar(s32 item);
-#ifndef OWN_Item_IsCompatibleWithOwnerFar
-s32 Item_IsCompatibleWithOwnerFar(s32 owner_id, s32 item_id);
-#endif
 void ItemMenu_ApplyFlags(const u8 *flags);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 s32	 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state);
@@ -294,12 +274,6 @@ void ObjectPlacement_CreateGroup(
 	struct RenderInput *origin, s32 x, s32 y, struct PlacementDescriptor *descriptor);
 #endif
 void OptionMenu_InitializeWork(void);
-u32	 Owner_GetLevelThresholdFar(s32 owner_id, s32 level);
-s32	 Owner_GetResistanceValueFar(s32 unit, s32 element);
-#ifndef OWN_Owner_RecalculateStatsFar
-void UnitCalcFar(s32 owner);
-#endif
-void Owner_RefreshClassActionsFar(s32 owner);
 #ifndef OWN_OwnerAction_DiffSlots
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b, u16 *out,
 	s32 *first_count, s32 *second_count);
@@ -308,10 +282,6 @@ void Palette_CopyObjectBankToBackground14(void);
 void Palette_LightenBankHighlight(s32 bank);
 s32	 PaletteFar_Entry00(s32 mode);
 void PaletteFar_Entry20(s32 mode);
-void Party_AdjustCounterCappedAt28Far(s32 value);
-#ifndef OWN_Party_AdjustSixDigitCounterBFar
-s32 Party_AdjustSixDigitCounterBFar(s32 amount);
-#endif
 s32 Party_RemapCharacterIdByFlagsFar(u16 value);
 s32 Party_RemapCharacterIdIfEnabledFar(s8 kind, s8 variant);
 #ifndef OWN_PartyTalkMenu_Choose

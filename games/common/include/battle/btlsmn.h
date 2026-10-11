@@ -4,6 +4,10 @@
 #include "layout_guard.h"
 
 #include "types.h"
+#include "edition.h"
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 struct BattleSpriteDefinition
 {
@@ -32,7 +36,9 @@ struct BattleSummonState
 	u32 available_mask;
 };
 
+#if GAME_TLA
 const struct SummonDefinition *SummonDefinition_Get(s32 summon_id);
+#endif
 s32							   EnmSlotGet(void);
 s32							   EnmChk(s32 class_id);
 

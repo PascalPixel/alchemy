@@ -80,7 +80,7 @@ Match one function
   label         name English-only scaffold data in the other editions
 
 Adopt data
-  adopt-data    a data block's object into all six linker scripts and its
+  adopt-data    a data block's object into all six editions' link order and its
                 bytes out of every edition's scaffold, splitting sections
 
 Check the whole build

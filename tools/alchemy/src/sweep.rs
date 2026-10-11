@@ -62,16 +62,12 @@ fn linked(root: &Path) -> Result<Vec<(DecompTarget, BTreeSet<String>)>, String> 
         .map(|target| {
             let main = crate::edition::linked_statements(root, target, crate::edition::Image::Main)?;
             let mut objects: BTreeSet<String> = crate::edition::built_objects(&main).into_iter().collect();
-            for entry in walkdir::WalkDir::new(root.join(target.overlay_dir)) {
-                let entry = entry.map_err(|error| error.to_string())?;
-                if entry.path().extension().is_some_and(|ext| ext == "ld") {
-                    let text = fs::read_to_string(entry.path()).map_err(|error| error.to_string())?;
-                    // Every overlay script in the directory, whether or not
-                    // this edition's ROM streams it.
-                    let statements = crate::edition::statements(&text)
-                        .map_err(|error| format!("{}: {error}", entry.path().display()))?;
-                    objects.extend(crate::edition::built_objects(&statements));
-                }
+            // Every overlay the game has a script or list rows for, whether
+            // or not this edition's ROM streams it.
+            for id in crate::edition::overlay_ids(root, target)? {
+                let statements =
+                    crate::edition::linked_statements(root, target, crate::edition::Image::Overlay(&id))?;
+                objects.extend(crate::edition::built_objects(&statements));
             }
             Ok((target, objects))
         })

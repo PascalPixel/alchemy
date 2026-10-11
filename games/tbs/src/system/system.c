@@ -27,6 +27,8 @@
 #include "oam.h"
 #include "map_scroll.h"
 #include "heap_state.h"
+#include "irqlock.h"
+#include "iowrite.h"
 
 extern u8 gDebugMode;
 extern u8 gCpuLoadDisplayEnabled;
@@ -50,8 +52,7 @@ void System_Initialize(void)
         dma0[5] &= 0x7fff;
         dma0[5];
     }
-    /* FAKEMATCH: the do-while wraps pin the register writes in place. */
-    do { u32 value = WAITCNT_GAME; REG_WAITCNT = value; } while (0);
+    Io_Write16(WAITCNT_GAME, &REG_WAITCNT);
     zero = 0;
     Dma_Set((const void *)&zero, (void *)0x03000000, 0x85001e00, REG_DMA3);
     Runtime_InitializeHeap();
@@ -68,7 +69,7 @@ void System_Initialize(void)
 #if defined(HALT_ON_GAMEPAK_IRQ)
     Runtime_SetIrqHandler(13, 1, IwramHalt);
 #endif
-    do { u32 value = KEYCNT_SOFT_RESET; REG_KEYCNT = value; } while (0);
+    Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
     Audio_InitializeRuntimeDefaultsFar();
     Resource_InitializeTable();
     Scheduler_ResetTaskTable();
@@ -234,42 +235,23 @@ void Runtime_IgnoreInterrupt(void)
 
 void Runtime_InstallIwramAndIrqs(void)
 {
-    volatile u16 *ime;
-    s32 zero;
     u8 *iwram;
-    s32 value;
-    s32 one;
 
-    ime = &REG_IME;
-    zero = 0;
-    /* FAKEMATCH: the do-while keeps the REG_IME store ahead of the IWRAM address load. */
-    do {
-        *ime = zero;
-    } while (0);
+    Io_Write16(0, &REG_IME);
     iwram = IwramIrqMain;
     Dma_Set((const void *)IwramRuntime_Rom, iwram, 0x84000500, REG_DMA3);
     gIrqVector = iwram;
     Dma_Set((const void *)Runtime_IrqHandlers, (void *)gIrqHandlers, 0x8400000e, REG_DMA3);
-    REG_DISPSTAT = zero;
-    value = 0xc3ff;
-    REG_KEYCNT = value;
+    Io_Write16(0, &REG_DISPSTAT);
+    Io_Write16(0xc3ff, &REG_KEYCNT);
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    value = 0x3001;
+    Io_Write16(0x3001, &REG_IE);
 #else
-    value = 0x1001;
+    Io_Write16(0x1001, &REG_IE);
 #endif
-    REG_IE = value;
-    one = 1;
-    *ime = one;
+    Io_Write16(1, &REG_IME);
 }
-
-#define Io_Write16(v, reg)                                                     \
-    do { \
-        /* FAKEMATCH: the word temporary and one-pass boundary retain measured halfword-value construction and pool-load scheduling. */ \
-        u32 value_ = (u16)(v);                                                 \
-        *(reg) = value_;                                                       \
-    } while (0)
 
 static __inline__ void System_SoftReset(void)
 {
@@ -293,17 +275,11 @@ static __inline__ void System_SoftReset(void)
 void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
 {
     if (irq <= 13) {
-        volatile u16 *ime_reg = &REG_IME;
         u32 ime;
         u32 bit;
         u32 ie;
 
-        ime = *ime_reg;
-        /* FAKEMATCH: the address value leaves IME bit 0 clear and keeps the measured address-register store. A plain zero store adds a literal load and splits the pool (124 to 136 bytes). */
-        *ime_reg = (u32)ime_reg;
-        /* FAKEMATCH: an empty do-while keeps the IE address load after the IME write */
-        do {
-        } while (0);
+        IRQ_LOCK(ime);
         bit = 1 << irq;
         ie = REG_IE & ~bit;
         if (handler != 0)
@@ -327,7 +303,7 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
             gIrqHandlers[irq] = handler;
         else
             gIrqHandlers[irq] = Runtime_IgnoreInterrupt;
-        REG_IME = ime;
+        IRQ_UNLOCK(ime);
     }
 }
 

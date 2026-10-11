@@ -31,7 +31,7 @@ struct ElementLevelBonus {
     u16 res;
 };
 
-extern const struct ElementLevelBonus Element_PowerResistByLevel[16];
+extern struct ElementLevelBonus Element_PowerResistByLevel[16];
 
 s32 GameFlag_Test(s32 flag);
 #ifdef MODERN
@@ -353,7 +353,6 @@ u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
 {
     struct BtlUnit *state = (struct BtlUnit *)UnitGet(owner);
     u32 index;
-    u32 result;
     s32 values[4];
     s32 i;
 
@@ -375,14 +374,11 @@ copied:
     }
 
     Owner_GetDigitValues(state->class_id, (u8 *)state->djinn_available, values);
-    i = 0;
-    do {
+    for (i = 0; i < 4; i++) {
         s32 value;
         s32 ones;
         s32 tens;
-        const struct ElementLevelBonus *table;
 
-        result = (u32)Element_PowerResistByLevel;
         value = values[i];
         ones = value % 10;
         tens = value / 10;
@@ -393,12 +389,9 @@ copied:
             tens = 0;
 
         destination[i][0] = Element_PowerResistByLevel[tens].pow + ones;
-        /* FAKEMATCH: needed to match: the table reloaded through a temporary builds the res address after the pow store */
-        table = Element_PowerResistByLevel;
-        destination[i][1] = table[tens].res + ones;
-        i++;
-    } while (i < 4);
-    return result;
+        destination[i][1] = Element_PowerResistByLevel[tens].res + ones;
+    }
+    // 戻り値なし（r0 には表のアドレスが残る）
 }
 
 s32 Owner_DetermineClass(s32 character, const u8 *djinn)

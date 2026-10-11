@@ -80,24 +80,32 @@ impl DecompTarget {
         std::path::Path::new(self.game_dir()).join("main.ld")
     }
     /// The edition's own linker script, which replaces or derives the
-    /// game's output sections; the Japanese base edition has none.
+    /// game's output sections; the Japanese base edition has none, and
+    /// neither has any edition of a game with an object list.
     pub fn edition_script(&self) -> Option<std::path::PathBuf> {
         match self.id.as_str().split_once('-') {
             Some((_, "ja")) | None => None,
+            Some((game, _)) if LISTED.contains(&game) => None,
             Some((game, lang)) => Some(edition_script_path(game, lang)),
         }
+    }
+    /// The game's object list, games/<game>/objects.tsv, when all six of
+    /// its editions link from the one main.ld by it.
+    pub fn object_list(&self) -> Option<std::path::PathBuf> {
+        object_list_path(self.id.as_str().split_once('-').map_or("", |(game, _)| game))
     }
     /// The directory of the edition's assembly scaffold, recon/<game>/<lang>.
     pub fn scaffold_dir(&self) -> std::path::PathBuf {
         let (game, lang) = self.id.as_str().split_once('-').expect("an edition id names its game");
         ["recon", game, lang].iter().collect()
     }
-    /// An overlay's link script: games/<game>/src/system/overlay/ovl_<id>.ld,
+    /// An overlay's link script: games/<game>/src/system/overlay/overlay.ld,
+    /// the one script every overlay of a game with an object list links by,
     /// or recon/<game>/raw/overlays/resource_<id>.ld for a game whose
     /// overlays are still listings.
     pub fn overlay_script(&self, id: &str) -> std::path::PathBuf {
-        let name = if self.overlay_dir.starts_with("games/") {
-            format!("ovl_{}.ld", id.to_ascii_lowercase())
+        let name = if self.object_list().is_some() {
+            "overlay.ld".to_owned()
         } else {
             format!("resource_{id}.ld")
         };
@@ -148,21 +156,28 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, usize); 2] = [
 ];
 pub const DEFAULT_TARGET: DecompTargetId = DecompTargetId::TbsJa;
 
-/// Games whose edition linker scripts live beside main.ld as main_<lang>.ld;
-/// the others keep theirs in recon/<game>/<lang>/main.ld.
-const SCRIPTS_IN_GAME: [&str; 1] = ["tbs"];
+/// Games that link all six editions from their one main.ld, which names no
+/// object: games/<game>/objects.tsv lists them. The others keep an edition
+/// script in recon/<game>/<lang>/main.ld.
+const LISTED: [&str; 1] = ["tbs"];
+
+/// The object list of a game ("tbs" or "tla"), when it links by one.
+pub fn object_list_path(game: &str) -> Option<std::path::PathBuf> {
+    LISTED
+        .contains(&game)
+        .then(|| ["games", game, "objects.tsv"].iter().collect())
+}
 
 /// The linker script of one edition of a game ("tbs" or "tla"), relative to
-/// the checkout: the game's main.ld for Japanese, else the edition's own.
+/// the checkout: the game's main.ld for Japanese and for every edition of a
+/// game with an object list, else the edition's own.
 pub fn edition_script_path(game: &str, lang: &str) -> std::path::PathBuf {
     let dir = match game {
         "tla" => "games/tla",
         _ => "games/tbs",
     };
-    if lang == "ja" {
+    if lang == "ja" || LISTED.contains(&game) {
         [dir, "main.ld"].iter().collect()
-    } else if SCRIPTS_IN_GAME.contains(&game) {
-        [dir, &format!("main_{lang}.ld")].iter().collect()
     } else {
         ["recon", game, lang, "main.ld"].iter().collect()
     }
@@ -213,17 +228,21 @@ mod tests {
     fn edition_scripts_live_with_their_game() {
         let path = |game, lang| edition_script_path(game, lang).to_string_lossy().into_owned();
         assert_eq!(path("tbs", "ja"), "games/tbs/main.ld");
-        assert_eq!(path("tbs", "en"), "games/tbs/main_en.ld");
-        assert_eq!(path("tbs", "it"), "games/tbs/main_it.ld");
+        assert_eq!(path("tbs", "en"), "games/tbs/main.ld");
+        assert_eq!(path("tbs", "it"), "games/tbs/main.ld");
         assert_eq!(path("tla", "ja"), "games/tla/main.ld");
         assert_eq!(path("tla", "de"), "recon/tla/de/main.ld");
         let de = target_for(DecompTargetId::TbsDe);
-        assert_eq!(de.edition_script().unwrap(), edition_script_path("tbs", "de"));
+        assert_eq!(de.edition_script(), None);
+        assert_eq!(de.object_list().unwrap().to_string_lossy(), "games/tbs/objects.tsv");
+        let tla_de = target_for(DecompTargetId::TlaDe);
+        assert_eq!(tla_de.edition_script().unwrap(), edition_script_path("tla", "de"));
+        assert_eq!(tla_de.object_list(), None);
         assert_eq!(de.scaffold_dir().to_string_lossy(), "recon/tbs/de");
         assert_eq!(target_for(DecompTargetId::TbsJa).edition_script(), None);
         assert_eq!(
             de.overlay_script("3ad").to_string_lossy(),
-            "games/tbs/src/system/overlay/ovl_3ad.ld"
+            "games/tbs/src/system/overlay/overlay.ld"
         );
         assert_eq!(
             de.overlay_data("3ad").to_string_lossy(),

@@ -5,7 +5,8 @@ use std::path::Path;
 const USAGE: &str = r#"usage: alchemy integrate BRANCH... [--no-build]
 Merges each BRANCH that is not yet in the current branch, in order, and
 stops at the first one that conflicts, leaving the merge for you to
-resolve. After the merges it reconciles the linker scripts (alchemy
+resolve. After the merges it reconciles each edition's link order, its
+linker script or its rows of the game's object list (alchemy
 merge-driver links) and commits any change, then runs make
 compare-editions; for each edition that differs it names the first
 object whose bytes differ, from that edition's map and reference ROM."#;
@@ -73,8 +74,8 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     crate::merge::run(&["links".to_string()])?;
     if !command(&["git", "status", "--porcelain", "--", "games", "recon"], root)?.trim().is_empty() {
         command(&["git", "add", "-A", "games", "recon"], root)?;
-        command(&["git", "commit", "-q", "-m", "Reconcile the edition linker scripts after the merges"], root)?;
-        println!("committed the reconciled linker scripts");
+        command(&["git", "commit", "-q", "-m", "Reconcile the editions' link order after the merges"], root)?;
+        println!("committed the reconciled link order");
     }
     if build {
         let output = std::process::Command::new("make")

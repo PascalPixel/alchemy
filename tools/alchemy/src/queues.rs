@@ -84,8 +84,10 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let header: Vec<&str> = lines.next().unwrap_or("").split('\t').collect();
     let column = |name: &str| header.iter().position(|h| *h == name).ok_or(format!("{name} missing from {}", report.display()));
     let (ci, ca, cn, co, cb, cc, cd, cs) = (column("image")?, column("address")?, column("name")?, column("origin")?, column("bytes")?, column("callers")?, column("draft")?, column("source")?);
-    let script_path = crate::targets::edition_script_path(game, "en").to_string_lossy().into_owned();
-    let script = std::fs::read_to_string(root.join(&script_path)).map_err(|e| e.to_string())?;
+    // The English link order: the edition's script, or for a game with an
+    // object list its rows, on this branch and on each other.
+    let script_path = crate::object_list::main_lines_path(game, "en").to_string_lossy().into_owned();
+    let script = crate::object_list::main_lines(root, game, "en")?;
     let run_of = runs(&script, game);
 
     let current = crate::process::run(&["git", "branch", "--show-current"], root)?.trim().to_string();
@@ -93,6 +95,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let mut taken = BTreeSet::new();
     for branch in branches.lines().filter(|b| !b.is_empty() && *b != current) {
         let Ok(theirs) = crate::process::run(&["git", "show", &format!("{branch}:{script_path}")], root) else { continue };
+        let Ok(theirs) = crate::object_list::lines_of(&theirs, game, "en") else { continue };
         let theirs = runs(&theirs, game);
         taken.extend(run_of.keys().filter(|a| !theirs.contains_key(*a)).cloned());
     }

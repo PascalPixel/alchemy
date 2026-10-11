@@ -5,8 +5,9 @@ const USAGE: &str = r#"usage: alchemy merge-driver scaffold|lines BASE OURS THEI
        alchemy merge-driver links
 scaffold and lines are git merge drivers (see .gitattributes; make bootstrap
 and make worktree register them): they merge BASE, OURS and THEIRS and
-write the result to OURS. links makes every edition's linker script name
-exactly the sections its rom.s defines, after a merge."#;
+write the result to OURS. links makes every edition's object lines (its
+linker script, or its rows of the game's objects.tsv) name exactly the
+sections its rom.s defines, after a merge."#;
 
 struct Scaffold {
     header: Vec<String>,
@@ -286,14 +287,16 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             for game in ["tbs", "tla"] {
                 for lang in ["ja", "de", "es", "fr", "it"] {
                     let rom = root.join(format!("recon/{game}/{lang}/rom.s"));
-                    let script = root.join(crate::targets::edition_script_path(game, lang));
                     if !Path::new(&rom).exists() {
                         continue;
                     }
-                    let (scaffold, text) = (read(&rom.to_string_lossy())?, read(&script.to_string_lossy())?);
+                    // The edition's object lines: its script, or its rows
+                    // of the game's object list.
+                    let text = crate::object_list::main_lines(root, game, lang)?;
+                    let scaffold = read(&rom.to_string_lossy())?;
                     let (fixed, dropped, unplaced) = reconcile_links(&scaffold, &text);
                     if fixed != text {
-                        std::fs::write(&script, &fixed).map_err(|e| e.to_string())?;
+                        crate::object_list::write_main_lines(root, game, &[(lang, fixed.clone())])?;
                     }
                     if dropped > 0 || !unplaced.is_empty() || fixed != text {
                         println!("{game}-{lang}: dropped {dropped}, placed {}", if unplaced.is_empty() { "all".into() } else { format!("all but {}", unplaced.join(", ")) });

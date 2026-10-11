@@ -184,13 +184,15 @@ pub(crate) fn main_script(text: &str) -> String {
     let object = regex::Regex::new(r#"("\*/[^"]+\.o")\(([^)]*)\)"#).expect("static pattern");
     // A far-call bank pinned where Camelot's bytes put it stays there while the
     // modern code before it fits, and follows that code once it does not.
-    let pin = regex::Regex::new(r"^(\s*)\. = ABSOLUTE\((0x[0-9a-fA-F]+)\);$").expect("static pattern");
+    // The address may be an expression over several lines, one arm for each
+    // edition; it ends at the statement's `);`.
+    let pin = regex::Regex::new(r"(?s)\. = ABSOLUTE\((.*?)\);").expect("static pattern");
+    let text = pin.replace_all(text, |capture: &regex::Captures| {
+        format!(". = MAX(ABSOLUTE(.), {});", &capture[1])
+    });
     let mut lines: Vec<String> = text
         .lines()
         .map(|line| {
-            if let Some(capture) = pin.captures(line) {
-                return format!("{}. = MAX(ABSOLUTE(.), {});", &capture[1], &capture[2]);
-            }
             object
                 .replace_all(line, |capture: &regex::Captures| {
                     format!("{}({})", &capture[1], widened(&capture[2]))
@@ -225,16 +227,11 @@ pub(crate) fn overlay_text(text: &str) -> String {
     out
 }
 
-pub(crate) fn overlay_script(
-    root: &Path,
-    script: &Path,
-    directory: &Path,
-    id: &str,
-) -> Result<PathBuf, String> {
-    let text = fs::read_to_string(root.join(script))
-        .map_err(|error| format!("{}: {error}", script.display()))?;
+/// Write the modern script of an overlay from its script's text as the
+/// linker reads it, an object list's fragments in place.
+pub(crate) fn overlay_script(text: &str, directory: &Path, id: &str) -> Result<PathBuf, String> {
     let path = directory.join(format!("resource_{id}.modern.ld"));
-    write_if_changed(&path, &overlay_text(&text))?;
+    write_if_changed(&path, &overlay_text(text))?;
     Ok(path)
 }
 
@@ -310,9 +307,9 @@ fn build(
     let name = target.id.as_str();
     let output = Path::new(OUTPUT).join(name);
     fs::create_dir_all(root.join(&output)).map_err(|error| error.to_string())?;
-    let script = crate::edition::script(root, target, &output)?;
-    let text = fs::read_to_string(root.join(&script))
-        .map_err(|error| format!("{}: {error}", script.display()))?;
+    // The script as the linker reads it, an object list's fragments in
+    // place: the modern script is one file, widened statement by statement.
+    let text = crate::edition::image_script(root, target, crate::edition::Image::Main)?;
     let modern_script = output.join(format!("{name}.modern.ld"));
     write_if_changed(&root.join(&modern_script), &main_script(&text))?;
     let Linked { image, .. } = link_with(
@@ -627,6 +624,11 @@ mod tests {
         assert!(out.contains("\"*/C.o\"(.rodata .rodata.str* .rodata.cst*)"));
         assert!(out.contains("\"*/D.o\"(.text.spawn)"), "named sections stay as they are");
         assert!(out.contains("        . = MAX(ABSOLUTE(.), 0x080f0000);\n"), "a bank pin yields");
+        let editions = text.replace("0x080f0000", "DEFINED(G_EDITION_JA) ? 0x080f0000 :\n                     0x080f9000");
+        assert!(
+            main_script(&editions).contains("        . = MAX(ABSOLUTE(.), DEFINED(G_EDITION_JA) ? 0x080f0000 :\n                     0x080f9000);\n"),
+            "a pin with an address for each edition yields as one statement"
+        );
         let catch = out.find(".rom_modern").unwrap();
         assert!(catch > out.find(".rom_tail").unwrap());
         assert!(catch < out.find("X = LOADADDR").unwrap());

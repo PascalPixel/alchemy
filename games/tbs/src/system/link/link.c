@@ -1,6 +1,8 @@
 #include "serial_runtime.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "../irqlock.h"
+#include "../iowrite.h"
 
 void SerialRuntime_Initialize(void)
 {
@@ -8,13 +10,9 @@ void SerialRuntime_Initialize(void)
     /* FAKEMATCH: keep the fill word's address before its store. */
     volatile u32 zero;
     s32 index;
-    volatile u16 *ime_reg;
     struct SerialRuntime *state;
 
-    interrupt_enable = REG_IME;
-    /* FAKEMATCH: retain the reference's IME pointer lifetime. */
-    do { ime_reg = &REG_IME; } while (0);
-    *ime_reg = (u32)ime_reg;
+    IRQ_LOCK(interrupt_enable);
     Runtime_SetIrqHandler(7, 0, SerialRuntime_HandleTransferInterrupt);
     Runtime_SetIrqHandler(6, 0, SerialRuntime_HandleTransferInterrupt);
     REG_IME = 0;
@@ -51,7 +49,7 @@ void SerialRuntime_Initialize(void)
     gSerialReceiveDest = 0;
     gSerialReceivedSize = 0;
     BattleLink_ResetTransferState();
-    REG_IME = interrupt_enable;
+    IRQ_UNLOCK(interrupt_enable);
 }
 
 void SerialRuntime_EnableTransferTimer(void)
@@ -307,32 +305,17 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload)
     u16 *packet;
     u16 *swap;
     s32 sum;
-    s32 enable;
 
     *(u32 *)&flags[4] = 0;
-    /* FAKEMATCH: needed to match: the one-pass store keeps the IME address
-     * load after the frame clear. Removing the original empty barrier
-     * without this block differs by 6; wrapping the clear instead differs
-     * by 2 (the zero and payload copies swap). */
-    do {
-        REG_IME = 0;
-    } while (0);
+    Io_Write16(0, &REG_IME);
     for (i = 0; i <= 3; i++) {
         swap = gSerialRuntime.pending_buffer[i];
         gSerialRuntime.pending_buffer[i] = gSerialRuntime.ready_buffer[i];
         gSerialRuntime.ready_buffer[i] = swap;
     }
     *(u32 *)flags = *(u32 *)gSerialRuntime.channel_flags;
-    /* FAKEMATCH: an unsigned long store does not alias the u32 snapshot, so sched2 puts lr = sp before the snapshot store as the native does (2 without). */
-    *(unsigned long *)gSerialRuntime.channel_flags = 0;
-    /* FAKEMATCH: needed to match: the one-pass assignment loads 1 ahead of
-     * the IME address and lets -1 be derived from it. A direct assignment
-     * without the original barrier differs by 6; wrapping the following
-     * store instead differs by 2, and a literal store differs by 26. */
-    do {
-        enable = 1;
-    } while (0);
-    REG_IME = enable;
+    *(u32 *)gSerialRuntime.channel_flags = 0;
+    Io_Write16(1, &REG_IME);
     gSerialRuntime.current_mask = 0;
     for (i = 0; i <= 1; i++) {
         packet = gSerialRuntime.pending_buffer[i];

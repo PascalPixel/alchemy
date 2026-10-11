@@ -83,17 +83,25 @@ A game is finished when all six hold (Pascal, 2026-10-08):
 ## Where things are
 
 - `games/<game>/src`, `include`, `sound`, `text` and `games/common` hold the
-  source; `<game>` is `tbs` or `tla`. `games/<game>/main.ld` is the Japanese
-  object order.
+  source; `<game>` is `tbs` or `tla`.
+- `games/tbs/objects.tsv` is ☀️'s object list: the object order of the main
+  image and of each overlay, one linker statement per row, with the
+  editions that link it. `games/tbs/main.ld` is the one main script of all
+  six editions and names no object: it has the memory, the output sections,
+  an `INCLUDE` for each place of the list and the far-call banks' fixed
+  addresses for each edition, chosen by `--defsym TBS_EDITION_<LANG>=1`. The
+  build writes each place's objects for the edition it links into
+  `out/<edition>/ld`.
+- ⚓️'s `games/tla/main.ld` is the Japanese object order; its other edition
+  scripts are still `recon/tla/<lang>/main.ld`.
 - `recon/<game>/raw` holds the English disassembly of code that is not C yet,
-  one listing per function or run. ☀️'s `games/tbs/main_en.ld`
-  is the English object order; German, Spanish, French and Italian follow it
-  through their own `main_de.ld` ... beside it. ⚓️'s edition scripts are
-  still `recon/tla/<lang>/main.ld`.
-- ☀️'s overlays link by `games/tbs/src/system/overlay/ovl_<id>.ld`,
-  with the overlay's own data and bss not yet in its modules in
-  `ovl_<id>.s` beside it; `recon/tbs/raw/overlays` keeps the original
-  listings as reference only. ⚓️'s are `recon/tla/raw/overlays`.
+  one listing per function or run.
+- ☀️'s overlays link by the one `games/tbs/src/system/overlay/overlay.ld`
+  and their rows of the object list; `games/tbs/overlays.tsv` gives each
+  overlay's `.bss` section its header. The overlay's own data and bss not
+  yet in its modules are in `ovl_<id>.s` beside the script;
+  `recon/tbs/raw/overlays` keeps the original listings as reference only.
+  ⚓️'s are `recon/tla/raw/overlays`.
 - `games/<game>/src/system/rom_head.s` is the cartridge header, linked
   first in every edition, as pret's `rom_header.s`: the logo is
   `.space 156` and the complement 0. Right after objcopy the build runs
@@ -194,7 +202,9 @@ or functions is exactly this cheating.
   reports under `out/` are for people only.
   _Check: publication._
 - **O2** Every name is defined where its bytes are, as a C definition or a
-  label, and layout is the linker scripts' object order. No equate, alias,
+  label, and layout is the build's object list order
+  (`games/<game>/objects.tsv`) where a game has one, and the linker scripts'
+  object order otherwise. No equate, alias,
   `#define` or table gives a name an address, except Camelot's own fixed
   addresses: resident IWRAM routines called through fixed entries, RAM
   buffers its code addressed as constants, and the hardware cartridge restart
@@ -271,7 +281,8 @@ or functions is exactly this cheating.
     `rom_head.s` is lowercase. The build chooses preprocessing by the
     extension, as GCC's driver does (Pascal, 2026-10-08). Directives stay
     lowercase (`#include`): the preprocessor reads no other. Rename a file
-    and its include and linker references together. _Check: hygiene,
+    and its include and linker references (its rows of the object list,
+    where its game has one) together. _Check: hygiene,
     publication._
     Shared code and declarations live once in `games/common`; a function is
     adopted into the module that holds its linker neighbours, not into a new
@@ -588,7 +599,7 @@ alchemy sizes DRAFT.c [SIZE]           # struct sizes; the locals that fill a fr
 alchemy show EDITION FUNCTION          # a built function beside the ROM
 alchemy adopt ADDR LABEL NAME [--into MODULE.c]   # into its module, out of all scaffolding
 alchemy label NAME ENGLISH_ADDR LEN    # name English-only scaffold data in other editions
-alchemy adopt-data OBJECT PIECE...     # a data block's object into all six scripts, out of all scaffolds
+alchemy adopt-data OBJECT PIECE...     # a data block's object into all six editions' link order, out of all scaffolds
 # Check the whole build
 alchemy objects EDITION...             # what differs from the ROM, object or placement
 alchemy dead [--apply PATH]            # what no edition links, includes or selects
@@ -602,7 +613,7 @@ alchemy keep [PATH...]                 # keep only edits that leave all twelve i
 alchemy sweep FILE.c...                # drop FAKEMATCH pins, barriers and volatiles the bytes no longer need
 # Work in parallel
 alchemy queues --workers N --out-dir DIR   # work that cannot collide (W7)
-alchemy integrate BRANCH...            # merge, reconcile linker scripts, build all twelve
+alchemy integrate BRANCH...            # merge, reconcile link order with the scaffolds, build all twelve
 # Report for people
 make figure                            # PROGRESS.png and PROGRESS_CHART.png after a build
 ```

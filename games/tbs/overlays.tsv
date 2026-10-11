@@ -1,0 +1,39 @@
+overlay	bss
+36f	.bss (NOLOAD)
+371	.bss (NOLOAD)
+372	.bss (NOLOAD)
+37a	.bss
+37b	.bss ALIGN(16) (NOLOAD)
+37f	.bss (NOLOAD)
+381	.bss (NOLOAD)
+383	.bss
+389	.bss (NOLOAD)
+38b	.bss (NOLOAD)
+38f	.bss (NOLOAD)
+391	.bss (NOLOAD)
+392	.bss
+393	.bss
+394	.bss
+395	.bss ALIGN(16) (NOLOAD)
+396	.bss
+397	.bss ALIGN(16) (NOLOAD)
+399	.bss
+39a	.bss (NOLOAD)
+3a4	.bss
+3a5	.bss ALIGN(16) (NOLOAD)
+3a8	.bss ALIGN(8)
+3ae	.bss
+3af	.bss ALIGN(16) (NOLOAD)
+3b0	.bss ALIGN(16) (NOLOAD)
+3b1	.bss
+3b3	.bss
+3b7	.bss ALIGN(16) (NOLOAD)
+3ba	.bss
+3bb	.bss
+3bc	.bss (NOLOAD)
+3bd	.bss
+3c0	.bss (NOLOAD)
+3c9	.bss (NOLOAD)
+3ca	.bss
+3cb	.bss (NOLOAD)
+3ce	.bss

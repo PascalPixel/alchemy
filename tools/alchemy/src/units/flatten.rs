@@ -356,7 +356,8 @@ fn group(root: &Path, options: &Options, judged: &[super::Judged], target: Decom
             out.push(format!("{}.o", path.trim_end_matches(".c")));
         }
         // Given in ROM order, as the candidates list them; today's build must link each.
-        for o in &out {
+        // The first names the unit; a file of tables alone may follow it.
+        for o in out.iter().take(1) {
             if !judged.iter().any(|j| j.loaded.image.functions.iter().any(|f| f.object == *o)) {
                 return Err(format!("{o}: today's build links no function from it"));
             }

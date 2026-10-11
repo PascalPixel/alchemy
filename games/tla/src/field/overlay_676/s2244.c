@@ -1,0 +1,48 @@
+#include "types.h"
+#include "object_runtime.h"
+#include "party_state.h"
+
+extern char SceneId_Ov676Room1;
+
+s32 GameFlag_Test(s32 flag);
+struct ObjectRuntime *Object_GetById(s32 id);
+void Func_02002470(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_020023c8(void);
+
+static __inline__ void Func_02002470_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02002470(a, b, c, d, e, f);
+}
+
+void Func_02002244(void)
+{
+    if (GameFlag_Test(0x300)) {
+        Object_GetById(9)->x = 0xa80000;
+        Object_GetById(9)->y = 0;
+        Object_GetById(9)->z = 0xc00000;
+    }
+}
+
+s32 Func_02002278(void)
+{
+    if (gPartyState.scene == (s32)&SceneId_Ov676Room1) {
+        if (gPartyState.entrance == 15)
+            Func_020023c8();
+        else
+            Func_02002244();
+    }
+    return 0;
+}
+
+s32 Func_020022b0(void)
+{
+    if (gPartyState.scene == (s32)&SceneId_Ov676Room1 && GameFlag_Test(0x300))
+        Func_02002470_(8, 12, 1, 1, 10, 12);
+    return 0;
+}
+
+void Func_020022f4(void)
+{
+}
+

@@ -3,9 +3,8 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/field/overlay_676/entry.o"(.text)
-        "*/resource_676_overlay.o"(.text.x02008038)
-        "*/resource_676_overlay.o"(.text.x02008044)
-        "*/resource_676_overlay.o"(.text.x02008050)
+        "*/games/tla/src/field/overlay_676/s0038.o"(.text)
+        "*/games/tla/src/field/vinasu_chojo/distance.o"(.text)
         "*/resource_676_overlay.o"(.text.x02008088)
         "*/resource_676_overlay.o"(.text.x0200814c)
         "*/games/tla/src/field/overlay_676/scene_tables.o"(.text)
@@ -29,9 +28,7 @@ SECTIONS
         "*/resource_676_overlay.o"(.text.x02009944)
         "*/resource_676_overlay.o"(.text.x02009d14)
         "*/resource_676_overlay.o"(.text.x02009ec0)
-        "*/resource_676_overlay.o"(.text.x0200a244)
-        "*/resource_676_overlay.o"(.text.x0200a278)
-        "*/resource_676_overlay.o"(.text.x0200a2b0)
+        "*/games/tla/src/field/overlay_676/s2244.o"(.text)
         "*/resource_676_overlay.o"(.text.x0200a2f8)
         "*/resource_676_overlay.o"(.text.x0200a3c8)
         "*/games/tla/src/field/overlay_676/import.o"(.text)

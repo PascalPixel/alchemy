@@ -367,7 +367,7 @@ void ObjectGroup_ApplyRandomChildValues(void *owner)
 void Motion_SetTargetPositionFromMagnitudeAngle(
 	struct ObjectRuntime *object, s32 magnitude, s32 angle)
 {
-	void Vector_AddPolarOffset(s32, s32, s32 *);
+	void Vector_AddPolarOffset(s32, s32, void *);
 	s32 pos[3];
 
 	if (object != 0)

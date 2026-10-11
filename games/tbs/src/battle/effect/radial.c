@@ -413,9 +413,9 @@ u32	 Random16(void);
 //--------------------------------------------------------------------------
 void BattleEffect_RunFallbackObjectTransition(void)
 {
-	void					ObjectDispatch_ApplyArgumentToChildrenFar(struct MotionObject *, s32);
-	void					ObjectDispatch_ReleaseFar(struct MotionObject *);
-	struct MotionObject	   *Object_Spawn(s32, s32, s32, s32);
+	void					ObjectDispatch_ApplyArgumentToChildrenFar(void *, s32);
+	void					ObjectDispatch_ReleaseFar(void *);
+	void *Object_Spawn(s32, s32, s32, s32);
 	struct BattleFxScene   *scene = gEffectWork;
 	struct MotionObject	   *user = scene->main_object;
 	struct MotionObject	   *obj;

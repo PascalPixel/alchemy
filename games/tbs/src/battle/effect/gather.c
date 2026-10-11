@@ -51,6 +51,7 @@ typedef void (*Callback)(s32 *);
 extern Callback BattleFx_ModeHandlers[];
 
 extern u8 gMapCellBuffer[];
+extern u16 gBgScroll[];
 
 //--------------------------------------------------------------------------
 // 演出の作業領域を取り、種類（arg[0]）ごとの演出を流して返す
@@ -225,7 +226,6 @@ void WaitFrames(s32 frames);
 
 void BattleEffect_SetupBlendedDisplay(void)
 {
-	extern u16		gBgScroll[];
 	void		  **slots = &gWorkSlot[HEAP_SLOT_BATTLE];
 	u8			   *buffer = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
 	struct BtlWork *battle = slots[0];
@@ -890,7 +890,6 @@ struct Mode10Work
 //--------------------------------------------------------------------------
 void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 {
-	extern struct Cells03001ad0 gBgScroll;
 	s32							pts[32][2];
 	s32							pos[4];
 	void					   *canvas;
@@ -1014,22 +1013,22 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 		{
 			ox = (Random16() & 3) - 1;
 			oy = (Random16() & 3) - 1;
-			gBgScroll.unk04 = ox;
-			gBgScroll.unk06 = oy + 32;
+			((struct Cells03001ad0 *)gBgScroll)->unk04 = ox;
+			((struct Cells03001ad0 *)gBgScroll)->unk06 = oy + 32;
 		}
 		else
 		{
 			ox = 0;
 			oy = 0;
-			gBgScroll.unk04 = 0;
-			gBgScroll.unk06 = 32;
+			((struct Cells03001ad0 *)gBgScroll)->unk04 = 0;
+			((struct Cells03001ad0 *)gBgScroll)->unk06 = 32;
 		}
 		if (frame >= 176 && frame < 180)
 		{
 			ox = -BattleFx10_ShakeOffsets[frame - 176];
 			oy = BattleFx10_ShakeOffsets[frame - 176];
-			gBgScroll.unk04 = ox;
-			gBgScroll.unk06 = oy + 32;
+			((struct Cells03001ad0 *)gBgScroll)->unk04 = ox;
+			((struct Cells03001ad0 *)gBgScroll)->unk06 = oy + 32;
 		}
 
 		for (i = 0; i != count; i++)

@@ -304,9 +304,9 @@ void ArutamiraDou_ApplyRoomVisuals(void)
 
 void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
 {
-	extern u8 gEffectWork[];
+	extern u8 *gEffectWork;
 
-	u8	*work = (*(u8 **)gEffectWork);
+	u8	*work = gEffectWork;
 	s16 *tbl;
 
 	if (Engine_GameFlagIsSet(0x200) != 0)
@@ -327,12 +327,12 @@ void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
 
 void ArutamiraDou_RespawnActorObject(void)
 {
-	extern u8		   gEffectWork[];
+	extern u8 *gEffectWork;
 	u8				  *work;
 	struct FieldActor *old;
 	struct FieldActor *copy;
 
-	work = *(u8 **)gEffectWork;
+	work = gEffectWork;
 	old = *(struct FieldActor **)(work + 16);
 	Engine_ActorFaceDirection(*(s16 *)(work + 24), 0x4000, 0);
 	Animation_ApplyChildValues((struct DispatchObject *)old, 0);
@@ -371,8 +371,8 @@ void FieldScene_RunTwoCallSequence(void)
 
 void SceneState_MarkObjectWhenActorElevenAhead(void)
 {
-	extern u8		   gEffectWork[];
-	u8				  *obj = *(u8 **)gEffectWork;
+	extern u8 *gEffectWork;
+	u8				  *obj = gEffectWork;
 	struct FieldActor *p = Object_GetById(11);
 	Vec				   v;
 
@@ -388,8 +388,8 @@ void SceneState_MarkObjectWhenActorElevenAhead(void)
 
 void FieldScene_RunActorElevenCellSetup(void)
 {
-	extern u8		   gEffectWork[];
-	u8				  *obj = *(u8 **)gEffectWork;
+	extern u8 *gEffectWork;
+	u8				  *obj = gEffectWork;
 	struct FieldActor *p = Object_GetById(11);
 	s32				   t;
 

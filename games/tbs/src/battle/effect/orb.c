@@ -41,6 +41,7 @@ void AudioCommand_PlayFar(s32);
 void ObjectDispatch_ApplyArgumentToChildrenFar(struct ObjectRuntime *, s32);
 
 void *Object_Spawn(s32, s32, s32, s32);
+extern void *gEffectWork;
 
 #define CLOAK_TILE 0xfb	 // 隠れていられるタイルの属性
 #define CLOAK_END 0x2092 // 隠れていられないときの psynergy_request
@@ -342,10 +343,9 @@ static __inline__ s32 Lerp10(s32 start, s32 end, s32 step)
 //--------------------------------------------------------------------------
 void RunBattleEffect05(void)
 {
-	void						 Animation_ApplyChildValuesFar(struct Effect05Object *, s32);
-	void						 ObjectDispatch_ReleaseFar(struct Effect05Object *);
-	void						 Vector_AddPolarOffset(s32, s32, struct Effect05Point *);
-	extern struct Effect05State *gEffectWork;
+	void						 Animation_ApplyChildValuesFar(void *, s32);
+	void						 ObjectDispatch_ReleaseFar(void *);
+	void						 Vector_AddPolarOffset(s32, s32, void *);
 	struct Effect05Point   pos;
 	struct Effect05Point   start;
 	struct Effect05Point   end;
@@ -558,14 +558,13 @@ LAYOUT_OFFSET_GUARD(FallParticle_Unknown5e, struct FallParticle, unknown_5e, 0x5
 //--------------------------------------------------------------------------
 void BattleFx_SpawnFallingParticles(void)
 {
-	void				 Vector_AddPolarOffset(s32, s32, struct FallPos *);
-	extern struct FallScene *gEffectWork;
+	void				 Vector_AddPolarOffset(s32, s32, void *);
 	struct FallSource	*src;
 	struct FallPos		 pos;
 	struct FallParticle *obj;
 	u32					 dist;
 
-	src = gEffectWork->child;
+	src = ((struct FallScene *)gEffectWork)->child;
 	pos.x = src->x;
 	pos.y = src->y - Random16() * 16 + (24 << 16);
 	pos.z = src->z;
@@ -671,11 +670,10 @@ static __inline__ s32 ObjProbeUp(struct FxObject *obj, struct FxPosition *pos)
 //--------------------------------------------------------------------------
 void BattleFx_SteerLiftedTarget(s32 id)
 {
-	void			 Animation_ApplyChildValuesFar(struct FxObject *object, s32 value);
-	void			 ObjectDispatch_ReleaseFar(struct FxObject *object);
-	void			 Script_WaitForEventTimeoutFar(struct FxObject *object);
-	void			 Vector_AddPolarOffset(s32 magnitude, s32 angle, struct FxPosition *position);
-	extern struct BattleFxScene *gEffectWork;
+	void			 Animation_ApplyChildValuesFar(void *object, s32 value);
+	void			 ObjectDispatch_ReleaseFar(void *object);
+	void			 Script_WaitForEventTimeoutFar(void *object);
+	void			 Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
 	struct BattleFxScene *work;
 	struct FxObject		 *src;
 	struct FxObject		 *target;
@@ -909,7 +907,6 @@ void RunBattleEffect11(void)
 {
 	void						 ObjectDispatch_ReleaseFar(void *object);
 	void						 Script_WaitForEventTimeoutFar(void *object);
-	extern struct BattleFxScene *gEffectWork;
 	struct BattleFxScene  *scene;
 	struct MotionObject	  *obj;
 	struct MotionObject	  *anchors[2];

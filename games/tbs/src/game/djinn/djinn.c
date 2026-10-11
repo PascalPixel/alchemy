@@ -268,7 +268,7 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index)
 
 s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
 {
-	u32 GameFlag_SetBit(u32 flag);
+	void GameFlag_SetBit(s32 flag);
     void *entry = state + index * 20 + 48;
     s32 best_no = 0;
     s32 best_val = 999;

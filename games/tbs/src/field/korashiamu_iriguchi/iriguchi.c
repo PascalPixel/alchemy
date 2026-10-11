@@ -14,6 +14,9 @@
 #include "call.h"
 #include "fieldobj.h"
 
+void FieldScene_CallPairWith10(s32 no);
+void SceneState_ForwardMaskedHalfwordWith10(s32 arg0, s32 arg1);
+
 #define RECORD_17 17
 
 extern u8 KorashiamuIriguchi_ActionTable1[];

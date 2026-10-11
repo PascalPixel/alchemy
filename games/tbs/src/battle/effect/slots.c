@@ -54,6 +54,7 @@
 	((void (*)(struct MotionObject *, s32, s32, s32))Object_SetPositionAndResetMotionFar)
 
 extern struct BattleFxScene *gEffectWork;
+extern u8 gMapCellBuffer[];
 struct MotionObject			*Object_Spawn(s32, s32, s32, s32);
 void						 ObjectDispatch_ReleaseFar(struct MotionObject *);
 
@@ -74,9 +75,9 @@ void BattleFx_RunEffect13Hook(void)
 //--------------------------------------------------------------------------
 void RunBattleEffect13(void)
 {
-	void Animation_ApplyChildValuesFar(struct MotionObject *, u32);
-	void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor * object, s32 animation);
-	void Vector_AddPolarOffset(s32, s32, s32 *);
+	void Animation_ApplyChildValuesFar(void *, s32);
+	void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 animation);
+	void Vector_AddPolarOffset(s32, s32, void *);
 	struct BattleFxScene	 *scene = gEffectWork;
 	struct MotionObject		 *actor = scene->main_object;
 	struct MotionObject		 *child = scene->child;
@@ -240,7 +241,7 @@ void AudioCommand_PlayFar(s32);
 //--------------------------------------------------------------------------
 void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot)
 {
-	void			   Vector_AddPolarOffset(s32, s32, struct Output *);
+	void			   Vector_AddPolarOffset(s32, s32, void *);
 	struct Output	   pos;
 	struct FieldActor *src;
 	s32				   state;
@@ -652,8 +653,8 @@ u32 Random16(void);
 
 void RunBattleEffect16(void)
 {
-	void					Animation_ApplyChildValuesFar(struct ArcEffectObject *, s32);
-	void					ObjectDispatch_SetSingleChildFlagsFar(struct ArcEffectObject *, s32);
+	void					Animation_ApplyChildValuesFar(void *, s32);
+	void					ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 	struct BattleFxScene   *scene;
 	struct ArcEffectObject *object;
 	struct AnimationObject *group;
@@ -916,7 +917,6 @@ struct FxObject
 
 void BattleFx_SetupResourcesAndWindow(void)
 {
-	extern struct FxWindowWork gMapCellBuffer;
 	u32						  *oam;
 	volatile u32			   fill;
 	u32						  *pal;
@@ -928,7 +928,7 @@ void BattleFx_SetupResourcesAndWindow(void)
 	u32						   attr2;
 
 	pal = (u32 *)Runtime_BumpAllocateAlternatePool(32);
-	work = &gMapCellBuffer;
+	work = (struct FxWindowWork *)gMapCellBuffer;
 	oam = (u32 *)work->entries;
 	object = Object_GetById(gGameState.selected_actor);
 	work->tiles = Resource_FindFreeEntry();
@@ -1063,7 +1063,6 @@ struct MapObject
 //--------------------------------------------------------------------------
 void BattleFx_CleanupResourcesAndWindow(void)
 {
-	extern u8			 gMapCellBuffer[];
 	struct WorldMapWork *work = (struct WorldMapWork *)gMapCellBuffer;
 
 	Resource_ResetEntry(work->vram_block);
@@ -1082,7 +1081,7 @@ s32		   ArcTan2(s32 dz, s32 dx);
 //--------------------------------------------------------------------------
 void Map_UpdateWorldMapMarkers(void)
 {
-	void				 Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 * position);
+	void				 Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
 	s32					 leader;
 	const s32			*place;
 	s32					 tile_base;
@@ -1328,7 +1327,6 @@ void BattleFx_ScheduleRatioTransition(s32, s32);
 
 void Map_ShowWorldMap(s32 picture)
 {
-	extern u8 gMapCellBuffer[];
 	/* FAKEMATCH: needed to match: one-pass loops order display-control setup and the spilled layer load. */
 	struct MapState			*map = WORK_SLOT(8);
 	struct EventWork		*field = Runtime_AllocateBlock(27, 0xccc);

@@ -1314,7 +1314,7 @@ void VinasuHeya_ShiftBridge(void)
 
 void VinasuHeya_RunCellPushScene(void)
 {
-	s32 OverlayObject_PrepareObjectWithCommand15();
+	struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind);
     u8 *flags;
     s32 z;
     s32 x;

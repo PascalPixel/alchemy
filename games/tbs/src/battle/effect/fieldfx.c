@@ -54,6 +54,7 @@ struct Output_08097f80
 void Vector_AddPolarOffset(s32, s32, struct Output_08097f80 *);
 
 extern struct BattleFxScene *gEffectWork;
+extern u8 *gEventWork;
 void						 ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
 
 extern void *Object_Spawn(s32, s32, s32, s32);
@@ -525,7 +526,6 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value)
 //--------------------------------------------------------------------------
 void FieldEffect_WatchLeaderDistance(void)
 {
-	extern u8 *gEventWork;
 	u8					 *work;
 	struct ObjectRuntime *actor;
 	s16					 *timer;
@@ -604,7 +604,6 @@ void AudioCommand_PlayFar(s32);
 //--------------------------------------------------------------------------
 void RunBattleEffect08(void)
 {
-	extern struct EffectGlobals gEventWork;
 	struct EffectState	*scene;
 	struct EffectState	*work;
 	struct EffectTarget *target;
@@ -612,10 +611,10 @@ void RunBattleEffect08(void)
 	s32					 ev;
 	s32					 frame;
 
-	scene = gEventWork.scene;
+	scene = ((struct EffectGlobals *)&gEventWork)->scene;
 	ObjectDispatch_ApplyValueToKind200Children(6);
 	DisplayTransition_InitializeBattleEffectState(8);
-	work = gEventWork.work;
+	work = ((struct EffectGlobals *)&gEventWork)->work;
 	target = ObjectTable_Get(gGameState.selected_actor);
 	work->x = target->x;
 	work->height = target->z - target->y;

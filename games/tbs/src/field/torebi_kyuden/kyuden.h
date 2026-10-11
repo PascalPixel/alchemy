@@ -36,10 +36,10 @@ static __inline__ void SetHalf(u16 *at, s32 value)
 }
 
 
-extern u8 TorebiKyuden_EmptyTable[];
-extern u8 TorebiKyuden_MessageTable[];
+extern s16 TorebiKyuden_EmptyTable[];
+extern u32 TorebiKyuden_MessageTable[];
 
-extern u8 TorebiKyuden_MiddleActionScript[];
+extern s32 TorebiKyuden_MiddleActionScript[];
 
 enum {
     ITEM_CLOAK_BALL = 205

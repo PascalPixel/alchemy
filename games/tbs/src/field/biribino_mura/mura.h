@@ -14,12 +14,12 @@ enum {
     ITEM_HARD_NUT = 194
 };
 
-extern u8 Placement_Messages[];
-extern u8 Mura_VillagerActions[];
-extern const u16 *const Mura_DoorCellSteps[];
-extern const s16 Mura_DoorCellOrigins[];
-extern u8 Mura_RepaintCells[];
-extern const s32 Mura_SpawnScript[];
+extern u32 Placement_Messages[];
+extern s32 Mura_VillagerActions[];
+extern u16 *Mura_DoorCellSteps[];
+extern u32 Mura_DoorCellOrigins[];
+extern u32 Mura_RepaintCells[];
+extern s32 Mura_SpawnScript[];
 
 s32 ArcTan2(s32, s32);
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);

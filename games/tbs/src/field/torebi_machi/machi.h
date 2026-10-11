@@ -22,12 +22,6 @@ struct TorebiSceneWork {
     u8 widen_proximity;
 };
 
-struct SceneSetup {
-    u16 *commands;
-    u16 first;
-    u16 second;
-};
-
 struct SceneSprite {
     u8 unknown_00[0x15];
     u8 unknown_15_low : 2;
@@ -41,15 +35,15 @@ struct Actor {
     u8 pad24[0x31];
     u8 field55;
 };
-extern u8 gTorebiMachiActor16Action[];
-extern u8 gTorebiMachiActor17Action[];
-extern u8 gTorebiMachiEntrances[];
-extern u8 gTorebiMachiExits[];
-extern u8 gTorebiMachiPlacements[];
-extern u8 gTorebiMachiEvents3[];
-extern u8 gTorebiMachiEvents2[];
-extern u8 gTorebiMachiEvents[];
-extern struct SceneSetup gTorebiMachiCellSteps[];
+extern s32 gTorebiMachiActor16Action[];
+extern s32 gTorebiMachiActor17Action[];
+extern struct SceneEntrance gTorebiMachiEntrances[];
+extern u32 gTorebiMachiExits[];
+extern struct ScenePlacement gTorebiMachiPlacements[];
+extern struct SceneEvent gTorebiMachiEvents3[];
+extern struct SceneEvent gTorebiMachiEvents2[];
+extern struct SceneEvent gTorebiMachiEvents[];
+extern struct MapCellAnim gTorebiMachiCellSteps[];
 
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 

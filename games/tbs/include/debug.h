@@ -11,20 +11,16 @@ struct ItemDefinition;
 struct RenderInput;
 
 extern const u8		   Debug_PaletteSwatchTiles[];
-extern u8			   gDebugItemCapacityLabel[];
-extern u8			   gDebugItemFullLabel[];
-extern u8			   gDebugItemPrompt[];
-extern u8			   gItemLevelItemFull[];
-extern u8			   gItemLevelItemHelp[];
-extern u8			   gItemLevelItemPrompt[];
-extern u8			   gItemLevelPsyHelp[];
-extern u8			   gItemLevelPsyPrompt[];
+extern char			   gDebugItemCapacityLabel[24];
+extern char			   gDebugItemFullLabel[20];
+extern char			   gDebugItemPrompt[12];
+extern char gItemLevelItemFull[20];
+extern char gItemLevelItemHelp[24];
+extern char gItemLevelItemPrompt[12];
+extern char gItemLevelPsyHelp[12];
+extern char gItemLevelPsyPrompt[8];
 extern const s16	   Portrait_SpriteMap[];	// 2 entries a row: key, id
 extern const s16	   Portrait_CharacterMap[]; // 2 entries a row: key, id
-extern u8			   TestRooms_Entrances[];
-extern u8			   TestRooms_Events[];
-extern u8			   TestRooms_Exits[];
-extern u8			   TestRooms_Placements[];
 void				   BattleMap_ApplyEntranceView(void);
 void				   Debug_RunPaletteEditor(void);
 void				   DebugBattle_ViewMessages(void);

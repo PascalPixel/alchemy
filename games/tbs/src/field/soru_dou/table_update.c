@@ -12,6 +12,7 @@
 #include "scene.h"
 
 #include "resource_37c_runtime.h"
+#include "field_scene.h"
 
 s32 Engine_GameFlagIsSet(s32);
 
@@ -21,7 +22,7 @@ void Engine_GameFlagSet(s32);
 
 u8 *State_Run(void)
 {
-    return SoruDou_SceneTable0;
+    return (u8 *)SoruDou_SceneTable0;
 }
 
 s32 SoruDou_GetView(void)
@@ -31,17 +32,17 @@ s32 SoruDou_GetView(void)
 
 u8 *SceneData_GetPrimaryTable37c(void)
 {
-    return SoruDou_SceneTable1;
+    return (u8 *)SoruDou_SceneTable1;
 }
 
 u8 *SceneData_GetSecondaryTable37c(void)
 {
-    return SoruDou_SceneTable2;
+    return (u8 *)SoruDou_SceneTable2;
 }
 
 u8 *SceneData_GetTertiaryTable37c(void)
 {
-    return SoruDou_SceneTable3;
+    return (u8 *)SoruDou_SceneTable3;
 }
 
 s32 Resource37c_Run(void)
@@ -60,3 +61,25 @@ s32 Resource37c_Run(void)
     }
     return 0;
 }
+
+struct SceneEntrance SoruDou_SceneTable0[] = {
+	{ 0, CONDITION_ALWAYS, 87, 0, 142, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 87, 0, 142, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 SoruDou_SceneTable1[] = {
+	SCENE_EXITS(13),
+	SCENE_EXIT(1, 12, 2),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement SoruDou_SceneTable2[] = {
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent SoruDou_SceneTable3[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ SEARCH(SEARCH_UNNAMED), 100, 0x350, FIND_PSYNERGY_STONE },
+	{ SCENE_EVENTS_END },
+};

@@ -19,13 +19,13 @@ enum CottageFlag {
 
 #define NULL ((void *)0)
 
-extern u8 Placement_Scripts[];
-extern u8 Placement_Messages[];
-extern u8 Placement_Actors[];
-extern u8 Placement_Effects[];
-extern u8 Placement_Effects834[];
-extern u8 Placement_Effects87a[];
-extern const u16 Sukureta_GateCells[];
+extern struct SceneEntrance Placement_Scripts[];
+extern u32 Placement_Messages[];
+extern struct ScenePlacement Placement_Actors[];
+extern struct SceneEvent Placement_Effects[];
+extern struct SceneEvent Placement_Effects834[];
+extern struct SceneEvent Placement_Effects87a[];
+extern u16 Sukureta_GateCells[];
 
 s32 ArcTan2(s32, s32);
 void BattleFx_SetWeightedResult(s32, s32);

@@ -10,14 +10,14 @@
 extern struct EventWork *gEventWork;
 extern u8				 gEffectWork[];
 
-extern u8 gItemLevelEntrances[];
-extern u8 gItemLevelExits[];
-extern u8 gItemLevelPlacements[];
-extern u8 gItemLevelEvents[];
-extern u8 gItemLevelGlyphsUpper[];
-extern u8 gItemLevelGlyphsLower[];
-extern u8 gItemLevelGlyphsMarks[];
-extern u8 gItemLevelLvLabel[];
+extern struct SceneEntrance gItemLevelEntrances[];
+extern u32 gItemLevelExits[];
+extern struct ScenePlacement gItemLevelPlacements[];
+extern struct SceneEvent gItemLevelEvents[];
+extern char gItemLevelGlyphsUpper[28];
+extern char gItemLevelGlyphsLower[28];
+extern char gItemLevelGlyphsMarks[12];
+extern char gItemLevelLvLabel[4];
 
 void UnitCalc();
 s32	 Party_ListActiveOwners();

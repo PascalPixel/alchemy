@@ -25,6 +25,7 @@
 #include "vram_block.h"
 #include "ram_buffer.h"
 #include "call.h"
+#include "field_scene.h"
 
 #define RuntimeDispatch_NoOpHook ((void (*)(s32))RuntimeDispatch_NoOpHook)
 #define Title_ShowSplashScreen ((void (*)(s32))Title_ShowSplashScreen)
@@ -48,7 +49,7 @@ struct TitleWork {
 
 u8 *Title_GetEntrances(void)
 {
-    return gTitleEntrances;
+    return (u8 *)gTitleEntrances;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -58,17 +59,17 @@ s32 SceneData_ReturnZero(void)
 
 u8 *Title_GetExits(void)
 {
-    return gTitleExits;
+    return (u8 *)gTitleExits;
 }
 
 u8 *Title_GetPlacements(void)
 {
-    return gTitlePlacements;
+    return (u8 *)gTitlePlacements;
 }
 
 u8 *Title_GetEvents(void)
 {
-    return gTitleEvents;
+    return (u8 *)gTitleEvents;
 }
 
 s32 Title_Run(void)
@@ -316,3 +317,22 @@ col:
     Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, DMA3);
     ((struct TitleWork *)gMapWork[0])->mode = 0x1400;
 }
+
+struct SceneEntrance gTitleEntrances[] = {
+	{ 0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 gTitleExits[] = {
+	SCENE_EXITS(511),
+};
+
+struct ScenePlacement gTitlePlacements[] = {
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent gTitleEvents[] = {
+	{ SCENE_EVENTS_END },
+};
+
+s16 gTitleVramBlock = -1;

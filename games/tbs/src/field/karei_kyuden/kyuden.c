@@ -11,6 +11,9 @@
 #include "field_event.h"
 #include "field_scene.h"
 #include "text/msg_ids.h"
+#include "ability_ids.h"
+#include "item_ids.h"
+#include "objcmd.h"
 
 #define FieldScene_PrepareActors ((void (*)(u8*))FieldScene_PrepareActors)
 
@@ -35,7 +38,7 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
     gEventWork->message += amount;
 }
 
-extern u8 Placement_Messages[];
+extern u32 Placement_Messages[];
 
 
 
@@ -59,13 +62,13 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-    return Placement_Messages;
+    return (u8 *)Placement_Messages;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_KareiKyuden) {
-        FieldScene_PrepareActors(gKareiKyudenPlacements);
+        FieldScene_PrepareActors((u8 *)gKareiKyudenPlacements);
         return (const struct ScenePlacement *)gKareiKyudenPlacements;
     }
     return gKareiKyudenPlacementsOther;
@@ -866,3 +869,145 @@ void Scene_RunPartySequence(void)
     GameFlag_Set(0x914);
     Engine_EventEnd();
 }
+
+s32 KareiKyuden_PartyActions[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(856), 0, PIXELS(486)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+struct SceneEntrance gKareiKyudenEntrancesOther[] = {
+	{ 0, CONDITION_ALWAYS, 168, 0, 168, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gKareiKyudenEntrances[] = {
+	{ 0, CONDITION_ALWAYS, 168, 0, 168, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 240, 0, 648, FACING_NORTH, 0, 45, 360, 440, 680, 0 },
+	{ 2, CONDITION_ALWAYS, 88, 0, 552, FACING_SOUTH, 0, 45, 360, 440, 680, 0 },
+	{ 3, CONDITION_ALWAYS, 392, 0, 552, FACING_SOUTH, 0, 45, 360, 440, 680, 0 },
+	{ 4, CONDITION_ALWAYS, 240, 0, 408, FACING_SOUTH, 0, 45, 360, 440, 680, 0 },
+	{ 5, CONDITION_ALWAYS, 152, 0, 432, FACING_SOUTH, 0, 45, 360, 440, 680, 0 },
+	{ 6, CONDITION_ALWAYS, 264, 0, 136, FACING_NORTH, 0, 40, 20, 305, 285, 0 },
+	{ 7, CONDITION_ALWAYS, 504, 0, 152, FACING_NORTH, 0, 380, 20, 755, 290, 0 },
+	{ 8, CONDITION_ALWAYS, 448, 0, 112, FACING_SOUTH, 0, 380, 20, 755, 290, 0 },
+	{ 9, CONDITION_ALWAYS, 864, 0, 576, FACING_NORTH, 0, 750, 370, 985, 635, 0 },
+	{ 10, CONDITION_ALWAYS, 928, 0, 224, FACING_WEST, 0, 800, 20, 1040, 250, 0 },
+	{ 11, CONDITION_ALWAYS, 904, 0, 72, FACING_SOUTH, 0, 800, 20, 1040, 250, 0 },
+	{ 12, CONDITION_ALWAYS, 616, 0, 824, FACING_NORTH, 0, 465, 640, 705, 875, 0 },
+	{ 13, CONDITION_ALWAYS, 128, 0, 808, FACING_EAST, 0, 20, 730, 260, 890, 0 },
+	{ 14, CONDITION_ALWAYS, 168, 0, 808, FACING_SOUTH, 0, 20, 730, 260, 890, 0 },
+	{ 20, CONDITION_ALWAYS, 864, 0, 576, FACING_NORTH, 0, 750, 370, 985, 635, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 Placement_Messages[] = {
+	SCENE_EXITS(103),
+	SCENE_EXIT(1, 102, 2),
+	SCENE_EXIT(2, 103, 6),
+	SCENE_EXIT(3, 103, 7),
+	SCENE_EXIT(4, 103, 9),
+	SCENE_EXIT(5, 103, 13),
+	SCENE_EXIT(6, 103, 2),
+	SCENE_EXIT(7, 103, 3),
+	SCENE_EXIT(8, 103, 10),
+	SCENE_EXIT(9, 103, 4),
+	SCENE_EXIT(10, 103, 8),
+	SCENE_EXIT(11, 156, 1),
+	SCENE_EXIT(12, 103, 14),
+	SCENE_EXIT(13, 103, 5),
+	SCENE_EXIT(14, 103, 12),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement gKareiKyudenPlacementsOther[] = {
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gKareiKyudenPlacements[] = {
+	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+	{ 0x2d, 0x0, ACTOR_STAND,
+		PIXELS(856), 0, PIXELS(440), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x31, 0x0, ACTOR_STAND,
+		PIXELS(872), 0, PIXELS(440), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x99, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_NORTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ 0x99, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ 0x6c, 0x0, ACTOR_STAND,
+		PIXELS(616), 0, PIXELS(113), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x6a, 0x0, ACTOR_STAND,
+		PIXELS(712), 0, PIXELS(246), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0xa7, 0x0, ACTOR_STAND,
+		PIXELS(212), 0, PIXELS(522), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x7e, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(169), 0, PIXELS(114), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x7f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(104), 0, PIXELS(114), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent gKareiKyudenEventsOther[] = {
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gKareiKyudenEvents[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(KareiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(KareiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(KareiKyuden_LeaveThroughDoor) },
+	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
+	{ EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
+	{ EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
+	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
+	{ EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
+	{ EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
+	{ 0x31, 11, CONDITION_ALWAYS, 11 },
+	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
+	{ EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(KareiKyuden_LeaveThroughDoor) },
+	{ EVENT_TALK, 8, 0x321, MSGNO(MsgKareiKyudenDodonpaIsAVeryShrewdMan) },
+	{ EVENT_TALK, 8, 0x913, EVENT_SCRIPT(FieldScene_RunActorEightTurnDialogue) },
+	{ EVENT_TALK, 8, 0x941, MSGNO(MsgKareiKyudenDodonpaPlansToUseHammetTo) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenNoOneInKalayKnowsHammet) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenTakeYourShamansRodAndSet) },
+	{ EVENT_TALK, 12, 0x941, MSGNO(MsgKareiKyudenTheTownsfolkDontKnowAboutLord) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenIHearHammetWasSavedBy) },
+	{ EVENT_TALK, 13, 0x941, EVENT_SCRIPT(SceneDialogue_RunActor13Message1b83) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenTheySayHammetsReturnIsSupposed) },
+	{ EVENT_TALK, 14, 0x941, MSGNO(MsgKareiKyudenLayanaIsPuttingUpAStrong) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenILeftTheDoorToThe) },
+	{ EVENT_TALK, 15, 0x941, MSGNO(MsgKareiKyudenMerchantsAreSupposedToBeProtected) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenIWonderIfAnyOfDodonpas) },
+	{ EVENT_TALK, 16, 0x941, EVENT_SCRIPT(SceneDialogue_RunActor16Message1b88) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenTheSecretPassageIsLockedBecause) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x913, MSGNO(MsgKareiKyudenIsThisTheRightDecisionHammet) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x941, MSGNO(MsgKareiKyudenIDontCareAboutTheMoney) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenImSoHappyHammetMadeIt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenLayanasWordsPainHerMoreThan) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x941, MSGNO(MsgKareiKyudenImSureTheVillagersWouldPanic) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenImSoRelievedHammetMadeIt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x941, MSGNO(MsgKareiKyudenEveryonesWorriedAboutLordHammetBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenICantLetOnToThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x941, MSGNO(MsgKareiKyudenLadyLayanaWasCryingAgainLast) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenLayanaOrderedTheDoorToThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x941, MSGNO(MsgKareiKyudenAndToThinkIAlmostWent) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenWeWillNeverLetDodonpasHenchmen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x941, MSGNO(MsgKareiKyudenLordHammetIsALegendAmong) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenTheKeyToTheSecretPassage) },
+	{ SEARCH(SEARCH_CHEST), 100, 0xf86, FIND_ITEM(0x5f) },
+	{ SEARCH(SEARCH_BARREL), 101, 0xf87, FIND_ITEM(ITEM_NUT) },
+	{ SEARCH(SEARCH_WARDROBE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiKyudenTheresATurbanItsTheSymbol)) },
+	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiKyudenTheresABookEntitledBusinessAnd)) },
+	{ SEARCH(SEARCH_BOOKCASE), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiKyudenTheresABookEntitledTheGood)) },
+	{ SCENE_EVENTS_END },
+};

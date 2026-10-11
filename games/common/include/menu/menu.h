@@ -83,18 +83,18 @@ extern struct ObjectSystemWork *gMenuCtrlWork;
 #endif
 extern u8					   gNumberTextBuffer[];
 extern struct SelectionScreen *gResQueueWork;
-extern u8					   gTitleEntrances[];
-extern u8					   gTitleEvents[];
-extern u8					   gTitleExits[];
+extern struct SceneEntrance					   gTitleEntrances[];
+extern struct SceneEvent					   gTitleEvents[];
+extern u32					   gTitleExits[];
 #ifndef OWN_gTitleExtraOptionEnabled
 extern u8 gTitleExtraOptionEnabled[];
 #endif
-extern u8		 gTitlePlacements[];
+extern struct ScenePlacement		 gTitlePlacements[];
 extern s8		 Inn_PriceMultipliers[];
 extern u8		 ItemMenu_ArrangeKeysString[];
 extern s32		 ItemMenu_CommandColumnXTable[];
 extern u8		 ItemMenu_EquipmentKeyString[];
-extern const u8	 LinkLobby_SlotColumns[];
+extern u8	 LinkLobby_SlotColumns[];
 extern const s32 LinkLobby_SlotValues[];
 extern const u8	 Menu_BackdropFrameTile[];
 #ifndef OWN_Menu_ColonString

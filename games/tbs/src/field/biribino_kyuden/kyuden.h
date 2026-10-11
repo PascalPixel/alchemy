@@ -12,10 +12,10 @@ enum {
     FLAG_REWARD_TAKEN = 0x84e
 };
 
-extern u8 Placement_Scripts[];
-extern u8 Placement_Messages[];
-extern const u8 Kyuden_FacingActions[];
-extern const u8 Kyuden_PacingActions[];
+extern struct SceneEntrance Placement_Scripts[];
+extern u32 Placement_Messages[];
+extern s32 Kyuden_FacingActions[];
+extern s32 Kyuden_PacingActions[];
 
 s32 ArcTan2(s32, s32);
 void Map_ClearLayerEntryFlag();

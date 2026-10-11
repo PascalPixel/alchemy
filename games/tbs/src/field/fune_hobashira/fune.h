@@ -9,20 +9,20 @@ enum {
     ITEM_ANCHOR_CHARM = 232
 };
 
-extern u8 FuneHobashira_SceneTableA[];
-extern u8 FuneHobashira_SceneTableB[];
-extern u8 FuneHobashira_SceneTableC[];
-extern u8 FuneHobashira_SceneTableD[];
-extern u8 FuneHobashira_SceneTableE[];
+extern struct SceneEntrance FuneHobashira_SceneTableA[];
+extern s16 FuneHobashira_SceneTableB[];
+extern u32 FuneHobashira_SceneTableC[];
+extern struct ScenePlacement FuneHobashira_SceneTableD[];
+extern struct SceneEvent FuneHobashira_SceneTableE[];
 extern s32 FuneHobashira_DriftActions[];
-extern s32 FuneHobashira_FlagValues[];
+extern u32 FuneHobashira_FlagValues[];
 
-extern u8 FuneHobashira_FollowCameraActions[];
-extern u8 FuneHobashira_LookoutActions[];
-extern u8 FuneHobashira_WaveActions[];
-extern s32 FuneHobashira_StagingObjects[];
-extern s32 FuneHobashira_EnsembleObjects[];
-extern s32 FuneHobashira_LandingObjects[];
+extern s32 FuneHobashira_FollowCameraActions[];
+extern s32 FuneHobashira_LookoutActions[];
+extern s32 FuneHobashira_WaveActions[];
+extern struct ScenePlacement FuneHobashira_StagingObjects[];
+extern struct ScenePlacement FuneHobashira_EnsembleObjects[];
+extern struct ScenePlacement FuneHobashira_LandingObjects[];
 
 extern s32 FuneHobashira_DriftY;
 extern s32 FuneHobashira_DriftX;

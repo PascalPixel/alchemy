@@ -80,23 +80,25 @@ s32 KorosseoKabe_RaiseScript[] = {
 	SC_END,
 };
 
-s16 KorosseoKabe_DirectionSteps[] = {
-	0, 16,
-	0, 16,
-	0, 16,
-	16, 0,
-	16, 0,
-	16, 0,
-	16, 0,
-	0, -16,
-	0, -16,
-	0, -16,
-	0, -16,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	0, 16,
+#define DIRECTION_STEP(x, z) ((u32)(x) << 16 | (u16)(z))
+
+u32 KorosseoKabe_DirectionSteps[] = {
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(16, 0),
 };
 
 struct SceneEntrance gKorosseoKabeEntrances[] = {
@@ -242,9 +244,7 @@ struct SceneEvent gKorosseoKabeEvents[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 Korosseo_PortraitSlot[] = {
-	MAP_CELL_STEPS_END,
-};
+s16 Korosseo_PortraitSlot = -1;
 
 s16 KorosseoKabe_ModeRecordDefault[] = {
 #if !EDITION_INTERNATIONAL
@@ -298,9 +298,7 @@ s16 KorosseoKabe_ModeRecordThree[] = {
 	6, 0x1000, 448, 6, 0x7fff, 6, -1,
 };
 
-u16 Korosseo_MarkerSlot[] = {
-	MAP_CELL_STEPS_END,
-};
+s16 Korosseo_MarkerSlot = -1;
 
 s32 Korosseo_RivalFinishScript[] = {
 	SC_ARG(2),

@@ -13,6 +13,10 @@
 #include "field_event.h"
 #include "field_service.h"
 #include "text/msg_ids.h"
+#include "ability_ids.h"
+#include "field_scene.h"
+#include "item_ids.h"
+#include "objcmd.h"
 
 #define FieldScene_PrepareActors ((void (*)(u8*))FieldScene_PrepareActors)
 
@@ -64,7 +68,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 
 u8 *SceneData_GetScriptTable(void)
 {
-    return Placement_Scripts;
+    return (u8 *)Placement_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -74,7 +78,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-    return Placement_Messages;
+    return (u8 *)Placement_Messages;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -82,7 +86,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     u8 *p;
 
     if (gGameState.scene == (s32)&SceneId_BiribinoKyuden) {
-        p = gBiribinoKyudenPlacements;
+        p = (u8 *)gBiribinoKyudenPlacements;
         FieldScene_PrepareActors(p);
 
         if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0) {
@@ -837,10 +841,10 @@ accepted:
     Actor_FaceDirection(19, FACING_EAST + FACING_STEP, 10);
     Engine_ActorSetAnimationAndWait(19, 3);
     Engine_EventWait(20);
-    FieldObject_SetTargetAndCallback(0, 0x10013, Kyuden_FacingActions);
-    FieldObject_SetTargetAndCallback(1, 0x10013, Kyuden_FacingActions);
-    FieldObject_SetTargetAndCallback(2, 0x10013, Kyuden_FacingActions);
-    FieldObject_SetTargetAndCallback(3, 0x10013, Kyuden_FacingActions);
+    FieldObject_SetTargetAndCallback(0, 0x10013, (const u8 *)Kyuden_FacingActions);
+    FieldObject_SetTargetAndCallback(1, 0x10013, (const u8 *)Kyuden_FacingActions);
+    FieldObject_SetTargetAndCallback(2, 0x10013, (const u8 *)Kyuden_FacingActions);
+    FieldObject_SetTargetAndCallback(3, 0x10013, (const u8 *)Kyuden_FacingActions);
     Actor_SetSpeed(19, 0x9999, 0x4ccc);
     Actor_WalkToAndWait(19, 852, 646);
     Actor_WalkToAndWait(19, 852, 666);
@@ -856,7 +860,7 @@ accepted:
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimation(GERALD, 3);
     Engine_ActorSetAnimationAndWait(IWAN, 3);
-    FieldObject_SetTargetAndCallback(19, 0x10000, Kyuden_FacingActions);
+    FieldObject_SetTargetAndCallback(19, 0x10000, (const u8 *)Kyuden_FacingActions);
     Engine_ActorSetAnimation(GERALD, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {
@@ -1008,7 +1012,7 @@ void RunEventScript02(void)
     }
 
     Camera_MoveTo(0x037e0000, -1, 0x02980000, 1);
-    Engine_ActorEnableActionCallback(19, Kyuden_PacingActions);
+    Engine_ActorEnableActionCallback(19, (const u8 *)Kyuden_PacingActions);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
 
     actor = Object_GetById(0);
@@ -1204,7 +1208,7 @@ void RunEventScript02(void)
     Actor_SetPosition(MEARI, 0, 0);
     Engine_EventWait(20);
     Actor_FaceDirection(18, 0x5000, 0);
-    FieldObject_SetTargetAndCallback(0, 0x10013, Kyuden_FacingActions);
+    FieldObject_SetTargetAndCallback(0, 0x10013, (const u8 *)Kyuden_FacingActions);
     Actor_WalkToAndWait(19, 852, 646);
     Actor_WalkToAndWait(19, 852, 666);
     Actor_WalkToAndWait(19, 864, 672);
@@ -1285,3 +1289,251 @@ void BiribinoKyuden_RunActorRowScene(void)
     Engine_GameFlagSet(0x202);
     Engine_EventEnd();
 }
+
+s32 Kyuden_FacingActions[] = {
+	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+s32 Kyuden_PacingActions[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(842), 0, PIXELS(696)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(842), 0, PIXELS(636)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(876), 0, PIXELS(634)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, 0x3000),
+	SC_WAIT(1),
+	SC_END,
+};
+
+struct SceneEntrance Placement_Scripts[] = {
+	{ 0, CONDITION_ALWAYS, 256, 0, 808, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 256, 0, 808, FACING_NORTH, 0, 32, 496, 480, 856, 0 },
+	{ 2, CONDITION_ALWAYS, 120, 0, 792, FACING_EAST, 0, 32, 496, 480, 856, 0 },
+	{ 3, CONDITION_ALWAYS, 392, 0, 792, FACING_WEST, 0, 32, 496, 480, 856, 0 },
+	{ 4, CONDITION_ALWAYS, 232, 0, 712, FACING_EAST, 0, 32, 496, 480, 856, 0 },
+	{ 5, CONDITION_ALWAYS, 280, 0, 712, FACING_WEST, 0, 32, 496, 480, 856, 0 },
+	{ 6, CONDITION_ALWAYS, 152, 0, 632, FACING_WEST, 0, 32, 496, 480, 856, 0 },
+	{ 7, CONDITION_ALWAYS, 104, 0, 552, FACING_EAST, 0, 32, 496, 480, 856, 0 },
+	{ 8, CONDITION_ALWAYS, 408, 0, 552, FACING_WEST, 0, 32, 496, 480, 856, 0 },
+	{ 9, CONDITION_ALWAYS, 256, 0, 632, FACING_SOUTH, 0, 32, 496, 480, 856, 0 },
+	{ 10, CONDITION_ALWAYS, 152, 0, 376, FACING_WEST, 0, 56, 304, 360, 464, 0 },
+	{ 11, CONDITION_ALWAYS, 264, 0, 376, FACING_EAST, 0, 56, 304, 360, 464, 0 },
+	{ 12, CONDITION_ALWAYS, 104, 0, 376, FACING_SOUTH, 0, 56, 304, 360, 464, 0 },
+	{ 13, CONDITION_ALWAYS, 312, 0, 376, FACING_SOUTH, 0, 56, 304, 360, 464, 0 },
+	{ 14, CONDITION_ALWAYS, 696, 0, 96, FACING_WEST, 0, 592, 0, 832, 160, 0 },
+	{ 15, CONDITION_ALWAYS, 680, 0, 72, FACING_WEST, 0, 592, 0, 832, 160, 0 },
+	{ 16, CONDITION_ALWAYS, 952, 0, 72, FACING_EAST, 0, 800, 0, 1040, 160, 0 },
+	{ 17, CONDITION_ALWAYS, 936, 0, 96, FACING_EAST, 0, 800, 0, 1040, 160, 0 },
+	{ 18, CONDITION_ALWAYS, 88, 0, 200, FACING_NORTH, 0, 0, 16, 240, 240, 0 },
+	{ 19, CONDITION_ALWAYS, 360, 0, 200, FACING_NORTH, 0, 208, 16, 448, 240, 0 },
+	{ 20, CONDITION_ALWAYS, 536, 0, 112, FACING_EAST, 0, 400, 0, 640, 160, 0 },
+	{ 21, CONDITION_ALWAYS, 536, 0, 88, FACING_EAST, 0, 400, 0, 640, 160, 0 },
+	{ 22, CONDITION_ALWAYS, 520, 0, 312, FACING_WEST, 0, 400, 208, 640, 368, 0 },
+	{ 23, CONDITION_ALWAYS, 520, 0, 296, FACING_WEST, 0, 400, 208, 640, 368, 0 },
+	{ 24, CONDITION_ALWAYS, 728, 0, 264, FACING_EAST, 0, 592, 192, 832, 352, 0 },
+	{ 25, CONDITION_ALWAYS, 904, 0, 264, FACING_WEST, 0, 792, 192, 1032, 352, 0 },
+	{ 26, CONDITION_ALWAYS, 744, 0, 424, FACING_EAST, 0, 592, 352, 832, 512, 0 },
+	{ 27, CONDITION_ALWAYS, 888, 0, 424, FACING_WEST, 0, 792, 352, 1032, 512, 0 },
+	{ 28, CONDITION_ALWAYS, 600, 0, 760, FACING_EAST, 0, 512, 560, 752, 816, 0 },
+	{ 29, CONDITION_ALWAYS, 896, 0, 728, FACING_NORTH, 0, 776, 560, 1016, 768, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 Placement_Messages[] = {
+	SCENE_EXITS(33),
+	SCENE_EXIT(1, 34, 2),
+	SCENE_EXIT(2, 33, 14),
+	SCENE_EXIT(3, 33, 17),
+	SCENE_EXIT(4, 33, 10),
+	SCENE_EXIT(5, 33, 11),
+	SCENE_EXIT(6, 33, 28),
+	SCENE_EXIT(7, 33, 22),
+	SCENE_EXIT(8, 33, 20),
+	SCENE_EXIT(9, 33, 29),
+	SCENE_EXIT(10, 33, 4),
+	SCENE_EXIT(11, 33, 5),
+	SCENE_EXIT(12, 33, 18),
+	SCENE_EXIT(13, 33, 19),
+	SCENE_EXIT(14, 33, 2),
+	SCENE_EXIT(15, 33, 26),
+	SCENE_EXIT(16, 33, 27),
+	SCENE_EXIT(17, 33, 3),
+	SCENE_EXIT(18, 33, 12),
+	SCENE_EXIT(19, 33, 13),
+	SCENE_EXIT(20, 33, 8),
+	SCENE_EXIT(21, 33, 25),
+	SCENE_EXIT(22, 33, 7),
+	SCENE_EXIT(23, 33, 24),
+	SCENE_EXIT(24, 33, 23),
+	SCENE_EXIT(25, 33, 21),
+	SCENE_EXIT(26, 33, 15),
+	SCENE_EXIT(27, 33, 16),
+	SCENE_EXIT(28, 33, 6),
+	SCENE_EXIT(29, 33, 9),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement gBiribinoKyudenPlacementsOther[] = {
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gBiribinoKyudenPlacements[] = {
+	{ 0x65, 0x0, ACTOR_STAND,
+		PIXELS(265), 0, PIXELS(702), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x73, 0x0, ACTOR_STAND,
+		PIXELS(342), 0, PIXELS(632), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x6a, 0x0, ACTOR_STAND,
+		PIXELS(360), 0, PIXELS(632), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x6c, 0x0, ACTOR_WANDER,
+		PIXELS(166), 0, PIXELS(728), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x6a, 0x0, ACTOR_STAND,
+		PIXELS(326), 0, PIXELS(378), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x6a, 0x0, ACTOR_WANDER,
+		PIXELS(362), 0, PIXELS(142), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x6a, 0x0, ACTOR_STAND,
+		PIXELS(296), 0, PIXELS(87), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ 0x67, 0x0, ACTOR_STAND,
+		PIXELS(952), 0, PIXELS(289), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x96, 0x0, ACTOR_STAND,
+		PIXELS(951), 0, PIXELS(438), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ 0x96, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(616), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x3a, 0x0, ACTOR_STAND,
+		PIXELS(894), 0, PIXELS(634), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x96, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0xf5, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x14, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x14, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x14, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x14, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTHWEST, TALK_KEEP_FACING, 0 },
+	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTHEAST, TALK_KEEP_FACING, 0 },
+	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x14, 0x0, 7,
+		PIXELS(616), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x14, 0x0, 7,
+		PIXELS(632), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0x14, 0x0, 7,
+		PIXELS(648), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0x14, 0x0, 7,
+		PIXELS(664), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0x14, 0x0, 7,
+		PIXELS(616), 0, PIXELS(648), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x14, 0x0, 7,
+		PIXELS(648), 0, PIXELS(648), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0x14, 0x0, 7,
+		PIXELS(664), 0, PIXELS(648), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0x14, 0x0, 7,
+		PIXELS(616), 0, PIXELS(664), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x14, 0x0, 7,
+		PIXELS(648), 0, PIXELS(664), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0x14, 0x0, 7,
+		PIXELS(664), 0, PIXELS(664), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent gBiribinoKyudenEventsOther[] = {
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gBiribinoKyudenEvents[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
+	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
+	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
+	{ EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
+	{ EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
+	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
+	{ 0xc402, 9, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoKyuden_RunDoorExitScene) },
+	{ EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
+	{ EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
+	{ 0xc402, 12, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoKyuden_RunDoorExitScene) },
+	{ 0xc402, 13, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoKyuden_RunDoorExitScene) },
+	{ EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
+	{ EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
+	{ EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
+	{ EVENT_EXIT, 17, CONDITION_ALWAYS, 17 },
+	{ EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
+	{ EVENT_EXIT, 19, CONDITION_ALWAYS, 19 },
+	{ EVENT_EXIT, 20, CONDITION_ALWAYS, 20 },
+	{ EVENT_EXIT, 21, CONDITION_ALWAYS, 21 },
+	{ EVENT_EXIT, 22, CONDITION_ALWAYS, 22 },
+	{ EVENT_EXIT, 23, CONDITION_ALWAYS, 23 },
+	{ EVENT_EXIT, 24, CONDITION_ALWAYS, 24 },
+	{ EVENT_EXIT, 25, CONDITION_ALWAYS, 25 },
+	{ EVENT_EXIT, 26, CONDITION_ALWAYS, 26 },
+	{ EVENT_EXIT, 27, CONDITION_ALWAYS, 27 },
+	{ EVENT_EXIT, 28, CONDITION_ALWAYS, 28 },
+	{ EVENT_EXIT, 29, CONDITION_ALWAYS, 29 },
+	{ EVENT_TALK, 8, 0x84e, MSGNO(MsgBilibinIfYouWantToSeeLord) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBilibinThePeopleOfBilibinWillNever) },
+	{ EVENT_TALK, 9, 0x84e, MSGNO(MsgBilibinMakeSureYouDontOffendLord) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBilibinIHeardYouReceivedASpectacular) },
+	{ EVENT_TALK, 10, 0x84e, EVENT_SCRIPT(Kyuden_AskAboutKolima) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBilibinLadyMccoyIsQuiteUpsetThat) },
+	{ EVENT_TALK, 11, 0x84e, MSGNO(MsgBilibinIAlwaysBelievedThatTheOld) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBilibinThingsAreLookingGrimSouthOf) },
+	{ EVENT_TALK, 12, 0x84e, MSGNO(MsgBilibinThisIsLadyMccoysRoomSo) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBilibinMiladyWasVeryUpsetWhenShe) },
+	{ EVENT_TALK, 13, 0x84e, MSGNO(MsgBilibinMiladyWasRenownedFarAndWide) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBilibinForOnceMilordDidntLetLady) },
+	{ EVENT_TALK, 14, 0x84e, MSGNO(MsgBilibinOhSomedayIWantToSleep) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStartledGuard) },
+	{ EVENT_TALK, 15, 0x84f, MSGNO(MsgBilibinYouCanSeeKolimaPrettyWell) },
+	{ EVENT_TALK, 15, 0x84e, MSGNO(MsgBilibinHeyIfYouCantDoThe) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene38dSequenceA) },
+	{ EVENT_TALK, 16, 0x84e, MSGNO(MsgBilibinHmmItSeemsTheCurseOf) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor16Message1769) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgBilibinYouMaySelectASingleItem) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorSeventeenFlaggedDialogue) },
+	{ EVENT_TALK, 18, 0x84e, MSGNO(MsgBilibinSorryLadsButKolimasFutureIs) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgBilibinYehveTaughtMeThatICannae) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x84e, MSGNO(MsgBilibinHowManyTimesDoIHave) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgBilibinIFeelSorryForTheWarriors) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x84e, MSGNO(MsgBilibinTheyShouldNeverHaveLetSuch) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBilibinIWonderWhatKindOfTreasure) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x84e, MSGNO(MsgBilibinSendingTheseChildrenToKolimaForest) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBilibinIWishShedJustStopWhining) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x84e, MSGNO(MsgBilibinIShouldntHaveSaidAnythingWhen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBilibinTheydBeGuaranteedAGoodLife) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x84e, MSGNO(MsgBilibinOfAllTheNerveComingInto) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBilibinICanTellWhenShesUpset) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x84e, MSGNO(MsgBilibinWillIEverFindSomeoneTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgBilibinSometimesAMansJustGottaPut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x84e, MSGNO(MsgBilibinOhNoThisNightgownHasA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgBilibinTheHoleInThisNightgownIs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x84f, MSGNO(MsgBilibinLordMccoyHasntComeHereFor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x84e, MSGNO(MsgBilibinItsAToughThingBeingSo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor15Flag303Scene) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x84e, MSGNO(MsgBilibinKolimaForestUsedToBeSo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgBilibinACourageousWarriorWouldntThinkTwice) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgBilibinTheseCourageousWarriorsDeserveToReceive) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorSeventeenFlagDialogue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x84e, MSGNO(MsgBilibinThereIsNothingMoreToTalk) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgBilibinButICannaeFiggerOutHow) },
+	{ SEARCH(SEARCH_UNNAMED), 100, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep210ByFlag84e) },
+	{ SEARCH(SEARCH_UNNAMED), 101, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep211ByFlag84e) },
+	{ SEARCH(SEARCH_UNNAMED), 102, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep212ByFlag84e) },
+	{ SEARCH(SEARCH_UNNAMED), 103, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep213ByFlag84e) },
+	{ EVENT_TOUCH, 50, 0x333, EVENT_SCRIPT(FieldScene_RunPalaceFarewell) },
+	{ EVENT_TOUCH, 51, 0x333, EVENT_SCRIPT(FieldScene_RunRewardReminder) },
+	{ SEARCH(SEARCH_BARREL), 120, 0xf55, FIND_ITEM(ITEM_ELIXIR) },
+	{ SEARCH(SEARCH_BARREL), 121, 0xf56, FIND_ITEM(ITEM_SMOKE_BOMB) },
+	{ SEARCH(SEARCH_WARDROBE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBilibinTheresASilkNegligeeRobinPut)) },
+	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBilibinTheresASheetOfPaperTitled)) },
+	{ SCENE_EVENTS_END },
+};

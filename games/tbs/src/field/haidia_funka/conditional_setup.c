@@ -11,6 +11,7 @@
 #include "field_event.h"
 #include "field_scene.h"
 #include "text/msg_ids.h"
+#include "objcmd.h"
 
 
 void BattleFx_SetBlock30Values12Zero();
@@ -19,7 +20,7 @@ void Object_RefreshSelectorById();
 
 u8 *ConditionalSceneSetup_GetScriptData(void)
 {
-    return HaidiaFunka_SceneTable0;
+    return (u8 *)HaidiaFunka_SceneTable0;
 }
 
 s32 ConditionalSceneSetup_GetInitialState(void)
@@ -29,17 +30,17 @@ s32 ConditionalSceneSetup_GetInitialState(void)
 
 u8 *ConditionalSceneSetup_GetMessageData(void)
 {
-    return HaidiaFunka_SceneTable1;
+    return (u8 *)HaidiaFunka_SceneTable1;
 }
 
 u8 *ConditionalSceneSetup_GetActorData(void)
 {
-    return HaidiaFunka_SceneTable2;
+    return (u8 *)HaidiaFunka_SceneTable2;
 }
 
 u8 *ConditionalSceneSetup_GetEffectData(void)
 {
-    return HaidiaFunka_SceneTable3;
+    return (u8 *)HaidiaFunka_SceneTable3;
 }
 
 s32 ConditionalSceneSetup_InitForScene15(void)
@@ -358,3 +359,86 @@ void RunEventScript01(void)
     Engine_EventRequestExit(1);
     Engine_EventEnd();
 }
+
+s32 HaidiaFunka_ActionScriptHead[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(128), 0, PIXELS(378)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(203), 0, PIXELS(378)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(212), 0, PIXELS(472)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(214), 0, PIXELS(472)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_END,
+	SC_ARG(2),
+	SC_MOVE(PIXELS(128), 0, PIXELS(378)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(203), 0, PIXELS(378)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(214), 0, PIXELS(455)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_END,
+};
+
+s32 HaidiaFunka_ActionScript[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(255), 0, PIXELS(452)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(255), 0, PIXELS(390)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_END,
+};
+
+struct SceneEntrance HaidiaFunka_SceneTable0[] = {
+	{ 0, CONDITION_ALWAYS, 110, 0, 270, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 15, CONDITION_ALWAYS, 103, 0, 284, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 HaidiaFunka_SceneTable1[] = {
+	SCENE_EXITS(10),
+	SCENE_EXIT(1, 9, 20),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement HaidiaFunka_SceneTable2[] = {
+	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(104), 0, PIXELS(258), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(265), 0, PIXELS(468), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+	{ 0x75, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(246), 0, PIXELS(468), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+	{ 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(246), 0, PIXELS(487), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+	{ 0x2a, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(265), 0, PIXELS(477), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+	{ 0x25, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(256), 0, PIXELS(490), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+	{ 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(265), 0, PIXELS(523), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+	{ 0x65, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(245), 0, PIXELS(532), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+	{ 0x72, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(256), 0, PIXELS(543), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+	{ 0x73, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(283), 0, PIXELS(536), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+	{ 0x66, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(235), 0, PIXELS(552), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(265), 0, PIXELS(561), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+	{ 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(247), 0, PIXELS(573), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent HaidiaFunka_SceneTable3[] = {
+	{ SCENE_EVENTS_END },
+};
+
+u16 HaidiaFunka_CellSteps[] = {
+	MAP_CELL_STEP(0, 98, 2, 2, 2), MAP_CELL_STEP(2, 98, 2, 2, 2), MAP_CELL_STEPS_END,
+};

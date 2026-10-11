@@ -35,16 +35,11 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-struct ModeRecord {
-    u8 pad[26];
-    u16 span;
-};
-
 typedef void (*SceneTask)(void);
 
 #define KEYS_HELD gKeysHeld // VBlank で書く
 
-extern u8 HexDigits[];
+extern char HexDigits[20];
 extern s32 KorosseoKawa_Countdown;
 extern s16 Korosseo_MarkerSlot;
 
@@ -102,7 +97,7 @@ struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void);
 u8 *KorosseoKawa_GetEntrances(void)
 {
 
-    return KorosseoKawa_SceneTableA;
+    return (u8 *)KorosseoKawa_SceneTableA;
 }
 
 s32 get_default_result(void)
@@ -113,13 +108,13 @@ s32 get_default_result(void)
 u8 *KorosseoKawa_GetExits(void)
 {
 
-    return KorosseoKawa_SceneTableB;
+    return (u8 *)KorosseoKawa_SceneTableB;
 }
 
 u8 *KorosseoKawa_GetPlacements(void)
 {
 
-    return KorosseoKawa_SceneTableC;
+    return (u8 *)KorosseoKawa_SceneTableC;
 }
 
 void FieldScene_RunOpeningAuxiliarySequence(void)
@@ -518,7 +513,7 @@ void FieldScene_RunBranchedStep(void)
 u8 *KorosseoKawa_GetEvents(void)
 {
 
-    return KorosseoKawa_SceneTableD;
+    return (u8 *)KorosseoKawa_SceneTableD;
 }
 
 void KorosseoKawa_RunPostMatchScene(s32 a0)
@@ -1419,9 +1414,9 @@ void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
     }
     if (mode == 3) {
         if (param != 0) {
-            handler = (s32)&KorosseoKawa_SpanB;
+            handler = (s32)KorosseoKawa_SpanB;
         } else {
-            handler = (s32)&KorosseoKawa_SpanA;
+            handler = (s32)KorosseoKawa_SpanA;
         }
     }
 
@@ -1488,8 +1483,8 @@ void FieldScene_RunLateSequence(s32 a0)
     Engine_AudioPlayCue(247);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    KorosseoKawa_SpanA.span = a0 * 60;
-    KorosseoKawa_SpanB.span = (a0 < 0 ? -a0 : a0) * 60;
+    KorosseoKawa_SpanA[13] = a0 * 60;
+    KorosseoKawa_SpanB[13] = (a0 < 0 ? -a0 : a0) * 60;
     if (a0 < 0) {
         Engine_EventWait(30);
         Engine_AudioPlayCue(86);
@@ -1680,7 +1675,7 @@ void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
         if (o != 0) {
             o->motion_flags = 0;
             Engine_ActorSetSpriteFlags(o, 0);
-            Engine_ObjectSetScript(o, (s32)KorosseoKawa_ScriptA);
+            Engine_ObjectSetScript(o, KorosseoKawa_ScriptA);
             Object_SetMode(o, 1);
             Object_SetMode(o, 0);
         }
@@ -1693,7 +1688,7 @@ s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a)
 
     Engine_ObjectSetPosition(o, a->x.fixed, a->y.fixed + 0x240000, a->z.fixed);
     o->motion_flags = 0;
-    Engine_ObjectSetScript(o, (s32)KorosseoKawa_ScriptB);
+    Engine_ObjectSetScript(o, KorosseoKawa_ScriptB);
     Engine_AudioPlayCue(83);
     a->timer = 0;
     return 0;
@@ -1737,7 +1732,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 
     Engine_ObjectSetPosition(rec, x, 0, z);
     Engine_GameFlagSet(0x211);
-    Engine_ObjectSetScript(rec, (s32)KorosseoKawa_ApproachScript);
+    Engine_ObjectSetScript(rec, KorosseoKawa_ApproachScript);
 
     while (*waitp != 0) {
         Engine_TaskWait(1);
@@ -1825,6 +1820,10 @@ void SceneState_InitControlWhenFlag109Clear(s32 resource)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/scene_state.c"
+#include "ability_ids.h"
+#include "edition.h"
+#include "item_ids.h"
+#include "objcmd.h"
 
 struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct FieldActor *subject)
 {
@@ -1957,3 +1956,28 @@ struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void)
 
     return hit;
 }
+
+u8 Korosseo_PortraitPaletteOffsets[] = {
+#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+	0, 32, 32, 32, 96, 64, 64, 64, 128, 0,
+#else
+	0, 32, 32, 32, 96, 64, 64, 160, 128, 0,
+#endif
+};
+
+s16 KorosseoKawa_ModeRecordTwo[] = {
+	0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 256,
+	6, 0x2000, 16, 6, 0x7fff, 30, 0x2000, 0,
+	30, 0x7fff, 30, -1,
+};
+
+s16 KorosseoKawa_SpanB[] = {
+	0x1000, 128, 1, 0x2000, 0, 1, 0x1000, 256,
+	6, 0x2000, 16, 6, 0x7fff, 60, 0x1000, 384,
+	6, 0x7fff, 6, 0x1000, 240, 6, 0x7fff, 6,
+	0x1000, 368, 6, 0x7fff, 6, 0x1000, 224, 6,
+	0x7fff, 6, 0x2000, 0, 30, 0x1000, 352, 6,
+	0x7fff, 6, 0x1000, 208, 6, 0x7fff, 6, 0x1000,
+	336, 6, 0x7fff, 6, 0x1000, 192, 6, 0x7fff,
+	6, 0x1000, 320, 6, 0x7fff, 6, -1,
+};

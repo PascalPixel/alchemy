@@ -82,9 +82,9 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-extern u8 Placement_Scripts[];
-extern u8 Placement_Messages[];
-extern const u16 Niwa_GateCells[];
+extern struct SceneEntrance Placement_Scripts[];
+extern u32 Placement_Messages[];
+extern u16 Niwa_GateCells[];
 
 s32 ArcTan2(s32, s32);
 void FieldScene_OpenGate(void);

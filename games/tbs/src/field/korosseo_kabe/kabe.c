@@ -21,6 +21,10 @@
 #include "field_service.h"
 #include "text/msg_ids.h"
 #include "battle_unit.h"
+#include "ability_ids.h"
+#include "edition.h"
+#include "item_ids.h"
+#include "objcmd.h"
 
 extern u8 gWorkSlot[];
 #define WORK_SLOT_STAGE 59
@@ -59,11 +63,6 @@ typedef struct PartyInteractionRecord {
     u8 padding_0c[6];
     s16 y;
 } PartyInteractionRecord;
-
-struct ModeRecord {
-    u8 pad[26];
-    u16 span;
-};
 
 typedef struct SparkSource {
     s32 f00;
@@ -113,19 +112,19 @@ typedef struct Position3 {
     s32 z;
 } Position3;
 
-extern u8 HexDigits[];
+extern char HexDigits[];
 extern s32 KorosseoKabe_SparkScript[];
 extern s32 KorosseoKabe_RaiseScript[];
 extern u32 KorosseoKabe_DirectionSteps[];
 extern s32 KorosseoKabe_ApproachScript[];
 extern s32 KorosseoKabe_SpectatorPhase;
-extern u32 KorosseoKabe_SpectatorTimer;
+extern s32 KorosseoKabe_SpectatorTimer;
 extern s16 Korosseo_MarkerSlot;
-extern struct ModeRecord KorosseoKabe_ModeRecordDefault;
-extern struct ModeRecord KorosseoKabe_ModeRecordTwo;
-extern struct ModeRecord KorosseoKabe_ModeRecordThree;
-extern struct ModeRecord KorosseoKabe_ModeRecordThreeAlt;
-extern struct ModeRecord KorosseoKabe_ModeRecordFour;
+extern s16 KorosseoKabe_ModeRecordDefault[];
+extern s16 KorosseoKabe_ModeRecordTwo[];
+extern s16 KorosseoKabe_ModeRecordThree[];
+extern s16 KorosseoKabe_ModeRecordThreeAlt[];
+extern s16 KorosseoKabe_ModeRecordFour[];
 
 s32 GameFlag_GetByte();
 void GameFlag_SetByte(s32, s32);
@@ -685,7 +684,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
         }
     }
     KorosseoKabe_SpectatorTimer++;
-    if (KorosseoKabe_SpectatorTimer > 119) {
+    if ((u32)KorosseoKabe_SpectatorTimer > 119) {
         if (GameFlag_IsSet(0x104) == 0) {
             KorosseoKabe_SpectatorTimer = 0;
         }
@@ -1698,18 +1697,18 @@ void KorosseoKabe_InitializeModeTask(u32 mode, u32 param)
         Engine_TaskAddCallback(Korosseo_UpdateModeTask, budget);
     }
 
-    handler = (s32)&KorosseoKabe_ModeRecordDefault;
+    handler = (s32)KorosseoKabe_ModeRecordDefault;
     if (mode == 2) {
-        handler = (s32)&KorosseoKabe_ModeRecordTwo;
+        handler = (s32)KorosseoKabe_ModeRecordTwo;
     }
     if (mode == 4) {
-        handler = (s32)&KorosseoKabe_ModeRecordFour;
+        handler = (s32)KorosseoKabe_ModeRecordFour;
     }
     if (mode == 3) {
         if (param != 0) {
-            handler = (s32)&KorosseoKabe_ModeRecordThreeAlt;
+            handler = (s32)KorosseoKabe_ModeRecordThreeAlt;
         } else {
-            handler = (s32)&KorosseoKabe_ModeRecordThree;
+            handler = (s32)KorosseoKabe_ModeRecordThree;
         }
     }
 
@@ -1740,7 +1739,7 @@ void KorosseoKabe_RunScriptedTransition(s32 mode)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     {
-        s16 *base = (s16 *)&KorosseoKabe_ModeRecordDefault;
+        s16 *base = KorosseoKabe_ModeRecordDefault;
         *(s16 *)((u8 *)base + 30) = (s16)(mode * 60);
     }
     Engine_EventWait(30);
@@ -1785,8 +1784,8 @@ void FieldScene_RunLateSequence(s32 a0)
     Engine_AudioPlayCue(247);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    KorosseoKabe_ModeRecordThree.span = a0 * 60;
-    KorosseoKabe_ModeRecordThreeAlt.span = (a0 < 0 ? -a0 : a0) * 60;
+    KorosseoKabe_ModeRecordThree[13] = a0 * 60;
+    KorosseoKabe_ModeRecordThreeAlt[13] = (a0 < 0 ? -a0 : a0) * 60;
     if (a0 < 0) {
         Engine_EventWait(30);
         Engine_AudioPlayCue(86);
@@ -2260,3 +2259,30 @@ s32 *SceneActor_FindOccupantAheadOfSubject(void)
 
     return occupant;
 }
+
+u8 KorosseoKabe_RollLogScript[] = { 2, 2, 3, 3 };
+
+u8 Korosseo_PortraitPaletteOffsets[] = {
+#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+	0, 32, 32, 32, 96, 64, 64, 64, 128, 0,
+#else
+	0, 32, 32, 32, 96, 64, 64, 160, 128, 0,
+#endif
+};
+
+s16 KorosseoKabe_ModeRecordTwo[] = {
+	0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 256,
+	6, 0x2000, 16, 6, 0x7fff, 30, 0x2000, 0,
+	30, 0x7fff, 30, -1,
+};
+
+s16 KorosseoKabe_ModeRecordThreeAlt[] = {
+	0x1000, 128, 1, 0x2000, 0, 1, 0x1000, 256,
+	6, 0x2000, 16, 6, 0x7fff, 60, 0x1000, 384,
+	6, 0x7fff, 6, 0x1000, 240, 6, 0x7fff, 6,
+	0x1000, 368, 6, 0x7fff, 6, 0x1000, 224, 6,
+	0x7fff, 6, 0x2000, 0, 30, 0x1000, 352, 6,
+	0x7fff, 6, 0x1000, 208, 6, 0x7fff, 6, 0x1000,
+	336, 6, 0x7fff, 6, 0x1000, 192, 6, 0x7fff,
+	6, 0x1000, 320, 6, 0x7fff, 6, -1,
+};

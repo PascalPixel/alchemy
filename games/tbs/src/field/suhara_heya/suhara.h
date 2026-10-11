@@ -29,13 +29,13 @@ union SceneActor {
     u8 bytes[90];
 };
 
-extern u8 gSuharaHeyaEntrances[];
-extern u8 gSuharaHeyaRegions[];
-extern u8 gSuharaHeyaExits[];
-extern u8 gSuharaHeyaPlacements[];
-extern u8 gSuharaHeyaPlacements96f[];
-extern u8 gSuharaHeyaEvents[];
-extern u8 gSuharaHeyaEvents96f[];
+extern struct SceneEntrance gSuharaHeyaEntrances[];
+extern s16 gSuharaHeyaRegions[];
+extern u32 gSuharaHeyaExits[];
+extern struct ScenePlacement gSuharaHeyaPlacements[];
+extern struct ScenePlacement gSuharaHeyaPlacements96f[];
+extern struct SceneEvent gSuharaHeyaEvents[];
+extern struct SceneEvent gSuharaHeyaEvents96f[];
 
 void Audio_PlayCueFromEventWork(void);
 void Engine_InnCheckIn(s32 first, s32 second);

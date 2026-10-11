@@ -39,20 +39,20 @@ union SceneField {
     u8 bytes[2];
 } __attribute__((packed, aligned(2)));
 
-extern u8 gValeFaceTargetScript[];
-extern u8 gValeActor10Script[];
-extern u8 gValePartyScript[];
-extern u8 gValeTimedActorScript[];
-extern u8 gValeHouseEntrances[];
-extern u8 gValeHouseExits[];
-extern u8 gValeHouseLateExits[];
-extern u8 gValeHousePlacements[];
-extern u8 gValeHousePlacementsAfterLeaving[];
-extern u8 gValeHouseReturnPlacements[];
-extern u8 gValeHouseLateEvents[];
-extern u8 gValeHouseEvents[];
-extern u8 gValeHouseEventsAfterLeaving[];
-extern u8 gValeHouseReturnEvents[];
+extern s32 gValeFaceTargetScript[];
+extern s32 gValeActor10Script[];
+extern s32 gValePartyScript[];
+extern s32 gValeTimedActorScript[];
+extern struct SceneEntrance gValeHouseEntrances[];
+extern u32 gValeHouseExits[];
+extern u32 gValeHouseLateExits[];
+extern struct ScenePlacement gValeHousePlacements[];
+extern struct ScenePlacement gValeHousePlacementsAfterLeaving[];
+extern struct ScenePlacement gValeHouseReturnPlacements[];
+extern struct SceneEvent gValeHouseLateEvents[];
+extern struct SceneEvent gValeHouseEvents[];
+extern struct SceneEvent gValeHouseEventsAfterLeaving[];
+extern struct SceneEvent gValeHouseReturnEvents[];
 
 s32 ArcTan2(s32, s32);
 void SceneEvents_UpdateInView(void *);

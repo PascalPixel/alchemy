@@ -69,23 +69,26 @@ s32 KorosseoKawa_ScriptB[] = {
 	SC_END,
 };
 
-s16 KorosseoKawa_DirectionSteps[] = {
-	0, 16,
-	0, 16,
-	0, 16,
-	16, 0,
-	16, 0,
-	16, 0,
-	16, 0,
-	0, -16,
-	0, -16,
-	0, -16,
-	0, -16,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	0, 16,
+// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+#define DIRECTION_STEP(x, z) ((u32)(x) << 16 | (u16)(z))
+
+u32 KorosseoKawa_DirectionSteps[] = {
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(16, 0),
 };
 
 struct SceneEntrance KorosseoKawa_SceneTableA[] = {
@@ -185,9 +188,7 @@ struct SceneEvent KorosseoKawa_SceneTableD[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 Korosseo_PortraitSlot[] = {
-	MAP_CELL_STEPS_END,
-};
+s16 Korosseo_PortraitSlot = -1;
 
 s16 KorosseoKawa_RoundSpans[] = {
 #if !EDITION_INTERNATIONAL
@@ -241,9 +242,7 @@ s16 KorosseoKawa_SpanA[] = {
 	6, 0x1000, 448, 6, 0x7fff, 6, -1,
 };
 
-u16 Korosseo_MarkerSlot[] = {
-	MAP_CELL_STEPS_END,
-};
+s16 Korosseo_MarkerSlot = -1;
 
 s32 Korosseo_RivalFinishScript[] = {
 	SC_ARG(2),

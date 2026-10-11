@@ -15,14 +15,13 @@
 #include "resource_3a8_effect.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "ability_ids.h"
+#include "item_ids.h"
+#include "objcmd.h"
 
 #define Object_Destroy ((void (*)(void))Object_Destroy)
 
 #define NULL ((void *)0)
-
-enum {
-    ITEM_NUT = 181
-};
 
 enum StagedGroupMessage {
     MSG_ROBIN_PEERED_INTO = 0x947,
@@ -139,35 +138,29 @@ typedef struct OrbitingSceneObject {
 
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 
-extern const struct SceneEntrance gKareiMachiEntrances1[];
-extern const struct SceneEntrance gKareiMachiEntrances2[];
-extern const struct SceneEntrance gKareiMachiEntrances3[];
-extern const struct SceneEntrance gKareiMachiEntrances4[];
-extern const struct SceneEntrance gKareiMachiEntrances5[];
-extern const struct SceneEntrance gKareiMachiEntrances6[];
-extern const struct SceneEntrance gKareiMachiEntrancesOther[];
+extern struct SceneEntrance gKareiMachiEntrances1[];
+extern struct SceneEntrance gKareiMachiEntrances2[];
+extern struct SceneEntrance gKareiMachiEntrances3[];
+extern struct SceneEntrance gKareiMachiEntrances4[];
+extern struct SceneEntrance gKareiMachiEntrances5[];
+extern struct SceneEntrance gKareiMachiEntrances6[];
+extern struct SceneEntrance gKareiMachiEntrancesOther[];
 
-extern const struct ScenePlacement gKareiMachiPlacements1[];
-extern const struct ScenePlacement gKareiMachiPlacements2[];
-extern const struct ScenePlacement gKareiMachiPlacements3[];
-extern const struct ScenePlacement gKareiMachiPlacements6[];
-extern const struct ScenePlacement gKareiMachiPlacementsOther[];
+extern struct ScenePlacement gKareiMachiPlacements1[];
+extern struct ScenePlacement gKareiMachiPlacements2[];
+extern struct ScenePlacement gKareiMachiPlacements3[];
+extern struct ScenePlacement gKareiMachiPlacements6[];
+extern struct ScenePlacement gKareiMachiPlacementsOther[];
 
-extern const struct SceneEvent gKareiMachiEvents1[];
-extern const struct SceneEvent gKareiMachiEvents2[];
-extern const struct SceneEvent gKareiMachiEvents3[];
-extern const struct SceneEvent gKareiMachiEvents4[];
-extern const struct SceneEvent gKareiMachiEvents5[];
-extern const struct SceneEvent gKareiMachiEvents6[];
-extern const struct SceneEvent gKareiMachiEventsOther[];
+extern struct SceneEvent gKareiMachiEvents1[];
+extern struct SceneEvent gKareiMachiEvents2[];
+extern struct SceneEvent gKareiMachiEvents3[];
+extern struct SceneEvent gKareiMachiEvents4[];
+extern struct SceneEvent gKareiMachiEvents5[];
+extern struct SceneEvent gKareiMachiEvents6[];
+extern struct SceneEvent gKareiMachiEventsOther[];
 
-struct DoorCells {
-    const u16 *steps;
-    u16 x;
-    u16 y;
-};
-
-extern struct DoorCells KareiMachi_DoorCells[];
+extern struct MapCellAnim KareiMachi_DoorCells[];
 
 void KareiMachi_AlternateDance();
 void Event_CallWithLastActiveObjectId();
@@ -307,7 +300,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *KareiMachi_GetExits(void)
 {
-    return KareiMachi_SceneTable01;
+    return (u8 *)KareiMachi_SceneTable01;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -577,18 +570,18 @@ void FieldScene_RunStagedGroupSequence(void)
         Actor_SetSpeed(33, 0xb333, 0x5999);
         Actor_SetSpeed(34, 0xb333, 0x5999);
         Actor_SetSpeed(21, 0x9999, 0x4ccc);
-        Engine_ActorEnableActionCallback(20, SceneAction_GroupMotion);
-        Engine_ActorEnableActionCallback(27, SceneAction_GroupMotion);
-        Engine_ActorEnableActionCallback(28, SceneAction_GroupMotion);
-        Engine_ActorEnableActionCallback(29, SceneAction_GroupMotion);
-        Engine_ActorEnableActionCallback(30, SceneAction_GroupMotion);
-        Engine_ActorEnableActionCallback(32, SceneAction_GroupMotion);
-        Engine_ActorEnableActionCallback(31, SceneAction_GroupMotion);
-        Engine_ActorEnableActionCallback(33, SceneAction_GroupMotion);
-        Engine_ActorEnableActionCallback(34, SceneAction_GroupMotion);
+        Engine_ActorEnableActionCallback(20, (const u8 *)SceneAction_GroupMotion);
+        Engine_ActorEnableActionCallback(27, (const u8 *)SceneAction_GroupMotion);
+        Engine_ActorEnableActionCallback(28, (const u8 *)SceneAction_GroupMotion);
+        Engine_ActorEnableActionCallback(29, (const u8 *)SceneAction_GroupMotion);
+        Engine_ActorEnableActionCallback(30, (const u8 *)SceneAction_GroupMotion);
+        Engine_ActorEnableActionCallback(32, (const u8 *)SceneAction_GroupMotion);
+        Engine_ActorEnableActionCallback(31, (const u8 *)SceneAction_GroupMotion);
+        Engine_ActorEnableActionCallback(33, (const u8 *)SceneAction_GroupMotion);
+        Engine_ActorEnableActionCallback(34, (const u8 *)SceneAction_GroupMotion);
         last = Actor_Get(21);
         last->timer = 0;
-        Engine_ActorEnableActionCallback(21, SceneAction_GroupMotion);
+        Engine_ActorEnableActionCallback(21, (const u8 *)SceneAction_GroupMotion);
         Camera_MoveTo(PIXELS(186), -1, PIXELS(272), 1);
         Object_RefreshSelectorById(20);
         Actor_FaceDirection(20, FACING_EAST, 0);
@@ -748,8 +741,8 @@ void FieldScene_RunStagedGroupSequence(void)
         last_wait->timer = 0;
         Actor_SetSpeed(20, 0xcccc, 0x6666);
         Actor_SetSpeed(21, 0xcccc, 0x6666);
-        Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptC);
-        Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptD);
+        Engine_ActorEnableActionCallback(20, (const u8 *)KareiMachi_DanceScriptC);
+        Engine_ActorEnableActionCallback(21, (const u8 *)KareiMachi_DanceScriptD);
         Engine_ActorStop(29);
         Engine_TaskWait(1);
         Actor_FaceDirection(29, FACING_SOUTH + FACING_STEP, 10);
@@ -763,8 +756,8 @@ void FieldScene_RunStagedGroupSequence(void)
             Engine_TaskWait(1);
         } while (Actor_Get(20)->timer == 0 ||
                  Actor_Get(21)->timer != 1);
-        Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptE);
-        Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptF);
+        Engine_ActorEnableActionCallback(20, (const u8 *)KareiMachi_DanceScriptE);
+        Engine_ActorEnableActionCallback(21, (const u8 *)KareiMachi_DanceScriptF);
         Engine_ActorStop(31);
         Engine_TaskWait(1);
         Actor_FaceDirection(31, FACING_SOUTH + FACING_STEP, 10);
@@ -897,18 +890,18 @@ void FieldScene_RunStagedGroupSequence(void)
         Engine_ActorStop(20);
         Engine_ActorStop(21);
         Engine_TaskWait(1);
-        Engine_ActorEnableActionCallback(20, SceneAction_GroupOffsetMotion);
-        Engine_ActorEnableActionCallback(27, SceneAction_GroupOffsetMotion);
-        Engine_ActorEnableActionCallback(28, SceneAction_GroupOffsetMotion);
-        Engine_ActorEnableActionCallback(29, SceneAction_GroupOffsetMotion);
-        Engine_ActorEnableActionCallback(30, SceneAction_GroupOffsetMotion);
-        Engine_ActorEnableActionCallback(32, SceneAction_GroupOffsetMotion);
-        Engine_ActorEnableActionCallback(31, SceneAction_GroupOffsetMotion);
-        Engine_ActorEnableActionCallback(33, SceneAction_GroupOffsetMotion);
-        Engine_ActorEnableActionCallback(34, SceneAction_GroupOffsetMotion);
+        Engine_ActorEnableActionCallback(20, (const u8 *)SceneAction_GroupOffsetMotion);
+        Engine_ActorEnableActionCallback(27, (const u8 *)SceneAction_GroupOffsetMotion);
+        Engine_ActorEnableActionCallback(28, (const u8 *)SceneAction_GroupOffsetMotion);
+        Engine_ActorEnableActionCallback(29, (const u8 *)SceneAction_GroupOffsetMotion);
+        Engine_ActorEnableActionCallback(30, (const u8 *)SceneAction_GroupOffsetMotion);
+        Engine_ActorEnableActionCallback(32, (const u8 *)SceneAction_GroupOffsetMotion);
+        Engine_ActorEnableActionCallback(31, (const u8 *)SceneAction_GroupOffsetMotion);
+        Engine_ActorEnableActionCallback(33, (const u8 *)SceneAction_GroupOffsetMotion);
+        Engine_ActorEnableActionCallback(34, (const u8 *)SceneAction_GroupOffsetMotion);
         closing = Actor_Get(21);
         closing->timer = 0;
-        Engine_ActorEnableActionCallback(21, SceneAction_GroupOffsetMotion);
+        Engine_ActorEnableActionCallback(21, (const u8 *)SceneAction_GroupOffsetMotion);
         do {
             Engine_TaskWait(1);
         } while (Actor_Get(21)->timer != 1);
@@ -935,7 +928,7 @@ void FieldScene_RunStagedGroupSequence(void)
         Actor_SetSpeed(14, 0x13333, 0x9999);
         closing = Actor_Get(14);
         closing->timer = 0;
-        Engine_ActorEnableActionCallback(14, SceneAction_GroupOffsetMotion);
+        Engine_ActorEnableActionCallback(14, (const u8 *)SceneAction_GroupOffsetMotion);
         do {
             Engine_TaskWait(1);
         } while (Actor_Get(14)->timer != 1);
@@ -1339,27 +1332,27 @@ void KareiMachi_AlternateDance(void)
     switch (KareiMachi_DanceStep) {
     case 0:
         ClearStep((u8 *)Object_GetById(21));
-        Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptA);
+        Engine_ActorEnableActionCallback(21, (const u8 *)KareiMachi_DanceScriptA);
         KareiMachi_DanceStep++;
         break;
     case 1:
         if (Object_GetById(21)->timer != 0) {
             ClearStep((u8 *)Object_GetById(20));
-            Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptB);
+            Engine_ActorEnableActionCallback(20, (const u8 *)KareiMachi_DanceScriptB);
             KareiMachi_DanceStep++;
         }
         break;
     case 2:
         if (Object_GetById(20)->timer != 0) {
             ClearStep((u8 *)Object_GetById(20));
-            Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptA);
+            Engine_ActorEnableActionCallback(20, (const u8 *)KareiMachi_DanceScriptA);
             KareiMachi_DanceStep++;
         }
         break;
     case 3:
         if (Object_GetById(20)->timer != 0) {
             ClearStep((u8 *)Object_GetById(21));
-            Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptB);
+            Engine_ActorEnableActionCallback(21, (const u8 *)KareiMachi_DanceScriptB);
             KareiMachi_DanceStep++;
         }
         break;
@@ -1611,7 +1604,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     fieldActor = Actor_Get(ACTOR_PARTY_LEADER);
     random = Random_Next();
     motionPhase = random * 5;
-    motionActions = KareiMachi_Data02;
+    motionActions = (const u8 *)KareiMachi_Data02;
     fieldActor += 102;
     *(u16 *)fieldActor = motionPhase >> 12;
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, motionActions);
@@ -1810,7 +1803,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_WalkToAndWait(11, 0x1b7, 0x138);
     Actor_WalkToAndWait(11, 0x1b7, 0x132);
     Actor_SetPosition(11, 0, 0);
-    exitActions = KareiMachi_Data03;
+    exitActions = (const u8 *)KareiMachi_Data03;
     Engine_ActorEnableActionCallback(GERALD, exitActions);
     Engine_ActorEnableActionCallback(IWAN, (s32)exitActions);
     Object_SetActionCallbackAndRefreshById(3, (s32)exitActions);
@@ -1940,7 +1933,7 @@ void FieldScene_RunScene3a8SequenceB(void)
         rec2->scale_x = 0x1999;
         rec2->scale_y = 0x1999;
         Actor_SetPosition(11, 0x960000, 0x2d80000);
-        Engine_ActorEnableActionCallback(11, KareiMachi_ActionScript01);
+        Engine_ActorEnableActionCallback(11, (const u8 *)KareiMachi_ActionScript01);
         v6 = 1;
         Map_CopyCellsTo(67, 64, 71, 44, v6, v5);
         Map_CopyCellsTo(67, 64, 72, 44, v6, v5);
@@ -2205,3 +2198,552 @@ void InitializeOrbitingRenderEffect(s32 id)
     actor->callback = (u32)SceneEffect_UpdateOrbitingEffect;
     actor->state = zero;
 }
+
+// 向きごとの 1 マス先: 上位 16 ビットが x、下位 16 ビットが z
+#define FACING_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+
+s32 KareiMachi_Data01[] = {
+	FACING_STEP(16, 0),
+	FACING_STEP(16, 0),
+	FACING_STEP(16, 0),
+	FACING_STEP(0, 16),
+	FACING_STEP(0, 16),
+	FACING_STEP(0, 16),
+	FACING_STEP(0, 16),
+	FACING_STEP(-16, 0),
+	FACING_STEP(-16, 0),
+	FACING_STEP(-16, 0),
+	FACING_STEP(-16, 0),
+	FACING_STEP(0, -16),
+	FACING_STEP(0, -16),
+	FACING_STEP(0, -16),
+	FACING_STEP(0, -16),
+	FACING_STEP(16, 0),
+};
+
+s32 SceneAction_GroupMotion[] = {
+	SC_ARG(2),
+	SC_MOVE_BY(PIXELS(-80), 0, 0),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(0x23, 1),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 SceneAction_GroupOffsetMotion[] = {
+	SC_ARG(2),
+	SC_MOVE_BY(PIXELS(-72), 0, 0),
+	SC_SYNC,
+	SC_MOVE_BY(PIXELS(-100), 0, 0),
+	SC_SYNC,
+	SC_MOVE_BY(PIXELS(-100), 0, 0),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(0x23, 1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
+	SC_ARG(2),
+	SC_MOVE(PIXELS(192), 0, PIXELS(222)),
+	SC_SYNC,
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 KareiMachi_Script01[] = {
+	SC_CALL(SceneEffect_UpdateRandomAction),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+s32 KareiMachi_DanceScriptA[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(228), 0, PIXELS(296)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, FACING_NORTH),
+	SC_WAIT(40),
+	SC_ARG(2),
+	SC_MOVE(PIXELS(212), 0, PIXELS(296)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, FACING_NORTH),
+	SC_WAIT(40),
+	SC_ARG(2),
+	SC_MOVE(PIXELS(192), 0, PIXELS(296)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, FACING_NORTH),
+	SC_WAIT(40),
+	SC_SET(0x23, 1),
+	SC_ARG(2),
+	SC_MOVE(PIXELS(178), 0, PIXELS(272)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, FACING_EAST),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 KareiMachi_DanceScriptB[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(164), 0, PIXELS(278)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(182), 0, PIXELS(304)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(238), 0, PIXELS(304)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(246), 0, PIXELS(296)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, 0xd000),
+	SC_WAIT(40),
+	SC_SET(0x23, 1),
+	SC_END,
+};
+
+s32 KareiMachi_DanceScriptC[] = {
+	SC_SET(SW_TARGET_X, PIXELS(-32768)),
+	SC_SET(SW_TARGET_Y, PIXELS(-32768)),
+	SC_SET(SW_TARGET_Z, PIXELS(-32768)),
+	SC_SET(SW_VELOCITY_X, 0),
+	SC_SET(SW_VELOCITY_Y, 0),
+	SC_SET(SW_VELOCITY_Z, 0),
+	SC_WAIT(1),
+	SC_ARG(2),
+	SC_MOVE(PIXELS(184), 0, PIXELS(294)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, FACING_EAST),
+	SC_SET(0x23, 1),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 KareiMachi_DanceScriptD[] = {
+	SC_SET(SW_TARGET_X, PIXELS(-32768)),
+	SC_SET(SW_TARGET_Y, PIXELS(-32768)),
+	SC_SET(SW_TARGET_Z, PIXELS(-32768)),
+	SC_SET(SW_VELOCITY_X, 0),
+	SC_SET(SW_VELOCITY_Y, 0),
+	SC_SET(SW_VELOCITY_Z, 0),
+	SC_WAIT(1),
+	SC_ARG(2),
+	SC_MOVE(PIXELS(198), 0, PIXELS(300)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, FACING_EAST),
+	SC_SET(0x23, 1),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 KareiMachi_DanceScriptE[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(178), 0, PIXELS(272)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, FACING_EAST),
+	SC_SET(0x23, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 KareiMachi_DanceScriptF[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(255), 0, PIXELS(289)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(265), 0, PIXELS(280)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(284), 0, PIXELS(272)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, FACING_WEST),
+	SC_SET(0x23, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 KareiMachi_Data02[] = {
+	SC_CALL(OverlayObject_AdvanceXWhenCounterExpires),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+s32 KareiMachi_Data03[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(388), 0, PIXELS(300)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_POS(0, 0, 0),
+	SC_END,
+};
+
+s32 KareiMachi_ActionScript01[] = {
+	SC_ADD(SW_SCALE_X, 546),
+	SC_ADD(SW_SCALE_Y, 546),
+	SC_WAIT(1),
+	SC_LOOP(108, SC_TOP),
+	SC_END,
+};
+
+struct SceneEntrance gKareiMachiEntrancesOther[] = {
+	{ 0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gKareiMachiEntrances1[] = {
+	{ 0, CONDITION_ALWAYS, 224, 0, 280, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 72, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 2, CONDITION_ALWAYS, 408, 0, 184, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 3, CONDITION_ALWAYS, 408, 0, 216, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 4, CONDITION_ALWAYS, 408, 0, 408, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 5, CONDITION_ALWAYS, 328, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 6, CONDITION_ALWAYS, 120, 0, 264, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 7, CONDITION_ALWAYS, 312, 0, 264, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 8, CONDITION_ALWAYS, 152, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 9, CONDITION_ALWAYS, 224, 0, 464, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 10, CONDITION_ALWAYS, 56, 0, 272, FACING_EAST, 0, -1, -1, -1, -1, 0 },
+	{ 11, CONDITION_ALWAYS, 224, 0, 88, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 12, CONDITION_ALWAYS, 296, 0, 408, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 13, CONDITION_ALWAYS, 152, 0, 232, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 14, CONDITION_ALWAYS, 440, 0, 88, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gKareiMachiEntrances2[] = {
+	{ 0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 192, 0, 280, FACING_NORTH, 0, 0, 0, 400, 352, 0 },
+	{ 2, CONDITION_ALWAYS, 192, 0, 232, FACING_SOUTH, 0, 0, 0, 400, 352, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gKareiMachiEntrances3[] = {
+	{ 0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 248, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 2, CONDITION_ALWAYS, 424, 0, 520, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 10, CONDITION_ALWAYS, 440, 0, 540, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gKareiMachiEntrances4[] = {
+	{ 0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 296, 0, 104, FACING_SOUTH, 0, 100, 50, 440, 445, 0 },
+	{ 2, CONDITION_ALWAYS, 280, 0, 392, FACING_NORTH, 0, 100, 50, 440, 445, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gKareiMachiEntrances5[] = {
+	{ 0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 296, 0, 456, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 2, CONDITION_ALWAYS, 632, 0, 456, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 3, CONDITION_ALWAYS, 152, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 4, CONDITION_ALWAYS, 568, 0, 152, FACING_SOUTH, 0, 390, 0, 630, 220, 0 },
+	{ 5, CONDITION_ALWAYS, 472, 0, 72, FACING_SOUTH, 0, 390, 0, 630, 220, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gKareiMachiEntrances6[] = {
+	{ 0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 408, 0, 632, FACING_SOUTH, 0, 85, 400, 465, 880, 0 },
+	{ 2, CONDITION_ALWAYS, 296, 0, 488, FACING_SOUTH, 0, 85, 400, 465, 880, 0 },
+	{ 3, CONDITION_ALWAYS, 744, 0, 488, FACING_SOUTH, 0, 595, 400, 930, 880, 0 },
+	{ 4, CONDITION_ALWAYS, 856, 0, 856, FACING_NORTH, 0, 595, 400, 930, 880, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 KareiMachi_SceneTable01[] = {
+	SCENE_EXITS(99),
+	SCENE_EXIT(1, 100, 1),
+	SCENE_EXIT(2, 100, 2),
+	SCENE_EXIT(3, 100, 3),
+	SCENE_EXIT(4, 100, 4),
+	SCENE_EXIT(5, 100, 6),
+	SCENE_EXIT(6, 100, 7),
+	SCENE_EXIT(7, 100, 10),
+	SCENE_EXIT(8, 101, 1),
+	SCENE_EXIT(9, 2, 20),
+	SCENE_EXIT(10, 2, 19),
+	SCENE_EXIT(11, 102, 1),
+	SCENE_EXIT(12, 100, 5),
+	SCENE_EXIT(13, 100, 8),
+	SCENE_EXIT(14, 156, 4),
+	SCENE_EXIT(0, 102, 0),
+	SCENE_EXIT(1, 99, 11),
+	SCENE_EXIT(2, 103, 1),
+	SCENE_EXIT(5, 103, 20),
+	SCENE_EXIT(0, 153, 0),
+	SCENE_EXIT(1, 154, 2),
+	SCENE_EXIT(2, 2, 60),
+	SCENE_EXIT(10, 2, 71),
+	SCENE_EXIT(0, 154, 0),
+	SCENE_EXIT(1, 155, 5),
+	SCENE_EXIT(2, 153, 1),
+	SCENE_EXIT(0, 155, 0),
+	SCENE_EXIT(1, 156, 2),
+	SCENE_EXIT(2, 156, 3),
+	SCENE_EXIT(3, 155, 4),
+	SCENE_EXIT(4, 155, 3),
+	SCENE_EXIT(5, 154, 1),
+	SCENE_EXIT(0, 156, 0),
+	SCENE_EXIT(1, 103, 11),
+	SCENE_EXIT(2, 155, 1),
+	SCENE_EXIT(3, 155, 2),
+	SCENE_EXIT(4, 99, 14),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement gKareiMachiPlacementsOther[] = {
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gKareiMachiPlacements1[] = {
+	{ 0x99, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(188), 0, PIXELS(476), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x99, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(260), 0, PIXELS(476), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
+		PIXELS(222), 0, PIXELS(382), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(328), 0, PIXELS(134), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x65, CONDITION_ALWAYS, ACTOR_WANDER,
+		PIXELS(115), 0, PIXELS(453), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x73, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(484), 0, PIXELS(258), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(359), 0, PIXELS(314), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x6f, CONDITION_ALWAYS, ACTOR_WANDER,
+		PIXELS(404), 0, PIXELS(268), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x6b, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(154), 0, PIXELS(119), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x66, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(198), 0, PIXELS(84), FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(199), 0, PIXELS(233), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x72, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(46), 0, PIXELS(217), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(468), 0, PIXELS(434), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(464), 0, PIXELS(416), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x7c, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(280), 0, PIXELS(408), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x7d, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(168), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x76, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(278), 0, PIXELS(318), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0xcb, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(440), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x16, CONDITION_ALWAYS, 7,
+		PIXELS(56), 0, PIXELS(332), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement KareiMachi_StagedGroupScript[] = {
+	{ 0x84, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x94, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x9d, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x72, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x42, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ 0x43, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gKareiMachiPlacements2[] = {
+	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x99, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(168), 0, PIXELS(232), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x99, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(212), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gKareiMachiPlacements3[] = {
+	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+	{ 0x99, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(246), 0, PIXELS(198), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ 0x111, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x31, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x44, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x16, 0xfd6, 7,
+		PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gKareiMachiPlacements6[] = {
+	{ 0xcb, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(376), 0, PIXELS(826), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xcb, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(808), 0, PIXELS(732), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x44, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x5c, 0x5b, ACTOR_STAND,
+		PIXELS(632), 0, PIXELS(712), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent gKareiMachiEventsOther[] = {
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gKareiMachiEvents1[] = {
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(KareiMachi_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(KareiMachi_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(KareiMachi_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(KareiMachi_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(KareiMachi_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(KareiMachi_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(KareiMachi_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(KareiMachi_RunExitDoor) },
+	{ EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
+	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
+	{ EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
+	{ EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
+	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStagedGroupSequence) },
+	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStagedGroupSequence) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKareiWelcomeInPeace) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiSoldiersProtectPeace) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKareiHammetGenerousMerchant) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKareiHammetOnJourney) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKareiNorthernBridgeRebuilt) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiRamakanTrouble) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKareiElderTownNews) },
+	{ EVENT_TALK, 15, 0x911, MSGNO(MsgKareiInnFestivalTourists) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKareiFormerInnFestivalTourists) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgKareiChildWantsFestival) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKareiTraderTownNews) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgKareiHammetBusinessSkill) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorNineteenDialogue) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgKareiHammetCapturedRumor) },
+	{ EVENT_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgKareiHammetWentNorth) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_BranchOnSlotZeroFacing) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorTwentyThreeByLeaderHeading) },
+	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorTwentyFourAngleDialogue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiWarriorHonestEyes) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKareiGuardsJudgeVisitors) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKareiHammetPeaceAndLiberty) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKareiHammetCanBeRash) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKareiSoldiersWentToKuupuappu) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKareiStrangeEvents) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKareiElderThoughts) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKareiWishSavedForFestival) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKareiChildFestivalDream) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKareiTraderThoughts) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgKareiHammetValuesTrust) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgKareiTrustAgainstForce) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgKareiRunpaNorthOfKuupuappu) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgKareiRumorsHideTruth) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgKareiWishBetterWeapons) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgKareiWeaponsHaveSoul) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgKareiPalaceWaterSupply) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 25, CONDITION_ALWAYS, 0 },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 26, 0x916, EVENT_SCRIPT(SceneDialogue_RunActor181Line916) },
+	{ SEARCH(SEARCH_JAR), 100, 0xf81, FIND_ITEM(ITEM_SLEEP_BOMB) },
+	{ SEARCH(SEARCH_JAR), 101, 0xf82, FIND_ITEM(ITEM_VIAL) },
+	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWithValue29df) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gKareiMachiEvents2[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(RunSceneArrivalSetup) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKareiSoldiersHandleAffairs) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiSoldiersRescueHammet) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiPrayForHammetSafety) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKareiWarriorsWillSaveHammet) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gKareiMachiEvents3[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSlotZeroFacingSequence) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiPassageClosedByOrders) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 12, 0xfd6, EVENT_SCRIPT(FieldScene_RunStepWithValueFd6) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gKareiMachiEvents4[] = {
+	{ 0x31, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ SEARCH(SEARCH_CHEST), 100, 0xf22, FIND_ITEM(0xc1) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gKareiMachiEvents5[] = {
+	{ 0x31, 1, CONDITION_ALWAYS, 1 },
+	{ 0x31, 2, CONDITION_ALWAYS, 2 },
+	{ 0x21, 3, CONDITION_ALWAYS, 3 },
+	{ 0x31, 4, CONDITION_ALWAYS, 4 },
+	{ 0x21, 5, CONDITION_ALWAYS, 5 },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gKareiMachiEvents6[] = {
+	{ 0x21, 1, CONDITION_ALWAYS, 1 },
+	{ 0x21, 2, CONDITION_ALWAYS, 2 },
+	{ 0x21, 3, CONDITION_ALWAYS, 3 },
+	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorTenDialogue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKareiTreasureBeyondDoors) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x302, EVENT_SCRIPT(FieldScene_RunScene3a8SequenceB) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x303, EVENT_SCRIPT(FieldScene_RunScene3a8SequenceB) },
+	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLateSequence) },
+	{ 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLateSequence) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLateSequence) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLateSequence) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLateSequence) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x201, EVENT_SCRIPT(FieldScene_DrawTilesAndRaiseActor11) },
+	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(KareiMachi_ReleaseEffectLeader) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_LinkRecordZeroWhenFlag200Clear) },
+	{ EVENT_TOUCH, 18, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ClearLeaderPriorityAutomatic) },
+	{ EVENT_TOUCH, 19, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_SetLeaderPriorityAutomatic) },
+	{ SEARCH(SEARCH_CHEST), 100, 0xf1c, FIND_ITEM(0x84) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues12And2And3) },
+	{ SEARCH(SEARCH_CHEST), 102, 0xf1e, FIND_ITEM(ITEM_SLEEP_BOMB) },
+	{ SEARCH(SEARCH_CHEST), 103, 0xf1f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+	{ SEARCH(SEARCH_CHEST), 104, 0xf20, FIND_COINS(200) },
+	{ SEARCH(SEARCH_CHEST), 105, 0xf21, FIND_ITEM(0xb7) },
+	{ SCENE_EVENTS_END },
+};
+
+u16 KareiMachi_DoorCellData[] = {
+	MAP_CELL_STEP(35, 33, 1, 2, 5), MAP_CELL_STEP(37, 33, 1, 2, 5), MAP_CELL_STEPS_END,
+};
+
+struct MapCellAnim KareiMachi_DoorCells[] = {
+	{ KareiMachi_DoorCellData, 36, 10 },
+	{ KareiMachi_DoorCellData, 57, 7 },
+	{ KareiMachi_DoorCellData, 57, 11 },
+	{ KareiMachi_DoorCellData, 57, 23 },
+	{ KareiMachi_DoorCellData, 52, 25 },
+	{ KareiMachi_DoorCellData, 39, 14 },
+	{ KareiMachi_DoorCellData, 51, 14 },
+	{ KareiMachi_DoorCellData, 41, 25 },
+};
+
+s32 KareiMachi_Script02[] = {
+	SC_CALL(SceneEffect_UpdateMotionWithDamping),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};

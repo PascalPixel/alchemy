@@ -186,35 +186,30 @@ static inline void InitializeSelectedActor(s32 actorId)
     Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
-struct ModeRecord {
-    u8 pad[26];
-    u16 span;
-};
-
-extern u8 gColossoHexChars[];
-extern s32 gKorosseoMarutaEntrances[];
-extern s32 gKorosseoMarutaExits[];
-extern s32 gKorosseoMarutaPlacements[];
-extern s32 gKorosseoMarutaEvents[];
+extern char gColossoHexChars[20];
+extern struct SceneEntrance gKorosseoMarutaEntrances[];
+extern u32 gKorosseoMarutaExits[];
+extern struct ScenePlacement gKorosseoMarutaPlacements[];
+extern struct SceneEvent gKorosseoMarutaEvents[];
 extern s32 gColossoSceneTaskStatus;
 extern s32 gColossoSceneTaskState;
 extern u16 gColossoEarlySequenceData[];
-extern u8 gColossoSceneEventEffect[];
-extern u8 gColossoParticleKinds[];
+extern s32 gColossoSceneEventEffect[];
+extern s32 gColossoParticleKinds[];
 extern s32 gColossoParticleCount;
-extern u8 gColossoMultiPhaseData[];
-extern u8 KorosseoMaruta_Actor8Action[];
-extern u8 KorosseoMaruta_LeaderActionA[];
-extern u8 KorosseoMaruta_LeaderActionB[];
-extern u8 KorosseoMaruta_LeaderActionC[];
+extern s32 gColossoMultiPhaseData[];
+extern s32 KorosseoMaruta_Actor8Action[];
+extern s32 KorosseoMaruta_LeaderActionA[];
+extern s32 KorosseoMaruta_LeaderActionB[];
+extern s32 KorosseoMaruta_LeaderActionC[];
 extern char ResourceId_RivalPathC;
-extern s32 gColossoModeScriptDefault;
-extern s32 gColossoModeScript2;
-extern s32 gColossoModeScript4;
-extern struct ModeRecord gColossoModeScript3B;
-extern struct ModeRecord gColossoModeScript3A;
-extern u8 gColossoRandomEffect[];
-extern u8 gColossoLinkedEffect[];
+extern s16 gColossoModeScriptDefault[];
+extern s16 gColossoModeScript2[];
+extern s16 gColossoModeScript4[];
+extern s16 gColossoModeScript3B[];
+extern s16 gColossoModeScript3A[];
+extern s32 gColossoRandomEffect[];
+extern s32 gColossoLinkedEffect[];
 extern u32 StagedActor_DirectionSteps[];
 extern s16 Korosseo_MarkerSlot;
 
@@ -765,7 +760,7 @@ void ColossoLogRollingStage_ConfigureSceneEventEffect(void)
     effect->move_rate_z = move_rate;
     effect->move_rate_x = move_rate;
     Object_SetMode(effect, 2);
-    Engine_ObjectSetScript(effect, (s32)gColossoSceneEventEffect);
+    Engine_ObjectSetScript(effect, gColossoSceneEventEffect);
     Engine_GameFlagSet(0x363);
 }
 
@@ -1194,7 +1189,7 @@ void ColossoLogRollingStage_SpawnPeriodicParticle(void)
     }
     particle->velocity_x = 25;
     particle->velocity_y = 128;
-    Engine_ActorEnableActionCallback(kind, (s32)gColossoParticleKinds);
+    Engine_ActorEnableActionCallback(kind, (u8 *)gColossoParticleKinds);
 }
 
 void FieldScene_RunMultiPhaseActorSequence(s32 a0)
@@ -1215,7 +1210,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     } else {
         Engine_ActorSetAnimation(8, 8);
     }
-    Engine_ActorEnableActionCallback(8, KorosseoMaruta_Actor8Action);
+    Engine_ActorEnableActionCallback(8, (u8 *)KorosseoMaruta_Actor8Action);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x5e00000, 0xc00000);
     record = Object_GetById(0);
     {
@@ -1223,7 +1218,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 
         record->facing = shown;
     }
-    Engine_ActorEnableActionCallback(0, KorosseoMaruta_LeaderActionA);
+    Engine_ActorEnableActionCallback(0, (u8 *)KorosseoMaruta_LeaderActionA);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
     Actor_SetSpeed(1, 0x10000, 0x8000);
     Actor_SetSpeed(IWAN, 0x10000, 0x8000);
@@ -1270,7 +1265,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     record = Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_EventWait(20);
-    Engine_ActorEnableActionCallback(0, KorosseoMaruta_LeaderActionB);
+    Engine_ActorEnableActionCallback(0, (u8 *)KorosseoMaruta_LeaderActionB);
     Event_ShowMessage(GERALD, 0);
     Engine_EventWait(20);
     Actor_WalkToAndWait(1, 0x5e0, 176);
@@ -1307,7 +1302,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Object_LinkObjectAndSetCallback(1, 3);
     Engine_EventWait(20);
     Event_ShowMessage(MEARI, 0);
-    Engine_ActorEnableActionCallback(0, KorosseoMaruta_LeaderActionC);
+    Engine_ActorEnableActionCallback(0, (u8 *)KorosseoMaruta_LeaderActionC);
     Engine_ActorRunRepeatedMotion(GERALD, 2);
     Object_LinkObjectAndSetCallback(1, 0);
     Engine_EventWait(20);
@@ -2229,18 +2224,18 @@ void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
         Engine_TaskAddCallback(task, budget);
     }
 
-    handler = (s32)&gColossoModeScriptDefault;
+    handler = (s32)gColossoModeScriptDefault;
     if (mode == 2) {
-        handler = (s32)&gColossoModeScript2;
+        handler = (s32)gColossoModeScript2;
     }
     if (mode == 4) {
-        handler = (s32)&gColossoModeScript4;
+        handler = (s32)gColossoModeScript4;
     }
     if (mode == 3) {
         if (parameter != 0) {
-            handler = (s32)&gColossoModeScript3B;
+            handler = (s32)gColossoModeScript3B;
         } else {
-            handler = (s32)&gColossoModeScript3A;
+            handler = (s32)gColossoModeScript3A;
         }
     }
 
@@ -2272,7 +2267,7 @@ void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     {
-        s16 *base = (s16 *)&gColossoModeScriptDefault;
+        s16 *base = gColossoModeScriptDefault;
         *(s16 *)((u8 *)base + 30) = (s16)(mode * 60);
     }
     Engine_EventWait(30);
@@ -2316,8 +2311,8 @@ void FieldScene_RunScene3bcSequenceA(s32 a0)
     Engine_AudioPlayCue(247);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    gColossoModeScript3A.span = a0 * 60;
-    gColossoModeScript3B.span = (a0 < 0 ? -a0 : a0) * 60;
+    gColossoModeScript3A[13] = a0 * 60;
+    gColossoModeScript3B[13] = (a0 < 0 ? -a0 : a0) * 60;
     if (a0 < 0) {
         Engine_EventWait(30);
         Engine_AudioPlayCue(86);
@@ -2528,7 +2523,7 @@ void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
         if (effect != 0) {
             effect->state = 0;
             Engine_ActorSetSpriteFlags(effect, 0);
-            Engine_ObjectSetScript(effect, (s32)gColossoRandomEffect);
+            Engine_ObjectSetScript(effect, gColossoRandomEffect);
             Object_SetMode(effect, 1);
             Object_SetMode(effect, 0);
         }
@@ -2542,7 +2537,7 @@ s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(StageEffect_02003d88 *source)
 
     Engine_ObjectSetPosition(effect, source->x, source->y + 0x240000, source->z);
     effect->state = 0;
-    Engine_ObjectSetScript(effect, (s32)gColossoLinkedEffect);
+    Engine_ObjectSetScript(effect, gColossoLinkedEffect);
     Engine_AudioPlayCue(83);
     source->linked_effect_slot = 0;
     return 0;
@@ -2662,6 +2657,10 @@ void ColossoLogRollingStage_InitializeSceneControl(s32 resource)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/scene_state.c"
+#include "ability_ids.h"
+#include "edition.h"
+#include "item_ids.h"
+#include "objcmd.h"
 
 s32 *FindActorAtWholeTilePosition(s32 *position, void *mover)
 {
@@ -2794,3 +2793,61 @@ s32 *ColossoLogRollingStage_FindActorAhead(void)
 
     return occupant;
 }
+
+s32 KorosseoMaruta_Record30Script[] = {
+	SC_SET(SW_Y, PIXELS(1)),
+	SC_WAIT(10),
+	SC_SET(SW_Y, 0),
+	SC_WAIT(10),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+s8 KorosseoMaruta_LogPattern[][6] = {
+	{ 7, 5, 7, 5, 7, 11 },
+	{ 4, 6, 4, 6, 4, 10 },
+	{ 5, 7, 5, 7, 5, 12 },
+	{ 6, 4, 6, 4, 6, 10 },
+};
+
+u16 gColossoEarlySequenceData[] = {
+	0, 0, 0x4000, 0x8000, 0x8000, 0x8000, 0xc000, 0,
+};
+
+s32 gColossoSceneEventEffect[] = {
+	SC_MOVE(PIXELS(1088), 0, PIXELS(184)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(1130), 0, PIXELS(184)),
+	SC_SYNC,
+	SC_CALL(ColossoLogRollingStage_SetSceneEventValues),
+	SC_LABEL(1),
+	SC_SET(SW_Y, PIXELS(1)),
+	SC_WAIT(10),
+	SC_SET(SW_Y, 0),
+	SC_WAIT(10),
+	SC_LOOP(SC_FOREVER, SC_TO(1)),
+};
+
+u8 Korosseo_PortraitPaletteOffsets[] = {
+#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+	0, 32, 32, 32, 96, 64, 64, 64, 128, 0,
+#else
+	0, 32, 32, 32, 96, 64, 64, 160, 128, 0,
+#endif
+};
+
+s16 gColossoModeScript2[] = {
+	0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 256,
+	6, 0x2000, 16, 6, 0x7fff, 30, 0x2000, 0,
+	30, 0x7fff, 30, -1,
+};
+
+s16 gColossoModeScript3B[] = {
+	0x1000, 128, 1, 0x2000, 0, 1, 0x1000, 256,
+	6, 0x2000, 16, 6, 0x7fff, 60, 0x1000, 384,
+	6, 0x7fff, 6, 0x1000, 240, 6, 0x7fff, 6,
+	0x1000, 368, 6, 0x7fff, 6, 0x1000, 224, 6,
+	0x7fff, 6, 0x2000, 0, 30, 0x1000, 352, 6,
+	0x7fff, 6, 0x1000, 208, 6, 0x7fff, 6, 0x1000,
+	336, 6, 0x7fff, 6, 0x1000, 192, 6, 0x7fff,
+	6, 0x1000, 320, 6, 0x7fff, 6, -1,
+};

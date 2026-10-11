@@ -15,6 +15,8 @@
 #include "callback_scheduler.h"
 #include "call.h"
 #include "object_runtime.h"
+#include "ability_ids.h"
+#include "objcmd.h"
 
 
 void Vector_AddPolarOffset(s32, s32, s32 *);
@@ -89,7 +91,7 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 
 u8 *KuupuappuDou_GetRegions(void)
 {
-    return gKuupuappuDouRegions;
+    return (u8 *)gKuupuappuDouRegions;
 }
 
 const u32 *Scene_GetExits(void)
@@ -139,6 +141,18 @@ s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz)
     return 0;
 }
 
+/* FAKEMATCH: the table is s16 pairs, read here as one word per heading
+   (x in the high half, z in the low). The read must stay an array
+   reference: through a plain s32 pointer cast the address is summed once
+   into a register and the function no longer matches. */
+struct DirectionSteps
+{
+    s32 xz[16];
+};
+
+#define DIRECTION_STEP(heading) \
+    (((struct DirectionSteps *)KuupuappuDou_DirectionSteps)->xz[heading])
+
 void KuupuappuDou_PushBlockAhead(void)
 {
     struct FieldActor *leader = Object_GetById(0);
@@ -152,8 +166,8 @@ void KuupuappuDou_PushBlockAhead(void)
     s32 cx;
     s32 cz;
 
-    cx = (leader->x.part.pixel + (KuupuappuDou_DirectionSteps[direction] >> 16)) >> 4;
-    cz = (leader->z.part.pixel + (s16)KuupuappuDou_DirectionSteps[direction]) >> 4;
+    cx = (leader->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
+    cz = (leader->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
     block = (struct FieldActor *)SceneData_FindActiveSlotAtCell(cx, cz);
     if (block->collision_flags == 0 || block == 0) {
         return;
@@ -163,8 +177,8 @@ void KuupuappuDou_PushBlockAhead(void)
             return;
         }
     }
-    cx = (block->x.part.pixel + (KuupuappuDou_DirectionSteps[direction] >> 16)) >> 4;
-    cz = (block->z.part.pixel + (s16)KuupuappuDou_DirectionSteps[direction]) >> 4;
+    cx = (block->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
+    cz = (block->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
     beyond = (struct FieldActor *)SceneData_FindActiveSlotAtCell(cx, cz);
     if (beyond != 0 && (beyond->collision_flags & 1)) {
         return;
@@ -172,9 +186,9 @@ void KuupuappuDou_PushBlockAhead(void)
     block->terrain_id = 2;
     zero = 0;
     p = pos;
-    p[0].fixed = block->x.fixed + (KuupuappuDou_DirectionSteps[direction] & 0xffff0000);
+    p[0].fixed = block->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
     p[1].fixed = block->y.fixed;
-    p[2].fixed = block->z.fixed + (KuupuappuDou_DirectionSteps[direction] << 16);
+    p[2].fixed = block->z.fixed + (DIRECTION_STEP(direction) << 16);
     if (Object_CheckMovementCollision(block, p) > 0) {
         return;
     }
@@ -922,3 +936,26 @@ s32 KuupuappuDou_ApplyEntryState(void)
     gGameState.retreat_scene = (s32)&SceneId_KuupuappuDou1;
     return 0;
 }
+
+s16 KuupuappuDou_DirectionSteps[] = {
+	0, 16,
+	0, 16,
+	0, 16,
+	16, 0,
+	16, 0,
+	16, 0,
+	16, 0,
+	0, -16,
+	0, -16,
+	0, -16,
+	0, -16,
+	-16, 0,
+	-16, 0,
+	-16, 0,
+	-16, 0,
+	0, 16,
+};
+
+s32 KuupuappuDou_PuffScript[] = {
+	SC_FREE,
+};

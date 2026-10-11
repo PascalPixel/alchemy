@@ -50,7 +50,7 @@ struct Actor02000c0c
 	u8	state;
 };
 
-extern u8 ArutinMura_TriggerTable[];
+extern struct MapCellAnim ArutinMura_TriggerTable[];
 
 s32	 Battle_GetWorkObject1e0();
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);

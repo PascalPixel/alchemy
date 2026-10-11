@@ -14,6 +14,8 @@
 #include "field_scene.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "ability_ids.h"
+#include "objcmd.h"
 
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 
@@ -24,6 +26,13 @@ struct SpawnCounter {
 };
 
 struct SpawnCounter gCornerSpawnCounter;
+
+// 向きごとの一歩: 表は s16 の (z, x) 組、コードは一語で読む
+struct FacingCellStepWords {
+    s32 step[16];
+};
+
+#define FACING_CELL_STEP(dir) (((struct FacingCellStepWords *)BiribinoMura_FacingCellSteps)->step[dir])
 
 s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
 {
@@ -65,20 +74,20 @@ const struct SceneEntrance *Scene_GetEntrances(void)
     if (scene == (s32)&SceneId_BiribinoMura2) {
         return gBiribinoMuraEntrances2;
     }
-    return gBiribinoMuraEntrancesOther;
+    return (const struct SceneEntrance *)gBiribinoMuraEntrancesOther;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
 {
     if (gGameState.scene == (s32)&SceneId_BiribinoMura2) {
-        return gBiribinoMuraRegions2;
+        return (const struct SceneRegion *)gBiribinoMuraRegions2;
     }
     return 0;
 }
 
 u8 *SceneData_GetMessageTable(void)
 {
-    return Placement_Messages;
+    return (u8 *)Placement_Messages;
 }
 
 void SceneState_SetValues9_3_0(void)
@@ -586,8 +595,8 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
     tz = actor->z.fixed >> 20;
 
     for (i = 0; i < 20; i += 2) {
-        s32 x = (s32)Mura_RepaintCells[i];
-        s32 z = (s32)Mura_RepaintCells[i + 1];
+        s32 x = (s32)((u8 *)Mura_RepaintCells)[i];
+        s32 z = (s32)((u8 *)Mura_RepaintCells)[i + 1];
         Engine_MapCopyCellAttributes(1, 0, 1, 1, x, z);
     }
 
@@ -637,16 +646,17 @@ void BiribinoMura_PushFacedBlock(void)
     union FieldCoordinate pos[3];
     union FieldCoordinate *p;
 
+    /* FAKEMATCH: the step table is s16 pairs read as one word each; only an array member view keeps its base and index apart, a plain s32 pointer cast adds them first (59 instructions differ, measured). */
     leader = Object_GetById(0);
     dir = leader->facing >> 12;
     block = SceneActor_FindActorAtCell(
-        (leader->x.part.pixel + (BiribinoMura_FacingCellSteps[dir] >> 16)) >> 4,
-        (leader->z.part.pixel + (s16)BiribinoMura_FacingCellSteps[dir]) >> 4);
+        (leader->x.part.pixel + (FACING_CELL_STEP(dir) >> 16)) >> 4,
+        (leader->z.part.pixel + (s16)FACING_CELL_STEP(dir)) >> 4);
     if (block != NULL) {
         block->terrain_id = 2;
         /* FAKEMATCH: the probe is filled through a pointer to it; indexing pos directly drops a saved register and moves the step table address (measured). */
         p = pos;
-        step = BiribinoMura_FacingCellSteps[dir];
+        step = FACING_CELL_STEP(dir);
         p[0].fixed = block->x.fixed + (step & -0x10000);
         p[1].fixed = block->y.fixed;
         p[2].fixed = block->z.fixed + (step << 16);
@@ -734,3 +744,330 @@ void FieldScene_DrawTilesByActor8Row(void)
     else
         Map_CopyCellAttributes(1, 0, 1, 1, 14, 9);
 }
+
+s32 Mura_VillagerActions[] = {
+	SC_CALL(SceneActor_UpdateFacingTowardTarget),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+u16 gBiribinoMuraEntrancesOther[] = {
+	MAP_CELL_STEP(0, 65535, 168, 0, 168), MAP_CELL_STEP(16384, 0, 65535, 65535, 65535), MAP_CELL_STEPS_END,
+};
+
+struct SceneEntrance gBiribinoMuraEntrances1[] = {
+	{ 1, CONDITION_ALWAYS, 240, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ 2, CONDITION_ALWAYS, 224, 0, 88, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 3, CONDITION_ALWAYS, 376, 0, 360, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 4, CONDITION_ALWAYS, 200, 0, 328, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 5, CONDITION_ALWAYS, 104, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 6, CONDITION_ALWAYS, 168, 0, 216, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 7, CONDITION_ALWAYS, 72, 0, 216, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 8, CONDITION_ALWAYS, 296, 0, 184, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 9, CONDITION_ALWAYS, 400, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 10, CONDITION_ALWAYS, 40, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 11, CONDITION_ALWAYS, 264, 0, 200, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gBiribinoMuraEntrances3[] = {
+	{ 0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 56, 0, 376, FACING_EAST, 0, 16, 16, 400, 400, 0 },
+	{ 2, CONDITION_ALWAYS, 376, 0, 184, FACING_WEST, 0, 16, 16, 400, 400, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEntrance gBiribinoMuraEntrances2[] = {
+	{ 0, CONDITION_ALWAYS, 232, 0, 144, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ 1, CONDITION_ALWAYS, 120, 0, 408, FACING_NORTH, 0, 0, 288, 240, 448, 0 },
+	{ 2, CONDITION_ALWAYS, 120, 0, 384, FACING_SOUTH, 0, 0, 288, 240, 448, 0 },
+	{ 3, CONDITION_ALWAYS, 72, 4, 128, FACING_NORTH, 0, 32, 32, 384, 304, 0 },
+	{ 4, CONDITION_ALWAYS, 296, 4, 224, FACING_NORTH, 0, 32, 32, 384, 304, 0 },
+	{ SCENE_TABLE_END },
+};
+
+s16 gBiribinoMuraRegions2[] = {
+	66, 26, 128, 78, 38, 140, -1, 3,
+	290, 26, 224, 302, 38, 236, -1, 4,
+	-1, 0, 0, 0, 0, 0, 0, 0,
+};
+
+u32 Placement_Messages[] = {
+	SCENE_EXITS(30),
+	SCENE_EXIT(1, 2, 5),
+	SCENE_EXIT(2, 34, 1),
+	SCENE_EXIT(3, 31, 6),
+	SCENE_EXIT(4, 31, 1),
+	SCENE_EXIT(5, 31, 2),
+	SCENE_EXIT(6, 31, 3),
+	SCENE_EXIT(7, 31, 5),
+	SCENE_EXIT(8, 31, 4),
+	SCENE_EXIT(9, 9, 35),
+	SCENE_EXIT(10, 32, 1),
+	SCENE_EXIT(11, 32, 4),
+	SCENE_EXIT(0, 32, 0),
+	SCENE_EXIT(1, 30, 10),
+	SCENE_EXIT(2, 32, 3),
+	SCENE_EXIT(3, 32, 2),
+	SCENE_EXIT(4, 30, 11),
+	SCENE_EXIT(0, 35, 0),
+	SCENE_EXIT(1, 2, 6),
+	SCENE_EXIT(2, 2, 47),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement gBiribinoMuraPlacementsOther[] = {
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gBiribinoMuraPlacements1[] = {
+	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(40), 0, PIXELS(140), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x69, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(256), 0, PIXELS(440), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(264), 0, PIXELS(328), FACING_SOUTHWEST, TALK_FACE_PARTY, 0 },
+	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(312), 0, PIXELS(240), FACING_NORTHEAST, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x65, CONDITION_ALWAYS, ACTOR_WANDER,
+		PIXELS(176), 0, PIXELS(328), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x73, CONDITION_ALWAYS, ACTOR_WANDER,
+		PIXELS(128), 0, PIXELS(224), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(176), 0, PIXELS(96), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x6f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(192), 0, PIXELS(96), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0x6b, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(208), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x66, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(192), 0, PIXELS(208), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x74, CONDITION_ALWAYS, ACTOR_WANDER,
+		PIXELS(232), 0, PIXELS(296), FACING_SOUTHWEST, TALK_FACE_PARTY, 0 },
+	{ 0x87, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(392), 0, PIXELS(360), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+	{ 0xf3, CONDITION_ALWAYS, 7,
+		PIXELS(264), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(264), 0, PIXELS(432), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gBiribinoMuraPlacements3[] = {
+	{ 0xf1, CONDITION_ALWAYS, 7,
+		PIXELS(136), 0, PIXELS(300), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x69, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ 0x69, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ 0x69, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(282), 0, PIXELS(170), FACING_WEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(246), 0, PIXELS(170), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(262), 0, PIXELS(156), FACING_WEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+	{ 0x17, CONDITION_ALWAYS, 7,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x16, CONDITION_ALWAYS, 7,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct ScenePlacement gBiribinoMuraPlacements2[] = {
+	{ 0xf3, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(232), 0, PIXELS(100), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x5d, 0x6c, ACTOR_STAND,
+		PIXELS(328), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent gBiribinoMuraEventsOther[] = {
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gBiribinoMuraEvents1[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
+	{ EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunEarlySequence) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunEarlySequence) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunEarlySequence) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunEarlySequence) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunEarlySequence) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunEarlySequence) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunEarlySequence) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoMura_TalkAboutHumanTree) },
+	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowLine16BF) },
+	{ EVENT_TALK, 10, 0x845, MSGNO(MsgBilibinWelcomeToBilibinPleaseJustIgnore) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBilibinWelcomeToBilibinWellForgetThat) },
+	{ EVENT_TALK, 11, 0x845, MSGNO(MsgBilibinIHearALargeGroupCrossed) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBilibinIfYoureTalkingAboutTheTravelers) },
+	{ EVENT_TALK, 12, 0x845, EVENT_SCRIPT(SceneDialogue_RunActorTwelveDialogue) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBilibinYoureWonderingAboutTheTreeNear) },
+	{ EVENT_TALK, 13, 0x845, MSGNO(MsgBilibinLordMccoyHasBeenQuiteFrightened) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBilibinISawLordMccoyTheChief) },
+	{ EVENT_TALK, 14, 0x845, EVENT_SCRIPT(SceneDialogue_RunActorFourteenDialogue) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBilibinIHearTheBarricadeGateThat) },
+	{ EVENT_TALK, 15, 0x845, MSGNO(MsgBilibinTheRoadToKolimaIsBlocked) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgBilibinThoseThreeKidsVanishedDuringAll) },
+	{ EVENT_TALK, 16, 0x845, MSGNO(MsgBilibinEverSinceThatManTurnedInto) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorSixteenDialogue) },
+	{ EVENT_TALK, 17, 0x845, MSGNO(MsgBilibinIsItTrueThatAMountain) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgBilibinLordMccoysMenSaidTheySaw) },
+	{ EVENT_TALK, 18, 0x845, MSGNO(MsgBilibinTheresATowerAtTheTip) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowLine16CC) },
+	{ EVENT_TALK, 19, 0x845, MSGNO(MsgBilibinSomethingChangedInTheEruptionNow) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgBilibinTheEruptionOnTheOtherSide) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBilibinHelpMeSomebody) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgBilibinINeverWantToBeTurned) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x845, MSGNO(MsgBilibinYouGuysAreSoUnluckyArriving) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBilibinNotManyLumberjacksAreWillingTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x845, MSGNO(MsgBilibinYouMustBeMadItsAlmost) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBilibinOneOfTheTwoPeopleThat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x845, MSGNO(MsgBilibinWeEndedUpLikeThisBecause) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBilibinThatGuyMightTurnIntoA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x845, MSGNO(MsgBilibinEveryoneGetsWorriedWhenTownLeaders) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgBilibinLordMccoySeemsToBeHaving) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x845, MSGNO(MsgBilibinWhereDidTheseKidsComeFrom) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgBilibinApparentlyJustAboutAnyoneCouldJust) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x845, MSGNO(MsgBilibinNoOneWouldDareGoAfter) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgBilibinTheGangOfThreeHaTheyre) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x845, MSGNO(MsgBilibinHeBeggedForHelpAsHe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgBilibinImSureLordMccoyWillGive) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x845, MSGNO(MsgBilibinIWantToSeeThatPretty) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgBilibinTheyMustBeReportingYourDeeds) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x845, MSGNO(MsgBilibinOnlyGreatAdeptsCanEnterThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgBilibinIWantToShareWithYou) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x845, MSGNO(MsgBilibinThatExplosionMustHaveBeenA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgBilibinAsLongAsImOkayI) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_UpdatePuzzleActors) },
+	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoMura_PushFacedBlock) },
+	{ PSYNERGY_ON_ACTOR(0x4e), 8, CONDITION_ALWAYS, 0 },
+	{ SEARCH(SEARCH_JAR), 100, 0xf50, FIND_ITEM(0xb4) },
+	{ SEARCH(SEARCH_JAR), 101, 0xf51, FIND_COINS(5) },
+	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedSteps947And29DD) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gBiribinoMuraEvents3[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunLine1470) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunLine1470) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunLine1470) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunLine1470) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x881), MSGNO(MsgBilibinTheyCrossedTheRiverAfterPushing) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBilibinTheyreSoHeavy) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x848, MSGNO(MsgBilibinShellBeSweptDownstreamIfShe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgBilibinOhItLooksLikeSheIs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x848, MSGNO(MsgBilibinShellBeSweptDownstreamIfShe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBilibinOhItLooksLikeSheIs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x848, MSGNO(MsgBilibinAhhhhPleaseAnyonePleaseHelp) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBiribinoThankSavedMeFromBeing) },
+	{ EVENT_TALK, 12, 0x848, MSGNO(MsgBilibinIHeardWeWereOnceCalled) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBilibinItWasAwfulLuckBeingTurned) },
+	{ EVENT_TALK, 13, 0x848, MSGNO(MsgBilibinIfOnlyWeHadntTriedGetting) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBilibinIReallyLikeThisSpotBy) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBilibinIWillThinkOfYouWhenever) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x848, MSGNO(MsgBilibinWeWorkedSoHardIfOnly) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBilibinWhoseIdeaWasItToPick) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x848, MSGNO(MsgBilibinWhatACruelWorldWeJust) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgBilibinWellItWasntMyIdeaTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgBilibinThesePersimmonsAreJustLikeMy) },
+	{ SEARCH(SEARCH_UNNAMED), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedStep1472) },
+	{ SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldDoorTightlyLocked)) },
+	{ EVENT_TOUCH, 13, 0x849, EVENT_SCRIPT(BiribinoMura_ReceiveJillsGift) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x848, EVENT_SCRIPT(FieldScene_RunScene38bSequenceC) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoMura_CheckLeaderAhead) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoMura_CheckLeaderAhead) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoMura_PushFacedBlock) },
+	{ 0x202, 12, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoMura_PushFacedBlock) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RepaintTenCellsAndActorEightCell) },
+	{ SCENE_EVENTS_END },
+};
+
+struct SceneEvent gBiribinoMuraEvents2[] = {
+	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+	{ SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedStep146E) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValues9_3_0) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DrawTilesByActor8Row) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoMura_PushFacedBlock) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoMura_PushFacedBlock) },
+	{ 0x202, 13, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoMura_PushFacedBlock) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoMura_CheckLeaderAhead) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoMura_CheckLeaderAhead) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoMura_CheckLeaderAhead) },
+	{ SCENE_EVENTS_END },
+};
+
+u16 Mura_DoorCellStep6[] = {
+	MAP_CELL_STEP(37, 33, 4, 2, 5), MAP_CELL_STEP(33, 33, 4, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 Mura_DoorCellStep4[] = {
+	MAP_CELL_STEP(35, 43, 2, 2, 5), MAP_CELL_STEP(33, 43, 2, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 Mura_DoorCellStep5[] = {
+	MAP_CELL_STEP(35, 52, 2, 2, 5), MAP_CELL_STEP(33, 52, 2, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 Mura_DoorCellStep1[] = {
+	MAP_CELL_STEP(35, 54, 2, 2, 5), MAP_CELL_STEP(33, 54, 2, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 Mura_DoorCellStep0[] = {
+	MAP_CELL_STEP(35, 48, 2, 2, 5), MAP_CELL_STEP(33, 48, 2, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 Mura_DoorCellStep2[] = {
+	MAP_CELL_STEP(35, 46, 2, 2, 5), MAP_CELL_STEP(33, 46, 2, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 Mura_DoorCellStep3[] = {
+	MAP_CELL_STEP(35, 50, 2, 2, 5), MAP_CELL_STEP(33, 50, 2, 2, 5), MAP_CELL_STEPS_END,
+};
+
+u16 *Mura_DoorCellSteps[] = {
+	Mura_DoorCellStep0,
+	Mura_DoorCellStep1,
+	Mura_DoorCellStep2,
+	Mura_DoorCellStep3,
+	Mura_DoorCellStep4,
+	Mura_DoorCellStep5,
+	Mura_DoorCellStep6,
+};
+
+u32 Mura_DoorCellOrigins[] = {
+	0x140036, 0x12002b, 0x130025, 0xb0029, 0xb0023, 0x90031, 0x60037,
+};
+
+u32 Mura_RepaintCells[] = {
+	0x12091208, 0x1308120a, 0x130a1309, 0x1409130b, 0x140b140a,
+};
+
+s16 BiribinoMura_FacingCellSteps[] = {
+	0, 16,
+	0, 16,
+	0, 16,
+	16, 0,
+	16, 0,
+	16, 0,
+	16, 0,
+	0, -16,
+	0, -16,
+	0, -16,
+	0, -16,
+	-16, 0,
+	-16, 0,
+	-16, 0,
+	-16, 0,
+	0, 16,
+};
+
+s32 Mura_SpawnScript[] = {
+	SC_WAIT(30),
+	SC_FREE,
+};

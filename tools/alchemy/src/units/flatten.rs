@@ -88,14 +88,11 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         println!("{USAGE}");
         return Ok(());
     }
-    if command == "gather" {
-        return super::gather::run(rest);
-    }
     let options = parse(rest)?;
     match command.as_str() {
         "candidates" => candidates(&options),
         "flatten" => flatten(&options),
-        _ => Err(format!("{USAGE}\n{}", super::gather::USAGE)),
+        _ => Err(USAGE.into()),
     }
 }
 

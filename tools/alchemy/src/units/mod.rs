@@ -8,7 +8,6 @@
 mod cmerge;
 mod dryrun;
 mod flatten;
-mod gather;
 mod ldscript;
 pub use flatten::run as unit;
 mod load;

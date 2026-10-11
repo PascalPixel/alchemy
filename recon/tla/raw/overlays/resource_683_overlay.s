@@ -156,24 +156,8 @@ Func_020000fc:
 	.4byte gPartyState
 .L_02008144:
 	.4byte 0x000000b7
-	.section .text.x0200814c,"ax",%progbits
-	.global Func_0200014c
-	.thumb_func
-Func_0200014c:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r0, #48
-	adds r2, #93
-	str r2, [r3]
-	adds r0, #255
-	bl GameFlag_ClearBit
-	pop {pc}
 	.section .rodata.x02008188,"a",%progbits
+	.balign 4
 	.global gSceneEntrances
 gSceneEntrances:
 	.4byte 0xffff0000

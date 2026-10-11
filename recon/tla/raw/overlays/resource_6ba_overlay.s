@@ -635,39 +635,8 @@ Func_02000520:
 	pop {r5, r6, r7, pc}
 .L_020085f8:
 	.4byte MsgTheBodyIs
-	.section .text.x020085fc,"ax",%progbits
-	.global Func_020005fc
-	.thumb_func
-Func_020005fc:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r6, r1, #0
-	adds r5, r0, #0
-	lsls r0, r6, #2
-	adds r0, r0, r6
-	adds r7, r2, #0
-	lsls r0, r0, #2
-	adds r0, r0, r7
-	adds r0, #48
-	mov r8, r3
-	bl GameFlag_SetBit
-	adds r0, r5, #0
-	adds r1, r6, #0
-	adds r2, r7, #0
-	bl Djinn_AddToOwner
-	mov r3, r8
-	cmp r3, #1
-	bne .L_02008632
-	adds r0, r5, #0
-	adds r1, r6, #0
-	adds r2, r7, #0
-	bl Djinn_Activate
-.L_02008632:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
 	.section .text.x02008638,"ax",%progbits
+	.balign 4
 	.global Func_02000638
 	.thumb_func
 Func_02000638:
@@ -1207,111 +1176,8 @@ Func_02000848:
 	.4byte Data_02000ea8
 .L_02008aa8:
 	.4byte gInput
-	.section .text.x02008ae0,"ax",%progbits
-	.balign 4
-	.global Func_02000ae0
-	.thumb_func
-Func_02000ae0:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r8
-	push {r6, r7}
-	adds r6, r1, #0
-	mov r10, r0
-	adds r0, r6, #0
-	adds r7, r2, #0
-	mov r8, r3
-	bl Object_GetById
-	mov r2, r10
-	adds r5, r0, #0
-	cmp r2, #1
-	bne .L_02008b10
-	mov r3, r8
-	lsls r2, r3, #16
-	lsls r1, r7, #16
-	adds r0, r6, #0
-	bl Func_02000df8
-	movs r3, #0
-	str r3, [r5, #24]
-	str r3, [r5, #28]
-.L_02008b10:
-	mov r2, r10
-	cmp r2, #2
-	bne .L_02008b46
-	ldr r3, [r5, #24]
-	movs r2, #128
-	lsls r2, r2, #9
-	cmp r3, r2
-	bge .L_02008b3e
-.L_02008b20:
-	movs r0, #1
-	bl WaitFrames
-	ldr r3, [r5, #24]
-	movs r2, #160
-	lsls r2, r2, #3
-	adds r2, #30
-	adds r3, r3, r2
-	movs r2, #255
-	lsls r2, r2, #8
-	adds r2, #255
-	str r3, [r5, #24]
-	str r3, [r5, #28]
-	cmp r3, r2
-	ble .L_02008b20
-.L_02008b3e:
-	movs r3, #128
-	lsls r3, r3, #9
-	str r3, [r5, #24]
-	str r3, [r5, #28]
-.L_02008b46:
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-	.section .text.x02008b50,"ax",%progbits
-	.global Func_02000b50
-	.thumb_func
-Func_02000b50:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r8
-	push {r6, r7}
-	adds r7, r1, #0
-	mov r10, r0
-	adds r0, r7, #0
-	mov r8, r3
-	adds r5, r2, #0
-	bl Object_GetById
-	mov r3, r10
-	adds r6, r0, #0
-	cmp r3, #2
-	bne .L_02008b96
-	mov r3, r8
-	lsls r2, r3, #16
-	adds r0, r7, #0
-	lsls r1, r5, #16
-	bl Func_02000df8
-	movs r3, #128
-	lsls r3, r3, #14
-	adds r2, r6, #0
-	str r3, [r6, #12]
-	adds r2, #85
-	movs r3, #3
-	strb r3, [r2]
-	movs r3, #184
-	lsls r3, r3, #5
-	adds r3, #10
-	str r3, [r6, #72]
-	movs r0, #50
-	bl WaitFrames
-.L_02008b96:
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
 	.section .text.x02008ba0,"ax",%progbits
+	.balign 4
 	.global Func_02000ba0
 	.thumb_func
 Func_02000ba0:

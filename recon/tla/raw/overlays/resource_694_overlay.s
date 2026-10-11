@@ -154,26 +154,8 @@ Func_020000f4:
 .L_02008154:
 	pop {r5, pc}
 	.2byte 0x0000
-	.section .text.x02008158,"ax",%progbits
-	.global Func_02000158
-	.thumb_func
-Func_02000158:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	subs r2, #172
-	str r2, [r3]
-	ldr r0, .L_02008174
-	bl Scheduler_RemoveCallbackFar
-	pop {pc}
-	.2byte 0x0000
-.L_02008174:
-	.4byte Func_020001f8
 	.section .text.x02008178,"ax",%progbits
+	.balign 4
 	.global Func_02000178
 	.thumb_func
 Func_02000178:
@@ -706,40 +688,8 @@ Func_02000430:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_020085f4:
 	.4byte 0xffff0000
-	.section .text.x02008620,"ax",%progbits
-	.balign 4
-	.global Func_02000620
-	.thumb_func
-Func_02000620:
-	push {r5, lr}
-	ldmia r0!, {r5}
-	ldmia r1!, {r3}
-	ldmia r0!, {r4}
-	subs r5, r5, r3
-	ldmia r1!, {r3}
-	asrs r5, r5, #16
-	ldr r2, [r1]
-	subs r4, r4, r3
-	ldr r3, [r0]
-	asrs r4, r4, #16
-	subs r3, r3, r2
-	asrs r3, r3, #16
-	adds r0, r5, #0
-	muls r0, r5
-	adds r2, r4, #0
-	muls r2, r4
-	adds r1, r3, #0
-	muls r1, r3
-	adds r0, r0, r2
-	adds r3, r1, #0
-	adds r0, r0, r3
-	ldr r3, .L_02008654
-	mov lr, r3
-	.2byte 0xf800
-	pop {r5, pc}
-.L_02008654:
-	.4byte IwramFillWords + 0x74
 	.section .text.x02008658,"ax",%progbits
+	.balign 4
 	.global Func_02000658
 	.thumb_func
 Func_02000658:
@@ -1422,35 +1372,8 @@ Func_02000af4:
 	.4byte MsgScene694No164
 .L_02008cc0:
 	.4byte MsgScene694No65
-	.section .text.x02008cc4,"ax",%progbits
-	.global Func_02000cc4
-	.thumb_func
-Func_02000cc4:
-	push {lr}
-	ldr r3, .L_02008cec
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r0, [r3]
-	bl Object_GetById
-	movs r2, #190
-	ldrh r3, [r0, #6]
-	lsls r2, r2, #7
-	adds r2, #255
-	adds r3, r3, r2
-	ldr r2, .L_02008cf0
-	lsls r3, r3, #16
-	movs r0, #1
-	cmp r3, r2
-	bls .L_02008cea
-	movs r0, #0
-.L_02008cea:
-	pop {pc}
-.L_02008cec:
-	.4byte gPartyState
-.L_02008cf0:
-	.4byte 0x3ffe0000
 	.section .text.x02008cf4,"ax",%progbits
+	.balign 4
 	.global Func_02000cf4
 	.thumb_func
 Func_02000cf4:

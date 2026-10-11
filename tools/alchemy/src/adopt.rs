@@ -6,30 +6,34 @@ use std::path::{Path, PathBuf};
 
 const USAGE: &str = r#"usage: alchemy adopt ADDRESS LABEL [NEW_NAME] [--game tbs|tla] [--padding]
                     [--into MODULE.c [--head]] [--skip LANG,...]
-After the function's C is in its module: removes recon/<game>/raw/ADDRESS.s,
-its line among the English edition's objects and the draft recon/<game>/en/
-main/ADDRESS.c; in each other edition removes the rom.s section that holds
-exactly LABEL and its line among that edition's objects (☀️'s rows of
-games/tbs/objects.tsv; ⚓️'s games/tla/main.ld for Japanese and
-recon/tla/<lang>/main.ld). --padding also removes a two-byte section
-directly before or after it, and English's two-byte padding listing linked
-directly before or after the function. NEW_NAME renames LABEL across games/
+After the function's C is in its module, and after make compare-editions
+(the maps of all six builds under out/ are read): removes
+recon/<game>/raw/ADDRESS.s, its line among the English edition's objects and
+the draft recon/<game>/en/main/ADDRESS.c, and takes the function's copy out
+of each other edition's recon/<game>/<lang>/rom.s and that edition's object
+lines (☀️'s rows of games/tbs/objects.tsv; ⚓️'s games/tla/main.ld for
+Japanese and recon/tla/<lang>/main.ld). NEW_NAME renames LABEL across games/
 and recon/. The game defaults to tbs. Then build all twelve editions.
 
-An edition whose scaffold does not hold LABEL as one section of its own (no
-label there, or more in its section) is cut by the function's bytes: the
-English function, where out/<game>-en's map placed its listing, is looked
-for among that edition's scaffold bytes in roms/<game>-<lang>.gba, as the
-same bytes or with only its call targets and literal-pool words moved, near
-where the edition's nearest labels say it lies. Those bytes leave their
-section, which is split around them, and the edition's object lines link
-what is left in the same place. With --padding the two zero bytes go with
-them on each side where English's padding listing went. A listing that
-itself ends in two bytes of padding leaves them to alignment: the listing
-or scaffold section linked right after the function starts with ".balign 4"
-in every edition, as C ends at its last instruction. An edition with no
-such copy stops the adoption; --skip LANG,... leaves the named editions on
-their scaffold (S4), for a function whose C those builds leave out.
+The copy is found by the function's bytes, not by the scaffold's labels,
+which are guesses until something links against them: the English function,
+where out/<game>-en's map placed its listing, is looked for among that
+edition's scaffold bytes in roms/<game>-<lang>.gba, as the same bytes or
+with only its call targets and literal-pool words moved, nearest where the
+two builds' maps say it lies (as far from the nearest object both link as
+in English). Where a section holds exactly those bytes under LABEL, the
+section and its line go; --padding also removes a two-byte section directly
+before or after it. Anywhere else, unnamed or sharing its section, the
+bytes leave their section, which is split around them, and the edition's
+object lines link what is left in the same place; a label that named LABEL
+on other bytes is dropped. --padding takes English's two-byte padding
+listing linked directly before or after the function, and in a split
+section the two zero bytes on the same sides. A listing that itself ends in
+two bytes of padding leaves them to alignment: the listing or scaffold
+section linked right after the function starts with ".balign 4" in every
+edition, as C ends at its last instruction. An edition with no such copy
+stops the adoption; --skip LANG,... leaves the named editions on their
+scaffold (S4), for a function whose C those builds leave out.
 
 --into first merges the draft into MODULE.c, its linker neighbour: the
 draft's missing includes after the module's top include block, then the
@@ -187,28 +191,63 @@ struct Reference {
     bytes: Vec<u8>,
     base: u32,
     arm: bool,
-    /// Each global name the English build placed, with its address.
-    names: HashMap<String, u32>,
+    /// Where the English build placed the code of each object built from
+    /// games/, by the object's path.
+    objects: HashMap<String, u32>,
+}
+
+/// Where a build's map placed the code of each object built from games/.
+fn placements(map: &Map) -> HashMap<String, u32> {
+    let code = map.placed.iter().filter(|placed| placed.name == ".text" && placed.size > 0 && placed.address >= ROM);
+    let mut objects = HashMap::new();
+    for placed in code.filter(|placed| placed.object().starts_with("games/")) {
+        objects.entry(placed.object().to_string()).or_insert(placed.address);
+    }
+    objects
+}
+
+fn load_map(root: &Path, edition: &str) -> Result<Map, String> {
+    let path = root.join(format!("out/{edition}/{edition}.map"));
+    Ok(Map::parse(&read(&path).map_err(|e| format!("{e}; build {edition} first (make compare-editions)"))?))
 }
 
 impl Reference {
     fn load(root: &Path, game: &str, address: &str) -> Result<Reference, String> {
-        let path = root.join(format!("out/{game}-en/{game}-en.map"));
-        let map = Map::parse(&read(&path).map_err(|e| format!("{e}; build {game}-en first (make compare-{game}-en)"))?);
+        let map = load_map(root, &format!("{game}-en"))?;
         let object = format!("recon/{game}/raw/{address}.o");
         let placed = map
             .placed
             .iter()
             .find(|placed| placed.name == ".text" && placed.size > 0 && placed.path.ends_with(&object))
-            .ok_or_else(|| format!("{}: no .text of {object}; build {game}-en first (make compare-{game}-en)", path.display()))?;
+            .ok_or_else(|| format!("out/{game}-en/{game}-en.map places no .text of {object}; build {game}-en first (make compare-{game}-en)"))?;
         let rom = root.join(format!("roms/{game}-en.gba"));
         let rom = std::fs::read(&rom).map_err(|e| format!("{}: {e}", rom.display()))?;
         let offset = placed.address.checked_sub(ROM).ok_or_else(|| format!("{object} is not in the ROM's main image"))? as usize;
         let bytes = rom.get(offset..offset + placed.size as usize).ok_or_else(|| format!("{object} lies beyond the English ROM"))?.to_vec();
         let arm = read(&root.join(format!("recon/{game}/raw/{address}.s")))?.lines().any(|line| line.trim() == ".arm");
-        let names = map.placed.iter().flat_map(|placed| placed.symbols.iter().map(|(address, name)| (name.clone(), *address))).collect();
-        Ok(Reference { bytes, base: placed.address, arm, names })
+        Ok(Reference { bytes, base: placed.address, arm, objects: placements(&map) })
     }
+
+    /// Where the function's copy should lie in an edition's ROM: as far from
+    /// the nearest object both builds place as it is in English. The builds
+    /// compare equal to their ROMs, so their placements are the ROMs'.
+    fn expected(&self, edition: &HashMap<String, u32>) -> usize {
+        shifted(&self.objects, edition, self.base)
+    }
+}
+
+fn shifted(english: &HashMap<String, u32>, edition: &HashMap<String, u32>, address: u32) -> usize {
+    let common = english.iter().filter_map(|(object, english)| edition.get(object).map(|other| (*english, *other)));
+    let nearest = common.min_by_key(|(english, other)| (english.abs_diff(address), *other));
+    let shift = nearest.map_or(0, |(english, other)| i64::from(other) - i64::from(english));
+    (i64::from(address) - i64::from(ROM) + shift).max(0) as usize
+}
+
+/// The file offset in an edition's ROM where code at an English address
+/// should lie, from the two builds' maps.
+pub(crate) fn expected_place(root: &Path, game: &str, lang: &str, address: u32) -> Result<usize, String> {
+    let english = placements(&load_map(root, &format!("{game}-en"))?);
+    Ok(shifted(&english, &placements(&load_map(root, &format!("{game}-{lang}"))?), address))
 }
 
 #[derive(Debug)]
@@ -217,33 +256,41 @@ struct Carved {
     note: String,
 }
 
+/// The size of the one byte range a scaffold holds right after `label`.
+fn labelled_size(scaffold: &str, label: &str) -> Option<u32> {
+    let mut lines = scaffold.lines().skip_while(|line| *line != format!("{label}:")).skip(1);
+    let size = lines.next()?.strip_prefix("\t.incbin \"baserom.gba\", 0x")?.split_once(", 0x")?.1;
+    u32::from_str_radix(size.trim(), 16).ok()
+}
+
+/// The scaffold without `label`: its `.global`, `.type`, `.thumb_func` and
+/// `.size` lines go with it, and the bytes it named stay.
+fn drop_label(scaffold: &str, label: &str) -> String {
+    let lines: Vec<&str> = scaffold.lines().collect();
+    let Some(at) = lines.iter().position(|line| *line == format!("{label}:")) else {
+        return scaffold.to_string();
+    };
+    let own = [format!("\t.global {label}"), format!("\t.type {label}, %function"), format!("\t.type {label}, %object"), "\t.thumb_func".to_string()];
+    let first = (0..at).rev().take_while(|&i| own.iter().any(|line| line == lines[i])).last().unwrap_or(at);
+    let size = format!("\t.size {label}, .-{label}");
+    let kept: Vec<&str> = lines.iter().enumerate().filter(|(i, line)| !(first..=at).contains(i) && **line != size).map(|(_, line)| *line).collect();
+    kept.join("\n") + "\n"
+}
+
 /// Cuts an edition's copy of the English function out of its scaffold,
-/// wherever its labels are. The copy is looked for where the nearest label
-/// both builds place says it should be, by the edition's shift there; with
-/// --padding it leaves with the two zero bytes on each side on which
-/// English's padding listing left (`pads`: before, after).
-fn carve(reference: &Reference, scaffold: &str, rom: &[u8], label: &str, pads: (bool, bool)) -> Result<Carved, String> {
-    let labels = crate::adopt_data::label_offsets(scaffold)?;
-    let offset = (reference.base - ROM) as usize;
-    let shift = labels
-        .iter()
-        .filter_map(|(name, file)| reference.names.get(name).map(|address| (address.abs_diff(reference.base), i64::from(*file) - (i64::from(*address) - i64::from(ROM)))))
-        .min_by_key(|(distance, _)| *distance)
-        .map_or(0, |(_, shift)| shift);
-    let expected = (offset as i64 + shift).max(0) as usize;
-    let extents = crate::adopt_data::extents(scaffold)?;
-    let copy = crate::label::copy_of(&reference.bytes, reference.base, reference.arm, rom, &extents, expected)
-        .ok_or("its scaffold holds no identical or relocated copy of the English function")?;
-    if let Some((_, named)) = labels.iter().find(|(name, named)| name == label && *named as usize != copy.at) {
-        return Err(format!("its scaffold names {label} at {named:#x}, but the nearest copy of the English function is at {:#x}", copy.at));
-    }
+/// wherever its labels are: the copy nearest `expected`. With --padding it
+/// leaves with the two zero bytes on each side on which English's padding
+/// listing left (`pads`: before, after). A scaffold's labels are guesses
+/// until something links against them: one that names LABEL elsewhere is
+/// dropped, and the others the copy held are reported.
+fn carve(reference: &Reference, scaffold: &str, rom: &[u8], label: &str, pads: (bool, bool), copy: &crate::label::Copy, expected: usize) -> Result<Carved, String> {
     let zero = |at: usize| rom.get(at..at + 2) == Some(&[0, 0]);
     let (start, end) = (copy.at, copy.at + reference.bytes.len());
     if (pads.0 && !(start >= 2 && zero(start - 2))) || (pads.1 && !zero(end)) {
         return Err(format!("English's padding listing beside the function has no two zero bytes beside the copy at {start:#x}"));
     }
     let (start, end) = (start - if pads.0 { 2 } else { 0 }, end + if pads.1 { 2 } else { 0 });
-    let cut = crate::adopt_data::cut_bytes(scaffold, start as u32, (end - start) as u32)?;
+    let mut cut = crate::adopt_data::cut_bytes(scaffold, start as u32, (end - start) as u32)?;
     let mut note = format!("{} copy at {:#x}", copy.class, copy.at);
     if copy.found > 1 {
         note.push_str(&format!(", the nearest of {} to {expected:#x}", copy.found));
@@ -251,9 +298,20 @@ fn carve(reference: &Reference, scaffold: &str, rom: &[u8], label: &str, pads: (
     note.push_str(&format!(", cut from .rom.{}", cut.section));
     let others: Vec<&str> = cut.labels.iter().map(String::as_str).filter(|name| *name != label).collect();
     if !others.is_empty() {
-        note.push_str(&format!("; the C must define {}, which left with it", others.join(" ")));
+        note.push_str(&format!("; its labels {} left with it", others.join(" ")));
+    }
+    if let Some((_, named)) = crate::adopt_data::label_offsets(&cut.text)?.iter().find(|(name, _)| name == label) {
+        note.push_str(&format!("; the scaffold named {label} at {named:#x}, which is other code: that label is dropped"));
+        cut.text = drop_label(&cut.text, label);
     }
     Ok(Carved { cut, note })
+}
+
+/// The edition's copy of the English function among its scaffold's bytes.
+fn locate(reference: &Reference, scaffold: &str, rom: &[u8], expected: usize) -> Result<crate::label::Copy, String> {
+    let extents = crate::adopt_data::extents(scaffold)?;
+    crate::label::copy_of(&reference.bytes, reference.base, reference.arm, rom, &extents, expected)
+        .ok_or_else(|| "its scaffold holds no identical or relocated copy of the English function".to_string())
 }
 
 pub fn run(arguments: &[String]) -> Result<(), String> {
@@ -348,7 +406,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         edits.push((path, aligned));
     }
 
-    let mut reference = None;
+    let reference = Reference::load(root, game, &address)?;
     for lang in ["ja", "de", "es", "fr", "it"] {
         if skip.iter().any(|skipped| skipped == lang) {
             println!("{game}-{lang}: skipped, it keeps its scaffold; its build must not link the function's C");
@@ -359,22 +417,25 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         let scaffold_text = read(&scaffold)?;
         let object = unlinked(&script);
         let rom_object = format!("recon/{game}/{lang}/rom.o");
-        let (text, script, follows) = match remove_section(&scaffold_text, &label, padding) {
-            Ok((text, sections)) => {
+        // The function's bytes say where its copy is; the scaffold's label
+        // is used only where it names exactly those bytes.
+        let stays = |e: String| format!("{game}-{lang}: {e}; adopt the others with --skip {lang} once its build leaves the function's C out (S4)");
+        let rom = root.join(format!("roms/{game}-{lang}.gba"));
+        let rom = std::fs::read(&rom).map_err(|e| format!("{}: {e}", rom.display()))?;
+        let expected = reference.expected(&placements(&load_map(root, &format!("{game}-{lang}"))?));
+        let copy = locate(&reference, &scaffold_text, &rom, expected).map_err(&stays)?;
+        let named = crate::adopt_data::label_offsets(&scaffold_text)?.iter().any(|(name, file)| *name == label && *file as usize == copy.at);
+        let whole = named && labelled_size(&scaffold_text, &label) == Some(reference.bytes.len() as u32);
+        let (text, script, follows) = match remove_section(&scaffold_text, &label, padding).ok().filter(|_| whole) {
+            Some((text, sections)) => {
                 let follows = next_scaffold_section(&script, &rom_object, &sections);
                 let script = unlink_sections(&script, &sections, object.as_deref()).map_err(|e| format!("{}: {e}", crate::object_list::main_lines_path(game, lang).display()))?;
                 (text, script, follows)
             }
             // The scaffold does not hold the function as one section of its
-            // own: find its copy by its bytes and cut it out.
-            Err(unlabelled) => {
-                if reference.is_none() {
-                    reference = Some(Reference::load(root, game, &address).map_err(|e| format!("{game}-{lang}: {unlabelled}; {e}"))?);
-                }
-                let reference = reference.as_ref().expect("loaded above");
-                let rom = root.join(format!("roms/{game}-{lang}.gba"));
-                let rom = std::fs::read(&rom).map_err(|e| format!("{}: {e}", rom.display()))?;
-                let carved = carve(reference, &scaffold_text, &rom, &label, pads).map_err(|e| format!("{game}-{lang}: {e}; adopt the others with --skip {lang} once its build leaves the function's C out (S4)"))?;
+            // own: cut its copy out.
+            None => {
+                let carved = carve(&reference, &scaffold_text, &rom, &label, pads, &copy, expected).map_err(&stays)?;
                 println!("{game}-{lang}: {}", carved.note);
                 let follows = carved.cut.after.clone().or_else(|| next_scaffold_section(&script, &rom_object, std::slice::from_ref(&carved.cut.section)));
                 let script = crate::adopt_data::relink_parts(&script, &rom_object, ".rom.", &carved.cut, object.as_deref())
@@ -514,9 +575,12 @@ mod tests {
             "\t.section .rom.00000100, \"ax\"\n\t.global Before\n\t.type Before, %function\n\t.thumb_func\nBefore:\n\t.incbin \"baserom.gba\", 0x00000100, 0x{:08x}\n",
             0x20 + length + 0x40
         );
-        let names = HashMap::from([("Before".to_string(), 0x0800_00f0)]);
-        let reference = Reference { bytes: english, base: 0x0800_0110, arm: false, names };
-        let carved = carve(&reference, &scaffold, &rom, "Run", (false, false)).unwrap();
+        let objects = HashMap::from([("games/g/a.o".to_string(), 0x0800_00f0), ("games/g/far.o".to_string(), 0x0800_4000)]);
+        let reference = Reference { bytes: english, base: 0x0800_0110, arm: false, objects };
+        let expected = reference.expected(&HashMap::from([("games/g/a.o".to_string(), 0x0800_0100), ("games/g/far.o".to_string(), 0x0800_8000)]));
+        assert_eq!(expected, 0x120);
+        let found = locate(&reference, &scaffold, &rom, expected).unwrap();
+        let carved = carve(&reference, &scaffold, &rom, "Run", (false, false), &found, expected).unwrap();
         assert_eq!(carved.note, "relocated copy at 0x120, cut from .rom.00000100");
         let after = 0x120 + length;
         assert_eq!(
@@ -529,22 +593,28 @@ mod tests {
         let linked = crate::adopt_data::relink_parts(script, "recon/g/de/rom.o", ".rom.", &carved.cut, None).unwrap();
         assert_eq!(linked, format!("    \"*/recon/g/de/rom.o\"(.rom.00000100)\n    \"*/recon/g/de/rom.o\"(.rom.{after:08x})\n    \"*/games/g/a.o\"(.text)\n"));
         // The padding English's listing held leaves with the copy.
-        let padded = carve(&reference, &scaffold, &rom, "Run", (true, false)).unwrap();
+        let padded = carve(&reference, &scaffold, &rom, "Run", (true, false), &found, expected).unwrap();
         assert!(padded.cut.text.contains("0x00000100, 0x0000001e\n\t.section"), "{}", padded.cut.text);
-        assert!(carve(&reference, &scaffold, &rom, "Run", (false, true)).unwrap_err().contains("no two zero bytes"));
+        assert!(carve(&reference, &scaffold, &rom, "Run", (false, true), &found, expected).unwrap_err().contains("no two zero bytes"));
         // A scaffold that names the function elsewhere, or holds no copy, stops.
-        assert!(carve(&reference, &scaffold, &rom, "Before", (false, false)).unwrap_err().contains("names Before at 0x100"));
+        let stale = carve(&reference, &scaffold, &rom, "Before", (false, false), &found, expected).unwrap();
+        assert!(stale.note.ends_with("the scaffold named Before at 0x100, which is other code: that label is dropped"), "{}", stale.note);
+        assert!(stale.cut.text.starts_with("\t.section .rom.00000100, \"ax\"\n\t.incbin \"baserom.gba\", 0x00000100, 0x00000020\n"), "{}", stale.cut.text);
+        assert_eq!(labelled_size(&scaffold, "Before"), Some(0x20 + length + 0x40));
         let other = Reference { bytes: function(10, 3, 0x40, 0), ..reference };
-        assert!(carve(&other, &scaffold, &rom, "Run", (false, false)).unwrap_err().contains("no identical or relocated copy"));
+        assert!(locate(&other, &scaffold, &rom, expected).unwrap_err().contains("no identical or relocated copy"));
         // A label and its .size line inside the copy leave with it.
         let named = scaffold.replace("0x00000100, ", "0x00000100, 0x00000020\n\t.global Run\nRun:\n\t.incbin \"baserom.gba\", 0x00000120, ").replace(&format!("0x{:08x}\n", 0x20 + length + 0x40), &format!("0x{:08x}\n\t.size Run, .-Run\n", length + 0x40));
-        let known = carve(&other_named(&copy), &named, &rom, "Run", (false, false)).unwrap();
+        let same = other_named(&copy);
+        let here = locate(&same, &named, &rom, 0x110).unwrap();
+        assert_eq!((here.at, here.class), (0x120, "identical"));
+        let known = carve(&same, &named, &rom, "Run", (false, false), &here, 0x110).unwrap();
         assert_eq!(known.cut.labels, ["Run"]);
         assert!(!known.cut.text.contains("Run"), "{}", known.cut.text);
     }
 
     fn other_named(bytes: &[u8]) -> Reference {
-        Reference { bytes: bytes.to_vec(), base: 0x0800_0110, arm: false, names: HashMap::new() }
+        Reference { bytes: bytes.to_vec(), base: 0x0800_0110, arm: false, objects: HashMap::new() }
     }
 
     #[test]

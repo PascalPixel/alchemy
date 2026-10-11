@@ -8,7 +8,8 @@ splits that edition's recon/<game>/<lang>/rom.s incbin there with
 English scaffold labelled. The game defaults to tbs.
 --function names Thumb code instead: the copy may differ from English's in
 its call targets and literal-pool words, which move with the edition; it is
-looked for in the scaffold's bytes only, and the label is a Thumb function's
+looked for in the scaffold's bytes only, nearest where the builds' maps
+(out/, after make compare-editions) say it lies, and the label is a Thumb function's
 (".type NAME, %function" and ".thumb_func"), so a call or a pointer to it
 from adopted C links as it did."#;
 
@@ -33,8 +34,9 @@ pub(crate) struct Copy {
     pub found: usize,
 }
 
-/// The candidates weighed at most, nearest the expected place first.
-const WEIGHED: usize = 256;
+/// The places an unchanged run was found that are weighed at most, nearest the
+/// expected place first.
+const WEIGHED: usize = 1024;
 /// How far from the expected place code with no unchanged run is looked for.
 const WINDOW: usize = 0x4000;
 
@@ -49,7 +51,7 @@ pub(crate) fn copy_of(reference: &[u8], base: u32, arm: bool, rom: &[u8], extent
     let length = reference.len();
     let step = if arm { 4 } else { 2 };
     let anchors = crate::editions::anchors(reference, base, arm);
-    let mut starts = std::collections::BTreeSet::new();
+    let (mut starts, mut around) = (std::collections::BTreeSet::new(), std::collections::BTreeSet::new());
     for &(file, size) in extents {
         let (file, size) = (file as usize, size as usize);
         let Some(run) = rom.get(file..file + size).filter(|run| run.len() >= length) else {
@@ -63,12 +65,17 @@ pub(crate) fn copy_of(reference: &[u8], base: u32, arm: bool, rom: &[u8], extent
         if anchors.is_empty() {
             let low = expected.saturating_sub(WINDOW).max(file).next_multiple_of(step);
             let high = (expected + WINDOW).min(file + size - length);
-            starts.extend((low..=high).step_by(step));
+            around.extend((low..=high).step_by(step));
         }
     }
-    let mut nearest: Vec<usize> = starts.into_iter().filter(|start| start % step == 0).collect();
+    let mut nearest: Vec<usize> = starts.into_iter().collect();
     nearest.sort_by_key(|start| start.abs_diff(expected));
-    let mut copies = nearest.into_iter().take(WEIGHED).filter_map(|start| {
+    nearest.truncate(WEIGHED);
+    nearest.extend(around);
+    nearest.retain(|start| start % step == 0);
+    nearest.sort_by_key(|start| start.abs_diff(expected));
+    nearest.dedup();
+    let mut copies = nearest.into_iter().filter_map(|start| {
         let verdict = crate::editions::compare(reference, base, &rom[start..start + length], crate::ld_map::ROM + start as u32, arm);
         matches!(verdict.class, "identical" | "relocated").then_some((start, verdict.class))
     });
@@ -146,7 +153,8 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         let rom = read(lang)?;
         let (at, how) = if function {
             let extents = crate::adopt_data::extents(&text).map_err(|e| format!("{}: {e}", scaffold.display()))?;
-            match copy_of(&needle, address, false, &rom, &extents, offset) {
+            let expected = crate::adopt::expected_place(root, game, lang, address)?;
+            match copy_of(&needle, address, false, &rom, &extents, expected) {
                 Some(copy) => (copy.at, format!(" ({}{})", copy.class, if copy.found > 1 { format!(", nearest of {}", copy.found) } else { String::new() })),
                 None => {
                     println!("{game}-{lang}: no identical or relocated copy in its scaffold");

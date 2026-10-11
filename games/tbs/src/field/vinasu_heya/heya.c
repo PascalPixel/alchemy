@@ -1076,7 +1076,6 @@ void Scene_RunActorLeapSequence(void)
         OverlayObject_SpawnWithMode14(rec7->x.fixed, 0, z, 223);
     }
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    /* FAKEMATCH: the existing map adapter keeps destination setup and zero/state scheduling; the direct Engine call changes nine instruction bytes in this complete localized leap. */
     Map_CopyCellAttributes(33, 35, 7, 1, 33, 34);
     *state = 3;
 #else

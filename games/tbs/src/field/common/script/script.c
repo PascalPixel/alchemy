@@ -774,28 +774,18 @@ u32 Field_StoreAssignedKeyValue(u32 value)
 s32 Field_CheckConfiguredKeys(void)
 {
     struct EventRuntime *work = gEventWork;
-    /* FAKEMATCH: needed to match: local halfword addresses and signed values avoid two extra literal-1 loads and 24 extra bytes. */
     s32 result = 0;
 
     if (work == NULL)
         return 0;
     if (gKeyState & gGameState.select_keys) {
-        s16 *flag = (s16 *)work->unknown_172;
-        s32 value = 1;
-
-        *flag = value;
+        work->unknown_172[0] = 1;
         result = 1;
     } else if (gKeyState & gGameState.a_keys) {
-        s16 *flag = (s16 *)(work->unknown_172 + 2);
-        s32 value = 1;
-
-        *flag = value;
+        work->unknown_172[1] = 1;
         result = 1;
     } else if (gKeyState & gGameState.start_keys) {
-        s16 *flag = (s16 *)(work->unknown_172 + 4);
-        s32 value = 1;
-
-        *flag = value;
+        work->unknown_172[2] = 1;
         result = 1;
     } else if (gKeyState & gGameState.first_shortcut_keys) {
         result = Field_StoreAssignedKeyValue(gGameState.first_shortcut);

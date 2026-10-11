@@ -1,19 +1,34 @@
+/* Near miss, differ 2: the listing loads the event work pointer before it
+ * builds the 0xca2 offset (ldr r3, [r3, #108]; movs r2, #192); this draft
+ * builds the offset first. Direct calls and call.h give the same. */
 #include "types.h"
+#include "ram_buffer.h"
+
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
-#include "call.h"
-s32 GameFlag_SetBit();
-s32 Func_02004594();
-s32 Func_020045e4();
-s32 GameFlag_ClearBit();
+s32 GameFlag_SetBit(s32 flag);
+s32 GameFlag_ClearBit(s32 flag);
+void Func_02004594(void);
+void Func_020045e4(void);
+
+static inline void FlagSet(s32 flag)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    GameFlag_SetBit(flag);
+}
+
+static inline void FlagClr(s32 flag)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    GameFlag_ClearBit(flag);
+}
 
 void Func_020038e8(void)
 {
-    if (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0xca2), s16, 0) != 0) {
-        Call1(GameFlag_SetBit, 0x106);
+    if (FIELD_AT(Ram_HeapSlots->event_work, s16, 0xca2) != 0) {
+        FlagSet(0x106);
         Func_02004594();
         Func_020045e4();
-        Call1(GameFlag_ClearBit, 0x106);
+        FlagClr(0x106);
     }
 }
-

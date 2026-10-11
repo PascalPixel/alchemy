@@ -1151,61 +1151,6 @@ Func_020012dc:
 	pop {r5, r6, pc}
 .L_02009394:
 	.4byte 0xfff80000
-	.section .text.x02009398,"ax",%progbits
-	.global Func_02001398
-	.thumb_func
-Func_02001398:
-	push {lr}
-	ldr r1, [r0, #80]
-	adds r0, #100
-	ldrh r3, [r0]
-	movs r2, #3
-	ands r2, r3
-	ldr r4, [r1, #40]
-	cmp r2, #1
-	beq .L_020093cc
-	cmp r2, #1
-	bgt .L_020093b4
-	cmp r2, #0
-	beq .L_020093be
-	b .L_020093e8
-.L_020093b4:
-	cmp r2, #2
-	beq .L_020093d0
-	cmp r2, #3
-	beq .L_020093de
-	b .L_020093e8
-.L_020093be:
-	movs r3, #7
-	strb r3, [r4, #5]
-	movs r3, #1
-	strb r3, [r1, #25]
-	movs r3, #2
-	strb r3, [r1, #26]
-	b .L_020093e8
-.L_020093cc:
-	movs r3, #0
-	b .L_020093d8
-.L_020093d0:
-	movs r2, #7
-	movs r3, #0
-	strb r2, [r4, #5]
-	movs r2, #1
-.L_020093d8:
-	strb r2, [r1, #25]
-	strb r3, [r1, #26]
-	b .L_020093e8
-.L_020093de:
-	movs r2, #0
-	movs r3, #1
-	strb r2, [r4, #5]
-	strb r3, [r1, #25]
-	strb r2, [r1, #26]
-.L_020093e8:
-	ldrh r3, [r0]
-	adds r3, #1
-	strh r3, [r0]
-	pop {pc}
 	.section .text.x020093f0,"ax",%progbits
 	.global Func_020013f0
 	.thumb_func

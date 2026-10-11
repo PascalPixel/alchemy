@@ -1,46 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008098,"ax",%progbits
-	.global Func_02000098
-	.thumb_func
-Func_02000098:
-	push {r5, r6, lr}
-	adds r6, r0, #0
-	bl Object_GetById
-	movs r1, #1
-	adds r5, r0, #0
-	adds r0, r6, #0
-	bl Engine_ActorSetAnimation
-	adds r0, r6, #0
-	bl Object_GetById
-	movs r1, #1
-	bl ObjectDispatch_SetSingleChildFlags
-	ldr r3, [r5, #8]
-	ldr r2, .L_020080ec
-	movs r0, #1
-	adds r3, r3, r2
-	ldr r2, [r5, #80]
-	str r3, [r5, #8]
-	movs r3, #0
-	strh r3, [r2, #18]
-	bl Task_Wait
-	adds r0, r6, #0
-	bl Object_GetById
-	movs r1, #1
-	bl ObjectDispatch_SetSingleChildFlags
-	movs r3, #128
-	lsls r3, r3, #11
-	str r3, [r5, #40]
-	adds r5, #85
-	movs r3, #3
-	strb r3, [r5]
-	movs r0, #40
-	bl Task_Wait
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_020080ec:
-	.4byte 0xfff40000
 	.section .text.x020080f0,"ax",%progbits
+	.balign 4
 	.global Func_020000f0
 	.thumb_func
 Func_020000f0:
@@ -600,58 +561,8 @@ Func_0200049c:
 	.4byte gPartyState
 .L_0200863c:
 	.4byte 0x00019999
-	.section .text.x02008640,"ax",%progbits
-	.global Func_02000640
-	.thumb_func
-Func_02000640:
-	push {lr}
-	bl Engine_EventBegin
-	movs r0, #0
-	bl Func_02003310
-	movs r0, #123
-	bl Engine_AudioPlayCue
-	bl Event_FinishScreenTransition
-	bl Event_WaitTransitionFrames
-	movs r0, #3
-	bl Func_020032e8
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x02008664,"ax",%progbits
-	.global Func_02000664
-	.thumb_func
-Func_02000664:
-	push {r5, lr}
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_020086a0
-	ldr r5, .L_020086a4
-	movs r3, #133
-	lsls r3, r3, #2
-	movs r1, #204
-	movs r2, #204
-	adds r5, r5, r3
-	lsls r1, r1, #8
-	lsls r2, r2, #7
-	ldr r0, [r5]
-	adds r1, #204
-	adds r2, #102
-	bl ObjectMotion_SetSpeedParameters
-	movs r2, #189
-	ldr r0, [r5]
-	movs r1, #152
-	lsls r2, r2, #2
-	bl ObjectMotion_SetPositionAndReset
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_SetBit
-.L_020086a0:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_020086a4:
-	.4byte gPartyState
 	.section .text.x020086a8,"ax",%progbits
+	.balign 4
 	.global Func_020006a8
 	.thumb_func
 Func_020006a8:

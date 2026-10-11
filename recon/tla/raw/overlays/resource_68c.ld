@@ -12,7 +12,7 @@ SECTIONS
         "*/resource_68c_overlay.o"(.text.x02008a5c)
         "*/resource_68c_overlay.o"(.text.x0200928c)
         "*/resource_68c_overlay.o"(.text.x020092dc)
-        "*/resource_68c_overlay.o"(.text.x02009398)
+        "*/games/tla/src/field/overlay_68c/s1398.o"(.text)
         "*/resource_68c_overlay.o"(.text.x020093f0)
         "*/games/tla/src/field/overlay_68c/import.o"(.text)
         "*/resource_68c_overlay.o"(.rodata.x0200a92c)

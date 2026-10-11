@@ -580,8 +580,6 @@ Object_SetMoveTarget:
 	.incbin "baserom.gba", 0x00024ec6, 0x00000002
 	.section .rom.00024fde, "ax"
 	.incbin "baserom.gba", 0x00024fde, 0x00000002
-	.section .rom.000250f2, "ax"
-	.incbin "baserom.gba", 0x000250f2, 0x00000042
 	.section .rom.00025160, "ax"
 	.incbin "baserom.gba", 0x00025160, 0x000009f8
 	.section .rom.00025bb4, "ax"
@@ -2043,8 +2041,6 @@ Item_AdjustCounter:
 	.thumb_func
 Owner_UpdateClassActions:
 	.incbin "baserom.gba", 0x000aa4e0, 0x00000210
-	.section .rom.000aa78e, "ax"
-	.incbin "baserom.gba", 0x000aa78e, 0x0000000a
 	.section .rom.000aa7a8, "ax"
 	.incbin "baserom.gba", 0x000aa7a8, 0x00000124
 	.global Owner_GetLevelThreshold

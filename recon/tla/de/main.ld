@@ -1092,6 +1092,8 @@
     "*/games/tla/src/battle/effect/cleanup_resources_and_window.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000f916c)
     "*/recon/tla/de/rom.o"(.rom.000fa804)
+    "*/games/tla/src/battle/effect/encount.o"(.rodata)
+    "*/recon/tla/de/rom.o"(.rom.000fb6d4)
         "*/games/tla/src/field/scenes.o"(.rodata)
         "*/recon/tla/de/rom.o"(.rom.000ff1d0)
         . = ABSOLUTE(0x08102000);

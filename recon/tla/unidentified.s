@@ -485,9 +485,7 @@ Data_080ed90c:
 	.global Data_080eda0c
 Data_080eda0c:
 	.incbin "baserom.gba", 0x000eda0c, 0x000000c0
-	.global Encounter_EnemyGroupTable
-Encounter_EnemyGroupTable:
-	.incbin "baserom.gba", 0x000edacc, 0x00000c08
+	.section .unidentified.080ee6d4,"a"
 	.global Data_080ee6d4
 Data_080ee6d4:
 	.incbin "baserom.gba", 0x000ee6d4, 0x000006e8

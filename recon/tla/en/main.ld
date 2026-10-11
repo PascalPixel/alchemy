@@ -1476,6 +1476,8 @@
         "*/recon/tla/raw/080ed788.o"(.text)
         "*/recon/tla/raw/080ed804.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.080ed80c)
+        "*/games/tla/src/battle/effect/encount.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.080ee6d4)
         "*/recon/tla/raw/080ef81c.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.080ef824)
         "*/games/tla/src/field/scenes.o"(.rodata)

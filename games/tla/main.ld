@@ -1030,6 +1030,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000ebed8)
     "*/games/tla/src/battle/effect/cleanup_resources_and_window.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ec0b0)
+    "*/games/tla/src/battle/effect/encount.o"(.rodata)
+    "*/recon/tla/ja/rom.o"(.rom.000ee5e0)
         "*/games/tla/src/field/scenes.o"(.rodata)
         "*/recon/tla/ja/rom.o"(.rom.000f20dc)
         . = ABSOLUTE(0x080f8000);

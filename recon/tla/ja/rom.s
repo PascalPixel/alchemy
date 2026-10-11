@@ -3844,9 +3844,8 @@ Func_080ed804:
 	.global BattleFx_ArcTiles
 BattleFx_ArcTiles:
 	.incbin "baserom.gba", 0x000ed718, 0x000002c0
-	.global Encounter_EnemyGroupTable
-Encounter_EnemyGroupTable:
-	.incbin "baserom.gba", 0x000ed9d8, 0x00001488
+	.section .rom.000ee5e0, "ax"
+	.incbin "baserom.gba", 0x000ee5e0, 0x00000880
 	.global Encounter_AreaEntryTable
 Encounter_AreaEntryTable:
 	.incbin "baserom.gba", 0x000eee60, 0x00000140

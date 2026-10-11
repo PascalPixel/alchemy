@@ -246,7 +246,14 @@ or functions is exactly this cheating.
   `Transform_SetIdentity` (multi-register `stmia` with no paired `ldmia`,
   which no pattern in agscc's machine description emits), `Iwram_Call2` (a
   return through ip, which no procedure-call standard produces) and
-  `WaitFrames`' stack switch (a write to sp). A layer that
+  `WaitFrames`' stack switch (a write to sp). A fifth is proven
+  (2026-10-11, decided under Pascal's delegation): `MulQ16`, the 16.16
+  multiply (`smull` with RdLo and RdHi in any two registers, even over its
+  inputs, where mulsidi3 pairs them and smulsi3_highpart discards RdLo; its
+  joining `orr` takes a fresh output reload register beside two dying inputs
+  and nothing is scheduled across it, as only asm statements do). It corrects
+  the earlier handwritten classification of `Object_UpdateAll` and
+  `Transform_UpdateVertices`, which are compiled C around it. A layer that
   explains a habit of the whole game is source, not a device: the ☀️ scene
   script layer (inline helpers forwarding to the engine services in
   `field_event.h`, `field_service.h` and `runpa_jo/jo.h`) matches every scene

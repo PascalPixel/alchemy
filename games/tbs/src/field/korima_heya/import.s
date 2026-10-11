@@ -1,53 +1,14 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
-.syntax unified
-	.thumb
 	.include "games/tbs/src/system/overlay.inc"
-	.balign 4
-	.global Engine_MapCopyCellsTo
-	.thumb_func
-Engine_MapCopyCellsTo:
-	overlay_veneer Map_CopyMetatileIndicesRectFar
-	.global Engine_ActorSetSpriteFlags
-	.thumb_func
-Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global Engine_GameFlagIsSet
-	.thumb_func
-Engine_GameFlagIsSet:
-	overlay_veneer GameFlag_TestFar
-	.global Engine_EventBegin
-	.thumb_func
-Engine_EventBegin:
-	overlay_veneer Battle_ResetFar
-	.global Engine_EventEnd
-	.thumb_func
-Engine_EventEnd:
-	overlay_veneer BattleFx_FinishActionFar
-	.global FieldScene_PrepareActors
-	.thumb_func
-FieldScene_PrepareActors:
-	overlay_veneer Scene_AssignViewFlagsFar
-	.global Object_GetById
-	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global Engine_ActorSetPosition
-	.thumb_func
-Engine_ActorSetPosition:
-	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
-	.global Engine_EventSetMessage
-	.thumb_func
-Engine_EventSetMessage:
-	overlay_veneer Event_SetMessageIdFar
-	.global Engine_EventShowMessage
-	.thumb_func
-Engine_EventShowMessage:
-	overlay_veneer BattleEv_RunWaitFar
-	.global Engine_ShopOpen
-	.thumb_func
-Engine_ShopOpen:
-	overlay_veneer Shop_RunFar
-	.global Engine_InnOpen
-	.thumb_func
-Engine_InnOpen:
-	overlay_veneer Inn_CheckInFar
+	import Engine_MapCopyCellsTo, Map_CopyMetatileIndicesRectFar
+	import Engine_ActorSetSpriteFlags, ObjectDispatch_SetSingleChildFlagsFar
+	import Engine_GameFlagIsSet, GameFlag_TestFar
+	import Engine_EventBegin, Battle_ResetFar
+	import Engine_EventEnd, BattleFx_FinishActionFar
+	import FieldScene_PrepareActors, Scene_AssignViewFlagsFar
+	import Object_GetById, Object_GetByIdFar
+	import Engine_ActorSetPosition, ObjectMotion_SetHorizontalPositionWithTerrainFar
+	import Engine_EventSetMessage, Event_SetMessageIdFar
+	import Engine_EventShowMessage, BattleEv_RunWaitFar
+	import Engine_ShopOpen, Shop_RunFar
+	import Engine_InnOpen, Inn_CheckInFar

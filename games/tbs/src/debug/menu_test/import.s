@@ -1,204 +1,72 @@
-	.include "games/common/include/game/ed_asm.h"
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
-.syntax unified
-	.thumb
+	.include "games/common/include/game/ed_asm.h"
 	.include "games/tbs/src/system/overlay.inc"
-	.balign 4
-	.global __modsi3
-	.thumb_func
-__modsi3:
-	overlay_veneer IwramSignedRemainder
-	.global Engine_TaskWait
-	.thumb_func
-Engine_TaskWait:
-	overlay_veneer WaitFramesFar
-	.global Engine_DebugCreateWindow
-	.thumb_func
-Engine_DebugCreateWindow:
-	overlay_veneer UiWindow_CreateFar
-	.global Engine_DebugFinalizeWindow
-	.thumb_func
-Engine_DebugFinalizeWindow:
-	overlay_veneer UiWork_FinalizeFar
+	import __modsi3, IwramSignedRemainder
+	import Engine_TaskWait, WaitFramesFar
+	import Engine_DebugCreateWindow, UiWindow_CreateFar
+	import Engine_DebugFinalizeWindow, UiWork_FinalizeFar
 	.if EDITION_INTERNATIONAL
-	.global UiText_OpenMessageWindow
-	.thumb_func
-UiText_OpenMessageWindow:
-	overlay_veneer UiText_OpenMessageWindowFar
+	import UiText_OpenMessageWindow, UiText_OpenMessageWindowFar
 	.endif
-	.global UiText_ShowPositionedMessageAndWait
-	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	import UiText_ShowPositionedMessageAndWait, UiText_ShowPositionedMessageAndWaitFar
 	.if EDITION_INTERNATIONAL
-	.global UiWork_IsComplete
-	.thumb_func
-UiWork_IsComplete:
-	overlay_veneer UiWork_IsCompleteFar
+	import UiWork_IsComplete, UiWork_IsCompleteFar
 	.endif
-	.global UiText_DrawResource
-	.thumb_func
-UiText_DrawResource:
-	overlay_veneer UiText_DrawResourceFar
-	.global UiText_DrawCharacterAtOffset
-	.thumb_func
-UiText_DrawCharacterAtOffset:
-	overlay_veneer UiText_DrawCharacterAtOffsetFar
-	.global UiText_DrawStringInWindow
-	.thumb_func
-UiText_DrawStringInWindow:
-	overlay_veneer UiText_DrawStringInWindowFar
-	.global UiText_DrawNumberAtOffset
-	.thumb_func
-UiText_DrawNumberAtOffset:
-	overlay_veneer UiText_DrawNumberAtOffsetFar
+	import UiText_DrawResource, UiText_DrawResourceFar
+	import UiText_DrawCharacterAtOffset, UiText_DrawCharacterAtOffsetFar
+	import UiText_DrawStringInWindow, UiText_DrawStringInWindowFar
+	import UiText_DrawNumberAtOffset, UiText_DrawNumberAtOffsetFar
 	.if EDITION_INTERNATIONAL
-	.global UiWindow_CreateWithSideObject
-	.thumb_func
-UiWindow_CreateWithSideObject:
-	overlay_veneer UiWindow_CreateWithSideObjectFar
-	.global UiWork_PushValueSlot
-	.thumb_func
-UiWork_PushValueSlot:
-	overlay_veneer UiWork_PushValueSlotFar
-	.global UiWork_FinalizePendingCore
-	.thumb_func
-UiWork_FinalizePendingCore:
-	overlay_veneer UiWork_FinalizePendingCoreFar
+	import UiWindow_CreateWithSideObject, UiWindow_CreateWithSideObjectFar
+	import UiWork_PushValueSlot, UiWork_PushValueSlotFar
+	import UiWork_FinalizePendingCore, UiWork_FinalizePendingCoreFar
 	.endif
-	.global Engine_DebugRedrawWindow
-	.thumb_func
-Engine_DebugRedrawWindow:
-	overlay_veneer RenderOutput_RedrawSavedRectFar
-	.global Engine_DebugClearWindow
-	.thumb_func
-Engine_DebugClearWindow:
-	overlay_veneer RenderOutput_ClearListFar
-	.global NameEntry_EditOwnerName
-	.thumb_func
-NameEntry_EditOwnerName:
-	overlay_veneer NameEntry_EditOwnerNameFar
-	.global DebugMenu_BrowseIcons
-	.thumb_func
-DebugMenu_BrowseIcons:
-	overlay_veneer DebugMenu_BrowseIconsFar
-	.global UnitGet
-	.thumb_func
-UnitGet:
-	overlay_veneer UnitGetFar
-	.global UnitCalc
-	.thumb_func
-UnitCalc:
-	overlay_veneer UnitCalcFar
-	.global Engine_DebugGetItem
-	.thumb_func
-Engine_DebugGetItem:
-	overlay_veneer Item_GetDirectFar
-	.global Inventory_AddItem
-	.thumb_func
-Inventory_AddItem:
-	overlay_veneer Inventory_AddItemFar
-	.global PartyInventory_Add
-	.thumb_func
-PartyInventory_Add:
-	overlay_veneer PartyInventory_AddFar
-	.global Owner_AdjustFirstValue
-	.thumb_func
-Owner_AdjustFirstValue:
-	overlay_veneer Owner_AdjustFirstValueFar
-	.global UnitEpAdd
-	.thumb_func
-UnitEpAdd:
-	overlay_veneer UnitEpAddFar
-	.global Party_AddActiveOwner
-	.thumb_func
-Party_AddActiveOwner:
-	overlay_veneer Party_AddActiveOwnerFar
-	.global Party_RemoveActiveOwner
-	.thumb_func
-Party_RemoveActiveOwner:
-	overlay_veneer Party_RemoveActiveOwnerFar
-	.global Djinn_AddToOwner
-	.thumb_func
-Djinn_AddToOwner:
-	overlay_veneer Djinn_AddToOwnerFar
-	.global Djinn_Activate
-	.thumb_func
-Djinn_Activate:
-	overlay_veneer Djinn_ActivateFar
-	.global Party_AdvanceOwnerCountToTarget
-	.thumb_func
-Party_AdvanceOwnerCountToTarget:
-	overlay_veneer Party_AdvanceOwnerCountToTargetFar
-	.global Item_AdjustCounter
-	.thumb_func
-Item_AdjustCounter:
-	overlay_veneer Item_AdjustCounterFar
-	.global PartyInventory_HasSpace
-	.thumb_func
-PartyInventory_HasSpace:
-	overlay_veneer PartyInventory_HasSpaceFar
+	import Engine_DebugRedrawWindow, RenderOutput_RedrawSavedRectFar
+	import Engine_DebugClearWindow, RenderOutput_ClearListFar
+	import NameEntry_EditOwnerName, NameEntry_EditOwnerNameFar
+	import DebugMenu_BrowseIcons, DebugMenu_BrowseIconsFar
+	import UnitGet, UnitGetFar
+	import UnitCalc, UnitCalcFar
+	import Engine_DebugGetItem, Item_GetDirectFar
+	import Inventory_AddItem, Inventory_AddItemFar
+	import PartyInventory_Add, PartyInventory_AddFar
+	import Owner_AdjustFirstValue, Owner_AdjustFirstValueFar
+	import UnitEpAdd, UnitEpAddFar
+	import Party_AddActiveOwner, Party_AddActiveOwnerFar
+	import Party_RemoveActiveOwner, Party_RemoveActiveOwnerFar
+	import Djinn_AddToOwner, Djinn_AddToOwnerFar
+	import Djinn_Activate, Djinn_ActivateFar
+	import Party_AdvanceOwnerCountToTarget, Party_AdvanceOwnerCountToTargetFar
+	import Item_AdjustCounter, Item_AdjustCounterFar
+	import PartyInventory_HasSpace, PartyInventory_HasSpaceFar
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_DE
-	.global PartyInventory_GiveItem
-	.thumb_func
-PartyInventory_GiveItem:
-	overlay_veneer PartyInventory_GiveItemFar
+	import PartyInventory_GiveItem, PartyInventory_GiveItemFar
 	.endif
 	.endif
 	.endif
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
-	.global Engine_EventSetMessage
-	.thumb_func
-Engine_EventSetMessage:
-	overlay_veneer Event_SetMessageIdFar
-	.global BattleEv_RunWait
-	.thumb_func
-BattleEv_RunWait:
-	overlay_veneer BattleEv_RunWaitFar
+	import Engine_EventSetMessage, Event_SetMessageIdFar
+	import BattleEv_RunWait, BattleEv_RunWaitFar
 	.endif
 	.endif
 	.ifeq EDITION_INTERNATIONAL
-	.global Menu_OpenCharacterSelector
-	.thumb_func
-Menu_OpenCharacterSelector:
-	overlay_veneer Menu_OpenCharacterSelectorFar
+	import Menu_OpenCharacterSelector, Menu_OpenCharacterSelectorFar
 	.endif
-	.global Engine_DebugDrawItemDetails
-	.thumb_func
-Engine_DebugDrawItemDetails:
-	overlay_veneer ItemMenu_DrawItemDetailsFar
-	.global Battle_ApplyPresetItemsAndFlags
-	.thumb_func
-Battle_ApplyPresetItemsAndFlags:
-	overlay_veneer Battle_ApplyPresetItemsAndFlagsFar
+	import Engine_DebugDrawItemDetails, ItemMenu_DrawItemDetailsFar
+	import Battle_ApplyPresetItemsAndFlags, Battle_ApplyPresetItemsAndFlagsFar
 	.ifdef TBS_EDITION_EN
-	.global Shop_ConfirmAct
-	.thumb_func
-Shop_ConfirmAct:
-	overlay_veneer Shop_ConfirmActFar
+	import Shop_ConfirmAct, Shop_ConfirmActFar
 	.else
 	.ifeq EDITION_INTERNATIONAL
-	.global Shop_ConfirmAct
-	.thumb_func
-Shop_ConfirmAct:
-	overlay_veneer Shop_ConfirmActFar
+	import Shop_ConfirmAct, Shop_ConfirmActFar
 	.else
 	.ifdef TBS_EDITION_DE
-	.global Shop_ConfirmAct
-	.thumb_func
-Shop_ConfirmAct:
-	overlay_veneer Shop_ConfirmActFar
+	import Shop_ConfirmAct, Shop_ConfirmActFar
 	.endif
 	.endif
 	.endif
-	.global Shop_PickUnitItem
-	.thumb_func
-Shop_PickUnitItem:
-	overlay_veneer Shop_PickUnitItemFar
-	.global Engine_AudioPlayCue
-	.thumb_func
-Engine_AudioPlayCue:
-	overlay_veneer AudioCommand_PlayFar
+	import Shop_PickUnitItem, Shop_PickUnitItemFar
+	import Engine_AudioPlayCue, AudioCommand_PlayFar

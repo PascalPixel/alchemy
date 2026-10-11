@@ -290,11 +290,15 @@ pub(crate) fn overlay_fragments(
 const PLAIN_PASSES: [&str; 3] = [".text .padding", ".rodata", ".data .overlays"];
 
 /// A plain place is a ROM place of the main image, or an overlay's text
-/// place, whose rows all name a whole object and no sections: an ordered list of objects, as a makefile
-/// has them, linked as `*(.text) *(.rodata) *(.data)` would link them.
+/// place, whose rows all name a whole object or a whole library member and
+/// no sections: an ordered list of objects, as a makefile has them with
+/// its libraries last, linked as `*(.text) *(.rodata) *(.data)` would link
+/// them.
 fn plain(image: &str, place: &str, rows: &[Row]) -> bool {
     let mut own = rows.iter().filter(|row| row.image == image && row.place == place).peekable();
-    (if image == MAIN { place.starts_with("rom_") } else { place == "text" }) && own.peek().is_some() && own.all(|row| row.sections == DEFAULT_SECTIONS && row.built())
+    (if image == MAIN { place.starts_with("rom_") } else { place == "text" })
+        && own.peek().is_some()
+        && own.all(|row| row.sections == DEFAULT_SECTIONS && row.object != EVERY)
 }
 
 /// One edition's linker fragments for an image: each place the list gives
@@ -1171,6 +1175,45 @@ mod tests {
         let mut edited = rows.clone();
         apply(&mut edited, "3ad", "en", &view(&rows, "3ad", "en")).unwrap();
         assert_eq!(edited, rows);
+    }
+
+    #[test]
+    fn a_place_of_whole_objects_links_code_then_constants_then_data() {
+        let rows = parse(&list(
+            "3ad\ttext\tgames/g/entry\n\
+             3ad\ttext\tgames/g/a\n\
+             3ad\ttext\tgames/g/import\n\
+             3ad\ttext\tlibgcc.a:_call_via_rX\n\
+             3ad\ttext\tgames/g/only_ja\t\tja\n\
+             3ad\tbss\tgames/g/a\t.bss COMMON\n\
+             3ae\ttext\tgames/g/b\n\
+             3ae\ttext\tgames/g/b_data\t.data\n",
+        ))
+        .unwrap();
+        let passes = |objects: &[&str]| -> String {
+            PLAIN_PASSES
+                .iter()
+                .flat_map(|sections| objects.iter().map(move |object| format!("    \"*{object}.o\"({sections})\n")))
+                .collect()
+        };
+        // Every object's code in the list's order, the library member's
+        // after the import table's, then the constants, then the data.
+        let listed = ["/games/g/entry", "/games/g/a", "/games/g/import", "libgcc.a:_call_via_rX"];
+        assert_eq!(render(&rows, "3ad", "en")[0], ("text".to_owned(), passes(&listed)));
+        let japanese = [&listed[..], &["/games/g/only_ja"]].concat();
+        assert_eq!(render(&rows, "3ad", "ja")[0].1, passes(&japanese));
+        // The bss place is its rows, and the member still asks libgcc for it.
+        assert_eq!(render(&rows, "3ad", "en")[1].1, "    \"*/games/g/a.o\"(.bss COMMON)\n");
+        let bss = parse_bss("overlay\tbss\n3ad\t.bss\n").unwrap();
+        assert_eq!(overlay_fragments(&rows, &bss, "3ad", "en").unwrap()[0].1, "EXTERN(_call_via_r0)\n");
+        // One row that names its sections, and the place is its rows as written.
+        assert_eq!(
+            render(&rows, "3ae", "en")[0].1,
+            "    \"*/games/g/b.o\"(.text .rodata .data .padding)\n    \"*/games/g/b_data.o\"(.data)\n"
+        );
+        // A place outside the ROM is never a plain list.
+        let ram = parse(&list("main\tiwram_runtime\tgames/g/a\n")).unwrap();
+        assert_eq!(render(&ram, MAIN, "en")[0].1, "    \"*/games/g/a.o\"(.text .rodata .data .padding)\n");
     }
 
     #[test]

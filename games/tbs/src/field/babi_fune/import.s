@@ -1,209 +1,53 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
-.syntax unified
-	.thumb
 	.include "games/tbs/src/system/overlay.inc"
-	.balign 4
-	.global Math_DivideUnsigned
-	.thumb_func
-Math_DivideUnsigned:
-	overlay_veneer IwramUnsignedDivide
-	.global Engine_TaskWait
-	.thumb_func
-Engine_TaskWait:
-	overlay_veneer WaitFramesFar
-	.global Scheduler_AddOrUpdateCallback
-	.thumb_func
-Scheduler_AddOrUpdateCallback:
-	overlay_veneer Scheduler_AddOrUpdateCallbackFar
-	.global Engine_TaskRemoveCallback
-	.thumb_func
-Engine_TaskRemoveCallback:
-	overlay_veneer Scheduler_RemoveCallbackFar
-	.global Engine_RandomNext
-	.thumb_func
-Engine_RandomNext:
-	overlay_veneer Random16Far
-	.global Engine_MathSin
-	.thumb_func
-Engine_MathSin:
-	overlay_veneer Trig_SinFar
-	.global Runtime_AllocateBlock
-	.thumb_func
-Runtime_AllocateBlock:
-	overlay_veneer Runtime_AllocateBlockFar
-	.global Runtime_BumpAllocateAlternatePool
-	.thumb_func
-Runtime_BumpAllocateAlternatePool:
-	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global Engine_VramLoad
-	.thumb_func
-Engine_VramLoad:
-	overlay_veneer VramBlock_LoadCachedFar
-	.global Resource_FindFreeEntry
-	.thumb_func
-Resource_FindFreeEntry:
-	overlay_veneer Resource_FindFreeEntryFar
-	.global Runtime_PushSlotEntry
-	.thumb_func
-Runtime_PushSlotEntry:
-	overlay_veneer Runtime_PushSlotEntryFar
-	.global Object_SetMode
-	.thumb_func
-Object_SetMode:
-	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
-	.global Engine_ObjectSetScript
-	.thumb_func
-Engine_ObjectSetScript:
-	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
-	.thumb_func
-Engine_ObjectCreate:
-	overlay_veneer Object_CreateFar
-	.global Engine_MapRedraw
-	.thumb_func
-Engine_MapRedraw:
-	overlay_veneer Map_ApplyWorkOriginAndSpanFar
-	.global Engine_MapCopyCellAttributes
-	.thumb_func
-Engine_MapCopyCellAttributes:
-	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Engine_ActorSetSpriteFlags
-	.thumb_func
-Engine_ActorSetSpriteFlags:
-	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global Engine_WorkSetValuesIfNonNegative
-	.thumb_func
-Engine_WorkSetValuesIfNonNegative:
-	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
-	.global Inventory_AddItem
-	.thumb_func
-Inventory_AddItem:
-	overlay_veneer Inventory_AddItemFar
-	.global Engine_GameFlagSet
-	.thumb_func
-Engine_GameFlagSet:
-	overlay_veneer GameFlag_SetBitFar
-	.global Engine_EventWait
-	.thumb_func
-Engine_EventWait:
-	overlay_veneer Battle_WaitMode0Far
-	.global Engine_EventBegin
-	.thumb_func
-Engine_EventBegin:
-	overlay_veneer Battle_ResetFar
-	.global Engine_EventEnd
-	.thumb_func
-Engine_EventEnd:
-	overlay_veneer BattleFx_FinishActionFar
-	.global Engine_EventChooseYesNo
-	.thumb_func
-Engine_EventChooseYesNo:
-	overlay_veneer Inventory_PromptAndSetObjectModeFar
-	.global Object_GetById
-	.thumb_func
-Object_GetById:
-	overlay_veneer Object_GetByIdFar
-	.global Engine_ActorSetSpeed
-	.thumb_func
-Engine_ActorSetSpeed:
-	overlay_veneer ObjectMotion_SetSpeedParametersFar
-	.global Engine_ActorEnableActionCallback
-	.thumb_func
-Engine_ActorEnableActionCallback:
-	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
-	.global Object_RefreshSelectorById
-	.thumb_func
-Object_RefreshSelectorById:
-	overlay_veneer Object_RefreshSelectorByIdFar
-	.global Engine_ActorWalkToAndWait
-	.thumb_func
-Engine_ActorWalkToAndWait:
-	overlay_veneer ObjectMotion_SetPositionAndResetFar
-	.global Engine_ActorWaitForMove
-	.thumb_func
-Engine_ActorWaitForMove:
-	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
-	.global Engine_ActorSetAnimation
-	.thumb_func
-Engine_ActorSetAnimation:
-	overlay_veneer Object_SetModeByIdFar
-	.global Engine_ActorSetAnimationAndWait
-	.thumb_func
-Engine_ActorSetAnimationAndWait:
-	overlay_veneer Motion_SetModeAndWaitAnimationFar
-	.global Engine_ActorRunRepeatedMotion
-	.thumb_func
-Engine_ActorRunRepeatedMotion:
-	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Engine_EventSetMessage
-	.thumb_func
-Engine_EventSetMessage:
-	overlay_veneer Event_SetMessageIdFar
-	.global UiText_OpenMessageAtObject
-	.thumb_func
-UiText_OpenMessageAtObject:
-	overlay_veneer UiText_OpenMessageAtObjectFar
-	.global Engine_EventShowMessage
-	.thumb_func
-Engine_EventShowMessage:
-	overlay_veneer BattleEv_RunWaitFar
-	.global Engine_ActorFaceDirection
-	.thumb_func
-Engine_ActorFaceDirection:
-	overlay_veneer ObjectMotion_ArmCallbackFar
-	.global Engine_ActorShowEmote
-	.thumb_func
-Engine_ActorShowEmote:
-	overlay_veneer BattleFx_SpawnLinkedFar
-	.global Engine_CameraSetSpeed
-	.thumb_func
-Engine_CameraSetSpeed:
-	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
-	.global Engine_CameraMoveTo
-	.thumb_func
-Engine_CameraMoveTo:
-	overlay_veneer Motion_CamBoundsFar
-	.global Engine_CameraWaitForMove
-	.thumb_func
-Engine_CameraWaitForMove:
-	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
-	.global Event_SetDestination
-	.thumb_func
-Event_SetDestination:
-	overlay_veneer Event_SetDestinationFar
-	.global Engine_EventRequestExit
-	.thumb_func
-Engine_EventRequestExit:
-	overlay_veneer Event_SetExitRequestFar
-	.global Engine_EventCloseScreen
-	.thumb_func
-Engine_EventCloseScreen:
-	overlay_veneer Event_FinishScreenTransitionFar
-	.global Engine_EventWaitForScreen
-	.thumb_func
-Engine_EventWaitForScreen:
-	overlay_veneer Event_WaitTransitionFramesFar
-	.global Battle_ResetEffectCounter
-	.thumb_func
-Battle_ResetEffectCounter:
-	overlay_veneer Battle_ResetEffectCounterFar
-	.global Motion_LaunchFromFocusedObject
-	.thumb_func
-Motion_LaunchFromFocusedObject:
-	overlay_veneer Motion_LaunchFromFocusedObjectFar
-	.global ObjectMotion_CommitPositionAndActivate
-	.thumb_func
-ObjectMotion_CommitPositionAndActivate:
-	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
-	.global AudioCommand_WaitForStateByteClear
-	.thumb_func
-AudioCommand_WaitForStateByteClear:
-	overlay_veneer AudioCommand_WaitForStateByteClearFar
-	.global Engine_AudioPlayCue
-	.thumb_func
-Engine_AudioPlayCue:
-	overlay_veneer AudioCommand_PlayFar
-	.global MusicCommand_SetPitchAndUpdateFrequency
-	.thumb_func
-MusicCommand_SetPitchAndUpdateFrequency:
-	overlay_veneer MusicCommand_SetPitchAndUpdateFrequencyFar
+	import Math_DivideUnsigned, IwramUnsignedDivide
+	import Engine_TaskWait, WaitFramesFar
+	import Scheduler_AddOrUpdateCallback, Scheduler_AddOrUpdateCallbackFar
+	import Engine_TaskRemoveCallback, Scheduler_RemoveCallbackFar
+	import Engine_RandomNext, Random16Far
+	import Engine_MathSin, Trig_SinFar
+	import Runtime_AllocateBlock, Runtime_AllocateBlockFar
+	import Runtime_BumpAllocateAlternatePool, Runtime_BumpAllocateAlternatePoolFar
+	import Engine_VramLoad, VramBlock_LoadCachedFar
+	import Resource_FindFreeEntry, Resource_FindFreeEntryFar
+	import Runtime_PushSlotEntry, Runtime_PushSlotEntryFar
+	import Object_SetMode, ObjectDispatch_ApplyArgumentToChildrenFar
+	import Engine_ObjectSetScript, ObjectDispatch_InitializeFar
+	import Engine_ObjectCreate, Object_CreateFar
+	import Engine_MapRedraw, Map_ApplyWorkOriginAndSpanFar
+	import Engine_MapCopyCellAttributes, Map_CopyCellAttributeRectFar
+	import Engine_ActorSetSpriteFlags, ObjectDispatch_SetSingleChildFlagsFar
+	import Engine_WorkSetValuesIfNonNegative, Runtime_SetWorkTripleIfNonNegativeFar
+	import Inventory_AddItem, Inventory_AddItemFar
+	import Engine_GameFlagSet, GameFlag_SetBitFar
+	import Engine_EventWait, Battle_WaitMode0Far
+	import Engine_EventBegin, Battle_ResetFar
+	import Engine_EventEnd, BattleFx_FinishActionFar
+	import Engine_EventChooseYesNo, Inventory_PromptAndSetObjectModeFar
+	import Object_GetById, Object_GetByIdFar
+	import Engine_ActorSetSpeed, ObjectMotion_SetSpeedParametersFar
+	import Engine_ActorEnableActionCallback, ObjectMotion_EnableActionAndSetCallbackFar
+	import Object_RefreshSelectorById, Object_RefreshSelectorByIdFar
+	import Engine_ActorWalkToAndWait, ObjectMotion_SetPositionAndResetFar
+	import Engine_ActorWaitForMove, ObjectMotion_CommitCurrentPositionAndActivateFar
+	import Engine_ActorSetAnimation, Object_SetModeByIdFar
+	import Engine_ActorSetAnimationAndWait, Motion_SetModeAndWaitAnimationFar
+	import Engine_ActorRunRepeatedMotion, Motion_SetVarCbAndRefreshFar
+	import Engine_EventSetMessage, Event_SetMessageIdFar
+	import UiText_OpenMessageAtObject, UiText_OpenMessageAtObjectFar
+	import Engine_EventShowMessage, BattleEv_RunWaitFar
+	import Engine_ActorFaceDirection, ObjectMotion_ArmCallbackFar
+	import Engine_ActorShowEmote, BattleFx_SpawnLinkedFar
+	import Engine_CameraSetSpeed, ObjectTable_AllocateAndSetObjectSpeedFar
+	import Engine_CameraMoveTo, Motion_CamBoundsFar
+	import Engine_CameraWaitForMove, BattleFx_CommitObjectPositionAndWaitFar
+	import Event_SetDestination, Event_SetDestinationFar
+	import Engine_EventRequestExit, Event_SetExitRequestFar
+	import Engine_EventCloseScreen, Event_FinishScreenTransitionFar
+	import Engine_EventWaitForScreen, Event_WaitTransitionFramesFar
+	import Battle_ResetEffectCounter, Battle_ResetEffectCounterFar
+	import Motion_LaunchFromFocusedObject, Motion_LaunchFromFocusedObjectFar
+	import ObjectMotion_CommitPositionAndActivate, ObjectMotion_CommitPositionAndActivateFar
+	import AudioCommand_WaitForStateByteClear, AudioCommand_WaitForStateByteClearFar
+	import Engine_AudioPlayCue, AudioCommand_PlayFar
+	import MusicCommand_SetPitchAndUpdateFrequency, MusicCommand_SetPitchAndUpdateFrequencyFar

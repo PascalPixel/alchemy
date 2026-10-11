@@ -583,6 +583,7 @@ mod tests {
             "devices",
             "hygiene",
             "object-list",
+            "packer",
         ];
         let passed = run(&makefile);
         assert!(
@@ -599,7 +600,7 @@ mod tests {
             );
         }
 
-        // Fail the first child: keep-going must still execute the other five,
+        // Fail the first child: keep-going must still execute the others,
         // and the parent must report failure rather than publish a count.
         let failure = makefile.replace("\t$(CHECK) publication --tree\n", "\t@false\n");
         assert_ne!(failure, makefile);

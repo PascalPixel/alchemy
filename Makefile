@@ -32,7 +32,7 @@ $(LIBGCC):
 .PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
 .PHONY: publication-check publication-staged-check hygiene-check coverage-report
-.PHONY: publication-tree-check layout-check dead-check aliases-check devices-check object-list-check
+.PHONY: publication-tree-check layout-check dead-check aliases-check devices-check object-list-check packer-check
 .PHONY: progress figure deps similar worst clean modern
 
 help:
@@ -118,7 +118,7 @@ compiler-runtime toolchain-check compare compare-tla compare-editions compare-ot
 $(COMPARE_EDITIONS) build-rom precommit prepush verify land publication-check \
 hygiene-check publication-staged-check lint-staged coverage-report progress figure \
 publication-tree-check layout-check dead-check aliases-check devices-check object-list-check \
-deps similar worst modern: | build-alchemy
+packer-check deps similar worst modern: | build-alchemy
 endif
 
 CPUS := $(shell sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null || echo 4)
@@ -150,10 +150,12 @@ land:
 
 # Comparison has finished before verification invokes this group. Its checks
 # only read the source and linked images, so every check can run together.
+# The packer check is the long one: it reads all twelve editions' images and
+# packs their streams again, about 25 seconds.
 publication-check:
-	@$(MAKE) --no-print-directory -k -j7 ALCHEMY="$(ALCHEMY)" \
+	@$(MAKE) --no-print-directory -k -j8 ALCHEMY="$(ALCHEMY)" \
 	    publication-tree-check layout-check dead-check aliases-check devices-check hygiene-check \
-	    object-list-check
+	    object-list-check packer-check
 
 publication-tree-check:
 	$(CHECK) publication --tree
@@ -172,6 +174,9 @@ devices-check:
 
 object-list-check:
 	$(CHECK) object-list
+
+packer-check:
+	$(CHECK) packer
 
 hygiene-check:
 	$(CHECK) hygiene

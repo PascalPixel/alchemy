@@ -904,25 +904,6 @@ fn native_pitch(scaled: f64) -> Result<u32, String> {
     Ok(pitch as u32)
 }
 
-#[cfg(test)]
-mod pitch_tests {
-    use super::native_pitch;
-
-    #[test]
-    fn a_pitch_is_rounded_unless_a_host_could_round_it_the_other_way() {
-        assert_eq!(native_pitch(13_379.0 * 1024.0), Ok(13_700_096));
-        assert_eq!(native_pitch(22_050.25), Ok(22_050));
-        assert_eq!(native_pitch(22_050.75), Ok(22_051));
-        assert_eq!(native_pitch(22_050.499_99), Ok(22_050));
-        assert!(native_pitch(22_050.5).unwrap_err().contains("half"));
-        assert!(native_pitch(22_050.500_000_1).unwrap_err().contains("half"));
-        assert!(native_pitch(22_050.499_999_9).is_err());
-        assert!(native_pitch(0.2).unwrap_err().contains("exceeds"));
-        assert!(native_pitch(f64::NAN).is_err());
-        assert!(native_pitch(5e9).is_err());
-    }
-}
-
 pub(crate) fn build_pcm_record(wav: &[u8]) -> Result<Vec<u8>, String> {
     let wave = crate::assets::wav::read_pcm8(wav).map_err(|e| e.to_string())?;
     let last_sample = u32::try_from(
@@ -970,3 +951,21 @@ pub fn build_sound_file(name: &str, input: &[u8]) -> Result<Vec<u8>, String> {
     }
 }
 
+#[cfg(test)]
+mod pitch_tests {
+    use super::native_pitch;
+
+    #[test]
+    fn a_pitch_is_rounded_unless_a_host_could_round_it_the_other_way() {
+        assert_eq!(native_pitch(13_379.0 * 1024.0), Ok(13_700_096));
+        assert_eq!(native_pitch(22_050.25), Ok(22_050));
+        assert_eq!(native_pitch(22_050.75), Ok(22_051));
+        assert_eq!(native_pitch(22_050.499_99), Ok(22_050));
+        assert!(native_pitch(22_050.5).unwrap_err().contains("half"));
+        assert!(native_pitch(22_050.500_000_1).unwrap_err().contains("half"));
+        assert!(native_pitch(22_050.499_999_9).is_err());
+        assert!(native_pitch(0.2).unwrap_err().contains("exceeds"));
+        assert!(native_pitch(f64::NAN).is_err());
+        assert!(native_pitch(5e9).is_err());
+    }
+}

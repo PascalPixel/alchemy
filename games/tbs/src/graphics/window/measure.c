@@ -92,15 +92,7 @@ void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2, u
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height);
 void UiWork_ResetCounters(void);
 
-#if GAME_TLA
-#include "ram_buffer.h"
-#endif
-
-#if GAME_TLA
-#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)
-#else
 #define UI_WORK ((struct UiRenderWork *)gWindowWork[0])
-#endif
 
 //--------------------------------------------------------------------------
 // あきリストの先頭をとり出す（なければ NULL）
@@ -1298,11 +1290,7 @@ void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_w
 // 表示：メッセージのチャンネルがすべて書き終えたか
 //--------------------------------------------------------------------------
 
-#if GAME_TLA
-#include "ram_buffer.h"
-#else
 #include "global_cells.h"
-#endif
 
 //--------------------------------------------------------------------------
 // 3 つのチャンネルのうち、ウィンドウがあって書き終えていない（state が 0）
@@ -1313,11 +1301,7 @@ s32 UiWork_IsComplete(void)
 	struct UiChannelSlot *ch;
 	s32					  i;
 
-#if GAME_TLA
-	ch = ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)->channels;
-#else
 	ch = ((struct UiRenderWork *)gWindowWork[0])->channels;
-#endif
 	for (i = 0; i != 3; i++, ch++)
 	{
 		if (ch->work != NULL && ch->work->state == 0)
@@ -9701,8 +9685,6 @@ void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
 #elif defined(TBS_EDITION_FR) || defined(TLA_EDITION_FR)
 #define SUMMARY_LEVEL_X 59
 #define SUMMARY_COINS_X 56
-#elif defined(TLA_EDITION_DE) || defined(TLA_EDITION_IT)
-#define SUMMARY_COINS_X 56
 #else
 #define SUMMARY_COINS_X 48
 #endif
@@ -14138,11 +14120,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item)
 	{
 		return 1;
 	}
-#if GAME_TLA
-	def = Item_Get(item);
-#else
 	def = Item_GetDirectFar(item);
-#endif
 	ret = 1;
 	if (def->use_type == 3) // エナジーを授ける装備
 	{

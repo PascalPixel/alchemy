@@ -13,18 +13,6 @@ enum {
     ITEM_NUT = 181
 };
 
-struct SceneHandle {
-    u8 unknown_00[9];
-    u8 flags09;
-};
-
-struct SceneEntity {
-    u8 unknown_00[0x23];
-    u8 fp;
-    u8 unknown_24[0x2c];
-    struct SceneHandle *h;
-};
-
 struct SceneHandle_0200090c {
     u8 unknown_00[30];
     s16 field1e;

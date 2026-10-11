@@ -6882,11 +6882,6 @@ s32 Object_CallSpawnRoutineAtOrigin(s32 value)
 //--------------------------------------------------------------------------
 
 void OwnerAction_AddFar(void);
-#if GAME_TLA
-void Audio_PlayCue(s32);
-void UiText_DrawQuantity(s32, s32);
-#else
-#endif
 
 //--------------------------------------------------------------------------
 // わざを覚えさせ、効果音とメッセージを出して、送られるまで待つ
@@ -6897,15 +6892,9 @@ void UiText_DrawQuantityPairWithCue(s32 unit, s32 abil)
 {
 	// 引数なしの宣言だが、r0・r1 の unit・abil がそのまま渡る
 	OwnerAction_AddFar();
-#if GAME_TLA
-	Audio_PlayCue(83);
-	UiText_DrawQuantity(unit, 1);
-	UiText_DrawQuantity(abil, 4);
-#else
 	AudioCommand_PlayFar(83);
 	UiWork_PushValueSlotFar(unit, 1);
 	UiWork_PushValueSlotFar(abil, 4);
-#endif
 	UiText_ShowPositionedMessageAndWaitFar(MsgAbilityLearned, 3);
 }
 
@@ -12691,20 +12680,9 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src)
 
 		if (dx != 0 || dz != 0)
 		{
-#if GAME_TLA
-			s32 dir = ArcTan2(dz, dx);
-			s32 cur = src->angle;
-			s32 lim = 128;
-
-			turn = (s16)(dir - cur);
-			lim <<= 5;
-			if (turn > lim)
-				turn = lim;
-#else
 			turn = (s16)(ArcTan2(dz, dx) - src->angle);
 			if (turn > 0x1000)
 				turn = 0x1000;
-#endif
 			if (turn < -0x1000)
 				turn = -0x1000;
 			src->angle += turn;
@@ -12720,20 +12698,12 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src)
 	dist <<= 4;
 	Vector_AddPolarOffset(dist, Random16(), &pos);
 
-#if GAME_TLA
-	obj = Object_Spawn(0x2a1, pos.x, pos.y, pos.z);
-#else
 	obj = Object_Spawn(0x11d, pos.x, pos.y, pos.z);
-#endif
 	if (obj != 0)
 	{
 		obj->mode_55 = 2;
 		obj->field_48 = 0x1999;
-#if GAME_TLA
-		Object_SetMode(obj, 0);
-#else
 		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
-#endif
 		obj->field_5e = 12;
 		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);
 	}

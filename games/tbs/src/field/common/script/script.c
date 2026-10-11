@@ -1083,17 +1083,10 @@ void ResourceMetadata_ClearRecord(void *dst)
 
 struct ResourceObjectWork
 {
-#if GAME_TLA
-	u8 unknown_00[16];
-	u8 resource; // VRAM キャッシュの番号
-	u8 flags;	 // ビット 0：VRAM キャッシュを返さない
-	u8 unknown_12[22];
-#else
 	u8 unknown_00[28];
 	u8 resource; // VRAM キャッシュの番号
 	u8 flags;	 // ビット 0：VRAM キャッシュを返さない
 	u8 unknown_1e[10];
-#endif
 	void *children[4];
 };
 
@@ -1282,9 +1275,6 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt)
 #undef Render_DecodeFrame
 #undef gMenuCtrlWork
 
-#if GAME_TLA
-#include "ram_buffer.h"
-#else
 #include "types.h"
 #include "callback_scheduler.h"
 #include "scene.h"
@@ -1499,19 +1489,13 @@ void ResourceTable_ReservedNoOp2(void)
 {
 }
 
-#endif
-
 //--------------------------------------------------------------------------
 // 64 個のうち、使われていない（スクリプトのない）オブジェクトを返す
 // 空きがなければ 0
 //--------------------------------------------------------------------------
 void *ObjectDispatch_FindFreeObject(void)
 {
-#if GAME_TLA
-	struct ObjectRuntime *obj = Ram_HeapSlots->script_objects;
-#else
 	struct ObjectRuntime *obj = gObjectSlots;
-#endif
 	void *ret = 0;
 	s32	  n = 0;
 
@@ -2283,21 +2267,12 @@ void ObjectSystem_UpdateCameraFixed(void)
 //--------------------------------------------------------------------------
 // スクリプトの読む位置を移し、1 を返して次の命令を続けて実行する
 //--------------------------------------------------------------------------
-#if GAME_TLA
-s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc)
-#else
 s32 Script_AdvancePastCursor(struct ScriptInterpreter *sc)
-#endif
 {
 	s32 zero;
 
-#if GAME_TLA
-	// 命令の次の語が指すスクリプトへ飛ぶ
-	sc->script = sc->script[sc->cursor + 1];
-#else
 	// 命令の次の語を新しい先頭にする
 	sc->script = sc->script + sc->cursor + 1;
-#endif
 	zero = 0;
 	sc->cursor = zero;
 	return 1;
@@ -5528,20 +5503,6 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destinati
 // マップ：セルの矩形の写し
 //--------------------------------------------------------------------------
 
-#if GAME_TLA
-
-//--------------------------------------------------------------------------
-// セルの矩形を、ブロック番号と属性ごと写す
-// src_x, src_y  : 写すもとの左上（セル）
-// width, height : 大きさ（セル）
-// dst_x, dst_y  : 写す先の左上（セル）
-//--------------------------------------------------------------------------
-void Map_CopyCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y)
-{
-	Map_CopyMetatileIndicesRect(src_x, src_y, dst_x, dst_y, width, height);
-	Map_CopyCellAttributeRect(src_x, src_y, width, height, dst_x, dst_y);
-}
-#else
 #include "map_scroll.h"
 #include "ram_buffer.h"
 
@@ -5838,7 +5799,6 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 		} while (y < dst_y + height);
 	}
 }
-#endif
 
 #undef Scheduler_AddOrUpdateCallback
 

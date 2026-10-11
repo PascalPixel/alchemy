@@ -1254,8 +1254,8 @@ void Scene_RunActorEntrySequence(void)
 	{
 		s32 actor = (s32)&SceneId_VinasuChojo;
 
-		Call2(Party_SetFields1ceAnd1d0, actor, 2);
-		Call2(Event_SetDefeatDestination, actor, 9);
+		Party_SetFields1ceAnd1d0(actor, 2);
+		Event_SetDefeatDestination(actor, 9);
 	}
 	BattleFx_SetWeightedResult(98, 1);
 	GameFlag_Set(0x350);

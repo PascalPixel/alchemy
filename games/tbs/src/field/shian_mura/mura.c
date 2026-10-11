@@ -570,7 +570,7 @@ void ShianMura_HopLeaderAhead(void)
 		p[2].fixed = (leader->z.fixed & -0x100000) + 0x80000;
 		FieldVector_AddPolarOffset(
 			0x200000, (leader->facing + 0x2000) & 0xc000, (struct FieldPosition *)p);
-		if (((s32 (*)())Object_CheckMovementCollision)((s32)leader, (s32)p) == 0)
+		if (Object_CheckMovementCollision(leader, p) == 0)
 		{
 			Engine_EventBegin();
 			Object_SetMode(leader, 6);

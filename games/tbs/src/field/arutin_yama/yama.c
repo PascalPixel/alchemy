@@ -1414,7 +1414,7 @@ void ArutinYama_RunLeapSequence(void)
 	Engine_ActorRunRepeatedMotion(10, 2);
 	Engine_EventWait(80);
 	Engine_ActorSetAnimation(10, 3);
-	Call4(ArutinYama_StartLeafGust, 0x820000, 0, 0xa80000, 0);
+	ArutinYama_StartLeafGust(0x820000, 0, 0xa80000, 0);
 	Engine_EventWait(60);
 	for (n = 0; n < 60 && gKeyState == 0; n++)
 	{

@@ -4,7 +4,12 @@ use std::fs;
 use std::ops::Range;
 use std::path::{Path, PathBuf};
 
+/// The script an edition's main image links by: the game's main.ld, or for
+/// an edition that derives its own, that script written under `output`.
 pub(crate) fn script(root: &Path, target: DecompTarget, output: &Path) -> Result<PathBuf, String> {
+    if target.object_list().is_some() {
+        return Ok(target.script());
+    }
     let Some(text) = script_text(root, target)? else {
         return Ok(target.script());
     };
@@ -80,9 +85,114 @@ pub(crate) enum Item {
     Assignment(String),
 }
 
-/// The linker script text an image links by: the edition's derived main
-/// script, or its overlay's own.
+/// How an image of a game with an object list links: the one maintained
+/// script, which names no object, and the fragments the build writes from
+/// the list for the script to INCLUDE.
+#[derive(Clone, Debug)]
+pub(crate) struct Listed {
+    /// The maintained script, from the checkout.
+    pub script: PathBuf,
+    /// Each fragment's name without `.ld`, and its text.
+    pub fragments: Vec<(String, String)>,
+    /// Where the fragments go under an edition's build output.
+    pub directory: PathBuf,
+}
+
+impl Listed {
+    /// The script as the linker reads it: each `INCLUDE "NAME.ld"` of a
+    /// fragment replaced by the fragment. Every fragment is read once, and
+    /// an INCLUDE of a path (games/tbs/constants.ld) is left to the linker.
+    pub(crate) fn flat(&self, root: &Path) -> Result<String, String> {
+        let text = fs::read_to_string(root.join(&self.script))
+            .map_err(|error| format!("{}: {error}", self.script.display()))?;
+        flat(&text, &self.fragments).map_err(|error| format!("{}: {error}", self.script.display()))
+    }
+
+    /// Write the fragments under `output`, each only when its text changed,
+    /// and remove any other fragment found there. Returns their directory,
+    /// for the linker's `-L`.
+    pub(crate) fn write(&self, output: &Path) -> Result<PathBuf, String> {
+        let directory = output.join(&self.directory);
+        fs::create_dir_all(&directory).map_err(|error| format!("{}: {error}", directory.display()))?;
+        for entry in fs::read_dir(&directory).into_iter().flatten().flatten() {
+            let path = entry.path();
+            let stale = path.extension().is_some_and(|extension| extension == "ld")
+                && !self
+                    .fragments
+                    .iter()
+                    .any(|(name, _)| path.file_stem().is_some_and(|stem| stem == name.as_str()));
+            if stale {
+                fs::remove_file(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+            }
+        }
+        for (name, text) in &self.fragments {
+            let path = directory.join(format!("{name}.ld"));
+            if fs::read_to_string(&path).ok().as_deref() != Some(text.as_str()) {
+                fs::write(&path, text).map_err(|error| format!("{}: {error}", path.display()))?;
+            }
+        }
+        Ok(directory)
+    }
+}
+
+/// The name a line includes a fragment by: `INCLUDE "NAME.ld"`, a bare name.
+fn included_fragment(line: &str) -> Option<&str> {
+    let name = line
+        .trim()
+        .strip_prefix("INCLUDE")?
+        .trim()
+        .strip_prefix('"')?
+        .strip_suffix(".ld\"")?;
+    (!name.is_empty() && name.bytes().all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'_'))
+        .then_some(name)
+}
+
+fn flat(script: &str, fragments: &[(String, String)]) -> Result<String, String> {
+    let mut text = String::with_capacity(script.len());
+    let mut read = BTreeSet::new();
+    for line in script.split_inclusive('\n') {
+        let Some(name) = included_fragment(line) else {
+            text.push_str(line);
+            continue;
+        };
+        let (_, fragment) = fragments
+            .iter()
+            .find(|(known, _)| known == name)
+            .ok_or_else(|| format!("INCLUDE \"{name}.ld\" names no place of the object list"))?;
+        if !read.insert(name) {
+            return Err(format!("{name}.ld is included twice"));
+        }
+        text.push_str(fragment);
+    }
+    match fragments.iter().find(|(name, _)| !read.contains(name.as_str())) {
+        Some((name, _)) => Err(format!("the object list has the place {name}, and no INCLUDE \"{name}.ld\"")),
+        None => Ok(text),
+    }
+}
+
+/// The listed form of an image, or None when the image links by a script
+/// that names its own objects.
+pub(crate) fn listed(root: &Path, target: DecompTarget, image: Image) -> Result<Option<Listed>, String> {
+    let Some(list) = crate::object_list::read(root, target)? else {
+        return Ok(None);
+    };
+    Ok(match image {
+        Image::Main => Some(Listed {
+            script: target.script(),
+            fragments: crate::object_list::render(&list, crate::object_list::MAIN, target.language()),
+            directory: PathBuf::from("ld"),
+        }),
+        Image::Overlay(_) => None,
+    })
+}
+
+/// The linker script text an image links by, as the linker reads it: a
+/// listed game's script with its fragments in place, else the edition's
+/// derived main script, or its overlay's own.
 pub(crate) fn image_script(root: &Path, target: DecompTarget, image: Image) -> Result<String, String> {
+    if let Some(listed) = listed(root, target, image)? {
+        return listed.flat(root);
+    }
     let path = match image {
         Image::Main => match script_text(root, target)? {
             Some(text) => return Ok(text),
@@ -417,6 +527,48 @@ mod tests {
         assert!(!text.contains("0x08009000"), "{text}");
         let reordered = ".rom_main :\n{\n    \"*/games/g/b.o\"(.text)\n    \"*/games/g/a.o\"(.text)\n}\n";
         assert!(derive(GAME, reordered, "\"*/recon/g/de/").is_err());
+    }
+
+    #[test]
+    fn a_listed_script_reads_each_fragment_where_it_includes_it() {
+        let script = "INCLUDE \"games/g/constants.ld\"\nSECTIONS\n{\n    .rom_main :\n    {\n        INCLUDE \"rom_main_00.ld\"\n        . = ABSOLUTE(DEFINED(G_EDITION_JA) ? 0x08009000 :\n                     0x08008800);\n        INCLUDE \"rom_main_01.ld\"\n    } > ROM\n}\n";
+        let fragment = |name: &str, text: &str| (name.to_owned(), text.to_owned());
+        let fragments = [
+            fragment("rom_main_00", "    \"*/games/g/a.o\"(.text)\n"),
+            fragment("rom_main_01", ""),
+        ];
+        let text = flat(script, &fragments).unwrap();
+        assert_eq!(
+            text,
+            "INCLUDE \"games/g/constants.ld\"\nSECTIONS\n{\n    .rom_main :\n    {\n    \"*/games/g/a.o\"(.text)\n        . = ABSOLUTE(DEFINED(G_EDITION_JA) ? 0x08009000 :\n                     0x08008800);\n    } > ROM\n}\n"
+        );
+        let found = items(&text).unwrap();
+        assert_eq!(found[0].1.len(), 2);
+        assert!(matches!(&found[0].1[1], Item::Placement(address) if address.starts_with("ABSOLUTE(DEFINED(G_EDITION_JA)")));
+        // The script and the list name the same places, each once.
+        assert!(flat(script, &fragments[..1]).unwrap_err().contains("rom_main_01.ld\" names no place"));
+        let more = [fragments[0].clone(), fragments[1].clone(), fragment("rom_tail", "")];
+        assert!(flat(script, &more).unwrap_err().contains("the place rom_tail"));
+        let twice = script.replace("rom_main_01", "rom_main_00");
+        assert!(flat(&twice, &fragments[..1]).unwrap_err().contains("included twice"));
+    }
+
+    #[test]
+    fn fragments_are_written_when_they_change_and_stale_ones_removed() {
+        let output = tempfile::tempdir().unwrap();
+        let listed = |fragments: &[(&str, &str)]| Listed {
+            script: PathBuf::from("games/g/main.ld"),
+            fragments: fragments.iter().map(|(name, text)| (name.to_string(), text.to_string())).collect(),
+            directory: PathBuf::from("ld"),
+        };
+        let directory = listed(&[("rom_start", "a\n"), ("rom_tail", "b\n")]).write(output.path()).unwrap();
+        assert_eq!(directory, output.path().join("ld"));
+        let stamp = |name: &str| fs::metadata(directory.join(name)).unwrap().modified().unwrap();
+        let before = stamp("rom_start.ld");
+        listed(&[("rom_start", "a\n"), ("rom_main", "c\n")]).write(output.path()).unwrap();
+        assert_eq!(stamp("rom_start.ld"), before);
+        assert!(!directory.join("rom_tail.ld").exists());
+        assert_eq!(fs::read_to_string(directory.join("rom_main.ld")).unwrap(), "c\n");
     }
 
     /// What the build read before linked_statements: every quoted object

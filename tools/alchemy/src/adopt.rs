@@ -4,10 +4,10 @@ use std::path::{Path, PathBuf};
 const USAGE: &str = r#"usage: alchemy adopt ADDRESS LABEL [NEW_NAME] [--game tbs|tla] [--padding]
                     [--into MODULE.c [--head]]
 After the function's C is in its module: removes recon/<game>/raw/ADDRESS.s,
-its line in the English linker script and the draft recon/<game>/en/main/
-ADDRESS.c; in each other edition removes the rom.s section that holds
-exactly LABEL and its line in that edition's linker script
-(games/<game>/main.ld for Japanese; ☀️'s main_<lang>.ld beside it, ⚓️'s
+its line among the English edition's objects and the draft recon/<game>/en/
+main/ADDRESS.c; in each other edition removes the rom.s section that holds
+exactly LABEL and its line among that edition's objects (☀️'s rows of
+games/tbs/objects.tsv; ⚓️'s games/tla/main.ld for Japanese and
 recon/tla/<lang>/main.ld). --padding also removes a two-byte section
 directly before or after it. NEW_NAME renames LABEL across games/ and recon/. The
 game defaults to tbs. Then build all twelve editions.
@@ -120,24 +120,29 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let root = root();
     let mut edits: Vec<(PathBuf, String)> = Vec::new();
 
-    let english = root.join(crate::targets::edition_script_path(game, "en"));
+    // Each edition's object lines: its linker script, or its rows of the
+    // game's object list.
+    let mut lines: Vec<(&str, String)> = Vec::new();
+    let english = crate::object_list::main_lines_path(game, "en");
     let object = format!("\"*/recon/{game}/raw/{address}.o\"");
-    let (text, removed) = drop_lines(&read(&english)?, |l| !l.contains(&object));
+    let (text, removed) = drop_lines(&crate::object_list::main_lines(root, game, "en")?, |l| !l.contains(&object));
     if removed != 1 {
         return Err(format!("{}: {removed} lines link {object}", english.display()));
     }
-    edits.push((english, text));
+    lines.push(("en", text));
 
     for lang in ["ja", "de", "es", "fr", "it"] {
         let scaffold = root.join(format!("recon/{game}/{lang}/rom.s"));
-        let script = root.join(crate::targets::edition_script_path(game, lang));
+        let script = crate::object_list::main_lines_path(game, lang);
         let (text, sections) = remove_section(&read(&scaffold)?, &label, padding).map_err(|e| format!("{game}-{lang}: {e}"))?;
         edits.push((scaffold, text));
-        let (text, removed) = drop_lines(&read(&script)?, |l| !sections.iter().any(|s| l.contains(&format!("(.rom.{s})"))));
+        let (text, removed) = drop_lines(&crate::object_list::main_lines(root, game, lang)?, |l| {
+            !sections.iter().any(|s| l.contains(&format!("(.rom.{s})")))
+        });
         if removed != sections.len() {
             return Err(format!("{}: expected {} section lines, removed {removed}", script.display(), sections.len()));
         }
-        edits.push((script, text));
+        lines.push((lang, text));
     }
 
     if let Some(module) = &into {
@@ -146,6 +151,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     for (path, text) in &edits {
         write(path, text)?;
     }
+    crate::object_list::write_main_lines(root, game, &lines)?;
     for file in [format!("recon/{game}/raw/{address}.s"), format!("recon/{game}/en/main/{address}.c")] {
         if root.join(&file).exists() {
             crate::process::run(&["git", "rm", "-q", "-f", &file], root)?;

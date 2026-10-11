@@ -3,8 +3,9 @@
 //!   unit candidates  every run of today's C files the analysis joins, with
 //!                    the evidence at its edges (TSV)
 //!   unit flatten     one such run merged into one file in ROM order: the
-//!                    merged source, every linker script and the routing
-//!                    tables updated, the superseded files removed
+//!                    merged source, every linker script and object list
+//!                    and the routing tables updated, the superseded
+//!                    files removed
 //!
 //! A run is a chain of adjacent C objects of one image where every gap
 //! between two of them is judged or forced a join; it never crosses
@@ -35,8 +36,9 @@ flatten merges the runs of one proposed unit (IMAGE:UNIT as in the units
 TSV; main is the main image), or the named sources, into one C file in ROM
 order, in the folder holding most of their functions and named after its
 main module file (the largest 8.3-named one), else after the folder;
---name chooses. Every linker script under games/ and recon/ that names the
-objects, and the compiler routing tables, follow; the old files and local
+--name chooses. Every linker script under games/ and recon/ and every
+game's object list (games/<game>/objects.tsv) that names the objects, and
+the compiler routing tables, follow; the old files and local
 headers only they include are removed. Every edition that links the
 objects is compiled and compared first, from today's builds; --dry-run
 stops there. --static also makes functions no other file names static,
@@ -296,6 +298,36 @@ fn editions(source: &str) -> Vec<String> {
 fn linker_scripts(root: &Path) -> Result<Vec<PathBuf>, String> {
     let listed = crate::process::run(&["git", "ls-files", "--", "*.ld"], root)?;
     Ok(listed.lines().filter(|l| l.starts_with("games/") || l.starts_with("recon/")).map(|l| root.join(l)).collect())
+}
+
+/// Each game's object list that names some of `objects`, with its text once
+/// `merged` takes their place in every image and edition.
+fn rewritten_lists(root: &Path, objects: &[String], merged: &str) -> Result<Vec<(PathBuf, String)>, String> {
+    let mut found = Vec::new();
+    for game in crate::targets::TARGET_IDS.chunks(6) {
+        let target = crate::targets::target_for(game[0]);
+        let (Some(path), Some(before)) = (target.object_list(), crate::object_list::read(root, target)?) else {
+            continue;
+        };
+        let rows = rewritten_rows(&before, objects, merged).map_err(|e| format!("{}: {e}", path.display()))?;
+        if rows != before {
+            found.push((path, crate::object_list::format(&rows)));
+        }
+    }
+    Ok(found)
+}
+
+fn rewritten_rows(before: &[crate::object_list::Row], objects: &[String], merged: &str) -> Result<Vec<crate::object_list::Row>, String> {
+    let mut rows = before.to_vec();
+    for image in crate::object_list::images(before) {
+        for language in crate::object_list::LANGUAGES {
+            let view = crate::object_list::view(&rows, &image, language);
+            if let Some(new) = super::ldscript::rewrite(&view, objects, merged).map_err(|e| format!("{image} {language}: {e}"))? {
+                crate::object_list::apply(&mut rows, &image, language, &new)?;
+            }
+        }
+    }
+    Ok(rows)
 }
 
 fn read(path: &Path) -> Result<String, String> {
@@ -682,6 +714,11 @@ fn flatten(options: &Options) -> Result<(), String> {
                 Err(e) => return Err(format!("{}: {e}", script.strip_prefix(&root).unwrap_or(script).display())),
             }
         }
+        // A game with an object list names its objects there: the same
+        // rewrite, over each image's rows as each edition links them.
+        for (list, text) in rewritten_lists(&root, &stems, &merged_object)? {
+            rewritten.push((root.join(list), text));
+        }
         // Plainly first; failing that, each file keeps its own shapes as casts.
         let lines = match verify(&root, &plan, &plan.text, &mut cache) {
             Ok(lines) => lines,
@@ -731,11 +768,11 @@ fn flatten(options: &Options) -> Result<(), String> {
             fs::create_dir_all(&out).map_err(|e| e.to_string())?;
             let path = out.join(Path::new(&plan.destination).file_name().unwrap_or_default());
             fs::write(&path, &text).map_err(|e| format!("{}: {e}", path.display()))?;
-            println!("  dry run: {} ({} linker scripts would change)", path.strip_prefix(&root).unwrap_or(&path).display(), rewritten.len());
+            println!("  dry run: {} ({} linker scripts and object lists would change)", path.strip_prefix(&root).unwrap_or(&path).display(), rewritten.len());
             continue;
         }
         apply(&root, &plan, &text, &rewritten)?;
-        println!("  applied: {} linker scripts", rewritten.len());
+        println!("  applied: {} linker scripts and object lists", rewritten.len());
     }
     Ok(())
 }
@@ -786,6 +823,37 @@ fn routing(root: &Path, sources: &[String], destination: &str) -> Result<(), Str
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn an_object_list_takes_the_merged_object_in_every_image_and_edition() {
+        let list = |rows: &str| crate::object_list::parse(&format!("{}\n{rows}", crate::object_list::HEADER)).unwrap();
+        let before = list(
+            "main\trom_start\tgames/g/x\t.text\n\
+             main\trom_start\tgames/g/a\t.text\n\
+             main\trom_start\tgames/g/b\t.text\n\
+             main\trom_start\tgames/g/only_ja\t.text\tja\n\
+             main\trom_tail\tgames/g/a\t.rodata\n\
+             main\trom_tail\tgames/g/b\t.rodata\n\
+             3ad\ttext\tgames/g/a\t.text\n\
+             3ad\ttext\tgames/g/b\t.text\n",
+        );
+        let objects = ["games/g/a".to_owned(), "games/g/b".to_owned()];
+        let rows = rewritten_rows(&before, &objects, "games/g/m").unwrap();
+        assert_eq!(
+            rows,
+            list(
+                "main\trom_start\tgames/g/x\t.text\n\
+                 main\trom_start\tgames/g/m\t.text\n\
+                 main\trom_start\tgames/g/only_ja\t.text\tja\n\
+                 main\trom_tail\tgames/g/m\t.rodata\n\
+                 3ad\ttext\tgames/g/m\t.text\n"
+            )
+        );
+        assert_eq!(rewritten_rows(&before, &["games/g/q".to_owned()], "games/g/m").unwrap(), before);
+        // An edition that links one of the objects and not the other is refused.
+        let partial = list("main\trom_start\tgames/g/a\t.text\nmain\trom_start\tgames/g/b\t.text\tja\n");
+        assert!(rewritten_rows(&partial, &objects, "games/g/m").unwrap_err().contains("main en"));
+    }
 
     #[test]
     fn runs_apply_only_with_strong_edges_and_joins() {

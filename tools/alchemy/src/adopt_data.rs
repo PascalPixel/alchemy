@@ -7,8 +7,8 @@ const USAGE: &str = r#"usage: alchemy adopt-data OBJECT PIECE... [--sections ".r
 After a data block's source is in its module: takes the block out of every
 edition's scaffold (recon/<game>/unidentified.s for English,
 recon/<game>/<lang>/rom.s for the others) and links OBJECT in its place in
-that edition's linker script (games/<game>/main.ld for Japanese,
-main_<lang>.ld beside it for ☀️, recon/tla/<lang>/main.ld for ⚓️).
+that edition's object lines (☀️'s rows of games/tbs/objects.tsv; for ⚓️
+games/tla/main.ld for Japanese and recon/tla/<lang>/main.ld).
 
 OBJECT is the module's object or source, games/<game>/src/.../x.o (or .s
 or .c); --sections lists its input sections, .rodata by default. It may
@@ -692,11 +692,12 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let mut texts = Vec::new();
     for lang in &langs {
         let (scaffold, prefix) = scaffold_of(game, lang);
-        let script = crate::targets::edition_script_path(game, lang);
         let read = |path: &Path| {
             std::fs::read_to_string(root.join(path)).map_err(|e| format!("{}: {e}", path.display()))
         };
-        texts.push((*lang, scaffold.clone(), prefix, read(&scaffold)?, script.clone(), read(&script)?));
+        // The edition's object lines: its script, or its rows of the list.
+        let lines = crate::object_list::main_lines(root, game, lang)?;
+        texts.push((*lang, scaffold.clone(), prefix, read(&scaffold)?, lines));
     }
     let scaffold_objects: Vec<String> = texts
         .iter()
@@ -705,19 +706,17 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let editions: Vec<(&str, &str, &str, &str, &str)> = texts
         .iter()
         .zip(&scaffold_objects)
-        .map(|(t, object)| (t.0, object.as_str(), t.2, t.3.as_str(), t.5.as_str()))
+        .map(|(t, object)| (t.0, object.as_str(), t.2, t.3.as_str(), t.4.as_str()))
         .collect();
     let required: Vec<&str> = only.iter().flatten().map(String::as_str).collect();
-    let english_script = crate::targets::edition_script_path(game, "en");
     let linked = line.split('(').next().unwrap_or(&line);
-    let english_links = std::fs::read_to_string(root.join(&english_script))
-        .map_err(|e| format!("{}: {e}", english_script.display()))?
-        .contains(linked);
+    let english_links = crate::object_list::main_lines(root, game, "en")?.contains(linked);
     let outcomes = match tail {
         Some(size) => plan_tail(&editions, &line, size, &required)?,
         None => plan(&editions, &pieces, &line, &required, english_links)?,
     };
     let mut writes = Vec::new();
+    let mut lines: Vec<(&str, String)> = Vec::new();
     let mut must_define = std::collections::BTreeSet::new();
     for (lang, outcome) in &outcomes {
         match outcome {
@@ -732,7 +731,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
                 );
                 must_define.extend(cut.labels.iter().cloned());
                 writes.push((t.1.clone(), cut.text.clone()));
-                writes.push((t.4.clone(), script.clone()));
+                lines.push((lang.as_str(), script.clone()));
             }
             Outcome::Kept(reason) => println!("{game}-{lang}: kept on its scaffold: {reason}"),
         }
@@ -750,6 +749,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     for (path, text) in writes {
         std::fs::write(root.join(&path), text).map_err(|e| format!("{}: {e}", path.display()))?;
     }
+    crate::object_list::write_main_lines(root, game, &lines)?;
     println!("build all twelve editions to confirm (make compare-editions)");
     Ok(())
 }

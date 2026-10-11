@@ -204,7 +204,8 @@ mod tests {
         for path in [
             "games/tbs/src/battle/tgtexec.c",
             "games/tbs/include/chara.h",
-            "games/tbs/main_en.ld",
+            "games/tbs/main.ld",
+            "games/tbs/objects.tsv",
             "games/common/src/system/overlays.s",
             "games/tbs/src/system/ROM_HEAD.S",
             "recon/tla/raw/08000630.s",

@@ -1,6 +1,6 @@
 recon/*/*/rom.s merge=alchemy-scaffold
 recon/*/*/main.ld merge=alchemy-lines
-games/*/main*.ld merge=alchemy-lines
+games/*/main.ld merge=alchemy-lines
 games/*/objects.tsv merge=alchemy-lines
 recon/*/raw/overlays/*.ld merge=alchemy-lines
 games/*/src/system/overlay/*.ld merge=alchemy-lines

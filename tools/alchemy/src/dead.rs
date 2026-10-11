@@ -186,6 +186,10 @@ impl Linked {
                     .to_string_lossy(),
                 ));
             }
+            // A game with an object list links by it and the one script.
+            if let Some(list) = target.object_list() {
+                scripts.push(normalize(&list.to_string_lossy()));
+            }
             let mut queue = scripts;
             let mut compiled = Vec::new();
             for object in crate::edition::built_objects(&statements) {

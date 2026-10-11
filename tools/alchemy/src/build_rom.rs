@@ -142,6 +142,14 @@ struct Build<'a> {
     modern: Option<&'a crate::modern::Modern>,
 }
 
+/// A linker script and, when it includes an object list's fragments, the
+/// directory the build wrote them to.
+#[derive(Clone, Copy)]
+struct Script<'a> {
+    path: &'a Path,
+    fragments: Option<&'a Path>,
+}
+
 fn link_indexed(
     root: &Path,
     build: Build,
@@ -151,18 +159,33 @@ fn link_indexed(
     keep_going: bool,
     index: &Index,
 ) -> Result<Linked, String> {
-    let text = fs::read_to_string(root.join(script))
-        .map_err(|error| format!("{}: {error}", script.display()))?;
-    // The script is the caller's: an edition's own, a modern build's or one
-    // given with --script, so its text says what this link takes.
+    // The game's own script names no object when the game has an object
+    // list: the list's fragments, written here, are what it includes.
+    let listed = crate::edition::listed(root, build.target, crate::edition::Image::Main)?
+        .filter(|listed| root.join(script) == root.join(&listed.script));
+    let (text, fragments) = match &listed {
+        Some(listed) => (listed.flat(root)?, Some(listed.write(output)?)),
+        None => (
+            fs::read_to_string(root.join(script))
+                .map_err(|error| format!("{}: {error}", script.display()))?,
+            None,
+        ),
+    };
+    let script = Script {
+        path: script,
+        fragments: fragments.as_deref(),
+    };
+    // The script is the caller's: the game's, an edition's own, a modern
+    // build's or one given with --script, so its text, with the fragments
+    // it includes in place, says what this link takes.
     let statements = crate::edition::statements(&text)
-        .map_err(|error| format!("{}: {error}", script.display()))?;
+        .map_err(|error| format!("{}: {error}", script.path.display()))?;
     let sources = crate::edition::built_objects(&statements)
         .iter()
         .map(|object| source_for(root, object))
         .collect::<Result<Vec<_>, _>>()?;
     if sources.is_empty() {
-        return Err(format!("{} lists no objects", script.display()));
+        return Err(format!("{} lists no objects", script.path.display()));
     }
     let target = build.target;
     if needs_base_rom(root, output, &sources)? {
@@ -537,19 +560,26 @@ fn carries_code(source: &Path, object: &[u8]) -> Result<bool, String> {
 fn link_command(
     root: &Path,
     build: Build,
-    script: &Path,
+    script: Script,
     text: &str,
     objects: &[PathBuf],
     elf: &Path,
 ) -> Vec<String> {
-    let mut arguments = vec![
-        "arm-none-eabi-ld".to_owned(),
-        "--no-warn-mismatch".into(),
+    let mut arguments = vec!["arm-none-eabi-ld".to_owned(), "--no-warn-mismatch".into()];
+    // The linker reads its command line in order: the edition's symbol and
+    // the fragments' directory come before the script that asks for them.
+    if build.target.object_list().is_some() {
+        arguments.extend(["--defsym".into(), format!("{}=1", build.target.edition_define)]);
+    }
+    if let Some(fragments) = script.fragments {
+        arguments.extend(["-L".into(), fragments.to_string_lossy().into_owned()]);
+    }
+    arguments.extend([
         "-T".into(),
-        root.join(script).to_string_lossy().into_owned(),
+        root.join(script.path).to_string_lossy().into_owned(),
         "-o".into(),
         elf.to_string_lossy().into_owned(),
-    ];
+    ]);
     arguments.extend(
         objects
             .iter()
@@ -582,7 +612,7 @@ fn run_link(build: Build, arguments: &[String], output: &Path, name: &str) -> Re
 fn symbols_pass(
     root: &Path,
     build: Build,
-    script: &Path,
+    script: Script,
     text: &str,
     output: &Path,
     name: &str,
@@ -1157,7 +1187,7 @@ fn asset_directories(output: &Path) -> Vec<PathBuf> {
 
 /// The folders an edition's build makes for itself; every other plain
 /// folder in its output holds built assets.
-const BUILD_FOLDERS: [&str; 4] = ["obj", "overlays", "symbols", "text"];
+const BUILD_FOLDERS: [&str; 5] = ["ld", "obj", "overlays", "symbols", "text"];
 
 fn asset_root(name: &str) -> bool {
     name.bytes().next().is_some_and(|byte| byte.is_ascii_lowercase())

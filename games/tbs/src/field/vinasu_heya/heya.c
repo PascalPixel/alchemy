@@ -2725,32 +2725,17 @@ void Scene_RunPairedParticleWaveSequence(void)
 void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
 {
     struct EffectOptions options;
-    struct EffectOptions *p = &options;
-    register struct EffectOptions *opts asm("r8"); /* FAKEMATCH: the options pointer is held in r8 once both scales are stored through p. 2026-10-02: an ordinary pointer puts options in r7 and x in r8, changing spin storage and both spawn calls. */
-    s32 phase;
-    u32 coin;
 
-    p->start_scale_x = 0xb333;
-    p->start_scale_y = 0xb333;
-    opts = p;
-    {
-        s32 spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-        u32 *frame = &gFrameCount; /* FAKEMATCH: the counter's address is loaded before the spin is stored */
-
-        opts->spin = spin;
-        phase = *frame & 3;
-    }
-    if (phase == 0) {
-        coin = (u32)(Engine_RandomNext() << 1) >> 16;
-        if (coin != 0) {
-            s32 r = Engine_RandomNext();
-            s32 vz = __divsi3((((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x70000, 10);
-
-            Effect_Spawn((x + (((u32)(r << 1) >> 16) << 4)) << 16, 0, z << 19, 0, phase, vz, 0x880000, opts);
+    options.start_scale_x = 0xb333;
+    options.start_scale_y = 0xb333;
+    options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+    if ((gFrameCount & 3) == 0) {
+        if (((u32)(Engine_RandomNext() << 1) >> 16) != 0) {
+            Effect_Spawn((x + (((u32)(Engine_RandomNext() << 1) >> 16) << 4)) << 16, 0, z << 19, 0, 0,
+                         (s32)((((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x70000) / 10, 0x880000, &options);
         } else {
-            s32 r = Engine_RandomNext();
-
-            Effect_Spawn((x + ((u32)(r * 17) >> 16)) << 16, 0, (x << 19) - 0x40000, 0, coin, coin, 0x880000, opts);
+            Effect_Spawn((x + ((u32)(Engine_RandomNext() * 17) >> 16)) << 16, 0, (x << 19) - 0x40000, 0, 0, 0,
+                         0x880000, &options);
         }
     }
 }

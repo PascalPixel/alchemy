@@ -1,10 +1,3 @@
-//--------------------------------------------------------------------------
-// facing.c
-// オブジェクト：相手のほうへ向きを変える
-//--------------------------------------------------------------------------
-
-#include "types.h"
-#include "facing_object.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -16,6 +9,8 @@
 #include "system.h"
 #include "fxblend.h"
 #include "map_scroll.h"
+#include "types.h"
+#include "facing_object.h"
 #include "field_event.h"
 #include "field_scene.h"
 #include "ram_buffer.h"
@@ -29,38 +24,6 @@
 #include "call.h"
 #include "field_effect.h"
 #include "heap_state.h"
-
-s32 ArcTan2(s32, s32);
-
-//--------------------------------------------------------------------------
-// 向く相手がいれば、その方向へ 1 回に 0x1000（22.5 度）まで向きを変える
-// obj : 向きを変えるオブジェクト
-//--------------------------------------------------------------------------
-s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *obj)
-{
-	s32					 turn;
-	u16					 old;
-	s32					 dir;
-	struct FacingObject *tgt;
-
-	tgt = obj->facing_target;
-	if (tgt != NULL)
-	{
-		obj->facing_flags = 0xfe & obj->facing_flags;
-		dir = (u16)ArcTan2(tgt->position_z - obj->position_z, tgt->position_x - obj->position_x);
-		old = obj->facing;
-		turn = (s16)(dir - old);
-		if (turn != 0)
-		{
-			if (turn > 0x1000)
-				turn = 0x1000;
-			if (turn < -0x1000)
-				turn = -0x1000;
-			obj->facing = old + turn;
-		}
-	}
-	return 1;
-}
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -289,6 +252,7 @@ void SceneState_ApplyValues123And11(void)
     Engine_AudioPlayCue(0x7B);
     HaidiaBabi_CloseScreenAndExit(11);
 }
+
 
 s32 HaidiaBabi_RestoreEntryState(void)
 {

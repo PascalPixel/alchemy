@@ -1,0 +1,193 @@
+#include "battle.h"
+#include "keystate.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "menu.h"
+#include "minigame.h"
+#include "sound.h"
+#include "system.h"
+#include "callback_scheduler.h"
+#include "resource.h"
+#include "types.h"
+#include "io_reg.h"
+#include "scene.h"
+#include "tbs_edition.h"
+#include "window.h"
+#include "uiflow.h"
+#include "btlsys.h"
+#include "text/msg_ids.h"
+s32 AudioCommand_GetStateByteFar(void);
+
+
+
+
+void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
+void UiWork_PushValueSlot(s32, s32);
+struct UiChannelSlot *UiText_QueueRenderEntries();
+void AudioCommand_PlayFar(s32);
+void WaitFrames(s32);
+
+
+void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
+{
+    struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
+    s32 name;
+    struct UiWindow *window;
+    s32 sprite[3];
+    s32 *entry;
+    s32 palette, handle;
+    s32 id;
+    s32 text;
+    u32 zero;
+    s32 *p;
+
+    window = NULL;
+    zero = 0;
+    name = Djinn_ElementSprites[element & 3];
+    entry = sprite;
+    window = UiWindow_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
+
+    if (window != NULL) {
+        UiWindow_DrawDividerLine(window, 4, 0, 4, 4);
+
+        work->dirty = 1;
+
+        id = Localization_LookupEntryId(name);
+        UiGlyph_LoadEntryWithPalette(id, zero, &handle, &palette, 14, zero);
+
+        p = entry;
+        *p++ = zero;
+        *p++ = 0x8000000c | ((DJINN_JOIN_X * 8 + 4) << 16);
+        *p = palette | 0xe000;
+
+        work->result[0] = zero;
+        work->result[1] = zero;
+
+        UiWork_PushValueSlot(pc, 1);
+        UiWork_PushValueSlot(element * 20 + djinn + 300, 4);
+
+        text = UiText_BuildRenderEntriesMode1(element + (s32)MsgVenusDjinnJoined);
+
+        UiText_QueueRenderEntries(window, text, 36, 2, zero);
+
+        AudioCommand_PlayFar(81);
+
+        do {
+            Runtime_PushSlotEntry(entry, 250);
+            WaitFrames(1);
+        } while (AudioCommand_GetStateByteFar() != 0 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+
+        UiWork_Finalize(window, 2);
+        WaitFrames(1);
+        Resource_ResetEntry(handle);
+    }
+}
+
+
+s32 Party_LookupCharacterValueByFlag32(u32 index)
+{
+    if (index > 8) {
+        return 0;
+    }
+    if (GameFlag_TestFar(32) == 0) {
+        return Character_SpriteTable[index];
+    }
+    return Character_ChildSpriteTable[index];
+}
+
+void AudioCommand_PlayFar(s32);
+
+void Party_ShowJoinedMessage(s32 member)
+{
+    struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
+    struct UiWindow *window = NULL;
+    s32 sprite[3];
+    s32 *entry = sprite;
+    s32 palette, handle;
+    s32 *p;
+
+    window = UiWindow_Create(2, 1, 26, 5, 0);
+    if (window != NULL) {
+        UiWindow_DrawDividerLine(window, 4, 0, 4, 4);
+        work->dirty = 1;
+        UiGlyph_LoadEntryWithPalette(Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(member)),
+            0, &handle, &palette, 14, 0);
+        p = entry;
+        *p++ = 0;
+        *p++ = 0x8000000c | ((2 * 8 + 4) << 16);
+        *p = palette | 0xe000;
+        work->result[0] = 0;
+        work->result[1] = 0;
+        UiWork_PushValueSlot(member, 1);
+        UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)MsgJoinedParty), 36, 2, 0);
+        AudioCommand_PlayFar(81);
+        do {
+            Runtime_PushSlotEntry(entry, 250);
+            WaitFrames(1);
+        } while (AudioCommand_GetStateByteFar() != 0 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+        UiWork_Finalize(window, 2);
+        WaitFrames(1);
+        Resource_ResetEntry(handle);
+    }
+}
+
+void Party_ShowPairJoinedMessage(s32 first, s32 second)
+{
+    u8 *work = gWindowWork[0];
+    struct UiWindow *window;
+    s32 sprite2[3];
+    s32 sprite1[3];
+    s32 *entry1;
+    s32 *entry2;
+    s32 handle1, palette, handle2;
+    u32 zero;
+    s32 *p;
+
+    // the window starts as NULL, though it is assigned before it is read; the same zero is the style argument below
+    window = NULL;
+    entry1 = sprite1;
+    window = UiWindow_Create(1, 1, 28, 5, 0);
+    zero = 0;
+
+    if (window != NULL) {
+        UiWindow_DrawDividerLine(window, 8, 0, 4, 4);
+
+        ((struct UiRenderWork *)work)->dirty = 1;
+
+        UiGlyph_LoadEntryWithPalette(Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(first)), 0, &handle1, &palette, 14, zero);
+        p = entry1;
+        *p++ = zero;
+        *p++ = 0x800c000c;
+        *p = palette | 0xe000;
+
+        entry2 = sprite2;
+        UiGlyph_LoadEntryWithPalette(Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(second)), 0, &handle2, &palette, 15, zero);
+        p = entry2;
+        *p++ = zero;
+        *p++ = 0x802c000c;
+        *p = palette | 0xf000;
+
+        ((struct UiRenderWork *)work)->result[0] = zero;
+        ((struct UiRenderWork *)work)->result[1] = zero;
+
+        UiWork_PushValueSlot(first, 1);
+        UiWork_PushValueSlot(second, 1);
+
+        UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)MsgPairJoinedParty), 68, 2, zero);
+
+        AudioCommand_PlayFar(81);
+
+        do {
+            Runtime_PushSlotEntry(entry1, 250);
+            Runtime_PushSlotEntry(entry2, 250);
+            WaitFrames(1);
+        } while (AudioCommand_GetStateByteFar() != 0 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+
+        UiWork_Finalize(window, 2);
+        WaitFrames(1);
+        Resource_ResetEntry(handle1);
+        Resource_ResetEntry(handle2);
+    }
+}

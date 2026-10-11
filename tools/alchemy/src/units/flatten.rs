@@ -757,9 +757,8 @@ fn flatten(options: &Options) -> Result<(), String> {
 /// today: units that share a file join, and a group splits only where two
 /// compilers build it. An experiment's grouping (--all with --force).
 fn all_groups(root: &Path, judged: &[super::Judged], target: DecompTarget) -> Vec<Vec<String>> {
-    let mut every: Vec<Vec<String>> = Vec::new();
+    let mut groups: Vec<Vec<String>> = Vec::new();
     for j in judged {
-        let mut groups: Vec<Vec<String>> = Vec::new();
         for unit in &j.units {
             let mut objects: Vec<String> = Vec::new();
             for f in &j.loaded.image.functions[unit.first..=unit.last] {
@@ -782,21 +781,9 @@ fn all_groups(root: &Path, judged: &[super::Judged], target: DecompTarget) -> Ve
                 groups.push(merged);
             }
         }
-        every.extend(groups);
-    }
-    // A file several images link is its own unit: it joins none of them.
-    let mut seen: BTreeMap<String, usize> = BTreeMap::new();
-    for g in &every {
-        for o in g {
-            *seen.entry(o.clone()).or_default() += 1;
-        }
-    }
-    for (o, n) in seen.iter().filter(|(_, n)| **n > 1) {
-        println!("NOTE\tseveral-images\t{o} is linked into {n} images and stays its own file");
     }
     let mut out = Vec::new();
-    for g in every {
-        let g: Vec<String> = g.into_iter().filter(|o| seen.get(o).copied().unwrap_or(0) < 2).collect();
+    for g in groups {
         let mut by: Vec<(String, Vec<String>)> = Vec::new();
         for o in g {
             let key = format!("{:?}", family(root, target, &source_path(root, &o).unwrap_or_default()));

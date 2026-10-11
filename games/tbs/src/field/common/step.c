@@ -83,7 +83,7 @@ s32 BattleFx_SumCounters(void)
          + state->counters[11];
 }
 
-u8 GetFocusedObjectCollision(void)
+s32 GetFocusedObjectCollision(void)
 {
     u32 runtime_slot_address;
     struct EventRuntime *runtime;

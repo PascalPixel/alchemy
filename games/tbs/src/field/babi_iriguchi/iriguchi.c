@@ -904,25 +904,17 @@ void ActorPresentation_SetSceneCellByFlag985(void)
 {
 	if (Engine_GameFlagIsSet(0x985) == 0)
 	{
-		s32 k5 = 17, k6 = 78;
-
-		Engine_MapCopyCellsLayered(36, 78, 1, 2, k5, k6);
+		Map_CopyCellsLayered(36, 78, 1, 2, 17, 78);
 	}
 	else
 	{
-		s32 k5 = 17, k6 = 78;
-
-		Engine_MapCopyCellsLayered(34, 78, 1, 2, k5, k6);
+		Map_CopyCellsLayered(34, 78, 1, 2, 17, 78);
 	}
 }
 
 void SceneState_ApplyRectAt32x78(void)
 {
-	{
-		s32 k5 = 17, k6 = 78;
-
-		Engine_MapCopyCellsLayered(32, 78, 1, 2, k5, k6);
-	}
+	Map_CopyCellsLayered(32, 78, 1, 2, 17, 78);
 }
 
 void BabiIriguchi_OpenTruthDoor(void)
@@ -980,14 +972,12 @@ void BabiIriguchi_FlipTruthDoorSwitch(void)
 	{
 		if (Engine_GameFlagIsSet(0x985) == 0)
 		{
-			/* FAKEMATCH: forced temporaries; the destination stays in two saved registers across both copies, where plain constants are built again for each call. */
-			s32 dest_x = 17, dest_y = 78;
 
 			Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
 			Engine_AudioPlayCue(155);
-			Engine_MapCopyCellsLayered(35, 78, 1, 2, dest_x, dest_y);
+			Map_CopyCellsLayered(35, 78, 1, 2, 17, 78);
 			Engine_EventWait(10);
-			Engine_MapCopyCellsLayered(34, 78, 1, 2, dest_x, dest_y);
+			Map_CopyCellsLayered(34, 78, 1, 2, 17, 78);
 			Engine_EventWait(10);
 			BabiIriguchi_OpenTruthDoor();
 		}

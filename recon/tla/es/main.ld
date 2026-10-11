@@ -796,7 +796,6 @@
     . = ALIGN(4);
         "*/games/tla/src/field/common/event/object_hook.o"(.text)
     "*/games/tla/src/field/common/event/event.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.000db3ca)
     "*/games/tla/src/field/common/event/packed_id.o"(.text)
     "*/games/tla/src/field/common/clear_packed_events.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000db5c8)

@@ -1037,8 +1037,6 @@
         . = ALIGN(4);
         "*/games/tla/src/field/common/event/object_hook.o"(.text)
         "*/games/tla/src/field/common/event/event.o"(.text)
-        "*/recon/tla/raw/080d23ca.o"(.text)
-        "*/recon/tla/raw/080d23cc.o"(.text)
         "*/games/tla/src/field/common/event/packed_id.o"(.text)
         "*/games/tla/src/field/common/clear_packed_events.o"(.text)
         "*/recon/tla/raw/080d25c8.o"(.text)

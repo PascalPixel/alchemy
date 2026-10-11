@@ -806,7 +806,6 @@ SECTIONS
     . = ALIGN(4);
         "*/games/tla/src/field/common/event/object_hook.o"(.text)
     "*/games/tla/src/field/common/event/event.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000d23aa)
     "*/games/tla/src/field/common/event/packed_id.o"(.text)
     "*/games/tla/src/field/common/clear_packed_events.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d25a8)

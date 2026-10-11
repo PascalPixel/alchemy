@@ -1,30 +1,3 @@
-/* Transform_UpdateVertices as game ARM C (K1) around MulQ16, the proven
- * multiply helper of mulq16.h: 157 native instructions, 157 built.
- *
- * As written here, with no device: differ 8 (2 and 6).
- *   - the native loads the address of gProjection.center_x as one literal,
- *     as for a variable of its own; this member access loads gProjection
- *     and reads at offset 12.
- *   - three instructions of the odd frame's out->y come in another order
- *     (native: ldrsh u, ldr pz, cmp, addlt, ldr dz, asr, add).
- *
- * Differ 0 in tbs-en with two C devices and nothing else (no inline asm but
- * the helper, no register pin, no asm barrier):
- *   1. cx = *&gProjection.center_x;
- *   2. one scratch variable holding the out->x sum and then vtx->u:
- *        work = ((px + vtx->dx) >> 8) + vtx->v / 4 + vtx->u / 2;
- *        out->x = work;
- *        work = vtx->u;
- *        out->y = ((pz + vtx->dz) >> 8) + work / 4 + vtx->v / 2;
- *      The native keeps both values in r3; with separate values 45,000
- *      permuter candidates and 400 written forms stayed at differ 6.
- * Both would carry FAKEMATCH tags under S2, so the function is not adopted
- * and vertices.s stays linked.
- *
- * What the match needed besides: z is one variable for the target distance
- * and each vertex's z (r4 in both places); the s16 copy of u and its product
- * with the centre are one variable (lr); the eye distance is computed in
- * place in the target's x. */
 #include "types.h"
 #include "frame.h"
 #include "mulq16.h"
@@ -124,7 +97,8 @@ void Transform_UpdateVertices(struct Position *eye, struct Position *target, str
 			v = MulQ16(x, sin) / 256;
 			vtx->v = v;
 			out->pc = v;
-			cx = gProjection.center_x;
+			/* FAKEMATCH: the centre is read through its own address, so the native single literal for it is built; member access loads gProjection and reads at offset 12 (differ 2). */
+			cx = *&gProjection.center_x;
 			a = (a << 8) * cx;
 			b = ((s16)v << 8) * -cx;
 			vtx->dx = -(a + MulQ16(nsin, z));
@@ -144,8 +118,13 @@ void Transform_UpdateVertices(struct Position *eye, struct Position *target, str
 			if (gFrameCount & 1)
 			{
 				// 奇数フレーム
-				out->x = ((px + vtx->dx) >> 8) + vtx->v / 4 + vtx->u / 2;
-				out->y = ((pz + vtx->dz) >> 8) + vtx->u / 4 + vtx->v / 2;
+				/* FAKEMATCH: one scratch variable holds the x sum and then u, as the native keeps both in r3; with separate values three instructions of out->y come in another order (differ 6). */
+				s32 work;
+
+				work = ((px + vtx->dx) >> 8) + vtx->v / 4 + vtx->u / 2;
+				out->x = work;
+				work = vtx->u;
+				out->y = ((pz + vtx->dz) >> 8) + work / 4 + vtx->v / 2;
 			}
 			else
 			{

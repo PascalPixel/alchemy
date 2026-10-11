@@ -51,4 +51,5 @@ pub static GAME_ARM_SOURCES: &[&str] = &[
     "games/common/src/graphics/tile/metatile.c",
     "games/tbs/src/graphics/text/moji.c",
     "games/tbs/src/field/common/object/update.c",
+    "games/tbs/src/graphics/tile/vertices.c",
 ];

@@ -80,7 +80,11 @@ SECTIONS
         "*/resource_696_overlay.o"(.text.x0200c6bc)
         "*/resource_696_overlay.o"(.text.x0200c6ec)
         "*/games/tla/src/field/overlay_696/import.o"(.text)
-        "*/resource_696_overlay.o"(.rodata.x0200caa4)
+        "*/games/tla/src/field/overlay_696/data.o"(.data)
+        "*/resource_696_overlay.o"(.rodata.x0200cbfe)
+        "*/games/tla/src/field/overlay_696/data2.o"(.data)
+        "*/resource_696_overlay.o"(.rodata.x0200d15a)
+        "*/games/tla/src/field/overlay_696/data3.o"(.data)
     }
     .bss : { "*/resource_696_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

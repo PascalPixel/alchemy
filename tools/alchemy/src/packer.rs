@@ -423,7 +423,69 @@ fn cpp_directive(line: &str) -> bool {
     line.starts_with('#') || line.starts_with("%:") || line.starts_with("??=")
 }
 
-fn cpp_directives(text: &str) -> Vec<usize> {
+/// The file a preprocessed source names with a plain `#include "NAME"`,
+/// found from the including file's own directory as cpp finds it. Only an
+/// assembler source or header under games/ is such a file, and only under
+/// its own name: any other form, place or kind stays an unsupported
+/// directive.
+fn cpp_included(row: &str, source: &str, root: &Path) -> Option<String> {
+    let rest = row.trim().strip_prefix('#')?.trim_start();
+    let name = rest.strip_prefix("include")?.trim_start();
+    let name = name.strip_prefix('"')?.strip_suffix('"')?;
+    if name.is_empty() || name.contains(['"', '\\']) {
+        return None;
+    }
+    let mut parts: Vec<&std::ffi::OsStr> = Path::new(source).parent()?.iter().collect();
+    for part in Path::new(name).components() {
+        match part {
+            std::path::Component::Normal(part) => parts.push(part),
+            std::path::Component::CurDir => {}
+            std::path::Component::ParentDir => {
+                parts.pop()?;
+            }
+            _ => return None,
+        }
+    }
+    let path: PathBuf = parts.iter().collect();
+    let kind = matches!(
+        path.extension().and_then(|extension| extension.to_str()),
+        Some("s" | "S" | "inc" | "h")
+    );
+    // A directory link on the way would make cpp read another file than
+    // the one this name spells.
+    let spelled = root.join(source).parent()?.join(name).canonicalize().ok()?;
+    let found = root.canonicalize().ok()?.join(&path);
+    (kind && path.starts_with("games") && spelled == found)
+        .then(|| path.to_string_lossy().into_owned())
+}
+
+/// Whether a directive left in a preprocessed source can bring in or build
+/// no line of its own: a conditional, or a macro whose text holds no
+/// include, no string and no cpp operator. `row` is the whole logical line
+/// and `visible` the same line without its comments.
+fn cpp_plain(row: &str, visible: &str) -> bool {
+    let Some(rest) = visible.trim_start().strip_prefix('#') else {
+        return false;
+    };
+    let rest = rest.trim_start();
+    let name = rest
+        .find(|letter: char| !letter.is_ascii_alphabetic())
+        .map_or(rest, |end| &rest[..end]);
+    let body = row.trim_start().get(1..).unwrap_or("");
+    match name {
+        "if" | "ifdef" | "ifndef" | "elif" | "else" | "endif" | "error" | "undef" => {
+            !row.contains("%:") && !row.contains("??")
+        }
+        "define" => ![".inc", "\"", "#", "%:", "??"]
+            .iter()
+            .any(|built| body.contains(built)),
+        _ => false,
+    }
+}
+
+/// The first line of each C preprocessor directive, and whether it is a
+/// plain one (cpp_plain).
+fn cpp_directives(text: &str) -> Vec<(usize, bool)> {
     let mut logical = String::new();
     let mut starts = Vec::new();
     let mut start = 0;
@@ -446,8 +508,10 @@ fn cpp_directives(text: &str) -> Vec<usize> {
     }
     crate::compiler::assembly_source::without_comments(&logical)
         .lines()
+        .zip(logical.lines())
         .enumerate()
-        .filter_map(|(number, row)| cpp_directive(row).then_some(starts[number]))
+        .filter(|(_, (visible, _))| cpp_directive(visible))
+        .map(|(number, (visible, row))| (starts[number], cpp_plain(row, visible)))
         .collect()
 }
 
@@ -508,37 +572,63 @@ fn included_source(name: &str) -> bool {
             .all(|part| matches!(part, std::path::Component::Normal(_)))
 }
 
+/// A module's lines with its included files in place.
+#[derive(Default)]
+struct Inlined {
+    lines: Vec<String>,
+    /// The file and line each line came from.
+    origins: Vec<(String, usize)>,
+    /// Whether the build's cpp step reads the line: the lines of a `.S`
+    /// source and of the files it `#include`s, but not those of a source
+    /// the assembler includes afterwards.
+    cpp: Vec<bool>,
+    open: Vec<String>,
+}
+
 /// The lines of a source with each included assembler source in place of
-/// its `.include`, and the file and line every line came from.
+/// its `.include`, and in a preprocessed source each file a plain
+/// `#include` names in place of that row (cpp_included). Either is read
+/// whole in the including file's place, so its payloads and claims are
+/// checked as that file's own are.
 fn with_sources(
     text: &str,
     source: &str,
     root: &Path,
-    open: &mut Vec<String>,
-    lines: &mut Vec<String>,
-    origins: &mut Vec<(String, usize)>,
+    cpp: bool,
+    module: &mut Inlined,
 ) -> Result<(), String> {
-    open.push(source.into());
+    module.open.push(source.into());
+    let mut continued = false;
     for (number, row) in text.lines().enumerate() {
         let visible = crate::compiler::assembly_source::without_comments(row);
-        let Some(name) = include_name(visible.trim()).filter(|name| included_source(name)) else {
-            lines.push(row.into());
-            origins.push((source.into(), number + 1));
+        let assembled = include_name(visible.trim())
+            .filter(|name| included_source(name))
+            .map(str::to_owned);
+        let preprocessed = (cpp && !continued && assembled.is_none())
+            .then(|| cpp_included(row, source, root))
+            .flatten();
+        continued = row.ends_with('\\');
+        let reads = preprocessed.is_some();
+        let Some(name) = assembled.or(preprocessed) else {
+            module.lines.push(row.into());
+            module.origins.push((source.into(), number + 1));
+            module.cpp.push(cpp);
             continue;
         };
         let at = |error: String| format!("{source}:{}: {error}", number + 1);
         if row.contains("PACKER:") {
             return Err(at("unsupported tagged or preprocessed include".into()));
         }
-        if open.iter().any(|known| known == name) {
-            return Err(at(format!("recursive GAS include {name}")));
+        if module.open.contains(&name) {
+            let kind = if reads { "preprocessed" } else { "GAS" };
+            return Err(at(format!("recursive {kind} include {name}")));
         }
-        let included = declared_read(root, Path::new(name))
+        let included = declared_read(root, Path::new(&name))
             .and_then(|bytes| String::from_utf8(bytes).map_err(|error| error.to_string()))
             .map_err(at)?;
-        with_sources(&included, name, root, open, lines, origins)?;
+        with_sources(&included, &name, root, reads, module)?;
     }
-    open.pop();
+    module.open.pop();
     Ok(())
 }
 
@@ -564,9 +654,10 @@ fn selected_module(
     output: &Path,
     read: &dyn Fn(&str) -> Result<Vec<u8>, String>,
 ) -> Result<(String, Vec<(String, usize)>), String> {
-    let (mut lines, mut places) = (Vec::new(), Vec::new());
-    with_sources(text, source, root, &mut Vec::new(), &mut lines, &mut places)?;
-    let mut text = lines.join("\n");
+    let mut module = Inlined::default();
+    with_sources(text, source, root, source.ends_with(".S"), &mut module)?;
+    let places = module.origins;
+    let mut text = module.lines.join("\n");
     text.push('\n');
     let text = text.as_str();
     let private = tempfile::tempdir().map_err(|error| error.to_string())?;
@@ -579,9 +670,10 @@ fn selected_module(
         &mut std::collections::BTreeSet::new(),
     )?;
     let mut expanded = text.to_owned();
-    let mut origins: Vec<(String, usize, bool)> = places
+    let mut origins: Vec<(String, usize, bool, bool)> = places
         .iter()
-        .map(|(file, line)| (file.clone(), *line, false))
+        .zip(&module.cpp)
+        .map(|((file, line), cpp)| (file.clone(), *line, false, *cpp))
         .collect();
     loop {
         let selected = crate::compiler::assembly_source::selected_includes(
@@ -590,11 +682,21 @@ fn selected_module(
             &[private.path()],
         )?;
         let rows: Vec<_> = selected.lines().collect();
-        if let Some(number) = cpp_directives(&selected).first() {
-            let (file, line, _) = &origins[*number];
-            return Err(format!("{file}:{line}: unsupported preprocessed directive"));
+        // A preprocessed list (a far-call bank: its macros, its edition
+        // conditionals and the header that lists its entries) places no
+        // stream and claims no byte, and only there may plain directives
+        // stay. Where the module holds a payload or a claim, in any
+        // branch, cpp could select or rewrite what this check reads, and
+        // every directive is refused; so is one cpp never reads, and any
+        // that could include or build a line.
+        let claims = expanded.contains("PACKER:") || expanded.contains(".incbin");
+        for (number, plain) in cpp_directives(&selected) {
+            let (file, line, _, cpp) = &origins[number];
+            if claims || !plain || !cpp {
+                return Err(format!("{file}:{line}: unsupported preprocessed directive"));
+            }
         }
-        for (row, (file, line, included)) in rows.iter().zip(&origins) {
+        for (row, (file, line, included, _)) in rows.iter().zip(&origins) {
             let visible = crate::compiler::assembly_source::without_comments(row);
             if row.contains("PACKER:") && *included {
                 return Err(format!(
@@ -633,7 +735,7 @@ fn selected_module(
         next.extend(rows[number + 1..].iter().map(|row| (*row).to_owned()));
         origins.splice(
             number..number + 1,
-            (1..=count).map(|line| (name.into(), line, true)),
+            (1..=count).map(|line| (name.into(), line, true, false)),
         );
         expanded = next.join("\n");
         expanded.push('\n');
@@ -1843,6 +1945,129 @@ mod tests {
         )
         .unwrap_err()
         .contains("missing GAS include"));
+    }
+
+    #[test]
+    fn a_preprocessed_list_is_read_through_its_includes() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let write = |name: &str, text: &str| {
+            let path = root.join(name);
+            fs::create_dir_all(path.parent().unwrap()).unwrap();
+            fs::write(path, text).unwrap();
+        };
+        let read = |name: &str| Err(format!("unknown source asset {name}"));
+        let edition = "games/common/include/game/edition.h";
+        let stub = "games/tbs/src/system/far_call/stub.inc";
+        let list = "games/tbs/include/farcall/bank.h";
+        let source = "games/tbs/src/system/far_call/BANK.S";
+        let guarded = "#ifndef GUARD_EDITION_H\n#define GUARD_EDITION_H\n#if (defined(TBS_EDITION_JA) + defined(TBS_EDITION_EN)) \\\n\t> 1\n#error multiple game editions selected\n#endif\n#define GAME_TLA 0\n#endif\n";
+        let macros = "@ each entry becomes its stub\n#include \"../../../../common/include/game/edition.h\"\n\t.thumb\n\t.include \"games/tbs/src/system/overlay.inc\"\n\t.macro far_call name, target\n\\name:\n\toverlay_veneer \\target\n\t.endm\n#define FAR_CALL(name, target, type, params) far_call name, target\n#define FAR_SLOT(target) far_slot target\n";
+        let entries = "/* one entry per stub */\n#ifndef FARCALL_BANK_H\nFAR_CALL(RunFar, Run, void, (void))\n#if EDITION_INTERNATIONAL\nFAR_SLOT(Fade)\n#endif\n#endif\n";
+        let bank = "@ C2: aligned 8-byte veneers\n#include \"stub.inc\"\n\t.global Bank\nBank:\n#include \"../../../include/farcall/bank.h\"\n";
+        write(edition, guarded);
+        write(stub, macros);
+        write(
+            "games/tbs/src/system/overlay.inc",
+            "\t.macro overlay_veneer target\n\tldr r4, =\\target\n\tbx r4\n\t.endm\n",
+        );
+        write(list, entries);
+        let module = |text: &str, source: &str| {
+            selected_module(text, source, "TBS_EDITION_EN", root, root, &read)
+        };
+        let refused = |text: &str, source: &str| {
+            let error = module(text, source).unwrap_err();
+            assert!(error.contains("unsupported preprocessed directive"), "{error}");
+            error
+        };
+
+        // The bank, its macros, the edition header and its list are read
+        // in place, each line from its own file; none holds a stream or a
+        // claim, so the module gives the check nothing to prove.
+        let (selected, origins) = module(bank, source).unwrap();
+        assert!(!selected.contains(".incbin") && !selected.contains("PACKER:"));
+        assert!(!selected.contains("#include"));
+        let from = |text: &str| {
+            let at = selected.lines().position(|row| row == text).unwrap();
+            (origins[at].0.as_str(), origins[at].1)
+        };
+        assert_eq!(from("#define GAME_TLA 0"), (edition, 7));
+        assert_eq!(from("\t.thumb"), (stub, 3));
+        assert_eq!(from("Bank:"), (source, 4));
+        assert_eq!(from("FAR_SLOT(Fade)"), (list, 5));
+
+        // A claim or a stream anywhere in what the module reads, even in
+        // a branch the edition leaves out, keeps every directive refused.
+        for row in [
+            ".byte 1 @ PACKER: unused residue\n",
+            ".ifdef TBS_EDITION_JA\n.byte 1 @ PACKER: unused residue\n.endif\n",
+            ".incbin \"graphics/hidden.4bpp.lz\"\n",
+        ] {
+            write(list, &format!("{entries}{row}"));
+            assert!(refused(bank, source).starts_with(&format!("{edition}:1: ")));
+            assert!(refused(&format!("{bank}{row}"), source).starts_with(edition));
+        }
+        write(list, entries);
+
+        // A directive that could include or build a line is refused where
+        // it stands, with or without a claim.
+        for directive in [
+            "#define HIDE .include \"graphics/hidden.spriteblocks\"",
+            "#define HIDE(name) .incbin name",
+            "#define PASTE(a, b) a ## b",
+            "#define TEXT(a) #a",
+            "#include <farcall/bank.h>",
+            "#include BANK",
+            "#include \"bank.h\" /* elsewhere */",
+            "#include \"missing.h\"",
+            "#include \"../../../../../private.h\"",
+            "#include \"bank.bin\"",
+            "#include \"linked.h\"",
+            "#include \"link/../bank.h\"",
+            "#line 1 \"other.s\"",
+            "#pragma once",
+            "#define A \\\n#include \"bank.h\"\n#include \"missing.h\"",
+        ] {
+            write(list, &format!("{entries}{directive}\n"));
+            write("private.h", "");
+            write("games/tbs/include/farcall/bank.bin", "");
+            fs::create_dir_all(root.join("games/tbs/include/other")).unwrap();
+            let _ = std::os::unix::fs::symlink(
+                root.join("games/tbs/include/farcall/bank.h"),
+                root.join("games/tbs/include/farcall/linked.h"),
+            );
+            let _ = std::os::unix::fs::symlink(
+                root.join("games/tbs/include/other"),
+                root.join("games/tbs/include/farcall/link"),
+            );
+            write("games/tbs/include/bank.h", "");
+            refused(bank, source);
+        }
+        write(list, entries);
+
+        // cpp reads neither a lowercase source nor a source the assembler
+        // includes, so a directive there is no directive the build obeys.
+        refused(bank, "games/tbs/src/system/far_call/bank.s");
+        write("games/tbs/src/system/far_call/tail.s", "#define TAIL 1\n");
+        let tail = ".include \"games/tbs/src/system/far_call/tail.s\"\n";
+        assert!(refused(tail, source).starts_with("games/tbs/src/system/far_call/tail.s:1: "));
+
+        // A file with no directive of its own is read in place like an
+        // included assembler source: its claim is the module's to prove,
+        // reported where it is written.
+        write(
+            "games/tbs/src/system/far_call/tail.inc",
+            "Tail:\n.incbin \"graphics/tail.4bpp.lz\"\n.byte 7 @ PACKER: unused residue\n",
+        );
+        let (selected, origins) = module("\t.rodata\n#include \"tail.inc\"\n", source).unwrap();
+        let at = selected.lines().position(|row| row.contains("PACKER:")).unwrap();
+        assert_eq!(origins[at], ("games/tbs/src/system/far_call/tail.inc".into(), 3));
+        refused("#include \"tail.inc\" @ PACKER: unused residue\n", source);
+        // A file cannot include itself.
+        write("games/tbs/src/system/far_call/tail.inc", "#include \"tail.inc\"\n");
+        assert!(module("#include \"tail.inc\"\n", source)
+            .unwrap_err()
+            .contains("recursive preprocessed include"));
     }
 
     #[test]

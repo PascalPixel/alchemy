@@ -48,10 +48,10 @@ modern GCC, as pret's `make modern`: out/modern/<edition>.gba, a ROM that
 matches nothing, and every compiler and linker warning in
 out/modern/warnings.txt with a summary by kind and file in
 out/modern/warnings-summary.txt. The compiler is --cc, else $MODERN_CC,
-else Homebrew's /opt/homebrew/bin/arm-none-eabi-gcc. --keep-going writes an
+else the arm-none-eabi-gcc on PATH. --keep-going writes an
 image despite link errors.";
 
-const DEFAULT_CC: &str = "/opt/homebrew/bin/arm-none-eabi-gcc";
+const DEFAULT_CC: &str = "arm-none-eabi-gcc";
 const OUTPUT: &str = "out/modern";
 
 pub(crate) struct Modern {

@@ -11,7 +11,7 @@ TARGET ?= tbs-ja
 SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
 
 LIBGCC := tools/out/compiler-runtime/libgcc.a
-MODERN_CC ?= /opt/homebrew/bin/arm-none-eabi-gcc
+MODERN_CC ?= arm-none-eabi-gcc
 
 .PHONY: compiler-runtime worktree
 compiler-runtime: toolchain-check compiler-source-check
@@ -81,7 +81,7 @@ toolchain-check:
 compilers: compiler-sources
 
 compiler-sources: compiler-source-check
-	$(MAKE) -C agscc -j8
+	$(MAKE) -C agscc -j$(JOBS) JOBS=$(JOBS)
 
 compiler-source-check:
 	@set -e; repo=agscc; approved=a5b70c21a48df6b5e14514d756036073d5bf1725; \
@@ -122,11 +122,12 @@ packer-check deps similar worst modern: | build-alchemy
 endif
 
 CPUS := $(shell sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null || echo 4)
+JOBS ?= $(CPUS)
 .PHONY: compare-editions compare-other-editions compare-tbs-ja compare-tla-ja $(COMPARE_EDITIONS)
 compare-editions:
-	@$(MAKE) --no-print-directory -j$(CPUS) ALCHEMY="$(ALCHEMY)" compare compare-tla $(COMPARE_EDITIONS)
+	@$(MAKE) --no-print-directory -j$(JOBS) ALCHEMY="$(ALCHEMY)" compare compare-tla $(COMPARE_EDITIONS)
 compare-other-editions:
-	@$(MAKE) --no-print-directory -j$(CPUS) ALCHEMY="$(ALCHEMY)" $(COMPARE_EDITIONS)
+	@$(MAKE) --no-print-directory -j$(JOBS) ALCHEMY="$(ALCHEMY)" $(COMPARE_EDITIONS)
 compare-tbs-ja: compare
 compare-tla-ja: compare-tla
 $(COMPARE_EDITIONS): compare-%:

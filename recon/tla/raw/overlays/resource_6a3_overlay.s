@@ -4994,16 +4994,6 @@ Func_02002e3c:
 	.2byte 0x0000
 	.section .text.x0200aefa,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x0200aefc,"ax",%progbits
-	.global Func_02002efc
-	.thumb_func
-Func_02002efc:
-	ldr r3, .L_0200af04
-	str r0, [r3]
-	bx lr
-	.2byte 0x0000
-.L_0200af04:
-	.4byte Data_02005a18
 	.section .text.x0200af08,"ax",%progbits
 	.global Func_02002f08
 	.thumb_func
@@ -5104,78 +5094,6 @@ Func_02002f08:
 .L_0200afbc:
 	.4byte Data_02005a40
 .L_0200afc0:
-	.4byte 0x05000184
-	.section .text.x0200afc4,"ax",%progbits
-	.global Func_02002fc4
-	.thumb_func
-Func_02002fc4:
-	push {r5, r6, lr}
-	ldr r2, .L_0200b020
-	movs r3, #1
-	adds r6, r0, #0
-	str r3, [r2]
-	cmp r6, #2
-	beq .L_0200afe8
-	ldr r1, .L_0200b024
-	movs r2, #32
-	ldr r0, .L_0200b028
-	ldr r5, .L_0200b02c
-	mov lr, r5
-	.2byte 0xf800
-	ldr r0, .L_0200b030
-	ldr r1, .L_0200b034
-	movs r2, #32
-	mov lr, r5
-	.2byte 0xf800
-.L_0200afe8:
-	movs r0, #160
-	lsls r0, r0, #4
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_0200aff8
-	cmp r6, #1
-	bne .L_0200b00a
-.L_0200aff8:
-	ldr r3, .L_0200b038
-	movs r2, #0
-	movs r1, #144
-	str r2, [r3]
-	ldr r0, .L_0200b03c
-	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
-	b .L_0200b01e
-.L_0200b00a:
-	movs r3, #128
-	movs r2, #132
-	lsls r3, r3, #19
-	lsls r2, r2, #24
-	adds r3, #212
-	ldr r0, .L_0200b040
-	ldr r1, .L_0200b044
-	adds r2, #2
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-.L_0200b01e:
-	pop {r5, r6, pc}
-.L_0200b020:
-	.4byte Data_02005a18
-.L_0200b024:
-	.4byte 0x05000180
-.L_0200b028:
-	.4byte Data_02005a40
-.L_0200b02c:
-	.4byte IwramCopyWords
-.L_0200b030:
-	.4byte Data_02005a60
-.L_0200b034:
-	.4byte 0x050001a0
-.L_0200b038:
-	.4byte Data_02005a14
-.L_0200b03c:
-	.4byte Func_02002f08
-.L_0200b040:
-	.4byte Data_02005a64
-.L_0200b044:
 	.4byte 0x05000184
 	.section .text.x0200b048,"ax",%progbits
 	.global Func_02003048
@@ -5460,32 +5378,6 @@ Func_0200309c:
 	pop {r5, r6, r7, pc}
 .L_0200b284:
 	.4byte gPartyState
-	.section .text.x0200b288,"ax",%progbits
-	.global Func_02003288
-	.thumb_func
-Func_02003288:
-	push {lr}
-	ldr r3, [r1]
-	ldr r4, [r0]
-	ldr r2, [r1, #8]
-	subs r4, r4, r3
-	ldr r3, [r0, #8]
-	asrs r4, r4, #16
-	subs r3, r3, r2
-	asrs r3, r3, #16
-	adds r2, r3, #0
-	muls r2, r3
-	adds r0, r4, #0
-	muls r0, r4
-	adds r3, r2, #0
-	adds r0, r0, r3
-	ldr r3, .L_0200b2b0
-	mov lr, r3
-	.2byte 0xf800
-	pop {pc}
-	.2byte 0x0000
-.L_0200b2b0:
-	.4byte IwramFillWords + 0x74
 	.section .text.x0200b2b4,"ax",%progbits
 	.global Func_020032b4
 	.thumb_func
@@ -6317,198 +6209,8 @@ Func_0200377c:
 	.4byte 0xc000a000
 .L_0200b934:
 	.4byte Data_02005b86
-	.section .text.x0200b938,"ax",%progbits
-	.global Func_02003938
-	.thumb_func
-Func_02003938:
-	push {r5, r6, lr}
-	movs r0, #192
-	lsls r0, r0, #4
-	bl MemAlloc
-	ldr r3, .L_0200b998
-	adds r6, r0, #0
-	movs r1, #64
-	ldr r0, .L_0200b99c
-	mov lr, r3
-	.2byte 0xf800
-	adds r1, r6, #0
-	ldr r0, .L_0200b9a0
-	bl Func_0200468c
-	ldr r5, .L_0200b9a4
-	bl Resource_FindFreeEntry
-	movs r1, #192
-	strh r0, [r5]
-	lsls r0, r0, #16
-	adds r2, r6, #0
-	lsls r1, r1, #4
-	asrs r0, r0, #16
-	bl VramBlock_LoadCached
-	adds r0, r6, #0
-	bl MemFree
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_0200b9a8
-	bl Scheduler_AddOrUpdateCallback
-	ldr r3, .L_0200b9ac
-	ldr r2, .L_0200b990
-	strh r2, [r3]
-	ldr r3, .L_0200b9b0
-	strh r2, [r3]
-	ldr r2, .L_0200b9b4
-	ldr r3, .L_0200b994
-	strh r3, [r2]
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200b990:
-	.4byte 0x00000000
-.L_0200b994:
-	.4byte 0xffffffff
-.L_0200b998:
-	.4byte IwramClearWords
-.L_0200b99c:
-	.4byte Data_02005a84
-.L_0200b9a0:
-	.4byte Data_02004b50
-.L_0200b9a4:
-	.4byte Data_02005a80
-.L_0200b9a8:
-	.4byte Func_0200377c
-.L_0200b9ac:
-	.4byte Data_02005a82
-.L_0200b9b0:
-	.4byte Data_02005b84
-.L_0200b9b4:
-	.4byte Data_02005b86
-	.section .text.x0200b9b8,"ax",%progbits
-	.global Func_020039b8
-	.thumb_func
-Func_020039b8:
-	push {r5, r6, lr}
-	movs r0, #192
-	lsls r0, r0, #4
-	bl MemAlloc
-	ldr r3, .L_0200ba18
-	adds r6, r0, #0
-	movs r1, #64
-	ldr r0, .L_0200ba1c
-	mov lr, r3
-	.2byte 0xf800
-	adds r1, r6, #0
-	ldr r0, .L_0200ba20
-	bl Func_0200468c
-	ldr r5, .L_0200ba24
-	bl Resource_FindFreeEntry
-	movs r1, #128
-	strh r0, [r5]
-	lsls r0, r0, #16
-	adds r2, r6, #0
-	lsls r1, r1, #4
-	asrs r0, r0, #16
-	bl VramBlock_LoadCached
-	adds r0, r6, #0
-	bl MemFree
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_0200ba28
-	bl Scheduler_AddOrUpdateCallback
-	ldr r3, .L_0200ba2c
-	ldr r2, .L_0200ba10
-	strh r2, [r3]
-	ldr r3, .L_0200ba30
-	strh r2, [r3]
-	ldr r2, .L_0200ba34
-	ldr r3, .L_0200ba14
-	strh r3, [r2]
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200ba10:
-	.4byte 0x00000000
-.L_0200ba14:
-	.4byte 0xffffffff
-.L_0200ba18:
-	.4byte IwramClearWords
-.L_0200ba1c:
-	.4byte Data_02005a84
-.L_0200ba20:
-	.4byte Data_02004cb2 + 0x1
-.L_0200ba24:
-	.4byte Data_02005a80
-.L_0200ba28:
-	.4byte Func_0200377c
-.L_0200ba2c:
-	.4byte Data_02005a82
-.L_0200ba30:
-	.4byte Data_02005b84
-.L_0200ba34:
-	.4byte Data_02005b86
-	.section .text.x0200ba38,"ax",%progbits
-	.global Func_02003a38
-	.thumb_func
-Func_02003a38:
-	push {r5, r6, lr}
-	movs r0, #128
-	lsls r0, r0, #4
-	bl MemAlloc
-	ldr r3, .L_0200ba9c
-	adds r6, r0, #0
-	movs r1, #64
-	ldr r0, .L_0200baa0
-	mov lr, r3
-	.2byte 0xf800
-	adds r1, r6, #0
-	ldr r0, .L_0200baa4
-	bl Func_0200468c
-	ldr r5, .L_0200baa8
-	bl Resource_FindFreeEntry
-	movs r1, #128
-	strh r0, [r5]
-	lsls r0, r0, #16
-	adds r2, r6, #0
-	lsls r1, r1, #4
-	asrs r0, r0, #16
-	bl VramBlock_LoadCached
-	adds r0, r6, #0
-	bl MemFree
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_0200baac
-	bl Scheduler_AddOrUpdateCallback
-	ldr r2, .L_0200bab0
-	ldr r3, .L_0200ba90
-	strh r3, [r2]
-	ldr r2, .L_0200bab4
-	ldr r3, .L_0200ba94
-	strh r3, [r2]
-	ldr r2, .L_0200bab8
-	ldr r3, .L_0200ba98
-	strh r3, [r2]
-	b .L_0200babc
-.L_0200ba90:
-	.4byte 0x00000000
-.L_0200ba94:
-	.4byte 0x00000001
-.L_0200ba98:
-	.4byte 0xffffffff
-.L_0200ba9c:
-	.4byte IwramClearWords
-.L_0200baa0:
-	.4byte Data_02005a84
-.L_0200baa4:
-	.4byte Data_02004ee2
-.L_0200baa8:
-	.4byte Data_02005a80
-.L_0200baac:
-	.4byte Func_0200377c
-.L_0200bab0:
-	.4byte Data_02005a82
-.L_0200bab4:
-	.4byte Data_02005b84
-.L_0200bab8:
-	.4byte Data_02005b86
-.L_0200babc:
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x0200bac0,"ax",%progbits
+	.balign 4
 	.global Func_02003ac0
 	.thumb_func
 Func_02003ac0:
@@ -6536,16 +6238,6 @@ Func_02003ac0:
 	.4byte Data_02005a82
 .L_0200baec:
 	.4byte Data_02005a84
-	.section .text.x0200baf0,"ax",%progbits
-	.global Func_02003af0
-	.thumb_func
-Func_02003af0:
-	ldr r3, .L_0200baf8
-	strh r0, [r3]
-	bx lr
-	.2byte 0x0000
-.L_0200baf8:
-	.4byte Data_02005b86
 	.section .text.x0200bb42,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200bb7a,"ax",%progbits

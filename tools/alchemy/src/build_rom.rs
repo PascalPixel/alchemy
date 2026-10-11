@@ -1153,7 +1153,7 @@ fn assembly_inputs(
     for input in stream_paths(root, target, source, &directory)? {
         hasher.update(fs::read(&input).map_err(|error| format!("{}: {error}", input.display()))?);
     }
-    for built in asset_files(root, source) {
+    for (_, built) in asset_files(root, source) {
         let row = index
             .row(&directory.join(&built))
             .ok_or_else(|| format!("{built} was not prepared"))?;
@@ -1163,11 +1163,45 @@ fn assembly_inputs(
     Ok(())
 }
 
-fn asset_files(root: &Path, source: &Path) -> Vec<String> {
+/// The build products a source names, each with the file that names it:
+/// the source's own, then those of every assembler source under games/ it
+/// reaches with `.include`, in the order the assembler reads them. A module
+/// that gathers assets shared with the other game includes their sources
+/// instead of repeating them, and an asset belongs to its game or to
+/// games/common by the file that names it.
+fn asset_files(root: &Path, source: &Path) -> Vec<(PathBuf, String)> {
+    let mut found = Vec::new();
+    asset_files_in(root, source, &mut Vec::new(), &mut found);
+    found
+}
+
+fn asset_files_in(root: &Path, source: &Path, seen: &mut Vec<PathBuf>, found: &mut Vec<(PathBuf, String)>) {
+    if seen.iter().any(|known| known == source) {
+        return;
+    }
+    seen.push(source.to_path_buf());
     let Ok(text) = fs::read_to_string(root.join(source)) else {
-        return Vec::new();
+        return;
     };
-    asset_names(&text)
+    found.extend(asset_names(&text).into_iter().map(|built| (source.to_path_buf(), built)));
+    for included in included_sources(&text) {
+        asset_files_in(root, Path::new(&included), seen, found);
+    }
+}
+
+/// The assembler sources under games/ a source includes by their path from
+/// the checkout: `.include "games/common/src/graphics/ui/small_font.s"`.
+/// A header (.h, .inc) is no source: it names no asset the build makes.
+pub(crate) fn included_sources(text: &str) -> Vec<String> {
+    static PATTERN: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    let pattern = PATTERN.get_or_init(|| {
+        regex::Regex::new(r#"(?m)^\s*\.include\s+"(games/[A-Za-z0-9_./]+\.s)""#).expect("static pattern")
+    });
+    pattern
+        .captures_iter(text)
+        .map(|capture| capture[1].to_owned())
+        .filter(|path| !path.split('/').any(|part| part.is_empty() || part == "." || part == ".."))
+        .collect()
 }
 
 /// The directories of built assets in an edition's output: one per src
@@ -1240,7 +1274,7 @@ struct Asset {
 
 fn source_assets(root: &Path, target: DecompTarget, source: &Path) -> Result<Vec<Asset>, String> {
     let mut assets = Vec::new();
-    for built in asset_files(root, source) {
+    for (named_in, built) in asset_files(root, source) {
         let sound = built
             .strip_prefix("common/")
             .unwrap_or(&built)
@@ -1264,7 +1298,7 @@ fn source_assets(root: &Path, target: DecompTarget, source: &Path) -> Result<Vec
         }
         let (game, recipe) = match recipe.strip_prefix("common/") {
             Some(shared) => (Path::new("games/common"), shared),
-            None if !sound && source.starts_with("games/common") => {
+            None if !sound && named_in.starts_with("games/common") => {
                 (Path::new("games/common"), recipe)
             }
             None => (Path::new(target.game_dir()), recipe),
@@ -1887,7 +1921,7 @@ fn overlay_inputs(
         return overlay_script_inputs(hasher, script, objects, index);
     };
     hasher.update(with_includes(&[root, output], &root.join(listing))?);
-    for built in asset_files(root, listing) {
+    for (_, built) in asset_files(root, listing) {
         let row = index
             .row(&output.join(&built))
             .ok_or_else(|| format!("{built} was not prepared"))?;
@@ -2155,5 +2189,45 @@ mod tests {
                 "map/map_095/shapes.table.lz",
             ]
         );
+    }
+
+    #[test]
+    fn a_module_takes_the_assets_of_the_sources_it_includes() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, text: &str| {
+            let path = root.path().join(path);
+            fs::create_dir_all(path.parent().unwrap()).unwrap();
+            fs::write(path, text).unwrap();
+        };
+        write(
+            "games/tbs/src/graphics/ui/ui.s",
+            "\t.include \"games/common/include/game/ed_asm.h\"\n\
+             \t.include \"games/common/src/graphics/ui/small_font.s\"\n\
+             Ui_Icons:\n\t.incbin \"graphics/ui/icons.4bpp.lz\"\n\
+             \t.include \"games/common/src/graphics/ui/small_font.s\"\n\
+             \t.include \"games/../private.s\"\n",
+        );
+        write("games/common/include/game/ed_asm.h", "\t.incbin \"graphics/ui/header.4bpp\"\n");
+        write(
+            "games/common/src/graphics/ui/small_font.s",
+            "UiText_SmallFont:\n\t.incbin \"graphics/ui/small_font.1bpp\"\n\
+             \t.include \"games/tbs/src/graphics/ui/ui.s\"\n",
+        );
+        let source = Path::new("games/tbs/src/graphics/ui/ui.s");
+        // The module's own first, each included source once, no header.
+        assert_eq!(
+            asset_files(root.path(), source),
+            [
+                (source.to_path_buf(), "graphics/ui/icons.4bpp.lz".to_owned()),
+                (
+                    PathBuf::from("games/common/src/graphics/ui/small_font.s"),
+                    "graphics/ui/small_font.1bpp".to_owned()
+                ),
+            ]
+        );
+        // An asset is the game's or games/common's by the file that names it.
+        let assets = source_assets(root.path(), crate::targets::target_for(crate::targets::TARGET_IDS[0]), source).unwrap();
+        let games: Vec<&Path> = assets.iter().map(|asset| asset.game.as_path()).collect();
+        assert_eq!(games, [Path::new(crate::targets::target_for(crate::targets::TARGET_IDS[0]).game_dir()), Path::new("games/common")]);
     }
 }

@@ -51,7 +51,10 @@ build can link: a malformed row, an object with no C, assembly or MIDI\n\
 source, an input section of an object given twice to one edition, a place\n\
 the game's main.ld or overlay.ld does not INCLUDE, a fragment included\n\
 outside the place it is named for, or an overlay whose bss rows and .bss\n\
-header in games/<game>/overlays.tsv do not go together. A place is an\n\
+header in games/<game>/overlays.tsv do not go together; or when the\n\
+assembler modules linked after the resource directory, with the sources\n\
+they include, do not define its resources in the order its rows first name\n\
+them. A place is an\n\
 output section (rom_start; text, bss and discard in an overlay), or the\n\
 span of one between two fixed placements, numbered from the section's start\n\
 (rom_main_00, rom_main_01 ...). A game without a list is not checked.";
@@ -567,8 +570,10 @@ fn run(root: &Path) -> Result<String, String> {
                 failures.extend(found.into_iter().map(|found| format!("{id} {name} {found}")));
             }
         }
+        let (resources, found) = resources(root, &rows)?;
+        failures.extend(found.into_iter().map(|found| format!("{shown}: {found}")));
         summary.push(format!(
-            "{shown}: {} rows of {} images, each linked where its script includes its place",
+            "{shown}: {} rows of {} images, each linked where its script includes its place; {resources} resources in their directory's order",
             rows.len(),
             images.len()
         ));
@@ -580,6 +585,121 @@ fn run(root: &Path) -> Result<String, String> {
         return Ok("no game has an object list".into());
     }
     Ok(summary.join("\n"))
+}
+
+/// The label that starts a game's resource directory, a table of pointers
+/// written one `resource NAME, PLACE` row each.
+const DIRECTORY: &str = "Resource_DirectoryTable";
+
+/// The resources a game's modules define against its resource directory:
+/// how many there are, and where their order is not the directory's. The
+/// modules are the assembler sources linked after the directory in its
+/// place; a game whose list links no directory has none.
+fn resources(root: &Path, rows: &[Row]) -> Result<(usize, Vec<String>), String> {
+    let assembler = |row: &Row| {
+        let source = format!("{}.s", row.object);
+        (row.image == MAIN && row.built() && root.join(&source).is_file()).then_some(source)
+    };
+    let mut directory = None;
+    let mut modules = Vec::new();
+    for row in rows {
+        let Some(source) = assembler(row) else {
+            continue;
+        };
+        match &directory {
+            None => {
+                let text = fs::read_to_string(root.join(&source)).map_err(|error| format!("{source}: {error}"))?;
+                if labels_of(&text).iter().any(|label| label == DIRECTORY) {
+                    directory = Some((row.place.clone(), directory_places(&text)));
+                }
+            }
+            Some((place, _)) if *place == row.place => {
+                let mut labels = Vec::new();
+                module_labels(root, &source, &mut Vec::new(), &mut labels)?;
+                modules.push((source, labels));
+            }
+            Some(_) => {}
+        }
+    }
+    let Some((_, places)) = directory else {
+        return Ok((0, Vec::new()));
+    };
+    let count = modules.iter().map(|(_, labels)| labels.len()).sum();
+    Ok((count, out_of_order(&places, &modules)))
+}
+
+/// The global labels of an assembler source, in order.
+fn labels_of(text: &str) -> Vec<String> {
+    text.lines()
+        .filter_map(|line| line.split('@').next().unwrap_or("").trim().strip_suffix(':'))
+        .filter(|name| {
+            name.starts_with(|c: char| c.is_ascii_alphabetic() || c == '_')
+                && name.bytes().all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
+        })
+        .map(str::to_owned)
+        .collect()
+}
+
+/// The places a resource directory names, in the order it first names each:
+/// a row is `resource NAME, PLACE`, and a place of 0 is an unused row.
+fn directory_places(text: &str) -> Vec<String> {
+    let mut places: Vec<String> = Vec::new();
+    for line in text.lines() {
+        let line = line.split('@').next().unwrap_or("").trim();
+        let Some(row) = line.strip_prefix("resource").filter(|rest| rest.starts_with(char::is_whitespace)) else {
+            continue;
+        };
+        let place = row.rsplit(',').next().unwrap_or("").trim();
+        if place.starts_with(|c: char| c.is_ascii_alphabetic() || c == '_') && !places.iter().any(|known| known == place) {
+            places.push(place.to_owned());
+        }
+    }
+    places
+}
+
+/// A module's global labels in the order the assembler meets them, those of
+/// each assembler source it includes in that include's place.
+fn module_labels(root: &Path, source: &str, open: &mut Vec<String>, labels: &mut Vec<String>) -> Result<(), String> {
+    if open.iter().any(|known| known == source) {
+        return Err(format!("{source} includes itself"));
+    }
+    let text = fs::read_to_string(root.join(source)).map_err(|error| format!("{source}: {error}"))?;
+    open.push(source.to_owned());
+    for line in text.lines() {
+        match crate::build_rom::included_sources(line).first() {
+            Some(included) => module_labels(root, included, open, labels)?,
+            None => labels.extend(labels_of(line)),
+        }
+    }
+    open.pop();
+    Ok(())
+}
+
+/// Where the modules' labels are not the directory's places in the order
+/// it first names them: Camelot's packer wrote each resource once, when
+/// its row first came up, so that order is the order of the bytes. Places
+/// no module defines (the far-call tables, the overlays) are other
+/// objects'.
+fn out_of_order(places: &[String], modules: &[(String, Vec<String>)]) -> Vec<String> {
+    let mut found = Vec::new();
+    let mut defined = BTreeSet::new();
+    let mut linked = Vec::new();
+    for (module, labels) in modules {
+        for label in labels {
+            if !defined.insert(label.as_str()) {
+                found.push(format!("{module}: {label} is defined twice among the resources"));
+            } else if !places.contains(label) {
+                found.push(format!("{module}: {label} is linked among the resources, and the directory has no row for it"));
+            } else {
+                linked.push((module, label));
+            }
+        }
+    }
+    let named = places.iter().filter(|place| defined.contains(place.as_str()));
+    if let Some(((module, label), place)) = linked.into_iter().zip(named).find(|((_, label), place)| label != place) {
+        found.push(format!("{module}: {label} is linked where the directory's order has {place}"));
+    }
+    found
 }
 
 /// Input sections the list gives one edition twice: the linker places a
@@ -903,6 +1023,58 @@ mod tests {
         assert!(refused("36f\t.bss\n36f\t.bss (NOLOAD)\n").contains("twice"));
         assert!(parse_bss("36f\t.bss\n").unwrap_err().contains("header"));
         assert!(parse(&list("3ad\trom_start\tgames/g/a\n")).unwrap_err().contains("not one of an overlay's"));
+    }
+
+    #[test]
+    fn resource_modules_follow_the_directorys_first_references() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, text: &str| {
+            let path = root.path().join(path);
+            fs::create_dir_all(path.parent().unwrap()).unwrap();
+            fs::write(path, text).unwrap();
+        };
+        // The directory names a far-call table no module defines, one
+        // resource twice, an unused row, and its own build stamp.
+        write(
+            "games/g/dir.s",
+            "\t.macro resource name, place:req\n\t.4byte \\place\n\t.endm\nResource_DirectoryTable:\n\
+             \tresource , FarCall_Table\n\tresource Tiles, Ui_Tiles\n\tresource , Title_Sun\n\tresource , Ui_Tiles\n\
+             \tresource , Field_Map\n\tresource , Tileset_Palette\n\tresource , 0\nResource_BuildStamp:\n",
+        );
+        write("games/g/code.s", "FarCall_Table:\n");
+        write("games/common/ui.s", "\t.section .rodata\n\t.global Ui_Tiles\nUi_Tiles:\n\t.incbin \"graphics/ui/tiles.4bpp\"\n");
+        write(
+            "games/g/title.s",
+            "\t.section .rodata\n\t.include \"games/common/ui.s\"\n\t.global Title_Sun\nTitle_Sun: @ 太陽\n\t.incbin \"graphics/title/sun.4bpp.lz\"\n",
+        );
+        write(
+            "games/g/map.s",
+            "\t.section .rodata\nField_Map:\n\tmap_block Field_Map, .LField_Map_GRID\n.LField_Map_GRID:\n\t.balign 4, 0\nTileset_Palette:\n",
+        );
+        let rows = |order: &str| {
+            let rows: String = order.split(' ').map(|object| format!("main\trom_tail\tgames/g/{object}\t.rodata\n")).collect();
+            parse(&list(&format!("main\trom_main\tgames/g/code\n{rows}"))).unwrap()
+        };
+        assert_eq!(resources(root.path(), &rows("dir title map")).unwrap(), (4, Vec::new()));
+        // A module out of the directory's order, by its first label there.
+        let (_, found) = resources(root.path(), &rows("dir map title")).unwrap();
+        assert_eq!(found, ["games/g/map.s: Field_Map is linked where the directory's order has Ui_Tiles"]);
+        // A label inside a module out of order.
+        write("games/g/map.s", "Tileset_Palette:\nField_Map:\n");
+        let (_, found) = resources(root.path(), &rows("dir title map")).unwrap();
+        assert_eq!(found, ["games/g/map.s: Tileset_Palette is linked where the directory's order has Field_Map"]);
+        // A resource the directory has no row for, and one defined twice.
+        write("games/g/map.s", "Field_Map:\nTileset_Palette:\nField_Spare:\n\t.include \"games/common/ui.s\"\n");
+        let (_, found) = resources(root.path(), &rows("dir title map")).unwrap();
+        assert_eq!(
+            found,
+            [
+                "games/g/map.s: Field_Spare is linked among the resources, and the directory has no row for it",
+                "games/g/map.s: Ui_Tiles is defined twice among the resources",
+            ]
+        );
+        // A list that links no directory has no resources to order.
+        assert_eq!(resources(root.path(), &rows("map title")).unwrap(), (0, Vec::new()));
     }
 
     #[test]

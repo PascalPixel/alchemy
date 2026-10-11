@@ -105,7 +105,7 @@ void *UnitGet(u32 owner)
          * a pin (28/28 instructions, differ 0). With an unrestricted "r"
          * operand or no use, only that copy is absent (28/27, differ 1,
          * same 0x44-byte English extent with a final alignment nop). */
-        /* FAKEMATCH: needed to match: low-register use preserves mov r3,lr; without it, 28/27 instructions, differ 1. */
+        /* FAKEMATCH: needed to match: low-register use preserves mov r3,lr; without it, 28/27 instructions, differ 1. 2026-10-11: arm_return_addr emits the lr copy after the argument copies and flow deletes it without a codeless use; every plain use (compare, store, fold) either emits code or folds away (differ 7). */
         asm("" : : "l"(caller));
     }
     states = gGameState.owners;

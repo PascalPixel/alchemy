@@ -947,7 +947,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 			for (i = 0; i != h; i++)
 			{
 				s32 k = 32;
-				/* FAKEMATCH: loop.c matches this 32 with the smoke calls' 32 (life 19, savings 2: 12 * 2 * 19 = 456 >= 450 insns) and hoists it out of the frame loop, so it loses its register and later reloads rotate; the native builds it in this loop's preheader. */
+				/* FAKEMATCH: loop.c matches this 32 with the smoke calls' 32 (life 19, savings 2: 12 * 2 * 19 = 456 >= 450 insns) and hoists it out of the frame loop, so it loses its register and later reloads rotate; the native builds it in this loop's preheader. 2026-10-11: loop.c's threshold is 12 after an earlier move (savings 2 x life 19 x 12 = 456 >= 448 insns); a 96 local declared before the ramp loops lowers that to 432 and defeats the hoist, but the asm pair's two codeless preheader insns also raise i's live length to 1292, which orders n (28 refs/106) before i (195 refs) and gives n r9; without them i takes r9 and a slot at [sp, #60] appears (differ 699). */
 				asm("" : "+r"(k));
 				blit[0](dst, ramp + w, w + 48, i + 16, k - w * 2, 1);
 			}

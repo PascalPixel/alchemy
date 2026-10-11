@@ -274,7 +274,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 			 * 353, nested helpers ignored) found no improvement in 1241
 			 * compiled candidates. Changing count alone differs 10, both
 			 * count and base differ 74, and level alone differs 42. */
-			/* FAKEMATCH: work's copy in r0; else it and the 0x778c reload swap r0/r1. */
+			/* FAKEMATCH: work's copy in r0; else it and the 0x778c reload swap r0/r1. 2026-10-11: plain `heat = work->frame / 4` with a plain line pointer differs 69: combine merges count's copy, the 0x778c reload and work swap r0/r1, and the halfword zero becomes a literal-pool load once its reload scratch moves. */
 			register u8 *base asm("r0") = (u8 *)work;
 			s32			 heat = count / 4;
 			u16			*line;
@@ -298,7 +298,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 			{
 				s32 hold;
 
-				/* FAKEMATCH: hold takes r7 across the call; with line in r5, hold in r7 and r6 clobbered, heat takes r4 and its sp+8 caller-save as in the reference (222 -> 89); global.c ignores hard conflicts with r7, the frame pointer, so r7 needs a pseudo. */
+				/* FAKEMATCH: hold takes r7 across the call; with line in r5, hold in r7 and r6 clobbered, heat takes r4 and its sp+8 caller-save as in the reference (222 -> 89); global.c ignores hard conflicts with r7, the frame pointer, so r7 needs a pseudo. 2026-10-11: a plain call differs 354, heat in r6 with no caller-save and the frame 280 instead of 284. */
 				asm("" : "=r"(hold));
 				/* FAKEMATCH: r6 is clobbered across the call. */
 				asm("" : : : "r6");
@@ -322,7 +322,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 				 * retains 26; also unbinding count differs 36, with either an
 				 * input or output count operand on the existing base boundary.
 				 * Reversing the sum or deriving green as red - 48 retains 42. */
-				/* FAKEMATCH: level in r2; unbinding it changes ten register/order rows. */
+				/* FAKEMATCH: level in r2; unbinding it changes ten register/order rows. 2026-10-11: the natural `level = green / 4 + heat` differs 18, a level/red r3/r2 swap only (local-alloc hands level r3 first); a use of level after the first red clamp matches, and moving green's computation there differs 4; no plain statement survives to allocation there. */
 				register s32 level asm("r2");
 
 				if (green < 0)

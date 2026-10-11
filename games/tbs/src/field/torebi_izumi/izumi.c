@@ -752,7 +752,7 @@ play:
         prize_state--;
         {
 
-            /* FAKEMATCH: keeps the slot in r1 and state + 1 in r0. */
+            /* FAKEMATCH: keeps the slot in r1 and state + 1 in r0. 2026-10-11: plain forms share state + 1 with the roulette's peeled first iteration through GCSE PRE (struct field 42/96, s8 pointer 57/107, direct global 38/100 rows in EN/JA); the ++/-- pair breaks the sharing, but then global allocation gives the later-defined pointer r1 before the slot (differ 10) or, pointer first, sched2 keeps adds r0, #1 ahead of adds r1, r6, r3 by RTL order (differ 2). */
             register s32 slot asm("r1") = i + 284;
             s8 *w = (s8 *)prize_state + 1;
 

@@ -276,7 +276,7 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 
 						{
 							tmp2 = 0x06002800;
-							/* FAKEMATCH: the consumed-base barrier preserves two register choices and one load order without changing instruction count or frame. */
+							/* FAKEMATCH: the consumed-base barrier preserves two register choices and one load order without changing instruction count or frame. 2026-10-11: without the second use combine folds the constant into the plus and reload materializes it round-robin into r5 (differ 6); a single-set base pointer with two uses is hoisted out of the loop instead (differ 113-149, frame +4/+8). */
 							__asm__ __volatile__("" : : "l"(tmp2));
 							tmp = (u32 *)Ram_MapBlocks;
 							tiles = tmp;

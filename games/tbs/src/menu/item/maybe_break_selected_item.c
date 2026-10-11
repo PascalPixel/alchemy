@@ -20,7 +20,6 @@
 #include "text/msg_ids.h"
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 
-#define InventoryMenu_ShowModalMessage ((s32 (*)(s32,s32,s32))InventoryMenu_ShowModalMessage)
 
 s32 AudioCommand_PlayFar(s32);
 

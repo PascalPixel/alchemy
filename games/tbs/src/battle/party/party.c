@@ -124,15 +124,15 @@ s32 Battle_RunEncounter(s32 enemy_group)
 	transition = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_BACKGROUND, 32);
 	Runtime_AllocateBlock(11, 0x280);
 	target = camera->pos;
-	/* FAKEMATCH: needed to match: the setup's zero held in result, a global pseudo, so global allocation gives it r7 as listed */
+	/* FAKEMATCH: needed to match: result starts at 0 and is never read before each exit sets it; CSE takes the setup zeros from its register, r7 as listed (without it 262) */
 	result = 0;
 	Iwram_ClearWords(owner_states, 0x7c8);
 	Scheduler_ResetTaskTable();
-	transition->frames = result;
+	transition->frames = 0;
 	transition->target_yaw = 0x2000;
 	transition->flag = 1;
-	transition->unknown_18 = result;
-	transition->unknown_1c = result;
+	transition->unknown_18 = 0;
+	transition->unknown_1c = 0;
 	REG_DISPCNT = 1;
 	GameFlag_SetBitFar(0x103);
 	GameFlag_SetBitFar(0x169);

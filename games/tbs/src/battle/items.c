@@ -24,8 +24,6 @@
 struct BtlAct		  *BtlActGet(s32 action_id);
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 
-#define BattleEffect_SelectNearbyObject ((s32 (*)(u32))BattleEffect_SelectNearbyObject)
-
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 extern u32 gFrameCount;
 #endif
@@ -99,16 +97,10 @@ void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette)
 
 void Battle_ResetEffectCounter(void)
 {
-	void  *runtime;
-	void **cell;
-	u8	  *counter;
-	int	   zero;
-	cell = (void **)&gEventWork;
-	runtime = *cell;
-	counter = (u8 *)&((struct BattleRuntime *)runtime)->unknown_cb6;
-	zero = 0;
-	*((s16 *)counter) = zero;
-	if ((*((s16 *)((struct BattleRuntime *)runtime)->unknown_cb8)) != 0)
+	struct BattleRuntime *runtime = gEventWork;
+
+	runtime->unknown_cb6 = 0;
+	if (*(s16 *)runtime->unknown_cb8 != 0)
 	{
 		BattleFx_ExecutePackedAbilityEffect(0x2090);
 	}
@@ -159,14 +151,12 @@ s32 Event_FindFacingTrigger(s32 source)
 s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 {
 	/* FAKEMATCH: needed to match: retain the caller's r1=0: the callee's flag parameter is unused */
-	/* FAKEMATCH: needed to match: the ROM caller treats this call as setting r0 (an implicit-int style declaration) */
 
 	s32						   result;
 	s32						   item_id;
 	s32						   actor;
 	struct BtlUnit			  *obj;
 	const struct SceneEvent	  *event;
-	u16						  *p;
 	s32						   j;
 	s32						   i;
 	s32						   best;
@@ -184,43 +174,31 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 		if (actor == 15)
 		{
 			actor = 0;
-			i = 0;
-			if (actor < count)
+			for (i = 0; i < count; i++)
 			{
-				struct GameState *party = &gGameState;
-				do
+				obj = UnitGetFar(gGameState.active_owners[i]);
+				matches = 0;
+				for (j = 0; j < 15; j++)
 				{
-					obj = (struct BtlUnit *)UnitGetFar(party->active_owners[i]);
-					matches = 0;
-					p = obj->inventory;
-					j = 14;
-					do
-					{
-						if ((*p++ & 0x1ff) == item_id)
-							matches++;
-						j--;
-					} while (j >= 0);
+					if ((obj->inventory[j] & 0x1ff) == item_id)
+						matches++;
+				}
 
-					if (best < matches)
-					{
-						best = matches;
-						actor = party->active_owners[i];
-					}
-					i++;
-				} while (i < count);
+				if (best < matches)
+				{
+					best = matches;
+					actor = gGameState.active_owners[i];
+				}
 			}
 		}
 		else
 		{
-			obj = (struct BtlUnit *)UnitGetFar(actor);
-			p = obj->inventory;
-			j = 14;
-			do
+			obj = UnitGetFar(actor);
+			for (j = 0; j < 15; j++)
 			{
-				if ((*p++ & 0x1ff) == item_id)
+				if ((obj->inventory[j] & 0x1ff) == item_id)
 					best++;
-				j--;
-			} while (j >= 0);
+			}
 		}
 
 		if (best == 0)
@@ -258,18 +236,16 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 	else
 	{
 		s32 action_id;
-		s32 flag;
 
-		flag = 0x142;
 		GameFlag_ClearBitFar(0x143);
-		GameFlag_SetBitFar(flag);
+		GameFlag_SetBitFar(0x142);
 		action_id = Item_GetDirectFar(item_id)->action_id;
 		runtime = (struct ItemCommandRuntime *)gEventWork;
 
 		if (action_id != 0)
 		{
 			GameFlag_SetBitFar(0x145);
-			GameFlag_ClearBitFar(flag);
+			GameFlag_ClearBitFar(0x142);
 
 			if (action_id == 149 && !GameFlag_TestFar(0x144))
 			{
@@ -281,14 +257,8 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 				if (i != 0)
 					return 0;
 
-				{
-					struct GameState *work = &gGameState;
-					s32				  a, b;
-					a = (u16)work->retreat_scene;
-					work->scene = a;
-					b = (u16)work->retreat_entrance;
-					work->entrance = b;
-				}
+				gGameState.scene = gGameState.retreat_scene;
+				gGameState.entrance = gGameState.retreat_entrance;
 				runtime->result_code = 999;
 			}
 

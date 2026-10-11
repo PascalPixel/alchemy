@@ -291,13 +291,7 @@ main	rom_main_04	games/tbs/src/field/common/effect/fieldgfx	.text
 main	rom_main_04	games/common/src/field/common/object/motion_move_halfway_toward_target	.text
 main	rom_main_04	games/tbs/src/battle/effect/radpart	.text
 main	rom_main_04	games/common/src/field/common/dispatch_type_handler	.text
-main	rom_main_04	games/tbs/src/battle/effect/effect	.text
-main	rom_main_04	games/tbs/src/field/common/object/resource	.text
-main	rom_main_04	games/tbs/src/battle/effect/arcupdat	.text
-main	rom_main_04	games/tbs/src/battle/effect/actsetup	.text
 main	rom_main_04	games/tbs/src/battle/effect/scene	.text
-main	rom_main_04	games/tbs/src/battle/effect/finish_scene_and_release_heap_block	.text
-main	rom_main_04	games/tbs/src/battle/effect/hue	.text
 main	rom_main_04	games/tbs/src/battle/effect/pattern	.text
 main	rom_main_04	games/common/src/battle/effect/fragment	.text
 main	rom_main_04	games/tbs/src/battle/effect/fieldfx	.text

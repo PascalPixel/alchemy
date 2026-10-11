@@ -39,23 +39,6 @@ extern s16 Korosseo_ModeTaskParam;
 extern s32 Korosseo_ModeTaskPosition;
 extern s16 *Korosseo_ModeTaskScript;
 
-#define QueueRegister(address, value) \
-{ \
-    u32 saved; \
-    s32 cnt; \
-    do { /* FAKEMATCH: needed to match: removing this one-pass boundary changes measured instruction scheduling. */ saved = *ime; } while (0); \
-    *ime = (u16)(u32)ime; \
-    cnt = queue->count; \
-    if (cnt < 32) { \
-        u32 *entry = (u32 *)((u8 *)queue + cnt * 12 + 4); \
-        *(u16 *)&queue->count = cnt + 1; \
-        *entry++ = (value); \
-        *entry++ = (address); \
-        *entry = 0x20000; \
-    } \
-    *ime = saved; \
-}
-
 void Korosseo_LoadPortrait(s32 id)
 {
     u8 *buf;
@@ -76,7 +59,6 @@ void Korosseo_LoadPortrait(s32 id)
 
 void Korosseo_UpdateModeTask(void)
 {
-    /* FAKEMATCH: needed to match: the queue read boundary and count-store alias keep separate cursors for each write. */
     u32 *write = Korosseo_ModeTaskSprites;
     struct Sprite *sprite = (struct Sprite *)write;
     s32 tile = gVramBlockCache[Korosseo_PortraitSlot].offset >> 5;
@@ -84,8 +66,6 @@ void Korosseo_UpdateModeTask(void)
     s32 scale, blend, pos;
     s32 matrix, i, x, y, left;
     struct AffineTransform work;
-    struct IoWriteQueue *queue;
-    volatile u16 *ime;
 
 commands:
     if (Korosseo_ModeTaskTimer != 0)
@@ -258,8 +238,6 @@ render:
         }
         break;
     }
-    queue = &gIoWriteQueue;
-    ime = &REG_IME;
-    QueueRegister((u32)&REG_BLDCNT, 0x3f00)
-    QueueRegister((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend)
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f00, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend, 0x20000);
 }

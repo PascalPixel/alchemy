@@ -2077,46 +2077,16 @@ static __inline__ void ClearWords(ClearWordsFn clear, void *destination, s32 siz
 
 void AudioCommand_PlayFar(s32);
 
-// REG_DISPCNT への書き込みを I/O 書き込みキューに積む（IME を止めて）
-#define QUEUE_DISPLAY_CONTROL(control)                                                                \
-	do                                                                                                \
-	{                                                                                                 \
-		/* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */     \
-		u32 saved;                                                                                    \
-		s32 count;                                                                                    \
-                                                                                                      \
-		do                                                                                            \
-		{                                                                                             \
-			/* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
-			saved = *ime;                                                                             \
-		} while (0);                                                                                  \
-		*ime = (u16)ime;                                                                              \
-		count = q->count;                                                                             \
-		if (count <= 31)                                                                              \
-		{                                                                                             \
-			u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);                                     \
-			*(u16 *)&q->count = count + 1;                                                            \
-			*destination++ = (control);                                                               \
-			*destination++ = (u32) & REG_DISPCNT;                                                     \
-			*destination = 0x20000;                                                                   \
-		}                                                                                             \
-		*ime = saved;                                                                                 \
-	} while (0)
-
 //--------------------------------------------------------------------------
 // キャンバス面を開く（背景パレットをフェードさせ、BG2 をキャンバスにする）
 // bg_control : REG_BG2CNT に足す値
 //--------------------------------------------------------------------------
 void BattleFx_BeginCanvasLayer(s32 bg_control)
 {
-	/* FAKEMATCH: needed to match: the one-pass IME read and u16 count store preserve queue scheduling and whole-function pointer lifetimes */
-
 	struct BattleEffectWork		*work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
 	struct BtlWork				*btl = *(gWorkSlot + HEAP_SLOT_BATTLE);
 	void						*canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
 	struct BattleBackgroundView *display = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
-	volatile u16				*ime;
-	struct IoWriteQueue			*q;
 	s32							 row;
 	s32							 col;
 	s32							 ofs;
@@ -2125,9 +2095,7 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
 	display->second_mode = 1;
 	WaitFrames(1);
 	REG_BLDCNT = 0;
-	q = &gIoWriteQueue;
-	ime = &REG_IME;
-	QUEUE_DISPLAY_CONTROL(0x7741);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
 	gBgScroll[1].y = 32;
 	WaitFrames(1);
 
@@ -2160,7 +2128,7 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
 	REG_WIN1V = 0x1088;
 	REG_WININ = 0x3537;
 	REG_WINOUT = 0x3f21;
-	QUEUE_DISPLAY_CONTROL(0x7741);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
 
 	// スクリーン：16x16 キャラクタを順に並べる（1 キャラ 1 バイトなので 2 個ずつ書く）
 	ofs = 0;
@@ -2191,14 +2159,10 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
 //--------------------------------------------------------------------------
 void BattleFx_OpenCanvasLayer(s32 bg_control)
 {
-	/* FAKEMATCH: needed to match: the one-pass IME read and u16 count store preserve queue scheduling and whole-function pointer lifetimes */
-
 	struct BattleEffectWork		*work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
 	struct BtlWork				*btl = *(gWorkSlot + HEAP_SLOT_BATTLE);
 	void						*canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
 	struct BattleBackgroundView *display = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
-	volatile u16				*ime;
-	struct IoWriteQueue			*q;
 	s32							 row;
 	s32							 col;
 	s32							 ofs;
@@ -2207,19 +2171,17 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
 	display->second_mode = 1;
 	WaitFrames(1);
 	REG_BLDCNT = 0;
-	q = &gIoWriteQueue;
-	ime = &REG_IME;
-	QUEUE_DISPLAY_CONTROL(0x1741);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1741, 0x20000);
 	gBgScroll[1].y = 32;
 	WaitFrames(1);
 	BattlePresentation_ConfigurePaletteFadeFar(1, btl->background, 128);
 	work->fade_frames = 24;
 	work->fade_step = 0;
 	Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
-	QUEUE_DISPLAY_CONTROL(0x1341);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1341, 0x20000);
 	WaitFrames(1);
 	REG_BG2CNT = bg_control | 0x784;
-	QUEUE_DISPLAY_CONTROL(0x1341);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1341, 0x20000);
 	BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
 	display->second_mode = 0;
 	WaitFrames(1);
@@ -2238,7 +2200,7 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
 	REG_WIN1V = 0x1088;
 	REG_WININ = 0x3537;
 	REG_WINOUT = 0x3f21;
-	QUEUE_DISPLAY_CONTROL(0x7741);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
 	WaitFrames(1);
 
 	ofs = 0;
@@ -2259,8 +2221,6 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
 	ClearWords(Iwram_ClearWords, BG_CHAR_BLOCK(1), 0x4000);
 	WaitFrames(1);
 }
-
-#undef QUEUE_DISPLAY_CONTROL
 
 //--------------------------------------------------------------------------
 // キャンバス面を開き、BG2 を 256x256 の折り返しありにする
@@ -2299,8 +2259,6 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
 //--------------------------------------------------------------------------
 void BattleFx_EndCanvasLayer(void)
 {
-	/* FAKEMATCH: needed to match: the one-pass IME/queue scopes and u16 count store preserve scheduling, loading the queue before the preceding store */
-
 	struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
 	struct BtlWork			*btl = *(gWorkSlot + HEAP_SLOT_BATTLE);
 	s32						 i;

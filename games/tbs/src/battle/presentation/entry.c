@@ -400,7 +400,7 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 {
-	/* FAKEMATCH: needed to match: one-pass IME save, as in the IO write queue, and a one-halfword struct mask held across the fade loop */
+	/* FAKEMATCH: needed to match: a one-halfword struct mask held across the fade loop */
 
 	struct BattleBackgroundView *transition = *(struct BattleBackgroundView **)gTransitionWork;
 
@@ -412,31 +412,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 
 	if (mode == 1)
 	{
-		volatile u16		*ime;
-		struct IoWriteQueue *q;
-		u32					 saved;
-		s32					 count;
-
-		q = &gIoWriteQueue;
-		{
-			/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
-			do
-			{
-				ime = &REG_IME;
-				saved = *ime;
-			} while (0);
-			*ime = (u16)ime;
-			count = q->count;
-			if (count <= 31)
-			{
-				u32 *destination = q->entries[count];
-				*(u16 *)&q->count = count + 1;
-				*destination++ = 0x1f83;
-				*destination++ = 0x0400000a;
-				*destination = 0x20000;
-			}
-			*ime = saved;
-		}
+		IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f83, 0x20000);
 	}
 
 	Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, REG_DMA3);

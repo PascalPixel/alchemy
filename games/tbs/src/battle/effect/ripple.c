@@ -56,7 +56,6 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
 	s32						 wave;
 	s32						 level;
 	u16						*pal;
-	volatile u16			*ime;
 	s32						 angle;
 	s32						*line;
 
@@ -156,31 +155,7 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
 		{
 			pal[1] = pal[63];
 			Dma_Set(pal + 62, pal + 63, 0x80a0003e, REG_DMA3);
-			{
-				struct IoWriteQueue *q;
-				u32					 saved;
-				s32					 count;
-
-				q = &gIoWriteQueue;
-				/* FAKEMATCH: needed to match: the one-pass block keeps the queue load first and the saved copy ahead of the IME store, as in the IO write queue */
-				do
-				{
-					ime = &REG_IME;
-					saved = *ime;
-				} while (0);
-				*ime = (u16)ime;
-				count = q->count;
-				if (count <= 31)
-				{
-					u32 *destination = q->entries[count];
-					/* FAKEMATCH: needed to match: the count is stored through a u16 pointer, as in the IO write queue, which places the store after the entry address */
-					*(u16 *)&q->count = count + 1;
-					*destination++ = (u32)(pal + 1);
-					*destination++ = (u32)&BG_PLTT[1];
-					*destination = 0x8000003f;
-				}
-				REG_IME = saved;
-			}
+			IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[1], (u32)(pal + 1), 0x8000003f);
 		}
 		WaitFrames(1);
 	}

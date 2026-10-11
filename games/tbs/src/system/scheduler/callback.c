@@ -316,7 +316,7 @@ s32 Resource_GetBuffer(s32 no, s32 src)
 #include "string.h"
 #include "io_reg.h"
 #include "low_runtime.h"
-#include "../irqlock.h"
+#include "irqlock.h"
 
 #define gRandomSeed (*(u32 *)&gRandomSeed)
 

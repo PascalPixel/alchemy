@@ -110,24 +110,5 @@ void DisplayTransition_UpdateFrame(void)
         value++;
     }
 
-    {
-        struct IoWriteQueue *queue = &gIoWriteQueue;
-        volatile u16 *ime = &REG_IME;
-        s32 savedIme;
-        s32 count;
-        /* FAKEMATCH: needed to match: the one-pass loop keeps the saved IME copy ahead of the masking write, as in the other queue writers. */
-        do {
-            savedIme = *ime;
-        } while (0);
-        *ime = (u32)ime;
-        if ((count = queue->count) <= 31) {
-            u32 *destination = queue->entries[count];
-            /* FAKEMATCH: needed to match: storing the count through a plain u16 pointer keeps it out of the entry stores' alias set, so sched2 finishes the entry address first. */
-            *(u16 *)&queue->count = count + 1;
-            *destination++ = (u32)state->palette_nibbles;
-            *destination++ = (u32)BG_CHAR_BLOCK(0);
-            *destination = 0x84000008;
-        }
-        *ime = savedIme;
-    }
+    IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->palette_nibbles, 0x84000008);
 }

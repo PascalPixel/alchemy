@@ -39,29 +39,6 @@ struct FieldGlobals {
 
 void QueueSceneSound(s32 cue);
 
-#define QUEUE_IO_WRITE(address, value)                                      \
-    q = &gIoWriteQueue;                                                     \
-    do { \
-        /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
-        do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
-            ime = &REG_IME;                                                 \
-            saved = *ime;                                                   \
-        } while (0);                                                        \
-        *ime = (u16)ime;                                                    \
-        limit = 31;                                                         \
-        count = q->count;                                                   \
-        if (count <= limit) {                                               \
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
-                                                                            \
-            *(u16 *)&q->count = count + 1;                                  \
-            *destination++ = (value);                                       \
-            *destination++ = (address);                                     \
-            *destination = 0x20000;                                         \
-        }                                                                   \
-        *ime = saved;                                                       \
-    } while (0)
-
 void SceneState_SendRequest15With45(void)
 {
     BattleFx_SetPhaseRequest(15, 45);
@@ -195,14 +172,8 @@ void FieldScene_RunActor12Step(void) { FieldScene_RunMiddleAuxiliarySequence(12)
 
 void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
 {
-    /* FAKEMATCH: a one-pass IME wrapper and a signed queue limit preserve the queued write order. */
     s32 i;
     s32 next_frame;
-    volatile u16 *ime;
-    struct IoWriteQueue *q;
-    u32 saved;
-    u16 count;
-    s32 limit;
     s32 p10;
     s32 p10b;
     /* FAKEMATCH: x precedes z to break their equal allocation priority. */
@@ -225,7 +196,6 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
     rec2 = Engine_GameFlagIsSet(0x340);
     p9 = rec7->x.part.pixel;
     p11 = rec7->z.part.pixel;
-    ime = &REG_IME;
     Engine_EventBegin();
     Engine_AudioPlayCue(244);
     i = 0;
@@ -233,23 +203,8 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
         rec->scale_x = ((i << 11) + 0x800);
         rec->scale_y = ((i << 12) + 0x1000);
         if (rec2 == 0) {
-            q = &gIoWriteQueue;
             next_frame = i + 1;
-            do {
-                saved = *ime;
-            } while (0);
-            *ime = (u16)ime;
-            limit = 31;
-            count = q->count;
-            if (count <= limit) {
-                u32 *dst = (u32 *)((u8 *)q + count * 12 + 4);
-
-                *(u16 *)&q->count = count + 1;
-                *dst++ = ((16 - next_frame) << 8) | next_frame;
-                *dst++ = 0x04000052;
-                *dst = 0x20000;
-            }
-            *ime = saved;
+            IO_WRITE_QUEUE_PUSH(0x04000052, ((16 - next_frame) << 8) | next_frame, 0x20000);
         } else {
             next_frame = i + 1;
         }
@@ -594,12 +549,6 @@ s32 SuharaSabaku_RunSceneScript(void)
 
 void SuharaSabaku_ApplyVisitFlagBlend(void)
 {
-    /* FAKEMATCH: the queue bound is a variable, so the comparison stays signed on the u16 count as the ROM's bgt has it, and the queue writes keep the one-pass loops of QueueIoWriteDelay2. */
-    volatile u16 *ime;
-    struct IoWriteQueue *q;
-    u32 saved;
-    u16 count;
-    s32 limit;
     struct FieldActor *actor;
     s32 id;
     s32 alpha = 0;
@@ -629,22 +578,16 @@ void SuharaSabaku_ApplyVisitFlagBlend(void)
             actor->sprite->flags = 0;
         }
     }
-    QUEUE_IO_WRITE(0x04000050, 0x3f42);
+    IO_WRITE_QUEUE_PUSH(0x04000050, 0x3f42, 0x20000);
     if (Engine_GameFlagIsSet(0x340)) {
         alpha = 16;
         QueueSceneSound(244);
     }
-    QUEUE_IO_WRITE(0x04000052, ((16 - alpha) << 8) | alpha);
+    IO_WRITE_QUEUE_PUSH(0x04000052, ((16 - alpha) << 8) | alpha, 0x20000);
 }
 
 void SuharaSabaku_ApplyAltarFlagBlend(void)
 {
-    /* FAKEMATCH: the queue bound is a variable, so the comparison stays signed on the u16 count as the ROM's bgt has it, and the queue writes keep the one-pass loops of QueueIoWriteDelay2. */
-    volatile u16 *ime;
-    struct IoWriteQueue *q;
-    u32 saved;
-    u16 count;
-    s32 limit;
     struct FieldActor *actor;
     struct FieldSprite *sprite;
     s32 id;
@@ -685,10 +628,10 @@ void SuharaSabaku_ApplyAltarFlagBlend(void)
     if (Engine_GameFlagIsSet(0x315)) {
         Engine_GameFlagSet(0x9b7);
     }
-    QUEUE_IO_WRITE(0x04000050, 0x3f42);
+    IO_WRITE_QUEUE_PUSH(0x04000050, 0x3f42, 0x20000);
     if (Engine_GameFlagIsSet(0x340)) {
         alpha = 16;
         QueueSceneSound(244);
     }
-    QUEUE_IO_WRITE(0x04000052, ((16 - alpha) << 8) | alpha);
+    IO_WRITE_QUEUE_PUSH(0x04000052, ((16 - alpha) << 8) | alpha, 0x20000);
 }

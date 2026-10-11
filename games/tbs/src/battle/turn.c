@@ -26,6 +26,7 @@
 #include "battle_random.h"
 #include "io_reg.h"
 #include "serial_runtime.h"
+#include "irqlock.h"
 
 #define gFrameCount (*(s32 *)&gFrameCount)
 
@@ -513,23 +514,13 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
 	{
 		if (battle->link_side == 0)
 		{
-			volatile u16 *ime;
 			u32			  saved;
 
 			state->count = count;
 			state->check = BtlRndFar();
-			/* FAKEMATCH: needed to match: the one-pass IME scope keeps the seed copy between writes and reloads state after the first write */
-			do
-			{
-				ime = &REG_IME;
-				saved = *ime;
-				*ime = (u32)ime;
-			} while (0);
+			IRQ_LOCK(saved);
 			gBattleRandomSeed = state->seed = gRandomSeed;
-			do
-			{ /* FAKEMATCH: needed to match: the one-pass restore, see above */
-				*ime = saved;
-			} while (0);
+			IRQ_UNLOCK(saved);
 			if (BattleLink_SendActions() < 0 || BattleLink_ReceiveActions() < 0)
 				goto fail;
 			result = state->count;

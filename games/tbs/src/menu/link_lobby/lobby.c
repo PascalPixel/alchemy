@@ -23,6 +23,7 @@
 #include "callback_scheduler.h"
 #include "scene_ids.h"
 #include "game_state.h"
+#include "irqlock.h"
 
 extern u8 gLinkLobbyEntrances[];
 extern u8 gLinkLobbyExits[];
@@ -115,17 +116,14 @@ s32 SceneData_ReturnZero(void)
 
 s32 LinkLobby_InitializeSerial(void)
 {
-    volatile u16 *ime;
     u32 saved;
 
     /* Returns no value: the ROM has the s32 epilogue (pop {r1}; bx r1) and no result. */
 
-    ime = &REG_IME;
-    saved = *ime;
-    *ime = (u32)ime;
+    IRQ_LOCK(saved);
     SerialRuntime_RemoveIrqHandlers();
     SerialRuntime_Initialize();
-    *ime = saved;
+    IRQ_UNLOCK(saved);
 }
 
 u8 *LinkLobby_GetExits(void) { return gLinkLobbyExits; }

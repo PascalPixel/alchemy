@@ -45,35 +45,6 @@ struct ClearWork {
 #undef DMA3
 #define DMA3 (REG_DMA3)
 
-static __inline__ void RestoreInterrupts(u32 saved)
-{
-    REG_IME = saved;
-}
-
-#define QUEUE_WRITE(address, value)                                         \
-    do {                                                                    \
-        volatile u16 *ime;                                                  \
-        u32 saved;                                                          \
-        s32 count;                                                          \
-                                                                            \
-        do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
-            ime = &REG_IME;                                           \
-            saved = *ime;                                                   \
-        } while (0);                                                        \
-        *ime = (u16)ime;                                                    \
-        count = q->count;                                                   \
-        if (count <= 31) {                                                  \
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
-            *(u16 *)&q->count = count + 1;                                  \
-            *destination++ = (value);                                       \
-            *destination++ = (address);                                     \
-            *destination = 0x20000;                                         \
-        }                                                                   \
-        RestoreInterrupts(saved);                                          \
-    } while (0)
-
-
 u8 *SceneData_GetScriptTable(void)
 {
     return Clear_ScriptTable;
@@ -159,17 +130,14 @@ col:
 
 void Clear_UpdateBlend(void)
 {
-    /* FAKEMATCH: the one-pass IME read keeps the saved copy before masking; the count cast preserves the queue's original publication order. */
-    struct IoWriteQueue *q;
     s32 frame;
     s32 level;
 
     frame = Clear_BlendFrame + 1;
     Clear_BlendFrame = frame;
-    q = &gIoWriteQueue;
     level = (u16)frame >> 1;
-    QUEUE_WRITE(0x4000050, 0x2e51);
-    QUEUE_WRITE(0x4000052, ((16 - (u16)level) << 8) | (u16)level);
+    IO_WRITE_QUEUE_PUSH(0x4000050, 0x2e51, 0x20000);
+    IO_WRITE_QUEUE_PUSH(0x4000052, ((16 - (u16)level) << 8) | (u16)level, 0x20000);
     if ((u16)level > 15)
         Engine_TaskRemoveCallback(Clear_UpdateBlend);
 }
@@ -852,7 +820,6 @@ s32 SaveMenu_Run(void)
     L_Return:;
     return 0;
 }
-
 
 void SaveMenu_FillTileGrid(struct RenderInput *window, s32 value)
 {

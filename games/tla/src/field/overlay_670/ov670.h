@@ -116,6 +116,26 @@ void Func_02000978(void);
 void Func_02000b2c(void);
 void Func_02000d74(void);
 void Func_02003a08(s32 x, s32 z);
+void Func_020000a0(struct Ov670Object *object);
+void Func_02002f34(void);
+void Func_02003030(void);
+void Func_02003184(void);
+void Func_02003640(s32 open, s32 hide);
+void Func_020036e0(s32 open, s32 mode);
+void Func_02004524(void);
+void Func_020045d0(void);
+void Func_020050ac(void);
+void Func_02005114(void);
+void Func_0200516c(void);
+void Func_020054e0(void);
+void Func_02005594(void);
+void Func_020057e0(void);
+void Func_02005898(void);
+void Func_02005bcc(void);
+void Func_02005c04(s32 a);
+void Func_02005c54(void);
+void Func_02005c5c(s32 a, s32 b, s32 c, s32 d);
+void Func_02005c64(const void *script);
 void Func_02005a54(struct Ov670Object *object, s32 x, s32 y, s32 z);
 void Func_02005a5c(struct Ov670Object *object);
 void Event_StartScreenTransition(void);
@@ -143,6 +163,9 @@ extern const u8 Data_02005d5c[];
 extern const u8 Data_02005da0[];
 extern const u8 Data_02005e54[];
 extern const u8 Data_02005cd0[];
+extern const u8 Data_0200613c[];
+extern const u8 Data_0200614c[];
+extern const u8 Data_02006324[];
 extern struct Ov670Object *Data_02007950;
 
 static inline void Ov670_ObjTurn(s32 actor, s32 angle)
@@ -235,6 +258,18 @@ static inline void Ov670_Wait(s32 frames)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Battle_WaitMode0(frames);
+}
+
+static inline void Ov670_SePlay(s32 cue)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02005c9c(cue);
+}
+
+static inline void Ov670_WaitFrames(s32 frames)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    WaitFrames(frames);
 }
 
 #endif

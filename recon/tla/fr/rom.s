@@ -2690,14 +2690,6 @@ Func_080d20fc:
 	.thumb_func
 EventRuntime_UpdateWaitMode:
 	.incbin "baserom.gba", 0x000d71f4, 0x0000004c
-	.section .rom.000d73ca, "ax"
-	.incbin "baserom.gba", 0x000d73ca, 0x00000002
-	.section .rom.000d73cc, "ax"
-	.global Event_SetSceneEvents
-	.type Event_SetSceneEvents, %function
-	.thumb_func
-Event_SetSceneEvents:
-	.incbin "baserom.gba", 0x000d73cc, 0x0000000c
 	.section .rom.000d75c8, "ax"
 	.global Func_080d25c8
 	.type Func_080d25c8, %function

@@ -817,8 +817,6 @@
     . = ALIGN(4);
         "*/games/tla/src/field/common/event/object_hook.o"(.text)
     "*/games/tla/src/field/common/event/event.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.000df3ca)
-    "*/recon/tla/de/rom.o"(.rom.000df3cc)
     "*/games/tla/src/field/common/event/packed_id.o"(.text)
     "*/games/tla/src/field/common/clear_packed_events.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000df5c8)

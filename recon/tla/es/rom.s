@@ -3357,8 +3357,6 @@ Func_080d1ee8:
 	.thumb_func
 EventRuntime_UpdateWaitMode:
 	.incbin "baserom.gba", 0x000db1f4, 0x0000004c
-	.section .rom.000db3ca, "ax"
-	.incbin "baserom.gba", 0x000db3ca, 0x0000000e
 	.section .rom.000db5c8, "ax"
 	.global Func_080d072c
 	.type Func_080d072c, %function

@@ -1,3 +1,4 @@
+#define OWN_Graphics_TransformSmallPalette
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -22,7 +23,7 @@
 #include "palbuf.h"
 
 
-#define Graphics_TransformSmallPalette ((s32 (*)(s32,s32))Graphics_TransformSmallPalette)
+s32 Graphics_TransformSmallPalette(); // no prototype was in scope: the call loads r0 last
 
 struct IntroSprite {
     u32 unknown_0;
@@ -278,7 +279,6 @@ s32 Title_ShowIntro(s32 prompt)
     gCpuLoadDisplayEnabled = result;
     Title_LoadIntroBackgrounds();
     TitlePalette_InitializeBuffers();
-    /* FAKEMATCH: needed to match: the ignored scalar-return call preserves argument-move order; the void callee declaration swaps the moves in five editions. */
     Graphics_TransformSmallPalette(2, 0);
     {
         volatile u16 *ime;
@@ -593,8 +593,7 @@ s32 Title_ShowAnimatedSplash(void)
     Blend_WaitForTransition();
     REG_DISPCNT = 0x1540;
     for (i = 0; i < 120; i++) {
-        /* FAKEMATCH: needed to match: the unsigned address sum retains the DMA source operand order. */
-        Dma_Set((void *)((((gFrameCount >> 3) & 3) << 10) + (u32)buffer), BG_CHAR_BLOCK(1) + 0x100, DMA_ENABLE32 | DMA_32BIT | 0x340 / 4, REG_DMA3);
+        Dma_Set(((gFrameCount >> 3) & 3) * 0x400 + buffer, BG_CHAR_BLOCK(1) + 0x100, DMA_ENABLE32 | DMA_32BIT | 0x340 / 4, REG_DMA3);
         if (gKeyState & (KEY_A | KEY_START))
             break;
         WaitFrames(1);

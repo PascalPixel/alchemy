@@ -89,24 +89,33 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
     Runtime_ReleaseHeapBlock(17);
 }
 
-void UiText_DrawCharacter(u8 *base, s32 index, u32 value)
-{
-    u8 *entry;
-    s32 offset;
-    s32 store_offset;
-    s32 load_offset;
+struct SelectionEntry {
+    struct MenuSprite sprite;
+    u16 resource, unused;
+    s32 pos_x, pos_y;
+    s32 kind;
+};
 
-    offset = index * 28;
-    entry = base + offset + 0x104;
-    ((s32 (*)())UiText_LoadRemappedGlyph)(base, value, index * 16, index * 16);
-    store_offset = offset + 0x11C;
-    *(u32 *)(base + store_offset) = value;
+struct SelectionWork {
+    struct GlyphPalette palette;
+    struct SelectionEntry entries[6];
+    struct UiWindow *window;
+    s32 count;
+    struct AffineTransform affine;
+    s32 matrix, selection, previous;
+    s32 kinds[6];
+};
+
+void UiText_DrawCharacter(struct SelectionWork *work, s32 index, u32 kind)
+{
+    struct SelectionEntry *entry = &work->entries[index];
+
+    UiText_LoadRemappedGlyph(&work->palette, kind, index * 16);
+    work->entries[index].kind = kind;
     /* FAKEMATCH: needed to match: the empty do-while around this store only moves the scheduler; the reference sets the constant after the value store. */
-    do { *(u32 *)(entry + 4) = 0x80002000; } while (0);
-    *(u32 *)(entry + 8) = 0;
-    load_offset = offset + 0x110;
-    ((CharacterCell *)(entry + 8))->code =
-        Resource_LoadIndexedIntoBuffer(*(u16 *)(base + load_offset), value);
+    do { entry->sprite.oam.word.attr01 = 0x80002000; } while (0);
+    entry->sprite.oam.word.attr23 = 0;
+    entry->sprite.oam.f.tile = Resource_LoadIndexedIntoBuffer(work->entries[index].resource, kind);
 }
 
 s32 UiWork_IsComplete(void);
@@ -156,25 +165,7 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y)
 #define MADO_X 23
 #endif
 
-struct SelectionEntry {
-    struct MenuSprite sprite;
-    u16 resource, unused;
-    s32 pos_x, pos_y;
-    s32 kind;
-};
-
-struct SelectionWork {
-    struct GlyphPalette palette;
-    struct SelectionEntry entries[6];
-    struct UiWindow *window;
-    s32 count;
-    struct AffineTransform affine;
-    s32 matrix, selection, previous;
-    s32 kinds[6];
-};
-
 void RenderOutput_PrepareForRedraw(struct UiWindow *work);
-void UiText_DrawCharacter(u8 *base, s32 index, u32 kind);
 s32 *Trade_GetOfferStateFar(s32 index);
 s32 BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
 void AudioCommand_PlayFar(s32 cue);
@@ -232,7 +223,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
         work->entries[cnt].resource = slot;
         if (work->kinds[cnt] == -1)
             break;
-        UiText_DrawCharacter((u8 *)work, cnt, work->kinds[cnt]);
+        UiText_DrawCharacter(work, cnt, work->kinds[cnt]);
     }
     work->count = cnt;
     work->affine.scale_x = 320;
@@ -253,20 +244,11 @@ s32 Ui_RunSelectionScreen(s32 mode)
     Runtime_SetIrqHandler(2, 136, Graphics_ClearBg1ControlBit2);
 
     for (;;) {
-        {
-            /* FAKEMATCH: needed to match: frame in its own block gives the loop's shared 0 the lifetime at which loop.c hoists it, so gBgScroll[1].x takes the pool-loaded 0 (120 rows differ without it). */
-            s32 frame = gFrameCount;
-            scale = Ui_BounceScales[(frame * 2) & 31];
-            scale = (scale - 256) / 4 + 304;
-            work->affine.scale_x = scale;
-            work->affine.scale_y = scale;
-        }
-        {
-            /* FAKEMATCH: needed to match: bg in its own block, as frame above (120 rows differ without it). */
-            struct BgScroll *bg = gBgScroll;
-            bg[1].x = 0;
-            bg[1].y = 32;
-        }
+        scale = Ui_BounceScales[(gFrameCount * 2) & 31];
+        scale = (scale - 256) / 4 + 304;
+        work->affine.scale_y = work->affine.scale_x = scale;
+        gBgScroll[1].x = 0;
+        gBgScroll[1].y = 32;
         if (rebuild != 0) {
             rebuild = 0;
             render->menu_busy = 1;
@@ -332,7 +314,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
             UiText_DrawCharacterAtOffset(work->entries[work->selection].kind + (s32)&MsgCommandName,
                                          (struct RenderInput *)work->window, 0, 0);
             work->previous = work->selection;
-            UiText_DrawCharacter((u8 *)work, work->selection, work->kinds[work->selection]);
+            UiText_DrawCharacter(work, work->selection, work->kinds[work->selection]);
         }
         work->matrix = AffineMatrix_BuildForEffect(&work->affine);
         for (cnt = 0; cnt < work->count; cnt++) {
@@ -449,7 +431,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
 
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
 {
-    u8 *base = gWindowWork[0];
+    struct UiRenderWork *render = (struct UiRenderWork *)gWindowWork[0];
 
     alt &= 1;
     alt <<= 12;
@@ -471,7 +453,7 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
 
     if (width > 0 && height > 0) {
         do {
-            u16 *p = &((u16 (*)[32])base)[y][x];
+            u16 *p = &((u16 (*)[32])render->tilemap)[y][x];
             s32 col = width;
 
             if (col != 0) {
@@ -486,7 +468,7 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
 
             /* FAKEMATCH: needed to match: the do-while (0) keeps the row counter update after the dirty-byte store instead of filling the load delay. */
             do {
-                ((struct UiRenderWork *)base)->dirty |= 2 << ((u32)y >> 2);
+                render->dirty |= 2 << ((u32)y >> 2);
             } while (0);
             height--;
             y++;

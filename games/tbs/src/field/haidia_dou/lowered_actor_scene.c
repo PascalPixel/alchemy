@@ -2,7 +2,6 @@
 #include "types.h"
 #include "staged_actor.h"
 #include "fieldobj.h"
-#define FIELD_STAGED_ACTOR_IMPORTS
 #include "field_event.h"
 
 void HaidiaDou_RunLoweredActorScene(void)

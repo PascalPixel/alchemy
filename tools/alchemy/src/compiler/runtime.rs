@@ -292,11 +292,27 @@ fn validate_members(root: &Path, members: &[(String, String)]) -> Result<(), Str
     Ok(())
 }
 
+const RUNTIME_OUTPUT: &str = "tools/out/compiler-runtime";
+
+/// Where a checkout's runtime archives really are. A worktree's directory is
+/// a link to its main checkout's (alchemy worktree), so the archive a
+/// worktree links lives there; a link to anything but a checkout's own
+/// tools/out/compiler-runtime is not followed, and whatever it holds is
+/// then outside the ignored output as before.
+fn runtime_output(root: &Path) -> PathBuf {
+    let named = root.join(RUNTIME_OUTPUT);
+    match std::fs::canonicalize(&named) {
+        Ok(real) if real.ends_with(RUNTIME_OUTPUT) => real,
+        _ => named,
+    }
+}
+
 fn archive_path(root: &Path, output: &Path, create: bool) -> Result<PathBuf, String> {
     let root = std::fs::canonicalize(root).map_err(|e| e.to_string())?;
     let output = crate::compiler::build_io::rooted(&root, output);
-    let allowed = root.join("tools/out/compiler-runtime");
-    if !output.starts_with(&allowed)
+    let named = root.join(RUNTIME_OUTPUT);
+    let allowed = runtime_output(&root);
+    if !output.starts_with(&named)
         || output
             .components()
             .any(|part| matches!(part, std::path::Component::ParentDir))
@@ -367,7 +383,7 @@ fn archive_lock(path: &Path) -> Result<std::fs::File, String> {
 }
 
 fn check_archive_outputs(root: &Path, archive: &Path) -> Result<(), String> {
-    let allowed = root.join("tools/out/compiler-runtime");
+    let allowed = runtime_output(root);
     for path in [
         archive.with_extension("lock"),
         archive.with_extension("objects"),
@@ -542,6 +558,51 @@ mod evidence_tests {
         let archive = std::fs::canonicalize(root.path()).unwrap().join("tools/out/compiler-runtime/renamed.a");
         std::fs::write(&archive, "an unrelated archive").unwrap();
         assert!(credited_member(root.path(), &format!("{}(_pretend.o)", archive.display())).is_err());
+    }
+
+    #[test]
+    fn a_worktree_reads_the_runtime_archive_through_its_link() {
+        let directory = tempfile::tempdir().unwrap();
+        let base = std::fs::canonicalize(directory.path()).unwrap();
+        let (main, worktree) = (base.join("main"), base.join("worktree"));
+        let real = main.join(RUNTIME_OUTPUT);
+        std::fs::create_dir_all(&real).unwrap();
+        std::fs::create_dir_all(worktree.join("tools/out")).unwrap();
+        std::fs::write(real.join("libgcc.a"), "archive").unwrap();
+        std::fs::create_dir_all(real.join("libgcc.objects")).unwrap();
+        let link = worktree.join(RUNTIME_OUTPUT);
+        std::os::unix::fs::symlink(&real, &link).unwrap();
+
+        // The map names the archive as the worktree does, relative or
+        // absolute; both are the main checkout's file, as the main
+        // checkout's own name for it is.
+        let archive = real.join("libgcc.a");
+        let relative = Path::new("tools/out/compiler-runtime/libgcc.a");
+        assert_eq!(archive_path(&worktree, relative, false).unwrap(), archive);
+        assert_eq!(archive_path(&worktree, &link.join("libgcc.a"), false).unwrap(), archive);
+        assert_eq!(archive_path(&main, relative, false).unwrap(), archive);
+        assert!(check_archive_outputs(&worktree, &archive).is_ok());
+        assert!(check_archive_outputs(&main, &archive).is_ok());
+        // Only the worktree's own name reaches it.
+        assert!(archive_path(&worktree, &archive, false).is_err());
+
+        // A link to anything else, and a link out of the directory, grant
+        // nothing.
+        let elsewhere = base.join("elsewhere");
+        std::fs::create_dir_all(&elsewhere).unwrap();
+        std::fs::write(elsewhere.join("libgcc.a"), "archive").unwrap();
+        std::fs::remove_file(&link).unwrap();
+        std::os::unix::fs::symlink(&elsewhere, &link).unwrap();
+        assert!(archive_path(&worktree, relative, false).is_err());
+        assert!(!credited_member(&worktree, "tools/out/compiler-runtime/libgcc.a(_x.o)").unwrap());
+        std::fs::remove_file(&link).unwrap();
+        std::os::unix::fs::symlink(&real, &link).unwrap();
+        std::fs::remove_file(&archive).unwrap();
+        std::os::unix::fs::symlink(elsewhere.join("libgcc.a"), &archive).unwrap();
+        assert!(archive_path(&worktree, relative, false).is_err());
+        std::fs::remove_dir(real.join("libgcc.objects")).unwrap();
+        std::os::unix::fs::symlink(&elsewhere, real.join("libgcc.objects")).unwrap();
+        assert!(check_archive_outputs(&worktree, &archive).is_err());
     }
 
     #[test]

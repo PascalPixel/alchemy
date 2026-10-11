@@ -414,8 +414,6 @@ main	rom_main_07	games/tbs/src/battle/presentation/run_mosaic_fade_out	.text
 main	rom_main_07	games/common/src/graphics/tile/build_sequential_table	.text
 main	rom_main_07	games/tbs/src/battle/presentation/entry	.text
 main	rom_main_07	games/common/src/battle/presentation/setup_transition_at_pair_midpoint	.text
-main	rom_main_07	games/tbs/src/graphics/display/fade_alpha_out	.text
-main	rom_main_07	games/tbs/src/graphics/display/fade_alpha_in	.text
 main	rom_main_07	games/tbs/src/battle/presentation/transit	.text
 main	rom_main_07	games/tbs/src/debug/adjust_value_with_buttons	.text
 main	rom_main_07	games/tbs/src/battle/presentation/actor_set_record_mode	.text

@@ -24,6 +24,7 @@ pub const GATES: &[&str] = &[
     "lint-staged",
     "test",
     "compare-editions",
+    "modern-check",
 ];
 
 pub fn entry(arguments: &[String]) -> ExitCode {

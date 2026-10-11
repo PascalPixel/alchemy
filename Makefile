@@ -32,7 +32,7 @@ $(LIBGCC):
 .PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
 .PHONY: publication-check publication-staged-check hygiene-check coverage-report
-.PHONY: publication-tree-check layout-check dead-check aliases-check devices-check object-list-check packer-check
+.PHONY: publication-tree-check layout-check dead-check aliases-check devices-check object-list-check packer-check modern-check
 .PHONY: progress figure deps similar worst clean modern
 
 help:
@@ -226,3 +226,8 @@ clean:
 # only and never in rom.sha1 (alchemy build modern --help).
 modern:
 	$(ALCHEMY) build modern --cc "$(MODERN_CC)" $(addprefix --target ,$(MODERN_TARGETS))
+
+# A landing gate: the six ☀️ editions compile with a current GCC (Goal, 100%
+# point 5). Errors fail it; warnings are reported for the camelotize pass.
+modern-check:
+	@$(ALCHEMY) build modern --cc "$(MODERN_CC)" $(addprefix --target ,$(MODERN_TARGETS)) > /dev/null

@@ -14,15 +14,12 @@
 #include "dma.h"
 #include "io_write_queue.h"
 #include "io_reg.h"
+#include "iowrite.h"
 
 void Input_HandleKeyInterrupt(void)
 {
-    u32 mask;
-
     if (gSleepActive == 0) {
-        /* FAKEMATCH: the word mask loads before KEYCNT; a halfword constant reverses those loads and literal order. */
-        mask = 0xc3ff;
-        REG_KEYCNT = mask;
+        Io_Write16(0xc3ff, &REG_KEYCNT);
         gResetRequested = 1;
     }
 }

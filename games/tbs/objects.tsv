@@ -423,8 +423,6 @@ main	rom_tail_00	games/common/src/sound/sound	.text
 main	rom_tail_00	games/tbs/src/system/sound_get_jump_list
 main	rom_tail_00	games/tbs/src/sound/sound2	.text
 main	rom_tail_00	games/common/src/sound/engine	.text
-main	rom_tail_00	games/common/src/sound/control	.text
-main	rom_tail_00	games/common/src/sound/modulate	.text
 main	rom_tail_00	games/tbs/src/sound/music_track_operate_work_byte	.text
 main	rom_tail_00	games/common/src/sound/music_track_dispatch_stream_command	.text
 main	rom_tail_00	games/tbs/src/sound/tail	.text

@@ -2476,8 +2476,6 @@
         "*/recon/tla/raw/081c2314.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c2328.o"(.text .rodata .data .padding)
         "*/games/common/src/sound/engine.o"(.text)
-        "*/games/common/src/sound/control.o"(.text)
-        "*/games/common/src/sound/modulate.o"(.text)
         "*/games/tla/src/sound/music_track_operate_work_byte.o"(.text)
         "*/games/common/src/sound/music_track_dispatch_stream_command.o"(.text)
         "*/recon/tla/raw/081c332c.o"(.text .rodata .data .padding)

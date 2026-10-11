@@ -1543,8 +1543,6 @@ SECTIONS
     "*/games/tla/src/system/sound_get_jump_list.o"(.text .rodata .data .padding)
     "*/recon/tla/ja/rom.o"(.rom.001c2314)
     "*/games/common/src/sound/engine.o"(.text)
-    "*/games/common/src/sound/control.o"(.text)
-    "*/games/common/src/sound/modulate.o"(.text)
     "*/games/tla/src/sound/music_track_operate_work_byte.o"(.text)
     "*/games/common/src/sound/music_track_dispatch_stream_command.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001c332c)

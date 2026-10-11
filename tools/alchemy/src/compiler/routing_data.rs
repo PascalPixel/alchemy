@@ -2,8 +2,6 @@
 pub static AGBCC_SOURCES: &[&str] = &[
     "games/common/src/sound/sound.c",
     "games/common/src/sound/engine.c",
-    "games/common/src/sound/control.c",
-    "games/common/src/sound/modulate.c",
     "games/tbs/src/sound/tail.c",
     "games/tla/src/sound/tail.c",
     "games/common/src/sound/music_track_dispatch_stream_command.c",

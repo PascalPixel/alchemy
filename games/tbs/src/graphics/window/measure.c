@@ -22,6 +22,7 @@
 #include "resource_ids.h"
 #include "mem.h"
 #include "dma.h"
+#include "ramcode.h"
 #include "io_reg.h"
 #include "text_font.h"
 #include "affine.h"
@@ -572,18 +573,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
     if (script == -1) {
         start = work->message_start;
     } else {
-        {
-            u32 size;
-            void *code;
-
-            /* FAKEMATCH: needed to match: the one-pass block loads the size before the slot number, as in symbol.c. */
-            do {
-                size = (u32)Text_DecodeSymbolCodeSize;
-            } while (0);
-            code = Runtime_AllocateHeapBlock(50, size);
-            Dma_Set((const void *)Text_DecodeSymbol, code,
-                0x84000000 | (size >> 2), REG_DMA3);
-        }
+        RamCode_LoadSlot(50, Text_DecodeSymbol, Text_DecodeSymbolCodeSize);
         decode = (s32 (*)(struct TextReader *))
             gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
         UiText_LookupMessage(&st, script);
@@ -1081,18 +1071,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
     if (script == -1) {
         start = work->message_start;
     } else {
-        {
-            u32 size;
-            void *code;
-
-            /* FAKEMATCH: needed to match: plain assignment and const initialization reverse the two slot/size argument moves; the one-pass block preserves their native order. */
-            do {
-                size = (u32)Text_DecodeSymbolCodeSize;
-            } while (0);
-            code = Runtime_AllocateHeapBlock(50, size);
-            Dma_Set((const void *)Text_DecodeSymbol, code,
-                0x84000000 | (size >> 2), REG_DMA3);
-        }
+        RamCode_LoadSlot(50, Text_DecodeSymbol, Text_DecodeSymbolCodeSize);
         decode = (s32 (*)(struct TextReader *))gWindowWork[50 - HEAP_SLOT_WINDOW];
         UiText_LookupMessage(&st, script);
         do {
@@ -1809,9 +1788,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character,
         if (character == ' ')
             goto done;
 #endif
-        size = (u32)UiText_DrawGlyphCodeSize;
-        draw = (GlyphRoutine)MemAlloc(size);
-        Dma_Set(UiText_DrawGlyphArm, draw, 0x84000000 | (size >> 2), REG_DMA3);
+        RamCode_Load(draw, UiText_DrawGlyphArm, UiText_DrawGlyphCodeSize);
         result = draw(window, character, x, y, font);
 #if !EDITION_INTERNATIONAL
         if ((u16)mark != 0)

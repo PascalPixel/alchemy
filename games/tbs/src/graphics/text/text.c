@@ -13,6 +13,7 @@
 #include "text_reader.h"
 #include "heap_state.h"
 #include "dma.h"
+#include "ramcode.h"
 #include "io_reg.h"
 
 s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity)
@@ -46,15 +47,8 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity)
 #endif
 
     original = ((union HeapState *)&gWorkSlot)->slots[50];
-    if (original == NULL) {
-        u32 size;
-        void *code;
-
-        size = (u32)Text_DecodeSymbolCodeSize;
-        code = Runtime_AllocateHeapBlock(50, size);
-        Dma_Set((const void *)Text_DecodeSymbol, code,
-            0x84000000 | (size >> 2), REG_DMA3);
-    }
+    if (original == NULL)
+        RamCode_LoadSlot(50, Text_DecodeSymbol, Text_DecodeSymbolCodeSize);
     decode = (s32 (*)(struct TextReader *))((union HeapState *)&gWorkSlot)->slots[50];
     UiText_LookupMessage(&reader, message);
 #if !defined(DECODE_EUROPEAN)

@@ -19,6 +19,7 @@
 #include "select.h"
 #include "global_cells.h"
 #include "dma.h"
+#include "ramcode.h"
 #include "resource_ids.h"
 #include "io_reg.h"
 #include "callback_scheduler.h"
@@ -338,40 +339,14 @@ void UiGlyph_ReservedNoOp(void)
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined)
 {
-    void *code;
-
-    {
-        u32 size;
-
-        /* FAKEMATCH: needed to match: retain the size load after saving both arguments. */
-        do {
-            size = (u32)Tile_Decompress4bppCodeSize;
-        } while (0);
-        code = (u8 *)Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
-        size >>= 2;
-        Dma_Set((const void *)Tile_Decompress4bpp, code,
-            0x84000000 | size, REG_DMA3);
-    }
+    RamCode_LoadSlot(ROUTINE_BLOCK, Tile_Decompress4bpp, Tile_Decompress4bppCodeSize);
     ((void (*)(const void *, u8 *))gWorkSlot[ROUTINE_BLOCK])(
         glyph->encoded, glyph->input);
     Runtime_ReleaseHeapBlock(ROUTINE_BLOCK);
-    if (outlined) {
-        u32 size;
-
-        size = (u32)Tile_ExpandMaskedCodeSize;
-        code = (u8 *)Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
-        size >>= 2;
-        Dma_Set((const void *)Tile_ExpandMasked, code,
-            0x84000000 | size, REG_DMA3);
-    } else {
-        u32 size;
-
-        size = (u32)Tile_ExpandOpaqueCodeSize;
-        code = (u8 *)Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
-        size >>= 2;
-        Dma_Set((const void *)Tile_ExpandOpaque, code,
-            0x84000000 | size, REG_DMA3);
-    }
+    if (outlined)
+        RamCode_LoadSlot(ROUTINE_BLOCK, Tile_ExpandMasked, Tile_ExpandMaskedCodeSize);
+    else
+        RamCode_LoadSlot(ROUTINE_BLOCK, Tile_ExpandOpaque, Tile_ExpandOpaqueCodeSize);
     ((void (*)(u8 *, u8 *, u32, u32))gWorkSlot[ROUTINE_BLOCK])(
         glyph->input, glyph->tiles, (u16)glyph->width, (u16)glyph->height);
     Runtime_ReleaseHeapBlock(ROUTINE_BLOCK);

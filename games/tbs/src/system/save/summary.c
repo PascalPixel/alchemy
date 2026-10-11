@@ -13,6 +13,7 @@
 #include "window.h"
 #include "btlwork.h"
 #include "dma.h"
+#include "ramcode.h"
 #include "global_cells.h"
 #include "tbs_edition.h"
 #include "io_reg.h"
@@ -51,10 +52,9 @@ void UiWindow_FillFromScene(void *dst)
 
         Dma_Set((void *)&fill, dst, 0x810000a0, REG_DMA3);
     } else {
-        u32 size = (u32)Tile_BuildMetatilesCodeSize;
-        RamRoutine code = (RamRoutine)MemAlloc(size);
+        RamRoutine code;
 
-        Dma_Set((void *)Tile_BuildMetatiles, code, 0x84000000 | (size >> 2), REG_DMA3);
+        RamCode_Load(code, Tile_BuildMetatiles, Tile_BuildMetatilesCodeSize);
         code(dst, scene);
         MemFree(code);
     }

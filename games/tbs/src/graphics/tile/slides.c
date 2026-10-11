@@ -10,6 +10,7 @@
 #include "mem.h"
 #include "resource.h"
 #include "dma.h"
+#include "ramcode.h"
 #include "types.h"
 #include "callback_scheduler.h"
 #include "io_write_queue.h"
@@ -71,8 +72,6 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
     u32 palette;
     u32 fill;
     u32 vram;
-    void *decoder;
-    u32 size;
 
     if (resource == 0) {
         Graphics_ClearCharacterBlockAndPalette(alternate);
@@ -88,9 +87,7 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
         vram = 0x06008000;
         palette = 0x05000100;
     }
-    size = (u32)SentouKouka_TenkaiCodeSize;
-    decoder = Runtime_AllocateHeapBlock(49, size);
-    Dma_Set((void *)SentouKouka_Tenkai, decoder, 0x84000000 | (size >> 2), REG_DMA3);
+    RamCode_LoadSlot(49, SentouKouka_Tenkai, SentouKouka_TenkaiCodeSize);
     ((PackedDecoder)((union HeapState *)gWorkSlot)->slots[49])(data + 256, vram, fill);
     Runtime_ReleaseHeapBlock(49);
 

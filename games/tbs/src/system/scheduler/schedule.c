@@ -14,6 +14,7 @@
 #include "iwram_call.h"
 #include "global_cells.h"
 #include "dma.h"
+#include "ramcode.h"
 #include "mem.h"
 #include "vram_block.h"
 #include "scene.h"
@@ -107,16 +108,9 @@ void Runtime_PushSlotEntry(void *slot_entry, s32 slot)
 
 void Render_BuildOamList(void *work)
 {
-    u32 size;
     OamBuildRoutine routine;
 
-    /* FAKEMATCH: a loop that runs once around the size load. It is a scheduling barrier: without it the size literal is loaded before the output buffer is copied to r8. */
-    do {
-        size = (u32)LoadedRuntime_Size;
-    } while (0);
-    routine = (OamBuildRoutine)MemAlloc(size);
-    Dma_Set((const void *)Render_BuildOamListKernel, (void *)routine,
-            (size >> 2) | 0x84000000, REG_DMA3);
+    RamCode_Load(routine, Render_BuildOamListKernel, LoadedRuntime_Size);
     routine(work);
     MemFree((void *)routine);
 }

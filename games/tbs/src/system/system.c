@@ -9,6 +9,7 @@
 #include "system.h"
 #include "mem.h"
 #include "dma.h"
+#include "ramcode.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "callback_scheduler.h"
@@ -216,15 +217,9 @@ void Resource_LoadCode(u32 index, void *destination)
 {
     void (*routine)(void *, s32);
     s32 end;
-    u32 size;
 
     end = Resource_DecodeType01((const void *)Resource_GetTableEntry(index), destination);
-    /* FAKEMATCH: the wrapper keeps the size load after the decode. */
-    do {
-        size = (u32)Resource_PatchThumbBranchCodeSize;
-    } while (0);
-    routine = (void (*)(void *, s32))MemAlloc(size);
-    Dma_Set((const void *)Resource_PatchThumbBranch, routine, 0x84000000 | (size >> 2), REG_DMA3);
+    RamCode_Load(routine, Resource_PatchThumbBranch, Resource_PatchThumbBranchCodeSize);
     routine(destination, end);
     MemFree(routine);
 }

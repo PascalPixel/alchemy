@@ -11,6 +11,7 @@
 #include "object_runtime.h"
 #include "iwram_call.h"
 #include "dma.h"
+#include "ramcode.h"
 #include "mem.h"
 #include "types.h"
 #include "script.h"
@@ -99,8 +100,7 @@ void Object_RunUpdateAllFromHeap(void)
 {
     void (*routine)(void);
 
-    routine = (void (*)(void))MemAlloc((s32)Object_UpdateAllCodeSize);
-    Dma_Set(Object_UpdateAll, routine, 0x84000000 | ((u32)Object_UpdateAllCodeSize >> 2), REG_DMA3);
+    RamCode_Load(routine, Object_UpdateAll, Object_UpdateAllCodeSize);
     routine();
     MemFree(routine);
 }

@@ -11,6 +11,7 @@
 #include "mem.h"
 #include "iwram_call.h"
 #include "dma.h"
+#include "ramcode.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "global_cells.h"
@@ -58,20 +59,12 @@ void Tilemap_ConvertBuffer(void)
     u32 size;
 
     size = 0x8000;
-    /* FAKEMATCH: needed to match: the two do-while blocks keep each allocation next to the transfer that uses it */
+    /* FAKEMATCH: needed to match: the do-while block keeps the allocation next to the copy that uses it */
     do {
         saved = (u8 *)Runtime_BumpAllocateAlternatePool(size);
         CopyWords(saved, Ram_MapCellBuffer, size);
     } while (0);
-    {
-        u32 code_size = (u32)Tile_ConvertMapCodeSize;
-
-        do {
-            routine = (ConvertFn)MemAlloc(code_size);
-            Dma_Set((void *)Tile_ConvertMap, routine, 0x84000000 | (code_size >> 2),
-                    REG_DMA3);
-        } while (0);
-    }
+    RamCode_Load(routine, Tile_ConvertMap, Tile_ConvertMapCodeSize);
     routine((gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
     MemFree(routine);
     MemFree(saved);

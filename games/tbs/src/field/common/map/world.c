@@ -18,6 +18,7 @@
 #include "project.h"
 #include "scene.h"
 #include "dma.h"
+#include "ramcode.h"
 #include "iwram_call.h"
 #include "map_scroll.h"
 #include "mapframe.h"
@@ -302,14 +303,10 @@ done:
 void Resource_RunCopiedDecoder(s32 a, s32 b)
 {
     u8 *base;
-    u32 size;
-    void *code;
 
     base = gDecodeBuffer;
-    /* FAKEMATCH: needed to match: the do-whiles order the size load and the call. */
-    do { size = (u32)TileMap_DrawRowsCodeSize; } while (0);
-    code = Runtime_AllocateHeapBlock(49, size);
-    Dma_Set((const void *)TileMap_DrawRows, code, DMA_ENABLE32 | DMA_32BIT | size >> 2, REG_DMA3);
+    RamCode_LoadSlot(49, TileMap_DrawRows, TileMap_DrawRowsCodeSize);
+    /* FAKEMATCH: needed to match: the do-while orders the call's argument loads. */
     do { ((void (*)(s32, s32, void *, void *))gWorkSlot[49])(a, b, gBgTileBuffer + 0x4000, base + 0x1000); } while (0);
     Runtime_ReleaseHeapBlock(49);
 }

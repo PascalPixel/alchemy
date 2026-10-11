@@ -11,6 +11,7 @@
 #include "types.h"
 #include "tbs_edition.h"
 #include "dma.h"
+#include "ramcode.h"
 #include "mem.h"
 #include "window.h"
 #include "io_reg.h"
@@ -73,14 +74,8 @@ s32 UiText_BuildRenderEntriesMode1(s32 arg0)
 void UiText_LookupMessage(struct TextReader *reader, s32 message)
 {
     void (*routine)(struct TextReader *, s32);
-    u32 size;
 
-    /* FAKEMATCH: needed to match: the wrapper keeps the size load after the parameter copies. */
-    do {
-        size = (u32)UiText_LookupMessageCodeSize;
-    } while (0);
-    routine = (void (*)(struct TextReader *, s32))MemAlloc(size);
-    Dma_Set((const void *)UiText_LookupMessageArm, routine, 0x84000000 | (size >> 2), REG_DMA3);
+    RamCode_Load(routine, UiText_LookupMessageArm, UiText_LookupMessageCodeSize);
     routine(reader, message);
     MemFree(routine);
 }

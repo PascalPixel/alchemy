@@ -17,6 +17,7 @@
 #include "object_dispatch.h"
 #include "io_reg.h"
 #include "dma.h"
+#include "ramcode.h"
 #include "btlsys.h"
 #include "transform.h"
 
@@ -807,7 +808,6 @@ void ObjectSystem_UpdateCamera(void)
 	struct CameraObject *obj;
 	struct CameraSprite *spr;
 	s32					*cam;
-	u32					 size;
 	u32					 kind;
 	s32					 dx;
 	s32					 dz;
@@ -826,13 +826,7 @@ void ObjectSystem_UpdateCamera(void)
 	cam_z = cam[1] & 0xffff0000;
 	sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
 	// 絵を置く処理（Render_DecodeFrame）を作業領域へ写す
-	/* FAKEMATCH: needed to match: the do-while keeps the copy between the runtime loads and the count reset. */
-	do
-	{
-		size = (u32)Render_DecodeFrameCodeSize;
-		Dma_Set(Render_DecodeFrame, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
-			REG_DMA3);
-	} while (0);
+	RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
 	sync->count = 0;
 	obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
 	for (cnt = 0; cnt < 64; cnt++, obj++)
@@ -945,7 +939,6 @@ void ObjectSystem_UpdateCameraFixed(void)
 	s32					 kind;
 	s32					*pos;
 	s32					 one;
-	u32					 size;
 	void			   **parts;
 	void				*spr;
 	s32					 scale2[2];
@@ -955,13 +948,7 @@ void ObjectSystem_UpdateCameraFixed(void)
 
 	cam = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);
 	sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
-	/* FAKEMATCH: needed to match: the do-while keeps the size load after the runtime loads. */
-	do
-	{
-		size = (u32)Render_DecodeFrameCodeSize;
-	} while (0);
-	Dma_Set(Render_DecodeFrame, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
-		REG_DMA3);
+	RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
 	eye = &cam->eye;
 	tgt = &cam->target;
 	if (cam->eye_override != NULL)

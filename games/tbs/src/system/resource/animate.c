@@ -13,6 +13,7 @@
 #include "animspr.h"
 #include "global_cells.h"
 #include "dma.h"
+#include "ramcode.h"
 #include "iwram_call.h"
 #include "io_reg.h"
 #include "heap_state.h"
@@ -960,8 +961,6 @@ void ObjectSystem_Configure(s32 mode)
 {
     void *objects;
     void *states;
-    void *table;
-    u32 size;
     volatile u32 zero;
 
     if (mode == 3) {
@@ -977,10 +976,7 @@ void ObjectSystem_Configure(s32 mode)
     zero = 0;
     Dma_Set((const void *)&zero, states, 0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry) / 4), REG_DMA3);
     VramBlock_LoadCached(93, 128, Object_ShadowTiles);
-    size = (u32)Tile_CopyStridedCodeSize;
-    table = Runtime_AllocateHeapBlock(53, size);
-    Dma_Set((const void *)Tile_CopyStrided, table, 0x84000000 | (size >> 2),
-            REG_DMA3);
+    RamCode_LoadSlot(53, Tile_CopyStrided, Tile_CopyStridedCodeSize);
 }
 
 struct AnimationEntry *AnimationObject_Allocate(s32 id)

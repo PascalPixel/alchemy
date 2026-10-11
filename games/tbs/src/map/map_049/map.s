@@ -27,3 +27,11 @@ Field_Map049:
 .LField_Map049_MARKERS:
 	.incbin "map/map_049/markers.table"
 	.balign 4, 0
+	.global Tileset_Set39Palette
+Tileset_Set39Palette:
+	.incbin "graphics/tileset/set_39/palette.gbapal.lz"
+	.byte 0xdc, 0x32	@ PACKER: left in the buffer by Field_Map049+0x18e
+	.global Tileset_Set39TilesA
+Tileset_Set39TilesA:
+	.incbin "graphics/tileset/set_39/tiles_a.4bpp.mtf"
+	.byte 0x71	@ PACKER: left in the buffer by Tileset_Set37TilesC+0x22b7

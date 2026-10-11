@@ -1,4 +1,5 @@
 	.include "games/tbs/src/map/map.inc"
+	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
 	.global Field_Map021
 Field_Map021:
@@ -30,3 +31,45 @@ Field_Map021:
 .LField_Map021_MARKERS:
 	.incbin "map/map_000/markers.table"
 	.balign 4, 0
+	.global Tileset_Set18Palette
+Tileset_Set18Palette:
+	.incbin "graphics/tileset/set_18/palette.gbapal.lz"
+	.byte 0x71	@ PACKER: left in the buffer by Field_Map021+0xcb
+	.global Tileset_Set18TilesA
+Tileset_Set18TilesA:
+	.incbin "graphics/tileset/set_18/tiles_a.4bpp.mtf"
+	.global Tileset_Set18TilesB
+Tileset_Set18TilesB:
+	.incbin "graphics/tileset/set_18/tiles_b.4bpp.mtf"
+	.global Tileset_Set18TilesC
+Tileset_Set18TilesC:
+	.ifdef TBS_EDITION_ES
+	.incbin "graphics/tileset/set_18/tiles_c_es.4bpp.mtf"
+	.else
+	.ifdef TBS_EDITION_FR
+	.incbin "graphics/tileset/set_18/tiles_c_es.4bpp.mtf"
+	.else
+	.ifdef TBS_EDITION_IT
+	.incbin "graphics/tileset/set_18/tiles_c_es.4bpp.mtf"
+	.else
+	.incbin "graphics/tileset/set_18/tiles_c.4bpp.mtf"
+	.endif
+	.endif
+	.endif
+	.ifdef TBS_EDITION_ES
+	.byte 0x60, 0x82, 0xc0	@ PACKER: left in the buffer by Tileset_Set18TilesB+0xec1
+	.else
+	.ifdef TBS_EDITION_FR
+	.byte 0x60, 0x82, 0xc0	@ PACKER: left in the buffer by Tileset_Set18TilesB+0xec1
+	.else
+	.ifdef TBS_EDITION_IT
+	.byte 0x60, 0x82, 0xc0	@ PACKER: left in the buffer by Tileset_Set18TilesB+0xec1
+	.else
+	.byte 0x00, 0x90	@ PACKER: left in the buffer by Tileset_Set18TilesB+0xfaa
+	.endif
+	.endif
+	.endif
+	.global Tileset_Set18TilesD
+Tileset_Set18TilesD:
+	.incbin "graphics/tileset/set_18/tiles_d.4bpp.mtf"
+	.byte 0x04	@ PACKER: left in the buffer by Tileset_Set18TilesC+0x13f

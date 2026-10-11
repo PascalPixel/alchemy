@@ -45,7 +45,7 @@ fn parts(wrapper: &Wrapper) -> Result<(Vec<&str>, Vec<&str>), String> {
         .iter()
         .take_while(|line| {
             let line = line.trim();
-            line.starts_with(".include \"games/") || line == ".section .rodata"
+            line.starts_with(".include \"games/") || line == ".section .rodata" || line.starts_with('@')
         })
         .count();
     let (head, body) = lines.split_at(header);
@@ -58,7 +58,9 @@ fn parts(wrapper: &Wrapper) -> Result<(Vec<&str>, Vec<&str>), String> {
     }) {
         return Err(format!("{}: {:?} is no line of a wrapper's body", wrapper.path, line.trim()));
     }
-    Ok((head.to_vec(), body.to_vec()))
+    // A comment above the section line stays above the wrapper's body.
+    let (comments, head): (Vec<&str>, Vec<&str>) = head.iter().partition(|line| line.trim().starts_with('@'));
+    Ok((head, comments.into_iter().chain(body.iter().copied()).collect()))
 }
 
 /// The module that takes the wrappers' place.
@@ -279,6 +281,8 @@ mod tests {
         assert!(!first.contains("\t.section .rodata\n\t.balign"));
         // A wrapper of games/common no other game links comes in whole, its
         // asset still games/common's.
+        let noted = format!("@ 黒い部屋\n{packer}");
+        assert!(module(&[wrapper("a.s", &noted, false, 1)]).unwrap().starts_with("\t.section .rodata\n@ 黒い部屋\n\t.global Title_Peak\n"));
         let own = module(&[wrapper("games/common/src/graphics/ui/font.s", shared, false, 1)]).unwrap();
         assert!(own.contains("Ui_Font:\n\t.incbin \"common/graphics/ui/font.1bpp\"\n"));
         // A body that changes section or includes a source is no wrapper's.

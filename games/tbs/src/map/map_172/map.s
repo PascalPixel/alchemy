@@ -24,3 +24,28 @@ Field_Map172:
 .LField_Map172_MARKERS:
 	.incbin "map/map_000/markers.table"
 	.balign 4, 0
+@ Tile sets 68 to 75 belong to the test rooms (Field_Map172 to Field_Map179) and
+@ are one blank set: fourteen black palettes, two tiles in colour 1 and three
+@ empty banks. Their sheets are drawn with that black palette, the only one
+@ the game pairs them with, as 1-bit images of its first two colours; the
+@ bank with two tiles is drawn two tiles wide, as the layout finder reads it.
+	.global Tileset_Set68Palette
+Tileset_Set68Palette:
+	.incbin "graphics/tileset/set_68/palette.gbapal.lz"
+	.byte 0x00	@ PACKER: left in the buffer by Field_Map172+0xb
+	.global Tileset_Set68TilesA
+Tileset_Set68TilesA:
+	.incbin "graphics/tileset/set_68/tiles_a.4bpp.mtf"
+	.byte 0xff, 0x00	@ PACKER: left in the buffer by Field_Map172+0x14e
+	.global Tileset_Set68TilesB
+Tileset_Set68TilesB:
+	.incbin "graphics/tileset/set_68/tiles_b.4bpp.mtf"
+	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set68TilesA+0x13f
+	.global Tileset_Set68TilesC
+Tileset_Set68TilesC:
+	.incbin "graphics/tileset/set_68/tiles_b.4bpp.mtf"
+	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set68TilesA+0x13f
+	.global Tileset_Set68TilesD
+Tileset_Set68TilesD:
+	.incbin "graphics/tileset/set_68/tiles_b.4bpp.mtf"
+	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set68TilesA+0x13f

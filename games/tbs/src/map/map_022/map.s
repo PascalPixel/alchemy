@@ -30,3 +30,20 @@ Field_Map022:
 .LField_Map022_MARKERS:
 	.incbin "map/map_022/markers.table"
 	.balign 4, 0
+	.global Tileset_Set19Palette
+Tileset_Set19Palette:
+	.incbin "graphics/tileset/set_19/palette.gbapal.lz"
+	.global Tileset_Set19TilesA
+Tileset_Set19TilesA:
+	.incbin "graphics/tileset/set_19/tiles_a.4bpp.mtf"
+	.byte 0x12, 0x00	@ PACKER: left in the buffer by Tileset_Set17TilesA+0x2c16
+	.global Tileset_Set19TilesB
+Tileset_Set19TilesB:
+	.incbin "graphics/tileset/set_19/tiles_b.4bpp.mtf"
+	.byte 0x27, 0x88	@ PACKER: left in the buffer by Tileset_Set19TilesA+0x20fa
+	.global Tileset_Set19TilesC
+Tileset_Set19TilesC:
+	.incbin "graphics/tileset/set_19/tiles_c.4bpp.mtf"
+	.global Tileset_Set19TilesD
+Tileset_Set19TilesD:
+	.incbin "graphics/tileset/set_19/tiles_d.4bpp.mtf"

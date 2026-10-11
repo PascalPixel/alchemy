@@ -27,3 +27,7 @@ Field_Map168:
 .LField_Map168_MARKERS:
 	.incbin "map/map_000/markers.table"
 	.balign 4, 0
+	.global Tileset_Palette52
+Tileset_Palette52:
+	.incbin "graphics/tileset/palettes/pal_52.gbapal.lz"
+	.byte 0x06	@ PACKER: left in the buffer by Field_Map168+0x103

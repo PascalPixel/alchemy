@@ -27,3 +27,6 @@ Field_Map117:
 .LField_Map117_MARKERS:
 	.incbin "map/map_117/markers.table"
 	.balign 4, 0
+	.global Tileset_Palette23
+Tileset_Palette23:
+	.incbin "graphics/tileset/palettes/pal_23.gbapal.lz"

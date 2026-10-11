@@ -30,3 +30,22 @@ Field_Map151:
 .LField_Map151_MARKERS:
 	.incbin "map/map_151/markers.table"
 	.balign 4, 0
+	.global Tileset_Set65Palette
+Tileset_Set65Palette:
+	.incbin "graphics/tileset/set_65/palette.gbapal.lz"
+	.global Tileset_Set65TilesA
+Tileset_Set65TilesA:
+	.incbin "graphics/tileset/set_65/tiles_a.4bpp.mtf"
+	.byte 0x94	@ PACKER: left in the buffer by Field_Map151+0x1e7f
+	.balign 4, 0
+	.global Tileset_Set65TilesB
+Tileset_Set65TilesB:
+	.incbin "graphics/tileset/set_65/tiles_b.4bpp.mtf"
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.global Tileset_Set65TilesC
+Tileset_Set65TilesC:
+	.incbin "graphics/tileset/set_65/tiles_c.4bpp.mtf"
+	.global Tileset_Set65TilesD
+Tileset_Set65TilesD:
+	.incbin "graphics/tileset/set_65/tiles_d.4bpp.mtf"
+	.byte 0x69, 0x4e, 0x50	@ PACKER: left in the buffer by Tileset_Set65TilesC+0x160d

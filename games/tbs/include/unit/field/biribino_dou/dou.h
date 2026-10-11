@@ -34,7 +34,7 @@ void BiribinoDou_PrepareWindowTransition(void);
 void FieldScene_RunScene398SequenceC(void);
 struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z);
 void StagedActor_PushActorAhead(void);
-void Resource398_ImportBankNoOp(void);
+void Resource398_ImportBankNoOp(s32 unused);
 extern s32 gBiribinoDouPlacements1_Data[];
 extern struct SceneEntrance gBiribinoDouEntrancesOther[];
 extern struct SceneEntrance gBiribinoDouEntrances3[];

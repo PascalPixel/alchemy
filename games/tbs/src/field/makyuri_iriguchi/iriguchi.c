@@ -371,8 +371,7 @@ void MakyuriIriguchi_OpenEntrance(void)
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, MakyuriIriguchi_OpenEntrance is 4 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_MakyuriIriguchi, 31);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriIriguchi, 31);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(36, 1);
 	Engine_EventEnd();
@@ -437,8 +436,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 	GameFlag_Set(0x111);
 	gGameState.retreat_entrance = 11;
 	gGameState.retreat_scene = (s32)&SceneId_MakyuriHeya4;
-	/* FAKEMATCH: BattleFx_StartFadeOverlay is called as void (*)(s32); as void (*)(void *), its prototype, MakyuriIriguchi_ApplyEntryState has 32 of 1104 bytes different */
-	((void (*)(s32))BattleFx_StartFadeOverlay)(0);
+	BattleFx_StartFadeOverlay(0);
 	if (GameFlag_IsSet(0x875))
 		Engine_TaskAddCallback(Makyuri_CyclePalette, 0xc80);
 	else

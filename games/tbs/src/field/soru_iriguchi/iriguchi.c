@@ -509,7 +509,7 @@ void SoruIriguchi_PushFacedBlock(void)
 		p[0].fixed = block->x.fixed + (step & -0x10000);
 		p[1].fixed = block->y.fixed;
 		p[2].fixed = block->z.fixed + (step << 16);
-		if (((s32 (*)())Object_CheckMovementCollision)((s32)block, (s32)p) <= 0)
+		if (Object_CheckMovementCollision(block, p) <= 0)
 		{
 			Object_SetMode(leader, 8);
 			Engine_TaskWait(15);

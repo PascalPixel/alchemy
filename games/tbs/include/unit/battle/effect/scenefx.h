@@ -210,7 +210,7 @@ void BattleFx_RunMode9WithAction(void *effect);
 void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_InitializeRisingObject(s32 id);
 void BattleFx_SetApproachMotion(s32 id, s32 tgt_id, s32 frames);
-void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride);
+void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 unused);
 void BattleFx_RunParticleFieldVariant0(s32 effect);
 void BattleFx_RunParticleFieldVariant1(s32 effect);
 void BattleFx_RunParticleFieldVariant2(s32 effect);

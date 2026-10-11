@@ -711,8 +711,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 			{
 				if (rec7->y.fixed <= 0xffff)
 				{
-					/* FAKEMATCH: KuupuappuDou_SpawnPuffs is called as void (*)(); as void (*)(struct FieldActor *), its prototype, FieldScene_RunOpeningAuxiliarySequence does not compile */
-					((void (*)())KuupuappuDou_SpawnPuffs)();
+					KuupuappuDou_SpawnPuffs(rec7);
 					rec7->y.fixed = 0xff0000;
 					rec7->gravity = 0;
 					rec7->velocity_y = 0;

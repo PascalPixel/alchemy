@@ -1040,7 +1040,7 @@ void SceneEffect_SpawnParticleRowsByMode(s32 mode)
 				else if (mode == 1)
 				{
 					Effect_Spawn((((j << 2) + i) << 17) + 0x03120000, 0,
-						(((((u32 (*)(void))Engine_RandomNext)() * 5) >> 16) << 16) + 0x2e80000,
+						((((u32)Engine_RandomNext() * 5) >> 16) << 16) + 0x2e80000,
 						0x4000, 0, 0, 0x90000, buf);
 				}
 				else
@@ -2822,8 +2822,7 @@ void SceneState_SetRecordTableValue(s32 key, s32 value)
 
 		if (index != -1)
 		{
-			/* FAKEMATCH: UnitGet is called as struct SceneLookupRecord *(*)(); as void *(*)(u32), its prototype, SceneState_SetRecordTableValue does not compile */
-			((struct SceneLookupRecord *(*)())UnitGet)(slot)->tbl[index] = value;
+			((struct SceneLookupRecord *)UnitGet(slot))->tbl[index] = value;
 		}
 	}
 }

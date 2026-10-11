@@ -185,8 +185,7 @@ void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
 	Engine_MapCopyCells(src_x, src_y + 1, 1, 1, dest_x, dest_y);
 	Engine_AudioPlayCue(206);
 	Engine_EventBegin();
-	/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ToretoHeya_HandleFloorSwitch is 4 bytes longer */
-	((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_ToretoHeya, entrance);
+	Event_SetDestination((s32)&SceneId_ToretoHeya, entrance);
 	Engine_ActorSetAnimation(leader, 27);
 	Engine_ActorSetSpriteFlags(Object_GetById(leader), 0);
 	Actor_SetAttachedEffect(leader, 0x101);
@@ -364,8 +363,8 @@ void ToretoHeya_RunTableScene(void)
 		}
 		Engine_ActorEnableActionCallback(3, ToretoHeya_TableActions3);
 	}
-	((s32 (*)())Engine_ActorEnableActionCallback)(0, (s32)ToretoHeya_TableActions0);
-	((s32 (*)())Engine_ActorEnableActionCallback)(1, (s32)ToretoHeya_TableActions1);
+	Engine_ActorEnableActionCallback(0, (const u8 *)ToretoHeya_TableActions0);
+	Engine_ActorEnableActionCallback(1, (const u8 *)ToretoHeya_TableActions1);
 	Object_SetActionCallbackAndRefreshById(2, (s32)ToretoHeya_TableActions2);
 	Engine_EventWait(10);
 	Actor_FaceDirection(0, 0xc000, 0);
@@ -403,8 +402,7 @@ void ToretoHeya_RunTableScene(void)
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	gEventWork->transition_frames = 64;
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ToretoHeya_RunTableScene is 2 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_ToretoHeya, 19);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_ToretoHeya, 19);
 	BattleFx_SetWeightedResult(36, 0);
 	Engine_EventEnd();
 }
@@ -659,7 +657,7 @@ s32 ToretoHeya_EnterRoom(void)
 	Engine_ActorSetChildValue(9, 15);
 	ToretoHeya_PlayGesture(0);
 	if (gGameState.entrance != 19)
-		((void (*)())Engine_TaskAddCallback)((s32)ToretoPalette_ApplyTint, 0xc80);
+		Engine_TaskAddCallback(ToretoPalette_ApplyTint, 0xc80);
 	if (Engine_GameFlagIsSet(0x844))
 	{
 		Engine_ActorSetPosition(9, 0, 0);
@@ -695,8 +693,7 @@ s32 ToretoHeya_EnterRoom(void)
 		actor->terrain_height = -0xa00000;
 		actor->gravity = 0x8000;
 		Engine_AudioPlayCue(204);
-		/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ToretoHeya_EnterRoom is 8 bytes longer */
-		((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_ToretoHeya, entrance - 10);
+		Event_SetDestination((s32)&SceneId_ToretoHeya, entrance - 10);
 		Engine_EventWait(20);
 		actor->terrain_id = 2;
 		Engine_ActorSetSpritePriority(leader, 3);

@@ -567,7 +567,7 @@ void ImiruMura_RunWeaponShop(void)
 {
 	s32 dir;
 
-	dir = *(s16 *)(((s32 (*)())Object_GetById)(0) + 6);
+	dir = *(s16 *)((s32)Object_GetById(0) + 6);
 	if (Engine_GameFlagIsSet(0x881) != 0)
 	{
 		if ((u32)((dir << 16) + 0x5fff0000) <= 0x3ffe0000)
@@ -606,7 +606,7 @@ void ImiruMura_RunArmorShop(void)
 {
 	s32 dir;
 
-	dir = *(s16 *)(((s32 (*)())Object_GetById)(0) + 6);
+	dir = *(s16 *)((s32)Object_GetById(0) + 6);
 	if (Engine_GameFlagIsSet(0x881) != 0)
 	{
 		if ((u32)((dir << 16) + 0x5fff0000) <= 0x3ffe0000)
@@ -645,7 +645,7 @@ void ImiruMura_RunItemShop(void)
 {
 	s32 dir;
 
-	dir = *(s16 *)(((s32 (*)())Object_GetById)(0) + 6);
+	dir = *(s16 *)((s32)Object_GetById(0) + 6);
 	if (Engine_GameFlagIsSet(0x881) != 0)
 	{
 		if ((u32)((dir << 16) + 0x5fff0000) <= 0x3ffe0000)

@@ -97,8 +97,7 @@ s32 Title_Run(void)
 					break;
 			} while (gKeyState == 0);
 		}
-		/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, Title_Run has 201 of 364 bytes different */
-		((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_Title, 2);
+		Event_SetDestination((s32)&SceneId_Title, 2);
 		return 0;
 	}
 	if (gGameState.entrance == 9)
@@ -110,12 +109,10 @@ s32 Title_Run(void)
 		Blend_WaitForTransition();
 		Engine_EventWait(240);
 		Engine_AudioPlayCue(19);
-		/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, Title_Run is 4 bytes longer */
-		((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_Clear, 2);
+		Event_SetDestination((s32)&SceneId_Clear, 2);
 		return 0;
 	}
-	/* FAKEMATCH: RuntimeDispatch_NoOpHook is called as void (*)(s32); as void (*)(void), its prototype, Title_Run does not compile */
-	((void (*)(s32))RuntimeDispatch_NoOpHook)((s32)&ResourceId_PaletteFarCalls);
+	RuntimeDispatch_NoOpHook((s32)&ResourceId_PaletteFarCalls);
 	if (gGameState.entrance == 2)
 	{
 	menu:
@@ -142,16 +139,14 @@ s32 Title_Run(void)
 		}
 		goto menu;
 	chosen:
-		/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, Title_Run is 4 bytes longer */
-		((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_Clear, 1);
+		Event_SetDestination((s32)&SceneId_Clear, 1);
 	}
 	else
 	{
 		Engine_AudioPlayCue(64);
 		PaletteFar_Entry00(0);
 		Party_ApplyStatePreset();
-		/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, Title_Run has 96 of 364 bytes different */
-		((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_HaidiaMura, 16);
+		Event_SetDestination((s32)&SceneId_HaidiaMura, 16);
 		Engine_AudioPlayCue(17);
 	}
 	Engine_AudioPlayCue(17);

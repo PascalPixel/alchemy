@@ -674,10 +674,10 @@ void SceneActor_ResetStateAndSpan(struct Actor02000c0c *actor)
 void SceneEffect_UpdateDriftingParticle(struct SceneMotion *work)
 {
 	work->x += (work->timer << 12)
-			   + ((s16)((s32)((((u32 (*)(void))Engine_RandomNext)() * 2) >> 16) - 1) << 15);
+			   + ((s16)((s32)(((u32)Engine_RandomNext() * 2) >> 16) - 1) << 15);
 	if (work->timer <= 3)
 	{
-		work->z += -((((u32 (*)(void))Engine_RandomNext)() * 0x8000) >> 16) - 0x10000;
+		work->z += -(((u32)Engine_RandomNext() * 0x8000) >> 16) - 0x10000;
 		work->scale_x += 0x2666;
 		work->scale_y += -0xa3d;
 	}
@@ -687,12 +687,12 @@ void SceneEffect_UpdateDriftingParticle(struct SceneMotion *work)
 		work->scale_x += 0x7ae;
 		work->scale_y += 0x7ae;
 	}
-	if ((((u32 (*)(void))Engine_RandomNext)() * work->timer) >> 16 == 0)
+	if (((u32)Engine_RandomNext() * work->timer) >> 16 == 0)
 		ObjectGroup_SetChildValue(work, 7);
 	if (work->timer != 0)
 		work->timer--;
 	else
-		work->timer = ((((u32 (*)(void))Engine_RandomNext)() * 5) >> 16) * 2 + 2;
+		work->timer = (((u32)Engine_RandomNext() * 5) >> 16) * 2 + 2;
 	if (--work->active == 0)
 	{
 		work->callback = 0;

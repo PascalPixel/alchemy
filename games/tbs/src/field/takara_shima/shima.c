@@ -315,7 +315,7 @@ void AdvanceEffectMotion(struct Effect *effect)
 	sprite->angle += effect->step64;
 }
 
-void SpawnRadialEffectBurst(void)
+void SpawnRadialEffectBurst(s32 object_id)
 {
 	struct SceneObject *object;
 	struct Vec			vec;
@@ -325,7 +325,7 @@ void SpawnRadialEffectBurst(void)
 	s32					x;
 	s32					z;
 
-	object = (struct SceneObject *)((u8 * (*)(void)) Object_GetById)();
+	object = (struct SceneObject *)Object_GetById(object_id);
 	params.callback = (s32)AdvanceEffectMotion;
 	for (angle_step = 0; angle_step <= 16; angle_step += 2)
 	{
@@ -348,8 +348,7 @@ void InitializePrologueSceneState(void)
 
 	Engine_EventBegin();
 	base = (u8 *)&gGameState;
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, InitializePrologueSceneState is 4 bytes shorter */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)(*(s16 *)(base + 448), 5);
+	Party_SetFields1ceAnd1d0(*(s16 *)(base + 448), 5);
 	base[555] = 3;
 	BattleFx_SetWeightedResult(84, 5);
 	Engine_EventEnd();
@@ -485,8 +484,7 @@ s32 Scene_Initialize(void)
 		{
 			return 0;
 		}
-		/* FAKEMATCH: InitializeSwayingSceneObject is called as void (*)(); as void (*)(void), its prototype, Scene_Initialize does not compile */
-		((void (*)())InitializeSwayingSceneObject)(8);
+		InitializeSwayingSceneObject(8);
 		return 0;
 	}
 	first = (s32)&SceneId_TakaraShima6;
@@ -568,7 +566,7 @@ void FieldScene_HandleEscapeColumn(void)
 #endif
 
 	Engine_EventWait(8);
-	((s32 (*)())SpawnRadialEffectBurst)(8);
+	SpawnRadialEffectBurst(8);
 	Engine_AudioPlayCue(136);
 	Engine_EventWait(40);
 
@@ -622,8 +620,7 @@ void TakaraShima_RunAreaEntry(void)
 	if (Engine_GameFlagIsSet(gGameState.scene + (0x8c8 - (s32)&SceneId_TakaraShima6)) == 0)
 	{
 		Engine_EventBegin();
-		/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, TakaraShima_RunAreaEntry is 4 bytes shorter */
-		((void (*)(s32, s32))Party_SetFields1ceAnd1d0)(gGameState.scene, 5);
+		Party_SetFields1ceAnd1d0(gGameState.scene, 5);
 		((u8 *)((s16(*)[1]) & gGameState))[0x22b] = 3;
 		switch (gGameState.scene - (s32)&SceneId_TakaraShima6)
 		{
@@ -842,7 +839,7 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
 
 		p->f30 = 0x10000;
 		p->f34 = 0x8000;
-		((void (*)(Obj *, s32, s32, s32))Engine_ObjectSetPosition)(p, x, p->f0c, y);
+		Engine_ObjectSetPosition((struct FieldActor *)p, x, p->f0c, y);
 	}
 	Object_SetMode(p, 27);
 	{
@@ -851,7 +848,7 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
 
 		q->f30 = 0x10000;
 		q->f34 = 0x8000;
-		((void (*)(Obj *, s32, s32, s32))Engine_ObjectSetPosition)(q, x, q->f0c, y);
+		Engine_ObjectSetPosition((struct FieldActor *)q, x, q->f0c, y);
 	}
 	if (x_offset < 0 || z_offset < 0)
 	{
@@ -2572,14 +2569,14 @@ s32 UpdateSwayingSceneObject(struct S *object)
 	return 0;
 }
 
-void InitializeSwayingSceneObject(void)
+void InitializeSwayingSceneObject(s32 object_id)
 {
 	OrbitingSceneObject		  *actor;
 	OrbitingSceneObjectSprite *sprite;
 	u8						  *transfer;
 	s32						   zero;
 
-	actor = ((s32 (*)())Object_GetById)();
+	actor = (OrbitingSceneObject *)Object_GetById(object_id);
 	sprite = actor->sprite;
 	sprite->flags_09_mode = 1;
 	sprite->flags_05_bit_5 = 0;

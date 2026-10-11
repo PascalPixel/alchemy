@@ -853,8 +853,7 @@ void RunScene58Sequence(void)
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x16, 0, 20);
 	Actor_WalkToAndWait(0x16, 0x150, 0xD8);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, RunScene58Sequence is 2 bytes longer */
-	((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_MakyuriChojo1, 2);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriChojo1, 2);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(0x24, 2);
 	Engine_EventEnd();

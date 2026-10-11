@@ -67,7 +67,7 @@ s32 Object_PlaceFromCameraOffset(struct FieldActor *object)
 
 s32 SceneActor_SetFacingFromSample(struct FieldActor *object)
 {
-	u32 sample = (u32)(((u32 (*)(void))Engine_RandomNext)() << 6) >> 16;
+	u32 sample = (u32)(Engine_RandomNext() << 6) >> 16;
 
 	if (sample == 6)
 	{
@@ -105,7 +105,7 @@ s32 FuneHobashira_SwayActor(struct SwayActor *actor)
 	}
 	else if (*state != 0)
 	{
-		actor->drift -= (u32)(((u32 (*)(void))Engine_RandomNext)() << 11) >> 16;
+		actor->drift -= (u32)(Engine_RandomNext() << 11) >> 16;
 		if (actor->drift < -0xc000)
 		{
 			next = 0;
@@ -114,7 +114,7 @@ s32 FuneHobashira_SwayActor(struct SwayActor *actor)
 	}
 	else
 	{
-		actor->drift += (u32)(((u32 (*)(void))Engine_RandomNext)() << 11) >> 16;
+		actor->drift += (u32)(Engine_RandomNext() << 11) >> 16;
 		if (actor->drift > 0xc000)
 		{
 			next = 1;
@@ -132,7 +132,7 @@ s32 FuneHobashira_SwayActor(struct SwayActor *actor)
 	}
 	else if (*state != 0)
 	{
-		actor->y -= (u32)(((u32 (*)(void))Engine_RandomNext)() * 3 << 14) >> 16;
+		actor->y -= (u32)(Engine_RandomNext() * 3 << 14) >> 16;
 		if (actor->y < 0)
 		{
 			next = 0;
@@ -141,7 +141,7 @@ s32 FuneHobashira_SwayActor(struct SwayActor *actor)
 	}
 	else
 	{
-		actor->y += (u32)(((u32 (*)(void))Engine_RandomNext)() * 3 << 14) >> 16;
+		actor->y += (u32)(Engine_RandomNext() * 3 << 14) >> 16;
 		if (actor->y > 0x100000)
 		{
 			next = 1;
@@ -226,8 +226,8 @@ s32 FuneHobashira_ApplyEntryState(void)
 	if ((Engine_GameFlagIsSet(0x927) != 0 || Engine_GameFlagIsSet(0x928) != 0)
 		&& Engine_GameFlagIsSet(0x93e) == 0 && Engine_GameFlagIsSet(0x8a0) == 0)
 	{
-		FuneHobashira_SwayX = (u16)((u32 (*)(void))Engine_RandomNext)();
-		FuneHobashira_SwayY = (u16)((u32 (*)(void))Engine_RandomNext)();
+		FuneHobashira_SwayX = (u16)Engine_RandomNext();
+		FuneHobashira_SwayY = (u16)Engine_RandomNext();
 		Engine_TaskAddCallback(FuneHobashira_UpdateSway, 0xc80);
 	}
 	if (Engine_GameFlagIsSet(0x925) != 0 && Engine_GameFlagIsSet(0x93e) == 0)
@@ -525,15 +525,15 @@ void OverlayObject_InitWithRandomFields(s32 a)
 	obj = Object_GetById(a);
 	Engine_ActorSetSpritePriority(a, 1);
 	obj->motion_flags = 0;
-	obj->timer = ((u32 (*)(void))Engine_RandomNext)() >> 15;
-	obj->work = ((u32 (*)(void))Engine_RandomNext)() >> 15;
-	x = ((u32 (*)(void))Engine_RandomNext)();
+	obj->timer = (u32)Engine_RandomNext() >> 15;
+	obj->work = (u32)Engine_RandomNext() >> 15;
+	x = (u32)Engine_RandomNext();
 	x <<= 2;
 	x >>= 16;
 	x <<= 16;
 	x += 0x60000;
 	obj->y.fixed = x;
-	x = ((u32 (*)(void))Engine_RandomNext)();
+	x = (u32)Engine_RandomNext();
 	obj->rise_base_y = ((x * 3 << 13) >> 16) - 0x3000;
 	obj->scale_x = 0x14000;
 	obj->scale_y = 0x14000;
@@ -736,8 +736,8 @@ void FuneHobashira_UpdateSway(void)
 	*pos += dy;
 	FuneHobashira_DriftX += dx;
 	FuneHobashira_DriftY += dy;
-	FuneHobashira_SwayX += (u32)(((u32 (*)(void))Engine_RandomNext)() * 3 << 7) >> 16;
-	FuneHobashira_SwayY += (u32)(((u32 (*)(void))Engine_RandomNext)() << 9) >> 16;
+	FuneHobashira_SwayX += (u32)(Engine_RandomNext() * 3 << 7) >> 16;
+	FuneHobashira_SwayY += (u32)(Engine_RandomNext() << 9) >> 16;
 	FuneHobashira_SwayX &= 0xffff;
 	FuneHobashira_SwayY &= 0xffff;
 }

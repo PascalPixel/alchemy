@@ -990,9 +990,6 @@ struct PillarActor
 	u8	motion_flags;
 };
 
-/* FAKEMATCH: the calls below read the collision code as a full word; the header returns u8. */
-#define GetMapCellCollisionWord ((s32 (*)(s32, s32, s32))GetMapCellCollision)
-
 void TakaraHashira_UpdatePillarActors(void)
 {
 	u32					 id;
@@ -1026,7 +1023,7 @@ void TakaraHashira_UpdatePillarActors(void)
 			TakaraHashira_PillarSlots[i].z, (struct MapCell *)&TakaraHashira_PillarSlots[i].cell);
 		if (*flags & 1)
 		{
-			if (GetMapCellCollisionWord(2, actor->x, actor->z) == 50)
+			if (GetMapCellCollision(2, actor->x, actor->z) == 50)
 			{
 				Engine_AudioPlayCue(189);
 				/* FAKEMATCH: the byte view keeps these flag updates out of the record's alias set; field stores reallocate the loop (score 2573). */
@@ -1034,7 +1031,7 @@ void TakaraHashira_UpdatePillarActors(void)
 				TakaraHashira_LowerActorToLedge(id, 1);
 				*(u8 *)&actor->priority_flags |= 1;
 			}
-			else if (GetMapCellCollisionWord(2, actor->x, actor->z) == 51)
+			else if (GetMapCellCollision(2, actor->x, actor->z) == 51)
 			{
 				SceneActor_WaitHeightBelowLimit((struct FieldActor *)actor, 0);
 				Engine_AudioPlayCue(189);
@@ -1320,7 +1317,7 @@ void TakaraHashira_RunMapShiftScene(void)
 		{
 			Engine_EventWait(60);
 		}
-		((void (*)())Engine_TaskRemoveCallback)((s32)SceneEffect_SpawnRandomizedParticle);
+		Engine_TaskRemoveCallback(SceneEffect_SpawnRandomizedParticle);
 		Engine_EventWait(20);
 		Map_CopyCellsTo(72, 10, 60, 10, 1, 2);
 		Engine_EventWait(20);

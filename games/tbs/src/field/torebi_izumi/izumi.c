@@ -144,7 +144,7 @@ void TorebiIzumi_WalkLeaderToSpring(void)
 	}
 	Engine_EventBegin();
 	Engine_ActorWalkToAndWait(leader, 120, 152);
-	((s32 (*)())Engine_ActorFaceDirection)(leader, 0x4000, 0);
+	Engine_ActorFaceDirection(leader, 0x4000, 0);
 	TorebiIzumi_RunSpringGame();
 	Engine_EventEnd();
 }
@@ -517,8 +517,7 @@ play:
 	Engine_EventSetMessage((s32)MsgTorebiStepRightEnjoy);
 	Engine_EventShowMessage(8, 0);
 	Event_RequestDestination(508, 0);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, TorebiIzumi_OfferLuckyWheels has 7 of 256 bytes different */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_TorebiIzumi1, 12);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_TorebiIzumi1, 12);
 }
 
 void TorebiIzumi_PayToPlay(void)
@@ -548,8 +547,7 @@ void TorebiIzumi_PayToPlay(void)
 		Engine_ActorFaceDirection(0, 0x8000, 0);
 		Engine_EventWait(20);
 		Event_RequestDestination(0x1fd, 0);
-		/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, TorebiIzumi_PayToPlay is 4 bytes longer */
-		((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_TorebiIzumi1, 13);
+		Party_SetFields1ceAnd1d0((s32)&SceneId_TorebiIzumi1, 13);
 	}
 	else
 	{

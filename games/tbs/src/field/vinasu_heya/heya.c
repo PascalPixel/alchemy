@@ -1679,7 +1679,7 @@ void SceneActor_UpdateSlots11And12ByTile(void)
 	o = Object_GetById(11);
 	if (o->unk8 >> 20 == 8)
 	{
-		((s32 (*)())OverlayObject_WaitUntilIdle)();
+		OverlayObject_WaitUntilIdle((struct BusyObject *)o);
 		SceneState_MarkActorAndApplyRectAtTile(o);
 	}
 	else
@@ -1689,7 +1689,7 @@ void SceneActor_UpdateSlots11And12ByTile(void)
 	o = Object_GetById(12);
 	if (o->unk8 >> 20 == 7)
 	{
-		((s32 (*)())OverlayObject_WaitUntilIdle)();
+		OverlayObject_WaitUntilIdle((struct BusyObject *)o);
 		SceneState_MarkActorAndApplyRectAtTile(o);
 	}
 	else

@@ -5730,9 +5730,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 			s32 angle;
 
 			BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-			/* FAKEMATCH: the value goes in whole here; the prototype (u16 value) would narrow it first */
-			((void (*)(s32, s32, s32))BattlePresentation_ConfigurePaletteFadeFar)(
-				1, (s32)&ResourceId_VioletSkyBackdrop, 8);
+			BattlePresentation_ConfigurePaletteFadeFar(1, (s32)&ResourceId_VioletSkyBackdrop, 8);
 			BattleFx_SelectLivingTargets(runtime->effect);
 			BattleFx_SpawnObjects(9, 376, 2);
 
@@ -15139,7 +15137,7 @@ void BattleFx_SetApproachMotion(s32 id, s32 tgt_id, s32 frames)
 // （あとの奇数列のバイトが残る）
 // stride : src の 1 行のバイト数（dst はその半分）
 //--------------------------------------------------------------------------
-void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride)
+void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 unused)
 {
 	s32 y = 0;
 	s32 h = 288;
@@ -15243,8 +15241,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 v
 	// 絵と色
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 	Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1, 0);
-	/* FAKEMATCH: called with four arguments (width, rows); the function takes three */
-	((void (*)(void *, void *, s32, s32))Graphics_PackTileRows)(work, cells, 40, 288);
+	Graphics_PackTileRows((u8 *)work, (u8 *)cells, 40, 288);
 	Resource_LoadAndDecompress((s32)&ResourceId_BlueBurstSheet, work->sheet, 1, 1);
 	switch (variant)
 	{
@@ -18277,8 +18274,7 @@ static __inline__ void LoadResource(const void *id, void *dest, s32 skip, s32 co
 static __inline__ void PackRows(void *src, void *dest, s32 width, s32 height)
 {
 	/* FAKEMATCH: needed to match: keep packing arguments within their own inline scope */
-	/* FAKEMATCH: called without a prototype and with four arguments; the function takes three */
-	((void (*)())Graphics_PackTileRows)(src, dest, width, height);
+	Graphics_PackTileRows(src, dest, width, height);
 }
 
 static __inline__ void DrawImage(
@@ -22643,9 +22639,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 
 		if (frame == 70)
 		{
-			/* FAKEMATCH: needed to match: the prototype's u16 value would truncate the resource symbol with a shift pair (2 instructions more); the native call passes it whole */
-			((void (*)(s32, s32, s32))BattlePresentation_ConfigurePaletteFadeFar)(
-				1, (s32)&ResourceId_AerialViewBackdrop, 7);
+			BattlePresentation_ConfigurePaletteFadeFar(1, (s32)&ResourceId_AerialViewBackdrop, 7);
 		}
 
 		if (frame == 150)

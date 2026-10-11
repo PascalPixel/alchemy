@@ -65,7 +65,7 @@ void KareiMachi_StartWindowTransition(void);
 void FieldScene_RunMiddleSequence(void);
 void SceneState_SetValues27Through34(void);
 void SceneEffect_SetSlotVariantAndDescriptor(s32 a);
-void KareiMachi_SpeedUpActors(s32 a0, s32 a1);
+void KareiMachi_SpeedUpActors(void);
 void KareiMachi_AlternateDance(void);
 void FieldScene_RunTwoActorCutsceneSequence(void);
 void FieldScene_RunSecondaryGroupSequence(void);

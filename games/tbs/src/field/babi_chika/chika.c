@@ -502,8 +502,8 @@ void SceneEffect_SpawnNineRadialEffects(s32 actor)
 		vec.z = z;
 		x += Math_Divide(x, 3);
 		vec.x = x;
-		((void (*)())Effect_Spawn)(
-			object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01030001, &params);
+		Effect_Spawn(
+			object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01030001, (const struct EffectOptions *)&params);
 	}
 }
 
@@ -721,9 +721,9 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 			rec7 = Random_Next();
 			rec7 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x2e00000);
 			value = Engine_RandomNext();
-			((void (*)())Effect_Spawn)(rec7, 0,
+			Effect_Spawn(rec7, 0,
 				((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0x800000), 0, 0, 0, 0x90000,
-				frame);
+				(const struct EffectOptions *)frame);
 		}
 		Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
 		Engine_EventWait(30);
@@ -808,7 +808,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 				arg0 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x3000000);
 				value = Engine_RandomNext();
 				arg2 = ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0xe00000);
-				((void (*)())Effect_Spawn)(arg0, 0, arg2, 0, 0, 0, 0x90000, slot);
+				Effect_Spawn(arg0, 0, arg2, 0, 0, 0, 0x90000, (const struct EffectOptions *)slot);
 			}
 			Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
 			Engine_EventWait(30);
@@ -1043,9 +1043,7 @@ void FieldScene_RunMiddleSequence(void)
 	{
 		if (Object_GetById(i + 12)->sprite->priority == 3 && GameFlag_IsSet(i + 0x200) == 0)
 		{
-			Actor_Get(i + 12);
-			/* FAKEMATCH: SceneActor_WaitValueBelowLimit is called as int (*)(); as void (*)(struct Track02001038 *), its prototype, FieldScene_RunMiddleSequence does not compile */
-			((int (*)())SceneActor_WaitValueBelowLimit)();
+			SceneActor_WaitValueBelowLimit((struct Track02001038 *)Actor_Get(i + 12));
 			Actor_SetPosition(i + 12, 0, 0);
 			GameFlag_Set(i + 0x200);
 			break;

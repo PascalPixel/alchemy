@@ -529,7 +529,7 @@ void BattlePresentation_ClearBg0VerticalOffset(void)
 //--------------------------------------------------------------------------
 // 何もしない
 //--------------------------------------------------------------------------
-void Party_ReservedNoOp5B14(void)
+void Party_ReservedNoOp5B14(s32 unused)
 {
 }
 
@@ -1244,8 +1244,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 	BattleBackground_Load(1, battle->background, 0);
 	BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
 	BattlePres_SetupTransitionScene(0, 0, 0, 190);
-	/* FAKEMATCH: Party_ReservedNoOp5B14 is called as void (*)(s32); as void (*)(void), its prototype, Battle_RunEncounter does not compile */
-	((void (*)(s32))Party_ReservedNoOp5B14)(1);
+	Party_ReservedNoOp5B14(1);
 	REG_BLDCNT = 0;
 	Summon_ClearWorkFields();
 	battle->prompt_slot = Resource_LoadIntoFreeSlot(128);
@@ -2804,13 +2803,11 @@ s32 Camera_ApplyTransformByFlag(void)
 	if (GameFlag_TestFar(0x16B) != 0)
 	{
 		Iwram_TransformMatrix((s32 *)Camera_FlagTransformWork);
-		/* FAKEMATCH: Graphics_PrepareTransferAndRun is called as s32 (*)(void *, void *); as void (*)(s32 *, s32 *), its prototype, Camera_ApplyTransformByFlag does not compile */
-		return ((s32 (*)(void *, void *))Graphics_PrepareTransferAndRun)(state, state->pos);
+		Graphics_PrepareTransferAndRun(state->eye, state->pos);
 	}
 	else
 	{
-		/* FAKEMATCH: Graphics_PrepareTransferInIwramWork is called as s32 (*)(void *, void *); as void (*)(s32 *, s32 *), its prototype, Camera_ApplyTransformByFlag does not compile */
-		return ((s32 (*)(void *, void *))Graphics_PrepareTransferInIwramWork)(state, state->pos);
+		Graphics_PrepareTransferInIwramWork(state->eye, state->pos);
 	}
 }
 
@@ -4435,7 +4432,7 @@ finish:
 // 並びの位置からユニット番号を返す
 // slot : 下位 4 ビットが位置、0x80 が立っていれば敵の並び
 //--------------------------------------------------------------------------
-s16 Battle_GetTaggedSlotValue(s32 slot)
+s32 Battle_GetTaggedSlotValue(s32 slot)
 {
 	struct BtlWork *work = BtlWk;
 
@@ -5370,7 +5367,7 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
 	return 0;
 }
 
-void BattleMotion_RunValueSequence(s32 id)
+void BattleMotion_RunValueSequence(s32 id, s32 unused0, s32 unused1)
 {
 	u16	 selection[2];
 	u16 *sel;
@@ -6199,10 +6196,7 @@ u32 BattleEv_DispatchQueued(void)
 			case BEV_OBJ_BGN:
 				if (runtime->pending_cue > 0)
 					AudioCommand_PlayFar(runtime->pending_cue);
-				/* FAKEMATCH: the call passes two extra zero arguments (r1, r2) the
-				   one-parameter function never reads; a one-argument call drops
-				   both moves. */
-				((void (*)())BattleMotion_RunValueSequence)(queue->operands[i], 0, 0);
+				BattleMotion_RunValueSequence(queue->operands[i], 0, 0);
 				break;
 			case BEV_OBJ_RES:
 				BattleEnemy_RecordDefeat(queue->operands[i], runtime->flags);
@@ -8378,8 +8372,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		}
 	}
 
-	/* FAKEMATCH: the s16 getter is called as returning s32; with its own type the caller sign-extends the result again (lsl, asr) and stores it through a kept address. */
-	tid = ((s32 (*)(s32))Battle_GetTaggedSlotValue)(req->target);
+	tid = Battle_GetTaggedSlotValue(req->target);
 	BattleEventRuntime_Reset();
 	plan->akuryo_dmg = 0;
 	plan->aid = req->unit_id;
@@ -10150,7 +10143,7 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 	}
 }
 
-void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
+void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 value, s32 fade)
 {
 	/* FAKEMATCH: needed to match: a one-halfword struct mask held across the fade loop */
 

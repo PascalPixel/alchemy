@@ -203,8 +203,7 @@ void SuharaSabaku_SyncSelectedActorProgress(void)
 			progress -= 1;
 		}
 	}
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(); as u32 (*)(u32, u8), its prototype, SuharaSabaku_SyncSelectedActorProgress is 4 bytes longer */
-	((void (*)())GameFlag_SetByte)(0x210, progress);
+	GameFlag_SetByte(0x210, progress);
 }
 
 void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
@@ -242,10 +241,8 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
 		rec7->motion_flags = 4;
 		*(base + 498) = 2;
 		GameFlag_Set(0x20f);
-		/* FAKEMATCH: GameFlag_SetByte is called as void (*)(); as u32 (*)(u32, u8), its prototype, FieldScene_RunMiddleAuxiliarySequence is 4 bytes longer */
-		((void (*)())GameFlag_SetByte)(0x218, p10);
-		/* FAKEMATCH: GameFlag_SetByte is called as void (*)(); as u32 (*)(u32, u8), its prototype, FieldScene_RunMiddleAuxiliarySequence has 4 of 244 bytes different */
-		((void (*)())GameFlag_SetByte)(0x210, 180);
+		GameFlag_SetByte(0x218, p10);
+		GameFlag_SetByte(0x210, 180);
 		Engine_EventEnd();
 		*(u16 *)(*(u8 **)((u8 *)&gEventWork) + 0x17c) = rec2;
 	}
@@ -564,8 +561,7 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
 			Engine_GameFlagSet((actor + 0x309));
 		}
 	}
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(); as u32 (*)(u32, u8), its prototype, SuharaSabaku_MeetActor has 4 of 220 bytes different */
-	((void (*)())GameFlag_SetByte)(0x210, 0);
+	GameFlag_SetByte(0x210, 0);
 	BattleFx_SetWeightedResult(98, 5);
 	Battle_SetStart(3);
 	state = &gGameState;
@@ -619,13 +615,11 @@ void SuharaSabaku_DropAndLeave(void)
 	Engine_GameFlagSet(0x122);
 	if (gGameState.scene == (s32)&SceneId_SuharaSabaku2 && GameFlag_GetByte(0x218) == 11)
 	{
-		/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, SuharaSabaku_DropAndLeave is 8 bytes longer */
-		((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_WorldMap, 77);
+		Event_SetDestination((s32)&SceneId_WorldMap, 77);
 	}
 	else
 	{
-		/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, SuharaSabaku_DropAndLeave is 4 bytes longer */
-		((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_WorldMap, 27);
+		Event_SetDestination((s32)&SceneId_WorldMap, 27);
 	}
 }
 

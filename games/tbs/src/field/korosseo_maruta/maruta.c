@@ -469,8 +469,7 @@ void ColossoLogRollingStage_ConfigureActorThirteen(void)
 
 	actor = Object_GetById(13);
 	x = actor->x >> 20;
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, ColossoLogRollingStage_ConfigureActorThirteen is 2 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)(880, x);
+	GameFlag_SetByte(880, x);
 	Engine_MapCopyCellAttributes(18, 10, 3, 1, 18, 11);
 	Engine_MapCopyCellAttributes(17, 11, 1, 1, x, 11);
 }
@@ -854,10 +853,8 @@ void KorosseoMaruta_RunStageStart(void)
 	Engine_EventWait(10);
 	BattleFx_SetWeightedResult(72, last - place + 1);
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, KorosseoMaruta_RunStageStart is 6 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_KorosseoMaruta, 4);
-	/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, KorosseoMaruta_RunStageStart is 4 bytes longer */
-	((void (*)(s32, s32))Event_SetDefeatDestination)((s32)&SceneId_KorosseoMaruta, 5);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoMaruta, 4);
+	Event_SetDefeatDestination((s32)&SceneId_KorosseoMaruta, 5);
 	Engine_GameFlagSet(0x11a);
 }
 
@@ -1471,8 +1468,7 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 		return;
 	}
 	Engine_EventBegin();
@@ -1546,8 +1542,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 		return;
 	}
 	Engine_EventBegin();
@@ -1607,8 +1602,7 @@ void KorosseoMaruta_RunStageIntro(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 	}
 	else
 	{
@@ -1677,8 +1671,7 @@ void FieldScene_RunFourStepActorMotion(s32 event)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(event);
 	}
 	else
 	{
@@ -1697,8 +1690,7 @@ void FieldScene_RunFourStepActorMotion(s32 event)
 			((s32 (*)())Korosseo_FadeInCompetitor)(0, 0x330, 200);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 			Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x348, 200);
-			/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-			Value3(Engine_ActorFaceDirection, 0, 0xc000, 20);
+			Engine_ActorFaceDirection(0, 0xc000, 20);
 			battle_owner_69();
 			Camera_MoveTo(-1, -1, -1, 0);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -1776,8 +1768,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 event)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(event);
 	}
 	else
 	{
@@ -1843,8 +1834,7 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(actor);
 		return;
 	}
 
@@ -2018,11 +2008,9 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	base = active_slot * 16;
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, ColossoLogRollingStage_SelectNearestObstacle is 4 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)(base + 880, target->x >> 20);
+	GameFlag_SetByte(base + 880, target->x >> 20);
 	z = target->z >> 20;
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, ColossoLogRollingStage_SelectNearestObstacle is 4 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)(base + 888, z);
+	GameFlag_SetByte(base + 888, z);
 	active_slot++;
 	if (active_slot > 3)
 	{
@@ -2081,18 +2069,12 @@ void RunPartyCountInteractionCopyB(s32 actorId)
 void ColossoLogRollingStage_ClearSavedActorPositions(void)
 {
 
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, ColossoLogRollingStage_ClearSavedActorPositions has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(896, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, ColossoLogRollingStage_ClearSavedActorPositions has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(904, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, ColossoLogRollingStage_ClearSavedActorPositions has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(912, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, ColossoLogRollingStage_ClearSavedActorPositions has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(920, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, ColossoLogRollingStage_ClearSavedActorPositions has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(928, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, ColossoLogRollingStage_ClearSavedActorPositions has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(936, 0);
+	GameFlag_SetByte(896, 0);
+	GameFlag_SetByte(904, 0);
+	GameFlag_SetByte(912, 0);
+	GameFlag_SetByte(920, 0);
+	GameFlag_SetByte(928, 0);
+	GameFlag_SetByte(936, 0);
 }
 
 s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags)
@@ -2124,8 +2106,7 @@ s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags)
 	}
 	if (Engine_GameFlagIsSet(flags + 520) != 0)
 	{
-		/* FAKEMATCH: called with an argument the function does not take; r0 is set to 0 before the call. */
-		result = ((s32 (*)(s32))PartyTalkMenu_Choose)(0);
+		result = PartyTalkMenu_Choose(0);
 		if (result == 1)
 		{
 			return 2;
@@ -2285,11 +2266,9 @@ L_main:
 	GameFlag_Set(base + 512);
 	rec = Object_GetById(obj);
 	sx = rec->x.fixed >> 20;
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunMiddleSequence is 4 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)((obj << 4) + 880, sx);
+	GameFlag_SetByte((obj << 4) + 880, sx);
 	sy = rec->z.fixed >> 20;
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunMiddleSequence is 4 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)((obj << 4) + 888, sy);
+	GameFlag_SetByte((obj << 4) + 888, sy);
 }
 
 void ColossoLogRollingStage_ApplyItemToMatchingSlots(s32 handle, s32 item)

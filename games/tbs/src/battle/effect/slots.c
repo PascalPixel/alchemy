@@ -257,7 +257,7 @@ void Party_SetReturnPoint(s32 reason)
 // シーンが属するグループを返す
 // scene : シーン番号
 //--------------------------------------------------------------------------
-s8 BattleFx_GetResourceGroup(s32 scene)
+s32 BattleFx_GetResourceGroup(s32 scene)
 {
 	return Field_SceneTable[scene].group;
 }
@@ -387,8 +387,7 @@ start:
 			Audio_PlayCueFromEventWork();
 		}
 		gGameState.map = record->map_index;
-		/* FAKEMATCH: needed to match: the call passes a 0 the function does not take */
-		((void (*)(s32))BattleFx_LoadResourceGroup)(0);
+		BattleFx_LoadResourceGroup(0);
 		MapGroupTable_SelectEntry(Field_RunScene(entrance));
 	}
 }
@@ -400,7 +399,7 @@ start:
 //--------------------------------------------------------------------------
 // 現在のシーンのコードをオーバーレイ領域へ読み込む
 //--------------------------------------------------------------------------
-void BattleFx_LoadResourceGroup(void)
+void BattleFx_LoadResourceGroup(s32 unused)
 {
 	const struct SceneRecord *tbl;
 
@@ -702,7 +701,7 @@ u16 BattleFx_GetWeightedResult(s32 zone, s32 slot)
 // 番号から（ゾーン, 枠）を引き、その敵グループを返す
 // return 文はなく、BattleFx_GetWeightedResult の戻り値が r0 に残る
 //--------------------------------------------------------------------------
-u8 BattleFx_GetPhaseResult(s32 no)
+s16 BattleFx_GetPhaseResult(s32 no)
 {
 	u16 *ent;
 
@@ -775,8 +774,7 @@ s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {
 	const struct SceneAreaNameRule *p = Scene_AreaNameRules;
 	s32								name = 0;
-	/* FAKEMATCH: needed to match: the s8 group is read as a whole register, with no sign extension after the call */
-	s32 grp = ((s32 (*)(s32))BattleFx_GetResourceGroup)(scene);
+	s32 grp = BattleFx_GetResourceGroup(scene);
 
 	while (p->id != -1)
 	{
@@ -1686,8 +1684,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 		{
 			n = sum / 0x10000;
 			work->encounter_steps = sum & 0xffff;
-			/* FAKEMATCH: needed to match: the call passes a second 0 the function does not take */
-			((void (*)(s32, s32))BattleParty_ApplyDrain)(n, 0);
+			BattleParty_ApplyDrain(n, 0);
 			if (BattlePlacement_UpdateTimedEntriesFar())
 				AudioCommand_PlayFar(STEP_CUE_EFFECT);
 			Event_ClearInvalidPackedValues();
@@ -1751,7 +1748,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 	}
 }
 
-void BattleParty_ApplyDrain(s32 amount)
+void BattleParty_ApplyDrain(s32 amount, s32 unused)
 {
 	s32 target_count = Party_CountActiveOwnersFar();
 	s32 i;
@@ -1981,9 +1978,7 @@ s32 Field_RunScene(s32 entrance)
 	BattleFx_ResetCounters();
 	work->view = (s32)gOverlayArea.events();
 	BattleMap_ApplyEntranceView();
-	gOverlayArea.placements();
-	/* FAKEMATCH: needed to match: the call leaves out the function's table argument */
-	((void (*)(void))ObjectTable_ResetForObject)();
+	ObjectTable_ResetForObject((struct ScenePlacement *)gOverlayArea.placements());
 	if (GameFlag_TestFar(0x109) != 0)
 		ObjectTable_Restore();
 	if (gGameState.pending_djinn_event != 0)
@@ -2160,8 +2155,7 @@ s32 Field_RunScene(s32 entrance)
 				gGameState.scene = 510;
 				gGameState.entrance = work->scene;
 				work->exit = 999;
-				/* FAKEMATCH: needed to match: the call passes a scene the function does not take */
-				((void (*)(s32))Scene_FadeColorFromWhite)(work->scene);
+				Scene_FadeColorFromWhite(work->scene);
 				work->unknown_1a8 = 0;
 				work->scene = 0;
 				gGameState.encounter_steps = 0;
@@ -2936,7 +2930,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
 			}
 			if (ev->result >= 0x10000)
 			{
-				s32 no = ((s32 (*)(s32))BattleFx_GetFlags)(id) /* FAKEMATCH: called with an argument and an s32 result */;
+				s32 no = BattleFx_GetFlags(id);
 				u32 rnd = Random16();
 				s32 mes = (s32)MsgPonderEllipsis + no * 2 + (rnd * 2 >> 16);
 				Battle_Reset();
@@ -3247,8 +3241,7 @@ s32 Field_RunTileAction(s32 tile)
 							AudioCommand_PlayFar(83);
 							UiWork_PushValueSlotFar((*(const u16 *)&descriptor->value), 5);
 							UiText_ShowPositionedMessageAndWaitFar((s32)MsgGotPsynergyStone, 3);
-							/* FAKEMATCH: needed to match: the call passes a second 0 the function does not take */
-							((void (*)(s32, s32))BattleParty_ApplyDrain)(999, 0);
+							BattleParty_ApplyDrain(999, 0);
 							UiWindow_CreateWithLayoutBoundsFar(1);
 							AudioCommand_PlayFar(126);
 							UiText_ShowPositionedMessageAndWaitFar((s32)MsgGotPsynergyStone + 1, 1);
@@ -3455,8 +3448,7 @@ s32 BattleEffect_SelectNearbyObject(s32 id)
 		if (dist >= best_dist)
 			continue;
 
-		/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, BattleEffect_SelectNearbyObject is 4 bytes shorter */
-		angle = ((u16 (*)(s32, s32))ArcTan2)(obj->z - src->z, obj->x - src->x);
+		angle = (u16)ArcTan2(obj->z - src->z, obj->x - src->x);
 		if (dist > 11)
 		{
 			s32 diff = (s16)(angle - src->angle);
@@ -3552,8 +3544,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode)
 			continue;
 
 		// 向きの幅 : 19 ドットまでは ±0x1800、それより遠ければ ±0x1000、mode 2 は ±0x2000
-		/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, BattleEffect_SelectNearbyTargetObject is 4 bytes shorter */
-		angle = ((u16 (*)(s32, s32))ArcTan2)(obj->z - src->z, obj->x - src->x);
+		angle = (u16)ArcTan2(obj->z - src->z, obj->x - src->x);
 		width = 0x1800;
 		if (dist > 19)
 			width = 0x1000;
@@ -4584,8 +4575,7 @@ void BattleFx_EmitRandomParticle(void)
 				actor->x = cx + (8 << 16);
 				actor->z = cz + (8 << 16);
 				Vector_AddPolarOffset(
-					/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, BattleFx_EmitRandomParticle is 4 bytes shorter */
-					20 << 16, ((u16 (*)(s32, s32))ArcTan2)(dz, dx), (struct ParticlePosition *)&actor->x);
+					20 << 16, (u16)ArcTan2(dz, dx), (struct ParticlePosition *)&actor->x);
 				actor->target_x = 0x80000000; // 移動先なし
 				actor->target_y = 0x80000000;
 				actor->target_z = 0x80000000;
@@ -6615,9 +6605,9 @@ struct BattleEffectEntry *BattleFx_FindDefinition(u32 id)
 	return entry;
 }
 
-s32 BattleFx_GetAnimationValue(void)
+s32 BattleFx_GetAnimationValue(s32 id)
 {
-	struct BattleRenderObject *object = ((void *(*)())ObjectTable_Get)(); /* FAKEMATCH: called without the index argument */
+	struct BattleRenderObject *object = ObjectTable_Get(id);
 
 	if (object->kind != 1 || object->animation == NULL || object->animation->value_28 == NULL)
 	{
@@ -6637,9 +6627,9 @@ s32 BattleFx_GetResourceId(u32 id)
 	return value + 0x100;
 }
 
-u8 BattleFx_GetFlags(void)
+s32 BattleFx_GetFlags(s32 id)
 {
-	return BattleFx_FindDefinition(BattleFx_GetAnimationValue())->flags;
+	return BattleFx_FindDefinition(BattleFx_GetAnimationValue(id))->flags;
 }
 
 void Battle_UpdateModeFromShoulderButtons(void)
@@ -6749,8 +6739,7 @@ void Event_SetSceneEvents(s32 value)
 
 void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value)
 {
-	/* FAKEMATCH: UnitGetFar is called with no argument set up; r0 still holds event_id */
-	((s32 (*)(void))UnitGetFar)();
+	UnitGetFar(event_id);
 	Party_AddActiveOwnerFar(event_id);
 	if (value != 0)
 	{
@@ -7139,7 +7128,7 @@ void Event_WaitTransitionFrames(void)
 	WaitFrames(((struct EventRuntime *)gEventWork)->value_1c8);
 }
 
-void Event_SetDestination(u16 first, u16 second)
+void Event_SetDestination(s32 first, s32 second)
 {
 	((struct EventRuntime *)gEventWork)->value_170 = 999;
 	gGameState.scene = first;
@@ -7207,8 +7196,7 @@ void BattleFx_SetPhaseRequest(s32 flag, s32 no)
 
 	gs = &gGameState;
 	gs->pending_djinn_event = (no + JIN_0) | skip;
-	/* FAKEMATCH: the result is read as s16 here; the shared prototype returns unsigned char */
-	ev->value_17c = ((s16 (*)(s32))BattleFx_GetPhaseResult)(no); // ジンの敵グループ
+	ev->value_17c = BattleFx_GetPhaseResult(no); // ジンの敵グループ
 	if (ev->mode_19e == 3)
 	{
 		void *obj = ObjectTable_Get(gs->selected_actor);
@@ -7218,13 +7206,13 @@ void BattleFx_SetPhaseRequest(s32 flag, s32 no)
 	((s32 (*)())BattleFx_SelectBattleCue)(0, 0); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
 }
 
-void Party_SetFields1ceAnd1d0(u16 first, u16 second)
+void Party_SetFields1ceAnd1d0(s32 first, s32 second)
 {
 	gGameState.next_scene = first;
 	gGameState.next_entrance = second;
 }
 
-void Event_SetDefeatDestination(u16 first, u16 second)
+void Event_SetDefeatDestination(s32 first, s32 second)
 {
 	gGameState.defeat_scene = first;
 	gGameState.defeat_entrance = second;
@@ -7868,8 +7856,7 @@ void FacingObject_TurnPairToFaceEachOther(
 
 	if (first == NULL || second == NULL)
 		return;
-	/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, FacingObject_TurnPairToFaceEachOther is 4 bytes shorter */
-	toward = ((u16 (*)(s32, s32))ArcTan2)(second->z - first->z, second->x - first->x);
+	toward = (u16)ArcTan2(second->z - first->z, second->x - first->x);
 	away = toward + 0x8000;
 	for (frame = 0; frame < 60; frame++)
 	{
@@ -8145,7 +8132,7 @@ s32 ObjectTable_FindActiveByValue(s32 value)
 	return result;
 }
 
-struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
+struct UiWindow *UiText_OpenMessageAtObject(s32 arg, s32 unused)
 {
 	struct UiRenderWork	 *win;
 	struct EventRuntime	 *work;
@@ -8373,9 +8360,7 @@ void BattleEv_RunWait(s32 action, s32 flag)
 {
 	s32					 masked_action;
 	struct EventRuntime *runtime = (struct EventRuntime *)gEventWork;
-	/* FAKEMATCH: called with a second argument the function does not take */
-	struct UiWindow *window =
-		((struct UiWindow * (*)(s32, s32)) UiText_OpenMessageAtObject)(action, flag);
+	struct UiWindow *window = UiText_OpenMessageAtObject(action, flag);
 	s32 message_id;
 	u32 frames;
 
@@ -8423,8 +8408,7 @@ s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
 	struct EventRuntime *runtime;
 	struct GameState	*save;
 
-	/* FAKEMATCH: called with a second argument the function does not take */
-	((struct UiWindow * (*)(s32, s32)) UiText_OpenMessageAtObject)(object_id, action_id);
+	UiText_OpenMessageAtObject(object_id, action_id);
 	save = &gGameState;
 	result = Inventory_PromptAndSetObjectMode(save->selected_actor, 0);
 	if (result == 0)
@@ -8482,10 +8466,9 @@ void Event_ShowSpeakerMessage(s32 speaker)
 	state->message++;
 }
 
-void ObjectTable_CallRefreshHook(void)
+void ObjectTable_CallRefreshHook(s32 unused0, s32 unused1, s32 x, s32 y)
 {
-	/* FAKEMATCH: called with no arguments set up */
-	((void (*)(void))Event_ShowMessageAtPosition)();
+	Event_ShowMessageAtPosition(unused0, unused1, x, y);
 }
 
 void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
@@ -9085,8 +9068,7 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object)
 	if (target != NULL)
 	{
 		object->action_flags &= 0xfe;
-		/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, ObjectMotion_TurnTowardLinkedTarget is 4 bytes shorter */
-		target_angle = ((u16 (*)(s32, s32))ArcTan2)(target->z - object->z, target->x - object->x);
+		target_angle = (u16)ArcTan2(target->z - object->z, target->x - object->x);
 		current_angle = object->angle;
 		turn_step = target_angle - current_angle;
 		if (turn_step != 0)
@@ -9173,8 +9155,7 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
 		dist = Iwram_Sqrt(dx * dx + dz * dz);
 		if (dist >= best)
 			continue;
-		/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, Object_FindNearestFacingTarget is 4 bytes shorter */
-		angle = ((u16 (*)(s32, s32))ArcTan2)(entry->z - self->z, entry->x - self->x);
+		angle = (u16)ArcTan2(entry->z - self->z, entry->x - self->x);
 		if (dist > 23)
 		{
 			turn = (s16)(angle - self->angle);
@@ -9452,7 +9433,7 @@ void ObjectEffect_ReservedNoOp941DC(void)
 {
 }
 
-s32 Scene_FadeColorFromWhite(void)
+s32 Scene_FadeColorFromWhite(s32 unused)
 {
 	struct EventRuntime *work = gEventWork;
 	s32					 i;
@@ -11678,9 +11659,6 @@ void Field_DispatchTypeHandler(s32 kind)
 
 #define gFrameCount (*(volatile s32 *)&gFrameCount)
 
-// 対象の番号を渡して呼ぶ。呼ばれる側は引数を取らない
-#define CALL_WITH_TARGET(run, id) ((void (*)(s32))(run))(id)
-
 #define FX_SLOT 56 // gWorkSlot[56] は gEffectWork
 
 void _call_via_r3(s32, s32);
@@ -11745,8 +11723,7 @@ void BattleFx_Run(void)
 		if (BattleFx_FindDescriptorWithOverride(obj_id) != 0)
 		{
 			BattleFx_SetupObjectPair(gGameState.selected_actor, obj_id);
-			/* FAKEMATCH: the callee takes no argument; the native call still loads the id into r0 */
-			CALL_WITH_TARGET(BattleFx_MarkChildAndRunFallbackTransition, obj_id);
+			BattleFx_MarkChildAndRunFallbackTransition(obj_id);
 			BattleEffect_PauseObject(obj_id);
 			gGameState.paused_object = obj_id;
 		}
@@ -11799,24 +11776,22 @@ void BattleFx_DispatchRequestKind(void)
 		BattleFx_SteerPushedTarget(target_id);
 		break;
 	case 7:
-		/* FAKEMATCH: the CALL_WITH_TARGET callees take no argument; each native call still loads
-		   the target id into r0 */
-		CALL_WITH_TARGET(BattleEffect_RunTargetedItemBreak, target_id);
+		BattleEffect_RunTargetedItemBreak(target_id);
 		break;
 	case 11:
 		BattleFx_SteerLiftedTarget(target_id);
 		break;
 	case 4:
-		CALL_WITH_TARGET(BattleFx_CallEffect04, target_id);
+		BattleFx_CallEffect04(target_id);
 		break;
 	case 5:
-		CALL_WITH_TARGET(BattleFx_CallEffect05, target_id);
+		BattleFx_CallEffect05(target_id);
 		break;
 	case 6:
-		CALL_WITH_TARGET(BattleFx_StartOrbitingParticles, target_id);
+		BattleFx_StartOrbitingParticles(target_id);
 		break;
 	case 12:
-		CALL_WITH_TARGET(BattleFx_RunBurstParticleMainObject, target_id);
+		BattleFx_RunBurstParticleMainObject(target_id);
 		break;
 	case 9:
 		if (gGameState.paused_object != -1)
@@ -11826,17 +11801,16 @@ void BattleFx_DispatchRequestKind(void)
 		}
 		BattleEffect_PauseObject(target_id);
 		gGameState.paused_object = target_id;
-		CALL_WITH_TARGET(BattleFx_MarkChildAndRunFallbackTransition, target_id);
+		BattleFx_MarkChildAndRunFallbackTransition(target_id);
 		break;
 	case 3:
-		CALL_WITH_TARGET(BattleFx_CallEffect03AndStop, target_id);
+		BattleFx_CallEffect03AndStop(target_id);
 		break;
 	case 14:
-		/* FAKEMATCH: BattleFx_CallEffect14 is called as s32 (*)(); as void (*)(void), its prototype, BattleFx_DispatchRequestKind does not compile */
-		((s32 (*)())BattleFx_CallEffect14)(target_id);
+		BattleFx_CallEffect14(target_id);
 		break;
 	case 13:
-		CALL_WITH_TARGET(BattleFx_RunEffect13Hook, target_id);
+		BattleFx_RunEffect13Hook(target_id);
 		break;
 	case 8:
 		RunBattleEffect08();
@@ -13008,7 +12982,7 @@ void Ui_SetBank15PaletteAndClearRenderMode(void)
 // 右 0、下 0x4000、左 0x8000、上 0xc000
 // 何も押していないとき、斜めのときは 0xffff
 //--------------------------------------------------------------------------
-u16 BattleFx_GetCycledTableWord(void)
+s32 BattleFx_GetCycledTableWord(u32 unused)
 {
 	return BattleFx_CyclePatternWords[(gKeysHeld >> 4) & 15]; // 右・左・上・下の 4 ビット
 }
@@ -13192,9 +13166,7 @@ void BattleFx_SteerPushedTarget(s32 target_id)
 			break;
 
 		// 方向キーが離れていれば押すオブジェクトを元の位置へ戻す
-		/* FAKEMATCH: the function takes no argument and returns u16; the native call loads the
-		   held keys into r0 and extends the result itself */
-		dir = (u16)((s32 (*)(u32))BattleFx_GetCycledTableWord)(gKeysHeld);
+		dir = (u16)BattleFx_GetCycledTableWord(gKeysHeld);
 		if (dir == 0xffff)
 		{
 			position.x = target->x;
@@ -13777,7 +13749,7 @@ void ResetSceneTransitionEffect(void)
 //--------------------------------------------------------------------------
 // 対象のある演出 12：対象のまわりに粒を出し、対象を足元の優先度にする
 //--------------------------------------------------------------------------
-void BattleFx_RunBurstParticleMainObject(void)
+void BattleFx_RunBurstParticleMainObject(s32 unused)
 {
 	struct FieldActor *tgt;
 
@@ -13919,7 +13891,7 @@ void BattleEffect_SpawnBurstParticleField(void)
 // 対象のある演出 7
 // 左右 32 ドットに物体を出して 14 ドット動かし、対象といっしょに 32 ドット持ち上げる
 //--------------------------------------------------------------------------
-void BattleEffect_RunTargetedItemBreak(void)
+void BattleEffect_RunTargetedItemBreak(s32 unused)
 {
 	struct BattleFxScene  *work;
 	struct DispatchObject *user;
@@ -14187,7 +14159,7 @@ s32 SpawnHeavyImpactEffect(struct MotionObject *src)
 //--------------------------------------------------------------------------
 // 戦闘エフェクト 4 番を呼ぶ
 //--------------------------------------------------------------------------
-void BattleFx_CallEffect04(void)
+void BattleFx_CallEffect04(s32 unused)
 {
 	RunBattleEffect04();
 }
@@ -14500,7 +14472,7 @@ void BattleFx_UpdateOrbitingParticleRight(struct FieldActor *particle)
 // エナジー 6 番をかけられた物（scene->child）から始める
 // child_mode があれば、物は変えずに粒だけ出す
 //--------------------------------------------------------------------------
-void BattleFx_StartOrbitingParticles(void)
+void BattleFx_StartOrbitingParticles(s32 unused)
 {
 	struct BattleFxScene *scene = gEffectWork;
 	struct FieldActor	 *tgt = scene->child;
@@ -14714,7 +14686,7 @@ void BattleFx_RunSparkEmitter(struct SparkObject *obj)
 //--------------------------------------------------------------------------
 // 演出 03 を流し、いまのオブジェクトを止める
 //--------------------------------------------------------------------------
-void BattleFx_CallEffect03AndStop(void)
+void BattleFx_CallEffect03AndStop(s32 unused)
 {
 	RunBattleEffect03();
 	EffectRuntime_StopCurrentObject();
@@ -15122,7 +15094,7 @@ void BattleFx_UpdateDriftingFallObject(struct ObjectRuntime *obj)
 	}
 }
 
-void BattleFx_CallEffect05(void)
+void BattleFx_CallEffect05(s32 unused)
 {
 	RunBattleEffect05();
 }
@@ -15480,9 +15452,7 @@ void BattleFx_SteerLiftedTarget(s32 id)
 			break;
 
 		// 方向キーなし : 持ち手を対象の左右に戻す
-		/* FAKEMATCH: the function takes no argument and returns u16; the native call loads the
-		   held keys into r0 and extends the result itself */
-		angle = (u16)((s32 (*)(u32))BattleFx_GetCycledTableWord)(gKeysHeld);
+		angle = (u16)BattleFx_GetCycledTableWord(gKeysHeld);
 		if (angle == 0xffff)
 		{
 			pos.x = target->x;
@@ -15861,7 +15831,7 @@ void BattleFx_ShrinkObjectScaleUntilHalf(struct MotionObject *obj)
 	}
 }
 
-void BattleFx_CallEffect14(void)
+void BattleFx_CallEffect14(s32 unused)
 {
 	RunBattleEffect14();
 }
@@ -16045,7 +16015,7 @@ top:
 // かけられた物（scene->child）に paused を立て、
 // BattleEffect_RunFallbackObjectTransition の演出を動かす
 //--------------------------------------------------------------------------
-void BattleFx_MarkChildAndRunFallbackTransition(void)
+void BattleFx_MarkChildAndRunFallbackTransition(s32 unused)
 {
 	struct FieldActor *tgt = gEffectWork->child;
 
@@ -16208,7 +16178,7 @@ void BattleFx_ResumeObject(s32 id)
 //--------------------------------------------------------------------------
 s32 BattleFx_FilterObjectIdByFlags(s32 id)
 {
-	if (((s32 (*)())BattleFx_GetFlags)() == 0xff) /* FAKEMATCH: the result is read as s32 */
+	if (BattleFx_GetFlags(id) == 0xff)
 		return -1;
 	return id;
 }
@@ -16220,7 +16190,7 @@ s32 BattleFx_FilterObjectIdByFlags(s32 id)
 //--------------------------------------------------------------------------
 // 対象への演出 (BattleFx_DispatchRequestKind から)
 //--------------------------------------------------------------------------
-void BattleFx_RunEffect13Hook(void)
+void BattleFx_RunEffect13Hook(s32 unused)
 {
 	RunBattleEffect13();
 }

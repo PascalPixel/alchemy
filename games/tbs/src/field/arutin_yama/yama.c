@@ -274,24 +274,21 @@ void ArutinYama_BeginRollingRide(s32 a0)
 void ArutinYama_StartAreaOneEncounter(void)
 {
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ArutinYama_StartAreaOneEncounter is 4 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_ArutinYama1, 99);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama1, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
 void ArutinYama_StartAreaThreeEncounter(void)
 {
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ArutinYama_StartAreaThreeEncounter is 4 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_ArutinYama3, 99);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama3, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
 void ArutinYama_StartAreaFiveEncounter(void)
 {
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ArutinYama_StartAreaFiveEncounter is 4 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_ArutinYama5, 99);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama5, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
@@ -1405,7 +1402,7 @@ void ArutinYama_RunLeapSequence(void)
 	Engine_ActorRunRepeatedMotion(10, 2);
 	Engine_EventWait(80);
 	Engine_ActorSetAnimation(10, 3);
-	Call4(ArutinYama_StartLeafGust, 0x820000, 0, 0xa80000, 0);
+	ArutinYama_StartLeafGust(0x820000, 0, 0xa80000, 0);
 	Engine_EventWait(60);
 	for (n = 0; n < 60 && gKeyState == 0; n++)
 	{
@@ -2117,8 +2114,7 @@ void FieldScene_RunLateAuxiliarySequence(void)
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorWaitForMove(8);
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, FieldScene_RunLateAuxiliarySequence is 4 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_ArutinYama10, 99);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama10, 99);
 	BattleFx_SetWeightedResult(53, 3);
 }
 

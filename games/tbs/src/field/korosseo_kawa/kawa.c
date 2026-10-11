@@ -183,8 +183,7 @@ void SceneState_ApplyRectsForActorsNineAndTen(void)
 	{
 		s32 x = actor->x.fixed >> 20;
 
-		/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, SceneState_ApplyRectsForActorsNineAndTen is 4 bytes longer */
-		((void (*)(s32, s32))GameFlag_SetByte)(784, x);
+		GameFlag_SetByte(784, x);
 	}
 	{
 		s32 x = actor->x.fixed >> 20;
@@ -489,10 +488,8 @@ void KorosseoKawa_RunStageStart(void)
 	/* FAKEMATCH: base is 0 from the top of the function, so 0 - approach + 1 is not folded into 1 - approach. */
 	BattleFx_SetWeightedResult(72, base - approach + 1);
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as s32 (*)(); as void (*)(u16, u16), its prototype, KorosseoKawa_RunStageStart is 6 bytes longer */
-	((s32 (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_KorosseoKawa, 4);
-	/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, KorosseoKawa_RunStageStart is 4 bytes longer */
-	((void (*)(s32, s32))Event_SetDefeatDestination)((s32)&SceneId_KorosseoKawa, 5);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKawa, 4);
+	Event_SetDefeatDestination((s32)&SceneId_KorosseoKawa, 5);
 	GameFlag_Set(0x11a);
 }
 
@@ -660,8 +657,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
 			FieldScene_RunTwoArmSequence(1);
 		}
 		Object_LinkObjectAndSetCallback(1, 0);
-		/* FAKEMATCH: Object_LinkObjectAndSetCallback is called as void (*)(s32, s32); as void (*)(u32, u32), its prototype, KorosseoKawa_ApplyEntryState has 6 of 892 bytes different */
-		((void (*)(s32, s32))Object_LinkObjectAndSetCallback)(2, 0);
+		Object_LinkObjectAndSetCallback(2, 0);
 		Object_LinkObjectAndSetCallback(3, 0);
 		SceneState_InitControlWhenFlag109Clear((s32)&ResourceId_RivalPathA);
 		break;
@@ -835,8 +831,7 @@ void KorosseoKawa_RunStageIntro(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 	}
 	else
 	{
@@ -904,8 +899,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(a0);
 	}
 	else
 	{
@@ -983,8 +977,7 @@ void Korosseo_RunBrokenBridgeIntro(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 	}
 	else
 	{
@@ -1032,8 +1025,7 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 		return;
 	}
 	Engine_EventBegin();
@@ -1187,13 +1179,11 @@ void FieldScene_RunNearestActor165Scene(void)
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	base = n << 4;
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunNearestActor165Scene is 4 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)(base + 880, p->x.fixed >> 20);
+	GameFlag_SetByte(base + 880, p->x.fixed >> 20);
 	{
 		s32 v = p->z.fixed >> 20;
 
-		/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunNearestActor165Scene is 4 bytes longer */
-		((void (*)(s32, s32))GameFlag_SetByte)(base + 888, v);
+		GameFlag_SetByte(base + 888, v);
 	}
 	n++;
 	if (n > 3)
@@ -1235,7 +1225,7 @@ void RunPartyCountInteraction(s32 actorId)
 	s32						x;
 	s32						y;
 
-	record = ((PartyInteractionRecord * (*)(void)) Object_GetById)();
+	record = (PartyInteractionRecord *)Object_GetById(actorId);
 	x = record->x;
 	y = record->y;
 	Engine_EventBegin();
@@ -1267,18 +1257,12 @@ void RunPartyCountInteraction(s32 actorId)
 
 void FieldScene_RunSixSteps380To3A8(void)
 {
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps380To3A8 has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(896, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps380To3A8 has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(904, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps380To3A8 has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(912, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps380To3A8 has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(920, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps380To3A8 has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(928, 0);
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps380To3A8 has 4 of 66 bytes different */
-	((void (*)(s32, s32))GameFlag_SetByte)(936, 0);
+	GameFlag_SetByte(896, 0);
+	GameFlag_SetByte(904, 0);
+	GameFlag_SetByte(912, 0);
+	GameFlag_SetByte(920, 0);
+	GameFlag_SetByte(928, 0);
+	GameFlag_SetByte(936, 0);
 }
 
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
@@ -1310,8 +1294,7 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
 	}
 	if (Engine_GameFlagIsSet(competitor + 520) != 0)
 	{
-		/* FAKEMATCH: called with an argument the function does not take; r0 is set to 0 before the call. */
-		choice = ((s32 (*)(s32))PartyTalkMenu_Choose)(0);
+		choice = PartyTalkMenu_Choose(0);
 		if (choice == 1)
 		{
 			return 2;
@@ -1469,11 +1452,9 @@ L_main:
 	Engine_GameFlagSet(base + 512);
 	rec = (s32)Object_GetById(obj);
 	sx = rec->x.fixed >> 20;
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunMiddleSequence is 4 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)((obj << 4) + 880, sx);
+	GameFlag_SetByte((obj << 4) + 880, sx);
 	sy = rec->z.fixed >> 20;
-	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunMiddleSequence is 4 bytes longer */
-	((void (*)(s32, s32))GameFlag_SetByte)((obj << 4) + 888, sy);
+	GameFlag_SetByte((obj << 4) + 888, sy);
 }
 
 void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b)

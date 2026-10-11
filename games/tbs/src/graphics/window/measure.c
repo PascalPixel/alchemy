@@ -5498,7 +5498,7 @@ void Resource_PushPendingPair(u32 first, u32 second)
 	}
 }
 
-void MenuSelection_BuildEntries(void)
+void MenuSelection_BuildEntries(u32 unused)
 {
 	struct SelectionScreen *screen = gResQueueWork;
 	u32						count = screen->count;
@@ -6968,8 +6968,7 @@ u32 Menu_RunSelectionForValue(u32 value)
 
 	state->cursor_index = value;
 	state->locked = 1;
-	/* FAKEMATCH: MenuSelection_BuildEntries is called as void (*)(u32); as void (*)(void), its prototype, Menu_RunSelectionForValue does not compile */
-	((void (*)(u32))MenuSelection_BuildEntries)(value);
+	MenuSelection_BuildEntries(value);
 	Menu_SetupSelectionBothSides();
 	Menu_OpenSelectionWindow(0, 5);
 	Resource_ScheduleOwnerResetDelayed();
@@ -10353,7 +10352,7 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec)
 
 	if (win != 0)
 	{
-		((void (*)(void))RenderOutput_PrepareForRedraw)(); /* FAKEMATCH: needed to match: called without the window argument. */
+		RenderOutput_PrepareForRedraw((struct UiWindow *)win);
 		UiWindow_DrawDividerLine(win, 0, 4, 13, 4);
 		UiText_DrawStringAtOffset(rec + 16, win, 0, 0);
 		y = 0;
@@ -11828,7 +11827,7 @@ finish:
 #define TALK_WINDOW_WIDTH 16
 #endif
 
-s32 PartyTalkMenu_Choose(void)
+s32 PartyTalkMenu_Choose(s32 unused)
 {
 	/* FAKEMATCH: the shared cursor union preserves pointer-store ordering; an equal-size struct changes stack-address construction in all six editions. */
 	struct RenderInput *window;
@@ -12240,7 +12239,7 @@ s32 Menu_BuildLocalizedPatternTiles(void)
 	}
 }
 
-int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 unused)
 {
 	// 値を返さない int 関数 (pop {r1}; bx r1)
 	s32 tile_offset = arg3 * 2;
@@ -13299,8 +13298,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 				tile = 11;
 			else
 				tile--;
-			/* FAKEMATCH: UiWindow_DrawThreeTileColumn is called as s32 (*)(struct RenderInput *, s32, s32, s32, s32); as int (*)(s32, s32, s32, s32), its prototype, DjinnMenu_ShowChangePreview does not compile */
-			((s32 (*)(struct RenderInput *, s32, s32, s32, s32))UiWindow_DrawThreeTileColumn)(win, 16, n * 2, tile, 0);
+			UiWindow_DrawThreeTileColumn((s32)win, 16, n * 2, tile, 0);
 
 			Ui_CreateOutputFromResourceSlot(win, 0, n * 16 - 4, list[i] & 0x3fff);
 			if ((list[i] & 0x8000) != 0)
@@ -15836,8 +15834,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 					{
 						range--;
 					}
-					/* FAKEMATCH: UiWindow_DrawThreeTileColumn is called as void (*)(struct UiWindow *, s32, s32, s32, s32); as int (*)(s32, s32, s32, s32), its prototype, BattleMenu_RunActionSelection does not compile */
-					((void (*)(struct UiWindow *, s32, s32, s32, s32))UiWindow_DrawThreeTileColumn)(window, 16, i * 2, range, 0);
+					UiWindow_DrawThreeTileColumn((s32)window, 16, i * 2, range, 0);
 				}
 				icon_count = i;
 				drawn_page = page;
@@ -18869,7 +18866,7 @@ void Scheduler_ScheduleCallbackCAfterFrames(void)
 	Scheduler_AddOrUpdateCallback((SchedulerCallback)Menu_RunSelection, 0xC80);
 }
 
-void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second)
+void Menu_DrawSelectionRow(struct Work *work, s32 first, const s16 *second)
 {
 	s16 selected = first;
 	s32 label = Scene_GetAreaNameIndexFar(selected, *second) + (s32)MsgDebugEntryName;
@@ -18955,7 +18952,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode)
 		}
 		if (value > 200)
 			value = 0;
-		((void (*)(s32, s32, s16 *))Menu_DrawSelectionRow)(arg, value, sub);
+		Menu_DrawSelectionRow((struct Work *)arg, value, sub);
 	}
 	else if (gKeysRepeat & KEY_LEFT)
 	{
@@ -18971,7 +18968,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode)
 		}
 		if (value < 0)
 			value = 200;
-		((void (*)(s32, s32, s16 *))Menu_DrawSelectionRow)(arg, value, sub);
+		Menu_DrawSelectionRow((struct Work *)arg, value, sub);
 	}
 	else if (gKeysRepeat & KEY_R)
 	{
@@ -18988,7 +18985,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode)
 		}
 		if (value > 200)
 			value = 0;
-		((void (*)(s32, s32, s16 *))Menu_DrawSelectionRow)(arg, value, sub);
+		Menu_DrawSelectionRow((struct Work *)arg, value, sub);
 	}
 	else if (gKeysRepeat & KEY_L)
 	{
@@ -19005,7 +19002,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode)
 		}
 		if (value < 0)
 			value = 200;
-		((void (*)(s32, s32, s16 *))Menu_DrawSelectionRow)(arg, value, sub);
+		Menu_DrawSelectionRow((struct Work *)arg, value, sub);
 	}
 	return value;
 }
@@ -19088,7 +19085,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
 	char label[5];
 	char bits[17];
 
-	((void (*)(void))RenderOutput_PrepareForRedraw)(); /* FAKEMATCH: needed to match: called without the window argument. */
+	RenderOutput_PrepareForRedraw((struct UiWindow *)window);
 	UiText_DrawStringInWindow((u8 *)Menu_HexDigitsString, window, 48, 0);
 
 	flag = start_flag << 8;

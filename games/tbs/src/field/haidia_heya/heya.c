@@ -417,7 +417,7 @@ void FieldScene_RunLongPresentationSequence(void)
 	Object_GetById(24)->motion_flags = v6;
 	Object_GetById(25)->motion_flags = v6;
 	base7_20090c1 = (s32)Scene_UpdateTimedActor;
-	((void (*)())Engine_TaskAddCallback)(base7_20090c1, 0xc80);
+	Engine_TaskAddCallback((void (*)(void))base7_20090c1, 0xc80);
 	Engine_TaskWait(1);
 	gEventWork->transition_frames = 32;
 	Engine_EventOpenScreen();

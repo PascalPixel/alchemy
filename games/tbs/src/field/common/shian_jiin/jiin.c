@@ -29,7 +29,7 @@ extern struct EventWork *gEventWork;
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define ObjectMotion_CallThenWaitForAnimationChange_9(args...) \
-	((void (*)())Engine_ActorSetAnimationAndWait)(args)
+	Engine_ActorSetAnimationAndWait(args)
 
 struct Params
 {

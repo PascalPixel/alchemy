@@ -191,7 +191,7 @@ void State_UpdateScrollRegistersWithPreset(void)
 
 	if (line == 227 || line <= 52)
 	{
-		if (((((u32 (*)(void))Engine_RandomNext)() * 100) >> 16) < KorimaMagari_ShakeChance)
+		if ((((u32)Engine_RandomNext() * 100) >> 16) < KorimaMagari_ShakeChance)
 		{
 			source = KorimaMagari_ShakeScroll;
 		}
@@ -299,7 +299,7 @@ L_02000626:;
 	}
 
 	KorimaMagari_ShakeChance = 0;
-	((void (*)())Engine_TaskAddCallback)((s32)KorimaMagari_CaptureShakeScroll, 0xc80);
+	Engine_TaskAddCallback(KorimaMagari_CaptureShakeScroll, 0xc80);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, State_UpdateScrollRegistersWithPreset);
 	/* FAKEMATCH: the do/while (0) wrap keeps the flag and the counter address in r6 and r5. */
@@ -330,7 +330,7 @@ L_02000626:;
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, 0);
 	Engine_TaskWait(1);
-	((void (*)())Engine_TaskRemoveCallback)((s32)KorimaMagari_CaptureShakeScroll);
+	Engine_TaskRemoveCallback(KorimaMagari_CaptureShakeScroll);
 	*(u16 *)gKorimaMagariLayout ^= 1;
 	Scene_RepaintBoardRecords();
 	Engine_MapRedraw();

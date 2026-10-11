@@ -282,7 +282,7 @@ void FieldScene_RunPillarSequence(void)
 	s32				   rec7, v1, v2, v3, t, u, n;
 	struct FieldActor *p0;
 
-	r1 = ((s32 (*)())Object_GetById)(9);
+	r1 = (s32)Object_GetById(9);
 	kind = *(s32 *)(r1 + 8) / 0x100000;
 	Engine_EventBegin();
 	if (kind == 25)
@@ -318,7 +318,7 @@ void FieldScene_RunPillarSequence(void)
 		Engine_TaskRemoveCallback(base);
 		Engine_EventWait(12);
 		Engine_AudioPlayCue(189);
-		rec7 = ((s32 (*)())Object_GetById)(9);
+		rec7 = (s32)Object_GetById(9);
 		v1 = Engine_RandomNext();
 		a0 = *(s32 *)(rec7 + 8);
 		a0 += ((((u32)(((v1 << 1) + v1) << 2)) >> 16) << 16);

@@ -2602,44 +2602,32 @@ void FieldScene_RunSingleStep(void)
 
 void SceneState_SetValue1ThenCall(void)
 {
-	Object_GetById(GERALD);
-	/* FAKEMATCH: SceneEffect_UpdateObjectOnOddFrames is called as s32 (*)(); as void (*)(s32), its prototype, SceneState_SetValue1ThenCall does not compile */
-	((s32 (*)())SceneEffect_UpdateObjectOnOddFrames)();
+	SceneEffect_UpdateObjectOnOddFrames((s32)Object_GetById(GERALD));
 }
 
 void SceneState_SetValue0ThenCall(void)
 {
-	Object_GetById(ACTOR_PARTY_LEADER);
-	/* FAKEMATCH: SceneEffect_UpdateObjectOnOddFrames is called as s32 (*)(); as void (*)(s32), its prototype, SceneState_SetValue0ThenCall does not compile */
-	((s32 (*)())SceneEffect_UpdateObjectOnOddFrames)();
+	SceneEffect_UpdateObjectOnOddFrames((s32)Object_GetById(ACTOR_PARTY_LEADER));
 }
 
 void FieldScene_RunStep9(void)
 {
-	Object_GetById(9);
-	/* FAKEMATCH: SceneEffect_UpdateObjectOnOddFramesOnly is called as s32 (*)(); as void (*)(s32), its prototype, FieldScene_RunStep9 does not compile */
-	((s32 (*)())SceneEffect_UpdateObjectOnOddFramesOnly)();
+	SceneEffect_UpdateObjectOnOddFramesOnly((s32)Object_GetById(9));
 }
 
 void FieldScene_RunStep17(void)
 {
-	Object_GetById(0x17);
-	/* FAKEMATCH: SceneEffect_UpdateObjectOnOddFramesOnly is called as s32 (*)(); as void (*)(s32), its prototype, FieldScene_RunStep17 does not compile */
-	((s32 (*)())SceneEffect_UpdateObjectOnOddFramesOnly)();
+	SceneEffect_UpdateObjectOnOddFramesOnly((s32)Object_GetById(0x17));
 }
 
 void SceneState_SetValue24ThenCall(void)
 {
-	Object_GetById(0x18);
-	/* FAKEMATCH: SceneEffect_UpdateObjectOnOddFramesOnly is called as s32 (*)(); as void (*)(s32), its prototype, SceneState_SetValue24ThenCall does not compile */
-	((s32 (*)())SceneEffect_UpdateObjectOnOddFramesOnly)();
+	SceneEffect_UpdateObjectOnOddFramesOnly((s32)Object_GetById(0x18));
 }
 
 void SceneState_SetValue25ThenCall(void)
 {
-	Object_GetById(0x19);
-	/* FAKEMATCH: SceneEffect_UpdateObjectOnOddFramesOnly is called as s32 (*)(); as void (*)(s32), its prototype, SceneState_SetValue25ThenCall does not compile */
-	((s32 (*)())SceneEffect_UpdateObjectOnOddFramesOnly)();
+	SceneEffect_UpdateObjectOnOddFramesOnly((s32)Object_GetById(0x19));
 }
 
 s32 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position)

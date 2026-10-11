@@ -1663,7 +1663,7 @@ void FieldScene_RunPairedActorChoreography(void)
 	Engine_EventWait(15);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_EventWait(10);
-	((void (*)())ShindenHeya_RaiseItemIcon)(222, 0xb80000, 0x1b0000, 0xa80000);
+	ShindenHeya_RaiseItemIcon(222, 0xb80000, 0x1b0000, 0xa80000);
 	Engine_ActorFaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(GERALD, 1);
@@ -1825,7 +1825,7 @@ void FieldScene_RunPairedActorChoreography(void)
 	Engine_EventWait(60);
 }
 
-void ShindenHeya_RaiseItemIcon(s32 item)
+void ShindenHeya_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z)
 {
 	struct FieldActor  *obj;
 	struct FieldSprite *spr;
@@ -1835,7 +1835,7 @@ void ShindenHeya_RaiseItemIcon(s32 item)
 	s32					z;
 	u8				   *flag;
 
-	obj = ((struct FieldActor * (*)()) Engine_ObjectCreate)(22);
+	obj = Engine_ObjectCreate(22, fixed_x, fixed_y, fixed_z);
 	zero = 0;
 	if (obj != 0)
 	{

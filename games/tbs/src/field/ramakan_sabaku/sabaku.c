@@ -309,7 +309,6 @@ clear_actors:;
 s32 RamakanSabaku_ConfigureAreaLayout(void)
 {
 	s32 i;
-	s32 record;
 
 	Engine_GameFlagClear(0x200);
 	Engine_GameFlagSet(0x201);
@@ -379,22 +378,17 @@ reset_objects:;
 	{
 		MapObject_SetPosition(i, -1, -1);
 	}
-	/* FAKEMATCH: BattleFx_EmitRandomParticle is called as s32 (*)(); as void (*)(void), its prototype, RamakanSabaku_ConfigureAreaLayout does not compile */
-	record = ((s32 (*)())BattleFx_EmitRandomParticle)();
+	BattleFx_EmitRandomParticle();
 	if (gGameState.scene != (s32)&SceneId_RamakanSabaku4)
 	{
-		/* FAKEMATCH: DisplayScroll_DisarmHBlankDma is called as s32 (*)(); as void (*)(void), its prototype, RamakanSabaku_ConfigureAreaLayout does not compile */
-		record = ((s32 (*)())DisplayScroll_DisarmHBlankDma)();
-		return record;
+		DisplayScroll_DisarmHBlankDma();
 	}
-	return record;
 }
 
 void RamakanSabaku_ReturnToArea3(void)
 {
 	Engine_ActorRunRepeatedMotion(8, 2);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, RamakanSabaku_ReturnToArea3 is 4 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_RamakanSabaku3, 5);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_RamakanSabaku3, 5);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(53, 5);
 }

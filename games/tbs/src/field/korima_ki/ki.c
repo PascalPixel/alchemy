@@ -984,8 +984,7 @@ void PaletteScene_SetRecordValue(s32 key, s32 value)
 
 		if (index != -1)
 		{
-			/* FAKEMATCH: UnitGet is called as struct PaletteSceneRecord *(*)(); as void *(*)(u32), its prototype, PaletteScene_SetRecordValue does not compile */
-			((struct PaletteSceneRecord *(*)())UnitGet)(slot)->values[index] = value;
+			((struct PaletteSceneRecord *)UnitGet(slot))->values[index] = value;
 		}
 	}
 }

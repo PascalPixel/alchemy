@@ -8158,15 +8158,11 @@ next:
 			Scheduler_ResetTaskTable();
 			if ((*held & KEY_B) != 0)
 			{
-				/* FAKEMATCH: RuntimeDispatch_ReturnZero is called as s32 (*)(); as s32 (*)(void), its prototype, Ui_RunIconMonitor does not compile */
-				((s32 (*)())RuntimeDispatch_ReturnZero)(
-					(s32)&ResourceId_ResourceFarCalls, FarCall_ResourceTable);
+				RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCalls, FarCall_ResourceTable);
 			}
 			else
 			{
-				/* FAKEMATCH: RuntimeDispatch_ReturnZero is called as s32 (*)(); as s32 (*)(void), its prototype, Ui_RunIconMonitor does not compile */
-				((s32 (*)())RuntimeDispatch_ReturnZero)(
-					(s32)&ResourceId_ResourceFarCallsAlternate, FarCall_ResourceTable);
+				RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCallsAlternate, FarCall_ResourceTable);
 			}
 			goto restart;
 		}

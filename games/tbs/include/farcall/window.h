@@ -156,7 +156,7 @@ FAR_CALL(Menu_SelectEntry19To1cFar, Menu_SelectEntry19To1c, s32, (s32 sel))
 FAR_CALL(Menu_RunConfirmSelectionFar, Menu_RunConfirmSelection, s32,
 	(s32 low, s32 mes, s32 w, s32 sel))
 FAR_CALL(Menu_SelectEntry20To21Far, Menu_SelectEntry20To21, s32, (s32 sel))
-FAR_CALL(PartyTalkMenu_ChooseFar, PartyTalkMenu_Choose, s32, (void))
+FAR_CALL(PartyTalkMenu_ChooseFar, PartyTalkMenu_Choose, s32, (s32 unused))
 FAR_SLOT(RenderResource_LoadTableEntry)
 FAR_CALL(Menu_RunConfirmSelectionAtFar, Menu_RunConfirmSelectionAt, s32, (s32 x, s32 y, s32 sel))
 FAR_CALL(Resource_LoadFixedBlockBIntoFreeSlotFar, Resource_LoadFixedBlockBIntoFreeSlot, s32, (void))

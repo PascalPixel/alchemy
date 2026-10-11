@@ -47,7 +47,7 @@ void FuneKanpan_PlaceRandomDeckActors(void);
 void SceneActor_PlaceActors20To27(void);
 void FuneKanpan_SetupRaisedCrewman(void);
 void FuneKanpan_SetupDeckCrewman(void);
-void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1);
+void FuneKanpan_PlaceDeckActors(void);
 void FuneKanpan_SetupHiddenLeaderDeparture(void);
 void FuneKanpan_SetupVisibleLeaderDeparture(void);
 void FuneKanpan_AnnouncePreparationsReady(s32 a0, s32 a1);

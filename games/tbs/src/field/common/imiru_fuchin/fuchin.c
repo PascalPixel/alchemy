@@ -165,7 +165,7 @@ void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz)
 
 		actor->speed = 0x10000;
 		actor->acceleration = 0x8000;
-		((void (*)())Engine_ObjectSetPosition)(actor, x, actor->y.fixed, z);
+		Engine_ObjectSetPosition(actor, x, actor->y.fixed, z);
 	}
 	Object_SetMode(actor, 27);
 	{
@@ -174,7 +174,7 @@ void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz)
 
 		other->speed = 0x10000;
 		other->acceleration = 0x8000;
-		((void (*)())Engine_ObjectSetPosition)(other, x, other->y.fixed, z);
+		Engine_ObjectSetPosition(other, x, other->y.fixed, z);
 	}
 	if (dx < 0 || dz < 0)
 	{
@@ -1736,7 +1736,7 @@ void SceneActor_StepSubjectAlongHeading(void)
 	s32					 z;
 	s32					 x;
 
-	subject = ((void *(*)())Engine_ActorLookup)(gGameState.selected_actor);
+	subject = Engine_ActorLookup(gGameState.selected_actor);
 
 	for (;;)
 	{
@@ -1770,7 +1770,7 @@ void SceneActor_StepSubjectAlongHeading(void)
 		subject->speed = 0x20000;
 		subject->acceleration = 0x1999;
 		subject->timer = 0;
-		((void (*)())Engine_ObjectSetPosition)(subject, x, subject->y.fixed, z);
+		Engine_ObjectSetPosition(subject, x, subject->y.fixed, z);
 
 		Object_SetMode(subject, 2);
 		ObjectDispatch_ApplyValueToChildren(subject, 48);
@@ -1788,7 +1788,7 @@ void SceneActor_StepSubjectAlongHeading(void)
 		z = probe.z;
 		subject->speed = 0x20000;
 		subject->acceleration = 0x1999;
-		((void (*)())Engine_ObjectSetPosition)(subject, probe.x, probe.y, probe.z);
+		Engine_ObjectSetPosition(subject, probe.x, probe.y, probe.z);
 		Object_CommitPosition(subject);
 		if (marker != goal)
 		{
@@ -1806,7 +1806,7 @@ void SceneActor_StepSubjectAlongHeading(void)
 	finish_probe:
 		subject->speed = 0x20000;
 		subject->acceleration = 0x10000;
-		((void (*)())Engine_ObjectSetPosition)(subject, x, subject->y.fixed, z);
+		Engine_ObjectSetPosition(subject, x, subject->y.fixed, z);
 		Object_CommitPosition(subject);
 		Engine_TaskWait(2);
 	}

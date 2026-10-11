@@ -635,7 +635,7 @@ void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
 
 		p->f30 = 0x10000;
 		p->f34 = 0x8000;
-		((void (*)(Obj *, s32, s32, s32))Engine_ObjectSetPosition)(p, x, p->f0c, y);
+		Engine_ObjectSetPosition((struct FieldActor *)p, x, p->f0c, y);
 	}
 	Object_SetMode(p, 27);
 	{
@@ -644,7 +644,7 @@ void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
 
 		q->f30 = 0x10000;
 		q->f34 = 0x8000;
-		((void (*)(Obj *, s32, s32, s32))Engine_ObjectSetPosition)(q, x, q->f0c, y);
+		Engine_ObjectSetPosition((struct FieldActor *)q, x, q->f0c, y);
 	}
 	if (a1 < 0 || a2 < 0)
 	{

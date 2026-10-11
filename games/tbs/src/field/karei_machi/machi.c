@@ -688,8 +688,7 @@ void FieldScene_RunStagedGroupSequence(void)
 		message = (s32)MsgKareiShortOnePerson;
 		Engine_EventSetMessage(message);
 		Event_ShowMessageAndWait(20, 0, 40);
-		/* FAKEMATCH: KareiMachi_SpeedUpActors is called as void (*)(); as void (*)(s32, s32), its prototype, FieldScene_RunStagedGroupSequence does not compile */
-		((void (*)())KareiMachi_SpeedUpActors)();
+		KareiMachi_SpeedUpActors();
 		Actor_WalkToAndWait(20, 178, 272);
 		Actor_FaceDirection(20, FACING_EAST, 0);
 		Engine_EventWait(240);
@@ -982,7 +981,7 @@ void SceneState_LinkRecordZeroWhenFlag200Clear(void)
 	if (GameFlag_IsSet(0x200) == 0)
 	{
 		work = gActorEffectWork;
-		*(s32 *)(work + 24) = ((s32 (*)())Object_GetById)(ACTOR_PARTY_LEADER);
+		*(s32 *)(work + 24) = (s32)Object_GetById(ACTOR_PARTY_LEADER);
 		GameFlag_Set(0x200);
 	}
 }
@@ -1359,7 +1358,7 @@ void SceneEffect_SetSlotVariantAndDescriptor(s32 a)
 	Engine_ObjectSetScript(p, (s32)KareiMachi_Script01);
 }
 
-void KareiMachi_SpeedUpActors(s32 a0, s32 a1)
+void KareiMachi_SpeedUpActors(void)
 {
 
 	{
@@ -1369,7 +1368,7 @@ void KareiMachi_SpeedUpActors(s32 a0, s32 a1)
 	}
 	Actor_SetSpeed(20, 0x19999, 0xcccc);
 	Actor_SetSpeed(21, 0x19999, 0xcccc);
-	((s32 (*)())Engine_TaskAddCallback)((s32)KareiMachi_AlternateDance, 0xc80);
+	Engine_TaskAddCallback(KareiMachi_AlternateDance, 0xc80);
 }
 
 void KareiMachi_AlternateDance(void)

@@ -557,7 +557,7 @@ void ShianMura_HopLeaderAhead(void)
 		p[2].fixed = (leader->z.fixed & -0x100000) + 0x80000;
 		FieldVector_AddPolarOffset(
 			0x200000, (leader->facing + 0x2000) & 0xc000, (struct FieldPosition *)p);
-		if (((s32 (*)())Object_CheckMovementCollision)((s32)leader, (s32)p) == 0)
+		if (Object_CheckMovementCollision(leader, p) == 0)
 		{
 			Engine_EventBegin();
 			Object_SetMode(leader, 6);
@@ -654,9 +654,9 @@ void Scene_RunActorNineteenScript(void)
 	s32 cb;
 
 	Engine_EventBegin();
-	((s32 (*)())Engine_ActorEnableActionCallback)(19, (s32)ShianMura_Actor19Motion);
+	Engine_ActorEnableActionCallback(19, (const u8 *)ShianMura_Actor19Motion);
 	cb = (s32)SceneEffect_AdvanceRotatingSprite;
-	((s32 (*)())Engine_TaskAddCallback)(cb, 0xc80);
+	Engine_TaskAddCallback((void (*)(void))cb, 0xc80);
 	Object_RefreshSelectorById(19);
 	Engine_AudioPlayCue(124);
 	Effect_Spawn(0xa80000, 0x80000, 0x1380000, 0, 0, 0, 0x20001, 0);
@@ -686,7 +686,7 @@ void ShianMura_EscortActorEighteen(void)
 	s32 record;
 
 	Engine_EventBegin();
-	((void (*)())Engine_ActorEnableActionCallback)(18, 1);
+	Engine_ActorEnableActionCallback(18, (const u8 *)1);
 	record = Actor_Get(18);
 	*(s32 *)(record + 108) = 0;
 	record = Actor_Get(18);
@@ -772,7 +772,7 @@ s32 ShianMura_SetupScene(void)
 
 			Engine_MapCopyCellAttributes(3, 17, 1, 1, px >> 20, Object_GetById(20)->z.fixed >> 20);
 		}
-		((void (*)())Engine_TaskAddCallback)((s32)Actor_UpdatePresentationFlag, 0xc80);
+		Engine_TaskAddCallback(Actor_UpdatePresentationFlag, 0xc80);
 	}
 	Engine_ActorSetChildValue(18, 2);
 	Object_GetById(18)->update = ShianMura_WatchGateTrigger;

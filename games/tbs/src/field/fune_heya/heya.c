@@ -753,7 +753,7 @@ void FieldScene_RunScene3b1SequenceA(void)
 	if (GameFlag_IsSet(0x300) != 0)
 	{
 		rec7 = SceneState_ApplyLevelFromFlags();
-		((s32 (*)())FuneHeya_TurnActorToOpenSide)();
+		FuneHeya_TurnActorToOpenSide(rec7);
 		Engine_EventSetMessage((s32)MsgFuneGivesMeChillsThinkCould);
 		FieldScene_RunStepThen10(12);
 		Engine_ActorSetAnimation(rec7, 2);
@@ -820,7 +820,7 @@ void FieldScene_RunScene3b1SequenceB(void)
 	if (GameFlag_IsSet(0x300) != 0)
 	{
 		rec7 = SceneState_ApplyLevelFromFlags();
-		((s32 (*)())FuneHeya_TurnActorToOpenSide)();
+		FuneHeya_TurnActorToOpenSide(rec7);
 		Engine_EventSetMessage((s32)MsgFuneRobinYouveGotGoodEye);
 		FieldScene_RunStepThen10(9);
 		Engine_ActorSetAnimation(rec7, 2);
@@ -1488,24 +1488,21 @@ void FuneHeya_RunFlagBranchSequence(void)
 	GameFlag_Clear(0x8f0);
 	if (Engine_GameFlagIsSet(0x928) == 0)
 	{
-		/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, FuneHeya_RunFlagBranchSequence is 8 bytes longer */
-		((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_FuneHeya, 16);
+		Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 16);
 		BattleFx_SetWeightedResult(62, 0);
 	}
 	else
 	{
 		if (Engine_GameFlagIsSet(0x929) == 0)
 		{
-			/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, FuneHeya_RunFlagBranchSequence is 8 bytes longer */
-			((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_FuneHeya, 18);
+			Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 18);
 			BattleFx_SetWeightedResult(62, 1);
 		}
 		else
 		{
 			if (Engine_GameFlagIsSet(0x92a) == 0)
 			{
-				/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, FuneHeya_RunFlagBranchSequence is 4 bytes longer */
-				((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_FuneHeya, 20);
+				Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 20);
 				BattleFx_SetWeightedResult(62, 2);
 			}
 		}
@@ -2462,14 +2459,10 @@ void SceneState_RunFlagGatedSetupCascade(void)
 		return;
 	}
 
+	if (Engine_GameFlagIsSet(0x928) != 0)
 	{
-		s32 t = Engine_GameFlagIsSet(0x928);
-		if (t != 0)
-		{
-			/* FAKEMATCH: SceneState_ApplyActor8FourFlags is called as void (*)(); as void (*)(void), its prototype, SceneState_RunFlagGatedSetupCascade does not compile */
-			((void (*)())SceneState_ApplyActor8FourFlags)(t);
-			return;
-		}
+		SceneState_ApplyActor8FourFlags();
+		return;
 	}
 
 	if (Engine_GameFlagIsSet(0x925) != 0)
@@ -4095,7 +4088,7 @@ void Scene_RunFourActorProgressPresentation(void)
 	Engine_EventWait(40);
 	base5_200e938 = (s32)&FuneHeya_ProgressTableC;
 	Object_SetActionCallbackAndRefreshById(rec2, base5_200e938);
-	((void (*)())Engine_ActorEnableActionCallback)(rec2, base6_200e904);
+	Engine_ActorEnableActionCallback(rec2, (const u8 *)base6_200e904);
 	Object_SetActionCallbackAndRefreshById(rec, base5_200e938);
 	Object_SetActionCallbackAndRefreshById(rec, base6_200e904);
 	Actor_SetSpeed(1, 0x10000, 0x8000);

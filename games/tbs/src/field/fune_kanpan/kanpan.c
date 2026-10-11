@@ -864,9 +864,9 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
 		Camera_SetSpeed(0xcccc, 0x1999);
 		Camera_MoveTo(0xb60000, -1, 0x2f80000, 1);
 		Actor_SetSpeed(23, 0xcccc, 0x6666);
-		((s32 (*)())Engine_ActorEnableActionCallback)(23, (s32)FuneKanpan_PresentationActionsA);
+		Engine_ActorEnableActionCallback(23, (const u8 *)FuneKanpan_PresentationActionsA);
 		Actor_SetSpeed(22, 0xcccc, 0x6666);
-		((s32 (*)())Engine_ActorEnableActionCallback)(22, (s32)FuneKanpan_PresentationActionsB);
+		Engine_ActorEnableActionCallback(22, (const u8 *)FuneKanpan_PresentationActionsB);
 		Actor_SetSpeed(20, 0xcccc, 0x6666);
 		Actor_WalkToAndWait(20, 182, 0x2f8);
 		Engine_ActorStartRepeatedMotion(20, 2);
@@ -1140,7 +1140,7 @@ void FuneKanpan_ApplyEntryState(void)
 	}
 	else if (Engine_GameFlagIsSet(0x8a0) != 0)
 	{
-		((void (*)(void))FuneKanpan_PlaceDeckActors)();
+		FuneKanpan_PlaceDeckActors();
 	}
 	else if (Engine_GameFlagIsSet(0x92b) != 0)
 	{
@@ -1300,7 +1300,7 @@ void FuneKanpan_SetupDeckCrewman(void)
 	Engine_EventEnd();
 }
 
-void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
+void FuneKanpan_PlaceDeckActors(void)
 {
 	struct FieldActor *record;
 	s32				   v5;
@@ -1472,9 +1472,9 @@ void FieldScene_RunShipDeckEventScript(void)
 	Engine_TaskWait(1);
 	Actor_SetPosition(21, 16252928, 47710208);
 	Engine_ActorSetChildValue(0, 15);
-	((void (*)(void *, s32))Engine_ActorSetSpriteFlags)(Object_GetById(0), 0);
+	Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
-	((void *(*)())Engine_EventOpenScreen)();
+	Engine_EventOpenScreen();
 	Actor_SetSpeed(21, 104857, 52428);
 	Actor_WalkToAndWait(21, 242, 692);
 	Actor_WalkToAndWait(21, 196, 678);
@@ -1842,8 +1842,7 @@ void FuneKanpan_RunJumpScene(void)
 	gGameState.saved_scene = (s32)&SceneId_FuneHeya;
 	gGameState.saved_entrance = 30;
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, FuneKanpan_RunJumpScene is 2 bytes longer */
-	((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_FuneKanpan, 16);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_FuneKanpan, 16);
 	BattleFx_SetWeightedResult(62, 3);
 	Engine_EventEnd();
 }
@@ -2144,8 +2143,7 @@ scene:
 		Engine_ActorEnableActionCallback(actor, FuneKanpan_RosterActions);
 	}
 
-	/* FAKEMATCH: Object_RefreshSelectorById is called as void (*)(s32); as void (*)(u32), its prototype, FieldScene_RunPartyRosterScene has 23 of 1228 bytes different */
-	((void (*)(s32))Object_RefreshSelectorById)(actor);
+	Object_RefreshSelectorById(actor);
 	Engine_EventWait(40);
 	Engine_ActorSetPosition(0, 216 << 16, 146 << 18);
 	Engine_TaskWait(1);

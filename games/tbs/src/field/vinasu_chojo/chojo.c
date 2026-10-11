@@ -989,8 +989,7 @@ void Scene_RunActorEntrySequence(void)
 	Engine_TaskWait(1);
 	Actor_SetChildValue(6, 0);
 	Engine_TaskWait(10);
-	/* FAKEMATCH: VinasuChojo_CleanupSceneObjects is called as void (*)(); as void (*)(s32), its prototype, Scene_RunActorEntrySequence does not compile */
-	((void (*)())VinasuChojo_CleanupSceneObjects)();
+	VinasuChojo_CleanupSceneObjects();
 	Engine_ActorJump(6, 2, 40);
 	VinasuChojo_ShowMessage(6);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 20);
@@ -1250,8 +1249,8 @@ void Scene_RunActorEntrySequence(void)
 	{
 		s32 actor = (s32)&SceneId_VinasuChojo;
 
-		Call2(Party_SetFields1ceAnd1d0, actor, 2);
-		Call2(Event_SetDefeatDestination, actor, 9);
+		Party_SetFields1ceAnd1d0(actor, 2);
+		Event_SetDefeatDestination(actor, 9);
 	}
 	BattleFx_SetWeightedResult(98, 1);
 	GameFlag_Set(0x350);
@@ -1387,10 +1386,9 @@ void SceneState_ApplyPair140And0(void)
 	Engine_PsynergyBegin(140, 0);
 }
 
-void VinasuChojo_CleanupSceneObjects(s32 a)
+void VinasuChojo_CleanupSceneObjects(void)
 {
-	/* FAKEMATCH: BattleEffect_CleanupSceneObjects is called as void (*)(s32); as void (*)(void), its prototype, VinasuChojo_CleanupSceneObjects does not compile */
-	((void (*)(s32))BattleEffect_CleanupSceneObjects)(a);
+	BattleEffect_CleanupSceneObjects();
 }
 
 void FieldScene_RunStep6(void)
@@ -1957,10 +1955,8 @@ void Scene_RunPairedActorEffectSequence(void)
 	VinasuChojo_FlashScreen();
 	Event_Wait(20);
 	Battle_SetStart(3);
-	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, Scene_RunPairedActorEffectSequence is 4 bytes longer */
-	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_VinasuChojo, 3);
-	/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, Scene_RunPairedActorEffectSequence is 4 bytes longer */
-	((void (*)(s32, s32))Event_SetDefeatDestination)((s32)&SceneId_VinasuChojo, 9);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_VinasuChojo, 3);
+	Event_SetDefeatDestination((s32)&SceneId_VinasuChojo, 9);
 	BattleFx_SetWeightedResult(98, 0);
 	Owner_RefreshRatiosOnFlag();
 	GameFlag_Set(0x351);
@@ -2677,8 +2673,7 @@ void VinasuChojo_RunActorTransition(void)
 	Engine_EventWait(30);
 	Engine_GameFlagSet(0x11a);
 	ObjectTable_Snapshot();
-	/* FAKEMATCH: Event_SetDestination is called as void (*)(); as void (*)(u16, u16), its prototype, VinasuChojo_RunActorTransition is 2 bytes longer */
-	((void (*)())Event_SetDestination)((s32)&SceneId_WorldMap, 91);
+	Event_SetDestination((s32)&SceneId_WorldMap, 91);
 	{
 		u16 white = 0x7fff;
 

@@ -9,6 +9,7 @@
 #include "system.h"
 #include "btlsys.h"
 #include "party_state.h"
+#include "battle_unit.h"
 
 static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
 {
@@ -33,11 +34,7 @@ void Party_RemoveOwnerRestored(s32 owner)
     Party_RemoveActiveOwnerFar(owner);
     Event_ClearInvalidPackedValues();
     vitals = UnitGetFar(owner);
-    /* FAKEMATCH: the do-while keeps both vital copies ahead of the ratio */
-    do {
-        vitals->hp = vitals->max_hp;
-        vitals->ep = vitals->max_ep;
-    } while (0);
+    Unit_Recover(vitals);
     vitals->hp_gauge = Vitals_Ratio(vitals->hp, vitals->max_hp);
     if (vitals->hp_gauge == 0 && vitals->hp != 0)
         vitals->hp_gauge = 1;

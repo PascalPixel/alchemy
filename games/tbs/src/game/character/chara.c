@@ -25,6 +25,7 @@
 #include "save_state.h"
 #include "io_reg.h"
 #include "fixed_math.h"
+#include "battle_unit.h"
 
 #define Game_ResetForNewGameFar ((s32 (*)(s32))Game_ResetForNewGameFar)
 
@@ -644,11 +645,7 @@ void Party_ApplyStatePreset(void)
         s32 rate;
         s32 slot;
 
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
-        do {
-            unit->hp = unit->max_hp;
-            unit->ep = unit->max_ep;
-        } while (0);
+        Unit_Recover(unit);
         {
             s16 max_hp = unit->max_hp;
 
@@ -714,11 +711,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
     for (n = 0; n < count; n++) {
         obj = UnitGet(gGameState.active_owners[n]);
 
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
-        do {
-            obj->hp = obj->max_hp;
-            obj->ep = obj->max_ep;
-        } while (0);
+        Unit_Recover(obj);
 
         v34 = obj->max_hp;
         t = (v34 << 14) / v34;

@@ -5,6 +5,7 @@
 #include "fieldrun.h"
 #include "btlsys.h"
 #include "battle.h"
+#include "battle_unit.h"
 
 void MapGroupTable_SelectEntry(s32 kind)
 {
@@ -105,11 +106,7 @@ void Party_SetReturnPoint(s32 reason)
         if (GameFlag_TestFar(32)) {
             for (i = 0; i < 2; i++) {
                 unit = UnitGetFar(i);
-                /* FAKEMATCH: needed to match: the one-pass block keeps both copies ahead of the ratio */
-                do {
-                    unit->hp = unit->max_hp;
-                    unit->ep = unit->max_ep;
-                } while (0);
+                Unit_Recover(unit);
                 Unit_UpdateGauges(unit);
             }
         }

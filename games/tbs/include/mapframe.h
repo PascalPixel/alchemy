@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_MAPFRAME_H
 #define ALCHEMY_MAPFRAME_H
 
+#include "unit/field/common/script/script.h"
 #include "types.h"
 #include "layout_guard.h"
 
@@ -36,7 +37,5 @@ LAYOUT_SIZE_GUARD(MapAffinePair_Size, struct MapAffinePair, 32);
 LAYOUT_OFFSET_GUARD(MapFrameWork_Pages, struct MapFrameWork, pages, 0xc80);
 LAYOUT_OFFSET_GUARD(MapFrameWork_UnknownTail, struct MapFrameWork, unknown_3480, 0x3480);
 LAYOUT_SIZE_GUARD(MapFrameWork_Size, struct MapFrameWork, 0x3484);
-
-void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct MapScanline *row);
 
 #endif

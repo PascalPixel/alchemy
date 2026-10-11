@@ -111,17 +111,4 @@ extern const struct SceneEvent	   gInteriorSealedEvents[];
 extern const struct SceneEvent	   gInteriorReopenedEvents[];
 extern const struct SceneEvent	   gSuharaGateHouseEvents[];
 
-void Innkeeper_Talk(void);
-void Chef_Talk(void);
-void Chef_ReadMind(void);
-void InnClerk_Talk(void);
-void TemplePriest_Talk(void);
-void ItemMerchant_ReadMind(void);
-void ItemMerchant_Talk(void);
-void WeaponMerchant_ReadMind(void);
-void WeaponMerchant_Talk(void);
-void ArmorMerchant_ReadMind(void);
-void ArmorMerchant_Talk(void);
-void TravelingPriest_Talk(void);
-
 #endif

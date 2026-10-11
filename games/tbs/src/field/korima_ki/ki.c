@@ -1,3 +1,8 @@
+#include "unit/field/korima_ki/ki.h"
+#include "unit/field/common/korima/palette.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/game/character/chara.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -19,9 +24,6 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-
-#define Object_ReplaceResourceEntry \
-	((s32 (*)(struct FieldSprite *, s32))Object_ReplaceResourceEntry)
 
 s32 gKorimaKiSparkOrigin[3] __attribute__((section(".bss")));
 s32 gKorimaKiSparkCount __attribute__((section(".bss")));
@@ -980,7 +982,8 @@ void PaletteScene_SetRecordValue(s32 key, s32 value)
 
 		if (index != -1)
 		{
-			UnitGet(slot)->values[index] = value;
+			/* FAKEMATCH: UnitGet is called as struct PaletteSceneRecord *(*)(); as void *(*)(u32), its prototype, PaletteScene_SetRecordValue does not compile */
+			((struct PaletteSceneRecord *(*)())UnitGet)(slot)->values[index] = value;
 		}
 	}
 }

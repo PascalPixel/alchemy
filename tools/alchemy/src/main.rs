@@ -29,6 +29,7 @@ mod elf;
 mod fakematch;
 mod gate;
 mod gbafix;
+mod headers;
 mod integrate;
 mod keep;
 mod label;
@@ -145,6 +146,7 @@ fn main() -> ExitCode {
         "camelotize" => result(camelotize::run(rest)),
         "objects" => result(objects::run(rest)),
         "dead" => result(dead::run(rest)),
+        "headers" => result(headers::run(rest)),
         "show" => result(show::run(rest)),
         "sweep" => result(sweep::run(rest)),
         "units" => result(units::run(rest)),

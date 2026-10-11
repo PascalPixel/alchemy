@@ -1,3 +1,9 @@
+#include "unit/field/raribero_heya/heya.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/game/character/chara.h"
+#include "unit/menu/shop/sell.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -16,11 +22,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-#define Shop_Run ((void (*)(s32, s32))Shop_Run)
-#define Inn_CheckIn ((void (*)(s32, s32))Inn_CheckIn)
-
-void Shop_ConfirmAct(s32);
 
 enum
 {

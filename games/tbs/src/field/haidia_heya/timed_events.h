@@ -59,17 +59,6 @@ extern struct SceneEvent	 gValeHouseEvents[];
 extern struct SceneEvent	 gValeHouseEventsAfterLeaving[];
 extern struct SceneEvent	 gValeHouseReturnEvents[];
 
-s32	 ArcTan2(s32, s32);
 void SceneEvents_UpdateInView(void *);
-void Object_SetTargetAndCallback();
-void BattleFx_SetBlock30ValuesMaxZero(void);
-void Map_ClearLayerEntryFlag();
-void BattleFx_StartTwelveFrameBlend();
-void BattleFx_SetBlock30Values12Zero();
-void BattleFx_SetBlock30Values128One();
-s32	 Battle_GetWorkObject1e0();
-s32	 Object_SetActionCallbackAndRefreshById();
-void Scene_UpdateTimedActor(void);
-void Scene_GiveFarewellHerb(void);
 
 #endif

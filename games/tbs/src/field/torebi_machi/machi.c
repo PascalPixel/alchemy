@@ -1,3 +1,8 @@
+#include "unit/field/torebi_machi/machi.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/system/scheduler/callback.h"
 #include "machi.h"
 #include "iwram_call.h"
 #include "call.h"

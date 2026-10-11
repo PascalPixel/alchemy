@@ -1,3 +1,5 @@
+#include "unit/sound/sound.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -110,8 +112,6 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
     Sound_TickDmaRestartTimer();
 }
 
-
-void AudioCommand_Play(s32 id);
 
 void AudioTest_RunParameterController(void)
 {

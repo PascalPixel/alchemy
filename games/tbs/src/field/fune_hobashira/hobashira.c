@@ -1,3 +1,7 @@
+#include "unit/field/fune_hobashira/hobashira.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -28,9 +32,6 @@ struct SwayActor
 	s16 x_state;
 	s16 y_state;
 };
-
-void battle_owner_69(void);
-void FieldScene_RunPrimarySequence(void);
 
 struct FieldGlobals
 {

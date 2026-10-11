@@ -26,8 +26,6 @@ struct MakyuriLights
 	struct FieldActor *upper;
 };
 
-void AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
-
 void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
 {
 	struct ObjectRuntime *actor;

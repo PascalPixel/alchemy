@@ -1,3 +1,6 @@
+#include "unit/field/kuupuappu_dou/dou.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -18,9 +21,6 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-void Vector_AddPolarOffset(s32, s32, s32 *);
-void KuupuappuDou_PushBlockAhead();
-void KuupuappuDou_SpawnPuffs();
 s32	 Math_RemainderUnsigned();
 
 struct Actor
@@ -63,8 +63,6 @@ struct SceneActorRecord
 };
 
 #define TILE(position) ((position) / 0x100000)
-
-void FieldScene_RunOpeningAuxiliarySequence(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -715,7 +713,8 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 			{
 				if (rec7->y.fixed <= 0xffff)
 				{
-					KuupuappuDou_SpawnPuffs();
+					/* FAKEMATCH: KuupuappuDou_SpawnPuffs is called as void (*)(); as void (*)(struct FieldActor *), its prototype, FieldScene_RunOpeningAuxiliarySequence does not compile */
+					((void (*)())KuupuappuDou_SpawnPuffs)();
 					rec7->y.fixed = 0xff0000;
 					rec7->gravity = 0;
 					rec7->velocity_y = 0;

@@ -1,3 +1,9 @@
+#include "unit/debug/menu_test/test.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/game/character/chara.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/menu/item/item.h"
+#include "unit/menu/shop/sell.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -27,9 +33,6 @@ void Engine_EventSetMessage(s16 message);
 
 void				Engine_AudioPlayCue(s32 cue);
 struct RenderInput *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
-void				UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);
-void UiText_DrawResource(s32 text, struct RenderInput *window, s32 x, s32 y);
 
 u8 *MenuTest_GetEntrances(void)
 {
@@ -170,7 +173,8 @@ void DebugMenu_RunMessageTest(void)
 
 void SceneState_ApplyOne(void)
 {
-	Battle_ApplyPresetItemsAndFlags(1);
+	/* FAKEMATCH: Battle_ApplyPresetItemsAndFlags is called as s32 (*)(); as s32 (*)(void), its prototype, SceneState_ApplyOne does not compile */
+	((s32 (*)())Battle_ApplyPresetItemsAndFlags)(1);
 }
 
 void SceneState_NoOp(void)
@@ -800,7 +804,8 @@ s32 DebugMenu_SelectCharacter(void)
 #else
 s32 SceneState_GetFarResult2418(void)
 {
-	return Shop_ConfirmAct();
+	/* FAKEMATCH: Shop_ConfirmAct is called as s32 (*)(void); as s32 (*)(s32), its prototype, SceneState_GetFarResult2418 does not compile */
+	return ((s32 (*)(void))Shop_ConfirmAct)();
 }
 #endif
 

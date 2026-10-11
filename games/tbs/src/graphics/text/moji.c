@@ -1,3 +1,4 @@
+#include "unit/graphics/text/moji.h"
 #include "types.h"
 #include "uiwindow.h"
 #include "glyph.h"

@@ -1,3 +1,8 @@
+#include "unit/field/soru_funka/funka.h"
+#include "unit/field/soru_star/ring_setup.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -75,10 +80,6 @@ struct QuakeWork
 	s32 fading;
 };
 
-void SoruFunka_SpawnEffectPair();
-void SceneEffect_UpdateArcOverAnchor();
-void SceneEffect_UpdateAnchoredRiseArc();
-
 struct PairDetail
 {
 	u8 unknown_00[22];
@@ -111,7 +112,6 @@ struct PairWork
 extern struct PairWork *gEffectWork;
 
 extern struct WorldMapVramBlock gVramBlockCache[];
-s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
 struct WorldMapOam
 {

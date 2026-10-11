@@ -1,3 +1,7 @@
+#include "unit/field/raribero_machi/machi.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -17,8 +21,6 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-void BattleFx_RunPageEffectForSlot(s32, s32, s32);
-
 extern struct SceneEntrance	 Placement_Scripts[];
 extern u32					 Placement_Messages[];
 extern struct ScenePlacement Placement_Actors[];
@@ -27,8 +29,6 @@ extern struct SceneEvent	 Placement_Effects[];
 #define NULL ((void *)0)
 
 #define REC_S16(rec, off) (*(s16 *)((rec) + (off)))
-
-void Motion_LaunchFromFocusedObject(u32, s32, s32, s32);
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {

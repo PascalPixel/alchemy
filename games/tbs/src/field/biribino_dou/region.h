@@ -10,10 +10,4 @@
 
 extern s16 StagedActor_DirectionSteps[];
 
-void FieldScene_RunScene398SequenceB(void);
-void RunGuardedSceneSetup(void);
-void BiribinoDou_PrepareWindowTransition(void);
-void FieldScene_RunScene398SequenceC(void);
-void Resource398_ImportBankNoOp();
-
 #endif

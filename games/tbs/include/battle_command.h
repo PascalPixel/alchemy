@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_BATTLE_COMMAND_H
 #define ALCHEMY_BATTLE_COMMAND_H
 
+#include "unit/battle/tgtexec.h"
 #include "btlsys.h"
 #include "item.h"
 #include "keystate.h"
@@ -12,7 +13,5 @@ extern u8 gDebugMode[];
 
 extern const u32 Battle_ActionFlags[];
 extern const u8	 Battle_ActionStatus[];
-
-s32 BattleCommand_BuildPlan(struct BattleActionRecord *request, struct BtlPlan *plan);
 
 #endif

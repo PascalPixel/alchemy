@@ -1,3 +1,5 @@
+#include "unit/field/common/camera/camera.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -16,8 +18,6 @@
 #include "scene.h"
 #include "edition.h"
 #include "callback_scheduler.h"
-
-#define SceneTransform_ApplyPosition ((void (*)(void *))SceneTransform_ApplyPosition)
 
 s32 Runtime_BlankDisplayAndRun(void)
 {
@@ -208,7 +208,6 @@ extern char ResourceId_EffectFarCalls;
 extern char ResourceId_LuckyDiceBoard;
 extern char ResourceId_LuckyDiceSprites;
 
-void Camera_ResetSceneDefaults(void);
 void UiWork_InitializeWithResourceCountersFar(void);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 s32	 Party_GetAverageLevelFar(void);

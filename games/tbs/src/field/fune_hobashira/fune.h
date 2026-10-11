@@ -40,11 +40,6 @@ enum
 	FLAG_MAST_924 = 0x924
 };
 
-void FieldEffect_UpdateGridPlacement(void);
-void FuneHobashira_AnnounceClearCourse(void);
-void FuneHobashira_GrowActorScale(struct FieldActor *o);
-s32	 Battle_GetWorkObject1e0();
-void Event_CallWithLastActiveObjectId(s32 value);
 void Object_CommitPosition();
 
 #endif

@@ -1,3 +1,8 @@
+#include "unit/menu/clear/clear.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/game/character/chara.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -28,8 +33,6 @@
 #include "item.h"
 #include "game_state.h"
 #include "uiwindow.h"
-
-u16 SceneData_GetBufferCrc16(u32 count, u8 *p);
 
 extern u16 gBgScroll[];
 
@@ -290,9 +293,6 @@ struct SaveMenuSceneState
 	u8	unknown_000[0x100];
 	s32 word_100;
 };
-void	  UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
-void	  UiWork_FinalizePendingCore(void);
-s32		  Scene_GetModeMask(void);
 extern u8 MsgNoBackupMemory[];
 extern u8 MsgSaveAdventureQuestion[];
 extern u8 MsgSaveDataCorrupted[];
@@ -303,7 +303,6 @@ extern u8 MsgClearPasswordLabel[];
 extern u8 MsgClearSaveLabel[];
 
 extern volatile u16 gLinkStatus;
-void				RenderOutput_PrepareForRedraw(s32 window);
 
 extern u8  gSaveBuffer[];
 extern u8  gSleepDisabled;
@@ -312,7 +311,6 @@ extern u8  gOptionMirror;
 extern s16 Clear_CodeUnlocked;
 extern s16 Clear_ExtraCodeUnlocked;
 extern u8 *gWindowWork[];
-void	   Clear_CheckButtonCodes(void);
 struct SaveLinkGreeting
 {
 	u16 code[4];
@@ -321,26 +319,7 @@ struct SaveLinkGreeting
 
 extern struct SaveLinkGreeting gLinkPeerSignatures[4];
 void						   Engine_AudioPlayCue(s32);
-void						   Event_SetDestination();
 void						   Engine_EventOpenScreen(void);
-void						   Graphics_ExpandVramTilesByColorTable();
-void						   InventorySnapshot_Restore(void);
-s32							   Menu_SelectResourceLayout(s32);
-s32							   Menu_SelectSaveSlotAction();
-s32							   NameEntry_EditOwnerName();
-void						   PaletteGlow_Update();
-void						   Party_AddActiveOwner();
-void						   Party_RemoveActiveOwner(s32);
-void						   Party_SetFlag32AndRefreshMembers();
-s32							   Runtime_GetBuildStampTime();
-void						   SaveState_CopySlotPair();
-void						   SaveState_DeleteSelectedSlot();
-s32							   SaveState_LoadRecordIntoWork();
-s32							   SaveState_ScanRecordFlags();
-s32							   Save_WriteSelectedSlot();
-void						   UiText_DrawResource();
-void						   UiText_ShowCenteredMessage();
-void						   UiWindow_DrawDividerLine();
 s32							   __divsi3(s32, s32);
 s32							   __modsi3();
 
@@ -402,7 +381,8 @@ s32 SaveMenu_Run(void)
 		Engine_EventCloseScreen();
 		Engine_AudioPlayCue(17);
 		((s32 (*)(s32))Engine_EventWait)(0x12c);
-		Event_SetDestination((s32)&SceneId_WorldMap, 72);
+		/* FAKEMATCH: Event_SetDestination is called as void (*)(); as void (*)(u16, u16), its prototype, SaveMenu_Run is 12 bytes shorter */
+		((void (*)())Event_SetDestination)((s32)&SceneId_WorldMap, 72);
 		return 0;
 	}
 	gSleepDisabled = started;
@@ -565,7 +545,8 @@ L_0200057a:;
 		GameFlag_ClearBit(0x106);
 		((void (*)(s32 flag))Engine_GameFlagSet)(0x17e);
 		gSleepDisabled = 1;
-		Event_SetDestination((s32)&SceneId_LinkLobby, 1);
+		/* FAKEMATCH: Event_SetDestination is called as void (*)(); as void (*)(u16, u16), its prototype, SaveMenu_Run has 17 of 2336 bytes different */
+		((void (*)())Event_SetDestination)((s32)&SceneId_LinkLobby, 1);
 		goto L_02000c96;
 	}
 	else
@@ -1023,8 +1004,6 @@ struct PasswordOwner
 	u8					 unknown_f6[2];
 	u32					 values[4];
 };
-
-struct PasswordOwner *UnitGet(s32 owner);
 
 s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 {

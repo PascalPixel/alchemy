@@ -141,47 +141,18 @@ extern u8		 Tile_CopyStrided[];
 extern u8		 Tile_CopyStridedCodeSize[];
 extern u8		 TransferCommandExecutor_Size[];
 void			 _call_via_r2(s32 arg0, s32 arg1, s32 target);
-s32				 Animation_InitializeObjects(struct AnimationObject *state);
-void			 Animation_InitWorkFromMetadata(struct AnimationEntry *work);
 #ifndef OWN_Animation_SetWorkEntry
-void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no);
 #endif
-struct AnimationEntry *AnimationObject_Allocate(s32 id);
-void				   AnimationObjects_SetActiveTimerSteps(struct AnimationObject *group, s32 val);
-void				   Bg0_ClearTilemap(void);
-s32					   FixedSqrt(s32 value);
 void				   IwramHalt(void);
-s32					   Link_CreateCountdownLabelWindow(void);
-void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);
-void ObjectSystem_Configure(s32 mode);
-void PaletteDma_LoadBlock(void);
-u8	*Resource_DecompressLz(const u8 *source, u8 *destination);
-struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
-void				  Resource_InitializeTable(void);
-s32					  Resource_LoadByMode(s32 mode, s32 value);
-void				  Resource_LoadWorkHeader(void);
-void				  Resource_ScheduleOwnerReset(void);
-void				  Resource_ScheduleOwnerResetDelayed(void);
-s32					  ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
 #ifndef OWN_Runtime_GetLowTableAddress
-s32 Runtime_GetLowTableAddress(void);
 #endif
 #ifndef OWN_Runtime_GetRemainingEwram
-s32 Runtime_GetRemainingEwram(void);
 #endif
 #ifndef OWN_Runtime_GetRemainingIwram
-s32 Runtime_GetRemainingIwram(void);
 #endif
 #ifndef OWN_RuntimeDispatch_NoOpHook
-void RuntimeDispatch_NoOpHook(void);
 #endif
-void  SerialRuntime_Initialize(void);
 void  SoundDriver_EnterMixer(void);
-void  System_VBlankHandler(void);
-void  Text_FormatHexToWork(u32 value);
-void *Text_FormatPlayTime(s32 value, u8 *out);
-void  Text_FormatSignedDecimalToWork(s32 arg0);
-void  Ui_LoadWindowGraphics(void);
 #endif
 
 #if GAME_TLA

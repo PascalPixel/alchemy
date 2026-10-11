@@ -1,6 +1,8 @@
 #ifndef ALCHEMY_MAP_H
 #define ALCHEMY_MAP_H
 
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
 #include "types.h"
 #include "layout_guard.h"
 
@@ -60,19 +62,6 @@ struct WorldPosition
 	s32 height;
 	s32 y;
 };
-
-void MapAnimation_StartChannels(const u16 *script);
-void Resource_RunCopiedDecoder(s32 source, s32 destination);
-
-s32	 GetFocusedObjectCollision(void);
-void UpdateMapRegionAtPosition(s32 x, s32 y, s32 z);
-u8	 GetMapCellCollision(s32 layer, s32 x, s32 y);
-void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code);
-s32	 GetWorldMapCollision(struct WorldPosition *position);
-s32	 CheckMapPositionCellOccupied(struct WorldPosition *position);
-s32	 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position);
-u8	 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind);
-void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane, s32 destX, s32 destY);
 
 extern u32 gMapBlocks[];
 

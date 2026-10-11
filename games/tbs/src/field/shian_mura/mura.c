@@ -1,3 +1,9 @@
+#include "unit/field/shian_mura/mura.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
+
 #define NULL ((void *)0)
 #include "fieldobj.h"
 #include "types.h"
@@ -21,8 +27,6 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-s32 ShianMura_WatchGateTrigger();
-
 struct PeriodicEffectConfig
 {
 	s32 kind;
@@ -40,8 +44,6 @@ extern u32 gShianMuraExits[];
 extern struct SceneEvent gShianMuraEvents[];
 extern s32 ShianMura_ActionTable[];
 
-s32		  ShianMura_WatchGateTrigger();
-void	  Actor_UpdatePresentationFlag(void);
 extern struct ScenePlacement gShianMuraPlacements[];
 extern u16 ShianMura_GateSteps1[];
 extern u16 ShianMura_GateSteps2[];
@@ -49,9 +51,7 @@ extern u16 ShianMura_GateSteps3[];
 extern u16 ShianMura_GateSteps4[];
 extern u16 ShianMura_GateSteps5[];
 
-void BattleFx_RunPageEffectForSlot();
 void Effect_Spawn();
-void BattleFx_PlayQueuedSound();
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
@@ -127,10 +127,6 @@ struct MapActor
 	s16 tracking_mode;
 };
 
-s32	 ArcTan2(s32 z_delta, s32 x_delta);
-void Vector_AddPolarOffset();
-void Object_RefreshSelectorById();
-
 struct SpawnParams
 {
 	s32 count;
@@ -142,12 +138,7 @@ struct SpawnParams
 	u8	unknown_22[6];
 };
 
-void Vector_AddPolarOffset(s32 distance, s32 angle, union FieldCoordinate *pos);
 s32	 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
-
-void BattleFx_SetQueuedSoundAndPlay(s32 music);
-
-s32 SceneEffect_CalculatePositionDistance(s32 *first_position, s32 *second_position);
 
 void SceneEffect_RequestFixedEffect(void)
 {

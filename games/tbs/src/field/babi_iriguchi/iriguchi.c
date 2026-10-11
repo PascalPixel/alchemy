@@ -1,3 +1,10 @@
+#include "unit/field/babi_iriguchi/iriguchi.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
+
 #define FIELD_STAGED_ACTOR_IMPORTS
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
@@ -24,9 +31,6 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-
-void BabiIriguchi_JumpFromLedge();
-void SceneState_ApplyRectsAtActors8And9();
 
 extern u8 gEffectWork[];
 
@@ -63,11 +67,6 @@ struct MotionEffect
 
 extern u32 gBabiIriguchiExits[];
 
-void BabiIriguchi_OpenTruthDoor(void);
-void BabiIriguchi_CloseTruthDoor(void);
-
-struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor);
-
 void Engine_TaskWait(s32 frames);
 void Engine_EventWait(s32 frames);
 void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
@@ -76,13 +75,6 @@ void Engine_ActorWaitForMove(s32 actor);
 void Engine_ActorSetAnimation(s32 actor, s32 mode);
 void Engine_MapCopyCellsLayered(
 	s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
-void BattleFx_SetPhaseRequest();
-void Battle_ResetEffectCounter();
-void Motion_LaunchFromFocusedObject();
-void BattleFx_RunRisingObjectSequence();
-s32	 FieldEffect_UpdateGridPlacement();
-s32	 battle_owner_69();
-void BabiIriguchi_JumpFromLedge();
 
 static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 {
@@ -152,14 +144,7 @@ u8 *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind)
 	return result;
 }
 
-void Effect_AdvanceMotion(struct MotionEffect *effect);
-void OverlayObject_WaitUntilIdle(s32 *obj);
-
 extern s16 StagedActor_DirectionSteps[];
-s32		   Map_GetTerrainHeight(s32 mode, s32 x, s32 z);
-
-s32 battle_owner_69(void);
-s32 FieldEffect_UpdateGridPlacement(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"

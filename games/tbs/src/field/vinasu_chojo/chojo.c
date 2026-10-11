@@ -1,3 +1,11 @@
+#include "unit/field/vinasu_chojo/chojo.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/game/character/chara.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/system/scheduler/callback.h"
+
 #define NULL ((void *)0)
 #include "fieldobj.h"
 #include "types.h"
@@ -33,15 +41,6 @@
 #include "window.h"
 #include "heap_state.h"
 #include "objcmd.h"
-
-void FieldScene_RunMultiActorPresentation();
-void SceneEffect_SpawnParticlesBesideActor();
-void VinasuChojo_CleanupSceneObjects();
-void VinasuChojo_ConfigureGroupMotion();
-void VinasuChojo_RunActorTransition();
-void VinasuChojo_RunTransitionStep();
-void VinasuChojo_ShowPartyMember();
-void VinasuChojo_TryToPreventFall();
 
 typedef struct
 {
@@ -106,25 +105,7 @@ extern s32						   VinasuChojo_NearestActor;
 
 s32	 Math_RemainderUnsigned(s32, s32);
 void OverlayObject_SetValue1(void *, s32);
-void SceneActor_ParkRecord(struct FieldActor *actor);
 s32	 Object_CheckMovementCollision();
-void Vector_AddPolarOffset();
-void VinasuChojo_ConfigureGroupMotion();
-s32	 SceneActor_FindNearestSlotOfKindF2(void);
-void SceneState_ForwardByRuntimeWordBits(s32 a);
-void Scene_RunScriptedActorPresentation(void);
-void SceneEffect_SpawnParticlesBesideActor();
-void Scene_RunPairedActorEffectSequence(void);
-void Inventory_AddItem(s32, s32);
-void VinasuChojo_RunLeapEntrance(void);
-void FieldScene_RunBracketedSceneWithFlag282(void);
-void VinasuChojo_RunActorTransition();
-void FieldScene_RunMultiActorPresentation();
-void BattleEffect_CleanupSceneObjects(s32);
-
-s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position);
-
-void VinasuChojo_TryToPreventFall();
 
 void VinasuChojo_SetSpritePriority(struct FieldActor *actor, u32 value)
 {
@@ -173,18 +154,7 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 
-void Object_SetActionCallbackAndRefreshById();
-void ObjectMotion_WaitForAnimationChange();
-
-void BattleFx_SetWeightedResult();
-void Event_SetDefeatDestination(s32 scene, s32 entrance);
-void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
-s32	 PartyInventory_Remove();
-s32	 PartyInventory_FindOwner();
-
 struct StagedVerticalEffect;
-void Effect_AnimateVerticalPositive(struct StagedVerticalEffect *effect);
-void Effect_AnimateVerticalNegative(struct StagedVerticalEffect *effect);
 
 struct PairDetail
 {
@@ -216,8 +186,6 @@ struct PairWork
 };
 
 extern struct PairWork *gEffectWork;
-
-s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
 struct WorldMapOam
 {
@@ -1026,7 +994,8 @@ void Scene_RunActorEntrySequence(void)
 	Engine_TaskWait(1);
 	Actor_SetChildValue(6, 0);
 	Engine_TaskWait(10);
-	VinasuChojo_CleanupSceneObjects();
+	/* FAKEMATCH: VinasuChojo_CleanupSceneObjects is called as void (*)(); as void (*)(s32), its prototype, Scene_RunActorEntrySequence does not compile */
+	((void (*)())VinasuChojo_CleanupSceneObjects)();
 	Engine_ActorJump(6, 2, 40);
 	VinasuChojo_ShowMessage(6);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 20);
@@ -1425,16 +1394,14 @@ void SceneState_ApplyPair140And0(void)
 
 void VinasuChojo_CleanupSceneObjects(s32 a)
 {
-	BattleEffect_CleanupSceneObjects(a);
+	/* FAKEMATCH: BattleEffect_CleanupSceneObjects is called as void (*)(s32); as void (*)(void), its prototype, VinasuChojo_CleanupSceneObjects does not compile */
+	((void (*)(s32))BattleEffect_CleanupSceneObjects)(a);
 }
 
 void FieldScene_RunStep6(void)
 {
 	SceneState_ForwardByRuntimeWordBits((s32)Object_GetById(6));
 }
-
-void SceneEffect_SpawnParticlesAboveActor(void);
-void Owner_RefreshRatiosOnFlag(void);
 
 static inline void VinasuChojo_AimBurst(s32 velocity[3], s32 angle)
 {
@@ -1995,8 +1962,10 @@ void Scene_RunPairedActorEffectSequence(void)
 	VinasuChojo_FlashScreen();
 	Event_Wait(20);
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_VinasuChojo, 3);
-	Event_SetDefeatDestination((s32)&SceneId_VinasuChojo, 9);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, Scene_RunPairedActorEffectSequence is 4 bytes longer */
+	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_VinasuChojo, 3);
+	/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, Scene_RunPairedActorEffectSequence is 4 bytes longer */
+	((void (*)(s32, s32))Event_SetDefeatDestination)((s32)&SceneId_VinasuChojo, 9);
 	BattleFx_SetWeightedResult(98, 0);
 	Owner_RefreshRatiosOnFlag();
 	GameFlag_Set(0x351);
@@ -2120,19 +2089,10 @@ void SceneEffect_SpawnParticlesAboveActor(void)
 	}
 }
 
-void SceneEffect_SpawnParticlesAboveActor();
-void Event_SetDestination();
-void ObjectTable_Snapshot();
-
 enum
 {
 	PARTICLE_SOURCE_ACTOR = 23
 };
-
-void ObjectDispatch_StopCallbacksAndHideLayers();
-void UiText_ShowCenteredMessage();
-void Graphics_EnableObjLayerAndCallbacks();
-void Object_RefreshSelectorById();
 
 // 目標なし (停止中) か
 static __inline__ s32 Actor_IsParked(struct FieldActor *actor)
@@ -2722,7 +2682,8 @@ void VinasuChojo_RunActorTransition(void)
 	Engine_EventWait(30);
 	Engine_GameFlagSet(0x11a);
 	ObjectTable_Snapshot();
-	Event_SetDestination((s32)&SceneId_WorldMap, 91);
+	/* FAKEMATCH: Event_SetDestination is called as void (*)(); as void (*)(u16, u16), its prototype, VinasuChojo_RunActorTransition is 2 bytes longer */
+	((void (*)())Event_SetDestination)((s32)&SceneId_WorldMap, 91);
 	{
 		u16 white = 0x7fff;
 

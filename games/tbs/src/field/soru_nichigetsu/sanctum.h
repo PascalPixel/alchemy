@@ -19,29 +19,13 @@ enum InnerSanctumFlag
 	FLAG_ROBIN_SEARCHING_FOR_SUKURETA = 0x896
 };
 
-void SetSolShindenActorStep();
-void SetSolShindenActorStep();
-
-s32 CheckAllStatueLights(void);
-
-void SetSolShindenActorStep(s32 actor_step, s32 wait_frames);
-
 #include "types.h"
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-void FieldScene_RunScene37aSequenceA();
-void SetSolShindenActorStep();
 
 #include "types.h"
 
 #include "types.h"
-
-void SetSolShindenActorStep();
-void SetSolShindenActorStep();
-void SetSolShindenActorStep();
-void SetSolShindenActorStep();
-void SetSolShindenActorStep();
-void SetSolShindenActorStep();
 
 #include "types.h"
 
@@ -71,17 +55,5 @@ extern u16 SoruNichigetsu_Light4Timer;
 
 #include "types.h"
 
-void SetSolShindenActorStep();
-void SetSolShindenActorStep();
-void SetSolShindenActorStep();
-void SetSolShindenActorStep();
-void SetSolShindenActorStep();
-void UpdateStatueLight1(void);
-void UpdateStatueLight2(void);
-void UpdateStatueLight3(void);
-void UpdateStatueLight4(void);
-
 #include "types.h"
 
-void SetSolShindenActorStep();
-void SetSolShindenActorStep();

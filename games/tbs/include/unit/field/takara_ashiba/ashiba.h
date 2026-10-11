@@ -1,0 +1,89 @@
+#ifndef ALCHEMY_UNIT_FIELD_TAKARA_ASHIBA_ASHIBA_H
+#define ALCHEMY_UNIT_FIELD_TAKARA_ASHIBA_ASHIBA_H
+
+#include "types.h"
+
+struct FieldActor;
+struct SceneEntrance;
+struct SceneEvent;
+struct ScenePlacement;
+
+void SceneActor_SetActor15ModeZero(void);
+void Resource3b4_EmptyHookA(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+s32 SceneData_ReturnZero(void);
+u8 *SceneData_GetSceneTable(void);
+const struct ScenePlacement *Scene_GetPlacements(void);
+void Resource3b4_EmptyHookB(void);
+s32 SceneActor_FaceTowardActorZero(struct FieldActor *actor);
+void TakaraAshiba_StartActorFifteenJump(void);
+void TakaraAshiba_RunActorFifteenSprint(void);
+void TakaraAshiba_ReturnActorFifteen(void);
+void FieldScene_CopyActorPosition(void);
+void FieldScene_RunActor15ZeroStep(void);
+const struct SceneEvent *Scene_GetEvents(void);
+void TakaraAshiba_CheckLeaderAhead(void);
+void TakaraAshiba_OpenPassage(s32 arg);
+void TakaraAshiba_OpenPlatformPassage(s32 a0);
+void FieldScene_RunScene3b4SequenceC(void);
+void SceneState_SetSelectorFlagWhenFacingC000(s32 selector);
+void FieldScene_RunIndexedStep0(void);
+void FieldScene_RunIndexedStep1(void);
+void TakaraAshiba_ResetBlockedStepsForSelectorTwo(void);
+void TakaraAshiba_ResetBlockedStepsForSelectorThree(void);
+void SceneState_ApplyRectAndPlaceSlot12(void);
+void ConfigureAndPlaceActorTwelve(void);
+void FieldScene_RunStep8ValueEe7(void);
+void FieldScene_RunStep9ValueEe8(void);
+void FieldScene_RunStep10ValueEe9(void);
+void FieldScene_RunStep11ValueEea(void);
+void FieldScene_RunStep12ValueEeb(void);
+void TakaraAshiba_RaiseTriggerOnStand(void);
+void FieldScene_RunSupplementalSequenceOne(void);
+void SceneState_TriggerColumnTen(void);
+void FieldScene_RunScene3b4SequenceA(void);
+void SceneActor_TrackOriginColumnForSlot(s32 no);
+void FieldScene_RunLateIndexedStep0(void);
+void FieldScene_RunLateIndexedStep1(void);
+void FieldScene_RunLateIndexedStep2(void);
+void FieldScene_RunPrimarySequence(void);
+void TakaraAshiba_RunActorElevenFollowScene(void);
+void SceneState_TriggerColumnNineteen(void);
+void FieldScene_RunScene3b4SequenceB(void);
+void SetBlendAlphaCoefficients(void);
+void SceneEffect_SetBlendAlpha0607(void);
+void FieldScene_DispatchBySlotZeroFacing(void);
+void FieldScene_NoOpCallback(void);
+void SceneActor_MarkSlot13AndSetFlag200(void);
+void SceneState_BranchOnActorZeroFacing(void);
+void TakaraAshiba_RestoreActorEightTerrain(void);
+void ActorPresentation_SetSceneCell58AndMarkActorEight(void);
+void TakaraAshiba_RestoreRightUnderfootCell(void);
+void TakaraAshiba_RestoreLeftUnderfootCell(void);
+void TakaraAshiba_DispatchByActorEightColumn(void);
+void SceneActor_BranchOnSlotZeroAtTile38(void);
+void TakaraAshiba_ReleaseActorNinePlatform(void);
+void SceneActor_RunWhenActor9AtTile45x43(void);
+void FieldScene_RunTwoStepSequence(void);
+void SceneState_ApplyTwoRectsAtRow56(void);
+void TakaraAshiba_RestoreActorTenLeftCell(void);
+void TakaraAshiba_RestoreActorTenRightCell(void);
+void TakaraAshiba_UpdateBlockRects(void);
+void FieldScene_RunThreeCallSequenceB(void);
+void FieldScene_DispatchByActorZeroFacing(void);
+void SceneState_ApplyFourRectsAt48_55(void);
+void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void);
+void FieldScene_RunSingleStep(void);
+void FieldScene_RunThreeCallSequence(void);
+void TakaraAshiba_RepaintActorCells(void);
+void FieldScene_RunThreeStepSequence(void);
+void ActorPresentation_PlaceActorFourteenOnActorNine(void);
+void SceneActor_PassActorNinePositionWithId107(void);
+void SceneActor_PublishMarkerBySlotZeroHeight(void);
+s32 Scene_Initialize(void);
+void TakaraAshiba_UpdateItemIcons(void);
+void TakaraAshiba_InitializeScene1(void);
+void TakaraAshiba_InitializeScene2(void);
+void TakaraAshiba_InitializeScene3(void);
+
+#endif

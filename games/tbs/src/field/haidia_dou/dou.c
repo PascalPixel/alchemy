@@ -1,3 +1,9 @@
+#include "unit/field/haidia_dou/dou.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/system/scheduler/callback.h"
+
 #define NULL ((void *)0)
 #include "fieldobj.h"
 #include "mapcopy.h"
@@ -22,11 +28,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-void  HaidiaDou_ApplyEntryState();
-void  HaidiaDou_SinkPillarColumn27();
-void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void  SceneActor_PositionPair();
 
 typedef struct Obj
 {
@@ -54,8 +55,6 @@ struct Rec_3a6
 extern u32 HaidiaDou_Exits[];
 extern s32 HaidiaDou_WalkTargets[];
 
-s32 SceneActor_FaceActorZero(struct FieldActor *obj);
-
 void Engine_TaskWait(s32 frames);
 void Engine_EventWait(s32 frames);
 void Engine_ActorWaitForMove(s32 actor);
@@ -64,16 +63,7 @@ void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
 void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
 
 void Object_CommitPosition(void *);
-void BattleFx_RunPageEffectForSlot(s32, s32, s32);
-s32	 ArcTan2(s32 dz, s32 dx);
-void HaidiaDou_SinkPillarColumn27();
 s32	 Object_CheckMovementCollision();
-void SceneActor_WaitActorDescent(struct FieldActor *actor);
-void SceneActor_PositionPair();
-void SceneActor_PlaceAtTile(s32 width, s32 top, s32 bottom);
-
-s32 StagedActor_FillGridAttributeRectangle(
-	u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {

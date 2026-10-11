@@ -1,3 +1,10 @@
+#include "unit/field/torebi_izumi/izumi.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/game/character/chara.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/menu/shop/sell.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -22,9 +29,6 @@
 #include "menu_list.h"
 #include "iwram_call.h"
 #include "ability_ids.h"
-
-void TorebiIzumi_RiseAndFadeIn(void);
-s32	 TorebiIzumi_RunSpringGame(void);
 
 extern const struct SceneEntrance TorebiIzumi_SceneTableA[];
 extern const u32 TorebiIzumi_SceneTableB[];
@@ -66,13 +70,8 @@ struct SpringActor
 extern struct SpringRide TorebiIzumi_Ride;
 extern const u8			 TorebiIzumi_SliderFrames[];
 extern const u8			 TorebiIzumi_CircleFrames[];
-void					 TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value);
-void					 FieldScene_RunSecondaryScript(void);
-
-void TorebiIzumi_OfferLuckyWheels(s32 wheel);
 
 extern u8 gOamCopyEnabled;
-void	  UiWork_PushValueSlot(s32 value, s32 digits);
 
 static __inline__ void Io_SetBlendControl(s32 value)
 {
@@ -424,17 +423,11 @@ void TorebiIzumi_RevealPrize(s32 item)
 	Engine_EventEnd();
 }
 
-#define Event_RequestDestination ((void (*)(s32, s32))Event_RequestDestination)
-#define Party_GetAverageLevel ((s32 (*)(void))Party_GetAverageLevel)
-
 struct Workspace
 {
 	u8				  unknown_000[356];
 	struct FieldActor actor;
 };
-
-void ObjectTable_Snapshot(void);
-void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 
 void TorebiIzumi_RiseAndFadeIn(void)
 {
@@ -532,7 +525,8 @@ play:
 	Engine_EventSetMessage((s32)MsgTorebiStepRightEnjoy);
 	Engine_EventShowMessage(8, 0);
 	Event_RequestDestination(508, 0);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_TorebiIzumi1, 12);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, TorebiIzumi_OfferLuckyWheels has 7 of 256 bytes different */
+	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_TorebiIzumi1, 12);
 }
 
 void TorebiIzumi_PayToPlay(void)
@@ -562,7 +556,8 @@ void TorebiIzumi_PayToPlay(void)
 		Engine_ActorFaceDirection(0, 0x8000, 0);
 		Engine_EventWait(20);
 		Event_RequestDestination(0x1fd, 0);
-		Party_SetFields1ceAnd1d0((s32)&SceneId_TorebiIzumi1, 13);
+		/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, TorebiIzumi_PayToPlay is 4 bytes longer */
+		((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_TorebiIzumi1, 13);
 	}
 	else
 	{
@@ -571,11 +566,6 @@ void TorebiIzumi_PayToPlay(void)
 	}
 	Engine_EventEnd();
 }
-
-void Battle_ResetEffectCounter(void);
-void UiText_DrawNumberInWindow(s32 value, s32 digits, struct UiWindow *window, s32 x, s32 y);
-void UiWork_FinalizePendingCore(void);
-s32	 Party_AdjustCoins(s32 amount);
 
 #if defined(TBS_EDITION_EN) || !EDITION_INTERNATIONAL
 #define ASK_WIDTH 17
@@ -878,8 +868,6 @@ end:
 	Event_End();
 	return 0;
 }
-
-void ObjectDispatch_ApplyValueToChildren();
 
 struct Half
 {

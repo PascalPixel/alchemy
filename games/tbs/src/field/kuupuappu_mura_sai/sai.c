@@ -1,3 +1,9 @@
+#include "unit/field/kuupuappu_mura_sai/sai.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/field/kuupuappu_mura/scene_cells.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/game/character/chara.h"
+#include "unit/system/scheduler/callback.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
@@ -17,8 +23,6 @@
 #include "text/msg_ids.h"
 #include "edition.h"
 #include "call.h"
-
-void ActorPresentation_MoveActorToPositionAndWait();
 
 #define NULL ((void *)0)
 
@@ -111,10 +115,6 @@ struct SceneActor_02000350
 	u8	unk_14[71];
 	u8	active;
 };
-
-s32	 SceneActor_GetPositionDistance(s32 *, s32 *);
-s32	 ArcTan2(s32, s32);
-void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 value);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"

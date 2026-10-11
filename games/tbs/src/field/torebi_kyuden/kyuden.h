@@ -6,22 +6,12 @@ extern struct EventWork *gEventWork;
 
 struct OwnerState;
 
-void			   Audio_PlayCueFromEventWork(void);
-void			   Battle_ResetEffectCounter(void);
-void			   DisplayTransition_InitializeBattleEffectState(s32 first);
 void			   Engine_EventOpenScreen(void);
 void			   Engine_EventWaitForScreen(void);
-void			   Inn_PlaySleep(s32 first);
 void			   Engine_InventorySnapshotRestore(void);
-void			   Map_ClearLayerEntryFlag(s32 first);
-void			   Map_SetLayerEntryFlag(s32 value);
 void			   Engine_ActorSetDestination(s32 first, s32 second, s32 third);
 void			   Engine_CameraFollowActor(s32 id, s32 flag);
-void			   Object_LinkObjectAndSetCallback(s32 first, s32 second);
-void			   Object_RefreshSelectorById(s32 first);
-struct OwnerState *UnitGet(s32 owner);
 void			   Engine_OwnerRecalculateRatios(s32 owner);
-void			   Party_AddActiveOwner(s32 owner);
 s32				   Engine_PartyListActiveOwners(s16 *owners);
 void			   Engine_UiTextDrawQuantity(s32 first, s32 second);
 

@@ -1,5 +1,7 @@
 
 
+#include "unit/field/goma_ike/gate_placement.h"
+#include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -25,8 +27,6 @@ u8 Engine_ActorSetSpriteFlags(s32, s32);
 u8 Engine_ActorSetAnimation(s32, s32);
 
 u8 Engine_MapCopyCellAttributes(s32, s32, s32, s32, s32, s32);
-
-extern void *Object_GetById(u32);
 
 u8 *SceneData_GetPrimaryTable(void)
 {

@@ -29,7 +29,4 @@ extern struct SceneEvent	 Placement_Effects834[];
 extern struct SceneEvent	 Placement_Effects87a[];
 extern u16					 Sukureta_GateCells[];
 
-s32	 ArcTan2(s32, s32);
-void BattleFx_SetWeightedResult(s32, s32);
-
 #endif

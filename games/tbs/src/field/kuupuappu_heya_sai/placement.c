@@ -1,4 +1,7 @@
 
+#include "unit/field/kuupuappu_heya_sai/placement.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/game/character/chara.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

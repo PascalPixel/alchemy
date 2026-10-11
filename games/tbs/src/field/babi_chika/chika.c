@@ -1,3 +1,9 @@
+#include "unit/field/babi_chika/chika.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/system/scheduler/callback.h"
+
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "fieldobj.h"
 #include "types.h"
@@ -21,10 +27,6 @@
 #include "call.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-
-void Effect_AdvanceMotion();
-s32	 OverlayObject_SetYAboveLinkedActor();
-s32	 SceneActor_SetFlagBitByRelativeDepth();
 
 struct Vec
 {
@@ -133,20 +135,11 @@ extern u32 Data_0200ba74[];
 extern struct SceneEvent Data_0200bc0c[];
 extern struct SceneEvent Data_0200bef4[];
 s32		  Object_CheckMovementCollision();
-s32		  Vector_AddPolarOffset();
-s32		  Battle_GetWorkObject1e0();
-void	  BattleFx_RunRisingObjectSequence(s32, s32, s32);
 struct Record_02000ec8;
-
-s32 SceneActor_SetFlagBitByRelativeDepth();
-
-void SceneEffect_SpawnNineRadialEffects(s32 actor);
-void Effect_AdvanceMotion();
 
 extern u32 Data_0200b85c[];
 extern u16 Data_0200b3ec[];
 extern u16 Data_0200b40c[];
-s32		   OverlayObject_SetYAboveLinkedActor();
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
@@ -229,7 +222,8 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 	probe[1] = actor->y;
 	probe[2] = (actor->z & 0xfff00000) + 0x00080000;
 
-	Vector_AddPolarOffset(0x00100000, (actor->tag + 0x2000) & 0xc000, probe);
+	/* FAKEMATCH: Vector_AddPolarOffset is called as s32 (*)(); as void (*)(s32, s32, s32 *), its prototype, SceneActor_MoveActorZeroToTarget has 4 of 240 bytes different */
+	((s32 (*)())Vector_AddPolarOffset)(0x00100000, (actor->tag + 0x2000) & 0xc000, probe);
 
 	if (Object_CheckMovementCollision(actor, probe) == 1)
 	{
@@ -508,11 +502,7 @@ void BabiChika_RunLeaderSpray(void)
 }
 
 #define SceneActor_MoveActorZeroToTarget ((int (*)())SceneActor_MoveActorZeroToTarget)
-#define SceneActor_PassActorZeroOffsetPoint ((int (*)())SceneActor_PassActorZeroOffsetPoint)
-#define SceneActor_WaitValueBelowLimit ((int (*)())SceneActor_WaitValueBelowLimit)
-#define SceneState_SwapSlotPairByRank ((int (*)())SceneState_SwapSlotPairByRank)
 
-void BattleFx_StartFadeOverlay(s32 value);
 #define ACTOR_UPDATE_IDLE ((void (*)(union FieldObject *))SceneActor_SetFlagBitByRelativeDepth)
 #define ACTOR_UPDATE_PANEL ((void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor)
 
@@ -1082,7 +1072,8 @@ void FieldScene_RunMiddleSequence(void)
 		if (Object_GetById(i + 12)->sprite->priority == 3 && GameFlag_IsSet(i + 0x200) == 0)
 		{
 			Actor_Get(i + 12);
-			SceneActor_WaitValueBelowLimit();
+			/* FAKEMATCH: SceneActor_WaitValueBelowLimit is called as int (*)(); as void (*)(struct Track02001038 *), its prototype, FieldScene_RunMiddleSequence does not compile */
+			((int (*)())SceneActor_WaitValueBelowLimit)();
 			Actor_SetPosition(i + 12, 0, 0);
 			GameFlag_Set(i + 0x200);
 			break;
@@ -1730,9 +1721,6 @@ s32 FieldScene_InitializeActorGroups(void)
 }
 
 #undef SceneActor_MoveActorZeroToTarget
-#undef SceneActor_PassActorZeroOffsetPoint
-#undef SceneActor_WaitValueBelowLimit
-#undef SceneState_SwapSlotPairByRank
 
 s16 StagedActor_DirectionSteps[] = {
 	0,

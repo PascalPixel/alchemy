@@ -1,6 +1,8 @@
 #ifndef ALCHEMY_MENU_LIST_H
 #define ALCHEMY_MENU_LIST_H
 
+#include "unit/graphics/window/measure.h"
+#include "unit/system/scheduler/callback.h"
 #include "types.h"
 #include "resource.h"
 #include "callback_scheduler.h"
@@ -134,16 +136,5 @@ extern struct MenuCell *gLinkCountdownWork;
 extern volatile u32		gFrameCount;
 extern u8				Resource_FixedBlockBTiles[];
 extern const u8			Menu_AnimatedCursorTiles[];
-
-void WaitFrames(s32 frames);
-void Runtime_SetMainState19(void);
-void RenderOutput_RedrawSavedRect(struct UiWindow *window);
-s32	 UiText_CopyMessageString(s32 message, u16 *buffer, u32 count);
-void UiText_RenderWideStringAtOffset(u16 *buffer, struct UiWindow *window, s32 x, s32 y);
-void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 tile, s32 x, s32 y, u32 layer);
-void UiWork_SetParamNibble(s32 param);
-void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 value);
-s32	 Ui_FillVramBlockPattern(void);
-void Vram_CopyTile(u32 source_tile, u32 destination_tile);
 
 #endif

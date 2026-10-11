@@ -11,12 +11,7 @@
 #include "game_state.h"
 #include "battle_unit.h"
 
-void Party_RemoveActiveOwner(s32 id);
-
 void Engine_CameraFollowActor(s32 id, s32 target);
-
-void			Party_AddActiveOwner(s32 id);
-struct BtlUnit *UnitGet(s32 id);
 
 void Korosseo_SelectSoloCompetitor(s32 id)
 {

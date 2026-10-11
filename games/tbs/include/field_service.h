@@ -1,6 +1,9 @@
 #ifndef FIELD_SERVICE_H
 #define FIELD_SERVICE_H
 
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "field_event.h"
 #include "farcall.h"
 
@@ -190,28 +193,20 @@ static inline s32 Vram_Load(s32 block, s32 size, const void *data)
 	return Engine_VramLoad(block, size, data);
 }
 
-void ObjectMotion_CommitPositionAndActivate();
-
 static inline void FieldObjectMotion_CommitPositionAndActivate(s32 a0, s32 a1, s32 a2)
 {
 	ObjectMotion_CommitPositionAndActivate(a0, a1, a2);
 }
-
-void ObjectMotion_OffsetPositionAndResetMotion();
 
 static inline void FieldObjectMotion_OffsetPositionAndResetMotion(s32 a0, s32 a1, s32 a2)
 {
 	Engine_ActorSetDestinationOffset(a0, a1, a2);
 }
 
-void ObjectMotion_CenterOnColumn();
-
 static inline void FieldObjectMotion_CenterOnColumn(s32 a0, s32 a1, s32 a2)
 {
 	ObjectMotion_CenterOnColumn(a0, a1, a2);
 }
-
-void ObjectMotion_ResetAndSetPosition();
 
 static inline void FieldObjectMotion_ResetAndSetPosition(s32 a0, s32 a1, s32 a2)
 {
@@ -223,49 +218,35 @@ static inline void FieldObject_MotionSetPositionAndCommit(s32 actor, s32 x, s32 
 	Engine_ObjectMotionSetPositionAndCommit(actor, x, z);
 }
 
-s32 Scheduler_AddOrUpdateCallback();
-
 static inline s32 FieldScheduler_AddOrUpdateCallback(s32 a0, s32 a1)
 {
 	return Engine_TaskAddCallback(a0, a1);
 }
-
-void Object_SetMoveTarget();
 
 static inline void FieldObject_SetMoveTarget(s32 a0, s32 a1, s32 a2, s32 a3)
 {
 	Engine_ObjectSetPosition(a0, a1, a2, a3);
 }
 
-void SetMapCellCollision();
-
 static inline void Field_SetMapCellCollision(s32 a0, s32 a1, s32 a2, s32 a3)
 {
 	SetMapCellCollision(a0, a1, a2, a3);
 }
-
-void Map_SetWindowCellTile();
 
 static inline void FieldMap_SetWindowCellTile(s32 a0, s32 a1, s32 a2, s32 a3)
 {
 	Map_SetWindowCellTile(a0, a1, a2, a3);
 }
 
-void Motion_LaunchFromFocusedObject();
-
 static inline void FieldMotion_LaunchFromFocusedObject(s32 actor, s32 dx, s32 dz, s32 facing)
 {
 	Motion_LaunchFromFocusedObject(actor, dx, dz, facing);
 }
 
-void Object_SetTargetAndCallback();
-
 static inline void FieldObject_SetTargetAndCallback(s32 object, s32 target, const u8 *actions)
 {
 	Object_SetTargetAndCallback(object, target, actions);
 }
-
-void Vector_AddPolarOffset();
 
 static inline void FieldVector_AddPolarOffset(s32 radius, s32 heading, struct FieldPosition *probe)
 {

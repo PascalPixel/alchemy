@@ -1,3 +1,9 @@
+#include "unit/field/takara_shima/shima.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "field.h"
 #include "menu.h"
@@ -19,9 +25,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-void InitializeSwayingSceneObject();
-void SpawnRadialEffectBurst();
 
 struct Sprite
 {
@@ -225,9 +228,6 @@ struct Owner
 	u8 unk9_4 : 4;
 };
 
-void Party_SetFields1ceAnd1d0(s32 arg0, s32 arg1);
-void BattleFx_SetWeightedResult(s32 arg0, s32 arg1);
-
 union GameStateRows
 {
 	s16 halves[512][1];
@@ -345,7 +345,8 @@ void InitializePrologueSceneState(void)
 
 	Engine_EventBegin();
 	base = (u8 *)&gGameState;
-	Party_SetFields1ceAnd1d0(*(s16 *)(base + 448), 5);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, InitializePrologueSceneState is 4 bytes shorter */
+	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)(*(s16 *)(base + 448), 5);
 	base[555] = 3;
 	BattleFx_SetWeightedResult(84, 5);
 	Engine_EventEnd();
@@ -481,7 +482,8 @@ s32 Scene_Initialize(void)
 		{
 			return 0;
 		}
-		InitializeSwayingSceneObject(8);
+		/* FAKEMATCH: InitializeSwayingSceneObject is called as void (*)(); as void (*)(void), its prototype, Scene_Initialize does not compile */
+		((void (*)())InitializeSwayingSceneObject)(8);
 		return 0;
 	}
 	first = (s32)&SceneId_TakaraShima6;
@@ -617,7 +619,8 @@ void TakaraShima_RunAreaEntry(void)
 	if (Engine_GameFlagIsSet(gGameState.scene + (0x8c8 - (s32)&SceneId_TakaraShima6)) == 0)
 	{
 		Engine_EventBegin();
-		Party_SetFields1ceAnd1d0(gGameState.scene, 5);
+		/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, TakaraShima_RunAreaEntry is 4 bytes shorter */
+		((void (*)(s32, s32))Party_SetFields1ceAnd1d0)(gGameState.scene, 5);
 		((u8 *)((s16(*)[1]) & gGameState))[0x22b] = 3;
 		switch (gGameState.scene - (s32)&SceneId_TakaraShima6)
 		{

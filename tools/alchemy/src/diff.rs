@@ -1222,7 +1222,7 @@ mod tests {
             assert!(steps[1].contains(&flag), "{flag}");
         }
         assert!(!steps[2].iter().any(|flag| flag == "-mthumb"));
-        let library = root().join("games/tbs/src/sound/music_track_operate_work_byte.c");
+        let library = root().join("games/tbs/src/sound/engine.c");
         assert!(arm_steps(target, &library, &object).is_err());
         let tla = decomp_target(Some("tla-en")).unwrap();
         let tla_source = root().join("recon/tla/en/main/08000000.c");

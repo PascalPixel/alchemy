@@ -18,9 +18,5 @@ extern struct SceneEvent	 gRariberoHeyaEvents[];
 extern struct SceneEvent	 gRariberoHeyaEvents9a7[];
 
 void Engine_ResetSceneEffectCounter(void);
-void Owner_RefreshActiveRatios();
-void FieldScene_RunSecondaryScript();
-
-void FieldScene_RunPrimaryScript(void);
 
 #endif

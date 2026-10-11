@@ -104,15 +104,4 @@ struct StagedActorProbePoint
 
 typedef char StagedActorProbePoint_size[sizeof(struct StagedActorProbePoint) == 0x0c ? 1 : -1];
 
-s32					FixedPoint_Distance(s32 *first_position, s32 *second_position);
-struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *self);
-void				StagedActor_AdvancePair(void);
-s32					StagedActor_FillGridAttributeRectangle(
-	u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
-s32	 StagedActor_StopBlockedMotion(struct StagedActor *actor);
-u8	*FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint);
-s32	 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
-void SceneActor_MoveAndRedraw(struct StagedActorProbe probe);
-s32	 FieldScene_RedrawActorFootprint(s32 id);
-
 #endif

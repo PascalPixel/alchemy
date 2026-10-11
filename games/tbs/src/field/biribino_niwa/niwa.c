@@ -1,3 +1,7 @@
+#include "unit/field/biribino_niwa/niwa.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -18,11 +22,6 @@
 #include "objcmd.h"
 
 extern struct EventWork *gEventWork;
-
-void FieldScene_OpenGate();
-
-void InitializeOrbitingSceneEntity();
-void BiribinoNiwa_RunGardenScene();
 
 s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
 {

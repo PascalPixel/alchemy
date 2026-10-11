@@ -1,3 +1,7 @@
+#include "unit/field/toreto_eda/eda.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -49,8 +53,6 @@ static u8  sTransferData[0x60];
 static s32 sSplitLine;
 static u16 sHofsAbove;
 static u16 sHofsBelow;
-
-void BattleFx_SetPhaseRequest(s32, s32);
 
 void State_SetActorEightValue3d(void)
 {

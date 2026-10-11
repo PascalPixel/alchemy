@@ -1,3 +1,8 @@
+#include "unit/field/mogoru_mori/mori.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
+
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "fieldobj.h"
 #include "mapcopy.h"
@@ -74,50 +79,9 @@ void Engine_EventWait(s32 frames);
 void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
 void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
 void Engine_ActorSetAnimation(s32 actor, s32 mode);
-void BattleFx_SetPhaseRequest(s32 a, s32 b);
-void BattleFx_SetWeightedResult();
 u8	*AllocateEffectTransfer(s32, s32);
-void MogoruMori_SpawnPuffRing(s32 id);
 
 extern u32 MogoruMori_SceneTable[];
-
-void OverlayObject_SetOwnerMode(u8 *object, s32 mode);
-u8	*OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind);
-u8	*OverlayObject_SpawnConfiguredWithMode15(s32 x, s32 y, s32 z, s32 kind);
-void SceneState_SetValue18Mode2(void);
-s32	 SceneActor_TryRunSlotZeroMoveStep(s16 *arg);
-s32	 MogoruMori_CopyTimerToChild(s32 a);
-s32	 OverlayObject_ApplyZero(s32 a);
-void MogoruMori_HopActorTo(s32 a0, s32 a1, s32 a2, s32 a3);
-void FieldScene_RunSixCallSetupSequence(s32 no, s32 val);
-
-s32 SceneData_ReturnZero(void);
-u8 *MogoruMori_GetExits(void);
-
-void SceneActor_PassOffsetPointOfActorZero(void);
-void SceneActor_BobActorZeroWhenAheadClear(void);
-void FieldScene_RunScriptedSteps0And17E6(void);
-void FieldScene_RunActor10WaypointSequence(void);
-void FieldScene_RunActorElevenPresentationBeat(void);
-void SceneActor_RunActorTwelveThreeWaypointMotion(void);
-void MogoruMori_AwardHiddenNut(s32 a);
-void FieldScene_RunProbedActorEightOrTenScene(void);
-void SceneState_ApplyCrossRectsAroundActor11(void);
-void FieldScene_RunActorThirteenPresentationBeat(void);
-void MogoruMori_TransferActorFourteen(void);
-void SceneActor_RunActorFourteenFourWaypointMotion(void);
-void SceneActor_BobActorZeroWhenTargetClear(void);
-void SceneActor_MarkActorThirteenTileAndPark(void);
-void FieldScene_RunSupplementalSequenceOne(void);
-void FieldScene_RunScene39fSequenceA(void);
-void FieldScene_RunSlot16WaypointSequence(void);
-void FieldScene_RunActor17CameraSequence(void);
-void MogoruMori_TransferActorEighteen(void);
-void FieldScene_RunActorEighteenEffectSequence(void);
-void MogoruMori_RunActorEighteenEscape(void);
-
-s32	 UpdateOrbitingSceneObject(s32 *p);
-void InitializeOrbitingEffect(s32 id);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
@@ -186,16 +150,8 @@ struct Vec
 	s32 z;
 };
 
-void FieldScene_RunSixCallSetupSequence();
-void MogoruMori_HopActorTo();
-
-void MogoruMori_SpawnPuffRing();
-void Party_SetFields1ceAnd1d0();
-
 extern struct EventWork *gEventWork;
 void					 Engine_TaskWait();
-void					 InitializeOrbitingEffect();
-void					 FieldScene_RunSupplementalSequenceOne();
 
 void SceneState_SetValue18Mode2(void)
 {
@@ -1217,7 +1173,8 @@ void MogoruMori_RunClosingChoreography(void)
 	}
 	Engine_EventWait(10);
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_MogoruMori3, 15);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, MogoruMori_RunClosingChoreography is 4 bytes longer */
+	((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_MogoruMori3, 15);
 	BattleFx_SetWeightedResult(53, 1);
 	Engine_EventEnd();
 }

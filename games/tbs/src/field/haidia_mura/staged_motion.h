@@ -176,36 +176,7 @@ extern s32 gHaidiaMuraPairTableC[];
 extern s32 gHaidiaMuraPairTableD[];
 extern s32 gDustBurstScript[];
 
-void Object_RefreshSelectorById();
-s32	 Object_SetActionCallbackAndRefreshById();
-void Graphics_EnableObjLayerAndCallbacks();
-void ObjectDispatch_StopCallbacksAndHideLayers();
-void UiText_ShowCenteredMessage();
-void Audio_PlayCueFromEventWork();
 void Engine_ObjectSetPosition();
-void HaidiaMura_MoveActorAlongLowerZPath(
-	s32 actor, s32 animation, s32 next_animation, s32 grounded);
-void HaidiaMura_OpenVillagerLane(void);
-s32	 SceneActor_RunStep18WhenTargetSet();
-void HaidiaMura_MoveActorAlongHigherZPath(
-	s32 actor, s32 animation, s32 next_animation, s32 grounded);
-void FieldScene_RunStep8C();
-void SceneState_SetValue0ThenCall();
-void FieldScene_RunStep17();
-void SceneState_SetValue1ThenCall();
-void FieldScene_RunStep9();
-void Effect_ConfigureSpawnedParticle(struct SourceEntity *source);
-void SceneState_SetValue24ThenCall();
-void SceneState_SetValue25ThenCall();
-void Effect_PlayStepSound();
-void Vector_AddPolarOffset(s32, s32, s32 *);
-void BattleEffect_CleanupSceneObjects(void);
-s32	 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32 range, s32 force);
-void InitializeStagedActorSceneOrbitingEffect(s32 id);
-void WorldMap_CreateLinkedEffects(void *object);
 extern void *gEffectWork;
-s32	 SceneEffect_UpdateOrbitPosition(s32 *p);
-
-void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z);
 
 #endif

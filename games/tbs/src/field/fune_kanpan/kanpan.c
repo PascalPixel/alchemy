@@ -1,3 +1,8 @@
+#include "unit/field/fune_kanpan/kanpan.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -20,13 +25,6 @@
 #include "objcmd.h"
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
-
-void FieldScene_CallPairWith10(s32 actor, s32 facing);
-void FuneKanpan_AnnouncePreparationsReady();
-void FuneKanpan_OpenFirstDoor();
-void FuneKanpan_OpenSecondDoor();
-void FuneKanpan_RunRobinTalk(void);
-void OverlayObject_DecayFields24And28();
 
 #ifdef ALCHEMY_FIELD_EVENT_H
 #endif
@@ -291,25 +289,6 @@ struct FlyBy
 };
 
 extern struct EventWork *gEventWork;
-void					 ObjectMotion_SetSpeedParameters();
-
-void Battle_ResetEffectCounter();
-void FieldScene_RunStepThen10(s32 a);
-
-void Event_CallWithLastActiveObjectId();
-
-void FieldScene_RunStepThen10();
-void Graphics_EnableObjLayerAndCallbacks();
-void ObjectDispatch_StopCallbacksAndHideLayers();
-void UiText_ShowCenteredMessage();
-void Object_RefreshSelectorById();
-void Ui_SetRenderResultFromObject();
-void Object_SetActionCallbackAndRefreshById();
-void Party_SetFields1ceAnd1d0();
-void BattleFx_SetWeightedResult();
-
-void FieldScene_RunStepThen10(s32 actor);
-void Object_RefreshSelectorById(s32 actor);
 
 struct MapLayer
 {
@@ -1862,7 +1841,8 @@ void FuneKanpan_RunJumpScene(void)
 	gGameState.saved_scene = (s32)&SceneId_FuneHeya;
 	gGameState.saved_entrance = 30;
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_FuneKanpan, 16);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, FuneKanpan_RunJumpScene is 2 bytes longer */
+	((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_FuneKanpan, 16);
 	BattleFx_SetWeightedResult(62, 3);
 	Engine_EventEnd();
 }
@@ -2163,7 +2143,8 @@ scene:
 		Engine_ActorEnableActionCallback(actor, FuneKanpan_RosterActions);
 	}
 
-	Object_RefreshSelectorById(actor);
+	/* FAKEMATCH: Object_RefreshSelectorById is called as void (*)(s32); as void (*)(u32), its prototype, FieldScene_RunPartyRosterScene has 23 of 1228 bytes different */
+	((void (*)(s32))Object_RefreshSelectorById)(actor);
 	Engine_EventWait(40);
 	Engine_ActorSetPosition(0, 216 << 16, 146 << 18);
 	Engine_TaskWait(1);
@@ -2317,8 +2298,6 @@ void OverlayObject_ActivateSlotWithMode3(s32 a)
 	}
 }
 
-#define ObjectVisual_CopyAttributes ((void (*)(s32, s32))ObjectVisual_CopyAttributes)
-
 u32 FuneKanpan_SlotMode[8];
 
 struct SlotSprite
@@ -2327,7 +2306,6 @@ struct SlotSprite
 	s16 unknown_1c;
 	s16 tilt;
 };
-void FieldScene_RunStepThen10(s32 step);
 
 void FuneKanpan_ChooseSlotModes(void)
 {

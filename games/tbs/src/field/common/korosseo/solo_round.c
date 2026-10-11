@@ -5,9 +5,6 @@
 #include "field_event.h"
 #include "game_state.h"
 
-void GameFlag_SetByte(s32, s32);
-void Korosseo_SelectSoloCompetitor(s32 id);
-
 void Korosseo_FinishSoloRound(s32 id)
 {
 	struct EventWork  *work;

@@ -1,3 +1,5 @@
+#include "unit/graphics/palette/tint.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -24,8 +26,6 @@
 #include "heap_state.h"
 #include "scene.h"
 #include "global_cells.h"
-
-#define Graphics_TransformSmallPalette ((s32 (*)())Graphics_TransformSmallPalette)
 
 struct IntroSprite
 {
@@ -55,8 +55,6 @@ struct IntroWork
 		} prompt;
 	} area;
 };
-
-s32 Resource_DecodeByteLz(const void *source, void *destination);
 
 extern u8 gDebugPaused;
 
@@ -295,7 +293,8 @@ s32 Title_ShowIntro(s32 prompt)
 	gCpuLoadDisplayEnabled = result;
 	Title_LoadIntroBackgrounds();
 	TitlePalette_InitializeBuffers();
-	Graphics_TransformSmallPalette(2, 0);
+	/* FAKEMATCH: Graphics_TransformSmallPalette is called as s32 (*)(); as void (*)(s32, s32), its prototype, Title_ShowIntro has 4 of 1152 bytes different */
+	((s32 (*)())Graphics_TransformSmallPalette)(2, 0);
 	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0xf740, 0x20000);
 	Graphics_UpdatePaletteInterpolation(60);
 	Scheduler_AddOrUpdateCallback(Title_PlaceIntroSprites, 0x480);
@@ -637,8 +636,6 @@ s32 Title_ShowAnimatedSplash(void)
 void Graphics_NoOpColor(void)
 {
 }
-
-#undef Graphics_TransformSmallPalette
 
 //--------------------------------------------------------------------------
 

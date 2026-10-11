@@ -1,3 +1,5 @@
+#include "unit/menu/shop/sell.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -42,7 +44,6 @@ struct ObjectRuntime *Object_GetByIdFar(s32 id);
 void				  UiWork_FinalizeFar(s32 window, s32 style);
 void				  UiWork_PushValueSlotFar(s32 value, s32 slot);
 void PsynergyMenu_InitializeEntryObjectsFar(s32 window, s32 column, s32 row, s32 height, s32 flags);
-void Vector_AddPolarOffset(s32, s32, s32 *);
 
 extern struct EventRuntime *gEventWork;
 

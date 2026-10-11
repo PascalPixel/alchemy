@@ -1,6 +1,8 @@
 #ifndef ALCHEMY_CHARACTER_MENU_H
 #define ALCHEMY_CHARACTER_MENU_H
 
+#include "unit/graphics/window/measure.h"
+#include "unit/menu/item/item.h"
 #include "types.h"
 #include "global_cells.h"
 #include "layout_guard.h"
@@ -86,26 +88,5 @@ enum CharacterAilment
 	CHARACTER_HAUNT,
 	CHARACTER_AILMENT_COUNT
 };
-
-s32	 Menu_OpenCharacterSelector(void);
-s32	 CharacterSelector_Run(void);
-s32	 CharacterSelector_RunRearrange(void);
-s32	 CharacterSelector_MoveEntry(s32 selected, s32 direction);
-s32	 CharacterMenu_SelectOwner(s32 slot);
-s32	 CharacterMenu_SelectCommand(void);
-s32	 Menu_RunActionFlow(void);
-void Menu_InitSelectorCursorAndEntries();
-void Menu_CreateWindowAndEntryObjects(s32 owner, s32 page);
-void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 owner, s32 mode);
-s32	 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 owner);
-void CharacterMenu_DrawSelectionCursor(s32 pane, s32 selected, u8 *entries, s32 invert);
-void CharacterMenu_DrawSelectionLabels(s32 window, s32 selected, const u8 *entries);
-void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *window, s32 variant, s32 preserve);
-void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode);
-void Render_SetTilemapFlagRect(
-	const struct UiWindow *window, s32 x, s32 y, s32 width, s32 height, u32 attributes);
-s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
-s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *old_slots,
-	const struct OwnerActionSlot *new_slots, u16 *out, s32 *gained, s32 *lost);
 
 #endif

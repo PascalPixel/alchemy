@@ -1,3 +1,9 @@
+#include "unit/field/kuupuappu_heya/heya.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/battle/tgtexec.h"
+#include "unit/field/common/script/script.h"
+#include "unit/game/character/chara.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -26,44 +32,10 @@
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 
-void FieldScene_ConfigurePairedActors(void);
-void FieldScene_RunLateSequence();
-void FieldScene_RunSplitTripleSteps();
-void KuupuappuHeya_OpenWindowTransition();
-void KuupuappuHeya_RunBranchingDialogueScene();
-void KuupuappuHeya_RunVaultEvent();
-void OverlayObject_ConfigureObject22WithResource17();
-void RunDialoguePromptScene();
-void RunEventScript01();
-void SceneActor_SetModeZeroAndValue();
-void SceneActor_SetPairZeroAndValue();
-void SceneEffect_ApplyPairWithValue141();
-void SceneEffect_ApplyThreeValuesAndFinish();
-void SceneState_SetValue2ThenFinish();
-void Scene_JoinRodSearch();
-
-#define Object_SetMoveTarget ((void (*)(s32, s32, s32, s32))Object_SetMoveTarget)
-
 #define FieldScene_PrepareActors ((void (*)(const struct ScenePlacement *))FieldScene_PrepareActors)
 
 s32	 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPosition *position);
 void Object_SetMode(struct FieldActor *object, s32 mode);
-
-s32	 PartyInventory_HasSpace(void);
-void BattleEffect_CleanupSceneObjects(void);
-void Audio_PlayCueFromEventWork();
-void Object_RefreshSelectorById();
-void Object_RefreshSelectorById(s32);
-s32	 ArcTan2();
-void Ui_SetBank15PaletteAndClearRenderMode();
-void Map_SetViewBounds();
-u8	*UnitGet(s32);
-void Djinn_Transfer(s32, s32, s32, s32);
-
-void Object_SetModeById(s32, s32, s32);
-void ObjectMotion_WaitForAnimationChange(s32);
-void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
-void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 
 enum PromptMessage
 {
@@ -116,9 +88,6 @@ enum PromptMessage
 	MSG_WANT_MORE_BONES = 0x1385,
 	MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
-
-void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
-void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -649,11 +618,6 @@ void KuupuappuHeya_RunActor25Response(void)
 #define Engine_ObjectSetPosition ((void (*)(s32, s32, s32, s32))Engine_ObjectSetPosition)
 #define Engine_ActorLookup ((struct Rec_383b * (*)()) Engine_ActorLookup)
 
-void Event_PrepareObjectAndApplyValue();
-void Party_SetFields1ceAnd1d0();
-void Event_SetDefeatDestination();
-void BattleFx_SetWeightedResult();
-
 #define RATIO_HI 52428
 #define RATIO_LO 26214
 
@@ -670,14 +634,6 @@ struct ActorFlags
 	u8 pad[89];
 	u8 flags;
 };
-void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
-void Event_SetDefeatDestination(s32 scene, s32 entrance);
-void BattleFx_SetWeightedResult(s32 first, s32 second);
-u8	*UnitGet(s32 owner);
-void Djinn_Transfer(s32 owner, s32 djinn, s32 element, s32 flags);
-
-s32	 BattleFx_PlayCueAndStartEmitterOnTarget();
-void Party_RemoveOwnerRestored();
 
 struct Stop
 {
@@ -1337,8 +1293,10 @@ void FieldScene_RunVaultClosingSequence(void)
 	GameFlag_Set(2132);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	base = (s32)&SceneId_KuupuappuHeya;
-	Party_SetFields1ceAnd1d0(base, 17);
-	Event_SetDefeatDestination(base, 16);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, FieldScene_RunVaultClosingSequence is 6 bytes longer */
+	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)(base, 17);
+	/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, FieldScene_RunVaultClosingSequence is 4 bytes longer */
+	((void (*)(s32, s32))Event_SetDefeatDestination)(base, 16);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(12, 5);
 	Engine_EventEnd();
@@ -1891,7 +1849,8 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 			Actor_SetPosition(18, 0x2380000, 0x2880000);
 			((void (*)())Engine_ActorEnableActionCallback)(18, 1);
 			Actor_FaceDirection(18, 0x4000, 0);
-			OverlayObject_ConfigureObject22WithResource17(231, 0x2380000, 0x100000, 0x2a00000);
+			/* FAKEMATCH: OverlayObject_ConfigureObject22WithResource17 is called as void (*)(); as void (*)(s32), its prototype, KuupuappuHeya_ApplyEntryState does not compile */
+			((void (*)())OverlayObject_ConfigureObject22WithResource17)(231, 0x2380000, 0x100000, 0x2a00000);
 			((void (*)())Engine_TaskAddCallback)((s32)SceneState_SetFlagByActorPosition, 0xc80);
 		}
 		else if (Engine_GameFlagIsSet(0x853) != 0)
@@ -2106,8 +2065,10 @@ void KuupuappuHeya_RunVaultEvent(void)
 	SceneEffect_ApplyThreeValuesAndFinish(10, 4, 20);
 	Event_ShowMessage(10, 0);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_KuupuappuHeya, 17);
-	Event_SetDefeatDestination((s32)&SceneId_KuupuappuHeya, 16);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, KuupuappuHeya_RunVaultEvent is 6 bytes longer */
+	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_KuupuappuHeya, 17);
+	/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, KuupuappuHeya_RunVaultEvent is 4 bytes longer */
+	((void (*)(s32, s32))Event_SetDefeatDestination)((s32)&SceneId_KuupuappuHeya, 16);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(12, 5);
 }

@@ -1,3 +1,7 @@
+#include "unit/field/goma_suiro/suiro.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "configured_effect_spawn.h"

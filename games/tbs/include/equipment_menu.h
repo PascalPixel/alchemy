@@ -1,9 +1,7 @@
 #ifndef ALCHEMY_EQUIPMENT_MENU_H
 #define ALCHEMY_EQUIPMENT_MENU_H
 
+#include "unit/menu/item/item.h"
 #include "types.h"
-
-void EquipmentMenu_UpdateCompatibilityIndicators(void);
-void EquipmentMenu_StartCompatibilityIndicators(void);
 
 #endif

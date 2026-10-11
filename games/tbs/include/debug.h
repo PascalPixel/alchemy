@@ -3,6 +3,8 @@
 
 /* DEBUG */
 
+#include "unit/battle/effect/slots.h"
+#include "unit/battle/tgtexec.h"
 #include "types.h"
 #include "edition.h"
 #include "farcall.h"
@@ -21,14 +23,10 @@ extern char			   gItemLevelPsyHelp[12];
 extern char			   gItemLevelPsyPrompt[8];
 extern const s16	   Portrait_SpriteMap[];	// 2 entries a row: key, id
 extern const s16	   Portrait_CharacterMap[]; // 2 entries a row: key, id
-void				   BattleMap_ApplyEntranceView(void);
-void				   Debug_RunPaletteEditor(void);
-void				   DebugBattle_ViewMessages(void);
 void				   Engine_DebugClearWindow(struct RenderInput *window);
 void				   Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 u8					  *Engine_DebugGetAbility(s32 ability);
 struct ItemDefinition *Engine_DebugGetItem(s32 item);
 void				   Engine_DebugRedrawWindow(struct RenderInput *window);
-s32					   Object_GetTriggerTileAheadOfCurrent(void);
 
 #endif

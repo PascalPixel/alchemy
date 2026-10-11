@@ -1,3 +1,9 @@
+#include "unit/field/haidia_ie/ie.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/game/character/chara.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -95,7 +101,8 @@ void Scene_CheckPsynergyStone(void)
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgHaidiaCheckedThePsynergyStone, 1);
 	Engine_AudioPlayCue(126);
-	BattleParty_ApplyDrain(0x3e7, 0);
+	/* FAKEMATCH: BattleParty_ApplyDrain is called as void (*)(s32, s32); as void (*)(s32), its prototype, Scene_CheckPsynergyStone does not compile */
+	((void (*)(s32, s32))BattleParty_ApplyDrain)(0x3e7, 0);
 	Engine_EventWait(10);
 	Engine_MessageShowCentered((s32)MsgHaidiaPartyPpRestored, 1);
 	UiWork_FinalizePendingCore();
@@ -494,9 +501,6 @@ void SceneState_ApplyFlag90d(void)
 
 s32 HaidiaIe_RestoreEntryState(void)
 {
-	void HaidiaIe_RunActorPairEffectScene();
-	void SceneState_SetValues352_365_2116_2117_40();
-	void Scene_RunExtendedActorSequence();
 
 	u32 i;
 	s32 record;
@@ -933,8 +937,10 @@ void FieldScene_RunGroupChoreography(void)
 	{
 		const void *message = &SceneId_HaidiaIe;
 
-		Party_SetFields1ceAnd1d0(message, 19);
-		Event_SetDefeatDestination(message, 19);
+		/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as s32 (*)(const void *, s32); as void (*)(u16, u16), its prototype, FieldScene_RunGroupChoreography is 6 bytes longer */
+		((s32 (*)(const void *, s32))Party_SetFields1ceAnd1d0)(message, 19);
+		/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(const void *, s32); as void (*)(u16, u16), its prototype, FieldScene_RunGroupChoreography is 4 bytes longer */
+		((void (*)(const void *, s32))Event_SetDefeatDestination)(message, 19);
 	}
 	BattleFx_SetWeightedResult(12, 4);
 	Engine_GameFlagSet(0x11a);
@@ -1176,7 +1182,8 @@ void Scene_RunExtendedActorSequence(void)
 	Engine_EventWait(10);
 	Camera_SetSpeed(0x26666, 0x4ccc);
 	v6 = 0;
-	Battle_GetWorkObject1e0()->motion_flags = v6;
+	/* FAKEMATCH: Battle_GetWorkObject1e0 is called as struct FieldActor *(*)(void); as s32 (*)(void), its prototype, Scene_RunExtendedActorSequence does not compile */
+	((struct FieldActor *(*)(void))Battle_GetWorkObject1e0)()->motion_flags = v6;
 	Camera_MoveTo(0xd70000, 0x100000, 0x3210000, 1);
 	Engine_EventWait(10);
 	Engine_ActorEnableActionCallback(12, (s32)Data_0200ad74);

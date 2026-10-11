@@ -1,3 +1,7 @@
+#include "unit/field/common/script/script.h"
+#include "unit/field/common/object/update.h"
+#include "unit/graphics/tile/vertices.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -132,8 +136,6 @@ dispatch:
 		goto back_reference;
 	return start;
 }
-
-#define Animation_SetWorkEntry ((void (*)(void *, s32))Animation_SetWorkEntry)
 
 #define gMenuCtrlWork ((void *(*)) & gMenuCtrlWork)
 #define Render_DecodeFrame ((const u8(*)) & Render_DecodeFrame)
@@ -713,7 +715,6 @@ void ObjectGroup_SetChildValueUnlessFifteen(void *raw_parent, u32 value)
 	}
 }
 
-#undef Animation_SetWorkEntry
 #undef gMenuCtrlWork
 
 struct ResourceSlotNumber
@@ -1207,8 +1208,6 @@ typedef char ResourceObjectWork_size[sizeof(struct ResourceObjectWork) == 56 ? 1
 
 extern struct AnimationObject *gSpriteObjects;
 
-s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
-
 //--------------------------------------------------------------------------
 // アニメ id のスプライトオブジェクトを作る
 // あいている 64 個のオブジェクトの 1 つと VRAM キャッシュを使う
@@ -1400,10 +1399,6 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt)
 extern struct ObjectRuntime *gObjectSlots;
 
 extern struct ObjectSystemWork *gMenuCtrlWork;
-
-void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-s32	 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
-s32	 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
 
 //--------------------------------------------------------------------------
 // 絵を 1 ドットずつ消す処理の 1 回分
@@ -2137,8 +2132,6 @@ struct FixedCamera
 
 extern u8 Render_DecodeFrame[];
 
-s32 ArcTan2(s32 x, s32 y);
-
 //--------------------------------------------------------------------------
 // 毎フレーム：オブジェクトの絵を画面に置く（ふつうのカメラ）
 // 画面のまわりにいるオブジェクトは、足もとのセルからレイヤーと優先度を決めて
@@ -2447,7 +2440,6 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object)
 typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
 
 extern ScriptCommandFn ScriptObject_CommandTable[];
-s32					   ArcTan2(s32, s32);
 
 static __inline__ s32 Square(s32 value)
 {
@@ -2456,7 +2448,6 @@ static __inline__ s32 Square(s32 value)
 
 void Object_UpdateAllThumb(void)
 {
-	s32								Map_GetTerrainHeight(s32, s32, s32);
 	struct ScriptMotionObject	   *obj;
 	const struct ScriptMotionWords *script;
 	s32								cnt;
@@ -2809,9 +2800,6 @@ void Object_SetPositionAndResetMotion(struct ObjectRuntime *obj, s32 x, s32 y, s
 	obj->velocity_y = 0;
 	obj->velocity_z = 0;
 }
-
-void ObjectDispatch_ApplyArgumentToChildren(void *, s32);
-void Object_SetPositionAndResetMotion(struct ObjectRuntime *, s32, s32, s32);
 
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
 {
@@ -3492,7 +3480,6 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj)
 
 extern u8 IwramSqrt[];
 s32		  _call_via_r3(s32, s32, s32, s32);
-void	  ObjectDispatch_ApplyArgumentToChildren(void *object, s32 argument);
 
 s32 Object_ApproachLinkedObject(struct ObjectRuntime *object)
 {
@@ -3529,10 +3516,6 @@ s32 Object_ApproachLinkedObject(struct ObjectRuntime *object)
 	ObjectDispatch_ApplyArgumentToChildren(object, 1);
 	return 0;
 }
-
-u32	 Random16(void);
-void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
-s32	 ArcTan2(s32 y, s32 x);
 
 s32 Object_Wander(struct ScriptObjectRuntime *object)
 {
@@ -4467,8 +4450,6 @@ struct WorldMapSprite
 	u8				  *shadow;
 };
 #define gDebugMode (*(volatile u8(*)) & gDebugMode)
-void	  ObjectDispatch_ApplyArgumentToChildren(void *object, s32 value);
-s32		  AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
 void	  AudioCommand_PlayFar(s32 cue);
 extern u8 ResourceBlockOwners[];
 
@@ -5117,7 +5098,6 @@ s32 Field_CheckConfiguredKeysAndCount(void *work)
 
 s32 Object_MoveByKeys(struct ObjectRuntime *object)
 {
-	s32					 Map_GetTerrainHeight(u32 layer, s32 x, s32 z);
 	struct FieldPosition pos;
 	u8					 unused[68];
 	struct MapCell		*from;
@@ -5343,8 +5323,6 @@ void Tilemap_ConvertBuffer(void)
 	MemFree(saved);
 }
 
-#define Scheduler_AddOrUpdateCallback ((void (*)(void (*)(void), s32))Scheduler_AddOrUpdateCallback)
-
 static __inline__ void CopyCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
 	/* FAKEMATCH: needed to match: helper scope gives each cell its own table-pointer lifetime. */
@@ -5565,7 +5543,8 @@ s32 Map_LoadLayeredScene(s32 index)
 	REG_BLDCNT = cnt;
 	cnt = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
 	REG_DISPCNT = cnt;
-	Scheduler_AddOrUpdateCallback(Map_UpdateLayerScroll, 0xc85);
+	/* FAKEMATCH: Scheduler_AddOrUpdateCallback is called as void (*)(void (*)(void), s32); as s32 (*)(SchedulerCallback, s32), its prototype, Map_LoadLayeredScene has 6 of 868 bytes different */
+	((void (*)(void (*)(void), s32))Scheduler_AddOrUpdateCallback)(Map_UpdateLayerScroll, 0xc85);
 	return 2;
 }
 
@@ -6267,8 +6246,6 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 	}
 }
 
-#undef Scheduler_AddOrUpdateCallback
-
 void Map_SetWorkFlagBits9To11(u32 v)
 {
 	struct MapState *state = gMapWork[0];
@@ -6296,8 +6273,6 @@ typedef s32 (*RatioFn)(s32, s32);
 typedef s32 (*PlaneFn)(void *camera, s32 *position, void *lines, void *out);
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
-
-s32 Resource_DecodeByteLz(const void *source, void *destination);
 
 struct WorldCell
 {
@@ -6652,9 +6627,6 @@ void MapAnimation_ApplyAffineFrame(void)
 	REG_DISPCNT = control;
 	work->window_pending = 0;
 }
-
-#define Camera_StoreSceneParameters ((void (*)(s32, s32, s32))Camera_StoreSceneParameters)
-#define SceneTransform_ApplyPosition ((void (*)(s32 *))SceneTransform_ApplyPosition)
 
 static __inline__ void CopyEntry(u8 *map, u8 *destination)
 {
@@ -7536,10 +7508,6 @@ s32 Curve_GetFirstSampleC(const s8 *samples)
 	return samples[0] << CURVE_VALUE_SHIFT;
 }
 
-#undef Scheduler_AddOrUpdateCallback
-
-#define Render_ApplyProjectedPlacement ((int (*)())Render_ApplyProjectedPlacement)
-
 typedef s32 (*TerrainHeightFn)(u8 *heights, s32 x, s32 y);
 
 extern TerrainHeightFn Map_TerrainHeightFunctions[16];
@@ -7888,9 +7856,6 @@ struct IconColumn
 	s8	param;
 };
 
-s32 RuntimeDispatch_ReturnZero();
-s32 ResourceMetadata_Register(struct AnimationObject *, s32);
-
 void Ui_RunIconMonitor(void)
 {
 	struct IconColumn		  ent[4];
@@ -8219,12 +8184,14 @@ next:
 			Scheduler_ResetTaskTable();
 			if ((*held & KEY_B) != 0)
 			{
-				RuntimeDispatch_ReturnZero(
+				/* FAKEMATCH: RuntimeDispatch_ReturnZero is called as s32 (*)(); as s32 (*)(void), its prototype, Ui_RunIconMonitor does not compile */
+				((s32 (*)())RuntimeDispatch_ReturnZero)(
 					(s32)&ResourceId_ResourceFarCalls, FarCall_ResourceTable);
 			}
 			else
 			{
-				RuntimeDispatch_ReturnZero(
+				/* FAKEMATCH: RuntimeDispatch_ReturnZero is called as s32 (*)(); as s32 (*)(void), its prototype, Ui_RunIconMonitor does not compile */
+				((s32 (*)())RuntimeDispatch_ReturnZero)(
 					(s32)&ResourceId_ResourceFarCallsAlternate, FarCall_ResourceTable);
 			}
 			goto restart;
@@ -8260,7 +8227,6 @@ s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step)
 }
 
 extern s32 gFrameTick;
-#define Vector_AddPolarOffset ((void (*)(s32 radius, s32 angle, s32 * point)) Vector_AddPolarOffset)
 
 void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
 {
@@ -8514,5 +8480,3 @@ void Battle_PlaceActorsByFormationKind(void)
 	}
 }
 
-#undef Render_ApplyProjectedPlacement
-#undef Vector_AddPolarOffset

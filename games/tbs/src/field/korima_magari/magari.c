@@ -1,3 +1,9 @@
+#include "unit/field/korima_magari/magari.h"
+#include "unit/field/common/map/panel.h"
+#include "unit/field/common/korima/palette.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -19,11 +25,6 @@
 #include "irq.h"
 #include "text/msg_ids.h"
 #include "field_scene.h"
-
-void KorimaMagari_PlaceObjects();
-void Scene_RepaintBoardRecords();
-
-#define Scene_PushBlockAlongRun ((void (*)(s16 *))Scene_PushBlockAlongRun)
 
 s32 Math_DivideSigned();
 
@@ -65,13 +66,7 @@ void KorimaMagari_TryJumpForward(void)
 	Field_TryJumpForward();
 }
 
-#undef Scene_PushBlockAlongRun
-
-#define ObjectDispatch_InitFromTable4WithArgument \
-	((void (*)(s32, struct FieldActor *))ObjectDispatch_InitFromTable4WithArgument)
-
 extern u8 gBgScroll[];
-s32		  Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 struct IcePlacement
 {
@@ -93,12 +88,8 @@ struct TileRun2
 	struct FieldActor *object;
 };
 
-void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *point);
 void Engine_ObjectSetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
 void Object_CommitPosition(struct FieldActor *object);
-void KorimaPalette_SaveFirst(void);
-void KorimaPalette_SaveSecond(void);
-void KorimaPalette_Capture(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/map/panel.c"

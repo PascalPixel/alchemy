@@ -1,3 +1,5 @@
+#include "unit/battle/effect/colorfx.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -316,7 +318,6 @@ s32	 BattleEffect_LoadWorkFar(s32 slot, s32 width_shift, s32 height_shift, s32 f
 
 #define UiText_DrawNumberInWindowFar \
 	((void (*)(s32, s32, struct UiWindow *, s32, s32))UiText_DrawNumberInWindowFar)
-#define RuntimeDispatch_NoOpHook ((void (*)(s32))RuntimeDispatch_NoOpHook)
 
 struct Reel
 {
@@ -1116,7 +1117,8 @@ void ReelGame_Run(void)
 	state = Runtime_AllocateBlock(45, sizeof(struct ReelWork));
 	tiles = Ram_MapCellBuffer;
 	save = (struct ReelSave *)((u8 *)&gGameState + 12);
-	RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
+	/* FAKEMATCH: RuntimeDispatch_NoOpHook is called as void (*)(s32); as void (*)(void), its prototype, ReelGame_Run does not compile */
+	((void (*)(s32))RuntimeDispatch_NoOpHook)((s32)&ResourceId_EffectFarCalls);
 	save->won_prizes[0] = -1;
 	state->repeat = 0;
 	state->bet = 1;

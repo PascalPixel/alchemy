@@ -32,7 +32,6 @@ extern void Engine_EventWait(s32);
 extern void Engine_ActorSetDestinationOffset(s32, s32, s32);
 extern void Engine_ActorWaitForMove(s32);
 extern void Engine_ActorSetAnimation(s32, s32);
-extern void BattleFx_PlayQueuedSound(void);
 extern void Engine_AudioPlayCue(s32);
 
 s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)

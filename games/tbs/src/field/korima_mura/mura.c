@@ -1,3 +1,8 @@
+#include "unit/field/korima_mura/mura.h"
+#include "unit/field/korima_hashi/falling_effect.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -17,12 +22,6 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-
-void FieldScene_ConfigureActor0ThenRun();
-void FieldScene_RunPairedStepA();
-void FieldScene_RunPairedStepB();
-
-void SceneData_InitRecordTable(u8 *o);
 
 #define NULL ((void *)0)
 
@@ -75,16 +74,6 @@ struct Sub
 	u8 pad0a[28];
 	u8 f26;
 };
-
-s32	 ArcTan2(s32, s32);
-void BattleFx_RunPageEffectForSlot(s32, s32, s32);
-void BattleEffect_CleanupSceneObjects(void);
-void Object_RefreshSelectorById();
-void Object_SetActionCallbackAndRefreshById();
-void Audio_PlayCueFromEventWork();
-void Object_SetTargetAndCallback();
-
-void Event_CallWithLastActiveObjectId(u8 *script);
 
 s32 KorimaMura_ApplyPendingPose(s32 arg0)
 {
@@ -1649,9 +1638,6 @@ hit:
 s32 KorimaMura_PendingPose __attribute__((section(".bss")));
 s32 KorimaMura_LayoutFlag __attribute__((section(".bss")));
 s32 KorimaMura_EffectActive __attribute__((section(".bss")));
-
-void FieldScene_RunPairedStepA();
-void FieldScene_RunPairedStepB();
 
 void FieldScene_RunFlag845And847Branches(void)
 {

@@ -1,3 +1,10 @@
+#include "unit/field/haidia_mura/mura.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/field/world_map/linked_effects.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -24,7 +31,6 @@
 s32	 Engine_GameFlagIsSet();
 void Engine_EventBegin();
 void Engine_EventWait();
-void ObjectMotion_SetSpeedParameters();
 void Engine_MessageShowCentered();
 void Engine_MapRedraw();
 void Engine_ActorSetAnimation();
@@ -44,9 +50,6 @@ enum
 	ANIM_HAMMER = 11
 };
 
-void PaletteGlow_Update(s32 a, s32 b);
-void BattleFx_SetQueuedSoundAndPlay(s32 value);
-
 void Engine_ActorSetSpeed();
 void Engine_ActorFaceDirection();
 void Engine_ActorSetAnimation();
@@ -58,8 +61,6 @@ struct Flags38
 	u8 pad[38];
 	u8 flags;
 };
-
-s32 ArcTan2(s32 z, s32 x);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
@@ -2616,37 +2617,43 @@ void FieldScene_RunSingleStep(void)
 void SceneState_SetValue1ThenCall(void)
 {
 	Object_GetById(GERALD);
-	SceneEffect_UpdateObjectOnOddFrames();
+	/* FAKEMATCH: SceneEffect_UpdateObjectOnOddFrames is called as s32 (*)(); as void (*)(s32), its prototype, SceneState_SetValue1ThenCall does not compile */
+	((s32 (*)())SceneEffect_UpdateObjectOnOddFrames)();
 }
 
 void SceneState_SetValue0ThenCall(void)
 {
 	Object_GetById(ACTOR_PARTY_LEADER);
-	SceneEffect_UpdateObjectOnOddFrames();
+	/* FAKEMATCH: SceneEffect_UpdateObjectOnOddFrames is called as s32 (*)(); as void (*)(s32), its prototype, SceneState_SetValue0ThenCall does not compile */
+	((s32 (*)())SceneEffect_UpdateObjectOnOddFrames)();
 }
 
 void FieldScene_RunStep9(void)
 {
 	Object_GetById(9);
-	SceneEffect_UpdateObjectOnOddFramesOnly();
+	/* FAKEMATCH: SceneEffect_UpdateObjectOnOddFramesOnly is called as s32 (*)(); as void (*)(s32), its prototype, FieldScene_RunStep9 does not compile */
+	((s32 (*)())SceneEffect_UpdateObjectOnOddFramesOnly)();
 }
 
 void FieldScene_RunStep17(void)
 {
 	Object_GetById(0x17);
-	SceneEffect_UpdateObjectOnOddFramesOnly();
+	/* FAKEMATCH: SceneEffect_UpdateObjectOnOddFramesOnly is called as s32 (*)(); as void (*)(s32), its prototype, FieldScene_RunStep17 does not compile */
+	((s32 (*)())SceneEffect_UpdateObjectOnOddFramesOnly)();
 }
 
 void SceneState_SetValue24ThenCall(void)
 {
 	Object_GetById(0x18);
-	SceneEffect_UpdateObjectOnOddFramesOnly();
+	/* FAKEMATCH: SceneEffect_UpdateObjectOnOddFramesOnly is called as s32 (*)(); as void (*)(s32), its prototype, SceneState_SetValue24ThenCall does not compile */
+	((s32 (*)())SceneEffect_UpdateObjectOnOddFramesOnly)();
 }
 
 void SceneState_SetValue25ThenCall(void)
 {
 	Object_GetById(0x19);
-	SceneEffect_UpdateObjectOnOddFramesOnly();
+	/* FAKEMATCH: SceneEffect_UpdateObjectOnOddFramesOnly is called as s32 (*)(); as void (*)(s32), its prototype, SceneState_SetValue25ThenCall does not compile */
+	((s32 (*)())SceneEffect_UpdateObjectOnOddFramesOnly)();
 }
 
 s32 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position)

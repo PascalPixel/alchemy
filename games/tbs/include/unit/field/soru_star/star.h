@@ -1,0 +1,43 @@
+#ifndef ALCHEMY_UNIT_FIELD_SORU_STAR_STAR_H
+#define ALCHEMY_UNIT_FIELD_SORU_STAR_STAR_H
+
+#include "types.h"
+
+struct OverlayObject;
+
+void OverlayObject_SetHandleFlagBits2And3(s32 object, u32 value);
+void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth);
+void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+s32 UpdateOverlayObjectAngle(struct OverlayObject *object);
+s32 *SceneData_GetScriptTable(void);
+s32 SceneData_ReturnZero(void);
+s32 *SceneData_GetMessageTable(void);
+s32 *SceneData_GetActorTable(void);
+s32 *SceneData_GetEffectTable(void);
+void Scene_BagVenusStar(void);
+void Scene_BagMercuryStar(void);
+void Scene_HandOverStars(void);
+void Scene_BagJupiterStar(void);
+void FieldScene_StagePairedActors(void);
+void FieldScene_RunElementalStarDemand(void);
+void Scene_OfferGuarantee(void);
+void Scene_UnmaskGarcia(void);
+void Scene_AlexTakesStars(void);
+void SoruStar_LineUpFollowers(void);
+void Scene_BagMarsStar(void);
+void Sukureta_Talk(void);
+void Jasmine_Talk(void);
+void Saturos_Talk(void);
+void Menardi_Talk(void);
+void Garcia_Talk(void);
+void Alex_Talk(void);
+void SceneDialogue_RunLine1072WithPair9And10(void);
+void SoruStar_CheckLeaderAhead(void);
+void Scene_EnterStarRoom(void);
+s32 SoruStar_ApplyEntryState(void);
+void Event_SayThenWait(s32 speaker, s32 frames);
+s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z);
+void Scene_GiveMythrilBags(void);
+void SoruStar_RiseActorFourteenSparks(void);
+
+#endif

@@ -3,6 +3,11 @@
 // オブジェクト：相手のほうへ向きを変える
 //--------------------------------------------------------------------------
 
+#include "unit/field/common/haidia_babi/babi.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/system/scheduler/callback.h"
 #include "types.h"
 #include "facing_object.h"
 #include "battle.h"
@@ -32,8 +37,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-s32 ArcTan2(s32, s32);
 
 //--------------------------------------------------------------------------
 // 向く相手がいれば、その方向へ 1 回に 0x1000（22.5 度）まで向きを変える
@@ -87,21 +90,7 @@ extern struct SceneEvent gHaidiaBabiEvents3[];
 extern struct SceneEvent gHaidiaBabiEvents2[];
 extern struct SceneEvent gHaidiaBabiEvents[];
 
-void HaidiaBabi_CloseScreenAndExit(s32 exit);
-void ActorPresentation_SetTwoSceneCells(void);
-void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object);
-void OverlayObject_UpdateArcFromAnchor(union FieldObject *object);
-
 #define FieldScene_PrepareActors ((s32 (*)(s32))FieldScene_PrepareActors)
-#define ObjectDispatch_RegisterChildMetadata \
-	((void (*)(struct FieldActor *, s32))ObjectDispatch_RegisterChildMetadata)
-
-void BattleFx_SetBlock30ValuesMaxZero(void);
-
-void Map_ClearLayerEntryFlag();
-void BattleFx_StartTwelveFrameBlend();
-void BattleFx_SetBlock30Values12Zero();
-void BattleFx_SetBlock30Values128One();
 
 s32 *HaidiaBabi_GetEntrances(void)
 {
@@ -311,8 +300,6 @@ void SceneState_ApplyValues123And11(void)
 
 s32 HaidiaBabi_RestoreEntryState(void)
 {
-	void FieldScene_RunPaletteRampSequence();
-	void FieldScene_RunSupplementalSequenceOne();
 	u32	 i;
 	s32	 record;
 
@@ -408,16 +395,8 @@ L_02000550:;
 	return 0;
 }
 
-void Map_SetLayerEntryFlag();
-void Graphics_EnableObjLayerAndCallbacks();
-void ObjectDispatch_StopCallbacksAndHideLayers();
-void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset);
-void Ui_SetRenderResultFromObject();
-
 void FieldScene_RunComplexActorSequence(void)
 {
-	void				  FieldScene_RunSixStepSequence17e4();
-	void				  Object_RefreshSelectorById();
 	s32					  base;
 	struct FieldSprite	 *sprite;
 	struct FieldActor	 *p12;
@@ -564,9 +543,6 @@ void FieldScene_RunComplexActorSequence(void)
 	Engine_EventRequestExit(20);
 }
 
-void DisplayBlend_EnableRunScript();
-void Object_SetActionCallbackAndRefreshById(s32 actor, const void *script);
-
 static __inline__ void SetBlendTarget(u32 value)
 {
 	REG_BLDCNT = value;
@@ -578,10 +554,6 @@ static __inline__ void SetBlendAlpha(u32 value)
 }
 
 extern struct EventWork *gEventWork;
-
-void Object_SetTargetAndCallback();
-
-void ObjectDispatch_WaitForValue16();
 
 union PairObject
 {
@@ -602,12 +574,8 @@ struct PairWork
 
 extern struct PairWork *gEffectWork;
 
-void BattleEffect_CleanupSceneObjects(void);
-void OverlayObject_UpdateOnFrameParity(union FieldObject *object);
-
 void FieldScene_RunPaletteRampSequence(void)
 {
-	void				Object_RefreshSelectorById(s32 actor);
 	struct FieldActor  *actor;
 	struct FieldSprite *sprite;
 	u32					i;

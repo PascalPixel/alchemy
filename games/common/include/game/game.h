@@ -49,40 +49,13 @@ extern u8							Item_ArtifactSlotTable[];
 extern s16							Character_SpriteTable[];
 extern s16							Character_ChildSpriteTable[];
 extern u8							Summon_OrderList[16];
-void								Ability_PlayUseAnimation(s32 action);
 s32									Audio_Check(void);
 #ifndef OWN_BattleEffect_ApplyToTargets
-s32 BattleEffect_ApplyToTargets(s32 effect_id, s32 source_id, s32 target_id, s32 fixed_scale);
 #endif
-s32	 Curve_LookupScaledValue(s32 input, s32 halve);
-s32	 Djinn_CheckTurnBalance(s32 from, s32 to);
-void Djinn_CountTurns(u8 *counts);
-s32	 DjinnMenu_RunScreen(void);
-s32	 DjinnMenu_SelectDjinn(s32 mode);
-void GameFlag_ClearBit(s32 flag);
-void GameState_InitDefaults(void);
-void Inventory_AddAndEquip(s32 owner, s32 target);
-s32	 Item_ClassifyUseAbility(s32 owner, s32 item);
-void Item_PlayUseAnimation(u32 item);
-s32	 Menu_GetModuloOfSum(s32 arg0, s32 arg1);
-s32	 Menu_SetFirstObjectRowCoordinates(s32 arg0);
-s32	 Object_CallSpawnRoutineAtOrigin(s32 value);
-void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value);
-s32	 Owner_DetermineClass(s32 character, const u8 *djinn);
-u32	 Owner_GetLevelThreshold(s32 owner, s32 level);
-s32	 Owner_GetResistanceValue(s32 owner, s32 index);
-void Owner_InitRecords(void);
-s32	 Owner_LookupFourColumnTable(s32 row, s32 column);
-s32	 OwnerAction_RunCompareLoop(u32 mode);
-void Party_ApplyStatePreset(void);
-s32	 Party_CheckMemberValueTotal(s32 id);
 #ifndef OWN_Party_GetAverageLevel
-u32 Party_GetAverageLevel(void);
 #endif
 #ifndef OWN_Party_LookupCharacterValueByFlag32
-s32 Party_LookupCharacterValueByFlag32(u32 index);
 #endif
-s32 DjinnMenu_ShowOwnerStatus(void);
 #endif
 
 #if GAME_TLA

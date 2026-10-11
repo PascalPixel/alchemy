@@ -1,0 +1,93 @@
+#ifndef ALCHEMY_UNIT_FIELD_ARUTIN_YAMA_YAMA_H
+#define ALCHEMY_UNIT_FIELD_ARUTIN_YAMA_YAMA_H
+
+#include "types.h"
+
+struct FacingObject;
+struct FieldActor;
+struct Frame;
+struct SceneEntrance;
+struct SceneEvent;
+struct SceneMotion;
+struct ScenePlacement;
+struct SceneRegion;
+union FieldObject;
+
+void SceneState_SetValue14Mode23(void);
+s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object);
+s32 SceneActor_CopyActor8PositionWithFixedY(struct Frame *dst);
+s32 OverlayObject_IntegrateAndDamp(struct FieldActor *actor);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneRegion *Scene_GetRegions(void);
+u8 *ArutinYama_GetExits(void);
+const struct ScenePlacement *Scene_GetPlacements(void);
+void ArutinYama_BeginRollingRide(s32 a0);
+void ArutinYama_StartAreaOneEncounter(void);
+void ArutinYama_StartAreaThreeEncounter(void);
+void ArutinYama_StartAreaFiveEncounter(void);
+void SceneActor_UpdateSlot10ByTileX(void);
+void ActorPresentation_SetCellAndLowerActorEight(void);
+void ArutinYama_RestoreFallingActorNine(void);
+void SceneActor_RaiseSlot9StepA(void);
+void SceneActor_RaiseSlot9StepB(void);
+void SceneState_ApplyRectAndLowerActor9(void);
+void SceneActor_RaiseSlot11AndSetFlag201(void);
+void SceneActor_AdjustSlot12AndSetFlag204(void);
+void SceneState_SetDispcntBit9ByThreshold(void);
+void FieldScene_RunEarlySequence(void);
+void FieldScene_RunScene3a4SequenceH(void);
+void FieldScene_RunScene3a4SequenceI(void);
+void FieldScene_RunScene3a4SequenceB(void);
+void FieldScene_RunValue1528Scene(void);
+void FieldScene_RunScene3a4SequenceA(void);
+void FieldScene_RunLine1528Sequence(void);
+void FieldScene_RunScene3a4SequenceC(void);
+void FieldScene_RunScene3a4SequenceD(void);
+void ArutinYama_SetActorTenUnderfootPriority(void);
+void ArutinYama_SetActorTenAutomaticPriority(void);
+void ArutinYama_PushMovableObject(void);
+void ArutinYama_SwingActorIntoSetPiece(void);
+void FieldScene_RunSharedSetPiece(s32 a0);
+void FieldScene_RunFallingRocksWarning(void);
+const struct SceneEvent *Scene_GetEvents(void);
+void SceneMotion_UpdateTimedActor(struct SceneMotion *work);
+void FieldScene_BuildMultiPhasePresentation(void);
+void ArutinYama_RunLeapSequence(void);
+s32 ArutinYama_RunAreaScene(void);
+void ArutinYama_ApplyEntryState(void);
+void ArutinYama_RestoreAreaThree(void);
+void ArutinYama_RestoreAreaFour(void);
+void ArutinYama_RestoreAreaFive(void);
+void ArutinYama_RestoreAreaSix(void);
+void ArutinYama_RestoreAreaSeven(void);
+void ArutinYama_PlaceFlaggedActors(void);
+void ArutinYama_RestoreAreaTen(void);
+void ArutinYama_RestoreAreaEleven(void);
+void ArutinYama_InitLeaf(struct FieldActor *leaf);
+void ArutinYama_UpdateDriftingLeaf(union FieldObject *object);
+void ArutinYama_SpawnLeaf(void);
+void ArutinYama_StartLeafGust(s32 x, s32 y, s32 z, s32 facing);
+void FieldScene_RunScene3a4SequenceG(void);
+void SceneState_ForwardByRuntimeSelector(s32 arg);
+void FieldScene_RunActorTenFourStepSequence(void);
+void FieldScene_RunOpeningAuxiliarySequence(void);
+void FieldScene_RunScene3a4SequenceF(void);
+void FieldScene_RunScene3a4SequenceE(void);
+void SceneAudio_PlayCue183EverySixtyTicks(void);
+void FieldScene_RunLateAuxiliarySequence(void);
+void SceneActor_SetActor8ModeByCounterBit(void);
+void RunEventScript01(void);
+void ArutinYama_RequestPsynergy(void);
+void SceneActor_SetActor12ModeByActorZeroHeight(void);
+void SceneActor_ClearCollisionFlagAndPlaceMarker(s32 no);
+void ArutinYama_SettleAndMountLeader(struct FieldActor *object);
+void ArutinYama_ReservedNoOp(void);
+void ArutinYama_TurnRollingObjectA(struct FieldActor *object);
+void ArutinYama_TurnRollingObjectB(struct FieldActor *object);
+void ArutinYama_SetRollingStateAndPlayCue(u16 *record);
+void ArutinYama_AdvanceRollingObject(struct FieldActor *object);
+void ArutinYama_RunRollingObject(s32 id, s32 heading);
+void ArutinYama_StepPaletteAnim(void);
+void ArutinYama_StartPaletteAnim(void);
+
+#endif

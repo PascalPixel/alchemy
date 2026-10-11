@@ -1,3 +1,6 @@
+#include "unit/battle/tgtexec.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -74,9 +77,6 @@
 #include "iowrite.h"
 #include "battle_formation.h"
 #include "b5_context.h"
-
-void *BattleMotion_DestroyAllSlotObjects(void);
-s32	  BattlePresentation_WaitForAdvance(void);
 
 #define Inventory_EquipFar ((void (*)(s32, s32))Inventory_EquipFar)
 
@@ -198,7 +198,6 @@ s32	 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 s32	 UiWork_IsCompleteFar(void);
 void UiWork_FinalizeFar(s32, s32);
 void AudioCommand_PlayFar(s32);
-void WaitFrames(s32);
 
 void DebugBattle_ViewMessages(void)
 {
@@ -291,10 +290,6 @@ void DebugBattle_ViewMessages(void)
 	}
 }
 
-#define Battle_RunEncounter ((void (*)(s32))Battle_RunEncounter)
-
-s32 DebugParty_LoadPreset(s32 preset);
-
 void DebugBattle_RunMenu(void)
 {
 	s32 locked = 0;
@@ -372,8 +367,6 @@ restart:
 	Battle_RunEncounter(257);
 	goto restart;
 }
-
-#define SceneTransform_ApplyPosition ((void (*)(void *))SceneTransform_ApplyPosition)
 
 extern volatile u16 gLinkStatus;
 
@@ -557,7 +550,6 @@ s32 Djinn_ActivateFar(s32 id, s32 element, s32 index);
 s32 Trade_RemoveOfferFar(s32 id, s32 element, s32 index);
 
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
-struct BtlObj			  *BtlObjGet(s32 object_id);
 
 s32 BattleParty_ResetActiveRuntimeFields(void)
 {
@@ -1109,8 +1101,6 @@ s32 BattlePres_SyncTurn(void)
 	return 0;
 }
 
-#undef Battle_RunEncounter
-
 s32 BattleParty_AssignMemberSlots(void)
 {
 	u16				active_members[8];
@@ -1133,15 +1123,6 @@ s32 Battle_ClearSerialTransferPayload(void)
 
 s32 GameFlag_TestFar(s32 flag);
 
-#define BattleParty_ReconcileDjinnRecovery ((void (*)(void))BattleParty_ReconcileDjinnRecovery)
-#define BattleSummon_UpdateAvailability ((void (*)(void))BattleSummon_UpdateAvailability)
-#define Party_ReservedNoOp5B14 ((void (*)(s32))Party_ReservedNoOp5B14)
-#define Runtime_GetRemainingIwram ((void (*)(void))Runtime_GetRemainingIwram)
-#define Runtime_GetRemainingEwram ((void (*)(void))Runtime_GetRemainingEwram)
-#define Battle_ProcessRoundEnd ((void (*)(void))Battle_ProcessRoundEnd)
-#define BattlePresentation_WaitForPromptAt ((void (*)(s32, s32))BattlePresentation_WaitForPromptAt)
-#define BattleParty_ResetActiveRuntimeFields ((void (*)(void))BattleParty_ResetActiveRuntimeFields)
-
 #define DMA_FILL32 0x85000000
 
 #define Dma3Fill(cell, dest, bytes)                                              \
@@ -1163,12 +1144,10 @@ extern u8 gCpuLoadDisplayEnabled;
 void GameFlag_SetBitFar(s32 id);
 #define Trade_GetOfferStateFar ((s32 * (*)(s32 index)) Trade_GetOfferStateFar)
 void PtyStDrawFar(s32 mode);
-#define BattleMotion_DestroyAllSlotObjects ((void (*)(void))BattleMotion_DestroyAllSlotObjects)
 s32	 UiText_OpenMessageWindowFar(s32 id, s32 a, s32 b, s32 c);
 void UiWork_FinalizeFar(s32 handle, s32 mode);
 void UiWork_PushValueSlotFar(s32 a, s32 b);
 void UiText_ShowMessageAndWaitCoreFar(s32 id);
-#define BattlePresentation_WaitForAdvance ((void (*)(void))BattlePresentation_WaitForAdvance)
 
 s32 Battle_RunEncounter(s32 enemy_group)
 {
@@ -1298,7 +1277,8 @@ s32 Battle_RunEncounter(s32 enemy_group)
 	BattleBackground_Load(1, battle->background, 0);
 	BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
 	BattlePres_SetupTransitionScene(0, 0, 0, 190);
-	Party_ReservedNoOp5B14(1);
+	/* FAKEMATCH: Party_ReservedNoOp5B14 is called as void (*)(s32); as void (*)(void), its prototype, Battle_RunEncounter does not compile */
+	((void (*)(s32))Party_ReservedNoOp5B14)(1);
 	REG_BLDCNT = 0;
 	Summon_ClearWorkFields();
 	battle->prompt_slot = Resource_LoadIntoFreeSlot(128);
@@ -1651,7 +1631,6 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
 }
 
 #undef Trade_GetOfferStateFar
-#undef BattleMotion_DestroyAllSlotObjects
 
 //--------------------------------------------------------------------------
 // actor_commit_placement.c
@@ -1686,7 +1665,6 @@ void BattleParty_ListAllUnitsAndSubmit(void)
 
 #define Object_CreateFar \
 	((struct MotionObject * (*)(s32 kind, s32 x, s32 y, s32 z)) Object_CreateFar)
-s32 ArcTan2(s32, s32);
 
 s32 BattleMotion_GetSlotPalette(s32 id)
 {
@@ -2628,10 +2606,6 @@ void ReleaseBattleObjectRecords(s32 no)
 	}
 }
 
-void BattleMotion_ReservedNoOp83B0();
-
-#define BattlePres_SetActorModeAndAction ((void (*)(s32))BattlePres_SetActorModeAndAction)
-
 #define gMenuCtrlWork (*(u8 **)&gMenuCtrlWork)
 
 struct PairedObjectList
@@ -2647,8 +2621,6 @@ struct PairedObjectTable
 };
 
 extern volatile u8 gSchedulerStatus;
-
-void WaitFrames(s32 frames);
 
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 {
@@ -2766,11 +2738,6 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 		}
 	}
 }
-#define Graphics_PrepareTransferAndRun ((s32 (*)(void *, void *))Graphics_PrepareTransferAndRun)
-#define Graphics_PrepareTransferInIwramWork \
-	((s32 (*)(void *, void *))Graphics_PrepareTransferInIwramWork)
-
-s32 Render_ProjectPoint(const s32 *, s32 *);
 
 struct BtlObj *BtlObjGet(s32 object_id)
 {
@@ -2889,11 +2856,13 @@ s32 Camera_ApplyTransformByFlag(void)
 	if (GameFlag_TestFar(0x16B) != 0)
 	{
 		Iwram_TransformMatrix((s32 *)Camera_FlagTransformWork);
-		return Graphics_PrepareTransferAndRun(state, state->pos);
+		/* FAKEMATCH: Graphics_PrepareTransferAndRun is called as s32 (*)(void *, void *); as void (*)(s32 *, s32 *), its prototype, Camera_ApplyTransformByFlag does not compile */
+		return ((s32 (*)(void *, void *))Graphics_PrepareTransferAndRun)(state, state->pos);
 	}
 	else
 	{
-		return Graphics_PrepareTransferInIwramWork(state, state->pos);
+		/* FAKEMATCH: Graphics_PrepareTransferInIwramWork is called as s32 (*)(void *, void *); as void (*)(s32 *, s32 *), its prototype, Camera_ApplyTransformByFlag does not compile */
+		return ((s32 (*)(void *, void *))Graphics_PrepareTransferInIwramWork)(state, state->pos);
 	}
 }
 
@@ -3859,36 +3828,23 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 	return (s16)living_units[(Random16() * living_count) >> 0x10];
 }
 
-#undef BattlePresentation_WaitForAdvance
-#undef Graphics_PrepareTransferAndRun
-#undef Graphics_PrepareTransferInIwramWork
-
 #undef BattleFx_DispatchByIdRangeFar
 #undef BattleFx_DispatchModeFar
 #undef BattleFx_RunIceFleckBurstFar
-#undef BattleMotion_DestroyAllSlotObjects
-#undef BattlePres_SetActorModeAndAction
-#undef BattlePresentation_WaitForPromptAt
-#undef Battle_ProcessRoundEnd
 #undef ObjectDispatch_ApplyValueToChildrenFar
-#undef SceneTransform_ApplyPosition
 #undef Trade_AddOfferFar
 #undef Trade_GetOfferStateFar
 
 extern volatile s32 gFrameTick;
 extern u8			gDisp[];
 
-s32 ArcTan2(s32 first, s32 second);
-#define BattleMotion_DestroyAllSlotObjects ((void (*)(void))BattleMotion_DestroyAllSlotObjects)
 s32	 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
 void GameFlag_ClearBitFar(s32 flag);
-void GameFlag_SetBit(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 s32	 Inventory_RemoveFar(s32 owner, s32 slot);
 #define ObjectDispatch_ApplyArgumentToChildrenFar \
 	((void (*)(void *object, s32 mode))ObjectDispatch_ApplyArgumentToChildrenFar)
 void Party_AdjustCoinsFar(s32 amount);
-#define Render_ProjectPoint ((s32 (*)(s32 * point, s32 * screen)) Render_ProjectPoint)
 s32 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 #define UiWork_PushValueSlotFar ((void (*)(u32, u32))UiWork_PushValueSlotFar)
 
@@ -12225,7 +12181,5 @@ void Battle_ReservedNoOp2A08(void)
 {
 }
 
-#undef BattleMotion_DestroyAllSlotObjects
 #undef ObjectDispatch_ApplyArgumentToChildrenFar
-#undef Render_ProjectPoint
 #undef UiWork_PushValueSlotFar

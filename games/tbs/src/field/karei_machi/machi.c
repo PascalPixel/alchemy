@@ -1,3 +1,7 @@
+#include "unit/field/karei_machi/machi.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -146,8 +150,6 @@ typedef struct OrbitingSceneObject
 	u32						   callback;
 } OrbitingSceneObject;
 
-void BattleFx_RunPageEffectForSlot(s32, s32, s32);
-
 extern struct SceneEntrance gKareiMachiEntrances1[];
 extern struct SceneEntrance gKareiMachiEntrances2[];
 extern struct SceneEntrance gKareiMachiEntrances3[];
@@ -172,18 +174,7 @@ extern struct SceneEvent gKareiMachiEventsOther[];
 
 extern struct MapCellAnim KareiMachi_DoorCells[];
 
-void KareiMachi_AlternateDance();
-void Event_CallWithLastActiveObjectId();
-void Ui_SetRenderResultFromObject();
-void UiText_ShowCenteredMessage();
-void Object_RefreshSelectorById();
-void Object_SetActionCallbackAndRefreshById();
-void KareiMachi_SpeedUpActors();
-void Audio_PlayCueFromEventWork();
-
 extern u8 *gActorEffectWork;
-
-void FieldScene_RunMiddleSequence(void);
 
 struct SpriteBits
 {
@@ -202,12 +193,6 @@ union GameStateRows
 	s16 halves[512][1];
 };
 
-void FieldScene_RunSupplementalSequenceOne();
-void BattleFx_StartFadeOverlay();
-void BattleFx_SetQueuedSoundAndPlay();
-
-void KareiMachi_AlternateDance(void);
-
 static __inline__ void ClearStep(u8 *a)
 {
 	s32 z = 0;
@@ -215,14 +200,9 @@ static __inline__ void ClearStep(u8 *a)
 	*(u16 *)(a + 100) = z;
 }
 
-void FieldScene_RunScene3a8SequenceB();
 s32	 Object_CheckMovementCollision();
 void Engine_ObjectSetPosition();
 void Object_CommitPosition();
-void BattleFx_PlayQueuedSound();
-void FieldScene_RunScene3a8SequenceA();
-
-u8 *Battle_GetWorkObject1e0();
 
 void SceneState_ApplyValues12And2And3(void)
 {
@@ -755,7 +735,8 @@ void FieldScene_RunStagedGroupSequence(void)
 		message = (s32)MsgKareiShortOnePerson;
 		Engine_EventSetMessage(message);
 		Event_ShowMessageAndWait(20, 0, 40);
-		KareiMachi_SpeedUpActors();
+		/* FAKEMATCH: KareiMachi_SpeedUpActors is called as void (*)(); as void (*)(s32, s32), its prototype, FieldScene_RunStagedGroupSequence does not compile */
+		((void (*)())KareiMachi_SpeedUpActors)();
 		Actor_WalkToAndWait(20, 178, 272);
 		Actor_FaceDirection(20, FACING_EAST, 0);
 		Engine_EventWait(240);

@@ -1,3 +1,4 @@
+#include "unit/field/common/object/update.h"
 #include "types.h"
 #include "irq.h"
 #include "iwram_call.h"

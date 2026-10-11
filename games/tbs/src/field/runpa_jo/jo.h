@@ -22,7 +22,6 @@ s32  Engine_BattleFxPlayCueAndStartEmitterOnTarget(s32 value, s32 actor, s32 ite
 void Engine_BattleFxSetWeightedResult(s32 slot, s32 value);
 void Engine_BattleFxRunPageEffectForSlot(s32 slot, s32 first, s32 second);
 void Engine_PartySetFields1ceAnd1d0(s32 first, s32 second);
-void Object_RefreshSelectorById(s32 actor);
 void Engine_MapSetWorkFlagBits9To11(s32 first);
 
 #endif

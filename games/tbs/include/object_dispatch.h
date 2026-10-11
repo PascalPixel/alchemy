@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_OBJECT_DISPATCH_H
 #define ALCHEMY_OBJECT_DISPATCH_H
 
+#include "unit/field/common/script/script.h"
 #include "types.h"
 
 struct DispatchObject
@@ -29,10 +30,6 @@ struct DispatchObject
 	s32 argument;
 	u8	unknown_6c[4];
 };
-
-void ObjectDispatch_Initialize(struct DispatchObject *object, const s32 *script);
-void Animation_ApplyChildValues(struct DispatchObject *object, u32 value);
-void ObjectGroup_SetChildValueUnlessFifteen(void *parent, u32 value);
 
 extern const u32 ObjectDispatch_Table0Script[];
 extern const u32 ObjectDispatch_Table1Script[];

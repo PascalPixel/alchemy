@@ -1,4 +1,6 @@
 
+#include "unit/field/korima_heya/entry_layout.h"
+#include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

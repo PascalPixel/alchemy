@@ -1,3 +1,7 @@
+#include "unit/field/imiru_mura/mura.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -24,7 +28,6 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-#define ObjectTable_Get ((struct Subject_02001fa4 * (*)()) ObjectTable_Get)
 extern u8 gEffectWork[];
 
 #define NULL ((void *)0)
@@ -163,50 +166,8 @@ extern s32 ImiruMura_ActorScriptC[];
 extern s32 ImiruMura_MiaScriptA[];
 extern s32 ImiruMura_MiaScriptB[];
 extern u16 ImiruMura_SwayHeadings[];
-s32		   ArcTan2(s32, s32);
-void	   ObjectDispatch_ApplyValueToChildren(T *, s32);
-void	   Object_SetActionCallbackAndRefreshById();
-s32		   Battle_GetWorkObject1e0();
-void	   Object_RefreshSelectorById();
-void	   BattleEffect_CleanupSceneObjects(void);
-s32		   GetMapCellCollision();
-s32		   Map_GetTerrainHeight();
 
-s32	 OverlayObject_UpdateWobbleByCounter(struct Object *obj);
-s32	 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj);
-s32	 SceneData_ReturnZero(void);
-u8	*ImiruMura_GetExits(void);
-void ImiruMura_RunHeadingProbe(void);
-void SceneDialogue_RunActorEightFlagGatedDialogue(void);
-void SceneDialogue_ShowLine1571Or152F(void);
-void SceneDialogue_RunActor9Line(void);
-void SceneDialogue_RunActorTenFlag881Dialogue(void);
-void FieldScene_RunSupplementalSequenceOne(void);
-void SceneDialogue_RunActor12Line(void);
-void SceneDialogue_RunActor18Line(void);
-void SceneDialogue_RunActor20BranchScene(void);
-void SceneDialogue_RunActor20FlaggedLine(void);
-void ImiruMura_TalkAboutLighthouse(void);
-void SceneDialogue_RunActorEightBranchedDialogue(void);
-void FieldScene_RunSingleStep(void);
-void SceneDialogue_ShowLine156E(void);
-void SceneDialogue_ShowLine1573Or155A(void);
-void ImiruMura_OpenInn(void);
-void ImiruMura_OpenSanctum(void);
-void FieldScene_RunPrimaryScriptChoreography(void);
 void SceneActor_UpdateCountdownArcPosition(T_0200154c *o);
-void ImiruMura_ShowActorNineTurnMessage(void);
-void ImiruMura_CastPsynergyAtActorNine(void);
-void SceneActor_ResetActorAndCenterOffsets(struct Work_399 *work);
-void FieldScene_RunSupplementalSequenceTwo(union FieldObject *object);
-void FieldScene_RunScene399SequenceA(void);
-void SceneState_UpdateZoneFlagsFromActorZero(void);
-void SceneState_UpdateActor11WithFlag203(void);
-void SceneActor_SetActorZeroFacingC000AndRun(void);
-void RunEventScript02(void);
-void FieldScene_RunThreeActorChoreography(void);
-void SceneActor_TurnTowardTableAngle(s32 z);
-void StagedActor_RunHeadingProbeStep(void);
 
 #define FieldScene_PrepareActors ((void (*)(u8 *))FieldScene_PrepareActors)
 
@@ -1621,10 +1582,12 @@ void StagedActor_RunHeadingProbeStep(void)
 		x = probe.x;
 		p = (u8 *)subject;
 		p += 34;
-		goal = GetMapCellCollision((s32)*p, x, z);
+		/* FAKEMATCH: GetMapCellCollision is called as s32 (*)(); as u8 (*)(s32, s32, s32), its prototype, StagedActor_RunHeadingProbeStep is 4 bytes longer */
+		goal = ((s32 (*)())GetMapCellCollision)((s32)*p, x, z);
 		Vector_AddPolarOffset(0x100000, heading, &probe);
 
-		marker = GetMapCellCollision((s32)*p, probe.x, probe.z);
+		/* FAKEMATCH: GetMapCellCollision is called as s32 (*)(); as u8 (*)(s32, s32, s32), its prototype, StagedActor_RunHeadingProbeStep has 206 of 452 bytes different */
+		marker = ((s32 (*)())GetMapCellCollision)((s32)*p, probe.x, probe.z);
 		if (marker == 255 || Map_GetTerrainHeight((s32)*p, probe.x, probe.z) - subject->y > 0x80000)
 		{
 			subject->heading = (u16)heading;
@@ -1661,7 +1624,8 @@ void StagedActor_RunHeadingProbeStep(void)
 
 	advanceProbe:
 		FieldVector_AddPolarOffset(0x100000, heading, &probe);
-		marker = GetMapCellCollision((s32)*p, probe.x, probe.z);
+		/* FAKEMATCH: GetMapCellCollision is called as s32 (*)(); as u8 (*)(s32, s32, s32), its prototype, StagedActor_RunHeadingProbeStep is 4 bytes longer */
+		marker = ((s32 (*)())GetMapCellCollision)((s32)*p, probe.x, probe.z);
 		if (marker != 255)
 		{
 			goto continueProbe;

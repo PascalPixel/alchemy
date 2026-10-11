@@ -1,3 +1,7 @@
+#include "unit/field/haidia_arashi/arashi.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -135,105 +139,10 @@ extern s32					 HaidiaArashi_ActorTwentyTwoScript[];
 s32 Math_RemainderUnsigned(s32, s32);
 
 union PairObject;
-void HaidiaArashi_SpawnEffectPair(union PairObject *parent);
-
-void BattleFx_SetQueuedSoundAndPlay(s32);
 
 void Effect_SoundAndFlash(void);
 
-void BattleFx_StartTwelveFrameBlend(void);
-
-void BattleFx_SetBlock30Values128One(void);
-
-void HaidiaArashi_RunCallOutSequence(void);
-
-void BattleFx_SetBlock30ValuesMaxZero(void);
-
-s32 BattleFx_SetWeightedResult(s32, s32);
-
-void HaidiaArashi_CycleObjectPalettes(s32 o);
-
-void BattleFx_PlayQueuedSound();
-
-void Event_CallWithLastActiveObjectId();
-
-void Object_RefreshSelectorById();
-
-void Object_SetActionCallbackAndRefreshById();
-
-void Map_SetLayerEntryFlag();
-
-void Map_ClearLayerEntryFlag();
-
-void OverlayObject_UpdateRandomSlotByFrame(s32 obj);
-
-void BattleEffect_CleanupSceneObjects(void);
-
-void SceneActor_RunActor22PlacementSequence(s32 x, s32 y);
-
-s32	 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object);
-s32	 UpdateFixedPointCountdown(struct FixedPointCountdown *state);
-u8	*HaidiaArashi_GetEntrances(void);
-s32	 SceneData_ReturnZero(void);
-u8	*HaidiaArashi_GetExits(void);
-u8	*HaidiaArashi_GetPlacements(void);
-u8	*HaidiaArashi_GetEvents(void);
-void SceneState_SetFlag210AndConfigureRegion40_84(void);
-void SceneState_SetFlag210AndConfigureRegion40_89(void);
-void HaidiaArashi_RequestBackdropExit(u8 *o);
-void HaidiaArashi_OpenBackdropExit11(void);
-void SceneState_SetValue123Mode1(void);
-void SceneState_ApplyValues123And3(void);
-void SceneState_SetValue123Mode4(void);
-void FieldScene_RunStep7BAndCheckFlags841And842(void);
-void HaidiaArashi_OpenBackdropExit5(void);
-void HaidiaArashi_OpenGateRoute(void);
-void HaidiaArashi_OpenBackdropExit7(void);
-void HaidiaArashi_OpenBackdropExit8(void);
-void HaidiaArashi_OpenBackdropExit9(void);
-void HaidiaArashi_OpenRouteTen(void);
-void HaidiaArashi_OpenRouteTwelve(void);
-void HaidiaArashi_OpenRouteThirteen(void);
-s32	 FieldScene_RunFlagGatedActorSetup(void);
-void Scene_DoraSendsRobinToThePlaza(void);
-void HaidiaArashi_SetStormCellAttributes(void);
-void ActorPresentation_SetEightSceneCells(void);
-void FieldScene_RunOpeningAuxiliarySequence(void);
-void SceneState_ApplyFourRects(void);
-void FieldScene_DrawFiveTileBlocks(void);
-void FieldScene_RunScene372SequenceA(void);
-void FieldScene_RunScene372SequenceB(void);
-void FieldScene_RunActor22SceneWhenFlag836Only(void);
-void FieldScene_RunScene372SequenceD(void);
-void Scene_BoulderFalls(void);
-void Arashi_SetActorFrameMode(struct FieldActor *actor, s32 mode);
-void ActorPresentation_SetFourActorsModeByBit(void);
-void SceneDialogue_RunActorTenFlag30dDialogue(void);
-void HaidiaArashi_FlashLightning(void);
-void ActorPresentation_SelectActorTwentySevenState(void);
-void HaidiaArashi_TryToFreeActorEight(void);
-void FieldScene_ConfigureActorTwentyTwoScene(void);
-void FieldScene_BuildPlacementGrid(void);
-void SceneState_SetWords1c0And1c8AndRun(void);
-void SceneState_SetWorkWordsAndFlag87f(void);
-void SceneActor_SetModeByFrameBit1(s32 o);
-void SceneEffect_UpdateArcOverAnchor(union FieldObject *object);
-void OverlayObject_UpdateArcFromParent(union FieldObject *object);
-void SceneState_SetValue140Mode0(void);
-void FieldScene_RunSingleStep(void);
-void FieldScene_RunFourPairedSteps(void);
-void SceneState_SetValue19ThenCall(void);
-void HaidiaArashi_CopyLeaderSpritePriority(void);
-void SceneState_SetValueEe4(void);
-
-void BattleFx_SetBlock30Values12Zero(void);
-void HaidiaArashi_SetStormCellAttributes();
-void SceneActor_RunActor22PlacementSequence();
-
-void ActorPresentation_SetEightSceneCells();
 void Engine_ActorSetSpritePriority();
-void FieldScene_DrawFiveTileBlocks();
-void Event_PrepareObjectAndApplyValue();
 
 s32 HaidiaArashi_ShakeDone;
 s32 HaidiaArashi_ShakeShift;
@@ -2153,7 +2062,6 @@ void HaidiaArashi_RunReunionAndDeparture(void)
 		}
 	}
 }
-struct FieldActor *Battle_GetWorkObject1e0(void);
 
 static __inline__ void HaidiaArashi_PlaceActor(struct FieldActor *object, s32 pos, s32 depth)
 {

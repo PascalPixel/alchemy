@@ -80,28 +80,10 @@ extern s32		 gKorimaKiSparkOrigin[3];
 extern s32		 gKorimaKiSparkCount;
 extern s32		 gKorimaKiSparkSound;
 extern s32		 gKorimaKiTransitionStep;
-void			 PaletteScene_SpawnEffect(void);
 extern s32 SceneAction_ActorOneEntry[];
 extern s32 SceneAction_ActorTwoEntry[];
 extern s32 SceneAction_ActorThreeEntry[];
 extern s32 SceneAction_GroupFinish[];
 extern s32 gKorimaKiEffectScript[];
-
-void					   Battle_ResetEffectCounter();
-void					   Object_RefreshSelectorById();
-void					   Object_SetActionCallbackAndRefreshById();
-void					   Vector_AddPolarOffset();
-s32						   PartyInventory_FindOwner();
-s32						   Inventory_Find();
-struct PaletteSceneRecord *UnitGet();
-void					   Audio_PlayCueFromEventWork();
-
-void KorimaKi_PlayGesture(s32 actor, s32 gesture);
-void KorimaKi_SpawnOrbitSparks(void);
-void KorimaPalette_SaveFirst(void);
-void KorimaPalette_SaveSecond(void);
-void KorimaPalette_Capture(void);
-void KorimaPalette_Restore(s32 second);
-void PaletteScene_AdvanceTransition(void);
 
 #endif

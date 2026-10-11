@@ -1,3 +1,8 @@
+#include "unit/field/ramakan_sabaku/sabaku.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
@@ -32,11 +37,6 @@
 #include "objcmd.h"
 
 #define NULL ((void *)0)
-
-void BattleFx_RunPageEffectForSlot();
-void RamakanSabaku_UpdateTravelDust(void);
-void RamakanSabaku_SetSandPhase(u16 value);
-void Vector_AddPolarOffset();
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
@@ -98,10 +98,6 @@ struct EffectParams
 	u8	pad24[4];
 };
 s32 Engine_DisplayScrollStartHBlankDma();
-s32 BattleFx_EmitRandomParticle();
-s32 DisplayScroll_DisarmHBlankDma();
-
-void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 
 void FieldScene_ApplyActor13Values3And3(void)
 {
@@ -382,10 +378,12 @@ reset_objects:;
 	{
 		MapObject_SetPosition(i, -1, -1);
 	}
-	record = BattleFx_EmitRandomParticle();
+	/* FAKEMATCH: BattleFx_EmitRandomParticle is called as s32 (*)(); as void (*)(void), its prototype, RamakanSabaku_ConfigureAreaLayout does not compile */
+	record = ((s32 (*)())BattleFx_EmitRandomParticle)();
 	if (gGameState.scene != (s32)&SceneId_RamakanSabaku4)
 	{
-		record = DisplayScroll_DisarmHBlankDma();
+		/* FAKEMATCH: DisplayScroll_DisarmHBlankDma is called as s32 (*)(); as void (*)(void), its prototype, RamakanSabaku_ConfigureAreaLayout does not compile */
+		record = ((s32 (*)())DisplayScroll_DisarmHBlankDma)();
 		return record;
 	}
 	return record;
@@ -393,9 +391,9 @@ reset_objects:;
 
 void RamakanSabaku_ReturnToArea3(void)
 {
-	void BattleFx_SetWeightedResult(s32 value, s32 weight);
 	Engine_ActorRunRepeatedMotion(8, 2);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_RamakanSabaku3, 5);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, RamakanSabaku_ReturnToArea3 is 4 bytes longer */
+	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_RamakanSabaku3, 5);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(53, 5);
 }
@@ -623,8 +621,6 @@ void RamakanSabaku_SweepBack(void)
 	RamakanSabaku_SetSandPhase(0);
 }
 
-#define RamakanSabaku_EmitSandEffect ((s32 (*)(u8 *))RamakanSabaku_EmitSandEffect)
-
 struct DustParams
 {
 	u8	unknown_00[8];
@@ -635,11 +631,9 @@ struct DustParams
 	u8	unknown_24[4];
 };
 
-void Object_SetActionById();
 s32	 Object_CheckMovementCollision(struct FieldActor *object, s32 *pos);
 
 extern struct EventWork *gEventWork;
-void					 BattleFx_SetQueuedSoundAndPlay();
 
 void RamakanSabaku_UpdateTravelDust(void)
 {
@@ -700,7 +694,6 @@ void RamakanSabaku_UpdateTravelDust(void)
 
 void RamakanSabaku_FaceNearestActor(void)
 {
-	void			   BattleFx_SetWeightedResult();
 	struct FieldActor *target;
 	struct FieldActor *actor;
 	struct FieldActor *record;
@@ -908,7 +901,6 @@ void RamakanSabaku_PlayStartledRetreat(void)
 
 s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
 {
-	void RamakanSabaku_ClaimSandEffectVram();
 	s32	 v5;
 
 	gGameState.hazard_limit = 0x258;

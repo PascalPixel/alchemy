@@ -20,7 +20,4 @@ extern s32 KorimaMura_ActionTable6[];
 extern s32 KorimaMura_ActionTable7[];
 extern s32 KorimaMura_Object26Script[];
 
-void SceneEffect_SpawnObject26EveryEightFrames(void);
-void FieldScene_UpdateFallingEffect(void);
-
 #endif

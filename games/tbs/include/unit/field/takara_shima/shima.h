@@ -1,0 +1,95 @@
+#ifndef ALCHEMY_UNIT_FIELD_TAKARA_SHIMA_SHIMA_H
+#define ALCHEMY_UNIT_FIELD_TAKARA_SHIMA_SHIMA_H
+
+#include "types.h"
+
+struct Effect;
+struct FieldActor;
+struct S;
+struct S_02000474;
+struct SceneEntrance;
+struct SceneEvent;
+struct ScenePlacement;
+struct SceneRegion;
+struct V;
+
+void SetEffectOwnerMode(struct FieldActor *object, s32 priority);
+struct FieldActor *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind);
+struct FieldActor *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind);
+void NoOpEffectCallback(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneRegion *Scene_GetRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ScenePlacement *Scene_GetPlacements(void);
+void AdvanceEffectMotion(struct Effect *effect);
+void SpawnRadialEffectBurst(void);
+void InitializePrologueSceneState(void);
+const struct SceneEvent *Scene_GetEvents(void);
+void StartScriptedSceneMessage(s32 message_id);
+s32 Scene_Initialize(void);
+void FieldScene_RunScene3b2SequenceA(void);
+void FieldScene_HandleEscapeColumn(void);
+void RunPrologueSceneSetup(void);
+void StartSceneScript37(void);
+void TakaraShima_RunAreaEntry(void);
+void TakaraShima_LeaveClearedRoom(void);
+void ConfigureSceneActor11(s32 actor_id);
+void ConfigureSceneActor12(s32 actor_id);
+void ConfigureSceneActor13(s32 actor_id);
+void ConfigureSceneActor14(s32 actor_id);
+void ShowForgetEverythingMessage(void);
+void ShowHelpYouForgetMessage(void);
+void ShowDamagedDoorMessage(void);
+void ShowSaveMyLifeMessage(void);
+void TakaraShima_RestoreRoomActors(void);
+void RunSceneVectorTransition(void);
+void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset);
+void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute, s32 unused);
+void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute, s32 unused);
+void SetSceneActorModes(int actor_id);
+void InitializeEscapeSceneActors(void);
+void ActivateSceneActor8(void);
+void ActivateSceneActor10(void);
+void ActivateSceneActor11(void);
+void ActivateSceneActor12(void);
+void ActivateSceneActor13(void);
+void ActivateSceneActor15(void);
+void ActivateSceneActor17(void);
+void ActivateSceneActor18(void);
+void ActivateSceneActor9(void);
+void ActivateSceneActor19(void);
+void ActivateSceneActor14(void);
+void ActivateSceneActor16(void);
+s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested);
+s32 CheckActorPathSouth(void);
+s32 CheckActorPathNorth(void);
+s32 CheckActorPathWest(void);
+s32 CheckActorPathEast(void);
+void UpdateEscapeRouteForActorPositions(void);
+void UpdateActor8ReturnRoute(void);
+void UpdateActor10RetreatRoute(void);
+void UpdateActor10AdvanceRoute(void);
+void UpdateActor11WestRoute(void);
+void UpdateActor11EastRoute(void);
+void UpdateActor12WestRoute(void);
+void UpdateActor12EastRoute(void);
+void UpdateActor13WestRoute(void);
+void UpdateActor13EastRoute(void);
+void UpdateActor15WestRoute(void);
+void UpdateActor15EastRoute(void);
+void UpdateActor17SouthRoute(void);
+void UpdateActor17NorthRoute(void);
+void TakaraShima_SettlePushedBlockNorth(void);
+void AdvanceActor18AlongEscapeRoute(void);
+void TakaraShima_SettleSecondBlockNorth(void);
+void AdvanceActor9AlongEscapeRoute(void);
+void TakaraShima_SettlePushedBlockWest(void);
+void TakaraShima_SettlePushedBlock(void);
+void RetreatActor14AlongEscapeRoute(void);
+void AdvanceActor14AlongEscapeRoute(void);
+void RetreatActor16AlongEscapeRoute(void);
+void AdvanceActor16AlongEscapeRoute(void);
+s32 UpdateSwayingSceneObject(struct S *object);
+void InitializeSwayingSceneObject(void);
+
+#endif

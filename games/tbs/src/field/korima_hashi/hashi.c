@@ -1,3 +1,7 @@
+#include "unit/field/korima_hashi/hashi.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/field/korima_hashi/falling_effect.h"
+#include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -77,8 +81,6 @@ void Engine_ActorWaitForMove(s32 actor);
 void Engine_ActorSetAnimation(s32 actor, s32 mode);
 void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
 void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
-
-s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
@@ -262,12 +264,6 @@ s32 Scene_Initialize(void)
 	}
 	return 0;
 }
-
-void Object_RefreshSelectorById(s32 id);
-void SceneActor_SetPairZeroAndValue(s32 actor, s32 facing, s32 frames);
-void Event_SayThenWait(s32 speaker, s32 frames);
-void Object_SetActionCallbackAndRefreshById(s32 id, const u8 *callback);
-void Audio_PlayCueFromEventWork(void);
 
 void FieldScene_RunBranchingFormationPresentation(void)
 {

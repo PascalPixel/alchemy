@@ -147,6 +147,12 @@ impl Build {
     /// place of the file. Assembly text is not compared: an edit that only
     /// renumbers GCC's `.L` labels leaves the object identical.
     fn compile(&self, root: &Path, file: &Path, text: &str) -> Result<(String, String), String> {
+        let (bytes, messages) = self.assemble(root, file, text)?;
+        Ok((object_contents(&bytes)?, unnumbered(&messages)))
+    }
+
+    /// The object file itself and the messages as the tools gave them.
+    fn assemble(&self, root: &Path, file: &Path, text: &str) -> Result<(Vec<u8>, String), String> {
         let name = file.file_name().and_then(|n| n.to_str()).unwrap_or("source.c");
         let source = self.directory.path().join(name);
         let assembly = self.directory.path().join("out.s");
@@ -174,7 +180,7 @@ impl Build {
             return Err(messages);
         }
         let bytes = std::fs::read(&object).map_err(|e| e.to_string())?;
-        Ok((object_contents(&bytes)?, unnumbered(&messages)))
+        Ok((bytes, messages))
     }
 }
 
@@ -216,6 +222,25 @@ pub(crate) fn proved(root: &Path, file: &Path, text: &str, games: &[DecompTarget
         Ok(true)
     })?;
     Ok((apply(text, &kept), kept.len()))
+}
+
+/// One edition's compiler for whole-file comparisons outside `proved`.
+pub(crate) struct Compiler {
+    build: Build,
+}
+
+impl Compiler {
+    pub(crate) fn new(root: &Path, target: DecompTarget) -> Result<Compiler, String> {
+        let imports = crate::build_text::fresh_c_imports(root, target)?;
+        let directory = tempfile::Builder::new().prefix("alchemy-trial-").tempdir().map_err(|e| e.to_string())?;
+        Ok(Compiler { build: Build { target, imports, directory } })
+    }
+
+    /// The object file of this text in place of the file, or the
+    /// compiler's messages when it does not compile.
+    pub(crate) fn object(&self, root: &Path, file: &Path, text: &str) -> Result<Vec<u8>, String> {
+        self.build.assemble(root, file, text).map(|(object, _)| object)
+    }
 }
 
 #[cfg(test)]

@@ -1,3 +1,10 @@
+#include "unit/field/takara_ashiba/ashiba.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/korosseo/item_icon.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/game/character/chara.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -26,12 +33,6 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-void Korosseo_ShowItemIcon(s32 id, s32 item);
-s32	 SceneActor_FaceTowardActorZero(struct FieldActor *actor);
-void TakaraAshiba_DispatchByActorEightColumn();
-void TakaraAshiba_OpenPassage(s32);
-void TakaraAshiba_UpdateBlockRects(void);
-
 enum
 {
 	ITEM_RED_KEY = 243,
@@ -56,23 +57,12 @@ struct Frame
 	s32 f10;
 };
 
-void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 frames);
-s32	 ArcTan2(s32, s32);
-void ObjectDispatch_ApplyValueToChildren();
-
 static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
 {
 	*field = step;
 }
 
 void Engine_MapCopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
-
-s32	 PartyInventory_FindOwner();
-void PartyInventory_Remove();
-s32	 PartyInventory_FindOwner(s32);
-
-void battle_owner_69();
-void FieldEffect_UpdateGridPlacement();
 
 static __inline__ void LiftBlock(s32 column, u8 lowered)
 {
@@ -84,7 +74,6 @@ static __inline__ void LiftBlock(s32 column, u8 lowered)
 	Object_GetById(8)->motion_flags = lowered;
 	Object_GetById(8)->y.fixed = 0x200000;
 }
-void BattleFx_RunRisingObjectSequence(s32, s32, s32);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
@@ -1263,9 +1252,6 @@ void TakaraAshiba_UpdateItemIcons(void)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/item_icon.c"
-
-void TakaraAshiba_DispatchByActorEightColumn();
-void FieldScene_RunSingleStep(void);
 
 void TakaraAshiba_InitializeScene1(void)
 {

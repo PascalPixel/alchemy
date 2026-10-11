@@ -1,3 +1,19 @@
+#include "unit/field/korosseo_kawa/kawa.h"
+#include "unit/field/common/korosseo/solo_competitor.h"
+#include "unit/field/common/korosseo/solo_round.h"
+#include "unit/field/common/korosseo/korosseo.h"
+#include "unit/field/common/korosseo/compete.h"
+#include "unit/field/common/korosseo/marker.h"
+#include "unit/field/common/korosseo/item_icon.h"
+#include "unit/field/common/korosseo/path_rival.h"
+#include "unit/field/common/korosseo/scene_state.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/game/character/chara.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/menu/item/item.h"
+#include "unit/sound/sound.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -49,56 +65,12 @@ extern char HexDigits[20];
 extern s32	KorosseoKawa_Countdown;
 extern s16	Korosseo_MarkerSlot;
 
-s32	 GameFlag_GetByte();
-void GameFlag_SetByte(s32, s32);
-void Script_WaitForEventTimeout(struct FieldActor *);
-s32	 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32	 GetPartyMemberCount(void);
-void Object_RefreshSelectorById(s32 actor);
-s32	 BattleFx_SetWeightedResult();
-s32	 Party_SetFields1ceAnd1d0();
-void Event_SetDefeatDestination(s32 scene, s32 entrance);
-void Owner_RefreshActiveRatios();
-void Battle_ResetEffectCounter(void);
-void UiWork_PushValueSlot(s32 value, s32 digits);
-s32	 Menu_OpenCharacterSelector();
-void Inventory_AddItem(s32, s32);
-void Inventory_Equip();
-s32	 AudioCommand_GetStateByte(void);
-void Audio_PlayCueFromEventWork(void);
-s16	 Resource_LoadFixedBlockBIntoFreeSlot(void);
-void ObjectDispatch_InitFromTable6(struct FieldActor *);
-void ObjectDispatch_WaitForValue16();
 s32	 Object_CheckMovementCollision(struct FieldActor *, Position3 *);
 
 // コロッセオ共通 (field/common/korosseo)
-void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z);
-void Korosseo_RestoreCompetitor(s32 id);
-void Korosseo_ShowItemIcon(s32 id, s32 item);
-void Korosseo_SelectSoloCompetitor(s32 id);
-void Korosseo_FinishSoloRound(s32 id);
-void Korosseo_LoadPortrait(s32);
-void Korosseo_UpdateModeTask(void);
-void Korosseo_UpdateMarker(void);
-void Korosseo_DrawGauge(void);
-void Korosseo_UpdatePathRival(void);
 
-void SceneActor_MarkObjectAtTiles94To95(s32 actor);
-s32	 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor);
-void SceneState_SendIdBySceneId(s32 speaker, s32 competitor);
-void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
-void FieldScene_RunLateSequence(s32 a0);
-void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b);
-void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style);
-void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration);
-void KorosseoKawa_ReleaseMarker(void);
-void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c);
-s32	 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b);
-void FieldScene_BuildSceneDescriptorAndInstallTask(
-	s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third, s32 fourth);
 struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct FieldActor *subject);
-void			   StagedActor_PushActorAhead(void);
-struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void);
 
 u8 *KorosseoKawa_GetEntrances(void)
 {
@@ -222,7 +194,8 @@ void SceneState_ApplyRectsForActorsNineAndTen(void)
 	{
 		s32 x = actor->x.fixed >> 20;
 
-		GameFlag_SetByte(784, x);
+		/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, SceneState_ApplyRectsForActorsNineAndTen is 4 bytes longer */
+		((void (*)(s32, s32))GameFlag_SetByte)(784, x);
 	}
 	{
 		s32 x = actor->x.fixed >> 20;
@@ -527,8 +500,10 @@ void KorosseoKawa_RunStageStart(void)
 	/* FAKEMATCH: base is 0 from the top of the function, so 0 - approach + 1 is not folded into 1 - approach. */
 	BattleFx_SetWeightedResult(72, base - approach + 1);
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKawa, 4);
-	Event_SetDefeatDestination((s32)&SceneId_KorosseoKawa, 5);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as s32 (*)(); as void (*)(u16, u16), its prototype, KorosseoKawa_RunStageStart is 6 bytes longer */
+	((s32 (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_KorosseoKawa, 4);
+	/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, KorosseoKawa_RunStageStart is 4 bytes longer */
+	((void (*)(s32, s32))Event_SetDefeatDestination)((s32)&SceneId_KorosseoKawa, 5);
 	GameFlag_Set(0x11a);
 }
 
@@ -601,7 +576,6 @@ void SceneActor_MarkObjectAtTiles94To95(s32 actor)
 
 s32 KorosseoKawa_ApplyEntryState(void)
 {
-	void			   Object_LinkObjectAndSetCallback(s32 actor, s32 leader);
 	struct FieldActor *actor;
 	s32				   hit;
 	s32				   x;
@@ -619,7 +593,8 @@ s32 KorosseoKawa_ApplyEntryState(void)
 		actor->motion_flags = hit;
 		Map_CopyCellAttributes(14, 13, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
 	}
-	x = GameFlag_GetByte(0x310);
+	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, KorosseoKawa_ApplyEntryState has 430 of 892 bytes different */
+	x = ((s32 (*)())GameFlag_GetByte)(0x310);
 	if (x == 0)
 	{
 		x = 25;
@@ -697,7 +672,8 @@ s32 KorosseoKawa_ApplyEntryState(void)
 			FieldScene_RunTwoArmSequence(1);
 		}
 		Object_LinkObjectAndSetCallback(1, 0);
-		Object_LinkObjectAndSetCallback(2, 0);
+		/* FAKEMATCH: Object_LinkObjectAndSetCallback is called as void (*)(s32, s32); as void (*)(u32, u32), its prototype, KorosseoKawa_ApplyEntryState has 6 of 892 bytes different */
+		((void (*)(s32, s32))Object_LinkObjectAndSetCallback)(2, 0);
 		Object_LinkObjectAndSetCallback(3, 0);
 		SceneState_InitControlWhenFlag109Clear((s32)&ResourceId_RivalPathA);
 		break;
@@ -1125,8 +1101,10 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
 void SceneActor_PlaceSlots1To3FromWork(void)
 {
 	{
-		s32 x = GameFlag_GetByte(896);
-		s32 y = GameFlag_GetByte(904);
+		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlaceSlots1To3FromWork is 4 bytes longer */
+		s32 x = ((s32 (*)())GameFlag_GetByte)(896);
+		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlaceSlots1To3FromWork is 2 bytes longer */
+		s32 y = ((s32 (*)())GameFlag_GetByte)(904);
 
 		x <<= 20;
 		x += 0x80000;
@@ -1135,8 +1113,10 @@ void SceneActor_PlaceSlots1To3FromWork(void)
 		Engine_ActorSetPosition(GERALD, x, y);
 	}
 	{
-		s32 x = GameFlag_GetByte(912);
-		s32 y = GameFlag_GetByte(920);
+		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlaceSlots1To3FromWork is 4 bytes longer */
+		s32 x = ((s32 (*)())GameFlag_GetByte)(912);
+		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlaceSlots1To3FromWork is 2 bytes longer */
+		s32 y = ((s32 (*)())GameFlag_GetByte)(920);
 
 		x <<= 20;
 		x += 0x80000;
@@ -1145,8 +1125,10 @@ void SceneActor_PlaceSlots1To3FromWork(void)
 		Engine_ActorSetPosition(IWAN, x, y);
 	}
 	{
-		s32 x = GameFlag_GetByte(928);
-		s32 y = GameFlag_GetByte(936);
+		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlaceSlots1To3FromWork is 4 bytes longer */
+		s32 x = ((s32 (*)())GameFlag_GetByte)(928);
+		/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SceneActor_PlaceSlots1To3FromWork is 2 bytes longer */
+		s32 y = ((s32 (*)())GameFlag_GetByte)(936);
 
 		x <<= 20;
 		x += 0x80000;
@@ -1223,11 +1205,13 @@ void FieldScene_RunNearestActor165Scene(void)
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	base = n << 4;
-	GameFlag_SetByte(base + 880, p->x.fixed >> 20);
+	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunNearestActor165Scene is 4 bytes longer */
+	((void (*)(s32, s32))GameFlag_SetByte)(base + 880, p->x.fixed >> 20);
 	{
 		s32 v = p->z.fixed >> 20;
 
-		GameFlag_SetByte(base + 888, v);
+		/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunNearestActor165Scene is 4 bytes longer */
+		((void (*)(s32, s32))GameFlag_SetByte)(base + 888, v);
 	}
 	n++;
 	if (n > 3)
@@ -1301,12 +1285,18 @@ void RunPartyCountInteraction(s32 actorId)
 
 void FieldScene_RunSixSteps380To3A8(void)
 {
-	GameFlag_SetByte(896, 0);
-	GameFlag_SetByte(904, 0);
-	GameFlag_SetByte(912, 0);
-	GameFlag_SetByte(920, 0);
-	GameFlag_SetByte(928, 0);
-	GameFlag_SetByte(936, 0);
+	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps380To3A8 has 4 of 66 bytes different */
+	((void (*)(s32, s32))GameFlag_SetByte)(896, 0);
+	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps380To3A8 has 4 of 66 bytes different */
+	((void (*)(s32, s32))GameFlag_SetByte)(904, 0);
+	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps380To3A8 has 4 of 66 bytes different */
+	((void (*)(s32, s32))GameFlag_SetByte)(912, 0);
+	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps380To3A8 has 4 of 66 bytes different */
+	((void (*)(s32, s32))GameFlag_SetByte)(920, 0);
+	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps380To3A8 has 4 of 66 bytes different */
+	((void (*)(s32, s32))GameFlag_SetByte)(928, 0);
+	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunSixSteps380To3A8 has 4 of 66 bytes different */
+	((void (*)(s32, s32))GameFlag_SetByte)(936, 0);
 }
 
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
@@ -1381,7 +1371,6 @@ void SceneState_SendIdBySceneId(s32 speaker, s32 competitor)
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 {
-	void Object_LinkObjectAndSetCallback();
 
 	struct FieldActor *rec;
 	struct FieldActor *record;
@@ -1498,9 +1487,11 @@ L_main:
 	Engine_GameFlagSet(base + 512);
 	rec = (s32)Object_GetById(obj);
 	sx = rec->x.fixed >> 20;
-	GameFlag_SetByte((obj << 4) + 880, sx);
+	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunMiddleSequence is 4 bytes longer */
+	((void (*)(s32, s32))GameFlag_SetByte)((obj << 4) + 880, sx);
 	sy = rec->z.fixed >> 20;
-	GameFlag_SetByte((obj << 4) + 888, sy);
+	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, FieldScene_RunMiddleSequence is 4 bytes longer */
+	((void (*)(s32, s32))GameFlag_SetByte)((obj << 4) + 888, sy);
 }
 
 void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b)
@@ -1584,7 +1575,8 @@ void FieldScene_RunTwoArmSequence(s32 a)
 		Korosseo_LoadPortrait(a);
 		SceneData_SelectBlockAndResetCounters(1, 0);
 		Engine_EventWait(120);
-		while (AudioCommand_GetStateByte() != 0)
+		/* FAKEMATCH: AudioCommand_GetStateByte is called as s32 (*)(void); as u8 (*)(void), its prototype, FieldScene_RunTwoArmSequence has 122 of 268 bytes different */
+		while (((s32 (*)(void))AudioCommand_GetStateByte)() != 0)
 		{
 			Engine_TaskWait(1);
 		}
@@ -1641,7 +1633,8 @@ void FieldScene_RunLateSequence(s32 a0)
 		kind = 8;
 	}
 	Engine_ActorShowEmote(kind, 0x105, 0);
-	while (AudioCommand_GetStateByte() != 0)
+	/* FAKEMATCH: AudioCommand_GetStateByte is called as s32 (*)(void); as u8 (*)(void), its prototype, FieldScene_RunLateSequence has 35 of 204 bytes different */
+	while (((s32 (*)(void))AudioCommand_GetStateByte)() != 0)
 	{
 		Engine_TaskWait(1);
 	}

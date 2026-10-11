@@ -1,3 +1,10 @@
+#include "unit/field/kuupuappu_mura/mura.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/field/kuupuappu_mura/scene_cells.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/battle/tgtexec.h"
+#include "unit/game/character/chara.h"
+#include "unit/system/scheduler/callback.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
@@ -22,8 +29,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 void SceneEffect_SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
@@ -78,16 +83,6 @@ union DriftingObject
 	struct FieldActor		   actor;
 	struct OverlayEffectMotion motion;
 };
-
-void Djinn_Transfer(s32 owner, s32 element, s32 index, s32 target);
-void Party_RemoveOwnerRestored(s32 owner);
-void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value);
-s32	 ArcTan2(s32 x, s32 y);
-
-s32 SceneActor_CheckFacingAndRange(
-	struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force);
-void SceneActor_RunActorStep(s32 actor);
-void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect);
 
 s32 SceneActor_UpdateProximityToLeader(struct FieldActor *self)
 {
@@ -1165,8 +1160,6 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
 	}
 	sprite->priority = leader->actor.sprite->priority;
 }
-
-void ActorDraw_SetupActorSceneCells(void);
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),

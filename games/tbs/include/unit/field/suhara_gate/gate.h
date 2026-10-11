@@ -1,0 +1,24 @@
+#ifndef ALCHEMY_UNIT_FIELD_SUHARA_GATE_GATE_H
+#define ALCHEMY_UNIT_FIELD_SUHARA_GATE_GATE_H
+
+#include "types.h"
+
+struct SceneEntrance;
+struct SceneEvent;
+struct ScenePlacement;
+
+void Scene_SetActor13Value1A(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+s32 SceneData_ReturnZero(void);
+u8 *SceneData_GetSceneTable(void);
+const struct ScenePlacement *Scene_GetPlacements(void);
+const struct SceneEvent *Scene_GetEvents(void);
+s32 SuharaGate_EnterScene(void);
+void Scene_RunScene3c3SequenceC(void);
+void Dialogue_ShowMessages8fbAnd8fc(void);
+void Scene_RunPrimarySequence(void);
+void Scene_RunScene3c3SequenceA(void);
+void Scene_RunActorNinePromptDialogue(void);
+void Scene_RunActorTenRepeatedMotion(void);
+
+#endif

@@ -52,9 +52,4 @@ struct Actor02000c0c
 
 extern struct MapCellAnim ArutinMura_TriggerTable[];
 
-s32	 Battle_GetWorkObject1e0();
-void BattleFx_SetQueuedSoundAndPlay(s32 sound);
-void SceneEffect_UpdateDriftingParticle(struct SceneMotion *work);
-void SceneEffect_SpawnDriftingParticle(void);
-
 #endif

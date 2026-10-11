@@ -1,3 +1,9 @@
+#include "unit/field/common/shinden_heya/heya.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/sound/sound.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -28,17 +34,6 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-void FieldScene_RunPairedActorChoreography(void);
-void SceneEffect_StepEllipseOrbit(u8 *obj);
-void ShindenHeya_CopyActorPose(void);
-void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor);
-s32	 ShindenHeya_MatchLeaderPriority(struct FieldActor *actor);
-void ShindenHeya_SpawnActorSpark(s32 id);
-void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1);
-
-void Event_CallWithLastActiveObjectId();
-void AudioCommand_WaitForCompletion();
-
 extern struct BattleEffectBuffers *gPaletteBufferWork;
 
 struct ShrineWork
@@ -48,9 +43,6 @@ struct ShrineWork
 	u8	unknown_0e60[0x2a00 - 0xe60];
 	u8	lamps[4];
 };
-
-void UiText_ShowCenteredMessage(s32 message, s32 a1, s32 a2);
-void ObjectMotion_WaitForAnimationChange();
 
 extern
 
@@ -1536,10 +1528,6 @@ struct TextCursor
 
 extern volatile u32 gFrameTick;
 
-void UiText_DrawResource(s32 message, s32 window, s32 x, s32 y);
-void UiTextResource_Initialize(struct TextCursor *cursor, s32 *slot);
-void UiTextResource_SetPosition(struct TextCursor *cursor, s32 x, s32 y);
-
 static inline void TextCursor_Initialize(struct TextCursor *cursor, s32 *slot)
 {
 	/* FAKEMATCH: needed to match: a direct call lets GCC 2.96 keep the cursor's address in a register across the calls. */
@@ -1611,12 +1599,7 @@ s32 ShindenHeya_ChooseRestartOption(void)
 	return choice;
 }
 
-void Object_RefreshSelectorById();
-void Ui_PrepareTransferForItem();
-
 s32 Math_RemainderUnsigned();
-
-void FieldScene_RunSupplementalSequenceOne(void);
 
 void FieldScene_RunPairedActorChoreography(void)
 {

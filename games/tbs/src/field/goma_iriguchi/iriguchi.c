@@ -1,3 +1,7 @@
+#include "unit/field/goma_iriguchi/iriguchi.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/game/character/chara.h"
 #include "battle.h"
 #include "field.h"
 #include "menu.h"
@@ -19,12 +23,6 @@
 #include "inventory.h"
 #include "text/msg_ids.h"
 #include "objcmd.h"
-
-void GomaIriguchi_GiveShamansRod();
-void GomaIriguchi_RunSpinningLeap();
-void GomaIriguchi_SetEntranceFlag();
-void OverlayObject_TurnStateByEighth();
-void OverlayObject_WaitForHeight();
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -71,17 +69,7 @@ struct EffectRecord
 	u8 flags_hi : 4;
 };
 
-void BattleFx_PlayQueuedSound();
-
-void BattleFx_SetQueuedSoundAndPlay();
-void Event_PrepareObjectAndApplyValue();
-
 extern u8 *gEffectWork;
-void	   BattleFx_LoadActionEffectResources();
-void	   BattleFx_SetupObjectPair();
-void	   Field_DispatchTypeHandler();
-void	   EventObject_Initialize();
-void	   EffectRuntime_StopCurrentObject();
 
 struct Actor
 {
@@ -127,8 +115,6 @@ struct EffectParams
 	u8	pad1c[12];
 };
 
-s32 Inventory_AddItem(s32 group, s32 value);
-
 struct Member_387
 {
 	u8	pad[216];
@@ -142,8 +128,6 @@ struct Item_387
 	u8	pad4[8];
 	u8	equippable;
 };
-
-s32 Inventory_AddItem(s32 member, s32 item);
 
 void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames)
 {

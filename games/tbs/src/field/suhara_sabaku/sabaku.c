@@ -1,3 +1,7 @@
+#include "unit/field/suhara_sabaku/sabaku.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/game/character/chara.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
@@ -50,70 +54,10 @@ extern u32 gSuharaSabakuExits[];
 extern s32 gSuharaSabakuActor12Action[];
 
 extern u16 gSuharaSabakuShownLevel;
-s32		   GameFlag_GetByte();
-void	   GameFlag_SetByte();
-void	   BattleFx_SetPhaseRequest();
-void	   BattleFx_EmitRandomParticle();
 
 #define ACTOR_ID 13
 
 #define EncounterPalette (*(volatile u16 *)0x0500019e)
-
-void SetEffectRecordMode(struct FieldActor *work, s32 mode);
-
-void *OverlayObject_CreateAndInitialize(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-
-void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-
-void SceneState_SendRequest15With45(void);
-
-s32 SuharaSabaku_ClearActorSpriteAndCollisionFlags(u8 *obj);
-
-s32 SuharaSabaku_ToggleActorActive(u8 *obj);
-
-s32 SceneData_ReturnZero(void);
-
-u8 *SuharaSabaku_GetExits(void);
-
-void SuharaSabaku_SyncSelectedActorProgress(void);
-
-void FieldScene_RunMiddleAuxiliarySequence(s32 a0);
-
-void FieldScene_RunActor8Step(void);
-
-void FieldScene_RunActor9Step(void);
-
-void FieldScene_RunActor10Step(void);
-
-void FieldScene_RunActor11Step(void);
-
-void FieldScene_RunActor12Step(void);
-
-void FieldScene_RunLateActor8Step(void);
-
-void FieldScene_RunLateActor9Step(void);
-
-void FieldScene_RunLateActor10Step(void);
-
-void FieldScene_RunLateActor11Step(void);
-
-void FieldScene_RunLateActor12Step(void);
-
-void FieldScene_RunActorThirteenRestoration(void);
-
-void PlaceActorTwelveWhenFlagClear(void);
-
-void SuharaSabaku_EnableEffectChildOption(void);
-
-void EncounterPalette_Pulse(void);
-
-s32 FieldScene_RunOpeningAuxiliarySequence(void);
-
-s32 FieldScene_RunScene3c0SequenceA(void);
-
-void SuharaSabaku_ApplyVisitFlagBlend(void);
-
-void SuharaSabaku_ApplyAltarFlagBlend(void);
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
@@ -163,10 +107,6 @@ void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 #include "../common/effect/spawnov.c"
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
-
-void BattleFx_SetWeightedResult(s32 actor, s32 mode);
-
-void Event_SetDestination(s32 scene, s32 entrance);
 
 struct FieldGlobals
 {
@@ -253,7 +193,8 @@ void SuharaSabaku_SyncSelectedActorProgress(void)
 	scene = *(struct SceneWork_02000400 **)((u8 *)&gEventWork);
 	actor->presentation = (gFrameCount << 12);
 
-	progress = GameFlag_GetByte(0x210);
+	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SuharaSabaku_SyncSelectedActorProgress is 4 bytes longer */
+	progress = ((s32 (*)())GameFlag_GetByte)(0x210);
 	if (progress != 0)
 	{
 		if (progress == 1)
@@ -265,7 +206,8 @@ void SuharaSabaku_SyncSelectedActorProgress(void)
 			progress -= 1;
 		}
 	}
-	GameFlag_SetByte(0x210, progress);
+	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(); as u32 (*)(u32, u8), its prototype, SuharaSabaku_SyncSelectedActorProgress is 4 bytes longer */
+	((void (*)())GameFlag_SetByte)(0x210, progress);
 }
 
 void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
@@ -303,8 +245,10 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
 		rec7->motion_flags = 4;
 		*(base + 498) = 2;
 		GameFlag_Set(0x20f);
-		GameFlag_SetByte(0x218, p10);
-		GameFlag_SetByte(0x210, 180);
+		/* FAKEMATCH: GameFlag_SetByte is called as void (*)(); as u32 (*)(u32, u8), its prototype, FieldScene_RunMiddleAuxiliarySequence is 4 bytes longer */
+		((void (*)())GameFlag_SetByte)(0x218, p10);
+		/* FAKEMATCH: GameFlag_SetByte is called as void (*)(); as u32 (*)(u32, u8), its prototype, FieldScene_RunMiddleAuxiliarySequence has 4 of 244 bytes different */
+		((void (*)())GameFlag_SetByte)(0x210, 180);
 		Engine_EventEnd();
 		*(u16 *)(*(u8 **)((u8 *)&gEventWork) + 0x17c) = rec2;
 	}
@@ -623,7 +567,8 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
 			Engine_GameFlagSet((actor + 0x309));
 		}
 	}
-	GameFlag_SetByte(0x210, 0);
+	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(); as u32 (*)(u32, u8), its prototype, SuharaSabaku_MeetActor has 4 of 220 bytes different */
+	((void (*)())GameFlag_SetByte)(0x210, 0);
 	BattleFx_SetWeightedResult(98, 5);
 	Battle_SetStart(3);
 	state = &gGameState;
@@ -653,7 +598,8 @@ void SuharaSabaku_DropAndLeave(void)
 	struct FieldActor *partner;
 	s32				   i;
 
-	other = GameFlag_GetByte(0x218);
+	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SuharaSabaku_DropAndLeave is 4 bytes longer */
+	other = ((s32 (*)())GameFlag_GetByte)(0x218);
 	leader = Object_GetById(gGameState.selected_actor);
 	partner = Object_GetById(other);
 	Engine_EventBegin();
@@ -675,13 +621,16 @@ void SuharaSabaku_DropAndLeave(void)
 	Engine_EventWaitForScreen();
 	Engine_EventEnd();
 	Engine_GameFlagSet(0x122);
-	if (gGameState.scene == (s32)&SceneId_SuharaSabaku2 && GameFlag_GetByte(0x218) == 11)
+	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SuharaSabaku_DropAndLeave is 8 bytes longer */
+	if (gGameState.scene == (s32)&SceneId_SuharaSabaku2 && ((s32 (*)())GameFlag_GetByte)(0x218) == 11)
 	{
-		Event_SetDestination((s32)&SceneId_WorldMap, 77);
+		/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, SuharaSabaku_DropAndLeave is 8 bytes longer */
+		((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_WorldMap, 77);
 	}
 	else
 	{
-		Event_SetDestination((s32)&SceneId_WorldMap, 27);
+		/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, SuharaSabaku_DropAndLeave is 4 bytes longer */
+		((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_WorldMap, 27);
 	}
 }
 
@@ -757,7 +706,8 @@ s32 SuharaSabaku_RunSceneScript(void)
 	map = (*(struct FieldGlobals *)gMapWork).map;
 	(*(struct FieldGlobals *)gMapWork).event->start_transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	if (GameFlag_GetByte(0x210) != 0)
+	/* FAKEMATCH: GameFlag_GetByte is called as s32 (*)(); as u8 (*)(s32), its prototype, SuharaSabaku_RunSceneScript is 4 bytes longer */
+	if (((s32 (*)())GameFlag_GetByte)(0x210) != 0)
 	{
 		gGameState.movement_mode = 2;
 		Engine_TaskAddCallback(SuharaSabaku_SyncSelectedActorProgress, 0xc80);

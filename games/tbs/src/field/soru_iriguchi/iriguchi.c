@@ -1,3 +1,7 @@
+#include "unit/field/soru_iriguchi/iriguchi.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -19,15 +23,10 @@
 #define FieldScene_PrepareActors ((void (*)(s32))FieldScene_PrepareActors)
 
 s32	 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
-void FieldScene_RunSceneEntryHook(void);
 
 s32 SoruIriguchi_CueTimer __attribute__((section(".bss")));
 
 void InitializeSceneRecordBuffer();
-void BattleFx_SetQueuedSoundAndPlay();
-void Scene_RunTransitionCue();
-void Scene_EnterSolSanctum();
-void Scene_SukuretaSuspectsHiddenPassage();
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

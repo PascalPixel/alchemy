@@ -1,3 +1,5 @@
+#include "unit/field/torebi_heya/heya.h"
+#include "unit/battle/effect/slots.h"
 #include "torebi.h"
 #include "call.h"
 #include "field_event.h"

@@ -1,3 +1,6 @@
+#include "unit/field/korashiamu_iriguchi/iriguchi.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/game/character/chara.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -16,9 +19,6 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-void FieldScene_CallPairWith10(s32 no);
-void SceneState_ForwardMaskedHalfwordWith10(s32 arg0, s32 arg1);
-
 #define RECORD_17 17
 
 extern s32 KorashiamuIriguchi_ActionTable1[];
@@ -31,13 +31,7 @@ extern s32 KorashiamuIriguchi_ActionTable7[];
 extern s32 KorashiamuIriguchi_ActionTable8[];
 extern s32 KorashiamuIriguchi_ActionTable9[];
 
-void Party_AddActiveOwner();
-void Party_RemoveActiveOwner();
-void Object_SetActionCallbackAndRefreshById();
-void Object_SetActionById();
 void InventorySnapshot_Take();
-
-void FieldScene_RunMiddleSequence(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -180,7 +174,6 @@ void SceneDialogue_RunActor13MessageByFlag962(void)
 
 void KorashiamuIriguchi_TalkToActorFourteen(void)
 {
-	void SceneState_ForwardMaskedHalfwordWith10();
 	u32	 i;
 	s32	 record;
 
@@ -292,7 +285,6 @@ void KorashiamuIriguchi_FrightenActorFourteen(void)
 
 void SceneDialogue_ShowLine2118WithActor15Steps(void)
 {
-	void SceneState_ForwardMaskedHalfwordWith10();
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKorashiamuWhoHaveComeQuestionMe);
 	FieldScene_CallPairWith10(15);
@@ -307,7 +299,6 @@ void SceneDialogue_ShowLine2118WithActor15Steps(void)
 
 void KorashiamuIriguchi_CheerForDekka(void)
 {
-	void SceneState_ForwardMaskedHalfwordWith10();
 	u32	 i;
 	s32	 record;
 
@@ -337,7 +328,6 @@ void KorashiamuIriguchi_CheerForDekka(void)
 
 void FieldScene_RunActorSeventeenDialogueSteps(void)
 {
-	void SceneState_ForwardMaskedHalfwordWith10();
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(17, ACTOR_PARTY_LEADER, 20);
 	Engine_EventSetMessage((s32)MsgKorashiamuAmNavampaGondowanSixthRanked);
@@ -353,7 +343,6 @@ void FieldScene_RunActorSeventeenDialogueSteps(void)
 
 void KorashiamuIriguchi_IntroduceSeventhSeed(void)
 {
-	void SceneState_ForwardMaskedHalfwordWith10();
 	u32	 i;
 	s32	 record;
 
@@ -386,7 +375,6 @@ void KorashiamuIriguchi_AskReadyForFinals(void)
 
 void Scene_RunBranchingActorPresentation(void)
 {
-	void FieldScene_CallPairWith10();
 	s32	 record;
 
 	if (Engine_GameFlagIsSet(0x962) == 0)
@@ -607,7 +595,6 @@ void Scene_RunBranchingActorPresentation(void)
 
 void KorashiamuIriguchi_RunGatherScene(void)
 {
-	void			   FieldScene_CallPairWith10();
 	struct FieldActor *actor;
 	s32				   script;
 

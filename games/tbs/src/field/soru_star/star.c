@@ -1,3 +1,12 @@
+#include "unit/field/soru_star/star.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/field/soru_star/ring_setup.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/game/character/chara.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/menu/shop/sell.h"
+#include "unit/system/scheduler/callback.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
@@ -20,8 +29,6 @@
 #include "glyph.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-
-void SoruStar_RiseActorFourteenSparks();
 
 enum StarRoomActor
 {
@@ -68,26 +75,9 @@ union MotionWork
 	u8 bytes[102];
 };
 
-extern s32	Inventory_Count(s32 arg0);
-extern s32	Shop_PickUnitItem(s32 *out_first, s32 *out_second);
-s32			Inventory_Discard(s32 owner, s32 slot);
-extern void PartyInventory_Add(s32 arg0);
-
 s32	  CalculateAngleFromCoordinateDelta(s32, s32);
-void  Scene_UnmaskGarcia(void);
-void  Scene_BagJupiterStar(void);
-void  UiWork_PushValueSlot();
-s32	  Scene_PresentItem(s32 item, s32 x, s32 y, s32 z);
-void  SoruStar_LineUpFollowers(void);
-void  Party_RemoveOwnerRestored();
-void  PartyInventory_Discard();
-void  SoruStar_RiseActorFourteenSparks();
-void  UiText_ShowCenteredMessage();
-void *UnitGet(u32 owner);
 
 struct ObjectRuntime;
-
-void Event_SayThenWait(s32 speaker, s32 frames);
 
 extern u16 SoruStar_StarCells[];
 extern struct SceneEntrance Placement_Scripts[];
@@ -146,7 +136,6 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
 #include "../common/effect/spawnov.c"
 
 extern struct EventWork *gEventWork;
-void					 BattlePres_RunActionThenWaitIfModeZero();
 
 static __inline__ void SkipMessage(s32 amount)
 {
@@ -1268,12 +1257,6 @@ void SoruStar_LineUpFollowers(void)
 	Engine_ObjectSetScript((struct FieldActor *)actor, SoruStar_AngleScript);
 	Engine_EventEnd();
 }
-
-void SoruStar_SetupElementalRings();
-
-s32	 PartyInventory_FindOwner(s32 item);
-s32	 Inventory_Find(s32 owner, s32 item);
-void Inventory_AddItem(s32 owner, s32 item);
 
 struct Actor
 {

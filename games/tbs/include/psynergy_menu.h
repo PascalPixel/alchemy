@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_PSYNERGY_MENU_H
 #define ALCHEMY_PSYNERGY_MENU_H
 
+#include "unit/menu/item/item.h"
 #include "global_cells.h"
 #include "layout_guard.h"
 #include "menu_result.h"
@@ -85,21 +86,5 @@ LAYOUT_OFFSET_GUARD(PsynergyMenuState_SelectedIndexByOwner, struct PsynergyMenuS
 LAYOUT_OFFSET_GUARD(PsynergyMenuState_SkipSlide, struct PsynergyMenuState, skip_slide, 0x222);
 LAYOUT_OFFSET_GUARD(PsynergyMenuState_TabObjects, struct PsynergyMenuState, tab_objects, 0x114);
 LAYOUT_OFFSET_GUARD(PsynergyMenuState_OwnerScale, struct PsynergyMenuState, owner_scale, 0x154);
-
-s32	 PsynergyMenu_ClassifySelectedPsynergy(void);
-s32	 PsynergyMenu_SelectPartySlot(s32 party_slot);
-s32	 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused);
-void PsynergyMenu_RefreshOwnerPsynergy(s32 owner);
-s32	 PsynergyMenu_ReturnTrue(void);
-s32	 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
-void PsynergyMenu_CreateEntryGrid(void);
-void PsynergyMenu_CloseWindows(void);
-void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
-s32	 PsynergyMenu_CollectActions(struct BtlUnit *owner, u16 *actions, s32 mode);
-s32	 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 owner_index);
-s32	 PsynergyMenu_IsActionRestricted(s32 encoded_action);
-void PsynergyMenu_DrawPreparedPsynergyIcons(s32 unused, s32 owner);
-void PsynergyMenu_PreparedIconsNoOp(void);
-void Menu_HideEmptyEntryIcons(const u16 *entries);
 
 #endif

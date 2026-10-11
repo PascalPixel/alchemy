@@ -1,3 +1,5 @@
+#include "unit/field/common/runpa_suhara/suhara.h"
+#include "unit/battle/effect/slots.h"
 #include "interiors.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"

@@ -1,0 +1,93 @@
+#ifndef ALCHEMY_UNIT_FIELD_MAKYURI_HEYA_HEYA_H
+#define ALCHEMY_UNIT_FIELD_MAKYURI_HEYA_HEYA_H
+
+#include "types.h"
+
+struct AnchoredEffect;
+struct FieldActor;
+struct SceneEntrance;
+struct SceneEvent;
+struct ScenePlacement;
+
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth);
+void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void SceneState_ApplyPair12And21(void);
+void MakyuriHeya_UpdateLeaderEffectTarget(void);
+s32 MakyuriHeya_TrailSparks(struct FieldActor *actor);
+const struct SceneEntrance *Scene_GetEntrances(void);
+s32 SceneData_ReturnZero(void);
+u8 *MakyuriHeya_GetExits(void);
+const struct ScenePlacement *Scene_GetPlacements(void);
+void MakyuriHeya_TickSpawnTimer(void);
+void MakyuriHeya_ClearSceneRecordAndTarget(void);
+void FieldScene_RunSingleStep(void);
+void MakyuriHeya_TriggerPillarRise(void);
+void SceneDialogue_RunLine1637(void);
+const struct SceneEvent *Scene_GetEvents(void);
+void SceneActor_RunActorZeroHandledMotion(s32 a);
+void MakyuriHeya_DropLeaderToColumn(s32 a0);
+void MakyuriHeya_RunExitThreeScene(void);
+void MakyuriHeya_RunExitThirteenScene(void);
+void MakyuriHeya_RunExitFiveScene(void);
+void MakyuriHeya_ExitWhenChannelsOpen(void);
+void MakyuriHeya_RunPushedBlockScene(void);
+void MakyuriHeya_WalkLeaderIn(void);
+void FieldScene_RunFourCallSequence(void);
+void FieldScene_RunActorElevenAtTile5And13(void);
+void MakyuriHeya_TriggerSmallFloorSwitch(void);
+void MakyuriHeya_CloseFloorSwitch(void);
+void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1, s32 a2);
+void MakyuriHeya_RunSequenceG(s32 a0);
+void MakyuriHeya_SprayAtFountain(void);
+void FieldScene_RunSupplementalSequenceOne(s32 a0);
+void MakyuriHeya_RunSequenceF(void);
+void MakyuriHeya_RunSequenceE(void);
+void FieldScene_RunFourSteps(void);
+void SceneState_RunWhenActor8AtTile10x23(void);
+void MakyuriHeya_TriggerFloorSwitch(void);
+void FieldScene_RunScene39cSequenceA(void);
+void MakyuriHeya_OpenStoneDoor(s32 side);
+void SceneEffect_SpawnParticleRowsByMode(s32 mode);
+s32 MakyuriHeya_StartPillarPush(void);
+void SceneActor_UseActorNinePositionWithYOffset(void);
+s32 MakyuriHeya_StartActorNineParticles(void);
+s32 MakyuriHeya_StopActorNinePositionCallback(void);
+void MakyuriHeya_RunColumnProbeScene(void);
+void FieldScene_RunFourStepSequence(void);
+void MakyuriHeya_SyncBlockFlags(void);
+void SceneState_ApplyRectWhenActor20AtColumn28(void);
+void SceneEffect_RotatePaletteEntries40To47(void);
+void FieldScene_RunActorThreeBranchSequence(void);
+void SceneDialogue_RunActor3TimedLine(void);
+void MakyuriHeya_FadePaletteToWhite(void);
+void FieldScene_RunColumnChoreography(void);
+void SceneEffect_RotatePaletteEntries97To103(void);
+void MakyuriHeya_FadePaletteToBlack(void);
+void MakyuriHeya_SinkActorWithSparks(s32 actor);
+void FieldScene_RunRandomEffectActorSequence(void);
+void FieldScene_RunScriptedSteps0And1576(void);
+void FieldScene_RunScriptedSteps0And953(void);
+void FieldScene_RunFlag881Dialogue(void);
+void FieldScene_RunActor184Sequence(void);
+void FieldScene_RunScene39cSequenceB(void);
+void MakyuriHeya_ArriveWithSparks(void);
+void SceneEffect_SpawnParticleRowsAndDrawTiles(void);
+void MakyuriHeya_OpenThreeStepStair(void);
+void SceneEffect_SpawnParticleEveryFourthFrame(void);
+void SceneEffect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z);
+void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z);
+void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w);
+s32 Scene_Initialize(void);
+void MakyuriHeya_RunPartyScene(void);
+void MakyuriHeya_RideLift(void);
+void MakyuriHeya_CastPsynergyAtActor11(void);
+void SceneState_SetRecordTableValue(s32 key, s32 value);
+void OverlayObject_SpawnKind24AtObject(struct FieldActor *src);
+s32 SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work);
+s32 SceneEffect_AdvanceScaleOverSixteenFrames(struct FieldActor *o);
+s32 OverlayObject_StepScaleUpSixteenFrames(struct FieldActor *o);
+void SceneState_ClearCurrentRecordAndReleaseTarget(void);
+void OverlayObject_ReleasePublishedAttachmentB(void);
+
+#endif

@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_AFFINE_H
 #define ALCHEMY_AFFINE_H
 
+#include "unit/system/scheduler/callback.h"
 #include "types.h"
 #include "layout_guard.h"
 
@@ -25,6 +26,5 @@ LAYOUT_SIZE_GUARD(AffineMatrix_Size, union AffineMatrix, 8);
 
 extern u8				  gObjAffineCount;
 extern union AffineMatrix gObjAffineMatrices[];
-s32						  AffineMatrix_BuildForEffect(struct AffineTransform *transform);
 
 #endif

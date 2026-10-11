@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_BATTLE_WORK_H
 #define ALCHEMY_BATTLE_WORK_H
 
+#include "unit/battle/tgtexec.h"
 #include "types.h"
 #include "layout_guard.h"
 #include "btltype.h"
@@ -116,11 +117,5 @@ LAYOUT_OFFSET_GUARD(BattleEventState_Phase, struct BattleEventState, phase, 0x14
 LAYOUT_OFFSET_GUARD(BattleEventState_Flags, struct BattleEventState, flags, 0x16c);
 
 extern struct BtlWork *BtlWk;
-
-s32	 BattleUnit_TickRefrain(s32 unit_id);
-u32	 BattleEventRuntime_Reset(void);
-s32	 BattleEventRuntime_WaitForReady(void);
-void BattleEventRuntime_BeginPhase(s32 cue);
-s32	 BattleEventRuntime_SchedulePhase(s32 frames);
 
 #endif

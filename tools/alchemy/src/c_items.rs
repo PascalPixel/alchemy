@@ -238,6 +238,141 @@ pub(crate) fn items(source: &str) -> Vec<Item<'_>> {
     out
 }
 
+/// One item of a file with the `#if` conditions it sits under. Unlike
+/// `items`, a conditional is not one item: each of its directives is a
+/// `Directive` and what it guards follows as items of its own.
+#[derive(Clone, Debug)]
+pub(crate) struct Flat<'a> {
+    pub item: Item<'a>,
+    pub conditions: Vec<String>,
+}
+
+fn condition_of(line: &str) -> String {
+    let joined = without_comments(line).replace("\\\n", " ");
+    let rest = joined.trim_start().trim_start_matches('#').trim_start();
+    let name = directive_name(&joined);
+    let rest = collapse(rest.strip_prefix(name).unwrap_or(rest));
+    match name {
+        "ifdef" => format!("defined({rest})"),
+        "ifndef" => format!("!defined({rest})"),
+        _ => rest,
+    }
+}
+
+/// The condition of a conditional's current branch: its own test and the
+/// failure of every branch before it.
+fn branch_condition(tests: &[Option<String>]) -> String {
+    let Some((last, earlier)) = tests.split_last() else {
+        return String::new();
+    };
+    let mut parts: Vec<String> = earlier.iter().flatten().map(|test| format!("!({test})")).collect();
+    match last {
+        Some(test) if parts.is_empty() => return test.clone(),
+        Some(test) => parts.push(format!("({test})")),
+        None => {}
+    }
+    parts.join(" && ")
+}
+
+pub(crate) fn flat(source: &str) -> Vec<Flat<'_>> {
+    let bytes = source.as_bytes();
+    let mut out = Vec::new();
+    // Each open conditional: the tests of its branches so far, `None` for #else.
+    let mut open: Vec<Vec<Option<String>>> = Vec::new();
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i].is_ascii_whitespace() {
+            i += 1;
+            continue;
+        }
+        let start = i;
+        let mut under: Vec<String> = open.iter().map(|tests| branch_condition(tests)).collect();
+        let (end, kind) = if let Some(end) = comment_end(source, i) {
+            (end, Kind::Comment)
+        } else if bytes[i] == b'#' && line_start(bytes, i) {
+            let line_end = directive_end(source, i);
+            let line = &source[i..line_end];
+            match directive_name(line) {
+                "include" => (trailing_comments(source, line_end), Kind::Include(include_header(line))),
+                "if" | "ifdef" | "ifndef" => {
+                    open.push(vec![Some(condition_of(line))]);
+                    (line_end, Kind::Directive)
+                }
+                name @ ("elif" | "else") => {
+                    if let Some(tests) = open.last_mut() {
+                        tests.push((name == "elif").then(|| condition_of(line)));
+                    }
+                    under.pop();
+                    (line_end, Kind::Directive)
+                }
+                "endif" => {
+                    open.pop();
+                    under.pop();
+                    (line_end, Kind::Directive)
+                }
+                _ => (line_end, Kind::Directive),
+            }
+        } else {
+            let (end, body) = statement_end(source, i);
+            let kind = body.map_or(Kind::Declaration, |b| Kind::Function { body: b - start });
+            (trailing_comments(source, end), kind)
+        };
+        out.push(Flat { item: Item { start, end, text: &source[start..end], kind }, conditions: under });
+        i = end.max(start + 1);
+    }
+    out
+}
+
+/// One declarator of a declaration item.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct Declared {
+    pub name: String,
+    pub function: bool,
+    pub external: bool,
+    pub local: bool,
+    pub typedef: bool,
+    pub initialized: bool,
+    pub signature: String,
+}
+
+/// What a declaration or function item declares, declarator by declarator.
+pub(crate) fn declared(item: &Item) -> Vec<Declared> {
+    let Ok(tokens) = lex(item.text) else {
+        return Vec::new();
+    };
+    let mut code: Vec<Tok> = tokens.iter().map(|t| t.tok.clone()).filter(|t| !matches!(t, Tok::Comment(_))).collect();
+    if let Kind::Function { .. } = item.kind {
+        let Some((_, boundary, name, _, open)) = scan_definitions(&tokens).into_iter().next() else {
+            return Vec::new();
+        };
+        // Macro calls before the definition are not part of its head.
+        let boundary = tokens[boundary..name].iter().rposition(|t| matches!(t.tok, Tok::Punct(")"))).map_or(boundary, |at| boundary + at + 1);
+        code = tokens[boundary..open].iter().map(|t| t.tok.clone()).filter(|t| !matches!(t, Tok::Comment(_))).collect();
+    } else if item.kind != Kind::Declaration {
+        return Vec::new();
+    }
+    let toks: Vec<&Tok> = code.iter().collect();
+    let spec = specifiers(&toks);
+    let end = spec.end.min(toks.len());
+    let specs = &toks[..end];
+    let local = specs.iter().any(|t| matches!(t, Tok::Ident(w) if w == "static"));
+    declarators(&toks[end..])
+        .into_iter()
+        .filter_map(|part| {
+            let (name, function, initialized) = declarator(part)?;
+            Some(Declared {
+                name,
+                function,
+                external: spec.external,
+                local,
+                typedef: spec.typedef,
+                initialized,
+                signature: signature(specs, part),
+            })
+        })
+        .collect()
+}
+
 pub(crate) fn blank_line_before(source: &str, at: usize) -> bool {
     let gap: &str = source[..at].trim_end_matches([' ', '\t']);
     let gap = &gap[gap.trim_end().len()..];

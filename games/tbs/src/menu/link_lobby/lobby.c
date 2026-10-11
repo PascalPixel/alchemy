@@ -1,3 +1,10 @@
+#include "unit/menu/link_lobby/lobby.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/battle/tgtexec.h"
+#include "unit/field/common/script/script.h"
+#include "unit/game/character/chara.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -31,32 +38,6 @@ extern u32					 gLinkLobbyExits[];
 extern struct ScenePlacement gLinkLobbyPlacements[];
 extern struct ScenePlacement gLinkLobbyBattlePlacements[];
 extern struct SceneEvent	 gLinkLobbyEvents[];
-
-u8 *LinkLobby_GetEntrances(void);
-
-s32 SceneData_ReturnZero(void);
-
-s32 LinkLobby_InitializeSerial(void);
-
-u8 *LinkLobby_GetExits(void);
-
-s32 LinkLobby_SelectPlacements(void);
-
-s32 Scene_ClearFlagsAndPlayCue2927(void);
-
-s32 SceneData_CopyUpToThreeEntries(u16 *dest);
-
-s32 State_ApplyValueAndGetResult(s32 arg0);
-
-void State_NoOp(void);
-
-u8 *LinkLobby_GetEvents(void);
-
-s32 LinkLobby_SaveBattleResults(void);
-
-s32 LinkLobby_SaveMonsterBattleResults(void);
-
-s32 LinkLobby_DrawThreeDigitValue(s32 value);
 
 extern u16 gLinkStatus;
 
@@ -256,11 +237,8 @@ s32 LinkLobby_PollPeerReady(void)
 	return result;
 }
 
-#define Ui_AdjustValueWithoutLimit ((void (*)(s32, u16 *))Ui_AdjustValueWithoutLimit)
-
 u32 gLinkLobbyCallFrames;
 #define gLinkStatus (*(volatile u16(*)) & gLinkStatus)
-u8 *UnitGet(s32 owner);
 
 s32 LinkLobby_CallIntoCircle(void)
 {
@@ -641,19 +619,7 @@ done:
 
 #undef gLinkStatus
 
-#define UiWork_Finalize ((void (*)(s32, s32))UiWork_Finalize)
-
-#define LinkLobby_PollPeerReady ((void (*)(void))LinkLobby_PollPeerReady)
-
-void GameFlag_SetByte(s32 flag, s32 value);
-
 extern u8 gMapCellBuffer[];
-s32		  UiText_OpenMessageWindow(s32 message, s32 x, s32 y, s32 flags);
-void	  Map_ClearLayerEntryFlag(s32 layer);
-void	  Map_SetLayerEntryFlag(s32 layer);
-void	  Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
-void	  Event_SetDefeatDestination(s32 scene, s32 entrance);
-void	  BattleFx_SetWeightedResult(s32 value, s32 weight);
 
 s32 LinkLobby_ExchangePartyRecords(void)
 {
@@ -689,7 +655,8 @@ s32 LinkLobby_ExchangePartyRecords(void)
 		if (result < 0)
 			goto fail;
 	}
-	GameFlag_SetByte(0x3f0, first);
+	/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, LinkLobby_ExchangePartyRecords has 60 of 176 bytes different */
+	((void (*)(s32, s32))GameFlag_SetByte)(0x3f0, first);
 	result = first;
 check:
 	if (first < 0)
@@ -819,13 +786,17 @@ s32 LinkLobby_RunConnectionSequence(void)
 		}
 		if (Engine_GameFlagIsSet(0x173))
 		{
-			Party_SetFields1ceAnd1d0((s32)&SceneId_LinkLobby, 8);
-			Event_SetDefeatDestination((s32)&SceneId_LinkLobby, 9);
+			/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, LinkLobby_RunConnectionSequence is 4 bytes longer */
+			((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_LinkLobby, 8);
+			/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, LinkLobby_RunConnectionSequence is 4 bytes longer */
+			((void (*)(s32, s32))Event_SetDefeatDestination)((s32)&SceneId_LinkLobby, 9);
 		}
 		else
 		{
-			Party_SetFields1ceAnd1d0((s32)&SceneId_LinkLobby, 10);
-			Event_SetDefeatDestination((s32)&SceneId_LinkLobby, 11);
+			/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, LinkLobby_RunConnectionSequence is 4 bytes longer */
+			((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_LinkLobby, 10);
+			/* FAKEMATCH: Event_SetDefeatDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, LinkLobby_RunConnectionSequence is 4 bytes longer */
+			((void (*)(s32, s32))Event_SetDefeatDestination)((s32)&SceneId_LinkLobby, 11);
 		}
 		Battle_SetStart(4);
 		BattleFx_SetWeightedResult(1, 1);
@@ -976,11 +947,9 @@ struct LobbyActor
 	u8	unknown_00[6];
 	u16 facing;
 };
-#define Object_GetById ((struct LobbyActor * (*)(s32 actor)) Object_GetById)
 void Engine_EventBegin(void);
 void Engine_ActorFaceActor(s32 actor, s32 target, s32 frames);
 void Engine_EventSetMessage(s32 message);
-void UiWork_ClearValueNameTables(void);
 #define Engine_EventShowMessage ((s32 (*)(s32 actor, s32 mode))Engine_EventShowMessage)
 
 s32 LinkLobby_TalkLinkedWins(s32 actor)
@@ -1017,33 +986,14 @@ none:
 	return Engine_EventShowMessage(actor, 0);
 }
 
-#undef Object_GetById
 #undef Engine_EventShowMessage
 
-#undef UiWork_Finalize
-
-s32 SaveState_ProcessSelectedSlot(void);
-
 s32	 Engine_DebugCreateWindow();
-void RenderOutput_PrepareForRedraw();
-void UiText_DrawNumber();
-s32	 DebugParty_LoadPreset();
 
-s32 Party_CountActiveOwners(void);
-
-s32	 Sound_LoadPresetParameters(s32 preset);
-s32	 Event_SetDestination(s32 scene, s32 entrance);
 void UiText_DrawQuantity();
-s32	 UiWork_IsComplete(void);
 
 extern u8 gOptionMirror;
-s32		  Sound_LoadPresetParameters(s32 value);
-void	  Map_SetLayerEntryFlag(s32 value);
-s32		  GameFlag_GetByte(s32 counter);
-void	  GameFlag_SetByte(s32 counter, s32 value);
 void	  UiText_DrawQuantity(s32 value, s32 digits);
-void	  Owner_RefreshActiveRatios(s32 value);
-void	  BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
 
 s32 LinkLobby_RunChoicePrompt(s32 id)
 {
@@ -1211,7 +1161,8 @@ s32 LinkLobby_StartExchange(void)
 	/* FAKEMATCH: the do/while loads the scene number before the 1. */
 	do
 	{
-		return Event_SetDestination((s32)&SceneId_Clear, 1);
+		/* FAKEMATCH: Event_SetDestination is called as s32 (*)(s32, s32); as void (*)(u16, u16), its prototype, LinkLobby_StartExchange does not compile */
+		return ((s32 (*)(s32, s32))Event_SetDestination)((s32)&SceneId_Clear, 1);
 	} while (0);
 }
 
@@ -1419,13 +1370,15 @@ s32 LinkLobby_RunRoundResult(void)
 				{
 					wins = 90;
 				}
-				GameFlag_SetByte(0x3f8, wins);
+				/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, LinkLobby_RunRoundResult has 642 of 1060 bytes different */
+				((void (*)(s32, s32))GameFlag_SetByte)(0x3f8, wins);
 			}
 			else
 			{
 
 				Engine_GameFlagClear(0x173);
-				GameFlag_SetByte(0x3f8, -1);
+				/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, LinkLobby_RunRoundResult is 4 bytes shorter */
+				((void (*)(s32, s32))GameFlag_SetByte)(0x3f8, -1);
 				/* FAKEMATCH: one scalar holds the row address, then its score. */
 				score = (u32)&state->link_tallies[3];
 				UiText_DrawQuantity(*(u16 *)score, 5);
@@ -1474,7 +1427,8 @@ s32 LinkLobby_RunRoundResult(void)
 		}
 		gGameState.link_tallies[3] = 0;
 		Engine_GameFlagClear(0x173);
-		GameFlag_SetByte(0x3f8, -1);
+		/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, LinkLobby_RunRoundResult is 4 bytes shorter */
+		((void (*)(s32, s32))GameFlag_SetByte)(0x3f8, -1);
 		LinkLobby_WriteSlotValue(0);
 		Engine_EventEnd();
 	}
@@ -1539,7 +1493,8 @@ s32 LinkLobby_RunRoundResult(void)
 	{
 		SerialRuntime_Initialize();
 		Engine_GameFlagClear(0x172);
-		GameFlag_SetByte(0x3f8, -1);
+		/* FAKEMATCH: GameFlag_SetByte is called as void (*)(s32, s32); as u32 (*)(u32, u8), its prototype, LinkLobby_RunRoundResult is 4 bytes shorter */
+		((void (*)(s32, s32))GameFlag_SetByte)(0x3f8, -1);
 		if (gGameState.saved_options != 0)
 		{
 			Engine_EventBegin();

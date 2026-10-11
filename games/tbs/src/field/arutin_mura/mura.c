@@ -1,3 +1,5 @@
+#include "unit/field/arutin_mura/mura.h"
+#include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -20,8 +22,6 @@
 #define FieldScene_PrepareActors ((void (*)(void *))FieldScene_PrepareActors)
 
 extern u32 Placement_Messages[];
-
-void FieldScene_RunMiddleSequence(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

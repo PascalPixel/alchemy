@@ -197,11 +197,4 @@ enum SearchTarget
 
 struct SceneRegion;
 
-s32							 Scene_Initialize(void);
-const struct SceneEntrance	*Scene_GetEntrances(void);
-const u32					*Scene_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent		*Scene_GetEvents(void);
-const struct SceneRegion	*Scene_GetRegions(void);
-
 #endif

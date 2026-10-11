@@ -1,3 +1,10 @@
+#include "unit/field/takara_hashira/hashira.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/map/panel.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
@@ -27,20 +34,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-s32	 FieldScene_QueryActorFootprint();
-s32	 FieldScene_RunScene3b3SequenceD();
-void FieldScene_RunScene3b3SequenceE();
-void OverlayObject_SetCallbackAndMode2();
-s32	 SceneActor_UpdateBit1ByPositionToSlotZero();
-void SceneEffect_SpawnRandomizedParticle();
-void StagedActor_PlaceAtObjectTenCell();
-void TakaraHashira_DropActorTen();
-void TakaraHashira_PrepLoweredActor();
-void TakaraHashira_ReleasePillarRider();
-void TakaraHashira_RestoreFlaggedPillar();
-s32	 TakaraHashira_UpdateActorPriority();
-void TakaraHashira_UpdatePillarActors();
 
 #define NULL ((void *)0)
 #define REC_ID 16
@@ -84,11 +77,6 @@ extern u16 TakaraHashira_ShiftSteps3[];
 extern u16 TakaraHashira_ShiftSteps4[];
 extern u16 TakaraHashira_ShiftSteps5[];
 
-void CopyAndOffsetCoordinatePreset(void);
-void TakaraHashira_JitterBackgroundScroll(void);
-s32	 SceneActor_UpdateBit1ByPositionToSlotZero();
-s32	 TakaraHashira_UpdateActorPriority();
-
 void Engine_TaskWait(s32 frames);
 void Object_SetMode(struct FieldActor *object, s32 mode);
 
@@ -97,19 +85,7 @@ extern u8 *gEffectWork;
 
 extern s32 TakaraHashira_ShakeChance;
 
-s32	 FieldScene_QueryActorFootprint();
-void Vector_AddPolarOffset();
 s32	 Object_CheckMovementCollision();
-void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane, s32 destX, s32 destY);
-s32	 FieldScene_RunScene3b3SequenceD();
-void TakaraHashira_UpdatePillarActors();
-void FieldScene_RunScene3b3SequenceE();
-int	 FieldScene_RunScene3b3SequenceD(void);
-void battle_owner_69();
-
-struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *origin);
-
-s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
@@ -170,8 +146,6 @@ struct MapCellFields
 	u8	height;
 	u8	event;
 };
-
-s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no);
 
 void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 {
@@ -369,10 +343,6 @@ void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
 	}
 }
 
-#define OverlayObject_PrepareObject ((s32 (*)(s32, s32, s32, s32))OverlayObject_PrepareObject)
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-
 void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *source)
 {
 	struct MapCellFields *src = (struct MapCellFields *)source;
@@ -485,7 +455,6 @@ void StagedActor_StepDownUntilClamp(s32 index)
 
 void FieldScene_RunPrimarySequence(void)
 {
-	s32 FieldScene_RunScene3b3SequenceD();
 
 	struct FieldActor *rec;
 	s32				   flag;
@@ -722,11 +691,6 @@ void TakaraHashira_JitterBackgroundScroll(void)
 	*reg++ = *src++;
 	*reg = *src;
 }
-
-#define TakaraHashira_ReadMapCell \
-	((void (*)(s32, s32, s32, struct MapCellFields *))TakaraHashira_ReadMapCell)
-#define OverlayObject_WaitUntilSettledAndReset \
-	((void (*)(struct FieldActor *))OverlayObject_WaitUntilSettledAndReset)
 
 #define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
 
@@ -1129,15 +1093,10 @@ void TakaraHashira_UpdatePillarActors(void)
 	TakaraHashira_SortPillarActors();
 }
 
-void FieldEffect_UpdateGridPlacement(void);
-
-void ObjectMotion_WaitForAnimationChange();
-
 struct Probe
 {
 	s32 word[6];
 };
-void BattleFx_StartFadeOverlay();
 
 void TakaraHashira_PushPillar(void)
 {

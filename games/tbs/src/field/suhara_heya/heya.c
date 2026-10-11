@@ -1,3 +1,7 @@
+#include "unit/field/suhara_heya/heya.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "suhara.h"
 #include "text/msg_ids.h"
 #include "types.h"

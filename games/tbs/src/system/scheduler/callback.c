@@ -1,3 +1,4 @@
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -50,8 +51,6 @@
 extern u8 gDebugMode;
 extern u8 gCpuLoadDisplayEnabled;
 extern u8 gOamCopyEnabled;
-
-void WaitFrames(s32 frames);
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
@@ -2686,8 +2685,6 @@ s32 SaveState_InitializeWorkspace(void)
 	}
 	return 0;
 }
-
-u32 Random16(void);
 
 u32 SaveState_SelectWriteSlot(s32 mode)
 {

@@ -1,3 +1,9 @@
+#include "unit/field/vinasu_heya/heya.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
+
 #define NULL ((void *)0)
 #include "global_cells.h"
 #include "types.h"
@@ -22,10 +28,6 @@
 #include "field_service.h"
 #include "io_reg.h"
 #include "scene_ids.h"
-
-void OverlayObject_WaitUntilIdle();
-void VinasuHeya_SpawnRandomParticles();
-void VinasuHeya_StepActorWithDust();
 
 struct Sprite
 {
@@ -388,21 +390,8 @@ extern u8  gMapCellBuffer[];
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 #endif
 extern u32		   gVinasuHeyaPrimaryTable[];
-void			   VinasuHeya_SettlePushedBlocks(void);
-void			   Object_RefreshSelectorById();
-void			   BattleFx_RunRisingObjectSequence();
-void			   BattleFx_PlayQueuedSound();
 s32				   Object_CheckMovementCollision();
-struct FieldActor *SceneData_FindSlotAtPosition(s32 *pos, struct FieldActor *self);
 void			   SceneEvents_UpdateInView(u8 *);
-void			   Scene_RunScene3c8SequenceA(void);
-void			   VinasuHeya_RunCellPushScene(void);
-void			  *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void			   RunStagedActorTransition(void);
-void			   SceneActor_SwapPositionsByDepth(s32 group, s32 index);
-s32				   SceneActor_TryMoveActorZeroTwoTilesAhead(void);
-
-void SceneEffect_SpawnNineRadialEffects(s32 actor);
 
 static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 {
@@ -459,7 +448,6 @@ void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 type)
 #endif
 
 extern u8 *gActorEffectWork;
-void	   Object_SetActionById();
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"
@@ -2166,8 +2154,6 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 	Engine_EventWait(30);
 }
 
-struct FieldActor *Battle_GetWorkObject1e0(void);
-
 struct FloatingBlock
 {
 	u8	unknown_00[0x64];
@@ -2255,7 +2241,8 @@ void VinasuHeya_ResolveFloatingBlock(void)
 			other = Object_GetById(slot + 10);
 			FloatingBlock_Settle(other, 0);
 			Engine_CameraSetSpeed(0x30000, 0x6000);
-			Battle_GetWorkObject1e0()->motion_flags = 0;
+			/* FAKEMATCH: Battle_GetWorkObject1e0 is called as struct FieldActor *(*)(void); as s32 (*)(void), its prototype, VinasuHeya_ResolveFloatingBlock does not compile */
+			((struct FieldActor *(*)(void))Battle_GetWorkObject1e0)()->motion_flags = 0;
 			Engine_CameraMoveTo(0x880000, 0x80000, 0x1580000, 1);
 			Engine_CameraWaitForMove();
 			SceneActor_PickHighestSlotAtSameTileAndRelease(slot + 10);
@@ -2423,8 +2410,6 @@ void VinasuHeya_ExtendBridge(void)
 	}
 }
 extern struct SwitchCell gVinasuPillarCells[];
-void					 ObjectDispatch_WaitForValue16(struct SwitchEffect *effect);
-void					 Battle_ResetEffectCounter(void);
 
 void Scene_RunScene3c8SequenceA(void)
 {
@@ -2570,12 +2555,6 @@ void Scene_RunScene3c8SequenceA(void)
 	}
 	Event_End();
 }
-
-void BattleFx_StartFadeOverlay(s32 mode);
-void BattleFx_SetQueuedSoundAndPlay(s32 cue);
-void DisplayBlend_EnableRunScript(void);
-void FieldScene_RunSupplementalSequenceOne(void);
-void FieldScene_RunOpeningAuxiliarySequence(void);
 
 struct DirXZ
 {

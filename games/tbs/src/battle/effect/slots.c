@@ -1,3 +1,6 @@
+#include "unit/battle/effect/slots.h"
+#include "unit/graphics/display/scroll_initialize_hblank_dma.h"
+#include "unit/system/scheduler/callback.h"
 #include "types.h"
 #include "scene.h"
 #include "btltype.h"
@@ -82,21 +85,6 @@
 #include "field_effect.h"
 #include "fixed_point_position.h"
 
-struct ActionDescriptor *BattleAction_FindDescriptor(s32 id);
-s32						 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result);
-void					 BattleFx_FinishAction(void);
-u8						 BattleFx_GetFlags(void);
-struct EfxObj			*BattleFx_StartRandomParticleEmitter(s32 actor, s32 item);
-void					 Djinn_ResolvePendingEvent(s32 capture);
-void					 Event_SetMessageId(s32 value);
-s32						 FieldEffect_UpdateGridPlacement(void);
-void					 Motion_SetVarCbAndRefresh(u32 object_id, s32 variant);
-void					 ObjectMotion_CommitCurrentPositionAndActivate(u32 object_id);
-void					 ObjectMotion_Launch(u32 object_id, s32 speed, s32 event_id);
-void					 Object_RefreshSelectorById(u32 object_id);
-struct ObjectRuntime	*Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-s32						 battle_owner_69(void);
-
 // ほかのモジュールの関数 (共通ヘッダーにまだ宣言が無いもの)
 s32	 Runtime_BlankDisplayAndRunFar(s32 entrance);
 s32	 Runtime_BlankDisplayLoadValueAndRunFar(s32 entrance);
@@ -104,8 +92,6 @@ void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
 void ObjectDispatch_ReleaseFar(void *object);
 void ObjectDispatch_SetSingleChildFlagsFar(void *object, s32 value);
 void ObjectDispatch_InitFromTable6Far(void *object);
-void Vector_AddPolarOffset(s32, s32, void *);
-u16	 ArcTan2(s32 deltaZ, s32 deltaX);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
 void UiWork_PushValueSlotFar(s32 value, s32 mode);
 void UiWork_FinalizePendingCoreFar(void);
@@ -114,29 +100,8 @@ void GameFlag_ClearBitFar(s32 flag);
 s32	 Party_CountActiveOwnersFar(void);
 void Party_AdjustCoinsFar(s32 coins);
 u8	 Inventory_RemoveFar(s32 actor, s32 slot);
-void Battle_Reset(void);
-void Battle_WaitMode0(s32 frames);
-void EventObject_Initialize(void);
-void Object_LinkPair(s32, s32, s32);
-void EffectRuntime_StopCurrentObject(void);
-void BattleEffect_CleanupSceneObjects(void);
-void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
-void BattleFx_DispatchRequestKind(void);
-void BattleFx_FinishAction(void);
-void BattleFx_LoadActionEffectResources(s32 action_id, s32 mode);
-void BattleFx_PlayQueuedSound(void);
-void BattleFx_Run(void);
-void BattleFx_RunRisingObjectSequence(s32, s32, s32);
-void BattleFx_SetupObjectPair(s32, s32);
 
 // このファイルの関数 (定義より前で使うもの)
-void Audio_PlayCueFromEventWork(void);
-s32	 Encounter_SelectEnemyGroup(s32 zone, s32 steps);
-u16	 BattleFx_GetWeightedResult(s32 zone, s32 slot);
-void BattleFx_SelectBattleCue(s32 first, s32 second);
-void BattleParty_ApplyDrain(s32 amount);
-void ObjectTable_Snapshot(void);
-void Battle_ResetEffectCounter(void);
 
 void MapGroupTable_SelectEntry(s32 kind)
 {
@@ -3499,7 +3464,8 @@ s32 BattleEffect_SelectNearbyObject(s32 id)
 		if (dist >= best_dist)
 			continue;
 
-		angle = ArcTan2(obj->z - src->z, obj->x - src->x);
+		/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, BattleEffect_SelectNearbyObject is 4 bytes shorter */
+		angle = ((u16 (*)(s32, s32))ArcTan2)(obj->z - src->z, obj->x - src->x);
 		if (dist > 11)
 		{
 			s32 diff = (s16)(angle - src->angle);
@@ -3595,7 +3561,8 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode)
 			continue;
 
 		// 向きの幅 : 19 ドットまでは ±0x1800、それより遠ければ ±0x1000、mode 2 は ±0x2000
-		angle = ArcTan2(obj->z - src->z, obj->x - src->x);
+		/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, BattleEffect_SelectNearbyTargetObject is 4 bytes shorter */
+		angle = ((u16 (*)(s32, s32))ArcTan2)(obj->z - src->z, obj->x - src->x);
 		width = 0x1800;
 		if (dist > 19)
 			width = 0x1000;
@@ -4456,17 +4423,12 @@ void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 y)
 	}
 }
 
-void ObjectMotion_SetActionVariant(s32 object_id, s32 priority);
-s32	 ObjectTable_ReadActiveValue(s32 key);
-
 //--------------------------------------------------------------------------
 // emitter.c
 // フィールド効果：手に入れたアイテムの表示ときらめき、近くの印、ウィンドウの HBlank DMA
 //--------------------------------------------------------------------------
 void Ui_PrepareTransferForItemFar(s32 item);
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
-void BattleFx_ApplyColorToSourceBuffer(s32 mode, s32 half);
-void Object_SetModeById(u32 object_id, s32 action);
 
 typedef struct MapEventEntry *(*EventListFn)(s32);
 
@@ -4639,7 +4601,8 @@ void BattleFx_EmitRandomParticle(void)
 				actor->x = cx + (8 << 16);
 				actor->z = cz + (8 << 16);
 				Vector_AddPolarOffset(
-					20 << 16, ArcTan2(dz, dx), (struct ParticlePosition *)&actor->x);
+					/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, BattleFx_EmitRandomParticle is 4 bytes shorter */
+					20 << 16, ((u16 (*)(s32, s32))ArcTan2)(dz, dx), (struct ParticlePosition *)&actor->x);
 				actor->target_x = 0x80000000; // 移動先なし
 				actor->target_y = 0x80000000;
 				actor->target_z = 0x80000000;
@@ -5611,8 +5574,6 @@ struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void)
 	return state;
 }
 
-void WaitFrames(s32 frames);
-
 extern volatile u32 gFrameCount;
 
 void DisplayTransition_Start(s32 mode, s32 frames)
@@ -6119,9 +6080,6 @@ void BattlePalette_UpdateBlend(void)
 
 #define COLOR_MAX 448 // BG 224 色 + OBJ 224 色
 #define COLOR_HALF 224
-
-s32 BattleFx_ClampRgb555Channel(s32 value);
-s32 BattleFx_ClampRgb555Component(s32 value);
 
 // 5 ビットの値を、バッファの 10 ビット上げた値に写す表
 extern u16 BattlePalette_ChannelCurve[];
@@ -7317,8 +7275,6 @@ struct FieldCueWork
 	u8	padding[0xcc8];
 	s16 queued_sound;
 };
-void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);
-void Battle_WaitMode0(s32);
 void Script_WaitForEventTimeoutFar(struct ObjectRuntime *);
 
 struct BurstParticle
@@ -7342,7 +7298,6 @@ struct BurstParticle
 	u8					pad_66[6];
 	void (*callback_6c)(struct BurstParticle *);
 };
-void ObjectMotion_ArmCallback(s32 arg0, s32 arg1, s32 arg2);
 
 void BattleFx_SetQueuedSoundAndPlay(s32 sound_id)
 {
@@ -7946,7 +7901,8 @@ void FacingObject_TurnPairToFaceEachOther(
 
 	if (first == NULL || second == NULL)
 		return;
-	toward = ArcTan2(second->z - first->z, second->x - first->x);
+	/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, FacingObject_TurnPairToFaceEachOther is 4 bytes shorter */
+	toward = ((u16 (*)(s32, s32))ArcTan2)(second->z - first->z, second->x - first->x);
 	away = toward + 0x8000;
 	for (frame = 0; frame < 60; frame++)
 	{
@@ -8074,8 +8030,6 @@ void ObjectGroup_SetChildValue(struct FieldActor *actor, s32 value)
 		container->dirty = 1;
 	}
 }
-
-struct UiWindow *UiText_OpenMessageAtObject(s32 arg);
 
 void Object_SetTargetAndCallback(u32 object_id, s32 target_id, const void *callback)
 {
@@ -8448,9 +8402,6 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
 	return handle;
 }
 
-void Battle_WaitMode0(s32 mode);
-s32	 Inventory_PromptAndSetObjectMode(s32 actor, s32 force);
-
 void BattleEv_RunWait(s32 action, s32 flag)
 {
 	s32					 masked_action;
@@ -8527,8 +8478,6 @@ s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
 void BattleEventRuntime_EmptyCallback(void)
 {
 }
-
-void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
 
 void Event_ShowSpeakerMessage(s32 speaker)
 {
@@ -8837,13 +8786,10 @@ void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target, s32 keep_current_
 // マップの表示範囲とズームの移り変わり、ほかのオブジェクトについて回るオブジェクト
 //--------------------------------------------------------------------------
 
-#define WaitFrames ((s32 (*)(s32))WaitFrames)
-
 #define gScanlinePitch ((u8 *)&gScanlinePitch)
 
 // スプライトの OAM 属性2 の上位バイト (bit 2〜3 が表示優先度)
 #define ATTR2_HI(spr) (((u8 *)&((struct AnimationObject *)(spr))->part[0])[9])
-void Battle_WaitMode0(s32 state);
 
 //--------------------------------------------------------------------------
 // マップの表示範囲を決める
@@ -9178,7 +9124,8 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object)
 	if (target != NULL)
 	{
 		object->action_flags &= 0xfe;
-		target_angle = ArcTan2(target->z - object->z, target->x - object->x);
+		/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, ObjectMotion_TurnTowardLinkedTarget is 4 bytes shorter */
+		target_angle = ((u16 (*)(s32, s32))ArcTan2)(target->z - object->z, target->x - object->x);
 		current_angle = object->angle;
 		turn_step = target_angle - current_angle;
 		if (turn_step != 0)
@@ -9265,7 +9212,8 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
 		dist = Iwram_Sqrt(dx * dx + dz * dz);
 		if (dist >= best)
 			continue;
-		angle = ArcTan2(entry->z - self->z, entry->x - self->x);
+		/* FAKEMATCH: ArcTan2 is called as u16 (*)(s32, s32); as s32 (*)(s32, s32), its prototype, Object_FindNearestFacingTarget is 4 bytes shorter */
+		angle = ((u16 (*)(s32, s32))ArcTan2)(entry->z - self->z, entry->x - self->x);
 		if (dist > 23)
 		{
 			turn = (s16)(angle - self->angle);
@@ -9284,13 +9232,11 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
 	return found;
 }
 
-#undef WaitFrames
 s32 Map_CheckObjectStepFar(struct ObjectRuntime *actor, struct FieldPosition *position);
 
 #define TILE_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 #define TILE_CELLS_TARGET ((struct MapCell *)(Ram_MapCellBuffer + 0x200))
 #define TILE_CELLS_ABOVE ((struct MapCell *)(Ram_MapCellBuffer - 0x200))
-void ObjectMotion_ArmCallback(s32, s32, s32);
 
 s32 Field_TryJumpForward(void)
 {
@@ -9546,9 +9492,6 @@ s32 Object_GetScreenPosition(s32 object_id, s32 *position)
 void ObjectEffect_ReservedNoOp941DC(void)
 {
 }
-
-#undef WaitFrames
-void Battle_WaitMode0(s32 arg0);
 
 s32 Scene_FadeColorFromWhite(void)
 {
@@ -9837,8 +9780,6 @@ void DisplayScroll_DisarmHBlankDma(void)
 	(void)dma0[5];
 }
 
-#define BattleFx_ApplyColorToTargetBuffer ((void (*)(void *, s32))BattleFx_ApplyColorToTargetBuffer)
-
 extern void *gFieldBlendWork[];
 
 struct GroundParticle
@@ -9872,9 +9813,6 @@ struct GroundParticleWork
 	struct GroundParticle particles[32];
 	s32					  unknown_408[2];
 };
-
-void Resource_DecodeByteLz(const void *source, void *destination);
-void BattleFx_SetQueuedSoundAndPlay(s32 sound);
 
 void FieldFx_UpdateGroundParticles(void)
 {
@@ -10017,8 +9955,6 @@ void FieldFx_StartGroundParticles(void)
 	} while (0);
 	Scheduler_AddOrUpdateCallback(FieldFx_UpdateGroundParticles, 0xc80);
 }
-
-void Resource_DecodeByteLz(const void *src, void *dst);
 
 struct Mote
 {
@@ -10457,20 +10393,11 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
 //--------------------------------------------------------------------------
 
 #undef ObjectDispatch_ReleaseFar
-#undef WaitFrames
 
 // ほかのモジュールの関数 (共通ヘッダーにまだ宣言が無いもの)
 void				  Animation_ApplyChildValuesFar(void *object, s32 value);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void				  ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void				  Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
-void				  Battle_SetObjectFlag5bWhenMode3(void);
-void				  Battle_ClearObjectFlag5bWhenMode3(void);
-void				  BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
 
 // このファイルの関数 (定義より前で使うもの)
-void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
-void BattleFx_RunPageEffectForSlot(s32 slot, s32 elm, void *djinn);
 
 //--------------------------------------------------------------------------
 // つながったオブジェクトとの距離を、x・y・z とも半分つめる
@@ -11772,10 +11699,6 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 
 //--------------------------------------------------------------------------
 
-#undef BattleFx_ApplyColorToTargetBuffer
-
-void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode);
-
 // 物体や座標は関数ごとの構造体で渡すので、引数は void * で受ける
 #define Object_SetMoveTargetFar ((void (*)(void *, s32, s32, s32))Object_SetMoveTargetFar)
 #define Object_SetPositionAndResetMotionFar \
@@ -11807,9 +11730,6 @@ void Field_DispatchTypeHandler(s32 kind)
 // フィールド効果：種類ごとの振り分けと、効果のイベント処理
 //--------------------------------------------------------------------------
 
-void BattleFx_CycleObjectValueByCounter(s32 obj);
-void BattleFx_FlickerObjectAndTick(s32 obj);
-
 #define gFrameCount (*(volatile s32 *)&gFrameCount)
 
 // 対象の番号を渡して呼ぶ。呼ばれる側は引数を取らない
@@ -11817,11 +11737,6 @@ void BattleFx_FlickerObjectAndTick(s32 obj);
 
 #define FX_SLOT 56 // gWorkSlot[56] は gEffectWork
 
-void BattleEffect_RunFallbackObjectTransition(void);
-void RunSceneTransitionEffect(s32 source_id, s32 target_id);
-void RunBattleEffect04(void);
-void RunBattleEffect14(void);
-void BattleEffect_PauseObject(s32 obj_id);
 void _call_via_r3(s32, s32);
 
 //--------------------------------------------------------------------------
@@ -11971,7 +11886,8 @@ void BattleFx_DispatchRequestKind(void)
 		CALL_WITH_TARGET(BattleFx_CallEffect03AndStop, target_id);
 		break;
 	case 14:
-		BattleFx_CallEffect14(target_id);
+		/* FAKEMATCH: BattleFx_CallEffect14 is called as s32 (*)(); as void (*)(void), its prototype, BattleFx_DispatchRequestKind does not compile */
+		((s32 (*)())BattleFx_CallEffect14)(target_id);
 		break;
 	case 13:
 		CALL_WITH_TARGET(BattleFx_RunEffect13Hook, target_id);
@@ -12126,8 +12042,6 @@ void Motion_SetTargetPositionFromMagnitudeAngle(
 }
 
 // 以下では物体を関数ごとの構造体で渡す
-#define Motion_SetTargetPositionFromMagnitudeAngle \
-	((void (*)(void *, s32, s32))Motion_SetTargetPositionFromMagnitudeAngle)
 
 s32 ResourceTable_CountFreeBlocks(void)
 {
@@ -12584,7 +12498,6 @@ struct BattleEffectPosition
 };
 
 #define BATTLE_OBJECT_SLOTS (*(struct ScriptMotionObject **)gObjectSlots)
-void BattleFx_ClearOwnedSlot(struct EffectSlot *object);
 #define CALLBACK_1 (u32) BattleFx_FlickerObjectAndTick
 #define CALLBACK_2 (u32) BattleFx_CycleObjectValueByCounter
 
@@ -12790,7 +12703,6 @@ void Camera_WorldToScreen(struct EffectVector *position)
 }
 
 // 以下では座標を関数ごとの構造体で渡す
-#define Camera_WorldToScreen ((void (*)(void *))Camera_WorldToScreen)
 
 void RunSceneTransitionEffect(s32 x, s32 y)
 {
@@ -12864,8 +12776,6 @@ struct WaveFxWork
 	u8	delay;	   // 開始までの待ち
 	u8	counter;   // 粒を出す周期 (0〜60)
 };
-
-void Ui_SetBank15PaletteAndClearRenderMode(void);
 
 //--------------------------------------------------------------------------
 // 効果を止めて使い手の色を戻し、作業領域を返す
@@ -15527,8 +15437,6 @@ void BattleFx_SpawnFallingParticles(void)
 // 対象を 2 つの持ち手で持ち上げ、方向キーで動かして落とす
 //--------------------------------------------------------------------------
 
-#define Random16 ((s32 (*)(void))Random16)
-
 #define SHARD_MAX 20 // 破片の数
 
 //--------------------------------------------------------------------------
@@ -15773,8 +15681,6 @@ void BattleFx_SteerLiftedTarget(s32 id)
 		BattleFx_PrepareBufferInterpolation();
 	}
 }
-
-#undef Random16
 
 void RunBattleEffect11(void)
 {
@@ -17569,11 +17475,6 @@ markers:
 	IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f00, 0x20000);
 	IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend, 0x20000);
 }
-
-void Event_FinishScreenTransition(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void BattleFx_ScheduleRatioTransition(s32, s32);
 
 void Map_ShowWorldMap(s32 picture)
 {

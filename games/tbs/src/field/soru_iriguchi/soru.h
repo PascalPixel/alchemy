@@ -24,9 +24,4 @@ enum SanctumEntranceFlag
 
 extern s32 SoruIriguchi_CueTimer;
 
-void Battle_ResetEffectCounter(void);
-
-void Scene_RunActorFormation(s32 a0);
-void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
-
 #endif

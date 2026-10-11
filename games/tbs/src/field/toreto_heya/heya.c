@@ -1,3 +1,10 @@
+#include "unit/field/toreto_heya/heya.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/game/character/chara.h"
+#include "unit/system/scheduler/callback.h"
+
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #include "fieldobj.h"
@@ -24,20 +31,11 @@
 #include "text/msg_ids.h"
 #include "heap_state.h"
 
-void ToretoHeya_AdvanceEffectMotion();
-void ToretoHeya_HandleFloorSwitch(int, int, int, int);
-void ToretoHeya_PlayGesture();
-void ToretoHeya_SpawnSwirlSparks();
-
 extern s16 *ToretoHeya_PaletteBuffer;
 extern s32	ToretoHeya_ActionTable2[];
 extern s32	ToretoHeya_ActionTable1[];
 extern u8	ToretoHeya_SparkOrigin[];
 extern u8	ToretoHeya_SparkCounter[];
-
-void PartyInventory_FindOwner();
-void Object_SetActionCallbackAndRefreshById();
-void ToretoPalette_ApplyTint(void);
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
@@ -83,17 +81,7 @@ void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 kind)
 	return NULL;
 }
 
-#define Object_ReplaceResourceEntry \
-	((s32 (*)(struct FieldSprite *, s32))Object_ReplaceResourceEntry)
-
-void Event_SetDestination(s32 scene, s32 entrance);
-
-void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
-void BattleFx_SetWeightedResult(s32 value, s32 mode);
-
 extern struct BattleEffectBuffers *gPaletteBufferWork;
-
-void Vector_AddPolarOffset();
 
 struct Vec
 {
@@ -198,7 +186,8 @@ void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
 	Engine_MapCopyCells(src_x, src_y + 1, 1, 1, dest_x, dest_y);
 	Engine_AudioPlayCue(206);
 	Engine_EventBegin();
-	Event_SetDestination((s32)&SceneId_ToretoHeya, entrance);
+	/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ToretoHeya_HandleFloorSwitch is 4 bytes longer */
+	((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_ToretoHeya, entrance);
 	Engine_ActorSetAnimation(leader, 27);
 	Engine_ActorSetSpriteFlags(Object_GetById(leader), 0);
 	Actor_SetAttachedEffect(leader, 0x101);
@@ -415,7 +404,8 @@ void ToretoHeya_RunTableScene(void)
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	gEventWork->transition_frames = 64;
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_ToretoHeya, 19);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ToretoHeya_RunTableScene is 2 bytes longer */
+	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_ToretoHeya, 19);
 	BattleFx_SetWeightedResult(36, 0);
 	Engine_EventEnd();
 }
@@ -706,7 +696,8 @@ s32 ToretoHeya_EnterRoom(void)
 		actor->terrain_height = -0xa00000;
 		actor->gravity = 0x8000;
 		Engine_AudioPlayCue(204);
-		Event_SetDestination((s32)&SceneId_ToretoHeya, entrance - 10);
+		/* FAKEMATCH: Event_SetDestination is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ToretoHeya_EnterRoom is 8 bytes longer */
+		((void (*)(s32, s32))Event_SetDestination)((s32)&SceneId_ToretoHeya, entrance - 10);
 		Engine_EventWait(20);
 		actor->terrain_id = 2;
 		Engine_ActorSetSpritePriority(leader, 3);
@@ -1052,28 +1043,6 @@ void ToretoHeya_RunLandingDustScene(void)
 	Object_GetById(0)->bounce = 0x4000;
 	Engine_EventEnd();
 }
-
-void FieldScene_RunStep200(void);
-void FieldScene_RunStep201(void);
-void FieldScene_RunStep202(void);
-void FieldScene_RunStep203(void);
-void FieldScene_RunStep204(void);
-void FieldScene_RunStep205(void);
-void FieldScene_RunStep206(void);
-void FieldScene_RunStep207(void);
-void FieldScene_RunStep208(void);
-void FieldScene_RunStep209(void);
-void FieldScene_RunStep20a(void);
-void FieldScene_RunStep20b(void);
-void FieldScene_RunStep20c(void);
-void FieldScene_RunStep20d(void);
-void FieldScene_RunStep20e(void);
-void FieldScene_RunStep20f(void);
-void FieldScene_RunStep210(void);
-void FieldScene_RunStep211(void);
-void FieldScene_RunStep212(void);
-void FieldScene_RunStep213(void);
-void FieldScene_RunStep214(void);
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),

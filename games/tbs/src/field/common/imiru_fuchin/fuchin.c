@@ -1,3 +1,8 @@
+#include "unit/field/common/imiru_fuchin/fuchin.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/game/character/chara.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "field_service.h"
 #include "debug.h"
@@ -25,9 +30,6 @@
 #include "objcmd.h"
 
 s32 ImiruFuchin_TrackLeader;
-
-struct FieldActor *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 sprite);
-void			   BattleFx_StartFadeOverlay(s32 mode);
 
 extern s32 *gEffectScripts[];
 
@@ -58,8 +60,6 @@ LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetX, struct CaveDustOptions, target_scal
 	(u32) & ((struct EffectOptions *)0)->target_scale_x);
 LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions, target_scale_y,
 	(u32) & ((struct EffectOptions *)0)->target_scale_y);
-
-void Effect_Spawn();
 
 void SceneState_ApplyValues8And2And1(void)
 {
@@ -188,7 +188,6 @@ void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz)
 
 void ActorPresentation_SetupActorEightForFlag301(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(8, 0x70, 0);
@@ -225,7 +224,6 @@ void FieldScene_RunActor9Transition302(void)
 
 void ActorPresentation_SetupActorNineForFlag302(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(9, 0, -64);
@@ -237,7 +235,6 @@ void ActorPresentation_SetupActorNineForFlag302(void)
 
 void ActorPresentation_SetupActorTenForFlag303(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(0xA, 0, 0x40);
@@ -311,7 +308,6 @@ void FieldScene_RunActor8FlaggedSequence(void)
 
 void ActorPresentation_SetupActorNineForFlag306(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(9, 0, 0x40);
@@ -333,7 +329,6 @@ void FieldScene_RunActor9Flag306Sequence(void)
 
 void ActorPresentation_SetupActorTenForFlag307(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(10, 0, 144);
@@ -346,7 +341,6 @@ void ActorPresentation_SetupActorTenForFlag307(void)
 
 void FieldScene_RunActorTenDepthSequence(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	s32 depth = -96;
 
@@ -395,7 +389,6 @@ void FieldScene_RunActor8Transition308And309(void)
 
 void ActorPresentation_SetupActorEightForFlags308And309Guarded(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	if (Engine_GameFlagIsSet(0x310) != 0)
 	{
@@ -419,7 +412,6 @@ void ActorPresentation_SetupActorEightForFlags308And309Guarded(void)
 
 void ActorPresentation_SetupActorEightForFlags308And309(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_AudioPlayCue(0xF1);
 	Engine_GameFlagClear(0x308);
@@ -432,7 +424,6 @@ void ActorPresentation_SetupActorEightForFlags308And309(void)
 
 void ActorPresentation_SetupActorNineForFlag30a(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(9, -32, 0);
@@ -565,7 +556,6 @@ void FieldScene_RunFlag311DialogueBranch(void)
 
 void ActorPresentation_SetupActorTenForFlags30bAnd30d(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(0xA, 0, -64);
@@ -681,7 +671,6 @@ void FieldScene_RunActor11Flags30fTo312Sequence(void)
 
 void ActorPresentation_SetupActorElevenAt0_112(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_AudioPlayCue(241);
 	SceneActor_PlacePairAtOffset(11, 0, 112);
@@ -693,7 +682,6 @@ void ActorPresentation_SetupActorElevenAt0_112(void)
 
 void ActorPresentation_SetupActorElevenAt0_64(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(0xB, 0, 0x40);
@@ -705,7 +693,6 @@ void ActorPresentation_SetupActorElevenAt0_64(void)
 
 void ActorPresentation_SetupActorElevenAt0_80(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(0xB, 0, 0x50);
@@ -727,7 +714,6 @@ void FieldScene_RunActor11Transition(void)
 
 void ActorPresentation_SetupActorEightForFlag313(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(8, 0, 0x70);
@@ -759,7 +745,6 @@ void FieldScene_RunActor9Flag314Sequence(void)
 
 void ActorPresentation_SetupActorNineForFlag314(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(9, 0x80, 0);
@@ -771,7 +756,6 @@ void ActorPresentation_SetupActorNineForFlag314(void)
 
 void ActorPresentation_SetupActorTenForFlag315(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_AudioPlayCue(241);
 	SceneActor_PlacePairAtOffset(10, 160, 0);
@@ -793,7 +777,6 @@ void FieldScene_RunActor10Flag315Sequence(void)
 
 void ActorPresentation_AdvanceActorEightStates(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_ActorSetAnimation(8, 1);
 	Engine_ActorSetAnimation(8, 2);
@@ -807,7 +790,6 @@ void FieldScene_SetActor9Values1And2(void)
 
 void ActorPresentation_AdvanceActorTenStates(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_ActorSetAnimation(10, 1);
 	Engine_ActorSetAnimation(10, 2);
@@ -815,7 +797,6 @@ void ActorPresentation_AdvanceActorTenStates(void)
 
 void SceneActor_SetActor11Values1And2(void)
 {
-	void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
 	Engine_ActorSetAnimation(11, 1);
 	Engine_ActorSetAnimation(11, 2);
@@ -1770,10 +1751,12 @@ void SceneActor_StepSubjectAlongHeading(void)
 		probe.z = (subject->z.fixed & 0xfff00000) + 0x80000;
 		z = probe.z;
 		x = probe.x;
-		goal = GetMapCellCollision(subject->terrain_id, x, z);
+		/* FAKEMATCH: GetMapCellCollision is called as s32 (*)(); as u8 (*)(s32, s32, s32), its prototype, SceneActor_StepSubjectAlongHeading is 4 bytes longer */
+		goal = ((s32 (*)())GetMapCellCollision)(subject->terrain_id, x, z);
 		FieldVector_AddPolarOffset(0x100000, heading, &probe);
 
-		marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
+		/* FAKEMATCH: GetMapCellCollision is called as s32 (*)(); as u8 (*)(s32, s32, s32), its prototype, SceneActor_StepSubjectAlongHeading has 206 of 452 bytes different */
+		marker = ((s32 (*)())GetMapCellCollision)(subject->terrain_id, probe.x, probe.z);
 		if (marker == 255
 			|| Map_GetTerrainHeight(subject->terrain_id, probe.x, probe.z) - subject->y.fixed
 				   > 0x80000)
@@ -1814,7 +1797,8 @@ void SceneActor_StepSubjectAlongHeading(void)
 
 	advance_probe:
 		FieldVector_AddPolarOffset(0x100000, heading, &probe);
-		marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
+		/* FAKEMATCH: GetMapCellCollision is called as s32 (*)(); as u8 (*)(s32, s32, s32), its prototype, SceneActor_StepSubjectAlongHeading is 4 bytes longer */
+		marker = ((s32 (*)())GetMapCellCollision)(subject->terrain_id, probe.x, probe.z);
 		if (marker != 255)
 		{
 			goto continue_probe;

@@ -1,3 +1,15 @@
+#include "unit/field/makyuri_heya/heya.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/makyuri/palette_cycle.h"
+#include "unit/field/common/makyuri/lights.h"
+#include "unit/field/makyuri_iriguchi/pillar.h"
+#include "unit/field/common/makyuri/makyuri.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/game/character/chara.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/system/scheduler/callback.h"
 #include "fieldobj.h"
 #include "mem.h"
 #include "makyuri.h"
@@ -28,12 +40,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-void FieldScene_RunOpeningAuxiliarySequence();
-void FieldScene_RunSupplementalSequenceOne();
-void MakyuriHeya_RunSequenceG();
-void SceneEffect_SpawnParticleRowsAndDrawTiles();
-void SceneState_ClearCurrentRecordAndReleaseTarget();
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -102,82 +108,6 @@ struct SceneLookupRecord
 extern u16 MakyuriHeya_GateCells[];
 extern u16 MakyuriHeya_GateCloseCells[];
 extern u16 MakyuriHeya_FloorSwitchCells[];
-
-void Vector_AddPolarOffset(s32, s32, s32 *);
-void AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
-void BattleFx_SetPhaseRequest(s32, s32);
-void UiWork_PushValueSlot(s32, s32);
-void BattleFx_PlayQueuedSound();
-s32	 PartyInventory_FindOwner();
-s32	 Inventory_Find();
-struct SceneLookupRecord *UnitGet();
-
-s32	  StagedActor_FindClearPosition();
-void  SceneActor_MoveAndRedraw();
-void  StagedActor_AdvancePair(void);
-void  MakyuriHeya_SyncBlockFlags(void);
-void  MakyuriHeya_OpenThreeStepStair(void);
-void  MakyuriHeya_UpdateLeaderEffectTarget(void);
-s32	  MakyuriHeya_TrailSparks(struct FieldActor *actor);
-void  SetEffectRecordMode(struct FieldActor *work, s32 mode);
-void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth);
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void  SceneState_ApplyPair12And21(void);
-s32	  SceneData_ReturnZero(void);
-u8	 *MakyuriHeya_GetExits(void);
-void  MakyuriHeya_TickSpawnTimer(void);
-void  MakyuriHeya_ClearSceneRecordAndTarget(void);
-void  FieldScene_RunSingleStep(void);
-void  MakyuriHeya_TriggerPillarRise(void);
-void  SceneDialogue_RunLine1637(void);
-void  SceneActor_RunActorZeroHandledMotion(s32 a);
-void  MakyuriHeya_DropLeaderToColumn(s32 a0);
-void  MakyuriHeya_RunExitThreeScene(void);
-void  MakyuriHeya_RunExitThirteenScene(void);
-void  MakyuriHeya_RunExitFiveScene(void);
-void  MakyuriHeya_ExitWhenChannelsOpen(void);
-void  MakyuriHeya_WalkLeaderIn(void);
-void  FieldScene_RunFourCallSequence(void);
-void  FieldScene_RunActorElevenAtTile5And13(void);
-void  MakyuriHeya_TriggerSmallFloorSwitch(void);
-void  MakyuriHeya_CloseFloorSwitch(void);
-void  FieldScene_RunOpeningAuxiliarySequence();
-void  MakyuriHeya_RunSequenceG();
-void  MakyuriHeya_SprayAtFountain(void);
-void  FieldScene_RunSupplementalSequenceOne();
-void  MakyuriHeya_RunSequenceF(void);
-void  MakyuriHeya_RunSequenceE(void);
-void  FieldScene_RunFourSteps(void);
-void  SceneState_RunWhenActor8AtTile10x23(void);
-void  FieldScene_RunScene39cSequenceA(void);
-void  SceneEffect_SpawnParticleRowsByMode(s32 mode);
-void  SceneActor_UseActorNinePositionWithYOffset(void);
-s32	  MakyuriHeya_StartActorNineParticles(void);
-s32	  MakyuriHeya_StopActorNinePositionCallback(void);
-void  FieldScene_RunFourStepSequence(void);
-void  SceneState_ApplyRectWhenActor20AtColumn28(void);
-void  SceneEffect_RotatePaletteEntries40To47(void);
-void  FieldScene_RunActorThreeBranchSequence(void);
-void  SceneDialogue_RunActor3TimedLine(void);
-void  SceneEffect_RotatePaletteEntries97To103(void);
-void  FieldScene_RunScriptedSteps0And1576(void);
-void  FieldScene_RunScriptedSteps0And953(void);
-void  FieldScene_RunFlag881Dialogue(void);
-void  FieldScene_RunActor184Sequence(void);
-void  MakyuriHeya_ArriveWithSparks(void);
-void  SceneEffect_SpawnParticleRowsAndDrawTiles();
-void  SceneEffect_SpawnParticleEveryFourthFrame(void);
-void  SceneEffect_SpawnRandomEveryFourFrames(s32, s32, s32);
-void  SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z);
-void  SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w);
-void  MakyuriHeya_CastPsynergyAtActor11(void);
-void  SceneState_SetRecordTableValue(s32, s32);
-void  OverlayObject_SpawnKind24AtObject(struct FieldActor *src);
-s32	  SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work);
-s32	  SceneEffect_AdvanceScaleOverSixteenFrames(struct FieldActor *o);
-s32	  OverlayObject_StepScaleUpSixteenFrames(struct FieldActor *o);
-void  SceneState_ClearCurrentRecordAndReleaseTarget();
-void  OverlayObject_ReleasePublishedAttachmentB(void);
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
@@ -1069,24 +999,10 @@ void MakyuriHeya_OpenStoneDoor(s32 side)
 	}
 }
 
-#define Makyuri_SpawnLightObjects ((void (*)(s32, s32))Makyuri_SpawnLightObjects)
-
 struct ColumnProbe
 {
 	s32 word[6];
 };
-void Object_RefreshSelectorById(s32 actor);
-void BattleFx_RunRisingObjectSequence();
-
-void Makyuri_CyclePalette(void);
-void BattleFx_StartFadeOverlay(s32 value);
-void BattleFx_SetQueuedSoundAndPlay(s32 sound);
-void DisplayBlend_EnableRunScript(void);
-void UiText_ShowCenteredMessage(s32 message, s32 a1, s32 a2);
-
-void Event_PrepareObjectAndApplyValue();
-s32	 Djinn_AddToOwner();
-void Djinn_Activate();
 
 struct LiftLayer
 {
@@ -2904,12 +2820,11 @@ void SceneState_SetRecordTableValue(s32 key, s32 value)
 
 		if (index != -1)
 		{
-			UnitGet(slot)->tbl[index] = value;
+			/* FAKEMATCH: UnitGet is called as struct SceneLookupRecord *(*)(); as void *(*)(u32), its prototype, SceneState_SetRecordTableValue does not compile */
+			((struct SceneLookupRecord *(*)())UnitGet)(slot)->tbl[index] = value;
 		}
 	}
 }
-
-#undef Makyuri_SpawnLightObjects
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/makyuri/lights.c"

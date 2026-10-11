@@ -1,3 +1,6 @@
+#include "unit/field/common/yama_rama/rama.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -17,11 +20,6 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-s32 ArcTan2(s32, s32);
-
-void Object_RefreshSelectorById();
-void BattleFx_PlayQueuedSound(void);
-
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
 	void Engine_ActorSetPosition(s32, s32, s32);
@@ -33,8 +31,6 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
 {
 	gEventWork->message += amount;
 }
-
-void BattleFx_SetQueuedSoundAndPlay(s32 value);
 
 s32 EventScript_PrepareActorRenderFlags(struct FieldActor *actor)
 {

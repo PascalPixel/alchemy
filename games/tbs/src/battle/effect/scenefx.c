@@ -1,3 +1,6 @@
+#include "unit/battle/effect/scenefx.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -44,12 +47,6 @@
 #include "battle_unit.h"
 #include "fixed_point_position.h"
 #include "irq.h"
-
-void BattleFx_PrepareCanvasEffect(
-	struct BattleEffectArgument *effect, s32 kind, s32 side, s32 anchor, s32 *out_x, s32 *out_y);
-void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind);
-void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant);
-void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride);
 
 extern struct EffectStep gMapCellBuffer[];
 
@@ -4317,7 +4314,6 @@ extern u16 SevenMode_ShardOffsets[];
 
 #define gShots ((struct EffectStep *)Ram_MapCellBuffer)
 #define gBursts ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
-void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
 
 void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 {
@@ -5495,7 +5491,6 @@ extern u8					  WhirlwindComets_CellWidths[];
 extern u8					  WhirlwindComets_CellHeights[];
 extern u8					  WhirlwindComets_CellBiasY[];
 extern u16					  WhirlwindComets_CellOffsets[];
-s32							  ArcTan2(s32 x, s32 z);
 void						  Object_ApplyProjectedPlacementFar(
 	void *handle, struct Placement *place, struct ScalePair *scale, s32 mode);
 
@@ -20216,9 +20211,6 @@ extern s16 ParticleStreams_OrbitPoints[][3];
 extern s16 ParticleStreams_DropPoints[][2];
 extern u16 ParticleStreams_FlashSheetOffsets[];
 extern u16 ParticleStreams_FlashSizes[];
-void	   BattleFx_FlushPendingGraphicsTransfer(void);
-void	   BattleFx_ArmPaletteHBlankDma(void);
-void	   Camera_AdvanceBg2Reference(void);
 
 #define FLASHES ((struct EffectStep *)Ram_MapCellBuffer)
 #define EMBERS (&FLASHES[128])

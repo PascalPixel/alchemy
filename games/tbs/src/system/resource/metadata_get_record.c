@@ -1,3 +1,4 @@
+#include "unit/system/resource/metadata_get_record.h"
 #include "metadata_lookup.h"
 
 extern struct AnimationMetadata Character_DescriptorTable[];

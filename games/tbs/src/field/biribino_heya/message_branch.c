@@ -1,3 +1,5 @@
+#include "unit/field/biribino_heya/message_branch.h"
+#include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

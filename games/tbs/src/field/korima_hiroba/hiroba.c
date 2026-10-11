@@ -1,3 +1,7 @@
+#include "unit/field/korima_hiroba/hiroba.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/korima/palette.h"
+#include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -17,7 +21,6 @@
 #ifdef MODERN
 // called before its definition below, which modern GCC refuses for an
 // implicit int declaration of a u16 function
-u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj);
 #endif
 
 enum
@@ -126,7 +129,6 @@ u8 *SceneData_GetExtraTable(void)
 
 s32 FieldScene_SetupEntryActors8To11(void)
 {
-	void SceneEffect_AdjustPaletteWindow(s32 id);
 
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (Engine_GameFlagIsSet(0xfd3) == 0)

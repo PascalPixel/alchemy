@@ -1,3 +1,7 @@
+#include "unit/field/arutin_yama/yama.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -66,74 +70,7 @@ extern s32				 ArutinYama_CueTicks;
 extern s32 ArutinYama_LeafMode;
 extern s32 ArutinYama_LeafOrigin[3];
 
-s32	 ArcTan2(s32, s32);
-void SetMapCellCollision();
-s32	 Object_SetActionCallbackAndRefreshById();
-s32	 Battle_GetWorkObject1e0();
 void Event_LoadAreaScript();
-void BattleFx_SetPhaseRequest(s32, s32);
-void BattleFx_SetWeightedResult(s32, s32);
-void Party_SetFields1ceAnd1d0(s32, s32);
-void BattleEffect_CleanupSceneObjects();
-void Audio_PlayCueFromEventWork();
-s32	 BattleFx_SetQueuedSoundAndPlay();
-void BattleFx_PlayQueuedSound();
-
-void SceneState_SetValue14Mode23(void);
-s32	 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object);
-s32	 SceneActor_CopyActor8PositionWithFixedY(struct Frame *dst);
-s32	 OverlayObject_IntegrateAndDamp(struct FieldActor *actor);
-u8	*ArutinYama_GetExits(void);
-void FieldScene_RunSharedSetPiece(s32 a0);
-void FieldScene_RunFallingRocksWarning(void);
-void ArutinYama_StartAreaFiveEncounter(void);
-void SceneActor_UpdateSlot10ByTileX(void);
-void ActorPresentation_SetCellAndLowerActorEight(void);
-void ArutinYama_RestoreFallingActorNine(void);
-void SceneActor_RaiseSlot9StepA(void);
-void SceneActor_RaiseSlot9StepB(void);
-void SceneState_ApplyRectAndLowerActor9(void);
-void SceneActor_RaiseSlot11AndSetFlag201(void);
-void SceneActor_AdjustSlot12AndSetFlag204(void);
-void SceneState_SetDispcntBit9ByThreshold(void);
-void FieldScene_RunEarlySequence(void);
-void FieldScene_RunScene3a4SequenceH(void);
-void FieldScene_RunScene3a4SequenceI(void);
-void FieldScene_RunScene3a4SequenceB(void);
-void FieldScene_RunValue1528Scene(void);
-void FieldScene_RunScene3a4SequenceA(void);
-void FieldScene_RunLine1528Sequence(void);
-void FieldScene_RunScene3a4SequenceC(void);
-void FieldScene_RunScene3a4SequenceD(void);
-void ArutinYama_SetActorTenUnderfootPriority(void);
-void ArutinYama_SetActorTenAutomaticPriority(void);
-void ArutinYama_PushMovableObject(void);
-void ArutinYama_RestoreAreaThree(void);
-void ArutinYama_UpdateDriftingLeaf(union FieldObject *object);
-void ArutinYama_RestoreAreaFour(void);
-void ArutinYama_RestoreAreaFive(void);
-void ArutinYama_RestoreAreaSix(void);
-void ArutinYama_RestoreAreaSeven(void);
-void ArutinYama_RestoreAreaTen(void);
-void ArutinYama_RestoreAreaEleven(void);
-void ArutinYama_InitLeaf(struct FieldActor *leaf);
-void SceneActor_SetActor8ModeByCounterBit(void);
-void RunEventScript01(void);
-void ArutinYama_SpawnLeaf(void);
-void ArutinYama_StartLeafGust(s32 x, s32 y, s32 z, s32 facing);
-void FieldScene_RunScene3a4SequenceG(void);
-void SceneState_ForwardByRuntimeSelector(s32 arg);
-void FieldScene_RunActorTenFourStepSequence(void);
-void FieldScene_RunOpeningAuxiliarySequence(void);
-void FieldScene_RunScene3a4SequenceF(void);
-void FieldScene_RunScene3a4SequenceE(void);
-void SceneAudio_PlayCue183EverySixtyTicks(void);
-void SceneActor_SetActor12ModeByActorZeroHeight(void);
-void SceneActor_ClearCollisionFlagAndPlaceMarker(s32 no);
-void ArutinYama_SetRollingStateAndPlayCue(u16 *record);
-
-void Battle_ResetEffectCounter(void);
-void BattleFx_PlayQueuedSound(void);
 
 void SceneState_SetValue14Mode23(void)
 {
@@ -349,21 +286,24 @@ void ArutinYama_BeginRollingRide(s32 a0)
 void ArutinYama_StartAreaOneEncounter(void)
 {
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama1, 99);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ArutinYama_StartAreaOneEncounter is 4 bytes longer */
+	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_ArutinYama1, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
 void ArutinYama_StartAreaThreeEncounter(void)
 {
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama3, 99);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ArutinYama_StartAreaThreeEncounter is 4 bytes longer */
+	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_ArutinYama3, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
 void ArutinYama_StartAreaFiveEncounter(void)
 {
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama5, 99);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, ArutinYama_StartAreaFiveEncounter is 4 bytes longer */
+	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_ArutinYama5, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
@@ -832,8 +772,6 @@ void ArutinYama_PushMovableObject(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSharedSetPiece(s32 delay);
-
 void ArutinYama_SwingActorIntoSetPiece(void)
 {
 	struct FieldActor  *actor;
@@ -1252,7 +1190,6 @@ void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
 
 void FieldScene_BuildMultiPhasePresentation(void)
 {
-	void			   FieldScene_RunActorTenFourStepSequence();
 	struct Half		   p10;
 	s32				   p8;
 	u8				  *rec3;
@@ -1496,11 +1433,6 @@ void ArutinYama_RunLeapSequence(void)
 
 #define Engine_ActorLookup ((struct FieldActor * (*)(s32)) Engine_ActorLookup)
 #define gPaletteBufferWork (*(u16 **)&gPaletteBufferWork)
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-
-s32	 GetMapCellCollision(s32 layer, s32 x, s32 z);
-void ResourceMetadata_Register(struct FieldSprite *sprite, s32 mode);
 
 struct Byte
 {
@@ -2200,7 +2132,8 @@ void FieldScene_RunLateAuxiliarySequence(void)
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorWaitForMove(8);
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama10, 99);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, FieldScene_RunLateAuxiliarySequence is 4 bytes longer */
+	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_ArutinYama10, 99);
 	BattleFx_SetWeightedResult(53, 3);
 }
 
@@ -2621,7 +2554,8 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading)
 	Engine_AudioPlayCue(233);
 	for (;;)
 	{
-		switch (GetMapCellCollision(2, object->x.fixed, object->z.fixed))
+		/* FAKEMATCH: GetMapCellCollision is called as s32 (*)(s32, s32, s32); as u8 (*)(s32, s32, s32), its prototype, ArutinYama_RunRollingObject is 4 bytes longer */
+		switch (((s32 (*)(s32, s32, s32))GetMapCellCollision)(2, object->x.fixed, object->z.fixed))
 		{
 		case 98:
 			ArutinYama_TurnRollingObjectA(object);

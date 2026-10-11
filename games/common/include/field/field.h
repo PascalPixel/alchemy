@@ -1192,7 +1192,6 @@ extern u32 MakyuriHeya_SceneTable[];
 extern s32 MakyuriHeya_SparkBurstScript[];
 extern s32					   MakyuriHeya_SparkScript[];
 extern s32 MogoruMori_ActorScript[];
-extern u8					   Object_UpdateAll[];
 extern u8					   Object_UpdateAllCodeSize[];
 extern u8					   ObjectGroup_BlinkChildValues[];
 extern const u8				   ObjectMotion_ActionKind1Script[];
@@ -1364,529 +1363,89 @@ extern struct ScenePlacement YamaRama_Placements[];
 extern struct SceneEntrance YamaRama_TempleEntrances[];
 extern struct SceneEvent YamaRama_TempleEvents[];
 extern struct ScenePlacement YamaRama_TemplePlacements[];
-void							   ActorPresentation_PlaceActorFourteenOnActorNine(void);
-void							   ActorPresentation_PrepareActorFourteenWithCallback(void);
-void							   ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void);
-void							   ActorPresentation_RepaintTenCellsAndActorEightCell(void);
-void							   ActorPresentation_RunActorModeOneThenZero(s32 actor);
-void							   ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x);
-void							   ArutamiraDou_ReleaseWallBurst(void);
-void							   ArutamiraDou_SpinActorWheel(void);
-void							   ArutinYama_AdvanceRollingObject(struct FieldActor *object);
-void							   ArutinYama_ApplyEntryState(void);
-void							   ArutinYama_PlaceFlaggedActors(void);
-void							   ArutinYama_RunRollingObject(s32 id, s32 heading);
-void							   ArutinYama_SettleAndMountLeader(struct FieldActor *object);
-void							   ArutinYama_StepPaletteAnim(void);
-void							   ArutinYama_TurnRollingObjectA(struct FieldActor *object);
-void							   ArutinYama_TurnRollingObjectB(struct FieldActor *object);
-void							   BabiChika_MarkActorCells(void);
-void							   BabiChika_RestorePlatformCells(void);
-void							   BabiChika_SettleSteps(s32 wait);
-void							   BabiChika_UpdateTrackedActor(void);
-void							   BabiFune_CyclePalette(void);
-void							   BabiFune_UpdateDriftingObject(u8 *obj);
-void							   BabiFune_UpdateWaves(void);
-void							   BattleFx_ConfigureLinkedObject(s32 id, s32 flags);
-void							   BattleFx_ResetCounters(void);
-void							   BattleFx_RunVisibilityTransition(void);
-s32								   BattleFx_SumCounters(void);
-void BattleFx_UpdateParticleLinearMotion(struct BurstParticle *particle);
-void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect);
-void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect);
-void BiribinoMura_RestoreRaisedEntrance(void);
-void BiribinoMura_RestoreVillageActors(void);
-void BiribinoMura_UpdateCornerSpawn(void);
-void BiribinoNiwa_ApplyEntryState(void);
 s32	 CalculateFacingAngle(s32, s32);
-void Camera_ApplyPhasedDelta(void);
 #ifndef OWN_Camera_ApplyShake
-void Camera_ApplyShake(s32 random_mask, u32 shake_range);
 #endif
-void ConfigureAndPlaceActorFourteen(void);
-void DialogueLayout_ConfigureGroupOne(void);
-void DialogueLayout_ConfigureGroupThree(void);
-void DialogueLayout_ConfigureGroupTwo(void);
-void DialogueLayout_ConfigureRowsByFlag301(void);
-void DialogueLayout_ConfigureTwoRegions(void);
-u16	 Effect_AdjustColorChannels(u16 color, s32 adj);
-void Effect_AdjustPaletteColors(s32 amount);
-void Effect_SetBg3HofsSplit(void);
-void Effect_UpdateBg3HofsByVcount(void);
 #ifndef OWN_EffectPosition_ApplyAlternateStepAndYOffset
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 #endif
 #ifndef OWN_EffectPosition_ApplyAnimationAndYOffset
-void EffectPosition_ApplyAnimationAndYOffset(s32 id, struct EffectPosition *position);
 #endif
-void EffectRuntime_ClearCurrentFlags(s32 id);
 #ifndef OWN_EffectRuntime_GetCurrentObject
-struct ObjectRuntime *EffectRuntime_GetCurrentObject(s32 id);
 #endif
-void EffectRuntime_SetMode2(s32 id);
-void EffectRuntime_SetMode4AndPlayCue(s32 id);
-void EffectRuntime_SetMode5AndPlayCue(s32 id);
-void EffectRuntime_SetMode7AndLaunch(s32 id);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 void Engine_ActorFollow(s32 actor, s32 leader);
 void Engine_EventClearInvalidPackedValues(void);
 s32	 Engine_PartyRemoveItem(s32 item);
-void Event_ClearInvalidPackedValues(void);
-void Event_NoOpHook(void);
 #ifndef OWN_Event_RequestDestination
-void Event_RequestDestination(u16 first, u16 second);
 #endif
-void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot);
-void FacingObject_TurnPairToFaceEachOther(
-	struct FacingObject *raw_first, struct FacingObject *raw_second);
 s32	 FarCall_BlankLoadTable(s32 entrance);
 s32	 FarCall_BlankRunTable(s32 entrance);
-s32	 Field_CheckConfiguredKeys(void);
-void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z);
 #ifndef OWN_Field_RunTileAction
-s32 Field_RunTileAction(s32 tile);
 #endif
 #ifndef OWN_Field_TryJumpForward
-s32 Field_TryJumpForward(void);
 #endif
-void				  FieldEffect_UpdateSparkles(void);
-void				  FieldMotes_Update(void);
-struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z);
 #ifndef OWN_FieldScene_BuildSceneDescriptorAndInstallTask
-void FieldScene_BuildSceneDescriptorAndInstallTask(
-	s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third, s32 fourth);
 #endif
-void FieldScene_CallWith560And44(void);
-void FieldScene_ConfigureFixedPointValues(void);
-void FieldScene_ConfigureFlaggedActors(void);
-void FieldScene_ConfigureLeadActors(void);
-void FieldScene_ConfigureThreeActors(void);
-void FieldScene_DispatchBySelector(void);
-void FieldScene_DispatchSceneByIndex(void);
-void FieldScene_DrawTilesByActor8Row(void);
-void FieldScene_PlaceAndPinSlots10And11(void);
-void FieldScene_PlaceAndPinSlots8And9(void);
-void FieldScene_PlaceAndPinSlots8To10(void);
 #ifndef OWN_FieldScene_PrepareActors
 void FieldScene_PrepareActors(struct SceneRegionEntry *entry);
 #endif
-void			   FieldScene_RequestAndWaitFrames(s32 selector, s32 frames);
-void			   FieldScene_RunActorEightApproach(void);
-void			   FieldScene_RunActorEventSequence(void);
-void			   FieldScene_RunActorNinePresentationCycles(void);
-void			   FieldScene_RunActorPresentationSequence(void);
-void			   FieldScene_RunActors24And25Setup(void);
-void			   FieldScene_RunActors24And25SetupWithValue929(void);
-void			   FieldScene_RunActors24And25SetupWithValue92a(void);
-void			   FieldScene_RunActorSequence(void);
-void			   FieldScene_RunActorTransferSequence(void);
-void			   FieldScene_RunActorTwentyDialogueSequence(void);
-void			   FieldScene_RunActorUpdateSequence(void);
-void			   FieldScene_RunBranchingActorSequence(void);
-void			   FieldScene_RunBranchingFormationPresentation(void);
-void			   FieldScene_RunCommandSequence(s32 a0);
-void			   FieldScene_RunExtendedActorSequence(void);
-void			   FieldScene_RunExtendedFormationPresentation(void);
-void			   FieldScene_RunFlag845And847Branches(void);
-void			   FieldScene_RunFlagBranchedLayoutSteps(void);
-void			   FieldScene_RunFlagBranchedSetupCascade(void);
-void			   FieldScene_RunFourActorPresentation(void);
-void			   FieldScene_RunLargeStagingSequence(void);
-void			   FieldScene_RunLateSequenceHead(void);
-void			   FieldScene_RunLeaderDropSequence(void);
-void			   FieldScene_RunMainCutsceneSequence(void);
-void			   FieldScene_RunPartyRosterScene(void);
-void			   FieldScene_RunPillarBurst(void);
-void			   FieldScene_RunPillarSequence(void);
-void			   FieldScene_RunRoofEnsembleSequence(void);
-void			   FieldScene_RunScene373SequenceB(void);
-void			   FieldScene_RunScene38bSequenceA(void);
-void			   FieldScene_RunScene39aSequenceA(void);
-void			   FieldScene_RunScene3a2SequenceA(void);
-void			   FieldScene_RunScene3a3SequenceD(void);
-void			   FieldScene_RunScene3a7SequenceD(void);
-void			   FieldScene_RunScene3b2SequenceA(void);
-void			   FieldScene_RunScene3b8SequenceB(void);
-void			   FieldScene_RunScene3c6SequenceA(void);
-void			   FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt);
-void			   FieldScene_RunScriptedSceneSequence(void);
-void			   FieldScene_RunSevenActorEnsemble(void);
-void			   FieldScene_RunShipDeckEventScript(void);
-void			   FieldScene_RunSixSteps380To3A8(void);
-void			   FieldScene_RunStep6(void);
-void			   FieldScene_RunTwoArmSequence(s32 a);
-void			   FieldScene_RunTwoCallSequence(void);
-struct FieldActor *FindActorNearPosition(s32 x, s32 y);
-s32				   FindNearestF2Actor(void);
-void			   FourObjectMotion_ClearSlotsAndSchedule(void);
-void			   FourObjectMotion_ClearSlotsAndScheduleAlt(void);
 #ifndef OWN_FourObjectMotion_InitializeBottomRow
-void FourObjectMotion_InitializeBottomRow(void);
 #endif
-s32				   FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative);
-void			   FourObjectMotion_UpdateAllPositions(void);
-void			   FourObjectMotion_UpdateBottomRow(void);
-void			   FuneHeya_AdvanceWalkerAfterRise(u8 *o);
-void			   FuneHeya_AnnounceDeparture(void);
-void			   FuneHeya_AnnounceTurn(void);
-void			   FuneHeya_ApplyFlaggedLayout(void);
-void			   FuneHeya_AskAboutMonsters(void);
-void			   FuneHeya_CallActorEighteenToRow(void);
-void			   FuneHeya_CallActorSixteenToRow(void);
-void			   FuneHeya_CastOff(void);
-void			   FuneHeya_DismissReplacementRowers(void);
-s32				   FuneHeya_FindFirstSetFlag(u32 group, s32 alternate);
-struct FieldActor *FuneHeya_PlaceAnchorCharm(void);
-void			   FuneHeya_SetupFirstRowingPair(void);
-void			   FuneHeya_SetupReplacementPair(void);
-void			   FuneHeya_SetupReplacementRower(void);
-void			   FuneHeya_TurnActorToOpenSide(s32 a0);
-void			   FuneHobashira_SetupHiddenLeaderLookout(void);
-void			   FuneHobashira_SetupVisibleLeaderLookout(void);
-void			   FuneHobashira_UpdateSway(void);
-void			   FuneKanpan_ApplyEntryState(void);
-void			   FuneKanpan_ArriveAtTolbi(void);
-void			   FuneKanpan_ChooseSlotModes(void);
-void			   FuneKanpan_PlaceDeckActors(s32 a0, s32 a1);
-void			   FuneKanpan_PlaceLeaderOnDeck(void);
-void			   FuneKanpan_PlaceRandomDeckActors(void);
-void			   FuneKanpan_RockDeck(void);
-void			   FuneKanpan_RunDeckCrewScene(void);
-void			   FuneKanpan_RunJumpScene(void);
-void			   FuneKanpan_SetupDeckCrewman(void);
-void			   FuneKanpan_SetupHiddenLeaderDeparture(void);
-void			   FuneKanpan_SetupRaisedCrewman(void);
-void			   FuneKanpan_SetupVisibleLeaderDeparture(void);
 #ifndef OWN_GameFlag_IsSet
 s32 GameFlag_IsSet(s32 flag);
 #endif
-void GomaHashira_DriveActor13Idle(void);
-void HaidiaArashi_RunRiverSearch(void);
-void HaidiaArashi_UpdatePulsingGlow(void);
-void HaidiaBabi_SpawnEffectPair(union FieldObject *object);
-void ImiruFuchin_ApplyEntrySetup(void);
-void ImiruFuchin_ApplyRoomLayout(void);
-void ImiruFuchin_PlaceDragonsEye(void);
-void InitializeEscapeSceneActors(void);
-void InitializeOrbitingRenderEffect(s32 id);
-void KareiMachi_SetupEntryActors(void);
-void KareiMachi_StartWindowTransition(void);
-void KorimaHashi_AlternateBridgePostHeights(void);
-void KorimaMagari_CaptureShakeScroll(void);
-void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row);
-void KorosseoKawa_EnsureMarkerSlot(void);
-void KorosseoKawa_RunPostMatchScene(s32 a0);
-void KorosseoKawa_WaitForCountdown(void);
-void KorosseoKawa_WaitForStageReady(void);
-void KuupuappuDou_EnableGroupAutomaticPriority(void);
-void KuupuappuDou_RaiseActorPriorities(void);
-void KuupuappuDou_RunRumble(void);
-s32	 KuupuappuHeya_GetIwanVenusDjinnCount(void);
-s32	 KuupuappuHeya_IsActorNearPoint(s32 x, s32 z, s32 id);
-s32	 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id);
-void KuupuappuHeya_StartActorStops(void);
-void KuupuappuHeya_UpdateActorStops(void);
-void Makyuri_ClearPalette(void);
 #ifndef OWN_Makyuri_SpawnLightObjects
-void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st);
 #endif
-void MakyuriChojo_FlickerActorEight(void);
-void MakyuriHeya_OpenStoneDoor(s32 side);
-void MakyuriHeya_RideLift(void);
-void MakyuriHeya_SpawnSparkPair(void);
-s32	 MakyuriHeya_StartPillarPush(void);
-s32	 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *position);
-void Map_LoadAreaGraphics(void);
-void Map_RenderPaletteMappedColumn(u32 value);
-void Map_RenderPaletteMappedRow(u32 value);
 void Map_ResumeAnimation(void);
-void Map_SetCameraCenter(s32 x, s32 y);
-void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py);
-void Map_ShowBg1FromBuffer(void);
-void Map_ShowWorldMap(s32 picture);
-void Map_UpdateCurrentTileBlock(void);
-void Map_UpdateCurrentTileBlockUntilBlocked(void);
-void Map_UpdateLayerScroll(void);
-void Map_WaitWorkValuesBelow256(void);
-s32	 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
-void MapActor_UpdateContact(void);
-void MapAnimation_ApplyAffineFrame(void);
-void MapAnimation_PresentFrame(void);
-void MapAnimation_Update(void);
 #ifndef OWN_MapGroupTable_SelectEntry
-void MapGroupTable_SelectEntry(s32 kind);
 #endif
-void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute, s32 unused);
-void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute, s32 unused);
 s32	 Math_Atan2(s32 dy, s32 dx);
 #ifndef OWN_Menu_FindShortcutEntries
-void Menu_FindShortcutEntries(
-	u32 *first_index, u32 *second_index, const struct AbilityListEntry *entries);
 #endif
-void  Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter);
-void *NewEffectObject(s32 first, s32 second, s32 third, s32 fourth);
 #ifndef OWN_Object_CollectResources
-s32 Object_CollectResources(struct AbilityListEntry *output);
 #endif
 #ifndef OWN_Object_Destroy
 void Object_Destroy(struct DispatchObject *work);
 #endif
-struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self, s32 id);
-s32					  Object_GetScreenPosition(s32 object_id, s32 *position);
-s32					  Object_IsTargetUnset(struct ObjectRuntime *object);
-void				  Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1);
 #ifndef OWN_Object_ReplaceResourceEntry
-void *Object_ReplaceResourceEntry(void *src, void *alt);
 #endif
 #ifndef OWN_ObjectDispatch_InitFromTable4WithArgument
-void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *object, s32 argument);
 #endif
 #ifndef OWN_ObjectDispatch_RegisterChildMetadata
-void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object, s32 value);
 #endif
-void ObjectEffect_BeginContextEffect25(void);
-void ObjectEffect_BeginContextEffect26(void);
-void ObjectEffect_EndContextEffect(s32 arg0);
-void ObjectEffect_PrepareContextEffect(s32 value);
-s32	 ObjectEffect_RunPendingFlagEvent(void);
-void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object);
 #ifndef OWN_ObjectGroup_UpdateMembers
-void ObjectGroup_UpdateMembers(
-	s32 set_id, s32 object_value, s32 group_value, s32 state_slot, s32 state_value);
 #endif
-void ObjectSystem_Initialize(s32 mode);
-void ObjectTable_ClearBattleSlots(void);
 #ifndef OWN_ObjectTable_ResetForObject
-void ObjectTable_ResetForObject(struct ScenePlacement *table);
 #endif
-void ObjectTable_Restore(void);
 #ifndef OWN_ObjectVisual_CopyAttributes
-void ObjectVisual_CopyAttributes(u32 target_id, u32 source_id);
 #endif
-void  OverlayObject_ActivateSlotWithMode3(s32 a);
-void  OverlayObject_AdvancePositionByDelta(union FieldObject *raw);
-void  OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object);
-void *OverlayObject_CreateConfiguredB(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void  OverlayObject_InitObject22(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z);
-void  OverlayObject_InitWithRandomFields(s32 a);
 #ifndef OWN_OverlayObject_PrepareObject
-void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth);
 #endif
-void OverlayObject_ResetMotionFields(s32 actor);
-s32	 OverlayObject_RunObjectTwoWhenFlagged(void);
-s32	 OverlayObject_SetFacingTowardObject10(void *self);
-void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d);
-void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor);
 #ifndef OWN_OverlayObject_WaitUntilSettledAndReset
-void OverlayObject_WaitUntilSettledAndReset(u8 *obj);
 #endif
-void Party_SetReturnPoint(s32 reason);
-void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset);
 #ifndef OWN_RamakanSabaku_EmitSandEffect
-s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor);
 #endif
-void RamakanSabaku_RaiseQuarterTriggers(void);
-void RamakanSabaku_RunSandstorm(void);
-void Resource3ba_NoOpCallback(void);
-s32	 ResourceTable_CountFreeBlocks(void);
-void RunActorsEightAndNineMapEvent(void);
-void RunScene59Sequence(void);
-void RunSceneSelectionChain(void);
-s32	 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position);
 #ifndef OWN_Scene_FadeColorFromWhite
-s32 Scene_FadeColorFromWhite(void);
 #endif
 #ifndef OWN_Scene_PushBlockAlongRun
-void Scene_PushBlockAlongRun(struct TileRun2 *runs);
 #endif
-void Scene_RepairTheHouse(void);
-void Scene_ResetFlagsOnEnter(s32 unused, s32 keep);
-void Scene_RunActorExchange(void);
-void Scene_RunEastParticleWaveSequence(void);
-void Scene_RunExtendedPresentationSequence(void);
-void Scene_RunFourActorProgressPresentation(void);
-void Scene_RunFourActorStagingSequence(void);
-void Scene_RunPairedParticleWaveSequence(void);
-void Scene_RunParticleWaveSequence(void);
-void Scene_RunScene371SequenceA(s32 palette);
-void Scene_UpdateFormationActor10Flags(void);
-void Scene_UpdateFormationActor11Flags(void);
-void Scene_UpdateFormationActor12Flags(void);
-void Scene_UpdateFormationActor13Flags(void);
-void Scene_UpdateFormationActor14Flags(void);
-void Scene_UpdateFormationActor9Flags(void);
-void Scene_UpdateOuterActor10Flags(void);
-void Scene_UpdateOuterActor9Flags(void);
-void Scene_UpdatePuzzleActors(void);
-void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay);
-void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
-void SceneActor_ApplyPositionsOfActors11And12(void);
-void SceneActor_ApplySlotsMatchingKind212(void);
-void SceneActor_BranchOnSlotZeroAtTile38(void);
-void SceneActor_CheckActors8To11NearSlotZero(void);
-void SceneActor_ClearActorModeAndSetState5(s32 no);
-void SceneActor_FaceActors24And25TowardActorZero(void);
-void SceneActor_InitSlots10To15AndStartTask(void);
-s32	 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor);
-void SceneActor_MarkSlot13AndSetFlag200(void);
-void SceneActor_MarkSlot21AndSetFlag205(void);
-void SceneActor_PassActorNinePositionWithId107(void);
-void SceneActor_PlaceActors20To27(void);
-void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay);
 #ifndef OWN_SceneActor_PlaceFiveActorsInRow
-void SceneActor_PlaceFiveActorsInRow(u8 *p);
 #endif
-void SceneActor_PlaceSlots1To3FromWork(void);
-void SceneActor_PublishMarkerBySlotZeroHeight(void);
-void SceneActor_PushObjectAheadIfLevel(void);
-void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
-void SceneActor_RunActorCommandWithFlag91(s32 x);
-void SceneActor_RunWhenActor9AtTile45x43(void);
-s32	 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor);
-void SceneActor_SetFlagByteBySlotZeroPosition(void);
-void SceneActor_SetMode55OnSevenRecords(void);
-void SceneActor_SetPositionFromTransformedBase(s32 a, s32 b, s32 c);
-void SceneActor_SetupActors11To14AndInstallTask(void);
-void SceneActor_SetupSlotTwenty(void);
-void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, const u8 *desc);
 #ifndef OWN_SceneActor_UpdateTracking
-s32 SceneActor_UpdateTracking(
-	struct MapActor *actor, struct MapActor *target, s32 distance_limit, s32 force_tracking);
 #endif
-void SceneActor_WaitHeightBelowLimit(struct FieldActor *obj, s32 limit);
 #ifndef OWN_SceneData_FindTileRunAt
-const struct TileRun *SceneData_FindTileRunAt(const struct TileRun *run, s32 x, s32 y);
 #endif
-s32	 SceneData_GetDifferenceOfPairSums(void);
-void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param);
-s32	 SceneData_SelectTableEntryByFlagGroup(u32 sel);
-s32	 SceneDialogue_PickTopicVariantId(s32 topic);
-void SceneDialogue_PromptAndCountSkip(s32 x);
-void SceneDialogue_RunActorFourteenFlagDialogue(void);
-void SceneEffect_AdjustPaletteColors(s32 a);
-void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor);
-void SceneEffect_AdvancePositionByAxisMode(struct PillarEffect *effect);
-void SceneEffect_AdvanceSlotByValueBand(s32 actor, s32 slot);
-void SceneEffect_InitSlotsEightToNineteen(void);
-void SceneEffect_LoadTablesAndStopDma0(void);
-void SceneEffect_RestoreBlendRegisters(void);
-void SceneEffect_RunActorBurst(s32 no);
-void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot, s32 flags);
-void SceneEffect_SetupBlendByFlag201(void);
 #ifndef OWN_SceneEffect_SpawnEffect284AtCell
-struct EffectObject_02000c5c *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, s32 arg2);
 #endif
 #ifndef OWN_SceneEffect_SpawnRandomizedParticleEveryFourFrames
-s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct SceneObject_02000b98 *obj);
 #endif
-void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor);
-void SceneEffect_UpdateLobeOrbitEffect26(void);
 void ScenePlacement_ClipToView(s32 placements);
-void SceneState_ApplyFiveRectsAtColumn78(void);
-void SceneState_ApplyFlagGatedActorEightSetup(void);
-void SceneState_ApplyRectAndMarkActor16(void);
-void SceneState_ApplyRectAndSetupActor19(void);
-void SceneState_ApplyRectsByFlag844(s32 flag);
-void SceneState_ApplyRectsByFlatla384And962(void);
-void SceneState_ApplyStepToSlots15To18(void);
-void SceneState_ApplyThreeRects(void);
-void SceneState_ApplyThreeRectsRows9And10(void);
-void SceneState_ApplyTwoRects(void);
-void SceneState_ApplyTwoRectsAtRow56(void);
-void SceneState_CallWith432And32(void);
-void SceneState_CheckFlags941And940(void);
-void SceneState_CheckPositionWindow(void);
-void SceneState_ClearSlotsBySubState(void);
-void SceneState_ConfigureEntries8Through19(void);
-void SceneState_ConfigureRegion26_30AndClearActor18Mode(void);
-void SceneState_ConfigureRegion26_30AndMarkActor17(void);
-void SceneState_CountDownEveryFortyTicks(void);
-void SceneState_DispatchByActorZeroDepth(void);
-s32	 SceneState_FindFirstSetFlagOfGroup(u32 sel);
-void SceneState_InitActorSlots8To19(void);
-void SceneState_InitControlWhenFlag109Clear(s32 resource);
-void SceneState_InitFourActorRecordsAndInstallTask(void);
-void SceneState_LinkRecordZeroWhenFlag200Clear(void);
-void SceneState_RaiseTriggerOnPsynergyTarget(void);
-void SceneState_ResetCounterAndStartTask(void);
-void SceneState_RunFlagGatedSetupCascade(void);
-void SceneState_RunGuardedActorStep(s32 x);
-void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b);
-void SceneState_Send210AndApplyRectAt40x84(void);
-void SceneState_SetFlagByActorPosition(void);
-void SceneState_SetMode66AndPassOpeningSequence(void);
-void SceneState_TriggerColumnNineteen(void);
-void SceneState_TriggerColumnTen(void);
 void SceneTable_Prepare(void *);
-void ShianJiin_AskIfCurious(void);
-s32	 ShindenHeya_ChooseRestartOption(void);
-void ShindenHeya_RaiseItemIcon(s32 item);
-void ShindenHeya_ResetActorUpdate(void);
-void ShindenHeya_UpdateRisingSpark(union FieldObject *object);
-void SoruIriguchi_ApplyEntryState(void);
-void SoruSekizo_RunSealOpenedSequence(void);
 #ifndef OWN_StagedActor_CountdownUntilPositionUnset
-s32 StagedActor_CountdownUntilPositionUnset(struct FieldActor *o);
 #endif
-void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz);
-void StagedActor_StepDownUntilClamp(s32 index);
-void State_ApplyRectByLayoutSelector(void);
-s32	 State_CheckFourCellRun(s32 x, s32 z, s32 mode);
-void State_StampRecordCells(s16 *records, s32 value);
-void State_UpdateScrollRegistersWithPreset(void);
-s32	 StoryActor_ApplyMapRotation(struct FieldActor *actor);
 #ifndef OWN_StoryActor_ConfigureSpawnedObject
-void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor);
 #endif
-void StoryScene_StartTransition(void);
-void TakaraAshiba_InitializeScene1(void);
-void TakaraAshiba_InitializeScene2(void);
-void TakaraAshiba_InitializeScene3(void);
-void TakaraAshiba_OpenPlatformPassage(s32 a0);
-void TakaraAshiba_RaiseTriggerOnStand(void);
-void TakaraAshiba_RepaintActorCells(void);
-void TakaraAshiba_RestoreActorEightTerrain(void);
-void TakaraAshiba_RestoreActorTenLeftCell(void);
-void TakaraAshiba_RestoreActorTenRightCell(void);
-s32	 TakaraHashira_LowerActorToLedge(s32 id, s32 far);
-void TakaraHashira_PushPillar(void);
 #ifndef OWN_TakaraHashira_ReadMapCell
-void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst);
 #endif
-void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *src);
-s32	 TakaraHashira_SyncPriorityIfAhead(struct FieldActor *front, struct FieldActor *actor);
-s32	 TakaraHashira_SyncPriorityIfBehind(struct FieldActor *actor, struct FieldActor *front);
-void TakaraShima_LeaveClearedRoom(void);
-void TakaraShima_RestoreRoomActors(void);
-void TorebiIzumi_RevealPrize(s32 item);
-s32	 TorebiIzumi_RunSpringRide(s32 side);
-void TorebiIzumi_SetActorActive(s32 arg0, s32 arg1);
-void ToretoEda_StartBg3Split(void);
-void ToretoHeya_ApplyFlaggedMapPatches(void);
-void ToretoHeya_RunLandingDustScene(void);
-void ToretoHeya_UpdateSwirlObject(struct Swirl *obj);
-void ToretoPalette_CaptureBank(void);
-void Transform_UpdateVertices(void);
-s32	 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested);
-s32	 UpdateActorProximity(u8 *actor);
-s32	 UpdateFacingFromResolvedObject(struct FacingObject *object);
-void VinasuChojo_StepSpriteRotation(struct FieldActor *actor);
-void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object);
-void VinasuHeya_LowerFloatingBlocks(s32 wait);
-s32	 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor);
-void WorldMap_ActivateSite138(s32 actor);
-void WorldMap_CompleteTransfer(void);
-void WorldMap_DisembarkCarriage(void);
-void WorldMap_RunBlackOrbScene(void);
-void WorldMap_RunOpeningRise(void);
-void WorldMap_StopLeaderLeavingShip(void);
-void WorldMap_TransferToExit102(void);
-void WorldMap_TransferToExit103(void);
-void WorldMap_TransferToExit104(void);
-void WorldMap_TransferToExit106(void);
-void WorldMap_TransferToFuneHeya(void);
-void WorldMap_UpdateView(void);
-void YamaRama_DisableActorCollision(void);
 #endif
 
 #if GAME_TLA

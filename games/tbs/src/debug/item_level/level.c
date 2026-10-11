@@ -1,3 +1,7 @@
+#include "unit/debug/item_level/level.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/game/character/chara.h"
+#include "unit/graphics/window/measure.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -23,14 +27,9 @@
 #include "text/msg_ids.h"
 #include "field_scene.h"
 
-#define RenderOutput_RedrawSavedRect ((void (*)(struct RenderInput *))RenderOutput_RedrawSavedRect)
-
 void Engine_AudioPlayCue(s32 cue);
 void Engine_TaskWait(s32 frames);
-void UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);
 #define ITEM_COUNT 270
-void UiText_DrawResource(s32 text, struct RenderInput *window, s32 x, s32 y);
 #define ABILITY_COUNT 270
 
 u8 *ItemLevel_GetEntrances(void)

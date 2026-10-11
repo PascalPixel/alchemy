@@ -1,0 +1,46 @@
+#ifndef ALCHEMY_UNIT_FIELD_MAKYURI_IRIGUCHI_IRIGUCHI_H
+#define ALCHEMY_UNIT_FIELD_MAKYURI_IRIGUCHI_IRIGUCHI_H
+
+#include "types.h"
+
+struct FieldActor;
+struct Work_39c;
+
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourth);
+void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+s32 MakyuriIriguchi_TrailSparks(struct FieldActor *a0);
+s32 SceneAudio_PlayCue118AndReturnZero(void);
+s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object);
+void MakyuriIriguchi_TickSpawnTimer(void);
+void MakyuriIriguchi_ClearCurrentRecordAndReleaseTarget(void);
+void FieldScene_RunSingleStep(void);
+void MakyuriIriguchi_TriggerPillarRise(void);
+void *SceneData_GetSceneTableA(void);
+int SceneData_ReturnZero(void);
+void *SceneData_GetSceneTableB(void);
+void *SceneData_GetSceneTableC(void);
+void FieldScene_RunStepWithValue1632(void);
+void SceneActor_RunActorZeroHandledMotion(s32 a);
+void MakyuriIriguchi_DropLeaderToColumn(s32 a0);
+void FieldScene_RunIndexedStep17(void);
+void FieldScene_RunIndexedStep18(void);
+void FieldScene_RunIndexedStep19(void);
+void *SceneData_GetSceneTableD(void);
+void FieldScene_RunSupplementalSequenceTwo(void);
+void FieldScene_RunIndexedStep63(void);
+void MakyuriIriguchi_InstallActorEightPath(void);
+void MakyuriIriguchi_SendActor8ByLeaderColumn(void);
+void MakyuriIriguchi_OpenEntrance(void);
+void MakyuriIriguchi_ArriveWithSparks(void);
+s32 MakyuriIriguchi_ApplyEntryState(void);
+void MakyuriIriguchi_CrossDoorway(void);
+void MakyuriIriguchi_RunDoorScene(void);
+void OverlayObject_SpawnKind24AtObject(struct FieldActor *src);
+s32 SceneEffect_AdvanceAnchoredRiseFrame(struct Work_39c *work);
+s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o);
+s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o);
+void SceneState_ClearCurrentRecordAndReleaseTarget(void);
+void OverlayObject_ReleasePublishedAttachment(void);
+
+#endif

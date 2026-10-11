@@ -1,6 +1,11 @@
 /*----------------------------------------------------------
     ルンパ城  イベント
 ----------------------------------------------------------*/
+#include "unit/field/runpa_jo/runpa_jo.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -32,8 +37,6 @@ void Engine_ActorWaitForMove(s32 actor);
 
 void Engine_MapCopyCellAttributes(
 	s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y);
-
-void Object_RefreshSelectorById(s32 actor);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"

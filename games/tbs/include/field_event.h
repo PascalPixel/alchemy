@@ -1,6 +1,8 @@
 #ifndef ALCHEMY_FIELD_EVENT_H
 #define ALCHEMY_FIELD_EVENT_H
 
+#include "unit/battle/effect/slots.h"
+#include "unit/system/scheduler/callback.h"
 #include "mapcopy.h"
 
 #include "layout_guard.h"
@@ -60,7 +62,6 @@ void			   Engine_EventCloseScreen(void);
 void			   Engine_EventWaitForScreen(void);
 void			   Engine_BlendSetDarkenTarget16(s32 target);
 u8				  *Engine_ResourceGetTableEntry(s32 resource);
-struct FieldActor *Object_GetById(s32 actor);
 void			   Engine_ActorSetPosition(s32 actor, s32 fixed_x, s32 fixed_z);
 void			   Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
 void			   Engine_ActorSetDestination(s32 actor, s32 x, s32 z);
@@ -109,7 +110,6 @@ struct FieldActor *Engine_ObjectCreate(s32 type, s32 fixed_x, s32 fixed_y, s32 f
 void			   Object_SetMode(struct FieldActor *object, s32 animation);
 void			   Engine_ObjectSetScript(struct FieldActor *object, const s32 *script);
 void			   Engine_ObjectSetBlendMode(struct FieldActor *object, s32 mode);
-void			   ObjectGroup_SetChildValue(struct FieldActor *object, s32 palette);
 void			   Engine_ObjectSetPartPalettes(struct FieldActor *object, s32 palette);
 void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 void Engine_ObjectCommitPosition(struct FieldActor *object);
@@ -156,12 +156,6 @@ void Engine_MapWaitWorkValuesBelow256(void);
 void Engine_RunRisingObjectSequence(struct FieldActor *object, s32 mode);
 
 #ifdef FIELD_STAGED_ACTOR_IMPORTS
-void Battle_WaitMode0(s32 frames);
-void WaitFrames(s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
-void Object_SetModeById(s32 actor, s32 animation);
 void Audio_PlayCue(s32 cue);
 #endif
 

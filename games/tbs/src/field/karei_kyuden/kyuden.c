@@ -1,3 +1,6 @@
+#include "unit/field/karei_kyuden/kyuden.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -25,12 +28,6 @@ enum PartyEventsMessage
 	MSG_ROBIN_SNEAKED_INTO_LUNPA_THATS = 0x1b91,
 	MSG_ITS_IVAN_HIS_COMPANIONS_PERFECT = 0x2588
 };
-
-void Map_ClearLayerEntryFlag();
-void Map_SetLayerEntryFlag();
-void SceneChannel_ConfigureUniformAndHandoff(s32);
-void SceneChannel_ConfigureUniformAndHandoff();
-s32	 Object_SetActionCallbackAndRefreshById();
 
 static __inline__ void Scene_AdvanceStep(s32 amount)
 {
@@ -118,7 +115,6 @@ void FieldScene_RunActorEightTurnDialogue(void)
 
 void KareiKyuden_LeaveThroughDoor(void)
 {
-	void Map_ClearLayerEntryFlag();
 
 	u32				  i;
 	s32				  record;

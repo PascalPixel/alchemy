@@ -1,3 +1,11 @@
+#include "unit/field/babi_fune/fune.h"
+#include "unit/graphics/display/scroll_initialize_hblank_dma.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/game/character/chara.h"
+#include "unit/menu/shop/sell.h"
+#include "unit/sound/sound.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -29,8 +37,6 @@
 #include "ability_ids.h"
 #include "field_scene.h"
 #include "objcmd.h"
-
-void BabiFune_ScheduleFade(void);
 
 #define PALETTE ((volatile u16 *)0x05000000)
 
@@ -242,12 +248,6 @@ void BabiFune_UpdateWaves(void)
 	}
 }
 
-void Motion_LaunchFromFocusedObject();
-s32	 UiText_OpenMessageAtObject();
-void Object_RefreshSelectorById();
-void MusicCommand_SetPitchAndUpdateFrequency();
-void Event_SetDestination();
-
 s32 BabiFune_StoreLeaderHeight(void)
 {
 	s32				  *d;
@@ -332,7 +332,8 @@ void Scene_RunExtendedPresentationSequence(void)
 	Engine_EventWait(30);
 	Engine_ActorFaceDirection(1, 57344, 0);
 	Engine_EventWait(20);
-	UiText_OpenMessageAtObject(1, 0);
+	/* FAKEMATCH: UiText_OpenMessageAtObject is called as s32 (*)(); as struct UiWindow *(*)(s32), its prototype, Scene_RunExtendedPresentationSequence does not compile */
+	((s32 (*)())UiText_OpenMessageAtObject)(1, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(30);
@@ -373,7 +374,8 @@ void Scene_RunExtendedPresentationSequence(void)
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(3, 4);
 	Engine_EventWait(20);
-	UiText_OpenMessageAtObject(3, 0);
+	/* FAKEMATCH: UiText_OpenMessageAtObject is called as s32 (*)(); as struct UiWindow *(*)(s32), its prototype, Scene_RunExtendedPresentationSequence does not compile */
+	((s32 (*)())UiText_OpenMessageAtObject)(3, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
@@ -410,7 +412,8 @@ void Scene_RunExtendedPresentationSequence(void)
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(3, 3);
 	Engine_EventWait(20);
-	UiText_OpenMessageAtObject(3, 0);
+	/* FAKEMATCH: UiText_OpenMessageAtObject is called as s32 (*)(); as struct UiWindow *(*)(s32), its prototype, Scene_RunExtendedPresentationSequence does not compile */
+	((s32 (*)())UiText_OpenMessageAtObject)(3, 0);
 	Actor_FaceDirection(1, 57344, 0);
 	Actor_FaceDirection(3, 49152, 0);
 	Engine_ActorFaceDirection(2, 40960, 0);
@@ -525,10 +528,9 @@ void Scene_RunExtendedPresentationSequence(void)
 	Engine_EventWaitForScreen();
 	Engine_EventWait(30);
 	Engine_GameFlagSet(282);
-	Event_SetDestination((s32)&SceneId_Title, 9);
+	/* FAKEMATCH: Event_SetDestination is called as void (*)(); as void (*)(u16, u16), its prototype, Scene_RunExtendedPresentationSequence has 40 of 1796 bytes different */
+	((void (*)())Event_SetDestination)((s32)&SceneId_Title, 9);
 }
-
-void Inventory_AddItem(s32 a, s32 b);
 
 union GameStateRows
 {
@@ -559,7 +561,6 @@ static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
 	return (u16)(Iwram_MulQ16(BabiFune_WaveSine[(angle >> 16) & 0xff], amplitude) / 256) + base;
 }
 
-void Battle_ResetEffectCounter(void);
 void Engine_ActorWalkToAndWait(s32 actor, s32 x, s32 z);
 
 static inline void BabiFune_AddTask(void (*task)(void), s32 order)

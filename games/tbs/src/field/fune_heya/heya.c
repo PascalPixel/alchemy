@@ -1,3 +1,9 @@
+#include "unit/field/fune_heya/heya.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/game/character/chara.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/system/scheduler/callback.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
@@ -22,17 +28,6 @@
 #include "objcmd.h"
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
-
-void ConfigureSceneMotionFlags();
-void FieldScene_RunPositionTransferPresentation();
-void FieldScene_RunStepThen10();
-void FuneHeya_PlaceFoundActors();
-void FuneHeya_PoseSceneActor();
-void FuneHeya_RunWalkerStep(struct FieldActor *obj);
-s32	 SceneActor_CheckBucketOffsetPoint(s32 bucket);
-void SceneState_ApplyActor8FourFlags();
-void Scene_RunConditionalActorPresentation();
-void UpdateActorNineEffectMode(struct EffectRecord *record);
 
 enum ExtendedChoreographyMessage
 {
@@ -189,15 +184,6 @@ s32 StagedActor_CountdownUntilPositionUnset(struct FieldActor *o)
 
 #ifdef ALCHEMY_FIELD_EVENT_H
 #endif
-
-#define StagedActor_CountdownUntilPositionUnset \
-	((s32 (*)(u8 *))StagedActor_CountdownUntilPositionUnset)
-
-void Battle_ResetEffectCounter();
-void FieldScene_CallPairWith10(s32 a, u16 b);
-
-s32	 SceneState_ApplyLevelFromFlags(void);
-void FieldScene_RunPrimarySequence(s32 actor, s32 message, s32 flag);
 
 struct Walker
 {
@@ -1141,14 +1127,6 @@ void FuneHeya_TurnActorToOpenSide(s32 a0)
 #endif
 
 s32	 Object_CheckMovementCollision();
-void Party_SetFields1ceAnd1d0();
-void BattleFx_SetWeightedResult();
-
-void UiText_ShowCenteredMessage();
-void Ui_SetRenderResultFromObject();
-void Object_RefreshSelectorById();
-
-void Audio_PlayCueFromEventWork();
 
 union GameStateRows
 {
@@ -1160,27 +1138,16 @@ struct Half
 {
 	u16 v;
 };
-void SceneActor_SetFlagBit3ForActors28To35(void);
 
 enum
 {
 	CabinSpeakerRequest = 0xa01b
 };
 
-void Object_SetActionById();
-void ObjectMotion_WaitForAnimationChange();
-void Event_CallWithLastActiveObjectId();
-u8	*Battle_GetWorkObject1e0();
-
 static __inline__ void SetPose(u8 *rec, s32 pose)
 {
 	((struct FieldActor *)rec)->facing = pose;
 }
-
-void Object_SetActionCallbackAndRefreshById();
-
-void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
-void FieldScene_InstallFlaggedActors10To17(u8 *src);
 
 extern struct EventWork *gEventWork;
 
@@ -1521,21 +1488,24 @@ void FuneHeya_RunFlagBranchSequence(void)
 	GameFlag_Clear(0x8f0);
 	if (Engine_GameFlagIsSet(0x928) == 0)
 	{
-		Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 16);
+		/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, FuneHeya_RunFlagBranchSequence is 8 bytes longer */
+		((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_FuneHeya, 16);
 		BattleFx_SetWeightedResult(62, 0);
 	}
 	else
 	{
 		if (Engine_GameFlagIsSet(0x929) == 0)
 		{
-			Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 18);
+			/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, FuneHeya_RunFlagBranchSequence is 8 bytes longer */
+			((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_FuneHeya, 18);
 			BattleFx_SetWeightedResult(62, 1);
 		}
 		else
 		{
 			if (Engine_GameFlagIsSet(0x92a) == 0)
 			{
-				Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 20);
+				/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, FuneHeya_RunFlagBranchSequence is 4 bytes longer */
+				((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_FuneHeya, 20);
 				BattleFx_SetWeightedResult(62, 2);
 			}
 		}
@@ -2496,7 +2466,8 @@ void SceneState_RunFlagGatedSetupCascade(void)
 		s32 t = Engine_GameFlagIsSet(0x928);
 		if (t != 0)
 		{
-			SceneState_ApplyActor8FourFlags(t);
+			/* FAKEMATCH: SceneState_ApplyActor8FourFlags is called as void (*)(); as void (*)(void), its prototype, SceneState_RunFlagGatedSetupCascade does not compile */
+			((void (*)())SceneState_ApplyActor8FourFlags)(t);
 			return;
 		}
 	}

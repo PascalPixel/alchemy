@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_OBJECT_RUNTIME_H
 #define ALCHEMY_OBJECT_RUNTIME_H
 
+#include "unit/field/common/script/script.h"
 #include "object_lookup.h"
 #include "types.h"
 
@@ -50,7 +51,5 @@ typedef char ObjectRuntime_arrival_axis_offset
 	[(u32) & (((struct ObjectRuntime *)0)->arrival_axis) == 0x56 ? 1 : -1];
 typedef char ObjectRuntime_snap_to_target_offset
 	[(u32) & (((struct ObjectRuntime *)0)->snap_to_target) == 0x58 ? 1 : -1];
-
-void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
 #endif

@@ -1,3 +1,6 @@
+#include "unit/field/shian_heya/heya.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
@@ -63,8 +66,6 @@ union KanpanSlot
 	u16	  h[2];
 	void *p;
 };
-
-void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 type);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"

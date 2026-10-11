@@ -1,3 +1,7 @@
+#include "unit/field/haidia_sukureta/sukureta.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -18,14 +22,8 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-void Object_SetTargetAndCallback();
-void Audio_PlayCueFromEventWork(void);
-
 s32	 Effect_SoundAndFlash();
-void BattleFx_StartTwelveFrameBlend();
 void Engine_MapCopyCellAttributes();
-void Scene_LeaveForMtAleph();
-void Object_SetActionCallbackAndRefreshById();
 
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
 {

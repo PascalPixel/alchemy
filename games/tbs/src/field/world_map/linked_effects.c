@@ -33,8 +33,6 @@ struct PairWork
 	u16 vram_block;
 };
 
-s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
-
 struct WorldMapOam
 {
 	u8	unknown_00[4];

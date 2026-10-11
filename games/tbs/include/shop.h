@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_SHOP_H
 #define ALCHEMY_SHOP_H
 
+#include "unit/menu/shop/sell.h"
 #include "global_cells.h"
 #include "item.h"
 #include "layout_guard.h"
@@ -84,29 +85,5 @@ extern const u8 Shop_DownArrowTiles[];
 
 extern const u8 Shop_PriceTiles[];
 extern const u8 Shop_QuantityTiles[];
-
-void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s8 kind);
-void Shop_PlaceCursor(void *window, s32 x, s32 y);
-void Shop_DrawStock(s32 window, s32 selected);
-void Shop_DrawMoney(void);
-void Shop_DrawItemPrice(s32 window, s32 item_name_message, s32 price, s32 price_mode);
-void Shop_DrawMsg(s32 window, s32 message);
-void Shop_DrawParty(s32 window, s32 selected, s32 requirement);
-void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id);
-s32	 Shop_SelBuyNum(s32 unit_id, s32 item_id);
-void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity);
-s32	 Shop_ConfirmEquip(s32 unit_id, s32 slot);
-s32	 Shop_SellOld(s32 unit_id, s32 slot);
-s32	 Shop_SelRepair(s32 unit_id);
-s32	 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price);
-void ShopCursor_Advance(struct ShopCursor *cursor);
-void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
-s32	 Shop_SalePrice(s32 item_id);
-s32	 Shop_PickUnit(void);
-void Shop_DrawUnitGrid(s32 window, s32 unit_id);
-s32	 Shop_SelSellNum(s32 unit_id, s32 slot);
-s32	 Shop_RepairPrice(s32 item_id);
-s32	 Shop_SelUnit(void);
-void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_slot);
 
 #endif

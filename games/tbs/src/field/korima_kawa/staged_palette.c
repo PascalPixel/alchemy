@@ -1,3 +1,7 @@
+#include "unit/field/korima_kawa/staged_palette.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/korima/palette.h"
+#include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -29,7 +33,6 @@ void Engine_AudioPlayCue(s32 cue);
 #ifdef MODERN
 // called before its definition below, which modern GCC refuses for an
 // implicit int declaration of a u16 function
-u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj);
 #endif
 
 void Engine_EventBegin(void);
@@ -38,9 +41,6 @@ void Engine_ActorSetDestinationOffset(s32, s32, s32);
 void Engine_EventWait(s32);
 void Engine_EventEnd(void);
 void Engine_TaskWait(s32 actor_index);
-void KorimaPalette_SaveFirst(void);
-void KorimaPalette_Capture(void);
-void KorimaPalette_SaveSecond(void);
 
 s32 Math_DivideSigned();
 
@@ -95,7 +95,6 @@ void FieldScene_RunActorTenPlacementScene(void)
 
 s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
 {
-	s32 ObjectMotion_SetPositionAndCommit();
 
 	struct StagedActorEffect *actor = (void *)Object_GetById(0);
 	u8						 *flags = &actor->motion_flags;

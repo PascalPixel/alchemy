@@ -1,3 +1,7 @@
+#include "unit/field/common/shian_jiin/jiin.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/system/scheduler/callback.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
@@ -16,8 +20,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-void FieldScene_SpawnRandomizedParticle();
 
 extern struct EventWork *gEventWork;
 
@@ -59,21 +61,6 @@ struct Descriptor_020041ec
 };
 
 extern u32 ShianJiin_XianMessages[];
-
-s32 ArcTan2(s32, s32);
-
-void FieldScene_SpawnRandomizedParticle();
-void ShianJiin_SpinAway(void);
-void ShianJiin_RunGatheringScene(void);
-void ShianJiin_RunMasterScene(s32 arg0);
-void ShianJiin_RunMasterScene(s32 variant);
-void ShianJiin_RunMasterScene();
-void FieldScene_RunOpeningAuxiliarySequence(s32 arg0, s32 arg1);
-void UiText_DrawQuantityPairWithCue();
-
-void FieldScene_RunForwardArcBurst(void);
-
-void FieldScene_RunDescentBurst(void);
 
 extern s32 ShianJiin_ActorTwelveScript[];
 extern u16 ShianJiin_CellStepsA[];
@@ -133,7 +120,6 @@ extern struct SceneEntrance gShianJiinEntrancesOther[];
 extern struct ScenePlacement gShianJiinPlacements1[];
 extern struct ScenePlacement gShianJiinPlacementsEntrance3[];
 extern struct ScenePlacement	   gShianJiinPlacements[];
-void							   BattleFx_PlayQueuedSound();
 
 union SceneWord
 {
@@ -141,15 +127,9 @@ union SceneWord
 	u16 half[2];
 };
 
-void ShianJiin_WalkByFacing(void);
-
-void ShianJiin_WalkByFacing();
-
 extern struct SceneEvent gShianJiinEvents1[];
 extern struct SceneEvent gShianJiinEventsEntrance3[];
 extern struct SceneEvent gShianJiinEvents[];
-
-void BattleFx_SetQueuedSoundAndPlay(s32 value);
 
 extern u8 gEffectWork[];
 

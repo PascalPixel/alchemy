@@ -1,3 +1,5 @@
+#include "unit/field/biribino_dou/dou.h"
+#include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -381,21 +383,36 @@ void FieldScene_RunScene398SequenceC(void)
 	Engine_ActorSetAnimation(12, 2);
 	Engine_ActorSetAnimation(13, 2);
 	Engine_ActorSetAnimation(14, 2);
-	Resource398_ImportBankNoOp(18);
-	Resource398_ImportBankNoOp(19);
-	Resource398_ImportBankNoOp(20);
-	Resource398_ImportBankNoOp(21);
-	Resource398_ImportBankNoOp(22);
-	Resource398_ImportBankNoOp(23);
-	Resource398_ImportBankNoOp(24);
-	Resource398_ImportBankNoOp(25);
-	Resource398_ImportBankNoOp(26);
-	Resource398_ImportBankNoOp(9);
-	Resource398_ImportBankNoOp(10);
-	Resource398_ImportBankNoOp(11);
-	Resource398_ImportBankNoOp(12);
-	Resource398_ImportBankNoOp(13);
-	Resource398_ImportBankNoOp(14);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(18);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(19);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(20);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(21);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(22);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(23);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(24);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(25);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(26);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(9);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(10);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(11);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(12);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(13);
+	/* FAKEMATCH: Resource398_ImportBankNoOp is called as void (*)(); as void (*)(void), its prototype, FieldScene_RunScene398SequenceC does not compile */
+	((void (*)())Resource398_ImportBankNoOp)(14);
 	if (GameFlag_IsSet(0x883) != 0)
 	{
 		Actor_SetPosition(8, 0, 0);

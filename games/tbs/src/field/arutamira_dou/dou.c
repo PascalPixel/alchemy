@@ -1,3 +1,10 @@
+#include "unit/field/arutamira_dou/dou.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/menu/shop/sell.h"
+#include "unit/system/scheduler/callback.h"
+
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #include "battle.h"
 #include "debug.h"
@@ -57,17 +64,6 @@ struct RockPuzzle
 };
 
 #define ArutamiraDou_RockPuzzle ((struct RockPuzzle *)&gSceneState[1])
-
-void BattleFx_SetPhaseRequest(s32, s32);
-void Battle_ResetEffectCounter();
-void Motion_LaunchFromFocusedObject();
-void Audio_PlayCueFromEventWork();
-void ArutamiraDou_SettleActorOnCell(void);
-void ArutamiraDou_ApplyFadeBlend(void);
-void ArutamiraDou_SetFadeLevel(s32 level);
-void BattleFx_ClearOwnedSlot(void *object);
-
-s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
 
 u16 gArutamiraActorWheelWork[6] __attribute__((nocommon, aligned(4)));
 
@@ -750,19 +746,10 @@ void ArutamiraDou_TurnRock(s32 action)
 	}
 }
 
-#define SceneActor_PlaceFiveActorsInRow ((void (*)(s32))SceneActor_PlaceFiveActorsInRow)
-#define Camera_WorldToScreen ((void (*)(s32 *))Camera_WorldToScreen)
-#define EffectSlot_Initialize ((void (*)(u8 *, s32, s32, s32))EffectSlot_Initialize)
-
 extern u8 gDisplayTransition[];
-void	  Battle_ResetEffectCounter(void);
-void	  Motion_LaunchFromFocusedObject(s32 actor, s32 dx, s32 dz, s32 facing);
-void	  Object_RefreshSelectorById(s32 actor);
-void	  Audio_PlayCueFromEventWork(void);
 
 extern u8 gFrameTick[];
 
-void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 s32	 Math_DivideUnsigned(s32 value, s32 divisor);
 
 void FieldScene_RunExtendedActorPresentation(void)

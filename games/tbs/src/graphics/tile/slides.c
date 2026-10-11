@@ -3,6 +3,8 @@
 // タイル：BG のキャラクターとパレットの半分を消す
 //--------------------------------------------------------------------------
 
+#include "unit/graphics/tile/slides.h"
+#include "unit/system/scheduler/callback.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "types.h"
@@ -183,8 +185,6 @@ void DisplayScroll_StepPositionEveryFourFrames(void)
 extern u8 gOamCopyEnabled;
 extern u8 gCpuLoadDisplayEnabled;
 extern u8 gOptionMirror;
-
-void WaitFrames(s32 frames);
 
 s32 DisplayScroll_RunSlideshow(void)
 {

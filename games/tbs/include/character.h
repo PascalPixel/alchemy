@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_CHARACTER_H
 #define ALCHEMY_CHARACTER_H
 
+#include "unit/game/character/chara.h"
 #include "types.h"
 #include "ownerval.h"
 #include "layout_guard.h"
@@ -120,19 +121,5 @@ LAYOUT_SIZE_GUARD(LevelUpResult_Size, struct LevelUpResult, 0x10);
 
 extern struct CharacterDefinition Character_DefinitionTable[];
 extern struct ClassDefinition	  Class_DefinitionTable[];
-struct CharacterDefinition		 *Character_GetDefinition(s32 index);
-struct ClassDefinition			 *Owner_GetRecordStride84(s32 index);
-struct LevelUpResult			 *Owner_LevelUp(s32 owner, struct LevelUpResult *result);
-struct LevelUpResult			 *Owner_GetValueIfLevelThresholdReached(
-	s32 owner, struct LevelUpResult *result);
-struct LevelUpResult *OwnerAction_CheckLevelThreshold(s32 owner, struct LevelUpResult *result);
-void				 *Trade_GetOfferState(s32 which);
-void				  UnitCalc(s32 owner);
-void				  Owner_RefreshDerivedData(s32 owner);
-s32					  OwnerAction_Add(s32 owner, s32 action);
-void				  UnitRatio(s32 owner);
-void				  Owner_UpdateRatioPair(struct BtlUnit *owner, s32 hp);
-void				  Owner_UpdateSecondInputAndRatios(struct BtlUnit *owner, s32 ep);
-s16					  UnitEpAdd(s32 owner, s32 ep);
 
 #endif

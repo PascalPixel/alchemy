@@ -1,3 +1,5 @@
+#include "unit/menu/item/item.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -56,10 +58,6 @@
 #include "battle_efx.h"
 #include "four_object_motion.h"
 
-s32	 Menu_RunPairedEntryAction(s32 mode, s32 param);
-void PsynergyMenu_InitializeEntryObjects(
-	void *source, s32 origin_x, s32 origin_y, s32 spacing, s32 unused);
-
 extern u8 IwramCopyWords[];
 
 s32	 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
@@ -67,11 +65,9 @@ void Event_ClearInvalidPackedValuesFar(void);
 s32	 GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 s32	 Inventory_RemoveFar(s32 owner, s32 slot);
-s32	 Inventory_RemoveFirstUnflagged(s32 owner);
 void Object_ApplyProjectedPlacementFar(void *, s32 *, s32 *, s32);
 s32	 Party_CountActiveOwnersFar(void);
 s32	 Party_ListActiveOwnersFar(void *ids);
-s32	 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 variant);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x0, s32 y0, s32 x1, s32 y1);
@@ -80,7 +76,6 @@ void UiWork_FinalizeFar(void *window, s32 style);
 void UiWork_PushValueSlotFar(u32 value, u32 slot);
 s32	 UiWork_SetParamNibbleFar(s32 color);
 s32	 _call_via_r3(void *, void *, s32, void *);
-void UiWindow_CloseIfOpen(struct UiWindow **handle, s32 style);
 
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void)
 {
@@ -5701,11 +5696,6 @@ done:
 
 #undef ACTION_ID_MASK
 
-void FourObjectMotion_InitializeTopRow(void);
-void UiWindow_ApplyRectAtObjectOrigin(void *obj, s32 x, s32 y, s32 width, s32 height, s32 palette);
-
-void ItemMenu_Close(void);
-
 #if EDITION_INTERNATIONAL
 #define ROW_CNT 8
 #else
@@ -5724,7 +5714,8 @@ s32 Menu_OpenCharacterSelector(void)
 	UiWindow_InitializeWork(0);
 
 	state->party_count = Party_ListActiveOwnersFar(state->owner_ids);
-	Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
+	/* FAKEMATCH: Menu_InitSelectorCursorAndEntries is called as void (*)(); as void (*)(void), its prototype, Menu_OpenCharacterSelector does not compile */
+	((void (*)())Menu_InitSelectorCursorAndEntries)(0, 3, 0, 7);
 	state->selector_window = (struct UiWindow *)UiWindow_CreateFar(13, 0, 17, 5, 2);
 	for (index = 0; index < ROW_CNT; index++)
 		state->owner_y[index] = 30;
@@ -5763,7 +5754,6 @@ typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 #else
 #define SAVED_TILE_BYTES 0x800
 #endif
-#define FourObjectMotion_InitializeTopRow ((void (*)())FourObjectMotion_InitializeTopRow)
 
 s32 ActionMenu_Open(void)
 {
@@ -5780,7 +5770,8 @@ s32 ActionMenu_Open(void)
 	UiWindow_InitializeWork(0);
 	state->page = 0;
 	state->party_count = Party_ListActiveOwnersFar(state->owner_ids);
-	Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
+	/* FAKEMATCH: Menu_InitSelectorCursorAndEntries is called as void (*)(); as void (*)(void), its prototype, ActionMenu_Open does not compile */
+	((void (*)())Menu_InitSelectorCursorAndEntries)(0, 3, 0, 7);
 	Iwram_CopyWords(palette, (void *)0x05000000, 64);
 #if !EDITION_INTERNATIONAL
 	Iwram_CopyWords(tiles, (void *)0x06004000, SAVED_TILE_BYTES);
@@ -5799,7 +5790,8 @@ s32 ActionMenu_Open(void)
 	for (index = 0; index < MENU_ROW_COUNT; index++)
 		state->owner_y[index] = 30;
 	if (Party_SumDjinnCountsFar(-1) != 0)
-		FourObjectMotion_InitializeTopRow(state->selector_window, 0);
+		/* FAKEMATCH: FourObjectMotion_InitializeTopRow is called as void (*)(); as void (*)(void), its prototype, ActionMenu_Open does not compile */
+		((void (*)())FourObjectMotion_InitializeTopRow)(state->selector_window, 0);
 	for (index = 0; index < 4; index++)
 	{
 		state->row_x[index] = 130 + index * 32;
@@ -5838,8 +5830,6 @@ s32 ActionMenu_Open(void)
 }
 
 s32 GameFlag_TestFar(s32 flag);
-
-s32 ItemMenu_SelectItem(void);
 
 s32 Menu_RunActionFlow(void)
 {
@@ -5997,14 +5987,10 @@ s32 DjinnMenu_ShowCurrentList(void)
 	/* Returns no value: the ROM has the s32 epilogue (pop {r1}; bx r1) after this void call. */
 }
 
-#define PsynergyMenu_CallIconRoutineWithValue \
-	((void (*)(void *, s32))PsynergyMenu_CallIconRoutineWithValue)
-#define DjinnMenu_ShowCurrentList ((void (*)(void))DjinnMenu_ShowCurrentList)
 #define UiWindow_ClearInteriorTilesFar \
 	((void (*)(s32, s32, s32, s32, s32))UiWindow_ClearInteriorTilesFar)
 
 struct InventoryMenuState;
-void Menu_SpawnIconEntries(struct InventoryMenuState *menu, s32 window);
 
 s32 CharacterSelector_RunRearrange(void)
 {
@@ -6608,7 +6594,6 @@ void UiText_DrawNumberInWindowFar(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 ar
 	((void (*)(s32, s32, void *, s32, s32))UiText_DrawNumberInWindowFar)
 
 s32	 Party_SumDjinnCountsFar(s32 side);
-void WaitFrames(s32 frames);
 
 void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mode)
 {
@@ -7151,10 +7136,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused, const struct MenuResult *r
 	return 1;
 }
 
-#undef PsynergyMenu_CallIconRoutineWithValue
-
 struct BtlUnit;
-void ItemMenu_HideAllIcons(void);
 
 s32 PsynergyMenu_SelectAction(void)
 {
@@ -8005,8 +7987,6 @@ void UnitCalcFar(s32 unit_id);
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 
 #define Link_DrawShiftedTilePairFar ((void (*)(void *))Link_DrawShiftedTilePairFar)
-#define FourObjectMotion_InitializeBottomRow \
-	((void (*)(s32, s32))FourObjectMotion_InitializeBottomRow)
 #define Djinn_DeactivateFar ((s32 (*)(s32, s32, s32))Djinn_DeactivateFar)
 #define Trade_AddOfferFar ((s32 (*)(s32, s32, s32))Trade_AddOfferFar)
 
@@ -8545,7 +8525,8 @@ s32 ItemMenu_Run(void)
 	menu->target = zero;
 	menu->slot = 0;
 	menu->target_slot = 0;
-	FourObjectMotion_InitializeBottomRow(menu->window, 0);
+	/* FAKEMATCH: FourObjectMotion_InitializeBottomRow is called as void (*)(s32, s32); as void (*)(void), its prototype, ItemMenu_Run does not compile */
+	((void (*)(s32, s32))FourObjectMotion_InitializeBottomRow)(menu->window, 0);
 	DjinnMenu_RunScreen();
 	FourObjectMotion_ClearSlotsAndScheduleAlt();
 	Menu_ResetTwoResourceEntries();
@@ -8829,8 +8810,6 @@ s32 DjinnMenu_RunScreen(void)
 	return ret;
 }
 
-#undef FourObjectMotion_InitializeTopRow
-
 //--------------------------------------------------------------------------
 // adjust_palette_bank.c
 // メニュー：BG パレットの明るさを変えた写しを作る
@@ -8901,9 +8880,6 @@ void Graphics_AdjustPaletteBank(s32 d)
 #define UiWindow_DrawDividerLineFar ((int (*)())UiWindow_DrawDividerLineFar)
 #define UiWindow_SetTilemapEntryFar ((int (*)())UiWindow_SetTilemapEntryFar)
 #define UiWork_SetParamNibbleFar ((int (*)())UiWork_SetParamNibbleFar)
-
-#define Runtime_GetLowTableAddress ((void *(*)(void))Runtime_GetLowTableAddress)
-#define Djinn_ListOwnerEntries ((s16 (*)(void *, s32, s32))Djinn_ListOwnerEntries)
 
 #define FRAME_TILE 150
 
@@ -9280,21 +9256,15 @@ s32 DjinnMenu_ShowHelp(void)
 }
 
 #undef Djinn_DeactivateFar
-#undef Djinn_ListOwnerEntries
 #undef RenderOutput_ClearListFar
 #undef RenderOutput_RedrawSavedRectFar
 #undef Trade_AddOfferFar
 #undef UiText_DrawNumberInWindowFar
 #undef UiWindow_ClearInteriorTilesFar
 
-#define UiIcon_DrawVariantWithTileOffset \
-	((void (*)(s32, s32, s32, s32))UiIcon_DrawVariantWithTileOffset)
-#define UiIcon_CreateWithLoadedResource \
-	((void (*)(s32, s32, s32, s32))UiIcon_CreateWithLoadedResource)
 #define SideObject_CreateFar ((void (*)(s32, s32, s32, s32, s32, s32))SideObject_CreateFar)
 #undef Djinn_DeactivateFar
 #define Djinn_DeactivateFar ((void (*)(s32, s32, s32))Djinn_DeactivateFar)
-#define OwnerAction_DiffSlots ((s8 (*)(void *, void *, u16 *, s32 *, s32 *))OwnerAction_DiffSlots)
 
 #define DJINN_ENTRY_SET (-0x8000)
 
@@ -9316,12 +9286,6 @@ void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 window, s32 x, s32 
 #endif
 #undef Djinn_DeactivateFar
 s32 Trade_RemoveOfferFar(s32 owner, s32 element, s32 number);
-#define UiWindow_ApplyRectAtObjectOrigin                        \
-	((void (*)(s32 window, s32 x, s32 y, s32 width, s32 height, \
-		s32 kind))UiWindow_ApplyRectAtObjectOrigin)
-s32	 Djinn_MarkBalancedEntries(s8 *balanced, s32 self);
-void FourObjectMotion_SetSlotPhase(s32 slot, s32 phase);
-s32	 FourObjectMotion_ReplaceSlot(s32 slot, s32 element, s32 kind);
 
 u32 __umodsi3(u32, u32);
 
@@ -10418,9 +10382,6 @@ s32 DjinnMenu_DrawStatPreview(
 
 #undef UiWindow_SetTilemapEntryFar
 #undef UiWindow_DrawDividerLineFar
-#undef UiWindow_ApplyRectAtObjectOrigin
-
-#undef FourObjectMotion_InitializeBottomRow
 
 void FourObjectMotion_InitializeTopRow(void)
 {
@@ -10657,18 +10618,14 @@ void Menu_EnableAllItemObjects(void)
 }
 
 #undef Djinn_DeactivateFar
-#undef OwnerAction_DiffSlots
 #undef RenderOutput_ClearListFar
 #undef RenderOutput_RedrawSavedRectFar
-#undef UiIcon_CreateWithLoadedResource
-#undef UiIcon_DrawVariantWithTileOffset
 #undef UiWindow_ClearInteriorTilesFar
 #undef UiWindow_SetTilemapEntryFar
 #undef UiWork_SetParamNibbleFar
 #undef gWindowWork
 
 extern u8 MsgCurrentStatus[];
-void	  UiWindow_CloseIfOpen(struct UiWindow **window, s32 release);
 
 extern u8 MsgDjinnName[];
 extern u8 MsgDjinnPsyHelp[];

@@ -48,11 +48,17 @@ impl<'a> Expansion<'a> {
     }
 
     pub(crate) fn fresh(&self, source: &str) -> Result<String, String> {
-        self.expand(source, &[])
+        self.expand(source, &[], true)
     }
 
-    fn expand(&self, source: &str, extra: &[&str]) -> Result<String, String> {
-        let mut command = command(self.target, source, true)?;
+    /// The expansion without the source's comments: a comment a macro
+    /// carries into a call would otherwise hide the rest of its line.
+    pub(crate) fn code(&self, source: &str) -> Result<String, String> {
+        self.expand(source, &[], false)
+    }
+
+    fn expand(&self, source: &str, extra: &[&str], comments: bool) -> Result<String, String> {
+        let mut command = command(self.target, source, comments)?;
         if let Some(directory) = &self.imports {
             command.insert(1, format!("-I{}", directory.path().display()));
         }

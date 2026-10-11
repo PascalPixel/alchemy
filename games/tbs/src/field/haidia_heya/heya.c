@@ -1,3 +1,7 @@
+#include "unit/field/haidia_heya/heya.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "timed_events.h"
 #include "call.h"
 #include "fxblend.h"

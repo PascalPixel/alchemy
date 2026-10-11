@@ -1,3 +1,5 @@
+#include "unit/field/haidia_funka/conditional_setup.h"
+#include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -12,10 +14,6 @@
 #include "field_scene.h"
 #include "text/msg_ids.h"
 #include "objcmd.h"
-
-void BattleFx_SetBlock30Values12Zero();
-void BattleFx_StartBufferBlend();
-void Object_RefreshSelectorById();
 
 u8 *ConditionalSceneSetup_GetScriptData(void)
 {

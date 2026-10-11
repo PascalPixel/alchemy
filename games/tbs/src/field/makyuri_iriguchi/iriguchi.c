@@ -1,3 +1,15 @@
+#include "unit/field/makyuri_iriguchi/iriguchi.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/makyuri/palette_cycle.h"
+#include "unit/field/common/makyuri/lights.h"
+#include "unit/field/makyuri_iriguchi/pillar.h"
+#include "unit/field/common/makyuri/makyuri.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/graphics/window/measure.h"
+#include "unit/system/scheduler/callback.h"
+
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define F(base, type, off) (*(type *)((u8 *)(base) + (off)))
@@ -27,8 +39,6 @@
 #include "iwram_call.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-
-void SceneActor_RunActorZeroHandledMotion(int page);
 
 struct Src_39c
 {
@@ -70,42 +80,6 @@ extern struct SceneEntrance MakyuriIriguchi_SceneTableA[];
 extern struct SceneEntrance MakyuriIriguchi_SceneTableB[];
 extern struct SceneEntrance MakyuriIriguchi_SceneTableC[];
 extern struct SceneEvent MakyuriIriguchi_SceneTableD[];
-void			 Makyuri_CyclePalette(void);
-void			 BattleFx_PlayQueuedSound();
-s32				 ArcTan2(s32 deltaZ, s32 deltaX);
-void			 Makyuri_TickSpawnTimer(void);
-void			 Makyuri_RunActorMove(void);
-void			 SceneState_ClearCurrentRecordAndReleaseTarget(void);
-void			 MakyuriIriguchi_RaisePillar(void);
-void			 SceneActor_RunActorZeroHandledMotion(int page);
-
-void  SetEffectRecordMode(struct FieldActor *work, s32 mode);
-void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourth);
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-s32	  MakyuriIriguchi_TrailSparks(struct FieldActor *a0);
-s32	  SceneAudio_PlayCue118AndReturnZero(void);
-s32	  SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object);
-void  MakyuriIriguchi_TickSpawnTimer(void);
-void  MakyuriIriguchi_ClearCurrentRecordAndReleaseTarget(void);
-void  FieldScene_RunSingleStep(void);
-void  MakyuriIriguchi_TriggerPillarRise(void);
-void  FieldScene_RunStepWithValue1632(void);
-void  MakyuriIriguchi_DropLeaderToColumn(s32 a0);
-void  FieldScene_RunIndexedStep17(void);
-void  FieldScene_RunIndexedStep18(void);
-void  FieldScene_RunIndexedStep19(void);
-void  FieldScene_RunSupplementalSequenceTwo(void);
-void  FieldScene_RunIndexedStep63(void);
-void  MakyuriIriguchi_InstallActorEightPath(void);
-void  MakyuriIriguchi_SendActor8ByLeaderColumn(void);
-void  MakyuriIriguchi_ArriveWithSparks(void);
-void  MakyuriIriguchi_RunDoorScene(void);
-void  OverlayObject_SpawnKind24AtObject(struct FieldActor *src);
-s32	  SceneEffect_AdvanceAnchoredRiseFrame(struct Work_39c *work);
-s32	  OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o);
-s32	  OverlayObject_AdvanceScaleCounter(struct FieldActor *o);
-void  OverlayObject_ReleasePublishedAttachment(void);
-void  MakyuriIriguchi_CrossDoorway(void);
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
@@ -202,13 +176,6 @@ s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/makyuri/palette_cycle.c"
-
-void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
-void BattleFx_SetWeightedResult(s32 value, s32 weight);
-
-void BattleFx_StartFadeOverlay(s32 value);
-void BattleFx_SetQueuedSoundAndPlay(s32 sound);
-void UiText_ShowCenteredMessage(s32 message, s32 a1, s32 a2);
 
 void MakyuriIriguchi_TickSpawnTimer(void)
 {
@@ -410,7 +377,8 @@ void MakyuriIriguchi_OpenEntrance(void)
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriIriguchi, 31);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, MakyuriIriguchi_OpenEntrance is 4 bytes longer */
+	((void (*)(s32, s32))Party_SetFields1ceAnd1d0)((s32)&SceneId_MakyuriIriguchi, 31);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(36, 1);
 	Engine_EventEnd();
@@ -475,7 +443,8 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 	GameFlag_Set(0x111);
 	gGameState.retreat_entrance = 11;
 	gGameState.retreat_scene = (s32)&SceneId_MakyuriHeya4;
-	BattleFx_StartFadeOverlay(0);
+	/* FAKEMATCH: BattleFx_StartFadeOverlay is called as void (*)(s32); as void (*)(void *), its prototype, MakyuriIriguchi_ApplyEntryState has 32 of 1104 bytes different */
+	((void (*)(s32))BattleFx_StartFadeOverlay)(0);
 	if (GameFlag_IsSet(0x875))
 		Engine_TaskAddCallback(Makyuri_CyclePalette, 0xc80);
 	else

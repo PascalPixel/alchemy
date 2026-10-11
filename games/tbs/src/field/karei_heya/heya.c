@@ -1,3 +1,5 @@
+#include "unit/field/karei_heya/heya.h"
+#include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

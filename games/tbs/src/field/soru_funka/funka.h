@@ -91,35 +91,12 @@ struct Actor_02002e5c
 
 extern u8 *gParticleWork[];
 
-void SoruFunka_ThrowEruptionRing(void);
-void Party_RemoveOwnerRestored();
-void SceneState_InitStateWordsAndSlots();
 s32	 Engine_TaskAddCallback(void (*)(), s32);
-void FieldScene_RunVariantStep();
-void FieldEffect_InitSparkles(void);
-void SceneState_ForwardByRuntimeWordBits(s32 object);
-void SoruFunka_PlaceBeforeStar(s32 actor);
-void SceneState_ApplyRectsByCondition(s32 a);
-void SceneState_ApplyRectPairByFlag(s32 a);
-void FieldScene_RunRandomHalfBranch(void);
-void FieldScene_RunLateRandomHalfBranch(void);
-void FieldScene_RunFourWayEffectSequence(u32 mode);
-void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b);
-void SceneState_ConfigureEightCornerRegions(void);
-void FieldScene_RunStepByRuntimeBits(s32 a);
-void SceneState_SetValue140Mode0(void);
-void SoruFunka_CleanupSceneObjects(void);
-void FieldScene_RunActor15TwoStep(void);
-void BattleEffect_CleanupSceneObjects(void);
-
-void SceneEffect_AdvanceTenEntryTimers(void);
 
 extern struct SceneEntrance Placement_Scripts[];
 extern u32 Placement_Messages[];
 extern struct ScenePlacement Placement_Actors[];
 extern struct SceneEvent Placement_Effects[];
-void	  SoruFunka_StepEmbers();
-void	  SceneState_UpdateRandomTimerLevel();
 
 extern s32 gEmberState[16];
 extern s32 gEmberTimer;

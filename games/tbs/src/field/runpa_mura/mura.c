@@ -1,3 +1,6 @@
+#include "unit/field/runpa_mura/mura.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
 #include "types.h"
 #include "field_effect.h"
 #include "field_event.h"

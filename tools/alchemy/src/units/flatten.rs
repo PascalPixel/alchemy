@@ -840,7 +840,7 @@ fn all_groups(root: &Path, judged: &[super::Judged], target: DecompTarget, hard:
 
 fn flatten_one(root: &Path, options: &Options, judged: &[super::Judged], target: DecompTarget, objects: &[String], cache: &mut BTreeMap<String, (DecompTarget, Vec<Loaded>)>) -> Result<(), String> {
     {
-        let mut plan = plan(&root, &objects, &judged, target, options.name.as_deref(), 0, options.force)?;
+        let mut plan = plan(root, objects, judged, target, options.name.as_deref(), 0, options.force)?;
         println!("{} files -> {}", plan.sources.len(), plan.destination);
         for s in &plan.sources {
             println!("  {s}");
@@ -852,7 +852,7 @@ fn flatten_one(root: &Path, options: &Options, judged: &[super::Judged], target:
             println!("  note: {n}");
         }
         // The scripts first: a merge the link cannot express stops here.
-        let scripts = linker_scripts(&root)?;
+        let scripts = linker_scripts(root)?;
         let merged_object = plan.destination.trim_end_matches(".c").to_string();
         let stems: Vec<String> = plan.objects.iter().map(|o| stem(o).to_string()).collect();
         // A forced merge into one game's file leaves the other game's scripts alone.
@@ -932,7 +932,7 @@ fn flatten_one(root: &Path, options: &Options, judged: &[super::Judged], target:
             println!("  {l}");
         }
         if options.make_static && !forced {
-            let private = private_functions(&root, &plan, &text);
+            let private = private_functions(root, &plan, &text);
             if !private.is_empty() {
                 let candidate = with_static(&text, &private);
                 match verify(root, &plan, &candidate, cache) {

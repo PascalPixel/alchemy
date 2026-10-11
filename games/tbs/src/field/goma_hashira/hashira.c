@@ -1,3 +1,8 @@
+#include "unit/field/goma_hashira/hashira.h"
+#include "unit/field/common/object/staged_actor.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -24,10 +29,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-void GomaHashira_SpawnPillarEffect();
-
-void BattleFx_SetPhaseRequest(s32, s32);
 
 enum StagedPlacementMessage
 {
@@ -260,8 +261,6 @@ void FieldScene_RunPrimarySequence(void)
 
 #if !EDITION_INTERNATIONAL
 
-#define Field_TryJumpForward ((void (*)(void))Field_TryJumpForward)
-
 #endif
 
 void Engine_EventBegin(void);
@@ -279,8 +278,6 @@ void Engine_MapRenderWaitForValues(void);
 s32 Engine_GameFlagSet(s32 flag);
 #endif
 void Engine_AudioPlayCue(s32 cue);
-void GomaHashira_SpawnPillarEffect();
-void FieldScene_RunPrimarySequence(void);
 
 s32 GomaHashira_Actor13Frames;
 

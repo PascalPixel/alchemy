@@ -1,3 +1,8 @@
+#include "unit/field/makyuri_chojo/chojo.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/game/character/chara.h"
+#include "unit/system/scheduler/callback.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
@@ -18,8 +23,6 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-void MakyuriChojo_CollectBandSlots();
-
 #define NULL ((void *)0)
 
 extern struct SceneEntrance	 gMakyuriChojoEntrances[];
@@ -29,16 +32,7 @@ extern struct SceneEvent	 gMakyuriChojoEvents[];
 
 extern s32 MakyuriChojo_NearestActor;
 
-s32	 FixedPoint_Distance(s32 *first_position, s32 *second_position);
 void RunOverlayObjectCommand1(void *object, s32 command);
-void Owner_RefreshRatiosOnFlag();
-void BattleEffect_CleanupSceneObjects(void);
-void Audio_PlayCueFromEventWork();
-
-void MakyuriChojo_SinkActorPair(void);
-void MakyuriChojo_RiseActorPair(void);
-void MakyuriChojo_LowerCollectedActors(void);
-void MakyuriChojo_RaiseCollectedActors(void);
 
 void MakyuriChojo_SetSpritePriority(struct OverlayObject *object, s32 priority)
 {
@@ -71,10 +65,7 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
 #include "create_configured_overlay_object_body.inc"
 }
 
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 s32	 Object_CheckMovementCollision(struct FieldActor *actor, s32 *position);
-void Party_SetFields1ceAnd1d0();
-void BattleFx_SetWeightedResult();
 
 struct EffectParams
 {
@@ -870,7 +861,8 @@ void RunScene58Sequence(void)
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x16, 0, 20);
 	Actor_WalkToAndWait(0x16, 0x150, 0xD8);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriChojo1, 2);
+	/* FAKEMATCH: Party_SetFields1ceAnd1d0 is called as void (*)(); as void (*)(u16, u16), its prototype, RunScene58Sequence is 2 bytes longer */
+	((void (*)())Party_SetFields1ceAnd1d0)((s32)&SceneId_MakyuriChojo1, 2);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(0x24, 2);
 	Engine_EventEnd();

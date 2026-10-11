@@ -1,3 +1,7 @@
+#include "unit/field/soru_nichigetsu/nichigetsu.h"
+#include "unit/battle/effect/slots.h"
+#include "unit/field/common/script/script.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -16,21 +20,12 @@
 #include "io_reg.h"
 #include "text/msg_ids.h"
 
-void Map_ClearLayerEntryFlag();
-void Object_LinkPair();
 void Engine_ActorSetChildValue();
 
 extern struct EventWork *gEventWork;
-void					 Scene_SpringStatueTrap();
-void					 FieldScene_RunClosingSequence();
-void					 FieldScene_RunFlaggedSequence();
-s32						 CheckAllStatueLights();
 void					 Engine_MapCopyCellAttributes();
-void					 SoruNichigetsu_RunLightScene();
 
 void InitializeSceneRecordBuffer(void);
-void BattleFx_SetQueuedSoundAndPlay(s32 value);
-void SetSolShindenActorStep(s32 actor_step, s32 wait_frames);
 
 struct EventGlobals
 {

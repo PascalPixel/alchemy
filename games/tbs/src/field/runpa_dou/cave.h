@@ -193,28 +193,4 @@ extern const struct ScenePlacement gCaveNoPlacements[];
 extern const struct ScenePlacement gCavePlacements[];
 extern const struct SceneEvent	   gCaveEvents[];
 
-void HiddenPuddle_Freeze(void);
-void SouthPuddle_Freeze(void);
-void GatePuddle_Freeze(void);
-void NorthPuddle_Freeze(void);
-void LoweringSwitch_Flip(void);
-void RaisingSwitch_Flip(void);
-void Reunion_Begin(void);
-void Gate_DrawPropped(void);
-void Gate_Lower(void);
-void Gate_Raise(void);
-void Reunion_Converse(void);
-void WagonChoice_Run(void);
-u8	 Leader_AnswersYes(void);
-u8	 Gerald_AsksIfNotRiding(void);
-u8	 Gerald_AsksAboutUnfinishedBusiness(void);
-u8	 Party_ConfirmsStaying(void);
-u8	 Bunza_AsksAboutUnfinishedBusiness(void);
-u8	 Gerald_ChecksNothingLeftToDo(void);
-u8	 Mia_AsksIfRidingAfterAll(void);
-u8	 Bunza_CannotWait(void);
-u8	 Gerald_AsksAboutThingsToDo(void);
-void Party_StaysBehind(void);
-void Party_RidesWagon(void);
-
 #endif

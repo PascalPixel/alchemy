@@ -22,10 +22,4 @@ extern u32	Mura_DoorCellOrigins[];
 extern u32	Mura_RepaintCells[];
 extern s32	Mura_SpawnScript[];
 
-s32	 ArcTan2(s32, s32);
-void BattleFx_RunPageEffectForSlot(s32, s32, s32);
-void RunSceneTransitionEffect();
-void Object_SetTargetAndCallback();
-void AnimationObjects_SelectAnimation();
-
 #endif

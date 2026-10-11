@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_RUNTIME_H
 #define ALCHEMY_BATTLE_EFFECT_RUNTIME_H
 
+#include "unit/battle/effect/slots.h"
 #include "object_lookup.h"
 #include "types.h"
 #include "layout_guard.h"
@@ -55,7 +56,5 @@ struct BattleEffectEntry
 };
 
 extern struct BattleEffectBuffers *gPaletteBufferWork;
-
-void BattleFx_SpawnLinked(s32 resource_id, s32 flags, s32 state);
 
 #endif

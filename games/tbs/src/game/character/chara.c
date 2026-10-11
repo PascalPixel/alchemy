@@ -1,3 +1,5 @@
+#include "unit/game/character/chara.h"
+#include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -39,9 +41,6 @@
 #include "battle_effect_chance.h"
 #include "btlpty.h"
 
-const u16 *Djinn_GetDefinition(u32 group, u32 index);
-s32		   Party_AddActiveOwner(s32 value);
-
 struct StatWork
 {
 	s32					   hp;
@@ -63,8 +62,6 @@ struct StatWork
 };
 
 #define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
-
-s32 GameFlag_SetBit(s32 flag);
 
 void Owner_RefreshAndResetZero(void)
 {
@@ -2875,13 +2872,6 @@ s32 Equipment_GetUnleashRateBonus(struct BtlUnit *owner)
 		sum = 0;
 	return sum;
 }
-
-s32	 Djinn_AddToOwner(s32 owner, s32 index, s32 bit);
-u32 *Trade_AddOffer(u32 owner, u32 index, u32 bit);
-s32	 Trade_RemoveOffer(s32 owner, s32 index, s32 bit);
-u32	 Djinn_IsActive(s32 owner, s32 index, s32 bit);
-u32	 Djinn_Deactivate(s32 owner, s32 index, s32 bit);
-s32	 Djinn_Activate(s32 owner, s32 index, s32 bit);
 
 s32 RollWeaponUnleash(struct BtlUnit *owner)
 {

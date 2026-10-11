@@ -1,3 +1,5 @@
+#include "unit/field/common/kuupuappu_runpa/jail.h"
+#include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

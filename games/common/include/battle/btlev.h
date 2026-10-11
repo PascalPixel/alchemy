@@ -54,7 +54,6 @@ s32 BattleActor_DestroyTemporaryObject(s32 unit_id);
 #if GAME_TLA
 void BtlEvPush(u32 opcode, u32 operand);
 #else
-u32 BtlEvPush(u32 opcode, u32 operand);
 #endif
 u32 BattleEv_DispatchQueued(void);
 

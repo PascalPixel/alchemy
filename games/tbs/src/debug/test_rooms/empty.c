@@ -1,3 +1,5 @@
+#include "unit/debug/test_rooms/empty.h"
+#include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -11,8 +13,6 @@
 #include "scene.h"
 #include "field_event.h"
 #include "field_scene.h"
-
-void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, s32 effect);
 
 extern struct SceneEntrance	 TestRooms_Entrances[];
 extern u32					 TestRooms_Exits[];

@@ -898,8 +898,7 @@ void Text_DrawSignedDecimalRightAligned(s32 value, s32 keta)
 #include "heap_state.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
-
-
+#include "../iowrite.h"
 
 extern u8 gCartridgeResetMarker[];
 
@@ -909,15 +908,8 @@ void Bg0_ClearTilemap(void)
 
     fill = 0xf000f000;
     Dma_Set((const void *)&fill, BG_SCREEN_BLOCK(4), 0x85000140, REG_DMA3);
-    /* FAKEMATCH: the cursor store sits in a do-while(0) to hold the BG0CNT constant load order */
-    do {
-        gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
-    } while (0);
-    {
-        s32 control = 0x400;
-
-        REG_BG0CNT = control;
-    }
+    gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
+    Io_Write16(0x400, &REG_BG0CNT);
 }
 
 void Ui_LoadWindowGraphics(void)
@@ -926,37 +918,14 @@ void Ui_LoadWindowGraphics(void)
             REG_DMA3);
     Dma_Set((const void *)Ui_WindowPalette, (void *)&BG_PLTT_COLOR(15, 0), 0x80000010,
             REG_DMA3);
-    /* FAKEMATCH: the two do-while blocks keep the value-before-address order of the palette stores */
-    do {
-        u16 black = 0;
-        PLTT_BACKDROP = black;
-    } while (0);
-    do {
-        volatile u16 *pal;
-        s32 color;
-
-        color = 0x4180;
-        pal = &BG_PLTT_COLOR(15, 4);
-        *pal = color;
-        color = 0x3960;
-        pal++;
-        *pal = color;
-        color = 0x3140;
-        pal++;
-        *pal = color;
-        color = 0x2920;
-        pal++;
-        *pal = color;
-        color = 0x49a0;
-        pal++;
-        *pal = color;
-        color = 0x51c0;
-        pal++;
-        *pal = color;
-        color = 0x59e0;
-        pal++;
-        *pal = color;
-    } while (0);
+    Io_Write16(0, &PLTT_BACKDROP);
+    Io_Write16(0x4180, &BG_PLTT_COLOR(15, 4));
+    Io_Write16(0x3960, &BG_PLTT_COLOR(15, 5));
+    Io_Write16(0x3140, &BG_PLTT_COLOR(15, 6));
+    Io_Write16(0x2920, &BG_PLTT_COLOR(15, 7));
+    Io_Write16(0x49a0, &BG_PLTT_COLOR(15, 8));
+    Io_Write16(0x51c0, &BG_PLTT_COLOR(15, 9));
+    Io_Write16(0x59e0, &BG_PLTT_COLOR(15, 10));
     Dma_Set((const void *)System_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0,
             REG_DMA3);
 }

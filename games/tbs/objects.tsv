@@ -63,11 +63,7 @@ main	rom_main_00	games/tbs/src/system/sound_vsync_on
 main	rom_main_00	games/common/src/system/save/flash	.text
 main	rom_main_00	games/common/src/system/save/sst	.text
 main	rom_main_00	games/common/src/system/save/program_flash_sector	.text
-main	rom_main_00	games/common/src/system/save/erase_atmel_flash_chip	.text
-main	rom_main_00	games/common/src/system/save/erase_atmel_flash_sector	.text
-main	rom_main_00	games/common/src/system/save/erase_atmel_flash_block	.text
-main	rom_main_00	games/common/src/system/save/program_atmel_flash_sector	.text
-main	rom_main_00	games/common/src/system/save/program_atmel_flash_block	.text
+main	rom_main_00	games/common/src/system/save/atmel	.text
 main	rom_main_00	libgcc.a:_call_via_rX	.text
 main	rom_main_00	games/tbs/src/system/runtime_irq_table	.rodata.irq_head .rodata.irq_middle .text.irq_halt .rodata.irq_tail
 main	rom_main_00	games/tbs/src/system/scheduler/mathtbl	.rodata
@@ -85,11 +81,7 @@ main	rom_main_00	games/common/src/system/save/sst	.rodata
 main	rom_main_00	games/common/src/system/save/flashmx	.rodata
 main	rom_main_00	games/common/src/system/save/program_flash_sector	.rodata
 main	rom_main_00	games/common/src/system/save/flashat	.rodata
-main	rom_main_00	games/common/src/system/save/erase_atmel_flash_chip	.rodata
-main	rom_main_00	games/common/src/system/save/erase_atmel_flash_sector	.rodata
-main	rom_main_00	games/common/src/system/save/erase_atmel_flash_block	.rodata
-main	rom_main_00	games/common/src/system/save/program_atmel_flash_sector	.rodata
-main	rom_main_00	games/common/src/system/save/program_atmel_flash_block	.rodata
+main	rom_main_00	games/common/src/system/save/atmel	.rodata
 main	rom_main_01	games/tbs/src/system/far_call/FIELD
 main	rom_main_01	games/tbs/src/system/resource/colconv	.rodata
 main	rom_main_01	games/tbs/src/field/common/remap	.rodata

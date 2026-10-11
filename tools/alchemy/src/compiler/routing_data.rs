@@ -25,11 +25,7 @@ pub static AGBCC_SOURCES: &[&str] = &[
 pub static AGBCC_FLASH_SOURCES: &[&str] = &[
     "games/common/src/system/save/sst.c",
     "games/common/src/system/save/flash.c",
-    "games/common/src/system/save/erase_atmel_flash_block.c",
-    "games/common/src/system/save/erase_atmel_flash_chip.c",
-    "games/common/src/system/save/erase_atmel_flash_sector.c",
-    "games/common/src/system/save/program_atmel_flash_block.c",
-    "games/common/src/system/save/program_atmel_flash_sector.c",
+    "games/common/src/system/save/atmel.c",
     "games/common/src/system/save/program_flash_sector.c",
 ];
 

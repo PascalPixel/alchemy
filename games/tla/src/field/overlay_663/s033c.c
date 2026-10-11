@@ -10,3 +10,52 @@ s32 Func_0200033c(s32 a0)
     return 0;
 }
 
+
+#include "ram_buffer.h"
+
+struct Ov663MapLayer {
+    u8 unknown_00[0x30];
+    u8 *cells;
+    u8 unknown_34[4];
+};
+
+struct Ov663MapWork {
+    u8 unknown_000[0x108];
+    struct Ov663MapLayer layers[3];
+};
+
+extern u8 gMapCellBuffer[];
+
+s32 Func_02000348(u32 layer, s32 x, s32 y)
+{
+    struct Ov663MapWork *map = (struct Ov663MapWork *)Ram_HeapSlots->map_work;
+    u8 *cell;
+
+    if (map == NULL)
+        return 0;
+    if (layer <= 2)
+        cell = map->layers[layer].cells;
+    else
+        cell = gMapCellBuffer;
+    cell += (x + (y << 7)) << 2;
+    return (cell[2] << 8) | cell[3];
+}
+
+s32 Func_02000384(u32 layer, s32 x, s32 y, s32 value)
+{
+    struct Ov663MapWork *map = (struct Ov663MapWork *)Ram_HeapSlots->map_work;
+    u8 *cell;
+    s32 old;
+
+    if (map == NULL)
+        return 0;
+    if (layer <= 2)
+        cell = map->layers[layer].cells;
+    else
+        cell = gMapCellBuffer;
+    cell += (x + (y << 7)) << 2;
+    old = (cell[2] << 8) | cell[3];
+    cell[2] = value >> 8;
+    cell[3] = value;
+    return old;
+}

@@ -138,9 +138,7 @@ main	rom_main_01	games/tbs/src/field/common/script/script	.text
 main	rom_main_01	games/common/src/graphics/tile/decode_staged_buffer	.text
 main	rom_main_01	games/tbs/src/field/common/map/map	.text
 main	rom_main_01	games/common/src/field/common/map/mapcopy	.text
-main	rom_main_01	games/tbs/src/field/common/map/set_work_flag_bits9_11	.text
 main	rom_main_01	games/tbs/src/field/common/map/perspect	.text
-main	rom_main_01	games/tbs/src/field/world_map/view	.text
 main	rom_main_01	games/tbs/src/field/common/map/loadgfx	.text
 main	rom_main_01	games/tbs/src/field/common/map/animate	.text
 main	rom_main_01	games/tbs/src/graphics/display/script	.text

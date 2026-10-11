@@ -754,6 +754,8 @@
         "*/recon/tla/raw/0804e1d8.o"(.text)
         "*/recon/tla/raw/0804e3f4.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.0804e584)
+        "*/games/tla/src/graphics/ui/menu_icons.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.080597f4)
         "*/games/common/src/graphics/font/text.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0805c0e0)
         "*/games/tla/text/messages.o"(.rodata)

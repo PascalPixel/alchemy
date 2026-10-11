@@ -208,21 +208,8 @@ Data_0804e7dc:
 	.global UiIcon_OverlayPointerTable
 UiIcon_OverlayPointerTable:
 	.incbin "baserom.gba", 0x0004ea74, 0x000000e4
-	.global UiIcon_ItemIconPointers
-UiIcon_ItemIconPointers:
-	.incbin "baserom.gba", 0x0004eb58, 0x000005cc
-	.global UiIcon_ItemIconPointersEnd
-UiIcon_ItemIconPointersEnd:
-	.incbin "baserom.gba", 0x0004f124, 0x000058f0
-	.global UiIcon_PsynergyIconPointers
-UiIcon_PsynergyIconPointers:
-	.incbin "baserom.gba", 0x00054a14, 0x00000410
-	.global UiIcon_PsynergyIconPointersEnd
-UiIcon_PsynergyIconPointersEnd:
-	.incbin "baserom.gba", 0x00054e24, 0x000041d0
-	.global UiIcon_MiscIconPointers
-UiIcon_MiscIconPointers:
-	.incbin "baserom.gba", 0x00058ff4, 0x00000804
+	.section .unidentified.080597f4,"a"
+	.incbin "baserom.gba", 0x000597f4, 0x00000004
 	.global Data_080597f8
 Data_080597f8:
 	.incbin "baserom.gba", 0x000597f8, 0x00000080

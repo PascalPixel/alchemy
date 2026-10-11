@@ -608,6 +608,8 @@ SECTIONS
         "*/games/tla/src/menu/flag_bit_rect.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0004e3d8)
     "*/recon/tla/ja/rom.o"(.rom.0004e5f4)
+    "*/games/tla/src/graphics/ui/menu_icons.o"(.rodata)
+    "*/recon/tla/ja/rom.o"(.rom.000599f0)
     "*/games/common/src/graphics/font/text.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.0005cdcc)
     "*/games/tla/text/messages.o"(.rodata)

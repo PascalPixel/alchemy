@@ -588,6 +588,8 @@
         "*/games/tla/src/menu/flag_bit_rect.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0004e3a4)
     "*/recon/tla/it/rom.o"(.rom.0004e5c0)
+    "*/games/tla/src/graphics/ui/menu_icons.o"(.rodata)
+    "*/recon/tla/it/rom.o"(.rom.000599bc)
     "*/games/common/src/graphics/font/text.o"(.rodata)
     "*/recon/tla/it/rom.o"(.rom.0005c2e4)
     "*/games/tla/text/messages.o"(.rodata)

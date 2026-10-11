@@ -9,6 +9,7 @@
 #include "system.h"
 #include "goma.h"
 #include "call.h"
+#include "field_event.h"
 #include "fixed_math.h"
 
 void SceneEffect_RotateRecord(EffectWork_020004c4 *work)
@@ -54,7 +55,6 @@ union SceneActor {
 };
 struct Vector { s32 x, y, z; };
 
-union SceneActor *Object_GetById(s32);
 void Engine_ActorSetSpeed();
 void Engine_ActorSetDestination();
 void Engine_ActorWaitForMove(s32);
@@ -73,7 +73,7 @@ void SceneEffect_RunActorBurst(s32 no)
         u8 bytes[sizeof(struct ConfiguredEffectOptions)];
     } opt;
 
-    work = Object_GetById(no);
+    work = (union SceneActor *)Object_GetById(no);
     work->fields.mode = 0;
     for (cnt = 0; cnt < 18; cnt++) {
         Engine_TaskWait(1);
@@ -82,17 +82,17 @@ void SceneEffect_RunActorBurst(s32 no)
         work->fields.field_38 = 0x80000000;
     }
     work->fields.callback = (u32)SceneEffect_RotateRecord;
-    Call3(Engine_ActorSetSpeed, no, 0x30000, 0x18000);
-    Call3(Engine_ActorSetDestination, no, 376, 288);
+    Actor_SetSpeed(no, 0x30000, 0x18000);
+    Actor_SetDestination(no, 376, 288);
     work->fields.velocity_y = 0xcccc;
     work->fields.mode = 3;
     work->fields.field_22 = 0;
     Engine_ActorWaitForMove(no);
     SceneActor_WaitObjectBelowHeight(work, 0);
     Engine_AudioPlayCue(188);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
+    Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     Engine_AudioPlayCue(141);
-    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     for (cnt = 0; cnt < 17; cnt++) {
         vec.x = Trig_Cos(cnt << 12);
         vec.y = 0;
@@ -103,7 +103,7 @@ void SceneEffect_RunActorBurst(s32 no)
                      vec.x, vec.y, vec.z, 0, NULL);
     }
     work->fields.field_28 = 0x50000;
-    Call3(Engine_ActorSetDestination, no, 346, 292);
+    Actor_SetDestination(no, 346, 292);
     Engine_ActorWaitForMove(no);
     SceneActor_WaitObjectBelowHeight(work, 0);
     work->fields.callback = 0;

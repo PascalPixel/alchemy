@@ -9,6 +9,7 @@
 #include "system.h"
 #include "types.h"
 #include "field_event.h"
+#include "field_service.h"
 #include "field_scene.h"
 #include "korima_mura.h"
 #include "object_runtime.h"
@@ -376,7 +377,7 @@ void KorimaMura_RunObjectSpreadScene(void)
     Engine_ActorJump(0, 6, 0);
     Engine_EventWait(20);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Call3(Object_SetTargetAndCallback, 8, 0x10000, (s32)KorimaMura_Actor8Path);
+    FieldObject_SetTargetAndCallback(8, 0x10000, KorimaMura_Actor8Path);
     Engine_EventWait(60);
     Engine_ActorShowEmote(0, 0x102, 60);
     Engine_GameFlagSet(0x847);

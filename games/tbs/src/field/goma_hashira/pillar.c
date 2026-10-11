@@ -232,7 +232,7 @@ void GomaHashira_DriveActor13Idle(void)
     t = ++GomaHashira_Actor13Frames;
     switch (t) {
     case 60:
-        Call3(Engine_ActorFaceDirection, 13, 0x2000, 0);
+        Actor_FaceDirection(13, 0x2000, 0);
         Engine_ActorShowEmote(13, 2, 0);
         break;
     case 180:

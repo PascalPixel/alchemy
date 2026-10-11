@@ -2,6 +2,7 @@
 #include "call.h"
 #include "fxblend.h"
 #include "field_event.h"
+#include "field_service.h"
 #include "text/msg_ids.h"
 
 
@@ -108,15 +109,13 @@ void Villager_PlanToScareVisitors(void)
 
 void Scene_GiveFarewellHerb(void)
 {
-    s32 callback;
     s32 gift;
 
     Engine_EventBegin();
     if (GameFlag_IsSet(FLAG_GOT_FAREWELL_HERB) != 0) {
         Engine_EventSetMessage((s32)MsgHaidiaYouMustSaveJasmine);
         Event_ShowMessage(20, 0);
-        callback = (s32)gValeFaceTargetScript;
-        Call3(Object_SetTargetAndCallback, 20, 0x10000, callback);
+        FieldObject_SetTargetAndCallback(20, 0x10000, gValeFaceTargetScript);
     } else {
         gift = (s32)MsgHaidiaThisIsMyFarewellGift;
         Engine_EventSetMessage(gift);
@@ -343,7 +342,6 @@ void FieldScene_RunLongPresentationSequence(void)
     struct FieldActor *actor;
     s32 v6;
     s32 base7_20090c1;
-    s32 base5_20092fc;
     s32 base5_2009400;
 
     Engine_EventBegin();
@@ -392,11 +390,10 @@ void FieldScene_RunLongPresentationSequence(void)
     Engine_ActorSetAnimation(GERALD, 1);
     Engine_ActorSetAnimation(IWAN, 1);
     Engine_EventWait(10);
-    base5_20092fc = (s32)gValeFaceTargetScript;
-    Call3(Object_SetTargetAndCallback, 0, 0x1000a, base5_20092fc);
-    Call3(Object_SetTargetAndCallback, 1, 0x1000a, base5_20092fc);
-    Call3(Object_SetTargetAndCallback, 2, 0x1000a, base5_20092fc);
-    Object_SetTargetAndCallback(3, 0x1000a, base5_20092fc);
+    FieldObject_SetTargetAndCallback(0, 0x1000a, gValeFaceTargetScript);
+    FieldObject_SetTargetAndCallback(1, 0x1000a, gValeFaceTargetScript);
+    FieldObject_SetTargetAndCallback(2, 0x1000a, gValeFaceTargetScript);
+    FieldObject_SetTargetAndCallback(3, 0x1000a, gValeFaceTargetScript);
     Engine_EventWait(0x12c);
     ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = v6;
     Camera_SetSpeed(0x1999, 0x333);

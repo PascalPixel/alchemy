@@ -11,6 +11,7 @@
 #include "call.h"
 #include "types.h"
 #include "field_event.h"
+#include "field_service.h"
 #include "field_scene.h"
 #include "text/msg_ids.h"
 
@@ -627,8 +628,8 @@ void Scene_OverhearSaturosAndMenardi(void)
     }
     Engine_ActorWaitForMove(JASMINE);
     Actor_SetPosition(JASMINE, 0, 0);
-    Call3(Object_SetTargetAndCallback, 14, 0x10000, (s32)Sukureta_StrangerActions);
-    Call3(Object_SetTargetAndCallback, 15, 0x10000, (s32)Sukureta_StrangerActions);
+    FieldObject_SetTargetAndCallback(14, 0x10000, Sukureta_StrangerActions);
+    FieldObject_SetTargetAndCallback(15, 0x10000, Sukureta_StrangerActions);
     Audio_PlayCueFromEventWork();
     Engine_EventEnd();
 }
@@ -719,7 +720,6 @@ s32 HaidiaSukureta_RestoreEntryState(void)
     u32 i;
     struct FieldActor *record;
     s32 v5;
-    s32 stranger_actions;
 
     if (gGameState.entrance == 5 || gGameState.entrance == 6) {
         Engine_GameFlagClear(0x12f);
@@ -783,9 +783,8 @@ s32 HaidiaSukureta_RestoreEntryState(void)
         if (Engine_GameFlagIsSet(0x808) != 0) {
             Actor_SetPosition(14, 0x1880000, 0x1780000);
             Actor_SetPosition(15, 0x1780000, 0x1780000);
-            stranger_actions = (s32)Sukureta_StrangerActions;
-            Call3(Object_SetTargetAndCallback, 14, 0x10000, stranger_actions);
-            Call3(Object_SetTargetAndCallback, 15, 0x10000, stranger_actions);
+            FieldObject_SetTargetAndCallback(14, 0x10000, Sukureta_StrangerActions);
+            FieldObject_SetTargetAndCallback(15, 0x10000, Sukureta_StrangerActions);
         }
     }
     if (Engine_GameFlagIsSet(0x87a) != 0) {
@@ -850,8 +849,8 @@ void HaidiaSukureta_RunActorSequence(void)
                 Engine_ActorSetAnimationAndWait(11, 3);
                 Engine_EventShowMessageAndWait(11, 0, 10);
                 Engine_ActorSetAnimationAndWait(11, 3);
-                Call3(Object_SetTargetAndCallback, 0, 0x1000b, (s32)Sukureta_StrangerActions);
-                Call3(Object_SetTargetAndCallback, 1, 0x1000b, (s32)Sukureta_StrangerActions);
+                FieldObject_SetTargetAndCallback(0, 0x1000b, Sukureta_StrangerActions);
+                FieldObject_SetTargetAndCallback(1, 0x1000b, Sukureta_StrangerActions);
                 Object_SetActionCallbackAndRefreshById(11, (s32)Sukureta_Actor11RockslideActions);
                 Engine_ActorStop(0);
                 Engine_ActorStop(1);

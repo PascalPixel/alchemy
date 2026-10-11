@@ -837,10 +837,10 @@ accepted:
     Actor_FaceDirection(19, FACING_EAST + FACING_STEP, 10);
     Engine_ActorSetAnimationAndWait(19, 3);
     Engine_EventWait(20);
-    Call3(Object_SetTargetAndCallback, 0, 0x10013, (s32)Kyuden_FacingActions);
-    Call3(Object_SetTargetAndCallback, 1, 0x10013, (s32)Kyuden_FacingActions);
-    Call3(Object_SetTargetAndCallback, 2, 0x10013, (s32)Kyuden_FacingActions);
-    Call3(Object_SetTargetAndCallback, 3, 0x10013, (s32)Kyuden_FacingActions);
+    FieldObject_SetTargetAndCallback(0, 0x10013, Kyuden_FacingActions);
+    FieldObject_SetTargetAndCallback(1, 0x10013, Kyuden_FacingActions);
+    FieldObject_SetTargetAndCallback(2, 0x10013, Kyuden_FacingActions);
+    FieldObject_SetTargetAndCallback(3, 0x10013, Kyuden_FacingActions);
     Actor_SetSpeed(19, 0x9999, 0x4ccc);
     Actor_WalkToAndWait(19, 852, 646);
     Actor_WalkToAndWait(19, 852, 666);
@@ -856,7 +856,7 @@ accepted:
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimation(GERALD, 3);
     Engine_ActorSetAnimationAndWait(IWAN, 3);
-    Call3(Object_SetTargetAndCallback, 19, 0x10000, (s32)Kyuden_FacingActions);
+    FieldObject_SetTargetAndCallback(19, 0x10000, Kyuden_FacingActions);
     Engine_ActorSetAnimation(GERALD, 2);
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if (record != 0) {

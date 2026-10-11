@@ -1161,7 +1161,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         sprite = 0;
         actor->motion_flags = (u32)sprite;
         Engine_AudioPlayCue(201);
-        Call2(Engine_ActorSetChildValue, 0, 0x100);
+        Actor_SetChildValue(0, 0x100);
         sprite = actor->sprite;
         base5_0 = 0;
         sprite->flags = 0;
@@ -1197,7 +1197,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
             actor->motion_flags = base5_0;
         }
         Engine_AudioPlayCue(201);
-        Call2(Engine_ActorSetChildValue, 16, 0x100);
+        Actor_SetChildValue(16, 0x100);
         sprite = actor->sprite;
         sprite->flags = 0;
         do {

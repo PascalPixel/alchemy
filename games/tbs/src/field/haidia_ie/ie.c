@@ -496,14 +496,14 @@ s32 HaidiaIe_RestoreEntryState(void)
         if (Engine_GameFlagIsSet(0x834) != 0) {
             FieldFx_StartGroundParticles();
             BattleFx_StartTwelveFrameBlend();
-            Call6(Engine_MapCopyCellAttributes, 21, 38, 1, 1, 18, 41);
+            Map_CopyCellAttributes(21, 38, 1, 1, 18, 41);
             record = Engine_GameFlagIsSet(0x840);
             if (record == 0) {
                 goto L_02000aaa;
             }
             Engine_ActorSetPosition(17, 0, 0);
             Engine_ActorSetPosition(18, 0, 0);
-            Call3(Object_SetTargetAndCallback, 19, 0x10000, (s32)HaidiaIe_FaceTargetActions);
+            FieldObject_SetTargetAndCallback(19, 0x10000, HaidiaIe_FaceTargetActions);
         } else {
             if (Engine_GameFlagIsSet(0x815) != 0) {
                 Actor_SetPosition(16, 0xb40000, 0x2380000);
@@ -703,7 +703,7 @@ void FieldScene_RunElderAidEvent(void)
         }
         Engine_ActorWaitForMove(22);
         Engine_ActorSetPosition(22, 0, 0);
-        Call3(Object_SetTargetAndCallback, 19, 0x10000, (s32)HaidiaIe_FaceTargetActions);
+        FieldObject_SetTargetAndCallback(19, 0x10000, HaidiaIe_FaceTargetActions);
         Engine_GameFlagSet(0x840);
         Engine_EventEnd();
     }
@@ -825,7 +825,7 @@ void FieldScene_RunGroupChoreography(void)
     SceneActor_SetPairZeroAndValue(24, turn_speed, 20);
     Engine_ActorRunRepeatedMotion(25, 2);
     Event_SayThenWait(0x1019, 10);
-    Call3(Object_SetTargetAndCallback, 0, 0x10019, (s32)HaidiaIe_FaceTargetActions);
+    FieldObject_SetTargetAndCallback(0, 0x10019, HaidiaIe_FaceTargetActions);
     Actor_WalkToAndWait(25, 93, 0x169);
     SceneActor_SetPairZeroAndValue(25, approach_speed, 40);
     Event_SayThenWait(25, 20);
@@ -959,8 +959,8 @@ void Scene_RunExtendedActorSequence(void)
 
     struct FieldActor *record;
     struct EventWork *work;
-    const u8 *base5_200ac00;
     s32 v5;
+    const u8 *base5_200ac00;
     const u8 *base5_200ac90;
     s32 v6;
     const u8 *base5_200adf0;
@@ -1024,8 +1024,8 @@ void Scene_RunExtendedActorSequence(void)
     Engine_ActorEnableActionCallback(30, (s32)Data_0200ac14);
     Engine_EventWait(40);
     base5_200ac00 = HaidiaIe_FaceTargetActions;
-    Call3(Object_SetTargetAndCallback, 11, 0x1001e, (s32)(base5_200ac00));
-    Call3(Object_SetTargetAndCallback, 12, 0x1001e, (s32)(base5_200ac00));
+    FieldObject_SetTargetAndCallback(11, 0x1001e, base5_200ac00);
+    FieldObject_SetTargetAndCallback(12, 0x1001e, base5_200ac00);
     Object_RefreshSelectorById(30);
     Engine_ActorStop(11);
     Engine_ActorStop(12);

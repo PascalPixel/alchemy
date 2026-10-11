@@ -451,7 +451,7 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
         horizontal_origin = workspace->layers[1].offset_x >> 20;
         vertical_origin = workspace->layers[1].offset_y >> 20;
 
-        Call6(Engine_MapCopyCellAttributes, probe.position_x, probe.position_z, horizontal_extent, vertical_extent, horizontal_origin + probe.position_x, vertical_origin + probe.position_z);
+        Map_CopyCellAttributes(probe.position_x, probe.position_z, horizontal_extent, vertical_extent, horizontal_origin + probe.position_x, vertical_origin + probe.position_z);
         StagedActor_FillGridAttributeRectangle(0, probe.position_x, probe.position_z,
                                                horizontal_extent, vertical_extent, 255);
         StagedActor_FillGridAttributeRectangle(2, probe.position_x, probe.position_z,

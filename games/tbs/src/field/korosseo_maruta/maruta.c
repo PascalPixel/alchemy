@@ -207,7 +207,7 @@ void FieldScene_RunClosingAuxiliarySequence(void)
         log->motion_flags = lowered;
         log->acceleration = 0x6666;
         log->speed = 0xcccc;
-        Call4(Engine_ObjectSetPosition, (s32)log, log->x.fixed, 0x40000, log->z.fixed);
+        FieldObject_SetPosition(log, log->x.fixed, 0x40000, log->z.fixed);
         rider = Object_GetById(actor);
         flags = &rider->motion_flags;
         *flags = lowered;
@@ -278,7 +278,7 @@ void FieldScene_RunFinalAuxiliarySequence(void)
             log->motion_flags = 0;
             log->acceleration = 0x6666;
             log->speed = 0xcccc;
-            Call4(Engine_ObjectSetPosition, (s32)log, log->x.fixed, 0x40000, log->z.fixed);
+            FieldObject_SetPosition(log, log->x.fixed, 0x40000, log->z.fixed);
             upper = Object_GetById(11);
             upper->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
             upper->acceleration = 0x6666;
@@ -1282,12 +1282,12 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
         pan1->motion_flags = 0;
         pan1->acceleration = 0x6666;
         pan1->speed = 0xcccc;
-        Call4(Engine_ObjectSetPosition, (s32)pan1, pan1->x.fixed, 4 << 16, pan1->z.fixed);
+        FieldObject_SetPosition(pan1, pan1->x.fixed, 4 << 16, pan1->z.fixed);
         pan2 = Object_GetById(11);
         pan2->motion_flags = 0;
         pan2->acceleration = 0x6666;
         pan2->speed = 0xcccc;
-        Call4(Engine_ObjectSetPosition, (s32)pan2, pan2->x.fixed, 32 << 16, pan2->z.fixed);
+        FieldObject_SetPosition(pan2, pan2->x.fixed, 32 << 16, pan2->z.fixed);
         Object_CommitPosition(pan2);
         Engine_EventWait(45);
         back1 = Object_GetById(10);

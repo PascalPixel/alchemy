@@ -1,5 +1,5 @@
 	.section .rodata
-	.global BattleFx_CrystalSheet
-BattleFx_CrystalSheet:
+	.global BattleFx_CrystalBitmapSheet
+BattleFx_CrystalBitmapSheet:
 	.incbin "graphics/battle_fx/crystal.gbapal"
 	.incbin "graphics/battle_fx/crystal.bitmap.lz"

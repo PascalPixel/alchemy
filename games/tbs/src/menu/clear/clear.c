@@ -355,18 +355,6 @@ void UiWindow_DrawDividerLine();
 s32 __divsi3(s32, s32);
 s32 __modsi3();
 
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    /* FAKEMATCH: a forwarding call keeps 0x109 out of a register for SaveMenu_Run's later flag clears (differ 85 called directly). */
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    /* FAKEMATCH: a forwarding call for SaveMenu_Run's 0x952 flag test (differ 10 called directly). */
-    return f(a0);
-}
-
 s32 SaveMenu_Run(void)
 {
     s32 page_count;
@@ -489,8 +477,7 @@ s32 SaveMenu_Run(void)
         if (v6 == -1) {
             goto L_020004a8;
         }
-        /* FAKEMATCH: called directly, CSE keeps 0x109 in r7 for the later clears; the native derives them from 0x1c2 (522 vs 573). */
-        Call1((void (*)())Engine_GameFlagSet, 0x109);
+        GameFlag_Set(0x109);
         state = &gGameState;
         PaletteGlow_Update(state->palette_glow[0], state->palette_glow[1]);
         if (state->build_stamp != Runtime_GetBuildStampTime()) {
@@ -541,8 +528,7 @@ s32 SaveMenu_Run(void)
             goto L_020004a8;
         }
         gGameState.selected_actor = 0;
-        /* FAKEMATCH: called directly, the flag test differs by 10 instructions (2026-10-07); through the wrapper it matches. */
-        if (Value1(Engine_GameFlagIsSet, 0x952) != 0) {
+        if (GameFlag_IsSet(0x952) != 0) {
             InventorySnapshot_Restore();
             Party_RemoveActiveOwner(0);
             Party_RemoveActiveOwner(1);

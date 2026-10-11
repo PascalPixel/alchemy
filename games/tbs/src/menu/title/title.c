@@ -15,6 +15,7 @@
 #include "save_state.h"
 #include "mem.h"
 #include "field_event.h"
+#include "field_service.h"
 #include "scene_ids.h"
 #include "resource_ids.h"
 #include "title.h"
@@ -186,15 +187,14 @@ void Title_LoadSprites(s32 unused)
     Dma_Set(res, (void *)0x05000200, 0x84000070, DMA3);
     res += 0x1c0;
     Resource_DecodeType01(res, buffer);
-    Call3((void (*)())Engine_VramLoad, gTitleVramBlock, 0x1e00,
-          (s32)(buffer + 0x7800));
+    Vram_Load(gTitleVramBlock, 0x1e00, buffer + 0x7800);
 #else
     buffer = (u8 *)Runtime_BumpAllocateAlternatePool(0x520);
     if (gTitleVramBlock == -1)
         gTitleVramBlock = Resource_FindFreeEntry();
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
     Dma_Set(buffer, (void *)0x050003e0, 0x84000008, DMA3);
-    Call3((void (*)())Engine_VramLoad, gTitleVramBlock, 0x500, (s32)(buffer + 32));
+    Vram_Load(gTitleVramBlock, 0x500, buffer + 32);
 #endif
     dma = DMA3;
     while (dma[2] & 0x80000000)

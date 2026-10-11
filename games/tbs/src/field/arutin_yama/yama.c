@@ -917,7 +917,6 @@ struct ActorMotion
 	s32 phase;
 	s32 callback;
 };
-void Engine_ObjectSetTargetAndCallback();
 
 struct Half
 {
@@ -1387,7 +1386,7 @@ void FieldScene_BuildMultiPhasePresentation(void)
 	Engine_CameraSetSpeed(0x4cccc, 0x9999);
 	Engine_CameraMoveTo(rec7->x.fixed, rec7->y.fixed, rec7->z.fixed, 1);
 	Engine_CameraWaitForMove();
-	Call3(Engine_ObjectSetTargetAndCallback, 10, 0x10000, (s32)&ArutinYama_ActorScript);
+	FieldObject_SetTargetAndCallback(10, 0x10000, &ArutinYama_ActorScript);
 	Engine_GameFlagSet(0x904);
 	Engine_EventEnd();
 }
@@ -1618,11 +1617,7 @@ void ArutinYama_ApplyEntryState(void)
 		actor->y.fixed = 0x200000;
 		Map_CopyCellAttributes(2, 0, 1, 1, 18, 13);
 		Actor_SetPosition(10, 0x1040000, 0xd70000);
-		{
-			u8 *script = ArutinYama_ActorScript;
-
-			Call3(Engine_ObjectSetTargetAndCallback, 10, 0x10000, (s32)script);
-		}
+		FieldObject_SetTargetAndCallback(10, 0x10000, ArutinYama_ActorScript);
 	}
 	else
 	{

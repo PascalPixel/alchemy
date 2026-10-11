@@ -11,6 +11,7 @@
 #include "types.h"
 #include "call.h"
 #include "field_event.h"
+#include "field_service.h"
 #include "text/msg_ids.h"
 
 
@@ -19,7 +20,6 @@
 
 extern struct EventWork *gEventWork;
 
-void Engine_ObjectSetTargetAndCallback();
 void FieldScene_OpenGate();
 
 
@@ -197,7 +197,7 @@ void BiribinoNiwa_RunGardenEvent(void)
             Engine_GameFlagSet(0x84a);
         } while (0);
     }
-    Call3(Engine_ObjectSetTargetAndCallback, 12, 0x10000, (s32)BiribinoNiwa_GuardScript);
+    FieldObject_SetTargetAndCallback(12, 0x10000, BiribinoNiwa_GuardScript);
     goto done;
 declined:
     Engine_EventShowMessage(12, 0);
@@ -256,11 +256,7 @@ void BiribinoNiwa_ApplyEntryState(void)
         if (Engine_GameFlagIsSet(0x84f) == 0) {
             if (Engine_GameFlagIsSet(0x845) == 0) {
                 Engine_ActorSetPosition(11, 0, 0);
-                {
-                    u8 *script = BiribinoNiwa_GuardScript;
-
-                    Call3(Engine_ObjectSetTargetAndCallback, 12, 0x10000, (s32)script);
-                }
+                FieldObject_SetTargetAndCallback(12, 0x10000, BiribinoNiwa_GuardScript);
             }
         }
     }

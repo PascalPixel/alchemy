@@ -627,8 +627,12 @@ play:
     }
     UiWork_Finalize(window, 2);
 #else
+    /* FAKEMATCH: whole marker ids swap message/label registers; keep message in r10 and label in r9. */
+    asm("" : "+r"(message));
     for (;;) {
-        text = (s32)MsgTorebiCoins; // +1 チケット, +2 まい
+        text = (s32)MsgTorebiCoins;
+        /* FAKEMATCH: keep the coin label in r9; otherwise the repeated marker takes fp and moves state into r9. */
+        asm("" : "+r"(text));
         state = &gGameState;
         coins = state->coins;
         tickets = PartyInventory_CountItem(229);
@@ -637,10 +641,10 @@ play:
         window = UiWindow_Create(0, 0, ASK_WIDTH, 4, 2);
         UiText_DrawCharacterAtOffset(text, window, 0, 0);
         UiText_DrawNumberInWindow(coins, 6, window, NUMBER_X, 0);
-        UiText_DrawCharacterAtOffset(text + 2, window, 104, 0);
+        UiText_DrawCharacterAtOffset((s32)MsgTorebiCounterMarker, window, 104, 0);
         UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
         UiText_DrawNumberInWindow(tickets, 6, window, NUMBER_X, 8);
-        UiText_DrawCharacterAtOffset(text + 2, window, 104, 8);
+        UiText_DrawCharacterAtOffset((s32)MsgTorebiCounterMarker, window, 104, 8);
         choice = Menu_SelectEntry20To21(choice);
         UiWork_Finalize(window, 2);
         UiWork_FinalizePendingCore();

@@ -12,6 +12,12 @@ const BINUTILS_SHA256: &str = "fd7d227c0dd15cf5448385e56b8ad8313cd491839834b57c0
 const MODERN_BINUTILS_VERSION: &str = "2.33.1";
 const MODERN_BINUTILS_SHA256: &str =
     "ab66fc2d1c3ec0359b8e08843c9f33b63e8707efdff5e4cc5c200eae24722cbf";
+/// The checks agscc's recipes make of a build from source: directory, make
+/// target, and the name a failure is reported under.
+const SOURCE_CHECKS: [(&str, &str, &str); 2] = [
+    ("agscc", "generated-check", "generated table check"),
+    ("agscc/arm", "probe", "ARM compiler probe"),
+];
 const MODERN_BINUTILS_TOOLS: [&str; 5] = ["as", "ld", "nm", "objcopy", "objdump"];
 /// `-Dfdopen=fdopen` keeps the bundled zlib from defining `fdopen` away on
 /// macOS (its zutil.h does under TARGET_OS_MAC unless the name is already a
@@ -150,6 +156,19 @@ fn build_from_sources() -> Result<(), String> {
             &log,
             "compiler source build",
         )?;
+        // What vouches for compilers built here is their pinned source and
+        // these two checks of what this host made of it, never a hash of the
+        // host's own executables: the tables the generators wrote, and the
+        // ARM compiler's probes against a 32-bit host's recorded output.
+        for (directory, target, label) in SOURCE_CHECKS {
+            execute(
+                Command::new("make")
+                    .args(["--no-print-directory", "-C", directory, target])
+                    .current_dir(root()),
+                &log,
+                label,
+            )?;
+        }
         let archive = sources.join("binutils-2.10.tar.gz");
         if !archive.exists() {
             let download = sources.join("binutils-2.10.download");

@@ -1097,7 +1097,6 @@ main	rom_tail_02	games/tbs/src/map/korosseo/rival_path_c	.rodata
 main	rom_tail_02	games/tbs/src/graphics/korosseo/lettering	.rodata
 main	rom_tail_02	games/common/src/graphics/shop/cursor	.rodata
 main	rom_tail_02	games/tbs/src/graphics/ui/icons	.rodata
-main	rom_tail_02	games/tbs/src/graphics/ui/command_icons	.rodata
 main	rom_tail_02	games/common/src/graphics/monster/axe_goblin	.rodata
 main	rom_tail_02	games/common/src/graphics/monster/ghoul	.rodata
 main	rom_tail_02	games/common/src/graphics/monster/harpy	.rodata

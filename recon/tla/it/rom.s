@@ -3540,7 +3540,7 @@ Func_080d73b4:
 	.type Func_080d73e0, %function
 	.thumb_func
 Func_080d73e0:
-	.incbin "baserom.gba", 0x000d7424, 0x000000c0
+	.incbin "baserom.gba", 0x000d7424, 0x000000b4
 	.section .rom.000d7518, "ax"
 	.incbin "baserom.gba", 0x000d7518, 0x00000264
 	.section .rom.000d777c, "ax"
@@ -5573,8 +5573,6 @@ AudioCommand_InvokeSlot35:
 	.thumb_func
 Func_081c2328:
 	.incbin "baserom.gba", 0x001c2328, 0x00000014
-	.section .rom.001c332c, "ax"
-	.incbin "baserom.gba", 0x001c332c, 0x00000014
 	.section .rom.001c339a, "ax"
 	.incbin "baserom.gba", 0x001c339a, 0x00000002
 	.section .rom.001c33ae, "ax"

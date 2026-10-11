@@ -2,6 +2,10 @@
 #include "io_reg.h"
 #include "callback_scheduler.h"
 #include "system.h"
+#include "irqlock.h"
+
+// キー付きコールバックは値を返す（呼び出し先アドレスが r0 に載る）
+typedef s32 (*KeyCallbackFn)(void);
 
 s32 Scheduler_DisableCallbacks(SchedulerCallback callback)
 {
@@ -12,24 +16,14 @@ s32 Scheduler_DisableCallbacks(SchedulerCallback callback)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the one-pass block keeps the task-table address load before IME's address. */
-    do {
-        {
-            volatile u16 *ime = &REG_IME;
-
-            saved_interrupt_master = *ime;
-            /* FAKEMATCH: under the ARM9TDMI load schedule the saved copy follows the IME store; this boundary keeps the native copy before it. */
-            __asm__ volatile("");
-            *ime = (u16)(u32)ime;
+    IRQ_LOCK(saved_interrupt_master);
+    for (i = 0; i <= 23; i++, task++) {
+        if (callback == 0 || task->callback == (u32)callback) {
+            TASK_STATE_HIGH(task) &= (u8)~1;
+            result = i;
         }
-        for (i = 0; i <= 23; i++, task++) {
-            if (callback == 0 || task->callback == (u32)callback) {
-                TASK_STATE_HIGH(task) &= (u8)~1;
-                result = i;
-            }
-        }
-        REG_IME = saved_interrupt_master;
-    } while (0);
+    }
+    IRQ_UNLOCK(saved_interrupt_master);
     return result;
 }
 
@@ -42,54 +36,34 @@ s32 Scheduler_DisableOverlayCallbacks(void)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the one-pass block keeps the task-table address load before IME's address. */
-    do {
-        {
-            volatile u16 *ime = &REG_IME;
-
-            saved_interrupt_master = *ime;
-            /* FAKEMATCH: the saved copy precedes the IME store, as in Scheduler_DisableCallbacks. */
-            __asm__ volatile("");
-            *ime = (u16)(u32)ime;
+    IRQ_LOCK(saved_interrupt_master);
+    for (i = 0; i <= 23; i++, task++) {
+        if ((task->callback >> 24) == 2) {
+            TASK_STATE_HIGH(task) &= (u8)~1;
+            result = i;
         }
-        for (i = 0; i <= 23; i++, task++) {
-            if ((task->callback >> 24) == 2) {
-                TASK_STATE_HIGH(task) &= (u8)~1;
-                result = i;
-            }
-        }
-        REG_IME = saved_interrupt_master;
-    } while (0);
+    }
+    IRQ_UNLOCK(saved_interrupt_master);
     return result;
 }
 
-void Scheduler_RunCallbacksByKey(s32 arg)
+void Scheduler_RunCallbacksByKey(s32 key)
 {
-    s32 key;
-    s32 held;
-    /* FAKEMATCH: plain typed scans use bottom-tested loops. The native preincrement countdown uses an unsigned cursor so no before-array C pointer is formed. */
-    u32 cursor = (u32)gSchedulerTaskTable;
-    struct SchedulerTask *task;
-    s32 i;
-    u8 *status = &gSchedulerTaskCount;
+    struct SchedulerTask *task = gSchedulerTaskTable;
+    s32 remaining;
 
-    /* FAKEMATCH: plain source loads status before retaining the key; this boundary keeps the native address/key/status order. */
-    asm("" : "=r"(held), "+r"(status) : "0"(arg));
-    key = held;
     key >>= 8;
-    if (*status == 1) {
-        i = 25;
-        cursor -= sizeof(*task);
+    if (gSchedulerTaskCount == 1) {
+        remaining = SCHEDULER_TLA_TASK_COUNT + 1;
+        task--;
 next_task:
-        i--;
-        if (i != 0) {
-            cursor += sizeof(*task);
-            task = (struct SchedulerTask *)cursor;
+        remaining--;
+        if (remaining != 0) {
+            task++;
             if (TASK_STATE_HIGH(task) == key) {
-                /* FAKEMATCH: the plain void callback call uses r3; native dispatch consumes r0. */
-                register void (*call)(void) asm("r0") = (void (*)(void))task->callback;
+                KeyCallbackFn callback = *(KeyCallbackFn *)&task->callback;
 
-                call();
+                callback();
             }
             goto next_task;
         }
@@ -137,36 +111,26 @@ finish:
     return key;
 }
 
-void Scheduler_RunCallbacksBeforeBoundary(s32 arg)
+void Scheduler_RunCallbacksBeforeBoundary(s32 key)
 {
-    s32 key;
-    s32 held;
-    /* FAKEMATCH: plain typed scans use bottom-tested loops. The native preincrement countdown uses an unsigned cursor so no before-array C pointer is formed. */
-    u32 cursor = (u32)gSchedulerTaskTable;
-    struct SchedulerTask *task;
-    s32 i;
-    u8 *status = &gSchedulerTaskCount;
+    struct SchedulerTask *task = gSchedulerTaskTable;
+    s32 remaining;
 
-    /* FAKEMATCH: plain source loads status before retaining the key; this boundary keeps the native address/key/status order. */
-    asm("" : "=r"(held), "+r"(status) : "0"(arg));
-    key = held;
     key >>= 8;
-    if (*status == 1) {
-        i = 25;
-        cursor -= sizeof(*task);
+    if (gSchedulerTaskCount == 1) {
+        remaining = SCHEDULER_TLA_TASK_COUNT + 1;
+        task--;
 next_task:
-        i--;
-        if (i != 0) {
-            cursor += sizeof(*task);
-            task = (struct SchedulerTask *)cursor;
+        remaining--;
+        if (remaining != 0) {
+            task++;
             if (TASK_STATE_HIGH(task) == 4) {
                 return;
             }
             if (TASK_STATE_HIGH(task) == key) {
-                /* FAKEMATCH: the plain void callback call uses r3; native dispatch consumes r0. */
-                register void (*call)(void) asm("r0") = (void (*)(void))task->callback;
+                KeyCallbackFn callback = *(KeyCallbackFn *)&task->callback;
 
-                call();
+                callback();
             }
             goto next_task;
         }

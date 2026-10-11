@@ -250,66 +250,8 @@ Func_0200015c:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
 	.4byte 0xffff0000
-	.section .text.x02008350,"ax",%progbits
-	.global Func_02000350
-	.thumb_func
-Func_02000350:
-	push {lr}
-	ldr r3, .L_0200838c
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_02008390
-	cmp r2, r3
-	bne .L_02008368
-	ldr r0, .L_02008394
-	b .L_02008388
-.L_02008368:
-	ldr r3, .L_02008398
-	cmp r2, r3
-	bne .L_02008372
-	ldr r0, .L_0200839c
-	b .L_02008388
-.L_02008372:
-	ldr r3, .L_020083a0
-	cmp r2, r3
-	bne .L_0200837c
-	ldr r0, .L_020083a4
-	b .L_02008388
-.L_0200837c:
-	ldr r3, .L_020083a8
-	cmp r2, r3
-	bne .L_02008386
-	ldr r0, .L_020083ac
-	b .L_02008388
-.L_02008386:
-	ldr r0, .L_020083b0
-.L_02008388:
-	pop {pc}
-	.2byte 0x0000
-.L_0200838c:
-	.4byte gPartyState
-.L_02008390:
-	.4byte 0x0000012b
-.L_02008394:
-	.4byte Data_02001390
-.L_02008398:
-	.4byte 0x0000012c
-.L_0200839c:
-	.4byte Data_02001480
-.L_020083a0:
-	.4byte 0x0000012d
-.L_020083a4:
-	.4byte Data_02001504
-.L_020083a8:
-	.4byte 0x0000012e
-.L_020083ac:
-	.4byte Data_0200169c
-.L_020083b0:
-	.4byte Data_02001330
 	.section .text.x0200843c,"ax",%progbits
+	.balign 4
 	.global Func_0200043c
 	.thumb_func
 Func_0200043c:
@@ -871,66 +813,8 @@ Func_02000880:
 	.4byte Data_0200117c
 .L_02008910:
 	.4byte Data_020011cc
-	.section .text.x02008b3c,"ax",%progbits
-	.global Func_02000b3c
-	.thumb_func
-Func_02000b3c:
-	push {lr}
-	ldr r3, .L_02008b78
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_02008b7c
-	cmp r2, r3
-	bne .L_02008b54
-	ldr r0, .L_02008b80
-	b .L_02008b74
-.L_02008b54:
-	ldr r3, .L_02008b84
-	cmp r2, r3
-	bne .L_02008b5e
-	ldr r0, .L_02008b88
-	b .L_02008b74
-.L_02008b5e:
-	ldr r3, .L_02008b8c
-	cmp r2, r3
-	bne .L_02008b68
-	ldr r0, .L_02008b90
-	b .L_02008b74
-.L_02008b68:
-	ldr r3, .L_02008b94
-	cmp r2, r3
-	bne .L_02008b72
-	ldr r0, .L_02008b98
-	b .L_02008b74
-.L_02008b72:
-	ldr r0, .L_02008b9c
-.L_02008b74:
-	pop {pc}
-	.2byte 0x0000
-.L_02008b78:
-	.4byte gPartyState
-.L_02008b7c:
-	.4byte 0x0000012b
-.L_02008b80:
-	.4byte Data_02001780
-.L_02008b84:
-	.4byte 0x0000012c
-.L_02008b88:
-	.4byte Data_0200184c
-.L_02008b8c:
-	.4byte 0x0000012d
-.L_02008b90:
-	.4byte Data_020018f4
-.L_02008b94:
-	.4byte 0x0000012e
-.L_02008b98:
-	.4byte Data_02001a5c
-.L_02008b9c:
-	.4byte Data_020016e4
 	.section .text.x02008ba0,"ax",%progbits
+	.balign 4
 	.global Func_02000ba0
 	.thumb_func
 Func_02000ba0:

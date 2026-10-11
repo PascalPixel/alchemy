@@ -429,8 +429,6 @@ main	rom_main_08	games/tbs/src/battle/effect/canvas	.text
 main	rom_main_08	games/tbs/src/battle/effect/memberfx	.text
 main	rom_main_08	games/tbs/src/battle/effect/stars	.text
 main	rom_main_08	games/common/src/battle/effect/render_mode	.text
-main	rom_main_08	games/tbs/src/battle/effect/render_mode	.text
-main	rom_main_08	games/tbs/src/battle/effect/sheep	.text
 main	rom_main_08	games/tbs/src/battle/effect/travel	.text
 main	rom_main_08	games/tbs/src/field/common/camera/apply_phased_delta	.text
 main	rom_main_08	games/common/src/battle/effect/run_no_effect_frames	.text

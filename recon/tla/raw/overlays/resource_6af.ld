@@ -13,7 +13,7 @@ SECTIONS
         "*/resource_6af_overlay.o"(.text.x0200815c)
         "*/games/tla/src/field/overlay_6af/scene_tables.o"(.text)
         "*/resource_6af_overlay.o"(.text.x02008350)
-        "*/resource_6af_overlay.o"(.text.x020083b4)
+        "*/games/tla/src/field/overlay_6af/s03b4.o"(.text)
         "*/games/tla/src/field/overlay_6af/s03fc.o"(.text)
         "*/resource_6af_overlay.o"(.text.x0200843c)
         "*/resource_6af_overlay.o"(.text.x020085ac)

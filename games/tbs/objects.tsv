@@ -384,8 +384,6 @@ main	rom_main_07	games/tbs/src/graphics/tile/bit_commands
 main	rom_main_07	games/tbs/src/debug/battle	.text
 main	rom_main_07	games/common/src/battle/presentation/tile_pattern	.text
 main	rom_main_07	games/tbs/src/battle/party/reset	.text
-main	rom_main_07	games/tbs/src/battle/summon/update_availability	.text
-main	rom_main_07	games/tbs/src/game/party/update_name_entries	.text
 main	rom_main_07	games/tbs/src/graphics/text/format_name	.text
 main	rom_main_07	games/common/src/battle/presentation/wait_sync	.text
 main	rom_main_07	games/tbs/src/battle/party/party	.text

@@ -392,11 +392,7 @@ main	rom_main_07	games/tbs/src/battle/presentation/layout	.text
 main	rom_main_07	games/common/src/battle/party/contains_id	.text
 main	rom_main_07	games/tbs/src/battle/battle	.text
 main	rom_main_07	games/common/src/battle/motion/release_battle_object_records	.text
-main	rom_main_07	games/tbs/src/battle/motion/spawn	.text
-main	rom_main_07	games/tbs/src/battle/motion/slots	.text
 main	rom_main_07	games/tbs/src/battle/motion/motion	.text
-main	rom_main_07	games/tbs/src/battle/motion/apply_pair_midpoint	.text
-main	rom_main_07	games/tbs/src/battle/motion/project	.text
 main	rom_main_07	games/tbs/src/battle/presentation/runact	.text
 main	rom_main_07	games/tbs/src/battle/presentation/damage	.text
 main	rom_main_07	games/tbs/src/battle/turn	.text

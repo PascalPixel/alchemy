@@ -24,25 +24,13 @@
 
 #define RenderOutput_ClearListFar ((void (*)(void *))RenderOutput_ClearListFar)
 
-struct InventoryMenuIcon {
-    struct InventoryMenuIcon *next;
-    u8 unknown_04;
-    u8 state;
-    s16 x;
-    s16 y;
-    u8 unknown_0a[2];
-    u16 unknown_0c;
-    u8 render_target;
-    u8 sentinel;
-};
-
 
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void AudioCommand_PlayFar(s32 cue);
 
 s32 ItemMenu_SelectItem(void)
 {
-    /* FAKEMATCH: the icon prefix keeps the row load before the active-byte store; the canonical view reverses them. */
+
     struct InventoryMenuState *menu;
     struct BtlUnit *owner;
     s32 result;
@@ -110,7 +98,7 @@ s32 ItemMenu_SelectItem(void)
                 }
                 ItemMenu_DrawEquipPage((s32)menu->status_window, 0, &state);
             }
-            ((struct InventoryMenuIcon *)menu->pane_icons[0])->state = 1;
+            menu->pane_icons[0]->active = 1;
             UiMenu_PositionCursor(96, state.row * 16 + 52);
             WaitFrames(1);
 

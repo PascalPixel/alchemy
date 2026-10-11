@@ -1889,12 +1889,12 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character,
             Dma_Set(tiles, (void *)(0x06010000 + (work->glyph_tiles + index) * 32),
                 0x84000020, REG_DMA3);
 #if !EDITION_INTERNATIONAL
-            ((u16 *)&output->packed)[0] = y + (spacing_y >> 1) + window->y * 8;
+            ((u16 *)&output->oam)[0] = y + (spacing_y >> 1) + window->y * 8;
 #else
-            ((u16 *)&output->packed)[0] = y + (spacing_y >> 1) + window->y * 8 - 2;
+            ((u16 *)&output->oam)[0] = y + (spacing_y >> 1) + window->y * 8 - 2;
 #endif
-            ((u16 *)&output->packed)[1] = (x + (spacing_x >> 1) + window->x * 8 + 2) | 0x4000;
-            ((u16 *)&output->packed)[2] = work->glyph_tiles + index;
+            ((u16 *)&output->oam)[1] = (x + (spacing_x >> 1) + window->x * 8 + 2) | 0x4000;
+            ((u16 *)&output->oam)[2] = work->glyph_tiles + index;
             sprite = OAM(output);
         }
         output->sentinel = 254;
@@ -1942,9 +1942,9 @@ LAYOUT_OFFSET_GUARD(GlyphSpriteOutput_Index, struct GlyphSpriteOutput, index,
 LAYOUT_OFFSET_GUARD(GlyphSpriteOutput_Attr, struct GlyphSpriteOutput, attr,
     (u32)&((struct RenderOutput *)0)->unknown_10);
 LAYOUT_OFFSET_GUARD(GlyphSpriteOutput_Oam, struct GlyphSpriteOutput, attr.y,
-    (u32)&((struct RenderOutput *)0)->packed);
+    (u32)&((struct RenderOutput *)0)->oam);
 LAYOUT_OFFSET_GUARD(GlyphSpriteOutput_Table, struct GlyphSpriteOutput, attr.unk8,
-    (u32)&((struct RenderOutput *)0)->table);
+    (u32)&((struct RenderOutput *)0)->oam + 4);
 
 #if EDITION_INTERNATIONAL
 

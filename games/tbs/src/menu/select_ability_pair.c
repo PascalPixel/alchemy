@@ -90,7 +90,7 @@ void Debug_SelectAbilityPair(void)
                 row = (row + 2) % 2;
                 y = (row << 4) + (win->y << 3) + 28;
                 cursor->y = y;
-                *(u8 *)&cursor->packed = y;
+                cursor->oam.y = y;
                 RenderOutput_RedrawSavedRect(win);
                 UiWindow_DrawDividerLine(win, 1, 2, 17, 2);
                 UiText_DrawCharacterAtOffset((s32)MsgPanelStatusLabel, win, 48, 0);

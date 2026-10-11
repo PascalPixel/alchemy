@@ -346,22 +346,14 @@ s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y)
   return icon;
 }
 
-struct UiIconAttributes {
-    u8 y;
-    u8 affine_mode : 2;
-    u8 flags : 6;
-    u16 x : 9;
-    u16 matrix : 5;
-    u16 size : 2;
-};
 
 void UiIcon_PrepareObject(struct RenderOutput *object)
 {
     if (object != NULL) {
         object->active = 1;
-        ((struct UiIconAttributes *)&object->packed)->x = object->x;
-        ((struct UiIconAttributes *)&object->packed)->y = object->y;
-        ((struct UiIconAttributes *)&object->packed)->matrix = 0;
-        ((struct UiIconAttributes *)&object->packed)->affine_mode = 0;
+        object->oam.x = object->x;
+        object->oam.y = object->y;
+        object->oam.matrix = 0;
+        object->oam.affine_mode = 0;
     }
 }

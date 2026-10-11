@@ -42,39 +42,6 @@ struct Record_080b06c0 {
 
 extern u8 gEventWork[];
 
-struct SpriteAttr {
-    unsigned y : 8;
-    unsigned affine : 2;
-    unsigned blend_mode : 2;
-    unsigned mosaic : 1;
-    unsigned full_color : 1;
-    unsigned shape : 2;
-    unsigned x : 9;
-    unsigned affine_index : 5;
-    unsigned size : 2;
-};
-
-struct SpriteAttr2 {
-    u16 y : 8;
-    u16 affine : 2;
-    u16 blend_mode : 2;
-    u16 mosaic : 1;
-    u16 full_color : 1;
-    u16 shape : 2;
-    u16 x : 9;
-    u16 affine_index : 5;
-    u16 size : 2;
-};
-
-struct ShopCursorSprite3 {
-    struct RenderOutput *next;
-    u8 unknown_04[2];
-    u16 x;
-    u16 y;
-    u8 unknown_0a[0x0a];
-    struct SpriteAttr2 oam;
-};
-
 
 void UiMessage_ShowAndWait(s32 arg0)
 {
@@ -285,10 +252,10 @@ void ShopCursor_Advance(struct ShopCursor *cursor)
     step = ++cursor->active;
     x = cursor->x + (cursor->target_x - (s16)cursor->x) * step / kind;
     sprite->x = x;
-    ((struct SpriteAttr *)&sprite->packed)->x = x;
+    sprite->oam.x = x;
     y = cursor->y + (cursor->target_y - (s16)cursor->y) * step / kind;
     sprite->y = y;
-    ((struct SpriteAttr *)&sprite->packed)->y = y;
+    sprite->oam.y = y;
     if (step == kind) {
         cursor->kind = 0;
         cursor->active = 0;
@@ -320,7 +287,7 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
             else
                 sprite->x = sprite->x + 1;
         }
-        ((struct SpriteAttr2 *)&sprite->packed)->x = sprite->x;
+        sprite->oam.x = sprite->x;
 
 move_y:
         delta = (u16)sprite->y - cursor->target_y;
@@ -340,7 +307,7 @@ move_y:
             else
                 sprite->y = sprite->y + 1;
         }
-        *(u8 *)&sprite->packed = sprite->y;
+        sprite->oam.y = sprite->y;
     }
 }
 
@@ -364,7 +331,7 @@ void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y)
 {
 
     {
-        struct ShopCursorSprite3 *sprite = (struct ShopCursorSprite3 *)cursor->anchor;
+        struct RenderOutput *sprite = cursor->anchor;
 
         cursor->target_x = x;
         cursor->kind = 1;
@@ -373,11 +340,11 @@ void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y)
         sprite->oam.x = sprite->x = x;
     }
     {
-        struct ShopCursorSprite3 *sprite;
+        struct RenderOutput *sprite;
 
         cursor->target_y = y;
         cursor->y = y;
-        sprite = (struct ShopCursorSprite3 *)cursor->anchor;
+        sprite = cursor->anchor;
         sprite->oam.y = sprite->y = y;
     }
 }

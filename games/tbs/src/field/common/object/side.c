@@ -67,9 +67,7 @@ struct RenderOutput *CreateSideObject(
     UiGlyph_LoadEntryWithPalette(id, position, &first, &second, slot, 0);
     object = RenderOutput_Create(first, 0x80000000, (struct RenderInput *)arg3, arg4, arg5);
     if (object != 0) {
-        s32 slotBits = slot << 4;
-
-        ((u8 *)&object->table)[1] = (((u8 *)&object->table)[1] & 15) | slotBits;
+        object->oam.palette = slot;
         object->kind = 2;
     }
 

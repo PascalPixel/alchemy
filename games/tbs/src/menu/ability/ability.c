@@ -136,27 +136,6 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
 
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 *, s32 x, s32 y);
 
-struct PsynergyTargetAttributes {
-    u16 y : 8;
-    u16 affine_mode : 2;
-    u16 object_mode : 2;
-    u16 mosaic : 1;
-    u16 palette_256 : 1;
-    u16 shape : 2;
-    u16 x : 9;
-    u16 matrix : 5;
-    u16 size : 2;
-};
-
-struct PsynergyTargetMarker {
-    u8 reserved_00[5];
-    u8 state;
-    u16 x;
-    u16 y;
-    u8 reserved_0a[10];
-    struct PsynergyTargetAttributes attributes;
-};
-
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
 void AudioCommand_PlayFar(s32 cue);
 
@@ -194,14 +173,14 @@ void PsynergyMenu_NoOp(void)
 
 s32 PsynergyMenu_SelectTarget(s32 mode)
 {
-    /* FAKEMATCH: the unsigned marker/OAM view keeps halfword narrowing before the nine-bit assignment; direct casts remove it. */
+
     struct PsynergyMenuState *menu;
     s32 selection;
     s32 count;
     s32 pending;
     s32 result;
     s32 shown;
-    struct PsynergyTargetMarker *marker;
+    struct RenderOutput *marker;
 
     menu = ((struct PsynergyMenuState *)gMenuWork);
     selection = menu->tab_index[1];
@@ -216,8 +195,8 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
             pending = 0;
             selection = (selection + count) % count;
             UnitGetFar(menu->owner_table[selection]);
-            marker = (struct PsynergyTargetMarker *)menu->pane_icon[1];
-            marker->attributes.x = marker->x =
+            marker = menu->pane_icon[1];
+            marker->oam.x = marker->x =
                 ((((struct RenderInput *)menu->auxiliary_window)->x + selection * 3) << 3) - 2;
             if (mode == 0) {
                 Menu_DrawOwnerStatusPanel(menu->status_window,
@@ -265,10 +244,10 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
             pending = 1;
         }
     }
-    marker = (struct PsynergyTargetMarker *)menu->pane_icon[1];
+    marker = menu->pane_icon[1];
     menu->tab_index[1] = selection;
-    UiIcon_PrepareObject((struct RenderOutput *)marker);
-    marker->state = 13;
+    UiIcon_PrepareObject(marker);
+    marker->active = 13;
     WaitFrames(1);
     menu->tab_index[1] = selection;
     menu->selected_owner = menu->owner_table[selection];

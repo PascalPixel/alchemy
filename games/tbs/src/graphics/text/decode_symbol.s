@@ -1,4 +1,7 @@
-@ C2: rrx and conditional rrxs consume the bit reader's shift carry.
+@ C2: Text_DecodeSymbol:
+@ rrx and conditional rrxs consume the bit reader's shift carry.
+@ C2: UiText_LookupMessageArm:
+@ rrx r3, r3 rotates through carry before the final bit shift.
 .syntax unified
 .text
 	.arm
@@ -95,7 +98,6 @@ Text_DecodeSymbol:
 	.4byte Text_MessageContexts
 	.global Text_DecodeSymbolCodeSize
 	.set Text_DecodeSymbolCodeSize, . - Text_DecodeSymbol
-@ C2: rrx r3, r3 rotates through carry before the final bit shift.
 .syntax unified
 .text
 	.arm

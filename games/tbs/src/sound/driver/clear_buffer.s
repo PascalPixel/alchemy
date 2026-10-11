@@ -1,5 +1,52 @@
-@ C2: Four stmia r0! of zero registers have no paired load/copy; r4 is saved
+@ C2: SoundDriver_ClearBuffer:
+@ Four stmia r0! of zero registers have no paired load/copy; r4 is saved
 @ through ip.
+@ C2: SoundNote_Detach to MusicTrack_FinishSequence:
+@ MusicPlayer2000 library assembly (public pret m4a_1.s: RealClearChain,
+@ with ply_fine after it). Credited on library provenance, not on a
+@ handwritten-instruction claim: both routines are ordinary Thumb, and neither
+@ SoundNote_Detach nor MusicTrack_FinishSequence carries an instruction-level
+@ tell.
+@ C2: Sound_LoadCommandTable to MusicTrack_WriteSoundRegisterFromCommand:
+@ MusicPlayer2000 library assembly (public pret m4a_1.s: ply_pend and the
+@ command family around it). MusicTrack_ReturnFromPattern (ply_pend) is
+@ ordinary Thumb, credited on library provenance, not on a
+@ handwritten-instruction claim.
+@ Its neighbours in this file do carry instruction-level tells:
+@ Sound_LoadCommandTable and the setter entries keep the return address with
+@ mov ip, lr across a bl and return with bx ip, never saving lr;
+@ Sound_ReadCheckedByte falls through into Sound_CheckReadAddress, which
+@ returns the decoded byte in r3 and preserves r0 with push {r0} / pop {r0}.
+@ Source's full .global list supplies the individual setter names.
+@ C2: Sound_TickDmaRestartTimer to SoundDriver_CallViaR3:
+@ DMA timer branches on carry from lsls; MusicPlayer_Tick's library
+@ dispatcher and call-via-r3 entry share the complete MusicPlayer2000 assembly
+@ module.
+@ C2: MusicTrack_Stop:
+@ Nintendo MusicPlayer2000 TrackStop, checked against pret's public
+@ m4a_1.s. This ordinary Thumb routine is library assembly, not claimed
+@ handwritten game code.
+@ C2: SoundDriver_CalculateStereoVolume:
+@ Caller supplies the channel in r4 and track in r5; the routine reads them
+@ without an argument move or save. Equivalent Nintendo MusicPlayer2000
+@ ChnVolSetAsm is public in pret m4a_1.s.
+@ C2: MusicTrack_HandleNote:
+@ Nintendo MusicPlayer2000 ply_note, checked against pret's public m4a_1.s.
+@ The frame and r8-r11 save/restore match the library; this is library
+@ provenance rather than a handwritten game-code assertion.
+@ C2: MusicTrack_ReleaseKey:
+@ push saves r4/r5 without lr; Nintendo library ply_endtie.
+@ C2: MusicTrack_ClearModulationState:
+@ MusicPlayer2000 library assembly (public pret m4a_1.s: clear_modM).
+@ Credited on library provenance, not on a handwritten-instruction claim:
+@ the routine is ordinary Thumb, and it is the only one in this file.
+@ C2: MusicTrack_ReadCommandByte:
+@ MusicPlayer2000 ld_r3_tp_adr_i_unchecked takes track in r1 and returns
+@ the decoded byte in r3 while updating r2/r3, rather than a standard r0
+@ return.
+@ C2: MusicTrack_SetLfoSpeedFromCommand to MusicTrack_SetModulationFromCommand:
+@ Both nested-call entries return through ip saved from lr rather than a
+@ procedure-standard return.
 .syntax unified
 	.thumb
 	.global SoundDriver_ClearBuffer
@@ -19,11 +66,6 @@ SoundDriver_ClearBuffer:
 AlchemyUncredited_080f9a2e:
 	.2byte	0x0000
 AlchemyUncreditedEnd_080f9a2e:
-@ C2: MusicPlayer2000 library assembly (public pret m4a_1.s: RealClearChain,
-@ with ply_fine after it). Credited on library provenance, not on a
-@ handwritten-instruction claim: both routines are ordinary Thumb, and neither
-@ SoundNote_Detach nor MusicTrack_FinishSequence carries an instruction-level
-@ tell.
 .syntax unified
 	.thumb
 	.global SoundNote_Detach
@@ -80,16 +122,6 @@ MusicTrack_FinishSequence:
 AlchemyUncredited_080f9a7e:
 	.2byte	0x0000
 AlchemyUncreditedEnd_080f9a7e:
-@ C2: MusicPlayer2000 library assembly (public pret m4a_1.s: ply_pend and the
-@ command family around it). MusicTrack_ReturnFromPattern (ply_pend) is
-@ ordinary Thumb, credited on library provenance, not on a
-@ handwritten-instruction claim.
-@ Its neighbours in this file do carry instruction-level tells:
-@ Sound_LoadCommandTable and the setter entries keep the return address with
-@ mov ip, lr across a bl and return with bx ip, never saving lr;
-@ Sound_ReadCheckedByte falls through into Sound_CheckReadAddress, which
-@ returns the decoded byte in r3 and preserves r0 with push {r0} / pop {r0}.
-@ Source's full .global list supplies the individual setter names.
 .syntax unified
 	.thumb
 	.global Sound_LoadCommandTable
@@ -411,9 +443,6 @@ MusicTrack_WriteSoundRegisterFromCommand:
 	strb	r3, [r0, #0]
 	bx	ip
 	.4byte 0x04000060
-@ C2: DMA timer branches on carry from lsls; MusicPlayer_Tick's library
-@ dispatcher and call-via-r3 entry share the complete MusicPlayer2000 assembly
-@ module.
 .syntax unified
 	.thumb
 	.global Sound_TickDmaRestartTimer
@@ -804,9 +833,6 @@ AlchemyUncreditedEnd_080f9eea:
 	.4byte Sound_ClockLengths
 	.4byte 0x03007ff0
 	.4byte 0x68736d53
-@ C2: Nintendo MusicPlayer2000 TrackStop, checked against pret's public
-@ m4a_1.s. This ordinary Thumb routine is library assembly, not claimed
-@ handwritten game code.
 .syntax unified
 	.thumb
 	.global MusicTrack_Stop
@@ -851,9 +877,6 @@ AlchemyUncredited_080f9f36:
 	.2byte	0x0000
 AlchemyUncreditedEnd_080f9f36:
 	.4byte	0x03007ff0
-@ C2: Caller supplies the channel in r4 and track in r5; the routine reads them
-@ without an argument move or save. Equivalent Nintendo MusicPlayer2000
-@ ChnVolSetAsm is public in pret m4a_1.s.
 .syntax unified
 	.thumb
 	.global SoundDriver_CalculateStereoVolume
@@ -885,9 +908,6 @@ SoundDriver_CalculateStereoVolume:
 .L_tail1:
 	strb	r0, [r4, #3]
 	bx	lr
-@ C2: Nintendo MusicPlayer2000 ply_note, checked against pret's public m4a_1.s.
-@ The frame and r8-r11 save/restore match the library; this is library
-@ provenance rather than a handwritten game-code assertion.
 .syntax unified
 	.thumb
 	.global MusicTrack_HandleNote
@@ -1171,7 +1191,6 @@ AlchemyUncredited_080fa162:
 AlchemyUncreditedEnd_080fa162:
 	.4byte	0x03007ff0
 	.4byte	Sound_ClockLengths
-@ C2: push saves r4/r5 without lr; Nintendo library ply_endtie.
 .syntax unified
 	.thumb
 	.global MusicTrack_ReleaseKey
@@ -1214,9 +1233,6 @@ MusicTrack_ReleaseKey:
 .L_080fa1a8:
 	pop	{r4, r5}
 	bx	lr
-@ C2: MusicPlayer2000 library assembly (public pret m4a_1.s: clear_modM).
-@ Credited on library provenance, not on a handwritten-instruction claim:
-@ the routine is ordinary Thumb, and it is the only one in this file.
 .syntax unified
 	.thumb
 	.global MusicTrack_ClearModulationState
@@ -1240,10 +1256,8 @@ MusicTrack_ClearModulationState:
 AlchemyUncredited_080fa1c6:
 	.2byte	0x0000
 AlchemyUncreditedEnd_080fa1c6:
-@ C2: MusicPlayer2000 ld_r3_tp_adr_i_unchecked takes track in r1 and returns
-@ the decoded byte in r3 while updating r2/r3, rather than a standard r0
-@ return.
 .syntax unified
+	.section .text.command_byte_reader,"ax",%progbits
 	.thumb
 
 .global MusicTrack_ReadCommandByte
@@ -1254,10 +1268,8 @@ MusicTrack_ReadCommandByte:
 	str	r3, [r1, #64]
 	ldrb	r3, [r2, #0]
 	bx	lr
-	.balign 4, 0
-@ C2: Both nested-call entries return through ip saved from lr rather than a
-@ procedure-standard return.
 .syntax unified
+	.section .text.command_byte_setters,"ax",%progbits
 	.thumb
 
 	.global MusicTrack_SetLfoSpeedFromCommand

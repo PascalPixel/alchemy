@@ -1,4 +1,7 @@
-@ C2: svc 11 and svc 25 are BIOS software interrupts.
+@ C2: Bios_CpuSet to Bios_SoundBiasOff:
+@ svc 11 and svc 25 are BIOS software interrupts.
+@ C2: Bios_SoundBiasOn:
+@ svc 25 is a BIOS software interrupt.
 .syntax unified
 	.thumb
 	.global Bios_CpuSet
@@ -15,8 +18,8 @@ Bios_SoundBiasOff:
 
 	.section .padding,"a",%progbits
 	.balign 4
-@ C2: svc 25 is a BIOS software interrupt.
 .syntax unified
+	.section .text.sound_vsync_on,"ax",%progbits
 	.thumb
 	.global Bios_SoundBiasOn
 	.thumb_func

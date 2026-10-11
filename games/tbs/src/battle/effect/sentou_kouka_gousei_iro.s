@@ -2,9 +2,7 @@
 @ ARM routines. r1/r5/r8/r9 are shared state and sl is the mask; r5/r8/r9
 @ change without callee saves, and neither fragment has a return.
 .syntax unified
-@ The game copies these routines into RAM: in the ROM they are read-only data.
-	.section .rodata,"a",%progbits
-	.balign 4
+.text
 	.arm
 	.global SentouKouka_IroJun
 	.global SentouKouka_IroGyaku

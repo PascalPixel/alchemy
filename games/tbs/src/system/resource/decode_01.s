@@ -1,5 +1,17 @@
-@ C2: The bit reader branches on carry immediately after shifting its live
+@ C2: Resource_DecodeType01Arm:
+@ The bit reader branches on carry immediately after shifting its live
 @ bit reservoir; it also uses unshifted movs r2,r2 for copy-and-test.
+@ C2: Resource_Decode2:
+@ add ip, pc, #36 followed by ldm ip, {sl, fp} loads a data block
+@ relative to pc, including r11/fp as ordinary decoder state.
+@ C2: Resource_DecodeType2Loop to Resource_RefillType2Bits:
+@ Computed add pc enters fixed-size decoder code slots; command execution
+@ also carries live reader register state across entry labels.
+@ C2: Resource_ExecuteTransfer:
+@ stmfd sp! saves callee-saved r5 without lr.
+@ C2: Resource_PatchThumbBranch:
+@ push saves callee-saved r5/r6 without lr; body also edits branch
+@ instructions.
 .syntax unified
 	.arm
 	.global Resource_DecodeType01Arm
@@ -210,8 +222,6 @@ Resource_DecodeType01Arm:
 	b	.L_080027d8
 	.global Resource_DecodeType01CodeSize
 	.set Resource_DecodeType01CodeSize, . - Resource_DecodeType01Arm
-@ C2: add ip, pc, #36 followed by ldm ip, {sl, fp} loads a data block
-@ relative to pc, including r11/fp as ordinary decoder state.
 .syntax unified
 	.arm
 	.global Resource_Decode2
@@ -238,9 +248,8 @@ Resource_Decode2:
 .L_08002848:
 	.4byte 0xfedcba98
 	.4byte 0x76543210
-@ C2: Computed add pc enters fixed-size decoder code slots; command execution
-@ also carries live reader register state across entry labels.
 .syntax unified
+	.section .text.decode_2_loop,"ax",%progbits
 	.arm
 .L_08002850:
 	and	r8, r2, #15
@@ -609,7 +618,6 @@ AlchemyUncreditedEnd_08002cdc:
 	and	r8, ip, sl, lsr #28
 	lsl	r9, sl, #4
 	b	.L_08002c10
-@ C2: stmfd sp! saves callee-saved r5 without lr.
 .syntax unified
 	.arm
 	.global Resource_ExecuteTransfer
@@ -646,8 +654,6 @@ Resource_ExecuteTransfer:
 	b	.L_08002d3c
 	.global TransferCommandExecutor_Size
 	.set TransferCommandExecutor_Size, . - Resource_ExecuteTransfer
-@ C2: push saves callee-saved r5/r6 without lr; body also edits branch
-@ instructions.
 .syntax unified
 	.arm
 	.global Resource_PatchThumbBranch

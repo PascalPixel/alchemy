@@ -1,9 +1,32 @@
-@ C2: bcs/bcc consume lsls lr's carry. The decoder dispatch also enters
+@ C2: Resource_DecodeByteLzArm:
+@ bcs/bcc consume lsls lr's carry. The decoder dispatch also enters
 @ eight-byte code slots, unlike the compiler's four-byte switch entries.
 @ Further hand evidence: the return is pop {r0, r5, r6, r7, ip} / bx ip, which
 @ also pops the r1 saved at entry into r0. The project's ARM C routines
 @ (Tile_BuildMetatiles, UiText_DrawGlyphArm) return with pop {..., lr} /
 @ bx lr; none returns through ip.
+@ C2: Render_BuildOamListKernel:
+@ unshifted movs r6, r6/r5/r4/r3 copy and test; ldmdb r2! also loads
+@ a four-register list outside the block-copy patterns.
+@ C2: ColorBuffer_ScaleThreeQuartersKernel to ColorBuffer_HalveKernel:
+@ both kernels save callee-saved r5/r6 without lr, and write modified
+@ words back with stmia r0!, {r3-r6}, beyond their initial block copy.
+@ C2: ColorBuffer_DarkenKernel to ColorBuffer_BackupKernelsEnd:
+@ stmia r0!, {r4-r7} writes arithmetic-modified words, not a block copy.
+@ C2: ColorBuffer_BrightenKernel to ColorBuffer_HalveNonzeroKernel:
+@ all three kernels save callee-saved r5/r6 (and further registers in
+@ BrightenKernel) without saving lr.
+@ C2: ColorBuffer_DarkenPartialKernel:
+@ ldm r0!, {r4-r7} and stmia r2!, {r4-r7} write back through a
+@ four-register list starting at r4. Stock agbcc_arm's block-copy expander
+@ fixes that list at r0-r3; its general ldm/stm peepholes never write back.
+@ Further hand evidence: the return is pop {r5, r6, r7, r8, ip} / bx ip. The
+@ project's ARM C routines (Tile_BuildMetatiles, UiText_DrawGlyphArm) return
+@ with pop {..., lr} / bx lr; none returns through ip.
+@ C2: ColorBuffer_BrightenPartialKernel to ColorBuffer_KernelsEnd:
+@ push {r5-r9} saves callee-saved registers without lr.
+@ C2: Resource_DecodeHalfwordLz:
+@ bcc and adc consume lsls r3's carry; the intervening ldrh keeps flags.
 .syntax unified
 	.arm
 	.global Resource_DecodeByteLzArm
@@ -172,8 +195,6 @@ AlchemyUncreditedEnd_08001d20:
 	bx	ip
 	.global Resource_DecodeByteLzCodeSize
 	.set Resource_DecodeByteLzCodeSize, . - Resource_DecodeByteLzArm
-@ C2: unshifted movs r6, r6/r5/r4/r3 copy and test; ldmdb r2! also loads
-@ a four-register list outside the block-copy patterns.
 .syntax unified
 	.arm
 	.global Render_BuildOamListKernel
@@ -241,8 +262,6 @@ Render_BuildOamListKernel:
 	.4byte	gObjAffineMatrices
 	.global LoadedRuntime_Size
 	.set LoadedRuntime_Size, . - Render_BuildOamListKernel
-@ C2: both kernels save callee-saved r5/r6 without lr, and write modified
-@ words back with stmia r0!, {r3-r6}, beyond their initial block copy.
 .syntax unified
 	.arm
 	.global ColorBuffer_ScaleThreeQuartersKernel
@@ -292,7 +311,6 @@ ColorBuffer_HalveKernel:
 	.set ColorBuffer_BackupAndScaleThreeQuartersCodeSize, ColorBuffer_HalveKernel - ColorBuffer_ScaleThreeQuartersKernel
 	.global ColorBuffer_BackupAndHalveCodeSize
 	.set ColorBuffer_BackupAndHalveCodeSize, .L_halve_end - ColorBuffer_HalveKernel
-@ C2: stmia r0!, {r4-r7} writes arithmetic-modified words, not a block copy.
 .syntax unified
 	.arm
 	.global ColorBuffer_DarkenKernel
@@ -333,8 +351,6 @@ ColorBuffer_DarkenKernel:
 ColorBuffer_BackupKernelsEnd:
 	.global ColorBuffer_BackupAndDarkenCodeSize
 	.set ColorBuffer_BackupAndDarkenCodeSize, ColorBuffer_BackupKernelsEnd - ColorBuffer_DarkenKernel
-@ C2: all three kernels save callee-saved r5/r6 (and further registers in
-@ BrightenKernel) without saving lr.
 .syntax unified
 	.arm
 	.global ColorBuffer_BrightenKernel
@@ -432,12 +448,6 @@ ColorBuffer_HalveNonzeroKernel:
 	.set ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize, ColorBuffer_HalveNonzeroKernel - ColorBuffer_ScaleNonzeroThreeQuartersKernel
 	.global ColorBuffer_BackupAndHalveNonzeroCodeSize
 	.set ColorBuffer_BackupAndHalveNonzeroCodeSize, .L_halve_nonzero_end - ColorBuffer_HalveNonzeroKernel
-@ C2: ldm r0!, {r4-r7} and stmia r2!, {r4-r7} write back through a
-@ four-register list starting at r4. Stock agbcc_arm's block-copy expander
-@ fixes that list at r0-r3; its general ldm/stm peepholes never write back.
-@ Further hand evidence: the return is pop {r5, r6, r7, r8, ip} / bx ip. The
-@ project's ARM C routines (Tile_BuildMetatiles, UiText_DrawGlyphArm) return
-@ with pop {..., lr} / bx lr; none returns through ip.
 .syntax unified
 	.arm
 	.global ColorBuffer_DarkenPartialKernel
@@ -506,7 +516,6 @@ ColorBuffer_DarkenPartialKernel:
 .L_darken_partial_end:
 	.global ColorBuffer_BackupAndDarkenPartialCodeSize
 	.set ColorBuffer_BackupAndDarkenPartialCodeSize, .L_darken_partial_end - ColorBuffer_DarkenPartialKernel
-@ C2: push {r5-r9} saves callee-saved registers without lr.
 .syntax unified
 	.arm
 	.global ColorBuffer_BrightenPartialKernel
@@ -576,7 +585,6 @@ ColorBuffer_BrightenPartialKernel:
 ColorBuffer_KernelsEnd:
 	.global ColorBuffer_BackupAndBrightenPartialCodeSize
 	.set ColorBuffer_BackupAndBrightenPartialCodeSize, ColorBuffer_KernelsEnd - ColorBuffer_BrightenPartialKernel
-@ C2: bcc and adc consume lsls r3's carry; the intervening ldrh keeps flags.
 .syntax unified
 	.arm
 	.global Resource_DecodeHalfwordLz

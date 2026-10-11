@@ -1,5 +1,41 @@
-@ C2: Unpaired live smull halves r2/r0; add ip,#1 and bx ip return through a
+@ C2: IwramMulQ16ReturnIp:
+@ Unpaired live smull halves r2/r0; add ip,#1 and bx ip return through a
 @ non-procedure-standard register.
+@ C2: IwramMulQ16:
+@ smull r2, r0, r1, r0 puts the low half in r2 and the high half in r0.
+@ mulsidi3 writes a DI register pair, RdHi = RdLo + 1, earlyclobbered and so
+@ apart from both inputs; here RdHi is r0, not r3, and is also an input. So
+@ this multiply did not come from mulsidi3. smulsi3_highpart can emit this
+@ same smull, but its low half is a dead scratch, and orr r0, r0, r2, lsr #16
+@ reads it.
+@ This proves a hand-written multiply sequence, not by itself a hand-written
+@ file. The routine has no other tell: its four instructions are a frameless
+@ leaf that reuses the argument registers, as compiled code also may.
+@ C2: IwramRatioMulQ14:
+@ Both smull halves are consumed from nonconsecutive r3/r0; compiler DI
+@ multiply patterns require consecutive halves, highpart patterns discard low
+@ half.
+@ C2: IwramClearWords to IwramFillWords:
+@ push saves r5-r9 without lr and computed add pc enters the unrolled store
+@ body.
+@ C2: IwramSqrt:
+@ movs r1, r0 copies and tests without a shift. The compilers' copy-and-test
+@ (*movsi_compare0) is subs r1, r0, #0; a register-to-register movs comes only
+@ with a shift.
+@ Secondary: the sign exit that follows is bxmi lr. *movsi_compare0 sets plain
+@ CC, where a signed < 0 test is lt; mi is the CC_NOOV spelling, which a
+@ copy-and-test never has.
+@ C2: IwramExpandBitRuns:
+@ bcc and bcs consume the carry set by lsls r3 in the bit-run loop.
+@ C2: IwramTransformVector to IwramTransformMatrix:
+@ fp is a product high half rather than a frame pointer; stmia writes
+@ arithmetic-transformed vectors, not compiler block-copy data.
+@ C2: IwramSignedDivide to IwramUnsignedDivide:
+@ signed wrappers use unshifted movs and return through ip. The core
+@ returns quotient in r0 and remainder in r1; the remainder wrappers read
+@ that second result, a custom internal linkage.
+@ C2: IwramDecompress:
+@ push saves r5/r6/r7 without lr.
 .syntax unified
 	.arm
 
@@ -10,15 +46,6 @@ IwramMulQ16ReturnIp:
 	orr	r0, r0, r2, lsr #16
 	add	ip, ip, #1
 	bx	ip
-@ C2: smull r2, r0, r1, r0 puts the low half in r2 and the high half in r0.
-@ mulsidi3 writes a DI register pair, RdHi = RdLo + 1, earlyclobbered and so
-@ apart from both inputs; here RdHi is r0, not r3, and is also an input. So
-@ this multiply did not come from mulsidi3. smulsi3_highpart can emit this
-@ same smull, but its low half is a dead scratch, and orr r0, r0, r2, lsr #16
-@ reads it.
-@ This proves a hand-written multiply sequence, not by itself a hand-written
-@ file. The routine has no other tell: its four instructions are a frameless
-@ leaf that reuses the argument registers, as compiled code also may.
 .syntax unified
 	.arm
 
@@ -28,9 +55,6 @@ IwramMulQ16:
 	lsl	r0, r0, #16
 	orr	r0, r0, r2, lsr #16
 	bx	lr
-@ C2: Both smull halves are consumed from nonconsecutive r3/r0; compiler DI
-@ multiply patterns require consecutive halves, highpart patterns discard low
-@ half.
 .syntax unified
 	.arm
 
@@ -46,8 +70,6 @@ IwramRatioMulQ14:
 	lsl	r0, r0, #18
 	orr	r0, r0, r3, lsr #14
 	bx	lr
-@ C2: push saves r5-r9 without lr and computed add pc enters the unrolled store
-@ body.
 .syntax unified
 	.arm
 
@@ -87,12 +109,6 @@ IwramFillWords:
 .L_clear_done:
 	pop	{r5, r6, r7, r8, r9}
 	bx	lr
-@ C2: movs r1, r0 copies and tests without a shift. The compilers' copy-and-test
-@ (*movsi_compare0) is subs r1, r0, #0; a register-to-register movs comes only
-@ with a shift.
-@ Secondary: the sign exit that follows is bxmi lr. *movsi_compare0 sets plain
-@ CC, where a signed < 0 test is lt; mi is the CC_NOOV spelling, which a
-@ copy-and-test never has.
 .syntax unified
 	.arm
 
@@ -114,7 +130,6 @@ IwramSqrt:
 	lsrs	r2, r2, #2
 	bne	.L_sqrt_coarse
 	bx	lr
-@ C2: bcc and bcs consume the carry set by lsls r3 in the bit-run loop.
 	.include "games/common/include/game/ed_asm.h"
 .syntax unified
 	.arm
@@ -144,8 +159,6 @@ IwramExpandBitRuns:
 	cmp	r0, ip
 	bne	.L_expand_halfword
 	bx	lr
-@ C2: fp is a product high half rather than a frame pointer; stmia writes
-@ arithmetic-transformed vectors, not compiler block-copy data.
 .syntax unified
 	.arm
 
@@ -228,10 +241,8 @@ gTransform:
 	.4byte 0x00010000, 0, 0, 0
 	.4byte 0x00010000, 0, 0, 0
 	.4byte 0x00010000, 0, 0, 0
-@ C2: signed wrappers use unshifted movs and return through ip. The core
-@ returns quotient in r0 and remainder in r1; the remainder wrappers read
-@ that second result, a custom internal linkage.
 .syntax unified
+	.section .text.runtime_divide,"ax",%progbits
 	.arm
 
 	.global IwramSignedDivide
@@ -397,7 +408,6 @@ IwramUnsignedDivide:
 	orrcs	r0, r0, #1
 	subcs	r1, r1, r2
 	bx	lr
-@ C2: push saves r5/r6/r7 without lr.
 .syntax unified
 	.arm
 

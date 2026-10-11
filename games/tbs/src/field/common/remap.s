@@ -1,5 +1,4 @@
-@ A table of the handwritten routine beside it: it lives in the routine's text.
-	.text
+	.section .rodata
 	.global Runtime_ByteRemapTable
 Runtime_ByteRemapTable:
 	.incbin "field/common/remap0.table"

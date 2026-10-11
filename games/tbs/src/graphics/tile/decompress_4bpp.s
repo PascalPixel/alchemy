@@ -1,4 +1,9 @@
-@ C2: push saves r5/r6 without lr and rrx consumes reader carry.
+@ C2: Tile_Decompress4bpp:
+@ push saves r5/r6 without lr and rrx consumes reader carry.
+@ C2: Tile_Decompress4bppLoop:
+@ Conditional rrxs consumes the shift carry in the bit reader.
+@ C2: Tile_ExpandMasked:
+@ push saves r5-r9/sl without lr.
 .syntax unified
 .text
 	.arm
@@ -18,13 +23,12 @@ Tile_Decompress4bpp:
 	lsr	ip, ip, r6
 	b Tile_Decompress4bppLoop
 .syntax unified
-@ A table of the handwritten routine beside it: it lives in the routine's text.
-	.text
+	.section .rodata,"a",%progbits
 	.arm
 	.4byte 0xfedcba98
 	.4byte 0x76543210
-@ C2: Conditional rrxs consumes the shift carry in the bit reader.
 .syntax unified
+	.section .text.decompress_4bpp_loop,"ax",%progbits
 	.arm
 .L_08015b38:
 	orr	r2, r4, r3, lsr #28
@@ -190,9 +194,8 @@ Tile_Decompress4bppLoop:
 .L_08015d6c:
 	pop	{r5, r6}
 	bx	lr
-@ C2: push saves r5-r9/sl without lr.
 .syntax unified
-.text
+	.section .text.decompress_4bpp_loop,"ax",%progbits
 	.arm
 	.global Tile_ExpandMasked
 Tile_ExpandMasked:

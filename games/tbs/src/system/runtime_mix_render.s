@@ -1,5 +1,9 @@
-@ C2: Sound synthesis uses fp as packed volume/sample arithmetic and writes
+@ C2: IwramSoundRenderFrame to IwramSoundSynthWave:
+@ Sound synthesis uses fp as packed volume/sample arithmetic and writes
 @ computed mixed words with stmia r5! without a matching block-copy source.
+@ C2: IwramCopyWords:
+@ Computed add pc enters the unrolled copy body; r5-r9 are saved without
+@ lr.
 .syntax unified
 	.arm
 IwramSoundRenderFrame:
@@ -188,9 +192,8 @@ IwramSoundSynthWave:
 	.global IwramSoundMixWorkspace
 IwramSoundMixWorkspace:
 	.space 0x590, 0
-@ C2: Computed add pc enters the unrolled copy body; r5-r9 are saved without
-@ lr.
 .syntax unified
+	.section .text.runtime_copy_words,"ax",%progbits
 	.arm
 
 	.global IwramCopyWords

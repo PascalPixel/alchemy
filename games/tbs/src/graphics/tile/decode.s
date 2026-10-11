@@ -1,5 +1,18 @@
-@ C2: r11/fp is the mask 7 passed through the command linkage; the opening
+@ C2: BitDecoder_DecodeImage:
+@ r11/fp is the mask 7 passed through the command linkage; the opening
 @ str loop rewrites the command table used by ldr pc in its dispatcher.
+@ C2: Model_DispatchBitCommand:
+@ Dispatcher enters Model_BitCommands' shared r0/r2/r3 decoder linkage;
+@ bit_commands.s documents its unsaved r5 and ordinary fp mask.
+@ In this file itself: it is a two-instruction fragment of that decoder, with
+@ no prologue and no return of its own, and its tell is the computed pc into
+@ code. and ip, r3, #7 / ldr pc, [pc, ip, lsl #2] is unconditional and has
+@ no bounds test, where the compiler's casesi always emits cmp, ldrls pc and a
+@ default branch; the table it indexes starts after the nop, in the next
+@ object.
+@ C2: Model_BitCommands to Model_SetBitValue:
+@ entries share live r0/r2/r3 decoder state with their caller; delta
+@ entries update unsaved r5 and use r11/fp as a data mask.
 .syntax unified
 .text
 	.arm
@@ -60,21 +73,12 @@ BitDecoder_DecodeImage:
 	bne .L_080b517c
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-@ A table of the handwritten routine beside it: it lives in the routine's text.
-	.text
+	.section .rodata
 	.balign 4
 @ BitDecoder_DecodeImage の定数
 	.4byte 0x60606060, Model_DispatchHandlers
-@ C2: Dispatcher enters Model_BitCommands' shared r0/r2/r3 decoder linkage;
-@ bit_commands.s documents its unsaved r5 and ordinary fp mask.
-@ In this file itself: it is a two-instruction fragment of that decoder, with
-@ no prologue and no return of its own, and its tell is the computed pc into
-@ code. and ip, r3, #7 / ldr pc, [pc, ip, lsl #2] is unconditional and has
-@ no bounds test, where the compiler's casesi always emits cmp, ldrls pc and a
-@ default branch; the table it indexes starts after the nop, in the next
-@ object.
 .syntax unified
-.text
+	.section .text.bit_dispatch,"ax",%progbits
 	.arm
 	.global Model_DispatchBitCommand
 Model_DispatchBitCommand:
@@ -83,8 +87,7 @@ Model_DispatchBitCommand:
 AlchemyUncredited_080b5214:
 	nop
 AlchemyUncreditedEnd_080b5214:
-@ A table of the handwritten routine beside it: it lives in the routine's text.
-	.text
+	.section .data,"aw",%progbits
 	.balign 4
 @ IWRAM の写しで実行時に埋まる分岐先
 	.space 32, 0
@@ -92,10 +95,8 @@ AlchemyUncreditedEnd_080b5214:
 Model_DispatchHandlers:
 	.4byte Model_BitCommands, Model_AddShortDelta, Model_AddSignedDelta, Model_AddLongDelta
 	.4byte Model_BitCommands, Model_SubtractShortDelta, Model_SetBitValue, Model_SubtractLongDelta
-@ C2: entries share live r0/r2/r3 decoder state with their caller; delta
-@ entries update unsaved r5 and use r11/fp as a data mask.
 .syntax unified
-.text
+	.section .text.bit_commands,"ax",%progbits
 	.arm
 	.global Model_BitCommands
 	.global Model_AddShortDelta

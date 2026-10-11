@@ -1,4 +1,21 @@
-@ C2: msr CPSR_fc selects IRQ and system modes before their stack setup.
+@ C2: System_Entry:
+@ msr CPSR_fc selects IRQ and system modes before their stack setup.
+@ C2: IwramCodeRecords:
+@ fp is a packed sample operand in arithmetic and rotates, not a frame
+@ pointer.
+@ C2: IwramCodeRecord1:
+@ fp is a packed sample operand in arithmetic and rotates, not a frame
+@ pointer.
+@ C2: IwramCodeRecord2:
+@ fp is a packed sample operand in arithmetic and rotates, not a frame
+@ pointer.
+@ C2: IwramCodeRecordsEnd:
+@ this unused packed-sample arithmetic suffix uses fp (r11) as an
+@ arithmetic and rotate operand, not a frame pointer.
+@ The final 152-byte preset record begins in the preceding object with
+@ four zeroing moves and a branch over this 132-byte suffix. The DMA loader
+@ copies the whole record; its known entry skips to the mixer continuation
+@ immediately after the copied record.
 .syntax unified
 .text
 	.arm
@@ -21,8 +38,6 @@ System_Entry:
 	.4byte 0x03007fa0
 	.4byte 0x03007ffc
 	.4byte System_Initialize
-@ C2: fp is a packed sample operand in arithmetic and rotates, not a frame
-@ pointer.
 .syntax unified
 .text
 	.arm
@@ -60,7 +75,7 @@ IwramCodeRecords:
 	add	r1, r1, r1, lsl #16
 	b	IwramCodeRecord1
 .syntax unified
-	.text	@ padding: carries no credit
+	.section .padding,"a",%progbits
 	.arm
 	nop
 	nop
@@ -69,9 +84,8 @@ IwramCodeRecords:
 	nop
 	nop
 	nop
-@ C2: fp is a packed sample operand in arithmetic and rotates, not a frame
-@ pointer.
 .syntax unified
+	.section .text.resampler_kernels_1,"ax",%progbits
 	.arm
 	.global IwramCodeRecord1
 IwramCodeRecord1:
@@ -111,14 +125,13 @@ IwramCodeRecord1:
 	adds	r1, r7, r6, lsl #16
 	b	IwramCodeRecord2
 .syntax unified
-	.text	@ padding: carries no credit
+	.section .padding.resampler_kernels_pad_1,"a",%progbits
 	.arm
 	nop
 	nop
 	nop
-@ C2: fp is a packed sample operand in arithmetic and rotates, not a frame
-@ pointer.
 .syntax unified
+	.section .text.resampler_kernels_2,"ax",%progbits
 	.arm
 	.global IwramCodeRecord2
 IwramCodeRecord2:
@@ -205,14 +218,8 @@ IwramCodeRecord2:
 	mov	r3, #0
 	mov	r4, #0
 	b	IwramCodeRecordsEnd
-@ C2: this unused packed-sample arithmetic suffix uses fp (r11) as an
-@ arithmetic and rotate operand, not a frame pointer.
-@ The final 152-byte preset record begins in the preceding object with
-@ four zeroing moves and a branch over this 132-byte suffix. The DMA loader
-@ copies the whole record; its known entry skips to the mixer continuation
-@ immediately after the copied record.
 .syntax unified
-	.section .text,"ax",%progbits
+	.section .text.resampler_kernels_2,"ax",%progbits
 	.arm
 	adds	r7, r7, fp, asr #18
 	addmi	r7, r7, #64

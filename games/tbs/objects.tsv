@@ -2,24 +2,24 @@ image	place	object	sections	editions
 main	ewram	games/tbs/src/system/ram/ewram	.sym_ewram
 main	rom_start	games/tbs/src/system/rom_head
 main	rom_start	games/tbs/src/system/far_call/RUNTIME
-main	rom_start	games/tbs/src/system/entry
+main	rom_start	games/tbs/src/system/entry	.text .padding .text.resampler_kernels_1 .padding.resampler_kernels_pad_1 .text.resampler_kernels_2
 main	rom_start	games/tbs/src/sound/driver/channel_update_entry
 main	iwram_runtime	games/tbs/src/system/runtime
 main	iwram_runtime	games/tbs/src/system/runtime_irq_table
-main	iwram_runtime	games/tbs/src/system/runtime_mul_q16_ip
+main	iwram_runtime	games/tbs/src/system/runtime_mul_q16_ip	.text .data .text.runtime_divide
 main	iwram_runtime	games/tbs/src/system/runtime_mix
 main	iwram_runtime	games/tbs/src/system/runtime_mix_state
-main	iwram_runtime	games/tbs/src/system/runtime_mix_interpolate
+main	iwram_runtime	games/tbs/src/system/runtime_mix_interpolate	.text .data .text.runtime_mix_channel
 main	iwram_runtime	games/tbs/src/system/runtime_mix_mask
-main	iwram_runtime	games/tbs/src/system/runtime_mix_render
+main	iwram_runtime	games/tbs/src/system/runtime_mix_render	.text .data .text.runtime_copy_words
 main	iwram	games/tbs/src/system/ram/iwram	.sym_iwram
 main	rom_main_00	games/tbs/src/system/resource/decode_byte_lz
 main	rom_main_00	games/tbs/src/system/iwram_entry	.text
 main	rom_main_00	games/tbs/src/lib/trig
-main	rom_main_00	games/tbs/src/system/resource/decode_01
+main	rom_main_00	games/tbs/src/system/resource/decode_01	.text .rodata .text.decode_2_loop
 main	rom_main_00	games/tbs/src/system/heapfree	.text .text.* .rodata .data .padding
 main	rom_main_00	games/tbs/src/system/scheduler/callback	.text
-main	rom_main_00	games/tbs/src/system/cpu_set
+main	rom_main_00	games/tbs/src/system/cpu_set	.text .padding .text.sound_vsync_on
 main	rom_main_00	games/common/src/system/save/flash	.text
 main	rom_main_00	games/common/src/system/save/sst	.text
 main	rom_main_00	games/common/src/system/save/program_flash_sector	.text
@@ -44,7 +44,7 @@ main	rom_main_00	games/common/src/system/save/atmel	.rodata
 main	rom_main_01	games/tbs/src/system/far_call/FIELD
 main	rom_main_01	games/tbs/src/system/resource/colconv
 main	rom_main_01	games/tbs/src/field/common/remap
-main	rom_main_01	games/tbs/src/graphics/render/decode
+main	rom_main_01	games/tbs/src/graphics/render/decode	.text .data .text.draw_map
 main	rom_main_01	games/tbs/src/graphics/tile/vertices
 main	rom_main_01	games/tbs/src/graphics/tile/convert_map
 main	rom_main_01	games/tbs/src/field/common/object/update
@@ -64,10 +64,10 @@ main	rom_main_01	games/tbs/src/field/common/map/layered
 main	rom_main_02	games/tbs/src/system/far_call/WINDOW
 main	rom_main_02	games/tbs/src/graphics/text/decode_symbol
 main	rom_main_02	games/tbs/src/graphics/text/moji	.text
-main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp
-main	rom_main_02	games/tbs/src/graphics/tile/expand_masked_masks	.text
+main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp	.text .rodata .text.decompress_4bpp_loop
+main	rom_main_02	games/tbs/src/graphics/tile/expand_masked_masks	.rodata
 main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque
-main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque_masks	.text
+main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque_masks	.rodata
 main	rom_main_02	games/tbs/src/graphics/window/measure	.text
 main	rom_main_02	games/tbs/src/menu/slider	.rodata
 main	rom_main_02	games/tbs/src/graphics/ui/marks	.rodata
@@ -124,23 +124,27 @@ main	rom_main_06	games/tbs/src/menu/shop/sell
 main	rom_main_06	games/tbs/src/menu/shop/shopspr
 main	rom_main_06	games/tbs/src/menu/shop/shopdata
 main	rom_main_07	games/tbs/src/system/far_call/BATTLE
-main	rom_main_07	games/tbs/src/graphics/tile/decode
+main	rom_main_07	games/tbs/src/graphics/tile/decode	.text .rodata .text.bit_dispatch
+main	rom_main_07	games/tbs/src/graphics/tile/decode	.data .text.bit_commands
 main	rom_main_07	games/tbs/src/battle/tgtexec
 main	rom_main_07	games/tbs/src/battle/btldata
 main	rom_main_07	games/tbs/src/battle/presentation/advarrow
 main	rom_main_07	games/tbs/src/battle/btlvars
 main	rom_main_08	games/tbs/src/system/far_call/EFFECT
-main	rom_main_08	games/tbs/src/battle/effect/scenefx
-main	rom_main_08	games/tbs/src/battle/effect/fxscales
+main	rom_main_08	games/tbs/src/battle/effect/scenefx	.text
+main	rom_main_08	games/tbs/src/battle/effect/fxscales	.rodata
 main	rom_main_08	games/tbs/src/battle/effect/sentou_kouka_gousei
-main	rom_main_08	games/tbs/src/battle/effect/koukatbl
+main	rom_main_08	games/tbs/src/battle/effect/koukatbl	.rodata
 main	rom_main_08	games/tbs/src/battle/effect/sentou_kouka_gousei_iro
-main	rom_main_08	games/tbs/src/battle/effect/koukabit
+main	rom_main_08	games/tbs/src/battle/effect/koukabit	.rodata
 main	rom_main_09	games/tbs/src/system/far_call/SCROLL
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_sekiwa
-main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai
-main	rom_main_09	games/tbs/src/graphics/tile/slides
-main	rom_main_09	games/tbs/src/graphics/display/staffrol
+main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai	.rodata
+main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai	.text .data .text.sentou_kouka_tenkai_commands
+main	rom_main_09	games/tbs/src/graphics/tile/slides	.text
+main	rom_main_09	games/tbs/src/graphics/tile/slides	.rodata
+main	rom_main_09	games/tbs/src/graphics/tile/slides	.data
+main	rom_main_09	games/tbs/src/graphics/display/staffrol	.rodata
 main	rom_main_10	games/tbs/src/system/far_call/PALETTE
 main	rom_main_10	games/tbs/src/graphics/title/prompt
 main	rom_main_10	games/tbs/src/graphics/palette/tint
@@ -156,7 +160,7 @@ main	rom_main_13	games/tbs/src/sound/driver/umul_high	.rodata
 main	rom_main_13	games/tbs/src/sound/driver/umul_high	.data
 main	iwram_mixer	games/tbs/src/sound/driver/mixer
 main	iwram_high	games/tbs/src/system/ram/iwram_hi	.sym_iwram_high
-main	rom_tail_00	games/tbs/src/sound/driver/clear_buffer
+main	rom_tail_00	games/tbs/src/sound/driver/clear_buffer	.text .text.command_byte_reader .text.command_byte_setters
 main	rom_tail_00	games/common/src/sound/sound	.text
 main	rom_tail_00	games/tbs/src/system/sound_get_jump_list
 main	rom_tail_00	games/tbs/src/sound/engine	.text

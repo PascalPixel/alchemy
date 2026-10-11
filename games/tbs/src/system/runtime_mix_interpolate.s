@@ -1,5 +1,10 @@
-@ C2: fp is the sample multiplier in mla; addne pc,lr,#8 skips into the shared
+@ C2: IwramSoundMixInterpolated to IwramSoundMixDone:
+@ fp is the sample multiplier in mla; addne pc,lr,#8 skips into the shared
 @ caller continuation.
+@ C2: IwramSoundEndChannel to IwramSoundNormalizeChannels:
+@ Mixer blocks save r4/r9 without lr, use fp as a sample multiplier and
+@ switch instruction mode; normalize-channel code stores an instruction word
+@ through pc.
 .syntax unified
 	.arm
 	asr	r9, r9, #22
@@ -63,10 +68,8 @@ IwramSoundMixDone:
 	.section .data,"aw",%progbits
 	.arm
 	.space 0x0c, 0
-@ C2: Mixer blocks save r4/r9 without lr, use fp as a sample multiplier and
-@ switch instruction mode; normalize-channel code stores an instruction word
-@ through pc.
 .syntax unified
+	.section .text.runtime_mix_channel,"ax",%progbits
 	.thumb_func
 	.arm
 .L_audio_channel_end:

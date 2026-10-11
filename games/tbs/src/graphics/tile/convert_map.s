@@ -1,4 +1,7 @@
-@ C2: push saves r5-r8 without lr.
+@ C2: Tile_ConvertMap:
+@ push saves r5-r8 without lr.
+@ C2: Tile_CopyStrided:
+@ push saves r5-r9/sl/fp without lr; fp holds copied data.
 .syntax unified
 	.arm
 	.global Tile_ConvertMap
@@ -47,7 +50,6 @@ Tile_ConvertMap:
 	bx	lr
 	.global Tile_ConvertMapCodeSize
 	.set Tile_ConvertMapCodeSize, . - Tile_ConvertMap
-@ C2: push saves r5-r9/sl/fp without lr; fp holds copied data.
 .syntax unified
 	.arm
 	.global Tile_CopyStrided

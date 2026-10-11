@@ -1,4 +1,5 @@
-@ C2: smull ip, r0, r1, r0 and both smlal ip, r0, r2, r3 keep the 64-bit sum
+@ C2: SentouKouka_SekiWa:
+@ smull ip, r0, r1, r0 and both smlal ip, r0, r2, r3 keep the 64-bit sum
 @ with its low half in ip (r12) and its high half in r0. mulsidi3 and
 @ *mulsidi3adddi write a DI register pair, RdHi = RdLo + 1, earlyclobbered
 @ and so apart from the inputs; a pair whose low half is r12 would put its
@@ -10,6 +11,9 @@
 @ ldm sp, {r2, r3}, which reloads the two stack arguments into argument
 @ registers already consumed, has no writeback and is within the compiler's
 @ load-multiple patterns.
+@ C2: SentouKouka_Tenkai:
+@ r11/fp is the mask 7 passed through the command linkage; the opening
+@ str loop rewrites the command table used by ldr pc in its dispatcher.
 .syntax unified
 .text
 	.arm
@@ -22,8 +26,6 @@ SentouKouka_SekiWa:
 	lsl	r0, r0, #16
 	orr	r0, r0, ip, lsr #16
 	bx	lr
-@ C2: r11/fp is the mask 7 passed through the command linkage; the opening
-@ str loop rewrites the command table used by ldr pc in its dispatcher.
 .syntax unified
 .text
 	.arm

@@ -1,3 +1,7 @@
+#include "fieldobj.h"
+#include "types.h"
+#include "field_event.h"
+#include "field_scene.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -7,15 +11,59 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "iwram_call.h"
-#include "field_event.h"
-#include "field_scene.h"
 #include "tbs_edition.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
+#include "edition.h"
+#include "call.h"
+
+void ActorPresentation_MoveActorToPositionAndWait();
 
 #define NULL ((void *)0)
+
+void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+{
+    work->sprite->priority = mode;
+}
+
+void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourth)
+{
+    struct FieldActor *obj;
+    struct FieldSprite *rec;
+
+    obj = Engine_ObjectCreate(fourth, first, second, third);
+    if (obj != NULL) {
+        rec = obj->sprite;
+        rec->priority = 0;
+        obj->motion_flags = 0;
+        obj->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(obj, 0);
+        ObjectGroup_SetChildValue(obj, 0xE);
+        Engine_ObjectSetBlendMode(obj, 1);
+        return obj;
+    }
+    return NULL;
+}
+
+void *OverlayObject_CreateConfiguredObjectB(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+{
+    struct FieldActor *result = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
+
+    if (result != NULL) {
+        struct FieldSprite *object = result->sprite;
+
+        object->priority = 1;
+        result->motion_flags = 0;
+        result->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(result, 0);
+        ObjectGroup_SetChildValue(result, 15);
+        result->priority_flags = (result->priority_flags & 0xfe) | 2;
+        return result;
+    }
+    return NULL;
+}
+
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 struct EffectRecord {
@@ -57,10 +105,8 @@ struct SceneActor_02000350 {
     u8 active;
 };
 
-
 s32 SceneActor_GetPositionDistance(s32 *, s32 *);
 s32 ArcTan2(s32, s32);
-void ActorPresentation_MoveActorToPositionAndWait();
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 value);
 
 s32 SceneActor_GetPositionDistance(s32 *first_position, s32 *second_position)
@@ -479,4 +525,167 @@ void FieldScene_SetupScene10(void)
     Engine_AudioPlayCue(158);
     Engine_MapAnimateCells(KuupuappuMuraSai_Scene10Cells, 38, 6);
     SceneActor_PlaceAndSetSceneDelay(120, 144, 10);
+}
+
+void ActorPresentation_MoveActorToPositionAndWait();
+
+void ActorPresentation_SetupActorZeroForSceneTwelve(void)
+{
+    struct SceneActor_02000c1c *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct Presentation_02000c1c *presentation = actor->presentation;
+    u8 flags;
+
+    Engine_AudioPlayCue(158);
+    Engine_MapAnimateCells(KuupuappuMuraSai_Scene12Cells, 35, 9);
+    {
+        s32 cell = 4;
+        s32 row = 10;
+
+        Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
+    }
+    actor->state_23 &= ~1;
+    flags = presentation->flags;
+    flags |= 12;
+    presentation->flags = flags;
+    SceneActor_PlaceAndSetSceneDelay(72, 160, 12);
+}
+
+void SceneState_SetFlag200AndConfigureRegion55_26(void)
+{
+    Engine_GameFlagSet(0x200);
+    {
+        s32 a = 23;
+        s32 b = 26;
+        Engine_MapCopyCellAttributes(55, 26, 4, 2, a, b);
+    }
+}
+
+void ActorPresentation_SetFlag200AndSceneCell23(void)
+{
+    Engine_GameFlagClear(0x200);
+    {
+        s32 first_value = 23;
+        s32 second_value = 26;
+        Engine_MapCopyCellAttributes(23, 23, 4, 2, first_value, second_value);
+    }
+}
+
+void FieldScene_SetActor21Values0And4(void)
+{
+    BattleFx_RunPageEffectForSlot(21, 0, 4);
+}
+
+void FieldScene_RunActor18MotionSequence(void)
+{
+    u32 i;
+    s32 record;
+
+    PartyInventory_Discard(231);
+    Engine_EventBegin();
+    Engine_EventWait(10);
+    Engine_ActorRunRepeatedMotion(18, 2);
+    Actor_SetSpeed(18, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(18, 216, 0x198);
+    Engine_EventWait(10);
+    Actor_FaceDirection(18, 0x4000, 20);
+    Engine_ActorJump(18, 6, 0);
+    Engine_EventWait(30);
+    Engine_ActorJump(18, 6, 0);
+    Engine_EventWait(30);
+    Engine_ActorJump(18, 6, 0);
+    Engine_EventWait(30);
+    Actor_WalkToAndWait(18, 216, 0x188);
+    Engine_EventWait(10);
+    Actor_FaceDirection(18, 0x4000, 20);
+    GameFlag_Set(0x858);
+    Engine_EventEnd();
+}
+
+void ActorPresentation_SetPairedSceneCells(void)
+{
+    s32 v1 = 13;
+    s32 v2 = 25;
+
+    Engine_MapCopyCellAttributes(41, 43, 1, 1, v1, v2);
+    Engine_MapCopyCells(40, 42, 12, 22, 3, 3);
+}
+
+void ActorPresentation_SetAlternatePairedSceneCells(void)
+{
+    s32 v1 = 13;
+    s32 v2 = 25;
+
+    Engine_MapCopyCellAttributes(37, 43, 1, 1, v1, v2);
+    Engine_MapCopyCells(36, 42, 12, 22, 3, 3);
+}
+
+void FieldScene_RunActorEighteenDialogue(void)
+{
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgKuupuappuRuffRrruff2);
+    Engine_ActorSetAnimation(18, 0);
+    Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
+    Engine_EventWait(2);
+    Engine_EventShowMessage(18, 0);
+    Engine_ActorSetAnimation(18, 1);
+
+    if (PartyInventory_FindOwner(231) != -1 && Engine_GameFlagIsSet(0x858) == 0) {
+        ((struct SceneWork_02000e90 *)gEventWork)->actor18_marker = 1;
+    }
+
+    Engine_EventEnd();
+}
+
+void KuupuappuMuraSai_InspectWell(void)
+{
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
+    Engine_MessageShowCentered((s32)MsgKuupuappuCanHearWaterRumblingDown, 1);
+    Engine_EventEnd();
+}
+
+const u8 *SceneData_GetExtraTable(void)
+{
+    return KuupuappuMuraSai_Extras;
+}
+
+s32 SceneSetup_InitializeActorsAndFlags(void)
+{
+
+    struct FieldActor *actor;
+    s16 *scene;
+    s32 mode;
+
+    if (Engine_GameFlagIsSet(0x200))
+        Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);
+    OverlayObject_CreateConfiguredObjectB(0x800000, 0, 0x1a40000, 223);
+    Engine_MapCopyCells(45, 41, 8, 45, 3, 3);
+    Engine_TaskWait(1);
+    actor = Object_GetById(14);
+    actor->update = (void (*)(union FieldObject *))UpdateActorProximity;
+    {
+        struct FieldActor *actor = Object_GetById(14);
+        s32 mode = 1;
+        actor->timer = mode;
+    }
+    mode = 0;
+    actor = Object_GetById(15);
+    actor->update = (void (*)(union FieldObject *))UpdateActorProximity;
+    Object_GetById(15)->timer = mode;
+    if (Engine_GameFlagIsSet(0x858))
+        Actor_SetPosition(18, 0xd80000, 0x1880000);
+    if (gGameState.entrance <= 2 && !Engine_GameFlagIsSet(52)
+#if EDITION_INTERNATIONAL
+        && !Engine_GameFlagIsSet(0x109)
+#endif
+       )
+        Engine_GameFlagClear(0x867);
+    if (Engine_GameFlagIsSet(0x867) && !Engine_GameFlagIsSet(52))
+        Actor_SetPosition(21, 0x1980000, 0x780000);
+    scene = (s16 *)&gGameState;
+    if (scene[225] == 11)
+        Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
+    if (scene[225] == 13)
+        Engine_GameFlagClear(0x120);
+    return 0;
 }

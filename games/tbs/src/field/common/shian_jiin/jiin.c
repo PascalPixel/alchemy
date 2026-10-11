@@ -1,3 +1,7 @@
+#include "fieldobj.h"
+#include "types.h"
+#include "field_event.h"
+#include "field_scene.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -7,12 +11,112 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
-#include "field_event.h"
-#include "field_scene.h"
-#include "temple.h"
 #include "call.h"
 #include "text/msg_ids.h"
+
+void FieldScene_SpawnRandomizedParticle();
+
+extern struct EventWork *gEventWork;
+
+#define NULL ((void *)0)
+#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+#define ObjectMotion_CallThenWaitForAnimationChange_9(args...) ((void (*)())Engine_ActorSetAnimationAndWait)(args)
+
+struct Params {
+    s32 unused0;
+    s32 field1;
+    s32 field2;
+    s32 field3;
+    u8 pad[24];
+};
+
+struct Descriptor_02000484 {
+    u32 field0;
+    u8 unused[12];
+    u32 field16;
+    u32 field20;
+    u16 field24;
+    u16 unused26;
+    u32 field28;
+    u8 unused32[8];
+};
+
+struct Descriptor_020041ec {
+    u32 field0;
+    u32 field4;
+    u8 unused8[16];
+    u16 field24;
+    u8 unused26[6];
+    u8 unused32[8];
+};
+
+extern u8 ShianJiin_XianMessages[];
+
+s32 ArcTan2(s32, s32);
+
+void FieldScene_SpawnRandomizedParticle();
+void Effect_Spawn();
+void Effect_Spawn(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
+void ShianJiin_SpinAway(void);
+void ShianJiin_RunGatheringScene(void);
+void ShianJiin_RunMasterScene(s32 arg0);
+void ShianJiin_RunMasterScene(s32 variant);
+void ShianJiin_RunMasterScene();
+void FieldScene_RunOpeningAuxiliarySequence(s32 arg0, s32 arg1);
+void UiText_DrawQuantityPairWithCue();
+
+void FieldScene_RunForwardArcBurst(void);
+
+void FieldScene_RunDescentBurst(void);
+
+extern u8 ShianJiin_ActorTwelveScript[];
+extern u8 ShianJiin_CellStepsA[];
+extern u8 ShianJiin_CellStepsB[];
+extern u8 ShianJiin_CellStepsC[];
+extern u8 ShianJiin_ShotScript[];
+
+void SetEffectMode(struct FieldActor *work, u32 mode)
+{
+    work->sprite->priority = mode;
+}
+
+void *NewEffectObject(s32 first, s32 second, s32 third, s32 fourth)
+{
+    struct FieldActor *overlay_object;
+    struct FieldSprite *object_record;
+
+    overlay_object = Engine_ObjectCreate(fourth, first, second, third);
+    if (overlay_object != NULL) {
+        object_record = overlay_object->sprite;
+        object_record->priority = 0;
+        overlay_object->motion_flags = 0;
+        overlay_object->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(overlay_object, 0);
+        ObjectGroup_SetChildValue(overlay_object, 0xE);
+        Engine_ObjectSetBlendMode(overlay_object, 1);
+        return overlay_object;
+    }
+    return NULL;
+}
+
+void *NewFlippedEffectObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+{
+    struct FieldActor *result = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
+
+    if (result != NULL) {
+        struct FieldSprite *object = result->sprite;
+
+        object->priority = 1;
+        result->motion_flags = 0;
+        result->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(result, 0);
+        ObjectGroup_SetChildValue(result, 15);
+        result->priority_flags = (result->priority_flags & 0xfe) | 2;
+        return result;
+    }
+    return NULL;
+}
 
 #define FieldScene_PrepareActors ((void (*)(struct ScenePlacement*))FieldScene_PrepareActors)
 
@@ -22,12 +126,7 @@ extern const struct SceneEntrance gShianJiinEntrancesOther[];
 extern const struct ScenePlacement gShianJiinPlacements1[];
 extern const struct ScenePlacement gShianJiinPlacementsEntrance3[];
 extern struct ScenePlacement gShianJiinPlacements[];
-
-
-void Effect_Spawn();
 void BattleFx_PlayQueuedSound();
-void Engine_MapCopyCellAttributes();
-
 
 union SceneWord {
     s32 word;
@@ -38,12 +137,9 @@ void ShianJiin_WalkByFacing(void);
 
 void ShianJiin_WalkByFacing();
 
-
 extern const struct SceneEvent gShianJiinEvents1[];
 extern const struct SceneEvent gShianJiinEventsEntrance3[];
 extern const struct SceneEvent gShianJiinEvents[];
-
-
 
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
 

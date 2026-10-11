@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "probe.h"
-
+#include "mem.h"
 
 void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {
@@ -81,4 +81,45 @@ s32 OverlayObject_StepScaleUpSixteenFrames(struct FieldActor *o)
     o->scale_x = (n << 11) + 0x10000;
     o->scale_y = (n << 11) + 0x10000;
     return 1;
+}
+
+extern const s32 Makyuri_ScaleCounterScript[];
+
+void SceneState_ClearCurrentRecordAndReleaseTarget(void)
+{
+    s32 *rec = **(s32 ***)&((struct WorkPointers *)&gEventWork)->scene;
+    s32 *target;
+
+    if (rec[0] == 0) {
+        return;
+    }
+
+    rec[0] = 0;
+    Engine_GameFlagClear(0x161);
+
+    target = (s32 *)rec[5];
+    if (target != 0) {
+        *(short *)((u8 *)target + 0x64) = 0;
+        Engine_ObjectSetScript(target, (s32)Makyuri_ScaleCounterScript);
+        Object_SetMode(target, 7);
+        rec[5] = 0;
+    }
+}
+
+void OverlayObject_ReleasePublishedAttachmentB(void)
+{
+    u8 **slot = Runtime_AllocateBlock(35, 4);
+    u8 *state;
+    u8 *obj;
+
+    if (slot == 0)
+        return;
+
+    state = *slot;
+    obj = *(u8 **)(state + 20);
+    if (obj == 0)
+        return;
+
+    Engine_ObjectDispatchRelease(obj);
+    *(u8 **)(state + 20) = 0;
 }

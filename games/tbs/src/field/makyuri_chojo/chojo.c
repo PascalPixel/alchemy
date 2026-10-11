@@ -1,3 +1,9 @@
+#include "types.h"
+#include "field_event.h"
+#include "field_scene.h"
+#include "overlay_object.h"
+#include "create_configured_overlay_object.h"
+#include "global_cells.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -7,18 +13,62 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "global_cells.h"
-#include "types.h"
-#include "field_event.h"
-#include "field_scene.h"
-#include "overlay_object.h"
-#include "create_configured_overlay_object.h"
-#include "aerie.h"
 #include "iwram_call.h"
 #include "map_scroll.h"
 #include "call.h"
 #include "text/msg_ids.h"
 
+void MakyuriChojo_CollectBandSlots();
+
+#define NULL ((void *)0)
+
+extern const struct SceneEntrance gMakyuriChojoEntrances[];
+extern const u32 gMakyuriChojoExits[];
+extern const struct ScenePlacement gMakyuriChojoPlacements[];
+extern const struct SceneEvent gMakyuriChojoEvents[];
+
+extern s32 MakyuriChojo_NearestActor;
+
+s32 FixedPoint_Distance(s32 *first_position, s32 *second_position);
+void RunOverlayObjectCommand1(void *object, s32 command);
+void Owner_RefreshRatiosOnFlag();
+void BattleEffect_CleanupSceneObjects(void);
+void Audio_PlayCueFromEventWork();
+
+void MakyuriChojo_SinkActorPair(void);
+void MakyuriChojo_RiseActorPair(void);
+void MakyuriChojo_LowerCollectedActors(void);
+void MakyuriChojo_RaiseCollectedActors(void);
+
+void MakyuriChojo_SetSpritePriority(struct OverlayObject *object, s32 priority)
+{
+    struct FieldSpritePriority *sprite;
+
+    sprite = (struct FieldSpritePriority *)object->record;
+    sprite->priority = priority;
+}
+
+void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 type)
+{
+    struct FieldActor *object;
+
+    object = Engine_ObjectCreate(type, x, y, z);
+    if (object != NULL) {
+        ((struct FieldSpritePriority *)object->sprite)->priority = 0;
+        object->motion_flags = 0;
+        object->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(object, 0);
+        ObjectGroup_SetChildValue(object, 14);
+        RunOverlayObjectCommand1(object, 1);
+        return object;
+    }
+    return NULL;
+}
+
+void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+{
+#include "create_configured_overlay_object_body.inc"
+}
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, s32 *position);
@@ -41,8 +91,6 @@ struct ActorTable {
     u8 unknown_00[0x14];
     struct FieldActor *actors[66];
 };
-
-void MakyuriChojo_CollectBandSlots();
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -1607,7 +1655,6 @@ struct LampSpark {
     struct FieldActor *source;
     void (*update)();
 };
-
 
 void MakyuriChojo_FlickerActorEight(void)
 {

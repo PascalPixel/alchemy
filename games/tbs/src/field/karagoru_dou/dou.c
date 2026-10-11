@@ -15,12 +15,14 @@
 #include "field_effect.h"
 #include "text/msg_ids.h"
 
+#define NULL ((void *)0)
 
-void Engine_EventWait(s32 frames);
-void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
-void Engine_ActorWaitForMove(s32 actor);
-void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
-void Engine_ActorSetAnimation(s32 actor, s32 animation);
+enum StagedPairMessage {
+    MSG_WARRIORS_HAVE_BEEN_FIGHTING_WHILE = 0x23d2,
+    MSG_WE_MISSED_COLOSSO_BECAUSE_WE = 0x23d5,
+    MSG_IVE_BEEN_WAITING_FOR_ROBIN = 0x23d9,
+    MSG_WHY_GOING_BACK_ROBIN_DO = 0x23da
+};
 
 struct EffectRecord {
     u8 pad[9];
@@ -29,16 +31,67 @@ struct EffectRecord {
     u8 flags_hi : 4;
 };
 
+void SetEffectRecordMode(struct EffectWork *work, s32 mode)
+{
+    work->record->mode = mode;
+}
+
+void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind)
+{
+    u8 *effect = Engine_ObjectCreate(kind, x, y, z);
+
+    if (effect != NULL) {
+        u8 *sprite = *(u8 **)(effect + 0x50);
+        s32 sprite_flags;
+        s32 flag_mask = 13;
+
+        sprite_flags = sprite[9];
+        flag_mask = -flag_mask;
+        flag_mask &= sprite_flags;
+        sprite[9] = flag_mask;
+        effect[0x55] = 0;
+        effect[0x59] = 8;
+        Engine_ActorSetSpriteFlags(effect, 0);
+        ObjectGroup_SetChildValue(effect, 14);
+        Engine_ObjectSetBlendMode(effect, 1);
+        return effect;
+    }
+    return NULL;
+}
+
+void *StagedActorPairScene_SpawnSecondaryEffect(s32 x, s32 y, s32 z, s32 kind)
+{
+    u8 *effect = Engine_ObjectCreate(kind, x, y, z);
+
+    if (effect != NULL) {
+        u8 *sprite = *(u8 **)(effect + 0x50);
+        s32 sprite_flags;
+        s32 flag_mask = 13;
+
+        sprite_flags = sprite[9];
+        flag_mask = -flag_mask;
+        flag_mask &= sprite_flags;
+        flag_mask |= 4;
+        sprite[9] = flag_mask;
+        effect[0x55] = 0;
+        effect[0x59] = 8;
+        Engine_ActorSetSpriteFlags(effect, 0);
+        ObjectGroup_SetChildValue(effect, 15);
+        effect[0x23] = (effect[0x23] & 0xfe) | 2;
+        return effect;
+    }
+    return NULL;
+}
+
+void Engine_EventWait(s32 frames);
+void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
+void Engine_ActorWaitForMove(s32 actor);
+void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
+void Engine_ActorSetAnimation(s32 actor, s32 animation);
+
 union SpinningActor {
     union FieldObject object;
     struct StagedActor staged;
-};
-
-enum StagedPairMessage {
-    MSG_WARRIORS_HAVE_BEEN_FIGHTING_WHILE = 0x23d2,
-    MSG_WE_MISSED_COLOSSO_BECAUSE_WE = 0x23d5,
-    MSG_IVE_BEEN_WAITING_FOR_ROBIN = 0x23d9,
-    MSG_WHY_GOING_BACK_ROBIN_DO = 0x23da
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void)

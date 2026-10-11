@@ -15,13 +15,38 @@
 #include "field_service.h"
 #include "field_scene.h"
 #include "staged_actor.h"
-#include "kawa.h"
 #include "call.h"
 #include "resource_ids.h"
 #include "text/msg_ids.h"
+#include "battle_unit.h"
+#include "resource.h"
+#include "object_runtime.h"
+
+s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b);
+void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
+void KorosseoKawa_ReleaseMarker(void);
+void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c);
+void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b);
+void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration);
+void SceneState_SendIdBySceneId(s32 speaker, s32 competitor);
+void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style);
+
+struct FieldActor;
+
+void *UnitGet(u32 owner);
+
+typedef struct Position3 {
+    s32 x;
+    s32 y;
+    s32 z;
+} Position3;
+
+struct FieldActor *SceneActor_FindSlotAtTilePosition(
+    Position3 *pos, struct FieldActor *subject);
+struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void);
+void SceneActor_MarkObjectAtTiles94To95(s32 actor);
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
-
 
 #define ObjectDispatch_InitFromTable4WithArgument ((void (*)(s32,struct FieldActor*))ObjectDispatch_InitFromTable4WithArgument)
 #define FieldScene_BuildSceneDescriptorAndInstallTask ((s32 (*)(s32,s32,s32,s32,s32,s32,s32))FieldScene_BuildSceneDescriptorAndInstallTask)
@@ -82,13 +107,9 @@ void Script_WaitForEventTimeout(struct FieldActor *);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
-
-s32 FieldScene_RunMiddleSequence();
-s32 SceneState_StoreParamsAndInitTable();
 s32 Korosseo_FadeInCompetitor();
 
 void StagedActor_PushActorAhead(void);
-s32 FieldScene_RunFlag211ApproachScene();
 void Object_RefreshSelectorById(s32 actor);
 s32 BattleFx_SetWeightedResult();
 s32 Party_SetFields1ceAnd1d0();
@@ -98,36 +119,12 @@ void FieldScene_RunLateSequence(s32 a0);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
 void Korosseo_SelectSoloCompetitor(s32 index);
-void Object_LinkObjectAndSetCallback(s32 actor, s32 leader);
 void FieldScene_RunOpeningAuxiliarySequence(void);
 
 void Korosseo_FinishSoloRound();
-void Engine_EventBegin();
 s32 SceneDialogue_RunFlagGatedPromptInteraction();
-void Engine_EventSetMessage();
-void Engine_CameraSetSpeed();
-void Engine_CameraMoveTo();
-void Engine_CameraWaitForMove();
-void Engine_EventShowMessage();
-void Engine_ActorSetSpeed();
-void Engine_ActorWalkToAndWait();
-void Engine_EventWait();
-void Engine_ActorShowEmote();
-void Engine_ActorFaceDirection();
-s32 OverlayObject_PlaceWithScale14000();
 void StagedActor_PushActorAhead();
-void Engine_ActorSetAnimation();
 void Korosseo_RestoreCompetitor();
-void Engine_CameraFollowActor();
-void Engine_ActorSetPosition();
-void SceneState_SendIdBySceneId();
-void Engine_EventEnd();
-void SceneState_InitTableWordsAndLoad3200();
-void KorosseoKawa_ReleaseMarker();
-void Engine_ObjectSetPosition();
-
-void SceneState_SendIdBySceneId(s32 a, s32 b);
-void KorosseoKawa_ReleaseMarker(void);
 
 u8 *KorosseoKawa_GetEntrances(void)
 {
@@ -626,6 +623,7 @@ void SceneActor_MarkObjectAtTiles94To95(s32 actor)
 
 s32 KorosseoKawa_ApplyEntryState(void)
 {
+	void Object_LinkObjectAndSetCallback(s32 actor, s32 leader);
     struct FieldActor *actor;
     s32 hit;
     s32 x;
@@ -1127,4 +1125,920 @@ void SceneActor_PlaceSlots1To3FromWork(void)
         y += 0x80000;
         Engine_ActorSetPosition(MEARI, x, y);
     }
+}
+
+void Korosseo_SelectSoloCompetitor(s32);
+
+void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
+
+void SceneState_RaiseTriggerOnPsynergyTarget(void)
+{
+    struct EventWork *work = gEventWork;
+    s32 sel = gGameState.selected_actor;
+
+    if (sel != 0 && (work->psynergy_request >> 10) == sel
+        && Engine_GameFlagIsSet(321) != 0) {
+        u16 *p = (u16 *)&work->raised_trigger;
+        s32 val = 99;
+
+        *p = val;
+    }
+}
+
+void FieldScene_RunNearestActor165Scene(void)
+{
+
+    u8 *state = (u8 *)gEventWork;
+    s32 best = 8;
+    s32 bestd = 0x100000;
+    s32 n = gGameState.selected_actor;
+    struct FieldActor *p = Object_GetById(n);
+    s32 i;
+    s32 *q;
+    s32 base;
+
+    Engine_EventBegin();
+    for (i = 8; i <= 66; i++) {
+        struct FieldActor *o = Object_GetById(i);
+
+        if (o != 0 && o->active == 1 && ((struct AnimationObject *)o->sprite)->entries[0]->anim_id == 165) {
+            s32 dx = (p->x.fixed - o->x.fixed) / 65536;
+            s32 dy = (p->z.fixed - o->z.fixed) / 65536;
+
+            if (dy <= 0) {
+                s32 a = dx;
+                s32 d;
+
+                if (a < 0) a = -a;
+                if (dy < 0) dy = -dy;
+                d = a + dy;
+                if (d < bestd) {
+                    best = i;
+                    bestd = d;
+                }
+            }
+        }
+    }
+    Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
+    Engine_EventShowMessage(best, 0);
+    q = &((struct EventWork *)state)->start_transition;
+    *q = 512;
+    ((struct EventWork *)state)->transition_frames = 15;
+    Engine_EventWait(20);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    base = n << 4;
+    GameFlag_SetByte(base + 880, p->x.fixed >> 20);
+    {
+        s32 v = p->z.fixed >> 20;
+
+        GameFlag_SetByte(base + 888, v);
+    }
+    n++;
+    if (n > 3) {
+        Engine_EventRequestExit(10);
+        Engine_GameFlagSet(282);
+    } else {
+        Korosseo_SelectSoloCompetitor(n);
+        Engine_EventOpenScreen();
+        Engine_EventWaitForScreen();
+        *q = 0;
+    }
+    Engine_EventEnd();
+}
+
+#define PartyTalkMenu_Choose ((s32 (*)(s32))PartyTalkMenu_Choose)
+
+static inline void InitializeActorZero(void)
+{
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+}
+
+static inline void InitializeSelectedActor(s32 actorId)
+{
+    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
+}
+
+static __inline__ void AdvanceMessage(s32 amount)
+{
+    gEventWork->message += amount;
+}
+
+void Battle_ResetEffectCounter(void);
+void UiWork_PushValueSlot(s32 value, s32 digits);
+
+void Party_RemoveActiveOwner();
+void Party_AddActiveOwner();
+void UiWork_PushValueSlot();
+void GameFlag_SetByte();
+s32 Menu_OpenCharacterSelector();
+void Inventory_AddItem(s32, s32);
+
+void RunPartyCountInteraction(s32 actorId)
+{
+    PartyInteractionRecord *record;
+    s32 x;
+    s32 y;
+
+    record = ((PartyInteractionRecord * (*)(void))Object_GetById)();
+    x = record->x;
+    y = record->y;
+    Engine_EventBegin();
+
+    if (GetPartyMemberCount() <= 1) {
+        Engine_EventSetMessage((s32)MsgKorosseoRobinDidGetGoodLook);
+        if (Engine_EventAskYesNo(actorId, 0) == 0) {
+            InitializeActorZero();
+            InitializeSelectedActor(actorId);
+            Engine_ActorWalkTo(actorId, x, y + 0x40);
+            Engine_EventWait(15);
+            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y);
+            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
+            Engine_EventCloseScreen();
+            Engine_EventWaitForScreen();
+            Engine_EventRequestExit(11);
+        }
+    } else {
+        Engine_EventSetMessage((s32)MsgKorosseoWaitShouldntDecideWhereBest);
+        Engine_EventShowMessage(actorId, 0);
+    }
+
+    Engine_EventEnd();
+}
+
+void FieldScene_RunSixSteps380To3A8(void)
+{
+    GameFlag_SetByte(896, 0);
+    GameFlag_SetByte(904, 0);
+    GameFlag_SetByte(912, 0);
+    GameFlag_SetByte(920, 0);
+    GameFlag_SetByte(928, 0);
+    GameFlag_SetByte(936, 0);
+}
+
+s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
+{
+    s32 scene;
+    s32 message;
+    s32 choice;
+
+    Battle_ResetEffectCounter();
+    UiWork_PushValueSlot(competitor, 5);
+    scene = gGameState.scene;
+    if (scene == (s32)&SceneId_KorosseoKawa) {
+        message = (s32)MsgKorosseoStageFirstFinalsMatch;
+    } else if (scene == (s32)&SceneId_KorosseoKabe) {
+        message = (s32)MsgKorosseoStageSecondFinalsMatch;
+    } else {
+        message = (s32)MsgKorosseoStageThirdFinalsMatch;
+    }
+    Engine_EventSetMessage(message);
+    Engine_EventShowMessage(speaker, 0);
+    if (Engine_GameFlagIsSet(competitor + 512) != 0) {
+        return 2;
+    }
+    if (Engine_GameFlagIsSet(competitor + 520) != 0) {
+        choice = PartyTalkMenu_Choose(0);
+        if (choice == 1) {
+            return 2;
+        }
+        if (choice == 2 || choice == -1) {
+            return 3;
+        }
+        return choice;
+    }
+    Engine_GameFlagSet(competitor + 520);
+    Engine_EventSetMessage((s32)MsgKorosseoWouldYouLikeHearDescription);
+    Engine_EventOpenMessage(speaker, 0);
+    return Engine_EventChooseYesNo(0, 0);
+}
+
+void SceneState_SendIdBySceneId(s32 speaker, s32 competitor)
+{
+    s32 scene;
+    s32 message;
+
+    UiWork_PushValueSlot(competitor, 5);
+    scene = gGameState.scene;
+    if (scene == (s32)&SceneId_KorosseoKawa) {
+        message = (s32)MsgKorosseoStageFirstFinalsMatch;
+    } else if (scene == (s32)&SceneId_KorosseoKabe) {
+        message = (s32)MsgKorosseoStageSecondFinalsMatch;
+    } else {
+        message = (s32)MsgKorosseoStageThirdFinalsMatch;
+    }
+    Engine_EventSetMessage(message + 1);
+    Engine_EventShowMessage(speaker, 0);
+}
+
+void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
+{
+	void Object_LinkObjectAndSetCallback();
+
+    struct FieldActor *rec;
+    struct FieldActor *record;
+    s32 p9;
+    s32 p11;
+    s32 count;
+    s32 state;
+    s32 obj;
+    s32 hi;
+    s32 lo;
+    s32 tail;
+    s32 sx;
+    s32 sy;
+    s32 i;
+    u8 buf[8];
+
+    rec = (s32)Object_GetById(owner);
+    p9 = rec->x.part.pixel;
+    p11 = rec->z.part.pixel;
+    if (mode != 3) {
+        count = GetPartyMemberCount();
+        for (i = 0; i < count; i++) {
+            buf[i] = gGameState.active_owners[i];
+        }
+        if (count <= 1) {
+            Engine_EventSetMessage((s32)MsgKorosseoDoYourBest);
+            Event_ShowMessage(owner, 0);
+            return;
+        }
+        if (GameFlag_IsSet(base + 512) != 0) {
+            Engine_EventSetMessage((s32)MsgKorosseoUnfortunatelyWeHaveFullHouse);
+            Event_ShowMessage(owner, 0);
+            return;
+        }
+        if (mode == 2) {
+            state = 0;
+            Engine_TaskWait(6);
+        } else {
+            Engine_EventSetMessage((s32)MsgKorosseoWouldLikeFriendCheerFor);
+            Event_OpenMessage(owner, 0);
+            state = Engine_EventChooseYesNo(0, 0);
+        }
+        if (state == 0) {
+            if (state < count) {
+                for (i = 0; i < count; i++) {
+                    Party_RemoveActiveOwner((s32)(s8)buf[i]);
+                }
+            }
+            for (i = 0; i < count; i++) {
+                if ((s32)(s8)buf[i] != 0) {
+                    Party_AddActiveOwner((s32)(s8)buf[i]);
+                }
+            }
+            obj = Menu_OpenCharacterSelector();
+            for (i = 0; i < count; i++) {
+                Party_RemoveActiveOwner((s32)(s8)buf[i]);
+            }
+            for (i = 0; i < count; i++) {
+                Party_AddActiveOwner((s32)(s8)buf[i]);
+            }
+            if (obj != -1) {
+                goto L_main;
+            }
+        }
+    }
+    Engine_EventSetMessage((s32)MsgKorosseoIfKnowWhoWantCheer);
+    Event_ShowMessage(owner, 0);
+    return;
+L_main:
+    UiWork_PushValueSlot(obj, 1);
+    Engine_EventSetMessage((s32)MsgKorosseoRobinWillCheerForWay);
+    Event_ShowMessage(owner, 0);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_SetSpeed(obj, 0x10000, 0x8000);
+    Actor_SetSpeed(owner, 0x10000, 0x8000);
+    record = (s32)Object_GetById(0);
+    if (record != 0) {
+        Actor_SetPosition(obj, record->x.fixed, record->z.fixed);
+    }
+    hi = p11 + 16;
+    Actor_WalkToAndWait(obj, p9, hi);
+    lo = p9 + 16;
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, lo, hi);
+    Engine_ActorFaceEachOther(obj, 0, 30);
+    Engine_ActorSetAnimation(obj, 3);
+    tail = hi - 32;
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Actor_WalkToAndWait(owner, p9, tail);
+    Actor_WalkTo(owner, lo, tail);
+    Object_LinkObjectAndSetCallback(0, obj);
+    Actor_WalkToAndWait(obj, p9, tail);
+    Engine_ActorSetAnimation(owner, 1);
+    Actor_FaceDirection(owner, 0x8000, 0);
+    Actor_WalkToAndWait(obj, p9, p11 - 48);
+    Actor_WalkToAndWait(owner, p9, tail);
+    Actor_WalkToAndWait(owner, p9, p11);
+    Party_RemoveActiveOwner(obj);
+    Engine_GameFlagSet(base + 512);
+    rec = (s32)Object_GetById(obj);
+    sx = rec->x.fixed >> 20;
+    GameFlag_SetByte((obj << 4) + 880, sx);
+    sy = rec->z.fixed >> 20;
+    GameFlag_SetByte((obj << 4) + 888, sy);
+}
+
+void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b)
+{
+    struct BtlUnit *t = UnitGet(a);
+    s32 i;
+
+    Inventory_AddItem(a, b);
+    for (i = 0; i <= 14; i++) {
+        if (t->inventory[i] == b) {
+            Inventory_Equip(a, i);
+        }
+    }
+}
+
+struct ModeRecord;
+
+extern u16 Korosseo_ModeTaskMode;
+extern u16 Korosseo_ModeTaskParam;
+extern u16 Korosseo_ModeTaskTimer;
+extern s32 Korosseo_ModeTaskScript;
+extern u16 Korosseo_ModeMoveTarget;
+extern u16 Korosseo_ModeMoveDuration;
+extern s32 Korosseo_ModeTaskPosition;
+void Korosseo_UpdateModeTask(void);
+void Korosseo_LoadPortrait(s32);
+s32 AudioCommand_GetStateByte(void);
+void Audio_PlayCueFromEventWork(void);
+void Korosseo_LoadPortrait();
+s32 AudioCommand_GetStateByte();
+
+void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
+{
+    s32 handler;
+
+    Korosseo_ModeTaskMode = (u16)mode;
+    Korosseo_ModeTaskParam = (u16)(param << 4);
+
+    Engine_TaskAddCallback((s32)(Korosseo_UpdateModeTask), 0xc80);
+
+    handler = (s32)KorosseoKawa_RoundSpans;
+    if (mode == 2) {
+        handler = (s32)KorosseoKawa_ModeRecordTwo;
+    }
+    if (mode == 4) {
+        handler = (s32)KorosseoKawa_ModeRecordFour;
+    }
+    if (mode == 3) {
+        if (param != 0) {
+            handler = (s32)&KorosseoKawa_SpanB;
+        } else {
+            handler = (s32)&KorosseoKawa_SpanA;
+        }
+    }
+
+    Korosseo_ModeTaskTimer = 0;
+    Korosseo_ModeTaskScript = handler;
+    Korosseo_ModeMoveTarget = 0;
+    Korosseo_ModeMoveDuration = 0;
+    Korosseo_ModeTaskPosition = 0;
+}
+
+void FieldScene_RunTwoArmSequence(s32 a)
+{
+    if (a == 0) {
+        Engine_EventBegin();
+        Engine_EventOpenScreen();
+        Engine_EventWaitForScreen();
+        Engine_EventWait(30);
+        Engine_AudioPlayCue(89);
+        Korosseo_LoadPortrait(0);
+        SceneData_SelectBlockAndResetCounters(1, 0);
+        Engine_EventWait(120);
+        Engine_EventEnd();
+    } else {
+        Engine_AudioPlayCue(247);
+        Engine_EventBegin();
+        Engine_EventOpenScreen();
+        Engine_EventWaitForScreen();
+        KorosseoKawa_RoundSpans[15] = a * 60;
+        Engine_EventWait(30);
+        Engine_AudioPlayCue(a + 90);
+        Korosseo_LoadPortrait(a);
+        SceneData_SelectBlockAndResetCounters(1, 0);
+        Engine_EventWait(120);
+        while (AudioCommand_GetStateByte() != 0) {
+            Engine_TaskWait(1);
+        }
+        Engine_AudioPlayCue(0x121);
+        Korosseo_LoadPortrait(5);
+        SceneData_SelectBlockAndResetCounters(2, 0);
+        Engine_AudioPlayCue(236);
+        Engine_EventWait(60);
+        SceneData_SelectBlockAndResetCounters(2, 1);
+        Engine_AudioPlayCue(236);
+        Engine_EventWait(60);
+        Korosseo_LoadPortrait(6);
+        SceneData_SelectBlockAndResetCounters(2, 0);
+        Engine_AudioPlayCue(236);
+        Engine_EventWait(60);
+        Korosseo_LoadPortrait(7);
+        SceneData_SelectBlockAndResetCounters(4, 0);
+        Engine_AudioPlayCue(237);
+        Audio_PlayCueFromEventWork();
+        Engine_EventEnd();
+        Engine_GameFlagSet(0x123);
+    }
+}
+
+void FieldScene_RunLateSequence(s32 a0)
+{
+    void Engine_TaskWait();
+
+    s32 kind;
+
+    Engine_AudioPlayCue(247);
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
+    KorosseoKawa_SpanA.span = a0 * 60;
+    KorosseoKawa_SpanB.span = (a0 < 0 ? -a0 : a0) * 60;
+    if (a0 < 0) {
+        Engine_EventWait(30);
+        Engine_AudioPlayCue(86);
+        Korosseo_LoadPortrait(8);
+        /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
+        Value2(SceneData_SelectBlockAndResetCounters, 3, 1);
+        Engine_EventWait(-a0 * 60 + 60);
+        kind = 0;
+    } else {
+        Engine_EventWait(30);
+        Engine_AudioPlayCue(a0 + 90);
+        Korosseo_LoadPortrait(4);
+        /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
+        Value2(SceneData_SelectBlockAndResetCounters, 3, 0);
+        Engine_EventWait(a0 * 60 + 60);
+        kind = 8;
+    }
+    Engine_ActorShowEmote(kind, 0x105, 0);
+    while (AudioCommand_GetStateByte()!= 0) {
+        Engine_TaskWait(1);
+    }
+    Engine_AudioPlayCue(19);
+    Engine_EventWait(30);
+    Engine_AudioPlayCue(0x121);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+}
+
+extern s16 Korosseo_MarkerSlot;
+s16 Resource_LoadFixedBlockBIntoFreeSlot(void);
+void ObjectDispatch_InitFromTable6(struct FieldActor *);
+
+void OverlayObject_ResetMotionFields(s32 actor)
+{
+    struct FieldActor *o = Object_GetById(actor);
+
+    ObjectDispatch_InitFromTable6(o);
+    o->velocity_x = 0;
+    o->velocity_z = 0;
+    o->target_x = ACTOR_NO_TARGET;
+    o->target_z = ACTOR_NO_TARGET;
+}
+
+void KorosseoKawa_EnsureMarkerSlot(void)
+{
+
+    if (Korosseo_MarkerSlot == -1) {
+        Korosseo_MarkerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
+    }
+}
+
+extern u16 Korosseo_MarkerX;
+extern u16 Korosseo_MarkerY;
+extern u16 Korosseo_MarkerPriority;
+extern u16 Korosseo_MarkerBlink;
+extern u16 Korosseo_MarkerSteps;
+extern u16 Korosseo_MarkerEndX;
+extern u16 Korosseo_MarkerEndY;
+extern u16 Korosseo_MarkerStartX;
+extern u16 Korosseo_MarkerStartY;
+extern u16 Korosseo_MarkerStep;
+void Korosseo_UpdateMarker(void);
+
+void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
+{
+    KorosseoKawa_EnsureMarkerSlot();
+
+    Korosseo_MarkerX = (u16)x;
+    Korosseo_MarkerY = (u16)y;
+    Korosseo_MarkerPriority = (u16)(style & 3);
+    Korosseo_MarkerBlink = 0;
+    Korosseo_MarkerSteps = 0;
+
+    Engine_TaskAddCallback((s32)(Korosseo_UpdateMarker), 0xc80);
+}
+
+void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
+{
+    Korosseo_MarkerEndX = (u16)x;
+    Korosseo_MarkerEndY = (u16)y;
+    Korosseo_MarkerStartX = Korosseo_MarkerX;
+    Korosseo_MarkerStartY = Korosseo_MarkerY;
+    Korosseo_MarkerSteps = (u16)duration;
+    Korosseo_MarkerStep = 0;
+
+    Engine_TaskAddCallback((s32)(Korosseo_UpdateMarker), 0xc80);
+}
+
+void KorosseoKawa_ReleaseMarker(void)
+{
+
+    Engine_TaskRemoveCallback(Korosseo_UpdateMarker);
+    Resource_ResetEntry(Korosseo_MarkerSlot);
+    Korosseo_MarkerSlot = -1;
+}
+
+void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
+{
+    struct FieldActor *o = Engine_ActorLookup(a);
+
+    if (o != 0) {
+        s32 v = 0x20000;
+        s32 z = 0;
+
+        o->speed = v;
+        o->acceleration = v >> 1;
+        o->paused = z;
+        ObjectDispatch_InitFromTable6(o);
+        Object_SetMode(o, 5);
+        Engine_ObjectSetPosition(o, b << 16, o->y.fixed, c << 16);
+    }
+}
+
+void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c)
+{
+    struct FieldActor *o = Engine_ActorLookup(a);
+
+    if (o != 0) {
+        s32 v = 0x14000;
+        s32 z = 0;
+
+        o->speed = v;
+        o->acceleration = v >> 1;
+        o->paused = z;
+        ObjectDispatch_InitFromTable6(o);
+        Object_SetMode(o, 5);
+        Engine_ObjectSetPosition(o, b << 16, o->y.fixed, c << 16);
+        Script_WaitForEventTimeout(o);
+        Object_SetMode(o, 1);
+    }
+}
+
+void ObjectDispatch_WaitForValue16();
+
+void Text_WriteU32AsHex(u8 *buf, u32 value)
+{
+    s32 i;
+
+    buf += 8;
+    *buf = 0;
+    buf--;
+    for (i = 7; i >= 0; i--) {
+        *buf = HexDigits[value & 15];
+        value >>= 4;
+        buf--;
+    }
+}
+
+void Resource3ba_NoOpCallback(void)
+{
+}
+
+void KorosseoKawa_MarkStageReady(void)
+{
+    s16 *ready = (s16 *)gSceneState;
+    u16 nine = 9;
+
+    *ready = nine;
+}
+
+void KorosseoKawa_WaitForStageReady(void)
+{
+    s16 *ready = (s16 *)gSceneState;
+
+    while (*ready != 9) {
+        Engine_TaskWait(1);
+    }
+}
+
+void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
+{
+    s32 t[3];
+    u32 n;
+
+    if (a->velocity_y >= -255 && a->velocity_y <= 255) {
+        a->motion_flags = 0;
+    }
+    n = Engine_RandomNext();
+    if (n * 100 >> 16 <= 9) {
+        struct FieldActor *o;
+        s32 u;
+        s32 w;
+
+        t[0] = a->x.fixed;
+        t[1] = a->y.fixed;
+        t[2] = a->z.fixed;
+        u = Engine_RandomNext();
+        w = Engine_RandomNext();
+        Vector_AddPolarOffset(u << 4, w, t);
+        {
+            s32 x = t[0];
+            s32 y = t[1];
+            s32 z = t[2];
+
+            o = Engine_ObjectCreate(285, x, y, z);
+        }
+        if (o != 0) {
+            o->motion_flags = 0;
+            Engine_ActorSetSpriteFlags(o, 0);
+            Engine_ObjectSetScript(o, (s32)KorosseoKawa_ScriptA);
+            Object_SetMode(o, 1);
+            Object_SetMode(o, 0);
+        }
+    }
+}
+
+s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a)
+{
+    struct FieldActor *o = Object_GetById(a->timer);
+
+    Engine_ObjectSetPosition(o, a->x.fixed, a->y.fixed + 0x240000, a->z.fixed);
+    o->motion_flags = 0;
+    Engine_ObjectSetScript(o, (s32)KorosseoKawa_ScriptB);
+    Engine_AudioPlayCue(83);
+    a->timer = 0;
+    return 0;
+}
+
+s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
+{
+
+    u8 *work = gKorosseoWork;
+    u8 *shared;
+    struct FieldActor *rec;
+    s32 flag;
+    s32 x;
+    s32 z;
+    u16 *cuep;
+    s16 *waitp;
+
+    flag = Engine_GameFlagIsSet(0x211);
+
+    shared = (u8 *)&gGameState;
+    rec = Object_GetById(((struct GameState *)shared)->selected_actor);
+
+    if (*(s32 *)(work + 232) < rec->x.fixed) {
+        x = *(s32 *)(work + 232) + 0xc0000;
+    } else {
+        x = *(s32 *)(work + 232) - 0xc0000;
+    }
+
+    if (flag != 0) {
+        z = *(s32 *)(work + 236) + 0x100000;
+        cuep = (u16 *)(work + 228);
+    } else {
+        z = *(s32 *)(work + 236) - 0x100000;
+        cuep = (u16 *)(work + 226);
+    }
+
+    waitp = (s16 *)&rec->timer;
+    *waitp = *cuep;
+    rec->acceleration = 0x4000;
+    rec->speed = 0x10000;
+
+    Engine_ObjectSetPosition(rec, x, 0, z);
+    Engine_GameFlagSet(0x211);
+    Engine_ObjectSetScript(rec, (s32)KorosseoKawa_ApproachScript);
+
+    while (*waitp != 0) {
+        Engine_TaskWait(1);
+    }
+
+    if (flag == 0) {
+        SceneActor_ApplyValueAndMatchingSlots(0, handle_a);
+        UiWork_PushValueSlot(handle_a, 2);
+    } else {
+        SceneActor_ApplyValueAndMatchingSlots(0, handle_b);
+        UiWork_PushValueSlot(handle_b, 2);
+    }
+
+    shared = (u8 *)&gGameState;
+    UiWork_PushValueSlot(((struct GameState *)shared)->selected_actor, 1);
+    Engine_MessageShowCentered((s32)MsgKorosseoRobinGotItem, 3);
+    ObjectDispatch_WaitForValue16(rec);
+
+    return flag;
+}
+
+#undef FieldScene_BuildSceneDescriptorAndInstallTask
+
+extern u8 Korosseo_GaugeGraphics[];
+extern u8 Korosseo_UpdatePathRival[];
+void Korosseo_DrawGauge(void);
+void Vector_AddPolarOffset();
+
+s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);
+
+void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre,
+                   s32 extra, s32 third, s32 fourth)
+{
+
+    u8 *desc;
+    struct FieldActor *rec0;
+    struct FieldActor *rec1;
+    s32 handle;
+    s32 pal;
+
+    desc = Runtime_AllocateBlock(59, 0x7170);
+    handle = (s32)Runtime_BumpAllocateAlternatePool(512);
+
+    *(u16 *)(desc + 222) = (u16)first;
+    *(u16 *)(desc + 224) = (u16)second;
+    *(u16 *)(desc + 226) = (u16)third;
+    *(u16 *)(desc + 228) = (u16)fourth;
+    *(u16 *)(desc + 230) = (u16)mode;
+    *(s32 *)(desc + 232) = centre;
+    *(s32 *)(desc + 236) = extra;
+
+    rec0 = Object_GetById(first);
+    rec1 = Object_GetById(second);
+
+    if (Engine_GameFlagIsSet(0x109) == 0) {
+        rec1->x.fixed =
+            (centre << 1) - rec0->x.fixed;
+        rec1->z.fixed = rec0->z.fixed;
+    }
+
+    *(u16 *)(desc + 218) = 0;
+    *(u16 *)(desc + 220) = 0;
+
+    Resource_DecodeType01(Korosseo_GaugeGraphics, handle);
+
+    pal = Resource_FindFreeEntry();
+    *(u16 *)(desc + 216) = (u16)pal;
+    Engine_VramLoad((s16)pal, 512, handle);
+
+    Engine_TaskAddCallback((s32)Korosseo_DrawGauge + 1, 0xc76);
+
+    Runtime_BumpFree(handle);
+}
+
+void SceneState_InitControlWhenFlag109Clear(s32 resource)
+{
+    u8 *work = gKorosseoWork;
+    struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
+
+    Resource_DecodeType01(Resource_GetTableEntry(resource), work + 240);
+    if (Engine_GameFlagIsSet(0x109) == 0) {
+        recorder->mode = 1;
+        recorder->mirror = 1;
+        recorder->actor = *(u16 *)(work + 224);
+        recorder->still = 0;
+        recorder->pos = 0;
+    }
+    ((s32 (*)(void ( *)(void), s32))Engine_TaskAddCallback)(Korosseo_UpdatePathRival, 0xc85);
+}
+
+#define Engine_ObjectSetPosition ((void (*)(struct FieldActor *, s32, s32, s32))Engine_ObjectSetPosition)
+
+typedef struct ActiveSubjectSlot_2 {
+    u8 pad[500];
+    s32 handle;
+} ActiveSubjectSlot;
+
+struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct FieldActor *subject)
+{
+    struct FieldActor **slots = gEventWork->placed_actors - 8;
+    u32 i;
+
+    for (i = 8; i <= 65; i++) {
+        struct FieldActor *p = slots[i];
+
+        if ((pos->x >> 20) == (p->x.fixed >> 20)
+            && (pos->y >> 20) == (p->y.fixed >> 20)
+            && (pos->z >> 20) == (p->z.fixed >> 20)) {
+            return p;
+        }
+    }
+    return 0;
+}
+
+void StagedActor_PushActorAhead(void)
+{
+
+    struct FieldActor *subject;
+    struct FieldActor *target;
+    struct FieldActor *blocker;
+    u32 step;
+    u32 dir;
+    Position3 pos;
+    u32 idx = 250;
+    s32 zero;
+    s32 handle;
+
+    handle = *(s32 *)((u8 *)&gGameState + (idx << 1));
+    subject = Object_GetById(handle);
+
+    dir = subject->facing >> 12;
+
+    step = KorosseoKawa_DirectionSteps[dir];
+    pos.x = subject->x.fixed + (s32)(step & 0xffff0000);
+    pos.y = subject->y.fixed;
+    step <<= 16;
+    pos.z = subject->z.fixed + (s32)step;
+
+    target = SceneActor_FindSlotAtTilePosition(&pos, subject);
+    if (target == 0) {
+        return;
+    }
+
+    step = KorosseoKawa_DirectionSteps[dir];
+    pos.x = target->x.fixed + (s32)(step & 0xffff0000);
+    pos.y = target->y.fixed;
+    step <<= 16;
+    pos.z = target->z.fixed + (s32)step;
+
+    blocker = SceneActor_FindSlotAtTilePosition(&pos, target);
+    if (blocker != 0 && (blocker->collision_flags & 1) != 0) {
+        return;
+    }
+
+    pos.x = target->x.fixed;
+    pos.y = target->y.fixed + 0x100000;
+    pos.z = target->z.fixed;
+
+    blocker = SceneActor_FindSlotAtTilePosition(&pos, target);
+    if (blocker != 0 && (blocker->collision_flags & 1) != 0) {
+        return;
+    }
+
+    target->terrain_id = 2;
+    zero = 0;
+
+    step = KorosseoKawa_DirectionSteps[dir];
+    pos.x = target->x.fixed + (s32)(step & 0xffff0000);
+    pos.y = target->y.fixed;
+    step <<= 16;
+    pos.z = target->z.fixed + (s32)step;
+
+    if (Object_CheckMovementCollision(target, &pos) > 0) {
+        return;
+    }
+
+    Object_SetMode(subject, 8);
+    Engine_TaskWait(15);
+
+    target->speed = 0x3333;
+    target->acceleration = 0x3333;
+    Engine_ObjectSetPosition(target, pos.x, pos.y, pos.z);
+
+    subject->speed = 0x3333;
+    subject->acceleration = 0x3333;
+    Engine_ObjectSetPosition(subject, pos.x, pos.y, pos.z);
+
+    Engine_AudioPlayCue(0xee);
+    Script_WaitForEventTimeout(target);
+    Engine_AudioPlayCue(0x120);
+
+    target->x.fixed = pos.x;
+    target->z.fixed = pos.z;
+    target->velocity_x = zero;
+    target->velocity_z = zero;
+
+    Object_SetMode(subject, 1);
+}
+
+struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void)
+{
+
+    struct FieldActor *rec;
+    s32 facing;
+    Position3 pos;
+    struct FieldActor *hit;
+
+    rec = Object_GetById(((ActiveSubjectSlot *)&gGameState)->handle);
+
+    facing = (rec->facing + 0x2000) & 0xc000;
+
+    pos.x = (rec->x.fixed & 0xfff00000) + 0x80000;
+    pos.y = rec->y.fixed;
+    pos.z = (rec->z.fixed & 0xfff00000) + 0x80000;
+    Vector_AddPolarOffset(0x100000, facing, &pos);
+
+    hit = SceneActor_FindSlotAtTilePosition(&pos, rec);
+    if (hit == 0) {
+        pos.x = (rec->x.fixed & 0xfff00000) + 0x80000;
+        pos.y = rec->y.fixed;
+        pos.z = (rec->z.fixed & 0xfff00000) + 0x80000;
+        Vector_AddPolarOffset(0x200000, facing, &pos);
+
+        hit = SceneActor_FindSlotAtTilePosition(&pos, rec);
+    }
+
+    return hit;
 }

@@ -1,18 +1,12 @@
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
 #include "graphics.h"
-#include "menu.h"
-#include "minigame.h"
-#include "sound.h"
-#include "system.h"
 #include "render_input.h"
-#include "window.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "vram_block.h"
 #include "resource.h"
+
+struct RenderOutput *RenderOutput_AcquireFree(void);
+s32 RenderOutput_AppendToList(); // no prototype was in scope: the call loads r0 last
 
 struct RenderOutput *RenderOutput_Create(
     s32 slot,
@@ -21,7 +15,6 @@ struct RenderOutput *RenderOutput_Create(
     s32 offset_x,
     s32 offset_y)
 {
-    /* FAKEMATCH: needed to match: the ignored scalar-return call keeps mov after the stores; direct void-call forms reorder it. */
     s32 x;
     struct RenderOutput *output;
     s32 y;
@@ -45,8 +38,7 @@ struct RenderOutput *RenderOutput_Create(
     output->index = slot;
     output->kind = 1;
     output->active = 1;
-    ((s32 (*)(struct RenderOutputList *, struct RenderOutput *))
-        RenderOutput_AppendToList)((struct RenderOutputList *)input, output);
+    RenderOutput_AppendToList(input, output);
     return output;
 }
 

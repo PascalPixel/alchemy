@@ -224,19 +224,13 @@ void MakyuriIriguchi_SendActor8ByLeaderColumn(void)
 
 void MakyuriIriguchi_OpenEntrance(void)
 {
-    s32 game;
-
     Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(20);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriIriguchi, 31);
-    game = (s32)&gGameState;
-    /* FAKEMATCH: the do/while loads the game state's address ahead of the offset for the byte store. */
-    do {
-        *(u8 *)(game + 0x22b) = 3;
-        BattleFx_SetWeightedResult(36, 1);
-    } while (0);
+    Battle_SetStart(3);
+    BattleFx_SetWeightedResult(36, 1);
     Engine_EventEnd();
 }
 

@@ -628,11 +628,6 @@ void SceneActor_MarkObjectAtTiles94To95(s32 actor)
 
 s32 KorosseoKawa_ApplyEntryState(void)
 {
-    /* FAKEMATCH: the halfword row view retains the base-plus-index entrance address form also used by the wall stage. */
-    union GameStateRows {
-        u8 bytes[512][2];
-        s16 halves[512][1];
-    };
     struct FieldActor *actor;
     s32 hit;
     s32 x;
@@ -698,7 +693,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
     Object_GetById(14)->priority_flags = 2;
     Korosseo_ShowItemIcon(24, 120);
     Korosseo_ShowItemIcon(25, 127);
-    switch (((union GameStateRows *)&gGameState)->halves[225][0]) {
+    switch (gGameState.entrance) {
     case 1:
         FieldScene_BuildSceneDescriptorAndInstallTask(0, 8, 4, 0x5180000, 0xc00000, 24, 25);
         Call6(Map_UpdateCellRect, 127, 0, 1, 2, 19, 2);

@@ -30,6 +30,8 @@
 
 #include "battle_effect_runtime.h"
 
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+
 enum
 {
 	ITEM_FROST_JEWEL = 202
@@ -313,7 +315,6 @@ void ArutinYama_BeginRollingRide(s32 a0)
 	struct FieldActor *rec7;
 	struct FieldActor *rec8;
 	s32				   record;
-	s32				   v3;
 
 	rec8 = Object_GetById(0);
 	rec7 = Object_GetById(8);
@@ -323,13 +324,7 @@ void ArutinYama_BeginRollingRide(s32 a0)
 	Engine_EventWait(10);
 	Engine_AudioPlayCue(152);
 	Engine_ActorSetSpeed(0, 0x33333, 0x19999);
-	v3 = rec7->y.fixed - rec8->y.fixed;
-	/* FAKEMATCH: needed to match: each branch finishes the speed, so its block ends before the next call and the step's shift is scheduled ahead of the constant's. */
-	if (v3 < 0)
-		v3 = (((rec8->y.fixed - rec7->y.fixed) >> 14) << 14) + 0x40000;
-	else
-		v3 = ((v3 >> 14) << 14) + 0x40000;
-	rec8->velocity_y = v3;
+	rec8->velocity_y = ((ABS(rec7->y.fixed - rec8->y.fixed) >> 14) << 14) + 0x40000;
 	Engine_ActorSetAnimation(0, 7);
 	Engine_ObjectSetPosition(rec8, rec7->x.fixed, rec7->y.fixed, rec7->z.fixed);
 	Engine_TaskWait(10);
@@ -858,9 +853,8 @@ void ArutinYama_SwingActorIntoSetPiece(void)
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Event_Wait(20);
 
-	/* FAKEMATCH: each phase leaves by goto; a break lets GCC 2.96 roll the phase's update and test below its wait. */
 	step = 0;
-	for (;;)
+	while (1)
 	{
 		step += 8;
 		sprite->rotation += step;
@@ -868,13 +862,12 @@ void ArutinYama_SwingActorIntoSetPiece(void)
 		actor->x.fixed = (c << 4) + x;
 		if (sprite->rotation > 0x8fff)
 		{
-			goto risen;
+			break;
 		}
 		Task_Wait(1);
 	}
-risen:
 	step = 0;
-	for (;;)
+	while (1)
 	{
 		step += 8;
 		sprite->rotation -= step;
@@ -882,13 +875,12 @@ risen:
 		actor->x.fixed = (c << 4) + x;
 		if (sprite->rotation <= 0x7000)
 		{
-			goto fallen;
+			break;
 		}
 		Task_Wait(1);
 	}
-fallen:
 	step = 8;
-	for (;;)
+	while (1)
 	{
 		step += step >> 3;
 		sprite->rotation += step;
@@ -901,11 +893,10 @@ fallen:
 		}
 		if (sprite->rotation + step > 0xbfff)
 		{
-			goto settled;
+			break;
 		}
 		Task_Wait(1);
 	}
-settled:
 	Task_Wait(1);
 	sprite->rotation = 0xc000;
 	Event_PlayCue(183);

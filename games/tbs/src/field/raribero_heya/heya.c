@@ -85,9 +85,9 @@ u8 *RariberoHeya_GetPlacements(void)
 void RariberoHeya_RunItemShop(s32 keeper)
 {
     struct FieldActor *leader = Object_GetById(0);
+    u16 facing = (leader->facing + 0x2000) & 0xc000;
 
-    /* FAKEMATCH: the halfword cast of the masked facing keeps the reference's compare. */
-    if ((u16)((leader->facing + 0x2000) & 0xc000) == 0xc000) {
+    if (facing == 0xc000) {
         Shop_Run(32, keeper);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
         Engine_EventSetMessage((s32)MsgRariberoWentOceanLook);

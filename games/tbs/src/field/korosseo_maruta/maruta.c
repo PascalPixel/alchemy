@@ -615,7 +615,6 @@ void KorosseoMaruta_RunCompetitorTalk(s32 a0)
 {
     struct EventWork *work;
     s32 owner;
-    s32 msg;
     s32 lines;
     s32 entrance;
 
@@ -624,14 +623,11 @@ void KorosseoMaruta_RunCompetitorTalk(s32 a0)
     entrance = gGameState.entrance;
     if (entrance == 2) {
         Engine_EventBegin();
-        msg = (s32)MsgKorosseoDidntThinkBattles;
         lines = a0 * 3;
-        Engine_EventSetMessage(lines + msg);
+        Engine_EventSetMessage(lines + (s32)MsgKorosseoDidntThinkBattles);
         Engine_EventOpenMessage(a0, 0);
         if (Engine_EventChooseYesNo(owner, 0) == 0) {
-            /* FAKEMATCH: each answer's line goes through its own local, here and below, which keeps the reference's addition order. */
-            s32 yes = msg + 1;
-            Engine_EventSetMessage(lines + yes);
+            Engine_EventSetMessage(lines + (s32)MsgKorosseoDidntThinkBattles + 1);
             Engine_EventShowMessage(a0, 0);
             work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
             work->transition_frames = 15;
@@ -641,8 +637,7 @@ void KorosseoMaruta_RunCompetitorTalk(s32 a0)
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
         } else {
-            s32 no = msg + 2;
-            Engine_EventSetMessage(lines + no);
+            Engine_EventSetMessage(lines + (s32)MsgKorosseoDidntThinkBattles + 2);
             Engine_EventShowMessage(a0, 0);
         }
         Engine_EventEnd();
@@ -713,7 +708,6 @@ s32 StageSetup_BuildAndDispatch(void)
 {
     struct FieldActor *actor;
     s32 i;
-    s32 x;
     s32 height;
     s32 column;
 
@@ -790,27 +784,16 @@ s32 StageSetup_BuildAndDispatch(void)
     }
 
     if (Engine_GameFlagIsSet(865) != 0) {
-        s32 still;
-        s32 underfoot;
-        s32 row;
-
-        /* FAKEMATCH: the loop's constants live in locals so they stay in r8-sl across the calls, as native keeps them; written inline they do not. */
-        i = 18;
-        still = 0;
-        underfoot = ACTOR_PRIORITY_UNDERFOOT;
-        x = 33;
-        row = 11;
-        for (; i <= 22; i++) {
+        for (i = 18; i <= 22; i++) {
             actor = Object_GetById(i);
-            actor->priority_flags = underfoot;
+            actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
             Object_SetMode(actor, 2);
             actor = Object_GetById(i + 5);
-            actor->priority_flags = underfoot;
-            actor->motion_flags = still;
+            actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+            actor->motion_flags = 0;
             actor->y.fixed = 32 << 16;
             Object_SetMode(actor, 10);
-            Engine_MapCopyCellAttributes(74, 12, 1, 1, x, row);
-            x += 2;
+            Map_CopyCellAttributes(74, 12, 1, 1, i * 2 - 3, 11);
         }
         Engine_ActorSetAnimation(28, 10);
         BattleEffect_PauseObject(28);

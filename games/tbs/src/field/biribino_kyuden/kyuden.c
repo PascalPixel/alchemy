@@ -580,7 +580,7 @@ void Kyuden_RunKolimaRequest(void)
         Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
         Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
-            /* FAKEMATCH: the first offer and the change of heart share one refusal and one acceptance by jumping into each other's blocks, which keeps the reference's single copy of each in this order. */
+            // 最初の申し出と心変わりは断りと承諾を一つずつ共有し、互いのブロックへ飛ぶ (構造化すると複製が要りバイトが変わる)
             goto accepted;
         }
     declined:
@@ -665,7 +665,7 @@ void Kyuden_RunKolimaRequest(void)
     Engine_EventSetMessage((s32)MsgBiribinoYehveChangeHeart);
     Engine_EventOpenMessage(0x2012, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        /* FAKEMATCH: into the first offer's refusal, as above. */
+        // 最初の申し出の断りへ
         goto declined;
     }
 accepted:

@@ -321,7 +321,6 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 		}
 		for (;;)
 		{
-			s32 tmp;
 			owner = -1;
 			for (i = 0; i < pending->count; i++)
 			{
@@ -331,9 +330,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 					break;
 				}
 			}
-			/* FAKEMATCH: needed to match: one temporary for the sentinel and the third scan's count puts the -1 in r3 and the order copy before the count load */
-			tmp = -1;
-			if (owner == tmp)
+			if (owner == -1)
 			{
 				break;
 			}
@@ -350,20 +347,14 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 			{
 				order = 2;
 			}
-			i = 0;
-			tmp = pending->count;
-			if (i < tmp)
+			for (i = 0; i < pending->count; i++)
 			{
-				do
+				if (pending->entries[i].unit_id == owner && pending->entries[i].turns == -2)
 				{
-					if (pending->entries[i].unit_id == owner && pending->entries[i].turns == -2)
-					{
-						pending->entries[i].turns = order;
-						counts[pending->entries[i].element]++;
-						order++;
-					}
-					i++;
-				} while (i < pending->count);
+					pending->entries[i].turns = order;
+					counts[pending->entries[i].element]++;
+					order++;
+				}
 			}
 		}
 	}
@@ -391,13 +382,14 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 		UnitCalcFar(id);
 		for (i = 0; i <= 3; i++)
 		{
-			order = unit->elm[i].pow - before->elm[i].pow;
-			if (order > 0)
+			s32 gain = unit->elm[i].pow - before->elm[i].pow;
+
+			if (gain > 0)
 			{
 				BattleEventRuntime_Reset();
 				BattleEventRuntime_SchedulePhase(25);
 				BtlEvPush(BEV_UNIT, id);
-				BtlEvPush(BEV_NUM, order);
+				BtlEvPush(BEV_NUM, gain);
 				BtlEvPush(BEV_SE, 175);
 				MES_PUSH(MsgEarthPowerUp + i);
 				BtlEvPush(BEV_OBJ_END, id);

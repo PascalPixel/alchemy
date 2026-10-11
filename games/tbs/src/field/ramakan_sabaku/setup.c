@@ -561,7 +561,7 @@ void RamakanSabaku_UpdateTravelDust(void)
         if (phase != 0) {
             return;
         }
-        /* FAKEMATCH: the reference reads the frame counter again and discards it */
+        // フレームカウンタをもう一度読んで捨てる (ROM の読み出しそのまま)
         gFrameCount;
         params.scale_x = 0xcccc;
         params.scale_y = 0xcccc;

@@ -49,22 +49,14 @@ void OverlayObject_WaitUntilIdle(s32 *obj)
 
 void Effect_AdvanceMotion(struct MotionEffect *effect)
 {
-	s32			   velocity_z;
 	struct Sprite *sprite;
-	s32			   velocity_x;
 
-	/* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
-	do
-	{
-		velocity_x = effect->velocity[0];
-		effect->position[0] += velocity_x;
-		effect->position[1] += effect->velocity[1];
-	} while (0);
-	velocity_z = effect->velocity[2];
-	effect->position[2] += velocity_z;
+	effect->position[0] += effect->velocity[0];
+	effect->position[1] += effect->velocity[1];
+	effect->position[2] += effect->velocity[2];
 
-	effect->velocity[0] = velocity_x - Iriguchi_Divide(velocity_x, 18);
-	effect->velocity[2] = velocity_z - velocity_z / 16;
+	effect->velocity[0] -= effect->velocity[0] / 18;
+	effect->velocity[2] -= effect->velocity[2] / 16;
 
 	effect->accum18 += effect->rate30;
 	effect->accum1c += effect->rate34;

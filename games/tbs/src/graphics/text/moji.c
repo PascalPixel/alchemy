@@ -7,151 +7,63 @@ extern const u8 UiText_GlyphWidths[];
 
 static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line, u8 *vram, u32 color)
 {
-	u32 tile;
-	u32 line;
-	u32 shift;
-	u32 mask;
-	u32 pixel;
+	u16 *p;
+	u32  mask;
 
-	/* FAKEMATCH: scalar reuse and the empty loop preserve the native dot sequence. */
-	pixel = x >> 3;
-	line = stride - 2;
-	tile = pixel * line + tile_y;
-	line = row_line | ((x & 7) >> 2);
-	shift = (x & 3) << 2;
-	do
-	{
-	} while (0);
-	tile = (u32)vram + (tile << 5);
-	tile |= line << 1;
-	mask = 15 << shift;
-	pixel = (*(u16 *)tile & ~mask) | (mask & color);
-	*(u16 *)tile = pixel;
+	p = (u16 *)((u32)vram + (((x >> 3) * (stride - 2) + tile_y) << 5) | ((row_line | ((x & 7) >> 2)) << 1));
+	mask = 15 << ((x & 3) << 2);
+	*p = (*p & ~mask) | (mask & color);
 }
 
-s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32 y, const u8 *font)
+s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, const u8 *font)
 {
-	struct UiWindow *window;
-	const u16		*rows;
-	u32				 width;
+	const u16 *rows;
+	u32		   width;
+	u32		   pass;
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
-	u32 mark;
 	u32 result;
 #endif
-	u32 stride;
-	u32 row;
-	u32 rownext;
-	u32 col;
-#if !defined(TBS_EDITION_JA) && !defined(TBS_EDITION_EN)
-	u32 narrow;
+	u32		   stride;
+	u32		   row;
+	u32		   rownext;
+	u32		   col;
+#if defined(TBS_EDITION_EN)
+	u32 index;
 #endif
 #if defined(TBS_EDITION_JA)
 	/* FAKEMATCH: these records reserve the native frame's 64-byte unused area. */
 	struct RenderInput frame[4];
 #endif
+
 #if defined(TBS_EDITION_EN)
-	u32 index;
 	index = character - 32;
 #endif
-	window = input_window;
-#if defined(TBS_EDITION_JA)
-	/* FAKEMATCH: the repeated read keeps the height copy after the character
-	   comparison through combine. CSE removes the second read; jump2 removes
-	   the empty branch. With the width setup below, JA differ 3 -> 2: the
-	   redundant height spill disappears and the remaining registers match. */
-	do
-	{
-		width = window->height;
-	} while (0);
-	if (character > 255)
-		width = window->height;
-	stride = (width << 16) >> 16;
-#elif defined(TBS_EDITION_EN)
-	width = window->height;
-	stride = width;
-#else
-	narrow = character <= 255 || font != NULL;
-	/* FAKEMATCH: normalize a separate height copy after its one-pass read.
-	   This retains the native argument lifetimes (continental differ 14 -> 12). */
-	do
-	{
-		width = window->height;
-	} while (0);
-	stride = (width << 16) >> 16;
-#endif
+	stride = window->height;
 #if defined(TBS_EDITION_EN)
 	if (index > 111)
 		return 1;
 #endif
 
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
-	/* FAKEMATCH: separate mark assignments preserve character and header-load lifetimes. */
-	if (character > 255)
-	{
-		if (font == NULL)
-		{
-			mark = character - 222;
-			goto glyph_wide;
-		}
-		mark = character - 222;
-		if (mark > 1)
-			goto glyph_wide;
-	}
+	if (character <= 255 || (font != NULL && character - 222 <= 1))
 #else
-	if (narrow)
+	if (character <= 255 || font != NULL)
 #endif
 	{
 		if (font != NULL)
 		{
 			const u8 *source;
 			u32		  color;
+			u32		  bits;
+
 #if defined(TBS_EDITION_JA)
-			u32 raw_color;
-#else
-#if defined(TBS_EDITION_EN)
-			u32		  raw_font_width;
-			const u8 *widths;
-#endif
-			u32 color1;
-			u32 color3;
-#endif
 			u32 font_width;
-			u32 bits;
 
-#if defined(TBS_EDITION_JA)
-			/* FAKEMATCH: the height's zero high half keeps this constant and
-			   its normalized copy separate until combine. The early accent
-			   comparison places the color spill after CMP (JA differ 6 -> 4);
-			   reload CSE removes the repeated assignment in the accent path. */
-			raw_color = 0x1111 + (stride >> 16);
-			{
-				u32 raw_width;
-
-				/* FAKEMATCH: stride is a zero-extended height, so the test is
-				   false. The separate width copy and x boundary retain ADD
-				   before its spill in sched2 (JA differ 2 -> 0). Testing
-				   stride >> 16 instead leaves two instructions and differs 18. */
-				raw_width = 8;
-				do
-				{
-					if ((u16)stride != stride)
-						raw_width += width & 0xffff0000U;
-				} while (0);
-				do
-				{
-					x++;
-				} while (0);
-				font_width = raw_width;
-			}
-			do
-			{
-				if (character - 222 <= 1)
-					raw_color = 0x1111 + (stride >> 16);
-			} while (0);
-			color = (raw_color << 16) >> 16;
+			color = 0x1111;
+			font_width = 8;
+			x++;
 			if (character - 222 <= 1)
 			{
-				color = raw_color;
 				character += 32;
 				x -= 2;
 				y--;
@@ -159,120 +71,48 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32
 			}
 			character -= 32;
 			source = font + character * 10;
+			row = 0;
+			bits = *source++;
+			while (y + row <= 31)
 			{
-				const u8 *first = source;
+				u32 tile_y;
+				u32 row_line;
+				u8 *vram;
 
-				/* FAKEMATCH: advance before the early clipping test to retain
-				   the native ADD/CMP/LDRB order (JA differ 10 -> 8). */
-				row = 0;
-				source++;
-				do
-				{
-					if (y > 31)
-						break;
-				} while (0);
-				bits = *first;
-				if (y > 31)
-					goto font_done;
-			}
-			{
-				while (1)
-				{
-					u32 tile_y;
-					u32 row_line;
-					u8 *vram;
-
-					col = 0;
-					/* FAKEMATCH: duplicated row increments produce the native CMP/ADD/BEQ order. */
-					if (bits == 0)
-						rownext = row + 1;
-					else
-					{
-						rownext = row + 1;
-						tile_y = (y + row) >> 3;
-						vram = (u8 *)0x06002500;
-						row_line = ((y + row) & 7) << 1;
-						do
-						{
-							if (bits & 1)
-								GlyphDot(stride, x + col, tile_y, row_line, vram, color);
-							col++;
-							bits >>= 1;
-						} while (bits != 0);
-					}
-					row = rownext;
-					if (rownext > 9)
-						break;
-					/* FAKEMATCH: the early comparison orders CMP before LDRB (differ 12 -> 10). */
-					do
-					{
-						if (y + rownext > 31)
-							break;
-					} while (0);
-					bits = *source++;
-					if (y + rownext > 31)
-						break;
-				}
-			}
-		font_done:
-#else
-#if defined(TBS_EDITION_EN)
-			/* FAKEMATCH: separate source and row setup from the palette's
-			   CSE block, retaining native spills (EN 14 -> 8, others 18 -> 14). */
-			do
-			{
-				source = font + character * 32;
-			} while (0);
-#else
-			source = font + character * 32;
-#endif
-			color1 = 0x1111;
-			color3 = 0x3333;
-#if !defined(TBS_EDITION_EN)
-			do
-			{
-				row = 0;
-			} while (0);
-#endif
-#if defined(TBS_EDITION_EN)
-			/* FAKEMATCH: finish the palette's CSE block, then load the table
-			   address before the row scope. Retaining the checked index keeps
-			   it live through the row clear (EN differ 6 -> 4). */
-			do
-			{
-			} while (0);
-			widths = UiText_GlyphWidths;
-			do
-			{
-				row = 0;
-			} while (0);
-			/* FAKEMATCH: the separate normalized width and repeated read
-			   retain the clipping comparison before its spill. Both reads
-			   become one LDRB; the width is a byte on either return path
-			   (EN differ 8 -> 6). */
-			raw_font_width = widths[index];
-			do
-			{
-				if (y > 31)
-					raw_font_width = widths[index];
-			} while (0);
-			font_width = (raw_font_width << 24) >> 24;
-			if (y > 31)
-			{
-				/* FAKEMATCH: both returns agree. Keeping the initialized
-				   height live through this empty branch preserves the native
-				   palette registers; jump2 removes the branch (EN 20 -> 2). */
-				if (width)
-				{
-					font_width = raw_font_width;
-					goto packed_font_done;
-				}
+				col = 0;
+				/* FAKEMATCH: needed to match: the row increment is written in both arms, which puts ADD between CMP and BEQ; written once ahead of the test it is scheduled before CMP (JA differ 2). */
+				if (bits == 0)
+					rownext = row + 1;
 				else
 				{
-					font_width = raw_font_width;
-					goto packed_font_done;
+					rownext = row + 1;
+					tile_y = (y + row) >> 3;
+					vram = (u8 *)0x06002500;
+					row_line = ((y + row) & 7) << 1;
+					do
+					{
+						if (bits & 1)
+							GlyphDot(stride, x + col, tile_y, row_line, vram, color);
+						col++;
+						bits >>= 1;
+					} while (bits != 0);
 				}
+				row = rownext;
+				if (row > 9)
+					break;
+				bits = *source++;
 			}
+#else
+			u32 color1;
+			u32 color3;
+			u32 font_width;
+
+			source = font + character * 32;
+			color1 = 0x1111;
+			color3 = 0x3333;
+			row = 0;
+#if defined(TBS_EDITION_EN)
+			font_width = UiText_GlyphWidths[index];
 #else
 			font_width = UiText_GlyphWidths[character - 32];
 #endif
@@ -302,13 +142,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32
 							if ((bits & 15) == 1)
 								color = color1;
 							if (((x + col) >> 3) <= 29)
-								/* FAKEMATCH: keep the pixel calculation in its own
-								   CSE block; native color/pixel registers and load
-								   order return (EN 74 -> 14, others 52 -> 18). */
-								do
-								{
-									GlyphDot(stride, x + col, tile_y, row_line, vram, color);
-								} while (0);
+								GlyphDot(stride, x + col, tile_y, row_line, vram, color);
 						}
 						col++;
 						if (col > 7)
@@ -320,181 +154,96 @@ s32 UiText_DrawGlyphArm(struct UiWindow *input_window, u32 character, u32 x, u32
 				}
 			}
 #endif
-#if defined(TBS_EDITION_EN)
-		packed_font_done:
-#endif
 			return font_width;
 		}
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
-		/* FAKEMATCH: fold this difference in combine, after GCSE has run;
-		   otherwise GCSE hoists the accent index (JA differ 2 -> 32). */
-		mark = 0U - (222U - character);
-#endif
 		rows = (const u16 *)((const u8 *)UiText_Glyphs + (character - 32) * 26);
-		{
-			const u16 *header = rows;
-
-			rows++;
-			/* FAKEMATCH: the one-pass header read preserves native load/store order and sharing. */
-			do
-			{
-				width = *header;
-			} while (0);
-		}
+		width = *rows++;
 	}
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
-	goto glyph_selected;
-glyph_wide:
-#else
 	else
-#endif
 	{
 #if defined(TBS_EDITION_JA)
 		width = 10;
 		rows = (const u16 *)(UiText_KanjiGlyphs + (character - 256) * 24);
 #else
 		rows = (const u16 *)((const u8 *)UiText_Glyphs + (character - 32) * 32);
-		{
-			const u16 *header = rows;
-
-			rows += 4;
-			/* FAKEMATCH: as for the narrow header above, retain the
-			   native header-load sharing and pointer spill order. */
-			do
-			{
-				width = *header;
-			} while (0);
-		}
+		width = *rows;
+		rows += 4;
 #endif
 	}
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
-glyph_selected:
-	if (mark <= 1)
+	if (character - 222 <= 1)
 	{
 		x -= 3;
 		y -= 2;
-		/* FAKEMATCH: the boundary keeps the zero result after both coordinate changes. */
-		do
-		{
-		} while (0);
 		result = 0;
 	}
 	else
 		result = width;
 #endif
 
+	for (pass = 0; pass <= 3; pass++)
 	{
-		register u32 pass;
-		const u16	*next;
-		const u16	*rows1;
+		u32		   color;
+		u32		   bits;
+		u8		  *vram;
+		const u16 *next;
 
-		rows1 = rows + 1;
-		pass = 0;
+		if (pass == 3)
+			color = 0x1111;
+		else
+			color = 0x5555;
+		if (window->flags & 64)
 		{
-			u32 color;
-			u32 bits;
-			u8 *vram;
-			/* FAKEMATCH: a separate next-pass lifetime avoids five repeated pass reloads. */
-			u32 next_pass;
-
-			/* FAKEMATCH: explicit back edges and one-pass bodies retain the
-			   native allocation while the tail increment stays outside
-			   both loops. This lets flow2 form its post-increment after reload,
-			   retaining the store after the shift (JA/EN 8 -> 6, others 12 -> 10). */
-		pass_start:
-			do
+			if (pass <= 1)
 			{
-				if (pass == 3)
-					color = 0x1111;
+				if (pass == 1)
+					x += 2;
 				else
-					color = 0x5555;
-				if (!(window->flags & 64))
-					goto draw;
-				if (pass <= 1)
-				{
-					if (pass == 1)
-						x += 2;
-					else
-						x--;
-					goto draw;
-				}
-				if (pass == 2)
-				{
 					x--;
-					y++;
-					goto draw;
-				}
-				y--;
-			draw:
-				row = 0;
-				bits = *rows;
-				bits <<= 16;
-				next = rows1;
-				next_pass = pass + 1;
-				if (y > 31)
-					goto pass_next;
-				vram = (u8 *)0x06002500;
-			row_start:
-				do
-				{
-					u32 tile_y;
-					u32 row_line;
-
-					col = 0;
-					rownext = row + 1;
-					tile_y = (y + row) >> 3;
-					row_line = ((y + row) & 7) << 1;
-					while (1)
-					{
-						if ((s32)bits < 0)
-							GlyphDot(stride, x + col, tile_y, row_line, vram, color);
-						bits <<= 1;
-						if (bits == 0)
-							goto row_next;
-						col++;
-						if (col > 13)
-							break;
-					}
-				} while (0);
-			} while (0);
-		row_next:
-			do
+			}
+			else if (pass == 2)
 			{
+				x--;
+				y++;
+			}
+			else
+				y--;
+		}
+		row = 0;
+		bits = rows[0];
+		bits <<= 16;
+		next = rows + 1;
+		if (y <= 31)
+		{
+			vram = (u8 *)0x06002500;
+			while (1)
+			{
+				u32 tile_y;
+				u32 row_line;
+
+				col = 0;
+				rownext = row + 1;
+				tile_y = (y + row) >> 3;
+				row_line = ((y + row) & 7) << 1;
+				while (1)
+				{
+					if ((s32)bits < 0)
+						GlyphDot(stride, x + col, tile_y, row_line, vram, color);
+					bits <<= 1;
+					if (bits == 0)
+						break;
+					col++;
+					if (col > 13)
+						break;
+				}
 				row = rownext;
 				if (rownext > 11)
-					goto pass_next;
-			} while (0);
-			/* FAKEMATCH: the repeated load preserves the early clipping
-			   comparison through CSE; both loads become one LDRH. The two
-			   boundaries retain y's native allocation priority in every edition. */
-			do
-			{
-				do
-				{
-					bits = *next;
-					if (y + rownext > 31)
-						bits = *next;
-				} while (0);
-			} while (0);
-			do
-			{
+					break;
+				bits = *next++;
 				bits <<= 16;
-			} while (0);
-			/* FAKEMATCH: the low half is zero. Combine reduces this to
-			   one after flow1, so the pointer spill remains after the shift. */
-			next += 1 + (bits & 0xffff);
-			if (y + rownext > 31)
-				goto pass_next;
-			goto row_start;
-		pass_next:
-			do
-			{
-				pass = next_pass;
-				if (pass > 3)
-					goto pass_end;
-			} while (0);
-			goto pass_start;
-		pass_end:;
+				if (y + rownext > 31)
+					break;
+			}
 		}
 	}
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)

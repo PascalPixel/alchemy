@@ -79,7 +79,7 @@ SECTIONS
         "*/resource_691_overlay.o"(.text.x0200b8dc)
         "*/games/tla/src/field/overlay_691/sparks.o"(.text)
         "*/games/tla/src/field/overlay_691/import.o"(.text)
-        "*/resource_691_overlay.o"(.rodata.x0200bc5c)
+        "*/games/tla/src/field/overlay_691/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

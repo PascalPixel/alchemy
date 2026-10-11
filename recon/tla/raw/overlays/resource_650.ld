@@ -26,7 +26,7 @@ SECTIONS
         "*/resource_650_overlay.o"(.text.x0200af88)
         "*/resource_650_overlay.o"(.text.x0200afd4)
         "*/games/tla/src/field/idejima/import.o"(.text)
-        "*/resource_650_overlay.o"(.rodata.x0200b330)
+        "*/games/tla/src/field/idejima/data.o"(.data)
     }
     .bss : { "*/resource_650_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

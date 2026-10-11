@@ -68,7 +68,7 @@ SECTIONS
         "*/resource_68f_overlay.o"(.text.x0200ae00)
         "*/games/tla/src/field/overlay_68f/sparks.o"(.text)
         "*/games/tla/src/field/overlay_68f/import.o"(.text)
-        "*/resource_68f_overlay.o"(.rodata.x0200b1b0)
+        "*/games/tla/src/field/overlay_68f/data.o"(.data)
     }
     .bss : { "*/resource_68f_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

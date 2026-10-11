@@ -30,7 +30,7 @@ SECTIONS
         "*/resource_676_overlay.o"(.text.x0200a2f8)
         "*/resource_676_overlay.o"(.text.x0200a3c8)
         "*/games/tla/src/field/overlay_676/import.o"(.text)
-        "*/resource_676_overlay.o"(.rodata.x0200a5a8)
+        "*/games/tla/src/field/overlay_676/data.o"(.data)
     }
     .bss : { "*/resource_676_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

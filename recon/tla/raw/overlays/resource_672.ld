@@ -30,7 +30,7 @@ SECTIONS
         "*/resource_672_overlay.o"(.text.x02009ba8)
         "*/resource_672_overlay.o"(.text.x02009c44)
         "*/games/tla/src/field/overlay_672/import.o"(.text)
-        "*/resource_672_overlay.o"(.rodata.x02009f18)
+        "*/games/tla/src/field/overlay_672/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

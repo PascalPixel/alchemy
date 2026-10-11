@@ -46,7 +46,9 @@ SECTIONS
         "*/resource_6a1_overlay.o"(.text.x02009f60)
         "*/resource_6a1_overlay.o"(.text.x0200a010)
         "*/games/tla/src/field/overlay_6a1/import.o"(.text)
-        "*/resource_6a1_overlay.o"(.rodata.x0200a2d0)
+        "*/games/tla/src/field/overlay_6a1/data.o"(.data)
+        "*/resource_6a1_overlay.o"(.rodata.x0200a334)
+        "*/games/tla/src/field/overlay_6a1/data2.o"(.data)
     }
     .bss : { "*/resource_6a1_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

@@ -17,7 +17,9 @@ SECTIONS
         "*/resource_68d_overlay.o"(.text.x02008550)
         "*/resource_68d_overlay.o"(.text.x0200858c)
         "*/games/tla/src/field/overlay_68d/import.o"(.text)
-        "*/resource_68d_overlay.o"(.rodata.x0200a12c)
+        "*/games/tla/src/field/overlay_68d/data.o"(.data)
+        "*/resource_68d_overlay.o"(.rodata.x0200a620)
+        "*/games/tla/src/field/overlay_68d/data2.o"(.data)
     }
     .bss : { "*/resource_68d_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

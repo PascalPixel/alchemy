@@ -94,7 +94,7 @@ SECTIONS
         "*/resource_692_overlay.o"(.text.x0200cb18)
         "*/resource_692_overlay.o"(.text.x0200cbd4)
         "*/games/tla/src/field/overlay_692/import.o"(.text)
-        "*/resource_692_overlay.o"(.rodata.x0200cf38)
+        "*/games/tla/src/field/overlay_692/data.o"(.data)
     }
     .bss : { "*/resource_692_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

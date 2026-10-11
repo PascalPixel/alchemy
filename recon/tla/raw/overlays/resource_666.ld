@@ -19,7 +19,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_666/prepare.o"(.text)
         "*/games/tla/src/field/overlay_666/s0738.o"(.text)
         "*/games/tla/src/field/overlay_666/import.o"(.text)
-        "*/resource_666_overlay.o"(.rodata.x02008be4)
+        "*/games/tla/src/field/overlay_666/data.o"(.data)
     }
     .bss : { "*/resource_666_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

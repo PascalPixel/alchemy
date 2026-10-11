@@ -140,7 +140,9 @@ SECTIONS
         "*/games/tla/src/field/overlay_6ad/light.o"(.text)
         "*/games/tla/src/field/overlay_6ad/lightcue.o"(.text)
         "*/games/tla/src/field/overlay_6ad/import.o"(.text)
-        "*/resource_6ad_overlay.o"(.rodata.x0200d6c8)
+        "*/games/tla/src/field/overlay_6ad/data.o"(.data)
+        "*/resource_6ad_overlay.o"(.rodata.x0200dfbc)
+        "*/games/tla/src/field/overlay_6ad/data2.o"(.data)
     }
     .bss : { "*/resource_6ad_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

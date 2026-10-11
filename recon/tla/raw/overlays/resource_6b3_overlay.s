@@ -847,36 +847,6 @@ Data_02000874:
 	.4byte 0x294a0240
 	.4byte 0x001f5294
 	.4byte 0x7c0003ff
-	.global gSceneEntrances
-gSceneEntrances:
-	.4byte 0xffff0000
-	.4byte 0x00000000
-	.4byte 0x40000000
-	.4byte 0xffff0000
-	.4byte 0xffffffff
-	.4byte 0x0000ffff
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global gSceneExits
-gSceneExits:
-	.4byte 0x000001ff
-	.global gScenePlacements
-gScenePlacements:
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global gSceneEvents
-gSceneEvents:
-	.4byte 0xffffffff
-	.4byte 0x00000000
-	.4byte 0x00000000
 	.section .bss,"aw",%nobits
 	.space 0x00000004
 	.global Data_020008f0

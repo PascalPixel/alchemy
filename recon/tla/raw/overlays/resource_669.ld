@@ -15,7 +15,7 @@ SECTIONS
         "*/resource_669_overlay.o"(.text.x020084f4)
         "*/games/tla/src/field/overlay_669/cutscene.o"(.text)
         "*/games/tla/src/field/overlay_669/import.o"(.text)
-        "*/resource_669_overlay.o"(.rodata.x0200b2b0)
+        "*/games/tla/src/field/overlay_669/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

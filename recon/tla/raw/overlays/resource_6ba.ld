@@ -24,7 +24,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6ba/drop.o"(.text)
         "*/resource_6ba_overlay.o"(.text.x02008ba0)
         "*/games/tla/src/field/overlay_6ba/import.o"(.text)
-        "*/resource_6ba_overlay.o"(.rodata.x02008e80)
+        "*/games/tla/src/field/overlay_6ba/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

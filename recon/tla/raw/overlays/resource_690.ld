@@ -47,7 +47,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_690/s1d30.o"(.text)
         "*/resource_690_overlay.o"(.text.x02009d3c)
         "*/games/tla/src/field/overlay_690/import.o"(.text)
-        "*/resource_690_overlay.o"(.rodata.x0200a1b8)
+        "*/games/tla/src/field/overlay_690/data.o"(.data)
     }
     .bss : { "*/resource_690_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

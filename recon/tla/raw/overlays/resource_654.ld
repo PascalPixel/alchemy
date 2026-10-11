@@ -42,7 +42,7 @@ SECTIONS
         "*/resource_654_overlay.o"(.text.x0200b598)
         "*/games/tla/src/field/overlay_654/eventg.o"(.text)
         "*/games/tla/src/field/overlay_654/import.o"(.text)
-        "*/resource_654_overlay.o"(.rodata.x0200bb50)
+        "*/games/tla/src/field/overlay_654/data.o"(.data)
     }
     .bss : { "*/resource_654_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

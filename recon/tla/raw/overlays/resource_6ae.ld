@@ -49,7 +49,7 @@ SECTIONS
         "*/resource_6ae_overlay.o"(.text.x0200d3e4)
         "*/games/tla/src/field/overlay_6ae/mark.o"(.text)
         "*/games/tla/src/field/overlay_6ae/import.o"(.text)
-        "*/resource_6ae_overlay.o"(.rodata.x0200d7e4)
+        "*/games/tla/src/field/overlay_6ae/data.o"(.data)
     }
     .bss : { "*/resource_6ae_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

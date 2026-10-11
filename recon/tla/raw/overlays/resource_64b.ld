@@ -77,7 +77,9 @@ SECTIONS
         "*/resource_64b_overlay.o"(.text.x0200c9bc)
         "*/games/tla/src/field/world_map/release.o"(.text)
         "*/games/tla/src/field/world_map/import.o"(.text)
-        "*/resource_64b_overlay.o"(.rodata.x0200ce38)
+        "*/games/tla/src/field/world_map/data.o"(.data)
+        "*/resource_64b_overlay.o"(.rodata.x0200cfd8)
+        "*/games/tla/src/field/world_map/data2.o"(.data)
     }
     .bss : { "*/resource_64b_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

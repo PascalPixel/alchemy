@@ -8,7 +8,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_66c/scene_events.o"(.text)
         "*/games/tla/src/field/overlay_66c/warriors.o"(.text)
         "*/games/tla/src/field/overlay_66c/import.o"(.text)
-        "*/resource_66c_overlay.o"(.rodata.x02008224)
+        "*/games/tla/src/field/overlay_66c/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

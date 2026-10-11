@@ -2,11 +2,6 @@
 #include "../../../include/system/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
-struct FlashInfo_0800711c {
-    u8 filler0[36];
-    u16 control;
-};
-
 u16 EraseAtmelFlashBlock(u16 sector)
 {
     u8 savedCode[64];
@@ -21,7 +16,7 @@ u16 EraseAtmelFlashBlock(u16 sector)
     CopyFlashReadRoutineToRam(savedCode);
     REG_WAITCNT =
         (REG_WAITCNT & 0xfffc) |
-        ((struct FlashInfo_0800711c *)Flash_ChipAtmelLayout)->control;
+        Flash_ChipAtmelLayout.wait[0];
 
     current = sector << 4;
     current = (u16)(current << 1);

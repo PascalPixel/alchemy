@@ -21,7 +21,7 @@ u16	 ProgramAtmelFlashSector(u32 sector, const u8 *source);
 u16	 ProgramAtmelFlashBlock(u16 block, u8 *source);
 void FlashTimerIntr(void);
 s32	 SetFlashTimerIntr(u8 timer_index, void (**callback)(void));
-void ReadFlashCore(u32 source, u8 *destination, s32 size);
+void ReadFlashCore(const u8 *source, u8 *destination, u32 size);
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size);
 u8	*VerifyFlashCore(u8 *left, u8 *right, u16 size);
 s32	 Flash_VerifySector(u16 sector, s32 source);

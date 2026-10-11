@@ -1,15 +1,6 @@
 #include "../../../include/system/flash.h"
+#include "../../../include/system/flash_data.h"
 #include "../../../include/system/io_reg.h"
-
-struct Config_080071a8 {
-    u8 pad_00[24];
-    s32 size;
-    u8 shift;
-};
-
-extern struct Config_080071a8 Flash_ChipAtmelLayout;
-
-typedef u16 (*FlashWaitProc)(s32 mode, volatile u8 *address, u8 expected);
 
 extern FlashWaitProc Flash_Handler3;
 
@@ -23,14 +14,14 @@ u16 ProgramAtmelFlashSector(u32 slot, const u8 *source)
     input = source;
     slot = (u16)slot;
     destination = (volatile u8 *)(
-        0x0e000000 + (slot << Flash_ChipAtmelLayout.shift));
+        0x0e000000 + (slot << Flash_ChipAtmelLayout.sector.shift));
     saved_ime = REG_IME;
     REG_IME = 0;
     *(volatile u8 *)0x0e005555 = 0xaa;
     *(volatile u8 *)0x0e002aaa = 0x55;
     *(volatile u8 *)0x0e005555 = 0xa0;
 
-    remaining = Flash_ChipAtmelLayout.size;
+    remaining = Flash_ChipAtmelLayout.sector.size;
     if (remaining != 0) {
         do {
             *destination++ = *input++;

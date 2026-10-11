@@ -6,19 +6,19 @@ extern FlashWaitProc Flash_Handler3;
 
 u16 EraseAtmelFlashSector(u16 sector)
 {
-    u8 *info = Flash_ChipAtmelLayout;
+    struct FlashSetupInfo *info = &Flash_ChipAtmelLayout;
     u8 *cursor;
     u16 saved;
     s32 count;
     u16 result;
 
-    cursor = (u8 *)(0x0E000000 + (sector << info[28]));
+    cursor = (u8 *)(0x0E000000 + (sector << info->sector.shift));
     saved = REG_IME;
     REG_IME = 0;
     *(volatile u8 *)0x0E005555 = 0xAA;
     *(volatile u8 *)0x0E002AAA = 0x55;
     *(volatile u8 *)0x0E005555 = 0xA0;
-    count = *(s32 *)(info + 24);
+    count = info->sector.size;
     while (count != 0) {
         *cursor = 0xFF;
         cursor++;

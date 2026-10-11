@@ -419,7 +419,6 @@ main	rom_tail_00	games/tbs/src/sound/driver/release_key
 main	rom_tail_00	games/tbs/src/sound/driver/clear_modulation
 main	rom_tail_00	games/tbs/src/sound/driver/command_byte_reader
 main	rom_tail_00	games/tbs/src/sound/driver/command_byte_setters
-main	rom_tail_00	games/common/src/sound/pcm_key_to_frequency	.text
 main	rom_tail_00	games/common/src/sound/sound	.text
 main	rom_tail_00	games/tbs/src/system/sound_get_jump_list
 main	rom_tail_00	games/tbs/src/sound/sound2	.text

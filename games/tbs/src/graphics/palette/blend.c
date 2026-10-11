@@ -24,28 +24,6 @@ extern struct DisplayTransitionState *gDisplayTransition;
 
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 
-/* FAKEMATCH: needed to match: system/io_write_queue.c's queue idiom: a one-pass loop around the IME read, and the count stored through a u16 pointer before the entry. */
-#define QUEUE_WRITE(value, address, control) {                             \
-        u32 saved;                                                          \
-        s32 count;                                                          \
-                                                                            \
-        do { \
-            /* FAKEMATCH: needed to match: removing this one-pass boundary changes measured instruction scheduling. */ \
-            ime = &REG_IME;                                                 \
-            saved = *ime;                                                   \
-        } while (0);                                                        \
-        *ime = (u16)ime;                                                    \
-        count = q->count;                                                   \
-        if (count <= 31) {                                                  \
-            u32 *destination = q->entries[count];                            \
-            *(u16 *)&q->count = count + 1;                                  \
-            *destination++ = (value);                                       \
-            *destination++ = (address);                                     \
-            *destination = (control);                                       \
-        }                                                                   \
-        *ime = saved;                                                       \
-    }
-
 void DisplayTransition_FillTilemapAndSolidTile(s32 color)
 {
     struct DisplayTransitionState *work = gDisplayTransition;
@@ -101,11 +79,9 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames
 
 void BattlePalette_UpdateBlend(void)
 {
-    /* FAKEMATCH: needed to match: IME scopes and halfword count stores preserve queue order; direct packed-bank selection swaps queue/IME registers. */
+    /* FAKEMATCH: needed to match: the packed bank is selected by its byte offset from the work; direct packed-bank selection swaps the queue and IME registers. */
     struct BattleEffectBuffers *work = gPaletteBufferWork;
     u16 *add = work->delta;
-    volatile u16 *ime;
-    struct IoWriteQueue *q;
     u8 *base;
     s32 i;
 
@@ -142,10 +118,9 @@ void BattlePalette_UpdateBlend(void)
 
     work->page ^= 1;
     base = (u8 *)work + work->page * sizeof(work->packed[0]);
-    q = &gIoWriteQueue;
     {
         u32 bg = (u32)(base + 0x2300);
-        QUEUE_WRITE(bg, (u32)BG_PLTT, 0x84000070);
+        IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, bg, 0x84000070);
     }
-    QUEUE_WRITE((u32)(base + 0x24c0), (u32)OBJ_PLTT, 0x84000070);
+    IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(base + 0x24c0), 0x84000070);
 }

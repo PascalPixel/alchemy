@@ -66,7 +66,6 @@ const u32 DisplayScroll_SlideResources[] = {
 
 void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
 {
-    /* FAKEMATCH: needed to match: the inline queue write keeps the one-pass IME read and u16 count-store scheduling. */
     u8 *data;
     u32 palette;
     u32 fill;
@@ -94,29 +93,7 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
     ((PackedDecoder)((union HeapState *)gWorkSlot)->slots[49])(data + 256, vram, fill);
     Runtime_ReleaseHeapBlock(49);
 
-    {
-        volatile u16 *ime;
-        struct IoWriteQueue *q;
-        u32 saved;
-        s32 count;
-
-        q = &gIoWriteQueue;
-        /* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
-        do {
-            ime = &REG_IME;
-            saved = *ime;
-        } while (0);
-        *ime = (u16)ime;
-        count = q->count;
-        if (count <= 31) {
-            u32 *destination = q->entries[count];
-            *(u16 *)&q->count = count + 1;
-            *destination++ = (u32)data;
-            *destination++ = palette;
-            *destination = 0x84000040;
-        }
-        *ime = saved;
-    }
+    IO_WRITE_QUEUE_PUSH(palette, (u32)data, 0x84000040);
 }
 
 void DisplayScroll_BuildHblankWordTable(u32 *arg0)

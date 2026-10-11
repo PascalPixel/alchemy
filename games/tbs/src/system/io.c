@@ -31,27 +31,7 @@ typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
 #define DEFINE_QUEUE_IO_WRITE(name, delay)                                  \
     void name(u32 address, u32 value)                                       \
     {                                                                       \
-        volatile u16 *ime;                                                  \
-        struct IoWriteQueue *q;                                             \
-        u32 saved;                                                          \
-        s32 count;                                                          \
-                                                                            \
-        q = &gIoWriteQueue; /* FAKEMATCH: the one-pass IME read and early u16 count store preserve queue-first loads and r4/r1 pointer allocation. */                                                 \
-        do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
-            ime = &REG_IME;                                                 \
-            saved = *ime;                                                   \
-        } while (0);                                                        \
-        *ime = (u16)ime;                                                    \
-        count = q->count;                                                   \
-        if (count <= 31) {                                                  \
-            u32 *destination = q->entries[count];                           \
-            *(u16 *)&q->count = count + 1;                                  \
-            *destination++ = value;                                         \
-            *destination++ = address;                                       \
-            *destination = (delay);                                         \
-        }                                                                   \
-        *ime = saved;                                                       \
+        IO_WRITE_QUEUE_PUSH(address, value, delay);                         \
     }
 
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay1, 0x10000)

@@ -19,30 +19,9 @@
 #include "scene.h"
 #include "global_cells.h"
 
-#define QUEUE_PALETTE(source, destination) {                                \
-        u32 saved;                                                          \
-                                                                            \
-        q = &gIoWriteQueue;                                                 \
-        do { \
-            /* FAKEMATCH: needed to match: removing this one-pass boundary changes measured instruction scheduling. */ \
-            ime = &REG_IME;                                                 \
-            saved = *ime;                                                   \
-        } while (0);                                                        \
-        *ime = (u16)ime;                                                    \
-        count = q->count;                                                   \
-        if (count <= 31) {                                                  \
-            u32 *entry = q->entries[count];                                  \
-            *(u16 *)&q->count = count + 1;                                  \
-            *entry++ = (u32)(source);                                       \
-            *entry++ = (destination);                                       \
-            *entry = 0x84000080;                                            \
-        }                                                                   \
-        *ime = saved;                                                       \
-    }
-
 void TitlePalette_UpdateFade(void)
 {
-    /* FAKEMATCH: needed to match: IME scopes, count stores and pointer lifetime preserve queue order; the byte-slot read avoids an extra add #128. */
+    /* FAKEMATCH: needed to match: the byte-slot read avoids an extra add #128. */
     struct TitlePaletteWork *work = *(struct TitlePaletteWork **)((u8 *)gWorkSlot + 32 * sizeof(void *));
     u16 *delta = work->delta;
     u16 *current;
@@ -50,9 +29,6 @@ void TitlePalette_UpdateFade(void)
     s32 i;
     u16 *bank;
     s32 blue;
-    volatile u16 *ime;
-    struct IoWriteQueue *q;
-    s32 count;
 
     if (work->duration == 0)
         return;
@@ -77,9 +53,9 @@ void TitlePalette_UpdateFade(void)
     {
         u16 *front = bank;
 
-        QUEUE_PALETTE(front, 0x05000000);
+        IO_WRITE_QUEUE_PUSH(0x05000000, (u32)front, 0x84000080);
     }
-    QUEUE_PALETTE(bank + 256, 0x05000200);
+    IO_WRITE_QUEUE_PUSH(0x05000200, (u32)(bank + 256), 0x84000080);
 }
 
 void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)

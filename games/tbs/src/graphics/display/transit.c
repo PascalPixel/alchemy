@@ -22,30 +22,6 @@ void WaitFrames(s32 frames);
 
 extern volatile u32 gFrameCount;
 
-#define QUEUE_DISPLAY_CONTROL(value)                                        \
-    do {                                                                    \
-        volatile u16 *ime;                                                  \
-        struct IoWriteQueue *q;                                             \
-        u32 saved;                                                          \
-        s32 count;                                                          \
-                                                                            \
-        q = &gIoWriteQueue;                                                 \
-        do {                                                                \
-            ime = &REG_IME;                                                 \
-            saved = *ime;                                                   \
-        } while (0);                                                        \
-        *ime = (u16)ime;                                                    \
-        count = q->count;                                                   \
-        if (count <= 31) {                                                  \
-            u32 *destination = q->entries[count];                            \
-            *(u16 *)&q->count = count + 1;                                  \
-            *destination++ = (value);                                       \
-            *destination++ = (u32)&REG_DISPCNT;                             \
-            *destination = 0x20000;                                         \
-        }                                                                   \
-        do { *ime = saved; } while (0);                                     \
-    } while (0)
-
 void DisplayTransition_Start(s32 mode, s32 frames)
 {
     void **work;
@@ -53,7 +29,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
     s32 value;
     s32 kind;
 
-    /* FAKEMATCH: needed to match: one-pass IME scopes and count stores preserve saved-IME and queue load order; the map-work word prefix preserves address order. */
+    /* FAKEMATCH: needed to match: the map-work word prefix preserves address order. */
     kind = (mode >> 8) & 0xff;
     work = Ram_MapWork;
     display = *(struct DisplayTransitionWindow **)work;
@@ -68,7 +44,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         BattleFx_ApplyColorToSourceBuffer(0x8000, PLTT_BACKDROP);
         BattleFx_StartBufferInterpolation(frames);
         WaitFrames(1);
-        QUEUE_DISPLAY_CONTROL(REG_DISPCNT | display->dispcnt);
+        IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt, 0x20000);
         BattleFx_SetPrimaryBufferValue(0);
         return;
     case 2: {
@@ -80,7 +56,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 0xc80);
         Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0x480);
         WaitFrames(1);
-        QUEUE_DISPLAY_CONTROL(REG_DISPCNT | display->dispcnt);
+        IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt, 0x20000);
         state->start = 0;
         state->end = 32;
         state->duration = frames;
@@ -94,7 +70,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         DisplayTransition_FillTilemapAndSolidTile(15);
         WaitFrames(1);
         Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0xc80);
-        QUEUE_DISPLAY_CONTROL(REG_DISPCNT | display->dispcnt);
+        IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt, 0x20000);
         state->start = 0;
         state->end = 32;
         state->duration = frames;
@@ -127,7 +103,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         break;
     }
     }
-    QUEUE_DISPLAY_CONTROL(REG_DISPCNT | display->dispcnt);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt, 0x20000);
 }
 
 void DisplayTransition_Finish(s32 mode, s32 frames)

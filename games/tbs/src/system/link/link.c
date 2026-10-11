@@ -1,7 +1,7 @@
 #include "serial_runtime.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "../irqlock.h"
+#include "irqlock.h"
 #include "../iowrite.h"
 
 void SerialRuntime_Initialize(void)
@@ -425,7 +425,6 @@ s32 SerialRuntime_BeginTransferA(void *source, s32 transfer_value)
 {
     volatile s32 *active;
     struct SerialTransferState *state;
-    volatile u16 *ime;
     u32 saved_interrupt_master;
     s32 busy;
     s32 value;
@@ -447,17 +446,13 @@ s32 SerialRuntime_BeginTransferA(void *source, s32 transfer_value)
     goto transfer_complete;
 
 begin_transfer:
-    ime = &REG_IME;
-    saved_interrupt_master = *ime;
-    *ime = (u32)ime;
-    do {
+    IRQ_LOCK(saved_interrupt_master);
         state->status = 0x80;
         gSerialSendSize = transfer;
         gSerialBlockSequence = 0;
         *active = value;
         state->active = 1;
-    } while (0);
-    *ime = saved_interrupt_master;
+    IRQ_UNLOCK(saved_interrupt_master);
     value = 0;
 
 transfer_complete:
@@ -468,7 +463,6 @@ s32 SerialRuntime_BeginTransferB(void *destination)
 {
     volatile s32 *active;
     struct SerialTransferState *state;
-    volatile u16 *ime;
     u32 saved_interrupt_master;
     s32 busy;
     s32 value;
@@ -484,16 +478,11 @@ s32 SerialRuntime_BeginTransferB(void *destination)
     goto transfer_complete;
 
 begin_transfer:
-    ime = &REG_IME;
-    saved_interrupt_master = *ime;
-    *ime = (u32)ime;
-    /* FAKEMATCH: the one-pass block keeps the IME read and write ahead of the transfer stores, as in SerialRuntime_BeginTransferA. */
-    do {
+    IRQ_LOCK(saved_interrupt_master);
         state->status = 0x81;
         gSerialReceivedSize = 0;
         state->active = 1;
         *active = value;
-    } while (0);
     {
 
         volatile u8 *sequence = &gSerialBlockSequence;
@@ -505,7 +494,7 @@ begin_transfer:
         register u16 zero asm("r0") = 0;
         *sequence = zero;
     }
-    *ime = saved_interrupt_master;
+    IRQ_UNLOCK(saved_interrupt_master);
     value = 0;
 
 transfer_complete:

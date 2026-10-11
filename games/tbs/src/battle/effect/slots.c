@@ -1074,32 +1074,6 @@ void BattleFx_CleanupResourcesAndWindow(void)
 #endif
 s32		   ArcTan2(s32 dz, s32 dx);
 
-// IME を止めて I/O 書き込みキューに 1 件積む（QueueIoWriteDelay2 と同じ）
-#define QUEUE_IO_WRITE_DELAY2(address, value)                                                         \
-	do                                                                                                \
-	{                                                                                                 \
-		u32 saved;                                                                                    \
-		s32 count;                                                                                    \
-                                                                                                      \
-		/* FAKEMATCH: a block of its own keeps the saved IME read first. */                           \
-		do                                                                                            \
-		{                                                                                             \
-			/* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
-			saved = *ime;                                                                             \
-		} while (0);                                                                                  \
-		*ime = (u16)ime;                                                                              \
-		count = q->count;                                                                             \
-		if (count <= 31)                                                                              \
-		{                                                                                             \
-			u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);                                     \
-			*(u16 *)&q->count = count + 1;                                                            \
-			*destination++ = (value);                                                                 \
-			*destination++ = (address);                                                               \
-			*destination = 0x20000;                                                                   \
-		}                                                                                             \
-		*ime = saved;                                                                                 \
-	} while (0)
-
 //--------------------------------------------------------------------------
 // ワールドマップの毎フレーム処理（スケジューラのコールバック）
 // フラグの立った場所に印を出し、十字キーでカーソルを動かし、
@@ -1134,8 +1108,6 @@ void Map_UpdateWorldMapMarkers(void)
 	s32					 x;
 	s32					 y;
 	s32					 angle;
-	struct IoWriteQueue *q;
-	volatile u16		*ime;
 
 #if WORLD_MAP_CURSOR_SNAPS
 	leader = gGameState.selected_actor;
@@ -1342,10 +1314,8 @@ markers:
 	}
 
 	// 印の半透明を明滅させる
-	q = &gIoWriteQueue;
-	ime = &REG_IME;
-	QUEUE_IO_WRITE_DELAY2((u32)&REG_BLDCNT, 0x3f00);
-	QUEUE_IO_WRITE_DELAY2((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f00, 0x20000);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend, 0x20000);
 }
 
 #undef ObjectTable_Get
@@ -1359,7 +1329,7 @@ void BattleFx_ScheduleRatioTransition(s32, s32);
 void Map_ShowWorldMap(s32 picture)
 {
 	extern u8 gMapCellBuffer[];
-	/* FAKEMATCH: needed to match: one-pass loops order display-control setup, the spilled layer load and the IME read; the count uses a halfword store. */
+	/* FAKEMATCH: needed to match: one-pass loops order display-control setup and the spilled layer load. */
 	struct MapState			*map = WORK_SLOT(8);
 	struct EventWork		*field = Runtime_AllocateBlock(27, 0xccc);
 	struct ObjectSystemWork *menu = WORK_SLOT(HEAP_SLOT_MENU_CONTROL);
@@ -1421,31 +1391,7 @@ void Map_ShowWorldMap(s32 picture)
 		REG_DISPCNT = v;
 	}
 	Map_LoadAreaGraphicsFar();
-	{
-		volatile u16		*ime;
-		struct IoWriteQueue *q;
-		u32					 saved;
-		s32					 count;
-
-		q = &gIoWriteQueue;
-		/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
-		do
-		{
-			ime = &REG_IME;
-			saved = *ime;
-		} while (0);
-		*ime = (u16)ime;
-		count = q->count;
-		if (count <= 31)
-		{
-			u32 *destination = q->entries[count];
-			*(u16 *)&q->count = count + 1;
-			*destination++ = (u16)blend;
-			*destination++ = (u32)&REG_BLDALPHA;
-			*destination = 0x20000;
-		}
-		*ime = saved;
-	}
+	IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, 0x20000);
 	/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
 	do
 	{

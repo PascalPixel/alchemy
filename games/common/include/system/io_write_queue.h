@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_IO_WRITE_QUEUE_H
 #define ALCHEMY_IO_WRITE_QUEUE_H
 
+#include "irqlock.h"
 #include "types.h"
 
 struct IoWriteQueue
@@ -23,34 +24,27 @@ void QueueIoWriteDelay10(u32 address, u32 value);
 void QueueIoWriteDelay11(u32 address, u32 value);
 void IoWriteQueue_FlushPending(void);
 
-#define IO_WRITE_QUEUE_PUSH(address, value, delay)                                                                                                           \
-	{                                                                                                                                                        \
-		/* FAKEMATCH: nested one-pass blocks keep queue/save loads before the IME store, the u16 count store, and following stores after the IME restore. */ \
-		volatile u16		*ime;                                                                                                                            \
-		struct IoWriteQueue *q;                                                                                                                              \
-		u32					 saved;                                                                                                                          \
-		s32					 count;                                                                                                                          \
-                                                                                                                                                             \
-		q = &gIoWriteQueue;                                                                                                                                  \
-		do                                                                                                                                                   \
-		{                                                                                                                                                    \
-			do                                                                                                                                               \
-			{                                                                                                                                                \
-				ime = (volatile u16 *)0x04000208;                                                                                                            \
-				saved = *ime;                                                                                                                                \
-			} while (0);                                                                                                                                     \
-			*ime = (u16)ime;                                                                                                                                 \
-			count = q->count;                                                                                                                                \
-			if (count <= 31)                                                                                                                                 \
-			{                                                                                                                                                \
-				u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);                                                                                        \
-				*(u16 *)&q->count = count + 1;                                                                                                               \
-				*destination++ = (value);                                                                                                                    \
-				*destination++ = (address);                                                                                                                  \
-				*destination = (delay);                                                                                                                      \
-			}                                                                                                                                                \
-			*ime = saved;                                                                                                                                    \
-		} while (0);                                                                                                                                         \
+// 割り込みを止めて I/O 書き込みキューに 1 件積む。満杯（32 件）なら何もしない
+// address : 書き込み先、value : 値、control : 遅延フレーム << 16、または DMA の制御語
+/* FAKEMATCH: the count is stored through a u16 pointer; stored as q->count, 21 objects differ. One text for the 9 QueueIoWriteDelay writers and 67 inline pushes; with braces alone, since an outer one-pass block changes 9 objects. Not covered: the four pushes of BattleEffect_RunShockwaveScene and the first of BattleFx_PlayUnitElementEffect, where the ROM keeps the IME address in one register across the frame loop. */
+#define IO_WRITE_QUEUE_PUSH(address, value, control)       \
+	{                                                      \
+		struct IoWriteQueue *q = &gIoWriteQueue;           \
+		u32					 saved;                        \
+		s32					 count;                        \
+                                                           \
+		IRQ_LOCK(saved);                                   \
+		count = q->count;                                  \
+		if (count <= 31)                                   \
+		{                                                  \
+			u32 *entry = q->entries[count];                \
+                                                           \
+			*(u16 *)&q->count = count + 1;                 \
+			*entry++ = (value);                            \
+			*entry++ = (address);                          \
+			*entry = (control);                            \
+		}                                                  \
+		IRQ_UNLOCK(saved);                                 \
 	}
 
 #endif

@@ -465,36 +465,6 @@ struct EffectLaunch
 		(reg) = value_;                                                                                                   \
 	} while (0)
 
-#define BG2_QUEUE_ORIGIN(ime, find_ime, origin)                                                                                     \
-	{                                                                                                                               \
-		struct IoWriteQueue *q;                                                                                                     \
-		u32					 saved;                                                                                                 \
-		s32					 count;                                                                                                 \
-                                                                                                                                    \
-		q = &gIoWriteQueue;                                                                                                         \
-		/* FAKEMATCH: needed to match: the one-pass block keeps the saved copy ahead of the IME store, as in the IO write queue. */ \
-		do                                                                                                                          \
-		{                                                                                                                           \
-			find_ime;                                                                                                               \
-			saved = *ime;                                                                                                           \
-		} while (0);                                                                                                                \
-		*ime = (u16)(u32)ime;                                                                                                       \
-		count = q->count;                                                                                                           \
-		if (count <= 31)                                                                                                            \
-		{                                                                                                                           \
-			u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);                                                                   \
-			*(u16 *)&q->count = count + 1;                                                                                          \
-			*destination++ = (u32)(origin);                                                                                         \
-			*destination++ = 0x04000028;                                                                                            \
-			*destination = 0x84000002;                                                                                              \
-		}                                                                                                                           \
-		/* FAKEMATCH: needed to match: the one-pass block keeps the IME restore ahead of the next statement. */                     \
-		do                                                                                                                          \
-		{                                                                                                                           \
-			*ime = saved;                                                                                                           \
-		} while (0);                                                                                                                \
-	}
-
 void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 {
 	/* FAKEMATCH: needed to match: an unread ten-word launch tail, the native frame's 40 extra bytes. */
@@ -537,7 +507,33 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 			BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
 			work->origin_x = (64 - pos->x) << 8;
 			work->origin_y = (64 - pos->y) << 8;
-			BG2_QUEUE_ORIGIN(ime, (void)0, &work->origin_x);
+			{
+				/* FAKEMATCH: needed to match: IO_WRITE_QUEUE_PUSH written out with the IME address in the function's own pointer, set at the top of the loop; the one-pass blocks keep the saved copy ahead of the IME store and the restore ahead of the next statement. With the macro the IME address and pos trade r6 and r7 (differ 20). */
+				struct IoWriteQueue *q;
+				u32					 saved;
+				s32					 count;
+
+				q = &gIoWriteQueue;
+				do
+				{
+					saved = *ime;
+				} while (0);
+				*ime = (u16)(u32)ime;
+				count = q->count;
+				if (count <= 31)
+				{
+					u32 *entry = (u32 *)((u8 *)q + count * 12 + 4);
+
+					*(u16 *)&q->count = count + 1;
+					*entry++ = (u32)&work->origin_x;
+					*entry++ = 0x04000028;
+					*entry = 0x84000002;
+				}
+				do
+				{
+					*ime = saved;
+				} while (0);
+			}
 			work->origin_pending = 1;
 			WaitFrames(1);
 		}
@@ -552,11 +548,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 			BattleMotion_ProjectScaledPosition(unit, (s32 *)&position2);
 			work->origin_x = (64 - position2.x) << 8;
 			work->origin_y = (64 - position2.y) << 8;
-			{
-				volatile u16 *reg;
-
-				BG2_QUEUE_ORIGIN(reg, reg = &REG_IME, &work->origin_x);
-			}
+			IO_WRITE_QUEUE_PUSH(0x04000028, (u32)&work->origin_x, 0x84000002);
 			work->origin_pending = 1;
 			WaitFrames(1);
 		}

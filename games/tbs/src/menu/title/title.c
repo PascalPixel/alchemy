@@ -25,42 +25,12 @@
 #include "ram_buffer.h"
 #include "call.h"
 
-
 #define RuntimeDispatch_NoOpHook ((void (*)(s32))RuntimeDispatch_NoOpHook)
 #define Title_ShowSplashScreen ((void (*)(s32))Title_ShowSplashScreen)
 
 void Event_SetDestination(s32 scene, s32 entrance);
 
 #define DMA3 (REG_DMA3)
-
-static __inline__ void RestoreInterrupts(u32 saved)
-{
-    REG_IME = saved;
-}
-
-#define QUEUE_WRITE(address, value)                                         \
-    do {                                                                    \
-        volatile u16 *ime;                                                  \
-        u32 saved;                                                          \
-        s32 count;                                                          \
-                                                                            \
-        q = &gIoWriteQueue;                                                 \
-        do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
-            ime = &REG_IME;                                                 \
-            saved = *ime;                                                   \
-        } while (0);                                                        \
-        *ime = (u16)ime;                                                    \
-        count = q->count;                                                   \
-        if (count <= 31) {                                                  \
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
-            *(u16 *)&q->count = count + 1;                                  \
-            *destination++ = (value);                                       \
-            *destination++ = (address);                                     \
-            *destination = 0x20000;                                         \
-        }                                                                   \
-        RestoreInterrupts(saved);                                           \
-    } while (0)
 
 extern u16 gBgScroll[];
 
@@ -272,22 +242,20 @@ loop:
 
 void Title_RevealScreen(s32 unused)
 {
-    /* FAKEMATCH: the one-pass IME read keeps the saved copy before masking; the count cast preserves the queue's original publication order. */
     s32 i;
-    struct IoWriteQueue *q;
 
     Title_LoadBackground();
     Engine_EventWait(30);
     gTitleRevealFrame = 0;
     Title_LoadSprites(0);
     Engine_TaskAddCallback(Title_RevealSpriteRow, 0xc80);
-    QUEUE_WRITE(0x4000000, 0x1540);
-    QUEUE_WRITE(0x4000050, 0x2fce);
-    QUEUE_WRITE(0x4000054, 16);
-    QUEUE_WRITE(0x4000052, 0x1010);
+    IO_WRITE_QUEUE_PUSH(0x4000000, 0x1540, 0x20000);
+    IO_WRITE_QUEUE_PUSH(0x4000050, 0x2fce, 0x20000);
+    IO_WRITE_QUEUE_PUSH(0x4000054, 16, 0x20000);
+    IO_WRITE_QUEUE_PUSH(0x4000052, 0x1010, 0x20000);
     Engine_EventWait(120);
     for (i = 0; i <= 16; i++) {
-        QUEUE_WRITE(0x4000054, 16 - i);
+        IO_WRITE_QUEUE_PUSH(0x4000054, 16 - i, 0x20000);
         Engine_TaskWait(3);
     }
     gEventWork->start_transition = 0;

@@ -280,29 +280,7 @@ s32 Title_ShowIntro(s32 prompt)
     Title_LoadIntroBackgrounds();
     TitlePalette_InitializeBuffers();
     Graphics_TransformSmallPalette(2, 0);
-    {
-        volatile u16 *ime;
-        struct IoWriteQueue *q;
-        u32 old;
-        s32 count;
-
-        q = &gIoWriteQueue;
-        /* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
-        do {
-            ime = &REG_IME;
-            old = *ime;
-        } while (0);
-        *ime = (u16)ime;
-        count = q->count;
-        if (count <= 31) {
-            u32 *destination = q->entries[count];
-            *(u16 *)&q->count = count + 1;
-            *destination++ = 0xf740;
-            *destination++ = (u32)&REG_DISPCNT;
-            *destination = 0x20000;
-        }
-        *ime = old;
-    }
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0xf740, 0x20000);
     Graphics_UpdatePaletteInterpolation(60);
     Scheduler_AddOrUpdateCallback(Title_PlaceIntroSprites, 0x480);
 

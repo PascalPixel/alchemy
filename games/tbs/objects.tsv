@@ -128,9 +128,9 @@ main	rom_main_01	games/tbs/src/graphics/tile/copy_strided
 main	rom_main_01	games/tbs/src/field/common/object/update	.text
 main	rom_main_01	games/tbs/src/system/updfar	.text
 main	rom_main_01	games/tbs/src/system/resource/animate	.text
-main	rom_main_01	games/common/src/system/resource/object	.text
-main	rom_main_01	games/common/src/system/resource/resobj	.text
-main	rom_main_01	games/common/src/field/common/object/object	.text
+main	rom_main_01	games/tbs/src/system/resource/object	.text
+main	rom_main_01	games/tbs/src/system/resource/resobj	.text
+main	rom_main_01	games/tbs/src/field/common/object/object	.text
 main	rom_main_01	games/common/src/field/common/script/script	.text
 main	rom_main_01	games/tbs/src/field/common/object/wait	.text
 main	rom_main_01	games/common/src/field/common/object/motion_set_position_and_reset_motion	.text

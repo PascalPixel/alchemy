@@ -20,6 +20,7 @@
 #include "types.h"
 #include "callback_scheduler.h"
 #include "dma.h"
+#include "ramcode.h"
 #include "map.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -124,7 +125,6 @@ s32 Map_InitializePerspectiveScene(void)
     volatile u32 fill;
     struct FixedPointPosition vector;
     s32 far_plane;
-    u32 size;
     s32 i;
 
     REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
@@ -203,12 +203,7 @@ s32 Map_InitializePerspectiveScene(void)
     ((s32 (*)(struct FixedPointPosition *, struct BattleCamera *))Iwram_TransformVector)(&vector, camera);
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(camera->eye, position);
-    /* FAKEMATCH: needed to match: loop note orders the transform call's r1, routine, r0 */
-    do {
-        size = (s32)&Transform_UpdateVerticesSize;
-        Dma_Set((void *)Transform_UpdateVertices, Runtime_AllocateHeapBlock(46, size),
-                DMA_ENABLE32 | DMA_32BIT | (size >> 2), REG_DMA3);
-    } while (0);
+    RamCode_LoadSlot(46, Transform_UpdateVertices, &Transform_UpdateVerticesSize);
     WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)),
                   position, tiles->scanlines);
     gScanlineAngle = 0;

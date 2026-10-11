@@ -269,7 +269,6 @@ main	rom_main_04	games/tbs/src/game/inventory/invent	.text
 main	rom_main_04	games/common/src/graphics/text/draw_draw_quantity_pair_with_cue	.text
 main	rom_main_04	games/tbs/src/field/common/event/evwork	.text
 main	rom_main_04	games/tbs/src/field/common/object/motion	.text
-main	rom_main_04	games/tbs/src/field/common/object/link	.text
 main	rom_main_04	games/tbs/src/field/common/object/state	.text
 main	rom_main_04	games/tbs/src/field/common/object/active	.text
 main	rom_main_04	games/tbs/src/battle/presentation/wait	.text

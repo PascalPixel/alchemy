@@ -22,22 +22,20 @@
 
 extern struct EventWork *gEventWork;
 
-extern s32 Encounter_SelectEnemyGroup();
+s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps);
 
 //--------------------------------------------------------------------------
 // 地形ごとのエンカウント
 // terrain : 地形番号（0 は通常の地面）
-// 呼び出し側が r1 に置いた歩数はそのまま Encounter_SelectEnemyGroup へ渡る
+// steps   : 歩数の係数。そのまま Encounter_SelectEnemyGroup へ渡す
 //--------------------------------------------------------------------------
-s32 EffectRuntime_LookupByTableEntry(u32 terrain)
+s32 EffectRuntime_LookupByTableEntry(u32 terrain, s32 steps)
 {
 	u8 *zone;
 
 	zone = gEventWork->encounter_groups;
-	return Encounter_SelectEnemyGroup(zone[terrain]);
+	return Encounter_SelectEnemyGroup(zone[terrain], steps);
 }
-
-s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps);
 
 //--------------------------------------------------------------------------
 // ワールドマップのエンカウント（足元の地形からゾーンを引く）

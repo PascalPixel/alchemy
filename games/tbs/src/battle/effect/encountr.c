@@ -59,7 +59,7 @@ extern struct EventWork	   *gEventWork;
 extern struct EncounterZone Encounter_EnemyGroupTable[];
 struct BtlUnit			   *UnitGetFar(s32 unit);
 u32							Random16(void);
-void						BattleFx_SelectBattleCue(s32 zone);
+void						BattleFx_SelectBattleCue(s32 zone, s32 slot);
 
 //--------------------------------------------------------------------------
 // 今のマップと部屋に合う規則から、出現テーブル番号の並びを作る
@@ -228,6 +228,6 @@ encounter:
 		} while (pick >= 0);
 	}
 	sum = entry->enemies[i];
-	BattleFx_SelectBattleCue(zone);
+	BattleFx_SelectBattleCue(zone, i);
 	return sum;
 }

@@ -637,17 +637,17 @@ void MakyuriIriguchi_CrossDoorway(void)
 
 void MakyuriIriguchi_RunDoorScene(void)
 {
-    s32 record;
+    struct FieldActor *record;
 
     if (GameFlag_IsSet(0x250) == 0) {
         GameFlag_Set(0x250);
         Engine_EventBegin();
         record = Actor_Get(12);
-        *(s32 *)(record + 24) = -0x10000;
+        record->scale_x = -0x10000;
         record = Object_GetById(13);
-        *(s32 *)(record + 24) = -0x10000;
+        record->scale_x = -0x10000;
         record = Actor_Get(14);
-        *(s32 *)(record + 24) = -0x10000;
+        record->scale_x = -0x10000;
         Actor_SetPosition(MEARI, 0x880000, 0x900000);
         Actor_FaceDirection(MEARI, 0x4000, 10);
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);

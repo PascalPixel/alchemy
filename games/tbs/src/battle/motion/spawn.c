@@ -133,18 +133,19 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 		}
 		BattlePres_SetActorModeAndAction(id);
 	}
-	/* FAKEMATCH: needed to match: the goto rotation preserves indexed list reads */
 	if (refresh)
 	{
 		i = 0;
 		if ((resource = list[0]) != 255)
 		{
-		again:
-			if (list[i] != 254 && (slot = BtlObjGet(resource)) != 0 && (object = slot->object) != 0)
-				BattlePres_SetActorModeAndAction(resource);
-			i++;
-			if (i <= 13 && (resource = list[i]) != 255)
-				goto again;
+			for (;;)
+			{
+				if (list[i] != 254 && (slot = BtlObjGet(resource)) != 0 && (object = slot->object) != 0)
+					BattlePres_SetActorModeAndAction(resource);
+				i++;
+				if (i >= 14 || (resource = list[i]) == 255)
+					break;
+			}
 		}
 	}
 }

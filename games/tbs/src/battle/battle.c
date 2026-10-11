@@ -43,11 +43,10 @@ void BattleActor_UpdateSpritePriorities(void)
 
 	// 全員の状態アイコン
 	BattleParty_ListActorIds(BATTLE_SIDE_BOTH, ids);
-	/* FAKEMATCH: needed to match: the scan is rotated by hand with a goto, which keeps the loop pass off it */
 	i = 0;
 	if (ids[i] != BATTLE_UNIT_LIST_END)
 	{
-	again:
+		for (;;)
 		{
 			struct BtlObj *slot = BtlObjGet(ids[i]);
 
@@ -76,10 +75,10 @@ void BattleActor_UpdateSpritePriorities(void)
 					}
 				}
 			}
+			i++;
+			if (i >= UNIT_MAX || ids[i] == BATTLE_UNIT_LIST_END)
+				break;
 		}
-		i++;
-		if (i <= UNIT_MAX - 1 && ids[i] != BATTLE_UNIT_LIST_END)
-			goto again;
 	}
 
 	// カメラの向きで、味方と敵の優先度を入れ替える

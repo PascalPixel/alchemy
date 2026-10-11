@@ -9,6 +9,15 @@
 
 #include "game_state.h"
 
+// A scene stores into its own const tables: an overlay's data is in RAM.
+// The games' compiler takes the store as written; a current GCC refuses it,
+// so the modern build names the place without its const.
+#ifdef MODERN
+#define STORE_CONST(place) (*(__typeof_unqual__(place) *)&(place))
+#else
+#define STORE_CONST(place) (place)
+#endif
+
 extern u8 gSceneState[];
 
 extern u8 *gKorosseoWork;

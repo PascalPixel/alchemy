@@ -75,32 +75,6 @@ typedef struct ScaledStageObject
 	u8	state;
 } ScaledStageObject;
 
-typedef struct StageEffect
-{
-	s32 reserved_00;
-	s32 reserved_04;
-	s32 x;
-	s32 y;
-	s32 z;
-	u8	reserved_14[20];
-	s32 vertical_motion;
-	u8	reserved_2c[41];
-	u8	state;
-} StageEffect;
-
-typedef struct StageEffect_02003d88
-{
-	s32 reserved_00;
-	s32 reserved_04;
-	s32 x;
-	s32 y;
-	s32 z;
-	u8	reserved_14[65];
-	u8	state;
-	u8	reserved_56[14];
-	s16 linked_effect_slot;
-} StageEffect_02003d88;
-
 typedef struct SceneControl
 {
 	s16 enabled;
@@ -151,24 +125,6 @@ typedef struct StageObstacleActor
 	u8	unk_38[29];
 	u8	state;
 } StageObstacleActor;
-
-typedef struct SceneParticle
-{
-	u8	filler00[8];
-	s32 x;
-	s32 y;
-	s32 z;
-	u8	filler14[4];
-	s32 scale_x;
-	s32 scale_y;
-	u8	filler20[0x1c];
-	s32 anchor_y;
-	u8	filler40[0x15];
-	u8	state;
-	u8	filler56[0xe];
-	s16 velocity_x;
-	s16 velocity_y;
-} SceneParticle;
 
 typedef void (*SceneTaskEntry)(void);
 
@@ -2474,7 +2430,7 @@ void FieldScene_RunScene3bcSequenceA(s32 a0)
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	gColossoModeScript3A[13] = a0 * 60;
-	gColossoModeScript3B[13] = (a0 < 0 ? -a0 : a0) * 60;
+	STORE_CONST(gColossoModeScript3B[13]) = (a0 < 0 ? -a0 : a0) * 60;
 	if (a0 < 0)
 	{
 		Engine_EventWait(30);

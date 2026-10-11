@@ -70,22 +70,6 @@ typedef struct Actor_02000cd0
 	u8	flags;
 } Actor_02000cd0;
 
-typedef struct Target_02000cd0
-{
-	union FieldCoordinate x;
-	s32					  pad4;
-	union FieldCoordinate z;
-} Target_02000cd0;
-
-typedef struct Record
-{
-	s32 pad0;
-	s32 pad4;
-	s32 w8;
-	s32 w12;
-	s32 w16;
-} Record;
-
 struct Actor_02000ec8
 {
 	u8	unknown_00[8];
@@ -188,8 +172,6 @@ u8 *OverlayObject_PrepareSpawnedObjectMode4(s32 x, s32 y, s32 z, s32 kind)
 	}
 	return (u8 *)ret;
 }
-
-s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record);
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 extern u8 *gActorEffectWork;
@@ -492,8 +474,6 @@ void BabiChika_RunLeaderSpray(void)
 	leader->motion_flags = 3;
 	Engine_EventEnd();
 }
-
-#define SceneActor_MoveActorZeroToTarget ((int (*)())SceneActor_MoveActorZeroToTarget)
 
 #define ACTOR_UPDATE_IDLE ((void (*)(union FieldObject *))SceneActor_SetFlagBitByRelativeDepth)
 #define ACTOR_UPDATE_PANEL ((void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor)
@@ -1711,8 +1691,6 @@ s32 FieldScene_InitializeActorGroups(void)
 	}
 	return 0;
 }
-
-#undef SceneActor_MoveActorZeroToTarget
 
 s16 StagedActor_DirectionSteps[] = {
 	0,

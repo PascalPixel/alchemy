@@ -11220,16 +11220,6 @@ typedef struct Puff // work->particles と同じ置き場
 	s32 tick; // 立ちのぼってからのフレーム（負なら待ち）
 } Puff;
 
-typedef struct
-{
-	s32 reserved_00[3];
-	s32 current_value;
-	s32 index_radius;
-	s32 entry_limit;
-	s32 reserved_18[3];
-	s16 values[1];
-} BattleEffectIndexWindow;
-
 #define HONOO_KAZU 9 // 炎の数
 
 //--------------------------------------------------------------------------
@@ -12404,7 +12394,6 @@ void BattleFx_RunNoEffect(void)
 #undef SPARKS
 
 typedef s32 (*CopyWords)(void *, const void *, s32);
-typedef struct BattleEffectArgument Efx;
 
 typedef struct Spark
 {

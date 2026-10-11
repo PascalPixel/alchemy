@@ -607,14 +607,14 @@ u8 *FuneKanpan_GetPlacements(void)
 	{
 		if (Engine_GameFlagIsSet(0x925))
 		{
-			gFuneKanpanPlacementsFlag911[13].talk_facing = v;
-			gFuneKanpanPlacementsFlag911[17].talk_facing = 2;
-			gFuneKanpanPlacementsFlag911[18].talk_facing = 2;
+			STORE_CONST(gFuneKanpanPlacementsFlag911[13].talk_facing) = v;
+			STORE_CONST(gFuneKanpanPlacementsFlag911[17].talk_facing) = 2;
+			STORE_CONST(gFuneKanpanPlacementsFlag911[18].talk_facing) = 2;
 		}
 		else if (Engine_GameFlagIsSet(0x922))
 		{
-			gFuneKanpanPlacementsFlag911[17].talk_facing = 1;
-			gFuneKanpanPlacementsFlag911[18].talk_facing = 1;
+			STORE_CONST(gFuneKanpanPlacementsFlag911[17].talk_facing) = 1;
+			STORE_CONST(gFuneKanpanPlacementsFlag911[18].talk_facing) = 1;
 		}
 		return gFuneKanpanPlacementsFlag911;
 	}

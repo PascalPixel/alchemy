@@ -71,17 +71,6 @@ struct MuraSceneRecord
 	u16 field_0x64;
 };
 
-typedef struct
-{
-	u8	filler0[8];
-	s32 unk8;
-	s32 unkC;
-	s32 unk10;
-	u8	filler14[80];
-	u16 unk64;
-	s16 unk66;
-} T_0200154c;
-
 struct Rec_399
 {
 	u8 pad00[9];
@@ -157,8 +146,6 @@ struct ExitCellPointHalves
 };
 
 extern s32 ImiruMura_ArcOrigin[];
-
-void SceneActor_UpdateCountdownArcPosition(T_0200154c *o);
 
 s32 OverlayObject_UpdateWobbleByCounter(struct Object *obj)
 {

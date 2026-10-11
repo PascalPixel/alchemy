@@ -64,18 +64,6 @@ struct Effect
 	u32			   callback;
 };
 
-typedef struct
-{
-	u8	filler0[8];
-	s32 unk8;
-	u8	fillerC[4];
-	s32 unk10;
-	u8	filler14[15];
-	u8	unk23;
-	u8	filler24[49];
-	u8	unk55;
-} Struct_1a14;
-
 struct Args_02003fe4
 {
 	s32 first;
@@ -109,24 +97,6 @@ struct BusyObject
 	u8	filler00[0x28];
 	s32 busy;
 };
-
-typedef struct
-{
-	u8 filler0[9];
-	u8 unk9;
-} Struct_Sub;
-
-typedef struct
-{
-	u8			filler0[8];
-	s32			unk8;
-	u8			fillerC[4];
-	s32			unk10;
-	u8			filler14[48];
-	s32			unk44;
-	u8			filler48[8];
-	Struct_Sub *unk50;
-} Struct_1a50;
 
 struct Object_020005e4
 {
@@ -300,12 +270,6 @@ typedef struct
 	u8	filler0[8];
 	s32 unk8;
 } Struct_1a9c;
-
-typedef struct
-{
-	s16 filler0[50];
-	s32 unk64;
-} Struct_22a4;
 
 typedef struct
 {

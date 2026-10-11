@@ -2914,7 +2914,7 @@ s32 BattleFx_FindDescriptorWithOverride(s32 id)
 //--------------------------------------------------------------------------
 s32 BattleFx_RunDescriptorAction(s32 id)
 {
-	extern const s32		   ObjectMotion_StepAngleScript[];
+	extern const u8		   ObjectMotion_StepAngleScript[];
 	struct BattleEffectAction *place = (struct BattleEffectAction *)BattleAction_FindDescriptor(id);
 	s32						   ret = -1;
 	struct BattleActionObject *obj = (struct BattleActionObject *)Object_GetById(id);
@@ -3007,7 +3007,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
 				{
 					obj->saved_value = saved_value;
 					ObjectDispatch_InitializeFar(
-						(struct DispatchObject *)obj, ObjectMotion_StepAngleScript);
+						(struct DispatchObject *)obj, (const s32 *)ObjectMotion_StepAngleScript);
 				}
 			}
 			obj->busy_5b = 0;
@@ -12649,7 +12649,7 @@ void Camera_WorldToScreen(struct EffectVector *position)
 
 void RunSceneTransitionEffect(s32 x, s32 y)
 {
-	s32			 __umodsi3(s32, s32);
+	u32			 __umodsi3(u32 numerator, u32 denominator);
 	u8			*work;
 	volatile u32 zero;
 

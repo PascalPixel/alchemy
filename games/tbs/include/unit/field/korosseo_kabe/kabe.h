@@ -9,6 +9,32 @@ struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
+typedef struct SparkSource
+{
+	s32 f00;
+	s32 f04;
+	s32 f08;
+	s32 f0c;
+	s32 f10;
+	u8	f14[20];
+	s32 f28;
+	u8	f2c[41];
+	u8	f55;
+} SparkSource;
+
+typedef struct RaisedEffect
+{
+	s32 f00;
+	s32 f04;
+	s32 f08;
+	s32 f0c;
+	s32 f10;
+	u8	f14[65];
+	u8	f55;
+	u8	f56[14];
+	s16 f64;
+} RaisedEffect;
+
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);
@@ -74,6 +100,8 @@ void Text_WriteU32AsHex(u8 *buf, u32 value);
 void SceneState_EmptyHook(void);
 void KorosseoKabe_MarkStageReady(void);
 void SceneState_WaitUntilStatusNine(void);
+void KorosseoKabe_SpawnRandomSceneEffect(SparkSource *a);
+s32 KorosseoKabe_RaiseLinkedSceneEffect(RaisedEffect *a);
 s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB);
 void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third, s32 fourth);
 void SceneState_InitControlRecordAndStartTask(s32 resource);

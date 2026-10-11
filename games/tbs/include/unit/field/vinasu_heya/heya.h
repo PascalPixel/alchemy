@@ -18,6 +18,42 @@ struct SceneEvent;
 struct SceneObject_02000b98;
 struct ScenePlacement;
 
+typedef struct
+{
+	u8 filler0[9];
+	u8 unk9;
+} Struct_Sub;
+
+typedef struct
+{
+	u8	filler0[8];
+	s32 unk8;
+	u8	fillerC[4];
+	s32 unk10;
+	u8	filler14[15];
+	u8	unk23;
+	u8	filler24[49];
+	u8	unk55;
+} Struct_1a14;
+
+typedef struct
+{
+	u8			filler0[8];
+	s32			unk8;
+	u8			fillerC[4];
+	s32			unk10;
+	u8			filler14[48];
+	s32			unk44;
+	u8			filler48[8];
+	Struct_Sub *unk50;
+} Struct_1a50;
+
+typedef struct
+{
+	s16 filler0[50];
+	s32 unk64;
+} Struct_22a4;
+
 void ConfigureOverlayObject(struct FieldActor *object, s32 palette);
 void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 type);
 void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 type);
@@ -68,12 +104,15 @@ void SceneState_ApplyRectAt19_44AndRunThree(void);
 void SceneActor_ApplyKind45AtActorsElevenAndTwelve(void);
 void SceneActor_ApplyPositionsOfActors11And12(void);
 void FieldScene_RunGuardedThreeStepSetup(void);
+void SceneState_MarkActorAndApplyRectAtTile(Struct_1a14 *obj);
+void OverlayObject_ResetObjectWhenFlatbs2Set(Struct_1a50 *o);
 void SceneActor_UpdateSlots11And12ByTile(void);
 void VinasuHeya_ShiftBridge(void);
 void VinasuHeya_RunCellPushScene(void);
 void FieldScene_RunGuardedRectStep(void);
 void VinasuHeya_SettlePushedBlocks(void);
 void SceneState_RunConditionalStep(void);
+s32 SceneActor_SetHeightAboveLinkedRecord(Struct_22a4 *obj);
 void VinasuHeya_LowerFloatingBlocks(s32 wait);
 void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector);
 void VinasuHeya_ResolveFloatingBlock(void);

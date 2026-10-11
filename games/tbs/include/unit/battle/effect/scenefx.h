@@ -2,11 +2,24 @@
 #define ALCHEMY_UNIT_BATTLE_EFFECT_SCENEFX_H
 
 #include "types.h"
+#include "battle_effect_work.h"
 #include "battle_efx.h"
 
 struct BattleEffectArgument;
 struct EffectPosition;
 struct EffectStep;
+
+typedef struct
+{
+	s32 reserved_00[3];
+	s32 current_value;
+	s32 index_radius;
+	s32 entry_limit;
+	s32 reserved_18[3];
+	s16 values[1];
+} BattleEffectIndexWindow;
+
+typedef struct BattleEffectArgument Efx;
 
 void BattlePres_ConfigureEffectDisplay(void);
 void BattleFx_AdvanceScrollOnInterval(void);
@@ -153,6 +166,7 @@ void BattleFx_RunPaletteRampMode2(struct BattleEffectArgument *effect);
 void BattleFx_RunPaletteRampMode3(struct BattleEffectArgument *effect);
 void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_RunPuffArc(struct BattleEffectArgument *efx);
+s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *win, s16 *out);
 void BattleFx_RunRockWall(struct BattleEffectArgument *effect);
 void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect);
 void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect);
@@ -170,6 +184,7 @@ void BattleFx_RunSeriesIMode3(struct BattleEffectArgument *effect);
 void BattleFx_RunSeriesIMode5(struct BattleEffectArgument *effect);
 void BattleFx_RunSeriesIMode7(struct BattleEffectArgument *effect);
 void BattleFx_RunSeriesIMode4(struct BattleEffectArgument *effect);
+void BattleEffect_RunBurstShower(Efx *efx, s32 mode);
 void BattleFx_RunSwirlingStars(void *object);
 void BattleFx_RunOrbitingSparks(void);
 void BattleFx_RunTargetBursts(void *object);

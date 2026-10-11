@@ -88,26 +88,6 @@ struct Obj_020036f8
 	s16 f64;
 };
 
-typedef struct RenderData
-{
-	unsigned char pad00[0x1E];
-	s16			  rotation;
-} RenderData;
-
-typedef struct Effect_0200390c
-{
-	unsigned char pad00[8];
-	s32			  x;
-	s32			  y;
-	unsigned char pad10[0x20];
-	s32			  angle;
-	unsigned char pad34[4];
-	s32			  base_x;
-	s32			  base_y;
-	unsigned char pad40[0x10];
-	RenderData	 *render;
-} Effect_0200390c;
-
 typedef struct OrbitingSceneObjectSprite
 {
 	u8 padding_00[5];

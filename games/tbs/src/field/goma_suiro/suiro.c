@@ -23,18 +23,6 @@
 #include "fixed_math.h"
 #include "objcmd.h"
 
-typedef struct
-{
-	u8	pad_to_angle[30];
-	u16 angle;
-} EffectRecord_020004c4;
-
-typedef struct
-{
-	u8					   pad_to_record[80];
-	EffectRecord_020004c4 *record;
-} EffectWork_020004c4;
-
 void SceneEffect_SetRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;

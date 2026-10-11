@@ -47,13 +47,6 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-typedef struct Position3
-{
-	s32 x;
-	s32 y;
-	s32 z;
-} Position3;
-
 typedef struct PartyInteractionRecord
 {
 	u8	padding_00[10];
@@ -67,8 +60,6 @@ typedef void (*SceneTask)(void);
 #define KEYS_HELD gKeysHeld // VBlank で書く
 
 // コロッセオ共通 (field/common/korosseo)
-
-struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct FieldActor *subject);
 
 u8 *KorosseoKawa_GetEntrances(void)
 {
@@ -1608,7 +1599,7 @@ void FieldScene_RunLateSequence(s32 a0)
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	KorosseoKawa_SpanA[13] = a0 * 60;
-	KorosseoKawa_SpanB[13] = (a0 < 0 ? -a0 : a0) * 60;
+	STORE_CONST(KorosseoKawa_SpanB[13]) = (a0 < 0 ? -a0 : a0) * 60;
 	if (a0 < 0)
 	{
 		Engine_EventWait(30);

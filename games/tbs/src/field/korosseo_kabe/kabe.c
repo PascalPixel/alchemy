@@ -89,32 +89,6 @@ typedef struct PartyInteractionRecord
 	s16 y;
 } PartyInteractionRecord;
 
-typedef struct SparkSource
-{
-	s32 f00;
-	s32 f04;
-	s32 f08;
-	s32 f0c;
-	s32 f10;
-	u8	f14[20];
-	s32 f28;
-	u8	f2c[41];
-	u8	f55;
-} SparkSource;
-
-typedef struct RaisedEffect
-{
-	s32 f00;
-	s32 f04;
-	s32 f08;
-	s32 f0c;
-	s32 f10;
-	u8	f14[65];
-	u8	f55;
-	u8	f56[14];
-	s16 f64;
-} RaisedEffect;
-
 typedef struct KabeSceneRecord
 {
 	u8	pad_00[6];
@@ -149,9 +123,6 @@ struct StageControl
 	s16 f6;
 	s16 f8;
 };
-
-void KorosseoKabe_SpawnRandomSceneEffect(SparkSource *a);
-s32	 KorosseoKabe_RaiseLinkedSceneEffect(RaisedEffect *a);
 
 static inline void InitializeActorZero(void)
 {
@@ -1891,7 +1862,7 @@ void FieldScene_RunLateSequence(s32 a0)
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	KorosseoKabe_ModeRecordThree[13] = a0 * 60;
-	KorosseoKabe_ModeRecordThreeAlt[13] = (a0 < 0 ? -a0 : a0) * 60;
+	STORE_CONST(KorosseoKabe_ModeRecordThreeAlt[13]) = (a0 < 0 ? -a0 : a0) * 60;
 	if (a0 < 0)
 	{
 		Engine_EventWait(30);

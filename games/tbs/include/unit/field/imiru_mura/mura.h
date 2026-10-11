@@ -13,6 +13,17 @@ struct ScenePlacement;
 struct Work_399;
 union FieldObject;
 
+typedef struct
+{
+	u8	filler0[8];
+	s32 unk8;
+	s32 unkC;
+	s32 unk10;
+	u8	filler14[80];
+	u16 unk64;
+	s16 unk66;
+} T_0200154c;
+
 s32 OverlayObject_UpdateWobbleByCounter(struct Object *obj);
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj);
 const struct SceneEntrance *Scene_GetEntrances(void);
@@ -43,6 +54,7 @@ void ImiruMura_OpenInn(void);
 void ImiruMura_OpenSanctum(void);
 s32 ImiruMura_ApplyEntryState(void);
 void FieldScene_RunPrimaryScriptChoreography(void);
+void SceneActor_UpdateCountdownArcPosition(T_0200154c *o);
 void ImiruMura_SwayAndSpark(struct FieldActor *actor);
 void ImiruMura_ShowActorNineTurnMessage(void);
 void ImiruMura_CastPsynergyAtActorNine(void);

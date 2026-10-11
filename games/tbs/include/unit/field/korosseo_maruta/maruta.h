@@ -4,6 +4,50 @@
 #include "types.h"
 #include "field_scene.h"
 
+typedef struct SceneParticle
+{
+	u8	filler00[8];
+	s32 x;
+	s32 y;
+	s32 z;
+	u8	filler14[4];
+	s32 scale_x;
+	s32 scale_y;
+	u8	filler20[0x1c];
+	s32 anchor_y;
+	u8	filler40[0x15];
+	u8	state;
+	u8	filler56[0xe];
+	s16 velocity_x;
+	s16 velocity_y;
+} SceneParticle;
+
+typedef struct StageEffect
+{
+	s32 reserved_00;
+	s32 reserved_04;
+	s32 x;
+	s32 y;
+	s32 z;
+	u8	reserved_14[20];
+	s32 vertical_motion;
+	u8	reserved_2c[41];
+	u8	state;
+} StageEffect;
+
+typedef struct StageEffect_02003d88
+{
+	s32 reserved_00;
+	s32 reserved_04;
+	s32 x;
+	s32 y;
+	s32 z;
+	u8	reserved_14[65];
+	u8	state;
+	u8	reserved_56[14];
+	s16 linked_effect_slot;
+} StageEffect_02003d88;
+
 u8 *ColossoLogRollingStage_GetScriptData(void);
 s32 ColossoLogRollingStage_GetMessageData(void);
 u8 *ColossoLogRollingStage_GetActorData(void);
@@ -39,6 +83,7 @@ void ColossoLogRollingStage_RunSceneEventIfReady(void);
 void ColossoLogRollingStage_FinishOrContinueSceneEvent(void);
 s32 ColossoLogRollingStage_GetSceneEventState(void);
 s32 StageSetup_BuildAndDispatch(void);
+s32 ColossoLogRollingStage_AdvanceParticleMotion(SceneParticle *particle);
 void ColossoLogRollingStage_SpawnPeriodicParticle(void);
 void FieldScene_RunMultiPhaseActorSequence(s32 a0);
 void Korosseo_RunGreetScene(s32 a0);
@@ -73,6 +118,8 @@ void WriteU32AsHex(u8 *hex_text, u32 value);
 void ColossoLogRollingStage_NoopSceneHook(void);
 void ColossoLogRollingStage_SetBalanceStateReady(void);
 void ColossoLogRollingStage_WaitForBalanceState(void);
+void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source);
+s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(StageEffect_02003d88 *source);
 s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_handle);
 void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_actor, s32 mode, s32 centre, s32 extra, s32 third_actor, s32 fourth_actor);
 void ColossoLogRollingStage_InitializeSceneControl(s32 resource);

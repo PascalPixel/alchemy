@@ -10,6 +10,18 @@ struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
+typedef struct
+{
+	u8	pad_to_angle[30];
+	u16 angle;
+} EffectRecord_020004c4;
+
+typedef struct
+{
+	u8					   pad_to_record[80];
+	EffectRecord_020004c4 *record;
+} EffectWork_020004c4;
+
 void SceneEffect_SetRecordMode(struct FieldActor *work, s32 mode);
 void *OverlayObject_PrepareObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
@@ -20,6 +32,7 @@ const struct ScenePlacement *Scene_GetPlacements(void);
 void FieldScene_RunActor8AtCell24Sequence(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 FieldScene_PlaceActor8OnEntry(void);
+void SceneEffect_RotateRecord(EffectWork_020004c4 *work);
 void SceneActor_WaitObjectBelowHeight(u8 *object, s32 height);
 void SceneEffect_RunActorBurst(s32 no);
 extern s32 gEffectScript0[];

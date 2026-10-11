@@ -6,6 +6,13 @@
 
 struct FieldActor;
 
+typedef struct Position3
+{
+	s32 x;
+	s32 y;
+	s32 z;
+} Position3;
+
 u8 *KorosseoKawa_GetEntrances(void);
 s32 get_default_result(void);
 u8 *KorosseoKawa_GetExits(void);
@@ -62,6 +69,7 @@ s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a);
 s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b);
 void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third, s32 fourth);
 void SceneState_InitControlWhenFlag109Clear(s32 resource);
+struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct FieldActor *subject);
 void StagedActor_PushActorAhead(void);
 struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void);
 extern const u8 Korosseo_PortraitPaletteOffsets[];

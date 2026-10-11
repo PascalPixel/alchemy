@@ -13,6 +13,26 @@ struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 
+typedef struct RenderData
+{
+	unsigned char pad00[0x1E];
+	s16			  rotation;
+} RenderData;
+
+typedef struct Effect_0200390c
+{
+	unsigned char pad00[8];
+	s32			  x;
+	s32			  y;
+	unsigned char pad10[0x20];
+	s32			  angle;
+	unsigned char pad34[4];
+	s32			  base_x;
+	s32			  base_y;
+	unsigned char pad40[0x10];
+	RenderData	 *render;
+} Effect_0200390c;
+
 void SceneState_ApplyValues12And2And3(void);
 s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect);
 s32 OverlayObject_AdvanceXWhenCounterExpires(struct Object *obj);
@@ -57,6 +77,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0);
 void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2);
 void SceneEffect_UpdateLobeOrbitEffect26(void);
 void FieldScene_DrawTilesAndRaiseActor11(void);
+s32 SceneEffect_UpdateOrbitingEffect(Effect_0200390c *effect);
 void InitializeOrbitingRenderEffect(s32 id);
 extern s32 KareiMachi_Data01[];
 extern s32 SceneAction_GroupMotion[];

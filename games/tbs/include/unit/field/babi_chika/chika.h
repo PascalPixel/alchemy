@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "field_scene.h"
+#include "fieldcoo.h"
 
 struct Actor_02000ec8;
 struct FieldActor;
@@ -11,16 +12,34 @@ struct SceneEntrance;
 struct SceneRegion;
 struct Track02001038;
 
+typedef struct Target_02000cd0
+{
+	union FieldCoordinate x;
+	s32					  pad4;
+	union FieldCoordinate z;
+} Target_02000cd0;
+
+typedef struct Record
+{
+	s32 pad0;
+	s32 pad4;
+	s32 w8;
+	s32 w12;
+	s32 w16;
+} Record;
+
 void OverlayObject_SetOwnerMode(u8 *object, s32 mode);
 u8 *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind);
 u8 *OverlayObject_PrepareSpawnedObjectMode4(s32 x, s32 y, s32 z, s32 kind);
 s32 SceneState_ApplyArgMode0AndReturnZero(s32 no);
+s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target);
 void SceneActor_PassRaisedPointOfActorZero(void);
 void SceneActor_PassActorZeroOffsetPoint(void);
 void BabiChika_UpdateTrackedActor(void);
 s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_02000ec8 *actor);
 void SceneState_SwapSlotPairByRank(s32 first, s32 second);
 s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object);
+s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record);
 void SceneActor_WaitValueBelowLimit(struct Track02001038 *track);
 void Effect_AdvanceMotion(struct MotionEffect *effect);
 void BabiChika_RunLeaderSpray(void);

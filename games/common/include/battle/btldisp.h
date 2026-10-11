@@ -114,6 +114,8 @@ void BattleFx_ArmBg2AffineHBlankDma(void);
 void Palette_StepFadeTransfer(void);
 #endif
 struct BattleEffectArgument;
+#if GAME_TLA
 void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect, s32 mode);
+#endif
 
 #endif

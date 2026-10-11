@@ -468,7 +468,7 @@ impl Plan {
                 continue;
             };
             let own: Vec<Entry> = model.entries[file].iter().filter(|entry| !(entry.what == What::Object && (model.functions_only || model.leave.contains(&entry.name)))).cloned().collect();
-            if let Some((text, names)) = header(&path, &model.text[file], &own, &types, &mut plan.problems) {
+            if let Some((text, names)) = header(&path, &model.text[file], model.text.get(&path).map(String::as_str), &own, &types, &mut plan.problems) {
                 generated.insert(file, path.clone());
                 emitted.insert(file, names);
                 plan.headers.insert(path, text);
@@ -510,7 +510,7 @@ impl Plan {
             lines.push((String::new(), prototype.replacen(&format!("{function}("), &format!("{name}("), 1)));
         }
         if !lines.is_empty() {
-            plan.headers.insert(IMPORTS.to_string(), render(IMPORTS, tags, includes, &lines));
+            plan.headers.insert(IMPORTS.to_string(), render(IMPORTS, tags, includes, &[], &lines));
         }
         if let Some(text) = model.text.get(&far_header) {
             let draft = plan.drafts.entry(far_header.clone()).or_default();

@@ -3,8 +3,4 @@
 
 #include "types.h"
 
-s32	 ColossoLogRollingStage_AdvanceParticleMotion();
-void ColossoLogRollingStage_SpawnRandomSceneEffect();
-s32	 ColossoLogRollingStage_RaiseLinkedSceneEffect();
-
 #endif

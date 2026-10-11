@@ -10952,7 +10952,7 @@ skip:
 
 s32 SaveState_LoadRecordIntoWork(s32 arg)
 {
-	extern s32 gLoadedStateWord;
+	extern u32 gLoadedStateWord;
 	s32		   ret = 0;
 	s32		   err = SaveState_InitializeWorkspace();
 
@@ -17120,7 +17120,7 @@ extern volatile u16 gLinkStatus;
 
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 count)
 {
-	extern u16				   gLinkPeerSignatures[][12];
+	extern struct LinkSignature gLinkPeerSignatures[];
 	struct LinkRoundState	  *state;
 	struct BtlWork			  *link;
 	struct BtlWork			  *session;
@@ -17225,7 +17225,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 			}
 			WaitFrames(1);
 		handshake_check:
-			peer = gLinkPeerSignatures[link->link_side ^ 1];
+			peer = (u16 *)&gLinkPeerSignatures[link->link_side ^ 1];
 			if (link->link_paused == 0)
 			{
 				goto handshake_loop;
@@ -17946,7 +17946,7 @@ finish:
 		}
 		for (;;)
 		{
-			peer = gLinkPeerSignatures[session->link_side ^ 1];
+			peer = (u16 *)&gLinkPeerSignatures[session->link_side ^ 1];
 			if (session->link_paused != 0)
 			{
 				count = -1;

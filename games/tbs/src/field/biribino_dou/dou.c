@@ -455,10 +455,6 @@ struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 	return 0;
 }
 
-/* FAKEMATCH: the table is s16 pairs, read here as one word per heading
-   (x in the high half, z in the low). The read must stay an array
-   reference: through a plain s32 pointer cast the address is summed once
-   into a register and 68 instructions differ. */
 struct DirectionSteps
 {
 	s32 xz[16];
@@ -468,6 +464,10 @@ struct DirectionSteps
 
 void StagedActor_PushActorAhead(void)
 {
+	/* FAKEMATCH: the table is s16 pairs, read here as one word per heading
+	   (x in the high half, z in the low). The read must stay an array
+	   reference: through a plain s32 pointer cast the address is summed once
+	   into a register and 68 instructions differ. */
 	struct FieldActor *player;
 	struct FieldActor *target;
 	struct FieldActor *blocker;

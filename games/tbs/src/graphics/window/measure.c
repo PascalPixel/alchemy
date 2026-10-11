@@ -5310,13 +5310,14 @@ s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 slot)
 	Runtime_ReleaseHeapBlock(0x11);
 	return 1;
 }
-/* FAKEMATCH: three more names of the one table keep each case's own literal slot; one name folds the switch to a single load. */
-extern const u8 *RenderResource_PairSourceTable[], *PairSource1[] __asm__("RenderResource_PairSourceTable"), *PairSource2[] __asm__("RenderResource_PairSourceTable"), *PairSource3[] __asm__("RenderResource_PairSourceTable");
+extern const u8 *RenderResource_PairSourceTable[];
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *, s32);
 
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot)
 {
+	/* FAKEMATCH: three more names of the one table keep each case's own literal slot; one name folds the switch to a single load. */
+	extern const u8 *PairSource1[] __asm__("RenderResource_PairSourceTable"), *PairSource2[] __asm__("RenderResource_PairSourceTable"), *PairSource3[] __asm__("RenderResource_PairSourceTable");
 	void *source;
 	switch (value)
 	{
@@ -5360,9 +5361,6 @@ void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reus
 {
 	UiIcon_BuildAbilityIconTiles(BtlActGet(action)->unknown_04[0], with_base, slot, tile, reuse);
 }
-
-/* FAKEMATCH: needed to match: this file reads UiIcon_FramePointerTable through its own declaration; the shop's changes its code. */
-extern u8 *UiIcon_FramePointerTable[];
 
 extern void *gWorkSlot[64];
 

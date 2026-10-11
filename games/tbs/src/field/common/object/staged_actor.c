@@ -67,10 +67,7 @@ struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *or
 	return 0;
 }
 
-/* FAKEMATCH: the table is s16 pairs, read here as one word per heading
-   (x in the high half, z in the low). The read must stay an array
-   reference: through a plain s32 pointer cast the address is summed once
-   into a register and the function no longer matches. */
+// 向きごとの歩幅の表は s16 の組。ここでは向き一つを一語 (上位が x、下位が z) として読む
 struct DirectionSteps
 {
 	s32 xz[16];
@@ -80,6 +77,9 @@ struct DirectionSteps
 
 void StagedActor_AdvancePair(void)
 {
+	/* FAKEMATCH: DIRECTION_STEP reads the s16 pair table as one word per heading through an
+	   array reference; through a plain s32 pointer cast the address is summed once into a
+	   register and 41 instructions differ. */
 	s32					dst[3];
 	struct StagedActor *lead;
 	struct StagedActor *next;
@@ -187,6 +187,9 @@ s32 StagedActor_FillGridAttributeRectangle(
 
 s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
 {
+	/* FAKEMATCH: DIRECTION_STEP reads the s16 pair table as one word per heading through an
+	   array reference; through a plain s32 pointer cast the address is summed once into a
+	   register and 6 instructions differ. */
 	struct StagedActorProbePoint probe;
 	u32							 dir;
 	s32							 step;
@@ -234,6 +237,9 @@ done:
 
 u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint)
 {
+	/* FAKEMATCH: DIRECTION_STEP reads the s16 pair table as one word per heading through an
+	   array reference; through a plain s32 pointer cast the address is summed once into a
+	   register and 33 instructions differ. */
 	struct FieldStepWork  *work = (struct FieldStepWork *)gEventWork;
 	struct StagedActor	  *player = (struct StagedActor *)Object_GetById(0);
 	struct ObjectRuntime **list;
@@ -283,6 +289,9 @@ u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint)
 
 s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe)
 {
+	/* FAKEMATCH: DIRECTION_STEP reads the s16 pair table as one word per heading through an
+	   array reference; through a plain s32 pointer cast the address is summed once into a
+	   register and 47 instructions differ. */
 	s32					direction;
 	s32					position[3];
 	struct StagedActor *actor;
@@ -374,6 +383,9 @@ found:
 
 void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 {
+	/* FAKEMATCH: DIRECTION_STEP reads the s16 pair table as one word per heading through an
+	   array reference; through a plain s32 pointer cast the address is summed once into a
+	   register and 4 instructions differ. */
 	/* FAKEMATCH: needed to match: the integer cell read keeps incoming probe spills before the cache load. */
 	struct MapScrollWork		   *workspace;
 	struct StagedActor			   *actor;

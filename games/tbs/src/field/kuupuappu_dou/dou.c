@@ -145,10 +145,6 @@ s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz)
 	return 0;
 }
 
-/* FAKEMATCH: the table is s16 pairs, read here as one word per heading
-   (x in the high half, z in the low). The read must stay an array
-   reference: through a plain s32 pointer cast the address is summed once
-   into a register and the function no longer matches. */
 struct DirectionSteps
 {
 	s32 xz[16];
@@ -159,6 +155,10 @@ struct DirectionSteps
 
 void KuupuappuDou_PushBlockAhead(void)
 {
+	/* FAKEMATCH: the table is s16 pairs, read here as one word per heading
+	   (x in the high half, z in the low). The read must stay an array
+	   reference: through a plain s32 pointer cast the address is summed once
+	   into a register and the function no longer matches. */
 	struct FieldActor	  *leader = Object_GetById(0);
 	s32					   direction = leader->facing >> 12;
 	struct FieldActor	  *block;

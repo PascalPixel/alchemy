@@ -10,6 +10,26 @@
 #include "effect_step.h"
 
 
+void EffectStep_RunAnimationMode9(struct EffectStep *step)
+{
+    BattlePres_RunBurstScene(step, 9);
+}
+
+void EffectStep_RunAnimationMode12(struct EffectStep *step)
+{
+    BattlePres_RunBurstScene(step, 12);
+}
+
+void EffectStep_RunAnimationMode10(struct EffectStep *step)
+{
+    BattlePres_RunBurstScene(step, 10);
+}
+
+void EffectStep_RunAnimationMode11(struct EffectStep *step)
+{
+    BattlePres_RunBurstScene(step, 11);
+}
+
 void EffectStep_RunAnimationMode6Or7Or8B(struct EffectStep *step)
 {
     if (step->variant == 0) {

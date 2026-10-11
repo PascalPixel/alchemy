@@ -1168,25 +1168,8 @@ Resource_LoadByMode:
 	.thumb_func
 Func_0803f234:
 	.incbin "baserom.gba", 0x0003f28c, 0x000003dc
-	.section .rom.0003f668, "ax"
-	.global Func_0803f610
-	.type Func_0803f610, %function
-	.thumb_func
-Func_0803f610:
-	.incbin "baserom.gba", 0x0003f668, 0x00000004
-	.section .rom.0003f66c, "ax"
-	.global Func_0803f614
-	.type Func_0803f614, %function
-	.thumb_func
-Func_0803f614:
-	.incbin "baserom.gba", 0x0003f66c, 0x0000000c
-	.section .rom.0003f678, "ax"
-	.global Func_0803f620
-	.type Func_0803f620, %function
-	.thumb_func
-Func_0803f620:
-	.incbin "baserom.gba", 0x0003f678, 0x00000004
 	.section .rom.0003f67c, "ax"
+	.balign 4
 	.global UiTextResource_Initialize
 	.type UiTextResource_Initialize, %function
 	.thumb_func
@@ -5262,8 +5245,6 @@ Func_08157530:
 	.section .rom.00158dc8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00158dc8, 0x0000127c
-	.section .rom.0015a0bc, "ax"
-	.incbin "baserom.gba", 0x0015a0bc, 0x00000030
 	.section .rom.0015a110, "ax"
 	.global BattlePres_RunBurstScene
 	.type BattlePres_RunBurstScene, %function

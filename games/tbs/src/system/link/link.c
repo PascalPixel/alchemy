@@ -314,8 +314,7 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload)
         gSerialRuntime.ready_buffer[i] = swap;
     }
     *(u32 *)flags = *(u32 *)gSerialRuntime.channel_flags;
-    /* FAKEMATCH: an unsigned long store does not alias the u32 snapshot, so sched2 puts lr = sp before the snapshot store as the native does (2 without). */
-    *(unsigned long *)gSerialRuntime.channel_flags = 0;
+    *(u32 *)gSerialRuntime.channel_flags = 0;
     Io_Write16(1, &REG_IME);
     gSerialRuntime.current_mask = 0;
     for (i = 0; i <= 1; i++) {

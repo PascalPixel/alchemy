@@ -25,7 +25,7 @@ struct MakyuriLights {
     struct FieldActor *upper;
 };
 
-s32 AnimationObjects_SelectAnimation(struct AnimationObject *anim, s32 animation);
+void AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
 void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
 {
@@ -59,7 +59,7 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
         obj->motion_flags = 4;
         obj->y.fixed += -0x8000;
         if (anim != 0) {
-            AnimationObjects_SelectAnimation((struct AnimationObject *)anim, 6 - st->lit);
+            AnimationObjects_SelectAnimation(anim, 6 - st->lit);
             anim->flags = 0;
             anim->priority = 1;
         }
@@ -80,7 +80,7 @@ upper:
         obj->priority_flags = 2;
         obj->speed = 0x40000;
         if (anim != 0) {
-            AnimationObjects_SelectAnimation((struct AnimationObject *)anim, 6);
+            AnimationObjects_SelectAnimation(anim, 6);
             anim->flags = 0;
         }
         st->upper = obj;

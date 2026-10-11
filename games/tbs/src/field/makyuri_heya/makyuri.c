@@ -85,6 +85,9 @@ s32 OverlayObject_StepScaleUpSixteenFrames(struct FieldActor *o)
 
 extern const s32 Makyuri_ScaleCounterScript[];
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../makyuri_iriguchi/pillar.c"
+
 void SceneState_ClearCurrentRecordAndReleaseTarget(void)
 {
     s32 *rec = **(s32 ***)&((struct WorkPointers *)&gEventWork)->scene;
@@ -105,6 +108,9 @@ void SceneState_ClearCurrentRecordAndReleaseTarget(void)
         rec[5] = 0;
     }
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/makyuri/makyuri.c"
 
 void OverlayObject_ReleasePublishedAttachmentB(void)
 {

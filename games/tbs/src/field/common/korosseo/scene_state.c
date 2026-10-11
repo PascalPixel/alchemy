@@ -2,9 +2,7 @@
 
 extern u8 gWorkSlot[];
 
-enum {
-    WORK_SLOT_STAGE = 59
-};
+#define WORK_SLOT_STAGE 59
 
 void Korosseo_SetGaugeHold(s16 v)
 {

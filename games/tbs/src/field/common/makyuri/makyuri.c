@@ -17,13 +17,7 @@
 #include "heap_state.h"
 
 
-void Vector_AddPolarOffset(s32 radius, s32 angle, union FieldCoordinate *pos);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
-s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
-void OverlayObject_SpawnKind24AtObject(struct FieldActor *actor);
-void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
-
-extern const s32 Makyuri_ScaleCounterScript[];
 #include "keystate.h"
 
 struct PushState {
@@ -82,7 +76,7 @@ void Makyuri_RunActorMove(void)
     pos[1].fixed = ((struct ObjectRuntime *)actor)->terrain_height;
     pos[2].fixed = (actor->z.fixed & -0x100000) + 0x80000;
     from = &MAP_CELLS[(pos[2].fixed / 0x100000 << 7) + pos[0].fixed / 0x100000];
-    Vector_AddPolarOffset(0x200000, angle, pos);
+    Vector_AddPolarOffset(0x200000, angle, &pos[0].fixed);
     to = &MAP_CELLS[(pos[2].fixed / 0x100000 << 7) + pos[0].fixed / 0x100000];
     if (from->collision_code != state->level && to->collision_code == state->level && state->count == 0)
         return;

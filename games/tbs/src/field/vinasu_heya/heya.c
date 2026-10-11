@@ -404,6 +404,10 @@ void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 type)
 extern u8 *gActorEffectWork;
 void Object_SetActionById();
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)
 {
     s32 dx = (*a++ - *b++) >> 16;

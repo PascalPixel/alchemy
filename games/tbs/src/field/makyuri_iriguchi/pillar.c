@@ -12,8 +12,6 @@
 #include "iwram_call.h"
 #include "field_event.h"
 
-#define Makyuri_PillarScript ((u8 (*))&Makyuri_PillarScript)
-
 
 struct FollowDetail {
     u8 unknown_00[5];
@@ -27,8 +25,6 @@ struct FollowSprite {
     struct FollowDetail *detail;
 };
 
-void AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 mode);
-
 struct SpawnPoint {
     u8 unknown_00[8];
     s32 x;
@@ -40,13 +36,6 @@ struct SpawnPoint {
 struct EventSpawns {
     u8 unknown_00[20];
     struct SpawnPoint *points[1];
-};
-
-
-struct WorkPointers {
-    u8 *event;
-    u8 *unknown_04[7];
-    u8 *scene;
 };
 
 
@@ -189,7 +178,7 @@ void MakyuriIriguchi_RaisePillar(void)
         if (obj != 0) {
             spr = *(struct Sprite39b **)(obj + 80);
             *(s32 *)(obj + 20) = *(s32 *)(leader + 20);
-            Engine_ObjectSetScript(obj, (s32)Makyuri_PillarScript);
+            Engine_ObjectSetScript(obj, Makyuri_PillarScript);
             ((struct Obj *)obj)->owner = leader;
             ((struct Obj *)obj)->f85 = 4;
             ((struct Obj *)obj)->y += -0x8000;

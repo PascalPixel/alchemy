@@ -216,25 +216,7 @@ extern struct ModeRecord gColossoModeScript3A;
 extern u8 gColossoRandomEffect[];
 extern u8 gColossoLinkedEffect[];
 extern u32 StagedActor_DirectionSteps[];
-extern u16 Korosseo_ModeTaskMode;
-extern u16 Korosseo_ModeTaskParam;
-extern u16 Korosseo_ModeTaskTimer;
-extern s32 Korosseo_ModeTaskScript;
-extern u16 Korosseo_ModeMoveTarget;
-extern u16 Korosseo_ModeMoveDuration;
-extern s32 Korosseo_ModeTaskPosition;
 extern s16 Korosseo_MarkerSlot;
-extern u16 Korosseo_MarkerX;
-extern u16 Korosseo_MarkerY;
-extern u16 Korosseo_MarkerPriority;
-extern u16 Korosseo_MarkerBlink;
-extern u16 Korosseo_MarkerSteps;
-extern u16 Korosseo_MarkerEndX;
-extern u16 Korosseo_MarkerEndY;
-extern u16 Korosseo_MarkerStartX;
-extern u16 Korosseo_MarkerStartY;
-extern u16 Korosseo_MarkerStep;
-extern u8 Korosseo_GaugeGraphics[];
 
 s32 AudioCommand_GetStateByte(void);
 void Audio_PlayCueFromEventWork(void);
@@ -262,20 +244,17 @@ void Object_CommitPosition(void *object);
 void Object_LinkObjectAndSetCallback();
 void Object_RefreshSelectorById(s32 object);
 void Owner_RefreshActiveRatios();
-void Party_AddActiveOwner();
-void Party_RemoveActiveOwner();
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-u8 *UnitGet();
 void UiText_DrawQuantity(s32, s32);
 
 // コロッセオ共通 (field/common/korosseo)
-s32 Korosseo_FadeInCompetitor();
-void Korosseo_RestoreCompetitor();
-s32 Korosseo_ShowItemIcon();
-void Korosseo_SelectSoloCompetitor(s32 competitor);
-void Korosseo_FinishSoloRound(void);
-void Korosseo_LoadPortrait(s32 mode);
+void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z);
+void Korosseo_RestoreCompetitor(s32 id);
+void Korosseo_ShowItemIcon(s32 id, s32 item);
+void Korosseo_SelectSoloCompetitor(s32 id);
+void Korosseo_FinishSoloRound(s32 id);
+void Korosseo_LoadPortrait(s32 id);
 void Korosseo_UpdateModeTask(void);
 void Korosseo_UpdateMarker(void);
 void Korosseo_DrawGauge(void);
@@ -1089,8 +1068,9 @@ s32 StageSetup_BuildAndDispatch(void)
     actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
     Engine_ActorSetAnimation(8, 9);
     gGameState.movement_mode = 0;
-    Korosseo_ShowItemIcon(39, 3);
-    Korosseo_ShowItemIcon(40, 17);
+    /* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
+    ((s32 (*)())Korosseo_ShowItemIcon)(39, 3);
+    ((s32 (*)())Korosseo_ShowItemIcon)(40, 17);
     Engine_ActorSetChildValue(8, 2);
 
     switch (gGameState.entrance) {
@@ -1490,7 +1470,8 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
     s32 state;
 
     if (gGameState.entrance == 2) {
-        Korosseo_FinishSoloRound();
+        /* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
+        ((void (*)(void))Korosseo_FinishSoloRound)();
         return;
     }
     Engine_EventBegin();
@@ -1560,7 +1541,8 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
     s32 x;
 
     if (gGameState.entrance == 2) {
-        Korosseo_FinishSoloRound();
+        /* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
+        ((void (*)(void))Korosseo_FinishSoloRound)();
         return;
     }
     Engine_EventBegin();
@@ -1573,7 +1555,8 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
         Engine_CameraWaitForMove();
         Engine_EventWait(30);
         Event_ShowMessage(scene, 0);
-        Korosseo_FadeInCompetitor(0, x, 200);
+        /* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
+        ((s32 (*)())Korosseo_FadeInCompetitor)(0, x, 200);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
         /* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
         ((s32 (*)(s32, s32, s32))ColossoLogRollingStage_SpawnPositionedObject)(0, x, 152);
@@ -1615,7 +1598,8 @@ void KorosseoMaruta_RunStageIntro(s32 scene)
     s32 state;
 
     if (gGameState.entrance == 2) {
-        Korosseo_FinishSoloRound();
+        /* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
+        ((void (*)(void))Korosseo_FinishSoloRound)();
     } else {
         Engine_EventBegin();
         state = ColossoLogRollingStage_RunStateInteraction(scene, 3);
@@ -1631,7 +1615,8 @@ void KorosseoMaruta_RunStageIntro(s32 scene)
             ColossoLogRollingStage_StartSceneTask();
             Engine_EventWait(60);
             Engine_EventShowMessage(scene, 0);
-            Korosseo_FadeInCompetitor(0, 504, 200);
+            /* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
+            ((s32 (*)())Korosseo_FadeInCompetitor)(0, 504, 200);
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(Engine_ActorFaceDirection, 0, 0, 0);
             ColossoLogRollingStage_WaitForSceneTask();
@@ -1674,7 +1659,8 @@ void FieldScene_RunFourStepActorMotion(s32 event)
     s32 shifted_x;
 
     if (gGameState.entrance == 2) {
-        Korosseo_FinishSoloRound();
+        /* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
+        ((void (*)(void))Korosseo_FinishSoloRound)();
     } else {
         Engine_EventBegin();
         result = ColossoLogRollingStage_RunStateInteraction(event, 4);
@@ -1686,7 +1672,8 @@ void FieldScene_RunFourStepActorMotion(s32 event)
             Engine_EventWait(30);
             Event_ShowMessage(event, 0);
             Event_ShowMessage(event, 0);
-            Korosseo_FadeInCompetitor(0, 0x330, 200);
+            /* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
+            ((s32 (*)())Korosseo_FadeInCompetitor)(0, 0x330, 200);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x348, 200);
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
@@ -1763,7 +1750,8 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 event)
     struct FieldActor *actor;
 
     if (gGameState.entrance == 2) {
-        Korosseo_FinishSoloRound();
+        /* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
+        ((void (*)(void))Korosseo_FinishSoloRound)();
     } else {
         Engine_EventBegin();
         result = ColossoLogRollingStage_RunStateInteraction(event, 5);
@@ -1775,7 +1763,8 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 event)
             Engine_EventWait(30);
             Event_ShowMessage(event, 0);
             Event_ShowMessage(event, 0);
-            Korosseo_FadeInCompetitor(0, 0x3d8, 184);
+            /* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
+            ((s32 (*)())Korosseo_FadeInCompetitor)(0, 0x3d8, 184);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             ColossoLogRollingStage_PositionAndActivateActor(0, 0x3e0, 184);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);
@@ -1820,7 +1809,8 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
     s32 state;
 
     if (gGameState.entrance == 2) {
-        Korosseo_FinishSoloRound();
+        /* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
+        ((void (*)(void))Korosseo_FinishSoloRound)();
         return;
     }
 
@@ -1891,6 +1881,9 @@ void ColossoLogRollingStage_RestoreActorPositions(void)
         Engine_ActorSetPosition(MEARI, x, z);
     }
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/solo_competitor.c"
 
 void ColossoLogRollingStage_MarkSceneProgress(void)
 {
@@ -1992,6 +1985,9 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     }
     Engine_EventEnd();
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/solo_round.c"
 
 void RunPartyCountInteractionCopyB(s32 actorId)
 {
@@ -2217,6 +2213,9 @@ void ColossoLogRollingStage_ApplyItemToMatchingSlots(s32 handle, s32 item)
     }
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/korosseo.c"
+
 void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 {
     s32 handler;
@@ -2246,7 +2245,7 @@ void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
     }
 
     Korosseo_ModeTaskTimer = 0;
-    Korosseo_ModeTaskScript = handler;
+    Korosseo_ModeTaskScript = (s16 *)handler;
     Korosseo_ModeMoveTarget = 0;
     Korosseo_ModeMoveDuration = 0;
     Korosseo_ModeTaskPosition = 0;
@@ -2347,6 +2346,9 @@ void FieldScene_RunScene3bcSequenceA(s32 a0)
     Engine_EventWaitForScreen();
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/compete.c"
+
 void ColossoLogRollingStage_ResetActorMotion(s32 selector)
 {
 
@@ -2371,6 +2373,9 @@ void ColossoLogRollingStage_EnsurePaletteHandle(void)
     }
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/marker.c"
+
 void ColossoLogRollingStage_StartPaletteTask(u32 first_value, u32 second_value, u32 mode)
 {
     ColossoLogRollingStage_EnsurePaletteHandle();
@@ -2392,8 +2397,8 @@ void ColossoLogRollingStage_StartPaletteTaskFromState(u32 first_value, u32 secon
 {
     Korosseo_MarkerEndX = (u16)first_value;
     Korosseo_MarkerEndY = (u16)second_value;
-    Korosseo_MarkerStartX = Korosseo_MarkerX;
-    Korosseo_MarkerStartY = Korosseo_MarkerY;
+    *(u16 *)&Korosseo_MarkerStartX = Korosseo_MarkerX;
+    *(u16 *)&Korosseo_MarkerStartY = Korosseo_MarkerY;
     Korosseo_MarkerSteps = (u16)mode;
     Korosseo_MarkerStep = 0;
 
@@ -2454,6 +2459,9 @@ void ColossoLogRollingStage_SpawnPositionedObject(s32 object_id, s32 x, s32 z)
     Object_CommitPosition(object);
     Object_SetMode(object, 1);
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/item_icon.c"
 
 void WriteU32AsHex(u8 *hex_text, u32 value)
 {
@@ -2588,6 +2596,9 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
     return flag;
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/path_rival.c"
+
 void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_actor,
                    s32 mode, s32 centre, s32 extra, s32 third_actor,
                    s32 fourth_actor)
@@ -2648,6 +2659,9 @@ void ColossoLogRollingStage_InitializeSceneControl(s32 resource)
     }
     Engine_TaskAddCallback(Korosseo_UpdatePathRival, 0xc85);
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/scene_state.c"
 
 s32 *FindActorAtWholeTilePosition(s32 *position, void *mover)
 {

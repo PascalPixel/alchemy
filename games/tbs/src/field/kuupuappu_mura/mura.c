@@ -573,6 +573,9 @@ void ActorPresentation_SetupActorZeroForSceneNineAt296_176(void)
 void FieldScene_SetupScene10At120_144(void)
 { Engine_AudioPlayCue(158); Engine_MapAnimateCells(KuupuappuMura_Scene10Cells, 38, 6); SceneActor_PlaceAndSetSceneDelay(120, 144, 10); }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "scene_cells.c"
+
 void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
 {
     struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);

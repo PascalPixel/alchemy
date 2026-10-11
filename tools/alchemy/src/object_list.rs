@@ -289,12 +289,12 @@ pub(crate) fn overlay_fragments(
 /// pass after another: code, read-only data, data.
 const PLAIN_PASSES: [&str; 3] = [".text .padding", ".rodata", ".data .overlays"];
 
-/// A plain place is a ROM place of the main image whose rows all name a
-/// whole object and no sections: an ordered list of objects, as a makefile
+/// A plain place is a ROM place of the main image, or an overlay's text
+/// place, whose rows all name a whole object and no sections: an ordered list of objects, as a makefile
 /// has them, linked as `*(.text) *(.rodata) *(.data)` would link them.
 fn plain(image: &str, place: &str, rows: &[Row]) -> bool {
     let mut own = rows.iter().filter(|row| row.image == image && row.place == place).peekable();
-    image == MAIN && place.starts_with("rom_") && own.peek().is_some() && own.all(|row| row.sections == DEFAULT_SECTIONS && row.built())
+    (if image == MAIN { place.starts_with("rom_") } else { place == "text" }) && own.peek().is_some() && own.all(|row| row.sections == DEFAULT_SECTIONS && row.built())
 }
 
 /// One edition's linker fragments for an image: each place the list gives
@@ -673,12 +673,133 @@ fn labels_of(text: &str) -> Vec<String> {
         .collect()
 }
 
+/// The directory's rows as the assembler sees them: the file's own group
+/// macros and `.irp`, `.irpc`, `.rept` and `.ifnc` expanded, down to the
+/// `resource` rows they stand for.
+fn directory_rows(text: &str) -> Vec<String> {
+    let lines: Vec<String> =
+        text.lines().map(|line| line.split('@').next().unwrap_or("").trim().to_owned()).filter(|line| !line.is_empty()).collect();
+    let mut macros: BTreeMap<String, (Vec<String>, Vec<String>)> = BTreeMap::new();
+    let mut body = Vec::new();
+    let mut at = 0;
+    while at < lines.len() {
+        if let Some(rest) = lines[at].strip_prefix(".macro") {
+            let mut words = rest.split(|c: char| c == ',' || c.is_whitespace()).filter(|word| !word.is_empty());
+            let name = words.next().unwrap_or("").to_owned();
+            let parameters = words.map(|word| word.split(':').next().unwrap_or("").to_owned()).collect();
+            let mut inner = Vec::new();
+            at += 1;
+            while at < lines.len() && lines[at] != ".endm" {
+                inner.push(lines[at].clone());
+                at += 1;
+            }
+            macros.insert(name, (parameters, inner));
+        } else {
+            body.push(lines[at].clone());
+        }
+        at += 1;
+    }
+    // `resource` is the row itself.
+    macros.remove("resource");
+    let mut rows = Vec::new();
+    expand_rows(&body, &macros, &mut rows, 0);
+    rows
+}
+
+fn expand_rows(lines: &[String], macros: &BTreeMap<String, (Vec<String>, Vec<String>)>, rows: &mut Vec<String>, depth: usize) {
+    if depth > 8 {
+        return;
+    }
+    let bound = |inner: &[String], names: &[(String, String)]| -> Vec<String> { inner.iter().map(|line| substitute(line, names)).collect() };
+    let mut at = 0;
+    while at < lines.len() {
+        let line = &lines[at];
+        let (word, rest) = line.split_once(char::is_whitespace).map_or((line.as_str(), ""), |(word, rest)| (word, rest.trim()));
+        if matches!(word, ".irp" | ".irpc" | ".rept" | ".ifnc") {
+            let repeats = word != ".ifnc";
+            let opens = |w: &str| if repeats { matches!(w, ".irp" | ".irpc" | ".rept") } else { w == ".ifnc" };
+            let close = if repeats { ".endr" } else { ".endif" };
+            let (mut level, mut end) = (1, at + 1);
+            while end < lines.len() {
+                let first = lines[end].split_whitespace().next().unwrap_or("");
+                if opens(first) {
+                    level += 1;
+                } else if first == close {
+                    level -= 1;
+                    if level == 0 {
+                        break;
+                    }
+                }
+                end += 1;
+            }
+            let inner = &lines[at + 1..end.min(lines.len())];
+            let (first, others) = rest.split_once(',').map_or((rest, ""), |(first, others)| (first.trim(), others.trim()));
+            match word {
+                ".rept" => {
+                    for _ in 0..rest.parse::<usize>().unwrap_or(0) {
+                        expand_rows(inner, macros, rows, depth + 1);
+                    }
+                }
+                ".irp" => {
+                    for value in others.split(',').map(str::trim) {
+                        expand_rows(&bound(inner, &[(first.to_owned(), value.to_owned())]), macros, rows, depth + 1);
+                    }
+                }
+                ".irpc" => {
+                    for value in others.chars() {
+                        expand_rows(&bound(inner, &[(first.to_owned(), value.to_string())]), macros, rows, depth + 1);
+                    }
+                }
+                _ => {
+                    if first != others {
+                        expand_rows(inner, macros, rows, depth + 1);
+                    }
+                }
+            }
+            at = end + 1;
+            continue;
+        }
+        if let Some((parameters, inner)) = macros.get(word) {
+            let arguments: Vec<&str> = rest.split(',').map(str::trim).collect();
+            let names: Vec<(String, String)> = parameters
+                .iter()
+                .enumerate()
+                .map(|(index, parameter)| {
+                    // The last parameter takes what is left: a list.
+                    let value = if index + 1 == parameters.len() {
+                        arguments.get(index..).map_or(String::new(), |left| left.join(", "))
+                    } else {
+                        arguments.get(index).copied().unwrap_or("").to_owned()
+                    };
+                    (parameter.clone(), value)
+                })
+                .collect();
+            expand_rows(&bound(inner, &names), macros, rows, depth + 1);
+        } else if word == "resource" {
+            rows.push(line.clone());
+        }
+        at += 1;
+    }
+}
+
+/// `line` with each `\name` (and `\name\()`) replaced by its value, longer
+/// names first.
+fn substitute(line: &str, names: &[(String, String)]) -> String {
+    let mut order: Vec<&(String, String)> = names.iter().collect();
+    order.sort_by_key(|(name, _)| std::cmp::Reverse(name.len()));
+    let mut out = line.to_owned();
+    for (name, value) in order {
+        out = out.replace(&format!("\\{name}\\()"), value).replace(&format!("\\{name}"), value);
+    }
+    out
+}
+
 /// The places a resource directory names, in the order it first names each:
 /// a row is `resource NAME, PLACE`, and a place of 0 is an unused row.
 fn directory_places(text: &str) -> Vec<String> {
     let mut places: Vec<String> = Vec::new();
-    for line in text.lines() {
-        let line = line.split('@').next().unwrap_or("").trim();
+    for line in directory_rows(text) {
+        let line = line.as_str();
         let Some(row) = line.strip_prefix("resource").filter(|rest| rest.starts_with(char::is_whitespace)) else {
             continue;
         };
@@ -803,6 +924,16 @@ fn disagreements(rows: &[Row], image: &str, language: &str, script: &str) -> Res
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_directory_s_group_statements_expand_to_its_rows() {
+        let text = "\t.macro resource name, place:req\n\t.4byte \\place\n\t.endm\n\t.macro area set:req, sheets:req, maps:vararg\n\t.irp m, \\maps\n\tresource , Field_Map\\m\n\t.endr\n\tresource , Tileset_\\set\\()Palette\n\t.ifnc \\sheets, -\n\t.irpc s, \\sheets\n\tresource , Tileset_\\set\\()Tiles\\s\n\t.endr\n\t.endif\n\t.endm\n\t.macro unused count:req\n\t.rept \\count\n\tresource , 0\n\t.endr\n\t.endm\nTable:\n\tresource First, Rom_Start\n\tarea Set01, AB, 002, 003\n\tarea Set02, -, 004\n\tunused 2\n";
+        assert_eq!(
+            directory_places(text),
+            ["Rom_Start", "Field_Map002", "Field_Map003", "Tileset_Set01Palette", "Tileset_Set01TilesA", "Tileset_Set01TilesB", "Field_Map004", "Tileset_Set02Palette"]
+        );
+        assert_eq!(directory_rows(text).len(), 10);
+    }
 
     fn list(rows: &str) -> String {
         format!("{HEADER}\n{rows}")

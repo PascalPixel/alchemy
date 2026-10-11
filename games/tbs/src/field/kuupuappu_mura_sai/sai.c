@@ -109,6 +109,10 @@ s32 SceneActor_GetPositionDistance(s32 *, s32 *);
 s32 ArcTan2(s32, s32);
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 value);
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+
 s32 SceneActor_GetPositionDistance(s32 *first_position, s32 *second_position)
 {
     s32 delta_x = (*first_position++ - *second_position++) >> 16;
@@ -528,6 +532,9 @@ void FieldScene_SetupScene10(void)
 }
 
 void ActorPresentation_MoveActorToPositionAndWait();
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../kuupuappu_mura/scene_cells.c"
 
 void ActorPresentation_SetupActorZeroForSceneTwelve(void)
 {

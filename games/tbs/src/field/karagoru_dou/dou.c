@@ -94,6 +94,11 @@ union SpinningActor {
     struct StagedActor staged;
 };
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+#include "../common/object/staged_actor.c"
+
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
     s16 scene = gGameState.scene;

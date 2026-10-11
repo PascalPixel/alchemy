@@ -156,6 +156,10 @@ s32		   Map_GetTerrainHeight(s32 mode, s32 x, s32 z);
 s32 battle_owner_69(void);
 s32 FieldEffect_UpdateGridPlacement(void);
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+
 void SceneState_SetValue8Mode66(void)
 {
 	BattleFx_SetPhaseRequest(8, 66);

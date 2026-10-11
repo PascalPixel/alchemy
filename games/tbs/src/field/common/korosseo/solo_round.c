@@ -1,13 +1,12 @@
 #include "types.h"
 #include "call.h"
 #include "fieldobj.h"
-#include "game_flags.h"
 #include "text/msg_ids.h"
 #include "field_event.h"
 #include "game_state.h"
 
+void GameFlag_SetByte(s32, s32);
 void Korosseo_SelectSoloCompetitor(s32 id);
-
 
 void Korosseo_FinishSoloRound(s32 id)
 {

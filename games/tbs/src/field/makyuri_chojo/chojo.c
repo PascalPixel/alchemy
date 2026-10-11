@@ -74,7 +74,6 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, s32 *position);
 void Party_SetFields1ceAnd1d0();
 void BattleFx_SetWeightedResult();
-void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
 
 struct EffectParams {
     s32 count;
@@ -91,6 +90,10 @@ struct ActorTable {
     u8 unknown_00[0x14];
     struct FieldActor *actors[66];
 };
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

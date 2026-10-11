@@ -6,13 +6,57 @@
 	.4byte \place
 	.endm
 
+@ 一覧の書き方：
+@   resource NAME, PLACE   一件。NAME があれば ResourceId_NAME がその番号になる
+@   group KIND, 名前...    KIND_名前 を名前つきで続けて並べる
+@   area SET, 枚, マップ... マップ（複数可）のあとに、そのタイルセットのパレットとタイル A〜（枚は ABCD など、無ければ -）
+@   recolor NN, マップ...  マップのあとにパレットだけ（タイルは前のものを使う）
+@   overlays ID...         シーンのオーバーレイを番号順に
+@   unused N               空き N 件
+	.macro group kind:req, names:vararg
+	.irp n, \names
+	resource \n, \kind\()_\n
+	.endr
+	.endm
+
+	.macro area set:req, sheets:req, maps:vararg
+	.irp m, \maps
+	resource , Field_Map\m
+	.endr
+	resource , Tileset_\set\()Palette
+	.ifnc \sheets, -
+	.irpc s, \sheets
+	resource , Tileset_\set\()Tiles\s
+	.endr
+	.endif
+	.endm
+
+	.macro recolor palette:req, maps:vararg
+	.irp m, \maps
+	resource , Field_Map\m
+	.endr
+	resource , Tileset_Palette\palette
+	.endm
+
+	.macro overlays ids:vararg
+	.irp id, \ids
+	resource , Resource_Overlay\id
+	.endr
+	.endm
+
+	.macro unused count:req
+	.rept \count
+	resource , 0
+	.endr
+	.endm
+
 	.section .rodata
 	.balign 4
 	.global Resource_DirectoryTable
 Resource_DirectoryTable:
 	resource , Rom_Start
 	resource , Resource_DirectoryTable
-	resource BuildStamp, Resource_BuildStamp
+	group Resource, BuildStamp
 	resource , FarCall_FieldTable
 	resource , FarCall_WindowTable
 	resource , FarCall_GameTable
@@ -29,203 +73,54 @@ Resource_DirectoryTable:
 	resource , FarCall_SoundTable
 	resource ResourceFarCalls, FarCall_ResourceTable
 	resource ResourceFarCallsAlternate, FarCall_ResourceTable
-	resource WindowTiles, Ui_WindowTiles
-	resource SmallFont, UiText_SmallFont
-	resource IntroGraphicsA, Title_IntroGraphicsA
-	resource IntroGraphicsB, Title_IntroGraphicsB
-	resource IntroGraphicsC, Title_IntroGraphicsC
-	resource NintendoLogo, Title_NintendoLogo
-	resource CamelotLogo, Title_CamelotLogo
-	resource GoldenSunLogo, Title_GoldenSunLogo
-	resource WorldMapPicture, Field_WorldMapPicture
-	resource IntroTilesB, Title_IntroTilesB
-	resource SuharaGateBackdrop, Battle_SuharaGateBackdrop
-	resource TakaraShimaBackdrop, Battle_TakaraShimaBackdrop
-	resource TakaraShimaCaveBackdrop, Battle_TakaraShimaCaveBackdrop
-	resource KorosseoBackdrop, Battle_KorosseoBackdrop
-	resource VinasuChojoStormBackdrop, Battle_VinasuChojoStormBackdrop
-	resource VinasuChojoBackdrop, Battle_VinasuChojoBackdrop
-	resource VinasuHeyaBackdrop, Battle_VinasuHeyaBackdrop
-	resource SuharaSabakuBackdrop, Battle_SuharaSabakuBackdrop
-	resource ArutamiraDouBackdrop, Battle_ArutamiraDouBackdrop
-	resource BabiChikaBackdrop, Battle_BabiChikaBackdrop
-	resource BabiIriguchiBackdrop, Battle_BabiIriguchiBackdrop
-	resource RamakanSabakuBackdrop, Battle_RamakanSabakuBackdrop
-	resource MogoruMoriBackdrop, Battle_MogoruMoriBackdrop
-	resource MakyuriChojoBackdrop, Battle_MakyuriChojoBackdrop
-	resource FuneHeyaBackdrop, Battle_FuneHeyaBackdrop
-	resource ImiruFuchinBackdrop, Battle_ImiruFuchinBackdrop
-	resource KorimaMoriBackdrop, Battle_KorimaMoriBackdrop
-	resource ToretoHeyaBackdrop, Battle_ToretoHeyaBackdrop
-	resource GomaDouBackdrop, Battle_GomaDouBackdrop
-	resource InteriorBackdrop, Battle_InteriorBackdrop
-	resource ArutinYamaBackdrop, Battle_ArutinYamaBackdrop
-	resource FuneKanpanBackdrop, Battle_FuneKanpanBackdrop
-	resource MakyuriHeyaBackdrop, Battle_MakyuriHeyaBackdrop
-	resource HaidiaArashiBackdrop, Battle_HaidiaArashiBackdrop
-	resource ToretoEdaBackdrop, Battle_ToretoEdaBackdrop
-	resource BeachBackdrop, Battle_BeachBackdrop
-	resource SnowfieldBackdrop, Battle_SnowfieldBackdrop
-	resource GrasslandBackdrop, Battle_GrasslandBackdrop
-	resource SoruShindenBackdrop, Battle_SoruShindenBackdrop
-	resource ForestBackdrop, Battle_ForestBackdrop
-	resource VioletSkyBackdrop, Battle_VioletSkyBackdrop
-	resource DesertBackdrop, Battle_DesertBackdrop
-	resource DuskCloudsBackdrop, Battle_DuskCloudsBackdrop
-	resource AerialViewBackdrop, Battle_AerialViewBackdrop
+	group Ui, WindowTiles
+	group UiText, SmallFont
+	group Title, IntroGraphicsA, IntroGraphicsB, IntroGraphicsC, NintendoLogo, CamelotLogo
+	group Title, GoldenSunLogo
+	group Field, WorldMapPicture
+	group Title, IntroTilesB
+	group Battle, SuharaGateBackdrop, TakaraShimaBackdrop, TakaraShimaCaveBackdrop, KorosseoBackdrop, VinasuChojoStormBackdrop
+	group Battle, VinasuChojoBackdrop, VinasuHeyaBackdrop, SuharaSabakuBackdrop, ArutamiraDouBackdrop, BabiChikaBackdrop
+	group Battle, BabiIriguchiBackdrop, RamakanSabakuBackdrop, MogoruMoriBackdrop, MakyuriChojoBackdrop, FuneHeyaBackdrop
+	group Battle, ImiruFuchinBackdrop, KorimaMoriBackdrop, ToretoHeyaBackdrop, GomaDouBackdrop, InteriorBackdrop
+	group Battle, ArutinYamaBackdrop, FuneKanpanBackdrop, MakyuriHeyaBackdrop, HaidiaArashiBackdrop, ToretoEdaBackdrop
+	group Battle, BeachBackdrop, SnowfieldBackdrop, GrasslandBackdrop, SoruShindenBackdrop, ForestBackdrop
+	group Battle, VioletSkyBackdrop, DesertBackdrop, DuskCloudsBackdrop, AerialViewBackdrop
 	resource SlotsFramePicture, Slots_FramePicture
 	resource SlotsIcons, Slots_Icons
 	resource SlotsJackpot, Slots_Jackpot
 	resource LuckyDiceBoard, LuckyDice_Board
 	resource LuckyDiceSprites, LuckyDice_Sprites
-	resource TileAnimationMask, BattleFx_TileAnimationMask
-	resource CyanSparkSheet, BattleFx_CyanSparkSheet
-	resource VioletPaletteA, BattleFx_VioletPaletteA
-	resource RedPaletteA, BattleFx_RedPaletteA
-	resource YellowPaletteA, BattleFx_YellowPaletteA
-	resource StarBurstSheet, BattleFx_StarBurstSheet
-	resource CrescentSheet, BattleFx_CrescentSheet
-	resource RevealMaskA, BattleFx_RevealMaskA
-	resource RevealMaskB, BattleFx_RevealMaskB
-	resource RevealMaskC, BattleFx_RevealMaskC
-	resource RevealMaskD, BattleFx_RevealMaskD
-	resource RevealMaskE, BattleFx_RevealMaskE
-	resource RevealMaskF, BattleFx_RevealMaskF
-	resource LimeColumnSheet, BattleFx_LimeColumnSheet
-	resource RainSheet, BattleFx_RainSheet
-	resource FlameSheetA, BattleFx_FlameSheetA
-	resource DemonFaceSheet, BattleFx_DemonFaceSheet
-	resource FlameBladeSheet, BattleFx_FlameBladeSheet
-	resource SwordSheet, BattleFx_SwordSheet
-	resource IceTileSheet, BattleFx_IceTileSheet
-	resource FiveModeImage, BattleFx_FiveModeImage
-	resource SpiderWebSheet, BattleFx_SpiderWebSheet
-	resource VioletLightningSheetA, BattleFx_VioletLightningSheetA
-	resource YellowSparkSheet, BattleFx_YellowSparkSheet
-	resource ProjectileVolleyImage, BattleFx_ProjectileVolleyImage
-	resource ShurikenSheet, BattleFx_ShurikenSheet
-	resource FlareSheet, BattleFx_FlareSheet
-	resource FlareImage, BattleFx_FlareImage
-	resource VioletPaletteB, BattleFx_VioletPaletteB
-	resource FireSwirlSheet, BattleFx_FireSwirlSheet
-	resource VioletLightningSheetB, BattleFx_VioletLightningSheetB
-	resource FireBurstSheet, BattleFx_FireBurstSheet
-	resource BlueCrescentSheet, BattleFx_BlueCrescentSheet
-	resource OverlayImageA, BattleFx_OverlayImageA
-	resource VioletMoteSheet, BattleFx_VioletMoteSheet
-	resource OverlayImageB, BattleFx_OverlayImageB
-	resource FireballSheet, BattleFx_FireballSheet
-	resource MemberBurstImage, BattleFx_MemberBurstImage
-	resource SlashSheet, BattleFx_SlashSheet
-	resource WaveSheet, BattleFx_WaveSheet
-	resource TargetBurstImage, BattleFx_TargetBurstImage
-	resource PinkStarSheet, BattleFx_PinkStarSheet
-	resource WaterSpraySheet, BattleFx_WaterSpraySheet
-	resource BlueFlameSheet, BattleFx_BlueFlameSheet
-	resource ExplosionSheet, BattleFx_ExplosionSheet
-	resource MagentaSwirlSheet, BattleFx_MagentaSwirlSheet
-	resource MagentaTailSheet, BattleFx_MagentaTailSheet
-	resource ParticleSpritesA, BattleFx_ParticleSpritesA
-	resource ParticleSpritesB, BattleFx_ParticleSpritesB
-	resource ParticleSpritesC, BattleFx_ParticleSpritesC
-	resource ParticleSpritesD, BattleFx_ParticleSpritesD
-	resource GreenPalette, BattleFx_GreenPalette
-	resource SwordSlashSheet, BattleFx_SwordSlashSheet
-	resource RuneSheet, BattleFx_RuneSheet
-	resource FlameColumnSheet, BattleFx_FlameColumnSheet
-	resource EarthWallSheet, BattleFx_EarthWallSheet
-	resource OrangePaletteA, BattleFx_OrangePaletteA
-	resource FlashBurstSheet, BattleFx_FlashBurstSheet
-	resource ThornSheet, BattleFx_ThornSheet
-	resource CometSheetA, BattleFx_CometSheetA
-	resource CometSheetB, BattleFx_CometSheetB
-	resource CometSheetC, BattleFx_CometSheetC
-	resource WhirlwindSheet, BattleFx_WhirlwindSheet
-	resource GreenPillarSheet, BattleFx_GreenPillarSheet
-	resource VineSheet, BattleFx_VineSheet
-	resource FirePillarSheetA, BattleFx_FirePillarSheetA
-	resource RedPaletteB, BattleFx_RedPaletteB
-	resource OrangePaletteB, BattleFx_OrangePaletteB
-	resource VioletCometSheet, BattleFx_VioletCometSheet
-	resource FlameballSheet, BattleFx_FlameballSheet
-	resource BoulderSheet, BattleFx_BoulderSheet
-	resource RockWallSheet, BattleFx_RockWallSheet
-	resource StarDotSheet, BattleFx_StarDotSheet
-	resource MarsDjinnSheet, BattleFx_MarsDjinnSheet
-	resource MarsDjinnSmallSheet, BattleFx_MarsDjinnSmallSheet
-	resource JupiterDjinnSheet, BattleFx_JupiterDjinnSheet
-	resource JupiterDjinnSmallSheet, BattleFx_JupiterDjinnSmallSheet
-	resource MercuryDjinnSheet, BattleFx_MercuryDjinnSheet
-	resource MercuryDjinnSmallSheet, BattleFx_MercuryDjinnSmallSheet
-	resource VenusDjinnSheet, BattleFx_VenusDjinnSheet
-	resource VenusDjinnSmallSheet, BattleFx_VenusDjinnSmallSheet
-	resource FireBlobSheet, BattleFx_FireBlobSheet
-	resource FireStreakSheet, BattleFx_FireStreakSheet
-	resource LavaOrbSheet, BattleFx_LavaOrbSheet
-	resource YellowRingSheet, BattleFx_YellowRingSheet
-	resource YellowOrbSheet, BattleFx_YellowOrbSheet
-	resource BubbleSheet, BattleFx_BubbleSheet
-	resource ShieldSheet, BattleFx_ShieldSheet
-	resource DaggerSheet, BattleFx_DaggerSheet
-	resource PaletteRampImage, BattleFx_PaletteRampImage
-	resource SmokeSheet, BattleFx_SmokeSheet
-	resource BluePalette, BattleFx_BluePalette
-	resource LimePalette, BattleFx_LimePalette
-	resource PinkPalette, BattleFx_PinkPalette
-	resource VioletPaletteC, BattleFx_VioletPaletteC
-	resource CyanPalette, BattleFx_CyanPalette
-	resource TanPalette, BattleFx_TanPalette
-	resource WispSheet, BattleFx_WispSheet
-	resource GreenVineSheet, BattleFx_GreenVineSheet
-	resource PortalSheet, BattleFx_PortalSheet
-	resource SheepSheet, BattleFx_SheepSheet
-	resource SkullSheet, BattleFx_SkullSheet
-	resource HeartSheet, BattleFx_HeartSheet
-	resource CounterRevealSheet, BattleFx_CounterRevealSheet
-	resource RedCrescentSheetA, BattleFx_RedCrescentSheetA
-	resource BlueBeastSheet, BattleFx_BlueBeastSheet
-	resource RedCrescentSheetB, BattleFx_RedCrescentSheetB
-	resource SpiralSheet, BattleFx_SpiralSheet
-	resource VioletStreakSheet, BattleFx_VioletStreakSheet
-	resource CrescentMoonSheet, BattleFx_CrescentMoonSheet
-	resource ThornVineSheet, BattleFx_ThornVineSheet
-	resource IceShardSheet, BattleFx_IceShardSheet
-	resource EmberStreakSheet, BattleFx_EmberStreakSheet
-	resource BlueArcSheetA, BattleFx_BlueArcSheetA
-	resource BlueArcSheetB, BattleFx_BlueArcSheetB
-	resource GlowOrbSheet, BattleFx_GlowOrbSheet
-	resource IceChipSheet, BattleFx_IceChipSheet
-	resource IceBlockSheet, BattleFx_IceBlockSheet
-	resource SparkleDots, BattleFx_SparkleDots
-	resource PinkBurstSheet, BattleFx_PinkBurstSheet
-	resource LightFanSheet, BattleFx_LightFanSheet
-	resource BlueBurstSheet, BattleFx_BlueBurstSheet
-	resource DustPuffSheet, BattleFx_DustPuffSheet
-	resource GoldShellSheet, BattleFx_GoldShellSheet
-	resource BlastSheet, BattleFx_BlastSheet
-	resource FlameSheetB, BattleFx_FlameSheetB
-	resource FirePillarSheetB, BattleFx_FirePillarSheetB
-	resource RockSpireSheet, BattleFx_RockSpireSheet
-	resource LightningBoltSheet, BattleFx_LightningBoltSheet
-	resource BeamSequenceImage, BattleFx_BeamSequenceImage
-	resource TwelveModeImage, BattleFx_TwelveModeImage
-	resource WindStreakSheet, BattleFx_WindStreakSheet
-	resource YellowPaletteB, BattleFx_YellowPaletteB
-	resource BlueRingSheet, BattleFx_BlueRingSheet
-	resource RedPaletteC, BattleFx_RedPaletteC
-	resource VioletPaletteD, BattleFx_VioletPaletteD
-	resource BlueBeamSheet, BattleFx_BlueBeamSheet
-	resource VortexSheet, BattleFx_VortexSheet
-	resource TornadoSheet, BattleFx_TornadoSheet
-	resource CrystalSheet, BattleFx_CrystalSheet
-	resource WaterSparkleSheet, BattleFx_WaterSparkleSheet
-	resource LightningPillarSheet, BattleFx_LightningPillarSheet
-	resource StagedParticlePath, BattleFx_StagedParticlePath
-	resource DualStreamPath, BattleFx_DualStreamPath
-	resource PerspectiveDataA, Field_PerspectiveDataA
-	resource DefaultMapCells, Field_DefaultMapCells
-	resource DefaultMapAnimation, Field_DefaultMapAnimation
-	resource DefaultMetatileAttributes, Field_DefaultMetatileAttributes
+	group BattleFx, TileAnimationMask, CyanSparkSheet, VioletPaletteA, RedPaletteA, YellowPaletteA
+	group BattleFx, StarBurstSheet, CrescentSheet, RevealMaskA, RevealMaskB, RevealMaskC
+	group BattleFx, RevealMaskD, RevealMaskE, RevealMaskF, LimeColumnSheet, RainSheet
+	group BattleFx, FlameSheetA, DemonFaceSheet, FlameBladeSheet, SwordSheet, IceTileSheet
+	group BattleFx, FiveModeImage, SpiderWebSheet, VioletLightningSheetA, YellowSparkSheet, ProjectileVolleyImage
+	group BattleFx, ShurikenSheet, FlareSheet, FlareImage, VioletPaletteB, FireSwirlSheet
+	group BattleFx, VioletLightningSheetB, FireBurstSheet, BlueCrescentSheet, OverlayImageA, VioletMoteSheet
+	group BattleFx, OverlayImageB, FireballSheet, MemberBurstImage, SlashSheet, WaveSheet
+	group BattleFx, TargetBurstImage, PinkStarSheet, WaterSpraySheet, BlueFlameSheet, ExplosionSheet
+	group BattleFx, MagentaSwirlSheet, MagentaTailSheet, ParticleSpritesA, ParticleSpritesB, ParticleSpritesC
+	group BattleFx, ParticleSpritesD, GreenPalette, SwordSlashSheet, RuneSheet, FlameColumnSheet
+	group BattleFx, EarthWallSheet, OrangePaletteA, FlashBurstSheet, ThornSheet, CometSheetA
+	group BattleFx, CometSheetB, CometSheetC, WhirlwindSheet, GreenPillarSheet, VineSheet
+	group BattleFx, FirePillarSheetA, RedPaletteB, OrangePaletteB, VioletCometSheet, FlameballSheet
+	group BattleFx, BoulderSheet, RockWallSheet, StarDotSheet, MarsDjinnSheet, MarsDjinnSmallSheet
+	group BattleFx, JupiterDjinnSheet, JupiterDjinnSmallSheet, MercuryDjinnSheet, MercuryDjinnSmallSheet, VenusDjinnSheet
+	group BattleFx, VenusDjinnSmallSheet, FireBlobSheet, FireStreakSheet, LavaOrbSheet, YellowRingSheet
+	group BattleFx, YellowOrbSheet, BubbleSheet, ShieldSheet, DaggerSheet, PaletteRampImage
+	group BattleFx, SmokeSheet, BluePalette, LimePalette, PinkPalette, VioletPaletteC
+	group BattleFx, CyanPalette, TanPalette, WispSheet, GreenVineSheet, PortalSheet
+	group BattleFx, SheepSheet, SkullSheet, HeartSheet, CounterRevealSheet, RedCrescentSheetA
+	group BattleFx, BlueBeastSheet, RedCrescentSheetB, SpiralSheet, VioletStreakSheet, CrescentMoonSheet
+	group BattleFx, ThornVineSheet, IceShardSheet, EmberStreakSheet, BlueArcSheetA, BlueArcSheetB
+	group BattleFx, GlowOrbSheet, IceChipSheet, IceBlockSheet, SparkleDots, PinkBurstSheet
+	group BattleFx, LightFanSheet, BlueBurstSheet, DustPuffSheet, GoldShellSheet, BlastSheet
+	group BattleFx, FlameSheetB, FirePillarSheetB, RockSpireSheet, LightningBoltSheet, BeamSequenceImage
+	group BattleFx, TwelveModeImage, WindStreakSheet, YellowPaletteB, BlueRingSheet, RedPaletteC
+	group BattleFx, VioletPaletteD, BlueBeamSheet, VortexSheet, TornadoSheet, CrystalSheet
+	group BattleFx, WaterSparkleSheet, LightningPillarSheet, StagedParticlePath, DualStreamPath
+	group Field, PerspectiveDataA, DefaultMapCells, DefaultMapAnimation, DefaultMetatileAttributes
 	resource WorldMapPaletteA, WorldMap_PaletteA
 	resource WorldMapTilesA, WorldMap_TilesA
 	resource WorldMapTilesB, WorldMap_TilesB
@@ -238,10 +133,7 @@ Resource_DirectoryTable:
 	resource WorldMapTilesH, WorldMap_TilesH
 	resource WorldMapTilesI, WorldMap_TilesI
 	resource WorldMapTilesJ, WorldMap_TilesJ
-	resource RivalPathA, Korosseo_RivalPathA
-	resource RivalPathB, Korosseo_RivalPathB
-	resource RivalPathC, Korosseo_RivalPathC
-	resource Lettering, Korosseo_Lettering
+	group Korosseo, RivalPathA, RivalPathB, RivalPathC, Lettering
 	resource ShopCursorFrames, Shop_CursorFrameA
 	resource , Shop_CursorFrameB
 	resource , Shop_CursorFrameC
@@ -250,766 +142,169 @@ Resource_DirectoryTable:
 	resource , Shop_CursorFrameF
 	resource , Shop_CursorFrameG
 	resource , Shop_CursorFrameH
-	resource Icons, Ui_Icons
-	resource CommandIcons, Ui_CommandIcons
-	resource AxeGoblinSprites, Monster_AxeGoblinSprites
-	resource GhoulSprites, Monster_GhoulSprites
-	resource HarpySprites, Monster_HarpySprites
-	resource TrollSprites, Monster_TrollSprites
-	resource WitchSprites, Monster_WitchSprites
-	resource GriffinSprites, Monster_GriffinSprites
-	resource ShieldKnightSprites, Monster_ShieldKnightSprites
-	resource OrcSprites, Monster_OrcSprites
-	resource ChimeraSprites, Monster_ChimeraSprites
-	resource LivingArmorSprites, Monster_LivingArmorSprites
-	resource ManticoreSprites, Monster_ManticoreSprites
-	resource OrcLordSprites, Monster_OrcLordSprites
-	resource GargoyleSprites, Monster_GargoyleSprites
-	resource LizardManSprites, Monster_LizardManSprites
-	resource OgreSprites, Monster_OgreSprites
-	resource TailedImpSprites, Monster_TailedImpSprites
-	resource WispGhostSprites, Monster_WispGhostSprites
-	resource SalamanderSprites, Monster_SalamanderSprites
-	resource AquaBeastSprites, Monster_AquaBeastSprites
-	resource HoundSprites, Monster_HoundSprites
-	resource BearSprites, Monster_BearSprites
-	resource SirenSprites, Monster_SirenSprites
-	resource BlueWispSprites, Monster_BlueWispSprites
-	resource MushroomSprites, Monster_MushroomSprites
-	resource RedWormSprites, Monster_RedWormSprites
-	resource FairySprites, Monster_FairySprites
-	resource BatSprites, Monster_BatSprites
-	resource SmallLizardSprites, Monster_SmallLizardSprites
-	resource WalkingPlantSprites, Monster_WalkingPlantSprites
-	resource FlySprites, Monster_FlySprites
-	resource CrabSprites, Monster_CrabSprites
-	resource SmallBirdSprites, Monster_SmallBirdSprites
-	resource MothSprites, Monster_MothSprites
-	resource FrogSprites, Monster_FrogSprites
-	resource ManedLionSprites, Monster_ManedLionSprites
-	resource SerpentSprites, Monster_SerpentSprites
-	resource WingedDragonSprites, Monster_WingedDragonSprites
-	resource BlueMageSprites, Monster_BlueMageSprites
-	resource SkeletonSprites, Monster_SkeletonSprites
-	resource FlameSkullSprites, Monster_FlameSkullSprites
-	resource FireDragonSprites, Monster_FireDragonSprites
-	resource CrawlerSprites, Monster_CrawlerSprites
-	resource MimicSprites, Monster_MimicSprites
-	resource SeaBeastSprites, Monster_SeaBeastSprites
-	resource SpiritHorseSprites, Monster_SpiritHorseSprites
-	resource KrakenSprites, Monster_KrakenSprites
-	resource SlimeSprites, Monster_SlimeSprites
-	resource SaturosSprites, Monster_SaturosSprites
-	resource MenardiSprites, Monster_MenardiSprites
-	resource GhostHeadSprites, Monster_GhostHeadSprites
-	resource FusionDragonSprites, Monster_FusionDragonSprites
-	resource PurpleBeastSprites, Monster_PurpleBeastSprites
-	resource RedWarriorSprites, Monster_RedWarriorSprites
-	resource SwordGirlSprites, Monster_SwordGirlSprites
-	resource Map001, Field_Map001
+	group Ui, Icons, CommandIcons
+	group Monster, AxeGoblinSprites, GhoulSprites, HarpySprites, TrollSprites, WitchSprites
+	group Monster, GriffinSprites, ShieldKnightSprites, OrcSprites, ChimeraSprites, LivingArmorSprites
+	group Monster, ManticoreSprites, OrcLordSprites, GargoyleSprites, LizardManSprites, OgreSprites
+	group Monster, TailedImpSprites, WispGhostSprites, SalamanderSprites, AquaBeastSprites, HoundSprites
+	group Monster, BearSprites, SirenSprites, BlueWispSprites, MushroomSprites, RedWormSprites
+	group Monster, FairySprites, BatSprites, SmallLizardSprites, WalkingPlantSprites, FlySprites
+	group Monster, CrabSprites, SmallBirdSprites, MothSprites, FrogSprites, ManedLionSprites
+	group Monster, SerpentSprites, WingedDragonSprites, BlueMageSprites, SkeletonSprites, FlameSkullSprites
+	group Monster, FireDragonSprites, CrawlerSprites, MimicSprites, SeaBeastSprites, SpiritHorseSprites
+	group Monster, KrakenSprites, SlimeSprites, SaturosSprites, MenardiSprites, GhostHeadSprites
+	group Monster, FusionDragonSprites, PurpleBeastSprites, RedWarriorSprites, SwordGirlSprites
+	group Field, Map001
 	resource , Tileset_BlankPalette
 	resource , Tileset_BlankTilesA
 	resource , Tileset_BlankTilesB
 	resource , Tileset_BlankTilesC
 	resource , Tileset_BlankTilesD
-	resource , Field_Map000
-	resource , Tileset_Set00Palette
-	resource , Tileset_Set00TilesA
-	resource , Tileset_Set00TilesB
-	resource , Tileset_Set00TilesC
-	resource , Tileset_Set00TilesD
-	resource , Field_Map002
-	resource , Tileset_Set01Palette
-	resource , Tileset_Set01TilesA
-	resource , Tileset_Set01TilesB
-	resource , Tileset_Set01TilesC
-	resource , Tileset_Set01TilesD
-	resource , Field_Map003
-	resource , Tileset_Set02Palette
-	resource , Tileset_Set02TilesA
-	resource , Tileset_Set02TilesB
-	resource , Tileset_Set02TilesC
-	resource , Tileset_Set02TilesD
-	resource , Field_Map004
-	resource , Tileset_Set03Palette
-	resource , Tileset_Set03TilesA
-	resource , Tileset_Set03TilesB
-	resource , Tileset_Set03TilesC
-	resource , Tileset_Set03TilesD
-	resource , Field_Map005
-	resource , Tileset_Set04Palette
-	resource , Tileset_Set04TilesA
-	resource , Tileset_Set04TilesB
-	resource , Tileset_Set04TilesC
-	resource , Tileset_Set04TilesD
-	resource , Field_Map006
-	resource , Tileset_Set05Palette
-	resource , Tileset_Set05TilesA
-	resource , Tileset_Set05TilesB
-	resource , Tileset_Set05TilesC
-	resource , Tileset_Set05TilesD
-	resource , Field_Map007
-	resource , Tileset_Set06Palette
-	resource , Tileset_Set06TilesA
-	resource , Tileset_Set06TilesB
-	resource , Tileset_Set06TilesC
-	resource , Tileset_Set06TilesD
-	resource , Field_Map008
-	resource , Tileset_Set07Palette
-	resource , Tileset_Set07TilesA
-	resource , Tileset_Set07TilesB
-	resource , Tileset_Set07TilesC
-	resource , Tileset_Set07TilesD
-	resource , Field_Map009
-	resource , Tileset_Set08Palette
-	resource , Tileset_Set08TilesA
-	resource , Tileset_Set08TilesB
-	resource , Tileset_Set08TilesC
-	resource , Tileset_Set08TilesD
-	resource , Field_Map010
-	resource , Tileset_Set09Palette
-	resource , Tileset_Set09TilesA
-	resource , Tileset_Set09TilesB
-	resource , Tileset_Set09TilesC
-	resource , Field_Map011
-	resource , Tileset_Set10Palette
-	resource , Tileset_Set10TilesA
-	resource , Tileset_Set10TilesB
-	resource , Tileset_Set10TilesC
-	resource , Tileset_Set10TilesD
-	resource , Field_Map012
-	resource , Field_Map013
-	resource , Tileset_Set11Palette
-	resource , Tileset_Set11TilesA
-	resource , Tileset_Set11TilesB
-	resource , Tileset_Set11TilesC
-	resource , Tileset_Set11TilesD
-	resource , Field_Map014
-	resource , Tileset_Set12Palette
-	resource , Tileset_Set12TilesA
-	resource , Tileset_Set12TilesB
-	resource , Tileset_Set12TilesC
-	resource , Tileset_Set12TilesD
-	resource , Field_Map015
-	resource , Tileset_Set13Palette
-	resource , Tileset_Set13TilesA
-	resource , Tileset_Set13TilesB
-	resource , Tileset_Set13TilesC
-	resource , Tileset_Set13TilesD
-	resource , Field_Map016
-	resource , Tileset_Palette00
-	resource , Field_Map017
-	resource , Tileset_Set14Palette
-	resource , Tileset_Set14TilesA
-	resource , Tileset_Set14TilesB
-	resource , Tileset_Set14TilesC
-	resource , Tileset_Set14TilesD
-	resource , Field_Map018
-	resource , Tileset_Set15Palette
-	resource , Tileset_Set15TilesA
-	resource , Tileset_Set15TilesB
-	resource , Tileset_Set15TilesC
-	resource , Tileset_Set15TilesD
-	resource , Field_Map019
-	resource , Tileset_Set16Palette
-	resource , Tileset_Set16TilesA
-	resource , Tileset_Set16TilesB
-	resource , Tileset_Set16TilesC
-	resource , Tileset_Set16TilesD
-	resource , Field_Map020
-	resource , Tileset_Set17Palette
-	resource , Tileset_Set17TilesA
-	resource , Tileset_Set17TilesB
-	resource , Tileset_Set17TilesC
-	resource , Tileset_Set17TilesD
-	resource , Field_Map021
-	resource , Tileset_Set18Palette
-	resource , Tileset_Set18TilesA
-	resource , Tileset_Set18TilesB
-	resource , Tileset_Set18TilesC
-	resource , Tileset_Set18TilesD
-	resource , Field_Map022
-	resource , Tileset_Set19Palette
-	resource , Tileset_Set19TilesA
-	resource , Tileset_Set19TilesB
-	resource , Tileset_Set19TilesC
-	resource , Tileset_Set19TilesD
-	resource , Field_Map023
-	resource , Field_Map024
-	resource , Field_Map025
-	resource , Tileset_Set20Palette
-	resource , Tileset_Set20TilesA
-	resource , Tileset_Set20TilesB
-	resource , Tileset_Set20TilesC
-	resource , Tileset_Set20TilesD
-	resource , Field_Map026
-	resource , Field_Map027
-	resource , Field_Map028
-	resource , Tileset_Set21Palette
-	resource , Tileset_Set21TilesA
-	resource , Tileset_Set21TilesB
-	resource , Tileset_Set21TilesC
-	resource , Tileset_Set21TilesD
-	resource , Field_Map029
-	resource , Tileset_Set22Palette
-	resource , Tileset_Set22TilesA
-	resource , Tileset_Set22TilesB
-	resource , Tileset_Set22TilesC
-	resource , Field_Map030
-	resource , Field_Map031
-	resource , Tileset_Set23Palette
-	resource , Tileset_Set23TilesA
-	resource , Tileset_Set23TilesB
-	resource , Tileset_Set23TilesC
-	resource , Tileset_Set23TilesD
-	resource , Field_Map032
-	resource , Tileset_Set24Palette
-	resource , Tileset_Set24TilesA
-	resource , Tileset_Set24TilesB
-	resource , Field_Map033
-	resource , Tileset_Set25Palette
-	resource , Tileset_Set25TilesA
-	resource , Field_Map034
-	resource , Tileset_Set26Palette
-	resource , Tileset_Set26TilesA
-	resource , Tileset_Set26TilesB
-	resource , Tileset_Set26TilesC
-	resource , Field_Map035
-	resource , Tileset_Set27Palette
-	resource , Tileset_Set27TilesA
-	resource , Tileset_Set27TilesB
-	resource , Tileset_Set27TilesC
-	resource , Tileset_Set27TilesD
-	resource , Field_Map036
-	resource , Tileset_Set28Palette
-	resource , Tileset_Set28TilesA
-	resource , Tileset_Set28TilesB
-	resource , Tileset_Set28TilesC
-	resource , Tileset_Set28TilesD
-	resource , Field_Map037
-	resource , Tileset_Set29Palette
-	resource , Tileset_Set29TilesA
-	resource , Tileset_Set29TilesB
-	resource , Tileset_Set29TilesC
-	resource , Tileset_Set29TilesD
-	resource , Field_Map038
-	resource , Tileset_Set30Palette
-	resource , Tileset_Set30TilesA
-	resource , Field_Map039
-	resource , Tileset_Set31Palette
-	resource , Tileset_Set31TilesA
-	resource , Tileset_Set31TilesB
-	resource , Tileset_Set31TilesC
-	resource , Tileset_Set31TilesD
-	resource , Field_Map040
-	resource , Tileset_Palette01
-	resource , Field_Map041
-	resource , Tileset_Set32Palette
-	resource , Tileset_Set32TilesA
-	resource , Tileset_Set32TilesB
-	resource , Tileset_Set32TilesC
-	resource , Tileset_Set32TilesD
-	resource , Field_Map042
-	resource , Tileset_Set33Palette
-	resource , Tileset_Set33TilesA
-	resource , Field_Map043
-	resource , Tileset_Palette02
-	resource , Field_Map044
-	resource , Tileset_Set34Palette
-	resource , Tileset_Set34TilesA
-	resource , Tileset_Set34TilesB
-	resource , Tileset_Set34TilesC
-	resource , Tileset_Set34TilesD
-	resource , Field_Map045
-	resource , Tileset_Set35Palette
-	resource , Tileset_Set35TilesA
-	resource , Tileset_Set35TilesB
-	resource , Tileset_Set35TilesC
-	resource , Tileset_Set35TilesD
-	resource , Field_Map046
-	resource , Tileset_Set36Palette
-	resource , Tileset_Set36TilesA
-	resource , Tileset_Set36TilesB
-	resource , Tileset_Set36TilesC
-	resource , Tileset_Set36TilesD
-	resource , Field_Map047
-	resource , Tileset_Set37Palette
-	resource , Tileset_Set37TilesA
-	resource , Tileset_Set37TilesB
-	resource , Tileset_Set37TilesC
-	resource , Tileset_Set37TilesD
-	resource , Field_Map048
-	resource , Tileset_Set38Palette
-	resource , Tileset_Set38TilesA
-	resource , Field_Map049
-	resource , Tileset_Set39Palette
-	resource , Tileset_Set39TilesA
-	resource , Field_Map050
-	resource , Tileset_Set40Palette
-	resource , Tileset_Set40TilesA
-	resource , Field_Map051
-	resource , Tileset_Set41Palette
-	resource , Tileset_Set41TilesA
-	resource , Tileset_Set41TilesB
-	resource , Tileset_Set41TilesC
-	resource , Tileset_Set41TilesD
-	resource , Field_Map052
-	resource , Tileset_Set42Palette
-	resource , Tileset_Set42TilesA
-	resource , Tileset_Set42TilesB
-	resource , Tileset_Set42TilesC
-	resource , Tileset_Set42TilesD
-	resource , Field_Map053
-	resource , Field_Map054
-	resource , Tileset_Set43Palette
-	resource , Tileset_Set43TilesA
-	resource , Tileset_Set43TilesB
-	resource , Tileset_Set43TilesC
-	resource , Tileset_Set43TilesD
-	resource , Field_Map055
-	resource , Field_Map056
-	resource , Field_Map057
-	resource , Field_Map058
-	resource , Field_Map059
-	resource , Field_Map060
-	resource , Tileset_Set44Palette
-	resource , Tileset_Set44TilesA
-	resource , Field_Map061
-	resource , Tileset_Set45Palette
-	resource , Tileset_Set45TilesA
-	resource , Tileset_Set45TilesB
-	resource , Tileset_Set45TilesC
-	resource , Tileset_Set45TilesD
-	resource , Field_Map062
-	resource , Tileset_Palette03
-	resource , Field_Map063
-	resource , Field_Map064
-	resource , Field_Map065
-	resource , Field_Map066
-	resource , Field_Map067
-	resource , Field_Map068
-	resource , Tileset_Set46Palette
-	resource , Tileset_Set46TilesA
-	resource , Tileset_Set46TilesB
-	resource , Tileset_Set46TilesC
-	resource , Tileset_Set46TilesD
-	resource , Field_Map069
-	resource , Field_Map070
-	resource , Field_Map071
-	resource , Field_Map072
-	resource , Field_Map073
-	resource , Tileset_Set47Palette
-	resource , Tileset_Set47TilesA
-	resource , Tileset_Set47TilesB
-	resource , Tileset_Set47TilesC
-	resource , Tileset_Set47TilesD
-	resource , Field_Map074
-	resource , Tileset_Palette04
-	resource , Field_Map075
-	resource , Tileset_Set48Palette
-	resource , Tileset_Set48TilesA
-	resource , Tileset_Set48TilesB
-	resource , Tileset_Set48TilesC
-	resource , Tileset_Set48TilesD
-	resource , Field_Map076
-	resource , Tileset_Set49Palette
-	resource , Tileset_Set49TilesA
-	resource , Field_Map077
-	resource , Tileset_Palette05
-	resource , Field_Map078
-	resource , Field_Map079
-	resource , Field_Map080
-	resource , Field_Map081
-	resource , Field_Map082
-	resource , Field_Map083
-	resource , Field_Map084
-	resource , Field_Map085
-	resource , Field_Map086
-	resource , Tileset_Palette06
-	resource , Field_Map087
-	resource , Field_Map088
-	resource , Tileset_Palette07
-	resource , Field_Map089
-	resource , Field_Map090
-	resource , Tileset_Set50Palette
-	resource , Tileset_Set50TilesA
-	resource , Tileset_Set50TilesB
-	resource , Tileset_Set50TilesC
-	resource , Tileset_Set50TilesD
-	resource , Field_Map091
-	resource , Field_Map092
-	resource , Field_Map093
-	resource , Tileset_Set51Palette
-	resource , Tileset_Set51TilesA
-	resource , Tileset_Set51TilesB
-	resource , Tileset_Set51TilesC
-	resource , Tileset_Set51TilesD
-	resource , Field_Map094
-	resource , Tileset_Set52Palette
-	resource , Tileset_Set52TilesA
-	resource , Tileset_Set52TilesB
-	resource , Tileset_Set52TilesC
-	resource , Tileset_Set52TilesD
-	resource , Field_Map095
-	resource , Field_Map096
-	resource , Field_Map097
-	resource , Tileset_Palette08
-	resource , Field_Map098
-	resource , Tileset_Set53Palette
-	resource , Tileset_Set53TilesA
-	resource , Tileset_Set53TilesB
-	resource , Field_Map099
-	resource , Tileset_Palette09
-	resource , Field_Map100
-	resource , Tileset_Palette10
-	resource , Field_Map101
-	resource , Tileset_Set54Palette
-	resource , Tileset_Set54TilesA
-	resource , Tileset_Set54TilesB
-	resource , Tileset_Set54TilesC
-	resource , Field_Map102
-	resource , Tileset_Set55Palette
-	resource , Tileset_Set55TilesA
-	resource , Field_Map103
-	resource , Tileset_Set56Palette
-	resource , Tileset_Set56TilesA
-	resource , Tileset_Set56TilesB
-	resource , Tileset_Set56TilesC
-	resource , Tileset_Set56TilesD
-	resource , Field_Map104
-	resource , Tileset_Palette11
-	resource , Field_Map105
-	resource , Tileset_Set57Palette
-	resource , Tileset_Set57TilesA
-	resource , Tileset_Set57TilesB
-	resource , Tileset_Set57TilesC
-	resource , Tileset_Set57TilesD
-	resource , Field_Map106
-	resource , Tileset_Palette12
-	resource , Field_Map107
-	resource , Tileset_Palette13
-	resource , Field_Map108
-	resource , Tileset_Set58Palette
-	resource , Tileset_Set58TilesA
-	resource , Tileset_Set58TilesB
-	resource , Tileset_Set58TilesC
-	resource , Tileset_Set58TilesD
-	resource , Field_Map109
-	resource , Tileset_Palette14
-	resource , Field_Map110
-	resource , Tileset_Palette15
-	resource , Field_Map111
-	resource , Tileset_Palette16
-	resource , Field_Map112
-	resource , Tileset_Palette17
+	area Set00, ABCD, 000
+	area Set01, ABCD, 002
+	area Set02, ABCD, 003
+	area Set03, ABCD, 004
+	area Set04, ABCD, 005
+	area Set05, ABCD, 006
+	area Set06, ABCD, 007
+	area Set07, ABCD, 008
+	area Set08, ABCD, 009
+	area Set09, ABC, 010
+	area Set10, ABCD, 011
+	area Set11, ABCD, 012, 013
+	area Set12, ABCD, 014
+	area Set13, ABCD, 015
+	recolor 00, 016
+	area Set14, ABCD, 017
+	area Set15, ABCD, 018
+	area Set16, ABCD, 019
+	area Set17, ABCD, 020
+	area Set18, ABCD, 021
+	area Set19, ABCD, 022
+	area Set20, ABCD, 023, 024, 025
+	area Set21, ABCD, 026, 027, 028
+	area Set22, ABC, 029
+	area Set23, ABCD, 030, 031
+	area Set24, AB, 032
+	area Set25, A, 033
+	area Set26, ABC, 034
+	area Set27, ABCD, 035
+	area Set28, ABCD, 036
+	area Set29, ABCD, 037
+	area Set30, A, 038
+	area Set31, ABCD, 039
+	recolor 01, 040
+	area Set32, ABCD, 041
+	area Set33, A, 042
+	recolor 02, 043
+	area Set34, ABCD, 044
+	area Set35, ABCD, 045
+	area Set36, ABCD, 046
+	area Set37, ABCD, 047
+	area Set38, A, 048
+	area Set39, A, 049
+	area Set40, A, 050
+	area Set41, ABCD, 051
+	area Set42, ABCD, 052
+	area Set43, ABCD, 053, 054
+	area Set44, A, 055, 056, 057, 058, 059, 060
+	area Set45, ABCD, 061
+	recolor 03, 062
+	area Set46, ABCD, 063, 064, 065, 066, 067, 068
+	area Set47, ABCD, 069, 070, 071, 072, 073
+	recolor 04, 074
+	area Set48, ABCD, 075
+	area Set49, A, 076
+	recolor 05, 077
+	recolor 06, 078, 079, 080, 081, 082, 083, 084, 085, 086
+	recolor 07, 087, 088
+	area Set50, ABCD, 089, 090
+	area Set51, ABCD, 091, 092, 093
+	area Set52, ABCD, 094
+	recolor 08, 095, 096, 097
+	area Set53, AB, 098
+	recolor 09, 099
+	recolor 10, 100
+	area Set54, ABC, 101
+	area Set55, A, 102
+	area Set56, ABCD, 103
+	recolor 11, 104
+	area Set57, ABCD, 105
+	recolor 12, 106
+	recolor 13, 107
+	area Set58, ABCD, 108
+	recolor 14, 109
+	recolor 15, 110
+	recolor 16, 111
+	recolor 17, 112
 	resource , Tileset_Palette18
-	resource , Field_Map113
-	resource , Tileset_Palette19
-	resource , Field_Map114
-	resource , Tileset_Palette20
-	resource , Field_Map115
-	resource , Tileset_Palette21
-	resource , Field_Map116
-	resource , Tileset_Palette22
-	resource , Field_Map117
-	resource , Tileset_Palette23
-	resource , Field_Map118
-	resource , Tileset_Palette24
-	resource , Field_Map119
-	resource , Tileset_Palette25
-	resource , Field_Map120
-	resource , Tileset_Palette26
-	resource , Field_Map121
-	resource , Field_Map122
-	resource , Tileset_Palette27
-	resource , Field_Map123
-	resource , Tileset_Palette28
-	resource , Field_Map124
-	resource , Tileset_Set59Palette
-	resource , Tileset_Set59TilesA
-	resource , Tileset_Set59TilesB
-	resource , Tileset_Set59TilesC
-	resource , Tileset_Set59TilesD
-	resource , Field_Map125
-	resource , Tileset_Palette29
-	resource , Field_Map126
-	resource , Tileset_Palette30
-	resource , Field_Map127
-	resource , Tileset_Set60Palette
-	resource , Tileset_Set60TilesA
-	resource , Tileset_Set60TilesB
-	resource , Tileset_Set60TilesC
-	resource , Tileset_Set60TilesD
-	resource , Field_Map128
-	resource , Tileset_Set61Palette
-	resource , Tileset_Set61TilesA
-	resource , Tileset_Set61TilesB
-	resource , Tileset_Set61TilesC
-	resource , Tileset_Set61TilesD
-	resource , Field_Map129
-	resource , Tileset_Set62Palette
-	resource , Tileset_Set62TilesA
-	resource , Tileset_Set62TilesB
-	resource , Tileset_Set62TilesC
-	resource , Tileset_Set62TilesD
-	resource , Field_Map130
-	resource , Tileset_Palette31
-	resource , Field_Map131
-	resource , Field_Map132
-	resource , Field_Map133
-	resource , Tileset_Palette32
+	recolor 19, 113
+	recolor 20, 114
+	recolor 21, 115
+	recolor 22, 116
+	recolor 23, 117
+	recolor 24, 118
+	recolor 25, 119
+	recolor 26, 120
+	recolor 27, 121, 122
+	recolor 28, 123
+	area Set59, ABCD, 124
+	recolor 29, 125
+	recolor 30, 126
+	area Set60, ABCD, 127
+	area Set61, ABCD, 128
+	area Set62, ABCD, 129
+	recolor 31, 130
+	recolor 32, 131, 132, 133
 	resource , Field_Map134
 	resource , Field_Map135
 	resource , Field_GondowanaTsukojo
 	resource , Tileset_Palette33
-	resource , Field_Map136
-	resource , Tileset_Palette34
-	resource , Field_Map137
-	resource , Field_Map138
-	resource , Tileset_Palette35
-	resource , Field_Map139
-	resource , Tileset_Palette36
-	resource , Field_Map140
-	resource , Field_Map141
-	resource , Field_Map142
-	resource , Field_Map143
-	resource , Tileset_Palette37
-	resource , Field_Map144
-	resource , Tileset_Palette38
-	resource , Field_Map145
-	resource , Tileset_Set63Palette
-	resource , Tileset_Set63TilesA
-	resource , Field_Map146
-	resource , Field_Map147
-	resource , Tileset_Palette39
-	resource , Field_Map148
-	resource , Field_Map149
-	resource , Tileset_Palette40
-	resource , Field_Map150
-	resource , Tileset_Set64Palette
-	resource , Tileset_Set64TilesA
-	resource , Tileset_Set64TilesB
-	resource , Tileset_Set64TilesC
-	resource , Tileset_Set64TilesD
-	resource , Field_Map151
-	resource , Tileset_Set65Palette
-	resource , Tileset_Set65TilesA
-	resource , Tileset_Set65TilesB
-	resource , Tileset_Set65TilesC
-	resource , Tileset_Set65TilesD
-	resource , Field_Map152
-	resource , Tileset_Palette41
-	resource , Field_Map153
-	resource , Field_Map154
-	resource , Tileset_Palette42
-	resource , Field_Map155
-	resource , Tileset_Palette43
-	resource , Field_Map156
-	resource , Field_Map157
-	resource , Tileset_Palette44
+	recolor 34, 136
+	recolor 35, 137, 138
+	recolor 36, 139
+	recolor 37, 140, 141, 142, 143
+	recolor 38, 144
+	area Set63, A, 145
+	recolor 39, 146, 147
+	recolor 40, 148, 149
+	area Set64, ABCD, 150
+	area Set65, ABCD, 151
+	recolor 41, 152
+	recolor 42, 153, 154
+	recolor 43, 155
+	recolor 44, 156, 157
 	resource , Tileset_Palette45
-	resource , Field_Map158
-	resource , Tileset_Palette46
-	resource , Field_Map159
-	resource , Tileset_Palette47
-	resource , Field_Map160
-	resource , Tileset_Palette48
+	recolor 46, 158
+	recolor 47, 159
+	recolor 48, 160
 	resource , Field_Map161
 	resource , Field_Map162
 	resource , Field_VinasuIriguchi
 	resource , Tileset_Palette49
-	resource , Field_Map163
-	resource , Tileset_Palette50
-	resource , Field_Map164
-	resource , Tileset_Palette51
-	resource , Field_Map165
-	resource , Field_Map166
-	resource , Field_Map167
-	resource , Field_Map168
-	resource , Tileset_Palette52
-	resource , Field_Map169
-	resource , Tileset_Set66Palette
-	resource , Tileset_Set66TilesA
-	resource , Tileset_Set66TilesB
-	resource , Tileset_Set66TilesC
-	resource , Tileset_Set66TilesD
-	resource , Field_Map170
-	resource , Tileset_Set67Palette
-	resource , Tileset_Set67TilesA
-	resource , Tileset_Set67TilesB
-	resource , Tileset_Set67TilesC
-	resource , Tileset_Set67TilesD
-	resource , Field_Map171
-	resource , Tileset_Palette53
-	resource , Field_Map172
-	resource , Tileset_Set68Palette
-	resource , Tileset_Set68TilesA
-	resource , Tileset_Set68TilesB
-	resource , Tileset_Set68TilesC
-	resource , Tileset_Set68TilesD
-	resource , Field_Map173
-	resource , Tileset_Set69Palette
-	resource , Tileset_Set69TilesA
-	resource , Tileset_Set69TilesB
-	resource , Tileset_Set69TilesC
-	resource , Tileset_Set69TilesD
-	resource , Field_Map174
-	resource , Tileset_Set70Palette
-	resource , Tileset_Set70TilesA
-	resource , Tileset_Set70TilesB
-	resource , Tileset_Set70TilesC
-	resource , Tileset_Set70TilesD
-	resource , Field_Map175
-	resource , Tileset_Set71Palette
-	resource , Tileset_Set71TilesA
-	resource , Tileset_Set71TilesB
-	resource , Tileset_Set71TilesC
-	resource , Tileset_Set71TilesD
-	resource , Field_Map176
-	resource , Tileset_Set72Palette
-	resource , Tileset_Set72TilesA
-	resource , Tileset_Set72TilesB
-	resource , Tileset_Set72TilesC
-	resource , Tileset_Set72TilesD
-	resource , Field_Map177
-	resource , Tileset_Set73Palette
-	resource , Tileset_Set73TilesA
-	resource , Tileset_Set73TilesB
-	resource , Tileset_Set73TilesC
-	resource , Tileset_Set73TilesD
-	resource , Field_Map178
-	resource , Tileset_Set74Palette
-	resource , Tileset_Set74TilesA
-	resource , Tileset_Set74TilesB
-	resource , Tileset_Set74TilesC
-	resource , Tileset_Set74TilesD
-	resource , Field_Map179
-	resource , Tileset_Set75Palette
-	resource , Tileset_Set75TilesA
-	resource , Tileset_Set75TilesB
-	resource , Tileset_Set75TilesC
-	resource , Tileset_Set75TilesD
-	resource , Resource_Overlay36F
-	resource , Resource_Overlay370
-	resource , Resource_Overlay371
-	resource , Resource_Overlay372
-	resource , Resource_Overlay373
-	resource , Resource_Overlay374
-	resource , Resource_Overlay375
-	resource , Resource_Overlay376
-	resource , Resource_Overlay377
-	resource , Resource_Overlay378
-	resource , Resource_Overlay379
-	resource , Resource_Overlay37A
-	resource , Resource_Overlay37B
-	resource , Resource_Overlay37C
-	resource , Resource_Overlay37D
-	resource , Resource_Overlay37E
-	resource , Resource_Overlay37F
-	resource , Resource_Overlay380
-	resource , Resource_Overlay381
-	resource , Resource_Overlay382
-	resource , Resource_Overlay383
-	resource , Resource_Overlay384
-	resource , Resource_Overlay385
-	resource , Resource_Overlay386
-	resource , Resource_Overlay387
-	resource , Resource_Overlay388
-	resource , Resource_Overlay389
-	resource , Resource_Overlay38A
-	resource , Resource_Overlay38B
-	resource , Resource_Overlay38C
-	resource , Resource_Overlay38D
-	resource , Resource_Overlay38E
-	resource , Resource_Overlay38F
-	resource , Resource_Overlay390
-	resource , Resource_Overlay391
-	resource , Resource_Overlay392
-	resource , Resource_Overlay393
-	resource , Resource_Overlay394
-	resource , Resource_Overlay395
-	resource , Resource_Overlay396
-	resource , Resource_Overlay397
-	resource , Resource_Overlay398
-	resource , Resource_Overlay399
-	resource , Resource_Overlay39A
-	resource , Resource_Overlay39B
-	resource , Resource_Overlay39C
-	resource , Resource_Overlay39D
-	resource , Resource_Overlay39E
-	resource , Resource_Overlay39F
-	resource , Resource_Overlay3A0
-	resource , Resource_Overlay3A1
-	resource , Resource_Overlay3A2
-	resource , Resource_Overlay3A3
-	resource , Resource_Overlay3A4
-	resource , Resource_Overlay3A5
-	resource , Resource_Overlay3A6
-	resource , Resource_Overlay3A7
-	resource , Resource_Overlay3A8
-	resource , Resource_Overlay3A9
-	resource , Resource_Overlay3AA
-	resource , Resource_Overlay3AB
-	resource , Resource_Overlay3AC
-	resource , Resource_Overlay3AD
-	resource , Resource_Overlay3AE
-	resource , Resource_Overlay3AF
-	resource , Resource_Overlay3B0
-	resource , Resource_Overlay3B1
-	resource , Resource_Overlay3B2
-	resource , Resource_Overlay3B3
-	resource , Resource_Overlay3B4
-	resource , Resource_Overlay3B5
-	resource , Resource_Overlay3B6
-	resource , Resource_Overlay3B7
-	resource , Resource_Overlay3B8
-	resource , Resource_Overlay3B9
-	resource , Resource_Overlay3BA
-	resource , Resource_Overlay3BB
-	resource , Resource_Overlay3BC
-	resource , Resource_Overlay3BD
-	resource , Resource_Overlay3BE
-	resource , Resource_Overlay3BF
-	resource , Resource_Overlay3C0
-	resource , Resource_Overlay3C1
-	resource , Resource_Overlay3C2
-	resource , Resource_Overlay3C3
-	resource , Resource_Overlay3C4
-	resource , Resource_Overlay3C5
-	resource , Resource_Overlay3C6
-	resource , Resource_Overlay3C7
-	resource , Resource_Overlay3C8
-	resource , Resource_Overlay3C9
-	resource , Resource_Overlay3CA
-	resource , Resource_Overlay3CB
-	resource , Resource_Overlay3CC
-	resource , Resource_Overlay3CD
-	resource , Resource_Overlay3CE
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
-	resource , 0
+	recolor 50, 163
+	recolor 51, 164
+	recolor 52, 165, 166, 167, 168
+	area Set66, ABCD, 169
+	area Set67, ABCD, 170
+	recolor 53, 171
+	area Set68, ABCD, 172
+	area Set69, ABCD, 173
+	area Set70, ABCD, 174
+	area Set71, ABCD, 175
+	area Set72, ABCD, 176
+	area Set73, ABCD, 177
+	area Set74, ABCD, 178
+	area Set75, ABCD, 179
+	overlays 36F, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 37A
+	overlays 37B, 37C, 37D, 37E, 37F, 380, 381, 382, 383, 384, 385, 386
+	overlays 387, 388, 389, 38A, 38B, 38C, 38D, 38E, 38F, 390, 391, 392
+	overlays 393, 394, 395, 396, 397, 398, 399, 39A, 39B, 39C, 39D, 39E
+	overlays 39F, 3A0, 3A1, 3A2, 3A3, 3A4, 3A5, 3A6, 3A7, 3A8, 3A9, 3AA
+	overlays 3AB, 3AC, 3AD, 3AE, 3AF, 3B0, 3B1, 3B2, 3B3, 3B4, 3B5, 3B6
+	overlays 3B7, 3B8, 3B9, 3BA, 3BB, 3BC, 3BD, 3BE, 3BF, 3C0, 3C1, 3C2
+	overlays 3C3, 3C4, 3C5, 3C6, 3C7, 3C8, 3C9, 3CA, 3CB, 3CC, 3CD, 3CE
+	unused 25
 
 @ ビルドの日時（年月日時分秒、二桁ずつ）
 	.global Resource_BuildStamp

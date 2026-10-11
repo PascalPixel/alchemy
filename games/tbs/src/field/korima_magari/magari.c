@@ -96,6 +96,9 @@ void KorimaPalette_SaveFirst(void);
 void KorimaPalette_SaveSecond(void);
 void KorimaPalette_Capture(void);
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/map/panel.c"
+
 void State_ApplyRectByLayoutSelector(void)
 {
     if (*(s16 *)gKorimaMagariReturned == 1) {

@@ -204,6 +204,10 @@ s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record);
 #define FIELD_STAGED_ACTOR_IMPORTS
 extern u8 *gActorEffectWork;
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+
 s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 {
 	Engine_ActorSetSpriteFlags(no, 0);

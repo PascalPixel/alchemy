@@ -46,31 +46,12 @@ typedef void (*SceneTask)(void);
 
 extern u8 HexDigits[];
 extern s32 KorosseoKawa_Countdown;
-extern u16 Korosseo_ModeTaskMode;
-extern u16 Korosseo_ModeTaskParam;
-extern u16 Korosseo_ModeTaskTimer;
-extern s32 Korosseo_ModeTaskScript;
-extern u16 Korosseo_ModeMoveTarget;
-extern u16 Korosseo_ModeMoveDuration;
-extern s32 Korosseo_ModeTaskPosition;
 extern s16 Korosseo_MarkerSlot;
-extern u16 Korosseo_MarkerX;
-extern u16 Korosseo_MarkerY;
-extern u16 Korosseo_MarkerPriority;
-extern u16 Korosseo_MarkerBlink;
-extern u16 Korosseo_MarkerSteps;
-extern u16 Korosseo_MarkerEndX;
-extern u16 Korosseo_MarkerEndY;
-extern u16 Korosseo_MarkerStartX;
-extern u16 Korosseo_MarkerStartY;
-extern u16 Korosseo_MarkerStep;
-extern u8 Korosseo_GaugeGraphics[];
 
-void *UnitGet(u32 owner);
-void Script_WaitForEventTimeout(struct FieldActor *);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 GameFlag_GetByte();
 void GameFlag_SetByte(s32, s32);
+void Script_WaitForEventTimeout(struct FieldActor *);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 GetPartyMemberCount(void);
 void Object_RefreshSelectorById(s32 actor);
 s32 BattleFx_SetWeightedResult();
@@ -79,8 +60,6 @@ void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void Owner_RefreshActiveRatios();
 void Battle_ResetEffectCounter(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);
-void Party_RemoveActiveOwner();
-void Party_AddActiveOwner();
 s32 Menu_OpenCharacterSelector();
 void Inventory_AddItem(s32, s32);
 void Inventory_Equip();
@@ -92,11 +71,11 @@ void ObjectDispatch_WaitForValue16();
 s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);
 
 // コロッセオ共通 (field/common/korosseo)
-s32 Korosseo_FadeInCompetitor();
-void Korosseo_RestoreCompetitor();
-s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
-void Korosseo_SelectSoloCompetitor(s32 index);
-void Korosseo_FinishSoloRound();
+void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z);
+void Korosseo_RestoreCompetitor(s32 id);
+void Korosseo_ShowItemIcon(s32 id, s32 item);
+void Korosseo_SelectSoloCompetitor(s32 id);
+void Korosseo_FinishSoloRound(s32 id);
 void Korosseo_LoadPortrait(s32);
 void Korosseo_UpdateModeTask(void);
 void Korosseo_UpdateMarker(void);
@@ -839,7 +818,8 @@ void KorosseoKawa_RunStageIntro(s32 scene)
     s32 path;
 
     if (gGameState.entrance == 2) {
-        Korosseo_FinishSoloRound();
+        /* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
+        ((void (*)(void))Korosseo_FinishSoloRound)();
     } else {
         Engine_EventBegin();
         path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 1);
@@ -849,7 +829,8 @@ void KorosseoKawa_RunStageIntro(s32 scene)
             Camera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(scene, 0);
-            Korosseo_FadeInCompetitor(0, 280, 200);
+            /* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
+            ((s32 (*)())Korosseo_FadeInCompetitor)(0, 280, 200);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
             Engine_EventWait(30);
@@ -900,7 +881,8 @@ void Korosseo_RunPipeworksIntro(s32 a0)
     struct FieldActor *first;
 
     if (gGameState.entrance == 2) {
-        Korosseo_FinishSoloRound();
+        /* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
+        ((void (*)(void))Korosseo_FinishSoloRound)();
     } else {
         Engine_EventBegin();
         rec4 = SceneDialogue_RunFlagGatedPromptInteraction(a0, 2);
@@ -972,7 +954,8 @@ void Korosseo_RunBrokenBridgeIntro(s32 scene)
     s32 path;
 
     if (gGameState.entrance == 2) {
-        Korosseo_FinishSoloRound();
+        /* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
+        ((void (*)(void))Korosseo_FinishSoloRound)();
     } else {
         Engine_EventBegin();
         path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 3);
@@ -986,7 +969,8 @@ void Korosseo_RunBrokenBridgeIntro(s32 scene)
             SceneState_SetMode66AndPassOpeningSequence();
             Engine_EventWait(60);
             Event_ShowMessage(scene, 0);
-            Korosseo_FadeInCompetitor(0, 736, 200);
+            /* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
+            ((s32 (*)())Korosseo_FadeInCompetitor)(0, 736, 200);
             /* FAKEMATCH: the discarded result sets r0 after both other arguments. */
             Value3(Engine_ActorFaceDirection, ACTOR_PARTY_LEADER, 0, 0);
             KorosseoKawa_WaitForCountdown();
@@ -1013,7 +997,8 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
     s32 path;
 
     if (gGameState.entrance == 2) {
-        Korosseo_FinishSoloRound();
+        /* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
+        ((void (*)(void))Korosseo_FinishSoloRound)();
         return;
     }
     Engine_EventBegin();
@@ -1029,7 +1014,8 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
         Event_ShowMessage(scene, 0);
         KorosseoKawa_ReleaseMarker();
         Engine_EventWait(15);
-        Korosseo_FadeInCompetitor(0, 984, 200);
+        /* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
+        ((s32 (*)())Korosseo_FadeInCompetitor)(0, 984, 200);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);
         Event_ShowMessage(scene, 0);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
@@ -1095,6 +1081,9 @@ void SceneActor_PlaceSlots1To3FromWork(void)
         Engine_ActorSetPosition(MEARI, x, y);
     }
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/solo_competitor.c"
 
 void SceneState_RaiseTriggerOnPsynergyTarget(void)
 {
@@ -1186,6 +1175,9 @@ static __inline__ void AdvanceMessage(s32 amount)
 {
     gEventWork->message += amount;
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/solo_round.c"
 
 void RunPartyCountInteraction(s32 actorId)
 {
@@ -1406,6 +1398,9 @@ void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b)
     }
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/korosseo.c"
+
 void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
 {
     s32 handler;
@@ -1431,7 +1426,7 @@ void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
     }
 
     Korosseo_ModeTaskTimer = 0;
-    Korosseo_ModeTaskScript = handler;
+    Korosseo_ModeTaskScript = (s16 *)handler;
     Korosseo_ModeMoveTarget = 0;
     Korosseo_ModeMoveDuration = 0;
     Korosseo_ModeTaskPosition = 0;
@@ -1523,6 +1518,9 @@ void FieldScene_RunLateSequence(s32 a0)
     Engine_EventWaitForScreen();
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/compete.c"
+
 void OverlayObject_ResetMotionFields(s32 actor)
 {
     struct FieldActor *o = Object_GetById(actor);
@@ -1542,6 +1540,9 @@ void KorosseoKawa_EnsureMarkerSlot(void)
     }
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/marker.c"
+
 void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
 {
     KorosseoKawa_EnsureMarkerSlot();
@@ -1559,8 +1560,8 @@ void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
 {
     Korosseo_MarkerEndX = (u16)x;
     Korosseo_MarkerEndY = (u16)y;
-    Korosseo_MarkerStartX = Korosseo_MarkerX;
-    Korosseo_MarkerStartY = Korosseo_MarkerY;
+    *(u16 *)&Korosseo_MarkerStartX = Korosseo_MarkerX;
+    *(u16 *)&Korosseo_MarkerStartY = Korosseo_MarkerY;
     Korosseo_MarkerSteps = (u16)duration;
     Korosseo_MarkerStep = 0;
 
@@ -1610,6 +1611,9 @@ void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c)
         Object_SetMode(o, 1);
     }
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/item_icon.c"
 
 void Text_WriteU32AsHex(u8 *buf, u32 value)
 {
@@ -1756,6 +1760,9 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
     return flag;
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/path_rival.c"
+
 void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre,
                    s32 extra, s32 third, s32 fourth)
 {
@@ -1815,6 +1822,9 @@ void SceneState_InitControlWhenFlag109Clear(s32 resource)
     }
     Engine_TaskAddCallback(Korosseo_UpdatePathRival, 0xc85);
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/scene_state.c"
 
 struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct FieldActor *subject)
 {

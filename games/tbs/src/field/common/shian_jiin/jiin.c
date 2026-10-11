@@ -56,8 +56,6 @@ extern u8 ShianJiin_XianMessages[];
 s32 ArcTan2(s32, s32);
 
 void FieldScene_SpawnRandomizedParticle();
-void Effect_Spawn();
-void Effect_Spawn(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
 void ShianJiin_SpinAway(void);
 void ShianJiin_RunGatheringScene(void);
 void ShianJiin_RunMasterScene(s32 arg0);
@@ -144,6 +142,10 @@ extern const struct SceneEvent gShianJiinEvents[];
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
 
 extern u8 gEffectWork[];
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../effect/move.c"
+#include "../effect/spawnov.c"
 
 s32 StopXianActor(void *actor)
 {

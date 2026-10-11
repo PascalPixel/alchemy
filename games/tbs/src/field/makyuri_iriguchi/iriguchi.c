@@ -19,8 +19,6 @@
 #include "text/msg_ids.h"
 #include "mem.h"
 
-#define Makyuri_SpawnLightObjects ((void (*)(s32,s32))Makyuri_SpawnLightObjects)
-
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 value, s32 weight);
 
@@ -266,7 +264,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         s32 alpha = 0x1010;
         REG_BLDALPHA = alpha;
     }
-    Makyuri_SpawnLightObjects(21, (s32)gSceneState);
+    Makyuri_SpawnLightObjects(21, (struct MakyuriLights *)gSceneState);
     GameFlag_Set(0x111);
     gGameState.retreat_entrance = 11;
     gGameState.retreat_scene = (s32)&SceneId_MakyuriHeya4;
@@ -497,6 +495,9 @@ void MakyuriIriguchi_RunDoorScene(void)
     }
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/makyuri/lights.c"
+
 void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {
     struct FieldActor *obj = Engine_ObjectCreate(24, src->x.fixed, src->y.fixed, src->z.fixed);
@@ -565,6 +566,9 @@ s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o)
     return 1;
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "pillar.c"
+
 void SceneState_ClearCurrentRecordAndReleaseTarget(void)
 {
     s32 *record = **(s32 ***)&((struct WorkPointers *)&gEventWork)->scene;
@@ -585,6 +589,9 @@ void SceneState_ClearCurrentRecordAndReleaseTarget(void)
         record[5] = 0;
     }
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/makyuri/makyuri.c"
 
 void OverlayObject_ReleasePublishedAttachment(void)
 {

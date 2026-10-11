@@ -62,6 +62,10 @@ union KanpanSlot {
 
 void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 type);
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+
 s32 ShianHeya_GetEntrances(void)
 {
     return (s32)ShianHeya_SceneTable0;

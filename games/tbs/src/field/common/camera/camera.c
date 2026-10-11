@@ -338,17 +338,17 @@ void LuckyDice_Run(void)
 	}
 
 	base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceBoard);
-	Dma_Set((void *)base, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
-	Dma_Set((void *)0x05000000, palette, 0x84000080, (volatile u32 *)0x040000d4);
+	Dma_Set((void *)base, (void *)0x05000000, 0x84000070, REG_DMA3);
+	Dma_Set((void *)0x05000000, palette, 0x84000080, REG_DMA3);
 	base += 0x1c0;
 	LuckyDice_Decode((void *)base, Ram_MapCellBuffer);
-	Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x84002580, (volatile u32 *)0x040000d4);
+	Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x84002580, REG_DMA3);
 	base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
-	Dma_Set((void *)base, obj_palette, 0x84000080, (volatile u32 *)0x040000d4);
-	Dma_Set((void *)base, (void *)0x05000200, 0x84000080, (volatile u32 *)0x040000d4);
+	Dma_Set((void *)base, obj_palette, 0x84000080, REG_DMA3);
+	Dma_Set((void *)base, (void *)0x05000200, 0x84000080, REG_DMA3);
 	base += 0x200;
 	LuckyDice_Decode((void *)base, Ram_MapCellBuffer);
-	Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, 0x84001f00, (volatile u32 *)0x040000d4);
+	Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, 0x84001f00, REG_DMA3);
 	Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, 0, 256);
 	Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, 0, 256);
 
@@ -946,7 +946,7 @@ void LuckyDice_Run(void)
 			sprites->obj[i * 4 + 3].attr2 |= affine_d << 16;
 		}
 
-		Dma_Set(sprites->obj, (void *)0x07000000, 0x84000100, (volatile u32 *)0x040000d4);
+		Dma_Set(sprites->obj, (void *)0x07000000, 0x84000100, REG_DMA3);
 		WaitFrames(1);
 		frame++;
 	}

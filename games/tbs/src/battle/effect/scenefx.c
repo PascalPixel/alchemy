@@ -16393,7 +16393,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 	aux = slots[-3];
 	work->effect = efx;
 	BattleFx_BeginCanvasLayer(0x2000);
-	*(u16 *)0x04000020 = 0x100;
+	REG_BG2PA = 0x100;
 	Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work, 1, 1);
 	Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work, 1, 1);
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC, work->sheet + 0x1800, 0, 0);
@@ -16423,9 +16423,9 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 	}
 
 	BattlePres_ConfigureEffectDisplay();
-	*(u16 *)0x05000000 = 0;
+	PLTT_BACKDROP = 0;
 	*(u16 *)0x05000002 = 0;
-	*(u16 *)0x0400000c = 0x2784;
+	REG_BG2CNT = 0x2784;
 	work->scroll_timer = 0;
 	work->scroll_interval = 2;
 	work->scroll_step_x = 1;
@@ -16438,14 +16438,14 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 	BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
 	gProjection.center_y = 240;
 	BattleEffect_WipeCanvas(0, 1);
-	*(u16 *)0x04000020 = 0x80;
+	REG_BG2PA = 0x80;
 	BattleEffect_LoadWork(46, 7, 7, 3, 3);
 	cache = (DrawRectangle *)gWorkSlot;
 	blit[0] = cache[46];
-	*(u16 *)0x04000000 = 0x7741;
-	*(u16 *)0x04000020 = 0x80;
-	*(u16 *)0x04000052 = 0x100f;
-	*(u16 *)0x04000050 = 0x3f44;
+	REG_DISPCNT = 0x7741;
+	REG_BG2PA = 0x80;
+	REG_BLDALPHA = 0x100f;
+	REG_BLDCNT = 0x3f44;
 	work->transfer_mode = 2;
 	work->transfer_value = 75;
 
@@ -16462,7 +16462,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 			ramp[31 - i] = 63;
 		}
 	}
-	*(u16 *)0x0400000c = 0x784;
+	REG_BG2CNT = 0x784;
 
 	for (frame = 0; frame != 170; frame++)
 	{
@@ -16666,7 +16666,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 	Resource_LoadAndDecompress((s32)&ResourceId_VioletMoteSheet, work->sheet + 0x6000, 1, 0);
 	Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_CrystalSheet), 128);
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesB, aux, 0, 0);
-	*(u16 *)0x04000052 = 0x1010;
+	REG_BLDALPHA = 0x1010;
 	{
 		s32 cam_x;
 		s32 cam_y;
@@ -20283,7 +20283,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0x2000);
-	*(volatile u16 *)0x04000020 = 0x100;
+	REG_BG2PA = 0x100;
 	/* FAKEMATCH: test through direction so CSE retains the mode reload
 	 * in this arm. Testing mode directly replaces ldr r4,[sp,#76] with
 	 * movs r4,#1 (1532 instructions, two differing rows). */
@@ -20303,7 +20303,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 		direction = -1;
 	}
 	BattlePres_ConfigureEffectDisplay();
-	*(u16 *)0x05000000 = 0;
+	PLTT_BACKDROP = 0;
 	*(u16 *)0x05000002 = 0;
 	work->transfer_mode = 0;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -20335,10 +20335,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 	Dma_Set((void *)&fill, Ram_MapCellBuffer, 0x85002000, REG_DMA3);
 	Iwram_CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
 	WaitFrames(1);
-	*(volatile u16 *)0x04000050 = 0;
-	*(volatile u16 *)0x04000020 = 0x100;
-	*(volatile u16 *)0x0400000a = 0x1f80;
-	*(volatile u16 *)0x0400000c = 0x2787;
+	REG_BLDCNT = 0;
+	REG_BG2PA = 0x100;
+	REG_BG1CNT = 0x1f80;
+	REG_BG2CNT = 0x2787;
 	for (i = 0; i != 63; i++)
 	{
 		s32 red = (Random16() & 15) + 16;
@@ -20397,8 +20397,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 			WaitFrames(1);
 		} while (limit <= 191);
 	}
-	*(volatile u16 *)0x04000050 = 0x3f42;
-	*(volatile u16 *)0x04000052 = 0x1010;
+	REG_BLDCNT = 0x3f42;
+	REG_BLDALPHA = 0x1010;
 	{
 		s32							   saved_x = gBgScroll[1].x;
 		s32							   saved_y = gBgScroll[1].y;
@@ -20598,11 +20598,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 	}
 	Runtime_ReleaseHeapBlock(46);
 	BattleEffect_SetupBlendedDisplay();
-	*(volatile u16 *)0x04000020 = 0x80;
-	*(volatile u32 *)0x04000028 = 0;
-	*(volatile u32 *)0x0400002c = 0xfffff000;
-	*(volatile u16 *)0x04000052 = 0x1010;
-	*(volatile u16 *)0x0400000c = 0x2784;
+	REG_BG2PA = 0x80;
+	REG_BG2X = 0;
+	REG_BG2Y = 0xfffff000;
+	REG_BLDALPHA = 0x1010;
+	REG_BG2CNT = 0x2784;
 	BattleEffect_LoadWork(46, 7, 7, 3, 2);
 	draw = gWorkSlot[46];
 	Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work, 1, 0);
@@ -22244,9 +22244,9 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 	camera = cache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_CANVAS];
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0x2000);
-	*(u16 *)0x04000020 = 0x100;
+	REG_BG2PA = 0x100;
 	BattlePres_ConfigureEffectDisplay();
-	*(u16 *)0x05000000 = 0;
+	PLTT_BACKDROP = 0;
 	*(u16 *)0x05000002 = 0;
 	BattleEffect_LoadWork(46, 7, 7, 3, 3);
 	draw[0] = (DrawRectangle)cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
@@ -22261,10 +22261,10 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 	ctrl->initial_value = 1;
 	gBgScroll[1].x = 0;
 	BattleEffect_WipeCanvas(0, 1);
-	*(u16 *)0x04000000 = 0x7741;
-	*(u16 *)0x04000020 = 0x80;
-	*(u16 *)0x04000052 = 0x1010;
-	*(u16 *)0x04000050 = 0x3f44;
+	REG_DISPCNT = 0x7741;
+	REG_BG2PA = 0x80;
+	REG_BLDALPHA = 0x1010;
+	REG_BLDCNT = 0x3f44;
 	depth = 0xffc00000;
 	zoom = 0x80000;
 	near = 0xffff;
@@ -22321,7 +22321,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 
 	work->transfer_mode = 2;
 	work->transfer_value = 50;
-	*(u16 *)0x0400000c = 0x784;
+	REG_BG2CNT = 0x784;
 
 	for (frame = 0; frame != 160 && (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B))); frame++)
 	{
@@ -22584,12 +22584,12 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 	work->fade_frames = 0;
 	work->fade_step = 0;
 	BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
-	*(u16 *)0x04000020 = 0x100;
-	*(u32 *)0x04000028 = -0x3c00;
-	*(u16 *)0x0400000c = 0x784;
+	REG_BG2PA = 0x100;
+	REG_BG2X = -0x3c00;
+	REG_BG2CNT = 0x784;
 
 	fill = 0;
-	Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
+	Dma_Set(&fill, canvas, 0x85001000, REG_DMA3);
 
 	cx = 60;
 	cy = 44;
@@ -22602,7 +22602,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 	work->transfer_value = 75;
 
 	fill = shift;
-	Dma_Set(&fill, work, 0x85000e10, (volatile u32 *)0x040000d4);
+	Dma_Set(&fill, work, 0x85000e10, REG_DMA3);
 
 	for (frame = 0; frame != 320; frame++)
 	{
@@ -22653,7 +22653,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 			QUEUE_IO_WRITE(0x04000020, 0x80, 0x20000);
 			QUEUE_IO_WRITE(0x04000028, 0, 0x30000);
 			fill = 0;
-			Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
+			Dma_Set(&fill, canvas, 0x85001000, REG_DMA3);
 			Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet, work->sheet + 0x4000, 1, 0);
 			Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageA, work->sheet + 0x6000, 0, 0);
 		}
@@ -22670,7 +22670,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 		if (frame == 69)
 		{
 			fill = 0x3f3f3f3f;
-			Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
+			Dma_Set(&fill, canvas, 0x85001000, REG_DMA3);
 		}
 
 		if (frame == 70)
@@ -22688,18 +22688,18 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 			fill = 0;
 			rings = 4;
 			squash = 8;
-			Dma_Set(&fill, work, 0x85000e10, (volatile u32 *)0x040000d4);
+			Dma_Set(&fill, work, 0x85000e10, REG_DMA3);
 			fill = 0x3f3f3f3f;
-			Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
+			Dma_Set(&fill, canvas, 0x85001000, REG_DMA3);
 			BattleBackground_LoadFar(1, (s32)&ResourceId_BeachBackdrop, 0);
 		}
 
 		if (frame == 214)
 		{
 			fill = 0;
-			Dma_Set(&fill, work, 0x85000e10, (volatile u32 *)0x040000d4);
+			Dma_Set(&fill, work, 0x85000e10, REG_DMA3);
 			fill = 0x3f3f3f3f;
-			Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
+			Dma_Set(&fill, canvas, 0x85001000, REG_DMA3);
 			BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
 			for (i = 0; i != 16; i++)
 			{
@@ -22716,11 +22716,11 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 		{
 			BattleEffect_SetupBlendedDisplay();
 			fill = 0;
-			Dma_Set(&fill, work, 0x85000e10, (volatile u32 *)0x040000d4);
+			Dma_Set(&fill, work, 0x85000e10, REG_DMA3);
 			fill = 0x01010101;
-			Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
+			Dma_Set(&fill, canvas, 0x85001000, REG_DMA3);
 			ctrl->initial_value = 0;
-			*(u16 *)0x04000052 = 0x1010;
+			REG_BLDALPHA = 0x1010;
 			for (i = 0; i != 16; i++)
 			{
 				p = &work->particles[i];
@@ -22768,7 +22768,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 		if (frame == 182)
 		{
 			fill = 0x3f3f3f3f;
-			Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
+			Dma_Set(&fill, canvas, 0x85001000, REG_DMA3);
 		}
 
 		if (frame <= 63)
@@ -23007,7 +23007,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 		if (frame == 238)
 		{
 			fill = 0x3f3f3f3f;
-			Dma_Set(&fill, canvas, 0x85001000, (volatile u32 *)0x040000d4);
+			Dma_Set(&fill, canvas, 0x85001000, REG_DMA3);
 		}
 
 		if (frame >= 214 && frame < 280)

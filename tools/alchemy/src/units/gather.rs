@@ -84,8 +84,19 @@ pub(super) fn module(wrappers: &[Wrapper]) -> Result<String, String> {
                 includes.push(line);
             }
         }
+        // A wrapper under games/common that no other game links comes into
+        // the module with its assets named as games/common's.
+        let common = wrapper.path.starts_with("games/common/");
         for line in lines {
-            body += line;
+            match line.trim().strip_prefix(".incbin \"").filter(|_| common) {
+                Some(name) if name.starts_with("graphics/") || name.starts_with("map/") => {
+                    body += &line.replacen(".incbin \"", ".incbin \"common/", 1);
+                }
+                Some(name) if !name.starts_with("common/") => {
+                    return Err(format!("{}: {:?} is no asset of games/common the module can name", wrapper.path, line.trim()));
+                }
+                _ => body += line,
+            }
             body.push('\n');
         }
     }
@@ -266,6 +277,10 @@ mod tests {
         // and the first wrapper's is the module's own section's.
         let first = module(&[wrapper("games/tbs/src/map/a/map.s", aligned, false, 4)]).unwrap();
         assert!(!first.contains("\t.section .rodata\n\t.balign"));
+        // A wrapper of games/common no other game links comes in whole, its
+        // asset still games/common's.
+        let own = module(&[wrapper("games/common/src/graphics/ui/font.s", shared, false, 1)]).unwrap();
+        assert!(own.contains("Ui_Font:\n\t.incbin \"common/graphics/ui/font.1bpp\"\n"));
         // A body that changes section or includes a source is no wrapper's.
         let two = format!("{packer}\t.section .data\n");
         assert!(module(&[wrapper("a.s", &two, false, 1)]).unwrap_err().contains("no line of a wrapper's body"));

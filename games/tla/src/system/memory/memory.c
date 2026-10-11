@@ -177,7 +177,7 @@ void *MemAlloc(s32 size)
     u32 address;
     u32 words;
     u32 limit;
-    /* FAKEMATCH: the r4 bound capture preserves the heap/head registers. */
+    /* FAKEMATCH: the r4 bound capture preserves the heap/head registers. 2026-10-11: plain forms (any statement order, >> 2 << 2 or & ~3, a limit local anywhere) have the registers right and differ 6 in scheduling; a one-pass block around `words = size + 3; address = state[1];` reaches differ 2 (ldr r4, =0x3006fbf and lsls r0 swapped). Without the pin the asm output takes r1 and state moves to r4 (22 rows). */
     register u32 held asm("r4");
 
     words = (u32)size + 3;
@@ -212,12 +212,12 @@ void *Runtime_BumpAllocateAlternatePool(s32 size)
     u32 address;
     u32 words;
 
-    words = (u32)size + 3;
-    address = state[0];
-    /* FAKEMATCH: keep the unshifted value and incoming size live through the heap-head load. */
-    __asm__("" : : "r"(address), "r"(words), "r"(size));
-    words >>= 2;
-    size = (s32)(words << 2);
+    /* FAKEMATCH: the one-pass block keeps the heap-head load between the size's add and its shifts; as plain statements the ARM9TDMI schedule lifts both shifts above the load (differ 4). */
+    do {
+        words = (u32)size + 3;
+        address = state[0];
+    } while (0);
+    size = (s32)((words >> 2) << 2);
     next = address + (u32)size;
     if (next >= 0x02040000U) {
         address = state[1];

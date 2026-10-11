@@ -42,29 +42,27 @@ main	rom_main_00	games/common/src/system/save/program_flash_sector	.rodata
 main	rom_main_00	games/common/src/system/save/flashat	.rodata
 main	rom_main_00	games/common/src/system/save/atmel	.rodata
 main	rom_main_01	games/tbs/src/system/far_call/FIELD
-main	rom_main_01	games/tbs/src/system/resource/colconv	.text
-main	rom_main_01	games/tbs/src/field/common/remap	.text
+main	rom_main_01	games/tbs/src/system/resource/colconv
+main	rom_main_01	games/tbs/src/field/common/remap
 main	rom_main_01	games/tbs/src/graphics/render/decode
-main	rom_main_01	games/tbs/src/graphics/render/decode_data	.text
+main	rom_main_01	games/tbs/src/graphics/render/decode_data
 main	rom_main_01	games/tbs/src/graphics/tile/draw_map
-main	rom_main_01	games/tbs/src/graphics/tile/vertices	.text .padding
+main	rom_main_01	games/tbs/src/graphics/tile/vertices
 main	rom_main_01	games/tbs/src/graphics/tile/convert_map
-main	rom_main_01	games/tbs/src/field/common/object/update	.text
-main	rom_main_01	games/tbs/src/system/updfar	.text
-main	rom_main_01	games/tbs/src/field/common/script/script	.text
-main	rom_main_01	games/tbs/src/graphics/tile/vertices	.rodata
-main	rom_main_01	games/tbs/src/system/resource/animdata	.rodata
-main	rom_main_01	games/tbs/src/graphics/render/facing	.rodata
-main	rom_main_01	games/tbs/src/field/common/object/objdata	.rodata
-main	rom_main_01	games/tbs/src/field/common/fielddat	.rodata
-main	rom_main_01	games/tbs/src/field/common/map/wmapres	.rodata
-main	rom_main_01	games/tbs/src/lib/curvedat	.rodata
-main	rom_main_01	games/tbs/src/field/common/map/mapdata	.rodata
-main	rom_main_01	games/tbs/src/graphics/tile/griddata	.rodata
-main	rom_main_01	games/tbs/src/field/common/object/objscrpt	.rodata
-main	rom_main_01	games/tbs/src/field/common/script/operand	.rodata
-main	rom_main_01	games/tbs/src/field/common/map/layered	.rodata
-main	rom_main_01	games/tbs/src/graphics/tile/vertices	.data
+main	rom_main_01	games/tbs/src/field/common/object/update
+main	rom_main_01	games/tbs/src/system/updfar
+main	rom_main_01	games/tbs/src/field/common/script/script
+main	rom_main_01	games/tbs/src/system/resource/animdata
+main	rom_main_01	games/tbs/src/graphics/render/facing
+main	rom_main_01	games/tbs/src/field/common/object/objdata
+main	rom_main_01	games/tbs/src/field/common/fielddat
+main	rom_main_01	games/tbs/src/field/common/map/wmapres
+main	rom_main_01	games/tbs/src/lib/curvedat
+main	rom_main_01	games/tbs/src/field/common/map/mapdata
+main	rom_main_01	games/tbs/src/graphics/tile/griddata
+main	rom_main_01	games/tbs/src/field/common/object/objscrpt
+main	rom_main_01	games/tbs/src/field/common/script/operand
+main	rom_main_01	games/tbs/src/field/common/map/layered
 main	rom_main_02	games/tbs/src/system/far_call/WINDOW
 main	rom_main_02	games/tbs/src/graphics/text/decode_symbol
 main	rom_main_02	games/tbs/src/graphics/text/moji	.text
@@ -97,76 +95,71 @@ main	rom_main_02	games/tbs/src/graphics/text/numwords	.rodata	en de
 main	rom_main_02	games/tbs/src/menu/slidpal	.rodata
 main	rom_main_02	games/tbs/src/graphics/window/keyboard	.rodata
 main	rom_main_03	games/tbs/src/system/far_call/GAME
-main	rom_main_03	games/tbs/src/game/character/chara	.text
-main	rom_main_03	games/tbs/src/game/character/exptbl	.rodata
-main	rom_main_03	games/tbs/src/game/inventory/artslot	.rodata
-main	rom_main_03	games/tbs/src/game/character/starteq	.rodata
-main	rom_main_03	games/tbs/src/game/item/itemtbl	.rodata
-main	rom_main_03	games/tbs/src/game/inventory/actions	.rodata
-main	rom_main_03	games/tbs/src/game/character/enemies	.rodata
-main	rom_main_03	games/tbs/src/game/character/chars	.rodata
-main	rom_main_03	games/tbs/src/game/character/summons	.rodata
-main	rom_main_03	games/tbs/src/game/character/classes	.rodata
-main	rom_main_03	games/tbs/src/game/character/elemtbl	.rodata
-main	rom_main_03	games/tbs/src/game/djinn/djinntbl	.rodata
+main	rom_main_03	games/tbs/src/game/character/chara
+main	rom_main_03	games/tbs/src/game/character/exptbl
+main	rom_main_03	games/tbs/src/game/inventory/artslot
+main	rom_main_03	games/tbs/src/game/character/starteq
+main	rom_main_03	games/tbs/src/game/item/itemtbl
+main	rom_main_03	games/tbs/src/game/inventory/actions
+main	rom_main_03	games/tbs/src/game/character/enemies
+main	rom_main_03	games/tbs/src/game/character/chars
+main	rom_main_03	games/tbs/src/game/character/summons
+main	rom_main_03	games/tbs/src/game/character/classes
+main	rom_main_03	games/tbs/src/game/character/elemtbl
+main	rom_main_03	games/tbs/src/game/djinn/djinntbl
 main	rom_main_04	games/tbs/src/system/far_call/OBJECT
-main	rom_main_04	games/tbs/src/battle/effect/slots	.text
-main	rom_main_04	games/tbs/src/battle/effect/arcspark	.rodata
-main	rom_main_04	games/tbs/src/battle/effect/locrule	.rodata
-main	rom_main_04	games/tbs/src/battle/effect/zonedata	.rodata
-main	rom_main_04	games/tbs/src/battle/effect/scnrule	.rodata
-main	rom_main_04	games/tbs/src/battle/effect/btlcue	.rodata
-main	rom_main_04	games/tbs/src/debug/swatch	.rodata
-main	rom_main_04	games/tbs/src/battle/effect/fxdata	.rodata
-main	rom_main_04	games/tbs/src/field/scenes	.rodata
-main	rom_main_04	games/tbs/src/field/common/object/scripts	.rodata
+main	rom_main_04	games/tbs/src/battle/effect/slots
+main	rom_main_04	games/tbs/src/battle/effect/arcspark
+main	rom_main_04	games/tbs/src/battle/effect/locrule
+main	rom_main_04	games/tbs/src/battle/effect/zonedata
+main	rom_main_04	games/tbs/src/battle/effect/scnrule
+main	rom_main_04	games/tbs/src/battle/effect/btlcue
+main	rom_main_04	games/tbs/src/debug/swatch
+main	rom_main_04	games/tbs/src/battle/effect/fxdata
+main	rom_main_04	games/tbs/src/field/scenes
+main	rom_main_04	games/tbs/src/field/common/object/scripts
 main	rom_main_05	games/tbs/src/system/far_call/MENU
-main	rom_main_05	games/tbs/src/menu/item/item	.text
-main	rom_main_05	games/tbs/src/graphics/ui/menuspr	.rodata
-main	rom_main_05	games/tbs/src/menu/menustr	.rodata
-main	rom_main_05	games/tbs/src/menu/menudata	.rodata
+main	rom_main_05	games/tbs/src/menu/item/item
+main	rom_main_05	games/tbs/src/graphics/ui/menuspr
+main	rom_main_05	games/tbs/src/menu/menustr
+main	rom_main_05	games/tbs/src/menu/menudata
 main	rom_main_06	games/tbs/src/system/far_call/SHOP
-main	rom_main_06	games/tbs/src/menu/shop/sell	.text
-main	rom_main_06	games/tbs/src/menu/shop/shopspr	.rodata
-main	rom_main_06	games/tbs/src/menu/shop/shopdata	.rodata
+main	rom_main_06	games/tbs/src/menu/shop/sell
+main	rom_main_06	games/tbs/src/menu/shop/shopspr
+main	rom_main_06	games/tbs/src/menu/shop/shopdata
 main	rom_main_07	games/tbs/src/system/far_call/BATTLE
 main	rom_main_07	games/tbs/src/graphics/tile/decode
-main	rom_main_07	games/tbs/src/graphics/tile/decpool	.text
+main	rom_main_07	games/tbs/src/graphics/tile/decpool
 main	rom_main_07	games/tbs/src/graphics/tile/bit_dispatch
-main	rom_main_07	games/tbs/src/graphics/tile/bittable	.text
+main	rom_main_07	games/tbs/src/graphics/tile/bittable
 main	rom_main_07	games/tbs/src/graphics/tile/bit_commands
-main	rom_main_07	games/tbs/src/battle/tgtexec	.text
-main	rom_main_07	games/tbs/src/battle/btldata	.rodata
-main	rom_main_07	games/tbs/src/battle/presentation/advarrow	.rodata
-main	rom_main_07	games/tbs/src/battle/btlvars	.rodata
+main	rom_main_07	games/tbs/src/battle/tgtexec
+main	rom_main_07	games/tbs/src/battle/btldata
+main	rom_main_07	games/tbs/src/battle/presentation/advarrow
+main	rom_main_07	games/tbs/src/battle/btlvars
 main	rom_main_08	games/tbs/src/system/far_call/EFFECT
-main	rom_main_08	games/tbs/src/battle/effect/scenefx	.text
-main	rom_main_08	games/tbs/src/battle/effect/fxscales	.rodata
+main	rom_main_08	games/tbs/src/battle/effect/scenefx
+main	rom_main_08	games/tbs/src/battle/effect/fxscales
 main	rom_main_08	games/tbs/src/battle/effect/sentou_kouka_gousei
-main	rom_main_08	games/tbs/src/battle/effect/koukatbl	.rodata
+main	rom_main_08	games/tbs/src/battle/effect/koukatbl
 main	rom_main_08	games/tbs/src/battle/effect/sentou_kouka_gousei_iro
-main	rom_main_08	games/tbs/src/battle/effect/koukabit	.rodata
+main	rom_main_08	games/tbs/src/battle/effect/koukabit
 main	rom_main_09	games/tbs/src/system/far_call/SCROLL
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_sekiwa
-main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_link	.text
+main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_link
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_dispatch
-main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_tables	.text
+main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_tables
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_commands
-main	rom_main_09	games/tbs/src/graphics/tile/slides	.text
-main	rom_main_09	games/tbs/src/graphics/tile/slides	.rodata
-main	rom_main_09	games/tbs/src/graphics/tile/slides	.data
-main	rom_main_09	games/tbs/src/graphics/display/staffrol	.data
+main	rom_main_09	games/tbs/src/graphics/tile/slides
+main	rom_main_09	games/tbs/src/graphics/display/staffrol
 main	rom_main_10	games/tbs/src/system/far_call/PALETTE
-main	rom_main_10	games/tbs/src/graphics/palette/tint	.text
-main	rom_main_10	games/tbs/src/graphics/title/prompt	.rodata
-main	rom_main_10	games/tbs/src/graphics/palette/tint	.rodata
-main	rom_main_10	games/tbs/src/graphics/palette/curve	.rodata
+main	rom_main_10	games/tbs/src/graphics/title/prompt
+main	rom_main_10	games/tbs/src/graphics/palette/tint
+main	rom_main_10	games/tbs/src/graphics/palette/curve
 main	rom_main_11	games/tbs/src/system/far_call/BLANK_RUN
-main	rom_main_11	games/tbs/src/field/common/camera/camera	.text
-main	rom_main_11	games/tbs/src/field/common/camera/camera	.rodata
+main	rom_main_11	games/tbs/src/field/common/camera/camera
 main	rom_main_12	games/tbs/src/system/far_call/BLANK_LOAD
-main	rom_main_12	games/tbs/src/battle/effect/colorfx	.text
-main	rom_main_12	games/tbs/src/battle/effect/colorfx	.rodata
+main	rom_main_12	games/tbs/src/battle/effect/colorfx
 main	rom_main_13	games/tbs/src/system/far_call/SOUND
 main	rom_main_13	games/tbs/src/sound/sound	.text
 main	rom_main_13	games/tbs/src/sound/driver/umul_high	.text .padding
@@ -464,213 +457,211 @@ main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata.b
 main	rom_tail_01	games/tbs/src/graphics/animref0	.data
 main	rom_tail_01	games/tbs/src/graphics/animref1	.data
 main	rom_tail_01	games/tbs/src/graphics/animref2	.data
-main	rom_tail_02	games/tbs/src/system/resource/directory	.rodata
-main	rom_tail_02	games/tbs/src/graphics/ui/ui	.rodata
-main	rom_tail_02	games/tbs/src/graphics/title/title	.rodata
-main	rom_tail_02	games/tbs/src/graphics/backdrop/backdrop	.rodata
-main	rom_tail_02	games/tbs/src/graphics/slots/slots	.rodata
-main	rom_tail_02	games/tbs/src/graphics/lucky_dice/luckdice	.rodata
-main	rom_tail_02	games/tbs/src/graphics/battle_fx/battlefx	.rodata
-main	rom_tail_02	games/tbs/src/map/map	.rodata
-main	rom_tail_02	games/tbs/src/graphics/world_map/worldmap	.rodata
-main	rom_tail_02	games/tbs/src/map/korosseo/korosseo	.rodata
-main	rom_tail_02	games/common/src/graphics/shop/cursor	.rodata
-main	rom_tail_02	games/tbs/src/graphics/ui/icons	.rodata
-main	rom_tail_02	games/tbs/src/graphics/monster/monster	.rodata
-main	rom_tail_02	games/tbs/src/map/map_001/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_000/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_002/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_003/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_004/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_005/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_006/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_007/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_008/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_009/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_010/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_011/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_012/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_013/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_014/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_015/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_016/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_017/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_018/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_019/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_020/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_021/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_022/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_023/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_024/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_025/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_026/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_027/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_028/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_029/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_030/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_031/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_032/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_033/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_034/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_035/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_036/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_037/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_038/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_039/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_040/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_041/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_042/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_043/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_044/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_045/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_046/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_047/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_048/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_049/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_050/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_051/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_052/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_053/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_054/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_055/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_056/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_057/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_058/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_059/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_060/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_061/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_062/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_063/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_064/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_065/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_066/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_067/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_068/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_069/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_070/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_071/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_072/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_073/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_074/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_075/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_076/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_077/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_078/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_079/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_080/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_081/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_082/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_083/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_084/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_085/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_086/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_087/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_088/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_089/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_090/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_091/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_092/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_093/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_094/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_095/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_096/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_097/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_098/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_099/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_100/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_101/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_102/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_103/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_104/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_105/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_106/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_107/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_108/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_109/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_110/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_111/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_112/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_113/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_114/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_115/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_116/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_117/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_118/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_119/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_120/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_121/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_122/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_123/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_124/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_125/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_126/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_127/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_128/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_129/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_130/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_131/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_132/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_133/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_134/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_135/map	.rodata
-main	rom_tail_02	games/tbs/src/map/gondowana_tsukojo/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_136/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_137/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_138/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_139/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_140/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_141/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_142/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_143/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_144/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_145/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_146/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_147/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_148/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_149/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_150/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_151/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_152/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_153/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_154/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_155/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_156/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_157/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_158/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_159/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_160/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_161/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_162/map	.rodata
-main	rom_tail_02	games/tbs/src/map/vinasu_iriguchi/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_163/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_164/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_165/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_166/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_167/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_168/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_169/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_170/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_171/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_172/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_173/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_174/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_175/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_176/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_177/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_178/map	.rodata
-main	rom_tail_02	games/tbs/src/map/map_179/map	.rodata
-main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
-36f	text	games/tbs/src/menu/title/entry	.text
-36f	text	games/tbs/src/menu/title/title	.text
-36f	text	games/tbs/src/menu/title/import	.text
-36f	text	games/tbs/src/menu/title/title	.data
+main	rom_tail_02	games/tbs/src/system/resource/directory
+main	rom_tail_02	games/tbs/src/graphics/ui/ui
+main	rom_tail_02	games/tbs/src/graphics/title/title
+main	rom_tail_02	games/tbs/src/graphics/backdrop/backdrop
+main	rom_tail_02	games/tbs/src/graphics/slots/slots
+main	rom_tail_02	games/tbs/src/graphics/lucky_dice/luckdice
+main	rom_tail_02	games/tbs/src/graphics/battle_fx/battlefx
+main	rom_tail_02	games/tbs/src/map/map
+main	rom_tail_02	games/tbs/src/graphics/world_map/worldmap
+main	rom_tail_02	games/tbs/src/map/korosseo/korosseo
+main	rom_tail_02	games/common/src/graphics/shop/cursor
+main	rom_tail_02	games/tbs/src/graphics/ui/icons
+main	rom_tail_02	games/tbs/src/graphics/monster/monster
+main	rom_tail_02	games/tbs/src/map/map_001/map
+main	rom_tail_02	games/tbs/src/map/map_000/map
+main	rom_tail_02	games/tbs/src/map/map_002/map
+main	rom_tail_02	games/tbs/src/map/map_003/map
+main	rom_tail_02	games/tbs/src/map/map_004/map
+main	rom_tail_02	games/tbs/src/map/map_005/map
+main	rom_tail_02	games/tbs/src/map/map_006/map
+main	rom_tail_02	games/tbs/src/map/map_007/map
+main	rom_tail_02	games/tbs/src/map/map_008/map
+main	rom_tail_02	games/tbs/src/map/map_009/map
+main	rom_tail_02	games/tbs/src/map/map_010/map
+main	rom_tail_02	games/tbs/src/map/map_011/map
+main	rom_tail_02	games/tbs/src/map/map_012/map
+main	rom_tail_02	games/tbs/src/map/map_013/map
+main	rom_tail_02	games/tbs/src/map/map_014/map
+main	rom_tail_02	games/tbs/src/map/map_015/map
+main	rom_tail_02	games/tbs/src/map/map_016/map
+main	rom_tail_02	games/tbs/src/map/map_017/map
+main	rom_tail_02	games/tbs/src/map/map_018/map
+main	rom_tail_02	games/tbs/src/map/map_019/map
+main	rom_tail_02	games/tbs/src/map/map_020/map
+main	rom_tail_02	games/tbs/src/map/map_021/map
+main	rom_tail_02	games/tbs/src/map/map_022/map
+main	rom_tail_02	games/tbs/src/map/map_023/map
+main	rom_tail_02	games/tbs/src/map/map_024/map
+main	rom_tail_02	games/tbs/src/map/map_025/map
+main	rom_tail_02	games/tbs/src/map/map_026/map
+main	rom_tail_02	games/tbs/src/map/map_027/map
+main	rom_tail_02	games/tbs/src/map/map_028/map
+main	rom_tail_02	games/tbs/src/map/map_029/map
+main	rom_tail_02	games/tbs/src/map/map_030/map
+main	rom_tail_02	games/tbs/src/map/map_031/map
+main	rom_tail_02	games/tbs/src/map/map_032/map
+main	rom_tail_02	games/tbs/src/map/map_033/map
+main	rom_tail_02	games/tbs/src/map/map_034/map
+main	rom_tail_02	games/tbs/src/map/map_035/map
+main	rom_tail_02	games/tbs/src/map/map_036/map
+main	rom_tail_02	games/tbs/src/map/map_037/map
+main	rom_tail_02	games/tbs/src/map/map_038/map
+main	rom_tail_02	games/tbs/src/map/map_039/map
+main	rom_tail_02	games/tbs/src/map/map_040/map
+main	rom_tail_02	games/tbs/src/map/map_041/map
+main	rom_tail_02	games/tbs/src/map/map_042/map
+main	rom_tail_02	games/tbs/src/map/map_043/map
+main	rom_tail_02	games/tbs/src/map/map_044/map
+main	rom_tail_02	games/tbs/src/map/map_045/map
+main	rom_tail_02	games/tbs/src/map/map_046/map
+main	rom_tail_02	games/tbs/src/map/map_047/map
+main	rom_tail_02	games/tbs/src/map/map_048/map
+main	rom_tail_02	games/tbs/src/map/map_049/map
+main	rom_tail_02	games/tbs/src/map/map_050/map
+main	rom_tail_02	games/tbs/src/map/map_051/map
+main	rom_tail_02	games/tbs/src/map/map_052/map
+main	rom_tail_02	games/tbs/src/map/map_053/map
+main	rom_tail_02	games/tbs/src/map/map_054/map
+main	rom_tail_02	games/tbs/src/map/map_055/map
+main	rom_tail_02	games/tbs/src/map/map_056/map
+main	rom_tail_02	games/tbs/src/map/map_057/map
+main	rom_tail_02	games/tbs/src/map/map_058/map
+main	rom_tail_02	games/tbs/src/map/map_059/map
+main	rom_tail_02	games/tbs/src/map/map_060/map
+main	rom_tail_02	games/tbs/src/map/map_061/map
+main	rom_tail_02	games/tbs/src/map/map_062/map
+main	rom_tail_02	games/tbs/src/map/map_063/map
+main	rom_tail_02	games/tbs/src/map/map_064/map
+main	rom_tail_02	games/tbs/src/map/map_065/map
+main	rom_tail_02	games/tbs/src/map/map_066/map
+main	rom_tail_02	games/tbs/src/map/map_067/map
+main	rom_tail_02	games/tbs/src/map/map_068/map
+main	rom_tail_02	games/tbs/src/map/map_069/map
+main	rom_tail_02	games/tbs/src/map/map_070/map
+main	rom_tail_02	games/tbs/src/map/map_071/map
+main	rom_tail_02	games/tbs/src/map/map_072/map
+main	rom_tail_02	games/tbs/src/map/map_073/map
+main	rom_tail_02	games/tbs/src/map/map_074/map
+main	rom_tail_02	games/tbs/src/map/map_075/map
+main	rom_tail_02	games/tbs/src/map/map_076/map
+main	rom_tail_02	games/tbs/src/map/map_077/map
+main	rom_tail_02	games/tbs/src/map/map_078/map
+main	rom_tail_02	games/tbs/src/map/map_079/map
+main	rom_tail_02	games/tbs/src/map/map_080/map
+main	rom_tail_02	games/tbs/src/map/map_081/map
+main	rom_tail_02	games/tbs/src/map/map_082/map
+main	rom_tail_02	games/tbs/src/map/map_083/map
+main	rom_tail_02	games/tbs/src/map/map_084/map
+main	rom_tail_02	games/tbs/src/map/map_085/map
+main	rom_tail_02	games/tbs/src/map/map_086/map
+main	rom_tail_02	games/tbs/src/map/map_087/map
+main	rom_tail_02	games/tbs/src/map/map_088/map
+main	rom_tail_02	games/tbs/src/map/map_089/map
+main	rom_tail_02	games/tbs/src/map/map_090/map
+main	rom_tail_02	games/tbs/src/map/map_091/map
+main	rom_tail_02	games/tbs/src/map/map_092/map
+main	rom_tail_02	games/tbs/src/map/map_093/map
+main	rom_tail_02	games/tbs/src/map/map_094/map
+main	rom_tail_02	games/tbs/src/map/map_095/map
+main	rom_tail_02	games/tbs/src/map/map_096/map
+main	rom_tail_02	games/tbs/src/map/map_097/map
+main	rom_tail_02	games/tbs/src/map/map_098/map
+main	rom_tail_02	games/tbs/src/map/map_099/map
+main	rom_tail_02	games/tbs/src/map/map_100/map
+main	rom_tail_02	games/tbs/src/map/map_101/map
+main	rom_tail_02	games/tbs/src/map/map_102/map
+main	rom_tail_02	games/tbs/src/map/map_103/map
+main	rom_tail_02	games/tbs/src/map/map_104/map
+main	rom_tail_02	games/tbs/src/map/map_105/map
+main	rom_tail_02	games/tbs/src/map/map_106/map
+main	rom_tail_02	games/tbs/src/map/map_107/map
+main	rom_tail_02	games/tbs/src/map/map_108/map
+main	rom_tail_02	games/tbs/src/map/map_109/map
+main	rom_tail_02	games/tbs/src/map/map_110/map
+main	rom_tail_02	games/tbs/src/map/map_111/map
+main	rom_tail_02	games/tbs/src/map/map_112/map
+main	rom_tail_02	games/tbs/src/map/map_113/map
+main	rom_tail_02	games/tbs/src/map/map_114/map
+main	rom_tail_02	games/tbs/src/map/map_115/map
+main	rom_tail_02	games/tbs/src/map/map_116/map
+main	rom_tail_02	games/tbs/src/map/map_117/map
+main	rom_tail_02	games/tbs/src/map/map_118/map
+main	rom_tail_02	games/tbs/src/map/map_119/map
+main	rom_tail_02	games/tbs/src/map/map_120/map
+main	rom_tail_02	games/tbs/src/map/map_121/map
+main	rom_tail_02	games/tbs/src/map/map_122/map
+main	rom_tail_02	games/tbs/src/map/map_123/map
+main	rom_tail_02	games/tbs/src/map/map_124/map
+main	rom_tail_02	games/tbs/src/map/map_125/map
+main	rom_tail_02	games/tbs/src/map/map_126/map
+main	rom_tail_02	games/tbs/src/map/map_127/map
+main	rom_tail_02	games/tbs/src/map/map_128/map
+main	rom_tail_02	games/tbs/src/map/map_129/map
+main	rom_tail_02	games/tbs/src/map/map_130/map
+main	rom_tail_02	games/tbs/src/map/map_131/map
+main	rom_tail_02	games/tbs/src/map/map_132/map
+main	rom_tail_02	games/tbs/src/map/map_133/map
+main	rom_tail_02	games/tbs/src/map/map_134/map
+main	rom_tail_02	games/tbs/src/map/map_135/map
+main	rom_tail_02	games/tbs/src/map/gondowana_tsukojo/map
+main	rom_tail_02	games/tbs/src/map/map_136/map
+main	rom_tail_02	games/tbs/src/map/map_137/map
+main	rom_tail_02	games/tbs/src/map/map_138/map
+main	rom_tail_02	games/tbs/src/map/map_139/map
+main	rom_tail_02	games/tbs/src/map/map_140/map
+main	rom_tail_02	games/tbs/src/map/map_141/map
+main	rom_tail_02	games/tbs/src/map/map_142/map
+main	rom_tail_02	games/tbs/src/map/map_143/map
+main	rom_tail_02	games/tbs/src/map/map_144/map
+main	rom_tail_02	games/tbs/src/map/map_145/map
+main	rom_tail_02	games/tbs/src/map/map_146/map
+main	rom_tail_02	games/tbs/src/map/map_147/map
+main	rom_tail_02	games/tbs/src/map/map_148/map
+main	rom_tail_02	games/tbs/src/map/map_149/map
+main	rom_tail_02	games/tbs/src/map/map_150/map
+main	rom_tail_02	games/tbs/src/map/map_151/map
+main	rom_tail_02	games/tbs/src/map/map_152/map
+main	rom_tail_02	games/tbs/src/map/map_153/map
+main	rom_tail_02	games/tbs/src/map/map_154/map
+main	rom_tail_02	games/tbs/src/map/map_155/map
+main	rom_tail_02	games/tbs/src/map/map_156/map
+main	rom_tail_02	games/tbs/src/map/map_157/map
+main	rom_tail_02	games/tbs/src/map/map_158/map
+main	rom_tail_02	games/tbs/src/map/map_159/map
+main	rom_tail_02	games/tbs/src/map/map_160/map
+main	rom_tail_02	games/tbs/src/map/map_161/map
+main	rom_tail_02	games/tbs/src/map/map_162/map
+main	rom_tail_02	games/tbs/src/map/vinasu_iriguchi/map
+main	rom_tail_02	games/tbs/src/map/map_163/map
+main	rom_tail_02	games/tbs/src/map/map_164/map
+main	rom_tail_02	games/tbs/src/map/map_165/map
+main	rom_tail_02	games/tbs/src/map/map_166/map
+main	rom_tail_02	games/tbs/src/map/map_167/map
+main	rom_tail_02	games/tbs/src/map/map_168/map
+main	rom_tail_02	games/tbs/src/map/map_169/map
+main	rom_tail_02	games/tbs/src/map/map_170/map
+main	rom_tail_02	games/tbs/src/map/map_171/map
+main	rom_tail_02	games/tbs/src/map/map_172/map
+main	rom_tail_02	games/tbs/src/map/map_173/map
+main	rom_tail_02	games/tbs/src/map/map_174/map
+main	rom_tail_02	games/tbs/src/map/map_175/map
+main	rom_tail_02	games/tbs/src/map/map_176/map
+main	rom_tail_02	games/tbs/src/map/map_177/map
+main	rom_tail_02	games/tbs/src/map/map_178/map
+main	rom_tail_02	games/tbs/src/map/map_179/map
+main	rom_tail_02	games/tbs/src/system/overlay/overlays
+36f	text	games/tbs/src/menu/title/entry
+36f	text	games/tbs/src/menu/title/title
+36f	text	games/tbs/src/menu/title/import
 36f	bss	resource_36f_overlay	.bss
-370	text	games/tbs/src/menu/clear/entry	.text
-370	text	games/tbs/src/menu/clear/clear	.text
-370	text	games/tbs/src/menu/clear/import	.text
-370	text	games/tbs/src/menu/clear/clear	.data
-370	text	games/tbs/src/menu/clear/keybd	.data
-370	text	games/tbs/src/menu/clear/data	.data
+370	text	games/tbs/src/menu/clear/entry
+370	text	games/tbs/src/menu/clear/clear
+370	text	games/tbs/src/menu/clear/import
+370	text	games/tbs/src/menu/clear/keybd
+370	text	games/tbs/src/menu/clear/data
 371	text	games/tbs/src/field/world_map/entry	.text
 371	text	games/tbs/src/field/world_map/map	.text
 371	text	games/tbs/src/field/world_map/linked_effects	.text
@@ -690,99 +681,84 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 373	text	games/tbs/src/field/haidia_mura/import	.text
 373	text	libgcc.a:_call_via_rX	.text
 373	text	games/tbs/src/field/haidia_mura/data	.data
-374	text	games/tbs/src/field/haidia_ie/entry	.text
-374	text	games/tbs/src/field/haidia_ie/ie	.text
-374	text	games/tbs/src/field/haidia_ie/import	.text
-374	text	games/tbs/src/field/haidia_ie/ie	.data
-375	text	games/tbs/src/field/haidia_sukureta/entry	.text
-375	text	games/tbs/src/field/haidia_sukureta/sukureta	.text
-375	text	games/tbs/src/field/haidia_sukureta/import	.text
-375	text	games/tbs/src/field/haidia_sukureta/sukureta	.data
-376	text	games/tbs/src/field/haidia_heya/entry	.text
-376	text	games/tbs/src/field/haidia_heya/heya	.text
-376	text	games/tbs/src/field/haidia_heya/import	.text
-376	text	games/tbs/src/field/haidia_heya/heya	.data
-377	text	games/tbs/src/field/common/haidia_babi/entry	.text
-377	text	games/tbs/src/field/common/haidia_babi/babi	.text
-377	text	games/tbs/src/field/common/haidia_babi/import	.text
-377	text	games/tbs/src/field/common/haidia_babi/babi	.data
-378	text	games/tbs/src/field/common/shinden_heya/entry	.text
-378	text	games/tbs/src/field/common/shinden_heya/heya	.text
-378	text	games/tbs/src/field/common/shinden_heya/import	.text
-378	text	games/tbs/src/field/common/shinden_heya/heya	.data
-379	text	games/tbs/src/field/haidia_funka/entry	.text
-379	text	games/tbs/src/field/haidia_funka/conditional_setup	.text
-379	text	games/tbs/src/field/haidia_funka/import	.text
-379	text	games/tbs/src/field/haidia_funka/conditional_setup	.data
-37a	text	games/tbs/src/field/soru_nichigetsu/entry	.text
-37a	text	games/tbs/src/field/soru_nichigetsu/nichigetsu	.text
-37a	text	games/tbs/src/field/soru_nichigetsu/import	.text
-37a	text	games/tbs/src/field/soru_nichigetsu/nichigetsu	.data
+374	text	games/tbs/src/field/haidia_ie/entry
+374	text	games/tbs/src/field/haidia_ie/ie
+374	text	games/tbs/src/field/haidia_ie/import
+375	text	games/tbs/src/field/haidia_sukureta/entry
+375	text	games/tbs/src/field/haidia_sukureta/sukureta
+375	text	games/tbs/src/field/haidia_sukureta/import
+376	text	games/tbs/src/field/haidia_heya/entry
+376	text	games/tbs/src/field/haidia_heya/heya
+376	text	games/tbs/src/field/haidia_heya/import
+377	text	games/tbs/src/field/common/haidia_babi/entry
+377	text	games/tbs/src/field/common/haidia_babi/babi
+377	text	games/tbs/src/field/common/haidia_babi/import
+378	text	games/tbs/src/field/common/shinden_heya/entry
+378	text	games/tbs/src/field/common/shinden_heya/heya
+378	text	games/tbs/src/field/common/shinden_heya/import
+379	text	games/tbs/src/field/haidia_funka/entry
+379	text	games/tbs/src/field/haidia_funka/conditional_setup
+379	text	games/tbs/src/field/haidia_funka/import
+37a	text	games/tbs/src/field/soru_nichigetsu/entry
+37a	text	games/tbs/src/field/soru_nichigetsu/nichigetsu
+37a	text	games/tbs/src/field/soru_nichigetsu/import
 37a	bss	resource_37a_overlay	.bss
 37b	text	games/tbs/src/field/soru_sekizo/entry	.text
 37b	text	games/tbs/src/field/soru_sekizo/sekizo	.text
 37b	text	games/tbs/src/field/soru_sekizo/import	.text
 37b	text	games/tbs/src/field/soru_sekizo/sekizo	.data
 37b	bss	games/tbs/src/field/soru_sekizo/sekizo	.bss COMMON
-37c	text	games/tbs/src/field/soru_dou/entry	.text
-37c	text	games/tbs/src/field/soru_dou/table_update	.text
-37c	text	games/tbs/src/field/soru_dou/import	.text
-37c	text	games/tbs/src/field/soru_dou/table_update	.data
-37d	text	games/tbs/src/field/soru_meiro/entry	.text
-37d	text	games/tbs/src/field/soru_meiro/scene_37d	.text
-37d	text	games/tbs/src/field/soru_meiro/import	.text
-37d	text	games/tbs/src/field/soru_meiro/scene_37d	.data
-37e	text	games/tbs/src/field/soru_roka/entry	.text
-37e	text	games/tbs/src/field/soru_roka/scene_37e	.text
-37e	text	games/tbs/src/field/soru_roka/import	.text
-37e	text	games/tbs/src/field/soru_roka/scene_37e	.data
+37c	text	games/tbs/src/field/soru_dou/entry
+37c	text	games/tbs/src/field/soru_dou/table_update
+37c	text	games/tbs/src/field/soru_dou/import
+37d	text	games/tbs/src/field/soru_meiro/entry
+37d	text	games/tbs/src/field/soru_meiro/scene_37d
+37d	text	games/tbs/src/field/soru_meiro/import
+37e	text	games/tbs/src/field/soru_roka/entry
+37e	text	games/tbs/src/field/soru_roka/scene_37e
+37e	text	games/tbs/src/field/soru_roka/import
 37f	text	games/tbs/src/field/soru_iriguchi/entry	.text
 37f	text	games/tbs/src/field/soru_iriguchi/iriguchi	.text
 37f	text	games/tbs/src/field/soru_iriguchi/import	.text
 37f	text	games/tbs/src/field/soru_iriguchi/iriguchi	.data
 37f	bss	games/tbs/src/field/soru_iriguchi/iriguchi	.bss
-380	text	games/tbs/src/field/soru_star/entry	.text
-380	text	games/tbs/src/field/soru_star/star	.text
-380	text	games/tbs/src/field/soru_star/ring_setup	.text
-380	text	games/tbs/src/field/soru_star/import	.text
-380	text	games/tbs/src/field/soru_star/data	.data
-381	text	games/tbs/src/field/soru_funka/entry	.text
-381	text	games/tbs/src/field/soru_funka/funka	.text
-381	text	games/tbs/src/field/soru_star/ring_setup	.text
-381	text	games/tbs/src/field/soru_funka/import	.text
-381	text	games/tbs/src/field/soru_funka/data	.data
+380	text	games/tbs/src/field/soru_star/entry
+380	text	games/tbs/src/field/soru_star/star
+380	text	games/tbs/src/field/soru_star/ring_setup
+380	text	games/tbs/src/field/soru_star/import
+380	text	games/tbs/src/field/soru_star/data
+381	text	games/tbs/src/field/soru_funka/entry
+381	text	games/tbs/src/field/soru_funka/funka
+381	text	games/tbs/src/field/soru_star/ring_setup
+381	text	games/tbs/src/field/soru_funka/import
+381	text	games/tbs/src/field/soru_funka/data
 381	bss	resource_381_overlay	.bss
 382	text	games/tbs/src/field/kuupuappu_mura/entry	.text
 382	text	games/tbs/src/field/kuupuappu_mura/mura	.text
 382	text	games/tbs/src/field/kuupuappu_mura/import	.text
 382	text	libgcc.a:_call_via_rX	.text
 382	text	games/tbs/src/field/kuupuappu_mura/mura	.data
-383	text	games/tbs/src/field/kuupuappu_heya/entry	.text
-383	text	games/tbs/src/field/kuupuappu_heya/heya	.text
-383	text	games/tbs/src/field/kuupuappu_heya/import	.text
-383	text	games/tbs/src/field/kuupuappu_heya/heya	.data
+383	text	games/tbs/src/field/kuupuappu_heya/entry
+383	text	games/tbs/src/field/kuupuappu_heya/heya
+383	text	games/tbs/src/field/kuupuappu_heya/import
 383	bss	resource_383_overlay	.bss
-384	text	games/tbs/src/field/common/kuupuappu_runpa/entry	.text
-384	text	games/tbs/src/field/common/kuupuappu_runpa/jail	.text
-384	text	games/tbs/src/field/common/kuupuappu_runpa/import	.text
-384	text	games/tbs/src/field/common/kuupuappu_runpa/jail	.rodata
+384	text	games/tbs/src/field/common/kuupuappu_runpa/entry
+384	text	games/tbs/src/field/common/kuupuappu_runpa/jail
+384	text	games/tbs/src/field/common/kuupuappu_runpa/import
 385	text	games/tbs/src/field/kuupuappu_mura_sai/entry	.text
 385	text	games/tbs/src/field/kuupuappu_mura_sai/sai	.text
 385	text	games/tbs/src/field/kuupuappu_mura_sai/import	.text
 385	text	libgcc.a:_call_via_rX	.text
 385	text	games/tbs/src/field/kuupuappu_mura_sai/sai	.data
-386	text	games/tbs/src/field/kuupuappu_heya_sai/entry	.text
-386	text	games/tbs/src/field/kuupuappu_heya_sai/placement	.text
-386	text	games/tbs/src/field/kuupuappu_heya_sai/import	.text
-386	text	games/tbs/src/field/kuupuappu_heya_sai/placement	.data
-387	text	games/tbs/src/field/goma_iriguchi/entry	.text
-387	text	games/tbs/src/field/goma_iriguchi/iriguchi	.text
-387	text	games/tbs/src/field/goma_iriguchi/import	.text
-387	text	games/tbs/src/field/goma_iriguchi/iriguchi	.data
-388	text	games/tbs/src/field/goma_ike/entry	.text
-388	text	games/tbs/src/field/goma_ike/gate_placement	.text
-388	text	games/tbs/src/field/goma_ike/import	.text
-388	text	games/tbs/src/field/goma_ike/gate_placement	.data
+386	text	games/tbs/src/field/kuupuappu_heya_sai/entry
+386	text	games/tbs/src/field/kuupuappu_heya_sai/placement
+386	text	games/tbs/src/field/kuupuappu_heya_sai/import
+387	text	games/tbs/src/field/goma_iriguchi/entry
+387	text	games/tbs/src/field/goma_iriguchi/iriguchi
+387	text	games/tbs/src/field/goma_iriguchi/import
+388	text	games/tbs/src/field/goma_ike/entry
+388	text	games/tbs/src/field/goma_ike/gate_placement
+388	text	games/tbs/src/field/goma_ike/import
 389	text	games/tbs/src/field/goma_hashira/entry	.text
 389	text	games/tbs/src/field/common/object/staged_actor	.text
 389	text	games/tbs/src/field/goma_hashira/hashira	.text
@@ -790,36 +766,31 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 389	text	libgcc.a:_call_via_rX	.text
 389	text	games/tbs/src/field/goma_hashira/data	.data
 389	bss	*	.bss COMMON
-38a	text	games/tbs/src/field/goma_suiro/entry	.text
-38a	text	games/tbs/src/field/goma_suiro/suiro	.text
-38a	text	games/tbs/src/field/goma_suiro/import	.text
-38a	text	games/tbs/src/field/goma_suiro/suiro	.data
+38a	text	games/tbs/src/field/goma_suiro/entry
+38a	text	games/tbs/src/field/goma_suiro/suiro
+38a	text	games/tbs/src/field/goma_suiro/import
 38b	text	games/tbs/src/field/biribino_mura/entry	.text
 38b	text	games/tbs/src/field/biribino_mura/mura	.text
 38b	text	games/tbs/src/field/biribino_mura/import	.text
 38b	text	games/tbs/src/field/biribino_mura/mura	.data
 38b	bss	games/tbs/src/field/biribino_mura/mura	.bss COMMON
-38c	text	games/tbs/src/field/biribino_heya/entry	.text
-38c	text	games/tbs/src/field/biribino_heya/message_branch	.text
-38c	text	games/tbs/src/field/biribino_heya/import	.text
-38c	text	games/tbs/src/field/biribino_heya/message_branch	.data
-38d	text	games/tbs/src/field/biribino_kyuden/entry	.text
-38d	text	games/tbs/src/field/biribino_kyuden/kyuden	.text
-38d	text	games/tbs/src/field/biribino_kyuden/import	.text
-38d	text	games/tbs/src/field/biribino_kyuden/kyuden	.data
-38e	text	games/tbs/src/field/biribino_niwa/entry	.text
-38e	text	games/tbs/src/field/biribino_niwa/niwa	.text
-38e	text	games/tbs/src/field/biribino_niwa/import	.text
-38e	text	games/tbs/src/field/biribino_niwa/niwa	.data
+38c	text	games/tbs/src/field/biribino_heya/entry
+38c	text	games/tbs/src/field/biribino_heya/message_branch
+38c	text	games/tbs/src/field/biribino_heya/import
+38d	text	games/tbs/src/field/biribino_kyuden/entry
+38d	text	games/tbs/src/field/biribino_kyuden/kyuden
+38d	text	games/tbs/src/field/biribino_kyuden/import
+38e	text	games/tbs/src/field/biribino_niwa/entry
+38e	text	games/tbs/src/field/biribino_niwa/niwa
+38e	text	games/tbs/src/field/biribino_niwa/import
 38f	text	games/tbs/src/field/korima_mura/entry	.text
 38f	text	games/tbs/src/field/korima_mura/mura	.text
 38f	text	games/tbs/src/field/korima_mura/import	.text
 38f	text	games/tbs/src/field/korima_mura/data	.data
 38f	bss	games/tbs/src/field/korima_mura/mura	.bss
-390	text	games/tbs/src/field/korima_heya/entry	.text
-390	text	games/tbs/src/field/korima_heya/entry_layout	.text
-390	text	games/tbs/src/field/korima_heya/import	.text
-390	text	games/tbs/src/field/korima_heya/entry_layout	.data
+390	text	games/tbs/src/field/korima_heya/entry
+390	text	games/tbs/src/field/korima_heya/entry_layout
+390	text	games/tbs/src/field/korima_heya/import
 391	text	games/tbs/src/field/korima_hashi/entry	.text
 391	text	games/tbs/src/field/common/object/staged_actor	.text
 391	text	games/tbs/src/field/korima_hashi/hashi	.text
@@ -841,11 +812,11 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 393	text	libgcc.a:_call_via_rX	.text
 393	text	games/tbs/src/field/korima_kawa/data	.data
 393	bss	resource_393_overlay	.bss
-394	text	games/tbs/src/field/korima_magari/entry	.text
-394	text	games/tbs/src/field/korima_magari/magari	.text
-394	text	games/tbs/src/field/common/korima/palette	.text
-394	text	games/tbs/src/field/korima_magari/import	.text
-394	text	games/tbs/src/field/korima_magari/data	.data
+394	text	games/tbs/src/field/korima_magari/entry
+394	text	games/tbs/src/field/korima_magari/magari
+394	text	games/tbs/src/field/common/korima/palette
+394	text	games/tbs/src/field/korima_magari/import
+394	text	games/tbs/src/field/korima_magari/data
 394	bss	resource_394_overlay	.bss
 395	text	games/tbs/src/field/korima_ki/entry	.text
 395	text	games/tbs/src/field/korima_ki/ki	.text
@@ -853,24 +824,21 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 395	text	games/tbs/src/field/korima_ki/ki	.data
 395	bss	games/tbs/src/field/korima_ki/ki	.bss
 395	bss	resource_395_overlay	.bss
-396	text	games/tbs/src/field/toreto_heya/entry	.text
-396	text	games/tbs/src/field/toreto_heya/heya	.text
-396	text	games/tbs/src/field/toreto_heya/import	.text
-396	text	games/tbs/src/field/toreto_heya/heya	.data
+396	text	games/tbs/src/field/toreto_heya/entry
+396	text	games/tbs/src/field/toreto_heya/heya
+396	text	games/tbs/src/field/toreto_heya/import
 396	bss	resource_396_overlay	.bss
 397	text	games/tbs/src/field/toreto_eda/entry	.text
 397	text	games/tbs/src/field/toreto_eda/eda	.text
 397	text	games/tbs/src/field/toreto_eda/import	.text
 397	text	games/tbs/src/field/toreto_eda/eda	.data
 397	bss	games/tbs/src/field/toreto_eda/eda	.bss
-398	text	games/tbs/src/field/biribino_dou/entry	.text
-398	text	games/tbs/src/field/biribino_dou/dou	.text
-398	text	games/tbs/src/field/biribino_dou/import	.text
-398	text	games/tbs/src/field/biribino_dou/dou	.data
-399	text	games/tbs/src/field/imiru_mura/entry	.text
-399	text	games/tbs/src/field/imiru_mura/mura	.text
-399	text	games/tbs/src/field/imiru_mura/import	.text
-399	text	games/tbs/src/field/imiru_mura/mura	.data
+398	text	games/tbs/src/field/biribino_dou/entry
+398	text	games/tbs/src/field/biribino_dou/dou
+398	text	games/tbs/src/field/biribino_dou/import
+399	text	games/tbs/src/field/imiru_mura/entry
+399	text	games/tbs/src/field/imiru_mura/mura
+399	text	games/tbs/src/field/imiru_mura/import
 399	bss	resource_399_overlay	.bss
 39a	text	games/tbs/src/field/common/imiru_fuchin/entry	.text
 39a	text	games/tbs/src/field/common/imiru_fuchin/fuchin	.text
@@ -892,10 +860,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 39d	text	games/tbs/src/field/makyuri_chojo/import	.text
 39d	text	libgcc.a:_call_via_rX	.text
 39d	text	games/tbs/src/field/makyuri_chojo/chojo	.data
-39e	text	games/tbs/src/field/common/shian_jiin/entry	.text
-39e	text	games/tbs/src/field/common/shian_jiin/jiin	.text
-39e	text	games/tbs/src/field/common/shian_jiin/import	.text
-39e	text	games/tbs/src/field/common/shian_jiin/jiin	.data
+39e	text	games/tbs/src/field/common/shian_jiin/entry
+39e	text	games/tbs/src/field/common/shian_jiin/jiin
+39e	text	games/tbs/src/field/common/shian_jiin/import
 39f	text	games/tbs/src/field/mogoru_mori/entry	.text
 39f	text	games/tbs/src/field/common/object/staged_actor	.text
 39f	text	games/tbs/src/field/mogoru_mori/mori	.text
@@ -907,22 +874,18 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3a0	text	games/tbs/src/field/shian_mura/import	.text
 3a0	text	libgcc.a:_call_via_rX	.text
 3a0	text	games/tbs/src/field/shian_mura/data	.data
-3a1	text	games/tbs/src/field/shian_heya/entry	.text
-3a1	text	games/tbs/src/field/shian_heya/heya	.text
-3a1	text	games/tbs/src/field/shian_heya/import	.text
-3a1	text	games/tbs/src/field/shian_heya/heya	.data
-3a2	text	games/tbs/src/field/common/yama_rama/entry	.text
-3a2	text	games/tbs/src/field/common/yama_rama/rama	.text
-3a2	text	games/tbs/src/field/common/yama_rama/import	.text
-3a2	text	games/tbs/src/field/common/yama_rama/rama	.data
-3a3	text	games/tbs/src/field/arutin_mura/entry	.text
-3a3	text	games/tbs/src/field/arutin_mura/mura	.text
-3a3	text	games/tbs/src/field/arutin_mura/import	.text
-3a3	text	games/tbs/src/field/arutin_mura/mura	.data
-3a4	text	games/tbs/src/field/arutin_yama/entry	.text
-3a4	text	games/tbs/src/field/arutin_yama/yama	.text
-3a4	text	games/tbs/src/field/arutin_yama/import	.text
-3a4	text	games/tbs/src/field/arutin_yama/yama	.data
+3a1	text	games/tbs/src/field/shian_heya/entry
+3a1	text	games/tbs/src/field/shian_heya/heya
+3a1	text	games/tbs/src/field/shian_heya/import
+3a2	text	games/tbs/src/field/common/yama_rama/entry
+3a2	text	games/tbs/src/field/common/yama_rama/rama
+3a2	text	games/tbs/src/field/common/yama_rama/import
+3a3	text	games/tbs/src/field/arutin_mura/entry
+3a3	text	games/tbs/src/field/arutin_mura/mura
+3a3	text	games/tbs/src/field/arutin_mura/import
+3a4	text	games/tbs/src/field/arutin_yama/entry
+3a4	text	games/tbs/src/field/arutin_yama/yama
+3a4	text	games/tbs/src/field/arutin_yama/import
 3a4	bss	resource_3a4_overlay	.bss
 3a5	text	games/tbs/src/field/ramakan_sabaku/entry	.text
 3a5	text	games/tbs/src/field/ramakan_sabaku/sabaku	.text
@@ -949,35 +912,28 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3a7	text	games/tbs/src/field/kuupuappu_dou/dou	.rodata
 3a7	text	libgcc.a:_thenan_df	.rodata
 3a7	text	games/tbs/src/field/kuupuappu_dou/dou	.data
-3a8	text	games/tbs/src/field/karei_machi/entry	.text
-3a8	text	games/tbs/src/field/karei_machi/machi	.text
-3a8	text	games/tbs/src/field/karei_machi/import	.text
-3a8	text	games/tbs/src/field/karei_machi/machi	.data
+3a8	text	games/tbs/src/field/karei_machi/entry
+3a8	text	games/tbs/src/field/karei_machi/machi
+3a8	text	games/tbs/src/field/karei_machi/import
 3a8	bss	resource_3a8_overlay	.bss
-3a9	text	games/tbs/src/field/karei_heya/entry	.text
-3a9	text	games/tbs/src/field/karei_heya/heya	.text
-3a9	text	games/tbs/src/field/karei_heya/import	.text
-3a9	text	games/tbs/src/field/karei_heya/heya	.data
-3aa	text	games/tbs/src/field/karei_kyuden/entry	.text
-3aa	text	games/tbs/src/field/karei_kyuden/kyuden	.text
-3aa	text	games/tbs/src/field/karei_kyuden/import	.text
-3aa	text	games/tbs/src/field/karei_kyuden/kyuden	.data
-3ab	text	games/tbs/src/field/runpa_mura/entry	.text
-3ab	text	games/tbs/src/field/runpa_mura/mura	.text
-3ab	text	games/tbs/src/field/runpa_mura/import	.text
-3ab	text	games/tbs/src/field/runpa_mura/mura	.data
-3ac	text	games/tbs/src/field/common/runpa_suhara/entry	.text
-3ac	text	games/tbs/src/field/common/runpa_suhara/suhara	.text
-3ac	text	games/tbs/src/field/common/runpa_suhara/import	.text
-3ac	text	games/tbs/src/field/common/runpa_suhara/suhara	.rodata
-3ad	text	games/tbs/src/field/runpa_dou/entry	.text
-3ad	text	games/tbs/src/field/runpa_dou/dou	.text
-3ad	text	games/tbs/src/field/runpa_dou/import	.text
-3ad	text	games/tbs/src/field/runpa_dou/dou	.rodata
-3ae	text	games/tbs/src/field/common/karei_torebi/entry	.text
-3ae	text	games/tbs/src/field/common/karei_torebi/torebi	.text
-3ae	text	games/tbs/src/field/common/karei_torebi/import	.text
-3ae	text	games/tbs/src/field/common/karei_torebi/torebi	.data
+3a9	text	games/tbs/src/field/karei_heya/entry
+3a9	text	games/tbs/src/field/karei_heya/heya
+3a9	text	games/tbs/src/field/karei_heya/import
+3aa	text	games/tbs/src/field/karei_kyuden/entry
+3aa	text	games/tbs/src/field/karei_kyuden/kyuden
+3aa	text	games/tbs/src/field/karei_kyuden/import
+3ab	text	games/tbs/src/field/runpa_mura/entry
+3ab	text	games/tbs/src/field/runpa_mura/mura
+3ab	text	games/tbs/src/field/runpa_mura/import
+3ac	text	games/tbs/src/field/common/runpa_suhara/entry
+3ac	text	games/tbs/src/field/common/runpa_suhara/suhara
+3ac	text	games/tbs/src/field/common/runpa_suhara/import
+3ad	text	games/tbs/src/field/runpa_dou/entry
+3ad	text	games/tbs/src/field/runpa_dou/dou
+3ad	text	games/tbs/src/field/runpa_dou/import
+3ae	text	games/tbs/src/field/common/karei_torebi/entry
+3ae	text	games/tbs/src/field/common/karei_torebi/torebi
+3ae	text	games/tbs/src/field/common/karei_torebi/import
 3ae	bss	resource_3ae_overlay	.bss
 3af	text	games/tbs/src/field/fune_kanpan/entry	.text
 3af	text	games/tbs/src/field/fune_kanpan/kanpan	.text
@@ -989,10 +945,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3b0	text	games/tbs/src/field/fune_hobashira/import	.text
 3b0	text	games/tbs/src/field/fune_hobashira/hobashira	.data
 3b0	bss	games/tbs/src/field/fune_hobashira/hobashira	.bss
-3b1	text	games/tbs/src/field/fune_heya/entry	.text
-3b1	text	games/tbs/src/field/fune_heya/heya	.text
-3b1	text	games/tbs/src/field/fune_heya/import	.text
-3b1	text	games/tbs/src/field/fune_heya/heya	.data
+3b1	text	games/tbs/src/field/fune_heya/entry
+3b1	text	games/tbs/src/field/fune_heya/heya
+3b1	text	games/tbs/src/field/fune_heya/import
 3b1	bss	resource_3b1_overlay	.bss
 3b2	text	games/tbs/src/field/takara_shima/entry	.text
 3b2	text	games/tbs/src/field/common/object/staged_actor	.text
@@ -1016,24 +971,21 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3b5	text	games/tbs/src/field/torebi_machi/import	.text
 3b5	text	libgcc.a:_call_via_rX	.text
 3b5	text	games/tbs/src/field/torebi_machi/machi	.data
-3b6	text	games/tbs/src/field/torebi_heya/entry	.text
-3b6	text	games/tbs/src/field/torebi_heya/heya	.text
-3b6	text	games/tbs/src/field/torebi_heya/import	.text
-3b6	text	games/tbs/src/field/torebi_heya/heya	.data
+3b6	text	games/tbs/src/field/torebi_heya/entry
+3b6	text	games/tbs/src/field/torebi_heya/heya
+3b6	text	games/tbs/src/field/torebi_heya/import
 3b7	text	games/tbs/src/field/torebi_izumi/entry	.text
 3b7	text	games/tbs/src/field/torebi_izumi/izumi	.text
 3b7	text	games/tbs/src/field/torebi_izumi/import	.text
 3b7	text	libgcc.a:_call_via_rX	.text
 3b7	text	games/tbs/src/field/torebi_izumi/data	.data
 3b7	bss	games/tbs/src/field/torebi_izumi/izumi	.data .bss COMMON
-3b8	text	games/tbs/src/field/torebi_kyuden/entry	.text
-3b8	text	games/tbs/src/field/torebi_kyuden/kyuden	.text
-3b8	text	games/tbs/src/field/torebi_kyuden/import	.text
-3b8	text	games/tbs/src/field/torebi_kyuden/kyuden	.data
-3b9	text	games/tbs/src/field/korashiamu_iriguchi/entry	.text
-3b9	text	games/tbs/src/field/korashiamu_iriguchi/iriguchi	.text
-3b9	text	games/tbs/src/field/korashiamu_iriguchi/import	.text
-3b9	text	games/tbs/src/field/korashiamu_iriguchi/iriguchi	.data
+3b8	text	games/tbs/src/field/torebi_kyuden/entry
+3b8	text	games/tbs/src/field/torebi_kyuden/kyuden
+3b8	text	games/tbs/src/field/torebi_kyuden/import
+3b9	text	games/tbs/src/field/korashiamu_iriguchi/entry
+3b9	text	games/tbs/src/field/korashiamu_iriguchi/iriguchi
+3b9	text	games/tbs/src/field/korashiamu_iriguchi/import
 3ba	text	games/tbs/src/field/korosseo_kawa/entry	.text
 3ba	text	games/tbs/src/field/korosseo_kawa/kawa	.text
 3ba	text	games/tbs/src/field/korosseo_kawa/import	.text
@@ -1042,12 +994,10 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3ba	text	games/tbs/src/graphics/korosseo/gauge	.rodata
 3ba	text	games/tbs/src/field/korosseo_kawa/kawa	.data
 3ba	bss	resource_3ba_overlay	.bss
-3bb	text	games/tbs/src/field/korosseo_kabe/entry	.text
-3bb	text	games/tbs/src/field/korosseo_kabe/kabe	.text
-3bb	text	games/tbs/src/field/korosseo_kabe/import	.text
-3bb	text	games/tbs/src/field/korosseo_kabe/kabe	.rodata
-3bb	text	games/tbs/src/graphics/korosseo/gauge	.rodata
-3bb	text	games/tbs/src/field/korosseo_kabe/kabe	.data
+3bb	text	games/tbs/src/field/korosseo_kabe/entry
+3bb	text	games/tbs/src/field/korosseo_kabe/kabe
+3bb	text	games/tbs/src/field/korosseo_kabe/import
+3bb	text	games/tbs/src/graphics/korosseo/gauge
 3bb	bss	resource_3bb_overlay	.bss
 3bc	text	games/tbs/src/field/korosseo_maruta/entry	.text
 3bc	text	games/tbs/src/field/korosseo_maruta/maruta	.text
@@ -1083,23 +1033,19 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3bf	text	games/tbs/src/field/runpa_jo/data	.data
 3bf	text	libgcc.a:_thenan_df	.rodata
 3bf	text	games/tbs/src/field/runpa_jo/data2	.data
-3c0	text	games/tbs/src/field/suhara_sabaku/entry	.text
-3c0	text	games/tbs/src/field/suhara_sabaku/sabaku	.text
-3c0	text	games/tbs/src/field/suhara_sabaku/import	.text
-3c0	text	games/tbs/src/field/suhara_sabaku/sabaku	.data
+3c0	text	games/tbs/src/field/suhara_sabaku/entry
+3c0	text	games/tbs/src/field/suhara_sabaku/sabaku
+3c0	text	games/tbs/src/field/suhara_sabaku/import
 3c0	bss	resource_3c0_overlay	.bss
-3c1	text	games/tbs/src/field/suhara_mura/entry	.text
-3c1	text	games/tbs/src/field/suhara_mura/mura	.text
-3c1	text	games/tbs/src/field/suhara_mura/import	.text
-3c1	text	games/tbs/src/field/suhara_mura/mura	.data
-3c2	text	games/tbs/src/field/suhara_heya/entry	.text
-3c2	text	games/tbs/src/field/suhara_heya/heya	.text
-3c2	text	games/tbs/src/field/suhara_heya/import	.text
-3c2	text	games/tbs/src/field/suhara_heya/heya	.data
-3c3	text	games/tbs/src/field/suhara_gate/entry	.text
-3c3	text	games/tbs/src/field/suhara_gate/gate	.text
-3c3	text	games/tbs/src/field/suhara_gate/import	.text
-3c3	text	games/tbs/src/field/suhara_gate/gate	.data
+3c1	text	games/tbs/src/field/suhara_mura/entry
+3c1	text	games/tbs/src/field/suhara_mura/mura
+3c1	text	games/tbs/src/field/suhara_mura/import
+3c2	text	games/tbs/src/field/suhara_heya/entry
+3c2	text	games/tbs/src/field/suhara_heya/heya
+3c2	text	games/tbs/src/field/suhara_heya/import
+3c3	text	games/tbs/src/field/suhara_gate/entry
+3c3	text	games/tbs/src/field/suhara_gate/gate
+3c3	text	games/tbs/src/field/suhara_gate/import
 3c4	text	games/tbs/src/field/babi_chika/entry	.text
 3c4	text	games/tbs/src/field/babi_chika/chika	.text
 3c4	text	games/tbs/src/field/babi_chika/import	.text
@@ -1111,14 +1057,12 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3c5	text	games/tbs/src/field/babi_iriguchi/import	.text
 3c5	text	libgcc.a:_call_via_rX	.text
 3c5	text	games/tbs/src/field/babi_iriguchi/data	.data
-3c6	text	games/tbs/src/field/raribero_machi/entry	.text
-3c6	text	games/tbs/src/field/raribero_machi/machi	.text
-3c6	text	games/tbs/src/field/raribero_machi/import	.text
-3c6	text	games/tbs/src/field/raribero_machi/machi	.data
-3c7	text	games/tbs/src/field/raribero_heya/entry	.text
-3c7	text	games/tbs/src/field/raribero_heya/heya	.text
-3c7	text	games/tbs/src/field/raribero_heya/import	.text
-3c7	text	games/tbs/src/field/raribero_heya/heya	.data
+3c6	text	games/tbs/src/field/raribero_machi/entry
+3c6	text	games/tbs/src/field/raribero_machi/machi
+3c6	text	games/tbs/src/field/raribero_machi/import
+3c7	text	games/tbs/src/field/raribero_heya/entry
+3c7	text	games/tbs/src/field/raribero_heya/heya
+3c7	text	games/tbs/src/field/raribero_heya/import
 3c8	text	games/tbs/src/field/vinasu_heya/entry	.text
 3c8	text	games/tbs/src/field/vinasu_heya/heya	.text
 3c8	text	games/tbs/src/field/vinasu_heya/import	.text
@@ -1130,10 +1074,10 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3c9	text	libgcc.a:_call_via_rX	.text
 3c9	text	games/tbs/src/field/vinasu_chojo/data	.data
 3c9	bss	resource_3c9_overlay	.bss
-3ca	text	games/tbs/src/field/babi_fune/entry	.text
-3ca	text	games/tbs/src/field/babi_fune/fune	.text
-3ca	text	games/tbs/src/field/babi_fune/import	.text
-3ca	text	games/tbs/src/field/babi_fune/data	.data
+3ca	text	games/tbs/src/field/babi_fune/entry
+3ca	text	games/tbs/src/field/babi_fune/fune
+3ca	text	games/tbs/src/field/babi_fune/import
+3ca	text	games/tbs/src/field/babi_fune/data
 3ca	bss	resource_3ca_overlay	.bss
 3cb	text	games/tbs/src/menu/link_lobby/entry	.text
 3cb	text	games/tbs/src/menu/link_lobby/lobby	.text
@@ -1142,16 +1086,13 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3cb	text	games/tbs/src/menu/link_lobby/lobby	.rodata
 3cb	text	games/tbs/src/menu/link_lobby/lobby	.data
 3cb	bss	games/tbs/src/menu/link_lobby/lobby	.bss
-3cc	text	games/tbs/src/debug/test_rooms/entry	.text
-3cc	text	games/tbs/src/debug/test_rooms/empty	.text
-3cc	text	games/tbs/src/debug/test_rooms/import	.text
-3cc	text	games/tbs/src/debug/test_rooms/empty	.data
-3cd	text	games/tbs/src/debug/item_level/entry	.text
-3cd	text	games/tbs/src/debug/item_level/level	.text
-3cd	text	games/tbs/src/debug/item_level/import	.text
-3cd	text	games/tbs/src/debug/item_level/level	.data
-3ce	text	games/tbs/src/debug/menu_test/entry	.text
-3ce	text	games/tbs/src/debug/menu_test/test	.text
-3ce	text	games/tbs/src/debug/menu_test/import	.text
-3ce	text	games/tbs/src/debug/menu_test/test	.data
+3cc	text	games/tbs/src/debug/test_rooms/entry
+3cc	text	games/tbs/src/debug/test_rooms/empty
+3cc	text	games/tbs/src/debug/test_rooms/import
+3cd	text	games/tbs/src/debug/item_level/entry
+3cd	text	games/tbs/src/debug/item_level/level
+3cd	text	games/tbs/src/debug/item_level/import
+3ce	text	games/tbs/src/debug/menu_test/entry
+3ce	text	games/tbs/src/debug/menu_test/test
+3ce	text	games/tbs/src/debug/menu_test/import
 3ce	bss	resource_3ce_overlay	.bss

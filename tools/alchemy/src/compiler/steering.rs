@@ -376,10 +376,14 @@ fn parameter_names(tokens: &[&Tok]) -> Option<Vec<String>> {
         .collect()
 }
 
+/// Headers whose forwarding inlines are a layer of the whole game (S2), not
+/// devices: the scene script layer, and the IWRAM call layer, the one inline
+/// per resident IWRAM routine that every caller of that routine goes through.
 pub(crate) const SCRIPT_LAYER: &[&str] = &[
     "games/tbs/include/field_event.h",
     "games/tbs/include/field_service.h",
     "games/tbs/src/field/runpa_jo/jo.h",
+    "games/tbs/include/iwram_call.h",
 ];
 
 pub(crate) fn forwarding_findings(text: &str, source: &str) -> Result<Vec<Forwarder>, String> {
@@ -490,6 +494,25 @@ mod tests {
         assert_eq!(
             forwarding_findings(source, "field_event.h").unwrap().len(),
             3
+        );
+    }
+    #[test]
+    fn iwram_call_layer_is_admitted_only_in_its_own_header() {
+        let layer = "static __inline__ s32 Iwram_CopyWords(void *destination, const void *source, s32 size) { return Iwram_CopyWordsEntry(destination, source, size); }";
+        assert!(forwarding_findings(layer, "games/tbs/include/iwram_call.h")
+            .unwrap()
+            .is_empty());
+        for elsewhere in ["games/tbs/src/menu/backdrop.c", "games/tla/include/iwram_call.h"] {
+            assert_eq!(forwarding_findings(layer, elsewhere).unwrap().len(), 1);
+        }
+        let wrapper = "# 1 \"games/tbs/include/iwram_call.h\"\nstatic __inline__ s32 Iwram_CopyWords(void *d, const void *s, s32 n) { return Iwram_CopyWordsEntry(d, s, n); }\n# 1 \"games/tbs/src/menu/backdrop.c\"\nstatic __inline__ s32 CopyWords(void *d, const void *s, s32 n) { return Iwram_CopyWords(d, s, n); }\n";
+        let found = forwarding_findings(wrapper, "games/tbs/src/menu/backdrop.c").unwrap();
+        assert_eq!(
+            found
+                .iter()
+                .map(|item| item.name.as_str())
+                .collect::<Vec<_>>(),
+            ["CopyWords"]
         );
     }
     #[test]
